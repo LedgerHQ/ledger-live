@@ -25,7 +25,8 @@ class HwTransportReactNativeBle: RCTEventEmitter {
     var rejectCallback: ((_ code: String, _ message: String, _ error: NSError?) -> Void)?
     var queueTask: Queue?
     var runnerTask: Runner?
-    
+    var isDisconnecting: Bool = false
+
     override init() {
         super.init()
         print(BleTransport.shared)
@@ -92,8 +93,12 @@ class HwTransportReactNativeBle: RCTEventEmitter {
         }
     }
     
-    @objc func isConnected(_ resolve: @escaping RCTPromiseResolveBlock, reject: RCTPromiseRejectBlock) -> Void {
-        resolve(BleTransport.shared.isConnected)
+    @objc func isConnected(
+        _ resolve: @escaping RCTPromiseResolveBlock,
+          reject: @escaping RCTPromiseRejectBlock
+    ) -> Void {
+        let isConnected = BleTransport.shared.isConnected
+        resolve(isConnected && !isDisconnecting)
     }
     
     @objc func connect(
@@ -105,29 +110,40 @@ class HwTransportReactNativeBle: RCTEventEmitter {
             reject(TransportError.bluetoothRequired.rawValue, "", nil)
             return
         }
-        
-        let peripheral = PeripheralIdentifier(uuid: UUID(uuidString: uuid)!, name: "")
-        var consumed = false /// Callbacks can only be called once in rn
-        
-        DispatchQueue.main.async {
-            BleTransport.shared.connect(toPeripheralID: peripheral) {
-                /// Disconnect callback is called regardless of the original -connect- having resolved already
-                /// we use this to notify exchanges (background or foreground) about the disconnection.
-                if consumed {
-                    if let rejectCallback = self.rejectCallback {
-                        rejectCallback(TransportError.cantOpenDevice.rawValue, "", nil)
-                        print("ble-verbose unhandled disconnect")
-                    }
-                    return
+
+        BleTransport.shared.disconnect(immediate: false){ _ in
+            let peripheral = PeripheralIdentifier(uuid: UUID(uuidString: uuid)!, name: "")
+            var consumed = false /// Callbacks can only be called once in rn
+            DispatchQueue.main.asyncAfter(deadline: .now() + 8){
+                /// We never completed, so reject this, and queue a disconnect.
+                if !consumed {
+                    consumed = true
+                    reject(TransportError.cantOpenDevice.rawValue, "", nil)
                 }
-            } success: { PeripheralIdentifier in
-                if consumed { return }
-                resolve(uuid)
-                consumed = true
-            } failure: { error in
-                if consumed { return }
-                reject(TransportError.pairingFailed.rawValue, "", nil)
-                consumed = true
+            }
+
+            DispatchQueue.main.async{
+                BleTransport.shared.connect(toPeripheralID: peripheral) {
+                    /// Disconnect callback is called regardless of the original -connect- having resolved already
+                    /// we use this to notify exchanges (background or foreground) about the disconnection.
+                    if consumed {
+                        if let rejectCallback = self.rejectCallback {
+                            rejectCallback(TransportError.cantOpenDevice.rawValue, "", nil)
+                        }
+                        return
+                    }
+                } success: { PeripheralIdentifier in
+                    if consumed {
+                        /// We've consumed the callback, but we've connected. This shouldn't happen.... queue a desperate disconnect
+                        BleTransport.shared.disconnect(immediate: false){_ in }
+                    }
+                    resolve(uuid)
+                    consumed = true
+                } failure: { error in
+                    if consumed { return }
+                    reject(TransportError.pairingFailed.rawValue, "", nil)
+                    consumed = true
+                }
             }
         }
     }
@@ -136,19 +152,19 @@ class HwTransportReactNativeBle: RCTEventEmitter {
         _ resolve: @escaping RCTPromiseResolveBlock,
         reject: @escaping RCTPromiseRejectBlock
     ) -> Void {
+        isDisconnecting = true
+
         let disconnectImpl = {
-            DispatchQueue.main.async {
-                BleTransport.shared.disconnect(immediate: false, completion: { _ in
+            DispatchQueue.main.asyncAfter(deadline: .now()+3.00) {
+                BleTransport.shared.disconnect(immediate: false, completion: { [self] result in
                     resolve(true)
+                    isDisconnecting = false
                 })
             }
         }
         
-        /// Prevent race condition between organic disconnect (allow open app) and explicit disconnection below.
-        DispatchQueue.main.asyncAfter(deadline: .now() + 3){
-            if !BleTransport.shared.isConnected {
-                resolve(true)
-            } else if let queueTask = self.queueTask {
+        DispatchQueue.main.async{ [self] in
+            if let queueTask = self.queueTask {
                 queueTask.stop(disconnectImpl)
                 self.queueTask = nil
             } else {
