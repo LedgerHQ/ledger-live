@@ -48,7 +48,7 @@ export type SupportedLanguages = "fr" | "en" | "es" | "zh" | "ru" | "pt";
 type LocaleState = {
   i18n: any;
   t: TFunction;
-  locale: SupportedLanguages | string;
+  locale: SupportedLanguages;
 };
 
 function getLocaleState(i18n): LocaleState {

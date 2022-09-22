@@ -5,6 +5,7 @@ export type FeatureId =
   | "llmUsbFirmwareUpdate"
   | "ratings"
   | "counterValue"
+  | "deviceLocalization"
   | "buyDeviceFromLive"
   | "ptxSmartRouting"
   | "currencyOsmosis"
@@ -20,6 +21,7 @@ export type FeatureId =
   | "currencySongbirdMobile"
   | "currencyFlareMobile"
   | "ptxSmartRoutingMobile"
+  | "mockFeature"
   | "walletConnectLiveApp"
   | "customImage";
 

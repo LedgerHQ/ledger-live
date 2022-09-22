@@ -3,7 +3,7 @@ import invariant from "invariant";
 import type { AlgorandAccount, AlgorandTransaction } from "./types";
 import { getCryptoCurrencyById, parseCurrencyUnit } from "../../currencies";
 import { isAccountEmpty } from "../../account";
-import { botTest, pickSiblings } from "../../bot/specs";
+import { botTest, genericTestDestination, pickSiblings } from "../../bot/specs";
 import type { AppSpec } from "../../bot/types";
 import { BigNumber } from "bignumber.js";
 import sample from "lodash/sample";
@@ -79,6 +79,7 @@ const algorand: AppSpec<AlgorandTransaction> = {
     {
       name: "move ~50%",
       maxRun: 2,
+      testDestination: genericTestDestination,
       transaction: ({ account, siblings, bridge, maxSpendable }) => {
         invariant(maxSpendable.gt(0), "Spendable balance is too low");
         const sibling = pickSiblings(siblings, 4);
@@ -115,6 +116,7 @@ const algorand: AppSpec<AlgorandTransaction> = {
     {
       name: "send max",
       maxRun: 1,
+      testDestination: genericTestDestination,
       transaction: ({ account, siblings, bridge, maxSpendable }) => {
         invariant(maxSpendable.gt(0), "Spendable balance is too low");
         const sibling = pickSiblings(siblings, 4);

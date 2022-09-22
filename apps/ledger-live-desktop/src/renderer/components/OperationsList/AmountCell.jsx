@@ -9,7 +9,7 @@ import Box from "~/renderer/components/Box";
 import CounterValue from "~/renderer/components/CounterValue";
 import FormattedVal from "~/renderer/components/FormattedVal";
 import type { ThemedComponent } from "~/renderer/styles/StyleProvider";
-
+import { colors } from "~/renderer/styles/theme";
 import perFamilyOperationDetails from "~/renderer/generated/operationDetails";
 
 const Cell: ThemedComponent<{}> = styled(Box).attrs(() => ({
@@ -33,7 +33,7 @@ type Props = {
 class AmountCell extends PureComponent<Props> {
   render() {
     // eslint-disable-next-line no-unused-vars
-    const { currency, unit, operation } = this.props;
+    const { currency, unit, operation, isConfirmed } = this.props;
     const amount = getOperationAmountNumber(operation);
 
     // $FlowFixMe
@@ -68,7 +68,13 @@ class AmountCell extends PureComponent<Props> {
                   showCode
                   fontSize={4}
                   alwaysShowSign
-                  color={amount.isNegative() ? "palette.text.shade80" : undefined}
+                  color={
+                    !isConfirmed && operation.type === "IN"
+                      ? colors.warning
+                      : amount.isNegative()
+                      ? "palette.text.shade80"
+                      : undefined
+                  }
                 />
 
                 <CounterValue

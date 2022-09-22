@@ -1,6 +1,7 @@
 import { DeviceModelId } from "@ledgerhq/devices";
 import { getCryptoCurrencyById } from "../../currencies";
 import {
+  minimalAmount,
   createLockMutation,
   createRegisterAccountMutation,
   createSend50PercentMutation,
@@ -35,6 +36,7 @@ const celo: AppSpec<Transaction> = {
   },
   testTimeout: 2 * 60 * 1000,
   genericDeviceAction: acceptTransaction,
+  minViableAmount: minimalAmount,
   mutations: [
     send50PercentMutation,
     sendMaxMutation,

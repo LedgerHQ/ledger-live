@@ -28,6 +28,10 @@ Object {
         ],
         "family": "bitcoin",
         "id": "bitcoin",
+        "keywords": Array [
+          "btc",
+          "bitcoin",
+        ],
         "managerAppName": "Bitcoin",
         "name": "Bitcoin",
         "scheme": "bitcoin",
@@ -1800,6 +1804,10 @@ Object {
         ],
         "family": "bitcoin",
         "id": "bitcoin",
+        "keywords": Array [
+          "btc",
+          "bitcoin",
+        ],
         "managerAppName": "Bitcoin",
         "name": "Bitcoin",
         "scheme": "bitcoin",
@@ -4137,6 +4145,10 @@ Object {
         ],
         "family": "bitcoin",
         "id": "bitcoin",
+        "keywords": Array [
+          "btc",
+          "bitcoin",
+        ],
         "managerAppName": "Bitcoin",
         "name": "Bitcoin",
         "scheme": "bitcoin",
@@ -4773,6 +4785,10 @@ Object {
         ],
         "family": "bitcoin",
         "id": "bitcoin",
+        "keywords": Array [
+          "btc",
+          "bitcoin",
+        ],
         "managerAppName": "Bitcoin",
         "name": "Bitcoin",
         "scheme": "bitcoin",

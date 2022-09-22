@@ -89,6 +89,7 @@ import PostBuyDeviceSetupNanoWallScreen from "../../screens/PostBuyDeviceSetupNa
 import WalletConnectNavigator from "./WalletConnectNavigator";
 import WalletConnectLiveAppNavigator from "./WalletConnectLiveAppNavigator";
 import CustomImageNavigator from "./CustomImageNavigator";
+import PostOnboardingNavigator from "./PostOnboardingNavigator";
 
 import {
   BleDevicePairingFlow,
@@ -629,6 +630,11 @@ export default function BaseNavigator() {
         options={{
           title: "",
         }}
+      />
+      <Stack.Screen
+        name={NavigatorName.PostOnboarding}
+        options={{ headerShown: false }}
+        component={PostOnboardingNavigator}
       />
     </Stack.Navigator>
   );
