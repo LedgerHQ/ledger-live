@@ -236,10 +236,26 @@
     },
     "form" : {
       "changeCTA" : "تغيير",
-      "ratesDrawer" : {
-        "title" : "مُعدل",
-        "quote" : "عرض أسعار",
-        "receive" : "تلقي"
+      "rates" : {
+        "title" : "المزودين",
+        "registration" : "التسجيل مطلوب ",
+        "noRegistration" : "التسجيل غير مطلوب",
+        "fixed" : "ثابت",
+        "float" : "متغيّر",
+        "update" : "تم تحديث المُعدلات في",
+        "loading" : "جاري التحميل ...",
+        "name" : {
+          "title" : "المزود",
+          "tooltip" : "اعتماداً على المزوّد، يتعين عليك تسجيل الدخول لديهم من خلال إنشاء حساب."
+        },
+        "rate" : {
+          "title" : "مُعدّل التبادل",
+          "tooltip" : "<0>المُعدّل المتغيّر</0> يتقلّب وفقاً لأحوال السوق، لذلك قد تتلقى مبلغ أكثر أو أقل من ذلك الذي قدّرته.<br/><br/><0>المُعدّل الثابت</0> يتطابق مع المبلغ المعروض في بداية التبادل."
+        },
+        "receive" : {
+          "title" : "تلقي",
+          "tooltip" : "المبلغ التقديري الذي ستتلقاه بعد التبادل."
+        }
       },
       "details" : {
         "label" : {
@@ -391,13 +407,13 @@
     },
     "missingApp" : {
       "title" : "يرجى تثبيت تطبيق {{appName}} على جهازك",
-      "subtitle" : "Go to My Ledger and install {{appName}} app to swap assets.",
-      "cta" : "Go to My Ledger"
+      "subtitle" : "انتقل إلى My Ledger وقم بتثبيت تطبيق {{appName}} لمبادلة الأصول.",
+      "cta" : "انتقل إلى My Ledger"
     },
     "outdatedApp" : {
       "title" : "يرجى تثبيت تطبيق {{appName}} على جهازك",
-      "subtitle" : "Go to My Ledger and update {{appName}} app to swap assets.",
-      "cta" : "Go to My Ledger"
+      "subtitle" : "انتقل إلى My Ledger وحدّث تطبيق {{appName}} لمبادلة الأصول.",
+      "cta" : "انتقل إلى My Ledger"
     },
     "providers" : {
       "title" : "اختر أحد المزودين لمبادلة الأصول المشفرة",
@@ -412,7 +428,13 @@
           "approved" : "تمت الموافقة على KYC (اعرف عميلك)!",
           "closed" : "تم رفض KYC (اعرف عميلك)"
         }
-      }
+      },
+      "filter" : {
+        "all" : "الكل",
+        "centralised" : "مركزي",
+        "dedentralised" : "لامركزي"
+      },
+      "noQuote" : "عرض السعر متاح في الخطوة التالية"
     },
     "ip" : {
       "title" : "مرحباً بك في المبادلة",
@@ -761,7 +783,7 @@
       },
       "delegation" : {
         "title" : "في حالة أنك لم تكن تعلم...",
-        "description" : "The Ledger validator stakes your {{asset}} at a commission of {{commission}}%.",
+        "description" : "مدقق Ledger يقوم بتكديس {{asset}} خاصتك بعمولة قدرها %{{commission}}.",
         "cta" : "قم بالتكديس مع Ledger"
       }
     }
@@ -978,7 +1000,7 @@
       "terms" : {
         "title" : "إقراض الأصول المشفرة",
         "subtitle" : "إقراض الأصول على بروتوكول Compound",
-        "description" : "The Compound protocol allows you to lend and borrow assets on the Ethereum network. You can lend assets and earn interest directly from your Ledger account.",
+        "description" : "بروتوكول Compound يسمح لك بإقراض واقتراض الأصول على شبكة إيثيريوم. يمكنك إقراض الأصول وكسب الفائدة مباشرةً من حسابك Ledger.",
         "switchLabel" : "<1>لقد قرأت وأوافق على </1><0>شروط الخدمة<0><1>.</1>"
       },
       "steps" : {
@@ -1221,9 +1243,9 @@
   "emptyState" : {
     "dashboard" : {
       "title" : "قم بتثبيت التطبيقات على جهازك",
-      "desc" : "Go to My Ledger to install apps on your device. You can add accounts once you have apps on your device.",
+      "desc" : "انتقل إلى My Ledger لتثبيت التطبيقات على جهازك. يمكنك إضافة الحسابات بمجرد أن يكون لديك تطبيقات على جهازك.",
       "buttons" : {
-        "installApp" : "Go to My Ledger",
+        "installApp" : "انتقل إلى My Ledger",
         "help" : "مساعدة"
       }
     },
@@ -1232,7 +1254,7 @@
       "desc" : "أضف حساب لبدء إدارة أصولك المشفرة. يجب أن يكون لديك تطبيق لأصلك المشفر المُثبت على جهازك.",
       "buttons" : {
         "addAccount" : "إضافة حساب",
-        "installApp" : "Go to My Ledger to install apps",
+        "installApp" : "انتقل إلى My Ledger لتثبيت التطبيقات",
         "help" : "مساعدة"
       }
     }
@@ -1555,12 +1577,12 @@
     "quitApp" : "الخروج من التطبيق على جهازك",
     "appNotInstalledTitle" : "التطبيق المطلوب غير موجود",
     "appNotInstalledTitle_plural" : "التطبيقات المطلوبة غير موجودة",
-    "appNotInstalled" : "The {{appName}} app is required to complete this action. Please go to My Ledger and install it on your device",
-    "appNotInstalled_plural" : "The {{appName}} apps are required to complete this action. Please go to My Ledger and install them on your device",
-    "openManager" : "Open My Ledger",
+    "appNotInstalled" : "تطبيق {{appName}} مطلوب لإكمال هذا الإجراء. يُرجى الانتقال إلى My Ledger وتثبيته على جهازك",
+    "appNotInstalled_plural" : "تطبيقات {{appName}} مطلوبة لإكمال هذا الإجراء. يُرجى الانتقال إلى My Ledger وتثبيتهم على جهازك",
+    "openManager" : "افتح My Ledger",
     "openOnboarding" : "إعداد الجهاز",
     "outdated" : "إصدار التطبيق قديم",
-    "outdatedDesc" : "An important update is available for the {{appName}} application on your device. Please go to My Ledger to update it.",
+    "outdatedDesc" : "هناك تحديث مهم لتطبيق {{appName}} متاح على جهازك. يُرجى الانتقال إلى My Ledger لتحديثه.",
     "installApp" : "تثبيت تطبيق {{appName}}",
     "installAppDescription" : "يُرجى الانتظار حتى الانتهاء من التثبيت",
     "listApps" : "التحقق من تبعيات التطبيق",
@@ -1603,8 +1625,8 @@
     },
     "disconnected" : {
       "title" : "يبدو أن هناك تطبيق مفتوح على جهازك",
-      "subtitle" : "Reopening My Ledger will quit the app on your device",
-      "ctaReopen" : "Reopen My Ledger",
+      "subtitle" : "إعادة فتح My Ledger ستؤدي إلى إغلاق التطبيق على جهازك",
+      "ctaReopen" : "إعادة فتح My Ledger",
       "ctaPortfolio" : "الرجوع إلى المحفظة الاستثمارية"
     },
     "deviceStorage" : {
@@ -1647,7 +1669,7 @@
         "title_plural" : "التحديثات المتاحة",
         "progressTitle" : "{{number}} تحديث تطبيق",
         "progressTitle_plural" : "{{number}} تحديثات للتطبيق",
-        "progressWarning" : "Do not quit My Ledger during update.",
+        "progressWarning" : "لا تغادر My Ledger أثناء التحديث.",
         "progress" : "جارى تحديث الكل..."
       },
       "item" : {
@@ -1711,7 +1733,7 @@
       "updateBtn" : "قم بتحديث البرنامج الثابت",
       "banner" : {
         "warning" : "تحديث البرنامج الثابت إلى {{latestFirmware}} متاح",
-        "cta" : "Go to My Ledger",
+        "cta" : "انتقل إلى My Ledger",
         "old" : {
           "warning" : "إصدار البرنامج الثابت للجهاز قديم للغاية ليتم تحديثه. تواصل مع دعم Ledger للحصول على بديل.",
           "cta" : "تواصل مع الدعم"
@@ -1767,7 +1789,7 @@
         "boot" : "اضغط مع الاستمرار على الزر الجانبي حتى يتم عرض {{option}}",
         "recoveryMode" : "اضغط على وضع {{mode}}. انتظر حتى تظهر اللوحة الرئيسية>",
         "third" : "3. إلغاء تثبيت جميع التطبيقات",
-        "openLive" : "Open My Ledger in Ledger Live.",
+        "openLive" : "افتح My Ledger في Ledger Live.",
         "uninstall" : "انقر على أيقونة سلة المهملات الرمادية لجميع التطبيقات المثبتة حالياً على {{deviceName}}. هذا يفسح المجال لمثبت البرنامج الثابت.",
         "disclaimer" : "ملاحظة: لا تتأثر أموالك بهذه العملية، المفاتيح الخاصة التي تُمكن من الوصول إلى أصولك المشفرة في سلسلة الكتل تظل آمنة على ورقة الاسترداد الخاصة بك."
       }
@@ -3146,7 +3168,7 @@
           "steps" : {
             "confirmation" : {
               "success" : {
-                "title" : "You have successfully activated your delegation."
+                "title" : "لقد قمت بتنشيط تفويضك بنجاح."
               }
             }
           }
@@ -3158,7 +3180,7 @@
           "steps" : {
             "confirmation" : {
               "success" : {
-                "title" : "You have successfully reactivated your delegation."
+                "title" : "لقد قمت بإعادة تنشيط تفويضك بنجاح."
               }
             }
           }
@@ -3400,11 +3422,15 @@
         },
         "managerDevMode" : {
           "title" : "وضع المطور",
-          "description" : "Show developer and testnet apps in My Ledger."
+          "description" : "اعرض تطبيقات المطور وتطبيقات الشبكة التجريبية (testnet) في My Ledger."
         },
         "scanForInvalidPaths" : {
           "title" : "بحث موسع عن الحساب",
           "description" : "البحث عن الحسابات ذات مسارات اشتقاق غير صحيحة. يرجى إرسال الأصول التي يحتمل العثور عليها إلى حساب عادي."
+        },
+        "experimentalCountervalues" : {
+          "title" : "API للقيم المقابلة التجريبية",
+          "description" : "قد يتسبب هذا في أن تكون القيم المقابلة المعروضة لحساباتك غير صحيحة."
         },
         "experimentalExplorers" : {
           "title" : "API للمستكشفين التجريبيين",
@@ -3415,8 +3441,8 @@
           "description" : "تخصيص حد الفجوة لجميع الحسابات. زيادة هذه القيمة فوق القيمة الافتراضية (20) يؤدي إلى مسح المزيد من العناوين العامة غير المستخدمة للعملات. للمستخدمين المتقدمين فقط، قد يؤدي ذلك إلى الإضرار بالتوافق عند استعادة حسابك."
         },
         "forceProvider" : {
-          "title" : "My Ledger provider",
-          "description" : "Changing the app provider in My Ledger may make it impossible to install or uninstall apps on your Ledger device."
+          "title" : "مزوّد My Ledger",
+          "description" : "تغيير مزوّد التطبيق في My Ledger قد يجعله من المستحيل تثبيت أو إلغاء تثبيت التطبيقات على جهازك Ledger."
         },
         "testAnimations" : {
           "title" : "اختبر الرسوم المتحركة Lottie",
@@ -3551,7 +3577,11 @@
       "ru" : "Русский",
       "es" : "Español",
       "zh" : "中文（简体）",
-      "de" : "Deutsch"
+      "de" : "Deutsch",
+      "tr" : "Turkish",
+      "ja" : "Japanese",
+      "ko" : "Korean",
+      "pt" : "Portuguese"
     }
   },
   "theme" : {
@@ -4337,7 +4367,10 @@
   "errors" : {
     "NoSuchAppOnProvider" : {
       "title" : "لا يمكن العثور على التطبيق {{appName}} للتهيئة الخاصة بك.",
-      "description" : "Try reinstalling the app from My Ledger"
+      "description" : "حاول إعادة تثبيت التطبيق من My Ledger"
+    },
+    "PendingOperation" : {
+      "description" : "لديك معاملات واردة مُعلقة. يُرجى الانتباه إلى أن المعاملات المُعلقة يمكن عكسها."
     },
     "countervaluesUnavailable" : {
       "title" : "نحن غير قادرين على توفير قيمة مقابلة لهذا الأصل في الوقت الحالي"
@@ -4503,7 +4536,7 @@
     },
     "FirmwareOrAppUpdateRequired" : {
       "title" : "مطلوب تحديث البرنامج الثابت أو التطبيق",
-      "description" : "Please use My Ledger to uninstall all apps then check if a firmware update is available before reinstalling them"
+      "description" : "يُرجى استخدام My Ledger لإلغاء تثبيت جميع التطبيقات، ثم تحقق مما إذا كان تحديث البرنامج الثابت مُتاحاً قبل إعادة تثبيتهم"
     },
     "LatestFirmwareVersionRequired" : {
       "title" : "تحديث برنامج Nano الثابت",
@@ -4560,20 +4593,20 @@
     "ManagerQuitPage" : {
       "install" : {
         "title" : "هل تريد إنهاء تثبيت التطبيق قيد التنفيذ؟",
-        "description" : "Quitting My Ledger will terminate the app installation. Please finish the installation to install the apps in the queue.",
+        "description" : "مغادرة My Ledger ستؤدي إلى إنهاء تثبيت التطبيق. يُرجى إنهاء التثبيت لتثبيت التطبيقات الموجودة في قائمة الانتظار.",
         "stay" : "إنهاء التثبيت"
       },
       "uninstall" : {
         "title" : "هل تريد إنهاء تثبيت التطبيق قيد التنفيذ؟",
-        "description" : "Quitting My Ledger will terminate the app uninstallations in progress.",
+        "description" : "مغادرة My Ledger ستؤدي إلى إنهاء عمليات إلغاء تثبيت التطبيق قيد التنفيذ.",
         "stay" : "إنهاء إزالة التثبيت"
       },
       "update" : {
         "title" : "هل تريد إنهاء تحديثات التطبيق قيد التنفيذ؟",
-        "description" : "Quitting My Ledger will terminate the app updates in progress.",
+        "description" : "مغادرة My Ledger ستؤدي إلى إنهاء تحديثات التطبيق قيد التنفيذ.",
         "stay" : "إنهاء التحديثات"
       },
-      "quit" : "Quit My Ledger"
+      "quit" : "مغادرة My Ledger"
     },
     "ManagerUninstallBTCDep" : {
       "title" : "عذراً، هذا التطبيق مطلوب",
@@ -4581,10 +4614,6 @@
     },
     "NetworkDown" : {
       "title" : "عفواً، يبدو أن بالإنترنت مُعطل",
-      "description" : "يرجى أن تتحقق من اتصالك بالإنترنت."
-    },
-    "NetworkError" : {
-      "title" : "حدث خطأ خلال المزامنة",
       "description" : "يرجى أن تتحقق من اتصالك بالإنترنت."
     },
     "NoAddressesFound" : {
@@ -4673,7 +4702,7 @@
       "description" : "يرجى إعادة تشغيل جهازك دون لمس الأزرار عندما يظهر الشعار. تواصل مع دعم Ledger إذا استمرت المشكلة."
     },
     "UserRefusedAllowManager" : {
-      "title" : "My Ledger denied on device"
+      "title" : "تم رفض My Ledger على الجهاز"
     },
     "UserRefusedFirmwareUpdate" : {
       "title" : "تم إلغاء التحديث على الجهاز",
@@ -4693,7 +4722,7 @@
     },
     "UpdateYourApp" : {
       "title" : "مطلوب تحديث التطبيق",
-      "description" : "Uninstall and reinstall the {{managerAppName}} app in My Ledger"
+      "description" : "قم بإلغاء تثبيت تطبيق {{managerAppName}} ثم إعادة تثبيته في My Ledger"
     },
     "DeviceOnDashboardExpected" : {
       "title" : "العودة إلى اللوحة الرئيسية",
@@ -4713,7 +4742,7 @@
     },
     "DeviceAppVerifyNotSupported" : {
       "title" : "مطلوب تحديث التطبيق",
-      "description" : "Uninstall and reinstall the {{managerAppName}} app in My Ledger"
+      "description" : "قم بإلغاء تثبيت تطبيق {{managerAppName}} ثم إعادة تثبيته في My Ledger"
     },
     "InvalidAddress" : {
       "title" : "هذا ليس عنوان {{currencyName}} صحيح"
@@ -4734,7 +4763,7 @@
     },
     "EthAppNftNotSupported" : {
       "title" : "العملية غير متوفرة لهذا الجهاز",
-      "description" : "خاصية إرسال NFT متوفرة فقط لـ Nano X. يرجى زيارة منصة دعم العملاء لدينا لمعرفة كيفية إرسال NFT عن طريق Nano S."
+      "description" : "Send NFT feature is only available for Nano X. Please visit our customer support platform to know how to send a NFT with a Nano S or S Plus."
     },
     "CantScanQRCode" : {
       "title" : "تعذر فحص كود الاستجابة السريعة (QR) هذا: التحقق التلقائي غير مدعوم من قِبل هذا العنوان"
@@ -4758,7 +4787,7 @@
       "list" : {
         "1" : "افصل كبل USB وأعد توصيله دون الضغط على أي أزرار.",
         "2" : "اضغط على كلا الزرين معاً ثلاث مرات لعرض اللوحة الرئيسية.",
-        "3" : "Open My Ledger and click Update firmware."
+        "3" : "افتح My Ledger وانقر على Update firmware [تحديث البرنامج الثابت]."
       }
     },
     "UnavailableTezosOriginatedAccountReceive" : {
