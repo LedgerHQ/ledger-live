@@ -23,6 +23,7 @@ export type FeatureId =
   | "ptxSmartRoutingMobile"
   | "mockFeature"
   | "walletConnectLiveApp"
+  | "syncOnboarding"
   | "customImage";
 
 /**  We use objects instead of direct booleans for potential future improvements
