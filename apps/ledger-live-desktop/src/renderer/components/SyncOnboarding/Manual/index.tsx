@@ -122,10 +122,6 @@ const SyncOnboardingManual = () => {
         key: StepKey.Applications,
         status: "inactive",
         title: "Nano applications",
-        /**
-         * ApplicationContent contain the UI for
-         * the install recommended apps step
-         */
         renderBody: () => (
           <ApplicationContent onComplete={handleInstallRecommendedApplicationComplete} />
         ),
