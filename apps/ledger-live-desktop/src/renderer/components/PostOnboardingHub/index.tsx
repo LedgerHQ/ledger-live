@@ -24,7 +24,7 @@ const PostOnboardingHub = () => {
   const clearLastActionCompleted = useCallback(() => {
     dispatch(clearPostOnboardingLastActionCompleted());
   }, [dispatch]);
-  const isInsideDrawer = history.location.pathname === "/";
+  const isInsidePostOnboardingScreen = history.location.pathname === "/post-onboarding";
 
   const handleStartAction = useCallback(action => {
     action.startAction();
@@ -32,7 +32,7 @@ const PostOnboardingHub = () => {
 
   return (
     <Flex flexDirection="column" justifyContent="center" height="100%">
-      {isInsideDrawer && (
+      {!isInsidePostOnboardingScreen && (
         <>
           <Text variant="paragraph" fontSize="48px">
             {"Nice one."}
@@ -51,7 +51,7 @@ const PostOnboardingHub = () => {
             onClick={() => {
               if (action.navigationParams) history.push(...action.navigationParams);
               else if (action.startAction) {
-                if (history.location.pathname !== "/") {
+                if (isInsidePostOnboardingScreen) {
                   history.push("/");
                 }
                 handleStartAction(action);
@@ -64,10 +64,10 @@ const PostOnboardingHub = () => {
       ))}
 
       <Button
-        onClick={() => (isInsideDrawer ? setDrawer() : history.push("/"))}
+        onClick={() => (isInsidePostOnboardingScreen ? history.push("/") : setDrawer())}
         color="primary.c80"
       >
-        {isInsideDrawer ? "Skip to the app" : "I'll do this later"}
+        {isInsidePostOnboardingScreen ? "I'll do this later" : "Skip to the app"}
       </Button>
     </Flex>
   );
