@@ -1,17 +1,13 @@
 // @flow
-import React from "react";
+import React, { memo } from "react";
 import Svg, { Path } from "react-native-svg";
 
 type Props = {
-  size: number,
-  color?: string,
+  size: number;
+  color?: string;
 };
 
-export default function Loader({
-  size = 16,
-  color = "currentColor",
-  ...props
-}: Props) {
+const Loader = ({ size = 16, color = "currentColor", ...props }: Props) => {
   return (
     <Svg {...props} viewBox="0 0 16 16" width={size} height={size}>
       <Path
@@ -20,4 +16,6 @@ export default function Loader({
       />
     </Svg>
   );
-}
+};
+
+export default memo(Loader);
