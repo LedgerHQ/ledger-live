@@ -10,14 +10,14 @@ export type SyncOnboardingDeviceConnectionProps = {
   deviceModelId: DeviceModelId;
 };
 
-const SUCCESS_TIMEOUT_MS = 4000;
+const SUCCESS_TIMEOUT_MS = 2500;
 
 const SyncOnboardingDeviceConnection = ({ deviceModelId }: SyncOnboardingDeviceConnectionProps) => {
   const history = useHistory();
   const currentDevice = useSelector(getCurrentDevice);
 
   if (currentDevice) {
-    setTimeout(() => history.push(`/sync-onboarding/manual`), SUCCESS_TIMEOUT_MS);
+    setTimeout(() => history.push(`/onboarding/sync/manual`), SUCCESS_TIMEOUT_MS);
     return <Success device={currentDevice} />;
   }
 
