@@ -16,25 +16,19 @@ const PostOnboardingMockAction = ({ id }: Props) => {
   const dispatch = useDispatch();
   const history = useHistory();
   const action = getPostOnboardingAction(id);
-  console.log(action);
+
   const completeAction = useCallback(
     () => dispatch(setPostOnboardingActionCompleted({ actionId: id })),
     [dispatch, id],
   );
-  console.log(history);
+
   const navigateToDashboard = useCallback(() => {
     setDrawer();
-    if (history.location.pathname !== "/") {
-      history.push("/");
-    }
-  }, [history]);
+  }, []);
 
   const navigateToHub = useCallback(() => {
-    setDrawer(undefined);
-    if (history.location.pathname === "/") {
-      setDrawer(PostOnboardingHub);
-    }
-  }, [history.location.pathname]);
+    setDrawer(PostOnboardingHub);
+  }, []);
 
   const handleCompleteAndGoToDashboard = useCallback(() => {
     completeAction();

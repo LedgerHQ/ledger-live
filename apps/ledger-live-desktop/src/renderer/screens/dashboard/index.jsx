@@ -97,6 +97,10 @@ export default function DashboardPage() {
     [hiddenNftCollections],
   );
 
+  const handleTriggerPostOnboardingHub = useCallback(() => {
+    setDrawer(PostOnboardingHub);
+  }, []);
+
   return (
     <>
       <TopBannerContainer>
@@ -106,9 +110,7 @@ export default function DashboardPage() {
       </TopBannerContainer>
       {showCarousel ? <Carousel /> : null}
       {isPostOnboardingBannerVisible && (
-        <PostOnboardingHubTriggerPlaceHolder
-          onClick={() => setDrawer(PostOnboardingHub, { isInsideDrawer: true })}
-        >
+        <PostOnboardingHubTriggerPlaceHolder onClick={handleTriggerPostOnboardingHub}>
           {"THIS IS A PLACE HOLDER TO ACCESS POST ONBOARDING HUB CLICK ME!"}
         </PostOnboardingHubTriggerPlaceHolder>
       )}

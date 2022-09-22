@@ -15,11 +15,7 @@ import {
 import PostOnboardingActionRow from "./PostOnboardingActionRow";
 import { setDrawer } from "~/renderer/drawers/Provider";
 
-type Props = {
-  isInsideDrawer?: boolean;
-};
-
-const PostOnboardingHub = ({ isInsideDrawer }: Props) => {
+const PostOnboardingHub = () => {
   const dispatch = useDispatch();
   const { t } = useTranslation();
   const history = useHistory();
@@ -28,6 +24,11 @@ const PostOnboardingHub = ({ isInsideDrawer }: Props) => {
   const clearLastActionCompleted = useCallback(() => {
     dispatch(clearPostOnboardingLastActionCompleted());
   }, [dispatch]);
+  const isInsideDrawer = history.location.pathname === "/";
+
+  const handleStartAction = useCallback(action => {
+    action.startAction();
+  }, []);
 
   return (
     <Flex flexDirection="column" justifyContent="center" height="100%">
@@ -48,9 +49,13 @@ const PostOnboardingHub = ({ isInsideDrawer }: Props) => {
         <React.Fragment key={index}>
           <Box
             onClick={() => {
-              console.log("ok", action);
               if (action.navigationParams) history.push(...action.navigationParams);
-              else if (action.startAction) action.startAction();
+              else if (action.startAction) {
+                if (history.location.pathname !== "/") {
+                  history.push("/");
+                }
+                handleStartAction(action);
+              }
             }}
           >
             <PostOnboardingActionRow {...action} />
