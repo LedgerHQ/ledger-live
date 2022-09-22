@@ -11,24 +11,25 @@ const GenuineCheckModal = ({ isOpen, onClose }: Props) => {
   const { t } = useTranslation();
 
   return (
-    <Popin position="relative" isOpen={isOpen}>
-      <Flex
-        flexDirection="column"
-        alignItems="center"
-        justifyContent="space-between"
-        height="100%"
-        padding="40px"
-      >
-        <Text variant="h2" fontSize="20px" color="palette.primary.c80">
+    <Popin height="450px" isOpen={isOpen}>
+      <Flex flex={1} flexDirection="column" justifyContent="center" alignItems="center" px={12}>
+        <Text
+          mb={14}
+          variant="body"
+          textTransform="uppercase"
+          fontWeight="semiBold"
+          fontSize={16}
+          color="palette.primary.c80"
+        >
           {t("syncOnboarding.manual.genuineCheckModal.title")}
         </Text>
-        <Text variant="paragraph" fontSize="25px" textAlign="center">
+        <Text mb={8} variant="body" fontSize={24} textAlign="center">
           {t("syncOnboarding.manual.genuineCheckModal.paragraph1")}
         </Text>
-        <Text variant="paragraph" fontSize="18px" color="palette.neutral.c80" textAlign="center">
+        <Text mb={14} variant="body" fontSize={16} color="palette.neutral.c80" textAlign="center">
           {t("syncOnboarding.manual.genuineCheckModal.paragraph2")}
         </Text>
-        <Button variant="main" width="100%" onClick={onClose}>
+        <Button size="large" variant="main" width="100%" onClick={onClose}>
           {t("syncOnboarding.manual.genuineCheckModal.checkDeviceButton")}
         </Button>
       </Flex>

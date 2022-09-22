@@ -306,7 +306,7 @@ const SyncOnboardingManual = () => {
                 Setup {deviceName}
               </Text>
             </Flex>
-            <Flex flexShrink={1} overflowY="scroll">
+            <Flex maxWidth="680px" flexShrink={1} overflowY="scroll">
               <VerticalTimeline flex={1} steps={steps} />
             </Flex>
           </Flex>
