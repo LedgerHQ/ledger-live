@@ -17,7 +17,7 @@ const PostOnboardingHubTester = () => {
       title={t("settings.experimental.features.testPostonboarding.title")}
       desc={t("settings.experimental.features.testPostonboarding.description")}
     >
-      <Button onClick={() => history.push("/sync-onboarding/post-onboarding")} primary>
+      <Button onClick={() => history.push("/onboarding/sync/post-onboarding")} primary>
         {t("postOnboardingDebugger.buttonTitle")}
       </Button>
     </SettingsSectionRow>

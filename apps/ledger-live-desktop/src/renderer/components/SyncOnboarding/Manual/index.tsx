@@ -176,7 +176,7 @@ const SyncOnboardingManual = () => {
   }, []);
 
   const handleDeviceReady = useCallback(() => {
-    history.push("/sync-onboarding/completion");
+    history.push("/onboarding/sync/completion");
   }, [history]);
 
   const handleDesyncTimerRunsOut = useCallback(() => {
