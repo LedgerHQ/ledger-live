@@ -10,6 +10,7 @@ import React, {
   useEffect,
 } from "react";
 import { connect, useDispatch, useSelector } from "react-redux";
+import * as Sentry from "@sentry/react-native";
 import {
   StyleSheet,
   Text,
@@ -135,6 +136,9 @@ Text.defaultProps.allowFontScaling = false;
 type AppProps = {
   importDataString?: string;
 };
+
+export const routingInstrumentation =
+  new Sentry.ReactNavigationInstrumentation();
 
 function App({ importDataString }: AppProps) {
   useAppStateListener();
@@ -576,6 +580,7 @@ const DeepLinkingNavigator = ({ children }: { children: React.ReactNode }) => {
         onReady={() => {
           isReadyRef.current = true;
           setTimeout(() => SplashScreen.hide(), 300);
+          routingInstrumentation.registerNavigationContainer(navigationRef);
         }}
       >
         {children}

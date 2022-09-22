@@ -26,5 +26,5 @@ exports.zh = {
   common: require("./zh/common.json"),
 };
 exports.pt = {
-  common: require("./pt/common.json"),
+  common: require("./pt-BR/common.json"),
 };

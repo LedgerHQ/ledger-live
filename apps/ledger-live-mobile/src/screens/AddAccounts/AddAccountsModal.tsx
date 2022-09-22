@@ -1,26 +1,18 @@
 import React, { useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
-import { BottomDrawer } from "@ledgerhq/native-ui";
+import { BottomDrawer, Text } from "@ledgerhq/native-ui";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { NavigatorName } from "../../const";
 import { readOnlyModeEnabledSelector } from "../../reducers/settings";
-import Illustration from "../../images/illustration/Illustration";
-import NanoXFolded from "../../images/devices/NanoXFolded";
 
-import ChoiceCard from "../../components/ChoiceCard";
 import { track, TrackScreen } from "../../analytics";
+import AddAccountsModalCard from "./AddAccountsModalCard";
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const setupLedgerImg = require("../../images/illustration/Shared/_SetupLedger.png");
 
-const images = {
-  light: {
-    withYourLedger: require("../../images/illustration/Light/_067.png"),
-    importFromYourDesktop: require("../../images/illustration/Light/_074.png"),
-  },
-  dark: {
-    withYourLedger: require("../../images/illustration/Dark/_067.png"),
-    importFromYourDesktop: require("../../images/illustration/Dark/_074.png"),
-  },
-};
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const syncCryptoImg = require("../../images/illustration/Shared/_SyncFromDesktop.png");
 
 type Props = {
   navigation: any;
@@ -78,29 +70,36 @@ export default function AddAccountsModal({
       testId="AddAccountsModal"
       isOpen={isOpened}
       onClose={onPressClose}
-      title={t("portfolio.emptyState.addAccounts.addAccounts")}
     >
       <TrackScreen category="Add/Import accounts" type="drawer" />
+      <Text variant="h4" fontWeight="semiBold" fontSize="24px" mb={2}>
+        {t("addAccountsModal.title")}
+      </Text>
+      <Text
+        variant="large"
+        fontWeight="medium"
+        fontSize="14px"
+        color="neutral.c70"
+        mb="32px"
+      >
+        {t("addAccountsModal.description")}
+      </Text>
+
       {!readOnlyModeEnabled && (
-        <ChoiceCard
+        <AddAccountsModalCard
           title={t("addAccountsModal.add.title")}
           subTitle={t("addAccountsModal.add.description")}
-          Image={<NanoXFolded size={96} />}
           onPress={onClickAdd}
+          imageSource={setupLedgerImg}
+          hasMarginBottom
         />
       )}
 
-      <ChoiceCard
+      <AddAccountsModalCard
         title={t("addAccountsModal.import.title")}
         subTitle={t("addAccountsModal.import.description")}
-        Image={
-          <Illustration
-            lightSource={images.light.withYourLedger}
-            darkSource={images.dark.withYourLedger}
-            size={96}
-          />
-        }
         onPress={onClickImport}
+        imageSource={syncCryptoImg}
       />
     </BottomDrawer>
   );

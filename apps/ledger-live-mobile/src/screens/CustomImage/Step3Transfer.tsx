@@ -1,7 +1,8 @@
 import React, { useCallback, useMemo, useState } from "react";
-import { Dimensions, ScrollView } from "react-native";
+import { Dimensions, Pressable, ScrollView } from "react-native";
 import { Flex, InfiniteLoader, Text } from "@ledgerhq/native-ui";
 import { StackScreenProps } from "@react-navigation/stack";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { ProcessorPreviewResult } from "../../components/CustomImage/ImageProcessor";
 import ResultDataTester from "../../components/CustomImage/ResultDataTester";
 import { fitImageContain } from "../../components/CustomImage/imageUtils";
@@ -82,27 +83,36 @@ const Step3Transfer: React.FC<
     [reconstructedPreviewResult?.height, reconstructedPreviewResult?.width],
   );
 
+  const insets = useSafeAreaInsets();
+
+  const [showReconstructed, setShowReconstructed] = useState(true);
+  const handlePressIn = useCallback(
+    () => setShowReconstructed(false),
+    [setShowReconstructed],
+  );
+  const handlePressOut = useCallback(
+    () => setShowReconstructed(true),
+    [setShowReconstructed],
+  );
+
+  const isDataMatching =
+    reconstructedPreviewResult?.imageBase64DataUri ===
+    previewData?.imageBase64DataUri;
+
   return (
-    <ScrollView>
+    <ScrollView contentContainerStyle={{ paddingBottom: insets.bottom }}>
       <Flex p={6}>
         {rawData?.hexData && (
           <>
             <Text variant="h3" py={4}>
-              Raw data (500 first characters):
+              Raw data (200 first characters):
             </Text>
             <Flex backgroundColor="neutral.c30">
               <Text>width: {rawData?.width}</Text>
               <Text>height: {rawData?.height}</Text>
-              <Text>{rawData?.hexData.slice(0, 500)}</Text>
+              <Text>{rawData?.hexData.slice(0, 200)}</Text>
             </Flex>
           </>
-        )}
-        {rawData && (
-          <ResultDataTester
-            {...rawData}
-            onPreviewResult={handlePreviewResult}
-            onError={handleError}
-          />
         )}
         <Flex
           flex={1}
@@ -114,28 +124,55 @@ const Step3Transfer: React.FC<
           <Text variant="h3" py={4} alignSelf="flex-start">
             Image reconstructed from raw data:
           </Text>
-          <Alert type="primary" title={infoMessage} />
+          {rawData && (
+            <ResultDataTester
+              {...rawData}
+              onPreviewResult={handlePreviewResult}
+              onError={handleError}
+            />
+          )}
           {reconstructedPreviewResult?.imageBase64DataUri ? (
-            <Flex mt={5}>
-              {reconstructedPreviewResult?.imageBase64DataUri ===
-              previewData?.imageBase64DataUri ? (
+            <Flex mb={5} alignItems="center">
+              {isDataMatching ? (
                 <Alert type="success" title={successMessage} />
               ) : (
                 <Alert type="error" title={errorMessage} />
               )}
-              <PreviewImage
-                source={{
-                  uri: reconstructedPreviewResult.imageBase64DataUri,
-                }}
+              <Text textAlign="center">
+                {"Press the image below to see the difference.\n"}
+                {showReconstructed
+                  ? "Reconstructed image:"
+                  : "Previewed image:"}
+              </Text>
+              <Pressable
+                onPressIn={handlePressIn}
+                onPressOut={handlePressOut}
                 style={{
-                  height: previewDimensions?.height,
-                  width: previewDimensions?.width,
+                  ...previewDimensions,
                 }}
-              />
+              >
+                <Flex position="absolute">
+                  <PreviewImage
+                    source={{
+                      uri: previewData.imageBase64DataUri,
+                    }}
+                    style={previewDimensions}
+                  />
+                </Flex>
+                <Flex position="absolute" opacity={showReconstructed ? 1 : 0}>
+                  <PreviewImage
+                    source={{
+                      uri: reconstructedPreviewResult.imageBase64DataUri,
+                    }}
+                    style={previewDimensions}
+                  />
+                </Flex>
+              </Pressable>
             </Flex>
           ) : (
             <InfiniteLoader />
           )}
+          <Alert type="primary" title={infoMessage} />
         </Flex>
       </Flex>
     </ScrollView>

@@ -4,7 +4,11 @@ import { log } from "@ledgerhq/logs";
 import expect from "expect";
 import sample from "lodash/sample";
 import { isAccountEmpty } from "../account";
-import type { DeviceAction, DeviceActionArg } from "./types";
+import type {
+  DeviceAction,
+  DeviceActionArg,
+  TransactionDestinationTestInput,
+} from "./types";
 import { Account } from "@ledgerhq/types-live";
 import type { Transaction } from "../generated/types";
 import { botTest } from "./bot-test-context";
@@ -183,11 +187,14 @@ type DeviceAmountFormatOptions = {
   forceFloating: boolean;
   // device don't even display the code (unit ticker)
   hideCode: boolean;
+  // force the visibility of all digits of the amount
+  showAllDigits: boolean;
 };
 const defaultFormatOptions: DeviceAmountFormatOptions = {
   postfixCode: false,
   forceFloating: false,
   hideCode: false,
+  showAllDigits: false,
 };
 
 const sep = " ";
@@ -202,7 +209,10 @@ export function formatDeviceAmount(
     const { deviceTicker } = currency;
     if (deviceTicker) code = deviceTicker;
   }
-  let v = value.div(new BigNumber(10).pow(unit.magnitude)).toString(10);
+  const fValue = value.div(new BigNumber(10).pow(unit.magnitude));
+  let v = options.showAllDigits
+    ? fValue.toFixed(unit.magnitude)
+    : fValue.toString(10);
   if (options.forceFloating) {
     if (!v.includes(".")) {
       // if the value is pure integer, in the app it will automatically add an .0
@@ -212,3 +222,48 @@ export function formatDeviceAmount(
   if (options.hideCode) return v;
   return options.postfixCode ? v + sep + code : code + sep + v;
 }
+
+// this function throw if the portion of undelegated funds is smaller than the threshold
+// where threshold is a value from 0.0 to 1.0, percentage of the total amount of funds
+// Usage: put these in your spec, on the mutation transaction functions that intend to do more "delegations"
+export function expectSiblingsHaveSpendablePartGreaterThan(
+  siblings: Account[],
+  threshold: number
+): void {
+  const spendableTotal = siblings.reduce(
+    (acc, a) => acc.plus(a.spendableBalance),
+    new BigNumber(0)
+  );
+  const total = siblings.reduce(
+    (acc, a) => acc.plus(a.balance),
+    new BigNumber(0)
+  );
+  invariant(
+    spendableTotal.div(total).gt(threshold),
+    "the spendable part of accounts is sufficient (threshold: %s)",
+    threshold
+  );
+}
+
+export const genericTestDestination = <T>({
+  destination,
+  operation,
+  destinationBeforeTransaction,
+  sendingOperation,
+}: TransactionDestinationTestInput<T>): void => {
+  const amount = sendingOperation.value.minus(sendingOperation.fee);
+  botTest("account balance increased with transaction amount", () =>
+    expect(destination.balance.toString()).toBe(
+      destinationBeforeTransaction.balance.plus(amount).toString()
+    )
+  );
+  botTest("operation amount is consistent with sendingOperation", () =>
+    expect({
+      type: operation.type,
+      amount: operation.value.toString(),
+    }).toMatchObject({
+      type: "IN",
+      amount: amount.toString(),
+    })
+  );
+};
