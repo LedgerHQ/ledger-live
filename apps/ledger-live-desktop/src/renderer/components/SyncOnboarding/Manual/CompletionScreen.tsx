@@ -1,17 +1,18 @@
 import React, { useEffect } from "react";
 import { Flex } from "@ledgerhq/react-ui";
 import { useHistory } from "react-router-dom";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 
-import ConnectNano from "../../Onboarding/Screens/Tutorial/assets/connectNano.png";
-import Image from "~/renderer/components/Image";
 import { saveSettings } from "~/renderer/actions/settings";
+import DeviceIllustration from "~/renderer/components/DeviceIllustration";
+import { getCurrentDevice } from "~/renderer/reducers/devices";
 
 const GO_TO_POSTONBOARDING_TIMEOUT = 5000;
 
 const CompletionScreen = () => {
   const history = useHistory();
   const dispatch = useDispatch();
+  const device = useSelector(getCurrentDevice);
 
   useEffect(() => {
     dispatch(saveSettings({ hasCompletedOnboarding: true }));
@@ -23,7 +24,7 @@ const CompletionScreen = () => {
 
   return (
     <Flex alignItems="center" width="100%" justifyContent="center">
-      <Image resource={ConnectNano} alt="" width={350} height={350} />
+      <DeviceIllustration deviceId={device?.modelId || "nanoX"} />
     </Flex>
   );
 };
