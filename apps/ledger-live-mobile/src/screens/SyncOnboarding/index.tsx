@@ -292,6 +292,7 @@ export const SyncOnboarding = ({
       case DeviceOnboardingStep.WelcomeScreen3:
       case DeviceOnboardingStep.WelcomeScreen4:
       case DeviceOnboardingStep.WelcomeScreenReminder:
+      case DeviceOnboardingStep.ChooseName:
         setCompanionStepKey(CompanionStepKey.Paired);
         break;
       case DeviceOnboardingStep.Pin:
