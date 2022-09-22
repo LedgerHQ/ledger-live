@@ -173,8 +173,11 @@ export const track = (
 
   const screen = currentRouteNameRef.current;
 
-
-  const allProperties = { screen, ...extraProperties(storeInstance), ...properties };
+  const allProperties = {
+    screen,
+    ...extraProperties(storeInstance),
+    ...properties,
+  };
   if (ANALYTICS_LOGS) console.log("analytics:track", event, allProperties);
   trackSubject.next({
     event,
@@ -246,7 +249,11 @@ export const screen = (
 
   const source = previousRouteNameRef.current;
 
-  const allProperties = { source, ...extraProperties(storeInstance), ...properties };
+  const allProperties = {
+    source,
+    ...extraProperties(storeInstance),
+    ...properties,
+  };
   if (ANALYTICS_LOGS)
     console.log("analytics:screen", category, name, allProperties);
   trackSubject.next({

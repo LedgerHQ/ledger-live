@@ -7,6 +7,7 @@ import { RefreshMedium } from "@ledgerhq/native-ui/assets/icons";
 import { useTranslation } from "react-i18next";
 import { useGlobalSyncState } from "@ledgerhq/live-common/bridge/react/index";
 import { FlatList } from "react-native";
+import { getEnv } from "@ledgerhq/live-common/lib/env";
 import {
   useDistribution,
   useRefreshAccountsOrdering,
@@ -23,7 +24,6 @@ import TabBarSafeAreaView, {
 import AssetsNavigationHeader from "./AssetsNavigationHeader";
 import globalSyncRefreshControl from "../../components/globalSyncRefreshControl";
 import AddAccountsModal from "../AddAccounts/AddAccountsModal";
-import { getEnv } from "@ledgerhq/live-common/lib/env";
 
 const List = globalSyncRefreshControl(FlatList);
 

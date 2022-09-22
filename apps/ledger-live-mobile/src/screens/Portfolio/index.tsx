@@ -15,6 +15,7 @@ import { Box, Flex, Button, Icons } from "@ledgerhq/native-ui";
 import { Currency } from "@ledgerhq/types-cryptoassets";
 import { useTheme } from "styled-components/native";
 import { usePostOnboardingEntryPointVisibleOnWallet } from "@ledgerhq/live-common/postOnboarding/hooks/index";
+import { getEnv } from "@ledgerhq/live-common/lib/env";
 import {
   useDistribution,
   useRefreshAccountsOrdering,
@@ -51,7 +52,6 @@ import AllocationsSection from "../WalletCentricSections/Allocations";
 import OperationsHistorySection from "../WalletCentricSections/OperationsHistory";
 import { track } from "../../analytics";
 import PostOnboardingEntryPointCard from "../../components/PostOnboarding/PostOnboardingEntryPointCard";
-import { getEnv } from "@ledgerhq/live-common/lib/env";
 
 export { default as PortfolioTabIcon } from "./TabIcon";
 
