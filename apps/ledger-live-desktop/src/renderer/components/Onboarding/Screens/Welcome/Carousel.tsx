@@ -1,8 +1,9 @@
 import React, { useState, useCallback, useEffect, useRef } from "react";
 
-import { Flex, Icons, Logos, Text } from "@ledgerhq/react-ui";
 import styled from "styled-components";
+import { getEnv } from "@ledgerhq/live-common/env";
 import { TransitionGroup } from "react-transition-group";
+import { Flex, Icons, Logos, Text } from "@ledgerhq/react-ui";
 import TransitionSlide from "@ledgerhq/react-ui/components/transitions/TransitionSlide";
 
 const Wrapper = styled(Flex).attrs({
@@ -150,6 +151,12 @@ const Carousel = ({ timeout = DEFAULT_TIMEOUT, queue }: Props): React.ReactEleme
     if (intervalRef.current) clearInterval(intervalRef.current);
     if (!paused) intervalRef.current = setInterval(onSlide, _timeout);
   }, [onSlide, paused, timeout]);
+
+  useEffect(() => {
+    if (getEnv("PLAYWRIGHT_RUN")) {
+      setPaused(true);
+    }
+  }, []);
 
   if (!queue?.length) return null;
 
