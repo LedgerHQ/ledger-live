@@ -130,9 +130,9 @@ const SwapForm = () => {
   const providerKYC = swapKYC?.[provider];
   const kycStatus = providerKYC?.status;
 
-  const idleStateRef = useRef(idleState);
+  const idleStateRef = useRef();
   idleStateRef.current = idleState;
-  const showDetailsRef = useRef(showDetails);
+  const showDetailsRef = useRef();
   showDetailsRef.current = showDetails;
   const idleTimeout = useRef();
   const refreshInterval = useRef();
