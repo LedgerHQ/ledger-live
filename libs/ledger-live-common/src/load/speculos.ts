@@ -289,7 +289,6 @@ export async function listAppCandidates(cwd: string): Promise<AppCandidate[]> {
           if (elf.startsWith("app_") && elf.endsWith(".elf")) {
             const p4 = path.join(p3, elf);
             const appVersion = elf.slice(4, elf.length - 4);
-
             if (
               semver.valid(appVersion) &&
               !shouldUpgrade(model, appName, appVersion) &&
@@ -339,7 +338,8 @@ export function appCandidatesMatches(
           hackBadSemver(appCandidate.firmware),
           searchFirmware
         ))) &&
-    ((!search.appVersion && !appCandidate.appVersion.includes("-")) ||
+    (appCandidate.appVersion === search.appVersion ||
+      (!search.appVersion && !appCandidate.appVersion.includes("-")) ||
       (search.appVersion &&
         semver.satisfies(appCandidate.appVersion, search.appVersion)))
   );
