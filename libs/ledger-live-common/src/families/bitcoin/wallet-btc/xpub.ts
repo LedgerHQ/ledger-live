@@ -377,21 +377,17 @@ class Xpub extends EventEmitter {
     );
   }
 
-  // TODO : test the different syncing protection logic
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  emitSyncing(data: any) {
+  emitSyncing(data: any): void {
     this.syncing[`${data.type}-${data.key}`] = true;
     this.emit("syncing", data);
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  emitSynced(data: any) {
+  emitSynced(data: any): void {
     this.syncing[`${data.type}-${data.key}`] = false;
     this.emit("synced", data);
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  emitSyncedFailed(data: any) {
+  emitSyncedFailed(data: any): void {
     this.syncing[`${data.type}-${data.key}`] = false;
     this.emit("syncfail", data);
   }
