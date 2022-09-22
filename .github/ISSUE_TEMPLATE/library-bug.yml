@@ -1,7 +1,7 @@
 name: Library Bug Report (developers)
 description: File a bug report on one of our NPM libraries
 title: "[Bug]: "
-labels: ["bug", "libraries", "Needs Triage"]
+labels: ["bug", "libraries", "triage"]
 body:
   - type: markdown
     attributes:
@@ -13,6 +13,14 @@ body:
       label: Impacted Library name
       description: What is the name of the NPM library you used?
       placeholder: ex. @ledgerhq/hw-app-eth
+    validations:
+      required: false
+  - type: input
+    id: libraryversion
+    attributes:
+      label: Impacted Library version
+      description: What is the version of the NPM library you used?
+      placeholder: ex. 12.0.0
     validations:
       required: false
   - type: textarea

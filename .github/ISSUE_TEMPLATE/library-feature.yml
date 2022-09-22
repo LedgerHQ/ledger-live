@@ -1,7 +1,7 @@
 name: Library Feature Request (developers)
 description: Request a missing feature on one of our NPM libraries
-title: "[Bug]: "
-labels: ["feature", "libraries", "Needs Triage"]
+title: "[Feature]: "
+labels: ["feature", "libraries", "triage"]
 body:
   - type: markdown
     attributes:
