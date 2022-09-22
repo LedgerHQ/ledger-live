@@ -28,6 +28,7 @@ const elrondSpec: AppSpec<Transaction> = {
   },
   genericDeviceAction: acceptTransaction,
   testTimeout: 2 * 60 * 1000,
+  minViableAmount: ELROND_MIN_SAFE,
   transactionCheck: ({ maxSpendable }) => {
     invariant(maxSpendable.gt(ELROND_MIN_SAFE), "balance is too low");
   },

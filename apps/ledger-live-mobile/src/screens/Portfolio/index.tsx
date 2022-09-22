@@ -15,6 +15,7 @@ import { Box, Flex, Link as TextLink, Text } from "@ledgerhq/native-ui";
 import styled, { useTheme } from "styled-components/native";
 import proxyStyled from "@ledgerhq/native-ui/components/styled";
 import { PlusMedium } from "@ledgerhq/native-ui/assets/icons";
+import { usePostOnboardingEntryPointVisibleOnWallet } from "@ledgerhq/live-common/postOnboarding/hooks/index";
 import { useRefreshAccountsOrdering } from "../../actions/general";
 import { accountsSelector } from "../../reducers/accounts";
 import {
@@ -43,6 +44,7 @@ import CheckTermOfUseUpdate from "../../components/CheckTermOfUseUpdate";
 import TabBarSafeAreaView, {
   TAB_BAR_SAFE_HEIGHT,
 } from "../../components/TabBar/TabBarSafeAreaView";
+import PostOnboardingEntryPointCard from "../../components/PostOnboarding/PostOnboardingEntryPointCard";
 
 export { default as PortfolioTabIcon } from "./TabIcon";
 
@@ -172,8 +174,15 @@ function PortfolioScreen({ navigation }: Props) {
     [accounts],
   );
 
+  const postOnboardingVisible = usePostOnboardingEntryPointVisibleOnWallet();
+
   const data = useMemo(
     () => [
+      postOnboardingVisible && (
+        <Box m={6}>
+          <PostOnboardingEntryPointCard />
+        </Box>
+      ),
       !showAssets && (
         <Box mx={6} mt={3}>
           <AddAssetsCard />
@@ -273,6 +282,7 @@ function PortfolioScreen({ navigation }: Props) {
       closeAddModal,
       showCarousel,
       carouselVisibility,
+      postOnboardingVisible,
     ],
   );
 

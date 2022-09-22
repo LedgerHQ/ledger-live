@@ -5,7 +5,7 @@ on:
   push:
     branches:
       - support/bot-phosphore
-      - support/bot-actions-perf
+      - support/bot-phosphore-*
 
 concurrency:
   group: bot-seed6

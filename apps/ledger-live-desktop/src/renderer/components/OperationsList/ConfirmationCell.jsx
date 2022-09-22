@@ -7,7 +7,7 @@ import styled from "styled-components";
 import { createStructuredSelector } from "reselect";
 import type { Account, Operation, AccountLike } from "@ledgerhq/types-live";
 import { getMainAccount, getAccountCurrency } from "@ledgerhq/live-common/account/index";
-import { getOperationAmountNumber, isConfirmedOperation } from "@ledgerhq/live-common/operation";
+import { getOperationAmountNumber } from "@ledgerhq/live-common/operation";
 import {
   confirmationsNbForCurrencySelector,
   marketIndicatorSelector,
@@ -22,10 +22,6 @@ import type { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import perFamilyOperationDetails from "~/renderer/generated/operationDetails";
 
 const mapStateToProps = createStructuredSelector({
-  confirmationsNb: (state, { account, parentAccount }) =>
-    confirmationsNbForCurrencySelector(state, {
-      currency: getMainAccount(account, parentAccount).currency,
-    }),
   marketIndicator: marketIndicatorSelector,
 });
 
@@ -50,15 +46,13 @@ type Props = {
 
 class ConfirmationCell extends PureComponent<Props> {
   render() {
-    const { account, parentAccount, confirmationsNb, t, operation, marketIndicator } = this.props;
+    const { account, parentAccount, isConfirmed, t, operation, marketIndicator } = this.props;
     const mainAccount = getMainAccount(account, parentAccount);
     const currency = getAccountCurrency(mainAccount);
 
     const amount = getOperationAmountNumber(operation);
 
     const isNegative = amount.isNegative();
-
-    const isConfirmed = isConfirmedOperation(operation, mainAccount, confirmationsNb);
 
     const marketColor = getMarketColor({
       marketIndicator,

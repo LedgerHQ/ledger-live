@@ -1072,6 +1072,8 @@
     "stepLanguage" : {
       "title" : "言語を選択",
       "cta" : "続行",
+      "changeDeviceLanguage" : "{{language}}が{{deviceName}}でもご利用可能になりました",
+      "changeDeviceLanguageDescription" : "言語を{{language}}に変更しますか？",
       "warning" : {
         "title" : "ご利用ガイド（英語版）",
         "cta" : "了解！",
@@ -1603,27 +1605,27 @@
   "blePairingFlow" : {
     "scanning" : {
       "withProductName" : {
-        "title" : "Looking for your {{productName}}",
-        "description" : "Please make sure your {{productName}} is unlocked and Bluetooth is enabled"
+        "title" : "{{productName}}を検出中",
+        "description" : "{{productName}}のロックが解除済みで、Bluetoothが有効であることを確認してください"
       },
       "withoutProductName" : {
-        "title" : "Looking for devices",
-        "description" : "Please make sure your device is switched on, unlocked, and bluetooth is enabled"
+        "title" : "デバイスを探しています",
+        "description" : "デバイスの電源が入っていて、ロックが解除されていて、Bluetooth が有効になっていることを確認してください"
       },
-      "alreadyPaired" : "Already paired"
+      "alreadyPaired" : "ペアリング済み"
     },
     "pairing" : {
       "success" : {
-        "title" : "Paired with {{deviceName}}"
+        "title" : "{{deviceName}}とペアリング完了"
       },
       "loading" : {
-        "title" : "Pairing with {{deviceName}}",
-        "subtitle" : "Confirm the code on your {{productName}}"
+        "title" : "{{deviceName}}とペアリング中",
+        "subtitle" : "{{productName}}のコードを確認してください"
       },
       "error" : {
-        "title" : "Pairing unsucessful",
-        "subtitle" : "Looks like something went wrong! Check that your bluetooth is on and your {{productName}} is nearby",
-        "retryCta" : "Try again"
+        "title" : "ペアリング失敗",
+        "subtitle" : "何か問題が発生したようです。Bluetoothがオンになっていて、{{productName}}が近くにあることを確認してください",
+        "retryCta" : "再試行"
       }
     }
   },
@@ -3533,19 +3535,29 @@
     "no" : "希望しない",
     "languages" : {
       "en" : "英語",
-      "fr" : "フランス語",
-      "ru" : "ロシア語",
-      "es" : "Spanish",
-      "zh" : "中国語",
-      "de" : "ドイツ語"
+      "fr" : "Français",
+      "ru" : "Русский",
+      "es" : "Español",
+      "zh" : "中国人",
+      "de" : "Deutsch",
+      "tr" : "Türk",
+      "ja" : "日本",
+      "ko" : "한국인",
+      "pt" : "Português"
     }
   },
   "deviceLocalization" : {
     "language" : "言語",
     "deviceLanguage" : "デバイスの言語",
+    "chooseLanguage" : "{{deviceName}}の言語を選択してください。",
     "changeLanguage" : "言語の変更",
-    "allowLanguageInstallation" : "言語のインストールを許可する",
-    "languageInstalled" : "デバイスの言語が{{language}}に変更されました",
+    "yesChangeLanguage" : "はい、言語を変更します。",
+    "allowLanguageInstallation" : "{{deviceName}}への言語のインストールを承認する",
+    "languageInstalled" : "言語が{{language}}に変更されました",
+    "firmwareUpdatePrompt" : {
+      "title" : "{{deviceName}}を{{language}}に設定しますか？",
+      "description" : "{{language}}が{{deviceName}}でご利用可能になりました。今すぐ設定できます。また、My Ledgerからいつでもデバイスの言語を変更することが可能です。"
+    },
     "installingLanguage" : "言語をインストール",
     "languages" : {
       "english" : "英語",
@@ -4754,5 +4766,19 @@
     "chooseConstrast" : "コントラストを選択",
     "uploadAnotherImage" : "他の画像をアップロードする",
     "selectContrast" : "コントラストを選択する"
+  },
+  "postOnboarding" : {
+    "hub" : {
+      "title" : "素晴らしい。\nこれで準備完了です。",
+      "allDoneTitle" : "いい感じです。\nこれで準備が整いました。",
+      "subtitle" : "次にできること",
+      "skip" : "アプリにスキップする",
+      "goToWallet" : "Ledger Liveウォレットに移動する",
+      "done" : "将来を安全に保護しました"
+    },
+    "walletCard" : {
+      "title" : "ご利用ガイド",
+      "description" : "こちらをクリックして、Ledger Liveで{{productName}}を設定"
+    }
   }
 }

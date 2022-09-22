@@ -9,6 +9,7 @@ import {
   Pressable,
 } from "react-native";
 import { StackScreenProps } from "@react-navigation/stack";
+import { SafeAreaView } from "react-native-safe-area-context";
 import useResizedImage, {
   Params as ImageResizerParams,
   ResizeResult,
@@ -18,7 +19,7 @@ import ImageProcessor, {
   ProcessorPreviewResult,
   ProcessorRawResult,
 } from "../../components/CustomImage/ImageProcessor";
-import { cropAspectRatio } from "./shared";
+import { targetDimensions } from "./shared";
 import { fitImageContain } from "../../components/CustomImage/imageUtils";
 import BottomButtonsContainer from "../../components/CustomImage/BottomButtonsContainer";
 import ContrastChoice from "../../components/CustomImage/ContrastChoice";
@@ -30,7 +31,6 @@ export const PreviewImage = styled.Image.attrs({
   resizeMode: "contain",
 })`
   align-self: center;
-  margin: 16px;
   width: 200px;
   height: 200px;
 `;
@@ -58,6 +58,7 @@ const Step2Preview: React.FC<
   StackScreenProps<ParamList, "CustomImageStep2Preview">
 > = ({ navigation, route }) => {
   const imageProcessorRef = useRef<ImageProcessor>(null);
+  const [loading, setLoading] = useState(true);
   const [resizedImage, setResizedImage] = useState<ResizeResult | null>(null);
   const [contrast, setContrast] = useState(1);
   const [processorPreviewImage, setProcessorPreviewImage] =
@@ -91,7 +92,7 @@ const Step2Preview: React.FC<
   );
 
   useResizedImage({
-    targetDimensions: cropAspectRatio,
+    targetDimensions,
     imageFileUri: croppedImage?.imageFileUri,
     onError: handleError,
     onResult: handleResizeResult,
@@ -103,6 +104,7 @@ const Step2Preview: React.FC<
     useCallback(
       data => {
         setProcessorPreviewImage(data);
+        setLoading(false);
       },
       [setProcessorPreviewImage],
     );
@@ -154,7 +156,7 @@ const Step2Preview: React.FC<
   );
 
   return (
-    <Flex flex={1}>
+    <SafeAreaView edges={["bottom"]} flex={1}>
       {resizedImage?.imageBase64DataUri && (
         <ImageProcessor
           ref={imageProcessorRef}
@@ -192,8 +194,21 @@ const Step2Preview: React.FC<
         {resizedImage?.imageBase64DataUri && (
           <Flex flexDirection="row" my={6} justifyContent="space-between">
             {contrasts.map(({ val, color }) => (
-              <Pressable key={val} onPress={() => setContrast(val)}>
-                <ContrastChoice selected={contrast === val} color={color} />
+              <Pressable
+                disabled={loading}
+                key={val}
+                onPress={() => {
+                  if (contrast !== val) {
+                    setLoading(true);
+                    setContrast(val);
+                  }
+                }}
+              >
+                <ContrastChoice
+                  selected={contrast === val}
+                  loading={loading}
+                  color={color}
+                />
               </Pressable>
             ))}
           </Flex>
@@ -211,7 +226,7 @@ const Step2Preview: React.FC<
           {t("common.confirm")}
         </Button>
       </BottomButtonsContainer>
-    </Flex>
+    </SafeAreaView>
   );
 };
 
