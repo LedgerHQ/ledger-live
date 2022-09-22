@@ -12,28 +12,29 @@ const GenuineCheckCancelModal = ({ isOpen, onClose, onSkip }: Props) => {
   const { t } = useTranslation();
 
   return (
-    <Popin position="relative" isOpen={isOpen}>
-      <Flex
-        flexDirection="column"
-        alignItems="center"
-        justifyContent="space-between"
-        height="100%"
-        padding="40px"
-      >
-        <Text variant="h2" fontSize="20px" color="palette.warning.c80">
+    <Popin height="450px" isOpen={isOpen}>
+      <Flex flex={1} flexDirection="column" justifyContent="center" alignItems="center" px={12}>
+        <Text
+          mb={14}
+          variant="body"
+          textTransform="uppercase"
+          fontWeight="semiBold"
+          color="palette.warning.c80"
+          fontSize={16}
+        >
           {t("syncOnboarding.manual.genuineCheckCancelModal.title")}
         </Text>
-        <Text variant="paragraph" fontSize="25px" textAlign="center">
+        <Text mb={8} variant="body" fontSize={24} textAlign="center">
           {t("syncOnboarding.manual.genuineCheckCancelModal.paragraph1")}
         </Text>
-        <Text variant="paragraph" fontSize="18px" color="palette.neutral.c80" textAlign="center">
+        <Text mb={14} fontSize={16} variant="body" color="palette.neutral.c80" textAlign="center">
           {t("syncOnboarding.manual.genuineCheckCancelModal.paragraph2")}
         </Text>
         <Flex flexDirection="column" width="100%">
-          <Button variant="main" width="100%" onClick={onClose} marginBottom="20px">
+          <Button size="large" variant="main" width="100%" onClick={onClose} mb={8}>
             {t("syncOnboarding.manual.genuineCheckCancelModal.checkDeviceButton")}
           </Button>
-          <Button width="100%" onClick={onSkip}>
+          <Button size="large" width="100%" onClick={onSkip}>
             {t("syncOnboarding.manual.genuineCheckCancelModal.cancelButton")}
           </Button>
         </Flex>
