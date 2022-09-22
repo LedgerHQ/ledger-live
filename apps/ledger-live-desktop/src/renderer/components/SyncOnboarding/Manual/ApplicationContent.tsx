@@ -31,6 +31,8 @@ const ApplicationContent = ({ onComplete }: Props) => {
   const [isInstallingApplications, setIsInstallingApplications] = useState<boolean>(false);
 
   if (isInstallingApplications) {
+    // TODO: remove when we do the real app step content
+    setTimeout(onComplete, 5000);
     return <InstallingApplicationContent />;
   }
 
