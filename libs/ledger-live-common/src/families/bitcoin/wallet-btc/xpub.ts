@@ -212,17 +212,17 @@ class Xpub extends EventEmitter {
     );
   }
 
-  async getXpubAddresses() {
+  async getXpubAddresses(): Promise<Address[]> {
     await this.whenSynced("all");
     return this.storage.getUniquesAddresses({});
   }
 
-  async getAccountAddresses(account: number) {
+  async getAccountAddresses(account: number): Promise<Address[]> {
     await this.whenSynced("account", account.toString());
     return this.storage.getUniquesAddresses({ account });
   }
 
-  async getNewAddress(account: number, gap: number) {
+  async getNewAddress(account: number, gap: number): Promise<Address> {
     await this.whenSynced("account", account.toString());
 
     const accountAddresses = await this.getAccountAddresses(account);
@@ -361,12 +361,12 @@ class Xpub extends EventEmitter {
     };
   }
 
-  async broadcastTx(rawTxHex: string) {
+  async broadcastTx(rawTxHex: string): Promise<any> {
     return this.explorer.broadcast(rawTxHex);
   }
 
   // internal
-  async getAddressesBalance(addresses: Address[]) {
+  async getAddressesBalance(addresses: Address[]): Promise<BigNumber> {
     const balances = await Promise.all(
       addresses.map((address) => this.getAddressBalance(address))
     );
@@ -417,7 +417,7 @@ class Xpub extends EventEmitter {
     address: string,
     account: number,
     index: number
-  ) {
+  ): Promise<number> {
     let pendingTxs: TX[] = [];
     let txs: TX[] = [];
     let inserted = 0;
@@ -442,7 +442,7 @@ class Xpub extends EventEmitter {
     return inserted;
   }
 
-  async checkAddressReorg(account: number, index: number) {
+  async checkAddressReorg(account: number, index: number): Promise<void> {
     const lastTx = this.storage.getLastTx({
       account,
       index,

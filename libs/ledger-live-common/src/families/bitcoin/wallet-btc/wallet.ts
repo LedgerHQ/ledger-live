@@ -9,11 +9,12 @@ import { Account, SerializedAccount } from "./account";
 import Xpub from "./xpub";
 import { IExplorer } from "./explorer/types";
 import BitcoinLikeExplorer from "./explorer";
-import { IStorage } from "./storage/types";
+import { IStorage, Output } from "./storage/types";
 import BitcoinLikeStorage from "./storage";
 import { PickingStrategy } from "./pickingstrategies/types";
 import * as utils from "./utils";
 import cryptoFactory from "./crypto/factory";
+import { TX, Address } from "./storage/types";
 
 class BitcoinLikeWallet {
   explorerInstances: { [key: string]: IExplorer } = {};
@@ -79,30 +80,30 @@ class BitcoinLikeWallet {
   }
 
   // eslint-disable-next-line class-methods-use-this
-  async syncAccount(account: Account) {
+  async syncAccount(account: Account): Promise<number> {
     return account.xpub.sync();
   }
 
   // eslint-disable-next-line class-methods-use-this
-  async getAccountNewReceiveAddress(account: Account) {
+  async getAccountNewReceiveAddress(account: Account): Promise<Address> {
     const address = await account.xpub.getNewAddress(0, 1);
     return address;
   }
 
   // eslint-disable-next-line class-methods-use-this
-  async getAccountNewChangeAddress(account: Account) {
+  async getAccountNewChangeAddress(account: Account): Promise<Address> {
     const address = await account.xpub.getNewAddress(1, 1);
     return address;
   }
 
   // eslint-disable-next-line class-methods-use-this
-  async getAccountTransactions(account: Account) {
-    const txs = await account.xpub.storage.export();
+  async getAccountTransactions(account: Account): Promise<{ txs: TX[] }> {
+    const txs = (await account.xpub.storage.export()) as { txs: TX[] };
     return txs;
   }
 
   // eslint-disable-next-line class-methods-use-this
-  async getAccountUnspentUtxos(account: Account) {
+  async getAccountUnspentUtxos(account: Account): Promise<Output[]> {
     const addresses = await account.xpub.getXpubAddresses();
     return flatten(
       await Promise.all(
@@ -119,7 +120,7 @@ class BitcoinLikeWallet {
     feePerByte: number,
     excludeUTXOs: Array<{ hash: string; outputIndex: number }>,
     outputAddresses: string[] = []
-  ) {
+  ): Promise<BigNumber> {
     const addresses = await account.xpub.getXpubAddresses();
     const changeAddresses = (await account.xpub.getAccountAddresses(1)).map(
       (item) => item.address
@@ -170,13 +171,13 @@ class BitcoinLikeWallet {
   }
 
   // eslint-disable-next-line class-methods-use-this
-  async getAccountBalance(account: Account) {
+  async getAccountBalance(account: Account): Promise<BigNumber> {
     const balance = await account.xpub.getXpubBalance();
     return balance;
   }
 
   // eslint-disable-next-line class-methods-use-this
-  async getAccountPendings(account: Account) {
+  async getAccountPendings(account: Account): Promise<TX[]> {
     const addresses = await account.xpub.getXpubAddresses();
     return flatten(
       await Promise.all(
@@ -353,7 +354,7 @@ class BitcoinLikeWallet {
   }
 
   // eslint-disable-next-line class-methods-use-this
-  async broadcastTx(fromAccount: Account, tx: string) {
+  async broadcastTx(fromAccount: Account, tx: string): Promise<string> {
     const res = await fromAccount.xpub.broadcastTx(tx);
     return res.data.result;
   }
