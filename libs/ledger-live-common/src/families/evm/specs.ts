@@ -68,6 +68,7 @@ const cronos: AppSpec<Transaction> = {
   appQuery: {
     model: DeviceModelId.nanoS,
     appName: "Ethereum",
+    appVersion: "1.9.20-dev", // FIXME remove this line once 1.9.20 lands on coin-apps (branch ledger-live-bot)
   },
   testTimeout,
   transactionCheck: transactionCheck("cronos"),
@@ -83,6 +84,7 @@ const fantom: AppSpec<Transaction> = {
   appQuery: {
     model: DeviceModelId.nanoS,
     appName: "Ethereum",
+    appVersion: "1.9.20-dev", // FIXME remove this line once 1.9.20 lands on coin-apps (branch ledger-live-bot)
   },
   testTimeout,
   transactionCheck: transactionCheck("fantom"),
@@ -98,6 +100,7 @@ const moonbeam: AppSpec<Transaction> = {
   appQuery: {
     model: DeviceModelId.nanoS,
     appName: "Ethereum",
+    appVersion: "1.9.20-dev", // FIXME remove this line once 1.9.20 lands on coin-apps (branch ledger-live-bot)
   },
   testTimeout,
   transactionCheck: transactionCheck("moonbeam"),
@@ -113,6 +116,7 @@ const songbird: AppSpec<Transaction> = {
   appQuery: {
     model: DeviceModelId.nanoS,
     appName: "Ethereum",
+    appVersion: "1.9.20-dev", // FIXME remove this line once 1.9.20 lands on coin-apps (branch ledger-live-bot)
   },
   testTimeout,
   transactionCheck: transactionCheck("songbird"),
@@ -128,6 +132,7 @@ const flare: AppSpec<Transaction> = {
   appQuery: {
     model: DeviceModelId.nanoS,
     appName: "Ethereum",
+    appVersion: "1.9.20-dev", // FIXME remove this line once 1.9.20 lands on coin-apps (branch ledger-live-bot)
   },
   testTimeout,
   transactionCheck: transactionCheck("flare"),

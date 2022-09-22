@@ -3287,7 +3287,6 @@ export const cryptocurrenciesById: Record<string, CryptoCurrency> = {
     coinType: 60,
     name: "Cronos",
     managerAppName: "Ethereum",
-    deviceTicker: "ETH", // FIXME this is a limiation of the app?
     ticker: "CRO",
     scheme: "cro",
     color: "#002D74",
@@ -3352,7 +3351,6 @@ export const cryptocurrenciesById: Record<string, CryptoCurrency> = {
     coinType: 60,
     name: "Flare",
     managerAppName: "Ethereum",
-    deviceTicker: "ETH", // FIXME this is a limiation of the app?
     ticker: "FLR",
     scheme: "flare",
     color: "#D95F6C",
@@ -3382,7 +3380,6 @@ export const cryptocurrenciesById: Record<string, CryptoCurrency> = {
     coinType: 60,
     name: "Songbird",
     managerAppName: "Ethereum",
-    deviceTicker: "ETH", // FIXME this is a limiation of the app?
     ticker: "SGB",
     scheme: "songbird",
     color: "#61ACD4",
@@ -3412,7 +3409,6 @@ export const cryptocurrenciesById: Record<string, CryptoCurrency> = {
     coinType: 60,
     name: "Moonbeam",
     managerAppName: "Ethereum",
-    deviceTicker: "ETH", // FIXME this is a limiation of the app?
     ticker: "GLMR",
     scheme: "moonbeam",
     color: "#5FC0C1",

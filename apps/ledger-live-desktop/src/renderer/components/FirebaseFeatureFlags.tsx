@@ -45,7 +45,7 @@ export const FirebaseFeatureFlagsProvider = ({ children }: Props): JSX.Element =
         const overridenValue = { ...value, overridesRemote: true };
         setLocalOverrides(currentOverrides => ({ ...currentOverrides, [key]: overridenValue }));
       } else {
-        console.error("Not overriding");
+        setLocalOverrides(currentOverrides => ({ ...currentOverrides, [key]: undefined }));
       }
     },
     [getFeature],

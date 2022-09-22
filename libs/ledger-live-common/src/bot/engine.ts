@@ -92,7 +92,9 @@ export async function runWithAppSpec<T extends Transaction>(
   const { appQuery, currency, dependency } = spec;
   const appCandidate = findAppCandidate(appCandidates, appQuery);
   if (!appCandidate) {
-    console.warn("no app found for " + spec.name, { appQuery, appCandidates });
+    console.warn("no app found for " + spec.name);
+    console.warn(appQuery);
+    console.warn(JSON.stringify(appCandidates, undefined, 2));
   }
   invariant(
     appCandidate,
