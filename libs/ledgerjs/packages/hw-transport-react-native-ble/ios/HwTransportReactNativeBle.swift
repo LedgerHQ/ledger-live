@@ -110,41 +110,31 @@ class HwTransportReactNativeBle: RCTEventEmitter {
             reject(TransportError.bluetoothRequired.rawValue, "", nil)
             return
         }
+        let peripheral = PeripheralIdentifier(uuid: UUID(uuidString: uuid)!, name: "")
+        var consumed = false /// Callbacks can only be called once in rn
 
-        BleTransport.shared.disconnect(immediate: false){ _ in
-            let peripheral = PeripheralIdentifier(uuid: UUID(uuidString: uuid)!, name: "")
-            var consumed = false /// Callbacks can only be called once in rn
-            DispatchQueue.main.asyncAfter(deadline: .now() + 8){
-                /// We never completed, so reject this, and queue a disconnect.
-                if !consumed {
-                    consumed = true
-                    reject(TransportError.cantOpenDevice.rawValue, "", nil)
+        BleTransport.shared.connect(toPeripheralID: peripheral) { [self] in
+            /// Disconnect callback is called regardless of the original -connect- having resolved already
+            /// we use this to notify exchanges (background or foreground) about the disconnection.
+            if consumed {
+                if let rejectCallback = self.rejectCallback {
+                    rejectCallback(TransportError.cantOpenDevice.rawValue, "", nil)
                 }
+                return
             }
-
-            DispatchQueue.main.async{
-                BleTransport.shared.connect(toPeripheralID: peripheral) {
-                    /// Disconnect callback is called regardless of the original -connect- having resolved already
-                    /// we use this to notify exchanges (background or foreground) about the disconnection.
-                    if consumed {
-                        if let rejectCallback = self.rejectCallback {
-                            rejectCallback(TransportError.cantOpenDevice.rawValue, "", nil)
-                        }
-                        return
-                    }
-                } success: { PeripheralIdentifier in
-                    if consumed {
-                        /// We've consumed the callback, but we've connected. This shouldn't happen.... queue a desperate disconnect
-                        BleTransport.shared.disconnect(immediate: false){_ in }
-                    }
-                    resolve(uuid)
-                    consumed = true
-                } failure: { error in
-                    if consumed { return }
-                    reject(TransportError.pairingFailed.rawValue, "", nil)
-                    consumed = true
+        } success: { PeripheralIdentifier in
+            if consumed {
+                /// We've consumed the callback, but we've connected. This shouldn't happen.... queue a desperate disconnect
+                BleTransport.shared.disconnect(){_ in
                 }
+            } else {
+                resolve(uuid)
+                consumed = true
             }
+        } failure: { error in
+            if consumed { return }
+            reject(TransportError.pairingFailed.rawValue, "", nil)
+            consumed = true
         }
     }
     
@@ -153,13 +143,15 @@ class HwTransportReactNativeBle: RCTEventEmitter {
         reject: @escaping RCTPromiseRejectBlock
     ) -> Void {
         isDisconnecting = true
-
         let disconnectImpl = {
+            /// Before disconnecting we need to give time for organic disconnects to happen. Between the apdu acknowledgement
+            /// of an apdu that will quit/enter an app and the actual disconnect, there's a delay. If we try to disconnect in that gap it
+            /// breaks everything.
             DispatchQueue.main.asyncAfter(deadline: .now()+3.00) {
-                BleTransport.shared.disconnect(immediate: false, completion: { [self] result in
+                BleTransport.shared.disconnect(){ [self] result in
                     resolve(true)
                     isDisconnecting = false
-                })
+                }
             }
         }
         
