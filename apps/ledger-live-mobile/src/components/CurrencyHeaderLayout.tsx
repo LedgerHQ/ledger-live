@@ -12,6 +12,8 @@ import Animated, {
 import getWindowDimensions from "../logic/getWindowDimensions";
 import CurrencyGradient from "./CurrencyGradient";
 
+const windowsWidth = getWindowDimensions().width;
+
 function CurrencyHeaderLayout({
   currentPositionY,
   graphCardEndPosition,
@@ -86,7 +88,6 @@ function CurrencyHeaderLayout({
     position: absolute;
   `;
 
-  const windowsWidth = getWindowDimensions().width;
   return (
     <Header
       flexDirection="row"

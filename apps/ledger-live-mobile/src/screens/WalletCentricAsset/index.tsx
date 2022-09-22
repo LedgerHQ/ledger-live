@@ -157,7 +157,9 @@ const AssetScreen = ({ route }: Props) => {
           defaultAccount={defaultAccount}
         />
         {cryptoAccountsEmpty ? (
-          <EmptyAccountCard currencyTicker={currency.ticker} />
+          <Flex minHeight={220}>
+            <EmptyAccountCard currencyTicker={currency.ticker} />
+          </Flex>
         ) : null}
       </SectionContainer>,
       <SectionContainer
@@ -227,7 +229,7 @@ const AssetScreen = ({ route }: Props) => {
 
   return (
     <TabBarSafeAreaView edges={["bottom", "left", "right"]}>
-      <TrackScreen category="Asset" assetName={currency.name} />
+      <TrackScreen category="Asset" currency={currency.name} />
       <CurrencyBackgroundGradient
         currentPositionY={currentPositionY}
         graphCardEndPosition={graphCardEndPosition}

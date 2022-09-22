@@ -76,7 +76,10 @@ export default function useAssetActions({
         ? [
             {
               id: "buy",
-              event: "TransferExchange",
+              event: "button_clicked",
+              eventProperties: {
+                button: "buy",
+              },
               label: t("exchange.buy.tabTitle"),
               Icon: iconBuy,
               navigationParams: [
@@ -95,7 +98,10 @@ export default function useAssetActions({
         ? [
             {
               id: "sell",
-              event: "TransferExchange",
+              event: "button_clicked",
+              eventProperties: {
+                button: "sell",
+              },
               label: t("exchange.sell.tabTitle"),
               Icon: iconSell,
               navigationParams: [
@@ -122,7 +128,10 @@ export default function useAssetActions({
               ? [
                   {
                     id: "swap",
-                    event: "TransferSwap",
+                    event: "button_clicked",
+                    eventProperties: {
+                      button: "swap",
+                    },
                     label: t("transfer.swap.title"),
                     Icon: iconSwap,
                     navigationParams: [
@@ -141,7 +150,10 @@ export default function useAssetActions({
               : []),
             {
               id: "receive",
-              event: "TransferReceive",
+              event: "button_clicked",
+              eventProperties: {
+                button: "receive",
+              },
               label: t("transfer.receive.title"),
               Icon: iconReceive,
               navigationParams: [
@@ -168,7 +180,10 @@ export default function useAssetActions({
             },
             {
               id: "send",
-              event: "TransferSend",
+              event: "button_clicked",
+              eventProperties: {
+                button: "send",
+              },
               label: t("transfer.send.title"),
               Icon: iconSend,
               navigationParams: [
@@ -200,7 +215,10 @@ export default function useAssetActions({
               ? [
                   {
                     id: "add_account",
-                    event: "TransferAddAccount",
+                    event: "button_clicked",
+                    eventProperties: {
+                      button: "add_account",
+                    },
                     label: t("addAccountsModal.ctaAdd"),
                     Icon: iconAddAccount,
                     navigationParams: [

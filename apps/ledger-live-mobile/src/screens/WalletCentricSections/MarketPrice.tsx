@@ -1,6 +1,5 @@
 import React, { memo, useCallback } from "react";
 import { Flex, Text, Icons } from "@ledgerhq/native-ui";
-import { TouchableOpacity } from "react-native";
 import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { useNavigation } from "@react-navigation/native";
@@ -10,7 +9,7 @@ import { withDiscreetMode } from "../../context/DiscreetModeContext";
 import { ScreenName } from "../../const";
 import { localeSelector } from "../../reducers/settings";
 import DeltaVariation from "../Market/DeltaVariation";
-import { track } from "../../analytics";
+import Touchable from "../../components/Touchable";
 
 type Props = {
   currency: CryptoCurrency;
@@ -28,9 +27,6 @@ const MarketPrice = ({
   const navigation = useNavigation();
 
   const goToMarketPage = useCallback(() => {
-    track("market_data_clicked", {
-      currency: currency.name,
-    });
     navigation.navigate(ScreenName.MarketDetail, {
       currencyId: currency.id,
     });
@@ -38,7 +34,11 @@ const MarketPrice = ({
 
   return (
     <Flex flex={1} mt={6}>
-      <TouchableOpacity onPress={goToMarketPage}>
+      <Touchable
+        event="market_data_clicked"
+        eventProperties={{ currency: currency.name }}
+        onPress={goToMarketPage}
+      >
         <Flex flex={1} flexDirection="row" alignItems="center">
           <Flex
             flexDirection="column"
@@ -80,7 +80,7 @@ const MarketPrice = ({
           </Flex>
           <Icons.DroprightMedium size={24} />
         </Flex>
-      </TouchableOpacity>
+      </Touchable>
     </Flex>
   );
 };

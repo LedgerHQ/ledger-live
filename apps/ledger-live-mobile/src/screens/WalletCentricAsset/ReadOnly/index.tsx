@@ -6,7 +6,7 @@ import Animated, {
 } from "react-native-reanimated";
 import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
-import { Box } from "@ledgerhq/native-ui";
+import { Flex } from "@ledgerhq/native-ui";
 import { getCurrencyColor } from "@ledgerhq/live-common/currencies/index";
 import { useTheme } from "styled-components/native";
 import {
@@ -38,6 +38,7 @@ import BuyDeviceBanner, {
 } from "../../../components/BuyDeviceBanner";
 import SetupDeviceBanner from "../../../components/SetupDeviceBanner";
 import { FabAssetActions } from "../../../components/FabActions/actionsList/asset";
+import { TrackScreen } from "../../../analytics";
 
 type RouteParams = {
   currency: CryptoCurrency | TokenCurrency;
@@ -80,7 +81,7 @@ const ReadOnlyAssetScreen = ({ route }: Props) => {
     );
   }, [currency, selectCurrency]);
 
-  const [graphCardEndPosition, setGraphCardEndPosition] = useState(0);
+  const [graphCardEndPosition, setGraphCardEndPosition] = useState(100);
   const currentPositionY = useSharedValue(0);
   const handleScroll = useAnimatedScrollHandler(event => {
     currentPositionY.value = event.contentOffset.y;
@@ -94,7 +95,7 @@ const ReadOnlyAssetScreen = ({ route }: Props) => {
 
   const data = useMemo(
     () => [
-      <Box mt={6} onLayout={onAssetCardLayout}>
+      <Flex mt={6} onLayout={onAssetCardLayout}>
         <AssetCentricGraphCard
           assetPortfolio={assetPortfolio}
           counterValueCurrency={counterValueCurrency}
@@ -104,14 +105,16 @@ const ReadOnlyAssetScreen = ({ route }: Props) => {
           currencyBalance={0}
           accountsEmpty={true}
         />
-      </Box>,
+      </Flex>,
       <SectionContainer px={6}>
         <SectionTitle
           title={t("account.quickActions")}
           containerProps={{ mb: 6 }}
         />
         <FabAssetActions currency={currency} />
-        <EmptyAccountCard currencyTicker={currency.ticker} />
+        <Flex minHeight={220}>
+          <EmptyAccountCard currencyTicker={currency.ticker} />
+        </Flex>
       </SectionContainer>,
       ...(selectedCoinData?.price
         ? [
@@ -121,11 +124,13 @@ const ReadOnlyAssetScreen = ({ route }: Props) => {
                   currencyTicker: currency.ticker,
                 })}
               />
-              <MarketPriceSection
-                currency={currency}
-                selectedCoinData={selectedCoinData}
-                counterCurrency={counterCurrency}
-              />
+              <Flex minHeight={65}>
+                <MarketPriceSection
+                  currency={currency}
+                  selectedCoinData={selectedCoinData}
+                  counterCurrency={counterCurrency}
+                />
+              </Flex>
             </SectionContainer>,
           ]
         : []),
@@ -161,12 +166,15 @@ const ReadOnlyAssetScreen = ({ route }: Props) => {
       graphCardEndPosition,
       currency,
       t,
+      selectedCoinData,
+      counterCurrency,
       hasOrderedNano,
     ],
   );
 
   return (
     <TabBarSafeAreaView edges={["bottom", "left", "right"]}>
+      <TrackScreen category="Asset" currency={currency.name} />
       <CurrencyBackgroundGradient
         currentPositionY={currentPositionY}
         graphCardEndPosition={graphCardEndPosition}
