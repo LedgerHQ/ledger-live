@@ -3,6 +3,7 @@
     "cancel" : "キャンセル",
     "apply" : "適用",
     "seeAll" : "すべて表示",
+    "seeAllWithNumber" : "すべて表示（{{number}}）",
     "back" : "戻る",
     "delete" : "削除",
     "paste" : "貼り付け",
@@ -30,6 +31,7 @@
     "received" : "受取済み",
     "sent" : "送付済み",
     "or" : "または",
+    "others" : "その他",
     "rename" : "名前の変更",
     "learnMore" : "詳細はこちら",
     "checkItOut" : "確認する",
@@ -276,7 +278,7 @@
     },
     "EthAppNftNotSupported" : {
       "title" : "お使いのデバイスではこの操作をご利用いただけません",
-      "description" : "NFTの送付は、Nano Xでのみご利用いただけます。カスタマーサポートページから、Nano SでNFTを送付する方法をご確認ください。"
+      "description" : "Send NFT feature is only available for Nano X. Please visit our customer support platform to know how to send a NFT with a Nano S or S Plus."
     },
     "Touch ID Error" : {
       "title" : "生体認証に失敗しました。",
@@ -1672,7 +1674,10 @@
         "addAccounts" : "資産を追加",
         "title" : "ご利用ガイド",
         "description" : "パートナーから暗号資産を購入、またはウォレットをセットアップ可能です"
-      }
+      },
+      "title" : "ウォレットにお気に入りの資産を追加して始める",
+      "subtitle" : "Ledgerは6,000以上のコインやトークンに対応",
+      "addAccount" : "またはアカウントを追加"
     },
     "noOpState" : {
       "title" : "トランザクションがありません。",
@@ -1684,20 +1689,27 @@
     "topGainers" : {
       "title" : "トップ変動(24時間)",
       "seeMarket" : "すべて表示"
+    },
+    "walletBalance" : "ウォレット残高",
+    "seelAllAssets" : "すべての暗号資産を表示",
+    "marketPriceSection" : {
+      "title" : "{{currencyTicker}}の市場価格",
+      "currencyPrice" : "1 {{currencyTicker}}の価格",
+      "currencyPriceChange" : "24時間前の変更"
     }
   },
   "addAccountsModal" : {
+    "title" : "Add account",
     "ctaAdd" : "アカウントを追加",
     "ctaImport" : "デスクトップアカウントのインポート",
-    "title" : "暗号資産を追加",
-    "description" : "Ledgerに暗号資産を直接追加、またはLedger Live Desktopからインポートする方法を選択できます。",
+    "description" : "You can choose to add crypto directly with your Ledger, or import them from Ledger Live Desktop.",
     "add" : {
       "title" : "Ledgerと共に",
-      "description" : "Ledgerで資産を作成またはインポートする"
+      "description" : "Create or import asset with your Ledger"
     },
     "import" : {
       "title" : "デスクトップからインポート",
-      "description" : "Ledger Live Desktop(デスクトップ)から資産をインポート"
+      "description" : "Import asset from Ledger Live Desktop"
     }
   },
   "byteSize" : {
@@ -1909,7 +1921,8 @@
       "buttons" : {
         "receiveFunds" : "受け取る",
         "buyCrypto" : "購入"
-      }
+      },
+      "addAccountCta" : "アカウントを追加"
     },
     "settings" : {
       "header" : "アカウント設定",
@@ -2010,6 +2023,15 @@
         "subtitle" : "{{assetName}}の購入と受け取りには、デバイスが必要です"
       }
     },
+    "modals" : {
+      "zeroBalanceDisabledAction" : {
+        "title" : "{{currencyTicker}}はまだ所有していません",
+        "start" : "{{currencyTicker}}を購入または受け取ってから始めてください。",
+        "description" : "このアカウントでは、{{currencyTicker}}を{{actionName}}する必要があります。"
+      }
+    },
+    "earn" : "報酬獲得",
+    "quickActions" : "クイックアクション",
     "banner" : {
       "redelegation" : {
         "description" : "ご存知でしたか？Ledgerのバリデーターは、現在お使いのバリデーターよりも低額の手数料でステーキングを行います。",
@@ -2023,6 +2045,7 @@
   },
   "accounts" : {
     "title" : "アカウント",
+    "cryptoAccountsTitle" : "{{currencyTicker}}アカウント",
     "importNotification" : {
       "message" : "アカウントが正常にインポートされました！"
     },
@@ -2263,7 +2286,46 @@
     "experimental" : {
       "title" : "試験的機能",
       "desc" : "試験的機能をお試しになり、フィードバックをお寄せください。",
-      "disclaimer" : "これらは、テクノロジーファンのコミュニティ向けに、現状のまま提供される試験的機能です。これらの機能は随時変更、破損、または削除される可能性があります。このオプションを有効にすると、あなたは自己責任でこれらの機能を使用することに同意したことになります。"
+      "disclaimer" : "これらは、テクノロジーファンのコミュニティ向けに、現状のまま提供される試験的機能です。これらの機能は随時変更、破損、または削除される可能性があります。このオプションを有効にすると、あなたは自己責任でこれらの機能を使用することに同意したことになります。",
+      "experimentalFeatures" : {
+        "experimentalIntegrations" : {
+          "title" : "試験的統合",
+          "description" : "利用可能な試験的暗号資産の統合を使用する。"
+        },
+        "developerMode" : {
+          "title" : "デベロッパーモード",
+          "description" : "開発者用アプリとテストネットアプリを管理画面に表示します。"
+        },
+        "managerProvider" : {
+          "title" : "プロバイダー管理",
+          "description" : "プロバイダー管理でアプリプロバイダーを変更すると、Ledgerデバイスにアプリをインストールまたはアンインストールできなくなる場合があります。"
+        },
+        "experimentalExplorers" : {
+          "title" : "試験的なエクスプローラーAPI",
+          "description" : "Ledgerのブロックチェーンエクスプローラーの新バージョンをお試しいただけます。この設定を変更すると、アカウントの残高と同期、および送金機能に影響を与える可能性があります。"
+        },
+        "experimentalCountervalues" : {
+          "title" : "試験的なカウンターバリューAPI",
+          "description" : "これにより、アカウントに表示されるカウンター値が不正確になる可能性があります。"
+        },
+        "experimentalSwap" : {
+          "title" : "新しいスワップインタフェース",
+          "description" : "新しい試験的スワップインタフェースを使用する"
+        }
+      },
+      "developerFeatures" : {
+        "experimentalApps" : {
+          "title" : "試験的なアプリを許可する",
+          "description" : "試験的とタグ付けされたプラットフォームアプリの表示と実行を許可する"
+        },
+        "staggingUrl" : {
+          "title" : "学習ステージングのURL",
+          "description" : "ステージングURLを学習ページに使用する。"
+        },
+        "platformManifest" : {
+          "title" : "プラットフォームマニフェストを読み込む"
+        }
+      }
     },
     "developer" : {
       "title" : "デベロッパー",
@@ -2275,11 +2337,8 @@
     "debug" : {
       "featureFlagsTitle" : "Ledger Liveで使用される定義済みの機能フラグ",
       "featureFlagsDesc" : "上書きされた値は、アプリが再起動されるとリセットされます。有効なJSON文字列のみが受け入れられます。",
-      "featureFlagsOverride" : "上書き",
       "featureFlagsEdit" : "編集",
-      "featureFlagsRestore" : "復元",
-      "featureFlagsDisplayValue" : "値を表示",
-      "featureFlagsHideValue" : "値を非表示"
+      "featureFlagsRestore" : "復元"
     }
   },
   "notifications" : {
@@ -3074,6 +3133,7 @@
     }
   },
   "addAccounts" : {
+    "addNew" : "新規で追加",
     "supportLinks" : {
       "segwit_or_native_segwit" : "SegwitとNative Segwitとは？"
     },
@@ -3357,6 +3417,7 @@
       "appsInstalled" : "<0>{{number}}</0>個のアプリ",
       "appsInstalled_plural" : "<0>{{number}}</0>個のアプリ",
       "storageAvailable" : "利用可能",
+      "noFreeSpace" : "No storage left",
       "appsToUpdate" : "<0>{{number}}</0>アップデート",
       "appsToUpdate_plural" : "<0>{{number}}</0>アップデート"
     },
@@ -3535,15 +3596,15 @@
     "no" : "希望しない",
     "languages" : {
       "en" : "英語",
-      "fr" : "Français",
-      "ru" : "Русский",
-      "es" : "Español",
+      "fr" : "フランス語",
+      "ru" : "ロシア語",
+      "es" : "スペイン語",
       "zh" : "中国人",
-      "de" : "Deutsch",
-      "tr" : "Türk",
+      "de" : "ドイツ語",
+      "tr" : "トルコ語",
       "ja" : "日本",
-      "ko" : "한국인",
-      "pt" : "Português"
+      "ko" : "韓国",
+      "pt" : "ポルトガル語"
     }
   },
   "deviceLocalization" : {
@@ -4753,6 +4814,12 @@
     },
     "currentAddress" : {
       "messageIfVirtual" : "{{name}}アドレスがLedgerデバイスで確認できません。リスクを理解した上で、自己責任でご利用ください。"
+    }
+  },
+  "asset" : {
+    "title" : "あなたの{{assetName}}",
+    "accountsSection" : {
+      "title" : "あなたの{{currencyName}}アカウント"
     }
   },
   "customImage" : {
