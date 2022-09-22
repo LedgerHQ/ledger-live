@@ -1,5 +1,11 @@
 # ledger-live-desktop
 
+## 2.48.0-next.3
+
+### Patch Changes
+
+- [#1336](https://github.com/LedgerHQ/ledger-live/pull/1336) [`0ce37a6bf9`](https://github.com/LedgerHQ/ledger-live/commit/0ce37a6bf9eb7b6ca549c71f4c32e1e9db1ea475) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Add a loading state in the "continue" button at the end of the onboarding in case of lag
+
 ## 2.48.0-next.2
 
 ### Patch Changes
