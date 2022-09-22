@@ -236,10 +236,26 @@
     },
     "form" : {
       "changeCTA" : "Değiştir",
-      "ratesDrawer" : {
-        "title" : "Kur",
-        "quote" : "Teklif",
-        "receive" : "Al"
+      "rates" : {
+        "title" : "Sağlayıcılar",
+        "registration" : "Kayıt gerekiyor ",
+        "noRegistration" : "Kayıt gerekmiyor",
+        "fixed" : "Sabit",
+        "float" : "Dalgalı",
+        "update" : "Fiyat güncellemesine kalan süre:",
+        "loading" : "Yükleniyor...",
+        "name" : {
+          "title" : "Sağlayıcı",
+          "tooltip" : "Sağlayıcıya bağlı olarak, hesap oluşturarak giriş yapmanız gerekebilir."
+        },
+        "rate" : {
+          "title" : "Takas kuru",
+          "tooltip" : "<0>Dalgalı kur</0>, piyasa koşullarına bağlı olarak değişimler yaşar; dolayısıyla, tahmininizden daha yüksek ya da daha düşük tutarlar elde edebilirsiniz.<br/><br/><0>Sabit kur</0>, takas işleminin başında gösterilen tutarla eşleşir."
+        },
+        "receive" : {
+          "title" : "Al",
+          "tooltip" : "Takas sonrasında elde edeceğiniz tahmini tutar."
+        }
       },
       "details" : {
         "label" : {
@@ -412,7 +428,13 @@
           "approved" : "KYC Onaylandı!",
           "closed" : "KYC Reddedildi"
         }
-      }
+      },
+      "filter" : {
+        "all" : "Tümü",
+        "centralised" : "Merkezi",
+        "dedentralised" : "Merkeziyetsiz"
+      },
+      "noQuote" : "Ücret teklifi bir sonraki adımda yer alır"
     },
     "ip" : {
       "title" : "Takas İşlemlerine Hoş Geldiniz",
@@ -761,7 +783,7 @@
       },
       "delegation" : {
         "title" : "Haberiniz olsun...",
-        "description" : "The Ledger validator stakes your {{asset}} at a commission of {{commission}}%.",
+        "description" : "Ledger doğrulayıcısı, {{asset}} varlığınızı %{{commission}} oranında bir komisyonla stake eder.",
         "cta" : "Ledger ile Stake Edin"
       }
     }
@@ -978,7 +1000,7 @@
       "terms" : {
         "title" : "Kripto Borç Verin",
         "subtitle" : "Varlıklarınızı Compound protokolünde borç verin",
-        "description" : "The Compound protocol allows you to lend and borrow assets on the Ethereum network. You can lend assets and earn interest directly from your Ledger account.",
+        "description" : "Compound protokolü, Ethereum ağındaki varlıkları borç vermenizi ve almanızı sağlar. Varlıkları borç vererek doğrudan Ledger hesabınızdan faiz kazanabilirsiniz.",
         "switchLabel" : "<0>Kullanım Koşullarını</0><1> okudum ve kabul ediyorum.</1>"
       },
       "steps" : {
@@ -3146,7 +3168,7 @@
           "steps" : {
             "confirmation" : {
               "success" : {
-                "title" : "You have successfully activated your delegation."
+                "title" : "Yetki devrinizi başarıyla etkinleştirdiniz."
               }
             }
           }
@@ -3158,7 +3180,7 @@
           "steps" : {
             "confirmation" : {
               "success" : {
-                "title" : "You have successfully reactivated your delegation."
+                "title" : "Yetki devrinizi başarıyla yeniden etkinleştirdiniz."
               }
             }
           }
@@ -3406,6 +3428,10 @@
           "title" : "Genişletilmiş hesap arama",
           "description" : "Hatalı türetme yollarına sahip hesapları tarayın. Lütfen potansiyel olarak bulunan varlıkları normal bir hesaba gönderin."
         },
+        "experimentalCountervalues" : {
+          "title" : "Deneysel karşı değerler API'ı",
+          "description" : "Bu, hesaplarınız için görüntülenen karşı değerlerin hatalı gözükmesine neden olabilir."
+        },
         "experimentalExplorers" : {
           "title" : "Deneysel Tarayıcılar API'ı",
           "description" : "Ledger'ın blok zinciri tarayıcılarının gelecek bir sürümünü deneyin. Bu ayarın değiştirilmesi, hesap bakiyesi ve senkronizasyonun yanı sıra gönderme özelliğini de etkileyebilir.\n(<0></0>)"
@@ -3551,7 +3577,11 @@
       "ru" : "Rusça",
       "es" : "İspanyolca",
       "zh" : "Çince",
-      "de" : "Almanca"
+      "de" : "Almanca",
+      "tr" : "Turkish",
+      "ja" : "Japanese",
+      "ko" : "Korean",
+      "pt" : "Portuguese"
     }
   },
   "theme" : {
@@ -4339,6 +4369,9 @@
       "title" : "{{appName}} uygulaması, özel yapılandırmanız için bulunamadı.",
       "description" : "Uygulamayı My Ledger'dan yeniden yüklemeyi deneyin"
     },
+    "PendingOperation" : {
+      "description" : "Beklemede olan gelen işlemleriniz var. Bekleyen işlemlerin geri alınabileceğini lütfen unutmayın."
+    },
     "countervaluesUnavailable" : {
       "title" : "Şu anda bu varlık için bir karşı değer sağlayamıyoruz"
     },
@@ -4583,10 +4616,6 @@
       "title" : "Üzgünüz, internet bağlantısı görünmüyor",
       "description" : "Lütfen internet bağlantınızı kontrol edin."
     },
-    "NetworkError" : {
-      "title" : "Senkronizasyon sırasında bir hata oluştu",
-      "description" : "Lütfen internet bağlantınızı kontrol edin."
-    },
     "NoAddressesFound" : {
       "title" : "Üzgünüz, hesap bulunamadı",
       "description" : "Adres hesaplamasında bir hata oluştu; tekrar deneyin veya Ledger Destek ile iletişime geçin"
@@ -4734,7 +4763,7 @@
     },
     "EthAppNftNotSupported" : {
       "title" : "Bu işlem bu cihaz için mevcut değil",
-      "description" : "NFT gönderme özelliği yalnızca Nano X için mevcuttur. Nano S ile nasıl NFT gönderileceğini öğrenmek için lütfen müşteri destek platformumuzu ziyaret edin."
+      "description" : "Send NFT feature is only available for Nano X. Please visit our customer support platform to know how to send a NFT with a Nano S or S Plus."
     },
     "CantScanQRCode" : {
       "title" : "Bu QR kodu taranamadı; otomatik doğrulama bu adres tarafından desteklenmiyor"
