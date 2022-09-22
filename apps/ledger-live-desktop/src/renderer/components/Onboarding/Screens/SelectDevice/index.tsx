@@ -40,7 +40,7 @@ export function SelectDevice() {
     (deviceModelId: DeviceModelId) => {
       // TODO: use a feature flag to do this properly
       if (deviceModelId === "nanoFTS") {
-        history.push(`/sync-onboarding/${deviceModelId}`);
+        history.push(`/onboarding/sync/${deviceModelId}`);
       } else {
         track("Onboarding Device - Selection", { deviceModelId });
         setDeviceModelId(deviceModelId);

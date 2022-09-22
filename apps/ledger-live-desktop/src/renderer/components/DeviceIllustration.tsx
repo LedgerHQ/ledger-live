@@ -1,5 +1,7 @@
 import React from "react";
 import styled, { DefaultTheme, StyledComponent, ThemeProps } from "styled-components";
+import nanoFTS from "~/renderer/images/nanoFTS.svg";
+import nanoFTSDark from "~/renderer/images/nanoFTS.svg";
 import nanoX from "~/renderer/images/nanoX.v3.svg";
 import nanoS from "~/renderer/images/nanoS.v3.svg";
 import nanoS2 from "~/renderer/images/nanoS2.v3.svg";
@@ -10,7 +12,7 @@ import nanoS2Dark from "~/renderer/images/nanoS2Dark.v3.svg";
 import { registerAssets } from "~/renderer/components/Onboarding/preloadAssets";
 import { DeviceModelId } from "@ledgerhq/devices";
 
-registerAssets([nanoX, nanoS, nanoS2, nanoXDark, nanoSDark, nanoS2Dark]);
+registerAssets([nanoX, nanoS, nanoS2, nanoXDark, nanoSDark, nanoS2Dark, nanoFTS, nanoFTSDark]);
 
 const makeAssetSelector = (lightAsset: any, darkAsset: any) => (p: ThemeProps<DefaultTheme>) =>
   p.theme.colors.palette.type === "light" ? lightAsset : darkAsset;
@@ -27,6 +29,10 @@ const NanoSP = styled.div`
 
 const NanoX = styled.div`
   background: url(${p => makeAssetSelector(nanoX, nanoXDark)(p)}) no-repeat center;
+`;
+
+const NanoFTS = styled.div`
+  background: url(${p => makeAssetSelector(nanoFTS, nanoFTSDark)(p)}) no-repeat center;
 `;
 
 type Illustration = {
@@ -52,9 +58,9 @@ const illustrations: { [key in DeviceModelId]: Illustration } = {
     height: 250.87,
   },
   nanoFTS: {
-    Illustration: NanoX,
-    width: 53.83,
-    height: 250.87,
+    Illustration: NanoFTS,
+    width: 160.15,
+    height: 250.1,
   },
   blue: {
     Illustration: NanoS,
