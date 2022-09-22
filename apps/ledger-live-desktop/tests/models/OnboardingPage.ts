@@ -76,7 +76,6 @@ export class OnboardingPage {
   }
 
   async getStarted() {
-    await this.getStartedButton.waitFor({ state: "visible" });
     expect(await this.page.screenshot()).toMatchSnapshot("v3-get-started.png");
     await this.getStartedButton.click();
   }
