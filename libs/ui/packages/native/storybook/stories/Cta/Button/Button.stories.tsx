@@ -4,6 +4,7 @@ import { action } from "@storybook/addon-actions";
 import React from "react";
 import Button, { PromisableButton } from "../../../../src/components/cta/Button";
 import Info from "../../../../src/icons/Info";
+import { IconType } from "src/components/Icon/type";
 
 const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
@@ -11,7 +12,8 @@ const iconOptions = {
   Info,
   None: undefined,
 };
-const iconSelect = () => iconOptions[select("Icon", ["Info", "None"], "None")];
+const iconSelect = (): IconType =>
+  iconOptions[select("Icon", ["Info", "None"], "None")] as IconType;
 const iconName = () => text("Icon Name", "Info");
 
 const Regular = (): JSX.Element => (
