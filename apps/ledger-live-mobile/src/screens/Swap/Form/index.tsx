@@ -335,7 +335,7 @@ export function SwapForm({ route: { params } }: SwapFormProps) {
         params.target === "from"
           ? accounts
           : accounts.map(acc =>
-              accountWithMandatoryTokens(acc, [params?.currency]),
+              accountWithMandatoryTokens(acc, [params?.currency || []]),
             );
 
       const account = flattenAccounts(enhancedAccounts).find(
