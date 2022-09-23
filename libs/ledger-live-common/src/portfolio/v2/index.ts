@@ -209,22 +209,22 @@ export function getPortfolio(
       );
       return p.countervalueAvailable
         ? {
-          ...prev,
-          availables: [
-            ...prev.availables,
-            {
-              account,
-              history: p.history,
-              change: p.countervalueChange,
-              countervalueReceiveSum: p.countervalueReceiveSum,
-              countervalueSendSum: p.countervalueSendSum,
-            },
-          ],
-        }
+            ...prev,
+            availables: [
+              ...prev.availables,
+              {
+                account,
+                history: p.history,
+                change: p.countervalueChange,
+                countervalueReceiveSum: p.countervalueReceiveSum,
+                countervalueSendSum: p.countervalueSendSum,
+              },
+            ],
+          }
         : {
-          ...prev,
-          unavailableAccounts: [...prev.unavailableAccounts, account],
-        };
+            ...prev,
+            unavailableAccounts: [...prev.unavailableAccounts, account],
+          };
     },
     {
       availables: [],
@@ -376,9 +376,9 @@ export function getAssetsDistribution(
       });
       return cv
         ? {
-          sum: prev.sum + cv,
-          idCountervalues: { ...prev.idCountervalues, [id]: cv },
-        }
+            sum: prev.sum + cv,
+            idCountervalues: { ...prev.idCountervalues, [id]: cv },
+          }
         : prev;
     },
     {
