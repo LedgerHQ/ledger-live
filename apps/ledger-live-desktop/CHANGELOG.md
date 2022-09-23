@@ -1,5 +1,13 @@
 # ledger-live-desktop
 
+## 2.48.0-next.4
+
+### Patch Changes
+
+- [#1348](https://github.com/LedgerHQ/ledger-live/pull/1348) [`41bda3d8bb`](https://github.com/LedgerHQ/ledger-live/commit/41bda3d8bb1b43fbda3f39cf44620583720b1c1e) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Error message when trying to send a NFT from LNS is wrong
+
+* [#1346](https://github.com/LedgerHQ/ledger-live/pull/1346) [`1b696ba99b`](https://github.com/LedgerHQ/ledger-live/commit/1b696ba99ba6107260d5b48ea5749cc5f7b60ed8) Thanks [@sarneijim](https://github.com/sarneijim)! - Fix text color in swap light theme
+
 ## 2.48.0-next.3
 
 ### Patch Changes
