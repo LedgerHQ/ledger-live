@@ -148,14 +148,16 @@ export function Summary({
       </Item>
 
       <Item title={t("transfer.swap2.form.details.label.rate")}>
-        {ratesExpiration && ratesExpiration.getTime() > Date.now() && (
-          <Flex paddingX={2}>
-            <CountdownTimer
-              end={ratesExpiration}
-              callback={swap.refetchRates}
-            />
-          </Flex>
-        )}
+        {ratesExpiration &&
+          exchangeRate.tradeMethod === "fixed" &&
+          ratesExpiration > Date.now() && (
+            <Flex paddingX={2}>
+              <CountdownTimer
+                end={ratesExpiration}
+                callback={swap.refetchRates}
+              />
+            </Flex>
+          )}
         <Icon
           name={exchangeRate.tradeMethod === "fixed" ? "Lock" : "Unlock"}
           color="neutral.c70"

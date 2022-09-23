@@ -55,9 +55,10 @@ const handlers = {
   ) => ({
     ...state,
     exchangeRate: payload,
-    exchangeRateExpiration: new Date(
-      new Date().getTime() + ratesExpirationThreshold,
-    ),
+    exchangeRateExpiration:
+      payload?.tradeMethod === "fixed"
+        ? new Date(new Date().getTime() + ratesExpirationThreshold)
+        : null,
   }),
   RESET_STATE: () => ({ ...initialState }),
 };
