@@ -288,7 +288,7 @@ const envDefinitions = {
     desc: "disable a problematic mechanism of our API",
   },
   EIP1559_ENABLED_CURRENCIES: {
-    def: "ethereum,ethereum_goerli",
+    def: "ethereum,ethereum_goerli,polygon",
     parser: stringArrayParser,
     desc: "set the currency ids where EIP1559 is enabled",
   },
