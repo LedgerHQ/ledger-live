@@ -83,7 +83,8 @@ const Carousel = ({ cardsVisibility }: Props) => {
     cardId => {
       const slide = SLIDES.find(slide => slide.name === cardId);
       if (slide) {
-        track("Portfolio Recommended CloseUrl", {
+        track("button_clicked", {
+          button: "Close Card",
           url: slide.url,
         });
       }

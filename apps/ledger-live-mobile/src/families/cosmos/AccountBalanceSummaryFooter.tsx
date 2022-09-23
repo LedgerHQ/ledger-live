@@ -58,6 +58,7 @@ function AccountBalanceSummaryFooter({ account }: Props) {
               disableRounding
             />
           }
+          isLast={!delegatedBalance.gt(0) && !unbondingBalance.gt(0)}
         />
         {delegatedBalance.gt(0) && (
           <InfoItem
@@ -70,6 +71,7 @@ function AccountBalanceSummaryFooter({ account }: Props) {
                 disableRounding
               />
             }
+            isLast={!unbondingBalance.gt(0)}
           />
         )}
         {unbondingBalance.gt(0) && (
@@ -83,6 +85,7 @@ function AccountBalanceSummaryFooter({ account }: Props) {
                 disableRounding
               />
             }
+            isLast={true}
           />
         )}
       </ScrollView>
@@ -99,7 +102,6 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: "row",
     overflow: "visible",
-    paddingTop: 16,
   },
 });
 

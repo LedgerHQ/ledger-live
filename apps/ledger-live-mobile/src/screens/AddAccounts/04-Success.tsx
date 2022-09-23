@@ -10,7 +10,7 @@ import { TrackScreen } from "../../analytics";
 import LText from "../../components/LText";
 import Button from "../../components/Button";
 import IconCheck from "../../icons/Check";
-import CurrencyIcon from "../../components/CurrencyIcon";
+import ParentCurrencyIcon from "../../components/ParentCurrencyIcon";
 
 type Props = {
   navigation: any;
@@ -26,16 +26,10 @@ export default function AddAccountsSuccess({ navigation, route }: Props) {
   const { colors } = useTheme();
   const currency = route.params.currency;
   const primaryCTA = useCallback(() => {
-    navigation.replace(NavigatorName.Main, {
-      screen: NavigatorName.Portfolio,
+    navigation.replace(NavigatorName.Accounts, {
+      screen: ScreenName.Asset,
       params: {
-        screen: NavigatorName.PortfolioAccounts,
-        params: {
-          screen: ScreenName.Accounts,
-          params: {
-            search: currency.name,
-          },
-        },
+        currency,
       },
     });
   }, [currency, navigation]);
@@ -95,6 +89,7 @@ function CurrencySuccess({ currency }: CurrencySuccessProps) {
         },
       ]}
     >
+      <ParentCurrencyIcon currency={currency} size={80} />
       <View
         style={[
           styles.outer,
@@ -114,7 +109,6 @@ function CurrencySuccess({ currency }: CurrencySuccessProps) {
           <IconCheck size={16} color="white" />
         </View>
       </View>
-      <CurrencyIcon currency={currency} size={32} />
     </View>
   );
 }

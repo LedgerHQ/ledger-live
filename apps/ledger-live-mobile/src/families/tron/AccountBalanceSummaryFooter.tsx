@@ -89,6 +89,7 @@ function AccountBalanceSummaryFooter({ account }: Props) {
             ? "-"
             : toLocaleString(formattedEnergy, locale)
         }
+        isLast={true}
       />
     </ScrollView>
   );
