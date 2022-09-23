@@ -7,7 +7,7 @@ import { RefreshMedium } from "@ledgerhq/native-ui/assets/icons";
 import { useTranslation } from "react-i18next";
 import { useGlobalSyncState } from "@ledgerhq/live-common/bridge/react/index";
 import { FlatList } from "react-native";
-import { getEnv } from "@ledgerhq/live-common/lib/env";
+import useEnv from "@ledgerhq/live-common/hooks/useEnv";
 import {
   useDistribution,
   useRefreshAccountsOrdering,
@@ -31,11 +31,12 @@ function Assets() {
   const navigation = useNavigation();
   const isUpToDate = useSelector(isUpToDateSelector);
   const globalSyncState = useGlobalSyncState();
-  const hideEmptyTokenAccountsEnabled = getEnv("HIDE_EMPTY_TOKEN_ACCOUNTS");
+  const hideEmptyTokenAccount = useEnv("HIDE_EMPTY_TOKEN_ACCOUNTS");
 
   const { t } = useTranslation();
   const distribution = useDistribution({
-    showEmptyAccounts: !hideEmptyTokenAccountsEnabled,
+    showEmptyAccounts: true,
+    hideEmptyTokenAccount,
   });
 
   const refreshAccountsOrdering = useRefreshAccountsOrdering();

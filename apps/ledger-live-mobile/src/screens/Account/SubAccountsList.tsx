@@ -66,7 +66,6 @@ export default function SubAccountsList({
   const specific = perFamilySubAccountList[family];
 
   const hasSpecificTokenWording = specific && specific.hasSpecificTokenWording;
-  const ReceiveButton = specific && specific.ReceiveButton;
 
   const Placeholder = specific && specific.Placeholder;
 
@@ -105,16 +104,7 @@ export default function SubAccountsList({
         containerProps={{ mb: 6 }}
       />
     ),
-    [
-      isToken,
-      hasSpecificTokenWording,
-      family,
-      subAccounts.length,
-      ReceiveButton,
-      accountId,
-      navigateToReceiveConnectDevice,
-      colors.live,
-    ],
+    [isToken, hasSpecificTokenWording, family, subAccounts.length],
   );
 
   const renderFooter = useCallback(() => {

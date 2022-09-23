@@ -15,7 +15,7 @@ import { Box, Flex, Button, Icons } from "@ledgerhq/native-ui";
 import { Currency } from "@ledgerhq/types-cryptoassets";
 import { useTheme } from "styled-components/native";
 import { usePostOnboardingEntryPointVisibleOnWallet } from "@ledgerhq/live-common/postOnboarding/hooks/index";
-import { getEnv } from "@ledgerhq/live-common/lib/env";
+import useEnv from "@ledgerhq/live-common/hooks/useEnv";
 import {
   useDistribution,
   useRefreshAccountsOrdering,
@@ -70,15 +70,18 @@ type Props = {
 const maxAssetsToDisplay = 5;
 
 function PortfolioScreen({ navigation }: Props) {
+  const hideEmptyTokenAccount = useEnv("HIDE_EMPTY_TOKEN_ACCOUNTS");
+
   const { t } = useTranslation();
   const carouselVisibility = useSelector(carouselVisibilitySelector);
   const showCarousel = useMemo(
     () => Object.values(carouselVisibility).some(Boolean),
     [carouselVisibility],
   );
-  const hideEmptyTokenAccountsEnabled = getEnv("HIDE_EMPTY_TOKEN_ACCOUNTS");
+
   const distribution = useDistribution({
-    showEmptyAccounts: !hideEmptyTokenAccountsEnabled,
+    showEmptyAccounts: true,
+    hideEmptyTokenAccount,
   });
   const accounts = useSelector(accountsSelector);
 

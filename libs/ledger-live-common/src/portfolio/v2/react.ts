@@ -6,6 +6,7 @@ import type {
 import type {
   Account,
   AccountLike,
+  AssetsDistribution,
   PortfolioRange,
 } from "@ledgerhq/types-live";
 import { getAccountCurrency, flattenAccounts } from "../../account";
@@ -66,16 +67,19 @@ export function useDistribution({
   accounts,
   to,
   showEmptyAccounts,
+  hideEmptyTokenAccount,
 }: {
   accounts: Account[];
   to: Currency;
   showEmptyAccounts: boolean;
-}) {
+  hideEmptyTokenAccount: boolean;
+}): AssetsDistribution {
   const state = useCountervaluesState();
   return getAssetsDistribution(accounts, state, to, {
     minShowFirst: 6,
     maxShowFirst: 6,
     showFirstThreshold: 0.95,
     showEmptyAccounts,
+    hideEmptyTokenAccount,
   });
 }

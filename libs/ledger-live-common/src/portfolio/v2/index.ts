@@ -13,6 +13,7 @@ export const defaultAssetsDistribution = {
   maxShowFirst: 6,
   showFirstThreshold: 0.95,
   showEmptyAccounts: false,
+  hideEmptyTokenAccount: false,
 };
 export type AssetsDistributionOpts = typeof defaultAssetsDistribution;
 import type {
@@ -208,22 +209,22 @@ export function getPortfolio(
       );
       return p.countervalueAvailable
         ? {
-            ...prev,
-            availables: [
-              ...prev.availables,
-              {
-                account,
-                history: p.history,
-                change: p.countervalueChange,
-                countervalueReceiveSum: p.countervalueReceiveSum,
-                countervalueSendSum: p.countervalueSendSum,
-              },
-            ],
-          }
+          ...prev,
+          availables: [
+            ...prev.availables,
+            {
+              account,
+              history: p.history,
+              change: p.countervalueChange,
+              countervalueReceiveSum: p.countervalueReceiveSum,
+              countervalueSendSum: p.countervalueSendSum,
+            },
+          ],
+        }
         : {
-            ...prev,
-            unavailableAccounts: [...prev.unavailableAccounts, account],
-          };
+          ...prev,
+          unavailableAccounts: [...prev.unavailableAccounts, account],
+        };
     },
     {
       availables: [],
@@ -326,11 +327,16 @@ export function getAssetsDistribution(
   cvCurrency: Currency,
   opts?: AssetsDistributionOpts
 ): AssetsDistribution {
-  const { minShowFirst, maxShowFirst, showFirstThreshold, showEmptyAccounts } =
-    {
-      ...defaultAssetsDistribution,
-      ...opts,
-    };
+  const {
+    minShowFirst,
+    maxShowFirst,
+    showFirstThreshold,
+    showEmptyAccounts,
+    hideEmptyTokenAccount,
+  } = {
+    ...defaultAssetsDistribution,
+    ...opts,
+  };
   const idBalances: Record<string, number> = {};
   const idCurrencies: Record<string, CryptoCurrency | TokenCurrency> = {};
   const currenciesAccounts: Record<string, AccountLike[]> = {};
@@ -347,9 +353,16 @@ export function getAssetsDistribution(
       currenciesAccounts[id].push(account);
     }
 
-    if (showEmptyAccounts || account.balance.isGreaterThan(0)) {
-      idCurrencies[id] = cur;
-      idBalances[id] = (idBalances[id] ?? 0) + account.balance.toNumber();
+    if (account.type === "TokenAccount") {
+      if (!hideEmptyTokenAccount || account.balance.isGreaterThan(0)) {
+        idCurrencies[id] = cur;
+        idBalances[id] = (idBalances[id] ?? 0) + account.balance.toNumber();
+      }
+    } else {
+      if (showEmptyAccounts || account.balance.isGreaterThan(0)) {
+        idCurrencies[id] = cur;
+        idBalances[id] = (idBalances[id] ?? 0) + account.balance.toNumber();
+      }
     }
   }
 
@@ -363,9 +376,9 @@ export function getAssetsDistribution(
       });
       return cv
         ? {
-            sum: prev.sum + cv,
-            idCountervalues: { ...prev.idCountervalues, [id]: cv },
-          }
+          sum: prev.sum + cv,
+          idCountervalues: { ...prev.idCountervalues, [id]: cv },
+        }
         : prev;
     },
     {
