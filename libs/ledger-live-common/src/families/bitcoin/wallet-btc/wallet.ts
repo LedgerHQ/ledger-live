@@ -19,7 +19,6 @@ import { TX, Address } from "./storage/types";
 class BitcoinLikeWallet {
   explorerInstances: { [key: string]: IExplorer } = {};
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   explorers: { [key: string]: (explorerURI: string) => IExplorer } = {
     ledgerv3: (explorerURI) =>
       new BitcoinLikeExplorer({
@@ -33,7 +32,6 @@ class BitcoinLikeWallet {
       }),
   };
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   accountStorages: { [key: string]: (...args: any[]) => IStorage } = {
     mock: () => new BitcoinLikeStorage(),
   };
@@ -58,7 +56,6 @@ class BitcoinLikeWallet {
     explorer: "ledgerv3" | "ledgerv2";
     explorerURI: string;
     storage: "mock";
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     storageParams: any[];
   }): Promise<Account> {
     const crypto = cryptoFactory(params.currency);
@@ -79,30 +76,25 @@ class BitcoinLikeWallet {
     };
   }
 
-  // eslint-disable-next-line class-methods-use-this
   async syncAccount(account: Account): Promise<number> {
     return account.xpub.sync();
   }
 
-  // eslint-disable-next-line class-methods-use-this
   async getAccountNewReceiveAddress(account: Account): Promise<Address> {
     const address = await account.xpub.getNewAddress(0, 1);
     return address;
   }
 
-  // eslint-disable-next-line class-methods-use-this
   async getAccountNewChangeAddress(account: Account): Promise<Address> {
     const address = await account.xpub.getNewAddress(1, 1);
     return address;
   }
 
-  // eslint-disable-next-line class-methods-use-this
   async getAccountTransactions(account: Account): Promise<{ txs: TX[] }> {
     const txs = (await account.xpub.storage.export()) as { txs: TX[] };
     return txs;
   }
 
-  // eslint-disable-next-line class-methods-use-this
   async getAccountUnspentUtxos(account: Account): Promise<Output[]> {
     const addresses = await account.xpub.getXpubAddresses();
     return flatten(
@@ -114,7 +106,6 @@ class BitcoinLikeWallet {
     );
   }
 
-  // eslint-disable-next-line class-methods-use-this
   async estimateAccountMaxSpendable(
     account: Account,
     feePerByte: number,
@@ -170,13 +161,11 @@ class BitcoinLikeWallet {
     return maxSpendable.lt(0) ? new BigNumber(0) : maxSpendable;
   }
 
-  // eslint-disable-next-line class-methods-use-this
   async getAccountBalance(account: Account): Promise<BigNumber> {
     const balance = await account.xpub.getXpubBalance();
     return balance;
   }
 
-  // eslint-disable-next-line class-methods-use-this
   async getAccountPendings(account: Account): Promise<TX[]> {
     const addresses = await account.xpub.getXpubAddresses();
     return flatten(
@@ -186,7 +175,6 @@ class BitcoinLikeWallet {
     );
   }
 
-  // eslint-disable-next-line class-methods-use-this
   async buildAccountTx(params: {
     fromAccount: Account;
     dest: string;
@@ -207,7 +195,6 @@ class BitcoinLikeWallet {
     return txInfo;
   }
 
-  // eslint-disable-next-line class-methods-use-this
   async signAccountTx(params: {
     btc: Btc;
     fromAccount: Account;
@@ -353,7 +340,6 @@ class BitcoinLikeWallet {
     return tx;
   }
 
-  // eslint-disable-next-line class-methods-use-this
   async broadcastTx(fromAccount: Account, tx: string): Promise<string> {
     const res = await fromAccount.xpub.broadcastTx(tx);
     return res.data.result;
@@ -402,7 +388,6 @@ class BitcoinLikeWallet {
     };
   }
 
-  // eslint-disable-next-line class-methods-use-this
   async exportToSerializedAccount(
     account: Account
   ): Promise<SerializedAccount> {
@@ -417,7 +402,6 @@ class BitcoinLikeWallet {
     };
   }
 
-  // eslint-disable-next-line class-methods-use-this
   exportToSerializedAccountSync(account: Account): SerializedAccount {
     const data = account.xpub.storage.exportSync();
 

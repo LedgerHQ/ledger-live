@@ -12,6 +12,7 @@ class BIP32 {
   constructor(
     publicKey: Buffer,
     chainCode: Buffer,
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
     network: any,
     depth = 0,
     index = 0
