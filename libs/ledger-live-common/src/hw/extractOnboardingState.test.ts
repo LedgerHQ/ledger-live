@@ -249,6 +249,21 @@ describe("@hw/extractOnboardingState", () => {
         });
       });
 
+      describe("and the user is on 'choose name' step", () => {
+        beforeEach(() => {
+          flagsBytes[3] = 12;
+        });
+
+        it("should return an onboarding step that is set at ready", () => {
+          const onboardingState = extractOnboardingState(flagsBytes);
+
+          expect(onboardingState).not.toBeNull();
+          expect(onboardingState?.currentOnboardingStep).toBe(
+            OnboardingStep.ChooseName
+          );
+        });
+      });
+
       describe("and the user finished the onboarding process", () => {
         beforeEach(() => {
           flagsBytes[3] = 11;

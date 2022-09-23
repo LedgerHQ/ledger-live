@@ -28,6 +28,7 @@ export enum OnboardingStep {
   RestoreSeed = "RESTORE_SEED", // path "restore seed" & currentSeedWordIndex available
   SafetyWarning = "SAFETY WARNING",
   Ready = "READY",
+  ChooseName = "CHOOSE_NAME",
 }
 
 const fromBitsToOnboardingStep = new Map<number, OnboardingStep>([
@@ -43,6 +44,7 @@ const fromBitsToOnboardingStep = new Map<number, OnboardingStep>([
   [9, OnboardingStep.RestoreSeed],
   [10, OnboardingStep.SafetyWarning],
   [11, OnboardingStep.Ready],
+  [12, OnboardingStep.ChooseName],
 ]);
 
 export type OnboardingState = {

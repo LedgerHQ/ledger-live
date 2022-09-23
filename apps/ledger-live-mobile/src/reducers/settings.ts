@@ -422,7 +422,7 @@ const handlers: Record<string, any> = {
   }),
   SET_FIRST_CONNECTION_HAS_DEVICE: (
     state: SettingsState,
-    payload?: boolean,
+    { payload }: { payload?: boolean },
   ) => ({
     ...state,
     firstConnectionHasDevice: payload,

@@ -6,6 +6,7 @@ import type { AppCandidate } from "../load/speculos";
 import {
   Account,
   AccountBridge,
+  AccountRaw,
   Operation,
   SignedOperation,
   SignOperationEvent,
@@ -167,4 +168,26 @@ export type MutationReport<T extends Transaction> = {
   finalDestinationOperation?: Operation;
   testDestinationDuration?: number;
   error?: Error;
+};
+
+export type MinimalSerializedMutationReport = {
+  appCandidate: AppCandidate;
+  mutationName: string | undefined;
+  accountId: string | undefined;
+  destinationId: string | undefined;
+  operationId: string | undefined;
+  error: string | undefined;
+};
+
+export type MinimalSerializedSpecReport = {
+  // spec.name
+  specName: string;
+  // minified version of accounts (we remove transactions from them)
+  accounts: AccountRaw[] | undefined;
+  fatalError: string | undefined;
+  mutations: MinimalSerializedMutationReport[] | undefined;
+};
+
+export type MinimalSerializedReport = {
+  results: Array<MinimalSerializedSpecReport>;
 };
