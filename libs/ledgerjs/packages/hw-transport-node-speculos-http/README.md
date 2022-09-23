@@ -4,7 +4,7 @@
 
 A transport for <https://github.com/LedgerHQ/speculos> Nano simulator using its HTTP API.
 
-[GitHub](https://github.com/LedgerHQ/ledgerjs/),
+[GitHub](https://github.com/LedgerHQ/ledger-live/),
 [Ledger Devs Discord](https://developers.ledger.com/discord-pro),
 [Developer Portal](https://developers.ledger.com/)
 
