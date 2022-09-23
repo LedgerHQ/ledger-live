@@ -160,6 +160,7 @@ export function SelectAccount({
                 alignItems="center"
                 marginLeft={6}
                 paddingTop={4}
+                paddingBottom={100}
               >
                 <BoxedIcon
                   size={24}
@@ -188,19 +189,17 @@ export function SelectAccount({
         name="Edit Source Account"
         provider={provider}
       />
-      <Flex>
-        <FilteredSearchBar
-          keys={["name", "unit.code", "token.name", "token.ticker"]}
-          inputWrapperStyle={[styles.searchBarContainer]}
-          list={allAccounts}
-          renderList={renderList}
-          renderEmptySearch={() => (
-            <Flex padding={4} alignItems="center">
-              <Text>{t("transfer.receive.noAccount")}</Text>
-            </Flex>
-          )}
-        />
-      </Flex>
+      <FilteredSearchBar
+        keys={["name", "unit.code", "token.name", "token.ticker"]}
+        inputWrapperStyle={[styles.searchBarContainer]}
+        list={allAccounts}
+        renderList={renderList}
+        renderEmptySearch={() => (
+          <Flex padding={4} alignItems="center">
+            <Text>{t("transfer.receive.noAccount")}</Text>
+          </Flex>
+        )}
+      />
     </KeyboardView>
   );
 }
