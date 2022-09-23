@@ -1,6 +1,4 @@
 import bchaddr from "bchaddrjs";
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
 import { toOutputScript } from "bitcoinjs-lib/src/address";
 import { InvalidAddress } from "@ledgerhq/errors";
 import Base from "./base";

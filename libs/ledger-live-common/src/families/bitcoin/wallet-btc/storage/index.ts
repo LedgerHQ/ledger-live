@@ -34,8 +34,6 @@ class BitcoinLikeStorage implements IStorage {
     ) {
       return undefined;
     }
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
     const tx: TX | undefined = findLast(
       this.accountIndex[`${txFilter.account}-${txFilter.index}`].map(
         (i) => this.txs[i]
@@ -43,7 +41,7 @@ class BitcoinLikeStorage implements IStorage {
       (t) => {
         return (
           typeof txFilter.confirmed === "undefined" ||
-          (txFilter.confirmed && t.block) ||
+          (txFilter.confirmed && !!t.block) ||
           (!txFilter.confirmed && !t.block)
         );
       }
@@ -123,12 +121,17 @@ class BitcoinLikeStorage implements IStorage {
   getUniquesAddresses(addressesFilter: {
     account?: number;
     index?: number;
-  }): { address: string; account: number; index: number }[] {
+  }): Address[] {
     // TODO: to speed up, create more useful indexes in appendTxs
     return uniqBy(
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      filter(this.txs, addressesFilter).map((tx: TX) => ({
+      filter(
+        this.txs,
+        (t) =>
+          (typeof addressesFilter.account === "undefined" ||
+            addressesFilter.account === t.account) &&
+          (typeof addressesFilter.index === "undefined" ||
+            addressesFilter.index === t.index)
+      ).map((tx: TX) => ({
         address: tx.address,
         account: tx.account,
         index: tx.index,
