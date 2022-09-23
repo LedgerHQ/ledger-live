@@ -86,7 +86,11 @@ export default function ProviderRate({
         swapVersion={SWAP_VERSION}
       />
       <Box horizontal justifyContent="space-between" fontSize={5}>
-        <Text variant="h5" style={{ textTransform: "uppercase", fontFamily: "Alpha" }}>
+        <Text
+          variant="h5"
+          color="neutral.c100"
+          style={{ textTransform: "uppercase", fontFamily: "Alpha" }}
+        >
           <Trans i18nKey="swap2.form.rates.title" />
         </Text>
         {countdown && (
