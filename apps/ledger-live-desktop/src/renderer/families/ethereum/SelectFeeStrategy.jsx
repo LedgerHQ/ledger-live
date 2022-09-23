@@ -1,5 +1,5 @@
 // @flow
-import React from "react";
+import React, { memo } from "react";
 import styled from "styled-components";
 import { useTranslation, Trans } from "react-i18next";
 import type { BigNumber } from "bignumber.js";
@@ -179,4 +179,4 @@ const SelectFeeStrategy = ({
   );
 };
 
-export default SelectFeeStrategy;
+export default memo(SelectFeeStrategy);

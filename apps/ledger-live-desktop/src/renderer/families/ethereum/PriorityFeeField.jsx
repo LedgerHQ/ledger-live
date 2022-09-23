@@ -3,8 +3,7 @@ import React, { useCallback, useMemo } from "react";
 import { BigNumber } from "bignumber.js";
 import invariant from "invariant";
 import styled from "styled-components";
-import { withTranslation, Trans } from "react-i18next";
-import type { TFunction } from "react-i18next";
+import { useTranslation } from "react-i18next";
 import type { Account, TransactionStatus } from "@ledgerhq/live-common/types/index";
 import type { Transaction } from "@ledgerhq/live-common/families/ethereum/types";
 import Label from "~/renderer/components/Label";
@@ -51,12 +50,12 @@ const FeesField = ({
   account,
   transaction,
   status,
-  updateTransaction,
-  t
-}: Props & { t: TFunction }) => {
+  updateTransaction
+}: Props) => {
   invariant(transaction.family === "ethereum", "FeeField: ethereum family expected");
 
   const bridge = getAccountBridge(account);
+  const { t } = useTranslation();
 
   const onPriorityFeeChange = useCallback(
     priorityFee => {
@@ -120,16 +119,11 @@ const FeesField = ({
         ) : null}
       </ErrorContainer>
       <Label>
-        <span>
-          <Trans
-            i18nKey="send.steps.details.suggestedPriorityFee"
-            values={{
-              lowPriorityFee: lowPriorityFeeValue,
-              highPriorityFee: highPriorityFeeValue,
-              unitName
-            }}
-          />
-        </span>
+        {t("send.steps.details.suggestedPriorityFee", {
+            lowPriorityFee: lowPriorityFeeValue,
+            highPriorityFee: highPriorityFeeValue,
+            unitName
+          })}
       </Label>
     </Box>
   );
@@ -144,4 +138,4 @@ const InputRight = styled(Box).attrs(() => ({
   padding-right: 10px;
 `;
 
-export default withTranslation()(FeesField);
+export default FeesField;
