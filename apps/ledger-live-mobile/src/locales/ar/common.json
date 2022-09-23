@@ -1682,7 +1682,8 @@
     "topGainers" : {
       "title" : "الرابحون في السوق (24 ساعة)",
       "seeMarket" : "رؤية الكل"
-    }
+    },
+    "walletBalance": "رصيد المحفظة"
   },
   "addAccountsModal" : {
     "ctaAdd" : "إضافة حسابات",
