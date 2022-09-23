@@ -53,7 +53,7 @@ setSupportedCurrencies([
   "moonbeam",
   "cronos",
   "songbird",
-  "flare"
+  "flare",
   "stacks",
 ]);
 
