@@ -1,5 +1,28 @@
 # @ledgerhq/live-common
 
+## 27.3.0-nightly.5
+
+### Patch Changes
+
+- Updated dependencies [[`ecac411d7a`](https://github.com/LedgerHQ/ledger-live/commit/ecac411d7aad6f4003503ba6259d7c25017ca7aa)]:
+  - @ledgerhq/cryptoassets@6.35.0-nightly.2
+  - @ledgerhq/devices@7.0.2-nightly.2
+  - @ledgerhq/errors@6.11.0-nightly.1
+  - @ledgerhq/hw-app-algorand@6.27.5-nightly.2
+  - @ledgerhq/hw-app-btc@8.1.0-nightly.2
+  - @ledgerhq/hw-app-cosmos@6.27.5-nightly.2
+  - @ledgerhq/hw-app-eth@6.29.8-nightly.3
+  - @ledgerhq/hw-app-polkadot@6.27.5-nightly.2
+  - @ledgerhq/hw-app-solana@6.27.5-nightly.2
+  - @ledgerhq/hw-app-str@6.27.5-nightly.2
+  - @ledgerhq/hw-app-tezos@6.27.5-nightly.2
+  - @ledgerhq/hw-app-trx@6.27.5-nightly.2
+  - @ledgerhq/hw-app-xrp@6.27.5-nightly.2
+  - @ledgerhq/hw-transport-mocker@6.27.5-nightly.2
+  - @ledgerhq/hw-transport-node-speculos@6.27.5-nightly.2
+  - @ledgerhq/hw-transport@6.27.5-nightly.2
+  - @ledgerhq/logs@6.10.1-nightly.1
+
 ## 27.3.0-nightly.4
 
 ### Patch Changes

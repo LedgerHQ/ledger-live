@@ -1,5 +1,24 @@
 # live-mobile
 
+## 3.9.0-nightly.5
+
+### Patch Changes
+
+- [#1332](https://github.com/LedgerHQ/ledger-live/pull/1332) [`768abf264a`](https://github.com/LedgerHQ/ledger-live/commit/768abf264a50d151661267b029a6d56c471de2b6) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Close individual NFT drawer should back to Gallery/Collection screen
+
+- Updated dependencies [[`ecac411d7a`](https://github.com/LedgerHQ/ledger-live/commit/ecac411d7aad6f4003503ba6259d7c25017ca7aa)]:
+  - @ledgerhq/devices@7.0.2-nightly.2
+  - @ledgerhq/errors@6.11.0-nightly.1
+  - @ledgerhq/hw-transport-http@6.27.5-nightly.2
+  - @ledgerhq/hw-transport@6.27.5-nightly.2
+  - @ledgerhq/logs@6.10.1-nightly.1
+  - @ledgerhq/react-native-hid@6.28.7-nightly.2
+  - @ledgerhq/react-native-hw-transport-ble@6.27.7-nightly.2
+  - @ledgerhq/types-cryptoassets@6.23.1-nightly.1
+  - @ledgerhq/types-devices@6.22.2-nightly.0
+  - @ledgerhq/types-live@6.24.1-nightly.1
+  - @ledgerhq/live-common@27.3.0-nightly.5
+
 ## 3.9.0-nightly.4
 
 ### Patch Changes

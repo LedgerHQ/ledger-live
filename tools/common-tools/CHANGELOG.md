@@ -1,5 +1,18 @@
 # live-common-tools
 
+## 0.2.8-nightly.5
+
+### Patch Changes
+
+- Updated dependencies [[`ecac411d7a`](https://github.com/LedgerHQ/ledger-live/commit/ecac411d7aad6f4003503ba6259d7c25017ca7aa)]:
+  - @ledgerhq/cryptoassets@6.35.0-nightly.2
+  - @ledgerhq/hw-transport-http@6.27.5-nightly.2
+  - @ledgerhq/hw-transport-web-ble@6.27.5-nightly.2
+  - @ledgerhq/hw-transport-webhid@6.27.5-nightly.2
+  - @ledgerhq/hw-transport-webusb@6.27.5-nightly.2
+  - @ledgerhq/hw-transport@6.27.5-nightly.2
+  - @ledgerhq/live-common@27.3.0-nightly.5
+
 ## 0.2.8-nightly.4
 
 ### Patch Changes
