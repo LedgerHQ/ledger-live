@@ -24,6 +24,7 @@ import FallbackCameraSend from "../FallbackCamera/FallbackCameraSend";
 import Main from "./MainNavigator";
 // eslint-disable-next-line import/no-cycle
 import { ErrorHeaderInfo } from "./BaseOnboardingNavigator";
+// eslint-disable-next-line import/no-cycle
 import SettingsNavigator from "./SettingsNavigator";
 // eslint-disable-next-line import/no-cycle
 import BuyDeviceNavigator from "./BuyDeviceNavigator";
@@ -52,7 +53,8 @@ import LendingEnableFlowNavigator from "./LendingEnableFlowNavigator";
 import LendingSupplyFlowNavigator from "./LendingSupplyFlowNavigator";
 import LendingWithdrawFlowNavigator from "./LendingWithdrawFlowNavigator";
 import NotificationCenterNavigator from "./NotificationCenterNavigator";
-import AnalyticsNavigator from "./AnalyticsNavigator";
+import AnalyticsAllocation from "../../screens/Analytics/Allocation";
+import AnalyticsOperations from "../../screens/Analytics/Operations";
 import NftNavigator from "./NftNavigator";
 import { getStackNavigatorConfig } from "../../navigation/navigatorConfig";
 import Account from "../../screens/Account";
@@ -60,8 +62,6 @@ import TransparentHeaderNavigationOptions from "../../navigation/TransparentHead
 import styles from "../../navigation/styles";
 import HeaderRightClose from "../HeaderRightClose";
 import StepHeader from "../StepHeader";
-import AccountHeaderTitle from "../../screens/Account/AccountHeaderTitle";
-import AccountHeaderRight from "../../screens/Account/AccountHeaderRight";
 import PortfolioHistory from "../../screens/Portfolio/PortfolioHistory";
 import RequestAccountNavigator from "./RequestAccountNavigator";
 import VerifyAccount from "../../screens/VerifyAccount";
@@ -86,6 +86,8 @@ import Learn from "../../screens/Learn";
 // eslint-disable-next-line import/no-cycle
 import { useNoNanoBuyNanoWallScreenOptions } from "../../context/NoNanoBuyNanoWall";
 import PostBuyDeviceSetupNanoWallScreen from "../../screens/PostBuyDeviceSetupNanoWallScreen";
+import MarketDetail from "../../screens/Market/MarketDetail";
+import CurrencySettings from "../../screens/Settings/CryptoAssets/Currencies/CurrencySettings";
 import WalletConnectNavigator from "./WalletConnectNavigator";
 import WalletConnectLiveAppNavigator from "./WalletConnectLiveAppNavigator";
 import CustomImageNavigator from "./CustomImageNavigator";
@@ -178,6 +180,15 @@ export default function BaseNavigator() {
         name={NavigatorName.Settings}
         component={SettingsNavigator}
         options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name={ScreenName.CurrencySettings}
+        component={CurrencySettings}
+        options={({ route }) => ({
+          title: route.params.headerTitle,
+          headerRight: () => null,
+        })}
+        {...noNanoBuyNanoWallScreenOptions}
       />
       <Stack.Screen
         name={NavigatorName.ReceiveFunds}
@@ -518,10 +529,19 @@ export default function BaseNavigator() {
         options={{ headerShown: false }}
       />
       <Stack.Screen
-        name={NavigatorName.Analytics}
-        component={AnalyticsNavigator}
+        name={ScreenName.AnalyticsAllocation}
+        component={AnalyticsAllocation}
         options={{
-          title: t("analytics.title"),
+          title: t("analytics.allocation.title"),
+          headerRight: () => null,
+          cardStyleInterpolator: CardStyleInterpolators.forVerticalIOS,
+        }}
+      />
+      <Stack.Screen
+        name={ScreenName.AnalyticsOperations}
+        component={AnalyticsOperations}
+        options={{
+          title: t("analytics.operations.title"),
           headerRight: () => null,
           cardStyleInterpolator: CardStyleInterpolators.forVerticalIOS,
         }}
@@ -546,13 +566,7 @@ export default function BaseNavigator() {
       <Stack.Screen
         name={ScreenName.Account}
         component={Account}
-        options={({ route, navigation }) => ({
-          headerLeft: () => (
-            <BackButton navigation={navigation} route={route} />
-          ),
-          headerTitle: () => <AccountHeaderTitle />,
-          headerRight: () => <AccountHeaderRight />,
-        })}
+        options={{ headerShown: false }}
       />
       <Stack.Screen
         name={ScreenName.ScanRecipient}
@@ -607,6 +621,13 @@ export default function BaseNavigator() {
         name={NavigatorName.Accounts}
         component={AccountsNavigator}
         options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name={ScreenName.MarketDetail}
+        component={MarketDetail}
+        options={{
+          headerShown: false,
+        }}
       />
       <Stack.Screen
         name={NavigatorName.CustomImage}

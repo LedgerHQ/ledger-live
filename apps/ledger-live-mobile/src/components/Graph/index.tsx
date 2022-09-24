@@ -17,10 +17,11 @@ type Props = {
   data?: ItemArray;
   color: string;
   isInteractive: boolean;
-  onItemHover?: (_: Item | null | undefined) => void;
-  mapValue: (_: Item) => number;
+  onItemHover?: (item: Item) => void;
+  mapValue: (item: Item) => number;
   shape?: string;
   verticalRangeRatio?: number;
+  fill: string;
 };
 const STROKE_WIDTH = 2;
 const FOCUS_RADIUS = 4;
@@ -35,6 +36,7 @@ function Graph({
   mapValue,
   onItemHover,
   verticalRangeRatio = 2,
+  fill,
 }: Props) {
   const { colors } = useTheme();
   const color = initialColor || colors.primary.c80;
@@ -58,7 +60,9 @@ function Graph({
     .x(d => x(d.date))
     .y0(d => yExtractor(d))
     .y1(
-      d => yExtractor(d) + Math.min((maxY - minY) / verticalRangeRatio, height),
+      d =>
+        yExtractor(d) +
+        Math.min((maxY - minY) / verticalRangeRatio, height + 20),
     )
     .curve(curve)(data);
   const line = d3shape
@@ -76,7 +80,7 @@ function Graph({
       <Defs>
         <DefGraph height={height} color={color} />
       </Defs>
-      <Path d={area} fill="url(#grad)" />
+      <Path d={area} fill={fill || "url(#grad)"} />
       <Path d={line} stroke={color} strokeWidth={STROKE_WIDTH} fill="none" />
     </Svg>
   );

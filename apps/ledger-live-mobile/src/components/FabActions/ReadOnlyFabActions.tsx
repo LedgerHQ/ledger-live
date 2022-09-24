@@ -3,10 +3,11 @@ import { useTranslation } from "react-i18next";
 import { Icons, Flex } from "@ledgerhq/native-ui";
 import { useNavigation } from "@react-navigation/native";
 
-import Button from "./wrappedUi/Button";
-import { ScreenName } from "../const";
-import useCurrency from "../helpers/useCurrency";
-import { track } from "../analytics";
+import Button from "../wrappedUi/Button";
+
+import { ScreenName } from "../../const";
+import useCurrency from "../../helpers/useCurrency";
+import { track } from "../../analytics";
 
 const iconBuy = Icons.PlusMedium;
 const iconReceive = Icons.ArrowBottomMedium;

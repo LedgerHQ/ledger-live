@@ -9,6 +9,7 @@ import { ensureContrast, withTheme } from "../../colors";
 type Props = {
   data: Array<DistributionItem>;
   size: number;
+  strokeWidth?: number;
   colors: any;
 };
 
@@ -17,6 +18,8 @@ class RingChart extends PureComponent<Props> {
   offsetX = 0;
   offsetY = 0;
   paths: any = {};
+  innerRadius = 0;
+  outerRadius = 30;
 
   constructor(props: Props) {
     super(props);
@@ -37,13 +40,12 @@ class RingChart extends PureComponent<Props> {
 
   reducer = (data: any, item: DistributionItem, index: number) => {
     const increment = item.distribution * 2 * Math.PI;
-    const innerRadius = 0;
 
     const pathData = this.arcGenerator({
       startAngle: data.angle,
       endAngle: data.angle + increment,
-      innerRadius,
-      outerRadius: 30,
+      innerRadius: this.innerRadius,
+      outerRadius: this.outerRadius,
     });
 
     const parsedItem = {
@@ -64,7 +66,7 @@ class RingChart extends PureComponent<Props> {
   };
 
   render() {
-    const { size, colors } = this.props;
+    const { size, colors, strokeWidth } = this.props;
 
     return (
       <View>
@@ -79,7 +81,12 @@ class RingChart extends PureComponent<Props> {
                 d={pathData}
               />
             ))}
-            <Circle cx={0} cy={0} r="27" fill={colors.background.main} />
+            <Circle
+              cx={0}
+              cy={0}
+              r={this.outerRadius - (strokeWidth || 3)}
+              fill={colors.background.main}
+            />
           </G>
         </Svg>
       </View>
