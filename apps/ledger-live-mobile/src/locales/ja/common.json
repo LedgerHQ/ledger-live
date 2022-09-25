@@ -1072,8 +1072,6 @@
     "stepLanguage" : {
       "title" : "言語を選択",
       "cta" : "続行",
-      "changeDeviceLanguage" : "{{language}}が{{deviceName}}でもご利用可能になりました",
-      "changeDeviceLanguageDescription" : "言語を{{language}}に変更しますか？",
       "warning" : {
         "title" : "ご利用ガイド（英語版）",
         "cta" : "了解！",
@@ -2275,11 +2273,8 @@
     "debug" : {
       "featureFlagsTitle" : "Ledger Liveで使用される定義済みの機能フラグ",
       "featureFlagsDesc" : "上書きされた値は、アプリが再起動されるとリセットされます。有効なJSON文字列のみが受け入れられます。",
-      "featureFlagsOverride" : "上書き",
       "featureFlagsEdit" : "編集",
-      "featureFlagsRestore" : "復元",
-      "featureFlagsDisplayValue" : "値を表示",
-      "featureFlagsHideValue" : "値を非表示"
+      "featureFlagsRestore" : "復元"
     }
   },
   "notifications" : {
@@ -2904,7 +2899,7 @@
       "amount" : "数量",
       "from" : "送付元",
       "to" : "送付先",
-      "infoTotalTitle" : "デビットの合計",
+      "infoTotalTitle" : "合計出金額",
       "infoTotalDesc" : "トランザクション数量と選択したネットワーク手数料を含みます。",
       "gasLimit" : "ガスリミット",
       "gasPrice" : "ガス価格",
@@ -3535,29 +3530,23 @@
     "no" : "希望しない",
     "languages" : {
       "en" : "英語",
-      "fr" : "Français",
-      "ru" : "Русский",
-      "es" : "Español",
+      "fr" : "フランス語",
+      "ru" : "ロシア語",
+      "es" : "スペイン語",
       "zh" : "中国人",
-      "de" : "Deutsch",
-      "tr" : "Türk",
+      "de" : "ドイツ語",
+      "tr" : "トルコ語",
       "ja" : "日本",
-      "ko" : "한국인",
-      "pt" : "Português"
+      "ko" : "韓国",
+      "pt" : "ポルトガル語"
     }
   },
   "deviceLocalization" : {
     "language" : "言語",
     "deviceLanguage" : "デバイスの言語",
-    "chooseLanguage" : "{{deviceName}}の言語を選択してください。",
     "changeLanguage" : "言語の変更",
-    "yesChangeLanguage" : "はい、言語を変更します。",
-    "allowLanguageInstallation" : "{{deviceName}}への言語のインストールを承認する",
-    "languageInstalled" : "言語が{{language}}に変更されました",
-    "firmwareUpdatePrompt" : {
-      "title" : "{{deviceName}}を{{language}}に設定しますか？",
-      "description" : "{{language}}が{{deviceName}}でご利用可能になりました。今すぐ設定できます。また、My Ledgerからいつでもデバイスの言語を変更することが可能です。"
-    },
+    "allowLanguageInstallation" : "言語のインストールを許可する",
+    "languageInstalled" : "デバイスの言語が{{language}}に変更されました",
     "installingLanguage" : "言語をインストール",
     "languages" : {
       "english" : "英語",
