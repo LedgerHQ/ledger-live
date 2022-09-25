@@ -276,7 +276,7 @@
     },
     "EthAppNftNotSupported" : {
       "title" : "이 장치에서 사용할 수 없는 작업",
-      "description" : "NFT 보내기 기능은 Nano X에서만 사용할 수 있습니다. Nano S로 NFT를 보내는 방법을 알아보려면 고객 지원 플랫폼을 방문해 주세요."
+      "description" : "NFT 보내기 기능은 Nano X에서만 사용할 수 있습니다. Nano S 또는 S Plus로 NFT를 보내는 방법을 알아보려면 고객 지원 플랫폼을 방문해 주세요."
     },
     "Touch ID Error" : {
       "title" : "생체 인증 실패",
@@ -1085,6 +1085,7 @@
       "nanoS" : "Nano S",
       "nanoSP" : "Nano S Plus",
       "nanoX" : "Nano X",
+      "nanoFTS" : "Nano FTS",
       "blue" : "Blue",
       "chooseDevice" : "장치 선택"
     },
@@ -1629,6 +1630,130 @@
       }
     }
   },
+  "syncOnboarding" : {
+    "title" : "{{deviceName}} 설정",
+    "estimatedTimeFormat" : "{{estimatedTime}}분",
+    "deviceSelection" : {
+      "title" : "어떤 장치를 소유하고 계시나요?",
+      "subtitle" : "Ledger Live로 설정하려는 Ledger 지갑을 선택하세요.",
+      "brand" : "Ledger",
+      "setupTime" : "{{time}} 분"
+    },
+    "scanning" : {
+      "title" : "{{productName}} 장치를 찾고 있습니다.",
+      "description" : "{{productName}} 장치가 잠금 해제 상태이며 블루투스 기능이 켜져 있는지 확인하세요."
+    },
+    "pairing" : {
+      "success" : {
+        "title" : "{{deviceName}} 장치와 페어링 완료"
+      },
+      "loading" : {
+        "title" : "{{deviceName}} 장치와 페어링",
+        "subtitle" : "{{productName}}에서 코드를 확인합니다"
+      },
+      "error" : {
+        "title" : "페어링 실패",
+        "subtitle" : "문제가 발생한 것 같습니다! 블루투스가 켜져 있고 {{productName}} 장치가 근처에 있는지 확인하세요."
+      }
+    },
+    "languageSelect" : {
+      "title" : "앱 언어"
+    },
+    "firmwareLanguageUpdateDrawer" : {
+      "title" : "{{productName}}에서 언어 변경",
+      "description" : "이제 Ledger Lives가 {{newLanguage}}로 지원됩니다. {{productName}}에서도 {{newLanguage}} 사용을 원하시나요?",
+      "updateCta" : "언어 변경",
+      "cancelCta" : "취소"
+    },
+    "desyncDrawer" : {
+      "title" : "{{productName}}에 연결할 수 없습니다.",
+      "description" : "{{productName}} 장치를 잠금 해제 상태로 가까이 두세요. 휴대전화의 블루투스가 활성화되어 있는지 확인하세요.",
+      "retryCta" : "다시 시도하세요",
+      "helpCta" : "도움 받기"
+    },
+    "resyncOverlay" : {
+      "content" : "{{productName}} 장치와의 연결이 끊어진 것 같습니다. 재연결"
+    },
+    "helpDrawer" : {
+      "title" : "설정 안내와 관련하 도움이 필요하신가요?",
+      "description" : "Lorem Elsass ipsum aliquam bissame Ober schae ffolsheim gehts messti de Bischheim tellus blottkopf, dui sed libero. hopla libero, placerat leo eget Gal",
+      "docCta" : "FAQ 보기",
+      "supportCta" : "상담원과 대화"
+    },
+    "pairingStep" : {
+      "title" : "{{productName}} 장치가 페어링되었습니다.",
+      "description" : "{{productName}} 설정을 계속 진행하며 여기서 단계별 안내를 다시 확인하세요."
+    },
+    "pinStep" : {
+      "title" : "PIN 선택",
+      "description" : "PIN은 {{productName}}에 대한 원치 않는 액세스를 방지합니다. 절대 공유하지 마세요.",
+      "warning" : "PIN을 알고 있는 상태에서 {{productName}}에 액세스할 수 있는 사람이면 누구나 자산에 손을 댈 수 있습니다."
+    },
+    "seedStep" : {
+      "title" : "복구 문구 설정",
+      "description" : "복구 문구는 24개의 단어로 이루어진 시크릿 리스트로, 개인 키 백업에 사용됩니다. {{productName}} 장치가 고유한 복구 문구를 생성합니다. Ledger는 복구 문구의 복사본을 보관하지 않습니다."
+    },
+    "softwareChecksSteps" : {
+      "title" : "운영 시스템 점검",
+      "genuineCheckRequestDrawer" : {
+        "title" : "{{productName}}의 정품 여부를 확인하세요.",
+        "checkCta" : "정품 여부 확인"
+      },
+      "allowManagerDrawer" : {
+        "wording" : "Ledger Live"
+      },
+      "genuineCheckCancelledDrawer" : {
+        "title" : "Nano에서 정품 확인이 취소되었습니다.",
+        "description" : "정품 확인은 {{productName}}의 사용 안전성을 확인하는 데 중요합니다.",
+        "retryCta" : "정품 확인을 재실행합니다",
+        "skipCta" : "다음에 결정하기"
+      },
+      "updateAvailableDrawer" : {
+        "title" : "새로운 소프트웨어를 찾았습니다.",
+        "description" : "최신 보안 기능에 액세스하려면 {{productName}}을(를) 업데이트하는 것이 좋습니다.",
+        "updateCta" : "업데이트"
+      },
+      "genuineCheckStep" : {
+        "inactive" : {
+          "title" : "정품 확인"
+        },
+        "active" : {
+          "title" : "{{productName}} 확인 중"
+        },
+        "completed" : {
+          "title" : "귀하의 {{productName}}은(는) 정품입니다"
+        },
+        "failed" : {
+          "title" : "장치 보안이 확인되지 않음"
+        }
+      },
+      "firmwareUpdateStep" : {
+        "inactive" : {
+          "title" : "소프트웨어 점검"
+        },
+        "active" : {
+          "title" : "소프트웨어 버전 확인"
+        },
+        "completed" : {
+          "updateAvailable" : {
+            "title" : "소프트웨어 버전 {{firmwareVersion}} 사용 가능"
+          },
+          "noUpdateAvailable" : {
+            "title" : "최신 소프트웨어 버전"
+          }
+        },
+        "failed" : {
+          "title" : "소프트웨어 업데이트에 실패했습니다"
+        }
+      }
+    },
+    "readyStep" : {
+      "title" : "{{productName}} 장치가 준비되었습니다."
+    },
+    "completion" : {
+      "title" : "이제 통제권은 귀하에게 있습니다"
+    }
+  },
   "tabs" : {
     "portfolio" : "지갑",
     "accounts" : "계정",
@@ -1687,9 +1812,9 @@
     }
   },
   "addAccountsModal" : {
+    "title" : "계정 추가",
     "ctaAdd" : "계정 추가",
     "ctaImport" : "데스크탑 계정 가져오기",
-    "title" : "암호화폐 추가",
     "description" : "Ledger에 직접 암호화폐를 추가하거나 Ledger Live 데스크탑에서 가져올 수 있습니다.",
     "add" : {
       "title" : "Ledger를 통해",
@@ -2263,7 +2388,46 @@
     "experimental" : {
       "title" : "실험 특징",
       "desc" : "다양한 실험 특징을 시험해 보고 의견을 나누어 주세요.",
-      "disclaimer" : "이는 기술에 대한 관심이 지대한 당사 커뮤니티에 \"있는 그대로\" 제공하는 실험적 기능으로, 언제든지 변경, 중단 또는 제거될 수 있습니다. 기능을 활성화할 경우, 온전히 귀하의 책임 하에 해당 기능을 사용한다는 사실에 동의하게 됩니다."
+      "disclaimer" : "이는 기술에 대한 관심이 지대한 당사 커뮤니티에 \"있는 그대로\" 제공하는 실험적 기능으로, 언제든지 변경, 중단 또는 제거될 수 있습니다. 기능을 활성화할 경우, 온전히 귀하의 책임 하에 해당 기능을 사용한다는 사실에 동의하게 됩니다.",
+      "experimentalFeatures" : {
+        "experimentalIntegrations" : {
+          "title" : "Experimental integrations",
+          "description" : "Use available experimental crypto assets integrations."
+        },
+        "developerMode" : {
+          "title" : "Developer mode",
+          "description" : "Show developer and testnet apps in the Manager."
+        },
+        "managerProvider" : {
+          "title" : "Manager provider",
+          "description" : "Changing the app provider in the Manager may make it impossible to install or uninstall apps on your Ledger device."
+        },
+        "experimentalExplorers" : {
+          "title" : "Experimental Explorers API",
+          "description" : "Try an upcoming version of Ledger's blockchain explorers. Changing this setting may affect the account balance and synchronization as well as the send feature."
+        },
+        "experimentalCountervalues" : {
+          "title" : "Experimental countervalues API",
+          "description" : "This may cause the countervalues displayed for your accounts to become incorrect."
+        },
+        "experimentalSwap" : {
+          "title" : "New SWAP interface",
+          "description" : "Use the new experimental swap interface"
+        }
+      },
+      "developerFeatures" : {
+        "experimentalApps" : {
+          "title" : "Allow experimental apps",
+          "description" : "Display and allow opening experimental tagged platform apps."
+        },
+        "staggingUrl" : {
+          "title" : "Learn staging URL",
+          "description" : "Use the staging URL for the Learn page."
+        },
+        "platformManifest" : {
+          "title" : "Load Platform Manifest"
+        }
+      }
     },
     "developer" : {
       "title" : "개발자",
@@ -2275,11 +2439,8 @@
     "debug" : {
       "featureFlagsTitle" : "Ledger Live에서 사용되는 정의된 기능 플래그",
       "featureFlagsDesc" : "앱을 다시 실행하면 재정의된 값이 다시 설정됩니다. 유효한 JSON 문자열만 허용됩니다.",
-      "featureFlagsOverride" : "재정의",
       "featureFlagsEdit" : "편집",
-      "featureFlagsRestore" : "복구",
-      "featureFlagsDisplayValue" : "값 표시하기",
-      "featureFlagsHideValue" : "값 숨기기"
+      "featureFlagsRestore" : "복구"
     }
   },
   "notifications" : {
@@ -3357,6 +3518,7 @@
       "appsInstalled" : "<0>{{number}}</0>개의 앱",
       "appsInstalled_plural" : "<0>{{number}}</0>개의 앱",
       "storageAvailable" : "이용 가능",
+      "noFreeSpace" : "No storage left",
       "appsToUpdate" : "<0>{{number}}</0>개의 업데이트",
       "appsToUpdate_plural" : "<0>{{number}}</0>개의 업데이트"
     },
