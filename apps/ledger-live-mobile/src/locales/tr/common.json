@@ -276,7 +276,7 @@
     },
     "EthAppNftNotSupported" : {
       "title" : "Bu işlem bu cihaz için mevcut değil",
-      "description" : "NFT gönderme özelliği yalnızca Nano X için mevcuttur. Nano S ile nasıl NFT gönderileceğini öğrenmek için lütfen müşteri destek platformumuzu ziyaret edin."
+      "description" : "Send NFT feature is only available for Nano X. Please visit our customer support platform to know how to send a NFT with a Nano S or S Plus."
     },
     "Touch ID Error" : {
       "title" : "Biyometrik kimlik doğrulaması başarısız oldu",
@@ -1085,6 +1085,7 @@
       "nanoS" : "Nano S",
       "nanoSP" : "Nano S Plus",
       "nanoX" : "Nano X",
+      "nanoFTS" : "Nano FTS",
       "blue" : "Blue",
       "chooseDevice" : "Cihazınızı seçin"
     },
@@ -1629,6 +1630,130 @@
       }
     }
   },
+  "syncOnboarding" : {
+    "title" : "{{deviceName}} cihazını kurun",
+    "estimatedTimeFormat" : "{{estimatedTime}} dk.",
+    "deviceSelection" : {
+      "title" : "Elinizdeki cihaz hangisi?",
+      "subtitle" : "Ledger Live ile kurmak istediğiniz Ledger cüzdanını seçin",
+      "brand" : "Ledger",
+      "setupTime" : "{{time}} dk"
+    },
+    "scanning" : {
+      "title" : "{{productName}} cihazınız aranıyor",
+      "description" : "Lütfen {{productName}} cihazınızın kilidinin açıldığından ve Bluetooth'un etkin olduğundan emin olun"
+    },
+    "pairing" : {
+      "success" : {
+        "title" : "{{deviceName}} ile eşleştirildi"
+      },
+      "loading" : {
+        "title" : "{{deviceName}} ile eşleştiriliyor",
+        "subtitle" : "{{productName}} cihazınızdaki kodu onaylayın"
+      },
+      "error" : {
+        "title" : "Eşleştirme başarısız",
+        "subtitle" : "Bir sorun oluştu! Bluetooth'unuzun açık ve {{productName}} cihazınızın yakında olduğundan emin olun"
+      }
+    },
+    "languageSelect" : {
+      "title" : "Uygulama Dili"
+    },
+    "firmwareLanguageUpdateDrawer" : {
+      "title" : "{{productName}} cihazınızın dilini değiştirin",
+      "description" : "Ledger Live artık {{newLanguage}}. {{productName}} cihazınızı da {{newLanguage}} kullanmak ister misiniz?",
+      "updateCta" : "Dili değiştir",
+      "cancelCta" : "İptal et"
+    },
+    "desyncDrawer" : {
+      "title" : "{{productName}} cihazınıza bağlanamadık",
+      "description" : "Lütfen {{productName}} cihazınızın yakında olduğundan ve kilidinin açıldığından emin olun. Cep telefonunuzun Bluetooth bağlantısının açık olup olmadığını kontrol edin",
+      "retryCta" : "Tekrar deneyin",
+      "helpCta" : "Yardım alın"
+    },
+    "resyncOverlay" : {
+      "content" : "{{productName}} ile bağlantınız kesilmiş. Yeniden bağlanılıyor"
+    },
+    "helpDrawer" : {
+      "title" : "Kurulum kılavuzuyla ilgili yardıma mı ihtiyacınız var?",
+      "description" : "Lorem Elsass ipsum aliquam bissame Ober schae ffolsheim gehts messti de Bischheim tellus blottkopf, dui sed libero. hopla libero, placerat leo eget Gal",
+      "docCta" : "SSS sayfalarımızı görüntüleyin",
+      "supportCta" : "Bir temsilciyle görüş"
+    },
+    "pairingStep" : {
+      "title" : "{{productName}} eşleştirildi",
+      "description" : "{{productName}} cihazınızı kurmaya devam edin ve adım adım kılavuzu görmek için buraya tekrar bakın"
+    },
+    "pinStep" : {
+      "title" : "PIN Kodunuzu seçin",
+      "description" : "PIN Kodunuz {{productName}} cihazınıza istenmeyen kişilerin erişmesine engel olur. Bunu asla paylaşmayın",
+      "warning" : "PIN Kodunuzu bilen ve {{productName}} cihazınıza erişebilen herkes varlıklarınızı sonsuza dek çalabilir"
+    },
+    "seedStep" : {
+      "title" : "Kurtarma ifadenizi ayarlayın",
+      "description" : "Kurtarma ifadeniz, özel anahtarlarınızı yedekleyen 24 kelimeden oluşan gizli bir listedir. {{productName}} cihazınız benzersiz bir kurtarma ifadesi oluşturur. Ledger bunun bir kopyasını saklamaz"
+    },
+    "softwareChecksSteps" : {
+      "title" : "İşletim sistemi kontrolü",
+      "genuineCheckRequestDrawer" : {
+        "title" : "{{productName}} cihazınızın orijinal olduğundan emin olalım",
+        "checkCta" : "Orijinalliği kontrol et"
+      },
+      "allowManagerDrawer" : {
+        "wording" : "Ledger Live"
+      },
+      "genuineCheckCancelledDrawer" : {
+        "title" : "Orijinallik kontrolü Nano'nuzda iptal edildi",
+        "description" : "Bu kontrol, {{productName}} cihazınızın güvenli bir şekilde kullanılabileceğinden emin olmak için önemlidir",
+        "retryCta" : "Orijinallik kontrolünü tekrar çalıştırın",
+        "skipCta" : "Belki sonra"
+      },
+      "updateAvailableDrawer" : {
+        "title" : "Yeni yazılım bulundu",
+        "description" : "En yeni güvenlik özelliklerine erişmek için {{productName}} cihazınızı güncellemenizi önemle tavsiye ederiz",
+        "updateCta" : "Güncelle"
+      },
+      "genuineCheckStep" : {
+        "inactive" : {
+          "title" : "Orijinallik Kontrolü"
+        },
+        "active" : {
+          "title" : "{{productName}} kontrol ediliyor"
+        },
+        "completed" : {
+          "title" : "{{productName}} cihazınız orijinal"
+        },
+        "failed" : {
+          "title" : "Cihaz güvenliği kontrol edilmedi"
+        }
+      },
+      "firmwareUpdateStep" : {
+        "inactive" : {
+          "title" : "Yazılım kontrolü"
+        },
+        "active" : {
+          "title" : "Yazılım sürümü kontrol ediliyor"
+        },
+        "completed" : {
+          "updateAvailable" : {
+            "title" : "{{firmwareVersion}} yazılım sürümü mevcut"
+          },
+          "noUpdateAvailable" : {
+            "title" : "Yazılım sürümü güncel"
+          }
+        },
+        "failed" : {
+          "title" : "Yazılım güncellenemedi"
+        }
+      }
+    },
+    "readyStep" : {
+      "title" : "{{productName}} hazır"
+    },
+    "completion" : {
+      "title" : "Artık kontrol sizde"
+    }
+  },
   "tabs" : {
     "portfolio" : "Cüzdan",
     "accounts" : "Hesaplar",
@@ -1687,17 +1812,17 @@
     }
   },
   "addAccountsModal" : {
+    "title" : "Add account",
     "ctaAdd" : "Hesap ekle",
     "ctaImport" : "Masaüstü hesaplarını içe aktar",
-    "title" : "Kripto Ekle",
-    "description" : "Kriptoları doğrudan Ledger'ınızla eklemeyi seçebilir veya bunları Ledger Live Desktop'tan içe aktarabilirsiniz.",
+    "description" : "You can choose to add crypto directly with your Ledger, or import them from Ledger Live Desktop.",
     "add" : {
       "title" : "Ledger'ınızla ekleyin",
-      "description" : "Varlıkları Ledger'ınızla ekleyin veya içe aktarın"
+      "description" : "Create or import asset with your Ledger"
     },
     "import" : {
       "title" : "Masaüstünden içe aktarın",
-      "description" : "Varlıkları Ledger Live Desktop'tan içe aktarın"
+      "description" : "Import asset from Ledger Live Desktop"
     }
   },
   "byteSize" : {
@@ -2263,7 +2388,46 @@
     "experimental" : {
       "title" : "Deneysel özellikler",
       "desc" : "Deneysel özelliklere bakıp ne düşündüğünüzü bize bildirin.",
-      "disclaimer" : "Bu Deneysel özellikleri, teknoloji tutkunu topluluğumuzun test edebilmesi için \"olduğu gibi\" sunuyoruz. Herhangi bir zamanda değişebilir, bozulabilir veya kaldırılabilirler. Bu özellikleri etkinleştirdiğinizde tüm riskin size ait olduğunu kabul etmiş olursunuz."
+      "disclaimer" : "Bu Deneysel özellikleri, teknoloji tutkunu topluluğumuzun test edebilmesi için \"olduğu gibi\" sunuyoruz. Herhangi bir zamanda değişebilir, bozulabilir veya kaldırılabilirler. Bu özellikleri etkinleştirdiğinizde tüm riskin size ait olduğunu kabul etmiş olursunuz.",
+      "experimentalFeatures" : {
+        "experimentalIntegrations" : {
+          "title" : "Deneysel entegrasyonlar",
+          "description" : "Mevcut deneysel kripto varlık entegrasyonlarını kullanın."
+        },
+        "developerMode" : {
+          "title" : "Geliştirici modu",
+          "description" : "Yönetici sayfasında geliştirici ve testnet uygulamalarını gösterir."
+        },
+        "managerProvider" : {
+          "title" : "Yönetici sağlayıcısı",
+          "description" : "Yönetici'de uygulama sağlayıcısını değiştirmek, Ledger cihazınıza uygulama yüklemeyi veya kaldırmayı imkansız hale getirebilir."
+        },
+        "experimentalExplorers" : {
+          "title" : "Deneysel Tarayıcılar API'ı",
+          "description" : "Ledger'ın blok zinciri tarayıcılarının gelecek bir sürümünü deneyin. Bu ayarın değiştirilmesi, hesap bakiyesi ve senkronizasyonun yanı sıra gönderme özelliğini de etkileyebilir."
+        },
+        "experimentalCountervalues" : {
+          "title" : "Deneysel karşı değerler API'ı",
+          "description" : "Bu, hesaplarınız için görüntülenen karşı değerlerin hatalı gözükmesine neden olabilir."
+        },
+        "experimentalSwap" : {
+          "title" : "Yeni TAKAS arayüzü",
+          "description" : "Yeni ve deneysel takas arayüzünü kullanın"
+        }
+      },
+      "developerFeatures" : {
+        "experimentalApps" : {
+          "title" : "Deneysel uygulamalara izin ver",
+          "description" : "Deneysel etiketli platform uygulamalarını görüntüleme ve açmaya izin verin."
+        },
+        "staggingUrl" : {
+          "title" : "Test ortamı URL'sini öğrenin",
+          "description" : "Öğrenin sayfası için test ortamı URL'sini kullanın."
+        },
+        "platformManifest" : {
+          "title" : "Platform Manifest Dosyasını Yükleyin"
+        }
+      }
     },
     "developer" : {
       "title" : "Geliştiriciler için",
@@ -2275,11 +2439,8 @@
     "debug" : {
       "featureFlagsTitle" : "Ledger Live'da kullanılan tanımlı özellik bayrakları",
       "featureFlagsDesc" : "Uygulama yeniden başlatılırsa geçersiz bırakılan değerler sıfırlanacaktır. Sadece geçerli JSON dizeleri kabul edilecektir.",
-      "featureFlagsOverride" : "Geçersiz bırak",
       "featureFlagsEdit" : "Düzenle",
-      "featureFlagsRestore" : "Geri yükle",
-      "featureFlagsDisplayValue" : "Değeri göster",
-      "featureFlagsHideValue" : "Değeri gizle"
+      "featureFlagsRestore" : "Geri yükle"
     }
   },
   "notifications" : {
@@ -3357,6 +3518,7 @@
       "appsInstalled" : "<0>{{number}}</0> uygulama",
       "appsInstalled_plural" : "<0>{{number}}</0> uygulama",
       "storageAvailable" : "kullanılabilir",
+      "noFreeSpace" : "No storage left",
       "appsToUpdate" : "<0>{{number}}</0> güncelleme",
       "appsToUpdate_plural" : "<0>{{number}}</0> güncelleme"
     },
@@ -3535,15 +3697,15 @@
     "no" : "Şimdilik kalsın",
     "languages" : {
       "en" : "İngilizce",
-      "fr" : "Français",
-      "ru" : "Русский",
-      "es" : "Español",
-      "zh" : "中国人",
-      "de" : "Deutsch",
-      "tr" : "Türk",
-      "ja" : "日本",
-      "ko" : "한국인",
-      "pt" : "Português"
+      "fr" : "Fransızca",
+      "ru" : "Rusça",
+      "es" : "İspanyolca",
+      "zh" : "Çince",
+      "de" : "Almanca",
+      "tr" : "Türkçe",
+      "ja" : "Japonca",
+      "ko" : "Korece",
+      "pt" : "Portekizce"
     }
   },
   "deviceLocalization" : {
