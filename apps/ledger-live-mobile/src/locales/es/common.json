@@ -276,7 +276,7 @@
     },
     "EthAppNftNotSupported" : {
       "title" : "Operación no disponible en este dispositivo",
-      "description" : "La función Enviar NFT sólo está disponible en el Nano X. Visita nuestra plataforma de soporte al cliente para saber cómo enviar NFTs con un Nano S."
+      "description" : "La función Enviar NFT solo está disponible en el Nano X. Visita nuestra plataforma de soporte al cliente para saber cómo enviar NFTs con un Nano S o S Plus."
     },
     "Touch ID Error" : {
       "title" : "La autenticación biométrica ha fallado",
@@ -1085,6 +1085,7 @@
       "nanoS" : "Nano S",
       "nanoSP" : "Nano S Plus",
       "nanoX" : "Nano X",
+      "nanoFTS" : "Nano FTS",
       "blue" : "Blue",
       "chooseDevice" : "Elige tu dispositivo"
     },
@@ -1629,6 +1630,130 @@
       }
     }
   },
+  "syncOnboarding" : {
+    "title" : "Configurar {{deviceName}}",
+    "estimatedTimeFormat" : "{{estimatedTime}} min",
+    "deviceSelection" : {
+      "title" : "¿Qué dispositivo tienes?",
+      "subtitle" : "Elige la billetera Ledger que quieres configurar con Ledger Live",
+      "brand" : "Ledger",
+      "setupTime" : "{{time}} min"
+    },
+    "scanning" : {
+      "title" : "Buscando tu {{productName}}",
+      "description" : "Asegúrate de que tu {{productName}} esté desbloqueado y el Bluetooth habilitado"
+    },
+    "pairing" : {
+      "success" : {
+        "title" : "Emparejado con {{deviceName}}"
+      },
+      "loading" : {
+        "title" : "Emparejando con {{deviceName}}",
+        "subtitle" : "Confirma el código en tu {{productName}}"
+      },
+      "error" : {
+        "title" : "Emparejamiento fallido",
+        "subtitle" : "Parece que algo ha salido mal. Comprueba que el Bluetooth esté activado y tu {{productName}} esté cerca."
+      }
+    },
+    "languageSelect" : {
+      "title" : "Idioma de la aplicación"
+    },
+    "firmwareLanguageUpdateDrawer" : {
+      "title" : "Cambia el idioma en tu {{productName}}",
+      "description" : "Ledger Live está ahora disponible en {{newLanguage}}. ¿Quieres usar tu {{productName}} en {{newLanguage}} también?",
+      "updateCta" : "Cambiar idioma",
+      "cancelCta" : "Cancelar"
+    },
+    "desyncDrawer" : {
+      "title" : "No se ha podido establecer la conexión con tu {{productName}}",
+      "description" : "Asegúrate de que tu {{productName}} esté cerca y desbloqueado. Comprueba si el Bluetooth está habilitado en tu teléfono móvil.",
+      "retryCta" : "Inténtalo de nuevo",
+      "helpCta" : "Obtener ayuda"
+    },
+    "resyncOverlay" : {
+      "content" : "Parece que se ha perdido la conexión con tu {{productName}}. Volviendo a conectar"
+    },
+    "helpDrawer" : {
+      "title" : "¿Necesitas ayuda con el manual de configuración?",
+      "description" : "Lorem Elsass ipsum aliquam bissame Ober schae ffolsheim gehts messti de Bischheim tellus blottkopf, dui sed libero. hopla libero, placerat leo eget Gal",
+      "docCta" : "Ver las preguntas frecuentes",
+      "supportCta" : "Hablar con una persona"
+    },
+    "pairingStep" : {
+      "title" : "{{productName}} está emparejado.",
+      "description" : "Sigue configurando tu {{productName}} y regresa aquí para obtener ayuda paso a paso."
+    },
+    "pinStep" : {
+      "title" : "Elige tu PIN",
+      "description" : "El PIN evita el acceso no deseado a tu {{productName}}. No lo compartas con nadie.",
+      "warning" : "Cualquiera que conozca tu PIN y tenga acceso a tu {{productName}} podrá robarte tus activos de forma permanente."
+    },
+    "seedStep" : {
+      "title" : "Establece tu Frase de recuperación",
+      "description" : "Tu Frase de recuperación es una lista secreta de 24 Palabras que genera una copia de respaldo de tus claves privadas. Tu {{productName}} genera una Frase de recuperación única. Ledger no conserva ninguna copia."
+    },
+    "softwareChecksSteps" : {
+      "title" : "Comprobación del sistema operativo",
+      "genuineCheckRequestDrawer" : {
+        "title" : "Vamos a asegurarnos de que tu {{productName}} es auténtico.",
+        "checkCta" : "Comprobar la autenticidad"
+      },
+      "allowManagerDrawer" : {
+        "wording" : "Ledger Live"
+      },
+      "genuineCheckCancelledDrawer" : {
+        "title" : "Se ha cancelado la comprobación de autenticidad en tu Nano",
+        "description" : "Es importante que hagas esta comprobación para asegurarte de que es seguro usar tu {{productName}}",
+        "retryCta" : "Volver a ejecutar la comprobación de autenticidad",
+        "skipCta" : "Quizás más tarde"
+      },
+      "updateAvailableDrawer" : {
+        "title" : "Nuevo software encontrado",
+        "description" : "Para acceder a las últimas funciones de seguridad, te recomendamos encarecidamente que actualices tu {{productName}}",
+        "updateCta" : "Actualizar"
+      },
+      "genuineCheckStep" : {
+        "inactive" : {
+          "title" : "Comprobación de autenticidad"
+        },
+        "active" : {
+          "title" : "Comprobando {{productName}}"
+        },
+        "completed" : {
+          "title" : "Tu {{productName}} es auténtico"
+        },
+        "failed" : {
+          "title" : "Seguridad del dispositivo no comprobada"
+        }
+      },
+      "firmwareUpdateStep" : {
+        "inactive" : {
+          "title" : "Comprobación de software"
+        },
+        "active" : {
+          "title" : "Comprobando la versión de software"
+        },
+        "completed" : {
+          "updateAvailable" : {
+            "title" : "Versión de firmware {{firmwareVersion}} disponible"
+          },
+          "noUpdateAvailable" : {
+            "title" : "Versión de software actualizada"
+          }
+        },
+        "failed" : {
+          "title" : "Error al actualizar el software"
+        }
+      }
+    },
+    "readyStep" : {
+      "title" : "{{productName}} está listo"
+    },
+    "completion" : {
+      "title" : "Ahora tienes el control"
+    }
+  },
   "tabs" : {
     "portfolio" : "Billetera",
     "accounts" : "Cuentas",
@@ -1687,13 +1812,13 @@
     }
   },
   "addAccountsModal" : {
+    "title" : "Agregar cuenta",
     "ctaAdd" : "Agregar cuentas",
     "ctaImport" : "Importar cuentas desde Desktop",
-    "title" : "Agregar criptomonedas",
     "description" : "Puedes elegir añadir cripto directamente desde tu Ledger, o importarlas desde Ledger Live Desktop.",
     "add" : {
       "title" : "Con tu Ledger",
-      "description" : "Crea o importa activos con tu Ledger"
+      "description" : "Crear o importar activos con tu Ledger"
     },
     "import" : {
       "title" : "Importar desde Desktop",
@@ -2263,7 +2388,46 @@
     "experimental" : {
       "title" : "Funciones experimentales",
       "desc" : "Prueba las funciones experimentales y dinos qué te parecen.",
-      "disclaimer" : "Estas son funciones experimentales que ofrecemos “tal como están” para que nuestra comunidad de expertos tecnológicos las pruebe. Es posible que fallen, sufran cambios o sean eliminadas en cualquier momento. Al habilitarlas, aceptas usarlas bajo tu responsabilidad."
+      "disclaimer" : "Estas son funciones experimentales que ofrecemos “tal como están” para que nuestra comunidad de expertos tecnológicos las pruebe. Es posible que fallen, sufran cambios o sean eliminadas en cualquier momento. Al habilitarlas, aceptas usarlas bajo tu responsabilidad.",
+      "experimentalFeatures" : {
+        "experimentalIntegrations" : {
+          "title" : "Integraciones experimentales",
+          "description" : "Utilizar integraciones experimentales de actrivos cripto disponibles."
+        },
+        "developerMode" : {
+          "title" : "Modo de desarrollador",
+          "description" : "Mostrar aplicaciones de desarrollador y testnet en el Manager."
+        },
+        "managerProvider" : {
+          "title" : "Proveedor de Manager",
+          "description" : "Cambiar el proveedor de aplicaciones en el Manager puede imposibilitar la instalación o desinstalación de aplicaciones en tu dispositivo Ledger."
+        },
+        "experimentalExplorers" : {
+          "title" : "API de Experimental Explorers",
+          "description" : "Prueba la siguiente versión de los exploradores de cadena de bloques de Ledger. La modificación de esta configuración puede afectar el saldo de la cuenta y la sincronización, como así también la opción de envío."
+        },
+        "experimentalCountervalues" : {
+          "title" : "API experimental de contrapartes",
+          "description" : "Puede provocar que las contrapartes que se muestran de tus cuentas no sean las correctas."
+        },
+        "experimentalSwap" : {
+          "title" : "Nueva interfaz de PERMUTA",
+          "description" : "Usa la nueva interfaz experimental de permuta"
+        }
+      },
+      "developerFeatures" : {
+        "experimentalApps" : {
+          "title" : "Permitir aplicaciones experimentales",
+          "description" : "Mostrar y permitir la utilización de aplicaciones de plataforma etiquetadas como experimentales."
+        },
+        "staggingUrl" : {
+          "title" : "URL de ensayo de la página Learn",
+          "description" : "Usa la URL de ensayo para la página Learn."
+        },
+        "platformManifest" : {
+          "title" : "Carga el Manifiesto de la plataforma"
+        }
+      }
     },
     "developer" : {
       "title" : "Desarrollador",
@@ -2275,11 +2439,8 @@
     "debug" : {
       "featureFlagsTitle" : "Marcas de funciones definidas que se usan en Ledger Live",
       "featureFlagsDesc" : "Los valores anulados se restablecerán si se vuelve a iniciar la aplicación. Solo se aceptarán las cadenas JSON válidas.",
-      "featureFlagsOverride" : "Anular",
       "featureFlagsEdit" : "Editar",
-      "featureFlagsRestore" : "Restaurar",
-      "featureFlagsDisplayValue" : "Mostrar valor",
-      "featureFlagsHideValue" : "Ocultar valor"
+      "featureFlagsRestore" : "Restaurar"
     }
   },
   "notifications" : {
@@ -3357,6 +3518,7 @@
       "appsInstalled" : "<0>{{number}}</0> aplicación",
       "appsInstalled_plural" : "<0>{{number}}</0> aplicaciones",
       "storageAvailable" : "disponible",
+      "noFreeSpace" : "Sin almacenamiento disponible",
       "appsToUpdate" : "<0>{{number}}</0> actualización",
       "appsToUpdate_plural" : "<0>{{number}}</0> actualizaciones"
     },
