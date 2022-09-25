@@ -1072,8 +1072,6 @@
     "stepLanguage" : {
       "title" : "Selecione seu idioma",
       "cta" : "Continuar",
-      "changeDeviceLanguage" : "{{language}} também está disponível para a sua {{deviceName}}",
-      "changeDeviceLanguageDescription" : "Você gostaria de mudar o seu idioma para {{language}}?",
       "warning" : {
         "title" : "Começar em inglês",
         "cta" : "Entendi!",
@@ -2275,11 +2273,8 @@
     "debug" : {
       "featureFlagsTitle" : "Marcadores definidos usados no Ledger Live",
       "featureFlagsDesc" : "Valores sobrepostos serão redefinidos se o aplicativo for reexecutado. Apenas strings JSON válidas serão aceitas.",
-      "featureFlagsOverride" : "Sobrepor",
       "featureFlagsEdit" : "Editar",
-      "featureFlagsRestore" : "Restaurar",
-      "featureFlagsDisplayValue" : "Exibir Valor",
-      "featureFlagsHideValue" : "Ocultar Valor"
+      "featureFlagsRestore" : "Restaurar"
     }
   },
   "notifications" : {
@@ -3549,15 +3544,9 @@
   "deviceLocalization" : {
     "language" : "Idioma",
     "deviceLanguage" : "Idioma do dispositivo",
-    "chooseLanguage" : "Escolha um idioma para sua {{deviceName}}.",
     "changeLanguage" : "Mudar Idioma",
-    "yesChangeLanguage" : "Sim, mudar idioma",
-    "allowLanguageInstallation" : "Permitir a instalação do idioma na {{deviceName}}",
-    "languageInstalled" : "Idioma alterado para {{language}}",
-    "firmwareUpdatePrompt" : {
-      "title" : "Colocar sua {{deviceName}} em {{language}}?",
-      "description" : "{{language}} agora está disponível para sua {{deviceName}}. Você pode configurar agora ou mudar o idioma do seu dispositivo a qualquer momento no My Ledger."
-    },
+    "allowLanguageInstallation" : "Permitir instalação do idioma",
+    "languageInstalled" : "O idioma do dispositivo mudou para {{language}}.",
     "installingLanguage" : "Instalando Idioma",
     "languages" : {
       "english" : "Inglês",
