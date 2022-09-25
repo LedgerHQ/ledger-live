@@ -628,7 +628,7 @@ PODS:
     - ZXingObjC/Core
 
 DEPENDENCIES:
-  - BleTransport (from `https://github.com/LedgerHQ/hw-transport-ios-ble.git`, commit `fda2e9a3ef2634fcdc4ab68cfe2c3db229f1d240`)
+  - BleTransport (from `https://github.com/LedgerHQ/hw-transport-ios-ble.git`, commit `74f0e90746b88ad6187a4b5a178cbdd0f31a5864`)
   - "boost (from `../../../node_modules/.pnpm/react-native@0.68.2_qiqqwmyv63yhnuboofexv3s7x4/node_modules/react-native/third-party-podspecs/boost.podspec`)"
   - "DoubleConversion (from `../../../node_modules/.pnpm/react-native@0.68.2_qiqqwmyv63yhnuboofexv3s7x4/node_modules/react-native/third-party-podspecs/DoubleConversion.podspec`)"
   - "EXBarCodeScanner (from `../../../node_modules/.pnpm/expo-barcode-scanner@11.2.1_expo@43.0.5/node_modules/expo-barcode-scanner/ios`)"
@@ -783,7 +783,7 @@ SPEC REPOS:
 
 EXTERNAL SOURCES:
   BleTransport:
-    :commit: fda2e9a3ef2634fcdc4ab68cfe2c3db229f1d240
+    :commit: 74f0e90746b88ad6187a4b5a178cbdd0f31a5864
     :git: https://github.com/LedgerHQ/hw-transport-ios-ble.git
   boost:
     :podspec: "../../../node_modules/.pnpm/react-native@0.68.2_qiqqwmyv63yhnuboofexv3s7x4/node_modules/react-native/third-party-podspecs/boost.podspec"
@@ -952,7 +952,7 @@ EXTERNAL SOURCES:
 
 CHECKOUT OPTIONS:
   BleTransport:
-    :commit: fda2e9a3ef2634fcdc4ab68cfe2c3db229f1d240
+    :commit: 74f0e90746b88ad6187a4b5a178cbdd0f31a5864
     :git: https://github.com/LedgerHQ/hw-transport-ios-ble.git
 
 SPEC CHECKSUMS:
@@ -1079,6 +1079,6 @@ SPEC CHECKSUMS:
   YogaKit: f782866e155069a2cca2517aafea43200b01fd5a
   ZXingObjC: fdbb269f25dd2032da343e06f10224d62f537bdb
 
-PODFILE CHECKSUM: e3ffad4f6d7032b7a4e73d15283267adc0747439
+PODFILE CHECKSUM: cd49c31db81f901fbe83f66a55d57731aa368198
 
 COCOAPODS: 1.11.2

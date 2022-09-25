@@ -57,7 +57,7 @@ target 'ledgerlivemobile' do
   
   # Double check if we need to be overriding this here
   pod 'Starscream', '~> 4.0.0'
-  pod 'BleTransport', :git => 'https://github.com/LedgerHQ/hw-transport-ios-ble.git', :commit => 'fda2e9a3ef2634fcdc4ab68cfe2c3db229f1d240'
+  pod 'BleTransport', :git => 'https://github.com/LedgerHQ/hw-transport-ios-ble.git', :commit => '74f0e90746b88ad6187a4b5a178cbdd0f31a5864'
     
   # Enables Flipper.
   #
