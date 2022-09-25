@@ -276,7 +276,7 @@
     },
     "EthAppNftNotSupported" : {
       "title" : "Операция недоступна на этом устройстве",
-      "description" : "Функция отправки NFT доступна только в Nano X. Пожалуйста, обратитесь в Поддержку, чтобы узнать, как отправлять NFT с Nano S."
+      "description" : "Send NFT feature is only available for Nano X. Please visit our customer support platform to know how to send a NFT with a Nano S or S Plus."
     },
     "Touch ID Error" : {
       "title" : "Ошибка биометрической аутентификации",
@@ -1085,6 +1085,7 @@
       "nanoS" : "Nano S",
       "nanoSP" : "Nano S Plus",
       "nanoX" : "Nano X",
+      "nanoFTS" : "Nano FTS",
       "blue" : "Blue",
       "chooseDevice" : "Выберите устройство"
     },
@@ -1629,6 +1630,130 @@
       }
     }
   },
+  "syncOnboarding" : {
+    "title" : "Настройка {{deviceName}}",
+    "estimatedTimeFormat" : "{{estimatedTime}} минут",
+    "deviceSelection" : {
+      "title" : "Какое у вас устройство?",
+      "subtitle" : "Какое устройство Ledger настроим с помощью Ledger Live?",
+      "brand" : "Ledger",
+      "setupTime" : "{{time}} мин."
+    },
+    "scanning" : {
+      "title" : "Поиск {{productName}}",
+      "description" : "Обязательно разблокируйте {{productName}} и включите Bluetooth"
+    },
+    "pairing" : {
+      "success" : {
+        "title" : "Подключено к {{deviceName}}"
+      },
+      "loading" : {
+        "title" : "Подключение к {{deviceName}}",
+        "subtitle" : "Подтвердите код на устройстве {{productName}}"
+      },
+      "error" : {
+        "title" : "Не удалось подключить устройство",
+        "subtitle" : "Похоже, что-то пошло не так. Убедитесь, что Bluetooth активирован, а устройство {{productName}} находится в радиусе его действия"
+      }
+    },
+    "languageSelect" : {
+      "title" : "Язык приложения"
+    },
+    "firmwareLanguageUpdateDrawer" : {
+      "title" : "Поменяйте язык на {{productName}}",
+      "description" : "Теперь язык Ledger Live — {{newLanguage}}. Хотели бы вы также использовать {{newLanguage}} язык на {{productName}}?",
+      "updateCta" : "Поменять язык",
+      "cancelCta" : "Отменить"
+    },
+    "desyncDrawer" : {
+      "title" : "Подключение к {{productName}} не удалось",
+      "description" : "Убедитесь, что устройство {{productName}} разблокировано и находится в радиусе его действия Также проверьте, активирован ли Bluetooth на смартфоне",
+      "retryCta" : "Попробуйте ещё раз",
+      "helpCta" : "Воспользуйтесь разделом помощи на сайте"
+    },
+    "resyncOverlay" : {
+      "content" : "Похоже, подключение к {{productName}} было прервано. Подключаемся к устройству повторно"
+    },
+    "helpDrawer" : {
+      "title" : "Нужна помощь по настройке устройства?",
+      "description" : "- -",
+      "docCta" : "Ознакомиться с разделом ЧаВо",
+      "supportCta" : "Связаться с Поддержкой"
+    },
+    "pairingStep" : {
+      "title" : "{{productName}} сопряжено",
+      "description" : "Продолжайте настройку {{productName}} и заглядывайте сюда, если понадобится помощь"
+    },
+    "pinStep" : {
+      "title" : "Установите ПИН-код",
+      "description" : "ПИН-код защищает ваше устройство {{productName}} от посторонних. Никогда не делитесь им с кем-либо",
+      "warning" : "Любой человек с доступом к вашему {{productName}} и ПИН-коду от устройства может украсть ваши криптоактивы без возможности их восстановления"
+    },
+    "seedStep" : {
+      "title" : "Создайте фразу восстановления",
+      "description" : "Фраза восстановления — это секретный набор из 24 слов для восстановления ваших приватных ключей. {{productName}} самостоятельно генерирует уникальную фразу восстановления, причём у Ledger нет её копии"
+    },
+    "softwareChecksSteps" : {
+      "title" : "Проверка ОС",
+      "genuineCheckRequestDrawer" : {
+        "title" : "Давайте убедимся в подлинности устройства {{productName}}",
+        "checkCta" : "Проверить подлинность"
+      },
+      "allowManagerDrawer" : {
+        "wording" : "Ledger Live"
+      },
+      "genuineCheckCancelledDrawer" : {
+        "title" : "Проверка подлинности была отменена на кошельке Nano",
+        "description" : "Проверка позволяет быть уверенным в том, что пользоваться устройством {{productName}} абсолютно безопасно",
+        "retryCta" : "Запустить проверку подлинности повторно",
+        "skipCta" : "Не сейчас"
+      },
+      "updateAvailableDrawer" : {
+        "title" : "Доступна новая версия ПО",
+        "description" : "Для доступа к актуальным функциям безопасности рекомендуем регулярно обновлять устройство {{productName}}",
+        "updateCta" : "Обновить"
+      },
+      "genuineCheckStep" : {
+        "inactive" : {
+          "title" : "Проверка подлинности"
+        },
+        "active" : {
+          "title" : "Проверка {{productName}}"
+        },
+        "completed" : {
+          "title" : "Подлинность {{productName}} подтверждена"
+        },
+        "failed" : {
+          "title" : "Сбой проверки безопасности устройства"
+        }
+      },
+      "firmwareUpdateStep" : {
+        "inactive" : {
+          "title" : "Проверка ПО"
+        },
+        "active" : {
+          "title" : "Проверяем версию ПО"
+        },
+        "completed" : {
+          "updateAvailable" : {
+            "title" : "Доступно ПО версии {{firmwareVersion}}"
+          },
+          "noUpdateAvailable" : {
+            "title" : "Версия ПО актуальна"
+          }
+        },
+        "failed" : {
+          "title" : "Сбой обновления ПО"
+        }
+      }
+    },
+    "readyStep" : {
+      "title" : "Устройство {{productName}} готово"
+    },
+    "completion" : {
+      "title" : "Теперь вы всё контролируете"
+    }
+  },
   "tabs" : {
     "portfolio" : "Кошелёк",
     "accounts" : "Счета",
@@ -1687,17 +1812,17 @@
     }
   },
   "addAccountsModal" : {
+    "title" : "Add account",
     "ctaAdd" : "Добавить счета",
     "ctaImport" : "Импорт из настольного приложения",
-    "title" : "Добавляйте криптовалюту",
-    "description" : "Вы можете добавить криптовалюту прямо в Ledger, либо импортировать счёт из настольной версии Ledger Live.",
+    "description" : "You can choose to add crypto directly with your Ledger, or import them from Ledger Live Desktop.",
     "add" : {
       "title" : "При помощи Ledger",
-      "description" : "Создайте или импортируйте активы при помощи кошелька Ledger"
+      "description" : "Create or import asset with your Ledger"
     },
     "import" : {
       "title" : "Импорт из настольного приложения",
-      "description" : "Импортируйте активы из настольного приложения Ledger Live"
+      "description" : "Import asset from Ledger Live Desktop"
     }
   },
   "byteSize" : {
@@ -2263,7 +2388,46 @@
     "experimental" : {
       "title" : "Экспериментальные функции",
       "desc" : "Попробуйте экспериментальные функции и скажите нам, что вы думаете.",
-      "disclaimer" : "Это Экспериментальные функции, предоставляемые на условиях «как есть» для нашего сообщества технических энтузиастов. Эти функции могут быть изменены, заблокированы или удалены в любое время. Активируя их, вы принимаете на себя все риски от использования."
+      "disclaimer" : "Это Экспериментальные функции, предоставляемые на условиях «как есть» для нашего сообщества технических энтузиастов. Эти функции могут быть изменены, заблокированы или удалены в любое время. Активируя их, вы принимаете на себя все риски от использования.",
+      "experimentalFeatures" : {
+        "experimentalIntegrations" : {
+          "title" : "Экспериментальная интеграция",
+          "description" : "Использовать доступные экспериментальные интеграции криптовалют."
+        },
+        "developerMode" : {
+          "title" : "Режим разработчика",
+          "description" : "Показывать приложения от разработчиков и из тестнета в Диспетчере."
+        },
+        "managerProvider" : {
+          "title" : "Поставщик приложений",
+          "description" : "Смена поставщика приложений в Диспетчере может сделать невозможной установку или удаление приложений на вашем устройстве Ledger"
+        },
+        "experimentalExplorers" : {
+          "title" : "API экспериментальных обозревателей",
+          "description" : "Попробуйте предстоящую версию обозревателей блокчейна Ledger. Изменение этой настройки может повлиять на баланс и синхронизацию счета, а также на функцию отправки."
+        },
+        "experimentalCountervalues" : {
+          "title" : "Экспериментальный API эквивалентов",
+          "description" : "Данная функция может привести к ошибке отображения эквивалентов для ваших счетов."
+        },
+        "experimentalSwap" : {
+          "title" : "Новый интерфейс обмена",
+          "description" : "Использовать обновлённый интерфейс при обмене криптовалют и токенов"
+        }
+      },
+      "developerFeatures" : {
+        "experimentalApps" : {
+          "title" : "Разрешить экспериментальные приложения",
+          "description" : "Показывать и открывать экспериментальные приложения на платформе."
+        },
+        "staggingUrl" : {
+          "title" : "Промежуточный URL страницы",
+          "description" : "Включить промежуточный URL-адрес для страницы «Образование»"
+        },
+        "platformManifest" : {
+          "title" : "Загрузить манифест платформы"
+        }
+      }
     },
     "developer" : {
       "title" : "Разработчикам",
@@ -2275,11 +2439,8 @@
     "debug" : {
       "featureFlagsTitle" : "Определённые фича-флаги (feature flags), используемые в Ledger Live",
       "featureFlagsDesc" : "Переписанные значения будут сброшены в случае перезапуска приложения. Принимаются лишь валидные строки JSON.",
-      "featureFlagsOverride" : "Переписать",
       "featureFlagsEdit" : "Редактировать",
-      "featureFlagsRestore" : "Восстановить",
-      "featureFlagsDisplayValue" : "Показать значение",
-      "featureFlagsHideValue" : "Скрыть значение"
+      "featureFlagsRestore" : "Восстановить"
     }
   },
   "notifications" : {
@@ -3357,6 +3518,7 @@
       "appsInstalled" : "<0>{{number}}</0> приложение",
       "appsInstalled_plural" : "Приложений: <0>{{number}}</0>",
       "storageAvailable" : "доступно",
+      "noFreeSpace" : "Не хватает свободного места",
       "appsToUpdate" : "<0>{{number}}</0> обновление",
       "appsToUpdate_plural" : "Обновлений: <0>{{number}}</0>"
     },
@@ -3538,9 +3700,9 @@
       "fr" : "Français",
       "ru" : "Русский",
       "es" : "Español",
-      "zh" : "中国人",
+      "zh" : "简体中文",
       "de" : "Deutsch",
-      "tr" : "Türk",
+      "tr" : "Türkçe",
       "ja" : "日本",
       "ko" : "한국인",
       "pt" : "Português"
