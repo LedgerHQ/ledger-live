@@ -276,7 +276,7 @@
     },
     "EthAppNftNotSupported" : {
       "title" : "العملية غير متوفرة لهذا الجهاز",
-      "description" : "خاصية إرسال NFT متوفرة فقط لـ Nano X. يرجى زيارة منصة دعم العملاء لدينا لمعرفة كيفية إرسال NFT عن طريق Nano S."
+      "description" : "Send NFT feature is only available for Nano X. Please visit our customer support platform to know how to send a NFT with a Nano S or S Plus."
     },
     "Touch ID Error" : {
       "title" : "فشل التوثيق البيومتري",
@@ -713,7 +713,7 @@
       "description" : "يُرجى المحاولة مرة أخرى بصورة أخرى"
     },
     "ImagePreviewError" : {
-      "title" : "Preview of the image failed",
+      "title" : "فشل عرض الصورة",
       "description" : "يُرجى المحاولة مرة أخرى بصورة أخرى"
     },
     "ImageProcessingError" : {
@@ -1085,6 +1085,7 @@
       "nanoS" : "Nano S",
       "nanoSP" : "Nano S Plus",
       "nanoX" : "Nano X",
+      "nanoFTS" : "Nano FTS",
       "blue" : "أزرق",
       "chooseDevice" : "اختر جهازك"
     },
@@ -1605,28 +1606,152 @@
   "blePairingFlow" : {
     "scanning" : {
       "withProductName" : {
-        "title" : "Looking for your {{productName}}",
-        "description" : "Please make sure your {{productName}} is unlocked and Bluetooth is enabled"
+        "title" : "هل تبحث عن {{productName}} خاصتك",
+        "description" : "يرجى التأكد من إلغاء قفل {{productName}} خاصتك وأنه تم تمكين البلوتوث"
       },
       "withoutProductName" : {
         "title" : "البحث عن الأجهزة",
-        "description" : "Please make sure your device is switched on, unlocked, and bluetooth is enabled"
+        "description" : "يرجى التأكد من تشغيل جهازك وإلغاء قفله وتمكين البلوتوث"
       },
       "alreadyPaired" : "تم الإقران بالفعل"
     },
     "pairing" : {
       "success" : {
-        "title" : "Paired with {{deviceName}}"
+        "title" : "تم الإقران مع {{deviceName}}"
       },
       "loading" : {
-        "title" : "Pairing with {{deviceName}}",
-        "subtitle" : "Confirm the code on your {{productName}}"
+        "title" : "جارٍ الإقران مع {{deviceName}}",
+        "subtitle" : "قم بتأكيد الكود على {{productName}} خاصتك"
       },
       "error" : {
-        "title" : "Pairing unsucessful",
-        "subtitle" : "Looks like something went wrong! Check that your bluetooth is on and your {{productName}} is nearby",
+        "title" : "لم يتم إجراء الإقران بنجاح",
+        "subtitle" : "يبدو أنه قد حدث خطأ ما! تأكد من تشغيل البلوتوث لديك وأن {{productName}} خاصتك قريبة",
         "retryCta" : "أعد المحاولة"
       }
+    }
+  },
+  "syncOnboarding" : {
+    "title" : "إعداد {{deviceName}}",
+    "estimatedTimeFormat" : "{{estimatedTime}} دقيقة",
+    "deviceSelection" : {
+      "title" : "ما الجهاز الذي تمتلكه؟",
+      "subtitle" : "اختر محفظة Ledger التي تريد إعدادها مع Ledger Live",
+      "brand" : "Ledger",
+      "setupTime" : "{{time}} دقيقة"
+    },
+    "scanning" : {
+      "title" : "هل تبحث عن {{productName}} خاصتك",
+      "description" : "يرجى التأكد من إلغاء قفل {{productName}} خاصتك وأنه تم تمكين البلوتوث"
+    },
+    "pairing" : {
+      "success" : {
+        "title" : "تم الإقران مع {{deviceName}}"
+      },
+      "loading" : {
+        "title" : "جارٍ الإقران مع {{deviceName}}",
+        "subtitle" : "قم بتأكيد الكود على {{productName}} خاصتك"
+      },
+      "error" : {
+        "title" : "فشل الإقران",
+        "subtitle" : "يبدو أنه قد حدث خطأ ما! تأكد من تشغيل البلوتوث لديك وأن {{productName}} خاصتك قريبة"
+      }
+    },
+    "languageSelect" : {
+      "title" : "لغة التطبيق"
+    },
+    "firmwareLanguageUpdateDrawer" : {
+      "title" : "تغيير اللغة على {{productName}} خاصتك",
+      "description" : "Ledger Live الآن باللغة {{newLanguage}}. هل ترغب في استخدام اللغة {{newLanguage}} على {{productName}} خاصتك أيضاً؟",
+      "updateCta" : "تغيير اللغة",
+      "cancelCta" : "إلغاء"
+    },
+    "desyncDrawer" : {
+      "title" : "لا يمكننا الاتصال بـ {{productName}} خاصتك",
+      "description" : "يرجى التأكد من أن {{productName}} خاصتك قريبة وغير مُقفلة. تحقق لمعرفة إذا كان البلوتوث مُمكن على هاتفك الجوّال",
+      "retryCta" : "أعد المحاولة",
+      "helpCta" : "احصل على مساعدة"
+    },
+    "resyncOverlay" : {
+      "content" : "يبدو أن الاتصال بـ {{productName}} خاصتك قد فُقد. جارٍ إعادة الاتصال"
+    },
+    "helpDrawer" : {
+      "title" : "هل تحتاج إلى بعض المساعدة بخصوص كُتيّب الإعداد؟",
+      "description" : "Lorem Elsass ipsum aliquam bissame Ober schae ffolsheim gehts messti de Bischheim tellus blottkopf, dui sed libero. hopla libero, placerat leo eget Gal",
+      "docCta" : "عرض الأسئلة الأكثر شيوعاً لدينا",
+      "supportCta" : "التحدث مع شخص"
+    },
+    "pairingStep" : {
+      "title" : "تم إقران {{productName}}",
+      "description" : "واصل إعداد {{productName}} خاصتك وعاود النظر هنا للحصول على مساعدة خطوة بخطوة"
+    },
+    "pinStep" : {
+      "title" : "اختر كود PIN خاصتك",
+      "description" : "كود PIN خاصتك يمنع أي وصول غير مرغوب به إلى {{productName}} خاصتك. لا تشاركه مطلقاً",
+      "warning" : "أي شخص يعرف كود PIN خاصتك ولديه إمكانية الوصول إلى {{productName}} خاصتك يستطيع سرقة أصولك إلى الأبد"
+    },
+    "seedStep" : {
+      "title" : "قم بإعداد عبارة الاسترداد خاصتك",
+      "description" : "عبارة الاسترداد الخاصة بك هي قائمة سرية من 24 كلمة تقوم بنسخ مفاتيحك الخاصة أحتيطياً. {{productName}} خاصتك تنتج عبارة استرداد فريدة. Ledger لا تحتفظ بنسخة منها"
+    },
+    "softwareChecksSteps" : {
+      "title" : "التحقق من نظام التشغيل",
+      "genuineCheckRequestDrawer" : {
+        "title" : "لنتأكد من أن {{productName}} خاصتك أصلية",
+        "checkCta" : "اختبار الأصالة"
+      },
+      "allowManagerDrawer" : {
+        "wording" : "Ledger Live"
+      },
+      "genuineCheckCancelledDrawer" : {
+        "title" : "تم إلغاء اختبار الأصالة على Nano خاصتك",
+        "description" : "هذا الاختبار ضروري للتأكد من أن {{productName}} خاصتك آمنة للاستخدام",
+        "retryCta" : "إجراء اختبار الأصالة مجدداً",
+        "skipCta" : "ربّما في وقت لاحق"
+      },
+      "updateAvailableDrawer" : {
+        "title" : "تم العثور على برنامج جديد",
+        "description" : "لتصل إلى أحدث ميزات الأمان، نوصي بشدة بتحديث {{productName}} خاصتك",
+        "updateCta" : "تحديث"
+      },
+      "genuineCheckStep" : {
+        "inactive" : {
+          "title" : "اختبار الأصالة"
+        },
+        "active" : {
+          "title" : "التحقق من {{productName}}"
+        },
+        "completed" : {
+          "title" : "{{productName}} خاصتك أصلية"
+        },
+        "failed" : {
+          "title" : "لم يتم التحقق من أمان الجهاز"
+        }
+      },
+      "firmwareUpdateStep" : {
+        "inactive" : {
+          "title" : "التحقق من البرامج"
+        },
+        "active" : {
+          "title" : "التحقق من إصدار البرنامج"
+        },
+        "completed" : {
+          "updateAvailable" : {
+            "title" : "إصدار البرنامج {{firmwareVersion}} متاح"
+          },
+          "noUpdateAvailable" : {
+            "title" : "البرنامج مُحدّث إلى آخر إصدار"
+          }
+        },
+        "failed" : {
+          "title" : "فشل تحديث البرنامج"
+        }
+      }
+    },
+    "readyStep" : {
+      "title" : "{{productName}} مستعد"
+    },
+    "completion" : {
+      "title" : "أنت المتحكّم الآن"
     }
   },
   "tabs" : {
@@ -1687,17 +1812,17 @@
     }
   },
   "addAccountsModal" : {
+    "title" : "إضافة حساب",
     "ctaAdd" : "إضافة حسابات",
     "ctaImport" : "استيراد حسابات سطح المكتب",
-    "title" : "إضافة الأصول المشفرة",
-    "description" : "يمكنك اختيار إضافة أصل (أصول) مشفر مباشرةً عن طريق Ledger الخاصة بك، أو استيرادهم من Ledger Live لسطح المكتب.",
+    "description" : "You can choose to add crypto directly with your Ledger, or import them from Ledger Live Desktop.",
     "add" : {
       "title" : "مع Ledger خاصتك",
-      "description" : "إنشاء أو استيراد أصل (أصول) عن طريق Ledger الخاصة بك"
+      "description" : "Create or import asset with your Ledger"
     },
     "import" : {
       "title" : "قم بالاستيراد من سطح المكتب",
-      "description" : "استيراد أصل (أصول) من Ledger Live لسطح المكتب"
+      "description" : "Import asset from Ledger Live Desktop"
     }
   },
   "byteSize" : {
@@ -2263,7 +2388,46 @@
     "experimental" : {
       "title" : "الميزات التجريبية",
       "desc" : "جرّب الميزات التجريبية وأخبرنا برأيك.",
-      "disclaimer" : "هذه ميزات تجريبية نقدمها \"كما هي\" لكي يختبرها مجتمعنا المهتمين بالتكنولوجيا. من الممكن أن يتم تغيير هذه الميزات أو تعطيلها أو إزالتها في أي وقت. من خلال تمكينها، فإنك توافق على استخدامها على مسؤوليتك الخاصة."
+      "disclaimer" : "هذه ميزات تجريبية نقدمها \"كما هي\" لكي يختبرها مجتمعنا المهتمين بالتكنولوجيا. من الممكن أن يتم تغيير هذه الميزات أو تعطيلها أو إزالتها في أي وقت. من خلال تمكينها، فإنك توافق على استخدامها على مسؤوليتك الخاصة.",
+      "experimentalFeatures" : {
+        "experimentalIntegrations" : {
+          "title" : "تكاملات تجريبية",
+          "description" : "استخدم عمليات تكامل الأصول المشفرة التجريبية المتاحة."
+        },
+        "developerMode" : {
+          "title" : "وضع المطور",
+          "description" : "اعرض تطبيقات المطوّر و testnet في المدير."
+        },
+        "managerProvider" : {
+          "title" : "مزود المدير",
+          "description" : "تغيير مزود التطبيقات في المدير قد يجعله من المستحيل تثبيت أو إلغاء تثبيت التطبيقات على جهازك Ledger."
+        },
+        "experimentalExplorers" : {
+          "title" : "API للمستكشفين التجريبيين",
+          "description" : "جرب نسخة قادمة من متصفح سلسلة كتل Ledger. تغيير هذا الإعداد قد يؤثر على رصيد الحساب ومزامنته وكذلك ميزة الإرسال."
+        },
+        "experimentalCountervalues" : {
+          "title" : "API للقيم المقابلة التجريبية",
+          "description" : "قد يتسبب هذا في أن تكون القيم المقابلة المعروضة لحساباتك غير صحيحة."
+        },
+        "experimentalSwap" : {
+          "title" : "واجهة مبادلة جديدة",
+          "description" : "استخدم واجهة المبادلة التجريبية الجديدة"
+        }
+      },
+      "developerFeatures" : {
+        "experimentalApps" : {
+          "title" : "السماح بالتطبيقات التجريبية",
+          "description" : "عرض تطبيقات المنصة التي عليها علامة أنها تجريبية والسماح بفتحها."
+        },
+        "staggingUrl" : {
+          "title" : "الرابط المرحلي (staging URL) للصفحة التعليمية",
+          "description" : "استخدم الرابط المرحلي (staging URL) للصفحة التعليمية."
+        },
+        "platformManifest" : {
+          "title" : "تحميل بيان المنصة"
+        }
+      }
     },
     "developer" : {
       "title" : "مطوّر",
@@ -2275,11 +2439,8 @@
     "debug" : {
       "featureFlagsTitle" : "Defined feature flags used in Ledger Live",
       "featureFlagsDesc" : "القيم المُتجاوزَة سيتم إعادة تعيينها إذا أُعيد إطلاق التطبيق. سيتم قبول خيوط JSON الصالحة فقط.",
-      "featureFlagsOverride" : "تجاوز",
       "featureFlagsEdit" : "تعديل",
-      "featureFlagsRestore" : "استعادة",
-      "featureFlagsDisplayValue" : "عرض القيمة",
-      "featureFlagsHideValue" : "إخفاء القيمة"
+      "featureFlagsRestore" : "استعادة"
     }
   },
   "notifications" : {
@@ -3357,6 +3518,7 @@
       "appsInstalled" : "<0>{{number}}</0> تطبيق",
       "appsInstalled_plural" : "<0>{{number}}</0> تطبيق",
       "storageAvailable" : "متاح",
+      "noFreeSpace" : "No storage left",
       "appsToUpdate" : "<0>{{number}}</0> تحديث",
       "appsToUpdate_plural" : "<0>{{number}}</0> تحديث"
     },
@@ -4762,8 +4924,8 @@
         "uploadFromPhone" : "قم بالتحميل من هاتفك"
       }
     },
-    "cropImage" : "Crop image",
-    "chooseConstrast" : "Choose contrast",
+    "cropImage" : "قُصّ الصورة",
+    "chooseConstrast" : "اختر التباين",
     "uploadAnotherImage" : "قم بتحميل صورة أخرى",
     "selectContrast" : "اختر مستوى التباين"
   },
