@@ -236,10 +236,26 @@
     },
     "form" : {
       "changeCTA" : "Modifier",
-      "ratesDrawer" : {
-        "title" : "Taux",
-        "quote" : "Prix",
-        "receive" : "Reçu"
+      "rates" : {
+        "title" : "Prestataires",
+        "registration" : "Inscription requise ",
+        "noRegistration" : "Pas d’inscription requise",
+        "fixed" : "Fixe",
+        "float" : "Variable",
+        "update" : "Taux mis à jour dans",
+        "loading" : "Chargement...",
+        "name" : {
+          "title" : "Prestataire",
+          "tooltip" : "Pour utiliser certains prestataires, vous devez vous inscrire et créer un compte auprès d’eux."
+        },
+        "rate" : {
+          "title" : "Taux de change",
+          "tooltip" : "Un <0>taux variable</0> fluctue en fonction des conditions du marché. Vous pourriez donc recevoir plus ou moins que ce qui est estimé.<br/><br/>Un <0>taux fixe</0> correspond au montant affiché au début du swap."
+        },
+        "receive" : {
+          "title" : "Recevoir",
+          "tooltip" : "Montant estimé que vous recevrez après le swap."
+        }
       },
       "details" : {
         "label" : {
@@ -412,7 +428,13 @@
           "approved" : "Vérification d’identité approuvée",
           "closed" : "Vérification d'identité rejetée"
         }
-      }
+      },
+      "filter" : {
+        "all" : "Tous",
+        "centralised" : "Centralisé",
+        "dedentralised" : "Décentralisé"
+      },
+      "noQuote" : "Prix disponible à l’étape suivante"
     },
     "ip" : {
       "title" : "Bienvenue dans le Swap",
@@ -761,7 +783,7 @@
       },
       "delegation" : {
         "title" : "Bon à savoir",
-        "description" : "The Ledger validator stakes your {{asset}} at a commission of {{commission}}%.",
+        "description" : "En stakant vos {{asset}} via le validateur Ledger, les frais de commission sont de {{commission}} %.",
         "cta" : "Staker avec Ledger"
       }
     }
@@ -1228,7 +1250,7 @@
       }
     },
     "accounts" : {
-      "title" : "Ajouter un compte pour commencer",
+      "title" : "Ajoutez un compte pour commencer",
       "desc" : "Ajoutez un compte pour commencer à gérer vos crypto-actifs. Vous devez avoir installé l’application correspondant à ce crypto-actif sur votre appareil.",
       "buttons" : {
         "addAccount" : "Ajouter un compte",
@@ -3406,6 +3428,10 @@
           "title" : "Recherche de compte étendue",
           "description" : "Recherchez des comptes ayant des chemins de dérivation erronés. Veuillez envoyer tout actif trouvé vers un compte classique."
         },
+        "experimentalCountervalues" : {
+          "title" : "API Devises de contrepartie expérimentales",
+          "description" : "Avec cette fonctionnalité, les devises de contrepartie affichées dans vos comptes peuvent devenir incorrectes."
+        },
         "experimentalExplorers" : {
           "title" : "API Explorateurs Expérimentales",
           "description" : "Testez une version en développement des explorateurs de blockchain de Ledger. Modifier ce paramètre peut affecter le solde des comptes, la synchronisation et la fonctionnalité Envoyer.\n(<0></0>)"
@@ -3551,7 +3577,11 @@
       "ru" : "Русский",
       "es" : "Español",
       "zh" : "中文（简体）",
-      "de" : "Deutsch"
+      "de" : "Deutsch",
+      "tr" : "Turc",
+      "ja" : "Japonais",
+      "ko" : "Coréen",
+      "pt" : "Portugais"
     }
   },
   "theme" : {
@@ -3618,7 +3648,7 @@
         "title1" : "Comment fonctionne une phrase de récupération ?",
         "paragraph1" : "Votre phrase de récupération fonctionne comme une clé principale unique. Votre appareil Ledger l’utilise pour calculer les clés privées de chaque crypto-actif que vous possédez.",
         "paragraph2" : "Pour récupérer l’accès à vos cryptos, n’importe quel wallet peut utiliser votre phrase de récupération pour retrouver vos clés privées.",
-        "link" : "En savoir plus sur la phrase de récupération",
+        "link" : "En savoir plus",
         "title2" : "Qu’arrive-t-il si je perds l’accès à mon Nano ?",
         "paragraph3" : "Pas d’inquiétude, suivez ces étapes :",
         "paragraph4" : "Pour récupérer l’accès à vos cryptos, n’importe quel wallet peut utiliser votre phrase de récupération pour retrouver vos clés privées.",
@@ -3662,7 +3692,7 @@
     },
     "screens" : {
       "welcome" : {
-        "title" : "Le wallet de cryptos et NFT le plus sécurisé",
+        "title" : "Le wallet le plus sécurisé pour vos cryptos et NFT",
         "description" : "Gérez, achetez et faites fructifier vos cryptos et NFT en toute sécurité sur Ledger Live.",
         "nextButton" : "Commencer",
         "noDevice" : "Pas encore d’appareil ?",
@@ -3695,7 +3725,7 @@
         }
       },
       "selectDevice" : {
-        "title" : "Sélectionnez votre appareil",
+        "title" : "Sélectionnez votre Ledger",
         "selectLabel" : "Sélectionner"
       },
       "selectUseCase" : {
@@ -3708,7 +3738,7 @@
           },
           "2" : {
             "title" : "Connecter un {{deviceName}}",
-            "description" : "Si votre appareil est déjà configuré, connectez-le à l’application."
+            "description" : "Si votre Ledger est déjà configuré, connectez-le à Ledger Live."
           },
           "3" : {
             "title" : "Restaurer une phrase de récupération sur un nouvel appareil",
@@ -3753,19 +3783,19 @@
           },
           "deviceHowTo" : {
             "turnOn" : {
-              "title" : "Allumer le Nano",
+              "title" : "Allumez votre Nano",
               "descr" : "Connectez votre appareil à votre ordinateur à l’aide d’un câble USB."
             },
             "browse" : {
-              "title" : "Naviguer",
+              "title" : "Naviguez",
               "descr" : "Apprenez à interagir avec votre appareil. Lisez les instructions à l’écran."
             },
             "select" : {
-              "title" : "Choisir \"Set up as new device\"",
+              "title" : "Choisissez \"Set up as new device\"",
               "descr" : "Appuyez simultanément sur les deux boutons pour valider."
             },
             "follow" : {
-              "title" : "Suivre les instructions",
+              "title" : "Suivez les instructions",
               "descr" : "Revenez ici afin de suivre les instructions relatives à votre code PIN."
             },
             "buttons" : {
@@ -3781,19 +3811,19 @@
           "deviceHowTo2" : {
             "title" : "Avant de démarrer la configuration :",
             "turnOn" : {
-              "title" : "Allumer le Nano",
+              "title" : "Allumez votre Nano",
               "descr" : "Connectez votre appareil à votre ordinateur à l’aide d’un câble USB."
             },
             "browse" : {
-              "title" : "Naviguer",
+              "title" : "Naviguez",
               "descr" : "Apprenez à interagir avec votre appareil. Lisez les instructions à l’écran."
             },
             "select" : {
-              "title" : "Choisir \"Enter your recovery phrase\"",
+              "title" : "Choisissez \"Enter your recovery phrase\"",
               "descr" : "Sélectionnez \"Enter your recovery phrase\" (Entrez votre phrase de récupération). Appuyez simultanément sur les deux boutons pour valider."
             },
             "follow" : {
-              "title" : "Suivre les instructions",
+              "title" : "Suivez les instructions",
               "descr" : "Revenez ici afin de suivre les instructions relatives à votre code PIN."
             },
             "buttons" : {
@@ -3843,11 +3873,11 @@
           },
           "pinCodeHowTo" : {
             "setUp" : {
-              "title" : "Choisir un code PIN",
+              "title" : "Choisissez un code PIN",
               "descr" : "Appuyez sur le bouton gauche ou droit pour changer le chiffre. Appuyez sur les deux boutons pour valider un chiffre. Sélectionnez <0></0> pour confirmer votre code PIN. Sélectionnez <1></1> pour effacer un chiffre."
             },
             "confirm" : {
-              "title" : "Confirmer le code PIN",
+              "title" : "Confirmez votre code PIN",
               "descr" : "Saisissez à nouveau votre code PIN pour le confirmer."
             },
             "buttons" : {
@@ -3882,7 +3912,7 @@
               "descr" : "Prenez la feuille de récupération vierge incluse avec votre Nano. Contactez l’Assistance Ledger si la feuille de récupération fournie n’était pas vierge."
             },
             "writeDownWords" : {
-              "title" : "Noter les 24 mots",
+              "title" : "Notez vos 24 mots",
               "descr" : "Écrivez en position 1 sur la feuille de récupération le mot n°1 (\"Word #1\") affiché en gras sur votre Nano. Puis appuyez sur le bouton droit de votre Nano pour voir le mot n°2 (\"Word #2\") et écrivez-le en position 2.\n\nFaites cela pour tous les mots affichés en gras en respectant scrupuleusement l’ordre et l’orthographe. Appuyez sur le bouton gauche de votre Nano pour vérifier et ne pas faire d’erreur."
             },
             "buttons" : {
@@ -3912,18 +3942,18 @@
           },
           "recoveryHowTo" : {
             "grabRecovery" : {
-              "title" : "Prendre votre phrase de récupération"
+              "title" : "Prenez votre phrase de récupération"
             },
             "selectLength" : {
-              "title" : "Sélectionner la longueur de votre phrase de récupération",
+              "title" : "Sélectionnez la longueur de votre phrase de récupération",
               "descr" : "Sélectionnez \"24 words\" (24 mots), \"18 words\" (18 mots) ou \"12 words\" (12 mots). Vous devez entrer tous les mots de votre phrase de récupération."
             },
             "enterWord" : {
-              "title" : "Saisir le mot n°1 (\"Word #1\")",
+              "title" : "Saisissez le mot n°1 (\"Word #1\")",
               "descr" : "Saisissez les premières lettres du \"Word #1\" (Mot n°1) en les sélectionnant avec le bouton droit ou gauche. Appuyez sur les deux boutons pour valider chaque lettre."
             },
             "validateWord" : {
-              "title" : "Valider le mot n°1 (\"Word #1\")",
+              "title" : "Validez le mot n°1 (\"Word #1\")",
               "descr" : "Naviguez jusqu’au mot n°1 (\"Word #1\"). Appuyez sur les deux boutons pour valider."
             },
             "andNext" : {
@@ -3941,7 +3971,7 @@
           },
           "recoveryHowTo3" : {
             "reEnterWord" : {
-              "title" : "Confirmer votre phrase de récupération",
+              "title" : "Confirmez votre phrase de récupération",
               "descr" : "Appuyez sur le bouton droit pour faire défiler les mots jusqu’à ce que vous trouviez le mot n°1 (\"Word #1\"). Validez en appuyant sur les deux boutons."
             },
             "repeat" : {
@@ -4054,9 +4084,9 @@
           }
         },
         "2" : {
-          "text" : "Si ma phrase de récupération n’est plus en sécurité ou que quelqu’un la connaît :",
+          "text" : "Si quelqu’un connaît ma phrase de récupération ou elle n’est plus en sécurité :",
           "answers" : {
-            "1" : "Pas de souci, Ledger m’en enverra une copie.",
+            "1" : "Ledger m’en enverra une copie.",
             "2" : "Mes cryptos ne sont plus en sécurité et je dois les transférer en lieu sûr."
           },
           "results" : {
@@ -4339,6 +4369,9 @@
       "title" : "Échec de la localisation de l’application {{appName}} pour votre appareil.",
       "description" : "Veuillez essayer de réinstaller l’application depuis My Ledger."
     },
+    "PendingOperation" : {
+      "description" : "Vous avez des transactions entrantes en attente. Attention, les transactions en attente peuvent être annulées."
+    },
     "countervaluesUnavailable" : {
       "title" : "Actuellement impossible d’afficher une devise de contrepartie pour cet actif"
     },
@@ -4583,10 +4616,6 @@
       "title" : "Pas de connexion Internet",
       "description" : "Veuillez vérifier votre connexion Internet."
     },
-    "NetworkError" : {
-      "title" : "Erreur survenue lors de la synchronisation",
-      "description" : "Veuillez vérifier votre connexion Internet."
-    },
     "NoAddressesFound" : {
       "title" : "Aucun compte trouvé",
       "description" : "Une erreur est survenue lors du calcul de l’adresse. Veuillez réessayer ou contacter l’Assistance Ledger."
@@ -4734,7 +4763,7 @@
     },
     "EthAppNftNotSupported" : {
       "title" : "Opération indisponible sur cet appareil",
-      "description" : "La fonctionnalité Envoi de NFT n’est disponible que pour le Nano X. Visitez notre centre d’aide pour découvrir comment envoyer un NFT avec un Nano S."
+      "description" : "La fonctionnalité Envoi de NFT n’est disponible que pour le Nano X. Visitez notre centre d’aide pour découvrir comment envoyer un NFT avec un Nano S ou Nano S Plus."
     },
     "CantScanQRCode" : {
       "title" : "Échec du scan de ce code QR. Cette adresse ne prend pas en charge la vérification automatique."
