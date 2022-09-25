@@ -1072,8 +1072,6 @@
     "stepLanguage" : {
       "title" : "Dilinizi seçin",
       "cta" : "Devam",
-      "changeDeviceLanguage" : "{{deviceName}} cihazınızı {{language}} dilinde de kullanabilirsiniz",
-      "changeDeviceLanguageDescription" : "Dili {{language}} yapmak ister misiniz?",
       "warning" : {
         "title" : "İngilizce olarak başlayın",
         "cta" : "Anladım!",
@@ -2275,11 +2273,8 @@
     "debug" : {
       "featureFlagsTitle" : "Ledger Live'da kullanılan tanımlı özellik bayrakları",
       "featureFlagsDesc" : "Uygulama yeniden başlatılırsa geçersiz bırakılan değerler sıfırlanacaktır. Sadece geçerli JSON dizeleri kabul edilecektir.",
-      "featureFlagsOverride" : "Geçersiz bırak",
       "featureFlagsEdit" : "Düzenle",
-      "featureFlagsRestore" : "Geri yükle",
-      "featureFlagsDisplayValue" : "Değeri göster",
-      "featureFlagsHideValue" : "Değeri gizle"
+      "featureFlagsRestore" : "Geri yükle"
     }
   },
   "notifications" : {
@@ -3535,29 +3530,23 @@
     "no" : "Şimdilik kalsın",
     "languages" : {
       "en" : "İngilizce",
-      "fr" : "Français",
-      "ru" : "Русский",
-      "es" : "Español",
-      "zh" : "中国人",
-      "de" : "Deutsch",
-      "tr" : "Türk",
-      "ja" : "日本",
-      "ko" : "한국인",
-      "pt" : "Português"
+      "fr" : "Fransızca",
+      "ru" : "Rusça",
+      "es" : "İspanyolca",
+      "zh" : "Çince",
+      "de" : "Almanca",
+      "tr" : "Türkçe",
+      "ja" : "Japonca",
+      "ko" : "Korece",
+      "pt" : "Portekizce"
     }
   },
   "deviceLocalization" : {
     "language" : "Dil",
     "deviceLanguage" : "Cihaz Dili",
-    "chooseLanguage" : "{{deviceName}} cihazınız için bir dil seçin.",
     "changeLanguage" : "Dili değiştir",
-    "yesChangeLanguage" : "Evet, dili değiştir",
-    "allowLanguageInstallation" : "{{deviceName}} cihazına dilin yüklenmesini onaylayın",
-    "languageInstalled" : "Dil {{language}} oldu",
-    "firmwareUpdatePrompt" : {
-      "title" : "{{deviceName}} cihazınızın dili {{language}} yapılsın mı?",
-      "description" : "{{deviceName}} cihazınızı artık {{language}} kullanabilirsiniz. Cihaz dilini şimdi ayarlayabilir ya da daha sonra My Ledger'dan istediğiniz zaman değiştirebilirsiniz."
-    },
+    "allowLanguageInstallation" : "Dilin yüklenmesine izin verin",
+    "languageInstalled" : "Cihaz dili {{language}} oldu",
     "installingLanguage" : "Dil yükleniyor",
     "languages" : {
       "english" : "İngilizce",
