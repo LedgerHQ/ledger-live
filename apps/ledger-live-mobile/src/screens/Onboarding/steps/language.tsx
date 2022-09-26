@@ -83,7 +83,10 @@ function OnboardingStepLanguage({ navigation }: StackScreenProps<{}>) {
     useState<boolean>(false);
   const [selectedLanguage, setSelectedLanguage] = useState("");
 
-  const toggleModal = useCallback(() => setOpened(!isOpened), [isOpened]);
+  const toggleModal = useCallback(
+    () => setRestartPromptOpened(!isRestartPromptOpened),
+    [isRestartPromptOpened],
+  );
   const closeRestartPromptModal = () => {
     setRestartPromptOpened(false);
   };
