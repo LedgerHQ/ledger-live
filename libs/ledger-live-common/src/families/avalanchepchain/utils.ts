@@ -6,7 +6,7 @@ export const binTools = BinTools.getInstance();
 export const AVAX_HRP = "avax";
 
 export const FIGMENT_AVALANCHE_VALIDATOR_NODES = [
-  "NodeID-GW7CvXwkPFDsfFHrix1SA148NHF5ZnSXs",
+  "NodeID-GtF9Gx4mbkqq35LPdoDe8iPft7nZ48Hkn",
 ];
 
 export const ONE_AVAX = 1000000000;
