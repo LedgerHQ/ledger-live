@@ -346,7 +346,7 @@ export const renderInstallingLanguage = withV3StyleProvider(
         <ProgressWrapper>
           <ProgressLoader progress={cleanProgress} />
         </ProgressWrapper>
-        <Log extraTextProps={{ fontSize: 20 }} alignSelf="stretch" mx={16} mt={30}>
+        <Log extraTextProps={{ fontSize: 20 }} alignSelf="stretch" mx="115px" mt={30}>
           {t("deviceLocalization.installingLanguage")}
         </Log>
       </Flex>
