@@ -12,7 +12,7 @@ import {
   WebsocketConnectionError,
 } from "@ledgerhq/errors";
 import {
-  BackgroundEvent,
+  FwUpdateBackgroundEvent,
   nextBackgroundEventSelector,
 } from "../../reducers/appstate";
 import {
@@ -28,13 +28,14 @@ import FirmwareUpdatedStep from "./FirmwareUpdatedStep";
 import ConfirmPinStep from "./ConfirmPinStep";
 import ConfirmUpdateStep from "./ConfirmUpdateStep";
 import DownloadingUpdateStep from "./DownloadingUpdateStep";
+import DeviceLanguageStep from "./DeviceLanguageStep";
 import { track } from "../../analytics";
+import { FwUpdateForegroundEvent } from "./types";
 
 type Props = {
   device: Device;
   deviceInfo: DeviceInfo;
   isOpen: boolean;
-  // eslint-disable-next-line no-unused-vars
   onClose: (restoreApps?: boolean) => void;
   hasAppsToRestore: boolean;
 };
@@ -46,12 +47,15 @@ type FwUpdateStep =
   | "flashingMcu"
   | "confirmPin"
   | "confirmUpdate"
-  | "firmwareUpdated";
+  | "firmwareUpdated"
+  | "promptLanguageChange";
+
 type FwUpdateState = {
   step: FwUpdateStep;
   progress?: number;
   error?: Error;
   installing?: string | null;
+  updatedDeviceInfo?: DeviceInfo;
 };
 
 export default function FirmwareUpdate({
@@ -71,7 +75,7 @@ export default function FirmwareUpdate({
   const fwUpdateStateReducer = useCallback(
     (
       state: FwUpdateState,
-      event: BackgroundEvent | { type: "reset"; wired: boolean },
+      event: FwUpdateBackgroundEvent | FwUpdateForegroundEvent,
     ): FwUpdateState => {
       switch (event.type) {
         case "confirmPin":
@@ -98,6 +102,11 @@ export default function FirmwareUpdate({
             installing: event.installing,
           };
         case "firmwareUpdated":
+          return {
+            step: "promptLanguageChange",
+            updatedDeviceInfo: event.updatedDeviceInfo,
+          };
+        case "languagePromptDismissed":
           return { step: "firmwareUpdated" };
         case "error":
           return { step: "error", error: event.error };
@@ -126,7 +135,7 @@ export default function FirmwareUpdate({
     installing: undefined,
   });
 
-  const { step, progress, error, installing } = state;
+  const { step, progress, error, installing, updatedDeviceInfo } = state;
 
   const onReset = useCallback(() => {
     dispatchEvent({ type: "reset", wired: device.wired });
@@ -139,7 +148,8 @@ export default function FirmwareUpdate({
     step === "confirmRecoveryBackup" ||
     step === "firmwareUpdated" ||
     step === "error" ||
-    step === "confirmPin";
+    step === "confirmPin" ||
+    step === "promptLanguageChange";
 
   const onTryClose = useCallback(
     (restoreApps: boolean) => {
@@ -147,7 +157,7 @@ export default function FirmwareUpdate({
         onClose(restoreApps);
       }
     },
-    [canClose],
+    [canClose, onClose],
   );
 
   const onCloseAndReinstall = useCallback(() => onTryClose(true), [onTryClose]);
@@ -203,6 +213,14 @@ export default function FirmwareUpdate({
       )}
       {step === "flashingMcu" && (
         <FlashMcuStep progress={progress} installing={installing} />
+      )}
+      {step === "promptLanguageChange" && (
+        <DeviceLanguageStep
+          dispatchEvent={dispatchEvent}
+          updatedDeviceInfo={updatedDeviceInfo}
+          oldDeviceInfo={deviceInfo}
+          device={device}
+        />
       )}
       {step === "firmwareUpdated" && (
         <FirmwareUpdatedStep onReinstallApps={onCloseAndReinstall} />

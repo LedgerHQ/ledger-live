@@ -6,6 +6,7 @@ import type { AppCandidate } from "../load/speculos";
 import {
   Account,
   AccountBridge,
+  AccountRaw,
   Operation,
   SignedOperation,
   SignOperationEvent,
@@ -24,6 +25,15 @@ export type TransactionTestInput<T> = {
   status: TransactionStatus;
   optimisticOperation: Operation;
   operation: Operation;
+};
+export type TransactionDestinationTestInput<T> = {
+  sendingAccount: Account;
+  sendingOperation: Operation;
+  destinationBeforeTransaction: Account;
+  operation: Operation;
+  destination: Account;
+  transaction: T;
+  status: TransactionStatus;
 };
 export type DeviceActionArg<T extends Transaction, S> = {
   appCandidate: AppCandidate;
@@ -50,6 +60,7 @@ export type TransactionArg<T extends Transaction> = {
 export type TransactionRes<T extends Transaction> = {
   transaction: T;
   updates: Array<Partial<T> | null | undefined>;
+  destination?: Account;
 };
 export type MutationSpec<T extends Transaction> = {
   // Name what this mutation is doing
@@ -66,12 +77,14 @@ export type MutationSpec<T extends Transaction> = {
     account: Account;
     bridge: AccountBridge<T>;
   }) => T | null | undefined;
-  // Express the device actions to do (buttons,..) and validate the device screen
+  // Express the device actions to do (buttons,..) and validate the device screen. overrides genericDeviceAction
   deviceAction?: DeviceAction<T, any>;
   // how much time to wait in maximum to reach the final state
   testTimeout?: number;
   // Implement a test that runs after the operation is applied to the account
-  test?: (arg0: TransactionTestInput<T>) => void;
+  test?: (input: TransactionTestInput<T>) => void;
+  // Implement a second test that allows to test the effect of the transaction on the DESTINATION account (matched by recipient)
+  testDestination?: (input: TransactionDestinationTestInput<T>) => void;
 };
 
 export type AppSpec<T extends Transaction> = {
@@ -101,7 +114,13 @@ export type AppSpec<T extends Transaction> = {
   // can implement generic invariants for a mutation transaction to be possible
   transactionCheck?: (arg: TransactionArg<T>) => void;
   // Implement a test that also runs on each mutation after the operation is applied to the account
+  // this allows to verify the effect of the transaction is correctly applied on the account
   test?: (arg0: TransactionTestInput<T>) => void;
+  // Express the device actions to do (buttons,..) and validate the device screen
+  genericDeviceAction: DeviceAction<T, any>;
+  // indicates to the engine what's the generally minimal amount we use to opt out from doing a transaction
+  // NB: at the moment it's purely informative and help inferring good "hints", but we could eventually automate it
+  minViableAmount?: BigNumber;
 };
 export type SpecReport<T extends Transaction> = {
   spec: AppSpec<T>;
@@ -112,6 +131,8 @@ export type SpecReport<T extends Transaction> = {
   accountsAfter?: Account[];
   mutations?: MutationReport<T>[];
   fatalError?: Error;
+  // express hints for the spec developers on things that could be improved
+  hintWarnings: string[];
 };
 export type MutationReport<T extends Transaction> = {
   resyncAccountsDuration: number;
@@ -142,5 +163,31 @@ export type MutationReport<T extends Transaction> = {
   confirmedTime?: number;
   finalAccount?: Account;
   testDuration?: number;
+  destinationConfirmedTime?: number;
+  finalDestination?: Account;
+  finalDestinationOperation?: Operation;
+  testDestinationDuration?: number;
   error?: Error;
+};
+
+export type MinimalSerializedMutationReport = {
+  appCandidate: AppCandidate;
+  mutationName: string | undefined;
+  accountId: string | undefined;
+  destinationId: string | undefined;
+  operationId: string | undefined;
+  error: string | undefined;
+};
+
+export type MinimalSerializedSpecReport = {
+  // spec.name
+  specName: string;
+  // minified version of accounts (we remove transactions from them)
+  accounts: AccountRaw[] | undefined;
+  fatalError: string | undefined;
+  mutations: MinimalSerializedMutationReport[] | undefined;
+};
+
+export type MinimalSerializedReport = {
+  results: Array<MinimalSerializedSpecReport>;
 };

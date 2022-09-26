@@ -1,6 +1,6 @@
 import { BigNumber } from "bignumber.js";
 import type { CurrenciesData } from "@ledgerhq/types-live";
-import type { NetworkInfoRaw, Transaction } from "../types";
+import type { NetworkInfoRaw, Transaction, BitcoinAccountRaw } from "../types";
 import { fromTransactionRaw } from "../transaction";
 import scanAccounts1 from "./digibyte.scanAccounts.1";
 const networkInfo: NetworkInfoRaw = {
@@ -125,7 +125,10 @@ const dataset: CurrenciesData<Transaction> = {
         lastSyncDate: "",
         balance: "2302647120",
         xpub: "xpub6CV98T6ompjUmKuMaULsw4UP8yfnVCg6831rWdcPjScn6RaGWrt3b7uvTpt9hcq6tLtS1dGNzeJ9x4NpVGzLq7CFscxCdoPZ6zxkqGymx98",
-      },
+        bitcoinResources: {
+          utxos: [],
+        },
+      } as BitcoinAccountRaw,
     },
     {
       raw: {
@@ -151,7 +154,10 @@ const dataset: CurrenciesData<Transaction> = {
         lastSyncDate: "",
         balance: "0",
         xpub: "xpub6CsavyNsoieEiR5QNsHZ3VQt7UzRcnKcFNXkadn1kaxsysqa2L79m3iNw6bFyJ1Vz8xYNu9ivECVvFTxydqMp4C3njLGA5PFxBid81Jinkh",
-      },
+        bitcoinResources: {
+          utxos: [],
+        },
+      } as BitcoinAccountRaw,
     },
   ],
 };

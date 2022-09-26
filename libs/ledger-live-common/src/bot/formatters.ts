@@ -8,6 +8,7 @@ import {
 import { formatCurrencyUnit } from "../currencies";
 import type { MutationReport, AppCandidate } from "./types";
 import type { Transaction } from "../generated/types";
+import { getContext } from "./bot-test-context";
 
 const formatTimeMinSec = (t: number) => {
   const totalsecs = Math.round(t / 1000);
@@ -18,7 +19,9 @@ const formatTimeMinSec = (t: number) => {
 };
 
 export const formatTime = (t: number): string =>
-  t > 3000
+  !t
+    ? "N/A"
+    : t > 3000
     ? t > 100000
       ? formatTimeMinSec(t)
       : `${Math.round(t / 100) / 10}s`
@@ -30,10 +33,14 @@ export function formatAppCandidate(appCandidate: AppCandidate): string {
   return `${appCandidate.appName} ${appCandidate.appVersion} on ${appCandidate.model} ${appCandidate.firmware}`;
 }
 
-export function formatError(e: any, longform = false): string {
-  let out;
-  if (!e || typeof e !== "object" || e instanceof Error) {
+export function formatError(e: unknown, longform = false): string {
+  let out = "";
+  if (!e || typeof e !== "object") {
     out = String(e);
+  } else if (e instanceof Error) {
+    const ctx = getContext(e);
+    if (ctx) out += `TEST ${ctx}\n`;
+    out += String(e);
   } else {
     try {
       out = "raw object: " + JSON.stringify(e);
@@ -42,9 +49,9 @@ export function formatError(e: any, longform = false): string {
     }
   }
   if (longform) {
-    return out.slice(0, 400); // safemax
+    return out.slice(0, 500);
   }
-  return out.replace(/[`]/g, "").replace(/\n/g, " ").slice(0, 160);
+  return out.replace(/[`]/g, "").replace(/\n/g, " ").slice(0, 200);
 }
 
 export function formatReportForConsole<T extends Transaction>({
@@ -67,6 +74,9 @@ export function formatReportForConsole<T extends Transaction>({
   operation,
   confirmedTime,
   finalAccount,
+  finalDestination,
+  finalDestinationOperation,
+  testDestinationDuration,
   testDuration,
   error,
 }: MutationReport<T>): string {
@@ -160,15 +170,25 @@ export function formatReportForConsole<T extends Transaction>({
   }
 
   if (finalAccount) {
-    str += `✔️ ${formatAccount(finalAccount, "basic")}\n`;
+    str += `✔️ ${formatAccount(finalAccount, "basic")}`;
   }
 
   if (testDuration) {
-    str += `(final state reached in ${formatTime(testDuration)})\n`;
+    str += `(in ${formatTime(testDuration)})\n`;
+  }
+
+  if (finalDestination && finalDestinationOperation) {
+    str += `✔️ destination operation ${formatOperation(finalDestination)(
+      finalDestinationOperation
+    )}\n`;
+  }
+
+  if (testDestinationDuration) {
+    str += `(in ${formatTime(testDestinationDuration)})\n`;
   }
 
   if (error) {
-    str += `⚠️ ${formatError(error)}\n`;
+    str += `⚠️ ${formatError(error, true)}\n`;
   }
 
   return str;

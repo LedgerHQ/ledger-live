@@ -14,6 +14,7 @@ import {
   Icons,
   Log,
 } from "@ledgerhq/native-ui";
+import { getDeviceModel } from "@ledgerhq/devices";
 import { setModalLock } from "../../actions/appstate";
 import { urls } from "../../config/urls";
 import Alert from "../Alert";
@@ -22,10 +23,10 @@ import Button from "../Button";
 import DeviceActionProgress from "../DeviceActionProgress";
 import { NavigatorName, ScreenName } from "../../const";
 import Animation from "../Animation";
-import getDeviceAnimation from "./getDeviceAnimation";
+import { getDeviceAnimation } from "../../helpers/getDeviceAnimation";
 import GenericErrorView from "../GenericErrorView";
 import Circle from "../Circle";
-import { MANAGER_TABS } from "../../screens/Manager/Manager";
+import { MANAGER_TABS } from "../../const/manager";
 import ExternalLink from "../ExternalLink";
 import { track } from "../../analytics";
 import TermsFooter, { TermsProviders } from "../TermsFooter";
@@ -108,7 +109,6 @@ const ConnectDeviceExtraContentWrapper = styled(Flex).attrs({
 })``;
 
 type RawProps = {
-  // eslint-disable-next-line no-unused-vars
   t: (key: string, options?: { [key: string]: string | number }) => string;
   colors?: any;
   theme?: "light" | "dark";
@@ -288,16 +288,18 @@ export function renderAllowLanguageInstallation({
 }: RawProps & {
   device: Device;
 }) {
+  const deviceName = getDeviceModel(device.modelId).productName;
+
   return (
     <Wrapper>
+      <Text variant="h4" textAlign="center">
+        {t("deviceLocalization.allowLanguageInstallation", { deviceName })}
+      </Text>
       <AnimationContainer>
         <Animation
           source={getDeviceAnimation({ device, key: "validate", theme })}
         />
       </AnimationContainer>
-      <Log>
-        {t("deviceLocalization.allowLanguageInstallation")}
-      </Log>
     </Wrapper>
   );
 }

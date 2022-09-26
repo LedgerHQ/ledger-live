@@ -1,5 +1,7 @@
 package com.ledger.live;
 
+import static com.ledger.live.Constants.REQUEST_ENABLE_BT;
+
 import android.bluetooth.BluetoothAdapter;
 import android.content.Intent;
 import android.app.Activity;
@@ -17,8 +19,6 @@ import java.util.Map;
 import java.util.HashMap;
 
 public class BluetoothHelperModule extends ReactContextBaseJavaModule {
-
-  private static final int REQUEST_ENABLE_BT = 0;
 
   private static final String E_ACTIVITY_DOES_NOT_EXIST = "E_ACTIVITY_DOES_NOT_EXIST";
   private static final String E_BLE_CANCELLED = "E_BLE_CANCELLED";

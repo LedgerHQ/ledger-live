@@ -13,6 +13,9 @@ inputs:
   SLACK_API_TOKEN:
     description: "slack api token"
     required: false
+  SLACK_ICON_EMOJI:
+    description: "slack icon emoji"
+    required: false
   SHOW_LEGACY_NEW_ACCOUNT:
     description: "SHOW_LEGACY_NEW_ACCOUNT value"
     required: false
@@ -67,14 +70,21 @@ runs:
         githubToken: ${{github.token}}
         slackApiToken: ${{ inputs.SLACK_API_TOKEN }}
         slackChannel: ${{ inputs.SLACK_CHANNEL }}
-    - name: process perf log files
+        slackIconEmoji: ${{ inputs.SLACK_ICON_EMOJI }}
+    - name: prepare bot reports
       run: |
         cd libs/ledger-live-common
         node --prof-process --preprocess -j isolate*.log > botreport/perf-processed.txt
+        mv -f botreport/report.json .
       shell: bash
     - name: upload logs to github artifacts
       if: always()
       uses: actions/upload-artifact@v3
       with:
-        name: botreport
+        name: details
         path: libs/ledger-live-common/botreport/
+    - name: upload report.json
+      uses: actions/upload-artifact@v3
+      with:
+        name: report
+        path: libs/ledger-live-common/report.json

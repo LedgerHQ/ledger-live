@@ -500,7 +500,7 @@ const envDefinitions = {
     desc: "dev flag to skip onboarding flow",
   },
   SWAP_API_BASE: {
-    def: "https://swap.ledger.com/v3",
+    def: "https://swap.ledger.com/v4",
     parser: stringParser,
     desc: "Swap API base",
   },
@@ -628,6 +628,11 @@ const envDefinitions = {
     def: 1,
     parser: intParser,
     desc: "version used for the platform api",
+  },
+  PLAYWRIGHT_RUN: {
+    def: false,
+    parser: boolParser,
+    desc: "true when launched for E2E testing",
   },
   MARKET_API_URL: {
     def: "https://proxycg.api.live.ledger.com/api/v3",

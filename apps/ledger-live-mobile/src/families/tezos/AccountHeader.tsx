@@ -13,7 +13,6 @@ import Button from "../../components/wrappedUi/Button";
 
 const styles = StyleSheet.create({
   banner: {
-    margin: 16,
     marginBottom: 0,
     minHeight: 128,
     padding: 16,

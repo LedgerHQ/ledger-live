@@ -13,9 +13,9 @@ const defineStyleFromTheme = (lightAsset: string, darkAsset: string) => (
   p: ThemeProps<DefaultTheme>,
 ) => (p.theme.colors.palette.type === "light" ? lightAsset : darkAsset);
 
-const Img: ThemedComponent<Props> = styled(Box).attrs((p: Props) => ({
-  width: `${p.width}px`,
-  height: `${p.height}px`,
+const Illustration: ThemedComponent<Props> = styled(Box).attrs((p: Props) => ({
+  width: `${p.size}px`,
+  height: `${p.size}px`,
 }))<Props>`
   background: url(${(p: Props) => defineStyleFromTheme(p.lightSource, p.darkSource)(p)});
   background-size: cover;
@@ -23,4 +23,4 @@ const Img: ThemedComponent<Props> = styled(Box).attrs((p: Props) => ({
   background-position: center center;
 `;
 
-export default Img;
+export default Illustration;

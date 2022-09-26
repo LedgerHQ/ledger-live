@@ -5,6 +5,8 @@ export const ScreenName = {
   Account: "Account",
   AccountCurrencySettings: "AccountCurrencySettings",
   Accounts: "Accounts",
+  Assets: "Assets",
+  Asset: "Asset",
   AccountSettingsMain: "AccountSettingsMain",
   AccountsSettings: "AccountsSettings",
   AddAccountsAccounts: "AddAccountsAccounts",
@@ -95,7 +97,7 @@ export const ScreenName = {
   PairDevices: "PairDevices",
   PasswordAdd: "PasswordAdd",
   PasswordRemove: "PasswordRemove",
-  Portfolio: "Portfolio",
+  Portfolio: "Wallet",
   PortfolioOperationHistory: "PortfolioOperationHistory",
   PurchaseDevice: "PurchaseDevice",
   RateProviderSettings: "RateProviderSettings",
@@ -163,7 +165,8 @@ export const ScreenName = {
   VoteValidation: "VoteValidation",
   VoteValidationError: "VoteValidationError",
   VoteValidationSuccess: "VoteValidationSuccess",
-  CosmosEditMemo: "CosmosEditMemo",
+
+  CosmosFamilyEditMemo: "CosmosFamilyEditMemo",
   CosmosDelegationStarted: "CosmosDelegationStarted",
   CosmosDelegationValidator: "CosmosDelegationValidator",
   CosmosDelegationValidatorSelect: "CosmosDelegationValidatorSelect",
@@ -172,6 +175,7 @@ export const ScreenName = {
   CosmosDelegationConnectDevice: "CosmosDelegationConnectDevice",
   CosmosDelegationValidationError: "CosmosDelegationValidationError",
   CosmosDelegationValidationSuccess: "CosmosDelegationValidationSuccess",
+  CosmosDefaultRedelegationAmount: "CosmosDefaultRedelegationAmount",
   CosmosRedelegationValidator: "CosmosRedelegationValidator",
   CosmosRedelegationAmount: "CosmosRedelegationAmount",
   CosmosRedelegationSelectDevice: "CosmosRedelegationSelectDevice",
@@ -190,6 +194,33 @@ export const ScreenName = {
   CosmosClaimRewardsValidation: "CosmosClaimRewardsValidation",
   CosmosClaimRewardsValidationError: "CosmosClaimRewardsValidationError",
   CosmosClaimRewardsValidationSuccess: "CosmosClaimRewardsValidationSuccess",
+
+  OsmosisDelegationStarted: "OsmosisDelegationStarted",
+  OsmosisDelegationValidator: "OsmosisDelegationValidator",
+  OsmosisDelegationValidatorSelect: "OsmosisDelegationValidatorSelect",
+  OsmosisDelegationAmount: "OsmosisDelegationAmount",
+  OsmosisDelegationSelectDevice: "OsmosisDelegationSelectDevice",
+  OsmosisDelegationConnectDevice: "OsmosisDelegationConnectDevice",
+  OsmosisDelegationValidationError: "OsmosisDelegationValidationError",
+  OsmosisDelegationValidationSuccess: "OsmosisDelegationValidationSuccess",
+  OsmosisUndelegationAmount: "OsmosisUndelegationAmount",
+  OsmosisClaimRewardsValidator: "OsmosisClaimRewardsValidator",
+  OsmosisClaimRewardsMethod: "OsmosisClaimRewardsMethod",
+  OsmosisClaimRewardsSelectDevice: "OsmosisClaimRewardsSelectDevice",
+  OsmosisClaimRewardsConnectDevice: "OsmosisClaimRewardsConnectDevice",
+  OsmosisClaimRewardsValidationError: "OsmosisClaimRewardsValidationError",
+  OsmosisClaimRewardsValidationSuccess: "OsmosisClaimRewardsValidationSuccess",
+  OsmosisRedelegationValidator: "OsmosisRedelegationValidator",
+  OsmosisUndelegationSelectDevice: "OsmosisUndelegationSelectDevice",
+  OsmosisUndelegationConnectDevice: "OsmosisUndelegationConnectDevice",
+  OsmosisUndelegationValidationError: "OsmosisUndelegationValidationError",
+  OsmosisUndelegationValidationSuccess: "OsmosisUndelegationValidationSuccess",
+  OsmosisRedelegationAmount: "OsmosisRedelegationAmount",
+  OsmosisRedelegationSelectDevice: "OsmosisRedelegationSelectDevice",
+  OsmosisRedelegationConnectDevice: "OsmosisRedelegationConnectDevice",
+  OsmosisRedelegationValidationError: "OsmosisRedelegationValidationError",
+  OsmosisRedelegationValidationSuccess: "OsmosisRedelegationValidationSuccess",
+
   // crypto_org
   CryptoOrgEditMemo: "CryptoOrgEditMemo",
   AlgorandEditMemo: "AlgorandEditMemo",
@@ -311,6 +342,15 @@ export const ScreenName = {
   OnboardingModalSyncDesktopInformation:
     "OnboardingModalSyncDesktopInformation",
   OnboardingModalRecoveryPhraseWarning: "OnboardingModalRecoveryPhraseWarning",
+
+  SyncOnboardingCompanion: "SyncOnboardingCompanion",
+  SyncOnboardingCompletion: "SyncOnboardingCompletion",
+  DeviceModelSelection: "DeviceModelSelection",
+  BleDevicesScanning: "BleDevicesScanning",
+  BleDevicePairing: "BleDevicePairing",
+
+  BleDevicePairingFlow: "BleDevicePairingFlow",
+
   PlatformCatalog: "PlatformCatalog",
   PlatformApp: "PlatformApp",
   PlatformStartExchange: "PlatformStartExchange",
@@ -336,6 +376,8 @@ export const ScreenName = {
   // solana
   SolanaEditMemo: "SolanaEditMemo",
   SolanaEditAmount: "SolanaEditAmount",
+  SolanaDelegationStarted: "SolanaDelegationStarted",
+
   PostBuyDeviceScreen: "PostBuyDeviceScreen",
   PostBuyDeviceSetupNanoWallScreen: "PostBuyDeviceSetupNanoWallScreen",
   NoDeviceWallScreen: "NoDeviceWallScreen",
@@ -345,6 +387,15 @@ export const ScreenName = {
   CardanoEditMemo: "CardanoEditMemo",
   // hedera
   HederaEditMemo: "HederaEditMemo",
+
+  CustomImageStep1Crop: "CustomImageStep1Crop",
+  CustomImageStep2Preview: "CustomImageStep2Preview",
+  CustomImageStep3Transfer: "CustomImageStep3Transfer",
+  CustomImageErrorScreen: "CustomImageErrorScreen",
+
+  PostOnboardingHub: "PostOnboardingHub",
+  PostOnboardingDebugScreen: "PostOnboardingDebugScreen",
+  PostOnboardingMockActionScreen: "PostOnboardingMockActionScreen",
 };
 export const NavigatorName = {
   // Stack
@@ -366,6 +417,10 @@ export const NavigatorName = {
   CosmosDelegationFlow: "CosmosDelegationFlow",
   CosmosRedelegationFlow: "CosmosRedelegationFlow",
   CosmosUndelegationFlow: "CosmosUndelegationFlow",
+  OsmosisClaimRewardsFlow: "OsmosisClaimRewardsFlow",
+  OsmosisDelegationFlow: "OsmosisDelegationFlow",
+  OsmosisRedelegationFlow: "OsmosisRedelegationFlow",
+  OsmosisUndelegationFlow: "OsmosisUndelegationFlow",
   AlgorandClaimRewardsFlow: "AlgorandClaimRewardsFlow",
   AlgorandOptInFlow: "AlgorandOptInFlow",
   ClaimRewards: "ClaimRewards",
@@ -418,4 +473,11 @@ export const NavigatorName = {
   // Root
   RootNavigator: "RootNavigator",
   Discover: "Discover",
+
+  // Custom Image
+  CustomImage: "CustomImage",
+
+  WalletConnect: "WalletConnect",
+
+  PostOnboarding: "PostOnboarding",
 };

@@ -28,7 +28,6 @@ setSupportedCurrencies([
   "decred",
   "digibyte",
   "algorand",
-  "osmosis",
   "qtum",
   "bitcoin_gold",
   "komodo",
@@ -45,4 +44,10 @@ setSupportedCurrencies([
   "hedera",
   "cardano",
   "filecoin",
+  "osmosis",
+  "fantom",
+  "cronos",
+  "moonbeam",
+  "songbird",
+  "flare",
 ]);

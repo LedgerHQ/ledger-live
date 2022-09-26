@@ -3,6 +3,32 @@
 exports[`filecoin currency bridge scanAccounts filecoin seed 1 1`] = `
 Array [
   Object {
+    "balance": "1000000000000000",
+    "currencyId": "filecoin",
+    "derivationMode": "gliflegacy",
+    "freshAddress": "t15lauyzdivqj7m3yob3rxmzdsy7uyhfflwyheuri",
+    "freshAddressPath": "44'/1'/0'/0/0",
+    "freshAddresses": Array [
+      Object {
+        "address": "t15lauyzdivqj7m3yob3rxmzdsy7uyhfflwyheuri",
+        "derivationPath": "44'/1'/0'/0/0",
+      },
+    ],
+    "id": "js:2:filecoin:t15lauyzdivqj7m3yob3rxmzdsy7uyhfflwyheuri:gliflegacy",
+    "index": 0,
+    "name": "Filecoin 1",
+    "nfts": undefined,
+    "operationsCount": 0,
+    "pendingOperations": Array [],
+    "seedIdentifier": "04ca7b02cafdf36e8b4caaf530a96b949764af71b956b2a3328b7a10940794c860f574a9199be98bde3c261887fec8e5fd94bc5f104908bf5f992f52ef2a89abb0",
+    "spendableBalance": "1000000000000000",
+    "starred": false,
+    "swapHistory": Array [],
+    "syncHash": undefined,
+    "unitMagnitude": 18,
+    "used": true,
+  },
+  Object {
     "balance": "100000000000000000",
     "currencyId": "filecoin",
     "derivationMode": "",
@@ -59,6 +85,7 @@ Array [
 
 exports[`filecoin currency bridge scanAccounts filecoin seed 1 2`] = `
 Array [
+  Array [],
   Array [
     Object {
       "accountId": "js:2:filecoin:f1p74d4mlmeyc4agflhjqsnvoyzyfdai7fmkyso2a:",

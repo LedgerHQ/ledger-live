@@ -1,100 +1,57 @@
-import { Flex, Icons, Text, Button, BoxedIcon } from "@ledgerhq/native-ui";
-import React, { useCallback, useState, useMemo, useEffect } from "react";
+import { Flex, Icons, Text, Button } from "@ledgerhq/native-ui";
+import React, { useCallback, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Language } from "@ledgerhq/types-live";
-import BottomModal from "../../../components/BottomModal";
-import DeviceLanguageSelection from "./DeviceLanguageSelection";
-import DeviceActionModal from "../../../components/DeviceActionModal";
-import { createAction } from "@ledgerhq/live-common/lib/hw/actions/installLanguage";
-import installLanguage from "@ledgerhq/live-common/lib/hw/installLanguage";
+import { Language, DeviceInfo } from "@ledgerhq/types-live";
 import { useAvailableLanguagesForDevice } from "@ledgerhq/live-common/lib/manager/hooks";
 import { Device } from "@ledgerhq/live-common/lib/hw/actions/types";
-import { DeviceInfo } from "@ledgerhq/types-live";
+import BottomModal from "../../../components/BottomModal";
+import DeviceLanguageSelection from "./DeviceLanguageSelection";
+import ChangeDeviceLanguageActionModal from "../../../components/ChangeDeviceLanguageActionModal";
+import { track } from "../../../analytics";
 
 type Props = {
   pendingInstalls: boolean;
-  currentLanguage: Language;
+  currentDeviceLanguage: Language;
   device: Device;
   deviceInfo: DeviceInfo;
-};
-
-const DeviceLanguageInstalled: React.FC<{
-  onContinue: () => void;
-  onMount: () => void;
-  installedLanguage: Language;
-}> = ({ onContinue, onMount, installedLanguage }) => {
-  useEffect(() => onMount(), [onMount]);
-  const { t } = useTranslation();
-
-  return (
-    <Flex alignItems="center">
-      <BoxedIcon
-        Icon={Icons.CheckAloneMedium}
-        iconColor="success.c100"
-        size={48}
-        iconSize={24}
-      />
-      <Text variant="h4" textAlign="center" my={7} fontWeight="semiBold">
-        {t("deviceLocalization.languageInstalled", {
-          language: t(`deviceLocalization.languages.${installedLanguage}`),
-        })}
-      </Text>
-      <Button type="main" alignSelf="stretch" onPress={onContinue}>
-        {t("common.continue")}
-      </Button>
-    </Flex>
-  );
+  onLanguageChange: () => void;
 };
 
 const DeviceLanguage: React.FC<Props> = ({
   pendingInstalls,
-  currentLanguage,
+  currentDeviceLanguage,
   device,
   deviceInfo,
+  onLanguageChange,
 }) => {
   const { t } = useTranslation();
 
   const [isChangeLanguageOpen, setIsChangeLanguageOpen] = useState(false);
   const [selectedLanguage, setSelectedLanguage] = useState<Language>(
-    currentLanguage,
+    currentDeviceLanguage,
   );
-  const [deviceLanguage, setDeviceLanguage] = useState<Language>(
-    currentLanguage,
-  );
+
   const { availableLanguages } = useAvailableLanguagesForDevice(deviceInfo);
 
-  const [shouldInstallLanguage, setShouldInstallLanguage] = useState<boolean>(
-    false,
-  );
-  const [
-    deviceForActionModal,
-    setDeviceForActionModal,
-  ] = useState<Device | null>(null);
-
-  const action = useMemo(
-    () =>
-      createAction(() =>
-        installLanguage({
-          deviceId: device.deviceId,
-          language: selectedLanguage,
-        }),
-      ),
-    [selectedLanguage, device.deviceId],
-  );
+  const [shouldInstallLanguage, setShouldInstallLanguage] =
+    useState<boolean>(false);
+  const [deviceForActionModal, setDeviceForActionModal] =
+    useState<Device | null>(null);
 
   const closeChangeLanguageModal = useCallback(
     () => setIsChangeLanguageOpen(false),
     [setIsChangeLanguageOpen],
   );
-  const openChangeLanguageModal = useCallback(
-    () => setIsChangeLanguageOpen(true),
-    [setIsChangeLanguageOpen],
-  );
+  const openChangeLanguageModal = useCallback(() => {
+    track("Page Manager ChangeLanguageEntered");
+    setIsChangeLanguageOpen(true);
+  }, [setIsChangeLanguageOpen]);
 
   const confirmInstall = useCallback(() => {
+    track("Page Manager LanguageInstallTriggered", { selectedLanguage });
     setShouldInstallLanguage(true);
     closeChangeLanguageModal();
-  }, [setShouldInstallLanguage, closeChangeLanguageModal]);
+  }, [setShouldInstallLanguage, closeChangeLanguageModal, selectedLanguage]);
   // this has to be done in two steps because we can only open the second modal after the first
   // one has been hidden. So we need to put this function attached to the onModalHide prop of the first
   // see https://github.com/react-native-modal/react-native-modal/issues/30
@@ -109,10 +66,10 @@ const DeviceLanguage: React.FC<Props> = ({
     setDeviceForActionModal(null);
   }, [setShouldInstallLanguage, setDeviceForActionModal]);
 
-  const refreshDeviceLanguage = useCallback(
-    () => setDeviceLanguage(selectedLanguage),
-    [setDeviceLanguage, selectedLanguage],
-  );
+  const refreshDeviceLanguage = useCallback(() => {
+    track("Page Manager LanguageInstalled", { selectedLanguage });
+    onLanguageChange();
+  }, [selectedLanguage]);
 
   return (
     <>
@@ -133,10 +90,12 @@ const DeviceLanguage: React.FC<Props> = ({
             Icon={Icons.DropdownMedium}
             onPress={openChangeLanguageModal}
           >
-            {t(`deviceLocalization.languages.${deviceLanguage}`)}
+            {t(`deviceLocalization.languages.${currentDeviceLanguage}`)}
           </Button>
         ) : (
-          <Text>{t(`deviceLocalization.languages.${deviceLanguage}`)}</Text>
+          <Text>
+            {t(`deviceLocalization.languages.${currentDeviceLanguage}`)}
+          </Text>
         )}
       </Flex>
       <BottomModal
@@ -145,24 +104,23 @@ const DeviceLanguage: React.FC<Props> = ({
         onModalHide={openDeviceActionModal}
       >
         <DeviceLanguageSelection
-          deviceLanguage={deviceLanguage}
+          device={device}
+          deviceLanguage={currentDeviceLanguage}
           onSelectLanguage={setSelectedLanguage}
           selectedLanguage={selectedLanguage}
           onConfirmInstall={confirmInstall}
           availableLanguages={availableLanguages}
         />
       </BottomModal>
-      <DeviceActionModal
-        action={action}
+      <ChangeDeviceLanguageActionModal
         onClose={closeDeviceActionModal}
         device={deviceForActionModal}
-        renderOnResult={() => (
-          <DeviceLanguageInstalled
-            onContinue={closeDeviceActionModal}
-            onMount={refreshDeviceLanguage}
-            installedLanguage={selectedLanguage}
-          />
-        )}
+        language={selectedLanguage}
+        onError={error => {
+          track("Page Manager LanguageInstallError", { error });
+          refreshDeviceLanguage();
+        }}
+        onResult={refreshDeviceLanguage}
       />
     </>
   );

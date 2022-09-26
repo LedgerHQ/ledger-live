@@ -3,14 +3,12 @@ import { View } from "react-native";
 import { Trans } from "react-i18next";
 
 import { State, AppsDistribution } from "@ledgerhq/live-common/apps/index";
-import { App, DeviceInfo } from "@ledgerhq/types-live";
+import { App, DeviceInfo, idsToLanguage } from "@ledgerhq/types-live";
 
-import { Flex, Text, Button } from "@ledgerhq/native-ui";
+import { Flex, Text, Button, Divider } from "@ledgerhq/native-ui";
 import { CircledCheckMedium } from "@ledgerhq/native-ui/assets/icons";
 import styled, { useTheme } from "styled-components/native";
 import { ListAppsResult } from "@ledgerhq/live-common/apps/types";
-import { isDeviceLocalizationSupported } from "@ledgerhq/live-common/manager/localization";
-import { idsToLanguage } from "@ledgerhq/types-live";
 import DeviceAppStorage from "./DeviceAppStorage";
 
 import NanoS from "../../../images/devices/NanoS";
@@ -18,10 +16,8 @@ import NanoX from "../../../images/devices/NanoX";
 
 import DeviceName from "./DeviceName";
 import InstalledAppsModal from "../Modals/InstalledAppsModal";
-import { Divider } from "@ledgerhq/native-ui";
+
 import DeviceLanguage from "./DeviceLanguage";
-import { Device } from "@ledgerhq/live-common/hw/actions/types";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 
 const illustrations = {
   nanoS: NanoS,
@@ -44,10 +40,13 @@ type Props = {
   pendingInstalls: boolean;
   deviceInfo: DeviceInfo;
   device: Device;
-  setAppUninstallWithDependencies: (_: { dependents: App[]; app: App }) => void;
-  // eslint-disable-next-line no-unused-vars
+  setAppUninstallWithDependencies: (params: {
+    dependents: App[];
+    app: App;
+  }) => void;
   dispatch: (action: any) => void;
   appList: App[];
+  onLanguageChange: () => void;
 };
 
 const BorderCard = styled.View`
@@ -73,6 +72,7 @@ const DeviceCard = ({
   setAppUninstallWithDependencies,
   dispatch,
   appList,
+  onLanguageChange,
 }: Props) => {
   const { colors } = useTheme();
   const { deviceModel } = state;
@@ -82,7 +82,7 @@ const DeviceCard = ({
     illustrations[deviceModel.id]({ color: colors.neutral.c100 }),
   );
 
-  const deviceLocalizationFeatureFlag = { enabled: true }; //useFeature("deviceLocalization");
+  const deviceLocalizationFeatureFlag = useFeature("deviceLocalization");
 
   const openAppsModal = useCallback(() => {
     setAppsModalOpen(true);
@@ -142,18 +142,21 @@ const DeviceCard = ({
           </VersionContainer>
         </Flex>
       </Flex>
-      {deviceLocalizationFeatureFlag?.enabled && isLocalizationSupported && deviceInfo.languageId !== undefined && (
-        <Flex px={6}>
-          <Divider />
-          <DeviceLanguage
-            pendingInstalls={pendingInstalls}
-            currentLanguage={idsToLanguage[deviceInfo.languageId]}
-            deviceInfo={deviceInfo}
-            device={device}
-          />
-          <Divider />
-        </Flex>
-      )}
+      {deviceLocalizationFeatureFlag?.enabled &&
+        isLocalizationSupported &&
+        deviceInfo.languageId !== undefined && (
+          <Flex px={6}>
+            <Divider />
+            <DeviceLanguage
+              pendingInstalls={pendingInstalls}
+              currentDeviceLanguage={idsToLanguage[deviceInfo.languageId]}
+              deviceInfo={deviceInfo}
+              device={device}
+              onLanguageChange={onLanguageChange}
+            />
+            <Divider />
+          </Flex>
+        )}
       <DeviceAppStorage
         distribution={distribution}
         deviceModel={deviceModel}

@@ -20,6 +20,7 @@ export type Step<T, StepProps> = {
   component: React$ComponentType<StepProps>,
   footer?: React$ComponentType<StepProps>,
   onBack?: ?(StepProps) => void,
+  backButtonComponent?: React$Node,
   noScroll?: boolean,
   hideFooter?: boolean,
 };
@@ -83,7 +84,7 @@ const Stepper = <T, StepProps>({
 
   invariant(step, "Stepper: step %s doesn't exists", stepId);
 
-  const { component: StepComponent, footer: StepFooter, onBack, noScroll } = step;
+  const { component: StepComponent, footer: StepFooter, onBack, noScroll, backButtonComponent } = step;
 
   // $FlowFixMe we'll need to improve this. also ...props is bad practice...
   const stepProps: StepProps = {
@@ -98,6 +99,7 @@ const Stepper = <T, StepProps>({
       refocusWhenChange={stepId}
       onClose={hideCloseButton || deviceBlocked ? undefined : onClose}
       onBack={onBack && !deviceBlocked ? () => onBack(stepProps) : undefined}
+      backButtonComponent={backButtonComponent}
       title={title}
       noScroll={noScroll}
       render={() => (

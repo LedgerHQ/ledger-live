@@ -9,44 +9,46 @@ import Animated, {
 import { createNativeWrapper } from "react-native-gesture-handler";
 import { useTranslation } from "react-i18next";
 
-import { Box, Flex, Link as TextLink, Text } from "@ledgerhq/native-ui";
+import { Box, Flex, Button } from "@ledgerhq/native-ui";
 
-import styled from "styled-components/native";
-import proxyStyled from "@ledgerhq/native-ui/components/styled";
+import styled, { useTheme } from "styled-components/native";
 import {
   isCurrencySupported,
-  listSupportedCurrencies,
   listTokens,
+  listSupportedCurrencies,
   useCurrenciesByMarketcap,
 } from "@ledgerhq/live-common/currencies/index";
-import { FlexBoxProps } from "@ledgerhq/native-ui/components/Layout/Flex";
 import { Currency } from "@ledgerhq/types-cryptoassets";
+import { useRefreshAccountsOrdering } from "../../../actions/general";
 import {
   counterValueCurrencySelector,
   hasOrderedNanoSelector,
-  carouselVisibilitySelector,
 } from "../../../reducers/settings";
 import { usePortfolio } from "../../../actions/portfolio";
 import globalSyncRefreshControl from "../../../components/globalSyncRefreshControl";
+import BackgroundGradient from "../../../components/BackgroundGradient";
 
-import ReadOnlyGraphCard from "../../../components/ReadOnlyGraphCard";
+import GraphCardContainer from "../GraphCardContainer";
 import Header from "../Header";
-import { screen, track } from "../../../analytics";
-import { NavigatorName } from "../../../const";
-import ReadOnlyAssets from "./ReadOnlyAssets";
+import TrackScreen from "../../../analytics/TrackScreen";
+import { NavigatorName, ScreenName } from "../../../const";
+import MigrateAccountsBanner from "../../MigrateAccounts/Banner";
 import { useProviders } from "../../Swap/SwapEntry";
 import CheckLanguageAvailability from "../../../components/CheckLanguageAvailability";
 import CheckTermOfUseUpdate from "../../../components/CheckTermOfUseUpdate";
 import TabBarSafeAreaView, {
   TAB_BAR_SAFE_HEIGHT,
 } from "../../../components/TabBar/TabBarSafeAreaView";
+import SetupDeviceBanner from "../../../components/SetupDeviceBanner";
 import BuyDeviceBanner, {
   IMAGE_PROPS_BIG_NANO,
 } from "../../../components/BuyDeviceBanner";
-import SetupDeviceBanner from "../../../components/SetupDeviceBanner";
-import { ExploreWeb3Slide } from "../../../components/Carousel/shared";
 // eslint-disable-next-line import/no-cycle
 import { AnalyticsContext } from "../../../components/RootNavigator";
+import Assets from "../Assets";
+import FirmwareUpdateBanner from "../../../components/FirmwareUpdateBanner";
+
+export { default as PortfolioTabIcon } from "../TabIcon";
 
 const AnimatedFlatListWithRefreshControl = createNativeWrapper(
   Animated.createAnimatedComponent(globalSyncRefreshControl(FlatList)),
@@ -60,81 +62,40 @@ type Props = {
   navigation: any;
 };
 
-const StyledTouchableOpacity = proxyStyled.TouchableOpacity.attrs({
-  justifyContent: "center",
-  alignItems: "flex-end",
-  px: 7,
-  mx: -7,
-  py: 5,
-  my: -5,
-})``;
-
-const SectionContainer = styled(Flex).attrs((p: { px?: string | number }) => ({
-  mt: 9,
-  px: p.px ?? 6,
-}))``;
-
-const SectionTitle = ({
-  title,
-  onSeeAllPress,
-  navigatorName,
-  screenName,
-  params,
-  navigation,
-  seeMoreText,
-  containerProps,
-}: {
-  title: React.ReactElement;
-  onSeeAllPress?: () => void;
-  navigatorName?: string;
-  screenName?: string;
-  params?: any;
-  navigation?: any;
-  seeMoreText?: React.ReactElement;
-  containerProps?: FlexBoxProps;
-}) => {
-  const { t } = useTranslation();
-  const onLinkPress = useCallback(() => {
-    if (onSeeAllPress) {
-      onSeeAllPress();
-      track("button_clicked", { button: "See All", screen: "Wallet" });
-    }
-    if (navigation && navigatorName) {
-      navigation.navigate(navigatorName, { screen: screenName, params });
-    }
-  }, [onSeeAllPress, navigation, navigatorName, screenName, params]);
-
-  return (
-    <Flex
-      flexDirection={"row"}
-      justifyContent={"space-between"}
-      alignItems={"center"}
-      {...containerProps}
-    >
-      <Text variant={"h3"} textTransform={"uppercase"} mt={2}>
-        {title}
-      </Text>
-      {onSeeAllPress || navigatorName ? (
-        <StyledTouchableOpacity onPress={onLinkPress}>
-          <TextLink onPress={onLinkPress} type={"color"}>
-            {seeMoreText || t("common.seeAll")}
-          </TextLink>
-        </StyledTouchableOpacity>
-      ) : null}
-    </Flex>
-  );
-};
+export const Gradient = styled(BackgroundGradient)``;
 
 const maxAssetsToDisplay = 5;
 
-function PortfolioScreen({ navigation }: Props) {
+function ReadOnlyPortfolio({ navigation }: Props) {
   const { t } = useTranslation();
-  const hasOrderedNano = useSelector(hasOrderedNanoSelector);
-  const carouselVisibility = useSelector(carouselVisibilitySelector);
-  const showCarousel = useMemo(
-    () => Object.values(carouselVisibility).some(Boolean),
-    [carouselVisibility],
+  const counterValueCurrency: Currency = useSelector(
+    counterValueCurrencySelector,
   );
+  const portfolio = usePortfolio();
+  const { colors } = useTheme();
+  const hasOrderedNano = useSelector(hasOrderedNanoSelector);
+  useProviders();
+
+  const refreshAccountsOrdering = useRefreshAccountsOrdering();
+  useFocusEffect(refreshAccountsOrdering);
+
+  const [graphCardEndPosition, setGraphCardEndPosition] = useState(0);
+  const currentPositionY = useSharedValue(0);
+  const handleScroll = useAnimatedScrollHandler(event => {
+    currentPositionY.value = event.contentOffset.y;
+  });
+
+  const onPortfolioCardLayout = useCallback((event: LayoutChangeEvent) => {
+    const { y, height } = event.nativeEvent.layout;
+    setGraphCardEndPosition(y + height / 10);
+  }, []);
+
+  const goToAssets = useCallback(() => {
+    navigation.navigate(NavigatorName.Accounts, {
+      screen: ScreenName.Assets,
+    });
+  }, [navigation]);
+
   const listSupportedTokens = useCallback(
     () => listTokens().filter(t => isCurrencySupported(t.parentCurrency)),
     [],
@@ -148,96 +109,77 @@ function PortfolioScreen({ navigation }: Props) {
     () => sortedCryptoCurrencies.slice(0, maxAssetsToDisplay),
     [sortedCryptoCurrencies],
   );
-
-  const counterValueCurrency: Currency = useSelector(
-    counterValueCurrencySelector,
-  );
-  const portfolio = usePortfolio();
-  useProviders();
-
-  const [graphCardEndPosition, setGraphCardEndPosition] = useState(0);
-  const currentPositionY = useSharedValue(0);
-  const handleScroll = useAnimatedScrollHandler(event => {
-    currentPositionY.value = event.contentOffset.y;
-  });
-
-  const onPortfolioCardLayout = useCallback((event: LayoutChangeEvent) => {
-    const { y, height } = event.nativeEvent.layout;
-    setGraphCardEndPosition(y + height / 2);
-  }, []);
-
-  const [areAccountsEmpty] = useState(true);
-  const [, assetsToDisplay] = useMemo(
-    () => [
-      topCryptoCurrencies.length > 0,
-      topCryptoCurrencies.slice(0, maxAssetsToDisplay),
-    ],
+  const assetsToDisplay = useMemo(
+    () =>
+      topCryptoCurrencies.slice(0, maxAssetsToDisplay).map(currency => ({
+        amount: 0,
+        accounts: [],
+        currency,
+      })),
     [topCryptoCurrencies],
   );
 
   const data = useMemo(
     () => [
-      hasOrderedNano && (
-        <Box mx={6} mb={5} mt={6}>
-          <SetupDeviceBanner screen="Wallet" />
-        </Box>
-      ),
-      <Box mx={6} mt={3} onLayout={onPortfolioCardLayout}>
-        <ReadOnlyGraphCard
+      <Box onLayout={onPortfolioCardLayout}>
+        <GraphCardContainer
           counterValueCurrency={counterValueCurrency}
-          headerText={t("tabs.portfolio")}
+          portfolio={portfolio}
+          showGraphCard
+          areAccountsEmpty={false}
+          currentPositionY={currentPositionY}
+          graphCardEndPosition={graphCardEndPosition}
         />
       </Box>,
-      showCarousel && hasOrderedNano && (
-        <Box mt={6} mx={6}>
-          <ExploreWeb3Slide />
-        </Box>
-      ),
-      <SectionContainer>
-        <SectionTitle
-          title={t("distribution.title")}
-          navigation={navigation}
-          navigatorName={NavigatorName.PortfolioAccounts}
-          containerProps={{ mb: "9px" }}
-        />
-        <ReadOnlyAssets assets={assetsToDisplay} />
-      </SectionContainer>,
-      !hasOrderedNano && (
-        <BuyDeviceBanner
-          style={{
-            marginHorizontal: 16,
-            marginTop: 40,
-            paddingTop: 13.5,
-            paddingBottom: 13.5,
-          }}
-          buttonLabel={t("buyDevice.bannerButtonTitle")}
-          buttonSize="small"
-          event="button_clicked"
-          eventProperties={{
-            button: "Discover the Nano",
-            screen: "Wallet",
-          }}
-          screen="Wallet"
-          {...IMAGE_PROPS_BIG_NANO}
-        />
-      ),
+      ...(hasOrderedNano
+        ? [
+            <Box mx={6} mt={7}>
+              <SetupDeviceBanner screen="Wallet" />
+            </Box>,
+          ]
+        : []),
+      <Box background={colors.background.main} px={6} mt={6}>
+        <Assets assets={assetsToDisplay} />
+        <Button type="shade" size="large" outline mt={6} onPress={goToAssets}>
+          {t("portfolio.seelAllAssets")}
+        </Button>
+      </Box>,
+      ...(!hasOrderedNano
+        ? [
+            <BuyDeviceBanner
+              style={{
+                marginHorizontal: 16,
+                marginTop: 40,
+                paddingTop: 13.5,
+                paddingBottom: 13.5,
+              }}
+              buttonLabel={t("buyDevice.bannerButtonTitle")}
+              buttonSize="small"
+              event="button_clicked"
+              eventProperties={{
+                button: "Discover the Nano",
+              }}
+              screen="Wallet"
+              {...IMAGE_PROPS_BIG_NANO}
+            />,
+          ]
+        : []),
     ],
     [
       hasOrderedNano,
       onPortfolioCardLayout,
       counterValueCurrency,
-      t,
-      showCarousel,
-      navigation,
+      portfolio,
+      currentPositionY,
+      graphCardEndPosition,
+      colors.background.main,
       assetsToDisplay,
+      goToAssets,
+      t,
     ],
   );
 
   const { source, setSource, setScreen } = useContext(AnalyticsContext);
-
-  useFocusEffect(() => {
-    screen("ReadOnly", "Wallet", { source });
-  });
 
   useFocusEffect(
     useCallback(() => {
@@ -252,34 +194,42 @@ function PortfolioScreen({ navigation }: Props) {
   return (
     <>
       <TabBarSafeAreaView>
+        <Flex px={6} py={4}>
+          <FirmwareUpdateBanner />
+        </Flex>
         <CheckLanguageAvailability />
         <CheckTermOfUseUpdate />
-        <Box bg={"background.main"}>
-          <Header
-            counterValueCurrency={counterValueCurrency}
-            portfolio={portfolio}
-            currentPositionY={currentPositionY}
-            graphCardEndPosition={graphCardEndPosition}
-            hidePortfolio={areAccountsEmpty}
-          />
-        </Box>
+        <TrackScreen category="Wallet" source={source} />
+        <BackgroundGradient
+          currentPositionY={currentPositionY}
+          graphCardEndPosition={graphCardEndPosition}
+          color={colors.neutral.c30}
+        />
         <AnimatedFlatListWithRefreshControl
           data={data}
-          style={{ flex: 1, position: "relative" }}
+          style={{
+            flex: 1,
+            position: "relative",
+            paddingTop: 48,
+            marginBottom: 64,
+          }}
           contentContainerStyle={{ paddingBottom: TAB_BAR_SAFE_HEIGHT }}
           renderItem={({ item }: { item: React.ReactNode }) => item}
           keyExtractor={(_: any, index: number) => String(index)}
           showsVerticalScrollIndicator={false}
           onScroll={handleScroll}
-          testID={
-            topCryptoCurrencies.length
-              ? "PortfolioAccountsList"
-              : "PortfolioEmptyAccount"
-          }
+        />
+        <MigrateAccountsBanner />
+        <Header
+          counterValueCurrency={counterValueCurrency}
+          portfolio={portfolio}
+          currentPositionY={currentPositionY}
+          graphCardEndPosition={graphCardEndPosition}
+          hidePortfolio={false}
         />
       </TabBarSafeAreaView>
     </>
   );
 }
 
-export default memo<Props>(PortfolioScreen);
+export default memo<Props>(ReadOnlyPortfolio);

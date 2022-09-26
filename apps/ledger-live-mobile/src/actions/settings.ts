@@ -2,7 +2,7 @@ import { useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
 import type { Currency } from "@ledgerhq/types-cryptoassets";
-import { DeviceModelInfo } from "@ledgerhq/types-live";
+import { DeviceModelInfo, DeviceInfo } from "@ledgerhq/types-live";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import type { PortfolioRange } from "@ledgerhq/types-live";
 import { MarketListRequestParams } from "@ledgerhq/live-common/market/types";
@@ -167,6 +167,16 @@ export const setLastSeenDeviceInfo = (dmi: DeviceModelInfo) => ({
   type: "LAST_SEEN_DEVICE_INFO",
   payload: dmi,
 });
+
+export const setLastSeenDevice = ({
+  deviceInfo,
+}: {
+  deviceInfo: DeviceInfo;
+}) => ({
+  type: "LAST_SEEN_DEVICE",
+  payload: { deviceInfo },
+});
+
 export const addStarredMarketCoins = (payload: string) => ({
   type: "ADD_STARRED_MARKET_COINS",
   payload,
@@ -201,8 +211,9 @@ export const setSensitiveAnalytics = (enabled: boolean) => ({
   type: "SET_SENSITIVE_ANALYTICS",
   enabled,
 });
-export const setFirstConnectionHasDevice = () => ({
+export const setFirstConnectionHasDevice = (payload?: boolean) => ({
   type: "SET_FIRST_CONNECTION_HAS_DEVICE",
+  payload,
 });
 export const setNotifications = (payload: any) => ({
   type: "SET_NOTIFICATIONS",
@@ -224,7 +235,7 @@ export function useTimeRange() {
     },
     [dispatch],
   );
-  const ranges: PortfolioRange[] = ["all", "year", "month", "week", "day"];
+  const ranges: PortfolioRange[] = ["day", "week", "month", "year", "all"];
   const options = ranges.map<PortfolioRangeOption>(key => ({
     key,
     value: t(`common:time.${key}`),

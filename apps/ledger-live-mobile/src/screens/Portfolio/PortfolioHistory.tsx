@@ -21,6 +21,7 @@ import LoadingFooter from "../../components/LoadingFooter";
 import Button from "../../components/Button";
 import { ScreenName } from "../../const";
 import { withDiscreetMode } from "../../context/DiscreetModeContext";
+import { track } from "../../analytics";
 
 type Props = {
   navigation: any;
@@ -88,6 +89,9 @@ export const PortfolioHistoryList = withDiscreetMode(
     }
 
     const onTransactionButtonPress = useCallback(() => {
+      track("button_clicked", {
+        button: "See All Transactions",
+      });
       navigation.navigate(ScreenName.PortfolioOperationHistory);
     }, [navigation]);
 

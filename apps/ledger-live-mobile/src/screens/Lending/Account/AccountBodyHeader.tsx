@@ -4,9 +4,11 @@ import type { TokenAccount, Account } from "@ledgerhq/types-live";
 import type { CompoundAccountSummary } from "@ledgerhq/live-common/compound/types";
 import { Trans } from "react-i18next";
 import { useTheme } from "@react-navigation/native";
+import { Box } from "@ledgerhq/native-ui";
 import LText from "../../../components/LText";
 import ActiveAccountRow from "../Dashboard/ActiveAccountRow";
 import ClosedLoansRow from "../ClosedLoans/ClosedLoansRow";
+import SectionTitle from "../../WalletCentricSections/SectionTitle";
 
 type Props = {
   account: TokenAccount;
@@ -26,12 +28,13 @@ export default function AccountBodyHeader({
     [account, parentAccount],
   );
   return opened.length > 0 || closed.length > 0 ? (
-    <View style={styles.root}>
+    <Box>
       {opened && opened.length > 0 ? (
         <>
-          <LText semiBold style={styles.title}>
-            <Trans i18nKey="transfer.lending.account.openLoans" />
-          </LText>
+          <SectionTitle
+            title={<Trans i18nKey="transfer.lending.account.openLoans" />}
+            containerProps={{ mb: 6 }}
+          />
           <View
             style={[
               styles.container,
@@ -86,15 +89,10 @@ export default function AccountBodyHeader({
           />
         </>
       )}
-    </View>
+    </Box>
   ) : null;
 }
 const styles = StyleSheet.create({
-  root: {
-    marginTop: 12,
-    marginBottom: 32,
-    paddingHorizontal: 16,
-  },
   container: {
     borderRadius: 4,
   },
