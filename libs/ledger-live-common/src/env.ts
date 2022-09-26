@@ -632,7 +632,7 @@ const envDefinitions = {
   PLAYWRIGHT_RUN: {
     def: false,
     parser: boolParser,
-    desc: "true when the is launched for E2E testing",
+    desc: "true when launched for E2E testing",
   },
   MARKET_API_URL: {
     def: "https://proxycg.api.live.ledger.com/api/v3",
