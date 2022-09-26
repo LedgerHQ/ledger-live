@@ -15,14 +15,12 @@ import {
 
 import { Flex } from "@ledgerhq/native-ui";
 import { useSelector } from "react-redux";
-import { useRoute } from "@react-navigation/native";
 import { ScreenName } from "../../const";
 import { track, TrackScreen } from "../../analytics";
 import FilteredSearchBar from "../../components/FilteredSearchBar";
 import CurrencyRow from "../../components/CurrencyRow";
 import LText from "../../components/LText";
 import { flattenAccountsSelector } from "../../reducers/accounts";
-import { usePreviousRouteName } from "../../helpers/routeHooks";
 
 const SEARCH_KEYS = ["name", "ticker"];
 
@@ -57,12 +55,10 @@ const findAccountByCurrency = (
 
 export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
   const { t } = useTranslation();
-  const routerRoute = useRoute();
   const filterCurrencyIds = useMemo(
     () => route.params?.filterCurrencyIds || [],
     [route.params?.filterCurrencyIds],
   );
-  const lastRoute = usePreviousRouteName();
   const cryptoCurrencies = useMemo(
     () =>
       listSupportedCurrencies()
@@ -81,7 +77,6 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
   const onPressItem = useCallback(
     (currency: CryptoCurrency | TokenCurrency) => {
       track("currency_clicked", {
-        screen: routerRoute.name,
         currency: currency.name,
       });
 
@@ -132,7 +127,7 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
         });
       }
     },
-    [accounts, navigation, routerRoute.name],
+    [accounts, navigation],
   );
 
   const renderList = useCallback(
@@ -153,7 +148,7 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
 
   return (
     <>
-      <TrackScreen category="Receive" name="Select Crypto" source={lastRoute} />
+      <TrackScreen category="Receive" name="Select Crypto" />
       <LText fontSize={32} fontFamily="InterMedium" semiBold px={6} my={3}>
         {t("transfer.receive.selectCrypto.title")}
       </LText>
