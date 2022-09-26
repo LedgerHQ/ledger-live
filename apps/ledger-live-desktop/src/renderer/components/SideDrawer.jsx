@@ -1,6 +1,6 @@
 // @flow
 
-import React, { useEffect, useCallback, useState, useRef } from "react";
+import React, { useEffect, useCallback, useRef } from "react";
 import styled from "styled-components";
 import { color } from "styled-system";
 import { Transition } from "react-transition-group";
@@ -135,7 +135,6 @@ export function SideDrawer({
   preventBackdropClick = false,
   ...props
 }: DrawerProps) {
-  const [isMounted, setMounted] = useState(false);
 
   const onKeyPress = useCallback(
     e => {
@@ -146,13 +145,6 @@ export function SideDrawer({
     },
     [onRequestClose, isOpen, preventBackdropClick],
   );
-
-  useEffect(() => {
-    setMounted(true);
-    return () => {
-      setMounted(false);
-    };
-  }, []);
 
   useEffect(() => {
     window.addEventListener("keydown", onKeyPress, false);
@@ -180,10 +172,6 @@ export function SideDrawer({
       focusTrap.current = null;
     };
   }, [isOpen]);
-
-  if (!isMounted) {
-    return null;
-  }
 
   return domNode
     ? createPortal(
