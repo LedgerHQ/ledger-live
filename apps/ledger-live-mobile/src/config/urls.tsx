@@ -12,6 +12,7 @@ export const urls = {
     ja: "https://shop.ledger.com/ja/pages/ledger-live-terms-of-use",
     zh: "https://shop.ledger.com/zh-cn/pages/ledger-live-terms-of-use",
     ko: "https://shop.ledger.com/ko/pages/ledger-live-terms-of-use",
+    ru: "https://shop.ledger.com/ru/pages/ledger-live-terms-of-use",
   },
   privacyPolicy: {
     en: "https://www.ledger.com/privacy-policy?utm_content=privacy&utm_medium=self_referral&utm_source=ledger_live_mobile",
@@ -23,6 +24,7 @@ export const urls = {
     ja: "https://www.ledger.com/ja/privacy-policy?utm_content=privacy&utm_medium=self_referral&utm_source=ledger_live_mobile",
     zh: "https://www.ledger.com/zh-hans/privacy-policy?utm_content=privacy&utm_medium=self_referral&utm_source=ledger_live_mobile",
     ko: "https://www.ledger.com/ko/privacy-policy?utm_content=privacy&utm_medium=self_referral&utm_source=ledger_live_mobile",
+    ru: "https://www.ledger.com/ru/privacy-policy?utm_content=privacy&utm_medium=self_referral&utm_source=ledger_live_mobile",
   },
   ratingsContact:
     "https://support.ledger.com/hc/en-us/articles/4423020306705-Contact-Us?support=true",
