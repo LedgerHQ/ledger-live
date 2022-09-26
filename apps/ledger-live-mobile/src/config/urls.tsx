@@ -139,7 +139,8 @@ export const urls = {
   },
   solana: {
     supportPage: "https://support.ledger.com",
-    stakingPage: "https://support.ledger.com",
+    stakingPage:
+      "https://support.ledger.com/hc/en-us/articles/4731749170461?docs=true",
   },
   resources: {
     gettingStarted:
@@ -152,6 +153,9 @@ export const urls = {
     twitter: "https://twitter.com/Ledger",
     github: "https://github.com/LedgerHQ",
     status: "https://status.ledger.com",
+  },
+  deviceLocalization: {
+    learnMore: "https://support.ledger.com/hc/en-us/articles/6522080681501",
   },
   discover: {
     ledgerApps:

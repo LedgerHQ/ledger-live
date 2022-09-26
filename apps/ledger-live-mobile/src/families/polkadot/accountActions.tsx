@@ -18,8 +18,13 @@ import WithdrawUnbondedIcon from "../../icons/Coins";
 import NominateIcon from "../../icons/Vote";
 import ChillIcon from "../../icons/VoteNay";
 import { NavigatorName, ScreenName } from "../../const";
+import { ActionButtonEvent } from "../../components/FabActions";
 
-const getActions = ({ account }: { account: Account }) => {
+const getActions = ({
+  account,
+}: {
+  account: Account;
+}): ActionButtonEvent[] | null | undefined => {
   if (!account.polkadotResources) return null;
   const { staking } = getCurrentPolkadotPreloadData();
   const accountId = account.id;
@@ -53,6 +58,7 @@ const getActions = ({ account }: { account: Account }) => {
 
   return [
     {
+      id: "stake",
       disabled: !(earnRewardsEnabled || nominationEnabled),
       navigationParams: isStash(account)
         ? [
@@ -77,6 +83,7 @@ const getActions = ({ account }: { account: Account }) => {
       Icon: Icons.ClaimRewardsMedium,
     },
     {
+      id: "bond",
       disabled: !bondingEnabled,
       navigationParams: [
         NavigatorName.PolkadotBondFlow,
@@ -92,6 +99,7 @@ const getActions = ({ account }: { account: Account }) => {
       Icon: BondIcon,
     },
     {
+      id: "unbond",
       disabled: !unbondingEnabled,
       navigationParams: [
         NavigatorName.PolkadotUnbondFlow,
@@ -107,6 +115,7 @@ const getActions = ({ account }: { account: Account }) => {
       Icon: UnbondIcon,
     },
     {
+      id: "withdrawUnbonded",
       disabled: !withdrawEnabled,
       navigationParams: [
         NavigatorName.PolkadotSimpleOperationFlow,
@@ -125,6 +134,7 @@ const getActions = ({ account }: { account: Account }) => {
       Icon: WithdrawUnbondedIcon,
     },
     {
+      id: "nominate",
       disabled: !nominationEnabled,
       navigationParams: [
         NavigatorName.PolkadotNominateFlow,
@@ -140,6 +150,7 @@ const getActions = ({ account }: { account: Account }) => {
       Icon: NominateIcon,
     },
     {
+      id: "chill",
       disabled: !chillEnabled,
       navigationParams: [
         NavigatorName.PolkadotSimpleOperationFlow,

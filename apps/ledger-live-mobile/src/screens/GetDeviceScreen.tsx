@@ -10,6 +10,7 @@ import {
 import Video from "react-native-video";
 import styled, { useTheme } from "styled-components/native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { StackNavigationProp } from "@react-navigation/stack";
 import { useNavigation } from "@react-navigation/native";
 import { useTranslation } from "react-i18next";
 import { Linking, TouchableOpacity } from "react-native";
@@ -38,7 +39,7 @@ const hitSlop = {
 
 const StyledSafeAreaView = styled(SafeAreaView)`
   flex: 1;
-  background-color: ${({ theme }) => theme.colors.background.main};
+  background-color: ${p => p.theme.colors.background.main};
 `;
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
@@ -81,7 +82,8 @@ const videoStyle = {
 
 export default function GetDeviceScreen() {
   const { t } = useTranslation();
-  const navigation = useNavigation();
+  // @TODO replace any with RootStackParamList once ready
+  const navigation = useNavigation<StackNavigationProp<any>>();
   const { theme, colors } = useTheme();
   const { setShowWelcome, setFirstTimeOnboarding } = useNavigationInterceptor();
   const buyDeviceFromLive = useFeature("buyDeviceFromLive");
@@ -171,19 +173,21 @@ export default function GetDeviceScreen() {
             <Video
               disableFocus
               source={theme === "light" ? sourceLight : sourceDark}
+              // @ts-expect-error issue in typings
               style={{
-                ...videoStyle,
                 backgroundColor: colors.background.main,
                 transform: [{ scale: 1.4 }],
+                ...videoStyle,
               }}
               muted
               resizeMode={"cover"}
             />
           )}
           <Flex
+            // @ts-expect-error issue in typings
             style={{
-              ...videoStyle,
               opacity: 0.1,
+              ...videoStyle,
             }}
             bg="background.main"
           />
@@ -211,7 +215,11 @@ export default function GetDeviceScreen() {
           my={6}
           type="main"
           outline={false}
-          event="BuyDeviceScreen - Buy Ledger"
+          event="button_clicked"
+          eventProperties={{
+            button: "Buy your Ledger now",
+            screen: ScreenName.GetDevice,
+          }}
           onPress={buyLedger}
           size="large"
         >

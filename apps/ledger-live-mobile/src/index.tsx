@@ -10,6 +10,7 @@ import React, {
   useEffect,
 } from "react";
 import { connect, useDispatch, useSelector } from "react-redux";
+import * as Sentry from "@sentry/react-native";
 import {
   StyleSheet,
   Text,
@@ -23,8 +24,10 @@ import { SafeAreaProvider } from "react-native-safe-area-context";
 import { I18nextProvider } from "react-i18next";
 import {
   getStateFromPath,
+  LinkingOptions,
   NavigationContainer,
 } from "@react-navigation/native";
+import { useFlipper } from "@react-navigation/devtools";
 import Transport from "@ledgerhq/hw-transport";
 import { NotEnoughBalance } from "@ledgerhq/errors";
 import { log } from "@ledgerhq/logs";
@@ -41,8 +44,17 @@ import {
   useRemoteLiveAppContext,
 } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
 import { LocalLiveAppProvider } from "@ledgerhq/live-common/platform/providers/LocalLiveAppProvider/index";
+
+import { isEqual } from "lodash";
+import { postOnboardingSelector } from "@ledgerhq/live-common/postOnboarding/reducer";
 import logger from "./logger";
-import { saveAccounts, saveBle, saveSettings, saveCountervalues } from "./db";
+import {
+  saveAccounts,
+  saveBle,
+  saveSettings,
+  saveCountervalues,
+  savePostOnboardingState,
+} from "./db";
 import {
   exportSelector as settingsExportSelector,
   hasCompletedOnboardingSelector,
@@ -97,6 +109,8 @@ import MarketDataProvider from "./screens/Market/MarketDataProviderWrapper";
 import AdjustProvider from "./components/AdjustProvider";
 import DelayedTrackingProvider from "./components/DelayedTrackingProvider";
 import { useFilteredManifests } from "./screens/Platform/shared";
+import { setWallectConnectUri } from "./actions/walletconnect";
+import PostOnboardingProviderWrapped from "./logic/postOnboarding/PostOnboardingProviderWrapped";
 
 const themes = {
   light: lightTheme,
@@ -122,6 +136,9 @@ Text.defaultProps.allowFontScaling = false;
 type AppProps = {
   importDataString?: string;
 };
+
+export const routingInstrumentation =
+  new Sentry.ReactNavigationInstrumentation();
 
 function App({ importDataString }: AppProps) {
   useAppStateListener();
@@ -149,11 +166,16 @@ function App({ importDataString }: AppProps) {
             .map(a => a.id),
         };
       }
-
       return null;
     },
     [],
   );
+
+  const getPostOnboardingStateChanged = useCallback(
+    (a, b) => !isEqual(a.postOnboarding, b.postOnboarding),
+    [],
+  );
+
   const rawState = useCountervaluesExport();
   const trackingPairs = useTrackingPairs();
   const pairIds = useMemo(
@@ -187,6 +209,13 @@ function App({ importDataString }: AppProps) {
     getChangesStats: (a, b) => a.ble !== b.ble,
     lense: bleSelector,
   });
+  useDBSaveEffect({
+    save: savePostOnboardingState,
+    throttle: 500,
+    getChangesStats: getPostOnboardingStateChanged,
+    lense: postOnboardingSelector,
+  });
+
   return (
     <GestureHandlerRootView style={styles.root}>
       <SyncNewAccounts priority={5} />
@@ -206,8 +235,41 @@ function App({ importDataString }: AppProps) {
   );
 }
 
-function getProxyURL(url: string | null | undefined) {
-  if (typeof url === "string" && url.substr(0, 3) === "wc:") {
+function isWalletConnectUrl(url: string) {
+  return url.substring(0, 3) === "wc:";
+}
+
+function isWalletConnectLink(url: string) {
+  return (
+    isWalletConnectUrl(url) ||
+    url.substring(0, 20) === "ledgerlive://wc" ||
+    url.substring(0, 26) === "https://ledger.com/wc"
+  );
+}
+
+// https://docs.walletconnect.com/mobile-linking#wallet-support
+function isValidWalletConnectUrl(_url: string) {
+  let url = _url;
+  if (!isWalletConnectUrl(url)) {
+    const uri = new URL(url).searchParams.get("uri");
+    if (!uri) {
+      return false;
+    }
+    url = uri;
+  }
+  const { protocol, search } = new URL(url);
+  return protocol === "wc:" && search;
+}
+
+function isInvalidWalletConnectLink(url: string) {
+  if (!isWalletConnectLink(url) || isValidWalletConnectUrl(url)) {
+    return false;
+  }
+  return true;
+}
+
+function getProxyURL(url: string) {
+  if (isWalletConnectUrl(url)) {
     return `ledgerlive://wc?uri=${encodeURIComponent(url)}`;
   }
 
@@ -215,23 +277,10 @@ function getProxyURL(url: string | null | undefined) {
 }
 
 // DeepLinking
-const linkingOptions = {
+const linkingOptions: LinkingOptions<ReactNavigation.RootParamList> = {
   async getInitialURL() {
     const url = await Linking.getInitialURL();
-    return getProxyURL(url);
-  },
-
-  subscribe(listener) {
-    function onReceiveURL({ url: _url }: { url: string }) {
-      const url = getProxyURL(_url);
-      listener(url);
-    }
-
-    Linking.addEventListener("url", onReceiveURL);
-    return () => {
-      // Clean up the event listeners
-      Linking.removeEventListener("url", onReceiveURL);
-    };
+    return url && !isInvalidWalletConnectLink(url) ? getProxyURL(url) : null;
   },
 
   prefixes: ["ledgerlive://", "https://ledger.com"],
@@ -240,11 +289,16 @@ const linkingOptions = {
       [NavigatorName.Base]: {
         initialRouteName: NavigatorName.Main,
         screens: {
-          /**
-           * @params ?uri: string
-           * ie: "ledgerlive://wc?uri=wc:00e46b69-d0cc-4b3e-b6a2-cee442f97188@1?bridge=https%3A%2F%2Fbridge.walletconnect.org&key=91303dedf64285cbbaf9120f6e9d160a5c8aa3deb67017a3874cd272323f48ae
-           */
-          [ScreenName.WalletConnectDeeplinkingSelectAccount]: "wc",
+          [NavigatorName.WalletConnect]: {
+            screens: {
+              /**
+               * @params ?uri: string
+               * ie: "ledgerlive://wc?uri=wc:00e46b69-d0cc-4b3e-b6a2-cee442f97188@1?bridge=https%3A%2F%2Fbridge.walletconnect.org&key=91303dedf64285cbbaf9120f6e9d160a5c8aa3deb67017a3874cd272323f48ae
+               */
+              [ScreenName.WalletConnectDeeplinkingSelectAccount]: "wc",
+            },
+          },
+
           [ScreenName.PostBuyDeviceScreen]: "hw-purchase-success",
 
           /**
@@ -342,6 +396,7 @@ const linkingOptions = {
             initialRouteName: "buy",
             screens: {
               [ScreenName.ExchangeBuy]: "buy/:currency?",
+              [ScreenName.ExchangeSell]: "sell/:currency?",
             },
           },
 
@@ -395,10 +450,43 @@ const DeepLinkingNavigator = ({ children }: { children: React.ReactNode }) => {
   const liveAppProviderInitialized =
     !!remoteLiveAppState.value || !!remoteLiveAppState.error;
   const filteredManifests = useFilteredManifests(platformManifestFilterParams);
-  const linking = useMemo(
+  const linking = useMemo<LinkingOptions<ReactNavigation.RootParamList>>(
     () => ({
       ...(hasCompletedOnboarding ? linkingOptions : linkingOptionsOnboarding),
       enabled: wcContext.initDone && !wcContext.session.session,
+      subscribe(listener) {
+        const sub = Linking.addEventListener("url", ({ url }) => {
+          // Prevent default deeplink if invalid wallet connect link
+          if (isInvalidWalletConnectLink(url)) {
+            return;
+          }
+
+          // Prevent default deeplink if we're already in a wallet connect route.
+          const route = navigationRef.current?.getCurrentRoute();
+          if (
+            isWalletConnectLink(url) &&
+            route &&
+            [
+              ScreenName.WalletConnectScan,
+              ScreenName.WalletConnectDeeplinkingSelectAccount,
+              ScreenName.WalletConnectConnect,
+            ].includes(route.name)
+          ) {
+            const uri = isWalletConnectUrl(url)
+              ? url
+              : // we know uri exists in the searchParams because we check it in isValidWalletConnectUrl
+                new URL(url).searchParams.get("uri")!;
+            dispatch(setWallectConnectUri(uri));
+            return;
+          }
+
+          listener(getProxyURL(url));
+        });
+        // Clean up the event listeners
+        return () => {
+          sub.remove();
+        };
+      },
       getStateFromPath: (path, config) => {
         const url = new URL(`ledgerlive://${path}`);
         const { hostname, pathname } = url;
@@ -437,8 +525,9 @@ const DeepLinkingNavigator = ({ children }: { children: React.ReactNode }) => {
       hasCompletedOnboarding,
       wcContext.initDone,
       wcContext.session.session,
-      filteredManifests,
+      dispatch,
       liveAppProviderInitialized,
+      filteredManifests,
     ],
   );
   const [isReady, setIsReady] = React.useState(false);
@@ -464,7 +553,7 @@ const DeepLinkingNavigator = ({ children }: { children: React.ReactNode }) => {
   useEffect(() => {
     compareOsTheme();
 
-    const osThemeChangeHandler = nextAppState =>
+    const osThemeChangeHandler = (nextAppState: string) =>
       nextAppState === "active" && compareOsTheme();
 
     const sub = AppState.addEventListener("change", osThemeChangeHandler);
@@ -475,6 +564,8 @@ const DeepLinkingNavigator = ({ children }: { children: React.ReactNode }) => {
       ((theme === "system" && osTheme) || theme) === "light" ? "light" : "dark",
     [theme, osTheme],
   );
+
+  useFlipper(navigationRef);
 
   if (!isReady) {
     return null;
@@ -489,6 +580,7 @@ const DeepLinkingNavigator = ({ children }: { children: React.ReactNode }) => {
         onReady={() => {
           isReadyRef.current = true;
           setTimeout(() => SplashScreen.hide(), 300);
+          routingInstrumentation.registerNavigationContainer(navigationRef);
         }}
       >
         {children}
@@ -570,20 +662,22 @@ export default class Root extends Component<
                                               value={true}
                                             >
                                               <OnboardingContextProvider>
-                                                <ToastProvider>
-                                                  <NotificationsProvider>
-                                                    <SnackbarContainer />
-                                                    <NftMetadataProvider>
-                                                      <MarketDataProvider>
-                                                        <App
-                                                          importDataString={
-                                                            importDataString
-                                                          }
-                                                        />
-                                                      </MarketDataProvider>
-                                                    </NftMetadataProvider>
-                                                  </NotificationsProvider>
-                                                </ToastProvider>
+                                                <PostOnboardingProviderWrapped>
+                                                  <ToastProvider>
+                                                    <NotificationsProvider>
+                                                      <SnackbarContainer />
+                                                      <NftMetadataProvider>
+                                                        <MarketDataProvider>
+                                                          <App
+                                                            importDataString={
+                                                              importDataString
+                                                            }
+                                                          />
+                                                        </MarketDataProvider>
+                                                      </NftMetadataProvider>
+                                                    </NotificationsProvider>
+                                                  </ToastProvider>
+                                                </PostOnboardingProviderWrapped>
                                               </OnboardingContextProvider>
                                             </ButtonUseTouchable.Provider>
                                           </CounterValuesProvider>

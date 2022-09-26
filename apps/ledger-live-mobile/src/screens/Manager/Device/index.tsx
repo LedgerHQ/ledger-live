@@ -16,6 +16,7 @@ import NanoX from "../../../images/devices/NanoX";
 
 import DeviceName from "./DeviceName";
 import InstalledAppsModal from "../Modals/InstalledAppsModal";
+
 import DeviceLanguage from "./DeviceLanguage";
 
 const illustrations = {
@@ -45,6 +46,7 @@ type Props = {
   }) => void;
   dispatch: (action: any) => void;
   appList: App[];
+  onLanguageChange: () => void;
 };
 
 const BorderCard = styled.View`
@@ -70,6 +72,7 @@ const DeviceCard = ({
   setAppUninstallWithDependencies,
   dispatch,
   appList,
+  onLanguageChange,
 }: Props) => {
   const { colors } = useTheme();
   const { deviceModel } = state;
@@ -146,9 +149,10 @@ const DeviceCard = ({
             <Divider />
             <DeviceLanguage
               pendingInstalls={pendingInstalls}
-              currentLanguage={idsToLanguage[deviceInfo.languageId]}
+              currentDeviceLanguage={idsToLanguage[deviceInfo.languageId]}
               deviceInfo={deviceInfo}
               device={device}
+              onLanguageChange={onLanguageChange}
             />
             <Divider />
           </Flex>

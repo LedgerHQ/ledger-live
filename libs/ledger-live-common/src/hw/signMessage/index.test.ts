@@ -1,19 +1,38 @@
+import BigNumber from "bignumber.js";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import type { Account } from "@ledgerhq/types-live";
-import BigNumber from "bignumber.js";
+import { createFixtureCryptoCurrency } from "../../mock/fixtures/cryptoCurrencies";
+import { TypedMessageData } from "../../families/ethereum/types";
 import { prepareMessageToSign } from "./index";
 import { MessageData } from "./types";
 
+const signResult = {
+  message: "Sign results",
+  rawMessage: "Sign raw results",
+};
+const signFunction = jest.fn(() => signResult);
+jest.mock("../../generated/hw-signMessage", () => {
+  return {
+    signExistFamily: {
+      prepareMessageToSign: function () {
+        return signFunction();
+      },
+    },
+    bitcoin: {
+      otherMethod: function () {},
+    },
+  };
+});
+
 describe("prepareMessageToSign", () => {
-  it("returns the prepared data from a simple string", () => {
+  it("calls the perFamily function if it's exist and returns this function results", () => {
     // Given
-    const crypto = createCryptoCurrency("ethereum");
+    const crypto = createFixtureCryptoCurrency("signExistFamily");
     const account = createAccount(crypto);
-    const message = "4d6573736167652064652074657374";
-    const expectedRawMessage = "0x4d6573736167652064652074657374";
+    const message = "whatever";
 
     // When
-    let result: MessageData | null = null;
+    let result: MessageData | TypedMessageData | undefined;
     let error: unknown = null;
     try {
       result = prepareMessageToSign(account, message);
@@ -23,10 +42,26 @@ describe("prepareMessageToSign", () => {
 
     // Then
     expect(error).toBeNull();
+    expect(signFunction).toBeCalledTimes(1);
+    expect(result).toEqual(signResult);
+  });
+
+  it("returns a default implementation if account is linked to a crypto able to sign but with no prepareMessageToSign function", () => {
+    // Given
+    const currency = createFixtureCryptoCurrency("bitcoin");
+    const account = createAccount(currency);
+    const message = "4d6573736167652064652074657374";
+    const expectedPath = "44'/60'/0'/0/0";
+    const expectedRawMessage = "0x4d6573736167652064652074657374";
+
+    // // When
+    const result = prepareMessageToSign(account, message);
+
+    // // Then
     expect(result).toEqual({
-      currency: crypto,
-      path: "44'/60'/0'/0/0",
-      derivationMode: "ethM",
+      currency,
+      path: expectedPath,
+      derivationMode: account.derivationMode,
       message: "Message de test",
       rawMessage: expectedRawMessage,
     });
@@ -34,12 +69,12 @@ describe("prepareMessageToSign", () => {
 
   it("returns an error if account is not linked to a crypto able to sign a message", () => {
     // Given
-    const crypto = createCryptoCurrency("mycoin");
+    const crypto = createFixtureCryptoCurrency("mycoin");
     const account = createAccount(crypto);
-    const message = "4d6573736167652064652074657374";
+    const message = "whatever";
 
     // When
-    let result: MessageData | null = null;
+    let result: MessageData | TypedMessageData | undefined;
     let error: Error | null = null;
     try {
       result = prepareMessageToSign(account, message);
@@ -48,41 +83,9 @@ describe("prepareMessageToSign", () => {
     }
 
     // Then
-    expect(result).toBeNull();
+    expect(result).toBeUndefined();
     expect(error).toEqual(Error("Crypto does not support signMessage"));
   });
-});
-
-const createCryptoCurrency = (family: string): CryptoCurrency => ({
-  type: "CryptoCurrency",
-  id: "testCoinId",
-  coinType: 8008,
-  name: "MyCoin",
-  managerAppName: "MyCoin",
-  ticker: "MYC",
-  countervalueTicker: "MYC",
-  scheme: "mycoin",
-  color: "#ff0000",
-  family,
-  units: [
-    {
-      name: "MYC",
-      code: "MYC",
-      magnitude: 8,
-    },
-    {
-      name: "SmallestUnit",
-      code: "SMALLESTUNIT",
-      magnitude: 0,
-    },
-  ],
-  explorerViews: [
-    {
-      address: "https://mycoinexplorer.com/account/$address",
-      tx: "https://mycoinexplorer.com/transaction/$hash",
-      token: "https://mycoinexplorer.com/token/$contractAddress/?a=$address",
-    },
-  ],
 });
 
 const createAccount = (crypto: CryptoCurrency): Account => ({

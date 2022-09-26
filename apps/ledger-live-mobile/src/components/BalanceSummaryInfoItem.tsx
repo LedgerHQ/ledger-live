@@ -1,69 +1,56 @@
 import React from "react";
-import { View, TouchableOpacity, StyleSheet } from "react-native";
-import { useTheme } from "@react-navigation/native";
-import Info from "../icons/Info";
-import LText from "./LText";
+import { Flex, Text, Icons, Box } from "@ledgerhq/native-ui";
+import { TouchableOpacity } from "react-native";
 
 type Props = {
-  onPress: () => void;
+  onPress?: () => void;
   title: React.ReactNode;
   value: React.ReactNode;
-  warning: boolean | null | undefined;
+  warning?: boolean;
+  isLast?: boolean;
 };
+
 export default function BalanceSummaryInfoItem({
   onPress,
   title,
   value,
   warning = false,
+  isLast = false,
 }: Props) {
-  const { colors } = useTheme();
-  const warningStyle = warning && {
-    color: colors.orange,
-  };
   return (
-    <TouchableOpacity
-      onPress={onPress}
-      style={[
-        warningStyle,
-        styles.wrapper,
-        {
-          backgroundColor: colors.card,
-        },
-      ]}
-    >
-      <View style={[warningStyle, styles.balanceLabelContainer]}>
-        <LText style={[warningStyle, styles.balanceLabel]}>{title}</LText>
-        {onPress && (
-          <Info size={12} color={warningStyle ? colors.orange : colors.grey} />
-        )}
-      </View>
-      <LText semiBold style={[warningStyle, styles.balance]} color="grey">
-        {value}
-      </LText>
+    <TouchableOpacity onPress={onPress}>
+      <Box
+        flexBasis={"auto"}
+        flexDirection={"column"}
+        pr={7}
+        mr={7}
+        py={5}
+        borderRightColor={"neutral.c40"}
+        borderRightWidth={isLast ? 0 : 1}
+      >
+        <Flex flexDirection={"row"} alignItems={"center"}>
+          <Text
+            variant={"small"}
+            fontWeight={"medium"}
+            color={"neutral.c70"}
+            mr={2}
+          >
+            {title}
+          </Text>
+          {onPress && (
+            <>
+              {warning ? (
+                <Icons.WarningMedium size={16} color={"warning.c60"} />
+              ) : (
+                <Icons.InfoMedium size={16} color={"neutral.c70"} />
+              )}
+            </>
+          )}
+        </Flex>
+        <Text variant={"large"} fontWeight={"medium"} color={"neutral.c100"}>
+          {value}
+        </Text>
+      </Box>
     </TouchableOpacity>
   );
 }
-const styles = StyleSheet.create({
-  wrapper: {
-    flexBasis: "auto",
-    flexDirection: "column",
-    marginRight: 16,
-    paddingVertical: 10,
-    paddingHorizontal: 14,
-    borderRadius: 4,
-  },
-  balanceLabelContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    paddingBottom: 4,
-  },
-  balanceLabel: {
-    fontSize: 13,
-    lineHeight: 16,
-    marginRight: 6,
-  },
-  balance: {
-    fontSize: 18,
-    lineHeight: 22,
-  },
-});

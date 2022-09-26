@@ -1,4 +1,4 @@
-<img src="https://user-images.githubusercontent.com/211411/34776833-6f1ef4da-f618-11e7-8b13-f0697901d6a8.png" height="100" />
+<img src="https://user-images.githubusercontent.com/4631227/191834116-59cf590e-25cc-4956-ae5c-812ea464f324.png" height="100" />
 
 ## @ledgerhq/errors
 
@@ -17,6 +17,8 @@ Hodl all possible errors of Ledger (live, ledgerjs) so we can deal with them in 
 
 ### TransportError
 
+**Extends Error**
+
 TransportError is used for any generic transport errors.
 e.g. Error thrown when data received by exchanges are incorrect or if exchanged failed to communicate with the device for various reason.
 
@@ -24,8 +26,6 @@ e.g. Error thrown when data received by exchanges are incorrect or if exchanged 
 
 *   `message` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** 
 *   `id` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** 
-
-Returns **void** 
 
 ### TransportStatusError
 

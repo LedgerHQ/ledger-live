@@ -16,11 +16,12 @@ const getActions = ({
 
   return [
     {
+      id: "stake",
       disabled: delegationDisabled,
       navigationParams: [
         NavigatorName.SolanaDelegationFlow,
         {
-          screen: ScreenName.DelegationStarted,
+          screen: ScreenName.SolanaDelegationStarted,
           params: {
             accountId: account.id,
             parentId: parentAccount ? parentAccount.id : undefined,

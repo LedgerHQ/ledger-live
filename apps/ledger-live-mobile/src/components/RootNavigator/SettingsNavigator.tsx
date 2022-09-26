@@ -1,6 +1,7 @@
 import React, { useMemo, useCallback } from "react";
 import {
   createStackNavigator,
+  StackNavigationProp,
   TransitionPresets,
 } from "@react-navigation/stack";
 import { useTranslation } from "react-i18next";
@@ -36,6 +37,7 @@ import CurrencySettings from "../../screens/Settings/CryptoAssets/Currencies/Cur
 import DebugSettings, {
   DebugDevices,
   DebugMocks,
+  DebugMocksParams,
 } from "../../screens/Settings/Debug";
 import DebugExport from "../../screens/Settings/Debug/ExportAccounts";
 import ExperimentalSettings from "../../screens/Settings/Experimental";
@@ -50,7 +52,22 @@ import OnboardingStepLanguage from "../../screens/Onboarding/steps/language";
 import { GenerateMockAccountSelectScreen } from "../../screens/Settings/Debug/GenerateMockAccountsSelect";
 import HiddenNftCollections from "../../screens/Settings/Accounts/HiddenNftCollections";
 import { track } from "../../analytics";
-import { useCurrentRouteName } from "../../helpers/routeHooks";
+// eslint-disable-next-line import/no-cycle
+import { useNoNanoBuyNanoWallScreenOptions } from "../../context/NoNanoBuyNanoWall";
+import PostOnboardingDebugScreen from "../../screens/PostOnboarding/PostOnboardingDebugScreen";
+
+// TODO: types for each screens and navigators need to be set
+export type SettingsNavigatorStackParamList = {
+  DebugMocks: DebugMocksParams;
+
+  // Hack: allows any other properties
+  [otherScreens: string]: undefined | object;
+};
+
+export type SettingsNavigatorProps =
+  StackNavigationProp<SettingsNavigatorStackParamList>;
+
+const Stack = createStackNavigator<SettingsNavigatorStackParamList>();
 
 export default function SettingsNavigator() {
   const { t } = useTranslation();
@@ -61,15 +78,14 @@ export default function SettingsNavigator() {
   );
 
   const navigation = useNavigation();
-  const currentRoute = useCurrentRouteName();
+  const noNanoBuyNanoWallScreenOptions = useNoNanoBuyNanoWallScreenOptions();
 
   const goBackFromNotifications = useCallback(() => {
     track("button_clicked", {
       button: "Back Arrow",
-      screen: currentRoute,
     });
     navigation.goBack();
-  }, [navigation, currentRoute]);
+  }, [navigation]);
 
   return (
     <Stack.Navigator screenOptions={stackNavConfig}>
@@ -159,6 +175,7 @@ export default function SettingsNavigator() {
           title: route.params.headerTitle,
           headerRight: null,
         })}
+        {...noNanoBuyNanoWallScreenOptions}
       />
       <Stack.Screen
         name={ScreenName.RepairDevice}
@@ -336,8 +353,10 @@ export default function SettingsNavigator() {
           headerTitle: t("onboarding.stepLanguage.title"),
         }}
       />
+      <Stack.Screen
+        name={ScreenName.PostOnboardingDebugScreen}
+        component={PostOnboardingDebugScreen}
+      />
     </Stack.Navigator>
   );
 }
-
-const Stack = createStackNavigator();

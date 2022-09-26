@@ -9,7 +9,7 @@ import type {
   TransactionRes,
 } from "../../bot/types";
 import type { Transaction } from "./types";
-import { botTest, pickSiblings } from "../../bot/specs";
+import { botTest, genericTestDestination, pickSiblings } from "../../bot/specs";
 import { isAccountEmpty } from "../../account";
 import { acceptTransaction } from "./speculos-deviceActions";
 
@@ -49,6 +49,7 @@ const hedera: AppSpec<Transaction> = {
     {
       name: "Send ~50%",
       maxRun: 2,
+      testDestination: genericTestDestination,
       transaction: ({
         account,
         siblings,
@@ -85,6 +86,7 @@ const hedera: AppSpec<Transaction> = {
     {
       name: "Send max",
       maxRun: 2,
+      testDestination: genericTestDestination,
       transaction: ({
         account,
         siblings,
