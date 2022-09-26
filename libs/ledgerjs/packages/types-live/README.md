@@ -1,4 +1,4 @@
-<img src="https://user-images.githubusercontent.com/211411/34776833-6f1ef4da-f618-11e7-8b13-f0697901d6a8.png" height="100" />
+<img src="https://user-images.githubusercontent.com/4631227/191834116-59cf590e-25cc-4956-ae5c-812ea464f324.png" height="100" />
 
 ## @ledgerhq/types-live
 
@@ -1060,12 +1060,12 @@ Type: (`"all"` | `"year"` | `"month"` | `"week"` | `"day"`)
 
 ### AssetsDistribution
 
-Type: {isAvailable: [boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean), list: [Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<{currency: (CryptoCurrency | TokenCurrency), distribution: [number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number), amount: [number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number), countervalue: [number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)}>, showFirst: [number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number), sum: [number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)}
+Type: {isAvailable: [boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean), list: [Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<{currency: (CryptoCurrency | TokenCurrency), accounts: [Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[AccountLike](#accountlike)>, distribution: [number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number), amount: [number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number), countervalue: [number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)}>, showFirst: [number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number), sum: [number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)}
 
 #### Properties
 
 *   `isAvailable` **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)** 
-*   `list` **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<{currency: (CryptoCurrency | TokenCurrency), distribution: [number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number), amount: [number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number), countervalue: [number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)}>** 
+*   `list` **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<{currency: (CryptoCurrency | TokenCurrency), accounts: [Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[AccountLike](#accountlike)>, distribution: [number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number), amount: [number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number), countervalue: [number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)}>** 
 *   `showFirst` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)** 
 *   `sum` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)** 
 

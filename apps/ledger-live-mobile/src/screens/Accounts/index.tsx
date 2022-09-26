@@ -1,4 +1,4 @@
-import React, { useCallback, useState, useEffect, memo } from "react";
+import React, { useCallback, useState, useEffect, memo, useMemo } from "react";
 import { FlatList } from "react-native";
 import { useSelector } from "react-redux";
 import { useFocusEffect } from "@react-navigation/native";
@@ -8,41 +8,42 @@ import { Flex, Text } from "@ledgerhq/native-ui";
 import { RefreshMedium } from "@ledgerhq/native-ui/assets/icons";
 
 import { flattenAccounts } from "@ledgerhq/live-common/account/index";
-import { Trans, useTranslation } from "react-i18next";
+import { useTranslation } from "react-i18next";
 import { useGlobalSyncState } from "@ledgerhq/live-common/bridge/react/index";
+import { getAccountCurrency } from "@ledgerhq/live-common/lib/account/helpers";
 import { useRefreshAccountsOrdering } from "../../actions/general";
 import { accountsSelector, isUpToDateSelector } from "../../reducers/accounts";
 import globalSyncRefreshControl from "../../components/globalSyncRefreshControl";
 import TrackScreen from "../../analytics/TrackScreen";
-import NoResultsFound from "../../icons/NoResultsFound";
 
-import NoAccounts from "./NoAccounts";
 import AccountRow from "./AccountRow";
 import MigrateAccountsBanner from "../MigrateAccounts/Banner";
 import TokenContextualModal from "../Settings/Accounts/TokenContextualModal";
 import { ScreenName } from "../../const";
 import { withDiscreetMode } from "../../context/DiscreetModeContext";
-import { usePortfolio } from "../../actions/portfolio";
 
-import FilteredSearchBar from "../../components/FilteredSearchBar";
 import Spinning from "../../components/Spinning";
 import TabBarSafeAreaView, {
   TAB_BAR_SAFE_HEIGHT,
 } from "../../components/TabBar/TabBarSafeAreaView";
 import AccountsNavigationHeader from "./AccountsNavigationHeader";
 
-const SEARCH_KEYS = ["name", "unit.code", "token.name", "token.ticker"];
-
 const List = globalSyncRefreshControl(FlatList);
 
 type Props = {
   navigation: any;
-  route: { params?: { currency?: string; search?: string } };
+  route: {
+    params?: {
+      currency?: string;
+      search?: string;
+      currencyTicker?: string;
+      currencyId?: string;
+    };
+  };
 };
 
 function Accounts({ navigation, route }: Props) {
   const accounts = useSelector(accountsSelector);
-  const portfolio = usePortfolio();
   const isUpToDate = useSelector(isUpToDateSelector);
   const globalSyncState = useGlobalSyncState();
 
@@ -55,13 +56,21 @@ function Accounts({ navigation, route }: Props) {
 
   const { params } = route;
 
-  const search = params?.search;
-
-  const [account, setAccount] = useState(undefined);
-
-  const flattenedAccounts = flattenAccounts(accounts, {
-    enforceHideEmptySubAccounts: true,
-  });
+  const [account, setAccount] = useState<Account | undefined>(undefined);
+  const flattenedAccounts = useMemo(
+    () =>
+      route?.params?.currencyId
+        ? flattenAccounts(accounts, {
+            enforceHideEmptySubAccounts: true,
+          }).filter(
+            account =>
+              getAccountCurrency(account).id === route?.params?.currencyId,
+          )
+        : flattenAccounts(accounts, {
+            enforceHideEmptySubAccounts: true,
+          }),
+    [accounts, route?.params?.currencyId],
+  );
 
   // Deep linking params redirect
   useEffect(() => {
@@ -93,67 +102,22 @@ function Accounts({ navigation, route }: Props) {
         account={item}
         accountId={item.id}
         onSetAccount={setAccount}
-        isLast={index === accounts.length - 1}
-        portfolioValue={
-          portfolio.balanceHistory[portfolio.balanceHistory.length - 1].value
+        isLast={index === flattenedAccounts.length - 1}
+        topLink={!params?.currencyId && item.type === "TokenAccount"}
+        bottomLink={
+          !params?.currencyId &&
+          flattenedAccounts[index + 1]?.type === "TokenAccount"
         }
-        topLink={item.type === "TokenAccount"}
-        bottomLink={flattenedAccounts[index + 1]?.type === "TokenAccount"}
       />
     ),
-    [navigation, accounts.length, portfolio.balanceHistory],
-  );
-
-  const renderList = useCallback(
-    items => (
-      <List
-        data={items}
-        renderItem={renderItem}
-        keyExtractor={(i: any) => i.id}
-        ListEmptyComponent={<NoAccounts />}
-        contentContainerStyle={{
-          paddingHorizontal: 16,
-          paddingBottom: TAB_BAR_SAFE_HEIGHT,
-        }}
-      />
-    ),
-    [renderItem],
-  );
-
-  const renderEmptySearch = useCallback(
-    () => (
-      <Flex alignItems="center" justifyContent="center" pb="50px" pt="30px">
-        <NoResultsFound />
-        <Text
-          color="neutral.c100"
-          fontWeight="medium"
-          variant="h2"
-          mt={6}
-          textAlign="center"
-        >
-          <Trans i18nKey="accounts.noResultsFound" />
-        </Text>
-        <Flex>
-          <Text
-            color="neutral.c80"
-            fontWeight="medium"
-            variant="body"
-            pt={6}
-            textAlign="center"
-          >
-            <Trans i18nKey="accounts.noResultsDesc" />
-          </Text>
-        </Flex>
-      </Flex>
-    ),
-    [t],
+    [navigation, flattenedAccounts, params?.currencyId],
   );
 
   return (
     <TabBarSafeAreaView>
       <TrackScreen category="Accounts" accountsLength={accounts.length} />
       <Flex flex={1} bg={"background.main"}>
-        <AccountsNavigationHeader />
+        <AccountsNavigationHeader currencyId={params?.currencyId} />
         {syncPending && (
           <Flex flexDirection={"row"} alignItems={"center"} px={6} my={3}>
             <Spinning clockwise>
@@ -164,19 +128,26 @@ function Accounts({ navigation, route }: Props) {
             </Text>
           </Flex>
         )}
-
-        <FilteredSearchBar
-          list={flattenedAccounts}
-          inputWrapperStyle={{
+        <List
+          data={flattenedAccounts}
+          renderItem={renderItem}
+          keyExtractor={(i: any) => i.id}
+          ListHeaderComponent={
+            <Flex mt={3} mb={3}>
+              <Text variant="h4">
+                {params?.currencyTicker
+                  ? t("accounts.cryptoAccountsTitle", {
+                      currencyTicker: params?.currencyTicker,
+                    })
+                  : t("accounts.title")}
+              </Text>
+            </Flex>
+          }
+          contentContainerStyle={{
             paddingHorizontal: 16,
-            paddingBottom: 16,
+            paddingBottom: TAB_BAR_SAFE_HEIGHT,
           }}
-          renderList={renderList}
-          renderEmptySearch={renderEmptySearch}
-          keys={SEARCH_KEYS}
-          initialQuery={search}
         />
-
         <MigrateAccountsBanner />
         <TokenContextualModal
           onClose={() => setAccount(undefined)}

@@ -34,6 +34,7 @@ import { knownDevicesSelector } from "../reducers/ble";
 import { satisfactionSelector } from "../reducers/ratings";
 import type { State } from "../reducers";
 import { NavigatorName } from "../const";
+import { previousRouteNameRef, currentRouteNameRef } from "./screenRefs";
 
 const sessionId = uuid();
 const appVersion = `${VersionNumber.appVersion || ""} (${
@@ -65,6 +66,7 @@ const extraProperties = store => {
       }
     : {};
   const firstConnectionHasDevice = firstConnectionHasDeviceSelector(state);
+
   return {
     appVersion,
     androidVersionCode: getAndroidVersionCode(VersionNumber.buildVersion),
@@ -170,7 +172,13 @@ export const track = (
     return;
   }
 
-  const allProperties = { ...extraProperties(storeInstance), ...properties };
+  const screen = currentRouteNameRef.current;
+
+  const allProperties = {
+    screen,
+    ...extraProperties(storeInstance),
+    ...properties,
+  };
   if (ANALYTICS_LOGS) console.log("analytics:track", event, allProperties);
   trackSubject.next({
     event,
@@ -240,7 +248,13 @@ export const screen = (
     return;
   }
 
-  const allProperties = { ...extraProperties(storeInstance), ...properties };
+  const source = previousRouteNameRef.current;
+
+  const allProperties = {
+    source,
+    ...extraProperties(storeInstance),
+    ...properties,
+  };
   if (ANALYTICS_LOGS)
     console.log("analytics:screen", category, name, allProperties);
   trackSubject.next({
