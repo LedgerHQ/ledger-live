@@ -36,11 +36,12 @@ function OnboardingStepLanguage({ navigation }: StackScreenProps<{}>) {
     navigation.goBack();
   }, [navigation]);
 
-  const changeLanguageRTL = useCallback(() => {
-    dispatch(setLanguage(selectedLanguage));
-    I18nManager.forceRTL(!I18nManager.isRTL);
+  // no useCallBack around RNRRestart, or the app might crash.
+  const changeLanguageRTL = async () => {
+    await I18nManager.forceRTL(!I18nManager.isRTL);
+    await dispatch(setLanguage(selectedLanguage));
     RNRestart.Restart();
-  }, [selectedLanguage, dispatch]);
+  };
 
   const changeLanguage = useCallback(
     async l => {

@@ -18,7 +18,6 @@ import BracketLeft from "../../icons/BracketRight";
 import { getColor } from "../../styles";
 import { FontWeightTypes, getTextStyle, getBracketSize } from "./getTextStyle";
 import { TextVariants } from "../../styles/theme";
-import { I18nManager } from "react-native";
 
 const uppercase = system({
   uppercase: {
@@ -85,7 +84,6 @@ const BracketText = ({ children, color = "neutral.c100", ...props }: BaseTextPro
 const Text = ({ children, bracket, textAlign = "left", ...props }: BaseTextProps) => {
   if (bracket) return <BracketText {...props}>{children}</BracketText>;
 
-  // console.log(I18nManager.isRTL ? !textAlign : textAlign);
   return (
     <Base textAlign={textAlign} {...props}>
       {children}
