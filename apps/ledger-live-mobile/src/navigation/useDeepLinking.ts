@@ -139,7 +139,7 @@ export function useDeepLinkHandler() {
           break;
         }
 
-        case "manager": {
+        case "myledger": {
           navigate(NavigatorName.Manager, {
             screen: ScreenName.Manager,
             params: query,
