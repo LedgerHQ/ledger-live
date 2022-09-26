@@ -85,6 +85,7 @@
     "lock" : "Verrouiller",
     "showMore" : "Afficher plus",
     "back" : "Retour",
+    "adjustFees" : "Modifier les frais",
     "reset" : "Réinitialiser",
     "retry" : "Réessayer",
     "range" : "Période",
@@ -235,10 +236,26 @@
     },
     "form" : {
       "changeCTA" : "Modifier",
-      "ratesDrawer" : {
-        "title" : "Taux",
-        "quote" : "Prix",
-        "receive" : "Reçu"
+      "rates" : {
+        "title" : "Prestataires",
+        "registration" : "Inscription requise ",
+        "noRegistration" : "Pas d’inscription requise",
+        "fixed" : "Fixe",
+        "float" : "Variable",
+        "update" : "Taux mis à jour dans",
+        "loading" : "Chargement...",
+        "name" : {
+          "title" : "Prestataire",
+          "tooltip" : "Pour utiliser certains prestataires, vous devez vous inscrire et créer un compte auprès d’eux."
+        },
+        "rate" : {
+          "title" : "Taux de change",
+          "tooltip" : "Un <0>taux variable</0> fluctue en fonction des conditions du marché. Vous pourriez donc recevoir plus ou moins que ce qui est estimé.<br/><br/>Un <0>taux fixe</0> correspond au montant affiché au début du swap."
+        },
+        "receive" : {
+          "title" : "Recevoir",
+          "tooltip" : "Montant estimé que vous recevrez après le swap."
+        }
       },
       "details" : {
         "label" : {
@@ -411,7 +428,13 @@
           "approved" : "Vérification d’identité approuvée",
           "closed" : "Vérification d'identité rejetée"
         }
-      }
+      },
+      "filter" : {
+        "all" : "Tous",
+        "centralised" : "Centralisé",
+        "dedentralised" : "Décentralisé"
+      },
+      "noQuote" : "Prix disponible à l’étape suivante"
     },
     "ip" : {
       "title" : "Bienvenue dans le Swap",
@@ -760,7 +783,7 @@
       },
       "delegation" : {
         "title" : "Bon à savoir",
-        "description" : "The Ledger validator stakes your {{asset}} at a commission of {{commission}}%.",
+        "description" : "En stakant vos {{asset}} via le validateur Ledger, les frais de commission sont de {{commission}} %.",
         "cta" : "Staker avec Ledger"
       }
     }
@@ -3405,6 +3428,10 @@
           "title" : "Recherche de compte étendue",
           "description" : "Recherchez des comptes ayant des chemins de dérivation erronés. Veuillez envoyer tout actif trouvé vers un compte classique."
         },
+        "experimentalCountervalues" : {
+          "title" : "API Devises de contrepartie expérimentales",
+          "description" : "Avec cette fonctionnalité, les devises de contrepartie affichées dans vos comptes peuvent devenir incorrectes."
+        },
         "experimentalExplorers" : {
           "title" : "API Explorateurs Expérimentales",
           "description" : "Testez une version en développement des explorateurs de blockchain de Ledger. Modifier ce paramètre peut affecter le solde des comptes, la synchronisation et la fonctionnalité Envoyer.\n(<0></0>)"
@@ -3550,7 +3577,11 @@
       "ru" : "Русский",
       "es" : "Español",
       "zh" : "中文（简体）",
-      "de" : "Deutsch"
+      "de" : "Deutsch",
+      "tr" : "Turc",
+      "ja" : "Japonais",
+      "ko" : "Coréen",
+      "pt" : "Portugais"
     }
   },
   "theme" : {
@@ -4338,6 +4369,9 @@
       "title" : "Échec de la localisation de l’application {{appName}} pour votre appareil.",
       "description" : "Veuillez essayer de réinstaller l’application depuis My Ledger."
     },
+    "PendingOperation" : {
+      "description" : "Vous avez des transactions entrantes en attente. Attention, les transactions en attente peuvent être annulées."
+    },
     "countervaluesUnavailable" : {
       "title" : "Actuellement impossible d’afficher une devise de contrepartie pour cet actif"
     },
@@ -4582,10 +4616,6 @@
       "title" : "Pas de connexion Internet",
       "description" : "Veuillez vérifier votre connexion Internet."
     },
-    "NetworkError" : {
-      "title" : "Erreur survenue lors de la synchronisation",
-      "description" : "Veuillez vérifier votre connexion Internet."
-    },
     "NoAddressesFound" : {
       "title" : "Aucun compte trouvé",
       "description" : "Une erreur est survenue lors du calcul de l’adresse. Veuillez réessayer ou contacter l’Assistance Ledger."
@@ -4733,7 +4763,7 @@
     },
     "EthAppNftNotSupported" : {
       "title" : "Opération indisponible sur cet appareil",
-      "description" : "La fonctionnalité Envoi de NFT n’est disponible que pour le Nano X. Visitez notre centre d’aide pour découvrir comment envoyer un NFT avec un Nano S."
+      "description" : "La fonctionnalité Envoi de NFT n’est disponible que pour le Nano X. Visitez notre centre d’aide pour découvrir comment envoyer un NFT avec un Nano S ou Nano S Plus."
     },
     "CantScanQRCode" : {
       "title" : "Échec du scan de ce code QR. Cette adresse ne prend pas en charge la vérification automatique."
