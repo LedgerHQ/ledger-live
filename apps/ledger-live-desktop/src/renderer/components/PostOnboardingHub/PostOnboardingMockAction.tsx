@@ -4,7 +4,7 @@ import { Button, Flex, Text } from "@ledgerhq/react-ui";
 import { useHistory } from "react-router-dom";
 import { setPostOnboardingActionCompleted } from "@ledgerhq/live-common/postOnboarding/actions";
 import { PostOnboardingActionId } from "@ledgerhq/types-live";
-import { getPostOnboardingAction } from "./logicc";
+import { getPostOnboardingAction } from "./logic";
 import { setDrawer } from "~/renderer/drawers/Provider";
 import PostOnboardingHub from ".";
 
