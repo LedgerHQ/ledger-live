@@ -64,7 +64,12 @@ const MarketPrice = ({
               })}
             </Text>
           </Flex>
-          <Flex flex={1} flexDirection="column" pl={7}>
+          <Flex
+            flex={1}
+            flexDirection="column"
+            pl={7}
+            alignItems={"flex-start"}
+          >
             <Text
               variant="small"
               fontWeight="medium"

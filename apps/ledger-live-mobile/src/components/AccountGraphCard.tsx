@@ -283,51 +283,59 @@ const GraphCardHeader = ({
           eventProperties={{ useCounterValue: shouldUseCounterValue }}
           onPress={countervalueAvailable ? onSwitchAccountCurrency : undefined}
         >
-          <Flex pb={4}>
-            <Flex flexDirection="row" alignItems="center" width="100%">
-              <Box maxWidth={"50%"}>
-                <Text variant={"large"} fontWeight={"medium"} numberOfLines={1}>
-                  {getAccountName(account)}
-                </Text>
-              </Box>
-              {isToken && (
-                <Tag marginLeft={3} numberOfLines={1} maxWidth={"50%"}>
-                  {getAccountName(parentAccount)}
-                </Tag>
-              )}
-            </Flex>
-
-            <Flex flexDirection="row">
-              <Text
-                variant={"large"}
-                fontWeight={"medium"}
-                color={"neutral.c70"}
-              >
-                {typeof items[1]?.value === "number" ? (
-                  <CurrencyUnitValue {...items[1]} />
-                ) : (
-                  <NoCountervaluePlaceholder />
+          <Flex flex={1} alignItems="flex-start">
+            <Flex pb={4}>
+              <Flex flexDirection="row" alignItems="center" width="100%">
+                <Box maxWidth={"50%"}>
+                  <Text
+                    variant={"large"}
+                    fontWeight={"medium"}
+                    numberOfLines={1}
+                  >
+                    {getAccountName(account)}
+                  </Text>
+                </Box>
+                {isToken && (
+                  <Tag marginLeft={3} numberOfLines={1} maxWidth={"50%"}>
+                    {getAccountName(parentAccount)}
+                  </Tag>
                 )}
-              </Text>
-              <TransactionsPendingConfirmationWarning maybeAccount={account} />
+              </Flex>
+
+              <Flex flexDirection="row">
+                <Text
+                  variant={"large"}
+                  fontWeight={"medium"}
+                  color={"neutral.c70"}
+                >
+                  {typeof items[1]?.value === "number" ? (
+                    <CurrencyUnitValue {...items[1]} />
+                  ) : (
+                    <NoCountervaluePlaceholder />
+                  )}
+                </Text>
+                <TransactionsPendingConfirmationWarning
+                  maybeAccount={account}
+                />
+              </Flex>
             </Flex>
-          </Flex>
-          <Text
-            fontFamily="Inter"
-            fontWeight="semiBold"
-            fontSize="32px"
-            numberOfLines={1}
-            adjustsFontSizeToFit
-          >
-            <CurrencyUnitValue
-              disableRounding={shouldUseCounterValue}
-              {...items[0]}
-            />
-          </Text>
-          <Flex flexDirection="row" alignItems="center">
-            <Delta percent show0Delta valueChange={valueChange} />
-            <Flex ml={2}>
-              <Delta unit={items[0].unit} valueChange={valueChange} />
+            <Text
+              fontFamily="Inter"
+              fontWeight="semiBold"
+              fontSize="32px"
+              numberOfLines={1}
+              adjustsFontSizeToFit
+            >
+              <CurrencyUnitValue
+                disableRounding={shouldUseCounterValue}
+                {...items[0]}
+              />
+            </Text>
+            <Flex flexDirection="row" alignItems="center">
+              <Delta percent show0Delta valueChange={valueChange} />
+              <Flex ml={2}>
+                <Delta unit={items[0].unit} valueChange={valueChange} />
+              </Flex>
             </Flex>
           </Flex>
         </Touchable>

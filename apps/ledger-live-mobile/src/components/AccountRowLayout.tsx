@@ -78,7 +78,7 @@ const AccountRowLayout = ({
                 fontWeight="semiBold"
                 color="neutral.c100"
                 numberOfLines={1}
-                flexGrow={1}
+                flexGrow={0}
                 flexShrink={1}
               >
                 {name}
