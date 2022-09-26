@@ -39,7 +39,7 @@ export type WCCallRequest =
       method: "send" | "sign";
       data: Transaction;
     };
-type Parser = (arg0: Account, arg1: WCPayload) => Promise<WCCallRequest>;
+type Parser = (account: Account, payload: WCPayload) => Promise<WCCallRequest>;
 export const parseCallRequest: Parser = async (account, payload) => {
   let wcTransactionData, bridge, transaction, message, rawMessage, hashes;
 
@@ -52,12 +52,11 @@ export const parseCallRequest: Parser = async (account, payload) => {
 
     // @dev: Today, `eth_signTypedData` is versionned. We can't only check `eth_signTypedData`
     //       This regex matches `eth_signTypedData` and `eth_signTypedData_v[0-9]`
+    // https://docs.metamask.io/guide/signing-data.html
     case payload.method.match(/eth_signTypedData(_v.)?$/)?.input:
       message = JSON.parse(payload.params[1]);
       hashes = {
-        // $FlowFixMe
         domainHash: bufferToHex(domainHash(message)),
-        // $FlowFixMe
         messageHash: bufferToHex(messageHash(message)),
       };
     case "eth_sign":
@@ -67,7 +66,6 @@ export const parseCallRequest: Parser = async (account, payload) => {
         stringHash:
           "0x" +
           sha("sha256")
-            // $FlowFixMe
             .update(Buffer.from(payload.params[1].slice(2), "hex"))
             .digest("hex"),
       };
@@ -76,16 +74,10 @@ export const parseCallRequest: Parser = async (account, payload) => {
         message || Buffer.from(payload.params[0].slice(2), "hex").toString();
       rawMessage = rawMessage || payload.params[0];
       hashes = hashes || {
-        stringHash:
-          "0x" +
-          sha("sha256")
-            // $FlowFixMe
-            .update(message)
-            .digest("hex"),
+        stringHash: "0x" + sha("sha256").update(message).digest("hex"),
       };
       return {
         type: "message",
-        // $FlowFixMe (can't figure out MessageData | TypedMessageData)
         data: {
           path: account.freshAddressPath,
           message,

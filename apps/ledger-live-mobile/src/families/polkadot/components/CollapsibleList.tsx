@@ -52,7 +52,7 @@ const CollapsibleList = ({
                 Icon={collapsed ? DropdownMedium : DropupMedium}
                 iconPosition={"right"}
                 onPress={toggleCollapsed}
-                size={"small"}
+                size={"medium"}
                 mt={3}
               >
                 {renderShowMore(collapsed)}
@@ -61,9 +61,6 @@ const CollapsibleList = ({
           </>
         ) : null}
       </View>
-      {!!collapsed && collapsedItems.length ? (
-        <View style={[styles.showMoreIndicator, {}]} />
-      ) : null}
     </>
   );
 };

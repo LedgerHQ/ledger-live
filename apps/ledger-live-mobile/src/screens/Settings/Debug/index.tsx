@@ -32,6 +32,8 @@ import GenerateMockAccount from "./GenerateMockAccountsSelect";
 import OpenDebugEnv from "./OpenDebugEnv";
 import HasOrderedNanoRow from "./HasOrderedNanoRow";
 import OpenDebugBlePairingFlow from "./OpenDebugBlePairingFlow";
+import OpenDebugCustomImage from "./OpenDebugCustomImage";
+import OpenDebugPostOnboarding from "./OpenDebugPostOnboarding";
 
 // Type of DebugMocks screen route params
 export type DebugMocksParams = {
@@ -66,6 +68,8 @@ export function DebugMocks() {
       <OpenDebugFeatureFlags />
       <OpenDebugIcons />
       <OpenLottie />
+      <OpenDebugCustomImage />
+      <OpenDebugPostOnboarding />
       <OpenDebugPlayground />
       <OpenDebugBlePairingFlow />
       <ReadOnlyModeRow />

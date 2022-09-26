@@ -16,10 +16,6 @@ export const setDismissedCarousel = createAction("APPLICATION_SET_DATA", dismiss
   dismissedCarousel,
 }));
 export const setOSDarkMode = createAction("APPLICATION_SET_DATA", osDarkMode => ({ osDarkMode }));
-export const setNotSeededDeviceRelaunch = createAction(
-  "APPLICATION_SET_DATA",
-  notSeededDeviceRelaunch => ({ notSeededDeviceRelaunch }),
-);
 export const setNavigationLock = createAction("APPLICATION_SET_DATA", navigationLocked => ({
   navigationLocked,
 }));
@@ -27,7 +23,3 @@ export const toggleSkeletonVisibility = createAction(
   "APPLICATION_SET_DATA",
   alwaysShowSkeletons => ({ debug: { alwaysShowSkeletons } }),
 );
-
-export const relaunchOnboarding = createAction("RELAUNCH_ONBOARDING", onboardingRelaunched => ({
-  onboardingRelaunched,
-}));

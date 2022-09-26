@@ -13,7 +13,12 @@ import type {
 } from "../../families/cosmos/types";
 import { getCurrentCosmosPreloadData } from "../../families/cosmos/preloadedData";
 import { getCryptoCurrencyById } from "../../currencies";
-import { pickSiblings, botTest } from "../../bot/specs";
+import {
+  pickSiblings,
+  botTest,
+  expectSiblingsHaveSpendablePartGreaterThan,
+  genericTestDestination,
+} from "../../bot/specs";
 import type { AppSpec } from "../../bot/types";
 import { toOperationRaw } from "../../account";
 import {
@@ -56,6 +61,7 @@ const cosmos: AppSpec<Transaction> = {
   },
   genericDeviceAction: acceptTransaction,
   testTimeout: 2 * 60 * 1000,
+  minViableAmount: minAmount,
   transactionCheck: ({ maxSpendable }) => {
     invariant(maxSpendable.gt(minAmount), "balance is too low");
   },
@@ -92,6 +98,7 @@ const cosmos: AppSpec<Transaction> = {
   mutations: [
     {
       name: "send some",
+      testDestination: genericTestDestination,
       test: ({ account, accountBeforeTransaction, operation }) => {
         expect(account.balance.toString()).toBe(
           accountBeforeTransaction.balance.minus(operation.value).toString()
@@ -123,6 +130,7 @@ const cosmos: AppSpec<Transaction> = {
     {
       name: "send max",
       maxRun: 1,
+      testDestination: genericTestDestination,
       transaction: ({ account, siblings, bridge }) => {
         return {
           transaction: bridge.createTransaction(account),
@@ -145,7 +153,8 @@ const cosmos: AppSpec<Transaction> = {
     {
       name: "delegate new validators",
       maxRun: 1,
-      transaction: ({ account, bridge }) => {
+      transaction: ({ account, bridge, siblings }) => {
+        expectSiblingsHaveSpendablePartGreaterThan(siblings, 0.5);
         invariant(
           account.index % 2 > 0,
           "only one out of 2 accounts is not going to delegate"
@@ -406,10 +415,14 @@ const cosmos: AppSpec<Transaction> = {
           const d = (cosmosResources as CosmosResources).delegations.find(
             (d) => d.validatorAddress === v.address
           );
-          invariant(d, "delegation %s must be found in account", v.address);
-          invariant(
-            !canClaimRewards(account as CosmosAccount, d as CosmosDelegation),
-            "reward no longer be claimable"
+          botTest("delegation exists in account", () =>
+            invariant(d, "delegation %s must be found in account", v.address)
+          );
+          botTest("reward is no longer claimable after claim", () =>
+            invariant(
+              !canClaimRewards(account as CosmosAccount, d as CosmosDelegation),
+              "reward no longer be claimable"
+            )
           );
         });
       },

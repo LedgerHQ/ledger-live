@@ -9,6 +9,7 @@ import {
   usePortfolio as usePortfolioCommon,
   useCurrencyPortfolio as useCurrencyPortfolioCommon,
 } from "@ledgerhq/live-common/portfolio/v2/react";
+import { GetPortfolioOptionsType } from "@ledgerhq/live-common/portfolio/v2/index";
 import {
   selectedTimeRangeSelector,
   counterValueCurrencySelector,
@@ -29,14 +30,19 @@ export function useBalanceHistoryWithCountervalue({
     to,
   });
 }
-export function usePortfolio() {
+
+export function usePortfolio(
+  accounts: AccountLike[],
+  options: GetPortfolioOptionsType,
+) {
   const to = useSelector(counterValueCurrencySelector);
-  const accounts = useSelector(accountsSelector);
+  const accountsSelected = useSelector(accountsSelector);
   const range = useSelector(selectedTimeRangeSelector);
   return usePortfolioCommon({
-    accounts,
+    accounts: accounts || accountsSelected,
     range,
     to,
+    options,
   });
 }
 export function useCurrencyPortfolio({

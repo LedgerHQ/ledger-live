@@ -7,8 +7,12 @@ import sampleSize from "lodash/sampleSize";
 import get from "lodash/get";
 import type { Transaction, TronAccount } from "./types";
 import { getCryptoCurrencyById, parseCurrencyUnit } from "../../currencies";
-import { botTest, pickSiblings } from "../../bot/specs";
-import type { AppSpec } from "../../bot/types";
+import {
+  botTest,
+  expectSiblingsHaveSpendablePartGreaterThan,
+  pickSiblings,
+} from "../../bot/specs";
+import type { AppSpec, TransactionDestinationTestInput } from "../../bot/types";
 import { getUnfreezeData, getNextRewardDate } from "./react";
 import { DeviceModelId } from "@ledgerhq/devices";
 import { SubAccount } from "@ledgerhq/types-live";
@@ -20,6 +24,7 @@ const maxAccount = 10;
 const getDecimalPart = (value: BigNumber, magnitude: number) =>
   value.minus(value.modulo(10 ** magnitude));
 
+// FIXME TRON have a bug where the amounts from the API have imprecisions
 const expectedApproximate = (
   value: BigNumber,
   expected: BigNumber,
@@ -28,6 +33,24 @@ const expectedApproximate = (
   if (value.minus(expected).abs().gt(delta)) {
     expect(value.toString()).toEqual(value.toString());
   }
+};
+
+const testDestination = <T>({
+  destination,
+  operation,
+  destinationBeforeTransaction,
+  sendingOperation,
+}: TransactionDestinationTestInput<T>): void => {
+  const amount = sendingOperation.value.minus(sendingOperation.fee);
+  botTest("account balance increased with transaction amount", () =>
+    expectedApproximate(
+      destination.balance,
+      destinationBeforeTransaction.balance.plus(amount)
+    )
+  );
+  botTest("operation amount is consistent with sendingOperation", () =>
+    expectedApproximate(operation.value, amount)
+  );
 };
 
 const tron: AppSpec<Transaction> = {
@@ -39,10 +62,12 @@ const tron: AppSpec<Transaction> = {
   },
   genericDeviceAction: acceptTransaction,
   testTimeout: 2 * 60 * 1000,
+  minViableAmount: minimalAmount,
   mutations: [
     {
       name: "move 50% to another account",
       maxRun: 2,
+      testDestination,
       transaction: ({ account, siblings, bridge, maxSpendable }) => {
         invariant(maxSpendable.gt(minimalAmount), "balance is too low");
         const sibling = pickSiblings(siblings, maxAccount);
@@ -72,6 +97,7 @@ const tron: AppSpec<Transaction> = {
     {
       name: "send max to another account",
       maxRun: 1,
+      testDestination,
       transaction: ({ account, siblings, bridge, maxSpendable }) => {
         invariant(maxSpendable.gt(minimalAmount), "balance is too low");
         const sibling = pickSiblings(siblings, maxAccount);
@@ -90,14 +116,16 @@ const tron: AppSpec<Transaction> = {
       },
       test: ({ account }) => {
         botTest("account spendable balance is zero", () =>
-          expect(account.spendableBalance.toString()).toBe("0")
+          expectedApproximate(account.spendableBalance, new BigNumber(0))
         );
       },
     },
     {
       name: "freeze 25% to bandwidth | energy",
       maxRun: 1,
-      transaction: ({ account, bridge, maxSpendable }) => {
+      transaction: ({ siblings, account, bridge, maxSpendable }) => {
+        expectSiblingsHaveSpendablePartGreaterThan(siblings, 0.5);
+
         invariant(maxSpendable.gt(minimalAmount), "balance is too low");
         let amount = getDecimalPart(
           maxSpendable.div(4),

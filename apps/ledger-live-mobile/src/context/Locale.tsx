@@ -43,11 +43,13 @@ export { i18next as i18n };
 type Props = {
   children: React.ReactNode;
 };
-export type SupportedLanguages = "fr" | "en" | "es" | "zh" | "ru" | "ar";
+
+export type SupportedLanguages = "fr" | "en" | "es" | "zh" | "ru" | "pt" | "ar";
+
 type LocaleState = {
   i18n: any;
   t: TFunction;
-  locale: SupportedLanguages | string;
+  locale: SupportedLanguages;
 };
 
 function getLocaleState(i18n): LocaleState {
@@ -80,7 +82,7 @@ export default function LocaleProvider({ children }: Props) {
 export function useLocale() {
   return useContext(LocaleContext);
 }
-const lastAskedLanguageAvailable = "2021-09-23";
+const lastAskedLanguageAvailable = "2022-09-23";
 // To reset os language proposition, change this date !
 export async function hasAnsweredLanguageAvailable() {
   const memory = await AsyncStorage.getItem("hasAnsweredLanguageAvailable");
