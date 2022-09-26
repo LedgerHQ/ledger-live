@@ -129,11 +129,11 @@ export function useDeepLinkHandler() {
             screen: ScreenName.PlatformCatalog,
             params: dapp
               ? {
-                platform: dapp.id,
-                name: dapp.name,
-                // $FlowFixMe Nope I want query to be spread last. Sry Flow.
-                ...query,
-              }
+                  platform: dapp.id,
+                  name: dapp.name,
+                  // $FlowFixMe Nope I want query to be spread last. Sry Flow.
+                  ...query,
+                }
               : query,
           });
           break;
