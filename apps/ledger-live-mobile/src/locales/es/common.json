@@ -276,7 +276,7 @@
     },
     "EthAppNftNotSupported" : {
       "title" : "Operación no disponible en este dispositivo",
-      "description" : "La función Enviar NFT sólo está disponible en el Nano X. Visita nuestra plataforma de soporte al cliente para saber cómo enviar NFTs con un Nano S."
+      "description" : "La función Enviar NFT solo está disponible en el Nano X. Visita nuestra plataforma de soporte al cliente para saber cómo enviar NFTs con un Nano S o S Plus."
     },
     "Touch ID Error" : {
       "title" : "La autenticación biométrica ha fallado",
@@ -1072,6 +1072,8 @@
     "stepLanguage" : {
       "title" : "Elige tu idioma",
       "cta" : "Continuar",
+      "changeDeviceLanguage" : "El idioma {{language}} también está disponible para tu {{deviceName}}.",
+      "changeDeviceLanguageDescription" : "¿Quieres cambiar el idioma al {{language}}?",
       "warning" : {
         "title" : "Comenzar en español",
         "cta" : "¡Entendido!",
@@ -1685,13 +1687,13 @@
     }
   },
   "addAccountsModal" : {
+    "title" : "Agregar cuenta",
     "ctaAdd" : "Agregar cuentas",
     "ctaImport" : "Importar cuentas desde Desktop",
-    "title" : "Agregar criptomonedas",
     "description" : "Puedes elegir añadir cripto directamente desde tu Ledger, o importarlas desde Ledger Live Desktop.",
     "add" : {
       "title" : "Con tu Ledger",
-      "description" : "Crea o importa activos con tu Ledger"
+      "description" : "Crear o importar activos con tu Ledger"
     },
     "import" : {
       "title" : "Importar desde Desktop",
@@ -2261,7 +2263,46 @@
     "experimental" : {
       "title" : "Funciones experimentales",
       "desc" : "Prueba las funciones experimentales y dinos qué te parecen.",
-      "disclaimer" : "Estas son funciones experimentales que ofrecemos “tal como están” para que nuestra comunidad de expertos tecnológicos las pruebe. Es posible que fallen, sufran cambios o sean eliminadas en cualquier momento. Al habilitarlas, aceptas usarlas bajo tu responsabilidad."
+      "disclaimer" : "Estas son funciones experimentales que ofrecemos “tal como están” para que nuestra comunidad de expertos tecnológicos las pruebe. Es posible que fallen, sufran cambios o sean eliminadas en cualquier momento. Al habilitarlas, aceptas usarlas bajo tu responsabilidad.",
+      "experimentalFeatures" : {
+        "experimentalIntegrations" : {
+          "title" : "Integraciones experimentales",
+          "description" : "Utilizar integraciones experimentales de actrivos cripto disponibles."
+        },
+        "developerMode" : {
+          "title" : "Modo de desarrollador",
+          "description" : "Mostrar aplicaciones de desarrollador y testnet en el Manager."
+        },
+        "managerProvider" : {
+          "title" : "Proveedor de Manager",
+          "description" : "Cambiar el proveedor de aplicaciones en el Manager puede imposibilitar la instalación o desinstalación de aplicaciones en tu dispositivo Ledger."
+        },
+        "experimentalExplorers" : {
+          "title" : "API de Experimental Explorers",
+          "description" : "Prueba la siguiente versión de los exploradores de cadena de bloques de Ledger. La modificación de esta configuración puede afectar el saldo de la cuenta y la sincronización, como así también la opción de envío."
+        },
+        "experimentalCountervalues" : {
+          "title" : "API experimental de contrapartes",
+          "description" : "Puede provocar que las contrapartes que se muestran de tus cuentas no sean las correctas."
+        },
+        "experimentalSwap" : {
+          "title" : "Nueva interfaz de PERMUTA",
+          "description" : "Usa la nueva interfaz experimental de permuta"
+        }
+      },
+      "developerFeatures" : {
+        "experimentalApps" : {
+          "title" : "Permitir aplicaciones experimentales",
+          "description" : "Mostrar y permitir la utilización de aplicaciones de plataforma etiquetadas como experimentales."
+        },
+        "staggingUrl" : {
+          "title" : "URL de ensayo de la página Learn",
+          "description" : "Usa la URL de ensayo para la página Learn."
+        },
+        "platformManifest" : {
+          "title" : "Carga el Manifiesto de la plataforma"
+        }
+      }
     },
     "developer" : {
       "title" : "Desarrollador",
@@ -2273,11 +2314,8 @@
     "debug" : {
       "featureFlagsTitle" : "Marcas de funciones definidas que se usan en Ledger Live",
       "featureFlagsDesc" : "Los valores anulados se restablecerán si se vuelve a iniciar la aplicación. Solo se aceptarán las cadenas JSON válidas.",
-      "featureFlagsOverride" : "Anular",
       "featureFlagsEdit" : "Editar",
-      "featureFlagsRestore" : "Restaurar",
-      "featureFlagsDisplayValue" : "Mostrar valor",
-      "featureFlagsHideValue" : "Ocultar valor"
+      "featureFlagsRestore" : "Restaurar"
     }
   },
   "notifications" : {
@@ -3355,6 +3393,7 @@
       "appsInstalled" : "<0>{{number}}</0> aplicación",
       "appsInstalled_plural" : "<0>{{number}}</0> aplicaciones",
       "storageAvailable" : "disponible",
+      "noFreeSpace" : "Sin almacenamiento disponible",
       "appsToUpdate" : "<0>{{number}}</0> actualización",
       "appsToUpdate_plural" : "<0>{{number}}</0> actualizaciones"
     },
@@ -3536,16 +3575,26 @@
       "fr" : "Français",
       "ru" : "Русский",
       "es" : "Español",
-      "zh" : "中文",
-      "de" : "Alemán"
+      "zh" : "中国人",
+      "de" : "Deutsch",
+      "tr" : "Türk",
+      "ja" : "日本",
+      "ko" : "한국인",
+      "pt" : "Português"
     }
   },
   "deviceLocalization" : {
     "language" : "Idioma",
     "deviceLanguage" : "Idioma del dispositivo",
+    "chooseLanguage" : "Elige un idioma para tu {{deviceName}}.",
     "changeLanguage" : "Cambiar idioma",
-    "allowLanguageInstallation" : "Permitir instalación de idioma",
-    "languageInstalled" : "Idioma del dispositivo cambiado a {{language}}",
+    "yesChangeLanguage" : "Sí, cambiar idioma",
+    "allowLanguageInstallation" : "Aprueba la instalación del idioma en {{deviceName}}",
+    "languageInstalled" : "Idioma cambiado al {{language}}",
+    "firmwareUpdatePrompt" : {
+      "title" : "¿Establecer tu {{deviceName}} en {{language}}?",
+      "description" : "Ya está disponible el idioma {{language}} para tu {{deviceName}}. Puedes establecerlo ahora o cambiar el idioma de tu dispositivo en cualquier momento desde My Ledger."
+    },
     "installingLanguage" : "Instalando idioma",
     "languages" : {
       "english" : "English",
@@ -4754,5 +4803,19 @@
     "chooseConstrast" : "Elegir contraste",
     "uploadAnotherImage" : "Cargar otra imagen",
     "selectContrast" : "Selecciona el contraste"
+  },
+  "postOnboarding" : {
+    "hub" : {
+      "title" : "Muy bien.\nTodo listo.",
+      "allDoneTitle" : "Bien hecho.\nYa está todo en marcha.",
+      "subtitle" : "Esto es lo que puedes hacer a continuación:",
+      "skip" : "Ir a la aplicación",
+      "goToWallet" : "Ir a la billetera Ledger Live",
+      "done" : "Acabas de asegurar tu futuro"
+    },
+    "walletCard" : {
+      "title" : "Primeros pasos",
+      "description" : "Haz clic aquí para finalizar la configuración de tu {{productName}} con Ledger Live"
+    }
   }
 }
