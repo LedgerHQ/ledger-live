@@ -165,31 +165,21 @@ export function SideDrawer({
   const focusTrap = useRef(null);
 
   useEffect(() => {
-    if (!isMounted || !focusTrapElem.current) return;
-
-    focusTrap.current = createFocusTrap(focusTrapElem.current, {
-      fallbackFocus: focusTrapElem.current,
-      escapeDeactivates: false,
-      clickOutsideDeactivates: false,
-      preventScroll: true,
-    });
+    if (isOpen && focusTrapElem.current) {
+      focusTrap.current = createFocusTrap(focusTrapElem.current, {
+        fallbackFocus: focusTrapElem.current,
+        escapeDeactivates: false,
+        clickOutsideDeactivates: false,
+        preventScroll: true,
+      });
+      focusTrap.current.activate();
+    }
 
     return () => {
+      focusTrap.current?.deactivate();
       focusTrap.current = null;
     };
-  }, [isMounted]);
-
-  const onEntered = useCallback(() => {
-    if (!focusTrap.current) return;
-
-    focusTrap.current.activate();
-  }, []);
-
-  const onExited = useCallback(() => {
-    if (!focusTrap.current) return;
-
-    focusTrap.current.deactivate();
-  }, []);
+  }, [isOpen]);
 
   if (!isMounted) {
     return null;
@@ -204,8 +194,6 @@ export function SideDrawer({
             enter: DURATION,
             exit: DURATION * 3, // leaves extra time for the animation to end before unmount
           }}
-          onEntered={onEntered}
-          onExited={onExited}
           unmountOnExit
         >
           {state => (
