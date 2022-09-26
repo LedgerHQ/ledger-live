@@ -276,7 +276,7 @@
     },
     "EthAppNftNotSupported" : {
       "title" : "Opération indisponible sur cet appareil",
-      "description" : "La fonctionnalité Envoi de NFT n’est disponible que pour le Nano X. Visitez notre centre d’aide pour découvrir comment envoyer un NFT avec un Nano S."
+      "description" : "La fonctionnalité Envoi de NFT n’est disponible que pour le Nano X. Visitez notre centre d’aide pour découvrir comment envoyer un NFT avec un Nano S ou Nano S Plus."
     },
     "Touch ID Error" : {
       "title" : "Échec de l’authentification biométrique",
@@ -1072,6 +1072,8 @@
     "stepLanguage" : {
       "title" : "Choisir la langue",
       "cta" : "Continuer",
+      "changeDeviceLanguage" : "Une autre langue est disponible pour votre {{deviceName}} : {{language}}.",
+      "changeDeviceLanguageDescription" : "Souhaitez-vous l’utiliser en {{language}} ?",
       "warning" : {
         "title" : "À noter",
         "cta" : "Compris",
@@ -1685,9 +1687,9 @@
     }
   },
   "addAccountsModal" : {
+    "title" : "Ajouter un compte",
     "ctaAdd" : "Ajouter des comptes",
     "ctaImport" : "Importer les comptes de l’ordinateur",
-    "title" : "Ajouter une crypto",
     "description" : "Vous pouvez choisir d’ajouter des cryptos directement avec votre Ledger, ou les importer depuis Ledger Live pour l’ordinateur.",
     "add" : {
       "title" : "Avec votre Ledger",
@@ -2255,13 +2257,52 @@
       "exportLogsDesc" : "Sauvegardez les logs de Ledger Live peut être nécessaire à des fins de dépannage.",
       "hardReset" : "Réinitialiser Ledger Live",
       "hardResetDesc" : "Sans effet sur vos actifs. Toutes les données de Ledger Live, y compris les données de comptes, l’historique de vos transactions et paramètres seront effacées. Utilisez votre appareil Ledger pour recharger et gérer vos crypto-actifs dans une app Ledger Live vierge.",
-      "repairDevice" : "Réparer son appareil Ledger",
+      "repairDevice" : "Réparer votre appareil Ledger",
       "repairDeviceDesc" : "En cas de problème lors de la mise à jour de votre appareil (reprise des mises à jour impossible), essayez cela pour réparer votre appareil."
     },
     "experimental" : {
       "title" : "Fonctionnalités expérimentales",
       "desc" : "Essayez les Fonctionnalités expérimentales et donnez-nous votre avis.",
-      "disclaimer" : "Il s’agit de fonctionnalités expérimentales fournies \"telles quelles\" pour notre communauté de passionné(e)s de la tech. Elles peuvent changer, casser ou être retirées à tout moment. En les activant, vous acceptez de les utiliser en toute connaissance de cause."
+      "disclaimer" : "Il s’agit de fonctionnalités expérimentales fournies \"telles quelles\" pour notre communauté de passionné(e)s de la tech. Elles peuvent changer, casser ou être retirées à tout moment. En les activant, vous acceptez de les utiliser en toute connaissance de cause.",
+      "experimentalFeatures" : {
+        "experimentalIntegrations" : {
+          "title" : "Intégrations expérimentales",
+          "description" : "Utilisez les intégrations expérimentales disponibles pour les crypto-actifs concernés."
+        },
+        "developerMode" : {
+          "title" : "Mode développeur",
+          "description" : "Affichez les applications développeurs et testnet dans le Gestionnaire."
+        },
+        "managerProvider" : {
+          "title" : "Fournisseur du Gestionnaire",
+          "description" : "Changer le fournisseur d’applications dans le Gestionnaire peut rendre impossible l’installation ou désinstallation d’applications sur votre appareil Ledger."
+        },
+        "experimentalExplorers" : {
+          "title" : "API Explorateurs Expérimentales",
+          "description" : "Testez une version en développement des explorateurs de blockchain de Ledger. Modifier ce paramètre peut affecter le solde des comptes, la synchronisation et la fonctionnalité Envoyer."
+        },
+        "experimentalCountervalues" : {
+          "title" : "API Devises de contrepartie expérimentales",
+          "description" : "Avec cette fonctionnalité, les devises de contrepartie affichées dans vos comptes peuvent devenir incorrectes."
+        },
+        "experimentalSwap" : {
+          "title" : "Nouvelle interface de Swap",
+          "description" : "Utilisez la nouvelle interface expérimentale de swap."
+        }
+      },
+      "developerFeatures" : {
+        "experimentalApps" : {
+          "title" : "Autoriser les Apps Expérimentales",
+          "description" : "Affichez et autorisez l’ouverture des Platform Apps \"Expérimentales\"."
+        },
+        "staggingUrl" : {
+          "title" : "Activer l’URL de test de la page Apprendre",
+          "description" : "Utilisez l’URL de test (staging) de la page Apprendre."
+        },
+        "platformManifest" : {
+          "title" : "Charger un manifest pour Platform"
+        }
+      }
     },
     "developer" : {
       "title" : "Développeurs",
@@ -2273,11 +2314,8 @@
     "debug" : {
       "featureFlagsTitle" : "Indicateurs de fonctionnalités (feature flags) définis et utilisés dans Ledger Live",
       "featureFlagsDesc" : "Les valeurs remplacées seront réinitialisées lorsque l’application sera relancée. Seules les chaînes JSON valides sont acceptées.",
-      "featureFlagsOverride" : "Remplacer",
       "featureFlagsEdit" : "Modifier",
-      "featureFlagsRestore" : "Restaurer",
-      "featureFlagsDisplayValue" : "Afficher le code",
-      "featureFlagsHideValue" : "Masquer le code"
+      "featureFlagsRestore" : "Restaurer"
     }
   },
   "notifications" : {
@@ -3355,6 +3393,7 @@
       "appsInstalled" : "<0>{{number}}</0> app",
       "appsInstalled_plural" : "<0>{{number}}</0> apps",
       "storageAvailable" : "disponibles",
+      "noFreeSpace" : "Plus d’espace disponible",
       "appsToUpdate" : "<0>{{number}}</0> mise à jour",
       "appsToUpdate_plural" : "<0>{{number}}</0> mises à jour"
     },
@@ -3534,18 +3573,28 @@
     "languages" : {
       "en" : "Anglais",
       "fr" : "Français",
-      "ru" : "Russe",
-      "es" : "Espagnol",
-      "zh" : "Chinois",
-      "de" : "Allemand"
+      "ru" : "Русский",
+      "es" : "Español",
+      "zh" : "简体中文",
+      "de" : "Deutsch",
+      "tr" : "Türkçe",
+      "ja" : "日本語",
+      "ko" : "한국어",
+      "pt" : "Português"
     }
   },
   "deviceLocalization" : {
     "language" : "Langue",
     "deviceLanguage" : "Langue de l’appareil",
+    "chooseLanguage" : "Choisissez une langue pour votre {{deviceName}}.",
     "changeLanguage" : "Changer la langue",
-    "allowLanguageInstallation" : "Confirmez l’ajout de la langue",
-    "languageInstalled" : "Votre appareil est maintenant en {{language}}.",
+    "yesChangeLanguage" : "Oui, changer la langue",
+    "allowLanguageInstallation" : "Confirmez l’ajout de la langue sur votre {{deviceName}}",
+    "languageInstalled" : "Votre Ledger est maintenant en {{language}}.",
+    "firmwareUpdatePrompt" : {
+      "title" : "Utiliser votre {{deviceName}} en {{language}} ?",
+      "description" : "Une nouvelle langue est disponible pour votre {{deviceName}} : {{language}}. Vous pouvez changer la langue de votre Ledger maintenant ou à tout moment à partir de My Ledger."
+    },
     "installingLanguage" : "Installation de la langue",
     "languages" : {
       "english" : "English",
@@ -4754,5 +4803,19 @@
     "chooseConstrast" : "Choisissez un contraste",
     "uploadAnotherImage" : "Télécharger une autre image",
     "selectContrast" : "Sélectionnez le contraste voulu"
+  },
+  "postOnboarding" : {
+    "hub" : {
+      "title" : "Voilà.\nTout est configuré.",
+      "allDoneTitle" : "Parfait.\nVous êtes fin prêt(e) !",
+      "subtitle" : "Vous pouvez maintenant :",
+      "skip" : "Accéder à l’app",
+      "goToWallet" : "Accéder à votre wallet Ledger Live",
+      "done" : "Vous venez de sécuriser votre avenir."
+    },
+    "walletCard" : {
+      "title" : "Premiers pas",
+      "description" : "Cliquez ici pour terminer la configuration de votre {{productName}} avec Ledger Live."
+    }
   }
 }
