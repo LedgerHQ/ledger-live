@@ -1,19 +1,14 @@
-import React, { useEffect, useCallback } from "react";
+import React, { useCallback } from "react";
 import { Flex, Button, Box, Text } from "@ledgerhq/react-ui";
 import { useHistory } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { useTranslation } from "react-i18next";
-import {
-  useAllPostOnboardingActionsCompleted,
-  usePostOnboardingHubState,
-} from "@ledgerhq/live-common/postOnboarding/hooks/index";
-import {
-  clearPostOnboardingLastActionCompleted,
-  setPostOnboardingActionCompleted,
-} from "@ledgerhq/live-common/postOnboarding/actions";
+import { usePostOnboardingHubState } from "@ledgerhq/live-common/postOnboarding/hooks/index";
+import { clearPostOnboardingLastActionCompleted } from "@ledgerhq/live-common/postOnboarding/actions";
 
 import PostOnboardingActionRow from "./PostOnboardingActionRow";
 import { setDrawer } from "~/renderer/drawers/Provider";
+import { withV3StyleProvider } from "~/renderer/styles/StyleProviderV3";
 
 const PostOnboardingHub = () => {
   const dispatch = useDispatch();
@@ -27,6 +22,7 @@ const PostOnboardingHub = () => {
   const isInsidePostOnboardingScreen = history.location.pathname === "/post-onboarding";
 
   const handleStartAction = useCallback(action => {
+    console.log("handleStartAction");
     action.startAction();
   }, []);
 
@@ -73,5 +69,5 @@ const PostOnboardingHub = () => {
   );
 };
 
-export default PostOnboardingHub;
+export default withV3StyleProvider(PostOnboardingHub);
 // {index !== arr.length - 1 && <Divider />}

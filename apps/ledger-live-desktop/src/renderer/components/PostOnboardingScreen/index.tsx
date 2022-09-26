@@ -1,7 +1,7 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { Flex, Text } from "@ledgerhq/react-ui";
-import { useHistory } from "react-router-dom";
 import PostOnboardingHub from "~/renderer/components/PostOnboardingHub";
+import { withV3StyleProvider } from "~/renderer/styles/StyleProviderV3";
 
 const PostOnboardingScreen = () => {
   return (
@@ -32,4 +32,4 @@ const PostOnboardingScreen = () => {
   );
 };
 
-export default PostOnboardingScreen;
+export default withV3StyleProvider(PostOnboardingScreen);
