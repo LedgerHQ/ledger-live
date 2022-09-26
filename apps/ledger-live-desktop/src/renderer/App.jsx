@@ -35,7 +35,7 @@ import { themeSelector } from "./actions/general";
 import MarketDataProvider from "~/renderer/screens/market/MarketDataProviderWrapper";
 // $FlowFixMe
 import { ConnectEnvsToSentry } from "~/renderer/components/ConnectEnvsToSentry";
-import PostOnboardingProviderWrapped from "~/renderer/components/PostOnboardingHub/Logic/PostOnboardingProviderWrapped";
+import PostOnboardingProviderWrapped from "~/renderer/components/PostOnboardingHub/logicc/PostOnboardingProviderWrapped";
 
 const reloadApp = event => {
   if ((event.ctrlKey || event.metaKey) && event.key === "r") {
