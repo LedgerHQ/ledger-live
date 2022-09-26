@@ -70,6 +70,8 @@ export const urls = {
       "https://shop.ledger.com/tr/pages/ledger-live-terms-of-use?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=terms",
     ar:
       "https://shop.ledger.com/ar/pages/ledger-live-terms-of-use?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=terms",
+    ru:
+      "https://shop.ledger.com/ru/pages/ledger-live-terms-of-use?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=terms",
     ja:
       "https://shop.ledger.com/ja/pages/ledger-live-terms-of-use?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=terms",
     zh:
@@ -128,6 +130,9 @@ export const urls = {
       "https://www.ledger.com/ar/privacy-policy?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=privacy",
     ja:
       "https://www.ledger.com/ja/privacy-policy?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=privacy",
+    ru:
+      "https://www.ledger.com/ru/privacy-policy?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=privacy",
+
     zh:
       "https://www.ledger.com/zh-hans/privacy-policy?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=privacy",
     ko:
