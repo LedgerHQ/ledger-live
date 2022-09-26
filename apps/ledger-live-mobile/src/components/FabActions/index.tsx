@@ -73,7 +73,7 @@ export const FabButtonBarProvider = ({
   actions,
   navigationProps,
   modalOnDisabledClickProps,
-  eventProperties,
+  eventProperties: globalEventProperties,
   children,
 }: {
   actions: ActionButtonEvent[];
@@ -109,14 +109,21 @@ export const FabButtonBarProvider = ({
 
   const onPress = useCallback(
     (data: ActionButtonEvent) => {
-      const { navigationParams, confirmModalProps, linkUrl, event, id } = data;
+      const {
+        navigationParams,
+        confirmModalProps,
+        linkUrl,
+        event,
+        eventProperties,
+        id,
+      } = data;
 
       if (!confirmModalProps) {
         if (event) {
-          track(event, { ...eventProperties });
+          track(event, { ...globalEventProperties, ...eventProperties });
         }
         if (id) {
-          track("button_clicked", { button: id });
+          track("button_clicked", { ...globalEventProperties, button: id });
         }
         setInfoModalProps(undefined);
         if (linkUrl) {
@@ -129,7 +136,7 @@ export const FabButtonBarProvider = ({
         setIsModalInfoOpened(true);
       }
     },
-    [onNavigate, setIsModalInfoOpened],
+    [globalEventProperties, onNavigate],
   );
 
   const onContinue = useCallback(() => {
