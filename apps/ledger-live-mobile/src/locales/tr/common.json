@@ -276,7 +276,7 @@
     },
     "EthAppNftNotSupported" : {
       "title" : "Bu işlem bu cihaz için mevcut değil",
-      "description" : "NFT gönderme özelliği yalnızca Nano X için mevcuttur. Nano S ile nasıl NFT gönderileceğini öğrenmek için lütfen müşteri destek platformumuzu ziyaret edin."
+      "description" : "Send NFT feature is only available for Nano X. Please visit our customer support platform to know how to send a NFT with a Nano S or S Plus."
     },
     "Touch ID Error" : {
       "title" : "Biyometrik kimlik doğrulaması başarısız oldu",
@@ -1072,6 +1072,8 @@
     "stepLanguage" : {
       "title" : "Dilinizi seçin",
       "cta" : "Devam",
+      "changeDeviceLanguage" : "{{deviceName}} cihazınızı {{language}} dilinde de kullanabilirsiniz",
+      "changeDeviceLanguageDescription" : "Dili {{language}} yapmak ister misiniz?",
       "warning" : {
         "title" : "İngilizce olarak başlayın",
         "cta" : "Anladım!",
@@ -1685,17 +1687,17 @@
     }
   },
   "addAccountsModal" : {
+    "title" : "Add account",
     "ctaAdd" : "Hesap ekle",
     "ctaImport" : "Masaüstü hesaplarını içe aktar",
-    "title" : "Kripto Ekle",
-    "description" : "Kriptoları doğrudan Ledger'ınızla eklemeyi seçebilir veya bunları Ledger Live Desktop'tan içe aktarabilirsiniz.",
+    "description" : "You can choose to add crypto directly with your Ledger, or import them from Ledger Live Desktop.",
     "add" : {
       "title" : "Ledger'ınızla ekleyin",
-      "description" : "Varlıkları Ledger'ınızla ekleyin veya içe aktarın"
+      "description" : "Create or import asset with your Ledger"
     },
     "import" : {
       "title" : "Masaüstünden içe aktarın",
-      "description" : "Varlıkları Ledger Live Desktop'tan içe aktarın"
+      "description" : "Import asset from Ledger Live Desktop"
     }
   },
   "byteSize" : {
@@ -2261,7 +2263,46 @@
     "experimental" : {
       "title" : "Deneysel özellikler",
       "desc" : "Deneysel özelliklere bakıp ne düşündüğünüzü bize bildirin.",
-      "disclaimer" : "Bu Deneysel özellikleri, teknoloji tutkunu topluluğumuzun test edebilmesi için \"olduğu gibi\" sunuyoruz. Herhangi bir zamanda değişebilir, bozulabilir veya kaldırılabilirler. Bu özellikleri etkinleştirdiğinizde tüm riskin size ait olduğunu kabul etmiş olursunuz."
+      "disclaimer" : "Bu Deneysel özellikleri, teknoloji tutkunu topluluğumuzun test edebilmesi için \"olduğu gibi\" sunuyoruz. Herhangi bir zamanda değişebilir, bozulabilir veya kaldırılabilirler. Bu özellikleri etkinleştirdiğinizde tüm riskin size ait olduğunu kabul etmiş olursunuz.",
+      "experimentalFeatures" : {
+        "experimentalIntegrations" : {
+          "title" : "Deneysel entegrasyonlar",
+          "description" : "Mevcut deneysel kripto varlık entegrasyonlarını kullanın."
+        },
+        "developerMode" : {
+          "title" : "Geliştirici modu",
+          "description" : "Yönetici sayfasında geliştirici ve testnet uygulamalarını gösterir."
+        },
+        "managerProvider" : {
+          "title" : "Yönetici sağlayıcısı",
+          "description" : "Yönetici'de uygulama sağlayıcısını değiştirmek, Ledger cihazınıza uygulama yüklemeyi veya kaldırmayı imkansız hale getirebilir."
+        },
+        "experimentalExplorers" : {
+          "title" : "Deneysel Tarayıcılar API'ı",
+          "description" : "Ledger'ın blok zinciri tarayıcılarının gelecek bir sürümünü deneyin. Bu ayarın değiştirilmesi, hesap bakiyesi ve senkronizasyonun yanı sıra gönderme özelliğini de etkileyebilir."
+        },
+        "experimentalCountervalues" : {
+          "title" : "Deneysel karşı değerler API'ı",
+          "description" : "Bu, hesaplarınız için görüntülenen karşı değerlerin hatalı gözükmesine neden olabilir."
+        },
+        "experimentalSwap" : {
+          "title" : "Yeni TAKAS arayüzü",
+          "description" : "Yeni ve deneysel takas arayüzünü kullanın"
+        }
+      },
+      "developerFeatures" : {
+        "experimentalApps" : {
+          "title" : "Deneysel uygulamalara izin ver",
+          "description" : "Deneysel etiketli platform uygulamalarını görüntüleme ve açmaya izin verin."
+        },
+        "staggingUrl" : {
+          "title" : "Test ortamı URL'sini öğrenin",
+          "description" : "Öğrenin sayfası için test ortamı URL'sini kullanın."
+        },
+        "platformManifest" : {
+          "title" : "Platform Manifest Dosyasını Yükleyin"
+        }
+      }
     },
     "developer" : {
       "title" : "Geliştiriciler için",
@@ -2273,11 +2314,8 @@
     "debug" : {
       "featureFlagsTitle" : "Ledger Live'da kullanılan tanımlı özellik bayrakları",
       "featureFlagsDesc" : "Uygulama yeniden başlatılırsa geçersiz bırakılan değerler sıfırlanacaktır. Sadece geçerli JSON dizeleri kabul edilecektir.",
-      "featureFlagsOverride" : "Geçersiz bırak",
       "featureFlagsEdit" : "Düzenle",
-      "featureFlagsRestore" : "Geri yükle",
-      "featureFlagsDisplayValue" : "Değeri göster",
-      "featureFlagsHideValue" : "Değeri gizle"
+      "featureFlagsRestore" : "Geri yükle"
     }
   },
   "notifications" : {
@@ -3355,6 +3393,7 @@
       "appsInstalled" : "<0>{{number}}</0> uygulama",
       "appsInstalled_plural" : "<0>{{number}}</0> uygulama",
       "storageAvailable" : "kullanılabilir",
+      "noFreeSpace" : "No storage left",
       "appsToUpdate" : "<0>{{number}}</0> güncelleme",
       "appsToUpdate_plural" : "<0>{{number}}</0> güncelleme"
     },
@@ -3537,15 +3576,25 @@
       "ru" : "Rusça",
       "es" : "İspanyolca",
       "zh" : "Çince",
-      "de" : "Almanca"
+      "de" : "Almanca",
+      "tr" : "Türkçe",
+      "ja" : "Japonca",
+      "ko" : "Korece",
+      "pt" : "Portekizce"
     }
   },
   "deviceLocalization" : {
     "language" : "Dil",
     "deviceLanguage" : "Cihaz Dili",
+    "chooseLanguage" : "{{deviceName}} cihazınız için bir dil seçin.",
     "changeLanguage" : "Dili değiştir",
-    "allowLanguageInstallation" : "Dilin yüklenmesine izin verin",
-    "languageInstalled" : "Cihaz dili {{language}} oldu",
+    "yesChangeLanguage" : "Evet, dili değiştir",
+    "allowLanguageInstallation" : "{{deviceName}} cihazına dilin yüklenmesini onaylayın",
+    "languageInstalled" : "Dil {{language}} oldu",
+    "firmwareUpdatePrompt" : {
+      "title" : "{{deviceName}} cihazınızın dili {{language}} yapılsın mı?",
+      "description" : "{{deviceName}} cihazınızı artık {{language}} kullanabilirsiniz. Cihaz dilini şimdi ayarlayabilir ya da daha sonra My Ledger'dan istediğiniz zaman değiştirebilirsiniz."
+    },
     "installingLanguage" : "Dil yükleniyor",
     "languages" : {
       "english" : "İngilizce",
@@ -4754,5 +4803,19 @@
     "chooseConstrast" : "Kontrastı seç",
     "uploadAnotherImage" : "Başka bir görsel yükleyin",
     "selectContrast" : "Kontrastınızı seçin"
+  },
+  "postOnboarding" : {
+    "hub" : {
+      "title" : "Bravo.\nArtık tamamen hazırsınız.",
+      "allDoneTitle" : "İyi iş çıkardınız.\nHer şey tamam.",
+      "subtitle" : "Şimdi şunları yapabilirsiniz:",
+      "skip" : "Uygulamaya geç",
+      "goToWallet" : "Ledger Live cüzdanına git",
+      "done" : "Az önce geleceğinizi güvenceye almış oldunuz"
+    },
+    "walletCard" : {
+      "title" : "Başlarken",
+      "description" : "Ledger Live ile {{productName}} kurulumunu tamamlamak için buraya tıklayın"
+    }
   }
 }
