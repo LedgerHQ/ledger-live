@@ -51,6 +51,8 @@ Ledger Live main types.
 *   [Feature](#feature)
     *   [Properties](#properties-13)
     *   [enabled](#enabled)
+    *   [desktop_version](#desktop_version)
+    *   [enabledOverriddenForCurrentDesktopVersion](#enabledoverriddenforcurrentdesktopversion)
     *   [languages_whitelisted](#languages_whitelisted)
     *   [languages_whitelisted](#languages_whitelisted-1)
     *   [languages_blacklisted](#languages_blacklisted)
@@ -489,11 +491,13 @@ Type: (`"learn"` | `"pushNotifications"` | `"llmUsbFirmwareUpdate"` | `"ratings"
 We use objects instead of direct booleans for potential future improvements
 like feature versioning etc
 
-Type: {enabled: [boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean), languages_whitelisted: \[[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)]?, languages_blacklisted: \[[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)]?, enabledOverriddenForCurrentLanguage: [boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)?, overridesRemote: [boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)?, params: any?}
+Type: {enabled: [boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean), desktop_version: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)?, enabledOverriddenForCurrentDesktopVersion: [boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)?, languages_whitelisted: \[[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)]?, languages_blacklisted: \[[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)]?, enabledOverriddenForCurrentLanguage: [boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)?, overridesRemote: [boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)?, params: any?}
 
 #### Properties
 
 *   `enabled` **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)** 
+*   `desktop_version` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)?**
+*   `enabledOverriddenForCurrentDesktopVersion` **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)?**
 *   `languages_whitelisted` **\[[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)]?** 
 *   `languages_blacklisted` **\[[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)]?** 
 *   `enabledOverriddenForCurrentLanguage` **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)?** 
@@ -503,6 +507,20 @@ Type: {enabled: [boolean](https://developer.mozilla.org/docs/Web/JavaScript/Refe
 #### enabled
 
 If false, the feature is disabled (for every languages regardless of the languages_whitelisted option)
+
+Type: [boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)
+
+#### desktop_version
+
+The `desktop_version` option is desktop specific, it has no impact on mobile
+If set, the feature is disabled when the desktop app version does not satisfies this param
+It should respect the semantic versioning specification (https://semver.org/)
+
+Type: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)
+
+#### enabledOverriddenForCurrentDesktopVersion
+
+Whether the remote value of `enabled` was overriden due to `desktop_version`
 
 Type: [boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)
 
