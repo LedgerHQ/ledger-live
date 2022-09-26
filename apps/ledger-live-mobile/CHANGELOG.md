@@ -1,5 +1,11 @@
 # live-mobile
 
+## 3.9.0-nightly.6
+
+### Patch Changes
+
+- [#1328](https://github.com/LedgerHQ/ledger-live/pull/1328) [`877dc46b5f`](https://github.com/LedgerHQ/ledger-live/commit/877dc46b5f7ebffeff618449884cb5f923bb7932) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Bump hermes-engine dependency to 0.11.0
+
 ## 3.9.0-nightly.5
 
 ### Patch Changes
