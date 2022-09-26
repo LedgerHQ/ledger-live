@@ -2,7 +2,6 @@ import URL from "url";
 import invariant from "invariant";
 import { BigNumber } from "bignumber.js";
 import { LedgerAPINotAvailable } from "@ledgerhq/errors";
-import JSONBigNumber from "@ledgerhq/json-bignumber";
 import type { EthereumGasLimitRequest } from "../families/ethereum/types";
 import network from "../network";
 import { blockchainBaseURL } from "./Ledger";
@@ -17,12 +16,17 @@ import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 
 export type Block = {
   height: BigNumber;
-}; // TODO more fields actually
+  hash: string;
+  time: string;
+  txs: string[];
+};
 
 export type Tx = {
   hash: string;
+  transaction_type: number;
   status?: BigNumber;
   // 0: fail, 1: success
+  confirmations?: number;
   received_at?: string;
   nonce: string;
   value: BigNumber;
@@ -32,17 +36,14 @@ export type Tx = {
   to: string;
   cumulative_gas_used?: BigNumber;
   gas_used?: BigNumber;
-  transfer_events?: {
-    list: Array<{
-      contract: string;
-      from: string;
-      to: string;
-      count: BigNumber;
-      decimal?: number;
-      symbol?: string;
-    }>;
-    truncated: boolean;
-  };
+  transfer_events?: Array<{
+    contract: string;
+    from: string;
+    to: string;
+    count: BigNumber;
+    decimal?: number;
+    symbol?: string;
+  }>;
   erc721_transfer_events?: Array<{
     contract: string;
     sender: string;
@@ -59,12 +60,20 @@ export type Tx = {
       value: string;
     }>;
   }>;
+  approval_events?: Array<{
+    contract: string;
+    owner: string;
+    spender: string;
+    count: string;
+  }>;
   actions?: Array<{
     from: string;
     to: string;
     value: BigNumber;
     gas?: BigNumber;
     gas_used?: BigNumber;
+    error?: string;
+    input?: string;
   }>;
   block?: {
     hash: string;
@@ -109,10 +118,7 @@ export type API = {
     address: string,
     block_hash: string | null | undefined,
     batch_size?: number
-  ) => Promise<{
-    truncated: boolean;
-    txs: Tx[];
-  }>;
+  ) => Promise<{ txs: Tx[] }>;
   getCurrentBlock: () => Promise<Block>;
   getAccountNonce: (address: string) => Promise<number>;
   broadcastTransaction: (signedTransaction: string) => Promise<string>;
@@ -147,6 +153,22 @@ export type API = {
   }>;
   getBlockByHash: (blockHash: string) => Promise<BlockByHashOutput | undefined>;
 };
+
+function adaptTx(apiTx): Tx {
+  return {
+    ...apiTx,
+    value: new BigNumber(apiTx.value),
+    gas: new BigNumber(apiTx.gas),
+    gas_price: new BigNumber(apiTx.gas_price),
+    cumulative_gas_used: new BigNumber(apiTx.cumulative_gas_used),
+    gas_used: new BigNumber(apiTx.gas_used),
+    block: {
+      ...apiTx.block,
+      height: new BigNumber(apiTx.block.height),
+    },
+  };
+}
+
 export const apiForCurrency = (currency: CryptoCurrency): API => {
   const baseURL = blockchainBaseURL(currency);
 
@@ -161,7 +183,7 @@ export const apiForCurrency = (currency: CryptoCurrency): API => {
       let { data } = await network({
         method: "GET",
         url: URL.format({
-          pathname: `${baseURL}/addresses/${address}/transactions`,
+          pathname: `${baseURL}/address/${address}/txs`,
           query: {
             batch_size,
             noinput: true,
@@ -171,43 +193,34 @@ export const apiForCurrency = (currency: CryptoCurrency): API => {
             block_hash,
           },
         }),
-        transformResponse: JSONBigNumber.parse,
       });
 
-      // v3 have a bug that still includes the tx of the paginated block_hash, we're cleaning it up
-      if (block_hash) {
-        data = {
-          ...data,
-          txs: data.txs.filter(
-            (tx) => !tx.block || tx.block.hash !== block_hash
-          ),
-        };
-      }
-
-      return data;
+      return { txs: data.data.map((tx) => adaptTx(tx)) };
     },
 
     async getCurrentBlock() {
       const { data } = await network({
         method: "GET",
-        url: `${baseURL}/blocks/current`,
-        transformResponse: JSONBigNumber.parse,
+        url: `${baseURL}/block/current`,
       });
-      return data;
+      return {
+        ...data,
+        height: new BigNumber(data.height),
+      };
     },
 
     async getAccountNonce(address) {
       const { data } = await network({
         method: "GET",
-        url: `${baseURL}/addresses/${address}/nonce`,
+        url: `${baseURL}/address/${address}/nonce`,
       });
-      return data[0].nonce;
+      return data.nonce;
     },
 
     async broadcastTransaction(tx) {
       const { data } = await network({
         method: "POST",
-        url: `${baseURL}/transactions/send`,
+        url: `${baseURL}/tx/send`,
         data: {
           tx,
         },
@@ -218,20 +231,21 @@ export const apiForCurrency = (currency: CryptoCurrency): API => {
     async getAccountBalance(address) {
       const { data } = await network({
         method: "GET",
-        url: `${baseURL}/addresses/${address}/balance`,
-        transformResponse: JSONBigNumber.parse,
+        url: `${baseURL}/address/${address}/balance`,
       });
-      return new BigNumber(data[0].balance);
+      return new BigNumber(data.balance);
     },
 
     async getERC20Balances(input) {
       const { data } = await network({
         method: "POST",
         url: `${baseURL}/erc20/balances`,
-        transformResponse: JSONBigNumber.parse,
         data: input,
       });
-      return data;
+      return data.map((erc20Balance) => ({
+        ...erc20Balance,
+        blockNumber: new BigNumber(erc20Balance.blockNumber),
+      }));
     },
 
     async getNFTMetadata(input, chainId) {
@@ -275,10 +289,11 @@ export const apiForCurrency = (currency: CryptoCurrency): API => {
         return data
           .map((m: any) => {
             if (!m || typeof m !== "object") return;
-            const { sender, value } = m;
-            if (typeof sender !== "string" || typeof value !== "string") return;
+            const { spender, value } = m;
+            if (typeof spender !== "string" || typeof value !== "string")
+              return;
             return {
-              sender,
+              sender: spender,
               value,
             };
           })
@@ -295,8 +310,7 @@ export const apiForCurrency = (currency: CryptoCurrency): API => {
     async roughlyEstimateGasLimit(address) {
       const { data } = await network({
         method: "GET",
-        url: `${baseURL}/addresses/${address}/estimate-gas-limit`,
-        transformResponse: JSONBigNumber.parse,
+        url: `${baseURL}/address/${address}/estimate-gas-limit`,
       });
       return new BigNumber(data.estimated_gas_limit);
     },
@@ -310,9 +324,8 @@ export const apiForCurrency = (currency: CryptoCurrency): API => {
       delete post.gasPrice;
       const { data } = await network({
         method: "POST",
-        url: `${baseURL}/addresses/${address}/estimate-gas-limit`,
+        url: `${baseURL}/address/${address}/estimate-gas-limit`,
         data: post,
-        transformResponse: JSONBigNumber.parse,
       });
 
       if (data.error_message) {
@@ -350,8 +363,7 @@ export const apiForCurrency = (currency: CryptoCurrency): API => {
       try {
         const { data }: { data: BlockByHashOutput[] } = await network({
           method: "GET",
-          url: `${baseURL}/blocks/${blockHash}`,
-          transformResponse: JSONBigNumber.parse,
+          url: `${baseURL}/block/${blockHash}`,
         });
 
         return data[0];

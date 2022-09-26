@@ -178,8 +178,8 @@ const initialExplorerConfig: FullConfig = {
   ethereum: {
     id: "eth",
     stable: {
-      base: "EXPLORER",
-      version: "v3",
+      base: "EXPLORER_STAGING",
+      version: "v4",
     },
   },
   ethereum_ropsten: {
