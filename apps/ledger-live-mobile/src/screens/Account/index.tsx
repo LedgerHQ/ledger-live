@@ -128,7 +128,7 @@ const AccountScreenInner = ({
     setGraphCardEndPosition(y + height / 10);
   }, []);
 
-  const secondaryActions = useAccountActions({ account, parentAccount });
+  const { secondaryActions } = useAccountActions({ account, parentAccount });
 
   const { listHeaderComponents } = useMemo(
     () =>
