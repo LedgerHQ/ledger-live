@@ -244,7 +244,7 @@ export const apiForCurrency = (currency: CryptoCurrency): API => {
       });
       return data.map((erc20Balance) => ({
         ...erc20Balance,
-        blockNumber: new BigNumber(erc20Balance.blockNumber),
+        balance: new BigNumber(erc20Balance.balance),
       }));
     },
 

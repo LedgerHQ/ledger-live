@@ -281,7 +281,7 @@ const txToOps =
     // We are putting the sub operations in place for now, but they will later be exploded out of the operations back to their token accounts
     const subOperations = !transfer_events
       ? []
-      : flatMap(transfer_events.list, (event, i) => {
+      : flatMap(transfer_events, (event, i) => {
           const from = safeEncodeEIP55(event.from);
           const to = safeEncodeEIP55(event.to);
           const sending = addr === from;
