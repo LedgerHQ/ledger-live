@@ -56,14 +56,13 @@ export function Widget({ provider, type }: Props) {
           }
         };
 
+        localStorage.setItem("theme", "${dark ? "dark" : "light"}");
+
         if (location.pathname.includes("/login") && !${redirected}) {
           localStorage.removeItem("authToken");
         } else if (location.pathname.includes("/kyc")) {
-          localStorage.setItem("authToken", ${authToken});
+          localStorage.setItem("authToken", "${authToken}");
         }
-
-        localStorage.setItem("theme", "${dark ? "dark" : "light"}");
-
       } catch(e) {
         alert(e)
       }
@@ -91,7 +90,7 @@ export function Widget({ provider, type }: Props) {
             );
             break;
           case "closeWidget":
-            navigation.pop();
+            navigation.navigate("SwapForm");
             break;
           default:
             break;

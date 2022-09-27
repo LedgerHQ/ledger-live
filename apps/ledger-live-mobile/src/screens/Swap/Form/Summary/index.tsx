@@ -66,7 +66,7 @@ export function Summary({
     const params = {
       returnToSwap: true,
       onSuccess: () => {
-        navigation.pop();
+        navigation.navigate("SwapForm");
       },
       analyticsPropertyFlow: "swap",
     };
