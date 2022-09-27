@@ -54,7 +54,6 @@ export default function BiometricsRow({ iconLeft }: Props) {
     onSuccess,
     onError,
   });
-
   if (!privacy) return null;
   return (
     <>
@@ -69,7 +68,10 @@ export default function BiometricsRow({ iconLeft }: Props) {
                 i18nKey="auth.enableBiometrics.title"
                 values={{
                   ...privacy,
-                  biometricsType: privacy.biometricsType,
+                  biometricsType:
+                    t(
+                      `auth.enableBiometrics.${privacy.biometricsType.toLowerCase()}`,
+                    ) ?? privacy.biometricsType,
                 }}
               />
             }
@@ -78,7 +80,10 @@ export default function BiometricsRow({ iconLeft }: Props) {
                 i18nKey="auth.enableBiometrics.desc"
                 values={{
                   ...privacy,
-                  biometricsType: privacy.biometricsType,
+                  biometricsType:
+                    t(
+                      `auth.enableBiometrics.${privacy.biometricsType.toLowerCase()}`,
+                    ) ?? privacy.biometricsType,
                 }}
               />
             }
