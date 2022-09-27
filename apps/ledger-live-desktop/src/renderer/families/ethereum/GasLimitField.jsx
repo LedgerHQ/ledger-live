@@ -37,6 +37,8 @@ const AdvancedOptions = ({ account, transaction, status, updateTransaction }: Pr
     [account, updateTransaction],
   );
 
+  const onEditClick = useCallback(() => setEditable(true));
+
   const gasLimit = getGasLimit(transaction);
   const { gasLimit: gasLimitError } = status.errors;
   const { gasLimit: gasLimitWarning } = status.warnings;
@@ -66,7 +68,7 @@ const AdvancedOptions = ({ account, transaction, status, updateTransaction }: Pr
           <Label color="p.theme.colors.palette.text.shade100">
             {gasLimit.toString()}
           </Label>
-          <Button onClick={() => setEditable(true)} ml={1} px={2}>
+          <Button onClick={onEditClick} ml={1} px={2}>
             <Box horizontal alignItems="center">
               <Trans i18nKey="send.steps.details.edit" />
             </Box>
