@@ -276,7 +276,7 @@
     },
     "EthAppNftNotSupported" : {
       "title" : "이 장치에서 사용할 수 없는 작업",
-      "description" : "NFT 보내기 기능은 Nano X에서만 사용할 수 있습니다. Nano S로 NFT를 보내는 방법을 알아보려면 고객 지원 플랫폼을 방문해 주세요."
+      "description" : "NFT 보내기 기능은 Nano X에서만 사용할 수 있습니다. Nano S 또는 S Plus로 NFT를 보내는 방법을 알아보려면 고객 지원 플랫폼을 방문해 주세요."
     },
     "Touch ID Error" : {
       "title" : "생체 인증 실패",
@@ -1687,9 +1687,9 @@
     }
   },
   "addAccountsModal" : {
+    "title" : "계정 추가",
     "ctaAdd" : "계정 추가",
     "ctaImport" : "데스크탑 계정 가져오기",
-    "title" : "암호화폐 추가",
     "description" : "Ledger에 직접 암호화폐를 추가하거나 Ledger Live 데스크탑에서 가져올 수 있습니다.",
     "add" : {
       "title" : "Ledger를 통해",
@@ -1947,6 +1947,7 @@
       },
       "advanced" : {
         "title" : "고급 로그",
+        "warningDerivation" : "{{tag}} xpub 입니다. 타사 지갑으로 가져올 때 동일한 파생 모드를 선택하세요.",
         "desc" : ""
       }
     },
@@ -2263,7 +2264,46 @@
     "experimental" : {
       "title" : "실험 특징",
       "desc" : "다양한 실험 특징을 시험해 보고 의견을 나누어 주세요.",
-      "disclaimer" : "이는 기술에 대한 관심이 지대한 당사 커뮤니티에 \"있는 그대로\" 제공하는 실험적 기능으로, 언제든지 변경, 중단 또는 제거될 수 있습니다. 기능을 활성화할 경우, 온전히 귀하의 책임 하에 해당 기능을 사용한다는 사실에 동의하게 됩니다."
+      "disclaimer" : "이는 기술에 대한 관심이 지대한 당사 커뮤니티에 \"있는 그대로\" 제공하는 실험적 기능으로, 언제든지 변경, 중단 또는 제거될 수 있습니다. 기능을 활성화할 경우, 온전히 귀하의 책임 하에 해당 기능을 사용한다는 사실에 동의하게 됩니다.",
+      "experimentalFeatures" : {
+        "experimentalIntegrations" : {
+          "title" : "실험 통합",
+          "description" : "사용 가능한 실험 암호화폐 통합을 사용합니다."
+        },
+        "developerMode" : {
+          "title" : "개발자 모드",
+          "description" : "관리자에 개발자 및 테스트넷 앱을 보여줍니다."
+        },
+        "managerProvider" : {
+          "title" : "관리자 공급자",
+          "description" : "관리자에서 앱 공급자를 변경하면 Ledger 기기에서 앱 설치 또는 삭제가 불가능해질 수 있습니다."
+        },
+        "experimentalExplorers" : {
+          "title" : "실험적 탐색기 API",
+          "description" : "Ledger 블록체인 탐색기 새 버전을 사용해 보세요. 이 설정을 변경하면 계정 잔금과 동기화, 전송 기능이 영향을 받을 수 있습니다."
+        },
+        "experimentalCountervalues" : {
+          "title" : "실험적 등가 API",
+          "description" : "이로 인해 계정과 관련하여 올바른 등가 값이 표시되지 않을 수 있습니다."
+        },
+        "experimentalSwap" : {
+          "title" : "새로운 스왑 인터페이스",
+          "description" : "새로운 실험적 스왑 인터페이스 사용"
+        }
+      },
+      "developerFeatures" : {
+        "experimentalApps" : {
+          "title" : "실험적 앱 허용",
+          "description" : "실험적이라 태그 된 플랫폼 앱을 표시하고 허용하세요."
+        },
+        "staggingUrl" : {
+          "title" : "스테이징 URL에 대해 알아보기",
+          "description" : "학습 페이지에서 스테이징 URL 사용하기"
+        },
+        "platformManifest" : {
+          "title" : "플랫폼 Manifest 불러오기"
+        }
+      }
     },
     "developer" : {
       "title" : "개발자",
@@ -2275,11 +2315,8 @@
     "debug" : {
       "featureFlagsTitle" : "Ledger Live에서 사용되는 정의된 기능 플래그",
       "featureFlagsDesc" : "앱을 다시 실행하면 재정의된 값이 다시 설정됩니다. 유효한 JSON 문자열만 허용됩니다.",
-      "featureFlagsOverride" : "재정의",
       "featureFlagsEdit" : "편집",
-      "featureFlagsRestore" : "복구",
-      "featureFlagsDisplayValue" : "값 표시하기",
-      "featureFlagsHideValue" : "값 숨기기"
+      "featureFlagsRestore" : "복구"
     }
   },
   "notifications" : {
