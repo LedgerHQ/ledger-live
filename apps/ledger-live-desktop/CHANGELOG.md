@@ -1,5 +1,11 @@
 # ledger-live-desktop
 
+## 2.48.0-next.5
+
+### Patch Changes
+
+- [#1381](https://github.com/LedgerHQ/ledger-live/pull/1381) [`d95783a5fb`](https://github.com/LedgerHQ/ledger-live/commit/d95783a5fb749da55461b8161ba511b857c9c7a5) Thanks [@LFBarreto](https://github.com/LFBarreto)! - LLD - fix toast issue when no click callback given
+
 ## 2.48.0-next.4
 
 ### Patch Changes
