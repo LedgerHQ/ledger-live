@@ -166,6 +166,16 @@ function adaptTx(apiTx): Tx {
       ...apiTx.block,
       height: new BigNumber(apiTx.block.height),
     },
+    transfer_events: apiTx.transfer_events.map((event) => ({
+      ...event,
+      count: new BigNumber(event.count),
+    })),
+    actions: apiTx.actions.map((action) => ({
+      ...action,
+      value: new BigNumber(action.count),
+      gas: new BigNumber(action.gas),
+      gas_used: new BigNumber(action.gas_used),
+    })),
   };
 }
 
