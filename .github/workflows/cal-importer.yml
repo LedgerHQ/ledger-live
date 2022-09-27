@@ -1,4 +1,4 @@
-name: "[Testing] 'Dynamic cal importer'"
+name: "[S3 Staging] 'Dynamic cal importer'"
 on:
   workflow_dispatch:
   push:
@@ -60,10 +60,14 @@ jobs:
         shell: bash
       - name: run script
         run: |
-          mkdir calreport
+          mkdir cal
           node libs/ledgerjs/script/crypto-assets-importer/index.js $PWD/crypto-assets true
-      - name: upload logs to github artifacts
-        if: always()
-        uses: actions/upload-artifact@v3
+          mv libs/ledgerjs/packages/cryptoassets/data/**.json cal
+      - name: Configure AWS Credentials (staging)
+        uses: aws-actions/configure-aws-credentials@v1
         with:
-          path: libs/ledgerjs/packages/cryptoassets/data/*.json
+          aws-access-key-id: ${{ secrets.LEDGER_LIVE_ASSETS_SA_KEY_ID_STG }}
+          aws-secret-access-key: ${{ secrets.LEDGER_LIVE_ASSETS_SA_ACCESS_KEY_STG }}
+          aws-region: eu-west-1
+      - name: Deploy json to s3
+        run: aws s3 sync ./cal/ s3://ledger-live-cryptoassets-stg --delete
