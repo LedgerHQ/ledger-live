@@ -276,7 +276,7 @@
     },
     "EthAppNftNotSupported" : {
       "title" : "お使いのデバイスではこの操作をご利用いただけません",
-      "description" : "NFTの送付は、Nano Xでのみご利用いただけます。カスタマーサポートページから、Nano SでNFTを送付する方法をご確認ください。"
+      "description" : "NFTの送付は、Nano Xでのみご利用いただけます。カスタマーサポートページから、Nano SまたはNano S PlusでNFTを送付する方法をご確認ください。"
     },
     "Touch ID Error" : {
       "title" : "生体認証に失敗しました。",
@@ -1687,9 +1687,9 @@
     }
   },
   "addAccountsModal" : {
+    "title" : "アカウントを追加",
     "ctaAdd" : "アカウントを追加",
     "ctaImport" : "デスクトップアカウントのインポート",
-    "title" : "暗号資産を追加",
     "description" : "Ledgerに暗号資産を直接追加、またはLedger Live Desktopからインポートする方法を選択できます。",
     "add" : {
       "title" : "Ledgerと共に",
@@ -1697,7 +1697,7 @@
     },
     "import" : {
       "title" : "デスクトップからインポート",
-      "description" : "Ledger Live Desktop(デスクトップ)から資産をインポート"
+      "description" : "Ledger Live Desktopから資産をインポート"
     }
   },
   "byteSize" : {
@@ -1947,6 +1947,7 @@
       },
       "advanced" : {
         "title" : "詳細ログ",
+        "warningDerivation" : "これは {{tag}}のxpubです。サードパーティのウォレットにインポートする際は、同じ派生モードを選択してください。",
         "desc" : ""
       }
     },
@@ -2263,7 +2264,46 @@
     "experimental" : {
       "title" : "試験的機能",
       "desc" : "試験的機能をお試しになり、フィードバックをお寄せください。",
-      "disclaimer" : "これらは、テクノロジーファンのコミュニティ向けに、現状のまま提供される試験的機能です。これらの機能は随時変更、破損、または削除される可能性があります。このオプションを有効にすると、あなたは自己責任でこれらの機能を使用することに同意したことになります。"
+      "disclaimer" : "これらは、テクノロジーファンのコミュニティ向けに、現状のまま提供される試験的機能です。これらの機能は随時変更、破損、または削除される可能性があります。このオプションを有効にすると、あなたは自己責任でこれらの機能を使用することに同意したことになります。",
+      "experimentalFeatures" : {
+        "experimentalIntegrations" : {
+          "title" : "試験的統合",
+          "description" : "利用可能な試験的暗号資産の統合を使用する。"
+        },
+        "developerMode" : {
+          "title" : "デベロッパーモード",
+          "description" : "開発者用アプリとテストネットアプリを管理画面に表示します。"
+        },
+        "managerProvider" : {
+          "title" : "プロバイダー管理",
+          "description" : "プロバイダー管理でアプリプロバイダーを変更すると、Ledgerデバイスにアプリをインストールまたはアンインストールできなくなる場合があります。"
+        },
+        "experimentalExplorers" : {
+          "title" : "試験的なエクスプローラーAPI",
+          "description" : "Ledgerのブロックチェーンエクスプローラーの新バージョンをお試しいただけます。この設定を変更すると、アカウントの残高と同期、および送金機能に影響を与える可能性があります。"
+        },
+        "experimentalCountervalues" : {
+          "title" : "試験的なカウンターバリューAPI",
+          "description" : "これにより、アカウントに表示されるカウンター値が不正確になる可能性があります。"
+        },
+        "experimentalSwap" : {
+          "title" : "新しいスワップインタフェース",
+          "description" : "新しい試験的スワップインタフェースを使用する"
+        }
+      },
+      "developerFeatures" : {
+        "experimentalApps" : {
+          "title" : "試験的なアプリを許可する",
+          "description" : "試験的とタグ付けされたプラットフォームアプリの表示と実行を許可する"
+        },
+        "staggingUrl" : {
+          "title" : "学習ステージングのURL",
+          "description" : "ステージングURLを学習ページに使用する。"
+        },
+        "platformManifest" : {
+          "title" : "プラットフォームマニフェストを読み込む"
+        }
+      }
     },
     "developer" : {
       "title" : "デベロッパー",
@@ -2275,11 +2315,8 @@
     "debug" : {
       "featureFlagsTitle" : "Ledger Liveで使用される定義済みの機能フラグ",
       "featureFlagsDesc" : "上書きされた値は、アプリが再起動されるとリセットされます。有効なJSON文字列のみが受け入れられます。",
-      "featureFlagsOverride" : "上書き",
       "featureFlagsEdit" : "編集",
-      "featureFlagsRestore" : "復元",
-      "featureFlagsDisplayValue" : "値を表示",
-      "featureFlagsHideValue" : "値を非表示"
+      "featureFlagsRestore" : "復元"
     }
   },
   "notifications" : {
@@ -2904,7 +2941,7 @@
       "amount" : "数量",
       "from" : "送付元",
       "to" : "送付先",
-      "infoTotalTitle" : "デビットの合計",
+      "infoTotalTitle" : "合計出金額",
       "infoTotalDesc" : "トランザクション数量と選択したネットワーク手数料を含みます。",
       "gasLimit" : "ガスリミット",
       "gasPrice" : "ガス価格",
@@ -3535,15 +3572,15 @@
     "no" : "希望しない",
     "languages" : {
       "en" : "英語",
-      "fr" : "Français",
-      "ru" : "Русский",
-      "es" : "Español",
+      "fr" : "フランス語",
+      "ru" : "ロシア語",
+      "es" : "スペイン語",
       "zh" : "中国人",
-      "de" : "Deutsch",
-      "tr" : "Türk",
+      "de" : "ドイツ語",
+      "tr" : "トルコ語",
       "ja" : "日本",
-      "ko" : "한국인",
-      "pt" : "Português"
+      "ko" : "韓国",
+      "pt" : "ポルトガル語"
     }
   },
   "deviceLocalization" : {
