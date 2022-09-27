@@ -392,6 +392,12 @@
       "title" : "Cette app est nécessaire.",
       "description" : "Désinstallez les apps Bitcoin ou Ethereum en dernier."
     },
+    "MaxBaseFeeHigh" : {
+      "title" : "Frais de base maximaux surestimés. Le cas échéant, vous serez remboursé(e) par le réseau."
+    },
+    "MaxBaseFeeLow" : {
+      "title" : "Frais de base maximaux faibles. La transaction peut rester en attente un moment."
+    },
     "NetworkDown" : {
       "title" : "Pas de connexion Internet",
       "description" : "Vérifiez votre connexion Internet."
@@ -434,6 +440,12 @@
     "PasswordsDontMatch" : {
       "title" : "Mots de passe non identiques",
       "description" : "Veuillez réessayer."
+    },
+    "PriorityFeeTooHigh" : {
+      "title" : "Frais de priorité plus élevés que nécessaire. Vous pourriez payer trop cher."
+    },
+    "PriorityFeeTooLow" : {
+      "title" : "Frais de priorité inférieurs au montant recommandé."
     },
     "SelectExchangesLoadError" : {
       "title" : "Chargement impossible",
@@ -2255,7 +2267,7 @@
       "exportLogsDesc" : "Sauvegardez les logs de Ledger Live peut être nécessaire à des fins de dépannage.",
       "hardReset" : "Réinitialiser Ledger Live",
       "hardResetDesc" : "Sans effet sur vos actifs. Toutes les données de Ledger Live, y compris les données de comptes, l’historique de vos transactions et paramètres seront effacées. Utilisez votre appareil Ledger pour recharger et gérer vos crypto-actifs dans une app Ledger Live vierge.",
-      "repairDevice" : "Réparer son appareil Ledger",
+      "repairDevice" : "Réparer votre appareil Ledger",
       "repairDeviceDesc" : "En cas de problème lors de la mise à jour de votre appareil (reprise des mises à jour impossible), essayez cela pour réparer votre appareil."
     },
     "experimental" : {
@@ -2273,11 +2285,8 @@
     "debug" : {
       "featureFlagsTitle" : "Indicateurs de fonctionnalités (feature flags) définis et utilisés dans Ledger Live",
       "featureFlagsDesc" : "Les valeurs remplacées seront réinitialisées lorsque l’application sera relancée. Seules les chaînes JSON valides sont acceptées.",
-      "featureFlagsOverride" : "Remplacer",
       "featureFlagsEdit" : "Modifier",
-      "featureFlagsRestore" : "Restaurer",
-      "featureFlagsDisplayValue" : "Afficher le code",
-      "featureFlagsHideValue" : "Masquer le code"
+      "featureFlagsRestore" : "Restaurer"
     }
   },
   "notifications" : {
@@ -2906,9 +2915,14 @@
       "infoTotalDesc" : "Comprend le montant de la transaction et les frais de réseau choisis",
       "gasLimit" : "Limite de gaz",
       "gasPrice" : "Prix du gaz",
+      "maxBaseFee" : "Frais de base maximaux",
+      "priorityFee" : "Frais de priorité",
+      "nextBlock" : "Bloc suivant : {{nextBaseFee}}",
+      "suggestedPriorityFee" : "Suggérés : {{lowPriorityFee}} - {{highPriorityFee}}",
       "maxFees" : "Frais maximaux",
       "validateGasLimit" : "Valider la limite de gaz",
       "fees" : "Frais",
+      "maxEstimatedFee" : "Frais maximaux estimés",
       "validateFees" : "Valider les frais",
       "customizeFees" : "Modifier les frais",
       "memo" : {
@@ -3536,11 +3550,11 @@
       "fr" : "Français",
       "ru" : "Русский",
       "es" : "Español",
-      "zh" : "中国人",
+      "zh" : "简体中文",
       "de" : "Deutsch",
-      "tr" : "Türk",
-      "ja" : "日本",
-      "ko" : "한국인",
+      "tr" : "Türkçe",
+      "ja" : "日本語",
+      "ko" : "한국어",
       "pt" : "Português"
     }
   },
