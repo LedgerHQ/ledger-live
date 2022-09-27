@@ -27,11 +27,11 @@ class EventEmitter private constructor
 
 
     fun onAppStateChange(awake: Boolean) {
-        isJavaScriptAvailable = awake
-
-        if (awake) {
-            consumeEventQueue()
-        }
+//        isJavaScriptAvailable = awake
+//
+//        if (awake) {
+//            consumeEventQueue()
+//        }
     }
 
     fun dispatch(payload: WritableMap) {
