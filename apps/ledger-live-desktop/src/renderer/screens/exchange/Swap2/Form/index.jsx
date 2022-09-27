@@ -15,7 +15,7 @@ import {
 import React, { useCallback, useEffect, useMemo, useState, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
-import { useLocation } from "react-router-dom";
+import { useHistory, useLocation } from "react-router-dom";
 import styled from "styled-components";
 import { setSwapKYCStatus } from "~/renderer/actions/settings";
 import {
@@ -38,7 +38,6 @@ import KYC from "../KYC";
 import Login from "../Login";
 import MFA from "../MFA";
 import { SWAP_VERSION, trackSwapError } from "../utils/index";
-import DexSwapAvailableAlert from "./DexSwapAvailableAlert";
 import ExchangeDrawer from "./ExchangeDrawer/index";
 import FormErrorBanner from "./FormErrorBanner";
 import FormKYCBanner from "./FormKYCBanner";
@@ -107,6 +106,7 @@ const SwapForm = () => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const { state: locationState } = useLocation();
+  const history = useHistory();
   const accounts = useSelector(shallowAccountsSelector);
   const { storedProviders, providers, providersError } = useProviders();
   const exchangeRate = useSelector(rateSelector);
@@ -126,6 +126,8 @@ const SwapForm = () => {
 
   const exchangeRatesState = swapTransaction.swap?.rates;
   const swapKYC = useSelector(swapKYCSelector);
+  const [navigation, setNavigation] = useState(null);
+
   const provider = exchangeRate?.provider;
   const providerKYC = swapKYC?.[provider];
   const kycStatus = providerKYC?.status;
@@ -141,7 +143,7 @@ const SwapForm = () => {
 
   useEffect(() => {
     // In case of error, don't show  login, kyc or mfa banner
-    if (error) {
+    if (error || navigation) {
       // Don't show any flow banner on error to avoid double banner display
       setCurrentBanner(null);
       return;
@@ -162,7 +164,7 @@ const SwapForm = () => {
     if (currentBanner !== "LOGIN" && shouldShowKYCBanner({ provider, kycStatus })) {
       setCurrentBanner("KYC");
     }
-  }, [error, provider, providerKYC?.id, kycStatus, currentBanner]);
+  }, [error, provider, providerKYC?.id, kycStatus, currentBanner, navigation]);
 
   const { setDrawer } = React.useContext(context);
 
@@ -359,7 +361,18 @@ const SwapForm = () => {
       provider,
       swapVersion: SWAP_VERSION,
     });
-    setDrawer(ExchangeDrawer, { swapTransaction, exchangeRate }, { preventBackdropClick: true });
+    if (navigation) {
+      const { pathname, params } = navigation;
+      history.push({
+        pathname,
+        search: new URLSearchParams({
+          returnTo: "/swap",
+          ...params,
+        }).toString(),
+      });
+    } else {
+      setDrawer(ExchangeDrawer, { swapTransaction, exchangeRate }, { preventBackdropClick: true });
+    }
   };
 
   const sourceAccount = swapTransaction.swap.from.account;
@@ -368,6 +381,21 @@ const SwapForm = () => {
   const targetParentAccount = swapTransaction.swap.to.parentAccount;
   const sourceCurrency = swapTransaction.swap.from.currency;
   const targetCurrency = swapTransaction.swap.to.currency;
+
+  const updateSelection = useCallback(
+    payload => {
+      const { navigation } = payload;
+      if (navigation) {
+        // Means a DEX provider is selected
+        setNavigation(navigation);
+      } else {
+        // Means a CEX provider is selected
+        setNavigation(null);
+        swapTransaction.swap.updateSelectedRate(payload);
+      }
+    },
+    [swapTransaction?.swap],
+  );
 
   // We check if a decentralized swap is available to conditionnaly render an Alert below.
   // All Ethereum related currencies are considered available
@@ -413,21 +441,25 @@ const SwapForm = () => {
   }
 
   const setFromAccount = currency => {
+    setNavigation(null);
     setShowDetails(false);
     swapTransaction.setFromAccount(currency);
   };
 
   const setFromAmount = currency => {
+    setNavigation(null);
     setShowDetails(false);
     swapTransaction.setFromAmount(currency);
   };
 
   const setToAccount = account => {
+    setNavigation(null);
     setShowDetails(false);
     swapTransaction.setToAccount(account);
   };
 
   const setToCurrency = currency => {
+    setNavigation(null);
     setShowDetails(false);
     swapTransaction.setToCurrency(currency);
   };
@@ -465,10 +497,11 @@ const SwapForm = () => {
             />
             <SwapFormRates
               swap={swapTransaction.swap}
-              kycStatus={kycStatus}
               provider={provider}
               refreshTime={refreshTime}
               countdown={!swapError && !idleState}
+              decentralizedSwapAvailable={decentralizedSwapAvailable}
+              updateSelection={updateSelection}
             />
 
             {currentBanner === "LOGIN" ? (
@@ -495,7 +528,6 @@ const SwapForm = () => {
           <Button primary disabled={!isSwapReady} onClick={onSubmit} data-test-id="exchange-button">
             {t("common.exchange")}
           </Button>
-          {showDetails && decentralizedSwapAvailable ? <DexSwapAvailableAlert /> : null}
         </Box>
       </Wrapper>
     );
@@ -505,9 +537,6 @@ const SwapForm = () => {
     return (
       <>
         <FormNotAvailable />
-        <Box px="18px" maxWidth="500px">
-          <DexSwapAvailableAlert />
-        </Box>
       </>
     );
   }

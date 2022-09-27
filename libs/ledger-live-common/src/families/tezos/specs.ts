@@ -3,7 +3,7 @@ import sample from "lodash/sample";
 import invariant from "invariant";
 import type { Transaction } from "./types";
 import { getCryptoCurrencyById, parseCurrencyUnit } from "../../currencies";
-import { pickSiblings } from "../../bot/specs";
+import { genericTestDestination, pickSiblings } from "../../bot/specs";
 import type { AppSpec } from "../../bot/types";
 import { DeviceModelId } from "@ledgerhq/devices";
 import { getAccountDelegationSync, isAccountDelegating } from "./bakers";
@@ -47,6 +47,7 @@ const tezos: AppSpec<Transaction> = {
     {
       name: "send unrevealed",
       maxRun: 1,
+      testDestination: genericTestDestination,
       transaction: ({ maxSpendable, account, siblings, bridge }) => {
         expectUnrevealed(account);
         const sibling = pickSiblings(siblings, maxAccount);
@@ -67,6 +68,7 @@ const tezos: AppSpec<Transaction> = {
     {
       name: "send revealed",
       maxRun: 2,
+      testDestination: genericTestDestination,
       transaction: ({ maxSpendable, account, siblings, bridge }) => {
         expectRevealed(account);
         const sibling = pickSiblings(siblings, maxAccount);
@@ -87,6 +89,7 @@ const tezos: AppSpec<Transaction> = {
     {
       name: "send max (non delegating)",
       maxRun: 3,
+      testDestination: genericTestDestination,
       transaction: ({ account, siblings, bridge, maxSpendable }) => {
         invariant(
           !isAccountDelegating(account),

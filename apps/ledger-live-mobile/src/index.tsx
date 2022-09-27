@@ -367,7 +367,7 @@ const linkingOptions: LinkingOptions<ReactNavigation.RootParamList> = {
                * @params ?currency: string
                * ie: "ledgerlive://receive?currency=bitcoin" will open the prefilled search account in the receive flow
                */
-              [ScreenName.ReceiveSelectAccount]: "receive",
+              [ScreenName.ReceiveSelectCrypto]: "receive",
             },
           },
           [NavigatorName.Swap]: {
@@ -386,6 +386,29 @@ const linkingOptions: LinkingOptions<ReactNavigation.RootParamList> = {
                * ie: "ledgerlive://send?currency=bitcoin" will open the prefilled search account in the send flow
                */
               [ScreenName.SendCoin]: "send",
+            },
+          },
+
+          [NavigatorName.Accounts]: {
+            screens: {
+              /**
+               * @params ?id: string
+               * ie: "ledgerlive://accounts?currency=ethereum&address={{eth_account_address}}"
+               */
+              [ScreenName.Accounts]: "accounts",
+            },
+          },
+
+          [NavigatorName.AddAccounts]: {
+            screens: {
+              /**
+               * ie: "ledgerlive://add-account" will open the add account flow
+               *
+               * @params ?currency: string
+               * ie: "ledgerlive://add-account?currency=bitcoin" will open the add account flow with "bitcoin" prefilled in the search input
+               *
+               */
+              [ScreenName.AddAccountsSelectCrypto]: "add-account",
             },
           },
 
@@ -525,8 +548,9 @@ const DeepLinkingNavigator = ({ children }: { children: React.ReactNode }) => {
       hasCompletedOnboarding,
       wcContext.initDone,
       wcContext.session.session,
-      filteredManifests,
+      dispatch,
       liveAppProviderInitialized,
+      filteredManifests,
     ],
   );
   const [isReady, setIsReady] = React.useState(false);
@@ -552,7 +576,7 @@ const DeepLinkingNavigator = ({ children }: { children: React.ReactNode }) => {
   useEffect(() => {
     compareOsTheme();
 
-    const osThemeChangeHandler = nextAppState =>
+    const osThemeChangeHandler = (nextAppState: string) =>
       nextAppState === "active" && compareOsTheme();
 
     const sub = AppState.addEventListener("change", osThemeChangeHandler);

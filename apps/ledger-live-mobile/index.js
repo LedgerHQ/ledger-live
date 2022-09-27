@@ -32,7 +32,7 @@ import { languageSelector } from "./src/reducers/settings";
 import { store } from "./src/context/LedgerStore";
 
 if (__DEV__) {
-  require('react-native-performance-flipper-reporter').setupDefaultFlipperReporter();
+  require("react-native-performance-flipper-reporter").setupDefaultFlipperReporter();
 }
 
 // we exclude errors related to user's environment, not fixable by us
@@ -83,6 +83,7 @@ const excludedErrorDescription = [
   "database or disk is full",
   "Unable to open URL",
   "Received an invalid JSON-RPC message",
+  "Transaction simulation failed", // LIVE-3506
 ];
 if (Config.SENTRY_DSN && (!__DEV__ || Config.FORCE_SENTRY) && !Config.MOCK) {
   Sentry.init({

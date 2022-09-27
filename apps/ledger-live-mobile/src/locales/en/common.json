@@ -3,6 +3,7 @@
     "cancel": "Cancel",
     "apply": "Apply",
     "seeAll": "See all",
+    "seeAllWithNumber": "See all ({{number}})",
     "back": "Back",
     "delete": "Delete",
     "paste": "Paste",
@@ -30,6 +31,7 @@
     "received": "Received",
     "sent": "Sent",
     "or": "OR",
+    "others": "Others",
     "rename": "Rename",
     "learnMore": "Learn more",
     "checkItOut": "Check it out",
@@ -147,6 +149,12 @@
           "nanoX": "Please make sure your {{productName}} is unlocked and is connected by cable or has Bluetooth enabled."
         }
       }
+    },
+    "CeloAllFundsWarning": {
+      "title": "Ensure you have enough balance left for future transaction fees"
+    },
+    "CeloMissingWithdrawalsError": {
+      "title": "Something went wrong, cannot fetch any funds to withdraw"
     },
     "ClaimRewardsFeesWarning": {
       "title": "The rewards are smaller than the estimated fees to claim them.",
@@ -276,7 +284,7 @@
     },
     "EthAppNftNotSupported": {
       "title": "Operation not available for this device",
-      "description": "Send NFT feature is only available for Nano X. Please visit our customer support platform to know how to send a NFT with a Nano S."
+      "description": "Send NFT feature is only available for Nano X. Please visit our customer support platform to know how to send a NFT with a Nano S or S Plus."
     },
     "Touch ID Error": {
       "title": "Biometric authentication failed",
@@ -1072,6 +1080,8 @@
     "stepLanguage": {
       "title": "Select your language",
       "cta": "Continue",
+      "changeDeviceLanguage": "{{language}} is also available for your {{deviceName}}",
+      "changeDeviceLanguageDescription": "Would you like to change its language to {{language}}?",
       "warning": {
         "title": "Get started in English",
         "cta": "Got it!",
@@ -1670,7 +1680,10 @@
         "addAccounts": "Add asset",
         "title": "Get started",
         "description": "You can either purchase crypto from our partners or setup your wallet"
-      }
+      },
+      "title": "Start by adding your favorite assets to your wallet",
+      "subtitle": "Ledger supports more than 6,000 coins and tokens",
+      "addAccount": "or add an account"
     },
     "noOpState": {
       "title": "No operations yet?",
@@ -1682,20 +1695,27 @@
     "topGainers": {
       "title": "Market gainers (24H)",
       "seeMarket": "See all"
+    },
+    "walletBalance": "Wallet balance",
+    "seelAllAssets": "See All Assets",
+    "marketPriceSection": {
+      "title": "{{currencyTicker}} market price",
+      "currencyPrice": "1 {{currencyTicker}} price",
+      "currencyPriceChange": "Last 24h change"
     }
   },
   "addAccountsModal": {
+    "title": "Add account",
     "ctaAdd": "Add accounts",
     "ctaImport": "Import Desktop accounts",
-    "title": "Add Crypto",
-    "description": "You can choose to add crypto(s) directly with your Ledger, or import them from Ledger Live Desktop.",
+    "description": "You can choose to add crypto directly with your Ledger, or import them from Ledger Live Desktop.",
     "add": {
       "title": "With your Ledger",
-      "description": "Create or import asset(s) with your Ledger"
+      "description": "Create or import asset with your Ledger"
     },
     "import": {
       "title": "Import from desktop",
-      "description": "Import asset(s) from Ledger Live Desktop"
+      "description": "Import asset from Ledger Live Desktop"
     }
   },
   "byteSize": {
@@ -1907,7 +1927,8 @@
       "buttons": {
         "receiveFunds": "Receive",
         "buyCrypto": "Buy"
-      }
+      },
+      "addAccountCta": "Add Account"
     },
     "settings": {
       "header": "Account settings",
@@ -2008,6 +2029,15 @@
         "subtitle": "You'll need a device in order to buy or receive {{assetName}}"
       }
     },
+    "modals": {
+      "zeroBalanceDisabledAction": {
+        "title": "You have no {{currencyTicker}} yet",
+        "start": "Buy or Receive some {{currencyTicker}} to start.",
+        "description": "You need some {{currencyTicker}} to {{actionName}} with this account."
+      }
+    },
+    "earn": "Earn",
+    "quickActions": "Quick actions",
     "banner": {
       "redelegation": {
         "description": "In case you didn’t know, the Ledger validator stakes at a lower commission than the validator you’re using.",
@@ -2021,6 +2051,7 @@
   },
   "accounts": {
     "title": "Accounts",
+    "cryptoAccountsTitle": "{{currencyTicker}} accounts",
     "importNotification": {
       "message": "Your accounts were imported successfully!"
     },
@@ -2261,7 +2292,46 @@
     "experimental": {
       "title": "Experimental features",
       "desc": "Try out the Experimental features and let us know what you think.",
-      "disclaimer": "These are Experimental features provided on an \"as is\" basis for our community of tech enthusiasts. They may change, break or be removed at any time. By enabling them, you agree to use them at your own risk."
+      "disclaimer": "These are Experimental features provided on an \"as is\" basis for our community of tech enthusiasts. They may change, break or be removed at any time. By enabling them, you agree to use them at your own risk.",
+      "experimentalFeatures": {
+        "experimentalIntegrations": {
+          "title": "Experimental integrations",
+          "description": "Use available experimental crypto assets integrations."
+        },
+        "developerMode": {
+          "title": "Developer mode",
+          "description": "Show developer and testnet apps in the Manager."
+        },
+        "managerProvider": {
+          "title": "Manager provider",
+          "description": "Changing the app provider in the Manager may make it impossible to install or uninstall apps on your Ledger device."
+        },
+        "experimentalExplorers": {
+          "title": "Experimental Explorers API",
+          "description": "Try an upcoming version of Ledger's blockchain explorers. Changing this setting may affect the account balance and synchronization as well as the send feature."
+        },
+        "experimentalCountervalues": {
+          "title": "Experimental countervalues API",
+          "description": "This may cause the countervalues displayed for your accounts to become incorrect."
+        },
+        "experimentalSwap": {
+          "title": "New SWAP interface",
+          "description": "Use the new experimental swap interface"
+        }
+      },
+      "developerFeatures": {
+        "experimentalApps": {
+          "title": "Allow experimental apps",
+          "description": "Display and allow opening experimental tagged platform apps."
+        },
+        "staggingUrl": {
+          "title": "Learn staging URL",
+          "description": "Use the staging URL for the Learn page."
+        },
+        "platformManifest": {
+          "title": "Load Platform Manifest"
+        }
+      }
     },
     "developer": {
       "title": "Developer",
@@ -3067,6 +3137,7 @@
     }
   },
   "addAccounts": {
+    "addNew": "Add new",
     "supportLinks": {
       "segwit_or_native_segwit": "Segwit or Native segwit?"
     },
@@ -3350,6 +3421,7 @@
       "appsInstalled": "<0>{{number}}</0> app",
       "appsInstalled_plural": "<0>{{number}}</0> apps",
       "storageAvailable": "available",
+      "noFreeSpace": "No storage left",
       "appsToUpdate": "<0>{{number}}</0> update",
       "appsToUpdate_plural": "<0>{{number}}</0> updates"
     },
@@ -3542,9 +3614,15 @@
   "deviceLocalization": {
     "language": "Language",
     "deviceLanguage": "Device Language",
+    "chooseLanguage": "Choose a language for your {{deviceName}}.",
     "changeLanguage": "Change language",
-    "allowLanguageInstallation": "Allow language installation",
-    "languageInstalled": "Device language changed to {{language}}",
+    "yesChangeLanguage": "Yes, change language",
+    "allowLanguageInstallation": "Approve language installation on {{deviceName}}",
+    "languageInstalled": "Language changed to {{language}}",
+    "firmwareUpdatePrompt": {
+      "title": "Set your {{deviceName}} in {{language}}?",
+      "description": "{{language}} is now available for your {{deviceName}}. You can set it now, or change your device language at any time from My Ledger."
+    },
     "installingLanguage": "Installing language",
     "languages": {
       "english": "English",
@@ -3658,7 +3736,276 @@
       "available": {
         "title": "CELO available",
         "description": "This amount is disposable."
+      },
+      "lockedBalance": {
+        "title": "Locked balance",
+        "description": "Assets must be locked and voted for validator groups before earning rewards."
+      },
+      "nonvotingLockedBalance": {
+        "title": "Non-voting locked balance",
+        "description": "The balance of locked assets available to be used for voting."
+      },
+      "withdrawableBalance": {
+        "title": "Withdrawable balance",
+        "description": "Unlocked Celo you can withdraw to your Available Balance."
       }
+    },
+    "delegation": {
+      "validatorGroup": "Validator Group",
+      "totalVotes": "Total Votes",
+      "actions": {
+        "activate": "Activate",
+        "revoke": "Revoke"
+      },
+      "delegationUnavailable": {
+        "title": "Insufficient Locked Funds"
+      },
+      "manageMultipleVoteWarning": "You need to Activate or Revoke other votes in the same validator group before managing this vote."
+    },
+    "manage": {
+      "title": "Manage assets",
+      "titleWhenPendingRegistration": "Account Registration Pending",
+      "lock": {
+        "title": "Lock",
+        "description": "To earn rewards, first lock an amount. Then you must vote for your validator(s)."
+      },
+      "unlock": {
+        "title": "Unlock",
+        "description": "To make a locked amount available again, first you need to unlock it. You can withdraw it after the 3-day unlocking period."
+      },
+      "withdraw": {
+        "title": "Withdraw",
+        "description": "To retrieve an unlocked amount back to the available balance, you need to withdraw it manually."
+      },
+      "vote": {
+        "title": "Vote",
+        "description": "Vote for validator groups. Ensure you activate your votes to earn rewards."
+      },
+      "activate": {
+        "title": "Activate vote",
+        "description": "Activate your vote for validator group"
+      },
+      "revoke": {
+        "title": "Revoke vote",
+        "description": "Revoke your vote for validator group"
+      }
+    },
+    "unlock": {
+      "stepperHeader": {
+        "title": "Unlock assets",
+        "stepRange": "Step {{currentStep}} of {{totalSteps}}",
+        "selectDevice": "Select device",
+        "connectDevice": "Connect device"
+      },
+      "flow": {
+        "steps": {
+          "amount": {
+            "info": "Unlocked assets can be withdrawn after the 3-day unlocking period.",
+            "available": "Available",
+            "max": "Max"
+          },
+          "verification": {
+            "success": {
+              "title": "Unlock transaction sent successfully",
+              "text": "Unlocked assets can be withdrawn in 3 days."
+            }
+          }
+        }
+      }
+    },
+    "vote": {
+      "iVote": "I vote",
+      "stepperHeader": {
+        "title": "Vote",
+        "stepRange": "Step {{currentStep}} of {{totalSteps}}",
+        "selectDevice": "Select device",
+        "connectDevice": "Connect device"
+      },
+      "flow": {
+        "steps": {
+          "starter": {
+            "description": "You may earn rewards by delegating your CELO assets to a validator.",
+            "bullet": {
+              "0": "You keep ownership of delegated assets",
+              "1": "Delegate using your Ledger device",
+              "2": "Assets will be available after undelegation"
+            },
+            "warning": {
+              "description": "Choose your validator wisely: Part of your delegated assets may be irrevocably lost if the validator does not behave appropriately."
+            },
+            "cta": "Continue"
+          },
+          "amount": {
+            "available": "Available",
+            "max": "Max"
+          },
+          "verification": {
+            "success": {
+              "title": "You have successfully voted",
+              "text": "You will see your operation in history soon."
+            }
+          }
+        }
+      }
+    },
+    "activate": {
+      "iActivate": "I activate my votes",
+      "stepperHeader": {
+        "title": "Activate vote",
+        "stepRange": "Step {{currentStep}} of {{totalSteps}}",
+        "selectDevice": "Select device",
+        "connectDevice": "Connect device"
+      },
+      "title": "Activate votes",
+      "flow": {
+        "steps": {
+          "verification": {
+            "success": {
+              "title": "Activation successful",
+              "text": "Your vote was successfully activated."
+            }
+          }
+        }
+      }
+    },
+    "revoke": {
+      "iRevoke": "I revoke",
+      "stepperHeader": {
+        "title": "Vote",
+        "stepRange": "Step {{currentStep}} of {{totalSteps}}",
+        "selectDevice": "Select device",
+        "connectDevice": "Connect device"
+      },
+      "flow": {
+        "steps": {
+          "validator": {
+            "active": "Active",
+            "pending": "Pending"
+          },
+          "amount": {
+            "available": "Available",
+            "max": "Max"
+          },
+          "verification": {
+            "success": {
+              "title": "You have successfully revoked your votes",
+              "text": "You will see your operation in history soon."
+            }
+          }
+        }
+      },
+      "vote": {
+        "title": "Vote",
+        "active": "Active",
+        "pending": "Pending",
+        "awaitingActivation": "Awaiting activation",
+        "info": "Only revokable votes are shown on this modal"
+      }
+    },
+    "register": {
+      "stepperHeader": {
+        "title": "Register account",
+        "continue": "Continue",
+        "stepRange": "Step {{currentStep}} of {{totalSteps}}",
+        "selectDevice": "Select device",
+        "connectDevice": "Connect device"
+      },
+      "flow": {
+        "steps": {
+          "started": {
+            "description": "Before locking any Celo you need to register your account on-chain."
+          },
+          "verification": {
+            "success": {
+              "title": "Account registered successfully",
+              "text": "You will see your operation in history soon."
+            }
+          }
+        }
+      }
+    },
+    "lock": {
+      "stepperHeader": {
+        "title": "Lock assets",
+        "stepRange": "Step {{currentStep}} of {{totalSteps}}",
+        "selectDevice": "Select device",
+        "connectDevice": "Connect device"
+      },
+      "flow": {
+        "steps": {
+          "amount": {
+            "info": "Locked assets can be unlocked at any time, but unlocking takes 3 days.",
+            "available": "Available",
+            "max": "Max"
+          },
+          "verification": {
+            "success": {
+              "title": "Assets successfully locked",
+              "text": "You will be able to vote validators once the network has confirmed your transaction."
+            }
+          }
+        }
+      }
+    },
+    "withdraw": {
+      "iWithdraw": "I withdraw",
+      "title": "Withdraw assets",
+      "steps": {
+        "amount": {
+          "title": "Withdraw"
+        },
+        "connectDevice": {
+          "title": "Device"
+        },
+        "confirmation": {
+          "title": "Confirmation",
+          "success": {
+            "title": "Withdraw transaction sent successfully",
+            "text": "The withdrawn amount will be credited to your available balance.",
+            "cta": "View details"
+          },
+          "broadcastError": "Your transaction may have failed. Please wait a moment then check the transaction history before trying again."
+        }
+      },
+      "stepperHeader": {
+        "title": "Vote",
+        "stepRange": "Step {{currentStep}} of {{totalSteps}}",
+        "selectDevice": "Select device",
+        "connectDevice": "Connect device"
+      },
+      "flow": {
+        "steps": {
+          "amount": {
+            "available": "Available",
+            "max": "Max",
+            "waitingTitle": "Amount not ready for withdrawal",
+            "waitingPeriod": "You need to wait until {{date}} to withdraw this amount."
+          },
+          "verification": {
+            "success": {
+              "title": "Your assets were withdrawn successfully",
+              "text": "The withdrawn amount will be credited to your available balance."
+            }
+          }
+        }
+      }
+    },
+    "emptyState": {
+      "description": "You can earn CELO rewards by delegating your assets.",
+      "info": "How Delegation works",
+      "delegation": "Earn rewards"
+    },
+    "earnRewards": {
+      "description": "You may earn rewards by delegating your CELO assets to a validator.",
+      "bullet": {
+        "0": "You keep ownership of delegated assets",
+        "1": "Delegate using your Ledger device",
+        "2": "Assets will be available after undelegation"
+      }
+    },
+    "alerts": {
+      "withdrawableAssets": "You have a withdrawable balance.",
+      "activatableVotes": "You have votes that can now be activated."
     }
   },
   "osmosis": {
@@ -4748,6 +5095,12 @@
     },
     "currentAddress": {
       "messageIfVirtual": "Your {{name}} address cannot be confirmed on your Ledger device. Use at your own risk."
+    }
+  },
+  "asset": {
+    "title": "Your {{assetName}}",
+    "accountsSection": {
+      "title": "Your {{currencyName}} accounts"
     }
   },
   "customImage": {

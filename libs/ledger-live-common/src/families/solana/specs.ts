@@ -5,6 +5,7 @@ import { DeviceModelId } from "@ledgerhq/devices";
 import {
   botTest,
   expectSiblingsHaveSpendablePartGreaterThan,
+  genericTestDestination,
   pickSiblings,
 } from "../../bot/specs";
 import { AppSpec, TransactionTestInput } from "../../bot/types";
@@ -21,6 +22,8 @@ import { getCurrentSolanaPreloadData } from "./js-preload-data";
 import { sample } from "lodash/fp";
 import BigNumber from "bignumber.js";
 
+const maxAccount = 9;
+
 const solana: AppSpec<Transaction> = {
   name: "Solana",
   appQuery: {
@@ -36,11 +39,12 @@ const solana: AppSpec<Transaction> = {
     {
       name: "Transfer ~50%",
       maxRun: 2,
+      testDestination: genericTestDestination,
       deviceAction: acceptTransferTransaction,
       transaction: ({ account, siblings, bridge, maxSpendable }) => {
         invariant(maxSpendable.gt(0), "balance is 0");
         const transaction = bridge.createTransaction(account);
-        const sibling = pickSiblings(siblings);
+        const sibling = pickSiblings(siblings, maxAccount);
         const recipient = sibling.freshAddress;
         const amount = account.spendableBalance
           .div(1.9 + 0.2 * Math.random())
@@ -62,7 +66,7 @@ const solana: AppSpec<Transaction> = {
       transaction: ({ account, siblings, bridge, maxSpendable }) => {
         invariant(maxSpendable.gt(0), "balance is 0");
         const transaction = bridge.createTransaction(account);
-        const sibling = pickSiblings(siblings);
+        const sibling = pickSiblings(siblings, maxAccount);
         const recipient = sibling.freshAddress;
         return {
           transaction,

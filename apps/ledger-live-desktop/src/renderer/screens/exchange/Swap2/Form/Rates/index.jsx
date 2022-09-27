@@ -1,15 +1,15 @@
 // @flow
-import React, { useCallback } from "react";
+import React, { useCallback, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Trans } from "react-i18next";
 import Box from "~/renderer/components/Box";
 import Text from "~/renderer/components/Text";
-import Rate from "./Rate";
+import DecentralisedRate from "./DecentralisedRate";
+import CentralisedRate from "./CentralisedRate";
 import Countdown from "./Countdown";
 import type {
   SwapSelectorStateType,
   RatesReducerState,
-  SwapDataType,
 } from "@ledgerhq/live-common/exchange/swap/hooks/index";
 import { rateSelector, updateRateAction } from "~/renderer/actions/swap";
 import TrackPage from "~/renderer/analytics/TrackPage";
@@ -17,6 +17,7 @@ import { SWAP_VERSION } from "../../utils/index";
 import styled from "styled-components";
 import Tooltip from "~/renderer/components/Tooltip";
 import IconInfoCircle from "~/renderer/icons/InfoCircle";
+import { DEX_PROVIDERS } from "../utils";
 
 type Props = {
   fromCurrency: $PropertyType<SwapSelectorStateType, "currency">,
@@ -24,8 +25,9 @@ type Props = {
   rates: $PropertyType<RatesReducerState, "value">,
   provider: ?string,
   refreshTime: number,
-  updateSelectedRate: $PropertyType<SwapDataType, "updateSelectedRate">,
+  updateSelection: () => void,
   countdown: boolean,
+  decentralizedSwapAvailable: boolean,
 };
 
 const TableHeader: ThemedComponent<{}> = styled(Box).attrs({
@@ -49,20 +51,30 @@ export default function ProviderRate({
   toCurrency,
   rates,
   provider,
-  updateSelectedRate,
+  updateSelection,
   refreshTime,
   countdown,
+  decentralizedSwapAvailable,
 }: Props) {
   const dispatch = useDispatch();
+  const [dexSelected, setDexSelected] = useState(null);
   const selectedRate = useSelector(rateSelector);
 
   const setRate = useCallback(
     rate => {
-      updateSelectedRate(rate);
+      setDexSelected(null);
+      updateSelection(rate);
       dispatch(updateRateAction(rate));
     },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [dispatch],
+    [updateSelection, dispatch],
+  );
+
+  const setDexRate = useCallback(
+    provider => {
+      setDexSelected(provider);
+      updateSelection(provider);
+    },
+    [updateSelection],
   );
 
   return (
@@ -138,15 +150,25 @@ export default function ProviderRate({
       </TableHeader>
       <Box mt={3}>
         {rates?.map((rate, index) => (
-          <Rate
-            key={rate.rateId || index}
+          <CentralisedRate
+            key={`${rate.provider}-${rate.tradeMethod}`}
             value={rate}
-            selected={rate === selectedRate}
+            selected={!dexSelected && rate === selectedRate}
             onSelect={setRate}
             fromCurrency={fromCurrency}
             toCurrency={toCurrency}
           />
         ))}
+        {decentralizedSwapAvailable &&
+          DEX_PROVIDERS.map((rate, index) => (
+            <DecentralisedRate
+              key={rate.id}
+              value={rate}
+              selected={dexSelected && rate.id === dexSelected.id}
+              onSelect={setDexRate}
+              icon={rate.icon}
+            />
+          ))}
       </Box>
     </Box>
   );

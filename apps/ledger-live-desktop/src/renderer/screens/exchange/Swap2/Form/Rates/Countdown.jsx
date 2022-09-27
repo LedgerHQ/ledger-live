@@ -48,7 +48,7 @@ export default function Countdown({ refreshTime, rates }: Props) {
             <AnimatedCountdown size={15} duration={refreshTime} />
           </Box>
           <Box style={{ width: "28px" }}>
-            00:{countdown.toLocaleString("en-US", { minimumIntegerDigits: 2 })}
+            00:{Math.abs(countdown).toLocaleString("en-US", { minimumIntegerDigits: 2 })}
           </Box>
         </Box>
       ) : (

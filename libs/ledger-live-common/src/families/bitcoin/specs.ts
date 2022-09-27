@@ -11,7 +11,7 @@ import type {
   Transaction,
 } from "./types";
 import { getCryptoCurrencyById, parseCurrencyUnit } from "../../currencies";
-import { botTest, pickSiblings } from "../../bot/specs";
+import { botTest, genericTestDestination, pickSiblings } from "../../bot/specs";
 import { bitcoinPickingStrategy } from "./types";
 import type { MutationSpec, AppSpec } from "../../bot/types";
 import { LowerThanMinimumRelayFee } from "../../errors";
@@ -123,6 +123,8 @@ const genericTest = ({
   );
 };
 
+const testDestination = genericTestDestination;
+
 const genericMinimalAmount = new BigNumber(10000);
 
 const bitcoinLikeMutations = ({
@@ -157,8 +159,10 @@ const bitcoinLikeMutations = ({
       return {
         transaction,
         updates,
+        destination: sibling,
       };
     },
+    testDestination,
     recoverBadTransactionStatus,
   },
   {
@@ -185,8 +189,10 @@ const bitcoinLikeMutations = ({
       return {
         transaction,
         updates,
+        destination: sibling,
       };
     },
+    testDestination,
     recoverBadTransactionStatus,
   },
   {
@@ -225,9 +231,11 @@ const bitcoinLikeMutations = ({
             useAllAmount: true,
           },
         ],
+        destination: sibling,
       };
     },
     recoverBadTransactionStatus,
+    testDestination,
     test: ({ accountBeforeTransaction, account, operation, transaction }) => {
       const utxo = (
         (accountBeforeTransaction as BitcoinAccount).bitcoinResources?.utxos ||
@@ -282,9 +290,11 @@ const bitcoinLikeMutations = ({
             useAllAmount: true,
           },
         ],
+        destination: sibling,
       };
     },
     recoverBadTransactionStatus,
+    testDestination,
     test: ({ account }) => {
       botTest("total of utxos is zero", () =>
         expect(
@@ -479,7 +489,6 @@ const minZcash = parseCurrencyUnit(
 const zcash: AppSpec<Transaction> = {
   name: "ZCash",
   currency: getCryptoCurrencyById("zcash"),
-  dependency: "Bitcoin",
   appQuery: {
     model: DeviceModelId.nanoS,
     appName: "Zcash",

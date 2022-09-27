@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo } from "react";
+import React, { useCallback } from "react";
 import useEnv from "@ledgerhq/live-common/hooks/useEnv";
 import {
   getAccountCurrency,
@@ -6,23 +6,21 @@ import {
   getAccountUnit,
 } from "@ledgerhq/live-common/account/index";
 import { Account, TokenAccount } from "@ledgerhq/types-live";
-import { Currency, CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { getTagDerivationMode } from "@ledgerhq/live-common/derivation";
 import { useSelector } from "react-redux";
-import { useCalculate } from "@ledgerhq/live-common/countervalues/react";
-import { BigNumber } from "bignumber.js";
-import { ScreenName } from "../../const";
+import { NavigatorName, ScreenName } from "../../const";
 import { useBalanceHistoryWithCountervalue } from "../../actions/portfolio";
-import { counterValueCurrencySelector } from "../../reducers/settings";
 import AccountRowLayout from "../../components/AccountRowLayout";
+import { parentAccountSelector } from "../../reducers/accounts";
+import { track } from "../../analytics";
 
 type Props = {
   account: Account | TokenAccount;
   accountId: string;
   navigation: any;
-  isLast: boolean;
-  onSetAccount: (_: TokenAccount) => void;
-  portfolioValue: number;
+  isLast?: boolean;
+  onSetAccount?: (arg: TokenAccount) => void;
   navigationParams?: any[];
   hideDelta?: boolean;
   topLink?: boolean;
@@ -33,15 +31,19 @@ const AccountRow = ({
   navigation,
   account,
   accountId,
-  portfolioValue,
   navigationParams,
   hideDelta,
   topLink,
   bottomLink,
+  isLast,
 }: Props) => {
   // makes it refresh if this changes
   useEnv("HIDE_EMPTY_TOKEN_ACCOUNTS");
   const currency = getAccountCurrency(account);
+  const parentAccount = useSelector(state =>
+    parentAccountSelector(state, { account }),
+  );
+
   const name = getAccountName(account);
   const unit = getAccountUnit(account);
 
@@ -50,45 +52,40 @@ const AccountRow = ({
     account.derivationMode !== null &&
     getTagDerivationMode(currency as CryptoCurrency, account.derivationMode);
 
-  const counterValueCurrency: Currency = useSelector(
-    counterValueCurrencySelector,
-  );
-
-  const countervalue = useCalculate({
-    from: currency,
-    to: counterValueCurrency,
-    value:
-      account.balance instanceof BigNumber
-        ? account.balance.toNumber()
-        : account.balance,
-    disableRounding: true,
-  });
-
-  const portfolioPercentage = useMemo(
-    () => (countervalue ? countervalue / Math.max(1, portfolioValue) : 0), // never divide by potential zero, we dont want to go towards infinity
-    [countervalue, portfolioValue],
-  );
-
   const { countervalueChange } = useBalanceHistoryWithCountervalue({
     account,
     range: "day",
   });
 
   const onAccountPress = useCallback(() => {
+    track("account_clicked", {
+      currency: currency.name,
+    });
     if (navigationParams) {
       navigation.navigate(...navigationParams);
     } else if (account.type === "Account") {
       navigation.navigate(ScreenName.Account, {
         accountId,
-        isForwardedFromAccounts: true,
       });
     } else if (account.type === "TokenAccount") {
-      navigation.navigate(ScreenName.Account, {
-        parentId: account?.parentId,
-        accountId: account.id,
+      navigation.navigate(NavigatorName.Accounts, {
+        screen: ScreenName.Account,
+        params: {
+          currencyId: currency.id,
+          parentId: account?.parentId,
+          accountId: account.id,
+        },
       });
     }
-  }, [account, accountId, navigation, navigationParams]);
+  }, [
+    account.id,
+    account?.parentId,
+    account.type,
+    accountId,
+    currency.id,
+    navigation,
+    navigationParams,
+  ]);
 
   return (
     <AccountRowLayout
@@ -99,10 +96,11 @@ const AccountRow = ({
       name={name}
       countervalueChange={countervalueChange}
       tag={tag}
-      progress={portfolioPercentage}
       topLink={topLink}
       bottomLink={bottomLink}
       hideDelta={hideDelta}
+      parentAccountName={parentAccount && getAccountName(parentAccount)}
+      isLast={isLast}
     />
   );
 };
