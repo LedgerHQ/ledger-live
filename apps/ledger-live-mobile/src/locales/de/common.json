@@ -392,6 +392,12 @@
       "title" : "Entschuldigung, diese App wird benötigt",
       "description" : "Deinstallieren Sie die Bitcoin- oder Ethereum-App zuletzt."
     },
+    "MaxBaseFeeHigh" : {
+      "title" : "Ihre max. Grundgebühr ist zu hoch geschätzt. Gegebenenfalls werden Ihnen die Kosten vom Netzwerk erstattet."
+    },
+    "MaxBaseFeeLow" : {
+      "title" : "Die max. Grundgebühr ist zu niedrig. Ihre Transaktion kann eine Weile ausstehend bleiben"
+    },
     "NetworkDown" : {
       "title" : "Entschuldigung, das Internet scheint ausgefallen zu sein",
       "description" : "Bitte überprüfen Sie Ihre Internetverbindung."
@@ -434,6 +440,12 @@
     "PasswordsDontMatch" : {
       "title" : "Passwort stimmt nicht überein",
       "description" : "Bitte versuchen Sie es erneut."
+    },
+    "PriorityFeeTooHigh" : {
+      "title" : "Die Prioritätsgebühr ist höher als nötig. Möglicherweise zahlen Sie zu viel"
+    },
+    "PriorityFeeTooLow" : {
+      "title" : "Die Prioritätsgebühr ist niedriger als der empfohlene Wert"
     },
     "SelectExchangesLoadError" : {
       "title" : "Kann nicht geladen werden",
@@ -2273,11 +2285,8 @@
     "debug" : {
       "featureFlagsTitle" : "In Ledger Live verwendete definierte Feature-Flags",
       "featureFlagsDesc" : "Überschriebene Werte werden zurückgesetzt, wenn die App neu gestartet wird. Es werden nur gültige JSON-Zeichenfolgen akzeptiert.",
-      "featureFlagsOverride" : "Überschreiben",
       "featureFlagsEdit" : "Bearbeiten",
-      "featureFlagsRestore" : "Wiederherstellen",
-      "featureFlagsDisplayValue" : "Wert anzeigen",
-      "featureFlagsHideValue" : "Wert ausblenden"
+      "featureFlagsRestore" : "Wiederherstellen"
     }
   },
   "notifications" : {
@@ -2906,9 +2915,14 @@
       "infoTotalDesc" : "Enthält den Transaktionsbetrag und die gewählten Netzwerkgebühren",
       "gasLimit" : "Gaslimit",
       "gasPrice" : "Gaspreis",
+      "maxBaseFee" : "Max. Grundgebühr",
+      "priorityFee" : "Prioritätsgebühr",
+      "nextBlock" : "Nächster Block: {{nextBaseFee}}",
+      "suggestedPriorityFee" : "Vorgeschlagen: {{lowPriorityFee}} - {{highPriorityFee}}",
       "maxFees" : "Max. Gebühren",
       "validateGasLimit" : "Gas-Limit validieren",
       "fees" : "Gebühren",
+      "maxEstimatedFee" : "Geschätzte max. Gebühr",
       "validateFees" : "Gebühren validieren",
       "customizeFees" : "Gebühren anpassen",
       "memo" : {
@@ -3533,15 +3547,15 @@
     "no" : "Lieber nicht",
     "languages" : {
       "en" : "Englisch",
-      "fr" : "Français",
-      "ru" : "Русский",
-      "es" : "Español",
-      "zh" : "中国人",
+      "fr" : "Französisch",
+      "ru" : "Russisch",
+      "es" : "Spanisch",
+      "zh" : "Chinesisch",
       "de" : "Deutsch",
-      "tr" : "Türk",
-      "ja" : "日本",
-      "ko" : "한국인",
-      "pt" : "Português"
+      "tr" : "Türkisch",
+      "ja" : "Japanisch",
+      "ko" : "Koreanisch",
+      "pt" : "Portugiesisch"
     }
   },
   "deviceLocalization" : {
