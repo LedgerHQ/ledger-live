@@ -59,4 +59,4 @@ jobs:
       - name: Deploy json to s3
         run: aws s3 sync ./cal/ s3://ledger-live-cryptoassets-stg/cryptoassets --delete
       - name: Cache invalidate
-        run: aws cloudfront create-invalidation --distribution-id E53IORS7MW883 --paths "/cryptoassets/*" --debug
+        run: aws cloudfront create-invalidation --distribution-id E2NGFIXS9QJTH --paths "/cryptoassets/*" --debug
