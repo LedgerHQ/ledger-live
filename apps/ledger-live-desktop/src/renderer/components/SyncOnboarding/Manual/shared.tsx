@@ -43,6 +43,7 @@ export enum Status {
   updateAvailable = "updateAvailable",
   cancelled = "cancelled",
   active = "active",
+  notGenuine = "notGenuine",
   completed = "completed",
   failed = "failed",
 }
@@ -53,6 +54,7 @@ export type StatusType =
   | "updateAvailable"
   | "cancelled"
   | "active"
+  | "notGenuine"
   | "completed"
   | "failed";
 
