@@ -177,6 +177,8 @@
   "time" : {
     "minute" : "Minute",
     "minute_plural" : "Minuten",
+    "minute_short" : "Min.",
+    "second_short" : "Sek.",
     "hour" : "Stunde",
     "hour_plural" : "Stunden",
     "range" : {
@@ -235,10 +237,26 @@
     },
     "form" : {
       "changeCTA" : "Änderung",
-      "ratesDrawer" : {
-        "title" : "Kurs",
-        "quote" : "Preis",
-        "receive" : "Empfangen"
+      "rates" : {
+        "title" : "Anbieter",
+        "registration" : "Anmeldung erforderlich ",
+        "noRegistration" : "Keine Anmeldung erforderlich",
+        "fixed" : "Festgelegt",
+        "float" : "Float",
+        "update" : "Kursaktualisierung in",
+        "loading" : "Lade Daten...",
+        "name" : {
+          "title" : "Anbieter",
+          "tooltip" : "Je nach Anbieter müssen Sie sich bei diesem anmelden, indem Sie ein Konto erstellen."
+        },
+        "rate" : {
+          "title" : "Wechselkurs",
+          "tooltip" : "Ein <0>variabler Zinssatz<0> schwankt je nach den Marktbedingungen, so dass Sie mehr oder weniger erhalten können, was Sie geschätzt haben. <br/><br/>Ein <0>fester Kurs<0> entspricht dem Betrag, der zu Beginn des Wechsels angezeigt wird."
+        },
+        "receive" : {
+          "title" : "Empfangen",
+          "tooltip" : "Der geschätzte Betrag, den Sie nach dem Austausch erhalten werden."
+        }
       },
       "details" : {
         "label" : {
@@ -411,7 +429,13 @@
           "approved" : "KYC genehmigt!",
           "closed" : "KYC abgelehnt"
         }
-      }
+      },
+      "filter" : {
+        "all" : "Alle",
+        "centralised" : "Zentralisiert",
+        "dedentralised" : "Dezentralisiert"
+      },
+      "noQuote" : "Kurs im nächsten Schritt verfügbar"
     },
     "ip" : {
       "title" : "Willkommen bei Swap",
@@ -760,7 +784,7 @@
       },
       "delegation" : {
         "title" : "Schon gewusst?",
-        "description" : "The Ledger validator stakes your {{asset}} at a commission of {{commission}}%.",
+        "description" : "Der Ledger-Validator erledigt das Staking Ihrer {{asset}} zu einer Provision in Höhe von {{commission}} %.",
         "cta" : "Mit Ledger staken"
       }
     }
@@ -1930,7 +1954,7 @@
       "amount" : {
         "title" : "Betrag",
         "banner" : "Maximaler Auszahlungsbetrag ist",
-        "fees" : "Gebühren",
+        "fees" : "Geschätzte max. Gebühr",
         "standard" : "Standart",
         "advanced" : "Advanced",
         "nftQuantity" : "Menge"
@@ -1953,8 +1977,13 @@
         "useMax" : "Maximum senden",
         "rippleTag" : "Tag",
         "rippleTagPlaceholder" : "Optional",
+        "edit" : "Bearbeiten",
         "ethereumGasLimit" : "Gaslimit",
         "ethereumGasPrice" : "Gaspreis",
+        "ethereumMaxBaseFee" : "Max. Grundgebühr ({{unitName}})",
+        "ethereumPriorityFee" : "Prioritätsgebühr ({{unitName}})",
+        "nextBlock" : "Nächster Block: {{nextBaseFee}}",
+        "suggestedPriorityFee" : "Vorgeschlagen: {{lowPriorityFee}} - {{highPriorityFee}} {{unitName}}",
         "unitPerByte" : "{{unit}} pro Byte",
         "nft" : "NFT",
         "nftQuantity" : "Menge"
@@ -1984,7 +2013,8 @@
       }
     },
     "footer" : {
-      "estimatedFees" : "Netzgebühren"
+      "estimatedFees" : "Netzgebühren",
+      "totalToDebit" : "Zu belastende Summe"
     }
   },
   "sign" : {
@@ -3405,6 +3435,10 @@
           "title" : "Erweiterte Kontosuche",
           "description" : "Suchen Sie nach Konten mit fehlerhaften Ableitungspfaden. Bitte senden Sie potenziell gefundene Vermögenswerte an ein reguläres Konto."
         },
+        "experimentalCountervalues" : {
+          "title" : "Experimentelle Gegenwerte API",
+          "description" : "Dies kann dazu führen, dass die für Ihre Konten angezeigten Gegenwerte nicht mehr stimmen."
+        },
         "experimentalExplorers" : {
           "title" : "Experimentelle Explorer-API",
           "description" : "Probieren Sie eine kommende Version von Ledgers Blockchain-Explorern aus. Das Ändern dieser Einstellung kann den Kontostand und die Synchronisation sowie die Sendefunktion beeinflussen.\n(<0></0>)"
@@ -4582,10 +4616,6 @@
       "title" : "Entschuldigung, das Internet scheint ausgefallen zu sein",
       "description" : "Bitte überprüfen Sie Ihre Internetverbindung."
     },
-    "NetworkError" : {
-      "title" : "Während der Synchronisierung ist ein Fehler aufgetreten",
-      "description" : "Bitte überprüfen Sie Ihre Internetverbindung."
-    },
     "NoAddressesFound" : {
       "title" : "Entschuldigung, es wurden keine Konten gefunden",
       "description" : "Bei der Adressberechnung ist etwas schief gelaufen, versuchen Sie es erneut oder wenden Sie sich an den Ledger-Support"
@@ -4746,6 +4776,18 @@
     },
     "GasLessThanEstimate" : {
       "title" : "Dies könnte zu niedrig sein. Bitte erhöhen"
+    },
+    "MaxBaseFeeLow" : {
+      "title" : "Die max. Grundgebühr ist zu niedrig. Ihre Transaktion kann eine Weile ausstehend bleiben"
+    },
+    "MaxBaseFeeHigh" : {
+      "title" : "Ihre max. Grundgebühr ist zu hoch geschätzt. Gegebenenfalls werden Ihnen die Kosten vom Netzwerk erstattet."
+    },
+    "PriorityFeeTooLow" : {
+      "title" : "Die Prioritätsgebühr ist niedriger als der empfohlene Wert"
+    },
+    "PriorityFeeTooHigh" : {
+      "title" : "Die Prioritätsgebühr ist höher als nötig. Möglicherweise zahlen Sie zu viel"
     },
     "UnknownMCU" : {
       "title" : "Unbekannte MCU-Version",
