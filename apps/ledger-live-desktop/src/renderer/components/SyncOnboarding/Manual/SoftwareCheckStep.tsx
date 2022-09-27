@@ -11,6 +11,7 @@ import SoftwareCheckContent from "./SoftwareCheckContent";
 import GenuineCheckModal from "./GenuineCheckModal";
 import GenuineCheckAnimationModal from "./GenuineCheckAnimationModal";
 import GenuineCheckCancelModal from "./GenuineCheckCancelModal";
+import GenuineCheckNotGenuineModal from "./GenuineCheckNotGenuineModal";
 import { Status as SoftwareCheckStatus } from "./shared";
 
 const UIDelay = 2500;
@@ -64,6 +65,10 @@ const SoftwareCheckStep = ({ isDisplayed, onComplete }: Props) => {
       setTimeout(() => setGenuineCheckStatus(SoftwareCheckStatus.requested), UIDelay);
     }
 
+    if (genuineState === "non-genuine") {
+      setGenuineCheckStatus(SoftwareCheckStatus.notGenuine);
+    }
+
     if (genuineState === "genuine") {
       setGenuineCheckStatus(SoftwareCheckStatus.completed);
     }
@@ -105,11 +110,22 @@ const SoftwareCheckStep = ({ isDisplayed, onComplete }: Props) => {
   return (
     <Box>
       <GenuineCheckModal
-        isOpen={genuineCheckStatus === "requested"}
+        isOpen={genuineCheckStatus === SoftwareCheckStatus.requested}
         onClose={() => setGenuineCheckStatus(SoftwareCheckStatus.active)}
       />
       <GenuineCheckCancelModal
-        isOpen={genuineCheckStatus === "cancelled"}
+        isOpen={genuineCheckStatus === SoftwareCheckStatus.cancelled}
+        onClose={() => {
+          resetGenuineCheckState();
+          setGenuineCheckStatus(SoftwareCheckStatus.requested);
+        }}
+        onSkip={() => {
+          resetGenuineCheckState();
+          setGenuineCheckStatus(SoftwareCheckStatus.failed);
+        }}
+      />
+      <GenuineCheckNotGenuineModal
+        isOpen={genuineCheckStatus === SoftwareCheckStatus.notGenuine}
         onClose={() => {
           resetGenuineCheckState();
           setGenuineCheckStatus(SoftwareCheckStatus.requested);
