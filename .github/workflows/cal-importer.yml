@@ -9,33 +9,9 @@ concurrency:
   group: bot-dyn-cal
 
 jobs:
-  start-runner:
-    name: "start ec2 instance (Linux)"
-    if: ${{ always() }}
-    uses: ledgerhq/actions/.github/workflows/start-linux-runner.yml@main
-    secrets:
-      CI_BOT_TOKEN: ${{ secrets.CI_BOT_TOKEN }}
-
-  stop-runner:
-    name: "stop ec2 instance (Linux)"
-    needs: [start-runner, run-bot]
-    uses: ledgerhq/actions/.github/workflows/stop-linux-runner.yml@main
-    if: ${{ always() }}
-    with:
-      label: ${{ needs.start-runner.outputs.label }}
-      ec2-instance-id: ${{ needs.start-runner.outputs.ec2-instance-id }}
-    secrets:
-      CI_BOT_TOKEN: ${{ secrets.CI_BOT_TOKEN }}
-
-
   run-bot:
-    runs-on: ${{ needs.start-runner.outputs.label }}
-    needs: [start-runner]
+    runs-on: ubuntu-latest
     steps:
-      - name: prepare runner
-        run: |
-          sudo growpart /dev/nvme0n1 1
-          sudo resize2fs /dev/nvme0n1p1
       - uses: actions/checkout@v3
       - name: Retrieving crypto-assets
         uses: actions/checkout@v3
@@ -44,14 +20,25 @@ jobs:
           repository: LedgerHQ/crypto-assets
           token: ${{ secrets.CI_BOT_TOKEN }}
           path: crypto-assets
-      - uses: pnpm/action-setup@v2.0.1
-        with:
-          version: latest
       - uses: actions/setup-node@v3
         with:
           node-version: 16.x
-          cache: pnpm
-          cache-dependency-path: "**/pnpm-lock.yaml"
+      - uses: pnpm/action-setup@v2.0.1
+        id: pnpm-install
+        with:
+          version: latest
+          run_install: false
+      - name: Get pnpm store directory
+        id: pnpm-cache
+        run: |
+          echo "::set-output name=pnpm_cache_dir::$(pnpm store path)"
+      - uses: actions/cache@v3
+        name: Setup pnpm cache
+        with:
+          path: ${{ steps.pnpm-cache.outputs.pnpm_cache_dir }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
       - name: install and build
         continue-on-error: true
         run: |
