@@ -93,6 +93,7 @@ const excludedErrorDescription = [
   // LIVE-3506 workaround, solana throws tons of cryptic errors
   "failed to find a healthy working node",
   "was reached for request with last error",
+  "Transaction simulation failed",
   "530 undefined",
   "524 undefined",
 ];
