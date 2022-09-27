@@ -99,6 +99,7 @@ export function SwapForm({ route: { params } }: SwapFormProps) {
     setExchangeRate,
     setIsSendMaxLoading,
     onNoRates: trackNoRates,
+    excludeFixedRates: true,
   });
 
   const exchangeRatesState = swapTransaction.swap?.rates;

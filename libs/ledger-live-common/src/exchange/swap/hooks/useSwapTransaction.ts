@@ -46,6 +46,7 @@ export const useSwapTransaction = ({
   defaultAccount = selectorStateDefaultValues.account,
   defaultParentAccount = selectorStateDefaultValues.parentAccount,
   onNoRates,
+  excludeFixedRates,
 }: {
   accounts?: Account[];
   setExchangeRate?: SetExchangeRateCallback;
@@ -54,6 +55,7 @@ export const useSwapTransaction = ({
   defaultAccount?: SwapSelectorStateType["account"];
   defaultParentAccount?: SwapSelectorStateType["parentAccount"];
   onNoRates?: OnNoRatesCallback;
+  excludeFixedRates?: boolean;
 } = {}): SwapTransactionType => {
   const bridgeTransaction = useBridgeTransaction(() => ({
     account: defaultAccount,
@@ -112,7 +114,13 @@ export const useSwapTransaction = ({
       from: fromState,
       isMaxEnabled,
       isSwapReversable,
-      rates,
+      rates:
+        rates.value && excludeFixedRates
+          ? {
+              ...rates,
+              value: rates.value.filter((v) => v.tradeMethod !== "fixed"),
+            }
+          : rates,
       refetchRates,
       updateSelectedRate,
       targetAccounts,
