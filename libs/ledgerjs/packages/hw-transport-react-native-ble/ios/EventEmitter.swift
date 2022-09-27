@@ -91,10 +91,10 @@ class EventEmitter {
     }
     
     func onAppStateChange(awake: Bool) {
-        self.isJavaScriptAvailable = awake
-        if awake {
-            self.consumeEventQueue()
-        }
+//        self.isJavaScriptAvailable = awake
+//        if awake {
+//            self.consumeEventQueue()
+//        }
     }
     
     func dispatch(_ payload: Payload) {
