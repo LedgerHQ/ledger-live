@@ -3,6 +3,7 @@
     "cancel" : "İptal et",
     "apply" : "Uygula",
     "seeAll" : "Tümünü gör",
+    "seeAllWithNumber" : "Tümünü gör ({{number}})",
     "back" : "Geri",
     "delete" : "Sil",
     "paste" : "Yapıştır",
@@ -30,6 +31,7 @@
     "received" : "Alındı",
     "sent" : "Gönderildi",
     "or" : "VEYA",
+    "others" : "Diğerleri",
     "rename" : "Cihazın adını değiştir",
     "learnMore" : "Daha fazla bilgi",
     "checkItOut" : "Göz at",
@@ -83,7 +85,8 @@
     "moreInfo" : "Daha fazla bilgi",
     "buyEth" : "Ethereum Satın Al",
     "popular" : "popüler",
-    "comingSoon" : "Çok yakında"
+    "comingSoon" : "Çok yakında",
+    "getSupport" : "Destek alın"
   },
   "errors" : {
     "countervaluesUnavailable" : {
@@ -276,7 +279,7 @@
     },
     "EthAppNftNotSupported" : {
       "title" : "Bu işlem bu cihaz için mevcut değil",
-      "description" : "NFT gönderme özelliği yalnızca Nano X için mevcuttur. Nano S ile nasıl NFT gönderileceğini öğrenmek için lütfen müşteri destek platformumuzu ziyaret edin."
+      "description" : "NFT Gönder özelliği yalnızca Nano X için mevcuttur. Nano S veya S Plus ile nasıl NFT gönderebileceğinizi öğrenmek için lütfen müşteri destek platformumuzu ziyaret edin."
     },
     "Touch ID Error" : {
       "title" : "Biyometrik kimlik doğrulaması başarısız oldu",
@@ -583,8 +586,8 @@
       "title" : "Tutar {{maxAmountFromFormatted}} değerinden az olmalıdır"
     },
     "SwapGenericAPIError" : {
-      "title" : "Kur zaman aşımına uğradı",
-      "description" : "Süre bitmeden önce takas işlemini onaylamalısınız. Kur, sabit bir süreliğine geçerli kalır."
+      "title" : "Bir hata oluştu",
+      "description" : "Takas işlemi gerçekleştirilemedi. Lütfen tekrar deneyin veya destek ekibiyle iletişime geçin."
     },
     "PolkadotElectionClosed" : {
       "title" : "Doğrulayıcı seçimleri kapatılmalı"
@@ -720,6 +723,9 @@
       "title" : "Görüntü işlenemedi",
       "description" : "Lütfen başka bir görüntüyle tekrar deneyin"
     }
+  },
+  "crash" : {
+    "title" : "Bir hata oluştu"
   },
   "bluetooth" : {
     "required" : "Üzgünüz, Bluetooth devre dışı görünüyor",
@@ -1672,7 +1678,10 @@
         "addAccounts" : "Varlık ekle",
         "title" : "Hemen başla",
         "description" : "Ortaklarımızdan kripto satın alabilir veya cüzdanınızı kurabilirsiniz"
-      }
+      },
+      "title" : "Başlangıç olarak en çok kullandığınız varlıkları cüzdanınıza ekleyin",
+      "subtitle" : "Ledger 6.000'den fazla coin ve token'ı destekler",
+      "addAccount" : "veya bir hesap ekleyin"
     },
     "noOpState" : {
       "title" : "Henüz işlem yok mu?",
@@ -1684,20 +1693,27 @@
     "topGainers" : {
       "title" : "Yükselenler (24SA)",
       "seeMarket" : "Tümünü gör"
+    },
+    "walletBalance" : "Cüzdan bakiyesi",
+    "seelAllAssets" : "Tüm Varlıkları Gör",
+    "marketPriceSection" : {
+      "title" : "{{currencyTicker}} piyasa fiyatı",
+      "currencyPrice" : "1 {{currencyTicker}} fiyatı",
+      "currencyPriceChange" : "Son 24 saatlik değişim"
     }
   },
   "addAccountsModal" : {
+    "title" : "Hesap ekle",
     "ctaAdd" : "Hesap ekle",
     "ctaImport" : "Masaüstü hesaplarını içe aktar",
-    "title" : "Kripto Ekle",
-    "description" : "Kriptoları doğrudan Ledger'ınızla eklemeyi seçebilir veya bunları Ledger Live Desktop'tan içe aktarabilirsiniz.",
+    "description" : "Doğrudan Ledger'ınız ile kripto eklemeyi ya da onları Ledger Live Desktop üzerinden içe aktarmayı seçebilirsiniz.",
     "add" : {
       "title" : "Ledger'ınızla ekleyin",
-      "description" : "Varlıkları Ledger'ınızla ekleyin veya içe aktarın"
+      "description" : "Ledger'ınız ile varlık yaratabilir ya da içe aktarabilirsiniz"
     },
     "import" : {
       "title" : "Masaüstünden içe aktarın",
-      "description" : "Varlıkları Ledger Live Desktop'tan içe aktarın"
+      "description" : "Ledger Live Desktop'tan varlık içe aktarın"
     }
   },
   "byteSize" : {
@@ -1909,7 +1925,8 @@
       "buttons" : {
         "receiveFunds" : "Al",
         "buyCrypto" : "Satın Al"
-      }
+      },
+      "addAccountCta" : "Hesap ekle"
     },
     "settings" : {
       "header" : "Hesap ayarları",
@@ -2010,6 +2027,15 @@
         "subtitle" : "{{assetName}} satın almak veya teslim almak için bir cihaza ihtiyacınız olacak"
       }
     },
+    "modals" : {
+      "zeroBalanceDisabledAction" : {
+        "title" : "Henüz elinizde {{currencyTicker}} yok",
+        "start" : "Başlamak için {{currencyTicker}} Satın Alın veya başka bir yerden cüzdanınıza Alın.",
+        "description" : "Bu hesapla {{actionName}} işlemi yapmak için elinizde {{currencyTicker}} olmalı."
+      }
+    },
+    "earn" : "Kazanın",
+    "quickActions" : "Hızlı işlemler",
     "banner" : {
       "redelegation" : {
         "description" : "Haberiniz olsun! Ledger doğrulayıcısı, kullanmakta olduğunuz doğrulayıcıya kıyasla daha düşük bir komisyonla stake eder.",
@@ -2023,6 +2049,7 @@
   },
   "accounts" : {
     "title" : "Hesaplar",
+    "cryptoAccountsTitle" : "{{currencyTicker}} hesapları",
     "importNotification" : {
       "message" : "Hesaplarınız başarıyla içe aktarıldı!"
     },
@@ -2255,6 +2282,10 @@
       "clearCacheButton" : "Temizle",
       "exportLogs" : "Logları kaydedin",
       "exportLogsDesc" : "Ledger Live loglarını kaydetmek sorun giderme amacıyla gerekli olabilir.",
+      "resetThirdPartyData" : "Üçüncü taraf verilerini sıfırla",
+      "resetThirdPartyDataDesc" : "Üçüncü taraf işlem sağlayıcısına erişmek için kullanılan tüm yerel üçüncü taraf verilerinizi silin.",
+      "resetThirdPartyDataModal" : "Yerel üçüncü taraf verilerinizi silin",
+      "resetThirdPartyDataModalDesc" : "Yerel üçüncü taraf verilerinizi silin. İş ortaklarımız tarafından sağlanan hizmetlere erişmek için KYC'nizi yeniden göndermeniz veya tekrar oturum açmanız gerekebilir.",
       "hardReset" : "Ledger Live'ı sıfırlayın",
       "hardResetDesc" : "Bunun varlıklarınız üzerinde bir etkisi yoktur. Hesap verileri, işlem geçmişleri ve ayarlar dahil olmak üzere Ledger Live'daki tüm verileri siler. Boş bir Ledger Live'da kripto varlıklarınızı yeniden yüklemek ve yönetmek için Ledger cihazınızı kullanın.",
       "repairDevice" : "Ledger cihazınızı onarın",
@@ -2263,7 +2294,46 @@
     "experimental" : {
       "title" : "Deneysel özellikler",
       "desc" : "Deneysel özelliklere bakıp ne düşündüğünüzü bize bildirin.",
-      "disclaimer" : "Bu Deneysel özellikleri, teknoloji tutkunu topluluğumuzun test edebilmesi için \"olduğu gibi\" sunuyoruz. Herhangi bir zamanda değişebilir, bozulabilir veya kaldırılabilirler. Bu özellikleri etkinleştirdiğinizde tüm riskin size ait olduğunu kabul etmiş olursunuz."
+      "disclaimer" : "Bu Deneysel özellikleri, teknoloji tutkunu topluluğumuzun test edebilmesi için \"olduğu gibi\" sunuyoruz. Herhangi bir zamanda değişebilir, bozulabilir veya kaldırılabilirler. Bu özellikleri etkinleştirdiğinizde tüm riskin size ait olduğunu kabul etmiş olursunuz.",
+      "experimentalFeatures" : {
+        "experimentalIntegrations" : {
+          "title" : "Deneysel entegrasyonlar",
+          "description" : "Mevcut deneysel kripto varlık entegrasyonlarını kullanın."
+        },
+        "developerMode" : {
+          "title" : "Geliştirici modu",
+          "description" : "Yönetici sayfasında geliştirici ve testnet uygulamalarını gösterir."
+        },
+        "managerProvider" : {
+          "title" : "Yönetici sağlayıcısı",
+          "description" : "Yönetici'de uygulama sağlayıcısını değiştirmek, Ledger cihazınıza uygulama yüklemeyi veya kaldırmayı imkansız hale getirebilir."
+        },
+        "experimentalExplorers" : {
+          "title" : "Deneysel Tarayıcılar API'ı",
+          "description" : "Ledger'ın blok zinciri tarayıcılarının gelecek bir sürümünü deneyin. Bu ayarın değiştirilmesi, hesap bakiyesi ve senkronizasyonun yanı sıra gönderme özelliğini de etkileyebilir."
+        },
+        "experimentalCountervalues" : {
+          "title" : "Deneysel karşı değerler API'ı",
+          "description" : "Bu, hesaplarınız için görüntülenen karşı değerlerin hatalı gözükmesine neden olabilir."
+        },
+        "experimentalSwap" : {
+          "title" : "Yeni TAKAS arayüzü",
+          "description" : "Yeni ve deneysel takas arayüzünü kullanın"
+        }
+      },
+      "developerFeatures" : {
+        "experimentalApps" : {
+          "title" : "Deneysel uygulamalara izin ver",
+          "description" : "Deneysel etiketli platform uygulamalarını görüntüleme ve açmaya izin verin."
+        },
+        "staggingUrl" : {
+          "title" : "Test ortamı URL'sini öğrenin",
+          "description" : "Öğrenin sayfası için test ortamı URL'sini kullanın."
+        },
+        "platformManifest" : {
+          "title" : "Platform Manifest Dosyasını Yükleyin"
+        }
+      }
     },
     "developer" : {
       "title" : "Geliştiriciler için",
@@ -2275,11 +2345,8 @@
     "debug" : {
       "featureFlagsTitle" : "Ledger Live'da kullanılan tanımlı özellik bayrakları",
       "featureFlagsDesc" : "Uygulama yeniden başlatılırsa geçersiz bırakılan değerler sıfırlanacaktır. Sadece geçerli JSON dizeleri kabul edilecektir.",
-      "featureFlagsOverride" : "Geçersiz bırak",
       "featureFlagsEdit" : "Düzenle",
-      "featureFlagsRestore" : "Geri yükle",
-      "featureFlagsDisplayValue" : "Değeri göster",
-      "featureFlagsHideValue" : "Değeri gizle"
+      "featureFlagsRestore" : "Geri yükle"
     }
   },
   "notifications" : {
@@ -2639,19 +2706,79 @@
         }
       }
     },
-    "swapv2" : {
+    "swap2" : {
       "form" : {
-        "summary" : {
-          "from" : "Gönderici",
-          "to" : "Alıcı",
-          "send" : "Gönder",
-          "payoutNetworkFees" : "Ödeme ücretleri",
-          "payoutNetworkFeesTooltip" : "Bu tutar cihazınızda gösterilmeyecektir",
-          "receive" : "Tutar",
-          "receiveFloat" : "Hizmet ücretleri hariç alınacak tutar",
-          "provider" : "Sağlayıcı",
-          "method" : "Kur",
-          "fees" : "Ücretler"
+        "ratesDrawer" : {
+          "title" : "Kur",
+          "quote" : "Teklif",
+          "receive" : "Al"
+        },
+        "placeholder" : "Seç",
+        "title" : "Takas edin",
+        "cta" : "Takas edin",
+        "from" : "Gönderici",
+        "to" : "Alıcı",
+        "loading" : "Yükleniyor...",
+        "disclaimer" : {
+          "title" : "Hüküm ve Koşullar",
+          "desc" : "“Kabul Et” seçeneğine tıklayarak bu hizmetin tamamen ve sadece {{providerName}} Hüküm ve Koşullarına tabi olduğunu anlıyor ve kabul ediyorum.",
+          "tos" : "Hüküm ve Koşullar",
+          "accept" : "Kabul et"
+        },
+        "notAvailable" : {
+          "title" : "Bulunduğunuz yerde takas işlemleri henüz mevcut değil",
+          "content" : "Lütfen biraz daha sabredin; bu özelliği çok yakında başlatacağız"
+        },
+        "amount" : {
+          "useMax" : "Tümünü kullan"
+        },
+        "details" : {
+          "label" : {
+            "provider" : "Sağlayıcı",
+            "rate" : "Kur",
+            "fees" : "Ağ ücretleri",
+            "target" : "Hedef hesap"
+          },
+          "noAccount" : "{{name}} almak için bir hesap oluşturun",
+          "noAccountCTA" : "Hesap ekle"
+        },
+        "select" : {
+          "from" : {
+            "title" : "Gönderici"
+          },
+          "to" : {
+            "title" : "Alıcı"
+          }
+        },
+        "providers" : {
+          "kyc" : {
+            "title" : "KYC",
+            "required" : "KYC işlemini tamamlamalısınız",
+            "complete" : "KYC'yi tamamla",
+            "update" : "KYC'yi yenile",
+            "rejected" : "KYC reddedildi; doğrulamayı yeniden başlatın",
+            "rejectedContactProviderSupport" : "KYC reddedildi, lütfen {{providerName}} desteğiyle iletişime geçin",
+            "updateRequired" : "KYC'nizi tamamlayın veya güncelleyin",
+            "status" : {
+              "pending" : "KYC beklemede",
+              "approved" : "KYC onaylandı",
+              "closed" : "KYC reddedildi",
+              "upgradeRequired" : "KYC eksik"
+            }
+          },
+          "login" : {
+            "title" : "Oturum aç",
+            "required" : "Bu sağlayıcı ile giriş yapmanız gerekiyor",
+            "complete" : "Oturum aç"
+          },
+          "mfa" : {
+            "title" : "MFA",
+            "required" : "Bu sağlayıcı ile MFA kurmanız gerekiyor",
+            "complete" : "MFA kur"
+          },
+          "withdrawalsBlockedError" : {
+            "message" : "Çekim işleminiz {{providerName}} tarafından engellendi. \n\n Daha fazla bilgi almak için lütfen onların destek ekibiyle iletişime geçin."
+          }
         }
       }
     },
@@ -3074,6 +3201,7 @@
     }
   },
   "addAccounts" : {
+    "addNew" : "Yeni ekle",
     "supportLinks" : {
       "segwit_or_native_segwit" : "Segwit mi yoksa Native Segwit mi?"
     },
@@ -3106,7 +3234,6 @@
     "retry" : "Tekrar dene",
     "done" : "Tamam",
     "finalCta" : "Devam",
-    "finalCtaForSwap" : "Takas sayfasına dön",
     "synchronizing" : "Senkronize ediliyor",
     "synchronizingDesc" : "Hesaplarınız senkronize ediliyor. Bu biraz zaman alabilir...",
     "noAccountToCreate" : "<1><0>{{currencyName}}<></> hesabı oluşturulamadı. İşlemi yeniden başlatın ve hesaplarınızı senkronize edin.",
@@ -3183,7 +3310,17 @@
     "confirmSwap" : {
       "title" : "Takas işlemini cihazdan onaylayın",
       "alert" : "Göndermeden önce cihazınızdaki takas bilgilerini doğrulayın. Adresler güvenli bir şekilde aktarılır, böylece onları doğrulamak zorunda kalmazsınız.",
-      "acceptTerms" : "Bu işlemi onaylayarak,\n<0><0>{{provider}}</0> Kullanım Koşullarını</0> kabul ediyorum."
+      "acceptTerms" : "Bu işlemi onaylayarak,\n<0><0>{{provider}}</0> Kullanım Koşullarını</0> kabul ediyorum.",
+      "notice" : "Göndermeden önce cihazınızdaki takas bilgilerini doğrulayın. Adresler güvenli bir şekilde aktarılır, böylece onları doğrulamak zorunda kalmazsınız."
+    },
+    "swap2" : {
+      "notice" : "Göndermeden önce cihazınızdaki takas bilgilerini doğrulayın. Adresler güvenli bir şekilde aktarılır, böylece onları doğrulamak zorunda kalmazsınız.",
+      "amountSent" : "Gönderilecek tutar",
+      "amountReceived" : "Alınacak tutar",
+      "provider" : "Sağlayıcı",
+      "fees" : "Ağ Ücretleri",
+      "sourceAccount" : "Kaynak Hesap",
+      "targetAccount" : "Hedef Hesap"
     },
     "confirmSell" : {
       "title" : "Satış işleminizi cihazdan onaylayın",
@@ -3357,6 +3494,7 @@
       "appsInstalled" : "<0>{{number}}</0> uygulama",
       "appsInstalled_plural" : "<0>{{number}}</0> uygulama",
       "storageAvailable" : "kullanılabilir",
+      "noFreeSpace" : "Depolama alanı kalmadı",
       "appsToUpdate" : "<0>{{number}}</0> güncelleme",
       "appsToUpdate_plural" : "<0>{{number}}</0> güncelleme"
     },
@@ -3535,15 +3673,15 @@
     "no" : "Şimdilik kalsın",
     "languages" : {
       "en" : "İngilizce",
-      "fr" : "Français",
-      "ru" : "Русский",
-      "es" : "Español",
-      "zh" : "中国人",
-      "de" : "Deutsch",
-      "tr" : "Türk",
-      "ja" : "日本",
-      "ko" : "한국인",
-      "pt" : "Português"
+      "fr" : "Fransızca",
+      "ru" : "Rusça",
+      "es" : "İspanyolca",
+      "zh" : "Çince",
+      "de" : "Almanca",
+      "tr" : "Türkçe",
+      "ja" : "Japonca",
+      "ko" : "Korece",
+      "pt" : "Portekizce"
     }
   },
   "deviceLocalization" : {
@@ -4753,6 +4891,12 @@
     },
     "currentAddress" : {
       "messageIfVirtual" : "{{name}} adresiniz Ledger cihazınızda onaylanamıyor. Kullandığınız takdirde sorumluluk size aittir."
+    }
+  },
+  "asset" : {
+    "title" : "{{assetName}} varlığınız",
+    "accountsSection" : {
+      "title" : "{{currencyName}} hesaplarınız"
     }
   },
   "customImage" : {
