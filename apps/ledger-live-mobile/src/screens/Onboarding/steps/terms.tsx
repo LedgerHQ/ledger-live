@@ -91,7 +91,7 @@ function OnboardingStepTerms() {
       />
       <LinkBox
         text={t("settings.about.privacyPolicy")}
-        url={urls.privacyPolicy[locale]}
+        url={urls.privacyPolicy[locale] ?? urls.privacyPolicy.en}
         event="OpenPrivacyPolicy"
       />
       <Flex flexDirection="row" mt={9}>
