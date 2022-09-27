@@ -34,7 +34,7 @@ const FilteredSearchBar = ({
     (newQuery: string) => {
       setQuery(newQuery);
       if (route.name === ScreenName.ReceiveSelectCrypto) {
-        track("search_clicked", { input: newQuery, screen: route.name });
+        track("search_clicked", { input: newQuery });
       }
     },
     [route.name],

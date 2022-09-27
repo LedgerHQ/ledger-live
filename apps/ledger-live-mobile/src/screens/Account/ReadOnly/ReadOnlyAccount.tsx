@@ -13,7 +13,7 @@ import { useFocusEffect } from "@react-navigation/native";
 
 import { TAB_BAR_SAFE_HEIGHT } from "../../../components/TabBar/TabBarSafeAreaView";
 import ReadOnlyGraphCard from "../../../components/ReadOnlyGraphCard";
-import ReadOnlyFabActions from "../../../components/ReadOnlyFabActions";
+import ReadOnlyFabActions from "../../../components/FabActions/ReadOnlyFabActions";
 import GradientContainer from "../../../components/GradientContainer";
 import BuyDeviceBanner, {
   IMAGE_PROPS_BIG_NANO,
@@ -150,7 +150,7 @@ function ReadOnlyAccount({ route }: Props) {
     <SafeAreaView style={{ flex: 1 }} edges={["bottom", "left", "right"]}>
       <TrackScreen
         category="Account"
-        currency={currency}
+        currency={currency.name}
         operationsSize={0}
         source={source}
       />

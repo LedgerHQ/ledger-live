@@ -19,10 +19,6 @@ import { notificationsSelector } from "../../../reducers/settings";
 import { setNotifications } from "../../../actions/settings";
 import { State } from "../../../reducers";
 import useNotifications from "../../../logic/notifications";
-import {
-  usePreviousRouteName,
-  useCurrentRouteName,
-} from "../../../helpers/routeHooks";
 
 type NotificationRowProps = {
   disabled?: boolean;
@@ -42,8 +38,6 @@ function NotificationSettingsRow({
 
   const capitalizedKey = capitalize(notificationKey);
 
-  const screen = useCurrentRouteName();
-
   const onChange = useCallback(
     (value: boolean) => {
       dispatch(
@@ -56,10 +50,9 @@ function NotificationSettingsRow({
           capitalizedKey === "Allowed" ? "Allow" : capitalizedKey
         }`,
         enabled: value,
-        screen,
       });
     },
-    [capitalizedKey, dispatch, notificationKey, screen],
+    [capitalizedKey, dispatch, notificationKey],
   );
 
   return (
@@ -127,11 +120,7 @@ function NotificationsSettings() {
 
   return (
     <SettingsNavigationScrollView>
-      <TrackScreen
-        category="Settings"
-        name="Notifications"
-        source={usePreviousRouteName()}
-      />
+      <TrackScreen category="Settings" name="Notifications" />
       {isNotifPermissionEnabled === null ||
       isNotifPermissionEnabled === undefined ? (
         <InfiniteLoader />

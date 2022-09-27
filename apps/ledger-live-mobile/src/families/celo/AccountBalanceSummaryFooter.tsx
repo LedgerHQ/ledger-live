@@ -96,6 +96,7 @@ function AccountBalanceSummaryFooter({ account }: Props) {
             disableRounding={false}
           />
         }
+        isLast={true}
       />
     </ScrollView>
   );
@@ -109,7 +110,6 @@ const styles = StyleSheet.create({
   root: {
     flex: 1,
     flexDirection: "row",
-    paddingTop: 16,
     overflow: "visible",
   },
 });

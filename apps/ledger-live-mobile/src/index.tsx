@@ -525,8 +525,9 @@ const DeepLinkingNavigator = ({ children }: { children: React.ReactNode }) => {
       hasCompletedOnboarding,
       wcContext.initDone,
       wcContext.session.session,
-      filteredManifests,
+      dispatch,
       liveAppProviderInitialized,
+      filteredManifests,
     ],
   );
   const [isReady, setIsReady] = React.useState(false);
@@ -552,7 +553,7 @@ const DeepLinkingNavigator = ({ children }: { children: React.ReactNode }) => {
   useEffect(() => {
     compareOsTheme();
 
-    const osThemeChangeHandler = nextAppState =>
+    const osThemeChangeHandler = (nextAppState: string) =>
       nextAppState === "active" && compareOsTheme();
 
     const sub = AppState.addEventListener("change", osThemeChangeHandler);

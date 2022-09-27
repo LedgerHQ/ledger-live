@@ -40,7 +40,11 @@ const AnalyticsConsole = () => {
             <Text style={styles.eventName}>{filteredData.event}</Text>
             <Text>
               {filteredData.properties
-                ? JSON.stringify(filteredData.properties)
+                ? JSON.stringify({
+                    ...filteredData.properties,
+                    source: item.properties?.source,
+                    screen: item.properties?.screen,
+                  })
                 : null}
             </Text>
           </View>
