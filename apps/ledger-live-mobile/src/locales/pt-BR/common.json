@@ -392,6 +392,12 @@
       "title" : "Desculpe, este aplicativo é necessário",
       "description" : "Desinstale o aplicativo Bitcoin ou Ethereum por último."
     },
+    "MaxBaseFeeHigh" : {
+      "title" : "Sua taxa básica máxima é sobrevalorizada Se aplicável, você receberá um reembolso da rede"
+    },
+    "MaxBaseFeeLow" : {
+      "title" : "A taxa básica máxima é muito baixa. Sua transação pode ficar pendente por um tempo"
+    },
     "NetworkDown" : {
       "title" : "Desculpe, a internet deve ter caído",
       "description" : "Verifique sua conexão de internet."
@@ -434,6 +440,12 @@
     "PasswordsDontMatch" : {
       "title" : "A senha não corresponde",
       "description" : "Tente Novamente."
+    },
+    "PriorityFeeTooHigh" : {
+      "title" : "A taxa de prioridade é mais alta do que o necessário. Você pode estar pagando mais que o necessário"
+    },
+    "PriorityFeeTooLow" : {
+      "title" : "A taxa de prioridade é mais baixa do que a quantia recomendada"
     },
     "SelectExchangesLoadError" : {
       "title" : "Não foi possível carregar",
@@ -2273,11 +2285,8 @@
     "debug" : {
       "featureFlagsTitle" : "Marcadores definidos usados no Ledger Live",
       "featureFlagsDesc" : "Valores sobrepostos serão redefinidos se o aplicativo for reexecutado. Apenas strings JSON válidas serão aceitas.",
-      "featureFlagsOverride" : "Sobrepor",
       "featureFlagsEdit" : "Editar",
-      "featureFlagsRestore" : "Restaurar",
-      "featureFlagsDisplayValue" : "Exibir Valor",
-      "featureFlagsHideValue" : "Ocultar Valor"
+      "featureFlagsRestore" : "Restaurar"
     }
   },
   "notifications" : {
@@ -2906,9 +2915,14 @@
       "infoTotalDesc" : "Inclui a quantia da transação e as taxas da rede selecionadas",
       "gasLimit" : "Limite de gás",
       "gasPrice" : "Preço do gás",
+      "maxBaseFee" : "Taxa básica máxima",
+      "priorityFee" : "Taxa de prioridade",
+      "nextBlock" : "Próximo bloco: {{nextBaseFee}}",
+      "suggestedPriorityFee" : "Sugerido {{lowPriorityFee}} - {{highPriorityFee}}",
       "maxFees" : "Taxas Máximas",
       "validateGasLimit" : "Validar limite de gás",
       "fees" : "Taxas",
+      "maxEstimatedFee" : "Taxa máxima estimada",
       "validateFees" : "Validar Taxas",
       "customizeFees" : "Personalizar Taxas",
       "memo" : {
