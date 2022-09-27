@@ -1,7 +1,6 @@
 const { promises: fs } = require("fs");
 const path = require("path");
 const semver = require("semver");
-const { getAppVersion } = require("./appVersion");
 
 const getCleanVersion = str => {
   return str.replace("# ", "").trim();
@@ -9,7 +8,10 @@ const getCleanVersion = str => {
 
 async function main() {
   const file = await fs.readFile(path.resolve(__dirname, "..", "..", "RELEASE_NOTES.md"), "utf8");
-  const appVersion = await getAppVersion();
+  const pkg = JSON.parse(
+    await fs.readFile(path.resolve(__dirname, "..", "..", "package.json"), "utf8"),
+  );
+  const parsed = semver.parse(pkg.version);
   const split = file.split("\n");
 
   const saved = {};
@@ -23,9 +25,7 @@ async function main() {
       if (
         !semver.satisfies(
           clean,
-          `< ${appVersion.major}.${appVersion.minor + 1} >= ${appVersion.major}.${
-            appVersion.minor
-          }`,
+          `< ${parsed.major}.${parsed.minor + 1} >= ${parsed.major}.${parsed.minor}`,
         )
       ) {
         currentVersion = null;
