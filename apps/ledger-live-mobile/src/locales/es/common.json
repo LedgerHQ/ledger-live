@@ -3,6 +3,7 @@
     "cancel" : "Cancelar",
     "apply" : "Aplicar",
     "seeAll" : "Ver todo",
+    "seeAllWithNumber" : "Ver todos ({{number}})",
     "back" : "Atrás",
     "delete" : "Borrar",
     "paste" : "Pegar",
@@ -30,6 +31,7 @@
     "received" : "Recibido",
     "sent" : "Enviado",
     "or" : "O",
+    "others" : "Otros",
     "rename" : "Renombrar",
     "learnMore" : "Más información",
     "checkItOut" : "Échale un vistazo",
@@ -276,7 +278,7 @@
     },
     "EthAppNftNotSupported" : {
       "title" : "Operación no disponible en este dispositivo",
-      "description" : "La función Enviar NFT sólo está disponible en el Nano X. Visita nuestra plataforma de soporte al cliente para saber cómo enviar NFTs con un Nano S."
+      "description" : "La función Enviar NFT solo está disponible en el Nano X. Visita nuestra plataforma de soporte al cliente para saber cómo enviar NFTs con un Nano S o S Plus."
     },
     "Touch ID Error" : {
       "title" : "La autenticación biométrica ha fallado",
@@ -1672,7 +1674,10 @@
         "addAccounts" : "Añadir activo",
         "title" : "Comenzar",
         "description" : "Puedes comprar criptomonedas a nuestros socios o configurar tu billetera"
-      }
+      },
+      "title" : "Para empezar, agrega tus activos favoritos a tu billetera",
+      "subtitle" : "Ledger es compatible con más de 6000 monedas y tokens",
+      "addAccount" : "o agrega una cuenta"
     },
     "noOpState" : {
       "title" : "¿Aún no tienes operaciones?",
@@ -1684,16 +1689,23 @@
     "topGainers" : {
       "title" : "Ganadores del mercado (24H)",
       "seeMarket" : "Ver todo"
+    },
+    "walletBalance" : "Saldo de la billetera",
+    "seelAllAssets" : "Ver todos los activos",
+    "marketPriceSection" : {
+      "title" : "Precio de mercado de {{currencyTicker}}",
+      "currencyPrice" : "Precio de 1 {{currencyTicker}}",
+      "currencyPriceChange" : "Cambio en las últimas 24 horas"
     }
   },
   "addAccountsModal" : {
+    "title" : "Agregar cuenta",
     "ctaAdd" : "Agregar cuentas",
     "ctaImport" : "Importar cuentas desde Desktop",
-    "title" : "Agregar criptomonedas",
     "description" : "Puedes elegir añadir cripto directamente desde tu Ledger, o importarlas desde Ledger Live Desktop.",
     "add" : {
       "title" : "Con tu Ledger",
-      "description" : "Crea o importa activos con tu Ledger"
+      "description" : "Crear o importar activos con tu Ledger"
     },
     "import" : {
       "title" : "Importar desde Desktop",
@@ -1909,7 +1921,8 @@
       "buttons" : {
         "receiveFunds" : "Recibir",
         "buyCrypto" : "Comprar"
-      }
+      },
+      "addAccountCta" : "Agregar cuenta"
     },
     "settings" : {
       "header" : "Ajustes de cuenta",
@@ -2010,6 +2023,15 @@
         "subtitle" : "Necesitas un dispositivo para poder comprar o recibir {{assetName}}"
       }
     },
+    "modals" : {
+      "zeroBalanceDisabledAction" : {
+        "title" : "Aún no tienes {{currencyTicker}}",
+        "start" : "Para empezar, compra o recibe {{currencyTicker}}.",
+        "description" : "Necesitas {{currencyTicker}} para {{actionName}} con esta cuenta."
+      }
+    },
+    "earn" : "Gana",
+    "quickActions" : "Acciones rápidas",
     "banner" : {
       "redelegation" : {
         "description" : "Por si no lo sabías, el validador de Ledger pone en participación con una comisión inferior a la del validador que estás utilizando.",
@@ -2023,6 +2045,7 @@
   },
   "accounts" : {
     "title" : "Cuentas",
+    "cryptoAccountsTitle" : "Cuentas de {{currencyTicker}}",
     "importNotification" : {
       "message" : "¡Tus cuentas han sido importadas correctamente!"
     },
@@ -2263,7 +2286,46 @@
     "experimental" : {
       "title" : "Funciones experimentales",
       "desc" : "Prueba las funciones experimentales y dinos qué te parecen.",
-      "disclaimer" : "Estas son funciones experimentales que ofrecemos “tal como están” para que nuestra comunidad de expertos tecnológicos las pruebe. Es posible que fallen, sufran cambios o sean eliminadas en cualquier momento. Al habilitarlas, aceptas usarlas bajo tu responsabilidad."
+      "disclaimer" : "Estas son funciones experimentales que ofrecemos “tal como están” para que nuestra comunidad de expertos tecnológicos las pruebe. Es posible que fallen, sufran cambios o sean eliminadas en cualquier momento. Al habilitarlas, aceptas usarlas bajo tu responsabilidad.",
+      "experimentalFeatures" : {
+        "experimentalIntegrations" : {
+          "title" : "Integraciones experimentales",
+          "description" : "Utilizar integraciones experimentales de actrivos cripto disponibles."
+        },
+        "developerMode" : {
+          "title" : "Modo de desarrollador",
+          "description" : "Mostrar aplicaciones de desarrollador y testnet en el Manager."
+        },
+        "managerProvider" : {
+          "title" : "Proveedor de Manager",
+          "description" : "Cambiar el proveedor de aplicaciones en el Manager puede imposibilitar la instalación o desinstalación de aplicaciones en tu dispositivo Ledger."
+        },
+        "experimentalExplorers" : {
+          "title" : "API de Experimental Explorers",
+          "description" : "Prueba la siguiente versión de los exploradores de cadena de bloques de Ledger. La modificación de esta configuración puede afectar el saldo de la cuenta y la sincronización, como así también la opción de envío."
+        },
+        "experimentalCountervalues" : {
+          "title" : "API experimental de contrapartes",
+          "description" : "Puede provocar que las contrapartes que se muestran de tus cuentas no sean las correctas."
+        },
+        "experimentalSwap" : {
+          "title" : "Nueva interfaz de PERMUTA",
+          "description" : "Usa la nueva interfaz experimental de permuta"
+        }
+      },
+      "developerFeatures" : {
+        "experimentalApps" : {
+          "title" : "Permitir aplicaciones experimentales",
+          "description" : "Mostrar y permitir la utilización de aplicaciones de plataforma etiquetadas como experimentales."
+        },
+        "staggingUrl" : {
+          "title" : "URL de ensayo de la página Learn",
+          "description" : "Usa la URL de ensayo para la página Learn."
+        },
+        "platformManifest" : {
+          "title" : "Carga el Manifiesto de la plataforma"
+        }
+      }
     },
     "developer" : {
       "title" : "Desarrollador",
@@ -2275,11 +2337,8 @@
     "debug" : {
       "featureFlagsTitle" : "Marcas de funciones definidas que se usan en Ledger Live",
       "featureFlagsDesc" : "Los valores anulados se restablecerán si se vuelve a iniciar la aplicación. Solo se aceptarán las cadenas JSON válidas.",
-      "featureFlagsOverride" : "Anular",
       "featureFlagsEdit" : "Editar",
-      "featureFlagsRestore" : "Restaurar",
-      "featureFlagsDisplayValue" : "Mostrar valor",
-      "featureFlagsHideValue" : "Ocultar valor"
+      "featureFlagsRestore" : "Restaurar"
     }
   },
   "notifications" : {
@@ -3074,6 +3133,7 @@
     }
   },
   "addAccounts" : {
+    "addNew" : "Agregar nueva",
     "supportLinks" : {
       "segwit_or_native_segwit" : "¿Segwit o Native segwit?"
     },
@@ -3357,6 +3417,7 @@
       "appsInstalled" : "<0>{{number}}</0> aplicación",
       "appsInstalled_plural" : "<0>{{number}}</0> aplicaciones",
       "storageAvailable" : "disponible",
+      "noFreeSpace" : "Sin almacenamiento disponible",
       "appsToUpdate" : "<0>{{number}}</0> actualización",
       "appsToUpdate_plural" : "<0>{{number}}</0> actualizaciones"
     },
@@ -4753,6 +4814,12 @@
     },
     "currentAddress" : {
       "messageIfVirtual" : "No se puede confirmar tu dirección {{name}} en tu dispositivo Ledger. Si lo usas es bajo tu propio riesgo."
+    }
+  },
+  "asset" : {
+    "title" : "Tus {{assetName}}",
+    "accountsSection" : {
+      "title" : "Tus cuentas de {{currencyName}}"
     }
   },
   "customImage" : {
