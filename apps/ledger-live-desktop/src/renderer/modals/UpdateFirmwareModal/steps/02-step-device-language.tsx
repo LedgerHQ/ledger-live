@@ -104,6 +104,7 @@ const StepDeviceLanguage = ({
               ),
               deviceName,
             })}
+            deviceModelId={device.modelId}
             onSkip={() => {
               track("Page Manager FwUpdateDeviceLanguagePromptDismissed");
               transitionTo("finish");

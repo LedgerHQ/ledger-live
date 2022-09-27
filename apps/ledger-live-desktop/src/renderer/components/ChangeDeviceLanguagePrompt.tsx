@@ -2,16 +2,16 @@ import React from "react";
 import { withV3StyleProvider } from "../styles/StyleProviderV3";
 import { Flex, Text, Button } from "@ledgerhq/react-ui";
 
-import Illustration from "~/renderer/components/Illustration";
-import NanoXFoldedDark from "./assets/nano-x-folded-dark.svg";
-import NanoXFoldedLight from "./assets/nano-x-folded-light.svg";
 import { useTranslation } from "react-i18next";
+import { DeviceModelId } from "@ledgerhq/devices";
+import DeviceIllustration from "./DeviceIllustration";
 
 type Props = {
   onSkip: () => void;
   onConfirm: () => void;
   descriptionWording: string;
   titleWording: string;
+  deviceModelId: DeviceModelId;
 };
 
 const ChangeDeviceLanguagePrompt: React.FC<Props> = ({
@@ -19,19 +19,14 @@ const ChangeDeviceLanguagePrompt: React.FC<Props> = ({
   onConfirm,
   titleWording,
   descriptionWording,
+  deviceModelId
 }) => {
   const { t } = useTranslation();
 
   return (
     <Flex flexDirection="column" flex={1}>
       <Flex alignItems="center" justifyContent="center" flexDirection="column" flex={1}>
-        <Illustration
-          width={251}
-          height={126}
-          lightSource={NanoXFoldedLight}
-          darkSource={NanoXFoldedDark}
-        />
-
+        <DeviceIllustration width={251} height={200} deviceId={deviceModelId} />
         <Text variant="h1" fontSize={20} mt={24}>
           {titleWording}
         </Text>

@@ -1,6 +1,7 @@
 import React, { useMemo, useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useSelector, useDispatch } from "react-redux";
+import { DeviceModelId } from "@ledgerhq/devices";
 import {
   allLanguages,
   prodStableLanguages,
@@ -135,6 +136,7 @@ const LanguageSelect = () => {
       />
 
       <ChangeDeviceLanguagePromptDrawer
+        deviceModelId={lastSeenDevice?.modelId ?? DeviceModelId.nanoX}
         isOpen={isDeviceLanguagePromptOpen}
         onClose={onClosePrompt}
         currentLanguage={(currentLanguage.value ?? getInitialLanguageLocale()) as Locale}

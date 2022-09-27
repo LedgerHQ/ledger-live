@@ -12,17 +12,20 @@ import { withV3StyleProvider } from "~/renderer/styles/StyleProviderV3";
 import { command } from "~/renderer/commands";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
 import ChangeDeviceLanguagePrompt from "~/renderer/components/ChangeDeviceLanguagePrompt";
+import { DeviceModelId } from "@ledgerhq/devices";
 
 type Props = {
   onClose: () => void;
   currentLanguage: Locale;
   isOpen: boolean;
+  deviceModelId: DeviceModelId;
 };
 
 const ChangeDeviceLanguagePromptDrawer: React.FC<Props> = ({
   onClose,
   isOpen,
   currentLanguage,
+  deviceModelId,
 }) => {
   const [installingLanguage, setInstallingLanguage] = useState(false);
   const [languageInstalled, setLanguageInstalled] = useState(false);
@@ -96,6 +99,7 @@ const ChangeDeviceLanguagePromptDrawer: React.FC<Props> = ({
           </>
         ) : (
           <ChangeDeviceLanguagePrompt
+            deviceModelId={deviceModelId}
             onSkip={onCloseDrawer}
             onConfirm={() => {
               track("Page LiveLanguageChange LanguageInstallTriggered", {
