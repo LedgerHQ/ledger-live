@@ -177,6 +177,8 @@
   "time" : {
     "minute" : "Minuto",
     "minute_plural" : "Minutos",
+    "minute_short" : "min",
+    "second_short" : "sec",
     "hour" : "Hora",
     "hour_plural" : "Horas",
     "range" : {
@@ -235,10 +237,26 @@
     },
     "form" : {
       "changeCTA" : "Alterar",
-      "ratesDrawer" : {
-        "title" : "Taxa",
-        "quote" : "Cotação",
-        "receive" : "Receber"
+      "rates" : {
+        "title" : "Provedores",
+        "registration" : "Cadastro necessário ",
+        "noRegistration" : "Não é necessário ter cadastro",
+        "fixed" : "Fixo",
+        "float" : "Flutuante",
+        "update" : "Tarifas atualizadas em",
+        "loading" : "Carregando...",
+        "name" : {
+          "title" : "Provedor",
+          "tooltip" : "Dependendo do provedor, você precisa criar uma conta."
+        },
+        "rate" : {
+          "title" : "Taxa de câmbio",
+          "tooltip" : "Uma <0>taxa flutuante</0> muda dependendo das condições do mercado, então você pode receber mais ou menos do que o estimado.<br/><br/>Uma <0>taxa fixa</0> corresponde ao valor exibido no início do câmbio."
+        },
+        "receive" : {
+          "title" : "Receber",
+          "tooltip" : "A quantia estimada que você receberá após o câmbio."
+        }
       },
       "details" : {
         "label" : {
@@ -411,7 +429,13 @@
           "approved" : "KYC Aprovado!",
           "closed" : "KYC Rejeitado"
         }
-      }
+      },
+      "filter" : {
+        "all" : "Todos",
+        "centralised" : "Centralizado",
+        "dedentralised" : "Descentralizado"
+      },
+      "noQuote" : "Taxa disponível no próximo passo"
     },
     "ip" : {
       "title" : "Boas-vindas à Troca",
@@ -760,7 +784,7 @@
       },
       "delegation" : {
         "title" : "Caso você não saiba...",
-        "description" : "The Ledger validator stakes your {{asset}} at a commission of {{commission}}%.",
+        "description" : "O validador da Ledger faz staking do seu {{asset}} por uma comissão menor que {{commission}}%.",
         "cta" : "Faça staking com a Ledger"
       }
     }
@@ -977,7 +1001,7 @@
       "terms" : {
         "title" : "Emprestar Cripto",
         "subtitle" : "Empreste ativos no protocolo Compound",
-        "description" : "The Compound protocol allows you to lend and borrow assets on the Ethereum network. You can lend assets and earn interest directly from your Ledger account.",
+        "description" : "O protocolo Compound permite emprestar e pegar emprestado ativos na rede Ethereum. Você pode emprestar ativos e receber juros diretamente da sua conta Ledger.",
         "switchLabel" : "<1>Eu li e concordo com os </1><0>Termos de uso</0><1>.</1>"
       },
       "steps" : {
@@ -1930,7 +1954,7 @@
       "amount" : {
         "title" : "Quantia",
         "banner" : "Quantia máxima a ser gasta é",
-        "fees" : "Taxas",
+        "fees" : "Taxa máxima estimada",
         "standard" : "Padrão",
         "advanced" : "Avançado",
         "nftQuantity" : "Quantidade"
@@ -1953,8 +1977,13 @@
         "useMax" : "Enviar Máximo",
         "rippleTag" : "Etiqueta",
         "rippleTagPlaceholder" : "Opcional",
+        "edit" : "Editar",
         "ethereumGasLimit" : "Limite de gas",
         "ethereumGasPrice" : "Preço do gás",
+        "ethereumMaxBaseFee" : "Taxa básica máxima ({{unitName}})",
+        "ethereumPriorityFee" : "Taxa de prioridade ({{unitName}})",
+        "nextBlock" : "Próximo bloco: {{nextBaseFee}}",
+        "suggestedPriorityFee" : "Sugerido {{lowPriorityFee}} - {{highPriorityFee}} {{unitName}}",
         "unitPerByte" : "{{unit}} por byte",
         "nft" : "NFT",
         "nftQuantity" : "Quantidade"
@@ -1984,7 +2013,8 @@
       }
     },
     "footer" : {
-      "estimatedFees" : "Taxas de rede"
+      "estimatedFees" : "Taxas de rede",
+      "totalToDebit" : "Total a debitar"
     }
   },
   "sign" : {
@@ -3145,7 +3175,7 @@
           "steps" : {
             "confirmation" : {
               "success" : {
-                "title" : "You have successfully activated your delegation."
+                "title" : "Você ativou sua delegação com sucesso."
               }
             }
           }
@@ -3157,7 +3187,7 @@
           "steps" : {
             "confirmation" : {
               "success" : {
-                "title" : "You have successfully reactivated your delegation."
+                "title" : "Você reativou sua delegação com sucesso."
               }
             }
           }
@@ -3404,6 +3434,10 @@
         "scanForInvalidPaths" : {
           "title" : "Pesquisa de contas ampliada",
           "description" : "Procure contas com caminhos de derivação incorretos. Envie os potenciais ativos encontrados para uma conta regular."
+        },
+        "experimentalCountervalues" : {
+          "title" : "API de Contravalores Experimentais",
+          "description" : "Isso pode fazer com que contravalores incorretos sejam exibidos nas suas contas."
         },
         "experimentalExplorers" : {
           "title" : "API de exploradores experimentais",
@@ -4582,10 +4616,6 @@
       "title" : "A internet parece estar desconectada",
       "description" : "Verifique sua conexão à internet."
     },
-    "NetworkError" : {
-      "title" : "Ocorreu um erro durante a sincronização",
-      "description" : "Verifique sua conexão de internet."
-    },
     "NoAddressesFound" : {
       "title" : "Nenhuma conta encontrada",
       "description" : "Algo deu errado com o cálculo do endereço, tente novamente ou contate o Suporte Ledger"
@@ -4746,6 +4776,18 @@
     },
     "GasLessThanEstimate" : {
       "title" : "Isto pode ser baixo demais Por favor, aumente"
+    },
+    "MaxBaseFeeLow" : {
+      "title" : "A taxa básica máxima é muito baixa. Sua transação pode ficar pendente por um tempo"
+    },
+    "MaxBaseFeeHigh" : {
+      "title" : "Sua taxa básica máxima é sobrevalorizada Se aplicável, você receberá um reembolso da rede"
+    },
+    "PriorityFeeTooLow" : {
+      "title" : "A taxa de prioridade é mais baixa do que a quantia recomendada"
+    },
+    "PriorityFeeTooHigh" : {
+      "title" : "A taxa de prioridade é mais alta do que o necessário. Você pode estar pagando mais que o necessário"
     },
     "UnknownMCU" : {
       "title" : "Versão de MCU desconhecida",
