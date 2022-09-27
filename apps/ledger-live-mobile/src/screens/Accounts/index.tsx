@@ -32,21 +32,21 @@ const List = globalSyncRefreshControl(FlatList);
 
 type Props = {
   navigation: any;
-  route: {
-    params?: {
-      currency?: string;
-      search?: string;
-      currencyTicker?: string;
-      currencyId?: string;
-    };
-  };
+  route: { params?: Params };
+};
+
+type Params = {
+  currency?: string;
+  search?: string;
+  address?: string;
+  currencyTicker?: string;
+  currencyId?: string;
 };
 
 function Accounts({ navigation, route }: Props) {
   const accounts = useSelector(accountsSelector);
   const isUpToDate = useSelector(isUpToDateSelector);
   const globalSyncState = useGlobalSyncState();
-
   const { t } = useTranslation();
 
   const refreshAccountsOrdering = useRefreshAccountsOrdering();
@@ -63,7 +63,7 @@ function Accounts({ navigation, route }: Props) {
         ? flattenAccounts(accounts, {
             enforceHideEmptySubAccounts: true,
           }).filter(
-            account =>
+            (account: Account | TokenAccount) =>
               getAccountCurrency(account).id === route?.params?.currencyId,
           )
         : flattenAccounts(accounts, {
@@ -80,20 +80,28 @@ function Accounts({ navigation, route }: Props) {
           params.currency.toUpperCase(),
         );
         if (currency) {
-          const account = accounts.find(acc => acc.currency.id === currency.id);
+          const account = params.address
+            ? accounts.find(
+                acc =>
+                  acc.currency.id === currency.id &&
+                  acc.freshAddress === params.address,
+              )
+            : null;
 
           if (account) {
-            // reset params so when we come back the redirection doesn't loop
-            navigation.setParams({ ...params, currency: undefined });
-            navigation.navigate(ScreenName.Account, {
+            navigation.replace(ScreenName.Account, {
               accountId: account.id,
+            });
+          } else {
+            navigation.replace(ScreenName.Asset, {
+              currency,
               isForwardedFromAccounts: true,
             });
           }
         }
       }
     }
-  }, [params, accounts, navigation]);
+  }, [params, accounts, navigation, account]);
 
   const renderItem = useCallback(
     ({ item, index }: { item: Account | TokenAccount; index: number }) => (
