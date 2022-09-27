@@ -90,7 +90,11 @@ const excludedErrorDescription = [
   "database or disk is full",
   "Unable to open URL",
   "Received an invalid JSON-RPC message",
-  "Transaction simulation failed", // LIVE-3506
+  // LIVE-3506 workaround, solana throws tons of cryptic errors
+  "failed to find a healthy working node",
+  "was reached for request with last error",
+  "530 undefined",
+  "524 undefined",
 ];
 if (Config.SENTRY_DSN && (!__DEV__ || Config.FORCE_SENTRY) && !Config.MOCK) {
   Sentry.init({
