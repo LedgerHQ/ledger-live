@@ -177,6 +177,8 @@
   "time" : {
     "minute" : "分钟",
     "minute_plural" : "分钟",
+    "minute_short" : "分钟",
+    "second_short" : "秒",
     "hour" : "小时",
     "hour_plural" : "小时",
     "range" : {
@@ -235,10 +237,26 @@
     },
     "form" : {
       "changeCTA" : "更改",
-      "ratesDrawer" : {
-        "title" : "费率",
-        "quote" : "报价",
-        "receive" : "接收"
+      "rates" : {
+        "title" : "提供商",
+        "registration" : "需要注册 ",
+        "noRegistration" : "无需注册",
+        "fixed" : "固定",
+        "float" : "浮动",
+        "update" : "费用更新：",
+        "loading" : "正在加载……",
+        "name" : {
+          "title" : "提供方",
+          "tooltip" : "您必须创建账户来登录提供商的服务，具体取决于提供商。"
+        },
+        "rate" : {
+          "title" : "互换费用",
+          "tooltip" : "<0>浮动费用</0>会根据市场情况波动，因此您收到的费用可能会多于或少于您的估计值。<br/><br/><0>固定费用</0>与互换开始时显示的金额一致。"
+        },
+        "receive" : {
+          "title" : "接收",
+          "tooltip" : "互换后您将收到的估计金额。"
+        }
       },
       "details" : {
         "label" : {
@@ -411,7 +429,13 @@
           "approved" : "KYC 已批准！",
           "closed" : "KYC 被拒绝"
         }
-      }
+      },
+      "filter" : {
+        "all" : "全部",
+        "centralised" : "中心化",
+        "dedentralised" : "去中心化"
+      },
+      "noQuote" : "在下一步提供报价"
     },
     "ip" : {
       "title" : "欢迎使用互换（Swap）",
@@ -646,7 +670,7 @@
           }
         },
         "accounts" : {
-          "title" : "Account（账户）",
+          "title" : "账户",
           "existing" : "待扫描的现有账户",
           "toScan" : "待扫描的账户",
           "toScanDescription" : "每个地址类别中待扫描的账户",
@@ -760,7 +784,7 @@
       },
       "delegation" : {
         "title" : "您知道吗……",
-        "description" : "The Ledger validator stakes your {{asset}} at a commission of {{commission}}%.",
+        "description" : "使用 Ledger 验证器权益质押 {{asset}}，仅需 {{commission}}% 的佣金。",
         "cta" : "使用 Ledger 进行权益质押"
       }
     }
@@ -1033,7 +1057,7 @@
     }
   },
   "accounts" : {
-    "title" : "Account（账户）",
+    "title" : "账户",
     "noResultFound" : "未找到账户。",
     "order" : {
       "name|asc" : "名称 A-Z",
@@ -1200,7 +1224,7 @@
     }
   },
   "dashboard" : {
-    "title" : "Portfolio（投资组合）",
+    "title" : "资产组合",
     "emptyAccountTile" : {
       "desc" : "添加账户以管理其他加密货币资产",
       "createAccount" : "添加账户"
@@ -1435,7 +1459,7 @@
     "breadcrumb" : {
       "informations" : "加密资产",
       "connectDevice" : "设备",
-      "import" : "Account（账户）",
+      "import" : "账户",
       "finish" : "确认"
     },
     "fullNodeReadyInfo" : "将使用您的比特币完整节点来添加账户。",
@@ -1930,7 +1954,7 @@
       "amount" : {
         "title" : "数额",
         "banner" : "最大可支出数额为",
-        "fees" : "费用",
+        "fees" : "最高预估费用",
         "standard" : "标准",
         "advanced" : "高级",
         "nftQuantity" : "数量"
@@ -1953,8 +1977,13 @@
         "useMax" : "发送最大值",
         "rippleTag" : "标签",
         "rippleTagPlaceholder" : "可选",
+        "edit" : "编辑",
         "ethereumGasLimit" : "Gas 限值",
         "ethereumGasPrice" : "Gas 价格",
+        "ethereumMaxBaseFee" : "最高基本费用 ({{unitName}})",
+        "ethereumPriorityFee" : "优先费用 ({{unitName}})",
+        "nextBlock" : "下一个区块：{{nextBaseFee}}",
+        "suggestedPriorityFee" : "建议：{{lowPriorityFee}} - {{highPriorityFee}} {{unitName}}",
         "unitPerByte" : "{{unit}} 每字节",
         "nft" : "NFT",
         "nftQuantity" : "数量"
@@ -1984,7 +2013,8 @@
       }
     },
     "footer" : {
-      "estimatedFees" : "网络费用"
+      "estimatedFees" : "网络费用",
+      "totalToDebit" : "总借额"
     }
   },
   "sign" : {
@@ -3281,7 +3311,7 @@
       "help" : "帮助",
       "about" : "简介",
       "experimental" : "实验性功能",
-      "accounts" : "Account（账户）",
+      "accounts" : "账户",
       "developer" : "开发者"
     },
     "export" : {
@@ -3404,6 +3434,10 @@
         "scanForInvalidPaths" : {
           "title" : "扩展的账户搜索",
           "description" : "扫描有错误派生路径的账户。请将可能找到的资产发送到一个常规账户。"
+        },
+        "experimentalCountervalues" : {
+          "title" : "实验性对价 API",
+          "description" : "这可能会导致您的账户对价显示错误。"
         },
         "experimentalExplorers" : {
           "title" : "实验性浏览器 API 应用程序界面",
@@ -4582,10 +4616,6 @@
       "title" : "抱歉，网络连接似乎已断开",
       "description" : "请检查您的网络连接。"
     },
-    "NetworkError" : {
-      "title" : "同步期间发生错误",
-      "description" : "请检查您的网络连接。"
-    },
     "NoAddressesFound" : {
       "title" : "抱歉，没有找到账户",
       "description" : "地址计算出错，请重试或联系 Ledger 客服"
@@ -4746,6 +4776,18 @@
     },
     "GasLessThanEstimate" : {
       "title" : "这可能太低。请增加"
+    },
+    "MaxBaseFeeLow" : {
+      "title" : "最高基本费用太低。您的交易可能会等待一段时间"
+    },
+    "MaxBaseFeeHigh" : {
+      "title" : "您的最高基本费用估计过高。如果适用，网络将向您退款"
+    },
+    "PriorityFeeTooLow" : {
+      "title" : "优先费用低于推荐值"
+    },
+    "PriorityFeeTooHigh" : {
+      "title" : "优先费用高于必要费用。您可能多付了费用"
     },
     "UnknownMCU" : {
       "title" : "未知 MCU 版本",
