@@ -1,8 +1,8 @@
 // @flow
 import React from "react";
 import styled from "styled-components";
+import { Text } from "@ledgerhq/react-ui";
 import Box from "~/renderer/components/Box";
-import Text from "~/renderer/components/Text";
 import FormattedVal from "~/renderer/components/FormattedVal";
 import type { ExchangeRate } from "@ledgerhq/live-common/exchange/swap/types";
 import type { ThemedComponent } from "~/renderer/styles/StyleProvider";

@@ -128,13 +128,7 @@ export default function ProviderRate({
             <IconInfoCircle size={12} />
           </Tooltip>
         </Box>
-        <Box
-          horizontal
-          flex="1"
-          alignItems="center"
-          justifyContent="flex-end"
-          style={{ marginRight: 5 }}
-        >
+        <Box horizontal flex="1" alignItems="center" justifyContent="flex-end" mr={1}>
           <Text alignItems="center" display="flex" mr={1}>
             <Trans i18nKey="swap2.form.rates.receive.title" />
           </Text>

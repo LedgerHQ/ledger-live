@@ -1,8 +1,8 @@
 // @flow
 import React, { useCallback } from "react";
 import styled from "styled-components";
+import { Text } from "@ledgerhq/react-ui";
 import Box from "~/renderer/components/Box";
-import Text from "~/renderer/components/Text";
 import type { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import type { ExchangeRate } from "@ledgerhq/live-common/exchange/swap/types";
 import { iconByProviderName } from "../../utils";

@@ -1,7 +1,7 @@
 // @flow
 import React from "react";
+import { Text } from "@ledgerhq/react-ui";
 import styled from "styled-components";
-import Text from "~/renderer/components/Text";
 import type { ExchangeRate } from "@ledgerhq/live-common/exchange/swap/types";
 import type { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import { Trans } from "react-i18next";
