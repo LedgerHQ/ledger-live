@@ -392,6 +392,12 @@
       "title" : "죄송하지만 필요한 앱입니다",
       "description" : "마지막으로 비트코인 앱이나 이더리움 앱을 삭제하세요."
     },
+    "MaxBaseFeeHigh" : {
+      "title" : "최대 기본 수수료가 너무 높게 책정되었습니다. 가능한 경우, 네트워크에서 환불받을 수 있습니다."
+    },
+    "MaxBaseFeeLow" : {
+      "title" : "최대 기본 수수료가 너무 낮습니다. 트랜잭션이 당분간 보류 상태일 수 있습니다."
+    },
     "NetworkDown" : {
       "title" : "죄송하지만 인터넷이 끊긴 것 같습니다",
       "description" : "인터넷 연결을 확인하세요."
@@ -434,6 +440,12 @@
     "PasswordsDontMatch" : {
       "title" : "패스워드가 일치하지 않습니다",
       "description" : "다시 시도해 주세요."
+    },
+    "PriorityFeeTooHigh" : {
+      "title" : "우선 수수료가 필요 이상으로 높습니다. 초과 금액을 지불할 수 있습니다."
+    },
+    "PriorityFeeTooLow" : {
+      "title" : "우선 수수료가 권장 값 보다 낮습니다."
     },
     "SelectExchangesLoadError" : {
       "title" : "로드 불가능",
@@ -2273,11 +2285,8 @@
     "debug" : {
       "featureFlagsTitle" : "Ledger Live에서 사용되는 정의된 기능 플래그",
       "featureFlagsDesc" : "앱을 다시 실행하면 재정의된 값이 다시 설정됩니다. 유효한 JSON 문자열만 허용됩니다.",
-      "featureFlagsOverride" : "재정의",
       "featureFlagsEdit" : "편집",
-      "featureFlagsRestore" : "복구",
-      "featureFlagsDisplayValue" : "값 표시하기",
-      "featureFlagsHideValue" : "값 숨기기"
+      "featureFlagsRestore" : "복구"
     }
   },
   "notifications" : {
@@ -2906,9 +2915,14 @@
       "infoTotalDesc" : "트랜잭션 금액과 선택된 네트워크 수수료가 포함됩니다",
       "gasLimit" : "가스 한도(Gas limit)",
       "gasPrice" : "가스 가격(Gas price)",
+      "maxBaseFee" : "최대 기본 수수료",
+      "priorityFee" : "우선 수수료",
+      "nextBlock" : "다음 블록: {{nextBaseFee}}",
+      "suggestedPriorityFee" : "권장: {{lowPriorityFee}} - {{highPriorityFee}}",
       "maxFees" : "최대 수수료",
       "validateGasLimit" : "가스 제한 검증",
       "fees" : "수수료",
+      "maxEstimatedFee" : "최대 예상 수수료",
       "validateFees" : "수수료 검증",
       "customizeFees" : "맞춤형 수수료",
       "memo" : {
