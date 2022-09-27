@@ -81,7 +81,7 @@ const DeviceLanguageInstallation: React.FC<Props> = ({
 
   const Result = useCallback(() => {
     return <DeviceLanguageInstalled onContinue={onCloseDrawer} onMount={onSuccess} />;
-  }, [selectedLanguage, onCloseDrawer, onSuccess]);
+  }, [onCloseDrawer, onSuccess]);
 
   const onChange = useCallback(
     (radioValue?: string | string[] | number) => onSelectLanguage(radioValue as Language),
