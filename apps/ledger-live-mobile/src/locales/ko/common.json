@@ -3,6 +3,7 @@
     "cancel" : "취소",
     "apply" : "적용",
     "seeAll" : "모두 보기",
+    "seeAllWithNumber" : "모두 보기 ({{number}})",
     "back" : "뒤로",
     "delete" : "삭제",
     "paste" : "붙여넣기",
@@ -30,6 +31,7 @@
     "received" : "수령됨",
     "sent" : "전송됨",
     "or" : "또는",
+    "others" : "기타",
     "rename" : "이름 변경",
     "learnMore" : "자세히 알아보기",
     "checkItOut" : "확인해 보세요",
@@ -83,7 +85,8 @@
     "moreInfo" : "자세한 정보",
     "buyEth" : "이더리움 구매",
     "popular" : "인기 있는",
-    "comingSoon" : "곧 출시 예정"
+    "comingSoon" : "곧 출시 예정",
+    "getSupport" : "지원 받기"
   },
   "errors" : {
     "countervaluesUnavailable" : {
@@ -276,7 +279,7 @@
     },
     "EthAppNftNotSupported" : {
       "title" : "이 장치에서 사용할 수 없는 작업",
-      "description" : "NFT 보내기 기능은 Nano X에서만 사용할 수 있습니다. Nano S로 NFT를 보내는 방법을 알아보려면 고객 지원 플랫폼을 방문해 주세요."
+      "description" : "NFT 보내기 기능은 Nano X에서만 사용할 수 있습니다. Nano S 또는 S Plus로 NFT를 보내는 방법을 알아보려면 고객 지원 플랫폼을 방문해 주세요."
     },
     "Touch ID Error" : {
       "title" : "생체 인증 실패",
@@ -583,8 +586,8 @@
       "title" : "금액은 {{maxAmountFromFormatted}} 보다 낮아야 합니다"
     },
     "SwapGenericAPIError" : {
-      "title" : "환율이 만료되었습니다",
-      "description" : "타이머가 완료되기 전에 스왑을 승인해야 합니다. 환율은 정해진 기간 동안만 유효합니다."
+      "title" : "문제가 발생했습니다",
+      "description" : "교환 트랜잭션이 완료되지 않았습니다. 다시 시도하거나 지원에 연락하세요."
     },
     "PolkadotElectionClosed" : {
       "title" : "검증인 선출을 종료해야 합니다"
@@ -720,6 +723,9 @@
       "title" : "이미지 처리 실패",
       "description" : "다른 이미지로 다시 시도하세요"
     }
+  },
+  "crash" : {
+    "title" : "문제가 발생했습니다"
   },
   "bluetooth" : {
     "required" : "죄송하지만 블루투스가 비활성 상태인 것 같습니다",
@@ -1672,7 +1678,10 @@
         "addAccounts" : "자산 추가",
         "title" : "시작하기",
         "description" : "당사 파트너로부터 암호화폐를 구매하거나 지갑을 설정할 수 있습니다"
-      }
+      },
+      "title" : "지갑에 선호하는 자산을 추가하고 시작하기",
+      "subtitle" : "Ledger는 6,000가지 이상의 코인과 토큰을 지원합니다",
+      "addAccount" : "또는 계정 추가"
     },
     "noOpState" : {
       "title" : "아직 거래가 없나요?",
@@ -1684,12 +1693,19 @@
     "topGainers" : {
       "title" : "최고 상승 목록 (24시간)",
       "seeMarket" : "모두 보기"
+    },
+    "walletBalance" : "지갑 잔액",
+    "seelAllAssets" : "모든 자산 보기",
+    "marketPriceSection" : {
+      "title" : "{{currencyTicker}} 시장가",
+      "currencyPrice" : "1 {{currencyTicker}} 가격",
+      "currencyPriceChange" : "지난 24시간 변경 사항"
     }
   },
   "addAccountsModal" : {
+    "title" : "계정 추가",
     "ctaAdd" : "계정 추가",
     "ctaImport" : "데스크탑 계정 가져오기",
-    "title" : "암호화폐 추가",
     "description" : "Ledger에 직접 암호화폐를 추가하거나 Ledger Live 데스크탑에서 가져올 수 있습니다.",
     "add" : {
       "title" : "Ledger를 통해",
@@ -1909,7 +1925,8 @@
       "buttons" : {
         "receiveFunds" : "수령",
         "buyCrypto" : "구매"
-      }
+      },
+      "addAccountCta" : "계정 추가"
     },
     "settings" : {
       "header" : "계정 설정",
@@ -2010,6 +2027,15 @@
         "subtitle" : "{{assetName}} 구매 또는 수령에는 장치가 필요합니다"
       }
     },
+    "modals" : {
+      "zeroBalanceDisabledAction" : {
+        "title" : "보유 중인 {{currencyTicker}}(이)가 아직 없습니다",
+        "start" : "시작하려면 소량의 {{currencyTicker}}을 구매 또는 수령해야 합니다.",
+        "description" : "이 계정에서 {{actionName}} 기능을 이용하려면 소량의 {{currencyTicker}}(이)가 필요합니다."
+      }
+    },
+    "earn" : "수익",
+    "quickActions" : "빠른 동작",
     "banner" : {
       "redelegation" : {
         "description" : "알고 계셨나요? Ledger 검증인의 스테이킹 수수료는 귀하의 현 검증인보다 저렴합니다.",
@@ -2023,6 +2049,7 @@
   },
   "accounts" : {
     "title" : "계정",
+    "cryptoAccountsTitle" : "{{currencyTicker}} 계정",
     "importNotification" : {
       "message" : "계정을 성공적으로 가져왔습니다."
     },
@@ -2255,6 +2282,10 @@
       "clearCacheButton" : "제거",
       "exportLogs" : "로그 저장",
       "exportLogsDesc" : "문제 해결을 위해 Ledger Live 로그가 필요할 수 있습니다.",
+      "resetThirdPartyData" : "타사 데이터 재설정",
+      "resetThirdPartyDataDesc" : "타사 트랜잭션 공급자에 액세스하는 데 사용되는 모든 타사 로컬 데이터를 삭제합니다.",
+      "resetThirdPartyDataModal" : "타사 로컬 데이터 삭제",
+      "resetThirdPartyDataModalDesc" : "타사 로컬 데이터 삭제 고객확인제도를 다시 제출하거나 다시 로그인해야 파트너가 제공하는 서비스를 이용할 수 있습니다.",
       "hardReset" : "Ledger Live 리셋",
       "hardResetDesc" : "귀하의 자산에는 영향을 주지 않습니다. 계정 데이터, 트랜잭션 내역, 설정을 포함하여 Ledger Live의 모든 데이터를 삭제합니다. Ledger 장치를 이용하여 빈 Ledger Live에 암호화폐를 다시 로드하고 관리합니다.",
       "repairDevice" : "Ledger 장치 복구",
@@ -2263,7 +2294,46 @@
     "experimental" : {
       "title" : "실험 특징",
       "desc" : "다양한 실험 특징을 시험해 보고 의견을 나누어 주세요.",
-      "disclaimer" : "이는 기술에 대한 관심이 지대한 당사 커뮤니티에 \"있는 그대로\" 제공하는 실험적 기능으로, 언제든지 변경, 중단 또는 제거될 수 있습니다. 기능을 활성화할 경우, 온전히 귀하의 책임 하에 해당 기능을 사용한다는 사실에 동의하게 됩니다."
+      "disclaimer" : "이는 기술에 대한 관심이 지대한 당사 커뮤니티에 \"있는 그대로\" 제공하는 실험적 기능으로, 언제든지 변경, 중단 또는 제거될 수 있습니다. 기능을 활성화할 경우, 온전히 귀하의 책임 하에 해당 기능을 사용한다는 사실에 동의하게 됩니다.",
+      "experimentalFeatures" : {
+        "experimentalIntegrations" : {
+          "title" : "실험 통합",
+          "description" : "사용 가능한 실험 암호화폐 통합을 사용합니다."
+        },
+        "developerMode" : {
+          "title" : "개발자 모드",
+          "description" : "관리자에 개발자 및 테스트넷 앱을 보여줍니다."
+        },
+        "managerProvider" : {
+          "title" : "관리자 공급자",
+          "description" : "관리자에서 앱 공급자를 변경하면 Ledger 기기에서 앱 설치 또는 삭제가 불가능해질 수 있습니다."
+        },
+        "experimentalExplorers" : {
+          "title" : "실험적 탐색기 API",
+          "description" : "Ledger 블록체인 탐색기 새 버전을 사용해 보세요. 이 설정을 변경하면 계정 잔금과 동기화, 전송 기능이 영향을 받을 수 있습니다."
+        },
+        "experimentalCountervalues" : {
+          "title" : "실험적 등가 API",
+          "description" : "이로 인해 계정과 관련하여 올바른 등가 값이 표시되지 않을 수 있습니다."
+        },
+        "experimentalSwap" : {
+          "title" : "새로운 스왑 인터페이스",
+          "description" : "새로운 실험적 스왑 인터페이스 사용"
+        }
+      },
+      "developerFeatures" : {
+        "experimentalApps" : {
+          "title" : "실험적 앱 허용",
+          "description" : "실험적이라 태그 된 플랫폼 앱을 표시하고 허용하세요."
+        },
+        "staggingUrl" : {
+          "title" : "스테이징 URL에 대해 알아보기",
+          "description" : "학습 페이지에서 스테이징 URL 사용하기"
+        },
+        "platformManifest" : {
+          "title" : "플랫폼 Manifest 불러오기"
+        }
+      }
     },
     "developer" : {
       "title" : "개발자",
@@ -2275,11 +2345,8 @@
     "debug" : {
       "featureFlagsTitle" : "Ledger Live에서 사용되는 정의된 기능 플래그",
       "featureFlagsDesc" : "앱을 다시 실행하면 재정의된 값이 다시 설정됩니다. 유효한 JSON 문자열만 허용됩니다.",
-      "featureFlagsOverride" : "재정의",
       "featureFlagsEdit" : "편집",
-      "featureFlagsRestore" : "복구",
-      "featureFlagsDisplayValue" : "값 표시하기",
-      "featureFlagsHideValue" : "값 숨기기"
+      "featureFlagsRestore" : "복구"
     }
   },
   "notifications" : {
@@ -2639,19 +2706,79 @@
         }
       }
     },
-    "swapv2" : {
+    "swap2" : {
       "form" : {
-        "summary" : {
-          "from" : "수신",
-          "to" : "발신",
-          "send" : "전송",
-          "payoutNetworkFees" : "지불금 비용",
-          "payoutNetworkFeesTooltip" : "이 금액은 장치에 표시되지 않습니다",
-          "receive" : "금액",
-          "receiveFloat" : "서비스 수수료 부과 전 수신 금액",
-          "provider" : "공급자",
-          "method" : "요율",
-          "fees" : "수수료"
+        "ratesDrawer" : {
+          "title" : "요율",
+          "quote" : "호가",
+          "receive" : "수령"
+        },
+        "placeholder" : "선택",
+        "title" : "교환",
+        "cta" : "교환",
+        "from" : "수신",
+        "to" : "발신",
+        "loading" : "로딩...",
+        "disclaimer" : {
+          "title" : "이용약관",
+          "desc" : "\"수락\"을 클릭하여, {{providerName}}의 이용 약관에 따라 독점 관리되는 서비스임을 확인하고 수락합니다.",
+          "tos" : "이용약관",
+          "accept" : "수락"
+        },
+        "notAvailable" : {
+          "title" : "아직 스왑이 불가능한 지역입니다",
+          "content" : "조금만 기다려 주세요. <br/>조만간 해당 기능을 런칭을 앞두고 있습니다"
+        },
+        "amount" : {
+          "useMax" : "최대치 사용"
+        },
+        "details" : {
+          "label" : {
+            "provider" : "공급자",
+            "rate" : "요율",
+            "fees" : "네트워크 수수료",
+            "target" : "보내는 계정"
+          },
+          "noAccount" : "{{name}}을 수령할 계정을 생성하세요",
+          "noAccountCTA" : "계정 추가"
+        },
+        "select" : {
+          "from" : {
+            "title" : "수신"
+          },
+          "to" : {
+            "title" : "발신"
+          }
+        },
+        "providers" : {
+          "kyc" : {
+            "title" : "고객확인제도",
+            "required" : "고객확인제도를 완료해야 합니다",
+            "complete" : "고객확인제도 완료",
+            "update" : "고객확인제도 업데이트",
+            "rejected" : "고객확인제도가 거부되었습니다. 인증을 다시 시작하세요",
+            "rejectedContactProviderSupport" : "고객확인제도가 거부되었습니다. {{providerName}}지원팀에 문의해 주세요.",
+            "updateRequired" : "고객확인제도를 완료하거나 업데이트하세요",
+            "status" : {
+              "pending" : "고객확인제도 대기 중",
+              "approved" : "고객확인제도 승인됨",
+              "closed" : "고객확인제도 거부됨",
+              "upgradeRequired" : "고객확인제도 불충분"
+            }
+          },
+          "login" : {
+            "title" : "로그인",
+            "required" : "이 공급자로 로그인해야 합니다.",
+            "complete" : "로그인"
+          },
+          "mfa" : {
+            "title" : "MFA",
+            "required" : "이 공급자와 다중인증(MFA)을 설정해야 합니다.",
+            "complete" : "다중인증(MFA) 설정"
+          },
+          "withdrawalsBlockedError" : {
+            "message" : "고객님의 출금이 {{providerName}}에 의해 차단되었습니다.\n\n 자세한 내용은 해당 지원팀에 문의하세요."
+          }
         }
       }
     },
@@ -3074,6 +3201,7 @@
     }
   },
   "addAccounts" : {
+    "addNew" : "새로 추가하기",
     "supportLinks" : {
       "segwit_or_native_segwit" : "SegWit, 또는 Native SegWit?"
     },
@@ -3106,7 +3234,6 @@
     "retry" : "다시 시도",
     "done" : "완료",
     "finalCta" : "계속",
-    "finalCtaForSwap" : "스왑으로 돌아가기",
     "synchronizing" : "동기화 중",
     "synchronizingDesc" : "사용자의 계정이 동기화 중입니다. 약간의 시간이 소요됩니다...",
     "noAccountToCreate" : "<1><0>{{currencyName}}</></> 계정을 생성할 수 없습니다. 절차를 다시 시작하고 계정을 동기화하세요.",
@@ -3183,7 +3310,17 @@
     "confirmSwap" : {
       "title" : "장치에서 스왑 거래를 확인하세요",
       "alert" : "장치에서 스왑 세부사항을 확인한 후 전송하세요. 주소가 안전하게 교환되어 주소를 따로 인증할 필요 없습니다.",
-      "acceptTerms" : "본인은 이 트랜잭션을 확인함으로써 \n<0><0>{{provider}}</0>의 이용약관</0>을 수락합니다."
+      "acceptTerms" : "본인은 이 트랜잭션을 확인함으로써 \n<0><0>{{provider}}</0>의 이용약관</0>을 수락합니다.",
+      "notice" : "장치에서 스왑 세부사항을 확인한 후 전송하세요. 주소가 안전하게 교환되어 주소를 따로 인증할 필요 없습니다."
+    },
+    "swap2" : {
+      "notice" : "장치에서 스왑 세부사항을 확인한 후 전송하세요. 주소가 안전하게 교환되어 주소를 따로 인증할 필요 없습니다.",
+      "amountSent" : "전송 금액",
+      "amountReceived" : "수령 금액",
+      "provider" : "공급자",
+      "fees" : "네트워크 수수료",
+      "sourceAccount" : "송신 계정",
+      "targetAccount" : "보내는 계정"
     },
     "confirmSell" : {
       "title" : "장치에서 스왑 거래를 확인하세요",
@@ -3357,6 +3494,7 @@
       "appsInstalled" : "<0>{{number}}</0>개의 앱",
       "appsInstalled_plural" : "<0>{{number}}</0>개의 앱",
       "storageAvailable" : "이용 가능",
+      "noFreeSpace" : "남은 저장 공간 없음",
       "appsToUpdate" : "<0>{{number}}</0>개의 업데이트",
       "appsToUpdate_plural" : "<0>{{number}}</0>개의 업데이트"
     },
@@ -4753,6 +4891,12 @@
     },
     "currentAddress" : {
       "messageIfVirtual" : "Ledger 장치에서 귀하의 {{name}} 주소를 확인할 수 없습니다. 사용은 본인의 책임입니다."
+    }
+  },
+  "asset" : {
+    "title" : "내 {{assetName}}",
+    "accountsSection" : {
+      "title" : "내 {{currencyName}} 계정"
     }
   },
   "customImage" : {
