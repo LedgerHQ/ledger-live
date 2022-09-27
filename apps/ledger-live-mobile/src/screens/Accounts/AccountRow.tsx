@@ -64,13 +64,8 @@ const AccountRow = ({
     if (navigationParams) {
       navigation.navigate(...navigationParams);
     } else if (account.type === "Account") {
-      navigation.navigate(NavigatorName.Accounts, {
-        screen: ScreenName.Account,
-        params: {
-          currencyId: currency.id,
-          accountId,
-          isForwardedFromAccounts: true,
-        },
+      navigation.navigate(ScreenName.Account, {
+        accountId,
       });
     } else if (account.type === "TokenAccount") {
       navigation.navigate(NavigatorName.Accounts, {

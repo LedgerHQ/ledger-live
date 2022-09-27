@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo } from "react";
+import React, { useCallback, useEffect, useMemo } from "react";
 import { Trans, useTranslation } from "react-i18next";
 import { StyleSheet, FlatList } from "react-native";
 import type { Account, TokenAccount } from "@ledgerhq/types-live";
@@ -11,6 +11,7 @@ import {
   listTokens,
   useCurrenciesByMarketcap,
   listSupportedCurrencies,
+  findCryptoCurrencyByKeyword,
 } from "@ledgerhq/live-common/currencies/index";
 
 import { Flex } from "@ledgerhq/native-ui";
@@ -27,7 +28,7 @@ const SEARCH_KEYS = ["name", "ticker"];
 type Props = {
   devMode: boolean;
   navigation: any;
-  route: { params: { filterCurrencyIds?: string[] } };
+  route: { params: { filterCurrencyIds?: string[]; currency?: string } };
 };
 
 const keyExtractor = (currency: CryptoCurrency | TokenCurrency) => currency.id;
@@ -54,6 +55,8 @@ const findAccountByCurrency = (
   );
 
 export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
+  const paramsCurrency = route?.params?.currency;
+
   const { t } = useTranslation();
   const filterCurrencyIds = useMemo(
     () => route.params?.filterCurrencyIds || [],
@@ -71,6 +74,18 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
   );
 
   const accounts = useSelector(flattenAccountsSelector);
+
+  useEffect(() => {
+    if (paramsCurrency) {
+      const selectedCurrency = findCryptoCurrencyByKeyword(
+        paramsCurrency.toUpperCase(),
+      );
+
+      if (selectedCurrency) {
+        onPressItem(selectedCurrency);
+      }
+    }
+  }, [onPressItem, paramsCurrency]);
 
   const sortedCryptoCurrencies = useCurrenciesByMarketcap(cryptoCurrencies);
 
