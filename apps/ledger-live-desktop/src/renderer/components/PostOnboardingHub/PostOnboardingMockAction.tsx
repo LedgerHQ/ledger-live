@@ -6,7 +6,7 @@ import { setPostOnboardingActionCompleted } from "@ledgerhq/live-common/postOnbo
 import { PostOnboardingActionId } from "@ledgerhq/types-live";
 import { getPostOnboardingAction } from "./logic";
 import { setDrawer } from "~/renderer/drawers/Provider";
-import PostOnboardingHub from ".";
+import PostOnboardingHubContent from "./PostOnboardingHubContent";
 
 type Props = {
   id: PostOnboardingActionId;
@@ -27,7 +27,7 @@ const PostOnboardingMockAction = ({ id }: Props) => {
   }, []);
 
   const navigateToHub = useCallback(() => {
-    setDrawer(PostOnboardingHub);
+    setDrawer(PostOnboardingHubContent);
   }, []);
 
   const handleCompleteAndGoToDashboard = useCallback(() => {

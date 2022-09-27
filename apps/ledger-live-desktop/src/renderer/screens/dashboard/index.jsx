@@ -32,7 +32,7 @@ import CurrencyDownStatusAlert from "~/renderer/components/CurrencyDownStatusAle
 
 import { setDrawer } from "~/renderer/drawers/Provider";
 
-import PostOnboardingHub from "~/renderer/components/PostOnboardingHub";
+import PostOnboardingHubContent from "~/renderer/components/PostOnboardingHub/PostOnboardingHubContent";
 
 // This forces only one visible top banner at a time
 export const TopBannerContainer: ThemedComponent<{}> = styled.div`
@@ -98,7 +98,7 @@ export default function DashboardPage() {
   );
 
   const handleTriggerPostOnboardingHub = useCallback(() => {
-    setDrawer(PostOnboardingHub);
+    setDrawer(PostOnboardingHubContent);
   }, []);
 
   return (

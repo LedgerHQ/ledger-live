@@ -1,6 +1,6 @@
 import React from "react";
 import { Flex, Text } from "@ledgerhq/react-ui";
-import PostOnboardingHub from "~/renderer/components/PostOnboardingHub";
+import PostOnboardingHubContent from "~/renderer/components/PostOnboardingHub/PostOnboardingHubContent";
 import { withV3StyleProvider } from "~/renderer/styles/StyleProviderV3";
 
 const PostOnboardingScreen = () => {
@@ -26,7 +26,7 @@ const PostOnboardingScreen = () => {
         </Text>
       </Flex>
       <Flex flex={1}>
-        <PostOnboardingHub />
+        <PostOnboardingHubContent />
       </Flex>
     </Flex>
   );
