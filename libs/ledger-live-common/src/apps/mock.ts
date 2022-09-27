@@ -165,9 +165,9 @@ export function mockListAppsResult(
     appByName,
     appsListNames: apps.map((a) => a.name),
     deviceInfo,
-    deviceModelId: deviceInfo.seTargetId ? 
-      identifyTargetId(deviceInfo.seTargetId)?.id ?? <DeviceModelId>"nanoS" : 
-      <DeviceModelId>"nanoS",
+    deviceModelId: deviceInfo.seTargetId
+      ? identifyTargetId(deviceInfo.seTargetId)?.id ?? <DeviceModelId>"nanoS"
+      : <DeviceModelId>"nanoS",
     firmware: firmware155,
     installed,
     installedAvailable: true,
