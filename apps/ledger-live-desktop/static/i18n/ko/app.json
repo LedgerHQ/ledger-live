@@ -130,6 +130,7 @@
     "nanoS" : "Nano S",
     "nanoSP" : "Nano S Plus",
     "nanoX" : "Nano X",
+    "nanoFTS" : "Nano FTS",
     "blue" : "Blue"
   },
   "operation" : {
@@ -236,10 +237,26 @@
     },
     "form" : {
       "changeCTA" : "변경",
-      "ratesDrawer" : {
-        "title" : "요율",
-        "quote" : "호가",
-        "receive" : "수령"
+      "rates" : {
+        "title" : "공급자",
+        "registration" : "등록이 필요합니다 ",
+        "noRegistration" : "등록이 필요하지 않습니다",
+        "fixed" : "고정",
+        "float" : "변동",
+        "update" : "요율 업데이트 날짜",
+        "loading" : "로딩 중...",
+        "name" : {
+          "title" : "공급자",
+          "tooltip" : "제공업체에 따라 계정을 생성하여 로그인해야 합니다."
+        },
+        "rate" : {
+          "title" : "환율",
+          "tooltip" : "A <0>변동 이율</0> 시장 상태에 따라 변동되어 예상치보다 적거나 많이 받을 수 있습니다.<br/><br/>A <0>고정 이율</0> 교환을 시작하는 시점에 표시된 것과 금액이 정확히 일치합니다."
+        },
+        "receive" : {
+          "title" : "수령",
+          "tooltip" : "교환 후 받게 되는 금액의 추정치."
+        }
       },
       "details" : {
         "label" : {
@@ -412,7 +429,13 @@
           "approved" : "고객확인제도 승인됨!",
           "closed" : "고객확인제도 거부됨"
         }
-      }
+      },
+      "filter" : {
+        "all" : "전체",
+        "centralised" : "중앙화",
+        "dedentralised" : "탈중앙화"
+      },
+      "noQuote" : "다음 단계에서 견적을 확인할 수 있습니다"
     },
     "ip" : {
       "title" : "스왑 거래에 오신 것을 환영합니다",
@@ -573,6 +596,12 @@
     }
   },
   "lottieDebugger" : {
+    "buttonTitle" : "테스트"
+  },
+  "storylyDebugger" : {
+    "buttonTitle" : "테스트"
+  },
+  "postOnboardingDebugger" : {
     "buttonTitle" : "테스트"
   },
   "fullNode" : {
@@ -761,7 +790,7 @@
       },
       "delegation" : {
         "title" : "알고 계셨나요?",
-        "description" : "The Ledger validator stakes your {{asset}} at a commission of {{commission}}%.",
+        "description" : "Ledger 검증인은 {{asset}} 스테이킹 서비스를 {{commission}}%의 커미션으로 제공합니다.",
         "cta" : "Ledger를 통한 스테이킹"
       }
     }
@@ -978,7 +1007,7 @@
       "terms" : {
         "title" : "암호화폐 대출",
         "subtitle" : "컴파운드 프로토콜에서 자산 대출",
-        "description" : "The Compound protocol allows you to lend and borrow assets on the Ethereum network. You can lend assets and earn interest directly from your Ledger account.",
+        "description" : "컴파운드 프로토콜로 이더리움 네트워크에서 자산을 대출해 주거나 받을 수 있습니다. Ledger 계정에서 바로 자산을 대출해 주고 이자를 받을 수 있습니다.",
         "switchLabel" : "<1></1><0>이용 약관</0><1>을 읽고 동의합니다.</1>"
       },
       "steps" : {
@@ -1100,6 +1129,77 @@
     "title" : "토큰 숨기기",
     "desc" : "이 작업은 모든 <1><0>{{tokenName}}</0></1>의 계정을 숨기며 <3>설정</3>을 사용하여 다시 표시할 수 있습니다",
     "hideCTA" : "토큰 숨기기"
+  },
+  "syncOnboarding" : {
+    "connection" : {
+      "searching" : {
+        "title" : "{{deviceModelName}} 장치를 컴퓨터에 연결",
+        "connectionTrouble" : "장치 연결에 문제가 있나요?"
+      },
+      "success" : {
+        "title" : "{{ deviceName }}에 연결"
+      }
+    },
+    "manual" : {
+      "recoveryContent" : {
+        "title" : "복구 문구",
+        "content" : "아래 영상을 탭하여 비밀 복구 문구에 대해 자세히 알아보세요"
+      },
+      "softwareCheckContent" : {
+        "title" : "소프트웨어 점검",
+        "genuineCheck" : {
+          "active" : "Nano 점검",
+          "completed" : "Nano는 정품입니다"
+        },
+        "firmwareUpdate" : {
+          "inactive" : "소프트웨어 점검",
+          "active" : "소프트웨어 업데이트 확인",
+          "updateAvailable" : "{{firmwareVersion}} 소프트웨어 업데이트가 가능합니다",
+          "recommendation" : "지금 업데이트를 다운로드할 것을 권장드립니다.",
+          "downloadUpdate" : "업데이트 다운로드",
+          "skipUpdate" : "다음에",
+          "completed" : "최신 소프트웨어입니다"
+        }
+      },
+      "installApplications" : {
+        "title" : "기본 앱 세트 다운로드를 권장드립니다. 이후 추가로 다운로드할 수 있습니다",
+        "install" : "설치",
+        "skip" : "나중에",
+        "info" : "Nano 앱은 트랜잭션 승인에 사용됩니다. 언제든지 추가나 삭제가 가능합니다."
+      },
+      "genuineCheckModal" : {
+        "title" : "정품 확인",
+        "paragraph1" : "Nano의 사용 안전성과 정품 여부를 확인하세요",
+        "paragraph2" : "장치가 변조되지 않았는지 확인하기 위해 검사를 수행합니다. Nano에서 이를 수락해야 합니다.",
+        "checkDeviceButton" : "장치 확인"
+      },
+      "genuineCheckCancelModal" : {
+        "title" : "정품 확인",
+        "paragraph1" : "정품 확인이 취소되었습니다",
+        "paragraph2" : "정품 확인은 사용 중인 Ledger Nano가 안전한지 확인하는 데 매우 중요한 절차입니다.",
+        "checkDeviceButton" : "확인 절차를 다시 실행하세요",
+        "cancelButton" : "다음에 결정하기"
+      },
+      "genuineCheckNotGenuineModal" : {
+        "title" : "Authenticity Check",
+        "paragraph1" : "Your device is not genuine",
+        "paragraph2" : "Authenticity check failed",
+        "checkDeviceButton" : "Run check again",
+        "cancelButton" : "Maybe later"
+      },
+      "helpDrawer" : {
+        "title" : "설정 안내와 관련하 도움이 필요하신가요?",
+        "description" : "Lorem Elsass ipsum aliquam bissame Oberschaeffolsheim geht's messti de Bischheim tellus blottkopf, dui sed libero. hopla libero, placerat leo eget Gal.",
+        "docButton" : "FAQ로 이동",
+        "supportButton" : "상담원과 대화"
+      },
+      "troubleshootingDrawer" : {
+        "title" : "USB 연결 문제 해결",
+        "description" : "장치 연결에 문제가 있는 것 같습니다. 걱정 마세요. 장치가 무사히 연결될 때까지 다양한 해결책을 하나씩 시도해볼 수 있습니다!",
+        "fixButton" : "해결하세요",
+        "closeButton" : "닫기"
+      }
+    }
   },
   "hideNftCollection" : {
     "title" : "NFT 컬렉션 숨기기",
@@ -3146,7 +3246,7 @@
           "steps" : {
             "confirmation" : {
               "success" : {
-                "title" : "You have successfully activated your delegation."
+                "title" : "위임을 성공적으로 활성화했습니다."
               }
             }
           }
@@ -3158,7 +3258,7 @@
           "steps" : {
             "confirmation" : {
               "success" : {
-                "title" : "You have successfully reactivated your delegation."
+                "title" : "위임을 성공적으로 재활성화했습니다."
               }
             }
           }
@@ -3406,6 +3506,10 @@
           "title" : "확장 계정 검색",
           "description" : "잘못된 파생 경로가 있는 계정을 스캔합니다. 잠재적으로 찾은 자산을 일반 계정으로 보내세요."
         },
+        "experimentalCountervalues" : {
+          "title" : "실험적 등가 API",
+          "description" : "이로 인해 계정과 관련하여 올바른 등가 값이 표시되지 않을 수 있습니다."
+        },
         "experimentalExplorers" : {
           "title" : "실험적 탐색기 API",
           "description" : "Ledger 블록체인 탐색기 새 버전을 사용해 보세요. 이 설정을 변경하면 계정 잔금과 동기화, 전송 기능이 영향을 받을 수 있습니다.\n(<0>)"
@@ -3421,6 +3525,14 @@
         "testAnimations" : {
           "title" : "테스트 로티 애니메이션",
           "description" : "Ledger Live에서 사용되는 모든 애니메이션 테스트"
+        },
+        "testStories" : {
+          "title" : "Storyly 스토리 테스트",
+          "description" : "Ledger Live의 모든 스토리 테스트"
+        },
+        "testPostonboarding" : {
+          "title" : "Post Onboarding 테스트",
+          "description" : "모든 post onboarding 기능 테스트"
         }
       }
     },
@@ -3551,7 +3663,11 @@
       "ru" : "러시아어",
       "es" : "스페인어",
       "zh" : "중국어",
-      "de" : "독일어"
+      "de" : "독일어",
+      "tr" : "터키어",
+      "ja" : "일본어",
+      "ko" : "한국어",
+      "pt" : "포르투갈어"
     }
   },
   "theme" : {
@@ -4339,6 +4455,9 @@
       "title" : "특정 구성에 대한 {{appName}} 앱을 찾을 수 없습니다.",
       "description" : "내 Ledger에서 앱을 다시 설치해 보세요"
     },
+    "PendingOperation" : {
+      "description" : "대기 중인 수신 트랜잭션이 있습니다. 대기 중 트랜잭션은 취소될 수 있으니 주의하시기 바랍니다."
+    },
     "countervaluesUnavailable" : {
       "title" : "현재 이 자산에 대한 등가를 제공할 수 없습니다"
     },
@@ -4583,10 +4702,6 @@
       "title" : "죄송하지만 인터넷이 끊긴 것 같습니다",
       "description" : "인터넷 연결을 확인하세요."
     },
-    "NetworkError" : {
-      "title" : "동기화 중 오류가 발생했습니다",
-      "description" : "인터넷 연결을 확인하세요."
-    },
     "NoAddressesFound" : {
       "title" : "죄송하지만 발견된 계정이 없습니다",
       "description" : "주소 계산에 문제가 발생했습니다. 재시도하거나 Ledger 지원 부서에 연락하세요"
@@ -4734,7 +4849,7 @@
     },
     "EthAppNftNotSupported" : {
       "title" : "이 장치에서 사용할 수 없는 작업",
-      "description" : "NFT 보내기 기능은 Nano X에서만 사용할 수 있습니다. Nano S로 NFT를 보내는 방법을 알아보려면 고객 지원 플랫폼을 방문해 주세요."
+      "description" : "NFT 보내기 기능은 Nano X에서만 사용할 수 있습니다. Nano S 또는 S Plus로 NFT를 보내는 방법을 알아보려면 고객 지원 플랫폼을 방문해 주세요."
     },
     "CantScanQRCode" : {
       "title" : "이 QR 코드를 스캔할 수 없습니다: 이 주소는 자동 확인을 지원하지 않습니다"
