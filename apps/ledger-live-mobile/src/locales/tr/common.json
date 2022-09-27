@@ -392,6 +392,12 @@
       "title" : "Üzgünüz, bu uygulama gerekli",
       "description" : "Bitcoin veya Ethereum uygulamasını en son kaldırın."
     },
+    "MaxBaseFeeHigh" : {
+      "title" : "Maks. taban ücretiniz fazla yüksek hesaplandı. Uygunsa ağ tarafından size geri ödeme yapılacak"
+    },
+    "MaxBaseFeeLow" : {
+      "title" : "Maks. taban ücret çok düşük. İşleminiz bir süreliğine beklemede kalabilir"
+    },
     "NetworkDown" : {
       "title" : "Üzgünüz, internet bağlantısı görünmüyor",
       "description" : "Lütfen internet bağlantınızı kontrol edin."
@@ -434,6 +440,12 @@
     "PasswordsDontMatch" : {
       "title" : "Parola eşleşmiyor",
       "description" : "Lütfen tekrar deneyin."
+    },
+    "PriorityFeeTooHigh" : {
+      "title" : "Öncelik ücreti, gereğinden yüksek. Fazla ödeme yapıyor olabilirsiniz"
+    },
+    "PriorityFeeTooLow" : {
+      "title" : "Öncelik ücreti, önerilen değerden düşük"
     },
     "SelectExchangesLoadError" : {
       "title" : "Yüklenemiyor",
@@ -2273,11 +2285,8 @@
     "debug" : {
       "featureFlagsTitle" : "Ledger Live'da kullanılan tanımlı özellik bayrakları",
       "featureFlagsDesc" : "Uygulama yeniden başlatılırsa geçersiz bırakılan değerler sıfırlanacaktır. Sadece geçerli JSON dizeleri kabul edilecektir.",
-      "featureFlagsOverride" : "Geçersiz bırak",
       "featureFlagsEdit" : "Düzenle",
-      "featureFlagsRestore" : "Geri yükle",
-      "featureFlagsDisplayValue" : "Değeri göster",
-      "featureFlagsHideValue" : "Değeri gizle"
+      "featureFlagsRestore" : "Geri yükle"
     }
   },
   "notifications" : {
@@ -2906,9 +2915,14 @@
       "infoTotalDesc" : "İşlem miktarını ve seçilen ağın ücretlerini içerir",
       "gasLimit" : "Gas limiti",
       "gasPrice" : "Gas ücreti",
+      "maxBaseFee" : "Maks. taban ücret",
+      "priorityFee" : "Öncelik ücreti",
+      "nextBlock" : "Sonraki blok: {{nextBaseFee}}",
+      "suggestedPriorityFee" : "Önerilen: {{lowPriorityFee}} - {{highPriorityFee}}",
       "maxFees" : "Maksimum ücret",
       "validateGasLimit" : "Gas limitini onayla",
       "fees" : "Ücretler",
+      "maxEstimatedFee" : "Maks. tahminî ücret",
       "validateFees" : "Ücretleri Onayla",
       "customizeFees" : "Ücretleri Özelleştir",
       "memo" : {
@@ -3533,15 +3547,15 @@
     "no" : "Şimdilik kalsın",
     "languages" : {
       "en" : "İngilizce",
-      "fr" : "Français",
-      "ru" : "Русский",
-      "es" : "Español",
-      "zh" : "中国人",
-      "de" : "Deutsch",
-      "tr" : "Türk",
-      "ja" : "日本",
-      "ko" : "한국인",
-      "pt" : "Português"
+      "fr" : "Fransızca",
+      "ru" : "Rusça",
+      "es" : "İspanyolca",
+      "zh" : "Çince",
+      "de" : "Almanca",
+      "tr" : "Türkçe",
+      "ja" : "Japonca",
+      "ko" : "Korece",
+      "pt" : "Portekizce"
     }
   },
   "deviceLocalization" : {
