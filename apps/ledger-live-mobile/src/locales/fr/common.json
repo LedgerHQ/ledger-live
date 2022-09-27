@@ -3,6 +3,7 @@
     "cancel" : "Annuler",
     "apply" : "Appliquer",
     "seeAll" : "Tout afficher",
+    "seeAllWithNumber" : "Afficher tout ({{number}})",
     "back" : "Retour",
     "delete" : "Effacer",
     "paste" : "Coller",
@@ -30,6 +31,7 @@
     "received" : "Reçu",
     "sent" : "Envoyé",
     "or" : "OU",
+    "others" : "Autres",
     "rename" : "Renommer",
     "learnMore" : "En savoir plus",
     "checkItOut" : "Jeter un œil",
@@ -276,7 +278,7 @@
     },
     "EthAppNftNotSupported" : {
       "title" : "Opération indisponible sur cet appareil",
-      "description" : "La fonctionnalité Envoi de NFT n’est disponible que pour le Nano X. Visitez notre centre d’aide pour découvrir comment envoyer un NFT avec un Nano S."
+      "description" : "La fonctionnalité Envoi de NFT n’est disponible que pour le Nano X. Visitez notre centre d’aide pour découvrir comment envoyer un NFT avec un Nano S ou Nano S Plus."
     },
     "Touch ID Error" : {
       "title" : "Échec de l’authentification biométrique",
@@ -1672,7 +1674,10 @@
         "addAccounts" : "Ajouter un actif",
         "title" : "Commencer",
         "description" : "Vous pouvez acheter des cryptos auprès de nos partenaires ou configurer votre wallet."
-      }
+      },
+      "title" : "Commencez par ajouter vos actifs préférés à votre wallet",
+      "subtitle" : "Ledger prend en charge plus de 6 000 cryptos.",
+      "addAccount" : "ou ajoutez un compte"
     },
     "noOpState" : {
       "title" : "Pas encore d’opérations ?",
@@ -1684,12 +1689,19 @@
     "topGainers" : {
       "title" : "Palmarès marché (24H)",
       "seeMarket" : "Tout afficher"
+    },
+    "walletBalance" : "Solde total",
+    "seelAllAssets" : "Afficher tous les actifs",
+    "marketPriceSection" : {
+      "title" : "Cours du {{currencyTicker}}",
+      "currencyPrice" : "Prix de 1 {{currencyTicker}}",
+      "currencyPriceChange" : "Variation (24h)"
     }
   },
   "addAccountsModal" : {
+    "title" : "Ajouter un compte",
     "ctaAdd" : "Ajouter des comptes",
     "ctaImport" : "Importer les comptes de l’ordinateur",
-    "title" : "Ajouter une crypto",
     "description" : "Vous pouvez choisir d’ajouter des cryptos directement avec votre Ledger, ou les importer depuis Ledger Live pour l’ordinateur.",
     "add" : {
       "title" : "Avec votre Ledger",
@@ -1909,7 +1921,8 @@
       "buttons" : {
         "receiveFunds" : "Recevoir",
         "buyCrypto" : "Acheter"
-      }
+      },
+      "addAccountCta" : "Ajouter un compte"
     },
     "settings" : {
       "header" : "Paramètres du compte",
@@ -2010,6 +2023,15 @@
         "subtitle" : "Vous avez besoin d’un appareil pour acheter ou recevoir des {{assetName}}"
       }
     },
+    "modals" : {
+      "zeroBalanceDisabledAction" : {
+        "title" : "Vous n’avez pas encore de {{currencyTicker}}",
+        "start" : "Achetez ou recevez des {{currencyTicker}} pour commencer.",
+        "description" : "Vous avez besoin de {{currencyTicker}} pour {{actionName}} avec ce compte."
+      }
+    },
+    "earn" : "Gagner",
+    "quickActions" : "Raccourcis",
     "banner" : {
       "redelegation" : {
         "description" : "Bon à savoir : le validateur Ledger offre des frais de staking inférieurs à ceux prélevés par votre validateur actuel.",
@@ -2023,6 +2045,7 @@
   },
   "accounts" : {
     "title" : "Comptes",
+    "cryptoAccountsTitle" : "Comptes {{currencyTicker}}",
     "importNotification" : {
       "message" : "Vos comptes ont bien été importés."
     },
@@ -2257,13 +2280,52 @@
       "exportLogsDesc" : "Sauvegardez les logs de Ledger Live peut être nécessaire à des fins de dépannage.",
       "hardReset" : "Réinitialiser Ledger Live",
       "hardResetDesc" : "Sans effet sur vos actifs. Toutes les données de Ledger Live, y compris les données de comptes, l’historique de vos transactions et paramètres seront effacées. Utilisez votre appareil Ledger pour recharger et gérer vos crypto-actifs dans une app Ledger Live vierge.",
-      "repairDevice" : "Réparer son appareil Ledger",
+      "repairDevice" : "Réparer votre appareil Ledger",
       "repairDeviceDesc" : "En cas de problème lors de la mise à jour de votre appareil (reprise des mises à jour impossible), essayez cela pour réparer votre appareil."
     },
     "experimental" : {
       "title" : "Fonctionnalités expérimentales",
       "desc" : "Essayez les Fonctionnalités expérimentales et donnez-nous votre avis.",
-      "disclaimer" : "Il s’agit de fonctionnalités expérimentales fournies \"telles quelles\" pour notre communauté de passionné(e)s de la tech. Elles peuvent changer, casser ou être retirées à tout moment. En les activant, vous acceptez de les utiliser en toute connaissance de cause."
+      "disclaimer" : "Il s’agit de fonctionnalités expérimentales fournies \"telles quelles\" pour notre communauté de passionné(e)s de la tech. Elles peuvent changer, casser ou être retirées à tout moment. En les activant, vous acceptez de les utiliser en toute connaissance de cause.",
+      "experimentalFeatures" : {
+        "experimentalIntegrations" : {
+          "title" : "Intégrations expérimentales",
+          "description" : "Utilisez les intégrations expérimentales disponibles pour les crypto-actifs concernés."
+        },
+        "developerMode" : {
+          "title" : "Mode développeur",
+          "description" : "Affichez les applications développeurs et testnet dans le Gestionnaire."
+        },
+        "managerProvider" : {
+          "title" : "Fournisseur du Gestionnaire",
+          "description" : "Changer le fournisseur d’applications dans le Gestionnaire peut rendre impossible l’installation ou désinstallation d’applications sur votre appareil Ledger."
+        },
+        "experimentalExplorers" : {
+          "title" : "API Explorateurs Expérimentales",
+          "description" : "Testez une version en développement des explorateurs de blockchain de Ledger. Modifier ce paramètre peut affecter le solde des comptes, la synchronisation et la fonctionnalité Envoyer."
+        },
+        "experimentalCountervalues" : {
+          "title" : "API Devises de contrepartie expérimentales",
+          "description" : "Avec cette fonctionnalité, les devises de contrepartie affichées dans vos comptes peuvent devenir incorrectes."
+        },
+        "experimentalSwap" : {
+          "title" : "Nouvelle interface de Swap",
+          "description" : "Utilisez la nouvelle interface expérimentale de swap."
+        }
+      },
+      "developerFeatures" : {
+        "experimentalApps" : {
+          "title" : "Autoriser les Apps Expérimentales",
+          "description" : "Affichez et autorisez l’ouverture des Platform Apps \"Expérimentales\"."
+        },
+        "staggingUrl" : {
+          "title" : "Activer l’URL de test de la page Apprendre",
+          "description" : "Utilisez l’URL de test (staging) de la page Apprendre."
+        },
+        "platformManifest" : {
+          "title" : "Charger un manifest pour Platform"
+        }
+      }
     },
     "developer" : {
       "title" : "Développeurs",
@@ -2275,11 +2337,8 @@
     "debug" : {
       "featureFlagsTitle" : "Indicateurs de fonctionnalités (feature flags) définis et utilisés dans Ledger Live",
       "featureFlagsDesc" : "Les valeurs remplacées seront réinitialisées lorsque l’application sera relancée. Seules les chaînes JSON valides sont acceptées.",
-      "featureFlagsOverride" : "Remplacer",
       "featureFlagsEdit" : "Modifier",
-      "featureFlagsRestore" : "Restaurer",
-      "featureFlagsDisplayValue" : "Afficher le code",
-      "featureFlagsHideValue" : "Masquer le code"
+      "featureFlagsRestore" : "Restaurer"
     }
   },
   "notifications" : {
@@ -3074,6 +3133,7 @@
     }
   },
   "addAccounts" : {
+    "addNew" : "Ajouter",
     "supportLinks" : {
       "segwit_or_native_segwit" : "SegWit ou Native SegWit ?"
     },
@@ -3357,6 +3417,7 @@
       "appsInstalled" : "<0>{{number}}</0> app",
       "appsInstalled_plural" : "<0>{{number}}</0> apps",
       "storageAvailable" : "disponibles",
+      "noFreeSpace" : "Plus d’espace disponible",
       "appsToUpdate" : "<0>{{number}}</0> mise à jour",
       "appsToUpdate_plural" : "<0>{{number}}</0> mises à jour"
     },
@@ -3538,11 +3599,11 @@
       "fr" : "Français",
       "ru" : "Русский",
       "es" : "Español",
-      "zh" : "中国人",
+      "zh" : "简体中文",
       "de" : "Deutsch",
-      "tr" : "Türk",
-      "ja" : "日本",
-      "ko" : "한국인",
+      "tr" : "Türkçe",
+      "ja" : "日本語",
+      "ko" : "한국어",
       "pt" : "Português"
     }
   },
@@ -4753,6 +4814,12 @@
     },
     "currentAddress" : {
       "messageIfVirtual" : "Votre adresse {{name}} n’a pas été confirmée sur votre appareil Ledger. Il est risqué de l’utiliser."
+    }
+  },
+  "asset" : {
+    "title" : "Vos {{assetName}}",
+    "accountsSection" : {
+      "title" : "Vos comptes {{currencyName}}"
     }
   },
   "customImage" : {
