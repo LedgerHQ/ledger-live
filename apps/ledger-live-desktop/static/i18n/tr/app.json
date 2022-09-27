@@ -177,6 +177,8 @@
   "time" : {
     "minute" : "Dakika",
     "minute_plural" : "Dakika",
+    "minute_short" : "dk.",
+    "second_short" : "sn.",
     "hour" : "Saat",
     "hour_plural" : "Saat",
     "range" : {
@@ -235,10 +237,26 @@
     },
     "form" : {
       "changeCTA" : "Değiştir",
-      "ratesDrawer" : {
-        "title" : "Kur",
-        "quote" : "Teklif",
-        "receive" : "Al"
+      "rates" : {
+        "title" : "Sağlayıcılar",
+        "registration" : "Kayıt gerekiyor ",
+        "noRegistration" : "Kayıt gerekmiyor",
+        "fixed" : "Sabit",
+        "float" : "Dalgalı",
+        "update" : "Fiyat güncellemesine kalan süre:",
+        "loading" : "Yükleniyor...",
+        "name" : {
+          "title" : "Sağlayıcı",
+          "tooltip" : "Sağlayıcıya bağlı olarak, hesap oluşturarak giriş yapmanız gerekebilir."
+        },
+        "rate" : {
+          "title" : "Takas kuru",
+          "tooltip" : "<0>Dalgalı kur</0>, piyasa koşullarına bağlı olarak değişimler yaşar; dolayısıyla, tahmininizden daha yüksek ya da daha düşük tutarlar elde edebilirsiniz.<br/><br/><0>Sabit kur</0>, takas işleminin başında gösterilen tutarla eşleşir."
+        },
+        "receive" : {
+          "title" : "Al",
+          "tooltip" : "Takas sonrasında elde edeceğiniz tahmini tutar."
+        }
       },
       "details" : {
         "label" : {
@@ -411,7 +429,13 @@
           "approved" : "KYC Onaylandı!",
           "closed" : "KYC Reddedildi"
         }
-      }
+      },
+      "filter" : {
+        "all" : "Tümü",
+        "centralised" : "Merkezi",
+        "dedentralised" : "Merkeziyetsiz"
+      },
+      "noQuote" : "Ücret teklifi bir sonraki adımda yer alır"
     },
     "ip" : {
       "title" : "Takas İşlemlerine Hoş Geldiniz",
@@ -760,7 +784,7 @@
       },
       "delegation" : {
         "title" : "Haberiniz olsun...",
-        "description" : "The Ledger validator stakes your {{asset}} at a commission of {{commission}}%.",
+        "description" : "Ledger doğrulayıcısı, {{asset}} varlığınızı %{{commission}} oranında bir komisyonla stake eder.",
         "cta" : "Ledger ile Stake Edin"
       }
     }
@@ -977,7 +1001,7 @@
       "terms" : {
         "title" : "Kripto Borç Verin",
         "subtitle" : "Varlıklarınızı Compound protokolünde borç verin",
-        "description" : "The Compound protocol allows you to lend and borrow assets on the Ethereum network. You can lend assets and earn interest directly from your Ledger account.",
+        "description" : "Compound protokolü, Ethereum ağındaki varlıkları borç vermenizi ve almanızı sağlar. Varlıkları borç vererek doğrudan Ledger hesabınızdan faiz kazanabilirsiniz.",
         "switchLabel" : "<0>Kullanım Koşullarını</0><1> okudum ve kabul ediyorum.</1>"
       },
       "steps" : {
@@ -1930,7 +1954,7 @@
       "amount" : {
         "title" : "Tutar",
         "banner" : "Maksimum harcanabilir tutar",
-        "fees" : "Ücretler",
+        "fees" : "Maks. tahminî ücret",
         "standard" : "Standart",
         "advanced" : "Gelişmiş",
         "nftQuantity" : "Miktar"
@@ -1953,8 +1977,13 @@
         "useMax" : "Tamamını Gönder",
         "rippleTag" : "Etiket",
         "rippleTagPlaceholder" : "Opsiyonel",
+        "edit" : "Düzenle",
         "ethereumGasLimit" : "Gas limiti",
         "ethereumGasPrice" : "Gas ücreti",
+        "ethereumMaxBaseFee" : "Maks. Taban Ücret ({{unitName}})",
+        "ethereumPriorityFee" : "Öncelik Ücreti ({{unitName}})",
+        "nextBlock" : "Sonraki blok: {{nextBaseFee}}",
+        "suggestedPriorityFee" : "Önerilen: {{lowPriorityFee}} - {{highPriorityFee}} {{unitName}}",
         "unitPerByte" : "bayt başına {{unit}}",
         "nft" : "NFT",
         "nftQuantity" : "Miktar"
@@ -1984,7 +2013,8 @@
       }
     },
     "footer" : {
-      "estimatedFees" : "Ağ ücretleri"
+      "estimatedFees" : "Ağ ücretleri",
+      "totalToDebit" : "Düşülecek tutar"
     }
   },
   "sign" : {
@@ -3145,7 +3175,7 @@
           "steps" : {
             "confirmation" : {
               "success" : {
-                "title" : "You have successfully activated your delegation."
+                "title" : "Yetki devrinizi başarıyla etkinleştirdiniz."
               }
             }
           }
@@ -3157,7 +3187,7 @@
           "steps" : {
             "confirmation" : {
               "success" : {
-                "title" : "You have successfully reactivated your delegation."
+                "title" : "Yetki devrinizi başarıyla yeniden etkinleştirdiniz."
               }
             }
           }
@@ -3404,6 +3434,10 @@
         "scanForInvalidPaths" : {
           "title" : "Genişletilmiş hesap arama",
           "description" : "Hatalı türetme yollarına sahip hesapları tarayın. Lütfen potansiyel olarak bulunan varlıkları normal bir hesaba gönderin."
+        },
+        "experimentalCountervalues" : {
+          "title" : "Deneysel karşı değerler API'ı",
+          "description" : "Bu, hesaplarınız için görüntülenen karşı değerlerin hatalı gözükmesine neden olabilir."
         },
         "experimentalExplorers" : {
           "title" : "Deneysel Tarayıcılar API'ı",
@@ -4582,10 +4616,6 @@
       "title" : "Üzgünüz, internet bağlantısı görünmüyor",
       "description" : "Lütfen internet bağlantınızı kontrol edin."
     },
-    "NetworkError" : {
-      "title" : "Senkronizasyon sırasında bir hata oluştu",
-      "description" : "Lütfen internet bağlantınızı kontrol edin."
-    },
     "NoAddressesFound" : {
       "title" : "Üzgünüz, hesap bulunamadı",
       "description" : "Adres hesaplamasında bir hata oluştu; tekrar deneyin veya Ledger Destek ile iletişime geçin"
@@ -4746,6 +4776,18 @@
     },
     "GasLessThanEstimate" : {
       "title" : "Bu çok düşük olabilir. Lütfen arttırın"
+    },
+    "MaxBaseFeeLow" : {
+      "title" : "Maks. taban ücret çok düşük. İşleminiz bir süreliğine beklemede kalabilir"
+    },
+    "MaxBaseFeeHigh" : {
+      "title" : "Maks. taban ücretiniz fazla yüksek hesaplandı. Uygunsa ağ tarafından size geri ödeme yapılacak"
+    },
+    "PriorityFeeTooLow" : {
+      "title" : "Öncelik ücreti, önerilen değerden düşük"
+    },
+    "PriorityFeeTooHigh" : {
+      "title" : "Öncelik ücreti, gereğinden yüksek. Fazla ödeme yapıyor olabilirsiniz"
     },
     "UnknownMCU" : {
       "title" : "Bilinmeyen MCU sürümü",
