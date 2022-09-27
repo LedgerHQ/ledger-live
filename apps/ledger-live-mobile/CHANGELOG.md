@@ -1,5 +1,11 @@
 # live-mobile
 
+## 3.9.0-nightly.7
+
+### Patch Changes
+
+- [#1365](https://github.com/LedgerHQ/ledger-live/pull/1365) [`6af4a22c54`](https://github.com/LedgerHQ/ledger-live/commit/6af4a22c5484499e112f21249f1c28ae146c78af) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - LLM - Terms and Privacy Policy urls to update
+
 ## 3.9.0-nightly.6
 
 ### Patch Changes
