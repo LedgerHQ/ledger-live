@@ -130,6 +130,7 @@
     "nanoS" : "Nano S",
     "nanoSP" : "Nano S Plus",
     "nanoX" : "Nano X",
+    "nanoFTS" : "Nano FTS",
     "blue" : "Blue"
   },
   "operation" : {
@@ -236,10 +237,26 @@
     },
     "form" : {
       "changeCTA" : "Cambiar",
-      "ratesDrawer" : {
-        "title" : "Tasa",
-        "quote" : "Cotización",
-        "receive" : "Recibir"
+      "rates" : {
+        "title" : "Proveedores",
+        "registration" : "Es necesario registrarse ",
+        "noRegistration" : "No es necesario registrarse",
+        "fixed" : "Fija",
+        "float" : "Variable",
+        "update" : "Las tasas se actualizarán en",
+        "loading" : "Cargando...",
+        "name" : {
+          "title" : "Proveedor",
+          "tooltip" : "Dependiendo del proveedor, es posible que tengas que crear una cuenta para iniciar sesión"
+        },
+        "rate" : {
+          "title" : "Tasa de cambio",
+          "tooltip" : "Una <0>tasa variable</0> fluctúa en función de las condiciones del mercado, con lo que tus beneficios pueden ser mayores o menores de lo que has calculado.<br/><br/>Una <0>tasa fija</0> coincide con el importe mostrado al comenzar el intercambio."
+        },
+        "receive" : {
+          "title" : "Recibir",
+          "tooltip" : "La cantidad estimada que recibirás después del intercambio."
+        }
       },
       "details" : {
         "label" : {
@@ -412,7 +429,13 @@
           "approved" : "¡KYC aprobado!",
           "closed" : "KYC rechazado"
         }
-      }
+      },
+      "filter" : {
+        "all" : "Todas",
+        "centralised" : "Centralizado",
+        "dedentralised" : "Descentralizado"
+      },
+      "noQuote" : "Cotización disponible en el siguiente paso"
     },
     "ip" : {
       "title" : "Bienvenido a Permutar",
@@ -573,6 +596,12 @@
     }
   },
   "lottieDebugger" : {
+    "buttonTitle" : "Prueba"
+  },
+  "storylyDebugger" : {
+    "buttonTitle" : "Prueba"
+  },
+  "postOnboardingDebugger" : {
     "buttonTitle" : "Prueba"
   },
   "fullNode" : {
@@ -761,7 +790,7 @@
       },
       "delegation" : {
         "title" : "Por si no lo sabías,",
-        "description" : "The Ledger validator stakes your {{asset}} at a commission of {{commission}}%.",
+        "description" : "El validador de Ledger pone en participación tus {{asset}} con una comisión del {{commission}}%.",
         "cta" : "Participar con Ledger"
       }
     }
@@ -1100,6 +1129,77 @@
     "title" : "Ocultar token",
     "desc" : "Esta acción ocultará todas las cuentas de <1><0>{{tokenName}}</0></1>, pero puedes visualizarlas de nuevo ingresando a <3>Ajustes</3>.",
     "hideCTA" : "Ocultar token"
+  },
+  "syncOnboarding" : {
+    "connection" : {
+      "searching" : {
+        "title" : "Conectar {{deviceModelName}} a tu PC",
+        "connectionTrouble" : "¿Tienes problemas para conectar tu dispositivo?"
+      },
+      "success" : {
+        "title" : "Conectado a tu {{ deviceName }}"
+      }
+    },
+    "manual" : {
+      "recoveryContent" : {
+        "title" : "Frase de recuperación",
+        "content" : "Consulta los siguientes videos para obtener más información sobre tu Frase de recuperación"
+      },
+      "softwareCheckContent" : {
+        "title" : "Comprobación de software",
+        "genuineCheck" : {
+          "active" : "Comprobando Nano",
+          "completed" : "El Nano es auténtico"
+        },
+        "firmwareUpdate" : {
+          "inactive" : "Comprobación de software",
+          "active" : "Buscando actualizaciones de software",
+          "updateAvailable" : "Actualización de software disponible {{firmwareVersion}}",
+          "recommendation" : "Te recomendamos descargar ahora la actualización",
+          "downloadUpdate" : "Descargar actualización",
+          "skipUpdate" : "Omitir por el momento",
+          "completed" : "El software está actualizado"
+        }
+      },
+      "installApplications" : {
+        "title" : "Te recomendamos descargar un conjunto de aplicaciones por defecto. Puedes descargar otras más adelante",
+        "install" : "Instalar",
+        "skip" : "Recordar más adelante",
+        "info" : "Las apps en el Nano se usan para aprobar transacciones. Puedes añadirlas o eliminarlas cuando quieras."
+      },
+      "genuineCheckModal" : {
+        "title" : "Comprobación de autenticidad",
+        "paragraph1" : "Vamos a asegurarnos de que tu Nano sea auténtico y seguro de usar",
+        "paragraph2" : "Realizaremos una comprobación para asegurarnos de que el dispositivo no ha sido manipulado. Tendrás que aceptar la operación en tu Nano.",
+        "checkDeviceButton" : "Comprobar dispositivo"
+      },
+      "genuineCheckCancelModal" : {
+        "title" : "Comprobación de autenticidad",
+        "paragraph1" : "La verificación de autenticidad se ha cancelado",
+        "paragraph2" : "Es muy importante que hagas la verificación para asegurarte de que es seguro usar tu Ledger Nano.",
+        "checkDeviceButton" : "Volver a ejecutar la verificación de autenticidad",
+        "cancelButton" : "Quizás más tarde"
+      },
+      "genuineCheckNotGenuineModal" : {
+        "title" : "Comprobación de autenticidad",
+        "paragraph1" : "Your device is not genuine",
+        "paragraph2" : "Authenticity check failed",
+        "checkDeviceButton" : "Volver a ejecutar la verificación de autenticidad",
+        "cancelButton" : "Quizás más tarde"
+      },
+      "helpDrawer" : {
+        "title" : "¿Necesitas ayuda con el manual de configuración?",
+        "description" : "Lorem Elsass ipsum aliquam bissame Oberschaeffolsheim geht's messti de Bischheim tellus blottkopf, dui sed libero. hopla libero, placerat leo eget Gal.",
+        "docButton" : "Ir a Preguntas más frecuentes",
+        "supportButton" : "Hablar con una persona"
+      },
+      "troubleshootingDrawer" : {
+        "title" : "Solucionar problemas de la conexión USB",
+        "description" : "Parece que hay un problema al conectar tu dispositivo. No te preocupes, puedes probar con distintas soluciones, una por vez, hasta que se conecte tu dispositivo.",
+        "fixButton" : "Corregir",
+        "closeButton" : "Cerrar"
+      }
+    }
   },
   "hideNftCollection" : {
     "title" : "Ocultar colección de NFTs",
@@ -3406,6 +3506,10 @@
           "title" : "Búsqueda de cuenta extendida",
           "description" : "Busca cuentas con rutas de derivación incorrectas. Envía los activos que encuentres a una cuenta normal."
         },
+        "experimentalCountervalues" : {
+          "title" : "API experimental de contrapartes",
+          "description" : "Puede provocar que las contrapartes que se muestran de tus cuentas no sean las correctas."
+        },
         "experimentalExplorers" : {
           "title" : "API de Experimental Explorers",
           "description" : "Prueba la siguiente versión de los exploradores de cadena de bloques de Ledger. La modificación de esta configuración puede afectar el saldo de la cuenta y la sincronización, como así también la opción de envío.(<0></0>)"
@@ -3421,6 +3525,14 @@
         "testAnimations" : {
           "title" : "Probar animaciones Lottie",
           "description" : "Probar todas las animaciones utilizadas en Ledger Live"
+        },
+        "testStories" : {
+          "title" : "Probar las historias de Storyly",
+          "description" : "Probar todas las historias usadas en Ledger Live"
+        },
+        "testPostonboarding" : {
+          "title" : "Probar el Post Onboarding",
+          "description" : "Probar todas las funciones de Post Onboarding"
         }
       }
     },
@@ -3551,7 +3663,11 @@
       "ru" : "Русский",
       "es" : "Español",
       "zh" : "中文",
-      "de" : "Alemán"
+      "de" : "Alemán",
+      "tr" : "Turco",
+      "ja" : "Japonés",
+      "ko" : "Coreano",
+      "pt" : "Portugués"
     }
   },
   "theme" : {
@@ -4339,6 +4455,9 @@
       "title" : "No es posible encontrar la aplicación {{appName}} para tu configuración específica.",
       "description" : "Prueba a reinstalar la aplicación desde Mi Ledger"
     },
+    "PendingOperation" : {
+      "description" : "Tienes transacciones entrantes pendientes. Ten en cuenta que las transacciones pendientes pueden revertirse."
+    },
     "countervaluesUnavailable" : {
       "title" : "No es posible ofrecerte una contraparte para este activo en este momento"
     },
@@ -4583,10 +4702,6 @@
       "title" : "Parece que no hay conexión a Internet",
       "description" : "Comprueba tu conexión a Internet."
     },
-    "NetworkError" : {
-      "title" : "Se ha producido un error durante la sincronización",
-      "description" : "Comprueba tu conexión a Internet."
-    },
     "NoAddressesFound" : {
       "title" : "No se encontró ninguna cuenta",
       "description" : "Algo ha salido mal con el cálculo de la dirección, inténtalo de nuevo o contacta al Soporte de Ledger"
@@ -4734,7 +4849,7 @@
     },
     "EthAppNftNotSupported" : {
       "title" : "Operación no disponible en este dispositivo",
-      "description" : "La función Enviar NFT sólo está disponible en el Nano X. Visita nuestra plataforma de soporte al cliente para saber cómo enviar NFTs con un Nano S."
+      "description" : "La función Enviar NFT solo está disponible en el Nano X. Visita nuestra plataforma de soporte al cliente para saber cómo enviar NFTs con un Nano S o S Plus."
     },
     "CantScanQRCode" : {
       "title" : "No fue posible escanear este código QR: esta dirección no es compatible con la verificación automática"
