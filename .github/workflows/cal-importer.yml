@@ -57,4 +57,4 @@ jobs:
           aws-secret-access-key: ${{ secrets.LEDGER_LIVE_ASSETS_SA_ACCESS_KEY_STG }}
           aws-region: eu-west-1
       - name: Deploy json to s3
-        run: aws s3 sync ./cal/ s3://ledger-live-cryptoassets-stg --delete
+        run: aws s3 sync ./cal/ s3://ledger-live-cryptoassets-stg/cryptoassets --delete
