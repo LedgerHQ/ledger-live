@@ -3,6 +3,7 @@
     "cancel" : "Abbrechen",
     "apply" : "Anwenden",
     "seeAll" : "Alles anzeigen",
+    "seeAllWithNumber" : "Alle anzeigen ({{number}})",
     "back" : "Zurück",
     "delete" : "Löschen",
     "paste" : "Einfügen",
@@ -30,6 +31,7 @@
     "received" : "Empfangen",
     "sent" : "Gesendet",
     "or" : "ODER",
+    "others" : "Sonstige",
     "rename" : "Umbenennen",
     "learnMore" : "Weitere Informationen",
     "checkItOut" : "Mehr erfahren",
@@ -83,7 +85,8 @@
     "moreInfo" : "Mehr Infos",
     "buyEth" : "Ethereum kaufen",
     "popular" : "beliebt",
-    "comingSoon" : "In Kürze verfügbar"
+    "comingSoon" : "In Kürze verfügbar",
+    "getSupport" : "Hilfe"
   },
   "errors" : {
     "countervaluesUnavailable" : {
@@ -583,8 +586,8 @@
       "title" : "Betrag muss kleiner als {{maxAmountFromFormatted}} sein"
     },
     "SwapGenericAPIError" : {
-      "title" : "Wechselkurs abgelaufen",
-      "description" : "Sie müssen den Tausch bestätigen, bevor der Timer abläuft. Der Tauschkurs bleibt für eine feste Dauer gültig."
+      "title" : "Etwas ist schief gelaufen",
+      "description" : "Der Umtauschvorgang wurde nicht durchgeführt. Bitte versuchen Sie es erneut oder kontaktieren Sie den Support."
     },
     "PolkadotElectionClosed" : {
       "title" : "Auswahl der Validatoren muss geschlossen werden"
@@ -720,6 +723,9 @@
       "title" : "Die Verarbeitung des Bildes ist fehlgeschlagen",
       "description" : "Bitte versuchen Sie es noch einmal mit einem anderen Bild"
     }
+  },
+  "crash" : {
+    "title" : "Etwas ist schief gelaufen"
   },
   "bluetooth" : {
     "required" : "Entschuldigung, es sieht so aus, als ob Bluetooth deaktiviert ist",
@@ -1672,7 +1678,10 @@
         "addAccounts" : "Wert hinzufügen",
         "title" : "Erste Schritte",
         "description" : "Sie können entweder Kryptowährungen von unseren Partnern kaufen oder Ihre eigene Wallet einrichten"
-      }
+      },
+      "title" : "Legen Sie zunächst Ihre bevorzugten Vermögenswerte in Ihrer Wallet ab",
+      "subtitle" : "Ledger unterstützt mehr als 6.000 Coins und Token",
+      "addAccount" : "oder fügen Sie ein Konto hinzu"
     },
     "noOpState" : {
       "title" : "Noch keine Aktionen?",
@@ -1684,12 +1693,19 @@
     "topGainers" : {
       "title" : "Marktgewinner (24H)",
       "seeMarket" : "Alles anzeigen"
+    },
+    "walletBalance" : "Kontostand der Wallet",
+    "seelAllAssets" : "Alle Vermögenswerte anzeigen",
+    "marketPriceSection" : {
+      "title" : "Marktpreis für {{currencyTicker}}",
+      "currencyPrice" : "Preis für 1 {{currencyTicker}}",
+      "currencyPriceChange" : "Änderung in den letzten 24 Stunden"
     }
   },
   "addAccountsModal" : {
+    "title" : "Konto hinzufügen",
     "ctaAdd" : "Konten hinzufügen",
     "ctaImport" : "Import desktop accounts (Desktop-Konten importieren)",
-    "title" : "Krypto hinzufügen",
     "description" : "Sie können Krypto(s) direkt mit Ihrer Ledger hinzufügen oder diese aus Ledger Live Desktop importieren.",
     "add" : {
       "title" : "Mit Ihrer Ledger",
@@ -1909,7 +1925,8 @@
       "buttons" : {
         "receiveFunds" : "Empfangen",
         "buyCrypto" : "Kaufen"
-      }
+      },
+      "addAccountCta" : "Konto hinzufügen"
     },
     "settings" : {
       "header" : "Konto-Einstellungen",
@@ -2010,6 +2027,15 @@
         "subtitle" : "Sie benötigen ein Gerät um {{assetName}} zu kaufen oder zu empfangen"
       }
     },
+    "modals" : {
+      "zeroBalanceDisabledAction" : {
+        "title" : "Sie haben noch keine {{currencyTicker}}",
+        "start" : "Zunächst müssen Sie {{currencyTicker}} kaufen oder empfangen.",
+        "description" : "Sie benötigen {{currencyTicker}}, um mit diesem Konto {{actionName}} zu können."
+      }
+    },
+    "earn" : "Verdienen",
+    "quickActions" : "Schnellaktionen",
     "banner" : {
       "redelegation" : {
         "description" : "Schon gewusst? Der Ledger-Validator erledigt das Staking zu einer günstigeren Provision als Ihr derzeitiger Validator.",
@@ -2023,6 +2049,7 @@
   },
   "accounts" : {
     "title" : "Konten",
+    "cryptoAccountsTitle" : "{{currencyTicker}}-Konten",
     "importNotification" : {
       "message" : "Ihre Konten wurden erfolgreich importiert!"
     },
@@ -2255,6 +2282,10 @@
       "clearCacheButton" : "Löschen",
       "exportLogs" : "Protokolle speichern",
       "exportLogsDesc" : "Das Speichern von Ledger Live-Logs kann für die Fehlerbehebung erforderlich sein.",
+      "resetThirdPartyData" : "Drittanbieterdaten zurücksetzen",
+      "resetThirdPartyDataDesc" : "Löschen Sie alle lokalen Drittanbieterdaten, die für den Zugriff auf Transaktionsservices von Drittanbietern verwendet wurden.",
+      "resetThirdPartyDataModal" : "Ihre lokalen Drittanbieterdaten löschen",
+      "resetThirdPartyDataModalDesc" : "Bitte löschen Sie Ihre lokalen Drittanbieterdaten. Eventuell müssen Sie den KYC-Prozess ein weiteres Mal durchlaufen und/oder sich erneut anmelden, um auf die Services unserer Partner zugreifen zu können.",
       "hardReset" : "Ledger Live zurücksetzen",
       "hardResetDesc" : "Dies hat keine Auswirkung auf Ihre Vermögenswerte. Löscht alle Daten in Ledger Live, einschließlich Kontodaten, Transaktionsverläufe und Einstellungen. Verwenden Sie Ihr Ledger-Gerät, um Ihre Krypto-Vermögenswerte auf einem leeren Ledger Live neu zu laden und zu verwalten.",
       "repairDevice" : "Reparieren Sie Ihr Ledger-Gerät",
@@ -2263,7 +2294,46 @@
     "experimental" : {
       "title" : "Experimentelle Funktionen",
       "desc" : "Probieren Sie die experimentellen Funktionen aus und lassen Sie uns wissen, was Sie davon halten.",
-      "disclaimer" : "Dies sind experimentelle Funktionen, die auf einer „wie besehen“-Basis für unsere Gemeinschaft von Technik-Enthusiasten bereitgestellt werden. Sie können jederzeit geändert, abgebrochen oder entfernt werden. Dadurch, dass Sie sie aktivieren, erklären Sie sich damit einverstanden, sie auf eigenes Risiko zu nutzen."
+      "disclaimer" : "Dies sind experimentelle Funktionen, die auf einer „wie besehen“-Basis für unsere Gemeinschaft von Technik-Enthusiasten bereitgestellt werden. Sie können jederzeit geändert, abgebrochen oder entfernt werden. Dadurch, dass Sie sie aktivieren, erklären Sie sich damit einverstanden, sie auf eigenes Risiko zu nutzen.",
+      "experimentalFeatures" : {
+        "experimentalIntegrations" : {
+          "title" : "Experimentelle Integrationen",
+          "description" : "Verwenden Sie verfügbare experimentelle Integrationen für Krypto-Werte."
+        },
+        "developerMode" : {
+          "title" : "Entwicklermodus",
+          "description" : "Zeige Entwickler- und Testnet-Apps im Manager."
+        },
+        "managerProvider" : {
+          "title" : "Manager-Anbieter",
+          "description" : "Das Ändern des App-Anbieters im Manager kann es unmöglich machen, Apps auf Ihrem Ledger-Gerät zu installieren oder zu deinstallieren."
+        },
+        "experimentalExplorers" : {
+          "title" : "Experimentelle Explorer-API",
+          "description" : "Probieren Sie eine kommende Version von Ledgers Blockchain-Explorern aus. Das Ändern dieser Einstellung kann den Kontostand und die Synchronisation sowie die Sendefunktion beeinflussen."
+        },
+        "experimentalCountervalues" : {
+          "title" : "Experimentelle Gegenwerte API",
+          "description" : "Dies kann dazu führen, dass die für Ihre Konten angezeigten Gegenwerte nicht mehr stimmen."
+        },
+        "experimentalSwap" : {
+          "title" : "Neue SWAP-Schnittstelle",
+          "description" : "Verwenden Sie die neue experimentelle Swap-Schnittstelle"
+        }
+      },
+      "developerFeatures" : {
+        "experimentalApps" : {
+          "title" : "Experimentelle Apps erlauben",
+          "description" : "Anzeigen und Öffnen von Debug-getaggten Plattform-Apps erlauben."
+        },
+        "staggingUrl" : {
+          "title" : "Lernen Sie die Staging-URL",
+          "description" : "Verwenden Sie die Staging-URL für die Lern-Website."
+        },
+        "platformManifest" : {
+          "title" : "Plattform-Manifest laden"
+        }
+      }
     },
     "developer" : {
       "title" : "Entwickler",
@@ -2275,11 +2345,8 @@
     "debug" : {
       "featureFlagsTitle" : "In Ledger Live verwendete definierte Feature-Flags",
       "featureFlagsDesc" : "Überschriebene Werte werden zurückgesetzt, wenn die App neu gestartet wird. Es werden nur gültige JSON-Zeichenfolgen akzeptiert.",
-      "featureFlagsOverride" : "Überschreiben",
       "featureFlagsEdit" : "Bearbeiten",
-      "featureFlagsRestore" : "Wiederherstellen",
-      "featureFlagsDisplayValue" : "Wert anzeigen",
-      "featureFlagsHideValue" : "Wert ausblenden"
+      "featureFlagsRestore" : "Wiederherstellen"
     }
   },
   "notifications" : {
@@ -2639,19 +2706,79 @@
         }
       }
     },
-    "swapv2" : {
+    "swap2" : {
       "form" : {
-        "summary" : {
-          "from" : "Von",
-          "to" : "An",
-          "send" : "Senden",
-          "payoutNetworkFees" : "Auszahlungsgebühren",
-          "payoutNetworkFeesTooltip" : "Dieser Betrag wird nicht auf Ihrem Gerät angezeigt",
-          "receive" : "Betrag",
-          "receiveFloat" : "Zu erhaltender Betrag vor Servicegebühren",
-          "provider" : "Anbieter",
-          "method" : "Kurs",
-          "fees" : "Gebühren"
+        "ratesDrawer" : {
+          "title" : "Kurs",
+          "quote" : "Preis",
+          "receive" : "Empfangen"
+        },
+        "placeholder" : "Auswählen",
+        "title" : "Umtauschen",
+        "cta" : "Umtauschen",
+        "from" : "Von",
+        "to" : "An",
+        "loading" : "Lade Daten...",
+        "disclaimer" : {
+          "title" : "Allgemeine Geschäftsbedingungen",
+          "desc" : "Indem ich auf „Akzeptieren“ klicke, erkenne ich an und akzeptiere, dass für diesen Dienst ausschließlich die Allgemeinen Geschäftsbedingungen von {{providerName}} gelten.",
+          "tos" : "Allgemeine Geschäftsbedingungen",
+          "accept" : "Akzeptieren"
+        },
+        "notAvailable" : {
+          "title" : "Swap ist in Ihrem Land noch nicht verfügbar",
+          "content" : "Haben Sie noch etwas Geduld,<br/>wir werden diese Funktion sehr bald einführen"
+        },
+        "amount" : {
+          "useMax" : "Max. verwenden"
+        },
+        "details" : {
+          "label" : {
+            "provider" : "Anbieter",
+            "rate" : "Kurs",
+            "fees" : "Netzgebühren",
+            "target" : "Zielkonto"
+          },
+          "noAccount" : "Erstellen Sie ein Konto um {{name}} zu erhalten",
+          "noAccountCTA" : "Konto hinzufügen"
+        },
+        "select" : {
+          "from" : {
+            "title" : "Von"
+          },
+          "to" : {
+            "title" : "An"
+          }
+        },
+        "providers" : {
+          "kyc" : {
+            "title" : "KYC",
+            "required" : "Sie müssen Ihr KYC vervollständigen",
+            "complete" : "Vervollständigen Sie Ihr KYC",
+            "update" : "KYC aktualisieren",
+            "rejected" : "KYC abgelehnt, erneute Überprüfung starten",
+            "rejectedContactProviderSupport" : "KYC-Prüfung abgelehnt, bitte wenden Sie sich an den {{providerName}} Support",
+            "updateRequired" : "Vervollständigen oder aktualisieren Sie Ihr KYC",
+            "status" : {
+              "pending" : "KYC ausstehend",
+              "approved" : "KYC genehmigt",
+              "closed" : "KYC abgelehnt",
+              "upgradeRequired" : "KYC unzureichend"
+            }
+          },
+          "login" : {
+            "title" : "Anmeldename",
+            "required" : "Sie müssen sich bei diesem Anbieter anmelden",
+            "complete" : "Anmeldename"
+          },
+          "mfa" : {
+            "title" : "MFA",
+            "required" : "Sie müssen bei diesem Anbieter eine Multi-Faktor-Authentifizierung (MFA) einrichten",
+            "complete" : "MFA einrichten"
+          },
+          "withdrawalsBlockedError" : {
+            "message" : "Ihre Abhebung wurde von {{providerName}} blockiert.\n\n Bitte kontaktieren Sie den Support für weitere Informationen."
+          }
         }
       }
     },
@@ -3074,6 +3201,7 @@
     }
   },
   "addAccounts" : {
+    "addNew" : "Neu hinzufügen",
     "supportLinks" : {
       "segwit_or_native_segwit" : "Segwit oder Native Segwit?"
     },
@@ -3106,7 +3234,6 @@
     "retry" : "Wiederholen",
     "done" : "Fertig",
     "finalCta" : "Weiter",
-    "finalCtaForSwap" : "Zurück zu Swap",
     "synchronizing" : "Synchronisieren",
     "synchronizingDesc" : "Ihre Konten werden synchronisiert. Dies kann eine Weile dauern ...",
     "noAccountToCreate" : "<1><0>{{currencyName}}</></> Konto konnte nicht erstellt werden. Starten Sie den Prozess neu und synchronisieren Sie Ihre Konten.",
@@ -3183,7 +3310,17 @@
     "confirmSwap" : {
       "title" : "Swap-Vorgang auf dem Gerät bestätigen",
       "alert" : "Vor dem Senden der Fondsdetails müssen Sie diese auf Ihrem Gerät verifizieren. Die Adressen müssen Sie nicht verifizieren, da diese sicher ausgetauscht werden.",
-      "acceptTerms" : "Durch Validieren dieser Transaktion stimme ich den\n<0>Nutzungsbedingungen von <0>{{provider}}</0> zu</0>"
+      "acceptTerms" : "Durch Validieren dieser Transaktion stimme ich den\n<0>Nutzungsbedingungen von <0>{{provider}}</0> zu</0>",
+      "notice" : "Überprüfen Sie die Details des Tauschs auf Ihrem Gerät, bevor Sie sie senden. Die Adressen werden sicher ausgetauscht, sodass Sie diese nicht verifizieren müssen."
+    },
+    "swap2" : {
+      "notice" : "Überprüfen Sie die Details des Tauschs auf Ihrem Gerät, bevor Sie sie senden. Die Adressen werden sicher ausgetauscht, sodass Sie diese nicht verifizieren müssen.",
+      "amountSent" : "Zu sendender Betrag",
+      "amountReceived" : "Zu erhaltender Betrag",
+      "provider" : "Anbieter",
+      "fees" : "Netzgebühren",
+      "sourceAccount" : "Abbuchungskonto",
+      "targetAccount" : "Zielkonto"
     },
     "confirmSell" : {
       "title" : "Verkaufsvorgang auf Gerät bestätigen",
@@ -3357,6 +3494,7 @@
       "appsInstalled" : "<0>{{number}}</0>App",
       "appsInstalled_plural" : "<0>{{number}}</0>Apps",
       "storageAvailable" : "verfügbar",
+      "noFreeSpace" : "Kein Speicher mehr frei",
       "appsToUpdate" : "{{number}} App-Update",
       "appsToUpdate_plural" : "{{number}} App-Updates"
     },
@@ -3535,15 +3673,15 @@
     "no" : "Lieber nicht",
     "languages" : {
       "en" : "Englisch",
-      "fr" : "Français",
-      "ru" : "Русский",
-      "es" : "Español",
-      "zh" : "中国人",
+      "fr" : "Französisch",
+      "ru" : "Russisch",
+      "es" : "Spanisch",
+      "zh" : "Chinesisch",
       "de" : "Deutsch",
-      "tr" : "Türk",
-      "ja" : "日本",
-      "ko" : "한국인",
-      "pt" : "Português"
+      "tr" : "Türkisch",
+      "ja" : "Japanisch",
+      "ko" : "Koreanisch",
+      "pt" : "Portugiesisch"
     }
   },
   "deviceLocalization" : {
@@ -4753,6 +4891,12 @@
     },
     "currentAddress" : {
       "messageIfVirtual" : "Ihre {{name}}-Adresse kann auf Ihrem Ledger-Gerät nicht bestätigt werden. Nutzung auf eigenes Risiko."
+    }
+  },
+  "asset" : {
+    "title" : "Ihre {{assetName}}",
+    "accountsSection" : {
+      "title" : "Ihre {{currencyName}}-Konten"
     }
   },
   "customImage" : {
