@@ -14,7 +14,6 @@ const CompletionScreen = () => {
   const dispatch = useDispatch();
   const device = useSelector(getCurrentDevice);
 
-  const device = useSelector(getCurrentDevice);
   const handleInitPostOnboarding = useStartPostOnboardingCallback(device?.modelId, true);
 
   useEffect(() => {
