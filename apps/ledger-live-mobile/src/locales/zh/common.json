@@ -3,6 +3,7 @@
     "cancel" : "取消",
     "apply" : "应用",
     "seeAll" : "显示全部",
+    "seeAllWithNumber" : "查看全部 ({{number}})",
     "back" : "返回",
     "delete" : "删除",
     "paste" : "粘贴",
@@ -30,6 +31,7 @@
     "received" : "已接收",
     "sent" : "已发送",
     "or" : "或者",
+    "others" : "其他",
     "rename" : "重命名",
     "learnMore" : "了解更多",
     "checkItOut" : "一探究竟",
@@ -276,7 +278,7 @@
     },
     "EthAppNftNotSupported" : {
       "title" : "操作不可用于此设备",
-      "description" : "发送 NFT 功能仅可用于 Nano X。请访问我们的客服平台，以了解如何使用 Nano S 来发送 NFT。"
+      "description" : "仅 Nano X 提供发送 NFT 非同质化代币功能。请访问我们的客服平台，了解如何使用 Nano S 或 S Plus 发送 NFT。"
     },
     "Touch ID Error" : {
       "title" : "生物特征认证失败",
@@ -1631,7 +1633,7 @@
   },
   "tabs" : {
     "portfolio" : "钱包",
-    "accounts" : "Account（账户）",
+    "accounts" : "账户",
     "transfer" : "转移",
     "manager" : "我的 Ledger",
     "settings" : "设置",
@@ -1672,7 +1674,10 @@
         "addAccounts" : "添加资产",
         "title" : "开始",
         "description" : "您可以通过我们的合作伙伴购买加密货币或设置您的钱包"
-      }
+      },
+      "title" : "首先将您喜欢的资产添加到您的钱包",
+      "subtitle" : "Ledger 支持超过 6,000 种币和代币",
+      "addAccount" : "或添加账户"
     },
     "noOpState" : {
       "title" : "尚无操作？",
@@ -1684,20 +1689,27 @@
     "topGainers" : {
       "title" : "市场获利者（24 小时）",
       "seeMarket" : "显示全部"
+    },
+    "walletBalance" : "钱包余额",
+    "seelAllAssets" : "查看所有资产",
+    "marketPriceSection" : {
+      "title" : "{{currencyTicker}} 市场价格",
+      "currencyPrice" : "1 {{currencyTicker}} 价格",
+      "currencyPriceChange" : "最近 24 小时变化"
     }
   },
   "addAccountsModal" : {
+    "title" : "添加账户",
     "ctaAdd" : "添加账户",
     "ctaImport" : "导入桌面应用程序账户",
-    "title" : "添加加密",
-    "description" : "您可以选择直接用您的 Ledger 设备添加加密资产，或者从 Ledger Live 桌面版程序导入加密资产。",
+    "description" : "您可以选择直接使用您的 Ledger 添加加密货币，或从 Ledger Live 桌面版导入加密货币。",
     "add" : {
       "title" : "用您的 Ledger",
-      "description" : "用您的 Ledger 创建或导入资产"
+      "description" : "使用您的 Ledger 创建或导入资产"
     },
     "import" : {
       "title" : "从桌面程序导入",
-      "description" : "从 Ledger Live 桌面版程序导入资产"
+      "description" : "从 Ledger Live 桌面版导入资产"
     }
   },
   "byteSize" : {
@@ -1909,7 +1921,8 @@
       "buttons" : {
         "receiveFunds" : "接收",
         "buyCrypto" : "买入"
-      }
+      },
+      "addAccountCta" : "添加账户"
     },
     "settings" : {
       "header" : "账户设置",
@@ -2010,6 +2023,15 @@
         "subtitle" : "您需要有设备才能买入或接收 {{assetName}}"
       }
     },
+    "modals" : {
+      "zeroBalanceDisabledAction" : {
+        "title" : "您还没有 {{currencyTicker}}",
+        "start" : "购买或接收一些 {{currencyTicker}} 即可开始。",
+        "description" : "您需要一些 {{currencyTicker}} 来使用此账户{{actionName}}。"
+      }
+    },
+    "earn" : "赚取",
+    "quickActions" : "快速操作",
     "banner" : {
       "redelegation" : {
         "description" : "您知道吗？Ledger 验证器权益质押的佣金低于您目前使用的验证器。",
@@ -2022,7 +2044,8 @@
     }
   },
   "accounts" : {
-    "title" : "Account（账户）",
+    "title" : "账户",
+    "cryptoAccountsTitle" : "{{currencyTicker}} 账户",
     "importNotification" : {
       "message" : "账户导入成功！"
     },
@@ -2169,8 +2192,8 @@
       "placeholder" : "没有此资产的设置"
     },
     "accounts" : {
-      "header" : "Account（账户）",
-      "title" : "Account（账户）",
+      "header" : "账户",
+      "title" : "账户",
       "desc" : "管理应用程序中显示的资产。",
       "hideTokenCTA" : "隐藏代币",
       "showContractCTA" : "显示合约",
@@ -2263,7 +2286,46 @@
     "experimental" : {
       "title" : "实验性功能",
       "desc" : "尝试一下实验性功能，让我们知道您的想法。",
-      "disclaimer" : "这些是我们以“按现状”为基准提供的实验性功能，以供我们的专业爱好者社区测试。这些功能随时可能会更改、中断或删除。启用这些功能，意味着您同意自行承担使用过程中的风险。"
+      "disclaimer" : "这些是我们以“按现状”为基准提供的实验性功能，以供我们的专业爱好者社区测试。这些功能随时可能会更改、中断或删除。启用这些功能，意味着您同意自行承担使用过程中的风险。",
+      "experimentalFeatures" : {
+        "experimentalIntegrations" : {
+          "title" : "实验性集成",
+          "description" : "使用可用的实验性加密资产集成。"
+        },
+        "developerMode" : {
+          "title" : "开发者模式",
+          "description" : "在管理器中显示开发者和测试网应用程序。"
+        },
+        "managerProvider" : {
+          "title" : "管理器提供方",
+          "description" : "在管理器中更改应用程序提供方可能会导致无法在您的 Ledger 设备上安装或卸载应用程序。"
+        },
+        "experimentalExplorers" : {
+          "title" : "实验性浏览器 API 应用程序界面",
+          "description" : "试用即将面世的新版 Ledger 区块链浏览器。更改此设置可能会影响账户余额和同步以及发送功能。"
+        },
+        "experimentalCountervalues" : {
+          "title" : "实验性对价 API",
+          "description" : "这可能会导致您的账户对价显示错误。"
+        },
+        "experimentalSwap" : {
+          "title" : "新的互换界面",
+          "description" : "使用新的实验性互换界面"
+        }
+      },
+      "developerFeatures" : {
+        "experimentalApps" : {
+          "title" : "允许实验性应用程序",
+          "description" : "显示并允许打开实验性标记的平台应用程序。"
+        },
+        "staggingUrl" : {
+          "title" : "“学习”页面的模拟环境网址",
+          "description" : "使用“学习”页面的模拟环境网址。"
+        },
+        "platformManifest" : {
+          "title" : "加载平台清单"
+        }
+      }
     },
     "developer" : {
       "title" : "开发者",
@@ -2275,11 +2337,8 @@
     "debug" : {
       "featureFlagsTitle" : "Ledger Live 中使用的已定义功能标志",
       "featureFlagsDesc" : "如果重新启动应用程序，将重置覆盖的值。仅接受有效的 JSON 字符串。",
-      "featureFlagsOverride" : "覆盖",
       "featureFlagsEdit" : "编辑",
-      "featureFlagsRestore" : "重置",
-      "featureFlagsDisplayValue" : "显示值",
-      "featureFlagsHideValue" : "隐藏值"
+      "featureFlagsRestore" : "重置"
     }
   },
   "notifications" : {
@@ -3074,6 +3133,7 @@
     }
   },
   "addAccounts" : {
+    "addNew" : "添加新的",
     "supportLinks" : {
       "segwit_or_native_segwit" : "Segwit 或 Native Segwit 地址格式？"
     },
@@ -3357,6 +3417,7 @@
       "appsInstalled" : "<0>{{number}}</0> 个应用程序",
       "appsInstalled_plural" : "<0>{{number}}</0> 个应用程序",
       "storageAvailable" : "可用",
+      "noFreeSpace" : "存储空间不足",
       "appsToUpdate" : "<0>{{number}}</0> 个更新",
       "appsToUpdate_plural" : "<0>{{number}} </0>个更新"
     },
@@ -3538,10 +3599,10 @@
       "fr" : "Français",
       "ru" : "Русский",
       "es" : "Español",
-      "zh" : "中国人",
+      "zh" : "简体中文",
       "de" : "Deutsch",
       "tr" : "Türk",
-      "ja" : "日本",
+      "ja" : "日本語",
       "ko" : "한국인",
       "pt" : "Português"
     }
@@ -4753,6 +4814,12 @@
     },
     "currentAddress" : {
       "messageIfVirtual" : "无法在 Ledger 设备上确认您的 {{name}} 地址。使用需自担风险。"
+    }
+  },
+  "asset" : {
+    "title" : "您的 {{assetName}}",
+    "accountsSection" : {
+      "title" : "您的 {{currencyName}} 账户"
     }
   },
   "customImage" : {
