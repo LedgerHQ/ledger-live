@@ -32,7 +32,9 @@ const ignoreErrors = [
   "ENETUNREACH",
   "ENOSPC",
   "ENOTFOUND",
+  "EPERM",
   "ERR_CONNECTION_RESET",
+  "ERR_PROXY_CONNECTION_FAILED",
   "ERR_INTERNET_DISCONNECTED",
   "ERR_NETWORK_CHANGED",
   "ETIMEDOUT",
@@ -46,10 +48,13 @@ const ignoreErrors = [
   "socket hang up",
   "ERR_SSL_PROTOCOL_ERROR",
   "status code 404",
+  "unable to get local issuer certificate",
   // API issues
   "LedgerAPI4xx",
   "LedgerAPI5xx",
   "<!DOCTYPE html",
+  "Unexpected ''",
+  "Unexpected '<'",
   // timeouts
   "ERR_CONNECTION_TIMED_OUT",
   "request timed out",
@@ -74,6 +79,7 @@ const ignoreErrors = [
   "Ledger Device is busy",
   "ManagerDeviceLocked",
   "PairingFailed",
+  "Ledger device: UNKNOWN_ERROR",
   // other
   "AccountAwaitingSendPendingOperations",
   "AccountNeedResync",
@@ -84,8 +90,12 @@ const ignoreErrors = [
   "SwapNoAvailableProviders",
   "TransactionRefusedOnDevice",
   "Please reimport your Tezos accounts",
-  "failed to find a healthy working node", // LIVE-3506 workaround
   "Transaction simulation failed", // LIVE-3506
+  // LIVE-3506 workaround, solana throws tons of cryptic errors
+  "failed to find a healthy working node",
+  "was reached for request with last error",
+  "530 undefined",
+  "524 undefined",
 ];
 
 export function init(Sentry: any, opts: any) {

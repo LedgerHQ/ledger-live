@@ -64,18 +64,25 @@ const excludedErrorName = [
   "AccountNeedResync",
   "DeviceAppVerifyNotSupported",
   "AccountAwaitingSendPendingOperations",
+  // API issues
+  "LedgerAPI4xx",
+  "LedgerAPI5xx",
 ];
 const excludedErrorDescription = [
   // networking
   /timeout of .* exceeded/,
+  "timeout exceeded",
   "Network Error",
   "Network request failed",
   "INVALID_STATE_ERR",
   "API HTTP",
+  "Unexpected ''",
+  "Unexpected '<'",
   // base usage of device
   /Device .* was disconnected/,
   "Invalid channel",
   /Ledger Device is busy/,
+  "Ledger device: UNKNOWN_ERROR",
   // others
   "Transaction signing request was rejected by the user",
   "Transaction approval request was rejected",
