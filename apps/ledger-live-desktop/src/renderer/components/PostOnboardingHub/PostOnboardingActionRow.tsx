@@ -32,8 +32,8 @@ const PostOnboardingActionRow: React.FC<Props> = props => {
       flexDirection="row"
       alignItems="center"
       backgroundColor="neutral.c30"
-      borderRadius="8px"
-      marginBottom="10px"
+      borderRadius={3}
+      marginBottom={4}
       padding="32px 24px 32px 24px"
     >
       <Flex flexDirection="row" alignItems="center" flexShrink={1}>
