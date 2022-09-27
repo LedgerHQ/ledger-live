@@ -392,6 +392,12 @@
       "title" : "抱歉，此应用程序是必需的",
       "description" : "最后卸载比特币或以太坊应用程序。"
     },
+    "MaxBaseFeeHigh" : {
+      "title" : "您的最高基本费用估计过高。如果适用，网络将向您退款"
+    },
+    "MaxBaseFeeLow" : {
+      "title" : "最高基本费用太低。您的交易可能会等待一段时间"
+    },
     "NetworkDown" : {
       "title" : "抱歉，网络连接似乎已断开",
       "description" : "请检查您的网络连接。"
@@ -434,6 +440,12 @@
     "PasswordsDontMatch" : {
       "title" : "密码不匹配",
       "description" : "请再次尝试。"
+    },
+    "PriorityFeeTooHigh" : {
+      "title" : "优先费用高于必要费用。您可能多付了费用"
+    },
+    "PriorityFeeTooLow" : {
+      "title" : "优先费用低于推荐值"
     },
     "SelectExchangesLoadError" : {
       "title" : "无法加载",
@@ -1629,7 +1641,7 @@
   },
   "tabs" : {
     "portfolio" : "钱包",
-    "accounts" : "Account（账户）",
+    "accounts" : "账户",
     "transfer" : "转移",
     "manager" : "我的 Ledger",
     "settings" : "设置",
@@ -2020,7 +2032,7 @@
     }
   },
   "accounts" : {
-    "title" : "Account（账户）",
+    "title" : "账户",
     "importNotification" : {
       "message" : "账户导入成功！"
     },
@@ -2167,8 +2179,8 @@
       "placeholder" : "没有此资产的设置"
     },
     "accounts" : {
-      "header" : "Account（账户）",
-      "title" : "Account（账户）",
+      "header" : "账户",
+      "title" : "账户",
       "desc" : "管理应用程序中显示的资产。",
       "hideTokenCTA" : "隐藏代币",
       "showContractCTA" : "显示合约",
@@ -2273,11 +2285,8 @@
     "debug" : {
       "featureFlagsTitle" : "Ledger Live 中使用的已定义功能标志",
       "featureFlagsDesc" : "如果重新启动应用程序，将重置覆盖的值。仅接受有效的 JSON 字符串。",
-      "featureFlagsOverride" : "覆盖",
       "featureFlagsEdit" : "编辑",
-      "featureFlagsRestore" : "重置",
-      "featureFlagsDisplayValue" : "显示值",
-      "featureFlagsHideValue" : "隐藏值"
+      "featureFlagsRestore" : "重置"
     }
   },
   "notifications" : {
@@ -2906,9 +2915,14 @@
       "infoTotalDesc" : "包含交易数额以及所选的网络费用",
       "gasLimit" : "Gas 限值",
       "gasPrice" : "Gas 价格",
+      "maxBaseFee" : "最高基本费用",
+      "priorityFee" : "优先费用",
+      "nextBlock" : "下一个区块：{{nextBaseFee}}",
+      "suggestedPriorityFee" : "建议：{{lowPriorityFee}} - {{highPriorityFee}}",
       "maxFees" : "最大费用",
       "validateGasLimit" : "验证 gas 限值",
       "fees" : "费用",
+      "maxEstimatedFee" : "最高预估费用",
       "validateFees" : "验证费用",
       "customizeFees" : "自定义费用",
       "memo" : {
@@ -3536,10 +3550,10 @@
       "fr" : "Français",
       "ru" : "Русский",
       "es" : "Español",
-      "zh" : "中国人",
+      "zh" : "简体中文",
       "de" : "Deutsch",
       "tr" : "Türk",
-      "ja" : "日本",
+      "ja" : "日本語",
       "ko" : "한국인",
       "pt" : "Português"
     }
