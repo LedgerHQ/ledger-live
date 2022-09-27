@@ -22,7 +22,7 @@ const PostOnboardingHubContent = () => {
   const isInsidePostOnboardingScreen = history.location.pathname === "/post-onboarding";
 
   return (
-    <Flex flexDirection="column" justifyContent="center" height="100%" padding={7}>
+    <Flex flexDirection="column" justifyContent="center" height="100%" width="100%" maxWidth={450}>
       {!isInsidePostOnboardingScreen && (
         <Text variant="paragraph" fontSize={48} mb={8}>
           {actionCompletedHubTitle || "Nice one.You're all set."}
