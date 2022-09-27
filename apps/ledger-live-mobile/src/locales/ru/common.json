@@ -392,6 +392,12 @@
       "title" : "Это приложение является обязательным",
       "description" : "Удаляйте приложения Биткойна и Эфириума в последнюю очередь."
     },
+    "MaxBaseFeeHigh" : {
+      "title" : "Макс. базовая комиссия завышена. В случае необходимости сеть вернёт вам средства"
+    },
+    "MaxBaseFeeLow" : {
+      "title" : "Макс. базовая комиссия слишком мала. Подтверждение транзакции может занять длительное время"
+    },
     "NetworkDown" : {
       "title" : "Похоже, не работает Интернет",
       "description" : "Пожалуйста, проверьте подключение к Интернету."
@@ -434,6 +440,12 @@
     "PasswordsDontMatch" : {
       "title" : "Пароли не совпадают",
       "description" : "Пожалуйста, попробуйте ещё раз."
+    },
+    "PriorityFeeTooHigh" : {
+      "title" : "Комиссия за приоритет выше необходимой. Вы можете переплатить"
+    },
+    "PriorityFeeTooLow" : {
+      "title" : "Комиссия за приоритет ниже рекомендованной"
     },
     "SelectExchangesLoadError" : {
       "title" : "Ошибка при загрузке",
@@ -2273,11 +2285,8 @@
     "debug" : {
       "featureFlagsTitle" : "Определённые фича-флаги (feature flags), используемые в Ledger Live",
       "featureFlagsDesc" : "Переписанные значения будут сброшены в случае перезапуска приложения. Принимаются лишь валидные строки JSON.",
-      "featureFlagsOverride" : "Переписать",
       "featureFlagsEdit" : "Редактировать",
-      "featureFlagsRestore" : "Восстановить",
-      "featureFlagsDisplayValue" : "Показать значение",
-      "featureFlagsHideValue" : "Скрыть значение"
+      "featureFlagsRestore" : "Восстановить"
     }
   },
   "notifications" : {
@@ -2906,9 +2915,14 @@
       "infoTotalDesc" : "Включает сумму транзакции и комиссию выбранной сети",
       "gasLimit" : "Лимит Газа",
       "gasPrice" : "Цена Газа",
+      "maxBaseFee" : "Макс. базовая комиссия",
+      "priorityFee" : "Комиссия за приоритет",
+      "nextBlock" : "Следующий блок: {{nextBaseFee}}",
+      "suggestedPriorityFee" : "Рекомендовано: {{lowPriorityFee}} - {{highPriorityFee}}",
       "maxFees" : "Макс. комиссия",
       "validateGasLimit" : "Подтвердить лимит Газа",
       "fees" : "Комиссия",
+      "maxEstimatedFee" : "Макс. ориентировочная комиссия",
       "validateFees" : "Подтвердить комиссию",
       "customizeFees" : "Указать комиссию",
       "memo" : {
@@ -3536,9 +3550,9 @@
       "fr" : "Français",
       "ru" : "Русский",
       "es" : "Español",
-      "zh" : "中国人",
+      "zh" : "简体中文",
       "de" : "Deutsch",
-      "tr" : "Türk",
+      "tr" : "Türkçe",
       "ja" : "日本",
       "ko" : "한국인",
       "pt" : "Português"
