@@ -1,6 +1,6 @@
 import { storiesOf } from "../../storiesOf";
 import React from "react";
-import { Box } from "../../../../lib";
+import Box from "../../../../src/components/Layout/Box";
 import QuickActionList from "../../../../src/components/cta/QuickAction/QuickActionList";
 import { QuickActionButtonProps } from "../../../../src/components/cta/QuickAction/QuickActionButton";
 import {
