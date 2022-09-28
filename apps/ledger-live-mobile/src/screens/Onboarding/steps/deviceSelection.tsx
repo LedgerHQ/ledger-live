@@ -2,7 +2,7 @@ import React, { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { useTheme } from "styled-components/native";
 import { StackActions, useNavigation } from "@react-navigation/native";
-import { getDeviceModel } from "@ledgerhq/devices/lib/";
+import { getDeviceModel } from "@ledgerhq/devices/index";
 import { Flex, ScrollListContainer, Text } from "@ledgerhq/native-ui";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { TouchableOpacity } from "react-native-gesture-handler";
@@ -45,7 +45,7 @@ function OnboardingStepDeviceSelection() {
   };
 
   const handleHelp = () => {
-    // TOOD
+    // TODO
   };
 
   const next = (deviceModelId: string) => {
@@ -60,6 +60,7 @@ function OnboardingStepDeviceSelection() {
           areKnownDevicesDisplayed: false,
           onSuccessAddToKnownDevices: false,
           onSuccessNavigateToConfig: {
+            navigationType: "push",
             navigateInput: {
               name: NavigatorName.BaseOnboarding,
               params: {

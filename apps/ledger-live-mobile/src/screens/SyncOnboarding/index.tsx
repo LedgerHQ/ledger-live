@@ -204,6 +204,7 @@ export const SyncOnboarding = ({
         areKnownDevicesDisplayed: false,
         onSuccessAddToKnownDevices: false,
         onSuccessNavigateToConfig: {
+          navigationType: "navigate",
           navigateInput: {
             name: NavigatorName.BaseOnboarding,
             params: {
