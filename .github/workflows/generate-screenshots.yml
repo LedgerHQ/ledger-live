@@ -38,6 +38,7 @@ jobs:
           issue-number: ${{ github.event.inputs.number }}
           body: |
             <!-- generate-screenshots-report:${{ github.run_id }} -->
+            @${{ github.event.inputs.login }}
             [Generating screenshots: workflow started](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
 
   test-failing-job:
@@ -75,6 +76,7 @@ jobs:
         uses: peter-evans/create-or-update-comment@v2.0.0
         with:
           comment-id: ${{ steps.find-comment.outputs.comment-id }}
+          edit-mode: replace
           body: |
             <!-- generate-screenshots-report:${{ github.run_id }} -->
             @${{ github.event.inputs.login }}
