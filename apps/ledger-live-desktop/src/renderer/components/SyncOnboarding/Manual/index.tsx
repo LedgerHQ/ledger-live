@@ -186,7 +186,10 @@ const SyncOnboardingManual = () => {
   }, [device]);
 
   useEffect(() => {
-    if (deviceOnboardingState?.isOnboarded) {
+    if (
+      deviceOnboardingState?.isOnboarded &&
+      deviceOnboardingState?.currentOnboardingStep === DeviceOnboardingStep.Ready
+    ) {
       setStepKey(StepKey.SoftwareCheck);
       return;
     }
