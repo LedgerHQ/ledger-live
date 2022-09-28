@@ -26,10 +26,10 @@ export type BleDevicePairingFlowParams = {
   filterByDeviceModelId?: DeviceModelId;
   areKnownDevicesDisplayed?: boolean;
   onSuccessAddToKnownDevices?: boolean;
-  navigationType?: NavigationType;
   onSuccessNavigateToConfig: {
     navigateInput: NavigateInput;
     pathToDeviceParam: PathToDeviceParam;
+    navigationType?: NavigationType;
   };
 };
 
@@ -45,8 +45,6 @@ export type BleDevicePairingFlowProps = StackScreenProps<
  * - filterByDeviceModelId: (optional, default to none) a device model id to filter on
  * - areKnownDevicesDisplayed: boolean, display the already known device if true,
  *   filter out them if false (default to true)
- * - navigationType: (optional, default to "navigate") when navigating after a successful pairing,
- *   choose between a "replace" or a "navigate"
  * - onSuccessNavigateToConfig: object containing navigation config parameters when successful pairing:
  *   - navigateInput: navigation object given as input to navigation.navigate. 2 mandatory props:
  *     - name: navigator name or screen name if no need to specify a navigator
@@ -64,6 +62,8 @@ export type BleDevicePairingFlowProps = StackScreenProps<
  *      }
  *   - pathToDeviceParam: path to device property that is nested into navigateInput
  *     From the ex of navigateInput, it would be: "params.params.pairedDevice"
+ *   - navigationType: (optional, default to "navigate") when navigating after a successful pairing,
+ *     choose between a "replace" or a "navigate"
  * - onSuccessAddToKnownDevices: boolean, if true the successfully paired device is added to the redux
  *   list of known devices. Not added if false (default to false).
  * @returns a JSX component
@@ -78,8 +78,11 @@ export const BleDevicePairingFlow = ({
     filterByDeviceModelId,
     areKnownDevicesDisplayed = true,
     onSuccessAddToKnownDevices = false,
-    navigationType = "navigate",
-    onSuccessNavigateToConfig: { navigateInput, pathToDeviceParam },
+    onSuccessNavigateToConfig: {
+      navigateInput,
+      pathToDeviceParam,
+      navigationType = "navigate",
+    },
   } = route.params;
   const [deviceToPair, setDeviceToPair] = useState<Device | null>(null);
 
