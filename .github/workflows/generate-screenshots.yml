@@ -150,16 +150,10 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           JOBS_STATUS=$(gh run view -R ${{ github.repository }} ${{ github.run_id }} | grep "(ID " | grep "generate-screenshots")
-          successful=$(echo $JOBS_STATUS | grep ✓)
-          unsuccessful=$(echo $JOBS_STATUS | grep --invert-match ✓)
-          successful="${successful//'%'/'%25'}"
-          successful="${successful//$'\n'/'%0A'}"
-          successful="${successful//$'\r'/'%0D'}"
-          unsuccessful="${unsuccessful//'%'/'%25'}"
-          unsuccessful="${unsuccessful//$'\n'/'%0A'}"
-          unsuccessful="${unsuccessful//$'\r'/'%0D'}"
-          echo "::set-output name=SUCCESSFUL::$successful"
-          echo "::set-output name=UNSUCCESSFUL::$unsuccessful"
+          JOBS_STATUS="${JOBS_STATUS//'%'/'%25'}"
+          JOBS_STATUS="${JOBS_STATUS//$'\n'/'%0A'}"
+          JOBS_STATUS="${JOBS_STATUS//$'\r'/'%0D'}"
+          echo "::set-output name=JOBS_STATUS::$JOBS_STATUS"
       - name: Find existing comment
         uses: peter-evans/find-comment@v2
         id: find-comment
@@ -176,11 +170,7 @@ jobs:
             <!-- generate-screenshots-report:${{ github.run_id }} -->
             @${{ github.event.inputs.login }}
             [Generating screenshots: workflow ended:](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
-            **Successful jobs:**
+            **Jobs status:**
             ```
-            ${{ steps.jobs_status.outputs.SUCCESSFUL }}
-            ```
-            **Unsuccessful jobs:**
-            ```
-            ${{ steps.jobs_status.outputs.UNSUCCESSFUL }}
+            ${{ steps.jobs_status.outputs.JOBS_STATUS }}
             ```
