@@ -54,6 +54,8 @@ jobs:
     steps:
       - name: get jobs status
         id: jobs_status
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           echo "::set-output name=JOBS_STATUS::$(gh run view ${{ github.run_id }} | grep "(ID ")"
       - name: Create or Update Comment
