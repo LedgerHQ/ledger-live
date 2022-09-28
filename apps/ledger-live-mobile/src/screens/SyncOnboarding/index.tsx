@@ -27,14 +27,14 @@ import { TouchableOpacity } from "react-native-gesture-handler";
 import { CompositeScreenProps } from "@react-navigation/native";
 import { addKnownDevice } from "../../actions/ble";
 import { NavigatorName, ScreenName } from "../../const";
+import type { BaseNavigatorStackParamList } from "../../components/RootNavigator/BaseNavigator";
+import type { SyncOnboardingStackParamList } from "../../components/RootNavigator/SyncOnboardingNavigator";
 import Question from "../../icons/Question";
 import HelpDrawer from "./HelpDrawer";
 import DesyncDrawer from "./DesyncDrawer";
 import ResyncOverlay from "./ResyncOverlay";
 import LanguageSelect from "./LanguageSelect";
 import SoftwareChecksStep from "./SoftwareChecksStep";
-import type { BaseNavigatorStackParamList } from "../../components/RootNavigator/BaseNavigator";
-import { SyncOnboardingCompanionParams } from "./types";
 
 type StepStatus = "completed" | "active" | "inactive";
 
@@ -47,7 +47,7 @@ type Step = {
 };
 
 export type SyncOnboardingCompanionProps = CompositeScreenProps<
-  StackScreenProps<SyncOnboardingCompanionParams>,
+  StackScreenProps<SyncOnboardingStackParamList, "SyncOnboardingCompanion">,
   StackScreenProps<BaseNavigatorStackParamList>
 >;
 
