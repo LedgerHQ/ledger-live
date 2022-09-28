@@ -2,7 +2,7 @@ import BigNumber from "bignumber.js";
 import { Account, Operation } from "@ledgerhq/types-live";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { findCryptoCurrencyById } from "@ledgerhq/cryptoassets";
-import { GetAccountShapeArg0 } from "../../../bridge/jsHelpers";
+import { AccountShapeInfos } from "../../../bridge/jsHelpers";
 import * as synchronization from "../synchronization";
 import { decodeAccountId } from "../../../account";
 import * as etherscanAPI from "../api/etherscan";
@@ -20,7 +20,7 @@ const currency: CryptoCurrency = {
     },
   },
 };
-const getAccountShapeParameters: GetAccountShapeArg0 = {
+const getAccountShapeParameters: AccountShapeInfos = {
   address: "0xkvn",
   currency,
   derivationMode: "",
