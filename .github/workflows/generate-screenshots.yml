@@ -150,11 +150,23 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           JOBS_STATUS=$(gh run view -R ${{ github.repository }} ${{ github.run_id }} | grep "(ID " | grep "generate-screenshots")
+          touch body.txt
+          echo "**Successful:**\n" >> body.txt
+          echo "\`\`\`\n" >> body.txt
+          echo $JOBS_STATUS | grep ✓ >> body.txt
+          echo "\`\`\`\n" >> body.txt
+          echo "**Failures:**\n" >> body.txt
+          echo "\`\`\`" >> body.txt
+          echo $JOBS_STATUS | grep --invert-match ✓ >> body.txt
+          echo "\`\`\`\n" >> body.txt
+          BODY=$(cat body.txt)
+          rm body.txt
+          
           # below, a trick to fit multiple lines in an output https://github.com/peter-evans/create-or-update-comment#setting-the-comment-body-from-a-file: 
-          JOBS_STATUS="${JOBS_STATUS//'%'/'%25'}"
-          JOBS_STATUS="${JOBS_STATUS//$'\n'/'%0A'}"
-          JOBS_STATUS="${JOBS_STATUS//$'\r'/'%0D'}"
-          echo "::set-output name=JOBS_STATUS::$JOBS_STATUS"
+          BODY="${BODY//'%'/'%25'}"
+          BODY="${BODY//$'\n'/'%0A'}"
+          BODY="${BODY//$'\r'/'%0D'}"
+          echo "::set-output name=BODY::$BODY"
       - name: Find existing comment
         uses: peter-evans/find-comment@v2
         id: find-comment
@@ -172,6 +184,4 @@ jobs:
             @${{ github.event.inputs.login }}
             [Generating screenshots: workflow ended:](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
 
-            ```
-            ${{ steps.jobs_status.outputs.JOBS_STATUS }}
-            ```
+            ${{ steps.jobs_status.outputs.BODY }}
