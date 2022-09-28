@@ -57,11 +57,11 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          echo "::set-output name=JOBS_STATUS::$(gh run view ${{ github.run_id }} | grep "(ID ")"
+          echo "::set-output name=JOBS_STATUS::$(gh run view -R ${{ github.repository }} ${{ github.run_id }} | grep "(ID ")"
       - name: Create or Update Comment
         uses: peter-evans/create-or-update-comment@v2.0.0
         with:
-          issue-number: ${{ github.event.inputs.number }}
+          issue-number: ${{ github.event.inputs.number }} ${{github.repository}}
           body: |
             Generating screenshots: worflow ended:
             ${{ steps.jobs_status.outputs.JOBS_STATUS }}
