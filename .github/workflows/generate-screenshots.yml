@@ -62,7 +62,7 @@ jobs:
           JOBS_STATUS="${JOBS_STATUS//'%'/'%25'}"
           JOBS_STATUS="${JOBS_STATUS//$'\n'/'%0A'}"
           JOBS_STATUS="${JOBS_STATUS//$'\r'/'%0D'}"
-          echo "::set-env name=JOBS_STATUS::$JOBS_STATUS"
+          echo "::set-output name=JOBS_STATUS::$JOBS_STATUS"
       - name: Create or Update Comment
         uses: peter-evans/create-or-update-comment@v2.0.0
         with:
@@ -70,7 +70,7 @@ jobs:
           body: |
             @${{ github.event.inputs.login }}
             [Generating screenshots: workflow ended:](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
-            ${{ env.JOBS_STATUS }}
+            ${{ steps.jobs_status.outputs.JOBS_STATUS }}
 
   generate-screenshots:
     needs: [is-org-member]
