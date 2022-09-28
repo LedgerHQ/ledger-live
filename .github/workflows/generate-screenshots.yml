@@ -52,12 +52,17 @@ jobs:
     name: Create comment "worflow ended"
     runs-on: "ubuntu-latest"
     steps:
+      - name: get jobs status
+        id: jobs_status
+        run: |
+          echo "::set-output name=JOBS_STATUS::$(gh run view ${{ github.run_id }} | grep "(ID ")"
       - name: Create or Update Comment
         uses: peter-evans/create-or-update-comment@v2.0.0
         with:
           issue-number: ${{ github.event.inputs.number }}
           body: |
-            Generating screenshots: worflow ended: ${{ jobs.test-failing-job.result }}
+            Generating screenshots: worflow ended:
+            ${{ steps.jobs_status.outputs.JOBS_STATUS }}
 
   generate-screenshots:
     needs: [is-org-member]
