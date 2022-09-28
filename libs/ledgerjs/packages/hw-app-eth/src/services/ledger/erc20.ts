@@ -1,18 +1,43 @@
 import blob from "@ledgerhq/cryptoassets/data/erc20-signatures";
+import { log } from "@ledgerhq/logs";
+import axios from "axios";
+import { LoadConfig } from "../types";
+import { getLoadConfig } from "./loadConfig";
+
+export const getERC20SignaturesInfo = async (
+  userLoadConfig: LoadConfig
+): Promise<string | undefined> => {
+  const { erc20SignaturesBaseURL } = getLoadConfig(userLoadConfig);
+  if (!erc20SignaturesBaseURL) return;
+  const url = `${erc20SignaturesBaseURL}/cryptoassets/erc20-signatures.json`;
+  const response = await axios.get<string>(url).catch((e) => {
+    log("error", "could not fetch from " + url + ": " + String(e));
+    return null;
+  });
+  if (!response) return;
+  return response.data;
+};
 
 /**
  * Retrieve the token information by a given contract address if any
  */
 export const byContractAddressAndChainId = (
   contract: string,
-  chainId: number
-): TokenInfo | null | undefined =>
-  get().byContractAndChainId(asContractAddress(contract), chainId);
+  chainId: number,
+  erc20SignaturesBlob?: string
+): TokenInfo | null | undefined => {
+  return get(erc20SignaturesBlob).byContractAndChainId(
+    asContractAddress(contract),
+    chainId
+  );
+};
 
 /**
  * list all the ERC20 tokens informations
  */
-export const list = (): TokenInfo[] => get().list();
+export const list = (erc20SignaturesBlob?: string): TokenInfo[] =>
+  get(erc20SignaturesBlob).list();
+
 export type TokenInfo = {
   contractAddress: string;
   ticker: string;
@@ -35,11 +60,11 @@ const asContractAddress = (addr: string) => {
 };
 
 // this internal get() will lazy load and cache the data from the erc20 data blob
-const get: () => API = (() => {
+const get: (erc20SignaturesBlob?: string) => API = (() => {
   let cache;
-  return () => {
+  return (erc20SignaturesBlob) => {
     if (cache) return cache;
-    const buf = Buffer.from(blob, "base64");
+    const buf = Buffer.from(erc20SignaturesBlob ?? blob, "base64");
     const map = {};
     const entries: TokenInfo[] = [];
     let i = 0;

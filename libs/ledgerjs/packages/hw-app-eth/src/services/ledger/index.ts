@@ -7,7 +7,7 @@ import {
   LedgerEthTransactionService,
 } from "../types";
 import { loadInfosForContractMethod } from "./contracts";
-import { byContractAddressAndChainId } from "./erc20";
+import { byContractAddressAndChainId, getERC20SignaturesInfo } from "./erc20";
 import { getNFTInfo, loadNftPlugin } from "./nfts";
 import { decodeTxInfo } from "../../utils";
 
@@ -50,9 +50,12 @@ const ledgerService: LedgerEthTransactionService = {
         );
         provideNFTInformation(nftInfo.data);
       } else {
+        const erc20SignaturesBlob = await getERC20SignaturesInfo(loadConfig);
+
         const erc20Info = byContractAddressAndChainId(
           address,
-          chainIdTruncated
+          chainIdTruncated,
+          erc20SignaturesBlob
         );
         if (erc20Info) {
           log(
