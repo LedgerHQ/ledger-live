@@ -27,9 +27,8 @@ jobs:
     secrets:
       token: ${{ secrets.COMMON_READ_ORG }}
 
-  comment-pr-workflow-started:
-    needs: [is-org-member]
-    name: Create comment "worflow started"
+  report-started:
+    name: Report worflow started
     runs-on: "ubuntu-latest"
     steps:
       - name: Create or Update Comment
@@ -42,7 +41,7 @@ jobs:
             [Generating screenshots: workflow started](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
 
   # test-failing-job:
-  #   needs: [comment-pr-workflow-started]
+  #   needs: [report-started]
   #   runs-on: "ubuntu-latest"
   #   steps:
   #     - name: failing job
@@ -139,10 +138,10 @@ jobs:
           os: "macos-latest"
           turbo-server-port: ${{ steps.turborepo-cache-server.outputs.port }}
 
-  comment-pr-workflow-ended:
+  report-ended:
     needs: ["generate-screenshots", "generate-screenshots-mac-internal"]
     if: always()
-    name: Create comment "worflow ended"
+    name: Report ended
     runs-on: "ubuntu-latest"
     steps:
       - name: get jobs status
@@ -151,7 +150,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           JOBS_STATUS=$(gh run view -R ${{ github.repository }} ${{ github.run_id }} | grep "(ID " | grep "generate-screenshots")
-          # below, a trick to make it a 1 liner: https://github.com/orgs/community/discussions/26288#discussioncomment-3251222
+          # below, a trick to fit multiple lines in an output https://github.com/peter-evans/create-or-update-comment#setting-the-comment-body-from-a-file: 
           JOBS_STATUS="${JOBS_STATUS//'%'/'%25'}"
           JOBS_STATUS="${JOBS_STATUS//$'\n'/'%0A'}"
           JOBS_STATUS="${JOBS_STATUS//$'\r'/'%0D'}"
