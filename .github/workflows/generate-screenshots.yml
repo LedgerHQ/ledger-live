@@ -28,6 +28,7 @@ jobs:
       token: ${{ secrets.COMMON_READ_ORG }}
       
   comment-pr-workflow-started:
+    needs: [is-org-member]
     name: Create comment "worflow started"
     runs-on: "ubuntu-latest"
     steps:
@@ -39,6 +40,7 @@ jobs:
             [Generating screenshots: worflow started](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
 
   test-failing-job:
+    needs: [comment-pr-workflow-started]
     runs-on: "ubuntu-latest"
     steps:
       - name: failing job
