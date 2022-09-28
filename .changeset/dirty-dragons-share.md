@@ -1,5 +1,0 @@
----
-"ledger-live-desktop": patch
----
-
-Error message when trying to send a NFT from LNS is wrong

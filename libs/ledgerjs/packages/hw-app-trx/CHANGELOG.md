@@ -1,5 +1,13 @@
 # @ledgerhq/hw-app-trx
 
+## 6.27.5
+
+### Patch Changes
+
+- Updated dependencies [[`1a94cbf28a`](https://github.com/LedgerHQ/ledger-live/commit/1a94cbf28aaa2917c70719e22f446148cd66cef6)]:
+  - @ledgerhq/errors@6.11.0
+  - @ledgerhq/hw-transport@6.27.5
+
 ## 6.27.5-next.0
 
 ### Patch Changes
