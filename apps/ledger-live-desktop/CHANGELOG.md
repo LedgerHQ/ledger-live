@@ -1,5 +1,11 @@
 # ledger-live-desktop
 
+## 2.48.0-nightly.11
+
+### Minor Changes
+
+- [#1362](https://github.com/LedgerHQ/ledger-live/pull/1362) [`bfeb4499cb`](https://github.com/LedgerHQ/ledger-live/commit/bfeb4499cb003b36da1cc757e9a9f84633204653) Thanks [@chabroA](https://github.com/chabroA)! - Use walletConnectLiveApp feature flag in LLD
+
 ## 2.48.0-nightly.10
 
 ### Patch Changes
