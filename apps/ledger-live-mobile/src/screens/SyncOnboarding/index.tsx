@@ -292,7 +292,11 @@ export const SyncOnboarding = ({
   }, [isDesyncDrawerOpen]);
 
   useEffect(() => {
-    if (deviceOnboardingState?.isOnboarded) {
+    if (
+      deviceOnboardingState?.isOnboarded &&
+      deviceOnboardingState?.currentOnboardingStep ===
+        DeviceOnboardingStep.Ready
+    ) {
       setCompanionStepKey(CompanionStepKey.SoftwareCheck);
       return;
     }
