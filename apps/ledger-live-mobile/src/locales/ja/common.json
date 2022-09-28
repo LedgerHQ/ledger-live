@@ -19,6 +19,7 @@
     "device" : "デバイス",
     "cryptoAsset" : "暗号資産",
     "skip" : "スキップ",
+    "next" : "次へ",
     "noCryptoFound" : "暗号資産が見つかりません",
     "needHelp" : "ヘルプが必要ですか？",
     "edit" : "編集",
@@ -686,6 +687,38 @@
     },
     "StellarSourceHasMultiSign" : {
       "title" : "Stellarトランザクションを行うには、マルチシグを無効にしてください"
+    },
+    "ImageLoadFromGalleryError" : {
+      "title" : "ギャラリーからの画像の読み込みに失敗しました",
+      "description" : "別の画像でもう一度お試しください"
+    },
+    "ImageDownloadError" : {
+      "title" : "画像のダウンロードに失敗しました",
+      "description" : "別の画像でもう一度お試しください"
+    },
+    "ImageMetadataLoadingError" : {
+      "title" : "画像メタデータの読み込みに失敗しました",
+      "description" : "別の画像でもう一度お試しください"
+    },
+    "ImageTooLargeError" : {
+      "title" : "画像が大きすぎます",
+      "description" : "小さい画像でもう一度お試しください"
+    },
+    "ImageCropError" : {
+      "title" : "画像のトリミングに失敗しました",
+      "description" : "別の画像でもう一度お試しください"
+    },
+    "ImageResizeError" : {
+      "title" : "画像のサイズ変更に失敗しました",
+      "description" : "別の画像でもう一度お試しください"
+    },
+    "ImagePreviewError" : {
+      "title" : "画像のプレビューに失敗しました",
+      "description" : "別の画像でもう一度お試しください"
+    },
+    "ImageProcessingError" : {
+      "title" : "画像の処理に失敗しました",
+      "description" : "別の画像でもう一度お試しください"
     }
   },
   "bluetooth" : {
@@ -1014,6 +1047,10 @@
       "discoverLedger" : {
         "title" : "Ledger Liveを詳しく見る",
         "subtitle" : "アプリを探索し、それぞれの利点について学ぶ "
+      },
+      "desktopSync" : {
+        "title" : "デスクトップアプリと同期",
+        "subtitle" : "Ledger Liveデスクトップの資産をモバイルと同期させます。"
       }
     },
     "discoverLive" : {
@@ -1035,6 +1072,8 @@
     "stepLanguage" : {
       "title" : "言語を選択",
       "cta" : "続行",
+      "changeDeviceLanguage" : "{{language}}が{{deviceName}}でもご利用可能になりました",
+      "changeDeviceLanguageDescription" : "言語を{{language}}に変更しますか？",
       "warning" : {
         "title" : "ご利用ガイド（英語版）",
         "cta" : "了解！",
@@ -1563,6 +1602,33 @@
       }
     }
   },
+  "blePairingFlow" : {
+    "scanning" : {
+      "withProductName" : {
+        "title" : "{{productName}}を検出中",
+        "description" : "{{productName}}のロックが解除済みで、Bluetoothが有効であることを確認してください"
+      },
+      "withoutProductName" : {
+        "title" : "デバイスを探しています",
+        "description" : "デバイスの電源が入っていて、ロックが解除されていて、Bluetooth が有効になっていることを確認してください"
+      },
+      "alreadyPaired" : "ペアリング済み"
+    },
+    "pairing" : {
+      "success" : {
+        "title" : "{{deviceName}}とペアリング完了"
+      },
+      "loading" : {
+        "title" : "{{deviceName}}とペアリング中",
+        "subtitle" : "{{productName}}のコードを確認してください"
+      },
+      "error" : {
+        "title" : "ペアリング失敗",
+        "subtitle" : "何か問題が発生したようです。Bluetoothがオンになっていて、{{productName}}が近くにあることを確認してください",
+        "retryCta" : "再試行"
+      }
+    }
+  },
   "tabs" : {
     "portfolio" : "ウォレット",
     "accounts" : "アカウント",
@@ -1698,7 +1764,13 @@
       "WITHDRAW_UNBONDED" : "引き出す",
       "NOMINATE" : "ノミネート",
       "CHILL" : "ノミネートを解除する",
-      "SET_CONTROLLER" : "コントローラーを設定"
+      "SET_CONTROLLER" : "コントローラーを設定",
+      "ACTIVATE" : "有効化されました",
+      "LOCK" : "ロックされました",
+      "UNLOCK" : "ロック解除されました",
+      "REVOKE" : "取り消されました",
+      "REGISTER" : "登録されました",
+      "WITHDRAW" : "引き出し済み"
     }
   },
   "operationDetails" : {
@@ -1936,6 +2008,16 @@
       "noTransaction" : {
         "title" : "トランザクションはありません",
         "subtitle" : "{{assetName}}の購入と受け取りには、デバイスが必要です"
+      }
+    },
+    "banner" : {
+      "redelegation" : {
+        "description" : "ご存知でしたか？Ledgerのバリデーターは、現在お使いのバリデーターよりも低額の手数料でステーキングを行います。",
+        "cta" : "再デリゲート"
+      },
+      "delegation" : {
+        "description" : "ご存知でしたか？Ledgerのバリデーターは、低額の手数料で{{asset}}のステーキングを行います。",
+        "cta" : "今すぐステーキング"
       }
     }
   },
@@ -3453,19 +3535,29 @@
     "no" : "希望しない",
     "languages" : {
       "en" : "英語",
-      "fr" : "フランス語",
-      "ru" : "ロシア語",
-      "es" : "Spanish",
-      "zh" : "中国語",
-      "de" : "ドイツ語"
+      "fr" : "Français",
+      "ru" : "Русский",
+      "es" : "Español",
+      "zh" : "中国人",
+      "de" : "Deutsch",
+      "tr" : "Türk",
+      "ja" : "日本",
+      "ko" : "한국인",
+      "pt" : "Português"
     }
   },
   "deviceLocalization" : {
     "language" : "言語",
     "deviceLanguage" : "デバイスの言語",
+    "chooseLanguage" : "{{deviceName}}の言語を選択してください。",
     "changeLanguage" : "言語の変更",
-    "allowLanguageInstallation" : "言語のインストールを許可する",
-    "languageInstalled" : "デバイスの言語が{{language}}に変更されました",
+    "yesChangeLanguage" : "はい、言語を変更します。",
+    "allowLanguageInstallation" : "{{deviceName}}への言語のインストールを承認する",
+    "languageInstalled" : "言語が{{language}}に変更されました",
+    "firmwareUpdatePrompt" : {
+      "title" : "{{deviceName}}を{{language}}に設定しますか？",
+      "description" : "{{language}}が{{deviceName}}でご利用可能になりました。今すぐ設定できます。また、My Ledgerからいつでもデバイスの言語を変更することが可能です。"
+    },
     "installingLanguage" : "言語をインストール",
     "languages" : {
       "english" : "英語",
@@ -4244,7 +4336,10 @@
       "info" : "デリゲートの仕組み",
       "broadcastSuccessTitle" : "処理が送信されました",
       "broadcastSuccessDescription" : "処理が承認されると、デリゲートのステータスが更新されます。",
-      "delegatedTo" : "デリゲート先："
+      "delegatedTo" : "デリゲート先：",
+      "started" : {
+        "description" : "SOL資産をバリデーターにデリゲートすることで報酬を得ることができます。"
+      }
     }
   },
   "delegation" : {
@@ -4264,6 +4359,7 @@
     "delegation" : "デリゲート",
     "viewDetails" : "詳細を表示",
     "validator" : "バリデータ",
+    "validatorGroup" : "バリデーターグループ",
     "validatorAddress" : "バリデータのアドレス",
     "delegatedAccount" : "デリゲート済みアカウント",
     "duration" : "期間",
@@ -4657,6 +4753,32 @@
     },
     "currentAddress" : {
       "messageIfVirtual" : "{{name}}アドレスがLedgerデバイスで確認できません。リスクを理解した上で、自己責任でご利用ください。"
+    }
+  },
+  "customImage" : {
+    "drawer" : {
+      "title" : "画像を選択してください",
+      "options" : {
+        "uploadFromPhone" : "携帯電話からアップロードする"
+      }
+    },
+    "cropImage" : "画像をトリミング",
+    "chooseConstrast" : "コントラストを選択",
+    "uploadAnotherImage" : "他の画像をアップロードする",
+    "selectContrast" : "コントラストを選択する"
+  },
+  "postOnboarding" : {
+    "hub" : {
+      "title" : "素晴らしい。\nこれで準備完了です。",
+      "allDoneTitle" : "いい感じです。\nこれで準備が整いました。",
+      "subtitle" : "次にできること",
+      "skip" : "アプリにスキップする",
+      "goToWallet" : "Ledger Liveウォレットに移動する",
+      "done" : "将来を安全に保護しました"
+    },
+    "walletCard" : {
+      "title" : "ご利用ガイド",
+      "description" : "こちらをクリックして、Ledger Liveで{{productName}}を設定"
     }
   }
 }

@@ -137,7 +137,7 @@ class DisplayResult extends Component<Props, State> {
     }
 
     if (onFinish) onFinish();
-    else navigation.navigate(NavigatorName.PortfolioAccounts);
+    else navigation.navigate(NavigatorName.Portfolio);
   };
 
   onSwitchResultItem = (checked: boolean, account: Account) => {

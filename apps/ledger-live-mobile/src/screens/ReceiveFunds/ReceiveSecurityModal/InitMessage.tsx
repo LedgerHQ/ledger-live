@@ -3,9 +3,7 @@ import { TouchableOpacity } from "react-native";
 import { Trans } from "react-i18next";
 import styled from "styled-components/native";
 import { Flex, Text, Button } from "@ledgerhq/native-ui";
-import { useRoute } from "@react-navigation/native";
 import { track, TrackScreen } from "../../../analytics";
-import { usePreviousRouteName } from "../../../helpers/routeHooks";
 
 const NotNowButton = styled(TouchableOpacity)`
   align-items: center;
@@ -19,32 +17,26 @@ type Props = {
 };
 
 const InitMessage = ({ setStep, onVerifyAddress }: Props) => {
-  const route = useRoute();
-  const lastRoute = usePreviousRouteName();
-
   const onDontVerify = useCallback(() => {
     track("button_clicked", {
       button: "Reveal my address without verifying",
-      screen: route.name,
       drawer: "Verification Security Disclaimer",
     });
     setStep("confirmUnverified");
-  }, [setStep, route]);
+  }, [setStep]);
 
   const handleVerifyAddress = useCallback(() => {
     track("button_clicked", {
       button: "Verify my address",
-      screen: route.name,
       drawer: "Verification Security Disclaimer",
     });
     onVerifyAddress();
-  }, [route, onVerifyAddress]);
+  }, [onVerifyAddress]);
   return (
     <Flex flex={1} justifyContent="center" mt={3}>
       <TrackScreen
         category="Receive"
         name="Verification Security Disclaimer"
-        source={lastRoute}
         type="drawer"
       />
       <Text

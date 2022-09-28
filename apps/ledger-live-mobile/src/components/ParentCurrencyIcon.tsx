@@ -45,7 +45,7 @@ const ParentCurrencyIcon = ({
       height={size}
       alignItems={"center"}
       justifyContent={"center"}
-      borderRadius={32}
+      borderRadius={size}
     >
       <CurrencyIcon
         size={iconSize}
@@ -63,7 +63,7 @@ const ParentCurrencyIcon = ({
           height={parentIconCircleSize}
           alignItems={"center"}
           justifyContent={"center"}
-          borderRadius={32}
+          borderRadius={size}
           borderWidth={parentIconBorderWidth}
           borderColor={borderColor}
         >

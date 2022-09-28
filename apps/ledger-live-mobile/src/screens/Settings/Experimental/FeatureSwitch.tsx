@@ -9,7 +9,6 @@ type Props = {
   valueOff: any;
   checked?: boolean;
   readOnly?: boolean;
-  // eslint-disable-next-line no-unused-vars
   onChange: (name: string, val: any) => boolean;
 };
 

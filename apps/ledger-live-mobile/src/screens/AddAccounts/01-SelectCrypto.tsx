@@ -26,6 +26,7 @@ type Props = {
   route: {
     params: {
       filterCurrencyIds?: string[];
+      currency?: string;
     };
   };
 };
@@ -45,25 +46,41 @@ const listSupportedTokens = () =>
 
 export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
   const { colors } = useTheme();
-  const { filterCurrencyIds = [] } = route.params || {};
-  const currencyOsmosis = useFeature("currencyOsmosisMobile");
+  const { filterCurrencyIds = [], currency } = route.params || {};
+  const osmo = useFeature("currencyOsmosisMobile");
+  const fantom = useFeature("currencyFantomMobile");
+  const moonbeam = useFeature("currencyMoonbeamMobile");
+  const cronos = useFeature("currencyCronosMobile");
+  const songbird = useFeature("currencySongbirdMobile");
+  const flare = useFeature("currencyFlareMobile");
+
+  const featureFlaggedCurrencies = useMemo(
+    () => ({
+      osmo,
+      fantom,
+      moonbeam,
+      cronos,
+      songbird,
+      flare,
+    }),
+    [osmo, fantom, moonbeam, cronos, songbird, flare],
+  );
 
   const cryptoCurrencies = useMemo(() => {
-    const currencies = listSupportedCurrencies()
-      .concat(listSupportedTokens())
-      .filter(
-        ({ id }) =>
-          filterCurrencyIds.length <= 0 ||
-          filterCurrencyIds.includes(id) ||
-          currencyOsmosis?.enabled,
-      );
+    const currencies = [
+      ...listSupportedCurrencies(),
+      ...listSupportedTokens(),
+    ].filter(
+      ({ id }) =>
+        filterCurrencyIds.length <= 0 || filterCurrencyIds.includes(id),
+    );
+    const deactivatedCurrencies = Object.entries(featureFlaggedCurrencies)
+      .filter(([, feature]) => !feature?.enabled)
+      .map(([name]) => name);
 
-    if (currencyOsmosis?.enabled) {
-      return currencies;
-    }
+    return currencies.filter(c => !deactivatedCurrencies.includes(c.id));
+  }, [featureFlaggedCurrencies, filterCurrencyIds]);
 
-    return currencies.filter(c => c.family !== "osmosis");
-  }, [currencyOsmosis, filterCurrencyIds]);
   const sortedCryptoCurrencies = useCurrenciesByMarketcap(cryptoCurrencies);
 
   const onPressCurrency = (currency: CryptoCurrency) => {
@@ -117,6 +134,7 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
           list={sortedCryptoCurrencies}
           renderList={renderList}
           renderEmptySearch={renderEmptyList}
+          initialQuery={currency}
         />
       </View>
     </SafeAreaView>

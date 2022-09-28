@@ -39,9 +39,8 @@ function OperationDetailsExtra({ extra, type, account }: Props) {
   const locale = useSelector(localeSelector);
   const unit = getAccountUnit(account);
   const currencyName = account.currency.name.toLowerCase();
-  const { validators: cosmosValidators } = useCosmosFamilyPreloadData(
-    currencyName,
-  );
+  const { validators: cosmosValidators } =
+    useCosmosFamilyPreloadData(currencyName);
 
   const redirectAddressCreator = useCallback(
     address => () => {

@@ -42,7 +42,8 @@ const Slide = ({
   const { t } = useTranslation();
   const { navigate } = useNavigation();
   const onClick = useCallback(() => {
-    track("Portfolio Recommended OpenUrl", {
+    track("banner_clicked", {
+      banner: name,
       url,
     });
     if (onPress) {

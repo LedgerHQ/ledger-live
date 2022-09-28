@@ -18,13 +18,13 @@ function DeltaVariation({ value, percent, ...props }: Props) {
   const [color, ArrowIcon, sign] =
     delta !== 0
       ? delta > 0
-        ? ["success.c100", Icons.ArrowUpMedium, "+"]
-        : ["error.c100", Icons.ArrowDownMedium, "-"]
+        ? ["success.c100", Icons.ArrowEvolutionUpMedium, "+"]
+        : ["error.c100", Icons.ArrowEvolutionDownMedium, "-"]
       : ["neutral.c100", null, ""];
 
   return (
     <Flex flexDirection="row" alignItems="center">
-      {percent && ArrowIcon ? <ArrowIcon size={10} color={color} /> : null}
+      {percent && ArrowIcon ? <ArrowIcon size={20} color={color} /> : null}
       <Text
         variant="body"
         ml={2}

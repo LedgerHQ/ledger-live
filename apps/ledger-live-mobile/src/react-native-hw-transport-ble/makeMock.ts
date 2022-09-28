@@ -16,7 +16,6 @@ export type DeviceMock = {
   apduMock: ApduMock;
 };
 type Opts = {
-  // eslint-disable-next-line no-unused-vars
   createTransportDeviceMock: (id: string, name: string) => DeviceMock;
 };
 const defaultOpts = {

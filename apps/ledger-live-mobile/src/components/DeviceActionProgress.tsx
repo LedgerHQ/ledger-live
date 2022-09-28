@@ -20,4 +20,4 @@ function DeviceActionProgress({ progress }: Props) {
   );
 }
 
-export default memo<Props>(FirmwareProgress);
+export default memo<Props>(DeviceActionProgress);

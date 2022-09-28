@@ -37,6 +37,7 @@
     "watch:common": "pnpm turbo run watch --filter=live-common",
     "dev:cli": "pnpm turbo run watch --filter=live-cli",
     "dev:lld": "pnpm turbo run start --filter=ledger-live-desktop",
+    "dev:lld:debug": "DEV_TOOLS=1 LEDGER_INTERNAL_ARGS=--inspect pnpm turbo run start --filter=ledger-live-desktop",
     "dev:llm": "pnpm turbo run start --filter=live-mobile",
     "release:lld": "pnpm turbo run release --filter=ledger-live-desktop",
     "pre:lld": "pnpm turbo run pre-build --filter=ledger-live-desktop",
@@ -54,8 +55,8 @@
     "common-tools": "pnpm --filter live-common-tools",
     "bot:github": "pnpm --filter live-github-bot",
     "ljs:cryptoassets": "pnpm --filter cryptoassets",
-    "ljs:devices": "pnpm --filter cryptoassets",
-    "ljs:errors": "pnpm --filter cryptoassets",
+    "ljs:devices": "pnpm --filter devices",
+    "ljs:errors": "pnpm --filter errors",
     "ljs:hw-app-algorand": "pnpm --filter hw-app-algorand",
     "ljs:hw-app-btc": "pnpm --filter hw-app-btc",
     "ljs:hw-app-cosmos": "pnpm --filter hw-app-cosmos",
@@ -117,7 +118,8 @@
     },
     "patchedDependencies": {
       "react-native-fast-crypto@2.2.0": "patches/react-native-fast-crypto@2.2.0.patch",
-      "react-native-video@5.2.0": "patches/react-native-video@5.2.0.patch"
+      "react-native-video@5.2.0": "patches/react-native-video@5.2.0.patch",
+      "react-native-image-crop-tools@1.6.2": "patches/react-native-image-crop-tools@1.6.2.patch"
     }
   }
 }

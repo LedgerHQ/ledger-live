@@ -13,6 +13,7 @@ import {
 } from "@ledgerhq/live-common/explorers";
 import { createStructuredSelector } from "reselect";
 import { BottomDrawer } from "@ledgerhq/native-ui";
+import { useNavigation } from "@react-navigation/native";
 import LText from "../../../components/LText";
 import { blacklistToken } from "../../../actions/settings";
 import TokenContractAddress from "../../Account/TokenContractAddress";
@@ -20,6 +21,7 @@ import Button from "../../../components/Button";
 import { parentAccountSelector } from "../../../reducers/accounts";
 import ParentCurrencyIcon from "../../../components/ParentCurrencyIcon";
 import BottomModalChoice from "../../../components/BottomModalChoice";
+import { ScreenName } from "../../../const";
 
 const mapDispatchToProps = {
   blacklistToken,
@@ -42,6 +44,8 @@ const TokenContextualModal = ({
   blacklistToken,
 }: Props) => {
   const { t } = useTranslation();
+  const navigation = useNavigation();
+
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [showContract, setShowContract] = useState(false);
   const showingContextMenu = !showConfirmation && !showContract;
@@ -54,7 +58,9 @@ const TokenContextualModal = ({
     if (!account) return;
     blacklistToken(account.token.id);
     onCloseModal();
-  }, [onCloseModal, blacklistToken, account]);
+    navigation.navigate(ScreenName.Portfolio);
+  }, [onCloseModal, blacklistToken, account, navigation]);
+
   if (!isOpened || !account) return null;
   const mainAccount = account ? getMainAccount(account, parentAccount) : null;
   const explorerView = mainAccount

@@ -61,12 +61,9 @@ type VoteRowProps = {
     rank: number;
     validator?: SuperRepresentative;
   };
-  // eslint-disable-next-line no-unused-vars
   onEdit: (vote: Vote, name: string) => void;
-  // eslint-disable-next-line no-unused-vars
   onRemove: (vote: Vote) => void;
   index: number;
-  // eslint-disable-next-line no-unused-vars
   onOpen: (i: number) => void;
   openIndex: number;
 };

@@ -23,8 +23,8 @@ type Props = {
   };
 };
 type RouteParams = {
-  account: Account,
-  transaction: CosmosTransaction | OsmosisTransaction,
+  account: Account;
+  transaction: CosmosTransaction | OsmosisTransaction;
 };
 
 function CosmosFamilyEditMemo({ navigation, route }: Props) {

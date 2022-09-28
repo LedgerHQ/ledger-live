@@ -78,9 +78,7 @@ export type UseCurrencyAccountSelectReturnType = {
   account: (Account | null | undefined) | any;
   subAccount: (SubAccount | null | undefined) | any;
   setAccount: (
-    // eslint-disable-next-line no-unused-vars
     account: Account | null | undefined,
-    // eslint-disable-next-line no-unused-vars
     subAccount: SubAccount | null | undefined,
   ) => void;
   setCurrency: (_: (CryptoCurrency | TokenCurrency) | null | undefined) => void;

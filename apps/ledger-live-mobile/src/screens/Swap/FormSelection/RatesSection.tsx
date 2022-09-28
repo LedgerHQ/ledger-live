@@ -49,11 +49,8 @@ type Props = {
   status: any;
   rate: ExchangeRate;
   setToAccount: (
-    // eslint-disable-next-line no-unused-vars
     currency: TokenCurrency | CryptoCurrency,
-    // eslint-disable-next-line no-unused-vars
     account: Account | TokenAccount,
-    // eslint-disable-next-line no-unused-vars
     parentAccount?: Account | TokenAccount,
   ) => void;
   providers: any;

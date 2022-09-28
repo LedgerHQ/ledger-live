@@ -19,6 +19,7 @@
     "device" : "Gerät",
     "cryptoAsset" : "Krypto-Vermögenswert",
     "skip" : "Überspringen",
+    "next" : "Weiter",
     "noCryptoFound" : "Keine Krypto-Werte gefunden",
     "needHelp" : "Brauchen Sie Hilfe?",
     "edit" : "Bearbeiten",
@@ -686,6 +687,38 @@
     },
     "StellarSourceHasMultiSign" : {
       "title" : "Bitte deaktivieren Sie Multisign, um Stellar-Transaktionen durchzuführen"
+    },
+    "ImageLoadFromGalleryError" : {
+      "title" : "Das Laden eines Bildes aus der Galerie ist fehlgeschlagen",
+      "description" : "Bitte versuchen Sie es noch einmal mit einem anderen Bild"
+    },
+    "ImageDownloadError" : {
+      "title" : "Bilddownload fehlgeschlagen",
+      "description" : "Bitte versuchen Sie es noch einmal mit einem anderen Bild"
+    },
+    "ImageMetadataLoadingError" : {
+      "title" : "Laden der Bild-Metadaten fehlgeschlagen",
+      "description" : "Bitte versuchen Sie es noch einmal mit einem anderen Bild"
+    },
+    "ImageTooLargeError" : {
+      "title" : "Das Bild ist zu groß",
+      "description" : "Bitte versuchen Sie es mit einem kleineren Bild"
+    },
+    "ImageCropError" : {
+      "title" : "Das Zuschneiden des Bildes ist fehlgeschlagen",
+      "description" : "Bitte versuchen Sie es noch einmal mit einem anderen Bild"
+    },
+    "ImageResizeError" : {
+      "title" : "Die Größenänderung des Bildes ist fehlgeschlagen",
+      "description" : "Bitte versuchen Sie es noch einmal mit einem anderen Bild"
+    },
+    "ImagePreviewError" : {
+      "title" : "Die Vorschau des Bildes ist fehlgeschlagen",
+      "description" : "Bitte versuchen Sie es noch einmal mit einem anderen Bild"
+    },
+    "ImageProcessingError" : {
+      "title" : "Die Verarbeitung des Bildes ist fehlgeschlagen",
+      "description" : "Bitte versuchen Sie es noch einmal mit einem anderen Bild"
     }
   },
   "bluetooth" : {
@@ -1014,6 +1047,10 @@
       "discoverLedger" : {
         "title" : "Erkunden Sie Ledger Live",
         "subtitle" : "Erkunden Sie die App und erfahren Sie mehr über ihre Vorteile "
+      },
+      "desktopSync" : {
+        "title" : "Mit der Desktop-App synchronisieren",
+        "subtitle" : "Synchronisieren Sie Ihre Vermögenswerte in Ledger Live Desktop mit Ihrem Mobilgerät."
       }
     },
     "discoverLive" : {
@@ -1035,6 +1072,8 @@
     "stepLanguage" : {
       "title" : "Wählen Sie Ihre Sprache",
       "cta" : "Weiter",
+      "changeDeviceLanguage" : "{{language}} ist jetzt für {{deviceName}} verfügbar.",
+      "changeDeviceLanguageDescription" : "Möchten Sie die Sprache auf {{language}} umstellen?",
       "warning" : {
         "title" : "Erste Schritte auf Englisch",
         "cta" : "Verstanden!",
@@ -1563,6 +1602,33 @@
       }
     }
   },
+  "blePairingFlow" : {
+    "scanning" : {
+      "withProductName" : {
+        "title" : "Nach Ihrer {{productName}} wird gesucht",
+        "description" : "Bitte stellen Sie sicher, dass Ihre {{productName}} entsperrt und Bluetooth aktiviert ist."
+      },
+      "withoutProductName" : {
+        "title" : "Suche nach Geräten",
+        "description" : "Vergewissern Sie sich, dass Ihr Gerät eingeschaltet und entsperrt und Bluetooth aktiviert ist."
+      },
+      "alreadyPaired" : "Bereits gekoppelt"
+    },
+    "pairing" : {
+      "success" : {
+        "title" : "Gekoppelt mit {{deviceName}}"
+      },
+      "loading" : {
+        "title" : "Koppeln mit {{deviceName}}",
+        "subtitle" : "Bestätigen Sie den Code auf Ihrer {{productName}}"
+      },
+      "error" : {
+        "title" : "Kopplung fehlgeschlagen",
+        "subtitle" : "Offenbar ist ein Problem aufgetreten. Überprüfen Sie, ob Bluetooth aktiviert ist und sich Ihre {{productName}} in der Nähe befindet.",
+        "retryCta" : "Wiederholen"
+      }
+    }
+  },
   "tabs" : {
     "portfolio" : "Wallet",
     "accounts" : "Konten",
@@ -1698,7 +1764,13 @@
       "WITHDRAW_UNBONDED" : "Abhebung",
       "NOMINATE" : "Nominierung",
       "CHILL" : "Nominierungen löschen",
-      "SET_CONTROLLER" : "Controller einstellen"
+      "SET_CONTROLLER" : "Controller einstellen",
+      "ACTIVATE" : "Aktiviert",
+      "LOCK" : "Gesperrt",
+      "UNLOCK" : "Entsperrt",
+      "REVOKE" : "Widerrufen",
+      "REGISTER" : "Registriert",
+      "WITHDRAW" : "Ausgezahlt"
     }
   },
   "operationDetails" : {
@@ -1936,6 +2008,16 @@
       "noTransaction" : {
         "title" : "Sie haben keine Transaktionen",
         "subtitle" : "Sie benötigen ein Gerät um {{assetName}} zu kaufen oder zu empfangen"
+      }
+    },
+    "banner" : {
+      "redelegation" : {
+        "description" : "Schon gewusst? Der Ledger-Validator erledigt das Staking zu einer günstigeren Provision als Ihr derzeitiger Validator.",
+        "cta" : "Erneut delegieren"
+      },
+      "delegation" : {
+        "description" : "Schon gewusst? Der Ledger-Validator erledigt das Staking Ihrer {{asset}} zu einer günstigen Provision.",
+        "cta" : "Jetzt staken"
       }
     }
   },
@@ -3453,19 +3535,29 @@
     "no" : "Lieber nicht",
     "languages" : {
       "en" : "Englisch",
-      "fr" : "Französisch",
-      "ru" : "Russisch",
-      "es" : "Spanisch",
-      "zh" : "Chinesisch",
-      "de" : "Deutsch"
+      "fr" : "Français",
+      "ru" : "Русский",
+      "es" : "Español",
+      "zh" : "中国人",
+      "de" : "Deutsch",
+      "tr" : "Türk",
+      "ja" : "日本",
+      "ko" : "한국인",
+      "pt" : "Português"
     }
   },
   "deviceLocalization" : {
     "language" : "Sprache",
     "deviceLanguage" : "Geräte-Sprache",
+    "chooseLanguage" : "Wählen Sie eine Sprache für {{deviceName}} aus.",
     "changeLanguage" : "Sprache wechseln",
-    "allowLanguageInstallation" : "Sprachinstallation zulassen",
-    "languageInstalled" : "Gerätesprache auf {{language}} gewechselt",
+    "yesChangeLanguage" : "Ja, Sprache umstellen",
+    "allowLanguageInstallation" : "Sprachinstallation auf {{deviceName}} genehmigen",
+    "languageInstalled" : "Sprache umgestellt auf {{language}}",
+    "firmwareUpdatePrompt" : {
+      "title" : "Ihr {{deviceName}} auf {{language}} einstellen?",
+      "description" : "{{language}} ist jetzt für {{deviceName}} verfügbar. Sie können die Sprache Ihres Geräts jetzt einstellen oder jederzeit über My Ledger ändern."
+    },
     "installingLanguage" : "Sprache installieren",
     "languages" : {
       "english" : "Englisch",
@@ -4244,7 +4336,10 @@
       "info" : "So funktioniert Delegation",
       "broadcastSuccessTitle" : "Vorgang gesendet",
       "broadcastSuccessDescription" : "Der Status der Delegation wird bei der Bestätigung der Transaktion aktualisiert.",
-      "delegatedTo" : "delegiert an"
+      "delegatedTo" : "delegiert an",
+      "started" : {
+        "description" : "Sie können Belohnungen verdienen, indem Sie Ihre SOL-Werte an einen Validator delegieren."
+      }
     }
   },
   "delegation" : {
@@ -4264,6 +4359,7 @@
     "delegation" : "Delegation",
     "viewDetails" : "Details anzeigen",
     "validator" : "Validator",
+    "validatorGroup" : "Validator-Gruppe",
     "validatorAddress" : "Validator-Adresse",
     "delegatedAccount" : "Delegiertes Konto",
     "duration" : "Dauer",
@@ -4657,6 +4753,32 @@
     },
     "currentAddress" : {
       "messageIfVirtual" : "Ihre {{name}}-Adresse kann auf Ihrem Ledger-Gerät nicht bestätigt werden. Nutzung auf eigenes Risiko."
+    }
+  },
+  "customImage" : {
+    "drawer" : {
+      "title" : "Wählen Sie ein Bild aus",
+      "options" : {
+        "uploadFromPhone" : "Von meinem Mobiltelefon hochladen"
+      }
+    },
+    "cropImage" : "Bild zuschneiden",
+    "chooseConstrast" : "Kontrast auswählen",
+    "uploadAnotherImage" : "Ein weiteres Bild hochladen",
+    "selectContrast" : "Wählen Sie Ihren Kontrast"
+  },
+  "postOnboarding" : {
+    "hub" : {
+      "title" : "Gut gemacht.\nSie können loslegen.",
+      "allDoneTitle" : "Gute Arbeit.\nSie sind startklar.",
+      "subtitle" : "Hier ist, was Sie als nächstes tun können:",
+      "skip" : "Weiter zur App",
+      "goToWallet" : "Weiter zur Ledger Live Wallet",
+      "done" : "Sie haben sich gerade Ihre Zukunft gesichert"
+    },
+    "walletCard" : {
+      "title" : "Erste Schritte",
+      "description" : "Klicken Sie hier, um die Einrichtung Ihres {{productName}} mit Ledger Live abzuschließen"
     }
   }
 }
