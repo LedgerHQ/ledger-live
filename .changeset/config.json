@@ -12,5 +12,7 @@
   "access": "public",
   "baseBranch": "develop",
   "updateInternalDependencies": "patch",
-  "ignore": []
+  "ignore": [
+    "ledger-live-desktop"
+  ]
 }
