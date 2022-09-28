@@ -169,7 +169,9 @@ jobs:
           body: |
             <!-- generate-screenshots-report:${{ github.run_id }} -->
             @${{ github.event.inputs.login }}
+
             [Generating screenshots: workflow ended:](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
+
             **Jobs status:**
             ```
             ${{ steps.jobs_status.outputs.JOBS_STATUS }}
