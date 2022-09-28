@@ -27,6 +27,14 @@ jobs:
     secrets:
       token: ${{ secrets.COMMON_READ_ORG }}
 
+  comment-pr:
+    name: "Comment PR"
+    uses: peter-evans/create-or-update-comment@v2
+    with:
+      issue-number: ${{ github.event.inputs.number }}
+      body: |
+        [Generating screenshots: job started](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
+
   generate-screenshots:
     needs: [is-org-member]
     if: ${{ fromJSON(needs.is-org-member.outputs.is-org-member) }}
