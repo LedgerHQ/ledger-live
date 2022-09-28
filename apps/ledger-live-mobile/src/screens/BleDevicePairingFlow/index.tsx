@@ -20,7 +20,7 @@ export type NavigateInput = {
 };
 
 export type PathToDeviceParam = PropertyPath;
-export type NavigationType = "navigate" | "replace";
+export type NavigationType = "navigate" | "replace" | "push";
 
 export type BleDevicePairingFlowParams = {
   filterByDeviceModelId?: DeviceModelId;
@@ -123,7 +123,9 @@ export const BleDevicePairingFlow = ({
       // Before navigating, to never come back a the successful pairing but to the scanning part
       setDeviceToPair(null);
 
-      if (navigationType === "replace") {
+      if (navigationType === "push") {
+        navigation.push(navigateInput.name, { ...navigateInput.params });
+      } else if (navigationType === "replace") {
         navigation.replace(navigateInput.name, { ...navigateInput.params });
       } else {
         navigation.navigate(navigateInput);
