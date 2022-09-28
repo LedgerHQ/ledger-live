@@ -27,8 +27,8 @@ jobs:
     secrets:
       token: ${{ secrets.COMMON_READ_ORG }}
 
-  report-started:
-    name: Report worflow started
+  report-start:
+    name: Report start
     runs-on: "ubuntu-latest"
     steps:
       - name: Create or Update Comment
@@ -138,10 +138,10 @@ jobs:
           os: "macos-latest"
           turbo-server-port: ${{ steps.turborepo-cache-server.outputs.port }}
 
-  report-ended:
+  report-end:
     needs: ["generate-screenshots", "generate-screenshots-mac-internal"]
     if: always()
-    name: Report ended
+    name: Report end
     runs-on: "ubuntu-latest"
     steps:
       - name: get jobs status
