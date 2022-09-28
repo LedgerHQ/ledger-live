@@ -70,7 +70,10 @@ jobs:
           body: |
             @${{ github.event.inputs.login }}
             [Generating screenshots: workflow ended:](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
+
+            ```
             ${{ steps.jobs_status.outputs.JOBS_STATUS }}
+            ```
 
   generate-screenshots:
     needs: [is-org-member]
