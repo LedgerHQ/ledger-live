@@ -37,7 +37,7 @@ jobs:
         with:
           issue-number: ${{ github.event.inputs.number }}
           body: |
-            [Generating screenshots: worflow started](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
+            [Generating screenshots: workflow started](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
 
   test-failing-job:
     needs: [comment-pr-workflow-started]
@@ -63,7 +63,8 @@ jobs:
         with:
           issue-number: ${{ github.event.inputs.number }} ${{github.repository}}
           body: |
-            Generating screenshots: worflow ended:
+            @${{ github.event.inputs.login }}
+            [Generating screenshots: workflow ended:](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
             ${{ steps.jobs_status.outputs.JOBS_STATUS }}
 
   generate-screenshots:
