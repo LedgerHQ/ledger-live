@@ -1,5 +1,23 @@
 # @ledgerhq/devices
 
+## 7.0.2
+
+### Patch Changes
+
+- [#1278](https://github.com/LedgerHQ/ledger-live/pull/1278) [`e0915b34ba`](https://github.com/LedgerHQ/ledger-live/commit/e0915b34ba37d9906b6c65e7e42f87893c088325) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Update values for memory and block size for FTS
+
+- Updated dependencies [[`1a94cbf28a`](https://github.com/LedgerHQ/ledger-live/commit/1a94cbf28aaa2917c70719e22f446148cd66cef6)]:
+  - @ledgerhq/errors@6.11.0
+
+## 7.0.2-next.0
+
+### Patch Changes
+
+- [#1278](https://github.com/LedgerHQ/ledger-live/pull/1278) [`e0915b34ba`](https://github.com/LedgerHQ/ledger-live/commit/e0915b34ba37d9906b6c65e7e42f87893c088325) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Update values for memory and block size for FTS
+
+- Updated dependencies [[`1a94cbf28a`](https://github.com/LedgerHQ/ledger-live/commit/1a94cbf28aaa2917c70719e22f446148cd66cef6)]:
+  - @ledgerhq/errors@6.11.0-next.0
+
 ## 7.0.1
 
 ### Patch Changes

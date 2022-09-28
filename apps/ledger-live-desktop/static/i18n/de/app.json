@@ -236,10 +236,26 @@
     },
     "form" : {
       "changeCTA" : "Änderung",
-      "ratesDrawer" : {
-        "title" : "Kurs",
-        "quote" : "Preis",
-        "receive" : "Empfangen"
+      "rates" : {
+        "title" : "Anbieter",
+        "registration" : "Anmeldung erforderlich ",
+        "noRegistration" : "Keine Anmeldung erforderlich",
+        "fixed" : "Festgelegt",
+        "float" : "Float",
+        "update" : "Kursaktualisierung in",
+        "loading" : "Lade Daten...",
+        "name" : {
+          "title" : "Anbieter",
+          "tooltip" : "Je nach Anbieter müssen Sie sich bei diesem anmelden, indem Sie ein Konto erstellen."
+        },
+        "rate" : {
+          "title" : "Wechselkurs",
+          "tooltip" : "Ein <0>variabler Zinssatz<0> schwankt je nach den Marktbedingungen, so dass Sie mehr oder weniger erhalten können, was Sie geschätzt haben. <br/><br/>Ein <0>fester Kurs<0> entspricht dem Betrag, der zu Beginn des Wechsels angezeigt wird."
+        },
+        "receive" : {
+          "title" : "Empfangen",
+          "tooltip" : "Der geschätzte Betrag, den Sie nach dem Austausch erhalten werden."
+        }
       },
       "details" : {
         "label" : {
@@ -412,7 +428,13 @@
           "approved" : "KYC genehmigt!",
           "closed" : "KYC abgelehnt"
         }
-      }
+      },
+      "filter" : {
+        "all" : "Alle",
+        "centralised" : "Zentralisiert",
+        "dedentralised" : "Dezentralisiert"
+      },
+      "noQuote" : "Kurs im nächsten Schritt verfügbar"
     },
     "ip" : {
       "title" : "Willkommen bei Swap",
@@ -761,7 +783,7 @@
       },
       "delegation" : {
         "title" : "Schon gewusst?",
-        "description" : "The Ledger validator stakes your {{asset}} at a commission of {{commission}}%.",
+        "description" : "Der Ledger-Validator erledigt das Staking Ihrer {{asset}} zu einer Provision in Höhe von {{commission}} %.",
         "cta" : "Mit Ledger staken"
       }
     }
@@ -3406,6 +3428,10 @@
           "title" : "Erweiterte Kontosuche",
           "description" : "Suchen Sie nach Konten mit fehlerhaften Ableitungspfaden. Bitte senden Sie potenziell gefundene Vermögenswerte an ein reguläres Konto."
         },
+        "experimentalCountervalues" : {
+          "title" : "Experimentelle Gegenwerte API",
+          "description" : "Dies kann dazu führen, dass die für Ihre Konten angezeigten Gegenwerte nicht mehr stimmen."
+        },
         "experimentalExplorers" : {
           "title" : "Experimentelle Explorer-API",
           "description" : "Probieren Sie eine kommende Version von Ledgers Blockchain-Explorern aus. Das Ändern dieser Einstellung kann den Kontostand und die Synchronisation sowie die Sendefunktion beeinflussen.\n(<0></0>)"
@@ -3551,7 +3577,11 @@
       "ru" : "Russisch",
       "es" : "Spanisch",
       "zh" : "Chinesisch",
-      "de" : "Deutsch"
+      "de" : "Deutsch",
+      "tr" : "Türkisch",
+      "ja" : "Japanisch",
+      "ko" : "Koreanisch",
+      "pt" : "Portugiesisch"
     }
   },
   "theme" : {
@@ -4339,6 +4369,9 @@
       "title" : "Die {{appName}} -App kann für Ihre spezifische Konfiguration nicht gefunden werden.",
       "description" : "Versuchen Sie, die App über My Ledger neu zu installieren."
     },
+    "PendingOperation" : {
+      "description" : "Sie haben eingehende Transaktionen ausstehend. Bitte bedenken Sie, dass ausstehende Transaktionen rückgängig gemacht werden können."
+    },
     "countervaluesUnavailable" : {
       "title" : "Wir können derzeit keinen Gegenwert für diesen Vermögenswert angeben"
     },
@@ -4583,10 +4616,6 @@
       "title" : "Entschuldigung, das Internet scheint ausgefallen zu sein",
       "description" : "Bitte überprüfen Sie Ihre Internetverbindung."
     },
-    "NetworkError" : {
-      "title" : "Während der Synchronisierung ist ein Fehler aufgetreten",
-      "description" : "Bitte überprüfen Sie Ihre Internetverbindung."
-    },
     "NoAddressesFound" : {
       "title" : "Entschuldigung, es wurden keine Konten gefunden",
       "description" : "Bei der Adressberechnung ist etwas schief gelaufen, versuchen Sie es erneut oder wenden Sie sich an den Ledger-Support"
@@ -4734,7 +4763,7 @@
     },
     "EthAppNftNotSupported" : {
       "title" : "Vorgang auf diesem Gerät nicht verfügbar",
-      "description" : "Funktion zum Senden von NFTs ist nur für Nano X verfügbar. Bitte besuchen Sie unsere Kunden-Support-Plattform, um herauszufinden, wie man ein NFT mit einem Nano S sendet."
+      "description" : "Send NFT feature is only available for Nano X and Nano S+. Please visit our customer support platform to know how to send a NFT with a Nano S."
     },
     "CantScanQRCode" : {
       "title" : "Dieser QR-Code konnte nicht gescannt werden: Auto-Verifizierung wird von dieser Adresse nicht unterstützt"
