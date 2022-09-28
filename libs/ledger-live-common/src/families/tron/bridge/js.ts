@@ -85,7 +85,7 @@ import {
 } from "../../../api/Tron";
 import { activationFees, oneTrx } from "../constants";
 import { makeAccountBridgeReceive } from "../../../bridge/jsHelpers";
-import type { GetAccountShapeArg0 } from "../../../bridge/jsHelpers";
+import type { AccountShapeInfos } from "../../../bridge/jsHelpers";
 
 const receive = makeAccountBridgeReceive();
 
@@ -317,7 +317,7 @@ const broadcast = async ({
   return operation;
 };
 
-const getAccountShape = async (info: GetAccountShapeArg0, syncConfig) => {
+const getAccountShape = async (info: AccountShapeInfos, syncConfig) => {
   const blockHeight = await fetchCurrentBlockHeight();
   const tronAcc = await fetchTronAccount(info.address);
 

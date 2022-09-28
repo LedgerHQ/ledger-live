@@ -69,7 +69,7 @@ export type IterateResultBuilder = ({
   derivationScheme: string;
 }) => Promise<IterateResult>;
 
-export type GetAccountShapeArg0 = {
+export type AccountShapeInfos = {
   currency: CryptoCurrency;
   address: string;
   index: number;
@@ -81,10 +81,10 @@ export type GetAccountShapeArg0 = {
 };
 
 export type GetAccountShape = (
-  arg0: GetAccountShapeArg0,
-  arg1: SyncConfig
+  infos: AccountShapeInfos,
+  sysConfig: SyncConfig
 ) => Promise<Partial<Account>>;
-type AccountUpdater = (arg0: Account) => Account;
+type AccountUpdater = (account: Account) => Account;
 
 // compare that two dates are roughly the same date in order to update the case it would have drastically changed
 const sameDate = (a, b) => Math.abs(a - b) < 1000 * 60 * 30;
