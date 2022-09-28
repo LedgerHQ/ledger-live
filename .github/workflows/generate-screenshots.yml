@@ -37,6 +37,7 @@ jobs:
         with:
           issue-number: ${{ github.event.inputs.number }}
           body: |
+            <!-- generate-screenshots-report:${{ github.run_id }} -->
             [Generating screenshots: workflow started](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
 
   test-failing-job:
@@ -63,11 +64,19 @@ jobs:
           JOBS_STATUS="${JOBS_STATUS//$'\n'/'%0A'}"
           JOBS_STATUS="${JOBS_STATUS//$'\r'/'%0D'}"
           echo "::set-output name=JOBS_STATUS::$JOBS_STATUS"
+      - name: Find existing comment
+        uses: peter-evans/find-comment@v2
+        id: find-comment
+        with:
+          issue-number: ${{ github.event.inputs.number }}
+          comment-author: 'github-actions[bot]'
+          body-includes: <!-- generate-screenshots-report:${{ github.run_id }} -->
       - name: Create or Update Comment
         uses: peter-evans/create-or-update-comment@v2.0.0
         with:
-          issue-number: ${{ github.event.inputs.number }} ${{github.repository}}
+          comment-id: ${{ steps.find-comment.outputs.comment-id }}
           body: |
+            <!-- generate-screenshots-report:${{ github.run_id }} -->
             @${{ github.event.inputs.login }}
             [Generating screenshots: workflow ended:](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
 
