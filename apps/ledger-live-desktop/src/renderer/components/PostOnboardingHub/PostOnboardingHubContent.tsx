@@ -25,11 +25,11 @@ const PostOnboardingHubContent = () => {
     <Flex flexDirection="column" justifyContent="center" height="100%" width="100%" maxWidth={450}>
       {!isInsidePostOnboardingScreen && (
         <Text variant="paragraph" fontSize={48} mb={8}>
-          {actionCompletedHubTitle || "Nice one.You're all set."}
+          {actionCompletedHubTitle || t("postOnboarding.postOnboardingContent.title")}
         </Text>
       )}
       <Text variant="paragraph" fontSize={14} color="neutral.c70" mb={8}>
-        {"Here's what you can do next:"}
+        {t("postOnboarding.postOnboardingContent.description")}
       </Text>
       <PostOnboardingHub />
       <Button
@@ -39,7 +39,9 @@ const PostOnboardingHubContent = () => {
         border="0px"
         width={isInsidePostOnboardingScreen ? "fit-content" : ""}
       >
-        {isInsidePostOnboardingScreen ? "I'll do this later" : "Skip to the app"}
+        {isInsidePostOnboardingScreen
+          ? t("postOnboarding.postOnboardingContent.skipButtonInDrawer")
+          : t("postOnboarding.postOnboardingContent.skipButton")}
       </Button>
     </Flex>
   );
