@@ -237,16 +237,16 @@
     "form": {
       "changeCTA": "Change",
       "rates": {
-        "title": "Providers",
+        "title": "Quotes",
         "registration": "Registration required ",
         "noRegistration": "No registration required",
         "fixed": "Fixed",
-        "float": "Float",
+        "float": "Floating",
         "update": "Rates update in",
         "loading": "Loading...",
         "name": {
           "title": "Provider",
-          "tooltip": "Depending on the provider, you have to sign in with them by creating an account."
+          "tooltip": "Depending on the provider, you have to register with them by creating an account."
         },
         "rate": {
           "title": "Exchange rate",
