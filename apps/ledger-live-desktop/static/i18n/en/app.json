@@ -246,7 +246,7 @@
         "loading": "Loading...",
         "name": {
           "title": "Provider",
-          "tooltip": "Depending on the provider, you have to sign in with them by creating an account."
+          "tooltip": "Depending on the provider, you have to register with them by creating an account."
         },
         "rate": {
           "title": "Exchange rate",
