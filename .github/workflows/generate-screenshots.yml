@@ -57,7 +57,12 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          echo "::set-output name=JOBS_STATUS::$(gh run view -R ${{ github.repository }} ${{ github.run_id }} | grep "(ID ")"
+          JOBS_STATUS=$(gh run view -R ${{ github.repository }} ${{ github.run_id }} | grep "(ID ")
+          # below, a trick to make it a 1 liner: https://github.com/orgs/community/discussions/26288#discussioncomment-3251222
+          JOBS_STATUS="${JOBS_STATUS//'%'/'%25'}"
+          JOBS_STATUS="${JOBS_STATUS//$'\n'/'%0A'}"
+          JOBS_STATUS="${JOBS_STATUS//$'\r'/'%0D'}"
+          echo "::set-env name=JOBS_STATUS::$JOBS_STATUS"
       - name: Create or Update Comment
         uses: peter-evans/create-or-update-comment@v2.0.0
         with:
@@ -65,7 +70,7 @@ jobs:
           body: |
             @${{ github.event.inputs.login }}
             [Generating screenshots: workflow ended:](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
-            ${{ steps.jobs_status.outputs.JOBS_STATUS }}
+            ${{ env.JOBS_STATUS }}
 
   generate-screenshots:
     needs: [is-org-member]
