@@ -150,23 +150,17 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           JOBS_STATUS=$(gh run view -R ${{ github.repository }} ${{ github.run_id }} | grep "(ID " | grep "generate-screenshots")
-          touch body.txt
-          echo "**Successful:**\n" >> body.txt
-          echo "\`\`\`\n" >> body.txt
-          echo $JOBS_STATUS | grep ✓ >> body.txt
-          echo "\`\`\`\n" >> body.txt
-          echo "**Failures:**\n" >> body.txt
-          echo "\`\`\`" >> body.txt
-          echo $JOBS_STATUS | grep --invert-match ✓ >> body.txt
-          echo "\`\`\`\n" >> body.txt
-          BODY=$(cat body.txt)
-          rm body.txt
-          
+          successful=$(echo $JOBS_STATUS | grep ✓)
+          unsuccessful=$(echo $JOBS_STATUS | grep --invert-match ✓)
           # below, a trick to fit multiple lines in an output https://github.com/peter-evans/create-or-update-comment#setting-the-comment-body-from-a-file: 
-          BODY="${BODY//'%'/'%25'}"
-          BODY="${BODY//$'\n'/'%0A'}"
-          BODY="${BODY//$'\r'/'%0D'}"
-          echo "::set-output name=BODY::$BODY"
+          successful="${successful//'%'/'%25'}"
+          successful="${successful//$'\n'/'%0A'}"
+          successful="${successful//$'\r'/'%0D'}"
+          unsuccessful="${unsuccessful//'%'/'%25'}"
+          unsuccessful="${unsuccessful//$'\n'/'%0A'}"
+          unsuccessful="${unsuccessful//$'\r'/'%0D'}"
+          echo "::set-output name=SUCCESSFUL::$successful"
+          echo "::set-output name=UNSUCCESSFUL::$unsuccessful"
       - name: Find existing comment
         uses: peter-evans/find-comment@v2
         id: find-comment
@@ -183,5 +177,11 @@ jobs:
             <!-- generate-screenshots-report:${{ github.run_id }} -->
             @${{ github.event.inputs.login }}
             [Generating screenshots: workflow ended:](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
-
-            ${{ steps.jobs_status.outputs.BODY }}
+            **Successful jobs:**
+            ```
+            ${{ steps.jobs_status.outputs.SUCCESSFUL }}
+            ```
+            **Unsuccessful jobs:**
+            ```
+            ${{ steps.jobs_status.outputs.UNSUCCESSFUL }}
+            ```
