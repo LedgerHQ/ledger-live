@@ -152,7 +152,6 @@ jobs:
           JOBS_STATUS=$(gh run view -R ${{ github.repository }} ${{ github.run_id }} | grep "(ID " | grep "generate-screenshots")
           successful=$(echo $JOBS_STATUS | grep ✓)
           unsuccessful=$(echo $JOBS_STATUS | grep --invert-match ✓)
-          # below, a trick to fit multiple lines in an output https://github.com/peter-evans/create-or-update-comment#setting-the-comment-body-from-a-file: 
           successful="${successful//'%'/'%25'}"
           successful="${successful//$'\n'/'%0A'}"
           successful="${successful//$'\r'/'%0D'}"
