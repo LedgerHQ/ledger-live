@@ -52,7 +52,9 @@ function OnboardingStepDeviceSelection() {
     // TODO: do better
     if (deviceModelId === "nanoFTS") {
       // On pairing success, navigate to the Sync Onboarding Companion
-      navigation.navigate(NavigatorName.Base as "Base", {
+      // navigation.pushe on stack navigation because with navigation.navigate
+      // it could not go back to this screen in certain cases.
+      navigation.push(NavigatorName.Base as "Base", {
         screen: ScreenName.BleDevicePairingFlow as "BleDevicePairingFlow",
         params: {
           // TODO: for now we remove this
@@ -60,6 +62,8 @@ function OnboardingStepDeviceSelection() {
           areKnownDevicesDisplayed: false,
           onSuccessAddToKnownDevices: false,
           onSuccessNavigateToConfig: {
+            // navigation.push on success because it could not correctly
+            // go back to the previous screens (BLE and then this screen).
             navigationType: "push",
             navigateInput: {
               name: NavigatorName.BaseOnboarding,
