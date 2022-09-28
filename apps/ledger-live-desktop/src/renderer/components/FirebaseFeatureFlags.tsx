@@ -74,10 +74,6 @@ export const FirebaseFeatureFlagsProvider = ({ children }: Props): JSX.Element =
       overrideFeature={overrideFeature}
       resetFeature={resetFeature}
     >
-      <p style={{ height: "400px", color: "#fff", margin: "50px" }}>
-        {"app version <" + JSON.stringify(semver.satisfies(__APP_VERSION__, "2.47.0"), null, 2) + ">"}
-        {__APP_VERSION__}
-      </p>
       {children}
     </FeatureFlagsProvider>
   );
