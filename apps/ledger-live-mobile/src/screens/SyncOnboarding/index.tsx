@@ -157,7 +157,9 @@ export const SyncOnboarding = ({
     [t, productName, device, handleSoftwareCheckComplete],
   );
 
-  const [desyncTimer, setDesyncTimer] = useState<NodeJS.Timeout | null>(null);
+  const [desyncTimer, setDesyncTimer] = useState<ReturnType<
+    typeof setTimeout
+  > | null>(null);
   const [stopPolling, setStopPolling] = useState<boolean>(false);
   const [pollingPeriodMs, setPollingPeriodMs] = useState<number>(
     normalPollingPeriodMs,
@@ -177,7 +179,21 @@ export const SyncOnboarding = ({
     CompanionStepKey.Paired,
   );
 
+  const cleanBeforeExit = useCallback(() => {
+    // Cleans polling subscription
+    setStopPolling(true);
+
+    // Cleans timer
+    if (desyncTimer) {
+      // desyncTimer should not be set to null to avoid triggering the useEffect
+      // setting up a new timeout on allowedError changes. Only clean the timeout.
+      clearTimeout(desyncTimer);
+    }
+  }, [desyncTimer]);
+
   const goBackToPairingFlow = useCallback(() => {
+    cleanBeforeExit();
+
     // On pairing success, navigate to the Sync Onboarding Companion
     // Replace to avoid going back to this screen on return from the pairing flow
     navigation.navigate(NavigatorName.Base as "Base", {
@@ -204,7 +220,7 @@ export const SyncOnboarding = ({
         },
       },
     });
-  }, [navigation, device]);
+  }, [navigation, device, cleanBeforeExit]);
 
   const {
     onboardingState: deviceOnboardingState,
@@ -222,7 +238,7 @@ export const SyncOnboarding = ({
 
   const handleDesyncTimedOut = useCallback(() => {
     setDesyncDrawerOpen(true);
-  }, [setDesyncDrawerOpen]);
+  }, []);
 
   const handleDesyncRetry = useCallback(() => {
     goBackToPairingFlow();
@@ -255,6 +271,7 @@ export const SyncOnboarding = ({
     setDesyncDrawerOpen(true);
   }, [fatalError]);
 
+  // Reacts to allowedError from the polling to set or clean the desync timeout
   useEffect(() => {
     if (allowedError && !desyncTimer) {
       setDesyncTimer(setTimeout(handleDesyncTimedOut, desyncTimeoutMs));
