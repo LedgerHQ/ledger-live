@@ -99,6 +99,7 @@ const SwapForm = () => {
   const [isSendMaxLoading, setIsSendMaxLoading] = useState(false);
   const [showDetails, setShowDetails] = useState(false);
   const [idleState, setIdleState] = useState(false);
+  const [firstRateId, setFirstRateId] = useState(null);
 
   const [error, setError] = useState();
   const { t } = useTranslation();
@@ -174,13 +175,19 @@ const SwapForm = () => {
   const swapError = swapTransaction.fromAmountError || exchangeRatesState?.error;
 
   useEffect(() => {
-    if (swapTransaction.swap.rates.status !== "loading") {
-      refreshInterval.current && clearInterval(refreshInterval.current);
-      refreshInterval.current = setInterval(() => {
-        !swapError && !idleStateRef.current && swapTransaction?.swap?.refetchRates();
-      }, refreshTime);
-    }
-  }, [swapError, swapTransaction.swap]);
+    const newFirstRateId = swapTransaction?.swap?.rates?.value?.length
+      ? swapTransaction.swap.rates.value[0].rateId
+      : null;
+    setFirstRateId(newFirstRateId);
+  }, [swapTransaction]);
+
+  useEffect(() => {
+    refreshInterval.current && clearInterval(refreshInterval.current);
+    refreshInterval.current = setInterval(() => {
+      !swapError && !idleStateRef.current && swapTransaction?.swap?.refetchRates();
+    }, refreshTime);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [swapError, firstRateId]);
 
   const refreshIdle = () => {
     idleStateRef.current && setIdleState(false);
