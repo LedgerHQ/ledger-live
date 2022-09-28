@@ -18,7 +18,16 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  comment-pr:
+    name: "Comment PR"
+    uses: peter-evans/create-or-update-comment@v2.0.0
+    with:
+      issue-number: ${{ github.event.inputs.number }}
+      body: |
+        [Generating screenshots: job started](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
+
   is-org-member:
+    needs: [comment-pr]
     name: "Check Org Member"
     uses: ledgerhq/ledger-live/.github/workflows/is-org-member.yml@develop
     with:
@@ -26,14 +35,6 @@ jobs:
       organisation: ledgerhq
     secrets:
       token: ${{ secrets.COMMON_READ_ORG }}
-
-  comment-pr:
-    name: "Comment PR"
-    uses: peter-evans/create-or-update-comment@v2
-    with:
-      issue-number: ${{ github.event.inputs.number }}
-      body: |
-        [Generating screenshots: job started](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
 
   generate-screenshots:
     needs: [is-org-member]
