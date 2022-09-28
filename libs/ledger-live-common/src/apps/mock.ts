@@ -88,7 +88,8 @@ export const parseInstalled = (installedDesc: string): InstalledItem[] =>
 export function mockListAppsResult(
   appDesc: string,
   installedDesc: string,
-  deviceInfo: DeviceInfo
+  deviceInfo: DeviceInfo,
+  deviceModelId?: DeviceModelId
 ): ListAppsResult {
   const tickersByMarketCap = Object.keys(getBTCValues());
   const apps = appDesc
@@ -145,7 +146,7 @@ export function mockListAppsResult(
     appByName,
     appsListNames: apps.map((a) => a.name),
     deviceInfo,
-    deviceModelId: <DeviceModelId>"nanoS",
+    deviceModelId: deviceModelId || DeviceModelId.nanoS,
     firmware: firmware155,
     installed,
     installedAvailable: true,

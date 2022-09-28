@@ -124,7 +124,8 @@
     },
     "exchange": "Exchange",
     "info": "Info",
-    "connectDevice": "Connect your device"
+    "connectDevice": "Connect your device",
+    "add": "Add"
   },
   "devices": {
     "nanoS": "Nano S",
@@ -5036,6 +5037,42 @@
     },
     "StellarSourceHasMultiSign": {
       "title": "Please disable multisign to make Stellar transactions"
+    },
+    "ImageIncorrectFileTypeError": {
+      "title": "Image loading from file failed.",
+      "description": "Please try again with an image."
+    },
+    "ImageLoadFromFileError": {
+      "title": "Image loading from file failed",
+      "description": "Please try again with another image"
+    },
+    "ImageDownloadError": {
+      "title": "Image download failed",
+      "description": "Please try again with another image"
+    },
+    "ImageMetadataLoadingError": {
+      "title": "Image metadata loading failed",
+      "description": "Please try again with another image"
+    },
+    "ImageTooLargeError": {
+      "title": "Image too large",
+      "description": "Please try with a smaller image"
+    },
+    "ImageCropError": {
+      "title": "Cropping of the image failed",
+      "description": "Please try again with another image"
+    },
+    "ImageResizeError": {
+      "title": "Resizing of the image failed",
+      "description": "Please try again with another image"
+    },
+    "ImagePreviewError": {
+      "title": "Preview of the image failed",
+      "description": "Please try again with another image"
+    },
+    "ImageProcessingError": {
+      "title": "Processing of the image failed",
+      "description": "Please try again with another image"
     }
   },
   "cryptoOrg": {
@@ -5065,6 +5102,27 @@
     },
     "selectAccount": {
       "title": "choose account"
+    }
+  },
+  "customImage": {
+    "title": "Custom image",
+    "steps": {
+      "choose": {
+        "stepLabel": "Choose an image",
+        "description": "Choose an image to set as (...)",
+        "pickFromNftGallery": "Select from my NFT gallery",
+        "upload": "Upload from my computer"
+      },
+      "adjust": {
+        "stepLabel": "Adjust image",
+        "rotate": "Rotate"
+      },
+      "contrast": {
+        "stepLabel": "Choose contrast"
+      },
+      "transfer": {
+        "stepLabel": "Transfer"
+      }
     }
   }
 }

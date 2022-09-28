@@ -1,5 +1,6 @@
 import React, { useState, useMemo, useCallback } from "react";
-import Button from "~/renderer/components/Button";
+import ButtonV2 from "~/renderer/components/Button";
+import Button from "~/renderer/components/ButtonV3";
 import { useTranslation } from "react-i18next";
 import { defaultFeatures, useFeatureFlags } from "@ledgerhq/live-common/featureFlags/index";
 import { SettingsSectionRow as Row } from "../../SettingsSection";
@@ -8,12 +9,16 @@ import {
   InputRenderLeftContainer,
   InputRenderRightContainer,
 } from "@ledgerhq/react-ui/components/form/BaseInput/index";
-import { withV3StyleProvider } from "~/renderer/styles/StyleProviderV3";
 import { includes, lowerCase } from "lodash";
+import { withV3StyleProvider } from "~/renderer/styles/StyleProviderV3";
 import Box from "~/renderer/components/Box";
-import Switch from "~/renderer/components/Switch";
+import SwitchV2 from "~/renderer/components/Switch";
 import Alert from "~/renderer/components/Alert";
 import { Feature, FeatureId } from "@ledgerhq/types-live";
+import { withV2StyleProvider } from "~/renderer/styles/StyleProvider";
+
+const OldButton = withV2StyleProvider(ButtonV2);
+const Switch = withV2StyleProvider(SwitchV2);
 
 type EditSectionProps = {
   error?: Error;
@@ -67,10 +72,10 @@ const EditSection = ({
           )}
         />
       </Flex>
-      <Button small outlineGrey onClick={onRestore}>
+      <Button variant="main" outline onClick={onRestore}>
         {t("settings.developer.featureFlagsRestore")}
       </Button>
-      <Button disabled={disabled} small primary onClick={onOverride}>
+      <Button disabled={disabled} variant="main" onClick={onOverride}>
         {t("settings.developer.featureFlagsOverride")}
       </Button>
     </Flex>
@@ -179,63 +184,68 @@ const FeatureFlagsButton = () => {
                 onChange={handleAddHiddenFlag}
               />
               <Flex height={15} />
-              {filteredFlags.map(([flagName, value]) => (
-                <>
-                  <Button
-                    flexDirection="row"
-                    py={1}
-                    onClick={() => {
-                      flagName === focusedName ? setFocusedName() : setFocusedName(flagName);
-                    }}
-                  >
-                    <Flex flex={1} mr={3} alignItems="center">
-                      <Box
-                        bg={value?.enabled ? "success.c100" : "error.c100"}
-                        height={10}
-                        width={10}
-                        mr={2}
-                        borderRadius={999}
-                      />
-                      <Text mr={1}>{flagName}</Text>
-                      {value?.overridesRemote ? (
-                        <Tag active mx={1} type="opacity" size="small">
-                          overridden locally
-                        </Tag>
-                      ) : null}
-                      {value?.enabledOverriddenForCurrentLanguage ? (
-                        <Tag active mx={1} type="outlinedOpacity" size="small">
-                          disabled for current language
-                        </Tag>
-                      ) : null}
-                    </Flex>
-                  </Button>
-                  {focusedName === flagName ? (
-                    <Flex flexDirection="column" pl={6} rowGap={3}>
-                      <EditSection
-                        value={inputValues[flagName] || JSON.stringify(featureFlags[flagName])}
-                        disabled={!inputValues[flagName]}
-                        error={error}
-                        onChange={handleInputChange}
-                        onOverride={handleOverrideFeature}
-                        onRestore={handleRestoreFeature}
-                      />
-                      <Flex p={3} backgroundColor="neutral.c30">
-                        <Text whiteSpace="pre">
-                          {JSON.stringify(featureFlags[flagName], null, 2)}
-                        </Text>
+              {filteredFlags.map(([flagName, value]) => {
+                const { overriddenByEnv, overridesRemote, ...pureValue } = value; // eslint-disable-line
+                return (
+                  <>
+                    <OldButton
+                      flexDirection="row"
+                      py={1}
+                      onClick={() => {
+                        flagName === focusedName ? setFocusedName() : setFocusedName(flagName);
+                      }}
+                    >
+                      <Flex flex={1} mr={3} alignItems="center">
+                        <Box
+                          bg={value?.enabled ? "success.c100" : "error.c100"}
+                          height={10}
+                          width={10}
+                          mr={2}
+                          borderRadius={999}
+                        />
+                        <Text mr={1}>{flagName}</Text>
+                        {value?.overriddenByEnv ? (
+                          <Tag active mx={1} type="opacity" size="small">
+                            overridden by env
+                          </Tag>
+                        ) : value?.overridesRemote ? (
+                          <Tag active mx={1} type="opacity" size="small">
+                            overridden locally
+                          </Tag>
+                        ) : null}
+                        {value?.enabledOverriddenForCurrentLanguage ? (
+                          <Tag active mx={1} type="outlinedOpacity" size="small">
+                            disabled for current language
+                          </Tag>
+                        ) : null}
                       </Flex>
-                    </Flex>
-                  ) : null}
-                </>
-              ))}
+                    </OldButton>
+                    {focusedName === flagName ? (
+                      <Flex flexDirection="column" pl={6} rowGap={3}>
+                        <EditSection
+                          value={inputValues[flagName] || JSON.stringify(pureValue)}
+                          disabled={!inputValues[flagName]}
+                          error={error}
+                          onChange={handleInputChange}
+                          onOverride={handleOverrideFeature}
+                          onRestore={handleRestoreFeature}
+                        />
+                        <Flex p={3} backgroundColor="neutral.c30">
+                          <Text whiteSpace="pre">{JSON.stringify(pureValue, null, 2)}</Text>
+                        </Flex>
+                      </Flex>
+                    ) : null}
+                  </>
+                );
+              })}
             </>
           )}
         </Flex>
       }
     >
-      <Button small primary onClick={() => setVisible(!visible)}>
+      <OldButton small primary onClick={() => setVisible(!visible)}>
         {visible ? "Hide" : "Show"}
-      </Button>
+      </OldButton>
     </Row>
   );
 };

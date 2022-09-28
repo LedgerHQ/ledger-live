@@ -39,6 +39,8 @@ export type Feature = {
   enabledOverriddenForCurrentLanguage?: boolean;
   /** Whether the remote value of this object was overriden locally */
   overridesRemote?: boolean;
+  /** Whether the remote value of this object was overriden by an environment variable */
+  overriddenByEnv?: boolean;
   /** Additional params */
   params?: any;
 };

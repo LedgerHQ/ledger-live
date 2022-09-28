@@ -29,6 +29,23 @@ const boolParser = (v: unknown): boolean | null | undefined => {
 const stringParser = (v: unknown): string | null | undefined =>
   typeof v === "string" ? v : undefined;
 
+type JSONValue =
+  | string
+  | number
+  | boolean
+  | null
+  | { [x: string]: JSONValue }
+  | Array<JSONValue>;
+
+const jsonParser = (v: unknown): JSONValue | undefined => {
+  try {
+    if (typeof v !== "string") throw new Error();
+    return JSON.parse(v);
+  } catch (e) {
+    return undefined;
+  }
+};
+
 const envDefinitions = {
   ANALYTICS_CONSOLE: {
     def: false,
@@ -643,6 +660,11 @@ const envDefinitions = {
     def: false,
     parser: boolParser,
     desc: "use the staging URL for the learn page",
+  },
+  FEATURE_FLAGS: {
+    def: "",
+    parser: jsonParser,
+    desc: "key value map for feature flags: {[key in FeatureId]?: Feature]}",
   },
 };
 

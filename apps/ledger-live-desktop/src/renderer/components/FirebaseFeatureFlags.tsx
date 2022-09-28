@@ -5,6 +5,7 @@ import { Feature, FeatureId } from "@ledgerhq/types-live";
 import { getValue } from "firebase/remote-config";
 
 import { formatFeatureId, useFirebaseRemoteConfig } from "./FirebaseRemoteConfig";
+import { getEnv } from "@ledgerhq/live-common/env";
 
 type Props = {
   children?: ReactNode;
@@ -26,6 +27,17 @@ export const FirebaseFeatureFlagsProvider = ({ children }: Props): JSX.Element =
           return localOverrides[key];
         }
 
+        const envFlags = getEnv("FEATURE_FLAGS") as { [key in FeatureId]?: Feature } | undefined;
+        if (allowOverride && envFlags) {
+          const feature = envFlags[key];
+          if (feature)
+            return {
+              ...feature,
+              overridesRemote: true,
+              overriddenByEnv: true,
+            };
+        }
+
         const value = getValue(remoteConfig, formatFeatureId(key));
         const feature: Feature = JSON.parse(value.asString());
 
@@ -42,7 +54,8 @@ export const FirebaseFeatureFlagsProvider = ({ children }: Props): JSX.Element =
     (key: FeatureId, value: Feature): void => {
       const actualRemoteValue = getFeature(key, false);
       if (!isEqual(actualRemoteValue, value)) {
-        const overridenValue = { ...value, overridesRemote: true };
+        const { overriddenByEnv, ...pureValue } = value; // eslint-disable-line
+        const overridenValue = { ...pureValue, overridesRemote: true };
         setLocalOverrides(currentOverrides => ({ ...currentOverrides, [key]: overridenValue }));
       } else {
         setLocalOverrides(currentOverrides => ({ ...currentOverrides, [key]: undefined }));
