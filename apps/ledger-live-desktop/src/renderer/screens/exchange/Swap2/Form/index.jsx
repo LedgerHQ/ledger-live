@@ -131,10 +131,6 @@ const SwapForm = () => {
   const providerKYC = swapKYC?.[provider];
   const kycStatus = providerKYC?.status;
 
-  const idleStateRef = useRef();
-  idleStateRef.current = idleState;
-  const showDetailsRef = useRef();
-  showDetailsRef.current = showDetails;
   const idleTimeout = useRef();
   const refreshInterval = useRef();
 
@@ -184,25 +180,25 @@ const SwapForm = () => {
   useEffect(() => {
     refreshInterval.current && clearInterval(refreshInterval.current);
     refreshInterval.current = setInterval(() => {
-      !swapError && !idleStateRef.current && swapTransaction?.swap?.refetchRates();
+      !swapError && !idleState && swapTransaction?.swap?.refetchRates();
     }, refreshTime);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [swapError, firstRateId]);
 
-  const refreshIdle = () => {
-    idleStateRef.current && setIdleState(false);
+  const refreshIdle = useCallback(() => {
+    idleState && setIdleState(false);
     idleTimeout.current && clearInterval(idleTimeout.current);
     idleTimeout.current = setTimeout(() => {
       setIdleState(true);
     }, idleTime);
-  };
+  }, [idleState]);
 
   useEffect(() => {
-    if (!showDetailsRef.current && swapTransaction.swap.rates.status !== "loading") {
+    if (!showDetails && swapTransaction.swap.rates.status !== "loading") {
       refreshIdle();
       setShowDetails(true);
     }
-  }, [swapTransaction.swap.rates.status]);
+  }, [refreshIdle, showDetails, swapTransaction.swap.rates.status]);
 
   useEffect(() => {
     dispatch(updateTransactionAction(swapTransaction.transaction));
