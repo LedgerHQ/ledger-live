@@ -4,17 +4,27 @@ export const urls = {
     "https://support.ledger.com/hc/en-us/requests/new?utm_source=ledger_live_mobile&utm_medium=self_referral&utm_content=contact",
   terms: {
     en: "https://shop.ledger.com/pages/ledger-live-terms-of-use",
-    fr: "https://shop.ledger.com/pages/conditions-dutilisation-de-ledger-live",
-    es: "https://shop.ledger.com/pages/condiciones-de-uso-de-ledger-live",
-    de: "https://shop.ledger.com/pages/nutzungsbedingungen-von-ledger-live",
+    fr: "https://shop.ledger.com/fr/pages/ledger-live-terms-of-use",
+    de: "https://shop.ledger.com/de/pages/ledger-live-terms-of-use",
+    es: "https://shop.ledger.com/es/pages/ledger-live-terms-of-use",
+    tr: "https://shop.ledger.com/tr/pages/ledger-live-terms-of-use",
+    ar: "https://shop.ledger.com/ar/pages/ledger-live-terms-of-use",
+    ja: "https://shop.ledger.com/ja/pages/ledger-live-terms-of-use",
+    zh: "https://shop.ledger.com/zh-cn/pages/ledger-live-terms-of-use",
+    ko: "https://shop.ledger.com/ko/pages/ledger-live-terms-of-use",
+    ru: "https://shop.ledger.com/ru/pages/ledger-live-terms-of-use",
   },
   privacyPolicy: {
-    en: "https://shop.ledger.com/pages/privacy-policy?utm_source=ledger_live_mobile&utm_medium=self_referral&utm_content=privacy",
-    fr: "https://shop.ledger.com/pages/politique-de-confidentialite?utm_source=ledger_live_mobile&utm_medium=self_referral&utm_content=privacy",
-    es: "https://shop.ledger.com/pages/politica-de-privacidad?utm_source=ledger_live_mobile&utm_medium=self_referral&utm_content=privacy",
-    ru: "https://shop.ledger.com/pages/nasha-politika-konfidentsialnosti?utm_source=ledger_live_mobile&utm_medium=self_referral&utm_content=privacy",
-    // TODO: Add the correct zh link
-    zh: "https://shop.ledger.com/pages/privacy-policy?utm_source=ledger_live_mobile&utm_medium=self_referral&utm_content=privacy",
+    en: "https://www.ledger.com/privacy-policy?utm_content=privacy&utm_medium=self_referral&utm_source=ledger_live_mobile",
+    fr: "https://www.ledger.com/fr/privacy-policy?utm_content=privacy&utm_medium=self_referral&utm_source=ledger_live_mobile",
+    de: "https://www.ledger.com/de/privacy-policy?utm_content=privacy&utm_medium=self_referral&utm_source=ledger_live_mobile",
+    es: "https://www.ledger.com/es/privacy-policy?utm_content=privacy&utm_medium=self_referral&utm_source=ledger_live_mobile",
+    tr: "https://www.ledger.com/tr/privacy-policy?utm_content=privacy&utm_medium=self_referral&utm_source=ledger_live_mobile",
+    ar: "https://www.ledger.com/ar/privacy-policy?utm_content=privacy&utm_medium=self_referral&utm_source=ledger_live_mobile",
+    ja: "https://www.ledger.com/ja/privacy-policy?utm_content=privacy&utm_medium=self_referral&utm_source=ledger_live_mobile",
+    zh: "https://www.ledger.com/zh-hans/privacy-policy?utm_content=privacy&utm_medium=self_referral&utm_source=ledger_live_mobile",
+    ko: "https://www.ledger.com/ko/privacy-policy?utm_content=privacy&utm_medium=self_referral&utm_source=ledger_live_mobile",
+    ru: "https://www.ledger.com/ru/privacy-policy?utm_content=privacy&utm_medium=self_referral&utm_source=ledger_live_mobile",
   },
   ratingsContact:
     "https://support.ledger.com/hc/en-us/articles/4423020306705-Contact-Us?support=true",
@@ -67,6 +77,8 @@ export const urls = {
     bep20:
       "https://support.ledger.com/hc/en-us/articles/4412962166289-Manage-BEP20-tokens?utm_source=ledger_live_mobile&utm_medium=self_referral&utm_content=receive_account_flow_bep20",
   },
+  celoStakingRewards:
+    "https://support.ledger.com/hc/en-us/articles/360020499920-Celo-CELO-?utm_source=ledger_live_mobile&utm_medium=self_referral&utm_content=celo&docs=true",
   osmosisStakingRewards:
     "https://support.ledger.com/hc/en-us/sections/4404369637521-Crypto-assets?docs=true",
   cosmosStaking:

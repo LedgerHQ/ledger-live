@@ -236,10 +236,26 @@
     },
     "form" : {
       "changeCTA" : "変更",
-      "ratesDrawer" : {
-        "title" : "レート",
-        "quote" : "見積もり",
-        "receive" : "受け取る"
+      "rates" : {
+        "title" : "プロバイダー",
+        "registration" : "登録が必要です ",
+        "noRegistration" : "いいえ、登録は不要です。",
+        "fixed" : "固定",
+        "float" : "変動",
+        "update" : "次のレート更新",
+        "loading" : "読み込み中...",
+        "name" : {
+          "title" : "プロバイダー",
+          "tooltip" : "プロバイダーによっては、アカウントを作成し、プロバイダーにサインインする必要があります。"
+        },
+        "rate" : {
+          "title" : "取引レート",
+          "tooltip" : "A <0>変動レート</0> は市況により変動するため、予測した金額よりも多額または少額である場合があります。<br/><0>固定レート</0>は、取引開始時に表示される金額と一致します。"
+        },
+        "receive" : {
+          "title" : "受け取る",
+          "tooltip" : "取引後に受け取る予測金額。"
+        }
       },
       "details" : {
         "label" : {
@@ -412,7 +428,13 @@
           "approved" : "本人確認が承認されました！",
           "closed" : "本人確認却下"
         }
-      }
+      },
+      "filter" : {
+        "all" : "全て",
+        "centralised" : "中央集権型",
+        "dedentralised" : "分散型"
+      },
+      "noQuote" : "お見積もりは次のページでご利用可能です"
     },
     "ip" : {
       "title" : "スワップへようこそ",
@@ -761,7 +783,7 @@
       },
       "delegation" : {
         "title" : "ご存知でしたか？",
-        "description" : "The Ledger validator stakes your {{asset}} at a commission of {{commission}}%.",
+        "description" : "Ledgerのバリデーターは、{{commission}}%の手数料で{{asset}}のステーキングを行います。",
         "cta" : "Ledgerでステーキング"
       }
     }
@@ -978,7 +1000,7 @@
       "terms" : {
         "title" : "暗号資産をレンディング",
         "subtitle" : "コンパウンド・プロトコルで資産をレンディング",
-        "description" : "The Compound protocol allows you to lend and borrow assets on the Ethereum network. You can lend assets and earn interest directly from your Ledger account.",
+        "description" : "コンパウンド・プロトコルを使用すると、Ethereumネットワーク上で資産のレンディングや借り入れを行うことができます。Ledgerアカウントから直接、資産のレンディングや利息を得ることが可能です。",
         "switchLabel" : "<1>私は<0>利用規約</0>を読み</1>、内容に同意しました<1>。</1>"
       },
       "steps" : {
@@ -1575,7 +1597,7 @@
       "provider" : "プロバイダー",
       "payoutNetworkFees" : "ペイアウト手数料",
       "payoutNetworkFeesTooltip" : "これはデバイスには表示されません。",
-      "acceptTerms" : "By validating this transaction, I accept\n<0>{{provider}}'s terms of use</0>"
+      "acceptTerms" : "このトランザクションを検証することにより、私は\n<0>{{provider}}の利用規約</0>に同意します"
     },
     "swap2" : {
       "amountSent" : "送付額",
@@ -1922,7 +1944,7 @@
   "send" : {
     "title" : "送信",
     "titleNft" : "NFTを送付",
-    "totalSpent" : "入金の合計",
+    "totalSpent" : "合計出金額",
     "steps" : {
       "recipient" : {
         "title" : "受取人",
@@ -3146,7 +3168,7 @@
           "steps" : {
             "confirmation" : {
               "success" : {
-                "title" : "You have successfully activated your delegation."
+                "title" : "デリゲートが正常に有効化されました。"
               }
             }
           }
@@ -3158,7 +3180,7 @@
           "steps" : {
             "confirmation" : {
               "success" : {
-                "title" : "You have successfully reactivated your delegation."
+                "title" : "デリゲートが正常に再有効化されました。"
               }
             }
           }
@@ -3406,6 +3428,10 @@
           "title" : "拡張アカウント検索",
           "description" : "誤った派生パスを持つアカウントをスキャンする検出された資産は、通常のアカウントに送金してください。"
         },
+        "experimentalCountervalues" : {
+          "title" : "実験的なカウンターバリューAPI",
+          "description" : "これにより、アカウントに表示されるカウンター値が不正確となる可能性があります。"
+        },
         "experimentalExplorers" : {
           "title" : "試験的なエクスプローラーAPI",
           "description" : "Ledgerのブロックチェーンエクスプローラーの、新バージョンをお試しいただけます。この設定を変更すると、アカウントの残高と同期、および送金機能に影響を与える可能性があります。\n(<0></0>)"
@@ -3551,7 +3577,11 @@
       "ru" : "ロシア語",
       "es" : "スペイン語",
       "zh" : "中国語",
-      "de" : "ドイツ語"
+      "de" : "ドイツ語",
+      "tr" : "トルコ語",
+      "ja" : "日本語",
+      "ko" : "韓国語",
+      "pt" : "ポルトガル語"
     }
   },
   "theme" : {
@@ -4339,6 +4369,9 @@
       "title" : "特定の設定に必要な{{appName}}アプリが見つかりません。",
       "description" : "My Ledgerからアプリの再インストールを試す"
     },
+    "PendingOperation" : {
+      "description" : "保留中の受信トランザクションがあります。保留中のトランザクションは取り消される可能性がありますので、ご注意ください。"
+    },
     "countervaluesUnavailable" : {
       "title" : "現在、この資産のカウンターバリューを提供できません。"
     },
@@ -4583,10 +4616,6 @@
       "title" : "インターネットがダウンしているようです。",
       "description" : "インターネット接続を確認してください。"
     },
-    "NetworkError" : {
-      "title" : "同期中にエラーが発生しました",
-      "description" : "インターネット接続を確認してください。"
-    },
     "NoAddressesFound" : {
       "title" : "アカウントが見つかりませんでした。",
       "description" : "アドレス計算時に問題が発生しました。再試行するか、Ledgerサポートにお問い合わせください。"
@@ -4734,7 +4763,7 @@
     },
     "EthAppNftNotSupported" : {
       "title" : "お使いのデバイスではこの操作をご利用いただけません",
-      "description" : "NFTの送付は、Nano Xでのみご利用いただけます。カスタマーサポートページから、Nano SでNFTを送付する方法をご確認ください。"
+      "description" : "Send NFT feature is only available for Nano X and Nano S+. Please visit our customer support platform to know how to send a NFT with a Nano S."
     },
     "CantScanQRCode" : {
       "title" : "このQRコードをスキャンできませんでした：このアドレスでは自動認証がサポートされていません。"

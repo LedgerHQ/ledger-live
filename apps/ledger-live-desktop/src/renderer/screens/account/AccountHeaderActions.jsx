@@ -87,12 +87,29 @@ type Props = {
 } & OwnProps;
 
 const AccountHeaderSettingsButtonComponent = ({ account, parentAccount, openModal, t }: Props) => {
+  const mainAccount = getMainAccount(account, parentAccount);
   const currency = getAccountCurrency(account);
+  const history = useHistory();
+
+  const walletConnectLiveApp = useFeature("walletConnectLiveApp");
 
   const onWalletConnect = useCallback(() => {
     setTrackingSource("account header actions");
     openModal("MODAL_WALLETCONNECT_PASTE_LINK", { account });
   }, [openModal, account]);
+
+  const onWalletConnectLiveApp = useCallback(() => {
+    setTrackingSource("account header actions");
+
+    const params = {
+      initialAccountId: mainAccount.id,
+    };
+
+    history.push({
+      pathname: "/platform/ledger-wallet-connect",
+      state: params,
+    });
+  }, [mainAccount.id, history]);
 
   return (
     <Box horizontal alignItems="center" justifyContent="flex-end" flow={2}>
@@ -106,7 +123,9 @@ const AccountHeaderSettingsButtonComponent = ({ account, parentAccount, openModa
       </Tooltip>
       {["ethereum", "bsc", "polygon"].includes(currency.id) ? (
         <Tooltip content={t("walletconnect.titleAccount")}>
-          <ButtonSettings onClick={onWalletConnect}>
+          <ButtonSettings
+            onClick={walletConnectLiveApp?.enabled ? onWalletConnectLiveApp : onWalletConnect}
+          >
             <Box justifyContent="center">
               <IconWalletConnect size={14} />
             </Box>
