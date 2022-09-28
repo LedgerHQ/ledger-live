@@ -7,7 +7,7 @@ import { BigNumber } from "bignumber.js";
 import { BroadcastTransactionRequest, TransactionResponse } from "./types";
 import {
   GetAccountShape,
-  GetAccountShapeArg0,
+  AccountShapeInfo,
 } from "../../../../bridge/jsHelpers";
 import { fetchBalances, fetchBlockHeight, fetchTxs } from "./api";
 import { encodeAccountId } from "../../../../account";
@@ -49,7 +49,7 @@ export const processTxs = (
 };
 
 export const mapTxToOps =
-  (accountId, { address }: GetAccountShapeArg0) =>
+  (accountId, { address }: AccountShapeInfo) =>
   (tx: TransactionResponse): Operation[] => {
     const { to, from, hash, timestamp, amount, fee } = tx;
     const ops: Operation[] = [];

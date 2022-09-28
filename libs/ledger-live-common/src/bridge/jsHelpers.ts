@@ -16,7 +16,7 @@ import {
 import { Resolver } from "@ledgerhq/coin-framework/lib/bridge/getAddressWrapper";
 
 export {
-  AccountShapeInfo as GetAccountShapeArg0,
+  AccountShapeInfo,
   GetAccountShape,
   IterateResultBuilder,
   makeSync,
