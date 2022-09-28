@@ -27,9 +27,8 @@ jobs:
     secrets:
       token: ${{ secrets.COMMON_READ_ORG }}
       
-  comment-pr:
-    needs: [is-org-member]
-    name: "Create comment"
+  comment-pr-workflow-started:
+    name: Create comment "worflow started"
     runs-on: "ubuntu-latest"
     steps:
       - name: Create or Update Comment
@@ -37,8 +36,26 @@ jobs:
         with:
           issue-number: ${{ github.event.inputs.number }}
           body: |
-            [Generating screenshots: job started](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
+            [Generating screenshots: worflow started](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
 
+  test-failing-job:
+    runs-on: "ubuntu-latest"
+    steps:
+      - name: failing job
+        run: exit 1
+        
+  comment-pr-workflow-ended:
+    needs: ["test-failing-job"]
+    if: always()
+    name: Create comment "worflow ended"
+    runs-on: "ubuntu-latest"
+    steps:
+      - name: Create or Update Comment
+        uses: peter-evans/create-or-update-comment@v2.0.0
+        with:
+          issue-number: ${{ github.event.inputs.number }}
+          body: |
+            Generating screenshots: worflow ended: ${{ jobs.test-failing-job.result }}
 
   generate-screenshots:
     needs: [is-org-member]
