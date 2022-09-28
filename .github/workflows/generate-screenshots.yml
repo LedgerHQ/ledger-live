@@ -26,7 +26,7 @@ jobs:
       organisation: ledgerhq
     secrets:
       token: ${{ secrets.COMMON_READ_ORG }}
-      
+
   comment-pr-workflow-started:
     needs: [is-org-member]
     name: Create comment "worflow started"
@@ -41,50 +41,12 @@ jobs:
             @${{ github.event.inputs.login }}
             [Generating screenshots: workflow started](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
 
-  test-failing-job:
-    needs: [comment-pr-workflow-started]
-    runs-on: "ubuntu-latest"
-    steps:
-      - name: failing job
-        run: exit 1
-        
-  comment-pr-workflow-ended:
-    needs: ["test-failing-job"]
-    if: always()
-    name: Create comment "worflow ended"
-    runs-on: "ubuntu-latest"
-    steps:
-      - name: get jobs status
-        id: jobs_status
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          JOBS_STATUS=$(gh run view -R ${{ github.repository }} ${{ github.run_id }} | grep "(ID ")
-          # below, a trick to make it a 1 liner: https://github.com/orgs/community/discussions/26288#discussioncomment-3251222
-          JOBS_STATUS="${JOBS_STATUS//'%'/'%25'}"
-          JOBS_STATUS="${JOBS_STATUS//$'\n'/'%0A'}"
-          JOBS_STATUS="${JOBS_STATUS//$'\r'/'%0D'}"
-          echo "::set-output name=JOBS_STATUS::$JOBS_STATUS"
-      - name: Find existing comment
-        uses: peter-evans/find-comment@v2
-        id: find-comment
-        with:
-          issue-number: ${{ github.event.inputs.number }}
-          comment-author: 'github-actions[bot]'
-          body-includes: <!-- generate-screenshots-report:${{ github.run_id }} -->
-      - name: Create or Update Comment
-        uses: peter-evans/create-or-update-comment@v2.0.0
-        with:
-          comment-id: ${{ steps.find-comment.outputs.comment-id }}
-          edit-mode: replace
-          body: |
-            <!-- generate-screenshots-report:${{ github.run_id }} -->
-            @${{ github.event.inputs.login }}
-            [Generating screenshots: workflow ended:](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
-
-            ```
-            ${{ steps.jobs_status.outputs.JOBS_STATUS }}
-            ```
+  # test-failing-job:
+  #   needs: [comment-pr-workflow-started]
+  #   runs-on: "ubuntu-latest"
+  #   steps:
+  #     - name: failing job
+  #       run: exit 1
 
   generate-screenshots:
     needs: [is-org-member]
@@ -176,3 +138,41 @@ jobs:
         with:
           os: "macos-latest"
           turbo-server-port: ${{ steps.turborepo-cache-server.outputs.port }}
+
+  comment-pr-workflow-ended:
+    needs: ["generate-screenshots", "generate-screenshots-mac-internal"]
+    if: always()
+    name: Create comment "worflow ended"
+    runs-on: "ubuntu-latest"
+    steps:
+      - name: get jobs status
+        id: jobs_status
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          JOBS_STATUS=$(gh run view -R ${{ github.repository }} ${{ github.run_id }} | grep "(ID " | grep "generate-screenshots")
+          # below, a trick to make it a 1 liner: https://github.com/orgs/community/discussions/26288#discussioncomment-3251222
+          JOBS_STATUS="${JOBS_STATUS//'%'/'%25'}"
+          JOBS_STATUS="${JOBS_STATUS//$'\n'/'%0A'}"
+          JOBS_STATUS="${JOBS_STATUS//$'\r'/'%0D'}"
+          echo "::set-output name=JOBS_STATUS::$JOBS_STATUS"
+      - name: Find existing comment
+        uses: peter-evans/find-comment@v2
+        id: find-comment
+        with:
+          issue-number: ${{ github.event.inputs.number }}
+          comment-author: "github-actions[bot]"
+          body-includes: <!-- generate-screenshots-report:${{ github.run_id }} -->
+      - name: Create or Update Comment
+        uses: peter-evans/create-or-update-comment@v2.0.0
+        with:
+          comment-id: ${{ steps.find-comment.outputs.comment-id }}
+          edit-mode: replace
+          body: |
+            <!-- generate-screenshots-report:${{ github.run_id }} -->
+            @${{ github.event.inputs.login }}
+            [Generating screenshots: workflow ended:](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
+
+            ```
+            ${{ steps.jobs_status.outputs.JOBS_STATUS }}
+            ```
