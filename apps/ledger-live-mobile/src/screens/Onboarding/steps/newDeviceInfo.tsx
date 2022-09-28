@@ -5,12 +5,15 @@ import { Flex, Carousel, Text, Button, Icons } from "@ledgerhq/native-ui";
 import { useNavigation, useRoute, RouteProp } from "@react-navigation/native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import styled from "styled-components/native";
+import { space } from "@ledgerhq/native-ui/styles/theme";
+import { StyleSheet } from "react-native";
 import { ScreenName } from "../../../const";
 import Illustration from "../../../images/illustration/Illustration";
 
 import { normalize } from "../../../helpers/normalizeSize";
 
 import { DeviceNames } from "../types";
+import InvertTheme from "../../../components/theme/InvertTheme";
 
 const StyledSafeAreaView = styled(SafeAreaView)`
   flex: 1;
@@ -33,7 +36,7 @@ const Card = ({ index /* , deviceModelId */ }: CardType) => {
   const { t } = useTranslation();
   return (
     <Flex flex={1} justifyContent="center" alignItems="center" px={20}>
-      <Flex>
+      <Flex mb={`${space[8]}px`}>
         <Illustration
           size={normalize(240)}
           darkSource={images.light[index]}
@@ -43,7 +46,7 @@ const Card = ({ index /* , deviceModelId */ }: CardType) => {
       <Text variant="h2" mb={3} textAlign="center" color="constant.black">
         {t(`onboarding.stepNewDevice.${index}.title`)}
       </Text>
-      <Text textAlign="center" variant="body" color="constant.black">
+      <Text textAlign="center" variant="bodyLineHeight" color="constant.black">
         {t(`onboarding.stepNewDevice.${index}.desc`)}
       </Text>
     </Flex>
@@ -76,7 +79,7 @@ const Footer = ({ index }: { index: number }) => {
 
   return (
     <Animatable.View
-      style={{ width: "100%" }}
+      style={styles.animatable}
       animation="fadeIn"
       useNativeDriver
     >
@@ -95,35 +98,55 @@ function OnboardingStepNewDevice() {
   const route = useRoute<CurrentRouteType>();
   const navigation = useNavigation();
   const { deviceModelId } = route.params;
-
+  const { t } = useTranslation();
   const handleBack = useCallback(() => navigation.goBack(), [navigation]);
 
   return (
     <StyledSafeAreaView>
       <Flex
         flexDirection="row"
-        justifyContent="space-between"
+        justifyContent="center"
         alignItems="center"
         width="100%"
         height={48}
       >
-        <Button Icon={Icons.ArrowLeftMedium} onPress={handleBack} />
+        <Button
+          Icon={() => <Icons.ArrowLeftMedium color="neutral.c00" size={24} />}
+          onPress={handleBack}
+          style={styles.backArrow}
+        />
+        <Text variant="h3" mb={3} textAlign="center" color="constant.black">
+          {t(`onboarding.stepNewDevice.${currentIndex}.label`)}
+        </Text>
       </Flex>
-      <Carousel onChange={setCurrentIndex}>
-        {new Array(5).fill(null).map((_, index) => (
-          <Card index={index} key={index} deviceModelId={deviceModelId} />
-        ))}
-      </Carousel>
-      <Flex
-        minHeight="60px"
-        width="100%"
-        justifyContent="center"
-        alignItems="center"
-      >
-        <Footer index={currentIndex} />
-      </Flex>
+      <InvertTheme>
+        <Carousel onChange={setCurrentIndex}>
+          {new Array(5).fill(null).map((_, index) => (
+            <Card index={index} key={index} deviceModelId={deviceModelId} />
+          ))}
+        </Carousel>
+        <Flex
+          minHeight="60px"
+          width="100%"
+          justifyContent="center"
+          alignItems="center"
+        >
+          <Footer index={currentIndex} />
+        </Flex>
+      </InvertTheme>
     </StyledSafeAreaView>
   );
 }
+
+const styles = StyleSheet.create({
+  animatable: {
+    width: "100%",
+  },
+  backArrow: {
+    position: "absolute",
+    top: -5,
+    left: 0,
+  },
+});
 
 export default OnboardingStepNewDevice;
