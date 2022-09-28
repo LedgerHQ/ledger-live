@@ -139,7 +139,7 @@ jobs:
           turbo-server-port: ${{ steps.turborepo-cache-server.outputs.port }}
 
   report-end:
-    needs: ["generate-screenshots", "generate-screenshots-mac-internal"]
+    needs: ["generate-screenshots", "generate-screenshots-mac-internal", "report-start"]
     if: always()
     name: Report end
     runs-on: "ubuntu-latest"
