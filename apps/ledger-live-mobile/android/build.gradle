@@ -62,6 +62,9 @@ allprojects {
                 includeModule("com.theartofdev.edmodo", "android-image-cropper") // for expo-image-picker
             }
         }
+        maven {
+            url "https://appboy.github.io/appboy-android-sdk/sdk"
+        }
     }
     configurations.all {
         resolutionStrategy {
