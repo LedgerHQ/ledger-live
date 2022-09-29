@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-<string name="com_braze_api_key">be5e1bc8-43f1-4864-b097-076a3c693a43</string>
-<string translatable="false" name="com_braze_custom_endpoint">sdk.fra-02.braze.eu</string>
+<string name="com_braze_api_key">@string/BRAZE_API_KEY</string>
+<string translatable="false" name="com_braze_custom_endpoint">@string/BRAZE_CUSTOM_ENDPOINT</string>
 </resources>
