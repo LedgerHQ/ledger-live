@@ -6,6 +6,7 @@ import { Trans } from "react-i18next";
 import { Transition, TransitionGroup } from "react-transition-group";
 
 import manager from "@ledgerhq/live-common/manager/index";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 
 import type { DeviceInfo, FirmwareUpdateContext } from "@ledgerhq/types-live";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
@@ -302,6 +303,7 @@ const DeviceStorage = ({
   const shouldWarn = distribution.shouldWarnMemory || isIncomplete;
 
   const firmwareOutdated = manager.firmwareUnsupported(deviceModel.id, deviceInfo) || firmware;
+  const deviceLocalizationFeatureFlag = useFeature("deviceLocalization");
 
   return (
     <Card p={20} mb={4} horizontal>
@@ -334,7 +336,7 @@ const DeviceStorage = ({
             )}{" "}
             {<HighlightVersion>{deviceInfo.version}</HighlightVersion>}
           </Text>
-          {deviceInfo.languageId !== undefined && (
+          {deviceInfo.languageId !== undefined && deviceLocalizationFeatureFlag?.enabled && (
             <DeviceLanguage
               deviceInfo={deviceInfo}
               device={device}

@@ -11,12 +11,14 @@ type Props = {
   parentAccount?: Account;
   currency?: CryptoCurrency | TokenCurrency;
   accounts?: AccountLike[];
+  eventProperties?: { [key: string]: any };
 };
 
 const FabMarketActionsComponent: React.FC<Props> = ({
   currency,
   accounts,
   defaultAccount,
+  eventProperties,
 }) => {
   const { mainActions } = useAssetActions({ currency, accounts });
 
@@ -24,6 +26,7 @@ const FabMarketActionsComponent: React.FC<Props> = ({
     <FabButtonBarProvider
       actions={mainActions}
       modalOnDisabledClickProps={{ currency, account: defaultAccount }}
+      eventProperties={eventProperties}
     >
       {({ quickActions }) => <FabButtonBar data={quickActions} />}
     </FabButtonBarProvider>
