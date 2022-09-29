@@ -206,13 +206,18 @@ jobs:
               }
             ).then(resPerPage => resPerPage.find(res => !!res));
 
-            if (!existingComment) throw new Error("existing comment not found")
-
-            console.log("existingComment", existingComment);
-
-            await github.rest.issues.updateComment({
-              owner,
-              repo,
-              comment_id: existingComment?.id,
-              body
-            });
+            if (existingComment) {
+              await github.rest.issues.updateComment({
+                owner,
+                repo,
+                comment_id: existingComment?.id,
+                body
+              });
+            } else {
+              await github.request("POST /repos/{owner}/{repo}/issues/{issue_number}/comments", {
+                owner,
+                repo,
+                issue_number: ${{ github.event.inputs.number }},
+                body,
+              })
+            }
