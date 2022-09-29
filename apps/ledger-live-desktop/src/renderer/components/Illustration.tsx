@@ -5,8 +5,7 @@ import { Box } from "@ledgerhq/react-ui";
 type Props = {
   lightSource: string;
   darkSource: string;
-  height: number;
-  width: number
+  size: number;
 };
 
 const defineStyleFromTheme = (lightAsset: string, darkAsset: string) => (
