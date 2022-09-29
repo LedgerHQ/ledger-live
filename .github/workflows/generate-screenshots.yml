@@ -147,8 +147,12 @@ jobs:
           turbo-server-port: ${{ steps.turborepo-cache-server.outputs.port }}
 
   report-end:
-    # needs: ["generate-screenshots", "generate-screenshots-mac-internal", "report-start"]
-    needs: ["report-start"]
+    needs:
+      [
+        "generate-screenshots",
+        "generate-screenshots-mac-internal",
+        "report-start",
+      ]
     if: always()
     name: Report end
     runs-on: "ubuntu-latest"
@@ -165,7 +169,6 @@ jobs:
               repo,
               run_id: ${{ github.run_id }},
             });
-            console.log(jobs);
 
             const jobsStatusString = jobs
               .filter(job => job.name.startsWith("generate-screenshots"))
@@ -182,19 +185,13 @@ jobs:
             ${jobsStatusString}
             `
 
-            console.log(body);
-
             const comments = await github.rest.issues.listComments({
               owner: context.repo.owner,
               repo: context.repo.repo,
               issue_number: ${{ github.event.inputs.number }},
             });
 
-            console.log(comments);
-
             const existingComment = comments.data.find(comment => comment.user.login === 'github-actions[bot]' && comment.body.startsWith(`${{ env.comment_header }}`));
-
-            console.log(existingComment);
 
             await github.rest.issues.updateComment({
               owner,
