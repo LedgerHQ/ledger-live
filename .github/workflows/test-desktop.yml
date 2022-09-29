@@ -14,6 +14,9 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
+env:
+  comment_header: <!-- test-desktop-report -->
+
 jobs:
   pr-is-fork:
     name: "Check if the PR is a fork"
@@ -175,7 +178,11 @@ jobs:
               issue_number: context.issue.number,
             });
 
-            const exists = comments.data.find(comment => comment.user.login === 'github-actions[bot]');
+            const exists = comments.data
+              .find(comment =>
+                comment.user.login === 'github-actions[bot]' &&
+                comment.body.startsWith(`${{ env.comment_header }}`));
+              );
 
             return exists?.id ?? 'false';
       - name: download images artifacts
@@ -216,11 +223,11 @@ jobs:
               owner: context.repo.owner,
               repo: context.repo.repo,
               comment_id: ${{ steps.exists.outputs.result }},
-              body: `${{ steps.comment.outputs.body }}`
+              body: `${{ env.comment_header }}\n${{ steps.comment.outputs.body }}`
             });
       - name: create comment
         if: ${{ steps.exists.outputs.result == 'false' }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          gh pr comment ${{ github.event.number }} --body "${{ steps.comment.outputs.body }}"
+          gh pr comment ${{ github.event.number }} --body "${{ env.comment_header }}\n${{ steps.comment.outputs.body }}"
