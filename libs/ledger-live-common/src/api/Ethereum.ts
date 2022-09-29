@@ -320,7 +320,8 @@ export const apiForCurrency = (currency: CryptoCurrency): API => {
     async roughlyEstimateGasLimit(address) {
       const { data } = await network({
         method: "GET",
-        url: `${baseURL}/address/${address}/estimate-gas-limit`,
+        url: `https://explorers.api-01.live.ledger-stg.com/blockchain/v3/eth/addresses/${address}/estimate-gas-limit`,
+        //url: `${baseURL}/address/${address}/estimate-gas-limit`,
       });
       return new BigNumber(data.estimated_gas_limit);
     },
@@ -334,7 +335,8 @@ export const apiForCurrency = (currency: CryptoCurrency): API => {
       delete post.gasPrice;
       const { data } = await network({
         method: "POST",
-        url: `${baseURL}/address/${address}/estimate-gas-limit`,
+        url: `https://explorers.api-01.live.ledger-stg.com/blockchain/v3/eth/addresses/${address}/estimate-gas-limit`,
+        //url: `${baseURL}/address/${address}/estimate-gas-limit`,
         data: post,
       });
 
