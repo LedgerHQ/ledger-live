@@ -187,7 +187,7 @@ jobs:
             `
 
             const existingComment = await github.paginate(
-              "GET /repos/{owner}/{repo}/issues/comments",
+              "GET /repos/{owner}/{repo}/issues/{issue_number}/comments",
               {
                 owner: context.repo.owner,
                 repo: context.repo.repo,
