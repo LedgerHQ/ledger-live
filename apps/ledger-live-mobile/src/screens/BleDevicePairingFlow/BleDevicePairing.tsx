@@ -120,7 +120,7 @@ export const BleDevicePairing = ({
   if (pairingError) {
     return (
       <Flex bg="background.main" height="100%" justifyContent="space-between">
-        <Flex mx={10}>
+        <Flex mx="10" mt="12">
           <Flex alignItems="center" justifyContent="center" p={5}>
             <CircledCrossSolidMedium color={colors.error.c80} size={56} />
           </Flex>
@@ -137,9 +137,11 @@ export const BleDevicePairing = ({
             {t("blePairingFlow.pairing.error.subtitle", { productName })}
           </Text>
         </Flex>
-        <Button type="main" onPress={onRetry}>
-          {t("blePairingFlow.pairing.error.retryCta")}
-        </Button>
+        <Flex mb="10" mx="6">
+          <Button type="main" onPress={onRetry}>
+            {t("blePairingFlow.pairing.error.retryCta")}
+          </Button>
+        </Flex>
       </Flex>
     );
   }
