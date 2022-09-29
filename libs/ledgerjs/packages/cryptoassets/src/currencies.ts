@@ -322,6 +322,7 @@ export const cryptocurrenciesById: Record<string, CryptoCurrency> = {
     supportsSegwit: true,
     supportsNativeSegwit: true,
     family: "bitcoin",
+    bypassAppDependency: true,
     blockAvgTime: 15 * 60,
     bitcoinLikeInfo: {
       P2PKH: 0,
@@ -350,6 +351,7 @@ export const cryptocurrenciesById: Record<string, CryptoCurrency> = {
     scheme: "bitcoincash",
     color: "#3ca569",
     family: "bitcoin",
+    bypassAppDependency: true,
     blockAvgTime: 15 * 60,
     bitcoinLikeInfo: {
       P2PKH: 0,
@@ -397,6 +399,7 @@ export const cryptocurrenciesById: Record<string, CryptoCurrency> = {
     color: "#132c47",
     supportsSegwit: true,
     family: "bitcoin",
+    bypassAppDependency: true,
     blockAvgTime: 15 * 60,
     bitcoinLikeInfo: {
       P2PKH: 38,
@@ -443,6 +446,7 @@ export const cryptocurrenciesById: Record<string, CryptoCurrency> = {
     scheme: "btcp",
     color: "#2F2D63",
     family: "bitcoin",
+    bypassAppDependency: true,
     blockAvgTime: 2.5 * 60,
     units: [
       {
@@ -623,6 +627,7 @@ export const cryptocurrenciesById: Record<string, CryptoCurrency> = {
     scheme: "club",
     color: "#000000",
     family: "bitcoin",
+    bypassAppDependency: true,
     blockAvgTime: 140,
     bitcoinLikeInfo: {
       P2PKH: 28,
@@ -757,6 +762,7 @@ export const cryptocurrenciesById: Record<string, CryptoCurrency> = {
     scheme: "dash",
     color: "#0e76aa",
     family: "bitcoin",
+    bypassAppDependency: true,
     blockAvgTime: 150,
     bitcoinLikeInfo: {
       P2PKH: 76,
@@ -809,6 +815,7 @@ export const cryptocurrenciesById: Record<string, CryptoCurrency> = {
       },
     ],
     family: "bitcoin",
+    bypassAppDependency: true,
     blockAvgTime: 15 * 60,
     bitcoinLikeInfo: {
       P2PKH: 0x073f,
@@ -859,6 +866,7 @@ export const cryptocurrenciesById: Record<string, CryptoCurrency> = {
     scheme: "digibyte",
     color: "#0066cc",
     family: "bitcoin",
+    bypassAppDependency: true,
     supportsSegwit: true,
     supportsNativeSegwit: true,
     blockAvgTime: 60,
@@ -896,6 +904,7 @@ export const cryptocurrenciesById: Record<string, CryptoCurrency> = {
     scheme: "dogecoin",
     color: "#65d196",
     family: "bitcoin",
+    bypassAppDependency: true,
     blockAvgTime: 60,
     bitcoinLikeInfo: {
       P2PKH: 30,
@@ -1278,6 +1287,7 @@ export const cryptocurrenciesById: Record<string, CryptoCurrency> = {
     scheme: "game",
     color: "#24485D",
     family: "bitcoin",
+    bypassAppDependency: true,
     units: [
       {
         name: "GAME",
@@ -1344,6 +1354,7 @@ export const cryptocurrenciesById: Record<string, CryptoCurrency> = {
     scheme: "hcash",
     color: "#56438c",
     family: "bitcoin",
+    bypassAppDependency: true,
     blockAvgTime: 150,
     bitcoinLikeInfo: {
       P2PKH: 40,
@@ -1589,6 +1600,7 @@ export const cryptocurrenciesById: Record<string, CryptoCurrency> = {
     scheme: "komodo",
     color: "#326464",
     family: "bitcoin",
+    bypassAppDependency: true,
     blockAvgTime: 60,
     bitcoinLikeInfo: {
       P2PKH: 60,
@@ -1643,6 +1655,7 @@ export const cryptocurrenciesById: Record<string, CryptoCurrency> = {
     scheme: "LBRY",
     color: "#000",
     family: "bitcoin",
+    bypassAppDependency: true,
     units: [
       {
         name: "LBRY",
@@ -1664,6 +1677,7 @@ export const cryptocurrenciesById: Record<string, CryptoCurrency> = {
     supportsSegwit: true,
     supportsNativeSegwit: true,
     family: "bitcoin",
+    bypassAppDependency: true,
     blockAvgTime: 5 * 60,
     bitcoinLikeInfo: {
       P2PKH: 48,
@@ -1952,6 +1966,7 @@ export const cryptocurrenciesById: Record<string, CryptoCurrency> = {
     color: "#344cff",
     supportsSegwit: true,
     family: "bitcoin",
+    bypassAppDependency: true,
     blockAvgTime: 120,
     bitcoinLikeInfo: {
       P2PKH: 38,
@@ -2050,6 +2065,7 @@ export const cryptocurrenciesById: Record<string, CryptoCurrency> = {
     scheme: "peercoin",
     color: "#3cb054",
     family: "bitcoin",
+    bypassAppDependency: true,
     blockAvgTime: 450,
     bitcoinLikeInfo: {
       P2PKH: 55,
@@ -2109,6 +2125,7 @@ export const cryptocurrenciesById: Record<string, CryptoCurrency> = {
     scheme: "pivx",
     color: "#46385d",
     family: "bitcoin",
+    bypassAppDependency: true,
     blockAvgTime: 150,
     bitcoinLikeInfo: {
       P2PKH: 30,
@@ -2232,6 +2249,7 @@ export const cryptocurrenciesById: Record<string, CryptoCurrency> = {
     // FIXME
     color: "#000000",
     family: "bitcoin",
+    bypassAppDependency: true,
     blockAvgTime: 60,
     bitcoinLikeInfo: {
       P2PKH: 55,
@@ -2292,6 +2310,7 @@ export const cryptocurrenciesById: Record<string, CryptoCurrency> = {
     scheme: "qtum",
     color: "#2e9ad0",
     family: "bitcoin",
+    bypassAppDependency: true,
     blockAvgTime: 2 * 60,
     bitcoinLikeInfo: {
       P2PKH: 58,
@@ -2375,6 +2394,7 @@ export const cryptocurrenciesById: Record<string, CryptoCurrency> = {
     scheme: "ravencoin",
     color: "#000",
     family: "bitcoin",
+    bypassAppDependency: true,
     units: [
       {
         name: "RVN",
@@ -2475,6 +2495,7 @@ export const cryptocurrenciesById: Record<string, CryptoCurrency> = {
     scheme: "resistance",
     color: "#000",
     family: "bitcoin",
+    bypassAppDependency: true,
     units: [
       {
         name: "RES",
@@ -2528,6 +2549,7 @@ export const cryptocurrenciesById: Record<string, CryptoCurrency> = {
     color: "#141828",
     supportsSegwit: true,
     family: "bitcoin",
+    bypassAppDependency: true,
     blockAvgTime: 60,
     bitcoinLikeInfo: {
       P2PKH: 76,
@@ -2566,6 +2588,7 @@ export const cryptocurrenciesById: Record<string, CryptoCurrency> = {
     scheme: "stratis",
     color: "#1382c6",
     family: "bitcoin",
+    bypassAppDependency: true,
     blockAvgTime: 150,
     bitcoinLikeInfo: {
       P2PKH: 63,
@@ -2605,6 +2628,7 @@ export const cryptocurrenciesById: Record<string, CryptoCurrency> = {
     scheme: "stealth",
     color: "#000000",
     family: "bitcoin",
+    bypassAppDependency: true,
     blockAvgTime: 150,
     bitcoinLikeInfo: {
       P2PKH: 62,
@@ -2898,6 +2922,7 @@ export const cryptocurrenciesById: Record<string, CryptoCurrency> = {
     color: "#1b5c2e",
     supportsSegwit: true,
     family: "bitcoin",
+    bypassAppDependency: true,
     blockAvgTime: 150,
     bitcoinLikeInfo: {
       P2PKH: 71,
@@ -2934,6 +2959,7 @@ export const cryptocurrenciesById: Record<string, CryptoCurrency> = {
     color: "#414141",
     supportsSegwit: true,
     family: "bitcoin",
+    bypassAppDependency: true,
     blockAvgTime: 24,
     bitcoinLikeInfo: {
       P2PKH: 71,
@@ -3011,6 +3037,7 @@ export const cryptocurrenciesById: Record<string, CryptoCurrency> = {
     scheme: "zcash",
     color: "#3790ca",
     family: "bitcoin",
+    bypassAppDependency: true,
     blockAvgTime: 150,
     bitcoinLikeInfo: {
       P2PKH: 0x1cb8,
@@ -3046,6 +3073,7 @@ export const cryptocurrenciesById: Record<string, CryptoCurrency> = {
     scheme: "zclassic",
     color: "#CF6031",
     family: "bitcoin",
+    bypassAppDependency: true,
     blockAvgTime: 150,
     bitcoinLikeInfo: {
       P2PKH: 0x1cb8,
@@ -3080,6 +3108,7 @@ export const cryptocurrenciesById: Record<string, CryptoCurrency> = {
     scheme: "zcoin",
     color: "#00C027",
     family: "bitcoin",
+    bypassAppDependency: true,
     units: [
       {
         name: "XZC",
@@ -3103,6 +3132,7 @@ export const cryptocurrenciesById: Record<string, CryptoCurrency> = {
     scheme: "zencash",
     color: "#152f5c",
     family: "bitcoin",
+    bypassAppDependency: true,
     blockAvgTime: 150,
     bitcoinLikeInfo: {
       P2PKH: 0x2089,
@@ -3199,6 +3229,7 @@ export const cryptocurrenciesById: Record<string, CryptoCurrency> = {
     isTestnetFor: "bitcoin",
     disableCountervalue: true,
     family: "bitcoin",
+    bypassAppDependency: true,
     blockAvgTime: 15 * 60,
     bitcoinLikeInfo: {
       P2PKH: 111,

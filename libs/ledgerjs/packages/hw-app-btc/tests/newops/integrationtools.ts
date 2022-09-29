@@ -82,9 +82,9 @@ export async function runSignTransaction(
       logCallback("CALLBACK: signature requested"),
     onDeviceStreaming: (arg) => logCallback("CALLBACK: " + JSON.stringify(arg)),
   };
-  logCallback("Start createPaymentTransactionNew");
-  const tx = await btcNew.createPaymentTransactionNew(arg);
-  logCallback("Done createPaymentTransactionNew");
+  logCallback("Start createPaymentTransaction");
+  const tx = await btcNew.createPaymentTransaction(arg);
+  logCallback("Done createPaymentTransaction");
   // console.log(callbacks);
   return tx;
 }

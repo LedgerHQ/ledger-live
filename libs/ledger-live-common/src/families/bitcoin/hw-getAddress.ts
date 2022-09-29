@@ -15,7 +15,7 @@ const oldP2SH = {
   digibyte: 5,
 };
 
-export const getAddressWithBtcInstance = async (
+export const getAddress = async (
   transport: Transport,
   {
     currency,
@@ -27,7 +27,7 @@ export const getAddressWithBtcInstance = async (
   }: GetAddressOptions
 ): Promise<Result> => {
   const format = forceFormat || getAddressFormatDerivationMode(derivationMode);
-  const btc = new Btc(transport, "BTC", currency.id);
+  const btc = new Btc({ transport, currency: currency.id });
   let result;
   try {
     result = await btc.getWalletPublicKey(path, {
@@ -93,7 +93,6 @@ export const getAddressWithBtcInstance = async (
   };
 };
 
-const resolver: Resolver = (transport, opts) =>
-  getAddressWithBtcInstance(transport, opts);
+const resolver: Resolver = (transport, opts) => getAddress(transport, opts);
 
 export default resolver;

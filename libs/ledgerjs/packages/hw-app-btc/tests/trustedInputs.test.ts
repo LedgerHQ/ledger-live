@@ -33,12 +33,13 @@ test("transaction on btc – nano s 1.3.1 – native segwit", async () => {
     <= 3045022100e4acf0eb3803a62399f53825d86aa30743fe999eefb01522d5f7ecd9eeec663d022063b90c512e207c2ac47d8759e1c73c6abeff58daec31c48905193470bc87f2d3019000
         `)
   );
-  const btc = new Btc(transport, "BTC", "oldbitcoin");
+  // This test covers the old bitcoin Nano app 1.6 API, before the breaking changes that occurred in v2.1.0 of the app
+  const btc = new Btc({ transport, currency: "oldbitcoin" });
   const tx1 = btc.splitTransaction(
     "01000000000102b91a5eb409e1243dcc02440ad5709d57047946309a515902ffdba8b98ad9e9970000000000ffffff00b91a5eb409e1243dcc02440ad5709d57047946309a515902ffdba8b98ad9e9970100000000ffffff000250c300000000000016001449df9e8ba7e25dd4830579cb42fbea938497168bef8b0100000000001600142f3fa4710983519e4ae45dd80e72e70b79f25c5e0248304502210080ed332c269ae7d86fac26a143afcec0a634e1098fd1ee5ca43cbe0c66de861802204c804eceb4cc9ca397156fa683f46274d22bb5d95f8c8293dc595934899f7927012103cc39edf09d462b4de30cc9bf96b163f18dcee742e0a1ea6fad0274ae0b9d60330247304402203e277d48d19a01c33b45b8f102479eb10811d20991bbf060cab4ba79f0972e61022041e13ed7da2b266d20c36b01694f2d16cf144c1ff66863f26d7c332dc220bc1301210369f216ec068fb7ef17a46ad3ad4d7f0e04e8a3a16ae2da852d6e4b57c3bb972f00000000",
     true
   );
-  const result = await btc.createPaymentTransactionNew({
+  const result = await btc.createPaymentTransaction({
     inputs: [[tx1, 1, undefined, 0xffffffff]],
     associatedKeysets: ["84'/0'/0'/1/27"],
     changePath: "84'/0'/0'/1/28",
@@ -100,12 +101,13 @@ test("transaction on btc – nano s 1.6.0 – native segwit", async () => {
     <= 3045022100e4acf0eb3803a62399f53825d86aa30743fe999eefb01522d5f7ecd9eeec663d022063b90c512e207c2ac47d8759e1c73c6abeff58daec31c48905193470bc87f2d3019000
     `)
   );
-  const btc = new Btc(transport, "BTC", "oldbitcoin");
+  // This test covers the old bitcoin Nano app 1.6 API, before the breaking changes that occurred in v2.1.0 of the app
+  const btc = new Btc({ transport, currency: "oldbitcoin" });
   const tx1 = btc.splitTransaction(
     "01000000000102b91a5eb409e1243dcc02440ad5709d57047946309a515902ffdba8b98ad9e9970000000000ffffff00b91a5eb409e1243dcc02440ad5709d57047946309a515902ffdba8b98ad9e9970100000000ffffff000250c300000000000016001449df9e8ba7e25dd4830579cb42fbea938497168bef8b0100000000001600142f3fa4710983519e4ae45dd80e72e70b79f25c5e0248304502210080ed332c269ae7d86fac26a143afcec0a634e1098fd1ee5ca43cbe0c66de861802204c804eceb4cc9ca397156fa683f46274d22bb5d95f8c8293dc595934899f7927012103cc39edf09d462b4de30cc9bf96b163f18dcee742e0a1ea6fad0274ae0b9d60330247304402203e277d48d19a01c33b45b8f102479eb10811d20991bbf060cab4ba79f0972e61022041e13ed7da2b266d20c36b01694f2d16cf144c1ff66863f26d7c332dc220bc1301210369f216ec068fb7ef17a46ad3ad4d7f0e04e8a3a16ae2da852d6e4b57c3bb972f00000000",
     true
   );
-  const result = await btc.createPaymentTransactionNew({
+  const result = await btc.createPaymentTransaction({
     inputs: [[tx1, 1, undefined, 0xffffffff]],
     associatedKeysets: ["84'/0'/0'/1/27"],
     changePath: "84'/0'/0'/1/28",

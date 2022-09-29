@@ -34,10 +34,10 @@ For a smooth and quick integration:
     *   [getWalletPublicKey](#getwalletpublickey)
         *   [Parameters](#parameters-2)
         *   [Examples](#examples-1)
-    *   [signMessageNew](#signmessagenew)
+    *   [signMessage](#signmessage)
         *   [Parameters](#parameters-3)
         *   [Examples](#examples-2)
-    *   [createPaymentTransactionNew](#createpaymenttransactionnew)
+    *   [createPaymentTransaction](#createpaymenttransaction)
         *   [Parameters](#parameters-4)
         *   [Examples](#examples-3)
     *   [signP2SHTransaction](#signp2shtransaction)
@@ -55,7 +55,7 @@ For a smooth and quick integration:
         *   [Parameters](#parameters-9)
     *   [getWalletPublicKey](#getwalletpublickey-1)
         *   [Parameters](#parameters-10)
-    *   [createPaymentTransactionNew](#createpaymenttransactionnew-1)
+    *   [createPaymentTransaction](#createpaymenttransaction-1)
         *   [Parameters](#parameters-11)
 *   [BtcOld](#btcold)
     *   [Parameters](#parameters-12)
@@ -63,7 +63,7 @@ For a smooth and quick integration:
     *   [getWalletPublicKey](#getwalletpublickey-2)
         *   [Parameters](#parameters-13)
         *   [Examples](#examples-8)
-    *   [createPaymentTransactionNew](#createpaymenttransactionnew-2)
+    *   [createPaymentTransaction](#createpaymenttransaction-2)
         *   [Parameters](#parameters-14)
         *   [Examples](#examples-9)
 *   [CreateTransactionArg](#createtransactionarg)
@@ -116,9 +116,11 @@ Bitcoin API.
 
 #### Parameters
 
-*   `transport` **Transport** 
-*   `scrambleKey`   (optional, default `"BTC"`)
-*   `currency`   (optional, default `"bitcoin"`)
+*   `$0` **{transport: Transport, scrambleKey: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), currency: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)}** 
+
+    *   `$0.transport`  
+    *   `$0.scrambleKey`   (optional, default `"BTC"`)
+    *   `$0.currency`   (optional, default `"bitcoin"`)
 
 #### Examples
 
@@ -163,7 +165,7 @@ btc.getWalletPublicKey("49'/0'/0'/0/0", { format: "p2sh" }).then(o => o.bitcoinA
 
 Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)<{publicKey: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), bitcoinAddress: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), chainCode: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)}>** 
 
-#### signMessageNew
+#### signMessage
 
 You can sign a message according to the Bitcoin Signature format and retrieve v, r, s given the message and the BIP 32 path of the account to sign.
 
@@ -175,7 +177,7 @@ You can sign a message according to the Bitcoin Signature format and retrieve v,
 ##### Examples
 
 ```javascript
-btc.signMessageNew_async("44'/60'/0'/0'/0", Buffer.from("test").toString("hex")).then(function(result) {
+btc.signMessage("44'/60'/0'/0'/0", Buffer.from("test").toString("hex")).then(function(result) {
 var v = result['v'] + 27 + 4;
 var signature = Buffer.from(v.toString(16) + result['r'] + result['s'], 'hex').toString('base64');
 console.log("Signature : " + signature);
@@ -184,7 +186,7 @@ console.log("Signature : " + signature);
 
 Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)<{v: [number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number), r: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), s: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)}>** 
 
-#### createPaymentTransactionNew
+#### createPaymentTransaction
 
 To sign a transaction involving standard (P2PKH) inputs, call createTransaction with the following parameters
 
@@ -359,9 +361,9 @@ will be the empty string "", see this.getWalletAddress() for details.
 
 Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)<{publicKey: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), bitcoinAddress: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), chainCode: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)}>** 
 
-#### createPaymentTransactionNew
+#### createPaymentTransaction
 
-Build and sign a transaction. See Btc.createPaymentTransactionNew for
+Build and sign a transaction. See Btc.createPaymentTransaction for
 details on how to use this method.
 
 This method will convert the legacy arguments, CreateTransactionArg, into
@@ -414,7 +416,7 @@ btc.getWalletPublicKey("49'/0'/0'/0/0", { format: "p2sh" }).then(o => o.bitcoinA
 
 Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)<{publicKey: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), bitcoinAddress: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), chainCode: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)}>** 
 
-#### createPaymentTransactionNew
+#### createPaymentTransaction
 
 To sign a transaction involving standard (P2PKH) inputs, call createTransaction with the following parameters
 

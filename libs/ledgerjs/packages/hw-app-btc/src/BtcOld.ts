@@ -128,10 +128,10 @@ export default class BtcOld {
    outputScriptHex: "01905f0100000000001976a91472a5d75c8d2d0565b656a5232703b167d50d5a2b88ac"
   }).then(res => ...);
    */
-  createPaymentTransactionNew(arg: CreateTransactionArg): Promise<string> {
+  createPaymentTransaction(arg: CreateTransactionArg): Promise<string> {
     if (arguments.length > 1) {
       throw new Error(
-        "@ledgerhq/hw-app-btc: createPaymentTransactionNew multi argument signature is deprecated. please switch to named parameters."
+        "@ledgerhq/hw-app-btc: createPaymentTransaction multi argument signature is deprecated. please switch to named parameters."
       );
     }
     return createTransaction(this.transport, arg);

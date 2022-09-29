@@ -26,7 +26,15 @@ export default class Btc {
   private _transport: Transport;
   private _impl: BtcOld | BtcNew;
 
-  constructor(transport: Transport, scrambleKey = "BTC", currency = "bitcoin") {
+  constructor({
+    transport,
+    scrambleKey = "BTC",
+    currency = "bitcoin",
+  }: {
+    transport: Transport;
+    scrambleKey?: string;
+    currency?: string;
+  }) {
     this._transport = transport;
     transport.decorateAppAPIMethods(
       this,
@@ -34,8 +42,8 @@ export default class Btc {
         "getWalletXpub",
         "getWalletPublicKey",
         "signP2SHTransaction",
-        "signMessageNew",
-        "createPaymentTransactionNew",
+        "signMessage",
+        "createPaymentTransaction",
         "getTrustedInput",
         "getTrustedInputBIP143",
       ],
@@ -112,13 +120,13 @@ export default class Btc {
   /**
    * You can sign a message according to the Bitcoin Signature format and retrieve v, r, s given the message and the BIP 32 path of the account to sign.
    * @example
-   btc.signMessageNew_async("44'/60'/0'/0'/0", Buffer.from("test").toString("hex")).then(function(result) {
+   btc.signMessage("44'/60'/0'/0'/0", Buffer.from("test").toString("hex")).then(function(result) {
      var v = result['v'] + 27 + 4;
      var signature = Buffer.from(v.toString(16) + result['r'] + result['s'], 'hex').toString('base64');
      console.log("Signature : " + signature);
    }).catch(function(ex) {console.log(ex);});
    */
-  signMessageNew(
+  signMessage(
     path: string,
     messageHex: string
   ): Promise<{
@@ -165,13 +173,13 @@ export default class Btc {
    outputScriptHex: "01905f0100000000001976a91472a5d75c8d2d0565b656a5232703b167d50d5a2b88ac"
   }).then(res => ...);
    */
-  createPaymentTransactionNew(arg: CreateTransactionArg): Promise<string> {
+  createPaymentTransaction(arg: CreateTransactionArg): Promise<string> {
     if (arguments.length > 1) {
       throw new Error(
-        "@ledgerhq/hw-app-btc: createPaymentTransactionNew multi argument signature is deprecated. please switch to named parameters."
+        "@ledgerhq/hw-app-btc: createPaymentTransaction multi argument signature is deprecated. please switch to named parameters."
       );
     }
-    return this._impl.createPaymentTransactionNew(arg);
+    return this._impl.createPaymentTransaction(arg);
   }
 
   /**

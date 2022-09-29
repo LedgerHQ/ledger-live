@@ -177,16 +177,14 @@ export default class BtcNew {
   }
 
   /**
-   * Build and sign a transaction. See Btc.createPaymentTransactionNew for
+   * Build and sign a transaction. See Btc.createPaymentTransaction for
    * details on how to use this method.
    *
    * This method will convert the legacy arguments, CreateTransactionArg, into
    * a psbt which is finally signed and finalized, and the extracted fully signed
    * transaction is returned.
    */
-  async createPaymentTransactionNew(
-    arg: CreateTransactionArg
-  ): Promise<string> {
+  async createPaymentTransaction(arg: CreateTransactionArg): Promise<string> {
     const inputCount = arg.inputs.length;
     if (inputCount == 0) {
       throw Error("No inputs");

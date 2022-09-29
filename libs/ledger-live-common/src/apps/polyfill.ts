@@ -16,7 +16,7 @@ listCryptoCurrencies(true, true).forEach((a) => {
 
   const dep = findCryptoCurrencyById(a.family);
   if (!dep || !dep.managerAppName) return; // no dep
-  if (a.family === "bitcoin") return; // all bitcoin family currencies are independent since nano app 2.1.0
+  if (a.bypassAppDependency) return;
   if (dep.managerAppName === a.managerAppName) return; // same app
 
   declareDep(a.managerAppName, dep.managerAppName);
