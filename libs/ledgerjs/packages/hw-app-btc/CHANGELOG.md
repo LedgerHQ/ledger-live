@@ -1,23 +1,6 @@
 # @ledgerhq/hw-app-btc
 
-## 8.1.0-nightly.2
-
-### Patch Changes
-
-- [#1356](https://github.com/LedgerHQ/ledger-live/pull/1356) [`ecac411d7a`](https://github.com/LedgerHQ/ledger-live/commit/ecac411d7aad6f4003503ba6259d7c25017ca7aa) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Updated readme.md of packages
-
-- Updated dependencies [[`ecac411d7a`](https://github.com/LedgerHQ/ledger-live/commit/ecac411d7aad6f4003503ba6259d7c25017ca7aa)]:
-  - @ledgerhq/hw-transport@6.27.5-nightly.2
-  - @ledgerhq/logs@6.10.1-nightly.1
-
-## 8.1.0-nightly.1
-
-### Patch Changes
-
-- Updated dependencies []:
-  - @ledgerhq/hw-transport@6.27.5-nightly.1
-
-## 8.1.0-nightly.0
+## 8.1.0
 
 ### Minor Changes
 
@@ -26,7 +9,18 @@
 ### Patch Changes
 
 - Updated dependencies []:
-  - @ledgerhq/hw-transport@6.27.5-nightly.0
+  - @ledgerhq/hw-transport@6.27.5
+
+## 8.1.0-next.0
+
+### Minor Changes
+
+- [#836](https://github.com/LedgerHQ/ledger-live/pull/836) [`68a0b01efc`](https://github.com/LedgerHQ/ledger-live/commit/68a0b01efcfd481cb8fe71ec22a2fc7217f25ec9) Thanks [@hzheng-ledger](https://github.com/hzheng-ledger)! - Support zcash v5 format transaction
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/hw-transport@6.27.5-next.0
 
 ## 8.0.2
 

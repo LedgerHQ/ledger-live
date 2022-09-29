@@ -1,12 +1,12 @@
 # @ledgerhq/types-live
 
-## 6.24.1-nightly.1
+## 6.24.1
 
 ### Patch Changes
 
-- [#1356](https://github.com/LedgerHQ/ledger-live/pull/1356) [`ecac411d7a`](https://github.com/LedgerHQ/ledger-live/commit/ecac411d7aad6f4003503ba6259d7c25017ca7aa) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Updated readme.md of packages
+- [#943](https://github.com/LedgerHQ/ledger-live/pull/943) [`8465b5e317`](https://github.com/LedgerHQ/ledger-live/commit/8465b5e317baecaf8f893b9c090537d2d03ac835) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Add postOnboarding types
 
-## 6.24.1-nightly.0
+## 6.24.1-next.0
 
 ### Patch Changes
 

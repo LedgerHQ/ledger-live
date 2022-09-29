@@ -1,27 +1,18 @@
 # @ledgerhq/hw-app-tezos
 
-## 6.27.5-nightly.2
-
-### Patch Changes
-
-- [#1356](https://github.com/LedgerHQ/ledger-live/pull/1356) [`ecac411d7a`](https://github.com/LedgerHQ/ledger-live/commit/ecac411d7aad6f4003503ba6259d7c25017ca7aa) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Updated readme.md of packages
-
-- Updated dependencies [[`ecac411d7a`](https://github.com/LedgerHQ/ledger-live/commit/ecac411d7aad6f4003503ba6259d7c25017ca7aa)]:
-  - @ledgerhq/hw-transport@6.27.5-nightly.2
-
-## 6.27.5-nightly.1
+## 6.27.5
 
 ### Patch Changes
 
 - Updated dependencies []:
-  - @ledgerhq/hw-transport@6.27.5-nightly.1
+  - @ledgerhq/hw-transport@6.27.5
 
-## 6.27.5-nightly.0
+## 6.27.5-next.0
 
 ### Patch Changes
 
 - Updated dependencies []:
-  - @ledgerhq/hw-transport@6.27.5-nightly.0
+  - @ledgerhq/hw-transport@6.27.5-next.0
 
 ## 6.27.4
 
