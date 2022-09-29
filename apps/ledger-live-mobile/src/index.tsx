@@ -218,10 +218,6 @@ function App({ importDataString }: AppProps) {
     lense: postOnboardingSelector,
   });
 
-  useEffect(() => {
-    Braze.changeUser("come-id");
-  }, []);
-
   return (
     <GestureHandlerRootView style={styles.root}>
       <SyncNewAccounts priority={5} />
