@@ -1,10 +1,9 @@
-import React, { useEffect, useContext } from "react";
+import React, { useEffect } from "react";
 import { Flex } from "@ledgerhq/react-ui";
 import { useDispatch, useSelector } from "react-redux";
-
+import { DeviceModelId } from "@ledgerhq/devices";
 import { useStartPostOnboardingCallback } from "@ledgerhq/live-common/postOnboarding/hooks/index";
-import ConnectNano from "../../Onboarding/Screens/Tutorial/assets/connectNano.png";
-import Image from "~/renderer/components/Image";
+import DeviceIllustration from "~/renderer/components/DeviceIllustration";
 import { saveSettings } from "~/renderer/actions/settings";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
 
@@ -14,7 +13,10 @@ const CompletionScreen = () => {
   const dispatch = useDispatch();
   const device = useSelector(getCurrentDevice);
 
-  const handleInitPostOnboarding = useStartPostOnboardingCallback(device?.modelId, true);
+  const handleInitPostOnboarding = useStartPostOnboardingCallback(
+    device?.modelId || DeviceModelId.nanoX,
+    true,
+  );
 
   useEffect(() => {
     dispatch(saveSettings({ hasCompletedOnboarding: true }));
@@ -23,7 +25,7 @@ const CompletionScreen = () => {
 
   return (
     <Flex alignItems="center" width="100%" justifyContent="center">
-      <DeviceIllustration deviceId={device?.modelId || "nanoX"} />
+      <DeviceIllustration deviceId={device?.modelId || DeviceModelId.nanoX} />
     </Flex>
   );
 };
