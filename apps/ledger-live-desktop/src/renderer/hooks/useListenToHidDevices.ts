@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { Subscription } from "rxjs";
-import { ListenDescriptorEvent } from "@ledgerhq/ledgerjs/hw-transport-node-hid-singleton/TransportNodeHid";
+import { ListenDescriptorEvent } from "@ledgerhq/hw-transport-node-hid-singleton";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { addDevice, removeDevice, resetDevices } from "~/renderer/actions/devices";
 import { command } from "~/renderer/commands";
