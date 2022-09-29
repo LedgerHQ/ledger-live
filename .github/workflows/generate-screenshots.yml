@@ -187,7 +187,7 @@ jobs:
             const comments = await github.rest.issues.listComments({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              issue_number: context.issue.number,
+              issue_number: ${{ github.event.inputs.number }},
             });
 
             console.log(comments);
