@@ -237,16 +237,16 @@
     "form" : {
       "changeCTA" : "Alterar",
       "rates" : {
-        "title" : "Provedores",
+        "title" : "Quotes",
         "registration" : "Cadastro necessário ",
         "noRegistration" : "Não é necessário ter cadastro",
         "fixed" : "Fixo",
-        "float" : "Flutuante",
+        "float" : "Floating",
         "update" : "Tarifas atualizadas em",
         "loading" : "Carregando...",
         "name" : {
           "title" : "Provedor",
-          "tooltip" : "Dependendo do provedor, você precisa criar uma conta."
+          "tooltip" : "Depending on the provider, you have to register with them by creating an account."
         },
         "rate" : {
           "title" : "Taxa de câmbio",
