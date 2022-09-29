@@ -61,7 +61,7 @@ const asContractAddress = (addr: string) => {
 
 // this internal get() will lazy load and cache the data from the erc20 data blob
 const get: (erc20SignaturesBlob?: string) => API = (() => {
-  let wm: WeakMap<{ blob: string | undefined }, API> = new WeakMap();
+  const wm: WeakMap<{ blob: string | undefined }, API> = new WeakMap();
   return (erc20SignaturesBlob) => {
     if (wm.has({ blob: erc20SignaturesBlob }))
       return wm.get({ blob: erc20SignaturesBlob }) as API;

@@ -107,8 +107,6 @@ export const signOperation = ({
                 loadConfig
               );
 
-              console.log(erc20SignatureBlob);
-
               for (const addr of addrs) {
                 const tokenInfo = byContractAddressAndChainId(
                   addr,
