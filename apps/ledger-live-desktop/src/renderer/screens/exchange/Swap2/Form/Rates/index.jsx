@@ -98,7 +98,8 @@ export default function ProviderRate({
       }
     }
     setEmptyState(!providerRef.current?.children.length);
-  }, [filter, rates, setDexRate, setRate]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [filter]);
 
   return (
     <Box height="100%" width="100%">
