@@ -7,7 +7,7 @@ import withStaticURLs from "@ledgerhq/hw-transport-http";
 import { retry } from "@ledgerhq/live-common/promise";
 import { setEnv } from "@ledgerhq/live-common/env";
 import {
-  preloadTokens,
+  findCryptoCurrencyById,
   setSupportedCurrencies,
 } from "@ledgerhq/live-common/currencies/index";
 import { setPlatformVersion } from "@ledgerhq/live-common/platform/version";
@@ -19,6 +19,7 @@ import { Platform } from "react-native";
 import axios from "axios";
 import { setSecp256k1Instance } from "@ledgerhq/live-common/families/bitcoin/wallet-btc/crypto/secp256k1";
 import { setGlobalOnBridgeError } from "@ledgerhq/live-common/bridge/useBridgeTransaction";
+import { prepareCurrency } from "~/renderer/bridge/cache";
 import BluetoothTransport from "./react-native-hw-transport-ble";
 import "./experimental";
 import logger from "./logger";
@@ -159,4 +160,4 @@ if (process.env.NODE_ENV === "production") {
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 setSecp256k1Instance(require("./logic/secp256k1"));
 
-preloadTokens();
+prepareCurrency(findCryptoCurrencyById("ethereum"));

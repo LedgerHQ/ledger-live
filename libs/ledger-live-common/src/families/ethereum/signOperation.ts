@@ -9,7 +9,7 @@ import { FeeNotLoaded } from "@ledgerhq/errors";
 import Eth from "@ledgerhq/hw-app-eth";
 import {
   byContractAddressAndChainId,
-  getERC20SignaturesInfo,
+  findERC20SignaturesInfo,
 } from "@ledgerhq/hw-app-eth/erc20";
 import { ledgerService as ethLedgerServices } from "@ledgerhq/hw-app-eth";
 import type { Transaction } from "./types";
@@ -74,7 +74,7 @@ export const signOperation = ({
               rawData[6] = Buffer.from([common.chainIdBN().toNumber()]);
               const txHex = Buffer.from(encode(rawData)).toString("hex");
               const loadConfig: LoadConfig = {
-                erc20SignaturesBaseURL: getEnv("DYNAMIC_CAL_BASE_URL"),
+                cryptoassetsBaseURL: getEnv("DYNAMIC_CAL_BASE_URL"),
               };
               if (isNFTActive(account.currency)) {
                 loadConfig.nftExplorerBaseURL =
@@ -103,17 +103,17 @@ export const signOperation = ({
                   fillTransactionDataResult.erc20contracts) ||
                 [];
 
-              const ercO20SignatureBlob = await getERC20SignaturesInfo(
+              const erc20SignatureBlob = await findERC20SignaturesInfo(
                 loadConfig
               );
 
-              if (ercO20SignatureBlob === undefined) throw new Error("Why ?");
+              console.log(erc20SignatureBlob);
 
               for (const addr of addrs) {
                 const tokenInfo = byContractAddressAndChainId(
                   addr,
                   account.currency.ethereumLikeInfo?.chainId || 0,
-                  ercO20SignatureBlob
+                  erc20SignatureBlob
                 );
 
                 if (tokenInfo) {

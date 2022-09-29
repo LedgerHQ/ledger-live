@@ -4,12 +4,12 @@ import axios from "axios";
 import { LoadConfig } from "../types";
 import { getLoadConfig } from "./loadConfig";
 
-export const getERC20SignaturesInfo = async (
+export const findERC20SignaturesInfo = async (
   userLoadConfig: LoadConfig
 ): Promise<string | undefined> => {
-  const { erc20SignaturesBaseURL } = getLoadConfig(userLoadConfig);
-  if (!erc20SignaturesBaseURL) return;
-  const url = `${erc20SignaturesBaseURL}/cryptoassets/erc20-signatures.json`;
+  const { cryptoassetsBaseURL } = getLoadConfig(userLoadConfig);
+  if (!cryptoassetsBaseURL) return;
+  const url = `${cryptoassetsBaseURL}/erc20-signatures.json`;
   const response = await axios.get<string>(url).catch((e) => {
     log("error", "could not fetch from " + url + ": " + String(e));
     return null;
@@ -61,9 +61,10 @@ const asContractAddress = (addr: string) => {
 
 // this internal get() will lazy load and cache the data from the erc20 data blob
 const get: (erc20SignaturesBlob?: string) => API = (() => {
-  let cache;
+  let wm: WeakMap<{ blob: string | undefined }, API> = new WeakMap();
   return (erc20SignaturesBlob) => {
-    if (cache) return cache;
+    if (wm.has({ blob: erc20SignaturesBlob }))
+      return wm.get({ blob: erc20SignaturesBlob }) as API;
     const buf = Buffer.from(erc20SignaturesBlob ?? blob, "base64");
     const map = {};
     const entries: TokenInfo[] = [];
@@ -105,7 +106,7 @@ const get: (erc20SignaturesBlob?: string) => API = (() => {
       byContractAndChainId: (contractAddress, chainId) =>
         map[String(chainId) + ":" + contractAddress],
     };
-    cache = api;
+    wm.set({ blob: erc20SignaturesBlob }, api);
     return api;
   };
 })();

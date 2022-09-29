@@ -5,7 +5,10 @@ import eip55 from "eip55";
 import { BigNumber } from "bignumber.js";
 import type { ModeModule } from "../types";
 import { AmountRequired } from "@ledgerhq/errors";
-import { findTokenByAddressInCurrency } from "@ledgerhq/cryptoassets";
+import {
+  findTokenByAddressInCurrency,
+  convertERC20,
+} from "@ledgerhq/cryptoassets";
 import { inferTokenAccount, validateRecipient } from "../transaction";
 import {
   getAccountCurrency,
@@ -19,12 +22,14 @@ import type {
 import {
   findTokenById,
   formatCurrencyUnit,
-  fetchERC20Tokens,
   addTokens,
 } from "../../../currencies";
 import { getAccountCapabilities } from "../../../compound/logic";
 import { CompoundLowerAllowanceOfActiveAccountError } from "../../../errors";
 import { DeviceTransactionField } from "../../../transaction";
+import { getEnv } from "../../../env";
+import { log } from "@ledgerhq/logs";
+import network from "../../../network";
 
 const infinite = new BigNumber(2).pow(256).minus(1);
 
@@ -152,6 +157,23 @@ const erc20approve: ModeModule = {
 };
 export const modes: Record<Modes, ModeModule> = {
   "erc20.approve": erc20approve,
+};
+
+export const fetchERC20Tokens = async () => {
+  let tokens: TokenCurrency[];
+
+  try {
+    const { data } = await network({
+      url: `${getEnv("DYNAMIC_CAL_BASE_URL")}/erc20.json`,
+    });
+
+    tokens = data.map(convertERC20);
+  } catch (e: any) {
+    log("preload-erc20", `failed to preload erc20 ${e.toString()}`);
+    tokens = [];
+  }
+
+  return tokens;
 };
 
 export async function preload(

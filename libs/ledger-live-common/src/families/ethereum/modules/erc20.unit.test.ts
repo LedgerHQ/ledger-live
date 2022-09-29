@@ -1,10 +1,10 @@
-import { fetchERC20Tokens } from ".";
+import { fetchERC20Tokens } from "./erc20";
 
 beforeEach(() => {
   jest.resetModules();
 });
 
-jest.mock("../network", () => {
+jest.mock("../../../network", () => {
   return jest.fn().mockImplementationOnce(() => ({
     data: [
       [
