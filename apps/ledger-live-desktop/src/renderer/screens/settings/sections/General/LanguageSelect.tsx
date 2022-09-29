@@ -2,6 +2,7 @@ import React, { useMemo, useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useSelector, useDispatch } from "react-redux";
 import { DeviceModelId } from "@ledgerhq/devices";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import {
   allLanguages,
   prodStableLanguages,
@@ -12,10 +13,10 @@ import useEnv from "~/renderer/hooks/useEnv";
 import { setLanguage } from "~/renderer/actions/settings";
 import {
   useSystemLanguageSelector,
+  lastSeenDeviceSelector,
   languageSelector,
   getInitialLanguageLocale,
 } from "~/renderer/reducers/settings";
-import { lastSeenDeviceSelector } from "~/renderer/reducers/settings";
 import Select from "~/renderer/components/Select";
 import { track } from "~/renderer/analytics/segment";
 import Track from "~/renderer/analytics/Track";
@@ -56,7 +57,7 @@ const LanguageSelect = () => {
 
   const [isDeviceLanguagePromptOpen, setIsDeviceLanguagePromptOpen] = useState<boolean>(false);
 
-  const deviceLocalizationFeatureFlag = { enabled: true }; // useFeature("deviceLocalization");
+  const deviceLocalizationFeatureFlag = useFeature("deviceLocalization");
   // TODO: reactivate this feature flag once QA is done
 
   const { availableLanguages: availableDeviceLanguages } = useAvailableLanguagesForDevice(
@@ -103,7 +104,7 @@ const LanguageSelect = () => {
         langAvailableOnDevice &&
         deviceLanguageId !== undefined &&
         idsToLanguage[deviceLanguageId] !== potentialDeviceLanguage &&
-        deviceLocalizationFeatureFlag.enabled
+        deviceLocalizationFeatureFlag?.enabled
       ) {
         track("Page LiveLanguageChange DeviceLanguagePrompt", {
           selectedLanguage: potentialDeviceLanguage,
@@ -113,7 +114,7 @@ const LanguageSelect = () => {
 
       dispatch(setLanguage(languageKey));
     },
-    [dispatch, lastSeenDevice, availableDeviceLanguages, deviceLocalizationFeatureFlag],
+    [dispatch, lastSeenDevice, availableDeviceLanguages, deviceLocalizationFeatureFlag?.enabled],
   );
 
   const onClosePrompt = useCallback(() => {

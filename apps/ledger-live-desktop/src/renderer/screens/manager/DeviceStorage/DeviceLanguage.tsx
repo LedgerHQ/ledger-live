@@ -20,7 +20,6 @@ const DeviceLanguage: React.FC<Props> = ({ deviceInfo, device, onRefreshDeviceIn
   const [isLanguageInstallationOpen, setIsLanguageInstallation] = useState(false);
   const [selectedLanguage, setSelectedLanguage] = useState<Language>(deviceLanguage);
 
-
   const openLanguageInstallation = useCallback(() => {
     setIsLanguageInstallation(true);
     track("Page Manager ChangeLanguageEntered");
@@ -50,7 +49,7 @@ const DeviceLanguage: React.FC<Props> = ({ deviceInfo, device, onRefreshDeviceIn
         device={device}
         onError={(error: Error) => {
           track("Page Manager LanguageInstallError", { error });
-          onRefreshDeviceInfo();          
+          onRefreshDeviceInfo();
         }}
         onSelectLanguage={setSelectedLanguage}
         selectedLanguage={selectedLanguage}

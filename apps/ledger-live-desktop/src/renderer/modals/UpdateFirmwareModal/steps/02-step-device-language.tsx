@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useState } from "react";
 import { getDeviceModel } from "@ledgerhq/devices";
 import { StepProps } from "..";
 import { idsToLanguage, Language, languageIds } from "@ledgerhq/types-live";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { Flex } from "@ledgerhq/react-ui";
 import { useSelector } from "react-redux";
 import { languageSelector } from "~/renderer/reducers/settings";
@@ -40,15 +41,12 @@ const StepDeviceLanguage = ({
 
   const { t } = useTranslation();
 
-  const deviceLocalizationFeatureFlag = { enabled: true }; // useFeature("deviceLocalization");
+  const deviceLocalizationFeatureFlag = useFeature("deviceLocalization");
 
-  const installLanguage = useCallback(
-    (language: Language) => {
-      setLanguageToInstall(language);
-      setInstallingLanguage(true);
-    },
-    [device],
-  );
+  const installLanguage = useCallback((language: Language) => {
+    setLanguageToInstall(language);
+    setInstallingLanguage(true);
+  }, []);
 
   useEffect(() => {
     if (newLanguagesLoaded && oldLanguagesLoaded) {
@@ -66,12 +64,12 @@ const StepDeviceLanguage = ({
         langAvailableForTheFirstTime &&
         deviceLanguageId !== undefined &&
         idsToLanguage[deviceLanguageId] !== potentialDeviceLanguage &&
-        deviceLocalizationFeatureFlag.enabled
+        deviceLocalizationFeatureFlag?.enabled
       ) {
         setIsLanguagePromptOpen(true);
       } else if (
         oldDeviceInfo?.languageId !== undefined &&
-        oldDeviceInfo?.languageId !== languageIds["english"]
+        oldDeviceInfo?.languageId !== languageIds.english
       ) {
         track("Page Manager FwUpdateReinstallLanguage");
         installLanguage(idsToLanguage[oldDeviceInfo.languageId]);
@@ -88,6 +86,8 @@ const StepDeviceLanguage = ({
     oldDeviceInfo,
     updatedDeviceInfo,
     installLanguage,
+    deviceLocalizationFeatureFlag?.enabled,
+    transitionTo,
   ]);
 
   const deviceName = getDeviceModel(device.modelId).productName;
@@ -125,7 +125,7 @@ const StepDeviceLanguage = ({
           onSuccess={() => {
             track("Page Manager FwUpdateLanguageInstalled", {
               selectedLanguage: languageToInstall,
-            })
+            });
             setInstallingLanguage(false);
             transitionTo("finish");
           }}

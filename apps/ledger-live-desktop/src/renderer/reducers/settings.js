@@ -304,7 +304,7 @@ const handlers: Object = {
     { payload }: { payload: { deviceInfo: DeviceInfo } },
   ) => ({
     ...state,
-    lastSeenDevice: { ...state.lastSeenDevice, deviceInfo: payload.deviceInfo }
+    lastSeenDevice: { ...state.lastSeenDevice, deviceInfo: payload.deviceInfo },
   }),
   SET_DEEPLINK_URL: (state: SettingsState, { payload: deepLinkUrl }) => ({
     ...state,

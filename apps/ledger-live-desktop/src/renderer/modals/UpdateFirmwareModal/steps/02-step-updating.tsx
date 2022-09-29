@@ -2,6 +2,7 @@ import React, { useEffect } from "react";
 import { timeout } from "rxjs/operators";
 import styled from "styled-components";
 import { DeviceModelId } from "@ledgerhq/devices";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { command } from "~/renderer/commands";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import Box from "~/renderer/components/Box";
@@ -36,7 +37,7 @@ const StepUpdating = ({
   transitionTo,
   setUpdatedDeviceInfo,
 }: Props) => {
-  const deviceLocalizationFeatureFlag = { enabled: true }; //useFeature("deviceLocalization");
+  const deviceLocalizationFeatureFlag = useFeature("deviceLocalization");
 
   useEffect(() => {
     const sub = (getEnv("MOCK")
@@ -50,7 +51,7 @@ const StepUpdating = ({
           const shouldGoToLanguageStep =
             firmware &&
             isDeviceLocalizationSupported(firmware.final.name, deviceModelId) &&
-            deviceLocalizationFeatureFlag.enabled;
+            deviceLocalizationFeatureFlag?.enabled;
           transitionTo(shouldGoToLanguageStep ? "deviceLanguage" : "finish");
         },
         error: (error: Error) => {
@@ -70,7 +71,7 @@ const StepUpdating = ({
     firmware,
     deviceModelId,
     setUpdatedDeviceInfo,
-    deviceLocalizationFeatureFlag,
+    deviceLocalizationFeatureFlag?.enabled,
   ]);
 
   return (

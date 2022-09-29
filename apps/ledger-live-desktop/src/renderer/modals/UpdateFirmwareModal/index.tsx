@@ -3,13 +3,13 @@ import { useTranslation, TFunction } from "react-i18next";
 import { log } from "@ledgerhq/logs";
 import { DeviceModelId } from "@ledgerhq/devices";
 import { UserRefusedFirmwareUpdate } from "@ledgerhq/errors";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { DeviceInfo, FirmwareUpdateContext } from "@ledgerhq/types-live";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { hasFinalFirmware } from "@ledgerhq/live-common/hw/hasFinalFirmware";
 import logger from "~/logger";
 import Modal from "~/renderer/components/Modal";
-import Stepper from "~/renderer/components/Stepper";
-import { Step as TypedStep } from "~/renderer/components/Stepper";
+import Stepper, { Step as TypedStep } from "~/renderer/components/Stepper";
 import { ModalStatus } from "~/renderer/screens/manager/FirmwareUpdate/types";
 import StepResetDevice, { StepResetFooter } from "./steps/00-step-reset-device";
 import StepFullFirmwareInstall from "./steps/01-step-install-full-firmware";
@@ -86,7 +86,7 @@ const UpdateModal = ({
   const [nonce, setNonce] = useState(0);
   const { t } = useTranslation();
   const withFinal = useMemo(() => hasFinalFirmware(firmware?.final), [firmware]);
-  const deviceLocalizationFeatureFlag = { enabled: true }; //useFeature("deviceLocalization");
+  const deviceLocalizationFeatureFlag = useFeature("deviceLocalization");
 
   const createSteps = useCallback(
     ({ withResetStep }: { withResetStep: boolean }) => {
