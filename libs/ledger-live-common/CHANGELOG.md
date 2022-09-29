@@ -1,5 +1,11 @@
 # @ledgerhq/live-common
 
+## 27.3.1-nightly.0
+
+### Patch Changes
+
+- [#1306](https://github.com/LedgerHQ/ledger-live/pull/1306) [`f6854a3fd7`](https://github.com/LedgerHQ/ledger-live/commit/f6854a3fd79a28eb5507796b69105c85b40bbe98) Thanks [@jnicoulaud-ledger](https://github.com/jnicoulaud-ledger)! - Fix outdated assertion on exchange signature size
+
 ## 27.3.0
 
 ### Minor Changes

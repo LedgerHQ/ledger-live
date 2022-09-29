@@ -1,5 +1,14 @@
 # ledger-live-desktop
 
+## 2.48.1-nightly.0
+
+### Patch Changes
+
+- [#1340](https://github.com/LedgerHQ/ledger-live/pull/1340) [`8fbc6da367`](https://github.com/LedgerHQ/ledger-live/commit/8fbc6da367f9dd9b0ee226ab0547a4be354220df) Thanks [@sarneijim](https://github.com/sarneijim)! - Fix swap cosmetic bugs
+
+- Updated dependencies [[`f6854a3fd7`](https://github.com/LedgerHQ/ledger-live/commit/f6854a3fd79a28eb5507796b69105c85b40bbe98)]:
+  - @ledgerhq/live-common@27.3.1-nightly.0
+
 ## 2.48.0
 
 ### Minor Changes

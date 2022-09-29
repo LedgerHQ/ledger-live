@@ -1,5 +1,20 @@
 # live-mobile
 
+## 3.9.0-nightly.9
+
+### Minor Changes
+
+- [#1326](https://github.com/LedgerHQ/ledger-live/pull/1326) [`95cb5649b9`](https://github.com/LedgerHQ/ledger-live/commit/95cb5649b9395ff1ad845043101116007f3f85c0) Thanks [@github-actions](https://github.com/apps/github-actions)! - Add prompt to change device language when live language is changed
+
+### Patch Changes
+
+- [#1326](https://github.com/LedgerHQ/ledger-live/pull/1326) [`c3831633cd`](https://github.com/LedgerHQ/ledger-live/commit/c3831633cddc7bff9792246e6078b75a6f0c01ce) Thanks [@github-actions](https://github.com/apps/github-actions)! - Error message when trying to send a NFT from LNS is wrong
+
+* [#1326](https://github.com/LedgerHQ/ledger-live/pull/1326) [`e9166620ec`](https://github.com/LedgerHQ/ledger-live/commit/e9166620ec195be7c2803ebeb83508be39d5563d) Thanks [@github-actions](https://github.com/apps/github-actions)! - Update error message when trying to send NFTs with LNS
+
+* Updated dependencies [[`f6854a3fd7`](https://github.com/LedgerHQ/ledger-live/commit/f6854a3fd79a28eb5507796b69105c85b40bbe98)]:
+  - @ledgerhq/live-common@27.3.1-nightly.0
+
 ## 3.9.0-nightly.8
 
 ### Minor Changes
