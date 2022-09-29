@@ -1,4 +1,6 @@
 import { combineReducers } from "redux";
+import { PostOnboardingState } from "@ledgerhq/types-live";
+import postOnboarding from "@ledgerhq/live-common/postOnboarding/reducer";
 import accounts from "./accounts";
 import settings from "./settings";
 import appstate from "./appstate";
@@ -22,6 +24,7 @@ export type State = {
   ratings: RatingsState;
   notifications: NotificationsState;
   walletconnect: WalletConnectState;
+  postOnboarding: PostOnboardingState;
 };
 
 const appReducer = combineReducers({
@@ -32,6 +35,7 @@ const appReducer = combineReducers({
   ratings,
   notifications,
   walletconnect,
+  postOnboarding,
 });
 
 const rootReducer = (state: State, action: any) => {

@@ -14,6 +14,8 @@ import { useTheme } from "styled-components/native";
 import { Flex, Text, Icons, Button, Notification } from "@ledgerhq/native-ui";
 import { useRoute } from "@react-navigation/native";
 // eslint-disable-next-line import/no-unresolved
+import { DeviceModelId } from "@ledgerhq/devices/lib/";
+import { Currency } from "@ledgerhq/types-cryptoassets";
 import getWindowDimensions from "../../logic/getWindowDimensions";
 import { accountScreenSelector } from "../../reducers/accounts";
 import CurrencyIcon from "../../components/CurrencyIcon";
@@ -24,7 +26,6 @@ import AdditionalInfoModal from "./AdditionalInfoModal";
 import { replaceAccounts } from "../../actions/accounts";
 import { ScreenName } from "../../const";
 import { track, TrackScreen } from "../../analytics";
-import { usePreviousRouteName } from "../../helpers/routeHooks";
 import PreventNativeBack from "../../components/PreventNativeBack";
 import byFamily from "../../generated/Confirmation";
 
@@ -79,8 +80,6 @@ function ReceiveConfirmationInner({
     useState(verified);
   const [isAddionalInfoModalOpen, setIsAddionalInfoModalOpen] = useState(false);
   const dispatch = useDispatch();
-  const lastRoute = usePreviousRouteName();
-  const routerRoute = useRoute();
 
   const hideToast = useCallback(() => {
     setIsToastDisplayed(false);
@@ -92,11 +91,10 @@ function ReceiveConfirmationInner({
   const openAdditionalInfoModal = useCallback(() => {
     track("notification_clicked", {
       button: "Imported and created account",
-      screen: routerRoute.name,
     });
     setIsAddionalInfoModalOpen(true);
     hideToast();
-  }, [setIsAddionalInfoModalOpen, hideToast, routerRoute.name]);
+  }, [setIsAddionalInfoModalOpen, hideToast]);
 
   const closeAdditionalInfoModal = useCallback(() => {
     setIsAddionalInfoModalOpen(false);
@@ -105,12 +103,11 @@ function ReceiveConfirmationInner({
   const onRetry = useCallback(() => {
     track("button_clicked", {
       button: "Verify your address",
-      screen: routerRoute.name,
     });
     const params = { ...route.params, notSkippable: true };
     setIsModalOpened(false);
     navigation.navigate(ScreenName.ReceiveConnectDevice, params);
-  }, [navigation, route.params, routerRoute]);
+  }, [navigation, route.params]);
 
   const { width } = getWindowDimensions();
   const QRSize = Math.round(width / 1.8 - 16);
@@ -172,19 +169,17 @@ function ReceiveConfirmationInner({
   const onShare = useCallback(() => {
     track("button_clicked", {
       button: "Share",
-      screen: routerRoute.name,
     });
     if (mainAccount?.freshAddress) {
       Share.share({ message: mainAccount?.freshAddress });
     }
-  }, [mainAccount?.freshAddress, routerRoute.name]);
+  }, [mainAccount?.freshAddress]);
 
   const onCopy = useCallback(() => {
     track("button_clicked", {
       button: "Copy",
-      screen: routerRoute.name,
     });
-  }, [routerRoute.name]);
+  }, []);
 
   if (!account || !currency || !mainAccount) return null;
 
@@ -200,7 +195,6 @@ function ReceiveConfirmationInner({
         <TrackScreen
           category="Receive"
           name="Qr Code"
-          source={lastRoute}
           currency={currency.name}
         />
         <Flex p={6} alignItems="center" justifyContent="center">

@@ -276,7 +276,7 @@
     },
     "EthAppNftNotSupported" : {
       "title" : "Операция недоступна на этом устройстве",
-      "description" : "Функция отправки NFT доступна только в Nano X. Пожалуйста, обратитесь в Поддержку, чтобы узнать, как отправлять NFT с Nano S."
+      "description" : "Send NFT feature is only available for Nano X and Nano S+. Please visit our customer support platform to know how to send a NFT with a Nano S."
     },
     "Touch ID Error" : {
       "title" : "Ошибка биометрической аутентификации",
@@ -1072,6 +1072,8 @@
     "stepLanguage" : {
       "title" : "Выберите язык",
       "cta" : "Продолжить",
+      "changeDeviceLanguage" : "{{language}} язык также доступен для {{deviceName}}.",
+      "changeDeviceLanguageDescription" : "Хотите сменить язык на {{language}}?",
       "warning" : {
         "title" : "Настроить на английском",
         "cta" : "Понятно!",
@@ -1685,17 +1687,17 @@
     }
   },
   "addAccountsModal" : {
+    "title" : "Добавить счёт",
     "ctaAdd" : "Добавить счета",
     "ctaImport" : "Импорт из настольного приложения",
-    "title" : "Добавляйте криптовалюту",
-    "description" : "Вы можете добавить криптовалюту прямо в Ledger, либо импортировать счёт из настольной версии Ledger Live.",
+    "description" : "Вы можете добавить криптовалюту с помощью устройства, либо импортировать её из Ledger Live для ПК.",
     "add" : {
       "title" : "При помощи Ledger",
-      "description" : "Создайте или импортируйте активы при помощи кошелька Ledger"
+      "description" : "Создайте или импортируйте активы с помощью устройства"
     },
     "import" : {
       "title" : "Импорт из настольного приложения",
-      "description" : "Импортируйте активы из настольного приложения Ledger Live"
+      "description" : "Импортируйте активы из Ledger Live для ПК"
     }
   },
   "byteSize" : {
@@ -1854,7 +1856,7 @@
       "moreInfo" : "Подробнее...",
       "cardTitle" : "Powered by {{team}}",
       "drawer" : {
-        "title" : "интеграция {{family}}",
+        "title" : "Интеграция {{family}}",
         "subTitle" : "Интеграция {{family}} выполнена командой {{team}}",
         "description" : "Ledger Live – это платформа с открытым исходным кодом.",
         "description2" : "Разработчики из любой точки мира могут интегрироваться в наше приложение Ledger Live",
@@ -2261,7 +2263,46 @@
     "experimental" : {
       "title" : "Экспериментальные функции",
       "desc" : "Попробуйте экспериментальные функции и скажите нам, что вы думаете.",
-      "disclaimer" : "Это Экспериментальные функции, предоставляемые на условиях «как есть» для нашего сообщества технических энтузиастов. Эти функции могут быть изменены, заблокированы или удалены в любое время. Активируя их, вы принимаете на себя все риски от использования."
+      "disclaimer" : "Это Экспериментальные функции, предоставляемые на условиях «как есть» для нашего сообщества технических энтузиастов. Эти функции могут быть изменены, заблокированы или удалены в любое время. Активируя их, вы принимаете на себя все риски от использования.",
+      "experimentalFeatures" : {
+        "experimentalIntegrations" : {
+          "title" : "Экспериментальная интеграция",
+          "description" : "Использовать доступные экспериментальные интеграции криптовалют."
+        },
+        "developerMode" : {
+          "title" : "Режим разработчика",
+          "description" : "Показывать приложения от разработчиков и из тестнета в Диспетчере."
+        },
+        "managerProvider" : {
+          "title" : "Поставщик приложений",
+          "description" : "Смена поставщика приложений в Диспетчере может сделать невозможной установку или удаление приложений на вашем устройстве Ledger"
+        },
+        "experimentalExplorers" : {
+          "title" : "API экспериментальных обозревателей",
+          "description" : "Попробуйте предстоящую версию обозревателей блокчейна Ledger. Изменение этой настройки может повлиять на баланс и синхронизацию счета, а также на функцию отправки."
+        },
+        "experimentalCountervalues" : {
+          "title" : "Экспериментальный API эквивалентов",
+          "description" : "Данная функция может привести к ошибке отображения эквивалентов для ваших счетов."
+        },
+        "experimentalSwap" : {
+          "title" : "Новый интерфейс обмена",
+          "description" : "Использовать обновлённый интерфейс при обмене криптовалют и токенов"
+        }
+      },
+      "developerFeatures" : {
+        "experimentalApps" : {
+          "title" : "Разрешить экспериментальные приложения",
+          "description" : "Показывать и открывать экспериментальные приложения на платформе."
+        },
+        "staggingUrl" : {
+          "title" : "Промежуточный URL страницы",
+          "description" : "Включить промежуточный URL-адрес для страницы «Образование»"
+        },
+        "platformManifest" : {
+          "title" : "Загрузить манифест платформы"
+        }
+      }
     },
     "developer" : {
       "title" : "Разработчикам",
@@ -2273,11 +2314,8 @@
     "debug" : {
       "featureFlagsTitle" : "Определённые фича-флаги (feature flags), используемые в Ledger Live",
       "featureFlagsDesc" : "Переписанные значения будут сброшены в случае перезапуска приложения. Принимаются лишь валидные строки JSON.",
-      "featureFlagsOverride" : "Переписать",
       "featureFlagsEdit" : "Редактировать",
-      "featureFlagsRestore" : "Восстановить",
-      "featureFlagsDisplayValue" : "Показать значение",
-      "featureFlagsHideValue" : "Скрыть значение"
+      "featureFlagsRestore" : "Восстановить"
     }
   },
   "notifications" : {
@@ -3355,6 +3393,7 @@
       "appsInstalled" : "<0>{{number}}</0> приложение",
       "appsInstalled_plural" : "Приложений: <0>{{number}}</0>",
       "storageAvailable" : "доступно",
+      "noFreeSpace" : "Не хватает свободного места",
       "appsToUpdate" : "<0>{{number}}</0> обновление",
       "appsToUpdate_plural" : "Обновлений: <0>{{number}}</0>"
     },
@@ -3537,15 +3576,25 @@
       "ru" : "Русский",
       "es" : "Español",
       "zh" : "简体中文",
-      "de" : "Deutsch"
+      "de" : "Deutsch",
+      "tr" : "Türkçe",
+      "ja" : "日本",
+      "ko" : "한국인",
+      "pt" : "Português"
     }
   },
   "deviceLocalization" : {
     "language" : "Язык интерфейса",
     "deviceLanguage" : "Язык устройства",
+    "chooseLanguage" : "Выберите язык для {{deviceName}}.",
     "changeLanguage" : "Поменять язык",
-    "allowLanguageInstallation" : "Разрешить установку языка",
+    "yesChangeLanguage" : "Да, поменять язык",
+    "allowLanguageInstallation" : "Разрешите установку языка на {{deviceName}}",
     "languageInstalled" : "Новый язык устройства — {{language}}",
+    "firmwareUpdatePrompt" : {
+      "title" : "Добавить {{language}} язык на устройство {{deviceName}}?",
+      "description" : "Теперь {{language}} язык доступен для {{deviceName}}. Можно установить его сейчас или поменять в любое удобное время в разделе «Мой Ledger»."
+    },
     "installingLanguage" : "Установка языка",
     "languages" : {
       "english" : "English",
@@ -4754,5 +4803,19 @@
     "chooseConstrast" : "Указать контраст",
     "uploadAnotherImage" : "Загрузить другое изображение",
     "selectContrast" : "Выберите контрастность"
+  },
+  "postOnboarding" : {
+    "hub" : {
+      "title" : "Отлично!\nВсё готово.",
+      "allDoneTitle" : "Хорошая работа!\nВы готовы приступить.",
+      "subtitle" : "Вот что вы можете сделать дальше:",
+      "skip" : "Перейти к приложению",
+      "goToWallet" : "Перейти к Ledger Live",
+      "done" : "Вы обеспечили свою безопасность"
+    },
+    "walletCard" : {
+      "title" : "Начало работы",
+      "description" : "Нажмите здесь, чтобы завершить настройку {{productName}} в Ledger Live"
+    }
   }
 }

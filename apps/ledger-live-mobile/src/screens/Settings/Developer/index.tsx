@@ -2,6 +2,7 @@ import { NavigationProp } from "@react-navigation/native";
 import { isEnvDefault } from "@ledgerhq/live-common/env";
 import React from "react";
 import { ScrollView } from "react-native";
+import { useTranslation } from "react-i18next";
 import SettingsRow from "../../../components/SettingsRow";
 import { ScreenName } from "../../../const";
 import { developerFeatures } from "../../../experimental";
@@ -14,6 +15,7 @@ export default function DeveloperSettings({
 }: {
   navigation: NavigationProp;
 }) {
+  const { t } = useTranslation();
   return (
     <ScrollView>
       <TrackScreen category="Settings" name="Developer" />
@@ -26,7 +28,9 @@ export default function DeveloperSettings({
       )}
 
       <SettingsRow
-        title="Load Platform Manifest"
+        title={t(
+          "settings.experimental.developerFeatures.platformManifest.title",
+        )}
         onPress={() => navigation.navigate(ScreenName.DeveloperCustomManifest)}
       />
     </ScrollView>

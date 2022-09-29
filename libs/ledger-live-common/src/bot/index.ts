@@ -9,7 +9,14 @@ import invariant from "invariant";
 import flatMap from "lodash/flatMap";
 import { getEnv } from "../env";
 import allSpecs from "../generated/specs";
-import type { MutationReport, SpecReport } from "./types";
+import type {
+  AppSpec,
+  MutationReport,
+  MinimalSerializedMutationReport,
+  MinimalSerializedReport,
+  MinimalSerializedSpecReport,
+  SpecReport,
+} from "./types";
 import { promiseAllBatched } from "../promise";
 import {
   findCryptoCurrencyByKeyword,
@@ -17,7 +24,7 @@ import {
   formatCurrencyUnit,
   getFiatCurrencyByTicker,
 } from "../currencies";
-import { isAccountEmpty, toAccountRaw } from "../account";
+import { formatAccount, isAccountEmpty, toAccountRaw } from "../account";
 import { runWithAppSpec } from "./engine";
 import { formatReportForConsole, formatError, formatTime } from "./formatters";
 import {
@@ -28,12 +35,58 @@ import {
 import { getPortfolio } from "../portfolio/v2";
 import { Account } from "@ledgerhq/types-live";
 import { getContext } from "./bot-test-context";
+import { Transaction } from "../generated/types";
+
 type Arg = Partial<{
   currency: string;
   family: string;
   mutation: string;
 }>;
 const usd = getFiatCurrencyByTicker("USD");
+
+function convertMutation<T extends Transaction>(
+  report: MutationReport<T>
+): MinimalSerializedMutationReport {
+  const { appCandidate, mutation, account, destination, error, operation } =
+    report;
+  return {
+    appCandidate,
+    mutationName: mutation?.name,
+    accountId: account?.id,
+    destinationId: destination?.id,
+    operationId: operation?.id,
+    error: error ? String(error) : undefined,
+  };
+}
+
+function convertSpecReport<T extends Transaction>(
+  result: SpecReport<T>
+): MinimalSerializedSpecReport {
+  const accounts = result.accountsAfter?.map((a) => {
+    // remove the "expensive" data fields
+    const raw = toAccountRaw(a);
+    raw.operations = [];
+    delete raw.balanceHistoryCache;
+    if (raw.subAccounts) {
+      raw.subAccounts.forEach((a) => {
+        a.operations = [];
+        delete a.balanceHistoryCache;
+      });
+    }
+    const unsafe = raw as any;
+    if (unsafe.bitcoinResources) {
+      delete unsafe.bitcoinResources.walletAccount;
+    }
+    return raw;
+  });
+  const mutations = result.mutations?.map(convertMutation);
+  return {
+    specName: result.spec.name,
+    fatalError: result.fatalError ? String(result.fatalError) : undefined,
+    accounts,
+    mutations,
+  };
+}
 
 function makeAppJSON(accounts: Account[]) {
   const jsondata = {
@@ -71,7 +124,7 @@ export async function bot({
     }
 
     for (const key in familySpecs) {
-      let spec = familySpecs[key];
+      let spec: AppSpec<any> = familySpecs[key];
 
       if (!isCurrencySupported(spec.currency) || spec.disabled) {
         continue;
@@ -81,7 +134,7 @@ export async function bot({
         if (mutation) {
           spec = {
             ...spec,
-            mutations: spec.mutation.filter((m) =>
+            mutations: spec.mutations.filter((m) =>
               new RegExp(mutation).test(m.name)
             ),
           };
@@ -96,7 +149,7 @@ export async function bot({
   const results: Array<SpecReport<any>> = await promiseAllBatched(
     getEnv("BOT_MAX_CONCURRENT"),
     specs,
-    (spec) => {
+    (spec: AppSpec<any>) => {
       const logs: string[] = [];
       specsLogs.push(logs);
       return runWithAppSpec(spec, (message) => {
@@ -109,6 +162,7 @@ export async function bot({
         mutations: [],
         accountsBefore: [],
         accountsAfter: [],
+        hintWarnings: [],
       }));
     }
   );
@@ -373,9 +427,27 @@ export async function bot({
 
   if (errorCases.length) {
     appendBody("<details>\n");
-    appendBody(`<summary>${errorCases.length} mutation errors</summary>\n\n`);
+    appendBody(
+      `<summary>❌ ${errorCases.length} mutation errors</summary>\n\n`
+    );
     errorCases.forEach((c) => {
       appendBody("```\n" + formatReportForConsole(c) + "\n```\n\n");
+    });
+    appendBody("</details>\n\n");
+  }
+
+  const specWithWarnings = results.filter((s) => s.hintWarnings.length > 0);
+  if (specWithWarnings.length > 0) {
+    appendBody("<details>\n");
+    appendBody(
+      `<summary>⚠️ ${specWithWarnings.reduce(
+        (sum, s) => s.hintWarnings.length + sum,
+        0
+      )} spec hints</summary>\n\n`
+    );
+    specWithWarnings.forEach((s) => {
+      appendBody(`- Spec ${s.spec.name}:\n`);
+      s.hintWarnings.forEach((txt) => appendBody(`  - ${txt}\n`));
     });
     appendBody("</details>\n\n");
   }
@@ -508,12 +580,9 @@ export async function bot({
 
     const beforeOps = countOps(r.accountsBefore);
     const afterOps = countOps(r.accountsAfter);
-    const firstAccount = (r.accountsAfter || r.accountsBefore || [])[0];
-    appendBody(
-      `| ${r.spec.name} (${
-        (r.accountsBefore || []).filter((a) => a.used).length
-      }) `
-    );
+    const accounts = r.accountsAfter || r.accountsBefore || [];
+    const firstAccount = accounts[0];
+    appendBody(`| ${r.spec.name} (${accounts.filter((a) => a.used).length}) `);
     appendBody(
       `| ${afterOps || beforeOps}${
         afterOps > beforeOps ? ` (+${afterOps - beforeOps})` : ""
@@ -525,6 +594,11 @@ export async function bot({
     );
     appendBody("|\n");
   });
+
+  appendBody("\n```\n");
+  appendBody(allAccountsAfter.map((a) => formatAccount(a, "head")).join("\n"));
+  appendBody("\n```\n");
+
   appendBody("\n</details>\n\n");
 
   // Add performance details
@@ -545,9 +619,9 @@ export async function bot({
   }
 
   appendBody(
-    "| Spec (accounts) | preload | scan | re-sync | tx status | sign op | broadcast | mutation confirm |\n"
+    "| Spec (accounts) | preload | scan | re-sync | tx status | sign op | broadcast | test | destination test |\n"
   );
-  appendBody("|---|---|---|---|---|---|---|---|\n");
+  appendBody("|---|---|---|---|---|---|---|---|---|\n");
 
   appendBody("| **TOTAL** |");
   appendBody(`**${formatTime(sumResults((r) => r.preloadDuration))}** |`);
@@ -585,15 +659,17 @@ export async function bot({
           ? m.confirmedTime - m.broadcastedTime
           : 0
       )
+    )}** |`
+  );
+  appendBody(
+    `**${formatTime(
+      sumResultsMutation((m) => m.testDestinationDuration || 0)
     )}** |\n`
   );
 
   results.forEach((r) => {
-    appendBody(
-      `| ${r.spec.name} (${
-        (r.accountsBefore || []).filter((a) => a.used).length
-      }) |`
-    );
+    const accounts = r.accountsAfter || r.accountsBefore || [];
+    appendBody(`| ${r.spec.name} (${accounts.filter((a) => a.used).length}) |`);
     appendBody(`${formatTime(r.preloadDuration || 0)} |`);
     appendBody(`${formatTime(r.scanDuration || 0)} |`);
     appendBody(
@@ -631,6 +707,11 @@ export async function bot({
             ? m.confirmedTime - m.broadcastedTime
             : 0
         )
+      )} |`
+    );
+    appendBody(
+      `${formatTime(
+        sumMutation(r.mutations, (m) => m.testDestinationDuration || 0)
       )} |\n`
     );
   });
@@ -644,6 +725,10 @@ export async function bot({
   )}: ${title} (<{{url}}|details> – <${runURL}|logs>)\n${subtitle}${slackBody}`;
 
   if (BOT_REPORT_FOLDER) {
+    const serializedReport: MinimalSerializedReport = {
+      results: results.map(convertSpecReport),
+    };
+
     await Promise.all([
       fs.promises.writeFile(
         path.join(BOT_REPORT_FOLDER, "github-report.md"),
@@ -668,6 +753,11 @@ export async function bot({
       fs.promises.writeFile(
         path.join(BOT_REPORT_FOLDER, "coin-apps.json"),
         JSON.stringify(allAppPaths),
+        "utf-8"
+      ),
+      fs.promises.writeFile(
+        path.join(BOT_REPORT_FOLDER, "report.json"),
+        JSON.stringify(serializedReport),
         "utf-8"
       ),
     ]);

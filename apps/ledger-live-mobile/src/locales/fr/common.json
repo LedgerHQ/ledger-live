@@ -276,7 +276,7 @@
     },
     "EthAppNftNotSupported" : {
       "title" : "Opération indisponible sur cet appareil",
-      "description" : "La fonctionnalité Envoi de NFT n’est disponible que pour le Nano X. Visitez notre centre d’aide pour découvrir comment envoyer un NFT avec un Nano S."
+      "description" : "Send NFT feature is only available for Nano X and Nano S+. Please visit our customer support platform to know how to send a NFT with a Nano S."
     },
     "Touch ID Error" : {
       "title" : "Échec de l’authentification biométrique",
@@ -1072,6 +1072,8 @@
     "stepLanguage" : {
       "title" : "Choisir la langue",
       "cta" : "Continuer",
+      "changeDeviceLanguage" : "Une autre langue est disponible pour votre {{deviceName}} : {{language}}.",
+      "changeDeviceLanguageDescription" : "Souhaitez-vous l’utiliser en {{language}} ?",
       "warning" : {
         "title" : "À noter",
         "cta" : "Compris",
@@ -1168,7 +1170,7 @@
       "setup" : {
         "bullets" : {
           "0" : {
-            "title" : "Allumer le Nano",
+            "title" : "Allumez votre Nano",
             "nanoX" : {
               "label" : "Allumez votre appareil en appuyant sur le bouton noir pendant 1 seconde."
             },
@@ -1183,15 +1185,15 @@
             }
           },
           "1" : {
-            "title" : "Naviguer",
+            "title" : "Naviguez",
             "label" : "Apprenez à interagir avec votre appareil. Lisez les instructions à l’écran."
           },
           "2" : {
-            "title" : "Choisir \"Set up as new device\"",
+            "title" : "Choisissez \"Set up as new device\"",
             "label" : "Appuyez simultanément sur les deux boutons pour valider."
           },
           "3" : {
-            "title" : "Suivre les instructions",
+            "title" : "Suivez les instructions",
             "label" : "Revenez ici afin de suivre les instructions relatives à votre code PIN."
           }
         },
@@ -1206,12 +1208,12 @@
       "pinCodeSetup" : {
         "bullets" : {
           "0" : {
-            "title" : "Choisir un code PIN",
+            "title" : "Choisissez un code PIN",
             "label" : "Appuyez sur le bouton gauche ou droit pour changer le chiffre. Appuyez sur les deux boutons simultanément pour confirmer. Sélectionnez <1></1> pour confirmer votre code PIN. Sélectionnez <2></2> pour effacer un chiffre.",
             "desc" : "Appuyez sur le bouton gauche ou droit pour changer le chiffre. Appuyez sur les deux boutons simultanément pour confirmer. Sélectionnez <validIcon></validIcon> pour confirmer votre code PIN. Sélectionnez <cancelIcon></cancelIcon> pour effacer un chiffre."
           },
           "1" : {
-            "title" : "Confirmer le code PIN",
+            "title" : "Confirmez votre code PIN",
             "label" : "Saisissez à nouveau votre code PIN pour le confirmer.",
             "desc" : "Saisissez à nouveau votre code PIN pour le confirmer."
           }
@@ -1259,7 +1261,7 @@
           "title" : "Comment fonctionne une phrase de récupération ?",
           "desc" : "Votre phrase de récupération fonctionne comme une clé principale unique. Votre appareil Ledger l’utilise pour calculer les clés privées de chaque crypto-actif que vous possédez.",
           "desc_1" : "Pour récupérer l’accès à vos cryptos, n’importe quel wallet peut utiliser votre phrase de récupération pour retrouver vos clés privées.",
-          "link" : "En savoir plus sur la phrase de récupération",
+          "link" : "En savoir plus",
           "title_1" : "Qu’arrive-t-il si je perds l’accès à mon Nano ?",
           "bullets" : {
             "0" : {
@@ -1284,7 +1286,7 @@
             "label_1" : "Faites cela pour tous les mots affichés en gras en respectant scrupuleusement l’ordre et l’orthographe. Appuyez sur le bouton gauche de votre Nano pour vérifier et ne pas faire d’erreur."
           },
           "2" : {
-            "title" : "Confirmer votre phrase de récupération",
+            "title" : "Confirmez votre phrase de récupération",
             "label" : "Appuyez sur le bouton droit pour faire défiler les mots jusqu’à ce que vous trouviez le mot n°1 (\"Word #1\"). Validez en appuyant sur les deux boutons."
           },
           "3" : {
@@ -1349,7 +1351,7 @@
         "nextStep" : "Étape suivante",
         "bullets" : {
           "0" : {
-            "title" : "Allumer le Nano",
+            "title" : "Allumez votre Nano",
             "nanoX" : {
               "label" : "Allumez votre appareil en appuyant sur le bouton noir pendant 1 seconde."
             },
@@ -1364,7 +1366,7 @@
             }
           },
           "1" : {
-            "title" : "Naviguer",
+            "title" : "Naviguez",
             "label" : "Apprenez à interagir avec votre appareil. Lisez les instructions à l’écran."
           },
           "2" : {
@@ -1372,7 +1374,7 @@
             "label" : "Appuyez simultanément sur les deux boutons pour valider."
           },
           "3" : {
-            "title" : "Suivre les instructions",
+            "title" : "Suivez les instructions",
             "label" : "Revenez ici afin de suivre les instructions relatives à votre code PIN."
           }
         }
@@ -1384,18 +1386,18 @@
         "checkboxDesc" : "Je comprends que si je perds ma phrase de récupération, je ne pourrais plus accéder à mes cryptos au cas où je n’ai plus accès à mon Nano.",
         "bullets" : {
           "0" : {
-            "title" : "Prendre votre phrase de récupération"
+            "title" : "Prenez votre phrase de récupération"
           },
           "1" : {
             "title" : "Choisir la longueur de votre phrase de récupération",
             "label" : "Sélectionnez \"24 words\" (24 mots), \"18 words\" (18 mots) ou \"12 words\" (12 mots). Vous devez entrer tous les mots de votre phrase de récupération."
           },
           "2" : {
-            "title" : "Saisir le mot n°1 (\"Word #1\")",
+            "title" : "Saisissez le mot n°1 (\"Word #1\")",
             "label" : "Saisissez les premières lettres du \"Word #1\" (Mot n°1) en les sélectionnant avec le bouton droit ou gauche.  Appuyez sur les deux boutons pour valider chaque lettre."
           },
           "3" : {
-            "title" : "Valider le mot n°1 (\"Word #1\")",
+            "title" : "Validez le mot n°1 (\"Word #1\")",
             "label" : "Naviguez jusqu’au mot n°1 (\"Word #1\"). Appuyez sur les deux boutons pour valider."
           },
           "4" : {
@@ -1554,10 +1556,10 @@
         }
       },
       "recoveryPhrase" : {
-        "title" : "Si ma phrase de récupération n’est plus en sécurité ou que quelqu’un la connaît :",
+        "title" : "Si quelqu’un connaît ma phrase de récupération ou elle n’est plus en sécurité :",
         "answers" : {
           "correct" : "Mes cryptos ne sont plus en sécurité et je dois les transférer en lieu sûr.",
-          "wrong" : "Pas de souci, Ledger m’en enverra une copie."
+          "wrong" : "Ledger m’en enverra une copie."
         },
         "modal" : {
           "text" : "Toute personne qui connaît votre phrase de récupération peut voler vos crypto-actifs.\nSi vous la perdez, vous devez rapidement mettre vos cryptos en lieu sûr.",
@@ -1685,9 +1687,9 @@
     }
   },
   "addAccountsModal" : {
+    "title" : "Ajouter un compte",
     "ctaAdd" : "Ajouter des comptes",
     "ctaImport" : "Importer les comptes de l’ordinateur",
-    "title" : "Ajouter une crypto",
     "description" : "Vous pouvez choisir d’ajouter des cryptos directement avec votre Ledger, ou les importer depuis Ledger Live pour l’ordinateur.",
     "add" : {
       "title" : "Avec votre Ledger",
@@ -2255,13 +2257,52 @@
       "exportLogsDesc" : "Sauvegardez les logs de Ledger Live peut être nécessaire à des fins de dépannage.",
       "hardReset" : "Réinitialiser Ledger Live",
       "hardResetDesc" : "Sans effet sur vos actifs. Toutes les données de Ledger Live, y compris les données de comptes, l’historique de vos transactions et paramètres seront effacées. Utilisez votre appareil Ledger pour recharger et gérer vos crypto-actifs dans une app Ledger Live vierge.",
-      "repairDevice" : "Réparer son appareil Ledger",
+      "repairDevice" : "Réparer votre appareil Ledger",
       "repairDeviceDesc" : "En cas de problème lors de la mise à jour de votre appareil (reprise des mises à jour impossible), essayez cela pour réparer votre appareil."
     },
     "experimental" : {
       "title" : "Fonctionnalités expérimentales",
       "desc" : "Essayez les Fonctionnalités expérimentales et donnez-nous votre avis.",
-      "disclaimer" : "Il s’agit de fonctionnalités expérimentales fournies \"telles quelles\" pour notre communauté de passionné(e)s de la tech. Elles peuvent changer, casser ou être retirées à tout moment. En les activant, vous acceptez de les utiliser en toute connaissance de cause."
+      "disclaimer" : "Il s’agit de fonctionnalités expérimentales fournies \"telles quelles\" pour notre communauté de passionné(e)s de la tech. Elles peuvent changer, casser ou être retirées à tout moment. En les activant, vous acceptez de les utiliser en toute connaissance de cause.",
+      "experimentalFeatures" : {
+        "experimentalIntegrations" : {
+          "title" : "Intégrations expérimentales",
+          "description" : "Utilisez les intégrations expérimentales disponibles pour les crypto-actifs concernés."
+        },
+        "developerMode" : {
+          "title" : "Mode développeur",
+          "description" : "Affichez les applications développeurs et testnet dans le Gestionnaire."
+        },
+        "managerProvider" : {
+          "title" : "Fournisseur du Gestionnaire",
+          "description" : "Changer le fournisseur d’applications dans le Gestionnaire peut rendre impossible l’installation ou désinstallation d’applications sur votre appareil Ledger."
+        },
+        "experimentalExplorers" : {
+          "title" : "API Explorateurs Expérimentales",
+          "description" : "Testez une version en développement des explorateurs de blockchain de Ledger. Modifier ce paramètre peut affecter le solde des comptes, la synchronisation et la fonctionnalité Envoyer."
+        },
+        "experimentalCountervalues" : {
+          "title" : "API Devises de contrepartie expérimentales",
+          "description" : "Avec cette fonctionnalité, les devises de contrepartie affichées dans vos comptes peuvent devenir incorrectes."
+        },
+        "experimentalSwap" : {
+          "title" : "Nouvelle interface de Swap",
+          "description" : "Utilisez la nouvelle interface expérimentale de swap."
+        }
+      },
+      "developerFeatures" : {
+        "experimentalApps" : {
+          "title" : "Autoriser les Apps Expérimentales",
+          "description" : "Affichez et autorisez l’ouverture des Platform Apps \"Expérimentales\"."
+        },
+        "staggingUrl" : {
+          "title" : "Activer l’URL de test de la page Apprendre",
+          "description" : "Utilisez l’URL de test (staging) de la page Apprendre."
+        },
+        "platformManifest" : {
+          "title" : "Charger un manifest pour Platform"
+        }
+      }
     },
     "developer" : {
       "title" : "Développeurs",
@@ -2273,11 +2314,8 @@
     "debug" : {
       "featureFlagsTitle" : "Indicateurs de fonctionnalités (feature flags) définis et utilisés dans Ledger Live",
       "featureFlagsDesc" : "Les valeurs remplacées seront réinitialisées lorsque l’application sera relancée. Seules les chaînes JSON valides sont acceptées.",
-      "featureFlagsOverride" : "Remplacer",
       "featureFlagsEdit" : "Modifier",
-      "featureFlagsRestore" : "Restaurer",
-      "featureFlagsDisplayValue" : "Afficher le code",
-      "featureFlagsHideValue" : "Masquer le code"
+      "featureFlagsRestore" : "Restaurer"
     }
   },
   "notifications" : {
@@ -3355,6 +3393,7 @@
       "appsInstalled" : "<0>{{number}}</0> app",
       "appsInstalled_plural" : "<0>{{number}}</0> apps",
       "storageAvailable" : "disponibles",
+      "noFreeSpace" : "Plus d’espace disponible",
       "appsToUpdate" : "<0>{{number}}</0> mise à jour",
       "appsToUpdate_plural" : "<0>{{number}}</0> mises à jour"
     },
@@ -3534,18 +3573,28 @@
     "languages" : {
       "en" : "Anglais",
       "fr" : "Français",
-      "ru" : "Russe",
-      "es" : "Espagnol",
-      "zh" : "Chinois",
-      "de" : "Allemand"
+      "ru" : "Русский",
+      "es" : "Español",
+      "zh" : "简体中文",
+      "de" : "Deutsch",
+      "tr" : "Türkçe",
+      "ja" : "日本語",
+      "ko" : "한국어",
+      "pt" : "Português"
     }
   },
   "deviceLocalization" : {
     "language" : "Langue",
     "deviceLanguage" : "Langue de l’appareil",
+    "chooseLanguage" : "Choisissez une langue pour votre {{deviceName}}.",
     "changeLanguage" : "Changer la langue",
-    "allowLanguageInstallation" : "Confirmez l’ajout de la langue",
-    "languageInstalled" : "Votre appareil est maintenant en {{language}}.",
+    "yesChangeLanguage" : "Oui, changer la langue",
+    "allowLanguageInstallation" : "Confirmez l’ajout de la langue sur votre {{deviceName}}",
+    "languageInstalled" : "Votre Ledger est maintenant en {{language}}.",
+    "firmwareUpdatePrompt" : {
+      "title" : "Utiliser votre {{deviceName}} en {{language}} ?",
+      "description" : "Une nouvelle langue est disponible pour votre {{deviceName}} : {{language}}. Vous pouvez changer la langue de votre Ledger maintenant ou à tout moment à partir de My Ledger."
+    },
     "installingLanguage" : "Installation de la langue",
     "languages" : {
       "english" : "English",
@@ -4754,5 +4803,19 @@
     "chooseConstrast" : "Choisissez un contraste",
     "uploadAnotherImage" : "Télécharger une autre image",
     "selectContrast" : "Sélectionnez le contraste voulu"
+  },
+  "postOnboarding" : {
+    "hub" : {
+      "title" : "Voilà.\nTout est configuré.",
+      "allDoneTitle" : "Parfait.\nVous êtes fin prêt(e) !",
+      "subtitle" : "Vous pouvez maintenant :",
+      "skip" : "Accéder à l’app",
+      "goToWallet" : "Accéder à votre wallet Ledger Live",
+      "done" : "Vous venez de sécuriser votre avenir."
+    },
+    "walletCard" : {
+      "title" : "Premiers pas",
+      "description" : "Cliquez ici pour terminer la configuration de votre {{productName}} avec Ledger Live."
+    }
   }
 }

@@ -276,7 +276,7 @@
     },
     "EthAppNftNotSupported" : {
       "title" : "お使いのデバイスではこの操作をご利用いただけません",
-      "description" : "NFTの送付は、Nano Xでのみご利用いただけます。カスタマーサポートページから、Nano SでNFTを送付する方法をご確認ください。"
+      "description" : "Send NFT feature is only available for Nano X and Nano S+. Please visit our customer support platform to know how to send a NFT with a Nano S."
     },
     "Touch ID Error" : {
       "title" : "生体認証に失敗しました。",
@@ -1072,6 +1072,8 @@
     "stepLanguage" : {
       "title" : "言語を選択",
       "cta" : "続行",
+      "changeDeviceLanguage" : "{{language}}が{{deviceName}}でもご利用可能になりました",
+      "changeDeviceLanguageDescription" : "言語を{{language}}に変更しますか？",
       "warning" : {
         "title" : "ご利用ガイド（英語版）",
         "cta" : "了解！",
@@ -1603,27 +1605,27 @@
   "blePairingFlow" : {
     "scanning" : {
       "withProductName" : {
-        "title" : "Looking for your {{productName}}",
-        "description" : "Please make sure your {{productName}} is unlocked and Bluetooth is enabled"
+        "title" : "{{productName}}を検出中",
+        "description" : "{{productName}}のロックが解除済みで、Bluetoothが有効であることを確認してください"
       },
       "withoutProductName" : {
-        "title" : "Looking for devices",
-        "description" : "Please make sure your device is switched on, unlocked, and bluetooth is enabled"
+        "title" : "デバイスを探しています",
+        "description" : "デバイスの電源が入っていて、ロックが解除されていて、Bluetooth が有効になっていることを確認してください"
       },
-      "alreadyPaired" : "Already paired"
+      "alreadyPaired" : "ペアリング済み"
     },
     "pairing" : {
       "success" : {
-        "title" : "Paired with {{deviceName}}"
+        "title" : "{{deviceName}}とペアリング完了"
       },
       "loading" : {
-        "title" : "Pairing with {{deviceName}}",
-        "subtitle" : "Confirm the code on your {{productName}}"
+        "title" : "{{deviceName}}とペアリング中",
+        "subtitle" : "{{productName}}のコードを確認してください"
       },
       "error" : {
-        "title" : "Pairing unsucessful",
-        "subtitle" : "Looks like something went wrong! Check that your bluetooth is on and your {{productName}} is nearby",
-        "retryCta" : "Try again"
+        "title" : "ペアリング失敗",
+        "subtitle" : "何か問題が発生したようです。Bluetoothがオンになっていて、{{productName}}が近くにあることを確認してください",
+        "retryCta" : "再試行"
       }
     }
   },
@@ -1685,9 +1687,9 @@
     }
   },
   "addAccountsModal" : {
+    "title" : "アカウントを追加",
     "ctaAdd" : "アカウントを追加",
     "ctaImport" : "デスクトップアカウントのインポート",
-    "title" : "暗号資産を追加",
     "description" : "Ledgerに暗号資産を直接追加、またはLedger Live Desktopからインポートする方法を選択できます。",
     "add" : {
       "title" : "Ledgerと共に",
@@ -1695,7 +1697,7 @@
     },
     "import" : {
       "title" : "デスクトップからインポート",
-      "description" : "Ledger Live Desktop(デスクトップ)から資産をインポート"
+      "description" : "Ledger Live Desktopから資産をインポート"
     }
   },
   "byteSize" : {
@@ -2261,7 +2263,46 @@
     "experimental" : {
       "title" : "試験的機能",
       "desc" : "試験的機能をお試しになり、フィードバックをお寄せください。",
-      "disclaimer" : "これらは、テクノロジーファンのコミュニティ向けに、現状のまま提供される試験的機能です。これらの機能は随時変更、破損、または削除される可能性があります。このオプションを有効にすると、あなたは自己責任でこれらの機能を使用することに同意したことになります。"
+      "disclaimer" : "これらは、テクノロジーファンのコミュニティ向けに、現状のまま提供される試験的機能です。これらの機能は随時変更、破損、または削除される可能性があります。このオプションを有効にすると、あなたは自己責任でこれらの機能を使用することに同意したことになります。",
+      "experimentalFeatures" : {
+        "experimentalIntegrations" : {
+          "title" : "試験的統合",
+          "description" : "利用可能な試験的暗号資産の統合を使用する。"
+        },
+        "developerMode" : {
+          "title" : "デベロッパーモード",
+          "description" : "開発者用アプリとテストネットアプリを管理画面に表示します。"
+        },
+        "managerProvider" : {
+          "title" : "プロバイダー管理",
+          "description" : "プロバイダー管理でアプリプロバイダーを変更すると、Ledgerデバイスにアプリをインストールまたはアンインストールできなくなる場合があります。"
+        },
+        "experimentalExplorers" : {
+          "title" : "試験的なエクスプローラーAPI",
+          "description" : "Ledgerのブロックチェーンエクスプローラーの新バージョンをお試しいただけます。この設定を変更すると、アカウントの残高と同期、および送金機能に影響を与える可能性があります。"
+        },
+        "experimentalCountervalues" : {
+          "title" : "試験的なカウンターバリューAPI",
+          "description" : "これにより、アカウントに表示されるカウンター値が不正確になる可能性があります。"
+        },
+        "experimentalSwap" : {
+          "title" : "新しいスワップインタフェース",
+          "description" : "新しい試験的スワップインタフェースを使用する"
+        }
+      },
+      "developerFeatures" : {
+        "experimentalApps" : {
+          "title" : "試験的なアプリを許可する",
+          "description" : "試験的とタグ付けされたプラットフォームアプリの表示と実行を許可する"
+        },
+        "staggingUrl" : {
+          "title" : "学習ステージングのURL",
+          "description" : "ステージングURLを学習ページに使用する。"
+        },
+        "platformManifest" : {
+          "title" : "プラットフォームマニフェストを読み込む"
+        }
+      }
     },
     "developer" : {
       "title" : "デベロッパー",
@@ -2273,11 +2314,8 @@
     "debug" : {
       "featureFlagsTitle" : "Ledger Liveで使用される定義済みの機能フラグ",
       "featureFlagsDesc" : "上書きされた値は、アプリが再起動されるとリセットされます。有効なJSON文字列のみが受け入れられます。",
-      "featureFlagsOverride" : "上書き",
       "featureFlagsEdit" : "編集",
-      "featureFlagsRestore" : "復元",
-      "featureFlagsDisplayValue" : "値を表示",
-      "featureFlagsHideValue" : "値を非表示"
+      "featureFlagsRestore" : "復元"
     }
   },
   "notifications" : {
@@ -2902,7 +2940,7 @@
       "amount" : "数量",
       "from" : "送付元",
       "to" : "送付先",
-      "infoTotalTitle" : "デビットの合計",
+      "infoTotalTitle" : "合計出金額",
       "infoTotalDesc" : "トランザクション数量と選択したネットワーク手数料を含みます。",
       "gasLimit" : "ガスリミット",
       "gasPrice" : "ガス価格",
@@ -3355,6 +3393,7 @@
       "appsInstalled" : "<0>{{number}}</0>個のアプリ",
       "appsInstalled_plural" : "<0>{{number}}</0>個のアプリ",
       "storageAvailable" : "利用可能",
+      "noFreeSpace" : "ストレージ容量に空きがありません。",
       "appsToUpdate" : "<0>{{number}}</0>アップデート",
       "appsToUpdate_plural" : "<0>{{number}}</0>アップデート"
     },
@@ -3535,17 +3574,27 @@
       "en" : "英語",
       "fr" : "フランス語",
       "ru" : "ロシア語",
-      "es" : "Spanish",
-      "zh" : "中国語",
-      "de" : "ドイツ語"
+      "es" : "スペイン語",
+      "zh" : "中国人",
+      "de" : "ドイツ語",
+      "tr" : "トルコ語",
+      "ja" : "日本",
+      "ko" : "韓国",
+      "pt" : "ポルトガル語"
     }
   },
   "deviceLocalization" : {
     "language" : "言語",
     "deviceLanguage" : "デバイスの言語",
+    "chooseLanguage" : "{{deviceName}}の言語を選択してください。",
     "changeLanguage" : "言語の変更",
-    "allowLanguageInstallation" : "言語のインストールを許可する",
-    "languageInstalled" : "デバイスの言語が{{language}}に変更されました",
+    "yesChangeLanguage" : "はい、言語を変更します。",
+    "allowLanguageInstallation" : "{{deviceName}}への言語のインストールを承認する",
+    "languageInstalled" : "言語が{{language}}に変更されました",
+    "firmwareUpdatePrompt" : {
+      "title" : "{{deviceName}}を{{language}}に設定しますか？",
+      "description" : "{{language}}が{{deviceName}}でご利用可能になりました。今すぐ設定できます。また、My Ledgerからいつでもデバイスの言語を変更することが可能です。"
+    },
     "installingLanguage" : "言語をインストール",
     "languages" : {
       "english" : "英語",
@@ -4754,5 +4803,19 @@
     "chooseConstrast" : "コントラストを選択",
     "uploadAnotherImage" : "他の画像をアップロードする",
     "selectContrast" : "コントラストを選択する"
+  },
+  "postOnboarding" : {
+    "hub" : {
+      "title" : "素晴らしい。\nこれで準備完了です。",
+      "allDoneTitle" : "いい感じです。\nこれで準備が整いました。",
+      "subtitle" : "次にできること",
+      "skip" : "アプリにスキップする",
+      "goToWallet" : "Ledger Liveウォレットに移動する",
+      "done" : "将来を安全に保護しました"
+    },
+    "walletCard" : {
+      "title" : "ご利用ガイド",
+      "description" : "こちらをクリックして、Ledger Liveで{{productName}}を設定"
+    }
   }
 }

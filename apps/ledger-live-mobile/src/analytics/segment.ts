@@ -15,6 +15,7 @@ import {
 } from "@react-navigation/native";
 import { snakeCase } from "lodash";
 import { useCallback } from "react";
+import { idsToLanguage } from "@ledgerhq/types-live";
 import {
   getAndroidArchitecture,
   getAndroidVersionCode,
@@ -33,6 +34,7 @@ import { knownDevicesSelector } from "../reducers/ble";
 import { satisfactionSelector } from "../reducers/ratings";
 import type { State } from "../reducers";
 import { NavigatorName } from "../const";
+import { previousRouteNameRef, currentRouteNameRef } from "./screenRefs";
 
 const sessionId = uuid();
 const appVersion = `${VersionNumber.appVersion || ""} (${
@@ -55,11 +57,16 @@ const extraProperties = store => {
   const deviceInfo = lastDevice
     ? {
         deviceVersion: lastDevice.deviceInfo?.version,
+        deviceLanguage:
+          lastDevice.deviceInfo?.languageId !== undefined
+            ? idsToLanguage[lastDevice.deviceInfo.languageId]
+            : undefined,
         appLength: lastDevice?.appsInstalled,
         modelId: lastDevice.modelId,
       }
     : {};
   const firstConnectionHasDevice = firstConnectionHasDeviceSelector(state);
+
   return {
     appVersion,
     androidVersionCode: getAndroidVersionCode(VersionNumber.buildVersion),
@@ -148,8 +155,8 @@ export const trackSubject: any = new ReplaySubject<{
 }>(10);
 export const track = (
   event: string,
-  properties: Record<string, any> | null | undefined,
-  mandatory?: boolean | null | undefined,
+  properties?: Record<string, any> | null,
+  mandatory?: boolean | null,
 ) => {
   Sentry.addBreadcrumb({
     message: event,
@@ -165,7 +172,13 @@ export const track = (
     return;
   }
 
-  const allProperties = { ...extraProperties(storeInstance), ...properties };
+  const screen = currentRouteNameRef.current;
+
+  const allProperties = {
+    screen,
+    ...extraProperties(storeInstance),
+    ...properties,
+  };
   if (ANALYTICS_LOGS) console.log("analytics:track", event, allProperties);
   trackSubject.next({
     event,
@@ -235,7 +248,13 @@ export const screen = (
     return;
   }
 
-  const allProperties = { ...extraProperties(storeInstance), ...properties };
+  const source = previousRouteNameRef.current;
+
+  const allProperties = {
+    source,
+    ...extraProperties(storeInstance),
+    ...properties,
+  };
   if (ANALYTICS_LOGS)
     console.log("analytics:screen", category, name, allProperties);
   trackSubject.next({

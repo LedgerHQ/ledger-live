@@ -7,6 +7,9 @@ export const defaultFeatures: DefaultFeatures = {
   pushNotifications: {
     enabled: false,
   },
+  deviceLocalization: {
+    enabled: false,
+  },
   buyDeviceFromLive: {
     enabled: false,
     params: {
@@ -107,6 +110,9 @@ export const defaultFeatures: DefaultFeatures = {
     enabled: false,
   },
   ptxSmartRoutingMobile: {
+    enabled: false,
+  },
+  mockFeature: {
     enabled: false,
   },
 };

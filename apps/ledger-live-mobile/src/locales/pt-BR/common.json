@@ -276,7 +276,7 @@
     },
     "EthAppNftNotSupported" : {
       "title" : "Operação indisponível para este dispositivo",
-      "description" : "A função de enviar NFT só está disponível para Nano X. Visite nossa plataforma de suporte ao cliente para saber como enviar um NFT com uma Nano S."
+      "description" : "Send NFT feature is only available for Nano X and Nano S+. Please visit our customer support platform to know how to send a NFT with a Nano S."
     },
     "Touch ID Error" : {
       "title" : "Falha na autenticação biométrica",
@@ -1072,6 +1072,8 @@
     "stepLanguage" : {
       "title" : "Selecione seu idioma",
       "cta" : "Continuar",
+      "changeDeviceLanguage" : "{{language}} também está disponível para a sua {{deviceName}}",
+      "changeDeviceLanguageDescription" : "Você gostaria de mudar o seu idioma para {{language}}?",
       "warning" : {
         "title" : "Começar em inglês",
         "cta" : "Entendi!",
@@ -1603,27 +1605,27 @@
   "blePairingFlow" : {
     "scanning" : {
       "withProductName" : {
-        "title" : "Looking for your {{productName}}",
-        "description" : "Please make sure your {{productName}} is unlocked and Bluetooth is enabled"
+        "title" : "Buscando sua {{productName}}",
+        "description" : "Verifique se sua {{productName}} está desbloqueada e se o Bluetooth está habilitado"
       },
       "withoutProductName" : {
-        "title" : "Looking for devices",
-        "description" : "Please make sure your device is switched on, unlocked, and bluetooth is enabled"
+        "title" : "Buscando dispositivos",
+        "description" : "Certifique-se de que o seu dispositivo está ligado, desbloqueado e que o bluetooth está ativado"
       },
-      "alreadyPaired" : "Already paired"
+      "alreadyPaired" : "Já emparelhado"
     },
     "pairing" : {
       "success" : {
-        "title" : "Paired with {{deviceName}}"
+        "title" : "Emparelhado com {{deviceName}}"
       },
       "loading" : {
-        "title" : "Pairing with {{deviceName}}",
-        "subtitle" : "Confirm the code on your {{productName}}"
+        "title" : "Emparelhando com {{deviceName}}",
+        "subtitle" : "Confirme o código em sua {{productName}}"
       },
       "error" : {
-        "title" : "Pairing unsucessful",
-        "subtitle" : "Looks like something went wrong! Check that your bluetooth is on and your {{productName}} is nearby",
-        "retryCta" : "Try again"
+        "title" : "Emparelhamento sem sucesso",
+        "subtitle" : "Parece que algo deu errado! Verifique se o seu bluetooth está ativado e se sua {{productName}} está próxima",
+        "retryCta" : "Tente novamente"
       }
     }
   },
@@ -1685,17 +1687,17 @@
     }
   },
   "addAccountsModal" : {
+    "title" : "Adicionar Conta",
     "ctaAdd" : "Adicionar contas",
     "ctaImport" : "Importar contas do desktop",
-    "title" : "Adicionar Cripto",
-    "description" : "Você pode escolher adicionar criptoativos diretamente com sua Ledger, ou importá-los do Ledger Live de desktop.",
+    "description" : "Você pode escolher adicionar criptoativos diretamente com sua Ledger, ou importá-los do Ledger Live desktop.",
     "add" : {
       "title" : "Com sua Ledger",
       "description" : "Crie ou importe ativos com sua Ledger"
     },
     "import" : {
       "title" : "Importar do desktop",
-      "description" : "Importe ativos do Ledger Live Desktop"
+      "description" : "Importe ativos do Ledger Live desktop"
     }
   },
   "byteSize" : {
@@ -2261,7 +2263,46 @@
     "experimental" : {
       "title" : "Recursos experimentais",
       "desc" : "Experimente os recursos experimentais e nos conte o que achou.",
-      "disclaimer" : "Estes são recursos experimentais fornecidas tal como se encontram para nossa comunidade de entusiastas de tecnologia. Eles podem mudar, quebrar ou ser removidos a qualquer momento. Ao habilitá-los, você concorda em usá-los por sua própria conta e risco."
+      "disclaimer" : "Estes são recursos experimentais fornecidas tal como se encontram para nossa comunidade de entusiastas de tecnologia. Eles podem mudar, quebrar ou ser removidos a qualquer momento. Ao habilitá-los, você concorda em usá-los por sua própria conta e risco.",
+      "experimentalFeatures" : {
+        "experimentalIntegrations" : {
+          "title" : "Integrações Experimentais",
+          "description" : "Use as integrações experimentais de criptoativos disponíveis."
+        },
+        "developerMode" : {
+          "title" : "Modo Desenvolvedor",
+          "description" : "Mostrar testnets e aplicativos de desenvolvedor no Manager."
+        },
+        "managerProvider" : {
+          "title" : "Provedor do Manager",
+          "description" : "Alterar o provedor de aplicativos no Manager pode impossibilitar a instalação ou desinstalação de aplicativos no seu dispositivo Ledger."
+        },
+        "experimentalExplorers" : {
+          "title" : "API de Exploradores Experimentais",
+          "description" : "Experimente uma versão futura dos exploradores de blockchain da Ledger. Alterar essa configuração poderá afetar o saldo e a sincronização da conta, bem como o recurso de enviar."
+        },
+        "experimentalCountervalues" : {
+          "title" : "API de Contravalores Experimentais",
+          "description" : "Isso pode fazer com que os contravalores incorretos sejam exibidos nas suas contas."
+        },
+        "experimentalSwap" : {
+          "title" : "Nova Interface de Troca",
+          "description" : "Use a nova interface experimental de troca"
+        }
+      },
+      "developerFeatures" : {
+        "experimentalApps" : {
+          "title" : "Permitir aplicativos experimentais",
+          "description" : "Exibir e permitir a abertura de aplicativos classificados como experimentais na plataforma"
+        },
+        "staggingUrl" : {
+          "title" : "Staging URL da página Aprender",
+          "description" : "Use a staging URL da página Aprender."
+        },
+        "platformManifest" : {
+          "title" : "Carregar o Manifesto da Plataforma"
+        }
+      }
     },
     "developer" : {
       "title" : "Desenvolvedor",
@@ -2273,11 +2314,8 @@
     "debug" : {
       "featureFlagsTitle" : "Marcadores definidos usados no Ledger Live",
       "featureFlagsDesc" : "Valores sobrepostos serão redefinidos se o aplicativo for reexecutado. Apenas strings JSON válidas serão aceitas.",
-      "featureFlagsOverride" : "Sobrepor",
       "featureFlagsEdit" : "Editar",
-      "featureFlagsRestore" : "Restaurar",
-      "featureFlagsDisplayValue" : "Exibir Valor",
-      "featureFlagsHideValue" : "Ocultar Valor"
+      "featureFlagsRestore" : "Restaurar"
     }
   },
   "notifications" : {
@@ -3355,6 +3393,7 @@
       "appsInstalled" : "<0>{{number}}</0> aplicativo",
       "appsInstalled_plural" : "<0>{{number}}</0> aplicativos",
       "storageAvailable" : "disponível",
+      "noFreeSpace" : "Armazenamento esgotado",
       "appsToUpdate" : "<0>{{number}}</0> atualização",
       "appsToUpdate_plural" : "<0>{{number}}</0> atualizações"
     },
@@ -3533,19 +3572,29 @@
     "no" : "Eu prefiro que não",
     "languages" : {
       "en" : "Inglês",
-      "fr" : "Francês",
-      "ru" : "Russo",
-      "es" : "Espanhol",
-      "zh" : "Chinês",
-      "de" : "Alemão"
+      "fr" : "Français",
+      "ru" : "Русский",
+      "es" : "Español",
+      "zh" : "中国人",
+      "de" : "Deutsch",
+      "tr" : "Türk",
+      "ja" : "日本",
+      "ko" : "한국인",
+      "pt" : "Português"
     }
   },
   "deviceLocalization" : {
     "language" : "Idioma",
     "deviceLanguage" : "Idioma do dispositivo",
+    "chooseLanguage" : "Escolha um idioma para sua {{deviceName}}.",
     "changeLanguage" : "Mudar Idioma",
-    "allowLanguageInstallation" : "Permitir instalação do idioma",
-    "languageInstalled" : "O idioma do dispositivo mudou para {{language}}.",
+    "yesChangeLanguage" : "Sim, mudar idioma",
+    "allowLanguageInstallation" : "Permitir a instalação do idioma na {{deviceName}}",
+    "languageInstalled" : "Idioma alterado para {{language}}",
+    "firmwareUpdatePrompt" : {
+      "title" : "Colocar sua {{deviceName}} em {{language}}?",
+      "description" : "{{language}} agora está disponível para sua {{deviceName}}. Você pode configurar agora ou mudar o idioma do seu dispositivo a qualquer momento no My Ledger."
+    },
     "installingLanguage" : "Instalando Idioma",
     "languages" : {
       "english" : "Inglês",
@@ -4750,9 +4799,23 @@
         "uploadFromPhone" : "Enviar do meu telefone"
       }
     },
-    "cropImage" : "Crop image",
-    "chooseConstrast" : "Choose contrast",
+    "cropImage" : "Cortar imagem",
+    "chooseConstrast" : "Escolher contraste",
     "uploadAnotherImage" : "Enviar outra imagem",
     "selectContrast" : "Selecione o contraste"
+  },
+  "postOnboarding" : {
+    "hub" : {
+      "title" : "Muito bom.\nTudo pronto.",
+      "allDoneTitle" : "Bom trabalho.\nTudo está em pleno funcionamento.",
+      "subtitle" : "Aqui está o que você pode fazer a seguir.",
+      "skip" : "Pular para o aplicativo.",
+      "goToWallet" : "Ir para a carteira Ledger Live",
+      "done" : "Você tornou seu futuro mais seguro."
+    },
+    "walletCard" : {
+      "title" : "Como Começar",
+      "description" : "Clique aqui para finalizar a configuração da sua {{productName}} com a Ledger Live"
+    }
   }
 }

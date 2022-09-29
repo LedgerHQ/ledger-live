@@ -1,5 +1,29 @@
 # @ledgerhq/errors
 
+## 6.11.0
+
+### Minor Changes
+
+- [#1253](https://github.com/LedgerHQ/ledger-live/pull/1253) [`1a94cbf28a`](https://github.com/LedgerHQ/ledger-live/commit/1a94cbf28aaa2917c70719e22f446148cd66cef6) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Warning when btc transactions are pending in send flow
+
+## 6.11.0-next.0
+
+### Minor Changes
+
+- [#1253](https://github.com/LedgerHQ/ledger-live/pull/1253) [`1a94cbf28a`](https://github.com/LedgerHQ/ledger-live/commit/1a94cbf28aaa2917c70719e22f446148cd66cef6) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Warning when btc transactions are pending in send flow
+
+## 6.10.2
+
+### Patch Changes
+
+- [#1179](https://github.com/LedgerHQ/ledger-live/pull/1179) [`ae5e33e15e`](https://github.com/LedgerHQ/ledger-live/commit/ae5e33e15e8a107d0ba8a3688a63eda2c0d43ce7) Thanks [@gre](https://github.com/gre)! - Improve TypeScript of @ledgerhq/errors and fixes 2 bugs in swap and stellar on their error handling
+
+## 6.10.2-next.0
+
+### Patch Changes
+
+- [#1179](https://github.com/LedgerHQ/ledger-live/pull/1179) [`ae5e33e15`](https://github.com/LedgerHQ/ledger-live/commit/ae5e33e15e8a107d0ba8a3688a63eda2c0d43ce7) Thanks [@gre](https://github.com/gre)! - Improve TypeScript of @ledgerhq/errors and fixes 2 bugs in swap and stellar on their error handling
+
 ## 6.10.1
 
 ### Patch Changes

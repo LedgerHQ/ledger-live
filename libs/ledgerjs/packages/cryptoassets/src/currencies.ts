@@ -95,6 +95,7 @@ export const cryptocurrenciesById: Record<string, CryptoCurrency> = {
       },
     ],
     explorerViews: [],
+    keywords: ["near"],
   },
   aeternity: {
     type: "CryptoCurrency",
@@ -188,35 +189,7 @@ export const cryptocurrenciesById: Record<string, CryptoCurrency> = {
         tx: "https://algoexplorer.io/tx/$hash",
       },
     ],
-  },
-  arbitrum: {
-    type: "CryptoCurrency",
-    id: "arbitrum",
-    coinType: 60,
-    name: "Arbitrum",
-    managerAppName: "Ethereum",
-    ticker: "ETH",
-    scheme: "arbitrum",
-    color: "#28a0f0",
-    family: "evm",
-    units: ethereumUnits("ETH", "ETH"),
-    ethereumLikeInfo: {
-      baseChain: "mainnet",
-      chainId: 42161,
-      networkId: 42161,
-      rpc: "https://arb1.arbitrum.io/rpc",
-      explorer: {
-        uri: "https://api.arbiscan.io",
-        type: "etherscan",
-      },
-    },
-    explorerViews: [
-      {
-        tx: "https://arbiscan.io/tx/$hash",
-        address: "https://arbiscan.io/address/$address",
-        token: "https://arbiscan.io/token/$contractAddress?a=$address",
-      },
-    ],
+    keywords: ["algo", "algorand"],
   },
   ark: {
     type: "CryptoCurrency",
@@ -288,6 +261,7 @@ export const cryptocurrenciesById: Record<string, CryptoCurrency> = {
           "https://cchain.explorer.avax.network/token/$contractAddress?a=$address",
       },
     ],
+    keywords: ["avax", "avalanche"],
   },
   banano: {
     type: "CryptoCurrency",
@@ -339,6 +313,7 @@ export const cryptocurrenciesById: Record<string, CryptoCurrency> = {
         tx: "https://blockchain.info/btc/tx/$hash",
       },
     ],
+    keywords: ["btc", "bitcoin"],
   },
   bitcoin_cash: {
     type: "CryptoCurrency",
@@ -507,6 +482,7 @@ export const cryptocurrenciesById: Record<string, CryptoCurrency> = {
         token: "https://bscscan.com/token/$contractAddress?a=$address",
       },
     ],
+    keywords: ["bsc", "bnb", "binance", "binance smart chain", "binance chain"],
   },
   callisto: {
     type: "CryptoCurrency",
@@ -556,6 +532,7 @@ export const cryptocurrenciesById: Record<string, CryptoCurrency> = {
         address: "https://cardanoscan.io/address/$address",
       },
     ],
+    keywords: ["ada", "cardano"],
   },
   cardano_testnet: {
     type: "CryptoCurrency",
@@ -683,6 +660,7 @@ export const cryptocurrenciesById: Record<string, CryptoCurrency> = {
         address: "https://www.mintscan.io/cosmos/validators/$address",
       },
     ],
+    keywords: ["atom", "cosmos"],
   },
   cosmos_testnet: {
     type: "CryptoCurrency",
@@ -714,41 +692,6 @@ export const cryptocurrenciesById: Record<string, CryptoCurrency> = {
       {
         tx: "https://testnet.mintscan.io/txs/$hash",
         address: "https://testnet.mintscan.io/validators/$address",
-      },
-    ],
-  },
-  cronos: {
-    type: "CryptoCurrency",
-    id: "cronos",
-    coinType: 60,
-    name: "Cronos",
-    managerAppName: "Ethereum",
-    ticker: "CRO",
-    scheme: "cro",
-    color: "#002D74",
-    family: "evm",
-    ethereumLikeInfo: {
-      baseChain: "mainnet",
-      chainId: 25,
-      networkId: 25,
-      rpc: "https://evm.cronos.org",
-      explorer: {
-        uri: "https://api.cronoscan.com",
-        type: "etherscan",
-      },
-    },
-    units: [
-      {
-        name: "CRO",
-        code: "CRO",
-        magnitude: 18,
-      },
-    ],
-    explorerViews: [
-      {
-        tx: "https://cronoscan.com/tx/$hash",
-        address: "https://cronoscan.com/address/$address",
-        token: "https://cronoscan.com/token/$contractAddress?a=$address",
       },
     ],
   },
@@ -930,6 +873,7 @@ export const cryptocurrenciesById: Record<string, CryptoCurrency> = {
         address: "https://dogechain.info/address/$address",
       },
     ],
+    keywords: ["doge", "dogecoin"],
   },
   elastos: {
     type: "CryptoCurrency",
@@ -980,6 +924,7 @@ export const cryptocurrenciesById: Record<string, CryptoCurrency> = {
     color: "#1b46c2",
     family: "elrond",
     blockAvgTime: 6,
+    deviceTicker: "EGLD",
     units: [
       {
         name: "EGLD",
@@ -1061,6 +1006,7 @@ export const cryptocurrenciesById: Record<string, CryptoCurrency> = {
         token: "https://etherscan.io/token/$contractAddress?a=$address",
       },
     ],
+    keywords: ["eth", "ethereum"],
   },
   ethereum_classic: {
     type: "CryptoCurrency",
@@ -1087,6 +1033,7 @@ export const cryptocurrenciesById: Record<string, CryptoCurrency> = {
           "https://blockscout.com/etc/mainnet/address/$address/transactions",
       },
     ],
+    keywords: ["etc", "ethereum classic"],
   },
   ether1: {
     type: "CryptoCurrency",
@@ -1181,35 +1128,6 @@ export const cryptocurrenciesById: Record<string, CryptoCurrency> = {
     ],
     explorerViews: [],
   },
-  fantom: {
-    type: "CryptoCurrency",
-    id: "fantom",
-    coinType: 60,
-    name: "Fantom",
-    managerAppName: "Ethereum",
-    ticker: "FTM",
-    scheme: "fantom",
-    color: "#1969ff",
-    family: "evm",
-    units: ethereumUnits("FTM", "FTM"),
-    ethereumLikeInfo: {
-      baseChain: "mainnet",
-      chainId: 250,
-      networkId: 250,
-      rpc: "https://rpcapi.fantom.network",
-      explorer: {
-        uri: "https://api.ftmscan.com",
-        type: "etherscan",
-      },
-    },
-    explorerViews: [
-      {
-        tx: "https://ftmscan.com/tx/$hash",
-        address: "https://ftmscan.com/address/$address",
-        token: "https://ftmscan.com/token/$contractAddress?a=$address",
-      },
-    ],
-  },
   fic: {
     type: "CryptoCurrency",
     id: "fic",
@@ -1228,35 +1146,6 @@ export const cryptocurrenciesById: Record<string, CryptoCurrency> = {
       },
     ],
     explorerViews: [],
-  },
-  flare: {
-    type: "CryptoCurrency",
-    id: "flare",
-    coinType: 60,
-    name: "Flare",
-    managerAppName: "Ethereum",
-    ticker: "FLR",
-    scheme: "flare",
-    color: "#D95F6C",
-    family: "evm",
-    ethereumLikeInfo: {
-      baseChain: "mainnet",
-      chainId: 14,
-      networkId: 14,
-      rpc: "https://flare-api.flare.network/ext/bc/C/rpc",
-      explorer: {
-        uri: "https://flare-explorer.flare.network",
-        type: "blockscout",
-      },
-    },
-    units: ethereumUnits("FLR", "FLR"),
-    explorerViews: [
-      {
-        tx: "https://flare-explorer.flare.network/tx/$hash/internal-transactions",
-        address:
-          "https://flare-explorer.flare.network/address/$address/transactions",
-      },
-    ],
   },
   flow: {
     type: "CryptoCurrency",
@@ -1708,6 +1597,7 @@ export const cryptocurrenciesById: Record<string, CryptoCurrency> = {
         address: "https://live.blockcypher.com/ltc/address/$address",
       },
     ],
+    keywords: ["ltc", "litecoin"],
   },
   lisk: {
     type: "CryptoCurrency",
@@ -1772,40 +1662,7 @@ export const cryptocurrenciesById: Record<string, CryptoCurrency> = {
         tx: "https://moneroblocks.info/tx/$hash",
       },
     ],
-  },
-  moonbeam: {
-    type: "CryptoCurrency",
-    id: "moonbeam",
-    coinType: 60,
-    name: "Moonbeam",
-    managerAppName: "Ethereum",
-    ticker: "GLMR",
-    scheme: "moonbeam",
-    color: "#5FC0C1",
-    family: "evm",
-    units: [
-      {
-        name: "GLMR",
-        code: "GLMR",
-        magnitude: 18,
-      },
-    ],
-    ethereumLikeInfo: {
-      chainId: 1284,
-      networkId: 1284,
-      rpc: "https://rpc.api.moonbeam.network",
-      explorer: {
-        uri: "https://api-moonbeam.moonscan.io",
-        type: "etherscan",
-      },
-    },
-    explorerViews: [
-      {
-        tx: "https://moonbeam.moonscan.io/tx/$hash",
-        address: "https://moonbeam.moonscan.io/address/$address",
-        token: "https://moonbeam.moonscan.io/token/$contractAddress?a=$address",
-      },
-    ],
+    keywords: ["xmr", "monero"],
   },
   moonriver: {
     type: "CryptoCurrency",
@@ -2207,6 +2064,7 @@ export const cryptocurrenciesById: Record<string, CryptoCurrency> = {
         tx: "https://polkascan.io/polkadot/transaction/$hash",
       },
     ],
+    keywords: ["dot", "polkadot"],
   },
   polygon: {
     type: "CryptoCurrency",
@@ -2237,6 +2095,7 @@ export const cryptocurrenciesById: Record<string, CryptoCurrency> = {
         token: "https://polygonscan.com/token/$contractAddress?a=$address",
       },
     ],
+    keywords: ["matic", "polygon"],
   },
   poswallet: {
     type: "CryptoCurrency",
@@ -2336,35 +2195,6 @@ export const cryptocurrenciesById: Record<string, CryptoCurrency> = {
       },
     ],
   },
-  songbird: {
-    type: "CryptoCurrency",
-    id: "songbird",
-    coinType: 60,
-    name: "Songbird",
-    managerAppName: "Ethereum",
-    ticker: "SGB",
-    scheme: "songbird",
-    color: "#61ACD4",
-    family: "evm",
-    ethereumLikeInfo: {
-      baseChain: "mainnet",
-      chainId: 19,
-      networkId: 19,
-      rpc: "https://songbird.towolabs.com/rpc",
-      explorer: {
-        uri: "https://songbird-explorer.flare.network",
-        type: "blockscout",
-      },
-    },
-    units: ethereumUnits("SGB", "SGB"),
-    explorerViews: [
-      {
-        tx: "https://songbird-explorer.flare.network/tx/$hash/internal-transactions",
-        address:
-          "https://songbird-explorer.flare.network/address/$address/transactions",
-      },
-    ],
-  },
   nem: {
     type: "CryptoCurrency",
     id: "nem",
@@ -2432,6 +2262,7 @@ export const cryptocurrenciesById: Record<string, CryptoCurrency> = {
         address: "https://bithomp.com/explorer/$address",
       },
     ],
+    keywords: ["xrp", "ripple"],
   },
   rise: {
     type: "CryptoCurrency",
@@ -2537,6 +2368,7 @@ export const cryptocurrenciesById: Record<string, CryptoCurrency> = {
         tx: "https://solanabeach.io/transaction/$hash",
       },
     ],
+    keywords: ["sol", "solana"],
   },
   stakenet: {
     type: "CryptoCurrency",
@@ -2682,6 +2514,7 @@ export const cryptocurrenciesById: Record<string, CryptoCurrency> = {
         tx: "https://stellar.expert/explorer/public/tx/$hash",
       },
     ],
+    keywords: ["xlm", "stellar"],
   },
   osmosis: {
     type: "CryptoCurrency",
@@ -2840,6 +2673,7 @@ export const cryptocurrenciesById: Record<string, CryptoCurrency> = {
         address: "https://tronscan.org/#/address/$address",
       },
     ],
+    keywords: ["trx", "tron"],
   },
   ubiq: {
     type: "CryptoCurrency",
@@ -3448,6 +3282,192 @@ export const cryptocurrenciesById: Record<string, CryptoCurrency> = {
       },
     ],
   },
+  // Light Integrations are at the end of the list until we figure out a way to fix the ticker/managerApp collisions
+  arbitrum: {
+    type: "CryptoCurrency",
+    id: "arbitrum",
+    coinType: 60,
+    name: "Arbitrum",
+    managerAppName: "Arbitrum",
+    ticker: "ETH",
+    scheme: "arbitrum",
+    color: "#28a0f0",
+    family: "evm",
+    units: ethereumUnits("ETH", "ETH"),
+    ethereumLikeInfo: {
+      baseChain: "mainnet",
+      chainId: 42161,
+      networkId: 42161,
+      rpc: "https://arb1.arbitrum.io/rpc",
+      explorer: {
+        uri: "https://api.arbiscan.io",
+        type: "etherscan",
+      },
+    },
+    explorerViews: [
+      {
+        tx: "https://arbiscan.io/tx/$hash",
+        address: "https://arbiscan.io/address/$address",
+        token: "https://arbiscan.io/token/$contractAddress?a=$address",
+      },
+    ],
+  },
+  cronos: {
+    type: "CryptoCurrency",
+    id: "cronos",
+    coinType: 60,
+    name: "Cronos",
+    managerAppName: "Ethereum",
+    ticker: "CRO",
+    scheme: "cro",
+    color: "#002D74",
+    family: "evm",
+    ethereumLikeInfo: {
+      baseChain: "mainnet",
+      chainId: 25,
+      networkId: 25,
+      rpc: "https://evm.cronos.org",
+      explorer: {
+        uri: "https://api.cronoscan.com",
+        type: "etherscan",
+      },
+    },
+    units: [
+      {
+        name: "CRO",
+        code: "CRO",
+        magnitude: 18,
+      },
+    ],
+    explorerViews: [
+      {
+        tx: "https://cronoscan.com/tx/$hash",
+        address: "https://cronoscan.com/address/$address",
+        token: "https://cronoscan.com/token/$contractAddress?a=$address",
+      },
+    ],
+  },
+  fantom: {
+    type: "CryptoCurrency",
+    id: "fantom",
+    coinType: 60,
+    name: "Fantom",
+    managerAppName: "Ethereum",
+    ticker: "FTM",
+    scheme: "fantom",
+    color: "#1969ff",
+    family: "evm",
+    units: ethereumUnits("FTM", "FTM"),
+    ethereumLikeInfo: {
+      baseChain: "mainnet",
+      chainId: 250,
+      networkId: 250,
+      rpc: "https://rpcapi.fantom.network",
+      explorer: {
+        uri: "https://api.ftmscan.com",
+        type: "etherscan",
+      },
+    },
+    explorerViews: [
+      {
+        tx: "https://ftmscan.com/tx/$hash",
+        address: "https://ftmscan.com/address/$address",
+        token: "https://ftmscan.com/token/$contractAddress?a=$address",
+      },
+    ],
+  },
+  flare: {
+    type: "CryptoCurrency",
+    id: "flare",
+    coinType: 60,
+    name: "Flare",
+    managerAppName: "Ethereum",
+    ticker: "FLR",
+    scheme: "flare",
+    color: "#D95F6C",
+    family: "evm",
+    ethereumLikeInfo: {
+      baseChain: "mainnet",
+      chainId: 14,
+      networkId: 14,
+      rpc: "https://flare-api.flare.network/ext/bc/C/rpc",
+      explorer: {
+        uri: "https://flare-explorer.flare.network",
+        type: "blockscout",
+      },
+    },
+    units: ethereumUnits("FLR", "FLR"),
+    explorerViews: [
+      {
+        tx: "https://flare-explorer.flare.network/tx/$hash/internal-transactions",
+        address:
+          "https://flare-explorer.flare.network/address/$address/transactions",
+      },
+    ],
+  },
+  songbird: {
+    type: "CryptoCurrency",
+    id: "songbird",
+    coinType: 60,
+    name: "Songbird",
+    managerAppName: "Ethereum",
+    ticker: "SGB",
+    scheme: "songbird",
+    color: "#61ACD4",
+    family: "evm",
+    ethereumLikeInfo: {
+      baseChain: "mainnet",
+      chainId: 19,
+      networkId: 19,
+      rpc: "https://songbird.towolabs.com/rpc",
+      explorer: {
+        uri: "https://songbird-explorer.flare.network",
+        type: "blockscout",
+      },
+    },
+    units: ethereumUnits("SGB", "SGB"),
+    explorerViews: [
+      {
+        tx: "https://songbird-explorer.flare.network/tx/$hash/internal-transactions",
+        address:
+          "https://songbird-explorer.flare.network/address/$address/transactions",
+      },
+    ],
+  },
+  moonbeam: {
+    type: "CryptoCurrency",
+    id: "moonbeam",
+    coinType: 60,
+    name: "Moonbeam",
+    managerAppName: "Ethereum",
+    ticker: "GLMR",
+    scheme: "moonbeam",
+    color: "#5FC0C1",
+    family: "evm",
+    units: [
+      {
+        name: "GLMR",
+        code: "GLMR",
+        magnitude: 18,
+      },
+    ],
+    ethereumLikeInfo: {
+      chainId: 1284,
+      networkId: 1284,
+      rpc: "https://rpc.api.moonbeam.network",
+      explorer: {
+        uri: "https://api-moonbeam.moonscan.io",
+        type: "etherscan",
+      },
+    },
+    explorerViews: [
+      {
+        tx: "https://moonbeam.moonscan.io/tx/$hash",
+        address: "https://moonbeam.moonscan.io/address/$address",
+        token: "https://moonbeam.moonscan.io/token/$contractAddress?a=$address",
+      },
+    ],
+  },
 };
 const cryptocurrenciesByScheme: Record<string, CryptoCurrency> = {};
 const cryptocurrenciesByTicker: Record<string, CryptoCurrency> = {};
@@ -3466,12 +3486,26 @@ for (const id in cryptocurrenciesById) {
  * @param {string} id
  * @param {CryptoCurrency} currency
  */
-export function registerCryptoCurrency(id: string, currency: CryptoCurrency) {
+export function registerCryptoCurrency(
+  id: string,
+  currency: CryptoCurrency
+): void {
   cryptocurrenciesById[currency.id] = currency;
   cryptocurrenciesByScheme[currency.scheme] = currency;
 
   if (!currency.isTestnetFor) {
-    cryptocurrenciesByTicker[currency.ticker] = currency;
+    const currencyAlreadySet = cryptocurrenciesByTicker[currency.ticker];
+    const curencyHasTickerinKeywords = Boolean(
+      currency?.keywords?.includes(currency.ticker)
+    );
+
+    if (
+      !currencyAlreadySet ||
+      // In case of duplicates, we prioritize currencies with the ticker as a keyword of the currency
+      (currencyAlreadySet && curencyHasTickerinKeywords)
+    ) {
+      cryptocurrenciesByTicker[currency.ticker] = currency;
+    }
     prodCryptoArray.push(currency);
 
     if (!currency.terminated) {
@@ -3544,24 +3578,56 @@ export function findCryptoCurrencyById(
   return cryptocurrenciesById[id];
 }
 
+const testsMap = {
+  keywords: (s) =>
+    findCryptoCurrency((c) =>
+      Boolean(
+        c?.keywords?.map((k) => k.replace(/ /, "").toLowerCase()).includes(s)
+      )
+    ),
+  name: (s) =>
+    findCryptoCurrency((c) => c.name.replace(/ /, "").toLowerCase() === s),
+  id: (s) => findCryptoCurrencyById(s.toLowerCase()),
+  ticker: (s) => findCryptoCurrencyByTicker(s.toUpperCase()),
+  manager: (s) => findCryptoCurrencyByManagerAppName(s),
+};
+
 /**
  *
  * @param {*} keyword
  */
 export const findCryptoCurrencyByKeyword = (
-  keyword: string
+  keyword: string,
+  tests = ["keywords", "name", "id", "ticker", "manager"]
 ): CryptoCurrency | null | undefined => {
-  const r = findCryptoCurrency((c) => {
-    const search = keyword.replace(/ /, "").toLowerCase();
-    return (
-      c.id === search ||
-      c.name.replace(/ /, "").toLowerCase() === search ||
-      (c.managerAppName &&
-        c.managerAppName.replace(/ /, "").toLowerCase() === search) ||
-      c.ticker.toLowerCase() === search
-    );
-  });
-  return r;
+  const search = keyword.replace(/ /, "").toLowerCase();
+
+  const conditions: Array<(string) => CryptoCurrency | null | undefined> =
+    tests.map((t) => testsMap[t]);
+
+  for (const condition of conditions) {
+    const currency = condition(search);
+
+    if (currency) {
+      return currency;
+    }
+  }
+};
+
+export const findCryptoCurrencyByManagerAppName = (
+  managerAppName: string
+): CryptoCurrency | null | undefined => {
+  const search = managerAppName.replace(/ /, "").toLowerCase();
+
+  return (
+    findCryptoCurrency((c) => c.managerAppName === managerAppName) ||
+    findCryptoCurrency((c) =>
+      Boolean(
+        c.managerAppName &&
+          c.managerAppName.replace(/ /, "").toLowerCase() === search
+      )
+    )
+  );
 };
 
 /**

@@ -1,7 +1,6 @@
 import type { DeviceAction } from "../../bot/types";
 import type { Transaction } from "./types";
-import { deviceActionFlow } from "../../bot/specs";
-import { formatCurrencyUnit } from "../../currencies";
+import { deviceActionFlow, formatDeviceAmount } from "../../bot/specs";
 
 export const acceptTransaction: DeviceAction<Transaction, any> =
   deviceActionFlow({
@@ -15,13 +14,9 @@ export const acceptTransaction: DeviceAction<Transaction, any> =
         title: "Amount",
         button: "Rr",
         expectedValue: ({ account, transaction }) =>
-          formatCurrencyUnit(account.unit, transaction.amount, {
-            showCode: true,
-            disableRounding: true,
-            joinFragmentsSeparator: " ",
-          })
-            .replace(/\s+/g, " ")
-            .replace("egld", "EGLD"), // FIXME
+          formatDeviceAmount(account.currency, transaction.amount, {
+            postfixCode: true,
+          }),
       },
       {
         title: "Fee",

@@ -1,4 +1,4 @@
-<img src="https://user-images.githubusercontent.com/211411/34776833-6f1ef4da-f618-11e7-8b13-f0697901d6a8.png" height="100" />
+<img src="https://user-images.githubusercontent.com/4631227/191834116-59cf590e-25cc-4956-ae5c-812ea464f324.png" height="100" />
 
 ## @ledgerhq/types-cryptoassets
 
@@ -35,7 +35,7 @@ Type: {name: [string](https://developer.mozilla.org/docs/Web/JavaScript/Referenc
 
 ### CurrencyCommon
 
-Type: {name: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), ticker: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), units: [Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[Unit](#unit)>, symbol: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)?, disableCountervalue: [boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)?, delisted: [boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)?, countervalueTicker: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)?}
+Type: {name: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), ticker: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), units: [Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[Unit](#unit)>, symbol: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)?, disableCountervalue: [boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)?, delisted: [boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)?, countervalueTicker: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)?, keywords: [Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)>?}
 
 #### Properties
 
@@ -46,6 +46,7 @@ Type: {name: [string](https://developer.mozilla.org/docs/Web/JavaScript/Referenc
 *   `disableCountervalue` **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)?** 
 *   `delisted` **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)?** 
 *   `countervalueTicker` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)?** 
+*   `keywords` **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)>?** 
 
 ### TokenCurrency
 

@@ -74,6 +74,9 @@ export function formatReportForConsole<T extends Transaction>({
   operation,
   confirmedTime,
   finalAccount,
+  finalDestination,
+  finalDestinationOperation,
+  testDestinationDuration,
   testDuration,
   error,
 }: MutationReport<T>): string {
@@ -167,11 +170,21 @@ export function formatReportForConsole<T extends Transaction>({
   }
 
   if (finalAccount) {
-    str += `✔️ ${formatAccount(finalAccount, "basic")}\n`;
+    str += `✔️ ${formatAccount(finalAccount, "basic")}`;
   }
 
   if (testDuration) {
-    str += `(final state reached in ${formatTime(testDuration)})\n`;
+    str += `(in ${formatTime(testDuration)})\n`;
+  }
+
+  if (finalDestination && finalDestinationOperation) {
+    str += `✔️ destination operation ${formatOperation(finalDestination)(
+      finalDestinationOperation
+    )}\n`;
+  }
+
+  if (testDestinationDuration) {
+    str += `(in ${formatTime(testDestinationDuration)})\n`;
   }
 
   if (error) {

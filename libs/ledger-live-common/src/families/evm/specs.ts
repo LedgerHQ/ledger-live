@@ -3,7 +3,7 @@ import invariant from "invariant";
 import { DeviceModelId } from "@ledgerhq/devices";
 import { getCryptoCurrencyById, parseCurrencyUnit } from "../../currencies";
 import { acceptTransaction } from "./speculos-deviceActions";
-import { pickSiblings } from "../../bot/specs";
+import { botTest, genericTestDestination, pickSiblings } from "../../bot/specs";
 import type { AppSpec } from "../../bot/types";
 import type { Transaction } from "./types";
 
@@ -14,7 +14,7 @@ const transactionCheck =
   ({ maxSpendable }) => {
     invariant(
       maxSpendable.gt(
-        parseCurrencyUnit(getCryptoCurrencyById(currencyId).units[0], "0.01")
+        parseCurrencyUnit(getCryptoCurrencyById(currencyId).units[0], "1")
       ),
       `${currencyId} balance is too low`
     );
@@ -24,6 +24,7 @@ const evmBasicMutations = ({ maxAccount }) => [
   {
     name: "move 50%",
     maxRun: 2,
+    testDestination: genericTestDestination,
     transaction: ({ account, siblings, bridge, maxSpendable }) => {
       const sibling = pickSiblings(siblings, maxAccount);
       const recipient = sibling.freshAddress;
@@ -45,13 +46,17 @@ const evmBasicMutations = ({ maxAccount }) => [
         "operation time to be older than 60s"
       );
       const estimatedGas = transaction.gasLimit.times(
-        transaction.gasPrice || 0
+        transaction.gasPrice || transaction.maxFeePerGas || 0
       );
-      expect(operation.fee.toNumber()).toBeLessThanOrEqual(
-        estimatedGas.toNumber()
+      botTest("operation fee is not exceeding estimated gas", () =>
+        expect(operation.fee.toNumber()).toBeLessThanOrEqual(
+          estimatedGas.toNumber()
+        )
       );
-      expect(account.balance.toString()).toBe(
-        accountBeforeTransaction.balance.minus(operation.value).toString()
+      botTest("account balance moved with operation value", () =>
+        expect(account.balance.toString()).toBe(
+          accountBeforeTransaction.balance.minus(operation.value).toString()
+        )
       );
     },
   },
@@ -63,6 +68,7 @@ const cronos: AppSpec<Transaction> = {
   appQuery: {
     model: DeviceModelId.nanoS,
     appName: "Ethereum",
+    appVersion: "1.9.20-dev", // FIXME remove this line once 1.9.20 lands on coin-apps (branch ledger-live-bot)
   },
   testTimeout,
   transactionCheck: transactionCheck("cronos"),
@@ -78,6 +84,7 @@ const fantom: AppSpec<Transaction> = {
   appQuery: {
     model: DeviceModelId.nanoS,
     appName: "Ethereum",
+    appVersion: "1.9.20-dev", // FIXME remove this line once 1.9.20 lands on coin-apps (branch ledger-live-bot)
   },
   testTimeout,
   transactionCheck: transactionCheck("fantom"),
@@ -93,6 +100,7 @@ const moonbeam: AppSpec<Transaction> = {
   appQuery: {
     model: DeviceModelId.nanoS,
     appName: "Ethereum",
+    appVersion: "1.9.20-dev", // FIXME remove this line once 1.9.20 lands on coin-apps (branch ledger-live-bot)
   },
   testTimeout,
   transactionCheck: transactionCheck("moonbeam"),
@@ -108,6 +116,7 @@ const songbird: AppSpec<Transaction> = {
   appQuery: {
     model: DeviceModelId.nanoS,
     appName: "Ethereum",
+    appVersion: "1.9.20-dev", // FIXME remove this line once 1.9.20 lands on coin-apps (branch ledger-live-bot)
   },
   testTimeout,
   transactionCheck: transactionCheck("songbird"),
@@ -118,11 +127,12 @@ const songbird: AppSpec<Transaction> = {
 };
 
 const flare: AppSpec<Transaction> = {
-  name: "Moonbeam",
+  name: "Flare",
   currency: getCryptoCurrencyById("flare"),
   appQuery: {
     model: DeviceModelId.nanoS,
     appName: "Ethereum",
+    appVersion: "1.9.20-dev", // FIXME remove this line once 1.9.20 lands on coin-apps (branch ledger-live-bot)
   },
   testTimeout,
   transactionCheck: transactionCheck("flare"),

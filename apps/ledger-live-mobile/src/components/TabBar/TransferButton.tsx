@@ -1,7 +1,7 @@
 import React, { useCallback } from "react";
-import { Flex, Text } from "@ledgerhq/native-ui";
-import { TouchableOpacity } from "react-native";
-import styled from "styled-components/native";
+import { BoxedIcon, Flex, Tag, Text } from "@ledgerhq/native-ui";
+import { StyleProp, TouchableOpacity, ViewStyle } from "react-native";
+import { IconType } from "@ledgerhq/native-ui/components/Icon/type";
 import { track } from "../../analytics";
 
 type Props = {
@@ -12,54 +12,9 @@ type Props = {
   onPress?: (() => any) | null;
   disabled?: boolean;
   event?: string;
-  eventProperties?: any;
+  eventProperties?: unknown;
   style?: StyleProp<ViewStyle>;
 };
-
-const CircleContainer = styled(Flex).attrs({
-  height: 40,
-  width: 40,
-  borderRadius: 20,
-  borderWidth: 1,
-  borderColor: "neutral.c50",
-  justifyContent: "center",
-  alignItems: "center",
-})``;
-
-const Tag = ({
-  text,
-  style,
-}: {
-  text: string;
-  style: StyleProp<ViewStyle>;
-}) => (
-  <Flex
-    backgroundColor="primary.c80"
-    height="11px"
-    borderRadius="1px"
-    px="3px"
-    flexDirection="row"
-    alignItems="center"
-    alignSelf="center"
-    style={style}
-  >
-    <Text
-      fontFamily="Inter"
-      fontSize="6px"
-      fontWeight="bold"
-      uppercase
-      color="neutral.c20"
-    >
-      {text}
-    </Text>
-  </Flex>
-);
-
-const CircledIcon = ({ Icon }: { Icon: Props["Icon"] }) => (
-  <CircleContainer>
-    <Icon size={16} color="neutral.c100" />
-  </CircleContainer>
-);
 
 export default function TransferButton({
   title,
@@ -80,21 +35,46 @@ export default function TransferButton({
   return (
     <TouchableOpacity disabled={disabled} onPress={handlePress} style={[style]}>
       <Flex flexDirection="row" justifyContent="flex-start" alignItems="center">
-        <CircledIcon Icon={Icon} />
+        <BoxedIcon
+          Icon={Icon}
+          variant={"circle"}
+          iconColor={disabled ? "neutral.c50" : "neutral.c100"}
+          backgroundColor={disabled ? "neutral.c30" : "neutral.c40"}
+          borderColor={disabled ? "neutral.c30" : "neutral.c40"}
+        />
         <Flex
           flexDirection="column"
           justifyContent="space-between"
           alignItems="flex-start"
           ml="16px"
           py="1px"
+          flexShrink={1}
+          flexWrap="wrap"
         >
-          <Flex flexDirection="row">
-            <Text variant="large" fontWeight="semiBold">
+          <Flex flexDirection="row" alignItems={"center"}>
+            <Text
+              variant="large"
+              fontWeight="semiBold"
+              color={disabled ? "neutral.c50" : "neutral.c100"}
+            >
               {title}
             </Text>
-            {tag && <Tag text={tag} style={{ marginLeft: 10 }} />}
+            {tag && (
+              <Tag
+                size={"small"}
+                type={"color"}
+                ml={3}
+                opacity={disabled ? 0.3 : 1}
+              >
+                {tag}
+              </Tag>
+            )}
           </Flex>
-          <Text variant="body" fontWeight="medium" color="neutral.c70">
+          <Text
+            variant="body"
+            fontWeight="medium"
+            color={disabled ? "neutral.c40" : "neutral.c70"}
+          >
             {description}
           </Text>
         </Flex>
