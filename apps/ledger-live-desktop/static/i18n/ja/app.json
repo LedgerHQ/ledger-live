@@ -185,7 +185,7 @@
       "week" : "1週",
       "month" : "1月",
       "year" : "1年",
-      "all" : "全期間"
+      "all" : "ALL"
     }
   },
   "fees" : {
@@ -237,16 +237,16 @@
     "form" : {
       "changeCTA" : "変更",
       "rates" : {
-        "title" : "プロバイダー",
+        "title" : "Quotes",
         "registration" : "登録が必要です ",
         "noRegistration" : "いいえ、登録は不要です。",
         "fixed" : "固定",
-        "float" : "変動",
+        "float" : "Floating",
         "update" : "次のレート更新",
         "loading" : "読み込み中...",
         "name" : {
           "title" : "プロバイダー",
-          "tooltip" : "プロバイダーによっては、アカウントを作成し、プロバイダーにサインインする必要があります。"
+          "tooltip" : "Depending on the provider, you have to register with them by creating an account."
         },
         "rate" : {
           "title" : "取引レート",
@@ -5021,6 +5021,9 @@
     },
     "StellarSourceHasMultiSign" : {
       "title" : "Stellarトランザクションを行うには、マルチシグを無効にしてください"
+    },
+    "HederaAddAccountError" : {
+      "title" : "Your account has not been added. Please try again."
     }
   },
   "cryptoOrg" : {
