@@ -16,7 +16,7 @@ on:
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
-  
+
 env:
   comment_header: <!-- generate-screenshots-report:${{ github.run_id }} -->
 
@@ -25,14 +25,26 @@ jobs:
     name: Report start
     runs-on: "ubuntu-latest"
     steps:
-      - name: Create or Update Comment
-        uses: peter-evans/create-or-update-comment@v2.0.0
+      - name: report jobs status
+        uses: actions/github-script@v6
         with:
-          issue-number: ${{ github.event.inputs.number }}
-          body: |
+          result-encoding: string
+          retries: 3
+          script: |
+            const {repo: {owner, repo}, run_id} = context
+            const issue_number = ${{ github.event.inputs.number }}
+            const body = `\
             ${{ env.comment_header }}
             @${{ github.event.inputs.login }}
+
             [Generating screenshots: workflow started](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
+            `
+            await github.request('POST /repos/${owner}/${repo}/issues/${issue_number}/comments', {
+              owner,
+              repo,
+              issue_number,
+              body,
+            })
 
   is-org-member:
     name: "Check Org Member"
@@ -135,40 +147,58 @@ jobs:
           turbo-server-port: ${{ steps.turborepo-cache-server.outputs.port }}
 
   report-end:
-    needs: ["generate-screenshots", "generate-screenshots-mac-internal", "report-start"]
+    # needs: ["generate-screenshots", "generate-screenshots-mac-internal", "report-start"]
+    needs: ["report-start"]
     if: always()
     name: Report end
     runs-on: "ubuntu-latest"
     steps:
-      - name: get jobs status
-        id: jobs_status
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          JOBS_STATUS=$(gh run view -R ${{ github.repository }} ${{ github.run_id }} | grep "(ID " | grep "generate-screenshots")
-          JOBS_STATUS="${JOBS_STATUS//'%'/'%25'}"
-          JOBS_STATUS="${JOBS_STATUS//$'\n'/'%0A'}"
-          JOBS_STATUS="${JOBS_STATUS//$'\r'/'%0D'}"
-          echo "::set-output name=JOBS_STATUS::$JOBS_STATUS"
-      - name: Find existing comment
-        uses: peter-evans/find-comment@v2
-        id: find-comment
+      - name: report jobs status
+        uses: actions/github-script@v6
         with:
-          issue-number: ${{ github.event.inputs.number }}
-          comment-author: "github-actions[bot]"
-          body-includes: ${{ env.comment_header }}
-      - name: Create or Update Comment
-        uses: peter-evans/create-or-update-comment@v2.0.0
-        with:
-          comment-id: ${{ steps.find-comment.outputs.comment-id }}
-          edit-mode: replace
-          body: |
+          result-encoding: string
+          retries: 3
+          script: |
+            const {repo: {owner, repo}, run_id} = context
+            const jobs = await github.request(`GET /repos/${owner}/${repo}/actions/runs/${run_id}/jobs`, {
+              owner,
+              repo,
+              run_id,
+            });
+            console.log(jobs);
+
+            const jobsStatusString = jobs
+              .filter(job => job.name.startsWith("generate-screenshots"))
+              .map(job => `${job.status === "success" ? "✅" : "❌"} - [${job.name}](${job.url})`)
+              .join("\n")
+
+            const body = `\
             ${{ env.comment_header }}
             @${{ github.event.inputs.login }}
 
             [Generating screenshots: workflow ended:](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
 
             **Jobs status:**
-            ```
-            ${{ steps.jobs_status.outputs.JOBS_STATUS }}
-            ```
+            ${jobsStatusString}
+            `
+
+            console.log(body);
+
+            const comments = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+            });
+
+            console.log(comments);
+
+            const existingComment = comments.data.find(comment => comment.user.login === 'github-actions[bot]' && comment.body.startsWith(`${{ env.comment_header }}`));
+
+            console.log(existingComment);
+
+            await github.rest.issues.updateComment({
+              owner,
+              repo,
+              comment_id: existingComment?.id,
+              body
+            });
