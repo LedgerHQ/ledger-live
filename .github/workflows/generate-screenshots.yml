@@ -204,7 +204,7 @@ jobs:
                   return existingComment;
                 };
               }
-            );
+            ).then(resPerPage => resPerPage.findres => !!res));
 
             if (!existingComment) throw new Error("existing comment not found")
 
