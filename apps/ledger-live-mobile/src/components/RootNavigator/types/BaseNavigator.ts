@@ -4,7 +4,7 @@ import {
   CompositeScreenProps,
   NavigatorScreenParams,
 } from "@react-navigation/native";
-import { StackNavigationProp, StackScreenProps } from "@react-navigation/stack";
+import { StackScreenProps } from "@react-navigation/stack";
 import { NavigatorName, ScreenName } from "../../../const";
 import { BleDevicePairingFlowParams } from "../../../screens/BleDevicePairingFlow";
 import { MainNavigatorParamList } from "../types";
@@ -24,6 +24,7 @@ import type { SignMessageNavigatorStackParamList } from "./SignMessageNavigator"
 import type { SignTransactionNavigatorParamList } from "./SignTransactionNavigator";
 import type { SwapNavigatorParamList } from "./SwapNavigator";
 import { LendingInfoNavigatorParamList } from "./LendingInfoNavigator";
+import { PlatformExchangeNavigatorParamList } from "./PlatformExchangeNavigator";
 
 export type BaseNavigatorStackParamList = {
   [NavigatorName.Main]: CompositeScreenProps<
@@ -95,7 +96,7 @@ export type BaseNavigatorStackParamList = {
   [NavigatorName.ProviderList]: NavigatorScreenParams<undefined>;
   [NavigatorName.ProviderView]: NavigatorScreenParams<undefined>;
   [NavigatorName.ExchangeStack]: NavigatorScreenParams<undefined>;
-  [NavigatorName.PlatformExchange]: NavigatorScreenParams<undefined>;
+  [NavigatorName.PlatformExchange]: NavigatorScreenParams<PlatformExchangeNavigatorParamList>;
   [NavigatorName.AccountSettings]: NavigatorScreenParams<AccountSettingsNavigatorParamList>;
   [NavigatorName.ImportAccounts]: NavigatorScreenParams<ImportAccountsNavigatorParamList>;
   [NavigatorName.PasswordAddFlow]: NavigatorScreenParams<PasswordAddFlowParamList>;

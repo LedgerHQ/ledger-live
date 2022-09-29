@@ -648,7 +648,7 @@ importers:
       prando: ^6.0.1
       prettier: ^2.7.1
       prop-types: ^15.8.1
-      qrloop: ^1.2.0
+      qrloop: ^1.4.1
       react: ^17.0.2
       react-i18next: 11.12.0
       react-is: ^17.0.2
@@ -785,7 +785,7 @@ importers:
       node-libs-react-native: 1.2.1
       prando: 6.0.1
       prop-types: 15.8.1
-      qrloop: 1.2.0
+      qrloop: 1.4.1
       react: 17.0.2
       react-i18next: 11.12.0_nepajqe5ybaqev3dsys5kejmni
       react-is: 17.0.2
@@ -45907,6 +45907,13 @@ packages:
 
   /qrloop/1.2.0:
     resolution: {integrity: sha512-DybxnuUe5gQNZnanbkUiK3lotHOiJ6MNOn/uGIEIpXLBFv2RuWbN1noy6LaGLxDmQRmRVkvpKJRxeM7+rHymMQ==}
+    dependencies:
+      buffer: 6.0.3
+      md5: 2.3.0
+    dev: false
+
+  /qrloop/1.4.1:
+    resolution: {integrity: sha512-LXkwCl1Qd8imTHb+KqjMn+cHmuncyFT81AXoooWJvbG3+g9q61l9udSRPgY4cgl+5goQHuAK4teEdUF6UErYXw==}
     dependencies:
       buffer: 6.0.3
       md5: 2.3.0

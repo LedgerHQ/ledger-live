@@ -57,7 +57,7 @@ class Scan extends PureComponent<
   }
 
   lastData: string | null | undefined = null;
-  frames: any = null;
+  frames: ReturnType<typeof parseFramesReducer> = null;
   completed = false;
 
   onBarCodeRead = (data: string) => {

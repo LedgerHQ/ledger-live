@@ -131,7 +131,7 @@
     "node-libs-react-native": "^1.2.1",
     "prando": "^6.0.1",
     "prop-types": "^15.8.1",
-    "qrloop": "^1.2.0",
+    "qrloop": "^1.4.1",
     "react": "^17.0.2",
     "react-i18next": "11.12.0",
     "react-is": "^17.0.2",
