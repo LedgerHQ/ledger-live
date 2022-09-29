@@ -2004,6 +2004,19 @@
     "switchButton" : "Переключиться на {{language}}",
     "no" : "Мне не хочется"
   },
+  "deviceLocalization" : {
+    "language" : "Язык интерфейса",
+    "deviceLanguage" : "Язык устройства",
+    "changeLanguage" : "Поменять язык",
+    "allowLanguageInstallation" : "Разрешить установку языка",
+    "languageInstalled" : "Язык изменён",
+    "installingLanguage" : "Установка языка",
+    "languages" : {
+      "english" : "English",
+      "french" : "Français",
+      "spanish" : "Español"
+    }
+  },
   "distribution" : {
     "asset" : "Актив",
     "price" : "Цена",
@@ -4516,6 +4529,14 @@
     "HardResetFail" : {
       "title" : "Не удалось сбросить",
       "description" : "Повторите попытку или обратитесь в Поддержку Ledger, если проблема не решена."
+    },
+    "LanguageInstallRefusedOnDevice" : {
+      "title" : "Установка языка на устройстве невозможна",
+      "description" : "Пожалуйста, попробуйте ещё раз. Если проблема не уходит, сохраните логи и отправьте их в Поддержку Ledger."
+    },
+    "LanguageNotFound" : {
+      "title" : "Язык не найден",
+      "description" : "Мы не смогли найти язык, который вы пытаетесь установить. Пожалуйста, попробуйте установить другой язык."
     },
     "LatestMCUInstalledError" : {
       "title" : "Кажется, обновлений нет",
