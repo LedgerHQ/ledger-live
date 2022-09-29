@@ -30,6 +30,8 @@ const setDisconnectTimeout = () => {
   );
 };
 
+export type ListenDescriptorEvent = DescriptorEvent<any>;
+
 /**
  * node-hid Transport implementation
  * @example
@@ -52,7 +54,7 @@ export default class TransportNodeHidSingleton extends TransportNodeHidNoEvents 
 
   /**
    */
-  static listen = (observer: Observer<DescriptorEvent<any>>): Subscription => {
+  static listen = (observer: Observer<ListenDescriptorEvent>): Subscription => {
     let unsubscribed;
     Promise.resolve(getDevices()).then((devices) => {
       // this needs to run asynchronously so the subscription is defined during this phase
@@ -151,7 +153,7 @@ export default class TransportNodeHidSingleton extends TransportNodeHidNoEvents 
         new HID.HID(device.path as string)
       );
       const unlisten = listenDevices(
-        () => {},
+        () => { },
         () => {
           // assume any ledger disconnection concerns current transport
           if (transportInstance) {

@@ -1,22 +1,25 @@
-// @flow
 import { useEffect } from "react";
 import { useDispatch } from "react-redux";
+import { Subscription } from "rxjs";
+import { ListenDescriptorEvent } from "@ledgerhq/ledgerjs/hw-transport-node-hid-singleton/TransportNodeHid";
+import { DeviceModelId } from "@ledgerhq/types-devices";
 import { addDevice, removeDevice, resetDevices } from "~/renderer/actions/devices";
 import { command } from "~/renderer/commands";
 
-const ListenDevices = () => {
+export const useListenToHidDevices = () => {
   const dispatch = useDispatch();
   useEffect(() => {
-    let sub;
+    let sub: Subscription;
     function syncDevices() {
-      const devices = {};
-      sub = command("listenDevices")().subscribe(
-        ({ device, deviceModel, type, descriptor }) => {
+      const devices: { [key: string]: boolean } = {};
+
+      sub = command("listenToHidDevices")().subscribe(
+        ({ device, deviceModel, type, descriptor }: ListenDescriptorEvent) => {
           if (device) {
             const deviceId = descriptor || "";
             const stateDevice = {
               deviceId,
-              modelId: deviceModel ? deviceModel.id : "nanoS",
+              modelId: deviceModel ? deviceModel.id : DeviceModelId.nanoS,
               wired: true,
             };
 
@@ -50,5 +53,3 @@ const ListenDevices = () => {
 
   return null;
 };
-
-export default ListenDevices;
