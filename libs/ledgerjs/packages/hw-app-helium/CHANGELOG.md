@@ -1,5 +1,29 @@
 # @ledgerhq/hw-app-helium
 
+## 6.29.0
+
+### Minor Changes
+
+- [#920](https://github.com/LedgerHQ/ledger-live/pull/920) [`772f5f87cb`](https://github.com/LedgerHQ/ledger-live/commit/772f5f87cb56c27427b00b13c0572a5c2c368580) Thanks [@Perronef5](https://github.com/Perronef5)! - Fixed an issue with tesnet keytype and added ability to support other token types.
+
+### Patch Changes
+
+- Updated dependencies [[`1a94cbf28a`](https://github.com/LedgerHQ/ledger-live/commit/1a94cbf28aaa2917c70719e22f446148cd66cef6)]:
+  - @ledgerhq/errors@6.11.0
+  - @ledgerhq/hw-transport@6.27.5
+
+## 6.29.0-next.0
+
+### Minor Changes
+
+- [#920](https://github.com/LedgerHQ/ledger-live/pull/920) [`772f5f87cb`](https://github.com/LedgerHQ/ledger-live/commit/772f5f87cb56c27427b00b13c0572a5c2c368580) Thanks [@Perronef5](https://github.com/Perronef5)! - Fixed an issue with tesnet keytype and added ability to support other token types.
+
+### Patch Changes
+
+- Updated dependencies [[`1a94cbf28a`](https://github.com/LedgerHQ/ledger-live/commit/1a94cbf28aaa2917c70719e22f446148cd66cef6)]:
+  - @ledgerhq/errors@6.11.0-next.0
+  - @ledgerhq/hw-transport@6.27.5-next.0
+
 ## 6.28.3
 
 ### Patch Changes

@@ -99,8 +99,7 @@ const SwapForm = () => {
   const [isSendMaxLoading, setIsSendMaxLoading] = useState(false);
   const [showDetails, setShowDetails] = useState(false);
   const [idleState, setIdleState] = useState(false);
-  const idleStateRef = useRef(idleState);
-  idleStateRef.current = idleState;
+  const [firstRateId, setFirstRateId] = useState(null);
 
   const [error, setError] = useState();
   const { t } = useTranslation();
@@ -131,7 +130,9 @@ const SwapForm = () => {
   const provider = exchangeRate?.provider;
   const providerKYC = swapKYC?.[provider];
   const kycStatus = providerKYC?.status;
-  let idleTimeout = 0;
+
+  const idleTimeout = useRef();
+  const refreshInterval = useRef();
 
   // On provider change, reset banner and flow
   useEffect(() => {
@@ -167,29 +168,37 @@ const SwapForm = () => {
 
   const { setDrawer } = React.useContext(context);
 
-  useEffect(() => {
-    const refreshInterval = setInterval(() => {
-      !swapError && !idleStateRef.current && swapTransaction?.swap?.refetchRates();
-    }, refreshTime);
-    return () => {
-      clearInterval(refreshInterval);
-    };
-  }, [swapTransaction.swap.from.amount]);
+  const swapError = swapTransaction.fromAmountError || exchangeRatesState?.error;
 
-  const refreshIdle = () => {
-    idleStateRef.current && setIdleState(false);
-    idleTimeout && clearInterval(idleTimeout);
-    idleTimeout = setTimeout(() => {
+  useEffect(() => {
+    const newFirstRateId = swapTransaction?.swap?.rates?.value?.length
+      ? swapTransaction.swap.rates.value[0].rateId
+      : null;
+    setFirstRateId(newFirstRateId);
+  }, [swapTransaction]);
+
+  useEffect(() => {
+    refreshInterval.current && clearInterval(refreshInterval.current);
+    refreshInterval.current = setInterval(() => {
+      !swapError && !idleState && swapTransaction?.swap?.refetchRates();
+    }, refreshTime);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [swapError, firstRateId]);
+
+  const refreshIdle = useCallback(() => {
+    idleState && setIdleState(false);
+    idleTimeout.current && clearInterval(idleTimeout.current);
+    idleTimeout.current = setTimeout(() => {
       setIdleState(true);
     }, idleTime);
-  };
+  }, [idleState]);
 
   useEffect(() => {
     if (!showDetails && swapTransaction.swap.rates.status !== "loading") {
       refreshIdle();
       setShowDetails(true);
     }
-  }, [swapTransaction.swap.rates.status, showDetails]);
+  }, [refreshIdle, showDetails, swapTransaction.swap.rates.status]);
 
   useEffect(() => {
     dispatch(updateTransactionAction(swapTransaction.transaction));
@@ -222,7 +231,6 @@ const SwapForm = () => {
     },
     [dispatch],
   );
-  const swapError = swapTransaction.fromAmountError || exchangeRatesState?.error;
 
   // Track errors
   useEffect(
@@ -464,6 +472,12 @@ const SwapForm = () => {
     swapTransaction.setToCurrency(currency);
   };
 
+  const toggleMax = state => {
+    setNavigation(null);
+    setShowDetails(false);
+    swapTransaction.toggleMax(state);
+  };
+
   if (providers?.length)
     return (
       <Wrapper>
@@ -479,7 +493,7 @@ const SwapForm = () => {
           setToAccount={setToAccount}
           setToCurrency={setToCurrency}
           isMaxEnabled={swapTransaction.swap.isMaxEnabled}
-          toggleMax={swapTransaction.toggleMax}
+          toggleMax={toggleMax}
           fromAmountError={swapError}
           isSwapReversable={swapTransaction.swap.isSwapReversable}
           reverseSwap={swapTransaction.reverseSwap}
