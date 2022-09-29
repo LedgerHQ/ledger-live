@@ -160,7 +160,7 @@ jobs:
           retries: 3
           script: |
             const {repo: {owner, repo}} = context
-            const jobs = await github.request(`GET /repos/${owner}/${repo}/actions/runs/${{ github.run_id }}/jobs`, {
+            const {data: {jobs}} = await github.request(`GET /repos/${owner}/${repo}/actions/runs/${{ github.run_id }}/jobs`, {
               owner,
               repo,
               run_id: ${{ github.run_id }},
