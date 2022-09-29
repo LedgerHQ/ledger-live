@@ -169,6 +169,7 @@ jobs:
               repo,
               run_id: ${{ github.run_id }},
             });
+            console.log("jobs", jobs);
 
             const jobsStatusString = jobs
               .filter(job => job.name.startsWith("generate-screenshots"))
@@ -191,7 +192,11 @@ jobs:
               issue_number: ${{ github.event.inputs.number }},
             });
 
+            console.log("comments", comments);
+
             const existingComment = comments.data.find(comment => comment.user.login === 'github-actions[bot]' && comment.body.startsWith(`${{ env.comment_header }}`));
+
+            console.log("existingComment", existingComment);
 
             await github.rest.issues.updateComment({
               owner,
