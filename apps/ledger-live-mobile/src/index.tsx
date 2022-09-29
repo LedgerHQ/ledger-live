@@ -86,6 +86,7 @@ import WalletConnectProvider, {
 /* eslint-enable import/named */
 import HookAnalytics from "./analytics/HookAnalytics";
 import HookSentry from "./components/HookSentry";
+import HookNotifications from "./notifications/HookNotifications";
 import RootNavigator from "./components/RootNavigator";
 import SetEnvsFromSettings from "./components/SetEnvsFromSettings";
 import CounterValuesProvider from "./components/CounterValuesProvider";
@@ -111,7 +112,6 @@ import { useFilteredManifests } from "./screens/Platform/shared";
 import { setWallectConnectUri } from "./actions/walletconnect";
 import PostOnboardingProviderWrapped from "./logic/postOnboarding/PostOnboardingProviderWrapped";
 import { isAcceptedTerms } from "./logic/terms";
-import Braze from "react-native-appboy-sdk";
 
 const themes = {
   light: lightTheme,
@@ -216,10 +216,6 @@ function App({ importDataString }: AppProps) {
     getChangesStats: getPostOnboardingStateChanged,
     lense: postOnboardingSelector,
   });
-
-  useEffect(() => {
-    Braze.changeUser("come-id");
-  }, []);
 
   return (
     <GestureHandlerRootView style={styles.root}>
@@ -678,6 +674,7 @@ export default class Root extends Component<
                 <AdjustProvider />
                 <DelayedTrackingProvider />
                 <HookAnalytics store={store} />
+                <HookNotifications />
                 <WalletConnectProvider>
                   <RemoteLiveAppProvider
                     provider={provider}
