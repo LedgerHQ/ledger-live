@@ -181,7 +181,7 @@ jobs:
             const exists = comments.data
               .find(comment =>
                 comment.user.login === 'github-actions[bot]' &&
-                comment.body.startsWith(`${{ env.comment_header }}`));
+                comment.body.startsWith(`${{ env.comment_header }}`);
               );
 
             return exists?.id ?? 'false';
