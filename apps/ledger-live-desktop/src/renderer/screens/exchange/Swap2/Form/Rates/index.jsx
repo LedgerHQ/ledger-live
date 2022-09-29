@@ -87,15 +87,13 @@ export default function ProviderRate({
     if (filter.includes(FILTER.decentralised)) {
       setDexRate(DEX_PROVIDERS[0]);
     } else {
+      let selectedRate;
       if (filter.includes(FILTER.float)) {
-        const selectedRate = rates.find((rate) => rate.tradeMethod === FILTER.float);
-        setRate(selectedRate || rates[0]);
+        selectedRate = rates.find((rate) => rate.tradeMethod === FILTER.float);
       } else if (filter.includes(FILTER.fixed)) {
-        const selectedRate = rates.find((rate) => rate.tradeMethod === FILTER.fixed);
-        setRate(selectedRate || rates[0]);
-      } else {
-        setRate(rates[0]);
+        selectedRate = rates.find((rate) => rate.tradeMethod === FILTER.fixed);
       }
+      setRate(selectedRate || rates[0] || {});
     }
     setEmptyState(!providerRef.current?.children.length);
     // eslint-disable-next-line react-hooks/exhaustive-deps

@@ -1,5 +1,5 @@
 // @flow
-import React, { useState } from "react";
+import React, { useState, useCallback } from "react";
 import { Trans } from "react-i18next";
 import Box from "~/renderer/components/Box";
 import styled from "styled-components";
@@ -41,23 +41,30 @@ export const Btn: ThemedComponent<{}> = styled(Button).attrs((p) => {
 export default function ProviderRate({ onClick }: Props) {
   const [filter, setFilter] = useState([]);
 
-  const updateFilter = (type) => {
-    let newFilter = [];
-    if (filter.includes(type)) {
-      newFilter = filter.filter((e) => e !== type);
-      setFilter(newFilter);
-    } else {
-      setFilter([type, ...filter]);
-      newFilter = [type, ...filter];
-    }
-    if ([FILTER.centralised, FILTER.decentralised].every((elem) => newFilter.includes(elem))) {
-      newFilter = newFilter.filter((f) => ![FILTER.centralised, FILTER.decentralised].includes(f));
-    }
-    if ([FILTER.fixed, FILTER.float].every((elem) => newFilter.includes(elem))) {
-      newFilter = newFilter.filter((f) => ![FILTER.fixed, FILTER.float].includes(f));
-    }
-    onClick(newFilter);
-  };
+  const updateFilter = useCallback(
+    (type) => {
+      let newFilter = [];
+      if (filter.includes(type)) {
+        newFilter = filter.filter((e) => e !== type);
+        setFilter(newFilter);
+      } else {
+        setFilter([type, ...filter]);
+        newFilter = [type, ...filter];
+      }
+      // If centralised & decentralised filters are active, these 2 filters will not be applied
+      if ([FILTER.centralised, FILTER.decentralised].every((elem) => newFilter.includes(elem))) {
+        newFilter = newFilter.filter(
+          (f) => ![FILTER.centralised, FILTER.decentralised].includes(f),
+        );
+      }
+      // If fixed & float filters are active, these 2 filters will not be applied
+      if ([FILTER.fixed, FILTER.float].every((elem) => newFilter.includes(elem))) {
+        newFilter = newFilter.filter((f) => ![FILTER.fixed, FILTER.float].includes(f));
+      }
+      onClick(newFilter);
+    },
+    [filter, onClick],
+  );
 
   return (
     <Container>
