@@ -39,7 +39,7 @@ jobs:
 
             [Generating screenshots: workflow started](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
             `
-            await github.request(`POST /repos/${owner}/${repo}/issues/${issue_number}/comments`, {
+            await github.request("POST /repos/{owner}/{repo}/issues/{issue_number}/comments", {
               owner,
               repo,
               issue_number,
@@ -164,7 +164,7 @@ jobs:
           retries: 3
           script: |
             const {repo: {owner, repo}} = context
-            const {data: {jobs}} = await github.request(`GET /repos/${owner}/${repo}/actions/runs/${{ github.run_id }}/jobs`, {
+            const {data: {jobs}} = await github.request("GET /repos/{owner}/{repo}/actions/runs/{run_id}/jobs", {
               owner,
               repo,
               run_id: ${{ github.run_id }},
@@ -186,21 +186,27 @@ jobs:
             ${jobsStatusString}
             `
 
-            const comments = await github.rest.issues.listComments({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              issue_number: ${{ github.event.inputs.number }},
-              sort: "created",
-              direction: "desc",
-            });
+            const existingComment = await github.paginate(
+              "GET /repos/{owner}/{repo}/issues/comments",
+              {
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: ${{ github.event.inputs.number }},
+              },
+              (response, done) => {
+                const comments = response.data
+                const existingComment = comments
+                  .find(comment =>
+                    comment.user.login === 'github-actions[bot]' &&
+                    comment.body.startsWith(`${{ env.comment_header }}`));
+                if (existingComment) {
+                  done()
+                  return existingComment;
+                };
+              }
+            );
 
-            console.log("comments", comments);
-
-            const existingComment =
-              comments.data
-                .find(comment =>
-                  comment.user.login === 'github-actions[bot]' &&
-                  comment.body.startsWith(`${{ env.comment_header }}`));
+            if (!existingComment) throw new Error("existing comment not found")
 
             console.log("existingComment", existingComment);
 
