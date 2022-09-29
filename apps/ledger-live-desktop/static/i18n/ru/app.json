@@ -237,16 +237,16 @@
     "form" : {
       "changeCTA" : "Изменить",
       "rates" : {
-        "title" : "Операторы",
+        "title" : "Quotes",
         "registration" : "Необходима регистрация ",
         "noRegistration" : "Регистрация не нужна",
         "fixed" : "Фиксированный",
-        "float" : "Плавающий",
+        "float" : "Floating",
         "update" : "Обновление курсов через",
         "loading" : "Загружаем...",
         "name" : {
           "title" : "Оператор",
-          "tooltip" : "Некоторые операторы требуют авторизацию с помощью учётной записи."
+          "tooltip" : "Depending on the provider, you have to register with them by creating an account."
         },
         "rate" : {
           "title" : "Курс",
@@ -5021,6 +5021,9 @@
     },
     "StellarSourceHasMultiSign" : {
       "title" : "Отключите функцию мультиподписи, чтобы проводить транзакции в Stellar"
+    },
+    "HederaAddAccountError" : {
+      "title" : "Your account has not been added. Please try again."
     }
   },
   "cryptoOrg" : {
