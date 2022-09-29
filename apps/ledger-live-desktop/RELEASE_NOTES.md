@@ -1,3 +1,15 @@
+# 2.48.0
+
+### 🚀 Features
+
+- Introducing a new way to swap crypto — **compare quotes from different platforms and choose the best offer**. Select the coin you want to swap and explore providers, KYC requirements, exchange rates, and more. In addition, you can now fully leverage DeFi protocols to swap ERC-20 tokens on decentralised exchanges.
+- Olá! From today, **Ledger Live supports Brazilian Portuguese** 🇧🇷 You can change the language in the settings menu under General → Display language.
+- When sending BTC, a **warning message** will alert you if there are any **pending incoming transactions**.
+
+### 🐛 Fixes
+
+We’ve tidied up some bugs that caused issues when sending Zcash and signing transactions. Everything is running smoothly again.
+
 # 2.47.0
 
 Here's a look at what's new in Ledger Live.
