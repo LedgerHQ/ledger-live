@@ -173,7 +173,7 @@ jobs:
 
             const jobsStatusString = jobs
               .filter(job => job.name.startsWith("generate-screenshots"))
-              .map(job => `${job.status === "success" ? "✅" : "❌"} - [${job.name}](${job.html_url})`)
+              .map(job => `${job.conclusion === "success" ? "✅" : "❌"} - [${job.name}](${job.html_url})`)
               .join("\n")
 
             const body = `\
