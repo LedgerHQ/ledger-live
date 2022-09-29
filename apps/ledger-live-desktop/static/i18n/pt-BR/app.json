@@ -2004,6 +2004,19 @@
     "switchButton" : "Alterar para {{language}}",
     "no" : "Eu prefiro não"
   },
+  "deviceLocalization" : {
+    "language" : "Idioma",
+    "deviceLanguage" : "Idioma do dispositivo",
+    "changeLanguage" : "Mudar Idioma",
+    "allowLanguageInstallation" : "Permitir instalação do idioma",
+    "languageInstalled" : "Idioma alterado com sucesso",
+    "installingLanguage" : "Instalando Idioma",
+    "languages" : {
+      "english" : "Inglês",
+      "french" : "Francês",
+      "spanish" : "Espanhol"
+    }
+  },
   "distribution" : {
     "asset" : "Ativo",
     "price" : "Preço",
@@ -4516,6 +4529,14 @@
     "HardResetFail" : {
       "title" : "Não foi possível redefinir",
       "description" : "Se o problema persistir, tente novamente ou contate o Suporte Ledger."
+    },
+    "LanguageInstallRefusedOnDevice" : {
+      "title" : "Instalação de idioma recusada no dispositivo",
+      "description" : "Tente Novamente. Se o problema persistir, salve seus registros usando o botão abaixo e os forneça ao Suporte Ledger."
+    },
+    "LanguageNotFound" : {
+      "title" : "Idioma não encontrado",
+      "description" : "O idioma que você está tentando instalar não foi encontrado. Tente instalar outro idioma."
     },
     "LatestMCUInstalledError" : {
       "title" : "Não há nada para atualizar",

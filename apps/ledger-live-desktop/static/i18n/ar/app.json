@@ -2004,6 +2004,19 @@
     "switchButton" : "التبديل إلى {{language}}",
     "no" : "أفضل عدم القيام بذلك"
   },
+  "deviceLocalization" : {
+    "language" : "اللغة",
+    "deviceLanguage" : "لغة الجهاز",
+    "changeLanguage" : "تغيير اللغة",
+    "allowLanguageInstallation" : "اسمح بتثبيت اللغة",
+    "languageInstalled" : "تم تغيير اللغة بنجاح",
+    "installingLanguage" : "جاري تثبيت اللغة",
+    "languages" : {
+      "english" : "English",
+      "french" : "Français",
+      "spanish" : "Español"
+    }
+  },
   "distribution" : {
     "asset" : "الأصل",
     "price" : "السعر",
@@ -4516,6 +4529,14 @@
     "HardResetFail" : {
       "title" : "عذراً، لا يمكن إعادة التعيين",
       "description" : "يرجى المحاولة مرة أخرى أو الاتصال بدعم ليدجر إذا استمرت المشكلة."
+    },
+    "LanguageInstallRefusedOnDevice" : {
+      "title" : "تم رفض تثبيت اللغة على الجهاز",
+      "description" : "يرجى إعادة المحاولة مرة أخرى. إذا استمرت المشكلة، يرجى حفظ سجلاتك باستخدام الزر أدناه وتقديمها إلى فريق دعم Ledger."
+    },
+    "LanguageNotFound" : {
+      "title" : "لم يتم العثور على اللغة",
+      "description" : "لم يتم العثور على اللغة التي تحاول تثبيتها. يرجى محاولة تثبيت لغة أخرى."
     },
     "LatestMCUInstalledError" : {
       "title" : "عذراً، لا يوجد شيء للتحديث",
