@@ -1,7 +1,8 @@
 // @flow
 
 import { getAccountCurrency, getAccountName } from "@ledgerhq/live-common/account/index";
-import type { TFunction, withTranslation } from "react-i18next";
+import type { TFunction } from "react-i18next";
+import { withTranslation } from "react-i18next";
 import type { Account, SubAccount } from "@ledgerhq/types-live";
 import React, { useCallback, useState } from "react";
 import { connect } from "react-redux";
