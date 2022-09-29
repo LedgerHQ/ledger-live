@@ -237,16 +237,16 @@
     "form" : {
       "changeCTA" : "Modifier",
       "rates" : {
-        "title" : "Prestataires",
+        "title" : "Quotes",
         "registration" : "Inscription requise ",
         "noRegistration" : "Pas d’inscription requise",
         "fixed" : "Fixe",
-        "float" : "Variable",
+        "float" : "Floating",
         "update" : "Taux mis à jour dans",
         "loading" : "Chargement...",
         "name" : {
           "title" : "Prestataire",
-          "tooltip" : "Pour utiliser certains prestataires, vous devez vous inscrire et créer un compte auprès d’eux."
+          "tooltip" : "Depending on the provider, you have to register with them by creating an account."
         },
         "rate" : {
           "title" : "Taux de change",
