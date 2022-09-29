@@ -237,16 +237,16 @@
     "form" : {
       "changeCTA" : "更改",
       "rates" : {
-        "title" : "提供商",
+        "title" : "Quotes",
         "registration" : "需要注册 ",
         "noRegistration" : "无需注册",
         "fixed" : "固定",
-        "float" : "浮动",
+        "float" : "Floating",
         "update" : "费用更新：",
         "loading" : "正在加载……",
         "name" : {
           "title" : "提供方",
-          "tooltip" : "您必须创建账户来登录提供商的服务，具体取决于提供商。"
+          "tooltip" : "Depending on the provider, you have to register with them by creating an account."
         },
         "rate" : {
           "title" : "互换费用",
@@ -5021,6 +5021,9 @@
     },
     "StellarSourceHasMultiSign" : {
       "title" : "要进行 Stellar（恒星）交易，请禁用多重签名"
+    },
+    "HederaAddAccountError" : {
+      "title" : "Your account has not been added. Please try again."
     }
   },
   "cryptoOrg" : {
