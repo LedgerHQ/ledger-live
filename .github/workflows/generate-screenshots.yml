@@ -25,7 +25,7 @@ jobs:
     name: Report start
     runs-on: "ubuntu-latest"
     steps:
-      - name: report jobs status
+      - name: report start
         uses: actions/github-script@v6
         with:
           result-encoding: string
@@ -39,7 +39,7 @@ jobs:
 
             [Generating screenshots: workflow started](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
             `
-            await github.request('POST /repos/${owner}/${repo}/issues/${issue_number}/comments', {
+            await github.request(`POST /repos/${owner}/${repo}/issues/${issue_number}/comments`, {
               owner,
               repo,
               issue_number,
