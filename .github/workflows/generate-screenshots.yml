@@ -16,6 +16,9 @@ on:
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
+  
+env:
+  comment_header: <!-- generate-screenshots-report:${{ github.run_id }} -->
 
 jobs:
   report-start:
@@ -27,7 +30,7 @@ jobs:
         with:
           issue-number: ${{ github.event.inputs.number }}
           body: |
-            <!-- generate-screenshots-report:${{ github.run_id }} -->
+            ${{ env.comment_header }}
             @${{ github.event.inputs.login }}
             [Generating screenshots: workflow started](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
 
@@ -39,13 +42,6 @@ jobs:
       organisation: ledgerhq
     secrets:
       token: ${{ secrets.COMMON_READ_ORG }}
-
-  # test-failing-job:
-  #   needs: [report-started]
-  #   runs-on: "ubuntu-latest"
-  #   steps:
-  #     - name: failing job
-  #       run: exit 1
 
   generate-screenshots:
     needs: [is-org-member]
@@ -160,14 +156,14 @@ jobs:
         with:
           issue-number: ${{ github.event.inputs.number }}
           comment-author: "github-actions[bot]"
-          body-includes: <!-- generate-screenshots-report:${{ github.run_id }} -->
+          body-includes: ${{ env.comment_header }}
       - name: Create or Update Comment
         uses: peter-evans/create-or-update-comment@v2.0.0
         with:
           comment-id: ${{ steps.find-comment.outputs.comment-id }}
           edit-mode: replace
           body: |
-            <!-- generate-screenshots-report:${{ github.run_id }} -->
+            ${{ env.comment_header }}
             @${{ github.event.inputs.login }}
 
             [Generating screenshots: workflow ended:](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
