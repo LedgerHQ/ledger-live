@@ -3,6 +3,7 @@
     "cancel" : "取消",
     "apply" : "应用",
     "seeAll" : "显示全部",
+    "seeAllWithNumber" : "查看全部 ({{number}})",
     "back" : "返回",
     "delete" : "删除",
     "paste" : "粘贴",
@@ -30,6 +31,7 @@
     "received" : "已接收",
     "sent" : "已发送",
     "or" : "或者",
+    "others" : "其他",
     "rename" : "重命名",
     "learnMore" : "了解更多",
     "checkItOut" : "一探究竟",
@@ -147,6 +149,12 @@
           "nanoX" : "请确保您的 {{productName}} 已解锁，已连接好数据线或已启用蓝牙。"
         }
       }
+    },
+    "CeloAllFundsWarning" : {
+      "title" : "确保您留有足够的余额，以便缴纳未来的交易费"
+    },
+    "CeloMissingWithdrawalsError" : {
+      "title" : "出错了，无法获取任何要提取的资金"
     },
     "ClaimRewardsFeesWarning" : {
       "title" : "奖励少于领取奖金的估算费用。",
@@ -1085,6 +1093,7 @@
       "nanoS" : "Nano S",
       "nanoSP" : "Nano S Plus",
       "nanoX" : "Nano X",
+      "nanoFTS" : "Nano FTS",
       "blue" : "Blue",
       "chooseDevice" : "选择您的设备"
     },
@@ -1629,6 +1638,130 @@
       }
     }
   },
+  "syncOnboarding" : {
+    "title" : "设置 {{deviceName}}",
+    "estimatedTimeFormat" : "{{estimatedTime}} 分钟",
+    "deviceSelection" : {
+      "title" : "您拥有何种设备？",
+      "subtitle" : "选择您想要通过 Ledger Live 设置的 Ledger 钱包",
+      "brand" : "Ledger",
+      "setupTime" : "{{time}} 分钟"
+    },
+    "scanning" : {
+      "title" : "正在寻找您的 {{productName}}",
+      "description" : "请确保您的 {{productName}} 已解锁并且已启用蓝牙"
+    },
+    "pairing" : {
+      "success" : {
+        "title" : "已和 {{deviceName}} 配对"
+      },
+      "loading" : {
+        "title" : "正在和 {{deviceName}} 配对",
+        "subtitle" : "在您的 {{productName}} 上确认代码"
+      },
+      "error" : {
+        "title" : "配对成功",
+        "subtitle" : "似乎出了点问题！检查蓝牙是否开启，以及 {{productName}} 是否在附近"
+      }
+    },
+    "languageSelect" : {
+      "title" : "应用程序语言"
+    },
+    "firmwareLanguageUpdateDrawer" : {
+      "title" : "更改您 {{productName}} 的语言",
+      "description" : "Ledger Live 现在支持{{newLanguage}}。您想在 {{productName}} 上也使用{{newLanguage}}吗？",
+      "updateCta" : "更改语言",
+      "cancelCta" : "取消"
+    },
+    "desyncDrawer" : {
+      "title" : "无法连接 {{productName}}",
+      "description" : "请确保您的 {{productName}} 在附近并且已经解锁。检查手机蓝牙是否启用",
+      "retryCta" : "请重试",
+      "helpCta" : "获得帮助"
+    },
+    "resyncOverlay" : {
+      "content" : "您的 {{productName}} 似乎已断开连接。正在重新连接"
+    },
+    "helpDrawer" : {
+      "title" : "需要安装手册方面的一些帮助？",
+      "description" : "Lorem Elsass ipsum aliquam bissame Ober schae ffolsheim gehts messti de Bischheim tellus blottkopf, dui sed libero. hopla libero, placerat leo eget Gal",
+      "docCta" : "查看我们的常见问题解答",
+      "supportCta" : "人工服务"
+    },
+    "pairingStep" : {
+      "title" : "{{productName}} 已配对",
+      "description" : "请继续设置 {{productName}}，如需分步协助，请返回此处查看"
+    },
+    "pinStep" : {
+      "title" : "选择您的识别码",
+      "description" : "识别码可防止任何人未经许可访问您的 {{productName}}。切勿告诉他人",
+      "warning" : "任何知晓识别码的人都能够访问您的 {{productName}} 并永久窃取您的资产"
+    },
+    "seedStep" : {
+      "title" : "设置恢复短语",
+      "description" : "恢复短语是私钥的备份，是由 24 个助记词组成的秘密列表。您的 {{productName}} 会生成独一无二的恢复短语。Ledger 不会保存它的副本"
+    },
+    "softwareChecksSteps" : {
+      "title" : "检查操作系统",
+      "genuineCheckRequestDrawer" : {
+        "title" : "请确保您的 {{productName}} 为正品",
+        "checkCta" : "检查是否为正品"
+      },
+      "allowManagerDrawer" : {
+        "wording" : "Ledger Live"
+      },
+      "genuineCheckCancelledDrawer" : {
+        "title" : "您取消了 Nano 真伪检查",
+        "description" : "该检查对确保能够安全使用 {{productName}} 而言至关重要",
+        "retryCta" : "再次运行真伪检查",
+        "skipCta" : "以后再说"
+      },
+      "updateAvailableDrawer" : {
+        "title" : "找到新软件",
+        "description" : "要使用最新的安全功能，我们强烈建议更新您的 {{productName}}",
+        "updateCta" : "更新"
+      },
+      "genuineCheckStep" : {
+        "inactive" : {
+          "title" : "真伪检查"
+        },
+        "active" : {
+          "title" : "正在检查 {{productName}}"
+        },
+        "completed" : {
+          "title" : "您的 {{productName}} 为正品"
+        },
+        "failed" : {
+          "title" : "未检查设备安全性"
+        }
+      },
+      "firmwareUpdateStep" : {
+        "inactive" : {
+          "title" : "软件检查"
+        },
+        "active" : {
+          "title" : "正在检查软件版本"
+        },
+        "completed" : {
+          "updateAvailable" : {
+            "title" : "软件版本 {{firmwareVersion}} 已可用"
+          },
+          "noUpdateAvailable" : {
+            "title" : "软件为最新版本"
+          }
+        },
+        "failed" : {
+          "title" : "软件更新失败"
+        }
+      }
+    },
+    "readyStep" : {
+      "title" : "{{productName}} 已经就绪"
+    },
+    "completion" : {
+      "title" : "现在一切尽在您的掌控。"
+    }
+  },
   "tabs" : {
     "portfolio" : "钱包",
     "accounts" : "账户",
@@ -1672,7 +1805,10 @@
         "addAccounts" : "添加资产",
         "title" : "开始",
         "description" : "您可以通过我们的合作伙伴购买加密货币或设置您的钱包"
-      }
+      },
+      "title" : "首先将您喜欢的资产添加到您的钱包",
+      "subtitle" : "Ledger 支持超过 6,000 种币和代币",
+      "addAccount" : "或添加账户"
     },
     "noOpState" : {
       "title" : "尚无操作？",
@@ -1684,6 +1820,13 @@
     "topGainers" : {
       "title" : "市场获利者（24 小时）",
       "seeMarket" : "显示全部"
+    },
+    "walletBalance" : "钱包余额",
+    "seelAllAssets" : "查看所有资产",
+    "marketPriceSection" : {
+      "title" : "{{currencyTicker}} 市场价格",
+      "currencyPrice" : "1 {{currencyTicker}} 价格",
+      "currencyPriceChange" : "最近 24 小时变化"
     }
   },
   "addAccountsModal" : {
@@ -1909,7 +2052,8 @@
       "buttons" : {
         "receiveFunds" : "接收",
         "buyCrypto" : "买入"
-      }
+      },
+      "addAccountCta" : "添加账户"
     },
     "settings" : {
       "header" : "账户设置",
@@ -2010,6 +2154,15 @@
         "subtitle" : "您需要有设备才能买入或接收 {{assetName}}"
       }
     },
+    "modals" : {
+      "zeroBalanceDisabledAction" : {
+        "title" : "您还没有 {{currencyTicker}}",
+        "start" : "购买或接收一些 {{currencyTicker}} 即可开始。",
+        "description" : "您需要一些 {{currencyTicker}} 来使用此账户{{actionName}}。"
+      }
+    },
+    "earn" : "赚取",
+    "quickActions" : "快速操作",
     "banner" : {
       "redelegation" : {
         "description" : "您知道吗？Ledger 验证器权益质押的佣金低于您目前使用的验证器。",
@@ -2023,6 +2176,7 @@
   },
   "accounts" : {
     "title" : "账户",
+    "cryptoAccountsTitle" : "{{currencyTicker}} 账户",
     "importNotification" : {
       "message" : "账户导入成功！"
     },
@@ -3110,6 +3264,7 @@
     }
   },
   "addAccounts" : {
+    "addNew" : "添加新的",
     "supportLinks" : {
       "segwit_or_native_segwit" : "Segwit 或 Native Segwit 地址格式？"
     },
@@ -3708,7 +3863,276 @@
       "available" : {
         "title" : "CELO 可用",
         "description" : "该数额可自由支配。"
+      },
+      "lockedBalance" : {
+        "title" : "已锁定余额",
+        "description" : "赚取奖励之前，必须锁定资产并投票给验证者组。"
+      },
+      "nonvotingLockedBalance" : {
+        "title" : "非投票锁定余额",
+        "description" : "可用于投票的已锁定资产余额。"
+      },
+      "withdrawableBalance" : {
+        "title" : "可提取余额",
+        "description" : "解锁能够提取至可用余额的 Celo。"
       }
+    },
+    "delegation" : {
+      "validatorGroup" : "验证者组",
+      "totalVotes" : "总投票数",
+      "actions" : {
+        "activate" : "激活",
+        "revoke" : "撤销"
+      },
+      "delegationUnavailable" : {
+        "title" : "锁定资金不足"
+      },
+      "manageMultipleVoteWarning" : "管理此投票之前，您需要激活或撤销同一验证器组中的其他投票。"
+    },
+    "manage" : {
+      "title" : "管理资产",
+      "titleWhenPendingRegistration" : "账户注册待处理",
+      "lock" : {
+        "title" : "锁定",
+        "description" : "要赚取奖励，请先锁定一个金额。然后必须投票给您的验证者。"
+      },
+      "unlock" : {
+        "title" : "解锁",
+        "description" : "要使已锁定金额再次可用，请先将其解锁。您可以在 3 天解锁期结束后提取金额。"
+      },
+      "withdraw" : {
+        "title" : "提取",
+        "description" : "要取回已解锁金额并恢复到可用余额，您需要手动提取金额。"
+      },
+      "vote" : {
+        "title" : "投票",
+        "description" : "投票给验证者组。激活您的投票后方可赚取奖励。"
+      },
+      "activate" : {
+        "title" : "激活投票",
+        "description" : "激活您对验证者组的投票"
+      },
+      "revoke" : {
+        "title" : "撤销投票",
+        "description" : "撤销您对验证者组的投票"
+      }
+    },
+    "unlock" : {
+      "stepperHeader" : {
+        "title" : "解锁资产",
+        "stepRange" : "步骤 {{currentStep}} 之 {{totalSteps}}",
+        "selectDevice" : "选择设备",
+        "connectDevice" : "连接设备"
+      },
+      "flow" : {
+        "steps" : {
+          "amount" : {
+            "info" : "已解锁资产可在 3 天解锁期结束后提取。",
+            "available" : "可用",
+            "max" : "最大值"
+          },
+          "verification" : {
+            "success" : {
+              "title" : "解锁交易发送成功",
+              "text" : "已解锁资产可在 3 天后提取。"
+            }
+          }
+        }
+      }
+    },
+    "vote" : {
+      "iVote" : "我要投票",
+      "stepperHeader" : {
+        "title" : "投票",
+        "stepRange" : "步骤 {{currentStep}} 之 {{totalSteps}}",
+        "selectDevice" : "选择设备",
+        "connectDevice" : "连接设备"
+      },
+      "flow" : {
+        "steps" : {
+          "starter" : {
+            "description" : "您可以通过将 Celo 资产委托给验证者来赚取奖励。",
+            "bullet" : {
+              "0" : "您保有对已委托资产的所有权",
+              "1" : "使用您的 Ledger 设备进行委托",
+              "2" : "资产将在解除委托后可用"
+            },
+            "warning" : {
+              "description" : "请明智地选择验证者：如果验证者表现不当，您可能会不可挽回地损失部分已委托资产。"
+            },
+            "cta" : "继续"
+          },
+          "amount" : {
+            "available" : "可用",
+            "max" : "最大值"
+          },
+          "verification" : {
+            "success" : {
+              "title" : "您已成功投票。",
+              "text" : "很快就能在历史记录中查看您的操作。"
+            }
+          }
+        }
+      }
+    },
+    "activate" : {
+      "iActivate" : "我要激活投票",
+      "stepperHeader" : {
+        "title" : "激活投票",
+        "stepRange" : "步骤 {{currentStep}} 之 {{totalSteps}}",
+        "selectDevice" : "选择设备",
+        "connectDevice" : "连接设备"
+      },
+      "title" : "激活投票",
+      "flow" : {
+        "steps" : {
+          "verification" : {
+            "success" : {
+              "title" : "激活成功",
+              "text" : "您的投票已成功激活。"
+            }
+          }
+        }
+      }
+    },
+    "revoke" : {
+      "iRevoke" : "我要撤销",
+      "stepperHeader" : {
+        "title" : "投票",
+        "stepRange" : "步骤 {{currentStep}} 之 {{totalSteps}}",
+        "selectDevice" : "选择设备",
+        "connectDevice" : "连接设备"
+      },
+      "flow" : {
+        "steps" : {
+          "validator" : {
+            "active" : "活跃",
+            "pending" : "待处理"
+          },
+          "amount" : {
+            "available" : "可用",
+            "max" : "最大值"
+          },
+          "verification" : {
+            "success" : {
+              "title" : "您已成功撤销投票",
+              "text" : "很快就能在历史记录中查看您的操作。"
+            }
+          }
+        }
+      },
+      "vote" : {
+        "title" : "投票",
+        "active" : "活跃",
+        "pending" : "待处理",
+        "awaitingActivation" : "等待激活",
+        "info" : "此模式下仅显示可撤销投票"
+      }
+    },
+    "register" : {
+      "stepperHeader" : {
+        "title" : "注册账户",
+        "continue" : "继续",
+        "stepRange" : "步骤 {{currentStep}} 之 {{totalSteps}}",
+        "selectDevice" : "选择设备",
+        "connectDevice" : "连接设备"
+      },
+      "flow" : {
+        "steps" : {
+          "started" : {
+            "description" : "锁定任何 Celo 之前，您需要先在链上注册账户。"
+          },
+          "verification" : {
+            "success" : {
+              "title" : "账户注册成功",
+              "text" : "很快就能在历史记录中查看您的操作。"
+            }
+          }
+        }
+      }
+    },
+    "lock" : {
+      "stepperHeader" : {
+        "title" : "锁定资产",
+        "stepRange" : "步骤 {{currentStep}} 之 {{totalSteps}}",
+        "selectDevice" : "选择设备",
+        "connectDevice" : "连接设备"
+      },
+      "flow" : {
+        "steps" : {
+          "amount" : {
+            "info" : "已锁定资产可以随时解锁，但解锁需要 3 天时间。",
+            "available" : "可用",
+            "max" : "最大值"
+          },
+          "verification" : {
+            "success" : {
+              "title" : "资产锁定成功",
+              "text" : "网络确认您的交易后，您就可以投票给验证者。"
+            }
+          }
+        }
+      }
+    },
+    "withdraw" : {
+      "iWithdraw" : "我提取",
+      "title" : "提取资产",
+      "steps" : {
+        "amount" : {
+          "title" : "提取"
+        },
+        "connectDevice" : {
+          "title" : "设备"
+        },
+        "confirmation" : {
+          "title" : "确认",
+          "success" : {
+            "title" : "提取交易发送成功",
+            "text" : "提取的金额将记入您的可用余额。",
+            "cta" : "查看详情"
+          },
+          "broadcastError" : "您的交易可能已失败。请稍候片刻并在重试之前查看交易记录。"
+        }
+      },
+      "stepperHeader" : {
+        "title" : "投票",
+        "stepRange" : "步骤 {{currentStep}} 之 {{totalSteps}}",
+        "selectDevice" : "选择设备",
+        "connectDevice" : "连接设备"
+      },
+      "flow" : {
+        "steps" : {
+          "amount" : {
+            "available" : "可用",
+            "max" : "最大值",
+            "waitingTitle" : "尚未准备好提取的金额",
+            "waitingPeriod" : "您需要等到 {{date}} 才能提取此金额。"
+          },
+          "verification" : {
+            "success" : {
+              "title" : "您的资产已成功提取",
+              "text" : "提取的金额将记入您的可用余额。"
+            }
+          }
+        }
+      }
+    },
+    "emptyState" : {
+      "description" : "您可以通过委托资产赚取 Celo 奖励。",
+      "info" : "委托机制如何运作",
+      "delegation" : "赚取奖励"
+    },
+    "earnRewards" : {
+      "description" : "您可以通过将 Celo 资产委托给验证者来赚取奖励。",
+      "bullet" : {
+        "0" : "您保有对已委托资产的所有权",
+        "1" : "使用您的 Ledger 设备进行委托",
+        "2" : "资产将在解除委托后可用"
+      }
+    },
+    "alerts" : {
+      "withdrawableAssets" : "您有可提取余额。",
+      "activatableVotes" : "您有现在可激活的投票。"
     }
   },
   "osmosis" : {
@@ -4790,6 +5214,12 @@
     },
     "currentAddress" : {
       "messageIfVirtual" : "无法在 Ledger 设备上确认您的 {{name}} 地址。使用需自担风险。"
+    }
+  },
+  "asset" : {
+    "title" : "您的 {{assetName}}",
+    "accountsSection" : {
+      "title" : "您的 {{currencyName}} 账户"
     }
   },
   "customImage" : {
