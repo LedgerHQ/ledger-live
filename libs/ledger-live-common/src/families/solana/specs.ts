@@ -62,7 +62,6 @@ const solana: AppSpec<Transaction> = {
     {
       name: "Transfer Max",
       maxRun: 1,
-      testDestination: genericTestDestination,
       deviceAction: acceptTransferTransaction,
       transaction: ({ account, siblings, bridge, maxSpendable }) => {
         invariant(maxSpendable.gt(0), "balance is 0");

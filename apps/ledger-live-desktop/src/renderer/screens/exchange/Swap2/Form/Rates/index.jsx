@@ -110,7 +110,11 @@ export default function ProviderRate({
         swapVersion={SWAP_VERSION}
       />
       <Box horizontal justifyContent="space-between" fontSize={5}>
-        <Text variant="h5" style={{ textTransform: "uppercase", fontFamily: "Alpha" }}>
+        <Text
+          variant="h5"
+          color="neutral.c100"
+          style={{ textTransform: "uppercase", fontFamily: "Alpha" }}
+        >
           <Trans i18nKey="swap2.form.rates.title" />
         </Text>
         {countdown && (
@@ -121,7 +125,7 @@ export default function ProviderRate({
       </Box>
       <Filter onClick={(type) => setFilter(type)} />
       <TableHeader>
-        <Box horizontal flex="1" alignItems="center" pr="38px">
+        <Box horizontal width="215px" alignItems="center" pr="38px">
           <Text alignItems="center" display="flex" mr={1}>
             <Trans i18nKey="swap2.form.rates.name.title" />
           </Text>
@@ -135,7 +139,7 @@ export default function ProviderRate({
             <IconInfoCircle size={12} />
           </Tooltip>
         </Box>
-        <Box horizontal flex="1" alignItems="center" justifyContent="center">
+        <Box horizontal flex="1" alignItems="center" justifyContent="flex-start">
           <Text alignItems="center" display="flex" mr={1}>
             <Trans i18nKey="swap2.form.rates.rate.title" />
           </Text>
@@ -153,21 +157,20 @@ export default function ProviderRate({
             <IconInfoCircle size={12} />
           </Tooltip>
         </Box>
-        <Box horizontal flex="1" alignItems="center" justifyContent="flex-end">
+        <Box horizontal flex="1" alignItems="center" justifyContent="flex-end" mr={1}>
           <Text alignItems="center" display="flex" mr={1}>
             <Trans i18nKey="swap2.form.rates.receive.title" />
           </Text>
           <Tooltip
-            placement={"top-end"}
             content={
               <Box style={{ maxWidth: 150 }}>
-                <Text style={{ textAlign: "right" }}>
+                <Text>
                   <Trans i18nKey="swap2.form.rates.receive.tooltip" />
                 </Text>
               </Box>
             }
           >
-            <Box style={{ marginRight: 5 }}>
+            <Box>
               <IconInfoCircle size={12} />
             </Box>
           </Tooltip>

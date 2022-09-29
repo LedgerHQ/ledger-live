@@ -16,7 +16,7 @@ export function useCeloPreloadData(): CeloPreloadData {
   return state;
 }
 
-export function useValidatorGroups(search: string): CeloValidatorGroup[] {
+export function useValidatorGroups(search?: string): CeloValidatorGroup[] {
   const { validatorGroups } = useCeloPreloadData();
 
   return useMemo(() => {

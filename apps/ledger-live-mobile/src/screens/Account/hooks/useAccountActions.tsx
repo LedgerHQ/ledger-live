@@ -244,9 +244,12 @@ export default function useAccountActions({
             navigationParams: [
               NavigatorName.Base,
               {
-                screen: ScreenName.WalletConnectScan,
+                screen: NavigatorName.WalletConnect,
                 params: {
-                  accountId: account?.id,
+                  screen: ScreenName.WalletConnectScan,
+                  params: {
+                    accountId: account?.id,
+                  },
                 },
               },
             ],

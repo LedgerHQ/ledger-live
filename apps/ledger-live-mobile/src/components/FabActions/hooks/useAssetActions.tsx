@@ -76,10 +76,6 @@ export default function useAssetActions({
         ? [
             {
               id: "buy",
-              event: "button_clicked",
-              eventProperties: {
-                button: "buy",
-              },
               label: t("exchange.buy.tabTitle"),
               Icon: iconBuy,
               navigationParams: [
@@ -98,10 +94,6 @@ export default function useAssetActions({
         ? [
             {
               id: "sell",
-              event: "button_clicked",
-              eventProperties: {
-                button: "sell",
-              },
               label: t("exchange.sell.tabTitle"),
               Icon: iconSell,
               navigationParams: [
@@ -128,10 +120,6 @@ export default function useAssetActions({
               ? [
                   {
                     id: "swap",
-                    event: "button_clicked",
-                    eventProperties: {
-                      button: "swap",
-                    },
                     label: t("transfer.swap.title"),
                     Icon: iconSwap,
                     navigationParams: [
@@ -150,10 +138,6 @@ export default function useAssetActions({
               : []),
             {
               id: "receive",
-              event: "button_clicked",
-              eventProperties: {
-                button: "receive",
-              },
               label: t("transfer.receive.title"),
               Icon: iconReceive,
               navigationParams: [
@@ -180,10 +164,6 @@ export default function useAssetActions({
             },
             {
               id: "send",
-              event: "button_clicked",
-              eventProperties: {
-                button: "send",
-              },
               label: t("transfer.send.title"),
               Icon: iconSend,
               navigationParams: [
@@ -215,10 +195,6 @@ export default function useAssetActions({
               ? [
                   {
                     id: "add_account",
-                    event: "button_clicked",
-                    eventProperties: {
-                      button: "add_account",
-                    },
                     label: t("addAccountsModal.ctaAdd"),
                     Icon: iconAddAccount,
                     navigationParams: [
