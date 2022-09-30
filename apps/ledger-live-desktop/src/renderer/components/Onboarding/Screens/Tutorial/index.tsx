@@ -29,6 +29,7 @@ import { QuizFailure } from "~/renderer/components/Onboarding/Screens/Tutorial/s
 import { QuizSuccess } from "~/renderer/components/Onboarding/Screens/Tutorial/screens/QuizSuccess";
 import RecoveryWarning from "../../Help/RecoveryWarning";
 import { QuizzPopin } from "~/renderer/modals/OnboardingQuizz/OnboardingQuizzModal";
+import { DeviceModelId } from "@ledgerhq/devices";
 
 import { UseCase } from "../../index";
 
@@ -468,7 +469,16 @@ export default function Tutorial({ useCase }: Props) {
           setConnectedDevice,
         },
         canContinue: !!connectedDevice,
-        next: () => history.push("/"),
+        next: () => {
+          if (
+            connectedDevice.modelId === DeviceModelId.nanoX ||
+            connectedDevice.modelId === DeviceModelId.nanoFTS
+          ) {
+            history.push("/onboarding/sync/completion");
+          } else {
+            history.push("/");
+          }
+        },
         previous: () => history.push(`${path}/${ScreenId.pairMyNano}`),
       },
     ],

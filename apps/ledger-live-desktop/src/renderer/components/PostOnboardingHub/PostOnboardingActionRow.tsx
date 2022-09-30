@@ -3,8 +3,13 @@ import { Flex, Icons, Tag, Text } from "@ledgerhq/react-ui";
 import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom";
 import { PostOnboardingActionState, PostOnboardingAction } from "@ledgerhq/types-live";
+import styled from "styled-components";
 
 export type Props = PostOnboardingAction & PostOnboardingActionState;
+
+const ActionRowWrapper = styled(Flex)<{ completed: boolean }>`
+  cursor: ${p => (p.completed ? "auto" : "pointer")};
+`;
 
 const PostOnboardingActionRow: React.FC<Props> = props => {
   const {
@@ -13,28 +18,41 @@ const PostOnboardingActionRow: React.FC<Props> = props => {
     title,
     description,
     tagLabel,
-    startEvent,
+    startAction,
     startEventProperties,
     completed,
   } = props;
   const { t } = useTranslation();
-  /*const navigation = useNavigation();
+  const history = useHistory();
 
-  const handlePress = useCallback(() => {
-    if (navigationParams) {
-      navigation.navigate(...navigationParams);
-      startEvent && track(startEvent, startEventProperties);
+  const isInsidePostOnboardingScreen = history.location.pathname === "/post-onboarding";
+
+  const handleStartAction = useCallback(() => {
+    if (navigationParams) history.push(navigationParams);
+    else if (startAction) {
+      if (isInsidePostOnboardingScreen) {
+        history.push("/");
+      }
+      startAction();
     }
-  }, [navigationParams, navigation, startEvent, startEventProperties]);*/
+  }, [history, isInsidePostOnboardingScreen, navigationParams, startAction]);
 
   return (
-    <Flex
+    <ActionRowWrapper
       flexDirection="row"
       alignItems="center"
       backgroundColor="neutral.c30"
       borderRadius={3}
       marginBottom={4}
+      completed={completed}
       padding="32px 24px 32px 24px"
+      {...(!completed
+        ? {
+            onClick: () => {
+              handleStartAction();
+            },
+          }
+        : {})}
     >
       <Flex flexDirection="row" alignItems="center" flexShrink={1}>
         <Icon size={24} color={completed ? "neutral.c70" : "primary.c80"} />
@@ -70,7 +88,7 @@ const PostOnboardingActionRow: React.FC<Props> = props => {
           <Icons.ChevronRightMedium color="primary.c80" size={16} />
         )}
       </Flex>
-    </Flex>
+    </ActionRowWrapper>
   );
 };
 

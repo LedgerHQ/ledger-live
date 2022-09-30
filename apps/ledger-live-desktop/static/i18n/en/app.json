@@ -1211,8 +1211,8 @@
     "postOnboardingContent": {
       "title": "Nice one.You're all set.",
       "description": "Here's what you can do next:",
-      "skipButton": "Skip to the app",
-      "skipButtonInDrawer": "I'll do this later"
+      "skipLink": "Skip to the app",
+      "skipLinkInDrawer": "I'll do this later"
     }
   },
   "hideNftCollection": {

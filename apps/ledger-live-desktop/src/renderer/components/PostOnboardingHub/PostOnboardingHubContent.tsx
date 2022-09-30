@@ -1,5 +1,5 @@
 import React, { useCallback } from "react";
-import { Flex, Button, Box, Text } from "@ledgerhq/react-ui";
+import { Flex, Link, Text } from "@ledgerhq/react-ui";
 import { useHistory } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { useTranslation } from "react-i18next";
@@ -19,10 +19,25 @@ const PostOnboardingHubContent = () => {
   const clearLastActionCompleted = useCallback(() => {
     dispatch(clearPostOnboardingLastActionCompleted());
   }, [dispatch]);
+
   const isInsidePostOnboardingScreen = history.location.pathname === "/post-onboarding";
 
+  // useEffect(() => clearLastActionCompleted, []);
+
+  const handleSkipButton = useCallback(() => {
+    isInsidePostOnboardingScreen ? history.push("/") : setDrawer();
+  }, [history, isInsidePostOnboardingScreen]);
+
   return (
-    <Flex flexDirection="column" justifyContent="center" height="100%" width="100%" maxWidth={450}>
+    <Flex
+      px={3}
+      ml={4}
+      flexDirection="column"
+      justifyContent="center"
+      height="100%"
+      width="100%"
+      maxWidth={450}
+    >
       {!isInsidePostOnboardingScreen && (
         <Text variant="paragraph" fontSize={48} mb={8}>
           {actionCompletedHubTitle || t("postOnboarding.postOnboardingContent.title")}
@@ -32,17 +47,15 @@ const PostOnboardingHubContent = () => {
         {t("postOnboarding.postOnboardingContent.description")}
       </Text>
       <PostOnboardingHub />
-      <Button
-        onClick={() => (isInsidePostOnboardingScreen ? history.push("/") : setDrawer())}
-        variant="color"
-        outline={true}
-        border="0px"
+      <Link
+        onClick={handleSkipButton}
+        type="color"
         width={isInsidePostOnboardingScreen ? "fit-content" : ""}
       >
         {isInsidePostOnboardingScreen
-          ? t("postOnboarding.postOnboardingContent.skipButtonInDrawer")
-          : t("postOnboarding.postOnboardingContent.skipButton")}
-      </Button>
+          ? t("postOnboarding.postOnboardingContent.skipLinkInDrawer")
+          : t("postOnboarding.postOnboardingContent.skipLink")}
+      </Link>
     </Flex>
   );
 };

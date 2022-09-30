@@ -20,7 +20,10 @@ const CompletionScreen = () => {
 
   useEffect(() => {
     dispatch(saveSettings({ hasCompletedOnboarding: true }));
-    setTimeout(() => handleInitPostOnboarding(), GO_TO_POSTONBOARDING_TIMEOUT);
+    const timeout = setTimeout(handleInitPostOnboarding, GO_TO_POSTONBOARDING_TIMEOUT);
+    return () => {
+      clearTimeout(timeout);
+    };
   }, [dispatch, handleInitPostOnboarding]);
 
   return (
