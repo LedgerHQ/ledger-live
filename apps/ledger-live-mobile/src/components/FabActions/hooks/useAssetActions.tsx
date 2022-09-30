@@ -126,7 +126,10 @@ export default function useAssetActions({
                       NavigatorName.Swap,
                       {
                         screen: ScreenName.Swap,
-                        params: { currencyId: currency?.id, defaultAccount },
+                        params: {
+                          defaultAccount,
+                          currency,
+                        },
                       },
                     ],
                     disabled: areAccountsBalanceEmpty,
