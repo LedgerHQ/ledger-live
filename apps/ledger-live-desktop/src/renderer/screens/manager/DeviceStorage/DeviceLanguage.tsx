@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from "react";
-import { Button, Flex, Icons } from "@ledgerhq/react-ui";
+import { Flex, Icons, Link } from "@ledgerhq/react-ui";
 import Text from "~/renderer/components/Text";
 import DeviceLanguageInstallation from "./DeviceLanguageInstallation";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
@@ -34,13 +34,14 @@ const DeviceLanguage: React.FC<Props> = ({ deviceInfo, device }: Props) => {
           {t("deviceLocalization.language")}
         </Text>
       </Flex>
-      <Button
+      <Link
+        type="color"
         Icon={Icons.ChevronRightMedium}
         onClick={() => setIsLanguageInstallation(true)}
         data-test-id="manager-change-language-button"
       >
         {t(`deviceLocalization.languages.${deviceLanguage}`)}
-      </Button>
+      </Link>
       <DeviceLanguageInstallation
         isOpen={isLanguageInstallationOpen}
         onClose={() => setIsLanguageInstallation(false)}
