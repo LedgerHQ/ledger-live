@@ -39,7 +39,7 @@ jobs:
 
             [Generating screenshots: workflow started](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
             `
-            await github.request("POST /repos/{owner}/{repo}/issues/{issue_number}/comments", {
+            await github.rest.issues.createComment({
               owner,
               repo,
               issue_number,
@@ -164,7 +164,7 @@ jobs:
           retries: 3
           script: |
             const {repo: {owner, repo}} = context
-            const {data: {jobs}} = await github.request("GET /repos/{owner}/{repo}/actions/runs/{run_id}/jobs", {
+            const {data: {jobs}} = await github.rest.actions.listJobsForWorkflowRun({
               owner,
               repo,
               run_id: ${{ github.run_id }},
@@ -187,7 +187,7 @@ jobs:
             `
 
             const existingComment = await github.paginate(
-              "GET /repos/{owner}/{repo}/issues/{issue_number}/comments",
+              github.rest.issues.listComments,
               {
                 owner: context.repo.owner,
                 repo: context.repo.repo,
@@ -214,7 +214,7 @@ jobs:
                 body
               });
             } else {
-              await github.request("POST /repos/{owner}/{repo}/issues/{issue_number}/comments", {
+              await github.rest.issues.createComment({
                 owner,
                 repo,
                 issue_number: ${{ github.event.inputs.number }},
