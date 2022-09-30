@@ -1,5 +1,11 @@
 # @ledgerhq/live-common
 
+## 27.3.1-nightly.1
+
+### Patch Changes
+
+- [#1256](https://github.com/LedgerHQ/ledger-live/pull/1256) [`824efb6e62`](https://github.com/LedgerHQ/ledger-live/commit/824efb6e62b4b042fef700896f0bfd54ccfee5c7) Thanks [@jackthta](https://github.com/jackthta)! - Add user friendly error if add account flow fails to fetch account balance.
+
 ## 27.3.1-nightly.0
 
 ### Patch Changes
