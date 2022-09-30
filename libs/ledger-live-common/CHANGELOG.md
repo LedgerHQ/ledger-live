@@ -1,5 +1,59 @@
 # @ledgerhq/live-common
 
+## 27.3.1
+
+### Patch Changes
+
+- [#1314](https://github.com/LedgerHQ/ledger-live/pull/1314) [`1a23c232fa`](https://github.com/LedgerHQ/ledger-live/commit/1a23c232fa21557ccd48568f4f577263bd6fc6e6) Thanks [@grsoares21](https://github.com/grsoares21)! - Add new onboarding state for the sync onboarding
+
+* [#1331](https://github.com/LedgerHQ/ledger-live/pull/1331) [`2f473b2fdf`](https://github.com/LedgerHQ/ledger-live/commit/2f473b2fdffbbe8641a90aa9ada5ad1dd048460f) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Revert minimum version for Ethereum nano app from 1.9.20 to 1.9.17
+
+* Updated dependencies [[`ecac411d7a`](https://github.com/LedgerHQ/ledger-live/commit/ecac411d7aad6f4003503ba6259d7c25017ca7aa)]:
+  - @ledgerhq/cryptoassets@6.35.1
+  - @ledgerhq/devices@7.0.3
+  - @ledgerhq/errors@6.11.1
+  - @ledgerhq/hw-app-algorand@6.27.6
+  - @ledgerhq/hw-app-btc@8.1.1
+  - @ledgerhq/hw-app-cosmos@6.27.6
+  - @ledgerhq/hw-app-eth@6.29.9
+  - @ledgerhq/hw-app-polkadot@6.27.6
+  - @ledgerhq/hw-app-solana@6.27.6
+  - @ledgerhq/hw-app-str@6.27.6
+  - @ledgerhq/hw-app-tezos@6.27.6
+  - @ledgerhq/hw-app-trx@6.27.6
+  - @ledgerhq/hw-app-xrp@6.27.6
+  - @ledgerhq/hw-transport-mocker@6.27.6
+  - @ledgerhq/hw-transport-node-speculos@6.27.6
+  - @ledgerhq/hw-transport@6.27.6
+  - @ledgerhq/logs@6.10.1
+
+## 27.3.1-next.0
+
+### Patch Changes
+
+- [#1314](https://github.com/LedgerHQ/ledger-live/pull/1314) [`1a23c232fa`](https://github.com/LedgerHQ/ledger-live/commit/1a23c232fa21557ccd48568f4f577263bd6fc6e6) Thanks [@grsoares21](https://github.com/grsoares21)! - Add new onboarding state for the sync onboarding
+
+* [#1331](https://github.com/LedgerHQ/ledger-live/pull/1331) [`2f473b2fdf`](https://github.com/LedgerHQ/ledger-live/commit/2f473b2fdffbbe8641a90aa9ada5ad1dd048460f) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Revert minimum version for Ethereum nano app from 1.9.20 to 1.9.17
+
+* Updated dependencies [[`ecac411d7a`](https://github.com/LedgerHQ/ledger-live/commit/ecac411d7aad6f4003503ba6259d7c25017ca7aa)]:
+  - @ledgerhq/cryptoassets@6.35.1-next.0
+  - @ledgerhq/devices@7.0.3-next.0
+  - @ledgerhq/errors@6.11.1-next.0
+  - @ledgerhq/hw-app-algorand@6.27.6-next.0
+  - @ledgerhq/hw-app-btc@8.1.1-next.0
+  - @ledgerhq/hw-app-cosmos@6.27.6-next.0
+  - @ledgerhq/hw-app-eth@6.29.9-next.0
+  - @ledgerhq/hw-app-polkadot@6.27.6-next.0
+  - @ledgerhq/hw-app-solana@6.27.6-next.0
+  - @ledgerhq/hw-app-str@6.27.6-next.0
+  - @ledgerhq/hw-app-tezos@6.27.6-next.0
+  - @ledgerhq/hw-app-trx@6.27.6-next.0
+  - @ledgerhq/hw-app-xrp@6.27.6-next.0
+  - @ledgerhq/hw-transport-mocker@6.27.6-next.0
+  - @ledgerhq/hw-transport-node-speculos@6.27.6-next.0
+  - @ledgerhq/hw-transport@6.27.6-next.0
+  - @ledgerhq/logs@6.10.1-next.0
+
 ## 27.3.0
 
 ### Minor Changes
