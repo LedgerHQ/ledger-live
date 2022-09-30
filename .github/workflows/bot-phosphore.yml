@@ -12,22 +12,35 @@ concurrency:
 
 jobs:
   start-runner:
-    name: "start ec2 instance (Linux)"
-    if: ${{ always() }}
-    uses: ledgerhq/actions/.github/workflows/start-linux-runner.yml@main
-    secrets:
-      CI_BOT_TOKEN: ${{ secrets.CI_BOT_TOKEN }}
+    name: Start self-hosted EC2 runner
+    runs-on: [ledger-live, linux]
+    outputs:
+      label: ${{ steps.start-ec2-linux-runner.outputs.label }}
+      ec2-instance-id: ${{ steps.start-ec2-linux-runner.outputs.ec2-instance-id }}
+    steps:
+      - name: Start EC2 Linux Runner
+        id: start-ec2-linux-runner
+        uses: LedgerHQ/actions/ec2-linux-runner@main
+        with:
+          mode: start
+          github-token: ${{ secrets.CI_BOT_TOKEN }}
+          project: ec2-runner-project-id
+          aws-nfs-logging: true
+          ami-name-filter: ledger-live-runner
+          instance-volume-size: 8
 
   stop-runner:
-    name: "stop ec2 instance (Linux)"
+    name: Stop self-hosted EC2 runner
     needs: [start-runner, run-bot]
-    uses: ledgerhq/actions/.github/workflows/stop-linux-runner.yml@main
-    if: ${{ always() }}
-    with:
-      label: ${{ needs.start-runner.outputs.label }}
-      ec2-instance-id: ${{ needs.start-runner.outputs.ec2-instance-id }}
-    secrets:
-      CI_BOT_TOKEN: ${{ secrets.CI_BOT_TOKEN }}
+    runs-on: [ledger-live, linux]
+    steps:
+      - name: Stop EC2 Linux Runner
+        uses: LedgerHQ/actions/ec2-linux-runner@main
+        with:
+          mode: stop
+          github-token: ${{ secrets.CI_BOT_TOKEN }}
+          label: ${{ needs.start-runner.outputs.label }}
+          ec2-instance-id: ${{ needs.start-runner.outputs.ec2-instance-id }}
 
   run-bot:
     runs-on: ${{ needs.start-runner.outputs.label }}
