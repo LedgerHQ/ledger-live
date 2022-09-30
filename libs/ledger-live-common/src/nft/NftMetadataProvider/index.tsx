@@ -17,6 +17,10 @@ import { getCurrencyBridge } from "../../bridge";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import type { NFT, ProtoNFT } from "@ledgerhq/types-live";
 
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
 const NftMetadataContext = createContext<NFTMetadataContextType>({
   cache: {},
   loadNFTMetadata: () => Promise.resolve(),
@@ -156,12 +160,15 @@ export function NftMetadataProvider({
         }));
 
         try {
+          console.log("begin: nft load metadata", contract);
           const { status, result } =
             await currencyBridge.nftResolvers.nftMetadata({
               contract,
               tokenId,
               currencyId: currency.id,
             });
+          await sleep(4000);
+          console.log("finish: nft load metadata", contract, result);
 
           switch (status) {
             case 500:
@@ -230,11 +237,14 @@ export function NftMetadataProvider({
         }));
 
         try {
+          console.log("begin: nft collection load metadata", contract);
           const { status, result } =
             await currencyBridge.nftResolvers.collectionMetadata({
               contract,
               currencyId: currency.id,
             });
+          await sleep(4000);
+          console.log("finish: nft collection load metadata", contract, result);
 
           switch (status) {
             case 500:
