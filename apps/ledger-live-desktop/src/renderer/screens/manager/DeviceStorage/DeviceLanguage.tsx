@@ -35,7 +35,7 @@ const DeviceLanguage: React.FC<Props> = ({ deviceInfo, device }: Props) => {
         </Text>
       </Flex>
       <Link
-        type="color"
+        type="main"
         Icon={Icons.ChevronRightMedium}
         onClick={() => setIsLanguageInstallation(true)}
         data-test-id="manager-change-language-button"
