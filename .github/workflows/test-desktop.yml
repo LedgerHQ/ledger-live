@@ -205,7 +205,7 @@ jobs:
               {
                 owner: context.repo.owner,
                 repo: context.repo.repo,
-                issue_number: ${{ github.event.inputs.number }},
+                issue_number: context.issue.number,
               },
               (response, done) => {
                 const comments = response.data
@@ -216,7 +216,7 @@ jobs:
                 if (existingComment) {
                   done()
                   return existingComment;
-                };
+                }
               }
             ).then(resPerPage => resPerPage.find(res => !!res));
             if (existingComment) {
