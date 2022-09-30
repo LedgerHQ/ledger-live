@@ -214,20 +214,23 @@ jobs:
         uses: ledgerhq/ledger-live/tools/actions/prepare-comment-screenshots@develop
         with:
           images: images.json
-      - name: edit comment
+      - name: create/update comment
         uses: actions/github-script@v6
-        if: ${{ steps.exists.outputs.result != 'false' }}
         with:
           script: |
-            await github.rest.issues.updateComment({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              comment_id: ${{ steps.exists.outputs.result }},
-              body: `${{ env.comment_header }}\n${{ steps.comment.outputs.body }}`
-            });
-      - name: create comment
-        if: ${{ steps.exists.outputs.result == 'false' }}
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          gh pr comment ${{ github.event.number }} --body "${{ env.comment_header }}\n${{ steps.comment.outputs.body }}"
+            const body = `${{ env.comment_header }}\n${{ steps.comment.outputs.body }}`;
+            if (${{ steps.exists.outputs.result }} !== "false") {
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: ${{ steps.exists.outputs.result }},
+                body,
+              });
+            } else {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body,
+              })
+            }
