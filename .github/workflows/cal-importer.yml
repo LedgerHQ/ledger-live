@@ -53,9 +53,10 @@ jobs:
       - name: Configure AWS Credentials (staging)
         uses: aws-actions/configure-aws-credentials@v1
         with:
-          aws-access-key-id: ${{ secrets.LEDGER_LIVE_ASSETS_SA_KEY_ID_STG }}
-          aws-secret-access-key: ${{ secrets.LEDGER_LIVE_ASSETS_SA_ACCESS_KEY_STG }}
+          role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_STG }}:role/ledger-live-assets-sa-role
           aws-region: eu-west-1
+          role-duration-seconds: 3600
+          role-session-name: ledger-live-assets-sa
       - name: Deploy json to s3
         run: aws s3 sync ./cal/ s3://ledger-live-cryptoassets-stg/cryptoassets --delete
       - name: Cache invalidate
