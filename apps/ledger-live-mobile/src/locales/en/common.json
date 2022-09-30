@@ -727,6 +727,9 @@
     "ImageProcessingError": {
       "title": "Processing of the image failed",
       "description": "Please try again with another image"
+    },
+    "HederaAddAccountError": {
+      "title": "Your account has not been added. Please try again."
     }
   },
   "bluetooth": {
