@@ -361,12 +361,7 @@ const envDefinitions = {
     desc: "how much time to timeout a GET http call",
   },
   HELIUM_API_ENDPOINT: {
-    def: "https://api.helium.io/v1",
-    parser: stringParser,
-    desc: "Helium API url",
-  },
-  HELIUM_API_KEY: {
-    def: "",
+    def: "https://helium.coin.ledger.com/",
     parser: stringParser,
     desc: "Helium API url",
   },

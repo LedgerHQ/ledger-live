@@ -32,7 +32,6 @@ export async function fetch(
     url,
     headers: {
       "User-Agent": "LedgerLive",
-      apiKey: getEnv("HELIUM_API_KEY"),
     },
   });
   return data;
