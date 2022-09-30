@@ -59,7 +59,6 @@ const filecoinSpecs: AppSpec<Transaction> = {
     {
       name: "Transfer Max",
       maxRun: 1,
-      testDestination: genericTestDestination,
       transaction: ({ account, siblings, bridge }) => {
         return {
           transaction: bridge.createTransaction(account),
