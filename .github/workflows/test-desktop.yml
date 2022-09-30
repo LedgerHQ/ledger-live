@@ -166,25 +166,6 @@ jobs:
     if: ${{ always()  && !cancelled() && github.event.pull_request != '' && !fromJSON(needs.pr-is-fork.outputs.pr-is-fork) }}
     steps:
       - uses: actions/checkout@v3
-      - name: check if comment already exists exists
-        uses: actions/github-script@v6
-        id: exists
-        with:
-          result-encoding: string
-          script: |
-            const comments = await github.rest.issues.listComments({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              issue_number: context.issue.number,
-            });
-
-            const exists = comments.data
-              .find(comment =>
-                comment.user.login === 'github-actions[bot]' &&
-                comment.body.startsWith(`${{ env.comment_header }}`)
-              );
-
-            return exists?.id ?? 'false';
       - name: download images artifacts
         uses: actions/download-artifact@v3
         with:
@@ -219,11 +200,30 @@ jobs:
         with:
           script: |
             const body = `${{ env.comment_header }}\n${{ steps.comment.outputs.body }}`;
-            if (${{ steps.exists.outputs.result }} !== "false") {
+            const existingComment = await github.paginate(
+              github.rest.issues.listComments,
+              {
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: ${{ github.event.inputs.number }},
+              },
+              (response, done) => {
+                const comments = response.data
+                const existingComment = comments
+                  .find(comment =>
+                    comment.user.login === 'github-actions[bot]' &&
+                    comment.body.startsWith(`${{ env.comment_header }}`));
+                if (existingComment) {
+                  done()
+                  return existingComment;
+                };
+              }
+            ).then(resPerPage => resPerPage.find(res => !!res));
+            if (existingComment) {
               await github.rest.issues.updateComment({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
-                comment_id: ${{ steps.exists.outputs.result }},
+                comment_id: existingComment?.id,
                 body,
               });
             } else {
