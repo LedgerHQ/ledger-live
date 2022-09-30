@@ -1,5 +1,15 @@
 # @ledgerhq/hw-app-polkadot
 
+## 6.27.6
+
+### Patch Changes
+
+- [#1356](https://github.com/LedgerHQ/ledger-live/pull/1356) [`ecac411d7a`](https://github.com/LedgerHQ/ledger-live/commit/ecac411d7aad6f4003503ba6259d7c25017ca7aa) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Updated readme.md of packages
+
+- Updated dependencies [[`ecac411d7a`](https://github.com/LedgerHQ/ledger-live/commit/ecac411d7aad6f4003503ba6259d7c25017ca7aa)]:
+  - @ledgerhq/errors@6.11.1
+  - @ledgerhq/hw-transport@6.27.6
+
 ## 6.27.6-next.0
 
 ### Patch Changes
