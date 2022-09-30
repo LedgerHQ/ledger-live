@@ -30,25 +30,39 @@ jobs:
       token: ${{ secrets.COMMON_READ_ORG }}
 
   start-runner:
+    name: Start self-hosted EC2 runner
+    runs-on: [ledger-live, linux]
     needs: [pr-is-fork]
     if: ${{ !fromJSON(needs.pr-is-fork.outputs.pr-is-fork) }}
-    name: "start ec2 instance"
-    uses: ledgerhq/ledger-live/.github/workflows/start-linux-runner.yml@develop
-    with:
-      instance-type: c5.4xlarge
-    secrets:
-      CI_BOT_TOKEN: ${{ secrets.CI_BOT_TOKEN }}
+    outputs:
+      label: ${{ steps.start-ec2-linux-runner.outputs.label }}
+      ec2-instance-id: ${{ steps.start-ec2-linux-runner.outputs.ec2-instance-id }}
+    steps:
+      - name: Start EC2 Linux Runner
+        id: start-ec2-linux-runner
+        uses: LedgerHQ/actions/ec2-linux-runner@main
+        with:
+          mode: start
+          github-token: ${{ secrets.CI_BOT_TOKEN }}
+          project: 2049
+          aws-nfs-logging: true
+          ami-name-filter: ledger-live-runner
+          instance-volume-size: 30
+          instance-type: c5.4xlarge
 
   stop-runner:
-    name: "stop ec2 instance"
+    name: Stop self-hosted EC2 runner
     if: ${{ always() && needs.start-runner.result == 'success' && !fromJSON(needs.pr-is-fork.outputs.pr-is-fork) }}
-    needs: [pr-is-fork, start-runner, build-desktop-app-linux]
-    uses: ledgerhq/ledger-live/.github/workflows/stop-linux-runner.yml@develop
-    with:
-      label: ${{ needs.start-runner.outputs.label }}
-      ec2-instance-id: ${{ needs.start-runner.outputs.ec2-instance-id }}
-    secrets:
-      CI_BOT_TOKEN: ${{ secrets.CI_BOT_TOKEN }}
+    needs: [start-runner, pr-is-fork, build-desktop-app-linux]
+    runs-on: [ledger-live, linux]
+    steps:
+      - name: Stop EC2 Linux Runner
+        uses: LedgerHQ/actions/ec2-linux-runner@main
+        with:
+          mode: stop
+          github-token: ${{ secrets.CI_BOT_TOKEN }}
+          label: ${{ needs.start-runner.outputs.label }}
+          ec2-instance-id: ${{ needs.start-runner.outputs.ec2-instance-id }}
 
   build-desktop-app-linux:
     name: "Build Ledger Live Desktop (Linux)"
