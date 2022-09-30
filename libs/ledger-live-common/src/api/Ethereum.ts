@@ -24,23 +24,23 @@ export type Block = {
 export type Tx = {
   hash: string;
   transaction_type: number;
-  status?: BigNumber;
+  status?: string;
   // 0: fail, 1: success
   confirmations?: number;
   received_at?: string;
   nonce: string;
-  value: BigNumber;
-  gas: BigNumber;
-  gas_price: BigNumber;
+  value: string;
+  gas: string;
+  gas_price: string;
   from: string;
   to: string;
-  cumulative_gas_used?: BigNumber;
-  gas_used?: BigNumber;
+  cumulative_gas_used?: string;
+  gas_used?: string;
   transfer_events?: Array<{
     contract: string;
     from: string;
     to: string;
-    count: BigNumber;
+    count: string;
     decimal?: number;
     symbol?: string;
   }>;
@@ -69,15 +69,15 @@ export type Tx = {
   actions?: Array<{
     from: string;
     to: string;
-    value: BigNumber;
-    gas?: BigNumber;
-    gas_used?: BigNumber;
+    value: string;
+    gas?: string;
+    gas_used?: string;
     error?: string;
     input?: string;
   }>;
   block?: {
     hash: string;
-    height: BigNumber;
+    height: number;
     time: string;
   };
 };
@@ -118,7 +118,7 @@ export type API = {
     address: string,
     block_hash: string | null | undefined,
     batch_size?: number
-  ) => Promise<{ txs: Tx[] }>;
+  ) => Promise<Tx[]>;
   getCurrentBlock: () => Promise<Block>;
   getAccountNonce: (address: string) => Promise<number>;
   broadcastTransaction: (signedTransaction: string) => Promise<string>;
@@ -154,31 +154,6 @@ export type API = {
   getBlockByHash: (blockHash: string) => Promise<BlockByHashOutput | undefined>;
 };
 
-function adaptTx(apiTx): Tx {
-  return {
-    ...apiTx,
-    value: new BigNumber(apiTx.value),
-    gas: new BigNumber(apiTx.gas),
-    gas_price: new BigNumber(apiTx.gas_price),
-    cumulative_gas_used: new BigNumber(apiTx.cumulative_gas_used),
-    gas_used: new BigNumber(apiTx.gas_used),
-    block: {
-      ...apiTx.block,
-      height: new BigNumber(apiTx.block.height),
-    },
-    transfer_events: apiTx.transfer_events.map((event) => ({
-      ...event,
-      count: new BigNumber(event.count),
-    })),
-    actions: apiTx.actions.map((action) => ({
-      ...action,
-      value: new BigNumber(action.count),
-      gas: new BigNumber(action.gas),
-      gas_used: new BigNumber(action.gas_used),
-    })),
-  };
-}
-
 export const apiForCurrency = (currency: CryptoCurrency): API => {
   const baseURL = blockchainBaseURL(currency);
 
@@ -205,7 +180,7 @@ export const apiForCurrency = (currency: CryptoCurrency): API => {
         }),
       });
 
-      return { txs: data.data.map((tx) => adaptTx(tx)) };
+      return data.data;
     },
 
     async getCurrentBlock() {

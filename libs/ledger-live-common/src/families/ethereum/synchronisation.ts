@@ -232,7 +232,7 @@ const txToOps =
     const value = new BigNumber(tx.value);
     const fee = new BigNumber(tx.gas_price).times(tx.gas_used || 0);
     const hasFailed = new BigNumber(tx.status || 0).eq(0);
-    const blockHeight = block && block.height.toNumber();
+    const blockHeight = block && block.height;
     const blockHash = block && block.hash;
     const date = tx.received_at ? new Date(tx.received_at) : new Date();
     const transactionSequenceNumber = parseInt(tx.nonce);
@@ -243,6 +243,7 @@ const txToOps =
           .map((action, i) => {
             const actionFrom = safeEncodeEIP55(action.from);
             const actionTo = safeEncodeEIP55(action.to);
+            const actionValue = new BigNumber(action.value);
 
             // Since explorer is considering also wrapping tx as an internal action,
             // we must filter it by considering that only internal action with same data,
@@ -250,13 +251,12 @@ const txToOps =
             if (
               actionFrom === from &&
               actionTo === to &&
-              tx.value.eq(action.value)
+              value.eq(actionValue)
             ) {
               return;
             }
 
             const receiving = addr === actionTo;
-            const value = action.value;
             const fee = new BigNumber(0);
 
             if (receiving) {
@@ -264,7 +264,7 @@ const txToOps =
                 id: `${id}-${hash}-i${i}`,
                 hash,
                 type: "IN",
-                value,
+                actionValue,
                 fee,
                 blockHeight,
                 blockHash,
@@ -277,7 +277,7 @@ const txToOps =
               };
             }
           })
-          .filter(Boolean) as Operation[]);
+          .filter(Boolean) as unknown as Operation[]);
     // We are putting the sub operations in place for now, but they will later be exploded out of the operations back to their token accounts
     const subOperations = !transfer_events
       ? []
@@ -297,7 +297,7 @@ const txToOps =
           );
           if (!token) return [];
           const accountId = encodeTokenAccountId(id, token);
-          const value = event.count;
+          const value = new BigNumber(event.count);
           const all: Operation[] = [];
 
           if (sending) {
@@ -583,14 +583,14 @@ const fetchCurrentBlock = ((perCurrencyId) => (currency) => {
 // FIXME we need to figure out how to optimize this
 // but nothing can easily be done until we have a better api
 const fetchAllTransactions = async (api: API, address, blockHash) => {
-  let r;
+  let getTransactionsResult: Tx[];
   let txs: Tx[] = [];
   let maxIteration = 20; // safe limit
 
   do {
-    r = await api.getTransactions(address, blockHash);
-    if (r.txs.length === 0) return txs;
-    txs = txs.concat(r.txs);
+    getTransactionsResult = await api.getTransactions(address, blockHash);
+    if (getTransactionsResult.length === 0) return txs;
+    txs = txs.concat(getTransactionsResult);
     blockHash = txs[txs.length - 1].block?.hash;
 
     if (!blockHash) {
