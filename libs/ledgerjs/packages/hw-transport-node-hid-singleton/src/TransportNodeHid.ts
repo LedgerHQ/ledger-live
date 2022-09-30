@@ -153,7 +153,7 @@ export default class TransportNodeHidSingleton extends TransportNodeHidNoEvents 
         new HID.HID(device.path as string)
       );
       const unlisten = listenDevices(
-        () => { },
+        () => {},
         () => {
           // assume any ledger disconnection concerns current transport
           if (transportInstance) {
