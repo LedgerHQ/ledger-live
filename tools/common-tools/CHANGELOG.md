@@ -1,18 +1,30 @@
 # live-common-tools
 
-## 0.2.9-nightly.1
+## 0.2.9
 
 ### Patch Changes
 
-- Updated dependencies [[`824efb6e62`](https://github.com/LedgerHQ/ledger-live/commit/824efb6e62b4b042fef700896f0bfd54ccfee5c7)]:
-  - @ledgerhq/live-common@27.3.1-nightly.1
+- Updated dependencies [[`1a23c232fa`](https://github.com/LedgerHQ/ledger-live/commit/1a23c232fa21557ccd48568f4f577263bd6fc6e6), [`2f473b2fdf`](https://github.com/LedgerHQ/ledger-live/commit/2f473b2fdffbbe8641a90aa9ada5ad1dd048460f), [`ecac411d7a`](https://github.com/LedgerHQ/ledger-live/commit/ecac411d7aad6f4003503ba6259d7c25017ca7aa)]:
+  - @ledgerhq/live-common@27.3.1
+  - @ledgerhq/cryptoassets@6.35.1
+  - @ledgerhq/hw-transport-http@6.27.6
+  - @ledgerhq/hw-transport-web-ble@6.27.6
+  - @ledgerhq/hw-transport-webhid@6.27.6
+  - @ledgerhq/hw-transport-webusb@6.27.6
+  - @ledgerhq/hw-transport@6.27.6
 
-## 0.2.9-nightly.0
+## 0.2.9-next.0
 
 ### Patch Changes
 
-- Updated dependencies [[`f6854a3fd7`](https://github.com/LedgerHQ/ledger-live/commit/f6854a3fd79a28eb5507796b69105c85b40bbe98)]:
-  - @ledgerhq/live-common@27.3.1-nightly.0
+- Updated dependencies [[`1a23c232fa`](https://github.com/LedgerHQ/ledger-live/commit/1a23c232fa21557ccd48568f4f577263bd6fc6e6), [`2f473b2fdf`](https://github.com/LedgerHQ/ledger-live/commit/2f473b2fdffbbe8641a90aa9ada5ad1dd048460f), [`ecac411d7a`](https://github.com/LedgerHQ/ledger-live/commit/ecac411d7aad6f4003503ba6259d7c25017ca7aa)]:
+  - @ledgerhq/live-common@27.3.1-next.0
+  - @ledgerhq/cryptoassets@6.35.1-next.0
+  - @ledgerhq/hw-transport-http@6.27.6-next.0
+  - @ledgerhq/hw-transport-web-ble@6.27.6-next.0
+  - @ledgerhq/hw-transport-webhid@6.27.6-next.0
+  - @ledgerhq/hw-transport-webusb@6.27.6-next.0
+  - @ledgerhq/hw-transport@6.27.6-next.0
 
 ## 0.2.8
 
