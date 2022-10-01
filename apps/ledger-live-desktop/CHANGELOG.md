@@ -1,5 +1,14 @@
 # ledger-live-desktop
 
+## 2.48.1-nightly.2
+
+### Patch Changes
+
+- [#1415](https://github.com/LedgerHQ/ledger-live/pull/1415) [`c5a0be496f`](https://github.com/LedgerHQ/ledger-live/commit/c5a0be496f465d5f482af5b21dcacc92e5570808) Thanks [@gre](https://github.com/gre)! - introduce getOperatingSystemSupportStatus() to ignore sentry reporting on old unsupported OSs
+
+- Updated dependencies [[`bd884848bd`](https://github.com/LedgerHQ/ledger-live/commit/bd884848bd3dc2ef3cb5ea4df0127ff8ec6be8b7)]:
+  - @ledgerhq/live-common@27.3.2-nightly.0
+
 ## 2.48.1-nightly.1
 
 ### Patch Changes

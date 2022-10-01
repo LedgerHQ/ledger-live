@@ -1,5 +1,11 @@
 # @ledgerhq/live-common
 
+## 27.3.2-nightly.0
+
+### Patch Changes
+
+- [#1420](https://github.com/LedgerHQ/ledger-live/pull/1420) [`bd884848bd`](https://github.com/LedgerHQ/ledger-live/commit/bd884848bd3dc2ef3cb5ea4df0127ff8ec6be8b7) Thanks [@gre](https://github.com/gre)! - Tezos: properly remap 'not enough balance' errors
+
 ## 27.3.1
 
 ### Patch Changes

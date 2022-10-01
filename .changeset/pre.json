@@ -77,33 +77,12 @@
     "@actions/turborepo-gh-cache": "1.0.0"
   },
   "changesets": [
-    "blue-ducks-learn",
-    "cool-wombats-dance",
-    "dirty-dragons-share-mobile",
-    "happy-garlics-kick",
-    "hip-beans-tease",
-    "honest-games-allow-mobile",
-    "large-numbers-remain",
-    "late-spies-knock",
-    "perfect-coins-float",
-    "perfect-weeks-burn",
-    "plenty-guests-beg",
-    "plenty-oranges-flash",
-    "poor-books-rest-mobile",
-    "rich-carrots-cheer",
-    "rich-pugs-switch",
-    "rich-snakes-turn",
-    "selfish-countries-burn-mobile",
-    "selfish-schools-end",
+    "flat-kangaroos-warn",
     "shiny-forks-mix",
+    "six-moons-change",
     "six-socks-leave",
     "stale-actors-compare",
     "strong-teachers-sing",
-    "stupid-months-tie",
-    "stupid-shirts-smoke",
-    "tiny-shrimps-promise",
-    "twelve-pianos-shop",
-    "twenty-ants-serve",
-    "wild-otters-live"
+    "twelve-pianos-shop"
   ]
 }
