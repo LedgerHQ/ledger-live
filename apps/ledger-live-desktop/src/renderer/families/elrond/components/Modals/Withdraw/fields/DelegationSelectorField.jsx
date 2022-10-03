@@ -115,7 +115,7 @@ const DelegationSelectorField = (props: Props) => {
   useEffect(() => {
     const [defaultOption] = options;
 
-    if (defaultOption && !transaction.recipient && transaction.amount.isEqualTo(0)) {
+    if (defaultOption && !Boolean(transaction.recipient) && transaction.amount.isEqualTo(0)) {
       onUpdateTransaction((transaction: Transaction): AccountBridge<Transaction> =>
         bridge.updateTransaction(transaction, {
           recipient: defaultOption.contract,

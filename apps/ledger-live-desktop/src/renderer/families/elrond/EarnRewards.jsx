@@ -121,7 +121,7 @@ const Delegation = (props: Props) => {
     setDelegationResources(account.elrondResources.delegations || []);
 
     return () => setDelegationResources(account.elrondResources.delegations || []);
-  }, [account.elrondResources.delegations]);
+  }, [JSON.stringify(account.elrondResources.delegations)]);
 
   const onEarnRewards = useCallback(() => {
     dispatch(

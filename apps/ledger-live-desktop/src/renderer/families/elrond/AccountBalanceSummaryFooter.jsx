@@ -43,7 +43,7 @@ const Summary = (props: Props) => {
     setDelegationResources(account.elrondResources.delegations || []);
 
     return () => setDelegationResources(account.elrondResources.delegations || []);
-  }, [account.elrondResources.delegations]);
+  }, [JSON.stringify(account.elrondResources.delegations)]);
 
   const available = useMemo((): BigNumber => account.spendableBalance, [account.spendableBalance]);
   const delegations = useMemo(

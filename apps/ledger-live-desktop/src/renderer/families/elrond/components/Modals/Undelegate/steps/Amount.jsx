@@ -65,7 +65,7 @@ const StepAmount = (props: StepProps) => {
         amount: value,
       }),
     );
-  }, [bridge, onUpdateTransaction, value]);
+  }, []);
 
   return (
     <Box flow={1}>

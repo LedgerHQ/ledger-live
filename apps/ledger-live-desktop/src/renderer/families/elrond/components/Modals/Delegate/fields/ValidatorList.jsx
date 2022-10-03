@@ -91,23 +91,25 @@ const ValidatorList = (props: Props) => {
     const sort = (validator: ValidatorType) => (validator.contract === constants.figment ? -1 : 1);
     const items = validators.sort(sort).map(disable);
 
-    return search ? items.filter(filter) : items;
-  }, [validators, search]);
+    return Boolean(search) ? items.filter(filter) : items;
+  }, [validators, constants.figment, search]);
 
   const defaultValidator = useMemo(
     () =>
       providers.filter(provider =>
-        transaction.recipient
+        Boolean(transaction.recipient)
           ? provider.contract === transaction.recipient
           : provider.contract === constants.figment,
       ),
-    [providers, transaction.recipient],
+    [search, providers, showAll],
   );
 
   const isActiveValidator = useCallback(
     (contract: string) =>
-      transaction.recipient ? contract === transaction.recipient : contract === constants.figment,
-    [transaction.recipient],
+      Boolean(transaction.recipient)
+        ? contract === transaction.recipient
+        : contract === constants.figment,
+    [transaction.recipient, constants.figment],
   );
 
   const renderItem = useCallback(
@@ -123,7 +125,7 @@ const ValidatorList = (props: Props) => {
           }}
         />
       ) : null,
-    [onSelectValidator, account, unit, isActiveValidator],
+    [ValidatorItem, onSelectValidator, account, unit, isActiveValidator],
   );
 
   const onSearch = useCallback(

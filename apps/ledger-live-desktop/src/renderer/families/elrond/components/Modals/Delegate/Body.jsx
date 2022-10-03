@@ -31,27 +31,27 @@ import type { Account, Operation } from "@ledgerhq/live-common/types/index";
 import type { DelegationType, ValidatorType } from "~/renderer/families/elrond/types";
 import type { StepProps, St } from "./types";
 
-interface OwnProps {
-  stepId: StepId;
-  onClose: () => void;
-  onChangeStepId: (step: StepId) => void;
+interface OwnProps {|
+  stepId: StepId,
+  onClose: () => void,
+  onChangeStepId: StepId => void,
   params: {
     account: Account,
     parentAccount: ?Account,
     validators?: Array<ValidatorType>,
     delegations?: Array<DelegationType>,
-  };
-  name: string;
-}
+  },
+  name: string,
+|};
 
-interface StateProps {
-  t: TFunction;
-  device: ?Device;
-  accounts: Account[];
-  device: ?Device;
-  closeModal: (name: string) => void;
-  openModal: (name: string) => void;
-}
+interface StateProps {|
+  t: TFunction,
+  device: ?Device,
+  accounts: Account[],
+  device: ?Device,
+  closeModal: string => void,
+  openModal: string => void,
+|};
 
 type Props = OwnProps & StateProps;
 
@@ -95,16 +95,23 @@ const mapDispatchToProps = {
 };
 
 const Body = (props: Props) => {
-  const { t, stepId, device, closeModal, openModal, onChangeStepId, params, name } = props;
+  const {
+    t,
+    stepId,
+    device,
+    closeModal,
+    openModal,
+    onChangeStepId,
+    params,
+    name,
+  } = props
 
   const [optimisticOperation, setOptimisticOperation] = useState(null);
   const [transactionError, setTransactionError] = useState(null);
   const [signed, setSigned] = useState(false);
   const dispatch = useDispatch();
 
-  const defaultValidator: ValidatorType | undefined = params.validators.find(
-    validator => validator.contract === constants.figment,
-  );
+  const defaultValidator: ValidatorType | undefined = params.validators.find(validator => validator.contract === constants.figment)
 
   const {
     transaction,
@@ -125,7 +132,7 @@ const Body = (props: Props) => {
       account,
       parentAccount: undefined,
       transaction: bridge.updateTransaction(transaction, {
-        recipient: defaultValidator ? defaultValidator.contract : "",
+        recipient: defaultValidator ? defaultValidator.contract : ''
       }),
     };
   });

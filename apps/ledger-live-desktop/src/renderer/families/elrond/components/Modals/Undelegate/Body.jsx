@@ -11,6 +11,7 @@ import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { SyncSkipUnderPriority } from "@ledgerhq/live-common/bridge/react/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 
+
 import logger from "~/logger/logger";
 import { updateAccountWithUpdater } from "~/renderer/actions/accounts";
 import { closeModal, openModal } from "~/renderer/actions/modals";
@@ -23,25 +24,26 @@ import type { AccountBridge, Operation } from "@ledgerhq/types-live";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import type { ValidatorType } from "~/renderer/families/elrond/types";
 
-interface OwnProps {
-  account: Account;
-  stepId: StepId;
-  onClose: () => void;
-  onChangeStepId: (step: StepId) => void;
-  contract: string;
-  validators: Array<ValidatorType>;
-  name: string;
-  amount: string;
-}
 
-interface StateProps {
-  t: TFunction;
-  device: ?Device;
-  accounts: Account[];
-  device: ?Device;
-  closeModal: (name: string) => void;
-  openModal: (name: string) => void;
-}
+interface OwnProps {|
+  account: Account,
+  stepId: StepId,
+  onClose: () => void,
+  onChangeStepId: StepId => void,
+  contract: string,
+  validators: Array<ValidatorType>,
+  name: string,
+  amount: string,
+|};
+
+interface StateProps {|
+  t: TFunction,
+  device: ?Device,
+  accounts: Account[],
+  device: ?Device,
+  closeModal: string => void,
+  openModal: string => void,
+|};
 
 type Props = OwnProps & StateProps;
 
@@ -177,7 +179,7 @@ const Body = (props: Props) => {
       <Track onUnmount={true} event="CloseModalUndelegation" />
     </Stepper>
   );
-};
+}
 
 const C: React$ComponentType<OwnProps> = compose(
   connect(mapStateToProps, mapDispatchToProps),
