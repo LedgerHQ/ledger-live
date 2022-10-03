@@ -19,51 +19,56 @@ There are two modes of usage of this library.
 
 #### Table of Contents
 
-*   [getAbandonSeedAddress](#getabandonseedaddress)
-    *   [Parameters](#parameters)
-*   [registerCryptoCurrency](#registercryptocurrency)
-    *   [Parameters](#parameters-1)
-*   [listCryptoCurrencies](#listcryptocurrencies)
-    *   [Parameters](#parameters-2)
-*   [findCryptoCurrency](#findcryptocurrency)
-    *   [Parameters](#parameters-3)
-*   [findCryptoCurrencyByScheme](#findcryptocurrencybyscheme)
-    *   [Parameters](#parameters-4)
-*   [findCryptoCurrencyByTicker](#findcryptocurrencybyticker)
-    *   [Parameters](#parameters-5)
-*   [findCryptoCurrencyById](#findcryptocurrencybyid)
-    *   [Parameters](#parameters-6)
-*   [findCryptoCurrencyByKeyword](#findcryptocurrencybykeyword)
-    *   [Parameters](#parameters-7)
-*   [hasCryptoCurrencyId](#hascryptocurrencyid)
-    *   [Parameters](#parameters-8)
-*   [getCryptoCurrencyById](#getcryptocurrencybyid)
-    *   [Parameters](#parameters-9)
-*   [findExchangeCurrencyConfig](#findexchangecurrencyconfig)
-    *   [Parameters](#parameters-10)
-*   [hasFiatCurrencyTicker](#hasfiatcurrencyticker)
-    *   [Parameters](#parameters-11)
-*   [findFiatCurrencyByTicker](#findfiatcurrencybyticker)
-    *   [Parameters](#parameters-12)
-*   [getFiatCurrencyByTicker](#getfiatcurrencybyticker)
-    *   [Parameters](#parameters-13)
-*   [listFiatCurrencies](#listfiatcurrencies)
-*   [listTokens](#listtokens)
-    *   [Parameters](#parameters-14)
-*   [listTokensForCryptoCurrency](#listtokensforcryptocurrency)
-    *   [Parameters](#parameters-15)
-*   [listTokenTypesForCryptoCurrency](#listtokentypesforcryptocurrency)
-    *   [Parameters](#parameters-16)
-*   [findTokenByTicker](#findtokenbyticker)
-    *   [Parameters](#parameters-17)
-*   [findTokenById](#findtokenbyid)
-    *   [Parameters](#parameters-18)
-*   [hasTokenId](#hastokenid)
-    *   [Parameters](#parameters-19)
-*   [getTokenById](#gettokenbyid)
-    *   [Parameters](#parameters-20)
-*   [findCompoundToken](#findcompoundtoken)
-    *   [Parameters](#parameters-21)
+- [@ledgerhq/cryptoassets](#ledgerhqcryptoassets)
+- [Usage](#usage)
+- [API](#api)
+    - [Table of Contents](#table-of-contents)
+  - [getAbandonSeedAddress](#getabandonseedaddress)
+    - [Parameters](#parameters)
+  - [registerCryptoCurrency](#registercryptocurrency)
+    - [Parameters](#parameters-1)
+  - [listCryptoCurrencies](#listcryptocurrencies)
+    - [Parameters](#parameters-2)
+  - [findCryptoCurrency](#findcryptocurrency)
+    - [Parameters](#parameters-3)
+  - [findCryptoCurrencyByScheme](#findcryptocurrencybyscheme)
+    - [Parameters](#parameters-4)
+  - [findCryptoCurrencyByTicker](#findcryptocurrencybyticker)
+    - [Parameters](#parameters-5)
+  - [findCryptoCurrencyById](#findcryptocurrencybyid)
+    - [Parameters](#parameters-6)
+  - [findCryptoCurrencyByKeyword](#findcryptocurrencybykeyword)
+    - [Parameters](#parameters-7)
+  - [hasCryptoCurrencyId](#hascryptocurrencyid)
+    - [Parameters](#parameters-8)
+  - [getCryptoCurrencyById](#getcryptocurrencybyid)
+    - [Parameters](#parameters-9)
+  - [findExchangeCurrencyConfig](#findexchangecurrencyconfig)
+    - [Parameters](#parameters-10)
+  - [hasFiatCurrencyTicker](#hasfiatcurrencyticker)
+    - [Parameters](#parameters-11)
+  - [findFiatCurrencyByTicker](#findfiatcurrencybyticker)
+    - [Parameters](#parameters-12)
+  - [getFiatCurrencyByTicker](#getfiatcurrencybyticker)
+    - [Parameters](#parameters-13)
+  - [listFiatCurrencies](#listfiatcurrencies)
+  - [listTokens](#listtokens)
+    - [Parameters](#parameters-14)
+  - [listTokensForCryptoCurrency](#listtokensforcryptocurrency)
+    - [Parameters](#parameters-15)
+  - [listTokenTypesForCryptoCurrency](#listtokentypesforcryptocurrency)
+    - [Parameters](#parameters-16)
+  - [findTokenByTicker](#findtokenbyticker)
+    - [Parameters](#parameters-17)
+  - [findTokenById](#findtokenbyid)
+    - [Parameters](#parameters-18)
+  - [hasTokenId](#hastokenid)
+    - [Parameters](#parameters-19)
+  - [getTokenById](#gettokenbyid)
+    - [Parameters](#parameters-20)
+  - [findCompoundToken](#findcompoundtoken)
+    - [Parameters](#parameters-21)
+- [Maintainance notes](#maintainance-notes)
 
 ### getAbandonSeedAddress
 
@@ -262,9 +267,14 @@ Import crypto assets data guide:
 
 https://ledgerhq.atlassian.net/wiki/spaces/WALLETCO/pages/3256516784/How+to+import+crypto-assets+data+in+Ledger+Live
 
-To regenerate data:
+Regenerate data:
 
     node script/crypto-assets-importer/index.js ~/dev/crypto-assets
     node script/crypto-assets-importer/tron/sync-trc10-tokens.js
 
 NB: currencies, trc20 and asa are currently manually maintained.
+
+Update test and snapshots in the monorepo:
+
+https://ledgerhq.atlassian.net/wiki/spaces/WALLETCO/pages/3740205141/CAL+updates
+
