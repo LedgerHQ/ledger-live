@@ -115,6 +115,7 @@ Object {
               "XPUBVersion": 76067358,
             },
             "blockAvgTime": 900,
+            "bypassAppDependency": true,
             "coinType": 0,
             "color": "#ffae35",
             "explorerViews": Array [
@@ -654,6 +655,7 @@ Object {
           "XPUBVersion": 76067358,
         },
         "blockAvgTime": 900,
+        "bypassAppDependency": true,
         "coinType": 0,
         "color": "#ffae35",
         "explorerViews": Array [
@@ -2430,6 +2432,7 @@ Object {
           "XPUBVersion": 76067358,
         },
         "blockAvgTime": 900,
+        "bypassAppDependency": true,
         "coinType": 0,
         "color": "#ffae35",
         "explorerViews": Array [
@@ -4771,6 +4774,7 @@ Object {
           "XPUBVersion": 76067358,
         },
         "blockAvgTime": 900,
+        "bypassAppDependency": true,
         "coinType": 0,
         "color": "#ffae35",
         "explorerViews": Array [
@@ -5411,6 +5415,7 @@ Object {
           "XPUBVersion": 76067358,
         },
         "blockAvgTime": 900,
+        "bypassAppDependency": true,
         "coinType": 0,
         "color": "#ffae35",
         "explorerViews": Array [
