@@ -67,7 +67,7 @@ const NftCardView = ({
                   numberOfLines={1}
                   style={styles.nftName}
                 >
-                  {displayText(metadata?.nftName?.toUpperCase())}
+                  {displayText(metadata?.nftName)}
                 </LText>
                 <LText
                   semiBold
@@ -87,6 +87,7 @@ const NftCardView = ({
                   color={colors.neutral.c80}
                   ellipsizeMode="tail"
                   numberOfLines={1}
+                  ml={2}
                 >
                   {displayText(metadata?.tokenName)}
                 </LText>
