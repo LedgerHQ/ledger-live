@@ -184,15 +184,6 @@ describe("xpub integration sync", () => {
       explorerVersion: "v3",
     },
     {
-      xpub: "xpub6Bhj2H9zg68KeE7hVg8KmoNqWev9vXKnsM3mVUhxVKN5QdNAtDjvWBGUJmMhxoPAhobfafg5Uux6xLcD2gpKKQdxot2T2jWpLUS3mhZruim",
-      derivationMode: DerivationModes.LEGACY,
-      addresses: 1,
-      balance: 100000000,
-      network: coininfo.bitcoin.main.toBitcoinJS(),
-      coin: "xsn",
-      explorerVersion: "v3",
-    },
-    {
       xpub: "v4PKUB8jAMVY8DsF9CrC5pT4kn1rsHtJY1ehtLSMemakWdMHHwdF5tsQXqQWov93ngSX1GUc1y7x91obdRtu9Bpyk3vqMWKnU9QLpYEjuVqLJy9T",
       derivationMode: DerivationModes.LEGACY,
       addresses: 1,

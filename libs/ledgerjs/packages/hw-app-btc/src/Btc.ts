@@ -36,7 +36,7 @@ export default class Btc {
     currency?: string;
   }) {
     this._transport = transport;
-    transport.decorateAppAPIMethods(
+    this._transport.decorateAppAPIMethods(
       this,
       [
         "getWalletXpub",

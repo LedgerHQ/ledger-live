@@ -22,7 +22,7 @@ export async function runSignTransaction(
 ): Promise<string> {
   const btcNew = new BtcNew(client);
   // btc is needed to perform some functions like splitTransaction.
-  const btc = new Btc(transport);
+  const btc = new Btc({ transport });
   const accountType = getAccountType(testTx.vin[0], btc);
   const additionals: string[] = [];
   if (accountType == StandardPurpose.p2wpkh) {
