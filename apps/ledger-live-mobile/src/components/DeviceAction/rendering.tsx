@@ -443,11 +443,13 @@ export function renderError({
 export function renderConnectYourDevice({
   t,
   unresponsive,
+  isLocked = false,
   device,
   theme,
   onSelectDeviceLink,
 }: RawProps & {
   unresponsive: boolean;
+  isLocked?: boolean;
   device: Device;
   onSelectDeviceLink?: () => void;
 }) {
@@ -457,7 +459,7 @@ export function renderConnectYourDevice({
         <Animation
           source={getDeviceAnimation({
             device,
-            key: unresponsive ? "enterPinCode" : "plugAndPinCode",
+            key: isLocked || unresponsive ? "enterPinCode" : "plugAndPinCode",
             theme,
           })}
         />
@@ -467,7 +469,7 @@ export function renderConnectYourDevice({
       )}
       <TitleText>
         {t(
-          unresponsive
+          isLocked || unresponsive
             ? "DeviceAction.unlockDevice"
             : device.wired
             ? "DeviceAction.connectAndUnlockDevice"

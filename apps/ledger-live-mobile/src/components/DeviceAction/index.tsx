@@ -62,6 +62,7 @@ export default function DeviceAction<R, H, P>({
     appAndVersion,
     device,
     unresponsive,
+    isLocked,
     error,
     isLoading,
     allowManagerRequestedWording,
@@ -96,12 +97,14 @@ export default function DeviceAction<R, H, P>({
     progress,
     listingApps,
   } = status;
+
   useEffect(() => {
     if (deviceInfo) {
       dispatch(
         setLastSeenDeviceInfo({
           modelId: device.modelId,
           deviceInfo,
+          apps: [],
         }),
       );
     }
@@ -306,11 +309,12 @@ export default function DeviceAction<R, H, P>({
     });
   }
 
-  if ((!isLoading && !device) || unresponsive) {
+  if ((!isLoading && !device) || unresponsive || isLocked) {
     return renderConnectYourDevice({
       t,
       device: selectedDevice,
       unresponsive,
+      isLocked,
       colors,
       theme,
       onSelectDeviceLink,
