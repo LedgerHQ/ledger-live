@@ -1182,6 +1182,10 @@
     "blackfriday": {
       "title": "BLACK FRIDAY ",
       "description": "Enjoy 40% off Ledger hardware wallets with the promo code BLACKFRIDAY20"
+    },
+    "referralProgram": {
+      "title": "Refer and earn $10",
+      "description": "Successfully refer a friend and you both earn $10 worth of Bitcoin."
     }
   },
   "signmessage": {
@@ -3591,8 +3595,8 @@
       "zh": "Chinese",
       "de": "German",
       "tr": "Turkish",
-      "ja": "Japanese", 
-      "ko": "Korean", 
+      "ja": "Japanese",
+      "ko": "Korean",
       "pt": "Portuguese"
     }
   },
