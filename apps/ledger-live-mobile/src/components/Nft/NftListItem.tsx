@@ -1,22 +1,30 @@
 import React, { memo, useMemo } from "react";
 import { RectButton } from "react-native-gesture-handler";
-import { View, StyleSheet } from "react-native";
+import { StyleSheet } from "react-native";
 import { useNftMetadata } from "@ledgerhq/live-common/nft/index";
 
 import { NFTMetadata, ProtoNFT } from "@ledgerhq/types-live";
 import { NFTResource } from "@ledgerhq/live-common/nft/NftMetadataProvider/types";
-import { Flex } from "@ledgerhq/native-ui";
-import { useTheme } from "styled-components/native";
+import { Box, Flex, Text } from "@ledgerhq/native-ui";
+
+import styled from "styled-components/native";
 import { getCryptoCurrencyById } from "@ledgerhq/live-common/lib/currencies/";
+
 import CurrencyIcon from "../CurrencyIcon";
 import NftMedia from "./NftMedia";
-import LText from "../LText";
 import Skeleton from "../Skeleton";
 
 type Props = {
   nft: ProtoNFT;
   style?: any;
 };
+
+const StyledRectButton = styled(RectButton)`
+  margin-bottom: 8;
+  border-radius: 4;
+  width: 160;
+  background-color: ${props => props.theme.colors.background.main};
+`;
 
 const displayText = (text?: string | null) => text ?? "--";
 
@@ -31,7 +39,6 @@ const NftCardView = ({
   status: NFTResource["status"];
   metadata: NFTMetadata;
 }) => {
-  const { colors } = useTheme();
   const loading = status === "loading";
 
   const currency = useMemo(
@@ -40,63 +47,47 @@ const NftCardView = ({
   );
 
   return (
-    <View style={style}>
-      <RectButton
-        style={[
-          styles.card,
-          {
-            backgroundColor: colors.background.main,
-          },
-        ]}
-        onPress={() => console.log("Go to Collection")}
-      >
+    <Box style={style}>
+      <StyledRectButton onPress={() => console.log("Go to Collection")}>
         <NftMedia
           style={styles.image}
           metadata={metadata}
           mediaFormat={"preview"}
           status={status}
         />
-        <View style={styles.nftNameContainer}>
+        <Box height={36} mb={4}>
           <Skeleton style={styles.skeleton} loading={loading}>
             <Flex flexDirection="column">
-              <Flex flexDirection="row" alignItems="center">
-                <LText
-                  semiBold
-                  color={colors.neutral.c100}
-                  ellipsizeMode="tail"
-                  numberOfLines={1}
-                  style={styles.nftName}
-                >
-                  {displayText(metadata?.nftName)}
-                </LText>
-                <LText
-                  semiBold
-                  color={colors.neutral.c100}
-                  ellipsizeMode="tail"
-                  numberOfLines={1}
-                  style={styles.nftTokenID}
-                >
-                  {` #${displayText(nft.tokenId)}`}
-                </LText>
-              </Flex>
+              <Text
+                variant="body"
+                fontWeight="medium"
+                color="neutral.c100"
+                ellipsizeMode="tail"
+                numberOfLines={1}
+              >
+                {displayText(metadata?.nftName)}
+                {` #${displayText(nft.tokenId)}`}
+              </Text>
 
               <Flex flexDirection="row" alignItems="center">
                 <CurrencyIcon currency={currency} size={20} />
-                <LText
-                  style={styles.tokenName}
-                  color={colors.neutral.c80}
+
+                <Text
+                  variant="paragraph"
+                  fontWeight="medium"
+                  color="neutral.c80"
                   ellipsizeMode="tail"
                   numberOfLines={1}
                   ml={2}
                 >
                   {displayText(metadata?.tokenName)}
-                </LText>
+                </Text>
               </Flex>
             </Flex>
           </Skeleton>
-        </View>
-      </RectButton>
-    </View>
+        </Box>
+      </StyledRectButton>
+    </Box>
   );
 };
 
@@ -116,11 +107,6 @@ const NftListItem = ({ nft, style }: Props) => {
 };
 
 const styles = StyleSheet.create({
-  card: {
-    marginBottom: 8,
-    borderRadius: 4,
-    width: 160,
-  },
   skeleton: {
     height: 8,
     width: 115,
@@ -134,25 +120,6 @@ const styles = StyleSheet.create({
     aspectRatio: 1,
     overflow: "hidden",
     height: 160,
-  },
-  nftNameContainer: {
-    height: 36,
-    marginBottom: 4,
-  },
-  nftName: {
-    lineHeight: 18,
-    fontSize: 14,
-    width: "65%",
-  },
-  nftTokenID: {
-    lineHeight: 18,
-    fontSize: 14,
-    width: "35%",
-  },
-  tokenName: {
-    fontSize: 13,
-    lineHeight: 15.75,
-    width: "90%",
   },
 });
 
