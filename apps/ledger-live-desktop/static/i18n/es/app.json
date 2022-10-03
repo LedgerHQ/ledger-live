@@ -237,16 +237,16 @@
     "form" : {
       "changeCTA" : "Cambiar",
       "rates" : {
-        "title" : "Proveedores",
+        "title" : "Quotes",
         "registration" : "Es necesario registrarse ",
         "noRegistration" : "No es necesario registrarse",
         "fixed" : "Fija",
-        "float" : "Variable",
+        "float" : "Floating",
         "update" : "Las tasas se actualizarán en",
         "loading" : "Cargando...",
         "name" : {
           "title" : "Proveedor",
-          "tooltip" : "Dependiendo del proveedor, es posible que tengas que crear una cuenta para iniciar sesión"
+          "tooltip" : "Depending on the provider, you have to register with them by creating an account."
         },
         "rate" : {
           "title" : "Tasa de cambio",
@@ -5021,6 +5021,9 @@
     },
     "StellarSourceHasMultiSign" : {
       "title" : "Desactiva la multifirma para realizar transacciones de Stellar."
+    },
+    "HederaAddAccountError" : {
+      "title" : "Your account has not been added. Please try again."
     }
   },
   "cryptoOrg" : {
