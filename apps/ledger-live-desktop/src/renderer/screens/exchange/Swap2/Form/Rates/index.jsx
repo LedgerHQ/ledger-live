@@ -95,9 +95,22 @@ export default function ProviderRate({
       }
       setRate(selectedRate || (rates && rates[0]) || {});
     }
-    setEmptyState(!providerRef.current?.children.length);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filter]);
+
+  useEffect(() => {
+    const hasCentralise =
+      rates &&
+      rates.some(rate => {
+        return filter.every(item => [FILTER.centralised, rate.tradeMethod].includes(item));
+      });
+    const hasDecentralise =
+      decentralizedSwapAvailable &&
+      DEX_PROVIDERS.some((rate, index) => {
+        return filter.every(item => [FILTER.decentralised, FILTER.float].includes(item));
+      });
+    setEmptyState(!hasCentralise && !hasDecentralise);
+  }, [decentralizedSwapAvailable, filter, rates]);
 
   return (
     <Box height="100%" width="100%">
