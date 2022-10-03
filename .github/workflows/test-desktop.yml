@@ -14,6 +14,9 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
+env:
+  comment_header: <!-- test-desktop-report -->
+
 jobs:
   pr-is-fork:
     name: "Check if the PR is a fork"
@@ -163,21 +166,6 @@ jobs:
     if: ${{ always()  && !cancelled() && github.event.pull_request != '' && !fromJSON(needs.pr-is-fork.outputs.pr-is-fork) }}
     steps:
       - uses: actions/checkout@v3
-      - name: check if comment already exists exists
-        uses: actions/github-script@v6
-        id: exists
-        with:
-          result-encoding: string
-          script: |
-            const comments = await github.rest.issues.listComments({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              issue_number: context.issue.number,
-            });
-
-            const exists = comments.data.find(comment => comment.user.login === 'github-actions[bot]');
-
-            return exists?.id ?? 'false';
       - name: download images artifacts
         uses: actions/download-artifact@v3
         with:
@@ -207,20 +195,42 @@ jobs:
         uses: ledgerhq/ledger-live/tools/actions/prepare-comment-screenshots@develop
         with:
           images: images.json
-      - name: edit comment
+      - name: create/update comment
         uses: actions/github-script@v6
-        if: ${{ steps.exists.outputs.result != 'false' }}
         with:
           script: |
-            await github.rest.issues.updateComment({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              comment_id: ${{ steps.exists.outputs.result }},
-              body: `${{ steps.comment.outputs.body }}`
-            });
-      - name: create comment
-        if: ${{ steps.exists.outputs.result == 'false' }}
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          gh pr comment ${{ github.event.number }} --body "${{ steps.comment.outputs.body }}"
+            const body = `${{ env.comment_header }}\n${{ steps.comment.outputs.body }}`;
+            const existingComment = await github.paginate(
+              github.rest.issues.listComments,
+              {
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+              },
+              (response, done) => {
+                const comments = response.data
+                const existingComment = comments
+                  .find(comment =>
+                    comment.user.login === 'github-actions[bot]' &&
+                    comment.body.startsWith(`${{ env.comment_header }}`));
+                if (existingComment) {
+                  done()
+                  return existingComment;
+                }
+              }
+            ).then(resPerPage => resPerPage.find(res => !!res));
+            if (existingComment) {
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: existingComment?.id,
+                body,
+              });
+            } else {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body,
+              })
+            }

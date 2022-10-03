@@ -237,16 +237,16 @@
     "form": {
       "changeCTA": "Change",
       "rates": {
-        "title": "Providers",
+        "title": "Quotes",
         "registration": "Registration required ",
         "noRegistration": "No registration required",
         "fixed": "Fixed",
-        "float": "Float",
+        "float": "Floating",
         "update": "Rates update in",
         "loading": "Loading...",
         "name": {
           "title": "Provider",
-          "tooltip": "Depending on the provider, you have to sign in with them by creating an account."
+          "tooltip": "Depending on the provider, you have to register with them by creating an account."
         },
         "rate": {
           "title": "Exchange rate",
@@ -4799,7 +4799,7 @@
     },
     "EthAppNftNotSupported": {
       "title": "Operation not available for this device",
-      "description": "Send NFT feature is only available for Nano X. Please visit our customer support platform to know how to send a NFT with a Nano S or S Plus."
+      "description": "Send NFT feature is only available for Nano X and Nano S+. Please visit our customer support platform to know how to send a NFT with a Nano S."
     },
     "CantScanQRCode": {
       "title": "Couldn't scan this QR code: auto-verification not supported by this address"
@@ -5057,6 +5057,9 @@
     },
     "StellarSourceHasMultiSign": {
       "title": "Please disable multisign to make Stellar transactions"
+    },
+    "HederaAddAccountError": {
+      "title": "Your account has not been added. Please try again."
     }
   },
   "cryptoOrg": {
