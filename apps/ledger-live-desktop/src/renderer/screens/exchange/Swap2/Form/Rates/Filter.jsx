@@ -16,7 +16,7 @@ const Container: ThemedComponent<{}> = styled(Box).attrs(() => ({}))`
   margin: 10px 0;
 `;
 
-export const Btn: ThemedComponent<{}> = styled(Button).attrs((p) => {
+export const Btn: ThemedComponent<{}> = styled(Button).attrs(p => {
   return {
     key: p.key,
     primary: p.selected,
@@ -29,12 +29,11 @@ export const Btn: ThemedComponent<{}> = styled(Button).attrs((p) => {
   margin-right: 12px;
   padding: 0 12px;
   height: 32px;
-  color: ${(p) => (p.selected ? p.theme.colors.neutral.c00 : p.theme.colors.neutral.c100)};
-  background-color: ${(p) =>
-    p.selected ? p.theme.colors.primary.c80 : p.theme.colors.neutral.c30};
+  color: ${p => (p.selected ? p.theme.colors.neutral.c00 : p.theme.colors.neutral.c100)};
+  background-color: ${p => (p.selected ? p.theme.colors.primary.c80 : p.theme.colors.neutral.c30)};
   &:active,
   &:hover {
-    color: ${(p) => (p.selected ? p.theme.colors.primary.c80 : p.theme.colors.neutral.c100)};
+    color: ${p => (p.selected ? p.theme.colors.primary.c80 : p.theme.colors.neutral.c100)};
   }
 `;
 
@@ -42,24 +41,22 @@ export default function ProviderRate({ onClick }: Props) {
   const [filter, setFilter] = useState([]);
 
   const updateFilter = useCallback(
-    (type) => {
+    type => {
       let newFilter = [];
       if (filter.includes(type)) {
-        newFilter = filter.filter((e) => e !== type);
+        newFilter = filter.filter(e => e !== type);
         setFilter(newFilter);
       } else {
         setFilter([type, ...filter]);
         newFilter = [type, ...filter];
       }
       // If centralised & decentralised filters are active, these 2 filters will not be applied
-      if ([FILTER.centralised, FILTER.decentralised].every((elem) => newFilter.includes(elem))) {
-        newFilter = newFilter.filter(
-          (f) => ![FILTER.centralised, FILTER.decentralised].includes(f),
-        );
+      if ([FILTER.centralised, FILTER.decentralised].every(elem => newFilter.includes(elem))) {
+        newFilter = newFilter.filter(f => ![FILTER.centralised, FILTER.decentralised].includes(f));
       }
       // If fixed & float filters are active, these 2 filters will not be applied
-      if ([FILTER.fixed, FILTER.float].every((elem) => newFilter.includes(elem))) {
-        newFilter = newFilter.filter((f) => ![FILTER.fixed, FILTER.float].includes(f));
+      if ([FILTER.fixed, FILTER.float].every(elem => newFilter.includes(elem))) {
+        newFilter = newFilter.filter(f => ![FILTER.fixed, FILTER.float].includes(f));
       }
       onClick(newFilter);
     },
