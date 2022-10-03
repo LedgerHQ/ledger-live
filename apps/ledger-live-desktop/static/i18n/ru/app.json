@@ -237,7 +237,7 @@
     "form" : {
       "changeCTA" : "Изменить",
       "rates" : {
-        "title" : "Операторы",
+        "title" : "Курсы",
         "registration" : "Необходима регистрация ",
         "noRegistration" : "Регистрация не нужна",
         "fixed" : "Фиксированный",
@@ -246,7 +246,7 @@
         "loading" : "Загружаем...",
         "name" : {
           "title" : "Оператор",
-          "tooltip" : "Некоторые операторы требуют авторизацию с помощью учётной записи."
+          "tooltip" : "Некоторые операторы требуют регистрации путём создания учётной записи."
         },
         "rate" : {
           "title" : "Курс",
@@ -4763,7 +4763,7 @@
     },
     "EthAppNftNotSupported" : {
       "title" : "Операция недоступна на этом устройстве",
-      "description" : "Send NFT feature is only available for Nano X and Nano S+. Please visit our customer support platform to know how to send a NFT with a Nano S."
+      "description" : "Функция отправки NFT доступна только в Nano X и Nano S Plus. Пожалуйста, обратитесь в Поддержку, чтобы узнать, как отправлять NFT с Nano S."
     },
     "CantScanQRCode" : {
       "title" : "Не удалось сканировать этот QR-код: этот адрес не поддерживает автопроверку."
@@ -5021,6 +5021,9 @@
     },
     "StellarSourceHasMultiSign" : {
       "title" : "Отключите функцию мультиподписи, чтобы проводить транзакции в Stellar"
+    },
+    "HederaAddAccountError" : {
+      "title" : "Your account has not been added. Please try again."
     }
   },
   "cryptoOrg" : {
