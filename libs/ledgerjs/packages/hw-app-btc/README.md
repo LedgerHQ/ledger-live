@@ -127,7 +127,7 @@ Bitcoin API.
 
 ```javascript
 import Btc from "@ledgerhq/hw-app-btc";
-const btc = new Btc(transport)
+const btc = new Btc({ transport, currency: "bitcoin" });
 ```
 
 #### getWalletXpub
@@ -389,7 +389,7 @@ Bitcoin API.
 
 ```javascript
 import Btc from "@ledgerhq/hw-app-btc";
-const btc = new Btc(transport)
+const btc = new Btc({ transport, currency: "zcash" });
 ```
 
 #### getWalletPublicKey

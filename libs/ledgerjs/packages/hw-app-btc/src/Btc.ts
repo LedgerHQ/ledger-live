@@ -19,7 +19,7 @@ import { signMessage } from "./signMessage";
  *
  * @example
  * import Btc from "@ledgerhq/hw-app-btc";
- * const btc = new Btc(transport)
+ * const btc = new Btc({ transport, currency: "bitcoin" });
  */
 
 export default class Btc {

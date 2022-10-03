@@ -14,7 +14,7 @@ export type { AddressFormat };
  *
  * @example
  * import Btc from "@ledgerhq/hw-app-btc";
- * const btc = new Btc(transport)
+ * const btc = new Btc({ transport, currency: "zcash" });
  */
 
 export default class BtcOld {
