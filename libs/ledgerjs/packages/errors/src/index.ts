@@ -281,6 +281,7 @@ export const StatusCodes = {
   GP_AUTH_FAILED: 0x6300,
   LICENSING: 0x6f42,
   HALTED: 0x6faa,
+  LOCKED_DEVICE: 0x5515,
 };
 
 export function getAltStatusMessage(code: number): string | undefined | null {
@@ -298,6 +299,8 @@ export function getAltStatusMessage(code: number): string | undefined | null {
       return "Invalid data received";
     case 0x6b00:
       return "Invalid parameter received";
+    case 0x5515:
+      return "Locked device";
   }
   if (0x6f00 <= code && code <= 0x6fff) {
     return "Internal error, please report";
