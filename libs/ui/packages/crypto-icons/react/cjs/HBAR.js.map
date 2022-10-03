@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["../../src/react/HBAR.tsx"],
+  "sourcesContent": ["import * as React from \"react\";\nimport Svg from \"./StyledSvg\";\ntype Props = {\n  size?: number | string;\n  color?: string;\n};\nconst DefaultColor = \"#000\";\n\nfunction HBAR({\n  size = 16,\n  color = DefaultColor\n}: Props): JSX.Element {\n  return <Svg width={size} height={size} viewBox=\"0 0 24 24\" fill={color}><path d=\"M22 23h-3.124v-6.785H5.124V23H2V1h3.124v6.621h13.752V1H22v22zM5.272 13.677h13.751v-3.505H5.272v3.505z\"  /></Svg>;\n}\n\nHBAR.DefaultColor = DefaultColor;\nexport default HBAR;"],
+  "mappings": ";;;;;;;;;;;;;;;;;;;;;;;AAAA;AAAA;AAAA;AAAA,YAAuB;AACvB,uBAAgB;AAKhB,MAAM,eAAe;AAErB,cAAc;AAAA,EACZ,OAAO;AAAA,EACP,QAAQ;AAAA,GACa;AACrB,SAAO,oCAAC,0BAAD;AAAA,IAAK,OAAO;AAAA,IAAM,QAAQ;AAAA,IAAM,SAAQ;AAAA,IAAY,MAAM;AAAA,KAAO,oCAAC,QAAD;AAAA,IAAM,GAAE;AAAA;AAAA;AAGlF,KAAK,eAAe;AACpB,IAAO,eAAQ;",
+  "names": []
+}

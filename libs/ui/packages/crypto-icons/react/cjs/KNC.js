@@ -1,0 +1,45 @@
+var __create = Object.create;
+var __defProp = Object.defineProperty;
+var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
+var __getOwnPropNames = Object.getOwnPropertyNames;
+var __getProtoOf = Object.getPrototypeOf;
+var __hasOwnProp = Object.prototype.hasOwnProperty;
+var __markAsModule = (target) => __defProp(target, "__esModule", { value: true });
+var __export = (target, all) => {
+  __markAsModule(target);
+  for (var name in all)
+    __defProp(target, name, { get: all[name], enumerable: true });
+};
+var __reExport = (target, module2, desc) => {
+  if (module2 && typeof module2 === "object" || typeof module2 === "function") {
+    for (let key of __getOwnPropNames(module2))
+      if (!__hasOwnProp.call(target, key) && key !== "default")
+        __defProp(target, key, { get: () => module2[key], enumerable: !(desc = __getOwnPropDesc(module2, key)) || desc.enumerable });
+  }
+  return target;
+};
+var __toModule = (module2) => {
+  return __reExport(__markAsModule(__defProp(module2 != null ? __create(__getProtoOf(module2)) : {}, "default", module2 && module2.__esModule && "default" in module2 ? { get: () => module2.default, enumerable: true } : { value: module2, enumerable: true })), module2);
+};
+__export(exports, {
+  default: () => KNC_default
+});
+var React = __toModule(require("react"));
+var import_StyledSvg = __toModule(require("./StyledSvg"));
+const DefaultColor = "#188C92";
+function KNC({
+  size = 16,
+  color = DefaultColor
+}) {
+  return /* @__PURE__ */ React.createElement(import_StyledSvg.default, {
+    width: size,
+    height: size,
+    viewBox: "0 0 24 24",
+    fill: color
+  }, /* @__PURE__ */ React.createElement("path", {
+    d: "M16.002 15.773a.409.409 0 00-.028.42l-4.445 3.478a.444.444 0 00-.197-.088l-.135-8.562a.443.443 0 00.135-.053l4.67 4.805zm.125-.119l-4.667-4.802a.408.408 0 00.065-.355l4.745-2.31a.435.435 0 00.242.15l-.236 7.258a.445.445 0 00-.149.06v-.001zm-5.055 3.958l-2.513-3.377a.412.412 0 000-.574.43.43 0 00-.28-.133l-.784-7.1a.425.425 0 00.33-.41.411.411 0 00-.098-.266l3.154-3.385c.04.023.085.04.133.05v5.778a.425.425 0 00-.35.413.428.428 0 00.357.415l.135 8.562a.452.452 0 00-.084.027zm.118-9.417V4.418a.442.442 0 00.205-.101l4.82 3.431a.407.407 0 00-.026.29l-4.743 2.31a.441.441 0 00-.256-.153zm-.088-6.445c.145 0 .263.113.263.253a.257.257 0 01-.263.253.258.258 0 01-.262-.253c0-.14.117-.253.262-.253zM7.387 7.766c.146 0 .263.112.263.252a.258.258 0 01-.263.254.258.258 0 01-.262-.254c0-.14.118-.253.263-.253zm.85 7.928c.146 0 .263.114.263.254a.258.258 0 01-.263.253.258.258 0 01-.262-.253c0-.14.117-.254.262-.254zm8.376-8.021c.144 0 .262.113.262.252a.257.257 0 01-.262.254.258.258 0 01-.263-.254c0-.14.117-.252.262-.252zm-5.51 2.682c.144 0 .262.113.262.253a.257.257 0 01-.263.253.258.258 0 01-.262-.253c0-.14.117-.253.262-.253zm.148 9.389c.145 0 .262.113.262.253a.258.258 0 01-.262.253.258.258 0 01-.263-.253c0-.14.118-.253.263-.253zm5.116-3.99c.145 0 .263.113.263.253a.258.258 0 01-.263.253.258.258 0 01-.262-.253c0-.14.117-.253.262-.253z"
+  }));
+}
+KNC.DefaultColor = DefaultColor;
+var KNC_default = KNC;
+//# sourceMappingURL=KNC.js.map

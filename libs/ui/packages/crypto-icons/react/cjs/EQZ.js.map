@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["../../src/react/EQZ.tsx"],
+  "sourcesContent": ["import * as React from \"react\";\nimport Svg from \"./StyledSvg\";\ntype Props = {\n  size?: number | string;\n  color?: string;\n};\nconst DefaultColor = \"#3A4AFF\";\n\nfunction EQZ({\n  size = 16,\n  color = DefaultColor\n}: Props): JSX.Element {\n  return <Svg width={size} height={size} viewBox=\"0 0 24 24\" fill={color}><path fillRule=\"evenodd\" clipRule=\"evenodd\" d=\"M12 21a9 9 0 110-18 9 9 0 010 18zM7.14 9.038c0 .529 2.174.957 4.856.957s4.856-.428 4.856-.957c0-.528-2.174-.957-4.856-.957s-4.856.429-4.856.957zm4.856 3.873c-2.682 0-4.856-.428-4.856-.957 0-.528 2.174-.957 4.856-.957s4.856.429 4.856.957c0 .529-2.174.957-4.856.957zm-4.856 2.052c0 .529 2.174.957 4.856.957s4.856-.428 4.856-.957c0-.528-2.174-.957-4.856-.957s-4.856.429-4.856.957z\"  /></Svg>;\n}\n\nEQZ.DefaultColor = DefaultColor;\nexport default EQZ;"],
+  "mappings": ";;;;;;;;;;;;;;;;;;;;;;;AAAA;AAAA;AAAA;AAAA,YAAuB;AACvB,uBAAgB;AAKhB,MAAM,eAAe;AAErB,aAAa;AAAA,EACX,OAAO;AAAA,EACP,QAAQ;AAAA,GACa;AACrB,SAAO,oCAAC,0BAAD;AAAA,IAAK,OAAO;AAAA,IAAM,QAAQ;AAAA,IAAM,SAAQ;AAAA,IAAY,MAAM;AAAA,KAAO,oCAAC,QAAD;AAAA,IAAM,UAAS;AAAA,IAAU,UAAS;AAAA,IAAU,GAAE;AAAA;AAAA;AAGxH,IAAI,eAAe;AACnB,IAAO,cAAQ;",
+  "names": []
+}

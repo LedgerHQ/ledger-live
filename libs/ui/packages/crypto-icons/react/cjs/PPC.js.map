@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["../../src/react/PPC.tsx"],
+  "sourcesContent": ["import * as React from \"react\";\nimport Svg from \"./StyledSvg\";\ntype Props = {\n  size?: number | string;\n  color?: string;\n};\nconst DefaultColor = \"#fff\";\n\nfunction PPC({\n  size = 16,\n  color = DefaultColor\n}: Props): JSX.Element {\n  return <Svg width={size} height={size} viewBox=\"0 0 24 24\" fill={color}><path fillRule=\"evenodd\" clipRule=\"evenodd\" d=\"M6.75 5.625c9.07.335 12.567 5.78 10.811 10.637-.497 1.352-1.026 2.093-2.137 2.863.045-.195.091-.39.127-.59.657-3.79-.588-8.35-6.684-10.87 4.85 2.886 6.806 8.021 4.545 11.336-3.85.605-6.662-2.682-6.662-6.47V5.626z\"  /><path fillRule=\"evenodd\" clipRule=\"evenodd\" d=\"M6.375 5.25c9.07.335 12.567 5.78 10.811 10.637-.497 1.352-1.026 2.093-2.137 2.863.045-.195.091-.39.127-.59.657-3.79-.588-8.35-6.684-10.87 4.85 2.886 6.807 8.021 4.545 11.336-3.85.605-6.662-2.682-6.662-6.47V5.25z\"  /></Svg>;\n}\n\nPPC.DefaultColor = DefaultColor;\nexport default PPC;"],
+  "mappings": ";;;;;;;;;;;;;;;;;;;;;;;AAAA;AAAA;AAAA;AAAA,YAAuB;AACvB,uBAAgB;AAKhB,MAAM,eAAe;AAErB,aAAa;AAAA,EACX,OAAO;AAAA,EACP,QAAQ;AAAA,GACa;AACrB,SAAO,oCAAC,0BAAD;AAAA,IAAK,OAAO;AAAA,IAAM,QAAQ;AAAA,IAAM,SAAQ;AAAA,IAAY,MAAM;AAAA,KAAO,oCAAC,QAAD;AAAA,IAAM,UAAS;AAAA,IAAU,UAAS;AAAA,IAAU,GAAE;AAAA,MAA0N,oCAAC,QAAD;AAAA,IAAM,UAAS;AAAA,IAAU,UAAS;AAAA,IAAU,GAAE;AAAA;AAAA;AAGhY,IAAI,eAAe;AACnB,IAAO,cAAQ;",
+  "names": []
+}

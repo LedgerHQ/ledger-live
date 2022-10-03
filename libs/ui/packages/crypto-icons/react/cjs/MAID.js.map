@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["../../src/react/MAID.tsx"],
+  "sourcesContent": ["import * as React from \"react\";\nimport Svg from \"./StyledSvg\";\ntype Props = {\n  size?: number | string;\n  color?: string;\n};\nconst DefaultColor = \"#5592D7\";\n\nfunction MAID({\n  size = 16,\n  color = DefaultColor\n}: Props): JSX.Element {\n  return <Svg width={size} height={size} viewBox=\"0 0 24 24\" fill={color}><path d=\"M15.975 9.527v9.73l-8.217-4.73c-2.43-1.423-2.276-2.308-2.276-4.23l8.447 4.884v-4.462l2.045-1.192z\"  /><path opacity={0.6} d=\"M13.93 15.18l-8.447-4.884 8.215-4.73c2.43-1.385 3.125-.808 4.822.154l-8.447 4.884 3.857 2.23v2.347z\"  /><path opacity={0.2} d=\"M10.073 10.604L18.52 5.72v9.46c0 2.809-.848 3.116-2.545 4.078v-9.73l-3.897 2.23-2.006-1.154z\"  /></Svg>;\n}\n\nMAID.DefaultColor = DefaultColor;\nexport default MAID;"],
+  "mappings": ";;;;;;;;;;;;;;;;;;;;;;;AAAA;AAAA;AAAA;AAAA,YAAuB;AACvB,uBAAgB;AAKhB,MAAM,eAAe;AAErB,cAAc;AAAA,EACZ,OAAO;AAAA,EACP,QAAQ;AAAA,GACa;AACrB,SAAO,oCAAC,0BAAD;AAAA,IAAK,OAAO;AAAA,IAAM,QAAQ;AAAA,IAAM,SAAQ;AAAA,IAAY,MAAM;AAAA,KAAO,oCAAC,QAAD;AAAA,IAAM,GAAE;AAAA,MAAuG,oCAAC,QAAD;AAAA,IAAM,SAAS;AAAA,IAAK,GAAE;AAAA,MAAyG,oCAAC,QAAD;AAAA,IAAM,SAAS;AAAA,IAAK,GAAE;AAAA;AAAA;AAG9U,KAAK,eAAe;AACpB,IAAO,eAAQ;",
+  "names": []
+}
