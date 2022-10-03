@@ -237,16 +237,16 @@
     "form" : {
       "changeCTA" : "변경",
       "rates" : {
-        "title" : "공급자",
+        "title" : "Quotes",
         "registration" : "등록이 필요합니다 ",
         "noRegistration" : "등록이 필요하지 않습니다",
         "fixed" : "고정",
-        "float" : "변동",
+        "float" : "Floating",
         "update" : "요율 업데이트 날짜",
         "loading" : "로딩 중...",
         "name" : {
           "title" : "공급자",
-          "tooltip" : "제공업체에 따라 계정을 생성하여 로그인해야 합니다."
+          "tooltip" : "Depending on the provider, you have to register with them by creating an account."
         },
         "rate" : {
           "title" : "환율",
@@ -5042,6 +5042,9 @@
     },
     "StellarSourceHasMultiSign" : {
       "title" : "스텔라 트랜잭션을 수행하려면 다중서명을 비활성화하세요"
+    },
+    "HederaAddAccountError" : {
+      "title" : "Your account has not been added. Please try again."
     }
   },
   "cryptoOrg" : {
