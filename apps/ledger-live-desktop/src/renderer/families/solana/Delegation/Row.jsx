@@ -88,7 +88,7 @@ export function Row({ account, stakeWithMeta, onManageAction, onExternalLink }: 
     action => {
       onManageAction(stakeWithMeta, action.key);
     },
-    [onManageAction],
+    [onManageAction, stakeWithMeta],
   );
 
   const { stake, meta } = stakeWithMeta;

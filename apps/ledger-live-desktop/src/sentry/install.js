@@ -3,6 +3,7 @@ import os from "os";
 import pname from "~/logger/pname";
 import anonymizer from "~/logger/anonymizer";
 import "../env";
+import { getOperatingSystemSupportStatus } from "~/support/os";
 
 /* eslint-disable no-continue */
 
@@ -100,6 +101,7 @@ const ignoreErrors = [
 ];
 
 export function init(Sentry: any, opts: any) {
+  if (!getOperatingSystemSupportStatus().supported) return false;
   if (!__SENTRY_URL__) return false;
   Sentry.init({
     dsn: __SENTRY_URL__,

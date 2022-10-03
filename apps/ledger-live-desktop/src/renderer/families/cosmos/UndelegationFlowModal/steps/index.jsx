@@ -31,6 +31,6 @@ export function useSteps(currencyName): St[] {
         footer: StepConfirmationFooter,
       },
     ],
-    [t],
+    [t, currencyName],
   );
 }

@@ -202,7 +202,7 @@ const SwapForm = () => {
 
   useEffect(() => {
     dispatch(updateTransactionAction(swapTransaction.transaction));
-    // eslint-disable-next-line
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [swapTransaction.transaction]);
 
   useEffect(() => {
@@ -211,7 +211,7 @@ const SwapForm = () => {
     if (swapTransaction.swap.to.currency && !swapTransaction.swap.to.account) {
       swapTransaction.setToCurrency(swapTransaction.swap.to.currency);
     }
-    // eslint-disable-next-line
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [accounts]);
 
   // FIXME: update usePollKYCStatus to use checkQuote for KYC status (?)
