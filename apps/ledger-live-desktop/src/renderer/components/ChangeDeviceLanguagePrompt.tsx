@@ -19,7 +19,7 @@ const ChangeDeviceLanguagePrompt: React.FC<Props> = ({
   onConfirm,
   titleWording,
   descriptionWording,
-  deviceModelId
+  deviceModelId,
 }) => {
   const { t } = useTranslation();
 

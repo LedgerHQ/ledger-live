@@ -175,11 +175,7 @@ export const setLastSeenDeviceInfo = ({
   payload: { lastSeenDevice, latestFirmware },
 });
 
-export const setLastSeenDevice = ({
-  deviceInfo
-}: {
-  deviceInfo: DeviceInfo,
-}) => ({
+export const setLastSeenDevice = ({ deviceInfo }: { deviceInfo: DeviceInfo }) => ({
   type: "LAST_SEEN_DEVICE",
   payload: { deviceInfo },
 });

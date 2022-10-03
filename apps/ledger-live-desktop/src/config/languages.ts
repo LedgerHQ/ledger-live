@@ -22,16 +22,16 @@ export type Locale =
   | "tr"
   | "zh";
 
-  /**
+/**
  * This maps the supported locales from live to theiur equivalent languages on the device.
  * It is to be used for suggesting the user to change their device language according to their Live
  * language.
  */
-export const localeIdToDeviceLanguage: { [key in Locale]?: Language} = {
+export const localeIdToDeviceLanguage: { [key in Locale]?: Language } = {
   en: "english",
   fr: "french",
   es: "spanish",
-}
+};
 
 export const allLanguages: Locale[] = [
   "de",

@@ -25,7 +25,14 @@ type Props = {
   appsToRestore: string[],
 };
 
-const Dashboard = ({ device, deviceInfo, result, onReset, appsToRestore, onRefreshDeviceInfo }: Props) => {
+const Dashboard = ({
+  device,
+  deviceInfo,
+  result,
+  onReset,
+  appsToRestore,
+  onRefreshDeviceInfo,
+}: Props) => {
   const { search } = useLocation();
   const { t } = useTranslation();
   const currentDevice = useSelector(getCurrentDevice);
