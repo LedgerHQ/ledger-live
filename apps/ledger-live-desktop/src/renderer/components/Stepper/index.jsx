@@ -84,7 +84,13 @@ const Stepper = <T, StepProps>({
 
   invariant(step, "Stepper: step %s doesn't exists", stepId);
 
-  const { component: StepComponent, footer: StepFooter, onBack, noScroll, backButtonComponent } = step;
+  const {
+    component: StepComponent,
+    footer: StepFooter,
+    onBack,
+    noScroll,
+    backButtonComponent,
+  } = step;
 
   // $FlowFixMe we'll need to improve this. also ...props is bad practice...
   const stepProps: StepProps = {

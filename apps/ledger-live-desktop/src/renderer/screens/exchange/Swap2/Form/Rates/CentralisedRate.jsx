@@ -1,9 +1,11 @@
 // @flow
 import React from "react";
+import styled from "styled-components";
+import { Text } from "@ledgerhq/react-ui";
 import Box from "~/renderer/components/Box";
-import Text from "~/renderer/components/Text";
 import FormattedVal from "~/renderer/components/FormattedVal";
 import type { ExchangeRate } from "@ledgerhq/live-common/exchange/swap/types";
+import type { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import {
   getProviderName,
   isRegistrationRequired,
@@ -21,6 +23,14 @@ export type Props = {
   fromCurrency?: $PropertyType<SwapSelectorStateType, "currency">,
   toCurrency?: $PropertyType<SwapSelectorStateType, "currency">,
 };
+
+const SecondaryText: ThemedComponent<{}> = styled(Text)`
+  color: ${p => p.theme.colors.neutral.c70};
+`;
+
+const StyledCounterValue: ThemedComponent<{}> = styled(CounterValue)`
+  color: ${p => p.theme.colors.neutral.c70};
+`;
 
 function CentralisedRate({ value = {}, selected, onSelect, fromCurrency, toCurrency }: Props) {
   const { toAmount: amount, provider } = value;
@@ -52,13 +62,13 @@ function CentralisedRate({ value = {}, selected, onSelect, fromCurrency, toCurre
               fontWeight="600"
             />
           </Box>
-          <Text fontSize={3} color="palette.text.shade40">
+          <SecondaryText fontSize={3}>
             <Trans
               i18nKey={
                 value.tradeMethod === "fixed" ? "swap2.form.rates.fixed" : "swap2.form.rates.float"
               }
             />
-          </Text>
+          </SecondaryText>
         </Box>
       }
       rightContainer={
@@ -73,14 +83,13 @@ function CentralisedRate({ value = {}, selected, onSelect, fromCurrency, toCurre
             color="palette.text.shade100"
             fontWeight="600"
           />
-          <CounterValue
+          <StyledCounterValue
             fontSize={3}
             inline
             currency={toCurrency}
             value={amount}
             disableRounding
             showCode
-            color="palette.text.shade40"
           />
         </>
       }

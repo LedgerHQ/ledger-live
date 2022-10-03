@@ -61,7 +61,7 @@ export const prodStableLanguages: Locale[] = ["en", "fr", "es", "ru", "zh", "de"
  * List of languages that should be prompted to existing users once if they are
  * using LL in english.
  * */
-export const pushedLanguages: Locale[] = ["fr", "ru", "es", "zh"];
+export const pushedLanguages: Locale[] = ["fr", "es", "ru", "zh", "de", "tr", "ja", "ko", "pt"];
 
 export const getLanguages = () =>
   getEnv("EXPERIMENTAL_LANGUAGES") ? allLanguages : prodStableLanguages;
