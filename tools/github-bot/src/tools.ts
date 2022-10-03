@@ -6,7 +6,12 @@ export const isValidBranchName = (branch: string): boolean =>
   ["release", "hotfix"].includes(branch);
 
 export const isValidUser = (user: string): boolean =>
-  !["ledgerlive", "live-github-bot[bot]", "github-actions[bot]"].includes(user);
+  ![
+    "ledgerlive",
+    "live-github-bot[bot]",
+    "github-actions[bot]",
+    "dependabot[bot]",
+  ].includes(user);
 
 export const isValidBody = (body: string | null): boolean => {
   if (!body) return false;
