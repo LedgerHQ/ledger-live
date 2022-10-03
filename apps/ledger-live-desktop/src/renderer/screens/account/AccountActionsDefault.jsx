@@ -16,6 +16,7 @@ type Props = {
   event?: string,
   eventProperties?: Object,
   disabled?: boolean,
+  actionName?: String,
 };
 
 export const ActionDefault = ({
@@ -25,6 +26,7 @@ export const ActionDefault = ({
   event,
   eventProperties,
   disabled,
+  actionName,
 }: Props) => (
   <Button
     variant="color"
@@ -32,6 +34,7 @@ export const ActionDefault = ({
     event={event}
     eventProperties={eventProperties}
     disabled={disabled}
+    data-test-id={`account-${actionName}-button`}
   >
     <Flex flexDirection="row" alignItems="center">
       {iconComponent ? <Flex mr="8px">{iconComponent}</Flex> : null} {labelComponent}
@@ -44,7 +47,7 @@ export const SendActionDefault = ({ onClick }: { onClick: () => void }) => (
     onClick={onClick}
     iconComponent={<IconSend size={14} />}
     labelComponent={<Trans i18nKey="send.title" />}
-    data-test-id={"account-send-button"}
+    actionName={"send"}
   />
 );
 
@@ -53,6 +56,7 @@ export const ReceiveActionDefault = ({ onClick }: { onClick: () => void }) => (
     onClick={onClick}
     iconComponent={<IconReceive size={14} />}
     labelComponent={<Trans i18nKey="receive.title" />}
+    actionName={"receive"}
   />
 );
 
@@ -62,6 +66,7 @@ export const SwapActionDefault = ({ onClick }: { onClick: () => void }) => {
       onClick={onClick}
       iconComponent={<IconSwap size={14} />}
       labelComponent={<Trans i18nKey="sidebar.swap" />}
+      actionName={"swap"}
     />
   );
 };
@@ -72,6 +77,7 @@ export const BuyActionDefault = ({ onClick }: { onClick: () => void }) => {
       onClick={onClick}
       iconComponent={<IconExchange size={14} />}
       labelComponent={<Trans i18nKey="accounts.contextMenu.buy" />}
+      actionName={"buy"}
     />
   );
 };
@@ -82,6 +88,7 @@ export const SellActionDefault = ({ onClick }: { onClick: () => void }) => {
       onClick={onClick}
       iconComponent={<IconSell size={14} />}
       labelComponent={<Trans i18nKey="accounts.contextMenu.sell" />}
+      actionName={"sell"}
     />
   );
 };
