@@ -184,6 +184,15 @@ describe("xpub integration sync", () => {
       explorerVersion: "v3",
     },
     {
+      xpub: "xpub6Bhj2H9zg68KeE7hVg8KmoNqWev9vXKnsM3mVUhxVKN5QdNAtDjvWBGUJmMhxoPAhobfafg5Uux6xLcD2gpKKQdxot2T2jWpLUS3mhZruim",
+      derivationMode: DerivationModes.LEGACY,
+      addresses: 1,
+      balance: 100000000,
+      network: coininfo.bitcoin.main.toBitcoinJS(),
+      coin: "xsn",
+      explorerVersion: "v3",
+    },
+    {
       xpub: "v4PKUB8jAMVY8DsF9CrC5pT4kn1rsHtJY1ehtLSMemakWdMHHwdF5tsQXqQWov93ngSX1GUc1y7x91obdRtu9Bpyk3vqMWKnU9QLpYEjuVqLJy9T",
       derivationMode: DerivationModes.LEGACY,
       addresses: 1,
@@ -200,15 +209,6 @@ describe("xpub integration sync", () => {
       network: coininfo.bitcoin.main.toBitcoinJS(),
       coin: "pivx",
       explorerVersion: "v3",
-    },
-    {
-      xpub: "XSTpb6G8xAzX1fqbWuzTSrcwqtvtEcnVinz7EtjJ6rBxmKmJ4XWSrTbNhvabfe4FXWc7cyUUxwgzsJDFeubQEx1dZPvMncd7LycUhXSShHikr8AN",
-      derivationMode: DerivationModes.LEGACY,
-      addresses: 1,
-      balance: 1000000,
-      network: coininfo.bitcoin.main.toBitcoinJS(),
-      coin: "xst",
-      explorerVersion: "v2",
     },
     {
       xpub: "dpubZFUiMExUREbqJQVJkfXSs4wjUb1jwVkoofnPK8Mt95j3PanCyq9Mc4aFnWtRZkhci9ZYPVLZybVLMMkS6g1nKBTN4899KJwGeVBvyumvcjW",
