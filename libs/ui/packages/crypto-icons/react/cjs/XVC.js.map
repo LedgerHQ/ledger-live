@@ -1,7 +1,0 @@
-{
-  "version": 3,
-  "sources": ["../../src/react/XVC.tsx"],
-  "sourcesContent": ["import * as React from \"react\";\nimport Svg from \"./StyledSvg\";\ntype Props = {\n  size?: number | string;\n  color?: string;\n};\nconst DefaultColor = \"#B50126\";\n\nfunction XVC({\n  size = 16,\n  color = DefaultColor\n}: Props): JSX.Element {\n  return <Svg width={size} height={size} viewBox=\"0 0 24 24\" fill={color}><path fillRule=\"evenodd\" clipRule=\"evenodd\" d=\"M6.838 8.057H5.25L6.498 6h3.1v8.038L15.537 6h3.214l-8.357 12H6.838V8.057z\"  /></Svg>;\n}\n\nXVC.DefaultColor = DefaultColor;\nexport default XVC;"],
-  "mappings": ";;;;;;;;;;;;;;;;;;;;;;;AAAA;AAAA;AAAA;AAAA,YAAuB;AACvB,uBAAgB;AAKhB,MAAM,eAAe;AAErB,aAAa;AAAA,EACX,OAAO;AAAA,EACP,QAAQ;AAAA,GACa;AACrB,SAAO,oCAAC,0BAAD;AAAA,IAAK,OAAO;AAAA,IAAM,QAAQ;AAAA,IAAM,SAAQ;AAAA,IAAY,MAAM;AAAA,KAAO,oCAAC,QAAD;AAAA,IAAM,UAAS;AAAA,IAAU,UAAS;AAAA,IAAU,GAAE;AAAA;AAAA;AAGxH,IAAI,eAAe;AACnB,IAAO,cAAQ;",
-  "names": []
-}

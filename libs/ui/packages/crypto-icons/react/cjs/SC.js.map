@@ -1,7 +1,0 @@
-{
-  "version": 3,
-  "sources": ["../../src/react/SC.tsx"],
-  "sourcesContent": ["import * as React from \"react\";\nimport Svg from \"./StyledSvg\";\ntype Props = {\n  size?: number | string;\n  color?: string;\n};\nconst DefaultColor = \"#20EE82\";\n\nfunction SC({\n  size = 16,\n  color = DefaultColor\n}: Props): JSX.Element {\n  return <Svg width={size} height={size} viewBox=\"0 0 24 24\" fill={color}><path fillRule=\"evenodd\" clipRule=\"evenodd\" d=\"M12 5.625A6.375 6.375 0 0118.375 12v6.375H12a6.375 6.375 0 110-12.75zm3.825 10.2v-3.767c0-2.115-1.691-3.873-3.805-3.883a3.83 3.83 0 00-3.845 3.845c.01 2.114 1.768 3.805 3.883 3.805h3.767z\"  /></Svg>;\n}\n\nSC.DefaultColor = DefaultColor;\nexport default SC;"],
-  "mappings": ";;;;;;;;;;;;;;;;;;;;;;;AAAA;AAAA;AAAA;AAAA,YAAuB;AACvB,uBAAgB;AAKhB,MAAM,eAAe;AAErB,YAAY;AAAA,EACV,OAAO;AAAA,EACP,QAAQ;AAAA,GACa;AACrB,SAAO,oCAAC,0BAAD;AAAA,IAAK,OAAO;AAAA,IAAM,QAAQ;AAAA,IAAM,SAAQ;AAAA,IAAY,MAAM;AAAA,KAAO,oCAAC,QAAD;AAAA,IAAM,UAAS;AAAA,IAAU,UAAS;AAAA,IAAU,GAAE;AAAA;AAAA;AAGxH,GAAG,eAAe;AAClB,IAAO,aAAQ;",
-  "names": []
-}

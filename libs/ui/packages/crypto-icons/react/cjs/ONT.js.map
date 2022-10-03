@@ -1,7 +1,0 @@
-{
-  "version": 3,
-  "sources": ["../../src/react/ONT.tsx"],
-  "sourcesContent": ["import * as React from \"react\";\nimport Svg from \"./StyledSvg\";\ntype Props = {\n  size?: number | string;\n  color?: string;\n};\nconst DefaultColor = \"#32A4BE\";\n\nfunction ONT({\n  size = 16,\n  color = DefaultColor\n}: Props): JSX.Element {\n  return <Svg width={size} height={size} viewBox=\"0 0 24 24\" fill={color}><path fillRule=\"evenodd\" clipRule=\"evenodd\" d=\"M18.75 18.163L7.483 7.14A6.653 6.653 0 0112.15 5.25c3.645 0 6.6 2.89 6.6 6.457v6.456zM5.25 5.837L16.517 16.86a6.653 6.653 0 01-4.667 1.89c-3.645 0-6.6-2.89-6.6-6.456V5.837z\"  /></Svg>;\n}\n\nONT.DefaultColor = DefaultColor;\nexport default ONT;"],
-  "mappings": ";;;;;;;;;;;;;;;;;;;;;;;AAAA;AAAA;AAAA;AAAA,YAAuB;AACvB,uBAAgB;AAKhB,MAAM,eAAe;AAErB,aAAa;AAAA,EACX,OAAO;AAAA,EACP,QAAQ;AAAA,GACa;AACrB,SAAO,oCAAC,0BAAD;AAAA,IAAK,OAAO;AAAA,IAAM,QAAQ;AAAA,IAAM,SAAQ;AAAA,IAAY,MAAM;AAAA,KAAO,oCAAC,QAAD;AAAA,IAAM,UAAS;AAAA,IAAU,UAAS;AAAA,IAAU,GAAE;AAAA;AAAA;AAGxH,IAAI,eAAe;AACnB,IAAO,cAAQ;",
-  "names": []
-}

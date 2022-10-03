@@ -1,7 +1,0 @@
-{
-  "version": 3,
-  "sources": ["../../src/react/TZC.tsx"],
-  "sourcesContent": ["import * as React from \"react\";\nimport Svg from \"./StyledSvg\";\ntype Props = {\n  size?: number | string;\n  color?: string;\n};\nconst DefaultColor = \"#374851\";\n\nfunction TZC({\n  size = 16,\n  color = DefaultColor\n}: Props): JSX.Element {\n  return <Svg width={size} height={size} viewBox=\"0 0 24 24\" fill={color}><path fillRule=\"evenodd\" clipRule=\"evenodd\" d=\"M13.275 11.55v5.698c.153-.038.303-.08.45-.13v2.183a7.521 7.521 0 01-3 .09V11.55H8.1v-2.1h7.8v2.1h-2.625zm1.05 7.582v-2.258a5.4 5.4 0 10-4.65 0v2.258a7.5 7.5 0 114.65 0z\"  /></Svg>;\n}\n\nTZC.DefaultColor = DefaultColor;\nexport default TZC;"],
-  "mappings": ";;;;;;;;;;;;;;;;;;;;;;;AAAA;AAAA;AAAA;AAAA,YAAuB;AACvB,uBAAgB;AAKhB,MAAM,eAAe;AAErB,aAAa;AAAA,EACX,OAAO;AAAA,EACP,QAAQ;AAAA,GACa;AACrB,SAAO,oCAAC,0BAAD;AAAA,IAAK,OAAO;AAAA,IAAM,QAAQ;AAAA,IAAM,SAAQ;AAAA,IAAY,MAAM;AAAA,KAAO,oCAAC,QAAD;AAAA,IAAM,UAAS;AAAA,IAAU,UAAS;AAAA,IAAU,GAAE;AAAA;AAAA;AAGxH,IAAI,eAAe;AACnB,IAAO,cAAQ;",
-  "names": []
-}

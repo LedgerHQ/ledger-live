@@ -1,7 +1,0 @@
-{
-  "version": 3,
-  "sources": ["../../src/react/CRED.tsx"],
-  "sourcesContent": ["import * as React from \"react\";\nimport Svg from \"./StyledSvg\";\ntype Props = {\n  size?: number | string;\n  color?: string;\n};\nconst DefaultColor = \"#37E8A3\";\n\nfunction CRED({\n  size = 16,\n  color = DefaultColor\n}: Props): JSX.Element {\n  return <Svg width={size} height={size} viewBox=\"0 0 24 24\" fill={color}><path d=\"M9.102 11.975l2.611 2.62L18.561 7.7l.939.952-7.787 7.847-3.55-3.572.939-.954zm1.582-.233L14.899 7.5l.94.953-4.213 4.245-.94-.956zm-1.707 3.622l-.927.935-3.55-3.572.938-.952 3.54 3.59z\"  /></Svg>;\n}\n\nCRED.DefaultColor = DefaultColor;\nexport default CRED;"],
-  "mappings": ";;;;;;;;;;;;;;;;;;;;;;;AAAA;AAAA;AAAA;AAAA,YAAuB;AACvB,uBAAgB;AAKhB,MAAM,eAAe;AAErB,cAAc;AAAA,EACZ,OAAO;AAAA,EACP,QAAQ;AAAA,GACa;AACrB,SAAO,oCAAC,0BAAD;AAAA,IAAK,OAAO;AAAA,IAAM,QAAQ;AAAA,IAAM,SAAQ;AAAA,IAAY,MAAM;AAAA,KAAO,oCAAC,QAAD;AAAA,IAAM,GAAE;AAAA;AAAA;AAGlF,KAAK,eAAe;AACpB,IAAO,eAAQ;",
-  "names": []
-}

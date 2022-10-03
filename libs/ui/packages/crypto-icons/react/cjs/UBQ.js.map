@@ -1,7 +1,0 @@
-{
-  "version": 3,
-  "sources": ["../../src/react/UBQ.tsx"],
-  "sourcesContent": ["import * as React from \"react\";\nimport Svg from \"./StyledSvg\";\ntype Props = {\n  size?: number | string;\n  color?: string;\n};\nconst DefaultColor = \"#00EA90\";\n\nfunction UBQ({\n  size = 16,\n  color = DefaultColor\n}: Props): JSX.Element {\n  return <Svg width={size} height={size} viewBox=\"0 0 24 24\" fill={color}><path d=\"M13.661 5.631l5.833 3.051-5.62 3.445-.213-6.496zM10.34 18.337l-5.833-3.051 5.62-3.446.213 6.497z\"  fillOpacity={0.2} /><path d=\"M19.494 15.51l-8.11 4.74v-6.652l8.11-4.916v6.827zM4.506 8.46l8.11-4.71v6.626l-8.11 4.91V8.459z\"  /></Svg>;\n}\n\nUBQ.DefaultColor = DefaultColor;\nexport default UBQ;"],
-  "mappings": ";;;;;;;;;;;;;;;;;;;;;;;AAAA;AAAA;AAAA;AAAA,YAAuB;AACvB,uBAAgB;AAKhB,MAAM,eAAe;AAErB,aAAa;AAAA,EACX,OAAO;AAAA,EACP,QAAQ;AAAA,GACa;AACrB,SAAO,oCAAC,0BAAD;AAAA,IAAK,OAAO;AAAA,IAAM,QAAQ;AAAA,IAAM,SAAQ;AAAA,IAAY,MAAM;AAAA,KAAO,oCAAC,QAAD;AAAA,IAAM,GAAE;AAAA,IAAoG,aAAa;AAAA,MAAO,oCAAC,QAAD;AAAA,IAAM,GAAE;AAAA;AAAA;AAGlN,IAAI,eAAe;AACnB,IAAO,cAAQ;",
-  "names": []
-}

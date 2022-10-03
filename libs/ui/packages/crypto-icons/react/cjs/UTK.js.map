@@ -1,7 +1,0 @@
-{
-  "version": 3,
-  "sources": ["../../src/react/UTK.tsx"],
-  "sourcesContent": ["import * as React from \"react\";\nimport Svg from \"./StyledSvg\";\ntype Props = {\n  size?: number | string;\n  color?: string;\n};\nconst DefaultColor = \"#30367A\";\n\nfunction UTK({\n  size = 16,\n  color = DefaultColor\n}: Props): JSX.Element {\n  return <Svg width={size} height={size} viewBox=\"0 0 24 24\" fill={color}><path d=\"M10.765 16.724V6.77h-2.89V4.5h8.25v2.271h-2.89v9.953h-2.47zM10.1 19.5c-1.492 0-2.198-.717-2.198-2.233V7.421h2.17v9.744c0 .24.08.32.315.32h3.254c.236 0 .315-.08.315-.32V7.422h2.169v9.845c0 1.516-.707 2.233-2.197 2.233h-3.829z\"  /></Svg>;\n}\n\nUTK.DefaultColor = DefaultColor;\nexport default UTK;"],
-  "mappings": ";;;;;;;;;;;;;;;;;;;;;;;AAAA;AAAA;AAAA;AAAA,YAAuB;AACvB,uBAAgB;AAKhB,MAAM,eAAe;AAErB,aAAa;AAAA,EACX,OAAO;AAAA,EACP,QAAQ;AAAA,GACa;AACrB,SAAO,oCAAC,0BAAD;AAAA,IAAK,OAAO;AAAA,IAAM,QAAQ;AAAA,IAAM,SAAQ;AAAA,IAAY,MAAM;AAAA,KAAO,oCAAC,QAAD;AAAA,IAAM,GAAE;AAAA;AAAA;AAGlF,IAAI,eAAe;AACnB,IAAO,cAAQ;",
-  "names": []
-}

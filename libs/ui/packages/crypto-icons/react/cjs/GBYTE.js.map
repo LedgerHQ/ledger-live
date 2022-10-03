@@ -1,7 +1,0 @@
-{
-  "version": 3,
-  "sources": ["../../src/react/GBYTE.tsx"],
-  "sourcesContent": ["import * as React from \"react\";\nimport Svg from \"./StyledSvg\";\ntype Props = {\n  size?: number | string;\n  color?: string;\n};\nconst DefaultColor = \"#302C2C\";\n\nfunction GBYTE({\n  size = 16,\n  color = DefaultColor\n}: Props): JSX.Element {\n  return <Svg width={size} height={size} viewBox=\"0 0 24 24\" fill={color}><path d=\"M12 20.25a8.25 8.25 0 100-16.5 8.25 8.25 0 000 16.5z\"  /><path d=\"M12 20.25a8.25 8.25 0 100-16.5 8.25 8.25 0 000 16.5z\"  /></Svg>;\n}\n\nGBYTE.DefaultColor = DefaultColor;\nexport default GBYTE;"],
-  "mappings": ";;;;;;;;;;;;;;;;;;;;;;;AAAA;AAAA;AAAA;AAAA,YAAuB;AACvB,uBAAgB;AAKhB,MAAM,eAAe;AAErB,eAAe;AAAA,EACb,OAAO;AAAA,EACP,QAAQ;AAAA,GACa;AACrB,SAAO,oCAAC,0BAAD;AAAA,IAAK,OAAO;AAAA,IAAM,QAAQ;AAAA,IAAM,SAAQ;AAAA,IAAY,MAAM;AAAA,KAAO,oCAAC,QAAD;AAAA,IAAM,GAAE;AAAA,MAA0D,oCAAC,QAAD;AAAA,IAAM,GAAE;AAAA;AAAA;AAGpJ,MAAM,eAAe;AACrB,IAAO,gBAAQ;",
-  "names": []
-}

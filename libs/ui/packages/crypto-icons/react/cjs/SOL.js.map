@@ -1,7 +1,0 @@
-{
-  "version": 3,
-  "sources": ["../../src/react/SOL.tsx"],
-  "sourcesContent": ["import * as React from \"react\";\nimport Svg from \"./StyledSvg\";\ntype Props = {\n  size?: number | string;\n  color?: string;\n};\nconst DefaultColor = \"#000\";\n\nfunction SOL({\n  size = 16,\n  color = DefaultColor\n}: Props): JSX.Element {\n  return <Svg width={size} height={size} viewBox=\"0 0 24 24\" fill={color}><path d=\"M2.41 7.77h15.68a.51.51 0 00.37-.16l3.43-3.67a.4.4 0 00-.3-.67H5.91a.51.51 0 00-.37.16L2.11 7.1a.4.4 0 00.3.67zM2.41 20.77h15.68a.51.51 0 00.37-.16l3.43-3.67a.4.4 0 00-.3-.67H5.91a.51.51 0 00-.37.16L2.11 20.1a.4.4 0 00.3.67zM21.59 14.27H5.91a.51.51 0 01-.37-.16l-3.43-3.67a.4.4 0 01.3-.67h15.68a.51.51 0 01.37.16l3.43 3.67a.4.4 0 01-.3.67z\" /></Svg>;\n}\n\nSOL.DefaultColor = DefaultColor;\nexport default SOL;"],
-  "mappings": ";;;;;;;;;;;;;;;;;;;;;;;AAAA;AAAA;AAAA;AAAA,YAAuB;AACvB,uBAAgB;AAKhB,MAAM,eAAe;AAErB,aAAa;AAAA,EACX,OAAO;AAAA,EACP,QAAQ;AAAA,GACa;AACrB,SAAO,oCAAC,0BAAD;AAAA,IAAK,OAAO;AAAA,IAAM,QAAQ;AAAA,IAAM,SAAQ;AAAA,IAAY,MAAM;AAAA,KAAO,oCAAC,QAAD;AAAA,IAAM,GAAE;AAAA;AAAA;AAGlF,IAAI,eAAe;AACnB,IAAO,cAAQ;",
-  "names": []
-}

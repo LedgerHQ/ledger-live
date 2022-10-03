@@ -1,7 +1,0 @@
-{
-  "version": 3,
-  "sources": ["../../src/react/XRP.tsx"],
-  "sourcesContent": ["import * as React from \"react\";\nimport Svg from \"./StyledSvg\";\ntype Props = {\n  size?: number | string;\n  color?: string;\n};\nconst DefaultColor = \"#23292F\";\n\nfunction XRP({\n  size = 16,\n  color = DefaultColor\n}: Props): JSX.Element {\n  return <Svg width={size} height={size} viewBox=\"0 0 24 24\" fill={color}><path d=\"M17.302 5.789h2.168l-4.511 4.468a4.216 4.216 0 01-5.918 0L4.526 5.789h2.171l3.428 3.392a2.667 2.667 0 003.747 0l3.43-3.392zM6.672 18.21H4.5l4.541-4.495a4.216 4.216 0 015.918 0L19.5 18.21h-2.171l-3.454-3.421a2.667 2.667 0 00-3.747 0L6.67 18.21h.001z\"  /></Svg>;\n}\n\nXRP.DefaultColor = DefaultColor;\nexport default XRP;"],
-  "mappings": ";;;;;;;;;;;;;;;;;;;;;;;AAAA;AAAA;AAAA;AAAA,YAAuB;AACvB,uBAAgB;AAKhB,MAAM,eAAe;AAErB,aAAa;AAAA,EACX,OAAO;AAAA,EACP,QAAQ;AAAA,GACa;AACrB,SAAO,oCAAC,0BAAD;AAAA,IAAK,OAAO;AAAA,IAAM,QAAQ;AAAA,IAAM,SAAQ;AAAA,IAAY,MAAM;AAAA,KAAO,oCAAC,QAAD;AAAA,IAAM,GAAE;AAAA;AAAA;AAGlF,IAAI,eAAe;AACnB,IAAO,cAAQ;",
-  "names": []
-}

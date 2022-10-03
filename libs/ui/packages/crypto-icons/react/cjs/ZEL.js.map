@@ -1,7 +1,0 @@
-{
-  "version": 3,
-  "sources": ["../../src/react/ZEL.tsx"],
-  "sourcesContent": ["import * as React from \"react\";\nimport Svg from \"./StyledSvg\";\ntype Props = {\n  size?: number | string;\n  color?: string;\n};\nconst DefaultColor = \"#183C87\";\n\nfunction ZEL({\n  size = 16,\n  color = DefaultColor\n}: Props): JSX.Element {\n  return <Svg width={size} height={size} viewBox=\"0 0 24 24\" fill={color}><path fillRule=\"evenodd\" clipRule=\"evenodd\" d=\"M3.75 12.086l3.371-1.903 3.37 1.903v3.636l-3.37 1.903-3.371-1.903v-3.636zm9.758 0l3.37-1.903 3.372 1.903v3.636l-3.371 1.903-3.37-1.903v-3.636h-.002zm-.354 3.158l-1.183.65-1.124-.617v-3.48L7.772 10.06V8.797l4.199-2.422 4.198 2.422v1.298l-3.016 1.702v3.447z\"  /></Svg>;\n}\n\nZEL.DefaultColor = DefaultColor;\nexport default ZEL;"],
-  "mappings": ";;;;;;;;;;;;;;;;;;;;;;;AAAA;AAAA;AAAA;AAAA,YAAuB;AACvB,uBAAgB;AAKhB,MAAM,eAAe;AAErB,aAAa;AAAA,EACX,OAAO;AAAA,EACP,QAAQ;AAAA,GACa;AACrB,SAAO,oCAAC,0BAAD;AAAA,IAAK,OAAO;AAAA,IAAM,QAAQ;AAAA,IAAM,SAAQ;AAAA,IAAY,MAAM;AAAA,KAAO,oCAAC,QAAD;AAAA,IAAM,UAAS;AAAA,IAAU,UAAS;AAAA,IAAU,GAAE;AAAA;AAAA;AAGxH,IAAI,eAAe;AACnB,IAAO,cAAQ;",
-  "names": []
-}

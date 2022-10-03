@@ -1,7 +1,0 @@
-{
-  "version": 3,
-  "sources": ["../../src/react/VET.tsx"],
-  "sourcesContent": ["import * as React from \"react\";\nimport Svg from \"./StyledSvg\";\ntype Props = {\n  size?: number | string;\n  color?: string;\n};\nconst DefaultColor = \"#15BDFF\";\n\nfunction VET({\n  size = 16,\n  color = DefaultColor\n}: Props): JSX.Element {\n  return <Svg width={size} height={size} viewBox=\"0 0 24 24\" fill={color}><path d=\"M11.053 17.8L5.279 6.035a.285.285 0 01.255-.41h2.001c.107 0 .208.06.255.154l4.217 8.536a1.024 1.024 0 001.839 0l4.203-8.529a.287.287 0 01.255-.154h.249c.148 0 .241.154.174.282L12.892 17.8a1.024 1.024 0 01-1.84 0z\"  /></Svg>;\n}\n\nVET.DefaultColor = DefaultColor;\nexport default VET;"],
-  "mappings": ";;;;;;;;;;;;;;;;;;;;;;;AAAA;AAAA;AAAA;AAAA,YAAuB;AACvB,uBAAgB;AAKhB,MAAM,eAAe;AAErB,aAAa;AAAA,EACX,OAAO;AAAA,EACP,QAAQ;AAAA,GACa;AACrB,SAAO,oCAAC,0BAAD;AAAA,IAAK,OAAO;AAAA,IAAM,QAAQ;AAAA,IAAM,SAAQ;AAAA,IAAY,MAAM;AAAA,KAAO,oCAAC,QAAD;AAAA,IAAM,GAAE;AAAA;AAAA;AAGlF,IAAI,eAAe;AACnB,IAAO,cAAQ;",
-  "names": []
-}

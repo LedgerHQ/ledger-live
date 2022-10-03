@@ -1,7 +1,0 @@
-{
-  "version": 3,
-  "sources": ["../../src/react/DOCK.tsx"],
-  "sourcesContent": ["import * as React from \"react\";\nimport Svg from \"./StyledSvg\";\ntype Props = {\n  size?: number | string;\n  color?: string;\n};\nconst DefaultColor = \"#786DBC\";\n\nfunction DOCK({\n  size = 16,\n  color = DefaultColor\n}: Props): JSX.Element {\n  return <Svg width={size} height={size} viewBox=\"0 0 24 24\" fill={color}><path d=\"M12.698 8.186l-1.222-1.224a.858.858 0 011.186-1.241l.029.029 2.727 2.727a.857.857 0 010 1.212l-2.73 2.727a.857.857 0 01-1.212-1.212l1.28-1.28a4.271 4.271 0 103.529 4.223V4.714a.858.858 0 011.714 0v9.546a6 6 0 11-5.302-6.078v.003z\"  /></Svg>;\n}\n\nDOCK.DefaultColor = DefaultColor;\nexport default DOCK;"],
-  "mappings": ";;;;;;;;;;;;;;;;;;;;;;;AAAA;AAAA;AAAA;AAAA,YAAuB;AACvB,uBAAgB;AAKhB,MAAM,eAAe;AAErB,cAAc;AAAA,EACZ,OAAO;AAAA,EACP,QAAQ;AAAA,GACa;AACrB,SAAO,oCAAC,0BAAD;AAAA,IAAK,OAAO;AAAA,IAAM,QAAQ;AAAA,IAAM,SAAQ;AAAA,IAAY,MAAM;AAAA,KAAO,oCAAC,QAAD;AAAA,IAAM,GAAE;AAAA;AAAA;AAGlF,KAAK,eAAe;AACpB,IAAO,eAAQ;",
-  "names": []
-}

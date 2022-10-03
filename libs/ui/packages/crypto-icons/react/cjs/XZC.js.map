@@ -1,7 +1,0 @@
-{
-  "version": 3,
-  "sources": ["../../src/react/XZC.tsx"],
-  "sourcesContent": ["import * as React from \"react\";\nimport Svg from \"./StyledSvg\";\ntype Props = {\n  size?: number | string;\n  color?: string;\n};\nconst DefaultColor = \"#23B852\";\n\nfunction XZC({\n  size = 16,\n  color = DefaultColor\n}: Props): JSX.Element {\n  return <Svg width={size} height={size} viewBox=\"0 0 24 24\" fill={color}><path d=\"M14.044 14.361h2.542v2.223H8.948l9.482-9.489a1.101 1.101 0 00.24-1.18 1.09 1.09 0 00-1.008-.665H6.339A1.08 1.08 0 005.25 6.339v8.022l4.706-4.71H7.414V7.416h7.626l-9.47 9.489a1.1 1.1 0 00-.24 1.18 1.09 1.09 0 001.008.665h11.325a1.086 1.086 0 001.087-1.089v-8.01l-4.706 4.71z\"  /></Svg>;\n}\n\nXZC.DefaultColor = DefaultColor;\nexport default XZC;"],
-  "mappings": ";;;;;;;;;;;;;;;;;;;;;;;AAAA;AAAA;AAAA;AAAA,YAAuB;AACvB,uBAAgB;AAKhB,MAAM,eAAe;AAErB,aAAa;AAAA,EACX,OAAO;AAAA,EACP,QAAQ;AAAA,GACa;AACrB,SAAO,oCAAC,0BAAD;AAAA,IAAK,OAAO;AAAA,IAAM,QAAQ;AAAA,IAAM,SAAQ;AAAA,IAAY,MAAM;AAAA,KAAO,oCAAC,QAAD;AAAA,IAAM,GAAE;AAAA;AAAA;AAGlF,IAAI,eAAe;AACnB,IAAO,cAAQ;",
-  "names": []
-}

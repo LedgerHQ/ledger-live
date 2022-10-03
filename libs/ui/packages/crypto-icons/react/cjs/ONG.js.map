@@ -1,7 +1,0 @@
-{
-  "version": 3,
-  "sources": ["../../src/react/ONG.tsx"],
-  "sourcesContent": ["import * as React from \"react\";\nimport Svg from \"./StyledSvg\";\ntype Props = {\n  size?: number | string;\n  color?: string;\n};\nconst DefaultColor = \"#000\";\n\nfunction ONG({\n  size = 16,\n  color = DefaultColor\n}: Props): JSX.Element {\n  return <Svg width={size} height={size} viewBox=\"0 0 24 24\" fill={color}><path fillRule=\"evenodd\" clipRule=\"evenodd\" d=\"M11.982 19.992c4.305 0 7.566-2.885 8.243-6.659h-3.673c-.549 2.004-2.253 3.471-4.526 3.471-2.257 0-3.983-1.477-4.555-3.47H3.775c.652 3.787 3.885 6.658 8.207 6.658z\"  /><path d=\"M12.003 7.799a1.895 1.895 0 100-3.79 1.895 1.895 0 000 3.79z\"  /><path fillRule=\"evenodd\" clipRule=\"evenodd\" d=\"M7.266 13.333v-.037c0-2.695 1.93-4.895 4.714-4.895 2.784 0 4.755 2.237 4.76 4.932H7.266z\"  /></Svg>;\n}\n\nONG.DefaultColor = DefaultColor;\nexport default ONG;"],
-  "mappings": ";;;;;;;;;;;;;;;;;;;;;;;AAAA;AAAA;AAAA;AAAA,YAAuB;AACvB,uBAAgB;AAKhB,MAAM,eAAe;AAErB,aAAa;AAAA,EACX,OAAO;AAAA,EACP,QAAQ;AAAA,GACa;AACrB,SAAO,oCAAC,0BAAD;AAAA,IAAK,OAAO;AAAA,IAAM,QAAQ;AAAA,IAAM,SAAQ;AAAA,IAAY,MAAM;AAAA,KAAO,oCAAC,QAAD;AAAA,IAAM,UAAS;AAAA,IAAU,UAAS;AAAA,IAAU,GAAE;AAAA,MAAwK,oCAAC,QAAD;AAAA,IAAM,GAAE;AAAA,MAAkE,oCAAC,QAAD;AAAA,IAAM,UAAS;AAAA,IAAU,UAAS;AAAA,IAAU,GAAE;AAAA;AAAA;AAGxZ,IAAI,eAAe;AACnB,IAAO,cAAQ;",
-  "names": []
-}

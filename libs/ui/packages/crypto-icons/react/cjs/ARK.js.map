@@ -1,7 +1,0 @@
-{
-  "version": 3,
-  "sources": ["../../src/react/ARK.tsx"],
-  "sourcesContent": ["import * as React from \"react\";\nimport Svg from \"./StyledSvg\";\ntype Props = {\n  size?: number | string;\n  color?: string;\n};\nconst DefaultColor = \"#F70000\";\n\nfunction ARK({\n  size = 16,\n  color = DefaultColor\n}: Props): JSX.Element {\n  return <Svg width={size} height={size} viewBox=\"0 0 24 24\" fill={color}><path d=\"M11.96 10.01l-8.21 8.658L11.997 5.25l8.253 13.5-8.29-8.74zm1.191 3.439h-2.566l1.32-1.452 1.246 1.465v-.013zm-4.95 2.383v-.018l1.456-1.49v-.007l4.44-.019 1.498 1.534H8.203z\"  /></Svg>;\n}\n\nARK.DefaultColor = DefaultColor;\nexport default ARK;"],
-  "mappings": ";;;;;;;;;;;;;;;;;;;;;;;AAAA;AAAA;AAAA;AAAA,YAAuB;AACvB,uBAAgB;AAKhB,MAAM,eAAe;AAErB,aAAa;AAAA,EACX,OAAO;AAAA,EACP,QAAQ;AAAA,GACa;AACrB,SAAO,oCAAC,0BAAD;AAAA,IAAK,OAAO;AAAA,IAAM,QAAQ;AAAA,IAAM,SAAQ;AAAA,IAAY,MAAM;AAAA,KAAO,oCAAC,QAAD;AAAA,IAAM,GAAE;AAAA;AAAA;AAGlF,IAAI,eAAe;AACnB,IAAO,cAAQ;",
-  "names": []
-}

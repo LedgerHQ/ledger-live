@@ -1,7 +1,0 @@
-{
-  "version": 3,
-  "sources": ["../../src/react/StyledSvg.ts"],
-  "sourcesContent": ["\nimport styled from \"styled-components\";\nimport { system } from \"styled-system\";\n\nexport default styled.svg`\n  ${system({\n    fill: {\n      property: \"fill\",\n      scale: \"colors\",\n    }\n  })}\n`;\n"],
-  "mappings": ";;;;;;;;;;;;;;;;;;;;;;;AAAA;AAAA;AAAA;AACA,+BAAmB;AACnB,2BAAuB;AAEvB,IAAO,oBAAQ,iCAAO;AAAA,IAClB,iCAAO;AAAA,EACP,MAAM;AAAA,IACJ,UAAU;AAAA,IACV,OAAO;AAAA;AAAA;AAAA;",
-  "names": []
-}
