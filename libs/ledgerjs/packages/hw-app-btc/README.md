@@ -117,7 +117,7 @@ Bitcoin API.
 
 #### Parameters
 
-*   `$0` **{transport: Transport, scrambleKey: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), currency: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)}** 
+*   `$0` **{transport: Transport, scrambleKey: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)?, currency: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)?}** 
 
     *   `$0.transport`  
     *   `$0.scrambleKey`   (optional, default `"BTC"`)
