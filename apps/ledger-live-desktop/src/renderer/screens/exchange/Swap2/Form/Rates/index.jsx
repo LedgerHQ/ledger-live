@@ -92,8 +92,10 @@ export default function ProviderRate({
         selectedRate = rates.find(rate => rate.tradeMethod === FILTER.float);
       } else if (filter.includes(FILTER.fixed)) {
         selectedRate = rates.find(rate => rate.tradeMethod === FILTER.fixed);
+      } else {
+        selectedRate = rates && rates[0];
       }
-      setRate(selectedRate || (rates && rates[0]) || {});
+      setRate(selectedRate || {});
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filter]);
