@@ -11,7 +11,6 @@ concurrency:
 jobs:
   run-bot:
     runs-on: [self-hosted, ledger-live-assets]
-    needs: [start-runner]
     steps:
       - name: prepare runner
         run: |
