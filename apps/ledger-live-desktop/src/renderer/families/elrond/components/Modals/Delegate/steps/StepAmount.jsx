@@ -28,7 +28,6 @@ const StepAmount = (props: StepProps) => {
     bridgePending,
   } = props;
 
-  if (!status) return null;
   const mainAccount = account ? getMainAccount(account, parentAccount) : null;
 
   const onUpdateTransactionCallback = useCallback(
@@ -39,6 +38,8 @@ const StepAmount = (props: StepProps) => {
       }),
     [onChangeTransaction],
   );
+
+  if (!status) return null;
 
   return (
     <Box flow={4}>

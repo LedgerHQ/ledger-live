@@ -26,28 +26,28 @@ import type { Transaction, AccountBridge, Operation } from "@ledgerhq/types-live
 import type { DelegationType, ValidatorType } from "~/renderer/families/elrond/types";
 import type { StepProps, St } from "./types";
 
-interface OwnProps {|
-  stepId: StepId,
-  onClose: () => void,
-  onChangeStepId: StepId => void,
+interface OwnProps {
+  stepId: StepId;
+  onClose: () => void;
+  onChangeStepId: (step: StepId) => void;
   params: {
     account: Account,
     parentAccount: ?Account,
     delegations?: Array<DelegationType>,
     validators?: Array<ValidatorType>,
     contract?: string,
-  },
-  name: string,
-|};
+  };
+  name: string;
+}
 
-interface StateProps {|
-  t: TFunction,
-  device: ?Device,
-  accounts: Account[],
-  device: ?Device,
-  closeModal: string => void,
-  openModal: string => void,
-|};
+interface StateProps {
+  t: TFunction;
+  device: ?Device;
+  accounts: Account[];
+  device: ?Device;
+  closeModal: (name: string) => void;
+  openModal: (name: string) => void;
+}
 
 type Props = OwnProps & StateProps;
 
@@ -83,16 +83,7 @@ const mapDispatchToProps = {
 };
 
 const Body = (props: Props) => {
-  const {
-    t,
-    stepId,
-    device,
-    closeModal,
-    openModal,
-    onChangeStepId,
-    params,
-    name,
-  } = props;
+  const { t, stepId, device, closeModal, openModal, onChangeStepId, params, name } = props;
 
   const [optimisticOperation, setOptimisticOperation] = useState(null);
   const [transactionError, setTransactionError] = useState(null);

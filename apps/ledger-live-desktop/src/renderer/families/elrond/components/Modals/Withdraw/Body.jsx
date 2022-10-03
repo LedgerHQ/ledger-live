@@ -26,28 +26,28 @@ import type { AccountBridge, Operation } from "@ledgerhq/types-live";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import type { StepProps, St } from "./types";
 
-interface OwnProps {|
-  stepId: StepId,
-  onClose: () => void,
-  onChangeStepId: StepId => void,
+interface OwnProps {
+  stepId: StepId;
+  onClose: () => void;
+  onChangeStepId: (step: StepId) => void;
   params: {
     account: Account,
     parentAccount: ?Account,
     unbondings?: any,
     contract?: string,
     amount?: string,
-  },
-  name: string,
-|};
+  };
+  name: string;
+}
 
-interface StateProps {|
-  t: TFunction,
-  device: ?Device,
-  accounts: Account[],
-  device: ?Device,
-  closeModal: string => void,
-  openModal: string => void,
-|};
+interface StateProps {
+  t: TFunction;
+  device: ?Device;
+  accounts: Account[];
+  device: ?Device;
+  closeModal: (name: string) => void;
+  openModal: (name: string) => void;
+}
 
 type Props = OwnProps & StateProps;
 
@@ -83,16 +83,7 @@ const mapDispatchToProps = {
 };
 
 const Body = (props: Props) => {
-  const {
-    t,
-    stepId,
-    device,
-    closeModal,
-    openModal,
-    onChangeStepId,
-    params,
-    name,
-  } = props;
+  const { t, stepId, device, closeModal, openModal, onChangeStepId, params, name } = props;
 
   const [optimisticOperation, setOptimisticOperation] = useState(null);
   const [transactionError, setTransactionError] = useState(null);
@@ -193,7 +184,7 @@ const Body = (props: Props) => {
     unbondings: params.unbondings,
     contract: params.contract,
     amount: params.amount,
-    name: params.validator ? params.validator.identity.name : params.contract
+    name: params.validator ? params.validator.identity.name : params.contract,
   };
 
   return (
