@@ -12,10 +12,6 @@ jobs:
   run-bot:
     runs-on: [self-hosted, ledger-live-assets]
     steps:
-      - name: prepare runner
-        run: |
-          sudo growpart /dev/nvme0n1 1
-          sudo resize2fs /dev/nvme0n1p1
       - uses: actions/checkout@v3
       - name: Retrieving crypto-assets
         uses: actions/checkout@v3
