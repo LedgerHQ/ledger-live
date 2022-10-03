@@ -203,20 +203,20 @@ const localizationEvents = [
   {
     name: "requestLanguageInstallation",
     event: {
-      type: "devicePermissionRequested"
+      type: "devicePermissionRequested",
     },
   },
   {
     name: "languageInstallationProgress50",
     event: {
       type: "progress",
-      progress: 0.5
+      progress: 0.5,
     },
   },
   {
     name: "languageInstallationComplete",
     event: {
-      type: "languageInstalled"
+      type: "languageInstalled",
     },
   },
 ];
@@ -339,7 +339,10 @@ const DebugMock = () => {
     expandedHistory,
   ]);
   const toggleExpandedSwap = useCallback(() => setExpandedSwap(!expandedSwap), [expandedSwap]);
-  const toggleExpandedLocalization = useCallback(() => setExpandedLocalization(!expandedLocalization), [expandedLocalization]);
+  const toggleExpandedLocalization = useCallback(
+    () => setExpandedLocalization(!expandedLocalization),
+    [expandedLocalization],
+  );
   const toggleExpandedNotif = useCallback(() => setExpandedNotif(!expandedNotif), [expandedNotif]);
 
   const queueEvent = useCallback(
