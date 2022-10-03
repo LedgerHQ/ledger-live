@@ -55,16 +55,13 @@ const ValidatorItem = (props: ValidatorItemType) => {
     disabled,
   } = props;
 
-  const onExternalLink = useCallback(
-    (address: string) => {
-      openURL(
-        address === constants.figment
-          ? urls.ledgerValidator
-          : `${constants.explorer}/providers/${address}`,
-      );
-    },
-    [constants.figment, constants.explorer, urls.ledgerValidator],
-  );
+  const onExternalLink = useCallback((address: string) => {
+    openURL(
+      address === constants.figment
+        ? urls.ledgerValidator
+        : `${constants.explorer}/providers/${address}`,
+    );
+  }, []);
 
   const icon = useMemo(
     () =>
@@ -73,7 +70,7 @@ const ValidatorItem = (props: ValidatorItemType) => {
       ) : (
         <FirstLetterIcon label={identity.name || contract} />
       ),
-    [contract, constants.figment, identity.name],
+    [contract, identity.name],
   );
 
   const onClick = useCallback(
