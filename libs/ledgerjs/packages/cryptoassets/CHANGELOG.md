@@ -1,5 +1,37 @@
 # @ledgerhq/cryptoassets
 
+## 6.35.1
+
+### Patch Changes
+
+- [#1356](https://github.com/LedgerHQ/ledger-live/pull/1356) [`ecac411d7a`](https://github.com/LedgerHQ/ledger-live/commit/ecac411d7aad6f4003503ba6259d7c25017ca7aa) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Updated readme.md of packages
+
+## 6.35.1-next.0
+
+### Patch Changes
+
+- [#1356](https://github.com/LedgerHQ/ledger-live/pull/1356) [`ecac411d7a`](https://github.com/LedgerHQ/ledger-live/commit/ecac411d7aad6f4003503ba6259d7c25017ca7aa) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Updated readme.md of packages
+
+## 6.35.0
+
+### Minor Changes
+
+- [#1257](https://github.com/LedgerHQ/ledger-live/pull/1257) [`4f66046ef7`](https://github.com/LedgerHQ/ledger-live/commit/4f66046ef78ebcd14e6d63639f54834e90e6547a) Thanks [@adrienlacombe-ledger](https://github.com/adrienlacombe-ledger)! - 20220912 CAL update
+
+### Patch Changes
+
+- [#1304](https://github.com/LedgerHQ/ledger-live/pull/1304) [`df76dd28c1`](https://github.com/LedgerHQ/ledger-live/commit/df76dd28c15d0cd5b7b57ee3f78aa0bd4170a44a) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Fixing currency inferences in cryptoassets, and reorder currencies as a temporary fix for the ticker/managerAppName collisions' side effects
+
+## 6.35.0-next.0
+
+### Minor Changes
+
+- [#1257](https://github.com/LedgerHQ/ledger-live/pull/1257) [`4f66046ef7`](https://github.com/LedgerHQ/ledger-live/commit/4f66046ef78ebcd14e6d63639f54834e90e6547a) Thanks [@adrienlacombe-ledger](https://github.com/adrienlacombe-ledger)! - 20220912 CAL update
+
+### Patch Changes
+
+- [#1304](https://github.com/LedgerHQ/ledger-live/pull/1304) [`df76dd28c1`](https://github.com/LedgerHQ/ledger-live/commit/df76dd28c15d0cd5b7b57ee3f78aa0bd4170a44a) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Fixing currency inferences in cryptoassets, and reorder currencies as a temporary fix for the ticker/managerAppName collisions' side effects
+
 ## 6.34.0
 
 ### Minor Changes

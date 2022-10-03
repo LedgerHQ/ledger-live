@@ -3,7 +3,7 @@
     "node": ">=14"
   },
   "name": "live-mobile",
-  "version": "3.8.0",
+  "version": "3.9.0",
   "private": true,
   "scripts": {
     "postinstall": "zx ./scripts/post.mjs",
@@ -120,7 +120,7 @@
     "expo-modules-autolinking": "^0.5.5",
     "expo-modules-core": "^0.6.5",
     "fuse.js": "^6.4.6",
-    "hermes-engine": "0.9.0",
+    "hermes-engine": "0.11.0",
     "hoist-non-react-statics": "3.3.2",
     "i18next": "20.3.5",
     "invariant": "2.2.4",

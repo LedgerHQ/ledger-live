@@ -28,6 +28,7 @@ type Props = {
   operation: Operation,
   currency: Currency,
   unit: Unit,
+  isConfirmed: Boolean,
 };
 
 class AmountCell extends PureComponent<Props> {

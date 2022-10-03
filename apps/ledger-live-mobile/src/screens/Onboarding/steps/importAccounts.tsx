@@ -39,7 +39,7 @@ function OnboardingStepPairNew() {
     >
   >();
 
-  const { deviceModelId } = route.params;
+  const deviceModelId = route?.params?.deviceModelId;
 
   const dispatch = useDispatch();
   const { resetCurrentStep } = useNavigationInterceptor();

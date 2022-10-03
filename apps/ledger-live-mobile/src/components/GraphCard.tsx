@@ -1,29 +1,37 @@
 import React, { useCallback, useState, memo } from "react";
-import { TouchableOpacity } from "react-native";
+import { Flex, Text, GraphTabs } from "@ledgerhq/native-ui";
 import { Currency } from "@ledgerhq/types-cryptoassets";
 import { Portfolio } from "@ledgerhq/types-live";
-import { BoxedIcon, Flex, Text, GraphTabs } from "@ledgerhq/native-ui";
-import { useTranslation } from "react-i18next";
-import { PieChartMedium } from "@ledgerhq/native-ui/assets/icons";
-import { useNavigation } from "@react-navigation/native";
 import styled, { useTheme } from "styled-components/native";
+import Animated, {
+  Extrapolate,
+  interpolate,
+  useAnimatedStyle,
+} from "react-native-reanimated";
+import { useSelector } from "react-redux";
 import Delta from "./Delta";
 import TransactionsPendingConfirmationWarning from "./TransactionsPendingConfirmationWarning";
 import CurrencyUnitValue from "./CurrencyUnitValue";
-import DiscreetModeButton from "./DiscreetModeButton";
-import { NavigatorName } from "../const";
 
 import { useTimeRange } from "../actions/settings";
 // eslint-disable-next-line import/no-unresolved
 import getWindowDimensions from "../logic/getWindowDimensions";
 import Graph from "./Graph";
 import FormatDate from "./FormatDate";
+import { track } from "../analytics";
+import { readOnlyModeEnabledSelector } from "../reducers/settings";
+import EmptyGraph from "../icons/EmptyGraph";
+
+const { width } = getWindowDimensions();
 
 type Props = {
   areAccountsEmpty: boolean;
   portfolio: Portfolio;
   counterValueCurrency: Currency;
   useCounterValue?: boolean;
+  currentPositionY: Animated.SharedValue<number>;
+  graphCardEndPosition: number;
+  onItemHower: () => void;
 };
 
 const Placeholder = styled(Flex).attrs({
@@ -45,25 +53,25 @@ function GraphCard({
   portfolio,
   counterValueCurrency,
   areAccountsEmpty,
+  currentPositionY,
+  graphCardEndPosition,
 }: Props) {
-  const { t } = useTranslation();
-  const { countervalueChange, balanceAvailable, balanceHistory } = portfolio;
+  const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector);
 
+  const { countervalueChange, balanceHistory } = portfolio;
   const item = balanceHistory[balanceHistory.length - 1];
-  const navigation = useNavigation();
-
-  const onPieChartButtonpress = useCallback(() => {
-    navigation.navigate(NavigatorName.Analytics);
-  }, [navigation]);
 
   const unit = counterValueCurrency.units[0];
 
-  const [hoveredItem, setHoverItem] = useState();
+  const [hoveredItem, setItemHover] = useState();
   const [, setTimeRange, timeRangeItems] = useTimeRange();
   const { colors } = useTheme();
 
   const updateTimeRange = useCallback(
     index => {
+      track("timeframe_clicked", {
+        timeframe: timeRangeItems[index].value,
+      });
       setTimeRange(timeRangeItems[index]);
     },
     [setTimeRange, timeRangeItems],
@@ -78,116 +86,124 @@ function GraphCard({
 
   const activeRangeIndex = timeRangeItems.findIndex(r => r.key === range);
 
+  const BalanceOpacity = useAnimatedStyle(() => {
+    const opacity = interpolate(
+      currentPositionY.value,
+      [graphCardEndPosition + 30, graphCardEndPosition + 50],
+      [1, 0],
+      Extrapolate.CLAMP,
+    );
+
+    return {
+      opacity,
+    };
+  }, [graphCardEndPosition]);
+
+  const onItemHover = (item: any) => {
+    setItemHover(item);
+  };
+
   return (
-    <Flex bg={"neutral.c30"} borderRadius={2}>
+    <Flex>
       <Flex
         flexDirection={"row"}
-        justifyContent={"space-between"}
-        alignItems={"flex-start"}
-        p={6}
+        justifyContent={"center"}
+        alignItems={"center"}
+        marginTop={40}
+        marginBottom={40}
       >
-        <Flex>
-          <Flex flexDirection={"row"} alignItems={"center"} mb={1}>
-            <Text
-              variant={"small"}
-              fontWeight={"semiBold"}
-              color={"neutral.c70"}
-              textTransform={"uppercase"}
-              mr={2}
-            >
-              {t("tabs.portfolio")}
-            </Text>
-            {!areAccountsEmpty && <DiscreetModeButton size={20} />}
+        <Animated.View style={[BalanceOpacity]}>
+          <Flex alignItems="center">
+            {areAccountsEmpty ? (
+              <Text
+                fontFamily="Inter"
+                fontWeight="semiBold"
+                fontSize="42px"
+                color={"neutral.c100"}
+                numberOfLines={1}
+                adjustsFontSizeToFit
+              >
+                <CurrencyUnitValue unit={unit} value={0} />
+              </Text>
+            ) : (
+              <>
+                <Flex>
+                  {!balanceHistory ? (
+                    <BigPlaceholder mt="8px" />
+                  ) : (
+                    <Text
+                      fontFamily="Inter"
+                      fontWeight="semiBold"
+                      fontSize="42px"
+                      color={"neutral.c100"}
+                      numberOfLines={1}
+                      adjustsFontSizeToFit
+                    >
+                      <CurrencyUnitValue
+                        unit={unit}
+                        value={hoveredItem ? hoveredItem.value : item.value}
+                        joinFragmentsSeparator=""
+                      />
+                    </Text>
+                  )}
+                  <TransactionsPendingConfirmationWarning />
+                </Flex>
+                <Flex flexDirection={"row"}>
+                  {!balanceHistory ? (
+                    <>
+                      <SmallPlaceholder mt="12px" />
+                    </>
+                  ) : (
+                    <Flex flexDirection="row" alignItems="center">
+                      {hoveredItem && hoveredItem.date ? (
+                        <Text variant={"large"} fontWeight={"semiBold"}>
+                          <FormatDate date={hoveredItem.date} />
+                        </Text>
+                      ) : (
+                        <>
+                          <Delta
+                            percent
+                            show0Delta
+                            valueChange={countervalueChange}
+                            // range={portfolio.range}
+                          />
+                          <Text> </Text>
+                          <Delta unit={unit} valueChange={countervalueChange} />
+                        </>
+                      )}
+                    </Flex>
+                  )}
+                </Flex>
+              </>
+            )}
           </Flex>
-          {areAccountsEmpty ? (
-            <Text variant={"h3"} color={"neutral.c100"}>
-              <CurrencyUnitValue unit={unit} value={0} />
-            </Text>
-          ) : (
-            <>
-              <Flex>
-                {!balanceAvailable ? (
-                  <BigPlaceholder mt="8px" />
-                ) : (
-                  <Text
-                    fontFamily="Inter"
-                    fontWeight="semiBold"
-                    fontSize="30px"
-                    color={"neutral.c100"}
-                    numberOfLines={1}
-                    adjustsFontSizeToFit
-                  >
-                    <CurrencyUnitValue
-                      unit={unit}
-                      value={hoveredItem ? hoveredItem.value : item.value}
-                      joinFragmentsSeparator=" "
-                    />
-                  </Text>
-                )}
-                <TransactionsPendingConfirmationWarning />
-              </Flex>
-              <Flex flexDirection={"row"}>
-                {!balanceAvailable ? (
-                  <>
-                    <SmallPlaceholder mt="12px" />
-                  </>
-                ) : (
-                  <Flex flexDirection="row" alignItems="center">
-                    {hoveredItem && hoveredItem.date ? (
-                      <Text variant={"body"} fontWeight={"medium"}>
-                        <FormatDate date={hoveredItem.date} />
-                      </Text>
-                    ) : (
-                      <>
-                        <Delta
-                          percent
-                          show0Delta
-                          valueChange={countervalueChange}
-                          // range={portfolio.range}
-                        />
-                        <Delta unit={unit} valueChange={countervalueChange} />
-                      </>
-                    )}
-                  </Flex>
-                )}
-              </Flex>
-            </>
-          )}
-        </Flex>
-        {!areAccountsEmpty ? (
-          <Flex>
-            <TouchableOpacity onPress={onPieChartButtonpress}>
-              <BoxedIcon
-                Icon={PieChartMedium}
-                variant={"circle"}
-                iconSize={20}
-                size={48}
-                badgeSize={30}
-                iconColor={"neutral.c100"}
-              />
-            </TouchableOpacity>
-          </Flex>
-        ) : null}
+        </Animated.View>
       </Flex>
 
-      <Graph
-        isInteractive={isAvailable}
-        isLoading={!isAvailable}
-        height={100}
-        width={getWindowDimensions().width - 32}
-        color={colors.primary.c80}
-        data={balanceHistory}
-        onItemHover={setHoverItem}
-        mapValue={mapGraphValue}
-      />
-      <Flex mt={25} px={6} pb={6}>
-        <GraphTabs
-          activeIndex={activeRangeIndex}
-          activeBg="background.main"
-          onChange={updateTimeRange}
-          labels={rangesLabels}
-        />
-      </Flex>
+      {readOnlyModeEnabled ? (
+        <EmptyGraph />
+      ) : (
+        <>
+          <Graph
+            isInteractive={isAvailable}
+            isLoading={!isAvailable}
+            height={110}
+            width={width + 1}
+            color={colors.primary.c80}
+            data={balanceHistory}
+            onItemHover={onItemHover}
+            mapValue={mapGraphValue}
+            fill={colors.background.main}
+          />
+          <Flex paddingTop={6} background={colors.background.main}>
+            <GraphTabs
+              activeIndex={activeRangeIndex}
+              onChange={updateTimeRange}
+              labels={rangesLabels}
+            />
+          </Flex>
+        </>
+      )}
     </Flex>
   );
 }

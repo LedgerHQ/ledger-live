@@ -276,7 +276,7 @@
     },
     "EthAppNftNotSupported" : {
       "title" : "Operação indisponível para este dispositivo",
-      "description" : "A função de enviar NFT só está disponível para Nano X. Visite nossa plataforma de suporte ao cliente para saber como enviar um NFT com uma Nano S."
+      "description" : "Send NFT feature is only available for Nano X and Nano S+. Please visit our customer support platform to know how to send a NFT with a Nano S."
     },
     "Touch ID Error" : {
       "title" : "Falha na autenticação biométrica",
@@ -1687,17 +1687,17 @@
     }
   },
   "addAccountsModal" : {
+    "title" : "Adicionar Conta",
     "ctaAdd" : "Adicionar contas",
     "ctaImport" : "Importar contas do desktop",
-    "title" : "Adicionar Cripto",
-    "description" : "Você pode escolher adicionar criptoativos diretamente com sua Ledger, ou importá-los do Ledger Live de desktop.",
+    "description" : "Você pode escolher adicionar criptoativos diretamente com sua Ledger, ou importá-los do Ledger Live desktop.",
     "add" : {
       "title" : "Com sua Ledger",
       "description" : "Crie ou importe ativos com sua Ledger"
     },
     "import" : {
       "title" : "Importar do desktop",
-      "description" : "Importe ativos do Ledger Live Desktop"
+      "description" : "Importe ativos do Ledger Live desktop"
     }
   },
   "byteSize" : {
@@ -2263,7 +2263,46 @@
     "experimental" : {
       "title" : "Recursos experimentais",
       "desc" : "Experimente os recursos experimentais e nos conte o que achou.",
-      "disclaimer" : "Estes são recursos experimentais fornecidas tal como se encontram para nossa comunidade de entusiastas de tecnologia. Eles podem mudar, quebrar ou ser removidos a qualquer momento. Ao habilitá-los, você concorda em usá-los por sua própria conta e risco."
+      "disclaimer" : "Estes são recursos experimentais fornecidas tal como se encontram para nossa comunidade de entusiastas de tecnologia. Eles podem mudar, quebrar ou ser removidos a qualquer momento. Ao habilitá-los, você concorda em usá-los por sua própria conta e risco.",
+      "experimentalFeatures" : {
+        "experimentalIntegrations" : {
+          "title" : "Integrações Experimentais",
+          "description" : "Use as integrações experimentais de criptoativos disponíveis."
+        },
+        "developerMode" : {
+          "title" : "Modo Desenvolvedor",
+          "description" : "Mostrar testnets e aplicativos de desenvolvedor no Manager."
+        },
+        "managerProvider" : {
+          "title" : "Provedor do Manager",
+          "description" : "Alterar o provedor de aplicativos no Manager pode impossibilitar a instalação ou desinstalação de aplicativos no seu dispositivo Ledger."
+        },
+        "experimentalExplorers" : {
+          "title" : "API de Exploradores Experimentais",
+          "description" : "Experimente uma versão futura dos exploradores de blockchain da Ledger. Alterar essa configuração poderá afetar o saldo e a sincronização da conta, bem como o recurso de enviar."
+        },
+        "experimentalCountervalues" : {
+          "title" : "API de Contravalores Experimentais",
+          "description" : "Isso pode fazer com que os contravalores incorretos sejam exibidos nas suas contas."
+        },
+        "experimentalSwap" : {
+          "title" : "Nova Interface de Troca",
+          "description" : "Use a nova interface experimental de troca"
+        }
+      },
+      "developerFeatures" : {
+        "experimentalApps" : {
+          "title" : "Permitir aplicativos experimentais",
+          "description" : "Exibir e permitir a abertura de aplicativos classificados como experimentais na plataforma"
+        },
+        "staggingUrl" : {
+          "title" : "Staging URL da página Aprender",
+          "description" : "Use a staging URL da página Aprender."
+        },
+        "platformManifest" : {
+          "title" : "Carregar o Manifesto da Plataforma"
+        }
+      }
     },
     "developer" : {
       "title" : "Desenvolvedor",
@@ -2275,11 +2314,8 @@
     "debug" : {
       "featureFlagsTitle" : "Marcadores definidos usados no Ledger Live",
       "featureFlagsDesc" : "Valores sobrepostos serão redefinidos se o aplicativo for reexecutado. Apenas strings JSON válidas serão aceitas.",
-      "featureFlagsOverride" : "Sobrepor",
       "featureFlagsEdit" : "Editar",
-      "featureFlagsRestore" : "Restaurar",
-      "featureFlagsDisplayValue" : "Exibir Valor",
-      "featureFlagsHideValue" : "Ocultar Valor"
+      "featureFlagsRestore" : "Restaurar"
     }
   },
   "notifications" : {
@@ -3357,6 +3393,7 @@
       "appsInstalled" : "<0>{{number}}</0> aplicativo",
       "appsInstalled_plural" : "<0>{{number}}</0> aplicativos",
       "storageAvailable" : "disponível",
+      "noFreeSpace" : "Armazenamento esgotado",
       "appsToUpdate" : "<0>{{number}}</0> atualização",
       "appsToUpdate_plural" : "<0>{{number}}</0> atualizações"
     },

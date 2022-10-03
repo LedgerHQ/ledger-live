@@ -634,6 +634,11 @@ const envDefinitions = {
     parser: intParser,
     desc: "version used for the platform api",
   },
+  PLAYWRIGHT_RUN: {
+    def: false,
+    parser: boolParser,
+    desc: "true when launched for E2E testing",
+  },
   MARKET_API_URL: {
     def: "https://proxycg.api.live.ledger.com/api/v3",
     parser: stringParser,
