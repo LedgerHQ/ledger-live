@@ -45,19 +45,24 @@ export default function ProviderRate({ onClick }: Props) {
       let newFilter = [];
       if (filter.includes(type)) {
         newFilter = filter.filter(e => e !== type);
-        setFilter(newFilter);
       } else {
-        setFilter([type, ...filter]);
-        newFilter = [type, ...filter];
+        switch (type) {
+          case FILTER.centralised:
+            newFilter = [type, ...filter.filter(f => f !== FILTER.decentralised)];
+            break;
+          case FILTER.decentralised:
+            newFilter = [type, ...filter.filter(f => f !== FILTER.centralised)];
+            break;
+          case FILTER.fixed:
+            newFilter = [type, ...filter.filter(f => f !== FILTER.float)];
+            break;
+          case FILTER.float:
+            newFilter = [type, ...filter.filter(f => f !== FILTER.fixed)];
+            break;
+          default:
+        }
       }
-      // If centralised & decentralised filters are active, these 2 filters will not be applied
-      if ([FILTER.centralised, FILTER.decentralised].every(elem => newFilter.includes(elem))) {
-        newFilter = newFilter.filter(f => ![FILTER.centralised, FILTER.decentralised].includes(f));
-      }
-      // If fixed & float filters are active, these 2 filters will not be applied
-      if ([FILTER.fixed, FILTER.float].every(elem => newFilter.includes(elem))) {
-        newFilter = newFilter.filter(f => ![FILTER.fixed, FILTER.float].includes(f));
-      }
+      setFilter(newFilter);
       onClick(newFilter);
     },
     [filter, onClick],
