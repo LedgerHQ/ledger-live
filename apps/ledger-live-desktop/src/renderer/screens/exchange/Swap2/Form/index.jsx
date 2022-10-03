@@ -360,7 +360,9 @@ const SwapForm = () => {
     !swapError &&
     !currentBanner &&
     exchangeRate &&
-    swapTransaction.swap.to.account;
+    swapTransaction.swap.to.account &&
+    swapTransaction.swap.from.amount &&
+    swapTransaction.swap.from.amount.gt(0);
 
   const onSubmit = () => {
     track("Page Swap Form - Request", {
