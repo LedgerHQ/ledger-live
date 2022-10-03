@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["../../src/react/MOAC.tsx"],
+  "sourcesContent": ["import * as React from \"react\";\nimport Svg from \"./StyledSvg\";\ntype Props = {\n  size?: number | string;\n  color?: string;\n};\nconst DefaultColor = \"#000\";\n\nfunction MOAC({\n  size = 16,\n  color = DefaultColor\n}: Props): JSX.Element {\n  return <Svg width={size} height={size} viewBox=\"0 0 24 24\" fill={color}><path d=\"M11.985 12.026L7.208 7.249l-.103-.156-1.699-1.661v13.136h1.713V9.482l3.687 3.739L12 14.415l1.194-1.194 3.687-3.74v9.087h1.713V5.432l-1.713 1.661-4.896 4.933z\"  /></Svg>;\n}\n\nMOAC.DefaultColor = DefaultColor;\nexport default MOAC;"],
+  "mappings": ";;;;;;;;;;;;;;;;;;;;;;;AAAA;AAAA;AAAA;AAAA,YAAuB;AACvB,uBAAgB;AAKhB,MAAM,eAAe;AAErB,cAAc;AAAA,EACZ,OAAO;AAAA,EACP,QAAQ;AAAA,GACa;AACrB,SAAO,oCAAC,0BAAD;AAAA,IAAK,OAAO;AAAA,IAAM,QAAQ;AAAA,IAAM,SAAQ;AAAA,IAAY,MAAM;AAAA,KAAO,oCAAC,QAAD;AAAA,IAAM,GAAE;AAAA;AAAA;AAGlF,KAAK,eAAe;AACpB,IAAO,eAAQ;",
+  "names": []
+}

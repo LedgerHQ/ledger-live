@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["../../src/react/RDD.tsx"],
+  "sourcesContent": ["import * as React from \"react\";\nimport Svg from \"./StyledSvg\";\ntype Props = {\n  size?: number | string;\n  color?: string;\n};\nconst DefaultColor = \"#E30613\";\n\nfunction RDD({\n  size = 16,\n  color = DefaultColor\n}: Props): JSX.Element {\n  return <Svg width={size} height={size} viewBox=\"0 0 24 24\" fill={color}><path opacity={0.75} fillRule=\"evenodd\" clipRule=\"evenodd\" d=\"M11.524 20.25c-4.291 0-7.771-3.445-7.771-7.694 0-4.248 3.48-7.693 7.77-7.693 4.293 0 7.772 3.445 7.772 7.693 0 4.25-3.48 7.694-7.772 7.694zm1.342-13.183c1.812.742 3.114 2.138 4.038 4.019l.697-.486c-.783-1.884-2.23-3.364-4.557-4.324l-.178.791z\"  fillOpacity={0.5} /><path d=\"M20.247 6.99c0-1.789-1.466-3.24-3.274-3.24-1.807 0-3.273 1.451-3.273 3.24 0 .172.013.342.04.51 1.09.635 1.965 1.546 2.665 2.683.187.032.378.05.568.05 1.808 0 3.274-1.452 3.274-3.242z\"  /></Svg>;\n}\n\nRDD.DefaultColor = DefaultColor;\nexport default RDD;"],
+  "mappings": ";;;;;;;;;;;;;;;;;;;;;;;AAAA;AAAA;AAAA;AAAA,YAAuB;AACvB,uBAAgB;AAKhB,MAAM,eAAe;AAErB,aAAa;AAAA,EACX,OAAO;AAAA,EACP,QAAQ;AAAA,GACa;AACrB,SAAO,oCAAC,0BAAD;AAAA,IAAK,OAAO;AAAA,IAAM,QAAQ;AAAA,IAAM,SAAQ;AAAA,IAAY,MAAM;AAAA,KAAO,oCAAC,QAAD;AAAA,IAAM,SAAS;AAAA,IAAM,UAAS;AAAA,IAAU,UAAS;AAAA,IAAU,GAAE;AAAA,IAAsP,aAAa;AAAA,MAAO,oCAAC,QAAD;AAAA,IAAM,GAAE;AAAA;AAAA;AAGzZ,IAAI,eAAe;AACnB,IAAO,cAAQ;",
+  "names": []
+}

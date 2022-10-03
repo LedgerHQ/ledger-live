@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["../../src/react/EGEM.tsx"],
+  "sourcesContent": ["import * as React from \"react\";\nimport Svg from \"./StyledSvg\";\ntype Props = {\n  size?: number | string;\n  color?: string;\n};\nconst DefaultColor = \"#4A4AB6\";\n\nfunction EGEM({\n  size = 16,\n  color = DefaultColor\n}: Props): JSX.Element {\n  return <Svg width={size} height={size} viewBox=\"0 0 24 24\" fill={color}><path fillRule=\"evenodd\" clipRule=\"evenodd\" d=\"M12 4.068l6.346 10.153L12 19.932l-6.346-5.711L12 4.068zm-1.694 9.444H8.102l3.448-5.517v3.495l-1.244 2.021zm.138.9H8.407l3.143 2.828v-1.861l-1.106-.967zm2.006.957v1.871l3.143-2.828h-2.049l-1.094.957zm1.233-1.857h2.215L12.45 7.994v3.513l1.233 2.004z\"  /></Svg>;\n}\n\nEGEM.DefaultColor = DefaultColor;\nexport default EGEM;"],
+  "mappings": ";;;;;;;;;;;;;;;;;;;;;;;AAAA;AAAA;AAAA;AAAA,YAAuB;AACvB,uBAAgB;AAKhB,MAAM,eAAe;AAErB,cAAc;AAAA,EACZ,OAAO;AAAA,EACP,QAAQ;AAAA,GACa;AACrB,SAAO,oCAAC,0BAAD;AAAA,IAAK,OAAO;AAAA,IAAM,QAAQ;AAAA,IAAM,SAAQ;AAAA,IAAY,MAAM;AAAA,KAAO,oCAAC,QAAD;AAAA,IAAM,UAAS;AAAA,IAAU,UAAS;AAAA,IAAU,GAAE;AAAA;AAAA;AAGxH,KAAK,eAAe;AACpB,IAAO,eAAQ;",
+  "names": []
+}

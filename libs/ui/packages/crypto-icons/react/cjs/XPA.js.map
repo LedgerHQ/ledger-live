@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["../../src/react/XPA.tsx"],
+  "sourcesContent": ["import * as React from \"react\";\nimport Svg from \"./StyledSvg\";\ntype Props = {\n  size?: number | string;\n  color?: string;\n};\nconst DefaultColor = \"#4FA784\";\n\nfunction XPA({\n  size = 16,\n  color = DefaultColor\n}: Props): JSX.Element {\n  return <Svg width={size} height={size} viewBox=\"0 0 24 24\" fill={color}><path fillRule=\"evenodd\" clipRule=\"evenodd\" d=\"M18.43 8.884l-6.082-1.743-2.08 3.544L7.85 7.882l1.095-.14 1.129 1.326 1.252-2.22-5.512-1.58a.44.44 0 00-.552.525L7.705 15.6l2.623-4.416 2.416 2.803-1.095.14-1.128-1.325-2.482 4.137.367 1.478a.443.443 0 00.735.21l9.473-9.007a.435.435 0 00-.183-.736z\"  /></Svg>;\n}\n\nXPA.DefaultColor = DefaultColor;\nexport default XPA;"],
+  "mappings": ";;;;;;;;;;;;;;;;;;;;;;;AAAA;AAAA;AAAA;AAAA,YAAuB;AACvB,uBAAgB;AAKhB,MAAM,eAAe;AAErB,aAAa;AAAA,EACX,OAAO;AAAA,EACP,QAAQ;AAAA,GACa;AACrB,SAAO,oCAAC,0BAAD;AAAA,IAAK,OAAO;AAAA,IAAM,QAAQ;AAAA,IAAM,SAAQ;AAAA,IAAY,MAAM;AAAA,KAAO,oCAAC,QAAD;AAAA,IAAM,UAAS;AAAA,IAAU,UAAS;AAAA,IAAU,GAAE;AAAA;AAAA;AAGxH,IAAI,eAAe;AACnB,IAAO,cAAQ;",
+  "names": []
+}
