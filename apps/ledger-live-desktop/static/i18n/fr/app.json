@@ -237,7 +237,7 @@
     "form" : {
       "changeCTA" : "Modifier",
       "rates" : {
-        "title" : "Prestataires",
+        "title" : "Prix",
         "registration" : "Inscription requise ",
         "noRegistration" : "Pas d’inscription requise",
         "fixed" : "Fixe",
@@ -246,7 +246,7 @@
         "loading" : "Chargement...",
         "name" : {
           "title" : "Prestataire",
-          "tooltip" : "Pour utiliser certains prestataires, vous devez vous inscrire et créer un compte auprès d’eux."
+          "tooltip" : "Certains prestataires vous demanderont de vous enregistrer et de créer un compte."
         },
         "rate" : {
           "title" : "Taux de change",
@@ -1107,7 +1107,7 @@
     },
     "facebook" : {
       "title" : "Facebook",
-      "desc" : "Likez notre page."
+      "desc" : "Aimez notre page."
     },
     "twitter" : {
       "title" : "Twitter",
@@ -4784,7 +4784,7 @@
     },
     "EthAppNftNotSupported" : {
       "title" : "Opération indisponible sur cet appareil",
-      "description" : "Send NFT feature is only available for Nano X and Nano S+. Please visit our customer support platform to know how to send a NFT with a Nano S."
+      "description" : "La fonctionnalité Envoi de NFT n’est disponible que pour le Nano X et le Nano S Plus. Visitez notre centre d’aide pour découvrir comment envoyer un NFT avec un Nano S."
     },
     "CantScanQRCode" : {
       "title" : "Échec du scan de ce code QR. Cette adresse ne prend pas en charge la vérification automatique."
@@ -5042,6 +5042,9 @@
     },
     "StellarSourceHasMultiSign" : {
       "title" : "Désactivez le multisig pour envoyer des transactions Stellar"
+    },
+    "HederaAddAccountError" : {
+      "title" : "Your account has not been added. Please try again."
     }
   },
   "cryptoOrg" : {
