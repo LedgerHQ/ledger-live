@@ -93,7 +93,7 @@ export default function ProviderRate({
       } else if (filter.includes(FILTER.fixed)) {
         selectedRate = rates.find((rate) => rate.tradeMethod === FILTER.fixed);
       }
-      setRate(selectedRate || rates[0] || {});
+      setRate(selectedRate || (rates && rates[0]) || {});
     }
     setEmptyState(!providerRef.current?.children.length);
     // eslint-disable-next-line react-hooks/exhaustive-deps
