@@ -45,73 +45,77 @@ const cmd = ({
   devicePath,
   managerRequest,
 }: Input): Observable<ConnectManagerEvent> =>
-  withDevice(devicePath)((transport) =>
-    Observable.create((o) => {
-      const timeoutSub = of({
-        type: "unresponsiveDevice",
-      })
-        .pipe(delay(1000))
-        .subscribe((e) => o.next(e));
-      const sub = from(getDeviceInfo(transport))
-        .pipe(
-          concatMap((deviceInfo) => {
-            timeoutSub.unsubscribe();
+  withDevice(devicePath)(
+    (transport) =>
+      new Observable((o) => {
+        const timeoutSub = of({
+          type: "unresponsiveDevice",
+        } as ConnectManagerEvent)
+          .pipe(delay(1000))
+          .subscribe((e) => o.next(e));
+        const sub = from(getDeviceInfo(transport))
+          .pipe(
+            concatMap((deviceInfo) => {
+              timeoutSub.unsubscribe();
 
-            if (!deviceInfo.onboarded && !deviceInfo.isRecoveryMode) {
-              throw new DeviceNotOnboarded();
-            }
+              if (!deviceInfo.onboarded && !deviceInfo.isRecoveryMode) {
+                throw new DeviceNotOnboarded();
+              }
 
-            if (deviceInfo.isBootloader) {
-              return of({
-                type: "bootloader",
-                deviceInfo,
-              });
-            }
+              if (deviceInfo.isBootloader) {
+                return of({
+                  type: "bootloader",
+                  deviceInfo,
+                } as ConnectManagerEvent);
+              }
 
-            if (deviceInfo.isOSU) {
-              return of({
-                type: "osu",
-                deviceInfo,
-              });
-            }
+              if (deviceInfo.isOSU) {
+                return of({
+                  type: "osu",
+                  deviceInfo,
+                } as ConnectManagerEvent);
+              }
 
-            return concat(
-              of({
-                type: "listingApps",
-                deviceInfo,
-              }),
-              listApps(transport, deviceInfo)
-            );
-          }),
-          catchError((e: unknown) => {
-            if (
-              e instanceof DeviceOnDashboardExpected ||
-              (e &&
-                e instanceof TransportStatusError &&
-                // @ts-expect-error typescript not checking agains the instanceof
-                [0x6e00, 0x6d00, 0x6e01, 0x6d01, 0x6d02].includes(e.statusCode))
-            ) {
-              return from(getAppAndVersion(transport)).pipe(
-                concatMap((appAndVersion) => {
-                  return !managerRequest?.autoQuitAppDisabled &&
-                    !isDashboardName(appAndVersion.name)
-                    ? attemptToQuitApp(transport, appAndVersion)
-                    : of({
-                        type: "appDetected",
-                      });
-                })
+              return concat(
+                of({
+                  type: "listingApps",
+                  deviceInfo,
+                } as ConnectManagerEvent),
+                listApps(transport, deviceInfo)
               );
-            }
+            }),
+            catchError((e: unknown) => {
+              if (
+                e instanceof DeviceOnDashboardExpected ||
+                (e &&
+                  e instanceof TransportStatusError &&
+                  [0x6e00, 0x6d00, 0x6e01, 0x6d01, 0x6d02].includes(
+                    // @ts-expect-error typescript not checking agains the instanceof
+                    e.statusCode
+                  ))
+              ) {
+                return from(getAppAndVersion(transport)).pipe(
+                  concatMap((appAndVersion) => {
+                    return !managerRequest?.autoQuitAppDisabled &&
+                      !isDashboardName(appAndVersion.name)
+                      ? attemptToQuitApp(transport, appAndVersion)
+                      : of({
+                          type: "appDetected",
+                        } as ConnectManagerEvent);
+                  })
+                );
+              }
 
-            return throwError(e);
-          })
-        )
-        .subscribe(o);
-      return () => {
-        timeoutSub.unsubscribe();
-        sub.unsubscribe();
-      };
-    })
+              return throwError(e);
+            })
+          )
+          .subscribe(o);
+
+        return () => {
+          timeoutSub.unsubscribe();
+          sub.unsubscribe();
+        };
+      })
   );
 
 export default cmd;
