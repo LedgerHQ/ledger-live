@@ -237,16 +237,16 @@
     "form" : {
       "changeCTA" : "Değiştir",
       "rates" : {
-        "title" : "Sağlayıcılar",
+        "title" : "Quotes",
         "registration" : "Kayıt gerekiyor ",
         "noRegistration" : "Kayıt gerekmiyor",
         "fixed" : "Sabit",
-        "float" : "Dalgalı",
+        "float" : "Floating",
         "update" : "Fiyat güncellemesine kalan süre:",
         "loading" : "Yükleniyor...",
         "name" : {
           "title" : "Sağlayıcı",
-          "tooltip" : "Sağlayıcıya bağlı olarak, hesap oluşturarak giriş yapmanız gerekebilir."
+          "tooltip" : "Depending on the provider, you have to register with them by creating an account."
         },
         "rate" : {
           "title" : "Takas kuru",
@@ -5042,6 +5042,9 @@
     },
     "StellarSourceHasMultiSign" : {
       "title" : "Stellar işlemleri yapmak için lütfen çoklu imzayı devre dışı bırakın"
+    },
+    "HederaAddAccountError" : {
+      "title" : "Your account has not been added. Please try again."
     }
   },
   "cryptoOrg" : {
