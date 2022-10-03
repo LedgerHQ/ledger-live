@@ -45,7 +45,7 @@ const TableHeader: ThemedComponent<{}> = styled(Box).attrs({
   mt: 3,
   pb: 10,
 })`
-  border-bottom: 1px solid ${(p) => p.theme.colors.neutral.c30};
+  border-bottom: 1px solid ${p => p.theme.colors.neutral.c30};
 `;
 
 export default function ProviderRate({
@@ -67,7 +67,7 @@ export default function ProviderRate({
   const providerRef = useRef(null);
 
   const setRate = useCallback(
-    (rate) => {
+    rate => {
       setDexSelected(null);
       updateSelection(rate);
       dispatch(updateRateAction(rate));
@@ -76,7 +76,7 @@ export default function ProviderRate({
   );
 
   const setDexRate = useCallback(
-    (provider) => {
+    provider => {
       setDexSelected(provider);
       updateSelection(provider);
     },
@@ -89,9 +89,9 @@ export default function ProviderRate({
     } else {
       let selectedRate;
       if (filter.includes(FILTER.float)) {
-        selectedRate = rates.find((rate) => rate.tradeMethod === FILTER.float);
+        selectedRate = rates.find(rate => rate.tradeMethod === FILTER.float);
       } else if (filter.includes(FILTER.fixed)) {
-        selectedRate = rates.find((rate) => rate.tradeMethod === FILTER.fixed);
+        selectedRate = rates.find(rate => rate.tradeMethod === FILTER.fixed);
       }
       setRate(selectedRate || (rates && rates[0]) || {});
     }
@@ -121,7 +121,7 @@ export default function ProviderRate({
           </Box>
         )}
       </Box>
-      <Filter onClick={(type) => setFilter(type)} />
+      <Filter onClick={type => setFilter(type)} />
       <TableHeader>
         <Box horizontal width="215px" alignItems="center" pr="38px">
           <Text alignItems="center" display="flex" mr={1}>
@@ -176,9 +176,7 @@ export default function ProviderRate({
       </TableHeader>
       <Box mt={3} ref={providerRef}>
         {rates?.map((rate, index) => {
-          const valid = filter.every((item) =>
-            [FILTER.centralised, rate.tradeMethod].includes(item),
-          );
+          const valid = filter.every(item => [FILTER.centralised, rate.tradeMethod].includes(item));
           if (valid) {
             return (
               <CentralisedRate
@@ -196,9 +194,7 @@ export default function ProviderRate({
         })}
         {decentralizedSwapAvailable &&
           DEX_PROVIDERS.map((rate, index) => {
-            const valid = filter.every((item) =>
-              [FILTER.decentralised, FILTER.float].includes(item),
-            );
+            const valid = filter.every(item => [FILTER.decentralised, FILTER.float].includes(item));
             if (valid) {
               return (
                 <DecentralisedRate
