@@ -6,6 +6,7 @@ import { NotEnoughBalance } from "@ledgerhq/errors";
 import { implicitMigration } from "@ledgerhq/live-common/migrations/accounts";
 import { log } from "@ledgerhq/logs";
 import { checkLibs } from "@ledgerhq/live-common/sanityChecks";
+import { importPostOnboardingState } from "@ledgerhq/live-common/postOnboarding/actions";
 import i18n from "i18next";
 import { webFrame, ipcRenderer } from "electron";
 import * as remote from "@electron/remote";
@@ -135,6 +136,11 @@ async function init() {
   const initialCountervalues = await getKey("app", "countervalues");
 
   r(<ReactRoot store={store} language={language} initialCountervalues={initialCountervalues} />);
+
+  const postOnboardingState = await getKey("app", "postOnboarding");
+  if (postOnboardingState) {
+    store.dispatch(importPostOnboardingState({ newState: postOnboardingState }));
+  }
 
   if (isMainWindow) {
     webFrame.setVisualZoomLevelLimits(1, 1);
