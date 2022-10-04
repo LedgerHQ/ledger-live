@@ -61,10 +61,10 @@ const asContractAddress = (addr: string) => {
 
 // this internal get() will lazy load and cache the data from the erc20 data blob
 const get: (erc20SignaturesBlob?: string) => API = (() => {
-  const wm: WeakMap<{ blob: string | undefined }, API> = new WeakMap();
+  const cache: { [k: string]: API } = {};
   return (erc20SignaturesBlob) => {
-    if (wm.has({ blob: erc20SignaturesBlob }))
-      return wm.get({ blob: erc20SignaturesBlob }) as API;
+    const cacheKey = erc20SignaturesBlob ?? "";
+    if (cache[cacheKey]) return cache[cacheKey];
     const buf = Buffer.from(erc20SignaturesBlob ?? blob, "base64");
     const map = {};
     const entries: TokenInfo[] = [];
@@ -106,7 +106,7 @@ const get: (erc20SignaturesBlob?: string) => API = (() => {
       byContractAndChainId: (contractAddress, chainId) =>
         map[String(chainId) + ":" + contractAddress],
     };
-    wm.set({ blob: erc20SignaturesBlob }, api);
+    cache[cacheKey] = api;
     return api;
   };
 })();

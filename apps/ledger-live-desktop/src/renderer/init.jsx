@@ -129,12 +129,13 @@ async function init() {
 
   let accounts = await getKey("app", "accounts", []);
   if (accounts) {
-    // preload currency that's not in accounts list
-    if (!accounts.some(a => a.currency.id === "ethereum")) {
-      prepareCurrency(getCryptoCurrencyById("ethereum"));
-    }
     accounts = implicitMigration(accounts);
     await store.dispatch(setAccounts(accounts));
+
+    // preload currency that's not in accounts list
+    if (accounts.some(a => a.currency.id !== "ethereum")) {
+      prepareCurrency(getCryptoCurrencyById("ethereum"));
+    }
   } else {
     store.dispatch(lock());
   }
