@@ -9,20 +9,6 @@ import BitcoinLikeExplorer from "../../../../families/bitcoin/wallet-btc/explore
 import Xpub from "../../../../families/bitcoin/wallet-btc/xpub";
 import * as currency from "../../../../families/bitcoin/wallet-btc/crypto";
 
-const startLogging = (emitters: any) => {
-  emitters.forEach((emitter: any) =>
-    emitter.emitter.on(emitter.event, (data: any) => {
-      if (data.type === emitter.type) {
-        // NOTE: Disabled logging because too verbose
-        //console.log(emitter.event, JSON.stringify(data, null, 2));
-      }
-    })
-  );
-};
-const stopLogging = (emitters: any) => {
-  emitters.forEach((emitter: any) => emitter.removeAllListeners());
-};
-
 expect.extend({ toMatchFile });
 describe("xpub integration sync", () => {
   const walletDatasets = [
@@ -211,15 +197,6 @@ describe("xpub integration sync", () => {
       explorerVersion: "v3",
     },
     {
-      xpub: "XSTpb6G8xAzX1fqbWuzTSrcwqtvtEcnVinz7EtjJ6rBxmKmJ4XWSrTbNhvabfe4FXWc7cyUUxwgzsJDFeubQEx1dZPvMncd7LycUhXSShHikr8AN",
-      derivationMode: DerivationModes.LEGACY,
-      addresses: 1,
-      balance: 1000000,
-      network: coininfo.bitcoin.main.toBitcoinJS(),
-      coin: "xst",
-      explorerVersion: "v2",
-    },
-    {
       xpub: "dpubZFUiMExUREbqJQVJkfXSs4wjUb1jwVkoofnPK8Mt95j3PanCyq9Mc4aFnWtRZkhci9ZYPVLZybVLMMkS6g1nKBTN4899KJwGeVBvyumvcjW",
       derivationMode: DerivationModes.LEGACY,
       addresses: 6,
@@ -311,16 +288,6 @@ describe("xpub integration sync", () => {
         crypto,
         xpub: dataset.xpub,
         derivationMode: dataset.derivationMode,
-      });
-
-      beforeAll(() => {
-        startLogging([
-          { emitter: xpub, event: "syncing", type: "address" },
-          { emitter: xpub.explorer, event: null },
-        ]);
-      });
-      afterAll(() => {
-        stopLogging([xpub, xpub.explorer]);
       });
 
       it(
