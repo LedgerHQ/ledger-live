@@ -1,7 +1,7 @@
 import React, { useCallback, useState } from "react";
 import { Alert } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
-import { Trans, useTranslation } from "react-i18next";
+import { useTranslation } from "react-i18next";
 import { Switch } from "@ledgerhq/native-ui";
 import { setPrivacyBiometrics } from "../../../actions/settings";
 import { privacySelector } from "../../../reducers/settings";
@@ -22,6 +22,10 @@ export default function BiometricsRow({ iconLeft }: Props) {
   const [biometricsEnabled, setBiometricsEnabled] = useState(
     privacy.biometricsEnabled || validationPending,
   );
+
+  const biometricsType =
+    t(`auth.enableBiometrics.${privacy?.biometricsType?.toLowerCase()}`) ??
+    privacy?.biometricsType;
 
   const onValueChange = useCallback(
     async (biometricsEnabled: boolean) => {
@@ -63,30 +67,8 @@ export default function BiometricsRow({ iconLeft }: Props) {
             event="BiometricsRow"
             iconLeft={iconLeft}
             centeredIcon
-            title={
-              <Trans
-                i18nKey="auth.enableBiometrics.title"
-                values={{
-                  ...privacy,
-                  biometricsType:
-                    t(
-                      `auth.enableBiometrics.${privacy.biometricsType.toLowerCase()}`,
-                    ) ?? privacy.biometricsType,
-                }}
-              />
-            }
-            desc={
-              <Trans
-                i18nKey="auth.enableBiometrics.desc"
-                values={{
-                  ...privacy,
-                  biometricsType:
-                    t(
-                      `auth.enableBiometrics.${privacy.biometricsType.toLowerCase()}`,
-                    ) ?? privacy.biometricsType,
-                }}
-              />
-            }
+            title={t("auth.enableBiometrics.title", { biometricsType })}
+            desc={t("auth.enableBiometrics.desc", { biometricsType })}
           >
             <Switch checked={biometricsEnabled} onChange={onValueChange} />
           </SettingsRow>

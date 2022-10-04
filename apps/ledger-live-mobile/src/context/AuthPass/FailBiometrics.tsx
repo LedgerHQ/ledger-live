@@ -1,6 +1,6 @@
 import React from "react";
 import { StyleSheet, View, TouchableWithoutFeedback } from "react-native";
-import { Trans, useTranslation } from "react-i18next";
+import { useTranslation } from "react-i18next";
 import { useTheme } from "@react-navigation/native";
 import LText from "../../components/LText";
 import type { Privacy } from "../../reducers/settings";
@@ -14,6 +14,11 @@ type Props = {
 function FailBiometrics({ privacy, lock }: Props) {
   const { colors } = useTheme();
   const { t } = useTranslation();
+
+  const biometricsType =
+    t(`auth.failed.biometrics.${privacy.biometricsType?.toLowerCase()}`) ??
+    privacy.biometricsType;
+
   return (
     <View>
       <TouchableWithoutFeedback onPress={lock}>
@@ -28,19 +33,10 @@ function FailBiometrics({ privacy, lock }: Props) {
       </TouchableWithoutFeedback>
       <View style={styles.textContainer}>
         <LText semiBold secondary style={styles.title}>
-          <Trans
-            i18nKey="auth.failed.biometrics.title"
-            values={{
-              ...privacy,
-              biometricsType:
-                t(
-                  `auth.failed.biometrics.${privacy.biometricsType?.toLowerCase()}`,
-                ) ?? privacy.biometricsType,
-            }}
-          />
+          {t("auth.failed.biometrics.title", { biometricsType })}
         </LText>
         <LText style={styles.description} color="grey">
-          <Trans i18nKey="auth.failed.biometrics.description" />
+          {t("auth.failed.biometrics.description")}
         </LText>
       </View>
     </View>
