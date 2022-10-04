@@ -472,7 +472,7 @@ export default function Tutorial({ useCase }: Props) {
         next: () => {
           if (
             connectedDevice &&
-            getPostOnboardingActionsForDevice(connectedDevice.modelId, true).length > 0
+            getPostOnboardingActionsForDevice(connectedDevice.modelId, true).length > 00
           ) {
             history.push("/onboarding/sync/completion");
           } else {
