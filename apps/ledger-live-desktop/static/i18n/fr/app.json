@@ -237,7 +237,7 @@
     "form" : {
       "changeCTA" : "Modifier",
       "rates" : {
-        "title" : "Prestataires",
+        "title" : "Prix",
         "registration" : "Inscription requise ",
         "noRegistration" : "Pas d’inscription requise",
         "fixed" : "Fixe",
@@ -246,7 +246,7 @@
         "loading" : "Chargement...",
         "name" : {
           "title" : "Prestataire",
-          "tooltip" : "Pour utiliser certains prestataires, vous devez vous inscrire et créer un compte auprès d’eux."
+          "tooltip" : "Certains prestataires vous demanderont de vous enregistrer et de créer un compte."
         },
         "rate" : {
           "title" : "Taux de change",
@@ -430,11 +430,13 @@
         }
       },
       "filter" : {
-        "all" : "Tous",
         "centralised" : "Centralisé",
-        "dedentralised" : "Décentralisé"
+        "decentralised" : "Décentralisé",
+        "float" : "Taux variable",
+        "fixed" : "Taux fixe"
       },
-      "noQuote" : "Prix disponible à l’étape suivante"
+      "noQuote" : "Prix disponible à l’étape suivante",
+      "noProviders" : "Aucun résultat. Il n’y a pas de résultat correspondant à ces préférences."
     },
     "ip" : {
       "title" : "Bienvenue dans le Swap",
@@ -752,7 +754,7 @@
     "settings" : {
       "title" : "Modifier le compte",
       "advancedLogs" : "Avancé",
-      "advancedTips" : "Votre xpub est une donnée sensible et privée. Faites preuve de prudence, en particulier lorsque vous la divulguez à des tiers.",
+      "advancedTips" : "Cet xpub est de type {{tag}}. Lorsque vous l’importez dans un wallet tiers, choisissez le même mode de dérivation.",
       "accountName" : {
         "title" : "Nom du compte",
         "desc" : "Description du compte"
@@ -1107,7 +1109,7 @@
     },
     "facebook" : {
       "title" : "Facebook",
-      "desc" : "Likez notre page."
+      "desc" : "Aimez notre page."
     },
     "twitter" : {
       "title" : "Twitter",
@@ -1182,6 +1184,10 @@
     "blackfriday" : {
       "title" : "BLACK FRIDAY ",
       "description" : "Profitez de 40 % de réduction sur les wallets Ledger avec le code promo BLACKFRIDAY20"
+    },
+    "referralProgram" : {
+      "title" : "Refer and earn $10",
+      "description" : "Successfully refer a friend and you both earn $10 worth of Bitcoin."
     }
   },
   "signmessage" : {
@@ -4763,7 +4769,7 @@
     },
     "EthAppNftNotSupported" : {
       "title" : "Opération indisponible sur cet appareil",
-      "description" : "Send NFT feature is only available for Nano X and Nano S+. Please visit our customer support platform to know how to send a NFT with a Nano S."
+      "description" : "La fonctionnalité Envoi de NFT n’est disponible que pour le Nano X et le Nano S Plus. Visitez notre centre d’aide pour découvrir comment envoyer un NFT avec un Nano S."
     },
     "CantScanQRCode" : {
       "title" : "Échec du scan de ce code QR. Cette adresse ne prend pas en charge la vérification automatique."
@@ -5021,6 +5027,9 @@
     },
     "StellarSourceHasMultiSign" : {
       "title" : "Désactivez le multisig pour envoyer des transactions Stellar"
+    },
+    "HederaAddAccountError" : {
+      "title" : "Your account has not been added. Please try again."
     }
   },
   "cryptoOrg" : {
