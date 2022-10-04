@@ -237,7 +237,7 @@
     "form" : {
       "changeCTA" : "Alterar",
       "rates" : {
-        "title" : "Provedores",
+        "title" : "Cotações",
         "registration" : "Cadastro necessário ",
         "noRegistration" : "Não é necessário ter cadastro",
         "fixed" : "Fixo",
@@ -246,7 +246,7 @@
         "loading" : "Carregando...",
         "name" : {
           "title" : "Provedor",
-          "tooltip" : "Dependendo do provedor, você precisa criar uma conta."
+          "tooltip" : "Dependendo do provedor, você precisa se cadastrar criando uma conta."
         },
         "rate" : {
           "title" : "Taxa de câmbio",
@@ -430,11 +430,13 @@
         }
       },
       "filter" : {
-        "all" : "Todos",
         "centralised" : "Centralizado",
-        "dedentralised" : "Descentralizado"
+        "decentralised" : "Descentralizado",
+        "float" : "Floating rate",
+        "fixed" : "Taxa Fixa"
       },
-      "noQuote" : "Taxa disponível no próximo passo"
+      "noQuote" : "Taxa disponível no próximo passo",
+      "noProviders" : "Nenhum resultado encontrado. Não há cotações disponíveis com as preferências atuais."
     },
     "ip" : {
       "title" : "Boas-vindas à Troca",
@@ -1182,6 +1184,10 @@
     "blackfriday" : {
       "title" : "BLACK FRIDAY ",
       "description" : "Aproveite 40% de desconto nas carteiras hardware da Ledger com o código promocional BLACKFRIDAY20"
+    },
+    "referralProgram" : {
+      "title" : "Refer and earn $10",
+      "description" : "Successfully refer a friend and you both earn $10 worth of Bitcoin."
     }
   },
   "signmessage" : {
@@ -4763,7 +4769,7 @@
     },
     "EthAppNftNotSupported" : {
       "title" : "Operação não disponível para este dispositivo",
-      "description" : "Send NFT feature is only available for Nano X and Nano S+. Please visit our customer support platform to know how to send a NFT with a Nano S."
+      "description" : "A função de enviar NFTs está disponível apenas para a Nano X e a Nano S+. Visite nossa plataforma de suporte ao cliente para saber como enviar um NFT com uma Nano S."
     },
     "CantScanQRCode" : {
       "title" : "Não foi possível escanear o QR Code: verificação automática não compatível com este endereço."
@@ -5021,6 +5027,9 @@
     },
     "StellarSourceHasMultiSign" : {
       "title" : "Desabilite a multiassinatura para fazer transações Stellar"
+    },
+    "HederaAddAccountError" : {
+      "title" : "Your account has not been added. Please try again."
     }
   },
   "cryptoOrg" : {
