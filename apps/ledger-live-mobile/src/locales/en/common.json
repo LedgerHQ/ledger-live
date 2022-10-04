@@ -1001,12 +1001,12 @@
   },
   "discover": {
     "title": "Discover",
-    "desc": "Explore the world of web3 included in Ledger Live",
+    "desc": "Explore the world of Web3 securely",
     "link": "Tell me more",
     "sections": {
       "learn": {
         "title": "Learn",
-        "desc": "Learn about crypto, NFTs, digital security and more"
+        "desc": "Learn about crypto, and more from experts for free."
       },
       "ledgerApps": {
         "title": "Apps",
@@ -1014,11 +1014,15 @@
       },
       "earn": {
         "title": "Earn",
-        "desc": "Earn passive income and grow your crypto assets"
+        "desc": "Grow your crypto through staking and lending."
       },
       "mint": {
         "title": "Mint",
-        "desc": "Mint NFTs from exclusive collaborations on [ L ] Market"
+        "desc": "Mint NFTs from exclusive campaigns on [L] Market."
+      },
+      "referralProgram": {
+        "title": "Refer a friend",
+        "desc": "Earn $10 in BTC when your friend buys a Ledger. "
       }
     },
     "comingSoon": "Coming soon",

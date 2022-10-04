@@ -41,6 +41,7 @@ type OwnProps = {|
     account: Account,
     parentAccount: ?Account,
     validatorAddress: ?string,
+    validatorDstAddress: ?string,
   },
   name: string,
 |};
