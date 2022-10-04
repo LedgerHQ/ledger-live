@@ -645,7 +645,7 @@ const envDefinitions = {
     desc: "use the staging URL for the learn page",
   },
   DYNAMIC_CAL_BASE_URL: {
-    def: "https://cdn.live.ledger-stg.com/cryptoassets",
+    def: "https://cdn.live.ledger.com/cryptoassets",
     parser: stringParser,
     desc: "bucket s3 of the dynamic cal ERC20-signatures",
   },

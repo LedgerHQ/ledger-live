@@ -55,7 +55,7 @@ jobs:
       - name: Configure AWS Credentials (staging)
         uses: aws-actions/configure-aws-credentials@v1
         with:
-          role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_STG }}:role/ledger-live-assets-sa-role
+          role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_PRD }}:role/ledger-live-assets-sa-role
           aws-region: eu-west-1
           role-duration-seconds: 3600
           role-session-name: ledger-live-assets-sa
