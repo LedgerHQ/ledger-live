@@ -89,6 +89,7 @@ export default function WalletTabNavigator() {
   return (
     // <Box bg={"red"} flex={1}>
     <Tab.Navigator
+      initialRouteName={ScreenName.Portfolio}
       tabBar={(props: MaterialTopTabBarProps) => <TabBar {...props} />}
       screenOptions={{
         tabBarStyle: { backgroundColor: "red" },
