@@ -165,6 +165,7 @@ export const ScreenName = {
   VoteValidation: "VoteValidation",
   VoteValidationError: "VoteValidationError",
   VoteValidationSuccess: "VoteValidationSuccess",
+  WalletNftGallery: "WalletNftGallery",
 
   // celo
   CeloRegistrationValidationSuccess: "CeloRegistrationValidationSuccess",
@@ -523,6 +524,7 @@ export const NavigatorName = {
   CeloWithdrawFlow: "CeloWithdrawFlow",
   // Tab
   Main: "Main",
+  WalletTab: "WalletTabNavigator",
   // Root
   RootNavigator: "RootNavigator",
   Discover: "Discover",

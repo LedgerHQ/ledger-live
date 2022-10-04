@@ -11,6 +11,7 @@ import AccountsNavigator from "./AccountsNavigator";
 import { getStackNavigatorConfig } from "../../navigation/navigatorConfig";
 import { readOnlyModeEnabledSelector } from "../../reducers/settings";
 import { accountsSelector } from "../../reducers/accounts";
+import WalletTabNavigator from "./WalletTabNavigator";
 
 export default function PortfolioNavigator() {
   const { colors } = useTheme();
@@ -24,16 +25,12 @@ export default function PortfolioNavigator() {
   return (
     <Stack.Navigator
       screenOptions={stackNavigationConfig}
-      initialRouteName={ScreenName.Portfolio}
+      initialRouteName={NavigatorName.WalletTab}
       backBehavior={"initialRoute"}
     >
       <Stack.Screen
-        name={ScreenName.Portfolio}
-        component={
-          readOnlyModeEnabled && accounts.length <= 0
-            ? ReadOnlyPortfolio
-            : Portfolio
-        }
+        name={NavigatorName.WalletTab}
+        component={WalletTabNavigator}
         options={{
           headerShown: false,
         }}
