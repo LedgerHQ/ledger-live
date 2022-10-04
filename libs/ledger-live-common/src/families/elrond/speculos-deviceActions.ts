@@ -43,6 +43,45 @@ export const acceptMoveBalanceTransaction: DeviceAction<Transaction, any> =
     ],
   });
 
+export const acceptDelegateTransaction: DeviceAction<Transaction, any> =
+  deviceActionFlow({
+    steps: [
+      {
+        title: "Receiver",
+        button: "Rr",
+        expectedValue: ({ transaction }) => transaction.recipient,
+      },
+      {
+        title: "Amount",
+        button: "Rr",
+        expectedValue: ({ account, transaction }) =>
+          formatCurrencyUnit(account.unit, transaction.amount, {
+            showCode: true,
+            disableRounding: true,
+            joinFragmentsSeparator: " ",
+          }).replace(/\s+/g, " "),
+      },
+      {
+        title: "Fee",
+        button: "Rr",
+      },
+      {
+        title: "Data",
+        button: "Rr",
+      },
+      {
+        title: "Sign",
+        button: "LRlr",
+        final: true,
+      },
+      {
+        title: "Network",
+        button: "Rr",
+        expectedValue: () => "Mainnet",
+      },
+    ],
+  });
+
 export const acceptEsdtTransferTransaction: DeviceAction<Transaction, any> =
   deviceActionFlow({
     steps: [
@@ -85,4 +124,5 @@ export const acceptEsdtTransferTransaction: DeviceAction<Transaction, any> =
 export default {
   acceptMoveBalanceTransaction,
   acceptEsdtTransferTransaction,
+  acceptDelegateTransaction,
 };
