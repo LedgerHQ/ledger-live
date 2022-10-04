@@ -1,5 +1,15 @@
 # live-mobile
 
+## 3.9.1-nightly.1
+
+### Patch Changes
+
+- [#1439](https://github.com/LedgerHQ/ledger-live/pull/1439) [`c33c82cd32`](https://github.com/LedgerHQ/ledger-live/commit/c33c82cd3291b651238659a8b9eababe6f953ece) Thanks [@LFBarreto](https://github.com/LFBarreto)! - LLM - Add discover card for referral program
+
+- Updated dependencies [[`c33c82cd32`](https://github.com/LedgerHQ/ledger-live/commit/c33c82cd3291b651238659a8b9eababe6f953ece)]:
+  - @ledgerhq/types-live@6.24.3-nightly.0
+  - @ledgerhq/live-common@27.3.2-nightly.0
+
 ## 3.9.1-nightly.0
 
 ### Patch Changes
