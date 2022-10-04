@@ -12,9 +12,9 @@ export const KYC_STATUS = {
   rejected: "closed",
   approved: "approved",
   upgradeRequired: "upgradeRequired",
-};
+} as const;
 
-export type KYCStatus = keyof typeof KYC_STATUS;
+export type KYCStatus = typeof KYC_STATUS[keyof typeof KYC_STATUS];
 
 export type AccountTuple = {
   account: Account | null | undefined;
@@ -81,7 +81,7 @@ export const isJwtExpired = (jwtToken: string): boolean => {
 // Note: used in UI (LLD / LLM)
 export const getKYCStatusFromCheckQuoteStatus = (
   checkQuoteStatus: CheckQuoteStatus
-): string | null => {
+): KYCStatus | null => {
   switch (checkQuoteStatus.codeName) {
     case "KYC_PENDING":
       return KYC_STATUS.pending;
@@ -161,7 +161,7 @@ export const shouldShowKYCBanner = ({
   kycStatus,
 }: {
   provider?: string;
-  kycStatus: ValidKYCStatus | "closed" | "rejected";
+  kycStatus: ValidKYCStatus | "rejected";
 }): boolean => {
   if (!provider) {
     return false;

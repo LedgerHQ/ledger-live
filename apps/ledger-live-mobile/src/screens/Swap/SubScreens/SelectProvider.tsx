@@ -41,6 +41,8 @@ export function SelectProvider({
     return null;
   }
 
+  const toCurrency = to.currency;
+
   return (
     <Flex paddingX={4}>
       <TrackScreen
@@ -101,7 +103,7 @@ export function SelectProvider({
                         {" = "}
 
                         <CurrencyUnitValue
-                          unit={to.currency.units[0]}
+                          unit={toCurrency.units[0]}
                           value={new BigNumber(10)
                             .pow(fromUnit.magnitude)
                             .times(rate.magnitudeAwareRate)}
@@ -116,16 +118,13 @@ export function SelectProvider({
                   <Text variant="large" paddingBottom={2}>
                     <CurrencyUnitValue
                       value={rate.toAmount}
-                      unit={to.currency?.units[0] as Unit}
+                      unit={toCurrency.units[0]}
                       showCode
                     />
                   </Text>
 
                   <Text variant="tiny" color="neutral.c70">
-                    <CounterValue
-                      currency={to.currency}
-                      value={rate.toAmount}
-                    />
+                    <CounterValue currency={toCurrency} value={rate.toAmount} />
                   </Text>
                 </Flex>
               </Flex>

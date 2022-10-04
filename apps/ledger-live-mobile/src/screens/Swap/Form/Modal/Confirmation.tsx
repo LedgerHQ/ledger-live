@@ -52,7 +52,7 @@ export type DeviceMeta = {
 
 interface Props {
   swapTx: SwapTransactionType;
-  exchangeRate?: ExchangeRate;
+  exchangeRate: ExchangeRate;
   deviceMeta: DeviceMeta;
   onError: (_error: { error: Error; swapId: string }) => void;
   onCancel: () => void;
@@ -207,7 +207,7 @@ export function Confirmation({
                 onError={onError}
                 request={{
                   exchange,
-                  exchangeRate: exchangeRate.current as ExchangeRate,
+                  exchangeRate: exchangeRate.current,
                   transaction: swapTx.current.transaction as SwapTransaction,
                   userId: providerKYC?.id,
                 }}
