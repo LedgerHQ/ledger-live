@@ -294,6 +294,8 @@ const linkingOptions: LinkingOptions<ReactNavigation.RootParamList> = {
 
           [ScreenName.PostBuyDeviceScreen]: "hw-purchase-success",
 
+          [ScreenName.BleDevicePairingDeeplinkRedirection]: "sync-onboarding",
+
           /**
            * @params ?platform: string
            * ie: "ledgerlive://discover/paraswap?theme=light" will open the catalog and the paraswap dapp with a light theme as parameter
@@ -448,6 +450,7 @@ const linkingOptionsOnboarding = {
         initialRouteName: NavigatorName.Main,
         screens: {
           [ScreenName.PostBuyDeviceScreen]: "hw-purchase-success",
+          [ScreenName.BleDevicePairingDeeplinkRedirection]: "sync-onboarding",
         },
       },
     },
