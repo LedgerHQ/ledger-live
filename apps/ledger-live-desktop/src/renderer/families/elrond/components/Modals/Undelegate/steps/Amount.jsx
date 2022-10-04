@@ -59,12 +59,16 @@ const StepAmount = (props: StepProps) => {
   );
 
   useEffect(() => {
-    onUpdateTransaction((transaction: Transaction): AccountBridge<Transaction> =>
-      bridge.updateTransaction(transaction, {
+    onUpdateTransaction((transaction: Transaction): AccountBridge<Transaction> => {
+      if (transaction.amount.isEqualTo(value)) {
+        return transaction;
+      }
+
+      return bridge.updateTransaction(transaction, {
         mode: "unDelegate",
         amount: value,
-      }),
-    );
+      });
+    });
   }, [bridge, onUpdateTransaction, value]);
 
   return (
