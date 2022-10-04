@@ -22,7 +22,6 @@ type Props = {
 const StyledRectButton = styled(RectButton)`
   margin-bottom: 8;
   border-radius: 4;
-  width: 160;
   background-color: ${props => props.theme.colors.background.main};
 `;
 
@@ -30,12 +29,10 @@ const displayText = (text?: string | null) => text ?? "--";
 
 const NftCardView = ({
   nft,
-  style,
   status,
   metadata,
 }: {
   nft: ProtoNFT;
-  style?: any;
   status: NFTResource["status"];
   metadata: NFTMetadata;
 }) => {
@@ -47,47 +44,59 @@ const NftCardView = ({
   );
 
   return (
-    <Box style={style}>
-      <StyledRectButton onPress={() => console.log("Go to Collection")}>
-        <NftMedia
-          style={styles.image}
-          metadata={metadata}
-          mediaFormat={"preview"}
-          status={status}
-        />
-        <Box height={36} mb={4}>
-          <Skeleton style={styles.skeleton} loading={loading}>
-            <Flex flexDirection="column">
+    <StyledRectButton onPress={() => console.log("Go to Collection")}>
+      <NftMedia
+        style={styles.image}
+        metadata={metadata}
+        mediaFormat={"preview"}
+        status={status}
+      />
+      <Box height={36} mb={4}>
+        <Skeleton style={styles.skeleton} loading={loading}>
+          <Flex flexDirection="column">
+            <Flex flexDirection={"row"}>
               <Text
                 variant="body"
                 fontWeight="medium"
                 color="neutral.c100"
                 ellipsizeMode="tail"
                 numberOfLines={1}
+                flexShrink={1}
               >
                 {displayText(metadata?.nftName)}
-                {` #${displayText(nft.tokenId)}`}
               </Text>
 
-              <Flex flexDirection="row" alignItems="center">
-                <CurrencyIcon currency={currency} size={20} />
-
-                <Text
-                  variant="paragraph"
-                  fontWeight="medium"
-                  color="neutral.c80"
-                  ellipsizeMode="tail"
-                  numberOfLines={1}
-                  ml={2}
-                >
-                  {displayText(metadata?.tokenName)}
-                </Text>
-              </Flex>
+              <Text
+                variant="body"
+                fontWeight="medium"
+                color="neutral.c100"
+                ellipsizeMode="tail"
+                numberOfLines={1}
+                flexGrow={1}
+              >
+                {` #${displayText(nft.tokenId)}`}
+              </Text>
             </Flex>
-          </Skeleton>
-        </Box>
-      </StyledRectButton>
-    </Box>
+
+            <Flex flexDirection="row" alignItems="center">
+              <CurrencyIcon currency={currency} size={20} />
+
+              <Text
+                variant="paragraph"
+                fontWeight="medium"
+                color="neutral.c80"
+                ellipsizeMode="tail"
+                numberOfLines={1}
+                ml={2}
+                flexGrow={1}
+              >
+                {displayText(metadata?.tokenName)}
+              </Text>
+            </Flex>
+          </Flex>
+        </Skeleton>
+      </Box>
+    </StyledRectButton>
   );
 };
 

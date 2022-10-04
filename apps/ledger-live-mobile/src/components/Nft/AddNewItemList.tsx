@@ -1,10 +1,12 @@
-import { Flex, Icons, Box, Text } from "@ledgerhq/native-ui";
+import { Flex, Icons, Text } from "@ledgerhq/native-ui";
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { RectButton } from "react-native-gesture-handler";
-import styled, { useTheme } from "styled-components/native";
+import { useTheme } from "styled-components/native";
+import { TouchableOpacity } from "react-native";
+import styled from "@ledgerhq/native-ui/components/styled";
 
-const StyledBox = styled(Box)`
+const StyledBox = styled(TouchableOpacity)`
   background-color: ${props => props.theme.colors.background.main};
   margin-bottom: 8;
   border-radius: 4;
