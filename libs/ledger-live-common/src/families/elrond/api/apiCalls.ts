@@ -159,17 +159,15 @@ export default class ElrondApi {
 
     let allTokenTransactions: ElrondApiTransaction[] = [];
     let from = 0;
-    let before = Math.floor(Date.now() / 1000);
-    while (from <= tokenTransactionsCount) {
+    while (from < tokenTransactionsCount) {
       const { data: tokenTransactions } = await network({
         method: "GET",
-        url: `${this.API_URL}/accounts/${addr}/transactions?token=${token}&before=${before}&after=${startAt}&size=${MAX_PAGINATION_SIZE}`,
+        url: `${this.API_URL}/accounts/${addr}/transactions?token=${token}&from=${from}&after=${startAt}&size=${MAX_PAGINATION_SIZE}`,
       });
 
       allTokenTransactions = [...allTokenTransactions, ...tokenTransactions];
 
       from = from + MAX_PAGINATION_SIZE;
-      before = tokenTransactions.slice(-1).timestamp;
     }
 
     for (const esdtTransaction of allTokenTransactions) {
