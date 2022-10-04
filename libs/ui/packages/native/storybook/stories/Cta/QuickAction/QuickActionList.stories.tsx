@@ -1,17 +1,17 @@
-import { storiesOf } from "../../storiesOf";
-import React from "react";
-import { Box } from "../../../../lib";
-import QuickActionList from "../../../../src/components/cta/QuickAction/QuickActionList";
-import { QuickActionButtonProps } from "../../../../src/components/cta/QuickAction/QuickActionButton";
 import {
-  PlusMedium,
-  LendMedium,
   ArrowBottomMedium,
-  MinusMedium,
   ArrowTopMedium,
   DelegateMedium,
+  LendMedium,
+  MinusMedium,
+  PlusMedium,
 } from "@ledgerhq/icons-ui/native";
 import { action } from "@storybook/addon-actions";
+import React from "react";
+import Box from "../../../../src/components/Layout/Box";
+import { QuickActionButtonProps } from "../../../../src/components/cta/QuickAction/QuickActionButton";
+import QuickActionList from "../../../../src/components/cta/QuickAction/QuickActionList";
+import { storiesOf } from "../../storiesOf";
 
 const List = (): JSX.Element => {
   const data: QuickActionButtonProps[] = [

@@ -276,7 +276,7 @@
     },
     "EthAppNftNotSupported" : {
       "title" : "Vorgang auf diesem Gerät nicht verfügbar",
-      "description" : "Funktion zum Senden von NFTs ist nur für Nano X verfügbar. Bitte besuchen Sie unsere Kunden-Support-Plattform, um herauszufinden, wie man ein NFT mit einem Nano S sendet."
+      "description" : "Send NFT feature is only available for Nano X and Nano S+. Please visit our customer support platform to know how to send a NFT with a Nano S."
     },
     "Touch ID Error" : {
       "title" : "Biometrische Authentifizierung fehlgeschlagen",
@@ -1687,9 +1687,9 @@
     }
   },
   "addAccountsModal" : {
+    "title" : "Konto hinzufügen",
     "ctaAdd" : "Konten hinzufügen",
     "ctaImport" : "Import desktop accounts (Desktop-Konten importieren)",
-    "title" : "Krypto hinzufügen",
     "description" : "Sie können Krypto(s) direkt mit Ihrer Ledger hinzufügen oder diese aus Ledger Live Desktop importieren.",
     "add" : {
       "title" : "Mit Ihrer Ledger",
@@ -2263,7 +2263,46 @@
     "experimental" : {
       "title" : "Experimentelle Funktionen",
       "desc" : "Probieren Sie die experimentellen Funktionen aus und lassen Sie uns wissen, was Sie davon halten.",
-      "disclaimer" : "Dies sind experimentelle Funktionen, die auf einer „wie besehen“-Basis für unsere Gemeinschaft von Technik-Enthusiasten bereitgestellt werden. Sie können jederzeit geändert, abgebrochen oder entfernt werden. Dadurch, dass Sie sie aktivieren, erklären Sie sich damit einverstanden, sie auf eigenes Risiko zu nutzen."
+      "disclaimer" : "Dies sind experimentelle Funktionen, die auf einer „wie besehen“-Basis für unsere Gemeinschaft von Technik-Enthusiasten bereitgestellt werden. Sie können jederzeit geändert, abgebrochen oder entfernt werden. Dadurch, dass Sie sie aktivieren, erklären Sie sich damit einverstanden, sie auf eigenes Risiko zu nutzen.",
+      "experimentalFeatures" : {
+        "experimentalIntegrations" : {
+          "title" : "Experimentelle Integrationen",
+          "description" : "Verwenden Sie verfügbare experimentelle Integrationen für Krypto-Werte."
+        },
+        "developerMode" : {
+          "title" : "Entwicklermodus",
+          "description" : "Zeige Entwickler- und Testnet-Apps im Manager."
+        },
+        "managerProvider" : {
+          "title" : "Manager-Anbieter",
+          "description" : "Das Ändern des App-Anbieters im Manager kann es unmöglich machen, Apps auf Ihrem Ledger-Gerät zu installieren oder zu deinstallieren."
+        },
+        "experimentalExplorers" : {
+          "title" : "Experimentelle Explorer-API",
+          "description" : "Probieren Sie eine kommende Version von Ledgers Blockchain-Explorern aus. Das Ändern dieser Einstellung kann den Kontostand und die Synchronisation sowie die Sendefunktion beeinflussen."
+        },
+        "experimentalCountervalues" : {
+          "title" : "Experimentelle Gegenwerte API",
+          "description" : "Dies kann dazu führen, dass die für Ihre Konten angezeigten Gegenwerte nicht mehr stimmen."
+        },
+        "experimentalSwap" : {
+          "title" : "Neue SWAP-Schnittstelle",
+          "description" : "Verwenden Sie die neue experimentelle Swap-Schnittstelle"
+        }
+      },
+      "developerFeatures" : {
+        "experimentalApps" : {
+          "title" : "Experimentelle Apps erlauben",
+          "description" : "Anzeigen und Öffnen von Debug-getaggten Plattform-Apps erlauben."
+        },
+        "staggingUrl" : {
+          "title" : "Lernen Sie die Staging-URL",
+          "description" : "Verwenden Sie die Staging-URL für die Lern-Website."
+        },
+        "platformManifest" : {
+          "title" : "Plattform-Manifest laden"
+        }
+      }
     },
     "developer" : {
       "title" : "Entwickler",
@@ -2275,11 +2314,8 @@
     "debug" : {
       "featureFlagsTitle" : "In Ledger Live verwendete definierte Feature-Flags",
       "featureFlagsDesc" : "Überschriebene Werte werden zurückgesetzt, wenn die App neu gestartet wird. Es werden nur gültige JSON-Zeichenfolgen akzeptiert.",
-      "featureFlagsOverride" : "Überschreiben",
       "featureFlagsEdit" : "Bearbeiten",
-      "featureFlagsRestore" : "Wiederherstellen",
-      "featureFlagsDisplayValue" : "Wert anzeigen",
-      "featureFlagsHideValue" : "Wert ausblenden"
+      "featureFlagsRestore" : "Wiederherstellen"
     }
   },
   "notifications" : {
@@ -3357,6 +3393,7 @@
       "appsInstalled" : "<0>{{number}}</0>App",
       "appsInstalled_plural" : "<0>{{number}}</0>Apps",
       "storageAvailable" : "verfügbar",
+      "noFreeSpace" : "Kein Speicher mehr frei",
       "appsToUpdate" : "{{number}} App-Update",
       "appsToUpdate_plural" : "{{number}} App-Updates"
     },
@@ -3535,15 +3572,15 @@
     "no" : "Lieber nicht",
     "languages" : {
       "en" : "Englisch",
-      "fr" : "Français",
-      "ru" : "Русский",
-      "es" : "Español",
-      "zh" : "中国人",
+      "fr" : "Französisch",
+      "ru" : "Russisch",
+      "es" : "Spanisch",
+      "zh" : "Chinesisch",
       "de" : "Deutsch",
-      "tr" : "Türk",
-      "ja" : "日本",
-      "ko" : "한국인",
-      "pt" : "Português"
+      "tr" : "Türkisch",
+      "ja" : "Japanisch",
+      "ko" : "Koreanisch",
+      "pt" : "Portugiesisch"
     }
   },
   "deviceLocalization" : {

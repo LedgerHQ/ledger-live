@@ -29,14 +29,14 @@ const totalSteps = "3";
 export default function AddAccountsNavigator({ route }: { route: Route }) {
   const { colors } = useTheme();
   const { t } = useTranslation();
-  const currency = route.params?.currency;
-  const token = route.params?.token;
-  const returnToSwap = route.params?.returnToSwap;
   const stackNavConfig = useMemo(
     () => getStackNavigatorConfig(colors),
     [colors],
   );
-  const analyticsPropertyFlow = route.params?.analyticsPropertyFlow;
+
+  const { currency, token, returnToSwap, analyticsPropertyFlow } =
+    route.params || {};
+
   return (
     <Stack.Navigator
       initialRouteName={

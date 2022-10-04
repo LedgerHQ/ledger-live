@@ -1,5 +1,64 @@
 # live-common-tools
 
+## 0.2.9
+
+### Patch Changes
+
+- Updated dependencies [[`1a23c232fa`](https://github.com/LedgerHQ/ledger-live/commit/1a23c232fa21557ccd48568f4f577263bd6fc6e6), [`2f473b2fdf`](https://github.com/LedgerHQ/ledger-live/commit/2f473b2fdffbbe8641a90aa9ada5ad1dd048460f), [`ecac411d7a`](https://github.com/LedgerHQ/ledger-live/commit/ecac411d7aad6f4003503ba6259d7c25017ca7aa)]:
+  - @ledgerhq/live-common@27.3.1
+  - @ledgerhq/cryptoassets@6.35.1
+  - @ledgerhq/hw-transport-http@6.27.6
+  - @ledgerhq/hw-transport-web-ble@6.27.6
+  - @ledgerhq/hw-transport-webhid@6.27.6
+  - @ledgerhq/hw-transport-webusb@6.27.6
+  - @ledgerhq/hw-transport@6.27.6
+
+## 0.2.9-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`1a23c232fa`](https://github.com/LedgerHQ/ledger-live/commit/1a23c232fa21557ccd48568f4f577263bd6fc6e6), [`2f473b2fdf`](https://github.com/LedgerHQ/ledger-live/commit/2f473b2fdffbbe8641a90aa9ada5ad1dd048460f), [`ecac411d7a`](https://github.com/LedgerHQ/ledger-live/commit/ecac411d7aad6f4003503ba6259d7c25017ca7aa)]:
+  - @ledgerhq/live-common@27.3.1-next.0
+  - @ledgerhq/cryptoassets@6.35.1-next.0
+  - @ledgerhq/hw-transport-http@6.27.6-next.0
+  - @ledgerhq/hw-transport-web-ble@6.27.6-next.0
+  - @ledgerhq/hw-transport-webhid@6.27.6-next.0
+  - @ledgerhq/hw-transport-webusb@6.27.6-next.0
+  - @ledgerhq/hw-transport@6.27.6-next.0
+
+## 0.2.8
+
+### Patch Changes
+
+- Updated dependencies [[`671700de22`](https://github.com/LedgerHQ/ledger-live/commit/671700de22dbfe7e59a0bee2b7cae243d5b22260), [`8465b5e317`](https://github.com/LedgerHQ/ledger-live/commit/8465b5e317baecaf8f893b9c090537d2d03ac835), [`41a31a0474`](https://github.com/LedgerHQ/ledger-live/commit/41a31a0474725d51d659142b292629c534b94338), [`5f003287f8`](https://github.com/LedgerHQ/ledger-live/commit/5f003287f85974d160cc230c8e5d7c442b0eb639), [`68a0b01efc`](https://github.com/LedgerHQ/ledger-live/commit/68a0b01efcfd481cb8fe71ec22a2fc7217f25ec9), [`56068b813c`](https://github.com/LedgerHQ/ledger-live/commit/56068b813ce301a37b9d08bd55273b3d934c7371), [`8465b5e317`](https://github.com/LedgerHQ/ledger-live/commit/8465b5e317baecaf8f893b9c090537d2d03ac835), [`900eea7642`](https://github.com/LedgerHQ/ledger-live/commit/900eea7642bda94c71e2a171b90d2b6cd4d6ac4e), [`b4be83ac62`](https://github.com/LedgerHQ/ledger-live/commit/b4be83ac62b3977c16e0c375e26973b05ae4cd9e), [`df76dd28c1`](https://github.com/LedgerHQ/ledger-live/commit/df76dd28c15d0cd5b7b57ee3f78aa0bd4170a44a), [`99acc1ad22`](https://github.com/LedgerHQ/ledger-live/commit/99acc1ad22bbb76b91c2cbdc1b8ed67c691b4233), [`8e8db41df4`](https://github.com/LedgerHQ/ledger-live/commit/8e8db41df4319d3406c7f29b8cce18d1b212f12f), [`56068b813c`](https://github.com/LedgerHQ/ledger-live/commit/56068b813ce301a37b9d08bd55273b3d934c7371), [`8fa17173ed`](https://github.com/LedgerHQ/ledger-live/commit/8fa17173ed20415b17bfb6d84e8a14b602516054), [`3d2fa9adbb`](https://github.com/LedgerHQ/ledger-live/commit/3d2fa9adbbd408b4be3748f1d2180e90b83de536), [`4d2149c2dc`](https://github.com/LedgerHQ/ledger-live/commit/4d2149c2dc47058aaf3d6e4bd9739e724103ab9a), [`692feed2b9`](https://github.com/LedgerHQ/ledger-live/commit/692feed2b95a246f43347695c3e8ab6e64ffd1f5), [`4f66046ef7`](https://github.com/LedgerHQ/ledger-live/commit/4f66046ef78ebcd14e6d63639f54834e90e6547a), [`df76dd28c1`](https://github.com/LedgerHQ/ledger-live/commit/df76dd28c15d0cd5b7b57ee3f78aa0bd4170a44a)]:
+  - @ledgerhq/live-common@27.3.0
+  - @ledgerhq/cryptoassets@6.35.0
+  - @ledgerhq/hw-transport@6.27.5
+  - @ledgerhq/hw-transport-http@6.27.5
+  - @ledgerhq/hw-transport-web-ble@6.27.5
+  - @ledgerhq/hw-transport-webhid@6.27.5
+  - @ledgerhq/hw-transport-webusb@6.27.5
+
+## 0.2.8-next.1
+
+### Patch Changes
+
+- Updated dependencies [[`692feed2b9`](https://github.com/LedgerHQ/ledger-live/commit/692feed2b95a246f43347695c3e8ab6e64ffd1f5)]:
+  - @ledgerhq/live-common@27.3.0-next.1
+
+## 0.2.8-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`671700de22`](https://github.com/LedgerHQ/ledger-live/commit/671700de22dbfe7e59a0bee2b7cae243d5b22260), [`8465b5e317`](https://github.com/LedgerHQ/ledger-live/commit/8465b5e317baecaf8f893b9c090537d2d03ac835), [`41a31a0474`](https://github.com/LedgerHQ/ledger-live/commit/41a31a0474725d51d659142b292629c534b94338), [`5f003287f8`](https://github.com/LedgerHQ/ledger-live/commit/5f003287f85974d160cc230c8e5d7c442b0eb639), [`68a0b01efc`](https://github.com/LedgerHQ/ledger-live/commit/68a0b01efcfd481cb8fe71ec22a2fc7217f25ec9), [`56068b813c`](https://github.com/LedgerHQ/ledger-live/commit/56068b813ce301a37b9d08bd55273b3d934c7371), [`8465b5e317`](https://github.com/LedgerHQ/ledger-live/commit/8465b5e317baecaf8f893b9c090537d2d03ac835), [`900eea7642`](https://github.com/LedgerHQ/ledger-live/commit/900eea7642bda94c71e2a171b90d2b6cd4d6ac4e), [`b4be83ac62`](https://github.com/LedgerHQ/ledger-live/commit/b4be83ac62b3977c16e0c375e26973b05ae4cd9e), [`df76dd28c1`](https://github.com/LedgerHQ/ledger-live/commit/df76dd28c15d0cd5b7b57ee3f78aa0bd4170a44a), [`99acc1ad22`](https://github.com/LedgerHQ/ledger-live/commit/99acc1ad22bbb76b91c2cbdc1b8ed67c691b4233), [`8e8db41df4`](https://github.com/LedgerHQ/ledger-live/commit/8e8db41df4319d3406c7f29b8cce18d1b212f12f), [`56068b813c`](https://github.com/LedgerHQ/ledger-live/commit/56068b813ce301a37b9d08bd55273b3d934c7371), [`8fa17173ed`](https://github.com/LedgerHQ/ledger-live/commit/8fa17173ed20415b17bfb6d84e8a14b602516054), [`3d2fa9adbb`](https://github.com/LedgerHQ/ledger-live/commit/3d2fa9adbbd408b4be3748f1d2180e90b83de536), [`4d2149c2dc`](https://github.com/LedgerHQ/ledger-live/commit/4d2149c2dc47058aaf3d6e4bd9739e724103ab9a), [`4f66046ef7`](https://github.com/LedgerHQ/ledger-live/commit/4f66046ef78ebcd14e6d63639f54834e90e6547a), [`df76dd28c1`](https://github.com/LedgerHQ/ledger-live/commit/df76dd28c15d0cd5b7b57ee3f78aa0bd4170a44a)]:
+  - @ledgerhq/live-common@27.3.0-next.0
+  - @ledgerhq/cryptoassets@6.35.0-next.0
+  - @ledgerhq/hw-transport@6.27.5-next.0
+  - @ledgerhq/hw-transport-http@6.27.5-next.0
+  - @ledgerhq/hw-transport-web-ble@6.27.5-next.0
+  - @ledgerhq/hw-transport-webhid@6.27.5-next.0
+  - @ledgerhq/hw-transport-webusb@6.27.5-next.0
+
 ## 0.2.7
 
 ### Patch Changes
