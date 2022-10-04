@@ -35,7 +35,7 @@ const Manager = () => {
           dispatch(setLastSeenDevice({ deviceInfo }));
         });
     }
-  }, [result]);
+  }, [result, dispatch]);
 
   const onResult = useCallback(result => setResult(result), []);
 
