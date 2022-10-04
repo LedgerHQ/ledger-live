@@ -4,7 +4,7 @@ import { DeviceInfo } from "@ledgerhq/types-live";
 import getDeviceInfo from "@ledgerhq/live-common/hw/getDeviceInfo";
 
 type Input = {
-  deviceId: string,
+  deviceId: string;
 };
 
 const cmd = ({ deviceId }: Input): Observable<DeviceInfo> =>
