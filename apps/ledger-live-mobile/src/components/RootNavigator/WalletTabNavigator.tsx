@@ -1,5 +1,4 @@
-import React, { useMemo } from "react";
-import { createStackNavigator } from "@react-navigation/stack";
+import React from "react";
 import { useTranslation } from "react-i18next";
 import { useTheme } from "styled-components/native";
 import {
@@ -7,12 +6,15 @@ import {
   MaterialTopTabBarProps,
 } from "@react-navigation/material-top-tabs";
 import styled from "@ledgerhq/native-ui/components/styled";
-import { Box, Flex } from "@ledgerhq/native-ui";
-import { TabsContainer } from "@ledgerhq/native-ui/components/Tabs/TemplateTabs";
-import { ChipTab } from "@ledgerhq/native-ui/components/Tabs/Chip";
-import { getStackNavigatorConfig } from "../../navigation/navigatorConfig";
+import { Flex, Text } from "@ledgerhq/native-ui";
+import { useSelector } from "react-redux";
 import { ScreenName } from "../../const";
 import Portfolio from "../../screens/Portfolio";
+import WalletNftGallery from "../../screens/Nft/WalletNftGallery";
+import { rgba } from "../../colors";
+import { readOnlyModeEnabledSelector } from "../../reducers/settings";
+import { accountsSelector } from "../../reducers/accounts";
+// eslint-disable-next-line import/no-cycle
 import ReadOnlyPortfolio from "../../screens/Portfolio/ReadOnly";
 
 const Tab = createMaterialTopTabNavigator();
@@ -23,7 +25,11 @@ const TabBarContainer = styled(Flex)`
   background-color: transparent;
 `;
 
+const StyledTab = styled.TouchableOpacity``;
+
 function TabBar({ state, descriptors, navigation }: MaterialTopTabBarProps) {
+  const { colors } = useTheme();
+
   return (
     <TabBarContainer
       paddingLeft={4}
@@ -31,7 +37,7 @@ function TabBar({ state, descriptors, navigation }: MaterialTopTabBarProps) {
       paddingBottom={4}
       paddingTop={4}
     >
-      <TabsContainer>
+      <Flex flexDirection={"row"}>
         {state.routes.map((route, index) => {
           const { options } = descriptors[route.key];
           const label = options.title;
@@ -51,31 +57,39 @@ function TabBar({ state, descriptors, navigation }: MaterialTopTabBarProps) {
           };
 
           return (
-            <ChipTab
+            <StyledTab
               key={index}
-              label={label || "Test"}
-              isActive={isActive}
-              index={index}
+              bg={isActive ? "primary.c70" : rgba(colors.constant.white, 0.08)}
+              borderRadius={2}
+              px={4}
+              py={3}
+              mr={4}
               onPress={onPress}
-            />
+            >
+              <Text
+                fontWeight={"semiBold"}
+                variant={"body"}
+                color={"neutral.c100"}
+              >
+                {label}
+              </Text>
+            </StyledTab>
           );
         })}
-      </TabsContainer>
+      </Flex>
     </TabBarContainer>
   );
 }
 
-const TestNftGallery = () => {
-  console.log("Test3red");
-  return <Box bg={"red"} height={200} width={400} />;
-};
-
 export default function WalletTabNavigator() {
-  const { colors } = useTheme();
+  const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector);
+  const accounts = useSelector(accountsSelector);
+
   const { t } = useTranslation();
   return (
+    // <Box bg={"red"} flex={1}>
     <Tab.Navigator
-      tabBar={props => <TabBar {...props} />}
+      tabBar={(props: MaterialTopTabBarProps) => <TabBar {...props} />}
       screenOptions={{
         tabBarStyle: { backgroundColor: "red" },
       }}
@@ -83,24 +97,27 @@ export default function WalletTabNavigator() {
       sceneContainerStyle={{ backgroundColor: "transparent" }}
       tabBarOptions={{ style: { backgroundColor: "transparent" } }}
       // lazy
-      lazyPlaceholder={() => {
-        console.log("PlaceHolderred");
-        return <Box bg={"green"} height={200} width={400} />;
-      }}
+      lazy={true}
     >
       <Tab.Screen
         name={ScreenName.Portfolio}
-        // component={
-        //   readOnlyModeEnabled && accounts.length <= 0
-        //     ? ReadOnlyPortfolio
-        //     : Portfolio
-        // }
-        component={Portfolio}
+        component={
+          readOnlyModeEnabled && accounts.length <= 0
+            ? ReadOnlyPortfolio
+            : Portfolio
+        }
+        options={{
+          title: t("wallet.tabs.crypto"),
+        }}
       />
       <Tab.Screen
         name={ScreenName.WalletNftGallery}
-        component={TestNftGallery}
+        component={WalletNftGallery}
+        options={{
+          title: t("wallet.tabs.nft"),
+        }}
       />
     </Tab.Navigator>
+    // </Box>
   );
 }

@@ -1,16 +1,11 @@
 import React, { useMemo } from "react";
-import { useSelector } from "react-redux";
 import { createStackNavigator } from "@react-navigation/stack";
 import { useTheme } from "styled-components/native";
-import { NavigatorName, ScreenName } from "../../const";
-import Portfolio from "../../screens/Portfolio";
-// eslint-disable-next-line import/no-cycle
-import ReadOnlyPortfolio from "../../screens/Portfolio/ReadOnly";
+import { NavigatorName } from "../../const";
 // eslint-disable-next-line import/no-cycle
 import AccountsNavigator from "./AccountsNavigator";
 import { getStackNavigatorConfig } from "../../navigation/navigatorConfig";
-import { readOnlyModeEnabledSelector } from "../../reducers/settings";
-import { accountsSelector } from "../../reducers/accounts";
+// eslint-disable-next-line import/no-cycle
 import WalletTabNavigator from "./WalletTabNavigator";
 
 export default function PortfolioNavigator() {
@@ -19,8 +14,6 @@ export default function PortfolioNavigator() {
     () => getStackNavigatorConfig(colors, true),
     [colors],
   );
-  const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector);
-  const accounts = useSelector(accountsSelector);
 
   return (
     <Stack.Navigator

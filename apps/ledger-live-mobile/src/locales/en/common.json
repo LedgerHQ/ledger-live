@@ -5131,5 +5131,11 @@
       "title": "Getting started",
       "description": "Click here to finish setting up your {{productName}} with Ledger Live"
     }
+  },
+  "wallet": {
+    "tabs": {
+      "crypto": "Crypto",
+      "nft": "NFTs"
+    }
   }
 }
