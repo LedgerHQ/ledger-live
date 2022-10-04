@@ -120,11 +120,10 @@ export default class ElrondApi {
 
     let allTransactions: ElrondApiTransaction[] = [];
     let from = 0;
-    let before = Math.floor(Date.now() / 1000);
     while (from < transactionsCount) {
       const { data: transactions } = await network({
         method: "GET",
-        url: `${this.API_URL}/accounts/${addr}/transactions?after=${startAt}&before=${before}&size=${MAX_PAGINATION_SIZE}&withOperations=true&withScResults=true`,
+        url: `${this.API_URL}/accounts/${addr}/transactions?after=${startAt}&from=${from}&size=${MAX_PAGINATION_SIZE}&withOperations=true&withScResults=true`,
       });
 
       for (const transaction of transactions) {
@@ -134,8 +133,6 @@ export default class ElrondApi {
       allTransactions = [...allTransactions, ...transactions];
 
       from = from + MAX_PAGINATION_SIZE;
-
-      before = transactions.slice(-1)[0].timestamp;
     }
 
     return allTransactions;
