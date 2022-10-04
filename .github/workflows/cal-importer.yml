@@ -53,6 +53,6 @@ jobs:
           node libs/ledgerjs/script/crypto-assets-importer/index.js $PWD/crypto-assets true
           mv libs/ledgerjs/packages/cryptoassets/data/**.json cal
       - name: Deploy json to s3
-        run: aws s3 sync ./cal/ s3://ledger-live-cryptoassets/cryptoassets --delete
+        run: aws s3 sync ./cal/ s3://ledger-live-cryptoassets-prd/cryptoassets --delete
       - name: Cache invalidate
         run: aws cloudfront create-invalidation --distribution-id E53IORS7MW883 --paths "/cryptoassets/*" --debug
