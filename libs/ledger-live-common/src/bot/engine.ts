@@ -595,7 +595,7 @@ export async function runOnAccount<T extends Transaction>({
     // wait the condition are good (operation confirmed)
     // test() is run over and over until either timeout is reach OR success
     const testBefore = now();
-    const timeOut = mutation.testTimeout || spec.testTimeout || 30 * 1000;
+    const timeOut = mutation.testTimeout || spec.testTimeout || 5 * 60 * 1000;
     const step = (account) => {
       const timedOut = now() - testBefore > timeOut;
       const operation = account.operations.find(
