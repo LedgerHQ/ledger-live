@@ -142,7 +142,7 @@ const DeviceAction = <R, H, P>({
     if (error && onError) {
       onError(error);
     }
-  }, [error]);
+  }, [error, onError]);
 
   const { t } = useTranslation();
 
