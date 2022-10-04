@@ -6,7 +6,6 @@ import type {
 import React from "react";
 import Rates from "../Rates";
 import ProvidersSection from "./ProvidersSection";
-import ProvidersValue, { NoValuePlaceholder } from "./ProvidersValue";
 
 export type SectionRateProps = {
   provider?: string,
@@ -33,24 +32,18 @@ const SectionRate = ({
 
   return (
     <ProvidersSection>
-      {(provider && (
-        <Rates
-          {...{
-            fromCurrency,
-            toCurrency,
-            rates,
-            provider,
-            updateSelection,
-            refreshTime,
-            countdown,
-            decentralizedSwapAvailable,
-          }}
-        />
-      )) || (
-        <ProvidersValue>
-          <NoValuePlaceholder />
-        </ProvidersValue>
-      )}
+      <Rates
+        {...{
+          fromCurrency,
+          toCurrency,
+          rates,
+          provider,
+          updateSelection,
+          refreshTime,
+          countdown,
+          decentralizedSwapAvailable,
+        }}
+      />
     </ProvidersSection>
   );
 };
