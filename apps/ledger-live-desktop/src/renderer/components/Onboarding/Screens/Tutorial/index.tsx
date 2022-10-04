@@ -29,7 +29,7 @@ import { QuizFailure } from "~/renderer/components/Onboarding/Screens/Tutorial/s
 import { QuizSuccess } from "~/renderer/components/Onboarding/Screens/Tutorial/screens/QuizSuccess";
 import RecoveryWarning from "../../Help/RecoveryWarning";
 import { QuizzPopin } from "~/renderer/modals/OnboardingQuizz/OnboardingQuizzModal";
-import { DeviceModelId } from "@ledgerhq/devices";
+import { getPostOnboardingActionsForDevice } from "~/renderer/components/PostOnboardingHub/logic";
 
 import { UseCase } from "../../index";
 
@@ -471,8 +471,8 @@ export default function Tutorial({ useCase }: Props) {
         canContinue: !!connectedDevice,
         next: () => {
           if (
-            connectedDevice.modelId === DeviceModelId.nanoX ||
-            connectedDevice.modelId === DeviceModelId.nanoFTS
+            connectedDevice &&
+            getPostOnboardingActionsForDevice(connectedDevice.modelId, true).length > 0
           ) {
             history.push("/onboarding/sync/completion");
           } else {

@@ -1,7 +1,6 @@
 import React, { useCallback } from "react";
 import { useDispatch } from "react-redux";
 import { Button, Flex, Text } from "@ledgerhq/react-ui";
-import { useHistory } from "react-router-dom";
 import {
   setPostOnboardingActionCompleted,
   clearPostOnboardingLastActionCompleted,
@@ -18,7 +17,6 @@ type Props = {
 
 const PostOnboardingMockAction = ({ id }: Props) => {
   const dispatch = useDispatch();
-  const history = useHistory();
   const action = getPostOnboardingAction(id);
 
   const clearLastActionCompleted = useCallback(() => {
