@@ -31,12 +31,7 @@ function TabBar({ state, descriptors, navigation }: MaterialTopTabBarProps) {
   const { colors } = useTheme();
 
   return (
-    <TabBarContainer
-      paddingLeft={4}
-      paddingRight={4}
-      paddingBottom={4}
-      paddingTop={4}
-    >
+    <TabBarContainer p={4}>
       <Flex flexDirection={"row"}>
         {state.routes.map((route, index) => {
           const { options } = descriptors[route.key];
