@@ -7,7 +7,7 @@ import withStaticURLs from "@ledgerhq/hw-transport-http";
 import { retry } from "@ledgerhq/live-common/promise";
 import { setEnv } from "@ledgerhq/live-common/env";
 import {
-  findCryptoCurrencyById,
+  getCryptoCurrencyById,
   setSupportedCurrencies,
 } from "@ledgerhq/live-common/currencies/index";
 import { setPlatformVersion } from "@ledgerhq/live-common/platform/version";
@@ -23,7 +23,6 @@ import { prepareCurrency } from "./bridge/cache";
 import BluetoothTransport from "./react-native-hw-transport-ble";
 import "./experimental";
 import logger from "./logger";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 
 setGlobalOnBridgeError(e => logger.critical(e));
 setDeviceMode("polling");
@@ -161,4 +160,4 @@ if (process.env.NODE_ENV === "production") {
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 setSecp256k1Instance(require("./logic/secp256k1"));
 
-prepareCurrency(findCryptoCurrencyById("ethereum") as CryptoCurrency);
+prepareCurrency(getCryptoCurrencyById("ethereum"));
