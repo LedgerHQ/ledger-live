@@ -1,5 +1,4 @@
 import { openModal } from "~/renderer/actions/modals";
-import { LEDGER_VALIDATOR_ADDRESS } from "@ledgerhq/live-common/families/cosmos/utils";
 
 const getAccountBannerProps = (state, account, { t, dispatch }) => {
   const { display, redelegate, ledgerValidator, validatorSrcAddress } = state;

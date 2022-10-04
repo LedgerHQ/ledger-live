@@ -24,6 +24,10 @@ const appsImg = require("../../images/illustration/Shared/_Apps.png");
 const earnImg = require("../../images/illustration/Shared/_Earn.png");
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const mintImg = require("../../images/illustration/Shared/_Mint.png");
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const referralImgDark = require("../../images/illustration/Dark/_ReferralProgram.png");
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const referralImgLight = require("../../images/illustration/Light/_ReferralProgram.png");
 
 const StyledSafeAreaView = styled(TabBarSafeAreaView)`
   background-color: ${({ theme }) => theme.colors.background.main};
@@ -34,6 +38,7 @@ function Discover() {
   const navigation = useNavigation();
 
   const learn = useFeature("learn");
+  const referralProgramConfig = useFeature("referralProgramDiscoverCard");
 
   const readOnlyTrack = useCallback((bannerName: string) => {
     track("banner_clicked", {
@@ -132,8 +137,31 @@ function Discover() {
             />
           ),
         },
+        ...(referralProgramConfig?.enabled && referralProgramConfig?.params.url
+          ? [
+              {
+                title: t("discover.sections.referralProgram.title"),
+                subTitle: t("discover.sections.referralProgram.desc"),
+                onPress: () => {
+                  readOnlyTrack("referralProgram");
+                  track("Discover - Refer Program - OpenUrl", {
+                    url: referralProgramConfig?.params.url,
+                  });
+                  Linking.openURL(referralProgramConfig?.params.url);
+                },
+                disabled: false,
+                Image: (
+                  <Illustration
+                    size={130}
+                    darkSource={referralImgDark}
+                    lightSource={referralImgLight}
+                  />
+                ),
+              },
+            ]
+          : []),
       ].sort((a, b) => (b.disabled ? -1 : 0)),
-    [learn?.enabled, navigation, readOnlyTrack, t],
+    [learn?.enabled, referralProgramConfig, navigation, readOnlyTrack, t],
   );
 
   const { setSource, setScreen } = useContext(AnalyticsContext);
@@ -155,13 +183,12 @@ function Discover() {
         contentContainerStyle={{ paddingBottom: TAB_BAR_SAFE_HEIGHT }}
       >
         <Flex p={8} mt={8} flexDirection="row">
-          <Flex flex={1} justyfyContent="flex-start" alignItems="flex-start">
+          <Flex flex={1} justifyContent="flex-start" alignItems="flex-start">
             <Text variant="h1">{t("discover.title")}</Text>
             <Text variant="body" mb={4} mt={4} color="neutral.c70">
               {t("discover.desc")}
             </Text>
           </Flex>
-          <Flex flex={1} />
         </Flex>
         {featuresList.map(
           ({ title, subTitle, onPress, disabled, labelBadge, Image }, i) => (

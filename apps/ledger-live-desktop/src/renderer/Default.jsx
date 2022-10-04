@@ -4,7 +4,7 @@ import styled from "styled-components";
 import { ipcRenderer } from "electron";
 import { Redirect, Route, Switch, useLocation, useHistory } from "react-router-dom";
 import { useSelector } from "react-redux";
-import { FeatureToggle, useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { FeatureToggle } from "@ledgerhq/live-common/featureFlags/index";
 import TrackAppStart from "~/renderer/components/TrackAppStart";
 import { BridgeSyncProvider } from "~/renderer/bridge/BridgeSyncContext";
 import { SyncNewAccounts } from "~/renderer/bridge/SyncNewAccounts";
@@ -25,7 +25,7 @@ import PlatformApp from "~/renderer/screens/platform/App";
 import NFTGallery from "~/renderer/screens/nft/Gallery";
 import NFTCollection from "~/renderer/screens/nft/Gallery/Collection";
 import Box from "~/renderer/components/Box/Box";
-import ListenDevices from "~/renderer/components/ListenDevices";
+import { useListenToHidDevices } from "./hooks/useListenToHidDevices";
 import ExportLogsButton from "~/renderer/components/ExportLogsButton";
 import Idler from "~/renderer/components/Idler";
 import IsUnlocked from "~/renderer/components/IsUnlocked";
@@ -146,6 +146,7 @@ export default function Default() {
   const history = useHistory();
   const hasCompletedOnboarding = useSelector(hasCompletedOnboardingSelector);
 
+  useListenToHidDevices();
   useDeeplink();
   useUSBTroubleshooting();
 
@@ -167,7 +168,6 @@ export default function Default() {
   return (
     <>
       <TriggerAppReady />
-      <ListenDevices />
       <ExportLogsButton hookToShortcut />
       <TrackAppStart />
       <Idler />

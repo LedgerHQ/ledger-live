@@ -26,6 +26,7 @@ export function ToastOverlay() {
   const { t } = useTranslation();
   const onOpenInformationCenter = useCallback(
     () => dispatch(openInformationCenter("announcement")),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [],
   );
 

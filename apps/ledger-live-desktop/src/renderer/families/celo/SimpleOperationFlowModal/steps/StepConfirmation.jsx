@@ -1,6 +1,6 @@
 // @flow
 
-import React, { useCallback } from "react";
+import React from "react";
 import { Trans } from "react-i18next";
 import { withTheme } from "styled-components";
 import { SyncOneAccountOnMount } from "@ledgerhq/live-common/bridge/react/index";
