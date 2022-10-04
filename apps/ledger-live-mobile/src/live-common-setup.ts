@@ -19,10 +19,11 @@ import { Platform } from "react-native";
 import axios from "axios";
 import { setSecp256k1Instance } from "@ledgerhq/live-common/families/bitcoin/wallet-btc/crypto/secp256k1";
 import { setGlobalOnBridgeError } from "@ledgerhq/live-common/bridge/useBridgeTransaction";
-import { prepareCurrency } from "~/renderer/bridge/cache";
+import { prepareCurrency } from "./bridge/cache";
 import BluetoothTransport from "./react-native-hw-transport-ble";
 import "./experimental";
 import logger from "./logger";
+import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 
 setGlobalOnBridgeError(e => logger.critical(e));
 setDeviceMode("polling");
@@ -160,4 +161,4 @@ if (process.env.NODE_ENV === "production") {
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 setSecp256k1Instance(require("./logic/secp256k1"));
 
-prepareCurrency(findCryptoCurrencyById("ethereum"));
+prepareCurrency(findCryptoCurrencyById("ethereum") as CryptoCurrency);

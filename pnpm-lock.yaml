@@ -324,7 +324,7 @@ importers:
       '@ledgerhq/react-ui': link:../../libs/ui/packages/react
       '@ledgerhq/types-cryptoassets': link:../../libs/ledgerjs/packages/types-cryptoassets
       '@ledgerhq/types-live': link:../../libs/ledgerjs/packages/types-live
-      '@polkadot/react-identicon': 0.89.2_grbnt2wkerwtzf6thy4efz3p5i
+      '@polkadot/react-identicon': 0.89.2_fane7jikarojcev26y27hpbhu4
       '@sentry/electron': 4.0.0
       '@sentry/node': 7.8.1
       '@sentry/tracing': 7.8.1
@@ -6068,6 +6068,7 @@ packages:
     dependencies:
       '@babel/core': 7.17.10
       '@babel/helper-plugin-utils': 7.16.7
+    dev: false
 
   /@babel/plugin-transform-react-jsx-self/7.16.7_@babel+core@7.18.10:
     resolution: {integrity: sha512-oe5VuWs7J9ilH3BCCApGoYjHoSO48vkjX2CbA5bFVhIuO2HKxA3vyF7rleA4o6/4rTDbk6r8hBW7Ul8E+UZrpA==}
@@ -6105,6 +6106,7 @@ packages:
     dependencies:
       '@babel/core': 7.17.10
       '@babel/helper-plugin-utils': 7.16.7
+    dev: false
 
   /@babel/plugin-transform-react-jsx-source/7.16.7_@babel+core@7.18.10:
     resolution: {integrity: sha512-rONFiQz9vgbsnaMtQlZCjIRwhJvlrPET8TabIUK2hzlXw9B9s2Ieaxte1SCOOXMbWRHodbKixNf3BLcWVOQ8Bw==}
@@ -6303,6 +6305,7 @@ packages:
       semver: 6.3.0
     transitivePeerDependencies:
       - supports-color
+    dev: false
 
   /@babel/plugin-transform-runtime/7.17.10_@babel+core@7.18.10:
     resolution: {integrity: sha512-6jrMilUAJhktTr56kACL8LnWC5hx3Lf27BS0R0DSyW/OoJfb/iTHeE96V3b1dgKG3FSFdd/0culnYWMkjcKCig==}
@@ -12416,13 +12419,12 @@ packages:
       '@substrate/ss58-registry': 1.18.0
     dev: false
 
-  /@polkadot/react-identicon/0.89.2_grbnt2wkerwtzf6thy4efz3p5i:
+  /@polkadot/react-identicon/0.89.2_fane7jikarojcev26y27hpbhu4:
     resolution: {integrity: sha512-zxfhWfeN1N15NxEoPU0PsVme0SbV4eWmZ9jnlfJGa4D8PMJFzsJ/eA04hXn10DEttvQvrlQ+jhCwBpvmBQ29dw==}
     peerDependencies:
       react: '*'
       react-dom: '*'
       react-is: '*'
-      styled-components: '*'
     dependencies:
       '@babel/runtime': 7.17.9
       '@polkadot/keyring': 8.7.1
@@ -13428,6 +13430,27 @@ packages:
       - metro-transform-worker
       - supports-color
       - utf-8-validate
+    dev: false
+
+  /@react-native-community/cli-plugin-metro/7.0.4_h77kaxayu5kga6qsud7rauzt6a:
+    resolution: {integrity: sha512-DEV9WwJ6mB8zWFvNe/Z/eGmtmQmsZcu9VIqjxT7e9xZr2csB9ZlOZiweAMFO5cuVWZZgfL+NYIaQiFi0E0DFXw==}
+    dependencies:
+      '@react-native-community/cli-server-api': 7.0.4
+      '@react-native-community/cli-tools': 6.2.1
+      chalk: 4.1.2
+      metro: 0.67.0
+      metro-config: 0.67.0_h77kaxayu5kga6qsud7rauzt6a
+      metro-core: 0.67.0_metro@0.67.0
+      metro-react-native-babel-transformer: 0.67.0
+      metro-resolver: 0.67.0
+      metro-runtime: 0.67.0
+      readline: 1.3.0
+    transitivePeerDependencies:
+      - bufferutil
+      - encoding
+      - metro-transform-worker
+      - supports-color
+      - utf-8-validate
 
   /@react-native-community/cli-plugin-metro/7.0.4_h77kaxayu5kga6qsud7rauzt6a:
     resolution: {integrity: sha512-DEV9WwJ6mB8zWFvNe/Z/eGmtmQmsZcu9VIqjxT7e9xZr2csB9ZlOZiweAMFO5cuVWZZgfL+NYIaQiFi0E0DFXw==}
@@ -13738,6 +13761,58 @@ packages:
       wcwidth: 1.0.1
     transitivePeerDependencies:
       - '@babel/core'
+      - bufferutil
+      - encoding
+      - metro-transform-worker
+      - supports-color
+      - utf-8-validate
+    dev: false
+
+  /@react-native-community/cli/7.0.4_oxdc6pm5g5rdvpaycf2kzdj6te:
+    resolution: {integrity: sha512-W9nACtHWaLJZIP48cQmhQOnl5/7maoWE1Aji67MrLeIoB+ScNTJxaHfV4fMcklD6B6XEhaKokPACRZWm36zAog==}
+    engines: {node: '>=12'}
+    hasBin: true
+    peerDependencies:
+      metro-resolver: '*'
+      react-native: '*'
+    peerDependenciesMeta:
+      metro-resolver:
+        optional: true
+    dependencies:
+      '@react-native-community/cli-debugger-ui': 7.0.3
+      '@react-native-community/cli-hermes': 6.3.1
+      '@react-native-community/cli-plugin-metro': 7.0.4_h77kaxayu5kga6qsud7rauzt6a
+      '@react-native-community/cli-server-api': 7.0.4
+      '@react-native-community/cli-tools': 6.2.1
+      '@react-native-community/cli-types': 6.0.0
+      appdirsjs: 1.2.6
+      chalk: 4.1.2
+      command-exists: 1.2.9
+      commander: 2.20.3
+      cosmiconfig: 5.2.1
+      deepmerge: 3.3.0
+      envinfo: 7.8.1
+      execa: 1.0.0
+      find-up: 4.1.0
+      fs-extra: 8.1.0
+      glob: 7.2.0
+      graceful-fs: 4.2.10
+      joi: 17.6.0
+      leven: 3.1.0
+      lodash: 4.17.21
+      metro-resolver: 0.67.0
+      minimist: 1.2.6
+      node-stream-zip: 1.15.0
+      ora: 3.4.0
+      pretty-format: 26.6.2
+      prompts: 2.4.2
+      react-native: 0.68.2_shn3lkepuadv4od4dudas6ijbq
+      semver: 6.3.0
+      serve-static: 1.15.0
+      strip-ansi: 5.2.0
+      sudo-prompt: 9.2.1
+      wcwidth: 1.0.1
+    transitivePeerDependencies:
       - bufferutil
       - encoding
       - metro-transform-worker
@@ -21240,10 +21315,10 @@ packages:
       lodash:
         optional: true
     dependencies:
-      7zip-bin: 5.1.1
       '@develar/schema-utils': 2.6.5
       '@electron/universal': 1.2.0
       '@malept/flatpak-bundler': 0.4.0
+      7zip-bin: 5.1.1
       async-exit-hook: 2.0.1
       bluebird-lst: 1.0.9
       builder-util: 23.0.2
@@ -22545,6 +22620,7 @@ packages:
       babel-plugin-syntax-trailing-function-commas: 7.0.0-beta.0
     transitivePeerDependencies:
       - supports-color
+    dev: false
 
   /babel-preset-fbjs/3.4.0_@babel+core@7.18.10:
     resolution: {integrity: sha512-9ywCsCvo1ojrw0b+XYk7aFvTH6D9064t0RIL1rtMf3nsa02Xw41MS7sZw216Im35xj/UY0PDBQsa1brUDDF1Ow==}
@@ -23654,9 +23730,9 @@ packages:
   /builder-util/23.0.2:
     resolution: {integrity: sha512-HaNHL3axNW/Ms8O1mDx3I07G+ZnZ/TKSWWvorOAPau128cdt9S+lNx5ocbx8deSaHHX4WFXSZVHh3mxlaKJNgg==}
     dependencies:
-      7zip-bin: 5.1.1
       '@types/debug': 4.1.7
       '@types/fs-extra': 9.0.13
+      7zip-bin: 5.1.1
       app-builder-bin: 4.0.0
       bluebird-lst: 1.0.9
       builder-util-runtime: 9.0.0
@@ -23826,7 +23902,7 @@ packages:
       minipass-pipeline: 1.2.4
       mkdirp: 1.0.4
       p-map: 4.0.0
-      promise-inflight: 1.0.1
+      promise-inflight: 1.0.1_bluebird@3.7.2
       rimraf: 3.0.2
       ssri: 8.0.1
       tar: 6.1.11
@@ -25062,8 +25138,8 @@ packages:
     engines: {node: '>=10'}
     hasBin: true
     dependencies:
-      JSONStream: 1.3.5
       is-text-path: 1.0.1
+      JSONStream: 1.3.5
       lodash: 4.17.21
       meow: 8.1.2
       split2: 3.2.2
@@ -34971,13 +35047,13 @@ packages:
       '@types/lodash': 4.14.182
       '@types/node': 12.20.52
       '@types/ws': 7.4.7
-      JSONStream: 1.3.5
       commander: 2.20.3
       delay: 5.0.0
       es6-promisify: 5.0.0
       eyes: 0.1.8
       isomorphic-ws: 4.0.1_ws@7.5.7
       json-stringify-safe: 5.0.1
+      JSONStream: 1.3.5
       lodash: 4.17.21
       uuid: 8.3.2
       ws: 7.5.7
@@ -40090,6 +40166,7 @@ packages:
       react-refresh: 0.4.3
     transitivePeerDependencies:
       - supports-color
+    dev: false
 
   /metro-react-native-babel-transformer/0.67.0:
     resolution: {integrity: sha512-P0JT09n7T01epUtgL9mH6BPat3xn4JjBakl4lWHdL61cvEGcrxuIom1eoFFKkgU/K5AVLU4aCAttHS7nSFCcEQ==}
@@ -40118,6 +40195,7 @@ packages:
       nullthrows: 1.1.1
     transitivePeerDependencies:
       - supports-color
+    dev: false
 
   /metro-resolver/0.67.0:
     resolution: {integrity: sha512-d2KS/zAyOA/z/q4/ff41rAp+1txF4H6qItwpsls/RHStV2j6PqgRHUzq/3ga+VIeoUJntYJ8nGW3+3qSrhFlig==}
@@ -40722,7 +40800,6 @@ packages:
     engines: {node: '>= 0.6'}
     hasBin: true
     dependencies:
-      JSONStream: 1.3.5
       browser-resolve: 1.11.3
       cached-path-relative: 1.1.0
       concat-stream: 1.5.2
@@ -40730,6 +40807,7 @@ packages:
       detective: 5.2.0
       duplexer2: 0.1.4
       inherits: 2.0.4
+      JSONStream: 1.3.5
       konan: 2.1.1
       readable-stream: 2.3.7
       resolve: 1.22.0
@@ -46451,6 +46529,58 @@ packages:
       - metro-transform-worker
       - supports-color
       - utf-8-validate
+    dev: false
+
+  /react-native/0.68.2_shn3lkepuadv4od4dudas6ijbq:
+    resolution: {integrity: sha512-qNMz+mdIirCEmlrhapAtAG+SWVx6MAiSfCbFNhfHqiqu1xw1OKXdzIrjaBEPihRC2pcORCoCHduHGQe/Pz9Yuw==}
+    engines: {node: '>=14'}
+    hasBin: true
+    peerDependencies:
+      react: 17.0.2
+    dependencies:
+      '@jest/create-cache-key-function': 27.5.1
+      '@react-native-community/cli': 7.0.4_oxdc6pm5g5rdvpaycf2kzdj6te
+      '@react-native-community/cli-platform-android': 7.0.1
+      '@react-native-community/cli-platform-ios': 7.0.1
+      '@react-native/assets': 1.0.0
+      '@react-native/normalize-color': 2.0.0
+      '@react-native/polyfills': 2.0.0
+      abort-controller: 3.0.0
+      anser: 1.4.10
+      base64-js: 1.5.1
+      deprecated-react-native-prop-types: 2.3.0
+      event-target-shim: 5.0.1
+      hermes-engine: 0.11.0
+      invariant: 2.2.4
+      jsc-android: 250230.2.1
+      metro-react-native-babel-transformer: 0.67.0
+      metro-runtime: 0.67.0
+      metro-source-map: 0.67.0
+      mkdirp: 0.5.6
+      nullthrows: 1.1.1
+      pretty-format: 26.6.2
+      promise: 8.1.0
+      react: 17.0.2
+      react-devtools-core: 4.24.5
+      react-native-codegen: 0.0.17
+      react-native-gradle-plugin: 0.0.6
+      react-refresh: 0.4.3
+      react-shallow-renderer: 16.14.1_react@17.0.2
+      regenerator-runtime: 0.13.9
+      scheduler: 0.20.2
+      stacktrace-parser: 0.1.10
+      use-subscription: 1.5.1_react@17.0.2
+      whatwg-fetch: 3.6.2
+      ws: 6.2.2
+      yargs: 15.4.1
+    transitivePeerDependencies:
+      - '@babel/preset-env'
+      - bufferutil
+      - encoding
+      - metro-resolver
+      - metro-transform-worker
+      - supports-color
+      - utf-8-validate
 
   /react-native/0.68.2_shn3lkepuadv4od4dudas6ijbq:
     resolution: {integrity: sha512-qNMz+mdIirCEmlrhapAtAG+SWVx6MAiSfCbFNhfHqiqu1xw1OKXdzIrjaBEPihRC2pcORCoCHduHGQe/Pz9Yuw==}
@@ -49559,10 +49689,10 @@ packages:
     engines: {node: '>=8.0.0'}
     hasBin: true
     dependencies:
-      JSONStream: 1.3.5
       ansi-escape-sequences: 5.1.2
       byte-size: 6.2.0
       common-log-format: 1.0.0
+      JSONStream: 1.3.5
       lodash.throttle: 4.1.1
       stream-via: 1.0.4
       table-layout: 1.0.2

@@ -153,8 +153,9 @@ function comparePriority(a: TokenCurrency, b: TokenCurrency) {
   return Number(!!b.disableCountervalue) - Number(!!a.disableCountervalue);
 }
 
-export function addTokens(list: TokenCurrency[]) {
+export function addTokens(list: TokenCurrency[]): void {
   list.forEach((token) => {
+    if (tokensById[token.id]) return;
     if (!token.delisted) tokensArray.push(token);
     tokensArrayWithDelisted.push(token);
     tokensById[token.id] = token;

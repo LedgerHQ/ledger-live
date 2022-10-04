@@ -19,8 +19,8 @@ import "~/renderer/styles/global";
 import "~/renderer/live-common-setup";
 import { getLocalStorageEnvs } from "~/renderer/experimental";
 import "~/renderer/i18n/init";
-import { prepareCurrency, hydrateCurrency } from "~/renderer/bridge/cache";
-import { findCryptoCurrencyById, addTokens } from "@ledgerhq/live-common/currencies/index";
+import { prepareCurrency } from "~/renderer/bridge/cache";
+import { findCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
 
 import logger, { enableDebugLogger } from "~/logger";
 import LoggerTransport from "~/logger/logger-transport-renderer";
@@ -61,9 +61,6 @@ async function init() {
     log,
     Transport,
   });
-
-  prepareCurrency(findCryptoCurrencyById("ethereum"));
-  await hydrateCurrency(findCryptoCurrencyById("ethereum"));
 
   if (process.env.PLAYWRIGHT_RUN) {
     const spectronData = await getKey("app", "PLAYWRIGHT_RUN", {});
@@ -132,6 +129,10 @@ async function init() {
 
   let accounts = await getKey("app", "accounts", []);
   if (accounts) {
+    // preload currency that's not in accounts list
+    if (!accounts.some(a => a.currency.id === "ethereum")) {
+      prepareCurrency(findCryptoCurrencyById("ethereum"));
+    }
     accounts = implicitMigration(accounts);
     await store.dispatch(setAccounts(accounts));
   } else {
