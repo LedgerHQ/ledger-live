@@ -532,6 +532,7 @@ export const renderConnectYourDevice = ({
   onRepairModal,
   device,
   unresponsive,
+  isLocked = false,
 }: {
   modelId: DeviceModelId,
   type: "light" | "dark",
@@ -539,6 +540,7 @@ export const renderConnectYourDevice = ({
   onRepairModal: () => void,
   device: ?Device,
   unresponsive?: boolean,
+  isLocked?: boolean,
 }) => (
   <Wrapper>
     <Header />
@@ -547,7 +549,7 @@ export const renderConnectYourDevice = ({
         animation={getDeviceAnimation(
           modelId,
           type,
-          unresponsive ? "enterPinCode" : "plugAndPinCode",
+          unresponsive || isLocked ? "enterPinCode" : "plugAndPinCode",
         )}
       />
     </AnimationWrapper>
@@ -555,7 +557,9 @@ export const renderConnectYourDevice = ({
       <Title>
         <Trans
           i18nKey={
-            unresponsive ? "DeviceAction.unlockDevice" : "DeviceAction.connectAndUnlockDevice"
+            unresponsive || isLocked
+              ? "DeviceAction.unlockDevice"
+              : "DeviceAction.connectAndUnlockDevice"
           }
         />
       </Title>

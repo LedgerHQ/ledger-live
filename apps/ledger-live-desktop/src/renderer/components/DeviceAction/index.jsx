@@ -88,6 +88,7 @@ const DeviceAction = <R, H, P>({
     appAndVersion,
     device,
     unresponsive,
+    isLocked,
     error,
     isLoading,
     allowManagerRequestedWording,
@@ -287,11 +288,12 @@ const DeviceAction = <R, H, P>({
     });
   }
 
-  if ((!isLoading && !device) || unresponsive) {
+  if ((!isLoading && !device) || unresponsive || isLocked) {
     return renderConnectYourDevice({
       modelId,
       type,
       unresponsive,
+      isLocked,
       device,
       onRepairModal,
       onRetry,
