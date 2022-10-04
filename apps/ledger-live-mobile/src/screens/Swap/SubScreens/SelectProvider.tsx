@@ -6,7 +6,6 @@ import { getProviderName } from "@ledgerhq/live-common/exchange/swap/utils/index
 import { getAccountUnit } from "@ledgerhq/live-common/account/index";
 import { useTranslation } from "react-i18next";
 import { ExchangeRate } from "@ledgerhq/live-common/exchange/swap/types";
-import { Unit } from "@ledgerhq/types-cryptoassets";
 import CurrencyUnitValue from "../../../components/CurrencyUnitValue";
 import { providerIcons } from "../../../icons/swap/index";
 import { SelectProviderProps } from "../types";
