@@ -1044,6 +1044,7 @@
   },
   "installSetOfApps": {
     "landing": {
+      "estimatedTime": "{{ minutes }} min",
       "title": "{{ productName }} uses apps to enable secure blockchain transactions",
       "subtitle": "We recommend downloading a default set of apps. You can download more later.",
       "installCTA": "Intall apps",

@@ -29,8 +29,8 @@ export default function DebugMultiAppInstall() {
   }, [device]);
 
   const formatEstimatedTime = (estimatedTime: number) =>
-    t("syncOnboarding.estimatedTimeFormat", {
-      estimatedTime: estimatedTime / 60,
+    t("installSetOfApps.landing.estimatedTime", {
+      minutes: estimatedTime / 60,
     });
 
   return (
