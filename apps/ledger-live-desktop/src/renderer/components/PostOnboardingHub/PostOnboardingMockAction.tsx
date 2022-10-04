@@ -2,8 +2,12 @@ import React, { useCallback } from "react";
 import { useDispatch } from "react-redux";
 import { Button, Flex, Text } from "@ledgerhq/react-ui";
 import { useHistory } from "react-router-dom";
-import { setPostOnboardingActionCompleted } from "@ledgerhq/live-common/postOnboarding/actions";
+import {
+  setPostOnboardingActionCompleted,
+  clearPostOnboardingLastActionCompleted,
+} from "@ledgerhq/live-common/postOnboarding/actions";
 import { PostOnboardingActionId } from "@ledgerhq/types-live";
+
 import { getPostOnboardingAction } from "./logic";
 import { setDrawer } from "~/renderer/drawers/Provider";
 import PostOnboardingHubContent from "./PostOnboardingHubContent";
@@ -17,28 +21,34 @@ const PostOnboardingMockAction = ({ id }: Props) => {
   const history = useHistory();
   const action = getPostOnboardingAction(id);
 
+  const clearLastActionCompleted = useCallback(() => {
+    dispatch(clearPostOnboardingLastActionCompleted());
+  }, [dispatch]);
+
   const completeAction = useCallback(
     () => dispatch(setPostOnboardingActionCompleted({ actionId: id })),
     [dispatch, id],
   );
 
-  const navigateToDashboard = useCallback(() => {
-    setDrawer();
-  }, []);
-
-  const navigateToHub = useCallback(() => {
-    setDrawer(PostOnboardingHubContent);
-  }, []);
-
   const handleCompleteAndGoToDashboard = useCallback(() => {
     completeAction();
-    navigateToDashboard();
-  }, [completeAction, navigateToDashboard]);
+    setDrawer();
+    clearLastActionCompleted();
+  }, [clearLastActionCompleted, completeAction]);
 
   const handleCompleteAndGoToHub = useCallback(() => {
     completeAction();
-    navigateToHub();
-  }, [completeAction, navigateToHub]);
+    setDrawer(
+      PostOnboardingHubContent,
+      {},
+      {
+        onRequestClose: () => {
+          setDrawer();
+          clearLastActionCompleted();
+        },
+      },
+    );
+  }, [clearLastActionCompleted, completeAction]);
 
   return (
     <Flex p={6} flexDirection="column" height="100%" justifyContent="center" alignItems="center">

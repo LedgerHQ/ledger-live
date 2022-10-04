@@ -1,8 +1,10 @@
 import React, { useCallback } from "react";
+import { useDispatch } from "react-redux";
 import { Flex, Link, Text } from "@ledgerhq/react-ui";
 import { useHistory } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { usePostOnboardingHubState } from "@ledgerhq/live-common/postOnboarding/hooks/index";
+import { clearPostOnboardingLastActionCompleted } from "@ledgerhq/live-common/postOnboarding/actions";
 
 import PostOnboardingHub from ".";
 import { setDrawer } from "~/renderer/drawers/Provider";
@@ -11,15 +13,21 @@ import { withV3StyleProvider } from "~/renderer/styles/StyleProviderV3";
 const PostOnboardingHubContent = () => {
   const { t } = useTranslation();
   const history = useHistory();
+  const dispatch = useDispatch();
 
   const { lastActionCompleted } = usePostOnboardingHubState();
   const { actionCompletedHubTitle } = lastActionCompleted ?? {};
 
   const isInsidePostOnboardingScreen = history.location.pathname === "/post-onboarding";
 
+  const clearLastActionCompleted = useCallback(() => {
+    dispatch(clearPostOnboardingLastActionCompleted());
+    setDrawer();
+  }, [dispatch]);
+
   const handleSkipButton = useCallback(() => {
-    isInsidePostOnboardingScreen ? history.push("/") : setDrawer();
-  }, [history, isInsidePostOnboardingScreen]);
+    isInsidePostOnboardingScreen ? history.push("/") : clearLastActionCompleted();
+  }, [clearLastActionCompleted, history, isInsidePostOnboardingScreen]);
 
   return (
     <Flex
