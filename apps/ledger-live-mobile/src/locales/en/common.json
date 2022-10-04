@@ -776,6 +776,9 @@
     "failed": {
       "biometrics": {
         "title": "{{biometricsType}} unlock failed",
+        "touchid": "TouchID",
+        "faceid": "FaceID",
+        "fingerprint": "Fingerprint",
         "description": "Enter your password to continue",
         "authenticate": "Please authenticate with the Ledger Live app"
       },
@@ -804,7 +807,10 @@
     },
     "enableBiometrics": {
       "title": "{{biometricsType}}",
-      "desc": "Unlock with {{biometricsType}}"
+      "desc": "Unlock with {{biometricsType}}",
+      "touchid": "TouchID",
+      "faceid": "FaceID",
+      "fingerprint": "Fingerprint"
     }
   },
   "reset": {
