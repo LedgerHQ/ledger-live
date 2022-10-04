@@ -754,7 +754,7 @@
     "settings": {
       "title": "Edit account",
       "advancedLogs": "Advanced",
-      "advancedTips": "Your xpub is privacy-sensitive data. Use with caution, especially when disclosing to third parties.",
+      "advancedTips": "This is a {{tag}} xpub. When importing it into a third-party wallet, chose the same derivation mode.",
       "accountName": {
         "title": "Account name",
         "desc": "Description of the account"
