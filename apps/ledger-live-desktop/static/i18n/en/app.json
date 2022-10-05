@@ -2032,7 +2032,10 @@
     "changeLanguage": "Change language",
     "changeDeviceLanguage": "Change your device language?",
     "chooseLanguage": "Choose a language for you {{deviceName}}.",
-    "changeDeviceLanguageDescription": "Ledger Live is now in {{language}}. Do you want to use {{language}} on your device too?",
+    "changeDeviceLanguagePrompt": {
+      "title": "{{language}} is also available for your {{deviceName}}",
+      "description": "Would you like to change its language to {{language}}?"
+    },
     "firmwareUpdatePrompt": {
       "title": "Set your {{deviceName}} in {{language}}?",
       "description": "{{language}} is now available for your {{deviceName}}. You can set it now, or change your device language at any time from My Ledger."

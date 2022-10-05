@@ -27,10 +27,10 @@ const ChangeDeviceLanguagePrompt: React.FC<Props> = ({
     <Flex flexDirection="column" flex={1} alignSelf="stretch">
       <Flex alignItems="center" justifyContent="center" flexDirection="column" flex={1} px={12}>
         <DeviceIllustration width={251} height={200} deviceId={deviceModelId} />
-        <Text variant="h1" fontSize={20} mt={24}>
+        <Text variant="large" fontSize={20} mt={12}>
           {titleWording}
         </Text>
-        <Text variant="body" textAlign="center" color="neutral.c80" mt={24}>
+        <Text variant="body" textAlign="center" color="neutral.c80" mt={2}>
           {descriptionWording}
         </Text>
       </Flex>

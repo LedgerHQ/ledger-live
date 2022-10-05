@@ -12,7 +12,7 @@ import { withV3StyleProvider } from "~/renderer/styles/StyleProviderV3";
 import { command } from "~/renderer/commands";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
 import ChangeDeviceLanguagePrompt from "~/renderer/components/ChangeDeviceLanguagePrompt";
-import { DeviceModelId } from "@ledgerhq/devices";
+import { DeviceModelId, getDeviceModel } from "@ledgerhq/devices";
 
 type Props = {
   onClose: () => void;
@@ -50,6 +50,8 @@ const ChangeDeviceLanguagePromptDrawer: React.FC<Props> = ({
         });
     }
   }, [dispatch, currentDevice]);
+
+  const deviceName = getDeviceModel(deviceModelId).productName;
 
   return (
     <Drawer
@@ -108,8 +110,13 @@ const ChangeDeviceLanguagePromptDrawer: React.FC<Props> = ({
               });
               setInstallingLanguage(true);
             }}
-            titleWording={t("deviceLocalization.changeDeviceLanguage")}
-            descriptionWording={t("deviceLocalization.changeDeviceLanguageDescription", {
+            titleWording={t("deviceLocalization.changeDeviceLanguagePrompt.title", {
+              language: t(
+                `deviceLocalization.languages.${localeIdToDeviceLanguage[currentLanguage]}`,
+              ),
+              deviceName,
+            })}
+            descriptionWording={t("deviceLocalization.changeDeviceLanguagePrompt.description", {
               language: t(
                 `deviceLocalization.languages.${localeIdToDeviceLanguage[currentLanguage]}`,
               ),
