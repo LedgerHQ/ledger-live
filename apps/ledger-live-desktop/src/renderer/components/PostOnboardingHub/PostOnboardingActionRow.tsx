@@ -21,6 +21,7 @@ const PostOnboardingActionRow: React.FC<Props> = props => {
     description,
     tagLabel,
     startAction,
+    startEvent,
     startEventProperties,
     completed,
   } = props;
@@ -36,9 +37,16 @@ const PostOnboardingActionRow: React.FC<Props> = props => {
         history.push("/");
       }
       startAction();
-      //startEvent && (navigationParams || startAction) && track();
+      startEvent && track(startEvent, startEventProperties);
     }
-  }, [history, isInsidePostOnboardingScreen, navigationParams, startAction]);
+  }, [
+    history,
+    isInsidePostOnboardingScreen,
+    navigationParams,
+    startAction,
+    startEvent,
+    startEventProperties,
+  ]);
 
   return (
     <ActionRowWrapper
