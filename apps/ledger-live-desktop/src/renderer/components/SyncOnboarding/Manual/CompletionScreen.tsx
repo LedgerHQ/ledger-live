@@ -1,6 +1,7 @@
 import React, { useEffect } from "react";
 import { Flex } from "@ledgerhq/react-ui";
 import { useDispatch, useSelector } from "react-redux";
+import { useHistory } from "react-router-dom";
 import { DeviceModelId } from "@ledgerhq/devices";
 import { useStartPostOnboardingCallback } from "@ledgerhq/live-common/postOnboarding/hooks/index";
 import DeviceIllustration from "~/renderer/components/DeviceIllustration";
@@ -11,20 +12,24 @@ const GO_TO_POSTONBOARDING_TIMEOUT = 5000;
 
 const CompletionScreen = () => {
   const dispatch = useDispatch();
+  const history = useHistory();
   const device = useSelector(getCurrentDevice);
 
-  const handleInitPostOnboarding = useStartPostOnboardingCallback(
-    device?.modelId || DeviceModelId.nanoX,
-    true,
-  );
+  const handleInitPostOnboarding = useStartPostOnboardingCallback();
 
   useEffect(() => {
     dispatch(saveSettings({ hasCompletedOnboarding: true }));
-    const timeout = setTimeout(handleInitPostOnboarding, GO_TO_POSTONBOARDING_TIMEOUT);
+    const timeout = setTimeout(
+      () =>
+        handleInitPostOnboarding(device?.modelId || DeviceModelId.nanoX, true, () =>
+          history.push("/"),
+        ),
+      GO_TO_POSTONBOARDING_TIMEOUT,
+    );
     return () => {
       clearTimeout(timeout);
     };
-  }, [dispatch, handleInitPostOnboarding]);
+  }, [device?.modelId, dispatch, handleInitPostOnboarding, history]);
 
   return (
     <Flex alignItems="center" width="100%" justifyContent="center">
