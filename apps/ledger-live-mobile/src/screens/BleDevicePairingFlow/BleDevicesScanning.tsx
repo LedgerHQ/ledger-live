@@ -1,7 +1,6 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { FlatList } from "react-native";
 import { Flex, InfiniteLoader, Text } from "@ledgerhq/native-ui";
-import { BluetoothMedium } from "@ledgerhq/native-ui/assets/icons";
 import { BleErrorCode } from "react-native-ble-plx";
 import { useBleDevicesScanning } from "@ledgerhq/live-common/ble/hooks/useBleDevicesScanning";
 import { useNavigation } from "@react-navigation/native";
