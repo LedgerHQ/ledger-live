@@ -12,6 +12,7 @@ import {
 } from "@ledgerhq/errors";
 import type Transport from "@ledgerhq/hw-transport";
 import type { DeviceModelId } from "@ledgerhq/devices";
+import { DeviceInfo, FirmwareUpdateContext } from "@ledgerhq/types-live";
 import type { DerivationMode } from "../derivation";
 import { getCryptoCurrencyById } from "../currencies";
 import appSupportsQuitApp from "../appSupportsQuitApp";
@@ -26,7 +27,7 @@ import quitApp from "./quitApp";
 import { LatestFirmwareVersionRequired } from "../errors";
 import { mustUpgrade } from "../apps";
 import manager from "../manager";
-import { DeviceInfo, FirmwareUpdateContext } from "@ledgerhq/types-live";
+import { LockedDeviceEvent } from "./actions/types";
 
 export type RequiresDerivation = {
   currencyId: string;
@@ -102,7 +103,9 @@ export type ConnectAppEvent =
   | {
       type: "display-upgrade-warning";
       displayUpgradeWarning: boolean;
-    };
+    }
+  | LockedDeviceEvent;
+
 export const openAppFromDashboard = (
   transport: Transport,
   appName: string
@@ -147,6 +150,10 @@ export const openAppFromDashboard = (
                   case 0x6985:
                   case 0x5501:
                     return throwError(new UserRefusedOnDevice());
+                  // case 0x5515:
+                  //   return of({
+                  //     type: "lockedDevice",
+                  //   } as ConnectAppEvent);
                 }
               }
 
@@ -234,6 +241,10 @@ const derivationLogic = (
           case 0x6d00:
             // this is likely because it's the wrong app (LNS 1.3.1)
             return attemptToQuitApp(transport, appAndVersion);
+          // case 0x5515:
+          //   return of({
+          //     type: "lockedDevice",
+          //   } as ConnectAppEvent);
         }
       }
 
@@ -369,24 +380,26 @@ const cmd = ({
                 });
               }
 
-              if (
-                e &&
-                e instanceof TransportStatusError &&
+              if (e && e instanceof TransportStatusError) {
                 // @ts-expect-error TransportStatusError to be typed on ledgerjs
-                (e.statusCode === 0x6e00 || // in 1.3.1 dashboard
-                  // @ts-expect-error TransportStatusError to be typed on ledgerjs
-                  e.statusCode === 0x6d00) // in 1.3.1 and bitcoin app
-              ) {
-                // fallback on "old way" because device does not support getAppAndVersion
-                if (!requiresDerivation) {
-                  // if there is no derivation, there is nothing we can do to check an app (e.g. requiring non coin app)
-                  return throwError(new FirmwareOrAppUpdateRequired());
-                }
+                switch (e.statusCode) {
+                  case 0x6e00: // in 1.3.1 dashboard
+                  case 0x6d00: // in 1.3.1 and bitcoin app
+                    // fallback on "old way" because device does not support getAppAndVersion
+                    if (!requiresDerivation) {
+                      // if there is no derivation, there is nothing we can do to check an app (e.g. requiring non coin app)
+                      return throwError(new FirmwareOrAppUpdateRequired());
+                    }
 
-                return derivationLogic(transport, {
-                  requiresDerivation,
-                  appName,
-                });
+                    return derivationLogic(transport, {
+                      requiresDerivation,
+                      appName,
+                    });
+                  case 0x5515:
+                    return of({
+                      type: "lockedDevice",
+                    } as ConnectAppEvent);
+                }
               }
 
               return throwError(e);
