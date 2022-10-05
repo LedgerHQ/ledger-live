@@ -1,7 +1,7 @@
 import { useDispatch } from "react-redux";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { usePostOnboardingContext } from "./usePostOnboardingContext";
-import { useCallback, useMemo } from "react";
+import { useCallback } from "react";
 import { initPostOnboarding } from "../actions";
 
 /**
