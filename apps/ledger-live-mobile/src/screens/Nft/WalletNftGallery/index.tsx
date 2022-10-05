@@ -29,11 +29,11 @@ function orderByLastReceived(accounts: Account[], nfts: ProtoNFT[]) {
 
   operationMapping.forEach(operation => {
     // Prevent multiple occurences due to Exchange Send/Receive same NFT several times
-    const isAlredayIn = orderedNFTs.find(
+    const isAlreadyIn = orderedNFTs.find(
       nft => nft.tokenId === operation.tokenId,
     );
 
-    if (!isAlredayIn) {
+    if (!isAlreadyIn) {
       const nft = getNFTById(operation.tokenId, nfts);
       if (nft) orderedNFTs.push(nft);
     }
