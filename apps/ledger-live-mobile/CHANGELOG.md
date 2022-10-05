@@ -1,5 +1,20 @@
 # live-mobile
 
+## 3.9.1-nightly.2
+
+### Patch Changes
+
+- [#1307](https://github.com/LedgerHQ/ledger-live/pull/1307) [`1592d5e00d`](https://github.com/LedgerHQ/ledger-live/commit/1592d5e00da3c8433401ae23d8144329f18b8163) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Layout issue with the error message if Bluetooth is disabled when user pairs device
+
+* [#1384](https://github.com/LedgerHQ/ledger-live/pull/1384) [`b3a787f49d`](https://github.com/LedgerHQ/ledger-live/commit/b3a787f49dc02119026fc04b997117f9e41b7db9) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - The text "Fingerprint" should be translated
+
+- [#1281](https://github.com/LedgerHQ/ledger-live/pull/1281) [`b8f28d388c`](https://github.com/LedgerHQ/ledger-live/commit/b8f28d388c04ef1ea91960eb126490954f98f75c) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Add warning on Advanced logs for xpub sharing
+
+- Updated dependencies [[`2100b9fb81`](https://github.com/LedgerHQ/ledger-live/commit/2100b9fb81a4fd04f65b96561c0a7d618658843a), [`777ccf8774`](https://github.com/LedgerHQ/ledger-live/commit/777ccf8774302cb17995a044f23972e2a9fc4045), [`4ec8df33ea`](https://github.com/LedgerHQ/ledger-live/commit/4ec8df33ea223c412cb81892bf0380d456e19b54), [`b34e55181c`](https://github.com/LedgerHQ/ledger-live/commit/b34e55181c12bb0a59ef5dee5e808d7597a21edb)]:
+  - @ledgerhq/live-common@27.3.2-nightly.1
+  - @ledgerhq/types-live@6.24.3-nightly.1
+  - @ledgerhq/native-ui@0.11.0-nightly.0
+
 ## 3.9.1-nightly.1
 
 ### Patch Changes

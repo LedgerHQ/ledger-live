@@ -1,5 +1,11 @@
 # @ledgerhq/types-live
 
+## 6.24.3-nightly.1
+
+### Patch Changes
+
+- [#1447](https://github.com/LedgerHQ/ledger-live/pull/1447) [`777ccf8774`](https://github.com/LedgerHQ/ledger-live/commit/777ccf8774302cb17995a044f23972e2a9fc4045) Thanks [@LFBarreto](https://github.com/LFBarreto)! - Types - Add Referral Program Desktop Banner FeatureId Flag
+
 ## 6.24.3-nightly.0
 
 ### Patch Changes

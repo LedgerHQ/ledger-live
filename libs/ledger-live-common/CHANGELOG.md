@@ -1,5 +1,17 @@
 # @ledgerhq/live-common
 
+## 27.3.2-nightly.1
+
+### Patch Changes
+
+- [#1419](https://github.com/LedgerHQ/ledger-live/pull/1419) [`2100b9fb81`](https://github.com/LedgerHQ/ledger-live/commit/2100b9fb81a4fd04f65b96561c0a7d618658843a) Thanks [@gre](https://github.com/gre)! - Introduce tests to ensure we define abandonseed values for coin we support
+
+* [#1357](https://github.com/LedgerHQ/ledger-live/pull/1357) [`b34e55181c`](https://github.com/LedgerHQ/ledger-live/commit/b34e55181c12bb0a59ef5dee5e808d7597a21edb) Thanks [@hzheng-ledger](https://github.com/hzheng-ledger)! - fix typescript lint rules warning
+
+* Updated dependencies [[`2100b9fb81`](https://github.com/LedgerHQ/ledger-live/commit/2100b9fb81a4fd04f65b96561c0a7d618658843a)]:
+  - @ledgerhq/cryptoassets@6.35.2-nightly.0
+  - @ledgerhq/hw-app-eth@6.29.10-nightly.0
+
 ## 27.3.2-nightly.0
 
 ### Patch Changes

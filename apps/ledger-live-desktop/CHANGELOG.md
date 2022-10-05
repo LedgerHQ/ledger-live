@@ -1,5 +1,28 @@
 # ledger-live-desktop
 
+## 2.49.0-nightly.4
+
+### Minor Changes
+
+- [#1377](https://github.com/LedgerHQ/ledger-live/pull/1377) [`0bc8ac869c`](https://github.com/LedgerHQ/ledger-live/commit/0bc8ac869cde8648766cb1f18dbab988d9e75c5b) Thanks [@sarneijim](https://github.com/sarneijim)! - Add swap filter
+
+### Patch Changes
+
+- [#1419](https://github.com/LedgerHQ/ledger-live/pull/1419) [`2100b9fb81`](https://github.com/LedgerHQ/ledger-live/commit/2100b9fb81a4fd04f65b96561c0a7d618658843a) Thanks [@gre](https://github.com/gre)! - Introduce tests to ensure we define abandonseed values for coin we support
+
+* [#1422](https://github.com/LedgerHQ/ledger-live/pull/1422) [`37d00208ab`](https://github.com/LedgerHQ/ledger-live/commit/37d00208abd18fc0f573370518a05e093f13f494) Thanks [@alexandremgo](https://github.com/alexandremgo)! - Refactor on listen HID devices on LLD:
+
+  - make the listenDevices definition command into TS, and rename into listenToHidDevices
+  - transform the ListenDevices component (that was mainly a useEffect returning null) into a hook useListenToHidDevices
+  - add the types-devices lib into LLD
+
+- [#1447](https://github.com/LedgerHQ/ledger-live/pull/1447) [`777ccf8774`](https://github.com/LedgerHQ/ledger-live/commit/777ccf8774302cb17995a044f23972e2a9fc4045) Thanks [@LFBarreto](https://github.com/LFBarreto)! - LLD - Add Feature Flagged Referral Program Banner
+
+- Updated dependencies [[`2100b9fb81`](https://github.com/LedgerHQ/ledger-live/commit/2100b9fb81a4fd04f65b96561c0a7d618658843a), [`37d00208ab`](https://github.com/LedgerHQ/ledger-live/commit/37d00208abd18fc0f573370518a05e093f13f494), [`777ccf8774`](https://github.com/LedgerHQ/ledger-live/commit/777ccf8774302cb17995a044f23972e2a9fc4045), [`b34e55181c`](https://github.com/LedgerHQ/ledger-live/commit/b34e55181c12bb0a59ef5dee5e808d7597a21edb)]:
+  - @ledgerhq/live-common@27.3.2-nightly.1
+  - @ledgerhq/hw-transport-node-hid-singleton@6.28.3-nightly.0
+  - @ledgerhq/types-live@6.24.3-nightly.1
+
 ## 2.48.1-nightly.3
 
 ### Patch Changes

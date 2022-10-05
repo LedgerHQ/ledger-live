@@ -77,14 +77,24 @@
     "@actions/turborepo-gh-cache": "1.0.0"
   },
   "changesets": [
+    "brown-experts-agree",
+    "cyan-dingos-cheat",
+    "fifty-shrimps-cry",
     "flat-kangaroos-warn",
+    "friendly-tigers-pretend",
+    "honest-mails-watch",
     "light-hotels-talk",
+    "orange-maps-walk",
+    "quick-moles-fix",
+    "rich-lemons-prove",
+    "serious-panthers-invent",
     "shiny-forks-mix",
     "six-moons-change",
     "six-socks-leave",
     "stale-actors-compare",
     "strong-teachers-sing",
     "tender-buckets-learn",
-    "twelve-pianos-shop"
+    "twelve-pianos-shop",
+    "twenty-pumpkins-shop"
   ]
 }

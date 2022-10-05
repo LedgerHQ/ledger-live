@@ -1,5 +1,11 @@
 # @ledgerhq/native-ui
 
+## 0.11.0-nightly.0
+
+### Minor Changes
+
+- [#1457](https://github.com/LedgerHQ/ledger-live/pull/1457) [`4ec8df33ea`](https://github.com/LedgerHQ/ledger-live/commit/4ec8df33ea223c412cb81892bf0380d456e19b54) Thanks [@thomasrogerlux](https://github.com/thomasrogerlux)! - Add a new vertical timeline component
+
 ## 0.10.0
 
 ### Minor Changes
