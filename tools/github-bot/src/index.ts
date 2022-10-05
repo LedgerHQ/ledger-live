@@ -59,7 +59,7 @@ export default (app: Probot) => {
     if (
       !isValidUser(login) &&
       // Close automatic PRs from smartling - except the ones triggered manually
-      !/^(smartling-content-updated|smartling-content-completed)-.+/.test(
+      !/^(smartling-content-updated|smartling-translation-completed)-.+/.test(
         branch
       )
     )
