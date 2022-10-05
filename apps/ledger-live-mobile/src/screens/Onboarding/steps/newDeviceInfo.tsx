@@ -40,7 +40,13 @@ const Card = ({ index /* , deviceModelId */ }: CardType) => {
           lightSource={images.light[index]}
         />
       </Flex>
-      <Text variant="h2" mb={3} textAlign="center" color="constant.black">
+      <Text
+        variant="h2"
+        mb={3}
+        textAlign="center"
+        color="constant.black"
+        lineHeight="34.8px"
+      >
         {t(`onboarding.stepNewDevice.${index}.title`)}
       </Text>
       <Text textAlign="center" variant="body" color="constant.black">
