@@ -774,6 +774,9 @@
     "failed": {
       "biometrics": {
         "title": "{{biometricsType}} unlock failed",
+        "touchid": "TouchID",
+        "faceid": "FaceID",
+        "fingerprint": "Fingerprint",
         "description": "Enter your password to continue",
         "authenticate": "Please authenticate with the Ledger Live app"
       },
@@ -802,7 +805,10 @@
     },
     "enableBiometrics": {
       "title": "{{biometricsType}}",
-      "desc": "Unlock with {{biometricsType}}"
+      "desc": "Unlock with {{biometricsType}}",
+      "touchid": "TouchID",
+      "faceid": "FaceID",
+      "fingerprint": "Fingerprint"
     }
   },
   "reset": {
@@ -1973,6 +1979,7 @@
       },
       "advanced": {
         "title": "Advanced logs",
+        "warningDerivation": "This is a {{tag}} xpub. When importing it into a third-party wallet, chose the same derivation mode.",
         "desc": ""
       }
     },

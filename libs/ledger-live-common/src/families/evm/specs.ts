@@ -7,7 +7,7 @@ import { botTest, genericTestDestination, pickSiblings } from "../../bot/specs";
 import type { AppSpec } from "../../bot/types";
 import type { Transaction } from "./types";
 
-const testTimeout = 5 * 60 * 1000;
+const testTimeout = 6 * 60 * 1000;
 
 const transactionCheck =
   (currencyId: string) =>

@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 import * as bitcoin from "bitcoinjs-lib";
 import bs58 from "bs58";
 import { padStart } from "lodash";
@@ -9,18 +9,16 @@ import { fallbackValidateAddress } from "./crypto/base";
 import { UnsupportedDerivation } from "../../../errors";
 import varuint from "varuint-bitcoin";
 
-export function parseHexString(str: any) {
+export function parseHexString(str: any): number[] {
   const result: Array<number> = [];
   while (str.length >= 2) {
     result.push(parseInt(str.substring(0, 2), 16));
-    // eslint-disable-next-line no-param-reassign
     str = str.substring(2, str.length);
   }
   return result;
 }
 
-export function encodeBase58Check(vchIn: any) {
-  // eslint-disable-next-line no-param-reassign
+export function encodeBase58Check(vchIn: any): string {
   vchIn = parseHexString(vchIn);
   let chksum = bitcoin.crypto.sha256(Buffer.from(vchIn));
   chksum = bitcoin.crypto.sha256(chksum);
@@ -29,29 +27,23 @@ export function encodeBase58Check(vchIn: any) {
   return bs58.encode(hash);
 }
 
-export function toHexDigit(number: any) {
+export function toHexDigit(number: any): string {
   const digits = "0123456789abcdef";
-  // eslint-disable-next-line no-bitwise
   return digits.charAt(number >> 4) + digits.charAt(number & 0x0f);
 }
 
-export function toHexInt(number: any) {
+export function toHexInt(number: any): string {
   return (
-    // eslint-disable-next-line no-bitwise
     toHexDigit((number >> 24) & 0xff) +
-    // eslint-disable-next-line no-bitwise
     toHexDigit((number >> 16) & 0xff) +
-    // eslint-disable-next-line no-bitwise
     toHexDigit((number >> 8) & 0xff) +
-    // eslint-disable-next-line no-bitwise
     toHexDigit(number & 0xff)
   );
 }
 
-export function compressPublicKey(publicKey: any) {
-  let compressedKeyIndex;
+export function compressPublicKey(publicKey: any): string {
+  let compressedKeyIndex: string;
   if (publicKey.substring(0, 2) !== "04") {
-    // eslint-disable-next-line no-throw-literal
     throw new Error("Invalid public key format");
   }
   if (parseInt(publicKey.substring(128, 130), 16) % 2 !== 0) {
@@ -70,7 +62,7 @@ export function createXPUB(
   chaincode: any,
   publicKey: any,
   network: any
-) {
+): string {
   let xpub = toHexInt(network);
   xpub += padStart(depth.toString(16), 2, "0");
   xpub += padStart(fingerprint.toString(16), 8, "0");
@@ -80,7 +72,7 @@ export function createXPUB(
   return xpub;
 }
 
-export function byteSize(count: number) {
+export function byteSize(count: number): number {
   if (count < 0xfd) {
     return 1;
   }
@@ -227,7 +219,7 @@ export function maxTxSizeCeil(
 }
 
 // refer to https://github.com/LedgerHQ/lib-ledger-core/blob/fc9d762b83fc2b269d072b662065747a64ab2816/core/src/wallet/bitcoin/api_impl/BitcoinLikeTransactionApi.cpp#L253
-export function computeDustAmount(currency: ICrypto, txSize: number) {
+export function computeDustAmount(currency: ICrypto, txSize: number): number {
   let dustAmount = currency.network.dustThreshold;
   switch (currency.network.dustPolicy) {
     case "PER_KBYTE":
@@ -242,7 +234,7 @@ export function computeDustAmount(currency: ICrypto, txSize: number) {
   return dustAmount;
 }
 
-export function isValidAddress(address: string, currency?: Currency) {
+export function isValidAddress(address: string, currency?: Currency): boolean {
   if (!currency) {
     // If the caller doesn't provide the currency, we'll
     // fallback to a pre-taproot basic validation that doesn't
@@ -253,7 +245,10 @@ export function isValidAddress(address: string, currency?: Currency) {
   return crypto.validateAddress(address);
 }
 
-export function isTaprootAddress(address: string, currency?: Currency) {
+export function isTaprootAddress(
+  address: string,
+  currency?: Currency
+): boolean {
   if (currency === "bitcoin") {
     return cryptoFactory("bitcoin").isTaprootAddress(address);
   } else if (currency === "bitcoin_testnet") {
@@ -263,7 +258,7 @@ export function isTaprootAddress(address: string, currency?: Currency) {
   }
 }
 
-export function writeVarInt(buffer: Buffer, i: number, offset: number) {
+export function writeVarInt(buffer: Buffer, i: number, offset: number): number {
   // refer to https://github.com/bitcoinjs/bitcoinjs-lib/blob/1f44f722d30cd14a1861c8546e6b455f73862c1e/src/bufferutils.js#L78
   varuint.encode(i, buffer, offset);
   offset += varuint.encode.bytes;

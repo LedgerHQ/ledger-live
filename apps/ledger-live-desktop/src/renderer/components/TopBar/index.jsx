@@ -3,7 +3,7 @@
 import React, { useState, useCallback, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
-import { useHistory, useLocation } from "react-router-dom";
+import { Route, useHistory, useLocation } from "react-router-dom";
 import styled from "styled-components";
 
 import { lock } from "~/renderer/actions/application";
@@ -23,6 +23,8 @@ import IconEye from "~/renderer/icons/Eye";
 import IconHelp from "~/renderer/icons/Question";
 import IconEyeOff from "~/renderer/icons/EyeOff";
 import IconSettings from "~/renderer/icons/Settings";
+
+import HomePromotionalTag from "./HomePromotionalTag";
 
 // TODO: ActivityIndicator
 import ActivityIndicator from "./ActivityIndicator";
@@ -93,6 +95,7 @@ const TopBar = () => {
     <Container color="palette.text.shade80">
       <Inner bg="palette.background.default">
         <Box grow horizontal justifyContent="space-between">
+          <Route exact path="/" component={HomePromotionalTag} />
           <Breadcrumb />
           <Box horizontal>
             {hasAccounts && (
