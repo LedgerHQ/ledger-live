@@ -5137,6 +5137,13 @@
     "tabs": {
       "crypto": "Crypto",
       "nft": "NFTs"
+    },
+    "nftGallery": {
+      "empty": {
+        "title": "Your NFTs live securely here",
+        "receive": "Receive NFTs",
+        "supportLink": "How to deposit from Metamask?"
+      }
     }
   }
 }
