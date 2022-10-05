@@ -16,7 +16,7 @@ import { initPostOnboarding } from "../actions";
  */
 export function useStartPostOnboardingCallback(): (
   deviceModelId: DeviceModelId,
-  mock: boolean,
+  mock?: boolean,
   fallbackIfNoAction?: () => void
 ) => void {
   const dispatch = useDispatch();
