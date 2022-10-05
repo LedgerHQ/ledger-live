@@ -16,6 +16,7 @@ import { readOnlyModeEnabledSelector } from "../../reducers/settings";
 import { accountsSelector } from "../../reducers/accounts";
 // eslint-disable-next-line import/no-cycle
 import ReadOnlyPortfolio from "../../screens/Portfolio/ReadOnly";
+import { track } from "../../analytics";
 
 const Tab = createMaterialTopTabNavigator();
 
@@ -52,6 +53,9 @@ function TabBar({ state, descriptors, navigation }: MaterialTopTabBarProps) {
             });
 
             if (!isActive && !event.defaultPrevented) {
+              track("tab_clicked", {
+                tab: route.name,
+              });
               navigation.navigate(route.name);
             }
           };
