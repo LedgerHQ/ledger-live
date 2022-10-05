@@ -118,9 +118,6 @@ export type CryptoCurrency = CurrencyCommon & {
     link: string;
   };
   deviceTicker?: string;
-  // by default all coins in a same family have a dependency to their parent Nano app
-  // this overrides it and allows a child currency to only use its own Nano app
-  bypassAppDependency?: boolean;
 };
 
 /**
