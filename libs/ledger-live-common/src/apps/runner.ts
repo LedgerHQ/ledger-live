@@ -80,7 +80,7 @@ type InlineInstallProgress = {
   itemProgress: number;
   currentAppOp: AppOp | null | undefined;
   installQueue: string[];
-}
+};
 
 export const runAllWithProgress = (
   state: State,
@@ -112,20 +112,23 @@ export const runAllWithProgress = (
       // Nb if you also want to expose the uninstall queue, feel free.
       const { currentProgressSubject, currentAppOp, installQueue } = s;
 
-      if (!currentProgressSubject) return of({
-        globalProgress: globalProgress(s, 0),
-        itemProgress: 0,
-        installQueue,
-        currentAppOp
-      });
+      if (!currentProgressSubject)
+        return of({
+          globalProgress: globalProgress(s, 0),
+          itemProgress: 0,
+          installQueue,
+          currentAppOp,
+        });
 
       // Expose more information about what's happening during the install
-      return currentProgressSubject.pipe(map((v) => ({
-        globalProgress: globalProgress(s, v),
-        itemProgress: v,
-        installQueue,
-        currentAppOp
-      })));
+      return currentProgressSubject.pipe(
+        map((v) => ({
+          globalProgress: globalProgress(s, v),
+          itemProgress: v,
+          installQueue,
+          currentAppOp,
+        }))
+      );
     }),
     distinctUntilChanged()
   );

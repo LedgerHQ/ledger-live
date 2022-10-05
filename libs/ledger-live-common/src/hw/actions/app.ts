@@ -83,9 +83,9 @@ type State = {
   progress?: number;
   listingApps?: boolean;
 
-  request: AppRequest | undefined,
+  request: AppRequest | undefined;
   installQueue?: string[];
-  currentAppOp?: AppOp; 
+  currentAppOp?: AppOp;
   itemProgress?: number;
 };
 
@@ -153,7 +153,10 @@ const mapResult = ({
       }
     : null;
 
-const getInitialState = (device?: Device | null | undefined, request?: AppRequest): State => ({
+const getInitialState = (
+  device?: Device | null | undefined,
+  request?: AppRequest
+): State => ({
   isLoading: !!device,
   requestQuitApp: false,
   requestOpenApp: null,
@@ -193,7 +196,10 @@ const reducer = (state: State, e: Event): State => {
       };
 
     case "disconnected":
-      return { ...getInitialState(null, state.request), isLoading: !!e.expected };
+      return {
+        ...getInitialState(null, state.request),
+        isLoading: !!e.expected,
+      };
 
     case "deviceChange":
       return { ...getInitialState(e.device, state.request), device: e.device };
