@@ -194,6 +194,7 @@ export default function NftCollectionsList({ account }: Props) {
         ListHeaderComponent={renderHeader}
         ListFooterComponent={renderFooter}
       />
+
       {selectedCollection && (
         <NftCollectionOptionsMenu
           isOpen={isCollectionMenuOpen}

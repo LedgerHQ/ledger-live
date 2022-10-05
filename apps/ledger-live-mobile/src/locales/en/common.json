@@ -5060,7 +5060,8 @@
       "seeFewerNfts": "See fewer NFT"
     },
     "gallery": {
-      "allNft": "All NFT"
+      "allNft": "All NFT",
+      "addNew": "Add new"
     },
     "viewer": {
       "properties": "Properties",
