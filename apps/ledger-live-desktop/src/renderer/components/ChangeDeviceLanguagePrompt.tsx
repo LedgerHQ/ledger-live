@@ -1,6 +1,6 @@
 import React from "react";
 import { withV3StyleProvider } from "../styles/StyleProviderV3";
-import { Flex, Text, Button } from "@ledgerhq/react-ui";
+import { Flex, Text, Button, Divider } from "@ledgerhq/react-ui";
 
 import { useTranslation } from "react-i18next";
 import { DeviceModelId } from "@ledgerhq/devices";
@@ -24,8 +24,8 @@ const ChangeDeviceLanguagePrompt: React.FC<Props> = ({
   const { t } = useTranslation();
 
   return (
-    <Flex flexDirection="column" flex={1}>
-      <Flex alignItems="center" justifyContent="center" flexDirection="column" flex={1}>
+    <Flex flexDirection="column" flex={1} alignSelf="stretch">
+      <Flex alignItems="center" justifyContent="center" flexDirection="column" flex={1} px={12}>
         <DeviceIllustration width={251} height={200} deviceId={deviceModelId} />
         <Text variant="h1" fontSize={20} mt={24}>
           {titleWording}
@@ -34,7 +34,8 @@ const ChangeDeviceLanguagePrompt: React.FC<Props> = ({
           {descriptionWording}
         </Text>
       </Flex>
-      <Flex alignSelf="flex-end" justifySelf="flex-end" columnGap={5} mt={24}>
+      <Divider variant="light" />
+      <Flex alignSelf="flex-end" justifySelf="flex-end" columnGap={5} py={8} px={12}>
         <Button onClick={onSkip}>{t("common.cancel")}</Button>
         <Button data-test-id="install-language-button" variant="main" onClick={onConfirm}>
           {t("deviceLocalization.changeLanguage")}

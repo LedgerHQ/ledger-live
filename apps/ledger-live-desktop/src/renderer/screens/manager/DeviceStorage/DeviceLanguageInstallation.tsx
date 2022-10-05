@@ -1,8 +1,9 @@
 import React, { useState, useCallback, useMemo } from "react";
-import { Button, Flex, Icons, Drawer, Radio, Divider } from "@ledgerhq/react-ui";
+import { Button, Flex, Icons, Drawer, Radio, Divider, Text } from "@ledgerhq/react-ui";
 import { DeviceInfo, Language } from "@ledgerhq/types-live";
 import { track } from "~/renderer/analytics/segment";
 import { useAvailableLanguagesForDevice } from "@ledgerhq/live-common/manager/hooks";
+import { getDeviceModel } from "@ledgerhq/devices";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { useTranslation } from "react-i18next";
 import ChangeDeviceLanguageAction from "~/renderer/components/ChangeDeviceLanguageAction";
@@ -23,6 +24,7 @@ const DeviceLanguageInstallation: React.FC<Props> = ({
   isOpen,
   onClose,
   deviceInfo,
+  device,
   selectedLanguage,
   onSelectLanguage,
   onError,
@@ -61,6 +63,8 @@ const DeviceLanguageInstallation: React.FC<Props> = ({
     track("Page Manager LanguageInstallTriggered", { selectedLanguage });
   }, [setInstalling, selectedLanguage]);
 
+  const deviceName = getDeviceModel(device.modelId).productName;
+
   return (
     <Drawer
       isOpen={isOpen}
@@ -69,7 +73,7 @@ const DeviceLanguageInstallation: React.FC<Props> = ({
       title={t("deviceLocalization.deviceLanguage")}
       big
     >
-      <Flex flex={1} flexDirection="column" justifyContent="space-between" pt={2}>
+      <Flex flex={1} flexDirection="column" justifyContent="space-between">
         {installing ? (
           <ChangeDeviceLanguageAction
             onSuccess={() => {
@@ -80,7 +84,10 @@ const DeviceLanguageInstallation: React.FC<Props> = ({
             language={selectedLanguage}
           />
         ) : (
-          <Flex px={12}>
+          <Flex px={12} flexDirection="column">
+            <Text textAlign="center" mb={10} variant="body" color="neutral.c70">
+              {t("deviceLocalization.chooseLanguage", { deviceName })}
+            </Text>
             <Radio
               currentValue={selectedLanguage}
               onChange={onChange}

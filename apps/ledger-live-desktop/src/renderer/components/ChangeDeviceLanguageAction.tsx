@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect } from "react";
+import React from "react";
 
 import { command } from "~/renderer/commands";
 import { createAction } from "@ledgerhq/live-common/hw/actions/installLanguage";
@@ -7,13 +7,13 @@ import { mockedEventEmitter } from "~/renderer/components/debug/DebugMock";
 import DeviceAction from "./DeviceAction";
 import { Language } from "@ledgerhq/types-live";
 import { useTranslation } from "react-i18next";
-import { BoxedIcon, Button, Divider, Flex, Icons, Log } from "@ledgerhq/react-ui";
+import { BoxedIcon, Flex, Icons, Text } from "@ledgerhq/react-ui";
 import { withV3StyleProvider } from "~/renderer/styles/StyleProviderV3";
 
 const installLanguageExec = command("installLanguage");
 const action = createAction(getEnv("MOCK") ? mockedEventEmitter : installLanguageExec);
 
-const DeviceLanguageInstalled = () => {
+const DeviceLanguageInstalled = ({ language }: { language: Language }) => {
   const { t } = useTranslation();
 
   return (
@@ -25,9 +25,11 @@ const DeviceLanguageInstalled = () => {
       data-test-id="language-installed"
     >
       <BoxedIcon Icon={Icons.CheckAloneMedium} iconColor="success.c100" size={64} iconSize={24} />
-      <Log extraTextProps={{ fontSize: 20 }} alignSelf="stretch" mx={16} mt={10}>
-        {t("deviceLocalization.languageInstalled")}
-      </Log>
+      <Text variant="large" alignSelf="stretch" mx={16} mt={10} textAlign="center" fontSize={24}>
+        {t("deviceLocalization.languageInstalled", {
+          language: t(`deviceLocalization.languages.${language}`),
+        })}
+      </Text>
     </Flex>
   );
 };
@@ -45,7 +47,7 @@ const ChangeDeviceLanguageAction: React.FC<Props> = ({ language, onError, onSucc
       action={action}
       request={language}
       onResult={onSuccess}
-      Result={DeviceLanguageInstalled}
+      Result={() => <DeviceLanguageInstalled language={language} />}
       onError={onError}
     />
   );
