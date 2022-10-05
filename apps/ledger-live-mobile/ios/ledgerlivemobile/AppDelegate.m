@@ -6,6 +6,7 @@
 #import <React/RCTLinkingManager.h>
 #import "ReactNativeConfig.h"
 #import "RNSplashScreen.h"  // here
+#import "Appboy-iOS-SDK/AppboyKit.h"
 
 #import <Firebase.h>
 
@@ -26,6 +27,10 @@
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
   [self initializeFlipper:application];
+
+  // Initialize Braze
+  NSString *brazeApiKeyFromEnv = [ReactNativeConfig envFor:@"BRAZE_API_KEY"];
+  [Appboy startWithApiKey:brazeApiKeyFromEnv inApplication:application withLaunchOptions:launchOptions];
 
   // Retrieve the correct GoogleService-Info.plist file name for a given environment
   NSString *googleServiceInfoEnvName = [ReactNativeConfig envFor:@"GOOGLE_SERVICE_INFO_NAME"];
