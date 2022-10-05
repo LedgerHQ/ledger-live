@@ -30,6 +30,7 @@ import { QuizSuccess } from "~/renderer/components/Onboarding/Screens/Tutorial/s
 import RecoveryWarning from "../../Help/RecoveryWarning";
 import { QuizzPopin } from "~/renderer/modals/OnboardingQuizz/OnboardingQuizzModal";
 import { getPostOnboardingActionsForDevice } from "~/renderer/components/PostOnboardingHub/logic";
+import { useStartPostOnboardingCallback } from "@ledgerhq/live-common/postOnboarding/hooks/index";
 
 import { UseCase } from "../../index";
 
@@ -216,6 +217,8 @@ export default function Tutorial({ useCase }: Props) {
   const [userChosePinCodeHimself, setUserChosePinCodeHimself] = useState(false);
 
   const [connectedDevice, setConnectedDevice] = useState(null);
+
+  const handleStartPostOnboarding = useStartPostOnboardingCallback;
 
   const [helpPinCode, setHelpPinCode] = useState(false);
   const [helpRecoveryPhrase, setHelpRecoveryPhrase] = useState(false);
@@ -470,19 +473,20 @@ export default function Tutorial({ useCase }: Props) {
         },
         canContinue: !!connectedDevice,
         next: () => {
-          if (
-            connectedDevice &&
-            getPostOnboardingActionsForDevice(connectedDevice.modelId, true).length > 0
-          ) {
-            history.push("/onboarding/sync/completion");
-          } else {
-            history.push("/");
-          }
+          handleStartPostOnboarding(connectedDevice.modelId, true, () => history.push("/"));
         },
         previous: () => history.push(`${path}/${ScreenId.pairMyNano}`),
       },
     ],
-    [connectedDevice, history, path, useCase, userChosePinCodeHimself, userUnderstandConsequences],
+    [
+      connectedDevice,
+      handleStartPostOnboarding,
+      history,
+      path,
+      useCase,
+      userChosePinCodeHimself,
+      userUnderstandConsequences,
+    ],
   );
 
   const steps = useMemo(() => {

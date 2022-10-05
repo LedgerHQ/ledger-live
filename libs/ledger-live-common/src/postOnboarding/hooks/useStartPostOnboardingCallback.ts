@@ -14,25 +14,35 @@ import { initPostOnboarding } from "../actions";
  * hub.
  * TODO: unit test this
  */
-export function useStartPostOnboardingCallback(
+export function useStartPostOnboardingCallback(): (
   deviceModelId: DeviceModelId,
-  mock = false
-): () => void {
+  mock: boolean,
+  fallbackIfNoAction?: () => void
+) => void {
   const dispatch = useDispatch();
   const { getPostOnboardingActionsForDevice, navigateToPostOnboardingHub } =
     usePostOnboardingContext();
-  const actions = useMemo(
-    () => getPostOnboardingActionsForDevice(deviceModelId, mock),
-    [deviceModelId, mock, getPostOnboardingActionsForDevice]
+
+  return useCallback(
+    (
+      deviceModelId: DeviceModelId,
+      mock: boolean,
+      fallbackIfNoAction?: () => void
+    ) => {
+      const actions = getPostOnboardingActionsForDevice(deviceModelId, mock);
+      dispatch(
+        initPostOnboarding({
+          deviceModelId,
+          actionsIds: actions.map((action) => action.id),
+        })
+      );
+      if (actions.length === 0) {
+        if (fallbackIfNoAction) {
+          fallbackIfNoAction();
+        }
+      }
+      navigateToPostOnboardingHub();
+    },
+    [dispatch, getPostOnboardingActionsForDevice, navigateToPostOnboardingHub]
   );
-  return useCallback(() => {
-    dispatch(
-      initPostOnboarding({
-        deviceModelId,
-        actionsIds: actions.map((action) => action.id),
-      })
-    );
-    if (actions.length === 0) return;
-    navigateToPostOnboardingHub();
-  }, [actions, deviceModelId, dispatch, navigateToPostOnboardingHub]);
 }

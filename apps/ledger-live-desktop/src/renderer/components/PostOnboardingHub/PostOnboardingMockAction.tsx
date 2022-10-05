@@ -9,7 +9,7 @@ import { PostOnboardingActionId } from "@ledgerhq/types-live";
 
 import { getPostOnboardingAction } from "./logic";
 import { setDrawer } from "~/renderer/drawers/Provider";
-import PostOnboardingHubContent from "./PostOnboardingHubContent";
+import useOpenPostOnboardingDrawerCallback from "~/renderer/hooks/useOpenPostOnboardingDrawerCallback";
 
 type Props = {
   id: PostOnboardingActionId;
@@ -18,6 +18,7 @@ type Props = {
 const PostOnboardingMockAction = ({ id }: Props) => {
   const dispatch = useDispatch();
   const action = getPostOnboardingAction(id);
+  const openPostOnboardingHubDrawer = useOpenPostOnboardingDrawerCallback();
 
   const clearLastActionCompleted = useCallback(() => {
     dispatch(clearPostOnboardingLastActionCompleted());
@@ -36,17 +37,8 @@ const PostOnboardingMockAction = ({ id }: Props) => {
 
   const handleCompleteAndGoToHub = useCallback(() => {
     completeAction();
-    setDrawer(
-      PostOnboardingHubContent,
-      {},
-      {
-        onRequestClose: () => {
-          setDrawer();
-          clearLastActionCompleted();
-        },
-      },
-    );
-  }, [clearLastActionCompleted, completeAction]);
+    openPostOnboardingHubDrawer();
+  }, [completeAction, openPostOnboardingHubDrawer]);
 
   return (
     <Flex p={6} flexDirection="column" height="100%" justifyContent="center" alignItems="center">

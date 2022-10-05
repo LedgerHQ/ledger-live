@@ -20,7 +20,7 @@ import AssetDistribution from "~/renderer/components/AssetDistribution";
 import MigrationBanner from "~/renderer/modals/MigrateAccounts/Banner";
 import ClearCacheBanner from "~/renderer/components/ClearCacheBanner";
 import { usePostOnboardingEntryPointVisibleOnWallet } from "@ledgerhq/live-common/postOnboarding/hooks/index";
-import { clearPostOnboardingLastActionCompleted } from "@ledgerhq/live-common/postOnboarding/actions";
+import useOpenPostOnboardingDrawerCallback from "~/renderer/hooks/useOpenPostOnboardingDrawerCallback";
 
 import { saveSettings } from "~/renderer/actions/settings";
 import { useDispatch, useSelector } from "react-redux";
@@ -30,10 +30,6 @@ import EmptyStateInstalledApps from "~/renderer/screens/dashboard/EmptyStateInst
 import EmptyStateAccounts from "~/renderer/screens/dashboard/EmptyStateAccounts";
 import { useRefreshAccountsOrderingEffect } from "~/renderer/actions/general";
 import CurrencyDownStatusAlert from "~/renderer/components/CurrencyDownStatusAlert";
-
-import { setDrawer } from "~/renderer/drawers/Provider";
-
-import PostOnboardingHubContent from "~/renderer/components/PostOnboardingHub/PostOnboardingHubContent";
 
 // This forces only one visible top banner at a time
 export const TopBannerContainer: ThemedComponent<{}> = styled.div`
@@ -98,22 +94,7 @@ export default function DashboardPage() {
     [hiddenNftCollections],
   );
 
-  const clearLastActionCompleted = useCallback(() => {
-    dispatch(clearPostOnboardingLastActionCompleted());
-  }, [dispatch]);
-
-  const handleTriggerPostOnboardingHub = useCallback(() => {
-    setDrawer(
-      PostOnboardingHubContent,
-      {},
-      {
-        onRequestClose: () => {
-          clearLastActionCompleted();
-          setDrawer();
-        },
-      },
-    );
-  }, [clearLastActionCompleted]);
+  const handleTriggerPostOnboardingHub = useOpenPostOnboardingDrawerCallback();
 
   return (
     <>

@@ -3,6 +3,8 @@ import { Flex, Icons, Tag, Text } from "@ledgerhq/react-ui";
 import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom";
 import { PostOnboardingActionState, PostOnboardingAction } from "@ledgerhq/types-live";
+import { track } from "~/renderer/analytics/segment";
+
 import styled from "styled-components";
 
 export type Props = PostOnboardingAction & PostOnboardingActionState;
@@ -34,6 +36,7 @@ const PostOnboardingActionRow: React.FC<Props> = props => {
         history.push("/");
       }
       startAction();
+      //startEvent && (navigationParams || startAction) && track();
     }
   }, [history, isInsidePostOnboardingScreen, navigationParams, startAction]);
 
@@ -46,13 +49,13 @@ const PostOnboardingActionRow: React.FC<Props> = props => {
       marginBottom={4}
       completed={completed}
       padding="32px 24px 32px 24px"
-      {...(!completed
-        ? {
+      {...(completed
+        ? undefined
+        : {
             onClick: () => {
               handleStartAction();
             },
-          }
-        : {})}
+          })}
     >
       <Flex flexDirection="row" alignItems="center" flexShrink={1}>
         <Icon size={24} color={completed ? "neutral.c70" : "primary.c80"} />
