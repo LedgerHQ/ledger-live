@@ -65,7 +65,6 @@ There are two modes of usage of this library.
     *   [Parameters](#parameters-20)
 *   [findCompoundToken](#findcompoundtoken)
     *   [Parameters](#parameters-21)
-*   [Maintainance notes](#maintainance-notes)
 
 ### abandonSeedAddresses
 
@@ -283,4 +282,3 @@ NB: currencies, trc20 and asa are currently manually maintained.
 Update test and snapshots in the monorepo:
 
 https://ledgerhq.atlassian.net/wiki/spaces/WALLETCO/pages/3740205141/CAL+updates
-
