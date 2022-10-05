@@ -23,7 +23,14 @@ const ADD_NEW: ProtoNFT = {
 const NB_COLUMNS = 2;
 
 const renderItem = ({ item, index }: { item: ProtoNFT; index: number }) => (
-  <Flex flex={1} mr={(index + 1) % NB_COLUMNS > 0 ? 4 : 0}>
+  <Flex
+    flex={
+      item.id === ADD_NEW.id && (index + 1) % NB_COLUMNS !== 0
+        ? 1 / NB_COLUMNS
+        : 1
+    }
+    mr={(index + 1) % NB_COLUMNS > 0 ? 4 : 0}
+  >
     {item.id === ADD_NEW.id ? <AddNewItem /> : <NftListItem nft={item} />}
   </Flex>
 );

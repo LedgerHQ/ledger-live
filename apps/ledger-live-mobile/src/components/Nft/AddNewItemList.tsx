@@ -1,19 +1,16 @@
 import { Flex, Icons, Text } from "@ledgerhq/native-ui";
 import React, { useCallback } from "react";
 import { useTranslation } from "react-i18next";
-import { RectButton } from "react-native-gesture-handler";
 import { useTheme } from "styled-components/native";
 import { TouchableOpacity } from "react-native";
 import styled from "@ledgerhq/native-ui/components/styled";
 import { useNavigation } from "@react-navigation/native";
-import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { NavigatorName, ScreenName } from "../../const";
 
 const StyledBox = styled(TouchableOpacity)`
   background-color: ${props => props.theme.colors.background.main};
   margin-bottom: 8;
   border-radius: 4;
-  width: 160;
   height: 160;
   border-width: 1;
   border-color: ${props => props.theme.colors.neutral.c60};
@@ -36,6 +33,7 @@ export const AddNewItem = () => {
       }),
     [navigation],
   );
+
   return (
     <StyledBox
       flexDirection="column"
