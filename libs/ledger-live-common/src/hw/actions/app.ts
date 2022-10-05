@@ -87,6 +87,7 @@ export type State = {
   installQueue?: string[];
   currentAppOp?: AppOp;
   itemProgress?: number;
+  isLocked: boolean;
 };
 
 export type AppState = State & {
@@ -161,6 +162,7 @@ const getInitialState = (
   requestQuitApp: false,
   requestOpenApp: null,
   unresponsive: false,
+  isLocked: false,
   requiresAppInstallation: null,
   allowOpeningRequestedWording: null,
   allowOpeningGranted: false,
@@ -188,6 +190,11 @@ const reducer = (state: State, e: Event): State => {
     case "unresponsiveDevice":
       return { ...state, unresponsive: true };
 
+    case "lockedDevice":
+      return { ...state, isLocked: true };
+
+    // This event does not set isLocked and unresponsive properties, as
+    // by itself it does not request anything from the device
     case "device-update-last-seen":
       return {
         ...state,
@@ -220,6 +227,7 @@ const reducer = (state: State, e: Event): State => {
         derivation: null,
         displayUpgradeWarning: false,
         unresponsive: false,
+        isLocked: false,
         installingApp: true,
         progress: e.progress || 0,
         requestOpenApp: null,
@@ -232,7 +240,12 @@ const reducer = (state: State, e: Event): State => {
       };
 
     case "listing-apps":
-      return { ...state, listingApps: true };
+      return {
+        ...state,
+        listingApps: true,
+        unresponsive: false,
+        isLocked: false,
+      };
 
     case "error":
       return {
@@ -260,6 +273,7 @@ const reducer = (state: State, e: Event): State => {
         derivation: null,
         displayUpgradeWarning: false,
         unresponsive: false,
+        isLocked: false,
         requestOpenApp: e.appName,
         request: state.request,
       };
@@ -280,6 +294,7 @@ const reducer = (state: State, e: Event): State => {
         derivation: null,
         displayUpgradeWarning: false,
         unresponsive: false,
+        isLocked: false,
         requestQuitApp: true,
         request: state.request,
       };
@@ -297,6 +312,7 @@ const reducer = (state: State, e: Event): State => {
         derivation: null,
         displayUpgradeWarning: false,
         unresponsive: false,
+        isLocked: false,
         allowOpeningGranted: false,
         allowOpeningRequestedWording: null,
         allowManagerGranted: false,
@@ -317,6 +333,7 @@ const reducer = (state: State, e: Event): State => {
         derivation: null,
         displayUpgradeWarning: false,
         unresponsive: false,
+        isLocked: false,
         allowOpeningGranted: true,
         allowOpeningRequestedWording: null,
         allowManagerGranted: true,
@@ -336,6 +353,7 @@ const reducer = (state: State, e: Event): State => {
         displayUpgradeWarning: false,
         isLoading: false,
         unresponsive: false,
+        isLocked: false,
         allowOpeningGranted: false,
         allowOpeningRequestedWording: null,
         allowManagerGranted: false,
@@ -360,6 +378,7 @@ const reducer = (state: State, e: Event): State => {
         error: null,
         isLoading: false,
         unresponsive: false,
+        isLocked: false,
         opened: true,
         appAndVersion: e.app,
         derivation: e.derivation,
@@ -563,7 +582,7 @@ const implementations = {
 
 export let currentMode: keyof typeof implementations = "event";
 
-export function setDeviceMode(mode: keyof typeof implementations) {
+export function setDeviceMode(mode: keyof typeof implementations): void {
   currentMode = mode;
 }
 
