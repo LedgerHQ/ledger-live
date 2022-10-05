@@ -218,7 +218,7 @@ export default function Tutorial({ useCase }: Props) {
 
   const [connectedDevice, setConnectedDevice] = useState(null);
 
-  const handleStartPostOnboarding = useStartPostOnboardingCallback;
+  const handleStartPostOnboarding = useStartPostOnboardingCallback();
 
   const [helpPinCode, setHelpPinCode] = useState(false);
   const [helpRecoveryPhrase, setHelpRecoveryPhrase] = useState(false);

@@ -26,7 +26,7 @@ export function useStartPostOnboardingCallback(): (
   return useCallback(
     (
       deviceModelId: DeviceModelId,
-      mock: boolean,
+      mock = false,
       fallbackIfNoAction?: () => void
     ) => {
       const actions = getPostOnboardingActionsForDevice(deviceModelId, mock);
@@ -36,12 +36,15 @@ export function useStartPostOnboardingCallback(): (
           actionsIds: actions.map((action) => action.id),
         })
       );
+
       if (actions.length === 0) {
         if (fallbackIfNoAction) {
           fallbackIfNoAction();
+          return;
         }
       }
       navigateToPostOnboardingHub();
+      return;
     },
     [dispatch, getPostOnboardingActionsForDevice, navigateToPostOnboardingHub]
   );
