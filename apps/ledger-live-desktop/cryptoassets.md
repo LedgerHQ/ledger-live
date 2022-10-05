@@ -113,7 +113,7 @@
 | lisk | LSK | NO | lisk |
 | æternity | AE | NO | aeternity |
 
-## Tokens (10482)
+## Tokens (10481)
 | parent currency | ticker | contract | name | status | ledger id |
 |--|--|--|--|--|--|
 | Algorand | ARCC | MESEJMPXKL7YUWEQGNRCKSLMQDKHOHWIZ3RBWP7BV4JDMUJXFUVQZWUBJM | Asia Reserve Currency Coin | countervalues disabled | algorand/asa/163650 |
@@ -9875,7 +9875,6 @@
 | Tron | TDEX | TRVQqdLgNv8j7xPUbT4EMLiT93YHHCFASj | TRUDEX | delisted, countervalues disabled | tron/trc10/1001691 |
 | Tron | TRUMP | TCaoHmxvJXM8A9UrUJ4AoKgVstauyjZw5k | TRUMP | delisted, countervalues disabled | tron/trc10/1001219 |
 | Tron | TRX | TB16q6kpSEW2WqvTJ9ua7HAoP9ugQ2HdHZ | TRX | delisted, countervalues disabled | tron/trc10/1000002 |
-| Tron | TRON | 3QJmnh | TRX | delisted, countervalues disabled | tron/trc10/0 |
 | Tron | TRXB | TGWBfWLpcJuNEHk8CQkwqA5d1eSkJhY6dC | TRXBURN | delisted, countervalues disabled | tron/trc10/1000175 |
 | Tron | TRXC | THs5b6Nt8q4NxaFiQPcaSRfXscdjqXfteG | TRXCash | delisted, countervalues disabled | tron/trc10/1000012 |
 | Tron | TDI | TKxztan5aHTs4VBsrYqWTCiHDp7n79FWdf | TRXDEXio | delisted, countervalues disabled | tron/trc10/1001707 |

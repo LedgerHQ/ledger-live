@@ -65,6 +65,7 @@ There are two modes of usage of this library.
     *   [Parameters](#parameters-20)
 *   [findCompoundToken](#findcompoundtoken)
     *   [Parameters](#parameters-21)
+*   [Maintainance notes](#maintainance-notes)
 
 ### abandonSeedAddresses
 
@@ -268,9 +269,18 @@ Returns **(TokenCurrency | null | [undefined](https://developer.mozilla.org/docs
 
 ## Maintainance notes
 
-To regenerate data:
+Import crypto assets data guide:
+
+https://ledgerhq.atlassian.net/wiki/spaces/WALLETCO/pages/3256516784/How+to+import+crypto-assets+data+in+Ledger+Live
+
+Regenerate data:
 
     node script/crypto-assets-importer/index.js ~/dev/crypto-assets
     node script/crypto-assets-importer/tron/sync-trc10-tokens.js
 
 NB: currencies, trc20 and asa are currently manually maintained.
+
+Update test and snapshots in the monorepo:
+
+https://ledgerhq.atlassian.net/wiki/spaces/WALLETCO/pages/3740205141/CAL+updates
+
