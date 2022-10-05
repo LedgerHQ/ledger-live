@@ -72,6 +72,16 @@ module.exports = {
         "flowtype/no-types-missing-file-annotation": 0,
         "react/jsx-filename-extension": 0,
 
+        // Enables no-unused-vars, with exception on _var, only for TypeScript
+        "@typescript-eslint/no-unused-vars": [
+          "error",
+          {
+            argsIgnorePattern: "^_",
+            vars: "all",
+            args: "after-used",
+            ignoreRestSiblings: true,
+          },
+        ],
         // Ignore live-common for the moment because this rule does not work with subpath exports
         // See: https://github.com/import-js/eslint-plugin-import/issues/1810
         // "import/no-unresolved": [
