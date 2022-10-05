@@ -29,7 +29,7 @@
   [self initializeFlipper:application];
 
   // Initialize Braze
-  NSString *brazeApiKeyFromEnv = [ReactNativeConfig envFor:@"BRAZE_API_KEY"];
+  NSString *brazeApiKeyFromEnv = [ReactNativeConfig envFor:@"BRAZE_IOS_API_KEY"];
   [Appboy startWithApiKey:brazeApiKeyFromEnv inApplication:application withLaunchOptions:launchOptions];
 
   // Retrieve the correct GoogleService-Info.plist file name for a given environment
