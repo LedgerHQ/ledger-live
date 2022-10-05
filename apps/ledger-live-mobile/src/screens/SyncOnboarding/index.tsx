@@ -7,7 +7,6 @@ import React, {
 } from "react";
 import type { StackScreenProps } from "@react-navigation/stack";
 import {
-  Button,
   Flex,
   ScrollContainer,
   VerticalTimeline,
@@ -29,12 +28,17 @@ import { addKnownDevice } from "../../actions/ble";
 import { NavigatorName, ScreenName } from "../../const";
 import type { BaseNavigatorStackParamList } from "../../components/RootNavigator/BaseNavigator";
 import type { SyncOnboardingStackParamList } from "../../components/RootNavigator/SyncOnboardingNavigator";
-import Question from "../../icons/Question";
 import HelpDrawer from "./HelpDrawer";
 import DesyncDrawer from "./DesyncDrawer";
 import ResyncOverlay from "./ResyncOverlay";
 import LanguageSelect from "./LanguageSelect";
 import SoftwareChecksStep from "./SoftwareChecksStep";
+import {
+  completeOnboarding,
+  setHasOrderedNano,
+  setLastConnectedDevice,
+  setReadOnlyMode,
+} from "../../actions/settings";
 
 type StepStatus = "completed" | "active" | "inactive";
 
@@ -54,9 +58,9 @@ export type SyncOnboardingCompanionProps = CompositeScreenProps<
 const normalPollingPeriodMs = 1000;
 const shortPollingPeriodMs = 400;
 const normalDesyncTimeoutMs = 60000;
-const longDesyncTimeoutMs = 300000;
-const normalResyncOverlayDisplayDelayMs = 8000;
-const longResyncOverlayDisplayDelayMs = 180000;
+const longDesyncTimeoutMs = 120000;
+const normalResyncOverlayDisplayDelayMs = 10000;
+const longResyncOverlayDisplayDelayMs = 60000;
 const readyRedirectDelayMs = 2500;
 
 // Because of https://github.com/typescript-eslint/typescript-eslint/issues/1197
@@ -201,7 +205,7 @@ export const SyncOnboarding = ({
       params: {
         // TODO: For now, don't do that because nanoFTS shows up as nanoX
         // filterByDeviceModelId: device.modelId,
-        areKnownDevicesDisplayed: false,
+        areKnownDevicesDisplayed: true,
         onSuccessAddToKnownDevices: false,
         onSuccessNavigateToConfig: {
           navigationType: "navigate",
@@ -221,7 +225,7 @@ export const SyncOnboarding = ({
         },
       },
     });
-  }, [navigation, device, cleanBeforeExit]);
+  }, [navigation, cleanBeforeExit]);
 
   const {
     onboardingState: deviceOnboardingState,
@@ -252,6 +256,10 @@ export const SyncOnboarding = ({
 
   const handleDeviceReady = useCallback(() => {
     // Adds the device to the list of known devices
+    dispatchRedux(setReadOnlyMode(false));
+    dispatchRedux(setHasOrderedNano(false));
+    dispatchRedux(setLastConnectedDevice(device));
+    dispatchRedux(completeOnboarding());
     dispatchRedux(
       addKnownDevice({
         id: device.deviceId,
@@ -421,11 +429,12 @@ export const SyncOnboarding = ({
                 <Text variant="h4" fontWeight="semiBold">
                   {t("syncOnboarding.title", { deviceName })}
                 </Text>
-                <Button
+                {/* TODO: disabled for now but will be used in the future */}
+                {/* <Button
                   ml={2}
                   Icon={Question}
                   onPress={() => setHelpDrawerOpen(true)}
-                />
+                /> */}
               </Flex>
               <VerticalTimeline
                 steps={companionSteps}

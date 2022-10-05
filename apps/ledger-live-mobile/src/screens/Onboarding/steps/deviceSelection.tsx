@@ -59,7 +59,7 @@ function OnboardingStepDeviceSelection() {
         params: {
           // TODO: for now we remove this
           // filterByDeviceModelId: DeviceModelId.nanoFTS,
-          areKnownDevicesDisplayed: false,
+          areKnownDevicesDisplayed: true,
           onSuccessAddToKnownDevices: false,
           onSuccessNavigateToConfig: {
             // navigation.push on success because it could not correctly

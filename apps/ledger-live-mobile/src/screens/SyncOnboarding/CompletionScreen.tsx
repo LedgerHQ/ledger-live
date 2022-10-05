@@ -4,7 +4,6 @@ import { useDispatch } from "react-redux";
 import { StackScreenProps } from "@react-navigation/stack";
 import { TouchableWithoutFeedback } from "react-native-gesture-handler";
 
-import { completeOnboarding } from "../../actions/settings";
 import { NavigatorName } from "../../const";
 import type { SyncOnboardingStackParamList } from "../../components/RootNavigator/SyncOnboardingNavigator";
 import Illustration from "../../images/illustration/Illustration";
@@ -23,10 +22,20 @@ const CompletionScreen = ({ navigation }: Props) => {
   const [delay, setDelay] = useState<NodeJS.Timeout | null>(null);
 
   const redirectToPostOnboarding = useCallback(() => {
-    dispatch(completeOnboarding());
-
-    navigation.replace(NavigatorName.Base, {
-      screen: NavigatorName.Main,
+    navigation.reset({
+      index: 0,
+      routes: [
+        {
+          name: NavigatorName.Base,
+          state: {
+            routes: [
+              {
+                name: NavigatorName.Main,
+              },
+            ],
+          },
+        },
+      ],
     });
   }, [dispatch, navigation]);
 
