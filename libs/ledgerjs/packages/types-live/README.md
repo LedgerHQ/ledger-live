@@ -52,6 +52,8 @@ Ledger Live main types.
     *   [Properties](#properties-13)
     *   [enabled](#enabled)
     *   [desktop_version](#desktop_version)
+    *   [desktop_version](#desktop_version-1)
+    *   [desktop_version](#desktop_version-2)
     *   [enabledOverriddenForCurrentDesktopVersion](#enabledoverriddenforcurrentdesktopversion)
     *   [languages_whitelisted](#languages_whitelisted)
     *   [languages_whitelisted](#languages_whitelisted-1)
@@ -496,8 +498,8 @@ Type: {enabled: [boolean](https://developer.mozilla.org/docs/Web/JavaScript/Refe
 #### Properties
 
 *   `enabled` **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)** 
-*   `desktop_version` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)?**
-*   `enabledOverriddenForCurrentDesktopVersion` **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)?**
+*   `desktop_version` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)?** 
+*   `enabledOverriddenForCurrentDesktopVersion` **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)?** 
 *   `languages_whitelisted` **\[[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)]?** 
 *   `languages_blacklisted` **\[[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)]?** 
 *   `enabledOverriddenForCurrentLanguage` **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)?** 
@@ -513,7 +515,17 @@ Type: [boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Glob
 #### desktop_version
 
 The `desktop_version` option is desktop specific, it has no impact on mobile
+
+Type: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)
+
+#### desktop_version
+
 If set, the feature is disabled when the desktop app version does not satisfies this param
+
+Type: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)
+
+#### desktop_version
+
 It should respect the semantic versioning specification (https://semver.org/)
 
 Type: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)
