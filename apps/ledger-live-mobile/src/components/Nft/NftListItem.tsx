@@ -1,5 +1,4 @@
-import React, { memo, useMemo } from "react";
-import { RectButton } from "react-native-gesture-handler";
+import React, { memo, useCallback, useMemo } from "react";
 import { StyleSheet } from "react-native";
 import { useNftMetadata } from "@ledgerhq/live-common/nft/index";
 
@@ -7,23 +6,20 @@ import { NFTMetadata, ProtoNFT } from "@ledgerhq/types-live";
 import { NFTResource } from "@ledgerhq/live-common/nft/NftMetadataProvider/types";
 import { Box, Flex, Text } from "@ledgerhq/native-ui";
 
-import styled from "styled-components/native";
 import { getCryptoCurrencyById } from "@ledgerhq/live-common/lib/currencies/";
 
+import { useNavigation } from "@react-navigation/native";
+import styled from "@ledgerhq/native-ui/components/styled";
 import CurrencyIcon from "../CurrencyIcon";
 import NftMedia from "./NftMedia";
 import Skeleton from "../Skeleton";
+import { NavigatorName, ScreenName } from "../../const";
 
 type Props = {
   nft: ProtoNFT;
-  style?: any;
 };
 
-const StyledRectButton = styled(RectButton)`
-  margin-bottom: 8;
-  border-radius: 4;
-  background-color: ${props => props.theme.colors.background.main};
-`;
+const StyledTouchableOpacity = styled.TouchableOpacity``;
 
 const displayText = (text?: string | null) => text ?? "--";
 
@@ -36,6 +32,8 @@ const NftCardView = ({
   status: NFTResource["status"];
   metadata: NFTMetadata;
 }) => {
+  const navigation = useNavigation();
+
   const loading = status === "loading";
 
   const currency = useMemo(
@@ -43,8 +41,24 @@ const NftCardView = ({
     [nft.currencyId],
   );
 
+  const navigateToNftViewer = useCallback(
+    () =>
+      navigation.navigate(NavigatorName.NftNavigator, {
+        screen: ScreenName.NftViewer,
+        params: {
+          nft,
+        },
+      }),
+    [navigation, nft],
+  );
+
   return (
-    <StyledRectButton onPress={() => console.log("Go to Collection")}>
+    <StyledTouchableOpacity
+      mb={3}
+      borderRadius={1}
+      bg={"background.main"}
+      onPress={navigateToNftViewer}
+    >
       <NftMedia
         style={styles.image}
         metadata={metadata}
@@ -96,23 +110,21 @@ const NftCardView = ({
           </Flex>
         </Skeleton>
       </Box>
-    </StyledRectButton>
+    </StyledTouchableOpacity>
   );
 };
 
 const NftCardMemo = memo(NftCardView);
 // this technique of splitting the usage of context and memoing the presentational component is used to prevent
 // the rerender of all NftCards whenever the NFT cache changes (whenever a new NFT is loaded)
-const NftListItem = ({ nft, style }: Props) => {
+const NftListItem = ({ nft }: Props) => {
   const { status, metadata } = useNftMetadata(
     nft?.contract,
     nft?.tokenId,
     nft?.currencyId,
   );
 
-  return (
-    <NftCardMemo nft={nft} style={style} status={status} metadata={metadata} />
-  );
+  return <NftCardMemo nft={nft} status={status} metadata={metadata} />;
 };
 
 const styles = StyleSheet.create({
