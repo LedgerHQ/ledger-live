@@ -4,7 +4,7 @@ import { createStackNavigator } from "@react-navigation/stack";
 
 import { getStackNavigatorConfig } from "../../navigation/navigatorConfig";
 import { ScreenName } from "../../const";
-import { SyncOnboarding } from "../../screens/SyncOnboarding";
+import { SyncOnboarding } from "../../screens/SyncOnboarding/index";
 import CompletionScreen from "../../screens/SyncOnboarding/CompletionScreen";
 import { SyncOnboardingCompanionParams } from "../../screens/SyncOnboarding/types";
 
