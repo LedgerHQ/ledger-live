@@ -10,6 +10,8 @@ import { ScannedDevice } from "@ledgerhq/live-common/ble/types";
 import { getDeviceModel } from "@ledgerhq/devices";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import TransportBLE from "@ledgerhq/react-native-hw-transport-ble";
+import { TouchableOpacity } from "react-native-gesture-handler";
+import { ArrowLeftMedium } from "@ledgerhq/native-ui/assets/icons";
 
 import { knownDevicesSelector } from "../../reducers/ble";
 import LocationRequired from "../LocationRequired";
@@ -17,6 +19,16 @@ import BleDeviceItem from "./BleDeviceItem";
 import type { BleDevicePairingFlowProps } from "./index";
 import Animation from "../../components/Animation";
 import lottie from "./assets/bluetooth.json";
+
+const HeaderLeft = ({ onClose }: { onClose: () => void }) => {
+  return (
+    <Flex pt={8} px={6}>
+      <TouchableOpacity onPress={onClose}>
+        <ArrowLeftMedium size={24} />
+      </TouchableOpacity>
+    </Flex>
+  );
+};
 
 export type FilterByDeviceModelId = null | DeviceModelId;
 
@@ -37,7 +49,7 @@ export const BleDevicesScanning = ({
   useEffect(() => {
     navigation.setOptions({
       headerRight: undefined,
-      headerLeft: undefined, // Puts the default back left arrow
+      headerLeft: () => <HeaderLeft onClose={navigation.goBack} />,
     });
   }, [navigation]);
 
