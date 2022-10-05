@@ -34,7 +34,6 @@ import type {
   Input as ConnectAppInput,
 } from "../connectApp";
 import { useReplaySubject } from "../../observable";
-import { getAccountName } from "../../account";
 import type { Device, Action } from "./types";
 import { shouldUpgrade } from "../../apps";
 import { ConnectAppTimeout } from "../../errors";
@@ -639,15 +638,7 @@ export const createAction = (
     }, []);
     return {
       ...state,
-      inWrongDeviceForAccount:
-        state.derivation && appRequest.account
-          ? state.derivation.address !== appRequest.account.freshAddress &&
-            state.derivation.address !== appRequest.account.seedIdentifier // Use-case added for Hedera
-            ? {
-                accountName: getAccountName(appRequest.account),
-              }
-            : null
-          : null,
+      inWrongDeviceForAccount: null,
       onRetry,
       passWarning,
     };
