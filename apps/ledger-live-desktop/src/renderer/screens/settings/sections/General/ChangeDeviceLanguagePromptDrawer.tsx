@@ -56,6 +56,7 @@ const ChangeDeviceLanguagePromptDrawer: React.FC<Props> = ({
       isOpen={isOpen}
       onClose={onCloseDrawer}
       title={t("deviceLocalization.deviceLanguage")}
+      extraContainerProps={{ p: 0 }}
       big
     >
       <Flex
@@ -83,9 +84,9 @@ const ChangeDeviceLanguagePromptDrawer: React.FC<Props> = ({
               }}
             />
             {languageInstalled && (
-              <Flex flexDirection="column" rowGap={10} alignSelf="stretch">
+              <Flex flexDirection="column" rowGap={8} alignSelf="stretch">
                 <Divider variant="light" />
-                <Flex alignSelf="end">
+                <Flex alignSelf="end" pb={8} px={12}>
                   <Button
                     variant="main"
                     onClick={onCloseDrawer}

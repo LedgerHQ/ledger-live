@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useMemo } from "react";
 import { Button, Flex, Icons, Drawer, Radio, Divider } from "@ledgerhq/react-ui";
 import { DeviceInfo, Language } from "@ledgerhq/types-live";
 import { track } from "~/renderer/analytics/segment";
@@ -30,11 +30,20 @@ const DeviceLanguageInstallation: React.FC<Props> = ({
   onSuccess,
 }: Props) => {
   const { availableLanguages } = useAvailableLanguagesForDevice(deviceInfo);
+  const { t } = useTranslation();
+
+  const sortedAvailableLanguages = useMemo(
+    () =>
+      availableLanguages.sort((a, b) =>
+        t(`deviceLocalization.languages.${a}`).localeCompare(
+          t(`deviceLocalization.languages.${b}`),
+        ),
+      ),
+    [availableLanguages, t],
+  );
 
   const [installing, setInstalling] = useState(false);
   const [installed, setInstalled] = useState(false);
-
-  const { t } = useTranslation();
 
   const onCloseDrawer = useCallback(() => {
     onClose();
@@ -56,6 +65,7 @@ const DeviceLanguageInstallation: React.FC<Props> = ({
     <Drawer
       isOpen={isOpen}
       onClose={onCloseDrawer}
+      extraContainerProps={{ p: 0 }}
       title={t("deviceLocalization.deviceLanguage")}
       big
     >
@@ -70,14 +80,14 @@ const DeviceLanguageInstallation: React.FC<Props> = ({
             language={selectedLanguage}
           />
         ) : (
-          <>
+          <Flex px={12}>
             <Radio
               currentValue={selectedLanguage}
               onChange={onChange}
               name="LanguageSelection"
               containerProps={{ flexDirection: "column", rowGap: "1rem", flex: 1 }}
             >
-              {availableLanguages.map(language => (
+              {sortedAvailableLanguages.map(language => (
                 <Radio.ListElement
                   containerProps={{
                     flex: 1,
@@ -101,12 +111,12 @@ const DeviceLanguageInstallation: React.FC<Props> = ({
                 />
               ))}
             </Radio>
-          </>
+          </Flex>
         )}
         {(!installing || installed) && (
-          <Flex flexDirection="column" rowGap={10}>
+          <Flex flexDirection="column" rowGap={8}>
             <Divider variant="light" />
-            <Flex alignSelf="end">
+            <Flex alignSelf="end" px={12} pb={8}>
               <Button
                 data-test-id={
                   installed ? "close-language-installation-button" : "install-language-button"
