@@ -120,7 +120,7 @@ export const BleDevicePairing = ({
   if (pairingError) {
     return (
       <Flex bg="background.main" height="100%" justifyContent="space-between">
-        <Flex mx="10" mt="12">
+        <Flex flex={1} mx="10" justifyContent="center" alignItems="center">
           <Flex alignItems="center" justifyContent="center" p={5}>
             <CircledCrossSolidMedium color={colors.error.c80} size={56} />
           </Flex>
