@@ -40,11 +40,10 @@ export function useStartPostOnboardingCallback(): (
       if (actions.length === 0) {
         if (fallbackIfNoAction) {
           fallbackIfNoAction();
-          return;
         }
+        return;
       }
       navigateToPostOnboardingHub();
-      return;
     },
     [dispatch, getPostOnboardingActionsForDevice, navigateToPostOnboardingHub]
   );
