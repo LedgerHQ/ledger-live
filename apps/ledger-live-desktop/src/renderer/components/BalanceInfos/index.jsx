@@ -135,7 +135,7 @@ export default function BalanceInfos({ totalBalance, valueChange, isAvailable, u
   }, [history, ptxSmartRouting]);
 
   const onSwap = useCallback(() => {
-    setTrackingSource("Page Market");
+    setTrackingSource("Page Portafolio");
 
     history.push({
       pathname: "/swap",
@@ -157,7 +157,16 @@ export default function BalanceInfos({ totalBalance, valueChange, isAvailable, u
           {t("accounts.contextMenu.buy")}
         </Button>
 
-        <Button data-test-id="portfolio-swap-button" variant="color" onClick={onSwap}>
+        <Button
+          data-test-id="portfolio-swap-button"
+          variant="color"
+          event="button_clicked"
+          eventProperties={{
+            button: "swap",
+            page: "Page Portafolio",
+          }}
+          onClick={onSwap}
+        >
           {t("accounts.contextMenu.swap")}
         </Button>
       </Box>

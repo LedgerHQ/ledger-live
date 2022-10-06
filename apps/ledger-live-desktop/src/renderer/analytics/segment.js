@@ -122,6 +122,15 @@ export const track = (event: string, properties: ?Object, mandatory: ?boolean) =
   sendTrack(event, fullProperties, storeInstance);
 };
 
+function sendScreen(event, properties: ?Object, storeInstance: *) {
+  const analytics = getAnalytics();
+  if (!analytics) return;
+  analytics.page(event, properties, {
+    context: getContext(storeInstance),
+  });
+  trackSubject.next({ event, properties });
+}
+
 export const page = (category: string, name: ?string, properties: ?Object) => {
   if (!storeInstance || !shareAnalyticsSelector(storeInstance.getState())) {
     return;
@@ -131,5 +140,5 @@ export const page = (category: string, name: ?string, properties: ?Object) => {
     ...properties,
   };
   logger.analyticsPage(category, name, fullProperties);
-  sendTrack(`Page ${category + (name ? ` ${name}` : "")}`, fullProperties, storeInstance);
+  sendScreen(`Page ${category + (name ? ` ${name}` : "")}`, fullProperties, storeInstance);
 };

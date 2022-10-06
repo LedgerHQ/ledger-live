@@ -33,6 +33,7 @@ import { useProviders } from "~/renderer/screens/exchange/Swap2/Form";
 import useCompoundAccountEnabled from "~/renderer/screens/lend/useCompoundAccountEnabled";
 import { rgba } from "~/renderer/styles/helpers";
 import type { ThemedComponent } from "~/renderer/styles/StyleProvider";
+import { track } from "~/renderer/analytics/segment";
 import {
   ActionDefault,
   BuyActionDefault,
@@ -238,7 +239,12 @@ const AccountHeaderActions = ({ account, parentAccount, openModal }: Props) => {
   }, [openModal, summary]);
 
   const onSwap = useCallback(() => {
-    setTrackingSource("account header actions");
+    track("button_clicked", {
+      button: "swap",
+      currency: currency.ticker,
+      page: "Page Account",
+    });
+    setTrackingSource("Page Account");
     history.push({
       pathname: "/swap",
       state: {

@@ -6,6 +6,7 @@ import styled, { useTheme } from "styled-components";
 import { Flex, Text, Icon } from "@ledgerhq/react-ui";
 import FormattedVal from "~/renderer/components/FormattedVal";
 import { setTrackingSource } from "~/renderer/analytics/TrackPage";
+import { track } from "~/renderer/analytics/segment";
 import counterValueFormatter from "@ledgerhq/live-common/market/utils/countervalueFormatter";
 import CryptoCurrencyIcon from "~/renderer/components/CryptoCurrencyIcon";
 import { TableCell, TableRow } from "./MarketList";
@@ -130,6 +131,11 @@ function MarketRowItem({
       if (currency?.internalCurrency?.id) {
         e.preventDefault();
         e.stopPropagation();
+        track("button_clicked", {
+          button: "swap",
+          currency: currency?.ticker,
+          page: "Page Market",
+        });
         setTrackingSource("Page Market");
 
         const currencyId = currency?.internalCurrency?.id;
