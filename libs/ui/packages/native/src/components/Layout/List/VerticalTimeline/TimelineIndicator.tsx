@@ -57,7 +57,7 @@ const CenterSegment = styled(Flex)<{ status: ItemStatus; isLastItem?: boolean }>
 `;
 
 export type Props = FlexProps & {
-  status: "inactive" | "active" | "completed";
+  status: ItemStatus;
   isFirstItem?: boolean;
   isLastItem?: boolean;
 };
