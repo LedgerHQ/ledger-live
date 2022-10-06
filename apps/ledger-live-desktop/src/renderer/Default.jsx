@@ -25,7 +25,7 @@ import PlatformApp from "~/renderer/screens/platform/App";
 import NFTGallery from "~/renderer/screens/nft/Gallery";
 import NFTCollection from "~/renderer/screens/nft/Gallery/Collection";
 import Box from "~/renderer/components/Box/Box";
-import ListenDevices from "~/renderer/components/ListenDevices";
+import { useListenToHidDevices } from "./hooks/useListenToHidDevices";
 import ExportLogsButton from "~/renderer/components/ExportLogsButton";
 import Idler from "~/renderer/components/Idler";
 import IsUnlocked from "~/renderer/components/IsUnlocked";
@@ -146,6 +146,7 @@ export default function Default() {
   const history = useHistory();
   const hasCompletedOnboarding = useSelector(hasCompletedOnboardingSelector);
 
+  useListenToHidDevices();
   useDeeplink();
   useUSBTroubleshooting();
 
@@ -167,7 +168,6 @@ export default function Default() {
   return (
     <>
       <TriggerAppReady />
-      <ListenDevices />
       <ExportLogsButton hookToShortcut />
       <TrackAppStart />
       <Idler />

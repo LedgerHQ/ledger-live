@@ -430,11 +430,13 @@
         }
       },
       "filter": {
-        "all": "All",
         "centralised": "Centralised",
-        "dedentralised": "Decentralised"
+        "decentralised": "Decentralised",
+        "float": "Floating rate",
+        "fixed": "Fixed rate"
       },
-      "noQuote": "Quote available at the next step"
+      "noQuote": "Quote available at the next step",
+      "noProviders": "No results found. There are no quotes available with the current preferences."
     },
     "ip": {
       "title": "Welcome to Swap",
@@ -752,7 +754,7 @@
     "settings": {
       "title": "Edit account",
       "advancedLogs": "Advanced",
-      "advancedTips": "Your xpub is privacy-sensitive data. Use with caution, especially when disclosing to third parties.",
+      "advancedTips": "This is a {{tag}} xpub. When importing it into a third-party wallet, chose the same derivation mode.",
       "accountName": {
         "title": "Account name",
         "desc": "Description of the account"
@@ -1182,6 +1184,10 @@
     "blackfriday": {
       "title": "BLACK FRIDAY ",
       "description": "Enjoy 40% off Ledger hardware wallets with the promo code BLACKFRIDAY20"
+    },
+    "referralProgram": {
+      "title": "Refer and earn $10",
+      "description": "Successfully refer a friend and you both earn $10 worth of Bitcoin."
     }
   },
   "signmessage": {
@@ -3614,8 +3620,8 @@
       "zh": "Chinese",
       "de": "German",
       "tr": "Turkish",
-      "ja": "Japanese", 
-      "ko": "Korean", 
+      "ja": "Japanese",
+      "ko": "Korean",
       "pt": "Portuguese"
     }
   },

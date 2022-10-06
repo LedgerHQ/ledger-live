@@ -52,6 +52,7 @@ import type {
 } from "@ledgerhq/types-live";
 import type { Transaction, TransactionStatus } from "../generated/types";
 import { botTest } from "./bot-test-context";
+import { retryWithDelay } from "../rxjs/operators/retryWithDelay";
 
 let appCandidates;
 const localCache = {};
@@ -73,6 +74,9 @@ async function crossAccount(account: Account): Promise<Account> {
   synced.name += " cross";
   return synced;
 }
+
+const defaultScanAccountsRetries = 2;
+const delayBetweenScanAccountRetries = 5000;
 
 export async function runWithAppSpec<T extends Transaction>(
   spec: AppSpec<T>,
@@ -156,6 +160,10 @@ export async function runWithAppSpec<T extends Transaction>(
         syncConfig,
       })
       .pipe(
+        retryWithDelay(
+          delayBetweenScanAccountRetries,
+          spec.scanAccountsRetries || defaultScanAccountsRetries
+        ),
         filter((e) => e.type === "discovered"),
         map((e) => e.account),
         reduce<Account, Account[]>((all, a) => all.concat(a), []),
@@ -587,7 +595,7 @@ export async function runOnAccount<T extends Transaction>({
     // wait the condition are good (operation confirmed)
     // test() is run over and over until either timeout is reach OR success
     const testBefore = now();
-    const timeOut = mutation.testTimeout || spec.testTimeout || 30 * 1000;
+    const timeOut = mutation.testTimeout || spec.testTimeout || 5 * 60 * 1000;
     const step = (account) => {
       const timedOut = now() - testBefore > timeOut;
       const operation = account.operations.find(

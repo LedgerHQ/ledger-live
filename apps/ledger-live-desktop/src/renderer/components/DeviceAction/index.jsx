@@ -138,6 +138,8 @@ const DeviceAction = <R, H, P>({
     }
   }, [dispatch, modelId, preferredDeviceModel]);
 
+  const { t } = useTranslation();
+
   useEffect(() => {
     if (error && onError) {
       onError(error);

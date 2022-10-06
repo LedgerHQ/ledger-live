@@ -20,7 +20,6 @@ export class ManagerPage {
     this.page = page;
     this.firmwareUpdateButton = page.locator('data-test-id=manager-update-firmware-button');
     this.changeDeviceLanguageButton = page.locator('data-test-id=manager-change-language-button');
-
     this.installedAppsTab = page.locator('data-test-id=manager-installed-apps-tab');
     this.catalogAppsTab = page.locator('data-test-id=manager-app-catalog-tab');
     this.updateAllButton = page.locator('data-test-id=manager-update-all-apps-button');

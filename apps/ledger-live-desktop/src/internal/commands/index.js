@@ -7,7 +7,7 @@ import flushDevice from "./flushDevice";
 import firmwareUpdating from "./firmwareUpdating";
 import getLatestFirmwareForDevice from "./getLatestFirmwareForDevice";
 import getSatStackStatus from "./getSatStackStatus";
-import listenDevices from "./listenDevices";
+import listenToHidDevices from "./listenToHidDevices";
 import listApps from "./listApps";
 import signMessage from "./signMessage";
 import ping from "./ping";
@@ -40,7 +40,7 @@ export const commandsById = {
   firmwareUpdating,
   getLatestFirmwareForDevice,
   getSatStackStatus,
-  listenDevices,
+  listenToHidDevices,
   connectApp,
   connectManager,
   listApps,
