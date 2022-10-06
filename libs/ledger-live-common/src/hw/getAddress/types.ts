@@ -12,7 +12,6 @@ export type GetAddressOptions = {
   path: string;
   derivationMode: DerivationMode;
   verify?: boolean;
-  skipAppFailSafeCheck?: boolean;
   askChainCode?: boolean;
   forceFormat?: string;
   devicePath?: string;
