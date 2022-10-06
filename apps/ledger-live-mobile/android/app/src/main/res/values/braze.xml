@@ -7,4 +7,5 @@
 <bool name="com_braze_handle_push_deep_links_automatically">true</bool>
 <string name="com_braze_default_notification_channel_name">Your default channel name</string>
 <string name="com_braze_default_notification_channel_description">Your default channel description</string>
+<drawable name="com_braze_push_small_notification_icon">@drawable/ic_notification_24dp</drawable>
 </resources>
