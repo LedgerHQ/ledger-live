@@ -2026,6 +2026,19 @@
     "switchButton" : "Basculer en {{language}}",
     "no" : "Non, merci"
   },
+  "deviceLocalization" : {
+    "language" : "Langue",
+    "deviceLanguage" : "Langue de l’appareil",
+    "changeLanguage" : "Changer la langue",
+    "allowLanguageInstallation" : "Confirmez l’ajout de la langue",
+    "languageInstalled" : "La langue a bien été modifiée",
+    "installingLanguage" : "Installation de la langue",
+    "languages" : {
+      "english" : "English",
+      "french" : "Français",
+      "spanish" : "Español"
+    }
+  },
   "distribution" : {
     "asset" : "Actif",
     "price" : "Cours",
@@ -4549,6 +4562,14 @@
     "HardResetFail" : {
       "title" : "Échec de la réinitialisation",
       "description" : "Si le problème persiste, veuillez réessayer ou contacter l’Assistance Ledger."
+    },
+    "LanguageInstallRefusedOnDevice" : {
+      "title" : "Installation de la langue refusée sur l’appareil",
+      "description" : "Veuillez réessayer. Si le problème persiste, enregistrez vos logs en utilisant le bouton ci-dessous et transmettez-les à l’Assistance Ledger."
+    },
+    "LanguageNotFound" : {
+      "title" : "Langue non trouvée",
+      "description" : "Impossible de trouver la langue que vous souhaitez installer. Veuillez essayer d’installer une autre langue."
     },
     "LatestMCUInstalledError" : {
       "title" : "Pas de mise à jour disponible",
