@@ -1,5 +1,11 @@
 # @ledgerhq/cryptoassets
 
+## 6.36.0-nightly.1
+
+### Minor Changes
+
+- [#1442](https://github.com/LedgerHQ/ledger-live/pull/1442) [`d3dc2c6877`](https://github.com/LedgerHQ/ledger-live/commit/d3dc2c6877fbdcaf68e442a781798d752fc5152d) Thanks [@sarneijim](https://github.com/sarneijim)! - Add bep20 exchange
+
 ## 6.35.2-nightly.0
 
 ### Patch Changes

@@ -1,5 +1,18 @@
 # ledger-live-desktop
 
+## 2.49.0-nightly.5
+
+### Minor Changes
+
+- [#1442](https://github.com/LedgerHQ/ledger-live/pull/1442) [`59760940ac`](https://github.com/LedgerHQ/ledger-live/commit/59760940ac68fa5be5144e7bc56f578dbd352693) Thanks [@sarneijim](https://github.com/sarneijim)! - Update CAL
+
+### Patch Changes
+
+- [#1367](https://github.com/LedgerHQ/ledger-live/pull/1367) [`011ea59e23`](https://github.com/LedgerHQ/ledger-live/commit/011ea59e237dc1e26e963c3d1862085887d5363a) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - LLD - Terms and Privacy Policy urls to update
+
+- Updated dependencies [[`12d40b578b`](https://github.com/LedgerHQ/ledger-live/commit/12d40b578bee2b52de197b679c3db0299bc9a716)]:
+  - @ledgerhq/live-common@27.4.0-nightly.2
+
 ## 2.49.0-nightly.4
 
 ### Minor Changes

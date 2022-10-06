@@ -1,5 +1,18 @@
 # live-mobile
 
+## 3.9.1-nightly.3
+
+### Patch Changes
+
+- [#1308](https://github.com/LedgerHQ/ledger-live/pull/1308) [`0fd20dff04`](https://github.com/LedgerHQ/ledger-live/commit/0fd20dff0440f932426c618640ac519c06b2d477) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - UI issue on Sync modal
+
+* [#1329](https://github.com/LedgerHQ/ledger-live/pull/1329) [`66158fa9b5`](https://github.com/LedgerHQ/ledger-live/commit/66158fa9b571662f614debe211b297201abc11f3) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Accents are cropped on the Onboarding carousel
+
+- [#1397](https://github.com/LedgerHQ/ledger-live/pull/1397) [`860027ad76`](https://github.com/LedgerHQ/ledger-live/commit/860027ad76a444cb21fa1fc5b804859869114748) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Updated share library (fixes export logs and ops)
+
+- Updated dependencies [[`12d40b578b`](https://github.com/LedgerHQ/ledger-live/commit/12d40b578bee2b52de197b679c3db0299bc9a716)]:
+  - @ledgerhq/live-common@27.4.0-nightly.2
+
 ## 3.9.1-nightly.2
 
 ### Patch Changes
