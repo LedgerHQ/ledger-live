@@ -2031,7 +2031,7 @@
     "deviceLanguage": "Language",
     "changeLanguage": "Change language",
     "changeDeviceLanguage": "Change your device language?",
-    "chooseLanguage": "Choose a language for you {{deviceName}}.",
+    "chooseLanguage": "Choose a language for your {{deviceName}}.",
     "changeDeviceLanguagePrompt": {
       "title": "{{language}} is also available for your {{deviceName}}",
       "description": "Would you like to change its language to {{language}}?"
