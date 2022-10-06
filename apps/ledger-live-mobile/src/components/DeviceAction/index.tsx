@@ -55,6 +55,7 @@ export default function DeviceAction<R, H, P>({
 
   return (
     <DeviceActionDefaultRendering
+      device={selectedDevice}
       status={status}
       request={request}
       payload={payload}
@@ -66,6 +67,7 @@ export default function DeviceAction<R, H, P>({
 export function DeviceActionDefaultRendering({
   onResult,
   onError,
+  device: selectedDevice,
   renderOnResult,
   onSelectDeviceLink,
   analyticsPropertyFlow = "unknown",
@@ -162,7 +164,7 @@ export function DeviceActionDefaultRendering({
   if (requestQuitApp) {
     return renderRequestQuitApp({
       t,
-      device,
+      device: selectedDevice,
       colors,
       theme,
     });
@@ -212,7 +214,7 @@ export function DeviceActionDefaultRendering({
     const wording = allowManagerRequestedWording;
     return renderAllowManager({
       t,
-      device,
+      device: selectedDevice,
       wording,
       colors,
       theme,
@@ -223,7 +225,7 @@ export function DeviceActionDefaultRendering({
     return renderAllowLanguageInstallation({
       t,
       theme,
-      device,
+      device: selectedDevice,
     });
   }
 
@@ -252,7 +254,7 @@ export function DeviceActionDefaultRendering({
   if (initSwapRequested && !initSwapResult && !initSwapError) {
     return renderConfirmSwap({
       t,
-      device,
+      device: selectedDevice,
       colors,
       theme,
       transaction: request?.transaction,
@@ -266,7 +268,7 @@ export function DeviceActionDefaultRendering({
   if (initSellRequested && !initSellResult && !initSellError) {
     return renderConfirmSell({
       t,
-      device,
+      device: selectedDevice,
     });
   }
 
@@ -276,7 +278,7 @@ export function DeviceActionDefaultRendering({
     return renderAllowOpeningApp({
       t,
       navigation,
-      device,
+      device: selectedDevice,
       wording,
       tokenContext: request?.tokenCurrency,
       isDeviceBlocker: !requestOpenApp,
@@ -331,7 +333,7 @@ export function DeviceActionDefaultRendering({
   if ((!isLoading && !device) || unresponsive) {
     return renderConnectYourDevice({
       t,
-      device,
+      device: selectedDevice,
       unresponsive,
       colors,
       theme,
