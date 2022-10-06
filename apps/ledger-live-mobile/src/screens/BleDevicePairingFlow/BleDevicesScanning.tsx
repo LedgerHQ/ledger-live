@@ -106,28 +106,26 @@ export const BleDevicesScanning = ({
       <Flex height={180} alignItems="center" justifyContent="center">
         <Animation source={lottie} />
       </Flex>
-      <Flex px={4}>
-        <Text mb={3} textAlign="center" variant="h4" fontWeight="semiBold">
-          {productName
-            ? t("blePairingFlow.scanning.withProductName.title", {
-                productName,
-              })
-            : t("blePairingFlow.scanning.withoutProductName.title")}
-        </Text>
-        <Text
-          mb={8}
-          color="neutral.c70"
-          textAlign="center"
-          variant="body"
-          fontWeight="medium"
-        >
-          {productName
-            ? t("blePairingFlow.scanning.withProductName.description", {
-                productName,
-              })
-            : t("blePairingFlow.scanning.withoutProductName.description")}
-        </Text>
-      </Flex>
+      <Text mb={3} textAlign="center" variant="h4" fontWeight="semiBold">
+        {productName
+          ? t("blePairingFlow.scanning.withProductName.title", {
+              productName,
+            })
+          : t("blePairingFlow.scanning.withoutProductName.title")}
+      </Text>
+      <Text
+        mb={8}
+        color="neutral.c70"
+        textAlign="center"
+        variant="body"
+        fontWeight="medium"
+      >
+        {productName
+          ? t("blePairingFlow.scanning.withProductName.description", {
+              productName,
+            })
+          : t("blePairingFlow.scanning.withoutProductName.description")}
+      </Text>
       {scannedDevices.length > 0 ? (
         <Flex flex={1} px={4}>
           <ScrollView>
