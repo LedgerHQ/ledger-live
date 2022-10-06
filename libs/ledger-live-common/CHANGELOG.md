@@ -1,5 +1,11 @@
 # @ledgerhq/live-common
 
+## 27.3.2
+
+### Patch Changes
+
+- [#687](https://github.com/LedgerHQ/ledger-live/pull/687) [`c7e40bfef7`](https://github.com/LedgerHQ/ledger-live/commit/c7e40bfef718b2f806d2f6e942f2ca61b03a0110) Thanks [@JunichiSugiura](https://github.com/JunichiSugiura)! - move swap related types into types.ts
+
 ## 27.3.2-hotfix.0
 
 ### Patch Changes
