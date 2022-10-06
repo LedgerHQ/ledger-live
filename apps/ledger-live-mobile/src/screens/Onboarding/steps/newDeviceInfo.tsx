@@ -36,7 +36,7 @@ const Card = ({ index /* , deviceModelId */ }: CardType) => {
   const { t } = useTranslation();
   return (
     <Flex flex={1} justifyContent="center" alignItems="center" px={20}>
-      <Flex mb={`${space[8]}px`}>
+      <Flex mb={8}>
         <Illustration
           size={normalize(240)}
           darkSource={images.light[index]}
@@ -113,7 +113,9 @@ function OnboardingStepNewDevice() {
         <Button
           Icon={() => <Icons.ArrowLeftMedium color="neutral.c00" size={24} />}
           onPress={handleBack}
-          style={styles.backArrow}
+          position="absolute"
+          top={-5}
+          left={0}
         />
         <Text variant="h3" mb={3} textAlign="center" color="constant.black">
           {t(`onboarding.stepNewDevice.${currentIndex}.label`)}
@@ -141,11 +143,6 @@ function OnboardingStepNewDevice() {
 const styles = StyleSheet.create({
   animatable: {
     width: "100%",
-  },
-  backArrow: {
-    position: "absolute",
-    top: -5,
-    left: 0,
   },
 });
 
