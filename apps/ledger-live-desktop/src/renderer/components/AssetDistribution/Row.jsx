@@ -3,6 +3,7 @@
 import React, { useCallback } from "react";
 import { useSelector } from "react-redux";
 import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { getEnv } from "@ledgerhq/live-common/env";
 import { useCurrencyColor } from "~/renderer/getCurrencyColor";
 import styled from "styled-components";
 import CounterValue, { NoCountervaluePlaceholder } from "~/renderer/components/CounterValue";
@@ -136,7 +137,7 @@ const Row = ({ item: { currency, amount, distribution }, isVisible }: Props) => 
               {`${percentageWording}%`}
             </Text>
             <Bar
-              progress={!process.env.PLAYWRIGHT_RUN && isVisible ? percentage.toString() : "0"}
+              progress={!getEnv("PLAYWRIGHT_RUN") && isVisible ? percentage.toString() : "0"}
               progressColor={color}
             />
           </>
