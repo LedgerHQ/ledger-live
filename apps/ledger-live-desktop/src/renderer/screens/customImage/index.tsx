@@ -16,9 +16,12 @@ import StepTransfer from "./Step4Transfer";
 import { Step } from "./types";
 import StepContainer from "./StepContainer";
 import StepFooter from "./StepFooter";
+import { setDrawer } from "~/renderer/drawers/Provider";
 
 type Props = {
   imageUri?: string;
+  isFromNFTEntryPoint?: boolean;
+  reOpenNFTDrawer?: () => void;
 };
 
 const orderedSteps: Step[] = [
@@ -31,7 +34,7 @@ const orderedSteps: Step[] = [
 const ErrorDisplayV2 = withV2StyleProvider(ErrorDisplay);
 
 const CustomImage: React.FC<Props> = props => {
-  const { imageUri } = props;
+  const { imageUri, isFromNFTEntryPoint, reOpenNFTDrawer } = props;
   const { t } = useTranslation();
 
   const [stepError, setStepError] = useState<{ [key in Step]?: Error }>({});
@@ -52,7 +55,11 @@ const CustomImage: React.FC<Props> = props => {
 
   const setStepWrapper = (step: Step) => {
     setStep(step);
-    setStepError({});
+  };
+
+  const cancelCustomImage = (step: Step) => {
+    setDrawer();
+    if (reOpenNFTDrawer) reOpenNFTDrawer();
   };
 
   const initialUri = imageUri;
@@ -202,7 +209,7 @@ const CustomImage: React.FC<Props> = props => {
             src={loadedImage}
             onError={errorHandlers[Step.adjustImage]}
             onResult={handleStepAdjustImageResult}
-            setStep={setStepWrapper}
+            setStep={isFromNFTEntryPoint ? cancelCustomImage : setStepWrapper}
             initialCropParams={initialCropParams}
             setCropParams={setInitialCropParams}
           />

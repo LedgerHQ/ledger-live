@@ -14,6 +14,7 @@ import IconBan from "~/renderer/icons/Ban";
 import { getMetadataMediaTypes } from "~/helpers/nft";
 import { setDrawer } from "../drawers/Provider";
 import CustomImage from "~/renderer/screens/customImage";
+import NFTViewerDrawer from "~/renderer/drawers/NFTViewerDrawer";
 
 const linksPerCurrency = {
   ethereum: (t, links) => [
@@ -82,7 +83,13 @@ const linksPerCurrency = {
   ],
 };
 
-export default (account: Account, nft: ProtoNFT, metadata: NFTMetadata, onClose?: () => void) => {
+export default (
+  account: Account,
+  nft: ProtoNFT,
+  metadata: NFTMetadata,
+  onClose?: () => void,
+  isInsideDrawer: boolean,
+) => {
   const dispatch = useDispatch();
   const { t } = useTranslation();
 
@@ -124,10 +131,22 @@ export default (account: Account, nft: ProtoNFT, metadata: NFTMetadata, onClose?
       Icon: Icons.ToolsMedium,
       type: null,
       callback: () => {
-        if (customImageUri) setDrawer(CustomImage, { imageUri: customImageUri });
+        if (customImageUri)
+          setDrawer(CustomImage, {
+            imageUri: customImageUri,
+            isFromNFTEntryPoint: true,
+            reOpenNFTDrawer: isInsideDrawer
+              ? () =>
+                  setDrawer(NFTViewerDrawer, {
+                    account,
+                    nftId: nft.id,
+                    isOpen: true,
+                  })
+              : undefined,
+          });
       },
     }),
-    [customImageUri],
+    [account, customImageUri, isInsideDrawer, nft.id],
   );
 
   const customImageEnabled = useFeature("customImage")?.enabled;
