@@ -4,7 +4,7 @@ import { useNavigation, useRoute } from "@react-navigation/native";
 import { DeviceModelInfo } from "@ledgerhq/types-live";
 import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
-import { Alert, BottomDrawer, Text } from "@ledgerhq/native-ui";
+import { Alert, BottomDrawer, Text, Flex } from "@ledgerhq/native-ui";
 import { DownloadMedium, UsbMedium } from "@ledgerhq/native-ui/assets/icons";
 import { getDeviceModel } from "@ledgerhq/devices";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
@@ -83,9 +83,9 @@ const FirmwareUpdateBanner = () => {
     : "";
 
   return showBanner && hasCompletedOnboarding && hasConnectedDevice ? (
-    <>
+    <Flex mt={4} mb={6} mx={6}>
       <Alert type="info" showIcon={false}>
-        <Text flexShrink={1}>
+        <Text flexShrink={1} flexGrow={1}>
           {t("FirmwareUpdate.newVersion", {
             version,
             deviceName,
@@ -129,7 +129,7 @@ const FirmwareUpdateBanner = () => {
           onPress={onCloseDrawer}
         />
       </BottomDrawer>
-    </>
+    </Flex>
   ) : null;
 };
 
