@@ -4672,6 +4672,10 @@
     "NotEnoughGas": {
       "title": "The parent account balance is insufficient for network fees"
     },
+    "OperatingSystemOutdated": {
+      "title": "Your Operating System version is not supported",
+      "description": "Please upgrade your {{type}} OS to {{criteria}}. (You use {{release}})"
+    },
     "PasswordsDontMatch": {
       "title": "The Passwords don't match",
       "description": "Please try again"

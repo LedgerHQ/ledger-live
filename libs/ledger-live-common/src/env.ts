@@ -444,6 +444,11 @@ const envDefinitions = {
     parser: stringParser,
     desc: "mock remote live app manifest",
   },
+  MOCK_OS_VERSION: {
+    def: "",
+    parser: stringParser,
+    desc: "if defined, overrides the os and version. format: os@version. Example: Windows_NT@6.1.7601",
+  },
   NFT_CURRENCIES: {
     def: "ethereum,polygon",
     parser: stringParser,

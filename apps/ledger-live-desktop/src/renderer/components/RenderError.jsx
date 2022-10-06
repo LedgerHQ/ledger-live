@@ -13,6 +13,7 @@ import TriggerAppReady from "./TriggerAppReady";
 import ExportLogsButton from "./ExportLogsButton";
 import Box from "~/renderer/components/Box";
 import Space from "~/renderer/components/Space";
+import TranslatedError from "~/renderer/components/TranslatedError";
 import Button from "~/renderer/components/Button";
 import ConfirmModal from "~/renderer/modals/ConfirmModal";
 import type { ThemedComponent } from "~/renderer/styles/StyleProvider";
@@ -61,13 +62,13 @@ export default function RenderError({ error, withoutAppData, children }: Props) 
   }, [hardReset]);
 
   return (
-    <Box alignItems="center" grow bg="palette.background.default">
+    <Box alignItems="center" grow bg="palette.background.default" data-test-id="render-error">
       <TriggerAppReady />
       <Space of={100} />
       <Image alt="" resource={CrashScreen} width="200" />
       <Space of={40} />
       <Box ff="Inter|SemiBold" fontSize={6} color="palette.text.shade100">
-        {t("crash.title")}
+        <TranslatedError error={error} field="title" />
       </Box>
       <Space of={15} />
       <Box
@@ -78,6 +79,8 @@ export default function RenderError({ error, withoutAppData, children }: Props) 
         color="palette.text.shade80"
         fontSize={4}
       >
+        <TranslatedError error={error} field="description" />
+        <br />
         {t("crash.description")}
       </Box>
       <Box py={6}>
