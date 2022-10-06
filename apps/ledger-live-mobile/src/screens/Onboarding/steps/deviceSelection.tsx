@@ -7,7 +7,6 @@ import { Flex, ScrollListContainer, Text } from "@ledgerhq/native-ui";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { ArrowLeftMedium, HelpMedium } from "@ledgerhq/native-ui/assets/icons";
-import { DeviceModelId } from "@ledgerhq/types-devices";
 import useFeature from "@ledgerhq/live-common/lib/featureFlags/useFeature";
 
 import { TrackScreen } from "../../../analytics";
@@ -59,7 +58,7 @@ function OnboardingStepDeviceSelection() {
         params: {
           // TODO: for now we remove this
           // filterByDeviceModelId: DeviceModelId.nanoFTS,
-          areKnownDevicesDisplayed: false,
+          areKnownDevicesDisplayed: true,
           onSuccessAddToKnownDevices: false,
           onSuccessNavigateToConfig: {
             // navigation.push on success because it could not correctly

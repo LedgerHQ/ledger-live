@@ -1669,7 +1669,7 @@
       },
       "error": {
         "title": "Pairing unsucessful",
-        "subtitle": "Looks like something went wrong! Check that your bluetooth is on and your {{productName}} is nearby",
+        "subtitle": "Looks like something went wrong!\nCheck that your Bluetooth is switched on and your {{productName}} is nearby.",
         "retryCta": "Try again"
       }
     }
