@@ -50,6 +50,11 @@ const CustomImage: React.FC<Props> = props => {
 
   const [step, setStep] = useState<Step>(Step.chooseImage);
 
+  const setStepWrapper = (step: Step) => {
+    setStep(step);
+    setStepError({});
+  };
+
   const initialUri = imageUri;
 
   useEffect(() => {
@@ -60,7 +65,7 @@ const CustomImage: React.FC<Props> = props => {
         .then(res => {
           if (dead) return;
           setLoadedImage({ imageBase64DataUri: res });
-          setStep(Step.adjustImage);
+          setStepWrapper(Step.adjustImage);
         })
         .catch(e => {
           console.error(e);
@@ -81,7 +86,7 @@ const CustomImage: React.FC<Props> = props => {
     typeof StepChooseImage
   >["onResult"] = useCallback(res => {
     setLoadedImage(res);
-    setStep(Step.adjustImage);
+    setStepWrapper(Step.adjustImage);
   }, []);
 
   const handleStepAdjustImageResult: ComponentProps<
@@ -128,7 +133,7 @@ const CustomImage: React.FC<Props> = props => {
                   <StepFooter
                     previousStep={previousStep}
                     previousLabel={t("common.previous")}
-                    setStep={setStep}
+                    setStep={setStepWrapper}
                   />
                 }
               >
@@ -139,7 +144,10 @@ const CustomImage: React.FC<Props> = props => {
                       ? () => {
                           setStepError({});
                         }
-                      : () => setStep(Step.chooseImage)
+                      : () => {
+                          setStepError({});
+                          setStepWrapper(Step.chooseImage);
+                        }
                   }
                 />
               </StepContainer>
@@ -181,7 +189,7 @@ const CustomImage: React.FC<Props> = props => {
             <StepChooseImage
               onError={errorHandlers[Step.chooseImage]}
               onResult={handleStepChooseImageResult}
-              setStep={setStep}
+              setStep={setStepWrapper}
               setLoading={setSourceLoading}
             />
           )}
@@ -194,7 +202,7 @@ const CustomImage: React.FC<Props> = props => {
             src={loadedImage}
             onError={errorHandlers[Step.adjustImage]}
             onResult={handleStepAdjustImageResult}
-            setStep={setStep}
+            setStep={setStepWrapper}
             initialCropParams={initialCropParams}
             setCropParams={setInitialCropParams}
           />
@@ -207,7 +215,7 @@ const CustomImage: React.FC<Props> = props => {
             src={croppedImage}
             onResult={handleStepChooseContrastResult}
             onError={errorHandlers[Step.chooseContrast]}
-            setStep={setStep}
+            setStep={setStepWrapper}
           />
         </FlowStepper.Indexed.Step>
         <FlowStepper.Indexed.Step
@@ -217,7 +225,7 @@ const CustomImage: React.FC<Props> = props => {
           <StepTransfer
             result={finalResult}
             onError={errorHandlers[Step.transferImage]}
-            setStep={setStep}
+            setStep={setStepWrapper}
           />
         </FlowStepper.Indexed.Step>
       </FlowStepper.Indexed>
