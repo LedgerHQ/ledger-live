@@ -3,6 +3,7 @@
     "cancel" : "İptal et",
     "apply" : "Uygula",
     "seeAll" : "Tümünü gör",
+    "seeAllWithNumber" : "Tümünü gör ({{number}})",
     "back" : "Geri",
     "delete" : "Sil",
     "paste" : "Yapıştır",
@@ -30,6 +31,7 @@
     "received" : "Alındı",
     "sent" : "Gönderildi",
     "or" : "VEYA",
+    "others" : "Diğerleri",
     "rename" : "Cihazın adını değiştir",
     "learnMore" : "Daha fazla bilgi",
     "checkItOut" : "Göz at",
@@ -83,7 +85,8 @@
     "moreInfo" : "Daha fazla bilgi",
     "buyEth" : "Ethereum Satın Al",
     "popular" : "popüler",
-    "comingSoon" : "Çok yakında"
+    "comingSoon" : "Çok yakında",
+    "getSupport" : "Destek alın"
   },
   "errors" : {
     "countervaluesUnavailable" : {
@@ -147,6 +150,12 @@
           "nanoX" : "{{productName}} cihazınızın kilidinin açıldığından ve kablo ile bağlı olduğundan veya Bluetooth'un etkin olduğundan emin olun."
         }
       }
+    },
+    "CeloAllFundsWarning" : {
+      "title" : "Gelecekteki işlem ücretleri için yeterli bakiyenizin kaldığından emin olun"
+    },
+    "CeloMissingWithdrawalsError" : {
+      "title" : "Bir hata oluştu, çekilecek hiçbir fon getirilemedi"
     },
     "ClaimRewardsFeesWarning" : {
       "title" : "Ödül miktarı, ödülü almak için gereken tahmini ağ ücretlerinden daha az.",
@@ -276,7 +285,7 @@
     },
     "EthAppNftNotSupported" : {
       "title" : "Bu işlem bu cihaz için mevcut değil",
-      "description" : "Send NFT feature is only available for Nano X and Nano S+. Please visit our customer support platform to know how to send a NFT with a Nano S."
+      "description" : "NFT Gönder özelliği yalnızca Nano X ve Nano S+ ile kullanılabilir. Nano S ile nasıl NFT gönderebileceğinizi öğrenmek için lütfen müşteri destek platformumuzu ziyaret edin."
     },
     "Touch ID Error" : {
       "title" : "Biyometrik kimlik doğrulaması başarısız oldu",
@@ -583,8 +592,8 @@
       "title" : "Tutar {{maxAmountFromFormatted}} değerinden az olmalıdır"
     },
     "SwapGenericAPIError" : {
-      "title" : "Kur zaman aşımına uğradı",
-      "description" : "Süre bitmeden önce takas işlemini onaylamalısınız. Kur, sabit bir süreliğine geçerli kalır."
+      "title" : "Bir hata oluştu",
+      "description" : "Takas işlemi gerçekleştirilemedi. Lütfen tekrar deneyin veya destek ekibiyle iletişime geçin."
     },
     "PolkadotElectionClosed" : {
       "title" : "Doğrulayıcı seçimleri kapatılmalı"
@@ -720,6 +729,9 @@
       "title" : "Görüntü işlenemedi",
       "description" : "Lütfen başka bir görüntüyle tekrar deneyin"
     }
+  },
+  "crash" : {
+    "title" : "Bir hata oluştu"
   },
   "bluetooth" : {
     "required" : "Üzgünüz, Bluetooth devre dışı görünüyor",
@@ -1672,7 +1684,10 @@
         "addAccounts" : "Varlık ekle",
         "title" : "Hemen başla",
         "description" : "Ortaklarımızdan kripto satın alabilir veya cüzdanınızı kurabilirsiniz"
-      }
+      },
+      "title" : "Başlangıç olarak en çok kullandığınız varlıkları cüzdanınıza ekleyin",
+      "subtitle" : "Ledger 6.000'den fazla coin ve token'ı destekler",
+      "addAccount" : "veya bir hesap ekleyin"
     },
     "noOpState" : {
       "title" : "Henüz işlem yok mu?",
@@ -1684,6 +1699,13 @@
     "topGainers" : {
       "title" : "Yükselenler (24SA)",
       "seeMarket" : "Tümünü gör"
+    },
+    "walletBalance" : "Cüzdan bakiyesi",
+    "seelAllAssets" : "Tüm Varlıkları Gör",
+    "marketPriceSection" : {
+      "title" : "{{currencyTicker}} piyasa fiyatı",
+      "currencyPrice" : "1 {{currencyTicker}} fiyatı",
+      "currencyPriceChange" : "Son 24 saatlik değişim"
     }
   },
   "addAccountsModal" : {
@@ -1909,7 +1931,8 @@
       "buttons" : {
         "receiveFunds" : "Al",
         "buyCrypto" : "Satın Al"
-      }
+      },
+      "addAccountCta" : "Hesap ekle"
     },
     "settings" : {
       "header" : "Hesap ayarları",
@@ -2010,6 +2033,15 @@
         "subtitle" : "{{assetName}} satın almak veya teslim almak için bir cihaza ihtiyacınız olacak"
       }
     },
+    "modals" : {
+      "zeroBalanceDisabledAction" : {
+        "title" : "Henüz elinizde {{currencyTicker}} yok",
+        "start" : "Başlamak için {{currencyTicker}} Satın Alın veya başka bir yerden cüzdanınıza Alın.",
+        "description" : "Bu hesapla {{actionName}} işlemi yapmak için elinizde {{currencyTicker}} olmalı."
+      }
+    },
+    "earn" : "Kazanın",
+    "quickActions" : "Hızlı işlemler",
     "banner" : {
       "redelegation" : {
         "description" : "Haberiniz olsun! Ledger doğrulayıcısı, kullanmakta olduğunuz doğrulayıcıya kıyasla daha düşük bir komisyonla stake eder.",
@@ -2023,6 +2055,7 @@
   },
   "accounts" : {
     "title" : "Hesaplar",
+    "cryptoAccountsTitle" : "{{currencyTicker}} hesapları",
     "importNotification" : {
       "message" : "Hesaplarınız başarıyla içe aktarıldı!"
     },
@@ -2255,6 +2288,10 @@
       "clearCacheButton" : "Temizle",
       "exportLogs" : "Logları kaydedin",
       "exportLogsDesc" : "Ledger Live loglarını kaydetmek sorun giderme amacıyla gerekli olabilir.",
+      "resetThirdPartyData" : "Üçüncü taraf verilerini sıfırla",
+      "resetThirdPartyDataDesc" : "Üçüncü taraf işlem sağlayıcısına erişmek için kullanılan tüm yerel üçüncü taraf verilerinizi silin.",
+      "resetThirdPartyDataModal" : "Yerel üçüncü taraf verilerinizi silin",
+      "resetThirdPartyDataModalDesc" : "Yerel üçüncü taraf verilerinizi silin. İş ortaklarımız tarafından sağlanan hizmetlere erişmek için KYC'nizi yeniden göndermeniz veya tekrar oturum açmanız gerekebilir.",
       "hardReset" : "Ledger Live'ı sıfırlayın",
       "hardResetDesc" : "Bunun varlıklarınız üzerinde bir etkisi yoktur. Hesap verileri, işlem geçmişleri ve ayarlar dahil olmak üzere Ledger Live'daki tüm verileri siler. Boş bir Ledger Live'da kripto varlıklarınızı yeniden yüklemek ve yönetmek için Ledger cihazınızı kullanın.",
       "repairDevice" : "Ledger cihazınızı onarın",
@@ -2675,19 +2712,79 @@
         }
       }
     },
-    "swapv2" : {
+    "swap2" : {
       "form" : {
-        "summary" : {
-          "from" : "Gönderici",
-          "to" : "Alıcı",
-          "send" : "Gönder",
-          "payoutNetworkFees" : "Ödeme ücretleri",
-          "payoutNetworkFeesTooltip" : "Bu tutar cihazınızda gösterilmeyecektir",
-          "receive" : "Tutar",
-          "receiveFloat" : "Hizmet ücretleri hariç alınacak tutar",
-          "provider" : "Sağlayıcı",
-          "method" : "Kur",
-          "fees" : "Ücretler"
+        "ratesDrawer" : {
+          "title" : "Kur",
+          "quote" : "Teklif",
+          "receive" : "Al"
+        },
+        "placeholder" : "Seç",
+        "title" : "Takas edin",
+        "cta" : "Takas edin",
+        "from" : "Gönderici",
+        "to" : "Alıcı",
+        "loading" : "Yükleniyor...",
+        "disclaimer" : {
+          "title" : "Hüküm ve Koşullar",
+          "desc" : "“Kabul Et” seçeneğine tıklayarak bu hizmetin tamamen ve sadece {{providerName}} Hüküm ve Koşullarına tabi olduğunu anlıyor ve kabul ediyorum.",
+          "tos" : "Hüküm ve Koşullar",
+          "accept" : "Kabul et"
+        },
+        "notAvailable" : {
+          "title" : "Bulunduğunuz yerde takas işlemleri henüz mevcut değil",
+          "content" : "Lütfen biraz daha sabredin; bu özelliği çok yakında başlatacağız"
+        },
+        "amount" : {
+          "useMax" : "Tümünü kullan"
+        },
+        "details" : {
+          "label" : {
+            "provider" : "Sağlayıcı",
+            "rate" : "Kur",
+            "fees" : "Ağ ücretleri",
+            "target" : "Hedef hesap"
+          },
+          "noAccount" : "{{name}} almak için bir hesap oluşturun",
+          "noAccountCTA" : "Hesap ekle"
+        },
+        "select" : {
+          "from" : {
+            "title" : "Gönderici"
+          },
+          "to" : {
+            "title" : "Alıcı"
+          }
+        },
+        "providers" : {
+          "kyc" : {
+            "title" : "KYC",
+            "required" : "KYC işlemini tamamlamalısınız",
+            "complete" : "KYC'yi tamamla",
+            "update" : "KYC'yi yenile",
+            "rejected" : "KYC reddedildi; doğrulamayı yeniden başlatın",
+            "rejectedContactProviderSupport" : "KYC reddedildi, lütfen {{providerName}} desteğiyle iletişime geçin",
+            "updateRequired" : "KYC'nizi tamamlayın veya güncelleyin",
+            "status" : {
+              "pending" : "KYC beklemede",
+              "approved" : "KYC onaylandı",
+              "closed" : "KYC reddedildi",
+              "upgradeRequired" : "KYC eksik"
+            }
+          },
+          "login" : {
+            "title" : "Oturum aç",
+            "required" : "Bu sağlayıcı ile giriş yapmanız gerekiyor",
+            "complete" : "Oturum aç"
+          },
+          "mfa" : {
+            "title" : "MFA",
+            "required" : "Bu sağlayıcı ile MFA kurmanız gerekiyor",
+            "complete" : "MFA kur"
+          },
+          "withdrawalsBlockedError" : {
+            "message" : "Çekim işleminiz {{providerName}} tarafından engellendi. \n\n Daha fazla bilgi almak için lütfen onların destek ekibiyle iletişime geçin."
+          }
         }
       }
     },
@@ -3110,6 +3207,7 @@
     }
   },
   "addAccounts" : {
+    "addNew" : "Yeni ekle",
     "supportLinks" : {
       "segwit_or_native_segwit" : "Segwit mi yoksa Native Segwit mi?"
     },
@@ -3142,7 +3240,6 @@
     "retry" : "Tekrar dene",
     "done" : "Tamam",
     "finalCta" : "Devam",
-    "finalCtaForSwap" : "Takas sayfasına dön",
     "synchronizing" : "Senkronize ediliyor",
     "synchronizingDesc" : "Hesaplarınız senkronize ediliyor. Bu biraz zaman alabilir...",
     "noAccountToCreate" : "<1><0>{{currencyName}}<></> hesabı oluşturulamadı. İşlemi yeniden başlatın ve hesaplarınızı senkronize edin.",
@@ -3219,7 +3316,17 @@
     "confirmSwap" : {
       "title" : "Takas işlemini cihazdan onaylayın",
       "alert" : "Göndermeden önce cihazınızdaki takas bilgilerini doğrulayın. Adresler güvenli bir şekilde aktarılır, böylece onları doğrulamak zorunda kalmazsınız.",
-      "acceptTerms" : "Bu işlemi onaylayarak,\n<0><0>{{provider}}</0> Kullanım Koşullarını</0> kabul ediyorum."
+      "acceptTerms" : "Bu işlemi onaylayarak,\n<0><0>{{provider}}</0> Kullanım Koşullarını</0> kabul ediyorum.",
+      "notice" : "Göndermeden önce cihazınızdaki takas bilgilerini doğrulayın. Adresler güvenli bir şekilde aktarılır, böylece onları doğrulamak zorunda kalmazsınız."
+    },
+    "swap2" : {
+      "notice" : "Göndermeden önce cihazınızdaki takas bilgilerini doğrulayın. Adresler güvenli bir şekilde aktarılır, böylece onları doğrulamak zorunda kalmazsınız.",
+      "amountSent" : "Gönderilecek tutar",
+      "amountReceived" : "Alınacak tutar",
+      "provider" : "Sağlayıcı",
+      "fees" : "Ağ Ücretleri",
+      "sourceAccount" : "Kaynak Hesap",
+      "targetAccount" : "Hedef Hesap"
     },
     "confirmSell" : {
       "title" : "Satış işleminizi cihazdan onaylayın",
@@ -3708,7 +3815,276 @@
       "available" : {
         "title" : "CELO mevcut",
         "description" : "Bu tutar, kullanabileceğiniz fondur."
+      },
+      "lockedBalance" : {
+        "title" : "Kilitli bakiye",
+        "description" : "Ödül kazanmak için öncelikle varlıkların kilitlenmesi ve doğrulayıcı gruplarına oylanması gerekir."
+      },
+      "nonvotingLockedBalance" : {
+        "title" : "Oylanmayan kilitli bakiye",
+        "description" : "Oylama için kullanılabilecek kilitli varlıkların bakiyesi."
+      },
+      "withdrawableBalance" : {
+        "title" : "Çekilebilir bakiye",
+        "description" : "Mevcut Bakiyenize çekebileceğiniz, kilidi açık Celo varlıkları."
       }
+    },
+    "delegation" : {
+      "validatorGroup" : "Doğrulayıcı Grubu",
+      "totalVotes" : "Toplam Oy",
+      "actions" : {
+        "activate" : "Etkinleştir",
+        "revoke" : "İptal et"
+      },
+      "delegationUnavailable" : {
+        "title" : "Yetersiz Kilitli Fon"
+      },
+      "manageMultipleVoteWarning" : "Bu oyu yönetmeden önce, aynı doğrulayıcı grubundaki diğer oyları Etkinleştirmeli ya da İptal Etmelisiniz."
+    },
+    "manage" : {
+      "title" : "Varlıkları yönet",
+      "titleWhenPendingRegistration" : "Hesap Kaydı Beklemede",
+      "lock" : {
+        "title" : "Kilitle",
+        "description" : "Ödül kazanmak için öncelikle belli bir miktarı kilitleyin. Ardından doğrulayıcılarınıza oy verin."
+      },
+      "unlock" : {
+        "title" : "Kilit açın",
+        "description" : "Kilitli bir tutarı yeniden kullanabilmek için öncelikle kilidini açmalısınız. 3 günlük kilit açma süresinin ardından çekebilirsiniz."
+      },
+      "withdraw" : {
+        "title" : "Çekim",
+        "description" : "Kilidi açılan varlıkları mevcut bakiyeye geri almak için manuel olarak çekim yapmanız gerekir."
+      },
+      "vote" : {
+        "title" : "Oylayın",
+        "description" : "Doğrulayıcı gruplarına oy verin. Ödül kazanmak için oylarınızı etkinleştirdiğinizden emin olun."
+      },
+      "activate" : {
+        "title" : "Oy etkinleştirin",
+        "description" : "Doğrulayıcı grubuna verdiğiniz oyu etkinleştirin"
+      },
+      "revoke" : {
+        "title" : "Oy iptal edin",
+        "description" : "Doğrulayıcı grubuna verdiğiniz oyu iptal edin"
+      }
+    },
+    "unlock" : {
+      "stepperHeader" : {
+        "title" : "Varlıkların kilidini açın",
+        "stepRange" : "Adım {{currentStep}} / {{totalSteps}}",
+        "selectDevice" : "Cihaz seçin",
+        "connectDevice" : "Cihazı bağlayın"
+      },
+      "flow" : {
+        "steps" : {
+          "amount" : {
+            "info" : "Kilidi açılan varlıklar, 3 günlük kilit açma süresinin ardından çekilebilir.",
+            "available" : "Mevcut",
+            "max" : "Maks."
+          },
+          "verification" : {
+            "success" : {
+              "title" : "Kilit açma işlemi başarıyla gönderildi",
+              "text" : "Kilidi açılan varlıklar 3 gün sonra çekilebilir."
+            }
+          }
+        }
+      }
+    },
+    "vote" : {
+      "iVote" : "Oy veriyorum",
+      "stepperHeader" : {
+        "title" : "Oylayın",
+        "stepRange" : "Adım {{currentStep}} / {{totalSteps}}",
+        "selectDevice" : "Cihaz seçin",
+        "connectDevice" : "Cihazı bağlayın"
+      },
+      "flow" : {
+        "steps" : {
+          "starter" : {
+            "description" : "CELO varlıklarınızın yetkisini bir doğrulayıcıya devrederek ödüller kazanabilirsiniz.",
+            "bullet" : {
+              "0" : "Yetki devrinde kullanılan varlıklar size ait olmaya devam eder.",
+              "1" : "Ledger cihazınızı kullanarak yetki devredin.",
+              "2" : "Varlıklar yetki iptalinden sonra mevcut olacak"
+            },
+            "warning" : {
+              "description" : "Doğrulayıcınızı dikkatle seçin: Doğrulayıcının yanlış kararlar vermesi halinde yetki devrinde kullandığınız varlıkların bir kısmını geri dönülemez bir şekilde kaybedebilirsiniz."
+            },
+            "cta" : "Devam"
+          },
+          "amount" : {
+            "available" : "Mevcut",
+            "max" : "Maks."
+          },
+          "verification" : {
+            "success" : {
+              "title" : "Başarıyla oy verdiniz",
+              "text" : "İşlem kısa süre içinde işlem geçmişinde görünecek."
+            }
+          }
+        }
+      }
+    },
+    "activate" : {
+      "iActivate" : "Oylarımı etkinleştiriyorum",
+      "stepperHeader" : {
+        "title" : "Oy etkinleştirin",
+        "stepRange" : "Adım {{currentStep}} / {{totalSteps}}",
+        "selectDevice" : "Cihaz seçin",
+        "connectDevice" : "Cihazı bağlayın"
+      },
+      "title" : "Oyları etkinleştirin",
+      "flow" : {
+        "steps" : {
+          "verification" : {
+            "success" : {
+              "title" : "Etkinleştirme başarılı",
+              "text" : "Oyunuz başarıyla etkinleştirildi."
+            }
+          }
+        }
+      }
+    },
+    "revoke" : {
+      "iRevoke" : "İptal ediyorum",
+      "stepperHeader" : {
+        "title" : "Oylayın",
+        "stepRange" : "Adım {{currentStep}} / {{totalSteps}}",
+        "selectDevice" : "Cihaz seçin",
+        "connectDevice" : "Cihazı bağlayın"
+      },
+      "flow" : {
+        "steps" : {
+          "validator" : {
+            "active" : "Aktif",
+            "pending" : "Beklemede"
+          },
+          "amount" : {
+            "available" : "Mevcut",
+            "max" : "Maks."
+          },
+          "verification" : {
+            "success" : {
+              "title" : "Oylarınızı başarıyla iptal ettiniz",
+              "text" : "İşlem kısa süre içinde işlem geçmişinde görünecek."
+            }
+          }
+        }
+      },
+      "vote" : {
+        "title" : "Oylayın",
+        "active" : "Aktif",
+        "pending" : "Beklemede",
+        "awaitingActivation" : "Etkinleştirme bekleniyor",
+        "info" : "Bu modda sadece iptal edebileceğiniz oylar gösterilir"
+      }
+    },
+    "register" : {
+      "stepperHeader" : {
+        "title" : "Hesap kaydet",
+        "continue" : "Devam",
+        "stepRange" : "Adım {{currentStep}} / {{totalSteps}}",
+        "selectDevice" : "Cihaz seçin",
+        "connectDevice" : "Cihazı bağlayın"
+      },
+      "flow" : {
+        "steps" : {
+          "started" : {
+            "description" : "Celo varlıklarınızın kilidini açmadan önce hesabınızı on-chain (zincir içi) olarak kaydetmeniz gerekir."
+          },
+          "verification" : {
+            "success" : {
+              "title" : "Hesap başarıyla kaydedildi.",
+              "text" : "İşlem kısa süre içinde işlem geçmişinde görünecek."
+            }
+          }
+        }
+      }
+    },
+    "lock" : {
+      "stepperHeader" : {
+        "title" : "Varlıkları kilitleyin",
+        "stepRange" : "Adım {{currentStep}} / {{totalSteps}}",
+        "selectDevice" : "Cihaz seçin",
+        "connectDevice" : "Cihazı bağlayın"
+      },
+      "flow" : {
+        "steps" : {
+          "amount" : {
+            "info" : "Kilitli varlıkların kilidini istediğiniz zaman açabilirsiniz ancak kilit açma işlemi 3 günde tamamlanır.",
+            "available" : "Mevcut",
+            "max" : "Maks."
+          },
+          "verification" : {
+            "success" : {
+              "title" : "Varlıkların kilidi başarıyla açıldı",
+              "text" : "İşleminiz ağ tarafından onaylandıktan sonra doğrulayıcılara oy verebileceksiniz."
+            }
+          }
+        }
+      }
+    },
+    "withdraw" : {
+      "iWithdraw" : "Çekilecek:",
+      "title" : "Varlık çekimi",
+      "steps" : {
+        "amount" : {
+          "title" : "Çekim"
+        },
+        "connectDevice" : {
+          "title" : "Cihaz"
+        },
+        "confirmation" : {
+          "title" : "Onaylayın",
+          "success" : {
+            "title" : "Çekim işlemi başarıyla gönderildi",
+            "text" : "Çekilen tutar mevcut bakiyenize aktarılacaktır.",
+            "cta" : "Ayrıntıları göster"
+          },
+          "broadcastError" : "İşleminiz başarısız olmuş olabilir. Lütfen biraz bekleyin ve tekrar denemeden önce işlem geçmişini kontrol edin."
+        }
+      },
+      "stepperHeader" : {
+        "title" : "Oyla",
+        "stepRange" : "Adım {{currentStep}} / {{totalSteps}}",
+        "selectDevice" : "Cihaz seçin",
+        "connectDevice" : "Cihazı bağlayın"
+      },
+      "flow" : {
+        "steps" : {
+          "amount" : {
+            "available" : "Mevcut",
+            "max" : "Maks.",
+            "waitingTitle" : "Tutar, çekim için hazır değil",
+            "waitingPeriod" : "Bu tutarı çekmek için {{date}} tarihine kadar beklemeniz gerekiyor."
+          },
+          "verification" : {
+            "success" : {
+              "title" : "Varlıklarınız başarıyla çekildi",
+              "text" : "Çekilen tutar mevcut bakiyenize aktarılacaktır."
+            }
+          }
+        }
+      }
+    },
+    "emptyState" : {
+      "description" : "Varlıklarınızın yetkisini devrederek CELO ödülleri kazanabilirsiniz.",
+      "info" : "Yetki Devri nasıl çalışır?",
+      "delegation" : "Ödüller kazanın"
+    },
+    "earnRewards" : {
+      "description" : "CELO varlıklarınızın yetkisini bir doğrulayıcıya devrederek ödüller kazanabilirsiniz.",
+      "bullet" : {
+        "0" : "Yetki devrinde kullanılan varlıklar size ait olmaya devam eder.",
+        "1" : "Ledger cihazınızı kullanarak yetki devredin.",
+        "2" : "Varlıklar yetki iptalinden sonra mevcut olacak"
+      }
+    },
+    "alerts" : {
+      "withdrawableAssets" : "Çekebileceğiniz bir miktar bakiyeniz var.",
+      "activatableVotes" : "Etkinleştirebileceğiniz oylar bulunuyor."
     }
   },
   "osmosis" : {
@@ -4790,6 +5166,12 @@
     },
     "currentAddress" : {
       "messageIfVirtual" : "{{name}} adresiniz Ledger cihazınızda onaylanamıyor. Kullandığınız takdirde sorumluluk size aittir."
+    }
+  },
+  "asset" : {
+    "title" : "{{assetName}} varlığınız",
+    "accountsSection" : {
+      "title" : "{{currencyName}} hesaplarınız"
     }
   },
   "customImage" : {
