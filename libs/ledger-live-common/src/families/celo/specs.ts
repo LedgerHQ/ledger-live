@@ -34,7 +34,7 @@ const celo: AppSpec<Transaction> = {
     model: DeviceModelId.nanoS,
     appName: "Celo",
   },
-  testTimeout: 2 * 60 * 1000,
+  testTimeout: 4 * 60 * 1000,
   genericDeviceAction: acceptTransaction,
   minViableAmount: minimalAmount,
   mutations: [

@@ -3,6 +3,10 @@ import React from "react";
 import { useTranslation } from "react-i18next";
 import { View, StyleSheet } from "react-native";
 import { useSelector } from "react-redux";
+import { Alert } from "@ledgerhq/native-ui";
+import { getTagDerivationMode } from "@ledgerhq/live-common/lib/derivation";
+import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import { accountScreenSelector } from "../../reducers/accounts";
 import LText from "../../components/LText";
 import NavigationScrollView from "../../components/NavigationScrollView";
@@ -38,10 +42,26 @@ export default function AdvancedLogs({ route }: Props) {
     hour: "2-digit",
     minute: "2-digit",
   });
+
+  const currency = getAccountCurrency(account) as CryptoCurrency;
+  const tag =
+    account.derivationMode !== undefined &&
+    account.derivationMode !== null &&
+    getTagDerivationMode(currency, account.derivationMode);
+
   return (
     <NavigationScrollView>
       <View style={styles.body}>
-        <LText semiBold style={styles.sync}>
+        {tag && (
+          <Alert
+            type="info"
+            title={t("account.settings.advanced.warningDerivation", {
+              tag,
+            })}
+          />
+        )}
+
+        <LText semiBold style={styles.sync} mt="16px">
           {t("common.sync.ago", {
             time: readableDate,
           })}

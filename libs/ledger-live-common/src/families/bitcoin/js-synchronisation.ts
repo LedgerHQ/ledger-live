@@ -164,7 +164,6 @@ const getAccountShape: GetAccountShape = async (info) => {
   const blockHeight = currentBlock?.height;
 
   span = startSpan("sync", "getAccountTransactions");
-  // @ts-expect-error return from wallet-btc should be typed
   const { txs: transactions } = await wallet.getAccountTransactions(
     walletAccount
   );

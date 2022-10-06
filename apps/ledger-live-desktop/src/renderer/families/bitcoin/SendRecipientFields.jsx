@@ -1,3 +1,4 @@
+// @flow
 import React, { PureComponent } from "react";
 import { connect } from "react-redux";
 import { isConfirmedOperation } from "@ledgerhq/live-common/operation";
@@ -7,8 +8,14 @@ import { confirmationsNbForCurrencySelector } from "../../reducers/settings";
 import { withTranslation } from "react-i18next";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import { PendingOperation } from "@ledgerhq/errors";
+import type { Account } from "@ledgerhq/types-live";
 
-class SendRecipientFields extends PureComponent {
+type Props = {
+  account: Account,
+  confirmationsNb: number,
+};
+
+class SendRecipientFields extends PureComponent<Props> {
   render() {
     const { confirmationsNb, account } = this.props;
     const pendingOperationError = new PendingOperation();
