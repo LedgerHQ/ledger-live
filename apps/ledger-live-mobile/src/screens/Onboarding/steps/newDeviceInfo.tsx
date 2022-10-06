@@ -5,7 +5,6 @@ import { Flex, Carousel, Text, Button, Icons } from "@ledgerhq/native-ui";
 import { useNavigation, useRoute, RouteProp } from "@react-navigation/native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import styled from "styled-components/native";
-import { space } from "@ledgerhq/native-ui/styles/theme";
 import { StyleSheet } from "react-native";
 import { ScreenName } from "../../../const";
 import Illustration from "../../../images/illustration/Illustration";
@@ -13,7 +12,7 @@ import Illustration from "../../../images/illustration/Illustration";
 import { normalize } from "../../../helpers/normalizeSize";
 
 import { DeviceNames } from "../types";
-import InvertTheme from "../../../components/theme/InvertTheme";
+import ForceTheme from "../../../components/theme/ForceTheme";
 
 const StyledSafeAreaView = styled(SafeAreaView)`
   flex: 1;
@@ -111,22 +110,23 @@ function OnboardingStepNewDevice() {
         height={48}
       >
         <Button
-          Icon={() => <Icons.ArrowLeftMedium color="neutral.c00" size={24} />}
+          Icon={() => (
+            <Icons.ArrowLeftMedium color="constant.black" size={24} />
+          )}
           onPress={handleBack}
-          position="absolute"
-          top={-5}
-          left={0}
+          style={styles.backArrow}
         />
         <Text variant="h3" mb={3} textAlign="center" color="constant.black">
           {t(`onboarding.stepNewDevice.${currentIndex}.label`)}
         </Text>
       </Flex>
-      <InvertTheme>
+      <ForceTheme selectedPalette={"light"}>
         <Carousel onChange={setCurrentIndex}>
           {new Array(5).fill(null).map((_, index) => (
             <Card index={index} key={index} deviceModelId={deviceModelId} />
           ))}
         </Carousel>
+
         <Flex
           minHeight="60px"
           width="100%"
@@ -135,7 +135,7 @@ function OnboardingStepNewDevice() {
         >
           <Footer index={currentIndex} />
         </Flex>
-      </InvertTheme>
+      </ForceTheme>
     </StyledSafeAreaView>
   );
 }
@@ -143,6 +143,11 @@ function OnboardingStepNewDevice() {
 const styles = StyleSheet.create({
   animatable: {
     width: "100%",
+  },
+  backArrow: {
+    position: "absolute",
+    top: -5,
+    left: 0,
   },
 });
 
