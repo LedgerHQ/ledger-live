@@ -1,4 +1,4 @@
-if (process.env.PLAYWRIGHT_RUN) {
+if (process.env.PLAYWRIGHT_RUN === "true") {
   const timemachine = require("timemachine");
   timemachine.config({
     dateString: require("../tests/time").default,
