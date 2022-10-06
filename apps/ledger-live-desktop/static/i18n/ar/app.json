@@ -237,16 +237,16 @@
     "form" : {
       "changeCTA" : "تغيير",
       "rates" : {
-        "title" : "المزودين",
+        "title" : "Quotes",
         "registration" : "التسجيل مطلوب ",
         "noRegistration" : "التسجيل غير مطلوب",
         "fixed" : "ثابت",
-        "float" : "متغيّر",
+        "float" : "Floating",
         "update" : "تم تحديث المُعدلات في",
         "loading" : "جاري التحميل ...",
         "name" : {
           "title" : "المزود",
-          "tooltip" : "اعتماداً على المزوّد، يتعين عليك تسجيل الدخول لديهم من خلال إنشاء حساب."
+          "tooltip" : "Depending on the provider, you have to register with them by creating an account."
         },
         "rate" : {
           "title" : "مُعدّل التبادل",
@@ -430,11 +430,13 @@
         }
       },
       "filter" : {
-        "all" : "الكل",
         "centralised" : "مركزي",
-        "dedentralised" : "لامركزي"
+        "decentralised" : "لامركزي",
+        "float" : "Floating rate",
+        "fixed" : "مُعدل ثابت"
       },
-      "noQuote" : "عرض السعر متاح في الخطوة التالية"
+      "noQuote" : "عرض السعر متاح في الخطوة التالية",
+      "noProviders" : "No results found. There are no quotes available with the current preferences."
     },
     "ip" : {
       "title" : "مرحباً بك في المبادلة",
@@ -752,7 +754,7 @@
     "settings" : {
       "title" : "تعديل الحساب",
       "advancedLogs" : "مُتَقدم",
-      "advancedTips" : "المفتاح العام الممتد (xpub) الخاص بك هي بيانات حساسة للخصوصية. استخدمه بحذر، خاصة عند الكشف للأطراف الثالثة.",
+      "advancedTips" : "هذا مفتاح عام ممتد {{tag}}. عند استيراده إلى محفظة طرف ثالث، اختر نفس نمط الاشتقاق.",
       "accountName" : {
         "title" : "اسم الحساب",
         "desc" : "وصف الحساب"
@@ -1182,6 +1184,10 @@
     "blackfriday" : {
       "title" : "الجمعة السوداء ",
       "description" : "استمتع بخصم %40 على محفظة أجهزة Ledger باستخدام كود الخصم BLACKFRIDAY20"
+    },
+    "referralProgram" : {
+      "title" : "Refer and earn $10",
+      "description" : "Successfully refer a friend and you both earn $10 worth of Bitcoin."
     }
   },
   "signmessage" : {
@@ -5042,6 +5048,9 @@
     },
     "StellarSourceHasMultiSign" : {
       "title" : "يرجى تعطيل التوقيع المتعدد لإجراء معاملات Stellar"
+    },
+    "HederaAddAccountError" : {
+      "title" : "Your account has not been added. Please try again."
     }
   },
   "cryptoOrg" : {
