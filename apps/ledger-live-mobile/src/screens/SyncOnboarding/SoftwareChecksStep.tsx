@@ -76,7 +76,7 @@ const CheckCard = ({ title, index, status, ...props }: CheckCardProps) => {
         variant="circle"
         Icon={getCheckIcon(status, index)}
       />
-      <Text ml={4} variant="body">
+      <Text ml={4} variant="body" flex={1}>
         {title}
       </Text>
     </Flex>
