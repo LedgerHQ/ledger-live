@@ -1,7 +1,6 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { FlatList } from "react-native";
 import { Flex, InfiniteLoader, Text } from "@ledgerhq/native-ui";
-import { BluetoothMedium } from "@ledgerhq/native-ui/assets/icons";
 import { BleErrorCode } from "react-native-ble-plx";
 import { useBleDevicesScanning } from "@ledgerhq/live-common/ble/hooks/useBleDevicesScanning";
 import { useNavigation } from "@react-navigation/native";
@@ -11,23 +10,22 @@ import { ScannedDevice } from "@ledgerhq/live-common/ble/types";
 import { getDeviceModel } from "@ledgerhq/devices";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import TransportBLE from "@ledgerhq/react-native-hw-transport-ble";
-import { useTheme } from "styled-components/native";
+import { TouchableOpacity } from "react-native-gesture-handler";
+import { ArrowLeftMedium } from "@ledgerhq/native-ui/assets/icons";
 
 import { knownDevicesSelector } from "../../reducers/ble";
 import LocationRequired from "../LocationRequired";
 import BleDeviceItem from "./BleDeviceItem";
 import type { BleDevicePairingFlowProps } from "./index";
+import Animation from "../../components/Animation";
+import lottie from "./assets/bluetooth.json";
 
-const BluetoothLogo = () => {
-  const { colors } = useTheme();
-
+const HeaderLeft = ({ onClose }: { onClose: () => void }) => {
   return (
-    <Flex borderRadius="9999px" backgroundColor="#0082FC4D" padding={3}>
-      <Flex borderRadius="9999px" backgroundColor="#0082FC4D" padding={4}>
-        <Flex borderRadius="9999px" backgroundColor="#0082FC4D" padding={3}>
-          <BluetoothMedium size={48} color={colors.constant.white} />
-        </Flex>
-      </Flex>
+    <Flex pt={8} px={6}>
+      <TouchableOpacity onPress={onClose}>
+        <ArrowLeftMedium size={24} />
+      </TouchableOpacity>
     </Flex>
   );
 };
@@ -51,7 +49,7 @@ export const BleDevicesScanning = ({
   useEffect(() => {
     navigation.setOptions({
       headerRight: undefined,
-      headerLeft: undefined, // Puts the default back left arrow
+      headerLeft: () => <HeaderLeft onClose={navigation.goBack} />,
     });
   }, [navigation]);
 
@@ -142,8 +140,8 @@ export const BleDevicesScanning = ({
   return (
     <Flex bg="background.main" height="100%">
       <Flex px={4}>
-        <Flex mb={8} alignItems="center">
-          <BluetoothLogo />
+        <Flex height={180} alignItems="center" justifyContent="center">
+          <Animation source={lottie} />
         </Flex>
         <Text mb={3} textAlign="center" variant="h4" fontWeight="semiBold">
           {productName
