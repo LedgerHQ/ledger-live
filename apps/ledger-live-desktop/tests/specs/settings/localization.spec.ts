@@ -31,10 +31,9 @@ test("Settings", async ({ page }) => {
     await layout.goToManager();
     await deviceAction.accessManagerWithL10n();
     await layout.goToSettings();
-    // the device language prompt only opens once the app has charded to available languages for the device
-    // I'm not entirely sure this is an entirely consistent way of waiting for that to be true
-    // if this gets flaky, don't hesitate in adding a plain wait for a few milliseconds
-    await page.waitForLoadState("networkidle");
+    // the device language prompt only opens once the app has charged the available languages for the device
+    // I've tried to wait for a network idle state here, but it seemed flaky, timeout seems more reliable
+    await page.waitForTimeout(3000);
     await settingsPage.changeLanguage("Français", "Español");
     await expect(page).toHaveScreenshot("settings-français-with-device-l10n.png");
   });
