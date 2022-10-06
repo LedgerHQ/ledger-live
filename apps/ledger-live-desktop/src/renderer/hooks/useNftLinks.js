@@ -88,7 +88,7 @@ export default (
   nft: ProtoNFT,
   metadata: NFTMetadata,
   onClose?: () => void,
-  isInsideDrawer: boolean,
+  isInsideDrawer?: boolean,
 ) => {
   const dispatch = useDispatch();
   const { t } = useTranslation();
@@ -135,7 +135,7 @@ export default (
           setDrawer(CustomImage, {
             imageUri: customImageUri,
             isFromNFTEntryPoint: true,
-            reOpenNFTDrawer: isInsideDrawer
+            reopenPreviousDrawer: isInsideDrawer
               ? () =>
                   setDrawer(NFTViewerDrawer, {
                     account,

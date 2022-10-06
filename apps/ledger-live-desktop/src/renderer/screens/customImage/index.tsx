@@ -21,7 +21,7 @@ import { setDrawer } from "~/renderer/drawers/Provider";
 type Props = {
   imageUri?: string;
   isFromNFTEntryPoint?: boolean;
-  reOpenNFTDrawer?: () => void;
+  reopenPreviousDrawer?: () => void;
 };
 
 const orderedSteps: Step[] = [
@@ -34,7 +34,7 @@ const orderedSteps: Step[] = [
 const ErrorDisplayV2 = withV2StyleProvider(ErrorDisplay);
 
 const CustomImage: React.FC<Props> = props => {
-  const { imageUri, isFromNFTEntryPoint, reOpenNFTDrawer } = props;
+  const { imageUri, isFromNFTEntryPoint, reopenPreviousDrawer } = props;
   const { t } = useTranslation();
 
   const [stepError, setStepError] = useState<{ [key in Step]?: Error }>({});
@@ -53,13 +53,21 @@ const CustomImage: React.FC<Props> = props => {
 
   const [step, setStep] = useState<Step>(Step.chooseImage);
 
-  const setStepWrapper = (step: Step) => {
-    setStep(step);
-  };
+  const setStepWrapper = useCallback(
+    (step: Step) => {
+      setStepError({});
+      setStep(step);
+    },
+    [setStepError, setStep],
+  );
 
-  const cancelCustomImage = (step: Step) => {
-    setDrawer();
-    if (reOpenNFTDrawer) reOpenNFTDrawer();
+  const handleStepCropSetStep = (step: Step) => {
+    if (step === Step.chooseImage && isFromNFTEntryPoint) {
+      setDrawer();
+      if (reopenPreviousDrawer) reopenPreviousDrawer();
+    } else {
+      setStepWrapper(step);
+    }
   };
 
   const initialUri = imageUri;
@@ -83,7 +91,7 @@ const CustomImage: React.FC<Props> = props => {
     return () => {
       dead = true;
     };
-  }, [setLoadedImage, initialUri]);
+  }, [setLoadedImage, initialUri, setStepWrapper]);
 
   useEffect(() => {
     if (loadedImage) setSourceLoading(false);
@@ -107,6 +115,10 @@ const CustomImage: React.FC<Props> = props => {
   >["onResult"] = useCallback(res => {
     setFinalResult(res);
   }, []);
+
+  const handleErrorRetryClicked = useCallback(() => {
+    setStepWrapper(Step.chooseImage);
+  }, [setStepWrapper]);
 
   const handleError = useCallback(
     (step: Step, error: Error) => {
@@ -144,24 +156,12 @@ const CustomImage: React.FC<Props> = props => {
                   />
                 }
               >
-                <ErrorDisplayV2
-                  error={error}
-                  onRetry={
-                    step === Step.chooseImage
-                      ? () => {
-                          setStepError({});
-                        }
-                      : () => {
-                          setStepError({});
-                          setStepWrapper(Step.chooseImage);
-                        }
-                  }
-                />
+                <ErrorDisplayV2 error={error} onRetry={handleErrorRetryClicked} />
               </StepContainer>
             );
           }
         : undefined,
-    [error, previousStep, t, step],
+    [error, previousStep, t, setStepWrapper, handleErrorRetryClicked],
   );
 
   return (
@@ -209,7 +209,7 @@ const CustomImage: React.FC<Props> = props => {
             src={loadedImage}
             onError={errorHandlers[Step.adjustImage]}
             onResult={handleStepAdjustImageResult}
-            setStep={isFromNFTEntryPoint ? cancelCustomImage : setStepWrapper}
+            setStep={handleStepCropSetStep}
             initialCropParams={initialCropParams}
             setCropParams={setInitialCropParams}
           />
