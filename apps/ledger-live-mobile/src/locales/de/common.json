@@ -3,6 +3,7 @@
     "cancel" : "Abbrechen",
     "apply" : "Anwenden",
     "seeAll" : "Alles anzeigen",
+    "seeAllWithNumber" : "Alle anzeigen ({{number}})",
     "back" : "Zurück",
     "delete" : "Löschen",
     "paste" : "Einfügen",
@@ -30,6 +31,7 @@
     "received" : "Empfangen",
     "sent" : "Gesendet",
     "or" : "ODER",
+    "others" : "Sonstige",
     "rename" : "Umbenennen",
     "learnMore" : "Weitere Informationen",
     "checkItOut" : "Mehr erfahren",
@@ -83,7 +85,8 @@
     "moreInfo" : "Mehr Infos",
     "buyEth" : "Ethereum kaufen",
     "popular" : "beliebt",
-    "comingSoon" : "In Kürze verfügbar"
+    "comingSoon" : "In Kürze verfügbar",
+    "getSupport" : "Hilfe"
   },
   "errors" : {
     "countervaluesUnavailable" : {
@@ -147,6 +150,12 @@
           "nanoX" : "Bitte stellen Sie sicher, dass Ihr {{productName}} entsperrt ist, wenn Bluetooth aktiviert ist."
         }
       }
+    },
+    "CeloAllFundsWarning" : {
+      "title" : "Stellen Sie sicher, dass Sie genug Guthaben für zukünftige Transaktionsgebühren übrig haben"
+    },
+    "CeloMissingWithdrawalsError" : {
+      "title" : "Etwas ist schief gelaufen, ich kann kein Guthaben abheben"
     },
     "ClaimRewardsFeesWarning" : {
       "title" : "Die Prämien sind kleiner als die geschätzten Gebühren, die anfallen, um sie zu beanspruchen.",
@@ -276,7 +285,7 @@
     },
     "EthAppNftNotSupported" : {
       "title" : "Vorgang auf diesem Gerät nicht verfügbar",
-      "description" : "Send NFT feature is only available for Nano X and Nano S+. Please visit our customer support platform to know how to send a NFT with a Nano S."
+      "description" : "Die Funktion zum Senden von NFTs ist nur für Nano X und Nano S+ verfügbar. Bitte besuchen Sie unsere Kunden-Support-Plattform, um herauszufinden, wie man ein NFT mit einem Nano S sendet."
     },
     "Touch ID Error" : {
       "title" : "Biometrische Authentifizierung fehlgeschlagen",
@@ -583,8 +592,8 @@
       "title" : "Betrag muss kleiner als {{maxAmountFromFormatted}} sein"
     },
     "SwapGenericAPIError" : {
-      "title" : "Wechselkurs abgelaufen",
-      "description" : "Sie müssen den Tausch bestätigen, bevor der Timer abläuft. Der Tauschkurs bleibt für eine feste Dauer gültig."
+      "title" : "Etwas ist schief gelaufen",
+      "description" : "Der Umtauschvorgang wurde nicht durchgeführt. Bitte versuchen Sie es erneut oder kontaktieren Sie den Support."
     },
     "PolkadotElectionClosed" : {
       "title" : "Auswahl der Validatoren muss geschlossen werden"
@@ -720,6 +729,9 @@
       "title" : "Die Verarbeitung des Bildes ist fehlgeschlagen",
       "description" : "Bitte versuchen Sie es noch einmal mit einem anderen Bild"
     }
+  },
+  "crash" : {
+    "title" : "Etwas ist schief gelaufen"
   },
   "bluetooth" : {
     "required" : "Entschuldigung, es sieht so aus, als ob Bluetooth deaktiviert ist",
@@ -1672,7 +1684,10 @@
         "addAccounts" : "Wert hinzufügen",
         "title" : "Erste Schritte",
         "description" : "Sie können entweder Kryptowährungen von unseren Partnern kaufen oder Ihre eigene Wallet einrichten"
-      }
+      },
+      "title" : "Legen Sie zunächst Ihre bevorzugten Vermögenswerte in Ihrer Wallet ab",
+      "subtitle" : "Ledger unterstützt mehr als 6.000 Coins und Token",
+      "addAccount" : "oder fügen Sie ein Konto hinzu"
     },
     "noOpState" : {
       "title" : "Noch keine Aktionen?",
@@ -1684,6 +1699,13 @@
     "topGainers" : {
       "title" : "Marktgewinner (24H)",
       "seeMarket" : "Alles anzeigen"
+    },
+    "walletBalance" : "Kontostand der Wallet",
+    "seelAllAssets" : "Alle Vermögenswerte anzeigen",
+    "marketPriceSection" : {
+      "title" : "Marktpreis für {{currencyTicker}}",
+      "currencyPrice" : "Preis für 1 {{currencyTicker}}",
+      "currencyPriceChange" : "Änderung in den letzten 24 Stunden"
     }
   },
   "addAccountsModal" : {
@@ -1909,7 +1931,8 @@
       "buttons" : {
         "receiveFunds" : "Empfangen",
         "buyCrypto" : "Kaufen"
-      }
+      },
+      "addAccountCta" : "Konto hinzufügen"
     },
     "settings" : {
       "header" : "Konto-Einstellungen",
@@ -2010,6 +2033,15 @@
         "subtitle" : "Sie benötigen ein Gerät um {{assetName}} zu kaufen oder zu empfangen"
       }
     },
+    "modals" : {
+      "zeroBalanceDisabledAction" : {
+        "title" : "Sie haben noch keine {{currencyTicker}}",
+        "start" : "Zunächst müssen Sie {{currencyTicker}} kaufen oder empfangen.",
+        "description" : "Sie benötigen {{currencyTicker}}, um mit diesem Konto {{actionName}} zu können."
+      }
+    },
+    "earn" : "Verdienen",
+    "quickActions" : "Schnellaktionen",
     "banner" : {
       "redelegation" : {
         "description" : "Schon gewusst? Der Ledger-Validator erledigt das Staking zu einer günstigeren Provision als Ihr derzeitiger Validator.",
@@ -2023,6 +2055,7 @@
   },
   "accounts" : {
     "title" : "Konten",
+    "cryptoAccountsTitle" : "{{currencyTicker}}-Konten",
     "importNotification" : {
       "message" : "Ihre Konten wurden erfolgreich importiert!"
     },
@@ -2255,6 +2288,10 @@
       "clearCacheButton" : "Löschen",
       "exportLogs" : "Protokolle speichern",
       "exportLogsDesc" : "Das Speichern von Ledger Live-Logs kann für die Fehlerbehebung erforderlich sein.",
+      "resetThirdPartyData" : "Drittanbieterdaten zurücksetzen",
+      "resetThirdPartyDataDesc" : "Löschen Sie alle lokalen Drittanbieterdaten, die für den Zugriff auf Transaktionsservices von Drittanbietern verwendet wurden.",
+      "resetThirdPartyDataModal" : "Ihre lokalen Drittanbieterdaten löschen",
+      "resetThirdPartyDataModalDesc" : "Bitte löschen Sie Ihre lokalen Drittanbieterdaten. Eventuell müssen Sie den KYC-Prozess ein weiteres Mal durchlaufen und/oder sich erneut anmelden, um auf die Services unserer Partner zugreifen zu können.",
       "hardReset" : "Ledger Live zurücksetzen",
       "hardResetDesc" : "Dies hat keine Auswirkung auf Ihre Vermögenswerte. Löscht alle Daten in Ledger Live, einschließlich Kontodaten, Transaktionsverläufe und Einstellungen. Verwenden Sie Ihr Ledger-Gerät, um Ihre Krypto-Vermögenswerte auf einem leeren Ledger Live neu zu laden und zu verwalten.",
       "repairDevice" : "Reparieren Sie Ihr Ledger-Gerät",
@@ -2675,19 +2712,79 @@
         }
       }
     },
-    "swapv2" : {
+    "swap2" : {
       "form" : {
-        "summary" : {
-          "from" : "Von",
-          "to" : "An",
-          "send" : "Senden",
-          "payoutNetworkFees" : "Auszahlungsgebühren",
-          "payoutNetworkFeesTooltip" : "Dieser Betrag wird nicht auf Ihrem Gerät angezeigt",
-          "receive" : "Betrag",
-          "receiveFloat" : "Zu erhaltender Betrag vor Servicegebühren",
-          "provider" : "Anbieter",
-          "method" : "Kurs",
-          "fees" : "Gebühren"
+        "ratesDrawer" : {
+          "title" : "Kurs",
+          "quote" : "Preis",
+          "receive" : "Empfangen"
+        },
+        "placeholder" : "Auswählen",
+        "title" : "Umtauschen",
+        "cta" : "Umtauschen",
+        "from" : "Von",
+        "to" : "An",
+        "loading" : "Lade Daten...",
+        "disclaimer" : {
+          "title" : "Allgemeine Geschäftsbedingungen",
+          "desc" : "Indem ich auf „Akzeptieren“ klicke, erkenne ich an und akzeptiere, dass für diesen Dienst ausschließlich die Allgemeinen Geschäftsbedingungen von {{providerName}} gelten.",
+          "tos" : "Allgemeine Geschäftsbedingungen",
+          "accept" : "Akzeptieren"
+        },
+        "notAvailable" : {
+          "title" : "Swap ist in Ihrem Land noch nicht verfügbar",
+          "content" : "Haben Sie noch etwas Geduld,<br/>wir werden diese Funktion sehr bald einführen"
+        },
+        "amount" : {
+          "useMax" : "Max. verwenden"
+        },
+        "details" : {
+          "label" : {
+            "provider" : "Anbieter",
+            "rate" : "Kurs",
+            "fees" : "Netzgebühren",
+            "target" : "Zielkonto"
+          },
+          "noAccount" : "Erstellen Sie ein Konto um {{name}} zu erhalten",
+          "noAccountCTA" : "Konto hinzufügen"
+        },
+        "select" : {
+          "from" : {
+            "title" : "Von"
+          },
+          "to" : {
+            "title" : "An"
+          }
+        },
+        "providers" : {
+          "kyc" : {
+            "title" : "KYC",
+            "required" : "Sie müssen Ihr KYC vervollständigen",
+            "complete" : "Vervollständigen Sie Ihr KYC",
+            "update" : "KYC aktualisieren",
+            "rejected" : "KYC abgelehnt, erneute Überprüfung starten",
+            "rejectedContactProviderSupport" : "KYC-Prüfung abgelehnt, bitte wenden Sie sich an den {{providerName}} Support",
+            "updateRequired" : "Vervollständigen oder aktualisieren Sie Ihr KYC",
+            "status" : {
+              "pending" : "KYC ausstehend",
+              "approved" : "KYC genehmigt",
+              "closed" : "KYC abgelehnt",
+              "upgradeRequired" : "KYC unzureichend"
+            }
+          },
+          "login" : {
+            "title" : "Anmeldename",
+            "required" : "Sie müssen sich bei diesem Anbieter anmelden",
+            "complete" : "Anmeldename"
+          },
+          "mfa" : {
+            "title" : "MFA",
+            "required" : "Sie müssen bei diesem Anbieter eine Multi-Faktor-Authentifizierung (MFA) einrichten",
+            "complete" : "MFA einrichten"
+          },
+          "withdrawalsBlockedError" : {
+            "message" : "Ihre Abhebung wurde von {{providerName}} blockiert.\n\n Bitte kontaktieren Sie den Support für weitere Informationen."
+          }
         }
       }
     },
@@ -3110,6 +3207,7 @@
     }
   },
   "addAccounts" : {
+    "addNew" : "Neu hinzufügen",
     "supportLinks" : {
       "segwit_or_native_segwit" : "Segwit oder Native Segwit?"
     },
@@ -3142,7 +3240,6 @@
     "retry" : "Wiederholen",
     "done" : "Fertig",
     "finalCta" : "Weiter",
-    "finalCtaForSwap" : "Zurück zu Swap",
     "synchronizing" : "Synchronisieren",
     "synchronizingDesc" : "Ihre Konten werden synchronisiert. Dies kann eine Weile dauern ...",
     "noAccountToCreate" : "<1><0>{{currencyName}}</></> Konto konnte nicht erstellt werden. Starten Sie den Prozess neu und synchronisieren Sie Ihre Konten.",
@@ -3219,7 +3316,17 @@
     "confirmSwap" : {
       "title" : "Swap-Vorgang auf dem Gerät bestätigen",
       "alert" : "Vor dem Senden der Fondsdetails müssen Sie diese auf Ihrem Gerät verifizieren. Die Adressen müssen Sie nicht verifizieren, da diese sicher ausgetauscht werden.",
-      "acceptTerms" : "Durch Validieren dieser Transaktion stimme ich den\n<0>Nutzungsbedingungen von <0>{{provider}}</0> zu</0>"
+      "acceptTerms" : "Durch Validieren dieser Transaktion stimme ich den\n<0>Nutzungsbedingungen von <0>{{provider}}</0> zu</0>",
+      "notice" : "Überprüfen Sie die Details des Tauschs auf Ihrem Gerät, bevor Sie sie senden. Die Adressen werden sicher ausgetauscht, sodass Sie diese nicht verifizieren müssen."
+    },
+    "swap2" : {
+      "notice" : "Überprüfen Sie die Details des Tauschs auf Ihrem Gerät, bevor Sie sie senden. Die Adressen werden sicher ausgetauscht, sodass Sie diese nicht verifizieren müssen.",
+      "amountSent" : "Zu sendender Betrag",
+      "amountReceived" : "Zu erhaltender Betrag",
+      "provider" : "Anbieter",
+      "fees" : "Netzgebühren",
+      "sourceAccount" : "Abbuchungskonto",
+      "targetAccount" : "Zielkonto"
     },
     "confirmSell" : {
       "title" : "Verkaufsvorgang auf Gerät bestätigen",
@@ -3708,7 +3815,276 @@
       "available" : {
         "title" : "CELO verfügbar",
         "description" : "Dieser Betrag ist verfügbar."
+      },
+      "lockedBalance" : {
+        "title" : "Gesperrtes Guthaben",
+        "description" : "Vermögenswerte müssen gesperrt und für Validatorgruppen abgestimmt worden sein, bevor sie Belohnungen verdienen."
+      },
+      "nonvotingLockedBalance" : {
+        "title" : "Nicht-abgestimmtes gesperrtes Guthaben",
+        "description" : "Saldo der gesperrten Vermögenswerte, die für Abstimmungen verwendet werden können."
+      },
+      "withdrawableBalance" : {
+        "title" : "Auszahlbares Guthaben",
+        "description" : "Entsperrte Celo, die Sie auf Ihr verfügbares Guthaben übertragen können."
       }
+    },
+    "delegation" : {
+      "validatorGroup" : "Validator-Gruppe",
+      "totalVotes" : "Stimmen insgesamt",
+      "actions" : {
+        "activate" : "Aktivieren",
+        "revoke" : "Widerrufen"
+      },
+      "delegationUnavailable" : {
+        "title" : "Unzureichende gesperrte Vermögenswerte"
+      },
+      "manageMultipleVoteWarning" : "Sie müssen andere Stimmen in derselben Validatorgruppe aktivieren oder widerrufen, bevor Sie diese Abstimmung verwalten können."
+    },
+    "manage" : {
+      "title" : "Vermögenswerte verwalten",
+      "titleWhenPendingRegistration" : "Kontoregistrierung steht aus",
+      "lock" : {
+        "title" : "Sperren",
+        "description" : "Um Prämien zu verdienen, sperren Sie zunächst einen Betrag. Dann müssen Sie für Ihre(n) Validator(en) abstimmen."
+      },
+      "unlock" : {
+        "title" : "Entsperren",
+        "description" : "Um einen gesperrten Betrag wieder verfügbar zu machen, müssen Sie ihn zunächst entsperren. Sie können ihn nach der 3-tägigen Entsperrungsfrist zurückziehen."
+      },
+      "withdraw" : {
+        "title" : "Abheben",
+        "description" : "Um einen nicht gesperrten Betrag wieder auf das verfügbare Guthaben zurück zu holen, müssen Sie ihn manuell abheben."
+      },
+      "vote" : {
+        "title" : "Abstimmen",
+        "description" : "Für Validatorgruppen abstimmen. Stellen Sie sicher, dass Sie Ihre Stimmen aktivieren, um Belohnungen zu verdienen."
+      },
+      "activate" : {
+        "title" : "Stimmen aktivieren",
+        "description" : "Aktivieren Sie ihre Stimme für Validator-Gruppe"
+      },
+      "revoke" : {
+        "title" : "Stimme widerrufen",
+        "description" : "Widerrufen Sie Ihre Stimme für die Validator-Gruppe"
+      }
+    },
+    "unlock" : {
+      "stepperHeader" : {
+        "title" : "Vermögenswerte entsperren",
+        "stepRange" : "Schritt {{currentStep}} von {{totalSteps}}",
+        "selectDevice" : "Gerät wählen",
+        "connectDevice" : "Verbundenes Gerät"
+      },
+      "flow" : {
+        "steps" : {
+          "amount" : {
+            "info" : "Entsperrte Vermögenswerte können nach Ablauf der dreitägigen Entsperrungsfrist abgehoben werden.",
+            "available" : "Verfügbar",
+            "max" : "Max."
+          },
+          "verification" : {
+            "success" : {
+              "title" : "Nicht gesperrte Transaktion erfolgreich gesendet",
+              "text" : "Entsperrte Vermögenswerte können innerhalb von 3 Tagen abgehoben werden."
+            }
+          }
+        }
+      }
+    },
+    "vote" : {
+      "iVote" : "Ich stimme ab",
+      "stepperHeader" : {
+        "title" : "Abstimmen",
+        "stepRange" : "Schritt {{currentStep}} von {{totalSteps}}",
+        "selectDevice" : "Gerät wählen",
+        "connectDevice" : "Verbundenes Gerät"
+      },
+      "flow" : {
+        "steps" : {
+          "starter" : {
+            "description" : "Sie können Belohnungen verdienen, indem Sie Ihre CELO-Werte an einen Validator delegieren.",
+            "bullet" : {
+              "0" : "Sie behalten das Eigentum an delegierten Vermögenswerten",
+              "1" : "Delegieren Sie mit Ihrem Ledger-Gerät",
+              "2" : "Vermögenswerte sind nach nach Aufhebung der Delegierung verfügbar"
+            },
+            "warning" : {
+              "description" : "Wählen Sie Ihren Validator mit Bedacht: Ein Teil Ihrer übertragenen Vermögenswerte kann unwiderruflich verloren gehen, wenn sich der Validator nicht angemessen verhält."
+            },
+            "cta" : "Weiter"
+          },
+          "amount" : {
+            "available" : "Verfügbar",
+            "max" : "Max."
+          },
+          "verification" : {
+            "success" : {
+              "title" : "Sie haben erfolgreich gestimmt",
+              "text" : "Sie werden Ihre Aktion bald in Ihrem Verlauf sehen."
+            }
+          }
+        }
+      }
+    },
+    "activate" : {
+      "iActivate" : "Ich aktiviere meine Stimmen",
+      "stepperHeader" : {
+        "title" : "Stimmen aktivieren",
+        "stepRange" : "Schritt {{currentStep}} von {{totalSteps}}",
+        "selectDevice" : "Gerät wählen",
+        "connectDevice" : "Verbundenes Gerät"
+      },
+      "title" : "Stimmen aktivieren",
+      "flow" : {
+        "steps" : {
+          "verification" : {
+            "success" : {
+              "title" : "Aktivierung erfolgreich",
+              "text" : "Ihre Stimme wurde erfolgreich aktiviert."
+            }
+          }
+        }
+      }
+    },
+    "revoke" : {
+      "iRevoke" : "Ich widerrufe",
+      "stepperHeader" : {
+        "title" : "Abstimmen",
+        "stepRange" : "Schritt {{currentStep}} von {{totalSteps}}",
+        "selectDevice" : "Gerät wählen",
+        "connectDevice" : "Verbundenes Gerät"
+      },
+      "flow" : {
+        "steps" : {
+          "validator" : {
+            "active" : "Aktiv",
+            "pending" : "Ausstehend"
+          },
+          "amount" : {
+            "available" : "Verfügbar",
+            "max" : "Max."
+          },
+          "verification" : {
+            "success" : {
+              "title" : "Sie haben Ihre Stimmen erfolgreich widerrufen",
+              "text" : "Sie werden Ihre Aktion bald in Ihrem Verlauf sehen."
+            }
+          }
+        }
+      },
+      "vote" : {
+        "title" : "Abstimmen",
+        "active" : "Aktiv",
+        "pending" : "Ausstehend",
+        "awaitingActivation" : "Warten auf Aktivierung",
+        "info" : "In diesem Modal werden nur widerrufbare Stimmen angezeigt"
+      }
+    },
+    "register" : {
+      "stepperHeader" : {
+        "title" : "Konto registrieren",
+        "continue" : "Weiter",
+        "stepRange" : "Schritt {{currentStep}} von {{totalSteps}}",
+        "selectDevice" : "Gerät wählen",
+        "connectDevice" : "Verbundenes Gerät"
+      },
+      "flow" : {
+        "steps" : {
+          "started" : {
+            "description" : "Bevor Sie Celo sperren können, müssen Sie Ihr Konto in der Blockchain registrieren."
+          },
+          "verification" : {
+            "success" : {
+              "title" : "Konto wurde erfolgreich registriert",
+              "text" : "Sie werden Ihre Aktion bald in Ihrem Verlauf sehen."
+            }
+          }
+        }
+      }
+    },
+    "lock" : {
+      "stepperHeader" : {
+        "title" : "Vermögenswerte sperren",
+        "stepRange" : "Schritt {{currentStep}} von {{totalSteps}}",
+        "selectDevice" : "Gerät wählen",
+        "connectDevice" : "Verbundenes Gerät"
+      },
+      "flow" : {
+        "steps" : {
+          "amount" : {
+            "info" : "Gesperrte Vermögenswerte können jederzeit freigeschaltet werden, das Entsperren dauert jedoch 3 Tage.",
+            "available" : "Verfügbar",
+            "max" : "Max."
+          },
+          "verification" : {
+            "success" : {
+              "title" : "Vermögenswerte erfolgreich gesperrt",
+              "text" : "Sie können die Validatoren wählen, sobald das Netzwerk Ihre Transaktion bestätigt hat."
+            }
+          }
+        }
+      }
+    },
+    "withdraw" : {
+      "iWithdraw" : "Ich hebe ab",
+      "title" : "Vermögenswerte abheben",
+      "steps" : {
+        "amount" : {
+          "title" : "Abheben"
+        },
+        "connectDevice" : {
+          "title" : "Gerät"
+        },
+        "confirmation" : {
+          "title" : "Bestätigung",
+          "success" : {
+            "title" : "Abhebungstransaktion erfolgreich versendet",
+            "text" : "Der Abbuchungsbetrag wird Ihrem verfügbaren Guthaben gutgeschrieben.",
+            "cta" : "Details anzeigen"
+          },
+          "broadcastError" : "Ihre Transaktion ist möglicherweise fehlgeschlagen. Bitte warten Sie einen Moment und prüfen Sie den Transaktionsverlauf, bevor Sie es erneut versuchen."
+        }
+      },
+      "stepperHeader" : {
+        "title" : "Abstimmen",
+        "stepRange" : "Schritt {{currentStep}} von {{totalSteps}}",
+        "selectDevice" : "Gerät wählen",
+        "connectDevice" : "Verbundenes Gerät"
+      },
+      "flow" : {
+        "steps" : {
+          "amount" : {
+            "available" : "Verfügbar",
+            "max" : "Max.",
+            "waitingTitle" : "Nicht abrufbarer Betrag",
+            "waitingPeriod" : "Sie müssen bis {{date}} warten, um diesen Betrag abzuheben."
+          },
+          "verification" : {
+            "success" : {
+              "title" : "Ihre Vermögenswerte wurden erfolgreich übertragen",
+              "text" : "Der Abbuchungsbetrag wird Ihrem verfügbaren Guthaben gutgeschrieben."
+            }
+          }
+        }
+      }
+    },
+    "emptyState" : {
+      "description" : "Sie können CELO-Prämien verdienen, indem Sie Ihre Vermögenswerte übertragen.",
+      "info" : "So funktioniert Delegierung",
+      "delegation" : "Verdienen Sie Belohnungen"
+    },
+    "earnRewards" : {
+      "description" : "Sie können Belohnungen verdienen, indem Sie Ihre CELO-Werte an einen Validator delegieren.",
+      "bullet" : {
+        "0" : "Sie behalten das Eigentum an delegierten Vermögenswerten",
+        "1" : "Delegieren Sie mit Ihrem Ledger-Gerät",
+        "2" : "Vermögenswerte sind nach nach Aufhebung der Delegierung verfügbar"
+      }
+    },
+    "alerts" : {
+      "withdrawableAssets" : "Sie verfügen über abrufbares Guthaben.",
+      "activatableVotes" : "Sie haben Stimmen, die jetzt aktiviert werden können."
     }
   },
   "osmosis" : {
@@ -4790,6 +5166,12 @@
     },
     "currentAddress" : {
       "messageIfVirtual" : "Ihre {{name}}-Adresse kann auf Ihrem Ledger-Gerät nicht bestätigt werden. Nutzung auf eigenes Risiko."
+    }
+  },
+  "asset" : {
+    "title" : "Ihre {{assetName}}",
+    "accountsSection" : {
+      "title" : "Ihre {{currencyName}}-Konten"
     }
   },
   "customImage" : {
