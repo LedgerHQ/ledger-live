@@ -146,8 +146,6 @@ const DeviceAction = <R, H, P>({
     }
   }, [error, onError]);
 
-  const { t } = useTranslation();
-
   useEffect(() => {
     if (deviceInfo) {
       const lastSeenDevice = {
