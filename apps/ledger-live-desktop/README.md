@@ -123,6 +123,25 @@ As stated in the [debugging documentation](https://code.visualstudio.com/docs/ed
 }
 ```
 
+### Tips
+
+- #### **Can't find Node.js binary "pnpm": path does not exist. Make sure Node.js is installed and in your PATH, or set the "runtimeExecutable" in your launch.json***
+
+  Add your terminal PATH as enviroment variable.
+
+  ```json
+    "env": {
+      "ELECTRON_ARGS": "--remote-debugging-port=8315",
+      "PATH": "...",
+    }
+  ```
+
+  To get the PATH run in your terminal
+
+  ```bash
+  echo $PATH
+  ```
+
 ---
 
 ## Config (optional helpers)
