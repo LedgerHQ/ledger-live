@@ -1,0 +1,32 @@
+name: "Bot Super Report"
+on:
+  schedule:
+    - cron: "0 14 * * 5"
+  push:
+    branches:
+      - support/bot-super-report
+
+jobs:
+  main:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: pnpm/action-setup@v2
+        with:
+          version: latest
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16.x
+          cache: pnpm
+          cache-dependency-path: "**/pnpm-lock.yaml"
+      - name: Install dependencies
+        run: pnpm i --filter='!./apps/**' --frozen-lockfile
+      - name: Build live-common
+        run: pnpm build:llc
+      - name: generate super report
+        uses: ledgerhq/ledger-live/tools/actions/generate-bot-super-report@support/bot-super-report
+        with:
+          branch: develop
+          githubToken: ${{github.token}}
+          days: 7
+          slackApiToken: ${{secrets.SLACK_API_TOKEN}}
