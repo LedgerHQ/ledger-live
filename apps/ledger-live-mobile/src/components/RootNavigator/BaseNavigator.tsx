@@ -596,6 +596,7 @@ export default function BaseNavigator() {
         component={BleDevicePairingFlow}
         options={{
           title: "",
+          headerShown: false,
         }}
       />
       <Stack.Screen

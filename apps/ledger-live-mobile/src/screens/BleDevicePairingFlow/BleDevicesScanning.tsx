@@ -3,31 +3,18 @@ import { ScrollView } from "react-native";
 import { Flex, InfiniteLoader, Text } from "@ledgerhq/native-ui";
 import { BleErrorCode } from "react-native-ble-plx";
 import { useBleDevicesScanning } from "@ledgerhq/live-common/ble/hooks/useBleDevicesScanning";
-import { useNavigation } from "@react-navigation/native";
 import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
 import { getDeviceModel } from "@ledgerhq/devices";
 import { Device, DeviceModelId } from "@ledgerhq/types-devices";
 import TransportBLE from "@ledgerhq/react-native-hw-transport-ble";
-import { TouchableOpacity } from "react-native-gesture-handler";
-import { ArrowLeftMedium } from "@ledgerhq/native-ui/assets/icons";
 
 import Animation from "../../components/Animation";
 import { knownDevicesSelector } from "../../reducers/ble";
 import LocationRequired from "../LocationRequired";
 import BleDeviceItem from "./BleDeviceItem";
-import type { BleDevicePairingFlowProps } from "./index";
 import lottie from "./assets/bluetooth.json";
-
-const HeaderLeft = ({ onClose }: { onClose: () => void }) => {
-  return (
-    <Flex pt={8} px={6}>
-      <TouchableOpacity onPress={onClose}>
-        <ArrowLeftMedium size={24} />
-      </TouchableOpacity>
-    </Flex>
-  );
-};
+import SyncOnboardingView from "../SyncOnboarding/SyncOnboardingView";
 
 export type FilterByDeviceModelId = null | DeviceModelId;
 
@@ -43,14 +30,6 @@ export const BleDevicesScanning = ({
   areKnownDevicesDisplayed,
 }: BleDevicesScanningProps) => {
   const { t } = useTranslation();
-  const navigation = useNavigation<BleDevicePairingFlowProps["navigation"]>();
-
-  useEffect(() => {
-    navigation.setOptions({
-      headerRight: undefined,
-      headerLeft: () => <HeaderLeft onClose={navigation.goBack} />,
-    });
-  }, [navigation]);
 
   const productName = filterByDeviceModelId
     ? getDeviceModel(filterByDeviceModelId).productName || filterByDeviceModelId
@@ -123,11 +102,11 @@ export const BleDevicesScanning = ({
   }
 
   return (
-    <Flex bg="background.main" height="100%">
+    <SyncOnboardingView hasBackButton>
+      <Flex height={180} alignItems="center" justifyContent="center">
+        <Animation source={lottie} />
+      </Flex>
       <Flex px={4}>
-        <Flex height={180} alignItems="center" justifyContent="center">
-          <Animation source={lottie} />
-        </Flex>
         <Text mb={3} textAlign="center" variant="h4" fontWeight="semiBold">
           {productName
             ? t("blePairingFlow.scanning.withProductName.title", {
@@ -184,6 +163,6 @@ export const BleDevicesScanning = ({
       ) : (
         <InfiniteLoader />
       )}
-    </Flex>
+    </SyncOnboardingView>
   );
 };

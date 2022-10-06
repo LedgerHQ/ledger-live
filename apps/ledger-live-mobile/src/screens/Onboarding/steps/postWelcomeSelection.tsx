@@ -1,18 +1,16 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback } from "react";
 import { useTranslation } from "react-i18next";
-import { useTheme } from "styled-components/native";
 import { RouteProp, useNavigation } from "@react-navigation/native";
-import { Text, Flex } from "@ledgerhq/native-ui";
+import { Text } from "@ledgerhq/native-ui";
 import { useDispatch } from "react-redux";
 import { ImageSourcePropType } from "react-native";
 import { TrackScreen } from "../../../analytics";
 import { NavigatorName, ScreenName } from "../../../const";
-import OnboardingView from "../OnboardingView";
 import StyledStatusBar from "../../../components/StyledStatusBar";
 import Illustration from "../../../images/illustration/Illustration";
 import DiscoverCard from "../../Discover/DiscoverCard";
 import { setHasOrderedNano } from "../../../actions/settings";
-import Button from "../../../components/wrappedUi/Button";
+import SyncOnboardingView from "../../SyncOnboarding/SyncOnboardingView";
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const setupLedgerImg = require("../../../images/illustration/Shared/_SetupLedger.png");
@@ -29,10 +27,7 @@ type PostWelcomeDiscoverCardProps = {
   event: string;
   eventProperties?: Record<string, any>;
   testID: string;
-  selectedOption: any;
-  // eslint-disable-next-line @typescript-eslint/ban-types
-  onPress: Function;
-  onValidate: () => void;
+  onPress: () => void;
   imageSource: ImageSourcePropType;
 };
 
@@ -42,21 +37,9 @@ const PostWelcomeDiscoverCard = ({
   event,
   eventProperties,
   testID,
-  selectedOption,
   onPress,
-  onValidate,
   imageSource,
 }: PostWelcomeDiscoverCardProps) => {
-  const { colors } = useTheme();
-  const setSelectedOption = useCallback(() => {
-    onPress({
-      title,
-      event,
-      banner: eventProperties?.banner,
-      onValidate,
-    });
-  }, [onPress, title, event, eventProperties?.banner, onValidate]);
-
   return (
     <DiscoverCard
       title={title}
@@ -66,15 +49,12 @@ const PostWelcomeDiscoverCard = ({
       event={event}
       eventProperties={eventProperties}
       testID={testID}
-      onPress={setSelectedOption}
+      onPress={onPress}
       cardProps={{
         mx: 0,
+        mb: 6,
         borderWidth: 1,
         borderColor: "transparent",
-        ...(selectedOption?.title === title && {
-          borderColor: colors.primary.c80,
-          backgroundColor: colors.primary.c10,
-        }),
       }}
       Image={
         <Illustration
@@ -87,13 +67,6 @@ const PostWelcomeDiscoverCard = ({
   );
 };
 
-type DataType = {
-  title: string;
-  event: string;
-  banne?: string;
-  onValidate: () => void;
-};
-
 function PostWelcomeSelection({
   route,
 }: {
@@ -104,7 +77,6 @@ function PostWelcomeSelection({
 
   const navigation = useNavigation();
   const { t } = useTranslation();
-  const [selectedOption, setSelectedOption] = useState<DataType | null>(null);
 
   const setupLedger = useCallback(() => {
     navigation.navigate(ScreenName.OnboardingDeviceSelection);
@@ -115,118 +87,83 @@ function PostWelcomeSelection({
   }, [navigation]);
 
   const exploreLedger = useCallback(() => {
+    dispatch(setHasOrderedNano(!!userHasDevice));
     navigation.navigate(ScreenName.OnboardingModalDiscoverLive);
-  }, [navigation]);
+  }, [navigation, dispatch, userHasDevice]);
 
   const syncCryptos = useCallback(() => {
     navigation.navigate(ScreenName.OnboardingImportAccounts);
   }, [navigation]);
 
-  const pressExplore = useCallback(
-    (data: DataType) => {
-      dispatch(setHasOrderedNano(!!userHasDevice));
-
-      setSelectedOption(data);
-    },
-    [dispatch, setSelectedOption, userHasDevice],
-  );
-
   return (
-    <Flex flex={1} bg="background.main">
+    <SyncOnboardingView hasBackButton>
       <TrackScreen
         category="Onboarding"
         name={userHasDevice ? "Choice With Device" : "Choice No Device"}
       />
-      <OnboardingView hasBackButton>
-        <Text variant="h4" fontWeight="semiBold" mb={2}>
-          {t("onboarding.postWelcomeStep.title")}
-        </Text>
-        <Text variant="large" fontWeight="medium" color="neutral.c70" mb={9}>
-          {t(
-            userHasDevice
-              ? "onboarding.postWelcomeStep.subtitle_yes"
-              : "onboarding.postWelcomeStep.subtitle_no",
-          )}
-        </Text>
-        <StyledStatusBar barStyle="dark-content" />
-        {userHasDevice && (
-          <PostWelcomeDiscoverCard
-            title={t("onboarding.postWelcomeStep.setupLedger.title")}
-            subTitle={t("onboarding.postWelcomeStep.setupLedger.subtitle")}
-            event="banner_clicked"
-            eventProperties={{
-              banner: "Setup my Ledger",
-            }}
-            testID={`Onboarding PostWelcome - Selection|SetupLedger`}
-            selectedOption={selectedOption}
-            onPress={setSelectedOption}
-            onValidate={setupLedger}
-            imageSource={setupLedgerImg}
-          />
+      <TrackScreen category="Onboarding" name="SelectDevice" />
+      <Text variant="h4" fontWeight="semiBold" mb={3}>
+        {t("onboarding.postWelcomeStep.title")}
+      </Text>
+      <Text variant="large" color="neutral.c70" mb={8}>
+        {t(
+          userHasDevice
+            ? "onboarding.postWelcomeStep.subtitle_yes"
+            : "onboarding.postWelcomeStep.subtitle_no",
         )}
+      </Text>
+      <StyledStatusBar barStyle="dark-content" />
+      {userHasDevice && (
         <PostWelcomeDiscoverCard
-          title={t("onboarding.postWelcomeStep.discoverLedger.title")}
-          subTitle={t("onboarding.postWelcomeStep.discoverLedger.subtitle")}
+          title={t("onboarding.postWelcomeStep.setupLedger.title")}
+          subTitle={t("onboarding.postWelcomeStep.setupLedger.subtitle")}
           event="banner_clicked"
           eventProperties={{
-            banner: "Explore LL",
+            banner: "Setup my Ledger",
           }}
-          testID={`Onboarding PostWelcome - Selection|ExploreLedger`}
-          selectedOption={selectedOption}
-          onPress={pressExplore}
-          onValidate={exploreLedger}
-          imageSource={discoverLiveImg}
+          testID={`Onboarding PostWelcome - Selection|SetupLedger`}
+          onPress={setupLedger}
+          imageSource={setupLedgerImg}
         />
-        {userHasDevice && (
-          <PostWelcomeDiscoverCard
-            title={t("onboarding.postWelcomeStep.desktopSync.title")}
-            subTitle={t("onboarding.postWelcomeStep.desktopSync.subtitle")}
-            event="banner_clicked"
-            eventProperties={{
-              banner: "Sync Cryptos",
-            }}
-            testID={`Onboarding PostWelcome - Selection|SyncCryptos`}
-            selectedOption={selectedOption}
-            onPress={setSelectedOption}
-            onValidate={syncCryptos}
-            imageSource={syncCryptoImg}
-          />
-        )}
-        {!userHasDevice && (
-          <PostWelcomeDiscoverCard
-            title={t("onboarding.postWelcomeStep.buyNano.title")}
-            subTitle={t("onboarding.postWelcomeStep.buyNano.subtitle")}
-            event="banner_clicked"
-            eventProperties={{
-              banner: "Buy a Nano X",
-            }}
-            testID={`Onboarding PostWelcome - Selection|BuyNano`}
-            selectedOption={selectedOption}
-            onPress={setSelectedOption}
-            onValidate={buyLedger}
-            imageSource={buyNanoImg}
-          />
-        )}
-        <TrackScreen category="Onboarding" name="SelectDevice" />
-      </OnboardingView>
-      {selectedOption && selectedOption.onValidate ? (
-        <Button
-          type="main"
-          outline={false}
-          event="button_clicked"
+      )}
+      <PostWelcomeDiscoverCard
+        title={t("onboarding.postWelcomeStep.discoverLedger.title")}
+        subTitle={t("onboarding.postWelcomeStep.discoverLedger.subtitle")}
+        event="banner_clicked"
+        eventProperties={{
+          banner: "Explore LL",
+        }}
+        testID={`Onboarding PostWelcome - Selection|ExploreLedger`}
+        onPress={exploreLedger}
+        imageSource={discoverLiveImg}
+      />
+      {userHasDevice && (
+        <PostWelcomeDiscoverCard
+          title={t("onboarding.postWelcomeStep.desktopSync.title")}
+          subTitle={t("onboarding.postWelcomeStep.desktopSync.subtitle")}
+          event="banner_clicked"
           eventProperties={{
-            button: "Continue",
-            banner: selectedOption?.banner,
+            banner: "Sync Cryptos",
           }}
-          onPress={selectedOption?.onValidate}
-          size="large"
-          m={6}
-          mb={8}
-        >
-          {t("postBuyDeviceSetupNanoWall.continue")}
-        </Button>
-      ) : null}
-    </Flex>
+          testID={`Onboarding PostWelcome - Selection|SyncCryptos`}
+          onPress={syncCryptos}
+          imageSource={syncCryptoImg}
+        />
+      )}
+      {!userHasDevice && (
+        <PostWelcomeDiscoverCard
+          title={t("onboarding.postWelcomeStep.buyNano.title")}
+          subTitle={t("onboarding.postWelcomeStep.buyNano.subtitle")}
+          event="banner_clicked"
+          eventProperties={{
+            banner: "Buy a Nano X",
+          }}
+          testID={`Onboarding PostWelcome - Selection|BuyNano`}
+          onPress={buyLedger}
+          imageSource={buyNanoImg}
+        />
+      )}
+    </SyncOnboardingView>
   );
 }
 

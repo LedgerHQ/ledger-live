@@ -1,12 +1,8 @@
 import React, { useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { useTheme } from "styled-components/native";
-import { StackActions, useNavigation } from "@react-navigation/native";
+import { useNavigation } from "@react-navigation/native";
 import { getDeviceModel } from "@ledgerhq/devices/index";
-import { Flex, ScrollListContainer, Text } from "@ledgerhq/native-ui";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { TouchableOpacity } from "react-native-gesture-handler";
-import { ArrowLeftMedium, HelpMedium } from "@ledgerhq/native-ui/assets/icons";
+import { Text } from "@ledgerhq/native-ui";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 
@@ -18,6 +14,7 @@ import { ScreenName, NavigatorName } from "../../../const";
 import DiscoverCard from "../../Discover/DiscoverCard";
 import Illustration from "../../../images/illustration/Illustration";
 import setupLedgerImg from "../../../images/illustration/Shared/_SetupLedger.png";
+import SyncOnboardingView from "../../SyncOnboarding/SyncOnboardingView";
 
 const nanoX = {
   SvgDevice: nanoXSvg,
@@ -43,7 +40,6 @@ const nanoFTS = {
 function OnboardingStepDeviceSelection() {
   const navigation = useNavigation();
   const { t } = useTranslation();
-  const { colors } = useTheme();
   const syncOnboarding = useFeature("syncOnboarding");
 
   const devices = useMemo(() => {
@@ -55,14 +51,6 @@ function OnboardingStepDeviceSelection() {
 
   const getProductName = (modelId: DeviceModelId) =>
     getDeviceModel(modelId)?.productName || modelId;
-
-  const handleBack = () => {
-    navigation.dispatch(StackActions.popToTop());
-  };
-
-  const handleHelp = () => {
-    // TODO
-  };
 
   const next = (deviceModelId: DeviceModelId) => {
     // Add NanoX.id, NanoSP.id etc, to the array when supported
@@ -108,63 +96,39 @@ function OnboardingStepDeviceSelection() {
   };
 
   return (
-    <SafeAreaView
-      style={[{ flex: 1 }, { backgroundColor: colors.background.main }]}
-    >
-      <Flex
-        px={6}
-        pt={8}
-        mb={7}
-        flexDirection="row"
-        justifyContent="space-between"
-      >
-        <Flex>
-          <TouchableOpacity onPress={handleBack}>
-            <ArrowLeftMedium size={24} />
-          </TouchableOpacity>
-        </Flex>
-        <Flex>
-          <TouchableOpacity onPress={handleHelp}>
-            <HelpMedium size={24} />
-          </TouchableOpacity>
-        </Flex>
-      </Flex>
-      <ScrollListContainer flex={1} px={6} bg="background.main">
-        <Flex flex={1}>
-          <Text variant="h4" mb={3} fontWeight="semiBold">
-            {t("syncOnboarding.deviceSelection.title")}
-          </Text>
-          <Text variant="large" color="neutral.c70" mb={8}>
-            {t("syncOnboarding.deviceSelection.subtitle")}
-          </Text>
-          {devices.map(device => (
-            <DiscoverCard
-              key={device.id}
-              event="Onboarding Device - Selection"
-              eventProperties={{ id: device.id }}
-              testID={`Onboarding Device - Selection|${device.id}`}
-              title={getProductName(device.id)}
-              titleProps={{ variant: "h4", fontSize: 16 }}
-              subTitle={t("syncOnboarding.deviceSelection.brand")}
-              subtitleFirst
-              onPress={() => next(device.id)}
-              labelBadge={t("syncOnboarding.deviceSelection.setupTime", {
-                time: device.setupTime / 60000,
-              })}
-              cardProps={{ mx: 0, mb: 6 }}
-              Image={
-                <Illustration
-                  size={130}
-                  darkSource={setupLedgerImg}
-                  lightSource={setupLedgerImg}
-                />
-              }
-            />
-          ))}
-        </Flex>
-      </ScrollListContainer>
+    <SyncOnboardingView hasBackButton>
       <TrackScreen category="Onboarding" name="SelectDevice" />
-    </SafeAreaView>
+      <Text variant="h4" mb={3} fontWeight="semiBold">
+        {t("syncOnboarding.deviceSelection.title")}
+      </Text>
+      <Text variant="large" color="neutral.c70" mb={8}>
+        {t("syncOnboarding.deviceSelection.subtitle")}
+      </Text>
+      {devices.map(device => (
+        <DiscoverCard
+          key={device.id}
+          event="Onboarding Device - Selection"
+          eventProperties={{ id: device.id }}
+          testID={`Onboarding Device - Selection|${device.id}`}
+          title={getProductName(device.id)}
+          titleProps={{ variant: "h4", fontSize: 16 }}
+          subTitle={t("syncOnboarding.deviceSelection.brand")}
+          subtitleFirst
+          onPress={() => next(device.id)}
+          labelBadge={t("syncOnboarding.deviceSelection.setupTime", {
+            time: device.setupTime / 60000,
+          })}
+          cardProps={{ mx: 0, mb: 6 }}
+          Image={
+            <Illustration
+              size={130}
+              darkSource={setupLedgerImg}
+              lightSource={setupLedgerImg}
+            />
+          }
+        />
+      ))}
+    </SyncOnboardingView>
   );
 }
 
