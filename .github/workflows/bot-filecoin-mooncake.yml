@@ -31,6 +31,7 @@ jobs:
     name: Stop self-hosted EC2 runner
     needs: [start-runner, run-bot]
     runs-on: [ledger-live, linux]
+    timeout-minutes: 5
     steps:
       - name: Stop EC2 Linux Runner
         uses: LedgerHQ/actions/ec2-linux-runner@main
