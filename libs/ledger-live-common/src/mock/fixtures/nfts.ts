@@ -344,7 +344,7 @@ export function genNFTOperation(
       rng.nextInt(0, 100000000 * rng.next() * rng.next())
   );
   const address = genAddress(superAccount.currency, rng);
-  const type = rng.next() < 0.3 ? "OUT" : "IN";
+  const type = rng.next() < 0.3 ? "NFT_OUT" : "NFT_IN";
   const divider = 2;
   const value = new BigNumber(
     Math.floor(rng.nextInt(0, 100000 * rng.next() * rng.next()) / divider)
@@ -361,9 +361,11 @@ export function genNFTOperation(
     type,
     value,
     fee: new BigNumber(Math.round(value.toNumber() * 0.01)),
-    senders: [type !== "IN" ? genAddress(superAccount.currency, rng) : address],
+    senders: [
+      type !== "NFT_IN" ? genAddress(superAccount.currency, rng) : address,
+    ],
     recipients: [
-      type === "IN" ? genAddress(superAccount.currency, rng) : address,
+      type === "NFT_IN" ? genAddress(superAccount.currency, rng) : address,
     ],
     blockHash: genHex(64, rng),
     blockHeight:

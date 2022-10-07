@@ -24,7 +24,6 @@ function orderByLastReceived(accounts: Account[], nfts: ProtoNFT[]) {
     const operations = section.data.filter(
       d => d.type === "NFT_IN" && d.contract && d.tokenId,
     );
-    console.log(operations);
     operationMapping = operationMapping.concat(operations);
   });
 

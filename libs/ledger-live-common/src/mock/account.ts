@@ -353,7 +353,6 @@ export function genAccount(
   const operationsSize = opts.operationsSize ?? rng.nextInt(1, 200);
   const swapHistorySize = opts.swapHistorySize || 0;
   const withNft = opts.withNft ?? false;
-  console.log("withNft", withNft);
   const address = genAddress(currency, rng);
   const derivationPath = runDerivationScheme(
     getDerivationScheme({
@@ -501,26 +500,27 @@ export function genAccount(
     }, []);
 
   if (withNft) {
-    account.operations = account.operations.concat(
-      Array(account.nfts?.length - 1)
-        .fill(null)
-        .reduce((ops: Operation[], index: number) => {
-          if (account.nfts && account.nfts[index]) {
-            console.log("coucou", index);
-            const { tokenId, contract, standard } = account.nfts[index];
-            const op = genNFTOperation(
-              account,
-              account,
-              ops,
-              rng,
-              contract,
-              standard,
-              tokenId
-            );
-            return ops.concat(op);
-          }
-        }, [])
-    );
+    const nftOperations = Array(5)
+      .fill(null)
+      .reduce((ops: Operation[]) => {
+        const index = Math.floor(Math.random() * (5 - 0 + 1) + 0);
+
+        if (account.nfts && account.nfts[index]) {
+          const { tokenId, contract, standard } = account.nfts[index];
+          const op = genNFTOperation(
+            account,
+            account,
+            ops,
+            rng,
+            contract,
+            standard,
+            tokenId
+          );
+          return ops.concat(op);
+        }
+      }, []);
+
+    account.operations = account.operations.concat(nftOperations);
   }
 
   account.creationDate =
