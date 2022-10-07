@@ -30,6 +30,7 @@ import { BitcoinAccount } from "../families/bitcoin/types";
 import { AlgorandAccount } from "../families/algorand/types";
 import { PolkadotAccount } from "../families/polkadot/types";
 import { TezosAccount } from "../families/tezos/types";
+import { createFixtureNFT, genNFTOperation } from "./fixtures/nfts";
 
 function ensureNoNegative(operations) {
   let total = new BigNumber(0);
@@ -299,6 +300,7 @@ type GenAccountOptions = {
   currency?: CryptoCurrency;
   subAccountsCount?: number;
   swapHistorySize?: number;
+  withNft?: boolean;
 };
 
 export function genTokenAccount(
@@ -350,6 +352,8 @@ export function genAccount(
   const currency = opts.currency || rng.nextArrayItem(currencies);
   const operationsSize = opts.operationsSize ?? rng.nextInt(1, 200);
   const swapHistorySize = opts.swapHistorySize || 0;
+  const withNft = opts.withNft ?? false;
+  console.log("withNft", withNft);
   const address = genAddress(currency, rng);
   const derivationPath = runDerivationScheme(
     getDerivationScheme({
@@ -402,6 +406,11 @@ export function genAccount(
         toAmount: new BigNumber("2000"),
       })),
     balanceHistoryCache: emptyHistoryCache,
+    nfts: withNft
+      ? Array(10)
+          .fill(null)
+          .map(() => createFixtureNFT())
+      : [],
   };
 
   if (
@@ -490,6 +499,30 @@ export function genAccount(
       const op = genOperation(account, account, ops, rng);
       return ops.concat(op);
     }, []);
+
+  if (withNft) {
+    account.operations = account.operations.concat(
+      Array(account.nfts?.length - 1)
+        .fill(null)
+        .reduce((ops: Operation[], index: number) => {
+          if (account.nfts && account.nfts[index]) {
+            console.log("coucou", index);
+            const { tokenId, contract, standard } = account.nfts[index];
+            const op = genNFTOperation(
+              account,
+              account,
+              ops,
+              rng,
+              contract,
+              standard,
+              tokenId
+            );
+            return ops.concat(op);
+          }
+        }, [])
+    );
+  }
+
   account.creationDate =
     account.operations.length > 0
       ? account.operations[account.operations.length - 1].date
