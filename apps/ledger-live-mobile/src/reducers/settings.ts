@@ -22,6 +22,7 @@ import type { State } from ".";
 // eslint-disable-next-line import/no-cycle
 import { SLIDES } from "../components/Carousel/shared";
 import { getDefaultLanguageLocale, getDefaultLocale } from "../languages";
+import { ScreenName } from "../const";
 
 const bitcoin = getCryptoCurrencyById("bitcoin");
 const ethereum = getCryptoCurrencyById("ethereum");
@@ -103,6 +104,7 @@ export type SettingsState = {
     announcement: boolean;
     price: boolean;
   };
+  walletTabNavigatorLastVisitedTab: string;
 };
 export const INITIAL_STATE: SettingsState = {
   counterValue: "USD",
@@ -165,6 +167,7 @@ export const INITIAL_STATE: SettingsState = {
     announcement: false,
     price: false,
   },
+  walletTabNavigatorLastVisitedTab: ScreenName.Portfolio,
 };
 
 const pairHash = (from, to) => `${from.ticker}_${to.ticker}`;
@@ -420,6 +423,13 @@ const handlers: Record<string, any> = {
     ...state,
     notifications: { ...state.notifications, ...payload },
   }),
+  WALLET_TAB_NAVIGATOR_LAST_VISITED_TAB: (
+    state: SettingsState,
+    { payload }: { payload: string },
+  ) => ({
+    ...state,
+    walletTabNavigatorLastVisitedTab: payload,
+  }),
 };
 
 const storeSelector = (state: any): SettingsState => state.settings;
@@ -610,3 +620,5 @@ export const firstConnectionHasDeviceSelector = (state: State) =>
   state.settings.firstConnectionHasDevice;
 export const notificationsSelector = (state: State) =>
   state.settings.notifications;
+export const walletTabNavigatorLastVisitedTabSelector = (state: State) =>
+  state.settings.walletTabNavigatorLastVisitedTab;

@@ -219,6 +219,11 @@ export const setNotifications = (payload: any) => ({
   type: "SET_NOTIFICATIONS",
   payload,
 });
+export const setWalletTabNavigatorLastVisitedTab = (payload: string) => ({
+  type: "WALLET_TAB_NAVIGATOR_LAST_VISITED_TAB",
+  payload,
+});
+
 type PortfolioRangeOption = {
   key: PortfolioRange;
   value: string;

@@ -46,6 +46,7 @@ export function NftList({ data }: Props) {
       renderItem={renderItem}
       keyExtractor={keyExtractor}
       showsVerticalScrollIndicator={false}
+      initialNumToRender={6}
     />
   );
 }
