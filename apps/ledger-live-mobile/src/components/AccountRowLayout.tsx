@@ -126,7 +126,7 @@ const AccountRowLayout = ({
               <CurrencyUnitValue showCode unit={currencyUnit} value={balance} />
             </Text>
           </Flex>
-          <Icons.DroprightMedium size={24} />
+          <Icons.ChevronRightMedium size={24} />
         </Flex>
       </Flex>
       {bottomLink && (

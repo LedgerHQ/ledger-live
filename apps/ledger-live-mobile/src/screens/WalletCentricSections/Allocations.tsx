@@ -121,7 +121,7 @@ const Allocations = () => {
               ) : null}
             </Flex>
           </Flex>
-          <Icons.DroprightMedium size={24} />
+          <Icons.ChevronRightMedium size={24} />
         </Flex>
       </TouchableOpacity>
     </Flex>

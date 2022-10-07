@@ -1,5 +1,10 @@
 import React from "react";
-import { Image, ImageProps, ImageSourcePropType } from "react-native";
+import {
+  Image,
+  ImageProps,
+  ImageSourcePropType,
+  I18nManager,
+} from "react-native";
 import { useTheme } from "styled-components/native";
 
 const Illustration = ({
@@ -23,7 +28,11 @@ const Illustration = ({
       {...othersProps}
       source={theme === "dark" ? darkSource : lightSource}
       resizeMode="contain"
-      style={{ width: width || size, height: height || size }}
+      style={{
+        width: width || size,
+        height: height || size,
+        transform: I18nManager.isRTL ? [{ scaleX: -1 }] : undefined,
+      }}
     />
   );
 };

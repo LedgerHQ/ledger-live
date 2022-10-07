@@ -3,7 +3,7 @@ import { StyleSheet, FlatList } from "react-native";
 import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { Observable } from "rxjs";
-import { InfiniteLoader } from "@ledgerhq/native-ui";
+import { InfiniteLoader, Flex } from "@ledgerhq/native-ui";
 import { getInfosForServiceUuid, DeviceModelId } from "@ledgerhq/devices";
 import { DescriptorEvent } from "@ledgerhq/hw-transport";
 import logger from "../../logger";
@@ -88,21 +88,15 @@ export default function Scanning({ onTimeout, onError, onSelect }: Props) {
   return (
     <>
       <TrackScreen category="PairDevices" name="Scanning" />
-      <FlatList
-        style={styles.list}
-        data={devices}
-        renderItem={renderItem}
-        keyExtractor={item => item.id}
-        ListHeaderComponent={ScanningHeader}
-        ListEmptyComponent={<InfiniteLoader size={58} />}
-      />
+      <Flex flex={1} pl={6} pr={6}>
+        <FlatList
+          data={devices}
+          renderItem={renderItem}
+          keyExtractor={item => item.id}
+          ListHeaderComponent={ScanningHeader}
+          ListEmptyComponent={<InfiniteLoader size={58} />}
+        />
+      </Flex>
     </>
   );
 }
-
-const styles = StyleSheet.create({
-  list: {
-    flex: 1,
-    paddingHorizontal: 16,
-  },
-});

@@ -2,7 +2,7 @@ import React from "react";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { Flex, Text } from "@ledgerhq/native-ui";
 import {
-  DroprightMedium,
+  ChevronRightMedium,
   NanoFoldedMedium,
 } from "@ledgerhq/native-ui/assets/icons";
 import { TouchableOpacity } from "react-native-gesture-handler";
@@ -57,7 +57,7 @@ const BleDeviceItem = ({ deviceMeta, onSelect }: Props) => {
           <Text flex={1} ml={4} variant="large" fontWeight="semiBold">
             {deviceName}
           </Text>
-          <DroprightMedium size={20} color="primary.c80" />
+          <ChevronRightMedium size={20} color="primary.c80" />
         </Flex>
       </TouchableOpacity>
     </Flex>

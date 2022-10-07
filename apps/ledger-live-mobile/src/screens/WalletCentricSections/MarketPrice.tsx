@@ -83,7 +83,7 @@ const MarketPrice = ({
               value={selectedCoinData?.priceChangePercentage || 0}
             />
           </Flex>
-          <Icons.DroprightMedium size={24} />
+          <Icons.ChevronRightMedium size={24} />
         </Flex>
       </Touchable>
     </Flex>

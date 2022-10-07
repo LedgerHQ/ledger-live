@@ -240,7 +240,7 @@ function Carousel({
         scrollEventThrottle={200}
         contentContainerStyle={{
           width: `${fullWidth}%`,
-          flexDirection: I18nManager.isRTL ? "row-reverse" : "row",
+          flexDirection: I18nManager.isRTL && Platform.OS !== "ios" ? "row-reverse" : "row",
         }}
         decelerationRate="fast"
         onTouchStart={scrollOnSidePress ? onStartTap : undefined}
