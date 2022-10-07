@@ -100,7 +100,6 @@ class Bitcoin extends Base {
     return toOutputScriptTemporary(address, this.network);
   }
 
-  // eslint-disable-next-line class-methods-use-this
   validateAddress(address: string): boolean {
     try {
       // This prefix check is to avoid returning false in cases where a valid base58 address also happens

@@ -19,7 +19,6 @@ class Litecoin extends Base {
     return toOutputScript(address, this.network);
   }
 
-  // eslint-disable-next-line class-methods-use-this
   validateAddress(address: string): boolean {
     // bech32 address
     if (address.substring(0, 3) === "ltc") {

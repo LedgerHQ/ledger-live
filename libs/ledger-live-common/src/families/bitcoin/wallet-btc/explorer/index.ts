@@ -1,9 +1,9 @@
-import type { AxiosRequestConfig } from "axios";
+import type { AxiosRequestConfig, AxiosResponse } from "axios";
 import axios, { AxiosInstance } from "axios";
 import axiosRetry, { isNetworkOrIdempotentRequestError } from "axios-retry";
 import BigNumber from "bignumber.js";
 import genericPool, { Pool } from "generic-pool";
-
+import https from "https";
 import JSONBigNumber from "@ledgerhq/json-bignumber";
 import { Address, Block, TX } from "../storage/types";
 import { IExplorer } from "./types";
@@ -47,8 +47,6 @@ class BitcoinLikeExplorer implements IExplorer {
     if (
       !(typeof navigator !== "undefined" && navigator.product === "ReactNative")
     ) {
-      // eslint-disable-next-line global-require,@typescript-eslint/no-var-requires
-      const https = require("https");
       // uses max 20 keep alive request in parallel
       clientParams.httpsAgent = new https.Agent({
         keepAlive: true,
@@ -87,7 +85,7 @@ class BitcoinLikeExplorer implements IExplorer {
     client.interceptors.response.use(responseInterceptor, errorInterceptor);
   }
 
-  async broadcast(tx: string): Promise<any> {
+  async broadcast(tx: string): Promise<AxiosResponse<any, any>> {
     const url = "/transactions/send";
     const client = await this.client.acquire();
     const res = await client.client.post(url, { tx });
@@ -146,7 +144,7 @@ class BitcoinLikeExplorer implements IExplorer {
     return block;
   }
 
-  async getFees(): Promise<any> {
+  async getFees(): Promise<{ [key: string]: number }> {
     const url = `/fees`;
 
     // TODO add a test for failure (at the sync level)

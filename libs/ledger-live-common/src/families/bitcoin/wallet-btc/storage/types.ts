@@ -8,8 +8,7 @@ export interface TX {
   address: string;
   inputs: Input[];
   outputs: Output[];
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  fees?: any;
+  fees?: number;
 }
 
 export interface Input {
