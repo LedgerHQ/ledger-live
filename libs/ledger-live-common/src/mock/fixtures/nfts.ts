@@ -306,17 +306,50 @@ const NFTs = [
   },
 ];
 
+const NFTs_POLYGON = [
+  {
+    id: "js:2:ethereum:0xB98d10d9f6d07bA283bFD21B2dFEc050f9Ae282A:+0x68a0B29526f342de944BBd6bF61D9c644B96b771+7",
+    tokenId: "7",
+    amount: "1",
+    collection: {
+      contract: "0x68a0B29526f342de944BBd6bF61D9c644B96b771",
+      standard: "ERC1155",
+    },
+  },
+
+  {
+    id: "js:2:ethereum:0xB98d10d9f6d07bA283bFD21B2dFEc050f9Ae282A:+0x68a0b29526f342de944bbd6bf61d9c644b96b771+4",
+    tokenId: "4",
+    amount: "1",
+    collection: {
+      contract: "0x68a0b29526f342de944bbd6bf61d9c644b96b771",
+      standard: "ERC1155",
+    },
+  },
+
+  {
+    id: "js:2:ethereum:0xB98d10d9f6d07bA283bFD21B2dFEc050f9Ae282A:+0x68a0b29526f342de944bbd6bf61d9c644b96b771+3",
+    tokenId: "3",
+    amount: "1",
+    collection: {
+      contract: "0x68a0b29526f342de944bbd6bf61d9c644b96b771",
+      standard: "ERC1155",
+    },
+  },
+];
 export function createFixtureNFT(
   currency: CryptoCurrency = defaultEthCryptoFamily
 ): ProtoNFT {
-  const index = Math.floor(Math.random() * NFTs.length);
+  console.log(currency.id);
+  const nfts = currency.id === "ethereum" ? NFTs : NFTs_POLYGON;
+  const index = Math.floor(Math.random() * nfts.length);
 
   return {
-    id: NFTs[index].id,
-    tokenId: NFTs[index].tokenId,
+    id: nfts[index].id,
+    tokenId: nfts[index].tokenId,
     amount: new BigNumber(0),
-    contract: NFTs[index].collection.contract,
-    standard: NFTs[index].collection.standard as NFTStandard,
+    contract: nfts[index].collection.contract,
+    standard: nfts[index].collection.standard as NFTStandard,
     currencyId: currency.id,
     metadata: undefined,
   };

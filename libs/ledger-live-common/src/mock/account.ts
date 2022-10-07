@@ -408,7 +408,7 @@ export function genAccount(
     nfts: withNft
       ? Array(10)
           .fill(null)
-          .map(() => createFixtureNFT())
+          .map(() => createFixtureNFT(currency))
       : [],
   };
 
