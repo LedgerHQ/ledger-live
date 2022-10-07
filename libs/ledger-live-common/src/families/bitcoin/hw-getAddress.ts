@@ -1,7 +1,5 @@
 import Btc, { AddressFormat } from "@ledgerhq/hw-app-btc";
 import { log } from "@ledgerhq/logs";
-import { BtcUnmatchedApp, UpdateYourApp } from "@ledgerhq/errors";
-import getBitcoinLikeInfo from "../../hw/getBitcoinLikeInfo";
 import { getAddressFormatDerivationMode } from "../../derivation";
 import type {
   Resolver,
@@ -12,20 +10,10 @@ import { UnsupportedDerivation } from "../../errors";
 import Transport from "@ledgerhq/hw-transport";
 import BtcOld from "@ledgerhq/hw-app-btc/BtcOld";
 
-const oldP2SH = {
-  digibyte: 5,
-};
-
 export const getAddressWithBtcInstance = async (
   transport: Transport,
   btc: Btc | BtcOld,
-  {
-    currency,
-    path,
-    verify,
-    derivationMode,
-    forceFormat,
-  }: GetAddressOptions
+  { currency, path, verify, derivationMode, forceFormat }: GetAddressOptions
 ): Promise<Result> => {
   const format = forceFormat || getAddressFormatDerivationMode(derivationMode);
   let result;

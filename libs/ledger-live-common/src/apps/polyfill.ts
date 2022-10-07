@@ -9,9 +9,15 @@ const directDep = {};
 const reverseDep = {};
 
 // whitelist dependencies
-export const whitelistDependencies = ["Decred", "Decred Test", "Zcash"];
+export const whitelistDependencies = [
+  "Decred",
+  "Decred Test",
+  "Bitcoin",
+  "Bitcoin Test",
+  "Zcash",
+];
 
-export function declareDep(name: string, dep: string) {
+export function declareDep(name: string, dep: string): void {
   if (whitelistDependencies.includes(name)) {
     return;
   }
@@ -25,7 +31,11 @@ listCryptoCurrencies(true, true).forEach((a) => {
   if (!dep || !dep.managerAppName) return; // no dep
 
   if (dep.managerAppName === a.managerAppName) return; // same app
-
+  if (a.family === "bitcoin") {
+    // all altcoin in bitcoin family currencies depend on bitcoin legacy app since nano app 2.1.0
+    declareDep(a.managerAppName, "Bitcoin Legacy");
+    return;
+  }
   declareDep(a.managerAppName, dep.managerAppName);
 
   if (!a.isTestnetFor) {
