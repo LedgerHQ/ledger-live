@@ -2,7 +2,7 @@
 import type {
   RatesReducerState,
   SwapSelectorStateType,
-} from "@ledgerhq/live-common/exchange/swap/hooks/index";
+} from "@ledgerhq/live-common/exchange/swap/types";
 import React from "react";
 import Rates from "../Rates";
 import ProvidersSection from "./ProvidersSection";

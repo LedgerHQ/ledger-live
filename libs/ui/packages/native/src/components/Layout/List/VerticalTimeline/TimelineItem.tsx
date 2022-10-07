@@ -1,11 +1,6 @@
-import React, { useCallback, useState } from "react";
-import { LayoutChangeEvent } from "react-native";
-import Animated, {
-  Easing,
-  useAnimatedStyle,
-  useDerivedValue,
-  withTiming,
-} from "react-native-reanimated";
+import React, { useCallback } from "react";
+import { Pressable } from "react-native";
+import Animated, { useAnimatedStyle, useSharedValue, withTiming } from "react-native-reanimated";
 import { Theme } from "src/styles/theme";
 import styled from "styled-components/native";
 
@@ -19,6 +14,8 @@ export type Props = {
   formatEstimatedTime?: (_: number) => string;
   isFirstItem?: boolean;
   isLastItem?: boolean;
+  setActiveIndex?: (_: number) => void;
+  index: number;
 };
 
 const getContainerBackground = (theme: Theme, status: ItemStatus, isLastItem?: boolean) => {
@@ -58,73 +55,80 @@ export default function TimelineItem({
   formatEstimatedTime,
   isFirstItem,
   isLastItem,
+  setActiveIndex,
+  index,
 }: Props) {
-  const [height, setHeight] = useState(0);
-
-  const transition = useDerivedValue(() => {
-    return item.status === "active"
-      ? withTiming(1, { duration: 300, easing: Easing.out(Easing.linear) })
-      : withTiming(0, { duration: 300, easing: Easing.in(Easing.linear) });
-  }, [item.status]);
-
-  const handleLayoutChange = useCallback(
-    (event: LayoutChangeEvent) => {
-      if (height === 0 && event?.nativeEvent?.layout?.height > 0) {
-        setHeight(event.nativeEvent.layout.height);
-      }
+  /**
+   * Having an initial value of null will prevent having "height: 0" before the
+   * initial call of onLayout.
+   * The component will just layout normally without an animation which is ok
+   * since this will happen only on the first step.
+   * Without this default behavior, there are issues on iOS where sometimes the
+   * height is stuck at 0.
+   */
+  const sharedHeight = useSharedValue<number | null>(null);
+  const handleLayout = useCallback(
+    ({ nativeEvent: { layout } }) => {
+      sharedHeight.value = withTiming(layout.height, { duration: 300 });
     },
-    [setHeight, height],
+    [sharedHeight],
   );
 
-  const style = useAnimatedStyle(
+  const animatedStyle = useAnimatedStyle(
     () => ({
-      height: transition.value * height + 1,
-      overflow: "hidden",
+      /**
+       * If it's null the component still renders normally at its full height
+       * without its height being derived from an animated value.
+       */
+      height: sharedHeight.value ?? undefined,
     }),
-    [height, transition.value],
+    [],
   );
+
+  const handlePress = useCallback(() => {
+    setActiveIndex && setActiveIndex(index);
+  }, [setActiveIndex, index]);
 
   return (
-    <Flex flexDirection="row">
-      <TimelineIndicator
-        status={item.status}
-        isFirstItem={isFirstItem}
-        isLastItem={isLastItem}
-        mr={4}
-      />
-      <Container status={item.status} isLastItem={isLastItem} mb={4}>
-        <Flex flexDirection="row" justifyContent="space-between">
-          <Text
-            variant="body"
-            color={
-              item.status === "inactive"
-                ? "neutral.c80"
-                : isLastItem
-                ? "success.c100"
-                : "primary.c90"
-            }
-          >
-            {item.title}
-          </Text>
-          {item?.estimatedTime && item.status === "active" && (
-            <Tag>
-              {formatEstimatedTime
-                ? formatEstimatedTime(item.estimatedTime)
-                : `${item.estimatedTime / 60} min`}
-            </Tag>
-          )}
-        </Flex>
-        <Animated.View style={style}>
-          {item.renderBody && (
-            <Flex position="relative">
-              <Flex onLayout={handleLayoutChange} pt={6} position="absolute" opacity={0}>
-                {item.renderBody(false)}
-              </Flex>
-              <Flex pt={6}>{item.renderBody(item.status === "active")}</Flex>
-            </Flex>
-          )}
-        </Animated.View>
-      </Container>
-    </Flex>
+    <Pressable onPress={handlePress}>
+      <Flex flexDirection="row">
+        <TimelineIndicator
+          status={item.status}
+          isFirstItem={isFirstItem}
+          isLastItem={isLastItem}
+          mr={4}
+        />
+        <Container status={item.status} isLastItem={isLastItem} mb={4}>
+          <Flex flexDirection="row" justifyContent="space-between">
+            <Text
+              variant="body"
+              color={
+                item.status === "inactive"
+                  ? "neutral.c80"
+                  : isLastItem
+                  ? "success.c100"
+                  : "primary.c90"
+              }
+            >
+              {item.title}
+            </Text>
+            {item?.estimatedTime && item.status === "active" && (
+              <Tag>
+                {formatEstimatedTime
+                  ? formatEstimatedTime(item.estimatedTime)
+                  : `${item.estimatedTime / 60} min`}
+              </Tag>
+            )}
+          </Flex>
+          <Animated.ScrollView style={animatedStyle}>
+            <Animated.View onLayout={handleLayout}>
+              {item.renderBody && item.status === "active" ? (
+                <Flex pt={6}>{item.renderBody(true)}</Flex>
+              ) : null}
+            </Animated.View>
+          </Animated.ScrollView>
+        </Container>
+      </Flex>
+    </Pressable>
   );
 }

@@ -32,8 +32,8 @@ import GraphCardContainer from "../GraphCardContainer";
 import Header from "../Header";
 import TrackScreen from "../../../analytics/TrackScreen";
 import { NavigatorName, ScreenName } from "../../../const";
+import { useProviders } from "../../Swap/Form/index";
 import MigrateAccountsBanner from "../../MigrateAccounts/Banner";
-import { useProviders } from "../../Swap/SwapEntry";
 import CheckLanguageAvailability from "../../../components/CheckLanguageAvailability";
 import CheckTermOfUseUpdate from "../../../components/CheckTermOfUseUpdate";
 import TabBarSafeAreaView, {

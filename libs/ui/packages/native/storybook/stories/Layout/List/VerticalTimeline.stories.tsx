@@ -1,80 +1,109 @@
-import React, { useEffect, useMemo, useState } from "react";
-import { select } from "@storybook/addon-knobs";
-
+import React, { useCallback, useEffect, useState } from "react";
+import { ScrollView, View } from "react-native";
 import { storiesOf } from "../../storiesOf";
-import { Flex, VerticalTimeline, Text } from "../../../../src";
-import { Item } from "../../../../src/components/Layout/List/VerticalTimeline";
+import { Flex, VerticalTimeline, Text, Button, Switch, Divider } from "../../../../src";
+
+const { ItemStatus } = VerticalTimeline;
+
+const defaultItems = [
+  {
+    status: ItemStatus.active,
+    title: "Nano paired",
+  },
+  {
+    status: ItemStatus.inactive,
+    title: "Set your PIN",
+    estimatedTime: 120,
+    renderBody: () => (
+      <Text>
+        {`Your PIN can be 4 to 8 digits long. Anyone with access to your Nano and to your PIN can also access all your crypto and NFT assets.`}
+      </Text>
+    ),
+  },
+  {
+    status: ItemStatus.inactive,
+    title: "Recovery phrase",
+    estimatedTime: 300,
+    renderBody: () => (
+      <Text>
+        {`Your recovery phrase is a secret list of 24 words that backs up your private keys. Your Nano generates a unique recovery phrase. Ledger does not keep a copy of it.`}
+      </Text>
+    ),
+  },
+  {
+    status: ItemStatus.inactive,
+    title: "Software check",
+    renderBody: () => (
+      <Text>{`We'll verify whether your Nano is genuine. This should be quick and easy!`}</Text>
+    ),
+  },
+  {
+    status: ItemStatus.inactive,
+    title: "Nano is ready",
+    renderBody: () => <DynamicHeightComponent />,
+  },
+];
 
 const VerticalTimelineStory = () => {
-  const defaultItems: Item[] = useMemo(
-    () => [
-      {
-        status: "active",
-        title: "Nano paired",
-      },
-      {
-        status: "inactive",
-        title: "Set your PIN",
-        estimatedTime: 120,
-        renderBody: () => (
-          <Text>
-            {`Your PIN can be 4 to 8 digits long. Anyone with access to your Nano and to your PIN can also access all your crypto and NFT assets.`}
-          </Text>
-        ),
-      },
-      {
-        status: "inactive",
-        title: "Recovery phrase",
-        estimatedTime: 300,
-        renderBody: () => (
-          <Text>
-            {`Your recovery phrase is a secret list of 24 words that backs up your private keys. Your Nano generates a unique recovery phrase. Ledger does not keep a copy of it.`}
-          </Text>
-        ),
-      },
-      {
-        status: "inactive",
-        title: "Software check",
-        renderBody: () => (
-          <Text>{`We'll verify whether your Nano is genuine. This should be quick and easy!`}</Text>
-        ),
-      },
-      {
-        status: "inactive",
-        title: "Nano is ready",
-      },
-    ],
-    [],
-  );
-
-  const animate = select("Animate", [true, false], true);
   const [items, setItems] = useState(defaultItems);
+  const [animate, setAnimate] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(0);
 
+  const setActiveIndex = useCallback((newIndex: number) => {
+    const newItems = defaultItems.map((item, index) => {
+      if (index < newIndex) return { ...item, status: ItemStatus.completed };
+      else if (index === newIndex) return { ...item, status: ItemStatus.active };
+      else return { ...item, status: ItemStatus.inactive };
+    });
+    setCurrentIndex(newIndex);
+    setItems(newItems);
+  }, []);
+
   useEffect(() => {
-    setTimeout(() => {
-      if (!animate) {
-        return;
-      }
-      if (currentIndex === defaultItems.length) {
-        setCurrentIndex(0);
-        setItems(defaultItems);
-        return;
-      }
-      const newItems = items.concat([]);
-      newItems[currentIndex]["status"] = "completed";
-      if (currentIndex + 1 !== defaultItems.length) {
-        newItems[currentIndex + 1]["status"] = "active";
-      }
-      setCurrentIndex(currentIndex + 1);
-      setItems(newItems);
-    }, 1000);
-  }, [items, animate, currentIndex, defaultItems]);
+    let timeout: ReturnType<typeof setTimeout>;
+    if (animate) {
+      timeout = setTimeout(() => {
+        if (!animate) {
+          return;
+        }
+        if (currentIndex === defaultItems.length) {
+          setActiveIndex(0);
+        } else {
+          setActiveIndex(currentIndex + 1);
+        }
+      }, 1000);
+    }
+    return () => {
+      timeout && clearTimeout(timeout);
+    };
+    // eslint-disable-next-line
+  }, [animate, currentIndex]);
 
   return (
-    <Flex width={300}>
-      <VerticalTimeline steps={items} />
+    <Flex width={"100%"} px={30} flex={1}>
+      <ScrollView>
+        <Switch checked={animate} onChange={setAnimate} label={"Auto animate VerticalTimeline"} />
+        <Divider />
+        <VerticalTimeline steps={items} setActiveIndex={animate ? undefined : setActiveIndex} />
+      </ScrollView>
     </Flex>
+  );
+};
+
+const DynamicHeightComponent = () => {
+  const [height, setHeight] = useState(100);
+  return (
+    <View>
+      <Button
+        type="main"
+        onPress={() => {
+          setHeight(Math.random() * 300);
+        }}
+      >
+        set random size
+      </Button>
+      <View style={{ backgroundColor: "lightgreen", width: "100%", height }} />
+    </View>
   );
 };
 
