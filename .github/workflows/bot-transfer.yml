@@ -45,10 +45,6 @@ jobs:
     runs-on: ${{ needs.start-runner.outputs.label }}
     needs: [start-runner]
     steps:
-      - name: prepare runner
-        run: |
-          sudo growpart /dev/nvme0n1 1
-          sudo resize2fs /dev/nvme0n1p1
       - uses: actions/checkout@v3
       - name: Retrieving coin apps
         uses: actions/checkout@v3
