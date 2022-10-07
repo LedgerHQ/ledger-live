@@ -88,7 +88,7 @@ export default function Scanning({ onTimeout, onError, onSelect }: Props) {
   return (
     <>
       <TrackScreen category="PairDevices" name="Scanning" />
-      <Flex flex={1} pl={6} pr={6}>
+      <Flex flex={1} px={6}>
         <FlatList
           data={devices}
           renderItem={renderItem}
