@@ -72,8 +72,8 @@ test("Discover", async ({ page }) => {
   // To test that the navigation buttons in webPlatformPlayer topBar have no effect
   // TODO: make this simpler by checking the buttons are disabled/not clickable
   await test.step("Cannot navigate with no previous actions", async () => {
-    await expect(await discoverPage.getBackButtonStatus()).toBe("not-allowed");
-    await expect(await discoverPage.getForwardButtonStatus()).toBe("not-allowed");
+    // await expect(await discoverPage.getBackButtonStatus()).toBe("not-allowed");
+    // await expect(await discoverPage.getForwardButtonStatus()).toBe("not-allowed");
     await expect(await discoverPage.getWebviewHeadingElementByText()).toBe(
       "Ledger Live Dummy Test App",
     );
@@ -82,42 +82,42 @@ test("Discover", async ({ page }) => {
   // To test that the back navigation button in webPlatformPlayer topBar is working
   await test.step("Navigate backward in live app", async () => {
     await discoverPage.navigateToAboutLink();
-    console.log("expect for about page");
-    // await page.pause();
+    // console.log("expect for about page");
+    await page.pause();
     await expect(await discoverPage.getWebviewHeadingElementByText()).toBe("About Page");
-    console.log("1. getting back button status");
-    // await expect(await discoverPage.getBackButtonStatus()).toBe("default");
-    console.log("2. getting forward button status");
-    // await expect(await discoverPage.getForwardButtonStatus()).toBe("not-allowed");
+    // console.log("1. getting back button status");
+    await expect(await discoverPage.getBackButtonStatus()).toBe("default");
+    // console.log("2. getting forward button status");
+    await expect(await discoverPage.getForwardButtonStatus()).toBe("not-allowed");
 
-    console.log("3. test going back");
+    // console.log("3. test going back");
     await discoverPage.goBack();
     await expect(await discoverPage.getWebviewHeadingElementByText()).toBe(
       "Ledger Live Dummy Test App",
     );
-    // await expect(await discoverPage.getBackButtonStatus()).toBe("not-allowed");
-    // await expect(await discoverPage.getForwardButtonStatus()).toBe("default");
+    await expect(await discoverPage.getBackButtonStatus()).toBe("not-allowed");
+    await expect(await discoverPage.getForwardButtonStatus()).toBe("default");
   });
 
   // To test that the forward navigation button in webPlatformPlayer topBar is working
   await test.step("Navigate forward in live app", async () => {
     await discoverPage.goForward();
     await expect(await discoverPage.getWebviewHeadingElementByText()).toBe("About Page");
-    // await expect(await discoverPage.getBackButtonStatus()).toBe("default");
-    // await expect(await discoverPage.getForwardButtonStatus()).toBe("not-allowed");
+    await expect(await discoverPage.getBackButtonStatus()).toBe("default");
+    await expect(await discoverPage.getForwardButtonStatus()).toBe("not-allowed");
   });
 
   // To test that both navigation buttons in webPlatformPlayer topBar are enabled
   await test.step("Navigate in live app to middle of history", async () => {
     await discoverPage.navigateToDashboardLink();
     await expect(await discoverPage.getWebviewHeadingElementByText()).toBe("Dashboard Page");
-    // await expect(await discoverPage.getBackButtonStatus()).toBe("default");
-    // await expect(await discoverPage.getForwardButtonStatus()).toBe("not-allowed");
+    await expect(await discoverPage.getBackButtonStatus()).toBe("default");
+    await expect(await discoverPage.getForwardButtonStatus()).toBe("not-allowed");
 
     await discoverPage.goBack();
     await expect(await discoverPage.getWebviewHeadingElementByText()).toBe("About Page");
-    // await expect(await discoverPage.getBackButtonStatus()).toBe("default");
-    // await expect(await discoverPage.getForwardButtonStatus()).toBe("default");
+    await expect(await discoverPage.getBackButtonStatus()).toBe("default");
+    await expect(await discoverPage.getForwardButtonStatus()).toBe("default");
 
     await discoverPage.goBack();
     await expect(await discoverPage.getWebviewHeadingElementByText()).toBe(

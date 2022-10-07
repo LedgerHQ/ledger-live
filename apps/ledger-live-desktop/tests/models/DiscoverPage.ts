@@ -41,14 +41,17 @@ export class DiscoverPage {
 
   async navigateToHomeLink() {
     await this.clickWebviewElement("[data-test-id=home-link]");
+    await this.delay(100);
   }
 
   async navigateToAboutLink() {
     await this.clickWebviewElement("[data-test-id=about-link]");
+    await this.delay(100);
   }
 
   async navigateToDashboardLink() {
     await this.clickWebviewElement("[data-test-id=dashboard-link]");
+    await this.delay(100);
   }
 
   async navigateToNothingHereLink() {
@@ -143,5 +146,9 @@ export class DiscoverPage {
   async getForwardButtonStatus() {
     console.log("getting forward attribute");
     return await this.topBarGoForwardButton.getAttribute("cursor");
+  }
+
+  delay(timeout: number) {
+    return new Promise(resolve => setTimeout(() => resolve("delay conplete"), timeout));
   }
 }
