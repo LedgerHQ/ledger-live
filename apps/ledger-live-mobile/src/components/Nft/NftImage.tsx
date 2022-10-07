@@ -156,7 +156,7 @@ class NftImage extends React.PureComponent<Props, State> {
               onLoad={this.onLoad}
               onLoadEnd={this.startAnimation}
               onError={this.onError}
-              onLoadStart={() => console.log("nft image load start")}
+              onLoadStart={() => console.log("nft image load start", src)}
             />
           )}
         </Animated.View>
