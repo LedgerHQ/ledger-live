@@ -1,0 +1,109 @@
+import React, { useCallback, useMemo } from "react";
+import { useTranslation } from "react-i18next";
+import { useNavigation } from "@react-navigation/native";
+import { Flex, Text } from "@ledgerhq/native-ui";
+import {
+  getAccountName,
+  getAccountUnit,
+} from "@ledgerhq/live-common/account/index";
+import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
+import { usePickDefaultAccount } from "@ledgerhq/live-common/exchange/swap/hooks/index";
+import { SwapTransactionType } from "@ledgerhq/live-common/exchange/swap/types";
+import { useSelector } from "react-redux";
+import { Selector } from "./Selector";
+import { AmountInput } from "./AmountInput";
+import { shallowAccountsSelector } from "../../../../reducers/accounts";
+import { SwapFormProps } from "../../types";
+import { fromSelector, pairsSelector } from "../../../../actions/swap";
+import TranslatedError from "../../../../components/TranslatedError";
+
+interface Props {
+  provider?: string;
+  swapTx: SwapTransactionType;
+  swapError?: Error;
+  isSendMaxLoading: boolean;
+}
+
+export function From({ swapTx, provider, swapError, isSendMaxLoading }: Props) {
+  const { t } = useTranslation();
+  const navigation = useNavigation<SwapFormProps>();
+
+  const accounts = useSelector(fromSelector)(
+    useSelector(shallowAccountsSelector),
+  );
+  const { name, balance, unit } = useMemo(() => {
+    const { currency, account } = swapTx.swap.from;
+
+    return {
+      account,
+      name: account && getAccountName(account),
+      balance:
+        (account &&
+          currency &&
+          formatCurrencyUnit(currency.units[0], account.balance, {
+            showCode: true,
+          })) ??
+        "",
+      unit: account && getAccountUnit(account),
+    };
+  }, [swapTx.swap.from]);
+
+  usePickDefaultAccount(
+    accounts,
+    swapTx.swap.from.account,
+    swapTx.setFromAccount,
+  );
+
+  const pairs = useSelector(pairsSelector);
+
+  const onPress = useCallback(() => {
+    // @ts-expect-error navigation type is only partially declared
+    navigation.navigate("SelectAccount", {
+      target: "from",
+      provider,
+      selectableCurrencyIds: [...new Set(pairs.map(p => p.from))],
+      swap: swapTx.swap,
+    });
+  }, [navigation, provider, pairs, swapTx.swap]);
+
+  return (
+    <Flex
+      borderBottomWidth={1}
+      borderColor="neutral.c70"
+      paddingBottom={2}
+      marginBottom={4}
+    >
+      <Text variant="small" marginBottom={2}>
+        {t("transfer.swap2.form.from")}
+      </Text>
+      <Flex>
+        <Flex flexDirection="row" justifyContent="space-between" width="100%">
+          <Flex flex={1} justifyContent="center">
+            <Selector
+              currency={swapTx.swap.from.currency}
+              title={name}
+              subTitle={balance}
+              onPress={onPress}
+            />
+          </Flex>
+
+          <Flex flex={1} justifyContent="center">
+            <AmountInput
+              value={swapTx.swap.from.amount}
+              editable={!swapTx.swap.isMaxEnabled}
+              loading={isSendMaxLoading}
+              unit={unit}
+              onChange={swapTx.setFromAmount}
+              error={swapError}
+            />
+          </Flex>
+        </Flex>
+
+        <Text color="error.c100" textAlign="right" variant="tiny">
+          {/* @ts-expect-error TranslatedError may return null */}
+          {swapError ? <TranslatedError error={swapError} /> : ""}
+        </Text>
+      </Flex>
+    </Flex>
+  );
+}
