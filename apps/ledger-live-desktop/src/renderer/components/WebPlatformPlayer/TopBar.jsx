@@ -223,10 +223,20 @@ const WebPlatformTopBar = ({
       </ItemContainer>
       {shouldDisplayNavigation && (
         <>
-          <ItemContainer disabled={!canGoBack} isInteractive onClick={onGoBack}>
+          <ItemContainer
+            disabled={!canGoBack}
+            isInteractive
+            onClick={onGoBack}
+            data-test-id="liveapp-nav-back-button"
+          >
             <ArrowRight flipped size={16} />
           </ItemContainer>
-          <ItemContainer disabled={!canGoForward} isInteractive onClick={onGoForward}>
+          <ItemContainer
+            disabled={!canGoForward}
+            isInteractive
+            onClick={onGoForward}
+            data-test-id="liveapp-nav-forward-button"
+          >
             <ArrowRight size={16} />
           </ItemContainer>
         </>

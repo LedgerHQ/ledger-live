@@ -10,10 +10,10 @@ import * as server from "../../utils/serve-dummy-app";
 // Comment out to disable recorder
 // process.env.PWDEBUG = "1";
 
-// NOTE: You must build the dummy live app before running this test:
+// NOTE: For running locally you must build the dummy live app before running this test:
 // pnpm --filter='dummy-live-app' i && pnpm --filter='dummy-live-app' build
 
-test.use({ userdata: "1AccountBTC1AccountETH" });
+test.use({ userdata: "1AccountBTC1AccountETH", env: { DEV_TOOLS: true } });
 
 let continueTest = false;
 
@@ -42,7 +42,7 @@ test.afterAll(() => {
 });
 
 // Due to flakiness on different OS's and CI, we won't run the screenshots where unncessary for testing
-test.skip("Discover", async ({ page }) => {
+test("Discover", async ({ page }) => {
   // Don't run test if server is not running
   if (!continueTest) return;
 
@@ -82,34 +82,49 @@ test.skip("Discover", async ({ page }) => {
   // To test that the back navigation button in webPlatformPlayer topBar is working
   await test.step("Navigate backward in live app", async () => {
     await discoverPage.navigateToAboutLink();
+    console.log("expect for about page");
+    // await page.pause();
     await expect(await discoverPage.getWebviewHeadingElementByText()).toBe("About Page");
-    await expect(await discoverPage.getBackButtonStatus()).toBe("allowed");
+    console.log("1. getting back button status");
+    // await expect(await discoverPage.getBackButtonStatus()).toBe("default");
+    console.log("2. getting forward button status");
+    // await expect(await discoverPage.getForwardButtonStatus()).toBe("not-allowed");
 
+    console.log("3. test going back");
     await discoverPage.goBack();
     await expect(await discoverPage.getWebviewHeadingElementByText()).toBe(
       "Ledger Live Dummy Test App",
     );
-    await expect(await discoverPage.getForwardButtonStatus()).toBe("allowed");
+    // await expect(await discoverPage.getBackButtonStatus()).toBe("not-allowed");
+    // await expect(await discoverPage.getForwardButtonStatus()).toBe("default");
   });
 
   // To test that the forward navigation button in webPlatformPlayer topBar is working
   await test.step("Navigate forward in live app", async () => {
     await discoverPage.goForward();
     await expect(await discoverPage.getWebviewHeadingElementByText()).toBe("About Page");
+    // await expect(await discoverPage.getBackButtonStatus()).toBe("default");
+    // await expect(await discoverPage.getForwardButtonStatus()).toBe("not-allowed");
   });
 
   // To test that both navigation buttons in webPlatformPlayer topBar are enabled
   await test.step("Navigate in live app to middle of history", async () => {
     await discoverPage.navigateToDashboardLink();
     await expect(await discoverPage.getWebviewHeadingElementByText()).toBe("Dashboard Page");
+    // await expect(await discoverPage.getBackButtonStatus()).toBe("default");
+    // await expect(await discoverPage.getForwardButtonStatus()).toBe("not-allowed");
 
     await discoverPage.goBack();
     await expect(await discoverPage.getWebviewHeadingElementByText()).toBe("About Page");
+    // await expect(await discoverPage.getBackButtonStatus()).toBe("default");
+    // await expect(await discoverPage.getForwardButtonStatus()).toBe("default");
 
     await discoverPage.goBack();
     await expect(await discoverPage.getWebviewHeadingElementByText()).toBe(
       "Ledger Live Dummy Test App",
     );
+    await expect(await discoverPage.getBackButtonStatus()).toBe("not-allowed");
+    await expect(await discoverPage.getForwardButtonStatus()).toBe("default");
   });
 
   await test.step("List all accounts", async () => {

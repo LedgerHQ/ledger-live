@@ -1,4 +1,4 @@
-  import { Locator, Page } from "@playwright/test";
+import { Locator, Page } from "@playwright/test";
 
 export class DiscoverPage {
   readonly page: Page;
@@ -31,8 +31,8 @@ export class DiscoverPage {
     this.confirmText = page.locator(
       "text=Please confirm the operation on your device to finalize it",
     );
-    this.topBarGoBackButton = page.locator("data-test-id=topbar-back-button");
-    this.topBarGoForwardButton = page.locator("data-test-id=topbar-forward-button");
+    this.topBarGoBackButton = page.locator("data-test-id=liveapp-nav-back-button");
+    this.topBarGoForwardButton = page.locator("data-test-id=liveapp-nav-forward-button");
   }
 
   async openTestApp() {
@@ -131,14 +131,17 @@ export class DiscoverPage {
   }
 
   async getBackButtonStatus() {
+    console.log("getting back attribute");
     return await this.topBarGoBackButton.getAttribute("cursor");
   }
 
   async goForward() {
+    console.log("going forward");
     return await this.topBarGoForwardButton.click({ force: true });
   }
 
   async getForwardButtonStatus() {
+    console.log("getting forward attribute");
     return await this.topBarGoForwardButton.getAttribute("cursor");
   }
 }
