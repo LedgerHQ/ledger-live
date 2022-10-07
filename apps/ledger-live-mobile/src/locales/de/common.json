@@ -728,6 +728,9 @@
     "ImageProcessingError" : {
       "title" : "Die Verarbeitung des Bildes ist fehlgeschlagen",
       "description" : "Bitte versuchen Sie es noch einmal mit einem anderen Bild"
+    },
+    "HederaAddAccountError" : {
+      "title" : "Ihr Konto wurde nicht hinzugefügt. Bitte versuchen Sie es erneut."
     }
   },
   "crash" : {
@@ -775,6 +778,9 @@
     "failed" : {
       "biometrics" : {
         "title" : "{{biometricsType}} Entsperren fehlgeschlagen",
+        "touchid" : "TouchID",
+        "faceid" : "FaceID",
+        "fingerprint" : "Fingerabdruck",
         "description" : "Passwort eingeben um fortzufahren",
         "authenticate" : "Bitte authentifizieren Sie sich mit der Ledger Live-App"
       },
@@ -803,7 +809,10 @@
     },
     "enableBiometrics" : {
       "title" : "{{biometricsType}}",
-      "desc" : "Entsperren mit {{biometricsType}}"
+      "desc" : "Entsperren mit {{biometricsType}}",
+      "touchid" : "TouchID",
+      "faceid" : "FaceID",
+      "fingerprint" : "Fingerabdruck"
     }
   },
   "reset" : {
@@ -1002,12 +1011,12 @@
   },
   "discover" : {
     "title" : "Entdecken",
-    "desc" : "Erkunden Sie die Welt von Web 3.0 in Ledger Live",
+    "desc" : "Die Welt des Web3 sicher entdecken",
     "link" : "Weitere Infos",
     "sections" : {
       "learn" : {
         "title" : "Lernen",
-        "desc" : "Machen Sie sich schlau über Kryptos, NFTs, digitale Sicherheit und mehr"
+        "desc" : "Lernen Sie über Krypto und mehr gratis von Experten"
       },
       "ledgerApps" : {
         "title" : "Apps",
@@ -1015,11 +1024,15 @@
       },
       "earn" : {
         "title" : "Verdienen",
-        "desc" : "Verdienen Sie ein passives Einkommen und vermehren Sie Ihr Kryptovermögen"
+        "desc" : "Vermehren Sie Ihre Kryptos durch Staking und Verleihen."
       },
       "mint" : {
         "title" : "Mint",
-        "desc" : "Mint NFTs aus exklusiven Kooperationen auf dem [ L ] Markt"
+        "desc" : "Prägen Sie NFTs von exklusiven Kampagnen auf [ L ] Market."
+      },
+      "referralProgram" : {
+        "title" : "Freunde werben",
+        "desc" : "Verdienen Sie 10 US-$ in Bitcoin wenn Ihr(e) Freund(in) einen Ledger kauft. "
       }
     },
     "comingSoon" : "In Kürze verfügbar",
@@ -1970,6 +1983,7 @@
       },
       "advanced" : {
         "title" : "Erweiterte Protokolle",
+        "warningDerivation" : "Das ist ein {{tag}} xpub. Wenn Sie es in eine Wallet eines Drittanbieters importieren, wählen Sie denselben Ableitungsmodus.",
         "desc" : ""
       }
     },
