@@ -1,0 +1,66 @@
+
+name: CI
+
+env:
+  PR_NUMBER: ${{ github.event.number }}
+  PR_TITLE: ${{ github.event.pull_request.title }}
+  PR_DESCRIPTION: ${{ github.event.head_commit.message }}
+on:
+  pull_request:
+    branches: [ "release" ]
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  release-translation-check:
+    name: release branch translation check
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+    
+    steps:
+      - uses: actions/checkout@v3
+          
+      - name: Verify Changed files for translations
+        uses: tj-actions/verify-changed-files@v11.1
+        id: verify-changed-files
+        with:
+          files: |
+             static/i18n/*/*
+
+#time to slack this bad boi
+
+      - name: Perform action when test_directory changes
+        if: contains(steps.verify-changed-files.outputs.changed_files, 'test_directory')
+        run: |
+          echo "Translations files have changed on PR $PR_NUMBER"
+          echo $PR_TITLE
+          echo $PR_DESCRIPTION
+
+  report-on-slack:
+      runs-on: ubuntu-latest
+      steps:
+      
+      - name: format message
+        uses: actions/github-script@v6
+        id: message
+        with:
+            script: |
+              const fs = require("fs");
+
+              const output = {
+                "Translations files have changed on PR $PR_NUMBER"
+                 "- $PR_TITLE"
+                 "- $PR_DESCRIPTION"
+              };
+
+              fs.writeFileSync(`./payload-slack-content.json`, JSON.stringify(output, null, 2));
+      - name: post to a Slack channel
+        id: slack
+        uses: slackapi/slack-github-action@v1.21.0
+        with:
+              channel-id: "C040D9JMVQ8"
+              payload-file-path: "./payload-slack-content.json"
+        env:
+              SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_USER_OAUTH_ACCESS_TOKEN }}
