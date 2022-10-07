@@ -1,10 +1,6 @@
 import React, { memo } from "react";
 
-import {
-  Account,
-  AccountLike,
-  Operation,
-} from "@ledgerhq/live-common/types/index";
+import { Account, AccountLike, Operation } from "@ledgerhq/types-live";
 import {
   getMainAccount,
   getAccountCurrency,
@@ -15,7 +11,7 @@ import { Text } from "@ledgerhq/native-ui";
 import Skeleton from "./Skeleton";
 
 type Props = {
-  style?: Object;
+  style?: any;
   operation: Operation;
   account: AccountLike;
   parentAccount?: Account | null;

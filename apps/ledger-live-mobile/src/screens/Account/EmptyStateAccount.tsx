@@ -1,8 +1,7 @@
-/* @flow */
 import React, { useCallback, useMemo } from "react";
 import { Trans } from "react-i18next";
 import { View, StyleSheet } from "react-native";
-import type { Account, AccountLike } from "@ledgerhq/live-common/types/index";
+import type { Account, AccountLike } from "@ledgerhq/types-live";
 import {
   getAccountCurrency,
   getMainAccount,
@@ -21,10 +20,10 @@ import EmptyStateAccountIllu from "../../images/EmptyStateAccount";
 import { withTheme } from "../../colors";
 
 type Props = {
-  account: AccountLike,
-  parentAccount?: Account,
-  navigation: any,
-  colors: any,
+  account: AccountLike;
+  parentAccount?: Account;
+  navigation: any;
+  colors: any;
 };
 
 function EmptyStateAccount({
@@ -54,7 +53,7 @@ function EmptyStateAccount({
 
   const goToReceiveFunds = useCallback(() => {
     navigation.navigate(NavigatorName.ReceiveFunds, {
-      screen: ScreenName.ReceiveConnectDevice,
+      screen: ScreenName.ReceiveConfirmation,
       params: {
         accountId: account.id,
         parentId: parentAccount && parentAccount.id,

@@ -1,0 +1,90 @@
+name: "Bot"
+description: "Build and run the bot tests"
+inputs:
+  SEED:
+    description: "seed to use"
+    required: true
+  BOT_FILTER_FAMILY:
+    description: "family to filter on"
+    required: false
+  SLACK_CHANNEL:
+    description: "slack channel to report on"
+    required: false
+  SLACK_API_TOKEN:
+    description: "slack api token"
+    required: false
+  SLACK_ICON_EMOJI:
+    description: "slack icon emoji"
+    required: false
+  SHOW_LEGACY_NEW_ACCOUNT:
+    description: "SHOW_LEGACY_NEW_ACCOUNT value"
+    required: false
+  EXPLORER:
+    description: "EXPLORER value"
+    required: false
+
+runs:
+  using: "composite"
+  steps:
+    - uses: pnpm/action-setup@v2.0.1
+      with:
+        version: latest
+    - uses: actions/setup-node@v3
+      with:
+        node-version: 16.x
+        cache: pnpm
+        cache-dependency-path: "**/pnpm-lock.yaml"
+    - name: pull docker image
+      run: docker pull ghcr.io/ledgerhq/speculos
+      shell: bash
+    - name: install and build
+      run: |
+        pnpm i --filter="live-cli..." --filter="ledger-live" --frozen-lockfile
+        pnpm build:llc
+      shell: bash
+    - name: bot logic
+      env:
+        SEED: ${{ inputs.SEED }}
+        BOT_REPORT_FOLDER: botreport
+        VERBOSE_FILE: botreport/logs.txt
+        GITHUB_RUN_ID: ${{ github.run_id }}
+        GITHUB_WORKFLOW: ${{ github.workflow }}
+        BOT_FILTER_FAMILY: ${{ inputs.BOT_FILTER_FAMILY }}
+        SHOW_LEGACY_NEW_ACCOUNT: ${{ inputs.SHOW_LEGACY_NEW_ACCOUNT }}
+        explorerinput: ${{ inputs.EXPLORER }}
+      run: |
+        export COINAPPS=$PWD/coin-apps
+        export NODE_ENV=production
+        mkdir libs/ledger-live-common/botreport
+        cd libs/ledger-live-common
+        if [ "$explorerinput" != "" ]; then
+          export EXPLORER=$explorerinput
+        fi
+        node --prof lib/bot/cli.js
+      shell: bash
+    - name: submit bot report
+      uses: ledgerhq/ledger-live/tools/actions/submit-bot-report@develop
+      with:
+        path: libs/ledger-live-common/botreport
+        githubSha: ${{github.sha}}
+        githubToken: ${{github.token}}
+        slackApiToken: ${{ inputs.SLACK_API_TOKEN }}
+        slackChannel: ${{ inputs.SLACK_CHANNEL }}
+        slackIconEmoji: ${{ inputs.SLACK_ICON_EMOJI }}
+    - name: prepare bot reports
+      run: |
+        cd libs/ledger-live-common
+        node --prof-process --preprocess -j isolate*.log > botreport/perf-processed.txt
+        mv -f botreport/report.json .
+      shell: bash
+    - name: upload logs to github artifacts
+      if: always()
+      uses: actions/upload-artifact@v3
+      with:
+        name: details
+        path: libs/ledger-live-common/botreport/
+    - name: upload report.json
+      uses: actions/upload-artifact@v3
+      with:
+        name: report
+        path: libs/ledger-live-common/report.json

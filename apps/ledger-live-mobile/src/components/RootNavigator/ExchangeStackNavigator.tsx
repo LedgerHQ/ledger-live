@@ -8,11 +8,6 @@ import AddAccountsHeaderRightClose from "../../screens/AddAccounts/AddAccountsHe
 import ExchangeSelectAccount from "../../screens/Exchange/SelectAccount";
 import ExchangeSelectCurrency from "../../screens/Exchange/SelectCurrency";
 
-type TabLabelProps = {
-  focused: boolean;
-  color: string;
-};
-
 export default function ExchangeStackNavigator() {
   const { t } = useTranslation();
   const { colors } = useTheme();

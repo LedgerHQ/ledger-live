@@ -3,6 +3,32 @@
 exports[`filecoin currency bridge scanAccounts filecoin seed 1 1`] = `
 Array [
   Object {
+    "balance": "1000000000000000",
+    "currencyId": "filecoin",
+    "derivationMode": "gliflegacy",
+    "freshAddress": "t15lauyzdivqj7m3yob3rxmzdsy7uyhfflwyheuri",
+    "freshAddressPath": "44'/1'/0'/0/0",
+    "freshAddresses": Array [
+      Object {
+        "address": "t15lauyzdivqj7m3yob3rxmzdsy7uyhfflwyheuri",
+        "derivationPath": "44'/1'/0'/0/0",
+      },
+    ],
+    "id": "js:2:filecoin:t15lauyzdivqj7m3yob3rxmzdsy7uyhfflwyheuri:gliflegacy",
+    "index": 0,
+    "name": "Filecoin 1",
+    "nfts": undefined,
+    "operationsCount": 1,
+    "pendingOperations": Array [],
+    "seedIdentifier": "04ca7b02cafdf36e8b4caaf530a96b949764af71b956b2a3328b7a10940794c860f574a9199be98bde3c261887fec8e5fd94bc5f104908bf5f992f52ef2a89abb0",
+    "spendableBalance": "1000000000000000",
+    "starred": false,
+    "swapHistory": Array [],
+    "syncHash": undefined,
+    "unitMagnitude": 18,
+    "used": true,
+  },
+  Object {
     "balance": "100000000000000000",
     "currencyId": "filecoin",
     "derivationMode": "",
@@ -59,6 +85,29 @@ Array [
 
 exports[`filecoin currency bridge scanAccounts filecoin seed 1 2`] = `
 Array [
+  Array [
+    Object {
+      "accountId": "js:2:filecoin:t15lauyzdivqj7m3yob3rxmzdsy7uyhfflwyheuri:gliflegacy",
+      "blockHash": null,
+      "blockHeight": 1899682,
+      "contract": undefined,
+      "extra": Object {},
+      "fee": "0",
+      "hash": "bafy2bzaceawypi647m4rz5czma3xm7syif67bfzce5q2w2tifd5jrvqeaowok",
+      "id": "js:2:filecoin:t15lauyzdivqj7m3yob3rxmzdsy7uyhfflwyheuri:gliflegacy-bafy2bzaceawypi647m4rz5czma3xm7syif67bfzce5q2w2tifd5jrvqeaowok-IN",
+      "operator": undefined,
+      "recipients": Array [
+        "t15lauyzdivqj7m3yob3rxmzdsy7uyhfflwyheuri",
+      ],
+      "senders": Array [
+        "f1ov6d42tujoyexkbdh34oik2vhe5unqo2a5ocqoq",
+      ],
+      "standard": undefined,
+      "tokenId": undefined,
+      "type": "IN",
+      "value": "1000000000000000",
+    },
+  ],
   Array [
     Object {
       "accountId": "js:2:filecoin:f1p74d4mlmeyc4agflhjqsnvoyzyfdai7fmkyso2a:",

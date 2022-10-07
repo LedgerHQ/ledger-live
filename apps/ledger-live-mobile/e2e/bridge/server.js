@@ -1,4 +1,3 @@
-// @flow
 import { Server } from "ws";
 import path from "path";
 import fs from "fs";

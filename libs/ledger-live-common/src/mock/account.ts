@@ -183,22 +183,22 @@ const hardcodedMarketcap = [
   "algorand/asa/163650",
 ];
 // for the mock generation we need to adjust to the actual market price of things, we want to avoid having things < 0.01 EUR
-const tickerApproxMarketPrice = {
-  BTC: 0.0073059,
-  ETH: 5.7033e-14,
-  ETC: 1.4857e-15,
-  BCH: 0.0011739,
-  BTG: 0.00005004,
-  LTC: 0.00011728,
-  XRP: 0.000057633,
-  DOGE: 4.9e-9,
-  DASH: 0.0003367,
-  PPC: 0.000226,
-  ZEC: 0.000205798,
+const currencyIdApproxMarketPrice = {
+  bitcoin: 0.0073059,
+  ethereum: 5.7033e-14,
+  ethereum_classic: 1.4857e-15,
+  bitcoin_cash: 0.0011739,
+  bitcoin_gold: 0.00005004,
+  litecoin: 0.00011728,
+  ripple: 0.000057633,
+  dogecoin: 4.9e-9,
+  dash: 0.0003367,
+  peercoin: 0.000226,
+  zcash: 0.000205798,
 };
 // mock only use subset of cryptocurrencies to not affect tests when adding coins
 const currencies = listCryptoCurrencies().filter(
-  (c) => tickerApproxMarketPrice[c.ticker]
+  (c) => currencyIdApproxMarketPrice[c.id]
 );
 // TODO fix the mock to never generate negative balance...
 
@@ -222,11 +222,12 @@ export function genOperation(
   );
   const address = genAddress(superAccount.currency, rng);
   const type = rng.next() < 0.3 ? "OUT" : "IN";
+  const divider =
+    (account.type === "Account" &&
+      currencyIdApproxMarketPrice[account.currency.id]) ||
+    currencyIdApproxMarketPrice.bitcoin;
   const value = new BigNumber(
-    Math.floor(
-      rng.nextInt(0, 100000 * rng.next() * rng.next()) /
-        (tickerApproxMarketPrice[ticker] || tickerApproxMarketPrice.BTC)
-    )
+    Math.floor(rng.nextInt(0, 100000 * rng.next() * rng.next()) / divider)
   );
 
   if (Number.isNaN(value)) {

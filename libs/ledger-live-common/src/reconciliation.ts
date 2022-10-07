@@ -20,17 +20,24 @@ import {
   fromCosmosResourcesRaw,
   fromBitcoinResourcesRaw,
   fromAlgorandResourcesRaw,
+  fromCardanoResourceRaw,
   fromPolkadotResourcesRaw,
   fromTezosResourcesRaw,
   fromElrondResourcesRaw,
   fromCryptoOrgResourcesRaw,
   fromSolanaResourcesRaw,
+  fromCeloResourcesRaw,
   fromNFTRaw,
-  fromCardanoResourceRaw,
+  toTronResourcesRaw,
+  toCosmosResourcesRaw,
+  toAlgorandResourcesRaw,
+  toCardanoResourceRaw,
+  toPolkadotResourcesRaw,
+  toTezosResourcesRaw,
+  toElrondResourcesRaw,
   toCryptoOrgResourcesRaw,
   toSolanaResourcesRaw,
-  toCosmosResourcesRaw,
-  toTronResourcesRaw,
+  toCeloResourcesRaw,
 } from "./account";
 import consoleWarnExpectToEqual from "./consoleWarnExpectToEqual";
 import { AlgorandAccount, AlgorandAccountRaw } from "./families/algorand/types";
@@ -46,6 +53,7 @@ import { PolkadotAccount, PolkadotAccountRaw } from "./families/polkadot/types";
 import { SolanaAccount, SolanaAccountRaw } from "./families/solana/types";
 import { TezosAccount, TezosAccountRaw } from "./families/tezos/types";
 import { TronAccount, TronAccountRaw } from "./families/tron/types";
+import { CeloAccount, CeloAccountRaw } from "./families/celo/types";
 
 // aim to build operations with the minimal diff & call to coin implementation possible
 export async function minimalOperationsBuilder<CO>(
@@ -288,16 +296,25 @@ export function patchAccount(
     }
   }
 
+  // TODO This will be reworked to belong in each coin family
+  // Temporary logic to patch resources for each coin is:
+  // - there is raw data to patch from
+  // AND
+  //   - there is no current account data
+  //   OR
+  //   - current account data is different
   switch (account.currency.family) {
     case "tron":
       {
         const tronAcc = account as TronAccount;
         const tronUpdatedRaw = updatedRaw as TronAccountRaw;
         if (
-          !areSameResources(
-            toTronResourcesRaw(tronAcc.tronResources),
-            tronUpdatedRaw.tronResources
-          )
+          tronUpdatedRaw.tronResources &&
+          (!tronAcc.tronResources ||
+            !areSameResources(
+              toTronResourcesRaw(tronAcc.tronResources),
+              tronUpdatedRaw.tronResources
+            ))
         ) {
           (next as TronAccount).tronResources = fromTronResourcesRaw(
             tronUpdatedRaw.tronResources
@@ -310,10 +327,30 @@ export function patchAccount(
       const cosmosAcc = account as CosmosAccount;
       const cosmosUpdatedRaw = updatedRaw as CosmosAccountRaw;
       if (
-        !areSameResources(
-          toCosmosResourcesRaw(cosmosAcc.cosmosResources),
+        cosmosUpdatedRaw.cosmosResources &&
+        (!cosmosAcc.cosmosResources ||
+          !areSameResources(
+            toCosmosResourcesRaw(cosmosAcc.cosmosResources),
+            cosmosUpdatedRaw.cosmosResources
+          ))
+      ) {
+        (next as CosmosAccount).cosmosResources = fromCosmosResourcesRaw(
           cosmosUpdatedRaw.cosmosResources
-        )
+        );
+        changed = true;
+      }
+      break;
+    }
+    case "osmosis": {
+      const cosmosAcc = account as CosmosAccount;
+      const cosmosUpdatedRaw = updatedRaw as CosmosAccountRaw;
+      if (
+        cosmosUpdatedRaw.cosmosResources &&
+        (!cosmosAcc.cosmosResources ||
+          !areSameResources(
+            toCosmosResourcesRaw(cosmosAcc.cosmosResources),
+            cosmosUpdatedRaw.cosmosResources
+          ))
       ) {
         (next as CosmosAccount).cosmosResources = fromCosmosResourcesRaw(
           cosmosUpdatedRaw.cosmosResources
@@ -326,10 +363,12 @@ export function patchAccount(
       const algorandAcc = account as AlgorandAccount;
       const algorandUpdatedRaw = updatedRaw as AlgorandAccountRaw;
       if (
-        !areSameResources(
-          algorandAcc.algorandResources,
-          algorandUpdatedRaw.algorandResources
-        )
+        algorandUpdatedRaw.algorandResources &&
+        (!algorandAcc.algorandResources ||
+          !areSameResources(
+            toAlgorandResourcesRaw(algorandAcc.algorandResources),
+            algorandUpdatedRaw.algorandResources
+          ))
       ) {
         (next as AlgorandAccount).algorandResources = fromAlgorandResourcesRaw(
           algorandUpdatedRaw.algorandResources
@@ -350,10 +389,12 @@ export function patchAccount(
       const polkadotAcc = account as PolkadotAccount;
       const polkadotUpdatedRaw = updatedRaw as PolkadotAccountRaw;
       if (
-        !areSameResources(
-          polkadotAcc.polkadotResources,
-          polkadotUpdatedRaw.polkadotResources
-        )
+        polkadotUpdatedRaw.polkadotResources &&
+        (!polkadotAcc.polkadotResources ||
+          !areSameResources(
+            toPolkadotResourcesRaw(polkadotAcc.polkadotResources),
+            polkadotUpdatedRaw.polkadotResources
+          ))
       ) {
         (next as PolkadotAccount).polkadotResources = fromPolkadotResourcesRaw(
           polkadotUpdatedRaw.polkadotResources
@@ -366,10 +407,12 @@ export function patchAccount(
       const tezosAcc = account as TezosAccount;
       const tezosUpdatedRaw = updatedRaw as TezosAccountRaw;
       if (
-        !areSameResources(
-          tezosAcc.tezosResources,
-          tezosUpdatedRaw.tezosResources
-        )
+        tezosUpdatedRaw.tezosResources &&
+        (!tezosAcc.tezosResources ||
+          !areSameResources(
+            toTezosResourcesRaw(tezosAcc.tezosResources),
+            tezosUpdatedRaw.tezosResources
+          ))
       ) {
         (next as TezosAccount).tezosResources = fromTezosResourcesRaw(
           tezosUpdatedRaw.tezosResources
@@ -382,10 +425,12 @@ export function patchAccount(
       const elrondAcc = account as ElrondAccount;
       const elrondUpdatedRaw = updatedRaw as ElrondAccountRaw;
       if (
-        areSameResources(
-          elrondAcc.elrondResources,
-          elrondUpdatedRaw.elrondResources
-        )
+        elrondUpdatedRaw.elrondResources &&
+        (!elrondAcc.elrondResources ||
+          !areSameResources(
+            toElrondResourcesRaw(elrondAcc.elrondResources),
+            elrondUpdatedRaw.elrondResources
+          ))
       ) {
         (next as ElrondAccount).elrondResources = fromElrondResourcesRaw(
           elrondUpdatedRaw.elrondResources
@@ -398,10 +443,12 @@ export function patchAccount(
       const cardanoAcc = account as CardanoAccount;
       const cardanoUpdatedRaw = updatedRaw as CardanoAccountRaw;
       if (
-        !areSameResources(
-          cardanoAcc.cardanoResources,
-          cardanoUpdatedRaw.cardanoResources
-        )
+        cardanoUpdatedRaw.cardanoResources &&
+        (!cardanoAcc.cardanoResources ||
+          !areSameResources(
+            toCardanoResourceRaw(cardanoAcc.cardanoResources),
+            cardanoUpdatedRaw.cardanoResources
+          ))
       ) {
         (next as CardanoAccount).cardanoResources = fromCardanoResourceRaw(
           cardanoUpdatedRaw.cardanoResources
@@ -414,10 +461,12 @@ export function patchAccount(
       const cryptoOrgAcc = account as CryptoOrgAccount;
       const cryptoOrgUpdatedRaw = updatedRaw as CryptoOrgAccountRaw;
       if (
-        !areSameResources(
-          toCryptoOrgResourcesRaw(cryptoOrgAcc.cryptoOrgResources),
-          cryptoOrgUpdatedRaw.cryptoOrgResources
-        )
+        cryptoOrgUpdatedRaw.cryptoOrgResources &&
+        (!cryptoOrgAcc.cryptoOrgResources ||
+          !areSameResources(
+            toCryptoOrgResourcesRaw(cryptoOrgAcc.cryptoOrgResources),
+            cryptoOrgUpdatedRaw.cryptoOrgResources
+          ))
       ) {
         (next as CryptoOrgAccount).cryptoOrgResources =
           fromCryptoOrgResourcesRaw(cryptoOrgUpdatedRaw.cryptoOrgResources);
@@ -430,13 +479,34 @@ export function patchAccount(
       const solanaUpdatedRaw = updatedRaw as SolanaAccountRaw;
 
       if (
-        !areSameResources(
-          toSolanaResourcesRaw(solanaAcc.solanaResources),
-          solanaUpdatedRaw.solanaResources
-        )
+        solanaUpdatedRaw.solanaResources &&
+        (!solanaAcc.solanaResources ||
+          !areSameResources(
+            toSolanaResourcesRaw(solanaAcc.solanaResources),
+            solanaUpdatedRaw.solanaResources
+          ))
       ) {
         (next as SolanaAccount).solanaResources = fromSolanaResourcesRaw(
           solanaUpdatedRaw.solanaResources
+        );
+        changed = true;
+      }
+      break;
+    }
+    case "celo": {
+      const celoAcc = account as CeloAccount;
+      const celoUpdatedRaw = updatedRaw as CeloAccountRaw;
+
+      if (
+        celoUpdatedRaw.celoResources &&
+        (!celoAcc.celoResources ||
+          !areSameResources(
+            toCeloResourcesRaw(celoAcc.celoResources),
+            celoUpdatedRaw.celoResources
+          ))
+      ) {
+        (next as CeloAccount).celoResources = fromCeloResourcesRaw(
+          celoUpdatedRaw.celoResources
         );
         changed = true;
       }

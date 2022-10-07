@@ -2,7 +2,7 @@ import React, { useCallback, useState } from "react";
 import { Trans } from "react-i18next";
 import { differenceInCalendarDays } from "date-fns";
 import { StyleSheet, Platform, View } from "react-native";
-import { AccountLike, Account } from "@ledgerhq/live-common/types/index";
+import { AccountLike, Account } from "@ledgerhq/types-live";
 import {
   shortAddressPreview,
   getAccountCurrency,
@@ -101,7 +101,9 @@ export default function TezosAccountBodyHeader({
 
   const delegation = useDelegation(account);
 
-  if (!delegation) return null;
+  if (!delegation) {
+    return null;
+  }
 
   const name = delegation.baker
     ? delegation.baker.name

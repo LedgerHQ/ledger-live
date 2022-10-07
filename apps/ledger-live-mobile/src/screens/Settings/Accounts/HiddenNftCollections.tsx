@@ -2,7 +2,7 @@ import React, { useCallback, useMemo } from "react";
 import { FlatList } from "react-native";
 import { Box, Flex, Text, Icons } from "@ledgerhq/native-ui";
 import { useDispatch, useSelector } from "react-redux";
-import { Account } from "@ledgerhq/live-common/types/index";
+import { Account } from "@ledgerhq/types-live";
 import {
   useNftCollectionMetadata,
   useNftMetadata,
@@ -48,10 +48,8 @@ const HiddenNftCollectionRow = ({
   const nfts = account?.nfts || [];
   const nft = nfts.find(nft => nft?.contract === contractAddress);
 
-  const {
-    status: collectionStatus,
-    metadata: collectionMetadata,
-  } = useNftCollectionMetadata(contractAddress, nft?.currencyId);
+  const { status: collectionStatus, metadata: collectionMetadata } =
+    useNftCollectionMetadata(contractAddress, nft?.currencyId);
   const { status: nftStatus, metadata: nftMetadata } = useNftMetadata(
     contractAddress,
     nft?.tokenId,

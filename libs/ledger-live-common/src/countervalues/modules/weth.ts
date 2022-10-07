@@ -1,18 +1,15 @@
-import type { Module } from "./types";
+import type { Module, Pair } from "./types";
 import { getCryptoCurrencyById } from "../../currencies";
+
 const ETH = getCryptoCurrencyById("ethereum");
 
-const remap = (pair) => {
-  if (pair.from.ticker === "WETH")
-    return {
-      from: ETH,
-      to: pair.to,
-    };
-  if (pair.to.ticker === "WETH")
-    return {
-      from: pair.from,
-      to: ETH,
-    };
+const wethId = "ethereum/erc20/weth";
+
+const remap = (pair: Pair): Pair => {
+  if (pair.from.type === "TokenCurrency" && pair.from.id === wethId)
+    return { from: ETH, to: pair.to };
+  if (pair.to.type === "TokenCurrency" && pair.to.id === wethId)
+    return { from: pair.from, to: ETH };
   return pair;
 };
 

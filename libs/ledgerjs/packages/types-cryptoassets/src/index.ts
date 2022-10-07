@@ -32,6 +32,8 @@ type CurrencyCommon = {
   delisted?: boolean;
   // some countervalue will have a ticker alias
   countervalueTicker?: string;
+  // keywords to be able to find currency from "obvious" terms
+  keywords?: string[];
 };
 
 /**
@@ -103,6 +105,13 @@ export type CryptoCurrency = CurrencyCommon & {
     networkId?: number;
     baseChain?: string;
     hardfork?: string;
+    // used by evm light integration
+    rpc?: string;
+    // used by evm light integration
+    explorer?: {
+      uri: string;
+      type: "etherscan" | "blockscout";
+    };
   };
   explorerViews: ExplorerView[];
   terminated?: {

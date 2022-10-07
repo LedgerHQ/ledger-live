@@ -58,12 +58,15 @@ pnpm dev:llm -- --reset-cache
 ### `pnpm mobile test`
 
 ### `pnpm mobile ios`
-
 or `open ios/ledgerlivemobile.xcworkspace` in XCode
 
-### `pnpm mobile android`
+Note:
+In some case if you never run `pnpm dev:llm` you will probably encounter an error while building it.
+Try to run `pnpm dev:llm` then `pnpm mobile ios`
 
+### `pnpm mobile android`
 or open `android/` in Android Studio.
+
 
 ### `pnpm mobile android:clean`
 
@@ -171,6 +174,6 @@ This part of the repository is where you will add the support of your blockchain
 For a smooth and quick integration:
 
 - See the developers’ documentation on the [Developer Portal](https://developers.ledger.com/docs/coin/general-process/) and
-- Go on Discord to chat with developer support and the developer community. See you there! If you are new to Ledger OP3N Discord server [click here](https://discord.gg/Ledger), otherwise directly join [the Blockchain channel](https://discord.com/channels/885256081289379850/907623688759803935).
+- Go on [Discord](https://developers.ledger.com/discord-pro/) to chat with developer support and the developer community.
 
 ---

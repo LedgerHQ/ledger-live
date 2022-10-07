@@ -46,7 +46,11 @@ function StepConfirmation({
     return (
       <Container>
         <TrackPage category="ClaimRewards Algorand Flow" name="Step Confirmed" />
-        <SyncOneAccountOnMount priority={10} accountId={optimisticOperation.accountId} />
+        <SyncOneAccountOnMount
+          reason="transaction-flow-confirmation"
+          priority={10}
+          accountId={optimisticOperation.accountId}
+        />
         <SuccessDisplay
           title={
             <Trans

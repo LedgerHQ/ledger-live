@@ -2,11 +2,11 @@ import {
   getAccountCurrency,
   getAccountUnit,
 } from "@ledgerhq/live-common/account/index";
-import { Transaction } from "@ledgerhq/live-common/families/solana/types";
 import {
-  AccountLike,
+  Transaction,
   TransactionStatus,
-} from "@ledgerhq/live-common/types/index";
+} from "@ledgerhq/live-common/families/solana/types";
+import { AccountLike } from "@ledgerhq/types-live";
 import { Text } from "@ledgerhq/native-ui";
 import { useTheme } from "@react-navigation/native";
 import React, { useCallback } from "react";
@@ -24,7 +24,7 @@ type Props = {
   status: TransactionStatus;
 };
 
-export default function SolanaFeeRow({ account, transaction, status }: Props) {
+export default function SolanaFeeRow({ account, status }: Props) {
   const { colors } = useTheme();
   const extraInfoFees = useCallback(() => {
     Linking.openURL(urls.solana.supportPage);

@@ -1,7 +1,7 @@
 // @flow
 
 import { WebviewTag } from "electron";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { RefObject, useCallback, useEffect, useState } from "react";
 import { Trans } from "react-i18next";
 import styled from "styled-components";
 
@@ -117,7 +117,7 @@ export type Props = {
   onClose?: Function,
   onHelp?: Function,
   config?: TopBarConfig,
-  webviewRef: { current: null | WebviewTag },
+  webviewRef: RefObject<WebviewTag>,
 };
 
 const WebPlatformTopBar = ({
@@ -171,14 +171,12 @@ const WebPlatformTopBar = ({
     if (webview && shouldDisplayNavigation) {
       webview.addEventListener("did-navigate", handleDidNavigate);
       webview.addEventListener("did-navigate-in-page", handleDidNavigate);
-    }
 
-    return () => {
-      if (webview) {
+      return () => {
         webview.removeEventListener("did-navigate", handleDidNavigate);
         webview.removeEventListener("did-navigate-in-page", handleDidNavigate);
-      }
-    };
+      };
+    }
   }, [handleDidNavigate, webviewRef, shouldDisplayNavigation]);
 
   const onClick = useCallback(() => {
@@ -225,20 +223,10 @@ const WebPlatformTopBar = ({
       </ItemContainer>
       {shouldDisplayNavigation && (
         <>
-          <ItemContainer
-            data-test-id="topbar-back-button"
-            disabled={!canGoBack}
-            isInteractive
-            onClick={onGoBack}
-          >
+          <ItemContainer disabled={!canGoBack} isInteractive onClick={onGoBack}>
             <ArrowRight flipped size={16} />
           </ItemContainer>
-          <ItemContainer
-            data-test-id="topbar-forward-button"
-            disabled={!canGoForward}
-            isInteractive
-            onClick={onGoForward}
-          >
+          <ItemContainer disabled={!canGoForward} isInteractive onClick={onGoForward}>
             <ArrowRight size={16} />
           </ItemContainer>
         </>

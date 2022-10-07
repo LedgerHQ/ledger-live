@@ -26,7 +26,7 @@ const mainOptions = commandLineArgs(
 );
 
 if (mainOptions.help || !mainOptions.command) {
-  console.log("Ledger Live @ https://github.com/LedgerHQ/ledger-live-common");
+  console.log("Ledger Live @ https://github.com/LedgerHQ/ledger-live");
   console.log("");
   console.log("Usage: ledger-live <command> ...");
   console.log("");

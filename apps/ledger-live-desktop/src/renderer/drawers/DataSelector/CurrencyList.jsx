@@ -6,7 +6,7 @@ import { FixedSizeList as List } from "react-window";
 import Text from "~/renderer/components/Text";
 import styled from "styled-components";
 import CryptoCurrencyIcon from "~/renderer/components/CryptoCurrencyIcon";
-import type { Currency } from "@ledgerhq/live-common/types/index";
+import type { Currency } from "@ledgerhq/types-cryptoassets";
 import Box from "~/renderer/components/Box";
 import type { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import { RowContainer, RowInnerContainer, CurrencyLabel } from "./shared";

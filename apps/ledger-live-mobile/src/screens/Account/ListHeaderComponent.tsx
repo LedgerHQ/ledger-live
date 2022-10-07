@@ -4,15 +4,11 @@ import {
   getMainAccount,
   getAccountUnit,
 } from "@ledgerhq/live-common/account/index";
-import {
-  AccountLike,
-  Account,
-  Currency,
-} from "@ledgerhq/live-common/types/index";
-import { ValueChange } from "@ledgerhq/live-common/portfolio/v2/types";
+import { AccountLike, Account, ValueChange } from "@ledgerhq/types-live";
+import { Currency } from "@ledgerhq/types-cryptoassets";
 import { CompoundAccountSummary } from "@ledgerhq/live-common/compound/types";
 
-import { Box } from "@ledgerhq/native-ui";
+import { Box, ColorPalette } from "@ledgerhq/native-ui";
 import { isNFTActive } from "@ledgerhq/live-common/nft/index";
 
 import Header from "./Header";
@@ -25,39 +21,14 @@ import perFamilyAccountHeader from "../../generated/AccountHeader";
 import perFamilyAccountSubHeader from "../../generated/AccountSubHeader";
 import perFamilyAccountBodyHeader from "../../generated/AccountBodyHeader";
 import perFamilyAccountBalanceSummaryFooter from "../../generated/AccountBalanceSummaryFooter";
-import { FabAccountActions } from "../../components/FabActions";
+import SectionTitle from "../WalletCentricSections/SectionTitle";
+import SectionContainer from "../WalletCentricSections/SectionContainer";
 
-const renderAccountSummary = (
-  account: AccountLike,
-  parentAccount: Account,
-  compoundSummary: CompoundAccountSummary,
-) => () => {
-  const mainAccount = getMainAccount(account, parentAccount);
-  const AccountBalanceSummaryFooter =
-    perFamilyAccountBalanceSummaryFooter[mainAccount.currency.family];
-
-  const footers = [];
-
-  if (compoundSummary && account.type === "TokenAccount") {
-    footers.push(
-      <CompoundSummary
-        key="compoundSummary"
-        account={account}
-        compoundSummary={compoundSummary}
-      />,
-    );
-  }
-
-  if (AccountBalanceSummaryFooter)
-    footers.push(
-      <AccountBalanceSummaryFooter
-        account={account}
-        key="accountbalancesummary"
-      />,
-    );
-  if (!footers.length) return null;
-  return footers;
-};
+import {
+  FabAccountActions,
+  FabAccountMainActions,
+} from "../../components/FabActions/actionsList/account";
+import { ActionButtonEvent } from "../../components/FabActions";
 
 type Props = {
   account?: AccountLike;
@@ -72,7 +43,20 @@ type Props = {
   onAccountPress: () => void;
   onSwitchAccountCurrency: () => void;
   compoundSummary?: CompoundAccountSummary;
+  onAccountCardLayout: any;
+  colors: ColorPalette;
+  secondaryActions: ActionButtonEvent[];
+  t: any;
 };
+
+type MaybeComponent =
+  | React.FunctionComponent<
+      Partial<{
+        account?: AccountLike;
+        parentAccount?: Account;
+      }>
+    >
+  | undefined;
 
 export function getListHeaderComponents({
   account,
@@ -87,6 +71,10 @@ export function getListHeaderComponents({
   onAccountPress,
   onSwitchAccountCurrency,
   compoundSummary,
+  onAccountCardLayout,
+  colors,
+  secondaryActions,
+  t,
 }: Props): {
   listHeaderComponents: ReactNode[];
   stickyHeaderIndices?: number[];
@@ -95,94 +83,145 @@ export function getListHeaderComponents({
     return { listHeaderComponents: [], stickyHeaderIndices: undefined };
 
   const mainAccount = getMainAccount(account, parentAccount);
+  const family: string = mainAccount.currency.family;
 
   const empty = isAccountEmpty(account);
   const shouldUseCounterValue = countervalueAvailable && useCounterValue;
 
-  const AccountHeader = perFamilyAccountHeader[mainAccount.currency.family];
-  const AccountBodyHeader =
-    perFamilyAccountBodyHeader[mainAccount.currency.family];
+  const AccountHeader = (
+    perFamilyAccountHeader as Record<string, MaybeComponent>
+  )[family];
+  const AccountHeaderRendered =
+    AccountHeader && AccountHeader({ account, parentAccount });
 
-  const AccountSubHeader =
-    perFamilyAccountSubHeader[mainAccount.currency.family];
+  const AccountBodyHeader = (
+    perFamilyAccountBodyHeader as Record<string, MaybeComponent>
+  )[family];
+  // Pre-render component, cause we need to know if it return null so we don't render an empty border container (Tezos was doing it)
+  const AccountBodyHeaderRendered =
+    AccountBodyHeader && AccountBodyHeader({ account, parentAccount });
 
-  const stickyHeaderIndices = empty ? [] : [4];
+  const AccountSubHeader = (
+    perFamilyAccountSubHeader as Record<string, MaybeComponent>
+  )[family];
+
+  const AccountBalanceSummaryFooter = (
+    perFamilyAccountBalanceSummaryFooter as Record<string, MaybeComponent>
+  )[family];
+  const AccountBalanceSummaryFooterRendered =
+    AccountBalanceSummaryFooter &&
+    AccountBalanceSummaryFooter({ account, parentAccount });
+
+  const stickyHeaderIndices = empty ? [] : [0];
 
   return {
     listHeaderComponents: [
-      <Header accountId={account.id} />,
-      !!AccountSubHeader && <AccountSubHeader />,
-      !empty && !!AccountHeader && (
-        <AccountHeader account={account} parentAccount={parentAccount} />
-      ),
-      !empty && (
-        <Box mx={6} my={6}>
-          <AccountGraphCard
-            account={account}
-            range={range}
-            history={history}
-            useCounterValue={shouldUseCounterValue}
-            valueChange={
-              shouldUseCounterValue ? countervalueChange : cryptoChange
-            }
-            countervalueAvailable={countervalueAvailable}
-            counterValueCurrency={counterValueCurrency}
-            renderAccountSummary={renderAccountSummary(
-              account,
-              parentAccount,
-              compoundSummary,
-            )}
-            onSwitchAccountCurrency={onSwitchAccountCurrency}
-            countervalueChange={countervalueChange}
-            counterValueUnit={counterValueCurrency.units[0]}
-            cryptoCurrencyUnit={getAccountUnit(account)}
-          />
+      <Box mt={6} onLayout={onAccountCardLayout}>
+        <AccountGraphCard
+          account={account}
+          range={range}
+          history={history}
+          useCounterValue={shouldUseCounterValue}
+          valueChange={
+            shouldUseCounterValue ? countervalueChange : cryptoChange
+          }
+          countervalueAvailable={countervalueAvailable}
+          counterValueCurrency={counterValueCurrency}
+          onSwitchAccountCurrency={onSwitchAccountCurrency}
+          counterValueUnit={counterValueCurrency.units[0]}
+          cryptoCurrencyUnit={getAccountUnit(account)}
+          parentAccount={parentAccount}
+        />
+      </Box>,
+      <Header />,
+      !!AccountSubHeader && (
+        <Box bg={colors.background.main}>
+          <AccountSubHeader />
         </Box>
       ),
-      ...(!empty
+      <SectionContainer px={6} bg={colors.background.main}>
+        <SectionTitle
+          title={t("account.quickActions")}
+          containerProps={{ mb: 6 }}
+        />
+        <FabAccountMainActions
+          account={account}
+          parentAccount={parentAccount}
+        />
+      </SectionContainer>,
+      ...(!empty &&
+      (AccountHeaderRendered ||
+        AccountBalanceSummaryFooterRendered ||
+        (compoundSummary && account.type === "TokenAccount") ||
+        secondaryActions.length > 0)
         ? [
-            <Box py={3} mb={8}>
-              <FabAccountActions
-                account={account}
-                parentAccount={parentAccount}
+            <SectionContainer>
+              <SectionTitle
+                title={t("account.earn")}
+                containerProps={{ mx: 6, mb: 6 }}
               />
-            </Box>,
+              <Box>
+                {AccountHeaderRendered && (
+                  <Box mx={6} mb={6}>
+                    {AccountHeaderRendered}
+                  </Box>
+                )}
+                {AccountBalanceSummaryFooterRendered && (
+                  <>
+                    <Box mb={6}>{AccountBalanceSummaryFooterRendered}</Box>
+                  </>
+                )}
+                {compoundSummary && account.type === "TokenAccount" && (
+                  <Box>
+                    <CompoundSummary
+                      key="compoundSummary"
+                      account={account}
+                      compoundSummary={compoundSummary}
+                    />
+                  </Box>
+                )}
+                <FabAccountActions
+                  account={account}
+                  parentAccount={parentAccount}
+                />
+              </Box>
+            </SectionContainer>,
           ]
         : []),
-
-      ...(!empty && AccountBodyHeader
-        ? [
-            <AccountBodyHeader
-              account={account}
-              parentAccount={parentAccount}
-            />,
-          ]
+      ...(!empty && AccountBodyHeaderRendered
+        ? [<SectionContainer>{AccountBodyHeaderRendered}</SectionContainer>]
         : []),
       ...(!empty && account.type === "Account" && account.subAccounts
         ? [
-            <Box mx={6} mb={8} pb={6}>
+            <SectionContainer px={6}>
               <SubAccountsList
                 accountId={account.id}
                 onAccountPress={onAccountPress}
                 parentAccount={account}
                 useCounterValue={shouldUseCounterValue}
               />
-            </Box>,
+            </SectionContainer>,
           ]
         : []),
       ...(!empty && account.type === "Account" && isNFTActive(account.currency)
-        ? [<NftCollectionsList account={account} />]
+        ? [
+            <SectionContainer px={6}>
+              <NftCollectionsList account={account} />
+            </SectionContainer>,
+          ]
         : []),
       ...(compoundSummary &&
       account &&
       account.type === "TokenAccount" &&
       parentAccount
         ? [
-            <CompoundAccountBodyHeader
-              account={account}
-              parentAccount={parentAccount}
-              compoundSummary={compoundSummary}
-            />,
+            <SectionContainer px={6}>
+              <CompoundAccountBodyHeader
+                account={account}
+                parentAccount={parentAccount}
+                compoundSummary={compoundSummary}
+              />
+            </SectionContainer>,
           ]
         : []),
     ],

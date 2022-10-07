@@ -21,7 +21,7 @@ import {
   useRandomBaker,
 } from "@ledgerhq/live-common/families/tezos/bakers";
 import whitelist from "@ledgerhq/live-common/families/tezos/bakers.whitelist-default";
-import type { AccountLike } from "@ledgerhq/live-common/types/index";
+import type { AccountLike } from "@ledgerhq/types-live";
 import { useTheme } from "@react-navigation/native";
 import { Alert } from "@ledgerhq/native-ui";
 import { accountScreenSelector } from "../../../reducers/accounts";
@@ -41,14 +41,14 @@ import BakerImage from "../BakerImage";
 const forceInset = { bottom: "always" };
 
 type Props = {
-  navigation: any,
-  route: { params: RouteParams },
+  navigation: any;
+  route: { params: RouteParams };
 };
 
 type RouteParams = {
-  mode?: "delegate" | "undelegate",
-  accountId: string,
-  parentId?: string,
+  mode?: "delegate" | "undelegate";
+  accountId: string;
+  parentId?: string;
 };
 
 const AccountBalanceTag = ({ account }: { account: AccountLike }) => {
@@ -88,9 +88,9 @@ const Words = ({
   highlighted,
   style,
 }: {
-  children: React.ReactNode,
-  highlighted?: boolean,
-  style?: any,
+  children: React.ReactNode;
+  highlighted?: boolean;
+  style?: any;
 }) => (
   <LText
     numberOfLines={1}
@@ -107,8 +107,8 @@ const BakerSelection = ({
   name,
   readOnly,
 }: {
-  name: string,
-  readOnly?: boolean,
+  name: string;
+  readOnly?: boolean;
 }) => {
   const { colors } = useTheme();
   return (
@@ -143,16 +143,11 @@ export default function DelegationSummary({ navigation, route }: Props) {
   const bakers = useBakers(whitelist);
   const randomBaker = useRandomBaker(bakers);
 
-  const {
-    transaction,
-    setTransaction,
-    status,
-    bridgePending,
-    bridgeError,
-  } = useBridgeTransaction(() => ({
-    account,
-    parentAccount,
-  }));
+  const { transaction, setTransaction, status, bridgePending, bridgeError } =
+    useBridgeTransaction(() => ({
+      account,
+      parentAccount,
+    }));
 
   invariant(account, "account must be defined");
   invariant(transaction, "transaction must be defined");
@@ -164,7 +159,7 @@ export default function DelegationSummary({ navigation, route }: Props) {
     invariant(transaction.family === "tezos", "tezos tx");
 
     // make sure the mode is in sync (an account changes can reset it)
-    const patch: Object = {
+    const patch: any = {
       mode: route.params?.mode ?? "delegate",
     };
 
@@ -368,9 +363,15 @@ export default function DelegationSummary({ navigation, route }: Props) {
       </View>
       <View style={styles.footer}>
         {transaction.mode === "undelegate" ? (
-          <Alert type="info" title={<Trans i18nKey="delegation.warnUndelegation" />} />
+          <Alert
+            type="info"
+            title={<Trans i18nKey="delegation.warnUndelegation" />}
+          />
         ) : (
-          <Alert type="info" title={<Trans i18nKey="delegation.warnDelegation" />} />
+          <Alert
+            type="info"
+            title={<Trans i18nKey="delegation.warnDelegation" />}
+          />
         )}
         <Button
           event="SummaryContinue"

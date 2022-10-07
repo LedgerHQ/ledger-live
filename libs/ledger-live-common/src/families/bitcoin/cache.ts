@@ -68,9 +68,9 @@ export const validateRecipient: (
         recipientError: null,
         recipientWarning,
       };
-    } catch (recipientError) {
+    } catch (e) {
       return {
-        recipientError,
+        recipientError: e instanceof Error ? e : null,
         recipientWarning: null,
       };
     }

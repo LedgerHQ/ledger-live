@@ -10,27 +10,19 @@ import {
   getAccountName,
   getAccountUnit,
 } from "@ledgerhq/live-common/account/index";
-
-import {
-  Account,
-  Operation,
-  AccountLike,
-} from "@ledgerhq/live-common/types/index";
-
+import { Account, Operation, AccountLike } from "@ledgerhq/types-live";
 import { Box, Flex, InfiniteLoader, Text } from "@ledgerhq/native-ui";
-
 import debounce from "lodash/debounce";
 import CurrencyUnitValue from "./CurrencyUnitValue";
 import CounterValue from "./CounterValue";
-
 import OperationIcon from "./OperationIcon";
 import { ScreenName } from "../const";
 import OperationRowDate from "./OperationRowDate";
 import OperationRowNftName from "./OperationRowNftName";
-
 import perFamilyOperationDetails from "../generated/operationDetails";
+import { track } from "../analytics";
 
-const ContainerTouchable = styled(Flex).attrs(p => ({
+const ContainerTouchable = styled(Flex).attrs(_ => ({
   height: "64px",
   flexDirection: "row",
   alignItems: "center",
@@ -94,6 +86,9 @@ export default function OperationRow({
   const navigation = useNavigation();
 
   const goToOperationDetails = debounce(() => {
+    track("transaction_clicked", {
+      transaction: operation.type,
+    });
     const params = [
       ScreenName.OperationDetails,
       {
@@ -119,8 +114,8 @@ export default function OperationRow({
     const mainAccount = getMainAccount(account, parentAccount);
     const currency = getAccountCurrency(account);
     const unit = getAccountUnit(account);
-    const specific = mainAccount.currency.family
-      ? perFamilyOperationDetails[mainAccount.currency.family]
+    const specific = mainAccount?.currency?.family
+      ? perFamilyOperationDetails[mainAccount?.currency?.family]
       : null;
 
     const SpecificAmountCell =

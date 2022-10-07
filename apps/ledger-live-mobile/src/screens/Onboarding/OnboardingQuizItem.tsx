@@ -21,7 +21,7 @@ type Props = {
     answers: Answer[];
   };
   onNext: (correct: boolean) => void;
-  setBg: (bg: string) => void;
+  setBg: (_: string) => void;
   cta: string;
 };
 
@@ -56,6 +56,7 @@ export default function OnboardingQuizItem({
                 mb={7}
                 textAlign="center"
                 color="constant.black"
+                lineHeight="34.8px"
               >
                 {selectedAnswer.title}
               </Text>
@@ -64,7 +65,13 @@ export default function OnboardingQuizItem({
               </Text>
             </>
           ) : (
-            <Text variant="h2" mt={8} textAlign="center" color="constant.black">
+            <Text
+              variant="h2"
+              mt={8}
+              textAlign="center"
+              color="constant.black"
+              lineHeight="34.8px"
+            >
               {question}
             </Text>
           )}

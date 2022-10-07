@@ -1,12 +1,12 @@
 import React from "react";
 import { setEnvUnsafe, isEnvDefault, getEnv } from "@ledgerhq/live-common/env";
 
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { FeatureId } from "@ledgerhq/types-live";
 import { Feature, isReadOnly } from "../../../experimental";
 import SettingsRow from "../../../components/SettingsRow";
 import FeatureSwitch from "./FeatureSwitch";
 import FeatureInteger from "./FeatureInteger";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
-import { FeatureId } from "@ledgerhq/live-common/types/index";
 
 type Props = {
   feature: Feature;
@@ -54,8 +54,8 @@ const FeatureRow = ({ feature }: Props) => {
   );
 };
 
-const FeatureRowCommon = ({ feature }: Props) => {
-  return feature.rolloutFeatureFlag ? (
+const FeatureRowCommon = ({ feature }: Props) =>
+  feature.rolloutFeatureFlag ? (
     <FeatureRowWithFeatureFlag
       feature={feature}
       featureFlagId={feature.rolloutFeatureFlag}
@@ -63,6 +63,5 @@ const FeatureRowCommon = ({ feature }: Props) => {
   ) : (
     <FeatureRow feature={feature} />
   );
-};
 
 export default FeatureRowCommon;

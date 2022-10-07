@@ -18,6 +18,7 @@ import InvertTheme from "../../../components/theme/InvertTheme";
 import ForceTheme from "../../../components/theme/ForceTheme";
 import Button from "../../../components/wrappedUi/Button";
 
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const source = require("../../../../assets/videos/onboarding.mp4");
 
 const absoluteStyle = {
@@ -64,12 +65,9 @@ function OnboardingStepWelcome({ navigation }: any) {
   );
 
   const next = useCallback(() => {
-    // TODO: Remove this stupid type check as soon as we convert useTermsAccept to TS
-    if (typeof setAccepted !== "boolean") setAccepted();
+    setAccepted();
     dispatch(setAnalytics(true));
 
-    // TODO: FIX @react-navigation/native using Typescript
-    // @ts-ignore next-line
     navigation.navigate({ name: ScreenName.OnboardingDoYouHaveALedgerDevice });
   }, [setAccepted, dispatch, navigation]);
 
@@ -89,12 +87,7 @@ function OnboardingStepWelcome({ navigation }: any) {
             resizeMode={"cover"}
           />
         )}
-        <Svg
-          style={absoluteStyle}
-          width="100%"
-          height="100%"
-          preserveAspectRatio="xMinYMin slice"
-        >
+        <Svg style={absoluteStyle} width="100%" height="120%">
           <Defs>
             <LinearGradient
               id="myGradient"

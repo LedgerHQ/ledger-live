@@ -2,7 +2,7 @@ import React, { useCallback } from "react";
 import { Trans } from "react-i18next";
 import { StyleSheet, View } from "react-native";
 import { useNavigation } from "@react-navigation/native";
-import { AccountLike, Account } from "@ledgerhq/live-common/types/index";
+import { AccountLike, Account } from "@ledgerhq/types-live";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import { getCurrencyColor } from "@ledgerhq/live-common/currencies/index";
 import { isAccountDelegating } from "@ledgerhq/live-common/families/tezos/bakers";
@@ -13,7 +13,6 @@ import Button from "../../components/wrappedUi/Button";
 
 const styles = StyleSheet.create({
   banner: {
-    margin: 16,
     marginBottom: 0,
     minHeight: 128,
     padding: 16,

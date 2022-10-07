@@ -4,10 +4,13 @@ import BigNumber from "bignumber.js";
 
 import type { Transaction } from "../../families/filecoin/types";
 import { getCryptoCurrencyById } from "../../currencies";
-import { pickSiblings } from "../../bot/specs";
+import { genericTestDestination, pickSiblings } from "../../bot/specs";
 import type { AppSpec } from "../../bot/types";
+import { acceptTransaction } from "./speculos-deviceActions";
 
 const MIN_SAFE = new BigNumber(100000);
+const maxAccount = 6;
+
 const filecoinSpecs: AppSpec<Transaction> = {
   name: "Filecoin",
   currency: getCryptoCurrencyById("filecoin"),
@@ -15,8 +18,9 @@ const filecoinSpecs: AppSpec<Transaction> = {
     model: DeviceModelId.nanoS,
     appName: "Filecoin",
   },
-
-  testTimeout: 5 * 60 * 1000,
+  genericDeviceAction: acceptTransaction,
+  testTimeout: 6 * 60 * 1000,
+  minViableAmount: MIN_SAFE,
   transactionCheck: ({ maxSpendable }) => {
     invariant(maxSpendable.gt(MIN_SAFE), "balance is too low");
   },
@@ -24,8 +28,9 @@ const filecoinSpecs: AppSpec<Transaction> = {
     {
       name: "Send 50%~",
       maxRun: 1,
+      testDestination: genericTestDestination,
       transaction: ({ account, siblings, bridge }) => {
-        const sibling = pickSiblings(siblings, 2);
+        const sibling = pickSiblings(siblings, maxAccount);
         let amount = account.spendableBalance
           .div(1.9 + 0.2 * Math.random())
           .integerValue();
@@ -42,7 +47,7 @@ const filecoinSpecs: AppSpec<Transaction> = {
           transaction: bridge.createTransaction(account),
           updates: [
             {
-              recipient: pickSiblings(siblings, 2).freshAddress,
+              recipient: sibling.freshAddress,
             },
             {
               amount,
@@ -59,7 +64,7 @@ const filecoinSpecs: AppSpec<Transaction> = {
           transaction: bridge.createTransaction(account),
           updates: [
             {
-              recipient: pickSiblings(siblings, 2).freshAddress,
+              recipient: pickSiblings(siblings, maxAccount).freshAddress,
             },
             {
               useAllAmount: true,

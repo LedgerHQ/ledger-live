@@ -1,5 +1,11 @@
 import { BigNumber } from "bignumber.js";
-import React, { useCallback, useState, useMemo , ElementProps } from "react";
+import React, {
+  useCallback,
+  useState,
+  useMemo,
+  ElementProps,
+  useEffect,
+} from "react";
 import { View, StyleSheet, Linking } from "react-native";
 import { useNavigation, useTheme } from "@react-navigation/native";
 import { useTranslation } from "react-i18next";
@@ -13,14 +19,14 @@ import {
   getAddressExplorer,
 } from "@ledgerhq/live-common/explorers";
 import {
-  useCosmosMappedDelegations,
-  useCosmosPreloadData,
+  useCosmosFamilyMappedDelegations,
+  useCosmosFamilyPreloadData,
 } from "@ledgerhq/live-common/families/cosmos/react";
 import type {
   CosmosMappedDelegation,
   CosmosMappedUnbonding,
 } from "@ledgerhq/live-common/families/cosmos/types";
-import type { Account } from "@ledgerhq/live-common/types/index";
+import type { Account } from "@ledgerhq/types-live";
 import {
   mapUnbondings,
   canRedelegate,
@@ -29,6 +35,8 @@ import {
   canDelegate,
 } from "@ledgerhq/live-common/families/cosmos/logic";
 import { Text } from "@ledgerhq/native-ui";
+import { getAccountBannerState as getCosmosBannerState } from "@ledgerhq/live-common/families/cosmos/banner";
+import { LEDGER_VALIDATOR_ADDRESS } from "@ledgerhq/live-common/families/cosmos/utils";
 import AccountDelegationInfo from "../../../components/AccountDelegationInfo";
 import IlluRewards from "../../../icons/images/Rewards";
 import { urls } from "../../../config/urls";
@@ -49,11 +57,12 @@ import DelegationLabelRight from "./LabelRight";
 import CurrencyUnitValue from "../../../components/CurrencyUnitValue";
 import CounterValue from "../../../components/CounterValue";
 import DateFromNow from "../../../components/DateFromNow";
+import AccountBanner from "../../../components/AccountBanner";
+import { getAccountBannerProps as getCosmosBannerProps } from "../utils";
 import ValidatorImage from "../shared/ValidatorImage";
-import { LEDGER_VALIDATOR_ADDRESS } from "@ledgerhq/live-common/families/cosmos/utils";
 
 type Props = {
-  account: Account,
+  account: Account;
 };
 
 type DelegationDrawerProps = ElementProps<typeof DelegationDrawer>;
@@ -63,15 +72,14 @@ function Delegations({ account }: Props) {
   const { colors } = useTheme();
   const { t } = useTranslation();
   const mainAccount = getMainAccount(account);
-  const delegations: CosmosMappedDelegation[] = useCosmosMappedDelegations(
-    mainAccount,
-  );
+  const delegations: CosmosMappedDelegation[] =
+    useCosmosFamilyMappedDelegations(mainAccount);
 
   const currency = getAccountCurrency(mainAccount);
   const unit = getAccountUnit(mainAccount);
   const navigation = useNavigation();
 
-  const { validators } = useCosmosPreloadData();
+  const { validators } = useCosmosFamilyPreloadData("cosmos");
 
   const { cosmosResources } = mainAccount;
 
@@ -82,6 +90,7 @@ function Delegations({ account }: Props) {
 
   const [delegation, setDelegation] = useState<CosmosMappedDelegation>();
   const [undelegation, setUndelegation] = useState<CosmosMappedUnbonding>();
+  const [banner, setBanner] = useState({ display: false });
 
   const totalRewardsAvailable = delegations.reduce(
     (sum, d) => sum.plus(d.pendingRewards || 0),
@@ -94,9 +103,9 @@ function Delegations({ account }: Props) {
       screen,
       params,
     }: {
-      route: typeof NavigatorName | typeof ScreenName,
-      screen?: typeof ScreenName,
-      params?: { [key: string]: any },
+      route: typeof NavigatorName | typeof ScreenName;
+      screen?: typeof ScreenName;
+      params?: { [key: string]: any };
     }) => {
       setDelegation();
       navigation.navigate(route, {
@@ -110,7 +119,10 @@ function Delegations({ account }: Props) {
   const onDelegate = useCallback(() => {
     onNavigate({
       route: NavigatorName.CosmosDelegationFlow,
-      screen: delegations.length > 0 ? ScreenName.CosmosDelegationValidator : ScreenName.CosmosDelegationStarted,
+      screen:
+        delegations.length > 0
+          ? ScreenName.CosmosDelegationValidator
+          : ScreenName.CosmosDelegationStarted,
     });
   }, [onNavigate, delegations]);
 
@@ -124,6 +136,34 @@ function Delegations({ account }: Props) {
       },
     });
   }, [onNavigate, delegation, account]);
+
+  useEffect(() => {
+    const state = getCosmosBannerState({ ...account });
+    const bannerText = getCosmosBannerProps(state, { ...account }, { t });
+    setBanner({ ...state, ...bannerText });
+  }, []);
+
+  const onRedelegateLedger = () => {
+    const { validatorSrcAddress, ledgerValidator } = { ...banner };
+    const worstValidator = delegations.find(
+      delegation => delegation.validatorAddress === validatorSrcAddress,
+    );
+    onNavigate({
+      route: NavigatorName.CosmosRedelegationFlow,
+      screen: ScreenName.CosmosDefaultRedelegationAmount,
+      params: {
+        accountId: account.id,
+        validatorSrcAddress,
+        transaction: {
+          validators: [worstValidator],
+        },
+        validatorSrc: worstValidator.validator,
+        validator: ledgerValidator,
+        max: worstValidator.amount,
+        nextScreen: ScreenName.CosmosRedelegationSelectDevice,
+      },
+    });
+  };
 
   const onCollectRewards = useCallback(() => {
     onNavigate({
@@ -374,7 +414,19 @@ function Delegations({ account }: Props) {
           },
         ]
       : [];
-  }, [delegation, account, t, onRedelegate, onCollectRewards, onUndelegate, colors.lightFog, colors.fog, colors.grey, colors.yellow, colors.alert]);
+  }, [
+    delegation,
+    account,
+    t,
+    onRedelegate,
+    onCollectRewards,
+    onUndelegate,
+    colors.lightFog,
+    colors.fog,
+    colors.grey,
+    colors.yellow,
+    colors.alert,
+  ]);
 
   const delegationDisabled = delegations.length <= 0 || !canDelegate(account);
 
@@ -386,7 +438,10 @@ function Delegations({ account }: Props) {
         account={account}
         ValidatorImage={({ size }) => (
           <ValidatorImage
-            isLedger={(delegation || undelegation)?.validatorAddress === LEDGER_VALIDATOR_ADDRESS}
+            isLedger={
+              (delegation || undelegation)?.validatorAddress ===
+              LEDGER_VALIDATOR_ADDRESS
+            }
             name={
               (delegation || undelegation)?.validator?.name ??
               (delegation || undelegation)?.validatorAddress ??
@@ -402,11 +457,9 @@ function Delegations({ account }: Props) {
       {totalRewardsAvailable.gt(0) && (
         <>
           <AccountSectionLabel name={t("account.claimReward.sectionLabel")} />
-          <View
-            style={[styles.rewardsWrapper]}
-          >
+          <View style={[styles.rewardsWrapper]}>
             <View style={styles.column}>
-              <Text fontWeight={'semiBold'} variant={'h4'}>
+              <Text fontWeight={"semiBold"} variant={"h4"}>
                 <CurrencyUnitValue value={totalRewardsAvailable} unit={unit} />
               </Text>
               <LText semiBold style={styles.subLabel} color="grey">
@@ -426,7 +479,14 @@ function Delegations({ account }: Props) {
           </View>
         </>
       )}
-
+      {banner.display && (
+        <View style={styles.banner}>
+          <AccountBanner
+            {...banner}
+            onPress={banner.redelegate ? onRedelegateLedger : onDelegate}
+          />
+        </View>
+      )}
       {delegations.length === 0 ? (
         <AccountDelegationInfo
           title={t("account.delegation.info.title")}
@@ -451,12 +511,7 @@ function Delegations({ account }: Props) {
             }
           />
           {delegations.map((d, i) => (
-            <View
-              key={d.validatorAddress}
-              style={[
-                styles.delegationsWrapper,
-              ]}
-            >
+            <View key={d.validatorAddress} style={[styles.delegationsWrapper]}>
               <DelegationRow
                 delegation={d}
                 currency={currency}
@@ -524,13 +579,14 @@ const styles = StyleSheet.create({
   column: {
     flexDirection: "column",
   },
-  wrapper: {
-    marginBottom: 16,
-  },
+  wrapper: {},
   delegationsWrapper: {
     borderRadius: 4,
   },
   valueText: {
     fontSize: 14,
+  },
+  banner: {
+    marginBottom: 16,
   },
 });

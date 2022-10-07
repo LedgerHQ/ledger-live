@@ -1,13 +1,27 @@
-<img src="https://user-images.githubusercontent.com/211411/34776833-6f1ef4da-f618-11e7-8b13-f0697901d6a8.png" height="100" />
+<img src="https://user-images.githubusercontent.com/4631227/191834116-59cf590e-25cc-4956-ae5c-812ea464f324.png" height="100" />
 
-[Github](https://github.com/LedgerHQ/ledgerjs/),
-[Ledger Devs Slack](https://ledger-dev.slack.com/)
+[GitHub](https://github.com/LedgerHQ/ledger-live/),
+[Ledger Devs Discord](https://developers.ledger.com/discord-pro),
+[Developer Portal](https://developers.ledger.com/)
 
 ## @ledgerhq/hw-transport-node-hid-singleton
 
 Allows to communicate with Ledger Hardware Wallets.
 
-**\[Node]**/Electron **(HID)** – uses `node-hid` and `usb-detection`. Keep transport opened and re-use it as a singleton, one device at a time on a computer but more robust implementation.
+**\[Node]**/Electron **(HID)** – uses `node-hid` and `node-usb`. Keep transport opened and re-use it as a singleton, one device at a time on a computer but more robust implementation.
+
+***
+
+## Are you adding Ledger support to your software wallet?
+
+You may be using this package to open a USB connection between your desktop application and the device.
+
+For a smooth and quick integration:
+
+*   See the developers’ documentation on the [Developer Portal](https://developers.ledger.com/docs/transport/overview/) and
+*   Go on [Discord](https://developers.ledger.com/discord-pro/) to chat with developer support and the developer community.
+
+***
 
 ## API
 
@@ -59,7 +73,7 @@ Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/
 
 ##### Parameters
 
-*   `observer` **Observer\<DescriptorEvent\<any>>** 
+*   `observer` **Observer\<ListenDescriptorEvent>** 
 
 Returns **Subscription** 
 

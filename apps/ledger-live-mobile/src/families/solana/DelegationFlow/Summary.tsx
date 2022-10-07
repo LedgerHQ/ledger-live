@@ -16,7 +16,7 @@ import {
 } from "@ledgerhq/live-common/families/solana/types";
 import { assertUnreachable } from "@ledgerhq/live-common/families/solana/utils";
 import { ValidatorsAppValidator } from "@ledgerhq/live-common/families/solana/validator-app/index";
-import { AccountLike } from "@ledgerhq/live-common/types/index";
+import { AccountLike } from "@ledgerhq/types-live";
 import { Text } from "@ledgerhq/native-ui";
 import { useTheme } from "@react-navigation/native";
 import { BigNumber } from "bignumber.js";
@@ -100,14 +100,8 @@ export default function DelegationSummary({ navigation, route }: Props) {
     );
   }, [validators, validator, delegationAction]);
 
-  const {
-    transaction,
-    setTransaction,
-    status,
-    bridgePending,
-    bridgeError,
-  } = useBridgeTransaction(() => {
-    return {
+  const { transaction, setTransaction, status, bridgePending, bridgeError } =
+    useBridgeTransaction(() => ({
       account,
       parentAccount,
       transaction: tx({
@@ -116,8 +110,7 @@ export default function DelegationSummary({ navigation, route }: Props) {
         amount: route.params.amount,
         chosenValidator,
       }),
-    };
-  });
+    }));
 
   useEffect(() => {
     setTransaction(
@@ -403,6 +396,7 @@ const styles = StyleSheet.create({
   },
 });
 
+// eslint-disable-next-line consistent-return
 function txModelByDelegationAction(
   delegationAction: DelegationAction,
   defaultValidator: ValidatorsAppValidator,

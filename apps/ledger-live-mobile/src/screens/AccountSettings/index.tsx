@@ -1,14 +1,14 @@
 import React, { PureComponent } from "react";
-import { Account } from "@ledgerhq/live-common/types/index";
+import { Account } from "@ledgerhq/types-live";
 import { connect } from "react-redux";
+import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import { accountScreenSelector } from "../../reducers/accounts";
 import { deleteAccount } from "../../actions/accounts";
 import { TrackScreen } from "../../analytics";
-import { NavigatorName } from "../../const";
+import { NavigatorName, ScreenName } from "../../const";
 
 import AccountNameRow from "./AccountNameRow";
 import AccountUnitsRow from "./AccountUnitsRow";
-import AccountCurrencyRow from "./AccountCurrencyRow";
 import DeleteAccountRow from "./DeleteAccountRow";
 import DeleteAccountModal from "./DeleteAccountModal";
 import AccountAdvancedLogsRow from "./AccountAdvancedLogsRow";
@@ -18,11 +18,13 @@ type Props = {
   navigation: any;
   route: { params: RouteParams };
   account: Account;
+  // eslint-disable-next-line @typescript-eslint/ban-types
   deleteAccount: Function;
 };
 
 type RouteParams = {
   accountId: string;
+  hasOtherAccountsForThisCrypto?: boolean;
 };
 
 type State = {
@@ -50,9 +52,19 @@ class AccountSettings extends PureComponent<Props, State> {
   };
 
   deleteAccount = () => {
-    const { account, deleteAccount, navigation } = this.props;
+    const { account, deleteAccount, navigation, route } = this.props;
     deleteAccount(account);
-    navigation.replace(NavigatorName.PortfolioAccounts);
+    if (route?.params?.hasOtherAccountsForThisCrypto) {
+      const currency = getAccountCurrency(account);
+      navigation.navigate(NavigatorName.Accounts, {
+        screen: ScreenName.Asset,
+        params: {
+          currency,
+        },
+      });
+    } else {
+      navigation.replace(NavigatorName.Base);
+    }
   };
 
   render() {
@@ -62,13 +74,9 @@ class AccountSettings extends PureComponent<Props, State> {
     if (!account) return null;
     return (
       <SettingsNavigationScrollView>
-        <TrackScreen category="AccountSettings" />
+        <TrackScreen category="Account Settings" />
         <AccountNameRow account={account} navigation={navigation} />
         <AccountUnitsRow account={account} navigation={navigation} />
-        <AccountCurrencyRow
-          currency={account.currency}
-          navigation={navigation}
-        />
         <AccountAdvancedLogsRow account={account} navigation={navigation} />
         <DeleteAccountRow onPress={this.onPress} />
         <DeleteAccountModal

@@ -1,10 +1,13 @@
 import React from "react";
 import { Trans } from "react-i18next";
-import type { AccountLike } from "@ledgerhq/live-common/types/index";
-import { getAccountDelegationSync, isAccountDelegating } from "@ledgerhq/live-common/families/tezos/bakers";
-import { Account } from "@ledgerhq/live-common/types/index";
+import type { Account, AccountLike } from "@ledgerhq/types-live";
+import {
+  getAccountDelegationSync,
+  isAccountDelegating,
+} from "@ledgerhq/live-common/families/tezos/bakers";
 import { Icons } from "@ledgerhq/native-ui";
 import { NavigatorName, ScreenName } from "../../const";
+import { ActionButtonEvent } from "../../components/FabActions";
 
 const getExtraSendActionParams = ({ account }: { account: AccountLike }) => {
   const delegation = getAccountDelegationSync(account);
@@ -38,8 +41,15 @@ const getExtraReceiveActionParams = ({ account }: { account: AccountLike }) => {
     : {};
 };
 
-const getActions = ({ account, parentAccount }: { account: Account,  parentAccount: Account }) => {
-  const delegationDisabled = (isAccountDelegating(account) || account.type !== "Account");
+const getActions = ({
+  account,
+  parentAccount,
+}: {
+  account: Account;
+  parentAccount: Account;
+}): ActionButtonEvent[] | null | undefined => {
+  const delegationDisabled =
+    isAccountDelegating(account) || account.type !== "Account";
 
   return [
     {
@@ -63,5 +73,5 @@ const getActions = ({ account, parentAccount }: { account: Account,  parentAccou
 export default {
   getExtraSendActionParams,
   getExtraReceiveActionParams,
-  getActions
+  getActions,
 };

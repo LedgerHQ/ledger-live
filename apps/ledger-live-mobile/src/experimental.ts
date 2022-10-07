@@ -2,34 +2,32 @@ import { useState, useEffect } from "react";
 import Config from "react-native-config";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { concatMap } from "rxjs/operators";
-import {
-  setEnvUnsafe,
-  isEnvDefault,
-  changes,
-} from "@ledgerhq/live-common/env";
+import { setEnvUnsafe, isEnvDefault, changes } from "@ledgerhq/live-common/env";
 import type { EnvName } from "@ledgerhq/live-common/env";
 
+import { FeatureId } from "@ledgerhq/types-live";
+
 import logger from "./logger";
-import { FeatureId } from "@ledgerhq/live-common/types/index";
+import { i18n } from "./context/Locale";
 
 export type FeatureCommon = {
-  name: EnvName,
-  title: string,
-  description: string,
-  shadow?: boolean,
-  rolloutFeatureFlag?: FeatureId,
+  name: EnvName;
+  title: string;
+  description: string;
+  shadow?: boolean;
+  rolloutFeatureFlag?: FeatureId;
 };
 
 export type FeatureToggle = {
-  type: "toggle",
-  valueOn?: any,
-  valueOff?: any,
+  type: "toggle";
+  valueOn?: any;
+  valueOff?: any;
 };
 
 export type FeatureInteger = {
-  type: "integer",
-  minValue?: number,
-  maxValue?: number,
+  type: "integer";
+  minValue?: number;
+  maxValue?: number;
 };
 
 export type Feature = FeatureCommon & (FeatureToggle | FeatureInteger);
@@ -38,6 +36,11 @@ export type Feature = FeatureCommon & (FeatureToggle | FeatureInteger);
 // const experimentalCurrencies = "solana,cardano";
 const experimentalCurrencies = "";
 
+const i18nKey = (key: string, prop: string) =>
+  `settings.experimental.experimentalFeatures.${key}.${prop}`;
+
+const i18nKeyDeveloper = (key: string, prop: string) =>
+  `settings.experimental.developerFeatures.${key}.${prop}`;
 
 export const experimentalFeatures: Feature[] = [
   ...(experimentalCurrencies.length
@@ -45,8 +48,10 @@ export const experimentalFeatures: Feature[] = [
         {
           type: "toggle",
           name: "EXPERIMENTAL_CURRENCIES",
-          title: "Experimental integrations",
-          description: "Use available experimental crypto assets integrations.",
+          title: i18n.t(i18nKey("experimentalIntegrations", "title")),
+          description: i18n.t(
+            i18nKey("experimentalIntegrations", "description"),
+          ),
           valueOn: experimentalCurrencies,
           valueOff: "",
         },
@@ -55,30 +60,27 @@ export const experimentalFeatures: Feature[] = [
   {
     type: "toggle",
     name: "MANAGER_DEV_MODE",
-    title: "Developer mode",
-    description: "Show developer and testnet apps in the Manager.",
+    title: i18n.t(i18nKey("developerMode", "title")),
+    description: i18n.t(i18nKey("developerMode", "description")),
   },
   {
     type: "integer",
     name: "FORCE_PROVIDER",
-    title: "Manager provider",
-    description:
-      "Changing the app provider in the Manager may make it impossible to install or uninstall apps on your Ledger device.",
+    title: i18n.t(i18nKey("managerProvider", "title")),
+    description: i18n.t(i18nKey("managerProvider", "description")),
     minValue: 1,
   },
   {
     type: "toggle",
     name: "EXPERIMENTAL_EXPLORERS",
-    title: "Experimental Explorers API",
-    description:
-      "Try an upcoming version of Ledger's blockchain explorers. Changing this setting may affect the account balance and synchronization as well as the send feature.",
+    title: i18n.t(i18nKey("experimentalExplorers", "title")),
+    description: i18n.t(i18nKey("experimentalExplorers", "description")),
   },
   {
     type: "toggle",
     name: "LEDGER_COUNTERVALUES_API",
-    title: "Experimental countervalues API",
-    description:
-      "This may cause the countervalues displayed for your accounts to become incorrect.",
+    title: i18n.t(i18nKey("experimentalCountervalues", "title")),
+    description: i18n.t(i18nKey("experimentalCountervalues", "description")),
     valueOn: "https://countervalues-experimental.live.ledger.com",
     valueOff: "https://countervalues.live.ledger.com",
   },
@@ -87,8 +89,8 @@ export const experimentalFeatures: Feature[] = [
         {
           type: "toggle",
           name: "EXPERIMENTAL_SWAP",
-          title: "New SWAP interface ",
-          description: "Use the new experimental swap interface",
+          title: i18n.t(i18nKey("experimentalSwap", "title")),
+          description: i18n.t(i18nKey("experimentalSwap", "description")),
         },
       ]
     : []),
@@ -98,14 +100,14 @@ export const developerFeatures: Feature[] = [
   {
     type: "toggle",
     name: "PLATFORM_EXPERIMENTAL_APPS",
-    title: "Allow experimental apps",
-    description: "Display and allow opening experimental tagged platform apps.",
+    title: i18n.t(i18nKeyDeveloper("experimentalApps", "title")),
+    description: i18n.t(i18nKeyDeveloper("experimentalApps", "description")),
   },
   {
     type: "toggle",
     name: "USE_LEARN_STAGING_URL",
-    title: "Learn staging URL",
-    description: "Use the staging URL for the Learn page.",
+    title: i18n.t(i18nKeyDeveloper("staggingUrl", "title")),
+    description: i18n.t(i18nKeyDeveloper("staggingUrl", "description")),
   },
 ];
 
@@ -184,4 +186,3 @@ export function useExperimental(): boolean {
 
   return state;
 }
-

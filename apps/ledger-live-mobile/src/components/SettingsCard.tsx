@@ -10,6 +10,7 @@ type Props = {
   title: string;
   desc: string;
   Icon: IconType;
+  // eslint-disable-next-line @typescript-eslint/ban-types
   onClick: Function;
   arrowRight?: boolean;
   settingsCardTestId?: string;

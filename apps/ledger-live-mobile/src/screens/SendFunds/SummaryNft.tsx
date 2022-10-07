@@ -4,16 +4,14 @@ import { useTranslation } from "react-i18next";
 import { View, StyleSheet } from "react-native";
 import { useTheme } from "@react-navigation/native";
 import { useNftMetadata } from "@ledgerhq/live-common/nft/index";
-import type {
-  Transaction,
-  CryptoCurrency,
-} from "@ledgerhq/live-common/types/index";
+import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import LText from "../../components/LText";
 import SummaryRow from "./SummaryRow";
 
 type Props = {
-  transaction: Transaction,
-  currencyId: CryptoCurrency["id"],
+  transaction: Transaction;
+  currencyId: CryptoCurrency["id"];
 };
 
 const SummaryNft = ({ transaction, currencyId }: Props) => {

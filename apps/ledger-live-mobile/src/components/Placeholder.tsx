@@ -1,5 +1,3 @@
-// @flow
-
 import React, { memo } from "react";
 import { Flex } from "@ledgerhq/native-ui";
 

@@ -102,13 +102,23 @@ const envDefinitions = {
   },
   API_STELLAR_HORIZON_FETCH_LIMIT: {
     parser: intParser,
-    def: 200,
+    def: 100,
     desc: "Limit of operation that Horizon will fetch per page",
   },
   API_STELLAR_HORIZON_STATIC_FEE: {
     def: false,
     parser: boolParser,
     desc: "Static fee for Stellar account",
+  },
+  API_OSMOSIS_INDEXER: {
+    def: "https://osmosis.coin.ledger.com/indexer",
+    parser: stringParser,
+    desc: "Endpoint for Transaction Explorer/Indexer for Osmosis",
+  },
+  API_OSMOSIS_NODE: {
+    def: "https://osmosis.coin.ledger.com/node",
+    parser: stringParser,
+    desc: "Endpoint for Osmosis Node",
   },
   API_TEZOS_BAKER: {
     parser: stringParser,
@@ -400,6 +410,11 @@ const envDefinitions = {
     parser: stringParser,
     desc: "switch the app into a MOCK mode for test purpose, the value will be used as a seed for the rng. Avoid falsy values.",
   },
+  MOCK_COUNTERVALUES: {
+    def: "",
+    parser: stringParser,
+    desc: "switch the countervalues resolution into a MOCK mode for test purpose",
+  },
   MOCK_SWAP_KYC: {
     def: "",
     parser: stringParser,
@@ -485,7 +500,7 @@ const envDefinitions = {
     desc: "dev flag to skip onboarding flow",
   },
   SWAP_API_BASE: {
-    def: "https://swap.ledger.com/v3",
+    def: "https://swap.ledger.com/v4",
     parser: stringParser,
     desc: "Swap API base",
   },
@@ -515,7 +530,7 @@ const envDefinitions = {
     desc: "maximum limit to synchronize accounts concurrently to limit overload",
   },
   BOT_MAX_CONCURRENT: {
-    def: 4,
+    def: 5,
     parser: intParser,
     desc: "maximum limit to run bot spec in parallel",
   },
@@ -613,6 +628,11 @@ const envDefinitions = {
     def: 1,
     parser: intParser,
     desc: "version used for the platform api",
+  },
+  PLAYWRIGHT_RUN: {
+    def: false,
+    parser: boolParser,
+    desc: "true when launched for E2E testing",
   },
   MARKET_API_URL: {
     def: "https://proxycg.api.live.ledger.com/api/v3",

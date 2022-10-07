@@ -1,7 +1,7 @@
 import React, { useCallback, useState } from "react";
 import * as Animatable from "react-native-animatable";
 import { useTranslation } from "react-i18next";
-import { Flex, Carousel, Text, Link, Button, Icons } from "@ledgerhq/native-ui";
+import { Flex, Carousel, Text, Button, Icons } from "@ledgerhq/native-ui";
 import { useNavigation, useRoute, RouteProp } from "@react-navigation/native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import styled from "styled-components/native";
@@ -40,7 +40,13 @@ const Card = ({ index /* , deviceModelId */ }: CardType) => {
           lightSource={images.light[index]}
         />
       </Flex>
-      <Text variant="h2" mb={3} textAlign="center" color="constant.black">
+      <Text
+        variant="h2"
+        mb={3}
+        textAlign="center"
+        color="constant.black"
+        lineHeight="34.8px"
+      >
         {t(`onboarding.stepNewDevice.${index}.title`)}
       </Text>
       <Text textAlign="center" variant="body" color="constant.black">
@@ -55,8 +61,6 @@ const FooterNextButton = ({ label }: { label: string }) => {
   const route = useRoute();
 
   const next = useCallback(() => {
-    // TODO: FIX @react-navigation/native using Typescript
-    // @ts-ignore next-line
     navigation.navigate(ScreenName.OnboardingSetNewDevice, { ...route.params });
   }, [navigation, route.params]);
 

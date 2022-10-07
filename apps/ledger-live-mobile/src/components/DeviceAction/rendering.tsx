@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import styled from "styled-components/native";
-import { WrongDeviceForAccount, UnexpectedBootloader } from "@ledgerhq/errors";
-import { TokenCurrency } from "@ledgerhq/live-common/types/index";
+import { WrongDeviceForAccount } from "@ledgerhq/errors";
+import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { AppRequest } from "@ledgerhq/live-common/hw/actions/app";
 import firmwareUpdateRepair from "@ledgerhq/live-common/hw/firmwareUpdate-repair";
@@ -14,18 +14,19 @@ import {
   Icons,
   Log,
 } from "@ledgerhq/native-ui";
+import { getDeviceModel } from "@ledgerhq/devices";
 import { setModalLock } from "../../actions/appstate";
 import { urls } from "../../config/urls";
 import Alert from "../Alert";
 import { lighten } from "../../colors";
 import Button from "../Button";
-import FirmwareProgress from "../FirmwareProgress";
+import DeviceActionProgress from "../DeviceActionProgress";
 import { NavigatorName, ScreenName } from "../../const";
 import Animation from "../Animation";
-import getDeviceAnimation from "./getDeviceAnimation";
+import { getDeviceAnimation } from "../../helpers/getDeviceAnimation";
 import GenericErrorView from "../GenericErrorView";
 import Circle from "../Circle";
-import { MANAGER_TABS } from "../../screens/Manager/Manager";
+import { MANAGER_TABS } from "../../const/manager";
 import ExternalLink from "../ExternalLink";
 import { track } from "../../analytics";
 import TermsFooter, { TermsProviders } from "../TermsFooter";
@@ -276,6 +277,29 @@ export function renderAllowManager({
       <CenteredText>
         {t("DeviceAction.allowManagerPermission", { wording })}
       </CenteredText>
+    </Wrapper>
+  );
+}
+
+export function renderAllowLanguageInstallation({
+  t,
+  device,
+  theme,
+}: RawProps & {
+  device: Device;
+}) {
+  const deviceName = getDeviceModel(device.modelId).productName;
+
+  return (
+    <Wrapper>
+      <Text variant="h4" textAlign="center">
+        {t("deviceLocalization.allowLanguageInstallation", { deviceName })}
+      </Text>
+      <AnimationContainer>
+        <Animation
+          source={getDeviceAnimation({ device, key: "validate", theme })}
+        />
+      </AnimationContainer>
     </Wrapper>
   );
 }
@@ -676,7 +700,7 @@ export const AutoRepair = ({
   return (
     <Wrapper>
       <TitleText>{t("FirmwareUpdate.preparingDevice")}</TitleText>
-      <FirmwareProgress progress={progress} />
+      <DeviceActionProgress progress={progress} />
       <DescriptionText>{t("FirmwareUpdate.pleaseWaitUpdate")}</DescriptionText>
     </Wrapper>
   );

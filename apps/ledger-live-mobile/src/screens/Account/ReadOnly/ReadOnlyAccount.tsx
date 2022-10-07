@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo } from "react";
+import React, { useCallback, useMemo, useContext } from "react";
 import { FlatList } from "react-native";
 import { useSelector } from "react-redux";
 import { Trans, useTranslation } from "react-i18next";
@@ -8,11 +8,12 @@ import {
   getCryptoCurrencyById,
   getTokenById,
 } from "@ledgerhq/live-common/currencies/index";
-import { Currency } from "@ledgerhq/live-common/types/index";
+import { Currency } from "@ledgerhq/types-cryptoassets";
+import { useFocusEffect } from "@react-navigation/native";
 
 import { TAB_BAR_SAFE_HEIGHT } from "../../../components/TabBar/TabBarSafeAreaView";
 import ReadOnlyGraphCard from "../../../components/ReadOnlyGraphCard";
-import ReadOnlyFabActions from "../../../components/ReadOnlyFabActions";
+import ReadOnlyFabActions from "../../../components/FabActions/ReadOnlyFabActions";
 import GradientContainer from "../../../components/GradientContainer";
 import BuyDeviceBanner, {
   IMAGE_PROPS_BIG_NANO,
@@ -25,8 +26,9 @@ import { withDiscreetMode } from "../../../context/DiscreetModeContext";
 import {
   counterValueCurrencySelector,
   hasOrderedNanoSelector,
-} from "../reducers/settings";
-import { usePreviousRouteName } from "../../../helpers/routeHooks";
+} from "../../../reducers/settings";
+// eslint-disable-next-line import/no-cycle
+import { AnalyticsContext } from "../../../components/RootNavigator";
 
 type RouteParams = {
   currencyId: string;
@@ -132,15 +134,25 @@ function ReadOnlyAccount({ route }: Props) {
   const renderItem = useCallback(({ item }: any) => item, []);
   const keyExtractor = useCallback((_: any, index: any) => String(index), []);
 
-  const previousRoute = usePreviousRouteName();
+  const { source, setSource, setScreen } = useContext(AnalyticsContext);
+
+  useFocusEffect(
+    useCallback(() => {
+      setScreen("Account");
+
+      return () => {
+        setSource("Account");
+      };
+    }, [setSource, setScreen]),
+  );
 
   return (
     <SafeAreaView style={{ flex: 1 }} edges={["bottom", "left", "right"]}>
       <TrackScreen
         category="Account"
-        currency={currency}
+        currency={currency.name}
         operationsSize={0}
-        source={previousRoute}
+        source={source}
       />
       <FlatList
         contentContainerStyle={{ paddingBottom: TAB_BAR_SAFE_HEIGHT }}

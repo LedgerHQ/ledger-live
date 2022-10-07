@@ -4,7 +4,7 @@ import { supportedCountervalues, SupportedCoutervaluesData } from "~/renderer/re
 import Dropdown from "./DropDown";
 import Track from "~/renderer/analytics/Track";
 import { useTranslation } from "react-i18next";
-import { Currency } from "@ledgerhq/live-common/types/index";
+import { Currency } from "@ledgerhq/types-cryptoassets";
 
 type Props = {
   counterCurrency: string;

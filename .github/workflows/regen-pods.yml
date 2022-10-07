@@ -1,0 +1,100 @@
+name: "Mobile App - Regen Pods"
+
+on:
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: The branch to generate pods for.
+        required: false
+      number:
+        description: The pull request number.
+        required: false
+      login:
+        description: The GitHub username that triggered the workflow
+        required: true
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.ref_name != 'develop' }}
+
+jobs:
+  regen-pods:
+    runs-on: macos-latest
+    name: "Regenerate Podfile"
+    env:
+      SKIP_BUNDLE_CHECK: 1
+    steps:
+      - uses: actions/checkout@v3
+        if: ${{ github.event.inputs.ref != null }}
+        with:
+          ref: ${{ github.event.inputs.ref }}
+      - uses: actions/checkout@v3
+        if: ${{ !github.event.inputs.ref }}
+      - name: Checkout PR
+        if: ${{ github.event.inputs.number != null }}
+        run: gh pr checkout ${{ github.event.inputs.number }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: set git user
+        run: |
+          git config user.email "team-live@ledger.fr"
+          git config user.name "Team Live"
+      - uses: pnpm/action-setup@v2
+        with:
+          version: latest
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16.x
+          cache: pnpm
+          cache-dependency-path: "**/pnpm-lock.yaml"
+      - name: bump npm
+        run: npm i -g npm@8.12.2
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 2.7
+      - name: Cache LLM pods
+        uses: actions/cache@v3
+        with:
+          path: |
+            apps/ledger-live-mobile/ios/Pods
+            ~/Library/Caches/CocoaPods
+            ~/.cocoapods
+          key: ${{ runner.os }}-pods-${{ hashFiles('apps/ledger-live-mobile/ios/Podfile.lock') }}
+      - name: install dependencies
+        run: pnpm i --filter="live-mobile..." --filter="ledger-live" --no-frozen-lockfile --unsafe-perm
+      - name: regenerate pods
+        run: pnpm mobile pod
+      - name: status
+        id: check-status
+        run: echo "::set-output name=status::$(git status --porcelain | wc -l)"
+      - name: commit and push changes
+        if: steps.check-status.outputs.status != 0
+        run: >
+          git add ./apps/ledger-live-mobile/ios &&
+          git commit -m 'chore(🍏): regenerate podfile' &&
+          git restore . &&
+          git pull --rebase &&
+          git push
+      - uses: ./tools/actions/composites/pr-comment
+        if: failure() && github.event.inputs.number != null
+        with:
+          number: ${{ github.event.inputs.number }}
+          body: |
+            #### ❌ Podfile regeneration failed
+
+            @${{ github.event.inputs.login }}: you can check [the action logs](https://github.com/LedgerHQ/ledger-live/runs/${{ github.run_id }}) for more information.
+      - uses: ./tools/actions/composites/pr-comment
+        if: github.event.inputs.number != null && steps.check-status.outputs.status != 0
+        with:
+          number: ${{ github.event.inputs.number }}
+          body: |
+            #### 🚀 Podfile regenerated
+
+            @${{ github.event.inputs.login }}: the podfile has been regenerated and a commit has been pushed to your branch.
+      - uses: ./tools/actions/composites/pr-comment
+        if: github.event.inputs.number != null && steps.check-status.outputs.status == 0
+        with:
+          number: ${{ github.event.inputs.number }}
+          body: |
+            #### ✨ No changes detected
+
+            @${{ github.event.inputs.login }}: the podfile is already up to date.
