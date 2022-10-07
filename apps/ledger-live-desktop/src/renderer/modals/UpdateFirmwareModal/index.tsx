@@ -154,7 +154,7 @@ const UpdateModal = ({
       if (
         firmware &&
         isDeviceLocalizationSupported(firmware.final.name, deviceModelId) &&
-        deviceLocalizationFeatureFlag.enabled
+        deviceLocalizationFeatureFlag?.enabled
       ) {
         steps.push(deviceLanguageStep);
       }

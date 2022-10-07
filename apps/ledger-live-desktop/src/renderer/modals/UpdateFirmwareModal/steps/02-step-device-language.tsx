@@ -94,7 +94,7 @@ const StepDeviceLanguage = ({
 
   return (
     <Flex justifyContent="center" flex={1}>
-      {isLanguagePromptOpen && !installingLanguage && (
+      {isLanguagePromptOpen && !installingLanguage ? (
         <>
           <Track event="Page Manager FwUpdateDeviceLanguagePrompt" onMount />
           <ChangeDeviceLanguagePrompt
@@ -112,7 +112,7 @@ const StepDeviceLanguage = ({
             onConfirm={() => installLanguage(localeIdToDeviceLanguage[currentLocale] as Language)}
           />
         </>
-      )}
+      ) : null}
       {installingLanguage ? (
         <ChangeDeviceLanguageAction
           device={device}
