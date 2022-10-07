@@ -12,7 +12,8 @@ import { withV3StyleProvider } from "~/renderer/styles/StyleProviderV3";
 import { command } from "~/renderer/commands";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
 import ChangeDeviceLanguagePrompt from "~/renderer/components/ChangeDeviceLanguagePrompt";
-import { DeviceModelId, getDeviceModel } from "@ledgerhq/devices";
+import { getDeviceModel } from "@ledgerhq/devices";
+import { DeviceModelId } from "@ledgerhq/types-devices";
 
 type Props = {
   onClose: () => void;
