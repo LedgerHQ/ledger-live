@@ -159,27 +159,26 @@ export const modes: Record<Modes, ModeModule> = {
   "erc20.approve": erc20approve,
 };
 
-export const fetchERC20Tokens: () => Promise<(string | number | boolean)[]> =
-  async () => {
-    let tokens: TokenCurrency[];
+export const fetchERC20Tokens: () => Promise<any> = async () => {
+  let tokens: any;
 
-    try {
-      const { data } = await network({
-        url: `${getEnv("DYNAMIC_CAL_BASE_URL")}/erc20.json`,
-      });
+  try {
+    const { data } = await network({
+      url: `${getEnv("DYNAMIC_CAL_BASE_URL")}/erc20.json`,
+    });
 
-      tokens = data;
-    } catch (e: any) {
-      log("preload-erc20", `failed to preload erc20 ${e.toString()}`);
-      tokens = [];
-    }
+    tokens = data;
+  } catch (e: any) {
+    log("preload-erc20", `failed to preload erc20 ${e.toString()}`);
+    tokens = [];
+  }
 
-    return tokens;
-  };
+  return tokens;
+};
 
 export async function preload(
   currency: CryptoCurrency
-): Promise<(string | number | boolean)[] | null | undefined> {
+): Promise<any | null | undefined> {
   if (currency.id !== "ethereum") {
     return Promise.resolve(null);
   }
@@ -190,7 +189,7 @@ export async function preload(
 }
 
 export function hydrate(
-  value: (string | number | boolean)[] | null | undefined,
+  value: any | null | undefined,
   currency: CryptoCurrency
 ): void {
   if (currency.id !== "ethereum" || !value) return;
