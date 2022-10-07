@@ -77,8 +77,10 @@
     "@actions/turborepo-gh-cache": "1.0.0"
   },
   "changesets": [
+    "angry-terms-wonder",
     "brown-experts-agree",
     "cold-papayas-sell",
+    "cool-rabbits-smile",
     "cyan-dingos-cheat",
     "dry-kiwis-give",
     "few-books-reflect",
@@ -86,9 +88,11 @@
     "flat-flies-behave",
     "flat-kangaroos-warn",
     "friendly-tigers-pretend",
+    "gorgeous-islands-call",
     "honest-mails-watch",
     "light-hotels-talk",
     "long-donkeys-invent",
+    "loud-zoos-scream",
     "modern-buckets-enjoy",
     "orange-maps-walk",
     "quick-moles-fix",
@@ -101,6 +105,7 @@
     "strong-teachers-sing",
     "tame-weeks-cheer",
     "tender-buckets-learn",
+    "thin-kangaroos-teach",
     "twelve-pianos-shop",
     "twenty-pumpkins-shop"
   ]

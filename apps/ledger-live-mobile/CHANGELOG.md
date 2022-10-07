@@ -1,5 +1,17 @@
 # live-mobile
 
+## 3.9.1-nightly.4
+
+### Patch Changes
+
+- [#1499](https://github.com/LedgerHQ/ledger-live/pull/1499) [`fffd15218c`](https://github.com/LedgerHQ/ledger-live/commit/fffd15218c6422f1e73032768a64e12cc3708ba8) Thanks [@Justkant](https://github.com/Justkant)! - fix: custom manifest open button
+
+* [#1482](https://github.com/LedgerHQ/ledger-live/pull/1482) [`6c174071cf`](https://github.com/LedgerHQ/ledger-live/commit/6c174071cf96629fd1aa1e8582eb262a3ff3795f) Thanks [@LFBarreto](https://github.com/LFBarreto)! - LLM - bug fix - issue in transfer drawer text spacing
+
+* Updated dependencies [[`22725d35e5`](https://github.com/LedgerHQ/ledger-live/commit/22725d35e59c79759e7cdd295ac5b7ebbb774ee2), [`d1aab06a96`](https://github.com/LedgerHQ/ledger-live/commit/d1aab06a966e06269b037b574e51593fe45e987f)]:
+  - @ledgerhq/native-ui@0.11.0-nightly.1
+  - @ledgerhq/live-common@27.4.0-nightly.3
+
 ## 3.9.1-nightly.3
 
 ### Patch Changes

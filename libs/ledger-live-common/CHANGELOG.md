@@ -1,5 +1,11 @@
 # @ledgerhq/live-common
 
+## 27.4.0-nightly.3
+
+### Patch Changes
+
+- [#1409](https://github.com/LedgerHQ/ledger-live/pull/1409) [`d1aab06a96`](https://github.com/LedgerHQ/ledger-live/commit/d1aab06a966e06269b037b574e51593fe45e987f) Thanks [@crypto-smoke](https://github.com/crypto-smoke)! - Crypto Icons - Add support for YAE token icon
+
 ## 27.4.0-nightly.2
 
 ### Minor Changes

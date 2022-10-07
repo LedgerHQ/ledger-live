@@ -1,5 +1,11 @@
 # @ledgerhq/native-ui
 
+## 0.11.0-nightly.1
+
+### Patch Changes
+
+- [#1480](https://github.com/LedgerHQ/ledger-live/pull/1480) [`22725d35e5`](https://github.com/LedgerHQ/ledger-live/commit/22725d35e59c79759e7cdd295ac5b7ebbb774ee2) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - VerticalTimeline: add dynamic height capability (with animation)
+
 ## 0.11.0-nightly.0
 
 ### Minor Changes
