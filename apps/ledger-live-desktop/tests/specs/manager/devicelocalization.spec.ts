@@ -4,11 +4,11 @@ import { ManagerPage } from "../../models/ManagerPage";
 import { LanguageInstallation } from "../../models/LanguageInstallation";
 import { DeviceAction } from "../../models/DeviceAction";
 import { Layout } from "../../models/Layout";
-import { languageIds } from "@ledgerhq/types-live";
 
 test.use({ userdata: "skip-onboarding" });
 test.use({ env: { FORCE_PROVIDER: 12 } });
 
+// eslint-disable-next-line jest/no-done-callback
 test("Manager", async ({ page }) => {
   const managerPage = new ManagerPage(page);
   const languageInstallation = new LanguageInstallation(page);
@@ -32,7 +32,7 @@ test("Manager", async ({ page }) => {
     await deviceAction.initiateLanguageInstallation();
     await languageInstallation.allowLanguageInstallation.waitFor({ state: "visible" });
     await expect.soft(page).toHaveScreenshot("manager-allow-language-installation.png");
-    
+
     await deviceAction.add50ProgressToLanguageInstallation();
     await languageInstallation.installingLanguageProgress.waitFor({ state: "visible" });
     await expect.soft(page).toHaveScreenshot("manager-language-installation-progress.png");
