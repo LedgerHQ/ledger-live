@@ -3,6 +3,7 @@
     "cancel" : "Annuler",
     "apply" : "Appliquer",
     "seeAll" : "Tout afficher",
+    "seeAllWithNumber" : "Afficher tout ({{number}})",
     "back" : "Retour",
     "delete" : "Effacer",
     "paste" : "Coller",
@@ -30,6 +31,7 @@
     "received" : "Reçu",
     "sent" : "Envoyé",
     "or" : "OU",
+    "others" : "Autres",
     "rename" : "Renommer",
     "learnMore" : "En savoir plus",
     "checkItOut" : "Jeter un œil",
@@ -83,7 +85,8 @@
     "moreInfo" : "Plus d’informations",
     "buyEth" : "Acheter de l’Ethereum",
     "popular" : "Populaire",
-    "comingSoon" : "Bientôt disponibles"
+    "comingSoon" : "Bientôt disponibles",
+    "getSupport" : "Obtenir de l’aide"
   },
   "errors" : {
     "countervaluesUnavailable" : {
@@ -147,6 +150,12 @@
           "nanoX" : "Assurez-vous que votre {{productName}} est déverrouillé, avec le Bluetooth activé ou le câble branché."
         }
       }
+    },
+    "CeloAllFundsWarning" : {
+      "title" : "Assurez-vous que votre solde disponible est suffisant pour couvrir les frais de transaction."
+    },
+    "CeloMissingWithdrawalsError" : {
+      "title" : "Erreur lors du retrait des fonds"
     },
     "ClaimRewardsFeesWarning" : {
       "title" : "Les récompenses sont inférieures aux frais estimés pour les demander.",
@@ -276,7 +285,7 @@
     },
     "EthAppNftNotSupported" : {
       "title" : "Opération indisponible sur cet appareil",
-      "description" : "Send NFT feature is only available for Nano X and Nano S+. Please visit our customer support platform to know how to send a NFT with a Nano S."
+      "description" : "La fonctionnalité Envoi de NFT n’est disponible que pour le Nano X et le Nano S Plus. Visitez notre centre d’aide pour découvrir comment envoyer un NFT avec un Nano S."
     },
     "Touch ID Error" : {
       "title" : "Échec de l’authentification biométrique",
@@ -583,8 +592,8 @@
       "title" : "Le montant doit être inférieur à {{maxAmountFromFormatted}}"
     },
     "SwapGenericAPIError" : {
-      "title" : "Taux de change expiré",
-      "description" : "Vous devez confirmer le swap avant que le temps limite ne soit écoulé. Le taux de change reste valide pendant une durée fixe."
+      "title" : "Une erreur est survenue.",
+      "description" : "Le swap n’a pas été effectué. Veuillez réessayer ou contacter l’Assistance."
     },
     "PolkadotElectionClosed" : {
       "title" : "L’élection du validateur doit être fermée."
@@ -721,6 +730,9 @@
       "description" : "Veuillez réessayer avec une autre image."
     }
   },
+  "crash" : {
+    "title" : "Une erreur est survenue."
+  },
   "bluetooth" : {
     "required" : "Le Bluetooth semble être désactivé.",
     "locationRequiredTitle" : "La localisation est requise pour le Bluetooth LE.",
@@ -762,7 +774,7 @@
   "auth" : {
     "failed" : {
       "biometrics" : {
-        "title" : "Échec du déverrouillage {{biometricsType}}",
+        "title" : "Échec du déverrouillage par {{biometricsType}}",
         "description" : "Entrez votre mot de passe pour continuer",
         "authenticate" : "Authentifiez-vous avec l’app Ledger Live."
       },
@@ -791,7 +803,7 @@
     },
     "enableBiometrics" : {
       "title" : "{{biometricsType}}",
-      "desc" : "Déverrouillez avec {{biometricsType}}."
+      "desc" : "Déverrouillez avec : {{biometricsType}}."
     }
   },
   "reset" : {
@@ -1277,7 +1289,7 @@
         },
         "bullets" : {
           "0" : {
-            "title" : "Utiliser votre feuille de récupération",
+            "title" : "Utilisez votre feuille de récupération",
             "label" : "Prenez la feuille de récupération vierge incluse avec votre Nano. Contactez l’Assistance Ledger si la feuille de récupération fournie n’était pas vierge."
           },
           "1" : {
@@ -1672,7 +1684,10 @@
         "addAccounts" : "Ajouter un actif",
         "title" : "Commencer",
         "description" : "Vous pouvez acheter des cryptos auprès de nos partenaires ou configurer votre wallet."
-      }
+      },
+      "title" : "Commencez par ajouter vos actifs préférés à votre wallet",
+      "subtitle" : "Ledger prend en charge plus de 6 000 cryptos.",
+      "addAccount" : "ou ajoutez un compte"
     },
     "noOpState" : {
       "title" : "Pas encore d’opérations ?",
@@ -1684,6 +1699,13 @@
     "topGainers" : {
       "title" : "Palmarès marché (24H)",
       "seeMarket" : "Tout afficher"
+    },
+    "walletBalance" : "Solde total",
+    "seelAllAssets" : "Afficher tous les actifs",
+    "marketPriceSection" : {
+      "title" : "Cours du {{currencyTicker}}",
+      "currencyPrice" : "Prix de 1 {{currencyTicker}}",
+      "currencyPriceChange" : "Variation (24h)"
     }
   },
   "addAccountsModal" : {
@@ -1909,7 +1931,8 @@
       "buttons" : {
         "receiveFunds" : "Recevoir",
         "buyCrypto" : "Acheter"
-      }
+      },
+      "addAccountCta" : "Ajouter un compte"
     },
     "settings" : {
       "header" : "Paramètres du compte",
@@ -2010,6 +2033,15 @@
         "subtitle" : "Vous avez besoin d’un appareil pour acheter ou recevoir des {{assetName}}"
       }
     },
+    "modals" : {
+      "zeroBalanceDisabledAction" : {
+        "title" : "Vous n’avez pas encore de {{currencyTicker}}",
+        "start" : "Achetez ou recevez des {{currencyTicker}} pour commencer.",
+        "description" : "Vous avez besoin de {{currencyTicker}} pour {{actionName}} avec ce compte."
+      }
+    },
+    "earn" : "Gagner",
+    "quickActions" : "Raccourcis",
     "banner" : {
       "redelegation" : {
         "description" : "Bon à savoir : le validateur Ledger offre des frais de staking inférieurs à ceux prélevés par votre validateur actuel.",
@@ -2023,6 +2055,7 @@
   },
   "accounts" : {
     "title" : "Comptes",
+    "cryptoAccountsTitle" : "Comptes {{currencyTicker}}",
     "importNotification" : {
       "message" : "Vos comptes ont bien été importés."
     },
@@ -2086,7 +2119,7 @@
     },
     "facebook" : {
       "title" : "Facebook",
-      "desc" : "Likez notre page."
+      "desc" : "Aimez notre page."
     },
     "twitter" : {
       "title" : "Twitter",
@@ -2255,6 +2288,10 @@
       "clearCacheButton" : "Effacer",
       "exportLogs" : "Enregistrer les logs",
       "exportLogsDesc" : "Sauvegardez les logs de Ledger Live peut être nécessaire à des fins de dépannage.",
+      "resetThirdPartyData" : "Réinitialiser les données fournies à des tiers",
+      "resetThirdPartyDataDesc" : "Supprimez toutes vos données stockées localement et partagées avec des tiers, qui sont utilisées pour accéder aux prestataires de transactions tiers.",
+      "resetThirdPartyDataModal" : "Supprimer vos données locales partagées avec des tiers",
+      "resetThirdPartyDataModalDesc" : "Vous vous apprêtez à supprimer vos données stockées localement qui sont partagées avec des tiers. Vous devrez peut-être soumettre à nouveau votre vérification d’identité et/ou vous reconnecter pour accéder aux services fournis par nos partenaires.",
       "hardReset" : "Réinitialiser Ledger Live",
       "hardResetDesc" : "Sans effet sur vos actifs. Toutes les données de Ledger Live, y compris les données de comptes, l’historique de vos transactions et paramètres seront effacées. Utilisez votre appareil Ledger pour recharger et gérer vos crypto-actifs dans une app Ledger Live vierge.",
       "repairDevice" : "Réparer votre appareil Ledger",
@@ -2586,7 +2623,7 @@
         "toAccount" : "Sélectionnez un compte",
         "paraswapCTA" : "Vous cherchez ParaSwap ? Il se trouve dans l’onglet Discover.",
         "quote" : "Prix",
-        "receive" : "Recevoir",
+        "receive" : "Recevez",
         "amount" : {
           "useMax" : "Choisir le maximum",
           "available" : "Total disponible"
@@ -2675,19 +2712,79 @@
         }
       }
     },
-    "swapv2" : {
+    "swap2" : {
       "form" : {
-        "summary" : {
-          "from" : "De",
-          "to" : "À",
-          "send" : "Envoyer",
-          "payoutNetworkFees" : "Frais de réception",
-          "payoutNetworkFeesTooltip" : "Ce montant n’apparaîtra pas sur votre appareil.",
-          "receive" : "Montant",
-          "receiveFloat" : "Montant à recevoir sans les frais de service",
-          "provider" : "Prestataire",
-          "method" : "Taux",
-          "fees" : "Frais"
+        "ratesDrawer" : {
+          "title" : "Taux",
+          "quote" : "Prix",
+          "receive" : "Recevez"
+        },
+        "placeholder" : "Sélectionner",
+        "title" : "Échanger",
+        "cta" : "Échanger",
+        "from" : "De",
+        "to" : "À",
+        "loading" : "Chargement...",
+        "disclaimer" : {
+          "title" : "Conditions d’utilisation",
+          "desc" : "En choisissant Accepter, je reconnais et accepte que ce service soit exclusivement soumis aux Conditions d’utilisation de {{providerName}}.",
+          "tos" : "Conditions d’utilisation",
+          "accept" : "Accepter"
+        },
+        "notAvailable" : {
+          "title" : "Le swap n’est pas encore disponible pour votre territoire.",
+          "content" : "Merci pour votre patience. Nous lancerons cette fonctionnalité très rapidement."
+        },
+        "amount" : {
+          "useMax" : "Choisir le maximum"
+        },
+        "details" : {
+          "label" : {
+            "provider" : "Prestataire",
+            "rate" : "Taux",
+            "fees" : "Frais de réseau",
+            "target" : "Compte bénéficiaire"
+          },
+          "noAccount" : "Créez un compte pour recevoir des {{name}}.",
+          "noAccountCTA" : "Ajouter un compte"
+        },
+        "select" : {
+          "from" : {
+            "title" : "De"
+          },
+          "to" : {
+            "title" : "À"
+          }
+        },
+        "providers" : {
+          "kyc" : {
+            "title" : "Vérification",
+            "required" : "Vous devez passer la vérification d’identité.",
+            "complete" : "Vérifier",
+            "update" : "Actualiser",
+            "rejected" : "Vérification d’identité rejetée, merci de recommencer.",
+            "rejectedContactProviderSupport" : "Vérification rejetée, contactez l’assistance de {{providerName}}",
+            "updateRequired" : "Complétez ou mettez à jour votre vérification d’identité",
+            "status" : {
+              "pending" : "En attente",
+              "approved" : "Approuvé",
+              "closed" : "Rejeté",
+              "upgradeRequired" : "Incomplet"
+            }
+          },
+          "login" : {
+            "title" : "Connexion",
+            "required" : "Connectez-vous pour utiliser ce prestataire.",
+            "complete" : "Me connecter"
+          },
+          "mfa" : {
+            "title" : "MFA",
+            "required" : "Configurez une authentification multifactorielle pour utiliser ce prestataire.",
+            "complete" : "Configurer une MFA"
+          },
+          "withdrawalsBlockedError" : {
+            "message" : "Votre retrait a été bloqué par {{providerName}}.\n\n Pour en savoir plus, contactez leur service d’assistance."
+          }
         }
       }
     },
@@ -3110,6 +3207,7 @@
     }
   },
   "addAccounts" : {
+    "addNew" : "Ajouter",
     "supportLinks" : {
       "segwit_or_native_segwit" : "SegWit ou Native SegWit ?"
     },
@@ -3142,7 +3240,6 @@
     "retry" : "Réessayer",
     "done" : "Terminé",
     "finalCta" : "Continuer",
-    "finalCtaForSwap" : "Retour au Swap",
     "synchronizing" : "Synchronisation",
     "synchronizingDesc" : "Synchronisation de vos comptes en cours. Cela peut prendre quelques minutes...",
     "noAccountToCreate" : "Impossible de créer le compte <1><0>{{currencyName}}</0></1>. Recommencez et synchronisez vos comptes.",
@@ -3219,7 +3316,17 @@
     "confirmSwap" : {
       "title" : "Confirmer l’opération de swap sur l’appareil",
       "alert" : "Vérifiez les détails du swap sur votre appareil avant de l’envoyer. Les adresses sont échangées de manière sécurisée afin que vous n’ayez pas à les vérifier.",
-      "acceptTerms" : "En validant cette transaction, j’accepte\n<0>les Conditions d’utilisation de <0>{{provider}}</0></0>."
+      "acceptTerms" : "En validant cette transaction, j’accepte\n<0>les Conditions d’utilisation de <0>{{provider}}</0></0>.",
+      "notice" : "Vérifiez les détails du swap sur votre appareil avant de l’envoyer. Les adresses sont échangées de manière sécurisée afin que vous n’ayez pas à les vérifier."
+    },
+    "swap2" : {
+      "notice" : "Vérifiez les détails du swap sur votre appareil avant de l’envoyer. Les adresses sont échangées de manière sécurisée afin que vous n’ayez pas à les vérifier.",
+      "amountSent" : "Montant à envoyer",
+      "amountReceived" : "Montant à recevoir",
+      "provider" : "Prestataire",
+      "fees" : "Frais de réseau",
+      "sourceAccount" : "Compte émetteur",
+      "targetAccount" : "Compte bénéficiaire"
     },
     "confirmSell" : {
       "title" : "Confirmer l’opération de vente sur l’appareil",
@@ -3708,7 +3815,276 @@
       "available" : {
         "title" : "CELO disponible",
         "description" : "Ce montant est disponible."
+      },
+      "lockedBalance" : {
+        "title" : "Solde immobilisé",
+        "description" : "Vous devez immobiliser des actifs puis voter pour des groupes de validateurs pour gagner des récompenses."
+      },
+      "nonvotingLockedBalance" : {
+        "title" : "Solde immobilisé non utilisé pour voter",
+        "description" : "Solde des actifs immobilisés pouvant être utilisés pour voter"
+      },
+      "withdrawableBalance" : {
+        "title" : "Solde pouvant être retiré",
+        "description" : "CELO dégelés et transférables sur votre solde disponible."
       }
+    },
+    "delegation" : {
+      "validatorGroup" : "Groupe de validateurs",
+      "totalVotes" : "Total des votes",
+      "actions" : {
+        "activate" : "Activer",
+        "revoke" : "Révoquer"
+      },
+      "delegationUnavailable" : {
+        "title" : "Fonds immobilisés insuffisants"
+      },
+      "manageMultipleVoteWarning" : "Vous devez activer ou révoquer les autres votes du même groupe de validateurs avant de gérer ce vote."
+    },
+    "manage" : {
+      "title" : "Gérer les actifs",
+      "titleWhenPendingRegistration" : "Enregistrement du compte en attente",
+      "lock" : {
+        "title" : "Immobiliser",
+        "description" : "Pour gagner des récompenses, vous devez d’abord immobiliser un montant. Vous devez ensuite voter pour des validateurs."
+      },
+      "unlock" : {
+        "title" : "Dégeler",
+        "description" : "Pour libérer un montant immobilisé, vous devez d’abord le dégeler. Vous pourrez ensuite le retirer après la période de gel de 3 jours."
+      },
+      "withdraw" : {
+        "title" : "Retirer",
+        "description" : "Pour verser un montant dégelé sur votre solde disponible, vous devez le retirer manuellement."
+      },
+      "vote" : {
+        "title" : "Voter",
+        "description" : "Votez pour des groupes de validateurs. N’oubliez pas d’activer vos votes pour gagner des récompenses."
+      },
+      "activate" : {
+        "title" : "Activer le vote",
+        "description" : "Activez votre vote pour le groupe de validateurs."
+      },
+      "revoke" : {
+        "title" : "Révoquer le vote",
+        "description" : "Révoquez votre vote pour le groupe de validateurs."
+      }
+    },
+    "unlock" : {
+      "stepperHeader" : {
+        "title" : "Dégeler des actifs",
+        "stepRange" : "Étape {{currentStep}} sur {{totalSteps}}",
+        "selectDevice" : "Sélectionner votre appareil",
+        "connectDevice" : "Connecter votre appareil"
+      },
+      "flow" : {
+        "steps" : {
+          "amount" : {
+            "info" : "Les actifs dégelés peuvent être retirés après une période de 3 jours.",
+            "available" : "Disponible",
+            "max" : "Max"
+          },
+          "verification" : {
+            "success" : {
+              "title" : "Transaction de dégel bien envoyée",
+              "text" : "Les actifs dégelés pourront être retirés après 3 jours."
+            }
+          }
+        }
+      }
+    },
+    "vote" : {
+      "iVote" : "Je vote",
+      "stepperHeader" : {
+        "title" : "Voter",
+        "stepRange" : "Étape {{currentStep}} sur {{totalSteps}}",
+        "selectDevice" : "Sélectionner votre appareil",
+        "connectDevice" : "Connecter votre appareil"
+      },
+      "flow" : {
+        "steps" : {
+          "starter" : {
+            "description" : "Vous pouvez gagner des récompenses en déléguant vos CELO à un validateur.",
+            "bullet" : {
+              "0" : "Vous gardez la propriété de vos actifs délégués.",
+              "1" : "Déléguez avec votre appareil Ledger.",
+              "2" : "Les actifs seront disponibles une fois la délégation arrêtée."
+            },
+            "warning" : {
+              "description" : "Choisissez votre validateur judicieusement : vous pouvez perdre une partie de vos actifs délégués si le validateur ne respecte pas les règles."
+            },
+            "cta" : "Continuer"
+          },
+          "amount" : {
+            "available" : "Disponible",
+            "max" : "Max"
+          },
+          "verification" : {
+            "success" : {
+              "title" : "Votre vote a bien été effectué.",
+              "text" : "L’opération apparaîtra dans votre historique sous peu."
+            }
+          }
+        }
+      }
+    },
+    "activate" : {
+      "iActivate" : "J’active mes votes",
+      "stepperHeader" : {
+        "title" : "Activer le vote",
+        "stepRange" : "Étape {{currentStep}} sur {{totalSteps}}",
+        "selectDevice" : "Sélectionner votre appareil",
+        "connectDevice" : "Connecter votre appareil"
+      },
+      "title" : "Activer les votes",
+      "flow" : {
+        "steps" : {
+          "verification" : {
+            "success" : {
+              "title" : "Activation réussie",
+              "text" : "Votre vote a bien été activé."
+            }
+          }
+        }
+      }
+    },
+    "revoke" : {
+      "iRevoke" : "Je révoque",
+      "stepperHeader" : {
+        "title" : "Voter",
+        "stepRange" : "Étape {{currentStep}} sur {{totalSteps}}",
+        "selectDevice" : "Sélectionner votre appareil",
+        "connectDevice" : "Connecter votre appareil"
+      },
+      "flow" : {
+        "steps" : {
+          "validator" : {
+            "active" : "Actif",
+            "pending" : "En attente"
+          },
+          "amount" : {
+            "available" : "Disponible",
+            "max" : "Max"
+          },
+          "verification" : {
+            "success" : {
+              "title" : "Vos votes ont bien été révoqués.",
+              "text" : "L’opération apparaîtra dans votre historique sous peu."
+            }
+          }
+        }
+      },
+      "vote" : {
+        "title" : "Voter",
+        "active" : "Actif",
+        "pending" : "En attente",
+        "awaitingActivation" : "En attente d’activation",
+        "info" : "Seuls les votes révocables sont affichés dans cette fenêtre."
+      }
+    },
+    "register" : {
+      "stepperHeader" : {
+        "title" : "Enregistrer un compte",
+        "continue" : "Continuer",
+        "stepRange" : "Étape {{currentStep}} sur {{totalSteps}}",
+        "selectDevice" : "Sélectionner votre appareil",
+        "connectDevice" : "Connecter votre appareil"
+      },
+      "flow" : {
+        "steps" : {
+          "started" : {
+            "description" : "Avant d’immobiliser des CELO, vous devez enregistrer votre compte sur la blockchain."
+          },
+          "verification" : {
+            "success" : {
+              "title" : "Compte bien enregistré",
+              "text" : "L’opération apparaîtra dans votre historique sous peu."
+            }
+          }
+        }
+      }
+    },
+    "lock" : {
+      "stepperHeader" : {
+        "title" : "Immobiliser des actifs",
+        "stepRange" : "Étape {{currentStep}} sur {{totalSteps}}",
+        "selectDevice" : "Sélectionner votre appareil",
+        "connectDevice" : "Connecter votre appareil"
+      },
+      "flow" : {
+        "steps" : {
+          "amount" : {
+            "info" : "Les actifs immobilisés peuvent être dégelés à tout moment. Ils peuvent ensuite être retirés après 3 jours.",
+            "available" : "Disponible",
+            "max" : "Max"
+          },
+          "verification" : {
+            "success" : {
+              "title" : "Actifs bien immobilisés",
+              "text" : "Vous pourrez voter pour des validateurs une fois que le réseau aura confirmé votre transaction."
+            }
+          }
+        }
+      }
+    },
+    "withdraw" : {
+      "iWithdraw" : "Je retire",
+      "title" : "Retirer des actifs",
+      "steps" : {
+        "amount" : {
+          "title" : "Retirer"
+        },
+        "connectDevice" : {
+          "title" : "Appareil"
+        },
+        "confirmation" : {
+          "title" : "Confirmation",
+          "success" : {
+            "title" : "Demande de retrait bien envoyée",
+            "text" : "Le montant retiré sera crédité sur votre solde disponible.",
+            "cta" : "Voir les détails"
+          },
+          "broadcastError" : "Échec probable de votre transaction. Patientez un instant puis vérifiez l’historique des transactions avant de réessayer."
+        }
+      },
+      "stepperHeader" : {
+        "title" : "Voter",
+        "stepRange" : "Étape {{currentStep}} sur {{totalSteps}}",
+        "selectDevice" : "Sélectionner votre appareil",
+        "connectDevice" : "Connecter votre appareil"
+      },
+      "flow" : {
+        "steps" : {
+          "amount" : {
+            "available" : "Disponible",
+            "max" : "Max",
+            "waitingTitle" : "Le montant ne peut pas encore être retiré",
+            "waitingPeriod" : "Vous devez attendre le {{date}} pour pouvoir retirer ce montant."
+          },
+          "verification" : {
+            "success" : {
+              "title" : "Vous avez bien retiré vos actifs.",
+              "text" : "Le montant retiré sera crédité sur votre solde disponible."
+            }
+          }
+        }
+      }
+    },
+    "emptyState" : {
+      "description" : "Vous pouvez gagner des récompenses CELO en déléguant vos actifs.",
+      "info" : "Fonctionnement de la délégation",
+      "delegation" : "Gagner des récompenses"
+    },
+    "earnRewards" : {
+      "description" : "Vous pouvez gagner des récompenses en déléguant vos CELO à un validateur.",
+      "bullet" : {
+        "0" : "Vous gardez la propriété de vos actifs délégués.",
+        "1" : "Déléguez avec votre appareil Ledger.",
+        "2" : "Les actifs seront disponibles une fois la délégation arrêtée."
+      }
+    },
+    "alerts" : {
+      "withdrawableAssets" : "Vous pouvez effectuer un retrait.",
+      "activatableVotes" : "Vos votes peuvent maintenant être activés."
     }
   },
   "osmosis" : {
@@ -4616,7 +4992,7 @@
     "liveStatus" : "Statut de Ledger Live",
     "groupedToast" : {
       "text" : "Vous avez {{count}} notifications non lues.",
-      "cta" : "Voir les détails"
+      "cta" : "Consulter"
     },
     "news" : {
       "title" : "Actualités",
@@ -4790,6 +5166,12 @@
     },
     "currentAddress" : {
       "messageIfVirtual" : "Votre adresse {{name}} n’a pas été confirmée sur votre appareil Ledger. Il est risqué de l’utiliser."
+    }
+  },
+  "asset" : {
+    "title" : "Vos {{assetName}}",
+    "accountsSection" : {
+      "title" : "Vos comptes {{currencyName}}"
     }
   },
   "customImage" : {

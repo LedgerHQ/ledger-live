@@ -4,13 +4,15 @@ import styled from "styled-components";
 import { Text } from "@ledgerhq/react-ui";
 import Box from "~/renderer/components/Box";
 import FormattedVal from "~/renderer/components/FormattedVal";
-import type { ExchangeRate } from "@ledgerhq/live-common/exchange/swap/types";
+import type {
+  ExchangeRate,
+  SwapSelectorStateType,
+} from "@ledgerhq/live-common/exchange/swap/types";
 import type { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import {
   getProviderName,
   isRegistrationRequired,
 } from "@ledgerhq/live-common/exchange/swap/utils/index";
-import type { SwapSelectorStateType } from "@ledgerhq/live-common/exchange/swap/hooks/index";
 import Price from "~/renderer/components/Price";
 import CounterValue from "~/renderer/components/CounterValue";
 import { Trans } from "react-i18next";
