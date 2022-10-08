@@ -6,8 +6,8 @@ Object {
     Object {
       "blocks": 10,
       "bytes": 40960,
-      "currencyId": "bitcoin",
-      "name": "Bitcoin",
+      "currencyId": undefined,
+      "name": "Bitcoin Legacy",
     },
     Object {
       "blocks": 1,
@@ -36,8 +36,8 @@ Object {
     Object {
       "blocks": 10,
       "bytes": 40960,
-      "currencyId": "bitcoin",
-      "name": "Bitcoin",
+      "currencyId": undefined,
+      "name": "Bitcoin Legacy",
     },
     Object {
       "blocks": 1,
@@ -72,8 +72,8 @@ Object {
     Object {
       "blocks": 10,
       "bytes": 40960,
-      "currencyId": "bitcoin",
-      "name": "Bitcoin",
+      "currencyId": undefined,
+      "name": "Bitcoin Legacy",
     },
     Object {
       "blocks": 1,
@@ -102,8 +102,8 @@ Object {
     Object {
       "blocks": 10,
       "bytes": 40960,
-      "currencyId": "bitcoin",
-      "name": "Bitcoin",
+      "currencyId": undefined,
+      "name": "Bitcoin Legacy",
     },
     Object {
       "blocks": 1,
@@ -138,8 +138,8 @@ Object {
     Object {
       "blocks": 10,
       "bytes": 40960,
-      "currencyId": "bitcoin",
-      "name": "Bitcoin",
+      "currencyId": undefined,
+      "name": "Bitcoin Legacy",
     },
     Object {
       "blocks": 1,
@@ -174,8 +174,8 @@ Object {
     Object {
       "blocks": 10,
       "bytes": 40960,
-      "currencyId": "bitcoin",
-      "name": "Bitcoin",
+      "currencyId": undefined,
+      "name": "Bitcoin Legacy",
     },
   ],
   "appsSpaceBlocks": 60,
@@ -198,8 +198,8 @@ Object {
     Object {
       "blocks": 10,
       "bytes": 40960,
-      "currencyId": "bitcoin",
-      "name": "Bitcoin",
+      "currencyId": undefined,
+      "name": "Bitcoin Legacy",
     },
     Object {
       "blocks": 1,
@@ -228,8 +228,8 @@ Object {
     Object {
       "blocks": 10,
       "bytes": 40960,
-      "currencyId": "bitcoin",
-      "name": "Bitcoin",
+      "currencyId": undefined,
+      "name": "Bitcoin Legacy",
     },
     Object {
       "blocks": 1,
@@ -316,8 +316,8 @@ Object {
     Object {
       "blocks": 1,
       "bytes": 4096,
-      "currencyId": "bitcoin",
-      "name": "Bitcoin",
+      "currencyId": undefined,
+      "name": "Bitcoin Legacy",
     },
   ],
   "appsSpaceBlocks": 60,
@@ -358,8 +358,8 @@ Object {
     Object {
       "blocks": 10,
       "bytes": 40960,
-      "currencyId": "bitcoin",
-      "name": "Bitcoin",
+      "currencyId": undefined,
+      "name": "Bitcoin Legacy",
     },
     Object {
       "blocks": 1,
@@ -464,8 +464,8 @@ Object {
     Object {
       "blocks": 10,
       "bytes": 40960,
-      "currencyId": "bitcoin",
-      "name": "Bitcoin",
+      "currencyId": undefined,
+      "name": "Bitcoin Legacy",
     },
     Object {
       "blocks": 1,
@@ -500,8 +500,8 @@ Object {
     Object {
       "blocks": 10,
       "bytes": 40960,
-      "currencyId": "bitcoin",
-      "name": "Bitcoin",
+      "currencyId": undefined,
+      "name": "Bitcoin Legacy",
     },
     Object {
       "blocks": 1,

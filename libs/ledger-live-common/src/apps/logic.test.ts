@@ -23,21 +23,21 @@ setEnv("MANAGER_INSTALL_DELAY", 0);
 const scenarios = [
   {
     name: "wipe installed apps",
-    apps: "Bitcoin, Ethereum, Litecoin, Dogecoin, Ethereum Classic, XRP",
-    installed: "Bitcoin, Litecoin, XRP, Ethereum Classic, Ethereum",
+    apps: "Bitcoin Legacy, Ethereum, Litecoin, Dogecoin, Ethereum Classic, XRP",
+    installed: "Bitcoin Legacy, Litecoin, XRP, Ethereum Classic, Ethereum",
     actions: [
       {
         dispatch: {
           type: "wipe",
         },
-        expectPlan: "-Litecoin, -Bitcoin, -XRP, -Ethereum Classic, -Ethereum",
+        expectPlan: "-Litecoin, -Bitcoin Legacy, -XRP, -Ethereum Classic, -Ethereum",
         expectInstalled: "",
       },
     ],
   },
   {
     name: "install an app install its dep",
-    apps: "Bitcoin, Litecoin, Dogecoin",
+    apps: "Bitcoin Legacy, Litecoin, Dogecoin",
     installed: "",
     actions: [
       {
@@ -45,8 +45,8 @@ const scenarios = [
           type: "install",
           name: "Dogecoin",
         },
-        expectPlan: "+Bitcoin, +Dogecoin",
-        expectInstalled: "Bitcoin, Dogecoin",
+        expectPlan: "+Bitcoin Legacy, +Dogecoin",
+        expectInstalled: "Bitcoin Legacy, Dogecoin",
       },
       {
         dispatch: {
@@ -54,7 +54,7 @@ const scenarios = [
           name: "Litecoin",
         },
         expectPlan: "+Litecoin",
-        expectInstalled: "Bitcoin, Dogecoin, Litecoin",
+        expectInstalled: "Bitcoin Legacy, Dogecoin, Litecoin",
       },
     ],
   },
@@ -83,7 +83,7 @@ const scenarios = [
   },
   {
     name: "install an app install its dep",
-    apps: "Bitcoin, Litecoin, Dogecoin",
+    apps: "Bitcoin Legacy, Litecoin, Dogecoin",
     installed: "",
     actions: [
       {
@@ -91,8 +91,8 @@ const scenarios = [
           type: "install",
           name: "Dogecoin",
         },
-        expectPlan: "+Bitcoin, +Dogecoin",
-        expectInstalled: "Bitcoin, Dogecoin",
+        expectPlan: "+Bitcoin Legacy, +Dogecoin",
+        expectInstalled: "Bitcoin Legacy, Dogecoin",
       },
       {
         dispatch: {
@@ -100,49 +100,49 @@ const scenarios = [
           name: "Litecoin",
         },
         expectPlan: "+Litecoin",
-        expectInstalled: "Bitcoin, Dogecoin, Litecoin",
+        expectInstalled: "Bitcoin Legacy, Dogecoin, Litecoin",
       },
     ],
   },
   {
     name: "uninstall an app that have deps",
-    apps: "Bitcoin, Litecoin, Dogecoin",
-    installed: "Bitcoin, Litecoin, Dogecoin",
+    apps: "Bitcoin Legacy, Litecoin, Dogecoin",
+    installed: "Bitcoin Legacy, Litecoin, Dogecoin",
     actions: [
       {
         dispatch: {
           type: "uninstall",
-          name: "Bitcoin",
+          name: "Bitcoin Legacy",
         },
-        expectPlan: "-Litecoin, -Dogecoin, -Bitcoin",
+        expectPlan: "-Litecoin, -Dogecoin, -Bitcoin Legacy",
         expectInstalled: "",
       },
     ],
   },
   {
     name: "install existing is noop",
-    apps: "Bitcoin",
-    installed: "Bitcoin",
+    apps: "Bitcoin Legacy",
+    installed: "Bitcoin Legacy",
     actions: [
       {
         dispatch: {
           type: "install",
-          name: "Bitcoin",
+          name: "Bitcoin Legacy",
         },
         expectPlan: "",
-        expectInstalled: "Bitcoin",
+        expectInstalled: "Bitcoin Legacy",
       },
     ],
   },
   {
     name: "uninstall non-existing is noop",
-    apps: "Bitcoin",
+    apps: "Bitcoin Legacy",
     installed: "",
     actions: [
       {
         dispatch: {
           type: "uninstall",
-          name: "Bitcoin",
+          name: "Bitcoin Legacy",
         },
         expectPlan: "",
         expectInstalled: "",
@@ -151,106 +151,108 @@ const scenarios = [
   },
   {
     name: "install an outdated app",
-    apps: "Bitcoin",
-    installed: "Bitcoin (outdated)",
+    apps: "Bitcoin Legacy",
+    installed: "Bitcoin Legacy (outdated)",
     actions: [
       {
         dispatch: {
           type: "install",
-          name: "Bitcoin",
+          name: "Bitcoin Legacy",
         },
-        expectPlan: "-Bitcoin, +Bitcoin",
-        expectInstalled: "Bitcoin",
+        expectPlan: "-Bitcoin Legacy, +Bitcoin Legacy",
+        expectInstalled: "Bitcoin Legacy",
       },
     ],
   },
   {
     name: "install an outdated app dep",
-    apps: "Bitcoin, Dogecoin",
-    installed: "Bitcoin (outdated), Dogecoin (outdated)",
+    apps: "Bitcoin Legacy, Dogecoin",
+    installed: "Bitcoin Legacy (outdated), Dogecoin (outdated)",
     actions: [
       {
         dispatch: {
           type: "install",
           name: "Dogecoin",
         },
-        expectPlan: "-Dogecoin, -Bitcoin, +Bitcoin, +Dogecoin",
-        expectInstalled: "Bitcoin, Dogecoin",
+        expectPlan: "-Dogecoin, -Bitcoin Legacy, +Bitcoin Legacy, +Dogecoin",
+        expectInstalled: "Bitcoin Legacy, Dogecoin",
       },
     ],
   },
   {
     name: "install an app with outdated dep",
-    apps: "Bitcoin, Litecoin, Dogecoin",
-    installed: "Bitcoin (outdated), Litecoin (outdated)",
+    apps: "Bitcoin Legacy, Litecoin, Dogecoin",
+    installed: "Bitcoin Legacy (outdated), Litecoin (outdated)",
     actions: [
       {
         dispatch: {
           type: "install",
           name: "Dogecoin",
         },
-        expectPlan: "-Litecoin, -Bitcoin, +Bitcoin, +Litecoin, +Dogecoin",
-        expectInstalled: "Bitcoin, Litecoin, Dogecoin",
+        expectPlan:
+          "-Litecoin, -Bitcoin Legacy, +Bitcoin Legacy, +Litecoin, +Dogecoin",
+        expectInstalled: "Bitcoin Legacy, Litecoin, Dogecoin",
       },
     ],
   },
   {
     name: "install an outdated app with dependents",
-    apps: "Bitcoin, Dogecoin",
-    installed: "Bitcoin (outdated), Dogecoin (outdated)",
+    apps: "Bitcoin Legacy, Dogecoin",
+    installed: "Bitcoin Legacy (outdated), Dogecoin (outdated)",
     actions: [
       {
         dispatch: {
           type: "install",
-          name: "Bitcoin",
+          name: "Bitcoin Legacy",
         },
-        expectPlan: "-Dogecoin, -Bitcoin, +Bitcoin, +Dogecoin",
-        expectInstalled: "Bitcoin, Dogecoin",
+        expectPlan: "-Dogecoin, -Bitcoin Legacy, +Bitcoin Legacy, +Dogecoin",
+        expectInstalled: "Bitcoin Legacy, Dogecoin",
       },
     ],
   },
   {
     name: "update all will reinstall the outdated",
-    apps: "Bitcoin, Litecoin, Ethereum",
-    installed: "Bitcoin (outdated), Litecoin (outdated), Ethereum",
+    apps: "Bitcoin Legacy, Litecoin, Ethereum",
+    installed: "Bitcoin Legacy (outdated), Litecoin (outdated), Ethereum",
     actions: [
       {
         dispatch: {
           type: "updateAll",
         },
-        expectPlan: "-Litecoin, -Bitcoin, +Bitcoin, +Litecoin",
-        expectInstalled: "Ethereum, Bitcoin, Litecoin",
+        expectPlan: "-Litecoin, -Bitcoin Legacy, +Bitcoin Legacy, +Litecoin",
+        expectInstalled: "Ethereum, Bitcoin Legacy, Litecoin",
       },
     ],
   },
   {
     name: "update all still works with unknown apps",
-    apps: "Bitcoin, Litecoin, Ethereum",
-    installed: "Bitcoin (outdated), Litecoin (outdated), Ethereum, Unknown",
+    apps: "Bitcoin Legacy, Litecoin, Ethereum",
+    installed:
+      "Bitcoin Legacy (outdated), Litecoin (outdated), Ethereum, Unknown",
     actions: [
       {
         dispatch: {
           type: "updateAll",
         },
-        expectPlan: "-Litecoin, -Bitcoin, +Bitcoin, +Litecoin",
-        expectInstalled: "Ethereum, Unknown, Bitcoin, Litecoin",
+        expectPlan: "-Litecoin, -Bitcoin Legacy, +Bitcoin Legacy, +Litecoin",
+        expectInstalled: "Ethereum, Unknown, Bitcoin Legacy, Litecoin",
       },
     ],
   },
   {
     name: "install and uninstall will undo (if top level dep)",
-    apps: "Bitcoin",
+    apps: "Bitcoin Legacy",
     installed: "",
     actions: [
       {
         dispatch: [
           {
             type: "install",
-            name: "Bitcoin",
+            name: "Bitcoin Legacy",
           },
           {
             type: "uninstall",
-            name: "Bitcoin",
+            name: "Bitcoin Legacy",
           },
         ],
         expectPlan: "",
@@ -260,7 +262,7 @@ const scenarios = [
   },
   {
     name: "order is preserved in install action plan",
-    apps: "Bitcoin, XRP, Ethereum, Ethereum Classic, Dogecoin, Zcash",
+    apps: "Bitcoin Legacy, XRP, Ethereum, Ethereum Classic, Dogecoin, Zcash",
     installed: "",
     actions: [
       {
@@ -283,16 +285,17 @@ const scenarios = [
           },
         ],
         expectPlan:
-          "+XRP, +Ethereum, +Ethereum Classic, +Bitcoin, +Dogecoin, +Zcash",
+          "+XRP, +Ethereum, +Ethereum Classic, +Bitcoin Legacy, +Dogecoin, +Zcash",
         expectInstalled:
-          "XRP, Ethereum, Ethereum Classic, Bitcoin, Dogecoin, Zcash",
+          "XRP, Ethereum, Ethereum Classic, Bitcoin Legacy, Dogecoin, Zcash",
       },
     ],
   },
   {
     name: "order is preserved in uninstall action plan",
-    apps: "Bitcoin, XRP, Ethereum, Ethereum Classic, Dogecoin, Zcash",
-    installed: "XRP, Ethereum, Ethereum Classic, Bitcoin, Dogecoin, Zcash",
+    apps: "Bitcoin Legacy, XRP, Ethereum, Ethereum Classic, Dogecoin, Zcash",
+    installed:
+      "XRP, Ethereum, Ethereum Classic, Bitcoin Legacy, Dogecoin, Zcash",
     actions: [
       {
         dispatch: [
@@ -310,10 +313,11 @@ const scenarios = [
           },
           {
             type: "uninstall",
-            name: "Bitcoin",
+            name: "Bitcoin Legacy",
           },
         ],
-        expectPlan: "-XRP, -Ethereum Classic, -Ethereum, -Dogecoin, -Bitcoin",
+        expectPlan:
+          "-XRP, -Ethereum Classic, -Ethereum, -Dogecoin, -Bitcoin Legacy",
         expectInstalled: "",
       },
     ],
@@ -353,11 +357,11 @@ scenarios.forEach((scenario) => {
 test("appsToRestore", async () => {
   const state = initState(
     mockListAppsResult(
-      "Bitcoin, XRP, Ethereum, Ethereum Classic, Dogecoin, Zcash",
-      "Bitcoin, Zcash",
+      "Bitcoin Legacy, XRP, Ethereum, Ethereum Classic, Dogecoin, Zcash",
+      "Bitcoin Legacy, Zcash",
       deviceInfo155
     ),
-    ["Bitcoin", "XRP", "Dogecoin", "Zcash", "Ethereum Classic"]
+    ["Bitcoin Legacy", "XRP", "Dogecoin", "Zcash", "Ethereum Classic"]
   );
   expect(prettyActionPlan(getActionPlan(state))).toBe(
     "+XRP, +Dogecoin, +Ethereum, +Ethereum Classic"
@@ -368,7 +372,7 @@ test("appsToRestore", async () => {
 test("a lock error that occurs will not cancel the queue, another error will", () => {
   let state = initState(
     mockListAppsResult(
-      "Bitcoin, XRP, Ethereum, Ethereum Classic, Dogecoin, Zcash",
+      "Bitcoin Legacy, XRP, Ethereum, Ethereum Classic, Dogecoin, Zcash",
       "",
       deviceInfo155
     )
@@ -414,8 +418,8 @@ test("a lock error that occurs will not cancel the queue, another error will", (
 test("global progress", async () => {
   let state = initState(
     mockListAppsResult(
-      "Bitcoin, XRP, Ethereum, Ethereum Classic, Dogecoin, Zcash",
-      "Bitcoin (outdated), Ethereum (outdated)",
+      "Bitcoin Legacy, XRP, Ethereum, Ethereum Classic, Dogecoin, Zcash",
+      "Bitcoin Legacy (outdated), Ethereum (outdated)",
       deviceInfo155
     )
   );
