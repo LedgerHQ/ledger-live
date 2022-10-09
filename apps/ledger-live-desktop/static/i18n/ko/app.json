@@ -237,7 +237,7 @@
     "form" : {
       "changeCTA" : "변경",
       "rates" : {
-        "title" : "공급자",
+        "title" : "호가",
         "registration" : "등록이 필요합니다 ",
         "noRegistration" : "등록이 필요하지 않습니다",
         "fixed" : "고정",
@@ -246,7 +246,7 @@
         "loading" : "로딩 중...",
         "name" : {
           "title" : "공급자",
-          "tooltip" : "제공업체에 따라 계정을 생성하여 로그인해야 합니다."
+          "tooltip" : "제공업체에 따라 계정을 생성하여 회원가입을 해야 합니다."
         },
         "rate" : {
           "title" : "환율",
@@ -4763,7 +4763,7 @@
     },
     "EthAppNftNotSupported" : {
       "title" : "이 장치에서 사용할 수 없는 작업",
-      "description" : "Send NFT feature is only available for Nano X and Nano S+. Please visit our customer support platform to know how to send a NFT with a Nano S."
+      "description" : "NFT 보내기 기능은 Nano X 및 Nano S+에서만 사용할 수 있습니다. Nano S로 NFT를 보내는 방법을 알아보려면 고객 지원 플랫폼을 방문하세요."
     },
     "CantScanQRCode" : {
       "title" : "이 QR 코드를 스캔할 수 없습니다: 이 주소는 자동 확인을 지원하지 않습니다"
