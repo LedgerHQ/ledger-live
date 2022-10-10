@@ -21,8 +21,6 @@ jobs:
           cache-dependency-path: "**/pnpm-lock.yaml"
       - name: Install dependencies
         run: pnpm i --filter='!./apps/**' --frozen-lockfile
-      - name: Build live-common
-        run: pnpm build:llc
       - name: generate super report
         uses: ledgerhq/ledger-live/tools/actions/generate-bot-super-report@support/bot-super-report
         with:
