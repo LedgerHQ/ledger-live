@@ -328,7 +328,7 @@ export function generateSuperReport(
     if (m.length > 0) {
       const allErrors = m.reduce((acc, m) => acc.concat(m.errors), []);
       const groupedErrors = groupErrors(allErrors);
-      reportMarkdownBody += `**mutations:**\n`;
+      reportMarkdownBody += "\n";
       reportMarkdownBody += "| Mutation | Tx Success | Ops | Errors |\n";
       reportMarkdownBody += "|--|--|--|--|\n";
       reportMarkdownBody += m
@@ -473,6 +473,6 @@ function groupErrors(
   return Object.keys(grouped).map((error, i) => ({
     error,
     index: i + 1,
-    occurrences: grouped[error],
+    occurrences: grouped[error].length,
   }));
 }
