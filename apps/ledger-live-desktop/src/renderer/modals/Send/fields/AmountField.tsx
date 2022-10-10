@@ -65,14 +65,16 @@ const AmountField = ({
 
   const { useAllAmount } = transaction;
   const { amount, errors, warnings } = status;
-  let { amount: amountError, dustLimit: messageDust, gasPrice: messageGas } = errors;
-  let { amount: amountWarning } = warnings;
+  const { amount: amountError, dustLimit: messageDust, gasPrice: messageGas } = errors;
+  const { amount: amountWarning } = warnings;
+
+  let amountErrMessage: Error | undefined = amountError;
+  let amountWarnMessage: Error | undefined = amountWarning;
 
   // we ignore zero case for displaying field error because field is empty.
-
   if (amount.eq(0) && (bridgePending || !useAllAmount)) {
-    amountError = undefined;
-    amountWarning = undefined;
+    amountErrMessage = undefined;
+    amountWarnMessage = undefined;
   }
 
   return (
@@ -111,8 +113,8 @@ const AmountField = ({
       <RequestAmount
         disabled={!!useAllAmount || walletConnectProxy}
         account={account}
-        validTransactionError={amountError || messageGas || messageDust}
-        validTransactionWarning={amountWarning}
+        validTransactionError={amountErrMessage || messageGas || messageDust}
+        validTransactionWarning={amountWarnMessage}
         onChange={onChange}
         value={walletConnectProxy ? transaction.amount : amount}
         autoFocus={!initValue}

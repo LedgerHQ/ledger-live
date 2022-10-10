@@ -110,9 +110,9 @@ export type FeeStrategy = {
  */
 export type TransactionStatusCommon = {
   // potential error for each (user) field of the transaction
-  errors: Record<string, Error | undefined>;
+  errors: Record<string, Error>;
   // potential warning for each (user) field for a transaction
-  warnings: Record<string, Error | undefined>;
+  warnings: Record<string, Error>;
   // estimated total fees the tx is going to cost. (in the mainAccount currency)
   estimatedFees: BigNumber;
   // actual amount that the recipient will receive (in account currency)
