@@ -16,6 +16,7 @@ import {
   ListPlatformCurrency,
   PlatformCurrency,
   AppManifest,
+  isDAppParams,
 } from "./types";
 import { getParentAccount } from "../account";
 import { listCurrencies } from "../currencies";
@@ -29,35 +30,48 @@ import { listCurrencies } from "../currencies";
 export function usePlatformUrl(
   manifest: AppManifest,
   params: { background: string; text: string; loadDate?: Date },
-  inputs: Record<string, string>
+  inputs: Record<string, string>,
+  dAppURL?: string
 ): URL {
   return useMemo(() => {
-    const url = new URL(manifest.url.toString());
+    return platformUrl(manifest, params, inputs, dAppURL);
+  }, [manifest, params, inputs, dAppURL]);
+}
 
-    if (inputs) {
-      for (const key in inputs) {
-        if (
-          Object.prototype.hasOwnProperty.call(inputs, key) &&
-          inputs[key] !== undefined
-        ) {
-          url.searchParams.set(key, inputs[key]);
-        }
+export function platformUrl(
+  manifest: AppManifest,
+  params: { background: string; text: string; loadDate?: Date },
+  inputs: Record<string, string>,
+  dAppURL?: string
+): URL {
+  const url = new URL(manifest.url.toString());
+
+  if (inputs) {
+    for (const key in inputs) {
+      if (
+        Object.prototype.hasOwnProperty.call(inputs, key) &&
+        inputs[key] !== undefined
+      ) {
+        url.searchParams.set(key, inputs[key]);
       }
     }
+  }
 
-    if (params.background)
-      url.searchParams.set("backgroundColor", params.background);
-    if (params.text) url.searchParams.set("textColor", params.text);
-    if (params.loadDate) {
-      url.searchParams.set("loadDate", params.loadDate.valueOf().toString());
+  if (params.background)
+    url.searchParams.set("backgroundColor", params.background);
+  if (params.text) url.searchParams.set("textColor", params.text);
+  if (params.loadDate) {
+    url.searchParams.set("loadDate", params.loadDate.valueOf().toString());
+  }
+
+  if (manifest.params) {
+    if (isDAppParams(manifest.params) && dAppURL !== undefined) {
+      manifest.params.dappUrl = dAppURL;
     }
+    url.searchParams.set("params", JSON.stringify(manifest.params));
+  }
 
-    if (manifest.params) {
-      url.searchParams.set("params", JSON.stringify(manifest.params));
-    }
-
-    return url;
-  }, [manifest.url, manifest.params, params, inputs]);
+  return url;
 }
 
 export function useListPlatformAccounts(

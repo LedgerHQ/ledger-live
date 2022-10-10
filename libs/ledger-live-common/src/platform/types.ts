@@ -8,6 +8,7 @@ import {
   Account as PlatformAccount,
   Currency as PlatformCurrency,
 } from "@ledgerhq/live-app-sdk";
+import { string } from "superstruct";
 
 export type {
   Account as PlatformAccount,
@@ -40,6 +41,28 @@ export type AppPermission = {
   params?: any;
 };
 
+type dAppParamsNetwork = {
+  currency: string;
+  chainId: number;
+  nodeURL: string;
+};
+type dAppParams = {
+  dappUrl: string;
+  nanoApp: string;
+  dappName: string;
+  networks: Array<dAppParamsNetwork>;
+};
+export function isDAppParams(params: any): params is dAppParams {
+  return (params as dAppParams).dappUrl !== undefined;
+}
+type webAppParams = {
+  webUrl: string;
+  webAppName: string;
+  currencies: Array<string>;
+};
+export function isWebAppParams(params: any): params is webAppParams {
+  return (params as webAppParams).webUrl !== undefined;
+}
 export type AppManifest = {
   id: string;
   private?: boolean;
@@ -52,7 +75,7 @@ export type AppManifest = {
   apiVersion: string;
   manifestVersion: string;
   branch: AppBranch;
-  params?: string[];
+  params?: dAppParams | webAppParams | any;
   categories: string[];
   currencies: string[] | "*";
   content: {
