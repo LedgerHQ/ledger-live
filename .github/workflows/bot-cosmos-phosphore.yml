@@ -1,4 +1,4 @@
-name: "[Bot] 'Cosmos on Phosphore'"
+name: "[Bot] Testing Cosmos with 'Phosphore'"
 on:
   push:
     branches:
@@ -61,3 +61,4 @@ jobs:
           SLACK_ICON_EMOJI: ":bot-seed6:"
           SLACK_CHANNEL: ci-atom-ll
           BOT_FILTER_FAMILY: cosmos
+          BOT_ENVIRONMENT: testing
