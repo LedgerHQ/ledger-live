@@ -2830,7 +2830,6 @@ importers:
     specifiers:
       '@actions/core': ^1.9.1
       '@actions/github': ^5.0.3
-      '@ledgerhq/live-common': workspace:^
       '@types/unzipper': 0.10.5
       isomorphic-unfetch: ^3.1.0
       lodash: 4.17.21
@@ -2840,7 +2839,6 @@ importers:
     devDependencies:
       '@actions/core': 1.9.1
       '@actions/github': 5.0.3
-      '@ledgerhq/live-common': link:../../../libs/ledger-live-common
       '@types/unzipper': 0.10.5
       isomorphic-unfetch: 3.1.0
       lodash: 4.17.21
