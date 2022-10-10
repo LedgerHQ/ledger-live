@@ -340,7 +340,6 @@ const NFTs_POLYGON = [
 export function createFixtureNFT(
   currency: CryptoCurrency = defaultEthCryptoFamily
 ): ProtoNFT {
-  console.log(currency.id);
   const nfts = currency.id === "ethereum" ? NFTs : NFTs_POLYGON;
   const index = Math.floor(Math.random() * nfts.length);
 
