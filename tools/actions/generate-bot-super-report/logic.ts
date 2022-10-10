@@ -211,21 +211,20 @@ export function generateSuperReport(
   // initialize all stats to make sure we have all the mutations known and so we can detect non coverage
   all.forEach(({ report }) => {
     report.results.forEach(({ specName, existingMutationNames }) => {
-      const mutations = {};
+      let s = (stats[specName] = stats[specName] || {
+        specName,
+        fatalErrors: [],
+        runs: 0,
+        mutations: {},
+      });
       existingMutationNames?.forEach((mutationName) => {
-        mutations[mutationName] = {
+        s.mutations[mutationName] = {
           mutationName,
           runs: 0,
           success: 0,
           errors: [],
         };
       });
-      stats[specName] = {
-        specName,
-        fatalErrors: [],
-        runs: 0,
-        mutations,
-      };
     });
   });
 

@@ -24290,21 +24290,20 @@ function generateSuperReport(all, days) {
   const stats = {};
   all.forEach(({ report }) => {
     report.results.forEach(({ specName, existingMutationNames }) => {
-      const mutations = {};
+      let s = stats[specName] = stats[specName] || {
+        specName,
+        fatalErrors: [],
+        runs: 0,
+        mutations: {}
+      };
       existingMutationNames == null ? void 0 : existingMutationNames.forEach((mutationName) => {
-        mutations[mutationName] = {
+        s.mutations[mutationName] = {
           mutationName,
           runs: 0,
           success: 0,
           errors: []
         };
       });
-      stats[specName] = {
-        specName,
-        fatalErrors: [],
-        runs: 0,
-        mutations
-      };
     });
   });
   all.forEach(({ report }) => {
