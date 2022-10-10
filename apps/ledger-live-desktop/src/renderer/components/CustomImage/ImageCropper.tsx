@@ -243,7 +243,7 @@ const ImageCropper: React.FC<Props> = props => {
           onCropComplete={handleCropComplete}
           onZoomChange={setZoom}
           initialCroppedAreaPixels={initialCroppedAreaPixels}
-          objectFit="contain"
+          objectFit="vertical-cover"
         />
       </Flex>
 
