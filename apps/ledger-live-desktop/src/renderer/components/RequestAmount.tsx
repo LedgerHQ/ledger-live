@@ -11,7 +11,6 @@ import InputCurrency from "~/renderer/components/InputCurrency";
 import IconTransfer from "~/renderer/icons/Transfer";
 import { counterValueCurrencySelector } from "~/renderer/reducers/settings";
 import TranslatedError from "./TranslatedError";
-// import { Currency } from "~/../../../libs/ledger-live-common/lib/families/bitcoin/wallet-btc";
 
 const ErrorContainer = styled(Box)`
   margin-top: 0px;

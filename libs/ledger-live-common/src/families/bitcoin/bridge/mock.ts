@@ -21,6 +21,7 @@ import { makeAccountBridgeReceive } from "../../../bridge/mockHelpers";
 import type { AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
 import cryptoFactory from "../wallet-btc/crypto/factory";
 import { Currency } from "../wallet-btc";
+
 const receive = makeAccountBridgeReceive();
 
 const defaultGetFees = (a, t: any) =>
