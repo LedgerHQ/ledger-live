@@ -216,6 +216,10 @@ class Bitcoin extends Base {
     }
     return false;
   }
+
+  getDustLimit(): number {
+    return 546;
+  }
 }
 
 export default Bitcoin;

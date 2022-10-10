@@ -1,6 +1,6 @@
 import type { BigNumber } from "bignumber.js";
-import type { Operation, OperationRaw } from "./operation";
 import type { Unit } from "@ledgerhq/types-cryptoassets";
+import type { Operation, OperationRaw } from "./operation";
 
 /**
  *
@@ -110,9 +110,9 @@ export type FeeStrategy = {
  */
 export type TransactionStatusCommon = {
   // potential error for each (user) field of the transaction
-  errors: Record<string, Error>;
+  errors: Record<string, Error | undefined>;
   // potential warning for each (user) field for a transaction
-  warnings: Record<string, Error>;
+  warnings: Record<string, Error | undefined>;
   // estimated total fees the tx is going to cost. (in the mainAccount currency)
   estimatedFees: BigNumber;
   // actual amount that the recipient will receive (in account currency)

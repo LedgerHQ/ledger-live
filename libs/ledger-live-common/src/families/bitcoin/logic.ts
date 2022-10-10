@@ -20,6 +20,8 @@ import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import type { Account, Operation, OperationType } from "@ledgerhq/types-live";
 import type { CryptoCurrencyIds } from "@ledgerhq/cryptoassets";
 
+export const DUST_LIMIT = 546; // sats
+
 // correspond ~ to min relay fees but determined empirically for a tx to be accepted by network
 const minFees = {
   bitcoin: 1000,
