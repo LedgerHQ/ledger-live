@@ -78,6 +78,7 @@ const excludedErrorDescription = [
   "API HTTP",
   "Unexpected ''",
   "Unexpected '<'",
+  "Service Unvailable",
   // base usage of device
   /Device .* was disconnected/,
   "Invalid channel",
@@ -96,7 +97,9 @@ const excludedErrorDescription = [
   "Transaction simulation failed",
   "530 undefined",
   "524 undefined",
+  "Missing or invalid topic field", // wallet connect issue
 ];
+
 if (Config.SENTRY_DSN && (!__DEV__ || Config.FORCE_SENTRY) && !Config.MOCK) {
   Sentry.init({
     dsn: Config.SENTRY_DSN,

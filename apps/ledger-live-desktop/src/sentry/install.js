@@ -57,6 +57,7 @@ const ignoreErrors = [
   "<!DOCTYPE html",
   "Unexpected ''",
   "Unexpected '<'",
+  "Service Unvailable",
   // timeouts
   "ERR_CONNECTION_TIMED_OUT",
   "request timed out",
@@ -98,6 +99,7 @@ const ignoreErrors = [
   "was reached for request with last error",
   "530 undefined",
   "524 undefined",
+  "Missing or invalid topic field", // wallet connect issue
 ];
 
 export function init(Sentry: any, opts: any) {

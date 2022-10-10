@@ -9,6 +9,7 @@ import botPortfolio from "./commands/botPortfolio";
 import botTransfer from "./commands/botTransfer";
 import broadcast from "./commands/broadcast";
 import cleanSpeculos from "./commands/cleanSpeculos";
+import confirmOp from "./commands/confirmOp";
 import countervalues from "./commands/countervalues";
 import derivation from "./commands/derivation";
 import devDeviceAppsScenario from "./commands/devDeviceAppsScenario";
@@ -61,6 +62,7 @@ export default {
   botTransfer,
   broadcast,
   cleanSpeculos,
+  confirmOp,
   countervalues,
   derivation,
   devDeviceAppsScenario,
