@@ -8,7 +8,6 @@ import {
   Account as PlatformAccount,
   Currency as PlatformCurrency,
 } from "@ledgerhq/live-app-sdk";
-import { string } from "superstruct";
 
 export type {
   Account as PlatformAccount,
