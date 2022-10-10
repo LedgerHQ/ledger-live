@@ -280,7 +280,7 @@ export function generateSuperReport(
     coverageInfo[1]
   )} coverage rate.`;
 
-  reportMarkdownBody += `"# Bot: ${ctx}\n`;
+  reportMarkdownBody += `# Super bot report on ${ctx}\n`;
   reportMarkdownBody +=
     "\n> What is the Bot and how does it work? [Everything is documented here!](https://github.com/LedgerHQ/ledger-live/wiki/LLC:bot)\n\n";
   reportMarkdownBody += summary + "\n\n";
@@ -311,10 +311,11 @@ export function generateSuperReport(
     reportMarkdownBody += `## Spec \`${specName}\`\n`;
 
     if (fatalErrors.length) {
+      const grouped = groupErrors(fatalErrors);
       reportMarkdownBody += `\n<details><summary>❌ Fatal cases (${fatalErrors.length})</summary>\n\n`;
       // TODO in future we will try to link to these errors. we can also tell how much it reproduced
 
-      reportMarkdownBody += groupErrors(fatalErrors)
+      reportMarkdownBody += grouped
         .map(
           ({ error, occurrences }) =>
             `- ${occurrences > 1 ? `**(x${occurrences})** ` : ""}\`${error}\`\n`
@@ -325,10 +326,8 @@ export function generateSuperReport(
 
     const m = Object.values(mutations);
     if (m.length > 0) {
-      const groupedErrors = groupErrors(
-        m.reduce((acc, m) => acc.concat(m.errors), [])
-      );
-      const errorAttached = [];
+      const allErrors = m.reduce((acc, m) => acc.concat(m.errors), []);
+      const groupedErrors = groupErrors(allErrors);
       reportMarkdownBody += `**mutations:**\n`;
       reportMarkdownBody += "| Mutation | Tx Success | Ops | Errors |\n";
       reportMarkdownBody += "|--|--|--|--|\n";
@@ -344,11 +343,11 @@ export function generateSuperReport(
             .join(", ")}|\n`;
         })
         .join("");
-      if (errorAttached.length) {
+      if (groupedErrors.length) {
         reportMarkdownBody += "\n";
         reportMarkdownBody +=
           "<details><summary>Detail of errors (" +
-          (errorAttached.length + 1) +
+          (allErrors.length + 1) +
           ")</summary>\n\n\n";
         reportMarkdownBody +=
           groupedErrors
@@ -356,7 +355,7 @@ export function generateSuperReport(
               ({ error, index, occurrences }) =>
                 `${index}. ${
                   occurrences > 1 ? `**(x${occurrences})** ` : ""
-                }${error}\n`
+                }\`${error}\`\n`
             )
             .join("") + "\n";
         reportMarkdownBody += "\n</details>\n\n";
