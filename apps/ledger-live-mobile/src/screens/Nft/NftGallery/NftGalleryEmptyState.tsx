@@ -11,15 +11,14 @@ import { useReceiveNFTsModal } from "./ReceiveNFTsModal.hook";
 
 const NftGalleryEmptyState = () => {
   const { t } = useTranslation();
-
   const navigation = useNavigation();
+  const { openModal, closeModal, isModalOpened } = useReceiveNFTsModal();
 
   const openSupportLink = useCallback(
     () => Linking.openURL(urls.nft.howToSecure),
     [],
   );
 
-  const { openModal, closeModal, isModalOpened } = useReceiveNFTsModal();
   return (
     <Flex flex={1} alignItems={"center"} justifyContent={"center"}>
       <Text
