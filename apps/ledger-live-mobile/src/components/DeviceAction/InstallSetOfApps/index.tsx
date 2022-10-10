@@ -1,8 +1,8 @@
 import React, { useCallback, useState, useMemo } from "react";
 import { Trans } from "react-i18next";
-import { createAction } from "@ledgerhq/live-common/lib/hw/actions/app";
+import { createAction } from "@ledgerhq/live-common/hw/actions/app";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
-import connectApp from "@ledgerhq/live-common/lib/hw/connectApp";
+import connectApp from "@ledgerhq/live-common/hw/connectApp";
 import { Flex, Text } from "@ledgerhq/native-ui";
 import { getDeviceModel } from "@ledgerhq/devices";
 
@@ -74,7 +74,7 @@ const InstallSetOfApps = ({
   }
 
   return userConfirmed ? (
-    <Flex style={{ height: "100%" }}>
+    <Flex height="100%">
       <Flex flex={1} alignItems="center" justifyContent="center">
         <Flex mb={2} alignSelf="flex-start">
           <Text mb={5} variant="paragraphLineHeight">

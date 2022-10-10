@@ -5,6 +5,7 @@ import { Text, VerticalTimeline } from "@ledgerhq/native-ui";
 import { useTranslation } from "react-i18next";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { getDeviceModel } from "@ledgerhq/devices";
+import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 
 import NavigationScrollView from "../components/NavigationScrollView";
 import InstallSetOfApps from "../components/DeviceAction/InstallSetOfApps";
@@ -22,7 +23,7 @@ export default function DebugMultiAppInstall() {
   }, []);
 
   const list = feature?.params?.apps || [];
-  const [device, setDevice] = useState(null);
+  const [device, setDevice] = useState<Device | null>(null);
   const productName = useMemo(() => {
     if (!device) return "";
     return getDeviceModel(device.modelId).productName;
@@ -53,7 +54,7 @@ export default function DebugMultiAppInstall() {
                     title: `${productName} applications`,
                     status: isCompleted ? "completed" : "active",
                     estimatedTime: 60,
-                    renderBody: isDisplayed =>
+                    renderBody: (isDisplayed: boolean) =>
                       isDisplayed ? (
                         <InstallSetOfApps
                           key={nonce}

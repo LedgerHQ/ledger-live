@@ -50,8 +50,8 @@ export default function DeviceAction<R, H, P>({
   device: selectedDevice,
   ...props
 }: Props<R, H, P>): JSX.Element {
-  const status: any = action.useHook(selectedDevice, request);
-  const payload = action.mapResult(status);
+  const status: any = action?.useHook(selectedDevice, request);
+  const payload = action?.mapResult(status);
 
   return (
     <DeviceActionDefaultRendering
@@ -64,7 +64,7 @@ export default function DeviceAction<R, H, P>({
   );
 }
 
-export function DeviceActionDefaultRendering({
+export function DeviceActionDefaultRendering<R, H, P>({
   onResult,
   onError,
   device: selectedDevice,
@@ -74,7 +74,7 @@ export function DeviceActionDefaultRendering({
   status,
   request,
   payload,
-}: Props<R, H, P>): JSX.Element {
+}: Props<R, H, P>): JSX.Element | null {
   const { colors, dark } = useTheme();
   const dispatch = useDispatch();
   const theme = dark ? "dark" : "light";
@@ -126,6 +126,7 @@ export function DeviceActionDefaultRendering({
         setLastSeenDeviceInfo({
           modelId: device.modelId,
           deviceInfo,
+          apps: [],
         }),
       );
     }

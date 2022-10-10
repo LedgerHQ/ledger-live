@@ -31,11 +31,7 @@ const Item = ({ appName, isActive, installed, itemProgress, i }: Props) => {
           </Text>
         )}
       </Circle>
-      <Text
-        ml={3}
-        variant="paragraphLineHeight"
-        style={{ textTransform: "capitalize" }}
-      >
+      <Text ml={3} variant="paragraphLineHeight" textTransform="capitalize">
         {appName}
       </Text>
     </Flex>
