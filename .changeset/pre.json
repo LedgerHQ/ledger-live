@@ -77,7 +77,9 @@
     "pnpm-utils": "1.0.0"
   },
   "changesets": [
+    "light-hotels-talk",
     "strong-teachers-sing",
+    "tender-buckets-learn",
     "thin-donkeys-fix"
   ]
 }
