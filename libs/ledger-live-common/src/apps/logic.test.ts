@@ -30,7 +30,8 @@ const scenarios = [
         dispatch: {
           type: "wipe",
         },
-        expectPlan: "-Litecoin, -Bitcoin Legacy, -XRP, -Ethereum Classic, -Ethereum",
+        expectPlan:
+          "-Litecoin, -Bitcoin Legacy, -XRP, -Ethereum Classic, -Ethereum",
         expectInstalled: "",
       },
     ],
