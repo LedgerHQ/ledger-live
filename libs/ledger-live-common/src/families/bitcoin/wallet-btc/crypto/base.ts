@@ -136,7 +136,7 @@ class Base implements ICrypto {
     return bs58check.encode(payload);
   }
 
-  // only used in js-getTransactionStatus
+  // default getDustLimit value - implement this methode in coins to set specific value
   public getDustLimit(): number {
     return 0;
   }
