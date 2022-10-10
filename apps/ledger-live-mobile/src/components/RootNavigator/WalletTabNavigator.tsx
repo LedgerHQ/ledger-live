@@ -37,7 +37,6 @@ export default function WalletTabNavigator() {
 
   return (
     <>
-      {/* <Box bg={"red"} flex={1}> */}
       <Box pt={10} pb={5} px={6}>
         <Header hidePortfolio={false} />
       </Box>
@@ -84,7 +83,6 @@ export default function WalletTabNavigator() {
           }}
         />
       </WalletTab.Navigator>
-      {/* </Box> */}
     </>
   );
 }

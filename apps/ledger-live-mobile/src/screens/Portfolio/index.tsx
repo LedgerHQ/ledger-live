@@ -263,7 +263,6 @@ function PortfolioScreen({ navigation }: Props) {
           data={data}
           style={{
             flex: 1,
-            // paddingTop: 48,
           }}
           contentContainerStyle={{ paddingBottom: TAB_BAR_SAFE_HEIGHT }}
           renderItem={({ item }: { item: React.ReactNode }) => item}
