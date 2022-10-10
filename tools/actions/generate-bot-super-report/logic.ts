@@ -470,7 +470,7 @@ function groupErrors(
   const grouped = groupBy(
     errors.map((e) => groupSimilarError(safeErrorDisplay(e)))
   );
-  return Object.keys(groupBy).map((error, i) => ({
+  return Object.keys(grouped).map((error, i) => ({
     error,
     index: i + 1,
     occurrences: grouped[error],
