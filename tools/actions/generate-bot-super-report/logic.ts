@@ -280,7 +280,7 @@ export function generateSuperReport(
 
   reportMarkdownBody +=
     "| Spec | Availability (scan success) | Transactions success | Mutations Coverage | Ops |\n";
-  reportMarkdownBody += "|--|--|--|--|\n";
+  reportMarkdownBody += "|--|--|--|--|--|\n";
   reportMarkdownBody += Object.values(stats)
     .map(({ specName, mutations, fatalErrors, runs }) => {
       const m = Object.values(mutations);
