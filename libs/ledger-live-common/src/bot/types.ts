@@ -188,6 +188,7 @@ export type MinimalSerializedSpecReport = {
   accounts: AccountRaw[] | undefined;
   fatalError: string | undefined;
   mutations: MinimalSerializedMutationReport[] | undefined;
+  existingMutationNames: string[];
 };
 
 export type MinimalSerializedReport = {
