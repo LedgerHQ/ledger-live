@@ -4953,6 +4953,9 @@
     "FeeTooHigh": {
       "title": "Network fees are above 10% of the amount"
     },
+    "DustLimit": {
+      "title": "Amount is lower than dust limit"
+    },
     "SourceHasMultiSign": {
       "title": "Please disable multisign to send {{currencyName}}"
     },

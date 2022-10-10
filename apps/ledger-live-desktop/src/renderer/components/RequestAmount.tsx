@@ -1,15 +1,17 @@
-// @flow
+/* eslint-disable @typescript-eslint/no-use-before-define */
+import { AccountLike } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
 import React, { useCallback } from "react";
 import { useSelector } from "react-redux";
 import styled from "styled-components";
-import type { AccountLike } from "@ledgerhq/types-live";
 import { useSendAmount } from "@ledgerhq/live-common/countervalues/react";
+
 import Box from "~/renderer/components/Box";
 import InputCurrency from "~/renderer/components/InputCurrency";
 import IconTransfer from "~/renderer/icons/Transfer";
 import { counterValueCurrencySelector } from "~/renderer/reducers/settings";
 import TranslatedError from "./TranslatedError";
+// import { Currency } from "~/../../../libs/ledger-live-common/lib/families/bitcoin/wallet-btc";
 
 const ErrorContainer = styled(Box)`
   margin-top: 0px;
@@ -30,16 +32,16 @@ const WarningDisplay = styled(Box)`
 `;
 
 type Props = {
-  autoFocus?: boolean,
+  autoFocus?: boolean;
   // crypto value (always the one which is returned)
-  value: BigNumber,
-  disabled?: boolean,
-  validTransactionError?: ?Error,
-  validTransactionWarning?: ?Error,
+  value: BigNumber;
+  disabled?: boolean;
+  validTransactionError?: Error;
+  validTransactionWarning?: Error;
   // change handler
-  onChange: BigNumber => void,
+  onChange: (_: BigNumber) => void;
   // used to determine the crypto input unit
-  account: AccountLike,
+  account: AccountLike;
 };
 
 export default function RequestAmount({
@@ -51,7 +53,7 @@ export default function RequestAmount({
   validTransactionError,
   validTransactionWarning,
 }: Props) {
-  const fiatCurrency = useSelector(counterValueCurrencySelector);
+  const fiatCurrency = useSelector<any, any>(counterValueCurrencySelector);
   const { cryptoUnit, fiatAmount, fiatUnit, calculateCryptoAmount } = useSendAmount({
     account,
     fiatCurrency,

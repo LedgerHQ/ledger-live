@@ -1,11 +1,9 @@
-// @flow
 import React, { useCallback, useEffect } from "react";
 import { BigNumber } from "bignumber.js";
-import { Trans } from "react-i18next";
+import { Trans, TFunction } from "react-i18next";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
-import type { Account, AccountLike } from "@ledgerhq/types-live";
-import type { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
-import type { TFunction } from "react-i18next";
+import { Account, AccountLike } from "@ledgerhq/types-live";
+import { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
 
 import Box from "~/renderer/components/Box";
 import Label from "~/renderer/components/Label";
@@ -14,16 +12,16 @@ import Switch from "~/renderer/components/Switch";
 import Text from "~/renderer/components/Text";
 
 type Props = {
-  parentAccount: ?Account,
-  account: AccountLike,
-  transaction: Transaction,
-  onChangeTransaction: (*) => void,
-  status: TransactionStatus,
-  bridgePending: boolean,
-  t: TFunction,
-  initValue?: BigNumber,
-  walletConnectProxy?: boolean,
-  resetInitValue?: () => void,
+  parentAccount?: Account;
+  account: AccountLike;
+  transaction: Transaction;
+  onChangeTransaction: (_: any) => void;
+  status: TransactionStatus;
+  bridgePending: boolean;
+  t: TFunction;
+  initValue?: BigNumber;
+  walletConnectProxy?: boolean;
+  resetInitValue?: () => void;
 };
 
 const AmountField = ({
@@ -41,7 +39,7 @@ const AmountField = ({
   const bridge = getAccountBridge(account, parentAccount);
 
   useEffect(() => {
-    if (initValue && !initValue.eq(transaction.amount || BigNumber(0))) {
+    if (initValue && !initValue.eq(transaction.amount || new BigNumber(0))) {
       onChangeTransaction(bridge.updateTransaction(transaction, { amount: initValue }));
       resetInitValue && resetInitValue();
     }
@@ -57,23 +55,24 @@ const AmountField = ({
   const onChangeSendMax = useCallback(
     (useAllAmount: boolean) => {
       onChangeTransaction(
-        bridge.updateTransaction(transaction, { useAllAmount, amount: BigNumber(0) }),
+        bridge.updateTransaction(transaction, { useAllAmount, amount: new BigNumber(0) }),
       );
     },
     [bridge, transaction, onChangeTransaction],
   );
 
   if (!status) return null;
+
   const { useAllAmount } = transaction;
   const { amount, errors, warnings } = status;
-  let { amount: amountError, gasPrice: messageGas } = errors;
+  let { amount: amountError, dustLimit: messageDust, gasPrice: messageGas } = errors;
   let { amount: amountWarning } = warnings;
 
   // we ignore zero case for displaying field error because field is empty.
 
   if (amount.eq(0) && (bridgePending || !useAllAmount)) {
-    amountError = null;
-    amountWarning = null;
+    amountError = undefined;
+    amountWarning = undefined;
   }
 
   return (
@@ -112,11 +111,10 @@ const AmountField = ({
       <RequestAmount
         disabled={!!useAllAmount || walletConnectProxy}
         account={account}
-        validTransactionError={amountError || messageGas}
+        validTransactionError={amountError || messageGas || messageDust}
         validTransactionWarning={amountWarning}
         onChange={onChange}
         value={walletConnectProxy ? transaction.amount : amount}
-        showCountervalue={false}
         autoFocus={!initValue}
       />
     </Box>

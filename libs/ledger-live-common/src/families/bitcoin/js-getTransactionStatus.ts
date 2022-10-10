@@ -4,13 +4,17 @@ import {
   AmountRequired,
   NotEnoughBalance,
   FeeNotLoaded,
+  DustLimit,
   FeeTooHigh,
   FeeRequired,
 } from "@ledgerhq/errors";
+import type { Account } from "@ledgerhq/types-live";
+
 import type { Transaction, TransactionStatus } from "./types";
 import { calculateFees, validateRecipient, isTaprootRecipient } from "./cache";
 import { TaprootNotActivated } from "./errors";
-import type { Account } from "@ledgerhq/types-live";
+import cryptoFactory from "./wallet-btc/crypto/factory";
+import { Currency } from "./wallet-btc";
 
 const getTransactionStatus = async (
   a: Account,
@@ -77,6 +81,7 @@ const getTransactionStatus = async (
     (sum, input) => sum.plus(input.value),
     new BigNumber(0)
   );
+
   const sumOfChanges = (txOutputs || [])
     .filter((o) => o.isChange)
     .reduce((sum, output) => sum.plus(output.value), new BigNumber(0));
@@ -109,7 +114,13 @@ const getTransactionStatus = async (
     warnings.feeTooHigh = new FeeTooHigh();
   }
 
-  return Promise.resolve({
+  const crypto = cryptoFactory(a.currency.id as Currency);
+
+  if (amount.gt(0) && amount.lt(crypto.getDustLimit())) {
+    errors.dustLimit = new DustLimit();
+  }
+
+  return {
     errors,
     warnings,
     estimatedFees,
@@ -117,7 +128,7 @@ const getTransactionStatus = async (
     totalSpent,
     txInputs,
     txOutputs,
-  });
+  };
 };
 
 export default getTransactionStatus;

@@ -136,6 +136,11 @@ class Base implements ICrypto {
     return bs58check.encode(payload);
   }
 
+  // only used in js-getTransactionStatus
+  public getDustLimit(): number {
+    return 0;
+  }
+
   // get address given an address type
   async getAddress(
     derivationMode: string,
