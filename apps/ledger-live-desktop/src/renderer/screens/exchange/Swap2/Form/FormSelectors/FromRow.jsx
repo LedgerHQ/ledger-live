@@ -101,22 +101,42 @@ function FromRow({
   const { t } = useTranslation();
   usePickDefaultAccount(accounts, fromAccount, setFromAccount);
   const trackEditAccount = () =>
-    track("Page Swap Form - Edit Source Account", {
-      provider,
-      swapVersion: SWAP_VERSION,
+    track("button_clicked", {
+      button: "Edit source account",
+      page: "Page Swap Form",
+      flow: "swap",
     });
+
   const setAccountAndTrack = account => {
     updateSelectedRate();
-    track("Page Swap Form - New Source Account", {
-      provider,
-      swapVersion: SWAP_VERSION,
+    track("button_clicked", {
+      button: "New source account",
+      page: "Page Swap Form",
+      flow: "swap",
+      account: account,
     });
     setFromAccount(account);
   };
 
   const setValue = fromAmount => {
+    track("button_clicked", {
+      button: "Amount input",
+      page: "Page Swap Form",
+      flow: "swap",
+      amount: fromAmount,
+    });
     updateSelectedRate();
     setFromAmount(fromAmount);
+  };
+
+  const toggleMaxAndTrack = state => {
+    track("button_clicked", {
+      button: "max",
+      page: "Page Swap Form",
+      flow: "swap",
+      value: state,
+    });
+    toggleMax(state);
   };
 
   return (
@@ -137,7 +157,7 @@ function FromRow({
           <Switch
             small
             isChecked={isMaxEnabled}
-            onChange={toggleMax}
+            onChange={toggleMaxAndTrack}
             disabled={!fromAccount}
             data-test-id="swap-max-spendable-toggle"
           />

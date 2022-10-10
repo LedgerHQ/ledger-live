@@ -365,11 +365,13 @@ const SwapForm = () => {
     swapTransaction.swap.from.amount.gt(0);
 
   const onSubmit = () => {
-    track("Page Swap Form - Request", {
+    track("button_clicked", {
+      button: "Request",
+      page: "Page Swap Form",
+      flow: "swap",
       sourceCurrency: sourceCurrency?.name,
       targetCurrency: targetCurrency?.name,
-      provider,
-      swapVersion: SWAP_VERSION,
+      partner: provider,
     });
     if (navigation) {
       const { pathname, params } = navigation;

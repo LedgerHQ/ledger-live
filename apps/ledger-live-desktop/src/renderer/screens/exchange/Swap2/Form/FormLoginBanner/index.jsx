@@ -1,6 +1,7 @@
 // @flow
 import React from "react";
 import { useTranslation } from "react-i18next";
+import { track } from "~/renderer/analytics/segment";
 import SectionInformative from "~/renderer/screens/exchange/Swap2/Form/FormSummary/SectionInformative";
 
 const FormLoginBanner = ({ provider, onClick }: { provider?: string, onClick: Function }) => {
@@ -13,7 +14,17 @@ const FormLoginBanner = ({ provider, onClick }: { provider?: string, onClick: Fu
     cta: t("swap2.form.providers.login.complete"),
   };
 
-  return <SectionInformative message={message} ctaLabel={cta} onClick={onClick} />;
+  const onClickAndTrack = () => {
+    track("button_clicked", {
+      button: "Login",
+      page: "Page Swap Form",
+      partner: provider,
+      flow: "swap",
+    });
+    onClick();
+  };
+
+  return <SectionInformative message={message} ctaLabel={cta} onClick={onClickAndTrack} />;
 };
 
 export default FormLoginBanner;

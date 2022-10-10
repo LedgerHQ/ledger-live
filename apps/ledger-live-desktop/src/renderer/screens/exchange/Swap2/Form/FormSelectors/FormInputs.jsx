@@ -5,6 +5,7 @@ import Button from "~/renderer/components/Button";
 import ArrowsUpDown from "~/renderer/icons/ArrowsUpDown";
 import styled from "styled-components";
 import type { ThemedComponent } from "~/renderer/styles/StyleProvider";
+import { track } from "~/renderer/analytics/segment";
 import FromRow from "./FromRow";
 import ToRow from "./ToRow";
 import type {
@@ -79,6 +80,15 @@ export default function FormInputs({
   isSendMaxLoading,
   updateSelectedRate,
 }: FormInputsProps) {
+  const reverseSwapAndTrack = () => {
+    track("button_clicked", {
+      button: "switch",
+      page: "Page Swap Form",
+      flow: "swap",
+    });
+    reverseSwap();
+  };
+
   return (
     <Main>
       <Box>
@@ -96,7 +106,7 @@ export default function FormInputs({
         />
       </Box>
       <Box horizontal justifyContent="center" alignContent="center">
-        <SwapButton disabled={!isSwapReversable} onClick={reverseSwap} />
+        <SwapButton disabled={!isSwapReversable} onClick={reverseSwapAndTrack} />
       </Box>
       <Box style={{ marginTop: "-23px" }}>
         <ToRow

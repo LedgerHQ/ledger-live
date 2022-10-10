@@ -13,6 +13,7 @@ import type {
   SwapTransactionType,
   SwapSelectorStateType,
 } from "@ledgerhq/live-common/exchange/swap/types";
+import { track } from "~/renderer/analytics/segment";
 import { rateSelector } from "~/renderer/actions/swap";
 import FormattedVal from "~/renderer/components/FormattedVal";
 import Box from "~/renderer/components/Box";
@@ -106,7 +107,12 @@ const SectionFees = ({
   const handleChange = useMemo(
     () =>
       canEdit &&
-      (() =>
+      (() => {
+        track("button_clicked", {
+          button: "change network fees",
+          page: "Page Swap Form",
+          flow: "swap",
+        });
         setDrawer(FeesDrawer, {
           setTransaction,
           updateTransaction,
@@ -115,7 +121,8 @@ const SectionFees = ({
           status,
           disableSlowStrategy: exchangeRate?.tradeMethod === "fixed",
           provider,
-        })),
+        });
+      }),
     [
       canEdit,
       setDrawer,

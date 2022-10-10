@@ -1,6 +1,7 @@
 // @flow
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useCallback } from "react";
 import { useDispatch } from "react-redux";
+import { track } from "~/renderer/analytics/segment";
 import SummaryLabel from "./SummaryLabel";
 import SectionInformative from "./SectionInformative";
 import SummaryValue, { NoValuePlaceholder } from "./SummaryValue";
@@ -30,10 +31,19 @@ const AccountSection = ({
   const { t } = useTranslation();
   const accountName = getAccountName(account);
 
+  const handleChangeAndTrack = useCallback(() => {
+    track("button_clicked", {
+      button: "change target account",
+      page: "Page Swap Form",
+      flow: "swap",
+    });
+    handleChange();
+  }, [handleChange]);
+
   return (
     <SummarySection>
       <SummaryLabel label={t("swap2.form.details.label.target")} />
-      <SummaryValue value={accountName} handleChange={handleChange}>
+      <SummaryValue value={accountName} handleChange={handleChangeAndTrack}>
         {currency ? <CryptoCurrencyIcon circle currency={currency} size={16} /> : null}
       </SummaryValue>
     </SummarySection>
@@ -71,8 +81,15 @@ const SectionTarget = ({
   const dispatch = useDispatch();
   const { setDrawer } = React.useContext(context);
 
-  const handleAddAccount = () =>
+  const handleAddAccount = () => {
+    track("button_clicked", {
+      button: "add account",
+      page: "Page Swap Form",
+      flow: "swap",
+    });
     dispatch(openModal("MODAL_ADD_ACCOUNTS", { currency, flow: "swap" }));
+  };
+
   const hideEdit = !targetAccounts || targetAccounts.length < 2;
 
   // Using a ref to keep the drawer state synced.
@@ -85,13 +102,15 @@ const SectionTarget = ({
       });
   }, [account, targetAccounts]);
 
-  const showDrawer = () =>
+  const showDrawer = () => {
     setDrawer(TargetAccountDrawer, {
       accounts: targetAccounts,
       selectedAccount: account,
       setToAccount: setToAccount,
       setDrawerStateRef: setDrawerStateRef,
     });
+  };
+
   const handleEditAccount = hideEdit ? null : showDrawer;
 
   if (!currency || !hasRates) return <PlaceholderSection />;

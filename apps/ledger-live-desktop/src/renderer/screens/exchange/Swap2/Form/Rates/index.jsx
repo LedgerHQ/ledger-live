@@ -2,6 +2,7 @@
 import React, { useCallback, useState, useRef, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Trans } from "react-i18next";
+import { track } from "~/renderer/analytics/segment";
 import Box from "~/renderer/components/Box";
 import Text from "~/renderer/components/Text";
 import DecentralisedRate from "./DecentralisedRate";
@@ -68,6 +69,12 @@ export default function ProviderRate({
 
   const setRate = useCallback(
     rate => {
+      track("button_clicked", {
+        button: "Partner Chosen",
+        page: "Page Swap Form",
+        flow: "swap",
+        value: rate.tradeMethod,
+      });
       setDexSelected(null);
       updateSelection(rate);
       dispatch(updateRateAction(rate));
@@ -77,6 +84,13 @@ export default function ProviderRate({
 
   const setDexRate = useCallback(
     provider => {
+      track("button_clicked", {
+        button: "Partner Dex Chosen",
+        page: "Page Swap Form",
+        flow: "swap",
+        swap_type: "float",
+        value: provider,
+      });
       setDexSelected(provider);
       updateSelection(provider);
     },
@@ -84,6 +98,12 @@ export default function ProviderRate({
   );
 
   useEffect(() => {
+    track("button_clicked", {
+      button: "Filter selected",
+      page: "Page Swap Form",
+      flow: "swap",
+      value: filter,
+    });
     if (filter.includes(FILTER.decentralised)) {
       setDexRate(DEX_PROVIDERS[0]);
     } else {
