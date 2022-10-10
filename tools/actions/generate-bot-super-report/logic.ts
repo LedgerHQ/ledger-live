@@ -304,13 +304,12 @@ export function generateSuperReport(
     reportMarkdownBody += `## Spec \`${specName}\`\n`;
 
     if (fatalErrors.length) {
-      reportMarkdownBody += `**❌ Fatal cases (${fatalErrors.length})**\n`;
-      reportMarkdownBody += `\n`;
+      reportMarkdownBody += `\n<details><summary>❌ Fatal cases (${fatalErrors.length})</summary>\n\n`;
       // TODO in future we will try to link to these errors. we can also tell how much it reproduced
       uniq(fatalErrors).forEach((e) => {
         reportMarkdownBody += `- ${safeErrorDisplay(e)}\n`;
       });
-      reportMarkdownBody += `\n`;
+      reportMarkdownBody += `\n</details>\n\n`;
     }
 
     const m = Object.values(mutations);
