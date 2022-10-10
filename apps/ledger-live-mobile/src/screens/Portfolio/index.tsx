@@ -32,7 +32,6 @@ import BackgroundGradient from "../../components/BackgroundGradient";
 
 import GraphCardContainer from "./GraphCardContainer";
 import Carousel from "../../components/Carousel";
-import Header from "./Header";
 import TrackScreen from "../../analytics/TrackScreen";
 import MigrateAccountsBanner from "../MigrateAccounts/Banner";
 import { NavigatorName, ScreenName } from "../../const";
@@ -264,7 +263,6 @@ function PortfolioScreen({ navigation }: Props) {
           data={data}
           style={{
             flex: 1,
-            paddingTop: 48,
           }}
           contentContainerStyle={{ paddingBottom: TAB_BAR_SAFE_HEIGHT }}
           renderItem={({ item }: { item: React.ReactNode }) => item}
@@ -278,13 +276,6 @@ function PortfolioScreen({ navigation }: Props) {
           }
         />
         <MigrateAccountsBanner />
-        <Header
-          counterValueCurrency={counterValueCurrency}
-          portfolio={portfolio}
-          currentPositionY={currentPositionY}
-          graphCardEndPosition={graphCardEndPosition}
-          hidePortfolio={areAccountsEmpty}
-        />
       </TabBarSafeAreaView>
       <AddAccountsModal
         navigation={navigation}
