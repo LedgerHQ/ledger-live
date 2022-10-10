@@ -1,7 +1,7 @@
 import eip55 from "eip55";
 import BigNumber from "bignumber.js";
 import { encodeNftId } from ".";
-import { decodeAccountId } from "../account";
+import { decodeAccountId, groupAccountsOperationsByDay } from "../account";
 
 import type { Batch, BatchElement, Batcher } from "./NftMetadataProvider/types";
 import type {
@@ -10,6 +10,7 @@ import type {
   ProtoNFT,
   NFT,
   NFTCollectionMetadataResponse,
+  Account,
 } from "@ledgerhq/types-live";
 import { API, apiForCurrency } from "../api/Ethereum";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
@@ -212,3 +213,58 @@ export const metadataCallBatcher = (
     loadCollection: batchers.collection.load,
   };
 };
+
+const getNFTByTokenId = (tokenId?: string, nfts?: ProtoNFT[]) =>
+  nfts?.find((nft) => nft.tokenId === tokenId);
+
+const SUPPORTED_CURRENCIES = ["ethereum", "polygon"];
+
+const groupByCurrency = (nfts: ProtoNFT[]) => {
+  const groupMap = new Map<string, ProtoNFT[]>();
+  SUPPORTED_CURRENCIES.forEach((elem) => groupMap.set(elem, []));
+
+  // GROUPING
+  nfts.forEach((nft) => {
+    const currency = nft.currencyId;
+    const group = groupMap.get(currency) ?? [];
+    group?.push(nft);
+    groupMap.set(currency, group);
+  });
+
+  return Array.from(groupMap, ([_key, value]) => value).flat();
+};
+
+export function orderByLastReceived(
+  accounts: Account[],
+  nfts: ProtoNFT[]
+): ProtoNFT[] {
+  const orderedNFTs: ProtoNFT[] = [];
+  let operationMapping: Operation[] = [];
+
+  const res = groupAccountsOperationsByDay(accounts, {
+    count: Infinity,
+  });
+
+  // Sections are sorted by Date, the most recent being the first
+  res.sections.forEach((section) => {
+    // Get all operation linked to the reception of an NFT
+    const operations = section.data.filter(
+      (d) => d.type === "NFT_IN" && d.contract && d.tokenId
+    );
+    operationMapping = operationMapping.concat(operations);
+  });
+
+  operationMapping.forEach((operation) => {
+    // Prevent multiple occurences due to Exchange Send/Receive same NFT several times
+    const isAlreadyIn = orderedNFTs.find(
+      (nft) => nft.tokenId === operation.tokenId
+    );
+
+    if (!isAlreadyIn) {
+      const nft = getNFTByTokenId(operation.tokenId, nfts);
+      if (nft) orderedNFTs.push(nft);
+    }
+  });
+
+  return groupByCurrency(orderedNFTs);
+}

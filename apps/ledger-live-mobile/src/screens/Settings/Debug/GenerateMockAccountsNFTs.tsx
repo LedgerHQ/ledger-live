@@ -8,6 +8,8 @@ import accountModel from "../../../logic/accountModel";
 import { saveAccounts } from "../../../db";
 import { useReboot } from "../../../context/Reboot";
 
+const CURRENCIES_FOR_NFT = ["ethereum", "polygon"];
+
 async function injectMockAccountsInDB(count: number) {
   await saveAccounts({
     active: Array(count)
@@ -15,7 +17,12 @@ async function injectMockAccountsInDB(count: number) {
       .map(() =>
         accountModel.encode(
           genAccount(String(Math.random()), {
-            currency: sample(listSupportedCurrencies()),
+            currency: sample(
+              listSupportedCurrencies().filter(c =>
+                CURRENCIES_FOR_NFT.includes(c.id),
+              ),
+            ),
+            withNft: true,
           }),
         ),
       ),
