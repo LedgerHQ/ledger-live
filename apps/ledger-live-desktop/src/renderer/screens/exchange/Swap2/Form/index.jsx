@@ -65,7 +65,10 @@ const Button = styled(ButtonBase)`
 `;
 
 const trackNoRates = ({ toState }) => {
-  track("Page Swap Form - Error No Rate", {
+  track("error_message", {
+    message: "no_rates",
+    page: "Page Swap Form",
+    flow: "swap",
     sourceCurrency: toState.currency?.name,
   });
 };
@@ -237,9 +240,10 @@ const SwapForm = () => {
     () => {
       swapError &&
         trackSwapError(swapError, {
+          page: "Page Swap Form",
+          flow: "swap",
           sourcecurrency: swapTransaction.swap.from.currency?.name,
           provider,
-          swapVersion: SWAP_VERSION,
         });
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps

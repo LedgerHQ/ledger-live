@@ -34,13 +34,15 @@ export const getProviderIcon = (exchangeRate: ExchangeRate) =>
 export const trackSwapError = (error: *, properties: * = {}) => {
   if (!error) return;
   if (error instanceof SwapExchangeRateAmountTooLow) {
-    track("Page Swap Form - Error Less Mini", {
+    track("error_message", {
       ...properties,
+      message: "min_amount",
     });
   }
   if (error instanceof NotEnoughBalance) {
-    track("Page Swap Form - Error No Funds", {
+    track("error_message", {
       ...properties,
+      message: "no_funds",
     });
   }
 };
