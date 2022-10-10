@@ -5143,6 +5143,14 @@
         "title": "Your NFTs live securely here",
         "receive": "Receive NFTs",
         "supportLink": "How to deposit from Metamask?"
+      },
+      "receiveModal": {
+        "title": "To receive an NFT...",
+        "bullets": {
+          "0": "\u2022 Select the NFT’s crypto blockchain.",
+          "1": "\u2022 Choose the account to receive the NFT \n— just like receiving any other crypto."
+        },
+        "cta": "Continue"
       }
     }
   }
