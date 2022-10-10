@@ -1,6 +1,6 @@
 [
   {
-    "tag_name": "2.48.0",
-    "body": "\n### 🚀 Features\n\n- Introducing a new way to swap crypto — **compare quotes from different platforms and choose the best offer**. Select the coin you want to swap and explore providers, KYC requirements, exchange rates, and more. In addition, you can now fully leverage DeFi protocols to swap ERC-20 tokens on decentralised exchanges.\n- Olá! From today, **Ledger Live supports Brazilian Portuguese** 🇧🇷 You can change the language in the settings menu under General → Display language.\n- When sending BTC, a **warning message** will alert you if there are any **pending incoming transactions**.\n\n### 🐛 Fixes\n\nWe’ve tidied up some bugs that caused issues when sending Zcash and signing transactions. Everything is running smoothly again.\n"
+    "tag_name": "2.46.0",
+    "body": "\nWe're releasing a slew of new features and improvements. Here is what’s new in Ledger Live 👇\n\n### 🚀 Features\n\n- We've added **Filecoin support** to the Ledger Live roaster. Beginning today, you can send and receive its native currency FIL.\n- **Empowering our external partners**. With more coins and tokens added to the Ledger platform, the account pages now display banners stating if integration has been done externally and by who.\n\n### 🐛 Fixes\n\nWe've tidied up some minor bugs.\n\nDon’t forget to update your Ledger Live app so that you can access these new features.\n"
   }
 ]
