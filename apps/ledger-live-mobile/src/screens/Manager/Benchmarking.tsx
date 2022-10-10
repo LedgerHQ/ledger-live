@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Flex, Text } from "@ledgerhq/native-ui";
+import type { AppOp, State } from "@ledgerhq/live-common/apps/index";
 import styled from "styled-components/native";
 import { useAppInstallProgress } from "@ledgerhq/live-common/apps/react";
 import Config from "react-native-config";
@@ -13,25 +14,30 @@ const Wrapper = styled(Flex).attrs({
   borderColor: "neutral.c40",
 })``;
 
-const Status = styled(Flex).attrs(p => ({
+type StatusCustomProps = { active: boolean };
+const Status = styled(Flex).attrs<StatusCustomProps>(p => ({
   bg: p.active ? "success.c100" : "warning.c100",
   borderRadius: 20,
   borderWidth: 0,
   height: 10,
   width: 10,
-}))``;
+}))<StatusCustomProps>``;
 
-export default function Benchmarking(props: any) {
+type Props = { state: State };
+
+export default function Benchmarking(props: Props) {
   const enabled = Config.ENABLE_BENCHMARKING || false;
-  const [list, setList] = useState([]);
-  const [start, setStart] = useState(0);
-  const [startTransfer, setStartTransfer] = useState(0);
-  const [end, setEnd] = useState(0);
-  const [lastSeenAppOp, setLastSeenAppOp] = useState(0);
+  const [list, setList] = useState<string[]>([]);
+  const [start, setStart] = useState<Date | null>(null);
+  const [startTransfer, setStartTransfer] = useState<Date | null>(null);
+  const [end, setEnd] = useState<Date | null>(null);
+  const [lastSeenAppOp, setLastSeenAppOp] = useState<AppOp | null | undefined>(
+    null,
+  );
 
   const { state } = props;
   const { currentAppOp } = state;
-  const progress = useAppInstallProgress(state, currentAppOp?.name);
+  const progress = useAppInstallProgress(state, currentAppOp?.name ?? "");
 
   useEffect(() => {
     if (!enabled) return;
@@ -40,7 +46,7 @@ export default function Benchmarking(props: any) {
     if (currentAppOp && !progress && !start) {
       setLastSeenAppOp(currentAppOp);
       setStart(new Date());
-      setEnd(0);
+      setEnd(null);
     } else if (currentAppOp && progress > 0 && !startTransfer) {
       setStartTransfer(new Date());
     } else if (lastSeenAppOp && !currentAppOp) {
@@ -50,18 +56,18 @@ export default function Benchmarking(props: any) {
 
   useEffect(() => {
     if (!enabled) return;
-    if (start && end && lastSeenAppOp) {
+    if (start && end && startTransfer && lastSeenAppOp) {
       setList(list => [
         ...list,
-        `${lastSeenAppOp.name}: ${end - startTransfer}ms [+${
-          startTransfer - start
-        }ms]`,
+        `${lastSeenAppOp.name}: ${
+          end.getTime() - startTransfer.getTime()
+        }ms [+${startTransfer.getTime() - start.getTime()}ms]`,
       ]);
 
       setLastSeenAppOp(null);
-      setStart(0);
-      setStartTransfer(0);
-      setEnd(0);
+      setStart(null);
+      setStartTransfer(null);
+      setEnd(null);
     }
   }, [lastSeenAppOp, end, start, startTransfer, enabled]);
 
@@ -71,7 +77,7 @@ export default function Benchmarking(props: any) {
         <Text color="primary.c50" variant="h3">
           {"App install benchmark"}
         </Text>
-        <Status active={start && !end} />
+        <Status active={!!(start && !end)} />
       </Flex>
       <Flex pl={2}>
         {list.map((item, i) => (
