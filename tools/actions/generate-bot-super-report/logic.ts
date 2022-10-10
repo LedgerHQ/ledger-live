@@ -276,7 +276,7 @@ export function generateSuperReport(
   reportMarkdownBody += "# Bot Weekly Super Report!\n";
   reportMarkdownBody +=
     "\n> What is the bot and how does it work? [Everything is documented here!](https://github.com/LedgerHQ/ledger-live/wiki/LLC:bot)\n\n";
-  reportMarkdownBody += summary + "\n";
+  reportMarkdownBody += summary + "\n\n";
 
   reportMarkdownBody +=
     "| Spec | Availability (scan success) | Transactions success | Mutations Coverage | Ops |\n";
