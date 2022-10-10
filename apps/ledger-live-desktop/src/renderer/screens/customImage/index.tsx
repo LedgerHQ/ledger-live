@@ -54,21 +54,17 @@ const CustomImage: React.FC<Props> = props => {
   const [step, setStep] = useState<Step>(Step.chooseImage);
 
   const setStepWrapper = useCallback(
-    (step: Step) => {
+    (newStep: Step) => {
+      if (step === Step.adjustImage && newStep === Step.chooseImage && isFromNFTEntryPoint) {
+        setDrawer();
+        if (reopenPreviousDrawer) reopenPreviousDrawer();
+        return;
+      }
       setStepError({});
-      setStep(step);
+      setStep(newStep);
     },
-    [setStepError, setStep],
+    [step, isFromNFTEntryPoint, reopenPreviousDrawer],
   );
-
-  const handleStepCropSetStep = (step: Step) => {
-    if (step === Step.chooseImage && isFromNFTEntryPoint) {
-      setDrawer();
-      if (reopenPreviousDrawer) reopenPreviousDrawer();
-    } else {
-      setStepWrapper(step);
-    }
-  };
 
   const initialUri = imageUri;
 
@@ -209,7 +205,7 @@ const CustomImage: React.FC<Props> = props => {
             src={loadedImage}
             onError={errorHandlers[Step.adjustImage]}
             onResult={handleStepAdjustImageResult}
-            setStep={handleStepCropSetStep}
+            setStep={setStepWrapper}
             initialCropParams={initialCropParams}
             setCropParams={setInitialCropParams}
           />
