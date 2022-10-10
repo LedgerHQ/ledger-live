@@ -1,5 +1,6 @@
 // @flow
 import React from "react";
+import { getEnv } from "@ledgerhq/live-common/env";
 
 type Props = {
   height: number | string,
@@ -22,7 +23,7 @@ export function AnimatedWave({ height, color }: Props) {
             V 0
             Z"
       >
-        {!process.env.PLAYWRIGHT_RUN ? (
+        {!getEnv("PLAYWRIGHT_RUN") ? (
           <animate
             repeatCount="indefinite"
             attributeName="d"

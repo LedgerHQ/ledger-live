@@ -2,6 +2,7 @@
 import React, { useMemo } from "react";
 import map from "lodash/map";
 import { Trans } from "react-i18next";
+import { getEnv } from "@ledgerhq/live-common/env";
 import Slide from "./Slide";
 import { urls } from "~/config/urls";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
@@ -307,7 +308,7 @@ export const useDefaultSlides = () => {
   return useMemo(
     () =>
       // $FlowFixMe
-      map(process.env.PLAYWRIGHT_RUN ? [SLIDES[2], SLIDES[1]] : slides, (slide: Props) => ({
+      map(getEnv("PLAYWRIGHT_RUN") ? [SLIDES[2], SLIDES[1]] : slides, (slide: Props) => ({
         id: slide.name,
         // eslint-disable-next-line react/display-name
         Component: () => <Slide {...slide} />,
