@@ -159,6 +159,7 @@ const AppsList = ({
           distribution={distribution}
           deviceModel={state.deviceModel}
           deviceInfo={deviceInfo}
+          device={device}
           isIncomplete={isIncomplete}
           firmware={firmware}
         />

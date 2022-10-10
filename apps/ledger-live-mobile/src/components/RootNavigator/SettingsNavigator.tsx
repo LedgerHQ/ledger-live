@@ -203,6 +203,9 @@ export default function SettingsNavigator() {
         component={DeveloperCustomManifest}
         options={{
           title: t("settings.developer.customManifest.title"),
+          headerTitleStyle: {
+            width: "80%",
+          },
         }}
       />
       <Stack.Screen

@@ -36,7 +36,7 @@ import SearchHeader from "./SearchHeader";
 import { ScreenName } from "../../const";
 import { track } from "../../analytics";
 import TrackScreen from "../../analytics/TrackScreen";
-import { useProviders } from "../Swap/SwapEntry";
+import { useProviders } from "../Swap/Form/index";
 import Illustration from "../../images/illustration/Illustration";
 import TabBarSafeAreaView, {
   TAB_BAR_SAFE_HEIGHT,

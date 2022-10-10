@@ -31,7 +31,8 @@ const sharedMutations = ({ maxAccount }) => [
 ];
 
 const crypto_org_croeseid: AppSpec<Transaction> = {
-  name: "Crypto.org Testnet",
+  disabled: true, // explorers are not correctly working. we will focus on crypto_org spec for now
+  name: "Crypto org Testnet",
   currency: getCryptoCurrencyById("crypto_org_croeseid"),
   appQuery: {
     model: DeviceModelId.nanoS,
@@ -45,7 +46,7 @@ const crypto_org_croeseid: AppSpec<Transaction> = {
 };
 
 const crypto_org: AppSpec<Transaction> = {
-  name: "Crypto.org",
+  name: "Crypto org",
   currency: getCryptoCurrencyById("crypto_org"),
   appQuery: {
     model: DeviceModelId.nanoS,
