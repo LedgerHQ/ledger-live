@@ -85,6 +85,7 @@ function convertSpecReport<T extends Transaction>(
     fatalError: result.fatalError ? formatError(result.fatalError) : undefined,
     accounts,
     mutations,
+    existingMutationNames: result.spec.mutations.map((m) => m.name),
   };
 }
 

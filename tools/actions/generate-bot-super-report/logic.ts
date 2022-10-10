@@ -341,7 +341,10 @@ export function generateSuperReport(
       if (errorAttached.length) {
         reportMarkdownBody += "\n";
         reportMarkdownBody +=
+          "<details><summary>Detail of errors</summary>\n\n\n";
+        reportMarkdownBody +=
           errorAttached.map((e, i) => `${i + 1}. ${e}\n`).join("") + "\n";
+        reportMarkdownBody += "\n</details>\n\n";
       }
     }
   });
