@@ -182,7 +182,7 @@ function PairDevicesInner({ navigation, route }: Props) {
             setLastSeenDeviceInfo({
               modelId: device.modelId,
               deviceInfo,
-              appsInstalled,
+              apps: appsInstalled,
             }),
           );
           dispatchRedux(setReadOnlyMode(false));
