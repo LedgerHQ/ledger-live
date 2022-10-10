@@ -15,10 +15,7 @@ import {
   getAccountUnit,
   getMainAccount,
 } from "../../../account";
-import type {
-  TokenCurrency,
-  CryptoCurrency,
-} from "@ledgerhq/types-cryptoassets";
+import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import {
   findTokenById,
   formatCurrencyUnit,
