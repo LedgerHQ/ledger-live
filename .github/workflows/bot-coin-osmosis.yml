@@ -61,3 +61,4 @@ jobs:
           SLACK_ICON_EMOJI: ":bot-seed3:"
           SLACK_CHANNEL: ci-osmosis-ll
           BOT_FILTER_FAMILY: osmosis
+          BOT_ENVIRONMENT: testing

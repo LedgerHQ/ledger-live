@@ -22,6 +22,9 @@ inputs:
   EXPLORER:
     description: "EXPLORER value"
     required: false
+  BOT_ENVIRONMENT:
+    description: "tells what environment to set in the exported report (to segment the super reports)"
+    required: false
 
 runs:
   using: "composite"
@@ -45,6 +48,7 @@ runs:
     - name: bot logic
       env:
         SEED: ${{ inputs.SEED }}
+        BOT_ENVIRONMENT: ${{ inputs.BOT_ENVIRONMENT }}
         BOT_REPORT_FOLDER: botreport
         VERBOSE_FILE: botreport/logs.txt
         GITHUB_RUN_ID: ${{ github.run_id }}

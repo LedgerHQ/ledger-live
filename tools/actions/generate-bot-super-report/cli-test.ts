@@ -6,6 +6,7 @@ async function main() {
     branch,
     days,
     githubToken,
+    environment: undefined,
   });
   const res = generateSuperReport(reports, days);
   console.log(res);

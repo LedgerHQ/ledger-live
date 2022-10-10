@@ -15,6 +15,8 @@ inputs:
     description: slack channel to post on (optional)
   slackIconEmoji:
     description: slack icon emoji to post with (optional)
+  environment:
+    description: if defined, filter a given environment
 runs:
   using: node16
   main: build/main.js

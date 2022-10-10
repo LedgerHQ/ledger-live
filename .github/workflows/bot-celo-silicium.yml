@@ -60,3 +60,4 @@ jobs:
           SLACK_API_TOKEN: ${{secrets.SLACK_API_TOKEN}}
           SLACK_CHANNEL: ci-celo-ll
           BOT_FILTER_FAMILY: celo
+          BOT_ENVIRONMENT: testing

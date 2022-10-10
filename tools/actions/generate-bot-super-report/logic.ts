@@ -3,7 +3,6 @@ import { Parse } from "unzipper";
 import { parser } from "stream-json";
 import { streamValues } from "stream-json/streamers/StreamValues";
 import groupBy from "lodash/groupBy";
-import allSpecs from "@ledgerhq/live-common/lib/generated/specs";
 
 type AppCandidate = {
   path: string;
@@ -30,10 +29,12 @@ export type MinimalSerializedSpecReport = {
   accounts: AccountRaw[] | undefined;
   fatalError: string | undefined;
   mutations: MinimalSerializedMutationReport[] | undefined;
+  existingMutationNames: string[];
 };
 
 export type MinimalSerializedReport = {
   results: Array<MinimalSerializedSpecReport>;
+  environment?: string | undefined;
 };
 
 export type Artifact = {
@@ -105,10 +106,12 @@ export async function loadReports({
   branch,
   days,
   githubToken,
+  environment,
 }: {
   branch: string | undefined;
   days: string | undefined;
   githubToken: string;
+  environment: string | undefined;
 }): Promise<{ report: MinimalSerializedReport; artifact: Artifact }[]> {
   let page = 1;
   const maxPage = 100;
@@ -159,14 +162,18 @@ export async function loadReports({
     await Promise.all(
       artifacts.map((artifact) =>
         downloadArchive(githubToken, artifact.archive_download_url).then(
-          (report) => ({
-            artifact,
-            report,
-          })
+          (report) => ({ artifact, report })
         )
       )
     )
-  ).filter(Boolean);
+  )
+    .filter(Boolean)
+    .filter(({ report }) => {
+      if (report.environment && environment) {
+        return report.environment === environment;
+      }
+      return true; // TODO we will remove this in one week to be strictly filtering production.
+    });
 
   return reports;
 }
@@ -201,38 +208,32 @@ export function generateSuperReport(
     };
   } = {};
 
-  function initMutations(specName) {
-    for (const k in allSpecs) {
-      const specs = allSpecs[k];
-      for (const s in specs) {
-        const spec = specs[s];
-        if (spec.name === specName) {
-          const m = {};
-          spec.mutations.forEach((mutation) => {
-            m[mutation.name] = {
-              mutationName: mutation.name,
-              runs: 0,
-              success: 0,
-              errors: [],
-            };
-          });
-          return m;
-        }
-      }
-    }
-    return {};
-  }
+  // initialize all stats to make sure we have all the mutations known and so we can detect non coverage
+  all.forEach(({ report }) => {
+    report.results.forEach(({ specName, existingMutationNames }) => {
+      const mutations = {};
+      existingMutationNames?.forEach((mutationName) => {
+        mutations[mutationName] = {
+          mutationName,
+          runs: 0,
+          success: 0,
+          errors: [],
+        };
+      });
+      stats[specName] = {
+        specName,
+        fatalErrors: [],
+        runs: 0,
+        mutations,
+      };
+    });
+  });
 
   all.forEach(({ report }) => {
     totalReports++;
     report.results?.forEach((result) => {
       const { specName, fatalError, mutations } = result;
-      const specStats = (stats[specName] = stats[specName] || {
-        specName,
-        mutations: initMutations(specName),
-        fatalErrors: [],
-        runs: 0,
-      });
+      const specStats = stats[specName];
       if (fatalError) {
         specStats.fatalErrors.push(fatalError);
       } else {
@@ -280,13 +281,13 @@ export function generateSuperReport(
     coverageInfo[1]
   )} coverage rate.`;
 
-  reportMarkdownBody += `# Super bot report on ${ctx}\n`;
+  reportMarkdownBody += `# Bot "super report" on ${ctx}\n`;
   reportMarkdownBody +=
     "\n> What is the Bot and how does it work? [Everything is documented here!](https://github.com/LedgerHQ/ledger-live/wiki/LLC:bot)\n\n";
   reportMarkdownBody += summary + "\n\n";
 
   reportMarkdownBody +=
-    "| Spec | Availability (scan success) | Transactions success | Mutations Coverage | Ops |\n";
+    "| Spec | Availability (scan success) | Transactions success | Mutations Coverage | Operations |\n";
   reportMarkdownBody += "|--|--|--|--|--|\n";
   reportMarkdownBody += Object.values(stats)
     .map(({ specName, mutations, fatalErrors, runs }) => {
@@ -453,6 +454,9 @@ const groupErrorsIncluding = [
   "Error: could not find optimisticOperation",
   "Error: Transaction has been reverted by the EVM",
   "LedgerAPI4xx: An error occurred: -25: Missing inputs",
+  "Error: failed to get Stake Activation",
+  "LedgerAPI4xx: Failed to get transactions for addresses",
+  "Failure(s) occurred during RPC call : co.ledger.jrpc.model.CallError: An error occurred: -32000",
 ];
 function groupSimilarError(str: string): string {
   const g = groupErrorsIncluding.find((t) => str.includes(t));

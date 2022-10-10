@@ -65,3 +65,4 @@ jobs:
           SLACK_ICON_EMOJI: ":bot-seed4:"
           SLACK_CHANNEL: ci-bitcoin-ll
           BOT_FILTER_FAMILY: bitcoin
+          BOT_ENVIRONMENT: testing

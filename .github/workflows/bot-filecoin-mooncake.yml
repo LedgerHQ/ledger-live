@@ -62,3 +62,4 @@ jobs:
           SLACK_ICON_EMOJI: ":bot-seed4:"
           SLACK_CHANNEL: ci-fil-ll
           BOT_FILTER_FAMILY: filecoin
+          BOT_ENVIRONMENT: testing

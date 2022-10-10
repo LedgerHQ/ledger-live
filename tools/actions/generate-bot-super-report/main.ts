@@ -14,8 +14,9 @@ async function main() {
   const slackChannel = core.getInput("slackChannel");
   const slackIconEmoji = core.getInput("slackIconEmoji");
   const slackApiToken = core.getInput("slackApiToken");
+  const environment = core.getInput("environment");
 
-  const reports = await loadReports({ branch, days, githubToken });
+  const reports = await loadReports({ branch, days, githubToken, environment });
 
   const { reportMarkdownBody, reportSlackText } = generateSuperReport(
     reports,
