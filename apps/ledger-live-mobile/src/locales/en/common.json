@@ -1700,6 +1700,7 @@
       "seeMarket": "See all"
     },
     "walletBalance": "Wallet balance",
+
     "seelAllAssets": "See All Assets",
     "marketPriceSection": {
       "title": "{{currencyTicker}} market price",

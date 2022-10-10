@@ -7,8 +7,6 @@ import { track } from "../analytics";
 import { rgba } from "../colors";
 
 const TabBarContainer = styled(Flex)`
-  border-bottom-width: 1px;
-  border-bottom-color: ${p => p.theme.colors.palette.neutral.c40};
   background-color: transparent;
 `;
 
@@ -67,7 +65,7 @@ function WalletTabNavigatorTabBar({
 }: MaterialTopTabBarProps) {
   return (
     <TabBarContainer
-      paddingLeft={4}
+      paddingLeft={6}
       paddingRight={4}
       paddingBottom={4}
       paddingTop={4}
