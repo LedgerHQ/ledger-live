@@ -124,13 +124,13 @@ export const formatTransactionStatusCommon = (
   str +=
     "\n" +
     `errors: ${Object.entries(errors)
-      .map(([key, error]) => `${key} ${formatErrorSmall(error!)}`)
+      .map(([key, error]) => `${key} ${formatErrorSmall(error)}`)
       .join(", ")}`;
 
   str +=
     "\n" +
     `errors: ${Object.entries(warnings)
-      .map(([key, warning]) => `${key} ${formatErrorSmall(warning!)}`)
+      .map(([key, warning]) => `${key} ${formatErrorSmall(warning)}`)
       .join(", ")}`;
 
   return str;
