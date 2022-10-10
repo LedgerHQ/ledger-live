@@ -4,7 +4,6 @@ import { useTranslation } from "react-i18next";
 import { useTheme } from "styled-components/native";
 import { TouchableOpacity } from "react-native";
 import styled from "@ledgerhq/native-ui/components/styled";
-import { useNavigation } from "@react-navigation/native";
 import ReceiveNFTsModal from "../../screens/Nft/NftGallery/ReceiveNFTsModal";
 import { useReceiveNFTsModal } from "../../screens/Nft/NftGallery/ReceiveNFTsModal.hook";
 
@@ -20,7 +19,6 @@ const StyledBox = styled(TouchableOpacity)`
 export const AddNewItem = () => {
   const { colors } = useTheme();
   const { t } = useTranslation();
-  const navigation = useNavigation();
 
   const { openModal, closeModal, isModalOpened } = useReceiveNFTsModal();
 
@@ -46,11 +44,7 @@ export const AddNewItem = () => {
         </Text>
       </Flex>
 
-      <ReceiveNFTsModal
-        navigation={navigation}
-        isOpened={isModalOpened}
-        onClose={closeModal}
-      />
+      <ReceiveNFTsModal isOpened={isModalOpened} onClose={closeModal} />
     </StyledBox>
   );
 };

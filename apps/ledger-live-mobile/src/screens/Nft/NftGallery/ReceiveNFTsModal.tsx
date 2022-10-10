@@ -2,24 +2,20 @@ import React, { useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { BottomDrawer, Button, Text } from "@ledgerhq/native-ui";
 
+import { useNavigation } from "@react-navigation/native";
 import { NavigatorName, ScreenName } from "../../../const";
 import { track, TrackScreen } from "../../../analytics";
 
 type Props = {
-  navigation: any;
   isOpened: boolean;
   onClose: () => void;
 };
 
 const PRE_SELECTED_CRYPTOS = ["ethereum", "polygon"];
 
-export default function ReceiveNFTsModal({
-  navigation,
-  onClose,
-  isOpened,
-}: Props) {
+export default function ReceiveNFTsModal({ onClose, isOpened }: Props) {
   const { t } = useTranslation();
-
+  const navigation = useNavigation();
   const onClickContinue = useCallback(() => {
     track("button_clicked", {
       button: "Continue",
@@ -54,12 +50,7 @@ export default function ReceiveNFTsModal({
       </Text>
 
       {new Array(2).fill(null).map((_e, index) => (
-        <Text
-          variant="large"
-          fontWeight="medium"
-          fontSize="14px"
-          color="neutral.c80"
-        >
+        <Text variant="body" fontWeight="medium" color="neutral.c80">
           {t(`wallet.nftGallery.receiveModal.bullets.${index}`)}
         </Text>
       ))}
