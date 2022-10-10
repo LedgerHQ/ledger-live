@@ -2,7 +2,7 @@ import React, { useCallback, useEffect } from "react";
 import { BigNumber } from "bignumber.js";
 import { Trans, TFunction } from "react-i18next";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
-import { Account, AccountLike } from "@ledgerhq/types-live";
+import { Account, AccountBridge, AccountLike } from "@ledgerhq/types-live";
 import { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
 
 import Box from "~/renderer/components/Box";
@@ -15,7 +15,7 @@ type Props = {
   parentAccount?: Account;
   account: AccountLike;
   transaction: Transaction;
-  onChangeTransaction: (_: any) => void;
+  onChangeTransaction: (_: AccountBridge<any>) => void;
   status: TransactionStatus;
   bridgePending: boolean;
   t: TFunction;
