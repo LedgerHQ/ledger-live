@@ -2,7 +2,7 @@ import fetch from "isomorphic-unfetch";
 import { Parse } from "unzipper";
 import { parser } from "stream-json";
 import { streamValues } from "stream-json/streamers/StreamValues";
-import uniq from "lodash/uniq";
+import groupBy from "lodash/groupBy";
 import allSpecs from "@ledgerhq/live-common/lib/generated/specs";
 
 type AppCandidate = {
@@ -98,7 +98,7 @@ function successRateDisplay(a, b) {
   if (!b) return "N/A";
   if (!a) return "❌ 0%";
   let r = a / b;
-  return (r === 1 ? "✅ " : r < 0.5 ? "⚠️ " : "") + Math.round(100 * r) + "%";
+  return (r === 1 ? "✅ " : r < 0.8 ? "⚠️ " : "") + Math.round(100 * r) + "%";
 }
 
 export async function loadReports({
@@ -169,11 +169,6 @@ export async function loadReports({
   ).filter(Boolean);
 
   return reports;
-}
-
-function safeErrorDisplay(txt) {
-  let min = txt.slice(0, 200);
-  return "`" + min.replace(/[\s`]/g, " ") + "`";
 }
 
 export function generateSuperReport(
@@ -266,16 +261,28 @@ export function generateSuperReport(
     });
   });
 
-  const summary = `${
-    days ? `${days} last days` : "all reports"
-  }: ${totalReports} runs, ${totalOperations} success txs. ${successRateDisplay(
+  let ctx = days ? `${days} last days` : "all available reports";
+
+  const coverageInfo = Object.values(stats).reduce(
+    ([success, total], { mutations }) => {
+      const m = Object.values(mutations);
+      const mutationsWithOneSuccess = m.filter((m) => m.success > 0);
+      return [success + mutationsWithOneSuccess.length, total + m.length];
+    },
+    [0, 0]
+  );
+
+  const summary = `${ctx}: ${totalReports} runs, ${totalOperations} success txs. ${successRateDisplay(
     totalOperations,
     totalMutations
-  )} success rate.`;
+  )} success rate. ${successRateDisplay(
+    coverageInfo[0],
+    coverageInfo[1]
+  )} coverage rate.`;
 
-  reportMarkdownBody += "# Bot Weekly Super Report!\n";
+  reportMarkdownBody += `"# Bot: ${ctx}\n`;
   reportMarkdownBody +=
-    "\n> What is the bot and how does it work? [Everything is documented here!](https://github.com/LedgerHQ/ledger-live/wiki/LLC:bot)\n\n";
+    "\n> What is the Bot and how does it work? [Everything is documented here!](https://github.com/LedgerHQ/ledger-live/wiki/LLC:bot)\n\n";
   reportMarkdownBody += summary + "\n\n";
 
   reportMarkdownBody +=
@@ -306,49 +313,58 @@ export function generateSuperReport(
     if (fatalErrors.length) {
       reportMarkdownBody += `\n<details><summary>❌ Fatal cases (${fatalErrors.length})</summary>\n\n`;
       // TODO in future we will try to link to these errors. we can also tell how much it reproduced
-      uniq(fatalErrors).forEach((e) => {
-        reportMarkdownBody += `- ${safeErrorDisplay(e)}\n`;
-      });
+
+      reportMarkdownBody += groupErrors(fatalErrors)
+        .map(
+          ({ error, occurrences }) =>
+            `- ${occurrences > 1 ? `**(x${occurrences})** ` : ""}\`${error}\`\n`
+        )
+        .join("");
       reportMarkdownBody += `\n</details>\n\n`;
     }
 
     const m = Object.values(mutations);
     if (m.length > 0) {
+      const groupedErrors = groupErrors(
+        m.reduce((acc, m) => acc.concat(m.errors), [])
+      );
       const errorAttached = [];
       reportMarkdownBody += `**mutations:**\n`;
       reportMarkdownBody += "| Mutation | Tx Success | Ops | Errors |\n";
       reportMarkdownBody += "|--|--|--|--|\n";
       reportMarkdownBody += m
-        .map(
-          ({ errors, success, runs, mutationName }) =>
-            `|${mutationName.replace(/[|]/g, " ")}|${successRateDisplay(
-              success,
-              runs
-            )}|${success ? success : "❌"}|${uniq(errors)
-              .map((e) => {
-                const reduced = safeErrorDisplay(e);
-                const i = errorAttached.indexOf(reduced) + 1;
-                if (!i) {
-                  errorAttached.push(reduced);
-                  return errorAttached.length;
-                }
-                return i;
-              })
-              .join(", ")}|\n`
-        )
+        .map(({ errors, success, runs, mutationName }) => {
+          const grouped = groupErrors(errors);
+          return `|${mutationName.replace(/[|]/g, " ")}|${successRateDisplay(
+            success,
+            runs
+          )}|${success ? success : "❌"}|${groupedErrors
+            .filter((e) => grouped.some((e2) => e2.error === e.error))
+            .map(({ index }) => index)
+            .join(", ")}|\n`;
+        })
         .join("");
       if (errorAttached.length) {
         reportMarkdownBody += "\n";
         reportMarkdownBody +=
-          "<details><summary>Detail of errors</summary>\n\n\n";
+          "<details><summary>Detail of errors (" +
+          (errorAttached.length + 1) +
+          ")</summary>\n\n\n";
         reportMarkdownBody +=
-          errorAttached.map((e, i) => `${i + 1}. ${e}\n`).join("") + "\n";
+          groupedErrors
+            .map(
+              ({ error, index, occurrences }) =>
+                `${index}. ${
+                  occurrences > 1 ? `**(x${occurrences})** ` : ""
+                }${error}\n`
+            )
+            .join("") + "\n";
         reportMarkdownBody += "\n</details>\n\n";
       }
     }
   });
 
-  reportSlackText = `${summary} <{{url}}|*Full Report*>`;
+  reportSlackText = `:confetti_ball: *${summary} <{{url}}|Full Report>*`;
 
   return {
     reportMarkdownBody,
@@ -432,4 +448,32 @@ export async function uploadToSlack({
       icon_emoji: slackIconEmoji || ":mere_denis:",
     }),
   }).then(handleErrors);
+}
+
+const groupErrorsIncluding = [
+  "Error: could not find optimisticOperation",
+  "Error: Transaction has been reverted by the EVM",
+  "LedgerAPI4xx: An error occurred: -25: Missing inputs",
+];
+function groupSimilarError(str: string): string {
+  const g = groupErrorsIncluding.find((t) => str.includes(t));
+  if (g) return g;
+  return str;
+}
+
+function safeErrorDisplay(txt) {
+  return txt.slice(0, 200).replace(/[\s`]/g, " ");
+}
+
+function groupErrors(
+  errors: string[]
+): Array<{ error: string; occurrences: number; index: number }> {
+  const grouped = groupBy(
+    errors.map((e) => groupSimilarError(safeErrorDisplay(e)))
+  );
+  return Object.keys(groupBy).map((error, i) => ({
+    error,
+    index: i + 1,
+    occurrences: grouped[error],
+  }));
 }
