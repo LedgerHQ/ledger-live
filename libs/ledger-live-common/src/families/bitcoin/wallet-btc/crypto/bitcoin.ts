@@ -8,6 +8,8 @@ import { InvalidAddress } from "@ledgerhq/errors";
 import { DerivationModes } from "../types";
 import Base from "./base";
 
+const BTC_DUST_LIMIT = 546; // satoshies
+
 /**
  * Temporarily copied fromBech32 and toBech32 from bitcoinjs-lib master branch (as of 2021-09-02,
  * commit 7b753caad6a5bf13d40ffb6ae28c2b00f7f5f585) so that we can make use of the
@@ -218,7 +220,7 @@ class Bitcoin extends Base {
   }
 
   getDustLimit(): number {
-    return 546;
+    return BTC_DUST_LIMIT;
   }
 }
 
