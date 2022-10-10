@@ -1,14 +1,21 @@
 name: "[Test] Mobile App"
 
 on:
-  push:
-    branches:
-      - main
-      - develop
-      - release
-      - hotfix
+  # push:
+  #   branches:
+  #     - main
+  #     - develop
+  #     - release
+  #     - hotfix
+  schedule:
+    - cron: "0 2/12 * * *"
   pull_request:
   workflow_dispatch:
+    inputs:
+      ref:
+        description: "The branch to run tests on (develop by default)"
+        required: false
+        default: develop
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -43,7 +50,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
         with:
-          ref: ${{ github.event.pull_request.head.sha || github.event.push.head.sha }}
+          ref: develop # When tests are run on every push to PR: ${{ github.event.pull_request.head.sha || github.event.push.head.sha }}
       - uses: pnpm/action-setup@v2.1.0
         with:
           version: latest
