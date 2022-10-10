@@ -83,7 +83,7 @@ const PortfolioEmptyState = ({
         </Text>
         <Flex flex={1} borderBottomWidth={1} borderColor="neutral.c30" />
       </Flex>
-      <Flex width="100%" mt={7} px={6}>
+      <Flex width="100%" mt={7} mb={11} px={6}>
         <Button
           type="shade"
           outline
