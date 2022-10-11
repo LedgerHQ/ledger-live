@@ -105,7 +105,10 @@ export default function DashboardPage() {
       </TopBannerContainer>
       {showCarousel ? <Carousel /> : null}
       {isPostOnboardingBannerVisible && (
-        <PostOnboardingHubTriggerPlaceHolder onClick={handleTriggerPostOnboardingHub}>
+        <PostOnboardingHubTriggerPlaceHolder
+          onClick={handleTriggerPostOnboardingHub}
+          data-test-id="postonboarding-banner-entry-point"
+        >
           {"THIS IS A PLACE HOLDER TO ACCESS POST ONBOARDING HUB CLICK ME!"}
         </PostOnboardingHubTriggerPlaceHolder>
       )}

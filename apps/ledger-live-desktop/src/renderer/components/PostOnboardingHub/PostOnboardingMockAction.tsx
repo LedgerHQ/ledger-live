@@ -46,10 +46,20 @@ const PostOnboardingMockAction = ({ id }: Props) => {
         This is a mock screen for the post onboarding action:
         <Text fontWeight="bold">{action?.id}</Text>
       </Text>
-      <Button mt={6} variant="main" onClick={handleCompleteAndGoToDashboard}>
+      <Button
+        mt={6}
+        variant="main"
+        onClick={handleCompleteAndGoToDashboard}
+        data-test-id="postonboarding-go-to-dashboard-button"
+      >
         Complete action & go to Wallet
       </Button>
-      <Button mt={6} variant="main" onClick={handleCompleteAndGoToHub}>
+      <Button
+        mt={6}
+        variant="main"
+        onClick={handleCompleteAndGoToHub}
+        data-test-id="postonboarding-go-to-hub-button"
+      >
         Complete action & go back to onboarding hub
       </Button>
     </Flex>

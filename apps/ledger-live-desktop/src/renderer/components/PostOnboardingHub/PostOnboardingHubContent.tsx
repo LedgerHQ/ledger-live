@@ -52,6 +52,7 @@ const PostOnboardingHubContent = () => {
         onClick={handleSkipButton}
         type="color"
         width={isInsidePostOnboardingScreen ? "fit-content" : ""}
+        data-test-id="postonboarding-hub-skip-button"
       >
         {isInsidePostOnboardingScreen
           ? t("postOnboarding.postOnboardingContent.skipLinkInDrawer")
