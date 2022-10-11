@@ -130,3 +130,7 @@ export function decodeVarint(stream: Buffer, index: number): DecodeResult {
 
   throw new Error("Too many bytes when decoding varint.");
 }
+
+export function hexBuffer(str: string): Buffer {
+  return Buffer.from(str.startsWith("0x") ? str.slice(2) : str, "hex");
+}
