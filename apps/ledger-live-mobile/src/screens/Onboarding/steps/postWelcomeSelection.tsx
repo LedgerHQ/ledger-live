@@ -81,6 +81,7 @@ const PostWelcomeDiscoverCard = ({
           size={130}
           darkSource={imageSource}
           lightSource={imageSource}
+          mirrorIfRTL
         />
       }
     />

@@ -75,6 +75,7 @@ function Discover() {
                     size={130}
                     darkSource={appsImg}
                     lightSource={appsImg}
+                    mirrorIfRTL
                   />
                 ),
               },
@@ -100,6 +101,7 @@ function Discover() {
               size={130}
               darkSource={learnImg}
               lightSource={learnImg}
+              mirrorIfRTL
             />
           ),
         },
@@ -117,6 +119,7 @@ function Discover() {
               size={130}
               darkSource={earnImg}
               lightSource={earnImg}
+              mirrorIfRTL
             />
           ),
         },
@@ -134,6 +137,7 @@ function Discover() {
               size={130}
               darkSource={mintImg}
               lightSource={mintImg}
+              mirrorIfRTL
             />
           ),
         },
@@ -155,6 +159,7 @@ function Discover() {
                     size={130}
                     darkSource={referralImgDark}
                     lightSource={referralImgLight}
+                    mirrorIfRTL
                   />
                 ),
               },
