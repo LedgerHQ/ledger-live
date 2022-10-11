@@ -46,6 +46,7 @@ runs:
         pnpm build:llc
       shell: bash
     - name: Get PR number
+      shell: bash
       id: pr
       run: |
         echo "::set-output name=pr::$(gh pr view --json number -q .number || echo '')"
