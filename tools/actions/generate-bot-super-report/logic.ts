@@ -169,8 +169,7 @@ export async function loadReports({
   )
     .filter(Boolean)
     .filter(({ report }) => {
-      const strictMode = true; // TODO we will remove this in one week to be strictly filtering production.
-      if ((report.environment || strictMode) && environment) {
+      if (environment) {
         return report.environment === environment;
       }
       return true;

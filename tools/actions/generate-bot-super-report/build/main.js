@@ -24274,8 +24274,7 @@ async function loadReports({
       )
     )
   )).filter(Boolean).filter(({ report }) => {
-    const strictMode = true;
-    if ((report.environment || strictMode) && environment) {
+    if (environment) {
       return report.environment === environment;
     }
     return true;
