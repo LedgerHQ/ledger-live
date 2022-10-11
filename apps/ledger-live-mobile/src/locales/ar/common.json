@@ -285,7 +285,7 @@
     },
     "EthAppNftNotSupported" : {
       "title" : "العملية غير متوفرة لهذا الجهاز",
-      "description" : "Send NFT feature is only available for Nano X and Nano S+. Please visit our customer support platform to know how to send a NFT with a Nano S."
+      "description" : "خاصية إرسال NFT متوفرة فقط لـ Nano X و +Nano S. يرجى زيارة منصة دعم العملاء لدينا لمعرفة كيفية إرسال NFT عن طريق Nano S."
     },
     "Touch ID Error" : {
       "title" : "فشل التوثيق البيومتري",
@@ -1002,12 +1002,12 @@
   },
   "discover" : {
     "title" : "اكتشف",
-    "desc" : "استكشف عالم ال\\\\ويب 0.3 المتضمن في Ledger Live",
+    "desc" : "اكتشف عالم ويب 3.0 بأمان",
     "link" : "أخبرني بالمزيد",
     "sections" : {
       "learn" : {
         "title" : "تعلّم",
-        "desc" : "تعرّف على الأصول المشفرة والرموز غير القابلة للاستبدال والأمان الرقمي وغير ذلك الكثير"
+        "desc" : "تعرف على المزيد حول الأصول المشفرة والمزيد غير ذلك من الخبراء مجاناً."
       },
       "ledgerApps" : {
         "title" : "التطبيقات",
@@ -1015,11 +1015,15 @@
       },
       "earn" : {
         "title" : "اكسب",
-        "desc" : "كسب دخل سلبي وتنمية أصولك المشفرة"
+        "desc" : "قم بتنمية أصولك المشفرة من خلال التكديس والإقراض."
       },
       "mint" : {
         "title" : "سَكَّ NFT",
-        "desc" : "سَكَّ الرموز غير القابلة للاستبدال (NFT) من خلال تعاونات حصرية على سوق [ L ]"
+        "desc" : "سَكَّ رموز غير قابلة للاستبدال من حملات حصرية على سوق [L]."
+      },
+      "referralProgram" : {
+        "title" : "رشّح صديق",
+        "desc" : "اكسب ما يساوي 10$ من BTC عندما يشتري صديقك Ledger. "
       }
     },
     "comingSoon" : "قريباً",
