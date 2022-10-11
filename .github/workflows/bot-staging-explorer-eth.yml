@@ -69,3 +69,4 @@ jobs:
           SLACK_ICON_EMOJI: ":bot-seed2:"
           SLACK_CHANNEL: explorer-bot-stg
           BOT_FILTER_FAMILY: ethereum
+          BOT_ENVIRONMENT: staging
