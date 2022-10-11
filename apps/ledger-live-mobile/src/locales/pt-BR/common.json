@@ -3,6 +3,7 @@
     "cancel" : "Cancelar",
     "apply" : "Aplicar",
     "seeAll" : "Ver tudo",
+    "seeAllWithNumber" : "Ver todos ({{number}})",
     "back" : "Voltar",
     "delete" : "Excluir",
     "paste" : "Colar",
@@ -30,6 +31,7 @@
     "received" : "Recebido",
     "sent" : "Enviado",
     "or" : "OU",
+    "others" : "Outros",
     "rename" : "Renomear",
     "learnMore" : "Saiba Mais",
     "checkItOut" : "Conferir",
@@ -147,6 +149,12 @@
           "nanoX" : "Certifique que sua {{productName}} esteja desbloqueada e conectada por cabo ou com o Bluetooth habilitado."
         }
       }
+    },
+    "CeloAllFundsWarning" : {
+      "title" : "Certifique-se de ter saldo suficiente para futuras taxas de transação"
+    },
+    "CeloMissingWithdrawalsError" : {
+      "title" : "Algo deu errado, não foi possível encontrar nenhum fundo para sacar"
     },
     "ClaimRewardsFeesWarning" : {
       "title" : "As recompensas são menores do que as taxas estimadas para resgatá-las.",
@@ -276,7 +284,7 @@
     },
     "EthAppNftNotSupported" : {
       "title" : "Operação indisponível para este dispositivo",
-      "description" : "Send NFT feature is only available for Nano X and Nano S+. Please visit our customer support platform to know how to send a NFT with a Nano S."
+      "description" : "A função de enviar NFTs está disponível apenas para a Nano X e a Nano S+. Visite nossa plataforma de suporte ao cliente para saber como enviar um NFT com uma Nano S."
     },
     "Touch ID Error" : {
       "title" : "Falha na autenticação biométrica",
@@ -1481,7 +1489,7 @@
       "cta" : "Tudo pronto para escanear",
       "bullets" : {
         "0" : {
-          "label" : "No aplicativo de desktop, selecione <1>Configurações > Contas > Exportação de conta</1>."
+          "label" : "No aplicativo de desktop, selecione <1>Configurações > Contas > Exportar Contas</1>."
         },
         "1" : {
           "label" : "Escaneie o LiveQR Code com seu telefone."
@@ -1672,7 +1680,10 @@
         "addAccounts" : "Adicionar ativos",
         "title" : "Começar",
         "description" : "Você pode comprar criptos de nossos parceiros ou configurar sua carteira"
-      }
+      },
+      "title" : "Comece adicionando seus ativos favoritos à sua carteira",
+      "subtitle" : "A Ledger suporta mais de 6.000 moedas e tokens",
+      "addAccount" : "ou adicione uma conta"
     },
     "noOpState" : {
       "title" : "Nenhuma operação ainda?",
@@ -1684,6 +1695,13 @@
     "topGainers" : {
       "title" : "Destaques do mercado (24H)",
       "seeMarket" : "Ver tudo"
+    },
+    "walletBalance" : "Saldo da carteira",
+    "seelAllAssets" : "Ver todos os ativos",
+    "marketPriceSection" : {
+      "title" : "preço de mercado de {{currencyTicker}}",
+      "currencyPrice" : "preço de 1 {{currencyTicker}}",
+      "currencyPriceChange" : "Alterações nas últimas 24h"
     }
   },
   "addAccountsModal" : {
@@ -1909,7 +1927,8 @@
       "buttons" : {
         "receiveFunds" : "Receber",
         "buyCrypto" : "Comprar"
-      }
+      },
+      "addAccountCta" : "Adicionar Conta"
     },
     "settings" : {
       "header" : "Configurações de conta",
@@ -2010,6 +2029,15 @@
         "subtitle" : "Você precisará de um dispositivo para poder comprar ou receber {{assetName}}"
       }
     },
+    "modals" : {
+      "zeroBalanceDisabledAction" : {
+        "title" : "Você ainda não possui {{currencyTicker}}",
+        "start" : "Compre ou receba {{currencyTicker}} para começar.",
+        "description" : "Você precisa de {{currencyTicker}} para {{actionName}} com esta conta."
+      }
+    },
+    "earn" : "Ganhar",
+    "quickActions" : "Ações Rápidas",
     "banner" : {
       "redelegation" : {
         "description" : "Caso você não saiba, o validador Ledger faz staking por uma comissão menor do que o validador que você está utilizando.",
@@ -2023,6 +2051,7 @@
   },
   "accounts" : {
     "title" : "Contas",
+    "cryptoAccountsTitle" : "contas {{currencyTicker}}",
     "importNotification" : {
       "message" : "Suas contas foram importadas com sucesso!"
     },
@@ -3110,6 +3139,7 @@
     }
   },
   "addAccounts" : {
+    "addNew" : "Adicionar Novo",
     "supportLinks" : {
       "segwit_or_native_segwit" : "Segwit ou Native segwit?"
     },
@@ -3708,7 +3738,276 @@
       "available" : {
         "title" : "CELO disponível",
         "description" : "Esta quantia é descartável."
+      },
+      "lockedBalance" : {
+        "title" : "Saldo Bloqueado",
+        "description" : "Antes de gerar recompensas, ativos devem ser bloqueados e usados para votar em grupos de validadores."
+      },
+      "nonvotingLockedBalance" : {
+        "title" : "Saldo bloqueado sem direito a voto",
+        "description" : "O saldo de ativos bloqueados disponível para uso em votação."
+      },
+      "withdrawableBalance" : {
+        "title" : "Saldo disponível para saque",
+        "description" : "Celo desbloqueado que você pode sacar para seu saldo disponível."
       }
+    },
+    "delegation" : {
+      "validatorGroup" : "Grupo de validadores",
+      "totalVotes" : "Total de votos",
+      "actions" : {
+        "activate" : "Ativar",
+        "revoke" : "Revogar"
+      },
+      "delegationUnavailable" : {
+        "title" : "Fundos bloqueados insuficientes"
+      },
+      "manageMultipleVoteWarning" : "Você precisa Ativar ou Revogar outros votos no mesmo grupo de validadores antes de gerenciar esse voto."
+    },
+    "manage" : {
+      "title" : "Gerenciar Ativos",
+      "titleWhenPendingRegistration" : "Registro de conta pendente",
+      "lock" : {
+        "title" : "Bloquear",
+        "description" : "Para ganhar recompensas, bloqueie uma quantia primeiro. Em seguida, vote para eleger seus validadores."
+      },
+      "unlock" : {
+        "title" : "Desbloquear",
+        "description" : "Para tornar uma quantia bloqueada disponível novamente, primeiro você precisa desbloqueá-la. Você pode sacá-la após o período de desbloqueio de 3 dias."
+      },
+      "withdraw" : {
+        "title" : "Sacar",
+        "description" : "Para recuperar uma quantia bloqueada para o saldo disponível, você precisa sacá-la manualmente."
+      },
+      "vote" : {
+        "title" : "Votar",
+        "description" : "Vote para os grupos de validadores. Certifique-se de ativar os seus votos para ganhar recompensas."
+      },
+      "activate" : {
+        "title" : "Ativar voto",
+        "description" : "Ativar seu voto no grupo de validadores"
+      },
+      "revoke" : {
+        "title" : "Revogar Voto",
+        "description" : "Revogar o seu voto no grupo de validadores"
+      }
+    },
+    "unlock" : {
+      "stepperHeader" : {
+        "title" : "Desbloquear Ativos",
+        "stepRange" : "Etapa {{currentStep}} de {{totalSteps}}",
+        "selectDevice" : "Selecione o dispositivo",
+        "connectDevice" : "Conecte o dispositivo"
+      },
+      "flow" : {
+        "steps" : {
+          "amount" : {
+            "info" : "Ativos bloqueados podem ser sacados após o período de bloqueio de 3 dias.",
+            "available" : "Disponível",
+            "max" : "Máximo"
+          },
+          "verification" : {
+            "success" : {
+              "title" : "Transação de desbloqueio enviada com sucesso",
+              "text" : "Ativos desbloqueados podem ser sacados dentro de 3 dias."
+            }
+          }
+        }
+      }
+    },
+    "vote" : {
+      "iVote" : "Eu voto",
+      "stepperHeader" : {
+        "title" : "Votar",
+        "stepRange" : "Etapa {{currentStep}} de {{totalSteps}}",
+        "selectDevice" : "Selecione o dispositivo",
+        "connectDevice" : "Conecte o dispositivo"
+      },
+      "flow" : {
+        "steps" : {
+          "starter" : {
+            "description" : "Você pode ganhar recompensas delegando seus ativos CELO a um validador.",
+            "bullet" : {
+              "0" : "Você continua tendo posse dos ativos delegados",
+              "1" : "Delegue usando seu dispositivo Ledger",
+              "2" : "Os ativos estarão disponíveis após parar delegação"
+            },
+            "warning" : {
+              "description" : "Escolha seu validador com sabedoria: parte de seus ativos delegados pode ser irrevogavelmente perdida se o validador não se comportar adequadamente."
+            },
+            "cta" : "Continuar"
+          },
+          "amount" : {
+            "available" : "Disponível",
+            "max" : "Máximo"
+          },
+          "verification" : {
+            "success" : {
+              "title" : "Você votou com sucesso",
+              "text" : "Você verá sua operação no histórico em breve."
+            }
+          }
+        }
+      }
+    },
+    "activate" : {
+      "iActivate" : "Eu ativo meus votos",
+      "stepperHeader" : {
+        "title" : "Ativar voto",
+        "stepRange" : "Etapa {{currentStep}} de {{totalSteps}}",
+        "selectDevice" : "Selecione o dispositivo",
+        "connectDevice" : "Conecte o dispositivo"
+      },
+      "title" : "Ativar Votos",
+      "flow" : {
+        "steps" : {
+          "verification" : {
+            "success" : {
+              "title" : "Ativação feita com sucesso",
+              "text" : "Seu voto foi ativado com sucesso."
+            }
+          }
+        }
+      }
+    },
+    "revoke" : {
+      "iRevoke" : "Eu revogo",
+      "stepperHeader" : {
+        "title" : "Votar",
+        "stepRange" : "Etapa {{currentStep}} de {{totalSteps}}",
+        "selectDevice" : "Selecione o dispositivo",
+        "connectDevice" : "Conecte o dispositivo"
+      },
+      "flow" : {
+        "steps" : {
+          "validator" : {
+            "active" : "Ativo",
+            "pending" : "Pendente"
+          },
+          "amount" : {
+            "available" : "Disponível",
+            "max" : "Máximo"
+          },
+          "verification" : {
+            "success" : {
+              "title" : "Você revogou seus votos com sucesso",
+              "text" : "Você verá sua operação no histórico em breve."
+            }
+          }
+        }
+      },
+      "vote" : {
+        "title" : "Votar",
+        "active" : "Ativo",
+        "pending" : "Pendente",
+        "awaitingActivation" : "Aguardando ativação",
+        "info" : "Somente votos revogáveis são mostrados neste modal"
+      }
+    },
+    "register" : {
+      "stepperHeader" : {
+        "title" : "Registrar Conta",
+        "continue" : "Continuar",
+        "stepRange" : "Etapa {{currentStep}} de {{totalSteps}}",
+        "selectDevice" : "Selecione o dispositivo",
+        "connectDevice" : "Conecte o dispositivo"
+      },
+      "flow" : {
+        "steps" : {
+          "started" : {
+            "description" : "Antes de bloquear Celo, você precisa registrar a sua conta on-chain."
+          },
+          "verification" : {
+            "success" : {
+              "title" : "Conta registrada com sucesso",
+              "text" : "Você verá sua operação no histórico em breve."
+            }
+          }
+        }
+      }
+    },
+    "lock" : {
+      "stepperHeader" : {
+        "title" : "Bloquear Ativos",
+        "stepRange" : "Etapa {{currentStep}} de {{totalSteps}}",
+        "selectDevice" : "Selecione o dispositivo",
+        "connectDevice" : "Conecte o dispositivo"
+      },
+      "flow" : {
+        "steps" : {
+          "amount" : {
+            "info" : "Ativos bloqueados podem ser desbloqueados a qualquer hora, mas o desbloqueio leva 3 dias.",
+            "available" : "Disponível",
+            "max" : "Máximo"
+          },
+          "verification" : {
+            "success" : {
+              "title" : "Ativos bloqueados com sucesso",
+              "text" : "Você poderá votar nos validadores assim que a rede tiver confirmado a sua transação."
+            }
+          }
+        }
+      }
+    },
+    "withdraw" : {
+      "iWithdraw" : "Eu saco",
+      "title" : "Sacar Ativos",
+      "steps" : {
+        "amount" : {
+          "title" : "Sacar"
+        },
+        "connectDevice" : {
+          "title" : "Dispositivo"
+        },
+        "confirmation" : {
+          "title" : "Confirmação",
+          "success" : {
+            "title" : "Transação de saque enviada com sucesso",
+            "text" : "A quantia sacada será creditada ao seu saldo disponível.",
+            "cta" : "Ver Detalhes"
+          },
+          "broadcastError" : "Sua transação pode ter falhado. Aguarde um momento e verifique seu histórico de transações antes de tentar novamente."
+        }
+      },
+      "stepperHeader" : {
+        "title" : "Votar",
+        "stepRange" : "Etapa {{currentStep}} de {{totalSteps}}",
+        "selectDevice" : "Selecione o dispositivo",
+        "connectDevice" : "Conecte o dispositivo"
+      },
+      "flow" : {
+        "steps" : {
+          "amount" : {
+            "available" : "Disponível",
+            "max" : "Máximo",
+            "waitingTitle" : "A quantia não está pronta para o saque",
+            "waitingPeriod" : "Você precisa esperar até {{date}} para sacar esta quantia."
+          },
+          "verification" : {
+            "success" : {
+              "title" : "Seus ativos foram sacados com sucesso",
+              "text" : "A quantia sacada será creditada ao seu saldo disponível."
+            }
+          }
+        }
+      }
+    },
+    "emptyState" : {
+      "description" : "Você pode ganhar recompensas em CELO delegando seus ativos.",
+      "info" : "Como funciona a delegação",
+      "delegation" : "Receba Recompensas"
+    },
+    "earnRewards" : {
+      "description" : "Você pode ganhar recompensas delegando seus ativos CELO a um validador.",
+      "bullet" : {
+        "0" : "Você continua tendo posse dos ativos delegados",
+        "1" : "Delegue usando seu dispositivo Ledger",
+        "2" : "Os ativos estarão disponíveis após parar delegação"
+      }
+    },
+    "alerts" : {
+      "withdrawableAssets" : "Você tem saldo disponível para saque.",
+      "activatableVotes" : "Agora você tem votos que podem ser ativados."
     }
   },
   "osmosis" : {
@@ -4743,7 +5042,11 @@
       "retrySearchParams" : "Tente pesquisar novamente usando outros parâmetros.",
       "trackFavAssets" : "Acompanhe seus favoritos",
       "clickOnStarIcon" : "Selecione o ícone de estrela ao lado de um ativo para adicioná-lo automaticamente aos seus favoritos.",
-      "browseAssets" : "Pesquisar Ativos"
+      "browseAssets" : "Pesquisar Ativos",
+      "starred" : {
+        "title" : "Rastreie seus ativos favoritos!",
+        "desc" : "Para adicionar um ativo aos seus favoritos automaticamente, clique no ícone de estrela próximo a ele"
+      }
     }
   },
   "nft" : {
@@ -4790,6 +5093,12 @@
     },
     "currentAddress" : {
       "messageIfVirtual" : "Seu endereço {{name}} não pode ser confirmado no seu dispositivo Ledger. Use por sua própria conta e risco."
+    }
+  },
+  "asset" : {
+    "title" : "Seu {{assetName}}",
+    "accountsSection" : {
+      "title" : "Suas contas {{currencyName}}"
     }
   },
   "customImage" : {
