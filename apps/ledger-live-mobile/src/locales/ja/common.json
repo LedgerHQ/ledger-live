@@ -1002,12 +1002,12 @@
   },
   "discover" : {
     "title" : "Discover",
-    "desc" : "Ledger LiveのWeb3の世界をチェック",
+    "desc" : "Web3の世界を安全に探索",
     "link" : "さらに詳しく",
     "sections" : {
       "learn" : {
         "title" : "ラーニング",
-        "desc" : "暗号資産・NFT・デジタルセキュリティについて学ぶ"
+        "desc" : "専門家から暗号資産について無料で学びましょう。"
       },
       "ledgerApps" : {
         "title" : "アプリ",
@@ -1015,11 +1015,15 @@
       },
       "earn" : {
         "title" : "報酬獲得",
-        "desc" : "不労所得を獲得して暗号資産を運用する"
+        "desc" : "ステーキングと貸し出しで暗号資産を運用。"
       },
       "mint" : {
         "title" : "ミント",
-        "desc" : "[ L ] Marketにおける専用コラボレーションからNFTをミント"
+        "desc" : "[ L ] Marketの特別なキャンペーンによるNFTをミント。"
+      },
+      "referralProgram" : {
+        "title" : "ご友人紹介",
+        "desc" : "ご友人がLedgerを購入すると$10相当のBTCを獲得可能です。 "
       }
     },
     "comingSoon" : "近日公開",
