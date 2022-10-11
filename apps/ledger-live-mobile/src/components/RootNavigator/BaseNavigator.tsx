@@ -578,23 +578,7 @@ export default function BaseNavigator() {
       <Stack.Screen
         name={ScreenName.Account}
         component={readOnlyModeEnabled ? ReadOnlyAccount : Account}
-        options={({ route, navigation }) => ({
-          headerLeft: () => (
-            <BackButton navigation={navigation} route={route} />
-          ),
-          headerTitle: () =>
-            readOnlyModeEnabled ? (
-              <ReadOnlyAccountHeaderTitle />
-            ) : (
-              <AccountHeaderTitle />
-            ),
-          headerRight: () =>
-            readOnlyModeEnabled ? (
-              <ReadOnlyAccountHeaderRight />
-            ) : (
-              <AccountHeaderRight />
-            ),
-        })}
+        options={{ headerShown: false }}
       />
       <Stack.Screen
         name={ScreenName.ScanRecipient}
