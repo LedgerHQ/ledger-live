@@ -1002,12 +1002,12 @@
   },
   "discover" : {
     "title" : "Discover",
-    "desc" : "Explora el mundo de la web3 incorporado dentro de Ledger Live",
+    "desc" : "Explora el universo de la Web3 de forma segura",
     "link" : "Más información",
     "sections" : {
       "learn" : {
         "title" : "Información",
-        "desc" : "Obtén información sobre las cripto, los NFTs, la seguridad digital y mucho más"
+        "desc" : "Aprende de cripto y más, de expertos, gratuitamente."
       },
       "ledgerApps" : {
         "title" : "Aplicaciones",
@@ -1015,11 +1015,15 @@
       },
       "earn" : {
         "title" : "Gana",
-        "desc" : "Gana ingresos pasivos y haz crecer tus activos cripto"
+        "desc" : "Haz crecer tus cripto a través de la puesta en participación y los préstamos."
       },
       "mint" : {
         "title" : "Acuñar",
-        "desc" : "Acuña NFTs de colaboraciones exclusivas en [ L ] Market"
+        "desc" : "Acuña NFTs de campañas exclusivas de [ L ] Market."
+      },
+      "referralProgram" : {
+        "title" : "Recomiéndanos a un amigo",
+        "desc" : "Gana $10 en BTC cuando tu amigo compre un Ledger. "
       }
     },
     "comingSoon" : "próximamente",
