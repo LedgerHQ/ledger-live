@@ -285,7 +285,7 @@
     },
     "EthAppNftNotSupported" : {
       "title" : "이 장치에서 사용할 수 없는 작업",
-      "description" : "Send NFT feature is only available for Nano X and Nano S+. Please visit our customer support platform to know how to send a NFT with a Nano S."
+      "description" : "NFT 보내기 기능은 Nano X 및 Nano S+에서만 사용할 수 있습니다. Nano S로 NFT를 보내는 방법을 알아보려면 고객 지원 플랫폼을 방문하세요."
     },
     "Touch ID Error" : {
       "title" : "생체 인증 실패",
@@ -728,6 +728,9 @@
     "ImageProcessingError" : {
       "title" : "이미지 처리 실패",
       "description" : "다른 이미지로 다시 시도하세요"
+    },
+    "HederaAddAccountError" : {
+      "title" : "귀하의 계정이 추가되지 않았습니다. 다시 시도해 주세요."
     }
   },
   "crash" : {
@@ -775,6 +778,9 @@
     "failed" : {
       "biometrics" : {
         "title" : "{{biometricsType}} 잠금 해제에 실패했습니다",
+        "touchid" : "TouchID",
+        "faceid" : "FaceID",
+        "fingerprint" : "지문",
         "description" : "계속하려면 암호를 입력하세요",
         "authenticate" : "Ledger Live 앱으로 인증하세요."
       },
@@ -803,7 +809,10 @@
     },
     "enableBiometrics" : {
       "title" : "{{biometricsType}}",
-      "desc" : "{{biometricsType}}로 잠금 해제"
+      "desc" : "{{biometricsType}}로 잠금 해제",
+      "touchid" : "TouchID",
+      "faceid" : "FaceID",
+      "fingerprint" : "지문"
     }
   },
   "reset" : {
@@ -1002,12 +1011,12 @@
   },
   "discover" : {
     "title" : "탐색",
-    "desc" : "Ledger Live에 포함된 web3의 세계를 탐험해보세요",
+    "desc" : "Web3의 세계를 안전하게 탐험하세요",
     "link" : "더 자세히 알려주세요",
     "sections" : {
       "learn" : {
         "title" : "알아보기",
-        "desc" : "암호화폐, NFT, 디지털 보안 등에 대해 알아보세요"
+        "desc" : "무료로 전문가로부터 암호화폐 등에 대해 알아보세요."
       },
       "ledgerApps" : {
         "title" : "앱",
@@ -1015,11 +1024,15 @@
       },
       "earn" : {
         "title" : "소득 창출",
-        "desc" : "불로소득을 얻고 암호화폐를 성장시키세요"
+        "desc" : "스테이킹 및 대출을 통해 암호화폐를 성장시키세요."
       },
       "mint" : {
         "title" : "민팅",
-        "desc" : "[ L ] 마켓 독점 콜라보 NFT 민팅"
+        "desc" : "[L] 마켓 전용 캠페인에서 NFT를 민팅합니다."
+      },
+      "referralProgram" : {
+        "title" : "친구 추천",
+        "desc" : "친구가 Ledger를 구매하면 BTC로 $10의 수익을 받을 수 있습니다. "
       }
     },
     "comingSoon" : "곧 출시 예정",
@@ -1970,6 +1983,7 @@
       },
       "advanced" : {
         "title" : "고급 로그",
+        "warningDerivation" : "{{tag}} xpub 입니다. 타사 지갑으로 가져올 때 동일한 파생 모드를 선택하세요.",
         "desc" : ""
       }
     },
