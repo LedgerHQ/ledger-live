@@ -55,7 +55,7 @@ function convertMutation<T extends Transaction>(
     accountId: account?.id,
     destinationId: destination?.id,
     operationId: operation?.id,
-    error: error ? String(error) : undefined,
+    error: error ? formatError(error) : undefined,
   };
 }
 
@@ -82,9 +82,10 @@ function convertSpecReport<T extends Transaction>(
   const mutations = result.mutations?.map(convertMutation);
   return {
     specName: result.spec.name,
-    fatalError: result.fatalError ? String(result.fatalError) : undefined,
+    fatalError: result.fatalError ? formatError(result.fatalError) : undefined,
     accounts,
     mutations,
+    existingMutationNames: result.spec.mutations.map((m) => m.name),
   };
 }
 
@@ -391,6 +392,10 @@ export async function bot({
     appendBody(warn);
     slackBody += warn;
   }
+
+  appendBody(
+    "\n> What is the bot and how does it work? [Everything is documented here!](https://github.com/LedgerHQ/ledger-live/wiki/LLC:bot)\n\n"
+  );
 
   appendBody("\n\n");
 
