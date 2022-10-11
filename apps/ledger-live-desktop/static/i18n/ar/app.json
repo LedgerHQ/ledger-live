@@ -237,11 +237,11 @@
     "form" : {
       "changeCTA" : "تغيير",
       "rates" : {
-        "title" : "المزودين",
+        "title" : "عروض أسعار",
         "registration" : "التسجيل مطلوب ",
         "noRegistration" : "التسجيل غير مطلوب",
         "fixed" : "ثابت",
-        "float" : "متغيّر",
+        "float" : "مُتغيّر",
         "update" : "تم تحديث المُعدلات في",
         "loading" : "جاري التحميل ...",
         "name" : {
@@ -4763,7 +4763,7 @@
     },
     "EthAppNftNotSupported" : {
       "title" : "العملية غير متوفرة لهذا الجهاز",
-      "description" : "Send NFT feature is only available for Nano X and Nano S+. Please visit our customer support platform to know how to send a NFT with a Nano S."
+      "description" : "خاصية إرسال NFT متوفرة فقط لـ Nano X و +Nano S. يرجى زيارة منصة دعم العملاء لدينا لمعرفة كيفية إرسال NFT عن طريق Nano S."
     },
     "CantScanQRCode" : {
       "title" : "تعذر فحص كود الاستجابة السريعة (QR) هذا: التحقق التلقائي غير مدعوم من قِبل هذا العنوان"
