@@ -45,6 +45,10 @@ runs:
         pnpm i --filter="live-cli..." --filter="ledger-live" --frozen-lockfile
         pnpm build:llc
       shell: bash
+    - name: Get PR number
+      id: pr
+      run: |
+        echo "::set-output name=pr::$(gh pr view --json number -q .number || echo '')"
     - name: bot logic
       env:
         SEED: ${{ inputs.SEED }}
@@ -67,11 +71,12 @@ runs:
         node --prof lib/bot/cli.js
       shell: bash
     - name: submit bot report
-      uses: ledgerhq/ledger-live/tools/actions/submit-bot-report@develop
+      uses: ledgerhq/ledger-live/tools/actions/submit-bot-report@support/bot-phosphore-evolutions
       with:
         path: libs/ledger-live-common/botreport
         githubSha: ${{github.sha}}
         githubToken: ${{github.token}}
+        githubPR: ${{ steps.pr.outputs.pr }}
         slackApiToken: ${{ inputs.SLACK_API_TOKEN }}
         slackChannel: ${{ inputs.SLACK_CHANNEL }}
         slackIconEmoji: ${{ inputs.SLACK_ICON_EMOJI }}
