@@ -237,16 +237,16 @@
     "form" : {
       "changeCTA" : "Cambiar",
       "rates" : {
-        "title" : "Proveedores",
+        "title" : "Cotizaciones",
         "registration" : "Es necesario registrarse ",
         "noRegistration" : "No es necesario registrarse",
         "fixed" : "Fija",
-        "float" : "Variable",
+        "float" : "Variables",
         "update" : "Las tasas se actualizarán en",
         "loading" : "Cargando...",
         "name" : {
           "title" : "Proveedor",
-          "tooltip" : "Dependiendo del proveedor, es posible que tengas que crear una cuenta para iniciar sesión"
+          "tooltip" : "Dependiendo del proveedor, es posible que tengas que registrarte para iniciar sesión."
         },
         "rate" : {
           "title" : "Tasa de cambio",
@@ -4763,7 +4763,7 @@
     },
     "EthAppNftNotSupported" : {
       "title" : "Operación no disponible en este dispositivo",
-      "description" : "Send NFT feature is only available for Nano X and Nano S+. Please visit our customer support platform to know how to send a NFT with a Nano S."
+      "description" : "La función Enviar NFT sólo está disponible en el Nano X y el Nano S+. Visita nuestra plataforma de soporte al cliente para saber cómo enviar NFTs con un Nano S."
     },
     "CantScanQRCode" : {
       "title" : "No fue posible escanear este código QR: esta dirección no es compatible con la verificación automática"
