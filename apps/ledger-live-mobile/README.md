@@ -1,6 +1,13 @@
 **[We are hiring, join us! 👨‍💻👩‍💻](https://jobs.lever.co/ledger/?department=Engineering)**
 
-# ledger-live-mobile
+# Ledger Live (mobile)
+
+## Are you adding support for a blockchain to Ledger Live?
+
+- See the developers’ documentation on the [Developer Portal](https://developers.ledger.com/docs/coin/general-process/) and
+- Go on [Discord](https://developers.ledger.com/discord-pro/) to chat with developer support and the developer community.
+
+## Intro
 
 - Related: [ledger-live-desktop](https://github.com/LedgerHQ/ledger-live/tree/develop/apps/ledger-live-desktop)
 
@@ -164,16 +171,5 @@ It is possible to run Ledger Live Mobile on an emulator and connect to a Nano th
 
 - [Deep Linking 🔗](https://github.com/LedgerHQ/ledger-live/wiki/LLM:DeepLinking)
 - [UI Theming 🎨](https://github.com/LedgerHQ/ledger-live/wiki/LLM:Theming)
-
----
-
-## Are you adding the support of a blockchain to Ledger Live?
-
-This part of the repository is where you will add the support of your blockchain for the mobile app.
-
-For a smooth and quick integration:
-
-- See the developers’ documentation on the [Developer Portal](https://developers.ledger.com/docs/coin/general-process/) and
-- Go on [Discord](https://developers.ledger.com/discord-pro/) to chat with developer support and the developer community.
 
 ---
