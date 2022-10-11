@@ -3,6 +3,7 @@
     "cancel" : "キャンセル",
     "apply" : "適用",
     "seeAll" : "すべて表示",
+    "seeAllWithNumber" : "すべて表示（{{number}}）",
     "back" : "戻る",
     "delete" : "削除",
     "paste" : "貼り付け",
@@ -30,6 +31,7 @@
     "received" : "受取済み",
     "sent" : "送付済み",
     "or" : "または",
+    "others" : "その他",
     "rename" : "名前の変更",
     "learnMore" : "詳細はこちら",
     "checkItOut" : "確認する",
@@ -147,6 +149,12 @@
           "nanoX" : "{{productName}} のロックが解除済みで、USBケーブルが接続されているか、Bluetoothが有効であることを確認してください。"
         }
       }
+    },
+    "CeloAllFundsWarning" : {
+      "title" : "今後のトランザクション手数料に十分な残高を、確保しておいてください。"
+    },
+    "CeloMissingWithdrawalsError" : {
+      "title" : "不具合が発生し、出金用の資金が利用できません"
     },
     "ClaimRewardsFeesWarning" : {
       "title" : "報酬が、獲得に必要となる推定手数料を下回っています。",
@@ -276,7 +284,7 @@
     },
     "EthAppNftNotSupported" : {
       "title" : "お使いのデバイスではこの操作をご利用いただけません",
-      "description" : "Send NFT feature is only available for Nano X and Nano S+. Please visit our customer support platform to know how to send a NFT with a Nano S."
+      "description" : "NFTの送付機能は、Nano XとNano S+でのみご利用いただけます。Nano SでNFTを送付する方法については、当社のカスタマーサポートのプラットフォームをご覧ください。"
     },
     "Touch ID Error" : {
       "title" : "生体認証に失敗しました。",
@@ -804,7 +812,7 @@
     "week" : "1週",
     "month" : "1月",
     "year" : "1年",
-    "all" : "全期間"
+    "all" : "ALL"
   },
   "carousel" : {
     "title" : "バナーを閉じますか？",
@@ -1672,7 +1680,10 @@
         "addAccounts" : "資産を追加",
         "title" : "ご利用ガイド",
         "description" : "パートナーから暗号資産を購入、またはウォレットをセットアップ可能です"
-      }
+      },
+      "title" : "ウォレットにお気に入りの資産を追加して始める",
+      "subtitle" : "Ledgerは6,000以上のコインやトークンに対応",
+      "addAccount" : "またはアカウントを追加"
     },
     "noOpState" : {
       "title" : "トランザクションがありません。",
@@ -1684,6 +1695,13 @@
     "topGainers" : {
       "title" : "トップ変動(24時間)",
       "seeMarket" : "すべて表示"
+    },
+    "walletBalance" : "ウォレット残高",
+    "seelAllAssets" : "すべての暗号資産を表示",
+    "marketPriceSection" : {
+      "title" : "{{currencyTicker}}の市場価格",
+      "currencyPrice" : "1 {{currencyTicker}}の価格",
+      "currencyPriceChange" : "24時間前の変更"
     }
   },
   "addAccountsModal" : {
@@ -1909,7 +1927,8 @@
       "buttons" : {
         "receiveFunds" : "受け取る",
         "buyCrypto" : "購入"
-      }
+      },
+      "addAccountCta" : "アカウントを追加"
     },
     "settings" : {
       "header" : "アカウント設定",
@@ -2010,6 +2029,15 @@
         "subtitle" : "{{assetName}}の購入と受け取りには、デバイスが必要です"
       }
     },
+    "modals" : {
+      "zeroBalanceDisabledAction" : {
+        "title" : "{{currencyTicker}}はまだ所有していません",
+        "start" : "{{currencyTicker}}を購入または受け取ってから始めてください。",
+        "description" : "このアカウントでは、{{currencyTicker}}を{{actionName}}する必要があります。"
+      }
+    },
+    "earn" : "報酬獲得",
+    "quickActions" : "クイックアクション",
     "banner" : {
       "redelegation" : {
         "description" : "ご存知でしたか？Ledgerのバリデーターは、現在お使いのバリデーターよりも低額の手数料でステーキングを行います。",
@@ -2023,6 +2051,7 @@
   },
   "accounts" : {
     "title" : "アカウント",
+    "cryptoAccountsTitle" : "{{currencyTicker}}アカウント",
     "importNotification" : {
       "message" : "アカウントが正常にインポートされました！"
     },
@@ -3110,6 +3139,7 @@
     }
   },
   "addAccounts" : {
+    "addNew" : "新規で追加",
     "supportLinks" : {
       "segwit_or_native_segwit" : "SegwitとNative Segwitとは？"
     },
@@ -3708,7 +3738,276 @@
       "available" : {
         "title" : "CELO利用可能",
         "description" : "これは利用可能額です。"
+      },
+      "lockedBalance" : {
+        "title" : "ロックされた残高",
+        "description" : "報酬を得るには、資産をロックし、バリデーターグループに投票する必要があります。"
+      },
+      "nonvotingLockedBalance" : {
+        "title" : "非投票のロックされた残高",
+        "description" : "投票に使用できるロックされた資産の残高。"
+      },
+      "withdrawableBalance" : {
+        "title" : "出金可能残高",
+        "description" : "ロック解除されたCeloは、利用可能残高に引き出すことができます。"
       }
+    },
+    "delegation" : {
+      "validatorGroup" : "バリデーターグループ",
+      "totalVotes" : "総投票数",
+      "actions" : {
+        "activate" : "有効化",
+        "revoke" : "取り消す"
+      },
+      "delegationUnavailable" : {
+        "title" : "ロックされた資金が不足しています"
+      },
+      "manageMultipleVoteWarning" : "この投票を管理する前に、同じバリデーターグループの他の投票を有効化するか、取り消す必要があります。"
+    },
+    "manage" : {
+      "title" : "資産管理",
+      "titleWhenPendingRegistration" : "アカウント登録保留中",
+      "lock" : {
+        "title" : "ロック",
+        "description" : "報酬を獲得するには、まず任意の金額をロックします。次に、バリデーター(複数)に投票する必要があります。"
+      },
+      "unlock" : {
+        "title" : "ロック解除",
+        "description" : "ロックされた金額を再び引き出せるようにするには、まずロックを解除する必要があります。3日間のロック解除期間が過ぎると、引き出すことが可能となります。"
+      },
+      "withdraw" : {
+        "title" : "引き出し",
+        "description" : "ロック解除済み金額を利用可能残高に戻すには、手動で引き出す必要があります。"
+      },
+      "vote" : {
+        "title" : "投票",
+        "description" : "バリデーターグループに投票します。投票を有効にして報酬を獲得してください。"
+      },
+      "activate" : {
+        "title" : "投票を有効にする",
+        "description" : "バリデーターグループへの投票を有効にする"
+      },
+      "revoke" : {
+        "title" : "投票を取り消す",
+        "description" : "バリデーターグループへの投票を取り消す"
+      }
+    },
+    "unlock" : {
+      "stepperHeader" : {
+        "title" : "資産のロック解除",
+        "stepRange" : "ステップ{{currentStep}}/{{totalSteps}}",
+        "selectDevice" : "デバイスを選択",
+        "connectDevice" : "デバイスを接続"
+      },
+      "flow" : {
+        "steps" : {
+          "amount" : {
+            "info" : "ロック解除された資産は、3日間のロック解除期間後に引き出せるようになります。",
+            "available" : "利用可能",
+            "max" : "最大"
+          },
+          "verification" : {
+            "success" : {
+              "title" : "ロック解除されたトランザクションが正常に送信されました",
+              "text" : "ロック解除された資産は3日後に引き出せるようになります。"
+            }
+          }
+        }
+      }
+    },
+    "vote" : {
+      "iVote" : "投票する",
+      "stepperHeader" : {
+        "title" : "投票",
+        "stepRange" : "ステップ{{currentStep}}/{{totalSteps}}",
+        "selectDevice" : "デバイスを選択",
+        "connectDevice" : "デバイスを接続"
+      },
+      "flow" : {
+        "steps" : {
+          "starter" : {
+            "description" : "CELO資産をバリデーターにデリゲートすることで報酬を得ることができます。",
+            "bullet" : {
+              "0" : "デリゲートされた資産の所有権を保持する",
+              "1" : "Ledgerデバイスを使ってデリゲートしましょう",
+              "2" : "資産はデリゲート解除後に使用可能"
+            },
+            "warning" : {
+              "description" : "バリデーターは慎重に選択してください。不適切なバリデーターに資産を預けると、資産の一部がペナルティによって失われてしまう危険があります。"
+            },
+            "cta" : "続行"
+          },
+          "amount" : {
+            "available" : "利用可能",
+            "max" : "最大"
+          },
+          "verification" : {
+            "success" : {
+              "title" : "投票に成功しました",
+              "text" : "操作は、すぐに履歴で確認できます。"
+            }
+          }
+        }
+      }
+    },
+    "activate" : {
+      "iActivate" : "投票を有効にする",
+      "stepperHeader" : {
+        "title" : "投票を有効にする",
+        "stepRange" : "ステップ{{currentStep}}/{{totalSteps}}",
+        "selectDevice" : "デバイスを選択",
+        "connectDevice" : "デバイスを接続"
+      },
+      "title" : "投票を有効にする",
+      "flow" : {
+        "steps" : {
+          "verification" : {
+            "success" : {
+              "title" : "有効化に成功しました",
+              "text" : "投票は正常に有効になりました。"
+            }
+          }
+        }
+      }
+    },
+    "revoke" : {
+      "iRevoke" : "取り消す",
+      "stepperHeader" : {
+        "title" : "投票",
+        "stepRange" : "ステップ{{currentStep}}/{{totalSteps}}",
+        "selectDevice" : "デバイスを選択",
+        "connectDevice" : "デバイスを接続"
+      },
+      "flow" : {
+        "steps" : {
+          "validator" : {
+            "active" : "アクティブ",
+            "pending" : "保留状態"
+          },
+          "amount" : {
+            "available" : "利用可能",
+            "max" : "最大"
+          },
+          "verification" : {
+            "success" : {
+              "title" : "投票の取り消しに成功しました",
+              "text" : "操作は、すぐに履歴で確認できます。"
+            }
+          }
+        }
+      },
+      "vote" : {
+        "title" : "投票",
+        "active" : "アクティブ",
+        "pending" : "保留中",
+        "awaitingActivation" : "有効化を待っています",
+        "info" : "このモーダルには、取り消し可能な投票のみが表示されます。"
+      }
+    },
+    "register" : {
+      "stepperHeader" : {
+        "title" : "アカウントの登録",
+        "continue" : "続行",
+        "stepRange" : "ステップ{{currentStep}}/{{totalSteps}}",
+        "selectDevice" : "デバイスを選択",
+        "connectDevice" : "デバイスを接続"
+      },
+      "flow" : {
+        "steps" : {
+          "started" : {
+            "description" : "Celoをロックする前に、オンチェーンにアカウントを登録する必要があります。"
+          },
+          "verification" : {
+            "success" : {
+              "title" : "アカウントが正常に登録されました",
+              "text" : "操作は、すぐに履歴で確認できます。"
+            }
+          }
+        }
+      }
+    },
+    "lock" : {
+      "stepperHeader" : {
+        "title" : "資産をロック",
+        "stepRange" : "ステップ{{currentStep}}/{{totalSteps}}",
+        "selectDevice" : "デバイスを選択",
+        "connectDevice" : "デバイスを接続"
+      },
+      "flow" : {
+        "steps" : {
+          "amount" : {
+            "info" : "ロックされた資産はいつでも解除できますが、ロック解除には3日かかります。",
+            "available" : "利用可能",
+            "max" : "最大"
+          },
+          "verification" : {
+            "success" : {
+              "title" : "資産が正常にロックされました",
+              "text" : "ネットワークによるトランザクションの承認後、バリデーターに投票できるようになります。"
+            }
+          }
+        }
+      }
+    },
+    "withdraw" : {
+      "iWithdraw" : "出金する",
+      "title" : "資産を引き出す",
+      "steps" : {
+        "amount" : {
+          "title" : "出金"
+        },
+        "connectDevice" : {
+          "title" : "デバイス"
+        },
+        "confirmation" : {
+          "title" : "確認",
+          "success" : {
+            "title" : "出金トランザクションが送信されました。",
+            "text" : "出金額は、利用可能残高に加算されます。",
+            "cta" : "詳細を表示"
+          },
+          "broadcastError" : "トランザクションが失敗した可能性があります。しばらく待ってから、取引履歴を確認した上でもう一度やり直してください。"
+        }
+      },
+      "stepperHeader" : {
+        "title" : "投票",
+        "stepRange" : "ステップ{{currentStep}}/{{totalSteps}}",
+        "selectDevice" : "デバイスを選択",
+        "connectDevice" : "デバイスを接続"
+      },
+      "flow" : {
+        "steps" : {
+          "amount" : {
+            "available" : "利用可能",
+            "max" : "最大",
+            "waitingTitle" : "出金準備ができていない金額",
+            "waitingPeriod" : "この金額を出金するには、{{date}}まで待つ必要があります。"
+          },
+          "verification" : {
+            "success" : {
+              "title" : "資産が正常に引き出されました",
+              "text" : "引き出された金額は、利用可能残高に加算されます。"
+            }
+          }
+        }
+      }
+    },
+    "emptyState" : {
+      "description" : "資産をデリゲートすることで、CELOの報酬を獲得できます。",
+      "info" : "デリゲートの仕組み",
+      "delegation" : "報酬を獲得する"
+    },
+    "earnRewards" : {
+      "description" : "CELO資産をバリデーターにデリゲートすることで報酬を得ることができます。",
+      "bullet" : {
+        "0" : "デリゲートされた資産の所有権を保持する",
+        "1" : "Ledgerデバイスを使ってデリゲートしましょう",
+        "2" : "資産はデリゲート解除後に使用可能"
+      }
+    },
+    "alerts" : {
+      "withdrawableAssets" : "引き出し可能な残高があります。",
+      "activatableVotes" : "有効化可能な投票があります。"
     }
   },
   "osmosis" : {
@@ -4743,7 +5042,11 @@
       "retrySearchParams" : "別のパラメータで再度検索してください。",
       "trackFavAssets" : "お気に入りを追跡する",
       "clickOnStarIcon" : "資産の横にある星アイコンをクリックすると、お気に入りに追加されます。",
-      "browseAssets" : "資産をチェック"
+      "browseAssets" : "資産をチェック",
+      "starred" : {
+        "title" : "お気に入りの資産を追跡しましょう！",
+        "desc" : "資産の横にある「星」アイコンをクリックすると、お気に入りに追加されます。"
+      }
     }
   },
   "nft" : {
@@ -4790,6 +5093,12 @@
     },
     "currentAddress" : {
       "messageIfVirtual" : "{{name}}アドレスがLedgerデバイスで確認できません。リスクを理解した上で、自己責任でご利用ください。"
+    }
+  },
+  "asset" : {
+    "title" : "あなたの{{assetName}}",
+    "accountsSection" : {
+      "title" : "あなたの{{currencyName}}アカウント"
     }
   },
   "customImage" : {
