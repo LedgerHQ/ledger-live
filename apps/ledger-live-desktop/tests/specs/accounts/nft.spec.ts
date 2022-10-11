@@ -21,7 +21,6 @@ test(`Open token account`, async ({ page }) => {
   });
 
   await test.step(`Verify token account is opened`, async () => {
-    //expect.soft(page.locator("id=account-header-name")).toHaveValue("USD Coin");
     await expect.soft(page).toHaveScreenshot(`token-success.png`);
   });
 });
