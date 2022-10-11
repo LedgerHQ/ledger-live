@@ -204,4 +204,5 @@ export type MinimalSerializedSpecReport = {
 export type MinimalSerializedReport = {
   results: Array<MinimalSerializedSpecReport>;
   environment: string | undefined;
+  seedHash: string;
 };
