@@ -17,7 +17,11 @@ import {
 import ManagerAPI from "../api/Manager";
 import { getEnv } from "../env";
 import hwListApps from "../hw/listApps";
-import { polyfillApp, polyfillApplication } from "./polyfill";
+import {
+  calculateDependencies,
+  polyfillApp,
+  polyfillApplication,
+} from "./polyfill";
 import {
   reducer,
   isOutOfMemoryState,
@@ -245,6 +249,7 @@ export const listApps = (
           listCryptoCurrencies(getEnv("MANAGER_DEV_MODE"), true)
         ),
       ]);
+      calculateDependencies();
 
       // unfortunately we sometimes (nano s 1.3.1) miss app.name (it's set as "" from list apps)
       // the fallback strategy is to look it up in applications list

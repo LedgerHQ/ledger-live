@@ -7,6 +7,8 @@ import {
 import { App, Application } from "@ledgerhq/types-live";
 const directDep = {};
 const reverseDep = {};
+// TODO remove newBitcoinApp logic after 2.1.0 bitcoin nano app
+let newBitcoinApp = false;
 
 // whitelist dependencies
 export const whitelistDependencies = [
@@ -24,24 +26,6 @@ export function declareDep(name: string, dep: string): void {
   directDep[name] = (directDep[name] || []).concat(dep);
   reverseDep[dep] = (reverseDep[dep] || []).concat(name);
 }
-listCryptoCurrencies(true, true).forEach((a) => {
-  if (!a.managerAppName) return; // no app for this currency
-
-  const dep = findCryptoCurrencyById(a.family);
-  if (!dep || !dep.managerAppName) return; // no dep
-
-  if (dep.managerAppName === a.managerAppName) return; // same app
-  if (a.family === "bitcoin") {
-    // all altcoin in bitcoin family currencies depend on bitcoin legacy app since nano app 2.1.0
-    declareDep(a.managerAppName, "Bitcoin Legacy");
-    return;
-  }
-  declareDep(a.managerAppName, dep.managerAppName);
-
-  if (!a.isTestnetFor) {
-    declareDep(a.managerAppName + " Test", dep.managerAppName);
-  }
-});
 
 // extra dependencies
 [
@@ -85,6 +69,13 @@ export const polyfillApplication = (app: Application): Application => {
         // if it's ethereum, we have a specific case that we must only allow the Ethereum app
         app.name === "Ethereum")
   );
+  if (app.name === "Bitcoin Legacy") {
+    app.application_versions.forEach((version) => {
+      if (version.providers.includes(1)) {
+        newBitcoinApp = true;
+      }
+    });
+  }
   let o = app;
 
   if (crypto && !app.currencyId) {
@@ -93,6 +84,27 @@ export const polyfillApplication = (app: Application): Application => {
 
   return o;
 };
+
+export const calculateDependencies = (): void => {
+  listCryptoCurrencies(true, true).forEach((a) => {
+    if (!a.managerAppName) return; // no app for this currency
+
+    const dep = findCryptoCurrencyById(a.family);
+    if (!dep || !dep.managerAppName) return; // no dep
+
+    if (dep.managerAppName === a.managerAppName) return; // same app
+    if (a.family === "bitcoin" && newBitcoinApp) {
+      // all altcoin in bitcoin family currencies depend on bitcoin legacy app since nano app 2.1.0
+      declareDep(a.managerAppName, "Bitcoin Legacy");
+      return;
+    }
+    declareDep(a.managerAppName, dep.managerAppName);
+    if (!a.isTestnetFor) {
+      declareDep(a.managerAppName + " Test", dep.managerAppName);
+    }
+  });
+};
+
 export const polyfillApp = (app: App): App => {
   const dependencies = whitelistDependencies.includes(app.name)
     ? []
