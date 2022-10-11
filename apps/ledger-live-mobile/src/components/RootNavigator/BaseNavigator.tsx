@@ -61,10 +61,6 @@ import { getStackNavigatorConfig } from "../../navigation/navigatorConfig";
 import Account from "../../screens/Account";
 // eslint-disable-next-line import/no-cycle
 import ReadOnlyAccount from "../../screens/Account/ReadOnly/ReadOnlyAccount";
-import ReadOnlyAccountHeaderTitle from "../../screens/Account/ReadOnly/ReadOnlyAccountHeaderTitle";
-import ReadOnlyAccountHeaderRight from "../../screens/Account/ReadOnly/ReadOnlyAccountHeaderRight";
-import AccountHeaderTitle from "../../screens/Account/AccountHeaderTitle";
-import AccountHeaderRight from "../../screens/Account/AccountHeaderRight";
 import TransparentHeaderNavigationOptions from "../../navigation/TransparentHeaderNavigationOptions";
 import styles from "../../navigation/styles";
 import HeaderRightClose from "../HeaderRightClose";
