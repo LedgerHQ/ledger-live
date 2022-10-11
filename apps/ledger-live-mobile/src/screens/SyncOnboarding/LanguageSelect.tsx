@@ -13,7 +13,7 @@ import {
   ChevronBottomMedium,
 } from "@ledgerhq/native-ui/assets/icons";
 import styled from "styled-components/native";
-import { useAvailableLanguagesForDevice } from "@ledgerhq/live-common/lib/manager/hooks";
+import { useAvailableLanguagesForDevice } from "@ledgerhq/live-common/manager/hooks";
 import { Device } from "@ledgerhq/types-devices";
 
 import { useTranslation } from "react-i18next";

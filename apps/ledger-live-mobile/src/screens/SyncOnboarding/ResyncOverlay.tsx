@@ -16,7 +16,7 @@ const ResyncOverlay = ({ isOpen, delay = 0, productName }: Props) => {
     null,
   );
 
-  const { colors, radii } = useTheme();
+  const { radii } = useTheme();
 
   useEffect(() => {
     if (isOpen) {
@@ -47,7 +47,7 @@ const ResyncOverlay = ({ isOpen, delay = 0, productName }: Props) => {
     <Flex
       zIndex={100}
       position="absolute"
-      background={colors.constant.overlay}
+      backgroundColor="constant.overlay"
       top={0}
       left={0}
       height="100%"
@@ -56,7 +56,7 @@ const ResyncOverlay = ({ isOpen, delay = 0, productName }: Props) => {
       <Flex position="absolute" width="100%" bottom={0} padding={4}>
         <Flex
           width="100%"
-          background={colors.warning.c100}
+          backgroundColor="warning.c100"
           borderRadius={radii[2]}
           p={6}
           flexDirection="row"

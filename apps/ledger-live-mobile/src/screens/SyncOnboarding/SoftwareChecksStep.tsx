@@ -10,7 +10,6 @@ import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { useGenuineCheck } from "@ledgerhq/live-common/hw/hooks/useGenuineCheck";
 import { useGetLatestAvailableFirmware } from "@ledgerhq/live-common/hw/hooks/useGetLatestAvailableFirmware";
 import { getDeviceModel } from "@ledgerhq/devices";
-import { useTheme } from "styled-components/native";
 
 import GenuineCheckDrawer from "./GenuineCheckDrawer";
 import FirmwareUpdateDrawer from "./FirmwareUpdateDrawer";
@@ -50,23 +49,21 @@ type CheckCardProps = FlexBoxProps & {
 };
 
 const CheckCard = ({ title, index, status, ...props }: CheckCardProps) => {
-  const { colors } = useTheme();
-
-  const getCheckIcon = useCallback(
-    (status: CheckStatus, index: number) => {
-      if (status === "active") {
-        return <InfiniteLoader color={colors.primary.c80} size={24} />;
-      }
-      if (status === "completed") {
-        return <CircledCheckSolidMedium color="success.c100" size={24} />;
-      }
-      if (status === "failed") {
-        return <CircledAlertMedium color="warning.c100" size={24} />;
-      }
-      return <Text variant="body">{index}</Text>;
-    },
-    [colors.primary.c80],
-  );
+  let checkIcon;
+  switch (status) {
+    case "active":
+      checkIcon = <InfiniteLoader color="primary.c80" size={24} />;
+      break;
+    case "completed":
+      checkIcon = <CircledCheckSolidMedium color="success.c100" size={24} />;
+      break;
+    case "failed": 
+      checkIcon = <CircledAlertMedium color="warning.c100" size={24} />;
+      break;
+    case "inactive":
+    default:
+      checkIcon = <Text variant="body">{index}</Text>;
+  };
 
   return (
     <Flex flexDirection="row" alignItems="center" {...props}>
@@ -74,7 +71,7 @@ const CheckCard = ({ title, index, status, ...props }: CheckCardProps) => {
         backgroundColor="neutral.c30"
         borderColor="neutral.c30"
         variant="circle"
-        Icon={getCheckIcon(status, index)}
+        Icon={checkIcon}
       />
       <Text ml={4} variant="body" flex={1}>
         {title}

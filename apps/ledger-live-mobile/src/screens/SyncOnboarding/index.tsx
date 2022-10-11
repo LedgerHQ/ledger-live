@@ -13,7 +13,7 @@ import {
   VerticalTimeline,
   Text,
 } from "@ledgerhq/native-ui";
-import { useOnboardingStatePolling } from "@ledgerhq/live-common/lib/onboarding/hooks/useOnboardingStatePolling";
+import { useOnboardingStatePolling } from "@ledgerhq/live-common/onboarding/hooks/useOnboardingStatePolling";
 import { CloseMedium } from "@ledgerhq/native-ui/assets/icons";
 import {
   OnboardingStep as DeviceOnboardingStep,
