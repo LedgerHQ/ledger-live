@@ -728,6 +728,9 @@
     "ImageProcessingError" : {
       "title" : "Échec du traitement de l’image",
       "description" : "Veuillez réessayer avec une autre image."
+    },
+    "HederaAddAccountError" : {
+      "title" : "Votre compte n’a pas été ajouté. Veuillez réessayer."
     }
   },
   "crash" : {
@@ -775,6 +778,9 @@
     "failed" : {
       "biometrics" : {
         "title" : "Échec du déverrouillage par {{biometricsType}}",
+        "touchid" : "Touch ID",
+        "faceid" : "Face ID",
+        "fingerprint" : "Empreinte digitale",
         "description" : "Entrez votre mot de passe pour continuer",
         "authenticate" : "Authentifiez-vous avec l’app Ledger Live."
       },
@@ -803,7 +809,10 @@
     },
     "enableBiometrics" : {
       "title" : "{{biometricsType}}",
-      "desc" : "Déverrouillez avec : {{biometricsType}}."
+      "desc" : "Déverrouillez avec : {{biometricsType}}.",
+      "touchid" : "Touch ID",
+      "faceid" : "Face ID",
+      "fingerprint" : "Empreinte digitale"
     }
   },
   "reset" : {
@@ -1002,12 +1011,12 @@
   },
   "discover" : {
     "title" : "Discover",
-    "desc" : "Explorez le monde du Web3 avec Ledger Live",
+    "desc" : "Explorez le monde du Web3 en toute sécurité",
     "link" : "En savoir plus",
     "sections" : {
       "learn" : {
         "title" : "Apprendre",
-        "desc" : "Apprenez-en plus sur les cryptos, NFT, la sécurité numérique et bien plus."
+        "desc" : "Approfondissez vos connaissances crypto gratuitement avec des experts."
       },
       "ledgerApps" : {
         "title" : "Apps",
@@ -1015,11 +1024,15 @@
       },
       "earn" : {
         "title" : "Gagner",
-        "desc" : "Gagnez des récompenses passives et faites fructifier vos cryptos."
+        "desc" : "Faites fructifier vos cryptos avec le staking et le prêt."
       },
       "mint" : {
         "title" : "Minter",
-        "desc" : "Mintez et acquérez les NFT de collaborations exclusives sur le [ L ] Market."
+        "desc" : "Mintez des NFT exclusifs sur le [ L ] Market."
+      },
+      "referralProgram" : {
+        "title" : "Parrainage",
+        "desc" : "Gagnez 10 $ US en BTC lorsque votre ami(e) achète un Ledger. "
       }
     },
     "comingSoon" : "Prochainement",
@@ -1084,7 +1097,7 @@
     "stepLanguage" : {
       "title" : "Choisir la langue",
       "cta" : "Continuer",
-      "changeDeviceLanguage" : "Une autre langue est disponible pour votre {{deviceName}} : {{language}}.",
+      "changeDeviceLanguage" : "Vous pouvez utiliser votre {{deviceName}} en : {{language}}.",
       "changeDeviceLanguageDescription" : "Souhaitez-vous l’utiliser en {{language}} ?",
       "warning" : {
         "title" : "À noter",
@@ -1970,6 +1983,7 @@
       },
       "advanced" : {
         "title" : "Logs détaillés",
+        "warningDerivation" : "Cet xpub est de type {{tag}}. Lorsque vous l’importez dans un wallet tiers, choisissez le même mode de dérivation.",
         "desc" : ""
       }
     },
