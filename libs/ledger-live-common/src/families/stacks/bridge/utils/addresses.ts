@@ -10,6 +10,7 @@ type ValidateAddressResult =
     }
   | {
       isValid: false;
+      error: any;
     };
 
 export const validateAddress = (input: string): ValidateAddressResult => {
@@ -17,6 +18,6 @@ export const validateAddress = (input: string): ValidateAddressResult => {
     const [version, data] = c32addressDecode(input);
     return { isValid: true, data: { version, data } };
   } catch (e) {
-    return { isValid: false };
+    return { isValid: false, error: e };
   }
 };
