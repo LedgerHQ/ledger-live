@@ -1,9 +1,8 @@
 import BlockstackApp from "@zondax/ledger-stacks";
 import { c32address } from "c32check";
-import { getNonce } from "@stacks/transactions/dist/builders";
-import { txidFromData } from "@stacks/transactions/dist/utils";
-import { StacksNetwork, StacksMainnet } from "@stacks/network/dist";
+import { StacksMainnet } from "@stacks/network";
 import { BigNumber } from "bignumber.js";
+import BN from "bn.js";
 import { Observable } from "rxjs";
 import { log } from "@ledgerhq/logs";
 import {
@@ -15,15 +14,14 @@ import {
   RecipientRequired
 } from "@ledgerhq/errors";
 import {
+  AddressVersion,
+  TransactionVersion,
   AnchorMode,
   UnsignedTokenTransferOptions,
   estimateTransfer,
   makeUnsignedSTXTokenTransfer
-} from "@stacks/transactions/dist";
-import {
-  AddressVersion,
-  TransactionVersion
-} from "@stacks/transactions/dist/constants";
+} from "@stacks/transactions";
+import { getNonce, txidFromData } from "@stacks/transactions";
 
 import { makeAccountBridgeReceive, makeSync } from "../../../bridge/jsHelpers";
 import {
@@ -35,6 +33,8 @@ import {
   SignOperationEvent,
   SignOperationFnSignature
 } from "@ledgerhq/types-live";
+
+import { StacksNetwork } from "./utils/types";
 import { Transaction, TransactionStatus } from "../types";
 import { getAccountShape, getTxToBroadcast } from "./utils/utils";
 import { broadcastTx } from "./utils/api";
@@ -44,7 +44,7 @@ import { close } from "../../../hw";
 import { getPath, isError } from "../utils";
 import { decodeAccountId, getMainAccount } from "../../../account";
 import { fetchBalances } from "./utils/api";
-import { patchOperationWithHash } from "../../../operation";
+import { encodeOperationId, patchOperationWithHash } from "../../../operation";
 import { validateAddress } from "./utils/addresses";
 
 const receive = makeAccountBridgeReceive();
@@ -153,20 +153,19 @@ const prepareTransaction = async (
   if (xpub && recipient && validateAddress(recipient).isValid) {
     // log("debug", "[prepareTransaction] fetching estimated fees");
 
+    const network = StacksNetwork[t.network] || new StacksMainnet();
+
     // Check if recipient is valid
     const options: UnsignedTokenTransferOptions = {
       recipient,
       anchorMode: t.anchorMode,
       memo: t.memo,
-      network: t.network,
+      network,
       publicKey: xpub,
-      amount: t.amount.toFixed()
+      amount: new BN(t.amount.toFixed())
     };
 
     const tx = await makeUnsignedSTXTokenTransfer(options);
-    const network = StacksNetwork.fromNameOrNetwork(
-      t.network || new StacksMainnet()
-    );
 
     const addressVersion =
       network.version === TransactionVersion.Mainnet
@@ -236,14 +235,14 @@ const signOperation: SignOperationFnSignature<Transaction> = ({
             if (useAllAmount) amount = balance.minus(fee);
 
             const options: UnsignedTokenTransferOptions = {
-              amount: amount.toFixed(),
+              amount: new BN(amount.toFixed()),
               recipient,
               anchorMode,
-              network,
+              network: StacksNetwork[network],
               memo,
               publicKey: xpub,
-              fee: fee.toString(),
-              nonce: nonce.toString()
+              fee: new BN(fee.toFixed()),
+              nonce: new BN(nonce.toFixed())
             };
 
             const tx = await makeUnsignedSTXTokenTransfer(options);
@@ -268,13 +267,13 @@ const signOperation: SignOperationFnSignature<Transaction> = ({
               type: "device-signature-granted"
             });
 
-            const txHash = txidFromData(serializedTx);
+            const txHash = "";
 
             // build signature on the correct format
             const signature = `${result.signatureVRS.toString("hex")}`;
 
             const operation: Operation = {
-              id: `${accountId}-${txHash}-OUT`,
+              id: encodeOperationId(accountId, txHash, "OUT"),
               hash: txHash,
               type: "OUT",
               senders: [address],

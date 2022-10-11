@@ -1,11 +1,12 @@
 import { BigNumber } from "bignumber.js";
+import BN from "bn.js";
 import flatMap from "lodash/flatMap";
 import { Account, Address, Operation } from "@ledgerhq/types-live";
 import {
   makeUnsignedSTXTokenTransfer,
   UnsignedTokenTransferOptions,
   createMessageSignature
-} from "@stacks/transactions/dist";
+} from "@stacks/transactions";
 
 import {
   GetAccountShape,
@@ -17,7 +18,7 @@ import {
   fetchBlockHeight,
   fetchFullTxs
 } from "../../bridge/utils/api";
-import { TransactionResponse } from "./types";
+import { StacksNetwork, TransactionResponse } from "./types";
 import { getCryptoCurrencyById } from "../../../../currencies";
 import { encodeOperationId } from "../../../../operation";
 
@@ -33,13 +34,13 @@ export const getTxToBroadcast = async (
   } = operation;
 
   const options: UnsignedTokenTransferOptions = {
-    amount: value.minus(fee).toFixed(),
+    amount: new BN(value.minus(fee).toFixed()),
     recipient: recipients[0],
     anchorMode,
-    network,
+    network: StacksNetwork[network],
     publicKey: xpub,
-    fee: fee.toFixed(),
-    nonce: nonce.toFixed()
+    fee: new BN(fee.toFixed()),
+    nonce: new BN(nonce.toFixed())
   };
 
   const tx = await makeUnsignedSTXTokenTransfer(options);

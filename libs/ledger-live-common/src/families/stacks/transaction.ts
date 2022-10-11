@@ -1,5 +1,5 @@
 import BigNumber from "bignumber.js";
-import { StacksNetworkName, StacksNetwork } from "@stacks/network/dist";
+import { StacksNetwork } from "./bridge/utils/types";
 import type { Account } from "@ledgerhq/types-live";
 
 import type { Transaction, TransactionRaw } from "./types";
@@ -34,7 +34,9 @@ export const fromTransactionRaw = (tr: TransactionRaw): Transaction => {
   const common = fromTransactionCommonRaw(tr);
 
   // validate if network is valid
-  StacksNetwork.fromName(tr.network as StacksNetworkName);
+  if(!StacksNetwork[ tr.network ]){
+    throw new Error(`network ${tr.network} not valid`);
+  }
 
   return {
     ...common,
@@ -42,7 +44,7 @@ export const fromTransactionRaw = (tr: TransactionRaw): Transaction => {
     nonce: tr.nonce !== undefined ? new BigNumber(tr.nonce) : undefined,
     fee: tr.fee !== undefined ? new BigNumber(tr.fee) : undefined,
     amount: new BigNumber(tr.amount),
-    network: tr.network as StacksNetworkName,
+    network: tr.network as keyof typeof StacksNetwork,
     anchorMode: tr.anchorMode,
     memo: tr.memo,
   };
