@@ -728,6 +728,9 @@
     "ImageProcessingError" : {
       "title" : "画像の処理に失敗しました",
       "description" : "別の画像でもう一度お試しください"
+    },
+    "HederaAddAccountError" : {
+      "title" : "アカウントが追加されていません。もう一度お試しください。"
     }
   },
   "crash" : {
@@ -775,6 +778,9 @@
     "failed" : {
       "biometrics" : {
         "title" : "{{biometricsType}}によるロック解除に失敗しました",
+        "touchid" : "TouchID",
+        "faceid" : "FaceID",
+        "fingerprint" : "指紋",
         "description" : "パスワードを入力して続行",
         "authenticate" : "Ledger Liveアプリで認証してください。"
       },
@@ -803,7 +809,10 @@
     },
     "enableBiometrics" : {
       "title" : "{{biometricsType}}",
-      "desc" : "{{biometricsType}}でロック解除"
+      "desc" : "{{biometricsType}}でロック解除",
+      "touchid" : "TouchID",
+      "faceid" : "FaceID",
+      "fingerprint" : "指紋"
     }
   },
   "reset" : {
@@ -1002,12 +1011,12 @@
   },
   "discover" : {
     "title" : "Discover",
-    "desc" : "Ledger LiveのWeb3の世界をチェック",
+    "desc" : "Web3の世界を安全に探索",
     "link" : "さらに詳しく",
     "sections" : {
       "learn" : {
         "title" : "ラーニング",
-        "desc" : "暗号資産・NFT・デジタルセキュリティについて学ぶ"
+        "desc" : "専門家から暗号資産について無料で学びましょう。"
       },
       "ledgerApps" : {
         "title" : "アプリ",
@@ -1015,11 +1024,15 @@
       },
       "earn" : {
         "title" : "報酬獲得",
-        "desc" : "不労所得を獲得して暗号資産を運用する"
+        "desc" : "ステーキングと貸し出しで暗号資産を運用。"
       },
       "mint" : {
         "title" : "ミント",
-        "desc" : "[ L ] Marketにおける専用コラボレーションからNFTをミント"
+        "desc" : "[ L ] Marketの特別なキャンペーンによるNFTをミント。"
+      },
+      "referralProgram" : {
+        "title" : "ご友人紹介",
+        "desc" : "ご友人がLedgerを購入すると$10相当のBTCを獲得可能です。 "
       }
     },
     "comingSoon" : "近日公開",
@@ -1970,6 +1983,7 @@
       },
       "advanced" : {
         "title" : "詳細ログ",
+        "warningDerivation" : "これは {{tag}}のxpubです。サードパーティのウォレットにインポートする際は、同じ派生モードを選択してください。",
         "desc" : ""
       }
     },
