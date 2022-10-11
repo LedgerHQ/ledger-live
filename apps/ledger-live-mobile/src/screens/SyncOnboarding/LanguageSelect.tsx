@@ -115,7 +115,8 @@ const LanguageSelect = ({ device, productName }: Props) => {
 
   // If there is already a displayed drawer, the currentDisplayedDrawer would be
   // synchronized with nextDrawerToDisplay during the displayed drawer onClose event.
-  // Otherwise, currentDisplayDrawer needs to be set to nextDrawerToDisplay manually
+  // Otherwise, currentDisplayDrawer needs to be set to nextDrawerToDisplay outside of
+  // the onClose event (that does not exist, because there is no current displayed drawer).
   if (currentDisplayedDrawer === "none" && nextDrawerToDisplay !== "none") {
     setCurrentDisplayedDrawer(nextDrawerToDisplay);
   }
