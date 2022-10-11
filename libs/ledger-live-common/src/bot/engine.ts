@@ -533,6 +533,7 @@ export async function runOnAccount<T extends Transaction>({
 
     // without recovering mechanism, we simply assume an error is a failure
     if (errors.length) {
+      console.warn(status);
       botTest("mutation must not have tx status errors", () => {
         // all mutation must express transaction that are POSSIBLE
         // recoveredFromTransactionStatus can also be used to solve this for tricky cases
