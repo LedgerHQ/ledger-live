@@ -6,13 +6,13 @@ import * as bitcoin from "bitcoinjs-lib";
 import coininfo from "coininfo";
 import axios from "axios";
 import BigNumber from "bignumber.js";
-import { DerivationModes } from "../../../../families/bitcoin/wallet-btc/types";
-import Xpub from "../../../../families/bitcoin/wallet-btc/xpub";
-import Crypto from "../../../../families/bitcoin/wallet-btc/crypto/bitcoin";
-import BitcoinLikeExplorer from "../../../../families/bitcoin/wallet-btc/explorer";
-import BitcoinLikeStorage from "../../../../families/bitcoin/wallet-btc/storage";
-import { Merge } from "../../../../families/bitcoin/wallet-btc/pickingstrategies/Merge";
-import * as utils from "../../../../families/bitcoin/wallet-btc/utils";
+import { DerivationModes } from "../types";
+import Xpub from "../xpub";
+import Crypto from "../crypto/bitcoin";
+import BitcoinLikeExplorer from "../explorer";
+import BitcoinLikeStorage from "../storage";
+import { Merge } from "../pickingstrategies/Merge";
+import * as utils from "../utils";
 
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 

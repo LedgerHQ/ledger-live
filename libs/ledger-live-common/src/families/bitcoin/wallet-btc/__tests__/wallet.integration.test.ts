@@ -1,9 +1,9 @@
 import BigNumber from "bignumber.js";
-import { DerivationModes } from "../../../../families/bitcoin/wallet-btc/types";
-import BitcoinLikeWallet from "../../../../families/bitcoin/wallet-btc/wallet";
-import { Account } from "../../../../families/bitcoin/wallet-btc/account";
-import { Merge } from "../../../../families/bitcoin/wallet-btc/pickingstrategies/Merge";
-import MockBtc from "../../../../mock/Btc";
+import { DerivationModes } from "../types";
+import BitcoinLikeWallet from "../wallet";
+import { Account } from "../account";
+import { Merge } from "../pickingstrategies/Merge";
+import MockBtc from "../../mockBtc";
 
 jest.setTimeout(180000);
 
