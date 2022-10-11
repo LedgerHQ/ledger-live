@@ -1002,12 +1002,12 @@
   },
   "discover" : {
     "title" : "Entdecken",
-    "desc" : "Erkunden Sie die Welt von Web 3.0 in Ledger Live",
+    "desc" : "Die Welt des Web3 sicher entdecken",
     "link" : "Weitere Infos",
     "sections" : {
       "learn" : {
         "title" : "Lernen",
-        "desc" : "Machen Sie sich schlau über Kryptos, NFTs, digitale Sicherheit und mehr"
+        "desc" : "Lernen Sie über Krypto und mehr gratis von Experten"
       },
       "ledgerApps" : {
         "title" : "Apps",
@@ -1015,11 +1015,15 @@
       },
       "earn" : {
         "title" : "Verdienen",
-        "desc" : "Verdienen Sie ein passives Einkommen und vermehren Sie Ihr Kryptovermögen"
+        "desc" : "Vermehren Sie Ihre Kryptos durch Staking und Verleihen."
       },
       "mint" : {
         "title" : "Mint",
-        "desc" : "Mint NFTs aus exklusiven Kooperationen auf dem [ L ] Markt"
+        "desc" : "Prägen Sie NFTs von exklusiven Kampagnen auf [ L ] Market."
+      },
+      "referralProgram" : {
+        "title" : "Freunde werben",
+        "desc" : "Verdienen Sie 10 US-$ in Bitcoin wenn Ihr(e) Freund(in) einen Ledger kauft. "
       }
     },
     "comingSoon" : "In Kürze verfügbar",
