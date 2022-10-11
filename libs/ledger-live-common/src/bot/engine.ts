@@ -386,10 +386,12 @@ export async function runOnAccount<T extends Transaction>({
 }): Promise<MutationReport<T>> {
   const { mutations } = spec;
   let latestSignOperationEvent;
+  const hintWarnings: string[] = [];
   const report: MutationReport<T> = {
     spec,
     appCandidate,
     resyncAccountsDuration,
+    hintWarnings,
   };
 
   try {
@@ -527,6 +529,28 @@ export async function runOnAccount<T extends Transaction>({
         // recoveredFromTransactionStatus can also be used to solve this for tricky cases
         throw errors[0];
       });
+    }
+
+    const { expectStatusWarnings } = mutation;
+    if (warnings.length || expectStatusWarnings) {
+      const expected =
+        expectStatusWarnings &&
+        expectStatusWarnings({
+          transaction,
+          status,
+          account,
+          bridge: accountBridge,
+        });
+      if (expected) {
+        botTest("verify status.warnings expectations", () =>
+          expect(status.warnings).toEqual(expected)
+        );
+      } else {
+        for (const k in status.warnings) {
+          const e = status.warnings[k];
+          hintWarnings.push(`unexpected status.warnings.${k} = ${String(e)}`);
+        }
+      }
     }
 
     mutationsCount[mutation.name] = (mutationsCount[mutation.name] || 0) + 1;
