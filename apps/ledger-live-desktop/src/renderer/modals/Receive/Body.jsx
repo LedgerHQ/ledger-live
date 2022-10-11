@@ -20,6 +20,7 @@ import StepAccount, { StepAccountFooter } from "./steps/StepAccount";
 import StepConnectDevice, { StepConnectDeviceFooter } from "./steps/StepConnectDevice";
 import StepWarning, { StepWarningFooter } from "./steps/StepWarning";
 import StepReceiveFunds from "./steps/StepReceiveFunds";
+import StepReceiveStakingFlow, { StepReceiveStakingFooter } from "./steps/StepReceiveStakingFlow";
 
 export type StepId = "warning" | "account" | "device" | "receive";
 
@@ -102,6 +103,12 @@ const createSteps = (): Array<St> => [
     label: <Trans i18nKey="receive.steps.receiveFunds.title" />,
     component: StepReceiveFunds,
   },
+  {
+    id: "stakingFlow",
+    excludeFromBreadcrumb: true,
+    component: StepReceiveStakingFlow,
+    footer: StepReceiveStakingFooter,
+  },
 ];
 
 const mapStateToProps = createStructuredSelector({
@@ -130,6 +137,8 @@ const Body = ({
   const [parentAccount, setParentAccount] = useState(() => params && params.parentAccount);
   const [disabledSteps, setDisabledSteps] = useState([]);
   const [token, setToken] = useState(null);
+  const [hideBreadcrumb, setHideBreadcrumb] = useState(false);
+  const [title, setTitle] = useState("");
 
   const currency = getAccountCurrency(account);
   const currencyName = currency ? currency.name : undefined;
@@ -181,10 +190,25 @@ const Body = ({
     }
   }, [accounts, account, params, handleChangeAccount]);
 
+  useEffect(() => {
+    const currentStep = steps.find(step => step.id === stepId);
+    setHideBreadcrumb(currentStep.excludeFromBreadcrumb);
+    switch (stepId) {
+      case "warning":
+        setTitle(t("common.information"));
+        break;
+      case "stakingFlow":
+        setTitle(t("receive.steps.staking.title", { currencyName: currency.name }));
+        break;
+      default:
+        setTitle(t("receive.title"));
+    }
+  }, [steps, stepId, t, currency.name]);
+
   const errorSteps = verifyAddressError ? [2] : [];
 
   const stepperProps = {
-    title: stepId === "warning" ? t("common.information") : t("receive.title"),
+    title,
     device,
     account,
     parentAccount,
@@ -194,7 +218,7 @@ const Body = ({
     errorSteps,
     disabledSteps,
     receiveTokenMode: !!params.receiveTokenMode,
-    hideBreadcrumb: stepId === "warning",
+    hideBreadcrumb,
     token,
     isAddressVerified,
     verifyAddressError,

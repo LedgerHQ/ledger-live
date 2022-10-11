@@ -33,7 +33,7 @@ const AccountHeaderActions = ({ account, parentAccount }: Props) => {
 
   return [
     {
-      key: "solana",
+      key: "Stake",
       onClick: onClick,
       icon: IconCoins,
       label: t("account.stake"),

@@ -31,6 +31,7 @@ import QRCode from "~/renderer/components/QRCode";
 import { getEnv } from "@ledgerhq/live-common/env";
 import AccountTagDerivationMode from "~/renderer/components/AccountTagDerivationMode";
 import byFamily from "~/renderer/generated/StepReceiveFunds";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 
 const Separator = styled.div`
   border-top: 1px solid #99999933;
@@ -140,6 +141,7 @@ const StepReceiveFunds = (props: StepProps) => {
     currencyName,
   } = props;
 
+  const receiveStakingFlowConfig = useFeature("receiveStakingFlowConfigDesktop");
   const mainAccount = account ? getMainAccount(account, parentAccount) : null;
   invariant(account && mainAccount, "No account given");
 
@@ -187,6 +189,24 @@ const StepReceiveFunds = (props: StepProps) => {
     onResetSkip();
   }, [device, onChangeAddressVerified, onResetSkip, transitionTo, isAddressVerified]);
 
+  const onFinishReceiveFlow = useCallback(() => {
+    if (
+      receiveStakingFlowConfig?.enabled &&
+      receiveStakingFlowConfig?.params[account.currency.id]?.enabled
+    ) {
+      transitionTo("stakingFlow");
+    } else {
+      // @TODO swap logic is missing and localstorage "Do not show this again"
+      onClose();
+    }
+  }, [
+    account.currency,
+    onClose,
+    receiveStakingFlowConfig?.enabled,
+    receiveStakingFlowConfig?.params,
+    transitionTo,
+  ]);
+
   // when address need verification we trigger it on device
   useEffect(() => {
     if (isAddressVerified === null) {
@@ -228,7 +248,7 @@ const StepReceiveFunds = (props: StepProps) => {
                 <Button event="Page Receive Step 3 re-verify" outlineGrey onClick={onVerify}>
                   <Trans i18nKey="common.reverify" />
                 </Button>
-                <Button data-test-id="modal-continue-button" primary onClick={onClose}>
+                <Button data-test-id="modal-continue-button" primary onClick={onFinishReceiveFlow}>
                   <Trans i18nKey="common.done" />
                 </Button>
               </Box>

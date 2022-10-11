@@ -29,7 +29,7 @@ const AccountHeaderManageActions = ({ account }: Props) => {
 
   return [
     {
-      key: "celo",
+      key: "Stake",
       onClick: onClick,
       icon: (props: *) => <Icon {...props} isDisabled={isRegistrationPending} />,
       disabled: isRegistrationPending,

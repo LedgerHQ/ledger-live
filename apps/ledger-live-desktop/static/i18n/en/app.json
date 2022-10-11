@@ -1944,6 +1944,37 @@
         "tezos": {
           "text": "The amount received on a delegated account will be added to the total staked amount. Choose another account if you want to avoid this."
         }
+      },
+      "staking": {
+        "title": "Earn {{currencyName}}",
+        "link": "Learn more",
+        "notShow": "Do not show this again",
+        "footer": {
+          "dismiss": "Not now",
+          "stake": "Stake with {{provider}}"
+        },
+        "ethereum": {
+          "title": "Grow your ETH. Stake now.",
+          "description": "Stake your Ethereum with Lido and earn rewards daily. No lock-up period. No minimum deposit.",
+          "title_alt": "Don’t just HODL. Grow your ETH.",
+          "description_alt": "Got more than 32 ETH? Earn passive rewards by securely staking your ETH with Kiln."
+        },
+        "cosmos": {
+          "title": "Grow your ATOM. Stake with Ledger validator.",
+          "description": "Stake your ATOM with the trusted Ledger validator. Your coins stay yours, backed by Ledger’s uncompromising security."
+        },
+        "osmosis": {
+          "title": "Grow your OSMO. Stake with Ledger by Figment.",
+          "description": "Stake your OSMO with Ledger by Figment validator. It offers the lowest commission fee and a guarantee against slashing!"
+        },
+        "solana": {
+          "title": "Grow your SOL. Stake with Ledger by Figment.",
+          "description": "Stake your SOL with Ledger by Figment validator. Your coins stay yours, backed by Ledger’s uncompromising security."
+        },
+        "celo": {
+          "title": "Grow your CELO. Stake with Ledger by Figment.",
+          "description": "Stake your CELO with Ledger by Figment validator. It guarantees complete cover against slashing, backed by Ledger’s uncompromising security."
+        }
       }
     }
   },
