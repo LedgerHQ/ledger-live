@@ -831,12 +831,12 @@
       "tour" : {
         "title" : "Faça um tour",
         "description" : "Explore o aplicativo Ledger Live e aprenda como comprar, crescer e proteger seus ativos",
-        "cta" : "Navegue"
+        "cta" : "Navegar"
       },
       "academy" : {
         "title" : "Ledger Academy",
         "description" : "Tudo o que você precisa saber sobre Blockchain",
-        "cta" : "Navegue"
+        "cta" : "Navegar"
       },
       "stakeCosmos" : {
         "title" : "Aplicar COSMOS",
@@ -890,7 +890,7 @@
       "market" : {
         "title" : "Mercados Cripto",
         "description" : "Acompanhe preços e tendências do mercado cripto no aplicativo",
-        "cta" : "Navegue"
+        "cta" : "Navegar"
       },
       "manageCard" : {
         "title" : "Apresentando o CL Card",
@@ -1002,12 +1002,12 @@
   },
   "discover" : {
     "title" : "Discover",
-    "desc" : "Explore o mundo da web3 através do Ledger Live",
+    "desc" : "Explore o mundo da Web3 com segurança",
     "link" : "Fale mais",
     "sections" : {
       "learn" : {
         "title" : "Aprender",
-        "desc" : "Aprenda sobre criptomoedas, NFTs, segurança digital e mais"
+        "desc" : "Aprenda sobre cripto e muito mais de graça com especialistas"
       },
       "ledgerApps" : {
         "title" : "Aplicativos",
@@ -1015,11 +1015,15 @@
       },
       "earn" : {
         "title" : "Ganhe",
-        "desc" : "Gere renda passiva e cresça seus criptoativos"
+        "desc" : "Aumente suas criptos com staking e empréstimos."
       },
       "mint" : {
         "title" : "Emitir",
-        "desc" : "Emita NFTs de colaborações exclusivas no [ L ] Market"
+        "desc" : "Emita NFTs de campanhas exclusivas do [ L ] Market"
+      },
+      "referralProgram" : {
+        "title" : "Indique um amigo",
+        "desc" : "Ganhe US$10 em BTC quando seu amigo comprar uma Ledger. "
       }
     },
     "comingSoon" : "Em breve",
@@ -1197,7 +1201,7 @@
             }
           },
           "1" : {
-            "title" : "Navegue",
+            "title" : "Navegar",
             "label" : "Aprenda como interagir com seu dispositivo lendo as instruções na tela."
           },
           "2" : {
@@ -1378,7 +1382,7 @@
             }
           },
           "1" : {
-            "title" : "Navegue",
+            "title" : "Navegar",
             "label" : "Aprenda a interagir com seu dispositivo lendo as instruções na tela."
           },
           "2" : {
