@@ -1,5 +1,11 @@
 # @ledgerhq/live-common
 
+## 27.4.0-next.1
+
+### Minor Changes
+
+- [#1525](https://github.com/LedgerHQ/ledger-live/pull/1525) [`64e00a9e30`](https://github.com/LedgerHQ/ledger-live/commit/64e00a9e30cf67b1e34552037e4405379af04a67) Thanks [@github-actions](https://github.com/apps/github-actions)! - Minimum version for Ethereum nano app from 1.9.17 to 1.9.20
+
 ## 27.4.0-next.0
 
 ### Minor Changes
