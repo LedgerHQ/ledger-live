@@ -71,11 +71,8 @@ export const fromTransactionStatusRawCommon = (
 export const toTransactionStatusRawCommon = (
   ts: TransactionStatusCommon
 ): TransactionStatusCommonRaw => ({
-  errors: mapValues(ts.errors, toErrorRaw) as unknown as Record<string, string>,
-  warnings: mapValues(ts.warnings, toErrorRaw) as unknown as Record<
-    string,
-    string
-  >,
+  errors: mapValues<Record<string, Error>, string>(ts.errors, toErrorRaw),
+  warnings: mapValues<Record<string, Error>, string>(ts.warnings, toErrorRaw),
   estimatedFees: ts.estimatedFees.toString(),
   amount: ts.amount.toString(),
   totalSpent: ts.totalSpent.toString(),
