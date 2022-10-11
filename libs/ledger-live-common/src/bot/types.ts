@@ -190,6 +190,7 @@ export type MinimalSerializedSpecReport = {
   fatalError: string | undefined;
   mutations: MinimalSerializedMutationReport[] | undefined;
   existingMutationNames: string[];
+  hintWarnings: string[];
 };
 
 export type MinimalSerializedReport = {

@@ -86,6 +86,7 @@ function convertSpecReport<T extends Transaction>(
     accounts,
     mutations,
     existingMutationNames: result.spec.mutations.map((m) => m.name),
+    hintWarnings: result.hintWarnings,
   };
 }
 
