@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useRef } from "react";
 import { Flex } from "@ledgerhq/native-ui";
 import { StackScreenProps } from "@react-navigation/stack";
 import { CompositeScreenProps } from "@react-navigation/native";
@@ -19,7 +19,7 @@ type Props = CompositeScreenProps<
 >;
 
 const CompletionScreen = ({ navigation }: Props) => {
-  const [delay, setDelay] = useState<NodeJS.Timeout | null>(null);
+  const delayRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const redirectToPostOnboarding = useCallback(() => {
     // Resets the navigation stack to avoid allowing to go back to the onboarding welcome screen
@@ -41,16 +41,23 @@ const CompletionScreen = ({ navigation }: Props) => {
   }, [navigation]);
 
   const skipDelay = useCallback(() => {
-    if (!delay) {
+    if (!delayRef.current) {
       return;
     }
-    clearTimeout(delay);
-    setDelay(null);
+    clearTimeout(delayRef.current);
+    delayRef.current = null;
     redirectToPostOnboarding();
-  }, [delay, redirectToPostOnboarding]);
+  }, [redirectToPostOnboarding]);
 
   useEffect(() => {
-    setDelay(setTimeout(redirectToPostOnboarding, redirectDelay));
+    delayRef.current = setTimeout(redirectToPostOnboarding, redirectDelay);
+
+    return () => {
+      if (delayRef.current) {
+        clearTimeout(delayRef.current);
+        delayRef.current = null;
+      }
+    };
   }, [redirectToPostOnboarding]);
 
   return (

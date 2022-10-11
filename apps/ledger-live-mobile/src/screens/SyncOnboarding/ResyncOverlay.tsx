@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Flex, InfiniteLoader, Text } from "@ledgerhq/native-ui";
 import { useTheme } from "styled-components/native";
 import { useTranslation } from "react-i18next";
@@ -12,14 +12,25 @@ type Props = {
 const ResyncOverlay = ({ isOpen, delay = 0, productName }: Props) => {
   const { t } = useTranslation();
   const [showContent, setShowContent] = useState<boolean>(false);
+  const showContentTimerRef = useRef<ReturnType<typeof setTimeout> | null>(
+    null,
+  );
+
   const { colors, radii } = useTheme();
 
   useEffect(() => {
     if (isOpen) {
-      setTimeout(() => {
+      showContentTimerRef.current = setTimeout(() => {
         setShowContent(true);
       }, delay);
     }
+
+    return () => {
+      if (showContentTimerRef.current) {
+        clearTimeout(showContentTimerRef.current);
+        showContentTimerRef.current = null;
+      }
+    };
   }, [isOpen, delay]);
 
   useEffect(() => {

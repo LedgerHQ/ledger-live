@@ -4,6 +4,7 @@ import React, {
   useCallback,
   useMemo,
   ReactNode,
+  useRef,
 } from "react";
 import type { StackScreenProps } from "@react-navigation/stack";
 import {
@@ -161,21 +162,27 @@ export const SyncOnboarding = ({
     [t, productName, device, handleSoftwareCheckComplete],
   );
 
-  const [desyncTimer, setDesyncTimer] = useState<ReturnType<
-    typeof setTimeout
-  > | null>(null);
   const [stopPolling, setStopPolling] = useState<boolean>(false);
   const [pollingPeriodMs, setPollingPeriodMs] = useState<number>(
     normalPollingPeriodMs,
   );
+
   const [resyncOverlayDisplayDelayMs, setResyncOverlayDisplayDelayMs] =
     useState<number>(normalResyncOverlayDisplayDelayMs);
-
   const [desyncTimeoutMs, setDesyncTimeoutMs] = useState<number>(
     normalDesyncTimeoutMs,
   );
-  const [isHelpDrawerOpen, setHelpDrawerOpen] = useState<boolean>(false);
+
+  const desyncTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const readyRedirectTimerRef = useRef<ReturnType<typeof setTimeout> | null>(
+    null,
+  );
+
+  const [isDesyncOverlayOpen, setIsDesyncOverlayOpen] =
+    useState<boolean>(false);
   const [isDesyncDrawerOpen, setDesyncDrawerOpen] = useState<boolean>(false);
+  const [isHelpDrawerOpen, setHelpDrawerOpen] = useState<boolean>(false);
+
   const [companionSteps, setCompanionSteps] = useState<Step[]>(
     defaultCompanionSteps,
   );
@@ -183,21 +190,7 @@ export const SyncOnboarding = ({
     CompanionStepKey.Paired,
   );
 
-  const cleanBeforeExit = useCallback(() => {
-    // Cleans polling subscription
-    setStopPolling(true);
-
-    // Cleans timer
-    if (desyncTimer) {
-      // desyncTimer should not be set to null to avoid triggering the useEffect
-      // setting up a new timeout on allowedError changes. Only clean the timeout.
-      clearTimeout(desyncTimer);
-    }
-  }, [desyncTimer]);
-
   const goBackToPairingFlow = useCallback(() => {
-    cleanBeforeExit();
-
     // On pairing success, navigate to the Sync Onboarding Companion
     // Replace to avoid going back to this screen on return from the pairing flow
     navigation.navigate(NavigatorName.Base as "Base", {
@@ -225,7 +218,7 @@ export const SyncOnboarding = ({
         },
       },
     });
-  }, [navigation, cleanBeforeExit]);
+  }, [navigation]);
 
   const {
     onboardingState: deviceOnboardingState,
@@ -282,16 +275,29 @@ export const SyncOnboarding = ({
 
   // Reacts to allowedError from the polling to set or clean the desync timeout
   useEffect(() => {
-    if (allowedError && !desyncTimer) {
-      setDesyncTimer(setTimeout(handleDesyncTimedOut, desyncTimeoutMs));
+    if (allowedError) {
+      desyncTimerRef.current = setTimeout(
+        handleDesyncTimedOut,
+        desyncTimeoutMs,
+      );
+      setIsDesyncOverlayOpen(true);
       // Accelerates the polling to resync as fast as possible with the device
       setPollingPeriodMs(shortPollingPeriodMs);
-    } else if (!allowedError && desyncTimer) {
-      clearTimeout(desyncTimer);
-      setDesyncTimer(null);
+    } else if (!allowedError) {
+      // desyncTimer is cleared in the useEffect cleanup function
       setPollingPeriodMs(normalPollingPeriodMs);
+      setIsDesyncOverlayOpen(false);
     }
-  }, [allowedError, handleDesyncTimedOut, desyncTimer, desyncTimeoutMs]);
+
+    return () => {
+      // allowedError needs to stay stable, and not change its reference
+      // if the error is the same to avoid resetting the timer 
+      if (desyncTimerRef.current) {
+        clearTimeout(desyncTimerRef.current);
+        desyncTimerRef.current = null;
+      }
+    }
+  }, [allowedError, handleDesyncTimedOut, desyncTimeoutMs]);
 
   useEffect(() => {
     if (isDesyncDrawerOpen) {
@@ -371,7 +377,7 @@ export const SyncOnboarding = ({
     }
 
     if (companionStepKey === CompanionStepKey.Exit) {
-      setTimeout(handleDeviceReady, readyRedirectDelayMs / 2);
+      readyRedirectTimerRef.current = setTimeout(handleDeviceReady, readyRedirectDelayMs / 2);
     }
 
     setCompanionSteps(
@@ -389,6 +395,13 @@ export const SyncOnboarding = ({
         };
       }),
     );
+
+    return () => {
+      if (readyRedirectTimerRef.current) {
+        clearTimeout(readyRedirectTimerRef.current);
+        readyRedirectTimerRef.current = null;
+      }
+    };
   }, [companionStepKey, defaultCompanionSteps, handleDeviceReady]);
 
   return (
@@ -419,7 +432,7 @@ export const SyncOnboarding = ({
         </Flex>
         <Flex flex={1}>
           <ResyncOverlay
-            isOpen={!!desyncTimer && !stopPolling}
+            isOpen={isDesyncOverlayOpen}
             delay={resyncOverlayDisplayDelayMs}
             productName={productName}
           />
