@@ -170,6 +170,7 @@ export type MutationReport<T extends Transaction> = {
   finalDestinationOperation?: Operation;
   testDestinationDuration?: number;
   error?: Error;
+  errorTime?: number;
 };
 
 export type MinimalSerializedMutationReport = {
