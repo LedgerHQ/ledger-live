@@ -237,7 +237,7 @@
     "form" : {
       "changeCTA" : "更改",
       "rates" : {
-        "title" : "提供商",
+        "title" : "报价",
         "registration" : "需要注册 ",
         "noRegistration" : "无需注册",
         "fixed" : "固定",
@@ -246,7 +246,7 @@
         "loading" : "正在加载……",
         "name" : {
           "title" : "提供方",
-          "tooltip" : "您必须创建账户来登录提供商的服务，具体取决于提供商。"
+          "tooltip" : "您必须创建账户完成注册，具体取决于提供商。"
         },
         "rate" : {
           "title" : "互换费用",
@@ -4763,7 +4763,7 @@
     },
     "EthAppNftNotSupported" : {
       "title" : "操作不可用于此设备",
-      "description" : "Send NFT feature is only available for Nano X and Nano S+. Please visit our customer support platform to know how to send a NFT with a Nano S."
+      "description" : "仅 Nano X 和 Nano S Plus 提供发送 NFT 功能。请访问我们的客服平台，了解如何使用 Nano S 发送 NFT。"
     },
     "CantScanQRCode" : {
       "title" : "无法扫描此二维码：此地址不支持自动验证"
