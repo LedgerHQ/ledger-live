@@ -126,8 +126,8 @@ function marketDataReducer(state, action) {
       const selectedCoinData = { ...state.selectedCoinData };
 
       selectedCoinData.chartData = {
-        ...selectedCoinData.chartData,
-        ...action.payload.chartData,
+        ...(selectedCoinData?.chartData ?? {}),
+        ...(action?.payload?.chartData ?? {}),
       };
 
       return { ...state, selectedCoinData, chartRequestParams };
