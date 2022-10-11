@@ -15,7 +15,7 @@
  *  limitations under the License.
  ********************************************************************************/
 // FIXME drop:
-import { splitPath, foreach, decodeVarint } from "./utils";
+import { splitPath, foreach, decodeVarint, hexBuffer } from "./utils";
 //import { StatusCodes, TransportStatusError } from "@ledgerhq/errors";
 import type Transport from "@ledgerhq/hw-transport";
 
@@ -37,6 +37,7 @@ const SIGN_MESSAGE = 0x08;
 const ECDH_SECRET = 0x0a;
 const VERSION = 0x06;
 const CHUNK_SIZE = 250;
+
 /**
  * Tron API
  *
@@ -356,5 +357,50 @@ export default class Trx {
     return this.transport
       .send(CLA, ECDH_SECRET, 0x00, 0x01, buffer)
       .then((response) => response.slice(0, 65).toString("hex"));
+  }
+
+  /**
+   * Sign a typed data. The host computes the domain separator and hashStruct(message)
+   * @example
+   tronApp.signTIP712HashedMessage("44'/195'/0'/0/0", "0101010101010101010101010101010101010101010101010101010101010101", "0202020202020202020202020202020202020202020202020202020202020202").then(result => {
+  var v = result['v'] - 27;
+  v = v.toString(16);
+  if (v.length < 2) {
+    v = "0" + v;
+  }
+  console.log("Signature 0x" + result['r'] + result['s'] + v);
+  })
+   */
+  signTIP712HashedMessage(
+    path: string,
+    domainSeparatorHex: string,
+    hashStructMessageHex: string
+  ): Promise<{
+    v: number;
+    s: string;
+    r: string;
+  }> {
+    const domainSeparator = hexBuffer(domainSeparatorHex);
+    const hashStruct = hexBuffer(hashStructMessageHex);
+    const paths = splitPath(path);
+    const buffer = Buffer.alloc(1 + paths.length * 4 + 32 + 32, 0);
+    let offset = 0;
+    buffer[0] = paths.length;
+    paths.forEach((element, index) => {
+      buffer.writeUInt32BE(element, 1 + 4 * index);
+    });
+    offset = 1 + 4 * paths.length;
+    domainSeparator.copy(buffer, offset);
+    offset += 32;
+    hashStruct.copy(buffer, offset);
+
+    return this.transport
+      .send(0xe0, 0x0c, 0x00, 0x00, buffer)
+      .then((response) => {
+        const v = response[0];
+        const r = response.slice(1, 1 + 32).toString("hex");
+        const s = response.slice(1 + 32, 1 + 32 + 32).toString("hex");
+        return { v, r, s };
+      });
   }
 }
