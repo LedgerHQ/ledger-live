@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-use-before-define */
 import { AccountLike } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
 import React, { useCallback } from "react";
@@ -30,6 +29,24 @@ const WarningDisplay = styled(Box)`
   color: ${p => p.theme.colors.warning};
 `;
 
+const InputRight = styled(Box).attrs(() => ({
+  ff: "Inter|Medium",
+  color: "palette.text.shade60",
+  fontSize: 4,
+  justifyContent: "center",
+}))`
+  padding-right: 10px;
+`;
+
+const InputCenter = styled(Box).attrs(() => ({
+  alignItems: "center",
+  justifyContent: "center",
+  color: "palette.text.shade40",
+}))`
+  margin-left: 19px;
+  margin-right: 19px;
+`;
+
 type Props = {
   autoFocus?: boolean;
   // crypto value (always the one which is returned)
@@ -52,7 +69,7 @@ export default function RequestAmount({
   validTransactionError,
   validTransactionWarning,
 }: Props) {
-  const fiatCurrency = useSelector<any, any>(counterValueCurrencySelector);
+  const fiatCurrency = useSelector(counterValueCurrencySelector);
   const { cryptoUnit, fiatAmount, fiatUnit, calculateCryptoAmount } = useSendAmount({
     account,
     fiatCurrency,
@@ -110,21 +127,3 @@ export default function RequestAmount({
     </Box>
   );
 }
-
-const InputRight = styled(Box).attrs(() => ({
-  ff: "Inter|Medium",
-  color: "palette.text.shade60",
-  fontSize: 4,
-  justifyContent: "center",
-}))`
-  padding-right: 10px;
-`;
-
-const InputCenter = styled(Box).attrs(() => ({
-  alignItems: "center",
-  justifyContent: "center",
-  color: "palette.text.shade40",
-}))`
-  margin-left: 19px;
-  margin-right: 19px;
-`;
