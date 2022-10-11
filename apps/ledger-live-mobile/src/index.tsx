@@ -348,15 +348,15 @@ const linkingOptions: LinkingOptions<ReactNavigation.RootParamList> = {
               [NavigatorName.Manager]: {
                 screens: {
                   /**
-                   * ie: "ledgerlive://manager" will open the manager
+                   * ie: "ledgerlive://myledger" will open MyLedger page
                    *
                    * @params ?installApp: string
-                   * ie: "ledgerlive://manager?installApp=bitcoin" will open the manager with "bitcoin" prefilled in the search input
+                   * ie: "ledgerlive://myledger?installApp=bitcoin" will open myledger with "bitcoin" prefilled in the search input
                    *
                    * * @params ?searchQuery: string
-                   * ie: "ledgerlive://manager?searchQuery=bitcoin" will open the manager with "bitcoin" prefilled in the search input
+                   * ie: "ledgerlive://myledger?searchQuery=bitcoin" will open myledger with "bitcoin" prefilled in the search input
                    */
-                  [ScreenName.Manager]: "manager",
+                  [ScreenName.Manager]: "myledger",
                 },
               },
             },

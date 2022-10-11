@@ -53,6 +53,12 @@ export const defaultFeatures: DefaultFeatures = {
   currencyFlareMobile: {
     enabled: false,
   },
+  deviceInitialApps: {
+    enabled: false,
+    params: {
+      apps: ["Boilerplate", "Boilerplate_2", "Boilerplate_3"],
+    },
+  },
   ratings: {
     enabled: false,
     params: {

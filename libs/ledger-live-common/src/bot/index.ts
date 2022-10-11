@@ -55,7 +55,7 @@ function convertMutation<T extends Transaction>(
     accountId: account?.id,
     destinationId: destination?.id,
     operationId: operation?.id,
-    error: error ? String(error) : undefined,
+    error: error ? formatError(error) : undefined,
   };
 }
 
@@ -82,9 +82,10 @@ function convertSpecReport<T extends Transaction>(
   const mutations = result.mutations?.map(convertMutation);
   return {
     specName: result.spec.name,
-    fatalError: result.fatalError ? String(result.fatalError) : undefined,
+    fatalError: result.fatalError ? formatError(result.fatalError) : undefined,
     accounts,
     mutations,
+    existingMutationNames: result.spec.mutations.map((m) => m.name),
   };
 }
 
@@ -718,7 +719,11 @@ export async function bot({
 
   appendBody("\n</details>\n\n");
 
-  const { BOT_REPORT_FOLDER } = process.env;
+  appendBody(
+    "\n> What is the bot and how does it work? [Everything is documented here!](https://github.com/LedgerHQ/ledger-live/wiki/LLC:bot)\n\n"
+  );
+
+  const { BOT_REPORT_FOLDER, BOT_ENVIRONMENT } = process.env;
 
   const slackCommentTemplate = `${String(
     GITHUB_WORKFLOW
@@ -727,6 +732,7 @@ export async function bot({
   if (BOT_REPORT_FOLDER) {
     const serializedReport: MinimalSerializedReport = {
       results: results.map(convertSpecReport),
+      environment: BOT_ENVIRONMENT,
     };
 
     await Promise.all([

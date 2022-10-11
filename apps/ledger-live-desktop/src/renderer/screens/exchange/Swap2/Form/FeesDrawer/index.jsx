@@ -7,7 +7,7 @@ import { transactionSelector } from "~/renderer/actions/swap";
 import type {
   SwapTransactionType,
   SwapSelectorStateType,
-} from "@ledgerhq/live-common/exchange/swap/hooks/index";
+} from "@ledgerhq/live-common/exchange/swap/types";
 import { DrawerTitle } from "../DrawerTitle";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import { SWAP_VERSION } from "../../utils/index";

@@ -71,6 +71,7 @@ const polkadot: AppSpec<Transaction> = {
         invariant((account as PolkadotAccount).polkadotResources, "polkadot");
         const sibling = pickSiblings(siblings, maxAccounts);
         let amount = account.spendableBalance
+          .minus(EXISTENTIAL_DEPOSIT)
           .div(1.9 + 0.2 * Math.random())
           .integerValue();
 

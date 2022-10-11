@@ -2026,6 +2026,19 @@
     "switchButton" : "切换至{{language}}",
     "no" : "我不愿意"
   },
+  "deviceLocalization" : {
+    "language" : "语言",
+    "deviceLanguage" : "设备语言",
+    "changeLanguage" : "更改语言",
+    "allowLanguageInstallation" : "允许安装语言",
+    "languageInstalled" : "语言更改成功",
+    "installingLanguage" : "正在安装语言",
+    "languages" : {
+      "english" : "English",
+      "french" : "Français",
+      "spanish" : "Español"
+    }
+  },
   "distribution" : {
     "asset" : "资产",
     "price" : "价格",
@@ -4550,6 +4563,14 @@
       "title" : "抱歉，无法重置",
       "description" : "请重试，如果问题仍然存在则请联系 Ledger 客服。"
     },
+    "LanguageInstallRefusedOnDevice" : {
+      "title" : "语言安装被设备端拒绝",
+      "description" : "请重试。如果问题依旧存在，请使用下面的按钮保存您的日志，并将其提供给 Ledger 客服。"
+    },
+    "LanguageNotFound" : {
+      "title" : "未找到语言",
+      "description" : "未找到您尝试安装的语言。请尝试安装其他语言。"
+    },
     "LatestMCUInstalledError" : {
       "title" : "对不起，没有可更新的内容",
       "description" : "如果设备无法使用，请联系 Ledger 客服。"
@@ -4763,7 +4784,7 @@
     },
     "EthAppNftNotSupported" : {
       "title" : "操作不可用于此设备",
-      "description" : "Send NFT feature is only available for Nano X and Nano S+. Please visit our customer support platform to know how to send a NFT with a Nano S."
+      "description" : "仅 Nano X 和 Nano S Plus 提供发送 NFT 功能。请访问我们的客服平台，了解如何使用 Nano S 发送 NFT。"
     },
     "CantScanQRCode" : {
       "title" : "无法扫描此二维码：此地址不支持自动验证"

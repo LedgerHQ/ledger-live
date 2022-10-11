@@ -36,6 +36,7 @@ export const ScreenName = {
   DebugFeatureFlags: "DebugFeatureFlags",
   DebugHttpTransport: "DebugHttpTransport",
   DebugIcons: "DebugIcons",
+  DebugMultiAppInstall: "DebugMultiAppInstall",
   DebugLogs: "DebugLogs",
   DebugLottie: "DebugLottie",
   DebugMocks: "DebugMocks",

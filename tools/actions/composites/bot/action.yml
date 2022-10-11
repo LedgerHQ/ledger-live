@@ -22,6 +22,9 @@ inputs:
   EXPLORER:
     description: "EXPLORER value"
     required: false
+  BOT_ENVIRONMENT:
+    description: "defines an environment to be included in the report.json"
+    required: false
 
 runs:
   using: "composite"
@@ -51,6 +54,7 @@ runs:
         GITHUB_WORKFLOW: ${{ github.workflow }}
         BOT_FILTER_FAMILY: ${{ inputs.BOT_FILTER_FAMILY }}
         SHOW_LEGACY_NEW_ACCOUNT: ${{ inputs.SHOW_LEGACY_NEW_ACCOUNT }}
+        BOT_ENVIRONMENT: ${{ inputs.BOT_ENVIRONMENT }}
         explorerinput: ${{ inputs.EXPLORER }}
       run: |
         export COINAPPS=$PWD/coin-apps

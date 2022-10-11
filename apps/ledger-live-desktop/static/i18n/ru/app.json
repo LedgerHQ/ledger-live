@@ -820,7 +820,7 @@
     }
   },
   "lend" : {
-    "title" : "Кредитовать криптовалюты",
+    "title" : "Кредитование",
     "tabs" : {
       "dashboard" : "Консоль",
       "opened" : "Активные займы",
@@ -2025,6 +2025,19 @@
     },
     "switchButton" : "Переключиться на {{language}}",
     "no" : "Мне не хочется"
+  },
+  "deviceLocalization" : {
+    "language" : "Язык интерфейса",
+    "deviceLanguage" : "Язык устройства",
+    "changeLanguage" : "Поменять язык",
+    "allowLanguageInstallation" : "Разрешить установку языка",
+    "languageInstalled" : "Язык изменён",
+    "installingLanguage" : "Установка языка",
+    "languages" : {
+      "english" : "English",
+      "french" : "Français",
+      "spanish" : "Español"
+    }
   },
   "distribution" : {
     "asset" : "Актив",
@@ -4550,6 +4563,14 @@
       "title" : "Не удалось сбросить",
       "description" : "Повторите попытку или обратитесь в Поддержку Ledger, если проблема не решена."
     },
+    "LanguageInstallRefusedOnDevice" : {
+      "title" : "Установка языка на устройстве невозможна",
+      "description" : "Пожалуйста, попробуйте ещё раз. Если проблема не уходит, сохраните логи и отправьте их в Поддержку Ledger."
+    },
+    "LanguageNotFound" : {
+      "title" : "Язык не найден",
+      "description" : "Мы не смогли найти язык, который вы пытаетесь установить. Пожалуйста, попробуйте установить другой язык."
+    },
     "LatestMCUInstalledError" : {
       "title" : "Кажется, обновлений нет",
       "description" : "Пожалуйста, свяжитесь с Поддержкой Ledger, если у вас не получается использовать ваше устройство."
@@ -4763,7 +4784,7 @@
     },
     "EthAppNftNotSupported" : {
       "title" : "Операция недоступна на этом устройстве",
-      "description" : "Send NFT feature is only available for Nano X and Nano S+. Please visit our customer support platform to know how to send a NFT with a Nano S."
+      "description" : "Функция отправки NFT доступна только в Nano X и Nano S Plus. Пожалуйста, обратитесь в Поддержку, чтобы узнать, как отправлять NFT с Nano S."
     },
     "CantScanQRCode" : {
       "title" : "Не удалось сканировать этот QR-код: этот адрес не поддерживает автопроверку."

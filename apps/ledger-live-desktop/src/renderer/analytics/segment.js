@@ -3,6 +3,7 @@
 import { v4 as uuid } from "uuid";
 import invariant from "invariant";
 import { ReplaySubject } from "rxjs";
+import { getEnv } from "@ledgerhq/live-common/env";
 import logger from "~/logger";
 import { getParsedSystemLocale } from "~/helpers/systemLocale";
 import user from "~/helpers/user";
@@ -76,8 +77,7 @@ function getAnalytics() {
 }
 
 export const start = async (store: *) => {
-  if (!user || (!process.env.SEGMENT_TEST && (process.env.MOCK || process.env.PLAYWRIGHT_RUN)))
-    return;
+  if (!user || (!process.env.SEGMENT_TEST && (getEnv("MOCK") || getEnv("PLAYWRIGHT_RUN")))) return;
   const { id } = await user();
   storeInstance = store;
   const analytics = getAnalytics();

@@ -50,7 +50,7 @@ const osmosis: AppSpec<Transaction> = {
     appName: "Cosmos",
   },
   genericDeviceAction: acceptTransaction,
-  testTimeout: 5 * 60 * 1000,
+  testTimeout: 8 * 60 * 1000,
   minViableAmount: minimalAmount,
   transactionCheck: ({ maxSpendable }) => {
     invariant(maxSpendable.gt(minimalAmount), "balance is too low");
