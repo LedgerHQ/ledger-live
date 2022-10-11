@@ -5,9 +5,14 @@ import rimraf from "rimraf";
 const basePath = path.join(__dirname, "..", "src");
 const generatedPath = path.join(basePath, "generated");
 
-await rimraf(generatedPath, async e => {
-  if (!!e) return echo(chalk.red(e));
-  await fs.promises.mkdir(generatedPath);
+await new Promise((resolve, reject) => {
+  rimraf(generatedPath, e => {
+    if (!!e) {
+      echo(chalk.red(e));
+      return reject(e)
+    }
+    return resolve(fs.promises.mkdir(generatedPath));
+  })
 });
 
 const dirContent = await fs.promises.readdir(path.join(basePath, "families"), {

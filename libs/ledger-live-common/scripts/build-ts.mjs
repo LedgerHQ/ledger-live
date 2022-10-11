@@ -4,16 +4,22 @@ import rimraf from "rimraf";
 
 cd(path.join(__dirname, ".."));
 
-const remover = async () => {
-  await rimraf("lib", (e) => {
-    if (e) echo(chalk.red(e));
-  });
-  await rimraf("src/data/icons/react*", (e) => {
-    if (e) echo(chalk.red(e));
-  });
+const promisifiedRimraf = (path) => {
+  return new Promise((resolve, reject) =>
+    rimraf(path, (e) => {
+      if (e) {
+        echo(chalk.red(e));
+        return reject(e);
+      }
+      resolve();
+    })
+  );
 };
 
-await remover();
+await Promise.all([
+  await promisifiedRimraf("lib"),
+  await promisifiedRimraf("src/data/icons/react*"),
+]);
 
 await $`zx ./scripts/sync-families-dispatch.mjs`;
 
