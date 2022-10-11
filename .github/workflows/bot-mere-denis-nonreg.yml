@@ -1,11 +1,7 @@
-name: "[Bot] 'Mère Denis'"
+name: "[Bot] non-reg on develop with 'Mère Denis'"
 on:
   schedule:
     - cron: "0 7 * * 1"
-  push:
-    branches:
-      - support/bot-mere-denis
-      - support/bot-actions-perf
 
 concurrency:
   group: bot-seed1

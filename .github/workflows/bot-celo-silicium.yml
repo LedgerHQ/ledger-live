@@ -1,4 +1,4 @@
-name: "[Bot] 'Celo on Silicium'"
+name: "[Bot] Testing Celo with 'Silicium'"
 on:
   push:
     branches:

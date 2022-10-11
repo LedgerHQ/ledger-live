@@ -1,4 +1,4 @@
-name: "[Bot] 'Cardano on Silicium'"
+name: "[Bot] Testing Cardano with 'Silicium'"
 on:
   push:
     branches:

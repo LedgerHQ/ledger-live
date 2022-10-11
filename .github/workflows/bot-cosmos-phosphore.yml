@@ -1,4 +1,4 @@
-name: "[Bot] 'Cosmos on Phosphore'"
+name: "[Bot] Testing Cosmos with 'Phosphore'"
 on:
   push:
     branches:

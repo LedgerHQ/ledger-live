@@ -1,4 +1,4 @@
-name: "[Bot] 'Hedera on Mooncake'"
+name: "[Bot] Testing Hedera with 'Mooncake'"
 on:
   push:
     branches:

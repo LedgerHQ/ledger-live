@@ -1,4 +1,4 @@
-name: "[Bot] '$COIN on Silicium'"
+name: "[Bot] Testing $COIN with 'Silicium'"
 on:
   push:
     branches:

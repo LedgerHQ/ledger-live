@@ -1,4 +1,4 @@
-name: "[Bot] 'Bitcoin on Mooncake'"
+name: "[Bot] Testing Bitcoin with 'Mooncake'"
 on:
   push:
     branches:
