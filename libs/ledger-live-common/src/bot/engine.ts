@@ -350,6 +350,15 @@ export async function runWithAppSpec<T extends Transaction>(
       );
     }
 
+    mutationReports.forEach((m) => {
+      m.hintWarnings.forEach((h) => {
+        const txt = `mutation ${m.mutation?.name || "?"}: ${h}`;
+        if (!hintWarnings.includes(txt)) {
+          hintWarnings.push(txt);
+        }
+      });
+    });
+
     appReport.mutations = mutationReports;
     appReport.accountsAfter = accounts;
   } catch (e: any) {
