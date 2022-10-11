@@ -2028,10 +2028,20 @@
   },
   "deviceLocalization" : {
     "language" : "Dil",
-    "deviceLanguage" : "Cihaz Dili",
+    "deviceLanguage" : "Dil",
     "changeLanguage" : "Dili değiştir",
+    "changeDeviceLanguage" : "Cihazınızın dili değiştirilsin mi?",
+    "chooseLanguage" : "{{deviceName}} cihazınız için bir dil seçin.",
+    "changeDeviceLanguagePrompt" : {
+      "title" : "{{deviceName}} cihazınızı {{language}} dilinde de kullanabilirsiniz",
+      "description" : "Dili {{language}} yapmak ister misiniz?"
+    },
+    "firmwareUpdatePrompt" : {
+      "title" : "{{deviceName}} cihazınızın dili {{language}} yapılsın mı?",
+      "description" : "{{deviceName}} cihazınızı artık {{language}} kullanabilirsiniz. Cihaz dilini şimdi ayarlayabilir ya da daha sonra My Ledger'dan istediğiniz zaman değiştirebilirsiniz."
+    },
     "allowLanguageInstallation" : "Dilin yüklenmesine izin verin",
-    "languageInstalled" : "Dil başarıyla değiştirildi",
+    "languageInstalled" : "Dil {{language}} oldu",
     "installingLanguage" : "Dil yükleniyor",
     "languages" : {
       "english" : "İngilizce",
