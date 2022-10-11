@@ -1,5 +1,11 @@
 # ledger-live-desktop
 
+## 2.49.0-next.2
+
+### Minor Changes
+
+- [#1489](https://github.com/LedgerHQ/ledger-live/pull/1489) [`1293a57427`](https://github.com/LedgerHQ/ledger-live/commit/1293a57427c8b1bdb953e3fc7986bafdf5041d28) Thanks [@grsoares21](https://github.com/grsoares21)! - Adds prompts suggesting the user to update their device language according to a few set of conditions
+
 ## 2.49.0-next.1
 
 ### Patch Changes
