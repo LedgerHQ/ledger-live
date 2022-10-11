@@ -1,5 +1,11 @@
 # @ledgerhq/live-common
 
+## 27.4.0-next.2
+
+### Patch Changes
+
+- [#1525](https://github.com/LedgerHQ/ledger-live/pull/1525) [`5fba025686`](https://github.com/LedgerHQ/ledger-live/commit/5fba025686d799badad3f7a7c7c8491cba14be8a) Thanks [@github-actions](https://github.com/apps/github-actions)! - Fix ts rework error
+
 ## 27.4.0-next.1
 
 ### Minor Changes
