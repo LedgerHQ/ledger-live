@@ -1002,12 +1002,12 @@
   },
   "discover" : {
     "title" : "Keşfedin",
-    "desc" : "Ledger Live'daki Web 3.0 dünyasını keşfedin",
+    "desc" : "Web3 dünyasını güvenle keşfedin",
     "link" : "Daha fazla bilgi ver",
     "sections" : {
       "learn" : {
         "title" : "Öğrenin",
-        "desc" : "Kripto, NFT'ler, dijital güvenlik ve daha fazlası hakkında bilgi edinin"
+        "desc" : "Uzmanlardan kripto ve daha fazlası hakkında ücretsiz bilgiler öğrenin."
       },
       "ledgerApps" : {
         "title" : "Uygulamalar",
@@ -1015,11 +1015,15 @@
       },
       "earn" : {
         "title" : "Kazanın",
-        "desc" : "Pasif gelir elde edin ve kripto varlıklarınızı artırın"
+        "desc" : "Kriptolarınızı stake ederek ve borç vererek artırın."
       },
       "mint" : {
         "title" : "Mint'leyin",
-        "desc" : "[ L ] Market'teki özel iş birliklerini kullanarak NFT'ler mint'leyin"
+        "desc" : "[L] Market'teki özel kampanyalara katılarak NFT'ler mint'leyin."
+      },
+      "referralProgram" : {
+        "title" : "Arkadaşına Öner",
+        "desc" : "Arkadaşınız bir Ledger satın aldığında 10$ değerinde BTC kazanın. "
       }
     },
     "comingSoon" : "Çok yakında",
