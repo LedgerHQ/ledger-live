@@ -1,4 +1,9 @@
-import {TransactionStatusCommon, TransactionStatusCommonRaw} from "@ledgerhq/types-live";
+import { StacksMainnet, StacksTestnet } from "@stacks/network";
+
+export const StacksNetwork = {
+  mainnet: new StacksMainnet(),
+  testnet: new StacksTestnet()
+};
 
 export interface EstimatedFeesRequest {
   to: string;
@@ -26,6 +31,11 @@ export interface TransactionResponse {
     block_height: number;
     tx_index: number;
     burn_block_time: number;
+    token_transfer: {
+      recipient_address: string;
+      amount: string;
+      memo: string;
+    };
   };
   stx_transfers: {
     amount: string;

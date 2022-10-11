@@ -1,5 +1,5 @@
 import { CurrenciesData } from "@ledgerhq/types-live";
-import { AnchorMode } from "@stacks/transactions/dist";
+import { AnchorMode } from "@stacks/transactions";
 import type { DatasetTest } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
 import {

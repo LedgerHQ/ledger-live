@@ -1,17 +1,18 @@
-import { StacksNetworkName } from "@stacks/network/dist";
-import { AnchorMode } from "@stacks/transactions/dist/constants";
-import { BigNumber } from "bignumber.js";
+import { AnchorMode } from "@stacks/transactions";
+import BigNumber from "bn.js";
 
 import {
   BroadcastArg0,
   Operation,
   TransactionCommon,
-  TransactionCommonRaw,
+  TransactionCommonRaw
 } from "@ledgerhq/types-live";
 import {
   TransactionStatusCommon,
-  TransactionStatusCommonRaw,
+  TransactionStatusCommonRaw
 } from "@ledgerhq/types-live";
+
+import { StacksNetwork } from "./bridge/utils/types";
 
 type FamilyType = "stacks";
 
@@ -27,7 +28,7 @@ export type Transaction = TransactionCommon & {
   fee?: BigNumber;
   nonce?: BigNumber;
   memo?: string;
-  network: StacksNetworkName;
+  network: keyof typeof StacksNetwork;
   anchorMode: AnchorMode;
 };
 
