@@ -6,6 +6,7 @@ export type FeatureId =
   | "ratings"
   | "counterValue"
   | "deviceLocalization"
+  | "deviceInitialApps"
   | "buyDeviceFromLive"
   | "ptxSmartRouting"
   | "currencyOsmosis"

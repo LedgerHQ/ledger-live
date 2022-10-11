@@ -149,7 +149,7 @@ const Carousel = ({ timeout = DEFAULT_TIMEOUT, queue }: Props): React.ReactEleme
     // Override passed timeout if lower than 1000ms
     const _timeout = timeout < 1000 ? DEFAULT_TIMEOUT : timeout;
     if (intervalRef.current) clearInterval(intervalRef.current);
-    if (!paused && !process.env.PLAYWRIGHT_RUN) {
+    if (!paused && !getEnv("PLAYWRIGHT_RUN")) {
       intervalRef.current = setInterval(onSlide, _timeout);
     }
   }, [onSlide, paused, timeout]);
