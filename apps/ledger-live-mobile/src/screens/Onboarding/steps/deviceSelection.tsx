@@ -8,6 +8,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { ArrowLeftMedium, HelpMedium } from "@ledgerhq/native-ui/assets/icons";
 import useFeature from "@ledgerhq/live-common/lib/featureFlags/useFeature";
+import { DeviceModelId } from "@ledgerhq/types-devices";
 
 import { TrackScreen } from "../../../analytics";
 import nanoSSvg from "../assets/nanoS";
@@ -18,10 +19,26 @@ import DiscoverCard from "../../Discover/DiscoverCard";
 import Illustration from "../../../images/illustration/Illustration";
 import setupLedgerImg from "../../../images/illustration/Shared/_SetupLedger.png";
 
-const nanoX = { SvgDevice: nanoXSvg, id: "nanoX", setupTime: 600000 };
-const nanoS = { SvgDevice: nanoSSvg, id: "nanoS", setupTime: 600000 };
-const nanoSP = { SvgDevice: nanoSPSvg, id: "nanoSP", setupTime: 600000 };
-const nanoFTS = { SvgDevice: nanoXSvg, id: "nanoFTS", setupTime: 300000 };
+const nanoX = {
+  SvgDevice: nanoXSvg,
+  id: DeviceModelId.nanoX,
+  setupTime: 600000,
+};
+const nanoS = {
+  SvgDevice: nanoSSvg,
+  id: DeviceModelId.nanoS,
+  setupTime: 600000,
+};
+const nanoSP = {
+  SvgDevice: nanoSPSvg,
+  id: DeviceModelId.nanoSP,
+  setupTime: 600000,
+};
+const nanoFTS = {
+  SvgDevice: nanoXSvg,
+  id: DeviceModelId.nanoFTS,
+  setupTime: 300000,
+};
 
 function OnboardingStepDeviceSelection() {
   const navigation = useNavigation();
@@ -36,7 +53,7 @@ function OnboardingStepDeviceSelection() {
     return [nanoX, nanoSP, nanoS];
   }, [syncOnboarding?.enabled]);
 
-  const getProductName = (modelId: string) =>
+  const getProductName = (modelId: DeviceModelId) =>
     getDeviceModel(modelId)?.productName || modelId;
 
   const handleBack = () => {
@@ -47,9 +64,9 @@ function OnboardingStepDeviceSelection() {
     // TODO
   };
 
-  const next = (deviceModelId: string) => {
-    // TODO: do better
-    if (deviceModelId === "nanoFTS") {
+  const next = (deviceModelId: DeviceModelId) => {
+    // Add NanoX.id, NanoSP.id etc, to the array when supported
+    if ([nanoFTS.id].includes(deviceModelId)) {
       // On pairing success, navigate to the Sync Onboarding Companion
       // navigation.pushe on stack navigation because with navigation.navigate
       // it could not go back to this screen in certain cases.
