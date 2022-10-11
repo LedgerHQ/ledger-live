@@ -193,7 +193,7 @@ export function formatReportForConsole<T extends Transaction>({
     if (mutationTime && errorTime) {
       str += `(totally spent ${formatTime(
         errorTime - mutationTime
-      )} – ends at ${new Date(mutationTime).toISOString()})`;
+      )} – ends at ${new Date().toISOString()})`;
     }
   }
 

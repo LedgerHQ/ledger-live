@@ -558,7 +558,11 @@ export async function runOnAccount<T extends Transaction>({
       } else {
         for (const k in status.warnings) {
           const e = status.warnings[k];
-          hintWarnings.push(`unexpected status.warnings.${k} = ${String(e)}`);
+          hintWarnings.push(
+            `unexpected status.warnings.${k} = ${String(
+              e
+            )} – Please implement expectStatusWarnings on the mutation if expected`
+          );
         }
       }
     }
