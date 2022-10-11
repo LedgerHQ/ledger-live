@@ -191,7 +191,9 @@ export function formatReportForConsole<T extends Transaction>({
   if (error) {
     str += `⚠️ ${formatError(error, true)}\n`;
     if (mutationTime && errorTime) {
-      str += `(totally spent ${formatTime(errorTime - mutationTime)})`;
+      str += `(totally spent ${formatTime(
+        errorTime - mutationTime
+      )} – ends at ${new Date(mutationTime).toISOString()})`;
     }
   }
 
