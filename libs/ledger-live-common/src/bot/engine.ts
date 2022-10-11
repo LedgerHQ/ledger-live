@@ -904,6 +904,7 @@ function transactionTest<T>({
   operation,
   optimisticOperation,
   account,
+  accountBeforeTransaction,
 }: TransactionTestInput<T>) {
   const dt = Date.now() - operation.date.getTime();
   const lowerThreshold = -60 * 1000; // -1mn accepted
@@ -944,5 +945,13 @@ function transactionTest<T>({
   );
   botTest("operation.fee must not be NaN", () =>
     expect(!operation.fee.isNaN()).toBe(true)
+  );
+
+  botTest(
+    "successful tx should increase by 1 the number of account.operations",
+    () =>
+      expect(account.operations.length).toBe(
+        accountBeforeTransaction.operations.length + 1
+      )
   );
 }
