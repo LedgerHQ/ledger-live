@@ -2,6 +2,13 @@
 
 # Ledger Live (desktop)
 
+## Are you adding support for a blockchain to Ledger Live?
+
+- See the developers’ documentation on the [Developer Portal](https://developers.ledger.com/docs/coin/general-process/) and
+- Go on [Discord](https://developers.ledger.com/discord-pro/) to chat with developer support and the developer community.
+
+## Intro
+
 - Related: [ledger-live-mobile](https://github.com/LedgerHQ/ledger-live/tree/develop/apps/ledger-live-mobile)
 - Backed by: [ledger-live-common](https://github.com/LedgerHQ/ledger-live/tree/develop/libs/ledger-live-common)
 
@@ -218,16 +225,5 @@ src
 ## Localization / Translations
 
 Translations from English to other languages are handled internally so it is not possible to directly contribute to them, however if you spot a bug (e.g. a wrong variable name) or any issue in translation files, feel free to report a bug to Ledger's support team and it will be taken care of.
-
----
-
-## Are you adding the support of a blockchain to Ledger Live?
-
-This part of the repository is where you will add the support of your blockchain for the desktop app.
-
-For a smooth and quick integration:
-
-- See the developers’ documentation on the [Developer Portal](https://developers.ledger.com/docs/coin/general-process/) and
-- Go on [Discord](https://developers.ledger.com/discord-pro/) to chat with developer support and the developer community.
 
 ---
