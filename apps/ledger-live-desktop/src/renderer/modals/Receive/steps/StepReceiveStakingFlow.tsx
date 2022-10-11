@@ -1,11 +1,12 @@
-// @flow
 import React, { useCallback, useState } from "react";
-import { getMainAccount } from "@ledgerhq/live-common/account/index";
-import { Flex, Text, Icons, Checkbox, Link } from "@ledgerhq/react-ui";
 import { useTranslation } from "react-i18next";
-import type { StepProps } from "../Body";
-import StakingIllustration from "../assets/StakingIllustration";
+
+import { Flex, Text, Icons, Checkbox, Link } from "@ledgerhq/react-ui";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+
+import { StepProps } from "../Body";
+import StakingIllustration from "../assets/StakingIllustration";
+
 import { openURL } from "~/renderer/linking";
 import { withV3StyleProvider } from "~/renderer/styles/StyleProviderV3";
 import Button from "~/renderer/components/ButtonV3";
@@ -14,7 +15,7 @@ import perFamilyManageActions from "~/renderer/generated/AccountHeaderManageActi
 const StepReceiveStakingFlow = (props: StepProps) => {
   const { t } = useTranslation();
   const receiveStakingFlowConfig = useFeature("receiveStakingFlowConfigDesktop");
-  const [doNotShowAgain, setDoNotShow] = useState(false);
+  const [doNotShowAgain, setDoNotShowAgain] = useState<boolean>(false);
   const { account } = props;
 
   const id = account.currency.id;
@@ -23,11 +24,10 @@ const StepReceiveStakingFlow = (props: StepProps) => {
   const openLink = useCallback(() => {
     openURL(supportLink);
   }, [supportLink]);
+
   const onChange = useCallback(() => {
-    console.log(doNotShowAgain);
-    setDoNotShow(!doNotShowAgain);
-  }, [doNotShowAgain]);
-  console.log(receiveStakingFlowConfig);
+    setDoNotShowAgain((state: boolean) => !state);
+  }, []);
 
   return (
     <Flex flexDirection="column" justifyContent="center" alignItems="center" px={10}>
@@ -57,7 +57,7 @@ const StepReceiveStakingFlow = (props: StepProps) => {
 
 export const StepReceiveStakingFooter = (props: StepProps) => {
   const { t } = useTranslation();
-  const { account, parentAccount, onClose } = props;
+  const { account, parentAccount, closeModal } = props;
   const manage = perFamilyManageActions[account.currency.family];
 
   const familyManageActions = manage && manage({ account, parentAccount });
@@ -65,17 +65,18 @@ export const StepReceiveStakingFooter = (props: StepProps) => {
   const onStake = useCallback(() => {
     const manageList =
       familyManageActions && familyManageActions.length > 0 ? familyManageActions : [];
-    const action = manageList && manageList.find((item) => item.key === "Stake");
+    const action = manageList && manageList.find(item => item.key === "Stake");
     if (action?.onClick) {
-      onClose();
+      closeModal();
       action.onClick();
     } else {
       // @TODO: redirect support link
+      closeModal();
     }
-  }, [familyManageActions, onClose]);
+  }, [familyManageActions, closeModal]);
   return (
     <>
-      <Button onClick={onClose}>{t("receive.steps.staking.footer.dismiss")}</Button>
+      <Button onClick={closeModal}>{t("receive.steps.staking.footer.dismiss")}</Button>
       <Button variant="color" onClick={onStake}>
         {t("receive.steps.staking.footer.stake", { provider: "Ledger" })}
       </Button>
