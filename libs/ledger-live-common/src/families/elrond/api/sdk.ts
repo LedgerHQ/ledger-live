@@ -19,6 +19,8 @@ import {
   Account as ErdjsAccount,
   Address,
   GasLimit,
+  GasPrice,
+  GasPriceModifier,
   NetworkConfig,
   Nonce,
   ProxyProvider,
@@ -26,7 +28,13 @@ import {
   TransactionPayload,
 } from "@elrondnetwork/erdjs/out";
 import { BinaryUtils } from "../utils/binary.utils";
-import { ELROND_STAKING_POOL } from "../constants";
+import {
+  ELROND_STAKING_POOL,
+  GAS_PER_DATA_BYTE,
+  GAS_PRICE,
+  GAS_PRICE_MODIFIER,
+  MIN_GAS_LIMIT,
+} from "../constants";
 const api = new ElrondApi(
   getEnv("ELROND_API_ENDPOINT"),
   getEnv("ELROND_DELEGATION_API_ENDPOINT")
@@ -284,16 +292,20 @@ export const getAccountESDTOperations = async (
  * Obtain fees from blockchain
  */
 export const getFees = async (t: Transaction): Promise<BigNumber> => {
-  await NetworkConfig.getDefault().sync(proxy);
-
   const transaction = new ElrondSdkTransaction({
-    data: new TransactionPayload(t.data),
+    data: TransactionPayload.fromEncoded(t.data?.trim()),
     receiver: new Address(t.recipient),
     chainID: NetworkConfig.getDefault().ChainID,
+    gasPrice: new GasPrice(GAS_PRICE),
     gasLimit: new GasLimit(t.gasLimit),
   });
 
-  const feesStr = transaction.computeFee(NetworkConfig.getDefault()).toFixed();
+  const networkConfig = new NetworkConfig();
+  networkConfig.MinGasLimit = new GasLimit(MIN_GAS_LIMIT);
+  networkConfig.GasPerDataByte = GAS_PER_DATA_BYTE;
+  networkConfig.GasPriceModifier = new GasPriceModifier(GAS_PRICE_MODIFIER);
+
+  const feesStr = transaction.computeFee(networkConfig).toFixed();
 
   return new BigNumber(feesStr);
 };
