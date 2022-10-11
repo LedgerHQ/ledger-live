@@ -1,7 +1,15 @@
-name: "Bot Super Report"
+name: "Bot Super Report (custom)"
 on:
-  schedule:
-    - cron: "0 14 * * 5"
+  workflow_dispatch:
+    inputs:
+      branch:
+        description: the branch to filter (if any)
+      environment:
+        description: the environment to filter (if any)
+      days:
+        description: number of days to take
+      slackChannel:
+        description: channel to use for the report
 
 jobs:
   main:
@@ -22,8 +30,9 @@ jobs:
       - name: generate super report
         uses: ledgerhq/ledger-live/tools/actions/generate-bot-super-report@develop
         with:
-          branch: develop
-          environment: production
-          days: 7
+          branch: ${{github.event.inputs.branch}}
+          environment: ${{github.event.inputs.environment}}
+          days: ${{github.event.inputs.days}}
+          slackChannel: ${{github.event.inputs.slackChannel}}
           githubToken: ${{github.token}}
           slackApiToken: ${{secrets.SLACK_API_TOKEN}}
