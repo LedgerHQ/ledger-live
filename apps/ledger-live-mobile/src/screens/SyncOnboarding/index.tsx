@@ -38,7 +38,7 @@ import {
   setLastConnectedDevice,
   setReadOnlyMode,
 } from "../../actions/settings";
-import SyncOnboardingView from "./SyncOnboardingView";
+import DeviceSetupView from "../../components/DeviceSetupView";
 
 type StepStatus = "completed" | "active" | "inactive";
 
@@ -408,10 +408,7 @@ export const SyncOnboarding = ({
   }, [companionStepKey, defaultCompanionSteps, handleDeviceReady]);
 
   return (
-    <SyncOnboardingView
-      noPadding
-      noScroll
-      hasCloseButton
+    <DeviceSetupView
       onClose={handleClose}
       renderLeft={() => (
         <LanguageSelect device={device} productName={productName} />
@@ -451,6 +448,6 @@ export const SyncOnboarding = ({
           />
         </ScrollContainer>
       </Flex>
-    </SyncOnboardingView>
+    </DeviceSetupView>
   );
 };

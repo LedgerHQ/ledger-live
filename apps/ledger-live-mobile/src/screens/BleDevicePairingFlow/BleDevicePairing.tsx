@@ -12,7 +12,7 @@ import {
 
 import Animation from "../../components/Animation";
 import { getDeviceAnimation } from "../../helpers/getDeviceAnimation";
-import SyncOnboardingView from "../SyncOnboarding/SyncOnboardingView";
+import DeviceSetupView from "../../components/DeviceSetupView";
 
 const TIMEOUT_AFTER_PAIRED_MS = 2000;
 
@@ -132,10 +132,16 @@ export const BleDevicePairing = ({
   }
 
   return (
-    <SyncOnboardingView hasCloseButton noScroll onClose={handleClose}>
-      <Flex flex={1} px={8} pt={36} justifyContent="center" alignItems="center">
+    <DeviceSetupView onClose={handleClose}>
+      <Flex
+        flex={1}
+        px={10}
+        pt={36}
+        justifyContent="center"
+        alignItems="center"
+      >
         {content}
       </Flex>
-    </SyncOnboardingView>
+    </DeviceSetupView>
   );
 };

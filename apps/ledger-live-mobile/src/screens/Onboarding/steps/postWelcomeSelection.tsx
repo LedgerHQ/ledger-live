@@ -1,16 +1,17 @@
 import React, { useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { RouteProp, useNavigation } from "@react-navigation/native";
-import { Text } from "@ledgerhq/native-ui";
+import { Text, ScrollListContainer } from "@ledgerhq/native-ui";
 import { useDispatch } from "react-redux";
 import { ImageSourcePropType } from "react-native";
+
 import { TrackScreen } from "../../../analytics";
 import { NavigatorName, ScreenName } from "../../../const";
 import StyledStatusBar from "../../../components/StyledStatusBar";
 import Illustration from "../../../images/illustration/Illustration";
 import DiscoverCard from "../../Discover/DiscoverCard";
 import { setHasOrderedNano } from "../../../actions/settings";
-import SyncOnboardingView from "../../SyncOnboarding/SyncOnboardingView";
+import DeviceSetupView from "../../../components/DeviceSetupView";
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const setupLedgerImg = require("../../../images/illustration/Shared/_SetupLedger.png");
@@ -96,74 +97,76 @@ function PostWelcomeSelection({
   }, [navigation]);
 
   return (
-    <SyncOnboardingView hasBackButton>
-      <TrackScreen
-        category="Onboarding"
-        name={userHasDevice ? "Choice With Device" : "Choice No Device"}
-      />
-      <TrackScreen category="Onboarding" name="SelectDevice" />
-      <Text variant="h4" fontWeight="semiBold" mb={3}>
-        {t("onboarding.postWelcomeStep.title")}
-      </Text>
-      <Text variant="large" color="neutral.c70" mb={8}>
-        {t(
-          userHasDevice
-            ? "onboarding.postWelcomeStep.subtitle_yes"
-            : "onboarding.postWelcomeStep.subtitle_no",
+    <DeviceSetupView hasBackButton>
+      <ScrollListContainer flex={1} px={6}>
+        <TrackScreen
+          category="Onboarding"
+          name={userHasDevice ? "Choice With Device" : "Choice No Device"}
+        />
+        <TrackScreen category="Onboarding" name="SelectDevice" />
+        <Text variant="h4" fontWeight="semiBold" mb={3}>
+          {t("onboarding.postWelcomeStep.title")}
+        </Text>
+        <Text variant="large" color="neutral.c70" mb={8}>
+          {t(
+            userHasDevice
+              ? "onboarding.postWelcomeStep.subtitle_yes"
+              : "onboarding.postWelcomeStep.subtitle_no",
+          )}
+        </Text>
+        <StyledStatusBar barStyle="dark-content" />
+        {userHasDevice && (
+          <PostWelcomeDiscoverCard
+            title={t("onboarding.postWelcomeStep.setupLedger.title")}
+            subTitle={t("onboarding.postWelcomeStep.setupLedger.subtitle")}
+            event="banner_clicked"
+            eventProperties={{
+              banner: "Setup my Ledger",
+            }}
+            testID={`Onboarding PostWelcome - Selection|SetupLedger`}
+            onPress={setupLedger}
+            imageSource={setupLedgerImg}
+          />
         )}
-      </Text>
-      <StyledStatusBar barStyle="dark-content" />
-      {userHasDevice && (
         <PostWelcomeDiscoverCard
-          title={t("onboarding.postWelcomeStep.setupLedger.title")}
-          subTitle={t("onboarding.postWelcomeStep.setupLedger.subtitle")}
+          title={t("onboarding.postWelcomeStep.discoverLedger.title")}
+          subTitle={t("onboarding.postWelcomeStep.discoverLedger.subtitle")}
           event="banner_clicked"
           eventProperties={{
-            banner: "Setup my Ledger",
+            banner: "Explore LL",
           }}
-          testID={`Onboarding PostWelcome - Selection|SetupLedger`}
-          onPress={setupLedger}
-          imageSource={setupLedgerImg}
+          testID={`Onboarding PostWelcome - Selection|ExploreLedger`}
+          onPress={exploreLedger}
+          imageSource={discoverLiveImg}
         />
-      )}
-      <PostWelcomeDiscoverCard
-        title={t("onboarding.postWelcomeStep.discoverLedger.title")}
-        subTitle={t("onboarding.postWelcomeStep.discoverLedger.subtitle")}
-        event="banner_clicked"
-        eventProperties={{
-          banner: "Explore LL",
-        }}
-        testID={`Onboarding PostWelcome - Selection|ExploreLedger`}
-        onPress={exploreLedger}
-        imageSource={discoverLiveImg}
-      />
-      {userHasDevice && (
-        <PostWelcomeDiscoverCard
-          title={t("onboarding.postWelcomeStep.desktopSync.title")}
-          subTitle={t("onboarding.postWelcomeStep.desktopSync.subtitle")}
-          event="banner_clicked"
-          eventProperties={{
-            banner: "Sync Cryptos",
-          }}
-          testID={`Onboarding PostWelcome - Selection|SyncCryptos`}
-          onPress={syncCryptos}
-          imageSource={syncCryptoImg}
-        />
-      )}
-      {!userHasDevice && (
-        <PostWelcomeDiscoverCard
-          title={t("onboarding.postWelcomeStep.buyNano.title")}
-          subTitle={t("onboarding.postWelcomeStep.buyNano.subtitle")}
-          event="banner_clicked"
-          eventProperties={{
-            banner: "Buy a Nano X",
-          }}
-          testID={`Onboarding PostWelcome - Selection|BuyNano`}
-          onPress={buyLedger}
-          imageSource={buyNanoImg}
-        />
-      )}
-    </SyncOnboardingView>
+        {userHasDevice && (
+          <PostWelcomeDiscoverCard
+            title={t("onboarding.postWelcomeStep.desktopSync.title")}
+            subTitle={t("onboarding.postWelcomeStep.desktopSync.subtitle")}
+            event="banner_clicked"
+            eventProperties={{
+              banner: "Sync Cryptos",
+            }}
+            testID={`Onboarding PostWelcome - Selection|SyncCryptos`}
+            onPress={syncCryptos}
+            imageSource={syncCryptoImg}
+          />
+        )}
+        {!userHasDevice && (
+          <PostWelcomeDiscoverCard
+            title={t("onboarding.postWelcomeStep.buyNano.title")}
+            subTitle={t("onboarding.postWelcomeStep.buyNano.subtitle")}
+            event="banner_clicked"
+            eventProperties={{
+              banner: "Buy a Nano X",
+            }}
+            testID={`Onboarding PostWelcome - Selection|BuyNano`}
+            onPress={buyLedger}
+            imageSource={buyNanoImg}
+          />
+        )}
+      </ScrollListContainer>
+    </DeviceSetupView>
   );
 }
 
