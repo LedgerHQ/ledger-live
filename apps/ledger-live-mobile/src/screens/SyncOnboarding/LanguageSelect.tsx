@@ -13,6 +13,8 @@ import {
   ChevronBottomMedium,
 } from "@ledgerhq/native-ui/assets/icons";
 import styled from "styled-components/native";
+import { useAvailableLanguagesForDevice } from "@ledgerhq/live-common/lib/manager/hooks";
+import { Device } from "@ledgerhq/types-devices";
 
 import { useTranslation } from "react-i18next";
 import { setLanguage } from "../../actions/settings";
@@ -34,6 +36,7 @@ type LanguageSelectStatus =
   | "completed";
 
 export type Props = {
+  device: Device;
   productName: string;
 };
 
@@ -41,13 +44,12 @@ const ScrollViewContainer = styled(ScrollView)`
   height: 100%;
 `;
 
-// TODO: remove this when there's a real equivalent
-const firmwareSupportedLocales = ["en", "fr", "es"];
-
-const LanguageSelect = ({ productName }: Props) => {
+const LanguageSelect = ({ device, productName }: Props) => {
   const { t } = useTranslation();
   const { locale: currentLocale } = useLocale();
   const dispatch = useDispatch();
+  const { availableLanguages: firmwareAvailableLanguages, loaded } =
+    useAvailableLanguagesForDevice(device);
 
   const [currentDisplayedDrawer, setCurrentDisplayedDrawer] =
     useState<UiDrawerStatus>("none");
@@ -68,15 +70,18 @@ const LanguageSelect = ({ productName }: Props) => {
     }
   }, [dispatch, selectedLanguage]);
 
-  const handleLanguageSelectOnChange = useCallback(language => {
-    setSelectedLanguage(language);
+  const handleLanguageSelectOnChange = useCallback(
+    language => {
+      setSelectedLanguage(language);
 
-    if (firmwareSupportedLocales.includes(language)) {
-      setLanguageSelectStatus("firmware-language-update-requested");
-    } else {
-      setLanguageSelectStatus("completed");
-    }
-  }, []);
+      if (loaded && firmwareAvailableLanguages.includes(language)) {
+        setLanguageSelectStatus("firmware-language-update-requested");
+      } else {
+        setLanguageSelectStatus("completed");
+      }
+    },
+    [firmwareAvailableLanguages, loaded],
+  );
 
   const handleLanguageSelectOnPress = useCallback(() => {
     setLanguageSelectStatus("language-selection-requested");

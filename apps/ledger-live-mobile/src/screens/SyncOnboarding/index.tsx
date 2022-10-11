@@ -412,7 +412,7 @@ export const SyncOnboarding = ({
           px={6}
           pb={5}
         >
-          <LanguageSelect productName={productName} />
+          <LanguageSelect device={device} productName={productName} />
           <TouchableOpacity onPress={handleClose}>
             <CloseMedium size={24} />
           </TouchableOpacity>
