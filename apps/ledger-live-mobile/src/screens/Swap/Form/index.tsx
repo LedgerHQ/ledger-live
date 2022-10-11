@@ -24,13 +24,16 @@ import {
   flattenAccounts,
   accountWithMandatoryTokens,
 } from "@ledgerhq/live-common/account/index";
+import { getSwapSelectableCurrencies } from "@ledgerhq/live-common/lib/exchange/swap/logic";
 import { shallowAccountsSelector } from "../../../reducers/accounts";
 import {
   swapAcceptedProvidersSelector,
   swapKYCSelector,
 } from "../../../reducers/settings";
-import { setSwapKYCStatus, setSwapSelectableCurrencies } from "../../../actions/settings";
-import { getSwapSelectableCurrencies } from "@ledgerhq/live-common/lib/exchange/swap/logic";
+import {
+  setSwapKYCStatus,
+  setSwapSelectableCurrencies,
+} from "../../../actions/settings";
 import {
   providersSelector,
   rateSelector,
@@ -60,9 +63,11 @@ export const useProviders = () => {
 
   useEffect(() => {
     if (providers) {
-      dispatch(updateProvidersAction(providers))
-      dispatch(setSwapSelectableCurrencies(getSwapSelectableCurrencies(providers)))
-    };
+      dispatch(updateProvidersAction(providers));
+      dispatch(
+        setSwapSelectableCurrencies(getSwapSelectableCurrencies(providers)),
+      );
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [providers]);
 
