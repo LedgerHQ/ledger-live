@@ -19,20 +19,9 @@ test("PostOnboarding", async ({ page }) => {
     await expect(page).toHaveScreenshot("postonboarding-screen.png");
   });
 
-  await test.step("start first mocked action from postonboarding screen", async () => {
-    await postOnboarding.startFirstMockedAction();
-    await expect(page).toHaveScreenshot("postonboarding-first-mocked-action.png");
-    //await onboardingPage.pedagogyModal.waitFor({ state: "visible" });
-  });
-
-  await test.step("go back to postonboarding hub in drawer", async () => {
-    await postOnboarding.goToHub();
-    await expect(page).toHaveScreenshot("postonboarding-hub-inside-drawer-1-action-completed.png");
-  });
-
-  await test.step("start second mocked action from postonboarding drawer", async () => {
-    await postOnboarding.startSecondMockedAction();
-    await expect(page).toHaveScreenshot("postonboarding-second-mocked-action.png");
+  await test.step("start claim mocked action from postonboarding screen", async () => {
+    await postOnboarding.startClaimMock();
+    await expect(page).toHaveScreenshot("postonboarding-claim-mocked-action.png");
   });
 
   await test.step("go back to dashboard", async () => {
@@ -42,19 +31,17 @@ test("PostOnboarding", async ({ page }) => {
 
   await test.step("go back to hub from dashboard banner", async () => {
     await postOnboarding.goPostOnboardingHubFromDashboardBanner();
-    await expect(page).toHaveScreenshot("postonboarding-hub-inside-drawer-2-action-completed.png");
+    await expect(page).toHaveScreenshot("postonboarding-hub-inside-drawer-1-action-completed.png");
   });
 
-  await test.step("skip postonboarding hub and go back to it", async () => {
-    await postOnboarding.skipPostOnboardingHub();
-    await postOnboarding.goPostOnboardingHubFromDashboardBanner();
-    await expect(page).toHaveScreenshot("postonboarding-hub-inside-drawer-2-action-completed.png");
+  await test.step("start migrate assets mocked action from postonboarding drawer", async () => {
+    await postOnboarding.startMigrateAssetsMock();
+    await expect(page).toHaveScreenshot("postonboarding-migrate-assets-mocked-action.png");
   });
 
-  await test.step("do the third post onboarding action", async () => {
-    await postOnboarding.startThirdMockedAction();
+  await test.step("go back to postonboarding hub in drawer", async () => {
     await postOnboarding.goToHub();
-    await expect(page).toHaveScreenshot("postonboarding-hub-inside-drawer-3-action-completed.png");
+    await expect(page).toHaveScreenshot("postonboarding-hub-inside-drawer-2-actions-completed.png");
   });
 
   await test.step("close post onboarding drawer", async () => {

@@ -15,6 +15,7 @@ const ActionRowWrapper = styled(Flex)<{ completed: boolean }>`
 
 const PostOnboardingActionRow: React.FC<Props> = props => {
   const {
+    id,
     navigationParams,
     Icon,
     title,
@@ -50,6 +51,7 @@ const PostOnboardingActionRow: React.FC<Props> = props => {
 
   return (
     <ActionRowWrapper
+      data-test-id={`postonboarding-action-row-${id}`}
       flexDirection="row"
       alignItems="center"
       backgroundColor="neutral.c30"

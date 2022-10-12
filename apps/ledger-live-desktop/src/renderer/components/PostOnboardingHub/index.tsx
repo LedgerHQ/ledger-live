@@ -12,10 +12,7 @@ const PostOnboardingHub = () => {
     () =>
       actionsState.map((action, index, arr) => (
         <React.Fragment key={index}>
-          <PostOnboardingActionRow
-            {...action}
-            data-test-id={`postonboarding-action-row-${index}`}
-          />
+          <PostOnboardingActionRow {...action} />
         </React.Fragment>
       )),
     [actionsState],
