@@ -1,5 +1,11 @@
 # ledger-live-desktop
 
+## 2.49.0-next.5
+
+### Patch Changes
+
+- [#1559](https://github.com/LedgerHQ/ledger-live/pull/1559) [`a6fdb5420f`](https://github.com/LedgerHQ/ledger-live/commit/a6fdb5420f56ee63a36254987ab93e3741984889) Thanks [@ledgerlive](https://github.com/ledgerlive)! - Update translation
+
 ## 2.49.0-next.4
 
 ### Minor Changes
