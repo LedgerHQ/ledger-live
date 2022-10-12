@@ -4,25 +4,26 @@ import Text from "~/renderer/components/Text";
 import DeviceLanguageInstallation from "./DeviceLanguageInstallation";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { idsToLanguage, Language, DeviceInfo } from "@ledgerhq/types-live";
+import { track } from "~/renderer/analytics/segment";
 import { useTranslation } from "react-i18next";
 import { withV3StyleProvider } from "~/renderer/styles/StyleProviderV3";
 
 type Props = {
   // this makes sure that this component is only rendered if languageId is present in deviceInfo
   deviceInfo: DeviceInfo & { languageId: number };
+  onRefreshDeviceInfo: () => void;
   device: Device;
 };
 
-const DeviceLanguage: React.FC<Props> = ({ deviceInfo, device }: Props) => {
+const DeviceLanguage: React.FC<Props> = ({ deviceInfo, device, onRefreshDeviceInfo }: Props) => {
+  const deviceLanguage = idsToLanguage[deviceInfo.languageId];
   const [isLanguageInstallationOpen, setIsLanguageInstallation] = useState(false);
-  const [deviceLanguage, setDeviceLanguage] = useState<Language>(
-    idsToLanguage[deviceInfo.languageId],
-  );
   const [selectedLanguage, setSelectedLanguage] = useState<Language>(deviceLanguage);
 
-  const refreshDeviceLanguage = useCallback(() => {
-    setDeviceLanguage(selectedLanguage);
-  }, [setDeviceLanguage, selectedLanguage]);
+  const openLanguageInstallation = useCallback(() => {
+    setIsLanguageInstallation(true);
+    track("Page Manager ChangeLanguageEntered");
+  }, []);
 
   const { t } = useTranslation();
 
@@ -37,7 +38,7 @@ const DeviceLanguage: React.FC<Props> = ({ deviceInfo, device }: Props) => {
       <Link
         type="main"
         Icon={Icons.ChevronRightMedium}
-        onClick={() => setIsLanguageInstallation(true)}
+        onClick={openLanguageInstallation}
         data-test-id="manager-change-language-button"
       >
         {t(`deviceLocalization.languages.${deviceLanguage}`)}
@@ -47,10 +48,17 @@ const DeviceLanguage: React.FC<Props> = ({ deviceInfo, device }: Props) => {
         onClose={() => setIsLanguageInstallation(false)}
         deviceInfo={deviceInfo}
         device={device}
+        onError={(error: Error) => {
+          track("Page Manager LanguageInstallError", { error });
+          onRefreshDeviceInfo();
+        }}
         onSelectLanguage={setSelectedLanguage}
         selectedLanguage={selectedLanguage}
         currentLanguage={deviceLanguage}
-        onSuccess={refreshDeviceLanguage}
+        onSuccess={() => {
+          track("Page Manager LanguageInstalled", { selectedLanguage });
+          onRefreshDeviceInfo();
+        }}
       />
     </Flex>
   );

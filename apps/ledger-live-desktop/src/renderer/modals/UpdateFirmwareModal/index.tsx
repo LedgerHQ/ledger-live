@@ -1,58 +1,66 @@
-// @flow
 import React, { useState, useCallback, useMemo, useEffect } from "react";
-import { useTranslation } from "react-i18next";
-import type { TFunction } from "react-i18next";
+import { useTranslation, TFunction } from "react-i18next";
 import { log } from "@ledgerhq/logs";
-import type { DeviceModelId } from "@ledgerhq/devices";
+import { DeviceModelId } from "@ledgerhq/devices";
 import { UserRefusedFirmwareUpdate } from "@ledgerhq/errors";
-import type { DeviceInfo, FirmwareUpdateContext } from "@ledgerhq/types-live";
-import type { Device } from "@ledgerhq/live-common/hw/actions/types";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { DeviceInfo, FirmwareUpdateContext } from "@ledgerhq/types-live";
+import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { hasFinalFirmware } from "@ledgerhq/live-common/hw/hasFinalFirmware";
 import logger from "~/logger";
 import Modal from "~/renderer/components/Modal";
-import Stepper from "~/renderer/components/Stepper";
-import type { Step as TypedStep } from "~/renderer/components/Stepper";
-import type { ModalStatus } from "~/renderer/screens/manager/FirmwareUpdate/types";
+import Stepper, { Step as TypedStep } from "~/renderer/components/Stepper";
+import { ModalStatus } from "~/renderer/screens/manager/FirmwareUpdate/types";
 import StepResetDevice, { StepResetFooter } from "./steps/00-step-reset-device";
 import StepFullFirmwareInstall from "./steps/01-step-install-full-firmware";
 import StepFlashMcu from "./steps/02-step-flash-mcu";
+import StepDeviceLanguage from "./steps/02-step-device-language";
 import StepUpdating from "./steps/02-step-updating";
+import { isDeviceLocalizationSupported } from "@ledgerhq/live-common/manager/localization";
 import StepConfirmation, { StepConfirmFooter } from "./steps/03-step-confirmation";
 
-type MaybeError = ?Error;
+type MaybeError = Error | undefined | null;
 
 export type StepProps = {
-  firmware: FirmwareUpdateContext,
-  appsToBeReinstalled: boolean,
-  onCloseModal: (proceedToAppReinstall?: boolean) => void,
-  error: ?Error,
-  setError: Error => void,
-  device: Device,
-  deviceModelId: DeviceModelId,
-  deviceInfo: DeviceInfo,
-  t: TFunction,
-  transitionTo: string => void,
-  onRetry: () => void,
+  firmware: FirmwareUpdateContext;
+  appsToBeReinstalled: boolean;
+  onCloseModal: (proceedToAppReinstall?: boolean) => void;
+  error?: Error;
+  setError: (e: Error) => void;
+  device: Device;
+  deviceModelId: DeviceModelId;
+  deviceInfo: DeviceInfo;
+  updatedDeviceInfo?: DeviceInfo;
+  setUpdatedDeviceInfo: (d: DeviceInfo) => void;
+  t: TFunction;
+  transitionTo: (step: StepId) => void;
+  onRetry: () => void;
 };
 
-export type StepId = "idCheck" | "updateMCU" | "updating" | "finish" | "resetDevice";
+export type StepId =
+  | "idCheck"
+  | "updateMCU"
+  | "updating"
+  | "finish"
+  | "resetDevice"
+  | "deviceLanguage";
 
 type Step = TypedStep<StepId, StepProps>;
 
 type Props = {
-  withResetStep: boolean,
-  withAppsToReinstall: boolean,
-  status: ModalStatus,
-  onClose: (proceedToAppReinstall?: boolean) => void,
-  firmware: ?FirmwareUpdateContext,
-  stepId: StepId,
-  error: ?Error,
-  deviceModelId: DeviceModelId,
-  deviceInfo: DeviceInfo,
-  setFirmwareUpdateOpened: boolean => void,
+  withResetStep: boolean;
+  withAppsToReinstall: boolean;
+  status: ModalStatus;
+  onClose: (proceedToAppReinstall?: boolean) => void;
+  firmware?: FirmwareUpdateContext;
+  stepId: StepId;
+  error?: Error;
+  deviceModelId: DeviceModelId;
+  deviceInfo: DeviceInfo;
+  setFirmwareUpdateOpened: (isOpen: boolean) => void;
 };
 
-const HookMountUnmount = ({ onMountUnmount }: { onMountUnmount: boolean => void }) => {
+const HookMountUnmount = ({ onMountUnmount }: { onMountUnmount: (m: boolean) => void }) => {
   useEffect(() => {
     onMountUnmount(true);
     return () => onMountUnmount(false);
@@ -74,13 +82,15 @@ const UpdateModal = ({
 }: Props) => {
   const [stateStepId, setStateStepId] = useState<StepId>(stepId);
   const [err, setErr] = useState<MaybeError>(error || null);
+  const [updatedDeviceInfo, setUpdatedDeviceInfo] = useState<DeviceInfo | undefined>(undefined);
   const [nonce, setNonce] = useState(0);
   const { t } = useTranslation();
   const withFinal = useMemo(() => hasFinalFirmware(firmware?.final), [firmware]);
+  const deviceLocalizationFeatureFlag = useFeature("deviceLocalization");
 
   const createSteps = useCallback(
     ({ withResetStep }: { withResetStep: boolean }) => {
-      const updateStep = {
+      const updateStep: Step = {
         id: "idCheck",
         label: firmware?.osu?.hash ? t("manager.modal.identifier") : t("manager.modal.preparation"),
         component: StepFullFirmwareInstall,
@@ -88,7 +98,7 @@ const UpdateModal = ({
         hideFooter: true,
       };
 
-      const finalStep = {
+      const finalStep: Step = {
         id: "finish",
         label: t("addAccounts.breadcrumb.finish"),
         component: StepConfirmation,
@@ -97,7 +107,7 @@ const UpdateModal = ({
         hideFooter: false,
       };
 
-      const mcuStep = {
+      const mcuStep: Step = {
         id: "updateMCU",
         label: t("manager.modal.steps.updateMCU"),
         component: StepFlashMcu,
@@ -105,7 +115,15 @@ const UpdateModal = ({
         hideFooter: true,
       };
 
-      const updatingStep = {
+      const deviceLanguageStep: Step = {
+        id: "deviceLanguage",
+        label: t("deviceLocalization.deviceLanguage"),
+        component: StepDeviceLanguage,
+        onBack: null,
+        hideFooter: true,
+      };
+
+      const updatingStep: Step = {
         id: "updating",
         label: t("manager.modal.steps.updating"),
         component: StepUpdating,
@@ -113,7 +131,7 @@ const UpdateModal = ({
         hideFooter: true,
       };
 
-      const resetStep = {
+      const resetStep: Step = {
         id: "resetDevice",
         label: t("manager.modal.steps.reset"),
         component: StepResetDevice,
@@ -122,7 +140,7 @@ const UpdateModal = ({
         hideFooter: false,
       };
 
-      const steps = [];
+      const steps: Step[] = [];
       if (withResetStep) {
         steps.push(resetStep);
       }
@@ -132,10 +150,19 @@ const UpdateModal = ({
       } else {
         steps.push(updatingStep);
       }
+
+      if (
+        firmware &&
+        isDeviceLocalizationSupported(firmware.final.name, deviceModelId) &&
+        deviceLocalizationFeatureFlag?.enabled
+      ) {
+        steps.push(deviceLanguageStep);
+      }
+
       steps.push(finalStep);
       return steps;
     },
-    [t, firmware, withFinal],
+    [t, firmware, withFinal, deviceModelId, deviceLocalizationFeatureFlag],
   );
 
   const steps = useMemo(() => createSteps({ withResetStep }), [createSteps, withResetStep]);
@@ -174,6 +201,8 @@ const UpdateModal = ({
     onCloseModal: onClose,
     setError,
     firmware,
+    updatedDeviceInfo,
+    setUpdatedDeviceInfo,
     error: err,
     deviceModelId,
     onRetry: handleReset,

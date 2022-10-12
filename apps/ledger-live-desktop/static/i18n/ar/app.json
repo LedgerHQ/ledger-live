@@ -2028,10 +2028,20 @@
   },
   "deviceLocalization" : {
     "language" : "اللغة",
-    "deviceLanguage" : "لغة الجهاز",
+    "deviceLanguage" : "اللغة",
     "changeLanguage" : "تغيير اللغة",
+    "changeDeviceLanguage" : "هل تريد تغير لغة جهازك؟",
+    "chooseLanguage" : "اختر لغة لجهازك {{deviceName}}.",
+    "changeDeviceLanguagePrompt" : {
+      "title" : "{{language}} متاحة أيضاً لجهازك {{deviceName}}",
+      "description" : "هل ترغب في تغيير لغته إلى {{language}}؟"
+    },
+    "firmwareUpdatePrompt" : {
+      "title" : "تعيين {{deviceName}} خاصتك باللغة {{language}}؟",
+      "description" : "اللغة {{language}} متاحة الآن لجهازك {{deviceName}}. يمكنك تعيينها الآن، أو تغيير لغة جهازك في أي وقت من My Ledger."
+    },
     "allowLanguageInstallation" : "اسمح بتثبيت اللغة",
-    "languageInstalled" : "تم تغيير اللغة بنجاح",
+    "languageInstalled" : "تم تغيير اللغة إلى {{language}}",
     "installingLanguage" : "جاري تثبيت اللغة",
     "languages" : {
       "english" : "English",

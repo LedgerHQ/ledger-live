@@ -22,6 +22,7 @@ export type Step<T, StepProps> = {
   onBack?: ?(StepProps) => void,
   backButtonComponent?: React$Node,
   noScroll?: boolean,
+  hideFooter?: boolean,
 };
 
 type Props<T, StepProps> = {
