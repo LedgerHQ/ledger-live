@@ -1,7 +1,7 @@
 import React, { useCallback, useMemo } from "react";
 import { Trans } from "react-i18next";
 import { useDispatch } from "react-redux";
-import { Device } from "@ledgerhq/live-common/lib/hw/actions/types";
+import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { disconnect } from "@ledgerhq/live-common/hw/index";
 import { useTheme } from "styled-components/native";
 import { Flex } from "@ledgerhq/native-ui";
