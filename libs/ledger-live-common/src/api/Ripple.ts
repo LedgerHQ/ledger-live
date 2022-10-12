@@ -2,6 +2,8 @@ import { BigNumber } from "bignumber.js";
 import { getEnv } from "../env";
 import network from "../network";
 import { parseCurrencyUnit, getCryptoCurrencyById } from "../currencies";
+import { retry } from "../promise";
+import { NEW_ACCOUNT_ERROR_MESSAGE } from "../families/ripple/bridge/js";
 
 const defaultEndpoint = () => getEnv("API_RIPPLE_RPC");
 
@@ -47,74 +49,117 @@ export const getAccountInfo = async (
   recipient: string,
   current?: boolean
 ): Promise<AccountInfo> => {
-  const res = await network({
-    method: "POST",
-    url: `${defaultEndpoint()}`,
-    data: {
-      method: "account_info",
-      params: [
-        {
-          account: recipient,
-          ledger_index: current ? "current" : "validated",
-        },
-      ],
-    },
+  const res = async () => {
+    const res = await network({
+      method: "POST",
+      url: `${defaultEndpoint()}`,
+      data: {
+        method: "account_info",
+        params: [
+          {
+            account: recipient,
+            ledger_index: current ? "current" : "validated",
+          },
+        ],
+      },
+    });
+    if (
+      res.data.result.status !== "success" &&
+      res.data.result.error !== NEW_ACCOUNT_ERROR_MESSAGE
+    ) {
+      throw new Error(`couldn't fetch account info ${recipient}`);
+    }
+
+    return res.data.result;
+  };
+
+  return retry(() => res(), {
+    maxRetry: getEnv("GET_CALLS_RETRY"),
   });
-  return res.data.result;
 };
 
 export const getServerInfo = async (
   endpointConfig?: string | null | undefined
 ): Promise<any> => {
-  const res = await network({
-    method: "POST",
-    url: endpointConfig ?? `${defaultEndpoint()}`,
-    data: {
-      method: "server_info",
-      params: [
-        {
-          ledger_index: "validated",
-        },
-      ],
-    },
-  });
+  const res = async () => {
+    const res = await network({
+      method: "POST",
+      url: endpointConfig ?? `${defaultEndpoint()}`,
+      data: {
+        method: "server_info",
+        params: [
+          {
+            ledger_index: "validated",
+          },
+        ],
+      },
+    });
 
-  return res.data.result;
+    if (res.data.result.status !== "success") {
+      throw new Error(`couldn't fetch server info`);
+    }
+
+    return res.data.result;
+  };
+
+  return retry(() => res(), {
+    maxRetry: getEnv("GET_CALLS_RETRY"),
+  });
 };
 
 export const getTransactions = async (
   address: string,
   options: any | undefined
 ): Promise<any> => {
-  const res = await network({
-    method: "POST",
-    url: `${defaultEndpoint()}`,
-    data: {
-      method: "account_tx",
-      params: [
-        {
-          account: address,
-          ledger_index: "validated",
-          ...options,
-        },
-      ],
-    },
+  const res = async () => {
+    const res = await network({
+      method: "POST",
+      url: `${defaultEndpoint()}`,
+      data: {
+        method: "account_tx",
+        params: [
+          {
+            account: address,
+            ledger_index: "validated",
+            ...options,
+          },
+        ],
+      },
+    });
+    return res.data.result.transactions;
+
+    if (res.data.result.status !== "success") {
+      throw new Error(`couldn't getTransactions for ${address}`);
+    }
+  };
+
+  return retry(() => res(), {
+    maxRetry: getEnv("GET_CALLS_RETRY"),
   });
-  return res.data.result.transactions;
 };
 
 export default async function getLedgerIndex(): Promise<number> {
-  const ledgerResponse = await network({
-    method: "POST",
-    url: `${defaultEndpoint()}`,
-    data: {
-      method: "ledger",
-      params: [
-        {
-          ledger_index: "validated",
-        },
-      ],
-    },
+  const res = async () => {
+    const ledgerResponse = await network({
+      method: "POST",
+      url: `${defaultEndpoint()}`,
+      data: {
+        method: "ledger",
+        params: [
+          {
+            ledger_index: "validated",
+          },
+        ],
+      },
+    });
+
+    if (ledgerResponse.data.result.status !== "success") {
+      throw new Error(`couldn't fetch getLedgerIndex`);
+    }
+
+    return ledgerResponse.data.result.ledger_index;
+  };
+  return retry(() => res(), {
+    maxRetry: getEnv("GET_CALLS_RETRY"),
   });
-  return ledgerResponse.data.result.ledger_index;
 }

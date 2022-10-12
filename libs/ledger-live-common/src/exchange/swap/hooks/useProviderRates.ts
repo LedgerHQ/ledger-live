@@ -1,19 +1,15 @@
 import { useCallback, useEffect, useReducer, useState } from "react";
-import {
-  OnNoRatesCallback,
-  SetExchangeRateCallback,
-  SwapSelectorStateType,
-} from "./useSwapTransaction";
 import { getExchangeRates } from "..";
-import { Exchange, ExchangeRate } from "../types";
-import { pickExchangeRate } from "../utils";
 import { Transaction } from "../../../generated/types";
-
-export type RatesReducerState = {
-  status?: string | null;
-  value?: ExchangeRate[];
-  error?: Error;
-};
+import {
+  Exchange,
+  ExchangeRate,
+  OnNoRatesCallback,
+  SwapSelectorStateType,
+  RatesReducerState,
+  CustomMinOrMaxError,
+} from "../types";
+import { SetExchangeRateCallback } from "./useSwapTransaction";
 
 const ratesReducerInitialState: RatesReducerState = {};
 const ratesReducer = (state: RatesReducerState, action): RatesReducerState => {
@@ -34,20 +30,19 @@ const ratesReducer = (state: RatesReducerState, action): RatesReducerState => {
 export const useProviderRates = ({
   fromState,
   toState,
-  exchangeRate,
   transaction,
   onNoRates,
   setExchangeRate,
 }: {
   fromState: SwapSelectorStateType;
   toState: SwapSelectorStateType;
-  exchangeRate?: ExchangeRate | null | undefined;
-  transaction?: Transaction | null | undefined;
-  onNoRates?: OnNoRatesCallback | null | undefined;
+  transaction?: Transaction | null;
+  onNoRates?: OnNoRatesCallback;
   setExchangeRate?: SetExchangeRateCallback | null | undefined;
 }): {
   rates: RatesReducerState;
   refetchRates: () => void;
+  updateSelectedRate: (selected?: ExchangeRate) => void;
 } => {
   const { account: fromAccount } = fromState;
   const { currency: toCurrency } = toState;
@@ -58,7 +53,14 @@ export const useProviderRates = ({
   const [getRatesDependency, setGetRatesDependency] = useState<unknown | null>(
     null
   );
+  const [getSelectedRate, setGetSelectedRate] = useState<ExchangeRate | {}>({});
+
   const refetchRates = useCallback(() => setGetRatesDependency({}), []);
+
+  const updateSelectedRate = useCallback(
+    (selected = {}) => setGetSelectedRate(selected),
+    []
+  );
 
   useEffect(
     () => {
@@ -71,7 +73,7 @@ export const useProviderRates = ({
           !toCurrency ||
           !fromAccount
         ) {
-          setExchangeRate && setExchangeRate(null);
+          setExchangeRate && setExchangeRate();
           return dispatchRates({ type: "set", payload: [] });
         }
         dispatchRates({ type: "loading" });
@@ -82,23 +84,84 @@ export const useProviderRates = ({
             undefined,
             toCurrency
           );
+
           if (abort) return;
           if (rates.length === 0) {
             onNoRates && onNoRates({ fromState, toState });
           }
+
           // Discard bad provider rates
-          let rateError: Error | null | undefined = null;
+          let rateError: Error | CustomMinOrMaxError | null | undefined = null;
           rates = rates.reduce<ExchangeRate[]>((acc, rate) => {
             rateError = rateError ?? rate.error;
+
+            /**
+             * If we have an error linked to the ammount, this error takes
+             * precedence over the other (like a "CurrencyNotSupportedError" one
+             * for example)
+             */
+            if (
+              rateError?.name !== rate.error?.name &&
+              (rate.error?.name === "SwapExchangeRateAmountTooLow" ||
+                rate.error?.name === "SwapExchangeRateAmountTooHigh")
+            ) {
+              rateError = rate.error;
+            }
+
+            if (
+              rateError?.name === rate.error?.name &&
+              (rate.error?.name === "SwapExchangeRateAmountTooLow" ||
+                rate.error?.name === "SwapExchangeRateAmountTooHigh")
+            ) {
+              /**
+               * Comparison pivot, depending on the order in which we want to sort errors
+               * If the order is ascending, the pivot is -1, otherwise it's 1
+               * Based on returns from https://mikemcl.github.io/bignumber.js/#cmp
+               */
+              const cmp =
+                rateError?.name === "SwapExchangeRateAmountTooLow" ? -1 : 1;
+
+              /**
+               * If the amount is too low, the user should put at least the
+               * minimum amount possible
+               * If the amount is too high, the user should put at most the
+               * maximum amount possible
+               */
+
+              rateError =
+                (rateError as CustomMinOrMaxError).amount.comparedTo(
+                  (rate.error as CustomMinOrMaxError)?.amount
+                ) === cmp
+                  ? rateError
+                  : rate.error;
+            }
+
             return rate.error ? acc : [...acc, rate];
           }, []);
+
           if (rates.length === 0 && rateError) {
             // If all the rates are in error
             dispatchRates({ type: "error", payload: rateError });
           } else {
             dispatchRates({ type: "set", payload: rates });
-            setExchangeRate &&
-              pickExchangeRate(rates, exchangeRate, setExchangeRate);
+
+            /**
+             * By default select the first rate returned by the API. Should be the prefered
+             * rate for the user. Rate ordering logic is handeled on backend side
+             */
+
+            const getRate = () => {
+              if (!(rates?.length > 0)) {
+                return;
+              }
+              const { provider, tradeMethod } = getSelectedRate as ExchangeRate;
+              const rate = rates.find(
+                (rate) =>
+                  rate.provider === provider && rate.tradeMethod === tradeMethod
+              );
+              return rate ? rate : rates[0];
+            };
+            setExchangeRate && setExchangeRate(getRate());
           }
         } catch (error) {
           !abort && dispatchRates({ type: "error", payload: error });
@@ -126,5 +189,6 @@ export const useProviderRates = ({
   return {
     rates,
     refetchRates,
+    updateSelectedRate,
   };
 };

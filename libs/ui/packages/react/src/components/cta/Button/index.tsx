@@ -14,12 +14,14 @@ interface BaseProps extends BaseStyledProps, BordersProps {
   ff?: string;
   color?: string;
   backgroundColor?: string;
+  size?: "small" | "medium" | "large";
   fontSize?: number;
   variant?: ButtonVariants;
   outline?: boolean;
   iconPosition?: IconPosition;
   iconButton?: boolean;
   disabled?: boolean;
+  whiteSpace?: string;
 }
 
 export interface ButtonProps extends BaseProps, React.RefAttributes<HTMLButtonElement> {
@@ -155,16 +157,15 @@ export const Base = baseStyled.button.attrs((p: BaseProps) => ({
   border-width: ${(p) => (p.outline || p.variant === "shade" ? 1 : 0)}px;
   font-weight: 600;
   ${compose(fontFamily, fontSize, border)};
-  height: ${(p) => p.theme.space[13]}px;
   line-height: ${(p) => p.theme.fontSizes[p.fontSize]}px;
   text-align: center;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 0 2em;
   overflow: hidden;
+  ${(p) => buttonSizeStyle[p.size || "medium"]}
   text-overflow: ellipsis;
-  white-space: nowrap;
+  white-space: ${(p) => (p.whiteSpace ? p.whiteSpace : "nowrap")};
   max-width: 100%;
   position: relative;
   cursor: ${(p) => (p.disabled ? "default" : "pointer")};
@@ -280,6 +281,26 @@ export function ButtonExpand(
     />
   );
 }
+
+export const buttonSizeStyle: {
+  [index: string]: {
+    padding: string;
+    height: string;
+  };
+} = {
+  small: {
+    padding: "0 20px",
+    height: "32px",
+  },
+  medium: {
+    padding: "0 24px",
+    height: "40px",
+  },
+  large: {
+    padding: "0 28px",
+    height: "48px",
+  },
+};
 
 Button.Unstyled = ButtonUnstyled;
 Button.Expand = React.forwardRef(ButtonExpand);

@@ -1,7 +1,7 @@
 import React, { memo, useMemo, useCallback } from "react";
 import invariant from "invariant";
 import { TouchableOpacity } from "react-native";
-import { Device } from "@ledgerhq/live-common/lib/hw/actions/types";
+import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import {
   NanoFoldedMedium,
   ToolsMedium,
@@ -15,8 +15,8 @@ type Props = {
   disabled?: boolean;
   withArrow?: boolean;
   description?: React.ReactNode;
-  onSelect?: (arg0: Device) => any;
-  onBluetoothDeviceAction?: (arg0: Device) => any;
+  onSelect?: (_: Device) => any;
+  onBluetoothDeviceAction?: (_: Device) => any;
 };
 
 const iconByFamily: Record<string, IconType> = {

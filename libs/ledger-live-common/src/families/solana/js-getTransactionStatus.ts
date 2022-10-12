@@ -1,6 +1,11 @@
 import { BigNumber } from "bignumber.js";
-import type { Account, TransactionStatus } from "../../types";
-import type { Command, CommandDescriptor, Transaction } from "./types";
+import type { Account } from "@ledgerhq/types-live";
+import type {
+  Command,
+  CommandDescriptor,
+  Transaction,
+  TransactionStatus,
+} from "./types";
 import { assertUnreachable } from "./utils";
 
 const getTransactionStatus = async (

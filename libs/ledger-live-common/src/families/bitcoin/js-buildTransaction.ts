@@ -3,11 +3,11 @@ import { CoinSelect, DeepFirst, Merge } from "./wallet-btc";
 import type { TransactionInfo as WalletTxInfo } from "./wallet-btc";
 import { FeeNotLoaded } from "@ledgerhq/errors";
 
-import type { Account } from "../../types";
 import type { Transaction, UtxoStrategy } from "./types";
 import { bitcoinPickingStrategy } from "./types";
 import wallet, { getWalletAccount } from "./wallet-btc";
 import { log } from "@ledgerhq/logs";
+import { Account } from "@ledgerhq/types-live";
 
 const selectUtxoPickingStrategy = (
   walletAccount: WalletAccount,
@@ -44,7 +44,6 @@ export const buildTransaction = async (
     walletAccount,
     transaction.feePerByte.toNumber(), //!\ wallet-btc handles fees as JS number
     transaction.utxoStrategy.excludeUTXOs,
-    transaction.utxoStrategy.pickUnconfirmedRBF,
     [transaction.recipient]
   );
   log("btcwallet", "building transaction", transaction);

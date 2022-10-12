@@ -1,21 +1,17 @@
 import React, { memo } from "react";
 
-import {
-  Account,
-  AccountLike,
-  Operation,
-} from "@ledgerhq/live-common/lib/types";
+import { Account, AccountLike, Operation } from "@ledgerhq/types-live";
 import {
   getMainAccount,
   getAccountCurrency,
-} from "@ledgerhq/live-common/lib/account";
-import { useNftMetadata } from "@ledgerhq/live-common/lib/nft";
+} from "@ledgerhq/live-common/account/index";
+import { useNftMetadata } from "@ledgerhq/live-common/nft/index";
 import { View, StyleSheet } from "react-native";
 import { Text } from "@ledgerhq/native-ui";
 import Skeleton from "./Skeleton";
 
 type Props = {
-  style?: Object;
+  style?: any;
   operation: Operation;
   account: AccountLike;
   parentAccount?: Account | null;

@@ -1,5 +1,24 @@
+import type {
+  Account,
+  AccountLike,
+  NFTStandard,
+  Operation,
+} from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
-import type { Account, AccountLike, Operation } from "./types";
+import { decodeAccountId } from "./account";
+import { encodeNftId } from "./nft";
+import {
+  encodeERC1155OperationId,
+  encodeERC721OperationId,
+} from "./nft/nftOperationId";
+
+const nftOperationIdEncoderPerStandard: Record<
+  NFTStandard,
+  (...args: any[]) => string
+> = {
+  ERC721: encodeERC721OperationId,
+  ERC1155: encodeERC1155OperationId,
+};
 
 export function findOperationInAccount(
   { operations, pendingOperations }: AccountLike,
@@ -32,6 +51,16 @@ export function findOperationInAccount(
   for (let i = 0; i < pendingOperations.length; i++) {
     const op = pendingOperations[i];
     if (op.id === operationId) return op;
+
+    if (op.nftOperations) {
+      const nftOps = op.nftOperations;
+
+      for (let j = 0; j < nftOps.length; j++) {
+        const nftOp = nftOps[j];
+
+        if (nftOp.id === operationId) return nftOp;
+      }
+    }
   }
 
   return null;
@@ -58,6 +87,30 @@ export function decodeOperationId(id: string): {
   };
 }
 
+export function encodeSubOperationId(
+  accountId: string,
+  hash: string,
+  type: string,
+  index: string | number
+): string {
+  return `${accountId}-${hash}-${type}-i${index}`;
+}
+
+export function decodeSubOperationId(id: string): {
+  accountId: string;
+  hash: string;
+  type: string;
+  index: number;
+} {
+  const [accountId, hash, type, index] = id.split("-");
+  return {
+    accountId,
+    hash,
+    type,
+    index: Number(index),
+  };
+}
+
 export function patchOperationWithHash(
   operation: Operation,
   hash: string
@@ -73,6 +126,26 @@ export function patchOperationWithHash(
         hash,
         id: encodeOperationId(op.accountId, hash, op.type),
       })),
+    nftOperations:
+      operation.nftOperations &&
+      operation.nftOperations.map((nftOp, i) => {
+        const { currencyId } = decodeAccountId(operation.accountId);
+        const nftId = encodeNftId(
+          operation.accountId,
+          nftOp.contract || "",
+          nftOp.tokenId || "",
+          currencyId
+        );
+        const nftOperationIdEncoder =
+          nftOperationIdEncoderPerStandard[nftOp?.standard || ""] ||
+          nftOperationIdEncoderPerStandard.ERC721;
+
+        return {
+          ...nftOp,
+          hash,
+          id: nftOperationIdEncoder(nftId, hash, nftOp.type, 0, i),
+        };
+      }),
   };
 }
 
@@ -105,6 +178,7 @@ export function getOperationAmountNumber(op: Operation): BigNumber {
     case "REWARD":
     case "REWARD_PAYOUT":
     case "SUPPLY":
+    case "WITHDRAW":
       return op.value;
 
     case "OUT":
@@ -118,6 +192,7 @@ export function getOperationAmountNumber(op: Operation): BigNumber {
     case "OPT_OUT":
     case "REDEEM":
     case "SLASH":
+    case "LOCK":
       return op.value.negated();
 
     case "FREEZE":
@@ -129,6 +204,10 @@ export function getOperationAmountNumber(op: Operation): BigNumber {
     case "SET_CONTROLLER":
     case "NOMINATE":
     case "CHILL":
+    case "REVOKE":
+    case "APPROVE":
+    case "ACTIVATE":
+    case "UNLOCK":
       return op.fee.negated();
 
     default:

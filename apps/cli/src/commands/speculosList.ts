@@ -1,7 +1,7 @@
 import { from } from "rxjs";
-import { getEnv } from "@ledgerhq/live-common/lib/env";
-import { listAppCandidates } from "@ledgerhq/live-common/lib/load/speculos";
-import { formatAppCandidate } from "@ledgerhq/live-common/lib/bot/formatters";
+import { getEnv } from "@ledgerhq/live-common/env";
+import { listAppCandidates } from "@ledgerhq/live-common/load/speculos";
+import { formatAppCandidate } from "@ledgerhq/live-common/bot/formatters";
 import invariant from "invariant";
 import { mergeAll } from "rxjs/operators";
 

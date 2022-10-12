@@ -1,8 +1,8 @@
 /* eslint-disable no-console */
 import { generateMnemonic } from "bip39";
 import { from } from "rxjs";
-import { getEnv } from "@ledgerhq/live-common/lib/env";
-import { bot } from "@ledgerhq/live-common/lib/bot";
+import { getEnv } from "@ledgerhq/live-common/env";
+import { bot } from "@ledgerhq/live-common/bot/index";
 import { currencyOpt } from "../scan";
 export default {
   description:

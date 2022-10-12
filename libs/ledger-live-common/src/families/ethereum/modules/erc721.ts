@@ -8,7 +8,7 @@ import {
 } from "@ledgerhq/errors";
 import { validateRecipient } from "../transaction";
 import type { ModeModule, Transaction } from "../types";
-import type { Account } from "../../../types";
+import type { Account } from "@ledgerhq/types-live";
 import { apiForCurrency } from "../../../api/Ethereum";
 
 const NotOwnedNft = createCustomErrorClass("NotOwnedNft");
@@ -118,6 +118,17 @@ const erc721Transfer: ModeModule = {
    */
   fillOptimisticOperation(a, t, op) {
     op.type = "FEES";
+    op.nftOperations = t.tokenIds?.map((tokenId, i) => ({
+      ...op,
+      id: "", // operation ID will be filled by patchOperationWithHash
+      type: "NFT_OUT",
+      senders: [eip55.encode(a.freshAddress)],
+      recipients: [eip55.encode(t.recipient)],
+      standard: "ERC721",
+      contract: eip55.encode(t.collection ?? ""),
+      tokenId,
+      value: t.quantities?.[i] || new BigNumber(0),
+    }));
   },
 
   getResolutionConfig: () => ({ nft: true }),

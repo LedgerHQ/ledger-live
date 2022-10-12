@@ -3,7 +3,7 @@ import type {
   SignOperationEvent,
   SignedOperationRaw,
   SignedOperation,
-} from "../types/transaction";
+} from "@ledgerhq/types-live";
 import { fromOperationRaw, toOperationRaw } from "../account";
 export const fromSignedOperationRaw = (
   signedOp: SignedOperationRaw,

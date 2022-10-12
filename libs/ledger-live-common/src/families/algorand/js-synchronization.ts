@@ -1,13 +1,4 @@
 import { BigNumber } from "bignumber.js";
-import type {
-  CryptoCurrency,
-  TokenCurrency,
-  Account,
-  TokenAccount,
-  Operation,
-  OperationType,
-  SyncConfig,
-} from "../../types";
 import { findTokenById, listTokensForCryptoCurrency } from "../../currencies";
 import {
   encodeAccountId,
@@ -28,6 +19,14 @@ import {
 import { AlgoTransactionType, getAccount, getAccountTransactions } from "./api";
 import { addPrefixToken, extractTokenId } from "./tokens";
 import { computeAlgoMaxSpendable } from "./logic";
+import type {
+  Account,
+  Operation,
+  OperationType,
+  SyncConfig,
+  TokenAccount,
+} from "@ledgerhq/types-live";
+import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 
 const getASAOperationAmount = (
   transaction: AlgoTransaction,

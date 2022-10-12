@@ -32,6 +32,8 @@ type CurrencyCommon = {
   delisted?: boolean;
   // some countervalue will have a ticker alias
   countervalueTicker?: string;
+  // keywords to be able to find currency from "obvious" terms
+  keywords?: string[];
 };
 
 /**
@@ -90,10 +92,12 @@ export type CryptoCurrency = CurrencyCommon & {
   supportsNativeSegwit?: boolean;
   // if defined this coin is a testnet for another crypto (id)};
   isTestnetFor?: string;
+  // TODO later we could express union of types with mandatory bitcoinLikeInfo for "bitcoin" family...
   bitcoinLikeInfo?: {
     P2PKH: number;
     P2SH: number;
     XPUBVersion?: number;
+    // FIXME optional as we miss some data to fill
     hasTimestamp?: boolean;
   };
   ethereumLikeInfo?: {
@@ -101,6 +105,13 @@ export type CryptoCurrency = CurrencyCommon & {
     networkId?: number;
     baseChain?: string;
     hardfork?: string;
+    // used by evm light integration
+    rpc?: string;
+    // used by evm light integration
+    explorer?: {
+      uri: string;
+      type: "etherscan" | "blockscout";
+    };
   };
   explorerViews: ExplorerView[];
   terminated?: {

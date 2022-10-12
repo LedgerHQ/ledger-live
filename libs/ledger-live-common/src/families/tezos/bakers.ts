@@ -1,5 +1,5 @@
 import { useEffect, useState, useMemo } from "react";
-import type { Operation, AccountLike } from "../../types";
+import type { Operation, AccountLike } from "@ledgerhq/types-live";
 import { log } from "@ledgerhq/logs";
 import { makeLRUCache } from "../../cache";
 import { getEnv } from "../../env";

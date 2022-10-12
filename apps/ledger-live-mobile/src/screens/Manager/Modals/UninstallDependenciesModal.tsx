@@ -2,8 +2,8 @@ import React, { memo, useCallback } from "react";
 import { View } from "react-native";
 import { Trans } from "react-i18next";
 
-import { Action } from "@ledgerhq/live-common/lib/apps";
-import { App } from "@ledgerhq/live-common/lib/types/manager";
+import { Action } from "@ledgerhq/live-common/apps/index";
+import { App } from "@ledgerhq/types-live";
 
 import styled, { useTheme } from "styled-components/native";
 import { Flex, Text, Button } from "@ledgerhq/native-ui";
@@ -14,13 +14,14 @@ import BottomModal from "../../../components/BottomModal";
 import CollapsibleList from "../../../components/CollapsibleList";
 import ListTreeLine from "../../../icons/ListTreeLine";
 
+// eslint-disable-next-line import/no-unresolved
 import getWindowDimensions from "../../../logic/getWindowDimensions";
 
 const { height } = getWindowDimensions();
 
 type Props = {
   appUninstallWithDependencies: { app: App; dependents: App[] };
-  dispatch: (action: Action) => void;
+  dispatch: (_: Action) => void;
   onClose: () => void;
 };
 
@@ -109,7 +110,11 @@ const UninstallDependenciesModal = ({
                   values={{ app: name }}
                 />
               </ModalText>
-              <ModalText color="neutral.c70" fontWeight="medium" variant="bodyLineHeight">
+              <ModalText
+                color="neutral.c70"
+                fontWeight="medium"
+                variant="bodyLineHeight"
+              >
                 <Trans
                   i18nKey="AppAction.uninstall.dependency.description_two"
                   values={{ app: name }}

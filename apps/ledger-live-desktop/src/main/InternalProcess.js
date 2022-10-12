@@ -121,9 +121,9 @@ class InternalProcess {
   }
 
   stop() {
-    return new Promise((resolve, reject) => {
+    return new Promise(resolve => {
       if (!this.process) {
-        reject(new Error("Process not running"));
+        resolve(false);
         return;
       }
 
@@ -134,7 +134,7 @@ class InternalProcess {
       console.log(`ending process ${pid} ...`);
       this.active = false;
       this.process.once("exit", () => {
-        resolve();
+        resolve(true);
       });
       this.process.disconnect();
       setTimeout(() => {

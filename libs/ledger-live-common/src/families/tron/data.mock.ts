@@ -1,5 +1,5 @@
 import { fromAccountRaw } from "../../account/serialization";
-import { BalanceHistoryRawMap } from "../../types";
+import { TronAccount } from "./types";
 
 export const __NEXT_REWARD_DATE__ = new Date(Date.now() - 6 * 60 * 60 * 1000);
 
@@ -22,7 +22,6 @@ export const mockAccount = fromAccountRaw({
   name: "Tron 1",
   blockHeight: 0,
   balance: "375978130",
-  balanceHistory: {} as BalanceHistoryRawMap,
   spendableBalance: "978130",
   operations: [
     {
@@ -280,7 +279,7 @@ export const mockAccount = fromAccountRaw({
     lastWithdrawnRewardDate: __NEXT_REWARD_DATE__.toISOString(),
     lastVotedDate: __LAST_VOTING_DATE__.toISOString(),
   },
-});
+}) as TronAccount;
 export const mockAccountNoReward = fromAccountRaw({
   id: "js:2:tron:TRON_ID:",
   starred: true,
@@ -298,7 +297,6 @@ export const mockAccountNoReward = fromAccountRaw({
   name: "Tron 1",
   blockHeight: 0,
   balance: "375978130",
-  balanceHistory: {} as BalanceHistoryRawMap,
   spendableBalance: "978130",
   operations: [
     {
@@ -511,7 +509,7 @@ export const mockAccountNoReward = fromAccountRaw({
     lastWithdrawnRewardDate: null,
     lastVotedDate: "2020-03-09T08:44:39.000Z",
   },
-});
+}) as TronAccount;
 export const mockAccountNoVote = fromAccountRaw({
   id: "js:2:tron:TRON_ID:",
   starred: true,
@@ -529,7 +527,6 @@ export const mockAccountNoVote = fromAccountRaw({
   name: "Tron 1",
   blockHeight: 0,
   balance: "375978130",
-  balanceHistory: {} as BalanceHistoryRawMap,
   spendableBalance: "978130",
   operations: [
     {
@@ -690,4 +687,4 @@ export const mockAccountNoVote = fromAccountRaw({
     lastWithdrawnRewardDate: null,
     lastVotedDate: null,
   },
-});
+}) as TronAccount;

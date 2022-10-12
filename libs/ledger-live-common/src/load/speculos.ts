@@ -21,6 +21,24 @@ let idCounter = 0;
 
 const data = {};
 
+const modelMap: Record<string, DeviceModelId> = {
+  nanos: <DeviceModelId>"nanoS",
+  "nanos+": <DeviceModelId>"nanoSP",
+  nanox: <DeviceModelId>"nanoX",
+  blue: <DeviceModelId>"blue",
+};
+const reverseModelMap = {};
+for (const k in modelMap) {
+  reverseModelMap[modelMap[k]] = k;
+}
+const modelMapPriority: Record<string, number> = {
+  nanos: 4,
+  "nanos+": 3,
+  nanox: 2,
+  blue: 1,
+};
+const defaultFirmware: Record<string, string> = {};
+
 export async function releaseSpeculosDevice(id: string) {
   log("speculos", "release " + id);
   const obj = data[id];
@@ -32,6 +50,23 @@ export async function releaseSpeculosDevice(id: string) {
 
 export function closeAllSpeculosDevices() {
   return Promise.all(Object.keys(data).map(releaseSpeculosDevice));
+}
+
+// to keep in sync from https://github.com/LedgerHQ/speculos/tree/master/speculos/cxlib
+const existingSdks = [
+  "nanos-cx-2.0.elf",
+  "nanos-cx-2.1.elf",
+  "nanosp-cx-1.0.3.elf",
+  "nanosp-cx-1.0.elf",
+  "nanox-cx-2.0.2.elf",
+  "nanox-cx-2.0.elf",
+];
+
+function inferSDK(firmware: string, model: string): string | undefined {
+  const begin = `${model.toLowerCase()}-cx-`;
+  if (existingSdks.includes(begin + firmware + ".elf")) return firmware;
+  const shortVersion = firmware.slice(0, 3);
+  if (existingSdks.includes(begin + shortVersion + ".elf")) return shortVersion;
 }
 
 export async function createSpeculosDevice(
@@ -49,6 +84,7 @@ export async function createSpeculosDevice(
 ): Promise<{
   transport: SpeculosTransport;
   id: string;
+  appPath: string;
 }> {
   const { model, firmware, appName, appVersion, seed, coinapps, dependency } =
     arg;
@@ -58,14 +94,11 @@ export async function createSpeculosDevice(
   const buttonPort = 42000 + idCounter;
   const automationPort = 43000 + idCounter;
 
-  // workaround until we have a clearer way to resolve sdk for a firmware.
-  const sdk =
-    model === "nanoX" ? "1.2" : model === "nanoS" ? firmware.slice(0, 3) : null;
+  const sdk = inferSDK(firmware, model);
 
-  const appPath = `./apps/${model.toLowerCase()}/${firmware}/${appName.replace(
-    / /g,
-    ""
-  )}/app_${appVersion}.elf`;
+  const appPath = `./apps/${
+    reverseModelMap[model]
+  }/${firmware}/${appName.replace(/ /g, "")}/app_${appVersion}.elf`;
 
   const params = [
     "run",
@@ -90,7 +123,7 @@ export async function createSpeculosDevice(
     ...(dependency
       ? [
           "-l",
-          `${dependency}:${`./apps/${model.toLowerCase()}/${firmware}/${dependency}/app_${appVersion}.elf`}`,
+          `${dependency}:${`./apps/${reverseModelMap[model]}/${firmware}/${dependency}/app_${appVersion}.elf`}`,
         ]
       : []),
     ...(sdk ? ["--sdk", sdk] : []),
@@ -202,6 +235,7 @@ export async function createSpeculosDevice(
   return {
     id: speculosID,
     transport,
+    appPath,
   };
 }
 export type AppCandidate = {
@@ -211,17 +245,6 @@ export type AppCandidate = {
   appName: string;
   appVersion: string;
 };
-const modelMap: Record<string, DeviceModelId> = {
-  nanos: <DeviceModelId>"nanoS",
-  nanox: <DeviceModelId>"nanoX",
-  blue: <DeviceModelId>"blue",
-};
-const modelMapPriority: Record<string, number> = {
-  nanos: 3,
-  nanox: 2,
-  blue: 1,
-};
-const defaultFirmware: Record<string, string> = {};
 
 function hackBadSemver(str) {
   const split = str.split(".");
@@ -266,7 +289,6 @@ export async function listAppCandidates(cwd: string): Promise<AppCandidate[]> {
           if (elf.startsWith("app_") && elf.endsWith(".elf")) {
             const p4 = path.join(p3, elf);
             const appVersion = elf.slice(4, elf.length - 4);
-
             if (
               semver.valid(appVersion) &&
               !shouldUpgrade(model, appName, appVersion) &&
@@ -316,8 +338,10 @@ export function appCandidatesMatches(
           hackBadSemver(appCandidate.firmware),
           searchFirmware
         ))) &&
-    (!search.appVersion ||
-      semver.satisfies(appCandidate.appVersion, search.appVersion))
+    (appCandidate.appVersion === search.appVersion ||
+      (!search.appVersion && !appCandidate.appVersion.includes("-")) ||
+      (search.appVersion &&
+        semver.satisfies(appCandidate.appVersion, search.appVersion)))
   );
 }
 export const findAppCandidate = (

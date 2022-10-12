@@ -12,7 +12,6 @@ import MODAL_RECEIVE from "./Receive";
 import MODAL_SEND from "./Send";
 import MODAL_SIGN_MESSAGE from "./SignMessage";
 import MODAL_SIGN_TRANSACTION from "./SignTransaction";
-import MODAL_REQUEST_ACCOUNT from "./RequestAccount";
 import MODAL_UPDATE_FIRMWARE from "./UpdateFirmwareModal";
 import MODAL_MIGRATE_ACCOUNTS from "./MigrateAccounts";
 import MODAL_EXPORT_ACCOUNTS from "./ExportAccounts";
@@ -21,11 +20,11 @@ import MODAL_SHARE_ANALYTICS from "./ShareAnalytics";
 import MODAL_SETTINGS_ACCOUNT from "./SettingsAccount";
 import MODAL_RELEASE_NOTES from "./ReleaseNotes";
 import MODAL_SYSTEM_LANGUAGE_AVAILABLE from "./SystemLanguageAvailable";
+// $FlowFixMe
+import MODAL_TERM_OF_USE_UPDATE from "./TermOfUseUpdate";
 import MODAL_EXCHANGE_CRYPTO_DEVICE from "./ExchangeDeviceConfirm";
 import MODAL_SELL_CRYPTO_DEVICE from "./SellDeviceConfirm";
-import MODAL_SWAP from "./Swap";
 import MODAL_SWAP_RESET_KYC from "./Swap/ResetKYC";
-import MODAL_SWAP_UNAUTHORIZED_RATES from "./Swap/UnauthorizedRates";
 import MODAL_WALLETCONNECT_PASTE_LINK from "./WalletConnectPasteLink";
 import MODAL_WALLETCONNECT_DEEPLINK from "./WalletConnectDeeplink";
 import MODAL_PLATFORM_EXCHANGE_START from "./Platform/Exchange/StartExchange";
@@ -53,6 +52,12 @@ import MODAL_ALGORAND_OPT_IN from "../families/algorand/OptInFlowModal";
 import MODAL_ALGORAND_CLAIM_REWARDS from "../families/algorand/Rewards/ClaimRewardsFlowModal";
 import MODAL_ALGORAND_EARN_REWARDS_INFO from "../families/algorand/Rewards/EarnRewardsInfoModal";
 
+import MODAL_OSMOSIS_DELEGATE from "../families/osmosis/DelegationFlowModal";
+import MODAL_OSMOSIS_REWARDS_INFO from "../families/osmosis/DelegationFlowModal/Info";
+// import MODAL_COSMOS_CLAIM_REWARDS from "../families/cosmos/ClaimRewardsFlowModal";
+import MODAL_OSMOSIS_REDELEGATE from "../families/osmosis/RedelegationFlowModal";
+// import MODAL_COSMOS_UNDELEGATE from "../families/cosmos/UndelegationFlowModal";
+
 import MODAL_POLKADOT_MANAGE from "../families/polkadot/ManageModal";
 import MODAL_POLKADOT_REWARDS_INFO from "../families/polkadot/EarnRewardsInfoModal";
 import MODAL_POLKADOT_SIMPLE_OPERATION from "../families/polkadot/SimpleOperationFlowModal";
@@ -61,12 +66,24 @@ import MODAL_POLKADOT_BOND from "../families/polkadot/BondFlowModal";
 import MODAL_POLKADOT_UNBOND from "../families/polkadot/UnbondFlowModal";
 import MODAL_POLKADOT_REBOND from "../families/polkadot/RebondFlowModal";
 
+import MODAL_STELLAR_ADD_ASSET from "../families/stellar/AddAssetModal";
+
 import MODAL_SOLANA_REWARDS_INFO from "../families/solana/DelegationFlowModal/Info";
 import MODAL_SOLANA_DELEGATE from "../families/solana/DelegationFlowModal";
 import MODAL_SOLANA_DELEGATION_ACTIVATE from "../families/solana/DelegationActivateFlowModal";
 import MODAL_SOLANA_DELEGATION_DEACTIVATE from "../families/solana/DelegationDeactivateFlowModal";
 import MODAL_SOLANA_DELEGATION_REACTIVATE from "../families/solana/DelegationReactivateFlowModal";
 import MODAL_SOLANA_DELEGATION_WITHDRAW from "../families/solana/DelegationWithdrawFlowModal";
+
+import MODAL_CELO_REWARDS_INFO from "../families/celo/EarnRewardsInfoModal/EarnRewardsInfoModal";
+import MODAL_CELO_MANAGE from "../families/celo/ManageModal/ManageModal";
+import MODAL_CELO_LOCK from "../families/celo/LockFlowModal";
+import MODAL_CELO_UNLOCK from "../families/celo/UnlockFlowModal";
+import MODAL_CELO_VOTE from "../families/celo/VoteFlowModal";
+import MODAL_CELO_SIMPLE_OPERATION from "../families/celo/SimpleOperationFlowModal/SimpleOperationFlowModal";
+import MODAL_CELO_WITHDRAW from "../families/celo/WithdrawFlowModal";
+import MODAL_CELO_ACTIVATE from "../families/celo/ActivateFlowModal";
+import MODAL_CELO_REVOKE from "../families/celo/RevokeFlowModal";
 
 // Lending
 import MODAL_LEND_MANAGE from "../screens/lend/modals/ManageLend";
@@ -92,7 +109,6 @@ const modals: { [_: string]: React$ComponentType<any> } = {
   MODAL_SEND,
   MODAL_SIGN_MESSAGE,
   MODAL_SIGN_TRANSACTION,
-  MODAL_REQUEST_ACCOUNT,
   MODAL_UPDATE_FIRMWARE,
   MODAL_DELEGATE,
   MODAL_MIGRATE_ACCOUNTS,
@@ -102,6 +118,7 @@ const modals: { [_: string]: React$ComponentType<any> } = {
   MODAL_SETTINGS_ACCOUNT,
   MODAL_RELEASE_NOTES,
   MODAL_SYSTEM_LANGUAGE_AVAILABLE,
+  MODAL_TERM_OF_USE_UPDATE,
   MODAL_CLAIM_REWARDS,
   MODAL_FREEZE,
   MODAL_UNFREEZE,
@@ -122,17 +139,30 @@ const modals: { [_: string]: React$ComponentType<any> } = {
   MODAL_ALGORAND_EARN_REWARDS_INFO,
   MODAL_POLKADOT_MANAGE,
   MODAL_POLKADOT_REWARDS_INFO,
+  MODAL_OSMOSIS_DELEGATE,
+  MODAL_OSMOSIS_REWARDS_INFO,
+  MODAL_OSMOSIS_REDELEGATE,
   MODAL_POLKADOT_SIMPLE_OPERATION,
   MODAL_POLKADOT_NOMINATE,
   MODAL_POLKADOT_BOND,
   MODAL_POLKADOT_UNBOND,
   MODAL_POLKADOT_REBOND,
+  MODAL_STELLAR_ADD_ASSET,
   MODAL_SOLANA_REWARDS_INFO,
   MODAL_SOLANA_DELEGATE,
   MODAL_SOLANA_DELEGATION_ACTIVATE,
   MODAL_SOLANA_DELEGATION_DEACTIVATE,
   MODAL_SOLANA_DELEGATION_REACTIVATE,
   MODAL_SOLANA_DELEGATION_WITHDRAW,
+  MODAL_CELO_REWARDS_INFO,
+  MODAL_CELO_MANAGE,
+  MODAL_CELO_LOCK,
+  MODAL_CELO_UNLOCK,
+  MODAL_CELO_VOTE,
+  MODAL_CELO_SIMPLE_OPERATION,
+  MODAL_CELO_WITHDRAW,
+  MODAL_CELO_ACTIVATE,
+  MODAL_CELO_REVOKE,
   MODAL_FULL_NODE,
   MODAL_LOTTIE_DEBUGGER,
   MODAL_RECOVERY_SEED_WARNING,
@@ -146,8 +176,6 @@ const modals: { [_: string]: React$ComponentType<any> } = {
   MODAL_LEND_NO_ETHEREUM_ACCOUNT,
   MODAL_LEND_EMPTY_ACCOUNT_DEPOSIT,
   // Swap
-  MODAL_SWAP,
-  MODAL_SWAP_UNAUTHORIZED_RATES,
   MODAL_SWAP_RESET_KYC,
   // Platform
   MODAL_PLATFORM_EXCHANGE_START,

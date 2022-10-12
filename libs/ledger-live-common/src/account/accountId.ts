@@ -1,16 +1,13 @@
 import memoize from "lodash/memoize";
 import invariant from "invariant";
-import type { CryptoCurrency, DerivationMode, TokenCurrency } from "../types";
 import { asDerivationMode } from "../derivation";
 import { getCryptoCurrencyById, findTokenById } from "../currencies";
 import { findTokenByAddressInCurrency } from "@ledgerhq/cryptoassets";
-export type AccountIdParams = {
-  type: string;
-  version: string;
-  currencyId: string;
-  xpubOrAddress: string;
-  derivationMode: DerivationMode;
-};
+import type { AccountIdParams, DerivationMode } from "@ledgerhq/types-live";
+import type {
+  CryptoCurrency,
+  TokenCurrency,
+} from "@ledgerhq/types-cryptoassets";
 
 function ensureNoColon(value: string, ctx: string): string {
   invariant(

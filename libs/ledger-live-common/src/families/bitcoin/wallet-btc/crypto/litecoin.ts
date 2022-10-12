@@ -1,8 +1,5 @@
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
 import { toOutputScript } from "bitcoinjs-lib/src/address";
 import * as bech32 from "bech32";
-import { DerivationModes } from "../types";
 import Base from "./base";
 
 // Todo copy paste from bitcoin.ts. we can merge them later
@@ -18,23 +15,7 @@ class Litecoin extends Base {
     this.network.usesTimestampedTransaction = false;
   }
 
-  // infer address type from its syntax
-  getDerivationMode(address: string) {
-    if (address.match("^(ltc1).*")) {
-      return DerivationModes.NATIVE_SEGWIT;
-    }
-    if (address.match("^(3|2|M).*")) {
-      return DerivationModes.SEGWIT;
-    }
-    if (address.match("^(1|n|m|L).*")) {
-      return DerivationModes.LEGACY;
-    }
-    throw new Error(
-      "INVALID ADDRESS: ".concat(address).concat(" is not a valid address")
-    );
-  }
-
-  toOutputScript(address: string) {
+  toOutputScript(address: string): Buffer {
     return toOutputScript(address, this.network);
   }
 

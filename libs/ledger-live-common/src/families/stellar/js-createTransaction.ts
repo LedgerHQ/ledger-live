@@ -16,6 +16,9 @@ const createTransaction = (): Transaction => ({
   memoValue: null,
   memoType: null,
   useAllAmount: false,
+  mode: "send",
+  assetCode: "",
+  assetIssuer: "",
 });
 
 export default createTransaction;

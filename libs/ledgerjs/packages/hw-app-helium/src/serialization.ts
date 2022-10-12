@@ -6,9 +6,27 @@ import {
   TransferValidatorStakeV1,
   UnstakeValidatorV1,
   SecurityExchangeV1,
+  TokenType,
 } from "@helium/transactions";
 import BigNumber from "bignumber.js";
 import BIPPath from "bip32-path";
+import JSLong from "long";
+
+const tokenTypeToInt = (tokenType) => {
+  if (!tokenType) return 0;
+
+  switch (tokenType) {
+    default:
+    case "hnt":
+      return TokenType.hnt;
+    case "hst":
+      return TokenType.hst;
+    case "mobile":
+      return TokenType.mobile;
+    case "iot":
+      return TokenType.iot;
+  }
+};
 
 const serializePath = (path: number[]): Buffer => {
   const buf = Buffer.alloc(1 + path.length * 4);
@@ -41,20 +59,28 @@ const serializeNumber = (amount: number | BigNumber | undefined): Buffer => {
   return Buffer.from(u8);
 };
 
+const serializeMemo = (memo: string) => {
+  const memoBuffer = Buffer.from(memo, "base64");
+  const memoLong = JSLong.fromBytes(Array.from(memoBuffer), true, true);
+  return Buffer.from(memoLong.toBytesLE());
+};
+
 export const serializePaymentV2 = (txn: PaymentV2): Buffer => {
   if (txn.payments.length > 1) throw "multiple payments are not supported";
 
   const { amount, memo } = txn.payments[0];
   const payee = txn.payments[0].payee as Address;
+  const tokenType = tokenTypeToInt(txn.payments[0].tokenType);
 
   const txSerialized = Buffer.concat([
     serializeNumber(amount),
     serializeNumber(txn.fee),
     serializeNumber(txn.nonce),
     Buffer.from([payee.version]),
-    Buffer.from([payee.keyType]),
+    Buffer.from([payee.netType | payee.keyType]),
     Buffer.from(payee.publicKey),
-    Buffer.from(memo || ""),
+    serializeMemo(memo || ""),
+    serializeNumber(tokenType),
   ]);
 
   return Buffer.from(txSerialized);
@@ -72,7 +98,7 @@ export const serializeSecurityExchangeV1 = (
     serializeNumber(txn.fee),
     serializeNumber(txn.nonce),
     Buffer.from([payee.version]),
-    Buffer.from([payee.keyType]),
+    Buffer.from([payee.netType | payee.keyType]),
     Buffer.from(payee.publicKey),
   ]);
 
@@ -88,9 +114,9 @@ export const serializeTokenBurnV1 = (txn: TokenBurnV1): Buffer => {
     serializeNumber(txn.amount),
     serializeNumber(txn.fee),
     serializeNumber(txn.nonce),
-    Buffer.from(txn.memo),
+    serializeMemo(txn.memo),
     Buffer.from([payee.version]),
-    Buffer.from([payee.keyType]),
+    Buffer.from([payee.netType | payee.keyType]),
     Buffer.from(payee.publicKey),
   ]);
 
@@ -106,7 +132,7 @@ export const serializeStakeValidatorV1 = (txn: StakeValidatorV1): Buffer => {
     serializeNumber(txn.stake),
     serializeNumber(txn.fee),
     Buffer.from([address.version]),
-    Buffer.from([address.keyType]),
+    Buffer.from([address.netType | address.keyType]),
     Buffer.from(address.publicKey),
   ]);
 
@@ -140,7 +166,7 @@ export const serializeTransferValidatorStakeV1 = (
     Buffer.from([newAddress.keyType]),
     Buffer.from(newAddress.publicKey),
     Buffer.from([oldAddress.version]),
-    Buffer.from([oldAddress.keyType]),
+    Buffer.from([oldAddress.netType | oldAddress.keyType]),
     Buffer.from(oldAddress.publicKey),
   ]);
 
@@ -159,7 +185,7 @@ export const serializeUnstakeValidatorV1 = (
     serializeNumber(txn.stakeReleaseHeight),
     serializeNumber(txn.fee),
     Buffer.from([address.version]),
-    Buffer.from([address.keyType]),
+    Buffer.from([address.netType | address.keyType]),
     Buffer.from(address.publicKey),
   ]);
 

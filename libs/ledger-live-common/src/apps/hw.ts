@@ -4,8 +4,6 @@ import { UnexpectedBootloader } from "@ledgerhq/errors";
 import { concat, of, EMPTY, from, Observable, throwError, defer } from "rxjs";
 import { mergeMap, map } from "rxjs/operators";
 import type { Exec, AppOp, ListAppsEvent, ListAppsResult } from "./types";
-import type { App, DeviceInfo } from "../types/manager";
-import { AppType } from "../types/manager";
 import manager, { getProviderId } from "../manager";
 import installApp from "../hw/installApp";
 import uninstallApp from "../hw/uninstallApp";
@@ -28,6 +26,7 @@ import {
 } from "../apps/logic";
 import { runAllWithProgress } from "../apps/runner";
 import type { ConnectAppEvent } from "../hw/connectApp";
+import { App, AppType, DeviceInfo } from "@ledgerhq/types-live";
 
 export const execWithTransport =
   (transport: Transport): Exec =>
@@ -57,6 +56,9 @@ export type StreamAppInstallEvent =
   | {
       type: "stream-install";
       progress: number;
+      itemProgress: number;
+      currentAppOp: AppOp;
+      installQueue: string[];
     };
 
 // global percentage
@@ -113,10 +115,20 @@ export const streamAppInstall = ({
           const exec = execWithTransport(transport);
           return concat(
             runAllWithProgress(state, exec).pipe(
-              map((progress) => ({
-                type: "stream-install",
-                progress,
-              }))
+              map(
+                ({
+                  globalProgress,
+                  itemProgress,
+                  installQueue,
+                  currentAppOp,
+                }) => ({
+                  type: "stream-install",
+                  progress: globalProgress,
+                  itemProgress,
+                  installQueue,
+                  currentAppOp,
+                })
+              )
             ),
             defer(onSuccessObs || (() => EMPTY))
           );

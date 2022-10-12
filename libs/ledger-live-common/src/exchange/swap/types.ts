@@ -1,22 +1,22 @@
 import { BigNumber } from "bignumber.js";
-import type { Account, AccountLike } from "../../types/account";
-import type {
-  AccountRawLike,
+import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import {
+  Account,
+  AccountLike,
   AccountRaw,
+  AccountRawLike,
   Operation,
-  Transaction,
-  CryptoCurrency,
-  TokenCurrency,
-  TransactionRaw,
-} from "../../types";
+} from "@ledgerhq/types-live";
+import { Transaction, TransactionRaw } from "../../generated/types";
+import { Result as UseBridgeTransactionResult } from "../../bridge/useBridgeTransaction";
 
 /// v3 changes here, move me to another folder soon
 export type ValidKYCStatus = "open" | "pending" | "approved" | "closed";
-export type KYCStatus = { id: string; status: ValidKYCStatus };
+export type KYCStatus = { id: string; status: ValidKYCStatus | "rejected" };
 export type GetKYCStatus = (arg0: string, arg1: string) => Promise<KYCStatus>;
 export type SubmitKYC = (
   str: string,
-  KYCData
+  data: KYCData
 ) => Promise<KYCStatus | { error: Error }>;
 
 export type KYCData = {
@@ -60,7 +60,9 @@ export type ExchangeRate = {
   error?: Error;
   providerURL?: string | null | undefined;
 };
+
 export type TradeMethod = "fixed" | "float";
+
 export type ExchangeRateRaw = {
   rate: string;
   magnitudeAwareRate: string;
@@ -72,15 +74,69 @@ export type ExchangeRateRaw = {
   error?: string;
   providerURL?: string | null | undefined;
 };
+
 export type AvailableProviderV2 = {
   provider: string;
   supportedCurrencies: string[];
 };
+
 export type AvailableProviderV3 = {
   provider: string;
-  pairs: Array<{ from: string; to: string; tradeMethod: string }>;
+  pairs: Pair[];
 };
 
+export interface Pair {
+  from: string;
+  to: string;
+  tradeMethod: string;
+}
+
+type TradeMethodGroup = {
+  methods: TradeMethod[];
+  pairs: {
+    [currencyIndex: number]: number[];
+  };
+};
+
+export type ProvidersResponseV4 = {
+  currencies: { [currencyIndex: number]: string };
+  providers: { [providerName: string]: TradeMethodGroup[] };
+};
+
+type CheckQuoteOkStatus = {
+  codeName: "RATE_VALID";
+};
+
+export type ValidCheckQuoteErrorCodes =
+  | "UNKNOW_USER"
+  | "KYC_UNDEFINED"
+  | "KYC_PENDING"
+  | "KYC_FAILED"
+  | "KYC_UPGRADE_REQUIRED"
+  | "OVER_TRADE_LIMIT"
+  | "UNKNOWN_ERROR"
+  | "WITHDRAWALS_BLOCKED"
+  | "MFA_REQUIRED"
+  | "UNAUTHENTICATED_USER"
+  | "RATE_NOT_FOUND";
+
+type CheckQuoteErrorStatus = {
+  codeName: ValidCheckQuoteErrorCodes;
+  error: string;
+  description: string;
+};
+
+export type CheckQuoteStatus = CheckQuoteOkStatus | CheckQuoteErrorStatus;
+
+export type CheckQuote = ({
+  provider,
+  quoteId,
+  bearerToken,
+}: {
+  provider: string;
+  quoteId: string;
+  bearerToken: string;
+}) => Promise<CheckQuoteStatus>;
 export type AvailableProvider = AvailableProviderV2 | AvailableProviderV3;
 export type GetExchangeRates = (
   arg0: Exchange,
@@ -93,6 +149,7 @@ export type InitSwapResult = {
   transaction: Transaction;
   swapId: string;
 };
+
 type ValidSwapStatus =
   | "pending"
   | "onhold"
@@ -108,7 +165,31 @@ export type SwapStatus = {
   swapId: string;
   status: ValidSwapStatus;
 };
-export type GetStatus = (arg0: SwapStatusRequest) => Promise<SwapStatus>;
+
+// -----
+// Related to Swap state API call (accepted or cancelled)
+
+type SwapStateRequest = {
+  provider: string;
+  swapId: string;
+};
+
+export type SwapStateAcceptedRequest = SwapStateRequest & {
+  transactionId: string;
+};
+
+export type SwapStateCancelledRequest = SwapStateRequest;
+
+export type PostSwapAccepted = (
+  arg0: SwapStateAcceptedRequest
+) => Promise<null>;
+
+export type PostSwapCancelled = (
+  arg0: SwapStateCancelledRequest
+) => Promise<null>;
+
+// -----
+
 export type UpdateAccountSwapStatus = (
   arg0: Account
 ) => Promise<Account | null | undefined>;
@@ -125,6 +206,7 @@ export type SwapRequestEvent =
   | {
       type: "init-swap-error";
       error: Error;
+      swapId: string;
     }
   | {
       type: "init-swap-result";
@@ -196,6 +278,7 @@ export type InitSwapInput = {
   deviceId: string;
   userId?: string; // Nb for kyc purposes
 };
+
 export type InitSwapInputRaw = {
   exchange: ExchangeRaw;
   exchangeRate: ExchangeRateRaw;
@@ -203,3 +286,66 @@ export type InitSwapInputRaw = {
   deviceId: string;
   userId?: string;
 };
+
+export interface CustomMinOrMaxError extends Error {
+  amount: BigNumber;
+}
+
+export type SwapSelectorStateType = {
+  currency: TokenCurrency | CryptoCurrency | undefined;
+  account: AccountLike | undefined;
+  parentAccount: Account | undefined;
+  amount: BigNumber | undefined;
+};
+
+export type OnNoRatesCallback = (arg: {
+  fromState: SwapSelectorStateType;
+  toState: SwapSelectorStateType;
+}) => void;
+
+export type RatesReducerState = {
+  status?: string | null;
+  value?: ExchangeRate[];
+  error?: Error;
+};
+
+export type SwapDataType = {
+  from: SwapSelectorStateType;
+  to: SwapSelectorStateType;
+  isMaxEnabled: boolean;
+  isSwapReversable: boolean;
+  rates: RatesReducerState;
+  refetchRates: () => void;
+  updateSelectedRate: (selected?: ExchangeRate) => void;
+  targetAccounts?: Account[];
+};
+
+export type SwapTransactionType = UseBridgeTransactionResult & {
+  swap: SwapDataType;
+  setFromAccount: (account: SwapSelectorStateType["account"]) => void;
+  setToAccount: (
+    currency: SwapSelectorStateType["currency"],
+    account: SwapSelectorStateType["account"],
+    parentAccount: SwapSelectorStateType["parentAccount"]
+  ) => void;
+  setFromAmount: (amount: BigNumber) => void;
+  setToAmount: (amount: BigNumber) => void;
+  setToCurrency: (currency: SwapSelectorStateType["currency"]) => void;
+  toggleMax: () => void;
+  reverseSwap: () => void;
+  fromAmountError?: Error;
+};
+
+export type SetIsSendMaxLoading = (loading: boolean) => void;
+
+export enum ActionRequired {
+  Login = "Login",
+  KYC = "KYC",
+  MFA = "MFA",
+  None = "None",
+}
+
+export type Message =
+  | { type: "navigation" }
+  | { type: "setToken"; token: string }
+  | { type: "closeWidget" };

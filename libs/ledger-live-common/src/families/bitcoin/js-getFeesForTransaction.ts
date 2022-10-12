@@ -1,8 +1,8 @@
 import { BigNumber } from "bignumber.js";
-import type { Account } from "./../../types";
 import type { Transaction } from "./types";
 import { buildTransaction } from "./js-buildTransaction";
 import { perCoinLogic } from "./logic";
+import type { Account } from "@ledgerhq/types-live";
 
 const getFeesForTransaction = async ({
   account,
@@ -10,7 +10,7 @@ const getFeesForTransaction = async ({
 }: {
   account: Account;
   transaction: Transaction;
-}) => {
+}): Promise<{ fees: BigNumber; txInputs: any; txOutputs: any }> => {
   const walletTx = await buildTransaction(account, transaction);
   const fees = new BigNumber(walletTx.fee).integerValue();
   let txInputs = walletTx.inputs.map((i) => {

@@ -8,9 +8,8 @@ import {
   NotEnoughBalanceBecauseDestinationNotCreated,
   FeeNotLoaded,
 } from "@ledgerhq/errors";
-import type { Account, TransactionStatus } from "../../types";
 import { formatCurrencyUnit } from "../../currencies";
-import type { Transaction } from "./types";
+import type { PolkadotAccount, Transaction, TransactionStatus } from "./types";
 import {
   PolkadotUnauthorizedOperation,
   PolkadotElectionClosed,
@@ -45,7 +44,7 @@ import { loadPolkadotCrypto } from "./polkadot-crypto";
 
 // Should try to refacto
 const getSendTransactionStatus = async (
-  a: Account,
+  a: PolkadotAccount,
   t: Transaction
 ): Promise<TransactionStatus> => {
   const errors: any = {};
@@ -80,12 +79,6 @@ const getSendTransactionStatus = async (
   const leftover = a.spendableBalance.minus(totalSpent);
 
   if (
-    a.spendableBalance.lte(
-      EXISTENTIAL_DEPOSIT.plus(EXISTENTIAL_DEPOSIT_RECOMMENDED_MARGIN)
-    )
-  ) {
-    errors.amount = new NotEnoughBalance();
-  } else if (
     minimumBalanceExistential.gt(0) &&
     leftover.lt(minimumBalanceExistential) &&
     leftover.gt(0)
@@ -97,6 +90,14 @@ const getSendTransactionStatus = async (
         { showCode: true }
       ),
     });
+  } else if (
+    !errors.amount &&
+    !t.useAllAmount &&
+    a.spendableBalance.lte(
+      EXISTENTIAL_DEPOSIT.plus(EXISTENTIAL_DEPOSIT_RECOMMENDED_MARGIN)
+    )
+  ) {
+    errors.amount = new NotEnoughBalance();
   } else if (totalSpent.gt(a.spendableBalance)) {
     errors.amount = new NotEnoughBalance();
   }
@@ -132,10 +133,11 @@ const getSendTransactionStatus = async (
     estimatedFees,
     amount: amount.lt(0) ? new BigNumber(0) : amount,
     totalSpent,
+    family: t.family,
   });
 };
 
-const getTransactionStatus = async (a: Account, t: Transaction) => {
+const getTransactionStatus = async (a: PolkadotAccount, t: Transaction) => {
   await loadPolkadotCrypto();
 
   const errors: {

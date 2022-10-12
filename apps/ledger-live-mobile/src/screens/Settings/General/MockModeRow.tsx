@@ -1,5 +1,5 @@
 import React, { memo, useCallback } from "react";
-import { getEnv, setEnvUnsafe } from "@ledgerhq/live-common/lib/env";
+import { getEnv, setEnvUnsafe } from "@ledgerhq/live-common/env";
 import SettingsRow from "../../../components/SettingsRow";
 import Track from "../../../analytics/Track";
 import { withReboot } from "../../../context/Reboot";
@@ -34,6 +34,7 @@ function MockModeRow({ reboot }: Props) {
   );
 }
 
+// eslint-disable-next-line @typescript-eslint/ban-types
 const m: React.ComponentType<{}> = withReboot(MockModeRow);
 
 export default memo<Props>(m);

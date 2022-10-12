@@ -1,7 +1,6 @@
 import { $Keys, $Shape } from "utility-types";
 import type { SwapState, TradeMethod, AvailableProviderV3 } from "./types";
 import { isExchangeSupportedByApp } from "../";
-import type { AccountLike, TokenCurrency, CryptoCurrency } from "../../types";
 import type { InstalledItem } from "../../apps";
 import { flattenAccounts, getAccountCurrency } from "../../account";
 export type CurrencyStatus = $Keys<typeof validCurrencyStatus>;
@@ -11,6 +10,11 @@ import invariant from "invariant";
 import { findCryptoCurrencyById, findTokenById } from "@ledgerhq/cryptoassets";
 import { isCurrencyExchangeSupported } from "../";
 import { isCurrencySupported } from "../../currencies";
+import type { AccountLike } from "@ledgerhq/types-live";
+import type {
+  CryptoCurrency,
+  TokenCurrency,
+} from "@ledgerhq/types-cryptoassets";
 
 const validCurrencyStatus = { ok: 1, noApp: 1, noAccounts: 1, outdatedApp: 1 };
 

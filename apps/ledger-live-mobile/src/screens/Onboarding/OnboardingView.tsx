@@ -20,7 +20,9 @@ type Props = {
   footer?: React.ReactNode;
   hasBackButton?: boolean;
   hasCloseButton?: boolean;
+  // eslint-disable-next-line @typescript-eslint/ban-types
   customBackAction?: () => {};
+  // eslint-disable-next-line @typescript-eslint/ban-types
   customCloseAction?: () => {};
   centerTitle?: boolean;
 };
@@ -39,11 +41,13 @@ function OnboardingView({
   const { colors } = useTheme();
   const navigation = useNavigation();
 
+  // eslint-disable-next-line consistent-return
   const handlecustomBackAction = () => {
     if (customBackAction) return customBackAction();
     navigation.goBack();
   };
 
+  // eslint-disable-next-line consistent-return
   const handlecustomCloseAction = () => {
     if (customCloseAction) return customCloseAction();
     navigation.dispatch(StackActions.popToTop());
@@ -51,7 +55,7 @@ function OnboardingView({
 
   return (
     <SafeAreaView
-      style={[{ flex: 1 }, { backgroundColor: colors.palette.background.main }]}
+      style={[{ flex: 1 }, { backgroundColor: colors.background.main }]}
     >
       {/* HEADER */}
       <Flex mb={8} px={6} pt={8}>
@@ -102,7 +106,7 @@ function OnboardingView({
           </Flex>
         ) : null}
       </Flex>
-      <ScrollListContainer flex={1} px={6} bg="palette.background.main">
+      <ScrollListContainer flex={1} px={6} bg="background.main">
         {/* BODY */}
         {children ? <Flex flex={1}>{children}</Flex> : null}
       </ScrollListContainer>

@@ -1,7 +1,7 @@
+import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import type { DeviceModel, DeviceModelId } from "@ledgerhq/devices";
+import { App, DeviceInfo, FinalFirmware } from "@ledgerhq/types-live";
 import type { Observable, Subject } from "rxjs";
-import type { CryptoCurrency } from "../types/currencies";
-import type { App, DeviceInfo, FinalFirmware } from "../types/manager";
 export type Exec = (
   appOp: AppOp,
   targetId: string | number,

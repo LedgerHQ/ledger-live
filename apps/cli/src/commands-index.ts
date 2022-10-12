@@ -9,6 +9,7 @@ import botPortfolio from "./commands/botPortfolio";
 import botTransfer from "./commands/botTransfer";
 import broadcast from "./commands/broadcast";
 import cleanSpeculos from "./commands/cleanSpeculos";
+import confirmOp from "./commands/confirmOp";
 import countervalues from "./commands/countervalues";
 import derivation from "./commands/derivation";
 import devDeviceAppsScenario from "./commands/devDeviceAppsScenario";
@@ -21,12 +22,12 @@ import estimateMaxSpendable from "./commands/estimateMaxSpendable";
 import exportAccounts from "./commands/exportAccounts";
 import firmwareRepair from "./commands/firmwareRepair";
 import firmwareUpdate from "./commands/firmwareUpdate";
-import generateAppJsonFromDataset from "./commands/generateAppJsonFromDataset";
 import generateTestScanAccounts from "./commands/generateTestScanAccounts";
 import generateTestTransaction from "./commands/generateTestTransaction";
 import genuineCheck from "./commands/genuineCheck";
 import getAddress from "./commands/getAddress";
 import getTransactionStatus from "./commands/getTransactionStatus";
+import i18n from "./commands/i18n";
 import liveData from "./commands/liveData";
 import makeCompoundSummary from "./commands/makeCompoundSummary";
 import managerListApps from "./commands/managerListApps";
@@ -42,6 +43,7 @@ import signMessage from "./commands/signMessage";
 import speculosList from "./commands/speculosList";
 import swap from "./commands/swap";
 import sync from "./commands/sync";
+import synchronousOnboarding from "./commands/synchronousOnboarding";
 import testDetectOpCollision from "./commands/testDetectOpCollision";
 import testGetTrustedInputFromTxHash from "./commands/testGetTrustedInputFromTxHash";
 import user from "./commands/user";
@@ -60,6 +62,7 @@ export default {
   botTransfer,
   broadcast,
   cleanSpeculos,
+  confirmOp,
   countervalues,
   derivation,
   devDeviceAppsScenario,
@@ -72,12 +75,12 @@ export default {
   exportAccounts,
   firmwareRepair,
   firmwareUpdate,
-  generateAppJsonFromDataset,
   generateTestScanAccounts,
   generateTestTransaction,
   genuineCheck,
   getAddress,
   getTransactionStatus,
+  i18n,
   liveData,
   makeCompoundSummary,
   managerListApps,
@@ -93,9 +96,10 @@ export default {
   speculosList,
   swap,
   sync,
+  synchronousOnboarding,
   testDetectOpCollision,
   testGetTrustedInputFromTxHash,
   user,
   version,
-  walletconnect,
+  walletconnect
 };

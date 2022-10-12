@@ -39,7 +39,7 @@
   NSString *filePath = [[NSBundle mainBundle] pathForResource:googleServiceInfoName ofType:@"plist"];
   FIROptions *options = [[FIROptions alloc] initWithContentsOfFile:filePath];
   [FIRApp configureWithOptions:options];
-  
+
   RCTBridge *bridge = [[RCTBridge alloc] initWithDelegate:self launchOptions:launchOptions];
   RCTRootView *rootView = [[RCTRootView alloc] initWithBridge:bridge
                                                    moduleName:@"ledgerlivemobile"
@@ -121,7 +121,7 @@
 - (NSURL *)sourceURLForBridge:(RCTBridge *)bridge
 {
 #if DEBUG
-  return [[RCTBundleURLProvider sharedSettings] jsBundleURLForBundleRoot:@"index" fallbackResource:nil];
+  return [[RCTBundleURLProvider sharedSettings] jsBundleURLForBundleRoot:@"index"];
 #else
   return [[NSBundle mainBundle] URLForResource:@"main" withExtension:@"jsbundle"];
 #endif

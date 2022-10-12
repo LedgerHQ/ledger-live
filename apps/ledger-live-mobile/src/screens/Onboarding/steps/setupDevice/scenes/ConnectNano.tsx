@@ -1,19 +1,21 @@
 import React, { useCallback, useState } from "react";
 import { Flex } from "@ledgerhq/native-ui";
 import { useDispatch } from "react-redux";
-import { Device } from "@ledgerhq/live-common/lib/hw/actions/types";
-import connectManager from "@ledgerhq/live-common/lib/hw/connectManager";
-import { createAction } from "@ledgerhq/live-common/lib/hw/actions/manager";
+import { Device } from "@ledgerhq/live-common/hw/actions/types";
+import connectManager from "@ledgerhq/live-common/hw/connectManager";
+import { createAction } from "@ledgerhq/live-common/hw/actions/manager";
 import DeviceActionModal from "../../../../../components/DeviceActionModal";
 import SelectDevice from "../../../../../components/SelectDevice";
-import { TrackScreen } from "../../../../../analytics";
+import { TrackScreen, updateIdentify } from "../../../../../analytics";
 import Button from "../../../../../components/PreventDoubleClickButton";
 
 import {
   installAppFirstTime,
+  setHasOrderedNano,
   setLastConnectedDevice,
   setReadOnlyMode,
 } from "../../../../../actions/settings";
+import { updateUser } from "../../../../../user";
 
 const action = createAction(connectManager);
 
@@ -28,18 +30,22 @@ const ConnectNanoScene = ({
   const [device, setDevice] = useState<Device | undefined>();
 
   const onSetDevice = useCallback(
-    device => {
+    async device => {
       dispatch(setLastConnectedDevice(device));
       setDevice(device);
       dispatch(setReadOnlyMode(false));
+      dispatch(setHasOrderedNano(false));
     },
     [dispatch],
   );
 
   const directNext = useCallback(
-    device => {
+    async device => {
+      await updateUser();
+      await updateIdentify();
       dispatch(setLastConnectedDevice(device));
       dispatch(setReadOnlyMode(false));
+      dispatch(setHasOrderedNano(false));
       onNext();
     },
     [dispatch, onNext],
@@ -57,6 +63,7 @@ const ConnectNanoScene = ({
         dispatch(installAppFirstTime(hasAnyAppinstalled));
         setDevice(undefined);
         dispatch(setReadOnlyMode(false));
+        dispatch(setHasOrderedNano(false));
         onNext();
       }
     },
@@ -101,6 +108,7 @@ const Next = ({ onNext }: { onNext: () => void }) => {
       outline
       onPress={() => {
         dispatch(setReadOnlyMode(false));
+        dispatch(setHasOrderedNano(false));
         onNext();
       }}
     >

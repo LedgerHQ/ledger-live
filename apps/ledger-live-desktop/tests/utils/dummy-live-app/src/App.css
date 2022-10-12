@@ -1,0 +1,34 @@
+.App {
+  text-align: center;
+}
+
+.App-logo {
+  height: 10vmin;
+}
+
+.App-header {
+  background-color: #282c34;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-size: calc(10px + 2vmin);
+  color: white;
+}
+
+.button-container {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: center;
+  width: 100%;
+}
+
+.output-container {
+  background-color: black;
+  text-align: start;
+  overflow: scroll;
+  /* margin: 10; */
+  font-size: 12px;
+  width: 90%;
+}

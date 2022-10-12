@@ -1,4 +1,6 @@
-import type { Account, CryptoCurrency, DerivationMode } from "../types";
+import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { Account, DerivationMode } from "@ledgerhq/types-live";
+
 const MAX_ACCOUNT_NAME_SIZE = 50;
 export const getAccountPlaceholderName = ({
   currency,

@@ -1,14 +1,9 @@
 // @flow
 
 import type { TFunction } from "react-i18next";
-import type {
-  Account,
-  AccountLike,
-  Transaction,
-  TransactionStatus,
-  Operation,
-} from "@ledgerhq/live-common/lib/types";
-import type { Device } from "@ledgerhq/live-common/lib/hw/actions/types";
+import type { Account, AccountLike, Operation } from "@ledgerhq/types-live";
+import type { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
+import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import type { Step } from "~/renderer/components/Stepper";
 
 export type StepId =

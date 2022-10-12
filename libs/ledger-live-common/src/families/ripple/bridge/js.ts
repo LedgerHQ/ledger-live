@@ -27,8 +27,14 @@ import { formatCurrencyUnit } from "../../../currencies";
 import signTransaction from "../../../hw/signTransaction";
 import { withDevice } from "../../../hw/deviceAccess";
 import { patchOperationWithHash } from "../../../operation";
-import type { Account, Operation, SignOperationEvent } from "../../../types";
-import type { AccountBridge, CurrencyBridge } from "../../../types/bridge";
+import type {
+  Account,
+  AccountBridge,
+  CurrencyBridge,
+  Operation,
+  SignOperationEvent,
+} from "@ledgerhq/types-live";
+
 import { scanAccounts, sync } from "../js-synchronization";
 import type { NetworkInfo, Transaction } from "../types";
 

@@ -1,17 +1,22 @@
 #!/usr/bin/env node
 // @flow
-
+const SentryCli = require("@sentry/cli");
 const yargs = require("yargs");
 const execa = require("execa");
 const Listr = require("listr");
 const verboseRenderer = require("listr-verbose-renderer");
 const path = require("path");
 const rimraf = require("rimraf");
-
+const pkg = require("../../package.json");
 const Draft = require("./draft");
 const healthChecksTasks = require("./health-checks");
 
 require("dotenv").config();
+
+const releaseSentryDSN =
+  "https://5729b6ee405f416a8998ae4d43c87d58@o118392.ingest.sentry.io/6488660";
+const prereleaseSentryDSN =
+  "https://5514716222674afd816b0961d7b4378c@o118392.ingest.sentry.io/6488659";
 
 const rootFolder = "../../";
 let verbose = false;
@@ -67,7 +72,41 @@ const buildTasks = args => [
   {
     title: "Compiling assets",
     task: async () => {
-      await exec("pnpm", ["run", "build"]);
+      await exec("pnpm", ["run", "build:js"], {
+        env: args.release
+          ? { SENTRY_URL: releaseSentryDSN }
+          : args.pre
+          ? { SENTRY_URL: prereleaseSentryDSN }
+          : {},
+      });
+    },
+  },
+  {
+    title: "Upload to Sentry",
+    enabled: () => args.release || args.pre,
+    task: async () => {
+      const cli = new SentryCli(
+        args.release
+          ? "sentry.release.properties"
+          : args.pre
+          ? "sentry.prerelease.properties"
+          : null,
+        {
+          authToken: process.env.SENTRY_AUTH_TOKEN,
+        },
+      );
+      await cli.releases.uploadSourceMaps(pkg.version, {
+        urlPrefix: "app:///.webpack",
+        include: [".webpack"],
+      });
+      await cli.releases.setCommits(pkg.version, { auto: true }).catch(e => {
+        console.error(e);
+        console.log(
+          "Sentry setCommits failed – The failure was ignored because " +
+            "it can be flawky and it was made optional in our builds. " +
+            "We will investigate why and eventually remove this failsafe.",
+        );
+      });
     },
   },
   {
@@ -83,22 +122,15 @@ const buildTasks = args => [
       } else if (args.pre) {
         commands.push("--config");
         commands.push("electron-builder-pre.yml");
-      } else if (args.ci) {
+      } else if (args.nosign) {
         commands.push("--config");
-        commands.push("electron-builder-ci.yml");
+        commands.push("electron-builder-nosign.yml");
         commands.push("-c.afterSign='lodash/noop'");
         commands.push("--publish", "never");
       }
 
       // Using npm here because pnpm will refuse to rebuild cached modules.
-      await exec("npm", ["run", ...commands], {
-        env: !args.ci
-          ? {
-              SENTRY_URL:
-                "https://db8f5b9b021048d4a401f045371701cb@o118392.ingest.sentry.io/274561",
-            }
-          : {},
-      });
+      await exec("npm", ["run", ...commands]);
     },
   },
 ];
@@ -206,7 +238,11 @@ yargs
           type: "boolean",
           describe: "make it a prerelease build (doesn't combine with nightly)",
         })
-        .option("ci", {
+        .option("release", {
+          type: "boolean",
+          describe: "make it a release build",
+        })
+        .option("nosign", {
           type: "boolean",
         })
         .option("dirty", {

@@ -1,10 +1,9 @@
-// @flow
 import React, { ReactElement } from "react";
 import { useSelector } from "react-redux";
-// $FlowFixMe
+import { getEnv } from "@ledgerhq/live-common/env";
 import { counterValueCurrencySelector } from "~/renderer/reducers/settings";
-import { MarketDataProvider } from "@ledgerhq/live-common/lib/market/MarketDataProvider";
-import apiMock from "@ledgerhq/live-common/lib/market/api/api.mock";
+import { MarketDataProvider } from "@ledgerhq/live-common/market/MarketDataProvider";
+import apiMock from "@ledgerhq/live-common/market/api/api.mock";
 
 type Props = {
   children: React.ReactNode;
@@ -15,7 +14,7 @@ export default function MarketDataProviderWrapper({ children }: Props): ReactEle
 
   return (
     <MarketDataProvider
-      {...(process.env.PLAYWRIGHT_RUN ? { fetchApi: apiMock } : {})}
+      {...(getEnv("PLAYWRIGHT_RUN") ? { fetchApi: apiMock } : {})}
       countervalue={counterValueCurrency}
     >
       {children}

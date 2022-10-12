@@ -10,7 +10,6 @@ import React, {
 } from "react";
 
 import { useDebounce } from "../hooks/useDebounce";
-import { Currency } from "../types";
 import {
   State,
   MarketDataApi,
@@ -21,6 +20,7 @@ import {
   SupportedCoins,
 } from "./types";
 import defaultFetchApi from "./api/api";
+import type { Currency } from "@ledgerhq/types-cryptoassets";
 type Props = {
   children: React.ReactNode;
   fetchApi?: MarketDataApi;
@@ -126,8 +126,8 @@ function marketDataReducer(state, action) {
       const selectedCoinData = { ...state.selectedCoinData };
 
       selectedCoinData.chartData = {
-        ...selectedCoinData.chartData,
-        ...action.payload.chartData,
+        ...(selectedCoinData?.chartData ?? {}),
+        ...(action?.payload?.chartData ?? {}),
       };
 
       return { ...state, selectedCoinData, chartRequestParams };

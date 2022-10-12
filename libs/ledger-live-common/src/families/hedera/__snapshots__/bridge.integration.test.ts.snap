@@ -1,0 +1,60 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`hedera currency bridge scanAccounts hedera seed 1 1`] = `
+Array [
+  Object {
+    "balance": "99870000",
+    "currencyId": "hedera",
+    "derivationMode": "hederaBip44",
+    "freshAddress": "0.0.1040977",
+    "freshAddressPath": "44/3030",
+    "freshAddresses": Array [
+      Object {
+        "address": "0.0.1040977",
+        "derivationPath": "44/3030",
+      },
+    ],
+    "id": "js:2:hedera:0.0.1040977:hederaBip44",
+    "index": 0,
+    "name": "Hedera 1",
+    "nfts": undefined,
+    "operationsCount": 1,
+    "pendingOperations": Array [],
+    "seedIdentifier": "9e92a312233d5fd6b5a723875aeea2cea81a8e48ffc00341cff6dffcfd3ab7f2",
+    "spendableBalance": "99870000",
+    "starred": false,
+    "swapHistory": Array [],
+    "syncHash": undefined,
+    "unitMagnitude": 8,
+    "used": true,
+  },
+]
+`;
+
+exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
+Array [
+  Array [
+    Object {
+      "accountId": "js:2:hedera:0.0.1040977:hederaBip44",
+      "blockHash": null,
+      "blockHeight": 5,
+      "contract": undefined,
+      "extra": Object {},
+      "fee": "163081",
+      "hash": "iQ_oLq-PEMlwmoSEZBXpeK_J9ENApLJnz-uGB3_1XVqtRnMU-0VvdKmJV3E8ig5J",
+      "id": "js:2:hedera:0.0.1040977:hederaBip44-iQ_oLq-PEMlwmoSEZBXpeK_J9ENApLJnz-uGB3_1XVqtRnMU-0VvdKmJV3E8ig5J-IN",
+      "operator": undefined,
+      "recipients": Array [
+        "0.0.1040977",
+      ],
+      "senders": Array [
+        "0.0.880760",
+      ],
+      "standard": undefined,
+      "tokenId": undefined,
+      "type": "IN",
+      "value": "99870000",
+    },
+  ],
+]
+`;

@@ -1,7 +1,6 @@
 // cross helps dealing with cross-project feature like export/import & cross project conversions
 import { BigNumber } from "bignumber.js";
 import compressjs from "@ledgerhq/compressjs";
-import type { Account, CryptoCurrencyIds } from "./types";
 import {
   runDerivationScheme,
   getDerivationScheme,
@@ -9,6 +8,7 @@ import {
 } from "./derivation";
 import { decodeAccountId, emptyHistoryCache } from "./account";
 import { getCryptoCurrencyById } from "./currencies";
+import type { Account, CryptoCurrencyIds } from "@ledgerhq/types-live";
 
 export type AccountData = {
   id: string;
@@ -308,7 +308,8 @@ export const accountDataToAccount = ({
   if (
     // FIXME Dirty hack, since we have no way here to know if "xpubOrAddress" is one or the other.
     // Proposed fix: https://ledgerhq.atlassian.net/browse/LL-7437
-    currency.family === "bitcoin"
+    currency.family === "bitcoin" ||
+    currency.family === "cardano"
   ) {
     // In bitcoin implementation, xpubOrAddress field always go in the xpub
     xpub = xpubOrAddress;

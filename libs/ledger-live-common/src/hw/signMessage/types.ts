@@ -1,5 +1,5 @@
+import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import Transport from "@ledgerhq/hw-transport";
-import type { CryptoCurrency } from "../../types";
 import type { DerivationMode } from "../../derivation";
 export type Result = {
   rsv: {
@@ -17,4 +17,7 @@ export type MessageData = {
   message: string;
   rawMessage: string;
 };
-export type Resolver = (arg0: Transport, arg1: MessageData) => Promise<Result>;
+export type SignMessage = (
+  transport: Transport,
+  message: MessageData
+) => Promise<Result>;

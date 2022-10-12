@@ -1,4 +1,4 @@
-import type { AccountBridge } from "../../types";
+import type { AccountBridge } from "@ledgerhq/types-live";
 import type { Transaction } from "./types";
 import BigNumber from "bignumber.js";
 import { ChainAPI } from "./api";

@@ -1,10 +1,13 @@
 {
   "name": "@ledgerhq/live-cli",
-  "version": "21.33.1",
+  "version": "22.4.3",
   "description": "ledger-live CLI version",
   "repository": {
     "type": "git",
-    "url": "git://github.com/LedgerHQ/ledger-live-common"
+    "url": "https://github.com/LedgerHQ/ledger-live.git"
+  },
+  "bugs": {
+    "url": "https://github.com/LedgerHQ/ledger-live/issues"
   },
   "bin": {
     "ledger-live": "./bin/index.js"
@@ -14,7 +17,7 @@
     "lib"
   ],
   "scripts": {
-    "prebuild": "./scripts/gen.sh",
+    "prebuild": "zx ./scripts/gen.mjs",
     "build": "tsc --project src/tsconfig.json",
     "prepublishOnly": "rm -rf lib && tsc --project src/tsconfig.json",
     "watch": "tsc --watch --project src/tsconfig.json",
@@ -58,6 +61,8 @@
     "ws": "^8.6.0"
   },
   "devDependencies": {
+    "@ledgerhq/types-live": "workspace:^",
+    "@ledgerhq/types-cryptoassets": "workspace:^",
     "@types/command-line-args": "^5.2.0",
     "@types/lodash": "^4.14.177",
     "@types/node": "^17.0.15",

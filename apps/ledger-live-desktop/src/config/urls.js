@@ -34,8 +34,26 @@ export const urls = {
     "https://www.ledger.com/pages/ledger-nano-x#utm_source=Ledger%20Live%20Desktop%20App&utm_medium=Ledger%20Live&utm_campaign=Ledger%20Live%20Desktop%20-%20Banner%20LNX",
 
   // Ledger support
-  faq:
-    "https://support.ledger.com/hc/en-us?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=faq",
+  faq: {
+    en:
+      "https://support.ledger.com/hc/en-us/categories/4404369571601-Support?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=faq",
+    fr:
+      "https://support.ledger.com/hc/fr-fr/categories/4404369571601-Assistance?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=faq",
+    es:
+      "https://support.ledger.com/hc/es/categories/4404369571601-Soporte?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=faq",
+    de:
+      "https://support.ledger.com/hc/de/categories/4404369571601-Support?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=faq",
+    ru:
+      "https://support.ledger.com/hc/ru/categories/4404369571601-%D0%A1%D0%BB%D1%83%D0%B6%D0%B1%D0%B0-%D0%BF%D0%BE%D0%B4%D0%B4%D0%B5%D1%80%D0%B6%D0%BA%D0%B8?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=faq",
+    zh:
+      "https://support.ledger.com/hc/zh-cn/categories/4404369571601-%E6%8A%80%E6%9C%AF%E6%94%AF%E6%8C%81?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=faq",
+    tr:
+      "https://support.ledger.com/hc/tr/categories/4404369571601-Destek?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=faq",
+    ja:
+      "https://support.ledger.com/hc/ja/categories/4404369571601-%E3%82%B5%E3%83%9D%E3%83%BC%E3%83%88?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=faq",
+    ko:
+      "https://support.ledger.com/hc/ko/categories/4404369571601-%EC%A7%80%EC%9B%90?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=faq",
+  },
   ledgerStatus: "https://status.ledger.com/",
   syncErrors:
     "https://support.ledger.com/hc/en-us/articles/360012207759?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=error_syncerror",
@@ -43,15 +61,45 @@ export const urls = {
     en:
       "https://shop.ledger.com/pages/ledger-live-terms-of-use?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=terms",
     fr:
-      "https://shop.ledger.com/pages/conditions-dutilisation-de-ledger-live?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=privacy",
-    es:
-      "https://shop.ledger.com/pages/condiciones-de-uso-de-ledger-live?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=privacy",
+      "https://shop.ledger.com/fr/pages/ledger-live-terms-of-use?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=terms",
     de:
-      "https://shop.ledger.com/pages/nutzungsbedingungen-von-ledger-live?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=privacy",
+      "https://shop.ledger.com/de/pages/ledger-live-terms-of-use?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=terms",
+    es:
+      "https://shop.ledger.com/es/pages/ledger-live-terms-of-use?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=terms",
+    tr:
+      "https://shop.ledger.com/tr/pages/ledger-live-terms-of-use?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=terms",
+    ar:
+      "https://shop.ledger.com/ar/pages/ledger-live-terms-of-use?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=terms",
+    ru:
+      "https://shop.ledger.com/ru/pages/ledger-live-terms-of-use?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=terms",
+    ja:
+      "https://shop.ledger.com/ja/pages/ledger-live-terms-of-use?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=terms",
+    zh:
+      "https://shop.ledger.com/zh-cn/pages/ledger-live-terms-of-use?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=terms",
+    ko:
+      "https://shop.ledger.com/ko/pages/ledger-live-terms-of-use?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=terms",
   },
   noDevice: {
-    buyNew:
-      "https://shop.ledger.com/pages/hardware-wallets-comparison?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=onboarding",
+    buyNew: {
+      en:
+        "https://shop.ledger.com/pages/hardware-wallets-comparison?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=onboarding",
+      fr:
+        "https://shop.ledger.com/fr/pages/hardware-wallets-comparison?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=onboarding",
+      es:
+        "https://shop.ledger.com/es/pages/hardware-wallets-comparison?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=onboarding",
+      de:
+        "https://shop.ledger.com/de/pages/hardware-wallets-comparison?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=onboarding",
+      ru:
+        "https://shop.ledger.com/ru/pages/hardware-wallets-comparison?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=onboarding",
+      zh:
+        "https://shop.ledger.com/zh-cn/pages/hardware-wallets-comparison?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=onboarding",
+      tr:
+        "https://shop.ledger.com/tr/pages/hardware-wallets-comparison?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=onboarding",
+      ja:
+        "https://shop.ledger.com/ja/pages/hardware-wallets-comparison?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=onboarding",
+      ko:
+        "https://shop.ledger.com/ko/pages/hardware-wallets-comparison?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=onboarding",
+    },
     learnMore:
       "https://www.ledger.com?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=onboarding",
     learnMoreCrypto:
@@ -69,15 +117,26 @@ export const urls = {
   managerAppLearnMore: "https://support.ledger.com/hc/en-us/categories/4404376139409?docs=true",
   privacyPolicy: {
     en:
-      "https://shop.ledger.com/pages/privacy-policy?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=privacy",
+      "https://www.ledger.com/privacy-policy?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=privacy",
     fr:
-      "https://shop.ledger.com/pages/politique-de-confidentialite?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=privacy",
-    es:
-      "https://shop.ledger.com/pages/politica-de-privacidad?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=privacy",
-    ru:
-      "https://shop.ledger.com/pages/nasha-politika-konfidentsialnosti?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=privacy",
+      "https://www.ledger.com/fr/privacy-policy?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=privacy",
     de:
-      "https://shop.ledger.com/pages/unsere-datenschutzrichtlinie?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=privacy",
+      "https://www.ledger.com/de/privacy-policy?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=privacy",
+    es:
+      "https://www.ledger.com/es/privacy-policy?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=privacy",
+    tr:
+      "https://www.ledger.com/tr/privacy-policy?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=privacy",
+    ar:
+      "https://www.ledger.com/ar/privacy-policy?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=privacy",
+    ja:
+      "https://www.ledger.com/ja/privacy-policy?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=privacy",
+    ru:
+      "https://www.ledger.com/ru/privacy-policy?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=privacy",
+
+    zh:
+      "https://www.ledger.com/zh-hans/privacy-policy?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=privacy",
+    ko:
+      "https://www.ledger.com/ko/privacy-policy?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=privacy",
   },
   troubleshootingUSB:
     "https://support.ledger.com/hc/en-us/articles/115005165269?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=error",
@@ -128,6 +187,7 @@ export const urls = {
     "https://support.ledger.com/hc/en-us/articles/360018131260?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=polkadot",
   cosmosStakingRewards:
     "https://support.ledger.com/hc/en-us/articles/360014339340-Earn-Cosmos-staking-rewards,?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=cosmos",
+  osmosisStakingRewards: "https://support.ledger.com/hc/en-us/articles/6235986236957?docs=true",
   algorandStakingRewards:
     "https://support.ledger.com/hc/en-us/articles/360015897740?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=algorand",
   polkadotFeesInfo:
@@ -178,6 +238,14 @@ export const urls = {
         support: "https://support.sendwyre.com/hc/en-us/requests/new",
         kyc: "https://support.ledger.com/hc/en-us/articles/4404422869265",
       },
+      ftx: {
+        main: "https://ftx.com",
+        support: "https://ftx.com/support",
+      },
+      ftxus: {
+        main: "https://ftx.us/",
+        support: "https://help.ftx.us/hc/en-us",
+      },
     },
   },
   exchange: {
@@ -210,13 +278,23 @@ export const urls = {
   elrond: {
     website: "https://elrond.com",
   },
+  figment: {
+    website: "https://www.figment.io",
+  },
   solana: {
     staking: "https://support.ledger.com/hc/en-us/articles/4731749170461?docs=true",
     recipient_info: "https://support.ledger.com",
-    ledgerByFigmentTC: "https://drive.google.com/file/d/1vlIh2gTwtbMon8_bzFQGjCLhTUqS5uQc",
+    ledgerByFigmentTC:
+      "https://cdn.figment.io/legal/Current%20Ledger_Online%20Staking%20Delgation%20Services%20Agreement.pdf",
   },
   hedera: {
     supportArticleLink:
-      "https://launchbadge.com/blog/using-a-ledger-nano-to-create-your-hedera-account",
+      "https://support.ledger.com/hc/en-us/articles/4494505217565-Create-a-Ledger-Hedera-HBAR-account-via-HashPack?docs=true",
+  },
+  celo: {
+    ledgerByFigmentTC:
+      "https://cdn.figment.io/legal/Current%20Ledger_Online%20Staking%20Delgation%20Services%20Agreement.pdf",
+    learnMore:
+      "https://support.ledger.com/hc/en-us/articles/360020499920-Celo-CELO-?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=celo",
   },
 };

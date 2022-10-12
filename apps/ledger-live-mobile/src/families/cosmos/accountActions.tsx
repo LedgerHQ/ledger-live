@@ -1,22 +1,31 @@
 import React from "react";
-import type { Account } from "@ledgerhq/live-common/lib/types";
-import { canDelegate } from "@ledgerhq/live-common/lib/families/cosmos/logic";
-
+import { canDelegate } from "@ledgerhq/live-common/families/cosmos/logic";
 import { Icons } from "@ledgerhq/native-ui";
 import { Trans } from "react-i18next";
-import { NavigatorName, ScreenName } from "../../const";
+import { CosmosAccount } from "@ledgerhq/live-common/lib/families/cosmos/types";
 
-const getActions = ({ account }: { account: Account }) => {
+import { NavigatorName, ScreenName } from "../../const";
+import { ActionButtonEvent } from "../../components/FabActions";
+
+const getActions = ({
+  account,
+}: {
+  account: CosmosAccount;
+}): ActionButtonEvent[] | null | undefined => {
   const delegationDisabled = !canDelegate(account);
 
   return [
     {
+      id: "stake",
       disabled: delegationDisabled,
       navigationParams: [
         NavigatorName.CosmosDelegationFlow,
         {
-          screen: ScreenName.CosmosDelegationStarted,
-
+          screen:
+            account.cosmosResources &&
+            account.cosmosResources?.delegations.length > 0
+              ? ScreenName.CosmosDelegationValidator
+              : ScreenName.CosmosDelegationStarted,
         },
       ],
       label: <Trans i18nKey="account.stake" />,

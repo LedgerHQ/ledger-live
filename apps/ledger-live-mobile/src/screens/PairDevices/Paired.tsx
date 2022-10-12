@@ -1,7 +1,7 @@
 import React, { useCallback } from "react";
 import { Trans } from "react-i18next";
 import { getDeviceModel } from "@ledgerhq/devices";
-import { Device } from "@ledgerhq/live-common/lib/hw/actions/types";
+import { Device } from "@ledgerhq/live-common/hw/actions/types";
 
 import { Button, Flex, IconBox, Text } from "@ledgerhq/native-ui";
 import { CheckAloneMedium } from "@ledgerhq/native-ui/assets/icons";
@@ -9,7 +9,7 @@ import { TrackScreen } from "../../analytics";
 
 type Props = {
   device: Device;
-  onContinue: (device: Device) => void;
+  onContinue: (_: Device) => void;
   genuine: boolean;
 };
 

@@ -1,6 +1,6 @@
 // @flow
 import { ipcRenderer } from "electron";
-import { setEnvUnsafe } from "@ledgerhq/live-common/lib/env";
+import { setEnvUnsafe } from "@ledgerhq/live-common/env";
 
 // List of environment variables for which killing internal process is necessary
 // (I must admit having considered calling this `bloodThirstyEnvs`)

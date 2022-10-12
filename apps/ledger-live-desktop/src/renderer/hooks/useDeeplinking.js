@@ -6,8 +6,9 @@ import { useLocation, useHistory } from "react-router-dom";
 import {
   findCryptoCurrencyByKeyword,
   parseCurrencyUnit,
-} from "@ledgerhq/live-common/lib/currencies";
-import { getAccountCurrency } from "@ledgerhq/live-common/lib/account";
+} from "@ledgerhq/live-common/currencies/index";
+import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { accountsSelector } from "~/renderer/reducers/accounts";
 import { openModal, closeAllModal } from "~/renderer/actions/modals";
 import { deepLinkUrlSelector, areSettingsLoaded } from "~/renderer/reducers/settings";
@@ -38,6 +39,7 @@ export function useDeepLinkHandler() {
   const accounts = useSelector(accountsSelector);
   const location = useLocation();
   const history = useHistory();
+  const walletConnectLiveApp = useFeature("walletConnectLiveApp");
 
   const navigate = useCallback(
     (url: string, state?: any, search?: string) => {
@@ -52,6 +54,31 @@ export function useDeepLinkHandler() {
   const handler = useCallback(
     (event: any, deeplink: string) => {
       const { pathname, searchParams } = new URL(deeplink);
+      /**
+       * TODO: handle duplicated query params
+       * Today, it only keeps one (the last) key / value pair encountered in search params
+       * There is a loss of information
+       * Example: http://localhost:5000/?weiAmount=0&foo=bar&abc=xyz&abc=123&theme=test
+       * will result in a "query" object with the following structure:
+       * {
+       *  "weiAmount": "0",
+       *  "foo": "bar",
+       *  "abc": "123",
+       *  "theme": "test"
+       * }
+       * instead of the following structure:
+       * {
+       *  "weiAmount": "0",
+       *  "foo": "bar",
+       *  "abc": ['xyz', '123'],
+       *  "theme": "test"
+       * }
+       *
+       * We could probably use https://github.com/ljharb/qs instead of URL and
+       * Object.fromEntries(searchParams) because we would have to use
+       * searchParams.getAll("abc") to get the array from the searchParams with
+       * what we have now
+       */
       const query = Object.fromEntries(searchParams);
       const fullUrl = pathname.replace(/(^\/+|\/+$)/g, "");
       const [url, path] = fullUrl.split("/");
@@ -65,7 +92,7 @@ export function useDeepLinkHandler() {
           navigate("/exchange");
           break;
 
-        case "manager": {
+        case "myledger": {
           const { installApp } = query;
           if (!installApp || typeof installApp !== "string") {
             navigate("/manager");
@@ -200,9 +227,15 @@ export function useDeepLinkHandler() {
           break;
 
         case "wc": {
-          const { uri } = query;
           setTrackingSource("deeplink");
-          dispatch(openModal("MODAL_WALLETCONNECT_DEEPLINK", { link: uri }));
+
+          if (walletConnectLiveApp?.enabled) {
+            navigate("/platform/ledger-wallet-connect", query);
+          } else {
+            const { uri } = query;
+            dispatch(openModal("MODAL_WALLETCONNECT_DEEPLINK", { link: uri }));
+          }
+
           break;
         }
         case "portfolio":
@@ -211,7 +244,7 @@ export function useDeepLinkHandler() {
           break;
       }
     },
-    [accounts, dispatch, navigate],
+    [accounts, dispatch, navigate, walletConnectLiveApp?.enabled],
   );
 
   return {

@@ -1,10 +1,10 @@
 // @flow
 import Prando from "prando";
-import { getEnv } from "@ledgerhq/live-common/lib/env";
+import { getEnv } from "@ledgerhq/live-common/env";
 import type {
   AnnouncementsApi,
   RawAnnouncement,
-} from "@ledgerhq/live-common/lib/notifications/AnnouncementProvider/types";
+} from "@ledgerhq/live-common/notifications/AnnouncementProvider/types";
 
 const announcementsPool: RawAnnouncement[] = [
   {

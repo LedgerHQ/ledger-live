@@ -6,23 +6,23 @@ import { useNavigation } from "@react-navigation/native";
 import { useTranslation } from "react-i18next";
 import { Polkadot as PolkadotIdenticon } from "@polkadot/reactnative-identicon/icons";
 
-import { getMainAccount } from "@ledgerhq/live-common/lib/account";
+import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import {
   getDefaultExplorerView,
   getAddressExplorer,
-} from "@ledgerhq/live-common/lib/explorers";
-import { Account } from "@ledgerhq/live-common/lib/types";
+} from "@ledgerhq/live-common/explorers";
+import { Account } from "@ledgerhq/types-live";
 import {
   canNominate,
   isStash,
   hasExternalController,
   hasExternalStash,
   hasPendingOperationType,
-} from "@ledgerhq/live-common/lib/families/polkadot/logic";
-import { usePolkadotPreloadData } from "@ledgerhq/live-common/lib/families/polkadot/react";
-import type { PolkadotNomination } from "@ledgerhq/live-common/lib/families/polkadot/types";
+} from "@ledgerhq/live-common/families/polkadot/logic";
+import { usePolkadotPreloadData } from "@ledgerhq/live-common/families/polkadot/react";
+import type { PolkadotNomination } from "@ledgerhq/live-common/families/polkadot/types";
 
-import { Flex } from "@ledgerhq/native-ui";
+import { Box, Flex } from "@ledgerhq/native-ui";
 import { ScreenName, NavigatorName } from "../../../const";
 import AccountDelegationInfo from "../../../components/AccountDelegationInfo";
 import { urls } from "../../../config/urls";
@@ -44,7 +44,7 @@ import EarnLight from "../../../images/illustration/Light/_003.png";
 import EarnDark from "../../../images/illustration/Dark/_003.png";
 
 type Props = {
-  account: Account,
+  account: Account;
 };
 
 export default function Nominations({ account }: Props) {
@@ -119,9 +119,9 @@ export default function Nominations({ account }: Props) {
       screen,
       params,
     }: {
-      route: typeof NavigatorName | typeof ScreenName,
-      screen?: typeof ScreenName,
-      params?: { [key: string]: any },
+      route: typeof NavigatorName | typeof ScreenName;
+      screen?: typeof ScreenName;
+      params?: { [key: string]: any };
     }) => {
       setNomination();
       navigation.navigate(route, {
@@ -341,13 +341,14 @@ export default function Nominations({ account }: Props) {
         <AccountDelegationInfo
           title={t("polkadot.nomination.emptyState.title")}
           image={
-          <Flex alignItems="center" mb={6}>
-            <Illustration
-              lightSource={EarnLight}
-              darkSource={EarnDark}
-              size={150}
-            />
-          </Flex>}
+            <Flex alignItems="center" mb={6}>
+              <Illustration
+                lightSource={EarnLight}
+                darkSource={EarnDark}
+                size={150}
+              />
+            </Flex>
+          }
           description={t("polkadot.nomination.emptyState.description", {
             name: account.currency.name,
           })}
@@ -362,7 +363,7 @@ export default function Nominations({ account }: Props) {
           }
         />
       ) : (
-        <View style={styles.wrapper}>
+        <Box>
           <AccountSectionLabel
             name={t("polkadot.nomination.header")}
             RightComponent={
@@ -385,7 +386,7 @@ export default function Nominations({ account }: Props) {
               </Alert>
             )}
           </CollapsibleList>
-        </View>
+        </Box>
       )}
 
       {hasUnlockings ? (
@@ -410,7 +411,7 @@ export default function Nominations({ account }: Props) {
 
 const styles = StyleSheet.create({
   root: {
-    margin: 16,
+    marginHorizontal: 16,
   },
   illustration: { alignSelf: "center", marginBottom: 16 },
   wrapper: {

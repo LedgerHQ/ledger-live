@@ -9,10 +9,11 @@ import {
 } from "rxjs/operators";
 import { log } from "@ledgerhq/logs";
 import { TransportStatusError, UserRefusedAddress } from "@ledgerhq/errors";
-import type { CryptoCurrency, CryptoCurrencyIds } from "./types";
+import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { getCryptoCurrencyById } from "./currencies";
 import { getEnv } from "./env";
 import type { GetAddressOptions, Result } from "./hw/getAddress/types";
+import type { CryptoCurrencyIds } from "@ledgerhq/types-live";
 export type ModeSpec = {
   mandatoryEmptyAccountSkip?: number;
   isNonIterable?: boolean;
@@ -33,6 +34,7 @@ export type ModeSpec = {
   tag?: string;
   addressFormat?: string;
 };
+
 export type DerivationMode = keyof typeof modes;
 
 const modes = Object.freeze({
@@ -154,8 +156,14 @@ const modes = Object.freeze({
   polkadotbip44: {
     overridesDerivation: "44'/354'/<account>'/0'/<address>'",
   },
-  filecoin: {
+  gliflegacy: {
+    overridesDerivation: "44'/1'/0'/0/<account>",
+    tag: "legacy",
+  },
+  glif: {
     overridesDerivation: "44'/461'/0'/0/<account>",
+    startsAt: 1,
+    tag: "third-party",
   },
   solanaMain: {
     isNonIterable: true,
@@ -166,6 +174,10 @@ const modes = Object.freeze({
   },
   hederaBip44: {
     overridesDerivation: "44/3030",
+  },
+  cardano: {
+    purpose: 1852,
+    overridesDerivation: "1852'/1815'/<account>'/<node>/<address>",
   },
 });
 modes as Record<DerivationMode, ModeSpec>; // eslint-disable-line
@@ -181,8 +193,10 @@ const legacyDerivations: Record<CryptoCurrencyIds, DerivationMode[]> = {
   tezos: ["galleonL", "tezboxL", "tezosbip44h", "tezbox"],
   stellar: ["sep5"],
   polkadot: ["polkadotbip44"],
-  filecoin: ["filecoin"],
   hedera: ["hederaBip44"],
+  filecoin: ["gliflegacy", "glif"],
+  cardano: ["cardano"],
+  cardano_testnet: ["cardano"],
 };
 
 const legacyDerivationsPerFamily: Record<string, DerivationMode[]> = {
@@ -343,12 +357,16 @@ const disableBIP44 = {
   polkadot: true,
   solana: true,
   hedera: true,
+  cardano: true,
+  cardano_testnet: true,
 };
 const seedIdentifierPath = {
   neo: ({ purpose, coinType }) => `${purpose}'/${coinType}'/0'/0/0`,
   filecoin: ({ purpose, coinType }) => `${purpose}'/${coinType}'/0'/0/0`,
   solana: ({ purpose, coinType }) => `${purpose}'/${coinType}'`,
   hedera: ({ purpose, coinType }) => `${purpose}/${coinType}`,
+  cardano: ({ purpose, coinType }) => `${purpose}'/${coinType}'/0'/0/0`,
+  cardano_testnet: ({ purpose, coinType }) => `${purpose}'/${coinType}'/0'/0/0`,
   _: ({ purpose, coinType }) => `${purpose}'/${coinType}'/0'`,
 };
 export const getSeedIdentifierDerivation = (

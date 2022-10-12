@@ -6,7 +6,7 @@ import {
   FeeRequired,
   GasLessThanEstimate,
 } from "@ledgerhq/errors";
-import type { CurrencyBridge, AccountBridge } from "../../../types";
+import type { CurrencyBridge, AccountBridge } from "@ledgerhq/types-live";
 import {
   makeSync,
   makeScanAccounts,
@@ -47,7 +47,11 @@ const broadcast = async ({
 };
 
 const scanAccounts = makeScanAccounts({ getAccountShape });
-const sync = makeSync({ getAccountShape, postSync: postSyncPatch });
+const sync = makeSync({
+  getAccountShape,
+  postSync: postSyncPatch,
+  shouldMergeOps: false,
+});
 
 const createTransaction = (): Transaction => ({
   family: "ethereum",

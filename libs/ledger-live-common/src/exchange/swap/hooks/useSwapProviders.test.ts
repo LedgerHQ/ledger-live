@@ -1,12 +1,10 @@
 import { renderHook } from "@testing-library/react-hooks";
-import { mocked } from "ts-jest/utils";
-
 import { useSwapProviders } from "./useSwapProviders";
 import { getProviders } from "..";
 
 jest.mock("..");
 
-const mockedGetProviders = mocked(getProviders);
+const mockedGetProviders = jest.mocked(getProviders);
 
 describe("useSwapProviders", () => {
   const OLD_ENV = process.env;

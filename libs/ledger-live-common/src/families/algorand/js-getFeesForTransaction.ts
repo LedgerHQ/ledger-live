@@ -1,6 +1,5 @@
 import { BigNumber } from "bignumber.js";
-import type { Account } from "../../types";
-import type { Transaction } from "./types";
+import type { AlgorandAccount, Transaction } from "./types";
 import { getTransactionParams } from "./api";
 import { buildTransactionPayload, encodeToSign } from "./buildTransaction";
 
@@ -9,7 +8,7 @@ import { buildTransactionPayload, encodeToSign } from "./buildTransaction";
 const SINGLE_SIGNATURE_SIZE = 71;
 
 export const getEstimatedFees = async (
-  account: Account,
+  account: AlgorandAccount,
   transaction: Transaction
 ): Promise<BigNumber> => {
   const params = await getTransactionParams();

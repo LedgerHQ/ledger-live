@@ -13,9 +13,9 @@ inputs:
     required: true
 outputs:
   images:
-    description: 'string[] of images uploaded to imgur'
+    description: "string[] of images uploaded to imgur"
 runs:
-  using: node12
+  using: node16
   main: build/index.js
 
 branding:

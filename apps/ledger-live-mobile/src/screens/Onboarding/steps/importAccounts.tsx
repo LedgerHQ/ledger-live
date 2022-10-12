@@ -8,7 +8,11 @@ import { DeviceNames } from "../types";
 import BaseStepperView, { SyncDesktop, Metadata } from "./setupDevice/scenes";
 import { TrackScreen } from "../../../analytics";
 
-import { completeOnboarding, setReadOnlyMode } from "../../../actions/settings";
+import {
+  completeOnboarding,
+  setHasOrderedNano,
+  setReadOnlyMode,
+} from "../../../actions/settings";
 import { useNavigationInterceptor } from "../onboardingContext";
 
 const images = {
@@ -35,7 +39,7 @@ function OnboardingStepPairNew() {
     >
   >();
 
-  const { deviceModelId } = route.params;
+  const deviceModelId = route?.params?.deviceModelId;
 
   const dispatch = useDispatch();
   const { resetCurrentStep } = useNavigationInterceptor();
@@ -58,6 +62,7 @@ function OnboardingStepPairNew() {
   const onFinish = useCallback(() => {
     dispatch(completeOnboarding());
     dispatch(setReadOnlyMode(false));
+    dispatch(setHasOrderedNano(false));
     resetCurrentStep();
 
     const parentNav = navigation.getParent();
@@ -71,8 +76,6 @@ function OnboardingStepPairNew() {
   }, [dispatch, navigation, resetCurrentStep]);
 
   const onNext = useCallback(() => {
-    // TODO: FIX @react-navigation/native using Typescript
-    // @ts-ignore next-line
     navigation.navigate(NavigatorName.ImportAccounts, {
       screen: ScreenName.ScanAccounts,
       params: {
@@ -82,8 +85,6 @@ function OnboardingStepPairNew() {
   }, [navigation, onFinish]);
 
   const nextPage = useCallback(() => {
-    // TODO: FIX @react-navigation/native using Typescript
-    // @ts-ignore next-line
     navigation.navigate(ScreenName.OnboardingModalWarning, {
       screen: ScreenName.OnboardingModalSyncDesktopInformation,
       params: { onNext },

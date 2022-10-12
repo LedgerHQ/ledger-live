@@ -5,8 +5,9 @@ import path from "path";
 import cloneDeep from "lodash/cloneDeep";
 import get from "lodash/get";
 import set from "lodash/set";
+import { getEnv } from "@ledgerhq/live-common/env";
 import { NoDBPathGiven, DBWrongPassword } from "@ledgerhq/errors";
-import {} from "@ledgerhq/live-common/lib/promise";
+import {} from "@ledgerhq/live-common/promise";
 import { encryptData, decryptData } from "~/main/db/crypto";
 import { readFile, writeFile } from "~/main/db/fsHelper";
 
@@ -50,7 +51,7 @@ let encryptionKeys = {};
 let transforms = {};
 
 const DEBOUNCE_MS =
-  process.env.NODE_ENV === "test" || process.env.PLAYWRIGHT_RUN || process.env.MOCK ? 16 : 500;
+  process.env.NODE_ENV === "test" || getEnv("PLAYWRIGHT_RUN") || getEnv("MOCK") ? 16 : 500;
 const save = debounce(saveToDisk, DEBOUNCE_MS);
 
 /**

@@ -11,8 +11,7 @@ import type {
   SubAccount,
   SubAccountRaw,
   BalanceHistoryCache,
-  BalanceHistoryRawMap,
-} from "./types";
+} from "@ledgerhq/types-live";
 import {
   fromAccountRaw,
   fromOperationRaw,
@@ -20,16 +19,41 @@ import {
   fromTronResourcesRaw,
   fromCosmosResourcesRaw,
   fromBitcoinResourcesRaw,
-  fromBalanceHistoryRawMap,
   fromAlgorandResourcesRaw,
+  fromCardanoResourceRaw,
   fromPolkadotResourcesRaw,
   fromTezosResourcesRaw,
   fromElrondResourcesRaw,
   fromCryptoOrgResourcesRaw,
   fromSolanaResourcesRaw,
+  fromCeloResourcesRaw,
   fromNFTRaw,
+  toTronResourcesRaw,
+  toCosmosResourcesRaw,
+  toAlgorandResourcesRaw,
+  toCardanoResourceRaw,
+  toPolkadotResourcesRaw,
+  toTezosResourcesRaw,
+  toElrondResourcesRaw,
+  toCryptoOrgResourcesRaw,
+  toSolanaResourcesRaw,
+  toCeloResourcesRaw,
 } from "./account";
 import consoleWarnExpectToEqual from "./consoleWarnExpectToEqual";
+import { AlgorandAccount, AlgorandAccountRaw } from "./families/algorand/types";
+import { BitcoinAccount, BitcoinAccountRaw } from "./families/bitcoin/types";
+import { CardanoAccount, CardanoAccountRaw } from "./families/cardano/types";
+import { CosmosAccount, CosmosAccountRaw } from "./families/cosmos/types";
+import {
+  CryptoOrgAccount,
+  CryptoOrgAccountRaw,
+} from "./families/crypto_org/types";
+import { ElrondAccount, ElrondAccountRaw } from "./families/elrond/types";
+import { PolkadotAccount, PolkadotAccountRaw } from "./families/polkadot/types";
+import { SolanaAccount, SolanaAccountRaw } from "./families/solana/types";
+import { TezosAccount, TezosAccountRaw } from "./families/tezos/types";
+import { TronAccount, TronAccountRaw } from "./families/tron/types";
+import { CeloAccount, CeloAccountRaw } from "./families/celo/types";
 
 // aim to build operations with the minimal diff & call to coin implementation possible
 export async function minimalOperationsBuilder<CO>(
@@ -136,37 +160,16 @@ const shouldRefreshBalanceHistoryCache = (
   return false;
 };
 
-// FIXME DEPRECATED post portfolio v2
-const shouldRefreshBalanceHistory = (
-  balanceHistory: BalanceHistoryRawMap,
-  account: Account
-): boolean => {
-  const { week } = balanceHistory;
-  const accountWeek = account.balanceHistory && account.balanceHistory.week;
-  if (!week || !accountWeek) return true; // there is no week yet || there were no balance history yet
-
-  const [firstDate] = week[0];
-  const [, lastValue] = week[week.length - 1];
-  const { date: firstAccountDate } = accountWeek[0];
-  const { value: lastAccountValue } = accountWeek[accountWeek.length - 1];
-  const isSameDate = firstDate === firstAccountDate.toISOString();
-  return (
-    !isSameDate || // start date of the range has changed
-    lastValue !== lastAccountValue.toString() || // final balance has changed
-    week.length !== accountWeek.length // number of endpoints has changed
-  );
-};
-
 function shouldRefreshBitcoinResources(
   updatedRaw: AccountRaw,
   account: Account
 ) {
-  if (!updatedRaw.bitcoinResources) return false;
-  if (!account.bitcoinResources) return true;
+  if (!(updatedRaw as BitcoinAccountRaw).bitcoinResources) return false;
+  if (!(account as BitcoinAccount).bitcoinResources) return true;
   if (updatedRaw.blockHeight !== account.blockHeight) return true;
   if (updatedRaw.operations.length !== account.operations.length) return true;
-  const { bitcoinResources: existing } = account;
-  const { bitcoinResources: raw } = updatedRaw;
+  const { bitcoinResources: existing } = account as BitcoinAccount;
+  const { bitcoinResources: raw } = updatedRaw as BitcoinAccountRaw;
   // FIXME Need more typing in wallet-btc to have a meaningful comparison
   //if (!isEqual(raw.walletAccount?.xpub?.data, existing.walletAccount?.xpub?.data)) return true;
   if (raw.utxos.length !== existing.utxos.length) return true;
@@ -244,19 +247,6 @@ export function patchAccount(
     changed = true;
   }
 
-  // DEPRECATED post portfolio v2
-  const { balanceHistory } = updatedRaw;
-
-  if (balanceHistory) {
-    if (shouldRefreshBalanceHistory(balanceHistory, account)) {
-      next.balanceHistory = fromBalanceHistoryRawMap(balanceHistory);
-      changed = true;
-    }
-  } else if (next.balanceHistory) {
-    delete next.balanceHistory;
-    changed = true;
-  }
-
   if (updatedRaw.spendableBalance !== account.spendableBalance.toString()) {
     next.spendableBalance = new BigNumber(
       updatedRaw.spendableBalance || updatedRaw.balance
@@ -306,86 +296,222 @@ export function patchAccount(
     }
   }
 
-  if (
-    updatedRaw.tronResources &&
-    // @ts-expect-error check if this is valid for deep equal check
-    account.tronResources !== updatedRaw.tronResources
-  ) {
-    next.tronResources = fromTronResourcesRaw(updatedRaw.tronResources);
-    changed = true;
-  }
+  // TODO This will be reworked to belong in each coin family
+  // Temporary logic to patch resources for each coin is:
+  // - there is raw data to patch from
+  // AND
+  //   - there is no current account data
+  //   OR
+  //   - current account data is different
+  switch (account.currency.family) {
+    case "tron":
+      {
+        const tronAcc = account as TronAccount;
+        const tronUpdatedRaw = updatedRaw as TronAccountRaw;
+        if (
+          tronUpdatedRaw.tronResources &&
+          (!tronAcc.tronResources ||
+            !areSameResources(
+              toTronResourcesRaw(tronAcc.tronResources),
+              tronUpdatedRaw.tronResources
+            ))
+        ) {
+          (next as TronAccount).tronResources = fromTronResourcesRaw(
+            tronUpdatedRaw.tronResources
+          );
+          changed = true;
+        }
+      }
+      break;
+    case "cosmos": {
+      const cosmosAcc = account as CosmosAccount;
+      const cosmosUpdatedRaw = updatedRaw as CosmosAccountRaw;
+      if (
+        cosmosUpdatedRaw.cosmosResources &&
+        (!cosmosAcc.cosmosResources ||
+          !areSameResources(
+            toCosmosResourcesRaw(cosmosAcc.cosmosResources),
+            cosmosUpdatedRaw.cosmosResources
+          ))
+      ) {
+        (next as CosmosAccount).cosmosResources = fromCosmosResourcesRaw(
+          cosmosUpdatedRaw.cosmosResources
+        );
+        changed = true;
+      }
+      break;
+    }
+    case "osmosis": {
+      const cosmosAcc = account as CosmosAccount;
+      const cosmosUpdatedRaw = updatedRaw as CosmosAccountRaw;
+      if (
+        cosmosUpdatedRaw.cosmosResources &&
+        (!cosmosAcc.cosmosResources ||
+          !areSameResources(
+            toCosmosResourcesRaw(cosmosAcc.cosmosResources),
+            cosmosUpdatedRaw.cosmosResources
+          ))
+      ) {
+        (next as CosmosAccount).cosmosResources = fromCosmosResourcesRaw(
+          cosmosUpdatedRaw.cosmosResources
+        );
+        changed = true;
+      }
+      break;
+    }
+    case "algorand": {
+      const algorandAcc = account as AlgorandAccount;
+      const algorandUpdatedRaw = updatedRaw as AlgorandAccountRaw;
+      if (
+        algorandUpdatedRaw.algorandResources &&
+        (!algorandAcc.algorandResources ||
+          !areSameResources(
+            toAlgorandResourcesRaw(algorandAcc.algorandResources),
+            algorandUpdatedRaw.algorandResources
+          ))
+      ) {
+        (next as AlgorandAccount).algorandResources = fromAlgorandResourcesRaw(
+          algorandUpdatedRaw.algorandResources
+        );
+        changed = true;
+      }
+      break;
+    }
+    case "bitcoin": {
+      if (shouldRefreshBitcoinResources(updatedRaw, account)) {
+        (next as BitcoinAccount).bitcoinResources = fromBitcoinResourcesRaw(
+          (updatedRaw as BitcoinAccountRaw).bitcoinResources
+        );
+      }
+      break;
+    }
+    case "polkadot": {
+      const polkadotAcc = account as PolkadotAccount;
+      const polkadotUpdatedRaw = updatedRaw as PolkadotAccountRaw;
+      if (
+        polkadotUpdatedRaw.polkadotResources &&
+        (!polkadotAcc.polkadotResources ||
+          !areSameResources(
+            toPolkadotResourcesRaw(polkadotAcc.polkadotResources),
+            polkadotUpdatedRaw.polkadotResources
+          ))
+      ) {
+        (next as PolkadotAccount).polkadotResources = fromPolkadotResourcesRaw(
+          polkadotUpdatedRaw.polkadotResources
+        );
+        changed = true;
+      }
+      break;
+    }
+    case "tezos": {
+      const tezosAcc = account as TezosAccount;
+      const tezosUpdatedRaw = updatedRaw as TezosAccountRaw;
+      if (
+        tezosUpdatedRaw.tezosResources &&
+        (!tezosAcc.tezosResources ||
+          !areSameResources(
+            toTezosResourcesRaw(tezosAcc.tezosResources),
+            tezosUpdatedRaw.tezosResources
+          ))
+      ) {
+        (next as TezosAccount).tezosResources = fromTezosResourcesRaw(
+          tezosUpdatedRaw.tezosResources
+        );
+        changed = true;
+      }
+      break;
+    }
+    case "elrond": {
+      const elrondAcc = account as ElrondAccount;
+      const elrondUpdatedRaw = updatedRaw as ElrondAccountRaw;
+      if (
+        elrondUpdatedRaw.elrondResources &&
+        (!elrondAcc.elrondResources ||
+          !areSameResources(
+            toElrondResourcesRaw(elrondAcc.elrondResources),
+            elrondUpdatedRaw.elrondResources
+          ))
+      ) {
+        (next as ElrondAccount).elrondResources = fromElrondResourcesRaw(
+          elrondUpdatedRaw.elrondResources
+        );
+        changed = true;
+      }
+      break;
+    }
+    case "cardano": {
+      const cardanoAcc = account as CardanoAccount;
+      const cardanoUpdatedRaw = updatedRaw as CardanoAccountRaw;
+      if (
+        cardanoUpdatedRaw.cardanoResources &&
+        (!cardanoAcc.cardanoResources ||
+          !areSameResources(
+            toCardanoResourceRaw(cardanoAcc.cardanoResources),
+            cardanoUpdatedRaw.cardanoResources
+          ))
+      ) {
+        (next as CardanoAccount).cardanoResources = fromCardanoResourceRaw(
+          cardanoUpdatedRaw.cardanoResources
+        );
+        changed = true;
+      }
+      break;
+    }
+    case "crypto_org": {
+      const cryptoOrgAcc = account as CryptoOrgAccount;
+      const cryptoOrgUpdatedRaw = updatedRaw as CryptoOrgAccountRaw;
+      if (
+        cryptoOrgUpdatedRaw.cryptoOrgResources &&
+        (!cryptoOrgAcc.cryptoOrgResources ||
+          !areSameResources(
+            toCryptoOrgResourcesRaw(cryptoOrgAcc.cryptoOrgResources),
+            cryptoOrgUpdatedRaw.cryptoOrgResources
+          ))
+      ) {
+        (next as CryptoOrgAccount).cryptoOrgResources =
+          fromCryptoOrgResourcesRaw(cryptoOrgUpdatedRaw.cryptoOrgResources);
+        changed = true;
+      }
+      break;
+    }
+    case "solana": {
+      const solanaAcc = account as SolanaAccount;
+      const solanaUpdatedRaw = updatedRaw as SolanaAccountRaw;
 
-  if (
-    updatedRaw.cosmosResources &&
-    // @ts-expect-error check if this is valid for deep equal check
-    account.cosmosResources !== updatedRaw.cosmosResources
-  ) {
-    next.cosmosResources = fromCosmosResourcesRaw(updatedRaw.cosmosResources);
-    changed = true;
-  }
+      if (
+        solanaUpdatedRaw.solanaResources &&
+        (!solanaAcc.solanaResources ||
+          !areSameResources(
+            toSolanaResourcesRaw(solanaAcc.solanaResources),
+            solanaUpdatedRaw.solanaResources
+          ))
+      ) {
+        (next as SolanaAccount).solanaResources = fromSolanaResourcesRaw(
+          solanaUpdatedRaw.solanaResources
+        );
+        changed = true;
+      }
+      break;
+    }
+    case "celo": {
+      const celoAcc = account as CeloAccount;
+      const celoUpdatedRaw = updatedRaw as CeloAccountRaw;
 
-  if (
-    updatedRaw.algorandResources &&
-    // @ts-expect-error check if this is valid for deep equal check
-    account.algorandResources !== updatedRaw.algorandResources
-  ) {
-    next.algorandResources = fromAlgorandResourcesRaw(
-      updatedRaw.algorandResources
-    );
-    changed = true;
-  }
-
-  if (
-    updatedRaw.bitcoinResources &&
-    shouldRefreshBitcoinResources(updatedRaw, account)
-  ) {
-    next.bitcoinResources = fromBitcoinResourcesRaw(
-      updatedRaw.bitcoinResources
-    );
-    changed = true;
-  }
-
-  if (
-    updatedRaw.polkadotResources &&
-    // @ts-expect-error check if this is valid for deep equal check
-    account.polkadotResources !== updatedRaw.polkadotResources
-  ) {
-    next.polkadotResources = fromPolkadotResourcesRaw(
-      updatedRaw.polkadotResources
-    );
-    changed = true;
-  }
-
-  if (
-    updatedRaw.tezosResources &&
-    account.tezosResources !== updatedRaw.tezosResources
-  ) {
-    next.tezosResources = fromTezosResourcesRaw(updatedRaw.tezosResources);
-    changed = true;
-  }
-
-  if (
-    updatedRaw.elrondResources &&
-    account.elrondResources !== updatedRaw.elrondResources
-  ) {
-    next.elrondResources = fromElrondResourcesRaw(updatedRaw.elrondResources);
-    changed = true;
-  }
-
-  if (
-    updatedRaw.cryptoOrgResources &&
-    // @ts-expect-error types don't overlap ¯\_(ツ)_/¯
-    account.cryptoOrgResources !== updatedRaw.cryptoOrgResources
-  ) {
-    next.cryptoOrgResources = fromCryptoOrgResourcesRaw(
-      updatedRaw.cryptoOrgResources
-    );
-    changed = true;
-  }
-
-  if (updatedRaw.solanaResources) {
-    next.solanaResources = fromSolanaResourcesRaw(updatedRaw.solanaResources);
-    changed = true;
+      if (
+        celoUpdatedRaw.celoResources &&
+        (!celoAcc.celoResources ||
+          !areSameResources(
+            toCeloResourcesRaw(celoAcc.celoResources),
+            celoUpdatedRaw.celoResources
+          ))
+      ) {
+        (next as CeloAccount).celoResources = fromCeloResourcesRaw(
+          celoUpdatedRaw.celoResources
+        );
+        changed = true;
+      }
+      break;
+    }
   }
 
   const nfts = updatedRaw?.nfts?.map(fromNFTRaw);
@@ -584,4 +710,8 @@ function stepBuilder(state, newOp, i) {
     // otherwise it's a new op
     state.operations.push(newOp);
   }
+}
+
+export function areSameResources(a: any, b: any) {
+  return isEqual(a, b);
 }

@@ -1,0 +1,110 @@
+{
+   "domain" : {
+      "chainId" : 1,
+      "name" : "Exchange",
+      "verifyingContract" : "0x9757f2d2b135150bbeb65308d4a91804107cd8d6",
+      "version" : "2"
+   },
+   "message" : {
+      "data" : "0x0000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000006000000000000000000000000000000000000000000000000000000000000000800000000000000000000000000000000000000000000000000000000000000001000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000010000000000000000000000001cf0df2a5a20cd61d68d4489eebbf85b8d39e18a00000000000000000000000000000000000000000000000000000000000000fa",
+      "dataType" : "0x23d235ef",
+      "end" : 0,
+      "makeAsset" : {
+         "assetType" : {
+            "assetClass" : "0x973bb640",
+            "data" : "0x000000000000000000000000495f947276749ce646f68ac8c248420045cb7b5ebdf2657ffc1fadfd73cf0a8cde95d50b62d3df8c000000000000070000000032"
+         },
+         "value" : "1"
+      },
+      "maker" : "0x112f0732e59e7600768dfc35ba744b89f2356cd8",
+      "salt" : "0xdbf0f98bc1746711579dcce549a4cc4e866fb71bf2e185bfefbb7d32f325972e",
+      "start" : 0,
+      "takeAsset" : {
+         "assetType" : {
+            "assetClass" : "0xaaaebeba",
+            "data" : "0x"
+         },
+         "value" : "2000000000000000000"
+      },
+      "taker" : "0x0000000000000000000000000000000000000000"
+   },
+   "primaryType" : "Order",
+   "types" : {
+      "Asset" : [
+         {
+            "name" : "assetType",
+            "type" : "AssetType"
+         },
+         {
+            "name" : "value",
+            "type" : "uint256"
+         }
+      ],
+      "AssetType" : [
+         {
+            "name" : "assetClass",
+            "type" : "bytes4"
+         },
+         {
+            "name" : "data",
+            "type" : "bytes"
+         }
+      ],
+      "EIP712Domain" : [
+         {
+            "name" : "name",
+            "type" : "string"
+         },
+         {
+            "name" : "version",
+            "type" : "string"
+         },
+         {
+            "name" : "chainId",
+            "type" : "uint256"
+         },
+         {
+            "name" : "verifyingContract",
+            "type" : "address"
+         }
+      ],
+      "Order" : [
+         {
+            "name" : "maker",
+            "type" : "address"
+         },
+         {
+            "name" : "makeAsset",
+            "type" : "Asset"
+         },
+         {
+            "name" : "taker",
+            "type" : "address"
+         },
+         {
+            "name" : "takeAsset",
+            "type" : "Asset"
+         },
+         {
+            "name" : "salt",
+            "type" : "uint256"
+         },
+         {
+            "name" : "start",
+            "type" : "uint256"
+         },
+         {
+            "name" : "end",
+            "type" : "uint256"
+         },
+         {
+            "name" : "dataType",
+            "type" : "bytes4"
+         },
+         {
+            "name" : "data",
+            "type" : "bytes"
+         }
+      ]
+   }
+}

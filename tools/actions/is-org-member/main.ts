@@ -10,27 +10,21 @@ import * as core from "@actions/core";
 // }
 
 const main = async function(): Promise<void> {
-  const username = core.getInput("username");
-  const organisation = core.getInput("organisation");
-  const token = core.getInput("token");
-  const octokit = github.getOctokit(token);
-
   try {
-    const { data: orgs } = await octokit.rest.orgs.listForUser({
+    const username = core.getInput("username");
+    const org = core.getInput("organisation");
+    const token = core.getInput("token");
+    const octokit = github.getOctokit(token);
+
+    await octokit.rest.orgs.checkMembershipForUser({
+      org,
       username,
-      per_page: 100,
     });
 
-    core.info(JSON.stringify(orgs, null, 2));
-
-    const isMember = orgs.some(
-      ({ login }) => login.toLowerCase() === organisation.toLowerCase()
-    );
-
-    core.setOutput("is-org-member", isMember);
+    core.setOutput("is-org-member", true);
   } catch (error) {
-    core.info(JSON.stringify(error, null, 2));
-    core.setFailed("Error fetching informations");
+    console.error(error);
+    core.setOutput("is-org-member", false);
   }
 };
 

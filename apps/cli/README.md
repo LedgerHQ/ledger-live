@@ -41,9 +41,10 @@ pnpm i
 ```
 
 ## Dev
+
 ```bash
 # launch a watch mode on the source files and recompiles on the fly
-pnpm dev:cli 
+pnpm dev:cli
 ```
 
 ## Run
@@ -62,7 +63,7 @@ pnpm build:cli
 
 # Documentation
 
-```
+`````
 Usage: ledger-live <command> ...
 
 Usage: ledger-live cosmosValidators
@@ -210,8 +211,6 @@ Usage: ledger-live firmwareUpdate # Perform a firmware update
      --osuVersion <String>    : (to your own risk) provide yourself an OSU version to flash the device with
      --listOSUs               : list all available OSUs (for all devices, beta and prod versions)
 
-Usage: ledger-live generateAppJsonFromDataset # Extract accounts from test datasets and print a sample app.json usable for tests
-
 Usage: ledger-live generateTestScanAccounts # Generate a test for scan accounts (live-common dataset)
  -d, --device <String>        : provide a specific HID path of a device
      --xpub <String>          : use an xpub (alternatively to --device) [DEPRECATED: prefer use of id]
@@ -254,7 +253,7 @@ Usage: ledger-live generateTestTransaction # Generate a test for transaction (li
  -E, --excludeUTXO <String>   : exclude utxo by their txhash@index (example: -E hash@3 -E hash@0)
      --rbf                    : enable replace-by-fee
      --bitcoin-pick-strategy <String>: utxo picking strategy, one of: DEEP_OUTPUTS_FIRST | OPTIMIZE_SIZE | MERGE_OUTPUTS
-     --cosmosSourceValidator <String>: for redelegate, add a source validator
+     --sourceValidator <String>: for redelegate, add a source validator
      --cosmosValidator <String>: address of recipient validator that will receive the delegate
      --cosmosAmountValidator <String>: Amount that the validator will receive
      --tokenId <String>       : determine the tokenId of an NFT (related to the --colection)
@@ -266,6 +265,8 @@ Usage: ledger-live generateTestTransaction # Generate a test for transaction (li
      --rewardDestination <String>: Reward destination
      --fee <String>           : how much fee
      --tag <Number>           : ripple tag
+     --solanaValidator <String>: validator address to delegate to
+     --solanaStakeAccount <String>: stake account address to use in the transaction
      --memoType <String>      : stellar memo type
      --memoValue <String>     : stellar memo value
      --storageLimit <String>  : how much storageLimit. default is estimated with the recipient
@@ -314,7 +315,7 @@ Usage: ledger-live getTransactionStatus # Prepare a transaction and returns 'Tra
  -E, --excludeUTXO <String>   : exclude utxo by their txhash@index (example: -E hash@3 -E hash@0)
      --rbf                    : enable replace-by-fee
      --bitcoin-pick-strategy <String>: utxo picking strategy, one of: DEEP_OUTPUTS_FIRST | OPTIMIZE_SIZE | MERGE_OUTPUTS
-     --cosmosSourceValidator <String>: for redelegate, add a source validator
+     --sourceValidator <String>: for redelegate, add a source validator
      --cosmosValidator <String>: address of recipient validator that will receive the delegate
      --cosmosAmountValidator <String>: Amount that the validator will receive
      --tokenId <String>       : determine the tokenId of an NFT (related to the --colection)
@@ -326,6 +327,8 @@ Usage: ledger-live getTransactionStatus # Prepare a transaction and returns 'Tra
      --rewardDestination <String>: Reward destination
      --fee <String>           : how much fee
      --tag <Number>           : ripple tag
+     --solanaValidator <String>: validator address to delegate to
+     --solanaStakeAccount <String>: stake account address to use in the transaction
      --memoType <String>      : stellar memo type
      --memoValue <String>     : stellar memo value
      --storageLimit <String>  : how much storageLimit. default is estimated with the recipient
@@ -455,7 +458,7 @@ Usage: ledger-live send       # Send crypto-assets
  -E, --excludeUTXO <String>   : exclude utxo by their txhash@index (example: -E hash@3 -E hash@0)
      --rbf                    : enable replace-by-fee
      --bitcoin-pick-strategy <String>: utxo picking strategy, one of: DEEP_OUTPUTS_FIRST | OPTIMIZE_SIZE | MERGE_OUTPUTS
-     --cosmosSourceValidator <String>: for redelegate, add a source validator
+     --sourceValidator <String>: for redelegate, add a source validator
      --cosmosValidator <String>: address of recipient validator that will receive the delegate
      --cosmosAmountValidator <String>: Amount that the validator will receive
      --tokenId <String>       : determine the tokenId of an NFT (related to the --colection)
@@ -467,6 +470,8 @@ Usage: ledger-live send       # Send crypto-assets
      --rewardDestination <String>: Reward destination
      --fee <String>           : how much fee
      --tag <Number>           : ripple tag
+     --solanaValidator <String>: validator address to delegate to
+     --solanaStakeAccount <String>: stake account address to use in the transaction
      --memoType <String>      : stellar memo type
      --memoValue <String>     : stellar memo value
      --storageLimit <String>  : how much storageLimit. default is estimated with the recipient
@@ -482,8 +487,9 @@ Usage: ledger-live send       # Send crypto-assets
 Usage: ledger-live signMessage # Sign a message with the device on specific derivations (advanced)
  -c, --currency <String>      : Currency name or ticker. If not provided, it will be inferred from the device.
      --path <String>          : HDD derivation path
-     --derivationMode <String>: derivationMode to use
      --message <String>       : the message to sign
+     --rawMessage <String>    : raw message to sign (used by walletconnect)
+     --parser <String>        : parser used for the message. Default: String
 
 Usage: ledger-live speculosList # list apps available for speculos
 
@@ -517,6 +523,10 @@ Usage: ledger-live sync       # Synchronize accounts with blockchain
  -l, --length <Number>        : set the number of accounts after the index. Defaults to 1 if index was provided, Infinity otherwise.
      --paginateOperations <Number>: if defined, will paginate operations
  -f, --format <operationBalanceHistoryBackwards | operationBalanceHistory | json | head | default | basic | full | stats | significantTokenTickers>: how to display the data
+
+Usage: ledger-live synchronousOnboarding # track the onboarding status of your device
+ -p, --pollingPeriodMs <Number>: polling period in milliseconds
+ -d, --device <String>        : provide a specific HID path of a device
 
 Usage: ledger-live testDetectOpCollision # Detect operation collisions
  -d, --device <String>        : provide a specific HID path of a device
@@ -574,5 +584,4 @@ Usage: ledger-live walletconnect # Create a walletconnect session
                     :::::::-.`
                     ....``
 
-
-```
+`````

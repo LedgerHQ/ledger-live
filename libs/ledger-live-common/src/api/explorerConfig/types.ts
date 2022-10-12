@@ -1,4 +1,4 @@
-import type { CryptoCurrencyIds } from "../../types";
+import type { CryptoCurrencyIds } from "@ledgerhq/cryptoassets";
 import type { EnvName } from "../../env";
 
 export type EndpointConfig = {

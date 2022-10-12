@@ -3,6 +3,7 @@ import {
   deserializeError,
   createCustomErrorClass,
   addCustomErrorDeserializer,
+  LedgerErrorConstructor,
 } from "./helpers";
 
 export {
@@ -25,9 +26,10 @@ export const CantOpenDevice = createCustomErrorClass("CantOpenDevice");
 export const CashAddrNotSupported = createCustomErrorClass(
   "CashAddrNotSupported"
 );
-export const CurrencyNotSupported = createCustomErrorClass(
-  "CurrencyNotSupported"
-);
+export const CurrencyNotSupported = createCustomErrorClass<
+  { currencyName: string },
+  LedgerErrorConstructor<{ currencyName: string }>
+>("CurrencyNotSupported");
 export const DeviceAppVerifyNotSupported = createCustomErrorClass(
   "DeviceAppVerifyNotSupported"
 );
@@ -53,6 +55,12 @@ export const DeviceSocketNoBulkStatus = createCustomErrorClass(
 export const DisconnectedDevice = createCustomErrorClass("DisconnectedDevice");
 export const DisconnectedDeviceDuringOperation = createCustomErrorClass(
   "DisconnectedDeviceDuringOperation"
+);
+export const DeviceExtractOnboardingStateError = createCustomErrorClass(
+  "DeviceExtractOnboardingStateError"
+);
+export const DeviceOnboardingStatePollingError = createCustomErrorClass(
+  "DeviceOnboardingStatePollingError"
 );
 export const EnpointConfigError = createCustomErrorClass("EnpointConfig");
 export const EthAppPleaseEnableContractData = createCustomErrorClass(
@@ -203,6 +211,7 @@ export const CantScanQRCode = createCustomErrorClass("CantScanQRCode");
 export const FeeNotLoaded = createCustomErrorClass("FeeNotLoaded");
 export const FeeRequired = createCustomErrorClass("FeeRequired");
 export const FeeTooHigh = createCustomErrorClass("FeeTooHigh");
+export const PendingOperation = createCustomErrorClass("PendingOperation");
 export const SyncError = createCustomErrorClass("SyncError");
 export const PairingFailed = createCustomErrorClass("PairingFailed");
 export const GenuineCheckFailed = createCustomErrorClass("GenuineCheckFailed");
@@ -211,6 +220,8 @@ export const LedgerAPI5xx = createCustomErrorClass("LedgerAPI5xx");
 export const FirmwareOrAppUpdateRequired = createCustomErrorClass(
   "FirmwareOrAppUpdateRequired"
 );
+
+export const LanguageNotFound = createCustomErrorClass("LanguageNotFound");
 
 // db stuff, no need to translate
 export const NoDBPathGiven = createCustomErrorClass("NoDBPathGiven");
@@ -221,13 +232,17 @@ export const DBNotReset = createCustomErrorClass("DBNotReset");
  * TransportError is used for any generic transport errors.
  * e.g. Error thrown when data received by exchanges are incorrect or if exchanged failed to communicate with the device for various reason.
  */
-export function TransportError(message: string, id: string): void {
-  this.name = "TransportError";
-  this.message = message;
-  this.stack = new Error().stack;
-  this.id = id;
+export class TransportError extends Error {
+  id: string;
+  constructor(message: string, id: string) {
+    const name = "TransportError";
+    super(message || name);
+    this.name = name;
+    this.message = message;
+    this.stack = new Error().stack;
+    this.id = id;
+  }
 }
-TransportError.prototype = new Error();
 
 addCustomErrorDeserializer(
   "TransportError",

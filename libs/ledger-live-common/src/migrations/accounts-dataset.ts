@@ -1,5 +1,5 @@
 import { fromAccountRaw } from "../account";
-import type { Account, AccountRaw } from "../types";
+import type { Account, AccountRaw } from "@ledgerhq/types-live";
 
 const accounts: Account[] = [
   {

@@ -5,15 +5,15 @@ import prepareTransaction from "../js-prepareTransaction";
 import signOperation from "../js-signOperation";
 import { sync, scanAccounts } from "../js-synchronisation";
 import updateTransaction from "../js-updateTransaction";
-import { AccountBridge, CurrencyBridge, CryptoCurrency } from "../../../types";
 import type { CosmosValidatorItem, Transaction } from "../types";
-import { getValidators, hydrateValidators } from "../validators";
+import cosmosValidatorsManager from "../validators";
 import { makeAccountBridgeReceive } from "../../../bridge/jsHelpers";
-import { broadcast } from "../api/Cosmos";
+import { defaultCosmosAPI } from "../api/Cosmos";
 import {
   asSafeCosmosPreloadData,
   setCosmosPreloadData,
 } from "../preloadedData";
+import type { AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
 
 const receive = makeAccountBridgeReceive();
 
@@ -23,8 +23,8 @@ const getPreloadStrategy = (_currency) => ({
 
 const currencyBridge: CurrencyBridge = {
   getPreloadStrategy,
-  preload: async (currency: CryptoCurrency) => {
-    const validators = await getValidators(currency);
+  preload: async () => {
+    const validators = await cosmosValidatorsManager.getValidators();
     setCosmosPreloadData({
       validators,
     });
@@ -41,7 +41,7 @@ const currencyBridge: CurrencyBridge = {
       !Array.isArray(validators)
     )
       return;
-    hydrateValidators(validators);
+    cosmosValidatorsManager.hydrateValidators(validators);
     setCosmosPreloadData(asSafeCosmosPreloadData(data));
   },
   scanAccounts,
@@ -56,7 +56,7 @@ const accountBridge: AccountBridge<Transaction> = {
   sync,
   receive,
   signOperation,
-  broadcast,
+  broadcast: defaultCosmosAPI.broadcast,
 };
 
 export default {

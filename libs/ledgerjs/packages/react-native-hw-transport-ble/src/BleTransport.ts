@@ -1,5 +1,10 @@
 /* eslint-disable prefer-template */
 import Transport from "@ledgerhq/hw-transport";
+import type {
+  Subscription as TransportSubscription,
+  Observer as TransportObserver,
+  DescriptorEvent,
+} from "@ledgerhq/hw-transport";
 import {
   BleManager,
   ConnectionPriority,
@@ -287,12 +292,12 @@ async function open(deviceOrId: Device | string, needsReconnect: boolean) {
 
   return transport;
 }
+
 /**
  * react-native bluetooth BLE implementation
  * @example
  * import BluetoothTransport from "@ledgerhq/react-native-hw-transport-ble";
  */
-
 export default class BluetoothTransport extends Transport {
   /**
    *
@@ -333,7 +338,9 @@ export default class BluetoothTransport extends Transport {
   /**
    * Scan for bluetooth Ledger devices
    */
-  static listen(observer: any) {
+  static listen(
+    observer: TransportObserver<DescriptorEvent<Device>>
+  ): TransportSubscription {
     log("ble-verbose", "listen...");
     let unsubscribed;
     // $FlowFixMe
@@ -362,11 +369,14 @@ export default class BluetoothTransport extends Transport {
 
             const res = retrieveInfos(device);
             const deviceModel = res && res.deviceModel;
-            observer.next({
-              type: "add",
-              descriptor: device,
-              deviceModel,
-            });
+
+            if (device) {
+              observer.next({
+                type: "add",
+                descriptor: device,
+                deviceModel,
+              });
+            }
           }
         );
       }

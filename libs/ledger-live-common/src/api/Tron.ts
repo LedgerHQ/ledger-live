@@ -14,7 +14,6 @@ import type {
   TronResources,
   TronTransactionInfo,
 } from "../families/tron/types";
-import type { Account, SubAccount } from "../types";
 import {
   decode58Check,
   encode58Check,
@@ -35,6 +34,7 @@ import drop from "lodash/drop";
 import sumBy from "lodash/sumBy";
 import take from "lodash/take";
 import compact from "lodash/compact";
+import { Account, SubAccount } from "@ledgerhq/types-live";
 
 const getBaseApiUrl = () => getEnv("API_TRONGRID_PROXY");
 
@@ -289,7 +289,7 @@ export const fetchTronContract = async (
     const data = await post(`${getBaseApiUrl()}/wallet/getcontract`, {
       value: decode58Check(addr),
     });
-    return data;
+    return Object.keys(data).length !== 0 ? data : undefined;
   } catch (e) {
     return undefined;
   }

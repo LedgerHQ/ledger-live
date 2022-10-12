@@ -2,8 +2,9 @@
 import "./setup";
 import { BrowserWindow, screen, shell, app } from "electron";
 import path from "path";
-import { delay } from "@ledgerhq/live-common/lib/promise";
+import { delay } from "@ledgerhq/live-common/promise";
 import { URL } from "url";
+import * as remoteMain from "@electron/remote/main";
 
 const intFromEnv = (key: string, def: number): number => {
   const v = process.env[key];
@@ -58,14 +59,13 @@ const defaultWindowOptions = {
     nodeIntegration: true,
     contextIsolation: false,
     spellcheck: false,
+    // Legacy - allows listening to the "new-window" even in webviews.
+    nativeWindowOpen: false,
   },
 };
 
 export const loadWindow = async () => {
-  let url = __DEV__ ? INDEX_URL : path.join("file://", __dirname, "index.html");
-  if (process.env.PLAYWRIGHT_RUN && !process.env.CI) {
-    url = url.replace("localhost", "host.docker.internal");
-  }
+  const url = __DEV__ ? INDEX_URL : path.join("file://", __dirname, "index.html");
   if (mainWindow) {
     /** Making the following variables easily accessible to the renderer thread:
      * - theme
@@ -106,12 +106,12 @@ export async function createMainWindow({ dimensions, positions }: any, settings:
     show: false,
     webPreferences: {
       preload: path.join(__dirname, "preloader.bundle.js"),
-      enableRemoteModule: true,
       ...defaultWindowOptions.webPreferences,
     },
   };
 
   mainWindow = new BrowserWindow(windowOptions);
+  remoteMain.enable(mainWindow.webContents);
 
   mainWindow.name = "MainWindow";
 

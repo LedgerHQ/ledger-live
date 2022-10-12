@@ -11,6 +11,7 @@ import { log } from "@ledgerhq/logs";
 import { identifyUSBProductId } from "@ledgerhq/devices";
 import { CantOpenDevice } from "@ledgerhq/errors";
 import { listenDevices } from "./listenDevices";
+
 let transportInstance;
 
 const DISCONNECT_TIMEOUT = 5000;
@@ -28,6 +29,8 @@ const setDisconnectTimeout = () => {
     DISCONNECT_TIMEOUT
   );
 };
+
+export type ListenDescriptorEvent = DescriptorEvent<any>;
 
 /**
  * node-hid Transport implementation
@@ -51,7 +54,7 @@ export default class TransportNodeHidSingleton extends TransportNodeHidNoEvents 
 
   /**
    */
-  static listen = (observer: Observer<DescriptorEvent<any>>): Subscription => {
+  static listen = (observer: Observer<ListenDescriptorEvent>): Subscription => {
     let unsubscribed;
     Promise.resolve(getDevices()).then((devices) => {
       // this needs to run asynchronously so the subscription is defined during this phase

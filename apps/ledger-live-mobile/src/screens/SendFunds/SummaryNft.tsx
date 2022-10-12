@@ -3,17 +3,15 @@ import React, { memo } from "react";
 import { useTranslation } from "react-i18next";
 import { View, StyleSheet } from "react-native";
 import { useTheme } from "@react-navigation/native";
-import { useNftMetadata } from "@ledgerhq/live-common/lib/nft";
-import type {
-  Transaction,
-  CryptoCurrency,
-} from "@ledgerhq/live-common/lib/types";
+import { useNftMetadata } from "@ledgerhq/live-common/nft/index";
+import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import LText from "../../components/LText";
 import SummaryRow from "./SummaryRow";
 
 type Props = {
-  transaction: Transaction,
-  currencyId: CryptoCurrency["id"],
+  transaction: Transaction;
+  currencyId: CryptoCurrency["id"];
 };
 
 const SummaryNft = ({ transaction, currencyId }: Props) => {

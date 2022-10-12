@@ -2,18 +2,14 @@ import {
   getAccountCurrency,
   getAccountName,
   getAccountUnit,
-} from "@ledgerhq/live-common/lib/account";
+} from "@ledgerhq/live-common/account/index";
 import React, { memo } from "react";
 import {
   RectButton,
   LongPressGestureHandler,
   State,
 } from "react-native-gesture-handler";
-import {
-  SubAccount,
-  TokenAccount,
-  Account,
-} from "@ledgerhq/live-common/lib/types";
+import { SubAccount, TokenAccount, Account } from "@ledgerhq/types-live";
 import { createStructuredSelector } from "reselect";
 import { connect, useSelector } from "react-redux";
 import { Box, Flex, Text } from "@ledgerhq/native-ui";
@@ -49,10 +45,8 @@ function SubAccountRow({
   const name = getAccountName(account);
   const unit = getAccountUnit(account);
   const range = useSelector(selectedTimeRangeSelector);
-  const {
-    countervalueChange,
-    cryptoChange,
-  } = useBalanceHistoryWithCountervalue({ account, range });
+  const { countervalueChange, cryptoChange } =
+    useBalanceHistoryWithCountervalue({ account, range });
 
   return (
     <LongPressGestureHandler

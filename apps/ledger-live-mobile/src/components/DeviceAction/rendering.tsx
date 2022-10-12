@@ -1,10 +1,14 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
+import { ScrollView } from "react-native";
 import { useDispatch } from "react-redux";
 import styled from "styled-components/native";
-import { WrongDeviceForAccount, UnexpectedBootloader } from "@ledgerhq/errors";
-import { TokenCurrency } from "@ledgerhq/live-common/lib/types";
-import { Device } from "@ledgerhq/live-common/lib/hw/actions/types";
-import { AppRequest } from "@ledgerhq/live-common/lib/hw/actions/app";
+import { WrongDeviceForAccount } from "@ledgerhq/errors";
+import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { Transaction } from "@ledgerhq/live-common/generated/types";
+import { Device } from "@ledgerhq/live-common/hw/actions/types";
+import { AppRequest } from "@ledgerhq/live-common/hw/actions/app";
+import firmwareUpdateRepair from "@ledgerhq/live-common/hw/firmwareUpdate-repair";
+import { getProviderName } from "@ledgerhq/live-common/exchange/swap/utils/index";
 import {
   InfiniteLoader,
   Text,
@@ -13,19 +17,37 @@ import {
   Icons,
   Log,
 } from "@ledgerhq/native-ui";
+import BigNumber from "bignumber.js";
+import {
+  ExchangeRate,
+  Exchange,
+} from "@ledgerhq/live-common/src/exchange/swap/types";
+import {
+  getAccountUnit,
+  getMainAccount,
+  getAccountName,
+} from "@ledgerhq/live-common/lib/account/index";
+import { getAccountCurrency } from "@ledgerhq/live-common/src/account";
+import { getDeviceModel } from "@ledgerhq/devices";
+import { DeviceModelId } from "@ledgerhq/types-devices";
 import { setModalLock } from "../../actions/appstate";
 import { urls } from "../../config/urls";
 import Alert from "../Alert";
 import { lighten } from "../../colors";
 import Button from "../Button";
+import DeviceActionProgress from "../DeviceActionProgress";
 import { NavigatorName, ScreenName } from "../../const";
 import Animation from "../Animation";
-import getDeviceAnimation from "./getDeviceAnimation";
+import { getDeviceAnimation } from "../../helpers/getDeviceAnimation";
 import GenericErrorView from "../GenericErrorView";
 import Circle from "../Circle";
-import { MANAGER_TABS } from "../../screens/Manager/Manager";
+import { MANAGER_TABS } from "../../const/manager";
+import { providerIcons } from "../../icons/swap/index";
 import ExternalLink from "../ExternalLink";
 import { track } from "../../analytics";
+import CurrencyUnitValue from "../CurrencyUnitValue";
+import TermsFooter from "../TermsFooter";
+import CurrencyIcon from "../CurrencyIcon";
 
 const Wrapper = styled(Flex).attrs({
   flex: 1,
@@ -207,24 +229,132 @@ export function renderConfirmSwap({
   t,
   device,
   theme,
+  transaction,
+  exchangeRate,
+  exchange,
+  amountExpectedTo,
+  estimatedFees,
 }: RawProps & {
   device: Device;
+  transaction: Transaction;
+  exchangeRate: ExchangeRate;
+  exchange: Exchange;
+  amountExpectedTo?: string;
+  estimatedFees?: string;
+}) {
+  const ProviderIcon = providerIcons[exchangeRate.provider.toLowerCase()];
+
+  return (
+    <ScrollView>
+      <Wrapper width="100%">
+        <Alert type="primary" learnMoreUrl={urls.swap.learnMore}>
+          {t("DeviceAction.confirmSwap.alert")}
+        </Alert>
+        <AnimationContainer
+          marginTop="16px"
+          withVerifyAddressHeight={device.modelId !== "blue"}
+        >
+          <Animation
+            source={getDeviceAnimation({ device, key: "validate", theme })}
+          />
+        </AnimationContainer>
+        <TitleText>{t("DeviceAction.confirmSwap.title")}</TitleText>
+
+        <Flex justifyContent={"space-between"} width="100%">
+          <FieldItem title={t("DeviceAction.swap2.amountSent")}>
+            <Text>
+              <CurrencyUnitValue
+                value={transaction.amount}
+                unit={getAccountUnit(exchange.fromAccount)}
+                disableRounding
+                showCode
+              />
+            </Text>
+          </FieldItem>
+
+          <FieldItem title={t("DeviceAction.swap2.amountReceived")}>
+            <Text>
+              <CurrencyUnitValue
+                unit={getAccountUnit(exchange.toAccount)}
+                value={
+                  amountExpectedTo
+                    ? new BigNumber(amountExpectedTo)
+                    : exchangeRate.toAmount
+                }
+                disableRounding
+                showCode
+              />
+            </Text>
+          </FieldItem>
+
+          <FieldItem title={t("DeviceAction.swap2.provider")}>
+            <Flex flexDirection="row" alignItems="center">
+              <Flex paddingRight={2}>
+                <ProviderIcon size={14} />
+              </Flex>
+
+              <Text>{getProviderName(exchangeRate.provider)}</Text>
+            </Flex>
+          </FieldItem>
+
+          <FieldItem title={t("DeviceAction.swap2.fees")}>
+            <Text>
+              <CurrencyUnitValue
+                unit={getAccountUnit(
+                  getMainAccount(
+                    exchange.fromAccount,
+                    exchange.fromParentAccount,
+                  ),
+                )}
+                value={new BigNumber(estimatedFees || 0)}
+                disableRounding
+                showCode
+              />
+            </Text>
+          </FieldItem>
+
+          <FieldItem title={t("DeviceAction.swap2.sourceAccount")}>
+            <Flex flexDirection="row" alignItems="center">
+              <CurrencyIcon
+                size={20}
+                currency={getAccountCurrency(exchange.fromAccount)}
+              />
+              <Text marginLeft={2}>{getAccountName(exchange.fromAccount)}</Text>
+            </Flex>
+          </FieldItem>
+
+          <FieldItem title={t("DeviceAction.swap2.targetAccount")}>
+            <Flex flexDirection="row" alignItems="center">
+              <CurrencyIcon
+                size={20}
+                currency={getAccountCurrency(exchange.toAccount)}
+              />
+              <Text marginLeft={2}>{getAccountName(exchange.toAccount)}</Text>
+            </Flex>
+          </FieldItem>
+        </Flex>
+
+        <TermsFooter provider={exchangeRate.provider} />
+      </Wrapper>
+    </ScrollView>
+  );
+}
+
+function FieldItem({
+  title,
+  children,
+}: {
+  title: string;
+  children: React.ReactNode;
 }) {
   return (
-    <Wrapper width="100%">
-      <Alert type="primary" learnMoreUrl={urls.swap.learnMore}>
-        {t("DeviceAction.confirmSwap.alert")}
-      </Alert>
-      <AnimationContainer
-        marginTop="16px"
-        withVerifyAddressHeight={device.modelId !== "blue"}
-      >
-        <Animation
-          source={getDeviceAnimation({ device, key: "validate", theme })}
-        />
-      </AnimationContainer>
-      <TitleText>{t("DeviceAction.confirmSwap.title")}</TitleText>
-    </Wrapper>
+    <Flex flexDirection="row" justifyContent="space-between" paddingY={4}>
+      <Text color="neutral.c70">{title}</Text>
+
+      <Flex flexDirection="row" alignItems="center">
+        {children}
+      </Flex>
+    </Flex>
   );
 }
 
@@ -270,6 +400,29 @@ export function renderAllowManager({
       <CenteredText>
         {t("DeviceAction.allowManagerPermission", { wording })}
       </CenteredText>
+    </Wrapper>
+  );
+}
+
+export function renderAllowLanguageInstallation({
+  t,
+  device,
+  theme,
+}: RawProps & {
+  device: Device;
+}) {
+  const deviceName = getDeviceModel(device.modelId).productName;
+
+  return (
+    <Wrapper>
+      <Text variant="h4" textAlign="center">
+        {t("deviceLocalization.allowLanguageInstallation", { deviceName })}
+      </Text>
+      <AnimationContainer>
+        <Animation
+          source={getDeviceAnimation({ device, key: "validate", theme })}
+        />
+      </AnimationContainer>
     </Wrapper>
   );
 }
@@ -423,7 +576,11 @@ export function renderConnectYourDevice({
 }) {
   return (
     <Wrapper>
-      <AnimationContainer withConnectDeviceHeight={device.modelId !== "blue"}>
+      <AnimationContainer
+        withConnectDeviceHeight={
+          ![DeviceModelId.blue, DeviceModelId.nanoFTS].includes(device.modelId)
+        }
+      >
         <Animation
           source={getDeviceAnimation({
             device,
@@ -469,6 +626,55 @@ export function renderLoading({
         <InfiniteLoader />
       </SpinnerContainer>
       <CenteredText>{description ?? t("DeviceAction.loading")}</CenteredText>
+    </Wrapper>
+  );
+}
+
+export function renderExchange({
+  exchangeType,
+  t,
+  device,
+  theme,
+}: RawProps & {
+  exchangeType: number;
+  device: Device;
+}) {
+  switch (exchangeType) {
+    case 0x00: // swap
+      return <div>{"Confirm swap on your device"}</div>;
+    case 0x01: // sell
+    case 0x02: // fund
+      return renderSecureTransferDeviceConfirmation({
+        exchangeTypeName: exchangeType === 0x01 ? "confirmSell" : "confirmFund",
+        t,
+        device,
+        theme,
+      });
+    default:
+      return <CenteredText>{"Confirm exchange on your device"}</CenteredText>;
+  }
+}
+
+export function renderSecureTransferDeviceConfirmation({
+  t,
+  exchangeTypeName,
+  device,
+  theme,
+}: RawProps & {
+  exchangeTypeName: string;
+  device: Device;
+}) {
+  return (
+    <Wrapper>
+      <AnimationContainer>
+        <Animation
+          source={getDeviceAnimation({ device, key: "validate", theme })}
+        />
+      </AnimationContainer>
+      <TitleText>{t(`DeviceAction.${exchangeTypeName}.title`)}</TitleText>
+      <Alert type="primary" learnMoreUrl={urls.swap.learnMore}>
+        {t(`DeviceAction.${exchangeTypeName}.alert`)}
+      </Alert>
     </Wrapper>
   );
 }
@@ -553,11 +759,76 @@ export function renderWarningOutdated({
   );
 }
 
-export function renderBootloaderStep({ t, colors, theme }: RawProps) {
-  return renderError({
-    t,
-    error: new UnexpectedBootloader(),
-    colors,
-    theme,
-  });
-}
+export const renderBootloaderStep = ({
+  onAutoRepair,
+  t,
+}: RawProps & { onAutoRepair: () => void }) => (
+  <Wrapper>
+    <TitleText>{t("DeviceAction.deviceInBootloader.title")}</TitleText>
+    <DescriptionText>
+      {t("DeviceAction.deviceInBootloader.description")}
+    </DescriptionText>
+    <Button
+      mt={4}
+      type="color"
+      outline={false}
+      event="DeviceInBootloaderContinue"
+      onPress={onAutoRepair}
+    >
+      {t("common.continue")}
+    </Button>
+  </Wrapper>
+);
+
+export const AutoRepair = ({
+  onDone,
+  t,
+  device,
+  navigation,
+  colors,
+  theme,
+}: RawProps & {
+  onDone: () => void;
+  device: Device;
+  navigation: StackNavigationProp<any>;
+}) => {
+  const [error, setError] = useState<Error | null>(null);
+  const [progress, setProgress] = useState<number>(0);
+
+  useEffect(() => {
+    const sub = firmwareUpdateRepair(device.deviceId, undefined).subscribe({
+      next: ({ progress }) => {
+        setProgress(progress);
+      },
+      error: err => {
+        setError(err);
+      },
+      complete: () => {
+        onDone();
+        navigation.replace(ScreenName.Manager, {});
+        // we re-navigate to the manager to reset the selected device for the action
+        // if we don't do that, we get an "Invalid Channel" error once the device is back online
+        // since the manager still thinks it's connected to a bootloader device and not a normal one
+      },
+    });
+
+    return () => sub.unsubscribe();
+  }, [onDone, setProgress, device, navigation]);
+
+  if (error) {
+    return renderError({
+      t,
+      error,
+      colors,
+      theme,
+    });
+  }
+
+  return (
+    <Wrapper>
+      <TitleText>{t("FirmwareUpdate.preparingDevice")}</TitleText>
+      <DeviceActionProgress progress={progress} />
+      <DescriptionText>{t("FirmwareUpdate.pleaseWaitUpdate")}</DescriptionText>
+    </Wrapper>
+  );
+};

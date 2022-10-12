@@ -24,16 +24,15 @@ import type {
   CurrencyBridge,
   AccountBridge,
   Account,
-  TransactionStatus,
   AccountLike,
-} from "../../../types";
+} from "@ledgerhq/types-live";
 import {
   makeSync,
   makeScanAccounts,
   makeAccountBridgeReceive,
 } from "../../../bridge/jsHelpers";
 import { getMainAccount } from "../../../account";
-import type { Transaction } from "../types";
+import type { TezosAccount, Transaction, TransactionStatus } from "../types";
 import { getAccountShape } from "../synchronisation";
 import { fetchAllBakers, hydrateBakers, isAccountDelegating } from "../bakers";
 import { getEnv } from "../../../env";
@@ -44,7 +43,7 @@ import { InvalidAddressBecauseAlreadyDelegated } from "../../../errors";
 import api from "../api/tzkt";
 
 const validateRecipient = (currency, recipient) => {
-  let recipientError = null;
+  let recipientError: Error | null = null;
   const recipientWarning = null;
   if (!recipient) {
     recipientError = new RecipientRequired("");
@@ -77,7 +76,7 @@ const createTransaction: () => Transaction = () => ({
 const updateTransaction = (t, patch) => ({ ...t, ...patch });
 
 const getTransactionStatus = async (
-  account: Account,
+  account: TezosAccount,
   t: Transaction
 ): Promise<TransactionStatus> => {
   const errors: {
@@ -141,7 +140,10 @@ const getTransactionStatus = async (
     log("taquitoerror", String(t.taquitoError));
 
     // remap taquito errors
-    if (t.taquitoError.endsWith("balance_too_low")) {
+    if (
+      t.taquitoError.endsWith("balance_too_low") ||
+      t.taquitoError.endsWith("subtraction_underflow")
+    ) {
       if (t.mode === "send") {
         resetTotalSpent = true;
         errors.amount = new NotEnoughBalance();
@@ -188,7 +190,7 @@ const getTransactionStatus = async (
 };
 
 const prepareTransaction = async (
-  account: Account,
+  account: TezosAccount,
   transaction: Transaction
 ): Promise<Transaction> => {
   const { tezosResources } = account;
@@ -339,7 +341,7 @@ const estimateMaxSpendable = async ({
   parentAccount: Account | undefined;
   transaction: Transaction;
 }): Promise<BigNumber> => {
-  const mainAccount = getMainAccount(account, parentAccount);
+  const mainAccount = getMainAccount(account, parentAccount) as TezosAccount;
   const t = await prepareTransaction(mainAccount, {
     ...createTransaction(),
     ...transaction,

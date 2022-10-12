@@ -2,22 +2,21 @@ import React from "react";
 import invariant from "invariant";
 import { ScrollView } from "react-native";
 import { useTranslation } from "react-i18next";
+import { Account, AccountLike } from "@ledgerhq/types-live";
 import {
-  Account,
-  AccountLike,
   Transaction,
   TransactionStatus,
-} from "@ledgerhq/live-common/lib/types";
+} from "@ledgerhq/live-common/generated/types";
 import {
   getMainAccount,
   getAccountUnit,
-} from "@ledgerhq/live-common/lib/account";
-import { Device } from "@ledgerhq/live-common/lib/hw/actions/types";
+} from "@ledgerhq/live-common/account/index";
+import { Device } from "@ledgerhq/live-common/hw/actions/types";
 
 import {
   getDeviceTransactionConfig,
   DeviceTransactionField,
-} from "@ledgerhq/live-common/lib/transaction";
+} from "@ledgerhq/live-common/transaction/index";
 import { getDeviceModel } from "@ledgerhq/devices";
 
 import { useTheme } from "@react-navigation/native";
@@ -27,7 +26,7 @@ import Alert from "./Alert";
 import perFamilyTransactionConfirmFields from "../generated/TransactionConfirmFields";
 import { DataRowUnitValue, TextValueField } from "./ValidateOnDeviceDataRow";
 import Animation from "./Animation";
-import getDeviceAnimation from "./DeviceAction/getDeviceAnimation";
+import { getDeviceAnimation } from "../helpers/getDeviceAnimation";
 
 export type FieldComponentProps = {
   account: AccountLike;

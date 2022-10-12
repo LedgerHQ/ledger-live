@@ -1,15 +1,10 @@
-/* eslint-disable flowtype/generic-spacing */
 // @flow
+/* eslint-disable flowtype/generic-spacing */
 
 import { BigNumber } from "bignumber.js";
 import { map, tap } from "rxjs/operators";
-import type {
-  CryptoCurrency,
-  Account,
-  AccountLike,
-  CurrencyBridge,
-  AccountBridge,
-} from "@ledgerhq/live-common/lib/types";
+import type { Account, AccountLike, CurrencyBridge, AccountBridge } from "@ledgerhq/types-live";
+import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import isEqual from "lodash/isEqual";
 import {
   fromTransactionRaw,
@@ -17,15 +12,16 @@ import {
   toSignedOperationRaw,
   fromTransactionStatusRaw,
   fromSignOperationEventRaw,
-} from "@ledgerhq/live-common/lib/transaction";
+} from "@ledgerhq/live-common/transaction/index";
 import {
   toAccountLikeRaw,
   toAccountRaw,
   fromOperationRaw,
-} from "@ledgerhq/live-common/lib/account";
-import { patchAccount } from "@ledgerhq/live-common/lib/reconciliation";
-import { fromScanAccountEventRaw } from "@ledgerhq/live-common/lib/bridge";
-import * as bridgeImpl from "@ledgerhq/live-common/lib/bridge/impl";
+} from "@ledgerhq/live-common/account/index";
+import { startSpan } from "@ledgerhq/live-common/performance";
+import { patchAccount } from "@ledgerhq/live-common/reconciliation";
+import { fromScanAccountEventRaw } from "@ledgerhq/live-common/bridge/index";
+import * as bridgeImpl from "@ledgerhq/live-common/bridge/impl";
 import { command } from "~/renderer/commands";
 
 const scanAccounts = ({ currency, deviceId, syncConfig }) =>
@@ -70,11 +66,19 @@ export const getAccountBridge = (
 ): AccountBridge<any> => {
   const sync = (account, syncConfig) => {
     syncs[account.id] = true;
+    const span = startSpan("sync", "toAccountRaw");
+    const raw = toAccountRaw(account);
+    span.finish();
     return command("AccountSync")({
-      account: toAccountRaw(account),
+      account: raw,
       syncConfig,
     }).pipe(
-      map(raw => account => patchAccount(account, raw)),
+      map(raw => account => {
+        const span = startSpan("sync", "patchAccount");
+        const r = patchAccount(account, raw);
+        span.finish();
+        return r;
+      }),
       tap(() => {
         // on first next event, we set it off
         syncs[account.id] = false;
@@ -115,7 +119,7 @@ export const getAccountBridge = (
       transaction: toTransactionRaw(t),
     })
       .toPromise()
-      .then(fromTransactionStatusRaw);
+      .then(transactionStatus => fromTransactionStatusRaw(transactionStatus, a.currency.family));
 
   const signOperation = ({ account, transaction, deviceId }) =>
     command("AccountSignOperation")({

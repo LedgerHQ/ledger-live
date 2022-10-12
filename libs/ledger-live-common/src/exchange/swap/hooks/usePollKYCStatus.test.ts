@@ -1,6 +1,4 @@
 import { renderHook } from "@testing-library/react-hooks";
-import { mocked } from "ts-jest/utils";
-
 import {
   usePollKYCStatus,
   KYC_STATUS_POLLING_INTERVAL,
@@ -12,7 +10,7 @@ import { KYCStatus } from "../types";
 
 // mock getKYCStatus
 jest.mock("..");
-const mockedGetKYCStatus = mocked(getKYCStatus, true);
+const mockedGetKYCStatus = jest.mocked(getKYCStatus, true);
 
 describe("usePollKYCStatus", () => {
   const defaultInput: UsePollKYCStatusProps = {
@@ -52,7 +50,7 @@ describe("usePollKYCStatus", () => {
     expect(mockedGetKYCStatus).toHaveBeenCalledTimes(1);
     expect(mockedGetKYCStatus).toHaveBeenCalledWith(
       input.provider,
-      input.kyc.id
+      input.kyc?.id
     );
     expect(onChange).toHaveBeenCalledTimes(0);
   });

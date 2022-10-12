@@ -1,7 +1,34 @@
 import { encode, decode } from "@ethersproject/rlp";
 import { BigNumber } from "bignumber.js";
 
-export function decodeTxInfo(rawTx: Buffer) {
+export function splitPath(path: string): number[] {
+  const result: number[] = [];
+  const components = path.split("/");
+  components.forEach((element) => {
+    let number = parseInt(element, 10);
+    if (isNaN(number)) {
+      return; // FIXME shouldn't it throws instead?
+    }
+    if (element.length > 1 && element[element.length - 1] === "'") {
+      number += 0x80000000;
+    }
+    result.push(number);
+  });
+  return result;
+}
+
+export function hexBuffer(str: string): Buffer {
+  return Buffer.from(str.startsWith("0x") ? str.slice(2) : str, "hex");
+}
+
+export function maybeHexBuffer(
+  str: string | null | undefined
+): Buffer | null | undefined {
+  if (!str) return null;
+  return hexBuffer(str);
+}
+
+export const decodeTxInfo = (rawTx: Buffer) => {
   const VALID_TYPES = [1, 2];
   const txType = VALID_TYPES.includes(rawTx[0]) ? rawTx[0] : null;
   const rlpData = txType === null ? rawTx : rawTx.slice(1);
@@ -74,4 +101,17 @@ export function decodeTxInfo(rawTx: Buffer) {
     chainIdTruncated,
     vrsOffset,
   };
-}
+};
+
+/**
+ * @ignore for the README
+ *
+ * Helper to convert an integer as a hexadecimal string with the right amount of digits
+ * to respect the number of bytes given as parameter
+ *
+ * @param int Integer
+ * @param bytes Number of bytes it should be represented as (1 byte = 2 caraters)
+ * @returns The given integer as an hexa string padded with the right number of 0
+ */
+export const intAsHexBytes = (int: number, bytes: number): string =>
+  int.toString(16).padStart(2 * bytes, "0");

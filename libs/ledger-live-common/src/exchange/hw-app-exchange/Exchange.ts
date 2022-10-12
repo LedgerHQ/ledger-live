@@ -67,7 +67,7 @@ export default class Exchange {
       this.transactionType === ExchangeTypes.Sell ||
       this.transactionType === ExchangeTypes.Fund
     ) {
-      return result.subarray(0, 32).toString("base64");
+      return result.slice(0, 32).toString("base64");
     }
 
     return result.toString("ascii", 0, 10);
@@ -138,9 +138,9 @@ export default class Exchange {
     invariant(payoutCurrencyConfig.length <= 255, "Currency config is too big");
     invariant(addressParameters.length <= 255, "Address parameter is too big.");
     invariant(
-      currencyConfigSignature.length >= 70 &&
+      currencyConfigSignature.length >= 67 &&
         currencyConfigSignature.length <= 73,
-      "Signature should be DER serialized and have length in [70, 73] bytes."
+      "Signature should be DER serialized and have length in [67, 73] bytes."
     );
     const bufferToSend: Buffer = Buffer.concat([
       Buffer.from([payoutCurrencyConfig.length]),
@@ -170,9 +170,9 @@ export default class Exchange {
     invariant(refundCurrencyConfig.length <= 255, "Currency config is too big");
     invariant(addressParameters.length <= 255, "Address parameter is too big.");
     invariant(
-      currencyConfigSignature.length >= 70 &&
+      currencyConfigSignature.length >= 67 &&
         currencyConfigSignature.length <= 73,
-      "Signature should be DER serialized and have length in [70, 73] bytes."
+      "Signature should be DER serialized and have length in [67, 73] bytes."
     );
     const bufferToSend: Buffer = Buffer.concat([
       Buffer.from([refundCurrencyConfig.length]),

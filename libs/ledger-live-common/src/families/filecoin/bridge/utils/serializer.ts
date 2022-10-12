@@ -1,4 +1,4 @@
-import cbor from "cbor";
+import cbor from "@zondax/cbor";
 import { Transaction } from "../../types";
 import BigNumber from "bignumber.js";
 

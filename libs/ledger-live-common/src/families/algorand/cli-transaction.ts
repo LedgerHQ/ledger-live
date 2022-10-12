@@ -1,13 +1,10 @@
 import invariant from "invariant";
 import flatMap from "lodash/flatMap";
-import type {
-  Transaction,
-  Account,
-  AccountLike,
-  AccountLikeArray,
-} from "../../types";
+import type { Transaction } from "../../generated/types";
 import { getAccountCurrency } from "../../account";
 import { extractTokenId } from "./tokens";
+import { AlgorandAccount } from "./types";
+import type { AccountLike, AccountLikeArray } from "@ledgerhq/types-live";
 const options = [
   {
     name: "mode",
@@ -39,13 +36,13 @@ const options = [
 ];
 
 function inferAccounts(
-  account: Account,
+  account: AlgorandAccount,
   opts: Record<string, any>
 ): AccountLikeArray {
   invariant(account.currency.family === "algorand", "algorand family");
 
   if (!opts.token || opts.mode === "optIn") {
-    const accounts: Account[] = [account];
+    const accounts: AlgorandAccount[] = [account];
     return accounts;
   }
 
@@ -87,7 +84,10 @@ function inferTransactions(
     invariant(transaction.family === "algorand", "algorand family");
 
     if (account.type === "Account") {
-      invariant(account.algorandResources, "unactivated account");
+      invariant(
+        (account as AlgorandAccount).algorandResources,
+        "unactivated account"
+      );
     }
 
     if (account.type === "TokenAccount") {

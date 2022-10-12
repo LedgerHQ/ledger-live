@@ -4,9 +4,9 @@ import {
   RecipientRequired,
   InvalidAddress,
   FeeTooHigh,
+  AmountRequired,
 } from "@ledgerhq/errors";
 import type { Transaction } from "../types";
-import type { AccountBridge, CurrencyBridge } from "../../../types";
 import { getFeeItems } from "../../../api/FeesBitcoin";
 import {
   scanAccounts,
@@ -17,6 +17,7 @@ import {
 } from "../../../bridge/mockHelpers";
 import { getMainAccount } from "../../../account";
 import { makeAccountBridgeReceive } from "../../../bridge/mockHelpers";
+import type { AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
 const receive = makeAccountBridgeReceive();
 
 const defaultGetFees = (a, t: any) =>
@@ -32,14 +33,17 @@ const createTransaction = (): Transaction => ({
   rbf: false,
   utxoStrategy: {
     strategy: 0,
-    pickUnconfirmedRBF: false,
     excludeUTXOs: [],
   },
 });
 
-const updateTransaction = (t, patch) => ({ ...t, ...patch });
+const updateTransaction = (t, patch): any => ({ ...t, ...patch });
 
-const estimateMaxSpendable = ({ account, parentAccount, transaction }) => {
+const estimateMaxSpendable = ({
+  account,
+  parentAccount,
+  transaction,
+}): Promise<BigNumber> => {
   const mainAccount = getMainAccount(account, parentAccount);
   const estimatedFees = transaction
     ? defaultGetFees(mainAccount, transaction)
@@ -61,12 +65,17 @@ const getTransactionStatus = (account, t) => {
     ? account.balance.minus(estimatedFees)
     : new BigNumber(t.amount);
 
+  if (!errors.amount && !amount.gt(0)) {
+    errors.amount = useAllAmount
+      ? new NotEnoughBalance()
+      : new AmountRequired();
+  }
   if (amount.gt(0) && estimatedFees.times(10).gt(amount)) {
     warnings.feeTooHigh = new FeeTooHigh();
   }
 
   // Fill up transaction errors...
-  if (totalSpent.gt(account.balance)) {
+  if (!errors.amount && totalSpent.gt(account.balance)) {
     errors.amount = new NotEnoughBalance();
   }
 

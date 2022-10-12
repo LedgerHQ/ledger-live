@@ -2,13 +2,8 @@
 import { createSelector, createSelectorCreator, defaultMemoize } from "reselect";
 import type { OutputSelector } from "reselect";
 import { handleActions } from "redux-actions";
-import type {
-  Account,
-  AccountLike,
-  CryptoCurrency,
-  TokenCurrency,
-  NFT,
-} from "@ledgerhq/live-common/lib/types";
+import type { Account, AccountLike, NFT } from "@ledgerhq/types-live";
+import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import {
   flattenAccounts,
   clearAccount,
@@ -17,8 +12,8 @@ import {
   isUpToDateAccount,
   withoutToken,
   nestedSortAccounts,
-} from "@ledgerhq/live-common/lib/account";
-import { getEnv } from "@ledgerhq/live-common/lib/env";
+} from "@ledgerhq/live-common/account/index";
+import { getEnv } from "@ledgerhq/live-common/env";
 import logger from "./../../logger/logger";
 import accountModel from "./../../helpers/accountModel";
 import type { State } from ".";

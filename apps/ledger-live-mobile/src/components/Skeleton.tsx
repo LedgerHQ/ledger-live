@@ -9,12 +9,12 @@ type Props = {
   animated?: boolean;
 };
 
-const Skeleton = ({
+const Skeleton: React.FC<Props> = ({
   style,
   loading,
-  children = <></>,
+  children = null,
   animated = true,
-}: Props) => {
+}) => {
   const { colors } = useTheme();
   const opacityAnim = useRef(new Animated.Value(1)).current;
 

@@ -1,6 +1,6 @@
 import BigNumber from "bignumber.js";
 import { estimatedFeeSafetyRate, estimatedFees } from "./utils";
-import type { Account, AccountLike } from "../../types";
+import type { Account, AccountLike } from "@ledgerhq/types-live";
 import type { Transaction } from "./types";
 
 export default function estimateMaxSpendable({

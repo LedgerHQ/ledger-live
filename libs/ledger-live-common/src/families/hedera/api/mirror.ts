@@ -2,7 +2,7 @@ import BigNumber from "bignumber.js";
 import network from "../../../network";
 import URL from "url";
 import { getAccountBalance } from "./network";
-import { Operation, OperationType } from "../../../types";
+import { Operation, OperationType } from "@ledgerhq/types-live";
 import { encodeOperationId } from "../../../operation";
 import { AccountId } from "@hashgraph/sdk";
 import { getEnv } from "../../../env";
@@ -12,7 +12,7 @@ const getMirrorApiUrl = (): string => getEnv("API_HEDERA_MIRROR");
 
 const fetch = (path, query = {}) =>
   network({
-    type: "get",
+    method: "GET",
     url: URL.format({
       pathname: `${getMirrorApiUrl()}/api/v1${path}`,
       query,
@@ -136,7 +136,7 @@ export async function getOperationsForAccount(
       // Set a value just so that it's considered confirmed according to isConfirmedOperation
       blockHeight: 5,
       blockHash: null,
-      extra: { consensus_timestamp },
+      extra: {},
       fee,
       hash,
       recipients,

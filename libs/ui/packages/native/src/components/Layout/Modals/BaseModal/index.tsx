@@ -30,11 +30,11 @@ export type BaseModalProps = {
 } & Partial<ModalProps>;
 
 const SafeContainer = styled.SafeAreaView`
-  background-color: ${(p) => p.theme.colors.background.main};
+  background-color: ${(p) => p.theme.colors.background.drawer};
 `;
 
 const Container = styled.View`
-  background-color: ${(p) => p.theme.colors.background.main};
+  background-color: ${(p) => p.theme.colors.background.drawer};
   width: 100%;
   padding: 16px;
   min-height: 350px;
@@ -48,7 +48,7 @@ const ContentContainer = styled.View`
 const CloseContainer = styled.View`
   display: flex;
   align-items: flex-end;
-  margin-bottom: ${(p) => p.theme.space[7]}px;
+  margin-bottom: ${(p) => p.theme.space[6]}px;
 `;
 
 const ClosePressableExtendedBounds = styled.TouchableOpacity.attrs({
@@ -110,6 +110,18 @@ export function ModalHeader({
   );
 }
 
+export function ModalHeaderCloseButton({
+  onClose,
+}: Pick<BaseModalProps, "onClose">): React.ReactElement {
+  return (
+    <CloseContainer>
+      <ClosePressableExtendedBounds onPress={onClose}>
+        <Icons.CloseMedium color="neutral.c100" size="20px" />
+      </ClosePressableExtendedBounds>
+    </CloseContainer>
+  );
+}
+
 export default function BaseModal({
   isOpen,
   onClose = () => {},
@@ -149,13 +161,7 @@ export default function BaseModal({
     >
       <SafeContainer style={safeContainerStyle}>
         <Container style={containerStyle}>
-          {!noCloseButton && (
-            <CloseContainer>
-              <ClosePressableExtendedBounds onPress={onClose}>
-                <Icons.CloseMedium color="neutral.c100" size="20px" />
-              </ClosePressableExtendedBounds>
-            </CloseContainer>
-          )}
+          {!noCloseButton && <ModalHeaderCloseButton onClose={onClose} />}
           <ModalHeader
             Icon={Icon}
             iconColor={iconColor}

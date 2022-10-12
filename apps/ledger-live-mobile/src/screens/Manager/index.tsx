@@ -1,25 +1,22 @@
-/* @flow */
 import React, { Component } from "react";
 import { StyleSheet } from "react-native";
 import { useIsFocused } from "@react-navigation/native";
 import { useDispatch } from "react-redux";
 import { Trans } from "react-i18next";
-import manager from "@ledgerhq/live-common/lib/manager";
-import { disconnect } from "@ledgerhq/live-common/lib/hw";
-import { Device } from "@ledgerhq/live-common/lib/hw/actions/types";
+import manager from "@ledgerhq/live-common/manager/index";
+import { disconnect } from "@ledgerhq/live-common/hw/index";
+import { Device } from "@ledgerhq/live-common/hw/actions/types";
 
-import connectManager from "@ledgerhq/live-common/lib/hw/connectManager";
-import { createAction } from "@ledgerhq/live-common/lib/hw/actions/manager";
+import connectManager from "@ledgerhq/live-common/hw/connectManager";
+import { createAction } from "@ledgerhq/live-common/hw/actions/manager";
 import { Text } from "@ledgerhq/native-ui";
 import { removeKnownDevice } from "../../actions/ble";
 import { ScreenName } from "../../const";
 import { ManagerTab } from "./Manager";
 import SelectDevice from "../../components/SelectDevice";
 import TrackScreen from "../../analytics/TrackScreen";
-// @FlowFixMe
 import { track } from "../../analytics";
 import Button from "../../components/Button";
-// @FlowFixMe
 import type { DeviceLike } from "../../reducers/ble";
 import Trash from "../../icons/Trash";
 import BottomModal from "../../components/BottomModal";
@@ -28,7 +25,9 @@ import NavigationScrollView from "../../components/NavigationScrollView";
 import DeviceActionModal from "../../components/DeviceActionModal";
 import Illustration from "../../images/illustration/Illustration";
 
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const darkImg = require("../../images/illustration/Dark/_079.png");
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const lightImg = require("../../images/illustration/Light/_079.png");
 
 const action = createAction(connectManager);
@@ -68,6 +67,9 @@ type RouteParams = {
   searchQuery?: string;
   tab?: ManagerTab;
   installApp?: string;
+  firmwareUpdate?: boolean;
+  device?: Device;
+  appsToRestore?: string[];
 };
 
 type Props = {
@@ -81,7 +83,7 @@ type Props = {
 
 type ChooseDeviceProps = Props & {
   isFocused: boolean;
-  removeKnownDevice: (d: string) => void;
+  removeKnownDevice: (_: string) => void;
 };
 
 class ChooseDevice extends Component<
@@ -89,7 +91,7 @@ class ChooseDevice extends Component<
   {
     showMenu: boolean;
     device?: Device;
-    result?: Object;
+    result?: any;
   }
 > {
   state = {
@@ -117,7 +119,7 @@ class ChooseDevice extends Component<
     this.setState({ device });
   };
 
-  onSelect = (result: Object) => {
+  onSelect = (result: any) => {
     this.setState({ device: undefined, result });
     const {
       route: { params = {} },
@@ -134,11 +136,13 @@ class ChooseDevice extends Component<
     this.setState({ device: undefined });
   };
 
-  onStepEntered = (i: number, meta: Object) => {
+  onStepEntered = (i: number, meta: any) => {
     if (i === 2) {
       // we also preload as much info as possible in case of a MCU
       manager.getLatestFirmwareForDevice(meta.deviceInfo).then(
+        // eslint-disable-next-line @typescript-eslint/no-empty-function
         () => {},
+        // eslint-disable-next-line @typescript-eslint/no-empty-function
         () => {},
       );
     }
@@ -147,16 +151,23 @@ class ChooseDevice extends Component<
   remove = async () => {
     const { removeKnownDevice } = this.props;
     removeKnownDevice(this.chosenDevice.deviceId);
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
     await disconnect(this.chosenDevice.deviceId).catch(() => {});
     this.onHideMenu();
   };
 
   componentDidMount() {
-    this.setState(state => ({ ...state, device: undefined }));
+    this.setState(state => ({
+      ...state,
+      device: this.props.route.params?.device,
+    }));
   }
 
   render() {
-    const { isFocused } = this.props;
+    const {
+      isFocused,
+      route: { params = {} },
+    } = this.props;
     const { showMenu, device } = this.state;
 
     if (!isFocused) return null;
@@ -171,6 +182,7 @@ class ChooseDevice extends Component<
           <Trans i18nKey="manager.connect" />
         </Text>
         <SelectDevice
+          usbOnly={params?.firmwareUpdate}
           autoSelectOnAdd
           onSelect={this.onSelectDevice}
           onStepEntered={this.onStepEntered}

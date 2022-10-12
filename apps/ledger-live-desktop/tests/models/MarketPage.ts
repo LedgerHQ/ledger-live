@@ -59,6 +59,7 @@ export class MarketPage {
   async openCoinPage(ticker: string) {
     await this.coinRow(ticker).click();
     await this.coinPageContainer.waitFor({ state: "attached" });
+    await this.loadingPlaceholder.first().waitFor({ state: "detached" });
   }
 
   async starCoin(ticker: string) {

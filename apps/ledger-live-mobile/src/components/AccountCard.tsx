@@ -2,13 +2,14 @@ import React, { ReactNode } from "react";
 import {
   getAccountName,
   getAccountSpendableBalance,
-} from "@ledgerhq/live-common/lib/account";
+} from "@ledgerhq/live-common/account/index";
 import {
   getAccountCurrency,
   getAccountUnit,
-} from "@ledgerhq/live-common/lib/account/helpers";
-import { getTagDerivationMode } from "@ledgerhq/live-common/lib/derivation";
-import { Account, CryptoCurrency } from "@ledgerhq/live-common/lib/types";
+} from "@ledgerhq/live-common/account/helpers";
+import { getTagDerivationMode } from "@ledgerhq/live-common/derivation";
+import { AccountLike } from "@ledgerhq/types-live";
+import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { Flex, Tag, Text } from "@ledgerhq/native-ui";
 import { useTheme } from "styled-components/native";
 import { TouchableOpacity } from "react-native-gesture-handler";
@@ -18,7 +19,7 @@ import CurrencyIcon from "./CurrencyIcon";
 import CurrencyUnitValue from "./CurrencyUnitValue";
 
 export type Props = CardProps & {
-  account: Account;
+  account: AccountLike;
   style?: any;
   disabled?: boolean;
   useFullBalance?: boolean;

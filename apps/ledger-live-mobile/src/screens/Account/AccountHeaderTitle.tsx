@@ -5,7 +5,7 @@ import { useSelector } from "react-redux";
 import {
   getAccountCurrency,
   getAccountName,
-} from "@ledgerhq/live-common/lib/account";
+} from "@ledgerhq/live-common/account/index";
 import { Text } from "@ledgerhq/native-ui";
 import { accountScreenSelector } from "../../reducers/accounts";
 import ParentCurrencyIcon from "../../components/ParentCurrencyIcon";

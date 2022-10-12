@@ -3,7 +3,7 @@ import Button from "./wrappedUi/Button";
 
 type ChoiceButtonProps = {
   disabled?: boolean;
-  onSelect: Function;
+  onSelect: any;
   label: ReactNode;
   description?: ReactNode;
   Icon: any;

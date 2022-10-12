@@ -1,70 +1,28 @@
-import { useMemo } from "react";
-import { BigNumber } from "bignumber.js";
-import useBridgeTransaction, {
-  Result as UseBridgeTransactionReturnType,
-} from "../../../bridge/useBridgeTransaction";
-import type {
-  Account,
-  TokenAccount,
-  TokenCurrency,
-  CryptoCurrency,
-} from "../../../types";
-import { ExchangeRate } from "../types";
 import { AmountRequired } from "@ledgerhq/errors";
-import { useUpdateMaxAmount } from "./useUpdateMaxAmount";
+import { useMemo } from "react";
 import {
-  RatesReducerState,
-  useFromState,
-  useProviderRates,
-  useToState,
-} from ".";
+  ExchangeRate,
+  SwapSelectorStateType,
+  OnNoRatesCallback,
+  SwapTransactionType,
+  SetIsSendMaxLoading,
+} from "../types";
+import useBridgeTransaction from "../../../bridge/useBridgeTransaction";
+import { useFromState } from "./useFromState";
+import { useProviderRates } from "./useProviderRates";
+import { useToState } from "./useToState";
 import { useReverseAccounts } from "./useReverseAccounts";
+import { Account } from "@ledgerhq/types-live";
+import { useUpdateMaxAmount } from "./useUpdateMaxAmount";
 
-export type SwapSelectorStateType = {
-  currency: null | undefined | TokenCurrency | CryptoCurrency;
-  account: null | undefined | Account | TokenAccount;
-  parentAccount: null | undefined | Account;
-  amount: null | undefined | BigNumber;
-};
-export type SwapDataType = {
-  from: SwapSelectorStateType;
-  to: SwapSelectorStateType;
-  isMaxEnabled: boolean;
-  isSwapReversable: boolean;
-  rates: RatesReducerState;
-  refetchRates: () => void;
-  targetAccounts?: Account[];
-};
 export const selectorStateDefaultValues = {
-  currency: null,
-  account: null,
-  parentAccount: null,
-  amount: null,
+  currency: undefined,
+  account: undefined,
+  parentAccount: undefined,
+  amount: undefined,
 };
 
-export type SwapTransactionType = UseBridgeTransactionReturnType & {
-  swap: SwapDataType;
-  setFromAccount: (account: SwapSelectorStateType["account"]) => void;
-  setToAccount: (
-    currency: SwapSelectorStateType["currency"],
-    account: SwapSelectorStateType["account"],
-    parentAccount: SwapSelectorStateType["parentAccount"]
-  ) => void;
-  setFromAmount: (amount: BigNumber) => void;
-  setToAmount: (amount: BigNumber) => void;
-  setToCurrency: (currency: SwapSelectorStateType["currency"]) => void;
-  toggleMax: () => void;
-  reverseSwap: () => void;
-  fromAmountError?: Error;
-};
-
-export type OnNoRatesCallback = (arg: {
-  fromState: SwapSelectorStateType;
-  toState: SwapSelectorStateType;
-}) => void;
-export type SetExchangeRateCallback = (
-  exchangeRate?: ExchangeRate | null
-) => void;
+export type SetExchangeRateCallback = (exchangeRate?: ExchangeRate) => void;
 
 export const useFromAmountError = (
   errors: Record<string, Error | undefined>
@@ -82,20 +40,22 @@ export const useFromAmountError = (
 
 export const useSwapTransaction = ({
   accounts,
-  exchangeRate,
   setExchangeRate,
+  setIsSendMaxLoading,
   defaultCurrency = selectorStateDefaultValues.currency,
   defaultAccount = selectorStateDefaultValues.account,
   defaultParentAccount = selectorStateDefaultValues.parentAccount,
   onNoRates,
+  excludeFixedRates,
 }: {
   accounts?: Account[];
-  exchangeRate?: ExchangeRate;
   setExchangeRate?: SetExchangeRateCallback;
+  setIsSendMaxLoading?: SetIsSendMaxLoading;
   defaultCurrency?: SwapSelectorStateType["currency"];
   defaultAccount?: SwapSelectorStateType["account"];
   defaultParentAccount?: SwapSelectorStateType["parentAccount"];
   onNoRates?: OnNoRatesCallback;
+  excludeFixedRates?: boolean;
 } = {}): SwapTransactionType => {
   const bridgeTransaction = useBridgeTransaction(() => ({
     account: defaultAccount,
@@ -136,12 +96,12 @@ export const useSwapTransaction = ({
     parentAccount: fromParentAccount,
     transaction,
     feesStrategy: transaction?.feesStrategy,
+    setIsSendMaxLoading,
   });
 
-  const { rates, refetchRates } = useProviderRates({
+  const { rates, refetchRates, updateSelectedRate } = useProviderRates({
     fromState,
     toState,
-    exchangeRate,
     transaction,
     onNoRates,
     setExchangeRate,
@@ -154,8 +114,15 @@ export const useSwapTransaction = ({
       from: fromState,
       isMaxEnabled,
       isSwapReversable,
-      rates,
+      rates:
+        rates.value && excludeFixedRates
+          ? {
+              ...rates,
+              value: rates.value.filter((v) => v.tradeMethod !== "fixed"),
+            }
+          : rates,
       refetchRates,
+      updateSelectedRate,
       targetAccounts,
     },
     setFromAmount,

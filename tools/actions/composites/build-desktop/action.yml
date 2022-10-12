@@ -16,7 +16,7 @@ runs:
   using: "composite"
   steps:
     - name: bump npm
-      run: npm i -g npm
+      run: npm i -g npm@8.12.2
       shell: bash
     - name: install dependencies
       if: ${{ inputs.os != 'mac' }}

@@ -1,0 +1,34 @@
+name: "Setup Ledger Live Desktop Tests"
+description: "Composite job to setup the CI for Ledger Live Desktop tests"
+inputs:
+  skip_python:
+    description: "skip the step to setup python"
+    required: false
+  skip_ruby:
+    description: "skip the step to setup ruby"
+    required: false
+
+runs:
+  using: "composite"
+  steps:
+    - uses: pnpm/action-setup@v2
+      with:
+        version: latest
+        dest: ${{ runner.temp }}/setup-pnpm
+    - uses: actions/setup-node@v3
+      with:
+        node-version: 16
+        cache: pnpm
+        cache-dependency-path: "**/pnpm-lock.yaml"
+    - uses: actions/setup-python@v4
+      if: ${{ !inputs.skip_python }}
+      with:
+        python-version: "3.x"
+    - uses: ruby/setup-ruby@v1
+      if: ${{ !inputs.skip_ruby }}
+      with:
+        ruby-version: 2.7
+        bundler-cache: true
+    - name: Bump npm to latest
+      run: npm i -g npm@8.12.2
+      shell: bash

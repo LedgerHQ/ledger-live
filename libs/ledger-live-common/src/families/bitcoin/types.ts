@@ -3,11 +3,14 @@ import type {
   Account as WalletAccount,
   SerializedAccount as WalletAccountRaw,
 } from "./wallet-btc";
-
-import type {
+import {
+  Account,
+  AccountRaw,
   TransactionCommon,
   TransactionCommonRaw,
-} from "../../types/transaction";
+  TransactionStatusCommon,
+  TransactionStatusCommonRaw,
+} from "@ledgerhq/types-live";
 
 export type BitcoinInput = {
   address: string | null | undefined;
@@ -126,7 +129,6 @@ export type BitcoinPickingStrategy =
   typeof bitcoinPickingStrategy[keyof typeof bitcoinPickingStrategy];
 export type UtxoStrategy = {
   strategy: BitcoinPickingStrategy;
-  pickUnconfirmedRBF: boolean;
   excludeUTXOs: Array<{
     hash: string;
     outputIndex: number;
@@ -145,4 +147,16 @@ export type TransactionRaw = TransactionCommonRaw & {
   rbf: boolean;
   feePerByte: string | null | undefined;
   networkInfo: NetworkInfoRaw | null | undefined;
+};
+export type TransactionStatus = TransactionStatusCommon & {
+  txInputs?: BitcoinInput[];
+  txOutputs?: BitcoinOutput[];
+};
+export type TransactionStatusRaw = TransactionStatusCommonRaw & {
+  txInputs?: BitcoinInputRaw[];
+  txOutputs?: BitcoinOutputRaw[];
+};
+export type BitcoinAccount = Account & { bitcoinResources: BitcoinResources };
+export type BitcoinAccountRaw = AccountRaw & {
+  bitcoinResources: BitcoinResourcesRaw;
 };

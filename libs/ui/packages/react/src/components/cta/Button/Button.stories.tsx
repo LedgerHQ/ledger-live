@@ -20,6 +20,10 @@ export default {
         type: "radio",
       },
     },
+    size: {
+      options: [undefined, "small", "medium", "large"],
+      control: { type: "radio" },
+    },
     fontSize: {
       options: [undefined, 0, 1, 2, 3, 4, 5, 6, 7, 8],
       control: {
@@ -44,7 +48,7 @@ export default {
   },
 };
 
-export const Overview = (() => {
+export const Overview = ((args: ButtonProps) => {
   const templateProps = { Icon: PlusMedium, children: "Try me", onClick: () => {} };
   const propsArr = [
     { ...templateProps, Icon: undefined },
@@ -65,6 +69,7 @@ export const Overview = (() => {
               <Flex flex={1} columnGap={4}>
                 {[false, true].map((disabled) => (
                   <Button
+                    size={args.size}
                     variant={buttonType}
                     outline={outline}
                     disabled={disabled}

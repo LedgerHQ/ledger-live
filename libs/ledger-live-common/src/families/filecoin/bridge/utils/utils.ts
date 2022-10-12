@@ -1,4 +1,4 @@
-import { Account, Address, Operation } from "../../../../types";
+import { Account, Address, Operation } from "@ledgerhq/types-live";
 import {
   getCryptoCurrencyById,
   parseCurrencyUnit,
@@ -11,6 +11,7 @@ import {
 } from "../../../../bridge/jsHelpers";
 import { fetchBalances, fetchBlockHeight, fetchTxs } from "./api";
 import { encodeAccountId } from "../../../../account";
+import { encodeOperationId } from "../../../../operation";
 import flatMap from "lodash/flatMap";
 
 type TxsById = {
@@ -39,7 +40,7 @@ export const processTxs = (
   for (const txId in txsById) {
     const { Fee: feeTx, Send: sendTx } = txsById[txId];
 
-    if (feeTx) sendTx.fee = feeTx.amount.toString();
+    if (feeTx) sendTx.fee = feeTx.amount;
 
     processedTxs.push(sendTx);
   }
@@ -48,27 +49,27 @@ export const processTxs = (
 };
 
 export const mapTxToOps =
-  (id, { address }: GetAccountShapeArg0) =>
+  (accountId, { address }: GetAccountShapeArg0) =>
   (tx: TransactionResponse): Operation[] => {
     const { to, from, hash, timestamp, amount, fee } = tx;
     const ops: Operation[] = [];
     const date = new Date(timestamp * 1000);
     const value = parseCurrencyUnit(getUnit(), amount.toString());
+    const feeToUse = parseCurrencyUnit(getUnit(), (fee || 0).toString());
 
     const isSending = address === from;
     const isReceiving = address === to;
-    const feeToUse = new BigNumber(fee || 0);
 
     if (isSending) {
       ops.push({
-        id: `${id}-${hash}-OUT`,
+        id: encodeOperationId(accountId, hash, "OUT"),
         hash,
         type: "OUT",
         value: value.plus(feeToUse),
         fee: feeToUse,
         blockHeight: tx.height,
         blockHash: null,
-        accountId: id,
+        accountId,
         senders: [from],
         recipients: [to],
         date,
@@ -78,14 +79,14 @@ export const mapTxToOps =
 
     if (isReceiving) {
       ops.push({
-        id: `${id}-${hash}-IN`,
+        id: encodeOperationId(accountId, hash, "IN"),
         hash,
         type: "IN",
         value,
         fee: feeToUse,
         blockHeight: tx.height,
         blockHash: null,
-        accountId: id,
+        accountId,
         senders: [from],
         recipients: [to],
         date,
@@ -105,7 +106,7 @@ export const getTxToBroadcast = (
   operation: Operation,
   signature: string
 ): BroadcastTransactionRequest => {
-  const { extra, senders, recipients, value } = operation;
+  const { extra, senders, recipients, value, fee } = operation;
   const {
     gasLimit,
     gasFeeCap,
@@ -127,7 +128,7 @@ export const getTxToBroadcast = (
       gaslimit: gasLimit.toNumber(),
       gaspremium: gasPremium.toString(),
       gasfeecap: gasFeeCap.toString(),
-      value: value.toFixed(),
+      value: value.minus(fee).toFixed(),
     },
     signature: {
       type: signatureType,
@@ -137,14 +138,14 @@ export const getTxToBroadcast = (
 };
 
 export const getAccountShape: GetAccountShape = async (info) => {
-  const { address, currency } = info;
+  const { address, currency, derivationMode } = info;
 
   const accountId = encodeAccountId({
     type: "js",
     version: "2",
     currencyId: currency.id,
     xpubOrAddress: address,
-    derivationMode: "",
+    derivationMode,
   });
 
   const blockHeight = await fetchBlockHeight();

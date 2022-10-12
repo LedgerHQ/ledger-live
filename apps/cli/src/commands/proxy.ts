@@ -5,7 +5,7 @@ import {
   openTransportReplayer,
 } from "@ledgerhq/hw-transport-mocker";
 import { log, listen } from "@ledgerhq/logs";
-import { open } from "@ledgerhq/live-common/lib/hw";
+import { open } from "@ledgerhq/live-common/hw/index";
 import fs from "fs";
 import http from "http";
 import express from "express";
@@ -21,7 +21,8 @@ const args = [
     name: "file",
     alias: "f",
     type: String,
-    desc: "in combination with --record, will save all the proxied APDUs to a provided file. If --record is not provided, proxy will start in replay mode of the provided file. If --file is not used at all, the proxy will just act as a proxy without saving the APDU.",
+    desc:
+      "in combination with --record, will save all the proxied APDUs to a provided file. If --record is not provided, proxy will start in replay mode of the provided file. If --file is not used at all, the proxy will just act as a proxy without saving the APDU.",
   },
   {
     name: "verbose",
@@ -154,9 +155,9 @@ const job = ({
 
           res.sendStatus(200);
           process.exit(0);
-        } catch (e: any) {
+        } catch (e) {
           res.sendStatus(400);
-          console.error(e.message);
+          console.error((e as Error).message);
           process.exit(1);
         }
       });
@@ -192,8 +193,8 @@ const job = ({
             }
           }
         }
-      } catch (e: any) {
-        error = e.toString();
+      } catch (e) {
+        error = e as Error;
       }
 
       pending = false;
@@ -250,9 +251,10 @@ const job = ({
         };
 
         ws.on("close", onClose);
-        ws.on("message", async (apduHex) => {
+        ws.on("message", async (data, isBinary) => {
           if (destroyed) return;
-
+          
+          const apduHex = isBinary ? data : data.toString();
           if (apduHex === "open") {
             if (wsBusyIndex) {
               ws.send(
@@ -278,11 +280,11 @@ const job = ({
                   type: "opened",
                 })
               );
-            } catch (e: any) {
+            } catch (e) {
               log("proxy", `WS(${index}): open failed! ${e}`);
               ws.send(
                 JSON.stringify({
-                  error: e.message,
+                  error: (e as Error).message,
                 })
               );
               ws.close();
@@ -313,18 +315,18 @@ const job = ({
                 data: res.toString("hex"),
               })
             );
-          } catch (e: any) {
+          } catch (e) {
             log("proxy", `WS(${index}): ${apduHex} =>`, e);
             if (destroyed) return;
             ws.send(
               JSON.stringify({
                 type: "error",
-                error: e.message,
+                error: (e as Error).message,
               })
             );
 
-            if (e.name === "RecordStoreWrongAPDU") {
-              console.error(e.message);
+            if ((e as Error).name === "RecordStoreWrongAPDU") {
+              console.error((e as Error).message);
               process.exit(1);
             }
           }

@@ -1,8 +1,8 @@
+import fs from "fs";
 import { from } from "rxjs";
 import { mergeMap } from "rxjs/operators";
-import { asDerivationMode } from "@ledgerhq/live-common/lib/derivation";
-import { withDevice } from "@ledgerhq/live-common/lib/hw/deviceAccess";
-import signMessage from "@ledgerhq/live-common/lib/hw/signMessage";
+import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";
+import signMessage from "@ledgerhq/live-common/hw/signMessage/index";
 import { currencyOpt, inferCurrency } from "../scan";
 export default {
   description:
@@ -15,14 +15,20 @@ export default {
       desc: "HDD derivation path",
     },
     {
-      name: "derivationMode",
-      type: String,
-      desc: "derivationMode to use",
-    },
-    {
       name: "message",
       type: String,
       desc: "the message to sign",
+    },
+    {
+      name: "rawMessage",
+      type: String,
+      desc: "raw message to sign (used by walletconnect)",
+    },
+    {
+      name: "parser",
+      type: String,
+      desc: "parser used for the message. Default: String",
+      default: "String",
     },
   ],
   job: (arg: any) =>
@@ -36,7 +42,23 @@ export default {
           throw new Error("--path is required");
         }
 
-        asDerivationMode(arg.derivationMode);
+        switch (arg.parser?.toLowerCase()) {
+          case "object":
+          case "json":
+          case "json.parse":
+            arg.message = JSON.parse(arg.message);
+            break;
+
+          case "file":
+            arg.message = JSON.parse(fs.readFileSync(arg.message, "utf8"));
+            break;
+
+          case "string":
+          default:
+            arg.message = arg.message?.toString();
+            break;
+        }
+
         return withDevice(arg.device || "")((t) =>
           from(signMessage(t, { ...arg, currency }))
         );

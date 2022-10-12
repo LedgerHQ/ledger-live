@@ -1,13 +1,9 @@
 import React, { useCallback, useState, memo } from "react";
-import { useNftCollectionMetadata } from "@ledgerhq/live-common/lib/nft";
+import { useNftCollectionMetadata } from "@ledgerhq/live-common/nft/index";
 import { FlatList, View, SafeAreaView, StyleSheet } from "react-native";
-import {
-  ProtoNFT,
-  NFTMetadata,
-  Account,
-} from "@ledgerhq/live-common/lib/types";
+import { ProtoNFT, NFTMetadata, Account } from "@ledgerhq/types-live";
 import { OthersMedium } from "@ledgerhq/native-ui/assets/icons";
-import { NFTResource } from "@ledgerhq/live-common/lib/nft/NftMetadataProvider/types";
+import { NFTResource } from "@ledgerhq/live-common/nft/NftMetadataProvider/types";
 import NftCard from "../../../components/Nft/NftCard";
 import Touchable from "../../../components/Touchable";
 import Skeleton from "../../../components/Skeleton";
@@ -31,7 +27,7 @@ const NftCollectionWithNameList = ({
 }: {
   account: Account;
   collection: ProtoNFT[];
-  contentContainerStyle?: Object;
+  contentContainerStyle?: any;
   status: NFTResource["status"];
   metadata?: NFTMetadata;
 }) => {
@@ -90,7 +86,7 @@ const NftCollectionWithNameMemo = memo(NftCollectionWithNameList);
 // the rerender of all Nft Collections whenever the NFT cache changes (whenever a new NFT is loaded)
 type Props = {
   collection: ProtoNFT[];
-  contentContainerStyle?: Object;
+  contentContainerStyle?: any;
   account: Account;
 };
 

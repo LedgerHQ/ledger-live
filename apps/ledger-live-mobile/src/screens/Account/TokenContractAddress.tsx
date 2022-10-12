@@ -1,24 +1,21 @@
-// @flow
 import React, { useCallback } from "react";
 import { StyleSheet, Linking, View } from "react-native";
 import { Trans } from "react-i18next";
 import SafeAreaView from "react-native-safe-area-view";
 import Icon from "react-native-vector-icons/dist/Feather";
-import type {
-  TokenAccount,
-  TokenCurrency,
-} from "@ledgerhq/live-common/lib/types";
-import { shortAddressPreview } from "@ledgerhq/live-common/lib/account/helpers";
+import type { TokenAccount } from "@ledgerhq/types-live";
+import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { shortAddressPreview } from "@ledgerhq/live-common/account/helpers";
 
 import { useTheme } from "@react-navigation/native";
 import LText from "../../components/LText";
 import Button from "../../components/Button";
 
 type Props = {
-  onClose: () => void,
-  account?: TokenAccount,
-  token?: TokenCurrency,
-  url: string,
+  onClose: () => void;
+  account?: TokenAccount;
+  token?: TokenCurrency;
+  url: string;
 };
 
 const forceInset = { bottom: "always" };

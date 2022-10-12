@@ -14,9 +14,7 @@ function copyFolderRecursivelySync(source, target) {
       if (fs.statSync(curSource).isDirectory()) {
         copyFolderRecursivelySync(curSource, path.join(target, file));
       } else {
-        // Loads the whole file in memory, very ugly…
-        const src = fs.readFileSync(curSource);
-        fs.writeFileSync(path.join(target, path.basename(file)), src);
+        fs.copyFileSync(curSource, path.join(target, path.basename(file)));
       }
     });
   }
@@ -194,10 +192,49 @@ function buildWebpackExternals(nativeModules) {
   };
 }
 
-function processNativeModules({ root, destination }) {
+// Populates an 'externals' plugin given a list of native modules.
+// See: https://esbuild.github.io/plugins/#on-resolve
+function esBuildExternalsPlugin(nativeModules) {
+  return {
+    name: "Externals Plugin (native-modules-tools)",
+    setup(build) {
+      Object.values(nativeModules).forEach((module) => {
+        build.onResolve({ filter: new RegExp(`^${module.name}`) }, (args) => {
+          if (args.resolveDir === "") {
+            return; // Ignore unresolvable paths
+          }
+          try {
+            const resolvedPath = require.resolve(args.path, {
+              paths: [args.resolveDir],
+            });
+            const realResolvedPath = fs.realpathSync(resolvedPath);
+            const resolvedRoot = findPackageRoot(realResolvedPath);
+            const nativeModule = nativeModules[resolvedRoot];
+            if (nativeModule) {
+              return {
+                path: args.path.replace(
+                  new RegExp(`^${nativeModule.name}`),
+                  nativeModule.name + "@" + nativeModule.version
+                ),
+                external: true,
+              };
+            }
+          } catch (error) {
+            // swallow error
+            // console.error(error);
+          }
+        });
+      });
+    },
+  };
+}
+
+function processNativeModules({ root, destination, silent = false }) {
   // First, we crawl the production dependencies and find every node.js native modules.
   const nativeModulesPaths = findNativeModules(root);
-  console.log("Found the following native modules:", nativeModulesPaths);
+  if (!silent) {
+    console.log("Found the following native modules:", nativeModulesPaths);
+  }
 
   // Then for each one of these native modules…
   const mappedNativeModules = nativeModulesPaths.reduce((acc, module) => {
@@ -238,6 +275,7 @@ module.exports = {
   copyNodeModule,
   dependencyTree,
   buildWebpackExternals,
+  esBuildExternalsPlugin,
   copyFolderRecursivelySync,
   processNativeModules,
 };

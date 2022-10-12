@@ -1,13 +1,11 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { isEnvDefault } from "@ledgerhq/live-common/lib/env";
+import { isEnvDefault } from "@ledgerhq/live-common/env";
 
 import { Alert } from "@ledgerhq/native-ui";
 import { TrackScreen } from "../../../analytics";
-
 import { experimentalFeatures } from "../../../experimental";
 import KeyboardView from "../../../components/KeyboardView";
-
 import FeatureRow from "./FeatureRow";
 import SettingsNavigationScrollView from "../SettingsNavigationScrollView";
 

@@ -1,5 +1,5 @@
 // @flow
-import type { CurrenciesData } from "../../../types";
+import type { CurrenciesData } from "@ledgerhq/types-live";
 import type { Transaction } from "../types";
 
 const dataset: CurrenciesData<Transaction> = {

@@ -1,7 +1,8 @@
-<img src="https://user-images.githubusercontent.com/211411/34776833-6f1ef4da-f618-11e7-8b13-f0697901d6a8.png" height="100" />
+<img src="https://user-images.githubusercontent.com/4631227/191834116-59cf590e-25cc-4956-ae5c-812ea464f324.png" height="100" />
 
-[Github](https://github.com/LedgerHQ/ledgerjs/),
-[Ledger Devs Slack](https://ledger-dev.slack.com/)
+[GitHub](https://github.com/LedgerHQ/ledger-live/),
+[Ledger Devs Discord](https://developers.ledger.com/discord-pro),
+[Developer Portal](https://developers.ledger.com/)
 
 ## @ledgerhq/hw-transport-webusb
 
@@ -9,21 +10,34 @@ Allows to communicate with Ledger Hardware Wallets.
 
 **\[Web]** **(WebUSB)** – WebUSB [check browser support](https://caniuse.com/webusb).
 
+***
+
+## Are you adding Ledger support to your software wallet?
+
+You may be using this package to open a USB connection between your web application and the device.
+
+For a smooth and quick integration:
+
+*   See the developers’ documentation on the [Developer Portal](https://developers.ledger.com/docs/transport/overview/) and
+*   Go on [Discord](https://developers.ledger.com/discord-pro/) to chat with developer support and the developer community.
+
+***
+
 ### FAQ: "DOM Exception" is triggered when creating the transport
 
-The transport functions `create()` and `listen()` must be called in the context of an user interaction (like a **"click"** event), otherwise it fails with DOM Exception. This is by WebUSB design. You also must run on HTTPS.
+The transport functions `create()` and `listen()` must be called in the context of a user interaction (like a **"click"** event), otherwise it fails with DOM Exception. This is by WebUSB design. You also must run on HTTPS.
 
 ### How to use this transport regarding WebUSB paradigm?
 
-In WebUSB, we have a "permission native" modal that appears when we need to "request" a device. This is required at-least-once for the user to accept, and then we can open the transport without triggering this modal. However, in both cases, it must happen in context of a click like explain above. Our current implementation tradeoff is to abstract this out and only trigger the permission modal if no device are listed. This might change in the future.
+In WebUSB, we have a "permission native" modal that appears when we need to "request" a device. This is required at-least-once for the user to accept, and then we can open the transport without triggering this modal. However, in both cases, it must happen in context of a click like explain above. Our current implementation trade off is to abstract this out and only trigger the permission modal if no device are listed. This might change in the future.
 
-In term of UX, there are two classical usecases:
+In terms of UX, there are two classical use cases:
 
 1.  you only need the device at key times, like once to get the address. once to sign a transaction,...
 2.  your app lifecycle requires that you need to access the device at the beginning and/or at any time (like you want to ping with getAddress to get the wallet address)
 
 in (1) case, you can just do your logic in each button (Get Address / Sign Transaction) time (create it, do the logic, close it).
-in (2) case, you will need to have a Connect button that appear when you don’t have the connection yet. and you need to hook to the “disconnect” event to potentially make the UI reflect that and require user to click again on that Connect button, because you can’t automatically `create()`/`open()` again.
+in (2) case, you will need to have a Connect button that appear when you don’t have the connection yet. And you need to hook to the “disconnect” event to potentially make the UI reflect that and require user to click again on that Connect button, because you can’t automatically `create()`/`open()` again.
 
 ### Support status
 

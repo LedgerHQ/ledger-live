@@ -71,9 +71,10 @@ describe("isValidHost", () => {
     expect(isValidHost("")).toBe(false);
     expect(isValidHost("a b")).toBe(false);
     expect(isValidHost("ledger .com")).toBe(false);
-    expect(isValidHost("ledger.com/foo")).toBe(false);
   });
   test("valid", () => {
+    expect(isValidHost("52.207.220.222/node/btc/")).toBe(true);
+    expect(isValidHost("ledger.com/foo")).toBe(true);
     expect(isValidHost("ledger.com")).toBe(true);
     expect(isValidHost("localhost")).toBe(true);
     expect(isValidHost("0.0.0.0")).toBe(true);
@@ -82,6 +83,8 @@ describe("isValidHost", () => {
     expect(isValidHost("192.168.0.1:8888")).toBe(true);
     expect(isValidHost("locahost:8888")).toBe(true);
     expect(isValidHost("ledger:8888")).toBe(true);
+    expect(isValidHost("ledger1:8888")).toBe(true);
+    expect(isValidHost("ledger-1:8888")).toBe(true);
   });
 });
 const mockConfig = {

@@ -5,13 +5,12 @@ import {
   InvalidAddress,
   FeeTooHigh,
 } from "@ledgerhq/errors";
-import type { Account } from "../../../types";
 import type {
+  CosmosAccount,
   CosmosValidatorItem,
   StatusErrorMap,
   Transaction,
 } from "../types";
-import type { AccountBridge, CurrencyBridge } from "../../../types";
 import {
   scanAccounts,
   signOperation,
@@ -26,6 +25,11 @@ import {
 import { getMainAccount } from "../../../account";
 import mockPreloadedData from "../preloadedData.mock";
 import { makeAccountBridgeReceive } from "../../../bridge/mockHelpers";
+import type {
+  Account,
+  AccountBridge,
+  CurrencyBridge,
+} from "@ledgerhq/types-live";
 const receive = makeAccountBridgeReceive();
 
 const defaultGetFees = (a, t) =>
@@ -40,7 +44,7 @@ const createTransaction = (): Transaction => ({
   gas: null,
   memo: null,
   validators: [],
-  cosmosSourceValidator: null,
+  sourceValidator: null,
   networkInfo: null,
   useAllAmount: false,
 });
@@ -57,7 +61,7 @@ const estimateMaxSpendable = ({ account, parentAccount, transaction }) => {
   );
 };
 
-const getTransactionStatus = (account, t) => {
+const getTransactionStatus = (account: Account, t: Transaction) => {
   const errors: StatusErrorMap = {};
   const warnings: StatusErrorMap = {};
   const useAllAmount = !!t.useAllAmount;
@@ -95,7 +99,7 @@ const getTransactionStatus = (account, t) => {
 };
 
 const prepareTransaction = async (
-  a: Account,
+  a: CosmosAccount,
   t: Transaction
 ): Promise<Transaction> => {
   if (!t.networkInfo) {

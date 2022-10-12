@@ -13,6 +13,7 @@ import {
   derivationModeSupportsIndex,
   getMandatoryEmptyAccountSkip,
   getDerivationModeStartsAt,
+  DerivationMode,
 } from "../derivation";
 import {
   getAccountPlaceholderName,
@@ -27,19 +28,19 @@ import {
   encodeAccountId,
 } from "../account";
 import { FreshAddressIndexInvalid, UnsupportedDerivation } from "../errors";
-import type {
-  Operation,
-  Account,
-  ScanAccountEvent,
-  SyncConfig,
-  CryptoCurrency,
-  DerivationMode,
-  ProtoNFT,
-} from "../types";
-import type { CurrencyBridge, AccountBridge } from "../types/bridge";
 import getAddress from "../hw/getAddress";
 import type { Result, GetAddressOptions } from "../hw/getAddress/types";
 import { withDevice } from "../hw/deviceAccess";
+import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import type {
+  Account,
+  AccountBridge,
+  CurrencyBridge,
+  Operation,
+  ProtoNFT,
+  ScanAccountEvent,
+  SyncConfig,
+} from "@ledgerhq/types-live";
 
 // Customize the way to iterate on the keychain derivation
 type IterateResult = ({
@@ -172,9 +173,11 @@ export const makeSync =
   ({
     getAccountShape,
     postSync = (_, a) => a,
+    shouldMergeOps = true,
   }: {
     getAccountShape: GetAccountShape;
     postSync?: (initial: Account, synced: Account) => Account;
+    shouldMergeOps?: boolean;
   }): AccountBridge<any>["sync"] =>
   (initial, syncConfig): Observable<AccountUpdater> =>
     Observable.create((o) => {
@@ -191,7 +194,7 @@ export const makeSync =
         try {
           const freshAddressPath = getSeedIdentifierDerivation(
             initial.currency,
-            initial.derivationMode
+            initial.derivationMode as DerivationMode
           );
 
           const shape = await getAccountShape(
@@ -200,15 +203,19 @@ export const makeSync =
               index: initial.index,
               address: initial.freshAddress,
               derivationPath: freshAddressPath,
-              derivationMode: initial.derivationMode,
+              derivationMode: initial.derivationMode as DerivationMode,
               initialAccount: needClear ? clearAccount(initial) : initial,
             },
             syncConfig
           );
+
           o.next((acc) => {
             const a = needClear ? clearAccount(acc) : acc;
             // FIXME reconsider doing mergeOps here. work is redundant for impl like eth
-            const operations = mergeOps(a.operations, shape.operations || []);
+            const operations = shouldMergeOps
+              ? mergeOps(a.operations, shape.operations || [])
+              : shape.operations || [];
+
             return recalculateAccountBalanceHistories(
               postSync(a, {
                 ...a,

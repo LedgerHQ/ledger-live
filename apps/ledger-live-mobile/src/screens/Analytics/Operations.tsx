@@ -1,22 +1,18 @@
 /* eslint-disable import/named */
-import React, { memo, useState, useCallback } from "react";
+import React, { memo, useMemo, useState, useCallback } from "react";
 import { SectionList } from "react-native";
 import { Flex } from "@ledgerhq/native-ui";
 
 import { useSelector } from "react-redux";
 import { useFocusEffect } from "@react-navigation/native";
-// @ts-ignore
 import { SectionBase } from "react-native/Libraries/Lists/SectionList";
-import { AccountLikeArray, Operation } from "@ledgerhq/live-common/lib/types";
-import { groupAccountsOperationsByDay } from "@ledgerhq/live-common/lib/account/groupOperations";
-import { isAccountEmpty } from "@ledgerhq/live-common/lib/account/helpers";
+import { AccountLikeArray, Operation } from "@ledgerhq/types-live";
+import { groupAccountsOperationsByDay } from "@ledgerhq/live-common/account/groupOperations";
+import { isAccountEmpty } from "@ledgerhq/live-common/account/helpers";
 
 import { Trans } from "react-i18next";
 import { useRefreshAccountsOrdering } from "../../actions/general";
-import {
-  accountsSelector,
-  flattenAccountsSelector,
-} from "../../reducers/accounts";
+import { flattenAccountsSelector } from "../../reducers/accounts";
 
 import NoOperationFooter from "../../components/NoOperationFooter";
 import NoMoreOperationFooter from "../../components/NoMoreOperationFooter";
@@ -31,34 +27,53 @@ import { ScreenName } from "../../const";
 import { TrackScreen } from "../../analytics";
 import { withDiscreetMode } from "../../context/DiscreetModeContext";
 
-type Props = {
-  navigation: any;
+type RouteParams = {
+  accountsIds: [string];
 };
 
-export function Operations({ navigation }: Props) {
+type Props = {
+  navigation: any;
+  route: {
+    params: RouteParams;
+  };
+};
+
+export function Operations({ navigation, route }: Props) {
+  const accountsIds = route?.params?.accountsIds;
+
   const [opCount, setOpCount] = useState(50);
 
   function onEndReached() {
     setOpCount(opCount + 50);
   }
 
-  const accounts = useSelector(accountsSelector);
+  const accountsFromState = useSelector(flattenAccountsSelector);
+  const accountsFiltered = useMemo(
+    () =>
+      accountsIds
+        ? accountsFromState.filter(account => accountsIds.includes(account.id))
+        : accountsFromState,
+    [accountsFromState, accountsIds],
+  );
   const allAccounts: AccountLikeArray = useSelector(flattenAccountsSelector);
 
   const refreshAccountsOrdering = useRefreshAccountsOrdering();
   useFocusEffect(refreshAccountsOrdering);
 
-  const { sections, completed } = groupAccountsOperationsByDay(accounts, {
-    count: opCount,
-    withSubAccounts: true,
-  });
+  const { sections, completed } = groupAccountsOperationsByDay(
+    accountsFiltered,
+    {
+      count: opCount,
+      withSubAccounts: true,
+    },
+  );
 
   function ListEmptyComponent() {
-    if (accounts.length === 0) {
+    if (accountsFiltered.length === 0) {
       return <EmptyStatePortfolio />;
     }
 
-    if (accounts.every(isAccountEmpty)) {
+    if (accountsFiltered.every(isAccountEmpty)) {
       return <NoOpStatePortfolio />;
     }
 
@@ -81,7 +96,7 @@ export function Operations({ navigation }: Props) {
     const account = allAccounts.find(a => a.id === item.accountId);
     const parentAccount =
       account && account.type !== "Account"
-        ? accounts.find(a => a.id === account.parentId)
+        ? allAccounts.find(a => a.id === account.parentId)
         : null;
 
     if (!account) return null;
@@ -91,7 +106,7 @@ export function Operations({ navigation }: Props) {
         operation={item}
         parentAccount={parentAccount}
         account={account}
-        multipleAccounts
+        multipleAccounts={accountsFiltered.length > 1}
         isLast={section.data.length - 1 === index}
       />
     );
@@ -116,6 +131,7 @@ export function Operations({ navigation }: Props) {
         renderSectionHeader={renderSectionHeader}
         stickySectionHeadersEnabled={false}
         onEndReached={onEndReached}
+        showsVerticalScrollIndicator={false}
         ListFooterComponent={
           !completed ? (
             !onEndReached ? (
@@ -130,7 +146,9 @@ export function Operations({ navigation }: Props) {
             ) : (
               <LoadingFooter />
             )
-          ) : accounts.every(isAccountEmpty) ? null : sections.length ? (
+          ) : accountsFiltered.every(
+              isAccountEmpty,
+            ) ? null : sections.length ? (
             <NoMoreOperationFooter />
           ) : (
             <NoOperationFooter />

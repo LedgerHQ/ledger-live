@@ -28,7 +28,7 @@ const hitSlop = {
 type CarouselCardProps = {
   id: string;
   children: React.ReactNode;
-  onHide: (cardId: string) => void;
+  onHide: (_: string) => void;
   index?: number;
 };
 
@@ -83,7 +83,8 @@ const Carousel = ({ cardsVisibility }: Props) => {
     cardId => {
       const slide = SLIDES.find(slide => slide.name === cardId);
       if (slide) {
-        track("Portfolio Recommended CloseUrl", {
+        track("button_clicked", {
+          button: "Close Card",
           url: slide.url,
         });
       }
@@ -122,6 +123,7 @@ const Carousel = ({ cardsVisibility }: Props) => {
       onContentSizeChange={onScrollViewContentChange}
       showsHorizontalScrollIndicator={false}
       snapToInterval={WIDTH + 16}
+      decelerationRate={"fast"}
     >
       {slides.map(({ id, Component }, index) => (
         <CarouselCardContainer

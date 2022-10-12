@@ -1,8 +1,9 @@
 import BigNumber from "bignumber.js";
 import * as hedera from "@hashgraph/sdk";
-import { Account } from "../../../types";
+import { Account } from "@ledgerhq/types-live";
 import { Transaction } from "../types";
 import { AccountId } from "@hashgraph/sdk";
+import { HederaAddAccountError } from "../errors";
 
 export function broadcastTransaction(
   transaction: hedera.Transaction
@@ -23,6 +24,7 @@ export async function buildUnsignedTransaction({
   return new hedera.TransferTransaction()
     .setNodeAccountIds([new AccountId(3)])
     .setTransactionId(hedera.TransactionId.generate(accountId))
+    .setTransactionMemo(transaction.memo ?? "")
     .addHbarTransfer(accountId, hbarAmount.negated())
     .addHbarTransfer(transaction.recipient, hbarAmount)
     .freeze();
@@ -36,9 +38,15 @@ export async function getAccountBalance(
   address: string
 ): Promise<AccountBalance> {
   const accountId = AccountId.fromString(address);
-  const accountBalance = await new hedera.AccountBalanceQuery({
-    accountId,
-  }).execute(getClient());
+  let accountBalance;
+
+  try {
+    accountBalance = await new hedera.AccountBalanceQuery({
+      accountId,
+    }).execute(getClient());
+  } catch {
+    throw new HederaAddAccountError();
+  }
 
   return {
     balance: accountBalance.hbars.to(hedera.HbarUnit.Tinybar),

@@ -5,7 +5,7 @@ import path from "path";
 import fs from "fs";
 import { UpdateFetchFileFail } from "@ledgerhq/errors";
 
-import network from "@ledgerhq/live-common/lib/network";
+import network from "@ledgerhq/live-common/network";
 import { fsReadFile } from "~/helpers/fs";
 import createAppUpdater from "./createAppUpdater";
 

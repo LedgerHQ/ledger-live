@@ -1,25 +1,10 @@
 import { BigNumber } from "bignumber.js";
 import type {
-  Account,
-  AccountRaw,
-  AccountLike,
-  AccountRawLike,
-  BalanceHistory,
-  BalanceHistoryRaw,
-  BalanceHistoryMap,
-  BalanceHistoryRawMap,
-  TokenAccount,
-  TokenAccountRaw,
-  ChildAccount,
-  ChildAccountRaw,
-  Operation,
-  OperationRaw,
-  SubAccount,
-  SubAccountRaw,
-  ProtoNFT,
-  ProtoNFTRaw,
-} from "../types";
-import type { TronResources, TronResourcesRaw } from "../families/tron/types";
+  TronAccount,
+  TronAccountRaw,
+  TronResources,
+  TronResourcesRaw,
+} from "../families/tron/types";
 import {
   toBitcoinResourcesRaw,
   fromBitcoinResourcesRaw,
@@ -55,6 +40,10 @@ import {
 } from "../families/solana/serialization";
 
 import {
+  toCeloResourcesRaw,
+  fromCeloResourcesRaw,
+} from "../families/celo/serialization";
+import {
   getCryptoCurrencyById,
   getTokenById,
   findTokenById,
@@ -67,6 +56,48 @@ import {
   emptyHistoryCache,
   generateHistoryFromOperations,
 } from "./balanceHistoryCache";
+import {
+  fromCardanoResourceRaw,
+  toCardanoResourceRaw,
+} from "../families/cardano/serialization";
+import type {
+  Account,
+  AccountLike,
+  AccountRaw,
+  AccountRawLike,
+  BalanceHistory,
+  BalanceHistoryRaw,
+  ChildAccount,
+  ChildAccountRaw,
+  Operation,
+  OperationRaw,
+  ProtoNFT,
+  ProtoNFTRaw,
+  SubAccount,
+  SubAccountRaw,
+  TokenAccount,
+  TokenAccountRaw,
+} from "@ledgerhq/types-live";
+import { CosmosAccount, CosmosAccountRaw } from "../families/cosmos/types";
+import { BitcoinAccount, BitcoinAccountRaw } from "../families/bitcoin/types";
+import {
+  AlgorandAccount,
+  AlgorandAccountRaw,
+} from "../families/algorand/types";
+import {
+  PolkadotAccount,
+  PolkadotAccountRaw,
+} from "../families/polkadot/types";
+import { ElrondAccount, ElrondAccountRaw } from "../families/elrond/types";
+import { CardanoAccount, CardanoAccountRaw } from "../families/cardano/types";
+import {
+  CryptoOrgAccount,
+  CryptoOrgAccountRaw,
+} from "../families/crypto_org/types";
+import { SolanaAccount, SolanaAccountRaw } from "../families/solana/types";
+import { TezosAccount, TezosAccountRaw } from "../families/tezos/types";
+import { CeloAccount, CeloAccountRaw } from "../families/celo/types";
+
 export { toCosmosResourcesRaw, fromCosmosResourcesRaw };
 export { toAlgorandResourcesRaw, fromAlgorandResourcesRaw };
 export { toBitcoinResourcesRaw, fromBitcoinResourcesRaw };
@@ -74,7 +105,9 @@ export { toPolkadotResourcesRaw, fromPolkadotResourcesRaw };
 export { toTezosResourcesRaw, fromTezosResourcesRaw };
 export { toElrondResourcesRaw, fromElrondResourcesRaw };
 export { toCryptoOrgResourcesRaw, fromCryptoOrgResourcesRaw };
+export { toCardanoResourceRaw, fromCardanoResourceRaw };
 export { toSolanaResourcesRaw, fromSolanaResourcesRaw };
+export { toCeloResourcesRaw, fromCeloResourcesRaw };
 
 export function toBalanceHistoryRaw(b: BalanceHistory): BalanceHistoryRaw {
   return b.map(({ date, value }) => [date.toISOString(), value.toString()]);
@@ -82,26 +115,8 @@ export function toBalanceHistoryRaw(b: BalanceHistory): BalanceHistoryRaw {
 export function fromBalanceHistoryRaw(b: BalanceHistoryRaw): BalanceHistory {
   return b.map(([date, value]) => ({
     date: new Date(date),
-    value: new BigNumber(value),
+    value: parseFloat(value),
   }));
-}
-export function toBalanceHistoryRawMap(
-  bhm: BalanceHistoryMap
-): BalanceHistoryRawMap {
-  const map = {};
-  Object.keys(bhm).forEach((range) => {
-    map[range] = toBalanceHistoryRaw(bhm[range]);
-  });
-  return map as BalanceHistoryRawMap;
-}
-export function fromBalanceHistoryRawMap(
-  bhm: BalanceHistoryRawMap
-): BalanceHistoryMap {
-  const map = {};
-  Object.keys(bhm).forEach((range) => {
-    map[range] = fromBalanceHistoryRaw(bhm[range]);
-  });
-  return map as BalanceHistoryMap;
 }
 export const toOperationRaw = (
   {
@@ -476,7 +491,6 @@ export function fromTokenAccountRaw(raw: TokenAccountRaw): TokenAccount {
     balance,
     spendableBalance,
     compoundBalance,
-    balanceHistory,
     balanceHistoryCache,
     swapHistory,
     approvals,
@@ -497,9 +511,6 @@ export function fromTokenAccountRaw(raw: TokenAccountRaw): TokenAccount {
       : new BigNumber(balance),
     compoundBalance: compoundBalance
       ? new BigNumber(compoundBalance)
-      : undefined,
-    balanceHistory: balanceHistory
-      ? fromBalanceHistoryRawMap(balanceHistory)
       : undefined,
     creationDate: new Date(creationDate || Date.now()),
     operationsCount:
@@ -525,7 +536,6 @@ export function toTokenAccountRaw(ta: TokenAccount): TokenAccountRaw {
     balance,
     spendableBalance,
     compoundBalance,
-    balanceHistory,
     balanceHistoryCache,
     swapHistory,
     approvals,
@@ -539,9 +549,6 @@ export function toTokenAccountRaw(ta: TokenAccount): TokenAccountRaw {
     balance: balance.toString(),
     spendableBalance: spendableBalance.toString(),
     compoundBalance: compoundBalance ? compoundBalance.toString() : undefined,
-    balanceHistory: balanceHistory
-      ? toBalanceHistoryRawMap(balanceHistory)
-      : undefined,
     balanceHistoryCache,
     creationDate: ta.creationDate.toISOString(),
     operationsCount,
@@ -564,7 +571,6 @@ export function fromChildAccountRaw(raw: ChildAccountRaw): ChildAccount {
     pendingOperations,
     balance,
     address,
-    balanceHistory,
     balanceHistoryCache,
     swapHistory,
   } = raw;
@@ -581,9 +587,6 @@ export function fromChildAccountRaw(raw: ChildAccountRaw): ChildAccount {
     currency,
     address,
     balance: new BigNumber(balance),
-    balanceHistory: balanceHistory
-      ? fromBalanceHistoryRawMap(balanceHistory)
-      : undefined,
     creationDate: new Date(creationDate || Date.now()),
     operationsCount: operationsCount || (operations && operations.length) || 0,
     operations: (operations || []).map(convertOperation),
@@ -605,7 +608,6 @@ export function toChildAccountRaw(ca: ChildAccount): ChildAccountRaw {
     operationsCount,
     pendingOperations,
     balance,
-    balanceHistory,
     balanceHistoryCache,
     address,
     creationDate,
@@ -621,9 +623,6 @@ export function toChildAccountRaw(ca: ChildAccount): ChildAccountRaw {
     operationsCount,
     currencyId: currency.id,
     balance: balance.toString(),
-    balanceHistory: balanceHistory
-      ? toBalanceHistoryRawMap(balanceHistory)
-      : undefined,
     balanceHistoryCache,
     creationDate: creationDate.toISOString(),
     operations: operations.map((o) => toOperationRaw(o)),
@@ -700,21 +699,11 @@ export function fromAccountRaw(rawAccount: AccountRaw): Account {
     lastSyncDate,
     creationDate,
     balance,
-    balanceHistory,
     balanceHistoryCache,
     spendableBalance,
     subAccounts: subAccountsRaw,
-    tronResources,
-    cosmosResources,
-    tezosResources,
-    bitcoinResources,
     swapHistory,
-    algorandResources,
     syncHash,
-    polkadotResources,
-    elrondResources,
-    cryptoOrgResources,
-    solanaResources,
     nfts,
   } = rawAccount;
   const subAccounts =
@@ -760,9 +749,6 @@ export function fromAccountRaw(rawAccount: AccountRaw): Account {
     blockHeight,
     creationDate: new Date(creationDate || Date.now()),
     balance: new BigNumber(balance),
-    balanceHistory: balanceHistory
-      ? fromBalanceHistoryRawMap(balanceHistory)
-      : undefined,
     spendableBalance: new BigNumber(spendableBalance || balance),
     operations: (operations || []).map(convertOperation),
     operationsCount: operationsCount || (operations && operations.length) || 0,
@@ -796,91 +782,132 @@ export function fromAccountRaw(rawAccount: AccountRaw): Account {
     res.subAccounts = subAccounts as SubAccount[];
   }
 
-  if (tronResources) {
-    res.tronResources = fromTronResourcesRaw(tronResources);
-  }
-
-  if (cosmosResources) {
-    res.cosmosResources = fromCosmosResourcesRaw(cosmosResources);
-  }
-
-  if (tezosResources) {
-    res.tezosResources = fromTezosResourcesRaw(tezosResources);
-  }
-
-  if (bitcoinResources) {
-    res.bitcoinResources = fromBitcoinResourcesRaw(bitcoinResources);
+  switch (res.currency.family) {
+    case "tron": {
+      const tronResourcesRaw = (rawAccount as TronAccountRaw).tronResources;
+      if (tronResourcesRaw)
+        (res as TronAccount).tronResources =
+          fromTronResourcesRaw(tronResourcesRaw);
+      break;
+    }
+    case "osmosis":
+    case "cosmos": {
+      const cosmosResourcesRaw = (rawAccount as CosmosAccountRaw)
+        .cosmosResources;
+      if (cosmosResourcesRaw)
+        (res as CosmosAccount).cosmosResources =
+          fromCosmosResourcesRaw(cosmosResourcesRaw);
+      break;
+    }
+    case "tezos": {
+      const tezosResourcesRaw = (rawAccount as TezosAccountRaw).tezosResources;
+      if (tezosResourcesRaw)
+        (res as TezosAccount).tezosResources =
+          fromTezosResourcesRaw(tezosResourcesRaw);
+      break;
+    }
+    case "bitcoin": {
+      const bitcoinResourcesRaw = (rawAccount as BitcoinAccountRaw)
+        .bitcoinResources;
+      if (bitcoinResourcesRaw)
+        (res as BitcoinAccount).bitcoinResources =
+          fromBitcoinResourcesRaw(bitcoinResourcesRaw);
+      break;
+    }
+    case "algorand": {
+      const algoResourcesRaw = (rawAccount as AlgorandAccountRaw)
+        .algorandResources;
+      if (algoResourcesRaw)
+        (res as AlgorandAccount).algorandResources =
+          fromAlgorandResourcesRaw(algoResourcesRaw);
+      break;
+    }
+    case "polkadot": {
+      const polkadotResourcesRaw = (rawAccount as PolkadotAccountRaw)
+        .polkadotResources;
+      if (polkadotResourcesRaw)
+        (res as PolkadotAccount).polkadotResources =
+          fromPolkadotResourcesRaw(polkadotResourcesRaw);
+      break;
+    }
+    case "elrond": {
+      const elrondResourcesRaw = (rawAccount as ElrondAccountRaw)
+        .elrondResources;
+      if (elrondResourcesRaw)
+        (res as ElrondAccount).elrondResources =
+          fromElrondResourcesRaw(elrondResourcesRaw);
+      break;
+    }
+    case "cardano": {
+      const cardanoResourcesRaw = (rawAccount as CardanoAccountRaw)
+        .cardanoResources;
+      if (cardanoResourcesRaw)
+        (res as CardanoAccount).cardanoResources =
+          fromCardanoResourceRaw(cardanoResourcesRaw);
+      break;
+    }
+    case "solana": {
+      const solanaResourcesRaw = (rawAccount as SolanaAccountRaw)
+        .solanaResources;
+      if (solanaResourcesRaw)
+        (res as SolanaAccount).solanaResources =
+          fromSolanaResourcesRaw(solanaResourcesRaw);
+      break;
+    }
+    case "crypto_org": {
+      const cryptoOrgResourcesRaw = (rawAccount as CryptoOrgAccountRaw)
+        .cryptoOrgResources;
+      if (cryptoOrgResourcesRaw)
+        (res as CryptoOrgAccount).cryptoOrgResources =
+          fromCryptoOrgResourcesRaw(cryptoOrgResourcesRaw);
+      break;
+    }
+    case "celo": {
+      const celoResourcesRaw = (rawAccount as CeloAccountRaw).celoResources;
+      if (celoResourcesRaw)
+        (res as CeloAccount).celoResources =
+          fromCeloResourcesRaw(celoResourcesRaw);
+      break;
+    }
   }
 
   if (swapHistory) {
     res.swapHistory = swapHistory.map(fromSwapOperationRaw);
   }
 
-  if (algorandResources) {
-    res.algorandResources = fromAlgorandResourcesRaw(algorandResources);
-  }
-
-  if (polkadotResources) {
-    res.polkadotResources = fromPolkadotResourcesRaw(polkadotResources);
-  }
-
-  if (elrondResources) {
-    res.elrondResources = fromElrondResourcesRaw(elrondResources);
-  }
-
-  if (elrondResources) {
-    res.elrondResources = fromElrondResourcesRaw(elrondResources);
-  }
-
-  if (cryptoOrgResources) {
-    res.cryptoOrgResources = fromCryptoOrgResourcesRaw(cryptoOrgResources);
-  }
-
-  if (solanaResources) {
-    res.solanaResources = fromSolanaResourcesRaw(solanaResources);
-  }
-
   return res;
 }
-export function toAccountRaw({
-  id,
-  seedIdentifier,
-  xpub,
-  name,
-  starred,
-  used,
-  derivationMode,
-  index,
-  freshAddress,
-  freshAddressPath,
-  freshAddresses,
-  blockHeight,
-  currency,
-  creationDate,
-  operationsCount,
-  operations,
-  pendingOperations,
-  unit,
-  lastSyncDate,
-  balance,
-  balanceHistory,
-  balanceHistoryCache,
-  spendableBalance,
-  subAccounts,
-  endpointConfig,
-  tronResources,
-  cosmosResources,
-  bitcoinResources,
-  tezosResources,
-  swapHistory,
-  algorandResources,
-  syncHash,
-  polkadotResources,
-  elrondResources,
-  cryptoOrgResources,
-  solanaResources,
-  nfts,
-}: Account): AccountRaw {
+export function toAccountRaw(account: Account): AccountRaw {
+  const {
+    id,
+    seedIdentifier,
+    xpub,
+    name,
+    starred,
+    used,
+    derivationMode,
+    index,
+    freshAddress,
+    freshAddressPath,
+    freshAddresses,
+    blockHeight,
+    currency,
+    creationDate,
+    operationsCount,
+    operations,
+    pendingOperations,
+    unit,
+    lastSyncDate,
+    balance,
+    balanceHistoryCache,
+    spendableBalance,
+    subAccounts,
+    endpointConfig,
+    swapHistory,
+    syncHash,
+    nfts,
+  } = account;
+
   const res: AccountRaw = {
     id,
     seedIdentifier,
@@ -906,10 +933,6 @@ export function toAccountRaw({
     nfts: nfts?.map((n) => toNFTRaw(n)),
   };
 
-  if (balanceHistory) {
-    res.balanceHistory = toBalanceHistoryRawMap(balanceHistory);
-  }
-
   if (balanceHistoryCache) {
     res.balanceHistoryCache = balanceHistoryCache;
   }
@@ -926,42 +949,117 @@ export function toAccountRaw({
     res.subAccounts = subAccounts.map(toSubAccountRaw);
   }
 
-  if (tronResources) {
-    res.tronResources = toTronResourcesRaw(tronResources);
-  }
-
-  if (cosmosResources) {
-    res.cosmosResources = toCosmosResourcesRaw(cosmosResources);
-  }
-
-  if (tezosResources) {
-    res.tezosResources = toTezosResourcesRaw(tezosResources);
-  }
-
-  if (bitcoinResources) {
-    res.bitcoinResources = toBitcoinResourcesRaw(bitcoinResources);
+  switch (account.currency.family) {
+    case "tron": {
+      const tronAccount = account as TronAccount;
+      if (tronAccount.tronResources) {
+        (res as TronAccountRaw).tronResources = toTronResourcesRaw(
+          tronAccount.tronResources
+        );
+      }
+      break;
+    }
+    case "osmosis": {
+      const cosmosAccount = account as CosmosAccount;
+      if (cosmosAccount.cosmosResources) {
+        (res as CosmosAccountRaw).cosmosResources = toCosmosResourcesRaw(
+          cosmosAccount.cosmosResources
+        );
+      }
+      break;
+    }
+    case "cosmos": {
+      const cosmosAccount = account as CosmosAccount;
+      if (cosmosAccount.cosmosResources) {
+        (res as CosmosAccountRaw).cosmosResources = toCosmosResourcesRaw(
+          cosmosAccount.cosmosResources
+        );
+      }
+      break;
+    }
+    case "tezos": {
+      const tezosAccount = account as TezosAccount;
+      if (tezosAccount.tezosResources) {
+        (res as TezosAccountRaw).tezosResources = toTezosResourcesRaw(
+          tezosAccount.tezosResources
+        );
+      }
+      break;
+    }
+    case "bitcoin": {
+      const bitcoinAccount = account as BitcoinAccount;
+      if (bitcoinAccount.bitcoinResources) {
+        (res as BitcoinAccountRaw).bitcoinResources = toBitcoinResourcesRaw(
+          bitcoinAccount.bitcoinResources
+        );
+      }
+      break;
+    }
+    case "algorand": {
+      const algorandAccount = account as AlgorandAccount;
+      if (algorandAccount.algorandResources) {
+        (res as AlgorandAccountRaw).algorandResources = toAlgorandResourcesRaw(
+          algorandAccount.algorandResources
+        );
+      }
+      break;
+    }
+    case "polkadot": {
+      const polkadotAccount = account as PolkadotAccount;
+      if (polkadotAccount.polkadotResources) {
+        (res as PolkadotAccountRaw).polkadotResources = toPolkadotResourcesRaw(
+          polkadotAccount.polkadotResources
+        );
+      }
+      break;
+    }
+    case "elrond": {
+      const elrondAccount = account as ElrondAccount;
+      if (elrondAccount.elrondResources) {
+        (res as ElrondAccountRaw).elrondResources = toElrondResourcesRaw(
+          elrondAccount.elrondResources
+        );
+      }
+      break;
+    }
+    case "cardano": {
+      const cardanoAccount = account as CardanoAccount;
+      if (cardanoAccount.cardanoResources) {
+        (res as CardanoAccountRaw).cardanoResources = toCardanoResourceRaw(
+          cardanoAccount.cardanoResources
+        );
+      }
+      break;
+    }
+    case "solana": {
+      const solanaAccount = account as SolanaAccount;
+      if (solanaAccount.solanaResources) {
+        (res as SolanaAccountRaw).solanaResources = toSolanaResourcesRaw(
+          solanaAccount.solanaResources
+        );
+      }
+      break;
+    }
+    case "crypto_org": {
+      const crytpoOrgAccount = account as CryptoOrgAccount;
+      if (crytpoOrgAccount.cryptoOrgResources) {
+        (res as CryptoOrgAccountRaw).cryptoOrgResources =
+          toCryptoOrgResourcesRaw(crytpoOrgAccount.cryptoOrgResources);
+      }
+      break;
+    }
+    case "celo": {
+      const celoAccount = account as CeloAccount;
+      if (celoAccount.celoResources)
+        (res as CeloAccountRaw).celoResources = toCeloResourcesRaw(
+          celoAccount.celoResources
+        );
+      break;
+    }
   }
 
   if (swapHistory) {
     res.swapHistory = swapHistory.map(toSwapOperationRaw);
-  }
-
-  if (algorandResources) {
-    res.algorandResources = toAlgorandResourcesRaw(algorandResources);
-  }
-
-  if (polkadotResources) {
-    res.polkadotResources = toPolkadotResourcesRaw(polkadotResources);
-  }
-  if (elrondResources) {
-    res.elrondResources = toElrondResourcesRaw(elrondResources);
-  }
-  if (cryptoOrgResources) {
-    res.cryptoOrgResources = toCryptoOrgResourcesRaw(cryptoOrgResources);
-  }
-
-  if (solanaResources) {
-    res.solanaResources = toSolanaResourcesRaw(solanaResources);
   }
 
   return res;

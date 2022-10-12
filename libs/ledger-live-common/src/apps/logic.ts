@@ -3,7 +3,6 @@ import { Subject } from "rxjs";
 import flatMap from "lodash/flatMap";
 import semver from "semver";
 import { getDeviceModel } from "@ledgerhq/devices";
-import type { App } from "../types/manager";
 import type {
   AppOp,
   State,
@@ -17,6 +16,7 @@ import {
   isCurrencySupported,
 } from "../currencies";
 import { LatestFirmwareVersionRequired, NoSuchAppOnProvider } from "../errors";
+import { App } from "@ledgerhq/types-live";
 
 export const initState = (
   {
@@ -417,7 +417,11 @@ export const distribute = (
   const apps = state.installed.map((app) => {
     const { name, blocks } = app;
     totalAppsBlocks += blocks;
-    const currency = findCryptoCurrency((c) => c.managerAppName === name);
+    const currency =
+      // try to find the "official" currency when possible (2 currencies can have the same manager app and ticker)
+      findCryptoCurrency((c) => c.name === name) ||
+      // Else take the first one with that manager app
+      findCryptoCurrency((c) => c.managerAppName === name);
     return {
       currency,
       name,

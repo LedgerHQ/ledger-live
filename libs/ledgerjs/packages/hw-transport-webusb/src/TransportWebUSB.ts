@@ -4,7 +4,7 @@ import type {
   DescriptorEvent,
   Subscription,
 } from "@ledgerhq/hw-transport";
-import hidFraming from "@ledgerhq/devices/lib/hid-framing";
+import hidFraming from "@ledgerhq/devices/hid-framing";
 import { identifyUSBProductId } from "@ledgerhq/devices";
 import type { DeviceModel } from "@ledgerhq/devices";
 import { log } from "@ledgerhq/logs";

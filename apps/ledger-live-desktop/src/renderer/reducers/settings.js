@@ -8,12 +8,12 @@ import {
   getCryptoCurrencyById,
   listSupportedFiats,
   getFiatCurrencyByTicker,
-} from "@ledgerhq/live-common/lib/currencies";
+} from "@ledgerhq/live-common/currencies/index";
 import type { DeviceModelId } from "@ledgerhq/devices";
-import type { CryptoCurrency, Currency } from "@ledgerhq/live-common/lib/types";
-import type { DeviceModelInfo } from "@ledgerhq/live-common/lib/types/manager";
-import type { PortfolioRange } from "@ledgerhq/live-common/lib/portfolio/v2/types";
-import { getEnv } from "@ledgerhq/live-common/lib/env";
+import type { CryptoCurrency, Currency } from "@ledgerhq/types-cryptoassets";
+import type { DeviceModelInfo } from "@ledgerhq/types-live";
+import type { PortfolioRange } from "@ledgerhq/live-common/portfolio/v2/types";
+import { getEnv } from "@ledgerhq/live-common/env";
 import { getLanguages, defaultLocaleForLanguage } from "~/config/languages";
 import type { State } from ".";
 import regionsByKey from "../screens/settings/sections/General/regions.json";
@@ -299,6 +299,13 @@ const handlers: Object = {
     lastSeenDevice: Object.assign({}, state.lastSeenDevice, payload.lastSeenDevice),
     latestFirmware: payload.latestFirmware,
   }),
+  LAST_SEEN_DEVICE: (
+    state: SettingsState,
+    { payload }: { payload: { deviceInfo: DeviceInfo } },
+  ) => ({
+    ...state,
+    lastSeenDevice: { ...state.lastSeenDevice, deviceInfo: payload.deviceInfo },
+  }),
   SET_DEEPLINK_URL: (state: SettingsState, { payload: deepLinkUrl }) => ({
     ...state,
     deepLinkUrl,
@@ -318,7 +325,8 @@ const handlers: Object = {
     const { provider, id, status } = payload;
     const KYC = { ...state.swap.KYC };
 
-    if (id && status) {
+    // If we have an id but a "null" KYC status, this means user is logged in to provider but has not gone through KYC yet
+    if (id && typeof status !== "undefined") {
       KYC[provider] = { id, status };
     } else {
       delete KYC[provider];
@@ -355,6 +363,13 @@ const handlers: Object = {
   REMOVE_STARRED_MARKET_COINS: (state: SettingsState, { payload }) => ({
     ...state,
     starredMarketCoins: state.starredMarketCoins.filter(id => id !== payload),
+  }),
+  RESET_SWAP_LOGIN_AND_KYC_DATA: (state: SettingsState) => ({
+    ...state,
+    swap: {
+      ...state.swap,
+      KYC: {},
+    },
   }),
 };
 
@@ -410,12 +425,12 @@ const languageAndUseSystemLangSelector = (state: State): LanguageAndUseSystemLan
 };
 
 /** Use this for translations */
-export const languageSelector: OutputSelector<State, void, string> = createSelector(
+export const languageSelector: OutputSelector<State, string, string> = createSelector(
   languageAndUseSystemLangSelector,
   o => o.language,
 );
 
-export const useSystemLanguageSelector: OutputSelector<State, void, boolean> = createSelector(
+export const useSystemLanguageSelector: OutputSelector<State, boolean, boolean> = createSelector(
   languageAndUseSystemLangSelector,
   o => o.useSystemLanguage,
 );

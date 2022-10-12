@@ -1,10 +1,3 @@
-import type {
-  AccountLike,
-  Account,
-  Currency,
-  CryptoCurrency,
-  TokenCurrency,
-} from "../../types";
 import type { CounterValuesState } from "../../countervalues/types";
 import { calculate, calculateMany } from "../../countervalues/logic";
 import {
@@ -13,7 +6,19 @@ import {
   getAccountHistoryBalances,
 } from "../../account";
 import { getEnv } from "../../env";
+import { getPortfolioRangeConfig, getDates } from "./range";
+
+export const defaultAssetsDistribution = {
+  minShowFirst: 1,
+  maxShowFirst: 6,
+  showFirstThreshold: 0.95,
+  showEmptyAccounts: false,
+  hideEmptyTokenAccount: false,
+};
+export type AssetsDistributionOpts = typeof defaultAssetsDistribution;
 import type {
+  Account,
+  AccountLike,
   BalanceHistory,
   PortfolioRange,
   BalanceHistoryWithCountervalue,
@@ -22,10 +27,12 @@ import type {
   CurrencyPortfolio,
   AssetsDistribution,
   ValueChange,
-} from "./types";
-import { getPortfolioRangeConfig, getDates } from "./range";
-import { defaultAssetsDistribution } from "../";
-import type { AssetsDistributionOpts } from "../";
+} from "@ledgerhq/types-live";
+import type {
+  CryptoCurrency,
+  Currency,
+  TokenCurrency,
+} from "@ledgerhq/types-cryptoassets";
 
 export function getPortfolioCount(
   accounts: AccountLike[],
@@ -161,6 +168,12 @@ type Available = {
   countervalueSendSum: number;
 };
 
+const defaultGetPortfolioOptions = {
+  flattenSourceAccounts: true,
+};
+
+export type GetPortfolioOptionsType = typeof defaultGetPortfolioOptions;
+
 /**
  * calculate the total balance history for all accounts in a reference fiat unit
  * and using a CalculateCounterValue function (see countervalue helper)
@@ -171,9 +184,16 @@ export function getPortfolio(
   topAccounts: Account[],
   range: PortfolioRange,
   cvState: CounterValuesState,
-  cvCurrency: Currency
+  cvCurrency: Currency,
+  options?: GetPortfolioOptionsType
 ): Portfolio {
-  const accounts = flattenAccounts(topAccounts);
+  const { flattenSourceAccounts } = {
+    ...defaultGetPortfolioOptions,
+    ...options,
+  };
+  const accounts = flattenSourceAccounts
+    ? flattenAccounts(topAccounts)
+    : topAccounts;
   const count = getPortfolioCount(accounts, range);
   const { availables, unavailableAccounts } = accounts.reduce<{
     availables: Available[];
@@ -307,12 +327,19 @@ export function getAssetsDistribution(
   cvCurrency: Currency,
   opts?: AssetsDistributionOpts
 ): AssetsDistribution {
-  const { minShowFirst, maxShowFirst, showFirstThreshold } = {
+  const {
+    minShowFirst,
+    maxShowFirst,
+    showFirstThreshold,
+    showEmptyAccounts,
+    hideEmptyTokenAccount,
+  } = {
     ...defaultAssetsDistribution,
     ...opts,
   };
   const idBalances: Record<string, number> = {};
   const idCurrencies: Record<string, CryptoCurrency | TokenCurrency> = {};
+  const currenciesAccounts: Record<string, AccountLike[]> = {};
   const accounts = flattenAccounts(topAccounts);
 
   for (let i = 0; i < accounts.length; i++) {
@@ -320,9 +347,22 @@ export function getAssetsDistribution(
     const cur = getAccountCurrency(account);
     const id = cur.id;
 
-    if (account.balance.isGreaterThan(0)) {
-      idCurrencies[id] = cur;
-      idBalances[id] = (idBalances[id] ?? 0) + account.balance.toNumber();
+    if (!currenciesAccounts[id]) {
+      currenciesAccounts[id] = [account];
+    } else {
+      currenciesAccounts[id].push(account);
+    }
+
+    if (account.type === "TokenAccount") {
+      if (!hideEmptyTokenAccount || account.balance.isGreaterThan(0)) {
+        idCurrencies[id] = cur;
+        idBalances[id] = (idBalances[id] ?? 0) + account.balance.toNumber();
+      }
+    } else {
+      if (showEmptyAccounts || account.balance.isGreaterThan(0)) {
+        idCurrencies[id] = cur;
+        idBalances[id] = (idBalances[id] ?? 0) + account.balance.toNumber();
+      }
     }
   }
 
@@ -352,17 +392,23 @@ export function getAssetsDistribution(
     return assetsDistributionNotAvailable;
   }
 
-  const isAvailable = sum !== 0;
+  const isAvailable = sum !== 0 || showEmptyAccounts;
   const list = idCurrenciesKeys
     .map((id) => {
       const currency = idCurrencies[id];
       const amount = idBalances[id];
       const countervalue = idCountervalues[id] ?? 0;
+      const currencyAccounts = currenciesAccounts[id];
       return {
         currency,
         countervalue,
         amount,
-        distribution: isAvailable ? countervalue / sum : 0,
+        distribution: isAvailable
+          ? sum !== 0
+            ? countervalue / sum
+            : 1 / idCurrenciesKeys.length
+          : 0,
+        accounts: currencyAccounts,
       };
     })
     .sort((a, b) => {

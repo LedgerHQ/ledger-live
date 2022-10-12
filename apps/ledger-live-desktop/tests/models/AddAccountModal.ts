@@ -5,7 +5,6 @@ export class AddAccountModal extends Modal {
   readonly page: Page;
   readonly selectAccount: Locator;
   readonly selectAccountInput: Locator;
-  readonly accountsListLoader: Locator;
   readonly addAccountsButton: Locator;
   readonly stopButton: Locator;
   readonly retryButton: Locator;
@@ -17,7 +16,6 @@ export class AddAccountModal extends Modal {
     this.page = page;
     this.selectAccount = page.locator("text=Choose a crypto asset"); // FIXME: I need an id
     this.selectAccountInput = page.locator('[placeholder="Search"]'); // FIXME: I need an id
-    this.accountsListLoader = page.locator('data-test-id=add-accounts-sync-loader');
     this.addAccountsButton = page.locator('data-test-id=add-accounts-import-add-button');
     this.retryButton = page.locator('data-test-id=add-accounts-import-retry-button');
     this.stopButton = page.locator('data-test-id=add-accounts-import-stop-button');
@@ -40,7 +38,6 @@ export class AddAccountModal extends Modal {
   }
 
   async waitForSync() {
-    await this.accountsListLoader.waitFor({ state: "hidden" });
     await this.stopButton.waitFor({ state: "hidden" });
     await this.addAccountsButton.waitFor({ state: "visible" });
   }

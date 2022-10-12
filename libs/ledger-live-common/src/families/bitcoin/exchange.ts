@@ -1,4 +1,4 @@
-import { bip32asBuffer } from "@ledgerhq/hw-app-btc/lib/bip32";
+import { bip32asBuffer } from "@ledgerhq/hw-app-btc/bip32";
 import type { DerivationMode } from "../../derivation";
 import { getAddressFormatDerivationMode } from "../../derivation";
 import invariant from "invariant";

@@ -10,9 +10,9 @@ import {
 } from "./polyfill";
 import { findCryptoCurrency } from "../currencies";
 import type { ListAppsResult, AppOp, Exec, InstalledItem } from "./types";
-import type { App, DeviceInfo, FinalFirmware } from "../types/manager";
 import { getBTCValues } from "../countervalues/mock";
-import { DeviceModelId } from "@ledgerhq/devices";
+import { DeviceModelId, identifyTargetId } from "@ledgerhq/devices";
+import { App, DeviceInfo, FinalFirmware } from "@ledgerhq/types-live";
 
 export const deviceInfo155 = {
   version: "1.5.5",
@@ -25,6 +25,26 @@ export const deviceInfo155 = {
   majMin: "1.5",
   targetId: 823132164,
 };
+
+export const deviceInfo210lo5: DeviceInfo = {
+  bootloaderVersion: "1.16",
+  hardwareVersion: 0,
+  isBootloader: false,
+  isOSU: false,
+  isRecoveryMode: false,
+  languageId: 0,
+  majMin: "2.1",
+  managerAllowed: false,
+  mcuVersion: "2.30",
+  onboarded: true,
+  pinValidated: true,
+  providerName: null,
+  seTargetId: 855638020,
+  seVersion: "2.1.0-lo5",
+  targetId: 855638020,
+  version: "2.1.0-lo5",
+};
+
 const firmware155: FinalFirmware = {
   id: 24,
   name: "1.5.5",
@@ -99,7 +119,11 @@ export function mockListAppsResult(
       const dependencies = whitelistDependencies.includes(name)
         ? []
         : getDependencies(name);
-      const currency = findCryptoCurrency((c) => c.managerAppName === name);
+      const currency =
+        // try to find the "official" currency when possible (2 currencies can have the same manager app and ticker)
+        findCryptoCurrency((c) => c.name === name) ||
+        // Else take the first one with that manager app
+        findCryptoCurrency((c) => c.managerAppName === name);
       const indexOfMarketCap = currency
         ? tickersByMarketCap.indexOf(currency.ticker)
         : -1;
@@ -141,7 +165,9 @@ export function mockListAppsResult(
     appByName,
     appsListNames: apps.map((a) => a.name),
     deviceInfo,
-    deviceModelId: <DeviceModelId>"nanoS",
+    deviceModelId: deviceInfo.seTargetId
+      ? identifyTargetId(deviceInfo.seTargetId)?.id ?? <DeviceModelId>"nanoS"
+      : <DeviceModelId>"nanoS",
     firmware: firmware155,
     installed,
     installedAvailable: true,

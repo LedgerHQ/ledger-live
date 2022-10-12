@@ -1,11 +1,11 @@
 import type {
+  GranularityId,
   BalanceHistoryCache,
   BalanceHistoryDataCache,
   AccountLike,
   Account,
   SubAccount,
-  GranularityId,
-} from "../types";
+} from "@ledgerhq/types-live";
 import { getOperationAmountNumberWithInternals } from "../operation";
 import { granularities } from "../portfolio/v2/range";
 export const emptyHistoryCache = {

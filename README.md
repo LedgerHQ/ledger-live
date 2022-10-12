@@ -11,18 +11,22 @@
   </h4>
 </h3>
 
+[![gitpoap badge](https://public-api.gitpoap.io/v1/repo/LedgerHQ/ledger-live/badge)](https://www.gitpoap.io/gh/LedgerHQ/ledger-live)
+
 ## About
 
 `ledger-live` is a **monorepository** whose purpose is to centralize all the JavaScript code related to the [**Ledger Live**](https://www.ledger.com/ledger-live) applications in one place.
 
 [**Ledger Live**](https://www.ledger.com/ledger-live) is our platform of apps and services integrated specifically to work with your Nano device. It functions as a secure gateway to the crypto ecosystem. This means accessing a variety of crypto, NFT and DeFi based services directly and seamlessly from your hardware wallet – a better, simpler user experience that bypasses a major security concern known as blind signing.
 
+Developers looking to integrate their blockchain in Ledger Live are invited to head to the [**Developer Portal**](https://developers.ledger.com) where they will find the section [**Blockchain Support**](https://developers.ledger.com/docs/coin/general-process). 
+
 ## Installation
 
 In order to interact with any package contained in this repository you will need to install the following:
 
-- [**Node.js@14.x.x**](https://nodejs.org/)
-- [**PnPm@7.x.x**](https://pnpm.io/)
+- [**Node.js@16.x.x**](https://nodejs.org/)
+- [**PnPm@7.4.x or newer**](https://pnpm.io/)
 
 **This is only a minimal setup. You will need to perform additional installation steps depending on the package you want to work on, please refer to its nested readme file.**
 
@@ -65,14 +69,14 @@ To run nested scripts which are not covered at the root, you should **not** chan
 Every package has an **alias** defined (see application or library tables or check out the [`package.json`](https://github.com/LedgerHQ/ledger-live/blob/develop/package.json) file) that you can use as a prefix when running the script from the root.
 
 ```sh
-# `pnpm desktop` is one of the shorthands written to to avoid changing the working directory.
+# `pnpm desktop` is one of the shorthands written to avoid changing the working directory.
 
 # The following command will run the nested `test` script.
 # `test` is defined inside the `./apps/ledger-live-desktop/package.json` file.
 pnpm desktop test
 ```
 
-**Note that when using these kind of scripts you will have to make sure that the dependencies are built beforehand.**
+**Note that when using these kinds of scripts you will have to make sure that the dependencies are built beforehand.**
 
 ### Scoping
 
@@ -114,8 +118,8 @@ The applications are user-facing programs which depend on one or more libraries.
 <br/>
 <p>
 
-| Name                                                                                                            | Alias          | Download                                                                                                                                                         |
-| --------------------------------------------------------------------------------------------------------------- | -------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Name                                                                                                     | Alias          | Download                                                                                                                                                         |
+| -------------------------------------------------------------------------------------------------------- | -------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | [**Ledger Live Desktop**](https://github.com/LedgerHQ/ledger-live/tree/develop/apps/ledger-live-desktop) | `pnpm desktop` | [Website](https://www.ledger.com/ledger-live/download)                                                                                                           |
 | [**Ledger Live Mobile**](https://github.com/LedgerHQ/ledger-live/tree/develop/apps/ledger-live-mobile)   | `pnpm mobile`  | [Android](https://play.google.com/store/apps/details?id=com.ledger.live&hl=fr&gl=US) / [iOS](https://apps.apple.com/fr/app/ledger-live-web3-wallet/id1361671700) |
 
@@ -131,10 +135,10 @@ They are deployed to the official npm repository under the `@ledgerhq` organizat
 <br/>
 <p>
 
-| Name                                                                                                                                                                | Alias                          | Umbrella                                                                              | Package                                                                                                                                                       |
-| ------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------ | ------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| [**@ledgerhq/ledger-live-common**](https://github.com/LedgerHQ/ledger-live/tree/develop/libs/ledger-live-common)                                             | `pnpm common`                  | -----                                                                                 |
-| ----                                                                                                                                                                | -----                          | -----                                                                                 | -------                                                                                                                                                       |
+| Name                                                                                                                                                         | Alias                          | Umbrella                                                                       | Package                                                                                                                                                       |
+| ------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------ | ------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [**@ledgerhq/ledger-live-common**](https://github.com/LedgerHQ/ledger-live/tree/develop/libs/ledger-live-common)                                             | `pnpm common`                  | -----                                                                          |
+| ----                                                                                                                                                         | -----                          | -----                                                                          | -------                                                                                                                                                       |
 | [**@ledgerhq/cryptoassets**](https://github.com/LedgerHQ/ledger-live/tree/develop/libs/ledgerjs/packages/cryptoassets)                                       | `pnpm ljs:cryoptoassets`       | [ledgerjs](https://github.com/LedgerHQ/ledger-live/tree/develop/libs/ledgerjs) | [![npm](https://img.shields.io/npm/v/@ledgerhq/cryptoassets.svg)](https://www.npmjs.com/package/@ledgerhq/cryptoassets)                                       |
 | [**@ledgerhq/devices**](https://github.com/LedgerHQ/ledger-live/tree/develop/libs/ledgerjs/packages/devices)                                                 | `pnpm ljs:devices`             | [ledgerjs](https://github.com/LedgerHQ/ledger-live/tree/develop/libs/ledgerjs) | [![npm](https://img.shields.io/npm/v/@ledgerhq/devices.svg)](https://www.npmjs.com/package/@ledgerhq/devices)                                                 |
 | [**@ledgerhq/errors**](https://github.com/LedgerHQ/ledger-live/tree/develop/libs/ledgerjs/packages/errors)                                                   | `pnpm ljs:errors`              | [ledgerjs](https://github.com/LedgerHQ/ledger-live/tree/develop/libs/ledgerjs) | [![npm](https://img.shields.io/npm/v/@ledgerhq/errors.svg)](https://www.npmjs.com/package/@ledgerhq/errors)                                                   |
@@ -167,7 +171,7 @@ They are deployed to the official npm repository under the `@ledgerhq` organizat
 | [**@ledgerhq/types-cryptoassets**](https://github.com/LedgerHQ/ledger-live/tree/develop/libs/ledgerjs/packages/types-cryptoassets)                           | `pnpm ljs:types-cryptoassets`  | [ledgerjs](https://github.com/LedgerHQ/ledger-live/tree/develop/libs/ledgerjs) | [![npm](https://img.shields.io/npm/v/@ledgerhq/types-cryptoassets.svg)](https://www.npmjs.com/package/@ledgerhq/types-cryptoassets)                           |
 | [**@ledgerhq/types-devices**](https://github.com/LedgerHQ/ledger-live/tree/develop/libs/ledgerjs/packages/types-devices)                                     | `pnpm ljs:types-devices`       | [ledgerjs](https://github.com/LedgerHQ/ledger-live/tree/develop/libs/ledgerjs) | [![npm](https://img.shields.io/npm/v/@ledgerhq/types-devices.svg)](https://www.npmjs.com/package/@ledgerhq/types-devices)                                     |
 | [**@ledgerhq/types-live**](https://github.com/LedgerHQ/ledger-live/tree/develop/libs/ledgerjs/packages/types-live)                                           | `pnpm ljs:types-live`          | [ledgerjs](https://github.com/LedgerHQ/ledger-live/tree/develop/libs/ledgerjs) | [![npm](https://img.shields.io/npm/v/@ledgerhq/types-live.svg)](https://www.npmjs.com/package/@ledgerhq/types-live)                                           |
-| ----                                                                                                                                                                | -----                          | -----                                                                                 | -------                                                                                                                                                       |
+| ----                                                                                                                                                         | -----                          | -----                                                                          | -------                                                                                                                                                       |
 | [**@ledgerhq/icons-ui**](https://github.com/LedgerHQ/ledger-live/tree/develop/libs/ui/packages/icons)                                                        | `pnpm ui:icons`                | [ui](https://github.com/LedgerHQ/ledger-live/tree/develop/libs/ui)             | [![npm](https://img.shields.io/npm/v/@ledgerhq/icons-ui.svg)](https://www.npmjs.com/package/@ledgerhq/icons-ui)                                               |
 | [**@ledgerhq/native-ui**](https://github.com/LedgerHQ/ledger-live/tree/develop/libs/ui/packages/native)                                                      | `pnpm ui:native`               | [ui](https://github.com/LedgerHQ/ledger-live/tree/develop/libs/ui)             | [![npm](https://img.shields.io/npm/v/@ledgerhq/native-ui.svg)](https://www.npmjs.com/package/@ledgerhq/native-ui)                                             |
 | [**@ledgerhq/react-ui**](https://github.com/LedgerHQ/ledger-live/tree/develop/libs/ui/packages/react)                                                        | `pnpm ui:react`                | [ui](https://github.com/LedgerHQ/ledger-live/tree/develop/libs/ui)             | [![npm](https://img.shields.io/npm/v/@ledgerhq/react-ui.svg)](https://www.npmjs.com/package/@ledgerhq/react-ui)                                               |
@@ -186,7 +190,7 @@ A tool can be a github action, a shell script or a piece of JavaScript code that
 
 Please check the general guidelines for contributing to Ledger Live projects: [`CONTRIBUTING.md`](https://github.com/LedgerHQ/ledger-live/blob/develop/CONTRIBUTING.md).
 
-Each separate project may also contain specific guidelines inside their own folder.
+Each separate project may also contain specific guidelines inside its own folder.
 
 In the meantime here are some important highlights:
 
@@ -212,7 +216,7 @@ For more information on the nightly releases, have a look at our [wiki](https://
 
 ### Libraries
 
-Nightly version of library packages are pushed every night to npm.
+Nightly versions of library packages are pushed every night to npm.
 
 To install a nightly library use the `@nightly` dist-tag.
 

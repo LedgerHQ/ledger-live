@@ -8,23 +8,28 @@ import type { Observable } from "rxjs";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import type { AccountLike, Account, AccountRaw } from "./account";
 import type {
-  TransactionStatus,
   SignOperationEvent,
   SignedOperation,
+  TransactionCommon,
+  TransactionStatusCommon,
 } from "./transaction";
 import type { Operation } from "./operation";
 import type { DerivationMode } from "./derivation";
 import type { SyncConfig } from "./pagination";
+import {
+  CryptoCurrencyIds,
+  NFTCollectionMetadata,
+  NFTCollectionMetadataResponse,
+  NFTMetadata,
+  NFTMetadataResponse,
+} from "./nft";
 
-/**
- *
- */
 export type ScanAccountEvent = {
   type: "discovered";
   account: Account;
 };
 /**
- * more events will come in the future
+ * More events will come in the future
  */
 export type ScanAccountEventRaw = {
   type: "discovered";
@@ -32,7 +37,7 @@ export type ScanAccountEventRaw = {
 };
 
 /**
- * unique identifier of a device. it will depends on the underlying implementation.
+ * Unique identifier of a device. It will depend on the underlying implementation.
  */
 export type DeviceId = string;
 
@@ -66,10 +71,11 @@ export type SignOperationArg0<T> = {
 export type SignOperationFnSignature<T> = (
   arg0: SignOperationArg0<T>
 ) => Observable<SignOperationEvent>;
+
 export type BroadcastFnSignature = (arg0: BroadcastArg0) => Promise<Operation>;
 
 /**
- *
+ * Abstraction related to a currency
  */
 export interface CurrencyBridge {
   // Preload data required for the bridges to work. (e.g. tokens, delegators,...)
@@ -89,9 +95,25 @@ export interface CurrencyBridge {
     preferredNewAccountScheme?: DerivationMode;
   }): Observable<ScanAccountEvent>;
   getPreloadStrategy?: (currency: CryptoCurrency) => PreloadStrategy;
+  nftResolvers?: {
+    nftMetadata: (arg: {
+      contract: string;
+      tokenId: string;
+      currencyId: string;
+      metadata?: NFTMetadata;
+    }) => Promise<NFTMetadataResponse>;
+    collectionMetadata: (arg: {
+      contract: string;
+      currencyId: string;
+      metadata?: NFTCollectionMetadata;
+    }) => Promise<NFTCollectionMetadataResponse>;
+  };
 }
-// Abstraction related to an account
-export interface AccountBridge<T> {
+
+/**
+ * Abstraction related to an account
+ */
+export interface AccountBridge<T extends TransactionCommon> {
   // synchronizes an account continuously to update with latest blochchains state.
   // The function emits updater functions each time there are data changes (e.g. blockchains updates)
   // an update function is just a Account => Account that perform the changes (to avoid race condition issues)
@@ -126,7 +148,7 @@ export interface AccountBridge<T> {
   getTransactionStatus(
     account: Account,
     transaction: T
-  ): Promise<TransactionStatus>;
+  ): Promise<TransactionStatusCommon>;
   // heuristic that provides the estimated max amount that can be set to a send.
   // this is usually the balance minus the fees, but it really depends between coins (reserve, burn, frozen part of the balance,...).
   // it is a heuristic in that this is not necessarily correct and it can be +-delta (so the info can exceed the spendable or leave some dust).
@@ -147,3 +169,68 @@ export interface AccountBridge<T> {
   // returns an optimistic Operation that this transaction is likely to create in the future
   broadcast: BroadcastFnSignature;
 }
+
+type ExpectFn = (...args: Array<any>) => any;
+
+/**
+ *
+ */
+export type CurrenciesData<T extends TransactionCommon> = {
+  FIXME_ignoreAccountFields?: string[];
+  FIXME_ignoreOperationFields?: string[];
+  FIXME_ignorePreloadFields?: string[];
+  mockDeviceOptions?: any;
+  scanAccounts?: Array<{
+    name: string;
+    apdus: string;
+    unstableAccounts?: boolean;
+    test?: (
+      expect: ExpectFn,
+      scanned: Account[],
+      bridge: CurrencyBridge
+    ) => any;
+  }>;
+  accounts?: Array<{
+    implementations?: string[];
+    raw: AccountRaw;
+    FIXME_tests?: Array<string | RegExp>;
+    transactions?: Array<{
+      name: string;
+      transaction: T | ((arg0: T, arg1: Account, arg2: AccountBridge<T>) => T);
+      expectedStatus?:
+        | Partial<TransactionStatusCommon>
+        | ((
+            arg0: Account,
+            arg1: T,
+            arg2: TransactionStatusCommon
+          ) => Partial<TransactionStatusCommon>);
+      test?: (
+        arg0: ExpectFn,
+        arg1: T,
+        arg2: TransactionStatusCommon,
+        arg3: AccountBridge<T>
+      ) => any;
+      apdus?: string;
+      testSignedOperation?: (
+        arg0: ExpectFn,
+        arg1: SignedOperation,
+        arg2: Account,
+        arg3: T,
+        arg4: TransactionStatusCommon,
+        arg5: AccountBridge<T>
+      ) => any;
+    }>;
+    test?: (arg0: ExpectFn, arg1: Account, arg2: AccountBridge<T>) => any;
+  }>;
+  test?: (arg0: ExpectFn, arg1: CurrencyBridge) => any;
+};
+
+/**
+ *
+ */
+export type DatasetTest<T extends TransactionCommon> = {
+  implementations: string[];
+  currencies:
+    | Record<CryptoCurrencyIds, CurrenciesData<T>>
+    | Record<string, never>;
+};

@@ -83,7 +83,7 @@ function useFrozenValue<T>(value: T, frozen: boolean): T {
 export const createAction = (
   connectAppExec: (arg0: ConnectAppInput) => Observable<ConnectAppEvent>,
   startExchangeExec: (arg0: {
-    deviceId?: string;
+    deviceId: string;
     exchangeType: ExchangeType;
   }) => Observable<ExchangeRequestEvent>
 ): StartExchangeAction => {

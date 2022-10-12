@@ -6,8 +6,8 @@ import { getCryptoCurrencyById } from "../../currencies";
 import { setEnv } from "../../env";
 import { makeBridgeCacheSystem } from "../../bridge/cache";
 import { genAccount, genAddingOperationsInAccount } from "../../mock/account";
-import type { Account, CurrencyBridge } from "../../types";
 import type {
+  CosmosAccount,
   CosmosDelegation,
   CosmosMappedDelegation,
   CosmosResources,
@@ -18,6 +18,7 @@ import { getCurrentCosmosPreloadData } from "./preloadedData";
 import preloadedMockData from "./preloadedData.mock";
 import * as hooks from "./react";
 import { LEDGER_VALIDATOR_ADDRESS } from "./utils";
+import { CurrencyBridge } from "@ledgerhq/types-live";
 const localCache = {};
 const cache = makeBridgeCacheSystem({
   saveData(c, d) {
@@ -30,10 +31,12 @@ const cache = makeBridgeCacheSystem({
   },
 });
 describe("cosmos/react", () => {
-  describe("useCosmosPreloadData", () => {
+  describe("useCosmosFamilyPreloadData", () => {
     it("should return Cosmos preload data and updates", async () => {
       const { prepare } = setup();
-      const { result } = renderHook(() => hooks.useCosmosPreloadData());
+      const { result } = renderHook(() =>
+        hooks.useCosmosFamilyPreloadData("cosmos")
+      );
       const data = getCurrentCosmosPreloadData();
       expect(result.current).toStrictEqual(data);
       await act(() => prepare());
@@ -45,10 +48,13 @@ describe("cosmos/react", () => {
       const { account, prepare } = setup();
       await prepare();
       const { result } = renderHook(() =>
-        hooks.useCosmosMappedDelegations(account)
+        hooks.useCosmosFamilyMappedDelegations(account)
       );
       const delegations = account.cosmosResources?.delegations;
       invariant(delegations, "cosmos: delegations is required");
+      expect(
+        account.cosmosResources?.delegations?.some((d) => d.amount[0] === 0)
+      ).toBe(false);
       expect(Array.isArray(result.current)).toBe(true);
       expect(result.current.length).toBe(
         (delegations as CosmosDelegation[]).length
@@ -68,13 +74,13 @@ describe("cosmos/react", () => {
         const { account, prepare } = setup();
         await prepare();
         const { result } = renderHook(() =>
-          hooks.useCosmosMappedDelegations(account, "claimReward")
+          hooks.useCosmosFamilyMappedDelegations(account, "claimReward")
         );
         expect(result.current.length).toBe(3);
       });
     });
   });
-  describe("useCosmosDelegationsQuerySelector", () => {
+  describe("useCosmosFamilyDelegationsQuerySelector", () => {
     it("should return delegations filtered by query as options", async () => {
       const { account, transaction, prepare } = setup();
       await prepare();
@@ -95,7 +101,10 @@ describe("cosmos/react", () => {
         })),
       };
       const { result } = renderHook(() =>
-        hooks.useCosmosDelegationsQuerySelector(account, newTx as Transaction)
+        hooks.useCosmosFamilyDelegationsQuerySelector(
+          account,
+          newTx as Transaction
+        )
       );
       expect(result.current.options.length).toBe(delegations.length);
       act(() => {
@@ -121,7 +130,10 @@ describe("cosmos/react", () => {
         })),
       };
       const { result } = renderHook(() =>
-        hooks.useCosmosDelegationsQuerySelector(account, newTx as Transaction)
+        hooks.useCosmosFamilyDelegationsQuerySelector(
+          account,
+          newTx as Transaction
+        )
       );
       expect(
         (
@@ -130,7 +142,7 @@ describe("cosmos/react", () => {
         ).validatorAddress
       ).toBe(delegations[0].validatorAddress);
     });
-    it("should find delegation by cosmosSourceValidator field and return as value for redelegate", async () => {
+    it("should find delegation by sourceValidator field and return as value for redelegate", async () => {
       const { account, transaction, prepare } = setup();
       await prepare();
       invariant(
@@ -139,7 +151,7 @@ describe("cosmos/react", () => {
       );
       const delegations =
         (account.cosmosResources as CosmosResources).delegations || [];
-      const cosmosSourceValidator =
+      const sourceValidator =
         delegations[delegations.length - 1].validatorAddress;
       const newTx = {
         ...transaction,
@@ -148,17 +160,20 @@ describe("cosmos/react", () => {
           address: validatorAddress,
           amount,
         })),
-        cosmosSourceValidator,
+        sourceValidator,
       };
       const { result } = renderHook(() =>
-        hooks.useCosmosDelegationsQuerySelector(account, newTx as Transaction)
+        hooks.useCosmosFamilyDelegationsQuerySelector(
+          account,
+          newTx as Transaction
+        )
       );
       expect(
         (
           (result.current.value as CosmosMappedDelegation)
             .validator as CosmosValidatorItem
         ).validatorAddress
-      ).toBe(cosmosSourceValidator);
+      ).toBe(sourceValidator);
     });
   });
   describe("useSortedValidators", () => {
@@ -166,7 +181,7 @@ describe("cosmos/react", () => {
       const { account, prepare } = setup();
       await prepare();
       const { result: preloadDataResult } = renderHook(() =>
-        hooks.useCosmosPreloadData()
+        hooks.useCosmosFamilyPreloadData("cosmos")
       );
       const { validators } = preloadDataResult.current;
       const delegations = (account.cosmosResources?.delegations || []).map(
@@ -188,7 +203,7 @@ describe("cosmos/react", () => {
   describe("reorderValidators", () => {
     it("should return a list of Validators with Ledger first", () => {
       const { result } = renderHook(() =>
-        hooks.useLedgerFirstShuffledValidatorsCosmos()
+        hooks.useLedgerFirstShuffledValidatorsCosmosFamily("cosmos")
       );
       expect(result.current[0].validatorAddress).toBe(LEDGER_VALIDATOR_ADDRESS);
     });
@@ -196,7 +211,7 @@ describe("cosmos/react", () => {
 });
 
 function setup(): {
-  account: Account;
+  account: CosmosAccount;
   currencyBridge: CurrencyBridge;
   transaction: Transaction;
   prepare: () => Promise<any>;
@@ -208,7 +223,7 @@ function setup(): {
   const a = genAccount(seed, {
     currency,
   });
-  const account = genAddingOperationsInAccount(a, 3, seed);
+  const account = genAddingOperationsInAccount(a, 3, seed) as CosmosAccount;
   const currencyBridge = getCurrencyBridge(currency);
   const bridge = getAccountBridge(account);
   const transaction = bridge.createTransaction(account);

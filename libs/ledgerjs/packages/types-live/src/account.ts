@@ -7,9 +7,8 @@ import type {
 import type { OperationRaw, Operation } from "./operation";
 import type { DerivationMode } from "./derivation";
 import type { SwapOperation, SwapOperationRaw } from "./swap";
-import type { NFT, NFTRaw } from "./nft";
+import { ProtoNFT, ProtoNFTRaw } from "./nft";
 
-// This is the old cache and now DEPRECATED (pre v2 portfoli)
 export type GranularityId = "HOUR" | "DAY" | "WEEK";
 
 // the cache is maintained for as many granularity as we need on Live.
@@ -30,9 +29,7 @@ export type BalanceHistoryDataCache = {
   balances: number[];
 };
 
-/**
- * A token belongs to an Account and share the parent account address
- */
+/** A token belongs to an Account and share the parent account address */
 export type TokenAccount = {
   type: "TokenAccount";
   id: string;
@@ -60,9 +57,7 @@ export type TokenAccount = {
   }>;
 };
 
-/**
- * A child account belongs to an Account but has its own address.
- */
+/** A child account belongs to an Account but has its own address */
 export type ChildAccount = {
   type: "ChildAccount";
   id: string;
@@ -85,9 +80,7 @@ export type ChildAccount = {
   swapHistory: SwapOperation[];
 };
 
-/**
- *
- */
+/** */
 export type Address = {
   address: string;
   derivationPath: string;
@@ -168,6 +161,9 @@ export type Account = {
   pendingOperations: Operation[];
   // used to know when the last sync happened
   lastSyncDate: Date;
+  // A configuration for the endpoint to use. (usecase: Ripple node)
+  // FIXME drop and introduce a config{} object
+  endpointConfig?: string | null | undefined;
   // An account can have sub accounts.
   // A sub account can be either a token account or a child account in some blockchain.
   // They are attached to the parent account in the related blockchain.
@@ -185,33 +181,28 @@ export type Account = {
   // currently there are no "raw" version of it because no need to at this stage.
   // could be in future when pagination is needed.
   balanceHistoryCache: BalanceHistoryCache;
+  // On some blockchain, an account can have resources (gained, delegated, ...)
   // Swap operations linked to this account
   swapHistory: SwapOperation[];
   // Hash used to discard tx history on sync
   syncHash?: string;
   // Array of NFTs computed by diffing NFTOperations ordered from newest to oldest
-  nfts?: NFT[];
+  nfts?: ProtoNFT[];
 };
 
-/**
- * super type that is either a token or a child account
- */
+/** super type that is either a token or a child account */
 export type SubAccount = TokenAccount | ChildAccount;
-/**
- * One of the Account type
- */
+
+/** One of the Account type */
 export type AccountLike = Account | SubAccount;
+
 /**
- * an array of AccountLikes
+ * An array of AccountLikes
  */
-export type AccountLikeArray =
-  | AccountLike[]
-  | TokenAccount[]
-  | ChildAccount[]
-  | Account[];
-/**
- *
- */
+export type AccountLikeArray = // $FlowFixMe wtf mobile
+  AccountLike[] | TokenAccount[] | ChildAccount[] | Account[];
+
+/** */
 export type TokenAccountRaw = {
   type: "TokenAccountRaw";
   id: string;
@@ -232,9 +223,8 @@ export type TokenAccountRaw = {
     value: string;
   }>;
 };
-/**
- *
- */
+
+/** */
 export type ChildAccountRaw = {
   type: "ChildAccountRaw";
   id: string;
@@ -251,9 +241,8 @@ export type ChildAccountRaw = {
   balanceHistoryCache?: BalanceHistoryCache;
   swapHistory?: SwapOperationRaw[];
 };
-/**
- *
- */
+
+/** */
 export type AccountRaw = {
   id: string;
   seedIdentifier: string;
@@ -283,13 +272,20 @@ export type AccountRaw = {
   balanceHistoryCache?: BalanceHistoryCache;
   swapHistory?: SwapOperationRaw[];
   syncHash?: string;
-  nfts?: NFTRaw[];
+  nfts?: ProtoNFTRaw[];
 };
-/**
- *
- */
+
+/** */
 export type SubAccountRaw = TokenAccountRaw | ChildAccountRaw;
-/**
- *
- */
+
+/** */
 export type AccountRawLike = AccountRaw | SubAccountRaw;
+
+/** */
+export type AccountIdParams = {
+  type: string;
+  version: string;
+  currencyId: string;
+  xpubOrAddress: string;
+  derivationMode: DerivationMode;
+};

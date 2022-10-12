@@ -1,3 +1,8 @@
+import type {
+  CryptoCurrency,
+  TokenCurrency,
+  Unit,
+} from "@ledgerhq/types-cryptoassets";
 import { BigNumber } from "bignumber.js";
 import { getAccountCurrency, getAccountUnit } from "../../account";
 import { formatCurrencyUnit } from "../../currencies";
@@ -7,15 +12,15 @@ import {
   SwapExchangeRateAmountTooLow,
 } from "../../errors";
 import network from "../../network";
-import type {
-  CryptoCurrency,
-  TokenCurrency,
-  Transaction,
-  Unit,
-} from "../../types";
-import { getSwapAPIBaseURL, getSwapAPIError } from "./";
+import type { Transaction } from "../../generated/types";
+import {
+  getAvailableProviders,
+  getSwapAPIBaseURL,
+  getSwapAPIError,
+  getSwapAPIVersion,
+} from "./";
 import { mockGetExchangeRates } from "./mock";
-import type { Exchange, GetExchangeRates } from "./types";
+import type { CustomMinOrMaxError, Exchange, GetExchangeRates } from "./types";
 
 const getExchangeRates: GetExchangeRates = async (
   exchange: Exchange,
@@ -26,8 +31,7 @@ const getExchangeRates: GetExchangeRates = async (
   if (getEnv("MOCK"))
     return mockGetExchangeRates(exchange, transaction, currencyTo);
 
-  // Rely on the api base to determine the version logic
-  const usesV3 = getSwapAPIBaseURL().endsWith("v3");
+  const usesV3 = getSwapAPIVersion() >= 3;
   const from = getAccountCurrency(exchange.fromAccount).id;
   const unitFrom = getAccountUnit(exchange.fromAccount);
   const unitTo =
@@ -40,6 +44,7 @@ const getExchangeRates: GetExchangeRates = async (
     from,
     to,
     amountFrom: apiAmount.toString(),
+    providers: usesV3 ? getAvailableProviders() : undefined,
   };
   const res = await network({
     method: "POST",
@@ -122,7 +127,7 @@ const inferError = (
     errorCode?: number;
     errorMessage?: string;
   }
-): Error | undefined => {
+): Error | CustomMinOrMaxError | undefined => {
   const tenPowMagnitude = new BigNumber(10).pow(unitFrom.magnitude);
   const { amountTo, minAmountFrom, maxAmountFrom, errorCode, errorMessage } =
     responseData;
@@ -134,8 +139,11 @@ const inferError = (
     }
 
     // For out of range errors we will have a min/max pairing
-    if (minAmountFrom) {
-      const isTooSmall = new BigNumber(apiAmount).lte(minAmountFrom);
+    const hasAmountLimit = minAmountFrom || maxAmountFrom;
+    if (hasAmountLimit) {
+      const isTooSmall = minAmountFrom
+        ? new BigNumber(apiAmount).lte(minAmountFrom)
+        : false;
 
       const MinOrMaxError = isTooSmall
         ? SwapExchangeRateAmountTooLow
@@ -157,6 +165,7 @@ const inferError = (
             showCode: true,
           }
         ),
+        amount: new BigNumber(amount),
       });
     }
   }

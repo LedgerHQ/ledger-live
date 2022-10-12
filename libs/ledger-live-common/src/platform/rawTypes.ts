@@ -1,4 +1,4 @@
-import type { SignedOperationRaw } from "../types";
+import type { SignedOperationRaw } from "@ledgerhq/types-live";
 
 export type {
   RawAccount as RawPlatformAccount,

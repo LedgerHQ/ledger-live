@@ -14,7 +14,7 @@ import {
   sanitizeValueString,
 } from "../currencies";
 import { byContractAddressAndChainId } from "@ledgerhq/hw-app-eth/erc20";
-import { CryptoCurrency, TokenCurrency } from "@ledgerhq/cryptoassets";
+import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 test("erc20 are all consistent with those on ledgerjs side", () => {
   const normalList = listTokens();
   const delistedList = listTokens({
@@ -51,7 +51,7 @@ test("sort by marketcap", () => {
   );
   const currencies: (CryptoCurrency | TokenCurrency)[] =
     listCryptoCurrencies().filter(
-      (c) => c.ticker === "BTC" || c.ticker === "XST" || c.ticker === "ETH"
+      (c) => c.ticker === "BTC" || c.ticker === "XST" || c.id === "ethereum"
     );
   expect(
     sortByMarketcap(currencies.concat(tokens), [

@@ -10,15 +10,19 @@ import type {
   Operation,
   TokenAccount,
   SubAccount,
-  TransactionStatus,
   SignedOperation,
   AccountLike,
   SignOperationEvent,
-} from "../../../types";
+  DeviceId,
+  CurrencyBridge,
+  AccountBridge,
+} from "@ledgerhq/types-live";
 import type {
   NetworkInfo,
   SuperRepresentative,
   Transaction,
+  TransactionStatus,
+  TronAccount,
   TrongridExtraTxInfo,
 } from "../types";
 import {
@@ -27,11 +31,6 @@ import {
   getOperationTypefromMode,
   getEstimatedBlockSize,
 } from "../utils";
-import type {
-  CurrencyBridge,
-  AccountBridge,
-  DeviceId,
-} from "../../../types/bridge";
 import { withDevice } from "../../../hw/deviceAccess";
 import signTransaction from "../../../hw/signTransaction";
 import { makeSync, makeScanAccounts } from "../../../bridge/jsHelpers";
@@ -187,10 +186,12 @@ const signOperation = ({
                 ? fee
                 : new BigNumber(transaction.amount || 0).plus(fee);
 
-            case "claimReward":
-              return account.tronResources
-                ? account.tronResources.unwithdrawnReward
+            case "claimReward": {
+              const tronAcc = account as TronAccount;
+              return tronAcc.tronResources
+                ? tronAcc.tronResources.unwithdrawnReward
                 : new BigNumber(0);
+            }
 
             default:
               return new BigNumber(0);
@@ -211,7 +212,7 @@ const signOperation = ({
             case "unfreeze":
               return {
                 unfreezeAmount: get(
-                  account.tronResources,
+                  (account as TronAccount).tronResources,
                   `frozen.${resource.toLocaleLowerCase()}.amount`,
                   new BigNumber(0)
                 ),
@@ -333,8 +334,9 @@ const getAccountShape = async (info: GetAccountShapeArg0, syncConfig) => {
     : new BigNumber(0);
   const cacheTransactionInfoById = {
     ...(info.initialAccount &&
-      info.initialAccount.tronResources &&
-      info.initialAccount.tronResources.cacheTransactionInfoById),
+      (info.initialAccount as TronAccount).tronResources &&
+      (info.initialAccount as TronAccount).tronResources
+        .cacheTransactionInfoById),
   };
   const operationsPageSize = Math.min(
     1000,
@@ -566,7 +568,7 @@ const getFeesFromAccountActivation = async (
   const estimatedBandwidthCost = getEstimatedBlockSize(a, t);
 
   if (recipientAccount.length === 0 && available.lt(estimatedBandwidthCost)) {
-    return activationFees; // cost is around 0.1 TRX
+    return activationFees; // cost is around 1 TRX
   }
 
   return new BigNumber(0); // no fee
@@ -591,12 +593,12 @@ const getEstimatedFees = async (
 };
 
 const getTransactionStatus = async (
-  a: Account,
+  a: TronAccount,
   t: Transaction
 ): Promise<TransactionStatus> => {
   const errors: Record<string, Error> = {};
   const warnings: Record<string, Error> = {};
-  const { mode, recipient, resource, votes, useAllAmount = false } = t;
+  const { family, mode, recipient, resource, votes, useAllAmount = false } = t;
   const tokenAccount = !t.subAccountId
     ? null
     : a.subAccounts && a.subAccounts.find((ta) => ta.id === t.subAccountId);
@@ -717,7 +719,10 @@ const getTransactionStatus = async (
   const totalSpent =
     account.type === "Account" ? amountSpent.plus(estimatedFees) : amountSpent;
 
-  if (!errors.recipient && ["send", "freeze"].includes(mode)) {
+  if (["send", "freeze"].includes(mode)) {
+    if (amount.eq(0)) {
+      errors.amount = new AmountRequired();
+    }
     if (amountSpent.eq(0)) {
       errors.amount = useAllAmount
         ? new NotEnoughBalance()
@@ -769,6 +774,7 @@ const getTransactionStatus = async (
     amount: amountSpent,
     estimatedFees,
     totalSpent,
+    family,
   });
 };
 
@@ -792,7 +798,9 @@ const estimateMaxSpendable = async ({
         transaction?.recipient || "0x0000000000000000000000000000000000000000",
       amount: new BigNumber(0),
     },
-    false
+    transaction && transaction.recipient
+      ? (await fetchTronContract(transaction.recipient)) !== undefined
+      : false
   );
   return account.type === "Account"
     ? BigNumber.max(0, account.spendableBalance.minus(fees))

@@ -1,10 +1,14 @@
 import type {
+  CryptoCurrency,
+  Currency,
+  TokenCurrency,
+} from "@ledgerhq/types-cryptoassets";
+import type {
   Account,
   AccountLike,
-  Currency,
-  CryptoCurrency,
-  TokenCurrency,
-} from "../../types";
+  AssetsDistribution,
+  PortfolioRange,
+} from "@ledgerhq/types-live";
 import { getAccountCurrency, flattenAccounts } from "../../account";
 import { useCountervaluesState } from "../../countervalues/react";
 import {
@@ -13,8 +17,8 @@ import {
   getCurrencyPortfolio,
   getAssetsDistribution,
   getPortfolioCount,
+  GetPortfolioOptionsType,
 } from "./";
-import type { PortfolioRange } from "./types";
 export function useBalanceHistoryWithCountervalue({
   account,
   range,
@@ -32,13 +36,15 @@ export function usePortfolio({
   accounts,
   range,
   to,
+  options,
 }: {
   accounts: Account[];
   range: PortfolioRange;
   to: Currency;
+  options?: GetPortfolioOptionsType;
 }) {
   const state = useCountervaluesState();
-  return getPortfolio(accounts, range, state, to);
+  return getPortfolio(accounts, range, state, to, options);
 }
 export function useCurrencyPortfolio({
   accounts: rawAccounts,
@@ -60,14 +66,20 @@ export function useCurrencyPortfolio({
 export function useDistribution({
   accounts,
   to,
+  showEmptyAccounts,
+  hideEmptyTokenAccount,
 }: {
   accounts: Account[];
   to: Currency;
-}) {
+  showEmptyAccounts: boolean;
+  hideEmptyTokenAccount: boolean;
+}): AssetsDistribution {
   const state = useCountervaluesState();
   return getAssetsDistribution(accounts, state, to, {
     minShowFirst: 6,
     maxShowFirst: 6,
     showFirstThreshold: 0.95,
+    showEmptyAccounts,
+    hideEmptyTokenAccount,
   });
 }

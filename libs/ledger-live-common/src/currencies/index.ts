@@ -1,5 +1,4 @@
 import { encodeURIScheme, decodeURIScheme } from "./CurrencyURIScheme";
-import type { Currency } from "../types";
 import { sanitizeValueString } from "./sanitizeValueString";
 import {
   sortByMarketcap,
@@ -33,6 +32,7 @@ import {
   getAbandonSeedAddress,
 } from "@ledgerhq/cryptoassets";
 export * from "./support";
+export * from "./helpers";
 import { parseCurrencyUnit } from "./parseCurrencyUnit";
 import { chopCurrencyUnitDecimals } from "./chopCurrencyUnitDecimals";
 import {
@@ -42,6 +42,7 @@ import {
 import { formatShort } from "./formatShort";
 import { valueFromUnit } from "./valueFromUnit";
 import { getCurrencyColor } from "./color";
+import type { Currency } from "@ledgerhq/types-cryptoassets";
 
 const findCurrencyByTicker = (ticker: string): Currency | null | undefined =>
   findCryptoCurrencyByTicker(ticker) ||

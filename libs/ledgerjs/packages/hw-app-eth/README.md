@@ -1,11 +1,25 @@
-<img src="https://user-images.githubusercontent.com/211411/34776833-6f1ef4da-f618-11e7-8b13-f0697901d6a8.png" height="100" />
+<img src="https://user-images.githubusercontent.com/4631227/191834116-59cf590e-25cc-4956-ae5c-812ea464f324.png" height="100" />
 
-[Github](https://github.com/LedgerHQ/ledgerjs/),
-[Ledger Devs Slack](https://ledger-dev.slack.com/)
+[GitHub](https://github.com/LedgerHQ/ledger-live/),
+[Ledger Devs Discord](https://developers.ledger.com/discord-pro),
+[Developer Portal](https://developers.ledger.com/)
 
 ## @ledgerhq/hw-app-eth
 
 Ledger Hardware Wallet ETH JavaScript bindings.
+
+***
+
+## Are you adding Ledger support to your software wallet?
+
+You may be using this package to communicate with the Ethereum Nano App.
+
+For a smooth and quick integration:
+
+*   See the developers’ documentation on the [Developer Portal](https://developers.ledger.com/docs/transport/overview/) and
+*   Go on [Discord](https://developers.ledger.com/discord-pro/) to chat with developer support and the developer community.
+
+***
 
 ## API
 
@@ -29,37 +43,40 @@ Ledger Hardware Wallet ETH JavaScript bindings.
     *   [signEIP712HashedMessage](#signeip712hashedmessage)
         *   [Parameters](#parameters-4)
         *   [Examples](#examples-4)
-    *   [starkGetPublicKey](#starkgetpublickey)
+    *   [signEIP712Message](#signeip712message)
         *   [Parameters](#parameters-5)
-    *   [starkSignOrder](#starksignorder)
-        *   [Parameters](#parameters-6)
-    *   [starkSignOrder_v2](#starksignorder_v2)
-        *   [Parameters](#parameters-7)
-    *   [starkSignTransfer](#starksigntransfer)
-        *   [Parameters](#parameters-8)
-    *   [starkSignTransfer_v2](#starksigntransfer_v2)
-        *   [Parameters](#parameters-9)
-    *   [starkProvideQuantum](#starkprovidequantum)
-        *   [Parameters](#parameters-10)
-    *   [starkProvideQuantum_v2](#starkprovidequantum_v2)
-        *   [Parameters](#parameters-11)
-    *   [starkUnsafeSign](#starkunsafesign)
-        *   [Parameters](#parameters-12)
-    *   [eth2GetPublicKey](#eth2getpublickey)
-        *   [Parameters](#parameters-13)
         *   [Examples](#examples-5)
-    *   [eth2SetWithdrawalIndex](#eth2setwithdrawalindex)
+    *   [starkGetPublicKey](#starkgetpublickey)
+        *   [Parameters](#parameters-6)
+    *   [starkSignOrder](#starksignorder)
+        *   [Parameters](#parameters-7)
+    *   [starkSignOrder_v2](#starksignorder_v2)
+        *   [Parameters](#parameters-8)
+    *   [starkSignTransfer](#starksigntransfer)
+        *   [Parameters](#parameters-9)
+    *   [starkSignTransfer_v2](#starksigntransfer_v2)
+        *   [Parameters](#parameters-10)
+    *   [starkProvideQuantum](#starkprovidequantum)
+        *   [Parameters](#parameters-11)
+    *   [starkProvideQuantum_v2](#starkprovidequantum_v2)
+        *   [Parameters](#parameters-12)
+    *   [starkUnsafeSign](#starkunsafesign)
+        *   [Parameters](#parameters-13)
+    *   [eth2GetPublicKey](#eth2getpublickey)
         *   [Parameters](#parameters-14)
-    *   [getEIP1024PublicEncryptionKey](#geteip1024publicencryptionkey)
-        *   [Parameters](#parameters-15)
         *   [Examples](#examples-6)
-    *   [getEIP1024SharedSecret](#geteip1024sharedsecret)
+    *   [eth2SetWithdrawalIndex](#eth2setwithdrawalindex)
+        *   [Parameters](#parameters-15)
+    *   [getEIP1024PublicEncryptionKey](#geteip1024publicencryptionkey)
         *   [Parameters](#parameters-16)
         *   [Examples](#examples-7)
+    *   [getEIP1024SharedSecret](#geteip1024sharedsecret)
+        *   [Parameters](#parameters-17)
+        *   [Examples](#examples-8)
 *   [loadInfosForContractMethod](#loadinfosforcontractmethod)
-    *   [Parameters](#parameters-17)
-*   [byContractAddressAndChainId](#bycontractaddressandchainid)
     *   [Parameters](#parameters-18)
+*   [byContractAddressAndChainId](#bycontractaddressandchainid)
+    *   [Parameters](#parameters-19)
 *   [list](#list)
 *   [ResolutionConfig](#resolutionconfig)
     *   [Properties](#properties)
@@ -112,7 +129,7 @@ You can sign a transaction and retrieve v, r, s given the raw transaction and th
 ##### Examples
 
 ```javascript
-import ledgerService from "@ledgerhq/hw-app-eth/lib/services/ledger"
+import { ledgerService } from "@ledgerhq/hw-app-eth"
 const tx = "e8018504e3b292008252089428ee52a8f3d6e5d15f8b131996950d7f296c7952872bd72a2487400080"; // raw tx to sign
 const resolution = await ledgerService.resolveTransaction(tx);
 const result = eth.signTransaction("44'/60'/0'/0/0", tx, resolution);
@@ -173,6 +190,45 @@ console.log("Signature 0x" + result['r'] + result['s'] + v);
 ```
 
 Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)<{v: [number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number), s: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), r: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)}>** 
+
+#### signEIP712Message
+
+Sign an EIP-721 formatted message following the specification here:
+https://github.com/LedgerHQ/app-ethereum/blob/develop/doc/ethapp.asc#sign-eth-eip-712
+
+##### Parameters
+
+*   `path` **[String](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** derivationPath
+*   `jsonMessage` **[Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)** message to sign
+*   `fullImplem` **[Boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)** use the legacy implementation (optional, default `false`)
+
+##### Examples
+
+```javascript
+eth.signEIP721Message("44'/60'/0'/0/0", {
+domain: {
+chainId: 69,
+name: "Da Domain",
+verifyingContract: "0xCcCCccccCCCCcCCCCCCcCcCccCcCCCcCcccccccC",
+version: "1"
+},
+types: {
+"EIP712Domain": [
+{ name: "name", type: "string" },
+{ name: "version", type: "string" },
+{ name: "chainId", type: "uint256" },
+{ name: "verifyingContract", type: "address" }
+],
+"Test": [
+{ name: "contents", type: "string" }
+]
+},
+primaryType: "Test",
+message: {contents: "Hello, Bob!"},
+})
+```
+
+Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)** 
 
 #### starkGetPublicKey
 

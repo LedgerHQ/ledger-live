@@ -3,8 +3,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { TouchableOpacity } from "react-native";
 import { Trans } from "react-i18next";
 
-import { Action } from "@ledgerhq/live-common/lib/apps";
-import { App } from "@ledgerhq/live-common/lib/types/manager";
+import { Action } from "@ledgerhq/live-common/apps/index";
+import { App } from "@ledgerhq/types-live";
 
 import styled from "styled-components/native";
 import { Flex, Icons, Text, Button } from "@ledgerhq/native-ui";
@@ -15,7 +15,7 @@ import BottomModal from "../../../components/BottomModal";
 
 type Props = {
   appInstallWithDependencies: { app: App; dependencies: App[] };
-  dispatch: (action: Action) => void;
+  dispatch: (_: Action) => void;
   onClose: () => void;
 };
 

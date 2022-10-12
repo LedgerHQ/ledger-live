@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next";
 import styled from "styled-components";
 import FormattedVal from "~/renderer/components/FormattedVal";
 import LoadingPlaceholder from "~/renderer/components/LoadingPlaceholder";
-import counterValueFormatter from "@ledgerhq/live-common/lib/market/utils/countervalueFormatter";
+import counterValueFormatter from "@ledgerhq/live-common/market/utils/countervalueFormatter";
 import FormattedDate from "~/renderer/components/FormattedDate";
 
 const Title = styled(Text).attrs({ variant: "h5", color: "neutral.c100", mb: 2 })`
@@ -227,7 +227,6 @@ function MarketInfo({
             <LoadingLabel loading={loading}>
               {counterValueFormatter({
                 value: circulatingSupply,
-                currency: counterCurrency,
                 locale,
                 shorten: true,
               })}

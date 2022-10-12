@@ -1,5 +1,5 @@
 import { SearchInput } from "@ledgerhq/native-ui";
-import { useDebounce } from "@ledgerhq/live-common/lib/hooks/useDebounce";
+import { useDebounce } from "@ledgerhq/live-common/hooks/useDebounce";
 import React, { memo, useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { track } from "../../analytics";
@@ -29,7 +29,7 @@ function SearchHeader({ search, refresh }: Props) {
   }, [debouncedSearch, refresh]);
 
   useEffect(() => {
-    setInputSearch(search)
+    setInputSearch(search);
   }, [setInputSearch, search]);
 
   return (

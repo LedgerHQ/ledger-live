@@ -1,6 +1,6 @@
 import { useMemo } from "react";
-import { getCurrencyColor as commonGetCurrencyColor } from "@ledgerhq/live-common/lib/currencies";
-import { Currency } from "@ledgerhq/live-common/lib/types/currencies";
+import { getCurrencyColor as commonGetCurrencyColor } from "@ledgerhq/live-common/currencies/index";
+import { Currency } from "@ledgerhq/types-cryptoassets";
 
 import { ensureContrast } from "../colors";
 

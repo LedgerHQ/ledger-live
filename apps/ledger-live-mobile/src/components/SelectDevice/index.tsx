@@ -5,10 +5,14 @@ import { useSelector, useDispatch } from "react-redux";
 import { Trans } from "react-i18next";
 import {
   useNavigation,
+  useRoute,
   useTheme as useNavTheme,
 } from "@react-navigation/native";
-import { discoverDevices, TransportModule } from "@ledgerhq/live-common/lib/hw";
-import { Device } from "@ledgerhq/live-common/lib/hw/actions/types";
+import {
+  discoverDevices,
+  TransportModule,
+} from "@ledgerhq/live-common/hw/index";
+import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { Button } from "@ledgerhq/native-ui";
 import { useTheme } from "styled-components/native";
 import { ScreenName } from "../../const";
@@ -16,21 +20,26 @@ import { knownDevicesSelector } from "../../reducers/ble";
 import { setHasConnectedDevice } from "../../actions/appstate";
 import DeviceItem from "./DeviceItem";
 import BluetoothEmpty from "./BluetoothEmpty";
+// eslint-disable-next-line import/no-unresolved
 import USBEmpty from "./USBEmpty";
 import LText from "../LText";
 import Animation from "../Animation";
 import { track } from "../../analytics";
+import {
+  setLastConnectedDevice,
+  setReadOnlyMode,
+} from "../../actions/settings";
 
 import PairLight from "../../screens/Onboarding/assets/nanoX/pairDevice/light.json";
 import PairDark from "../../screens/Onboarding/assets/nanoX/pairDevice/dark.json";
 
 type Props = {
-  onBluetoothDeviceAction?: (device: Device) => void;
-  onSelect: (device: Device) => void;
+  onBluetoothDeviceAction?: (_: Device) => void;
+  onSelect: (_: Device) => void;
   onWithoutDevice?: () => void;
   withArrows?: boolean;
   usbOnly?: boolean;
-  filter?: (transportModule: TransportModule) => boolean;
+  filter?: (_: TransportModule) => boolean;
   autoSelectOnAdd?: boolean;
   hideAnimation?: boolean;
 };
@@ -49,10 +58,13 @@ export default function SelectDevice({
   const navigation = useNavigation();
   const knownDevices = useSelector(knownDevicesSelector);
   const dispatch = useDispatch();
+  const route = useRoute();
 
   const handleOnSelect = useCallback(
     deviceInfo => {
       const { modelId, wired } = deviceInfo;
+
+      dispatch(setLastConnectedDevice(deviceInfo));
       if (wired) {
         track("Device selection", {
           modelId,
@@ -61,6 +73,7 @@ export default function SelectDevice({
         // Nb consider a device selection enough to show the fw update banner in portfolio
         dispatch(setHasConnectedDevice(true));
         onSelect(deviceInfo);
+        dispatch(setReadOnlyMode(false));
       } else {
         NativeModules.BluetoothHelperModule.prompt()
           .then(() => {
@@ -71,6 +84,7 @@ export default function SelectDevice({
             // Nb consider a device selection enough to show the fw update banner in portfolio
             dispatch(setHasConnectedDevice(true));
             onSelect(deviceInfo);
+            dispatch(setReadOnlyMode(false));
           })
           .catch(() => {
             /* ignore */
@@ -83,6 +97,10 @@ export default function SelectDevice({
   const [devices, setDevices] = useState([]);
 
   const onPairNewDevice = useCallback(() => {
+    track("button_clicked", {
+      button: "Pair with bluetooth",
+      screen: route.name,
+    });
     NativeModules.BluetoothHelperModule.prompt()
       .then(() =>
         // @ts-expect-error navigation issue
@@ -152,7 +170,7 @@ export default function SelectDevice({
     <>
       {usbOnly && withArrows && !hideAnimation ? (
         <UsbPlaceholder />
-      ) : ble.length === 0 ? (
+      ) : usbOnly ? null : ble.length === 0 ? (
         <BluetoothEmpty
           hideAnimation={hideAnimation}
           onPairNewDevice={onPairNewDevice}

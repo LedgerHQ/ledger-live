@@ -1,5 +1,8 @@
 import Prando from "prando";
-import type { CryptoCurrency, TokenCurrency } from "../types";
+import type {
+  CryptoCurrency,
+  TokenCurrency,
+} from "@ledgerhq/types-cryptoassets";
 
 /**
  * @memberof mock/account

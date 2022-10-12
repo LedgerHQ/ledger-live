@@ -11,9 +11,9 @@ import { hasAvailableUpdateSelector } from "../../reducers/settings";
 import Manager from "../../screens/Manager";
 import { getStackNavigatorConfig } from "../../navigation/navigatorConfig";
 import styles from "../../navigation/styles";
-import ReadOnlyTab from "../ReadOnlyTab";
-import NanoXIcon from "../../icons/TabNanoX";
+import TabIcon from "../TabIcon";
 import { useIsNavLocked } from "./CustomBlockRouterNavigator";
+import ManagerMain from "../../screens/Manager/Manager";
 
 const BadgeContainer = styled(Flex).attrs({
   position: "absolute",
@@ -53,9 +53,11 @@ const ManagerIconWithUpate = ({
 export default function ManagerNavigator() {
   const { t } = useTranslation();
   const { colors } = useTheme();
-  const stackNavConfig = useMemo(() => getStackNavigatorConfig(colors), [
-    colors,
-  ]);
+  const stackNavConfig = useMemo(
+    () => getStackNavigatorConfig(colors),
+    [colors],
+  );
+
   return (
     <Stack.Navigator
       screenOptions={{
@@ -76,6 +78,11 @@ export default function ManagerNavigator() {
           gestureEnabled: false,
         }}
       />
+      <Stack.Screen
+        name={ScreenName.ManagerMain}
+        component={ManagerMain}
+        options={{ title: "" }}
+      />
     </Stack.Navigator>
   );
 }
@@ -87,16 +94,15 @@ export function ManagerTabIcon(props: any) {
   const hasAvailableUpdate = useSelector(hasAvailableUpdateSelector);
 
   const content = (
-    <ReadOnlyTab
-      OnIcon={NanoXIcon}
-      oni18nKey="tabs.nanoX"
-      OffIcon={hasAvailableUpdate ? ManagerIconWithUpate : NanoFoldedMedium}
-      offi18nKey="tabs.manager"
+    <TabIcon
       {...props}
+      Icon={hasAvailableUpdate ? ManagerIconWithUpate : NanoFoldedMedium}
+      i18nKey="tabs.manager"
     />
   );
 
   if (isNavLocked) {
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
     return <TouchableOpacity onPress={() => {}}>{content}</TouchableOpacity>;
   }
 

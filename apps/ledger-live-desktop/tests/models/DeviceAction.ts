@@ -1,8 +1,9 @@
 import { Page, Locator } from "@playwright/test";
 import {
   deviceInfo155 as deviceInfo,
+  deviceInfo210lo5,
   mockListAppsResult as innerMockListAppResult,
-} from "@ledgerhq/live-common/lib/apps/mock";
+} from "@ledgerhq/live-common/apps/mock";
 
 const mockListAppsResult = (...params) => {
   // Nb Should move this polyfill to live-common eventually.
@@ -15,15 +16,17 @@ const mockListAppsResult = (...params) => {
 
 // fromTransactionRaw doesn't work as expected but I'm not sure why it produces the following error:
 // page.evaluate: ReferenceError: _transaction is not defined
-// import { fromTransactionRaw } from "@ledgerhq/live-common/lib/transaction";
+// import { fromTransactionRaw } from "@ledgerhq/live-common/transaction/index";
 
 export class DeviceAction {
   readonly page: Page;
-  readonly deviceActionLoader: Locator;
+  readonly loader: Locator;
+  readonly swapSummary: Locator;
 
   constructor(page: Page) {
     this.page = page;
-    this.deviceActionLoader = page.locator("#deviceAction-loading");
+    this.loader = page.locator("data-test-id=device-action-loader");
+    this.swapSummary = page.locator("data-test-id=device-swap-summary");
   }
 
   async openApp() {
@@ -31,8 +34,8 @@ export class DeviceAction {
       (window as any).mock.events.mockDeviceEvent({ type: "opened" });
     });
 
-    await this.deviceActionLoader.waitFor({ state: "visible" });
-    await this.deviceActionLoader.waitFor({ state: "detached" });
+    await this.loader.waitFor({ state: "visible" });
+    await this.loader.waitFor({ state: "detached" });
   }
 
   async genuineCheck(appDesc: string = "Bitcoin", installedDesc: string = "Bitcoin") {
@@ -57,7 +60,7 @@ export class DeviceAction {
       [deviceInfo, result],
     );
 
-    await this.deviceActionLoader.waitFor({ state: "hidden" });
+    await this.loader.waitFor({ state: "hidden" });
   }
 
   async accessManager(
@@ -85,25 +88,70 @@ export class DeviceAction {
       [deviceInfo, result],
     );
 
-    await this.deviceActionLoader.waitFor({ state: "hidden" });
+    await this.loader.waitFor({ state: "hidden" });
+  }
+
+  async accessManagerWithL10n(
+    appDesc: string = "Bitcoin,Tron,Litecoin,Ethereum,Ripple,Stellar",
+    installedDesc: string = "Bitcoin,Litecoin,Ethereum (outdated)",
+  ) {
+    const result = mockListAppsResult(appDesc, installedDesc, deviceInfo210lo5);
+
+    await this.page.evaluate(
+      args => {
+        const [deviceInfo210lo5, result] = args;
+
+        (window as any).mock.events.mockDeviceEvent(
+          {
+            type: "listingApps",
+            deviceInfo: deviceInfo210lo5,
+          },
+          {
+            type: "result",
+            result,
+          },
+          { type: "complete" },
+        );
+      },
+      [deviceInfo210lo5, result],
+    );
+
+    await this.loader.waitFor({ state: "hidden" });
   }
 
   async complete() {
     await this.page.evaluate(() => {
       (window as any).mock.events.mockDeviceEvent({ type: "complete" });
     });
-  };
+  }
+
+  async initiateLanguageInstallation() {
+    await this.page.evaluate(() => {
+      (window as any).mock.events.mockDeviceEvent({ type: "devicePermissionRequested" });
+    });
+  }
+
+  async add50ProgressToLanguageInstallation() {
+    await this.page.evaluate(() => {
+      (window as any).mock.events.mockDeviceEvent({ type: "progress", progress: 0.5 });
+    });
+  }
+
+  async completeLanguageInstallation() {
+    await this.page.evaluate(() => {
+      (window as any).mock.events.mockDeviceEvent({ type: "languageInstalled" });
+    });
+  }
 
   async initiateSwap() {
-    await this.page.evaluate(() => {
-      (window as any).mock.events.mockDeviceEvent(
-        { type: "opened" },
-        { type: "complete" },
-        { type: "init-swap-requested" },
-      );
-    });
+    await this.page.evaluate(() => (window as any).mock.events.mockDeviceEvent({ type: "opened" }));
+    await this.page.waitForTimeout(500);
+    await this.page.evaluate(() => (window as any).mock.events.mockDeviceEvent({ type: "complete" }));
+    await this.page.waitForTimeout(500);
+    await this.page.evaluate(() => (window as any).mock.events.mockDeviceEvent({ type: "init-swap-requested" }));
 
-    await this.page.waitForSelector("data-test-id=device-confirm-swap", { state: "visible" });
+    await this.loader.waitFor({ state: "detached" });
+    await this.swapSummary.waitFor({ state: "visible" });
   }
 
   async confirmSwap() {
@@ -118,7 +166,7 @@ export class DeviceAction {
               amount: { s: 1, e: 0, c: [1] },
               recipient: "1Cz2ZXb6Y6AacXJTpo4RBjQMLEmscuxD8e",
               rbf: false,
-              utxoStrategy: { strategy: 0, pickUnconfirmedRBF: false, excludeUTXOs: [] },
+              utxoStrategy: { strategy: 0, excludeUTXOs: [] },
               family: "bitcoin",
               feePerByte: { s: 1, e: 0, c: [1] },
               networkInfo: {

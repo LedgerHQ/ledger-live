@@ -1,4 +1,4 @@
-import { Page, Locator, expect } from "@playwright/test";
+import { Page, Locator } from "@playwright/test";
 
 export class SwapPage {
   readonly page: Page;
@@ -9,7 +9,6 @@ export class SwapPage {
   readonly seeDetailsButton: Locator;
   readonly detailsSwapId: Locator;
   readonly historyRow: Locator;
-  readonly sideDrawerCloseButton: Locator;
 
   constructor(page: Page) {
     this.page = page;
@@ -20,7 +19,6 @@ export class SwapPage {
     this.seeDetailsButton = page.locator('button:has-text("See details")');
     this.detailsSwapId = page.locator("data-test-id=details-swap-id").first();
     this.historyRow = page.locator(".swap-history-row").first();
-    this.sideDrawerCloseButton = page.locator(".sidedrawer-close");
   }
 
   async navigate() {
@@ -30,6 +28,7 @@ export class SwapPage {
 
   async sendMax() {
     await this.maxSpendableToggle.click();
+    await this.exchangeButton.isEnabled();
   }
 
   async confirmExchange() {
@@ -49,10 +48,6 @@ export class SwapPage {
   async verifyExchangeDetails() {
     await this.detailsSwapId.waitFor({ state: "visible" });
     return this.detailsSwapId.innerText();
-  }
-
-  async exitExchangeDrawer() {
-    await this.sideDrawerCloseButton.click();
   }
 
   async moveToExchangeButton() {

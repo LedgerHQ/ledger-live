@@ -1,4 +1,4 @@
-import type { AccountLike, Account, Operation } from "../../types";
+import type { AccountLike, Account, Operation } from "@ledgerhq/types-live";
 import { shouldRetainPendingOperation } from "../../account";
 
 // we need to preserve ETH pendingOperations because there is no mempool to do this

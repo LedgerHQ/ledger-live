@@ -20,7 +20,9 @@ export const providers = [
   },
 ];
 
-export function getProviderURL(value: string): RemotePlatformAppProvider {
+export function getProviderURL(
+  value: string
+): RemotePlatformAppProvider["url"] {
   const provider = providers.find((provider) => provider.value === value);
 
   if (!provider) {
@@ -34,6 +36,12 @@ const api = {
     provider: string
   ): Promise<LiveAppManifest[]> => {
     if (getEnv("MOCK")) {
+      if (getEnv("MOCK_REMOTE_LIVE_MANIFEST")) {
+        return [
+          ...mockData,
+          ...JSON.parse(getEnv("MOCK_REMOTE_LIVE_MANIFEST")),
+        ] as LiveAppManifest[];
+      }
       return mockData as LiveAppManifest[];
     }
 

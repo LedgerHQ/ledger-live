@@ -1,0 +1,76 @@
+name: "[Test] Integration"
+
+on:
+  schedule:
+    - cron: 20 9 * * *
+
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: "Which ref (branch or tag) to pull from ?"
+        required: false
+        default: develop
+      filter:
+        description: "passed to a jest test name filtering"
+        required: false
+        default: ""
+
+jobs:
+  integration-tests:
+    name: "Integration Tests"
+    env:
+      NODE_OPTIONS: "--max-old-space-size=7168"
+      FORCE_COLOR: 3
+      CI_OS: ${{ matrix.os }}
+
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+          - ubuntu-latest
+          - macos-latest
+          - windows-latest
+
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          ref: ${{ github.event.inputs.ref || github.ref }}
+          fetch-depth: 0
+      - uses: pnpm/action-setup@v2
+        with:
+          version: latest
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16
+          cache: pnpm
+          cache-dependency-path: "**/pnpm-lock.yaml"
+      - name: Bump npm to latest
+        run: |
+          npm i -g npm
+          npm --version
+      - name: Install dependencies
+        run: pnpm i --filter="!./apps/**"
+      - name: Build
+        run: pnpm build:libs
+      - name: Test
+        shell: bash
+        env:
+          FILTER: ${{ github.event.inputs.filter }}
+          VERBOSE_FILE: logs.txt
+        run: |
+          pnpm common ci-test-integration $FILTER
+          git diff --exit-code libs/ledger-live-common/src
+      - name: (On Failure) Upload live-common snapshots and source
+        uses: actions/upload-artifact@v3
+        if: failure()
+        with:
+          name: ${{ format('live-common-src-{0}', matrix.os) }}
+          path: |
+            libs/ledger-live-common/src
+      - name: (On Failure) Upload logs
+        uses: actions/upload-artifact@v3
+        if: failure()
+        with:
+          name: logs.txt
+          path: logs.txt

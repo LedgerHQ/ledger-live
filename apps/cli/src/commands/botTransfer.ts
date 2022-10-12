@@ -11,32 +11,42 @@ import {
 import {
   listSupportedCurrencies,
   getFiatCurrencyByTicker,
-} from "@ledgerhq/live-common/lib/currencies";
+} from "@ledgerhq/live-common/currencies/index";
 import {
   getAccountBridge,
   getCurrencyBridge,
-} from "@ledgerhq/live-common/lib/bridge";
-import { getEnv, setEnv } from "@ledgerhq/live-common/lib/env";
-import { promiseAllBatched } from "@ledgerhq/live-common/lib/promise";
-import { Account } from "@ledgerhq/live-common/lib/types";
-import { makeBridgeCacheSystem } from "@ledgerhq/live-common/lib/bridge/cache";
-import {
-  autoSignTransaction,
-  getImplicitDeviceAction,
-} from "@ledgerhq/live-common/lib/bot/engine";
+} from "@ledgerhq/live-common/bridge/index";
+import { getEnv, setEnv } from "@ledgerhq/live-common/env";
+import { promiseAllBatched } from "@ledgerhq/live-common/promise";
+import { makeBridgeCacheSystem } from "@ledgerhq/live-common/bridge/cache";
+import { autoSignTransaction } from "@ledgerhq/live-common/bot/engine";
+import allSpecs from "@ledgerhq/live-common/generated/specs";
 import {
   createImplicitSpeculos,
   releaseSpeculosDevice,
-} from "@ledgerhq/live-common/lib/load/speculos";
-import { formatOperation } from "@ledgerhq/live-common/lib/account";
+} from "@ledgerhq/live-common/load/speculos";
+import { formatOperation } from "@ledgerhq/live-common/account/index";
 import {
   calculate,
   inferTrackingPairForAccounts,
   initialState,
   loadCountervalues,
-} from "@ledgerhq/live-common/lib/countervalues/logic";
+} from "@ledgerhq/live-common/countervalues/logic";
+import type { Account } from "@ledgerhq/types-live";
+import { AppSpec } from "@ledgerhq/live-common/lib/bot/types";
 
 const CONCURRENT = 3;
+
+// TODO improve botTransfer by only using "allSpecs" and introduce a "transferMutation" in the specs for all spec to define how to transfer funds out (as well as UNDELEGATING funds)
+
+function getImplicitDeviceAction(currency) {
+  for (const k in allSpecs) {
+    const spec: AppSpec<any> = allSpecs[k];
+    if (spec.currency === currency) {
+      return spec.genericDeviceAction;
+    }
+  }
+}
 
 export default {
   description:
@@ -238,14 +248,16 @@ export default {
               account,
               tx
             );
-            const status = await accountBridge.getTransactionStatus(
+            const statusCommon = await accountBridge.getTransactionStatus(
               account,
               transaction
             );
 
-            if (Object.keys(status.errors).length !== 0) {
+            if (Object.keys(statusCommon.errors).length !== 0) {
               continue;
             }
+
+            const status = { ...statusCommon, family: transaction.family };
 
             if (!r) {
               console.warn(
@@ -254,6 +266,13 @@ export default {
               return;
             }
             device = r.device;
+
+            const deviceAction = getImplicitDeviceAction(account.currency);
+            if (!deviceAction) {
+              throw new Error(
+                "no spec found for currency " + account.currency.id
+              );
+            }
 
             const signedOperation = await accountBridge
               .signOperation({
@@ -264,7 +283,7 @@ export default {
               .pipe(
                 autoSignTransaction({
                   transport: device.transport,
-                  deviceAction: getImplicitDeviceAction(account.currency),
+                  deviceAction,
                   appCandidate: r.appCandidate,
                   account,
                   transaction,

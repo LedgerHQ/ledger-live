@@ -3,14 +3,15 @@ import { useSelector } from "react-redux";
 import {
   accountWithMandatoryTokens,
   flattenAccounts,
-} from "@ledgerhq/live-common/lib/account/helpers";
-import { CryptoCurrency, TokenCurrency } from "@ledgerhq/live-common/lib/types";
+} from "@ledgerhq/live-common/account/helpers";
+import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { Flex } from "@ledgerhq/native-ui";
 import {
   isAccountEmpty,
   getAccountSpendableBalance,
 } from "@ledgerhq/live-common/lib/account";
 import { NotEnoughBalance } from "@ledgerhq/errors";
+import { ScreenName } from "../const";
 import { accountsSelector } from "../reducers/accounts";
 import { TrackScreen } from "../analytics";
 import AccountSelector from "../components/AccountSelector";
@@ -80,14 +81,15 @@ export default function ReceiveFunds({ navigation, route }: Props) {
       if (!isNaN(minBalance) && balance.lte(minBalance)) {
         setError(new NotEnoughBalance());
       } else {
-        navigation.navigate(next, {
+        navigation.navigate(next || ScreenName.ReceiveConnectDevice, {
+          ...route.params,
           account,
           accountId: account.id,
           parentId: account.type !== "Account" ? account.parentId : undefined,
         });
       }
     },
-    [minBalance, navigation, next],
+    [minBalance, navigation, next, route.params],
   );
 
   return (

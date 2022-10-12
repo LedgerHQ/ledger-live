@@ -1,26 +1,9 @@
-import type { Currency } from "../types";
+import type { Currency } from "@ledgerhq/types-cryptoassets";
 import { useState, useEffect } from "react";
 import { makeLRUCache } from "../cache";
 import api from "../countervalues/api";
 import { listCryptoCurrencies, listTokens } from "../currencies";
-export const sortByMarketcapV1 = <C extends Currency>(
-  currencies: C[],
-  tickers: string[]
-): C[] => {
-  const list = currencies.slice(0);
-  const prependList: C[] = [];
-  tickers.forEach((ticker) => {
-    const item = list.find(
-      (c) => !c.disableCountervalue && c.ticker === ticker
-    );
 
-    if (item) {
-      list.splice(list.indexOf(item), 1);
-      prependList.push(item);
-    }
-  });
-  return prependList.concat(list);
-};
 // FIXME in future we would put it back in ledgerjs to be more "dynamic"
 let currenciesAndTokenWithCountervaluesByTicker:
   | Map<string, Currency>
@@ -37,7 +20,12 @@ function lazyLoadTickerMap() {
     }
   });
   listCryptoCurrencies().forEach((c) => {
-    if (!c.disableCountervalue) {
+    if (
+      !c.disableCountervalue &&
+      // FIXME Avoid duplicates & override if the already set currency is a token
+      // E.g. 'Binance-Peg Ethereum Token' has an 'ETH' ticker
+      (!m.has(c.ticker) || m.get(c.ticker)?.type !== "CryptoCurrency")
+    ) {
       m.set(c.ticker, c);
     }
   });
@@ -45,7 +33,7 @@ function lazyLoadTickerMap() {
   return m;
 }
 
-export const sortByMarketcapV2 = <C extends Currency>(
+export const sortByMarketcap = <C extends Currency>(
   currencies: C[],
   tickers: string[]
 ): C[] => {
@@ -66,10 +54,7 @@ export const sortByMarketcapV2 = <C extends Currency>(
   });
   return prependList.concat(list);
 };
-export const sortByMarketcap: <C extends Currency>(
-  currencies: C[],
-  tickers: string[]
-) => C[] = sortByMarketcapV2;
+
 let marketcapTickersCache;
 export const getMarketcapTickers: () => Promise<string[]> = makeLRUCache(() =>
   api.fetchMarketcapTickers().then((tickers) => {

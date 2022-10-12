@@ -1,7 +1,7 @@
 import { getCryptoCurrencyById, getTokenById } from "@ledgerhq/cryptoassets";
+import type { Account } from "@ledgerhq/types-live";
 import { renderHook, act } from "@testing-library/react-hooks";
 import { genAccount, genTokenAccount } from "../../../mock/account";
-import { Account } from "../../../types";
 import { useReverseAccounts } from "./useReverseAccounts";
 
 const BTC = getCryptoCurrencyById("bitcoin");
@@ -39,10 +39,10 @@ describe("useReverseAccounts", () => {
 
     expect(result.current.isSwapReversable).toBe(true);
 
-    rerender({ ...defaultProps, toAccount: null });
+    rerender({ ...defaultProps, toAccount: undefined });
     expect(result.current.isSwapReversable).toBe(false);
 
-    rerender({ ...defaultProps, fromCurrency: null });
+    rerender({ ...defaultProps, fromCurrency: undefined });
     expect(result.current.isSwapReversable).toBe(false);
 
     rerender({

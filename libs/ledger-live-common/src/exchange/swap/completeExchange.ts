@@ -1,22 +1,20 @@
+import { TransportStatusError, WrongDeviceForAccount } from "@ledgerhq/errors";
 import { log } from "@ledgerhq/logs";
 import { from, Observable } from "rxjs";
 import secp256k1 from "secp256k1";
-import { TransportStatusError, WrongDeviceForAccount } from "@ledgerhq/errors";
-
-import { delay } from "../../promise";
-import ExchangeTransport from "../hw-app-exchange/Exchange";
-import perFamily from "../../generated/exchange";
+import { getCurrencyExchangeConfig } from "../";
 import { getAccountCurrency, getMainAccount } from "../../account";
 import { getAccountBridge } from "../../bridge";
 import { TransactionRefusedOnDevice } from "../../errors";
+import perFamily from "../../generated/exchange";
 import { withDevice } from "../../hw/deviceAccess";
-import { getProviderNameAndSignature } from "./";
-import { getCurrencyExchangeConfig } from "../";
-
+import { delay } from "../../promise";
+import ExchangeTransport from "../hw-app-exchange/Exchange";
 import type {
   CompleteExchangeInputSwap,
   CompleteExchangeRequestEvent,
 } from "../platform/types";
+import { getProviderConfig } from "./";
 
 const withDevicePromise = (deviceId, fn) =>
   withDevice(deviceId)((transport) => from(fn(transport))).toPromise();
@@ -45,7 +43,7 @@ const completeExchange = (
 
     const confirmExchange = async () => {
       await withDevicePromise(deviceId, async (transport) => {
-        const providerNameAndSignature = getProviderNameAndSignature(provider);
+        const providerConfig = getProviderConfig(provider);
         const exchange = new ExchangeTransport(
           transport,
           exchangeType,
@@ -75,10 +73,10 @@ const completeExchange = (
         const errorsKeys = Object.keys(errors);
         if (errorsKeys.length > 0) throw errors[errorsKeys[0]]; // throw the first error
 
-        await exchange.setPartnerKey(providerNameAndSignature.nameAndPubkey);
+        await exchange.setPartnerKey(providerConfig.nameAndPubkey);
         if (unsubscribed) return;
 
-        await exchange.checkPartner(providerNameAndSignature.signature);
+        await exchange.checkPartner(providerConfig.signature);
         if (unsubscribed) return;
 
         await exchange.processTransaction(

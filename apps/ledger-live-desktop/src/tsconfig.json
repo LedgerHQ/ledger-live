@@ -14,7 +14,7 @@
     "target": "esnext",
     "baseUrl": ".",
     "paths": {
-      "~/*": ["src/*"]
+      "~/*": ["./*"]
     },
     "skipLibCheck": true,
     "sourceMap": true,

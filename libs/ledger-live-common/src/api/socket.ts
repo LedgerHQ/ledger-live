@@ -12,7 +12,7 @@ import {
 } from "@ledgerhq/errors";
 import { cancelDeviceAction } from "../hw/deviceAccess";
 import { getEnv } from "../env";
-import type { SocketEvent } from "../types/manager";
+import type { SocketEvent } from "@ledgerhq/types-live";
 const warningsSubject = new Subject<string>();
 export const warnings: Observable<string> = warningsSubject.asObservable();
 const ALLOW_MANAGER_DELAY = 500;
@@ -32,7 +32,7 @@ export const createDeviceSocket = (
   }
 ): Observable<SocketEvent> =>
   new Observable((o) => {
-    let deviceError = null; // the socket was interrupted by device problem
+    let deviceError: Error | null = null; // the socket was interrupted by device problem
 
     let unsubscribed = false; // subscriber wants to stops everything
 

@@ -1,13 +1,20 @@
 // polyfill the unfinished support of apps logic
 import uniq from "lodash/uniq";
-import type { App, Application } from "../types/manager";
 import {
   listCryptoCurrencies,
   findCryptoCurrencyById,
 } from "@ledgerhq/cryptoassets";
+import { App, Application } from "@ledgerhq/types-live";
 const directDep = {};
 const reverseDep = {};
+
+// whitelist dependencies
+export const whitelistDependencies = ["Decred", "Decred Test", "Zcash"];
+
 export function declareDep(name: string, dep: string) {
+  if (whitelistDependencies.includes(name)) {
+    return;
+  }
   directDep[name] = (directDep[name] || []).concat(dep);
   reverseDep[dep] = (reverseDep[dep] || []).concat(name);
 }
@@ -25,8 +32,6 @@ listCryptoCurrencies(true, true).forEach((a) => {
     declareDep(a.managerAppName + " Test", dep.managerAppName);
   }
 });
-// whitelist dependencies
-export const whitelistDependencies = ["Decred", "Decred Testnet"];
 
 // extra dependencies
 [
@@ -54,6 +59,9 @@ export const whitelistDependencies = ["Decred", "Decred Testnet"];
   ["OlympusDAO", "Ethereum"],
   ["Rarible", "Ethereum"],
   ["Ricochet", "Ethereum"],
+  ["Kiln", "Ethereum"],
+  ["Alkemi", "Ethereum"],
+  ["[ L ] Market", "Ethereum"],
 ].forEach(([name, dep]) => declareDep(name, dep));
 export const getDependencies = (appName: string): string[] =>
   directDep[appName] || [];
