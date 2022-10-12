@@ -1,4 +1,4 @@
-name: "[Bot] 'Hedera on Mooncake'"
+name: "[Bot] Testing Hedera with 'Mooncake'"
 on:
   push:
     branches:
@@ -61,3 +61,4 @@ jobs:
           SLACK_ICON_EMOJI: ":bot-seed4:"
           SLACK_CHANNEL: ci-hbar-ll
           BOT_FILTER_FAMILY: hedera
+          BOT_ENVIRONMENT: testing

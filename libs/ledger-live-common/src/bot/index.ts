@@ -393,10 +393,6 @@ export async function bot({
     slackBody += warn;
   }
 
-  appendBody(
-    "\n> What is the bot and how does it work? [Everything is documented here!](https://github.com/LedgerHQ/ledger-live/wiki/LLC:bot)\n\n"
-  );
-
   appendBody("\n\n");
 
   if (specFatals.length) {
@@ -723,7 +719,11 @@ export async function bot({
 
   appendBody("\n</details>\n\n");
 
-  const { BOT_REPORT_FOLDER } = process.env;
+  appendBody(
+    "\n> What is the bot and how does it work? [Everything is documented here!](https://github.com/LedgerHQ/ledger-live/wiki/LLC:bot)\n\n"
+  );
+
+  const { BOT_REPORT_FOLDER, BOT_ENVIRONMENT } = process.env;
 
   const slackCommentTemplate = `${String(
     GITHUB_WORKFLOW
@@ -732,6 +732,7 @@ export async function bot({
   if (BOT_REPORT_FOLDER) {
     const serializedReport: MinimalSerializedReport = {
       results: results.map(convertSpecReport),
+      environment: BOT_ENVIRONMENT,
     };
 
     await Promise.all([
