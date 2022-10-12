@@ -237,7 +237,7 @@
     "form" : {
       "changeCTA" : "Değiştir",
       "rates" : {
-        "title" : "Sağlayıcılar",
+        "title" : "Teklifler",
         "registration" : "Kayıt gerekiyor ",
         "noRegistration" : "Kayıt gerekmiyor",
         "fixed" : "Sabit",
@@ -246,7 +246,7 @@
         "loading" : "Yükleniyor...",
         "name" : {
           "title" : "Sağlayıcı",
-          "tooltip" : "Sağlayıcıya bağlı olarak, hesap oluşturarak giriş yapmanız gerekebilir."
+          "tooltip" : "Sağlayıcıya bağlı olarak, hesap oluşturarak kaydolmanız gerekebilir."
         },
         "rate" : {
           "title" : "Takas kuru",
@@ -430,11 +430,13 @@
         }
       },
       "filter" : {
-        "all" : "Tümü",
         "centralised" : "Merkezi",
-        "dedentralised" : "Merkeziyetsiz"
+        "decentralised" : "Merkeziyetsiz",
+        "float" : "Dalgalı kur",
+        "fixed" : "Sabit kur"
       },
-      "noQuote" : "Ücret teklifi bir sonraki adımda yer alır"
+      "noQuote" : "Ücret teklifi bir sonraki adımda yer alır",
+      "noProviders" : "Sonuç bulunamadı. Mevcut tercihlere uyan teklif yok."
     },
     "ip" : {
       "title" : "Takas İşlemlerine Hoş Geldiniz",
@@ -752,7 +754,7 @@
     "settings" : {
       "title" : "Hesabı düzenle",
       "advancedLogs" : "Gelişmiş",
-      "advancedTips" : "Xpub verilerinizin gizliliği çok hassastır. Kullanırken, özellikle üçüncü taraflarla paylaşırken, çok dikkatli olun.",
+      "advancedTips" : "Bu bir {{tag}} xpub'ıdır. Bunu bir üçüncü taraf cüzdanda içe aktarırken aynı türev modunu seçin.",
       "accountName" : {
         "title" : "Hesap adı",
         "desc" : "Hesap tanımı"
@@ -1182,6 +1184,10 @@
     "blackfriday" : {
       "title" : "EFSANE CUMA ",
       "description" : "BLACKFRIDAY20 promosyon koduyla Ledger donanım cüzdanlarda %40'lık indirimden yararlanın"
+    },
+    "referralProgram" : {
+      "title" : "Referans verin ve $10 kazanın",
+      "description" : "Bir arkadaşınıza başarıyla referans verdiğinizde, ikiniz de $10 değerinde Bitcoin kazanırsınız."
     }
   },
   "signmessage" : {
@@ -4651,6 +4657,10 @@
     "NotEnoughGas" : {
       "title" : "Ana hesaptaki bakiye ağ ücretlerini karşılamak için yetersiz"
     },
+    "OperatingSystemOutdated" : {
+      "title" : "İşletim Sistemi sürümünüz desteklenmiyor",
+      "description" : "Lütfen {{type}} işletim sisteminizi {{criteria}} sürümüne yükseltin. (Kullandığınız sürüm: {{release}})"
+    },
     "PasswordsDontMatch" : {
       "title" : "Parolalar eşleşmiyor",
       "description" : "Lütfen tekrar deneyin"
@@ -4784,7 +4794,7 @@
     },
     "EthAppNftNotSupported" : {
       "title" : "Bu işlem bu cihaz için mevcut değil",
-      "description" : "Send NFT feature is only available for Nano X and Nano S+. Please visit our customer support platform to know how to send a NFT with a Nano S."
+      "description" : "NFT Gönder özelliği yalnızca Nano X ve Nano S+ ile kullanılabilir. Nano S ile nasıl NFT gönderebileceğinizi öğrenmek için lütfen müşteri destek platformumuzu ziyaret edin."
     },
     "CantScanQRCode" : {
       "title" : "Bu QR kodu taranamadı; otomatik doğrulama bu adres tarafından desteklenmiyor"
@@ -5042,6 +5052,9 @@
     },
     "StellarSourceHasMultiSign" : {
       "title" : "Stellar işlemleri yapmak için lütfen çoklu imzayı devre dışı bırakın"
+    },
+    "HederaAddAccountError" : {
+      "title" : "Hesabınız eklenemedi. Lütfen tekrar deneyin."
     }
   },
   "cryptoOrg" : {
