@@ -1956,8 +1956,11 @@
         "ethereum": {
           "title": "Grow your ETH. Stake now.",
           "description": "Stake your Ethereum with Lido and earn rewards daily. No lock-up period. No minimum deposit.",
-          "title_alt": "Don’t just HODL. Grow your ETH.",
-          "description_alt": "Got more than 32 ETH? Earn passive rewards by securely staking your ETH with Kiln."
+          "description_alt": "Got more than 32 ETH? Earn passive rewards by securely staking your ETH with Kiln.",
+          "kiln": {
+            "title": "Don’t just HODL. Grow your ETH.",
+            "description": "Got more than 32 ETH? Earn passive rewards by securely staking your ETH with Kiln."
+          }
         },
         "cosmos": {
           "title": "Grow your ATOM. Stake with Ledger validator.",

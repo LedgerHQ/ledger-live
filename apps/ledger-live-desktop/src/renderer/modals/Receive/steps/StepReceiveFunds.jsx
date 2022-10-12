@@ -32,6 +32,7 @@ import { getEnv } from "@ledgerhq/live-common/env";
 import AccountTagDerivationMode from "~/renderer/components/AccountTagDerivationMode";
 import byFamily from "~/renderer/generated/StepReceiveFunds";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { LOCAL_STORAGE_KEY_PREFIX } from "./StepReceiveStakingFlow";
 
 const Separator = styled.div`
   border-top: 1px solid #99999933;
@@ -190,9 +191,12 @@ const StepReceiveFunds = (props: StepProps) => {
   }, [device, onChangeAddressVerified, onResetSkip, transitionTo, isAddressVerified]);
 
   const onFinishReceiveFlow = useCallback(() => {
+    const id = account.currency.id;
+    const dismissModal = global.localStorage.getItem(`${LOCAL_STORAGE_KEY_PREFIX}${id}`) === "true";
     if (
+      !dismissModal &&
       receiveStakingFlowConfig?.enabled &&
-      receiveStakingFlowConfig?.params[account.currency.id]?.enabled
+      receiveStakingFlowConfig?.params[id]?.enabled
     ) {
       transitionTo("stakingFlow");
     } else {
