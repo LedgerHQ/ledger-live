@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { BoxedIcon, Flex, InfiniteLoader, Text } from "@ledgerhq/native-ui";
 import {
@@ -57,13 +57,13 @@ const CheckCard = ({ title, index, status, ...props }: CheckCardProps) => {
     case "completed":
       checkIcon = <CircledCheckSolidMedium color="success.c100" size={24} />;
       break;
-    case "failed": 
+    case "failed":
       checkIcon = <CircledAlertMedium color="warning.c100" size={24} />;
       break;
     case "inactive":
     default:
       checkIcon = <Text variant="body">{index}</Text>;
-  };
+  }
 
   return (
     <Flex flexDirection="row" alignItems="center" {...props}>

@@ -291,12 +291,12 @@ export const SyncOnboarding = ({
 
     return () => {
       // allowedError needs to stay stable, and not change its reference
-      // if the error is the same to avoid resetting the timer 
+      // if the error is the same to avoid resetting the timer
       if (desyncTimerRef.current) {
         clearTimeout(desyncTimerRef.current);
         desyncTimerRef.current = null;
       }
-    }
+    };
   }, [allowedError, handleDesyncTimedOut, desyncTimeoutMs]);
 
   useEffect(() => {
@@ -377,7 +377,10 @@ export const SyncOnboarding = ({
     }
 
     if (companionStepKey === CompanionStepKey.Exit) {
-      readyRedirectTimerRef.current = setTimeout(handleDeviceReady, readyRedirectDelayMs / 2);
+      readyRedirectTimerRef.current = setTimeout(
+        handleDeviceReady,
+        readyRedirectDelayMs / 2,
+      );
     }
 
     setCompanionSteps(
