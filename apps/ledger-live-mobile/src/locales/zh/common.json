@@ -1002,12 +1002,12 @@
   },
   "discover" : {
     "title" : "发现",
-    "desc" : "探索 Ledger Live 中的 Web3 世界",
+    "desc" : "安全地探索 Web3 的世界",
     "link" : "了解更多",
     "sections" : {
       "learn" : {
         "title" : "学习",
-        "desc" : "了解加密货币、NFT、数字安全等"
+        "desc" : "免费从专家那里了解加密货币以及更多信息。"
       },
       "ledgerApps" : {
         "title" : "应用程序",
@@ -1015,11 +1015,15 @@
       },
       "earn" : {
         "title" : "赚取",
-        "desc" : "赚取被动收入并增长加密资产"
+        "desc" : "通过权益质押和借贷来增长您的加密货币。"
       },
       "mint" : {
         "title" : "铸造",
-        "desc" : "通过 [ L ] 市场上的独家合作来铸造 NFT"
+        "desc" : "从 [ L ] 市场的独家活动中铸造 NFT。"
+      },
+      "referralProgram" : {
+        "title" : "推荐好友",
+        "desc" : "当您的朋友购买 Ledger 时，赚取 10 美元的 BTC。 "
       }
     },
     "comingSoon" : "敬请期待",
