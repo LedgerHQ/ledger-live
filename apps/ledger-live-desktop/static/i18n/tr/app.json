@@ -2028,10 +2028,20 @@
   },
   "deviceLocalization" : {
     "language" : "Dil",
-    "deviceLanguage" : "Cihaz Dili",
+    "deviceLanguage" : "Dil",
     "changeLanguage" : "Dili değiştir",
+    "changeDeviceLanguage" : "Cihazınızın dili değiştirilsin mi?",
+    "chooseLanguage" : "{{deviceName}} cihazınız için bir dil seçin.",
+    "changeDeviceLanguagePrompt" : {
+      "title" : "{{deviceName}} cihazınızı {{language}} dilinde de kullanabilirsiniz",
+      "description" : "Dili {{language}} yapmak ister misiniz?"
+    },
+    "firmwareUpdatePrompt" : {
+      "title" : "{{deviceName}} cihazınızın dili {{language}} yapılsın mı?",
+      "description" : "{{deviceName}} cihazınızı artık {{language}} kullanabilirsiniz. Cihaz dilini şimdi ayarlayabilir ya da daha sonra My Ledger'dan istediğiniz zaman değiştirebilirsiniz."
+    },
     "allowLanguageInstallation" : "Dilin yüklenmesine izin verin",
-    "languageInstalled" : "Dil başarıyla değiştirildi",
+    "languageInstalled" : "Dil {{language}} oldu",
     "installingLanguage" : "Dil yükleniyor",
     "languages" : {
       "english" : "İngilizce",
@@ -4784,7 +4794,7 @@
     },
     "EthAppNftNotSupported" : {
       "title" : "Bu işlem bu cihaz için mevcut değil",
-      "description" : "Send NFT feature is only available for Nano X and Nano S+. Please visit our customer support platform to know how to send a NFT with a Nano S."
+      "description" : "NFT Gönder özelliği yalnızca Nano X ve Nano S+ ile kullanılabilir. Nano S ile nasıl NFT gönderebileceğinizi öğrenmek için lütfen müşteri destek platformumuzu ziyaret edin."
     },
     "CantScanQRCode" : {
       "title" : "Bu QR kodu taranamadı; otomatik doğrulama bu adres tarafından desteklenmiyor"

@@ -2028,10 +2028,20 @@
   },
   "deviceLocalization" : {
     "language" : "Idioma",
-    "deviceLanguage" : "Idioma del dispositivo",
+    "deviceLanguage" : "Idioma",
     "changeLanguage" : "Cambiar idioma",
+    "changeDeviceLanguage" : "¿Deseas cambiar el idioma de tu dispositivo?",
+    "chooseLanguage" : "Elige un idioma para tu {{deviceName}}.",
+    "changeDeviceLanguagePrompt" : {
+      "title" : "El idioma {{language}} también está disponible para tu {{deviceName}}.",
+      "description" : "¿Quieres cambiar el idioma al {{language}}?"
+    },
+    "firmwareUpdatePrompt" : {
+      "title" : "¿Cambiar tu {{deviceName}} a {{language}}?",
+      "description" : "Ya está disponible el idioma {{language}} para tu {{deviceName}}. Puedes cambiar el idioma de tu dispositivo ahora o en cualquier momento desde My Ledger."
+    },
     "allowLanguageInstallation" : "Permitir instalación de idioma",
-    "languageInstalled" : "Idioma cambiado correctamente",
+    "languageInstalled" : "Idioma cambiado al {{language}}",
     "installingLanguage" : "Instalando idioma",
     "languages" : {
       "english" : "English",
@@ -4784,7 +4794,7 @@
     },
     "EthAppNftNotSupported" : {
       "title" : "Operación no disponible en este dispositivo",
-      "description" : "Send NFT feature is only available for Nano X and Nano S+. Please visit our customer support platform to know how to send a NFT with a Nano S."
+      "description" : "La función Enviar NFT sólo está disponible en el Nano X y el Nano S+. Visita nuestra plataforma de soporte al cliente para saber cómo enviar NFTs con un Nano S."
     },
     "CantScanQRCode" : {
       "title" : "No fue posible escanear este código QR: esta dirección no es compatible con la verificación automática"

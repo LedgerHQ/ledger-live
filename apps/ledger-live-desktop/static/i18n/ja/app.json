@@ -185,7 +185,7 @@
       "week" : "1週",
       "month" : "1月",
       "year" : "1年",
-      "all" : "全期間"
+      "all" : "ALL"
     }
   },
   "fees" : {
@@ -2028,10 +2028,20 @@
   },
   "deviceLocalization" : {
     "language" : "言語",
-    "deviceLanguage" : "デバイスの言語",
+    "deviceLanguage" : "言語",
     "changeLanguage" : "言語の変更",
+    "changeDeviceLanguage" : "デバイスの言語を変更しますか？",
+    "chooseLanguage" : "{{deviceName}}の言語を選択してください。",
+    "changeDeviceLanguagePrompt" : {
+      "title" : "{{language}}が{{deviceName}}でもご利用可能になりました",
+      "description" : "言語を{{language}}に変更しますか？"
+    },
+    "firmwareUpdatePrompt" : {
+      "title" : "{{deviceName}}を{{language}}に設定しますか？",
+      "description" : "{{language}}が{{deviceName}}でご利用可能になりました。今すぐ設定できます。また、My Ledgerからいつでもデバイスの言語を変更することが可能です。"
+    },
     "allowLanguageInstallation" : "言語のインストールを許可する",
-    "languageInstalled" : "言語が変更されました",
+    "languageInstalled" : "言語が{{language}}に変更されました",
     "installingLanguage" : "言語をインストール",
     "languages" : {
       "english" : "英語",
@@ -4784,7 +4794,7 @@
     },
     "EthAppNftNotSupported" : {
       "title" : "お使いのデバイスではこの操作をご利用いただけません",
-      "description" : "Send NFT feature is only available for Nano X and Nano S+. Please visit our customer support platform to know how to send a NFT with a Nano S."
+      "description" : "NFTの送付機能は、Nano XとNano S+でのみご利用いただけます。Nano SでNFTを送付する方法については、当社のカスタマーサポートのプラットフォームをご覧ください。"
     },
     "CantScanQRCode" : {
       "title" : "このQRコードをスキャンできませんでした：このアドレスでは自動認証がサポートされていません。"

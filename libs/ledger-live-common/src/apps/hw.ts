@@ -60,6 +60,9 @@ export type StreamAppInstallEvent =
   | {
       type: "stream-install";
       progress: number;
+      itemProgress: number;
+      currentAppOp: AppOp;
+      installQueue: string[];
     };
 
 // global percentage
@@ -116,10 +119,20 @@ export const streamAppInstall = ({
           const exec = execWithTransport(transport);
           return concat(
             runAllWithProgress(state, exec).pipe(
-              map((progress) => ({
-                type: "stream-install",
-                progress,
-              }))
+              map(
+                ({
+                  globalProgress,
+                  itemProgress,
+                  installQueue,
+                  currentAppOp,
+                }) => ({
+                  type: "stream-install",
+                  progress: globalProgress,
+                  itemProgress,
+                  installQueue,
+                  currentAppOp,
+                })
+              )
             ),
             defer(onSuccessObs || (() => EMPTY))
           );

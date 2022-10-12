@@ -331,28 +331,26 @@ export const InstallingApp = ({
   );
 };
 
-export const renderInstallingLanguage = withV3StyleProvider(
-  ({ progress, t }: { progress: number; t: TFunction }) => {
-    const cleanProgress = Math.round(progress * 100);
+export const renderInstallingLanguage = ({ progress, t }: { progress: number; t: TFunction }) => {
+  const cleanProgress = Math.round(progress * 100);
 
-    return (
-      <Flex
-        flex={1}
-        alignItems="center"
-        justifyContent="center"
-        flexDirection="column"
-        data-test-id="installing-language-progress"
-      >
-        <ProgressWrapper>
-          <ProgressLoader progress={cleanProgress} />
-        </ProgressWrapper>
-        <Log extraTextProps={{ fontSize: 20 }} alignSelf="stretch" mx="115px" mt={30}>
-          {t("deviceLocalization.installingLanguage")}
-        </Log>
-      </Flex>
-    );
-  },
-);
+  return (
+    <Flex
+      flex={1}
+      alignItems="center"
+      justifyContent="center"
+      flexDirection="column"
+      data-test-id="installing-language-progress"
+    >
+      <ProgressWrapper>
+        <ProgressLoader progress={cleanProgress} />
+      </ProgressWrapper>
+      <Log extraTextProps={{ fontSize: 20 }} alignSelf="stretch" mx="115px" mt={30}>
+        {t("deviceLocalization.installingLanguage")}
+      </Log>
+    </Flex>
+  );
+};
 
 export const renderListingApps = () => (
   <Wrapper data-test-id="device-action-loader">

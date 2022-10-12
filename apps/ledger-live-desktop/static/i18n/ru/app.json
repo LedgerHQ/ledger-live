@@ -820,7 +820,7 @@
     }
   },
   "lend" : {
-    "title" : "Кредитовать криптовалюты",
+    "title" : "Кредитование",
     "tabs" : {
       "dashboard" : "Консоль",
       "opened" : "Активные займы",
@@ -2030,8 +2030,18 @@
     "language" : "Язык интерфейса",
     "deviceLanguage" : "Язык устройства",
     "changeLanguage" : "Поменять язык",
+    "changeDeviceLanguage" : "Поменять язык устройства?",
+    "chooseLanguage" : "Выберите язык для {{deviceName}}.",
+    "changeDeviceLanguagePrompt" : {
+      "title" : "{{language}} язык также доступен для {{deviceName}}.",
+      "description" : "Хотите сменить язык на {{language}}?"
+    },
+    "firmwareUpdatePrompt" : {
+      "title" : "Добавить {{language}} язык на устройство {{deviceName}}?",
+      "description" : "Теперь {{language}} язык доступен для {{deviceName}}. Можно установить его сейчас или поменять в любое удобное время в разделе «Мой Ledger»."
+    },
     "allowLanguageInstallation" : "Разрешить установку языка",
-    "languageInstalled" : "Язык изменён",
+    "languageInstalled" : "Новый язык устройства — {{language}}",
     "installingLanguage" : "Установка языка",
     "languages" : {
       "english" : "English",
@@ -4784,7 +4794,7 @@
     },
     "EthAppNftNotSupported" : {
       "title" : "Операция недоступна на этом устройстве",
-      "description" : "Send NFT feature is only available for Nano X and Nano S+. Please visit our customer support platform to know how to send a NFT with a Nano S."
+      "description" : "Функция отправки NFT доступна только в Nano X и Nano S Plus. Пожалуйста, обратитесь в Поддержку, чтобы узнать, как отправлять NFT с Nano S."
     },
     "CantScanQRCode" : {
       "title" : "Не удалось сканировать этот QR-код: этот адрес не поддерживает автопроверку."

@@ -1,6 +1,6 @@
 // @flow
 import { getEnv } from "@ledgerhq/live-common/env";
-import type { SwapTransactionType } from "@ledgerhq/live-common/exchange/swap/hooks/index";
+import type { SwapTransactionType } from "@ledgerhq/live-common/exchange/swap/hooks/types";
 import {
   toExchangeRateRaw,
   toExchangeRaw,

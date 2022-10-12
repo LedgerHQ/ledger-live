@@ -1,4 +1,4 @@
-import { Page, Locator } from '@playwright/test';
+import { Page, Locator } from "@playwright/test";
 
 export class SettingsPage {
   readonly page: Page;
@@ -11,12 +11,12 @@ export class SettingsPage {
 
   constructor(page: Page) {
     this.page = page;
-    this.accountsTab = page.locator('data-test-id=settings-accounts-tab');
-    this.aboutTab = page.locator('data-test-id=settings-about-tab');
-    this.helpTab = page.locator('data-test-id=settings-help-tab');
-    this.experimentalTab = page.locator('data-test-id=settings-experimental-tab');
-    this.experimentalDevModeToggle = page.locator('data-test-id=MANAGER_DEV_MODE-button');
-    this.carouselSwitchButton = page.locator('data-test-id=settings-carousel-switch-button');
+    this.accountsTab = page.locator("data-test-id=settings-accounts-tab");
+    this.aboutTab = page.locator("data-test-id=settings-about-tab");
+    this.helpTab = page.locator("data-test-id=settings-help-tab");
+    this.experimentalTab = page.locator("data-test-id=settings-experimental-tab");
+    this.experimentalDevModeToggle = page.locator("data-test-id=MANAGER_DEV_MODE-button");
+    this.carouselSwitchButton = page.locator("data-test-id=settings-carousel-switch-button");
   }
 
   async goToAccountsTab() {
@@ -33,6 +33,11 @@ export class SettingsPage {
 
   async goToExperimentalTab() {
     await this.experimentalTab.click();
+  }
+
+  async changeLanguage(fromLanguage: string, toLanguage: string) {
+    await this.page.locator(`text="${fromLanguage}"`).click();
+    await this.page.locator(`text="${toLanguage}"`).click();
   }
 
   async enableDevMode() {
