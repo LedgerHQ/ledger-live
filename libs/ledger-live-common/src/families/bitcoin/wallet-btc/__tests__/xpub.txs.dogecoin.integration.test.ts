@@ -1,13 +1,13 @@
 import coininfo from "coininfo";
 import BigNumber from "bignumber.js";
-import { DerivationModes } from "../../../../families/bitcoin/wallet-btc/types";
-import Xpub from "../../../../families/bitcoin/wallet-btc/xpub";
-import Doge from "../../../../families/bitcoin/wallet-btc/crypto/doge";
-import BitcoinLikeExplorer from "../../../../families/bitcoin/wallet-btc/explorer";
-import BitcoinLikeStorage from "../../../../families/bitcoin/wallet-btc/storage";
-import { Merge } from "../../../../families/bitcoin/wallet-btc/pickingstrategies/Merge";
-import BitcoinLikeWallet from "../../../../families/bitcoin/wallet-btc/wallet";
-import MockBtc from "../../../../mock/Btc";
+import { DerivationModes } from "../types";
+import Xpub from "../xpub";
+import Doge from "../crypto/doge";
+import BitcoinLikeExplorer from "../explorer";
+import BitcoinLikeStorage from "../storage";
+import { Merge } from "../pickingstrategies/Merge";
+import BitcoinLikeWallet from "../wallet";
+import MockBtc from "../../mockBtc";
 
 describe("testing dogecoin transactions", () => {
   const wallet = new BitcoinLikeWallet();

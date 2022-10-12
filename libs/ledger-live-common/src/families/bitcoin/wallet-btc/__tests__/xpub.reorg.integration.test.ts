@@ -5,11 +5,11 @@ import * as bitcoin from "bitcoinjs-lib";
 // @ts-ignore
 import coininfo from "coininfo";
 import axios from "axios";
-import { DerivationModes } from "../../../../families/bitcoin/wallet-btc/types";
-import Xpub from "../../../../families/bitcoin/wallet-btc/xpub";
-import Crypto from "../../../../families/bitcoin/wallet-btc/crypto/bitcoin";
-import Explorer from "../../../../families/bitcoin/wallet-btc/explorer";
-import BitcoinLikeStorage from "../../../../families/bitcoin/wallet-btc/storage";
+import { DerivationModes } from "../types";
+import Xpub from "../xpub";
+import Crypto from "../crypto/bitcoin";
+import Explorer from "../explorer";
+import BitcoinLikeStorage from "../storage";
 
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 

@@ -1,5 +1,5 @@
-import { getCryptoCurrencyById } from "../../../currencies";
-import { isValidRecipient } from "../../../families/bitcoin/logic";
+import { getCryptoCurrencyById } from "../../../../currencies";
+import { isValidRecipient } from "../../logic";
 import { InvalidAddress } from "@ledgerhq/errors";
 
 describe("Test isValidRecipient", () => {

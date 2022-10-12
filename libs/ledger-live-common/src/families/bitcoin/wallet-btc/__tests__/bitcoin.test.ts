@@ -1,6 +1,6 @@
-import { Currency } from "../../../../families/bitcoin/wallet-btc/crypto/types";
-import cryptoFactory from "../../../../families/bitcoin/wallet-btc/crypto/factory";
-import { DerivationModes } from "../../../../families/bitcoin/wallet-btc";
+import { Currency } from "../crypto/types";
+import cryptoFactory from "../crypto/factory";
+import { DerivationModes } from "../";
 
 describe("Unit tests for various bitcoin functions", () => {
   function testAddresses(addresses: string[][], currency: Currency) {

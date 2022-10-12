@@ -1,9 +1,9 @@
-import { DerivationModes } from "../../../../families/bitcoin/wallet-btc/types";
-import BitcoinLikeWallet from "../../../../families/bitcoin/wallet-btc/wallet";
+import { DerivationModes } from "../types";
+import BitcoinLikeWallet from "../wallet";
 import {
   getSecp256k1Instance,
   setSecp256k1Instance,
-} from "../../../../families/bitcoin/wallet-btc/crypto/secp256k1";
+} from "../crypto/secp256k1";
 
 jest.setTimeout(180000);
 

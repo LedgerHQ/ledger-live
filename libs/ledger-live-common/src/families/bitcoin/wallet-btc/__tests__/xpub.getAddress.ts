@@ -1,12 +1,12 @@
-import { DerivationModes } from "../../../../families/bitcoin/wallet-btc";
-import BitcoinLikeStorage from "../../../../families/bitcoin/wallet-btc/storage";
-import BitcoinLikeExplorer from "../../../../families/bitcoin/wallet-btc/explorer";
-import Xpub from "../../../../families/bitcoin/wallet-btc/xpub";
+import { DerivationModes } from "../";
+import BitcoinLikeStorage from "../storage";
+import BitcoinLikeExplorer from "../explorer";
+import Xpub from "../xpub";
 import coininfo from "coininfo";
-import BCHCrypto from "../../../../families/bitcoin/wallet-btc/crypto/bitcoincash";
-import BTCCrypto from "../../../../families/bitcoin/wallet-btc/crypto/bitcoin";
-import ZECCrypto from "../../../../families/bitcoin/wallet-btc/crypto/zec";
-import ZENCrypto from "../../../../families/bitcoin/wallet-btc/crypto/zen";
+import BCHCrypto from "../crypto/bitcoincash";
+import BTCCrypto from "../crypto/bitcoin";
+import ZECCrypto from "../crypto/zec";
+import ZENCrypto from "../crypto/zen";
 
 describe("Unit tests for getAddress", () => {
   it("Test getAddress for bch and btc", async () => {

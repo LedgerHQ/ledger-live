@@ -3,17 +3,14 @@ import * as bip39 from "bip39";
 import * as bitcoin from "bitcoinjs-lib";
 import coininfo from "coininfo";
 import BigNumber from "bignumber.js";
-import {
-  DerivationModes,
-  OutputInfo,
-} from "../../../../families/bitcoin/wallet-btc/types";
-import Xpub from "../../../../families/bitcoin/wallet-btc/xpub";
-import BitcoinLikeExplorer from "../../../../families/bitcoin/wallet-btc/explorer";
-import Crypto from "../../../../families/bitcoin/wallet-btc/crypto/bitcoin";
-import BitcoinLikeStorage from "../../../../families/bitcoin/wallet-btc/storage";
-import { Merge } from "../../../../families/bitcoin/wallet-btc/pickingstrategies/Merge";
-import { DeepFirst } from "../../../../families/bitcoin/wallet-btc/pickingstrategies/DeepFirst";
-import { CoinSelect } from "../../../../families/bitcoin/wallet-btc/pickingstrategies/CoinSelect";
+import { DerivationModes, OutputInfo } from "../types";
+import Xpub from "../xpub";
+import BitcoinLikeExplorer from "../explorer";
+import Crypto from "../crypto/bitcoin";
+import BitcoinLikeStorage from "../storage";
+import { Merge } from "../pickingstrategies/Merge";
+import { DeepFirst } from "../pickingstrategies/DeepFirst";
+import { CoinSelect } from "../pickingstrategies/CoinSelect";
 
 describe("testing xpub legacy transactions", () => {
   const network = coininfo.bitcoin.test.toBitcoinJS();
