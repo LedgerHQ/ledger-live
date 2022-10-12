@@ -108,21 +108,13 @@ export function Row({
       key: "MODAL_NEAR_UNSTAKE",
       label: <Trans i18nKey="near.stake.unstake" />,
       disabled: !unstakingEnabled,
-      tooltip: !unstakingEnabled ? (
-        <Trans i18nKey="near.unstake.disabledTooltip">
-          <b></b>
-        </Trans>
-      ) : null,
+      tooltip: !unstakingEnabled ? <Trans i18nKey="near.unstake.disabledTooltip" /> : null,
     },
     {
       key: "MODAL_NEAR_WITHDRAW",
       label: <Trans i18nKey="near.stake.withdraw" />,
       disabled: !withdawingEnabled,
-      tooltip: !withdawingEnabled ? (
-        <Trans i18nKey="near.withdraw.disabledTooltip">
-          <b></b>
-        </Trans>
-      ) : null,
+      tooltip: !withdawingEnabled ? <Trans i18nKey="near.withdraw.disabledTooltip" /> : null,
     },
   ];
 
