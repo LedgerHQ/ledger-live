@@ -70,7 +70,7 @@ const CustomImage: React.FC<Props> = props => {
 
   useEffect(() => {
     let dead = false;
-    if (initialUri) {
+    if (initialUri && step === Step.chooseImage) {
       setSourceLoading(true);
       urlContentToDataUri(initialUri)
         .then(res => {
@@ -87,7 +87,7 @@ const CustomImage: React.FC<Props> = props => {
     return () => {
       dead = true;
     };
-  }, [setLoadedImage, initialUri, setStepWrapper]);
+  }, [setLoadedImage, initialUri, setStepWrapper, step]);
 
   useEffect(() => {
     if (loadedImage) setSourceLoading(false);
