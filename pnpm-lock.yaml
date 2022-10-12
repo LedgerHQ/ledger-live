@@ -78,7 +78,7 @@ importers:
       qrloop: ^1.2.0
       react: ^17.0.2
       react-dom: ^17.0.2
-      react-redux: ^7.2.6
+      react-redux: 7.2.6
       rxjs: ^6.6.7
       ts-node: ^10.4.0
       typescript: ^4.5.5
@@ -110,7 +110,7 @@ importers:
       qrloop: 1.2.0
       react: 17.0.2
       react-dom: 17.0.2_react@17.0.2
-      react-redux: 7.2.8_react@17.0.2
+      react-redux: 7.2.6_react@17.0.2
       rxjs: 6.6.7
       winston: 3.7.2
       ws: 8.6.0
@@ -267,7 +267,7 @@ importers:
       react-markdown: ^4.3.0
       react-motion: ^0.5.2
       react-prismazoom: ^3.0.0
-      react-redux: ^7.2.6
+      react-redux: 7.2.6
       react-refresh: ^0.11.0
       react-router: ^5.2.0
       react-router-dom: ^5.2.0
@@ -373,7 +373,7 @@ importers:
       react-markdown: 4.3.1_react@17.0.2
       react-motion: 0.5.2_react@17.0.2
       react-prismazoom: 3.0.3_oxfzelaz5ynxsop2v2nu2h2m64
-      react-redux: 7.2.8_hx2b44akkvgcgvvtmk7ds2qk6q
+      react-redux: 7.2.6_hx2b44akkvgcgvvtmk7ds2qk6q
       react-router: 5.3.1_react@17.0.2
       react-router-dom: 5.3.1_react@17.0.2
       react-select: 3.2.0_sfoxds7t5ydpegc3knd667wn6m
@@ -22666,7 +22666,7 @@ packages:
       babel-plugin-syntax-jsx: 6.18.0
       lodash: 4.17.21
       picomatch: 2.3.1
-      styled-components: 5.3.5_ovpqj5wn7dv5iunpkty63trwiy
+      styled-components: 5.3.5_fane7jikarojcev26y27hpbhu4
 
   /babel-plugin-syntax-jsx/6.18.0:
     resolution: {integrity: sha1-CvMqmm4Tyno/1QaeYtew9Y0NiUY=}
@@ -24081,7 +24081,7 @@ packages:
       mkdirp: 0.5.6
       move-concurrently: 1.0.1
       p-map: 3.0.0
-      promise-inflight: 1.0.1
+      promise-inflight: 1.0.1_bluebird@3.7.2
       rimraf: 2.7.1
       ssri: 7.1.1
       unique-filename: 1.1.1
@@ -27202,7 +27202,7 @@ packages:
   /dom-helpers/5.2.1:
     resolution: {integrity: sha512-nRCa7CK3VTrM2NmGkIy4cbK7IZlgBE/PYMn55rrXefr5xXDP0LdtfPnblFDoVdcAfslJ7or6iqAUnx0CCGIWQA==}
     dependencies:
-      '@babel/runtime': 7.17.9
+      '@babel/runtime': 7.18.9
       csstype: 3.0.11
 
   /dom-serializer/0.2.2:
@@ -28716,7 +28716,7 @@ packages:
     dependencies:
       confusing-browser-globals: 1.0.11
       eslint: 7.32.0
-      eslint-plugin-import: 2.26.0_mc3t5k37xyrramrvyar3hwanmy
+      eslint-plugin-import: 2.26.0_ffi3uiz42rv3jyhs6cr7p7qqry
       object.assign: 4.1.2
       object.entries: 1.1.5
     dev: true
@@ -28733,7 +28733,7 @@ packages:
     dependencies:
       eslint: 7.32.0
       eslint-config-airbnb-base: 14.2.1_hpmu7kn6tcn2vnxpfzvv33bxmy
-      eslint-plugin-import: 2.26.0_mc3t5k37xyrramrvyar3hwanmy
+      eslint-plugin-import: 2.26.0_ffi3uiz42rv3jyhs6cr7p7qqry
       eslint-plugin-jsx-a11y: 6.5.1_eslint@7.32.0
       eslint-plugin-react: 7.29.4_eslint@7.32.0
       eslint-plugin-react-hooks: 4.5.0_eslint@7.32.0
@@ -36709,7 +36709,7 @@ packages:
       jest-resolve:
         optional: true
     dependencies:
-      jest-resolve: 28.1.3_metro@0.67.0
+      jest-resolve: 28.1.3
     dev: true
 
   /jest-regex-util/24.9.0:
@@ -37917,7 +37917,7 @@ packages:
     dev: true
 
   /js-tokens/3.0.2:
-    resolution: {integrity: sha1-mGbfOVECEw449/mWvOtlRDIJwls=}
+    resolution: {integrity: sha512-RjTcuD4xjtthQkaWH7dFlH85L+QaVtSoOyGdZ3g6HFhS9dFNDfLyqgm2NFe2X6cQpeFmt0452FJjFG5UameExg==}
 
   /js-tokens/4.0.0:
     resolution: {integrity: sha512-RdJUflcE3cUzKiMqQgsCu06FPu9UdIJO0beYbPhHN4k6apgJtifcoCtT9bcxOpYBtpD2kCM6Sbzg4CausW/PKQ==}
@@ -45016,6 +45016,7 @@ packages:
     peerDependenciesMeta:
       bluebird:
         optional: true
+    dev: true
 
   /promise-inflight/1.0.1_bluebird@3.7.2:
     resolution: {integrity: sha512-6zWPyEOFaQBJYcGMHBKTKJ3u6TBsnMFOIZSa6ce1e/ZrrsOlnHRHbabMjLiBYKp+n44X9eUI6VUPaukCXHuG4g==}
@@ -46811,29 +46812,12 @@ packages:
     transitivePeerDependencies:
       - '@types/react'
 
-  /react-redux/7.2.8_hx2b44akkvgcgvvtmk7ds2qk6q:
-    resolution: {integrity: sha512-6+uDjhs3PSIclqoCk0kd6iX74gzrGc3W5zcAjbrFgEdIjRSQObdIwfx80unTkVUYvbQ95Y8Av3OvFHq1w5EOUw==}
+  /react-redux/7.2.6_react@17.0.2:
+    resolution: {integrity: sha512-10RPdsz0UUrRL1NZE0ejTkucnclYSgXp5q+tB5SWx2qeG2ZJQJyymgAhwKy73yiL/13btfB6fPr+rgbMAaZIAQ==}
     peerDependencies:
-      react: ^16.8.3 || ^17 || ^18
+      react: ^16.8.3 || ^17
     dependencies:
-      '@babel/runtime': 7.17.9
-      '@types/react-redux': 7.1.24_@types+react@17.0.45
-      hoist-non-react-statics: 3.3.2
-      loose-envify: 1.4.0
-      prop-types: 15.8.1
-      react: 17.0.2
-      react-is: 17.0.2
-      react-native: 0.68.2_qiqqwmyv63yhnuboofexv3s7x4
-    transitivePeerDependencies:
-      - '@types/react'
-    dev: false
-
-  /react-redux/7.2.8_react@17.0.2:
-    resolution: {integrity: sha512-6+uDjhs3PSIclqoCk0kd6iX74gzrGc3W5zcAjbrFgEdIjRSQObdIwfx80unTkVUYvbQ95Y8Av3OvFHq1w5EOUw==}
-    peerDependencies:
-      react: ^16.8.3 || ^17 || ^18
-    dependencies:
-      '@babel/runtime': 7.17.9
+      '@babel/runtime': 7.18.9
       '@types/react-redux': 7.1.24
       hoist-non-react-statics: 3.3.2
       loose-envify: 1.4.0
@@ -50240,6 +50224,7 @@ packages:
       react-is: 17.0.2
       shallowequal: 1.1.0
       supports-color: 5.5.0
+    dev: false
 
   /styled-system/5.1.5:
     resolution: {integrity: sha512-7VoD0o2R3RKzOzPK0jYrVnS8iJdfkKsQJNiLRDjikOpQVqQHns/DXWaPZOH4tIKkhAT7I6wIsy9FWTWh2X3q+A==}
