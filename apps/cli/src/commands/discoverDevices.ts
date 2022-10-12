@@ -1,5 +1,6 @@
 import { map, tap, scan as rxScan } from "rxjs/operators";
 import { discoverDevices } from "@ledgerhq/live-common/hw/index";
+
 export default {
   args: [
     {
@@ -67,4 +68,4 @@ export default {
         )
       );
   },
-};
+} as any;
