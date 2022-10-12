@@ -2,7 +2,7 @@ import { EMPTY, merge } from "rxjs";
 import type { Observable } from "rxjs";
 import { catchError } from "rxjs/operators";
 import Transport from "@ledgerhq/hw-transport";
-import { DeviceModel } from "@ledgerhq/devices";
+import { DeviceModel } from "@ledgerhq/types-devices";
 
 type Discovery = Observable<{
   type: "add" | "remove";
