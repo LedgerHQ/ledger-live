@@ -24,7 +24,6 @@ import { updateAccountWithUpdater } from "~/renderer/actions/accounts";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
 import { closeModal, openModal } from "~/renderer/actions/modals";
 import StepAmount, { StepAmountFooter } from "./steps/StepAmount";
-import { FIGMENT_NEAR_VALIDATOR_ADDRESS } from "@ledgerhq/live-common/families/near/logic";
 
 import Stepper from "~/renderer/components/Stepper";
 import StepStake, { StepStakeFooter } from "./steps/StepStake";
