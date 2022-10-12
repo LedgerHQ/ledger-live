@@ -3,6 +3,7 @@ on:
   push:
     branches:
       - feat/cardano
+      - support/LIVE-4185-update-cardano-hw-app
 
 concurrency:
   group: bot-seed3-cardano
