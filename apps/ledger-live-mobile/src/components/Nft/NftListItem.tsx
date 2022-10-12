@@ -66,7 +66,7 @@ const NftCardView = ({
         status={status}
       />
       <Box height={36} mb={4}>
-        <Skeleton style={styles.skeleton} loading={loading}>
+        <Skeleton loading={loading} height={8} width={115} borderRadius={4}>
           <Flex flexDirection="column">
             <Flex flexDirection={"row"}>
               <Text
@@ -128,11 +128,6 @@ const NftListItem = ({ nft }: Props) => {
 };
 
 const styles = StyleSheet.create({
-  skeleton: {
-    height: 8,
-    width: 115,
-    borderRadius: 4,
-  },
   image: {
     position: "absolute",
     borderRadius: 4,
