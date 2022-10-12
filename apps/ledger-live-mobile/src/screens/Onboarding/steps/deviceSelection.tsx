@@ -1,8 +1,9 @@
 import React, { useMemo } from "react";
 import { useTranslation } from "react-i18next";
+import { useTheme } from "styled-components/native";
 import { useNavigation } from "@react-navigation/native";
+import { Text, ScrollListContainer, Flex } from "@ledgerhq/native-ui";
 import { getDeviceModel } from "@ledgerhq/devices/index";
-import { Text, ScrollListContainer } from "@ledgerhq/native-ui";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 
@@ -12,8 +13,6 @@ import nanoSPSvg from "../assets/nanoSP";
 import nanoXSvg from "../assets/nanoX";
 import { ScreenName, NavigatorName } from "../../../const";
 import DiscoverCard from "../../Discover/DiscoverCard";
-import Illustration from "../../../images/illustration/Illustration";
-import setupLedgerImg from "../../../images/illustration/Shared/_SetupLedger.png";
 import DeviceSetupView from "../../../components/DeviceSetupView";
 
 const nanoX = {
@@ -40,6 +39,7 @@ const nanoFTS = {
 function OnboardingStepDeviceSelection() {
   const navigation = useNavigation();
   const { t } = useTranslation();
+  const { colors } = useTheme();
   const syncOnboarding = useFeature("syncOnboarding");
 
   const devices = useMemo(() => {
@@ -115,17 +115,16 @@ function OnboardingStepDeviceSelection() {
             titleProps={{ variant: "h4", fontSize: 16 }}
             subTitle={t("syncOnboarding.deviceSelection.brand")}
             subtitleFirst
+            subTitleProps={{ mb: 0 }}
             onPress={() => next(device.id)}
             labelBadge={t("syncOnboarding.deviceSelection.setupTime", {
               time: device.setupTime / 60000,
             })}
             cardProps={{ mx: 0, mb: 6 }}
             Image={
-              <Illustration
-                size={130}
-                darkSource={setupLedgerImg}
-                lightSource={setupLedgerImg}
-              />
+              <Flex mr={12} mt={4} flex={1}>
+                <device.SvgDevice fill={colors.neutral.c100} width={40} />
+              </Flex>
             }
           />
         ))}
