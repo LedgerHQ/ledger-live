@@ -19,6 +19,7 @@ import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { useRemoteLiveAppManifest } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
 import WebPlatformPlayer from "~/renderer/components/WebPlatformPlayer";
 import useTheme from "~/renderer/hooks/useTheme";
+import { getEnv } from "@ledgerhq/live-common/env";
 
 const Container: ThemedComponent<{ selectable: boolean, pb: number }> = styled(Box)`
   flex: 1;
@@ -58,7 +59,13 @@ const DEFAULT_MULTIBUY_APP_ID = "multibuy";
 const LiveAppExchange = ({ appId }: { appId: string }) => {
   const { state: urlParams } = useLocation();
 
-  const manifest = useRemoteLiveAppManifest(appId);
+  let manifest = useRemoteLiveAppManifest(appId);
+
+  const buySellTestUrl = getEnv("BUY_SELL_TEST_URL");
+
+  if (buySellTestUrl) {
+    manifest = { ...manifest, url: buySellTestUrl };
+  }
 
   const themeType = useTheme("colors.palette.type");
 

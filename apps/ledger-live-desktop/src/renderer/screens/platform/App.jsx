@@ -2,6 +2,7 @@
 import React, { useCallback, useMemo } from "react";
 import { useHistory, useLocation } from "react-router-dom";
 import useTheme from "~/renderer/hooks/useTheme";
+import { getEnv } from "@ledgerhq/live-common/env";
 
 import { Card } from "~/renderer/components/Box";
 import WebPlatformPlayer from "~/renderer/components/WebPlatformPlayer";
@@ -28,7 +29,13 @@ export default function PlatformApp({ match, appId: propsAppId }: Props) {
   const appId = propsAppId || match.params?.appId;
 
   const localManifest = useLocalLiveAppManifest(appId);
-  const remoteManifest = useRemoteLiveAppManifest(appId);
+  let remoteManifest = useRemoteLiveAppManifest(appId);
+
+  const buySellTestUrl = getEnv("BUY_SELL_TEST_URL");
+
+  if (buySellTestUrl) {
+    remoteManifest = { ...remoteManifest, url: buySellTestUrl };
+  }
 
   const manifest = localManifest || remoteManifest;
 
