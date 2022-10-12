@@ -1,5 +1,25 @@
 # live-mobile
 
+## 3.9.2
+
+### Patch Changes
+
+- [#1518](https://github.com/LedgerHQ/ledger-live/pull/1518) [`f255b258a9`](https://github.com/LedgerHQ/ledger-live/commit/f255b258a9c79c5eb89ec65d6647e52b90a9c52c) Thanks [@desirendr](https://github.com/desirendr)! - LLM - Add discover card for referral program
+
+- Updated dependencies [[`f255b258a9`](https://github.com/LedgerHQ/ledger-live/commit/f255b258a9c79c5eb89ec65d6647e52b90a9c52c)]:
+  - @ledgerhq/types-live@6.24.3
+  - @ledgerhq/live-common@27.3.2
+
+## 3.9.2-hotfix.0
+
+### Patch Changes
+
+- [#1518](https://github.com/LedgerHQ/ledger-live/pull/1518) [`f255b258a9`](https://github.com/LedgerHQ/ledger-live/commit/f255b258a9c79c5eb89ec65d6647e52b90a9c52c) Thanks [@desirendr](https://github.com/desirendr)! - LLM - Add discover card for referral program
+
+- Updated dependencies [[`f255b258a9`](https://github.com/LedgerHQ/ledger-live/commit/f255b258a9c79c5eb89ec65d6647e52b90a9c52c)]:
+  - @ledgerhq/types-live@6.24.3-hotfix.0
+  - @ledgerhq/live-common@27.3.2
+
 ## 3.9.1
 
 ### Patch Changes
