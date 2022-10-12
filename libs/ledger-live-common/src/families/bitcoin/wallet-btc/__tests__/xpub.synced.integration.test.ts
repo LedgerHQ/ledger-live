@@ -4,11 +4,11 @@
 // @ts-ignore
 import coininfo from "coininfo";
 import { zipObject } from "lodash";
-import { DerivationModes } from "../../../../families/bitcoin/wallet-btc/types";
-import BitcoinLikeStorage from "../../../../families/bitcoin/wallet-btc/storage";
-import BitcoinLikeExplorer from "../../../../families/bitcoin/wallet-btc/explorer";
-import Crypto from "../../../../families/bitcoin/wallet-btc/crypto/bitcoincash";
-import Xpub from "../../../../families/bitcoin/wallet-btc/xpub";
+import { DerivationModes } from "../types";
+import BitcoinLikeStorage from "../storage";
+import BitcoinLikeExplorer from "../explorer";
+import Crypto from "../crypto/bitcoincash";
+import Xpub from "../xpub";
 
 describe("synced xpub utilites functions", () => {
   const explorer = new BitcoinLikeExplorer({

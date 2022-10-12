@@ -4,29 +4,28 @@ import * as bitcoin from "bitcoinjs-lib";
 import coininfo from "coininfo";
 import axios from "axios";
 import BigNumber from "bignumber.js";
-import { DerivationModes } from "../../../../families/bitcoin/wallet-btc/types";
-import Xpub from "../../../../families/bitcoin/wallet-btc/xpub";
-import Litecoin from "../../../../families/bitcoin/wallet-btc/crypto/litecoin";
-import BitcoinLikeExplorer from "../../../../families/bitcoin/wallet-btc/explorer";
-import BitcoinLikeStorage from "../../../../families/bitcoin/wallet-btc/storage";
-import { Merge } from "../../../../families/bitcoin/wallet-btc/pickingstrategies/Merge";
+import { DerivationModes } from "../types";
+import Xpub from "../xpub";
+import Crypto from "../crypto/bitcoin";
+import BitcoinLikeExplorer from "../explorer";
+import BitcoinLikeStorage from "../storage";
+import { Merge } from "../pickingstrategies/Merge";
+import * as utils from "../utils";
 
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
-/*
-In order to launch this litecoin test locally
-TICKER=ltc TAG=latest LOG_LEVEL=debug docker-compose -f ./environments/explorer-praline-btc.yml up -d
-*/
 // FIXME Skipped because Praline required on CI
-describe.skip("testing xpub legacy litecoin transactions", () => {
+describe.skip("testing xpub segwit transactions", () => {
+  const network = coininfo.bitcoin.regtest.toBitcoinJS();
+
   const explorer = new BitcoinLikeExplorer({
     explorerURI: "http://localhost:20000/blockchain/v3",
     explorerVersion: "v3",
     disableBatchSize: true, // https://ledgerhq.atlassian.net/browse/BACK-2191
   });
-
-  const network = coininfo.litecoin.test.toBitcoinJS();
-  const crypto = new Litecoin({ network });
+  const crypto = new Crypto({
+    network,
+  });
 
   const xpubs = [1, 2, 3].map((i) => {
     const storage = new BitcoinLikeStorage();
@@ -42,7 +41,7 @@ describe.skip("testing xpub legacy litecoin transactions", () => {
       explorer,
       crypto,
       xpub: node.neutered().toBase58(),
-      derivationMode: DerivationModes.LEGACY,
+      derivationMode: DerivationModes.SEGWIT,
     });
 
     return {
@@ -82,14 +81,15 @@ describe.skip("testing xpub legacy litecoin transactions", () => {
   });
 
   let expectedFee1: number;
-  it("should send a 1 litecoin tx to xpubs[1].xpub", async () => {
+  it("should send a 1 btc tx to xpubs[1].xpub", async () => {
     const { address } = await xpubs[1].xpub.getNewAddress(0, 0);
     const changeAddress = await xpubs[0].xpub.getNewAddress(1, 0);
+
     const psbt = new bitcoin.Psbt({ network });
 
     const utxoPickingStrategy = new Merge(
       xpubs[0].xpub.crypto,
-      xpubs[0].xpub.derivationMode,
+      DerivationModes.SEGWIT,
       []
     );
 
@@ -103,14 +103,37 @@ describe.skip("testing xpub legacy litecoin transactions", () => {
         sequence: 0,
       });
 
-    inputs.forEach((input) => {
-      const nonWitnessUtxo = Buffer.from(input.txHex, "hex");
+    inputs.forEach((input, i) => {
       const tx = bitcoin.Transaction.fromHex(input.txHex);
+      const keyPair = xpubs[0].signer(
+        associatedDerivations[i][0],
+        associatedDerivations[i][1]
+      );
+      const p2wpkh = bitcoin.payments.p2wpkh({
+        pubkey: keyPair.publicKey,
+        network,
+      });
+      const p2sh = bitcoin.payments.p2sh({ redeem: p2wpkh, network });
+      const redeemScript = p2sh.redeem?.output?.toString("hex");
+      const publickeyHash = bitcoin.crypto
+        .ripemd160(bitcoin.crypto.sha256(keyPair.publicKey))
+        .toString("hex");
 
       psbt.addInput({
         hash: tx.getId(),
         index: input.output_index,
-        nonWitnessUtxo,
+        witnessUtxo: {
+          script: Buffer.from(
+            `a914${bitcoin.crypto
+              .hash160(Buffer.from(`0014${publickeyHash}`, "hex"))
+              .toString("hex")}87`,
+            "hex"
+          ),
+          value: Number(input.value),
+        },
+        redeemScript: redeemScript
+          ? Buffer.from(redeemScript, "hex")
+          : undefined,
       });
     });
     outputs.forEach((output) => {
@@ -132,7 +155,6 @@ describe.skip("testing xpub legacy litecoin transactions", () => {
     });
     psbt.finalizeAllInputs();
     const rawTxHex = psbt.extractTransaction().toHex();
-    //
 
     try {
       await xpubs[0].xpub.broadcastTx(rawTxHex);
@@ -140,10 +162,7 @@ describe.skip("testing xpub legacy litecoin transactions", () => {
       // eslint-disable-next-line no-console
       console.log("broadcast error", e);
     }
-
-    // time for explorer to sync
-    await sleep(40000);
-
+    await sleep(10000);
     try {
       const { address: mineAddress } = await xpubs[2].xpub.getNewAddress(0, 0);
       await axios.post(`http://localhost:28443/chain/mine/${mineAddress}/1`);
@@ -151,18 +170,26 @@ describe.skip("testing xpub legacy litecoin transactions", () => {
       // eslint-disable-next-line no-console
       console.log("praline error");
     }
+
+    // time for explorer to sync
     await sleep(40000);
+
     await xpubs[0].xpub.sync();
     await xpubs[1].xpub.sync();
 
     expectedFee1 =
-      10 * 100 + inputs.length * 100 * 180 + outputs.length * 34 * 100;
-
+      utils.maxTxSizeCeil(
+        inputs.length,
+        outputs.map((o) => o.address),
+        false,
+        crypto,
+        DerivationModes.SEGWIT
+      ) * 100;
     expect((await xpubs[0].xpub.getXpubBalance()).toNumber()).toEqual(
       5700000000 - 100000000 - expectedFee1
     );
     expect((await xpubs[1].xpub.getXpubBalance()).toNumber()).toEqual(
       100000000
     );
-  }, 100000);
+  }, 180000);
 });
