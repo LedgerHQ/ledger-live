@@ -17,10 +17,6 @@
 
 Ledger Live desktop is an hybrid application built using Electron, React, Redux, RxJS. It is compatible with macOS 10.10+, Windows 8+ (x64) and Linux (x64). It communicates with Ledger hardware wallet devices (Nano X / Nano S / Nano S Plus) to verify addresses and sign transactions with [ledgerjs](https://github.com/LedgerHQ/ledger-live/tree/develop/libs/ledgerjs). Some logic is shared with [live-common](https://github.com/LedgerHQ/ledger-live/tree/develop/libs/ledger-live-common).
 
-<p align="center">
- <img src="./docs/architecture.png" width="550"/>
-</p>
-
 ## Download
 
 The latest stable release is available on [ledger.com/ledger-live](https://www.ledger.com/ledger-live/).

@@ -13,8 +13,6 @@
 Ledger Live mobile is a native mobile application built using React Native, React, Redux, RxJS. It is compatible with iOS and Android.
 It communicates with the [Ledger Nano X](https://www.ledger.com/pages/ledger-nano-x) via Bluetooth (or USB for using the Ledger Nano S or S Plus on Android) to manage installed applications, update the device firmware, verify public addresses and sign transactions with [ledgerjs](https://github.com/LedgerHQ/ledger-live/tree/develop/libs/ledgerjs). We also share some logic in [live-common](https://github.com/LedgerHQ/ledger-live/tree/develop/libs/ledger-live-common).
 
-![](https://user-images.githubusercontent.com/211411/51758555-43865000-20c6-11e9-8ac9-06787ebb49eb.png)
-
 # Developing on ledger-live-mobile
 
 ## Pre-requisites
