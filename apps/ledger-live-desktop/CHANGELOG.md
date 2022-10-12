@@ -1,5 +1,11 @@
 # ledger-live-desktop
 
+## 2.49.0-next.4
+
+### Minor Changes
+
+- [#1550](https://github.com/LedgerHQ/ledger-live/pull/1550) [`80a16f35bb`](https://github.com/LedgerHQ/ledger-live/commit/80a16f35bb7aef3991cd0989e71a0b854fa8bdee) Thanks [@sarneijim](https://github.com/sarneijim)! - Fix transparent swap bug
+
 ## 2.49.0-next.3
 
 ### Patch Changes
