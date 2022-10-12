@@ -10,6 +10,7 @@ import {
   NearStakingPosition,
   NearRawValidator,
   NearAccountDetails,
+  NearContract,
 } from "./sdk.types";
 import { getCurrentNearPreloadData } from "../preload";
 import {
@@ -195,27 +196,20 @@ export const getStakingPositions = async (
           "get_account_total_balance",
         ],
         changeMethods: [],
-      });
+      }) as NearContract;
 
-      // Methods are dynamically added
-      /* eslint-disable @typescript-eslint/ban-ts-comment */
-      // @ts-ignore
       const rawStaked = await contract.get_account_staked_balance({
         account_id: address,
       });
-      // @ts-ignore
       const rawUnstaked = await contract.get_account_unstaked_balance({
         account_id: address,
       });
-      // @ts-ignore
       const isAvailable = await contract.is_account_unstaked_balance_available({
         account_id: address,
       });
-      // @ts-ignore
       const rawTotal = await contract.get_account_total_balance({
         account_id: address,
       });
-      /* eslint-enable */
 
       const unstaked = new BigNumber(rawUnstaked);
 

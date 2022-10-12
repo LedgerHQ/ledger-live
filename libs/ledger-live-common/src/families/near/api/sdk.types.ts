@@ -1,3 +1,5 @@
+import * as nearAPI from "near-api-js";
+
 import type { BigNumber } from "bignumber.js";
 
 export type NearAccountDetails = {
@@ -74,4 +76,13 @@ export type NearStakingPosition = {
 export type NearRawValidator = {
   account_id: string;
   stake: string;
+};
+
+export type NearContractMethod = (params: { account_id: string }) => string;
+
+export type NearContract = nearAPI.Contract & {
+  get_account_staked_balance: NearContractMethod;
+  get_account_unstaked_balance: NearContractMethod;
+  is_account_unstaked_balance_available: NearContractMethod;
+  get_account_total_balance: NearContractMethod;
 };
