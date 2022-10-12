@@ -61,7 +61,10 @@ export const getDependencies = (appName: string): string[] =>
   directDep[appName] || [];
 export const getDependents = (appName: string): string[] =>
   reverseDep[appName] || [];
-export const polyfillApplication = (app: Application): Application => {
+export const polyfillApplication = (
+  app: Application,
+  provider: number
+): Application => {
   const crypto = listCryptoCurrencies(true, true).find(
     (crypto) =>
       app.name.toLowerCase() === crypto.managerAppName.toLowerCase() &&
@@ -71,7 +74,7 @@ export const polyfillApplication = (app: Application): Application => {
   );
   if (app.name === "Bitcoin Legacy") {
     app.application_versions.forEach((version) => {
-      if (version.providers.includes(1)) {
+      if (version.providers.includes(provider)) {
         newBitcoinApp = true;
       }
     });
