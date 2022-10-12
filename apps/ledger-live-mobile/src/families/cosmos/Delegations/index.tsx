@@ -99,9 +99,6 @@ function Delegations({ account }: Props) {
         mode: "redelegate",
         validators: [],
         sourceValidator: validatorSrcAddress,
-
-        /** @TODO remove this once the bridge handles it */
-        recipient: mainAccount.freshAddress,
       }),
     };
   });
