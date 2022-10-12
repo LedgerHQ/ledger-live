@@ -14,7 +14,7 @@ import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { Flex, Text } from "@ledgerhq/native-ui";
 
 import { ScreenName } from "../../const";
-import { ManagerTab } from "./Manager";
+import { ManagerTab } from "../../const/manager";
 import SelectDevice2 from "../../components/SelectDevice2";
 import SelectDevice from "../../components/SelectDevice";
 import RemoveDeviceMenu from "../../components/SelectDevice2/RemoveDeviceMenu";
@@ -23,7 +23,7 @@ import { track } from "../../analytics";
 import type { DeviceLike } from "../../reducers/ble";
 import NavigationScrollView from "../../components/NavigationScrollView";
 import DeviceActionModal from "../../components/DeviceActionModal";
-import { BaseNavigatorProps } from "../../components/RootNavigator/BaseNavigatorTypes";
+import type { BaseNavigatorProps } from "../../components/RootNavigator/BaseNavigator";
 
 const action = createAction(connectManager);
 

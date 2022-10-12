@@ -13,7 +13,7 @@ import { NavigatorName, ScreenName } from "../../const";
 import { knownDevicesSelector } from "../../reducers/ble";
 import Touchable from "../Touchable";
 import Item from "./Item";
-import { BaseNavigatorProps } from "../RootNavigator/BaseNavigatorTypes";
+import type { BaseNavigatorProps } from "../RootNavigator/BaseNavigator";
 import { saveBleDeviceName } from "../../actions/ble";
 import { setHasConnectedDevice } from "../../actions/appstate";
 import {
