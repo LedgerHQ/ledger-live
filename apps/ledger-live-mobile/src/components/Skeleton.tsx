@@ -1,5 +1,5 @@
 import React, { memo, useRef, useEffect, useMemo, ReactElement } from "react";
-import { Animated } from "react-native";
+import { Animated, StyleProp, ViewStyle } from "react-native";
 import { useTheme } from "@react-navigation/native";
 import styled from "styled-components/native";
 import { BaseStyledProps } from "@ledgerhq/native-ui/components/styled";
@@ -7,7 +7,7 @@ import { BorderProps } from "styled-system";
 
 type Props = BaseStyledProps &
   BorderProps & {
-    style?: any;
+    style?: StyleProp<ViewStyle>;
     loading: boolean;
     children?: ReactElement;
     animated?: boolean;
