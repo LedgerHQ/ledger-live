@@ -70,7 +70,7 @@
     "updateAppSupportsQuitApp": "node scripts/updateAppSupportsQuitApp.js",
     "prettier": "prettier --write 'src/**/*.?s' 'cli/src/**/*.?s'",
     "lint": "eslint src",
-    "lint:fix": "pnpm lint --fix",
+    "lint:fix": "pnpm lint --fix --quiet",
     "jest": "cross-env TZ=America/New_York jest",
     "typecheck": "tsc --noEmit -p src/tsconfig.json",
     "ci-lint": "pnpm lint",
@@ -108,7 +108,7 @@
     "https": false
   },
   "dependencies": {
-    "@cardano-foundation/ledgerjs-hw-app-cardano": "^5.0.0",
+    "@cardano-foundation/ledgerjs-hw-app-cardano": "^5.1.0",
     "@celo/connect": "^1.5.2",
     "@celo/contractkit": "^1.5.2",
     "@celo/utils": "^1.5.2",
