@@ -4,8 +4,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { discoverDevices } from "@ledgerhq/live-common/hw/index";
 import { useNavigation } from "@react-navigation/native";
 import { Text, Flex, Icons, BottomDrawer } from "@ledgerhq/native-ui";
-import { Device } from "@ledgerhq/live-common/lib/hw/actions/types";
-import { useBleDevicesScanning } from "@ledgerhq/live-common/lib/ble/hooks/useBleDevicesScanning";
+import { Device } from "@ledgerhq/live-common/hw/actions/types";
+import { useBleDevicesScanning } from "@ledgerhq/live-common/ble/hooks/useBleDevicesScanning";
 
 import TransportBLE from "../../react-native-hw-transport-ble";
 import { track } from "../../analytics";
