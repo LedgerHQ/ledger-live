@@ -1,9 +1,9 @@
 import * as bech32 from "bech32";
-import { bech32m } from "../../../../families/bitcoin/bech32m";
-import * as utils from "../../../../families/bitcoin/wallet-btc/utils";
-import { Currency } from "../../../../families/bitcoin/wallet-btc/crypto/types";
-import cryptoFactory from "../../../../families/bitcoin/wallet-btc/crypto/factory";
-import { DerivationModes } from "../../../../families/bitcoin/wallet-btc";
+import { bech32m } from "../../bech32m";
+import * as utils from "../utils";
+import { Currency } from "../crypto/types";
+import cryptoFactory from "../crypto/factory";
+import { DerivationModes } from "../";
 
 function validateAddrs(
   addresses: string[],
