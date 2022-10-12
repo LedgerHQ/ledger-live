@@ -237,7 +237,7 @@
     "form" : {
       "changeCTA" : "Alterar",
       "rates" : {
-        "title" : "Provedores",
+        "title" : "Cotações",
         "registration" : "Cadastro necessário ",
         "noRegistration" : "Não é necessário ter cadastro",
         "fixed" : "Fixo",
@@ -246,7 +246,7 @@
         "loading" : "Carregando...",
         "name" : {
           "title" : "Provedor",
-          "tooltip" : "Dependendo do provedor, você precisa criar uma conta."
+          "tooltip" : "Dependendo do provedor, você precisa se cadastrar criando uma conta."
         },
         "rate" : {
           "title" : "Taxa de câmbio",
@@ -430,11 +430,13 @@
         }
       },
       "filter" : {
-        "all" : "Todos",
         "centralised" : "Centralizado",
-        "dedentralised" : "Descentralizado"
+        "decentralised" : "Descentralizado",
+        "float" : "Taxa Flutuante",
+        "fixed" : "Taxa Fixa"
       },
-      "noQuote" : "Taxa disponível no próximo passo"
+      "noQuote" : "Taxa disponível no próximo passo",
+      "noProviders" : "Nenhum resultado encontrado. Não há cotações disponíveis com as preferências atuais."
     },
     "ip" : {
       "title" : "Boas-vindas à Troca",
@@ -752,7 +754,7 @@
     "settings" : {
       "title" : "Editar Conta",
       "advancedLogs" : "Avançado",
-      "advancedTips" : "Seu xpub é um dado privado e confidencial. Use-o com cautela, especialmente ao revelá-lo a terceiros.",
+      "advancedTips" : "Esta é uma xpub {{tag}}. Ao importá-la para uma carteira de terceiros, escolha o mesmo modo de derivação.",
       "accountName" : {
         "title" : "Nome da conta",
         "desc" : "Descrição da conta"
@@ -1182,6 +1184,10 @@
     "blackfriday" : {
       "title" : "BLACK FRIDAY ",
       "description" : "Aproveite 40% de desconto nas carteiras hardware da Ledger com o código promocional BLACKFRIDAY20"
+    },
+    "referralProgram" : {
+      "title" : "Indique e ganhe US$ 10",
+      "description" : "Indique com sucesso um amigo para ambos ganharem US$ 10 em Bitcoin."
     }
   },
   "signmessage" : {
@@ -3373,7 +3379,7 @@
       "featureFlagsOverride" : "Sobrepor",
       "addLocalApp" : "Adicionar um aplicativo local",
       "addLocalAppDesc" : "Navegue por arquivos locais e adicione um aplicativo local usando um manifesto local",
-      "addLocalAppButton" : "Navegue",
+      "addLocalAppButton" : "Navegar",
       "runLocalAppDeleteButton" : "Excluir",
       "runLocalAppOpenButton" : "Abrir",
       "enableLearnStagingUrl" : "Staging URL da página Aprender",
@@ -3800,7 +3806,7 @@
               "descr" : "Conecte seu dispositivo ao computador usando o cabo USB."
             },
             "browse" : {
-              "title" : "Navegue",
+              "title" : "Navegar",
               "descr" : "Aprenda como interagir com seu dispositivo lendo as instruções na tela."
             },
             "select" : {
@@ -3828,7 +3834,7 @@
               "descr" : "Conecte seu dispositivo ao computador usando o cabo USB."
             },
             "browse" : {
-              "title" : "Navegue",
+              "title" : "Navegar",
               "descr" : "Aprenda como interagir com seu dispositivo lendo as instruções na tela."
             },
             "select" : {
@@ -4246,13 +4252,14 @@
       "4" : {
         "deviceSelection" : {
           "title" : "Qual é seu dispositivo?",
-          "desc" : "Se você tem uma Nano S, você pode tentar reparar o firmware do seu dispositivo. Para usuários da Nano X e Blue, contate o Suporte Ledger"
+          "desc" : "Se estiver tentando conectar uma Nano S, selecione o estado exibido em sua Nano. Se estiver tentando conectar uma Nano S Plus ou Nano X, <0>visite o Centro de Ajuda</0>"
         },
         "notFixed" : {
           "title" : " O problema de conexão USB ainda não foi corrigido?",
           "desc" : "Se você já tentou todas as soluções possíveis, contate o Suporte Ledger. Caso contrário, siga as instruções das soluções que você ainda não tentou.",
           "back" : "Voltar ao portfólio",
-          "cta" : "Contatar Suporte"
+          "cta" : "Contatar Suporte",
+          "cta2" : "Voltar"
         },
         "repair" : {
           "title" : "Repare sua Nano S",
@@ -4784,7 +4791,7 @@
     },
     "EthAppNftNotSupported" : {
       "title" : "Operação não disponível para este dispositivo",
-      "description" : "Send NFT feature is only available for Nano X and Nano S+. Please visit our customer support platform to know how to send a NFT with a Nano S."
+      "description" : "A função de enviar NFTs está disponível apenas para a Nano X e a Nano S+. Visite nossa plataforma de suporte ao cliente para saber como enviar um NFT com uma Nano S."
     },
     "CantScanQRCode" : {
       "title" : "Não foi possível escanear o QR Code: verificação automática não compatível com este endereço."
@@ -5042,6 +5049,9 @@
     },
     "StellarSourceHasMultiSign" : {
       "title" : "Desabilite a multiassinatura para fazer transações Stellar"
+    },
+    "HederaAddAccountError" : {
+      "title" : "Sua conta não foi adicionada. Tente Novamente."
     }
   },
   "cryptoOrg" : {
