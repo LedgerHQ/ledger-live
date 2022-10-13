@@ -33,7 +33,6 @@ export default function AddAccountsModalCard({
           size={130}
           darkSource={imageSource}
           lightSource={imageSource}
-          mirrorIfRTL
         />
       }
     />

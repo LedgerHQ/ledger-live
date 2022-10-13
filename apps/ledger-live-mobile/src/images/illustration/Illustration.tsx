@@ -13,7 +13,6 @@ const Illustration = ({
   size,
   width,
   height,
-  mirrorIfRTL = false,
   ...othersProps
 }: Omit<ImageProps, "source"> & {
   lightSource: ImageSourcePropType;
@@ -21,7 +20,6 @@ const Illustration = ({
   size?: number;
   width?: number;
   height?: number;
-  mirrorIfRTL?: boolean;
 }) => {
   const { theme } = useTheme();
 
@@ -33,8 +31,6 @@ const Illustration = ({
       style={{
         width: width || size,
         height: height || size,
-        transform:
-          mirrorIfRTL && I18nManager.isRTL ? [{ scaleX: -1 }] : undefined,
       }}
     />
   );

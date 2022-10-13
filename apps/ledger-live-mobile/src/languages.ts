@@ -23,7 +23,7 @@ export const languages = {
   sv: "Svenska",
   tr: "Türkçe",
   zh: "简体中文",
-  ar: "عربية",
+  ar: "العربية",
 };
 
 export const localeIds: Locale[] = Object.keys(allLocales) as Locale[];

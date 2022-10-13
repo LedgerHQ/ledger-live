@@ -62,7 +62,6 @@ const OnboardingStepUseCaseSelection = () => {
                       size={130}
                       darkSource={images.dark.syncCrypto}
                       lightSource={images.light.syncCrypto}
-                      mirrorIfRTL
                     />
                   ),
                   title: t("onboarding.stepUseCase.desktopSync.subTitle"),
@@ -84,7 +83,6 @@ const OnboardingStepUseCaseSelection = () => {
                       size={130}
                       darkSource={images.dark.setupNano}
                       lightSource={images.light.setupNano}
-                      mirrorIfRTL
                     />
                   ),
                   title: t("onboarding.stepUseCase.firstUse.subTitle"),

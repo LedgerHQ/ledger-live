@@ -23,6 +23,21 @@ const discoverLiveImg = require("../../../images/illustration/Shared/_DiscoverLi
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const syncCryptoImg = require("../../../images/illustration/Shared/_SyncFromDesktop.png");
 
+const images = {
+  light: {
+    setupLedgerImg: require("../../../images/illustration/Light/Device/XFolded.png"),
+    buyNanoImg: require("../../../images/illustration/Shared/_BuyNanoX.png"),
+    discoverLiveImg: require("../../../images/illustration/Light/_050.png"),
+    syncCryptoImg: require("../../../images/illustration/Light/_074.png"),
+  },
+  dark: {
+    setupLedgerImg: require("../../../images/illustration/Dark/Device/XFolded.png"),
+    buyNanoImg: require("../../../images/illustration/Shared/_BuyNanoX.png"),
+    discoverLiveImg: require("../../../images/illustration/Dark/_050.png"),
+    syncCryptoImg: require("../../../images/illustration/Dark/_074.png"),
+  },
+};
+
 type PostWelcomeDiscoverCardProps = {
   title: string;
   subTitle: string;
@@ -33,7 +48,10 @@ type PostWelcomeDiscoverCardProps = {
   // eslint-disable-next-line @typescript-eslint/ban-types
   onPress: Function;
   onValidate: () => void;
-  imageSource: ImageSourcePropType;
+  imageSource: {
+    light: ImageSourcePropType;
+    dark: ImageSourcePropType;
+  };
 };
 
 const PostWelcomeDiscoverCard = ({
@@ -76,12 +94,19 @@ const PostWelcomeDiscoverCard = ({
           backgroundColor: colors.primary.c10,
         }),
       }}
+      imageContainerProps={{
+        position: "relative",
+        height: "auto",
+        alignItems: "center",
+        justifyContent: "center",
+        flex: 1,
+        paddingRight: 4,
+      }}
       Image={
         <Illustration
-          size={130}
-          darkSource={imageSource}
-          lightSource={imageSource}
-          mirrorIfRTL
+          size={105}
+          darkSource={imageSource.dark}
+          lightSource={imageSource.light}
         />
       }
     />
@@ -132,6 +157,11 @@ function PostWelcomeSelection({
     [dispatch, setSelectedOption, userHasDevice],
   );
 
+  const getSourceImageObj = key => ({
+    light: images.light[key],
+    dark: images.dark[key],
+  });
+
   return (
     <Flex flex={1} bg="background.main">
       <TrackScreen
@@ -162,7 +192,7 @@ function PostWelcomeSelection({
             selectedOption={selectedOption}
             onPress={setSelectedOption}
             onValidate={setupLedger}
-            imageSource={setupLedgerImg}
+            imageSource={getSourceImageObj("setupLedgerImg")}
           />
         )}
         <PostWelcomeDiscoverCard
@@ -176,7 +206,7 @@ function PostWelcomeSelection({
           selectedOption={selectedOption}
           onPress={pressExplore}
           onValidate={exploreLedger}
-          imageSource={discoverLiveImg}
+          imageSource={getSourceImageObj("discoverLiveImg")}
         />
         {userHasDevice && (
           <PostWelcomeDiscoverCard
@@ -190,7 +220,7 @@ function PostWelcomeSelection({
             selectedOption={selectedOption}
             onPress={setSelectedOption}
             onValidate={syncCryptos}
-            imageSource={syncCryptoImg}
+            imageSource={getSourceImageObj("syncCryptoImg")}
           />
         )}
         {!userHasDevice && (
@@ -205,7 +235,7 @@ function PostWelcomeSelection({
             selectedOption={selectedOption}
             onPress={setSelectedOption}
             onValidate={buyLedger}
-            imageSource={buyNanoImg}
+            imageSource={getSourceImageObj("buyNanoImg")}
           />
         )}
         <TrackScreen category="Onboarding" name="SelectDevice" />
