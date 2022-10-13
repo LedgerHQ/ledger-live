@@ -29,7 +29,7 @@ const buildOptimisticOperation = (
       type = "UNSTAKE";
       break;
     case "withdraw":
-      type = "WITHDRAW";
+      type = "WITHDRAW_UNSTAKED";
       break;
     default:
       value = value.plus(fee);

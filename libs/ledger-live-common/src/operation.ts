@@ -178,6 +178,7 @@ export function getOperationAmountNumber(op: Operation): BigNumber {
     case "REWARD":
     case "REWARD_PAYOUT":
     case "SUPPLY":
+    case "WITHDRAW":
       return op.value;
 
     case "OUT":
@@ -209,7 +210,7 @@ export function getOperationAmountNumber(op: Operation): BigNumber {
     case "UNLOCK":
     case "STAKE":
     case "UNSTAKE":
-    case "WITHDRAW":
+    case "WITHDRAW_UNSTAKED":
       return op.fee.negated();
 
     default:
