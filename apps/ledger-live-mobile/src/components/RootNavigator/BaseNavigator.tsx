@@ -97,7 +97,6 @@ import {
 } from "../../screens/BleDevicePairingFlow/index";
 import { readOnlyModeEnabledSelector } from "../../reducers/settings";
 import { accountsSelector } from "../../reducers/accounts";
-import { BleDevicePairingDeeplinkRedirection } from "../../screens/BleDevicePairingFlow/BleDevicePairingDeeplinkRedirection";
 
 export type BaseNavigatorStackParamList = {
   BleDevicePairingFlow: BleDevicePairingFlowParams;
@@ -596,17 +595,7 @@ export default function BaseNavigator() {
         name={ScreenName.BleDevicePairingFlow as "BleDevicePairingFlow"}
         component={BleDevicePairingFlow}
         options={{
-          title: "",
           headerShown: false,
-        }}
-      />
-      <Stack.Screen
-        name={
-          ScreenName.BleDevicePairingDeeplinkRedirection as "BleDevicePairingDeeplinkRedirection"
-        }
-        component={BleDevicePairingDeeplinkRedirection}
-        options={{
-          title: "",
         }}
       />
       <Stack.Screen
