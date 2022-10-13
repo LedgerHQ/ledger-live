@@ -17,7 +17,7 @@ const ResyncOverlay = ({ isOpen, delay = 0, productName }: Props) => {
     null,
   );
 
-  const { radii } = useTheme();
+  const { radii, colors } = useTheme();
 
   useEffect(() => {
     if (isOpen) {
