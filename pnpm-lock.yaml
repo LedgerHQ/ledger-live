@@ -559,7 +559,7 @@ importers:
       '@ledgerhq/types-live': workspace:^
       '@polkadot/reactnative-identicon': 2.2.1
       '@polkadot/x-randomvalues': 9.1.1
-      '@react-native-async-storage/async-storage': ^1.15.17
+      '@react-native-async-storage/async-storage': ^1.17.4
       '@react-native-community/cli': ^7.0.1
       '@react-native-community/cli-platform-android': ^7.0.1
       '@react-native-community/cli-platform-ios': ^7.0.1
@@ -570,13 +570,14 @@ importers:
       '@react-native-firebase/messaging': ^14.11.1
       '@react-native-firebase/remote-config': ^14.11.1
       '@react-native-masked-view/masked-view': ^0.2.6
-      '@react-navigation/bottom-tabs': ^6.4.0
-      '@react-navigation/devtools': ^6.0.10
-      '@react-navigation/elements': ^1.3.6
-      '@react-navigation/material-top-tabs': ^6.2.4
-      '@react-navigation/native': ^6.0.13
-      '@react-navigation/stack': ^6.3.1
-      '@segment/analytics-react-native': ^1.5.0
+      '@react-navigation/bottom-tabs': ^6.0.9
+      '@react-navigation/devtools': ^6.0.9
+      '@react-navigation/elements': ^1.2.1
+      '@react-navigation/material-top-tabs': ^6.0.6
+      '@react-navigation/native': ^6.0.6
+      '@react-navigation/stack': ^6.0.11
+      '@segment/analytics-react-native': ^2.9.0
+      '@segment/sovran-react-native': ^0.4.4
       '@sentry/cli': ^2.5.2
       '@sentry/react-native': ^4.2.4
       '@types/color': ^3.0.3
@@ -756,13 +757,14 @@ importers:
       '@react-native-firebase/messaging': 14.11.1_kijl5j5a34ibxr2pv5igp3eaii
       '@react-native-firebase/remote-config': 14.11.1_kijl5j5a34ibxr2pv5igp3eaii
       '@react-native-masked-view/masked-view': 0.2.6_zqxy7fpkavjkgz5xll7ed4r6rq
-      '@react-navigation/bottom-tabs': 6.4.0_6g2cdnxrcljgdc67hsl5pjjruq
-      '@react-navigation/devtools': 6.0.10_react@17.0.2
-      '@react-navigation/elements': 1.3.6_elf6whrf434bv32nh624ftlupy
-      '@react-navigation/material-top-tabs': 6.2.4_rgj3wu6tgb6admp3us4pfytzkm
-      '@react-navigation/native': 6.0.13_zqxy7fpkavjkgz5xll7ed4r6rq
-      '@react-navigation/stack': 6.3.1_zwmyepb37hrtoreh4mxfzm5jui
-      '@segment/analytics-react-native': 1.5.3
+      '@react-navigation/bottom-tabs': 6.3.1_3jvtadmweogmrrz7eqvlu5womu
+      '@react-navigation/devtools': 6.0.9_react@17.0.2
+      '@react-navigation/elements': 1.3.3_ns5tibmb6sproxrdq36ercqe6u
+      '@react-navigation/material-top-tabs': 6.2.1_xkxxoil2wujl2ovdidsx3fww5q
+      '@react-navigation/native': 6.0.10_zqxy7fpkavjkgz5xll7ed4r6rq
+      '@react-navigation/stack': 6.2.1_r56o2dk2wyftxawcvswkha4q4e
+      '@segment/analytics-react-native': 2.9.0_zqxy7fpkavjkgz5xll7ed4r6rq
+      '@segment/sovran-react-native': 0.4.4_zqxy7fpkavjkgz5xll7ed4r6rq
       '@sentry/cli': 2.5.2
       '@sentry/react-native': 4.2.4_zqxy7fpkavjkgz5xll7ed4r6rq
       asyncstorage-down: 4.2.0
@@ -14523,8 +14525,21 @@ packages:
     resolution: {integrity: sha512-ZxOhsSyxYwLJj3pLZCefNitxsj093tb2vq90mp2txoYeBqbcjDjqFhyM8eUjq/uFm6zJ+mUuqxlS2FkuSY1MTA==}
     dev: false
 
-  /@segment/analytics-react-native/1.5.3:
-    resolution: {integrity: sha512-sCUSqppTHKEB1FkvplO1e+uALyidTZSa/LnxrvuClsjP8Q5s5rfxLgK/aj3D3ffScIefQd+v9gY2cBjAo3zMWw==}
+  /@segment/analytics-react-native/2.9.0_zqxy7fpkavjkgz5xll7ed4r6rq:
+    resolution: {integrity: sha512-fQmz/LdbdBwxN1+9bTsPya4I3NRS4jiK2nsEGh82X6u3OZZ4Bml8A1t+Ju74YxY2QdsmTQ3qGfwKGOBL/HdTJw==}
+    engines: {node: '>=12'}
+    peerDependencies:
+      react: '*'
+      react-native: '*'
+    dependencies:
+      '@react-native-async-storage/async-storage': 1.17.4_react-native@0.68.2
+      '@segment/sovran-react-native': 0.4.4_zqxy7fpkavjkgz5xll7ed4r6rq
+      deepmerge: 4.2.2
+      js-base64: 3.7.2
+      nanoid: 3.3.4
+      promise.allsettled: 1.0.5
+      react: 17.0.2
+      react-native: 0.68.2_qiqqwmyv63yhnuboofexv3s7x4
     dev: false
 
   /@segment/loosely-validate-event/2.0.0:
@@ -14533,6 +14548,20 @@ packages:
       component-type: 1.2.1
       join-component: 1.1.0
     dev: true
+
+  /@segment/sovran-react-native/0.4.4_zqxy7fpkavjkgz5xll7ed4r6rq:
+    resolution: {integrity: sha512-YnXhHfFIdqjMb+6ejMA+1oO0KeJPK3Hv0dHYgcWmq5oxVAWrJNTK8rGiRVuVaVQHfSkGg0zQ/nGB09oMUVteDg==}
+    peerDependencies:
+      react: '*'
+      react-native: '*'
+    dependencies:
+      '@react-native-async-storage/async-storage': 1.17.4_react-native@0.68.2
+      ansi-regex: 5.0.1
+      deepmerge: 4.2.2
+      react: 17.0.2
+      react-native: 0.68.2_qiqqwmyv63yhnuboofexv3s7x4
+      shell-quote: 1.7.3
+    dev: false
 
   /@sentry/browser/7.8.1:
     resolution: {integrity: sha512-9JuagYqHyaZu/4RqyxrAgEHo71oV592XBuUKC33gajCVKWbyG3mNqudSMoHtdM1DrV9REZ4Elha7zFaE2cJX6g==}
@@ -21846,7 +21875,6 @@ packages:
       es-abstract: 1.20.1
       es-array-method-boxes-properly: 1.0.0
       is-string: 1.0.7
-    dev: true
 
   /array.prototype.reduce/1.0.4:
     resolution: {integrity: sha512-WnM+AjG/DvLRLo4DDl+r+SvCzYtD2Jd9oeBYMcEaI7t3fFrHY9M53/wdLcTvmZNQ70IU6Htj0emFkZ5TS+lrdw==}
@@ -35360,14 +35388,12 @@ packages:
 
   /iterate-iterator/1.0.2:
     resolution: {integrity: sha512-t91HubM4ZDQ70M9wqp+pcNpu8OyJ9UAtXntT/Bcsvp5tZMnz9vRa+IunKXeI8AnfZMTv0jNuVEmGeLSMjVvfPw==}
-    dev: true
 
   /iterate-value/1.0.2:
     resolution: {integrity: sha512-A6fMAio4D2ot2r/TYzr4yUWrmwNdsN5xL7+HUiyACE4DXm+q8HtPcnFTp+NnW3k4N05tZ7FVYFFb2CR13NxyHQ==}
     dependencies:
       es-get-iterator: 1.1.2
       iterate-iterator: 1.0.2
-    dev: true
 
   /jake/10.8.5:
     resolution: {integrity: sha512-sVpxYeuAhWt0OTWITwT98oyV0GsXyMlXCF+3L1SuafBVUIr/uILGRB+NqwkzhgXKvoJpDIpQvqkUALgdmQsQxw==}
@@ -45211,7 +45237,6 @@ packages:
       es-abstract: 1.20.1
       get-intrinsic: 1.1.2
       iterate-value: 1.0.2
-    dev: true
 
   /promise.prototype.finally/3.1.3:
     resolution: {integrity: sha512-EXRF3fC9/0gz4qkt/f5EP5iW4kj9oFpBICNpCNOb/52+8nlHIX07FPLbi/q4qYBQ1xZqivMzTpNQSnArVASolQ==}
