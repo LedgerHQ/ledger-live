@@ -123,7 +123,12 @@ export async function createSpeculosDevice(
     ...(dependency
       ? [
           "-l",
-          `${dependency}:${`./apps/${reverseModelMap[model]}/${firmware}/${dependency}/app_${appVersion}.elf`}`,
+          `${dependency}:${`./apps/${
+            reverseModelMap[model]
+          }/${firmware}/${dependency.replace(
+            / /g,
+            ""
+          )}/app_${appVersion}.elf`}`,
         ]
       : []),
     ...(sdk ? ["--sdk", sdk] : []),
