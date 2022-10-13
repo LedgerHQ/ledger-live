@@ -391,8 +391,6 @@ export const ScreenName = {
   SyncOnboardingCompanion: "SyncOnboardingCompanion",
   SyncOnboardingCompletion: "SyncOnboardingCompletion",
   DeviceModelSelection: "DeviceModelSelection",
-  BleDevicesScanning: "BleDevicesScanning",
-  BleDevicePairing: "BleDevicePairing",
 
   BleDevicePairingFlow: "BleDevicePairingFlow",
 
@@ -477,6 +475,7 @@ export const NavigatorName = {
   MigrateAccountsFlow: "MigrateAccountsFlow",
   NftNavigator: "NftNavigator",
   Onboarding: "Onboarding",
+  SyncOnboarding: "SyncOnboarding",
   PasswordAddFlow: "PasswordAddFlow",
   PasswordModifyFlow: "PasswordModifyFlow",
   Platform: "Platform",

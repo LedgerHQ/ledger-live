@@ -123,7 +123,7 @@ export default function BaseNavigator() {
     <Stack.Navigator
       screenOptions={{
         ...stackNavigationConfig,
-        ...TransitionPresets.ModalPresentation,
+        ...TransitionPresets.DefaultTransition,
       }}
     >
       <Stack.Screen

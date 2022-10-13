@@ -1,16 +1,16 @@
 # @ledgerhq/types-live
 
-## 6.24.3-nightly.1
+## 6.24.3
 
 ### Patch Changes
 
-- [#1447](https://github.com/LedgerHQ/ledger-live/pull/1447) [`777ccf8774`](https://github.com/LedgerHQ/ledger-live/commit/777ccf8774302cb17995a044f23972e2a9fc4045) Thanks [@LFBarreto](https://github.com/LFBarreto)! - Types - Add Referral Program Desktop Banner FeatureId Flag
+- [#1518](https://github.com/LedgerHQ/ledger-live/pull/1518) [`f255b258a9`](https://github.com/LedgerHQ/ledger-live/commit/f255b258a9c79c5eb89ec65d6647e52b90a9c52c) Thanks [@desirendr](https://github.com/desirendr)! - Types - Add new feature flag FeatureId type
 
-## 6.24.3-nightly.0
+## 6.24.3-hotfix.0
 
 ### Patch Changes
 
-- [#1439](https://github.com/LedgerHQ/ledger-live/pull/1439) [`c33c82cd32`](https://github.com/LedgerHQ/ledger-live/commit/c33c82cd3291b651238659a8b9eababe6f953ece) Thanks [@LFBarreto](https://github.com/LFBarreto)! - Types - Add new feature flag FeatureId type
+- [#1518](https://github.com/LedgerHQ/ledger-live/pull/1518) [`f255b258a9`](https://github.com/LedgerHQ/ledger-live/commit/f255b258a9c79c5eb89ec65d6647e52b90a9c52c) Thanks [@desirendr](https://github.com/desirendr)! - Types - Add new feature flag FeatureId type
 
 ## 6.24.2
 

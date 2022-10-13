@@ -17,8 +17,8 @@ const promisifiedRimraf = (path) => {
 };
 
 await Promise.all([
-  await promisifiedRimraf("lib"),
-  await promisifiedRimraf("src/data/icons/react*"),
+  promisifiedRimraf("lib"),
+  promisifiedRimraf("src/data/icons/react*"),
 ]);
 
 await $`zx ./scripts/sync-families-dispatch.mjs`;
