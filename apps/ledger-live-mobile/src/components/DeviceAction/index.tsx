@@ -19,6 +19,7 @@ import {
   renderAllowManager,
   renderInWrongAppForAccount,
   renderError,
+  renderDeviceNotOnboarded,
   renderBootloaderStep,
   renderExchange,
   renderConfirmSwap,
@@ -309,14 +310,7 @@ export function DeviceActionDefaultRendering<R, H, P>({
       (error instanceof TransportStatusError &&
         error.message.includes("0x6d06"))
     ) {
-      return renderError({
-        t,
-        navigation,
-        error: new DeviceNotOnboarded(),
-        withOnboardingCTA: true,
-        colors,
-        theme,
-      });
+      return renderDeviceNotOnboarded({ t, device, navigation });
     }
 
     return renderError({
