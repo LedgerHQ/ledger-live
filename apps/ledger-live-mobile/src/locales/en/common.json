@@ -2437,6 +2437,8 @@
       "desc": "Learn more about Ledger Live or how to get help.",
       "support": "Ledger Support",
       "supportDesc": "If you have a problem, get help using Ledger Live with your hardware wallet.",
+      "configureDevice": "Set up a device",
+      "configureDeviceDesc": "Set up as a new device or restore an existing device. Accounts and settings are preserved.",
       "clearCache": "Clear cache",
       "clearCacheDesc": "The transactions on the network will be scanned and your accounts will be recalculated.",
       "clearCacheModal": "Are you sure?",
