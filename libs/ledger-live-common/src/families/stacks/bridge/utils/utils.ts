@@ -114,12 +114,14 @@ export const mapTxToOps = (accountID, { address }: GetAccountShapeArg0) => (
 export const getAccountShape: GetAccountShape = async info => {
   const { initialAccount, address, currency, rest = {}, derivationMode } = info;
 
+  const publicKey = reconciliatePublicKey(rest.publicKey, initialAccount);
+
   const accountId = encodeAccountId({
     type: "js",
     version: "2",
     currencyId: currency.id,
-    xpubOrAddress: reconciliatePublicKey(rest.publicKey, initialAccount),
-    derivationMode
+    xpubOrAddress: publicKey,
+    derivationMode,
   });
 
   const blockHeight = await fetchBlockHeight();
@@ -128,10 +130,12 @@ export const getAccountShape: GetAccountShape = async info => {
 
   const result = {
     id: accountId,
+    xpub: publicKey,
+    freshAddress: address,
     balance: new BigNumber(balance.balance),
     spendableBalance: new BigNumber(balance.balance),
     operations: flatMap(rawTxs, mapTxToOps(accountId, info)),
-    blockHeight: blockHeight.chain_tip.block_height
+    blockHeight: blockHeight.chain_tip.block_height,
   };
 
   return result;
