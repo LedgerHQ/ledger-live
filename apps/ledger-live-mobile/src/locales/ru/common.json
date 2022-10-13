@@ -728,6 +728,9 @@
     "ImageProcessingError" : {
       "title" : "Не удалось обработать изображение",
       "description" : "Попробуйте другое изображение"
+    },
+    "HederaAddAccountError" : {
+      "title" : "Не удалось добавить счёт. Пожалуйста, попробуйте ещё раз."
     }
   },
   "crash" : {
@@ -775,6 +778,9 @@
     "failed" : {
       "biometrics" : {
         "title" : "Не удалось разблокировать {{biometricsType}}",
+        "touchid" : "TouchID",
+        "faceid" : "FaceID",
+        "fingerprint" : "Отпечаток пальца",
         "description" : "Чтобы продолжить, введите пароль",
         "authenticate" : "Пожалуйста, авторизуйтесь с помощью Ledger Live"
       },
@@ -803,7 +809,10 @@
     },
     "enableBiometrics" : {
       "title" : "{{biometricsType}}",
-      "desc" : "Разблокировать с помощью {{biometricsType}}"
+      "desc" : "Разблокировать с помощью {{biometricsType}}",
+      "touchid" : "TouchID",
+      "faceid" : "FaceID",
+      "fingerprint" : "Отпечаток пальца"
     }
   },
   "reset" : {
@@ -890,7 +899,7 @@
       "market" : {
         "title" : "Рынки криптовалют",
         "description" : "Следите за ценами криптовалют и тенденциями рынка прямо в приложении.",
-        "cta" : "Осмотритесь"
+        "cta" : "Посмотреть"
       },
       "manageCard" : {
         "title" : "Представляем CL Сard",
@@ -1002,12 +1011,12 @@
   },
   "discover" : {
     "title" : "Исследуйте",
-    "desc" : "Исследуйте мир Web3 прямо в Ledger Live",
+    "desc" : "Исследуйте мир Web3 в полной безопасности",
     "link" : "Расскажите подробнее",
     "sections" : {
       "learn" : {
         "title" : "Учитесь",
-        "desc" : "Узнайте о криптовалюте, NFT, цифровой безопасности и многом другом"
+        "desc" : "Узнайте о криптовалютах и многом другом от экспертов абсолютно бесплатно."
       },
       "ledgerApps" : {
         "title" : "Приложения",
@@ -1015,11 +1024,15 @@
       },
       "earn" : {
         "title" : "Растите",
-        "desc" : "Получайте пассивный доход и приумножайте криптоактивы"
+        "desc" : "Приумножайте криптовалюту за счёт стейкинга и кредитования."
       },
       "mint" : {
         "title" : "Собирайте",
-        "desc" : "Минтите NFT от эксклюзивных коллабораций прямо в [ L ] Market"
+        "desc" : "Минтите NFT от эксклюзивных коллабораций прямо в [ L ] Market."
+      },
+      "referralProgram" : {
+        "title" : "Пригласи друга",
+        "desc" : "Вы получаете 10$ в BTC, когда ваш друг покупает Ledger. "
       }
     },
     "comingSoon" : "Уже скоро",
@@ -1097,6 +1110,7 @@
       "nanoS" : "Nano S",
       "nanoSP" : "Nano S Plus",
       "nanoX" : "Nano X",
+      "nanoFTS" : "Nano FTS",
       "blue" : "Blue",
       "chooseDevice" : "Выберите устройство"
     },
@@ -1636,9 +1650,133 @@
       },
       "error" : {
         "title" : "Не удалось подключить устройство",
-        "subtitle" : "Похоже, что-то пошло не так. Убедитесь, что Bluetooth активирован, а устройство {{productName}} находится неподалёку",
+        "subtitle" : "Похоже, что-то пошло не так.\nУбедитесь, что Bluetooth активирован, а устройство {{productName}} находится в радиусе его действия.",
         "retryCta" : "Попробуйте ещё раз"
       }
+    }
+  },
+  "syncOnboarding" : {
+    "title" : "Настройка {{deviceName}}",
+    "estimatedTimeFormat" : "{{estimatedTime}} минут",
+    "deviceSelection" : {
+      "title" : "Какое у вас устройство?",
+      "subtitle" : "Какое устройство Ledger настроим с помощью Ledger Live?",
+      "brand" : "Ledger",
+      "setupTime" : "{{time}} мин."
+    },
+    "scanning" : {
+      "title" : "Поиск {{productName}}",
+      "description" : "Обязательно разблокируйте {{productName}} и включите Bluetooth"
+    },
+    "pairing" : {
+      "success" : {
+        "title" : "Подключено к {{deviceName}}"
+      },
+      "loading" : {
+        "title" : "Подключение к {{deviceName}}",
+        "subtitle" : "Подтвердите код на устройстве {{productName}}"
+      },
+      "error" : {
+        "title" : "Не удалось подключить устройство",
+        "subtitle" : "Похоже, что-то пошло не так. Убедитесь, что Bluetooth активирован, а устройство {{productName}} находится в радиусе его действия"
+      }
+    },
+    "languageSelect" : {
+      "title" : "Язык приложения"
+    },
+    "firmwareLanguageUpdateDrawer" : {
+      "title" : "Поменяйте язык на {{productName}}",
+      "description" : "Теперь язык Ledger Live — {{newLanguage}}. Хотели бы вы также использовать {{newLanguage}} язык на {{productName}}?",
+      "updateCta" : "Поменять язык",
+      "cancelCta" : "Отменить"
+    },
+    "desyncDrawer" : {
+      "title" : "Подключение к {{productName}} не удалось",
+      "description" : "Убедитесь, что устройство {{productName}} разблокировано и находится в радиусе его действия Также проверьте, активирован ли Bluetooth на смартфоне",
+      "retryCta" : "Попробуйте ещё раз",
+      "helpCta" : "Воспользуйтесь разделом помощи на сайте"
+    },
+    "resyncOverlay" : {
+      "content" : "Похоже, подключение к {{productName}} было прервано. Подключаемся к устройству повторно"
+    },
+    "helpDrawer" : {
+      "title" : "Нужна помощь по настройке устройства?",
+      "description" : "- -",
+      "docCta" : "Ознакомиться с разделом ЧаВо",
+      "supportCta" : "Связаться с Поддержкой"
+    },
+    "pairingStep" : {
+      "title" : "{{productName}} сопряжено",
+      "description" : "Продолжайте настройку {{productName}} и заглядывайте сюда, если понадобится помощь"
+    },
+    "pinStep" : {
+      "title" : "Установите ПИН-код",
+      "description" : "ПИН-код защищает ваше устройство {{productName}} от посторонних. Никогда не делитесь им с кем-либо",
+      "warning" : "Любой человек с доступом к вашему {{productName}} и ПИН-коду от устройства может украсть ваши криптоактивы без возможности их восстановления"
+    },
+    "seedStep" : {
+      "title" : "Создайте фразу восстановления",
+      "description" : "Фраза восстановления — это секретный набор из 24 слов для восстановления ваших приватных ключей. {{productName}} самостоятельно генерирует уникальную фразу восстановления, причём у Ledger нет её копии"
+    },
+    "softwareChecksSteps" : {
+      "title" : "Проверка ОС",
+      "genuineCheckRequestDrawer" : {
+        "title" : "Давайте убедимся в подлинности устройства {{productName}}",
+        "checkCta" : "Проверить подлинность"
+      },
+      "allowManagerDrawer" : {
+        "wording" : "Ledger Live"
+      },
+      "genuineCheckCancelledDrawer" : {
+        "title" : "Проверка подлинности была отменена на кошельке Nano",
+        "description" : "Проверка позволяет быть уверенным в том, что пользоваться устройством {{productName}} абсолютно безопасно",
+        "retryCta" : "Запустить проверку подлинности повторно",
+        "skipCta" : "Не сейчас"
+      },
+      "updateAvailableDrawer" : {
+        "title" : "Доступна новая версия ПО",
+        "description" : "Для доступа к актуальным функциям безопасности рекомендуем регулярно обновлять устройство {{productName}}",
+        "updateCta" : "Обновить"
+      },
+      "genuineCheckStep" : {
+        "inactive" : {
+          "title" : "Проверка подлинности"
+        },
+        "active" : {
+          "title" : "Проверка {{productName}}"
+        },
+        "completed" : {
+          "title" : "Подлинность {{productName}} подтверждена"
+        },
+        "failed" : {
+          "title" : "Сбой проверки безопасности устройства"
+        }
+      },
+      "firmwareUpdateStep" : {
+        "inactive" : {
+          "title" : "Проверка ПО"
+        },
+        "active" : {
+          "title" : "Проверяем версию ПО"
+        },
+        "completed" : {
+          "updateAvailable" : {
+            "title" : "Доступно ПО версии {{firmwareVersion}}"
+          },
+          "noUpdateAvailable" : {
+            "title" : "Версия ПО актуальна"
+          }
+        },
+        "failed" : {
+          "title" : "Сбой обновления ПО"
+        }
+      }
+    },
+    "readyStep" : {
+      "title" : "Устройство {{productName}} готово"
+    },
+    "completion" : {
+      "title" : "Теперь вы всё контролируете"
     }
   },
   "tabs" : {
@@ -1710,7 +1848,7 @@
   },
   "addAccountsModal" : {
     "title" : "Добавить счёт",
-    "ctaAdd" : "Добавить счета",
+    "ctaAdd" : "Добавление счёта",
     "ctaImport" : "Импорт из настольного приложения",
     "description" : "Вы можете добавить криптовалюту с помощью устройства, либо импортировать её из Ledger Live для ПК.",
     "add" : {
@@ -1970,6 +2108,7 @@
       },
       "advanced" : {
         "title" : "Расширенные логи",
+        "warningDerivation" : "Это xpub-ключ {{tag}}. При его импорте в сторонний кошелёк выберите тот же режим вывода.",
         "desc" : ""
       }
     },
@@ -2990,7 +3129,7 @@
   "send" : {
     "tooMuchUTXOBottomModal" : {
       "cta" : "Продолжить",
-      "description" : "Подтверждение и подписание транзакции может занять много времени ввиду большого количества монет на счету.",
+      "description" : "Подтверждение и подписание операции может занять много времени ввиду большого количества монет на счету.",
       "title" : "UTXO-сообщение"
     },
     "highFeeModal" : "Предупреждение: комиссия превышает <1>10%</1> от суммы. Хотите продолжить?",
