@@ -728,6 +728,9 @@
     "ImageProcessingError" : {
       "title" : "Error al procesar la imagen",
       "description" : "Vuelve a intentarlo con otra imagen"
+    },
+    "HederaAddAccountError" : {
+      "title" : "Tu cuenta no ha sido agregada. Inténtalo de nuevo."
     }
   },
   "crash" : {
@@ -775,6 +778,9 @@
     "failed" : {
       "biometrics" : {
         "title" : "El bloqueo por {{biometricsType}} ha fallado",
+        "touchid" : "Touch ID",
+        "faceid" : "Face ID",
+        "fingerprint" : "Huella dactilar",
         "description" : "Ingresa tu contraseña para continuar",
         "authenticate" : "Autentica con la aplicación Ledger Live"
       },
@@ -803,7 +809,10 @@
     },
     "enableBiometrics" : {
       "title" : "{{biometricsType}}",
-      "desc" : "Desbloquear con {{biometricsType}}"
+      "desc" : "Desbloquear con {{biometricsType}}",
+      "touchid" : "Touch ID",
+      "faceid" : "Face ID",
+      "fingerprint" : "Huella dactilar"
     }
   },
   "reset" : {
@@ -1002,12 +1011,12 @@
   },
   "discover" : {
     "title" : "Discover",
-    "desc" : "Explora el mundo de la web3 incorporado dentro de Ledger Live",
+    "desc" : "Explora el universo de la Web3 de forma segura",
     "link" : "Más información",
     "sections" : {
       "learn" : {
         "title" : "Información",
-        "desc" : "Obtén información sobre las cripto, los NFTs, la seguridad digital y mucho más"
+        "desc" : "Aprende de cripto y más, de expertos, gratuitamente."
       },
       "ledgerApps" : {
         "title" : "Aplicaciones",
@@ -1015,11 +1024,15 @@
       },
       "earn" : {
         "title" : "Gana",
-        "desc" : "Gana ingresos pasivos y haz crecer tus activos cripto"
+        "desc" : "Haz crecer tus cripto a través de la puesta en participación y los préstamos."
       },
       "mint" : {
         "title" : "Acuñar",
-        "desc" : "Acuña NFTs de colaboraciones exclusivas en [ L ] Market"
+        "desc" : "Acuña NFTs de campañas exclusivas de [ L ] Market."
+      },
+      "referralProgram" : {
+        "title" : "Recomiéndanos a un amigo",
+        "desc" : "Gana $10 en BTC cuando tu amigo compre un Ledger. "
       }
     },
     "comingSoon" : "próximamente",
@@ -1097,6 +1110,7 @@
       "nanoS" : "Nano S",
       "nanoSP" : "Nano S Plus",
       "nanoX" : "Nano X",
+      "nanoFTS" : "Nano FTS",
       "blue" : "Blue",
       "chooseDevice" : "Elige tu dispositivo"
     },
@@ -1636,9 +1650,133 @@
       },
       "error" : {
         "title" : "Emparejamiento fallido",
-        "subtitle" : "Parece que algo ha salido mal. Comprueba que el Bluetooth esté activado y tu {{productName}} esté cerca",
+        "subtitle" : "Parece que algo ha salido mal.\nComprueba que el Bluetooth esté activado y que tu {{productName}} esté cerca.",
         "retryCta" : "Inténtalo de nuevo"
       }
+    }
+  },
+  "syncOnboarding" : {
+    "title" : "Configurar {{deviceName}}",
+    "estimatedTimeFormat" : "{{estimatedTime}} min",
+    "deviceSelection" : {
+      "title" : "¿Qué dispositivo tienes?",
+      "subtitle" : "Elige la billetera Ledger que quieres configurar con Ledger Live",
+      "brand" : "Ledger",
+      "setupTime" : "{{time}} min"
+    },
+    "scanning" : {
+      "title" : "Buscando tu {{productName}}",
+      "description" : "Asegúrate de que tu {{productName}} esté desbloqueado y el Bluetooth habilitado"
+    },
+    "pairing" : {
+      "success" : {
+        "title" : "Emparejado con {{deviceName}}"
+      },
+      "loading" : {
+        "title" : "Emparejando con {{deviceName}}",
+        "subtitle" : "Confirma el código en tu {{productName}}"
+      },
+      "error" : {
+        "title" : "Emparejamiento fallido",
+        "subtitle" : "Parece que algo ha salido mal. Comprueba que el Bluetooth esté activado y tu {{productName}} esté cerca."
+      }
+    },
+    "languageSelect" : {
+      "title" : "Idioma de la aplicación"
+    },
+    "firmwareLanguageUpdateDrawer" : {
+      "title" : "Cambia el idioma en tu {{productName}}",
+      "description" : "Ledger Live está ahora disponible en {{newLanguage}}. ¿Quieres usar tu {{productName}} en {{newLanguage}} también?",
+      "updateCta" : "Cambiar idioma",
+      "cancelCta" : "Cancelar"
+    },
+    "desyncDrawer" : {
+      "title" : "No se ha podido establecer la conexión con tu {{productName}}",
+      "description" : "Asegúrate de que tu {{productName}} esté cerca y desbloqueado. Comprueba si el Bluetooth está habilitado en tu teléfono móvil.",
+      "retryCta" : "Inténtalo de nuevo",
+      "helpCta" : "Obtener ayuda"
+    },
+    "resyncOverlay" : {
+      "content" : "Parece que se ha perdido la conexión con tu {{productName}}. Volviendo a conectar"
+    },
+    "helpDrawer" : {
+      "title" : "¿Necesitas ayuda con el manual de configuración?",
+      "description" : "Lorem Elsass ipsum aliquam bissame Ober schae ffolsheim gehts messti de Bischheim tellus blottkopf, dui sed libero. hopla libero, placerat leo eget Gal",
+      "docCta" : "Ver las preguntas frecuentes",
+      "supportCta" : "Hablar con una persona"
+    },
+    "pairingStep" : {
+      "title" : "{{productName}} está emparejado.",
+      "description" : "Sigue configurando tu {{productName}} y regresa aquí para obtener ayuda paso a paso."
+    },
+    "pinStep" : {
+      "title" : "Elige tu PIN",
+      "description" : "El PIN evita el acceso no deseado a tu {{productName}}. No lo compartas con nadie.",
+      "warning" : "Cualquiera que conozca tu PIN y tenga acceso a tu {{productName}} podrá robarte tus activos de forma permanente."
+    },
+    "seedStep" : {
+      "title" : "Establece tu Frase de recuperación",
+      "description" : "Tu Frase de recuperación es una lista secreta de 24 Palabras que genera una copia de respaldo de tus claves privadas. Tu {{productName}} genera una Frase de recuperación única. Ledger no conserva ninguna copia."
+    },
+    "softwareChecksSteps" : {
+      "title" : "Comprobación del sistema operativo",
+      "genuineCheckRequestDrawer" : {
+        "title" : "Vamos a asegurarnos de que tu {{productName}} es auténtico.",
+        "checkCta" : "Comprobar la autenticidad"
+      },
+      "allowManagerDrawer" : {
+        "wording" : "Ledger Live"
+      },
+      "genuineCheckCancelledDrawer" : {
+        "title" : "Se ha cancelado la comprobación de autenticidad en tu Nano",
+        "description" : "Es importante que hagas esta comprobación para asegurarte de que es seguro usar tu {{productName}}",
+        "retryCta" : "Volver a ejecutar la comprobación de autenticidad",
+        "skipCta" : "Quizás más tarde"
+      },
+      "updateAvailableDrawer" : {
+        "title" : "Nuevo software encontrado",
+        "description" : "Para acceder a las últimas funciones de seguridad, te recomendamos encarecidamente que actualices tu {{productName}}",
+        "updateCta" : "Actualizar"
+      },
+      "genuineCheckStep" : {
+        "inactive" : {
+          "title" : "Comprobación de autenticidad"
+        },
+        "active" : {
+          "title" : "Comprobando {{productName}}"
+        },
+        "completed" : {
+          "title" : "Tu {{productName}} es auténtico"
+        },
+        "failed" : {
+          "title" : "Seguridad del dispositivo no comprobada"
+        }
+      },
+      "firmwareUpdateStep" : {
+        "inactive" : {
+          "title" : "Comprobación de software"
+        },
+        "active" : {
+          "title" : "Comprobando la versión de software"
+        },
+        "completed" : {
+          "updateAvailable" : {
+            "title" : "Versión de firmware {{firmwareVersion}} disponible"
+          },
+          "noUpdateAvailable" : {
+            "title" : "Versión de software actualizada"
+          }
+        },
+        "failed" : {
+          "title" : "Error al actualizar el software"
+        }
+      }
+    },
+    "readyStep" : {
+      "title" : "{{productName}} está listo"
+    },
+    "completion" : {
+      "title" : "Ahora tienes el control"
     }
   },
   "tabs" : {
@@ -1970,6 +2108,7 @@
       },
       "advanced" : {
         "title" : "Registros avanzados",
+        "warningDerivation" : "Esta es una xpub {{tag}}. Cuando la importes en una billetera de terceros, selecciona el mismo modo de derivación.",
         "desc" : ""
       }
     },
