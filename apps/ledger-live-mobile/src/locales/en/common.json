@@ -5283,7 +5283,11 @@
       "retrySearchParams": "Please retry the search with another parameters.",
       "trackFavAssets": "Track your favourite",
       "clickOnStarIcon": "Clicking on the star icon next to an asset will automatically add them to your favorites.",
-      "browseAssets": "Browse assets"
+      "browseAssets": "Browse assets",
+      "starred": {
+        "title": "Track your favorite assets!",
+        "desc": "Clicking on the “Star” icon next to an asset will automatically add them to your favorites"
+      }
     }
   },
   "nft": {
