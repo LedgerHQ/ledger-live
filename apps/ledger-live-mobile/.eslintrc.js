@@ -110,6 +110,19 @@ module.exports = {
         ignoreRestSiblings: true,
       },
     ],
+
+    "no-restricted-imports": [
+      "error",
+      {
+        patterns: [
+          {
+            group: ["@ledgerhq/live-common/lib/*"],
+            message:
+              '🚨 Please when importing from live-common, remove the "/lib/" in the path 🚨',
+          },
+        ],
+      },
+    ],
   },
   globals: {
     __DEV__: false,
