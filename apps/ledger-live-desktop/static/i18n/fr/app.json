@@ -237,7 +237,7 @@
     "form" : {
       "changeCTA" : "Modifier",
       "rates" : {
-        "title" : "Prestataires",
+        "title" : "Prix",
         "registration" : "Inscription requise ",
         "noRegistration" : "Pas d’inscription requise",
         "fixed" : "Fixe",
@@ -430,11 +430,13 @@
         }
       },
       "filter" : {
-        "all" : "Tous",
         "centralised" : "Centralisé",
-        "dedentralised" : "Décentralisé"
+        "decentralised" : "Décentralisé",
+        "float" : "Taux variable",
+        "fixed" : "Taux fixe"
       },
-      "noQuote" : "Prix disponible à l’étape suivante"
+      "noQuote" : "Prix disponible à l’étape suivante",
+      "noProviders" : "Aucun résultat. Il n’y a pas de résultat correspondant à ces préférences."
     },
     "ip" : {
       "title" : "Bienvenue dans le Swap",
@@ -752,7 +754,7 @@
     "settings" : {
       "title" : "Modifier le compte",
       "advancedLogs" : "Avancé",
-      "advancedTips" : "Votre xpub est une donnée sensible et privée. Faites preuve de prudence, en particulier lorsque vous la divulguez à des tiers.",
+      "advancedTips" : "Cet xpub est de type {{tag}}. Lorsque vous l’importez dans un wallet tiers, choisissez le même mode de dérivation.",
       "accountName" : {
         "title" : "Nom du compte",
         "desc" : "Description du compte"
@@ -1182,6 +1184,10 @@
     "blackfriday" : {
       "title" : "BLACK FRIDAY ",
       "description" : "Profitez de 40 % de réduction sur les wallets Ledger avec le code promo BLACKFRIDAY20"
+    },
+    "referralProgram" : {
+      "title" : "Parrainez et gagnez 10 $ US",
+      "description" : "Parrainez un ami et gagnez tous les deux 10 $ US en bitcoins."
     }
   },
   "signmessage" : {
@@ -1637,7 +1643,7 @@
       "used" : "Utilisé",
       "firmwareAvailable" : "Micrologiciel obsolète :",
       "firmwareUpToDate" : "Le micrologiciel est à jour :",
-      "genuine" : "L’appareil est authentique.",
+      "genuine" : "Votre Ledger est authentique.",
       "incomplete" : "Certaines applications n’ont pas été reconnues. Merci de les désinstaller puis les réinstaller."
     },
     "applist" : {
@@ -2844,7 +2850,7 @@
     "unlockedBalance" : "Délié",
     "unlockedTooltip" : "Les actifs déliés peuvent maintenant être déplacés en utilisant l’opération de retrait.",
     "networkFees" : "Les frais de réseau sont automatiquement définis par le consensus de Polkadot. Vous ne pourrez pas les voir sur votre appareil.",
-    "bondedBalanceBelowMinimum" : "Votre solde lié est inférieur au minimum requis ({{minimumBondBalance}}). Vos nominations risquent d’être supprimées.",
+    "bondedBalanceBelowMinimum" : "Votre solde lié est inférieur au minimum requis ({{minimumBondBalance}}). Vos nominations risquent d’être effacées.",
     "nomination" : {
       "emptyState" : {
         "description" : "Vous pouvez obtenir des récompenses en liant des actifs, puis en nommant un ou des validateur(s).",
@@ -3698,7 +3704,7 @@
         "continueCTA" : "Continuer",
         "title" : "Vérifiez le contenu de votre coffret.",
         "description" : "Si votre {{device}} est livré avec un code PIN ou une phrase de récupération, l’utiliser présente un risque. Contactez l’Assistance Ledger.",
-        "alert" : "Utilisez uniquement la phrase de récupération affichée par votre appareil Ledger lors de sa configuration."
+        "alert" : "Utilisez uniquement la phrase de récupération affichée sur votre appareil Ledger lors de sa configuration."
       }
     },
     "alerts" : {
@@ -4144,7 +4150,7 @@
     }
   },
   "connectTroubleshooting" : {
-    "desc" : "Des difficultés à connecter votre appareil ?",
+    "desc" : "Des difficultés à connecter votre Ledger ?",
     "cta" : "Réparer",
     "solution" : "Solution n°{{number}}",
     "applesInstructions" : "les instructions d’Apple",
@@ -5052,6 +5058,9 @@
     },
     "StellarSourceHasMultiSign" : {
       "title" : "Désactivez le multisig pour envoyer des transactions Stellar"
+    },
+    "HederaAddAccountError" : {
+      "title" : "Votre compte n’a pas été ajouté. Veuillez réessayer."
     }
   },
   "cryptoOrg" : {
