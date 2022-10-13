@@ -285,7 +285,7 @@
     },
     "EthAppNftNotSupported" : {
       "title" : "العملية غير متوفرة لهذا الجهاز",
-      "description" : "Send NFT feature is only available for Nano X and Nano S+. Please visit our customer support platform to know how to send a NFT with a Nano S."
+      "description" : "خاصية إرسال NFT متوفرة فقط لـ Nano X و +Nano S. يرجى زيارة منصة دعم العملاء لدينا لمعرفة كيفية إرسال NFT عن طريق Nano S."
     },
     "Touch ID Error" : {
       "title" : "فشل التوثيق البيومتري",
@@ -728,6 +728,9 @@
     "ImageProcessingError" : {
       "title" : "فشل معالجة الصورة",
       "description" : "يُرجى المحاولة مرة أخرى بصورة أخرى"
+    },
+    "HederaAddAccountError" : {
+      "title" : "لم تتم إضافة حسابك. يرجى إعادة المحاولة."
     }
   },
   "crash" : {
@@ -775,6 +778,9 @@
     "failed" : {
       "biometrics" : {
         "title" : "إلغاء قفل {{biometricsType}} فشل",
+        "touchid" : "مُعرّف البصمة (TouchID)",
+        "faceid" : "مُعرّف الوجه (FaceID)",
+        "fingerprint" : "بصمة الإصبع",
         "description" : "أدخل كلمة المرور الخاصة بك للمتابعة",
         "authenticate" : "يرجى التوثيق باستخدام تطبيق Ledger Live"
       },
@@ -803,7 +809,10 @@
     },
     "enableBiometrics" : {
       "title" : "{{biometricsType}}",
-      "desc" : "إلغاء القفل باستخدام {{biometricsType}}"
+      "desc" : "إلغاء القفل باستخدام {{biometricsType}}",
+      "touchid" : "مُعرّف البصمة (TouchID)",
+      "faceid" : "مُعرّف الوجه (FaceID)",
+      "fingerprint" : "بصمة الإصبع"
     }
   },
   "reset" : {
@@ -1002,12 +1011,12 @@
   },
   "discover" : {
     "title" : "اكتشف",
-    "desc" : "استكشف عالم ال\\\\ويب 0.3 المتضمن في Ledger Live",
+    "desc" : "اكتشف عالم ويب 3.0 بأمان",
     "link" : "أخبرني بالمزيد",
     "sections" : {
       "learn" : {
         "title" : "تعلّم",
-        "desc" : "تعرّف على الأصول المشفرة والرموز غير القابلة للاستبدال والأمان الرقمي وغير ذلك الكثير"
+        "desc" : "تعرف على المزيد حول الأصول المشفرة والمزيد غير ذلك من الخبراء مجاناً."
       },
       "ledgerApps" : {
         "title" : "التطبيقات",
@@ -1015,11 +1024,15 @@
       },
       "earn" : {
         "title" : "اكسب",
-        "desc" : "كسب دخل سلبي وتنمية أصولك المشفرة"
+        "desc" : "قم بتنمية أصولك المشفرة من خلال التكديس والإقراض."
       },
       "mint" : {
         "title" : "سَكَّ NFT",
-        "desc" : "سَكَّ الرموز غير القابلة للاستبدال (NFT) من خلال تعاونات حصرية على سوق [ L ]"
+        "desc" : "سَكَّ رموز غير قابلة للاستبدال من حملات حصرية على سوق [L]."
+      },
+      "referralProgram" : {
+        "title" : "رشّح صديق",
+        "desc" : "اكسب ما يساوي 10$ من BTC عندما يشتري صديقك Ledger. "
       }
     },
     "comingSoon" : "قريباً",
@@ -1097,6 +1110,7 @@
       "nanoS" : "Nano S",
       "nanoSP" : "Nano S Plus",
       "nanoX" : "Nano X",
+      "nanoFTS" : "Nano FTS",
       "blue" : "أزرق",
       "chooseDevice" : "اختر جهازك"
     },
@@ -1636,9 +1650,133 @@
       },
       "error" : {
         "title" : "لم يتم إجراء الإقران بنجاح",
-        "subtitle" : "يبدو أنه قد حدث خطأ ما! تأكد من تشغيل البلوتوث لديك وأن {{productName}} خاصتك قريبة",
+        "subtitle" : "يبدو أنه قد حدث خطأ ما!تأكد من تشغيل البلوتوث لديك وأن {{productName}} خاصتك قريبة.",
         "retryCta" : "أعد المحاولة"
       }
+    }
+  },
+  "syncOnboarding" : {
+    "title" : "إعداد {{deviceName}}",
+    "estimatedTimeFormat" : "{{estimatedTime}} دقيقة",
+    "deviceSelection" : {
+      "title" : "ما الجهاز الذي تمتلكه؟",
+      "subtitle" : "اختر محفظة Ledger التي تريد إعدادها مع Ledger Live",
+      "brand" : "Ledger",
+      "setupTime" : "{{time}} دقيقة"
+    },
+    "scanning" : {
+      "title" : "هل تبحث عن {{productName}} خاصتك",
+      "description" : "يرجى التأكد من إلغاء قفل {{productName}} خاصتك وأنه تم تمكين البلوتوث"
+    },
+    "pairing" : {
+      "success" : {
+        "title" : "تم الإقران مع {{deviceName}}"
+      },
+      "loading" : {
+        "title" : "جارٍ الإقران مع {{deviceName}}",
+        "subtitle" : "قم بتأكيد الكود على {{productName}} خاصتك"
+      },
+      "error" : {
+        "title" : "فشل الإقران",
+        "subtitle" : "يبدو أنه قد حدث خطأ ما! تأكد من تشغيل البلوتوث لديك وأن {{productName}} خاصتك قريبة"
+      }
+    },
+    "languageSelect" : {
+      "title" : "لغة التطبيق"
+    },
+    "firmwareLanguageUpdateDrawer" : {
+      "title" : "تغيير اللغة على {{productName}} خاصتك",
+      "description" : "Ledger Live الآن باللغة {{newLanguage}}. هل ترغب في استخدام اللغة {{newLanguage}} على {{productName}} خاصتك أيضاً؟",
+      "updateCta" : "تغيير اللغة",
+      "cancelCta" : "إلغاء"
+    },
+    "desyncDrawer" : {
+      "title" : "لا يمكننا الاتصال بـ {{productName}} خاصتك",
+      "description" : "يرجى التأكد من أن {{productName}} خاصتك قريبة وغير مُقفلة. تحقق لمعرفة إذا كان البلوتوث مُمكن على هاتفك الجوّال",
+      "retryCta" : "أعد المحاولة",
+      "helpCta" : "احصل على مساعدة"
+    },
+    "resyncOverlay" : {
+      "content" : "يبدو أن الاتصال بـ {{productName}} خاصتك قد فُقد. جارٍ إعادة الاتصال"
+    },
+    "helpDrawer" : {
+      "title" : "هل تحتاج إلى بعض المساعدة بخصوص كُتيّب الإعداد؟",
+      "description" : "Lorem Elsass ipsum aliquam bissame Ober schae ffolsheim gehts messti de Bischheim tellus blottkopf, dui sed libero. hopla libero, placerat leo eget Gal",
+      "docCta" : "عرض الأسئلة الأكثر شيوعاً لدينا",
+      "supportCta" : "التحدث مع شخص"
+    },
+    "pairingStep" : {
+      "title" : "تم إقران {{productName}}",
+      "description" : "واصل إعداد {{productName}} خاصتك وعاود النظر هنا للحصول على مساعدة خطوة بخطوة"
+    },
+    "pinStep" : {
+      "title" : "اختر كود PIN خاصتك",
+      "description" : "كود PIN خاصتك يمنع أي وصول غير مرغوب به إلى {{productName}} خاصتك. لا تشاركه مطلقاً",
+      "warning" : "أي شخص يعرف كود PIN خاصتك ولديه إمكانية الوصول إلى {{productName}} خاصتك يستطيع سرقة أصولك إلى الأبد"
+    },
+    "seedStep" : {
+      "title" : "قم بإعداد عبارة الاسترداد خاصتك",
+      "description" : "عبارة الاسترداد الخاصة بك هي قائمة سرية من 24 كلمة تقوم بنسخ مفاتيحك الخاصة أحتيطياً. {{productName}} خاصتك تنتج عبارة استرداد فريدة. Ledger لا تحتفظ بنسخة منها"
+    },
+    "softwareChecksSteps" : {
+      "title" : "التحقق من نظام التشغيل",
+      "genuineCheckRequestDrawer" : {
+        "title" : "لنتأكد من أن {{productName}} خاصتك أصلية",
+        "checkCta" : "اختبار الأصالة"
+      },
+      "allowManagerDrawer" : {
+        "wording" : "Ledger Live"
+      },
+      "genuineCheckCancelledDrawer" : {
+        "title" : "تم إلغاء اختبار الأصالة على Nano خاصتك",
+        "description" : "هذا الاختبار ضروري للتأكد من أن {{productName}} خاصتك آمنة للاستخدام",
+        "retryCta" : "إجراء اختبار الأصالة مجدداً",
+        "skipCta" : "ربّما في وقت لاحق"
+      },
+      "updateAvailableDrawer" : {
+        "title" : "تم العثور على برنامج جديد",
+        "description" : "لتصل إلى أحدث ميزات الأمان، نوصي بشدة بتحديث {{productName}} خاصتك",
+        "updateCta" : "تحديث"
+      },
+      "genuineCheckStep" : {
+        "inactive" : {
+          "title" : "اختبار الأصالة"
+        },
+        "active" : {
+          "title" : "التحقق من {{productName}}"
+        },
+        "completed" : {
+          "title" : "{{productName}} خاصتك أصلية"
+        },
+        "failed" : {
+          "title" : "لم يتم التحقق من أمان الجهاز"
+        }
+      },
+      "firmwareUpdateStep" : {
+        "inactive" : {
+          "title" : "التحقق من البرامج"
+        },
+        "active" : {
+          "title" : "التحقق من إصدار البرنامج"
+        },
+        "completed" : {
+          "updateAvailable" : {
+            "title" : "إصدار البرنامج {{firmwareVersion}} متاح"
+          },
+          "noUpdateAvailable" : {
+            "title" : "البرنامج مُحدّث إلى آخر إصدار"
+          }
+        },
+        "failed" : {
+          "title" : "فشل تحديث البرنامج"
+        }
+      }
+    },
+    "readyStep" : {
+      "title" : "{{productName}} مستعد"
+    },
+    "completion" : {
+      "title" : "أنت المتحكّم الآن"
     }
   },
   "tabs" : {
@@ -1970,6 +2108,7 @@
       },
       "advanced" : {
         "title" : "سجلات متقدمة",
+        "warningDerivation" : "هذا مفتاح عام ممتد {{tag}}. عند استيراده إلى محفظة طرف ثالث، اختر نفس نمط الاشتقاق.",
         "desc" : ""
       }
     },
