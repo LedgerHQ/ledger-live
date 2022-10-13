@@ -108,7 +108,7 @@ export const BleDevicesScanning = ({
 
   return (
     <DeviceSetupView hasBackButton>
-      <ScrollListContainer display="flex" flex={1} px={6}>
+      <ScrollListContainer display="flex" flex={1} px={4}>
         <Flex height={180} alignItems="center" justifyContent="center">
           <Animation source={lottie} />
         </Flex>

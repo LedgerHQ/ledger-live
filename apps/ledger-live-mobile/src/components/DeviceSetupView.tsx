@@ -28,6 +28,10 @@ const DeviceSetupView = ({
   const navigation = useNavigation();
   const { colors } = useTheme();
 
+  const canGoBack = navigation.canGoBack();
+  const canRenderBackButton = (canGoBack && hasBackButton) || onBack;
+  const canRenderCloseButton = (canGoBack && hasCloseButton) || onClose;
+
   const handleBack = () => {
     navigation.goBack();
   };
@@ -46,7 +50,7 @@ const DeviceSetupView = ({
       >
         {renderLeft ? (
           renderLeft()
-        ) : hasBackButton || onBack ? (
+        ) : canRenderBackButton ? (
           <Flex>
             <TouchableOpacity onPress={onBack || handleBack}>
               <ArrowLeftMedium size={24} />
@@ -57,7 +61,7 @@ const DeviceSetupView = ({
         )}
         {renderRight ? (
           renderRight()
-        ) : hasCloseButton || onClose ? (
+        ) : canRenderCloseButton ? (
           <Flex>
             <TouchableOpacity onPress={onClose || handleBack}>
               <CloseMedium size={24} />
