@@ -103,7 +103,7 @@ registerTransportModule({
     id.startsWith("usb|")
       ? Promise.resolve() // nothing to do
       : null,
-  discovery: new Observable<DescriptorEvent<any>>(o =>
+  discovery: new Observable<DescriptorEvent<unknown>>(o =>
     HIDTransport.listen(o),
   ).pipe(
     map(({ type, descriptor, deviceModel }) => {

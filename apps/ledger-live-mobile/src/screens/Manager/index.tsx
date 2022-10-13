@@ -79,15 +79,16 @@ const ChooseDevice: React.FC<ChooseDeviceProps> = ({ isFocused }) => {
 
   const onHideMenu = () => setShowMenu(false);
 
-  const onSelect = (result: any) => {
+  const onSelect = (result: unknown) => {
     setDevice(undefined);
 
-    result?.result &&
+    if (result && "result" in result) {
       navigation.navigate(ScreenName.ManagerMain, {
         ...result,
         ...params,
         searchQuery: params?.searchQuery || params?.installApp,
       });
+    }
   };
 
   const onModalHide = () => {
