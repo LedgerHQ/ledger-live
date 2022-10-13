@@ -171,6 +171,9 @@ export function SideDrawer({
         preventScroll: true,
       });
       focusTrap.current.activate();
+    } else if (shouldDisableFocusTrap) {
+      focusTrap.current?.deactivate();
+      focusTrap.current = null;
     }
 
     return () => {
