@@ -728,6 +728,9 @@
     "ImageProcessingError" : {
       "title" : "Görüntü işlenemedi",
       "description" : "Lütfen başka bir görüntüyle tekrar deneyin"
+    },
+    "HederaAddAccountError" : {
+      "title" : "Hesabınız eklenemedi. Lütfen tekrar deneyin."
     }
   },
   "crash" : {
@@ -775,6 +778,9 @@
     "failed" : {
       "biometrics" : {
         "title" : "{{biometricsType}} ile kilit açma başarısız",
+        "touchid" : "TouchID",
+        "faceid" : "FaceID",
+        "fingerprint" : "Parmak İzi",
         "description" : "Devam etmek için parolanızı girin",
         "authenticate" : "Lütfen Ledger Live uygulamasıyla kimlik doğrulaması yapın"
       },
@@ -803,7 +809,10 @@
     },
     "enableBiometrics" : {
       "title" : "{{biometricsType}}",
-      "desc" : "Kilidi {{biometricsType}} ile açın"
+      "desc" : "Kilidi {{biometricsType}} ile açın",
+      "touchid" : "TouchID",
+      "faceid" : "FaceID",
+      "fingerprint" : "Parmak İzi"
     }
   },
   "reset" : {
@@ -1002,12 +1011,12 @@
   },
   "discover" : {
     "title" : "Keşfedin",
-    "desc" : "Ledger Live'daki Web 3.0 dünyasını keşfedin",
+    "desc" : "Web3 dünyasını güvenle keşfedin",
     "link" : "Daha fazla bilgi ver",
     "sections" : {
       "learn" : {
         "title" : "Öğrenin",
-        "desc" : "Kripto, NFT'ler, dijital güvenlik ve daha fazlası hakkında bilgi edinin"
+        "desc" : "Uzmanlardan kripto ve daha fazlası hakkında ücretsiz bilgiler öğrenin."
       },
       "ledgerApps" : {
         "title" : "Uygulamalar",
@@ -1015,11 +1024,15 @@
       },
       "earn" : {
         "title" : "Kazanın",
-        "desc" : "Pasif gelir elde edin ve kripto varlıklarınızı artırın"
+        "desc" : "Kriptolarınızı stake ederek ve borç vererek artırın."
       },
       "mint" : {
         "title" : "Mint'leyin",
-        "desc" : "[ L ] Market'teki özel iş birliklerini kullanarak NFT'ler mint'leyin"
+        "desc" : "[L] Market'teki özel kampanyalara katılarak NFT'ler mint'leyin."
+      },
+      "referralProgram" : {
+        "title" : "Arkadaşına Öner",
+        "desc" : "Arkadaşınız bir Ledger satın aldığında 10$ değerinde BTC kazanın. "
       }
     },
     "comingSoon" : "Çok yakında",
@@ -1097,6 +1110,7 @@
       "nanoS" : "Nano S",
       "nanoSP" : "Nano S Plus",
       "nanoX" : "Nano X",
+      "nanoFTS" : "Nano FTS",
       "blue" : "Blue",
       "chooseDevice" : "Cihazınızı seçin"
     },
@@ -1636,9 +1650,133 @@
       },
       "error" : {
         "title" : "Eşleştirme başarısız",
-        "subtitle" : "Bir sorun oluştu! Bluetooth'unuzun açık ve {{productName}} cihazınızın yakında olduğundan emin olun",
+        "subtitle" : "Bir sorun oluştu!\nBluetooth'unuzun açık ve {{productName}} cihazınızın yakında olduğundan emin olun.",
         "retryCta" : "Tekrar deneyin"
       }
+    }
+  },
+  "syncOnboarding" : {
+    "title" : "{{deviceName}} cihazını kurun",
+    "estimatedTimeFormat" : "{{estimatedTime}} dk.",
+    "deviceSelection" : {
+      "title" : "Elinizdeki cihaz hangisi?",
+      "subtitle" : "Ledger Live ile kurmak istediğiniz Ledger cüzdanını seçin",
+      "brand" : "Ledger",
+      "setupTime" : "{{time}} dk"
+    },
+    "scanning" : {
+      "title" : "{{productName}} cihazınız aranıyor",
+      "description" : "Lütfen {{productName}} cihazınızın kilidinin açıldığından ve Bluetooth'un etkin olduğundan emin olun"
+    },
+    "pairing" : {
+      "success" : {
+        "title" : "{{deviceName}} ile eşleştirildi"
+      },
+      "loading" : {
+        "title" : "{{deviceName}} ile eşleştiriliyor",
+        "subtitle" : "{{productName}} cihazınızdaki kodu onaylayın"
+      },
+      "error" : {
+        "title" : "Eşleştirme başarısız",
+        "subtitle" : "Bir sorun oluştu! Bluetooth'unuzun açık ve {{productName}} cihazınızın yakında olduğundan emin olun"
+      }
+    },
+    "languageSelect" : {
+      "title" : "Uygulama Dili"
+    },
+    "firmwareLanguageUpdateDrawer" : {
+      "title" : "{{productName}} cihazınızın dilini değiştirin",
+      "description" : "Ledger Live artık {{newLanguage}}. {{productName}} cihazınızı da {{newLanguage}} kullanmak ister misiniz?",
+      "updateCta" : "Dili değiştir",
+      "cancelCta" : "İptal et"
+    },
+    "desyncDrawer" : {
+      "title" : "{{productName}} cihazınıza bağlanamadık",
+      "description" : "Lütfen {{productName}} cihazınızın yakında olduğundan ve kilidinin açıldığından emin olun. Cep telefonunuzun Bluetooth bağlantısının açık olup olmadığını kontrol edin",
+      "retryCta" : "Tekrar deneyin",
+      "helpCta" : "Yardım alın"
+    },
+    "resyncOverlay" : {
+      "content" : "{{productName}} ile bağlantınız kesilmiş. Yeniden bağlanılıyor"
+    },
+    "helpDrawer" : {
+      "title" : "Kurulum kılavuzuyla ilgili yardıma mı ihtiyacınız var?",
+      "description" : "Lorem Elsass ipsum aliquam bissame Ober schae ffolsheim gehts messti de Bischheim tellus blottkopf, dui sed libero. hopla libero, placerat leo eget Gal",
+      "docCta" : "SSS sayfalarımızı görüntüleyin",
+      "supportCta" : "Bir temsilciyle görüş"
+    },
+    "pairingStep" : {
+      "title" : "{{productName}} eşleştirildi",
+      "description" : "{{productName}} cihazınızı kurmaya devam edin ve adım adım kılavuzu görmek için buraya tekrar bakın"
+    },
+    "pinStep" : {
+      "title" : "PIN Kodunuzu seçin",
+      "description" : "PIN Kodunuz {{productName}} cihazınıza istenmeyen kişilerin erişmesine engel olur. Bunu asla paylaşmayın",
+      "warning" : "PIN Kodunuzu bilen ve {{productName}} cihazınıza erişebilen herkes varlıklarınızı sonsuza dek çalabilir"
+    },
+    "seedStep" : {
+      "title" : "Kurtarma ifadenizi ayarlayın",
+      "description" : "Kurtarma ifadeniz, özel anahtarlarınızı yedekleyen 24 kelimeden oluşan gizli bir listedir. {{productName}} cihazınız benzersiz bir kurtarma ifadesi oluşturur. Ledger bunun bir kopyasını saklamaz"
+    },
+    "softwareChecksSteps" : {
+      "title" : "İşletim sistemi kontrolü",
+      "genuineCheckRequestDrawer" : {
+        "title" : "{{productName}} cihazınızın orijinal olduğundan emin olalım",
+        "checkCta" : "Orijinalliği kontrol et"
+      },
+      "allowManagerDrawer" : {
+        "wording" : "Ledger Live"
+      },
+      "genuineCheckCancelledDrawer" : {
+        "title" : "Orijinallik kontrolü Nano'nuzda iptal edildi",
+        "description" : "Bu kontrol, {{productName}} cihazınızın güvenli bir şekilde kullanılabileceğinden emin olmak için önemlidir",
+        "retryCta" : "Orijinallik kontrolünü tekrar çalıştırın",
+        "skipCta" : "Belki sonra"
+      },
+      "updateAvailableDrawer" : {
+        "title" : "Yeni yazılım bulundu",
+        "description" : "En yeni güvenlik özelliklerine erişmek için {{productName}} cihazınızı güncellemenizi önemle tavsiye ederiz",
+        "updateCta" : "Güncelle"
+      },
+      "genuineCheckStep" : {
+        "inactive" : {
+          "title" : "Orijinallik Kontrolü"
+        },
+        "active" : {
+          "title" : "{{productName}} kontrol ediliyor"
+        },
+        "completed" : {
+          "title" : "{{productName}} cihazınız orijinal"
+        },
+        "failed" : {
+          "title" : "Cihaz güvenliği kontrol edilmedi"
+        }
+      },
+      "firmwareUpdateStep" : {
+        "inactive" : {
+          "title" : "Yazılım kontrolü"
+        },
+        "active" : {
+          "title" : "Yazılım sürümü kontrol ediliyor"
+        },
+        "completed" : {
+          "updateAvailable" : {
+            "title" : "{{firmwareVersion}} yazılım sürümü mevcut"
+          },
+          "noUpdateAvailable" : {
+            "title" : "Yazılım sürümü güncel"
+          }
+        },
+        "failed" : {
+          "title" : "Yazılım güncellenemedi"
+        }
+      }
+    },
+    "readyStep" : {
+      "title" : "{{productName}} hazır"
+    },
+    "completion" : {
+      "title" : "Artık kontrol sizde"
     }
   },
   "tabs" : {
@@ -1970,6 +2108,7 @@
       },
       "advanced" : {
         "title" : "Kapsamlı loglar",
+        "warningDerivation" : "Bu bir {{tag}} xpub'ıdır. Bunu bir üçüncü taraf cüzdanda içe aktarırken aynı türev modunu seçin.",
         "desc" : ""
       }
     },
