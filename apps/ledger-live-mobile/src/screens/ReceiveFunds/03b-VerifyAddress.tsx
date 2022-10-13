@@ -9,14 +9,14 @@ import type {
   TokenAccount,
   AccountLike,
   Currency,
-} from "@ledgerhq/live-common/lib/types";
+} from "@ledgerhq/live-common/types";
 import {
   getMainAccount,
   getAccountCurrency,
-} from "@ledgerhq/live-common/lib/account";
-import { getAccountBridge } from "@ledgerhq/live-common/lib/bridge";
+} from "@ledgerhq/live-common/account";
+import { getAccountBridge } from "@ledgerhq/live-common/bridge";
 import type { DeviceModelId } from "@ledgerhq/devices";
-import type { Device } from "@ledgerhq/live-common/lib/hw/actions/types";
+import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import styled, { useTheme } from "styled-components/native";
 import { Flex } from "@ledgerhq/native-ui";
 import { track, TrackScreen } from "../../analytics";

@@ -26,7 +26,7 @@ import {
   getAccountUnit,
   getMainAccount,
   getAccountName,
-} from "@ledgerhq/live-common/lib/account/index";
+} from "@ledgerhq/live-common/account/index";
 import { getAccountCurrency } from "@ledgerhq/live-common/src/account";
 import { getDeviceModel } from "@ledgerhq/devices";
 import { DeviceModelId } from "@ledgerhq/types-devices";
