@@ -102,4 +102,4 @@ export default {
   user,
   version,
   walletconnect
-} as any;
+};
