@@ -2,7 +2,6 @@ PODS:
   - Adjust (4.29.6):
     - Adjust/Core (= 4.29.6)
   - Adjust/Core (4.29.6)
-  - Analytics (4.1.6)
   - Appboy-iOS-SDK (4.5.1):
     - Appboy-iOS-SDK/UI (= 4.5.1)
   - Appboy-iOS-SDK/ContentCards (4.5.1):
@@ -544,9 +543,6 @@ PODS:
     - React-perflogger (= 0.68.2)
   - rn-fetch-blob (0.12.0):
     - React-Core
-  - RNAnalytics (1.5.3):
-    - Analytics
-    - React-Core
   - RNCAsyncStorage (1.17.4):
     - React-Core
   - RNCClipboard (1.5.1):
@@ -621,10 +617,15 @@ PODS:
   - SDWebImageWebPCoder (0.8.5):
     - libwebp (~> 1.0)
     - SDWebImage/Core (~> 5.10)
+  - segment-analytics-react-native (2.9.0):
+    - React-Core
+    - sovran-react-native
   - Sentry (7.23.0):
     - Sentry/Core (= 7.23.0)
   - Sentry/Core (7.23.0)
   - SocketRocket (0.6.0)
+  - sovran-react-native (0.4.4):
+    - React-Core
   - Storyly (1.24.1)
   - storyly-react-native (1.24.1):
     - React
@@ -729,7 +730,6 @@ DEPENDENCIES:
   - "React-runtimeexecutor (from `../../../node_modules/.pnpm/react-native@0.68.2_qiqqwmyv63yhnuboofexv3s7x4/node_modules/react-native/ReactCommon/runtimeexecutor`)"
   - "ReactCommon/turbomodule/core (from `../../../node_modules/.pnpm/react-native@0.68.2_qiqqwmyv63yhnuboofexv3s7x4/node_modules/react-native/ReactCommon`)"
   - "rn-fetch-blob (from `../../../node_modules/.pnpm/rn-fetch-blob@0.12.0/node_modules/rn-fetch-blob`)"
-  - "RNAnalytics (from `../../../node_modules/.pnpm/@segment+analytics-react-native@1.5.3/node_modules/@segment/analytics-react-native`)"
   - "RNCAsyncStorage (from `../../../node_modules/.pnpm/@react-native-async-storage+async-storage@1.17.4_react-native@0.68.2/node_modules/@react-native-async-storage/async-storage`)"
   - "RNCClipboard (from `../../../node_modules/.pnpm/@react-native-community+clipboard@1.5.1_zqxy7fpkavjkgz5xll7ed4r6rq/node_modules/@react-native-community/clipboard`)"
   - "RNCMaskedView (from `../../../node_modules/.pnpm/@react-native-masked-view+masked-view@0.2.6_zqxy7fpkavjkgz5xll7ed4r6rq/node_modules/@react-native-masked-view/masked-view`)"
@@ -747,6 +747,8 @@ DEPENDENCIES:
   - "RNShare (from `../../../node_modules/.pnpm/react-native-share@6.5.0/node_modules/react-native-share`)"
   - "RNSVG (from `../../../node_modules/.pnpm/react-native-svg@12.3.0_zqxy7fpkavjkgz5xll7ed4r6rq/node_modules/react-native-svg`)"
   - "RNVectorIcons (from `../../../node_modules/.pnpm/react-native-vector-icons@8.1.0/node_modules/react-native-vector-icons`)"
+  - "segment-analytics-react-native (from `../../../node_modules/.pnpm/@segment+analytics-react-native@2.9.0_zqxy7fpkavjkgz5xll7ed4r6rq/node_modules/@segment/analytics-react-native`)"
+  - "sovran-react-native (from `../../../node_modules/.pnpm/@segment+sovran-react-native@0.4.4_zqxy7fpkavjkgz5xll7ed4r6rq/node_modules/@segment/sovran-react-native`)"
   - "storyly-react-native (from `../../../node_modules/.pnpm/storyly-react-native@1.24.1_zqxy7fpkavjkgz5xll7ed4r6rq/node_modules/storyly-react-native`)"
   - "TcpSockets (from `../../../node_modules/.pnpm/react-native-tcp@4.0.0_react-native@0.68.2/node_modules/react-native-tcp`)"
   - "Yoga (from `../../../node_modules/.pnpm/react-native@0.68.2_qiqqwmyv63yhnuboofexv3s7x4/node_modules/react-native/ReactCommon/yoga`)"
@@ -754,7 +756,6 @@ DEPENDENCIES:
 SPEC REPOS:
   trunk:
     - Adjust
-    - Analytics
     - Appboy-iOS-SDK
     - CocoaAsyncSocket
     - Firebase
@@ -916,8 +917,6 @@ EXTERNAL SOURCES:
     :path: "../../../node_modules/.pnpm/react-native@0.68.2_qiqqwmyv63yhnuboofexv3s7x4/node_modules/react-native/ReactCommon"
   rn-fetch-blob:
     :path: "../../../node_modules/.pnpm/rn-fetch-blob@0.12.0/node_modules/rn-fetch-blob"
-  RNAnalytics:
-    :path: "../../../node_modules/.pnpm/@segment+analytics-react-native@1.5.3/node_modules/@segment/analytics-react-native"
   RNCAsyncStorage:
     :path: "../../../node_modules/.pnpm/@react-native-async-storage+async-storage@1.17.4_react-native@0.68.2/node_modules/@react-native-async-storage/async-storage"
   RNCClipboard:
@@ -952,6 +951,10 @@ EXTERNAL SOURCES:
     :path: "../../../node_modules/.pnpm/react-native-svg@12.3.0_zqxy7fpkavjkgz5xll7ed4r6rq/node_modules/react-native-svg"
   RNVectorIcons:
     :path: "../../../node_modules/.pnpm/react-native-vector-icons@8.1.0/node_modules/react-native-vector-icons"
+  segment-analytics-react-native:
+    :path: "../../../node_modules/.pnpm/@segment+analytics-react-native@2.9.0_zqxy7fpkavjkgz5xll7ed4r6rq/node_modules/@segment/analytics-react-native"
+  sovran-react-native:
+    :path: "../../../node_modules/.pnpm/@segment+sovran-react-native@0.4.4_zqxy7fpkavjkgz5xll7ed4r6rq/node_modules/@segment/sovran-react-native"
   storyly-react-native:
     :path: "../../../node_modules/.pnpm/storyly-react-native@1.24.1_zqxy7fpkavjkgz5xll7ed4r6rq/node_modules/storyly-react-native"
   TcpSockets:
@@ -961,7 +964,6 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   Adjust: 94f1c99429fb2a7ebe530294fd66a88d63a54922
-  Analytics: eefe524436f904b8bb3f8c8c3425280e43b34efc
   Appboy-iOS-SDK: 93f8c7e0820a79b4ef5367fae32406f03a30ca97
   boost: a7c83b31436843459a1961bfd74b96033dc77234
   CocoaAsyncSocket: 065fd1e645c7abab64f7a6a2007a48038fdc6a99
@@ -1052,7 +1054,6 @@ SPEC CHECKSUMS:
   React-runtimeexecutor: b960b687d2dfef0d3761fbb187e01812ebab8b23
   ReactCommon: 095366164a276d91ea704ce53cb03825c487a3f2
   rn-fetch-blob: f065bb7ab7fb48dd002629f8bdcb0336602d3cba
-  RNAnalytics: 6fc4977ed662251d8a0066422aed1d1a5f697caf
   RNCAsyncStorage: 9367a646dc24e3ab7b6874d79bc1bfd0832dce58
   RNCClipboard: 41d8d918092ae8e676f18adada19104fa3e68495
   RNCMaskedView: c298b644a10c0c142055b3ae24d83879ecb13ccd
@@ -1072,8 +1073,10 @@ SPEC CHECKSUMS:
   RNVectorIcons: 31cebfcf94e8cf8686eb5303ae0357da64d7a5a4
   SDWebImage: a7f831e1a65eb5e285e3fb046a23fcfbf08e696d
   SDWebImageWebPCoder: 908b83b6adda48effe7667cd2b7f78c897e5111d
+  segment-analytics-react-native: a66ad0fc52b657774ea8b53410f19d14b595ffd2
   Sentry: a0d4563fa4ddacba31fdcc35daaa8573d87224d6
   SocketRocket: fccef3f9c5cedea1353a9ef6ada904fde10d6608
+  sovran-react-native: 5f9715a62b50008d72c0cf904cb08c8377777b62
   Storyly: 1ae05f53c33d2ce75e8fdcc57f2617c4304d433c
   storyly-react-native: fb35dd20cb36da37a851a785d12969c95fe3c888
   TcpSockets: 4ef55305239923b343ed0a378b1fac188b1373b0

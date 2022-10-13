@@ -552,7 +552,7 @@ importers:
       '@ledgerhq/types-live': workspace:^
       '@polkadot/reactnative-identicon': 2.2.1
       '@polkadot/x-randomvalues': 9.1.1
-      '@react-native-async-storage/async-storage': ^1.15.17
+      '@react-native-async-storage/async-storage': ^1.17.4
       '@react-native-community/cli': ^7.0.1
       '@react-native-community/cli-platform-android': ^7.0.1
       '@react-native-community/cli-platform-ios': ^7.0.1
@@ -569,7 +569,8 @@ importers:
       '@react-navigation/material-top-tabs': ^6.0.6
       '@react-navigation/native': ^6.0.6
       '@react-navigation/stack': ^6.0.11
-      '@segment/analytics-react-native': ^1.5.0
+      '@segment/analytics-react-native': ^2.9.0
+      '@segment/sovran-react-native': ^0.4.4
       '@sentry/cli': ^2.5.2
       '@sentry/react-native': ^4.2.4
       '@types/color': ^3.0.3
@@ -752,7 +753,8 @@ importers:
       '@react-navigation/material-top-tabs': 6.2.1_xkxxoil2wujl2ovdidsx3fww5q
       '@react-navigation/native': 6.0.10_zqxy7fpkavjkgz5xll7ed4r6rq
       '@react-navigation/stack': 6.2.1_r56o2dk2wyftxawcvswkha4q4e
-      '@segment/analytics-react-native': 1.5.3
+      '@segment/analytics-react-native': 2.9.0_zqxy7fpkavjkgz5xll7ed4r6rq
+      '@segment/sovran-react-native': 0.4.4_zqxy7fpkavjkgz5xll7ed4r6rq
       '@sentry/cli': 2.5.2
       '@sentry/react-native': 4.2.4_zqxy7fpkavjkgz5xll7ed4r6rq
       asyncstorage-down: 4.2.0
@@ -14117,8 +14119,21 @@ packages:
     resolution: {integrity: sha512-ZxOhsSyxYwLJj3pLZCefNitxsj093tb2vq90mp2txoYeBqbcjDjqFhyM8eUjq/uFm6zJ+mUuqxlS2FkuSY1MTA==}
     dev: false
 
-  /@segment/analytics-react-native/1.5.3:
-    resolution: {integrity: sha512-sCUSqppTHKEB1FkvplO1e+uALyidTZSa/LnxrvuClsjP8Q5s5rfxLgK/aj3D3ffScIefQd+v9gY2cBjAo3zMWw==}
+  /@segment/analytics-react-native/2.9.0_zqxy7fpkavjkgz5xll7ed4r6rq:
+    resolution: {integrity: sha512-fQmz/LdbdBwxN1+9bTsPya4I3NRS4jiK2nsEGh82X6u3OZZ4Bml8A1t+Ju74YxY2QdsmTQ3qGfwKGOBL/HdTJw==}
+    engines: {node: '>=12'}
+    peerDependencies:
+      react: '*'
+      react-native: '*'
+    dependencies:
+      '@react-native-async-storage/async-storage': 1.17.4_react-native@0.68.2
+      '@segment/sovran-react-native': 0.4.4_zqxy7fpkavjkgz5xll7ed4r6rq
+      deepmerge: 4.2.2
+      js-base64: 3.7.2
+      nanoid: 3.3.4
+      promise.allsettled: 1.0.5
+      react: 17.0.2
+      react-native: 0.68.2_qiqqwmyv63yhnuboofexv3s7x4
     dev: false
 
   /@segment/loosely-validate-event/2.0.0:
@@ -14127,6 +14142,20 @@ packages:
       component-type: 1.2.1
       join-component: 1.1.0
     dev: true
+
+  /@segment/sovran-react-native/0.4.4_zqxy7fpkavjkgz5xll7ed4r6rq:
+    resolution: {integrity: sha512-YnXhHfFIdqjMb+6ejMA+1oO0KeJPK3Hv0dHYgcWmq5oxVAWrJNTK8rGiRVuVaVQHfSkGg0zQ/nGB09oMUVteDg==}
+    peerDependencies:
+      react: '*'
+      react-native: '*'
+    dependencies:
+      '@react-native-async-storage/async-storage': 1.17.4_react-native@0.68.2
+      ansi-regex: 5.0.1
+      deepmerge: 4.2.2
+      react: 17.0.2
+      react-native: 0.68.2_qiqqwmyv63yhnuboofexv3s7x4
+      shell-quote: 1.7.3
+    dev: false
 
   /@sentry/browser/7.8.1:
     resolution: {integrity: sha512-9JuagYqHyaZu/4RqyxrAgEHo71oV592XBuUKC33gajCVKWbyG3mNqudSMoHtdM1DrV9REZ4Elha7zFaE2cJX6g==}
@@ -21444,7 +21473,6 @@ packages:
       es-abstract: 1.20.1
       es-array-method-boxes-properly: 1.0.0
       is-string: 1.0.7
-    dev: true
 
   /array.prototype.reduce/1.0.4:
     resolution: {integrity: sha512-WnM+AjG/DvLRLo4DDl+r+SvCzYtD2Jd9oeBYMcEaI7t3fFrHY9M53/wdLcTvmZNQ70IU6Htj0emFkZ5TS+lrdw==}
@@ -27397,7 +27425,7 @@ packages:
       is-shared-array-buffer: 1.0.2
       is-string: 1.0.7
       is-weakref: 1.0.2
-      object-inspect: 1.12.1
+      object-inspect: 1.12.2
       object-keys: 1.1.1
       object.assign: 4.1.3
       regexp.prototype.flags: 1.4.3
@@ -34650,7 +34678,7 @@ packages:
     dev: false
 
   /isarray/0.0.1:
-    resolution: {integrity: sha1-ihis/Kmo9Bd+Cav8YDiTmwXR7t8=}
+    resolution: {integrity: sha512-D2S+3GLxWH+uhrNEcoh/fnmYeP8E8/zHl644d/jdA0g2uyXvy3sb0qxotE+ne0LtccHknQzWwZEzhak7oJ0COQ==}
 
   /isarray/1.0.0:
     resolution: {integrity: sha512-VLghIWNM6ELQzo7zwmcg0NmTVyWKYjvIeM83yjp0wRDTmUnrM678fQbcKBo6n2CJEF0szoG//ytg+TKla89ALQ==}
@@ -34876,14 +34904,12 @@ packages:
 
   /iterate-iterator/1.0.2:
     resolution: {integrity: sha512-t91HubM4ZDQ70M9wqp+pcNpu8OyJ9UAtXntT/Bcsvp5tZMnz9vRa+IunKXeI8AnfZMTv0jNuVEmGeLSMjVvfPw==}
-    dev: true
 
   /iterate-value/1.0.2:
     resolution: {integrity: sha512-A6fMAio4D2ot2r/TYzr4yUWrmwNdsN5xL7+HUiyACE4DXm+q8HtPcnFTp+NnW3k4N05tZ7FVYFFb2CR13NxyHQ==}
     dependencies:
       es-get-iterator: 1.1.2
       iterate-iterator: 1.0.2
-    dev: true
 
   /jake/10.8.5:
     resolution: {integrity: sha512-sVpxYeuAhWt0OTWITwT98oyV0GsXyMlXCF+3L1SuafBVUIr/uILGRB+NqwkzhgXKvoJpDIpQvqkUALgdmQsQxw==}
@@ -39835,24 +39861,6 @@ packages:
       - supports-color
       - utf-8-validate
 
-  /metro-config/0.67.0_5rj3ktdhebdtkdjqejo5rbxriu:
-    resolution: {integrity: sha512-ThAwUmzZwTbKyyrIn2bKIcJDPDBS0LKAbqJZQioflvBGfcgA21h3fdL3IxRmvCEl6OnkEWI0Tn1Z9w2GLAjf2g==}
-    peerDependencies:
-      metro-transform-worker: '*'
-    peerDependenciesMeta:
-      metro-transform-worker:
-        optional: true
-    dependencies:
-      cosmiconfig: 5.2.1
-      jest-validate: 26.6.2
-      metro: 0.67.0
-      metro-cache: 0.67.0_metro@0.67.0
-      metro-core: 0.67.0_metro@0.67.0
-      metro-runtime: 0.67.0
-      metro-transform-worker: 0.67.0_metro-minify-uglify@0.67.0
-    transitivePeerDependencies:
-      - metro
-
   /metro-config/0.67.0_h77kaxayu5kga6qsud7rauzt6a:
     resolution: {integrity: sha512-ThAwUmzZwTbKyyrIn2bKIcJDPDBS0LKAbqJZQioflvBGfcgA21h3fdL3IxRmvCEl6OnkEWI0Tn1Z9w2GLAjf2g==}
     peerDependencies:
@@ -40236,7 +40244,7 @@ packages:
       '@babel/parser': 7.18.11
       '@babel/types': 7.18.10
       babel-preset-fbjs: 3.4.0_@babel+core@7.18.10
-      metro: 0.67.0_h77kaxayu5kga6qsud7rauzt6a
+      metro: 0.67.0
       metro-babel-transformer: 0.67.0
       metro-cache: 0.67.0_metro@0.67.0
       metro-cache-key: 0.67.0
@@ -40309,68 +40317,6 @@ packages:
     transitivePeerDependencies:
       - bufferutil
       - encoding
-      - supports-color
-      - utf-8-validate
-
-  /metro/0.67.0_h77kaxayu5kga6qsud7rauzt6a:
-    resolution: {integrity: sha512-DwuBGAFcAivoac/swz8Lp7Y5Bcge1tzT7T6K0nf1ubqJP8YzBUtyR4pkjEYVUzVu/NZf7O54kHSPVu1ibYzOBQ==}
-    hasBin: true
-    dependencies:
-      '@babel/code-frame': 7.16.7
-      '@babel/core': 7.17.10
-      '@babel/generator': 7.17.10
-      '@babel/parser': 7.17.10
-      '@babel/template': 7.16.7
-      '@babel/traverse': 7.17.10
-      '@babel/types': 7.17.10
-      absolute-path: 0.0.0
-      accepts: 1.3.8
-      async: 2.6.4
-      chalk: 4.1.2
-      ci-info: 2.0.0
-      connect: 3.7.0
-      debug: 2.6.9
-      denodeify: 1.2.1
-      error-stack-parser: 2.0.7
-      fs-extra: 1.0.0
-      graceful-fs: 4.2.10
-      hermes-parser: 0.5.0
-      image-size: 0.6.3
-      invariant: 2.2.4
-      jest-haste-map: 27.5.1_metro@0.67.0
-      jest-worker: 26.6.2_metro@0.67.0
-      lodash.throttle: 4.1.1
-      metro-babel-transformer: 0.67.0
-      metro-cache: 0.67.0_metro@0.67.0
-      metro-cache-key: 0.67.0
-      metro-config: 0.67.0_5rj3ktdhebdtkdjqejo5rbxriu
-      metro-core: 0.67.0_metro@0.67.0
-      metro-hermes-compiler: 0.67.0
-      metro-inspector-proxy: 0.67.0
-      metro-minify-uglify: 0.67.0
-      metro-react-native-babel-preset: 0.67.0_@babel+core@7.17.10
-      metro-resolver: 0.67.0
-      metro-runtime: 0.67.0
-      metro-source-map: 0.67.0
-      metro-symbolicate: 0.67.0
-      metro-transform-plugins: 0.67.0
-      metro-transform-worker: 0.67.0_metro-minify-uglify@0.67.0
-      mime-types: 2.1.35
-      mkdirp: 0.5.6
-      node-fetch: 2.6.7
-      nullthrows: 1.1.1
-      rimraf: 2.7.1
-      serialize-error: 2.1.0
-      source-map: 0.5.7
-      strip-ansi: 6.0.1
-      temp: 0.8.3
-      throat: 5.0.0
-      ws: 7.5.7
-      yargs: 15.4.1
-    transitivePeerDependencies:
-      - bufferutil
-      - encoding
-      - metro-transform-worker
       - supports-color
       - utf-8-validate
 
@@ -41565,9 +41511,6 @@ packages:
     resolution: {integrity: sha512-RSn9F68PjH9HqtltsSnqYC1XXoWe9Bju5+213R98cNGttag9q9yAOTzdbsqvIa7aNm5WffBZFpWYr2aWrklWAw==}
     engines: {node: '>= 6'}
     dev: false
-
-  /object-inspect/1.12.1:
-    resolution: {integrity: sha512-Y/jF6vnvEtOPGiKD1+q+X0CiUYRQtEHp89MLLUJ7TUivtH8Ugn2+3A7Rynqk7BRsAoqeOQWnFnjpDrKSxDgIGA==}
 
   /object-inspect/1.12.2:
     resolution: {integrity: sha512-z+cPxW0QGUp0mcqcsgQyLVRDoXFQbXOwBaqyF7VIgI4TWNQsDHrBpUQslRmIfAoYWdYzs6UlKJtB2XJpTaNSpQ==}
@@ -44819,7 +44762,6 @@ packages:
       es-abstract: 1.20.1
       get-intrinsic: 1.1.2
       iterate-value: 1.0.2
-    dev: true
 
   /promise.prototype.finally/3.1.3:
     resolution: {integrity: sha512-EXRF3fC9/0gz4qkt/f5EP5iW4kj9oFpBICNpCNOb/52+8nlHIX07FPLbi/q4qYBQ1xZqivMzTpNQSnArVASolQ==}

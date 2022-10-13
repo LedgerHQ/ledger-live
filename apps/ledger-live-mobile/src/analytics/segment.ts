@@ -4,7 +4,7 @@ import { v4 as uuid } from "uuid";
 import * as Sentry from "@sentry/react-native";
 import Config from "react-native-config";
 import { Platform } from "react-native";
-import { createClient } from "@segment/analytics-react-native";
+import { createClient, SegmentClient } from "@segment/analytics-react-native";
 import VersionNumber from "react-native-version-number";
 import RNLocalize from "react-native-localize";
 import { ReplaySubject } from "rxjs";
@@ -94,10 +94,12 @@ const context = {
   ip: "0.0.0.0",
 };
 let storeInstance; // is the redux store. it's also used as a flag to know if analytics is on or off.
-let segmentClient;
+let segmentClient: SegmentClient | undefined;
 
-const token = __DEV__ ? null : ANALYTICS_TOKEN;
-export const start = async (store: any) => {
+// const token = __DEV__ ? null : ANALYTICS_TOKEN;
+const token = ANALYTICS_TOKEN;
+export const start = async (store: any): Promise<SegmentClient | undefined> => {
+  console.log("TOKEN ", ANALYTICS_TOKEN);
   const { user, created } = await getOrCreateUser();
   storeInstance = store;
 
@@ -120,6 +122,7 @@ export const start = async (store: any) => {
   }
 
   track("Start", extraProperties(store), true);
+  return segmentClient;
 };
 export const updateIdentify = async () => {
   Sentry.addBreadcrumb({
@@ -137,7 +140,7 @@ export const updateIdentify = async () => {
     });
   if (!token) return;
   const { user } = await getOrCreateUser();
-  segmentClient.identify(user.id, extraProperties(storeInstance), {
+  segmentClient?.identify(user.id, extraProperties(storeInstance), {
     context,
   });
 };
@@ -181,7 +184,7 @@ export const track = (
     properties: allProperties,
   });
   if (!token) return;
-  segmentClient.track(event, allProperties, {
+  segmentClient?.track(event, allProperties, {
     context,
   });
 };
@@ -258,7 +261,7 @@ export const screen = (
     properties: allProperties,
   });
   if (!token) return;
-  segmentClient.track(title, allProperties, {
+  segmentClient?.track(title, allProperties, {
     context,
   });
 };
