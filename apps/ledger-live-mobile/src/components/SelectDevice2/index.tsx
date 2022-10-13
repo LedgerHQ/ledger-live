@@ -233,33 +233,10 @@ export default function SelectDevice({ onSelect }: Props) {
         onClose={() => setIsAddNewDrawerOpen(false)}
       >
         <Flex>
-          <Touchable onPress={onPairDevices}>
-            <Flex backgroundColor="neutral.c30" px={6} py={7} borderRadius={8}>
-              <Flex flexDirection="row">
-                <Flex flexShrink={1}>
-                  <Text variant="large" fontWeight="semiBold" mb={3}>
-                    {t("manager.selectDevice.connectExistingLedger")}
-                  </Text>
-                  <Text variant="paragraph" color="neutral.c80">
-                    {t("manager.selectDevice.connectExistingLedgerDescription")}
-                  </Text>
-                </Flex>
-                <Flex justifyContent="center" alignItems="center" ml={5} mr={2}>
-                  <Flex
-                    borderRadius="9999px"
-                    backgroundColor="primary.c20"
-                    p={4}
-                  >
-                    <Icons.BluetoothMedium color="primary.c80" size={24} />
-                  </Flex>
-                </Flex>
-              </Flex>
-            </Flex>
-          </Touchable>
           <Touchable onPress={onSetUpNewDevice}>
             <Flex
               backgroundColor="neutral.c30"
-              mt={4}
+              mb={4}
               px={6}
               py={7}
               borderRadius={8}
@@ -280,6 +257,29 @@ export default function SelectDevice({ onSelect }: Props) {
                     p={4}
                   >
                     <Icons.PlusMedium color="primary.c80" size={24} />
+                  </Flex>
+                </Flex>
+              </Flex>
+            </Flex>
+          </Touchable>
+          <Touchable onPress={onPairDevices}>
+            <Flex backgroundColor="neutral.c30" px={6} py={7} borderRadius={8}>
+              <Flex flexDirection="row">
+                <Flex flexShrink={1}>
+                  <Text variant="large" fontWeight="semiBold" mb={3}>
+                    {t("manager.selectDevice.connectExistingLedger")}
+                  </Text>
+                  <Text variant="paragraph" color="neutral.c80">
+                    {t("manager.selectDevice.connectExistingLedgerDescription")}
+                  </Text>
+                </Flex>
+                <Flex justifyContent="center" alignItems="center" ml={5} mr={2}>
+                  <Flex
+                    borderRadius="9999px"
+                    backgroundColor="primary.c20"
+                    p={4}
+                  >
+                    <Icons.BluetoothMedium color="primary.c80" size={24} />
                   </Flex>
                 </Flex>
               </Flex>
