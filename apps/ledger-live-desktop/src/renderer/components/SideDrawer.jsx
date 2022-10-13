@@ -1,6 +1,7 @@
 // @flow
 
 import React, { useEffect, useCallback, useRef } from "react";
+import { useSelector } from "react-redux";
 import styled from "styled-components";
 import { color } from "styled-system";
 import { Transition } from "react-transition-group";
@@ -12,6 +13,7 @@ import IconAngleLeft from "~/renderer/icons/AngleLeft";
 import { Base as Button } from "./Button";
 import Box from "./Box/Box";
 import { createPortal } from "react-dom";
+import { modalsStateSelector } from "~/renderer/reducers/modals";
 
 const TouchButton = styled.button`
   border: none;
@@ -135,7 +137,6 @@ export function SideDrawer({
   preventBackdropClick = false,
   ...props
 }: DrawerProps) {
-
   const onKeyPress = useCallback(
     e => {
       if (isOpen && !preventBackdropClick && e.key === "Escape" && onRequestClose) {
@@ -155,9 +156,14 @@ export function SideDrawer({
 
   const focusTrapElem = useRef(null);
   const focusTrap = useRef(null);
+  const modalsState = useSelector(modalsStateSelector);
+  const shouldDisableFocusTrap = Object.values(modalsState).reduce(
+    (previous, current) => previous.isOpened || current.isOpened,
+    false,
+  );
 
   useEffect(() => {
-    if (isOpen && focusTrapElem.current) {
+    if (isOpen && focusTrapElem.current && !shouldDisableFocusTrap) {
       focusTrap.current = createFocusTrap(focusTrapElem.current, {
         fallbackFocus: focusTrapElem.current,
         escapeDeactivates: false,
@@ -171,7 +177,7 @@ export function SideDrawer({
       focusTrap.current?.deactivate();
       focusTrap.current = null;
     };
-  }, [isOpen]);
+  }, [isOpen, shouldDisableFocusTrap]);
 
   return domNode
     ? createPortal(
