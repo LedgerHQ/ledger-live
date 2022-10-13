@@ -530,7 +530,7 @@ const envDefinitions = {
     desc: "maximum limit to synchronize accounts concurrently to limit overload",
   },
   BOT_MAX_CONCURRENT: {
-    def: 5,
+    def: 10,
     parser: intParser,
     desc: "maximum limit to run bot spec in parallel",
   },
@@ -628,6 +628,11 @@ const envDefinitions = {
     def: 1,
     parser: intParser,
     desc: "version used for the platform api",
+  },
+  PLAYWRIGHT_RUN: {
+    def: false,
+    parser: boolParser,
+    desc: "true when launched for E2E testing",
   },
   MARKET_API_URL: {
     def: "https://proxycg.api.live.ledger.com/api/v3",

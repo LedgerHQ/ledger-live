@@ -13,7 +13,7 @@ import {
   getAccountCapabilities,
 } from "../../compound/logic";
 import { getSupplyMax } from "./modules/compound";
-import { botTest, pickSiblings } from "../../bot/specs";
+import { botTest, genericTestDestination, pickSiblings } from "../../bot/specs";
 import type { AppSpec } from "../../bot/types";
 import { getGasLimit } from "./transaction";
 import { DeviceModelId } from "@ledgerhq/devices";
@@ -21,12 +21,13 @@ import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { CompoundAccountSummary } from "../../compound/types";
 import { acceptTransaction } from "./speculos-deviceActions";
 
-const testTimeout = 5 * 60 * 1000;
+const testTimeout = 8 * 60 * 1000;
 
 const ethereumBasicMutations = ({ maxAccount }) => [
   {
     name: "move 50%",
     maxRun: 2,
+    testDestination: genericTestDestination,
     transaction: ({ account, siblings, bridge, maxSpendable }) => {
       const sibling = pickSiblings(siblings, maxAccount);
       const recipient = sibling.freshAddress;
@@ -130,6 +131,7 @@ const ethereum: AppSpec<Transaction> = {
   appQuery: {
     model: DeviceModelId.nanoS,
     appName: "Ethereum",
+    appVersion: "1.9.20",
   },
   genericDeviceAction: acceptTransaction,
   testTimeout,
@@ -139,7 +141,7 @@ const ethereum: AppSpec<Transaction> = {
   },
   // @ts-expect-error seriously we have to do somehting
   mutations: ethereumBasicMutations({
-    maxAccount: 3,
+    maxAccount: 7,
   }).concat([
     {
       name: "allow MAX a compound token",
@@ -401,6 +403,7 @@ const ethereumGoerli: AppSpec<Transaction> = {
   appQuery: {
     model: DeviceModelId.nanoS,
     appName: "Ethereum",
+    appVersion: "1.9.20",
   },
   genericDeviceAction: acceptTransaction,
   testTimeout,

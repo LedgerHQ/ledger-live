@@ -15,6 +15,15 @@ const fromBitsToSeedPhraseType = new Map<number, SeedPhraseType>([
   [2, SeedPhraseType.Twelve],
 ]);
 
+export const fromSeedPhraseTypeToNbOfSeedWords = new Map<
+  SeedPhraseType,
+  number
+>([
+  [SeedPhraseType.TwentyFour, 24],
+  [SeedPhraseType.Eighteen, 18],
+  [SeedPhraseType.Twelve, 12],
+]);
+
 export enum OnboardingStep {
   WelcomeScreen1 = "WELCOME_SCREEN_1",
   WelcomeScreen2 = "WELCOME_SCREEN_2",
@@ -28,6 +37,7 @@ export enum OnboardingStep {
   RestoreSeed = "RESTORE_SEED", // path "restore seed" & currentSeedWordIndex available
   SafetyWarning = "SAFETY WARNING",
   Ready = "READY",
+  ChooseName = "CHOOSE_NAME",
 }
 
 const fromBitsToOnboardingStep = new Map<number, OnboardingStep>([
@@ -43,6 +53,7 @@ const fromBitsToOnboardingStep = new Map<number, OnboardingStep>([
   [9, OnboardingStep.RestoreSeed],
   [10, OnboardingStep.SafetyWarning],
   [11, OnboardingStep.Ready],
+  [12, OnboardingStep.ChooseName],
 ]);
 
 export type OnboardingState = {

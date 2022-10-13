@@ -1,10 +1,11 @@
-import { Box, Icons } from "@ledgerhq/native-ui";
+import { Box, Icons, InfiniteLoader } from "@ledgerhq/native-ui";
 import React from "react";
 import styled from "styled-components/native";
 
 type Props = {
   color: string;
   selected: boolean;
+  loading?: boolean;
 };
 
 const Container = styled(Box).attrs((p: { selected: boolean }) => ({
@@ -48,10 +49,14 @@ const CheckPill: React.FC<Record<string, never>> = () => (
   </CheckContainer>
 );
 
-const ContrastChoice: React.FC<Props> = ({ selected, color }) => (
+const ContrastChoice: React.FC<Props> = ({ loading, selected, color }) => (
   <Container selected={selected}>
-    <Round backgroundColor={color} />
-    {selected && <CheckPill />}
+    {selected && loading ? (
+      <InfiniteLoader size={28} />
+    ) : (
+      <Round backgroundColor={color} />
+    )}
+    {selected ? <CheckPill /> : null}
   </Container>
 );
 

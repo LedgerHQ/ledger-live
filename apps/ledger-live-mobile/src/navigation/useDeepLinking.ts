@@ -2,10 +2,10 @@ import { useCallback, useMemo } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { useRemoteLiveAppContext } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
 import { filterPlatformApps } from "@ledgerhq/live-common/platform/filters";
-import { getPlatformVersion } from "@ledgerhq/live-common/lib/platform/version";
+import { getPlatformVersion } from "@ledgerhq/live-common/platform/version";
 import { NavigatorName, ScreenName } from "../const";
 
-function getSettingsScreen(pathname) {
+function getSettingsScreen(pathname: string) {
   const secondPath = pathname.replace(/(^\/+|\/+$)/g, "");
   let screen;
 
@@ -64,7 +64,12 @@ export function useDeepLinkHandler() {
 
       switch (hostname) {
         case "accounts":
-          navigate(NavigatorName.Accounts);
+          if (currency) {
+            navigate(NavigatorName.Accounts, {
+              screen: ScreenName.Asset,
+              params: { currency },
+            });
+          } else navigate(NavigatorName.Accounts);
           break;
 
         case "buy": {
@@ -95,7 +100,7 @@ export function useDeepLinkHandler() {
 
         case "receive":
           navigate(NavigatorName.ReceiveFunds, {
-            screen: ScreenName.ReceiveSelectAccount,
+            screen: ScreenName.ReceiveSelectCrypto,
             params: {
               currency,
             },
@@ -134,10 +139,20 @@ export function useDeepLinkHandler() {
           break;
         }
 
-        case "manager": {
+        case "myledger": {
           navigate(NavigatorName.Manager, {
             screen: ScreenName.Manager,
             params: query,
+          });
+          break;
+        }
+
+        case "add-account": {
+          navigate(NavigatorName.AddAccounts, {
+            screen: ScreenName.AddAccountsSelectCrypto,
+            params: {
+              currency,
+            },
           });
           break;
         }

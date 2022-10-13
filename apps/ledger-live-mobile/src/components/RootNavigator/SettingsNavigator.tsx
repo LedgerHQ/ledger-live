@@ -19,6 +19,7 @@ import DebugHttpTransport from "../../screens/DebugHttpTransport";
 import DebugFeatureFlags from "../../screens/DebugFeatureFlags";
 import DebugIcons from "../../screens/DebugIcons";
 import DebugLottie from "../../screens/DebugLottie";
+import DebugMultiAppInstall from "../../screens/DebugMultiAppInstall";
 import DebugLogs from "../../screens/DebugLogs";
 import DebugStore from "../../screens/DebugStore";
 import DebugEnv from "../../screens/DebugEnv";
@@ -52,7 +53,8 @@ import OnboardingStepLanguage from "../../screens/Onboarding/steps/language";
 import { GenerateMockAccountSelectScreen } from "../../screens/Settings/Debug/GenerateMockAccountsSelect";
 import HiddenNftCollections from "../../screens/Settings/Accounts/HiddenNftCollections";
 import { track } from "../../analytics";
-import { useCurrentRouteName } from "../../helpers/routeHooks";
+// eslint-disable-next-line import/no-cycle
+import { useNoNanoBuyNanoWallScreenOptions } from "../../context/NoNanoBuyNanoWall";
 import PostOnboardingDebugScreen from "../../screens/PostOnboarding/PostOnboardingDebugScreen";
 
 // TODO: types for each screens and navigators need to be set
@@ -77,15 +79,14 @@ export default function SettingsNavigator() {
   );
 
   const navigation = useNavigation();
-  const currentRoute = useCurrentRouteName();
+  const noNanoBuyNanoWallScreenOptions = useNoNanoBuyNanoWallScreenOptions();
 
   const goBackFromNotifications = useCallback(() => {
     track("button_clicked", {
       button: "Back Arrow",
-      screen: currentRoute,
     });
     navigation.goBack();
-  }, [navigation, currentRoute]);
+  }, [navigation]);
 
   return (
     <Stack.Navigator screenOptions={stackNavConfig}>
@@ -175,6 +176,7 @@ export default function SettingsNavigator() {
           title: route.params.headerTitle,
           headerRight: null,
         })}
+        {...noNanoBuyNanoWallScreenOptions}
       />
       <Stack.Screen
         name={ScreenName.RepairDevice}
@@ -202,6 +204,9 @@ export default function SettingsNavigator() {
         component={DeveloperCustomManifest}
         options={{
           title: t("settings.developer.customManifest.title"),
+          headerTitleStyle: {
+            width: "80%",
+          },
         }}
       />
       <Stack.Screen
@@ -327,6 +332,13 @@ export default function SettingsNavigator() {
         component={DebugLottie}
         options={{
           title: "Debug Lottie",
+        }}
+      />
+      <Stack.Screen
+        name={ScreenName.DebugMultiAppInstall}
+        component={DebugMultiAppInstall}
+        options={{
+          title: "Debug MultiAppInstall",
         }}
       />
       <Stack.Screen

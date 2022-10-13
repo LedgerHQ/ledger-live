@@ -13,7 +13,7 @@ export type Props = {
   refreshTime: number,
 };
 
-const CountdownText: ThemedComponent<{}> = styled(Text).attrs()`
+const CountdownText: ThemedComponent<{}> = styled(Text)`
   color: ${p => p.theme.colors.neutral.c70};
 `;
 
@@ -47,8 +47,8 @@ export default function Countdown({ refreshTime, rates }: Props) {
           <Box horizontal fontSize={3} mx={1} key={iconKey}>
             <AnimatedCountdown size={15} duration={refreshTime} />
           </Box>
-          <Box style={{ width: "28px" }}>
-            00:{countdown.toLocaleString("en-US", { minimumIntegerDigits: 2 })}
+          <Box color="neutral.c100" style={{ width: "28px" }}>
+            00:{Math.abs(countdown).toLocaleString("en-US", { minimumIntegerDigits: 2 })}
           </Box>
         </Box>
       ) : (

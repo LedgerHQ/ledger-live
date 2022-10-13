@@ -1,11 +1,15 @@
 import React, { useEffect, useState } from "react";
+import { ScrollView } from "react-native";
 import { useDispatch } from "react-redux";
 import styled from "styled-components/native";
 import { WrongDeviceForAccount } from "@ledgerhq/errors";
 import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { Transaction } from "@ledgerhq/live-common/generated/types";
+import { getDeviceModel } from "@ledgerhq/devices";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { AppRequest } from "@ledgerhq/live-common/hw/actions/app";
 import firmwareUpdateRepair from "@ledgerhq/live-common/hw/firmwareUpdate-repair";
+import { getProviderName } from "@ledgerhq/live-common/exchange/swap/utils/index";
 import {
   InfiniteLoader,
   Text,
@@ -14,7 +18,19 @@ import {
   Icons,
   Log,
 } from "@ledgerhq/native-ui";
-import { getDeviceModel } from "@ledgerhq/devices";
+import BigNumber from "bignumber.js";
+import {
+  ExchangeRate,
+  Exchange,
+} from "@ledgerhq/live-common/src/exchange/swap/types";
+import {
+  getAccountUnit,
+  getMainAccount,
+  getAccountName,
+} from "@ledgerhq/live-common/account/index";
+import { getAccountCurrency } from "@ledgerhq/live-common/src/account";
+import { TFunction } from "react-i18next";
+import { DeviceModelId } from "@ledgerhq/types-devices";
 import { setModalLock } from "../../actions/appstate";
 import { urls } from "../../config/urls";
 import Alert from "../Alert";
@@ -27,9 +43,16 @@ import { getDeviceAnimation } from "../../helpers/getDeviceAnimation";
 import GenericErrorView from "../GenericErrorView";
 import Circle from "../Circle";
 import { MANAGER_TABS } from "../../const/manager";
+import { providerIcons } from "../../icons/swap/index";
 import ExternalLink from "../ExternalLink";
 import { track } from "../../analytics";
-import TermsFooter, { TermsProviders } from "../TermsFooter";
+import CurrencyUnitValue from "../CurrencyUnitValue";
+import CurrencyIcon from "../CurrencyIcon";
+import TermsFooter from "../TermsFooter";
+import Illustration from "../../images/illustration/Illustration";
+
+import notOnboardedDarkImg from "../../images/illustration/Dark/_010.png";
+import notOnboardedLightImg from "../../images/illustration/Light/_010.png";
 
 const Wrapper = styled(Flex).attrs({
   flex: 1,
@@ -211,27 +234,132 @@ export function renderConfirmSwap({
   t,
   device,
   theme,
-  provider,
+  transaction,
+  exchangeRate,
+  exchange,
+  amountExpectedTo,
+  estimatedFees,
 }: RawProps & {
   device: Device;
-  provider?: TermsProviders;
+  transaction: Transaction;
+  exchangeRate: ExchangeRate;
+  exchange: Exchange;
+  amountExpectedTo?: string;
+  estimatedFees?: string;
+}) {
+  const ProviderIcon = providerIcons[exchangeRate.provider.toLowerCase()];
+
+  return (
+    <ScrollView>
+      <Wrapper width="100%">
+        <Alert type="primary" learnMoreUrl={urls.swap.learnMore}>
+          {t("DeviceAction.confirmSwap.alert")}
+        </Alert>
+        <AnimationContainer
+          marginTop="16px"
+          withVerifyAddressHeight={device.modelId !== "blue"}
+        >
+          <Animation
+            source={getDeviceAnimation({ device, key: "validate", theme })}
+          />
+        </AnimationContainer>
+        <TitleText>{t("DeviceAction.confirmSwap.title")}</TitleText>
+
+        <Flex justifyContent={"space-between"} width="100%">
+          <FieldItem title={t("DeviceAction.swap2.amountSent")}>
+            <Text>
+              <CurrencyUnitValue
+                value={transaction.amount}
+                unit={getAccountUnit(exchange.fromAccount)}
+                disableRounding
+                showCode
+              />
+            </Text>
+          </FieldItem>
+
+          <FieldItem title={t("DeviceAction.swap2.amountReceived")}>
+            <Text>
+              <CurrencyUnitValue
+                unit={getAccountUnit(exchange.toAccount)}
+                value={
+                  amountExpectedTo
+                    ? new BigNumber(amountExpectedTo)
+                    : exchangeRate.toAmount
+                }
+                disableRounding
+                showCode
+              />
+            </Text>
+          </FieldItem>
+
+          <FieldItem title={t("DeviceAction.swap2.provider")}>
+            <Flex flexDirection="row" alignItems="center">
+              <Flex paddingRight={2}>
+                <ProviderIcon size={14} />
+              </Flex>
+
+              <Text>{getProviderName(exchangeRate.provider)}</Text>
+            </Flex>
+          </FieldItem>
+
+          <FieldItem title={t("DeviceAction.swap2.fees")}>
+            <Text>
+              <CurrencyUnitValue
+                unit={getAccountUnit(
+                  getMainAccount(
+                    exchange.fromAccount,
+                    exchange.fromParentAccount,
+                  ),
+                )}
+                value={new BigNumber(estimatedFees || 0)}
+                disableRounding
+                showCode
+              />
+            </Text>
+          </FieldItem>
+
+          <FieldItem title={t("DeviceAction.swap2.sourceAccount")}>
+            <Flex flexDirection="row" alignItems="center">
+              <CurrencyIcon
+                size={20}
+                currency={getAccountCurrency(exchange.fromAccount)}
+              />
+              <Text marginLeft={2}>{getAccountName(exchange.fromAccount)}</Text>
+            </Flex>
+          </FieldItem>
+
+          <FieldItem title={t("DeviceAction.swap2.targetAccount")}>
+            <Flex flexDirection="row" alignItems="center">
+              <CurrencyIcon
+                size={20}
+                currency={getAccountCurrency(exchange.toAccount)}
+              />
+              <Text marginLeft={2}>{getAccountName(exchange.toAccount)}</Text>
+            </Flex>
+          </FieldItem>
+        </Flex>
+
+        <TermsFooter provider={exchangeRate.provider} />
+      </Wrapper>
+    </ScrollView>
+  );
+}
+
+function FieldItem({
+  title,
+  children,
+}: {
+  title: string;
+  children: React.ReactNode;
 }) {
   return (
-    <Wrapper width="100%">
-      <Alert type="primary" learnMoreUrl={urls.swap.learnMore}>
-        {t("DeviceAction.confirmSwap.alert")}
-      </Alert>
-      <AnimationContainer
-        marginTop="16px"
-        withVerifyAddressHeight={device.modelId !== "blue"}
-      >
-        <Animation
-          source={getDeviceAnimation({ device, key: "validate", theme })}
-        />
-      </AnimationContainer>
-      <TitleText>{t("DeviceAction.confirmSwap.title")}</TitleText>
-      <TermsFooter provider={provider} />
-    </Wrapper>
+    <Flex flexDirection="row" justifyContent="space-between" paddingY={4}>
+      <Text color="neutral.c70">{title}</Text>
+
+      <Flex flexDirection="row" alignItems="center">
+        {children}
+      </Flex>
+    </Flex>
   );
 }
 
@@ -440,6 +568,71 @@ export function renderError({
   );
 }
 
+export function renderDeviceNotOnboarded({
+  t,
+  device,
+  navigation,
+}: {
+  t: TFunction;
+  device: Device;
+  // TODO: correctly type the navigation prop here AND in the DeviceAction component
+  navigation: any;
+}) {
+  const navigateToOnboarding = () => {
+    if (device.modelId === DeviceModelId.nanoFTS) {
+      // On pairing success, navigate to the Sync Onboarding Companion
+      navigation.navigate(NavigatorName.BaseOnboarding, {
+        screen: NavigatorName.SyncOnboarding,
+        params: {
+          screen: ScreenName.SyncOnboardingCompanion,
+          params: {
+            device,
+          },
+        },
+      });
+    } else {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore next-line
+      navigation.navigate(NavigatorName.BaseOnboarding, {
+        screen: NavigatorName.Onboarding,
+        params: {
+          screen: ScreenName.OnboardingSetNewDevice,
+          params: {
+            deviceModelId: device.modelId,
+          },
+        },
+      });
+    }
+  };
+
+  const deviceName = getDeviceModel(device.modelId).productName;
+
+  return (
+    <Wrapper>
+      <Illustration
+        lightSource={notOnboardedLightImg}
+        darkSource={notOnboardedDarkImg}
+        size={175}
+      />
+      <Text variant="h4" textAlign="center" mt={4}>
+        {t("DeviceAction.deviceNotOnboarded.title")}
+      </Text>
+      <Text variant="body" color="neutral.c70" textAlign="center" mt={4} mx={4}>
+        {t("DeviceAction.deviceNotOnboarded.description", { deviceName })}
+      </Text>
+      <Button
+        type="main"
+        outline={false}
+        onPress={navigateToOnboarding}
+        mt={7}
+        alignSelf="stretch"
+      >
+        {t("DeviceAction.button.openOnboarding")}
+      </Button>
+    </Wrapper>
+  );
+}
+
 export function renderConnectYourDevice({
   t,
   unresponsive,
@@ -453,7 +646,11 @@ export function renderConnectYourDevice({
 }) {
   return (
     <Wrapper>
-      <AnimationContainer withConnectDeviceHeight={device.modelId !== "blue"}>
+      <AnimationContainer
+        withConnectDeviceHeight={
+          ![DeviceModelId.blue, DeviceModelId.nanoFTS].includes(device.modelId)
+        }
+      >
         <Animation
           source={getDeviceAnimation({
             device,

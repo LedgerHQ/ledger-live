@@ -1,6 +1,6 @@
 import invariant from "invariant";
 import React, { useCallback, useState } from "react";
-import { ScrollView, StyleSheet } from "react-native";
+import { ScrollView } from "react-native";
 import { useTranslation } from "react-i18next";
 import { useTheme } from "@react-navigation/native";
 import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
@@ -56,74 +56,82 @@ function AccountBalanceSummaryFooter({ account }: Props) {
 
   const hasMinBondBalance = hasMinimumBondBalance(account);
   return (
-    <ScrollView
-      horizontal
-      showsHorizontalScrollIndicator={false}
-      style={[styles.root]}
-      contentContainerStyle={{
-        paddingHorizontal: 16,
-      }}
-    >
+    <>
       <InfoModal
         isOpened={!!infoName}
         onClose={onCloseModal}
         data={infoName ? info[infoName] : []}
       />
-
-      <InfoItem
-        title={t("account.availableBalance")}
-        onPress={onPressInfoCreator("available")}
-        value={
-          <CurrencyUnitValue
-            unit={unit}
-            value={spendableBalance}
-            disableRounding
+      <ScrollView
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        contentContainerStyle={{
+          paddingHorizontal: 16,
+        }}
+      >
+        <InfoItem
+          title={t("account.availableBalance")}
+          onPress={onPressInfoCreator("available")}
+          value={
+            <CurrencyUnitValue
+              unit={unit}
+              value={spendableBalance}
+              disableRounding
+            />
+          }
+          isLast={
+            !unlockingBalance.gt(0) &&
+            !lockedBalance.gt(0) &&
+            !unlockedBalance.gt(0)
+          }
+        />
+        {lockedBalance.gt(0) && (
+          <InfoItem
+            warning={!hasMinBondBalance}
+            title={t("polkadot.lockedBalance")}
+            onPress={onPressInfoCreator(
+              hasMinBondBalance ? "locked" : "minBondWarning",
+            )}
+            value={
+              <CurrencyUnitValue
+                unit={unit}
+                value={lockedBalance}
+                disableRounding
+              />
+            }
+            isLast={!unlockingBalance.gt(0) && !unlockedBalance.gt(0)}
           />
-        }
-      />
-      {lockedBalance.gt(0) && (
-        <InfoItem
-          warning={!hasMinBondBalance}
-          title={t("polkadot.lockedBalance")}
-          onPress={onPressInfoCreator(
-            hasMinBondBalance ? "locked" : "minBondWarning",
-          )}
-          value={
-            <CurrencyUnitValue
-              unit={unit}
-              value={lockedBalance}
-              disableRounding
-            />
-          }
-        />
-      )}
-      {unlockingBalance.gt(0) && (
-        <InfoItem
-          title={t("polkadot.unlockingBalance")}
-          onPress={onPressInfoCreator("unlocking")}
-          value={
-            <CurrencyUnitValue
-              unit={unit}
-              value={unlockingBalance}
-              disableRounding
-            />
-          }
-        />
-      )}
-      {unlockedBalance.gt(0) && (
-        <InfoItem
-          title={t("polkadot.unlockedBalance")}
-          onPress={onPressInfoCreator("unlocked")}
-          value={
-            <CurrencyUnitValue
-              unit={unit}
-              value={unlockedBalance}
-              disableRounding
-            />
-          }
-        />
-      )}
-    </ScrollView>
+        )}
+        {unlockingBalance.gt(0) && (
+          <InfoItem
+            title={t("polkadot.unlockingBalance")}
+            onPress={onPressInfoCreator("unlocking")}
+            value={
+              <CurrencyUnitValue
+                unit={unit}
+                value={unlockingBalance}
+                disableRounding
+              />
+            }
+            isLast={!unlockedBalance.gt(0)}
+          />
+        )}
+        {unlockedBalance.gt(0) && (
+          <InfoItem
+            title={t("polkadot.unlockedBalance")}
+            onPress={onPressInfoCreator("unlocked")}
+            value={
+              <CurrencyUnitValue
+                unit={unit}
+                value={unlockedBalance}
+                disableRounding
+              />
+            }
+            isLast={true}
+          />
+        )}
+      </ScrollView>
+    </>
   );
 }
 
@@ -131,14 +139,6 @@ export default function AccountBalanceFooter({ account }: Props) {
   if (!account.polkadotResources || account.balance.lte(0)) return null;
   return <AccountBalanceSummaryFooter account={account} />;
 }
-const styles = StyleSheet.create({
-  root: {
-    flex: 1,
-    flexDirection: "row",
-    paddingTop: 16,
-    overflow: "visible",
-  },
-});
 
 function useInfo(): Record<InfoName, ModalInfo[]> {
   const { colors } = useTheme();

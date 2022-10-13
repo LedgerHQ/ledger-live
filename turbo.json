@@ -103,6 +103,14 @@
     "ledger-live-desktop#build:testing": {
       "cache": false,
       "dependsOn": ["^build"]
+    },
+    "@ledgerhq/native-ui#typecheck": {
+      "outputs": [],
+      "dependsOn": ["build", "$CI_OS"]
+    },
+    "@ledgerhq/react-ui#typecheck": {
+      "outputs": [],
+      "dependsOn": ["build", "$CI_OS"]
     }
   }
 }

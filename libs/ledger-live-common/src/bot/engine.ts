@@ -41,6 +41,7 @@ import type {
   TransactionTestInput,
   TransactionArg,
   TransactionRes,
+  TransactionDestinationTestInput,
 } from "./types";
 import { makeBridgeCacheSystem } from "../bridge/cache";
 import { accountDataToAccount, accountToAccountData } from "../cross";
@@ -51,6 +52,7 @@ import type {
 } from "@ledgerhq/types-live";
 import type { Transaction, TransactionStatus } from "../generated/types";
 import { botTest } from "./bot-test-context";
+import { retryWithDelay } from "../rxjs/operators/retryWithDelay";
 
 let appCandidates;
 const localCache = {};
@@ -73,6 +75,9 @@ async function crossAccount(account: Account): Promise<Account> {
   return synced;
 }
 
+const defaultScanAccountsRetries = 2;
+const delayBetweenScanAccountRetries = 5000;
+
 export async function runWithAppSpec<T extends Transaction>(
   spec: AppSpec<T>,
   reportLog: (arg0: string) => void
@@ -91,7 +96,9 @@ export async function runWithAppSpec<T extends Transaction>(
   const { appQuery, currency, dependency } = spec;
   const appCandidate = findAppCandidate(appCandidates, appQuery);
   if (!appCandidate) {
-    console.warn("no app found for " + spec.name, { appQuery, appCandidates });
+    console.warn("no app found for " + spec.name);
+    console.warn(appQuery);
+    console.warn(JSON.stringify(appCandidates, undefined, 2));
   }
   invariant(
     appCandidate,
@@ -127,6 +134,11 @@ export async function runWithAppSpec<T extends Transaction>(
     }
   }
 
+  // staticly assess if testDestination is necessary
+  const mutationThatProducedDestinationsWithoutTests: MutationSpec<any>[] = [];
+  const mutationWithDestinationTestsWithoutDestination: MutationSpec<any>[] =
+    [];
+
   try {
     device = await createSpeculosDevice(deviceParams);
     appReport.appPath = device.appPath;
@@ -148,6 +160,10 @@ export async function runWithAppSpec<T extends Transaction>(
         syncConfig,
       })
       .pipe(
+        retryWithDelay(
+          delayBetweenScanAccountRetries,
+          spec.scanAccountsRetries || defaultScanAccountsRetries
+        ),
         filter((e) => e.type === "discovered"),
         map((e) => e.account),
         reduce<Account, Account[]>((all, a) => all.concat(a), []),
@@ -259,6 +275,33 @@ export async function runWithAppSpec<T extends Transaction>(
             a.id === finalAccount.id ? finalAccount : a
           );
         }
+        if (report.finalDestination) {
+          // optim: no need to resync if all went well with finalDestination
+          const finalDestination: Account = report.finalDestination;
+          accountIdsNeedResync = accountIdsNeedResync.filter(
+            (id) => id !== finalDestination.id
+          );
+          accounts = accounts.map((a: Account) =>
+            a.id === finalDestination.id ? finalDestination : a
+          );
+        } else if (report.mutation) {
+          const { mutation } = report;
+          if (report.destination) {
+            if (
+              !mutation.testDestination &&
+              !mutationThatProducedDestinationsWithoutTests.includes(mutation)
+            ) {
+              mutationThatProducedDestinationsWithoutTests.push(mutation);
+            }
+          } else {
+            if (
+              mutation.testDestination &&
+              !mutationWithDestinationTestsWithoutDestination.includes(mutation)
+            ) {
+              mutationWithDestinationTestsWithoutDestination.push(mutation);
+            }
+          }
+        }
         // eslint-disable-next-line no-console
         console.log(formatReportForConsole(report));
         mutationReports.push(report);
@@ -289,6 +332,32 @@ export async function runWithAppSpec<T extends Transaction>(
         "No mutation were found possible. Yet there are funds in the accounts, please investigate."
       );
     }
+
+    if (mutationThatProducedDestinationsWithoutTests.length) {
+      hintWarnings.push(
+        "mutations should define a testDestination(): " +
+          mutationThatProducedDestinationsWithoutTests
+            .map((m) => m.name)
+            .join(", ")
+      );
+    }
+    if (mutationWithDestinationTestsWithoutDestination.length) {
+      hintWarnings.push(
+        "mutations should NOT define a testDestination() because there are no 'destination' sibling account found: " +
+          mutationWithDestinationTestsWithoutDestination
+            .map((m) => m.name)
+            .join(", ")
+      );
+    }
+
+    mutationReports.forEach((m) => {
+      m.hintWarnings.forEach((h) => {
+        const txt = `mutation ${m.mutation?.name || "?"}: ${h}`;
+        if (!hintWarnings.includes(txt)) {
+          hintWarnings.push(txt);
+        }
+      });
+    });
 
     appReport.mutations = mutationReports;
     appReport.accountsAfter = accounts;
@@ -326,10 +395,12 @@ export async function runOnAccount<T extends Transaction>({
 }): Promise<MutationReport<T>> {
   const { mutations } = spec;
   let latestSignOperationEvent;
+  const hintWarnings: string[] = [];
   const report: MutationReport<T> = {
     spec,
     appCandidate,
     resyncAccountsDuration,
+    hintWarnings,
   };
 
   try {
@@ -351,6 +422,7 @@ export async function runOnAccount<T extends Transaction>({
       mutation: MutationSpec<T>;
       tx: T;
       updates: Array<Partial<T> | null | undefined>;
+      destination: Account | undefined;
     }> = [];
     const unavailableMutationReasons: Array<{
       mutation: MutationSpec<T>;
@@ -380,6 +452,7 @@ export async function runOnAccount<T extends Transaction>({
           tx: r.transaction,
           // $FlowFixMe what the hell
           updates: r.updates,
+          destination: r.destination,
         });
       } catch (error: any) {
         if (process.env.CI) console.error(error);
@@ -422,9 +495,10 @@ export async function runOnAccount<T extends Transaction>({
     }
 
     report.transaction = transaction;
-    report.destination = accounts.find(
-      (a) => a.freshAddress === transaction.recipient
-    );
+    const destination =
+      candidate.destination ||
+      accounts.find((a) => a.freshAddress === transaction.recipient);
+    report.destination = destination;
     status = await accountBridge.getTransactionStatus(account, transaction);
     report.status = status;
     report.statusTime = now();
@@ -459,11 +533,38 @@ export async function runOnAccount<T extends Transaction>({
 
     // without recovering mechanism, we simply assume an error is a failure
     if (errors.length) {
+      console.warn(status);
       botTest("mutation must not have tx status errors", () => {
         // all mutation must express transaction that are POSSIBLE
         // recoveredFromTransactionStatus can also be used to solve this for tricky cases
         throw errors[0];
       });
+    }
+
+    const { expectStatusWarnings } = mutation;
+    if (warnings.length || expectStatusWarnings) {
+      const expected =
+        expectStatusWarnings &&
+        expectStatusWarnings({
+          transaction,
+          status,
+          account,
+          bridge: accountBridge,
+        });
+      if (expected) {
+        botTest("verify status.warnings expectations", () =>
+          expect(status.warnings).toEqual(expected)
+        );
+      } else {
+        for (const k in status.warnings) {
+          const e = status.warnings[k];
+          hintWarnings.push(
+            `unexpected status.warnings.${k} = ${String(
+              e
+            )} – Please implement expectStatusWarnings on the mutation if expected`
+          );
+        }
+      }
     }
 
     mutationsCount[mutation.name] = (mutationsCount[mutation.name] || 0) + 1;
@@ -504,6 +605,8 @@ export async function runOnAccount<T extends Transaction>({
     if (report.destination) {
       accountIdsNeedResync.push(report.destination.id);
     }
+    // even if the test will actively sync the account, we need to pessimisticly assume it won't, we may not reach the final step of it.
+    // after the runOnAccount() call, we actively remove from accountIdsNeedResync the account.id if it is actually sucessful
     accountIdsNeedResync.push(account.id);
 
     // broadcast the transaction
@@ -528,12 +631,11 @@ export async function runOnAccount<T extends Transaction>({
     );
 
     // wait the condition are good (operation confirmed)
+    // test() is run over and over until either timeout is reach OR success
     const testBefore = now();
-
+    const timeOut = mutation.testTimeout || spec.testTimeout || 5 * 60 * 1000;
     const step = (account) => {
-      const timedOut =
-        now() - testBefore >
-        (mutation.testTimeout || spec.testTimeout || 30 * 1000);
+      const timedOut = now() - testBefore > timeOut;
       const operation = account.operations.find(
         (o) => o.id === optimisticOperation.id
       );
@@ -567,6 +669,7 @@ export async function runOnAccount<T extends Transaction>({
             throw e;
           }
 
+          log("bot", "failed confirm test. trying again. " + String(e));
           // We will try again
           return;
         }
@@ -575,21 +678,85 @@ export async function runOnAccount<T extends Transaction>({
       return operation;
     };
 
-    const result = await awaitAccountOperation({
-      account,
-      step,
-    });
-    report.finalAccount = result.account;
-    report.operation = result.operation;
+    const result = await awaitAccountOperation<Operation>({ account, step });
+    const { account: finalAccount, value: operation } = result;
+    report.finalAccount = finalAccount;
+    report.operation = operation;
     report.confirmedTime = now();
     log(
       "engine",
       `spec ${spec.name}/${account.name}/${optimisticOperation.hash} confirmed`
     );
+
+    const destinationBeforeTransaction = destination;
+    if (destination && mutation.testDestination) {
+      const { testDestination } = mutation;
+      // test() is run over and over until either timeout is reach OR success
+      const ntestBefore = now();
+      const newTimeOut = Math.max(10000, timeOut - (ntestBefore - testBefore));
+      log(
+        "bot",
+        "remaining time to test destination: " +
+          (newTimeOut / 1000).toFixed(0) +
+          "s"
+      );
+      const sendingOperation = operation;
+      const step = (account) => {
+        const timedOut = now() - ntestBefore > newTimeOut;
+        let operation;
+        try {
+          operation = account.operations.find(
+            (op) => op.hash === sendingOperation.hash
+          );
+          botTest(
+            "destination account should receive an operation (by tx hash)",
+            () =>
+              invariant(
+                operation,
+                "no operation found with hash %s",
+                operation.hash
+              )
+          );
+          if (!operation) throw new Error();
+          const arg: TransactionDestinationTestInput<T> = {
+            transaction,
+            status,
+            sendingAccount: finalAccount,
+            sendingOperation,
+            operation,
+            destinationBeforeTransaction,
+            destination: account,
+          };
+          botTest("destination", () => testDestination(arg));
+          report.testDestinationDuration = now() - ntestBefore;
+        } catch (e) {
+          // We never reach the final test success
+          if (timedOut) {
+            report.testDestinationDuration = now() - ntestBefore;
+            throw e;
+          }
+          log(
+            "bot",
+            "failed destination confirm test. trying again. " + String(e)
+          );
+          // We will try again
+          return;
+        }
+        return operation;
+      };
+      const result = await awaitAccountOperation<Operation>({
+        account: destination,
+        step,
+      });
+      report.finalDestination = result.account;
+      report.finalDestinationOperation = result.value;
+      report.destinationConfirmedTime = now();
+    }
   } catch (error: any) {
     if (process.env.CI) console.error(error);
     log("mutation-error", spec.name + ": " + formatError(error, true));
     report.error = error;
+    report.errorTime = now();
   }
 
   report.latestSignOperationEvent = latestSignOperationEvent;
@@ -698,15 +865,15 @@ export function autoSignTransaction<T extends Transaction>({
   });
 }
 
-function awaitAccountOperation({
+function awaitAccountOperation<T>({
   account,
   step,
 }: {
   account: Account;
-  step: (arg0: Account) => Operation | null | undefined;
+  step: (arg0: Account) => T | null | undefined;
 }): Promise<{
   account: Account;
-  operation: Operation;
+  value: T;
 }> {
   log("engine", "awaitAccountOperation on " + account.name);
   let syncCounter = 0;
@@ -716,13 +883,12 @@ function awaitAccountOperation({
   const targetInterval = getEnv("SYNC_PENDING_INTERVAL");
 
   async function loop() {
-    const operation = step(acc);
+    const value = step(acc);
 
-    if (operation) {
-      log("engine", "found " + operation.id);
+    if (value) {
       return {
         account: acc,
-        operation,
+        value,
       };
     }
     const spent = now() - lastSync;
@@ -743,15 +909,16 @@ function transactionTest<T>({
   operation,
   optimisticOperation,
   account,
+  accountBeforeTransaction,
 }: TransactionTestInput<T>) {
-  const timingThreshold = 30 * 60 * 1000;
-  // FIXME: .valueOf to do arithmetic operations on date with typescript
-  const dt = Date.now().valueOf() - operation.date.valueOf();
+  const dt = Date.now() - operation.date.getTime();
+  const lowerThreshold = -60 * 1000; // -1mn accepted
+  const upperThreshold = 30 * 60 * 1000; // 30mn up
   botTest("operation.date must not be in future", () =>
-    expect(dt).toBeGreaterThanOrEqual(0)
+    expect(dt).toBeGreaterThan(lowerThreshold)
   );
   botTest("operation.date less than 30mn ago", () =>
-    expect(dt).toBeLessThan(timingThreshold)
+    expect(dt).toBeLessThan(upperThreshold)
   );
   botTest("operation must not failed", () => {
     expect(!operation.hasFailed).toBe(true);
@@ -761,7 +928,7 @@ function transactionTest<T>({
 
   if (blockAvgTime && account.blockHeight) {
     const expected = getOperationConfirmationNumber(operation, account);
-    const expectedMax = Math.ceil(timingThreshold / blockAvgTime);
+    const expectedMax = Math.ceil(upperThreshold / blockAvgTime);
     botTest("low amount of confirmations", () =>
       invariant(
         expected <= expectedMax,
@@ -783,5 +950,13 @@ function transactionTest<T>({
   );
   botTest("operation.fee must not be NaN", () =>
     expect(!operation.fee.isNaN()).toBe(true)
+  );
+
+  botTest(
+    "successful tx should increase by 1 the number of account.operations",
+    () =>
+      expect(account.operations.length).toBe(
+        accountBeforeTransaction.operations.length + 1
+      )
   );
 }

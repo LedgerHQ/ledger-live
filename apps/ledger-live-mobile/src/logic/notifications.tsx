@@ -1,13 +1,13 @@
 import { useCallback, useMemo, useState } from "react";
 import { Linking, Platform } from "react-native";
 import { useSelector, useDispatch } from "react-redux";
-import { useToasts } from "@ledgerhq/live-common/lib/notifications/ToastProvider";
+import { useToasts } from "@ledgerhq/live-common/notifications/ToastProvider/index";
 import { useNavigation } from "@react-navigation/native";
 import { add, isBefore, parseISO } from "date-fns";
-import type { Account } from "@ledgerhq/live-common/lib/types";
+import type { Account } from "@ledgerhq/types-live";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import messaging from "@react-native-firebase/messaging";
-import useFeature from "@ledgerhq/live-common/lib/featureFlags/useFeature";
+import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import { accountsSelector } from "../reducers/accounts";
 import {
   notificationsModalOpenSelector,
@@ -55,20 +55,6 @@ export type DataOfUser = {
 
 const pushNotificationsDataOfUserAsyncStorageKey =
   "pushNotificationsDataOfUser";
-
-const getCurrentRouteName = (
-  state: NavigationState | Required<NavigationState["routes"][0]>["state"],
-): Routes | undefined => {
-  if (state.index === undefined || state.index < 0) {
-    return undefined;
-  }
-
-  const nestedState = state.routes[state.index].state;
-  if (nestedState !== undefined) {
-    return getCurrentRouteName(nestedState);
-  }
-  return state.routes[state.index].name;
-};
 
 async function getPushNotificationsDataOfUserFromStorage() {
   const dataOfUser = await AsyncStorage.getItem(
@@ -266,14 +252,14 @@ const useNotifications = () => {
     [pushNotificationsOldRoute],
   );
 
-  const onRouteChange = useCallback(
-    newRoute => {
+  const onPushNotificationsRouteChange = useCallback(
+    (newRoute, isOtherModalOpened = false) => {
       if (pushNotificationsEventTriggered?.timeout) {
         clearTimeout(pushNotificationsEventTriggered?.timeout);
         dispatch(setRatingsModalLocked(false));
       }
 
-      if (isPushNotificationsModalLocked || !areConditionsMet()) return;
+      if (isOtherModalOpened || !areConditionsMet()) return false;
 
       for (const eventTrigger of pushNotificationsFeature?.params
         ?.trigger_events) {
@@ -288,9 +274,12 @@ const useNotifications = () => {
               timeout,
             }),
           );
+          dispatch(setNotificationsCurrentRouteName(newRoute));
+          return true;
         }
       }
       dispatch(setNotificationsCurrentRouteName(newRoute));
+      return false;
     },
     [
       areConditionsMet,
@@ -299,7 +288,6 @@ const useNotifications = () => {
       pushNotificationsFeature?.params?.trigger_events,
       isEventTriggered,
       setPushNotificationsModalOpenCallback,
-      isPushNotificationsModalLocked,
     ],
   );
 
@@ -311,18 +299,6 @@ const useNotifications = () => {
     [dispatch],
   );
 
-  const initPushNotifications = useCallback(() => {
-    if (!pushNotificationsFeature?.enabled) return;
-
-    navigation.addListener("state", e => {
-      const navState = e?.data?.state;
-      if (navState && navState.routeNames) {
-        const currentRouteName = getCurrentRouteName(navState);
-        onRouteChange(currentRouteName);
-      }
-    });
-  }, [navigation, pushNotificationsFeature?.enabled, onRouteChange]);
-
   const initPushNotificationsData = useCallback(() => {
     getPushNotificationsDataOfUserFromStorage().then(dataOfUser => {
       updatePushNotificationsDataOfUserInStateAndStore({
@@ -332,10 +308,6 @@ const useNotifications = () => {
       });
     });
   }, []);
-
-  const cleanPushNotifications = useCallback(() => {
-    navigation.removeListener("state");
-  }, [navigation]);
 
   const triggerMarketPushNotificationModal = useCallback(() => {
     if (
@@ -473,9 +445,8 @@ const useNotifications = () => {
   ]);
 
   return {
-    initPushNotifications,
     initPushNotificationsData,
-    cleanPushNotifications,
+    onPushNotificationsRouteChange,
     pushNotificationsOldRoute,
     pushNotificationsModalType,
     isPushNotificationsModalOpen,

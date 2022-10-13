@@ -8,7 +8,7 @@ This agreement is between you (“you”, “your”, or “User”) and Ledger 
 
 By clicking “I agree”, “Get started”, or otherwise using any of the services provided by Ledger or any third party services made available through Ledger Live, you agree that you have carefully read and accepted all of the below terms and conditions.
 
-Your use of Ledger Live is also subject to Ledger’s Privacy Policy, which is available at [https://shop.ledger.com/pages/privacy-policy](https://shop.ledger.com/pages/privacy-policy).
+Your use of Ledger Live is also subject to Ledger’s Privacy Policy, which is available at [https://www.ledger.com/privacy-policy](https://www.ledger.com/privacy-policy).
 
 BEFORE USING LEDGER LIVE, PLEASE EDUCATE YOURSELF TO MAKE INFORMED DECISIONS. LEDGER DOES NOT PROVIDE FINANCIAL, TAX, OR LEGAL ADVICE. LEDGER DOES NOT EXCHANGE, SEND, OR RECEIVE CRYPTO ASSETS FOR USERS.  LEDGER DOES NOT ADVISE OR MAKE RECOMMENDATIONS ABOUT ENGAGING IN CRYPTO ASSET TRANSACTIONS OR OPERATIONS. DECISIONS TO ENGAGE IN TRANSACTIONS OR PERFORM OPERATIONS INVOLVING CRYPTO ASSETS SHOULD BE TAKEN ON YOUR OWN OR RELY ON OPINIONS OF YOUR OWN RELIABLE AND QUALIFIED EXPERTS.
 

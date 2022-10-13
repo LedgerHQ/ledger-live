@@ -3,11 +3,13 @@ import { TouchableOpacity } from "react-native";
 import styled, { useTheme } from "styled-components/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { useSelector } from "react-redux";
-import { useTranslation } from "react-i18next";
-import { NanoFoldedMedium } from "@ledgerhq/native-ui/assets/icons";
 import { Box, Icons, Flex } from "@ledgerhq/native-ui";
+import { DeviceModelId } from "@ledgerhq/types-devices";
 import { ScreenName } from "../../const";
-import { hasAvailableUpdateSelector } from "../../reducers/settings";
+import {
+  hasAvailableUpdateSelector,
+  lastSeenDeviceSelector,
+} from "../../reducers/settings";
 import Manager from "../../screens/Manager";
 import { getStackNavigatorConfig } from "../../navigation/navigatorConfig";
 import styles from "../../navigation/styles";
@@ -37,21 +39,7 @@ const Badge = () => {
   );
 };
 
-const ManagerIconWithUpate = ({
-  color,
-  size,
-}: {
-  color: string;
-  size: number;
-}) => (
-  <Box>
-    <Icons.NanoFoldedMedium size={size} color={color} />
-    <Badge />
-  </Box>
-);
-
 export default function ManagerNavigator() {
-  const { t } = useTranslation();
   const { colors } = useTheme();
   const stackNavConfig = useMemo(
     () => getStackNavigatorConfig(colors),
@@ -73,8 +61,7 @@ export default function ManagerNavigator() {
         name={ScreenName.Manager}
         component={Manager}
         options={{
-          title: t("manager.title"),
-          headerRight: null,
+          headerShown: false,
           gestureEnabled: false,
         }}
       />
@@ -89,16 +76,40 @@ export default function ManagerNavigator() {
 
 const Stack = createStackNavigator();
 
+const DeviceIcon = ({ color, size }: { color: string; size: number }) => {
+  const hasAvailableUpdate = useSelector(hasAvailableUpdateSelector);
+  const lastSeenDevice = useSelector(lastSeenDeviceSelector);
+
+  let icon;
+  switch (lastSeenDevice?.modelId) {
+    case DeviceModelId.nanoS:
+    case DeviceModelId.nanoSP:
+      icon = <Icons.NanoSFoldedMedium size={size} color={color} />;
+      break;
+    case DeviceModelId.nanoFTS:
+      icon = <Icons.PowerMedium size={size} color={color} />;
+      break;
+    case DeviceModelId.nanoX:
+    default:
+      icon = <Icons.NanoXFoldedMedium size={size} color={color} />;
+      break;
+  }
+
+  return hasAvailableUpdate ? (
+    icon
+  ) : (
+    <Box>
+      {icon}
+      <Badge />
+    </Box>
+  );
+};
+
 export function ManagerTabIcon(props: any) {
   const isNavLocked = useIsNavLocked();
-  const hasAvailableUpdate = useSelector(hasAvailableUpdateSelector);
 
   const content = (
-    <TabIcon
-      {...props}
-      Icon={hasAvailableUpdate ? ManagerIconWithUpate : NanoFoldedMedium}
-      i18nKey="tabs.manager"
-    />
+    <TabIcon {...props} Icon={DeviceIcon} i18nKey="tabs.manager" />
   );
 
   if (isNavLocked) {

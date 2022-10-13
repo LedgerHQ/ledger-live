@@ -140,7 +140,10 @@ const getTransactionStatus = async (
     log("taquitoerror", String(t.taquitoError));
 
     // remap taquito errors
-    if (t.taquitoError.endsWith("balance_too_low")) {
+    if (
+      t.taquitoError.endsWith("balance_too_low") ||
+      t.taquitoError.endsWith("subtraction_underflow")
+    ) {
       if (t.mode === "send") {
         resetTotalSpent = true;
         errors.amount = new NotEnoughBalance();

@@ -24,7 +24,7 @@ const CustomImageBottomModal: React.FC<Props> = props => {
       if (importResult !== null) {
         navigation.navigate(NavigatorName.CustomImage, {
           screen: ScreenName.CustomImageStep1Crop,
-          params: importResult,
+          params: { ...importResult, isPictureFromGallery: true },
         });
       }
     } catch (error) {

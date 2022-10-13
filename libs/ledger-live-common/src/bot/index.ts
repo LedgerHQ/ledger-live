@@ -9,7 +9,14 @@ import invariant from "invariant";
 import flatMap from "lodash/flatMap";
 import { getEnv } from "../env";
 import allSpecs from "../generated/specs";
-import type { AppSpec, MutationReport, SpecReport } from "./types";
+import type {
+  AppSpec,
+  MutationReport,
+  MinimalSerializedMutationReport,
+  MinimalSerializedReport,
+  MinimalSerializedSpecReport,
+  SpecReport,
+} from "./types";
 import { promiseAllBatched } from "../promise";
 import {
   findCryptoCurrencyByKeyword,
@@ -28,6 +35,8 @@ import {
 import { getPortfolio } from "../portfolio/v2";
 import { Account } from "@ledgerhq/types-live";
 import { getContext } from "./bot-test-context";
+import { Transaction } from "../generated/types";
+import { sha256 } from "../crypto";
 
 type Arg = Partial<{
   currency: string;
@@ -35,6 +44,52 @@ type Arg = Partial<{
   mutation: string;
 }>;
 const usd = getFiatCurrencyByTicker("USD");
+
+function convertMutation<T extends Transaction>(
+  report: MutationReport<T>
+): MinimalSerializedMutationReport {
+  const { appCandidate, mutation, account, destination, error, operation } =
+    report;
+  return {
+    appCandidate,
+    mutationName: mutation?.name,
+    accountId: account?.id,
+    destinationId: destination?.id,
+    operationId: operation?.id,
+    error: error ? formatError(error) : undefined,
+  };
+}
+
+function convertSpecReport<T extends Transaction>(
+  result: SpecReport<T>
+): MinimalSerializedSpecReport {
+  const accounts = result.accountsAfter?.map((a) => {
+    // remove the "expensive" data fields
+    const raw = toAccountRaw(a);
+    raw.operations = [];
+    delete raw.balanceHistoryCache;
+    if (raw.subAccounts) {
+      raw.subAccounts.forEach((a) => {
+        a.operations = [];
+        delete a.balanceHistoryCache;
+      });
+    }
+    const unsafe = raw as any;
+    if (unsafe.bitcoinResources) {
+      delete unsafe.bitcoinResources.walletAccount;
+    }
+    return raw;
+  });
+  const mutations = result.mutations?.map(convertMutation);
+  return {
+    specName: result.spec.name,
+    fatalError: result.fatalError ? formatError(result.fatalError) : undefined,
+    accounts,
+    mutations,
+    existingMutationNames: result.spec.mutations.map((m) => m.name),
+    hintWarnings: result.hintWarnings,
+  };
+}
 
 function makeAppJSON(accounts: Account[]) {
   const jsondata = {
@@ -567,9 +622,9 @@ export async function bot({
   }
 
   appendBody(
-    "| Spec (accounts) | preload | scan | re-sync | tx status | sign op | broadcast | mutation confirm |\n"
+    "| Spec (accounts) | preload | scan | re-sync | tx status | sign op | broadcast | test | destination test |\n"
   );
-  appendBody("|---|---|---|---|---|---|---|---|\n");
+  appendBody("|---|---|---|---|---|---|---|---|---|\n");
 
   appendBody("| **TOTAL** |");
   appendBody(`**${formatTime(sumResults((r) => r.preloadDuration))}** |`);
@@ -607,6 +662,11 @@ export async function bot({
           ? m.confirmedTime - m.broadcastedTime
           : 0
       )
+    )}** |`
+  );
+  appendBody(
+    `**${formatTime(
+      sumResultsMutation((m) => m.testDestinationDuration || 0)
     )}** |\n`
   );
 
@@ -650,19 +710,34 @@ export async function bot({
             ? m.confirmedTime - m.broadcastedTime
             : 0
         )
+      )} |`
+    );
+    appendBody(
+      `${formatTime(
+        sumMutation(r.mutations, (m) => m.testDestinationDuration || 0)
       )} |\n`
     );
   });
 
   appendBody("\n</details>\n\n");
 
-  const { BOT_REPORT_FOLDER } = process.env;
+  appendBody(
+    "\n> What is the bot and how does it work? [Everything is documented here!](https://github.com/LedgerHQ/ledger-live/wiki/LLC:bot)\n\n"
+  );
+
+  const { BOT_REPORT_FOLDER, BOT_ENVIRONMENT } = process.env;
 
   const slackCommentTemplate = `${String(
     GITHUB_WORKFLOW
   )}: ${title} (<{{url}}|details> – <${runURL}|logs>)\n${subtitle}${slackBody}`;
 
   if (BOT_REPORT_FOLDER) {
+    const serializedReport: MinimalSerializedReport = {
+      results: results.map(convertSpecReport),
+      environment: BOT_ENVIRONMENT,
+      seedHash: sha256(getEnv("SEED")),
+    };
+
     await Promise.all([
       fs.promises.writeFile(
         path.join(BOT_REPORT_FOLDER, "github-report.md"),
@@ -687,6 +762,11 @@ export async function bot({
       fs.promises.writeFile(
         path.join(BOT_REPORT_FOLDER, "coin-apps.json"),
         JSON.stringify(allAppPaths),
+        "utf-8"
+      ),
+      fs.promises.writeFile(
+        path.join(BOT_REPORT_FOLDER, "report.json"),
+        JSON.stringify(serializedReport),
         "utf-8"
       ),
     ]);

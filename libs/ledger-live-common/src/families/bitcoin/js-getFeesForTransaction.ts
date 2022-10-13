@@ -10,7 +10,7 @@ const getFeesForTransaction = async ({
 }: {
   account: Account;
   transaction: Transaction;
-}) => {
+}): Promise<{ fees: BigNumber; txInputs: any; txOutputs: any }> => {
   const walletTx = await buildTransaction(account, transaction);
   const fees = new BigNumber(walletTx.fee).integerValue();
   let txInputs = walletTx.inputs.map((i) => {

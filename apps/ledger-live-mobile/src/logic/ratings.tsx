@@ -1,6 +1,5 @@
 import { useCallback, useMemo } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { useNavigation } from "@react-navigation/native";
 import { add, isBefore, parseISO } from "date-fns";
 import type { Account } from "@ledgerhq/types-live";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -53,19 +52,6 @@ export type RatingsDataOfUser = {
 
 const ratingsDataOfUserAsyncStorageKey = "ratingsDataOfUser";
 
-const getCurrentRouteName = (
-  state: NavigationState | Required<NavigationState["routes"][0]>["state"],
-): Routes | undefined => {
-  if (state.index === undefined || state.index < 0) {
-    return undefined;
-  }
-  const nestedState = state.routes[state.index].state;
-  if (nestedState !== undefined) {
-    return getCurrentRouteName(nestedState);
-  }
-  return state.routes[state.index].name;
-};
-
 async function getRatingsDataOfUserFromStorage() {
   const ratingsDataOfUser = await AsyncStorage.getItem(
     ratingsDataOfUserAsyncStorageKey,
@@ -97,19 +83,18 @@ const useRatings = () => {
   );
 
   const dispatch = useDispatch();
-  const navigation = useNavigation();
 
   const setRatingsModalOpenCallback = useCallback(
     isRatingsModalOpen => {
       if (!isRatingsModalOpen) {
         dispatch(setRatingsModalOpen(isRatingsModalOpen));
         dispatch(setNotificationsModalLocked(false));
-      } else if (!isRatingsModalLocked) {
+      } else {
         dispatch(setRatingsModalOpen(isRatingsModalOpen));
         dispatch(setNotificationsModalLocked(true));
       }
     },
-    [dispatch, isRatingsModalLocked],
+    [dispatch],
   );
 
   const areRatingsConditionsMet = useCallback(() => {
@@ -193,14 +178,14 @@ const useRatings = () => {
     [ratingsOldRoute],
   );
 
-  const onRouteChange = useCallback(
-    ratingsNewRoute => {
+  const onRatingsRouteChange = useCallback(
+    (ratingsNewRoute, isOtherModalOpened = false) => {
       if (ratingsHappyMoment?.timeout) {
         dispatch(setNotificationsModalLocked(false));
         clearTimeout(ratingsHappyMoment?.timeout);
       }
 
-      if (isRatingsModalLocked || !areRatingsConditionsMet()) return;
+      if (isOtherModalOpened || !areRatingsConditionsMet()) return false;
 
       for (const happyMoment of ratingsFeature?.params?.happy_moments) {
         if (isHappyMomentTriggered(happyMoment, ratingsNewRoute)) {
@@ -214,12 +199,14 @@ const useRatings = () => {
               timeout,
             }),
           );
+          dispatch(setRatingsCurrentRouteName(ratingsNewRoute));
+          return true;
         }
       }
       dispatch(setRatingsCurrentRouteName(ratingsNewRoute));
+      return false;
     },
     [
-      isRatingsModalLocked,
       areRatingsConditionsMet,
       ratingsHappyMoment?.timeout,
       dispatch,
@@ -237,18 +224,6 @@ const useRatings = () => {
     [dispatch],
   );
 
-  const initRatings = useCallback(() => {
-    if (!ratingsFeature?.enabled) return;
-
-    navigation.addListener("state", e => {
-      const navState = e?.data?.state;
-      if (navState && navState.routeNames) {
-        const currentRouteName = getCurrentRouteName(navState);
-        onRouteChange(currentRouteName);
-      }
-    });
-  }, [navigation, ratingsFeature?.enabled, onRouteChange]);
-
   const initRatingsData = useCallback(() => {
     getRatingsDataOfUserFromStorage().then(ratingsDataOfUser => {
       updateRatingsDataOfUserInStateAndStore({
@@ -260,10 +235,6 @@ const useRatings = () => {
       });
     });
   }, []);
-
-  const cleanRatings = useCallback(() => {
-    navigation.removeListener("state");
-  }, [navigation]);
 
   const ratingsInitialStep = useMemo(
     () => (ratingsDataOfUser?.alreadyClosedFromEnjoyStep ? "enjoy" : "init"),
@@ -344,9 +315,8 @@ const useRatings = () => {
   }, [ratingsDataOfUser, updateRatingsDataOfUserInStateAndStore]);
 
   return {
-    initRatings,
     initRatingsData,
-    cleanRatings,
+    onRatingsRouteChange,
     handleSettingsRateApp,
     handleRatingsSetDateOfNextAllowedRequest,
     handleEnjoyNotNow,

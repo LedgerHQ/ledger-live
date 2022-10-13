@@ -4,7 +4,6 @@ import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import type { ThemedComponent } from "~/renderer/styles/StyleProvider";
 
-import type { SectionProviderProps } from "./SectionRate";
 import SectionRate from "./SectionRate";
 
 const Form: ThemedComponent<{}> = styled.section.attrs(({ ready }) => ({
@@ -24,19 +23,20 @@ const Form: ThemedComponent<{}> = styled.section.attrs(({ ready }) => ({
 
 type SwapFormProvidersProps = {
   swap: SwapTransactionType,
-  kycStatus?: $PropertyType<SectionProviderProps, "status">,
   provider?: string,
   refreshTime: number,
   countdown: boolean,
+  decentralizedSwapAvailable: boolean,
+  updateSelection: () => void,
 };
 const SwapFormProviders = ({
   swap,
-  kycStatus,
   provider,
   refreshTime,
   countdown,
+  decentralizedSwapAvailable,
+  updateSelection,
 }: SwapFormProvidersProps) => {
-  const { updateSelectedRate } = swap;
   const { currency: fromCurrency } = swap.from;
   const { currency: toCurrency } = swap.to;
   const ratesState = swap.rates;
@@ -49,13 +49,13 @@ const SwapFormProviders = ({
     <Form ready={hasFetchedRates}>
       <SectionRate
         provider={provider}
-        status={kycStatus}
         fromCurrency={fromCurrency}
         toCurrency={toCurrency}
         ratesState={ratesState}
-        updateSelectedRate={updateSelectedRate}
+        updateSelection={updateSelection}
         refreshTime={refreshTime}
         countdown={countdown}
+        decentralizedSwapAvailable={decentralizedSwapAvailable}
       />
     </Form>
   );

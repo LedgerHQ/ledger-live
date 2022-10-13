@@ -2,58 +2,50 @@
 import type {
   RatesReducerState,
   SwapSelectorStateType,
-  SwapDataType,
-} from "@ledgerhq/live-common/exchange/swap/hooks/index";
-import type { KYCStatus } from "@ledgerhq/live-common/exchange/swap/utils/index";
+} from "@ledgerhq/live-common/exchange/swap/types";
 import React from "react";
 import Rates from "../Rates";
 import ProvidersSection from "./ProvidersSection";
-import ProvidersValue, { NoValuePlaceholder } from "./ProvidersValue";
 
-export type SectionProviderProps = {
+export type SectionRateProps = {
   provider?: string,
-  status?: KYCStatus,
   ratesState: RatesReducerState,
   fromCurrency: $PropertyType<SwapSelectorStateType, "currency">,
   toCurrency: $PropertyType<SwapSelectorStateType, "currency">,
-  updateSelectedRate: $PropertyType<SwapDataType, "updateSelectedRate">,
+  updateSelection: () => void,
   refreshTime: number,
   countdown: boolean,
+  decentralizedSwapAvailable: boolean,
 };
 
-const SectionProvider = ({
+const SectionRate = ({
   provider,
-  status,
   fromCurrency,
   toCurrency,
   ratesState,
-  updateSelectedRate,
+  updateSelection,
   refreshTime,
   countdown,
-}: SectionProviderProps) => {
+  decentralizedSwapAvailable,
+}: SectionRateProps) => {
   const rates = ratesState.value;
 
   return (
     <ProvidersSection>
-      {(provider && (
-        <Rates
-          {...{
-            fromCurrency,
-            toCurrency,
-            rates,
-            provider,
-            updateSelectedRate,
-            refreshTime,
-            countdown,
-          }}
-        />
-      )) || (
-        <ProvidersValue>
-          <NoValuePlaceholder />
-        </ProvidersValue>
-      )}
+      <Rates
+        {...{
+          fromCurrency,
+          toCurrency,
+          rates,
+          provider,
+          updateSelection,
+          refreshTime,
+          countdown,
+          decentralizedSwapAvailable,
+        }}
+      />
     </ProvidersSection>
   );
 };
 
-export default React.memo<SectionProviderProps>(SectionProvider);
+export default React.memo<SectionRateProps>(SectionRate);

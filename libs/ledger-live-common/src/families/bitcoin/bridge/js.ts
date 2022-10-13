@@ -11,6 +11,7 @@ import { perCoinLogic } from "../logic";
 import { makeAccountBridgeReceive } from "../../../bridge/jsHelpers";
 import * as explorerConfigAPI from "../../../api/explorerConfig";
 import { AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
+import { FullConfigOverrides } from "../../../api/explorerConfig/types";
 
 const receive = makeAccountBridgeReceive({
   injectGetAddressParams: (account) => {
@@ -22,7 +23,7 @@ const receive = makeAccountBridgeReceive({
   },
 });
 
-const updateTransaction = (t, patch) => {
+const updateTransaction = (t, patch): any => {
   const updatedT = { ...t, ...patch };
 
   // We accept case-insensitive addresses as input from user,

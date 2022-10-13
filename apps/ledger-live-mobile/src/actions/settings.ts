@@ -154,10 +154,13 @@ export const setSwapSelectableCurrencies = (
 export const setSwapKYCStatus = (payload: {
   provider: string;
   id?: string;
-  status?: string;
+  status?: string | null;
 }) => ({
   type: "SET_SWAP_KYC",
   payload,
+});
+export const resetSwapLoginAndKYCData = () => ({
+  type: "RESET_SWAP_LOGIN_AND_KYC_DATA",
 });
 export const swapAcceptProvider = (providerId: string) => ({
   type: "ACCEPT_SWAP_PROVIDER",
@@ -235,7 +238,7 @@ export function useTimeRange() {
     },
     [dispatch],
   );
-  const ranges: PortfolioRange[] = ["all", "year", "month", "week", "day"];
+  const ranges: PortfolioRange[] = ["day", "week", "month", "year", "all"];
   const options = ranges.map<PortfolioRangeOption>(key => ({
     key,
     value: t(`common:time.${key}`),

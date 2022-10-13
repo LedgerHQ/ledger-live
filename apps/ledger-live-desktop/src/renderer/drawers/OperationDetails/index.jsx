@@ -7,6 +7,8 @@ import { Trans, withTranslation } from "react-i18next";
 import type { TFunction } from "react-i18next";
 import styled from "styled-components";
 import uniq from "lodash/uniq";
+import { getEnv } from "@ledgerhq/live-common/env";
+import { colors } from "~/renderer/styles/theme";
 
 import {
   findSubAccountById,
@@ -302,7 +304,13 @@ const OperationD: React$ComponentType<Props> = (props: Props) => {
                   }
                 >
                   <FormattedVal
-                    color={amount.isNegative() ? "palette.text.shade80" : undefined}
+                    color={
+                      !isConfirmed && operation.type === "IN"
+                        ? colors.warning
+                        : amount.isNegative()
+                        ? "palette.text.shade80"
+                        : undefined
+                    }
                     unit={unit}
                     alwaysShowSign
                     showCode
@@ -438,7 +446,7 @@ const OperationD: React$ComponentType<Props> = (props: Props) => {
               : isConfirmed
               ? t("operationDetails.confirmed")
               : t("operationDetails.notConfirmed")}
-            {process.env.PLAYWRIGHT_RUN
+            {getEnv("PLAYWRIGHT_RUN")
               ? ""
               : hasFailed
               ? null

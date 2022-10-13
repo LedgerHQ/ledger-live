@@ -4,7 +4,11 @@ import { log } from "@ledgerhq/logs";
 import expect from "expect";
 import sample from "lodash/sample";
 import { isAccountEmpty } from "../account";
-import type { DeviceAction, DeviceActionArg } from "./types";
+import type {
+  DeviceAction,
+  DeviceActionArg,
+  TransactionDestinationTestInput,
+} from "./types";
 import { Account } from "@ledgerhq/types-live";
 import type { Transaction } from "../generated/types";
 import { botTest } from "./bot-test-context";
@@ -240,3 +244,26 @@ export function expectSiblingsHaveSpendablePartGreaterThan(
     threshold
   );
 }
+
+export const genericTestDestination = <T>({
+  destination,
+  operation,
+  destinationBeforeTransaction,
+  sendingOperation,
+}: TransactionDestinationTestInput<T>): void => {
+  const amount = sendingOperation.value.minus(sendingOperation.fee);
+  botTest("account balance increased with transaction amount", () =>
+    expect(destination.balance.toString()).toBe(
+      destinationBeforeTransaction.balance.plus(amount).toString()
+    )
+  );
+  botTest("operation amount is consistent with sendingOperation", () =>
+    expect({
+      type: operation.type,
+      amount: operation.value.toString(),
+    }).toMatchObject({
+      type: "IN",
+      amount: amount.toString(),
+    })
+  );
+};

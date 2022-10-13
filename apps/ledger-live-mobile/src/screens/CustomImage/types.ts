@@ -5,7 +5,9 @@ import {
 } from "../../components/CustomImage/ImageProcessor";
 import { ImageFileUri, ImageUrl } from "../../components/CustomImage/types";
 
-type Step1CroppingParams = ImageUrl | ImageFileUri;
+type Step1CroppingParams = (ImageUrl | ImageFileUri) & {
+  isPictureFromGallery?: boolean;
+};
 
 type Step2PreviewParams = CropResult;
 
