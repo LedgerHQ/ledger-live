@@ -3,12 +3,19 @@ import ButtonV2 from "~/renderer/components/Button";
 import { useTranslation } from "react-i18next";
 import { defaultFeatures } from "@ledgerhq/live-common/featureFlags/index";
 import { SettingsSectionRow as Row } from "../../../SettingsSection";
-import { Input, Icons, Flex, SearchInput } from "@ledgerhq/react-ui";
+import { Input, Icons, Flex, SearchInput, Alert } from "@ledgerhq/react-ui";
 import { FeatureId } from "@ledgerhq/types-live";
 import { InputRenderLeftContainer } from "@ledgerhq/react-ui/components/form/BaseInput/index";
 import { includes, lowerCase, trim } from "lodash";
 import { withV3StyleProvider } from "~/renderer/styles/StyleProviderV3";
 import FeatureFlagDetails from "./FeatureFlagDetails";
+
+const addFlagHint = `\
+If a feature flag is defined in the targeted Firebase environment \
+but it is missing from the following list, you can type its name in \
+the input field below and it will appear in the list. Type the \
+flag name in camelCase without the "feature" prefix.\
+`;
 
 const Content = withV3StyleProvider((props: { visible?: boolean }) => {
   const { t } = useTranslation();
@@ -53,7 +60,7 @@ const Content = withV3StyleProvider((props: { visible?: boolean }) => {
   );
 
   return (
-    <Flex flexDirection="column" pt={2} rowGap={1} alignSelf="stretch">
+    <Flex flexDirection="column" pt={2} rowGap={2} alignSelf="stretch">
       {t("settings.developer.featureFlagsDesc")}
       {!props.visible ? null : (
         <>
@@ -63,6 +70,7 @@ const Content = withV3StyleProvider((props: { visible?: boolean }) => {
             onChange={setSearchInput}
             clearable
           />
+          <Alert type="info" title={addFlagHint} showIcon={false} />
           <Input
             renderLeft={() => (
               <InputRenderLeftContainer>
@@ -70,9 +78,7 @@ const Content = withV3StyleProvider((props: { visible?: boolean }) => {
               </InputRenderLeftContainer>
             )}
             clearable
-            placeholder={
-              'Add missing flag by name (type the flag name in camelCase without the "feature" prefix)'
-            }
+            placeholder={"Add missing flag (instructions above)"}
             value={hiddenFlagName}
             onChange={handleAddHiddenFlag}
           />

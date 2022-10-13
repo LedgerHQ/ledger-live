@@ -13,6 +13,14 @@ import FeatureFlagDetails, {
   TagDisabled,
   TagEnabled,
 } from "./FeatureFlagDetails";
+import Alert from "../../components/Alert";
+
+const addFlagHint = `\
+If a feature flag is defined in the targeted Firebase environment \
+but it is missing from the following list, you can type its name in \
+the input field below and it will appear in the list.\nType the \
+flag name in camelCase without the "feature" prefix.\
+`;
 
 export default function DebugFeatureFlags() {
   const { t } = useTranslation();
@@ -79,7 +87,9 @@ export default function DebugFeatureFlags() {
           onChange={handleSearch}
           autoCapitalize="none"
         />
-        <Flex mb={3} />
+        <Flex my={3}>
+          <Alert title={addFlagHint} type="hint" />
+        </Flex>
         <BaseInput
           value={undefined}
           renderLeft={() => (
@@ -87,7 +97,7 @@ export default function DebugFeatureFlags() {
               <Icons.PlusMedium color="neutral.c70" />
             </InputRenderLeftContainer>
           )}
-          placeholder="Add missing flag"
+          placeholder="Add missing flag (instructions above)"
           onChange={handleAddHiddenFlag}
           autoCapitalize="none"
         />
