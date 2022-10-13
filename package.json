@@ -100,7 +100,7 @@
     "migrate-branch": "workspace:*",
     "pnpm-utils": "workspace:*",
     "rimraf": "^3.0.2",
-    "turbo": "1.4.3",
+    "turbo": "1.5.6",
     "zx": "^7.0.7"
   },
   "pnpm": {
