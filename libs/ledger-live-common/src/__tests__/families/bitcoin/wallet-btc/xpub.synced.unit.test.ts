@@ -13,7 +13,6 @@ import Xpub from "../../../../families/bitcoin/wallet-btc/xpub";
 describe("synced xpub utilites functions", () => {
   const explorer = new BitcoinLikeExplorer({
     explorerURI: "https://explorers.api.vault.ledger.com/blockchain/v3/bch",
-    explorerVersion: "v3",
   });
   const crypto = new Crypto({
     network: coininfo.bitcoincash.main.toBitcoinJS(),

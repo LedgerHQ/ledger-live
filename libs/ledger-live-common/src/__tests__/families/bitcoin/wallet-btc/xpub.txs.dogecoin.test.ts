@@ -13,7 +13,6 @@ describe("testing dogecoin transactions", () => {
   const wallet = new BitcoinLikeWallet();
   const explorer = new BitcoinLikeExplorer({
     explorerURI: "https://explorers.api.vault.ledger.com/blockchain/v3/doge",
-    explorerVersion: "v3",
     disableBatchSize: true,
   });
 
@@ -82,7 +81,6 @@ describe("testing dogecoin transactions", () => {
       currency: "dogecoin",
       network: "mainnet",
       derivationMode: DerivationModes.LEGACY,
-      explorer: "ledgerv3",
       explorerURI: "https://explorers.api.vault.ledger.com/blockchain/v3/doge",
       storage: "mock",
       storageParams: [],

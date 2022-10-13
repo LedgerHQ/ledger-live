@@ -1,10 +1,8 @@
 import type { AxiosRequestConfig } from "axios";
 import axios, { AxiosInstance } from "axios";
 import axiosRetry, { isNetworkOrIdempotentRequestError } from "axios-retry";
-import BigNumber from "bignumber.js";
 import genericPool, { Pool } from "generic-pool";
 
-import JSONBigNumber from "@ledgerhq/json-bignumber";
 import { Address, Block, TX } from "../storage/types";
 import EventEmitter from "../utils/eventemitter";
 import { IExplorer } from "./types";
@@ -16,20 +14,14 @@ import {
 
 class BitcoinLikeExplorer extends EventEmitter implements IExplorer {
   client: Pool<{ client: AxiosInstance }>;
-
   underlyingClient: AxiosInstance;
-
   disableBatchSize = false;
-
-  explorerVersion: "v2" | "v3";
 
   constructor({
     explorerURI,
-    explorerVersion,
     disableBatchSize,
   }: {
     explorerURI: string;
-    explorerVersion: "v2" | "v3";
     disableBatchSize?: boolean;
   }) {
     super();
@@ -72,7 +64,6 @@ class BitcoinLikeExplorer extends EventEmitter implements IExplorer {
       { max: 20 }
     );
 
-    this.explorerVersion = explorerVersion;
     if (disableBatchSize) {
       this.disableBatchSize = disableBatchSize;
     }
@@ -83,30 +74,32 @@ class BitcoinLikeExplorer extends EventEmitter implements IExplorer {
   }
 
   async broadcast(tx: string) {
-    const url = "/transactions/send";
+    const url = "/tx/send";
     const client = await this.client.acquire();
     const res = await client.client.post(url, { tx });
     await this.client.release(client);
     return res;
   }
 
-  async getTxHex(txId: string) {
-    const url = `/transactions/${txId}/hex`;
+  async getTxHex(txId: string): Promise<string> {
+    const url = `/tx/${txId}/hex`;
 
     this.emit("fetching-transaction-tx", { url, txId });
 
     // TODO add a test for failure (at the sync level)
     const client = await this.client.acquire();
-    const res: any = (await client.client.get(url)).data;
+    const res: { transaction_hash: string; hex: string } = (
+      await client.client.get(url)
+    ).data;
     await this.client.release(client);
 
-    this.emit("fetched-transaction-tx", { url, tx: res[0] });
+    this.emit("fetched-transaction-tx", { url, tx: res });
 
-    return res[0].hex;
+    return res.hex;
   }
 
   async getCurrentBlock() {
-    const url = `/blocks/current`;
+    const url = `/block/current`;
 
     this.emit("fetching-block", { url });
 
@@ -130,7 +123,7 @@ class BitcoinLikeExplorer extends EventEmitter implements IExplorer {
   }
 
   async getBlockByHeight(height: number) {
-    const url = `/blocks/${height}`;
+    const url = `/block/${height}`;
 
     this.emit("fetching-block", { url, height });
 
@@ -160,7 +153,8 @@ class BitcoinLikeExplorer extends EventEmitter implements IExplorer {
 
     // TODO add a test for failure (at the sync level)
     const client = await this.client.acquire();
-    const fees = (await client.client.get(url)).data;
+    const response = await client.client.get(url);
+    const fees = response.data;
     await this.client.release(client);
 
     this.emit("fetching-fees", { url, fees });
@@ -178,59 +172,35 @@ class BitcoinLikeExplorer extends EventEmitter implements IExplorer {
   async getPendings(address: Address, nbMax?: number) {
     const params: {
       no_token?: string;
-      noToken?: string;
       batch_size?: number;
       block_hash?: string;
-      blockHash?: string;
-    } =
-      this.explorerVersion === "v2"
-        ? {
-            noToken: "true",
-          }
-        : {
-            no_token: "true",
-          };
-    if (!this.disableBatchSize) {
-      params.batch_size = nbMax || 1000;
-    }
-    const res = await this.fetchTxs(address, params);
-    const pendingsTxs = res.txs.filter((tx) => !tx.block);
+    } = {
+      no_token: "true",
+      batch_size: !this.disableBatchSize ? nbMax || 1000 : undefined,
+      block_hash: undefined,
+    };
+    const txs = await this.fetchTxs(address, params);
+    const pendingsTxs = txs.filter((tx) => !tx.block);
     pendingsTxs.forEach((tx) => this.hydrateTx(address, tx));
     return pendingsTxs;
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  async fetchTxs(address: Address, params: any) {
-    const url = `/addresses/${address.address}/transactions`;
+  async fetchTxs(address: Address, params: any): Promise<any[]> {
+    const url = `/address/${address.address}/txs`;
 
     this.emit("fetching-address-transaction", { url, params });
 
     // TODO add a test for failure (at the sync level)
     const client = await this.client.acquire();
-    let res: { txs: TX[] } = { txs: [] };
-    try {
-      res = (
-        await client.client.get(url, {
-          params,
-          // some altcoin may have outputs with values > MAX_SAFE_INTEGER
-          transformResponse: (string) =>
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            JSONBigNumber.parse(string, (key: string, value: any) => {
-              if (BigNumber.isBigNumber(value)) {
-                if (key === "value") {
-                  return value.toString();
-                }
-                return value.toNumber();
-              }
-              return value;
-            }),
-        })
-      ).data;
-    } finally {
-      await this.client.release(client);
-    }
+    const response = await client.client.get(url, {
+      params,
+    });
+    const txs = response.data.data;
+    await this.client.release(client);
+    const res = { txs };
     this.emit("fetched-address-transaction", { url, params, res });
-    return res;
+    return txs;
   }
 
   // eslint-disable-next-line class-methods-use-this,@typescript-eslint/no-explicit-any
@@ -284,34 +254,19 @@ class BitcoinLikeExplorer extends EventEmitter implements IExplorer {
   ) {
     const params: {
       no_token?: string;
-      noToken?: string;
       batch_size?: number;
       block_hash?: string;
-      blockHash?: string;
-    } =
-      this.explorerVersion === "v2"
-        ? {
-            noToken: "true",
-          }
-        : {
-            no_token: "true",
-          };
-    if (!this.disableBatchSize) {
-      params.batch_size = batchSize;
-    }
-    if (lastTx) {
-      if (this.explorerVersion === "v2") {
-        params.blockHash = lastTx.block.hash;
-      } else {
-        params.block_hash = lastTx.block.hash;
-      }
-    }
-    const res = await this.fetchTxs(address, params);
+    } = {
+      no_token: "true",
+      batch_size: !this.disableBatchSize ? batchSize : undefined,
+      block_hash: lastTx ? lastTx.block.hash : undefined,
+    };
+    const txs = await this.fetchTxs(address, params);
 
     const hydratedTxs: TX[] = [];
 
     // faster than mapping
-    res.txs.forEach((tx) => {
+    txs.forEach((tx) => {
       this.hydrateTx(address, tx);
       hydratedTxs.push(tx);
     });

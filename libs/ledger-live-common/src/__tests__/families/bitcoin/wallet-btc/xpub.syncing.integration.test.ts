@@ -303,7 +303,6 @@ describe("xpub integration sync", () => {
       }
       const explorer = new BitcoinLikeExplorer({
         explorerURI: `https://explorers.api.vault.ledger.com/blockchain/${dataset.explorerVersion}/${dataset.coin}`,
-        explorerVersion: dataset.explorerVersion,
       });
       const xpub = new Xpub({
         storage,

@@ -22,7 +22,6 @@ describe.skip("testing xpub native segwit transactions", () => {
 
   const explorer = new BitcoinLikeExplorer({
     explorerURI: "http://localhost:20000/blockchain/v3",
-    explorerVersion: "v3",
     disableBatchSize: true, // https://ledgerhq.atlassian.net/browse/BACK-2191
   });
   const crypto = new Crypto({

@@ -21,7 +21,6 @@ TICKER=ltc TAG=latest LOG_LEVEL=debug docker-compose -f ./environments/explorer-
 describe.skip("testing xpub legacy litecoin transactions", () => {
   const explorer = new BitcoinLikeExplorer({
     explorerURI: "http://localhost:20000/blockchain/v3",
-    explorerVersion: "v3",
     disableBatchSize: true, // https://ledgerhq.atlassian.net/browse/BACK-2191
   });
 

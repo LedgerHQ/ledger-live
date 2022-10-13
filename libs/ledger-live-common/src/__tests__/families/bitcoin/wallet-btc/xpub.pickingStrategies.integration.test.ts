@@ -31,7 +31,6 @@ describe("testing xpub legacy transactions", () => {
     storage,
     explorer: new BitcoinLikeExplorer({
       explorerURI: "https://explorers.api.live.ledger.com/blockchain/v3/btc",
-      explorerVersion: "v3",
     }),
     crypto,
     xpub: node.neutered().toBase58(),

@@ -6,7 +6,7 @@ import { log } from "@ledgerhq/logs";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import type { GetAccountShape } from "../../bridge/jsHelpers";
 import { makeSync, makeScanAccounts, mergeOps } from "../../bridge/jsHelpers";
-import { findCurrencyExplorer } from "../../api/Ledger";
+import { blockchainBaseURL, findCurrencyExplorer } from "../../api/Ledger";
 import { encodeAccountId } from "../../account";
 import {
   isSegwitDerivationMode,
@@ -132,13 +132,7 @@ const getAccountShape: GetAccountShape = async (info) => {
   const walletDerivationMode = toWalletDerivationMode(
     derivationMode as DerivationMode
   );
-  const explorer = findCurrencyExplorer(currency);
-  if (!explorer) {
-    throw new Error(`No explorer found for currency ${currency.name}`);
-  }
-  if (explorer.version !== "v2" && explorer.version !== "v3") {
-    throw new Error(`Unsupported explorer version ${explorer.version}`);
-  }
+  const baseURL = blockchainBaseURL(currency);
 
   span = startSpan("sync", "generateAccount");
   const walletAccount =
@@ -150,10 +144,9 @@ const getAccountShape: GetAccountShape = async (info) => {
       currency: <Currency>currency.id,
       network: walletNetwork,
       derivationMode: walletDerivationMode,
-      explorer: `ledger${explorer.version}`,
-      explorerURI: `${explorer.endpoint}/blockchain/${explorer.version}/${explorer.id}`,
       storage: "mock",
       storageParams: [],
+      explorerURI: `${baseURL}`,
     }));
   span.finish();
 

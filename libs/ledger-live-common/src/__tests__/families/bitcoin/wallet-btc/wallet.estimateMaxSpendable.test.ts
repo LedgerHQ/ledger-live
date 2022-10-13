@@ -14,7 +14,6 @@ describe("testing estimateMaxSpendable", () => {
       currency: "bitcoin",
       network: "mainnet",
       derivationMode: DerivationModes.LEGACY,
-      explorer: "ledgerv3",
       explorerURI: "https://explorers.api.vault.ledger.com/blockchain/v3/btc",
       storage: "mock",
       storageParams: [],

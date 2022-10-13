@@ -20,7 +20,6 @@ describe("Unit tests for getAddress", () => {
       storage: new BitcoinLikeStorage(),
       explorer: new BitcoinLikeExplorer({
         explorerURI: "https://explorers.api.vault.ledger.com/blockchain/v3/bch",
-        explorerVersion: "v3",
       }),
       crypto: bchCrypto,
       xpub: "xpub6BtWBf3Pu6hYwJBKvEwG7JtrTxxDrSGy39HaTgZz6GTSaFWFdoCtuEXSQtoKGaYdz1emg8xTXKYwjhu3xXRPzFnYS1z4yjKj7hLDQyNeDZr",
@@ -36,7 +35,6 @@ describe("Unit tests for getAddress", () => {
       storage: new BitcoinLikeStorage(),
       explorer: new BitcoinLikeExplorer({
         explorerURI: "https://explorers.api.vault.ledger.com/blockchain/v3/btc",
-        explorerVersion: "v3",
       }),
       crypto: btcCrypto,
       xpub: "xpub6BtWBf3Pu6hYwJBKvEwG7JtrTxxDrSGy39HaTgZz6GTSaFWFdoCtuEXSQtoKGaYdz1emg8xTXKYwjhu3xXRPzFnYS1z4yjKj7hLDQyNeDZr",

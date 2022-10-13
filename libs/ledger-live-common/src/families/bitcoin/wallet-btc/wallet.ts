@@ -10,40 +10,25 @@ import { TransactionInfo, DerivationModes } from "./types";
 import { Account, SerializedAccount } from "./account";
 import Xpub from "./xpub";
 import { IExplorer } from "./explorer/types";
-import BitcoinLikeExplorer from "./explorer";
 import { IStorage } from "./storage/types";
 import BitcoinLikeStorage from "./storage";
 import { PickingStrategy } from "./pickingstrategies/types";
 import * as utils from "./utils";
 import cryptoFactory from "./crypto/factory";
+import BitcoinLikeExplorer from "./explorer";
 
 class BitcoinLikeWallet {
-  explorerInstances: { [key: string]: IExplorer } = {};
+  explorer!: IExplorer;
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  explorers: { [key: string]: (explorerURI: string) => IExplorer } = {
-    ledgerv3: (explorerURI) =>
-      new BitcoinLikeExplorer({
-        explorerURI,
-        explorerVersion: "v3",
-      }),
-    ledgerv2: (explorerURI) =>
-      new BitcoinLikeExplorer({
-        explorerURI,
-        explorerVersion: "v2",
-      }),
-  };
+  constructor() {}
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   accountStorages: { [key: string]: (...args: any[]) => IStorage } = {
     mock: () => new BitcoinLikeStorage(),
   };
 
-  getExplorer(explorer: "ledgerv3" | "ledgerv2", explorerURI: string) {
-    const id = `explorer-${explorer}-uri-${explorerURI}`;
-    this.explorerInstances[id] =
-      this.explorerInstances[id] || this.explorers[explorer](explorerURI);
-    return this.explorerInstances[id];
+  getExplorer(explorerURI: string) {
+    return this.explorer || new BitcoinLikeExplorer({ explorerURI });
   }
 
   async generateAccount(params: {
@@ -53,23 +38,23 @@ class BitcoinLikeWallet {
     currency: Currency;
     network: "mainnet" | "testnet";
     derivationMode: DerivationModes;
-    explorer: "ledgerv3" | "ledgerv2";
-    explorerURI: string;
     storage: "mock";
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     storageParams: any[];
+    explorerURI: string;
   }): Promise<Account> {
+    this.explorer = new BitcoinLikeExplorer({
+      explorerURI: params.explorerURI,
+    });
     const crypto = cryptoFactory(params.currency);
-
     const storage = this.accountStorages[params.storage](
       ...params.storageParams
     );
-    const explorer = this.getExplorer(params.explorer, params.explorerURI);
     return {
       params,
       xpub: new Xpub({
         storage,
-        explorer,
+        explorer: this.explorer,
         crypto,
         xpub: params.xpub,
         derivationMode: params.derivationMode,
@@ -362,14 +347,10 @@ class BitcoinLikeWallet {
     const storage = this.accountStorages[account.params.storage](
       ...account.params.storageParams
     );
-    const explorer = this.getExplorer(
-      account.params.explorer,
-      account.params.explorerURI
-    );
 
     return new Xpub({
       storage,
-      explorer,
+      explorer: this.getExplorer(account.params.explorerURI),
       crypto,
       xpub: account.xpub.xpub,
       derivationMode: account.params.derivationMode,

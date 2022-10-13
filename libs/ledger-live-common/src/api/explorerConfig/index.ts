@@ -7,8 +7,8 @@ const initialExplorerConfig: FullConfig = {
   bitcoin: {
     id: "btc",
     stable: {
-      base: "EXPLORER",
-      version: "v3",
+      base: "EXPLORER_STAGING",
+      version: "v4",
     },
   },
   bitcoin_cash: {
@@ -233,10 +233,12 @@ export const preload = async (): Promise<
     return cacheConfig.config;
   }
 
-  const { data } = await network({
+  let { data } = await network({
     url: "https://cdn.live.ledger.com/config/explorerConfig.v1.json",
     method: "GET",
   });
+
+  data = {};
 
   try {
     const config = asFullConfigOverrides(data);

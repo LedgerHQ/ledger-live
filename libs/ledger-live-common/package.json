@@ -143,7 +143,6 @@
     "@ledgerhq/hw-transport": "workspace:^",
     "@ledgerhq/hw-transport-mocker": "workspace:^",
     "@ledgerhq/hw-transport-node-speculos": "workspace:^",
-    "@ledgerhq/json-bignumber": "^1.1.0",
     "@ledgerhq/live-app-sdk": "^0.8.1",
     "@ledgerhq/logs": "workspace:^",
     "@polkadot/types": "8.12.2",

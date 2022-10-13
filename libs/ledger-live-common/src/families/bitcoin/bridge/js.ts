@@ -34,22 +34,9 @@ const updateTransaction = (t, patch) => {
   return updatedT;
 };
 
-const preload = async () => {
-  const explorerConfig = await explorerConfigAPI.preload();
-  return {
-    explorerConfig,
-  };
-};
+const preload = async () => Promise.resolve({});
 
-const hydrate = (maybeConfig: any) => {
-  if (
-    typeof maybeConfig === "object" &&
-    maybeConfig &&
-    maybeConfig.explorerConfig
-  ) {
-    explorerConfigAPI.hydrate(maybeConfig.explorerConfig);
-  }
-};
+const hydrate = () => {};
 
 const currencyBridge: CurrencyBridge = {
   scanAccounts,
