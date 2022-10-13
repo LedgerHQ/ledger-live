@@ -3,7 +3,7 @@ import { useRoute } from "@react-navigation/native";
 import {
   getCryptoCurrencyById,
   getTokenById,
-} from "@ledgerhq/live-common/currencies";
+} from "@ledgerhq/live-common/currencies/index";
 
 const useCurrency = () => {
   const route: any = useRoute();
