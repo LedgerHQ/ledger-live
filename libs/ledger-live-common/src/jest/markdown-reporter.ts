@@ -1,4 +1,5 @@
 import fs from "fs";
+import os from "os";
 
 function toPercent(n: number): number {
   return Math.round(n * 1000) / 10;
@@ -12,13 +13,13 @@ export default class DocumentTestHooksReporter {
     const percentFailedTests = toPercent(numFailedTests / numTotalTests);
     const percentPassedTests = toPercent(numPassedTests / numTotalTests);
 
-    const output = `# Jest Test Results
+    const output = `# Integration Test Report (${os.platform()})
 | Tests  |   # |    % |
 | ------ | --: | ---: |
 | Passed | ${numPassedTests} | ${percentPassedTests}% |
 | Failed | ${numFailedTests} | ${percentFailedTests}% |
 | Total  | ${numTotalTests} | 100% |`;
 
-    fs.writeFileSync("./jest.result.md", output);
+    fs.writeFileSync("./jest.result.md", output, "utf-8");
   }
 }

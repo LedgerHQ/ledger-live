@@ -77,21 +77,9 @@ jobs:
         with:
           name: logs.txt
           path: logs.txt
-      - uses: 8BitJonny/gh-get-current-pr@2.1.1
+      - uses: machine-learning-apps/pr-comment@1.0.0
         if: always()
-        id: PR
+        env:
+          GITHUB_TOKEN: ${{github.token}}
         with:
-          github-token: ${{ github.token }}
-          sha: ${{ github.event.pull_request.head.sha }}
-          filterOutClosed: true
-      - name: Get markdown result
-        if: always()
-        id: result
-        run: echo "::set-output name=md::$(cat libs/ledger-live-common/jest.result.md)"
-      - uses: mshick/add-pr-comment@v1
-        if: always()
-        with:
-          message: ${{steps.result.outputs.md}}
-          repo-token: ${{github.token}}
-          repo-token-user-login: "github-actions[bot]"
-          allow-repeats: false
+          path: libs/ledger-live-common/jest.result.md
