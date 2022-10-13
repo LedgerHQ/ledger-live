@@ -5,7 +5,7 @@ import { useTranslation } from "react-i18next";
 import i18next from "i18next";
 import type { Account } from "@ledgerhq/types-live";
 import type { Transaction } from "@ledgerhq/live-common/families/hedera/types";
-import { getAccountBridge } from "@ledgerhq/live-common/bridge";
+import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { useTheme } from "@react-navigation/native";
 import KeyboardView from "../../components/KeyboardView";
 import Button from "../../components/Button";
