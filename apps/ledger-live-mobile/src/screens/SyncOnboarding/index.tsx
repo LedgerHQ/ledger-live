@@ -13,7 +13,7 @@ import {
   VerticalTimeline,
   Text,
 } from "@ledgerhq/native-ui";
-import { useOnboardingStatePolling } from "@ledgerhq/live-common/lib/onboarding/hooks/useOnboardingStatePolling";
+import { useOnboardingStatePolling } from "@ledgerhq/live-common/onboarding/hooks/useOnboardingStatePolling";
 import {
   OnboardingStep as DeviceOnboardingStep,
   fromSeedPhraseTypeToNbOfSeedWords,
@@ -426,7 +426,7 @@ export const SyncOnboarding = ({
       />
       <Flex position="relative" flex={1}>
         <ResyncOverlay
-          isOpen={!!desyncTimer && !stopPolling}
+          isOpen={isDesyncOverlayOpen}
           delay={resyncOverlayDisplayDelayMs}
           productName={productName}
         />
