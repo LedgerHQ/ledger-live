@@ -43,3 +43,5 @@ cli/tests/tmp
 
 # Jetbrains
 .idea
+
+jest.result.md

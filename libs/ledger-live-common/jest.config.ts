@@ -18,6 +18,7 @@ if (process.env.ONLY_INTEGRATION_TESTS) {
 const reporters = ["default"];
 if (process.env.CI) {
   reporters.push("github-actions");
+  reporters.push("./lib/jest/markdown-reporter.js");
 }
 
 export default {

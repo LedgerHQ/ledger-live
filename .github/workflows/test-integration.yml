@@ -3,6 +3,9 @@ name: "[Test] Integration"
 on:
   schedule:
     - cron: 20 9 * * *
+  push:
+    branches:
+      - support/test-integration-*
 
   workflow_dispatch:
     inputs:
@@ -74,3 +77,21 @@ jobs:
         with:
           name: logs.txt
           path: logs.txt
+      - uses: 8BitJonny/gh-get-current-pr@2.1.1
+        if: always()
+        id: PR
+        with:
+          github-token: ${{ github.token }}
+          sha: ${{ github.event.pull_request.head.sha }}
+          filterOutClosed: true
+      - name: Get markdown result
+        if: always()
+        id: result
+        run: echo "::set-output name=md::$(cat libs/ledger-live-common/jest.result.md)"
+      - uses: mshick/add-pr-comment@v1
+        if: always()
+        with:
+          message: ${{steps.result.outputs.md}}
+          repo-token: ${{github.token}}
+          repo-token-user-login: "github-actions[bot]"
+          allow-repeats: false
