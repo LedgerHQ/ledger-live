@@ -237,7 +237,7 @@
     "form" : {
       "changeCTA" : "Alterar",
       "rates" : {
-        "title" : "Provedores",
+        "title" : "Cotações",
         "registration" : "Cadastro necessário ",
         "noRegistration" : "Não é necessário ter cadastro",
         "fixed" : "Fixo",
@@ -246,7 +246,7 @@
         "loading" : "Carregando...",
         "name" : {
           "title" : "Provedor",
-          "tooltip" : "Dependendo do provedor, você precisa criar uma conta."
+          "tooltip" : "Dependendo do provedor, você precisa se cadastrar criando uma conta."
         },
         "rate" : {
           "title" : "Taxa de câmbio",
@@ -430,11 +430,13 @@
         }
       },
       "filter" : {
-        "all" : "Todos",
         "centralised" : "Centralizado",
-        "dedentralised" : "Descentralizado"
+        "decentralised" : "Descentralizado",
+        "float" : "Taxa Flutuante",
+        "fixed" : "Taxa Fixa"
       },
-      "noQuote" : "Taxa disponível no próximo passo"
+      "noQuote" : "Taxa disponível no próximo passo",
+      "noProviders" : "Nenhum resultado encontrado. Não há cotações disponíveis com as preferências atuais."
     },
     "ip" : {
       "title" : "Boas-vindas à Troca",
@@ -752,7 +754,7 @@
     "settings" : {
       "title" : "Editar Conta",
       "advancedLogs" : "Avançado",
-      "advancedTips" : "Seu xpub é um dado privado e confidencial. Use-o com cautela, especialmente ao revelá-lo a terceiros.",
+      "advancedTips" : "Esta é uma xpub {{tag}}. Ao importá-la para uma carteira de terceiros, escolha o mesmo modo de derivação.",
       "accountName" : {
         "title" : "Nome da conta",
         "desc" : "Descrição da conta"
@@ -1182,6 +1184,10 @@
     "blackfriday" : {
       "title" : "BLACK FRIDAY ",
       "description" : "Aproveite 40% de desconto nas carteiras hardware da Ledger com o código promocional BLACKFRIDAY20"
+    },
+    "referralProgram" : {
+      "title" : "Indique e ganhe US$ 10",
+      "description" : "Indique com sucesso um amigo para ambos ganharem US$ 10 em Bitcoin."
     }
   },
   "signmessage" : {
@@ -3383,7 +3389,7 @@
       "featureFlagsOverride" : "Sobrepor",
       "addLocalApp" : "Adicionar um aplicativo local",
       "addLocalAppDesc" : "Navegue por arquivos locais e adicione um aplicativo local usando um manifesto local",
-      "addLocalAppButton" : "Navegue",
+      "addLocalAppButton" : "Navegar",
       "runLocalAppDeleteButton" : "Excluir",
       "runLocalAppOpenButton" : "Abrir",
       "enableLearnStagingUrl" : "Staging URL da página Aprender",
@@ -3810,7 +3816,7 @@
               "descr" : "Conecte seu dispositivo ao computador usando o cabo USB."
             },
             "browse" : {
-              "title" : "Navegue",
+              "title" : "Navegar",
               "descr" : "Aprenda como interagir com seu dispositivo lendo as instruções na tela."
             },
             "select" : {
@@ -3838,7 +3844,7 @@
               "descr" : "Conecte seu dispositivo ao computador usando o cabo USB."
             },
             "browse" : {
-              "title" : "Navegue",
+              "title" : "Navegar",
               "descr" : "Aprenda como interagir com seu dispositivo lendo as instruções na tela."
             },
             "select" : {
@@ -5052,6 +5058,9 @@
     },
     "StellarSourceHasMultiSign" : {
       "title" : "Desabilite a multiassinatura para fazer transações Stellar"
+    },
+    "HederaAddAccountError" : {
+      "title" : "Sua conta não foi adicionada. Tente Novamente."
     }
   },
   "cryptoOrg" : {
