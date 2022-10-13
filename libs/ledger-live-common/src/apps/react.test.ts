@@ -10,7 +10,9 @@ import {
 } from "./react";
 import { useNotEnoughMemoryToInstall } from "./react";
 import { AppType, SortOptions } from "./filtering";
+import { calculateDependencies } from "./polyfill";
 
+calculateDependencies();
 const mockedState = initState(
   mockListAppsResult(
     "Bitcoin, Bitcoin Legacy, Ethereum, Litecoin, Dogecoin, Ethereum Classic, XRP, Bitcoin Cash, Decred",
@@ -22,7 +24,8 @@ test("Apps hooks - useAppInstallNeedsDeps - Expect Bitcoin cash to depend on bit
   const { result = <any>{} } = renderHook(() =>
     useAppInstallNeedsDeps(mockedState, mockedState.appByName["Bitcoin Cash"])
   );
-  expect(result.current).toBe(null);
+  expect(result?.current.dependencies.length).toBe(1);
+  expect(result?.current.dependencies[0].name).toBe("Bitcoin");
   //TODO: Reactivate the following code after new bitcoin nano app 2.1.0
   /*
   expect(result?.current.dependencies.length).toBe(1);
