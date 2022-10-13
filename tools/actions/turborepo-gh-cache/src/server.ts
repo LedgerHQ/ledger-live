@@ -82,6 +82,11 @@ async function startServer() {
     })
   );
 
+  app.post("/v8/artifacts/events", (req, res) => {
+    // Analytics endpoint, just ignore it
+    res.status(200).send();
+  });
+
   const server = app.disable("etag").listen(0);
   server.once("listening", () => {
     const port = "" + server.address().port;
