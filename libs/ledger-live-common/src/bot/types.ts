@@ -77,6 +77,13 @@ export type MutationSpec<T extends Transaction> = {
     account: Account;
     bridge: AccountBridge<T>;
   }) => T | null | undefined;
+  // express what are the status warnings to express on a given transaction
+  expectStatusWarnings?: (arg0: {
+    transaction: T;
+    status: TransactionStatus;
+    account: Account;
+    bridge: AccountBridge<T>;
+  }) => { [_: string]: Error } | undefined;
   // Express the device actions to do (buttons,..) and validate the device screen. overrides genericDeviceAction
   deviceAction?: DeviceAction<T, any>;
   // how much time to wait in maximum to reach the final state
@@ -170,6 +177,8 @@ export type MutationReport<T extends Transaction> = {
   finalDestinationOperation?: Operation;
   testDestinationDuration?: number;
   error?: Error;
+  errorTime?: number;
+  hintWarnings: string[];
 };
 
 export type MinimalSerializedMutationReport = {
@@ -189,9 +198,11 @@ export type MinimalSerializedSpecReport = {
   fatalError: string | undefined;
   mutations: MinimalSerializedMutationReport[] | undefined;
   existingMutationNames: string[];
+  hintWarnings: string[];
 };
 
 export type MinimalSerializedReport = {
   results: Array<MinimalSerializedSpecReport>;
   environment: string | undefined;
+  seedHash: string;
 };
