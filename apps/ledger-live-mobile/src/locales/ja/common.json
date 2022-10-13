@@ -728,6 +728,9 @@
     "ImageProcessingError" : {
       "title" : "画像の処理に失敗しました",
       "description" : "別の画像でもう一度お試しください"
+    },
+    "HederaAddAccountError" : {
+      "title" : "アカウントが追加されていません。もう一度お試しください。"
     }
   },
   "crash" : {
@@ -775,6 +778,9 @@
     "failed" : {
       "biometrics" : {
         "title" : "{{biometricsType}}によるロック解除に失敗しました",
+        "touchid" : "TouchID",
+        "faceid" : "FaceID",
+        "fingerprint" : "指紋",
         "description" : "パスワードを入力して続行",
         "authenticate" : "Ledger Liveアプリで認証してください。"
       },
@@ -803,7 +809,10 @@
     },
     "enableBiometrics" : {
       "title" : "{{biometricsType}}",
-      "desc" : "{{biometricsType}}でロック解除"
+      "desc" : "{{biometricsType}}でロック解除",
+      "touchid" : "TouchID",
+      "faceid" : "FaceID",
+      "fingerprint" : "指紋"
     }
   },
   "reset" : {
@@ -1002,12 +1011,12 @@
   },
   "discover" : {
     "title" : "Discover",
-    "desc" : "Ledger LiveのWeb3の世界をチェック",
+    "desc" : "Web3の世界を安全に探索",
     "link" : "さらに詳しく",
     "sections" : {
       "learn" : {
         "title" : "ラーニング",
-        "desc" : "暗号資産・NFT・デジタルセキュリティについて学ぶ"
+        "desc" : "専門家から暗号資産について無料で学びましょう。"
       },
       "ledgerApps" : {
         "title" : "アプリ",
@@ -1015,11 +1024,15 @@
       },
       "earn" : {
         "title" : "報酬獲得",
-        "desc" : "不労所得を獲得して暗号資産を運用する"
+        "desc" : "ステーキングと貸し出しで暗号資産を運用。"
       },
       "mint" : {
         "title" : "ミント",
-        "desc" : "[ L ] Marketにおける専用コラボレーションからNFTをミント"
+        "desc" : "[ L ] Marketの特別なキャンペーンによるNFTをミント。"
+      },
+      "referralProgram" : {
+        "title" : "ご友人紹介",
+        "desc" : "ご友人がLedgerを購入すると$10相当のBTCを獲得可能です。 "
       }
     },
     "comingSoon" : "近日公開",
@@ -1097,6 +1110,7 @@
       "nanoS" : "Nano S",
       "nanoSP" : "Nano S Plus",
       "nanoX" : "Nano X",
+      "nanoFTS" : "Nano FTS",
       "blue" : "Blue",
       "chooseDevice" : "デバイスを選択してください"
     },
@@ -1636,9 +1650,133 @@
       },
       "error" : {
         "title" : "ペアリング失敗",
-        "subtitle" : "何か問題が発生したようです。Bluetoothがオンになっていて、{{productName}}が近くにあることを確認してください",
+        "subtitle" : "何か問題が発生したようです。\nBluetoothがオンになっており、{{productName}}が近くにあることをご確認ください。",
         "retryCta" : "再試行"
       }
+    }
+  },
+  "syncOnboarding" : {
+    "title" : "{{deviceName}}をセットアップ",
+    "estimatedTimeFormat" : "{{estimatedTime}}分",
+    "deviceSelection" : {
+      "title" : "どのデバイスをお持ちですか？",
+      "subtitle" : "Ledger LiveでセットアップしたいLedgerウォレットを選択してください",
+      "brand" : "Ledger",
+      "setupTime" : "{{time}}分"
+    },
+    "scanning" : {
+      "title" : "{{productName}}を検出中",
+      "description" : "{{productName}}のロックが解除済みで、Bluetoothが有効であることを確認してください"
+    },
+    "pairing" : {
+      "success" : {
+        "title" : "{{deviceName}}とペアリング完了"
+      },
+      "loading" : {
+        "title" : "{{deviceName}}とペアリング中",
+        "subtitle" : "{{productName}}のコードを確認してください"
+      },
+      "error" : {
+        "title" : "ペアリング失敗",
+        "subtitle" : "何か問題が発生したようです。Bluetoothがオンになっており、{{productName}}が近くにあることを確認してください"
+      }
+    },
+    "languageSelect" : {
+      "title" : "アプリの言語"
+    },
+    "firmwareLanguageUpdateDrawer" : {
+      "title" : "{{productName}}の言語を変更する",
+      "description" : "Ledger Liveの言語は現在、{{newLanguage}}です。{{newLanguage}}を{{productName}}でも使用しますか？",
+      "updateCta" : "言語の変更",
+      "cancelCta" : "キャンセル"
+    },
+    "desyncDrawer" : {
+      "title" : "{{productName}}に接続できませんでした",
+      "description" : "{{productName}}が近くにあり、ロックが解除されていることを確認してください。携帯電話でBluetoothが有効になっているかどうかを確認してください",
+      "retryCta" : "再試行",
+      "helpCta" : "ヘルプ"
+    },
+    "resyncOverlay" : {
+      "content" : "{{productName}}との接続が失われたようです。再接続しています"
+    },
+    "helpDrawer" : {
+      "title" : "セットアップマニュアルでお困りですか？",
+      "description" : "Lorem Elsass ipsum aliquam bissame Ober schae ffolsheim gehts messti de Bischheim tellus blottkopf, dui sed libero.hopla libero, placerat leo eget Gal",
+      "docCta" : "よくある質問（FAQ）を見る",
+      "supportCta" : "人と話す"
+    },
+    "pairingStep" : {
+      "title" : "{{productName}}はペアリングされています",
+      "description" : "{{productName}}のセットアップを続行し、こちらに戻って手順の説明を確認してください"
+    },
+    "pinStep" : {
+      "title" : "PINコードを選択する",
+      "description" : "PINコードは、{{productName}}への望ましくないアクセスを防ぎます。絶対に共有しないでください",
+      "warning" : "お客様のPINコードを知っていて、お客様の {{productName}}にアクセスできる人は、誰でも資産を盗むことができます"
+    },
+    "seedStep" : {
+      "title" : "リカバリーフレーズを設定する",
+      "description" : "リカバリーフレーズは、秘密鍵をバックアップする24単語からなる秘密のリストです。{{productName}}は唯一無二のリカバリフレーズを生成します。Ledgerはそのコピーを保持しません"
+    },
+    "softwareChecksSteps" : {
+      "title" : "オペレーティングシステムのチェック",
+      "genuineCheckRequestDrawer" : {
+        "title" : "{{productName}}が正規品であることを確認しましょう",
+        "checkCta" : "正規品チェック"
+      },
+      "allowManagerDrawer" : {
+        "wording" : "Ledger Live"
+      },
+      "genuineCheckCancelledDrawer" : {
+        "title" : "Nanoで正規品チェックがキャンセルされました",
+        "description" : "このチェックは、{{productName}}が安全に使用できることを確認するために重要です",
+        "retryCta" : "正規品チェックを再度実行する",
+        "skipCta" : "後で"
+      },
+      "updateAvailableDrawer" : {
+        "title" : "新しいソフトウェアが見つかりました",
+        "description" : "最新のセキュリティ機能にアクセスするには、{{productName}}を更新することを強くお勧めします",
+        "updateCta" : "アップデート"
+      },
+      "genuineCheckStep" : {
+        "inactive" : {
+          "title" : "真正性確認"
+        },
+        "active" : {
+          "title" : "{{productName}}をチェックしています"
+        },
+        "completed" : {
+          "title" : "お客様の{{productName}}は正規品です"
+        },
+        "failed" : {
+          "title" : "デバイスのセキュリティがチェックされていません"
+        }
+      },
+      "firmwareUpdateStep" : {
+        "inactive" : {
+          "title" : "ソフトウェアのチェック"
+        },
+        "active" : {
+          "title" : "ソフトウェアのバージョンを確認しています"
+        },
+        "completed" : {
+          "updateAvailable" : {
+            "title" : "ソフトウェアのバージョン{{firmwareVersion}}が利用可能です"
+          },
+          "noUpdateAvailable" : {
+            "title" : "ソフトウェアのバージョンは最新です"
+          }
+        },
+        "failed" : {
+          "title" : "ソフトウェアのアップデートに失敗しました"
+        }
+      }
+    },
+    "readyStep" : {
+      "title" : "{{productName}} の準備ができました"
+    },
+    "completion" : {
+      "title" : "コントロール可能です"
     }
   },
   "tabs" : {
@@ -1970,6 +2108,7 @@
       },
       "advanced" : {
         "title" : "詳細ログ",
+        "warningDerivation" : "これは {{tag}}のxpubです。サードパーティのウォレットにインポートする際は、同じ派生モードを選択してください。",
         "desc" : ""
       }
     },
