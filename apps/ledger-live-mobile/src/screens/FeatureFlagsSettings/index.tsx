@@ -5,7 +5,7 @@ import { defaultFeatures } from "@ledgerhq/live-common/featureFlags/index";
 import type { FeatureId } from "@ledgerhq/types-live";
 
 import { BaseInput, Text, Flex, SearchInput, Icons } from "@ledgerhq/native-ui";
-import { includes, lowerCase } from "lodash";
+import { includes, lowerCase, trim } from "lodash";
 import { InputRenderLeftContainer } from "@ledgerhq/native-ui/components/Form/Input/BaseInput";
 import NavigationScrollView from "../../components/NavigationScrollView";
 import FeatureFlagDetails, {
@@ -18,18 +18,19 @@ export default function DebugFeatureFlags() {
   const { t } = useTranslation();
   const [focusedName, setFocusedName] = useState<string | undefined>();
   const [hiddenFlagName, setHiddenFlagName] = useState<string | null>(null);
+  const trimmedHiddenFlagName = hiddenFlagName ? trim(hiddenFlagName) : "";
   const [searchInput, setSearchInput] = useState<string>("");
 
   const featureFlags = useMemo(() => {
     const featureKeys = Object.keys(defaultFeatures);
-    if (hiddenFlagName && !featureKeys.includes(hiddenFlagName))
-      featureKeys.push(hiddenFlagName);
+    if (trimmedHiddenFlagName && !featureKeys.includes(trimmedHiddenFlagName))
+      featureKeys.push(trimmedHiddenFlagName);
     return featureKeys;
-  }, [hiddenFlagName]);
+  }, [trimmedHiddenFlagName]);
 
   const handleAddHiddenFlag = useCallback(
     value => {
-      setHiddenFlagName(value);
+      setHiddenFlagName(trim(value));
       setSearchInput(value);
     },
     [setSearchInput, setHiddenFlagName],

@@ -16,18 +16,18 @@ const FeatureFlagEdit: React.FC<{
   const [error, setError] = useState<Error | unknown | undefined>();
   const [inputValue, setInputValue] = useState<string | undefined>(undefined);
 
-  const stringifiedFlagValue = useMemo(
-    () => (flagValue ? JSON.stringify(flagValue) : undefined),
-    [flagValue],
-  );
-  const inputValueDefaulted = inputValue || stringifiedFlagValue;
+  /**
+   * pureValue is the value of the flag without the keys set programmatically
+   * by Legder Live.
+   * */
+  const { overriddenByEnv, overridesRemote, ...pureValue } = flagValue || {};
 
-  const {
-    overriddenByEnv,
-    overridesRemote,
-    enabledOverriddenForCurrentLanguage,
-    ...pureValue
-  } = flagValue || {};
+  const stringifiedPureValue = useMemo(
+    () => (pureValue ? JSON.stringify(pureValue) : undefined),
+    [pureValue],
+  );
+
+  const inputValueDefaulted = inputValue || stringifiedPureValue;
 
   const featureFlagsProvider = useFeatureFlags();
 
