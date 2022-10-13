@@ -237,11 +237,11 @@
     "form" : {
       "changeCTA" : "Änderung",
       "rates" : {
-        "title" : "Anbieter",
+        "title" : "Preise",
         "registration" : "Anmeldung erforderlich ",
         "noRegistration" : "Keine Anmeldung erforderlich",
         "fixed" : "Festgelegt",
-        "float" : "Float",
+        "float" : "Variabel",
         "update" : "Kursaktualisierung in",
         "loading" : "Lade Daten...",
         "name" : {
@@ -430,11 +430,13 @@
         }
       },
       "filter" : {
-        "all" : "Alle",
         "centralised" : "Zentralisiert",
-        "dedentralised" : "Dezentralisiert"
+        "decentralised" : "Dezentralisiert",
+        "float" : "Variabler Wechselkurs",
+        "fixed" : "Fester Wechselkurs"
       },
-      "noQuote" : "Kurs im nächsten Schritt verfügbar"
+      "noQuote" : "Kurs im nächsten Schritt verfügbar",
+      "noProviders" : "Keine Ergebnisse gefunden. Mit den aktuellen Einstellungen sind keine Angebote verfügbar."
     },
     "ip" : {
       "title" : "Willkommen bei Swap",
@@ -752,7 +754,7 @@
     "settings" : {
       "title" : "Konto bearbeiten",
       "advancedLogs" : "Erweitert",
-      "advancedTips" : "Ihr xpub sind datenschutzsensible Daten. Verwenden Sie sie mit Vorsicht, insbesondere bei der Weitergabe an Dritte.",
+      "advancedTips" : "Das ist ein {{tag}} xpub. Wenn Sie es in eine Wallet eines Drittanbieters importieren, wählen Sie denselben Ableitungsmodus.",
       "accountName" : {
         "title" : "Kontoname",
         "desc" : "Beschreibung des Kontos"
@@ -1182,6 +1184,10 @@
     "blackfriday" : {
       "title" : "Black Friday ",
       "description" : "Freuen Sie sich über 40 % Rabatt auf Ledger Hardware-Wallets mit dem Promo-Code BLACKFRIDAY20"
+    },
+    "referralProgram" : {
+      "title" : "Empfehlen und 10$ verdienen",
+      "description" : "Wenn Sie erfolgreich einen Freund empfehlen, verdienen Sie beide Bitcoin im Wert von 10$."
     }
   },
   "signmessage" : {
@@ -5052,6 +5058,9 @@
     },
     "StellarSourceHasMultiSign" : {
       "title" : "Bitte deaktivieren Sie Multisign, um Stellar-Transaktionen durchzuführen"
+    },
+    "HederaAddAccountError" : {
+      "title" : "Ihr Konto wurde nicht hinzugefügt. Bitte versuchen Sie es erneut."
     }
   },
   "cryptoOrg" : {
