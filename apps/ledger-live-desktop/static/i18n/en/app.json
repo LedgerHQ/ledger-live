@@ -169,7 +169,8 @@
       "ACTIVATE": "Activated",
       "REGISTER": "Registered",
       "STAKE": "Staked",
-      "UNSTAKE": "Unstaked"
+      "UNSTAKE": "Unstaked",
+      "WITHDRAW_UNSTAKED": "Withdrawn"
     }
   },
   "byteSize": {

@@ -68,7 +68,7 @@ export const getMaxAmount = (
     if (type === "UNSTAKE" && recipient === selectedValidator?.validatorId) {
       pendingUnstakingAmount = pendingUnstakingAmount.plus(value);
     } else if (
-      type === "WITHDRAW" &&
+      type === "WITHDRAW_UNSTAKED" &&
       recipient === selectedValidator?.validatorId
     ) {
       pendingWithdrawingAmount = pendingWithdrawingAmount.plus(value);

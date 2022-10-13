@@ -39,7 +39,7 @@ function getOperationType(
       return "UNSTAKE";
     case "withdraw":
     case "withdraw_all":
-      return "WITHDRAW";
+      return "WITHDRAW_UNSTAKED";
     default:
       return isSender(transaction, address) ? "OUT" : "IN";
   }
