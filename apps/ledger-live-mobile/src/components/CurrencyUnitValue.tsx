@@ -36,16 +36,11 @@ const CurrencyUnitValue = ({
   const value =
     valueProp instanceof BigNumber ? valueProp : new BigNumber(valueProp);
 
-  console.log(
-    formatCurrencyUnit(unit, value, {
-      showCode,
-      alwaysShowSign,
-      locale,
-      disableRounding,
-      discreet: !alwaysShowValue && shouldApplyDiscreetMode && discreet,
-      joinFragmentsSeparator,
-    }),
-  );
+  let loc = locale;
+  // TEMPORARY : quick win to transform arabic to english
+  if (locale === "ar") {
+    loc = "en";
+  }
 
   return (
     <>
@@ -54,7 +49,7 @@ const CurrencyUnitValue = ({
           ? formatCurrencyUnit(unit, value, {
               showCode,
               alwaysShowSign,
-              locale,
+              locale: loc,
               disableRounding,
               discreet: !alwaysShowValue && shouldApplyDiscreetMode && discreet,
               joinFragmentsSeparator,

@@ -26,6 +26,12 @@ const MarketPrice = ({
   const locale = useSelector(localeSelector);
   const navigation = useNavigation();
 
+  let loc = locale;
+  // TEMPORARY : quick win to transform arabic to english
+  if (locale === "ar") {
+    loc = "en";
+  }
+
   const goToMarketPage = useCallback(() => {
     navigation.navigate(ScreenName.MarketDetail, {
       currencyId: currency.id,
@@ -60,7 +66,7 @@ const MarketPrice = ({
               {counterValueFormatter({
                 value: selectedCoinData?.price || 0,
                 currency: counterCurrency,
-                locale,
+                locale: loc,
               })}
             </Text>
           </Flex>
