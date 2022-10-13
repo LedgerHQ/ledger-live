@@ -14,21 +14,11 @@ import DisappointedDone from "./DisappointedDone";
 
 const RatingsModal = () => {
   const {
-    initRatings,
     initRatingsData,
-    cleanRatings,
     ratingsInitialStep,
     isRatingsModalOpen,
     setRatingsModalOpen,
   } = useRatings();
-
-  useEffect(() => {
-    initRatings();
-
-    return () => {
-      cleanRatings();
-    };
-  }, [initRatings, cleanRatings]);
 
   useEffect(() => {
     initRatingsData();
