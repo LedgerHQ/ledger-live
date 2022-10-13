@@ -60,10 +60,6 @@ function OnboardingStepDeviceSelection() {
     navigation.dispatch(StackActions.popToTop());
   };
 
-  const handleHelp = () => {
-    // TODO
-  };
-
   const next = (deviceModelId: DeviceModelId) => {
     // Add NanoX.id, NanoSP.id etc, to the array when supported
     if ([nanoFTS.id].includes(deviceModelId)) {
@@ -118,16 +114,9 @@ function OnboardingStepDeviceSelection() {
         flexDirection="row"
         justifyContent="space-between"
       >
-        <Flex>
-          <TouchableOpacity onPress={handleBack}>
-            <ArrowLeftMedium size={24} />
-          </TouchableOpacity>
-        </Flex>
-        <Flex>
-          <TouchableOpacity onPress={handleHelp}>
-            <HelpMedium size={24} />
-          </TouchableOpacity>
-        </Flex>
+        <TouchableOpacity onPress={handleBack}>
+          <ArrowLeftMedium size={24} />
+        </TouchableOpacity>
       </Flex>
       <ScrollListContainer flex={1} px={6} bg="background.main">
         <Flex flex={1}>
