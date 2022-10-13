@@ -10,10 +10,30 @@ import RequiresBLE from "../../components/RequiresBLE";
 import { BleDevicesScanning } from "./BleDevicesScanning";
 import { BleDevicePairing } from "./BleDevicePairing";
 import { addKnownDevice } from "../../actions/ble";
+import { NavigatorName, ScreenName } from "../../const";
 
 export type NavigateInput = {
   name: string;
   params: object;
+};
+
+// Necessary when the pairing flow is opened from a deeplink without any params
+// Shouldn't be relied upon for other usages
+const defaultSuccessNavigateToConfig = {
+  navigationType: "push",
+  pathToDeviceParam: "params.params.params.device",
+  navigateInput: {
+    name: NavigatorName.BaseOnboarding,
+    params: {
+      screen: NavigatorName.SyncOnboarding,
+      params: {
+        screen: ScreenName.SyncOnboardingCompanion,
+        params: {
+          device: null,
+        },
+      },
+    },
+  },
 };
 
 export type PathToDeviceParam = PropertyPath;
@@ -71,16 +91,21 @@ export const BleDevicePairingFlow = ({
 }: BleDevicePairingFlowProps) => {
   const dispatchRedux = useDispatch();
 
+  const params = route?.params || {};
+
   const {
-    filterByDeviceModelId,
+    filterByDeviceModelId = undefined,
     areKnownDevicesDisplayed = true,
     onSuccessAddToKnownDevices = false,
-    onSuccessNavigateToConfig: {
-      navigateInput,
-      pathToDeviceParam,
-      navigationType = "navigate",
-    },
-  } = route.params;
+    onSuccessNavigateToConfig = defaultSuccessNavigateToConfig,
+  } = params;
+
+  const {
+    navigateInput,
+    pathToDeviceParam,
+    navigationType = "navigate",
+  } = onSuccessNavigateToConfig;
+
   const [deviceToPair, setDeviceToPair] = useState<Device | null>(null);
 
   const onDeviceSelect = useCallback((item: Device) => {
