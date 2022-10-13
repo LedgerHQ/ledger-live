@@ -1526,7 +1526,7 @@
       "cta": "I’m ready to scan",
       "bullets": {
         "0": {
-          "label": "On the Desktop app, select <1>Settings > Accounts > Account export</1>."
+          "label": "On the Desktop app, select\n<1>Settings > Accounts > Account export</1>."
         },
         "1": {
           "label": "Scan the LiveQR code with your phone."
