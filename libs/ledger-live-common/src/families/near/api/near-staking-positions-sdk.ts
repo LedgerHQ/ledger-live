@@ -3,7 +3,7 @@ import { getEnv } from "../../../env";
 import { NearStakingDeposit } from "./sdk.types";
 
 const getIndexerUrl = (route: string): string =>
-  `${getEnv("API_NEAR_WALLET_INDEXER")}${route || ""}`;
+  `${getEnv("API_NEAR_STAKING_POSITIONS_API")}${route || ""}`;
 
 export const getStakingDeposits = async (
   address: string
