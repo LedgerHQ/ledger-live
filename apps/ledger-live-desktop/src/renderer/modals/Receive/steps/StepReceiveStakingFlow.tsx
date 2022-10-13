@@ -113,7 +113,6 @@ export const StepReceiveStakingFooter = (props: StepProps) => {
       closeModal();
       action.onClick();
     } else {
-      // @TODO: redirect support link
       closeModal();
     }
   }, [action, closeModal]);
