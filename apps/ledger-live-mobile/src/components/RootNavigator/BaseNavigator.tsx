@@ -92,7 +92,6 @@ import {
   BleDevicePairingFlow,
   BleDevicePairingFlowParams,
 } from "../../screens/BleDevicePairingFlow/index";
-import { BleDevicePairingDeeplinkRedirection } from "../../screens/BleDevicePairingFlow/BleDevicePairingDeeplinkRedirection";
 
 // TODO: types for each screens and navigators need to be set
 export type BaseNavigatorStackParamList = {
@@ -589,16 +588,7 @@ export default function BaseNavigator() {
         name={ScreenName.BleDevicePairingFlow as "BleDevicePairingFlow"}
         component={BleDevicePairingFlow}
         options={{
-          title: "",
-        }}
-      />
-      <Stack.Screen
-        name={
-          ScreenName.BleDevicePairingDeeplinkRedirection as "BleDevicePairingDeeplinkRedirection"
-        }
-        component={BleDevicePairingDeeplinkRedirection}
-        options={{
-          title: "",
+          headerShown: false,
         }}
       />
       <Stack.Screen

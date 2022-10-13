@@ -392,7 +392,6 @@ export const ScreenName = {
   DeviceModelSelection: "DeviceModelSelection",
 
   BleDevicePairingFlow: "BleDevicePairingFlow",
-  BleDevicePairingDeeplinkRedirection: "BleDevicePairingDeeplinkRedirection",
 
   PlatformCatalog: "PlatformCatalog",
   PlatformApp: "PlatformApp",
