@@ -2,7 +2,6 @@ import React, { useCallback, useState } from "react";
 import { useDispatch } from "react-redux";
 import { has as hasFromPath, set as setFromPath } from "lodash";
 import type { PropertyPath } from "lodash";
-import { ScannedDevice } from "@ledgerhq/live-common/ble/types";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { StackScreenProps } from "@react-navigation/stack";
@@ -86,11 +85,11 @@ export const BleDevicePairingFlow = ({
   } = route.params;
   const [deviceToPair, setDeviceToPair] = useState<Device | null>(null);
 
-  const onDeviceSelect = useCallback((item: ScannedDevice) => {
+  const onDeviceSelect = useCallback((item: Device) => {
     const deviceToPair = {
       deviceId: item.deviceId,
       deviceName: item.deviceName,
-      modelId: item.deviceModel.id,
+      modelId: item.modelId,
       wired: false,
     };
 

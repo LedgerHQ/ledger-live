@@ -98,7 +98,6 @@ import {
 import { readOnlyModeEnabledSelector } from "../../reducers/settings";
 import { accountsSelector } from "../../reducers/accounts";
 
-// TODO: types for each screens and navigators need to be set
 export type BaseNavigatorStackParamList = {
   BleDevicePairingFlow: BleDevicePairingFlowParams;
 

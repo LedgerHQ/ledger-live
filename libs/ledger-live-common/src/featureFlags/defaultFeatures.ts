@@ -109,6 +109,9 @@ export const defaultFeatures: DefaultFeatures = {
   counterValue: {
     enabled: false,
   },
+  llmNewDeviceSelection: {
+    enabled: false,
+  },
   llmUsbFirmwareUpdate: {
     enabled: false,
   },
