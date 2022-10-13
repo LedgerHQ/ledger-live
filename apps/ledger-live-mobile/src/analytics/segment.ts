@@ -39,8 +39,9 @@ import { NavigatorName } from "../const";
 import { previousRouteNameRef, currentRouteNameRef } from "./screenRefs";
 
 let sessionId = uuid();
-const appVersion = `${VersionNumber.appVersion || ""} (${VersionNumber.buildVersion || ""
-  })`;
+const appVersion = `${VersionNumber.appVersion || ""} (${
+  VersionNumber.buildVersion || ""
+})`;
 const { ANALYTICS_LOGS, ANALYTICS_TOKEN } = Config;
 
 export const updateSessionId = () => (sessionId = uuid());
@@ -59,14 +60,14 @@ const extraProperties = store => {
     lastSeenDeviceSelector(state) || devices[devices.length - 1];
   const deviceInfo = lastDevice
     ? {
-      deviceVersion: lastDevice.deviceInfo?.version,
-      deviceLanguage:
-        lastDevice.deviceInfo?.languageId !== undefined
-          ? idsToLanguage[lastDevice.deviceInfo.languageId]
-          : undefined,
-      appLength: lastDevice?.appsInstalled,
-      modelId: lastDevice.modelId,
-    }
+        deviceVersion: lastDevice.deviceInfo?.version,
+        deviceLanguage:
+          lastDevice.deviceInfo?.languageId !== undefined
+            ? idsToLanguage[lastDevice.deviceInfo.languageId]
+            : undefined,
+        appLength: lastDevice?.appsInstalled,
+        modelId: lastDevice.modelId,
+      }
     : {};
   const firstConnectionHasDevice = firstConnectionHasDeviceSelector(state);
 
@@ -86,8 +87,8 @@ const extraProperties = store => {
     // $FlowFixMe
     ...(satisfaction
       ? {
-        satisfaction,
-      }
+          satisfaction,
+        }
       : {}),
     ...deviceInfo,
   };
