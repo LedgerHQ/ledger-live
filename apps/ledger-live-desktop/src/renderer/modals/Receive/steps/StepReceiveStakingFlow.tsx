@@ -43,11 +43,16 @@ const StepReceiveStakingFlow = (props: StepProps) => {
       altDescription === `receive.steps.staking.${id}.${provider}.description`
         ? t(`receive.steps.staking.${id}.description`)
         : altTitle;
-
-    setTitle(newTitle);
-    setDescription(newDescription);
-    setAction(newAction);
-  }, [action?.provider?.liveAppId, familyManageActions, id, t]);
+    if (JSON.stringify(title) !== JSON.stringify(newTitle)) {
+      setTitle(newTitle);
+    }
+    if (JSON.stringify(description) !== JSON.stringify(newDescription)) {
+      setDescription(newDescription);
+    }
+    if (JSON.stringify(action) !== JSON.stringify(newAction)) {
+      setAction(newAction);
+    }
+  }, [action, description, familyManageActions, id, t, title]);
 
   const openLink = useCallback(() => {
     openURL(supportLink);
@@ -98,8 +103,10 @@ export const StepReceiveStakingFooter = (props: StepProps) => {
     const manageList =
       familyManageActions && familyManageActions.length > 0 ? familyManageActions : [];
     const newAction = manageList && manageList.find(item => item.key === "Stake");
-    setAction(newAction);
-  }, [familyManageActions]);
+    if (JSON.stringify(newAction) !== JSON.stringify(action)) {
+      setAction(newAction);
+    }
+  }, [action, familyManageActions]);
 
   const onStake = useCallback(() => {
     if (action?.onClick) {
