@@ -109,6 +109,7 @@ import DelayedTrackingProvider from "./components/DelayedTrackingProvider";
 import { useFilteredManifests } from "./screens/Platform/shared";
 import { setWallectConnectUri } from "./actions/walletconnect";
 import PostOnboardingProviderWrapped from "./logic/postOnboarding/PostOnboardingProviderWrapped";
+import { useTermsAccept } from "./logic/terms";
 
 const themes = {
   light: lightTheme,
@@ -294,7 +295,7 @@ const linkingOptions: LinkingOptions<ReactNavigation.RootParamList> = {
 
           [ScreenName.PostBuyDeviceScreen]: "hw-purchase-success",
 
-          [ScreenName.BleDevicePairingDeeplinkRedirection]: "sync-onboarding",
+          [ScreenName.BleDevicePairingFlow]: "sync-onboarding",
 
           /**
            * @params ?platform: string
@@ -442,20 +443,24 @@ const linkingOptions: LinkingOptions<ReactNavigation.RootParamList> = {
     },
   },
 };
-const linkingOptionsOnboarding = {
+
+const getOnboardingLinkingOptions = (acceptedTermsOfUse: boolean) => ({
   ...linkingOptions,
   config: {
-    screens: {
-      [NavigatorName.Base]: {
-        initialRouteName: NavigatorName.Main,
-        screens: {
-          [ScreenName.PostBuyDeviceScreen]: "hw-purchase-success",
-          [ScreenName.BleDevicePairingDeeplinkRedirection]: "sync-onboarding",
+    screens: !acceptedTermsOfUse
+      ? {}
+      : {
+          [NavigatorName.Base]: {
+            initialRouteName: NavigatorName.Main,
+            screens: {
+              [ScreenName.PostBuyDeviceScreen]: "hw-purchase-success",
+              [ScreenName.BleDevicePairingFlow]: "sync-onboarding",
+            },
+          },
         },
-      },
-    },
   },
-};
+});
+
 const platformManifestFilterParams = {
   private: true,
   branches: undefined, // will override & having it to undefined makes all branches valid
@@ -469,9 +474,13 @@ const DeepLinkingNavigator = ({ children }: { children: React.ReactNode }) => {
   const liveAppProviderInitialized =
     !!remoteLiveAppState.value || !!remoteLiveAppState.error;
   const filteredManifests = useFilteredManifests(platformManifestFilterParams);
+  const [acceptedTerms] = useTermsAccept();
+
   const linking = useMemo<LinkingOptions<ReactNavigation.RootParamList>>(
     () => ({
-      ...(hasCompletedOnboarding ? linkingOptions : linkingOptionsOnboarding),
+      ...(hasCompletedOnboarding
+        ? linkingOptions
+        : getOnboardingLinkingOptions(!!acceptedTerms)),
       enabled: wcContext.initDone && !wcContext.session.session,
       subscribe(listener) {
         const sub = Linking.addEventListener("url", ({ url }) => {
