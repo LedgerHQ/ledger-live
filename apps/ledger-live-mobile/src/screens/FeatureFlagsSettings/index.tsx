@@ -25,8 +25,8 @@ flag name in camelCase without the "feature" prefix.\
 export default function DebugFeatureFlags() {
   const { t } = useTranslation();
   const [focusedName, setFocusedName] = useState<string | undefined>();
-  const [hiddenFlagName, setHiddenFlagName] = useState<string | null>(null);
-  const trimmedHiddenFlagName = hiddenFlagName ? trim(hiddenFlagName) : "";
+  const [hiddenFlagName, setHiddenFlagName] = useState("");
+  const trimmedHiddenFlagName = trim(hiddenFlagName);
   const [searchInput, setSearchInput] = useState<string>("");
 
   const featureFlags = useMemo(() => {

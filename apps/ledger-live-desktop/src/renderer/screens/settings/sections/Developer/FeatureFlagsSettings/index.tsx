@@ -20,10 +20,10 @@ flag name in camelCase without the "feature" prefix.\
 const Content = withV3StyleProvider((props: { visible?: boolean }) => {
   const { t } = useTranslation();
   const [focusedName, setFocusedName] = useState<string | undefined>();
-  const [hiddenFlagName, setHiddenFlagName] = useState<string | null>(null);
+  const [hiddenFlagName, setHiddenFlagName] = useState("");
   const [searchInput, setSearchInput] = useState("");
 
-  const trimmedHiddenFlagName = hiddenFlagName ? trim(hiddenFlagName) : "";
+  const trimmedHiddenFlagName = trim(hiddenFlagName);
 
   const featureFlags = useMemo(() => {
     const featureKeys = Object.keys(defaultFeatures);
