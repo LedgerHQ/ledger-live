@@ -32,7 +32,6 @@ import Transport from "@ledgerhq/hw-transport";
 import { NotEnoughBalance } from "@ledgerhq/errors";
 import { log } from "@ledgerhq/logs";
 import { checkLibs } from "@ledgerhq/live-common/sanityChecks";
-import { FeatureToggle } from "@ledgerhq/live-common/featureFlags/index";
 import { useCountervaluesExport } from "@ledgerhq/live-common/countervalues/react";
 import { pairId } from "@ledgerhq/live-common/countervalues/helpers";
 import { NftMetadataProvider } from "@ledgerhq/live-common/nft/index";
@@ -94,8 +93,7 @@ import { navigationRef, isReadyRef } from "./rootnavigation";
 import { useTrackingPairs } from "./actions/general";
 import { ScreenName, NavigatorName } from "./const";
 import ExperimentalHeader from "./screens/Settings/Experimental/ExperimentalHeader";
-import PushNotificationsModal from "./screens/PushNotificationsModal";
-import RatingsModal from "./screens/RatingsModal";
+import Modals from "./screens/Modals";
 import { lightTheme, darkTheme } from "./colors";
 import NotificationsProvider from "./screens/NotificationCenter/NotificationsProvider";
 import SnackbarContainer from "./screens/NotificationCenter/Snackbar/SnackbarContainer";
@@ -225,12 +223,7 @@ function App({ importDataString }: AppProps) {
 
       <AnalyticsConsole />
       <ThemeDebug />
-      <FeatureToggle feature="pushNotifications">
-        <PushNotificationsModal />
-      </FeatureToggle>
-      <FeatureToggle feature="ratings">
-        <RatingsModal />
-      </FeatureToggle>
+      <Modals />
     </GestureHandlerRootView>
   );
 }

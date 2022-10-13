@@ -280,6 +280,7 @@ type Props = {
   deviceInfo: DeviceInfo,
   device: Device,
   distribution: AppsDistribution,
+  onRefreshDeviceInfo: () => void,
   isIncomplete: boolean,
   installQueue: string[],
   uninstallQueue: string[],
@@ -292,6 +293,7 @@ const DeviceStorage = ({
   deviceInfo,
   device,
   distribution,
+  onRefreshDeviceInfo,
   isIncomplete,
   installQueue,
   uninstallQueue,
@@ -335,7 +337,11 @@ const DeviceStorage = ({
             {<HighlightVersion>{deviceInfo.version}</HighlightVersion>}
           </Text>
           {deviceInfo.languageId !== undefined && deviceLocalizationFeatureFlag?.enabled && (
-            <DeviceLanguage deviceInfo={deviceInfo} device={device} />
+            <DeviceLanguage
+              deviceInfo={deviceInfo}
+              device={device}
+              onRefreshDeviceInfo={onRefreshDeviceInfo}
+            />
           )}
         </Flex>
         <Separator />

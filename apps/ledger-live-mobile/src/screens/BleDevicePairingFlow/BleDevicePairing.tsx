@@ -9,11 +9,13 @@ import { Flex, InfiniteLoader, Text, Button } from "@ledgerhq/native-ui";
 import {
   CircledCheckSolidMedium,
   CircledCrossSolidMedium,
+  CloseMedium,
 } from "@ledgerhq/native-ui/assets/icons";
+import { TouchableOpacity } from "react-native-gesture-handler";
+
 import Animation from "../../components/Animation";
 import { getDeviceAnimation } from "../../helpers/getDeviceAnimation";
 import type { BleDevicePairingFlowProps } from "./index";
-import HeaderRightClose from "../../components/HeaderRightClose";
 
 const TIMEOUT_AFTER_PAIRED_MS = 2000;
 
@@ -21,6 +23,16 @@ export type BleDevicePairingProps = {
   onPaired: (device: Device) => void;
   onRetry: () => void;
   deviceToPair: Device;
+};
+
+const HeaderRight = ({ onClose }: { onClose: () => void }) => {
+  return (
+    <Flex pt={8} px={6}>
+      <TouchableOpacity onPress={onClose}>
+        <CloseMedium size={24} />
+      </TouchableOpacity>
+    </Flex>
+  );
 };
 
 export const BleDevicePairing = ({
@@ -57,27 +69,20 @@ export const BleDevicePairing = ({
       // When paired, closing leads to onPaired
       navigation.setOptions({
         headerRight: () => (
-          <HeaderRightClose
-            skipNavigation={true}
-            onClose={() => onPaired(deviceToPair)}
-          />
+          <HeaderRight onClose={() => onPaired(deviceToPair)} />
         ),
         headerLeft: () => <></>,
       });
     } else if (pairingError) {
       // When error, closing leads to retry
       navigation.setOptions({
-        headerRight: () => (
-          <HeaderRightClose skipNavigation={true} onClose={onRetry} />
-        ),
+        headerRight: () => <HeaderRight onClose={onRetry} />,
         headerLeft: () => <></>,
       });
     } else {
       // When pairing, closing leads to retry
       navigation.setOptions({
-        headerRight: () => (
-          <HeaderRightClose skipNavigation={true} onClose={onRetry} />
-        ),
+        headerRight: () => <HeaderRight onClose={onRetry} />,
         headerLeft: () => <></>,
       });
     }
@@ -120,18 +125,24 @@ export const BleDevicePairing = ({
   if (pairingError) {
     return (
       <Flex bg="background.main" height="100%" justifyContent="space-between">
-        <Flex mx={10}>
+        <Flex flex={1} mx="10" justifyContent="center" alignItems="center">
           <Flex alignItems="center" justifyContent="center" p={5}>
             <CircledCrossSolidMedium color={colors.error.c80} size={56} />
           </Flex>
-          <Text mb={8} textAlign="center" variant="h4" fontWeight="semiBold">
+          <Text mb={4} textAlign="center" variant="h4" fontWeight="semiBold">
             {t("blePairingFlow.pairing.error.title")}
           </Text>
-          <Text textAlign="center">
+          <Text
+            variant="body"
+            fontWeight="medium"
+            mb={8}
+            color="neutral.c80"
+            textAlign="center"
+          >
             {t("blePairingFlow.pairing.error.subtitle", { productName })}
           </Text>
         </Flex>
-        <Flex px={4} mb={10}>
+        <Flex mb="10" mx="6">
           <Button type="main" onPress={onRetry}>
             {t("blePairingFlow.pairing.error.retryCta")}
           </Button>

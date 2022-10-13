@@ -2,9 +2,8 @@
 import React, { memo, useState, useCallback, useMemo, useEffect } from "react";
 import styled from "styled-components";
 import { withTranslation } from "react-i18next";
-import type { TFunction } from "react-i18next";
 import type { DeviceInfo, FirmwareUpdateContext } from "@ledgerhq/types-live";
-import type { ListAppsResult, Exec, InstalledItem } from "@ledgerhq/live-common/apps/types";
+import type { ListAppsResult } from "@ledgerhq/live-common/apps/types";
 import {
   predictOptimisticState,
   reducer,
@@ -52,6 +51,7 @@ type Props = {
   firmware: ?FirmwareUpdateContext,
   deviceInfo: DeviceInfo,
   result: ListAppsResult,
+  onRefreshDeviceInfo: () => void,
   exec: Exec,
   t: TFunction,
   render?: ({
@@ -67,6 +67,7 @@ const shouldBlockNavigation = l => l.pathname !== "/manager";
 const AppsList = ({
   firmware,
   deviceInfo,
+  onRefreshDeviceInfo,
   result,
   exec,
   t,
@@ -158,6 +159,7 @@ const AppsList = ({
           installQueue={installQueue}
           distribution={distribution}
           deviceModel={state.deviceModel}
+          onRefreshDeviceInfo={onRefreshDeviceInfo}
           deviceInfo={deviceInfo}
           device={device}
           isIncomplete={isIncomplete}

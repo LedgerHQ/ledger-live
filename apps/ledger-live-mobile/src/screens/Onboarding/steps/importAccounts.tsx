@@ -50,7 +50,7 @@ function OnboardingStepPairNew() {
       // @TODO: Replace this placeholder with the correct illustration asap
       illustration: (
         <Illustration
-          size={150}
+          size={200}
           darkSource={images.dark.Intro}
           lightSource={images.light.Intro}
         />

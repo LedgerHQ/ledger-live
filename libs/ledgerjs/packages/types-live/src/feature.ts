@@ -23,6 +23,7 @@ export type FeatureId =
   | "currencyFlareMobile"
   | "ptxSmartRoutingMobile"
   | "mockFeature"
+  | "syncOnboarding"
   | "walletConnectLiveApp"
   | "customImage"
   | "referralProgramDiscoverCard"
