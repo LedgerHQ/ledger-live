@@ -16,13 +16,23 @@ const FeatureFlagEdit: React.FC<{ flagName: FeatureId; flagValue: Feature }> = p
   const [error, setError] = useState<Error | unknown | undefined>();
   const [inputValue, setInputValue] = useState<string | undefined>(undefined);
 
-  const stringifiedFlagValue = useMemo(() => (flagValue ? JSON.stringify(flagValue) : undefined), [
-    flagValue,
-  ]);
-  const inputValueDefaulted = inputValue || stringifiedFlagValue;
+  /**
+   * pureValue is the value of the flag without the keys set programmatically
+   * by Legder Live.
+   * */
+  const {
+    overriddenByEnv, // eslint-disable-line @typescript-eslint/no-unused-vars
+    overridesRemote, // eslint-disable-line @typescript-eslint/no-unused-vars
+    enabledOverriddenForCurrentLanguage, // eslint-disable-line @typescript-eslint/no-unused-vars
+    enabledOverriddenForCurrentDesktopVersion, // eslint-disable-line @typescript-eslint/no-unused-vars
+    ...pureValue
+  } = flagValue || {};
 
-  const { overriddenByEnv, overridesRemote, enabledOverriddenForCurrentLanguage, ...pureValue } = // eslint-disable-line
-    flagValue || {};
+  const stringifiedPureValue = useMemo(() => (pureValue ? JSON.stringify(pureValue) : undefined), [
+    pureValue,
+  ]);
+
+  const inputValueDefaulted = inputValue || stringifiedPureValue;
 
   const featureFlagsProvider = useFeatureFlags();
 

@@ -6,25 +6,24 @@ import { SettingsSectionRow as Row } from "../../../SettingsSection";
 import { Input, Icons, Flex, SearchInput } from "@ledgerhq/react-ui";
 import { FeatureId } from "@ledgerhq/types-live";
 import { InputRenderLeftContainer } from "@ledgerhq/react-ui/components/form/BaseInput/index";
-import { includes, lowerCase } from "lodash";
-import { withV2StyleProvider } from "~/renderer/styles/StyleProvider";
+import { includes, lowerCase, trim } from "lodash";
 import { withV3StyleProvider } from "~/renderer/styles/StyleProviderV3";
 import FeatureFlagDetails from "./FeatureFlagDetails";
 
-const OldButton = withV2StyleProvider(ButtonV2);
-
-const FeatureFlagsSettings = () => {
+const Content = withV3StyleProvider((props: { visible?: boolean }) => {
   const { t } = useTranslation();
-  const [visible, setVisible] = useState(false);
   const [focusedName, setFocusedName] = useState<string | undefined>();
   const [hiddenFlagName, setHiddenFlagName] = useState<string | null>(null);
   const [searchInput, setSearchInput] = useState("");
 
+  const trimmedHiddenFlagName = hiddenFlagName ? trim(hiddenFlagName) : "";
+
   const featureFlags = useMemo(() => {
     const featureKeys = Object.keys(defaultFeatures);
-    if (hiddenFlagName && !featureKeys.includes(hiddenFlagName)) featureKeys.push(hiddenFlagName);
+    if (trimmedHiddenFlagName && !featureKeys.includes(trimmedHiddenFlagName))
+      featureKeys.push(trimmedHiddenFlagName);
     return featureKeys;
-  }, [hiddenFlagName]);
+  }, [trimmedHiddenFlagName]);
 
   const handleAddHiddenFlag = useCallback(
     value => {
@@ -40,10 +39,6 @@ const FeatureFlagsSettings = () => {
       .filter(name => !searchInput || includes(lowerCase(name), lowerCase(searchInput)));
   }, [featureFlags, searchInput]);
 
-  const handleClick = useCallback(() => {
-    setVisible(!visible);
-  }, [visible]);
-
   const content = useMemo(
     () =>
       filteredFlags.map(flagName => (
@@ -58,45 +53,58 @@ const FeatureFlagsSettings = () => {
   );
 
   return (
+    <Flex flexDirection="column" pt={2} rowGap={1} alignSelf="stretch">
+      {t("settings.developer.featureFlagsDesc")}
+      {!props.visible ? null : (
+        <>
+          <SearchInput
+            placeholder="Search"
+            value={searchInput}
+            onChange={setSearchInput}
+            clearable
+          />
+          <Input
+            renderLeft={() => (
+              <InputRenderLeftContainer>
+                <Icons.PlusMedium color="neutral.c80" />
+              </InputRenderLeftContainer>
+            )}
+            clearable
+            placeholder={
+              'Add missing flag by name (type the flag name in camelCase without the "feature" prefix)'
+            }
+            value={hiddenFlagName}
+            onChange={handleAddHiddenFlag}
+          />
+          <Flex height={15} />
+          {content}
+        </>
+      )}
+    </Flex>
+  );
+});
+
+const FeatureFlagsSettings = () => {
+  const { t } = useTranslation();
+  const [visible, setVisible] = useState(false);
+
+  const handleClick = useCallback(() => {
+    setVisible(!visible);
+  }, [visible]);
+
+  return (
     <Row
       title={t("settings.developer.featureFlagsTitle")}
       descContainerStyle={{ maxWidth: undefined }}
       contentContainerStyle={{ marginRight: 0 }}
       childrenContainerStyle={{ alignSelf: visible ? "flex-start" : "center" }}
-      desc={
-        <Flex flexDirection="column" pt={2} rowGap={1} alignSelf="stretch">
-          {t("settings.developer.featureFlagsDesc")}
-          {!visible ? null : (
-            <>
-              <SearchInput
-                placeholder="Search"
-                value={searchInput}
-                onChange={setSearchInput}
-                clearable
-              />
-              <Input
-                renderLeft={() => (
-                  <InputRenderLeftContainer>
-                    <Icons.PlusMedium color="neutral.c80" />
-                  </InputRenderLeftContainer>
-                )}
-                clearable
-                placeholder="Add missing flag"
-                value={hiddenFlagName}
-                onChange={handleAddHiddenFlag}
-              />
-              <Flex height={15} />
-              {content}
-            </>
-          )}
-        </Flex>
-      }
+      desc={<Content visible={visible} />}
     >
-      <OldButton small primary onClick={handleClick}>
+      <ButtonV2 small primary onClick={handleClick}>
         {visible ? "Hide" : "Show"}
-      </OldButton>
+      </ButtonV2>
     </Row>
   );
 };
 
-export default withV3StyleProvider(FeatureFlagsSettings);
+export default FeatureFlagsSettings;
