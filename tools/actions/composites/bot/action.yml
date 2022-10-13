@@ -73,7 +73,7 @@ runs:
         node --prof lib/bot/cli.js
       shell: bash
     - name: submit bot report
-      uses: ledgerhq/ledger-live/tools/actions/submit-bot-report@support/bot-phosphore-evolutions
+      uses: ledgerhq/ledger-live/tools/actions/submit-bot-report@develop
       with:
         path: libs/ledger-live-common/botreport
         githubSha: ${{github.sha}}
