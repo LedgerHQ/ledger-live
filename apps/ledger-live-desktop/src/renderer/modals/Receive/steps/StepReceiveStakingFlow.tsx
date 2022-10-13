@@ -38,10 +38,10 @@ const StepReceiveStakingFlow = (props: StepProps) => {
       altTitle === `receive.steps.staking.${id}.${provider}.title`
         ? t(`receive.steps.staking.${id}.title`)
         : altTitle;
-    const altDescription = t(`receive.steps.staking.${id}.${provider}.title`);
+    const altDescription = t(`receive.steps.staking.${id}.${provider}.description`);
     const newDescription =
       altDescription === `receive.steps.staking.${id}.${provider}.description`
-        ? t(`receive.steps.staking.${altDescription}.description`)
+        ? t(`receive.steps.staking.${id}.description`)
         : altTitle;
 
     setTitle(newTitle);
