@@ -1,4 +1,5 @@
 import React, { useMemo, useCallback, useEffect, useState } from "react";
+import { Linking } from "react-native";
 import { Trans, useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
 import { Platform } from "react-native";
@@ -7,7 +8,9 @@ import { CompositeScreenProps, useNavigation } from "@react-navigation/native";
 import { Text, Flex, Icons, BottomDrawer } from "@ledgerhq/native-ui";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { useBleDevicesScanning } from "@ledgerhq/live-common/ble/hooks/useBleDevicesScanning";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 
+import { urls } from "../../config/urls";
 import TransportBLE from "../../react-native-hw-transport-ble";
 import { track } from "../../analytics";
 import { NavigatorName, ScreenName } from "../../const";
@@ -49,6 +52,7 @@ export default function SelectDevice({ onSelect }: Props) {
 
   const { t } = useTranslation();
 
+  const buyDeviceFromLive = useFeature("buyDeviceFromLive");
   const knownDevices = useSelector(knownDevicesSelector);
   const navigation = useNavigation<Navigation["navigation"]>();
   const { scannedDevices } = useBleDevicesScanning({
@@ -143,10 +147,14 @@ export default function SelectDevice({ onSelect }: Props) {
   const onAddNewPress = useCallback(() => setIsAddNewDrawerOpen(true), []);
 
   const onBuyDevicePress = useCallback(() => {
-    navigation.navigate(NavigatorName.BuyDevice, {
-      screen: ScreenName.GetDevice,
-    });
-  }, [navigation]);
+    if (buyDeviceFromLive?.enabled) {
+      navigation.navigate(NavigatorName.BuyDevice, {
+        screen: ScreenName.PurchaseDevice,
+      });
+    } else {
+      Linking.openURL(urls.buyNanoX);
+    }
+  }, [navigation, buyDeviceFromLive?.enabled]);
 
   const onPairDevices = useCallback(() => {
     const navigateInput: NavigateInput<
