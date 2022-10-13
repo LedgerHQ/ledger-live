@@ -10,4 +10,4 @@ export {
   getValidators,
   getCommission,
 } from "./archive-node-sdk";
-export { getStakingDeposits } from "./near-indexer-sdk";
+export { getStakingDeposits } from "./near-staking-positions-sdk";
