@@ -45,14 +45,15 @@ runs:
         pnpm i --filter="live-cli..." --filter="ledger-live" --frozen-lockfile
         pnpm build:llc
       shell: bash
-    - name: Get PR number
-      shell: bash
-      id: pr
-      run: |
-        echo "::set-output name=pr::$(gh pr view --json number -q .number)"
+    - uses: 8BitJonny/gh-get-current-pr@2.1.1
+      id: PR
+      with:
+        github-token: ${{ github.token }}
+        sha: ${{ github.event.pull_request.head.sha }}
+        filterOutClosed: true
     - name: debug
       shell: bash
-      run: echo ${{steps.pr.outputs.pr}}
+      run: echo ${{steps.PR.outputs.number}}
     # - name: bot logic
     #   env:
     #     SEED: ${{ inputs.SEED }}
@@ -80,7 +81,7 @@ runs:
     #     path: libs/ledger-live-common/botreport
     #     githubSha: ${{github.sha}}
     #     githubToken: ${{github.token}}
-    #     githubPR: ${{ steps.pr.outputs.pr }}
+    #     githubPR: ${{steps.PR.outputs.number}}
     #     slackApiToken: ${{ inputs.SLACK_API_TOKEN }}
     #     slackChannel: ${{ inputs.SLACK_CHANNEL }}
     #     slackIconEmoji: ${{ inputs.SLACK_ICON_EMOJI }}
