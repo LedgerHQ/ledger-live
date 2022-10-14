@@ -27,7 +27,7 @@ function getDeviceTransactionConfig(input: {
   fields.push({
     type: "stacks.memo",
     label: "Memo",
-    value: input.transaction.memo || "-",
+    value: input.transaction.memo || "",
   });
 
   return fields;
