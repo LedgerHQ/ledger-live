@@ -9,9 +9,7 @@ import broadcast from "../js-broadcast";
 import { calculateFees } from "./../cache";
 import { perCoinLogic } from "../logic";
 import { makeAccountBridgeReceive } from "../../../bridge/jsHelpers";
-import * as explorerConfigAPI from "../../../api/explorerConfig";
 import { AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
-import { FullConfigOverrides } from "../../../api/explorerConfig/types";
 
 const receive = makeAccountBridgeReceive({
   injectGetAddressParams: (account) => {

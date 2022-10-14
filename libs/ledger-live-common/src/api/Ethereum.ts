@@ -165,7 +165,7 @@ export const apiForCurrency = (currency: CryptoCurrency): API => {
 
   return {
     async getTransactions(address, block_hash, batch_size = 2000) {
-      let { data } = await network({
+      const { data } = await network({
         method: "GET",
         url: URL.format({
           pathname: `${baseURL}/address/${address}/txs`,

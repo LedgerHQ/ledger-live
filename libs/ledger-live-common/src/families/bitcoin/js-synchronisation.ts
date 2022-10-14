@@ -6,7 +6,7 @@ import { log } from "@ledgerhq/logs";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import type { GetAccountShape } from "../../bridge/jsHelpers";
 import { makeSync, makeScanAccounts, mergeOps } from "../../bridge/jsHelpers";
-import { blockchainBaseURL, findCurrencyExplorer } from "../../api/Ledger";
+import { blockchainBaseURL } from "../../api/Ledger";
 import { encodeAccountId } from "../../account";
 import {
   isSegwitDerivationMode,
