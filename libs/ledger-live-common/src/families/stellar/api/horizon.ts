@@ -187,6 +187,23 @@ export const fetchOperations = async ({
       .includeFailed(true)
       .join("transactions")
       .call();
+
+    if (!rawOperations || !rawOperations.records.length) {
+      return [];
+    }
+
+    operations = operations.concat(
+      await rawOperationsToOperations(rawOperations.records, addr, accountId)
+    );
+
+    while (rawOperations.records.length > 0) {
+      rawOperations = await rawOperations.next();
+      operations = operations.concat(
+        await rawOperationsToOperations(rawOperations.records, addr, accountId)
+      );
+    }
+
+    return operations;
   } catch (e: unknown) {
     // FIXME: terrible hacks, because Stellar SDK fails to cast network failures to typed errors in react-native...
     // (https://github.com/stellar/js-stellar-sdk/issues/638)
@@ -214,23 +231,6 @@ export const fetchOperations = async ({
 
     throw e;
   }
-
-  if (!rawOperations || !rawOperations.records.length) {
-    return [];
-  }
-
-  operations = operations.concat(
-    await rawOperationsToOperations(rawOperations.records, addr, accountId)
-  );
-
-  while (rawOperations.records.length > 0) {
-    rawOperations = await rawOperations.next();
-    operations = operations.concat(
-      await rawOperationsToOperations(rawOperations.records, addr, accountId)
-    );
-  }
-
-  return operations;
 };
 
 export const fetchAccountNetworkInfo = async (

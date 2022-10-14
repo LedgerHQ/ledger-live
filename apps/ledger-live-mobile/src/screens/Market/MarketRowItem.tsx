@@ -38,6 +38,7 @@ function MarketRowItem({ item, index, counterCurrency, locale, t }: Props) {
     marketcapRank,
     price,
     priceChangePercentage,
+    ticker,
   } = item;
 
   let loc = locale;
@@ -80,15 +81,15 @@ function MarketRowItem({ item, index, counterCurrency, locale, t }: Props) {
         flex={1}
       >
         <Text variant="large" fontWeight="semiBold" numberOfLines={1}>
-          {name}
+          {`${name} (${ticker.toLocaleUpperCase()})`}
         </Text>
         <Flex flexDirection="row" alignItems="center">
           <Text
             variant="small"
             bg="neutral.c40"
-            height="20px"
-            lineHeight="20px"
-            px="3"
+            height="15px"
+            lineHeight="15px"
+            px="4px"
             mr="3"
             borderRadius={4}
             overflow="hidden"
@@ -96,7 +97,7 @@ function MarketRowItem({ item, index, counterCurrency, locale, t }: Props) {
           >
             {marketcapRank || "-"}
           </Text>
-          <Text variant="body" color="neutral.c80" fontWeight="semiBold">
+          <Text variant="body" color="neutral.c70" fontWeight="semiBold">
             {marketcap && marketcap > 0
               ? counterValueFormatter({
                   value: marketcap,

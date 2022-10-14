@@ -36,6 +36,7 @@ import { getPortfolio } from "../portfolio/v2";
 import { Account } from "@ledgerhq/types-live";
 import { getContext } from "./bot-test-context";
 import { Transaction } from "../generated/types";
+import { sha256 } from "../crypto";
 
 type Arg = Partial<{
   currency: string;
@@ -86,6 +87,7 @@ function convertSpecReport<T extends Transaction>(
     accounts,
     mutations,
     existingMutationNames: result.spec.mutations.map((m) => m.name),
+    hintWarnings: result.hintWarnings,
   };
 }
 
@@ -733,6 +735,7 @@ export async function bot({
     const serializedReport: MinimalSerializedReport = {
       results: results.map(convertSpecReport),
       environment: BOT_ENVIRONMENT,
+      seedHash: sha256(getEnv("SEED")),
     };
 
     await Promise.all([

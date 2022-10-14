@@ -2030,8 +2030,18 @@
     "language" : "Язык интерфейса",
     "deviceLanguage" : "Язык устройства",
     "changeLanguage" : "Поменять язык",
+    "changeDeviceLanguage" : "Поменять язык устройства?",
+    "chooseLanguage" : "Выберите язык для {{deviceName}}.",
+    "changeDeviceLanguagePrompt" : {
+      "title" : "{{language}} язык также доступен для {{deviceName}}.",
+      "description" : "Хотите сменить язык на {{language}}?"
+    },
+    "firmwareUpdatePrompt" : {
+      "title" : "Добавить {{language}} язык на устройство {{deviceName}}?",
+      "description" : "Теперь {{language}} язык доступен для {{deviceName}}. Можно установить его сейчас или поменять в любое удобное время в разделе «Мой Ledger»."
+    },
     "allowLanguageInstallation" : "Разрешить установку языка",
-    "languageInstalled" : "Язык изменён",
+    "languageInstalled" : "Новый язык устройства — {{language}}",
     "installingLanguage" : "Установка языка",
     "languages" : {
       "english" : "English",

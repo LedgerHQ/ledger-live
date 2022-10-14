@@ -2,6 +2,7 @@
 export type FeatureId =
   | "learn"
   | "pushNotifications"
+  | "llmNewDeviceSelection"
   | "llmUsbFirmwareUpdate"
   | "ratings"
   | "counterValue"
@@ -23,6 +24,7 @@ export type FeatureId =
   | "currencyFlareMobile"
   | "ptxSmartRoutingMobile"
   | "mockFeature"
+  | "syncOnboarding"
   | "walletConnectLiveApp"
   | "customImage"
   | "referralProgramDiscoverCard"

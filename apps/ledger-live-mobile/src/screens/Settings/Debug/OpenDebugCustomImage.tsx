@@ -1,5 +1,5 @@
 import React, { useCallback, useState } from "react";
-import { FeatureToggle } from "@ledgerhq/live-common/lib/featureFlags/index";
+import { FeatureToggle } from "@ledgerhq/live-common/featureFlags/index";
 import SettingsRow from "../../../components/SettingsRow";
 import CustomImageBottomModal from "../../../components/CustomImage/CustomImageBottomModal";
 

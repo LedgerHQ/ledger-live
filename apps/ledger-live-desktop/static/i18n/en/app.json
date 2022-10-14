@@ -2034,10 +2034,20 @@
   },
   "deviceLocalization": {
     "language": "Language",
-    "deviceLanguage": "Device Language",
+    "deviceLanguage": "Language",
     "changeLanguage": "Change language",
+    "changeDeviceLanguage": "Change your device language?",
+    "chooseLanguage": "Choose a language for your {{deviceName}}.",
+    "changeDeviceLanguagePrompt": {
+      "title": "{{language}} is also available for your {{deviceName}}",
+      "description": "Would you like to change its language to {{language}}?"
+    },
+    "firmwareUpdatePrompt": {
+      "title": "Set your {{deviceName}} in {{language}}?",
+      "description": "{{language}} is now available for your {{deviceName}}. You can set it now, or change your device language at any time from My Ledger."
+    },
     "allowLanguageInstallation": "Allow language installation",
-    "languageInstalled": "Language changed successfully",
+    "languageInstalled": "Language changed to {{language}}",
     "installingLanguage": "Installing language",
     "languages": {
       "english": "English",
