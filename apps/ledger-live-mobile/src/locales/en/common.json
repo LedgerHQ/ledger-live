@@ -413,9 +413,9 @@
       "title": "Sorry, insufficient funds",
       "description": "Please make sure the account has enough funds."
     },
-    "NoSuchAppOnProvider" : {
-      "title" : "The {{appName}} app cannot be found for your specific configuration.",
-      "description" : "Try reinstalling the app from the Manager"
+    "NoSuchAppOnProvider": {
+      "title": "The {{appName}} app cannot be found for your specific configuration.",
+      "description": "Try reinstalling the app from the Manager"
     },
     "NotEnoughGas": {
       "title": "Insufficient ETH for network fee",
@@ -735,6 +735,30 @@
     },
     "HederaAddAccountError": {
       "title": "Your account has not been added. Please try again."
+    },
+    "NearNewAccountWarning": {
+      "title": "The recipient account is not created yet. The protocol requires a {{formattedNewAccountStorageCost}} transfer to create it."
+    },
+    "NearNewNamedAccountError": {
+      "title": "The recipient account is not created yet. It needs to be created in the NEAR wallet."
+    },
+    "NearActivationFeeNotCovered": {
+      "title": "This amount doesn't cover the {{formattedNewAccountStorageCost}} storage cost."
+    },
+    "NearUseAllAmountStakeWarning": {
+      "title": "Ensure you have enough balance left for future transaction fees"
+    },
+    "NearNotEnoughStaked": {
+      "title": "Insuffient staked balance"
+    },
+    "NearNotEnoughAvailable": {
+      "title": "Insufficient withdrawable balance"
+    },
+    "NearRecommendUnstake": {
+      "title": "Please unstake and withdraw funds before emptying the account"
+    },
+    "NearStakingThresholdNotMet": {
+      "title": "Amount needs to be at least {{threshold}}"
     }
   },
   "crash": {
@@ -1949,7 +1973,10 @@
       "UNLOCK": "Unlocked",
       "REVOKE": "Revoked",
       "REGISTER": "Registered",
-      "WITHDRAW": "Withdrawn"
+      "WITHDRAW": "Withdrawn",
+      "STAKE": "Staked",
+      "UNSTAKE": "Unstaked",
+      "WITHDRAW_UNSTAKED": "Withdrawn"
     }
   },
   "operationDetails": {
@@ -2010,7 +2037,8 @@
       "storageLimit": "Storage Limit",
       "gasLimit": "Gas Limit",
       "id": "Id",
-      "autoClaimedRewards": "Auto Claimed Rewards"
+      "autoClaimedRewards": "Auto Claimed Rewards",
+      "stakedAmount": "Staked amount"
     },
     "multipleAddresses": "Why multiple addresses?",
     "tokenName": "Token Name",
@@ -4262,6 +4290,118 @@
             "description": "Delegate your OSMO to earn rewards securely, keeping control of your assets.",
             "steps": {
               "1": "You will have to wait 14 days for the undelegation to complete."
+            }
+          }
+        }
+      }
+    }
+  },
+  "near": {
+    "info": {
+      "available": {
+        "title": "NEAR available",
+        "description": "This amount is disposable."
+      },
+      "storageUsage": {
+        "title": "Minimum balance",
+        "description": "This amount is reserved for storage and transactions, and is the minimum balance that your account must maintain to remain active."
+      },
+      "staked": {
+        "title": "Staked balance",
+        "description": "This amount is currently staked with validators."
+      },
+      "pending": {
+        "title": "Pending balance",
+        "description": "This amount has been unstaked and is currently pending availability."
+      },
+      "withdrawable": {
+        "title": "Withdrawable balance",
+        "description": "This amount has been unstaked and is currently able to be withdrawn."
+      },
+      "stakingUnavailable": {
+        "title": "Staking unavailable",
+        "description": "Not enough available balance in your account to stake, unstake, and withdraw."
+      }
+    },
+    "unstaking": {
+      "stepperHeader": {
+        "amountSubTitle": "Amount to unstake"
+      },
+      "flow": {
+        "steps": {
+          "verification": {
+            "success": {
+              "title": "You have successfully unstaked your assets"
+            }
+          }
+        }
+      }
+    },
+    "withdrawing": {
+      "stepperHeader": {
+        "amountSubTitle": "Amount to withdraw"
+      },
+      "flow": {
+        "steps": {
+          "verification": {
+            "success": {
+              "title": "You have successfully withdrawn your assets"
+            }
+          }
+        }
+      }
+    },
+    "staking": {
+      "sectionLabel": "Staking Position(s)",
+      "info": "How Staking Works",
+      "add": "Add",
+      "stakingEarn": "You can earn NEAR rewards by staking your assets.",
+      "totalStake": "Total Stake",
+      "commission": "Commission",
+      "iStake": "I stake",
+      "actions": {
+        "unstake": "Unstake",
+        "withdraw": "Withdraw"
+      },
+      "drawer": {
+        "status": "Status",
+        "active": "Active",
+        "inactive": "Inactive",
+        "rewards": "Rewards",
+        "pending": "Pending",
+        "available": "Withdrawable"
+      },
+      "stepperHeader": {
+        "amountSubTitle": "Amount to stake",
+        "selectDevice": "Select device",
+        "connectDevice": "Connect device",
+        "stepRange": "Step {{currentStep}} of {{totalSteps}}"
+      },
+      "flow": {
+        "steps": {
+          "starter": {
+            "description": "Stake your NEAR to earn rewards securely, keeping control of your assets.",
+            "steps": {
+              "0": "Staked assets remain yours.",
+              "1": "You will have to wait 52 - 65 hours for unstaking to complete.",
+              "2": "Stake securely with your Ledger device."
+            },
+            "warning": {
+              "description": "Choose your validator wisely: Part of your staked assets may be irrevocably lost if the validator does not behave appropriately."
+            },
+            "cta": "Continue"
+          },
+          "amount": {
+            "assetsRemaining": "Assets remaining: <0>{{amount}}</0>",
+            "allAssetsUsed": "All assets used",
+            "minAmount": "Minimum amount: <0>{{min}}</0>",
+            "incorrectAmount": "Maximum amount: <0>{{max}}</0>",
+            "cta": "Continue"
+          },
+          "verification": {
+            "success": {
+              "title": "You have successfully staked your assets",
+              "text": "Your account balance will be updated once the network confirms the transaction."
             }
           }
         }

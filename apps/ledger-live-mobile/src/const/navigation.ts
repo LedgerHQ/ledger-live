@@ -439,6 +439,25 @@ export const ScreenName = {
   PostOnboardingHub: "PostOnboardingHub",
   PostOnboardingDebugScreen: "PostOnboardingDebugScreen",
   PostOnboardingMockActionScreen: "PostOnboardingMockActionScreen",
+  // near
+  NearStakingValidator: "NearStakingValidator",
+  NearStakingValidatorSelect: "NearStakingValidatorSelect",
+  NearStakingAmount: "NearStakingAmount",
+  NearStakingStarted: "NearStakingStarted",
+  NearUnstakingAmount: "NearUnstakingAmount",
+  NearWithdrawingAmount: "NearWithdrawingAmount",
+  NearStakingSelectDevice: "NearStakingSelectDevice",
+  NearStakingConnectDevice: "NearStakingConnectDevice",
+  NearStakingValidationError: "NearStakingValidationError",
+  NearStakingValidationSuccess: "NearStakingValidationSuccess",
+  NearUnstakingSelectDevice: "NearUnstakingSelectDevice",
+  NearUnstakingConnectDevice: "NearUnstakingConnectDevice",
+  NearUnstakingValidationError: "NearUnstakingValidationError",
+  NearUnstakingValidationSuccess: "NearUnstakingValidationSuccess",
+  NearWithdrawingSelectDevice: "NearWithdrawingSelectDevice",
+  NearWithdrawingConnectDevice: "NearWithdrawingConnectDevice",
+  NearWithdrawingValidationError: "NearWithdrawingValidationError",
+  NearWithdrawingValidationSuccess: "NearWithdrawingValidationSuccess",
 };
 export const NavigatorName = {
   // Stack
@@ -521,6 +540,10 @@ export const NavigatorName = {
   CeloActivateFlow: "CeloActivateFlow",
   CeloRevokeFlow: "CeloRevokeFlow",
   CeloWithdrawFlow: "CeloWithdrawFlow",
+  // NEAR
+  NearStakingFlow: "NearStakingFlow",
+  NearUnstakingFlow: "NearUnstakingFlow",
+  NearWithdrawingFlow: "NearWithdrawingFlow",
   // Tab
   Main: "Main",
   // Root
