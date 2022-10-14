@@ -1,7 +1,7 @@
 import React, { useCallback } from "react";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { BigNumber } from "bignumber.js";
-import { NavigatorName, ScreenName } from "../../../const";
+import { ScreenName } from "../../../const";
 import AccountRowLayout from "../../../components/AccountRowLayout";
 import { track } from "../../../analytics";
 
@@ -16,12 +16,9 @@ const ReadOnlyAccountRow = ({ navigation, currency, screen }: Props) => {
 
   const onAccountPress = useCallback(() => {
     track("account_clicked", { currency: name, screen });
-    navigation.navigate(NavigatorName.Accounts, {
-      screen: ScreenName.Account,
-      params: {
-        currencyId: id,
-        currencyType: type,
-      },
+    navigation.navigate(ScreenName.Account, {
+      currencyId: id,
+      currencyType: type,
     });
   }, [name, screen, navigation, id, type]);
 

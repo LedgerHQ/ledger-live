@@ -45,6 +45,12 @@ runs:
         pnpm i --filter="live-cli..." --filter="ledger-live" --frozen-lockfile
         pnpm build:llc
       shell: bash
+    - uses: 8BitJonny/gh-get-current-pr@2.1.1
+      id: PR
+      with:
+        github-token: ${{ github.token }}
+        sha: ${{ github.event.pull_request.head.sha }}
+        filterOutClosed: true
     - name: bot logic
       env:
         SEED: ${{ inputs.SEED }}
@@ -72,6 +78,7 @@ runs:
         path: libs/ledger-live-common/botreport
         githubSha: ${{github.sha}}
         githubToken: ${{github.token}}
+        githubPR: ${{steps.PR.outputs.number}}
         slackApiToken: ${{ inputs.SLACK_API_TOKEN }}
         slackChannel: ${{ inputs.SLACK_CHANNEL }}
         slackIconEmoji: ${{ inputs.SLACK_ICON_EMOJI }}

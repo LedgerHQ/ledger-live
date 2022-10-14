@@ -1526,7 +1526,7 @@
       "cta": "I’m ready to scan",
       "bullets": {
         "0": {
-          "label": "On the Desktop app, select <1>Settings > Accounts > Account export</1>."
+          "label": "On the Desktop app, select\n<1>Settings > Accounts > Account export</1>."
         },
         "1": {
           "label": "Scan the LiveQR code with your phone."
@@ -3461,6 +3461,10 @@
     "appNotInstalled": "Please install the {{appName}} app",
     "appNotInstalled_plural": "Please install the {{appName}} apps",
     "useAnotherDevice": "Use another device",
+    "deviceNotOnboarded": {
+      "title": "Your Ledger is not ready to use yet",
+      "description": "You need to setup {{deviceName}} first. We will guide you through the device setup process"
+    },
     "deviceInBootloader": {
       "title": "Device in Bootloader mode.",
       "description": "Click on \"Continue\" to update it."
@@ -3609,6 +3613,23 @@
   "manager": {
     "tabTitle": "My Ledger",
     "title": "My Ledger",
+    "selectDevice": {
+      "saved": {
+        "title": "Devices",
+        "description": "Manage your saved Ledgers"
+      },
+      "addNewCTA": "Add new",
+      "connectExistingLedger": "Connect an existing Ledger",
+      "connectExistingLedgerDescription": "Already have a Ledger that is set up? Pair it with bluetooth",
+      "setUpNewLedger": "Set up a new Ledger",
+      "setUpNewLedgerDescription": "Bought a new Ledger? Click here to set it up",
+      "buyDeviceCTA": "Need a new Ledger? Buy one",
+      "item": {
+        "usb": "Connected with USB",
+        "available": "Available. Tap to connect",
+        "unavailable": "Not connected"
+      }
+    },
     "connect": "Select your device",
     "appsCatalog": "App catalog",
     "installedApps": "Apps installed",
@@ -5283,7 +5304,11 @@
       "retrySearchParams": "Please retry the search with another parameters.",
       "trackFavAssets": "Track your favourite",
       "clickOnStarIcon": "Clicking on the star icon next to an asset will automatically add them to your favorites.",
-      "browseAssets": "Browse assets"
+      "browseAssets": "Browse assets",
+      "starred": {
+        "title": "Track your favorite assets!",
+        "desc": "Clicking on the “Star” icon next to an asset will automatically add them to your favorites"
+      }
     }
   },
   "nft": {
@@ -5339,6 +5364,8 @@
     }
   },
   "customImage": {
+    "title": "Lock screen picture",
+    "replace": "Replace",
     "drawer": {
       "title": "Choose an image",
       "options": {

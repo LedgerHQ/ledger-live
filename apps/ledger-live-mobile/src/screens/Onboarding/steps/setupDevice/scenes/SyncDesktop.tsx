@@ -3,18 +3,22 @@ import { Trans, useTranslation } from "react-i18next";
 import { Text, IconBoxList, Icons } from "@ledgerhq/native-ui";
 import Button from "../../../../../components/PreventDoubleClickButton";
 
+const { ComputerMedium, QrCodeMedium, ListMedium } = Icons;
 const items = [
   {
     title: "onboarding.stepImportAccounts.bullets.0.label",
-    icon: Icons.ComputerMedium,
+    icon: <ComputerMedium color="primary.c90" />,
+    hasTemplateTitle: true,
   },
   {
     title: "onboarding.stepImportAccounts.bullets.1.label",
-    icon: Icons.QrCodeMedium,
+    icon: <QrCodeMedium color="primary.c90" />,
+    hasTemplateTitle: false,
   },
   {
     title: "onboarding.stepImportAccounts.bullets.2.label",
-    icon: Icons.CheckAloneMedium,
+    icon: <ListMedium color="primary.c90" />,
+    hasTemplateTitle: false,
   },
 ];
 
@@ -24,18 +28,35 @@ const SyncDesktopScene = () => {
   return (
     <>
       <Text variant="h2">{t("onboarding.stepImportAccounts.title")}</Text>
-      <Text variant="body" color="neutral.c80" mt={5} mb={8}>
+      <Text
+        variant="body"
+        color="neutral.c70"
+        mt={5}
+        mb={8}
+        lineHeight="23.8px"
+      >
         {t("onboarding.stepImportAccounts.desc")}
       </Text>
       <IconBoxList
+        iconShapes="circle"
+        iconVariants="plain"
         items={items.map(item => ({
           Icon: item.icon,
-          title: (
+          title: item.hasTemplateTitle ? (
             <Trans i18nKey={item.title}>
               {""}
-              <Text fontWeight="bold" />
+              <Text fontWeight="semiBold" color="primary.c80" />
               {""}
             </Trans>
+          ) : (
+            <Text
+              variant="body"
+              fontWeight="medium"
+              color="neutral.c100"
+              lineHeight="16.94px"
+            >
+              {t(item.title)}
+            </Text>
           ),
         }))}
       />

@@ -47,6 +47,7 @@ import {
 } from "../../actions/settings";
 // eslint-disable-next-line import/no-cycle
 import { AnalyticsContext } from "../../components/RootNavigator";
+import EmptyStarredCoins from "./EmptyStarredCoins";
 
 const noResultIllustration = {
   dark: require("../../images/illustration/Dark/_051.png"),
@@ -150,16 +151,16 @@ const BottomSection = ({ navigation }: { navigation: any }) => {
       showsHorizontalScrollIndicator={false}
     >
       <TrackScreen category="Page" name={"Market"} access={true} />
-      {starredMarketCoins.length <= 0 && !filterByStarredAccount ? null : (
-        <TouchableOpacity onPress={toggleFilterByStarredAccounts}>
-          <Badge>
-            <Icon
-              name={filterByStarredAccount ? "StarSolid" : "Star"}
-              color="neutral.c100"
-            />
-          </Badge>
-        </TouchableOpacity>
-      )}
+
+      <TouchableOpacity onPress={toggleFilterByStarredAccounts}>
+        <Badge bg={filterByStarredAccount ? "primary.c80" : "neutral.c30"}>
+          <Icon
+            name={filterByStarredAccount ? "StarSolid" : "Star"}
+            color={filterByStarredAccount ? "background.main" : "neutral.c100"}
+          />
+        </Badge>
+      </TouchableOpacity>
+
       <SortBadge
         label={t("market.filters.sort")}
         valueLabel={t(
@@ -274,6 +275,10 @@ export default function Market({ navigation }: { navigation: any }) {
   const { params }: { params: any } = useRoute();
   const initialTop100 = params?.top100;
   const { isConnected } = useNetInfo();
+  const starredMarketCoins: string[] = useSelector(starredMarketCoinsSelector);
+  const filterByStarredAccount: boolean = useSelector(
+    marketFilterByStarredAccountsSelector,
+  );
 
   useProviders();
 
@@ -286,8 +291,11 @@ export default function Market({ navigation }: { navigation: any }) {
     loading,
     page,
     selectCurrency,
-    error,
   } = useMarketData();
+
+  const marketDataFiltered = filterByStarredAccount
+    ? marketData?.filter(d => starredMarketCoins.includes(d.id)) ?? undefined
+    : marketData;
 
   const { limit, search, range, top100 } = requestParams;
   const [isLoading, setIsLoading] = useState(true);
@@ -402,10 +410,12 @@ export default function Market({ navigation }: { navigation: any }) {
             {t("errors.NetworkDown.description")}
           </Text>
         </Flex>
+      ) : filterByStarredAccount && starredMarketCoins.length <= 0 ? (
+        <EmptyStarredCoins />
       ) : (
         <InfiniteLoader size={30} />
       ), // shows up in case loading is ongoing
-    [error, isLoading, resetSearch, search, t],
+    [filterByStarredAccount, starredMarketCoins, resetSearch, search, t],
   );
 
   const onEndReached = useCallback(() => {
@@ -471,14 +481,16 @@ export default function Market({ navigation }: { navigation: any }) {
         backgroundColor: colors.background.main,
       }}
     >
-      <Flex p={6}>
+      <Flex px={6} pt={6}>
         <Flex
           height={48}
           flexDirection="row"
           justifyContent="flex-start"
           alignItems="center"
         >
-          <Text variant="h1">{t("market.title")}</Text>
+          <Text variant="h1" lineHeight="40px">
+            {t("market.title")}
+          </Text>
         </Flex>
         <SearchHeader search={search} refresh={refresh} />
         <BottomSection navigation={navigation} />
@@ -489,7 +501,7 @@ export default function Market({ navigation }: { navigation: any }) {
           paddingHorizontal: 16,
           paddingBottom: TAB_BAR_SAFE_HEIGHT,
         }}
-        data={marketData}
+        data={marketDataFiltered}
         renderItem={renderItems}
         onEndReached={onEndReached}
         onEndReachedThreshold={0.5}
