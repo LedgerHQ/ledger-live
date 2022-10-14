@@ -80,6 +80,21 @@ const envDefinitions = {
     def: "https://filecoin.coin.ledger.com",
     desc: "Filecoin API url",
   },
+  API_NEAR_ARCHIVE_NODE: {
+    def: "https://near.coin.ledger.com/node/",
+    parser: stringParser,
+    desc: "Archive node endpoint for NEAR",
+  },
+  API_NEAR_INDEXER: {
+    def: "https://near.coin.ledger.com/indexer/",
+    parser: stringParser,
+    desc: "Datahub Indexer API for NEAR",
+  },
+  API_NEAR_STAKING_POSITIONS_API: {
+    def: "https://validators-near.coin.ledger.com/",
+    parser: stringParser,
+    desc: "NEAR staking positions API",
+  },
   API_POLKADOT_INDEXER: {
     parser: stringParser,
     def: "https://polkadot.coin.ledger.com",
@@ -530,7 +545,7 @@ const envDefinitions = {
     desc: "maximum limit to synchronize accounts concurrently to limit overload",
   },
   BOT_MAX_CONCURRENT: {
-    def: 5,
+    def: 10,
     parser: intParser,
     desc: "maximum limit to run bot spec in parallel",
   },

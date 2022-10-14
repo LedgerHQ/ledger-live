@@ -45,7 +45,11 @@ export type OperationType =
   | "REGISTER"
   // NFT
   | "NFT_IN"
-  | "NFT_OUT";
+  | "NFT_OUT"
+  // NEAR
+  | "STAKE"
+  | "UNSTAKE"
+  | "WITHDRAW_UNSTAKED";
 
 /**
  *
