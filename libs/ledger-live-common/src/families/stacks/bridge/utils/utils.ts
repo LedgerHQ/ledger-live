@@ -64,7 +64,8 @@ export const mapTxToOps = (accountID, { address }: GetAccountShapeArg0) => (
   tx: TransactionResponse
 ): Operation[] => {
   const { sender, recipient, amount } = tx.stx_transfers[0];
-  const { tx_id, fee_rate, block_height, burn_block_time } = tx.tx;
+  const { tx_id, fee_rate, block_height, burn_block_time, token_transfer } = tx.tx;
+  const { memo: memoHex } = token_transfer;
 
   const ops: Operation[] = [];
 
@@ -74,6 +75,8 @@ export const mapTxToOps = (accountID, { address }: GetAccountShapeArg0) => (
 
   const isSending = address === sender;
   const isReceiving = address === recipient;
+
+  const memo = Buffer.from(memoHex.substring(2), "hex").toString().replaceAll("\x00", "")
 
   if (isSending) {
     ops.push({
@@ -88,7 +91,9 @@ export const mapTxToOps = (accountID, { address }: GetAccountShapeArg0) => (
       senders: [sender],
       recipients: [recipient],
       date,
-      extra: {}
+      extra: {
+        memo
+      }
     });
   }
 
@@ -105,7 +110,9 @@ export const mapTxToOps = (accountID, { address }: GetAccountShapeArg0) => (
       senders: [sender],
       recipients: [recipient],
       date,
-      extra: {}
+      extra: {
+        memo
+      }
     });
   }
 
