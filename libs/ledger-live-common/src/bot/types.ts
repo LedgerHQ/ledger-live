@@ -130,6 +130,8 @@ export type AppSpec<T extends Transaction> = {
   // indicates to the engine what's the generally minimal amount we use to opt out from doing a transaction
   // NB: at the moment it's purely informative and help inferring good "hints", but we could eventually automate it
   minViableAmount?: BigNumber;
+  // global timeout to consider the run due date for the spec. (since a seed could have theorically an infinite amount of accounts and mutation could take a lot of time to validate transactions, we need a way to limit the run time)
+  skipMutationsTimeout?: number;
 };
 export type SpecReport<T extends Transaction> = {
   spec: AppSpec<T>;
@@ -142,6 +144,7 @@ export type SpecReport<T extends Transaction> = {
   fatalError?: Error;
   // express hints for the spec developers on things that could be improved
   hintWarnings: string[];
+  skipMutationsTimeoutReached: boolean;
 };
 export type MutationReport<T extends Transaction> = {
   resyncAccountsDuration: number;
