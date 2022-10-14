@@ -14,17 +14,15 @@ import {
   Text,
 } from "@ledgerhq/native-ui";
 import { useOnboardingStatePolling } from "@ledgerhq/live-common/onboarding/hooks/useOnboardingStatePolling";
-import { CloseMedium } from "@ledgerhq/native-ui/assets/icons";
 import {
   OnboardingStep as DeviceOnboardingStep,
   fromSeedPhraseTypeToNbOfSeedWords,
 } from "@ledgerhq/live-common/hw/extractOnboardingState";
-import { SafeAreaView } from "react-native-safe-area-context";
 import { useTranslation } from "react-i18next";
 import { getDeviceModel } from "@ledgerhq/devices";
 import { useDispatch } from "react-redux";
-import { TouchableOpacity } from "react-native-gesture-handler";
 import { CompositeScreenProps } from "@react-navigation/native";
+
 import { addKnownDevice } from "../../actions/ble";
 import { NavigatorName, ScreenName } from "../../const";
 import type { BaseNavigatorStackParamList } from "../../components/RootNavigator/BaseNavigator";
@@ -40,6 +38,7 @@ import {
   setLastConnectedDevice,
   setReadOnlyMode,
 } from "../../actions/settings";
+import DeviceSetupView from "../../components/DeviceSetupView";
 
 type StepStatus = "completed" | "active" | "inactive";
 
@@ -239,6 +238,7 @@ export const SyncOnboarding = ({
   }, []);
 
   const handleDesyncRetry = useCallback(() => {
+    setDesyncDrawerOpen(false);
     goBackToPairingFlow();
   }, [goBackToPairingFlow]);
 
@@ -408,58 +408,46 @@ export const SyncOnboarding = ({
   }, [companionStepKey, defaultCompanionSteps, handleDeviceReady]);
 
   return (
-    <SafeAreaView>
-      <Flex bg="background.main" height="100%" position="relative">
-        <HelpDrawer
-          isOpen={isHelpDrawerOpen}
-          onClose={() => setHelpDrawerOpen(false)}
+    <DeviceSetupView
+      onClose={handleClose}
+      renderLeft={() => (
+        <LanguageSelect device={device} productName={productName} />
+      )}
+    >
+      <HelpDrawer
+        isOpen={isHelpDrawerOpen}
+        onClose={() => setHelpDrawerOpen(false)}
+      />
+      <DesyncDrawer
+        isOpen={isDesyncDrawerOpen}
+        onClose={handleDesyncClose}
+        onRetry={handleDesyncRetry}
+        device={device}
+      />
+      <Flex position="relative" flex={1}>
+        <ResyncOverlay
+          isOpen={isDesyncOverlayOpen}
+          delay={resyncOverlayDisplayDelayMs}
+          productName={productName}
         />
-        <DesyncDrawer
-          isOpen={isDesyncDrawerOpen}
-          onClose={handleDesyncClose}
-          onRetry={handleDesyncRetry}
-          device={device}
-        />
-        <Flex
-          flexDirection="row"
-          justifyContent="space-between"
-          alignItems="center"
-          pt={7}
-          px={6}
-          pb={5}
-        >
-          <LanguageSelect device={device} productName={productName} />
-          <TouchableOpacity onPress={handleClose}>
-            <CloseMedium size={24} />
-          </TouchableOpacity>
-        </Flex>
-        <Flex flex={1}>
-          <ResyncOverlay
-            isOpen={isDesyncOverlayOpen}
-            delay={resyncOverlayDisplayDelayMs}
-            productName={productName}
-          />
-          <ScrollContainer>
-            <Flex px={7} pt={2}>
-              <Flex mb={7} flexDirection="row" alignItems="center">
-                <Text variant="h4" fontWeight="semiBold">
-                  {t("syncOnboarding.title", { deviceName })}
-                </Text>
-                {/* TODO: disabled for now but will be used in the future */}
-                {/* <Button
+        <ScrollContainer px={6}>
+          <Flex mb={8} flexDirection="row" alignItems="center">
+            <Text variant="h4" fontWeight="semiBold">
+              {t("syncOnboarding.title", { deviceName })}
+            </Text>
+            {/* TODO: disabled for now but will be used in the future */}
+            {/* <Button
                   ml={2}
                   Icon={Question}
                   onPress={() => setHelpDrawerOpen(true)}
                 /> */}
-              </Flex>
-              <VerticalTimeline
-                steps={companionSteps}
-                formatEstimatedTime={formatEstimatedTime}
-              />
-            </Flex>
-          </ScrollContainer>
-        </Flex>
+          </Flex>
+          <VerticalTimeline
+            steps={companionSteps}
+            formatEstimatedTime={formatEstimatedTime}
+          />
+        </ScrollContainer>
       </Flex>
-    </SafeAreaView>
+    </DeviceSetupView>
   );
 };
