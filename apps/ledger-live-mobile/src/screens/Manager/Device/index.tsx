@@ -106,7 +106,9 @@ const DeviceCard = ({
     isLocalizationSupported &&
     deviceInfo.languageId !== undefined;
 
-  const showCustomLockScreeImage = device.modelId === DeviceModelId.nanoFTS;
+  const hasCustomImage =
+    useFeature("customImage")?.enabled &&
+    deviceModel.id === DeviceModelId.nanoFTS;
 
   return (
     <BorderCard>
@@ -150,21 +152,27 @@ const DeviceCard = ({
           </VersionContainer>
         </Flex>
       </Flex>
-      <Flex px={6}>
-        {showCustomLockScreeImage && <CustomLockScreen />}
-        {showDeviceLanguage && (
-          <Flex mt={showCustomLockScreeImage ? 4 : 0}>
-            <DeviceLanguage
-              pendingInstalls={pendingInstalls}
-              currentDeviceLanguage={idsToLanguage[deviceInfo.languageId]}
-              deviceInfo={deviceInfo}
-              device={device}
-              onLanguageChange={onLanguageChange}
-            />
+      {hasCustomImage || showDeviceLanguage ? (
+        <>
+          <Flex px={6}>
+            {hasCustomImage && <CustomLockScreen device={device} />}
+            {showDeviceLanguage && (
+              <Flex mt={hasCustomImage ? 6 : 0}>
+                <DeviceLanguage
+                  pendingInstalls={pendingInstalls}
+                  currentDeviceLanguage={idsToLanguage[deviceInfo.languageId]}
+                  deviceInfo={deviceInfo}
+                  device={device}
+                  onLanguageChange={onLanguageChange}
+                />
+              </Flex>
+            )}
           </Flex>
-        )}
-      </Flex>
-      <Divider />
+          <Flex p={6}>
+            <Divider />
+          </Flex>
+        </>
+      ) : null}
       <DeviceAppStorage
         distribution={distribution}
         deviceModel={deviceModel}
