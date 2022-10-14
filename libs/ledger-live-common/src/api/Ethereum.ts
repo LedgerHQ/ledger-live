@@ -164,7 +164,11 @@ export const apiForCurrency = (currency: CryptoCurrency): API => {
   }
 
   return {
-    async getTransactions(address, block_hash, batch_size = 2000) {
+    async getTransactions(
+      address,
+      block_hash,
+      batch_size = 2000
+    ): Promise<Tx[]> {
       const { data } = await network({
         method: "GET",
         url: URL.format({
@@ -183,7 +187,7 @@ export const apiForCurrency = (currency: CryptoCurrency): API => {
       return data.data;
     },
 
-    async getCurrentBlock() {
+    async getCurrentBlock(): Promise<Block> {
       const { data } = await network({
         method: "GET",
         url: `${baseURL}/block/current`,
@@ -194,7 +198,7 @@ export const apiForCurrency = (currency: CryptoCurrency): API => {
       };
     },
 
-    async getAccountNonce(address) {
+    async getAccountNonce(address): Promise<number> {
       const { data } = await network({
         method: "GET",
         url: `${baseURL}/address/${address}/nonce`,
@@ -202,7 +206,7 @@ export const apiForCurrency = (currency: CryptoCurrency): API => {
       return data.nonce;
     },
 
-    async broadcastTransaction(tx) {
+    async broadcastTransaction(tx): Promise<string> {
       const { data } = await network({
         method: "POST",
         url: `${baseURL}/tx/send`,
@@ -213,7 +217,7 @@ export const apiForCurrency = (currency: CryptoCurrency): API => {
       return data.result;
     },
 
-    async getAccountBalance(address) {
+    async getAccountBalance(address): Promise<BigNumber> {
       const { data } = await network({
         method: "GET",
         url: `${baseURL}/address/${address}/balance`,
@@ -221,7 +225,7 @@ export const apiForCurrency = (currency: CryptoCurrency): API => {
       return new BigNumber(data.balance);
     },
 
-    async getERC20Balances(input) {
+    async getERC20Balances(input): Promise<ERC20BalanceOutput> {
       const { data } = await network({
         method: "POST",
         url: `${baseURL}/erc20/balances`,
@@ -233,7 +237,7 @@ export const apiForCurrency = (currency: CryptoCurrency): API => {
       }));
     },
 
-    async getNFTMetadata(input, chainId) {
+    async getNFTMetadata(input, chainId): Promise<NFTMetadataResponse[]> {
       const { data }: { data: NFTMetadataResponse[] } = await network({
         method: "POST",
         url: `${getEnv(
@@ -245,7 +249,10 @@ export const apiForCurrency = (currency: CryptoCurrency): API => {
       return data;
     },
 
-    async getNFTCollectionMetadata(input, chainId) {
+    async getNFTCollectionMetadata(
+      input,
+      chainId
+    ): Promise<NFTCollectionMetadataResponse[]> {
       const { data }: { data: NFTCollectionMetadataResponse[] } = await network(
         {
           method: "POST",
@@ -259,7 +266,15 @@ export const apiForCurrency = (currency: CryptoCurrency): API => {
       return data;
     },
 
-    async getERC20ApprovalsPerContract(owner, contract) {
+    async getERC20ApprovalsPerContract(
+      owner,
+      contract
+    ): Promise<
+      {
+        sender: string;
+        value: string;
+      }[]
+    > {
       try {
         const { data } = await network({
           method: "GET",
@@ -292,7 +307,7 @@ export const apiForCurrency = (currency: CryptoCurrency): API => {
       }
     },
 
-    async roughlyEstimateGasLimit(address) {
+    async roughlyEstimateGasLimit(address): Promise<BigNumber> {
       const { data } = await network({
         method: "GET",
         url: `https://explorers.api-01.live.ledger-stg.com/blockchain/v3/eth/addresses/${address}/estimate-gas-limit`,
@@ -301,7 +316,7 @@ export const apiForCurrency = (currency: CryptoCurrency): API => {
       return new BigNumber(data.estimated_gas_limit);
     },
 
-    async getDryRunGasLimit(address, request) {
+    async getDryRunGasLimit(address, request): Promise<BigNumber> {
       const post: Record<string, any> = { ...request };
       // .to not needed by backend as it's part of URL:
       delete post.to;
@@ -342,7 +357,7 @@ export const apiForCurrency = (currency: CryptoCurrency): API => {
       }
     ),
 
-    async getBlockByHash(blockHash) {
+    async getBlockByHash(blockHash): Promise<BlockByHashOutput | undefined> {
       if (!blockHash) {
         return undefined;
       }
