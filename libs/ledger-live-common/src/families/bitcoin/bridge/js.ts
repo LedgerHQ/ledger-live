@@ -33,14 +33,10 @@ const updateTransaction = (t, patch): any => {
   return updatedT;
 };
 
-const preload = async () => Promise.resolve({});
-
-const hydrate = () => {};
-
 const currencyBridge: CurrencyBridge = {
   scanAccounts,
-  preload,
-  hydrate,
+  preload: () => Promise.resolve({}),
+  hydrate: () => {},
 };
 const accountBridge: AccountBridge<Transaction> = {
   estimateMaxSpendable,

@@ -1,7 +1,5 @@
 // @flow
 import React from "react";
-import { findCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
-import { getExplorerConfig } from "@ledgerhq/live-common/api/explorerConfig/index";
 import { isEnvDefault, changes } from "@ledgerhq/live-common/env";
 import type { EnvName } from "@ledgerhq/live-common/env";
 import { Trans } from "react-i18next";
@@ -30,17 +28,6 @@ export type FeatureToggle =
 
 export type Feature = FeatureCommon & FeatureToggle;
 
-const explorerConfig = getExplorerConfig();
-const deltaExperimentalExplorers = Object.keys(explorerConfig)
-  .map(currencyId => {
-    const c = findCryptoCurrencyById(currencyId);
-    if (!c || c.terminated) return null;
-    const config = explorerConfig[currencyId];
-    if (!config || !config.experimental) return null;
-    return [c, config];
-  })
-  .filter(Boolean);
-
 // comma-separated list of currencies that we want to enable as experimental, e.g:
 // const experimentalCurrencies = "solana,cardano";
 const experimentalCurrencies = "";
@@ -57,30 +44,6 @@ export const experimentalFeatures: Feature[] = [
           ),
           valueOn: experimentalCurrencies,
           valueOff: "",
-        },
-      ]
-    : []),
-  ...(deltaExperimentalExplorers.length
-    ? [
-        {
-          type: "toggle",
-          name: "EXPERIMENTAL_EXPLORERS",
-          title: <Trans i18nKey="settings.experimental.features.experimentalExplorers.title" />,
-          description: (
-            <Trans i18nKey="settings.experimental.features.experimentalExplorers.description">
-              {deltaExperimentalExplorers
-                .map(
-                  ([currency, config]) =>
-                    (currency.isTestnetFor ? "t" : "") +
-                    currency.ticker +
-                    " " +
-                    config.stable.version +
-                    "->" +
-                    (config.experimental?.version || "?"),
-                )
-                .join(", ")}
-            </Trans>
-          ),
         },
       ]
     : []),
