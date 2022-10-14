@@ -2103,6 +2103,9 @@ importers:
       blakejs:
         specifier: ^1.1.1
         version: 1.2.1
+      bn.js:
+        specifier: ^5.2.1
+        version: 5.2.1
       bs58:
         specifier: ^4.0.1
         version: 4.0.1
@@ -2113,8 +2116,8 @@ importers:
         specifier: ^6.0.3
         version: 6.0.3
       c32check:
-        specifier: ^2.0.0
-        version: 2.0.0
+        specifier: 1.1.3
+        version: 1.1.3
       cashaddrjs:
         specifier: ^0.4.4
         version: 0.4.4
@@ -17204,6 +17207,14 @@ packages:
     resolution: {integrity: sha512-WfqfX/eXGiAd3RJe4VU2snh/ZPwtSjLG4ynQ/vYzvghTh7dHFcI1wl+nrkWG6lGhukOxOsUHfv8dUXr58D0ayg==}
     dev: false
 
+  /@stacks/common@1.2.2:
+    resolution: {integrity: sha512-knCqq88EBRCN8AhS7+Sx2PJuRv0EFNChEpqLqCAchCHCQfp5bWad/47Zw+fLP9ccBwFXh4pl1wDtbQLBfDo0+A==}
+    dependencies:
+      cross-fetch: 3.1.5
+    transitivePeerDependencies:
+      - encoding
+    dev: false
+
   /@stacks/common@4.3.5:
     resolution: {integrity: sha512-UuViiQ7fn3vdtTe3739aRzbl+wbukekeQuXgqt8d7nB2HC2HodD7GcHhpUga165cO35CD6lQUtj3vXxJb5Ga+A==}
     dependencies:
@@ -17212,11 +17223,42 @@ packages:
       buffer: 6.0.3
     dev: false
 
+  /@stacks/network@1.2.2:
+    resolution: {integrity: sha512-xcWwuRrLJn9qqi3PEBcP2UPZHQztTZd31C0aVlzYHttNMir/sY9SrUqSnw45z2Jo4O9pIYYPIiPRtdV91Ho3fw==}
+    dependencies:
+      '@stacks/common': 1.2.2
+    transitivePeerDependencies:
+      - encoding
+    dev: false
+
   /@stacks/network@4.3.5:
     resolution: {integrity: sha512-TC4+AkuT6qi3MoEGxTftA+4BNp99QvGnI+qtKQkoA1m0KDr8b9hSBUhugJHRhQbWuo7D6q0+JagYEGxLID29Kw==}
     dependencies:
       '@stacks/common': 4.3.5
       cross-fetch: 3.1.5
+    transitivePeerDependencies:
+      - encoding
+    dev: false
+
+  /@stacks/transactions@1.3.5:
+    resolution: {integrity: sha512-KhZ9y48KnOB+Es3whxbpxtPm6o5CYLrhxCCG5Tfglmj9AcFtpWCBjkcFwZJ/R3eI4OYthD5aMB9nYY31xGiULA==}
+    dependencies:
+      '@stacks/common': 1.2.2
+      '@stacks/network': 1.2.2
+      '@types/bn.js': 4.11.6
+      '@types/elliptic': 6.4.14
+      '@types/randombytes': 2.0.0
+      '@types/sha.js': 2.4.0
+      bn.js: 4.12.0
+      c32check: 1.1.3
+      cross-fetch: 3.1.5
+      elliptic: 6.5.4
+      lodash: 4.17.21
+      lodash-es: 4.17.20
+      randombytes: 2.1.0
+      ripemd160-min: 0.0.6
+      sha.js: 2.4.11
+      smart-buffer: 4.2.0
     transitivePeerDependencies:
       - encoding
     dev: false
@@ -27593,14 +27635,6 @@ packages:
       base-x: 3.0.9
       buffer: 5.7.1
       cross-sha256: 1.2.0
-    dev: false
-
-  /c32check@2.0.0:
-    resolution: {integrity: sha512-rpwfAcS/CMqo0oCqDf3r9eeLgScRE3l/xHDCXhM3UyrfvIn7PrLq63uHh7yYbv8NzaZn5MVsVhIRpQ+5GZ5HyA==}
-    engines: {node: '>=8'}
-    dependencies:
-      '@noble/hashes': 1.1.5
-      base-x: 4.0.0
     dev: false
 
   /c8@7.11.2:
@@ -42841,6 +42875,10 @@ packages:
     engines: {node: '>=10'}
     dependencies:
       p-locate: 5.0.0
+
+  /lodash-es@4.17.20:
+    resolution: {integrity: sha512-JD1COMZsq8maT6mnuz1UMV0jvYD0E0aUsSOdrr1/nAG3dhqQXwRRgeW0cSqH1U43INKcqxaiVIQNOUDld7gRDA==}
+    dev: false
 
   /lodash._reinterpolate@3.0.0:
     resolution: {integrity: sha512-xYHt68QRoYGjeeM/XOE1uJtvXQAgvszfBhjV4yvsQH0u2i9I6cI6c6/eG4Hh3UAOVn0y/xAXwmTzEay49Q//HA==}
