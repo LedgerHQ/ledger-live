@@ -3,7 +3,6 @@ on:
   push:
     branches:
       - feat/cardano
-      - feat/LIVE-3703-ada-disable-countervalues
 
 concurrency:
   group: bot-seed3-cardano
