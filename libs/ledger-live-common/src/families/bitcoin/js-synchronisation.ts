@@ -146,7 +146,7 @@ const getAccountShape: GetAccountShape = async (info) => {
       derivationMode: walletDerivationMode,
       storage: "mock",
       storageParams: [],
-      explorerURI: `${baseURL}`,
+      explorerURI: baseURL,
     }));
   span.finish();
 
