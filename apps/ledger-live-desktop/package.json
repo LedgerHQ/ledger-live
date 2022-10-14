@@ -223,7 +223,7 @@
     "listr-verbose-renderer": "^0.6.0",
     "native-modules-tools": "workspace:*",
     "nyc": "^15.1.0",
-    "playwright": "1.22.2",
+    "playwright": "1.27.1",
     "prebuild-install": "^7.0.0",
     "prettier": "^1.19.1",
     "react-refresh": "^0.11.0",
