@@ -15,3 +15,4 @@ export * from "./hedera";
 export * from "./osmosis";
 export * from "./celo";
 export * from "./near";
+export * from "./stacks";
