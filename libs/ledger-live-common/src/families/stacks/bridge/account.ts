@@ -286,10 +286,11 @@ const signOperation: SignOperationFnSignature<Transaction> = ({
               date: new Date(),
               extra: {
                 nonce,
+                memo,
                 xpub,
                 network,
                 anchorMode,
-                signatureType: 1
+                signatureType: 1,
               }
             };
 
