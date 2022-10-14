@@ -25,7 +25,9 @@ export type FeatureId =
   | "walletConnectLiveApp"
   | "customImage"
   | "referralProgramDiscoverCard"
-  | "referralProgramDesktopBanner";
+  | "referralProgramDesktopBanner"
+  | "receiveStakingFlowConfigDesktop"
+  | "ethStakingProviders";
 
 /**  We use objects instead of direct booleans for potential future improvements
 like feature versioning etc */
