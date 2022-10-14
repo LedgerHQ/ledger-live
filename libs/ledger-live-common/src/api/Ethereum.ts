@@ -192,9 +192,12 @@ export const apiForCurrency = (currency: CryptoCurrency): API => {
         method: "GET",
         url: `${baseURL}/block/current`,
       });
+      const { height, hash, time, txs } = data;
       return {
-        ...data,
-        height: new BigNumber(data.height),
+        hash,
+        time,
+        txs,
+        height: new BigNumber(height),
       };
     },
 
@@ -231,9 +234,10 @@ export const apiForCurrency = (currency: CryptoCurrency): API => {
         url: `${baseURL}/erc20/balances`,
         data: input,
       });
-      return data.map((erc20Balance) => ({
-        ...erc20Balance,
-        balance: new BigNumber(erc20Balance.balance),
+      return data.map(({ address, contract, balance }) => ({
+        address,
+        contract,
+        balance: new BigNumber(balance),
       }));
     },
 
