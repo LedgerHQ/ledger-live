@@ -28,7 +28,7 @@ jobs:
         run: pnpm i --filter='!./apps/**' --frozen-lockfile
 
       - name: generate super report
-        uses: ledgerhq/ledger-live/tools/actions/generate-bot-super-report@develop
+        uses: ./tools/actions/generate-bot-super-report
         with:
           branch: ${{github.event.inputs.branch}}
           environment: ${{github.event.inputs.environment}}
