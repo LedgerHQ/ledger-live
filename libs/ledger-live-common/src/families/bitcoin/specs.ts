@@ -316,6 +316,7 @@ const bitcoin: AppSpec<Transaction> = {
   appQuery: {
     model: DeviceModelId.nanoS,
     appName: "Bitcoin",
+    appVersion: "app_2.1.0-rc",
   },
   genericDeviceAction: acceptTransaction,
   test: genericTest,
@@ -328,7 +329,7 @@ const bitcoinTestnet: AppSpec<Transaction> = {
   appQuery: {
     model: DeviceModelId.nanoS,
     appName: "Bitcoin Test",
-    appVersion: "2.0.99-prerelease",
+    appVersion: "app_2.1.0-rc",
   },
   genericDeviceAction: acceptTransaction,
   test: genericTest,
