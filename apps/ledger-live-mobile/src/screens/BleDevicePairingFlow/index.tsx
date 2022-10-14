@@ -81,6 +81,8 @@ export type BleDevicePairingFlowProps = StackScreenProps<
  *     From the ex of navigateInput, it would be: "params.params.pairedDevice"
  *   - navigationType: (optional, default to "navigate") when navigating after a successful pairing,
  *     choose between a "replace" or a "navigate"
+ *   The default success config will navigate to the synchronous onboarding, however it shouldn't be
+ *   relied upon and exist solely to simplify deeplinking to the sync onboarding.
  * - onSuccessAddToKnownDevices: boolean, if true the successfully paired device is added to the redux
  *   list of known devices. Not added if false (default to false).
  * @returns a JSX component
