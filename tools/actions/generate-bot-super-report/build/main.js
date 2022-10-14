@@ -9561,9 +9561,9 @@ var require_timers = __commonJS({
         clearTimeout(this.handle);
       };
       var afterValue = function(value) {
-        return delay(+this).thenReturn(value);
+        return delay2(+this).thenReturn(value);
       };
-      var delay = Promise2.delay = function(ms, value) {
+      var delay2 = Promise2.delay = function(ms, value) {
         var ret2;
         var handle;
         if (value !== void 0) {
@@ -9585,7 +9585,7 @@ var require_timers = __commonJS({
         return ret2;
       };
       Promise2.prototype.delay = function(ms) {
-        return delay(ms, this);
+        return delay2(ms, this);
       };
       var afterTimeout = function(promise, message, parent) {
         var err;
@@ -14951,7 +14951,7 @@ var require_graceful_fs = __commonJS({
     function enqueue(elem) {
       debug("ENQUEUE", elem[0].name, elem[1]);
       fs[gracefulQueue].push(elem);
-      retry();
+      retry2();
     }
     var retryTimer;
     function resetQueue() {
@@ -14962,9 +14962,9 @@ var require_graceful_fs = __commonJS({
           fs[gracefulQueue][i][4] = now;
         }
       }
-      retry();
+      retry2();
     }
-    function retry() {
+    function retry2() {
       clearTimeout(retryTimer);
       retryTimer = void 0;
       if (fs[gracefulQueue].length === 0)
@@ -14995,7 +14995,7 @@ var require_graceful_fs = __commonJS({
         }
       }
       if (retryTimer === void 0) {
-        retryTimer = setTimeout(retry, 0);
+        retryTimer = setTimeout(retry2, 0);
       }
     }
   }
@@ -16246,13 +16246,13 @@ var require_minimatch = __commonJS({
       m.Minimatch = function Minimatch2(pattern, options) {
         return new orig.Minimatch(pattern, ext(def, options));
       };
-      m.Minimatch.defaults = function defaults(options) {
+      m.Minimatch.defaults = function defaults2(options) {
         return orig.defaults(ext(def, options)).Minimatch;
       };
       m.filter = function filter2(pattern, options) {
         return orig.filter(pattern, ext(def, options));
       };
-      m.defaults = function defaults(options) {
+      m.defaults = function defaults2(options) {
         return orig.defaults(ext(def, options));
       };
       m.makeRe = function makeRe2(pattern, options) {
@@ -18036,7 +18036,7 @@ var require_rimraf = __commonJS({
     };
     var timeout = 0;
     var isWindows = process.platform === "win32";
-    function defaults(options) {
+    function defaults2(options) {
       var methods = [
         "unlink",
         "chmod",
@@ -18071,7 +18071,7 @@ var require_rimraf = __commonJS({
       assert.equal(typeof cb, "function", "rimraf: callback function required");
       assert(options, "rimraf: invalid options argument provided");
       assert.equal(typeof options, "object", "rimraf: options should be object");
-      defaults(options);
+      defaults2(options);
       var busyTries = 0;
       var errState = null;
       var n = 0;
@@ -18227,7 +18227,7 @@ var require_rimraf = __commonJS({
     }
     function rimrafSync(p, options) {
       options = options || {};
-      defaults(options);
+      defaults2(options);
       assert(p, "rimraf: missing path");
       assert.equal(typeof p, "string", "rimraf: path should be a string");
       assert(options, "rimraf: missing options");
@@ -24179,6 +24179,60 @@ var import_isomorphic_unfetch = __toESM(require_isomorphic_unfetch());
 var import_unzipper = __toESM(require_unzip2());
 var import_stream_json = __toESM(require_stream_json());
 var import_StreamValues = __toESM(require_StreamValues());
+
+// promise.ts
+var delay = (ms) => new Promise((f) => setTimeout(f, ms));
+var defaults = {
+  maxRetry: 4,
+  interval: 300,
+  intervalMultiplicator: 1.5,
+  context: ""
+};
+function retry(f, options) {
+  const { maxRetry, interval, intervalMultiplicator, context } = {
+    ...defaults,
+    ...options
+  };
+  function rec(remainingTry, i) {
+    const result = f();
+    if (remainingTry <= 0) {
+      return result;
+    }
+    return result.catch((e) => {
+      console.log(
+        "promise-retry",
+        context + " failed. " + remainingTry + " retry remain. " + String(e)
+      );
+      return delay(i).then(
+        () => rec(remainingTry - 1, i * intervalMultiplicator)
+      );
+    });
+  }
+  return rec(maxRetry, interval);
+}
+async function promiseAllBatched(batch, items, fn) {
+  const data = Array(items.length);
+  const queue = items.map((item, index) => ({
+    item,
+    index
+  }));
+  async function step() {
+    if (queue.length === 0)
+      return;
+    const first = queue.shift();
+    if (first) {
+      const { item, index } = first;
+      data[index] = await fn(item, index);
+    }
+    await step();
+  }
+  await Promise.all(
+    Array(Math.min(batch, items.length)).fill(() => void 0).map(step)
+  );
+  return data;
+}
+
+// logic.ts
 var import_groupBy = __toESM(require_groupBy());
 function handleErrors(response) {
   if (!response.ok) {
@@ -24190,12 +24244,14 @@ function handleErrors(response) {
 }
 async function downloadArchive(githubToken, url) {
   console.log("retrieving " + url);
-  const blob = await (0, import_isomorphic_unfetch.default)(url, {
-    headers: {
-      Authorization: `Bearer ${githubToken}`,
-      "Content-Type": "application/json"
-    }
-  }).then((r) => {
+  const blob = await retry(
+    () => (0, import_isomorphic_unfetch.default)(url, {
+      headers: {
+        Authorization: `Bearer ${githubToken}`,
+        "Content-Type": "application/json"
+      }
+    })
+  ).then((r) => {
     if (r.ok) {
       return r.blob();
     }
@@ -24243,12 +24299,14 @@ async function loadReports({
   do {
     const url = `https://api.github.com/repos/LedgerHQ/ledger-live/actions/artifacts?per_page=100&page=${page}`;
     console.log("retrieving " + url);
-    res = await (0, import_isomorphic_unfetch.default)(url, {
-      headers: {
-        Authorization: `Bearer ${githubToken}`,
-        "Content-Type": "application/json"
-      }
-    }).then((r) => r.ok ? r.json() : r.status === 502 ? {} : handleErrors(r)).then((r) => {
+    res = await retry(
+      () => (0, import_isomorphic_unfetch.default)(url, {
+        headers: {
+          Authorization: `Bearer ${githubToken}`,
+          "Content-Type": "application/json"
+        }
+      })
+    ).then((r) => r.ok ? r.json() : r.status === 502 ? {} : handleErrors(r)).then((r) => {
       if (r.artifacts) {
         return r.artifacts;
       }
@@ -24266,13 +24324,15 @@ async function loadReports({
       });
     }
     page++;
+    await delay(500);
   } while (res && res.length > 0 && !latestDateReached && page < maxPage);
-  const reports = (await Promise.all(
-    artifacts.map(
-      (artifact) => downloadArchive(githubToken, artifact.archive_download_url).then(
-        (report) => ({ artifact, report })
-      )
-    )
+  const reports = (await promiseAllBatched(
+    5,
+    artifacts,
+    (artifact) => downloadArchive(
+      githubToken,
+      artifact.archive_download_url
+    ).then((report) => ({ artifact, report }))
   )).filter(Boolean).filter(({ report }) => {
     if (environment) {
       return report.environment === environment;
