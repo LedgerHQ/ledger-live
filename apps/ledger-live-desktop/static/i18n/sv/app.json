@@ -3705,6 +3705,11 @@
       },
       "memoWarningText": "When using a Memo, carefully verify the type used with the recipient"
     },
+    "stacks": {
+      "memo": "Memo",
+      "memoPlaceholder": "Optional",
+      "memoWarningText": "When using a memo, carefully check the information with the recipient"
+    },
     "cosmos": {
       "memo": "Memo",
       "memoPlaceholder": "Optional",
