@@ -4782,6 +4782,11 @@
       "memoPlaceholder" : "Необязательно",
       "memo" : "Memo"
     },
+    "stacks" : {
+      "memoPlaceholder" : "Необязательно",
+      "memo" : "Memo",
+      "memoWarningText" : "При использовании Memo необходимо тщательно проверять соответствие типа с получателем"
+    },
     "stellar" : {
       "memo" : "Memo",
       "memoType" : {

@@ -4782,6 +4782,11 @@
       "memoPlaceholder" : "可选",
       "memo" : "Memo"
     },
+    "stacks" : {
+      "memoPlaceholder" : "可选",
+      "memo" : "Memo",
+      "memoWarningText" : "当使用 Memo 标签时，请仔细核对接收方的类型。"
+    },
     "stellar" : {
       "memo" : "Memo",
       "memoType" : {

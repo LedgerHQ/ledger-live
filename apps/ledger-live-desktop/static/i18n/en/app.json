@@ -4803,6 +4803,11 @@
       "memoPlaceholder": "Optional",
       "memo": "Memo"
     },
+    "stacks" : {
+      "memoPlaceholder": "Optional",
+      "memo" : "Memo",
+      "memoWarningText": "When using a Memo, carefully verify the type used with the recipient"
+    },
     "stellar": {
       "memo": "Memo",
       "memoType": {

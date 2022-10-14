@@ -4782,6 +4782,11 @@
       "memoPlaceholder" : "Facultatif",
       "memo" : "Mémo"
     },
+    "stacks" : {
+      "memoPlaceholder" : "Facultatif",
+      "memo" : "Mémo",
+      "memoWarningText" : "Lorsque vous utilisez un mémo, vérifiez bien le type à utiliser auprès du bénéficiaire."
+    },
     "stellar" : {
       "memo" : "Mémo",
       "memoType" : {

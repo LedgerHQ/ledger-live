@@ -4782,6 +4782,11 @@
       "memoPlaceholder" : "Tercihe bağlı",
       "memo" : "Memo"
     },
+    "stacks" : {
+      "memoPlaceholder" : "Tercihe bağlı",
+      "memo" : "Memo",
+      "memoWarningText" : "Memo kullanırken, kullanılan türü alıcıyla birlikte dikkatlice doğrulayın"
+    },
     "stellar" : {
       "memo" : "Memo",
       "memoType" : {

@@ -4782,6 +4782,11 @@
       "memoPlaceholder" : "任意",
       "memo" : "メモ"
     },
+    "stacks" : {
+      "memoPlaceholder" : "任意",
+      "memoWarningText" : "Memo(メモ)を使用する場合は、受取先とタイプを確認してください。",
+      "memo" : "メモ"
+    },
     "stellar" : {
       "memo" : "メモ",
       "memoType" : {

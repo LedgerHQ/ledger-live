@@ -4782,6 +4782,11 @@
       "memoPlaceholder" : "선택 사항",
       "memo" : "메모"
     },
+    "stacks" : {
+      "memoPlaceholder" : "선택 사항",
+      "memo" : "메모",
+      "memoWarningText" : "메모 기능을 사용할 때는 사용한 메모 유형을 수령인과 확인하세요"
+    },
     "stellar" : {
       "memo" : "메모",
       "memoType" : {
