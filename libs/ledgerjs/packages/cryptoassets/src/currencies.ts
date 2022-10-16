@@ -3374,6 +3374,43 @@ export const cryptocurrenciesById: Record<string, CryptoCurrency> = {
       },
     ],
   },
+    XDC: {
+    type: "CryptoCurrency",
+    id: "XDC",
+    coinType: 550,
+    name: "XDCNetwork",
+    managerAppName: "XDCNetwork",
+    ticker: "XDC",
+    scheme: "xdc",
+    color: "#2b5876",
+    family: "ethereum",
+    ethereumLikeInfo: {
+      baseChain: "mainnet",
+      chainId: 50,
+      networkId: 50,
+      rpc: "https://rpc.xdcrpc.com",
+      chainId: 50,
+      explorer: {
+        uri: "https://xdc.blocksscan.io",
+        type: "blocksscan",
+      },
+    },
+    blockAvgTime: 2,
+    units: [
+      {
+        name: "XDC",
+        code: "XDC",
+        magnitude: 8,
+      },
+    ],
+    explorerViews: [
+      {
+        tx: "https://xdc.blocksscan.io/tx/$hash",
+        address: "https://xdc.blocksscan.io/address/$address",
+        token: "https://xdc.blocksscan.io/token/$contractAddress?a=$address",
+      },
+    ],
+  },
   songbird: {
     type: "CryptoCurrency",
     id: "songbird",
