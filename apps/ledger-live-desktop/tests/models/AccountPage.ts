@@ -6,6 +6,7 @@ export class AccountPage {
   readonly settingsButton: Locator;
   readonly buttonSend: Locator;
   readonly accountRow: Function;
+  readonly nftRow: Function;
 
   constructor(page: Page) {
     this.page = page;
@@ -13,6 +14,7 @@ export class AccountPage {
     this.settingsButton = page.locator("data-test-id=account-settings-button");
     this.buttonSend = page.locator("data-test-id=account-send-button");
     this.accountRow = (name: string): Locator => page.locator(`text=${name}`);
+    this.nftRow = (name: string): Locator => page.locator(`text=${name}`);
   }
 
   async clickBtnSend() {
@@ -21,5 +23,9 @@ export class AccountPage {
 
   async goToTokenAccount(name: string) {
     await this.accountRow(name).click();
+  }
+
+  async goToNftCollection(name: string) {
+    await this.nftRow(name).click();
   }
 }

@@ -6,7 +6,7 @@ import { AccountPage } from "../../models/AccountPage";
 
 test.use({ userdata: "adaAccount" });
 
-test(`Open token account`, async ({ page }) => {
+test(`Open nft drawer`, async ({ page }) => {
   const layout = new Layout(page);
   const accountsPage = new AccountsPage(page);
   const accountPage = new AccountPage(page);
@@ -16,11 +16,19 @@ test(`Open token account`, async ({ page }) => {
     await accountsPage.goToAccount("ethereum-1");
   });
 
-  await test.step(`Open token account`, async () => {
-    await accountPage.goToTokenAccount("USD Coin");
+  await test.step(`Open nft collection`, async () => {
+    await accountPage.goToNftCollection("0x495f947276749Ce646f68AC8c248420045cb7b5e");
   });
 
-  await test.step(`Verify token account is opened`, async () => {
-    await expect.soft(page).toHaveScreenshot(`token-success.png`);
+  await test.step(`nft collection list view`, async () => {
+    await expect.soft(page).toHaveScreenshot(`nft-listview-success.png`);
+  });
+
+  await test.step(`open nft drawer`, async () => {
+    await accountPage.goToNftCollection("ID: 845158187637...9010886680577");
+  });
+
+  await test.step(`display nft drawer`, async () => {
+    await expect.soft(page).toHaveScreenshot(`nft-drawer.png`);
   });
 });
