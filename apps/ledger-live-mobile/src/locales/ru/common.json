@@ -413,6 +413,10 @@
       "title" : "Кажется, у вас недостаточно средств",
       "description" : "Пожалуйста, убедитесь, что на счёте достаточно средств."
     },
+    "NoSuchAppOnProvider" : {
+      "title" : "Приложение {{appName}} по вашему запросу не найдено.",
+      "description" : "Попробуйте переустановить приложение в разделе Мой Ledger"
+    },
     "NotEnoughGas" : {
       "title" : "Недостаточно ETH для оплаты комиссии сети",
       "description" : "Пожалуйста, пополните свой счёт ETH для оплаты транзакций в токенах ERC-20."
@@ -728,6 +732,9 @@
     "ImageProcessingError" : {
       "title" : "Не удалось обработать изображение",
       "description" : "Попробуйте другое изображение"
+    },
+    "HederaAddAccountError" : {
+      "title" : "Не удалось добавить счёт. Пожалуйста, попробуйте ещё раз."
     }
   },
   "crash" : {
@@ -775,6 +782,9 @@
     "failed" : {
       "biometrics" : {
         "title" : "Не удалось разблокировать {{biometricsType}}",
+        "touchid" : "TouchID",
+        "faceid" : "FaceID",
+        "fingerprint" : "Отпечаток пальца",
         "description" : "Чтобы продолжить, введите пароль",
         "authenticate" : "Пожалуйста, авторизуйтесь с помощью Ledger Live"
       },
@@ -803,7 +813,10 @@
     },
     "enableBiometrics" : {
       "title" : "{{biometricsType}}",
-      "desc" : "Разблокировать с помощью {{biometricsType}}"
+      "desc" : "Разблокировать с помощью {{biometricsType}}",
+      "touchid" : "TouchID",
+      "faceid" : "FaceID",
+      "fingerprint" : "Отпечаток пальца"
     }
   },
   "reset" : {
@@ -1028,6 +1041,21 @@
     },
     "comingSoon" : "Уже скоро",
     "mostPopular" : "Самые популярные"
+  },
+  "installSetOfApps" : {
+    "landing" : {
+      "estimatedTime" : "{{ minutes }} мин.",
+      "title" : "{{ productName }} использует приложения для безопасных блокчейн-транзакций",
+      "subtitle" : "Рекомендуем загрузить стандартный набор приложений. Позже можно будет установить больше приложений.",
+      "installCTA" : "Установить приложения",
+      "skipCTA" : "Отложить"
+    },
+    "ongoing" : {
+      "loading" : "Загружаем...",
+      "resolving" : "Устраняем зависимости приложения...",
+      "progress" : "Установка приложений: {{progress}}%",
+      "disclaimer" : "Приложения в {{ productName }} нужны для подтверждения транзакций. Добавить или удалить их можно в любое время."
+    }
   },
   "onboarding" : {
     "stepWelcome" : {
@@ -1974,6 +2002,7 @@
       },
       "advanced" : {
         "title" : "Расширенные логи",
+        "warningDerivation" : "Это xpub-ключ {{tag}}. При его импорте в сторонний кошелёк выберите тот же режим вывода.",
         "desc" : ""
       }
     },
@@ -4088,7 +4117,7 @@
     },
     "alerts" : {
       "withdrawableAssets" : "У вас есть баланс для вывода.",
-      "activatableVotes" : "У вас есть голоса, которые можно активировать."
+      "activatableVotes" : "У вас есть голоса, которые можно активировать"
     }
   },
   "osmosis" : {
