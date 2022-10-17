@@ -1,24 +1,25 @@
-// @flow
 import React, { useState, useCallback, useMemo, memo } from "react";
-import { FlatList } from "react-native";
+import { FlatList, StyleSheet } from "react-native";
 import {
   listTokens,
   isCurrencySupported,
 } from "@ledgerhq/live-common/currencies/index";
 import { distribute, Action, State } from "@ledgerhq/live-common/apps/index";
-import { App } from "@ledgerhq/types-live";
+import { App, DeviceInfo } from "@ledgerhq/types-live";
 import { useAppsSections } from "@ledgerhq/live-common/apps/react";
 
 import { Text, Flex } from "@ledgerhq/native-ui";
 
 import { Trans } from "react-i18next";
 import { ListAppsResult } from "@ledgerhq/live-common/apps/types";
-import { ManagerTab } from "./Manager";
+// eslint-disable-next-line import/no-cycle
+import type { Device } from "@ledgerhq/live-common/hw/actions/types";
+import { ManagerTab } from "../../const/manager";
 
 import AppFilter from "./AppsList/AppFilter";
 
 import DeviceCard from "./Device";
-import FirmwareManager from "./Firmware";
+import Benchmarking from "./Benchmarking";
 import AppRow from "./AppsList/AppRow";
 
 import Searchbar from "./AppsList/Searchbar";
@@ -30,29 +31,26 @@ import AppIcon from "./AppsList/AppIcon";
 import AppUpdateAll from "./AppsList/AppUpdateAll";
 import Search from "../../components/Search";
 import FirmwareUpdateBanner from "../../components/FirmwareUpdateBanner";
+import { TAB_BAR_SAFE_HEIGHT } from "../../components/TabBar/shared";
 
 type Props = {
   state: State;
-  dispatch: (action: Action) => void;
-  setAppInstallWithDependencies: (params: {
-    app: App;
-    dependencies: App[];
-  }) => void;
-  setAppUninstallWithDependencies: (params: {
-    dependents: App[];
-    app: App;
-  }) => void;
+  dispatch: (_: Action) => void;
+  setAppInstallWithDependencies: (_: { app: App; dependencies: App[] }) => void;
+  setAppUninstallWithDependencies: (_: { dependents: App[]; app: App }) => void;
   setStorageWarning: () => void;
   deviceId: string;
   initialDeviceName: string;
   navigation: any;
-  blockNavigation: boolean;
-  deviceInfo: any;
+  pendingInstalls: boolean;
+  deviceInfo: DeviceInfo;
+  device: Device;
   searchQuery?: string;
   updateModalOpened?: boolean;
   tab: ManagerTab;
   optimisticState: State;
   result: ListAppsResult;
+  onLanguageChange: () => void;
 };
 
 const AppsScreen = ({
@@ -64,12 +62,14 @@ const AppsScreen = ({
   updateModalOpened,
   deviceId,
   initialDeviceName,
+  device,
   navigation,
-  blockNavigation,
+  pendingInstalls,
   deviceInfo,
   searchQuery,
   optimisticState,
   result,
+  onLanguageChange,
 }: Props) => {
   const distribution = distribute(state);
 
@@ -87,7 +87,11 @@ const AppsScreen = ({
 
   const [query, setQuery] = useState(searchQuery || "");
 
-  const { update, device, catalog } = useAppsSections(state, {
+  const {
+    update,
+    device: deviceApps,
+    catalog,
+  } = useAppsSections(state, {
     query: "",
     appFilter,
     sort: sortOptions,
@@ -261,15 +265,16 @@ const AppsScreen = ({
               result={result}
               deviceId={deviceId}
               initialDeviceName={initialDeviceName}
-              blockNavigation={blockNavigation}
+              pendingInstalls={pendingInstalls}
               deviceInfo={deviceInfo}
               setAppUninstallWithDependencies={setAppUninstallWithDependencies}
               dispatch={dispatch}
-              appList={device}
+              device={device}
+              appList={deviceApps}
+              onLanguageChange={onLanguageChange}
             />
-            <Flex mt={6}>
-              <FirmwareUpdateBanner />
-            </Flex>
+            <Benchmarking state={state} />
+            <FirmwareUpdateBanner />
             <AppUpdateAll
               state={state}
               appsToUpdate={update}
@@ -300,27 +305,30 @@ const AppsScreen = ({
         ListEmptyComponent={renderNoResults}
         keyExtractor={item => item.name}
         showsVerticalScrollIndicator={false}
+        contentContainerStyle={styles.list}
       />
     ),
     [
-      appFilter,
-      blockNavigation,
-      device,
-      deviceId,
-      deviceInfo,
-      dispatch,
       distribution,
-      initialDeviceName,
-      order,
-      query,
-      renderNoResults,
-      renderRow,
-      result,
-      setAppUninstallWithDependencies,
-      sort,
       state,
+      result,
+      deviceId,
+      initialDeviceName,
+      pendingInstalls,
+      deviceInfo,
+      setAppUninstallWithDependencies,
+      dispatch,
+      device,
+      deviceApps,
+      onLanguageChange,
       update,
       updateModalOpened,
+      query,
+      appFilter,
+      sort,
+      order,
+      renderRow,
+      renderNoResults,
     ],
   );
 
@@ -345,5 +353,11 @@ const AppsScreen = ({
     </Flex>
   );
 };
+
+const styles = StyleSheet.create({
+  list: {
+    paddingBottom: TAB_BAR_SAFE_HEIGHT,
+  },
+});
 
 export default memo<Props>(AppsScreen);

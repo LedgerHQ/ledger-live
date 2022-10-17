@@ -22,6 +22,7 @@
     "build:libs:force": "pnpm -r --filter=\"!./apps/**\" --filter=\"!ledger-live\" build",
     "build:actions": "pnpm turbo run build --filter=@actions/* --no-deps",
     "build:cli": "pnpm turbo run build --filter=live-cli",
+    "build:llc": "pnpm turbo run build --filter=\"!./apps/**\" --scope=@ledgerhq/live-common --include-dependencies --no-deps",
     "build:lld": "pnpm turbo run build --filter=ledger-live-desktop",
     "build:lld:deps": "pnpm turbo run build --filter=\"ledger-live-desktop^...\"",
     "build:llm:android": "pnpm turbo run android:apk --filter=live-mobile",
@@ -36,6 +37,7 @@
     "watch:common": "pnpm turbo run watch --filter=live-common",
     "dev:cli": "pnpm turbo run watch --filter=live-cli",
     "dev:lld": "pnpm turbo run start --filter=ledger-live-desktop",
+    "dev:lld:debug": "DEV_TOOLS=1 LEDGER_INTERNAL_ARGS=--inspect pnpm turbo run start --filter=ledger-live-desktop",
     "dev:llm": "pnpm turbo run start --filter=live-mobile",
     "release:lld": "pnpm turbo run release --filter=ledger-live-desktop",
     "pre:lld": "pnpm turbo run pre-build --filter=ledger-live-desktop",
@@ -52,9 +54,9 @@
     "common": "pnpm --filter live-common",
     "common-tools": "pnpm --filter live-common-tools",
     "bot:github": "pnpm --filter live-github-bot",
-    "ljs:cryoptoassets": "pnpm --filter cryptoassets",
-    "ljs:devices": "pnpm --filter cryptoassets",
-    "ljs:errors": "pnpm --filter cryptoassets",
+    "ljs:cryptoassets": "pnpm --filter cryptoassets",
+    "ljs:devices": "pnpm --filter devices",
+    "ljs:errors": "pnpm --filter errors",
     "ljs:hw-app-algorand": "pnpm --filter hw-app-algorand",
     "ljs:hw-app-btc": "pnpm --filter hw-app-btc",
     "ljs:hw-app-cosmos": "pnpm --filter hw-app-cosmos",
@@ -98,7 +100,7 @@
     "migrate-branch": "workspace:*",
     "pnpm-utils": "workspace:*",
     "rimraf": "^3.0.2",
-    "turbo": "1.4.3",
+    "turbo": "1.5.6",
     "zx": "^7.0.7"
   },
   "pnpm": {
@@ -116,7 +118,8 @@
     },
     "patchedDependencies": {
       "react-native-fast-crypto@2.2.0": "patches/react-native-fast-crypto@2.2.0.patch",
-      "react-native-video@5.2.0": "patches/react-native-video@5.2.0.patch"
+      "react-native-video@5.2.0": "patches/react-native-video@5.2.0.patch",
+      "react-native-image-crop-tools@1.6.2": "patches/react-native-image-crop-tools@1.6.2.patch"
     }
   }
 }

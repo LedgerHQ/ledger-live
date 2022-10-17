@@ -6,9 +6,9 @@ import { useNavigation } from "@react-navigation/native";
 import { useTranslation } from "react-i18next";
 import { useDispatch } from "react-redux";
 import Button from "../components/wrappedUi/Button";
-import { NavigatorName, ScreenName } from "../const";
+import { NavigatorName } from "../const";
 import { setHasOrderedNano, setSensitiveAnalytics } from "../actions/settings";
-import { track } from "../analytics";
+import { TrackScreen } from "../analytics";
 
 const StyledSafeAreaView = styled(SafeAreaView)`
   flex: 1;
@@ -21,10 +21,6 @@ export default function PostBuyDeviceScreen() {
   const navigation = useNavigation();
 
   const onClose = useCallback(() => {
-    track("button_clicked", {
-      button: "Close",
-      screen: "Congratulations",
-    });
     navigation.navigate(NavigatorName.Base, {
       screen: NavigatorName.Main,
     });
@@ -33,17 +29,12 @@ export default function PostBuyDeviceScreen() {
   useEffect(() => {
     dispatch(setHasOrderedNano(true));
     dispatch(setSensitiveAnalytics(true));
-    track("screen", {
-      button: "Add Account '+'",
-      screen: "Congratulations",
-      screenName: ScreenName.PostBuyDeviceScreen,
-      source: "Ledger Website",
-    });
   }, [dispatch]);
 
   return (
     <StyledSafeAreaView>
       <Flex flex={1} justifyContent="center" alignItems="center" mx={6} my={6}>
+        <TrackScreen category="Congratulations" source="Ledger Website" />
         <Flex justifyContent="center" alignItems="center">
           <Box bg={"success.c30"} p={6} mb={7} borderRadius={999}>
             <Box bg={"success.c50"} p={6} borderRadius={999}>
@@ -78,6 +69,11 @@ export default function PostBuyDeviceScreen() {
         outline={false}
         onPress={onClose}
         size="large"
+        event="button_clicked"
+        eventProperties={{
+          button: "Close",
+          screen: "Congratulations",
+        }}
       >
         {t("common.close")}
       </Button>

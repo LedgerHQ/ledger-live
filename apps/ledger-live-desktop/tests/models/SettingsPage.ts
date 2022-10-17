@@ -1,4 +1,4 @@
-import { Page, Locator } from '@playwright/test';
+import { Page, Locator } from "@playwright/test";
 
 export class SettingsPage {
   readonly page: Page;
@@ -53,6 +53,11 @@ export class SettingsPage {
 
   async goToExperimentalTab() {
     await this.experimentalTab.click();
+  }
+
+  async changeLanguage(fromLanguage: string, toLanguage: string) {
+    await this.page.locator(`text="${fromLanguage}"`).click();
+    await this.page.locator(`text="${toLanguage}"`).click();
   }
 
   async enableDevMode() {

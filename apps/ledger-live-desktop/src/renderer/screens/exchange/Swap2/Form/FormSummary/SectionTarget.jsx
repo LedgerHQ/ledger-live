@@ -15,7 +15,7 @@ import { context } from "~/renderer/drawers/Provider";
 import type {
   SwapSelectorStateType,
   SwapTransactionType,
-} from "@ledgerhq/live-common/exchange/swap/hooks/index";
+} from "@ledgerhq/live-common/exchange/swap/types";
 import TargetAccountDrawer from "../TargetAccountDrawer";
 
 const AccountSection = ({

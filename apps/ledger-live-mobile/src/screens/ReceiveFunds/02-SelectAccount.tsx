@@ -4,15 +4,14 @@ import { useSelector } from "react-redux";
 
 import { Flex } from "@ledgerhq/native-ui";
 import { useTranslation } from "react-i18next";
-import { AccountLike, Currency } from "@ledgerhq/live-common/lib/types";
-import { makeEmptyTokenAccount } from "@ledgerhq/live-common/lib/account";
-import { useRoute } from "@react-navigation/native";
+import { AccountLike } from "@ledgerhq/types-live";
+import { Currency } from "@ledgerhq/types-cryptoassets";
+import { makeEmptyTokenAccount } from "@ledgerhq/live-common/account/index";
 import { flattenAccountsByCryptoCurrencyScreenSelector } from "../../reducers/accounts";
 import { ScreenName } from "../../const";
 import { track, TrackScreen } from "../../analytics";
 import AccountCard from "../../components/AccountCard";
 import LText from "../../components/LText";
-import { usePreviousRouteName } from "../../helpers/routeHooks";
 
 type Props = {
   navigation: any;
@@ -20,11 +19,9 @@ type Props = {
 };
 
 function ReceiveSelectAccount({ navigation, route }: Props) {
-  const lastRoute = usePreviousRouteName();
   const currency = route.params?.currency;
-  const routerRoute = useRoute();
   const { t } = useTranslation();
-  const [selectedAccount, setSelectedAccount] = useState<String | null>(null);
+  const [selectedAccount, setSelectedAccount] = useState<string | null>(null);
 
   const accounts = useSelector(
     flattenAccountsByCryptoCurrencyScreenSelector(currency),
@@ -37,9 +34,11 @@ function ReceiveSelectAccount({ navigation, route }: Props) {
     () =>
       currency.type === "TokenCurrency"
         ? parentAccounts.reduce((accs, pa) => {
-            const tokenAccounts = pa.subAccounts.filter(
-              acc => acc.token.id === currency.id,
-            );
+            const tokenAccounts = pa.subAccounts
+              ? pa.subAccounts.filter(
+                  (acc: any) => acc.token.id === currency.id,
+                )
+              : [];
 
             if (tokenAccounts.length > 0) {
               accs.push(...tokenAccounts);
@@ -62,7 +61,6 @@ function ReceiveSelectAccount({ navigation, route }: Props) {
         setSelectedAccount(account.id);
         track("account_clicked", {
           currency: currency.name,
-          screen: routerRoute.name,
         });
         navigation.navigate(ScreenName.ReceiveConfirmation, {
           ...route.params,
@@ -71,13 +69,7 @@ function ReceiveSelectAccount({ navigation, route }: Props) {
         });
       }
     },
-    [
-      currency.name,
-      navigation,
-      route.params,
-      routerRoute.name,
-      selectedAccount,
-    ],
+    [currency.name, navigation, route.params, selectedAccount],
   );
 
   const renderItem = useCallback(
@@ -106,7 +98,6 @@ function ReceiveSelectAccount({ navigation, route }: Props) {
       <TrackScreen
         category="ReceiveFunds"
         name="Receive Account Select"
-        source={lastRoute}
         currency={currency.name}
       />
       <Flex p={6}>

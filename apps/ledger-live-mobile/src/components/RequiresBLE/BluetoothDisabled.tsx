@@ -11,6 +11,8 @@ const SafeAreaContainer = styled.SafeAreaView`
   align-items: center;
   justify-content: center;
   background-color: ${p => p.theme.colors.background.main};
+  margin-left: ${p => `${p.theme.space[4]}px`};
+  margin-right: ${p => `${p.theme.space[4]}px`};
 `;
 
 function BluetoothDisabled() {
@@ -24,13 +26,13 @@ function BluetoothDisabled() {
   return (
     <SafeAreaContainer>
       <IconBox Icon={BluetoothMedium} iconSize={24} boxSize={64} />
-      <Text variant={"h2"} mb={5} mt={7}>
+      <Text variant={"h2"} mb={5} mt={7} textAlign="center">
         <Trans i18nKey="bluetooth.required" />
       </Text>
       <Text
         variant={"body"}
         fontWeight={"medium"}
-        textAlign={"justify"}
+        textAlign="center"
         color={"neutral.c80"}
       >
         <Trans i18nKey="bluetooth.checkEnabled" values={deviceNames.nanoX} />
@@ -39,4 +41,5 @@ function BluetoothDisabled() {
   );
 }
 
+// eslint-disable-next-line @typescript-eslint/ban-types
 export default memo<{}>(BluetoothDisabled);

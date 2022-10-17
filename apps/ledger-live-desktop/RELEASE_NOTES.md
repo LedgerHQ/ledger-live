@@ -1,3 +1,54 @@
+# 2.49.0
+
+A few small but mighty improvements have been made to Ledger Live's swapping capabilities 👇
+
+### 🚀 Features
+
+- You can now filter swap quotes based on floating or fixed rates.
+
+### 🐛 Fixes
+
+- Trying to swap some assets with Changelly, such as GALA and MBOX, may have resulted in the app crashing. We've sorted this out and everything is working as it should now.
+
+# 2.48.0
+
+### 🚀 Features
+
+- Introducing a new way to swap crypto — **compare quotes from different platforms and choose the best offer**. Select the coin you want to swap and explore providers, KYC requirements, exchange rates, and more. In addition, you can now fully leverage DeFi protocols to swap ERC-20 tokens on decentralised exchanges.
+- Olá! From today, **Ledger Live supports Brazilian Portuguese** 🇧🇷 You can change the language in the settings menu under General → Display language.
+- When sending BTC, a **warning message** will alert you if there are any **pending incoming transactions**.
+
+### 🐛 Fixes
+
+We’ve tidied up some bugs that caused issues when sending Zcash and signing transactions. Everything is running smoothly again.
+
+# 2.47.0
+
+Here's a look at what's new in Ledger Live.
+
+### 🚀 Features
+
+- Put your CELO tokens to work—stake CELO and earn rewards directly from Ledger Live.
+
+### 🐛 Fixes
+
+We've released a few improvements and patches to reduce friction when sending transactions.
+
+# 2.46.0
+
+We're releasing a slew of new features and improvements. Here is what’s new in Ledger Live 👇
+
+### 🚀 Features
+
+- We've added **Filecoin support** to the Ledger Live roaster. Beginning today, you can send and receive its native currency FIL.
+- **Empowering our external partners**. With more coins and tokens added to the Ledger platform, the account pages now display banners stating if integration has been done externally and by who.
+
+### 🐛 Fixes
+
+We've tidied up some minor bugs.
+
+Don’t forget to update your Ledger Live app so that you can access these new features.
+
 # 2.45.0
 
 We're back with another roundup of handy new features and improvements.

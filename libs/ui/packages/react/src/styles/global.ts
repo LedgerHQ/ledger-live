@@ -15,7 +15,7 @@ export const GlobalStyle = createGlobalStyle<GlobalStyleProps>`
   }
 
   body {
-    font-family: Inter;
+    font-family: Inter, sans-serif;
     font-size: 100%;
   }
 

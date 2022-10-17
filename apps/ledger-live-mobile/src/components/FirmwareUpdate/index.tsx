@@ -4,8 +4,15 @@ import { NativeModules } from "react-native";
 import { useSelector, useDispatch } from "react-redux";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { Button, Icons } from "@ledgerhq/native-ui";
+import { DeviceInfo } from "@ledgerhq/types-live";
+import { BluetoothNotSupportedError } from "@ledgerhq/live-common/errors";
 import {
-  BackgroundEvent,
+  DisconnectedDevice,
+  DisconnectedDeviceDuringOperation,
+  WebsocketConnectionError,
+} from "@ledgerhq/errors";
+import {
+  FwUpdateBackgroundEvent,
   nextBackgroundEventSelector,
 } from "../../reducers/appstate";
 import {
@@ -14,7 +21,6 @@ import {
 } from "../../actions/appstate";
 import BottomModal from "../BottomModal";
 import GenericErrorView from "../GenericErrorView";
-import { DeviceInfo } from "@ledgerhq/types-live";
 import useLatestFirmware from "../../hooks/useLatestFirmware";
 import ConfirmRecoveryStep from "./ConfirmRecoveryStep";
 import FlashMcuStep from "./FlashMcuStep";
@@ -22,13 +28,9 @@ import FirmwareUpdatedStep from "./FirmwareUpdatedStep";
 import ConfirmPinStep from "./ConfirmPinStep";
 import ConfirmUpdateStep from "./ConfirmUpdateStep";
 import DownloadingUpdateStep from "./DownloadingUpdateStep";
+import DeviceLanguageStep from "./DeviceLanguageStep";
 import { track } from "../../analytics";
-import { BluetoothNotSupportedError } from "@ledgerhq/live-common/errors";
-import {
-  DisconnectedDevice,
-  DisconnectedDeviceDuringOperation,
-  WebsocketConnectionError,
-} from "@ledgerhq/errors";
+import { FwUpdateForegroundEvent } from "./types";
 
 type Props = {
   device: Device;
@@ -45,12 +47,15 @@ type FwUpdateStep =
   | "flashingMcu"
   | "confirmPin"
   | "confirmUpdate"
-  | "firmwareUpdated";
+  | "firmwareUpdated"
+  | "promptLanguageChange";
+
 type FwUpdateState = {
   step: FwUpdateStep;
   progress?: number;
   error?: Error;
   installing?: string | null;
+  updatedDeviceInfo?: DeviceInfo;
 };
 
 export default function FirmwareUpdate({
@@ -70,7 +75,7 @@ export default function FirmwareUpdate({
   const fwUpdateStateReducer = useCallback(
     (
       state: FwUpdateState,
-      event: BackgroundEvent | { type: "reset"; wired: boolean },
+      event: FwUpdateBackgroundEvent | FwUpdateForegroundEvent,
     ): FwUpdateState => {
       switch (event.type) {
         case "confirmPin":
@@ -97,6 +102,11 @@ export default function FirmwareUpdate({
             installing: event.installing,
           };
         case "firmwareUpdated":
+          return {
+            step: "promptLanguageChange",
+            updatedDeviceInfo: event.updatedDeviceInfo,
+          };
+        case "languagePromptDismissed":
           return { step: "firmwareUpdated" };
         case "error":
           return { step: "error", error: event.error };
@@ -125,7 +135,7 @@ export default function FirmwareUpdate({
     installing: undefined,
   });
 
-  const { step, progress, error, installing } = state;
+  const { step, progress, error, installing, updatedDeviceInfo } = state;
 
   const onReset = useCallback(() => {
     dispatchEvent({ type: "reset", wired: device.wired });
@@ -138,7 +148,8 @@ export default function FirmwareUpdate({
     step === "confirmRecoveryBackup" ||
     step === "firmwareUpdated" ||
     step === "error" ||
-    step === "confirmPin";
+    step === "confirmPin" ||
+    step === "promptLanguageChange";
 
   const onTryClose = useCallback(
     (restoreApps: boolean) => {
@@ -146,7 +157,7 @@ export default function FirmwareUpdate({
         onClose(restoreApps);
       }
     },
-    [canClose],
+    [canClose, onClose],
   );
 
   const onCloseAndReinstall = useCallback(() => onTryClose(true), [onTryClose]);
@@ -202,6 +213,14 @@ export default function FirmwareUpdate({
       )}
       {step === "flashingMcu" && (
         <FlashMcuStep progress={progress} installing={installing} />
+      )}
+      {step === "promptLanguageChange" && (
+        <DeviceLanguageStep
+          dispatchEvent={dispatchEvent}
+          updatedDeviceInfo={updatedDeviceInfo}
+          oldDeviceInfo={deviceInfo}
+          device={device}
+        />
       )}
       {step === "firmwareUpdated" && (
         <FirmwareUpdatedStep onReinstallApps={onCloseAndReinstall} />

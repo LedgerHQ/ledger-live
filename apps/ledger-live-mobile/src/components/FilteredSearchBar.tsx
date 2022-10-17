@@ -10,7 +10,7 @@ import { ScreenName } from "../const";
 
 type Props = {
   initialQuery?: string;
-  renderList: (list: any[]) => ReactNode;
+  renderList: (_: any[]) => ReactNode;
   renderEmptySearch: () => ReactNode;
   keys?: string[];
   list: any[];
@@ -34,7 +34,7 @@ const FilteredSearchBar = ({
     (newQuery: string) => {
       setQuery(newQuery);
       if (route.name === ScreenName.ReceiveSelectCrypto) {
-        track("search_clicked", { input: newQuery, screen: route.name });
+        track("search_clicked", { input: newQuery });
       }
     },
     [route.name],

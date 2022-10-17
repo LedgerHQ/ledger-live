@@ -2,6 +2,8 @@ import React, { useCallback, useMemo, memo } from "react";
 import { useNavigation, useRoute, RouteProp } from "@react-navigation/native";
 import { useTheme } from "styled-components/native";
 import { useDispatch } from "react-redux";
+import { DeviceModelId } from "@ledgerhq/devices";
+import { useStartPostOnboardingCallback } from "@ledgerhq/live-common/postOnboarding/hooks/index";
 import { NavigatorName, ScreenName } from "../../../const";
 import { DeviceNames } from "../types";
 import BaseStepperView, { PairNew, ConnectNano } from "./setupDevice/scenes";
@@ -48,9 +50,8 @@ function OnboardingStepPairNew() {
   >();
 
   const dispatch = useDispatch();
-  const {
-    triggerJustFinishedOnboardingNewDevicePushNotificationModal,
-  } = useNotifications();
+  const { triggerJustFinishedOnboardingNewDevicePushNotificationModal } =
+    useNotifications();
   const { resetCurrentStep } = useNavigationInterceptor();
 
   const { deviceModelId, showSeedWarning } = route.params;
@@ -89,6 +90,10 @@ function OnboardingStepPairNew() {
     [deviceModelId, theme],
   );
 
+  const startPostOnboarding = useStartPostOnboardingCallback(
+    deviceModelId as DeviceModelId,
+  );
+
   const onFinish = useCallback(() => {
     dispatch(completeOnboarding());
     resetCurrentStep();
@@ -102,21 +107,19 @@ function OnboardingStepPairNew() {
       screen: NavigatorName.Main,
     });
 
+    startPostOnboarding();
+
     triggerJustFinishedOnboardingNewDevicePushNotificationModal();
   }, [
     dispatch,
     navigation,
     resetCurrentStep,
     triggerJustFinishedOnboardingNewDevicePushNotificationModal,
+    startPostOnboarding,
   ]);
 
   const nextPage = useCallback(() => {
     onFinish();
-    // TODO: FIX @react-navigation/native using Typescript
-    // @ts-ignore next-line
-    // navigation.navigate(ScreenName.OnboardingFinish, {
-    //  ...route.params,
-    // });
   }, [onFinish]);
 
   return (

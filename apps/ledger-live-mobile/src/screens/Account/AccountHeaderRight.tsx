@@ -2,16 +2,21 @@ import React, { useState, useCallback, useEffect } from "react";
 import { View } from "react-native";
 import { useSelector } from "react-redux";
 import { useNavigation, useRoute } from "@react-navigation/native";
-import { FiltersMedium, OthersMedium } from "@ledgerhq/native-ui/assets/icons";
+import { SettingsMedium, OthersMedium } from "@ledgerhq/native-ui/assets/icons";
+import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import { NavigatorName, ScreenName } from "../../const";
 import Touchable from "../../components/Touchable";
-import { accountScreenSelector } from "../../reducers/accounts";
+import {
+  accountScreenSelector,
+  accountsSelector,
+} from "../../reducers/accounts";
 import TokenContextualModal from "../Settings/Accounts/TokenContextualModal";
 
 export default function AccountHeaderRight() {
   const navigation = useNavigation();
   const route = useRoute();
   const { account, parentAccount } = useSelector(accountScreenSelector(route));
+  const accounts = useSelector(accountsSelector);
 
   const [isOpened, setOpened] = useState(false);
 
@@ -19,6 +24,11 @@ export default function AccountHeaderRight() {
   const closeModal = () => {
     setOpened(false);
   };
+
+  const currency = getAccountCurrency(account);
+  const cryptoAccounts = accounts.filter(
+    account => account.currency.id === currency.id,
+  );
 
   useEffect(() => {
     if (!account) {
@@ -34,7 +44,7 @@ export default function AccountHeaderRight() {
         <Touchable
           event="ShowContractAddress"
           onPress={toggleModal}
-          style={{ alignItems: "center", justifyContent: "center", margin: 16 }}
+          style={{ alignItems: "center", justifyContent: "center" }}
         >
           <View>
             <OthersMedium size={24} color={"neutral.c100"} />
@@ -52,19 +62,24 @@ export default function AccountHeaderRight() {
   if (account.type === "Account") {
     return (
       <Touchable
-        event="AccountGoSettings"
+        event="button_clicked"
+        eventProperties={{
+          button: "Account Settings",
+        }}
         onPress={() => {
           navigation.navigate(NavigatorName.AccountSettings, {
             screen: ScreenName.AccountSettingsMain,
             params: {
               accountId: account.id,
+              hasOtherAccountsForThisCrypto:
+                cryptoAccounts && cryptoAccounts.length > 1,
             },
           });
         }}
-        style={{ alignItems: "center", justifyContent: "center", margin: 16 }}
+        style={{ alignItems: "center", justifyContent: "center" }}
       >
         <View>
-          <FiltersMedium size={24} color="neutral.c100" />
+          <SettingsMedium size={24} color="neutral.c100" />
         </View>
       </Touchable>
     );

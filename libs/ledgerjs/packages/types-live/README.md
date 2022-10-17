@@ -1,4 +1,4 @@
-<img src="https://user-images.githubusercontent.com/211411/34776833-6f1ef4da-f618-11e7-8b13-f0697901d6a8.png" height="100" />
+<img src="https://user-images.githubusercontent.com/4631227/191834116-59cf590e-25cc-4956-ae5c-812ea464f324.png" height="100" />
 
 ## @ledgerhq/types-live
 
@@ -51,6 +51,10 @@ Ledger Live main types.
 *   [Feature](#feature)
     *   [Properties](#properties-13)
     *   [enabled](#enabled)
+    *   [desktop_version](#desktop_version)
+    *   [desktop_version](#desktop_version-1)
+    *   [desktop_version](#desktop_version-2)
+    *   [enabledOverriddenForCurrentDesktopVersion](#enabledoverriddenforcurrentdesktopversion)
     *   [languages_whitelisted](#languages_whitelisted)
     *   [languages_whitelisted](#languages_whitelisted-1)
     *   [languages_blacklisted](#languages_blacklisted)
@@ -134,26 +138,51 @@ Ledger Live main types.
 *   [PortfolioRange](#portfoliorange)
 *   [AssetsDistribution](#assetsdistribution)
     *   [Properties](#properties-43)
-*   [SwapOperation](#swapoperation)
+*   [PostOnboardingActionId](#postonboardingactionid)
+*   [PostOnboardingAction](#postonboardingaction)
     *   [Properties](#properties-44)
-*   [SwapOperationRaw](#swapoperationraw)
+    *   [featureFlagId](#featureflagid)
+    *   [navigationParams](#navigationparams)
+    *   [Icon](#icon)
+    *   [title](#title)
+    *   [description](#description)
+    *   [tagLabel](#taglabel)
+    *   [actionCompletedPopupLabel](#actioncompletedpopuplabel)
+    *   [actionCompletedHubTitle](#actioncompletedhubtitle)
+    *   [startEvent](#startevent)
+    *   [startEventProperties](#starteventproperties)
+*   [PostOnboardingActionState](#postonboardingactionstate)
     *   [Properties](#properties-45)
-*   [SignedOperation](#signedoperation)
+    *   [completed](#completed)
+*   [PostOnboardingState](#postonboardingstate)
     *   [Properties](#properties-46)
-*   [SignedOperationRaw](#signedoperationraw)
+    *   [deviceModelId](#devicemodelid)
+    *   [walletEntryPointDismissed](#walletentrypointdismissed)
+    *   [actionsToComplete](#actionstocomplete)
+    *   [actionsCompleted](#actionscompleted)
+    *   [lastActionCompleted](#lastactioncompleted)
+*   [PostOnboardingHubState](#postonboardinghubstate)
     *   [Properties](#properties-47)
+*   [SwapOperation](#swapoperation)
+    *   [Properties](#properties-48)
+*   [SwapOperationRaw](#swapoperationraw)
+    *   [Properties](#properties-49)
+*   [SignedOperation](#signedoperation)
+    *   [Properties](#properties-50)
+*   [SignedOperationRaw](#signedoperationraw)
+    *   [Properties](#properties-51)
 *   [SignOperationEvent](#signoperationevent)
 *   [SignOperationEventRaw](#signoperationeventraw)
 *   [TransactionCommon](#transactioncommon)
-    *   [Properties](#properties-48)
-*   [TransactionCommonRaw](#transactioncommonraw)
-    *   [Properties](#properties-49)
-*   [FeeStrategy](#feestrategy)
-    *   [Properties](#properties-50)
-*   [TransactionStatusCommon](#transactionstatuscommon)
-    *   [Properties](#properties-51)
-*   [TransactionStatusCommonRaw](#transactionstatuscommonraw)
     *   [Properties](#properties-52)
+*   [TransactionCommonRaw](#transactioncommonraw)
+    *   [Properties](#properties-53)
+*   [FeeStrategy](#feestrategy)
+    *   [Properties](#properties-54)
+*   [TransactionStatusCommon](#transactionstatuscommon)
+    *   [Properties](#properties-55)
+*   [TransactionStatusCommonRaw](#transactionstatuscommonraw)
+    *   [Properties](#properties-56)
 
 ### TokenAccount
 
@@ -457,18 +486,20 @@ Type: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Globa
 
 Add others with union (e.g. "learn" | "market" | "foo")
 
-Type: (`"learn"` | `"pushNotifications"` | `"llmUsbFirmwareUpdate"` | `"ratings"` | `"counterValue"` | `"buyDeviceFromLive"` | `"ptxSmartRouting"` | `"ptxSmartRoutingMobile"` | [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String))
+Type: (`"learn"` | `"pushNotifications"` | `"llmNewDeviceSelection"` | `"llmUsbFirmwareUpdate"` | `"ratings"` | `"counterValue"` | `"deviceLocalization"` | `"deviceInitialApps"` | `"buyDeviceFromLive"` | `"ptxSmartRouting"` | `"currencyOsmosis"` | `"currencyOsmosisMobile"` | `"currencyFantom"` | `"currencyMoonbeam"` | `"currencyCronos"` | `"currencySongbird"` | `"currencyFlare"` | `"currencyFantomMobile"` | `"currencyMoonbeamMobile"` | `"currencyCronosMobile"` | `"currencySongbirdMobile"` | `"currencyFlareMobile"` | `"ptxSmartRoutingMobile"` | `"mockFeature"` | `"syncOnboarding"` | `"walletConnectLiveApp"` | `"customImage"` | `"referralProgramDiscoverCard"` | `"referralProgramDesktopBanner"`)
 
 ### Feature
 
 We use objects instead of direct booleans for potential future improvements
 like feature versioning etc
 
-Type: {enabled: [boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean), languages_whitelisted: \[[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)]?, languages_blacklisted: \[[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)]?, enabledOverriddenForCurrentLanguage: [boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)?, overridesRemote: [boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)?, params: any?}
+Type: {enabled: [boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean), desktop_version: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)?, enabledOverriddenForCurrentDesktopVersion: [boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)?, languages_whitelisted: \[[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)]?, languages_blacklisted: \[[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)]?, enabledOverriddenForCurrentLanguage: [boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)?, overridesRemote: [boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)?, params: any?}
 
 #### Properties
 
 *   `enabled` **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)** 
+*   `desktop_version` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)?** 
+*   `enabledOverriddenForCurrentDesktopVersion` **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)?** 
 *   `languages_whitelisted` **\[[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)]?** 
 *   `languages_blacklisted` **\[[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)]?** 
 *   `enabledOverriddenForCurrentLanguage` **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)?** 
@@ -478,6 +509,30 @@ Type: {enabled: [boolean](https://developer.mozilla.org/docs/Web/JavaScript/Refe
 #### enabled
 
 If false, the feature is disabled (for every languages regardless of the languages_whitelisted option)
+
+Type: [boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)
+
+#### desktop_version
+
+The `desktop_version` option is desktop specific, it has no impact on mobile
+
+Type: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)
+
+#### desktop_version
+
+If set, the feature is disabled when the desktop app version does not satisfies this param
+
+Type: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)
+
+#### desktop_version
+
+It should respect the semantic versioning specification (https://semver.org/)
+
+Type: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)
+
+#### enabledOverriddenForCurrentDesktopVersion
+
+Whether the remote value of `enabled` was overriden due to `desktop_version`
 
 Type: [boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)
 
@@ -537,7 +592,7 @@ Type: {firmware: [string](https://developer.mozilla.org/docs/Web/JavaScript/Refe
 
 ### DeviceInfo
 
-Type: {mcuVersion: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), version: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), majMin: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), targetId: ([string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String) | [number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)), isBootloader: [boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean), isRecoveryMode: [boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)?, isOSU: [boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean), providerName: ([string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String) | null | [undefined](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/undefined)), managerAllowed: [boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean), pinValidated: [boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean), seVersion: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)?, mcuBlVersion: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)?, mcuTargetId: [number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)?, seTargetId: [number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)?, onboarded: [boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)?, hasDevFirmware: [boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)?}
+Type: {mcuVersion: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), version: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), majMin: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), targetId: ([string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String) | [number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)), isBootloader: [boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean), isRecoveryMode: [boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)?, isOSU: [boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean), providerName: ([string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String) | null | [undefined](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/undefined)), managerAllowed: [boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean), pinValidated: [boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean), seVersion: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)?, mcuBlVersion: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)?, mcuTargetId: [number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)?, seTargetId: [number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)?, onboarded: [boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)?, hasDevFirmware: [boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)?, bootloaderVersion: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)?, hardwareVersion: [number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)?, languageId: [number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)?}
 
 #### Properties
 
@@ -557,6 +612,9 @@ Type: {mcuVersion: [string](https://developer.mozilla.org/docs/Web/JavaScript/Re
 *   `seTargetId` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)?** 
 *   `onboarded` **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)?** 
 *   `hasDevFirmware` **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)?** 
+*   `bootloaderVersion` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)?** 
+*   `hardwareVersion` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)?** 
+*   `languageId` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)?** 
 
 ### DeviceModelInfo
 
@@ -609,7 +667,7 @@ Type: {id: Id, mcu: Id, name: [string](https://developer.mozilla.org/docs/Web/Ja
 
 ### FirmwareInfo
 
-Type: {isBootloader: [boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean), rawVersion: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), targetId: [number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number), seVersion: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)?, mcuVersion: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), mcuBlVersion: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)?, mcuTargetId: [number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)?, seTargetId: [number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)?, flags: [Buffer](https://nodejs.org/api/buffer.html)}
+Type: {isBootloader: [boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean), rawVersion: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), targetId: [number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number), seVersion: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)?, mcuVersion: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), mcuBlVersion: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)?, mcuTargetId: [number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)?, seTargetId: [number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)?, flags: [Buffer](https://nodejs.org/api/buffer.html), bootloaderVersion: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)?, hardwareVersion: [number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)?, languageId: [number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)?}
 
 #### Properties
 
@@ -622,6 +680,9 @@ Type: {isBootloader: [boolean](https://developer.mozilla.org/docs/Web/JavaScript
 *   `mcuTargetId` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)?** 
 *   `seTargetId` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)?** 
 *   `flags` **[Buffer](https://nodejs.org/api/buffer.html)** 
+*   `bootloaderVersion` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)?** 
+*   `hardwareVersion` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)?** 
+*   `languageId` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)?** 
 
 ### OsuFirmware
 
@@ -836,7 +897,7 @@ Type: {ticker: [string](https://developer.mozilla.org/docs/Web/JavaScript/Refere
 
 ### OperationType
 
-Type: (`"IN"` | `"OUT"` | `"NONE"` | `"CREATE"` | `"REVEAL"` | `"DELEGATE"` | `"UNDELEGATE"` | `"REDELEGATE"` | `"REWARD"` | `"FEES"` | `"FREEZE"` | `"UNFREEZE"` | `"VOTE"` | `"REWARD_PAYOUT"` | `"BOND"` | `"UNBOND"` | `"WITHDRAW_UNBONDED"` | `"SET_CONTROLLER"` | `"SLASH"` | `"NOMINATE"` | `"CHILL"` | `"SUPPLY"` | `"REDEEM"` | `"APPROVE"` | `"OPT_IN"` | `"OPT_OUT"` | `"NFT_IN"` | `"NFT_OUT"`)
+Type: (`"IN"` | `"OUT"` | `"NONE"` | `"CREATE"` | `"REVEAL"` | `"DELEGATE"` | `"UNDELEGATE"` | `"REDELEGATE"` | `"REWARD"` | `"FEES"` | `"FREEZE"` | `"UNFREEZE"` | `"VOTE"` | `"REWARD_PAYOUT"` | `"BOND"` | `"UNBOND"` | `"WITHDRAW_UNBONDED"` | `"SET_CONTROLLER"` | `"SLASH"` | `"NOMINATE"` | `"CHILL"` | `"SUPPLY"` | `"REDEEM"` | `"APPROVE"` | `"OPT_IN"` | `"OPT_OUT"` | `"LOCK"` | `"UNLOCK"` | `"WITHDRAW"` | `"REVOKE"` | `"ACTIVATE"` | `"REGISTER"` | `"NFT_IN"` | `"NFT_OUT"`)
 
 ### Operation
 
@@ -1029,14 +1090,188 @@ Type: (`"all"` | `"year"` | `"month"` | `"week"` | `"day"`)
 
 ### AssetsDistribution
 
-Type: {isAvailable: [boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean), list: [Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<{currency: (CryptoCurrency | TokenCurrency), distribution: [number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number), amount: [number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number), countervalue: [number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)}>, showFirst: [number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number), sum: [number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)}
+Type: {isAvailable: [boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean), list: [Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<{currency: (CryptoCurrency | TokenCurrency), accounts: [Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[AccountLike](#accountlike)>, distribution: [number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number), amount: [number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number), countervalue: [number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)}>, showFirst: [number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number), sum: [number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)}
 
 #### Properties
 
 *   `isAvailable` **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)** 
-*   `list` **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<{currency: (CryptoCurrency | TokenCurrency), distribution: [number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number), amount: [number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number), countervalue: [number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)}>** 
+*   `list` **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<{currency: (CryptoCurrency | TokenCurrency), accounts: [Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[AccountLike](#accountlike)>, distribution: [number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number), amount: [number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number), countervalue: [number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)}>** 
 *   `showFirst` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)** 
 *   `sum` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)** 
+
+### PostOnboardingActionId
+
+Unique identifier of a post onboarding action.
+
+### PostOnboardingAction
+
+All necessary information for complete integration of a post onboarding
+action.
+
+Type: {id: [PostOnboardingActionId](#postonboardingactionid), featureFlagId: [FeatureId](#featureid)?, navigationParams: [Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)\<any>?, Icon: function (props: {size: [number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number), color: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)}): any, title: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), description: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), tagLabel: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)?, actionCompletedPopupLabel: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), actionCompletedHubTitle: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), startEvent: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)?, startEventProperties: any?}
+
+#### Properties
+
+*   `id` **[PostOnboardingActionId](#postonboardingactionid)** 
+*   `featureFlagId` **[FeatureId](#featureid)?** 
+*   `navigationParams` **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)\<any>?** 
+*   `Icon` **function (props: {size: [number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number), color: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)}): any** 
+*   `title` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** 
+*   `description` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** 
+*   `tagLabel` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)?** 
+*   `actionCompletedPopupLabel` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** 
+*   `actionCompletedHubTitle` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** 
+*   `startEvent` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)?** 
+*   `startEventProperties` **any?** 
+
+#### featureFlagId
+
+If this action is linked to a feature that is enabled by a feature flag,
+use this property to identify the feature flag.
+
+Type: [FeatureId](#featureid)
+
+#### navigationParams
+
+Navigation params when the user presses the button for this action
+
+*   In LLM, this will be used like this:
+    `navigation.navigate(...navigationParams)`
+*   In LLD, this will be used like this:
+    `history.push(...navigationParams)`
+
+Type: [Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)\<any>
+
+#### Icon
+
+Icon displayed for this action in the post onboarding hub.
+
+Type: function (props: {size: [number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number), color: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)}): any
+
+#### title
+
+Title displayed for this action in the post onboarding hub.
+
+Type: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)
+
+#### description
+
+Description displayed for this action in the post onboarding hub.
+
+Type: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)
+
+#### tagLabel
+
+Tag displayed for this action in the post onboarding hub.
+
+Type: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)
+
+#### actionCompletedPopupLabel
+
+Will appear in an success alert at the bottom of the post-onboarding hub
+after completing this action.
+
+Type: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)
+
+#### actionCompletedHubTitle
+
+Will be used as a title success alert at the bottom of the post-onboarding
+hub after completing this action.
+
+Type: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)
+
+#### startEvent
+
+Event that will be dispatched when starting this action.
+
+Type: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)
+
+#### startEventProperties
+
+Event properties that will be dispatched when starting this action.
+
+Type: any
+
+### PostOnboardingActionState
+
+State of a post onboarding action.
+
+Type: {completed: [boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)}
+
+#### Properties
+
+*   `completed` **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)** 
+
+#### completed
+
+Whether the user has completed this action. This will be reflected in the
+UI of the post onboarding hub.
+
+Type: [boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)
+
+### PostOnboardingState
+
+To be used for a redux reducer.
+Keeps all necessary information about the state of the post onboarding hub
+and can be persisted in storage.
+
+Type: {deviceModelId: (DeviceModelId | null), walletEntryPointDismissed: [boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean), actionsToComplete: [Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[PostOnboardingActionId](#postonboardingactionid)>, actionsCompleted: any, lastActionCompleted: ([PostOnboardingActionId](#postonboardingactionid) | null)}
+
+#### Properties
+
+*   `deviceModelId` **(DeviceModelId | null)** 
+*   `walletEntryPointDismissed` **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)** 
+*   `actionsToComplete` **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[PostOnboardingActionId](#postonboardingactionid)>** 
+*   `actionsCompleted` **any** 
+*   `lastActionCompleted` **([PostOnboardingActionId](#postonboardingactionid) | null)** 
+
+#### deviceModelId
+
+Model Id of the device for which the post onboarding was started.
+
+Type: (DeviceModelId | null)
+
+#### walletEntryPointDismissed
+
+Did the user dismiss the post onboarding entry point on the wallet page.
+
+Type: [boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)
+
+#### actionsToComplete
+
+List of all actions that have to be completed in this post onboarding
+(whether they are completed or).
+This is used to populate the list of actions in the post onboarding hub UI.
+
+Type: [Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[PostOnboardingActionId](#postonboardingactionid)>
+
+#### actionsCompleted
+
+"completed" state for each action.
+
+Type: any
+
+#### lastActionCompleted
+
+Last action that the user has completed.
+
+This is used to display potentially different content in the post
+onboarding hub UI depending on the last action that was completed.
+
+Type: ([PostOnboardingActionId](#postonboardingactionid) | null)
+
+### PostOnboardingHubState
+
+Digest of the store & list of actions into something directly consumable
+by UI. (All UI data will be in there).
+
+Type: {deviceModelId: (DeviceModelId | null), lastActionCompleted: ([PostOnboardingAction](#postonboardingaction) | null), actionsState: [Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)\<any>}
+
+#### Properties
+
+*   `deviceModelId` **(DeviceModelId | null)** 
+*   `lastActionCompleted` **([PostOnboardingAction](#postonboardingaction) | null)** 
+*   `actionsState` **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)\<any>** 
 
 ### SwapOperation
 

@@ -5,6 +5,7 @@ import {
   TokenCurrency,
   CryptoCurrency,
 } from "@ledgerhq/types-cryptoassets";
+import Animated from "react-native-reanimated";
 import { Portfolio } from "@ledgerhq/types-live";
 import { currenciesSelector } from "../../reducers/accounts";
 import CurrencyDownStatusAlert from "../../components/CurrencyDownStatusAlert";
@@ -16,15 +17,18 @@ const GraphCardContainer = ({
   showGraphCard,
   areAccountsEmpty,
   counterValueCurrency,
+  currentPositionY,
+  graphCardEndPosition,
 }: {
   portfolio: Portfolio;
   showGraphCard: boolean;
   areAccountsEmpty: boolean;
   counterValueCurrency: Currency;
+  currentPositionY: Animated.SharedValue<number>;
+  graphCardEndPosition: number;
 }) => {
-  const currencies: Array<CryptoCurrency | TokenCurrency> = useSelector(
-    currenciesSelector,
-  );
+  const currencies: Array<CryptoCurrency | TokenCurrency> =
+    useSelector(currenciesSelector);
 
   return (
     <>
@@ -35,6 +39,8 @@ const GraphCardContainer = ({
           areAccountsEmpty={areAccountsEmpty}
           counterValueCurrency={counterValueCurrency}
           portfolio={portfolio}
+          currentPositionY={currentPositionY}
+          graphCardEndPosition={graphCardEndPosition}
         />
       )}
     </>

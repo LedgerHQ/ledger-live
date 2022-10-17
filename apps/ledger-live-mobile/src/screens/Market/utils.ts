@@ -1,5 +1,4 @@
 import { TFunction } from "i18next";
-import { localeSelector } from "../../reducers/settings";
 
 const indexes: [string, number][] = [
   ["d", 1],

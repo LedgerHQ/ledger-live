@@ -39,7 +39,7 @@ function OnboardingStepPairNew() {
     >
   >();
 
-  const { deviceModelId } = route.params;
+  const deviceModelId = route?.params?.deviceModelId;
 
   const dispatch = useDispatch();
   const { resetCurrentStep } = useNavigationInterceptor();
@@ -50,7 +50,7 @@ function OnboardingStepPairNew() {
       // @TODO: Replace this placeholder with the correct illustration asap
       illustration: (
         <Illustration
-          size={150}
+          size={200}
           darkSource={images.dark.Intro}
           lightSource={images.light.Intro}
         />
@@ -76,8 +76,6 @@ function OnboardingStepPairNew() {
   }, [dispatch, navigation, resetCurrentStep]);
 
   const onNext = useCallback(() => {
-    // TODO: FIX @react-navigation/native using Typescript
-    // @ts-ignore next-line
     navigation.navigate(NavigatorName.ImportAccounts, {
       screen: ScreenName.ScanAccounts,
       params: {
@@ -87,8 +85,6 @@ function OnboardingStepPairNew() {
   }, [navigation, onFinish]);
 
   const nextPage = useCallback(() => {
-    // TODO: FIX @react-navigation/native using Typescript
-    // @ts-ignore next-line
     navigation.navigate(ScreenName.OnboardingModalWarning, {
       screen: ScreenName.OnboardingModalSyncDesktopInformation,
       params: { onNext },

@@ -1,7 +1,6 @@
 import bs58check from "bs58check";
 import * as bjs from "bitcoinjs-lib";
 import { InvalidAddress } from "@ledgerhq/errors";
-import { DerivationModes } from "../types";
 import Base from "./base";
 
 class ZCash extends Base {
@@ -27,7 +26,11 @@ class ZCash extends Base {
   }
 
   // eslint-disable-next-line
-  async getLegacyAddress(xpub: string, account: number, index: number): Promise<string> {
+  async getLegacyAddress(
+    xpub: string,
+    account: number,
+    index: number
+  ): Promise<string> {
     const pk = bjs.crypto.hash160(await this.getPubkeyAt(xpub, account, index));
     const payload = Buffer.allocUnsafe(22);
     payload.writeUInt16BE(this.network.pubKeyHash, 0);
@@ -44,12 +47,7 @@ class ZCash extends Base {
     return await this.getLegacyAddress(xpub, account, index);
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  getDerivationMode(address: string) {
-    return DerivationModes.LEGACY;
-  }
-
-  toOutputScript(address: string) {
+  toOutputScript(address: string): Buffer {
     if (!this.validateAddress(address)) {
       throw new InvalidAddress();
     }

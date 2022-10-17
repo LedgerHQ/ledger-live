@@ -9,8 +9,9 @@ import type {
   TransactionRes,
 } from "../../bot/types";
 import type { Transaction } from "./types";
-import { pickSiblings } from "../../bot/specs";
+import { botTest, genericTestDestination, pickSiblings } from "../../bot/specs";
 import { isAccountEmpty } from "../../account";
+import { acceptTransaction } from "./speculos-deviceActions";
 
 const currency = getCryptoCurrencyById("hedera");
 const memoTestMessage = "This is a test memo.";
@@ -39,6 +40,7 @@ const hedera: AppSpec<Transaction> = {
     firmware: "2.1.0",
     appVersion: "1.0.8",
   },
+  genericDeviceAction: acceptTransaction,
   currency,
   transactionCheck: ({ maxSpendable }) => {
     invariant(maxSpendable.gt(0), "Balance is too low");
@@ -47,6 +49,7 @@ const hedera: AppSpec<Transaction> = {
     {
       name: "Send ~50%",
       maxRun: 2,
+      testDestination: genericTestDestination,
       transaction: ({
         account,
         siblings,
@@ -73,14 +76,17 @@ const hedera: AppSpec<Transaction> = {
         accountBeforeTransaction,
         operation,
       }: TransactionTestInput<Transaction>): void => {
-        expect(account.balance.toString()).toBe(
-          accountBeforeTransaction.balance.minus(operation.value).toString()
+        botTest("account balance moved with operation value", () =>
+          expect(account.balance.toString()).toBe(
+            accountBeforeTransaction.balance.minus(operation.value).toString()
+          )
         );
       },
     },
     {
       name: "Send max",
       maxRun: 2,
+      testDestination: genericTestDestination,
       transaction: ({
         account,
         siblings,
@@ -95,21 +101,6 @@ const hedera: AppSpec<Transaction> = {
           transaction,
           updates: [{ recipient }, { useAllAmount: true }],
         };
-      },
-      test: ({
-        accountBeforeTransaction,
-        account,
-        operation,
-        transaction,
-      }: TransactionTestInput<Transaction>): void => {
-        const accountBalanceAfterTx = account.balance.toNumber();
-
-        // NOTE: operation.fee is the ACTUAL (not estimated) fee cost of the transaction
-        const amount = accountBeforeTransaction.balance
-          .minus(transaction.amount.plus(operation.fee))
-          .toNumber();
-
-        expect(accountBalanceAfterTx).toBe(amount);
       },
     },
     {
@@ -137,7 +128,9 @@ const hedera: AppSpec<Transaction> = {
         };
       },
       test: ({ transaction }: TransactionTestInput<Transaction>): void => {
-        expect(transaction.memo).toBe(memoTestMessage);
+        botTest("transaction.memo is set", () =>
+          expect(transaction.memo).toBe(memoTestMessage)
+        );
       },
     },
   ],

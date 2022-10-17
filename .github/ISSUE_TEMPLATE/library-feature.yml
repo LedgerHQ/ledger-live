@@ -1,0 +1,24 @@
+name: Library Feature Request (developers)
+description: Request a missing feature on one of our NPM libraries
+title: "[Feature]: "
+labels: ["feature", "libraries", "triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to fill out this feature request!
+  - type: input
+    id: library
+    attributes:
+      label: Library name
+      description: What is the name of the NPM library you used? (or name of a new library?)
+      placeholder: ex. @ledgerhq/hw-app-eth
+    validations:
+      required: false
+  - type: textarea
+    id: what
+    attributes:
+      label: Describe your feature request
+      description: Please describe, as a developer, the specification of what you would like.
+    validations:
+      required: true

@@ -187,21 +187,38 @@ export const fetchOperations = async ({
       .includeFailed(true)
       .join("transactions")
       .call();
-  } catch (e: any) {
+
+    if (!rawOperations || !rawOperations.records.length) {
+      return [];
+    }
+
+    operations = operations.concat(
+      await rawOperationsToOperations(rawOperations.records, addr, accountId)
+    );
+
+    while (rawOperations.records.length > 0) {
+      rawOperations = await rawOperations.next();
+      operations = operations.concat(
+        await rawOperationsToOperations(rawOperations.records, addr, accountId)
+      );
+    }
+
+    return operations;
+  } catch (e: unknown) {
     // FIXME: terrible hacks, because Stellar SDK fails to cast network failures to typed errors in react-native...
     // (https://github.com/stellar/js-stellar-sdk/issues/638)
-    const errorMsg = e ? e.toString() : "";
+    const errorMsg = e ? String(e) : "";
 
     if (e instanceof NotFoundError || errorMsg.match(/status code 404/)) {
       return [];
     }
 
     if (errorMsg.match(/status code 4[0-9]{2}/)) {
-      return new LedgerAPI4xx();
+      throw new LedgerAPI4xx();
     }
 
     if (errorMsg.match(/status code 5[0-9]{2}/)) {
-      return new LedgerAPI5xx();
+      throw new LedgerAPI5xx();
     }
 
     if (
@@ -214,23 +231,6 @@ export const fetchOperations = async ({
 
     throw e;
   }
-
-  if (!rawOperations || !rawOperations.records.length) {
-    return [];
-  }
-
-  operations = operations.concat(
-    await rawOperationsToOperations(rawOperations.records, addr, accountId)
-  );
-
-  while (rawOperations.records.length > 0) {
-    rawOperations = await rawOperations.next();
-    operations = operations.concat(
-      await rawOperationsToOperations(rawOperations.records, addr, accountId)
-    );
-  }
-
-  return operations;
 };
 
 export const fetchAccountNetworkInfo = async (

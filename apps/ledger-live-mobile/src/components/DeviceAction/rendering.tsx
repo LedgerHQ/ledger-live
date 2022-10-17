@@ -1,11 +1,15 @@
 import React, { useEffect, useState } from "react";
+import { ScrollView } from "react-native";
 import { useDispatch } from "react-redux";
 import styled from "styled-components/native";
-import { WrongDeviceForAccount, UnexpectedBootloader } from "@ledgerhq/errors";
+import { WrongDeviceForAccount } from "@ledgerhq/errors";
 import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { Transaction } from "@ledgerhq/live-common/generated/types";
+import { getDeviceModel } from "@ledgerhq/devices";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { AppRequest } from "@ledgerhq/live-common/hw/actions/app";
 import firmwareUpdateRepair from "@ledgerhq/live-common/hw/firmwareUpdate-repair";
+import { getProviderName } from "@ledgerhq/live-common/exchange/swap/utils/index";
 import {
   InfiniteLoader,
   Text,
@@ -14,21 +18,42 @@ import {
   Icons,
   Log,
 } from "@ledgerhq/native-ui";
+import BigNumber from "bignumber.js";
+import {
+  ExchangeRate,
+  Exchange,
+} from "@ledgerhq/live-common/exchange/swap/types";
+import {
+  getAccountCurrency,
+  getAccountUnit,
+  getMainAccount,
+  getAccountName,
+} from "@ledgerhq/live-common/account/index";
+import { TFunction } from "react-i18next";
+import { DeviceModelId } from "@ledgerhq/types-devices";
 import { setModalLock } from "../../actions/appstate";
 import { urls } from "../../config/urls";
 import Alert from "../Alert";
 import { lighten } from "../../colors";
 import Button from "../Button";
-import FirmwareProgress from "../FirmwareProgress";
+import DeviceActionProgress from "../DeviceActionProgress";
 import { NavigatorName, ScreenName } from "../../const";
 import Animation from "../Animation";
-import getDeviceAnimation from "./getDeviceAnimation";
+import { getDeviceAnimation } from "../../helpers/getDeviceAnimation";
 import GenericErrorView from "../GenericErrorView";
 import Circle from "../Circle";
-import { MANAGER_TABS } from "../../screens/Manager/Manager";
+import { MANAGER_TABS } from "../../const/manager";
+import { providerIcons } from "../../icons/swap/index";
 import ExternalLink from "../ExternalLink";
 import { track } from "../../analytics";
-import TermsFooter, { TermsProviders } from "../TermsFooter";
+import CurrencyUnitValue from "../CurrencyUnitValue";
+import CurrencyIcon from "../CurrencyIcon";
+import TermsFooter from "../TermsFooter";
+import Illustration from "../../images/illustration/Illustration";
+import { FramedImageWithContext } from "../CustomImage/FramedImage";
+
+import notOnboardedDarkImg from "../../images/illustration/Dark/_010.png";
+import notOnboardedLightImg from "../../images/illustration/Light/_010.png";
 
 const Wrapper = styled(Flex).attrs({
   flex: 1,
@@ -210,27 +235,132 @@ export function renderConfirmSwap({
   t,
   device,
   theme,
-  provider,
+  transaction,
+  exchangeRate,
+  exchange,
+  amountExpectedTo,
+  estimatedFees,
 }: RawProps & {
   device: Device;
-  provider?: TermsProviders;
+  transaction: Transaction;
+  exchangeRate: ExchangeRate;
+  exchange: Exchange;
+  amountExpectedTo?: string;
+  estimatedFees?: string;
+}) {
+  const ProviderIcon = providerIcons[exchangeRate.provider.toLowerCase()];
+
+  return (
+    <ScrollView>
+      <Wrapper width="100%">
+        <Alert type="primary" learnMoreUrl={urls.swap.learnMore}>
+          {t("DeviceAction.confirmSwap.alert")}
+        </Alert>
+        <AnimationContainer
+          marginTop="16px"
+          withVerifyAddressHeight={device.modelId !== "blue"}
+        >
+          <Animation
+            source={getDeviceAnimation({ device, key: "validate", theme })}
+          />
+        </AnimationContainer>
+        <TitleText>{t("DeviceAction.confirmSwap.title")}</TitleText>
+
+        <Flex justifyContent={"space-between"} width="100%">
+          <FieldItem title={t("DeviceAction.swap2.amountSent")}>
+            <Text>
+              <CurrencyUnitValue
+                value={transaction.amount}
+                unit={getAccountUnit(exchange.fromAccount)}
+                disableRounding
+                showCode
+              />
+            </Text>
+          </FieldItem>
+
+          <FieldItem title={t("DeviceAction.swap2.amountReceived")}>
+            <Text>
+              <CurrencyUnitValue
+                unit={getAccountUnit(exchange.toAccount)}
+                value={
+                  amountExpectedTo
+                    ? new BigNumber(amountExpectedTo)
+                    : exchangeRate.toAmount
+                }
+                disableRounding
+                showCode
+              />
+            </Text>
+          </FieldItem>
+
+          <FieldItem title={t("DeviceAction.swap2.provider")}>
+            <Flex flexDirection="row" alignItems="center">
+              <Flex paddingRight={2}>
+                <ProviderIcon size={14} />
+              </Flex>
+
+              <Text>{getProviderName(exchangeRate.provider)}</Text>
+            </Flex>
+          </FieldItem>
+
+          <FieldItem title={t("DeviceAction.swap2.fees")}>
+            <Text>
+              <CurrencyUnitValue
+                unit={getAccountUnit(
+                  getMainAccount(
+                    exchange.fromAccount,
+                    exchange.fromParentAccount,
+                  ),
+                )}
+                value={new BigNumber(estimatedFees || 0)}
+                disableRounding
+                showCode
+              />
+            </Text>
+          </FieldItem>
+
+          <FieldItem title={t("DeviceAction.swap2.sourceAccount")}>
+            <Flex flexDirection="row" alignItems="center">
+              <CurrencyIcon
+                size={20}
+                currency={getAccountCurrency(exchange.fromAccount)}
+              />
+              <Text marginLeft={2}>{getAccountName(exchange.fromAccount)}</Text>
+            </Flex>
+          </FieldItem>
+
+          <FieldItem title={t("DeviceAction.swap2.targetAccount")}>
+            <Flex flexDirection="row" alignItems="center">
+              <CurrencyIcon
+                size={20}
+                currency={getAccountCurrency(exchange.toAccount)}
+              />
+              <Text marginLeft={2}>{getAccountName(exchange.toAccount)}</Text>
+            </Flex>
+          </FieldItem>
+        </Flex>
+
+        <TermsFooter provider={exchangeRate.provider} />
+      </Wrapper>
+    </ScrollView>
+  );
+}
+
+function FieldItem({
+  title,
+  children,
+}: {
+  title: string;
+  children: React.ReactNode;
 }) {
   return (
-    <Wrapper width="100%">
-      <Alert type="primary" learnMoreUrl={urls.swap.learnMore}>
-        {t("DeviceAction.confirmSwap.alert")}
-      </Alert>
-      <AnimationContainer
-        marginTop="16px"
-        withVerifyAddressHeight={device.modelId !== "blue"}
-      >
-        <Animation
-          source={getDeviceAnimation({ device, key: "validate", theme })}
-        />
-      </AnimationContainer>
-      <TitleText>{t("DeviceAction.confirmSwap.title")}</TitleText>
-      <TermsFooter provider={provider} />
-    </Wrapper>
+    <Flex flexDirection="row" justifyContent="space-between" paddingY={4}>
+      <Text color="neutral.c70">{title}</Text>
+
+      <Flex flexDirection="row" alignItems="center">
+        {children}
+      </Flex>
+    </Flex>
   );
 }
 
@@ -276,6 +406,29 @@ export function renderAllowManager({
       <CenteredText>
         {t("DeviceAction.allowManagerPermission", { wording })}
       </CenteredText>
+    </Wrapper>
+  );
+}
+
+export function renderAllowLanguageInstallation({
+  t,
+  device,
+  theme,
+}: RawProps & {
+  device: Device;
+}) {
+  const deviceName = getDeviceModel(device.modelId).productName;
+
+  return (
+    <Wrapper>
+      <Text variant="h4" textAlign="center">
+        {t("deviceLocalization.allowLanguageInstallation", { deviceName })}
+      </Text>
+      <AnimationContainer>
+        <Animation
+          source={getDeviceAnimation({ device, key: "validate", theme })}
+        />
+      </AnimationContainer>
     </Wrapper>
   );
 }
@@ -374,11 +527,15 @@ export function renderError({
   onRetry,
   managerAppName,
   navigation,
+  Icon,
+  iconColor,
 }: RawProps & {
   navigation?: any;
   error: Error;
   onRetry?: () => void;
   managerAppName?: string;
+  Icon?: React.ComponentProps<typeof GenericErrorView>["Icon"];
+  iconColor?: string;
 }) {
   const onPress = () => {
     if (managerAppName && navigation) {
@@ -395,7 +552,13 @@ export function renderError({
   };
   return (
     <Wrapper>
-      <GenericErrorView error={error} withDescription withIcon>
+      <GenericErrorView
+        error={error}
+        withDescription
+        withIcon
+        Icon={Icon}
+        iconColor={iconColor}
+      >
         {onRetry || managerAppName ? (
           <ActionContainer marginBottom={0} marginTop={32}>
             <StyledButton
@@ -416,6 +579,71 @@ export function renderError({
   );
 }
 
+export function renderDeviceNotOnboarded({
+  t,
+  device,
+  navigation,
+}: {
+  t: TFunction;
+  device: Device;
+  // TODO: correctly type the navigation prop here AND in the DeviceAction component
+  navigation: any;
+}) {
+  const navigateToOnboarding = () => {
+    if (device.modelId === DeviceModelId.nanoFTS) {
+      // On pairing success, navigate to the Sync Onboarding Companion
+      navigation.navigate(NavigatorName.BaseOnboarding, {
+        screen: NavigatorName.SyncOnboarding,
+        params: {
+          screen: ScreenName.SyncOnboardingCompanion,
+          params: {
+            device,
+          },
+        },
+      });
+    } else {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore next-line
+      navigation.navigate(NavigatorName.BaseOnboarding, {
+        screen: NavigatorName.Onboarding,
+        params: {
+          screen: ScreenName.OnboardingSetNewDevice,
+          params: {
+            deviceModelId: device.modelId,
+          },
+        },
+      });
+    }
+  };
+
+  const deviceName = getDeviceModel(device.modelId).productName;
+
+  return (
+    <Wrapper>
+      <Illustration
+        lightSource={notOnboardedLightImg}
+        darkSource={notOnboardedDarkImg}
+        size={175}
+      />
+      <Text variant="h4" textAlign="center" mt={4}>
+        {t("DeviceAction.deviceNotOnboarded.title")}
+      </Text>
+      <Text variant="body" color="neutral.c70" textAlign="center" mt={4} mx={4}>
+        {t("DeviceAction.deviceNotOnboarded.description", { deviceName })}
+      </Text>
+      <Button
+        type="main"
+        outline={false}
+        onPress={navigateToOnboarding}
+        mt={7}
+        alignSelf="stretch"
+      >
+        {t("DeviceAction.button.openOnboarding")}
+      </Button>
+    </Wrapper>
+  );
+}
+
 export function renderConnectYourDevice({
   t,
   unresponsive,
@@ -429,7 +657,11 @@ export function renderConnectYourDevice({
 }) {
   return (
     <Wrapper>
-      <AnimationContainer withConnectDeviceHeight={device.modelId !== "blue"}>
+      <AnimationContainer
+        withConnectDeviceHeight={
+          ![DeviceModelId.blue, DeviceModelId.nanoFTS].includes(device.modelId)
+        }
+      >
         <Animation
           source={getDeviceAnimation({
             device,
@@ -676,8 +908,122 @@ export const AutoRepair = ({
   return (
     <Wrapper>
       <TitleText>{t("FirmwareUpdate.preparingDevice")}</TitleText>
-      <FirmwareProgress progress={progress} />
+      <DeviceActionProgress progress={progress} />
       <DescriptionText>{t("FirmwareUpdate.pleaseWaitUpdate")}</DescriptionText>
     </Wrapper>
+  );
+};
+
+const ImageLoadingGeneric: React.FC<{
+  title: string;
+  children?: React.ReactNode | undefined;
+  top?: React.ReactNode | undefined;
+  bottom?: React.ReactNode | undefined;
+  progress?: number;
+  backgroundPlaceholderText?: string;
+}> = ({
+  title,
+  top,
+  bottom,
+  children,
+  progress,
+  backgroundPlaceholderText,
+}) => {
+  return (
+    <Flex
+      flexDirection="column"
+      justifyContent="space-between"
+      alignItems="center"
+      flex={1}
+      alignSelf="stretch"
+    >
+      <Flex flex={1} flexDirection="column" alignItems={"center"}>
+        {top}
+      </Flex>
+      <Flex flexDirection={"column"} alignItems="center" alignSelf="stretch">
+        <Text textAlign="center" variant="large" mb={10} alignSelf="stretch">
+          {title}
+        </Text>
+        <FramedImageWithContext
+          loadingProgress={progress}
+          backgroundPlaceholderText={backgroundPlaceholderText}
+        >
+          {children}
+        </FramedImageWithContext>
+      </Flex>
+      <Flex flex={1} flexDirection="column" alignItems={"center"}>
+        {bottom}
+      </Flex>
+    </Flex>
+  );
+};
+
+export const renderImageLoadRequested = ({
+  t,
+  device,
+}: RawProps & { device: Device }) => {
+  return (
+    <ImageLoadingGeneric
+      title={t("customImage.allowPreview", {
+        productName:
+          device.deviceName || getDeviceModel(device.modelId)?.productName,
+      })}
+      progress={0}
+      backgroundPlaceholderText="load requested illustration placeholder"
+    />
+  );
+};
+
+export const renderLoadingImage = ({
+  t,
+  device,
+  progress,
+}: RawProps & { progress: number; device: Device }) => {
+  return (
+    <ImageLoadingGeneric
+      title={t("customImage.loadingPicture", {
+        productName:
+          device.deviceName || getDeviceModel(device.modelId)?.productName,
+      })}
+      progress={progress}
+      backgroundPlaceholderText="image loading illustration placeholder"
+      bottom={
+        <Flex flexDirection="column" flex={1} justifyContent="flex-end" pb={8}>
+          <Text textAlign="center" variant="bodyLineHeight" color="neutral.c60">
+            {t("customImage.timeDisclaimer")}
+          </Text>
+        </Flex>
+      }
+    />
+  );
+};
+
+export const renderImageCommitRequested = ({
+  t,
+  device,
+}: RawProps & { device: Device }) => {
+  return (
+    <ImageLoadingGeneric
+      title={t("customImage.confirmPicture", {
+        productName:
+          device.deviceName || getDeviceModel(device.modelId)?.productName,
+      })}
+      backgroundPlaceholderText="commit requested illustration placeholder"
+      top={
+        <Flex
+          flex={1}
+          flexDirection="column"
+          justifyContent="center"
+          alignItems="center"
+        >
+          <Flex mb={3} p={4} backgroundColor="neutral.c30" borderRadius={999}>
+            <Icons.CheckAloneMedium size={16} color="success.c50" />
+          </Flex>
+          <Text textAlign="center" color="neutral.c70" variant="bodyLineHeight">
+            {t("customImage.pictureLoaded")}
+          </Text>
+        </Flex>
+      }
+    />
   );
 };

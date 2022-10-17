@@ -23,11 +23,40 @@ import FullNodeStatus from "~/renderer/modals/AddAccounts/FullNodeStatus";
 import useSatStackStatus from "~/renderer/hooks/useSatStackStatus";
 import useEnv from "~/renderer/hooks/useEnv";
 import type { SatStackStatus } from "@ledgerhq/live-common/families/bitcoin/satstack";
+import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
+import { NetworkDown } from "@ledgerhq/errors";
+import ErrorBanner from "~/renderer/components/ErrorBanner";
 
 const listSupportedTokens = () => listTokens().filter(t => isCurrencySupported(t.parentCurrency));
 
 const StepChooseCurrency = ({ currency, setCurrency }: StepProps) => {
-  const currencies = useMemo(() => listSupportedCurrencies().concat(listSupportedTokens()), []);
+  const osmo = useFeature("currencyOsmosis");
+  const fantom = useFeature("currencyFantom");
+  const moonbeam = useFeature("currencyMoonbeam");
+  const cronos = useFeature("currencyCronos");
+  const songbird = useFeature("currencySongbird");
+  const flare = useFeature("currencyFlare");
+
+  const featureFlaggedCurrencies = useMemo(
+    () => ({
+      osmo,
+      fantom,
+      moonbeam,
+      cronos,
+      songbird,
+      flare,
+    }),
+    [osmo, fantom, moonbeam, cronos, songbird, flare],
+  );
+
+  const currencies = useMemo(() => {
+    const currencies = listSupportedCurrencies().concat(listSupportedTokens());
+    const deactivatedCurrencies = Object.entries(featureFlaggedCurrencies)
+      .filter(([, feature]) => !feature?.enabled)
+      .map(([name]) => name);
+
+    return currencies.filter(c => !deactivatedCurrencies.includes(c.id));
+  }, [featureFlaggedCurrencies]);
 
   const url =
     currency && currency.type === "TokenCurrency"
@@ -36,7 +65,13 @@ const StepChooseCurrency = ({ currency, setCurrency }: StepProps) => {
 
   return (
     <>
-      {currency ? <CurrencyDownStatusAlert currencies={[currency]} /> : null}
+      {!navigator.onLine ? (
+        <div>
+          <ErrorBanner error={new NetworkDown()} />
+        </div>
+      ) : currency ? (
+        <CurrencyDownStatusAlert currencies={[currency]} />
+      ) : null}
       {/* $FlowFixMe: onChange type is not good */}
       <SelectCurrency currencies={currencies} autoFocus onChange={setCurrency} value={currency} />
       <FullNodeStatus currency={currency} />
@@ -142,7 +177,7 @@ export const StepChooseCurrencyFooter = ({
       ) : (
         <Button
           primary
-          disabled={!currency || fullNodeNotReady}
+          disabled={!currency || fullNodeNotReady || !navigator.onLine}
           onClick={() => transitionTo("connectDevice")}
           data-test-id="modal-continue-button"
         >

@@ -4,6 +4,7 @@ import { WebView } from "react-native-webview";
 import styled from "styled-components/native";
 import { track, TrackScreen } from "../../analytics";
 import useRatings from "../../logic/ratings";
+// eslint-disable-next-line import/no-unresolved
 import getWindowDimensions from "../../logic/getWindowDimensions";
 
 const { height } = getWindowDimensions();
@@ -46,7 +47,7 @@ const StyledWebview = styled(WebView)`
 `;
 
 type Props = {
-  setStep: Function;
+  setStep: any;
 };
 
 const DisappointedForm = ({ setStep }: Props) => {

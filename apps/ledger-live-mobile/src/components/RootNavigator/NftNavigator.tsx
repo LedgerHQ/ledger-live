@@ -5,13 +5,14 @@ import { getStackNavigatorConfig } from "../../navigation/navigatorConfig";
 import NftViewer from "../Nft/NftViewer";
 import NftImageViewer from "../Nft/NftImageViewer";
 import { ScreenName } from "../../const";
-import { CloseButton, BackButton } from "../../screens/OperationDetails";
+import { BackButton } from "../../screens/OperationDetails";
 
 const NftNavigator = () => {
   const { colors } = useTheme();
-  const stackNavConfig = useMemo(() => getStackNavigatorConfig(colors, true), [
-    colors,
-  ]);
+  const stackNavConfig = useMemo(
+    () => getStackNavigatorConfig(colors, true),
+    [colors],
+  );
 
   return (
     <Stack.Navigator screenOptions={stackNavConfig} detachInactiveScreens>
@@ -21,7 +22,7 @@ const NftNavigator = () => {
         options={({ navigation }) => ({
           title: null,
           headerRight: null,
-          headerLeft: () => <CloseButton navigation={navigation} />,
+          headerLeft: () => <BackButton navigation={navigation} />,
         })}
       />
       <Stack.Screen

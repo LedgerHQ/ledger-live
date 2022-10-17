@@ -12,6 +12,7 @@ import { formatFeatureId } from "./FirebaseRemoteConfig";
 
 import { languageSelector } from "../reducers/settings";
 
+// eslint-disable-next-line @typescript-eslint/ban-types
 type Props = PropsWithChildren<{}>;
 
 const getFeature = (
@@ -78,6 +79,11 @@ export const FirebaseFeatureFlagsProvider: React.FC<Props> = ({ children }) => {
         setLocalOverrides(currentOverrides => ({
           ...currentOverrides,
           [key]: overridenValue,
+        }));
+      } else {
+        setLocalOverrides(currentOverrides => ({
+          ...currentOverrides,
+          [key]: undefined,
         }));
       }
     },

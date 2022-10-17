@@ -6,6 +6,7 @@ import type {
 import type {
   Account,
   AccountLike,
+  AssetsDistribution,
   PortfolioRange,
 } from "@ledgerhq/types-live";
 import { getAccountCurrency, flattenAccounts } from "../../account";
@@ -16,6 +17,7 @@ import {
   getCurrencyPortfolio,
   getAssetsDistribution,
   getPortfolioCount,
+  GetPortfolioOptionsType,
 } from "./";
 export function useBalanceHistoryWithCountervalue({
   account,
@@ -34,13 +36,15 @@ export function usePortfolio({
   accounts,
   range,
   to,
+  options,
 }: {
   accounts: Account[];
   range: PortfolioRange;
   to: Currency;
+  options?: GetPortfolioOptionsType;
 }) {
   const state = useCountervaluesState();
-  return getPortfolio(accounts, range, state, to);
+  return getPortfolio(accounts, range, state, to, options);
 }
 export function useCurrencyPortfolio({
   accounts: rawAccounts,
@@ -62,14 +66,20 @@ export function useCurrencyPortfolio({
 export function useDistribution({
   accounts,
   to,
+  showEmptyAccounts,
+  hideEmptyTokenAccount,
 }: {
   accounts: Account[];
   to: Currency;
-}) {
+  showEmptyAccounts: boolean;
+  hideEmptyTokenAccount: boolean;
+}): AssetsDistribution {
   const state = useCountervaluesState();
   return getAssetsDistribution(accounts, state, to, {
     minShowFirst: 6,
     maxShowFirst: 6,
     showFirstThreshold: 0.95,
+    showEmptyAccounts,
+    hideEmptyTokenAccount,
   });
 }

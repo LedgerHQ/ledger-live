@@ -1,16 +1,12 @@
-import React, { useMemo } from "react";
+import React from "react";
 import { TouchableOpacity } from "react-native";
-import { getCurrencyColor } from "@ledgerhq/live-common/currencies/index";
 import { Currency, Unit } from "@ledgerhq/types-cryptoassets";
-import { Flex, ProgressLoader, Text, Tag } from "@ledgerhq/native-ui";
+import { ValueChange } from "@ledgerhq/types-live";
+import { Flex, Text, Tag, Icons } from "@ledgerhq/native-ui";
 import { useTheme } from "styled-components/native";
 import { BigNumber } from "bignumber.js";
-import CurrencyUnitValue from "../../components/CurrencyUnitValue";
-import CounterValue from "../../components/CounterValue";
-import { ensureContrast } from "../../colors";
-import Delta from "../../components/Delta";
-import ParentCurrencyIcon from "../../components/ParentCurrencyIcon";
-import { ValueChange } from "../../../../libs/ledger-live-common/src/portfolio/v2/types";
+import CurrencyUnitValue from "./CurrencyUnitValue";
+import CounterValue from "./CounterValue";
 
 type Props = {
   balance: BigNumber;
@@ -18,12 +14,14 @@ type Props = {
   currencyUnit?: Unit;
   countervalueChange?: ValueChange;
   name: string;
+  parentAccountName?: string;
   tag?: string | null | boolean;
   onPress?: () => void;
   progress?: number;
   hideDelta?: boolean;
   topLink?: boolean;
   bottomLink?: boolean;
+  isLast?: boolean;
 };
 
 const AccountRowLayout = ({
@@ -31,20 +29,14 @@ const AccountRowLayout = ({
   currency,
   currencyUnit,
   name,
+  parentAccountName,
   onPress,
-  hideDelta,
   topLink,
   bottomLink,
-  progress,
-  countervalueChange,
   tag,
+  isLast,
 }: Props) => {
   const { colors, space } = useTheme();
-
-  const color = useMemo(
-    () => ensureContrast(getCurrencyColor(currency), colors.constant.white),
-    [colors, currency],
-  );
 
   return (
     <TouchableOpacity onPress={onPress}>
@@ -57,66 +49,84 @@ const AccountRowLayout = ({
           mb={2}
         />
       )}
-      <Flex flexDirection="row" pt={topLink ? 0 : 6} pb={bottomLink ? 0 : 6}>
-        <Flex pr={4}>
-          <ProgressLoader
-            strokeWidth={2}
-            mainColor={color}
-            secondaryColor={colors.neutral.c40}
-            progress={progress}
-            radius={22}
+      <Flex
+        flexDirection="row"
+        pt={topLink ? 0 : 6}
+        pb={bottomLink || isLast ? 0 : 6}
+      >
+        <Flex
+          flex={1}
+          flexDirection="row"
+          justifyContent="space-between"
+          alignItems={"center"}
+        >
+          <Flex
+            flexDirection="column"
+            alignItems={"flex-start"}
+            flexShrink={1}
+            flexGrow={1}
+            mr={4}
           >
-            <ParentCurrencyIcon currency={currency} size={32} />
-          </ProgressLoader>
-        </Flex>
-        <Flex flex={1} justifyContent="center">
-          <Flex mb={1} flexDirection="row" justifyContent="space-between">
             <Flex
               flexGrow={1}
               flexShrink={1}
               flexDirection="row"
               alignItems="center"
             >
-              <Flex flexShrink={1}>
-                <Text
-                  variant="large"
-                  fontWeight="semiBold"
-                  color="neutral.c100"
-                  numberOfLines={1}
-                  flexShrink={1}
-                >
-                  {name}
-                </Text>
-              </Flex>
+              <Text
+                variant="large"
+                fontWeight="semiBold"
+                color="neutral.c100"
+                numberOfLines={1}
+                flexGrow={1}
+                flexShrink={1}
+              >
+                {name}
+              </Text>
               {tag && (
-                <Flex mx={3} flexShrink={0}>
-                  <Tag>{tag}</Tag>
-                </Flex>
+                <Tag flexShrink={0} ml={3} numberOfLines={1}>
+                  {tag}
+                </Tag>
               )}
             </Flex>
-            <Flex flexDirection="row" alignItems="flex-end" flexShrink={0}>
-              <Text variant="large" fontWeight="semiBold" color="neutral.c100">
-                <CounterValue
-                  currency={currency}
-                  value={balance}
-                  joinFragmentsSeparator=""
-                />
-              </Text>
-            </Flex>
-          </Flex>
-          <Flex flexDirection="row" justifyContent="space-between">
-            <Text variant="body" fontWeight="medium" color="neutral.c70">
-              <CurrencyUnitValue showCode unit={currencyUnit} value={balance} />
-            </Text>
-            {!hideDelta && countervalueChange && (
-              <Delta
-                percent
-                show0Delta={balance.toNumber() !== 0}
-                fallbackToPercentPlaceholder
-                valueChange={countervalueChange}
-              />
+
+            {parentAccountName && (
+              <Tag
+                type={"shade"}
+                size={"small"}
+                numberOfLines={1}
+                ellipsizeMode="middle"
+              >
+                {parentAccountName}
+              </Tag>
             )}
           </Flex>
+
+          <Flex
+            flexDirection="column"
+            justifyContent={"flex-end"}
+            alignItems={"flex-end"}
+            flexShrink={0}
+            flexGrow={0}
+            mr={3}
+          >
+            <Text variant="large" fontWeight="semiBold" color="neutral.c100">
+              <CounterValue
+                currency={currency}
+                value={balance}
+                joinFragmentsSeparator=""
+              />
+            </Text>
+            <Text
+              variant="body"
+              fontWeight="medium"
+              color="neutral.c70"
+              flex={1}
+            >
+              <CurrencyUnitValue showCode unit={currencyUnit} value={balance} />
+            </Text>
+          </Flex>
+          <Icons.DroprightMedium size={24} />
         </Flex>
       </Flex>
       {bottomLink && (

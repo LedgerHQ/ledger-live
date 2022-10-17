@@ -6,6 +6,7 @@ import ProviderCommon, {
   setCurrentCallRequestError,
   setCurrentCallRequestResult,
 } from "@ledgerhq/live-common/walletconnect/Provider";
+import { getEnv } from "@ledgerhq/live-common/env";
 import { useHistory } from "react-router-dom";
 import { accountSelector } from "~/renderer/reducers/accounts";
 import { openModal, closeAllModal } from "~/renderer/actions/modals";
@@ -23,7 +24,7 @@ const Provider = ({ children }: { children: React$Node }) => {
 
   const rest = {};
 
-  if (process.env.PLAYWRIGHT_RUN) {
+  if (getEnv("PLAYWRIGHT_RUN")) {
     rest.WalletConnect = WalletConnectClientMock;
   }
 

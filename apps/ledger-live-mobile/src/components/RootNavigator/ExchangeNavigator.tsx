@@ -17,9 +17,10 @@ export default function ExchangeNavigator() {
   const { t } = useTranslation();
   const { colors } = useTheme();
 
-  const tabNavigationConfig = useMemo(() => getLineTabNavigatorConfig(colors), [
-    colors,
-  ]);
+  const tabNavigationConfig = useMemo(
+    () => getLineTabNavigatorConfig(colors),
+    [colors],
+  );
   return (
     <Tab.Navigator {...tabNavigationConfig}>
       <Tab.Screen

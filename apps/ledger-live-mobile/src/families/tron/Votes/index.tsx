@@ -18,13 +18,12 @@ import {
 } from "@ledgerhq/live-common/families/tron/react";
 import { getDefaultExplorerView } from "@ledgerhq/live-common/explorers";
 import { Account } from "@ledgerhq/types-live";
-import { Box, Button, Text } from "@ledgerhq/native-ui";
+import { Box, Button, Icons, Text } from "@ledgerhq/native-ui";
 import { urls } from "../../../config/urls";
 import Row from "./Row";
 import Header from "./Header";
 import LText from "../../../components/LText";
 import { NavigatorName, ScreenName } from "../../../const";
-import Info from "../../../icons/Info";
 import ArrowRight from "../../../icons/ArrowRight";
 import DateFromNow from "../../../components/DateFromNow";
 import CurrencyUnitValue from "../../../components/CurrencyUnitValue";
@@ -87,13 +86,15 @@ const Delegation = ({ account, parentAccount }: Props) => {
     0,
   );
 
-  const openRewardsInfoModal = useCallback(() => setRewardsInfoModal(true), [
-    setRewardsInfoModal,
-  ]);
+  const openRewardsInfoModal = useCallback(
+    () => setRewardsInfoModal(true),
+    [setRewardsInfoModal],
+  );
 
-  const closeRewardsInfoModal = useCallback(() => setRewardsInfoModal(false), [
-    setRewardsInfoModal,
-  ]);
+  const closeRewardsInfoModal = useCallback(
+    () => setRewardsInfoModal(false),
+    [setRewardsInfoModal],
+  );
 
   const bridge = getAccountBridge(account, undefined);
 
@@ -149,13 +150,17 @@ const Delegation = ({ account, parentAccount }: Props) => {
 
   const percentVotesUsed = totalVotesUsed / tronPower;
 
+  if (!hasRewards && (!tronPower || !formattedVotes.length) && !canFreeze) {
+    return null;
+  }
+
   return (
     <View style={styles.root}>
       {(hasRewards || (tronPower > 0 && formattedVotes.length > 0)) && (
         <>
           <AccountSectionLabel
             name={t("tron.voting.rewards.title")}
-            icon={<Info size={16} color={colors.darkBlue} />}
+            Icon={Icons.InfoMedium}
             onPress={openRewardsInfoModal}
           />
           <View style={[styles.rewardSection]}>
@@ -242,15 +247,17 @@ const Delegation = ({ account, parentAccount }: Props) => {
         ) : (
           <>
             <AccountSectionLabel name={t("tron.voting.votes.title")} />
-            <AccountDelegationInfo
-              description={t("tron.voting.votes.description", {
-                name: account.currency.name,
-              })}
-              infoUrl={urls.tronStaking}
-              infoTitle={t("tron.voting.howItWorks")}
-              onPress={onDelegate}
-              ctaTitle={t("tron.voting.votes.cta")}
-            />
+            <Box my={6}>
+              <AccountDelegationInfo
+                description={t("tron.voting.votes.description", {
+                  name: account.currency.name,
+                })}
+                infoUrl={urls.tronStaking}
+                infoTitle={t("tron.voting.howItWorks")}
+                onPress={onDelegate}
+                ctaTitle={t("tron.voting.votes.cta")}
+              />
+            </Box>
           </>
         )
       ) : (
@@ -280,7 +287,7 @@ const Delegation = ({ account, parentAccount }: Props) => {
 
 const styles = StyleSheet.create({
   root: {
-    padding: 16,
+    paddingHorizontal: 16,
   },
   container: {
     padding: 16,
@@ -296,7 +303,6 @@ const styles = StyleSheet.create({
     borderRadius: 4,
     flexDirection: "row",
     alignItems: "center",
-    marginBottom: 16,
   },
   illustration: { alignSelf: "center", marginBottom: 16 },
   collectButton: {

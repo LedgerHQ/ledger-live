@@ -2,7 +2,7 @@ import trackingWrapper from "./tracking";
 import { AppManifest } from "./types";
 
 describe("trackingWrapper", () => {
-  const methodToMessage = [
+  test.each([
     {
       method: "platformLoad",
       message: "Platform Load",
@@ -107,10 +107,9 @@ describe("trackingWrapper", () => {
       method: "platformSignMessageUserRefused",
       message: "Platform sign message user refused",
     },
-  ];
-
-  for (const { method, message } of methodToMessage) {
-    it(`calls once inner trackPlatform function ${method} with event named: ${message}`, () => {
+  ])(
+    "calls once inner trackPlatform function $method with event named: $message",
+    ({ method, message }) => {
       // Given
       const appManifest = appManifestFixture();
       const mockedTrack = jest.fn();
@@ -127,8 +126,8 @@ describe("trackingWrapper", () => {
         },
         null
       );
-    });
-  }
+    }
+  );
 });
 
 function appManifestFixture(name = "live-app"): AppManifest {

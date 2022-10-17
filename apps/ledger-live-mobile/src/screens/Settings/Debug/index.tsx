@@ -2,10 +2,13 @@ import React from "react";
 import { useNavigation } from "@react-navigation/native";
 import config from "react-native-config";
 import { Box, Text } from "@ledgerhq/native-ui";
+import { Device } from "@ledgerhq/live-common/hw/actions/types";
+import { StackScreenProps } from "@react-navigation/stack";
 import { TrackScreen } from "../../../analytics";
 import SettingsRow from "../../../components/SettingsRow";
 import SelectDevice from "../../../components/SelectDevice";
 import { ScreenName } from "../../../const";
+import type { SettingsNavigatorStackParamList } from "../../../components/RootNavigator/SettingsNavigator";
 
 import GenerateMockAccounts from "./GenerateMockAccounts";
 import ImportBridgeStreamData from "./ImportBridgeStreamData";
@@ -18,6 +21,7 @@ import AnalyticsConsoleRow from "./AnalyticsConsoleRow";
 import OpenDebugStore from "./OpenDebugStore";
 import OpenDebugPlayground from "./OpenDebugPlayground";
 import OpenDebugFeatureFlags from "./OpenDebugFeatureFlags";
+import OpenDebugMultiAppInstall from "./OpenDebugMultiAppInstall";
 import OpenLottie from "./OpenDebugLottie";
 import OpenDebugLogs from "./OpenDebugLogs";
 import SkipLock from "../../../components/behaviour/SkipLock";
@@ -28,6 +32,20 @@ import MockModeRow from "../General/MockModeRow";
 import GenerateMockAccount from "./GenerateMockAccountsSelect";
 import OpenDebugEnv from "./OpenDebugEnv";
 import HasOrderedNanoRow from "./HasOrderedNanoRow";
+import OpenDebugBlePairingFlow from "./OpenDebugBlePairingFlow";
+import OpenDebugCustomImage from "./OpenDebugCustomImage";
+import OpenDebugPostOnboarding from "./OpenDebugPostOnboarding";
+
+// Type of DebugMocks screen route params
+export type DebugMocksParams = {
+  pairedDevice?: Device;
+};
+
+// Type of DebugMocks screen props
+export type DebugMockScreenProps = StackScreenProps<
+  SettingsNavigatorStackParamList,
+  "DebugMocks"
+>;
 
 export function DebugMocks() {
   return (
@@ -51,9 +69,13 @@ export function DebugMocks() {
       <OpenDebugFeatureFlags />
       <OpenDebugIcons />
       <OpenLottie />
+      <OpenDebugCustomImage />
+      <OpenDebugPostOnboarding />
       <OpenDebugPlayground />
+      <OpenDebugBlePairingFlow />
+      <OpenDebugMultiAppInstall />
       <ReadOnlyModeRow />
-      <HasOrderedNanoRow/>
+      <HasOrderedNanoRow />
       <MockModeRow />
       <AnalyticsConsoleRow />
       <AddMockAnnouncementButton title="Mock a new announcement" />

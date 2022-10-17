@@ -7,11 +7,56 @@ export const defaultFeatures: DefaultFeatures = {
   pushNotifications: {
     enabled: false,
   },
+  deviceLocalization: {
+    enabled: false,
+  },
   buyDeviceFromLive: {
     enabled: false,
     params: {
       url: null,
       debug: false,
+    },
+  },
+  currencyOsmosis: {
+    enabled: false,
+  },
+  currencyFantom: {
+    enabled: false,
+  },
+  currencyMoonbeam: {
+    enabled: false,
+  },
+  currencyCronos: {
+    enabled: false,
+  },
+  currencySongbird: {
+    enabled: false,
+  },
+  currencyFlare: {
+    enabled: false,
+  },
+  currencyOsmosisMobile: {
+    enabled: false,
+  },
+  currencyFantomMobile: {
+    enabled: false,
+  },
+  currencyMoonbeamMobile: {
+    enabled: false,
+  },
+  currencyCronosMobile: {
+    enabled: false,
+  },
+  currencySongbirdMobile: {
+    enabled: false,
+  },
+  currencyFlareMobile: {
+    enabled: false,
+  },
+  deviceInitialApps: {
+    enabled: false,
+    params: {
+      apps: ["Boilerplate", "Boilerplate_2", "Boilerplate_3"],
     },
   },
   ratings: {
@@ -62,6 +107,24 @@ export const defaultFeatures: DefaultFeatures = {
     },
   },
   counterValue: {
+    enabled: false,
+  },
+  llmNewDeviceSelection: {
+    enabled: false,
+  },
+  llmUsbFirmwareUpdate: {
+    enabled: false,
+  },
+  ptxSmartRouting: {
+    enabled: false,
+  },
+  ptxSmartRoutingMobile: {
+    enabled: false,
+  },
+  mockFeature: {
+    enabled: false,
+  },
+  syncOnboarding: {
     enabled: false,
   },
 };

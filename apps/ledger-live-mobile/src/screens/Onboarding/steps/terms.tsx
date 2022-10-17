@@ -61,12 +61,9 @@ function OnboardingStepTerms() {
   }, [toggle]);
 
   const next = useCallback(() => {
-    // TODO: Remove this stupid type check as soon as we convert useTermsAccept to TS
-    if (typeof setAccepted !== "boolean") setAccepted();
+    setAccepted();
     dispatch(setAnalytics(true));
 
-    // TODO: FIX @react-navigation/native using Typescript
-    // @ts-ignore next-line
     navigation.navigate({ name: ScreenName.OnboardingDeviceSelection });
   }, [setAccepted, dispatch, navigation]);
 
@@ -94,7 +91,7 @@ function OnboardingStepTerms() {
       />
       <LinkBox
         text={t("settings.about.privacyPolicy")}
-        url={urls.privacyPolicy[locale]}
+        url={urls.privacyPolicy[locale] ?? urls.privacyPolicy.en}
         event="OpenPrivacyPolicy"
       />
       <Flex flexDirection="row" mt={9}>

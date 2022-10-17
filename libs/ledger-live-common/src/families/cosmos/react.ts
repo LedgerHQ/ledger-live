@@ -25,20 +25,52 @@ import { getAccountUnit } from "../../account";
 import useMemoOnce from "../../hooks/useMemoOnce";
 import { LEDGER_VALIDATOR_ADDRESS } from "./utils";
 
-export function useCosmosPreloadData(): CosmosPreloadData {
-  const [state, setState] = useState(getCurrentCosmosPreloadData);
+// Add Cosmos-families imports below:
+import {
+  getCurrentOsmosisPreloadData,
+  getOsmosisPreloadDataUpdates,
+} from "../osmosis/preloadedData";
+import { LEDGER_OSMOSIS_VALIDATOR_ADDRESS } from "../osmosis/utils";
+
+export function useCosmosFamilyPreloadData(
+  currencyName: string
+): CosmosPreloadData {
+  let getCurrent;
+  let getUpdates;
+
+  if (currencyName == "cosmos") {
+    getCurrent = getCurrentCosmosPreloadData;
+    getUpdates = getCosmosPreloadDataUpdates;
+  }
+  if (currencyName == "osmosis") {
+    getCurrent = getCurrentOsmosisPreloadData;
+    getUpdates = getOsmosisPreloadDataUpdates;
+  }
+
+  const [state, setState] = useState(getCurrent);
   useEffect(() => {
-    const sub = getCosmosPreloadDataUpdates().subscribe(setState);
+    const sub = getUpdates().subscribe(setState);
     return () => sub.unsubscribe();
-  }, []);
+  }, [getCurrent, getUpdates]);
   return state;
 }
 
-export function useCosmosMappedDelegations(
+// export function useCosmosPreloadData(): CosmosPreloadData {
+//   const [state, setState] = useState(getCurrentCosmosPreloadData);
+//   useEffect(() => {
+//     const sub = getCosmosPreloadDataUpdates().subscribe(setState);
+//     return () => sub.unsubscribe();
+//   }, []);
+//   return state;
+// }
+
+export function useCosmosFamilyMappedDelegations(
   account: CosmosAccount,
   mode?: CosmosOperationMode
 ): CosmosMappedDelegation[] {
-  const { validators } = useCosmosPreloadData();
+  const currencyName = account.currency.name.toLowerCase();
+  const { validators } = useCosmosFamilyPreloadData(currencyName);
+
   const delegations = account.cosmosResources?.delegations;
   invariant(delegations, "cosmos: delegations is required");
   const unit = getAccountUnit(account);
@@ -54,7 +86,7 @@ export function useCosmosMappedDelegations(
   }, [delegations, validators, mode, unit]);
 }
 
-export function useCosmosDelegationsQuerySelector(
+export function useCosmosFamilyDelegationsQuerySelector(
   account: CosmosAccount,
   transaction: Transaction,
   delegationSearchFilter: CosmosSearchFilter = defaultSearchFilter
@@ -65,7 +97,10 @@ export function useCosmosDelegationsQuerySelector(
   value: CosmosMappedDelegation | null | undefined;
 } {
   const [query, setQuery] = useState<string>("");
-  const delegations = useCosmosMappedDelegations(account, transaction.mode);
+  const delegations = useCosmosFamilyMappedDelegations(
+    account,
+    transaction.mode
+  );
   const options = useMemo<CosmosMappedDelegation[]>(
     () => delegations.filter(delegationSearchFilter(query)),
     [query, delegations, delegationSearchFilter]
@@ -75,12 +110,12 @@ export function useCosmosDelegationsQuerySelector(
     switch (transaction.mode) {
       case "redelegate":
         invariant(
-          transaction.cosmosSourceValidator,
-          "cosmos: cosmosSourceValidator is required"
+          transaction.sourceValidator,
+          "cosmos: sourceValidator is required"
         );
         return options.find(
           ({ validatorAddress }) =>
-            validatorAddress === transaction.cosmosSourceValidator
+            validatorAddress === transaction.sourceValidator
         );
 
       default:
@@ -143,6 +178,7 @@ export function useSortedValidators(
   return sr;
 }
 
+// Nothing using this function?
 export function useMappedExtraOperationDetails({
   account,
   extra,
@@ -150,7 +186,7 @@ export function useMappedExtraOperationDetails({
   account: CosmosAccount;
   extra: CosmosExtraTxInfo;
 }): CosmosExtraTxInfo {
-  const { validators } = useCosmosPreloadData();
+  const { validators } = useCosmosFamilyPreloadData("cosmos");
   const unit = getAccountUnit(account);
   return {
     validators: extra.validators
@@ -159,24 +195,40 @@ export function useMappedExtraOperationDetails({
     validator: extra.validator
       ? mapDelegationInfo([extra.validator], validators, unit)[0]
       : undefined,
-    cosmosSourceValidator: extra.cosmosSourceValidator
-      ? extra.cosmosSourceValidator
-      : undefined,
+    sourceValidator: extra.sourceValidator ? extra.sourceValidator : undefined,
+    autoClaimedRewards:
+      extra.autoClaimedRewards != null
+        ? extra.autoClaimedRewards
+        : "empty string",
   };
 }
 
-export function useLedgerFirstShuffledValidatorsCosmos(
+export function useLedgerFirstShuffledValidatorsCosmosFamily(
+  currencyName: string,
   searchInput?: string
 ): CosmosValidatorItem[] {
-  const data = useCosmosPreloadData();
+  let data;
+  let ledgerValidatorAddress;
+  if (currencyName == "osmosis") {
+    data = getCurrentOsmosisPreloadData();
+    ledgerValidatorAddress = LEDGER_OSMOSIS_VALIDATOR_ADDRESS;
+  } else {
+    data = getCurrentCosmosPreloadData();
+    ledgerValidatorAddress = LEDGER_VALIDATOR_ADDRESS;
+  }
 
   return useMemo(() => {
-    return reorderValidators(data?.validators ?? [], searchInput);
-  }, [data, searchInput]);
+    return reorderValidators(
+      data?.validators ?? [],
+      ledgerValidatorAddress,
+      searchInput
+    );
+  }, [data, ledgerValidatorAddress, searchInput]);
 }
 
 function reorderValidators(
   validators: CosmosValidatorItem[],
+  ledgerValidatorAddress: string,
   searchInput?: string
 ): CosmosValidatorItem[] {
   const sortedValidators = validators
@@ -190,12 +242,12 @@ function reorderValidators(
 
   // move Ledger validator to the first position
   const ledgerValidator = sortedValidators.find(
-    (v) => v.validatorAddress === LEDGER_VALIDATOR_ADDRESS
+    (v) => v.validatorAddress === ledgerValidatorAddress
   );
 
   if (ledgerValidator) {
     const sortedValidatorsLedgerFirst = sortedValidators.filter(
-      (v) => v.validatorAddress !== LEDGER_VALIDATOR_ADDRESS
+      (v) => v.validatorAddress !== ledgerValidatorAddress
     );
     sortedValidatorsLedgerFirst.unshift(ledgerValidator);
 

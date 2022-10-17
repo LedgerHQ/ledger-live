@@ -1,5 +1,113 @@
 # @ledgerhq/react-native-hw-transport-ble
 
+## 6.27.8
+
+### Patch Changes
+
+- [#1356](https://github.com/LedgerHQ/ledger-live/pull/1356) [`ecac411d7a`](https://github.com/LedgerHQ/ledger-live/commit/ecac411d7aad6f4003503ba6259d7c25017ca7aa) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Updated readme.md of packages
+
+- Updated dependencies [[`ecac411d7a`](https://github.com/LedgerHQ/ledger-live/commit/ecac411d7aad6f4003503ba6259d7c25017ca7aa)]:
+  - @ledgerhq/devices@7.0.3
+  - @ledgerhq/errors@6.11.1
+  - @ledgerhq/hw-transport@6.27.6
+  - @ledgerhq/logs@6.10.1
+
+## 6.27.8-next.0
+
+### Patch Changes
+
+- [#1356](https://github.com/LedgerHQ/ledger-live/pull/1356) [`ecac411d7a`](https://github.com/LedgerHQ/ledger-live/commit/ecac411d7aad6f4003503ba6259d7c25017ca7aa) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Updated readme.md of packages
+
+- Updated dependencies [[`ecac411d7a`](https://github.com/LedgerHQ/ledger-live/commit/ecac411d7aad6f4003503ba6259d7c25017ca7aa)]:
+  - @ledgerhq/devices@7.0.3-next.0
+  - @ledgerhq/errors@6.11.1-next.0
+  - @ledgerhq/hw-transport@6.27.6-next.0
+  - @ledgerhq/logs@6.10.1-next.0
+
+## 6.27.7
+
+### Patch Changes
+
+- Updated dependencies [[`1a94cbf28a`](https://github.com/LedgerHQ/ledger-live/commit/1a94cbf28aaa2917c70719e22f446148cd66cef6), [`e0915b34ba`](https://github.com/LedgerHQ/ledger-live/commit/e0915b34ba37d9906b6c65e7e42f87893c088325)]:
+  - @ledgerhq/errors@6.11.0
+  - @ledgerhq/devices@7.0.2
+  - @ledgerhq/hw-transport@6.27.5
+
+## 6.27.7-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`1a94cbf28a`](https://github.com/LedgerHQ/ledger-live/commit/1a94cbf28aaa2917c70719e22f446148cd66cef6), [`e0915b34ba`](https://github.com/LedgerHQ/ledger-live/commit/e0915b34ba37d9906b6c65e7e42f87893c088325)]:
+  - @ledgerhq/errors@6.11.0-next.0
+  - @ledgerhq/devices@7.0.2-next.0
+  - @ledgerhq/hw-transport@6.27.5-next.0
+
+## 6.27.6
+
+### Patch Changes
+
+- Updated dependencies [[`ae5e33e15e`](https://github.com/LedgerHQ/ledger-live/commit/ae5e33e15e8a107d0ba8a3688a63eda2c0d43ce7)]:
+  - @ledgerhq/errors@6.10.2
+  - @ledgerhq/devices@7.0.1
+  - @ledgerhq/hw-transport@6.27.4
+
+## 6.27.6-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`ae5e33e15`](https://github.com/LedgerHQ/ledger-live/commit/ae5e33e15e8a107d0ba8a3688a63eda2c0d43ce7)]:
+  - @ledgerhq/errors@6.10.2-next.0
+  - @ledgerhq/devices@7.0.1-next.0
+  - @ledgerhq/hw-transport@6.27.4-next.0
+
+## 6.27.5
+
+### Patch Changes
+
+- [#1117](https://github.com/LedgerHQ/ledger-live/pull/1117) [`a7976db5d`](https://github.com/LedgerHQ/ledger-live/commit/a7976db5d3836d3d41ef0a0507373cad0bd8725c) Thanks [@github-actions](https://github.com/apps/github-actions)! - Fix crash when scanning for bluetooth devices
+
+## 6.27.5-next.0
+
+### Patch Changes
+
+- [#1070](https://github.com/LedgerHQ/ledger-live/pull/1070) [`533e658dcd`](https://github.com/LedgerHQ/ledger-live/commit/533e658dcd7862d4e6c9cb1b55c400652c68ae26) Thanks [@grsoares21](https://github.com/grsoares21)! - Fix crash when scanning for bluetooth devices
+
+## 6.27.3
+
+### Patch Changes
+
+- [`3cc45438a8`](https://github.com/LedgerHQ/ledger-live/commit/3cc45438a8aced1922742ff077946d1216f63525) Thanks [@elbywan](https://github.com/elbywan)! - Use commonjs imports for @ledgerhq/devices. Fixes #777.
+
+## 6.27.4
+
+### Patch Changes
+
+- [#970](https://github.com/LedgerHQ/ledger-live/pull/970) [`ecfdd1ebd8`](https://github.com/LedgerHQ/ledger-live/commit/ecfdd1ebd8cc7c4b5bc6315316ce662bb6241311) Thanks [@alexandremgo](https://github.com/alexandremgo)! - BLE scanning and pairing hooks
+
+- Updated dependencies [[`ecfdd1ebd8`](https://github.com/LedgerHQ/ledger-live/commit/ecfdd1ebd8cc7c4b5bc6315316ce662bb6241311)]:
+  - @ledgerhq/hw-transport@6.27.3
+
+## 6.27.4-next.0
+
+### Patch Changes
+
+- [#970](https://github.com/LedgerHQ/ledger-live/pull/970) [`ecfdd1ebd`](https://github.com/LedgerHQ/ledger-live/commit/ecfdd1ebd8cc7c4b5bc6315316ce662bb6241311) Thanks [@alexandremgo](https://github.com/alexandremgo)! - BLE scanning and pairing hooks
+
+- Updated dependencies [[`ecfdd1ebd`](https://github.com/LedgerHQ/ledger-live/commit/ecfdd1ebd8cc7c4b5bc6315316ce662bb6241311)]:
+  - @ledgerhq/hw-transport@6.27.3-next.0
+
+## 6.27.3
+
+### Patch Changes
+
+- [`3cc45438a8`](https://github.com/LedgerHQ/ledger-live/commit/3cc45438a8aced1922742ff077946d1216f63525) Thanks [@elbywan](https://github.com/elbywan)! - Use commonjs imports for @ledgerhq/devices. Fixes #777.
+
+## 6.27.3-next.0
+
+### Patch Changes
+
+- [`3cc45438a`](https://github.com/LedgerHQ/ledger-live/commit/3cc45438a8aced1922742ff077946d1216f63525) Thanks [@elbywan](https://github.com/elbywan)! - Use commonjs imports for @ledgerhq/devices. Fixes #777.
+
 ## 6.27.2
 
 ### Patch Changes

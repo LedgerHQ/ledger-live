@@ -13,19 +13,21 @@ import {
   getAccountCapabilities,
 } from "../../compound/logic";
 import { getSupplyMax } from "./modules/compound";
-import { pickSiblings } from "../../bot/specs";
+import { botTest, genericTestDestination, pickSiblings } from "../../bot/specs";
 import type { AppSpec } from "../../bot/types";
 import { getGasLimit } from "./transaction";
 import { DeviceModelId } from "@ledgerhq/devices";
 import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { CompoundAccountSummary } from "../../compound/types";
+import { acceptTransaction } from "./speculos-deviceActions";
 
-const testTimeout = 5 * 60 * 1000;
+const testTimeout = 8 * 60 * 1000;
 
 const ethereumBasicMutations = ({ maxAccount }) => [
   {
     name: "move 50%",
     maxRun: 2,
+    testDestination: genericTestDestination,
     transaction: ({ account, siblings, bridge, maxSpendable }) => {
       const sibling = pickSiblings(siblings, maxAccount);
       const recipient = sibling.freshAddress;
@@ -49,11 +51,15 @@ const ethereumBasicMutations = ({ maxAccount }) => [
       const estimatedGas = getGasLimit(transaction).times(
         transaction.gasPrice || 0
       );
-      expect(operation.fee.toNumber()).toBeLessThanOrEqual(
-        estimatedGas.toNumber()
+      botTest("operation fee is not exceeding estimated gas", () =>
+        expect(operation.fee.toNumber()).toBeLessThanOrEqual(
+          estimatedGas.toNumber()
+        )
       );
-      expect(account.balance.toString()).toBe(
-        accountBeforeTransaction.balance.minus(operation.value).toString()
+      botTest("account balance moved with operation value", () =>
+        expect(account.balance.toString()).toBe(
+          accountBeforeTransaction.balance.minus(operation.value).toString()
+        )
       );
     },
   },
@@ -114,25 +120,28 @@ function getCompoundResult({ account, transaction, accountBeforeTransaction }) {
   };
 }
 
+const minAmountETH = parseCurrencyUnit(
+  getCryptoCurrencyById("ethereum").units[0],
+  "0.01"
+);
+
 const ethereum: AppSpec<Transaction> = {
   name: "Ethereum",
   currency: getCryptoCurrencyById("ethereum"),
   appQuery: {
     model: DeviceModelId.nanoS,
     appName: "Ethereum",
+    appVersion: "1.9.20",
   },
+  genericDeviceAction: acceptTransaction,
   testTimeout,
+  minViableAmount: minAmountETH,
   transactionCheck: ({ maxSpendable }) => {
-    invariant(
-      maxSpendable.gt(
-        parseCurrencyUnit(getCryptoCurrencyById("ethereum").units[0], "0.01")
-      ),
-      "balance is too low"
-    );
+    invariant(maxSpendable.gt(minAmountETH), "balance is too low");
   },
   // @ts-expect-error seriously we have to do somehting
   mutations: ethereumBasicMutations({
-    maxAccount: 3,
+    maxAccount: 7,
   }).concat([
     {
       name: "allow MAX a compound token",
@@ -159,7 +168,9 @@ const ethereum: AppSpec<Transaction> = {
       },
       test: (arg) => {
         const { capabilities } = getCompoundResult(arg);
-        expect((capabilities as any).enabledAmountIsUnlimited).toBe(true);
+        botTest("enabledAmountIsUnlimited is true", () =>
+          expect((capabilities as any).enabledAmountIsUnlimited).toBe(true)
+        );
       },
     },
     {
@@ -192,11 +203,13 @@ const ethereum: AppSpec<Transaction> = {
           "could not find compound summary for account %s",
           transaction.subAccountId
         );
-        expect(
-          (summary as CompoundAccountSummary).totalSupplied.gt(
-            previous.summary?.totalSupplied || new BigNumber(0)
-          )
-        ).toBe(true);
+        botTest("totalSupplied matches", () =>
+          expect(
+            (summary as CompoundAccountSummary).totalSupplied.gt(
+              previous.summary?.totalSupplied || new BigNumber(0)
+            )
+          ).toBe(true)
+        );
       },
     },
     {
@@ -248,16 +261,20 @@ const ethereum: AppSpec<Transaction> = {
         );
 
         if (arg.transaction.useAllAmount) {
-          expect((summary as CompoundAccountSummary).totalSupplied.eq(0)).toBe(
-            true
+          botTest("totalSupplies matches (2)", () =>
+            expect(
+              (summary as CompoundAccountSummary).totalSupplied.eq(0)
+            ).toBe(true)
           );
         } else {
-          expect(
-            (summary as CompoundAccountSummary).totalSupplied.lt(
-              (previous.summary as CompoundAccountSummary).totalSupplied ||
-                new BigNumber(0)
-            )
-          ).toBe(true);
+          botTest("totalSupplies matches (3)", () =>
+            expect(
+              (summary as CompoundAccountSummary).totalSupplied.lt(
+                (previous.summary as CompoundAccountSummary).totalSupplied ||
+                  new BigNumber(0)
+              )
+            ).toBe(true)
+          );
         }
       },
     },
@@ -291,7 +308,9 @@ const ethereum: AppSpec<Transaction> = {
       },
       test: (arg) => {
         const { capabilities } = getCompoundResult(arg);
-        expect((capabilities as any).enabledAmount.eq(0)).toBe(true);
+        botTest("enabledAmount is zero", () =>
+          expect((capabilities as any).enabledAmount.eq(0)).toBe(true)
+        );
       },
     },
     {
@@ -341,16 +360,25 @@ const ethereum: AppSpec<Transaction> = {
         invariant(erc20account, "erc20 acc is still here");
 
         if (transaction.useAllAmount) {
-          expect(erc20account.balance.toString()).toBe("0");
+          botTest("erc20 account is empty", () =>
+            expect(erc20account.balance.toString()).toBe("0")
+          );
         } else {
-          expect(erc20account.balance.toString()).toBe(
-            erc20accountBefore.balance.minus(transaction.amount).toString()
+          botTest("account balance moved with tx amount", () =>
+            expect(erc20account.balance.toString()).toBe(
+              erc20accountBefore.balance.minus(transaction.amount).toString()
+            )
           );
         }
       },
     },
   ]),
 };
+
+const minAmountETC = parseCurrencyUnit(
+  getCryptoCurrencyById("ethereum_classic").units[0],
+  "0.05"
+);
 const ethereumClassic: AppSpec<Transaction> = {
   name: "Ethereum Classic",
   currency: getCryptoCurrencyById("ethereum_classic"),
@@ -358,18 +386,12 @@ const ethereumClassic: AppSpec<Transaction> = {
     model: DeviceModelId.nanoS,
     appName: "Ethereum Classic",
   },
+  genericDeviceAction: acceptTransaction,
   dependency: "Ethereum",
   testTimeout,
+  minViableAmount: minAmountETC,
   transactionCheck: ({ maxSpendable }) => {
-    invariant(
-      maxSpendable.gt(
-        parseCurrencyUnit(
-          getCryptoCurrencyById("ethereum_classic").units[0],
-          "0.05"
-        )
-      ),
-      "balance is too low"
-    );
+    invariant(maxSpendable.gt(minAmountETC), "balance is too low");
   },
   mutations: ethereumBasicMutations({
     maxAccount: 4,
@@ -381,24 +403,23 @@ const ethereumGoerli: AppSpec<Transaction> = {
   appQuery: {
     model: DeviceModelId.nanoS,
     appName: "Ethereum",
+    appVersion: "1.9.20",
   },
+  genericDeviceAction: acceptTransaction,
   testTimeout,
+  minViableAmount: minAmountETH,
   transactionCheck: ({ maxSpendable }) => {
-    invariant(
-      maxSpendable.gt(
-        parseCurrencyUnit(
-          getCryptoCurrencyById("ethereum_goerli").units[0],
-          "0.01"
-        )
-      ),
-      "balance is too low"
-    );
+    invariant(maxSpendable.gt(minAmountETH), "balance is too low");
   },
   mutations: ethereumBasicMutations({
     maxAccount: 8,
   }),
 };
 
+const minAmountBSC = parseCurrencyUnit(
+  getCryptoCurrencyById("bsc").units[0],
+  "0.005"
+);
 const bsc: AppSpec<Transaction> = {
   name: "BSC",
   currency: getCryptoCurrencyById("bsc"),
@@ -406,15 +427,12 @@ const bsc: AppSpec<Transaction> = {
     model: DeviceModelId.nanoS,
     appName: "Binance Smart Chain",
   },
+  genericDeviceAction: acceptTransaction,
   dependency: "Ethereum",
   testTimeout,
+  minViableAmount: minAmountBSC,
   transactionCheck: ({ maxSpendable }) => {
-    invariant(
-      maxSpendable.gt(
-        parseCurrencyUnit(getCryptoCurrencyById("bsc").units[0], "0.005")
-      ),
-      "balance is too low"
-    );
+    invariant(maxSpendable.gt(minAmountBSC), "balance is too low");
   },
   mutations: ethereumBasicMutations({ maxAccount: 8 }).concat([
     {
@@ -446,6 +464,11 @@ const bsc: AppSpec<Transaction> = {
   ]),
 };
 
+const minAmountPolygon = parseCurrencyUnit(
+  getCryptoCurrencyById("polygon").units[0],
+  "0.005"
+);
+
 const polygon: AppSpec<Transaction> = {
   name: "Polygon",
   currency: getCryptoCurrencyById("polygon"),
@@ -453,15 +476,12 @@ const polygon: AppSpec<Transaction> = {
     model: DeviceModelId.nanoS,
     appName: "Polygon",
   },
+  genericDeviceAction: acceptTransaction,
   dependency: "Ethereum",
   testTimeout,
+  minViableAmount: minAmountPolygon,
   transactionCheck: ({ maxSpendable }) => {
-    invariant(
-      maxSpendable.gt(
-        parseCurrencyUnit(getCryptoCurrencyById("polygon").units[0], "0.005")
-      ),
-      "balance is too low"
-    );
+    invariant(maxSpendable.gt(minAmountPolygon), "balance is too low");
   },
   mutations: ethereumBasicMutations({ maxAccount: 8 }).concat([
     {

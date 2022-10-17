@@ -1,7 +1,5 @@
-// @flow
 import { useCallback, useMemo } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { useNavigation } from "@react-navigation/native";
 import { add, isBefore, parseISO } from "date-fns";
 import type { Account } from "@ledgerhq/types-live";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -24,47 +22,35 @@ import { track } from "../analytics";
 import { setNotificationsModalLocked } from "../actions/notifications";
 
 export type RatingsHappyMoment = {
-    /** Name of the route that will trigger the rating flow */
-    route_name: string,
-    /** In milliseconds, delay before triggering the rating flow */
-    timer: number,
-    /** Whether the rating flow is triggered when entering or when leaving the screen */
-    type: "on_enter" | "on_leave",
+  /** Name of the route that will trigger the rating flow */
+  // eslint-disable-next-line camelcase
+  route_name: string;
+  /** In milliseconds, delay before triggering the rating flow */
+  timer: number;
+  /** Whether the rating flow is triggered when entering or when leaving the screen */
+  type: "on_enter" | "on_leave";
 };
 
 export type RatingsDataOfUser = {
-    /** Date of the first time the user oppened the app */
-    appFirstStartDate?: Date,
-    /** Number of times the user oppened the application */
-    numberOfAppStarts?: number,
-    /** Number of times the user oppened the application since the last time his app crashed */
-    numberOfAppStartsSinceLastCrash?: number,
-    /** If set, we will not prompt the rating flow again before this date unless the user triggers it manually from the settings */
-    dateOfNextAllowedRequest?: Date,
-    /** Whether or not the user clicked on the "Not now" cta from the Enjoy step of the ratings flow */
-    alreadyClosedFromEnjoyStep?: boolean,
-    /** Whether or not the user already rated the app */
-    alreadyRated?: boolean,
-    /** If true, we will not prompt the rating flow again unless the user triggers it manually from the settings */
-    doNotAskAgain?: boolean,
-    /** "satisfied" if user clicked on the "Satisfied" cta in the ratings flow, "disappointed" if user clicked on the "I'm disappointed" in the ratings flow */
-    satisfaction?: string,
+  /** Date of the first time the user oppened the app */
+  appFirstStartDate?: Date;
+  /** Number of times the user oppened the application */
+  numberOfAppStarts?: number;
+  /** Number of times the user oppened the application since the last time his app crashed */
+  numberOfAppStartsSinceLastCrash?: number;
+  /** If set, we will not prompt the rating flow again before this date unless the user triggers it manually from the settings */
+  dateOfNextAllowedRequest?: Date;
+  /** Whether or not the user clicked on the "Not now" cta from the Enjoy step of the ratings flow */
+  alreadyClosedFromEnjoyStep?: boolean;
+  /** Whether or not the user already rated the app */
+  alreadyRated?: boolean;
+  /** If true, we will not prompt the rating flow again unless the user triggers it manually from the settings */
+  doNotAskAgain?: boolean;
+  /** "satisfied" if user clicked on the "Satisfied" cta in the ratings flow, "disappointed" if user clicked on the "I'm disappointed" in the ratings flow */
+  satisfaction?: string;
 };
 
 const ratingsDataOfUserAsyncStorageKey = "ratingsDataOfUser";
-
-const getCurrentRouteName = (
-  state: NavigationState | Required<NavigationState["routes"][0]>["state"],
-): Routes | undefined => {
-  if (state.index === undefined || state.index < 0) {
-    return undefined;
-  }
-  const nestedState = state.routes[state.index].state;
-  if (nestedState !== undefined) {
-    return getCurrentRouteName(nestedState);
-  }
-  return state.routes[state.index].name;
-};
 
 async function getRatingsDataOfUserFromStorage() {
   const ratingsDataOfUser = await AsyncStorage.getItem(
@@ -91,22 +77,24 @@ const useRatings = () => {
   const ratingsDataOfUser = useSelector(ratingsDataOfUserSelector);
   const accounts: Account[] = useSelector(accountsSelector);
 
-  const accountsWithAmountCount = useMemo(() => accounts.filter(account => account.balance?.gt(0)).length, [accounts]);
+  const accountsWithAmountCount = useMemo(
+    () => accounts.filter(account => account.balance?.gt(0)).length,
+    [accounts],
+  );
 
   const dispatch = useDispatch();
-  const navigation = useNavigation();
 
   const setRatingsModalOpenCallback = useCallback(
     isRatingsModalOpen => {
       if (!isRatingsModalOpen) {
         dispatch(setRatingsModalOpen(isRatingsModalOpen));
         dispatch(setNotificationsModalLocked(false));
-      } else if (!isRatingsModalLocked) {
+      } else {
         dispatch(setRatingsModalOpen(isRatingsModalOpen));
         dispatch(setNotificationsModalLocked(true));
       }
     },
-    [dispatch, isRatingsModalLocked],
+    [dispatch],
   );
 
   const areRatingsConditionsMet = useCallback(() => {
@@ -130,20 +118,24 @@ const useRatings = () => {
     // minimum accounts number criteria
     const minimumAccountsNumber: number =
       ratingsFeature?.params?.conditions?.minimum_accounts_number;
-    if (minimumAccountsNumber && accountsWithAmountCount < minimumAccountsNumber) {
+    if (
+      minimumAccountsNumber &&
+      accountsWithAmountCount < minimumAccountsNumber
+    ) {
       return false;
     }
 
     // minimum app start number criteria
     const minimumAppStartsNumber: number =
-    ratingsFeature?.params?.conditions?.minimum_app_starts_number;
+      ratingsFeature?.params?.conditions?.minimum_app_starts_number;
     if (ratingsDataOfUser.numberOfAppStarts < minimumAppStartsNumber) {
       return false;
     }
 
     // duration since first app start long enough criteria
     const minimumDurationSinceAppFirstStart: Duration =
-      ratingsFeature?.params?.conditions?.minimum_duration_since_app_first_start;
+      ratingsFeature?.params?.conditions
+        ?.minimum_duration_since_app_first_start;
     const dateAllowedAfterAppFirstStart = add(
       ratingsDataOfUser?.appFirstStartDate,
       minimumDurationSinceAppFirstStart,
@@ -157,7 +149,8 @@ const useRatings = () => {
 
     // No crash in last session criteria
     const minimumNumberOfAppStartsSinceLastCrash: number =
-      ratingsFeature?.params?.conditions?.minimum_number_of_app_starts_since_last_crash;
+      ratingsFeature?.params?.conditions
+        ?.minimum_number_of_app_starts_since_last_crash;
     if (
       ratingsDataOfUser.numberOfAppStartsSinceLastCrash <
       minimumNumberOfAppStartsSinceLastCrash
@@ -172,7 +165,8 @@ const useRatings = () => {
     ratingsFeature?.params?.conditions?.minimum_accounts_number,
     ratingsFeature?.params?.conditions?.minimum_app_starts_number,
     ratingsFeature?.params?.conditions?.minimum_duration_since_app_first_start,
-    ratingsFeature?.params?.conditions?.minimum_number_of_app_starts_since_last_crash,
+    ratingsFeature?.params?.conditions
+      ?.minimum_number_of_app_starts_since_last_crash,
   ]);
 
   const isHappyMomentTriggered = useCallback(
@@ -184,14 +178,14 @@ const useRatings = () => {
     [ratingsOldRoute],
   );
 
-  const onRouteChange = useCallback(
-    ratingsNewRoute => {
+  const onRatingsRouteChange = useCallback(
+    (ratingsNewRoute, isOtherModalOpened = false) => {
       if (ratingsHappyMoment?.timeout) {
         dispatch(setNotificationsModalLocked(false));
         clearTimeout(ratingsHappyMoment?.timeout);
       }
 
-      if (isRatingsModalLocked || !areRatingsConditionsMet()) return;
+      if (isOtherModalOpened || !areRatingsConditionsMet()) return false;
 
       for (const happyMoment of ratingsFeature?.params?.happy_moments) {
         if (isHappyMomentTriggered(happyMoment, ratingsNewRoute)) {
@@ -205,12 +199,14 @@ const useRatings = () => {
               timeout,
             }),
           );
+          dispatch(setRatingsCurrentRouteName(ratingsNewRoute));
+          return true;
         }
       }
       dispatch(setRatingsCurrentRouteName(ratingsNewRoute));
+      return false;
     },
     [
-      isRatingsModalLocked,
       areRatingsConditionsMet,
       ratingsHappyMoment?.timeout,
       dispatch,
@@ -220,22 +216,13 @@ const useRatings = () => {
     ],
   );
 
-  const updateRatingsDataOfUserInStateAndStore = useCallback(ratingsDataOfUserUpdated => {
-    dispatch(setRatingsDataOfUser(ratingsDataOfUserUpdated));
-    setRatingsDataOfUserInStorage(ratingsDataOfUserUpdated);
-  }, [dispatch]);
-
-  const initRatings = useCallback(() => {
-    if (!ratingsFeature?.enabled) return;
-
-    navigation.addListener("state", e => {
-      const navState = e?.data?.state;
-      if (navState && navState.routeNames) {
-        const currentRouteName = getCurrentRouteName(navState);
-        onRouteChange(currentRouteName);
-      }
-    });
-  }, [navigation, ratingsFeature?.enabled, onRouteChange]);
+  const updateRatingsDataOfUserInStateAndStore = useCallback(
+    ratingsDataOfUserUpdated => {
+      dispatch(setRatingsDataOfUser(ratingsDataOfUserUpdated));
+      setRatingsDataOfUserInStorage(ratingsDataOfUserUpdated);
+    },
+    [dispatch],
+  );
 
   const initRatingsData = useCallback(() => {
     getRatingsDataOfUserFromStorage().then(ratingsDataOfUser => {
@@ -248,10 +235,6 @@ const useRatings = () => {
       });
     });
   }, []);
-
-  const cleanRatings = useCallback(() => {
-    navigation.removeListener("state");
-  }, [navigation]);
 
   const ratingsInitialStep = useMemo(
     () => (ratingsDataOfUser?.alreadyClosedFromEnjoyStep ? "enjoy" : "init"),
@@ -273,21 +256,26 @@ const useRatings = () => {
       params: ratingsFeature?.params,
     });
     setRatingsModalOpenCallback(true);
-  }, [isRatingsModalLocked, dispatch, ratingsFeature?.params, setRatingsModalOpenCallback]);
+  }, [
+    isRatingsModalLocked,
+    dispatch,
+    ratingsFeature?.params,
+    setRatingsModalOpenCallback,
+  ]);
 
-  const handleRatingsSetDateOfNextAllowedRequest = useCallback((delay, additionalParams) => {
-    if (delay !== null && delay !== undefined) {
-      const dateOfNextAllowedRequest: Date = add(
-        Date.now(),
-        delay
-      );
-      updateRatingsDataOfUserInStateAndStore({
-        ...ratingsDataOfUser,
-        dateOfNextAllowedRequest,
-        ...additionalParams,
-      });
-    }
-  }, [ratingsDataOfUser, updateRatingsDataOfUserInStateAndStore]);
+  const handleRatingsSetDateOfNextAllowedRequest = useCallback(
+    (delay, additionalParams) => {
+      if (delay !== null && delay !== undefined) {
+        const dateOfNextAllowedRequest: Date = add(Date.now(), delay);
+        updateRatingsDataOfUserInStateAndStore({
+          ...ratingsDataOfUser,
+          dateOfNextAllowedRequest,
+          ...additionalParams,
+        });
+      }
+    },
+    [ratingsDataOfUser, updateRatingsDataOfUserInStateAndStore],
+  );
 
   const handleEnjoyNotNow = useCallback(() => {
     if (ratingsDataOfUser?.alreadyClosedFromEnjoyStep) {
@@ -327,9 +315,8 @@ const useRatings = () => {
   }, [ratingsDataOfUser, updateRatingsDataOfUserInStateAndStore]);
 
   return {
-    initRatings,
     initRatingsData,
-    cleanRatings,
+    onRatingsRouteChange,
     handleSettingsRateApp,
     handleRatingsSetDateOfNextAllowedRequest,
     handleEnjoyNotNow,

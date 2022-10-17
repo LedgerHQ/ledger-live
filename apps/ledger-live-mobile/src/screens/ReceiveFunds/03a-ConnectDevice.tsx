@@ -1,8 +1,6 @@
-// @flow
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { View, StyleSheet } from "react-native";
 import { useSelector } from "react-redux";
-import { useTranslation } from "react-i18next";
 import {
   getAccountCurrency,
   getMainAccount,
@@ -13,7 +11,6 @@ import type { AccountLike } from "@ledgerhq/types-live";
 import { createAction } from "@ledgerhq/live-common/hw/actions/app";
 import connectApp from "@ledgerhq/live-common/hw/connectApp";
 
-import { useRoute } from "@react-navigation/native";
 import { accountScreenSelector } from "../../reducers/accounts";
 import { ScreenName } from "../../const";
 import { TrackScreen } from "../../analytics";
@@ -28,19 +25,19 @@ import SkipSelectDevice from "../SkipSelectDevice";
 import byFamily from "../../generated/ConnectDevice";
 
 type Props = {
-  navigation: any,
-  route: { params: RouteParams },
+  navigation: any;
+  route: { params: RouteParams };
 };
 
 type RouteParams = {
-  account?: AccountLike,
-  accountId: string,
-  parentId?: string,
-  notSkippable?: boolean,
-  title: string,
-  appName?: string,
-  onSuccess?: () => void,
-  onError?: () => void,
+  account?: AccountLike;
+  accountId: string;
+  parentId?: string;
+  notSkippable?: boolean;
+  title: string;
+  appName?: string;
+  onSuccess?: () => void;
+  onError?: () => void;
 };
 
 const action = createAction(connectApp);
@@ -49,7 +46,6 @@ export default function ConnectDevice({ navigation, route }: Props) {
   const { account, parentAccount } = useSelector(accountScreenSelector(route));
   const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector);
   const [device, setDevice] = useState<Device | undefined>();
-  const routerRoute = useRoute()
 
   useEffect(() => {
     const readOnlyTitle = "transfer.receive.titleReadOnly";
@@ -67,6 +63,7 @@ export default function ConnectDevice({ navigation, route }: Props) {
   );
 
   const onResult = useCallback(
+    // eslint-disable-next-line consistent-return
     payload => {
       if (!account) {
         return null;
@@ -102,7 +99,7 @@ export default function ConnectDevice({ navigation, route }: Props) {
   }
 
   const mainAccount = getMainAccount(account, parentAccount);
-  const currency = getAccountCurrency(mainAccount)
+  const currency = getAccountCurrency(mainAccount);
   const tokenCurrency =
     account && account.type === "TokenAccount" && account.token;
 
@@ -123,11 +120,7 @@ export default function ConnectDevice({ navigation, route }: Props) {
 
   return (
     <>
-      <TrackScreen
-        category="ReceiveFunds"
-        name="Device Selection"
-        source={routerRoute.name}
-      />
+      <TrackScreen category="ReceiveFunds" name="Device Selection" />
       <NavigationScrollView
         style={styles.scroll}
         contentContainerStyle={styles.scrollContainer}
@@ -135,7 +128,9 @@ export default function ConnectDevice({ navigation, route }: Props) {
         <SkipSelectDevice route={route} onResult={setDevice} />
         <SelectDevice
           onSelect={setDevice}
-          onWithoutDevice={route.params?.notSkippable ? undefined : onSkipDevice}
+          onWithoutDevice={
+            route.params?.notSkippable ? undefined : onSkipDevice
+          }
         />
       </NavigationScrollView>
       <DeviceActionModal

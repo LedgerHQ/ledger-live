@@ -17,7 +17,8 @@ import { FormLabel } from "./FormLabel";
 import type {
   SwapSelectorStateType,
   SwapTransactionType,
-} from "@ledgerhq/live-common/exchange/swap/hooks/index";
+  SwapDataType,
+} from "@ledgerhq/live-common/exchange/swap/types";
 import { track } from "~/renderer/analytics/segment";
 import { SWAP_VERSION } from "../../utils/index";
 
@@ -61,18 +62,25 @@ type Props = {
   fromAmountError?: Error,
   provider: ?string,
   isSendMaxLoading: boolean,
+  updateSelectedRate: $PropertyType<SwapDataType, "updateSelectedRate">,
 };
 
 /* @dev: Yeah, Im sorry if you read this, design asked us to
  override the input component when it is called from the swap form. */
 const InputSection = styled(Box)`
+  & div {
+    padding-right: 0;
+    > input {
+      padding-right: 15px;
+    }
+  }
   & ${ErrorContainer} {
     font-weight: 500;
     font-size: 11px;
     text-align: right;
-    margin-left: calc(calc(100% + 45px) * -1);
-    width: calc(calc(100% + 30px) * 2);
+    margin-left: calc(calc(100% + 30px) * -1);
     margin-top: 6px;
+    align-self: flex-end;
   }
 `;
 
@@ -86,6 +94,7 @@ function FromRow({
   fromAmountError,
   provider,
   isSendMaxLoading,
+  updateSelectedRate,
 }: Props) {
   const accounts = useSelector(fromSelector)(useSelector(shallowAccountsSelector));
   const unit = fromAccount && getAccountUnit(fromAccount);
@@ -97,11 +106,17 @@ function FromRow({
       swapVersion: SWAP_VERSION,
     });
   const setAccountAndTrack = account => {
+    updateSelectedRate();
     track("Page Swap Form - New Source Account", {
       provider,
       swapVersion: SWAP_VERSION,
     });
     setFromAccount(account);
+  };
+
+  const setValue = fromAmount => {
+    updateSelectedRate();
+    setFromAmount(fromAmount);
   };
 
   return (
@@ -148,7 +163,7 @@ function FromRow({
           <InputCurrency
             loading={isSendMaxLoading}
             value={fromAmount}
-            onChange={setFromAmount}
+            onChange={setValue}
             disabled={!fromAccount || isMaxEnabled}
             placeholder="0"
             textAlign="right"
