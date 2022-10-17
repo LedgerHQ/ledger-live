@@ -413,6 +413,10 @@
       "title" : "資金が不足しています。",
       "description" : "アカウントに十分な資金があることを確認してください。"
     },
+    "NoSuchAppOnProvider" : {
+      "title" : "特定の設定に必要な{{appName}}アプリが見つかりません。",
+      "description" : "管理画面からアプリの再インストールを試す"
+    },
     "NotEnoughGas" : {
       "title" : "ネットワーク手数料に必要なETHが不足しています",
       "description" : "アカウントに、ERC20トークンのトランザクションに十分なETHを送金してください。"
@@ -728,6 +732,9 @@
     "ImageProcessingError" : {
       "title" : "画像の処理に失敗しました",
       "description" : "別の画像でもう一度お試しください"
+    },
+    "HederaAddAccountError" : {
+      "title" : "アカウントが追加されていません。もう一度お試しください。"
     }
   },
   "crash" : {
@@ -775,6 +782,9 @@
     "failed" : {
       "biometrics" : {
         "title" : "{{biometricsType}}によるロック解除に失敗しました",
+        "touchid" : "TouchID",
+        "faceid" : "FaceID",
+        "fingerprint" : "指紋",
         "description" : "パスワードを入力して続行",
         "authenticate" : "Ledger Liveアプリで認証してください。"
       },
@@ -803,7 +813,10 @@
     },
     "enableBiometrics" : {
       "title" : "{{biometricsType}}",
-      "desc" : "{{biometricsType}}でロック解除"
+      "desc" : "{{biometricsType}}でロック解除",
+      "touchid" : "TouchID",
+      "faceid" : "FaceID",
+      "fingerprint" : "指紋"
     }
   },
   "reset" : {
@@ -1028,6 +1041,21 @@
     },
     "comingSoon" : "近日公開",
     "mostPopular" : "一番人気"
+  },
+  "installSetOfApps" : {
+    "landing" : {
+      "estimatedTime" : "{{ minutes }}分",
+      "title" : "{{ productName }} はアプリを使用し、安全なブロックチェーントランザクションを有効にします",
+      "subtitle" : "既定のアプリ一式をダウンロードすることをお勧めします。後でさらにダウンロードできます。",
+      "installCTA" : "アプリをインストール",
+      "skipCTA" : "後で行う"
+    },
+    "ongoing" : {
+      "loading" : "読み込み中...",
+      "resolving" : "依存関係を解決しています",
+      "progress" : "アプリのインストール中{{progress}}%",
+      "disclaimer" : "{{ productName }}のアプリはトランザクションの承認に使用されます。これはいつでも追加、または削除できます。"
+    }
   },
   "onboarding" : {
     "stepWelcome" : {
@@ -1974,6 +2002,7 @@
       },
       "advanced" : {
         "title" : "詳細ログ",
+        "warningDerivation" : "これは {{tag}}のxpubです。サードパーティのウォレットにインポートする際は、同じ派生モードを選択してください。",
         "desc" : ""
       }
     },
