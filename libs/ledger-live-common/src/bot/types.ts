@@ -66,7 +66,7 @@ export type MutationSpec<T extends Transaction> = {
   // Name what this mutation is doing
   name: string;
   // The maximum number of times to execute this mutation for a given test run
-  maxRun?: number;
+  maxRun: number;
   // Express the transaction to be done
   // it returns either a transaction T, or an array with T and a list of patch to apply to it
   transaction: (arg: TransactionArg<T>) => TransactionRes<T>;
