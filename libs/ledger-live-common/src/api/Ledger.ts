@@ -21,7 +21,7 @@ export const findCurrencyExplorer = (
 
   return {
     endpoint: getEnv("EXPLORER"),
-    id: currency.id,
+    id: currency.ticker.toLocaleLowerCase(),
     version: "v4",
   };
 };
