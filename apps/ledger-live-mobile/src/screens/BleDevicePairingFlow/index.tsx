@@ -20,7 +20,7 @@ export type NavigateInput = {
 // Necessary when the pairing flow is opened from a deeplink without any params
 // Shouldn't be relied upon for other usages
 const defaultSuccessNavigateToConfig = {
-  navigationType: "push",
+  navigationType: "navigate",
   pathToDeviceParam: "params.params.params.device",
   navigateInput: {
     name: NavigatorName.BaseOnboarding,
@@ -105,7 +105,7 @@ export const BleDevicePairingFlow = ({
   const {
     navigateInput,
     pathToDeviceParam,
-    navigationType = "push",
+    navigationType = "navigate",
   } = onSuccessNavigateToConfig;
 
   const [deviceToPair, setDeviceToPair] = useState<Device | null>(null);
