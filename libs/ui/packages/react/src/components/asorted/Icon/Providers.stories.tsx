@@ -109,7 +109,7 @@ const ListTemplate = (args: ProviderIconProps) => {
   );
 };
 const FlagTemplate = (args: ProviderIconProps) => {
-  return <ProviderIcons {...args} />;
+  return <ProviderIcon {...args} />;
 };
 
 export const List = ListTemplate.bind({});
