@@ -77,6 +77,13 @@ export type MutationSpec<T extends Transaction> = {
     account: Account;
     bridge: AccountBridge<T>;
   }) => T | null | undefined;
+  // express what are the status warnings to express on a given transaction
+  expectStatusWarnings?: (arg0: {
+    transaction: T;
+    status: TransactionStatus;
+    account: Account;
+    bridge: AccountBridge<T>;
+  }) => { [_: string]: Error } | undefined;
   // Express the device actions to do (buttons,..) and validate the device screen. overrides genericDeviceAction
   deviceAction?: DeviceAction<T, any>;
   // how much time to wait in maximum to reach the final state
@@ -96,6 +103,8 @@ export type AppSpec<T extends Transaction> = {
   currency: CryptoCurrency;
   // how much time in ms does the test need to wait the operation to appear
   testTimeout?: number;
+  // how much should we retry scan accounts if an error occurs
+  scanAccountsRetries?: number;
   // if define, will run the mutations {multipleRuns} times in order to cover 2 txs in the same run and detect possible issues at the "second tx time"
   multipleRuns?: number;
   // define the frequency of exporting/importing back the account to simulate mobile export
@@ -121,6 +130,8 @@ export type AppSpec<T extends Transaction> = {
   // indicates to the engine what's the generally minimal amount we use to opt out from doing a transaction
   // NB: at the moment it's purely informative and help inferring good "hints", but we could eventually automate it
   minViableAmount?: BigNumber;
+  // global timeout to consider the run due date for the spec. (since a seed could have theorically an infinite amount of accounts and mutation could take a lot of time to validate transactions, we need a way to limit the run time)
+  skipMutationsTimeout?: number;
 };
 export type SpecReport<T extends Transaction> = {
   spec: AppSpec<T>;
@@ -133,6 +144,7 @@ export type SpecReport<T extends Transaction> = {
   fatalError?: Error;
   // express hints for the spec developers on things that could be improved
   hintWarnings: string[];
+  skipMutationsTimeoutReached: boolean;
 };
 export type MutationReport<T extends Transaction> = {
   resyncAccountsDuration: number;
@@ -168,6 +180,8 @@ export type MutationReport<T extends Transaction> = {
   finalDestinationOperation?: Operation;
   testDestinationDuration?: number;
   error?: Error;
+  errorTime?: number;
+  hintWarnings: string[];
 };
 
 export type MinimalSerializedMutationReport = {
@@ -186,8 +200,12 @@ export type MinimalSerializedSpecReport = {
   accounts: AccountRaw[] | undefined;
   fatalError: string | undefined;
   mutations: MinimalSerializedMutationReport[] | undefined;
+  existingMutationNames: string[];
+  hintWarnings: string[];
 };
 
 export type MinimalSerializedReport = {
   results: Array<MinimalSerializedSpecReport>;
+  environment: string | undefined;
+  seedHash: string;
 };

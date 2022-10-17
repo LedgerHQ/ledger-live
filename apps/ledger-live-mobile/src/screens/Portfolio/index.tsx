@@ -39,12 +39,12 @@ import { NavigatorName, ScreenName } from "../../const";
 import FirmwareUpdateBanner from "../../components/FirmwareUpdateBanner";
 import Assets from "./Assets";
 import AddAccountsModal from "../AddAccounts/AddAccountsModal";
-import { useProviders } from "../Swap/SwapEntry";
 import CheckLanguageAvailability from "../../components/CheckLanguageAvailability";
 import CheckTermOfUseUpdate from "../../components/CheckTermOfUseUpdate";
 import TabBarSafeAreaView, {
   TAB_BAR_SAFE_HEIGHT,
 } from "../../components/TabBar/TabBarSafeAreaView";
+import { useProviders } from "../Swap/Form/index";
 import PortfolioEmptyState from "./PortfolioEmptyState";
 import SectionTitle from "../WalletCentricSections/SectionTitle";
 import SectionContainer from "../WalletCentricSections/SectionContainer";
@@ -144,6 +144,7 @@ function PortfolioScreen({ navigation }: Props) {
 
   const data = useMemo(
     () => [
+      <FirmwareUpdateBanner />,
       postOnboardingVisible && (
         <Box m={6}>
           <PostOnboardingEntryPointCard />
@@ -246,9 +247,6 @@ function PortfolioScreen({ navigation }: Props) {
   return (
     <>
       <TabBarSafeAreaView>
-        <Flex px={6} py={4}>
-          <FirmwareUpdateBanner />
-        </Flex>
         <CheckLanguageAvailability />
         <CheckTermOfUseUpdate />
         <TrackScreen
@@ -286,6 +284,7 @@ function PortfolioScreen({ navigation }: Props) {
           hidePortfolio={areAccountsEmpty}
         />
       </TabBarSafeAreaView>
+
       <AddAccountsModal
         navigation={navigation}
         isOpened={isAddModalOpened}

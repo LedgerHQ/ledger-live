@@ -32,7 +32,6 @@ import Transport from "@ledgerhq/hw-transport";
 import { NotEnoughBalance } from "@ledgerhq/errors";
 import { log } from "@ledgerhq/logs";
 import { checkLibs } from "@ledgerhq/live-common/sanityChecks";
-import { FeatureToggle } from "@ledgerhq/live-common/featureFlags/index";
 import { useCountervaluesExport } from "@ledgerhq/live-common/countervalues/react";
 import { pairId } from "@ledgerhq/live-common/countervalues/helpers";
 import { NftMetadataProvider } from "@ledgerhq/live-common/nft/index";
@@ -94,8 +93,7 @@ import { navigationRef, isReadyRef } from "./rootnavigation";
 import { useTrackingPairs } from "./actions/general";
 import { ScreenName, NavigatorName } from "./const";
 import ExperimentalHeader from "./screens/Settings/Experimental/ExperimentalHeader";
-import PushNotificationsModal from "./screens/PushNotificationsModal";
-import RatingsModal from "./screens/RatingsModal";
+import Modals from "./screens/Modals";
 import { lightTheme, darkTheme } from "./colors";
 import NotificationsProvider from "./screens/NotificationCenter/NotificationsProvider";
 import SnackbarContainer from "./screens/NotificationCenter/Snackbar/SnackbarContainer";
@@ -225,12 +223,7 @@ function App({ importDataString }: AppProps) {
 
       <AnalyticsConsole />
       <ThemeDebug />
-      <FeatureToggle feature="pushNotifications">
-        <PushNotificationsModal />
-      </FeatureToggle>
-      <FeatureToggle feature="ratings">
-        <RatingsModal />
-      </FeatureToggle>
+      <Modals />
     </GestureHandlerRootView>
   );
 }
@@ -348,15 +341,15 @@ const linkingOptions: LinkingOptions<ReactNavigation.RootParamList> = {
               [NavigatorName.Manager]: {
                 screens: {
                   /**
-                   * ie: "ledgerlive://manager" will open the manager
+                   * ie: "ledgerlive://myledger" will open MyLedger page
                    *
                    * @params ?installApp: string
-                   * ie: "ledgerlive://manager?installApp=bitcoin" will open the manager with "bitcoin" prefilled in the search input
+                   * ie: "ledgerlive://myledger?installApp=bitcoin" will open myledger with "bitcoin" prefilled in the search input
                    *
                    * * @params ?searchQuery: string
-                   * ie: "ledgerlive://manager?searchQuery=bitcoin" will open the manager with "bitcoin" prefilled in the search input
+                   * ie: "ledgerlive://myledger?searchQuery=bitcoin" will open myledger with "bitcoin" prefilled in the search input
                    */
-                  [ScreenName.Manager]: "manager",
+                  [ScreenName.Manager]: "myledger",
                 },
               },
             },
@@ -367,7 +360,7 @@ const linkingOptions: LinkingOptions<ReactNavigation.RootParamList> = {
                * @params ?currency: string
                * ie: "ledgerlive://receive?currency=bitcoin" will open the prefilled search account in the receive flow
                */
-              [ScreenName.ReceiveSelectAccount]: "receive",
+              [ScreenName.ReceiveSelectCrypto]: "receive",
             },
           },
           [NavigatorName.Swap]: {
@@ -386,6 +379,29 @@ const linkingOptions: LinkingOptions<ReactNavigation.RootParamList> = {
                * ie: "ledgerlive://send?currency=bitcoin" will open the prefilled search account in the send flow
                */
               [ScreenName.SendCoin]: "send",
+            },
+          },
+
+          [NavigatorName.Accounts]: {
+            screens: {
+              /**
+               * @params ?id: string
+               * ie: "ledgerlive://accounts?currency=ethereum&address={{eth_account_address}}"
+               */
+              [ScreenName.Accounts]: "accounts",
+            },
+          },
+
+          [NavigatorName.AddAccounts]: {
+            screens: {
+              /**
+               * ie: "ledgerlive://add-account" will open the add account flow
+               *
+               * @params ?currency: string
+               * ie: "ledgerlive://add-account?currency=bitcoin" will open the add account flow with "bitcoin" prefilled in the search input
+               *
+               */
+              [ScreenName.AddAccountsSelectCrypto]: "add-account",
             },
           },
 

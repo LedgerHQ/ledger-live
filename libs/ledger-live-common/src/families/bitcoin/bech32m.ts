@@ -114,12 +114,12 @@ function __decode(str: string, LIMIT?: number) {
   return { prefix, words };
 }
 
-function decodeUnsafe(str: string, LIMIT?: number) {
+function decodeUnsafe(str: string, LIMIT?: number): any {
   const res = __decode(str, LIMIT);
   if (typeof res === "object") return res;
 }
 
-function decode(str: string, LIMIT?: number) {
+function decode(str: string, LIMIT?: number): any {
   const res = __decode(str, LIMIT);
   if (typeof res === "object") return res;
 

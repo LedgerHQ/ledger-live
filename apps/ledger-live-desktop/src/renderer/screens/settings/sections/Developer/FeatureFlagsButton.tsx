@@ -207,6 +207,11 @@ const FeatureFlagsButton = () => {
                           disabled for current language
                         </Tag>
                       ) : null}
+                      {value?.enabledOverriddenForCurrentDesktopVersion ? (
+                        <Tag active mx={1} type="outlinedOpacity" size="small">
+                          disabled for current version
+                        </Tag>
+                      ) : null}
                     </Flex>
                   </Button>
                   {focusedName === flagName ? (

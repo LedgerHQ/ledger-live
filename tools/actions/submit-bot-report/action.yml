@@ -11,6 +11,8 @@ inputs:
   githubSha:
     description: github sha in context of the run
     required: true
+  githubPR:
+    description: inferred github PR (if any)
   slackApiToken:
     description: slack API token (if wanting to post to slack)
   slackChannel:

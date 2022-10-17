@@ -3,7 +3,7 @@ import { RectButton } from "react-native-gesture-handler";
 import type {
   CryptoCurrency,
   TokenCurrency,
-} from "@ledgerhq/live-common/lib/types";
+} from "@ledgerhq/live-common/types";
 
 import styled from "styled-components/native";
 import { Flex, Tag } from "@ledgerhq/native-ui";

@@ -4,12 +4,12 @@ import Config from "react-native-config";
 import type { ViewStyleProp } from "react-native/Libraries/StyleSheet/StyleSheet";
 import { StyleSheet } from "react-native";
 
-type LottieProps = $PropertyType<Lottie, "props">;
+type LottieProps = Lottie["props"];
 export default function Animation({
   style,
   ...lottieProps
 }: LottieProps & {
-  style: ViewStyleProp;
+  style?: ViewStyleProp;
 }) {
   return lottieProps.source ? (
     <Lottie

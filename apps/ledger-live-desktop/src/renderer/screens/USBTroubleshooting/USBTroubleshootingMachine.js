@@ -95,6 +95,7 @@ export default createMachine(
         const currentIndex = solutions[platform].length <= 0 ? 0 : i - 1;
         return {
           currentIndex,
+          done: false,
         };
       }),
       // Tracking actions

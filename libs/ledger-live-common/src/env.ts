@@ -171,9 +171,14 @@ const envDefinitions = {
     desc: "Ledger script runner API",
   },
   BOT_TIMEOUT_SCAN_ACCOUNTS: {
-    def: 30 * 60 * 1000,
+    def: 10 * 60 * 1000,
     parser: intParser,
     desc: "bot's default timeout for scanAccounts",
+  },
+  BOT_SPEC_DEFAULT_TIMEOUT: {
+    def: 30 * 60 * 1000,
+    parser: intParser,
+    desc: "define the default value of spec.skipMutationsTimeout (if not overriden by spec)",
   },
   CARDANO_API_ENDPOINT: {
     def: "https://cardano.coin.ledger.com/api",
@@ -530,7 +535,7 @@ const envDefinitions = {
     desc: "maximum limit to synchronize accounts concurrently to limit overload",
   },
   BOT_MAX_CONCURRENT: {
-    def: 5,
+    def: 10,
     parser: intParser,
     desc: "maximum limit to run bot spec in parallel",
   },

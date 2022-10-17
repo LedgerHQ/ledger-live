@@ -102,23 +102,6 @@ const hedera: AppSpec<Transaction> = {
           updates: [{ recipient }, { useAllAmount: true }],
         };
       },
-      test: ({
-        accountBeforeTransaction,
-        account,
-        operation,
-        transaction,
-      }: TransactionTestInput<Transaction>): void => {
-        const accountBalanceAfterTx = account.balance.toNumber();
-
-        // NOTE: operation.fee is the ACTUAL (not estimated) fee cost of the transaction
-        const amount = accountBeforeTransaction.balance
-          .minus(transaction.amount.plus(operation.fee))
-          .toNumber();
-
-        botTest("account balance moved with operation", () =>
-          expect(accountBalanceAfterTx).toBe(amount)
-        );
-      },
     },
     {
       name: "Memo",

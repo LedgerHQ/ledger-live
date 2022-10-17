@@ -19,6 +19,7 @@ import {
   renderAllowManager,
   renderInWrongAppForAccount,
   renderError,
+  renderDeviceNotOnboarded,
   renderBootloaderStep,
   renderExchange,
   renderConfirmSwap,
@@ -26,6 +27,9 @@ import {
   LoadingAppInstall,
   AutoRepair,
   renderAllowLanguageInstallation,
+  renderImageLoadRequested,
+  renderLoadingImage,
+  renderImageCommitRequested,
 } from "./rendering";
 import PreventNativeBack from "../PreventNativeBack";
 import SkipLock from "../behaviour/SkipLock";
@@ -35,29 +39,52 @@ type Props<R, H, P> = {
   onResult?: (_: any) => Promise<void> | void;
   onError?: (_: any) => Promise<void> | void;
   renderOnResult?: (_: P) => React.ReactNode;
-  action: Action<R, H, P>;
+  action?: Action<R, H, P>;
+  status?: any;
   request?: R;
   device: Device;
+  payload?: any;
   onSelectDeviceLink?: () => void;
   analyticsPropertyFlow?: string;
 };
+
 export default function DeviceAction<R, H, P>({
   action,
   request = null,
   device: selectedDevice,
+  ...props
+}: Props<R, H, P>): JSX.Element {
+  const status: any = action?.useHook(selectedDevice, request);
+  const payload = action?.mapResult(status);
+
+  return (
+    <DeviceActionDefaultRendering
+      device={selectedDevice}
+      status={status}
+      request={request}
+      payload={payload}
+      {...props}
+    />
+  );
+}
+
+export function DeviceActionDefaultRendering<R, H, P>({
   onResult,
   onError,
+  device: selectedDevice,
   renderOnResult,
   onSelectDeviceLink,
   analyticsPropertyFlow = "unknown",
-}: Props<R, H, P>) {
+  status,
+  request,
+  payload,
+}: Props<R, H, P>): JSX.Element | null {
   const { colors, dark } = useTheme();
   const dispatch = useDispatch();
   const theme = dark ? "dark" : "light";
   const { t } = useTranslation();
   const navigation = useNavigation();
-  // TODO: fix flow type
-  const status: any = action.useHook(selectedDevice, request);
+
   const {
     appAndVersion,
     device,
@@ -95,13 +122,18 @@ export default function DeviceAction<R, H, P>({
     installingApp,
     progress,
     listingApps,
+    imageLoadRequested,
+    loadingImage,
+    imageCommitRequested,
   } = status;
+
   useEffect(() => {
     if (deviceInfo) {
       dispatch(
         setLastSeenDeviceInfo({
           modelId: device.modelId,
           deviceInfo,
+          apps: [],
         }),
       );
     }
@@ -111,7 +143,7 @@ export default function DeviceAction<R, H, P>({
     if (error && onError) {
       onError(error);
     }
-  }, [error]);
+  }, [error, onError]);
 
   if (displayUpgradeWarning && appAndVersion) {
     return renderWarningOutdated({
@@ -220,7 +252,6 @@ export default function DeviceAction<R, H, P>({
     !completeExchangeError
   ) {
     return renderExchange({
-      // $FlowFixMe
       exchangeType: request?.exchangeType,
       t,
       device,
@@ -234,9 +265,11 @@ export default function DeviceAction<R, H, P>({
       device: selectedDevice,
       colors,
       theme,
-      provider:
-        (request && request.exchangeRate && request.exchangeRate.provider) ||
-        undefined,
+      transaction: request?.transaction,
+      exchangeRate: request?.exchangeRate,
+      exchange: request?.exchange,
+      amountExpectedTo: status.amountExpectedTo,
+      estimatedFees: status.estimatedFees,
     });
   }
 
@@ -255,7 +288,6 @@ export default function DeviceAction<R, H, P>({
       navigation,
       device: selectedDevice,
       wording,
-      // $FlowFixMe
       tokenContext: request?.tokenCurrency,
       isDeviceBlocker: !requestOpenApp,
       colors,
@@ -273,6 +305,16 @@ export default function DeviceAction<R, H, P>({
     });
   }
 
+  if (imageLoadRequested) {
+    return renderImageLoadRequested({ t, device });
+  }
+  if (loadingImage) {
+    return renderLoadingImage({ t, device, progress });
+  }
+  if (imageCommitRequested) {
+    return renderImageCommitRequested({ t, device });
+  }
+
   if (!isLoading && error) {
     /** @TODO Put that back if the app is still crashing */
     // track("DeviceActionError", error);
@@ -284,14 +326,7 @@ export default function DeviceAction<R, H, P>({
       (error instanceof TransportStatusError &&
         error.message.includes("0x6d06"))
     ) {
-      return renderError({
-        t,
-        navigation,
-        error: new DeviceNotOnboarded(),
-        withOnboardingCTA: true,
-        colors,
-        theme,
-      });
+      return renderDeviceNotOnboarded({ t, device, navigation });
     }
 
     return renderError({
@@ -333,7 +368,6 @@ export default function DeviceAction<R, H, P>({
   }
 
   if (request && device && deviceSignatureRequested) {
-    // $FlowFixMe
     const { account, parentAccount, status, transaction } = request;
 
     if (account && status && transaction) {
@@ -359,7 +393,6 @@ export default function DeviceAction<R, H, P>({
   }
 
   if (request && device && signMessageRequested) {
-    // $FlowFixMe
     const { account } = request;
     return (
       <>
@@ -387,8 +420,6 @@ export default function DeviceAction<R, H, P>({
       theme,
     });
   }
-
-  const payload = action.mapResult(status);
 
   if (!payload) {
     return null;

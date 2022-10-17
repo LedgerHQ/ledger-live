@@ -7,7 +7,7 @@ import flushDevice from "./flushDevice";
 import firmwareUpdating from "./firmwareUpdating";
 import getLatestFirmwareForDevice from "./getLatestFirmwareForDevice";
 import getSatStackStatus from "./getSatStackStatus";
-import listenDevices from "./listenDevices";
+import listenToHidDevices from "./listenToHidDevices";
 import listApps from "./listApps";
 import signMessage from "./signMessage";
 import ping from "./ping";
@@ -24,7 +24,9 @@ import websocketBridge from "./websocketBridge";
 import checkSignatureAndPrepare from "./checkSignatureAndPrepare";
 import getTransactionId from "./getTransactionId";
 import scanDescriptors from "./scanDescriptors";
+import installLanguage from "./installLanguage";
 import getAppAndVersion from "./getAppAndVersion";
+import getDeviceInfo from "./getDeviceInfo";
 import { commands as bridgeProxyCommands } from "~/renderer/bridge/proxy-commands";
 
 export const commandsById = {
@@ -38,7 +40,7 @@ export const commandsById = {
   firmwareUpdating,
   getLatestFirmwareForDevice,
   getSatStackStatus,
-  listenDevices,
+  listenToHidDevices,
   connectApp,
   connectManager,
   listApps,
@@ -53,8 +55,10 @@ export const commandsById = {
   testInterval,
   websocketBridge,
   scanDescriptors,
+  installLanguage,
   signMessage,
   getAppAndVersion,
+  getDeviceInfo,
 };
 
 export type Commands = typeof commandsById;

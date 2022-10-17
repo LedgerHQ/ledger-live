@@ -26,6 +26,7 @@ import ConfirmModal from "~/renderer/modals/ConfirmModal";
 import Space from "~/renderer/components/Space";
 import Button from "~/renderer/components/Button";
 import type { ThemedComponent } from "~/renderer/styles/StyleProvider";
+import { getTagDerivationMode } from "@ledgerhq/live-common/derivation";
 
 type State = {
   accountName: ?string,
@@ -160,6 +161,11 @@ class AccountSettingRenderBody extends PureComponent<Props, State> {
 
     const onSubmit = this.handleSubmit(account, onClose);
 
+    const tag =
+      account.derivationMode !== undefined &&
+      account.derivationMode !== null &&
+      getTagDerivationMode(account.currency, account.derivationMode);
+
     return (
       <ModalBody
         onClose={onClose}
@@ -204,7 +210,7 @@ class AccountSettingRenderBody extends PureComponent<Props, State> {
               </Box>
             </Container>
             <Spoiler textTransform title={t("account.settings.advancedLogs")}>
-              {account.currency.family === "bitcoin" ? <Tips /> : null}
+              {tag ? <Tips tag={tag} /> : null}
               <AdvancedLogsContainer>{JSON.stringify(usefulData, null, 2)}</AdvancedLogsContainer>
             </Spoiler>
             <ConfirmModal
@@ -307,10 +313,10 @@ export const OptionRowTitle: ThemedComponent<{}> = styled(Box).attrs(() => ({
   lineHeight: 1.69,
 }))``;
 
-const Tips = memo(function Tips() {
+const Tips = memo(function Tips({ tag }: { tag: string }) {
   return (
     <Alert type="primary" learnMoreUrl={urls.xpubLearnMore}>
-      <Trans i18nKey="account.settings.advancedTips" />
+      <Trans i18nKey="account.settings.advancedTips" values={{ tag }} />
     </Alert>
   );
 });

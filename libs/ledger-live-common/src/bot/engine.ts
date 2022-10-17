@@ -52,6 +52,7 @@ import type {
 } from "@ledgerhq/types-live";
 import type { Transaction, TransactionStatus } from "../generated/types";
 import { botTest } from "./bot-test-context";
+import { retryWithDelay } from "../rxjs/operators/retryWithDelay";
 
 let appCandidates;
 const localCache = {};
@@ -73,6 +74,9 @@ async function crossAccount(account: Account): Promise<Account> {
   synced.name += " cross";
   return synced;
 }
+
+const defaultScanAccountsRetries = 2;
+const delayBetweenScanAccountRetries = 5000;
 
 export async function runWithAppSpec<T extends Transaction>(
   spec: AppSpec<T>,
@@ -117,7 +121,11 @@ export async function runWithAppSpec<T extends Transaction>(
   };
   let device;
   const hintWarnings: string[] = [];
-  const appReport: SpecReport<T> = { spec, hintWarnings };
+  const appReport: SpecReport<T> = {
+    spec,
+    hintWarnings,
+    skipMutationsTimeoutReached: false,
+  };
 
   // staticly check that all mutations declared a test too (if no generic spec test)
   if (!spec.test) {
@@ -156,6 +164,10 @@ export async function runWithAppSpec<T extends Transaction>(
         syncConfig,
       })
       .pipe(
+        retryWithDelay(
+          delayBetweenScanAccountRetries,
+          spec.scanAccountsRetries || defaultScanAccountsRetries
+        ),
         filter((e) => e.type === "discovered"),
         map((e) => e.account),
         reduce<Account, Account[]>((all, a) => all.concat(a), []),
@@ -214,6 +226,9 @@ export async function runWithAppSpec<T extends Transaction>(
       return appReport;
     }
 
+    const mutationsStartTime = now();
+    const skipMutationsTimeout =
+      spec.skipMutationsTimeout || getEnv("BOT_SPEC_DEFAULT_TIMEOUT");
     let mutationsCount = {};
     // we sequentially iterate on the initial account set to perform mutations
     const length = accounts.length;
@@ -223,13 +238,17 @@ export async function runWithAppSpec<T extends Transaction>(
 
     for (let j = 0; j < totalTries; j++) {
       for (let i = 0; i < length; i++) {
+        t = now();
+        if (t - mutationsStartTime > skipMutationsTimeout) {
+          appReport.skipMutationsTimeoutReached = true;
+          break;
+        }
         log(
           "engine",
           `spec ${spec.name} sync all accounts (try ${j} run ${i})`
         );
-        // resync all accounts that needs to be resynced
-        t = now();
 
+        // resync all accounts that needs to be resynced
         const resynced = await promiseAllBatched(
           getEnv("SYNC_MAX_CONCURRENT"),
           accounts.filter((a) => accountIdsNeedResync.includes(a.id)),
@@ -342,6 +361,15 @@ export async function runWithAppSpec<T extends Transaction>(
       );
     }
 
+    mutationReports.forEach((m) => {
+      m.hintWarnings.forEach((h) => {
+        const txt = `mutation ${m.mutation?.name || "?"}: ${h}`;
+        if (!hintWarnings.includes(txt)) {
+          hintWarnings.push(txt);
+        }
+      });
+    });
+
     appReport.mutations = mutationReports;
     appReport.accountsAfter = accounts;
   } catch (e: any) {
@@ -378,10 +406,12 @@ export async function runOnAccount<T extends Transaction>({
 }): Promise<MutationReport<T>> {
   const { mutations } = spec;
   let latestSignOperationEvent;
+  const hintWarnings: string[] = [];
   const report: MutationReport<T> = {
     spec,
     appCandidate,
     resyncAccountsDuration,
+    hintWarnings,
   };
 
   try {
@@ -514,11 +544,38 @@ export async function runOnAccount<T extends Transaction>({
 
     // without recovering mechanism, we simply assume an error is a failure
     if (errors.length) {
+      console.warn(status);
       botTest("mutation must not have tx status errors", () => {
         // all mutation must express transaction that are POSSIBLE
         // recoveredFromTransactionStatus can also be used to solve this for tricky cases
         throw errors[0];
       });
+    }
+
+    const { expectStatusWarnings } = mutation;
+    if (warnings.length || expectStatusWarnings) {
+      const expected =
+        expectStatusWarnings &&
+        expectStatusWarnings({
+          transaction,
+          status,
+          account,
+          bridge: accountBridge,
+        });
+      if (expected) {
+        botTest("verify status.warnings expectations", () =>
+          expect(status.warnings).toEqual(expected)
+        );
+      } else {
+        for (const k in status.warnings) {
+          const e = status.warnings[k];
+          hintWarnings.push(
+            `unexpected status.warnings.${k} = ${String(
+              e
+            )} – Please implement expectStatusWarnings on the mutation if expected`
+          );
+        }
+      }
     }
 
     mutationsCount[mutation.name] = (mutationsCount[mutation.name] || 0) + 1;
@@ -587,7 +644,7 @@ export async function runOnAccount<T extends Transaction>({
     // wait the condition are good (operation confirmed)
     // test() is run over and over until either timeout is reach OR success
     const testBefore = now();
-    const timeOut = mutation.testTimeout || spec.testTimeout || 30 * 1000;
+    const timeOut = mutation.testTimeout || spec.testTimeout || 5 * 60 * 1000;
     const step = (account) => {
       const timedOut = now() - testBefore > timeOut;
       const operation = account.operations.find(
@@ -710,6 +767,7 @@ export async function runOnAccount<T extends Transaction>({
     if (process.env.CI) console.error(error);
     log("mutation-error", spec.name + ": " + formatError(error, true));
     report.error = error;
+    report.errorTime = now();
   }
 
   report.latestSignOperationEvent = latestSignOperationEvent;
@@ -862,6 +920,7 @@ function transactionTest<T>({
   operation,
   optimisticOperation,
   account,
+  accountBeforeTransaction,
 }: TransactionTestInput<T>) {
   const dt = Date.now() - operation.date.getTime();
   const lowerThreshold = -60 * 1000; // -1mn accepted
@@ -902,5 +961,13 @@ function transactionTest<T>({
   );
   botTest("operation.fee must not be NaN", () =>
     expect(!operation.fee.isNaN()).toBe(true)
+  );
+
+  botTest(
+    "successful tx should increase by 1 the number of account.operations",
+    () =>
+      expect(account.operations.length).toBe(
+        accountBeforeTransaction.operations.length + 1
+      )
   );
 }
