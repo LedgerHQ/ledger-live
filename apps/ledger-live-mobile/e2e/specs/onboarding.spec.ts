@@ -7,7 +7,7 @@ describe("Onboarding", () => {
     await OnboardingSteps.startOnboarding();
     await OnboardingSteps.DoIOwnDevice(true);
     await OnboardingSteps.chooseToSetupLedger();
-    await OnboardingSteps.selectYourDevice("NANO X");
+    await OnboardingSteps.selectYourDevice("Ledger\u00A0Nano\u00A0X");
     await OnboardingSteps.chooseToConnectYourNano();
     await OnboardingSteps.verifyContentsOfBoxAreChecked();
     await OnboardingSteps.chooseToPairMyNano();
