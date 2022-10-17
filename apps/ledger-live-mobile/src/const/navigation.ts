@@ -431,6 +431,7 @@ export const ScreenName = {
   // hedera
   HederaEditMemo: "HederaEditMemo",
 
+  CustomImageStep0Welcome: "CustomImageStep0Welcome",
   CustomImageStep1Crop: "CustomImageStep1Crop",
   CustomImageStep2Preview: "CustomImageStep2Preview",
   CustomImageStep3Transfer: "CustomImageStep3Transfer",

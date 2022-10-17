@@ -63,6 +63,7 @@ importers:
       '@types/command-line-args': ^5.2.0
       '@types/lodash': ^4.14.177
       '@types/node': ^17.0.15
+      '@types/pako': ^2.0.0
       '@walletconnect/client': ^1.7.1
       asciichart: ^1.5.25
       bignumber.js: ^9.0.1
@@ -74,6 +75,7 @@ importers:
       invariant: ^2.2.4
       lodash: ^4.17.21
       lodash.product: ^18.9.19
+      pako: ^2.0.4
       qrcode-terminal: ^0.12.0
       qrloop: ^1.2.0
       react: ^17.0.2
@@ -106,6 +108,7 @@ importers:
       invariant: 2.2.4
       lodash: 4.17.21
       lodash.product: 18.9.19_lodash@4.17.21
+      pako: 2.0.4
       qrcode-terminal: 0.12.0
       qrloop: 1.2.0
       react: 17.0.2
@@ -122,6 +125,7 @@ importers:
       '@types/command-line-args': 5.2.0
       '@types/lodash': 4.14.182
       '@types/node': 17.0.32
+      '@types/pako': 2.0.0
       ts-node: 10.7.0_sm5zkxj4s52nbddwl76qwfh6ya
       typescript: 4.6.4
 
@@ -975,6 +979,7 @@ importers:
       '@types/lodash': ^4.14.179
       '@types/node': 16.11.12
       '@types/object-hash': ^2.1.0
+      '@types/pako': ^2.0.0
       '@types/qs': ^6.9.7
       '@types/react': ^17
       '@typescript-eslint/eslint-plugin': ^4.33.0
@@ -1046,6 +1051,7 @@ importers:
       minimatch: ^5.1.0
       numeral: ^2.0.6
       object-hash: ^2.2.0
+      pako: ^2.0.4
       performance-now: ^2.1.0
       prando: ^6.0.1
       prettier: 2.3.2
@@ -1139,6 +1145,7 @@ importers:
       '@taquito/utils': 13.0.1
       '@types/bchaddrjs': 0.4.0
       '@types/bs58check': 2.1.0
+      '@types/pako': 2.0.0
       '@types/qs': 6.9.7
       '@walletconnect/client': 1.7.3
       '@xstate/react': 1.6.3_trxcr4ukgza3iqpu7qkdqadng4
@@ -1186,6 +1193,7 @@ importers:
       minimatch: 5.1.0
       numeral: 2.0.6
       object-hash: 2.2.0
+      pako: 2.0.4
       performance-now: 2.1.0
       prando: 6.0.1
       qs: 6.10.3
@@ -18950,6 +18958,9 @@ packages:
     resolution: {integrity: sha512-V25YHbSoKQN35UasHf0EKD9U2vcmexRSp78qa8UglxFH8H3D+adEa9zGZwrqpH4TdvqeMrgMqVqsLB4woAryrQ==}
     dev: true
 
+  /@types/pako/2.0.0:
+    resolution: {integrity: sha512-10+iaz93qR5WYxTo+PMifD5TSxiOtdRaxBf7INGGXMQgTCu8Z/7GYWYFUOS3q/G0nE5boj1r4FEB+WSy7s5gbA==}
+
   /@types/parse-json/4.0.0:
     resolution: {integrity: sha512-//oorEZjL6sbPcKUaCdIGlIUeH26mgzimjBB77G6XRgnDl/L5wOnpyBGRe/Mmf5CVW3PwEBE1NjiMZ/ssFh4wA==}
 
@@ -24172,7 +24183,7 @@ packages:
       mkdirp: 0.5.6
       move-concurrently: 1.0.1
       p-map: 3.0.0
-      promise-inflight: 1.0.1
+      promise-inflight: 1.0.1_bluebird@3.7.2
       rimraf: 2.7.1
       ssri: 7.1.1
       unique-filename: 1.1.1
@@ -42571,6 +42582,10 @@ packages:
   /pako/1.0.11:
     resolution: {integrity: sha512-4hLB8Py4zZce5s4yd9XzopqwVv/yGNhV1Bl8NTmCq1763HeK2+EwVTv+leGeL13Dnh2wfbqowVPXCIO0z4taYw==}
 
+  /pako/2.0.4:
+    resolution: {integrity: sha512-v8tweI900AUkZN6heMU/4Uy4cXRc2AYNRggVmTR+dEncawDJgCdLMximOVA2p4qO57WMynangsfGRb5WD6L1Bg==}
+    dev: false
+
   /parallel-transform/1.2.0:
     resolution: {integrity: sha512-P2vSmIu38uIlvdcU7fDkyrxj33gTUy/ABO5ZUbGowxNCopBq/OoD42bP4UmMrJoPyk4Uqf0mu3mtWBhHCZD8yg==}
     dependencies:
@@ -45181,6 +45196,7 @@ packages:
     peerDependenciesMeta:
       bluebird:
         optional: true
+    dev: true
 
   /promise-inflight/1.0.1_bluebird@3.7.2:
     resolution: {integrity: sha512-6zWPyEOFaQBJYcGMHBKTKJ3u6TBsnMFOIZSa6ce1e/ZrrsOlnHRHbabMjLiBYKp+n44X9eUI6VUPaukCXHuG4g==}

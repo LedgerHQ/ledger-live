@@ -3,6 +3,7 @@ import { Flex } from "@ledgerhq/native-ui";
 import { StackScreenProps } from "@react-navigation/stack";
 import { CompositeScreenProps } from "@react-navigation/native";
 import { TouchableWithoutFeedback } from "react-native-gesture-handler";
+import { useStartPostOnboardingCallback } from "@ledgerhq/live-common/postOnboarding/hooks/useStartPostOnboardingCallback";
 
 import { NavigatorName } from "../../const";
 import type { BaseNavigatorStackParamList } from "../../components/RootNavigator/BaseNavigator";
@@ -18,8 +19,11 @@ type Props = CompositeScreenProps<
   StackScreenProps<BaseNavigatorStackParamList>
 >;
 
-const CompletionScreen = ({ navigation }: Props) => {
+const CompletionScreen = ({ navigation, route }: Props) => {
   const delayRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const { device } = route.params;
+  const startPostOnboarding = useStartPostOnboardingCallback(device.modelId);
 
   const redirectToPostOnboarding = useCallback(() => {
     // Resets the navigation stack to avoid allowing to go back to the onboarding welcome screen
@@ -38,7 +42,8 @@ const CompletionScreen = ({ navigation }: Props) => {
         },
       ],
     });
-  }, [navigation]);
+    startPostOnboarding();
+  }, [navigation, startPostOnboarding]);
 
   const skipDelay = useCallback(() => {
     if (!delayRef.current) {
