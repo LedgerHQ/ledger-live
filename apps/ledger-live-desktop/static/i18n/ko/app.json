@@ -237,7 +237,7 @@
     "form" : {
       "changeCTA" : "변경",
       "rates" : {
-        "title" : "공급자",
+        "title" : "호가",
         "registration" : "등록이 필요합니다 ",
         "noRegistration" : "등록이 필요하지 않습니다",
         "fixed" : "고정",
@@ -246,7 +246,7 @@
         "loading" : "로딩 중...",
         "name" : {
           "title" : "공급자",
-          "tooltip" : "제공업체에 따라 계정을 생성하여 로그인해야 합니다."
+          "tooltip" : "제공업체에 따라 계정을 생성하여 회원가입을 해야 합니다."
         },
         "rate" : {
           "title" : "환율",
@@ -430,11 +430,13 @@
         }
       },
       "filter" : {
-        "all" : "전체",
         "centralised" : "중앙화",
-        "dedentralised" : "탈중앙화"
+        "decentralised" : "탈중앙화",
+        "float" : "변동 이율",
+        "fixed" : "고정 요율"
       },
-      "noQuote" : "다음 단계에서 견적을 확인할 수 있습니다"
+      "noQuote" : "다음 단계에서 견적을 확인할 수 있습니다",
+      "noProviders" : "결과를 찾을 수 없습니다 현재 설정에 사용할 수 있는 호가가 없습니다."
     },
     "ip" : {
       "title" : "스왑 거래에 오신 것을 환영합니다",
@@ -752,7 +754,7 @@
     "settings" : {
       "title" : "계정 편집",
       "advancedLogs" : "고급",
-      "advancedTips" : "xpub은 개인 정보에 민감한 데이터입니다. 특히 제3자에게 공개할 때는 주의하여 사용하세요.",
+      "advancedTips" : "{{tag}} xpub 입니다. 타사 지갑으로 가져올 때 동일한 파생 모드를 선택하세요.",
       "accountName" : {
         "title" : "계정 이름",
         "desc" : "계정 설명"
@@ -1182,6 +1184,10 @@
     "blackfriday" : {
       "title" : "블랙 프라이데이 ",
       "description" : "프로모션 코드(BLACKFRIDAY20)로 Ledger 하드웨어 지갑을 40% 할인가에 구매하세요"
+    },
+    "referralProgram" : {
+      "title" : "추천하고 $10를 받으세요",
+      "description" : "친구를 추천하면 두 분 모두에게 $10 상당의 비트코인을 제공합니다."
     }
   },
   "signmessage" : {
@@ -4794,7 +4800,7 @@
     },
     "EthAppNftNotSupported" : {
       "title" : "이 장치에서 사용할 수 없는 작업",
-      "description" : "Send NFT feature is only available for Nano X and Nano S+. Please visit our customer support platform to know how to send a NFT with a Nano S."
+      "description" : "NFT 보내기 기능은 Nano X 및 Nano S+에서만 사용할 수 있습니다. Nano S로 NFT를 보내는 방법을 알아보려면 고객 지원 플랫폼을 방문하세요."
     },
     "CantScanQRCode" : {
       "title" : "이 QR 코드를 스캔할 수 없습니다: 이 주소는 자동 확인을 지원하지 않습니다"
@@ -5052,6 +5058,9 @@
     },
     "StellarSourceHasMultiSign" : {
       "title" : "스텔라 트랜잭션을 수행하려면 다중서명을 비활성화하세요"
+    },
+    "HederaAddAccountError" : {
+      "title" : "귀하의 계정이 추가되지 않았습니다. 다시 시도해 주세요."
     }
   },
   "cryptoOrg" : {
