@@ -1,4 +1,4 @@
-import React, { memo, useCallback, useMemo } from "react";
+import React, { memo, useCallback, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigation, useTheme } from "@react-navigation/native";
 import { NFTMediaSize, NFTMetadata } from "@ledgerhq/types-live";
@@ -21,6 +21,7 @@ import GlobeIcon from "../../icons/Globe";
 import BottomModal from "../BottomModal";
 import { rgba } from "../../colors";
 import LText from "../LText";
+import HideNftDrawer from "./HideNftDrawer";
 
 type Props = {
   links: NFTMetadata["links"] | null;
@@ -70,7 +71,8 @@ const NftLinksPanel = ({
   const { t } = useTranslation();
   const navigation = useNavigation();
   const customImage = useFeature("customImage");
-
+  const [bottomHideCollectionOpen, setBottomHideCollectionOpen] =
+    useState(false);
   const mediaTypes = useMemo(
     () => (nftMetadata ? getMetadataMediaTypes(nftMetadata) : null),
     [nftMetadata],
@@ -100,7 +102,7 @@ const NftLinksPanel = ({
   }, [links?.explorer]);
 
   const hide = useCallback(() => {
-    console.log("hide");
+    setBottomHideCollectionOpen(true);
   }, []);
 
   const show = useCallback(() => {
@@ -249,6 +251,10 @@ const NftLinksPanel = ({
     handlePressCustomImage,
   ]);
 
+  const closeHideModal = () => {
+    setBottomHideCollectionOpen(false);
+  };
+
   return (
     <BottomModal
       style={[
@@ -262,6 +268,11 @@ const NftLinksPanel = ({
       onClose={onClose}
     >
       {content}
+
+      <HideNftDrawer
+        isOpened={bottomHideCollectionOpen}
+        onClose={closeHideModal}
+      />
     </BottomModal>
   );
 };
