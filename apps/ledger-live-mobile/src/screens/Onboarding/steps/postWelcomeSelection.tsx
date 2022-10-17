@@ -124,7 +124,7 @@ function PostWelcomeSelection({
 
   return (
     <DeviceSetupView hasBackButton>
-      <ScrollListContainer flex={1} px={6}>
+      <ScrollListContainer flex={1} mx={6}>
         <TrackScreen
           category="Onboarding"
           name={userHasDevice ? "Choice With Device" : "Choice No Device"}

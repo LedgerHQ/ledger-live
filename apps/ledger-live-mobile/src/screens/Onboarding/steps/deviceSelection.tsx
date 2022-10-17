@@ -97,7 +97,7 @@ function OnboardingStepDeviceSelection() {
 
   return (
     <DeviceSetupView hasBackButton>
-      <ScrollListContainer flex={1} px={6}>
+      <ScrollListContainer flex={1} mx={6}>
         <TrackScreen category="Onboarding" name="SelectDevice" />
         <Text variant="h4" mb={3} fontWeight="semiBold">
           {t("syncOnboarding.deviceSelection.title")}
