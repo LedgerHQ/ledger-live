@@ -9,6 +9,7 @@ import Step1Cropping from "../../screens/CustomImage/Step1Crop";
 import Step2Preview from "../../screens/CustomImage/Step2Preview";
 import Step3Transfer from "../../screens/CustomImage/Step3Transfer";
 import ErrorScreen from "../../screens/CustomImage/ErrorScreen";
+import Step0Welcome from "../../screens/CustomImage/Step0Welcome";
 
 export type CustomImageParamList = ParamList;
 
@@ -22,6 +23,11 @@ export default function CustomImageNavigator() {
 
   return (
     <Stack.Navigator screenOptions={stackNavigationConfig}>
+      <Stack.Screen
+        name={ScreenName.CustomImageStep0Welcome as "CustomImageStep0Welcome"}
+        component={Step0Welcome}
+        options={{ title: "", headerRight: undefined }}
+      />
       <Stack.Screen
         name={ScreenName.CustomImageStep1Crop as "CustomImageStep1Crop"}
         component={Step1Cropping}

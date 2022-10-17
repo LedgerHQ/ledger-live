@@ -1,4 +1,4 @@
-import { Flex, Icons, Text } from "@ledgerhq/native-ui";
+import { Flex, Icons, Link, Text } from "@ledgerhq/native-ui";
 import React, { useCallback, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Language, DeviceInfo } from "@ledgerhq/types-live";
@@ -8,7 +8,6 @@ import BottomModal from "../../../components/BottomModal";
 import DeviceLanguageSelection from "./DeviceLanguageSelection";
 import ChangeDeviceLanguageActionModal from "../../../components/ChangeDeviceLanguageActionModal";
 import { track } from "../../../analytics";
-import Touchable from "../../../components/Touchable";
 
 type Props = {
   pendingInstalls: boolean;
@@ -74,33 +73,19 @@ const DeviceLanguage: React.FC<Props> = ({
 
   return (
     <>
-      <Flex
-        flexDirection="row"
-        alignItems="center"
-        justifyContent="space-between"
-      >
-        <Flex flexDirection="row">
-          <Icons.LanguageMedium size={24} color="neutral.c80" />
-          <Text ml={2} color="neutral.c80">
-            {t("deviceLocalization.language")}
-          </Text>
-        </Flex>
+      <Flex flex={1} flexDirection="row" alignItems="center">
+        <Icons.LanguageMedium size={24} color="neutral.c80" />
+        <Text ml={3} flex={1} variant="bodyLineHeight" color="neutral.c80">
+          {t("deviceLocalization.language")}
+        </Text>
         {availableLanguages.length ? (
-          <Touchable
+          <Link
             onPress={pendingInstalls ? undefined : openChangeLanguageModal}
+            type="color"
+            Icon={Icons.ChevronRightMedium}
           >
-            <Flex flexDirection="row" alignItems="center" pr={2}>
-              <Text
-                variant="body"
-                color="primary.c80"
-                fontWeight="semiBold"
-                mr={2}
-              >
-                {t(`deviceLocalization.languages.${currentDeviceLanguage}`)}
-              </Text>
-              <Icons.ChevronRightMedium size={18} color="primary.c80" />
-            </Flex>
-          </Touchable>
+            {t(`deviceLocalization.languages.${currentDeviceLanguage}`)}
+          </Link>
         ) : (
           <Text>
             {t(`deviceLocalization.languages.${currentDeviceLanguage}`)}

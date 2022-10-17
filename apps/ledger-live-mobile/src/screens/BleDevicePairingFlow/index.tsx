@@ -5,8 +5,6 @@ import type { PropertyPath } from "lodash";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { StackScreenProps } from "@react-navigation/stack";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { Flex } from "@ledgerhq/native-ui";
 import type { BaseNavigatorStackParamList } from "../../components/RootNavigator/BaseNavigator";
 import RequiresBLE from "../../components/RequiresBLE";
 import { BleDevicesScanning } from "./BleDevicesScanning";
@@ -146,23 +144,19 @@ export const BleDevicePairingFlow = ({
 
   return (
     <RequiresBLE>
-      <SafeAreaView>
-        <Flex bg="background.main" height="100%">
-          {deviceToPair ? (
-            <BleDevicePairing
-              deviceToPair={deviceToPair}
-              onPaired={onPaired}
-              onRetry={onRetryPairingFlow}
-            />
-          ) : (
-            <BleDevicesScanning
-              filterByDeviceModelId={filterByDeviceModelId}
-              areKnownDevicesDisplayed={areKnownDevicesDisplayed}
-              onDeviceSelect={onDeviceSelect}
-            />
-          )}
-        </Flex>
-      </SafeAreaView>
+      {deviceToPair ? (
+        <BleDevicePairing
+          deviceToPair={deviceToPair}
+          onPaired={onPaired}
+          onRetry={onRetryPairingFlow}
+        />
+      ) : (
+        <BleDevicesScanning
+          filterByDeviceModelId={filterByDeviceModelId}
+          areKnownDevicesDisplayed={areKnownDevicesDisplayed}
+          onDeviceSelect={onDeviceSelect}
+        />
+      )}
     </RequiresBLE>
   );
 };

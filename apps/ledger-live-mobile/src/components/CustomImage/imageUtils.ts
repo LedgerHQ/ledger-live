@@ -158,3 +158,10 @@ export function fitImageContain(
     height: boxHeight,
   };
 }
+
+export function scaleDimensions(dimensions: ImageDimensions, scale: number) {
+  return {
+    width: dimensions.width * scale,
+    height: dimensions.height * scale,
+  };
+}

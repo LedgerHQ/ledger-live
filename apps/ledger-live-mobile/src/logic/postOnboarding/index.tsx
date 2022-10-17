@@ -1,69 +1,10 @@
-import { DeviceModelId, getDeviceModel } from "@ledgerhq/devices/lib/index";
+import { DeviceModelId } from "@ledgerhq/devices/lib/index";
 import {
   PostOnboardingAction,
   PostOnboardingActionId,
 } from "@ledgerhq/types-live";
-import { Icons } from "@ledgerhq/native-ui";
-import { NavigatorName, ScreenName } from "../../const";
-
-const claimMock: PostOnboardingAction = {
-  id: PostOnboardingActionId.claimMock,
-  Icon: Icons.GiftCardMedium,
-  title: "Claim my NFT",
-  description: "A special NFT for you.",
-  tagLabel: "Free",
-  actionCompletedPopupLabel: "NFT claimed",
-  actionCompletedHubTitle: "Kickstart your Web3 journey.",
-  navigationParams: [
-    NavigatorName.PostOnboarding,
-    {
-      screen: ScreenName.PostOnboardingMockActionScreen,
-      params: {
-        id: PostOnboardingActionId.claimMock,
-        title: PostOnboardingActionId.claimMock,
-      },
-    },
-  ],
-};
-
-const personalizeMock: PostOnboardingAction = {
-  id: PostOnboardingActionId.personalizeMock,
-  Icon: Icons.BracketsMedium,
-  featureFlagId: "customImage",
-  title: `Personalize my ${getDeviceModel(DeviceModelId.nanoFTS).productName}`,
-  description: "By customizing the screen.",
-  actionCompletedPopupLabel: "Device personalized",
-  actionCompletedHubTitle: "That screen is looking neat.",
-  navigationParams: [
-    NavigatorName.PostOnboarding,
-    {
-      screen: ScreenName.PostOnboardingMockActionScreen,
-      params: {
-        id: PostOnboardingActionId.personalizeMock,
-        title: PostOnboardingActionId.personalizeMock,
-      },
-    },
-  ],
-};
-
-const migrateAssetsMock: PostOnboardingAction = {
-  id: PostOnboardingActionId.migrateAssetsMock,
-  Icon: Icons.TransferMedium,
-  title: "Transfer assets to my Ledger",
-  description: "Easily secure assets from coinbase or another exchange.",
-  actionCompletedPopupLabel: "Assets transfered",
-  actionCompletedHubTitle: "Something about being a crypto pro.",
-  navigationParams: [
-    NavigatorName.PostOnboarding,
-    {
-      screen: ScreenName.PostOnboardingMockActionScreen,
-      params: {
-        id: PostOnboardingActionId.migrateAssetsMock,
-        title: PostOnboardingActionId.migrateAssetsMock,
-      },
-    },
-  ],
-};
+import { claimMock, migrateAssetsMock, personalizeMock } from "./mockActions";
+import { customImageAction } from "./actions";
 
 /**
  * All implemented post onboarding actions.
@@ -75,6 +16,7 @@ const postOnboardingActions: Record<
   claimMock,
   migrateAssetsMock,
   personalizeMock,
+  customImage: customImageAction,
 };
 
 /**
@@ -85,6 +27,8 @@ const ftsPostOnboardingActionsMock: PostOnboardingAction[] = [
   personalizeMock,
   migrateAssetsMock,
 ];
+
+const ftsPostOnboardingActions: PostOnboardingAction[] = [customImageAction];
 
 export function getPostOnboardingAction(
   id: PostOnboardingActionId,
@@ -113,11 +57,7 @@ export function getPostOnboardingActionsForDevice(
       return [];
     case DeviceModelId.nanoFTS:
       if (mock) return ftsPostOnboardingActionsMock;
-      /**
-       * Set here the list of actions for the post onboarding of the
-       * DeviceModelId.nanoFTS
-       * */
-      return [];
+      return ftsPostOnboardingActions;
     default:
       return [];
   }

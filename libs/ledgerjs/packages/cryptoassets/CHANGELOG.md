@@ -1,5 +1,25 @@
 # @ledgerhq/cryptoassets
 
+## 6.36.0
+
+### Minor Changes
+
+- [#1442](https://github.com/LedgerHQ/ledger-live/pull/1442) [`d3dc2c6877`](https://github.com/LedgerHQ/ledger-live/commit/d3dc2c6877fbdcaf68e442a781798d752fc5152d) Thanks [@sarneijim](https://github.com/sarneijim)! - Add bep20 exchange
+
+### Patch Changes
+
+- [#1419](https://github.com/LedgerHQ/ledger-live/pull/1419) [`2100b9fb81`](https://github.com/LedgerHQ/ledger-live/commit/2100b9fb81a4fd04f65b96561c0a7d618658843a) Thanks [@gre](https://github.com/gre)! - Introduce tests to ensure we define abandonseed values for coin we support
+
+## 6.36.0-next.0
+
+### Minor Changes
+
+- [#1442](https://github.com/LedgerHQ/ledger-live/pull/1442) [`d3dc2c6877`](https://github.com/LedgerHQ/ledger-live/commit/d3dc2c6877fbdcaf68e442a781798d752fc5152d) Thanks [@sarneijim](https://github.com/sarneijim)! - Add bep20 exchange
+
+### Patch Changes
+
+- [#1419](https://github.com/LedgerHQ/ledger-live/pull/1419) [`2100b9fb81`](https://github.com/LedgerHQ/ledger-live/commit/2100b9fb81a4fd04f65b96561c0a7d618658843a) Thanks [@gre](https://github.com/gre)! - Introduce tests to ensure we define abandonseed values for coin we support
+
 ## 6.35.1
 
 ### Patch Changes

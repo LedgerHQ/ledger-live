@@ -2,6 +2,7 @@ import fetch from "isomorphic-unfetch";
 import { Parse } from "unzipper";
 import { parser } from "stream-json";
 import { streamValues } from "stream-json/streamers/StreamValues";
+import { delay, retry, promiseAllBatched } from "./promise";
 import groupBy from "lodash/groupBy";
 
 type AppCandidate = {
@@ -56,12 +57,14 @@ async function downloadArchive(
   url: string
 ): Promise<MinimalSerializedReport | null> {
   console.log("retrieving " + url);
-  const blob = await fetch(url, {
-    headers: {
-      Authorization: `Bearer ${githubToken}`,
-      "Content-Type": "application/json",
-    },
-  }).then((r) => {
+  const blob = await retry(() =>
+    fetch(url, {
+      headers: {
+        Authorization: `Bearer ${githubToken}`,
+        "Content-Type": "application/json",
+      },
+    })
+  ).then((r) => {
     if (r.ok) {
       return r.blob();
     }
@@ -127,12 +130,14 @@ export async function loadReports({
   do {
     const url = `https://api.github.com/repos/LedgerHQ/ledger-live/actions/artifacts?per_page=100&page=${page}`;
     console.log("retrieving " + url);
-    res = await fetch(url, {
-      headers: {
-        Authorization: `Bearer ${githubToken}`,
-        "Content-Type": "application/json",
-      },
-    })
+    res = await retry(() =>
+      fetch(url, {
+        headers: {
+          Authorization: `Bearer ${githubToken}`,
+          "Content-Type": "application/json",
+        },
+      })
+    )
       .then((r) => (r.ok ? r.json() : r.status === 502 ? {} : handleErrors(r)))
       .then((r) => {
         if (r.artifacts) {
@@ -156,15 +161,15 @@ export async function loadReports({
       });
     }
     page++;
+    await delay(500);
   } while (res && res.length > 0 && !latestDateReached && page < maxPage);
 
   const reports = (
-    await Promise.all(
-      artifacts.map((artifact) =>
-        downloadArchive(githubToken, artifact.archive_download_url).then(
-          (report) => ({ artifact, report })
-        )
-      )
+    await promiseAllBatched(5, artifacts, (artifact) =>
+      downloadArchive(
+        githubToken,
+        artifact.archive_download_url
+      ).then((report) => ({ artifact, report }))
     )
   )
     .filter(Boolean)
