@@ -1,3 +1,15 @@
+# 2.49.0
+
+A few small but mighty improvements have been made to Ledger Live's swapping capabilities 👇
+
+### 🚀 Features
+
+- You can now filter swap quotes based on floating or fixed rates.
+
+### 🐛 Fixes
+
+- Trying to swap some assets with Changelly, such as GALA and MBOX, may have resulted in the app crashing. We've sorted this out and everything is working as it should now.
+
 # 2.48.0
 
 ### 🚀 Features
