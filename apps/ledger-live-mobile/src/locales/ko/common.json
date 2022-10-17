@@ -413,6 +413,10 @@
       "title" : "죄송하지만 자금이 부족합니다",
       "description" : "계정에 자금이 충분한지 확인해 주세요."
     },
+    "NoSuchAppOnProvider" : {
+      "title" : "특정 구성에 대한 {{appName}} 앱을 찾을 수 없습니다.",
+      "description" : "관리자에서 앱을 다시 설치해 보세요"
+    },
     "NotEnoughGas" : {
       "title" : "ETH가 네트워크 수수료로 부족합니다",
       "description" : "ERC20 토큰 트랜잭션 수수료로 계정에 ETH를 전송하세요."
@@ -728,6 +732,9 @@
     "ImageProcessingError" : {
       "title" : "이미지 처리 실패",
       "description" : "다른 이미지로 다시 시도하세요"
+    },
+    "HederaAddAccountError" : {
+      "title" : "귀하의 계정이 추가되지 않았습니다. 다시 시도해 주세요."
     }
   },
   "crash" : {
@@ -775,6 +782,9 @@
     "failed" : {
       "biometrics" : {
         "title" : "{{biometricsType}} 잠금 해제에 실패했습니다",
+        "touchid" : "TouchID",
+        "faceid" : "FaceID",
+        "fingerprint" : "지문",
         "description" : "계속하려면 암호를 입력하세요",
         "authenticate" : "Ledger Live 앱으로 인증하세요."
       },
@@ -803,7 +813,10 @@
     },
     "enableBiometrics" : {
       "title" : "{{biometricsType}}",
-      "desc" : "{{biometricsType}}로 잠금 해제"
+      "desc" : "{{biometricsType}}로 잠금 해제",
+      "touchid" : "TouchID",
+      "faceid" : "FaceID",
+      "fingerprint" : "지문"
     }
   },
   "reset" : {
@@ -1028,6 +1041,21 @@
     },
     "comingSoon" : "곧 출시 예정",
     "mostPopular" : "인기 항목"
+  },
+  "installSetOfApps" : {
+    "landing" : {
+      "estimatedTime" : "{{ minutes }}분",
+      "title" : "{{ productName }} 제품은 앱을 사용하여 안전한 블록체인 트랜잭션을 지원합니다",
+      "subtitle" : "기본 앱 세트를 다운로드를 권장드립니다. 이후 추가로 다운로드할 수 있습니다.",
+      "installCTA" : "앱 설치",
+      "skipCTA" : "나중에 할게요"
+    },
+    "ongoing" : {
+      "loading" : "로딩 중...",
+      "resolving" : "의존성 해결",
+      "progress" : "앱 설치 중 {{progress}}%",
+      "disclaimer" : "{{ productName }}의 앱은 트랜잭션 승인에 사용됩니다. 언제든지 추가나 삭제가 가능합니다."
+    }
   },
   "onboarding" : {
     "stepWelcome" : {
@@ -1974,6 +2002,7 @@
       },
       "advanced" : {
         "title" : "고급 로그",
+        "warningDerivation" : "{{tag}} xpub 입니다. 타사 지갑으로 가져올 때 동일한 파생 모드를 선택하세요.",
         "desc" : ""
       }
     },
