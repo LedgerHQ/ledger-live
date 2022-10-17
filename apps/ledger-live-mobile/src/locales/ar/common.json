@@ -413,6 +413,10 @@
       "title" : "عفواً، الأموال المتوفرة غير كافية",
       "description" : "يرجى التأكد من وجود أموال كافية في الحساب."
     },
+    "NoSuchAppOnProvider" : {
+      "title" : "لا يمكن العثور على التطبيق {{appName}} للتهيئة الخاصة بك.",
+      "description" : "حاول إعادة تثبيت التطبيق من المدير"
+    },
     "NotEnoughGas" : {
       "title" : "ETH غير كافٍ لتغطية رسوم الشبكة",
       "description" : "يرجى إرسال بعض ETH إلى حسابك لسداد قيمة معاملات رمز ERC20."
@@ -728,6 +732,9 @@
     "ImageProcessingError" : {
       "title" : "فشل معالجة الصورة",
       "description" : "يُرجى المحاولة مرة أخرى بصورة أخرى"
+    },
+    "HederaAddAccountError" : {
+      "title" : "لم تتم إضافة حسابك. يرجى إعادة المحاولة."
     }
   },
   "crash" : {
@@ -775,6 +782,9 @@
     "failed" : {
       "biometrics" : {
         "title" : "إلغاء قفل {{biometricsType}} فشل",
+        "touchid" : "مُعرّف البصمة (TouchID)",
+        "faceid" : "مُعرّف الوجه (FaceID)",
+        "fingerprint" : "بصمة الإصبع",
         "description" : "أدخل كلمة المرور الخاصة بك للمتابعة",
         "authenticate" : "يرجى التوثيق باستخدام تطبيق Ledger Live"
       },
@@ -803,7 +813,10 @@
     },
     "enableBiometrics" : {
       "title" : "{{biometricsType}}",
-      "desc" : "إلغاء القفل باستخدام {{biometricsType}}"
+      "desc" : "إلغاء القفل باستخدام {{biometricsType}}",
+      "touchid" : "مُعرّف البصمة (TouchID)",
+      "faceid" : "مُعرّف الوجه (FaceID)",
+      "fingerprint" : "بصمة الإصبع"
     }
   },
   "reset" : {
@@ -1028,6 +1041,21 @@
     },
     "comingSoon" : "قريباً",
     "mostPopular" : "الأكثر شعبية"
+  },
+  "installSetOfApps" : {
+    "landing" : {
+      "estimatedTime" : "{{ minutes }} دقيقة",
+      "title" : "{{ productName }} يستخدم تطبيقات لتمكين المعاملات الآمنة على سلسلة الكتل",
+      "subtitle" : "نوصي بتنزيل مجموعة محددة من التطبيقات. يُمكنك تنزيل المزيد لاحقاً.",
+      "installCTA" : "تثبيت التطبيقات",
+      "skipCTA" : "سأفعل هذا لاحقاً"
+    },
+    "ongoing" : {
+      "loading" : "جاري التحميل ...",
+      "resolving" : "حل التبعيات",
+      "progress" : "تثبيت التطبيقات %{{progress}}",
+      "disclaimer" : "التطبيقات على {{ productName }} تُستخدم للموافقة على المعاملات. يمكنك إضافتها أو حذفها في أي وقت."
+    }
   },
   "onboarding" : {
     "stepWelcome" : {
@@ -1974,6 +2002,7 @@
       },
       "advanced" : {
         "title" : "سجلات متقدمة",
+        "warningDerivation" : "هذا مفتاح عام ممتد {{tag}}. عند استيراده إلى محفظة طرف ثالث، اختر نفس نمط الاشتقاق.",
         "desc" : ""
       }
     },
