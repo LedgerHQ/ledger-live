@@ -376,7 +376,7 @@ const envDefinitions = {
     desc: "Ledger countervalues API",
   },
   LEDGER_REST_API_BASE: {
-    def: "https://explorers.api-01.live.ledger-stg.com",
+    def: "https://explorers.api.live.ledger.com",
     parser: stringParser,
     desc: "DEPRECATED",
   },

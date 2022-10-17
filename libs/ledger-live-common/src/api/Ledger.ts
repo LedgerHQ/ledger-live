@@ -20,7 +20,7 @@ export const findCurrencyExplorer = (
   }
 
   return {
-    endpoint: getEnv("EXPLORER_STAGING"),
+    endpoint: getEnv("EXPLORER"),
     id: currency.id,
     version: "v4",
   };
