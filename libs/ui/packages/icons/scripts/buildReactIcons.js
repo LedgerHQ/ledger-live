@@ -16,8 +16,6 @@ if (!fs.existsSync(nativeDir)) {
   fs.mkdirSync(nativeDir);
 }
 
-console.log('START OF PART 1')
-
 const reactSvgStyledComponent = `
 import styled from "styled-components";
 import { system } from "styled-system";
@@ -171,5 +169,3 @@ glob(`${rootDir}/svg/**/*.svg`, (err, icons) => {
     );
   });
 });
-
-console.log('END OF PART 1')

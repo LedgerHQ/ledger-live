@@ -32,8 +32,6 @@ function reactTemplate({ template }, _, { imports, interfaces, componentName, __
     `;
 }
 
-console.log('START OF PART 2')
-
 const convert = (svg, options, componentName, outputFile) => {
     svgr(svg, options, componentName)
       .then(result => {
@@ -96,5 +94,3 @@ folders.forEach(folder => {
         })
     });
  })
-
- console.log('END OF PART 2')
