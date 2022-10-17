@@ -159,14 +159,17 @@ export async function bot({
         log("bot", message);
         if (process.env.CI) console.log(message);
         logs.push(message);
-      }).catch((fatalError) => ({
-        spec,
-        fatalError,
-        mutations: [],
-        accountsBefore: [],
-        accountsAfter: [],
-        hintWarnings: [],
-      }));
+      }).catch(
+        (fatalError): SpecReport<any> => ({
+          spec,
+          fatalError,
+          mutations: [],
+          accountsBefore: [],
+          accountsAfter: [],
+          hintWarnings: [],
+          skipMutationsTimeoutReached: false,
+        })
+      );
     }
   );
   const totalDuration = Date.now() - timeBefore;

@@ -144,6 +144,7 @@ function PortfolioScreen({ navigation }: Props) {
 
   const data = useMemo(
     () => [
+      <FirmwareUpdateBanner />,
       postOnboardingVisible && (
         <Box m={6}>
           <PostOnboardingEntryPointCard />
@@ -246,9 +247,6 @@ function PortfolioScreen({ navigation }: Props) {
   return (
     <>
       <TabBarSafeAreaView>
-        <Flex px={6} py={4}>
-          <FirmwareUpdateBanner />
-        </Flex>
         <CheckLanguageAvailability />
         <CheckTermOfUseUpdate />
         <TrackScreen
@@ -286,6 +284,7 @@ function PortfolioScreen({ navigation }: Props) {
           hidePortfolio={areAccountsEmpty}
         />
       </TabBarSafeAreaView>
+
       <AddAccountsModal
         navigation={navigation}
         isOpened={isAddModalOpened}

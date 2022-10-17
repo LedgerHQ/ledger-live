@@ -91,6 +91,7 @@ module.exports = {
     "react/state-in-constructor": 0,
     "react/static-property-placement": 0,
     "react/default-props-match-prop-types": 0,
+    "jsx-a11y/anchor-is-valid": 0, // this is not valid in react native as we don't have href
 
     // These ones are good practice we could switch to, so warn only
     "eslint-comments/no-unlimited-disable": "warn",

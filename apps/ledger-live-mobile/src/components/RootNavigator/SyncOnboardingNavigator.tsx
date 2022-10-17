@@ -6,11 +6,14 @@ import { getStackNavigatorConfig } from "../../navigation/navigatorConfig";
 import { ScreenName } from "../../const";
 import { SyncOnboarding } from "../../screens/SyncOnboarding/index";
 import CompletionScreen from "../../screens/SyncOnboarding/CompletionScreen";
-import { SyncOnboardingCompanionParams } from "../../screens/SyncOnboarding/types";
+import {
+  SyncOnboardingCompanionParams,
+  SyncOnboardingCompletionScreenParams,
+} from "../../screens/SyncOnboarding/types";
 
 export type SyncOnboardingStackParamList = {
   SyncOnboardingCompanion: SyncOnboardingCompanionParams;
-  SyncOnboardingCompletion: undefined;
+  SyncOnboardingCompletion: SyncOnboardingCompletionScreenParams;
 };
 
 const Stack = createStackNavigator<SyncOnboardingStackParamList>();

@@ -8,6 +8,7 @@ export enum PostOnboardingActionId {
   claimMock = "claimMock",
   migrateAssetsMock = "migrateAssetsMock",
   personalizeMock = "personalizeMock",
+  customImage = "customImage",
 }
 
 /**

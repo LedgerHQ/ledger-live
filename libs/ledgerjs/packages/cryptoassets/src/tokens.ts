@@ -387,6 +387,7 @@ function convertCardanoNativeTokens([
   ticker,
   decimals,
   delisted,
+  disableCountervalue,
 ]): TokenCurrency {
   const assetId = policyId + assetName;
   return {
@@ -400,6 +401,7 @@ function convertCardanoNativeTokens([
     name,
     ticker,
     delisted,
+    disableCountervalue,
     units: [
       {
         name,

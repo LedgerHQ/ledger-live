@@ -22,6 +22,8 @@ import estimateMaxSpendable from "./commands/estimateMaxSpendable";
 import exportAccounts from "./commands/exportAccounts";
 import firmwareRepair from "./commands/firmwareRepair";
 import firmwareUpdate from "./commands/firmwareUpdate";
+import ftsFetchImage from "./commands/ftsFetchImage";
+import ftsLoadImage from "./commands/ftsLoadImage";
 import generateTestScanAccounts from "./commands/generateTestScanAccounts";
 import generateTestTransaction from "./commands/generateTestTransaction";
 import genuineCheck from "./commands/genuineCheck";
@@ -75,6 +77,8 @@ export default {
   exportAccounts,
   firmwareRepair,
   firmwareUpdate,
+  ftsFetchImage,
+  ftsLoadImage,
   generateTestScanAccounts,
   generateTestTransaction,
   genuineCheck,

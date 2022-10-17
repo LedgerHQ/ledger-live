@@ -121,7 +121,11 @@ export async function runWithAppSpec<T extends Transaction>(
   };
   let device;
   const hintWarnings: string[] = [];
-  const appReport: SpecReport<T> = { spec, hintWarnings };
+  const appReport: SpecReport<T> = {
+    spec,
+    hintWarnings,
+    skipMutationsTimeoutReached: false,
+  };
 
   // staticly check that all mutations declared a test too (if no generic spec test)
   if (!spec.test) {
@@ -222,6 +226,9 @@ export async function runWithAppSpec<T extends Transaction>(
       return appReport;
     }
 
+    const mutationsStartTime = now();
+    const skipMutationsTimeout =
+      spec.skipMutationsTimeout || getEnv("BOT_SPEC_DEFAULT_TIMEOUT");
     let mutationsCount = {};
     // we sequentially iterate on the initial account set to perform mutations
     const length = accounts.length;
@@ -231,13 +238,17 @@ export async function runWithAppSpec<T extends Transaction>(
 
     for (let j = 0; j < totalTries; j++) {
       for (let i = 0; i < length; i++) {
+        t = now();
+        if (t - mutationsStartTime > skipMutationsTimeout) {
+          appReport.skipMutationsTimeoutReached = true;
+          break;
+        }
         log(
           "engine",
           `spec ${spec.name} sync all accounts (try ${j} run ${i})`
         );
-        // resync all accounts that needs to be resynced
-        t = now();
 
+        // resync all accounts that needs to be resynced
         const resynced = await promiseAllBatched(
           getEnv("SYNC_MAX_CONCURRENT"),
           accounts.filter((a) => accountIdsNeedResync.includes(a.id)),

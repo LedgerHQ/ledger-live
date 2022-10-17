@@ -37,6 +37,8 @@ import {
 import { Text } from "@ledgerhq/native-ui";
 import { getAccountBannerState as getCosmosBannerState } from "@ledgerhq/live-common/families/cosmos/banner";
 import { LEDGER_VALIDATOR_ADDRESS } from "@ledgerhq/live-common/families/cosmos/utils";
+import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
+import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import AccountDelegationInfo from "../../../components/AccountDelegationInfo";
 import IlluRewards from "../../../icons/images/Rewards";
 import { urls } from "../../../config/urls";
@@ -87,7 +89,19 @@ function Delegations({ account }: Props) {
     cosmosResources &&
     cosmosResources.unbondings &&
     mapUnbondings(cosmosResources.unbondings, validators, unit);
-
+  const bridge = getAccountBridge(account, undefined);
+  const { transaction, status } = useBridgeTransaction(() => {
+    const t = bridge.createTransaction(mainAccount);
+    const { validatorSrcAddress } = { ...banner };
+    return {
+      account,
+      transaction: bridge.updateTransaction(t, {
+        mode: "redelegate",
+        validators: [],
+        sourceValidator: validatorSrcAddress,
+      }),
+    };
+  });
   const [delegation, setDelegation] = useState<CosmosMappedDelegation>();
   const [undelegation, setUndelegation] = useState<CosmosMappedUnbonding>();
   const [banner, setBanner] = useState({ display: false });
@@ -155,11 +169,13 @@ function Delegations({ account }: Props) {
         accountId: account.id,
         validatorSrcAddress,
         transaction: {
-          validators: [worstValidator],
+          ...transaction,
+          sourceValidator: validatorSrcAddress,
         },
         validatorSrc: worstValidator.validator,
         validator: ledgerValidator,
         max: worstValidator.amount,
+        status,
         nextScreen: ScreenName.CosmosRedelegationSelectDevice,
       },
     });

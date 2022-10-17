@@ -22,18 +22,10 @@ const StepWrapper = styled(Box).attrs({
   mt: 32,
 })`
   position: absolute;
-  ${p =>
-    p.onboarding
-      ? `
   left: 0;
   margin: 0 20px;
   bottom: 20px;
   width: calc(100% - 40px);
-  `
-      : `
-  bottom: 12px;
-  width: 100%;
-  `}
 `;
 
 const USBTroubleshooting = ({ onboarding = false }: { onboarding?: boolean }) => {
@@ -82,7 +74,11 @@ const USBTroubleshooting = ({ onboarding = false }: { onboarding?: boolean }) =>
   ) : (
     <Box p={onboarding ? 48 : 0}>
       <SolutionComponent number={currentIndex + 1} sendEvent={sendEvent} done={done} />
-      {!isLastStep && <ConnectionTester onExit={onExit} onDone={onDone} />}
+      {!isLastStep && (
+        <Box p={20}>
+          <ConnectionTester onExit={onExit} onDone={onDone} />
+        </Box>
+      )}
       {!done && (
         <StepWrapper onboarding={onboarding}>
           {showExitOnboardingButton ? (
@@ -90,14 +86,15 @@ const USBTroubleshooting = ({ onboarding = false }: { onboarding?: boolean }) =>
               <ArrowRightIcon flipped size={16} />
               <Text ml={1}>{t("connectTroubleshooting.steps.entry.back")}</Text>
             </Button>
-          ) : (
-            <Button
-              disabled={!currentIndex}
-              onClick={() => sendEvent("PREVIOUS")}
-              id="USBTroubleshooting-previous"
-            >
+          ) : currentIndex ? (
+            <Button onClick={() => sendEvent("PREVIOUS")} id="USBTroubleshooting-previous">
               <ArrowRightIcon flipped size={16} />
               <Text ml={1}>{t("connectTroubleshooting.previousSolution")}</Text>
+            </Button>
+          ) : (
+            <Button onClick={onExit} id="USBTroubleshooting-exit">
+              <ArrowRightIcon flipped size={16} />
+              <Text ml={1}>{t("connectTroubleshooting.steps.entry.back")}</Text>
             </Button>
           )}
           {!isLastStep && (
