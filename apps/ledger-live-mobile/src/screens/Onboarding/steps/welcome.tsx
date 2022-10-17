@@ -159,6 +159,7 @@ function OnboardingStepWelcome({ navigation }: any) {
             flexDirection="row"
             alignItems="baseline"
             justifyContent="center"
+            flexWrap="wrap"
             pb={6}
           >
             <TextLink type="color" size={"small"} onPress={onTermsLink}>
