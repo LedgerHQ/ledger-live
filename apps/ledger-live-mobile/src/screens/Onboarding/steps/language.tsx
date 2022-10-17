@@ -11,7 +11,8 @@ import {
 } from "@ledgerhq/native-ui";
 import { StackScreenProps } from "@react-navigation/stack";
 import i18next from "i18next";
-import RNRestart from "react-native-restart";
+// Lib is there but linter doesn't seem to want to find it
+import RNRestart from "react-native-restart"; // eslint-disable-line
 import { useDispatch, useSelector } from "react-redux";
 import { useAvailableLanguagesForDevice } from "@ledgerhq/live-common/manager/hooks";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
@@ -97,7 +98,6 @@ function OnboardingStepLanguage({ navigation }: StackScreenProps<{}>) {
 
   // no useCallBack around RNRRestart, or the app might crash.
   const changeLanguageRTL = async () => {
-    console.log(selectedLanguage);
     await Promise.all([
       I18nManager.forceRTL(!I18nManager.isRTL),
       dispatch(setLanguage(selectedLanguage)),

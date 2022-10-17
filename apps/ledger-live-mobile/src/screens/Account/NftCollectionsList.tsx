@@ -9,7 +9,10 @@ import useEnv from "@ledgerhq/live-common/hooks/useEnv";
 import { nftsByCollections } from "@ledgerhq/live-common/nft/index";
 import { useNavigation, useTheme } from "@react-navigation/native";
 import { Account, ProtoNFT } from "@ledgerhq/types-live";
-import { ChevronRightMedium, PlusMedium } from "@ledgerhq/native-ui/assets/icons";
+import {
+  ChevronRightMedium,
+  PlusMedium,
+} from "@ledgerhq/native-ui/assets/icons";
 import NftCollectionOptionsMenu from "../../components/Nft/NftCollectionOptionsMenu";
 import { hiddenNftCollectionsSelector } from "../../reducers/settings";
 import NftCollectionRow from "../../components/Nft/NftCollectionRow";
