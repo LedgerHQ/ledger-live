@@ -413,6 +413,10 @@
       "title" : "Entschuldigung, Guthaben reicht nicht aus",
       "description" : "Bitte stellen Sie sicher, dass das Konto ausreichend gedeckt ist."
     },
+    "NoSuchAppOnProvider" : {
+      "title" : "Die {{appName}}-App kann für Ihre spezifische Konfiguration nicht gefunden werden.",
+      "description" : "Versuchen Sie, die App aus dem Manager heraus neu zu installieren"
+    },
     "NotEnoughGas" : {
       "title" : "Nicht genügend ETH für Netzwerkgebühr",
       "description" : "Bitte senden Sie einige ETH auf Ihr Konto, um ERC20-Token-Transaktionen zu bezahlen."
@@ -728,6 +732,9 @@
     "ImageProcessingError" : {
       "title" : "Die Verarbeitung des Bildes ist fehlgeschlagen",
       "description" : "Bitte versuchen Sie es noch einmal mit einem anderen Bild"
+    },
+    "HederaAddAccountError" : {
+      "title" : "Ihr Konto wurde nicht hinzugefügt. Bitte versuchen Sie es erneut."
     }
   },
   "crash" : {
@@ -775,6 +782,9 @@
     "failed" : {
       "biometrics" : {
         "title" : "{{biometricsType}} Entsperren fehlgeschlagen",
+        "touchid" : "TouchID",
+        "faceid" : "FaceID",
+        "fingerprint" : "Fingerabdruck",
         "description" : "Passwort eingeben um fortzufahren",
         "authenticate" : "Bitte authentifizieren Sie sich mit der Ledger Live-App"
       },
@@ -803,7 +813,10 @@
     },
     "enableBiometrics" : {
       "title" : "{{biometricsType}}",
-      "desc" : "Entsperren mit {{biometricsType}}"
+      "desc" : "Entsperren mit {{biometricsType}}",
+      "touchid" : "TouchID",
+      "faceid" : "FaceID",
+      "fingerprint" : "Fingerabdruck"
     }
   },
   "reset" : {
@@ -1028,6 +1041,21 @@
     },
     "comingSoon" : "In Kürze verfügbar",
     "mostPopular" : "Am beliebtesten"
+  },
+  "installSetOfApps" : {
+    "landing" : {
+      "estimatedTime" : "{{ minutes }} Min.",
+      "title" : "{{ productName }} nutzt Apps, um sichere Blockchain-Transaktionen zu ermöglichen",
+      "subtitle" : "Wir empfehlen, eine Standardauswahl an Apps herunterzuladen. Sie können später mehr herunterladen.",
+      "installCTA" : "Apps installieren",
+      "skipCTA" : "Ich mache das später"
+    },
+    "ongoing" : {
+      "loading" : "Lade Daten...",
+      "resolving" : "Auflösen von Abhängigkeiten",
+      "progress" : "Installieren von Apps {{progress}} %",
+      "disclaimer" : "Apps auf {{ productName }} werden zur Autorisierung von Transaktionen verwendet. Sie können sie jederzeit hinzufügen oder entfernen."
+    }
   },
   "onboarding" : {
     "stepWelcome" : {
@@ -1974,6 +2002,7 @@
       },
       "advanced" : {
         "title" : "Erweiterte Protokolle",
+        "warningDerivation" : "Das ist ein {{tag}} xpub. Wenn Sie es in eine Wallet eines Drittanbieters importieren, wählen Sie denselben Ableitungsmodus.",
         "desc" : ""
       }
     },
