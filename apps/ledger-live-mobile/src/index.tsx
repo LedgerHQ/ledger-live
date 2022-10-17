@@ -475,6 +475,7 @@ const DeepLinkingNavigator = ({ children }: { children: React.ReactNode }) => {
   const liveAppProviderInitialized =
     !!remoteLiveAppState.value || !!remoteLiveAppState.error;
   const filteredManifests = useFilteredManifests(platformManifestFilterParams);
+  // Can be either true, false or null, meaning we don't know yet
   const [userAcceptedTerms, setUserAcceptedTerms] = useState<boolean | null>(
     null,
   );
