@@ -43,6 +43,7 @@ const appVersion = `${VersionNumber.appVersion || ""} (${
   VersionNumber.buildVersion || ""
 })`;
 const { ANALYTICS_LOGS, ANALYTICS_TOKEN } = Config;
+let userId;
 
 export const updateSessionId = () => (sessionId = uuid());
 
@@ -75,7 +76,7 @@ const extraProperties = store => {
     appVersion,
     androidVersionCode: getAndroidVersionCode(VersionNumber.buildVersion),
     androidArchitecture: getAndroidArchitecture(VersionNumber.buildVersion),
-    environment: ANALYTICS_LOGS ? "development" : "production",
+    environment: "come",
     systemLanguage: sensitiveAnalytics ? null : systemLanguage,
     language,
     region: region?.split("-")[1] || region,
@@ -91,6 +92,7 @@ const extraProperties = store => {
         }
       : {}),
     ...deviceInfo,
+    userId,
   };
 };
 
@@ -105,6 +107,7 @@ const token = ANALYTICS_TOKEN;
 export const start = async (store: any): Promise<SegmentClient | undefined> => {
   console.log("TOKEN ", ANALYTICS_TOKEN);
   const { user, created } = await getOrCreateUser();
+  userId = user.id;
   storeInstance = store;
 
   if (created && ANALYTICS_LOGS) {
@@ -126,6 +129,7 @@ export const start = async (store: any): Promise<SegmentClient | undefined> => {
   }
 
   track("Start", extraProperties(store), true);
+  segmentClient?.identify(user.id, extraProperties(storeInstance));
   return segmentClient;
 };
 export const updateIdentify = async () => {
@@ -144,6 +148,7 @@ export const updateIdentify = async () => {
     });
   if (!token) return;
   const { user } = await getOrCreateUser();
+  userId = user.id;
   segmentClient?.identify(user.id, extraProperties(storeInstance), {
     context,
   });
