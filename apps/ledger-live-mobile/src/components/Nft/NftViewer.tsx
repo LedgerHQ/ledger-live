@@ -394,6 +394,7 @@ const NftViewer = ({ route }: Props) => {
         links={nftMetadata?.links}
         isOpen={bottomModalOpen}
         onClose={closeModal}
+        isCollectionShowedIngallery={true}
       />
     </View>
   );

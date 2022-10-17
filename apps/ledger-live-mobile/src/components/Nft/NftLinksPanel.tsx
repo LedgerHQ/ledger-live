@@ -2,9 +2,17 @@ import React, { memo, useCallback, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigation, useTheme } from "@react-navigation/native";
 import { NFTMediaSize, NFTMetadata } from "@ledgerhq/types-live";
-import { View, StyleSheet, TouchableOpacity, Linking } from "react-native";
+import {
+  View,
+  StyleSheet,
+  TouchableOpacity,
+  Linking,
+  StyleProp,
+  ViewStyle,
+} from "react-native";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { Icons } from "@ledgerhq/native-ui";
+import { EyeMedium, EyeNoneMedium } from "@ledgerhq/native-ui/assets/icons";
 import { getMetadataMediaTypes } from "../../logic/nft";
 import { NavigatorName, ScreenName } from "../../const";
 import ExternalLinkIcon from "../../icons/ExternalLink";
@@ -20,6 +28,7 @@ type Props = {
   isOpen: boolean;
   onClose: () => void;
   nftMetadata?: NFTMetadata;
+  isCollectionShowedIngallery?: boolean;
 };
 
 const NftLink = ({
@@ -30,7 +39,7 @@ const NftLink = ({
   subtitle,
   onPress,
 }: {
-  style?: any;
+  style?: StyleProp<ViewStyle>;
   leftIcon: React.ReactNode;
   rightIcon?: React.ReactNode;
   title: string;
@@ -51,7 +60,13 @@ const NftLink = ({
   </TouchableOpacity>
 );
 
-const NftLinksPanel = ({ links, isOpen, onClose, nftMetadata }: Props) => {
+const NftLinksPanel = ({
+  links,
+  isOpen,
+  onClose,
+  nftMetadata,
+  isCollectionShowedIngallery = true,
+}: Props) => {
   const { colors } = useTheme();
   const { t } = useTranslation();
   const navigation = useNavigation();
@@ -84,6 +99,14 @@ const NftLinksPanel = ({ links, isOpen, onClose, nftMetadata }: Props) => {
   const handleOpenExplorer = useCallback(() => {
     links?.explorer && Linking.openURL(links?.explorer);
   }, [links?.explorer]);
+
+  const hide = useCallback(() => {
+    console.log("hide");
+  }, []);
+
+  const show = useCallback(() => {
+    console.log("show");
+  }, []);
 
   const handlePressCustomImage = useCallback(() => {
     if (!customImageUri) return;
@@ -141,6 +164,39 @@ const NftLinksPanel = ({ links, isOpen, onClose, nftMetadata }: Props) => {
             />,
           ]
         : []),
+      ...(isCollectionShowedIngallery
+        ? [
+            <NftLink
+              leftIcon={
+                <View
+                  style={[
+                    styles.roundIconContainer,
+                    { backgroundColor: rgba(colors.live, 0.1) },
+                  ]}
+                >
+                  <EyeNoneMedium size={16} color={colors.live} />
+                </View>
+              }
+              title={t("nft.viewerModal.hide")}
+              onPress={hide}
+            />,
+          ]
+        : [
+            <NftLink
+              leftIcon={
+                <View
+                  style={[
+                    styles.roundIconContainer,
+                    { backgroundColor: rgba(colors.live, 0.1) },
+                  ]}
+                >
+                  <EyeMedium size={16} color={colors.live} />
+                </View>
+              }
+              title={t("nft.viewerModal.show")}
+              onPress={show}
+            />,
+          ]),
       ...(showCustomImageButton
         ? [
             <NftLink
@@ -182,13 +238,16 @@ const NftLinksPanel = ({ links, isOpen, onClose, nftMetadata }: Props) => {
     );
   }, [
     links,
-    colors,
     t,
-    showCustomImageButton,
-    handleOpenExplorer,
+    colors,
     handleOpenOpenSea,
     handleOpenRarible,
+    handleOpenExplorer,
+    showCustomImageButton,
     handlePressCustomImage,
+    isCollectionShowedIngallery,
+    hide,
+    show,
   ]);
 
   return (
