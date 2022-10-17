@@ -164,7 +164,7 @@
     "@bunchtogether/vite-plugin-flow": "^1.0.2",
     "@mapbox/node-pre-gyp": "^1.0.8",
     "@octokit/rest": "^18.12.0",
-    "@playwright/test": "1.22.2",
+    "@playwright/test": "1.27.1",
     "@sentry/cli": "^2.7.0",
     "@storybook/addon-actions": "^6.3.12",
     "@storybook/addon-essentials": "^6.3.12",
