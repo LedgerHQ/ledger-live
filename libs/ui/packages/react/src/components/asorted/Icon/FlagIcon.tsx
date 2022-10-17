@@ -27,7 +27,7 @@ export const iconNames = Array.from(
   }, new Set<string>()),
 );
 
-const FlagIcon = ({ name, size = sizes.S }: Props): JSX.Element | null => {
+const FlagIcon = ({ name, size = "S" }: Props): JSX.Element | null => {
   const maybeIconName = `${name}`;
   if (maybeIconName in flags) {
     // @ts-expect-error FIXME I don't know how to make you happy ts
