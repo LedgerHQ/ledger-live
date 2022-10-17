@@ -26,13 +26,10 @@ const HideNftDrawer = ({ isOpened, onClose }: Props) => {
       button: "Continue",
       drawer: "HideCollectionModal",
     });
-    navigation.navigate(NavigatorName.ReceiveFunds, {
-      screen: ScreenName.ReceiveSelectCrypto,
-      params: {
-        filterCurrencyIds: PRE_SELECTED_CRYPTOS,
-      },
-    });
     onClose();
+    navigation.navigate(NavigatorName.WalletTab, {
+      screen: ScreenName.NftGallery,
+    });
   }, [navigation, onClose]);
 
   const onPressClose = useCallback(() => {
