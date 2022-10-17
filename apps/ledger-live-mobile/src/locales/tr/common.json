@@ -413,6 +413,10 @@
       "title" : "Üzgünüz, fon miktarı yetersiz",
       "description" : "Hesabınızdaki fon miktarının yeterli olduğundan lütfen emin olun."
     },
+    "NoSuchAppOnProvider" : {
+      "title" : "{{appName}} uygulaması, özel yapılandırmanız için bulunamadı.",
+      "description" : "Uygulamayı Yönetici sekmesinden yeniden yüklemeyi deneyin"
+    },
     "NotEnoughGas" : {
       "title" : "Ağ ücreti için yetersiz ETH",
       "description" : "ERC20 token işlemlerini ödemek için lütfen hesabınıza biraz ETH gönderin."
@@ -728,6 +732,9 @@
     "ImageProcessingError" : {
       "title" : "Görüntü işlenemedi",
       "description" : "Lütfen başka bir görüntüyle tekrar deneyin"
+    },
+    "HederaAddAccountError" : {
+      "title" : "Hesabınız eklenemedi. Lütfen tekrar deneyin."
     }
   },
   "crash" : {
@@ -775,6 +782,9 @@
     "failed" : {
       "biometrics" : {
         "title" : "{{biometricsType}} ile kilit açma başarısız",
+        "touchid" : "TouchID",
+        "faceid" : "FaceID",
+        "fingerprint" : "Parmak İzi",
         "description" : "Devam etmek için parolanızı girin",
         "authenticate" : "Lütfen Ledger Live uygulamasıyla kimlik doğrulaması yapın"
       },
@@ -803,7 +813,10 @@
     },
     "enableBiometrics" : {
       "title" : "{{biometricsType}}",
-      "desc" : "Kilidi {{biometricsType}} ile açın"
+      "desc" : "Kilidi {{biometricsType}} ile açın",
+      "touchid" : "TouchID",
+      "faceid" : "FaceID",
+      "fingerprint" : "Parmak İzi"
     }
   },
   "reset" : {
@@ -1028,6 +1041,21 @@
     },
     "comingSoon" : "Çok yakında",
     "mostPopular" : "En popüler"
+  },
+  "installSetOfApps" : {
+    "landing" : {
+      "estimatedTime" : "{{ minutes }} dk.",
+      "title" : "{{ productName }}, güvenli blok zinciri işlemleri gerçekleştirmek için uygulamalar kullanmaktadır",
+      "subtitle" : "Varsayılan bir uygulama grubunu indirmenizi öneririz. Daha sonra diğer uygulamaları da indirebilirsiniz.",
+      "installCTA" : "Uygulamaları yükle",
+      "skipCTA" : "Daha sonra yapacağım"
+    },
+    "ongoing" : {
+      "loading" : "Yükleniyor...",
+      "resolving" : "Gereksinimler çözülüyor",
+      "progress" : "Uygulamalar yükleniyor %{{progress}}",
+      "disclaimer" : "{{ productName }} cihazındaki uygulamalar işlemleri onaylamak için kullanılır. İstediğiniz zaman bu uygulamaları ekleyebilir ve silebilirsiniz."
+    }
   },
   "onboarding" : {
     "stepWelcome" : {
@@ -1974,6 +2002,7 @@
       },
       "advanced" : {
         "title" : "Kapsamlı loglar",
+        "warningDerivation" : "Bu bir {{tag}} xpub'ıdır. Bunu bir üçüncü taraf cüzdanda içe aktarırken aynı türev modunu seçin.",
         "desc" : ""
       }
     },
