@@ -24,7 +24,7 @@ import {
   flattenAccounts,
   accountWithMandatoryTokens,
 } from "@ledgerhq/live-common/account/index";
-import { getSwapSelectableCurrencies } from "@ledgerhq/live-common/lib/exchange/swap/logic";
+import { getSwapSelectableCurrencies } from "@ledgerhq/live-common/exchange/swap/logic";
 import { shallowAccountsSelector } from "../../../reducers/accounts";
 import {
   swapAcceptedProvidersSelector,
