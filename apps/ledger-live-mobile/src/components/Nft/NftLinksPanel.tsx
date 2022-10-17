@@ -12,7 +12,6 @@ import {
 } from "react-native";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { Icons } from "@ledgerhq/native-ui";
-import { EyeMedium, EyeNoneMedium } from "@ledgerhq/native-ui/assets/icons";
 import { getMetadataMediaTypes } from "../../logic/nft";
 import { NavigatorName, ScreenName } from "../../const";
 import ExternalLinkIcon from "../../icons/ExternalLink";
@@ -174,7 +173,7 @@ const NftLinksPanel = ({
                     { backgroundColor: rgba(colors.live, 0.1) },
                   ]}
                 >
-                  <EyeNoneMedium size={16} color={colors.live} />
+                  <Icons.EyeNoneMedium size={16} color={colors.live} />
                 </View>
               }
               title={t("nft.viewerModal.hide")}
@@ -190,7 +189,7 @@ const NftLinksPanel = ({
                     { backgroundColor: rgba(colors.live, 0.1) },
                   ]}
                 >
-                  <EyeMedium size={16} color={colors.live} />
+                  <Icons.EyeMedium size={16} color={colors.live} />
                 </View>
               }
               title={t("nft.viewerModal.show")}
@@ -243,11 +242,11 @@ const NftLinksPanel = ({
     handleOpenOpenSea,
     handleOpenRarible,
     handleOpenExplorer,
-    showCustomImageButton,
-    handlePressCustomImage,
     isCollectionShowedIngallery,
     hide,
     show,
+    showCustomImageButton,
+    handlePressCustomImage,
   ]);
 
   return (
