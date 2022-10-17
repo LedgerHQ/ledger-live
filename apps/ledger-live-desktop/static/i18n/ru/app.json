@@ -2443,7 +2443,7 @@
     },
     "alerts" : {
       "withdrawableAssets" : "У вас есть баланс для вывода",
-      "activatableVotes" : "У вас есть голоса, которые можно активировать."
+      "activatableVotes" : "У вас есть голоса, которые можно активировать"
     }
   },
   "cosmos" : {
@@ -3388,7 +3388,7 @@
       "featureFlagsRestore" : "Восстановить",
       "featureFlagsOverride" : "Переопределить",
       "addLocalApp" : "Добавить локальное приложение",
-      "addLocalAppDesc" : "Просматривать локальные файлы и добавлять локальные приложения посредством локального манифеста",
+      "addLocalAppDesc" : "Загрузка локального приложения в формате локального манифеста",
       "addLocalAppButton" : "Добавить",
       "runLocalAppDeleteButton" : "Удалить",
       "runLocalAppOpenButton" : "Открыть",
