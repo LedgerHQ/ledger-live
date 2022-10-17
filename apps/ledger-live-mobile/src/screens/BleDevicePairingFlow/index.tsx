@@ -105,7 +105,7 @@ export const BleDevicePairingFlow = ({
   const {
     navigateInput,
     pathToDeviceParam,
-    navigationType = "navigate",
+    navigationType = "push",
   } = onSuccessNavigateToConfig;
 
   const [deviceToPair, setDeviceToPair] = useState<Device | null>(null);
