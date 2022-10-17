@@ -413,6 +413,10 @@
       "title": "Sorry, insufficient funds",
       "description": "Please make sure the account has enough funds."
     },
+    "NoSuchAppOnProvider" : {
+      "title" : "The {{appName}} app cannot be found for your specific configuration.",
+      "description" : "Try reinstalling the app from the Manager"
+    },
     "NotEnoughGas": {
       "title": "Insufficient ETH for network fee",
       "description": "Please send some ETH to your account to pay for ERC20 token transactions."
@@ -728,6 +732,9 @@
     "ImageProcessingError": {
       "title": "Processing of the image failed",
       "description": "Please try again with another image"
+    },
+    "HederaAddAccountError": {
+      "title": "Your account has not been added. Please try again."
     }
   },
   "crash": {
@@ -775,6 +782,9 @@
     "failed": {
       "biometrics": {
         "title": "{{biometricsType}} unlock failed",
+        "touchid": "TouchID",
+        "faceid": "FaceID",
+        "fingerprint": "Fingerprint",
         "description": "Enter your password to continue",
         "authenticate": "Please authenticate with the Ledger Live app"
       },
@@ -803,7 +813,10 @@
     },
     "enableBiometrics": {
       "title": "{{biometricsType}}",
-      "desc": "Unlock with {{biometricsType}}"
+      "desc": "Unlock with {{biometricsType}}",
+      "touchid": "TouchID",
+      "faceid": "FaceID",
+      "fingerprint": "Fingerprint"
     }
   },
   "reset": {
@@ -1028,6 +1041,21 @@
     },
     "comingSoon": "Coming soon",
     "mostPopular": "Most popular"
+  },
+  "installSetOfApps": {
+    "landing": {
+      "estimatedTime": "{{ minutes }} min",
+      "title": "{{ productName }} uses apps to enable secure blockchain transactions",
+      "subtitle": "We recommend downloading a default set of apps. You can download more later.",
+      "installCTA": "Intall apps",
+      "skipCTA": "I'll do this later"
+    },
+    "ongoing": {
+      "loading": "Loading ...",
+      "resolving": "Resolving dependencies",
+      "progress": "Installing apps {{progress}}%",
+      "disclaimer": "Apps on {{ productName }} are used to approve transactions. You can add or remove them at any time."
+    }
   },
   "onboarding": {
     "stepWelcome": {
@@ -1974,6 +2002,7 @@
       },
       "advanced": {
         "title": "Advanced logs",
+        "warningDerivation": "This is a {{tag}} xpub. When importing it into a third-party wallet, chose the same derivation mode.",
         "desc": ""
       }
     },

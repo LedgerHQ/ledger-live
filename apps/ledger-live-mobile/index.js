@@ -64,18 +64,26 @@ const excludedErrorName = [
   "AccountNeedResync",
   "DeviceAppVerifyNotSupported",
   "AccountAwaitingSendPendingOperations",
+  // API issues
+  "LedgerAPI4xx",
+  "LedgerAPI5xx",
 ];
 const excludedErrorDescription = [
   // networking
   /timeout of .* exceeded/,
+  "timeout exceeded",
   "Network Error",
   "Network request failed",
   "INVALID_STATE_ERR",
   "API HTTP",
+  "Unexpected ''",
+  "Unexpected '<'",
+  "Service Unvailable",
   // base usage of device
   /Device .* was disconnected/,
   "Invalid channel",
   /Ledger Device is busy/,
+  "Ledger device: UNKNOWN_ERROR",
   // others
   "Transaction signing request was rejected by the user",
   "Transaction approval request was rejected",
@@ -83,8 +91,15 @@ const excludedErrorDescription = [
   "database or disk is full",
   "Unable to open URL",
   "Received an invalid JSON-RPC message",
-  "Transaction simulation failed", // LIVE-3506
+  // LIVE-3506 workaround, solana throws tons of cryptic errors
+  "failed to find a healthy working node",
+  "was reached for request with last error",
+  "Transaction simulation failed",
+  "530 undefined",
+  "524 undefined",
+  "Missing or invalid topic field", // wallet connect issue
 ];
+
 if (Config.SENTRY_DSN && (!__DEV__ || Config.FORCE_SENTRY) && !Config.MOCK) {
   Sentry.init({
     dsn: Config.SENTRY_DSN,

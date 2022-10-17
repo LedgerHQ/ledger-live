@@ -237,7 +237,7 @@
     "form" : {
       "changeCTA" : "更改",
       "rates" : {
-        "title" : "提供商",
+        "title" : "报价",
         "registration" : "需要注册 ",
         "noRegistration" : "无需注册",
         "fixed" : "固定",
@@ -246,7 +246,7 @@
         "loading" : "正在加载……",
         "name" : {
           "title" : "提供方",
-          "tooltip" : "您必须创建账户来登录提供商的服务，具体取决于提供商。"
+          "tooltip" : "您必须创建账户完成注册，具体取决于提供商。"
         },
         "rate" : {
           "title" : "互换费用",
@@ -430,11 +430,13 @@
         }
       },
       "filter" : {
-        "all" : "全部",
         "centralised" : "中心化",
-        "dedentralised" : "去中心化"
+        "decentralised" : "去中心化",
+        "float" : "浮动汇率",
+        "fixed" : "固定汇率"
       },
-      "noQuote" : "在下一步提供报价"
+      "noQuote" : "在下一步提供报价",
+      "noProviders" : "找不到结果。当前首选项没有可用的报价。"
     },
     "ip" : {
       "title" : "欢迎使用互换（Swap）",
@@ -752,7 +754,7 @@
     "settings" : {
       "title" : "编辑账户",
       "advancedLogs" : "高级",
-      "advancedTips" : "您的 xpub 是隐私敏感的数据。请谨慎使用，特别是在向第三方披露时。",
+      "advancedTips" : "这是一个 {{tag}} xpub。将其导入第三方钱包时，请选择相同的衍生模式。",
       "accountName" : {
         "title" : "账户名",
         "desc" : "账户描述"
@@ -1182,6 +1184,10 @@
     "blackfriday" : {
       "title" : "黑色星期五 ",
       "description" : "使用促销代码 BLACKFRIDAY20 可享受 40% 的 Ledger 硬件钱包优惠"
+    },
+    "referralProgram" : {
+      "title" : "推荐好友，赚取 10 美元",
+      "description" : "成功推荐一名好友，双方均可赚取价值 10 美元的比特币。"
     }
   },
   "signmessage" : {
@@ -2025,6 +2031,29 @@
     },
     "switchButton" : "切换至{{language}}",
     "no" : "我不愿意"
+  },
+  "deviceLocalization" : {
+    "language" : "语言",
+    "deviceLanguage" : "语言",
+    "changeLanguage" : "更改语言",
+    "changeDeviceLanguage" : "要更改您的设备语言？",
+    "chooseLanguage" : "为您的 {{deviceName}} 选择语言。",
+    "changeDeviceLanguagePrompt" : {
+      "title" : "{{language}}同样适用于您的 {{deviceName}}",
+      "description" : "是否要将语言更改为{{language}}？"
+    },
+    "firmwareUpdatePrompt" : {
+      "title" : "将您的 {{deviceName}} 设置为 {{language}}？",
+      "description" : "您的 {{deviceName}} 现已可以使用 {{language}}。您可以立即设置语言，或随时在 My Ledger（我的 Ledger）中更改设备语言。"
+    },
+    "allowLanguageInstallation" : "允许安装语言",
+    "languageInstalled" : "语言已更改为{{language}}",
+    "installingLanguage" : "正在安装语言",
+    "languages" : {
+      "english" : "English",
+      "french" : "Français",
+      "spanish" : "Español"
+    }
   },
   "distribution" : {
     "asset" : "资产",
@@ -4550,6 +4579,14 @@
       "title" : "抱歉，无法重置",
       "description" : "请重试，如果问题仍然存在则请联系 Ledger 客服。"
     },
+    "LanguageInstallRefusedOnDevice" : {
+      "title" : "语言安装被设备端拒绝",
+      "description" : "请重试。如果问题依旧存在，请使用下面的按钮保存您的日志，并将其提供给 Ledger 客服。"
+    },
+    "LanguageNotFound" : {
+      "title" : "未找到语言",
+      "description" : "未找到您尝试安装的语言。请尝试安装其他语言。"
+    },
     "LatestMCUInstalledError" : {
       "title" : "对不起，没有可更新的内容",
       "description" : "如果设备无法使用，请联系 Ledger 客服。"
@@ -5021,6 +5058,9 @@
     },
     "StellarSourceHasMultiSign" : {
       "title" : "要进行 Stellar（恒星）交易，请禁用多重签名"
+    },
+    "HederaAddAccountError" : {
+      "title" : "您的账户尚未添加。请再次尝试。"
     }
   },
   "cryptoOrg" : {

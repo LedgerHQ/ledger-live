@@ -18,6 +18,7 @@ const INS = {
   GET_VERSION: 0x04,
   GET_ADDR: 0x05,
   SIGN: 0x06,
+  SIGN_OFFCHAIN: 0x07,
 };
 
 enum EXTRA_STATUS_CODES {
@@ -111,6 +112,41 @@ export default class Solana {
 
     const signatureBuffer = await this.sendToDevice(
       INS.SIGN,
+      P1_CONFIRM,
+      payload
+    );
+
+    return {
+      signature: signatureBuffer,
+    };
+  }
+
+  /**
+   * Sign a Solana off-chain message.
+   *
+   * @param path a BIP32 path
+   * @param msgBuffer serialized off-chain message
+   *
+   * @returns an object with the signature field
+   *
+   * @example
+   * solana.signOffchainMessage("44'/501'/0'", msgBuffer).then(r => r.signature)
+   */
+  async signOffchainMessage(
+    path: string,
+    msgBuffer: Buffer
+  ): Promise<{
+    signature: Buffer;
+  }> {
+    const pathBuffer = this.pathToBuffer(path);
+    // Ledger app supports only a single derivation path per call ATM
+    const pathsCountBuffer = Buffer.alloc(1);
+    pathsCountBuffer.writeUInt8(1, 0);
+
+    const payload = Buffer.concat([pathsCountBuffer, pathBuffer, msgBuffer]);
+
+    const signatureBuffer = await this.sendToDevice(
+      INS.SIGN_OFFCHAIN,
       P1_CONFIRM,
       payload
     );

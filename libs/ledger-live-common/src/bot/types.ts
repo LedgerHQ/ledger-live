@@ -96,6 +96,8 @@ export type AppSpec<T extends Transaction> = {
   currency: CryptoCurrency;
   // how much time in ms does the test need to wait the operation to appear
   testTimeout?: number;
+  // how much should we retry scan accounts if an error occurs
+  scanAccountsRetries?: number;
   // if define, will run the mutations {multipleRuns} times in order to cover 2 txs in the same run and detect possible issues at the "second tx time"
   multipleRuns?: number;
   // define the frequency of exporting/importing back the account to simulate mobile export
@@ -186,6 +188,7 @@ export type MinimalSerializedSpecReport = {
   accounts: AccountRaw[] | undefined;
   fatalError: string | undefined;
   mutations: MinimalSerializedMutationReport[] | undefined;
+  existingMutationNames: string[];
 };
 
 export type MinimalSerializedReport = {

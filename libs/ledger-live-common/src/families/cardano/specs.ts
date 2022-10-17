@@ -31,7 +31,7 @@ const cardano: AppSpec<Transaction> = {
   },
   minViableAmount: minBalanceRequired,
   genericDeviceAction: acceptTransaction,
-  testTimeout: 2 * 60 * 1000,
+  testTimeout: 5 * 60 * 1000,
   mutations: [
     {
       testDestination: genericTestDestination,

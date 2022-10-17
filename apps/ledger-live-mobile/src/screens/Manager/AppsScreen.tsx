@@ -19,6 +19,7 @@ import { ManagerTab } from "../../const/manager";
 import AppFilter from "./AppsList/AppFilter";
 
 import DeviceCard from "./Device";
+import Benchmarking from "./Benchmarking";
 import AppRow from "./AppsList/AppRow";
 
 import Searchbar from "./AppsList/Searchbar";
@@ -272,6 +273,7 @@ const AppsScreen = ({
               appList={deviceApps}
               onLanguageChange={onLanguageChange}
             />
+            <Benchmarking state={state} />
             <Flex mt={6}>
               <FirmwareUpdateBanner />
             </Flex>

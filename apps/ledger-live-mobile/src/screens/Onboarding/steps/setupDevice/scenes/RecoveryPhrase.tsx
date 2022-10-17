@@ -8,7 +8,13 @@ const RecoveryPhraseScene = () => {
 
   return (
     <>
-      <Text variant="h2" color="palette.neutral.c100" mb={4} uppercase>
+      <Text
+        variant="h2"
+        color="palette.neutral.c100"
+        mb={4}
+        uppercase
+        lineHeight="34.8px"
+      >
         {t("onboarding.stepSetupDevice.recoveryPhrase.title")}
       </Text>
       <Text variant="paragraph" color="palette.neutral.c80" mb={4}>
