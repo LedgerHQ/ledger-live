@@ -413,6 +413,10 @@
       "title" : "Desculpe, fundos insuficientes",
       "description" : "Certifique-se de que a conta tenha fundos suficientes."
     },
+    "NoSuchAppOnProvider" : {
+      "title" : "O aplicativo {{appName}} não pode ser encontrado para a sua configuração específica.",
+      "description" : "Tente reinstalar o aplicativo através do Manager"
+    },
     "NotEnoughGas" : {
       "title" : "ETH insuficiente para a taxa de rede",
       "description" : "Envie um pouco de ETH à sua conta para pagar por transações de tokens ERC20."
@@ -728,6 +732,9 @@
     "ImageProcessingError" : {
       "title" : "Falha no processamento da imagem",
       "description" : "Tente novamente com outra imagem"
+    },
+    "HederaAddAccountError" : {
+      "title" : "Sua conta não foi adicionada. Tente Novamente."
     }
   },
   "crash" : {
@@ -775,6 +782,9 @@
     "failed" : {
       "biometrics" : {
         "title" : "desbloqueio por {{biometricsType}} falhou",
+        "touchid" : "TouchID",
+        "faceid" : "Face ID",
+        "fingerprint" : "Impressão digital",
         "description" : "Insira sua senha para continuar",
         "authenticate" : "Autentique com o aplicativo Ledger Live"
       },
@@ -803,7 +813,10 @@
     },
     "enableBiometrics" : {
       "title" : "{{biometricsType}}",
-      "desc" : "Desbloquear com {{biometricsType}}"
+      "desc" : "Desbloquear com {{biometricsType}}",
+      "touchid" : "TouchID",
+      "faceid" : "Face ID",
+      "fingerprint" : "Impressão digital"
     }
   },
   "reset" : {
@@ -941,7 +954,7 @@
   },
   "buyDevice" : {
     "0" : {
-      "title" : "O dinheiro é seu. Tome o controle.",
+      "title" : "É seu dinheiro. Tome o controle.",
       "desc" : "Assuma o controle e tome a liberdade para administrar suas criptomoedas por conta própria."
     },
     "1" : {
@@ -1028,6 +1041,21 @@
     },
     "comingSoon" : "Em breve",
     "mostPopular" : "Mais populares"
+  },
+  "installSetOfApps" : {
+    "landing" : {
+      "estimatedTime" : "{{ minutes }} min",
+      "title" : "A {{ productName }} utiliza aplicativos para permitir transações seguras em blockchains",
+      "subtitle" : "Recomendamos que você baixe um conjunto padrão de aplicativos. Você pode baixar outros mais tarde",
+      "installCTA" : "Instalar aplicativos",
+      "skipCTA" : "Farei isso mais tarde."
+    },
+    "ongoing" : {
+      "loading" : "Carregando...",
+      "resolving" : "Resolvendo dependências",
+      "progress" : "Instalando aplicativos {{progress}}%",
+      "disclaimer" : "Aplicativos da {{ productName }} são usados para aprovar transações. Você pode adicioná-los ou removê-los a qualquer momento."
+    }
   },
   "onboarding" : {
     "stepWelcome" : {
@@ -1974,6 +2002,7 @@
       },
       "advanced" : {
         "title" : "Registros avançados",
+        "warningDerivation" : "Esta é uma xpub {{tag}}. Ao importá-la para uma carteira de terceiros, escolha o mesmo modo de derivação.",
         "desc" : ""
       }
     },
