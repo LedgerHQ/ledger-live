@@ -51,6 +51,7 @@ import AllocationsSection from "../WalletCentricSections/Allocations";
 import OperationsHistorySection from "../WalletCentricSections/OperationsHistory";
 import { track } from "../../analytics";
 import PostOnboardingEntryPointCard from "../../components/PostOnboarding/PostOnboardingEntryPointCard";
+import CollapsibleHeaderFlatList from "../../components/WalletTab/CollapsibleHeaderFlatList";
 
 export { default as PortfolioTabIcon } from "./TabIcon";
 
@@ -244,39 +245,33 @@ function PortfolioScreen({ navigation }: Props) {
 
   return (
     <>
-      <TabBarSafeAreaView>
-        <Flex px={6} py={4}>
-          <FirmwareUpdateBanner />
-        </Flex>
-        <CheckLanguageAvailability />
-        <CheckTermOfUseUpdate />
-        <TrackScreen
-          category="Wallet"
-          accountsLength={distribution.list && distribution.list.length}
-          discreet={discreetMode}
-        />
-        <BackgroundGradient
-          currentPositionY={currentPositionY}
-          graphCardEndPosition={graphCardEndPosition}
-        />
-        <AnimatedFlatListWithRefreshControl
-          data={data}
-          style={{
-            flex: 1,
-          }}
-          contentContainerStyle={{ paddingBottom: TAB_BAR_SAFE_HEIGHT }}
-          renderItem={({ item }: { item: React.ReactNode }) => item}
-          keyExtractor={(_: any, index: number) => String(index)}
-          showsVerticalScrollIndicator={false}
-          onScroll={handleScroll}
-          testID={
-            distribution.list && distribution.list.length
-              ? "PortfolioAccountsList"
-              : "PortfolioEmptyAccount"
-          }
-        />
-        <MigrateAccountsBanner />
-      </TabBarSafeAreaView>
+      <Flex px={6} py={4}>
+        <FirmwareUpdateBanner />
+      </Flex>
+      <CheckLanguageAvailability />
+      <CheckTermOfUseUpdate />
+      <TrackScreen
+        category="Wallet"
+        accountsLength={distribution.list && distribution.list.length}
+        discreet={discreetMode}
+      />
+      <BackgroundGradient
+        currentPositionY={currentPositionY}
+        graphCardEndPosition={graphCardEndPosition}
+      />
+      <CollapsibleHeaderFlatList
+        data={data}
+        renderItem={({ item }: { item: React.ReactNode }) => item}
+        keyExtractor={(_: any, index: number) => String(index)}
+        showsVerticalScrollIndicator={false}
+        // onScroll={handleScroll}
+        testID={
+          distribution.list && distribution.list.length
+            ? "PortfolioAccountsList"
+            : "PortfolioEmptyAccount"
+        }
+      />
+      <MigrateAccountsBanner />
       <AddAccountsModal
         navigation={navigation}
         isOpened={isAddModalOpened}
