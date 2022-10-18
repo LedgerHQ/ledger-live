@@ -237,11 +237,11 @@
     "form" : {
       "changeCTA" : "تغيير",
       "rates" : {
-        "title" : "المزودين",
+        "title" : "عروض أسعار",
         "registration" : "التسجيل مطلوب ",
         "noRegistration" : "التسجيل غير مطلوب",
         "fixed" : "ثابت",
-        "float" : "متغيّر",
+        "float" : "مُتغيّر",
         "update" : "تم تحديث المُعدلات في",
         "loading" : "جاري التحميل ...",
         "name" : {
@@ -430,11 +430,13 @@
         }
       },
       "filter" : {
-        "all" : "الكل",
         "centralised" : "مركزي",
-        "dedentralised" : "لامركزي"
+        "decentralised" : "لامركزي",
+        "float" : "مُعدل متغير",
+        "fixed" : "مُعدل ثابت"
       },
-      "noQuote" : "عرض السعر متاح في الخطوة التالية"
+      "noQuote" : "عرض السعر متاح في الخطوة التالية",
+      "noProviders" : "لم يتم العثور على نتائج. لا توجد عروض أسعار متاحة تُطابق التفضيلات الحالية."
     },
     "ip" : {
       "title" : "مرحباً بك في المبادلة",
@@ -752,7 +754,7 @@
     "settings" : {
       "title" : "تعديل الحساب",
       "advancedLogs" : "مُتَقدم",
-      "advancedTips" : "المفتاح العام الممتد (xpub) الخاص بك هي بيانات حساسة للخصوصية. استخدمه بحذر، خاصة عند الكشف للأطراف الثالثة.",
+      "advancedTips" : "هذا مفتاح عام ممتد {{tag}}. عند استيراده إلى محفظة طرف ثالث، اختر نفس نمط الاشتقاق.",
       "accountName" : {
         "title" : "اسم الحساب",
         "desc" : "وصف الحساب"
@@ -1182,6 +1184,10 @@
     "blackfriday" : {
       "title" : "الجمعة السوداء ",
       "description" : "استمتع بخصم %40 على محفظة أجهزة Ledger باستخدام كود الخصم BLACKFRIDAY20"
+    },
+    "referralProgram" : {
+      "title" : "رشّح واكسب 10$",
+      "description" : "قم بترشيح صديق بنجاح وكلاكما سيكسب ما قيمته 10$ من بيتكوين."
     }
   },
   "signmessage" : {
@@ -4794,7 +4800,7 @@
     },
     "EthAppNftNotSupported" : {
       "title" : "العملية غير متوفرة لهذا الجهاز",
-      "description" : "Send NFT feature is only available for Nano X and Nano S+. Please visit our customer support platform to know how to send a NFT with a Nano S."
+      "description" : "خاصية إرسال NFT متوفرة فقط لـ Nano X و +Nano S. يرجى زيارة منصة دعم العملاء لدينا لمعرفة كيفية إرسال NFT عن طريق Nano S."
     },
     "CantScanQRCode" : {
       "title" : "تعذر فحص كود الاستجابة السريعة (QR) هذا: التحقق التلقائي غير مدعوم من قِبل هذا العنوان"
@@ -5052,6 +5058,9 @@
     },
     "StellarSourceHasMultiSign" : {
       "title" : "يرجى تعطيل التوقيع المتعدد لإجراء معاملات Stellar"
+    },
+    "HederaAddAccountError" : {
+      "title" : "لم تتم إضافة حسابك. يرجى إعادة المحاولة."
     }
   },
   "cryptoOrg" : {

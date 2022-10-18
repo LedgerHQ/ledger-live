@@ -237,7 +237,7 @@
     "form" : {
       "changeCTA" : "更改",
       "rates" : {
-        "title" : "提供商",
+        "title" : "报价",
         "registration" : "需要注册 ",
         "noRegistration" : "无需注册",
         "fixed" : "固定",
@@ -246,7 +246,7 @@
         "loading" : "正在加载……",
         "name" : {
           "title" : "提供方",
-          "tooltip" : "您必须创建账户来登录提供商的服务，具体取决于提供商。"
+          "tooltip" : "您必须创建账户完成注册，具体取决于提供商。"
         },
         "rate" : {
           "title" : "互换费用",
@@ -430,11 +430,13 @@
         }
       },
       "filter" : {
-        "all" : "全部",
         "centralised" : "中心化",
-        "dedentralised" : "去中心化"
+        "decentralised" : "去中心化",
+        "float" : "浮动汇率",
+        "fixed" : "固定汇率"
       },
-      "noQuote" : "在下一步提供报价"
+      "noQuote" : "在下一步提供报价",
+      "noProviders" : "找不到结果。当前首选项没有可用的报价。"
     },
     "ip" : {
       "title" : "欢迎使用互换（Swap）",
@@ -752,7 +754,7 @@
     "settings" : {
       "title" : "编辑账户",
       "advancedLogs" : "高级",
-      "advancedTips" : "您的 xpub 是隐私敏感的数据。请谨慎使用，特别是在向第三方披露时。",
+      "advancedTips" : "这是一个 {{tag}} xpub。将其导入第三方钱包时，请选择相同的衍生模式。",
       "accountName" : {
         "title" : "账户名",
         "desc" : "账户描述"
@@ -1182,6 +1184,10 @@
     "blackfriday" : {
       "title" : "黑色星期五 ",
       "description" : "使用促销代码 BLACKFRIDAY20 可享受 40% 的 Ledger 硬件钱包优惠"
+    },
+    "referralProgram" : {
+      "title" : "推荐好友，赚取 10 美元",
+      "description" : "成功推荐一名好友，双方均可赚取价值 10 美元的比特币。"
     }
   },
   "signmessage" : {
@@ -5052,6 +5058,9 @@
     },
     "StellarSourceHasMultiSign" : {
       "title" : "要进行 Stellar（恒星）交易，请禁用多重签名"
+    },
+    "HederaAddAccountError" : {
+      "title" : "您的账户尚未添加。请再次尝试。"
     }
   },
   "cryptoOrg" : {

@@ -1,3 +1,4 @@
+import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { CropResult } from "../../components/CustomImage/ImageCropper";
 import {
   ProcessorPreviewResult,
@@ -5,20 +6,30 @@ import {
 } from "../../components/CustomImage/ImageProcessor";
 import { ImageFileUri, ImageUrl } from "../../components/CustomImage/types";
 
-type Step1CroppingParams = (ImageUrl | ImageFileUri) & {
-  isPictureFromGallery?: boolean;
+type BaseParams = {
+  device: Device | null;
 };
 
-type Step2PreviewParams = CropResult;
+type Step0WelcomeParams = BaseParams;
 
-type Step3TransferParams = {
+type Step1CroppingParams = BaseParams &
+  (ImageUrl | ImageFileUri) & {
+    isPictureFromGallery?: boolean;
+  };
+
+type Step2PreviewParams = BaseParams & {
+  cropResult: CropResult;
+};
+
+type Step3TransferParams = BaseParams & {
   rawData: ProcessorRawResult;
   previewData: ProcessorPreviewResult;
 };
 
-type ErrorScreenParams = { error: Error };
+type ErrorScreenParams = BaseParams & { error: Error };
 
 export type ParamList = {
+  CustomImageStep0Welcome: Step0WelcomeParams;
   CustomImageStep1Crop: Step1CroppingParams;
   CustomImageStep2Preview: Step2PreviewParams;
   CustomImageStep3Transfer: Step3TransferParams;

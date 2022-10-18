@@ -263,6 +263,7 @@ export const SyncOnboarding = ({
 
     navigation.navigate(
       ScreenName.SyncOnboardingCompletion as "SyncOnboardingCompletion",
+      { device },
     );
   }, [device, dispatchRedux, navigation]);
 

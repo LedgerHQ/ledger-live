@@ -237,7 +237,7 @@
     "form" : {
       "changeCTA" : "Değiştir",
       "rates" : {
-        "title" : "Sağlayıcılar",
+        "title" : "Teklifler",
         "registration" : "Kayıt gerekiyor ",
         "noRegistration" : "Kayıt gerekmiyor",
         "fixed" : "Sabit",
@@ -246,7 +246,7 @@
         "loading" : "Yükleniyor...",
         "name" : {
           "title" : "Sağlayıcı",
-          "tooltip" : "Sağlayıcıya bağlı olarak, hesap oluşturarak giriş yapmanız gerekebilir."
+          "tooltip" : "Sağlayıcıya bağlı olarak, hesap oluşturarak kaydolmanız gerekebilir."
         },
         "rate" : {
           "title" : "Takas kuru",
@@ -430,11 +430,13 @@
         }
       },
       "filter" : {
-        "all" : "Tümü",
         "centralised" : "Merkezi",
-        "dedentralised" : "Merkeziyetsiz"
+        "decentralised" : "Merkeziyetsiz",
+        "float" : "Dalgalı kur",
+        "fixed" : "Sabit kur"
       },
-      "noQuote" : "Ücret teklifi bir sonraki adımda yer alır"
+      "noQuote" : "Ücret teklifi bir sonraki adımda yer alır",
+      "noProviders" : "Sonuç bulunamadı. Mevcut tercihlere uyan teklif yok."
     },
     "ip" : {
       "title" : "Takas İşlemlerine Hoş Geldiniz",
@@ -752,7 +754,7 @@
     "settings" : {
       "title" : "Hesabı düzenle",
       "advancedLogs" : "Gelişmiş",
-      "advancedTips" : "Xpub verilerinizin gizliliği çok hassastır. Kullanırken, özellikle üçüncü taraflarla paylaşırken, çok dikkatli olun.",
+      "advancedTips" : "Bu bir {{tag}} xpub'ıdır. Bunu bir üçüncü taraf cüzdanda içe aktarırken aynı türev modunu seçin.",
       "accountName" : {
         "title" : "Hesap adı",
         "desc" : "Hesap tanımı"
@@ -1182,6 +1184,10 @@
     "blackfriday" : {
       "title" : "EFSANE CUMA ",
       "description" : "BLACKFRIDAY20 promosyon koduyla Ledger donanım cüzdanlarda %40'lık indirimden yararlanın"
+    },
+    "referralProgram" : {
+      "title" : "Referans verin ve $10 kazanın",
+      "description" : "Bir arkadaşınıza başarıyla referans verdiğinizde, ikiniz de $10 değerinde Bitcoin kazanırsınız."
     }
   },
   "signmessage" : {
@@ -5052,6 +5058,9 @@
     },
     "StellarSourceHasMultiSign" : {
       "title" : "Stellar işlemleri yapmak için lütfen çoklu imzayı devre dışı bırakın"
+    },
+    "HederaAddAccountError" : {
+      "title" : "Hesabınız eklenemedi. Lütfen tekrar deneyin."
     }
   },
   "cryptoOrg" : {

@@ -1,36 +1,30 @@
 import React, { useState } from "react";
-import { Flex, Icons, Text } from "@ledgerhq/native-ui";
+import { Flex, Icons, Link, Text } from "@ledgerhq/native-ui";
+import { Device } from "@ledgerhq/types-devices";
 import { useTranslation } from "react-i18next";
 
-import Touchable from "../../../components/Touchable";
 import CustomImageBottomModal from "../../../components/CustomImage/CustomImageBottomModal";
 
-const CustomLockScreen: React.FC = () => {
+const CustomLockScreen: React.FC<{ device: Device }> = ({ device }) => {
   const [isCustomImageOpen, setIsCustomImageOpen] = useState(false);
 
   const { t } = useTranslation();
 
   return (
-    <Flex
-      flexDirection="row"
-      alignItems="center"
-      justifyContent="space-between"
-    >
-      <Flex flexDirection="row" alignItems="center">
-        <Icons.CoffeeMedium size={24} color="neutral.c80" />
-        <Text ml={2} variant="body" color="neutral.c80">
-          {t("customImage.title")}
-        </Text>
-      </Flex>
-      <Touchable onPress={() => setIsCustomImageOpen(true)}>
-        <Flex flexDirection="row" alignItems="center" pr={2}>
-          <Text variant="body" color="primary.c80" fontWeight="semiBold" mr={2}>
-            {t("customImage.replace")}
-          </Text>
-          <Icons.ChevronRightMedium size={18} color="primary.c80" />
-        </Flex>
-      </Touchable>
+    <Flex flex={1} flexDirection="row" alignItems="center">
+      <Icons.BracketsMedium size={20} color="neutral.c80" />
+      <Text ml={3} flex={1} variant="bodyLineHeight" color="neutral.c80">
+        {t("customImage.customImage")}
+      </Text>
+      <Link
+        onPress={() => setIsCustomImageOpen(true)}
+        type="color"
+        Icon={Icons.ChevronRightMedium}
+      >
+        {t("customImage.replace")}
+      </Link>
       <CustomImageBottomModal
+        device={device}
         isOpened={isCustomImageOpen}
         onClose={() => setIsCustomImageOpen(false)}
       />

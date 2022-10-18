@@ -1,5 +1,75 @@
 # @ledgerhq/live-common
 
+## 27.4.0
+
+### Minor Changes
+
+- [#1525](https://github.com/LedgerHQ/ledger-live/pull/1525) [`64e00a9e30`](https://github.com/LedgerHQ/ledger-live/commit/64e00a9e30cf67b1e34552037e4405379af04a67) Thanks [@github-actions](https://github.com/apps/github-actions)! - Minimum version for Ethereum nano app from 1.9.17 to 1.9.20
+
+* [#1442](https://github.com/LedgerHQ/ledger-live/pull/1442) [`12d40b578b`](https://github.com/LedgerHQ/ledger-live/commit/12d40b578bee2b52de197b679c3db0299bc9a716) Thanks [@sarneijim](https://github.com/sarneijim)! - Update CAL
+
+- [#1474](https://github.com/LedgerHQ/ledger-live/pull/1474) [`2802e2d684`](https://github.com/LedgerHQ/ledger-live/commit/2802e2d6844a7e17127ea7d103fe0d1a45afa032) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Expose more information from inline app installs, allow dashboard as a target app in device actions
+
+### Patch Changes
+
+- [#1419](https://github.com/LedgerHQ/ledger-live/pull/1419) [`2100b9fb81`](https://github.com/LedgerHQ/ledger-live/commit/2100b9fb81a4fd04f65b96561c0a7d618658843a) Thanks [@gre](https://github.com/gre)! - Introduce tests to ensure we define abandonseed values for coin we support
+
+* [#1525](https://github.com/LedgerHQ/ledger-live/pull/1525) [`5fba025686`](https://github.com/LedgerHQ/ledger-live/commit/5fba025686d799badad3f7a7c7c8491cba14be8a) Thanks [@github-actions](https://github.com/apps/github-actions)! - Fix ts rework error
+
+- [#1420](https://github.com/LedgerHQ/ledger-live/pull/1420) [`bd884848bd`](https://github.com/LedgerHQ/ledger-live/commit/bd884848bd3dc2ef3cb5ea4df0127ff8ec6be8b7) Thanks [@gre](https://github.com/gre)! - Tezos: properly remap 'not enough balance' errors
+
+* [#1357](https://github.com/LedgerHQ/ledger-live/pull/1357) [`b34e55181c`](https://github.com/LedgerHQ/ledger-live/commit/b34e55181c12bb0a59ef5dee5e808d7597a21edb) Thanks [@hzheng-ledger](https://github.com/hzheng-ledger)! - fix typescript lint rules warning
+
+- [#1306](https://github.com/LedgerHQ/ledger-live/pull/1306) [`f6854a3fd7`](https://github.com/LedgerHQ/ledger-live/commit/f6854a3fd79a28eb5507796b69105c85b40bbe98) Thanks [@jnicoulaud-ledger](https://github.com/jnicoulaud-ledger)! - Fix outdated assertion on exchange signature size
+
+* [#1409](https://github.com/LedgerHQ/ledger-live/pull/1409) [`d1aab06a96`](https://github.com/LedgerHQ/ledger-live/commit/d1aab06a966e06269b037b574e51593fe45e987f) Thanks [@crypto-smoke](https://github.com/crypto-smoke)! - Crypto Icons - Add support for YAE token icon
+
+- [#1256](https://github.com/LedgerHQ/ledger-live/pull/1256) [`824efb6e62`](https://github.com/LedgerHQ/ledger-live/commit/824efb6e62b4b042fef700896f0bfd54ccfee5c7) Thanks [@jackthta](https://github.com/jackthta)! - Add user friendly error if add account flow fails to fetch account balance.
+
+- Updated dependencies [[`2100b9fb81`](https://github.com/LedgerHQ/ledger-live/commit/2100b9fb81a4fd04f65b96561c0a7d618658843a), [`1b43ce613f`](https://github.com/LedgerHQ/ledger-live/commit/1b43ce613f599cef9f69e40e7e3cfa8c1033c786), [`d3dc2c6877`](https://github.com/LedgerHQ/ledger-live/commit/d3dc2c6877fbdcaf68e442a781798d752fc5152d)]:
+  - @ledgerhq/cryptoassets@6.36.0
+  - @ledgerhq/hw-app-solana@7.0.0
+  - @ledgerhq/hw-app-eth@6.29.10
+
+## 27.4.0-next.2
+
+### Patch Changes
+
+- [#1525](https://github.com/LedgerHQ/ledger-live/pull/1525) [`5fba025686`](https://github.com/LedgerHQ/ledger-live/commit/5fba025686d799badad3f7a7c7c8491cba14be8a) Thanks [@github-actions](https://github.com/apps/github-actions)! - Fix ts rework error
+
+## 27.4.0-next.1
+
+### Minor Changes
+
+- [#1525](https://github.com/LedgerHQ/ledger-live/pull/1525) [`64e00a9e30`](https://github.com/LedgerHQ/ledger-live/commit/64e00a9e30cf67b1e34552037e4405379af04a67) Thanks [@github-actions](https://github.com/apps/github-actions)! - Minimum version for Ethereum nano app from 1.9.17 to 1.9.20
+
+## 27.4.0-next.0
+
+### Minor Changes
+
+- [#1442](https://github.com/LedgerHQ/ledger-live/pull/1442) [`12d40b578b`](https://github.com/LedgerHQ/ledger-live/commit/12d40b578bee2b52de197b679c3db0299bc9a716) Thanks [@sarneijim](https://github.com/sarneijim)! - Update CAL
+
+* [#1474](https://github.com/LedgerHQ/ledger-live/pull/1474) [`2802e2d684`](https://github.com/LedgerHQ/ledger-live/commit/2802e2d6844a7e17127ea7d103fe0d1a45afa032) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Expose more information from inline app installs, allow dashboard as a target app in device actions
+
+### Patch Changes
+
+- [#1419](https://github.com/LedgerHQ/ledger-live/pull/1419) [`2100b9fb81`](https://github.com/LedgerHQ/ledger-live/commit/2100b9fb81a4fd04f65b96561c0a7d618658843a) Thanks [@gre](https://github.com/gre)! - Introduce tests to ensure we define abandonseed values for coin we support
+
+* [#1420](https://github.com/LedgerHQ/ledger-live/pull/1420) [`bd884848bd`](https://github.com/LedgerHQ/ledger-live/commit/bd884848bd3dc2ef3cb5ea4df0127ff8ec6be8b7) Thanks [@gre](https://github.com/gre)! - Tezos: properly remap 'not enough balance' errors
+
+- [#1357](https://github.com/LedgerHQ/ledger-live/pull/1357) [`b34e55181c`](https://github.com/LedgerHQ/ledger-live/commit/b34e55181c12bb0a59ef5dee5e808d7597a21edb) Thanks [@hzheng-ledger](https://github.com/hzheng-ledger)! - fix typescript lint rules warning
+
+* [#1306](https://github.com/LedgerHQ/ledger-live/pull/1306) [`f6854a3fd7`](https://github.com/LedgerHQ/ledger-live/commit/f6854a3fd79a28eb5507796b69105c85b40bbe98) Thanks [@jnicoulaud-ledger](https://github.com/jnicoulaud-ledger)! - Fix outdated assertion on exchange signature size
+
+- [#1409](https://github.com/LedgerHQ/ledger-live/pull/1409) [`d1aab06a96`](https://github.com/LedgerHQ/ledger-live/commit/d1aab06a966e06269b037b574e51593fe45e987f) Thanks [@crypto-smoke](https://github.com/crypto-smoke)! - Crypto Icons - Add support for YAE token icon
+
+* [#1256](https://github.com/LedgerHQ/ledger-live/pull/1256) [`824efb6e62`](https://github.com/LedgerHQ/ledger-live/commit/824efb6e62b4b042fef700896f0bfd54ccfee5c7) Thanks [@jackthta](https://github.com/jackthta)! - Add user friendly error if add account flow fails to fetch account balance.
+
+* Updated dependencies [[`2100b9fb81`](https://github.com/LedgerHQ/ledger-live/commit/2100b9fb81a4fd04f65b96561c0a7d618658843a), [`1b43ce613f`](https://github.com/LedgerHQ/ledger-live/commit/1b43ce613f599cef9f69e40e7e3cfa8c1033c786), [`d3dc2c6877`](https://github.com/LedgerHQ/ledger-live/commit/d3dc2c6877fbdcaf68e442a781798d752fc5152d)]:
+  - @ledgerhq/cryptoassets@6.36.0-next.0
+  - @ledgerhq/hw-app-solana@7.0.0-next.0
+  - @ledgerhq/hw-app-eth@6.29.10-next.0
+
 ## 27.3.2
 
 ### Patch Changes

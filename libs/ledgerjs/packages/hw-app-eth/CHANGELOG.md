@@ -1,18 +1,18 @@
 # @ledgerhq/hw-app-eth
 
-## 6.29.10-nightly.1
+## 6.29.10
 
 ### Patch Changes
 
-- Updated dependencies [[`d3dc2c6877`](https://github.com/LedgerHQ/ledger-live/commit/d3dc2c6877fbdcaf68e442a781798d752fc5152d)]:
-  - @ledgerhq/cryptoassets@6.36.0-nightly.1
+- Updated dependencies [[`2100b9fb81`](https://github.com/LedgerHQ/ledger-live/commit/2100b9fb81a4fd04f65b96561c0a7d618658843a), [`d3dc2c6877`](https://github.com/LedgerHQ/ledger-live/commit/d3dc2c6877fbdcaf68e442a781798d752fc5152d)]:
+  - @ledgerhq/cryptoassets@6.36.0
 
-## 6.29.10-nightly.0
+## 6.29.10-next.0
 
 ### Patch Changes
 
-- Updated dependencies [[`2100b9fb81`](https://github.com/LedgerHQ/ledger-live/commit/2100b9fb81a4fd04f65b96561c0a7d618658843a)]:
-  - @ledgerhq/cryptoassets@6.35.2-nightly.0
+- Updated dependencies [[`2100b9fb81`](https://github.com/LedgerHQ/ledger-live/commit/2100b9fb81a4fd04f65b96561c0a7d618658843a), [`d3dc2c6877`](https://github.com/LedgerHQ/ledger-live/commit/d3dc2c6877fbdcaf68e442a781798d752fc5152d)]:
+  - @ledgerhq/cryptoassets@6.36.0-next.0
 
 ## 6.29.9
 

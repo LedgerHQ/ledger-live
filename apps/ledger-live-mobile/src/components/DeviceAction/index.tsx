@@ -27,6 +27,9 @@ import {
   LoadingAppInstall,
   AutoRepair,
   renderAllowLanguageInstallation,
+  renderImageLoadRequested,
+  renderLoadingImage,
+  renderImageCommitRequested,
 } from "./rendering";
 import PreventNativeBack from "../PreventNativeBack";
 import SkipLock from "../behaviour/SkipLock";
@@ -119,6 +122,9 @@ export function DeviceActionDefaultRendering<R, H, P>({
     installingApp,
     progress,
     listingApps,
+    imageLoadRequested,
+    loadingImage,
+    imageCommitRequested,
   } = status;
 
   useEffect(() => {
@@ -297,6 +303,16 @@ export function DeviceActionDefaultRendering<R, H, P>({
       colors,
       theme,
     });
+  }
+
+  if (imageLoadRequested) {
+    return renderImageLoadRequested({ t, device });
+  }
+  if (loadingImage) {
+    return renderLoadingImage({ t, device, progress });
+  }
+  if (imageCommitRequested) {
+    return renderImageCommitRequested({ t, device });
   }
 
   if (!isLoading && error) {
