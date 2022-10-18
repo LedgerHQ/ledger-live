@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { View, StyleSheet, Animated } from "react-native";
+import { View, StyleSheet, Animated, TextStyle, StyleProp } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useSelector } from "react-redux";
 import { Trans, useTranslation } from "react-i18next";
@@ -85,7 +85,7 @@ const Words = ({
 }: {
   children: React.ReactNode;
   highlighted?: boolean;
-  style?: any;
+  style?: StyleProp<TextStyle>;
 }) => (
   <LText
     numberOfLines={1}
@@ -155,7 +155,10 @@ export default function DelegationSummary({ navigation, route }: Props) {
     invariant(transaction.family === "tezos", "tezos tx");
 
     // make sure the mode is in sync (an account changes can reset it)
-    const patch: any = {
+    const patch: {
+      mode: string;
+      recipient?: string;
+    } = {
       mode: route.params?.mode ?? "delegate",
     };
 
@@ -242,11 +245,10 @@ export default function DelegationSummary({ navigation, route }: Props) {
   const onContinue = useCallback(async () => {
     navigation.navigate(ScreenName.DelegationSelectDevice, {
       accountId: account.id,
-      parentId: (parentAccount && parentAccount.id) || undefined,
       transaction,
       status,
     });
-  }, [status, account, parentAccount, navigation, transaction]);
+  }, [status, account, navigation, transaction]);
 
   return (
     <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]}>

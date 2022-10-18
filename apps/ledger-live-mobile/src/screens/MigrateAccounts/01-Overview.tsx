@@ -1,10 +1,17 @@
 import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
 import React, { useCallback, useMemo } from "react";
 import { Trans } from "react-i18next";
-import { StyleSheet, View, SectionList } from "react-native";
+import {
+  StyleSheet,
+  View,
+  SectionList,
+  SectionListData,
+  SectionListRenderItemInfo,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useSelector } from "react-redux";
 import { useTheme } from "@react-navigation/native";
+import { Account } from "@ledgerhq/types-live";
 import { ScreenName } from "../../const";
 import AccountCard from "../../components/AccountCard";
 import Button from "../../components/Button";
@@ -42,7 +49,11 @@ export default function Overview({ route, navigation }: Props) {
     });
   }, [navigation, currencyIds]);
 
-  const renderSectionHeader = ({ section }: { section: any }) => (
+  const renderSectionHeader = ({
+    section,
+  }: {
+    section: SectionListData<Account>;
+  }) => (
     <LText
       style={[
         styles.currencyTitle,
@@ -64,7 +75,7 @@ export default function Overview({ route, navigation }: Props) {
     </LText>
   );
 
-  const renderItem = ({ item }: { item: any }) => (
+  const renderItem = ({ item }: SectionListRenderItemInfo<Account>) => (
     <View style={styles.cardWrapper}>
       <AccountCard
         account={item}

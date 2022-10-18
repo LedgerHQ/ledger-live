@@ -13,14 +13,17 @@ import {
   TouchableOpacity,
   PanResponder,
   FlatList,
+  StyleProp,
+  ViewStyle,
 } from "react-native";
-import { useNavigation, useTheme } from "@react-navigation/native";
+import { useNavigation } from "@react-navigation/native";
 import { listTokenTypesForCryptoCurrency } from "@ledgerhq/live-common/currencies/index";
 import { Account } from "@ledgerhq/types-live";
 import { FlexBoxProps } from "@ledgerhq/native-ui/components/Layout/Flex";
 import { Flex, Text } from "@ledgerhq/native-ui";
 import Swipeable from "react-native-gesture-handler/Swipeable";
 
+import { StackNavigationProp } from "@react-navigation/stack";
 import { ScreenName } from "../const";
 import { track } from "../analytics";
 import AccountCard from "./AccountCard";
@@ -29,6 +32,8 @@ import swipedAccountSubject from "../screens/AddAccounts/swipedAccountSubject";
 import Button from "./Button";
 import TouchHintCircle from "./TouchHintCircle";
 import Touchable from "./Touchable";
+import { AccountSettingsNavigatorParamList } from "./RootNavigator/types/AccountSettingsNavigator";
+import { AddAccountsNavigatorParamList } from "./RootNavigator/types/AddAccountsNavigator";
 
 const selectAllHitSlop = {
   top: 16,
@@ -47,7 +52,7 @@ type Props = FlexBoxProps & {
   forceSelected?: boolean;
   emptyState?: ReactNode;
   header: ReactNode;
-  style?: any;
+  style?: StyleProp<ViewStyle>;
   index: number;
   showHint: boolean;
   onAccountNameChange?: (name: string, changedAccount: Account) => void;
@@ -70,8 +75,12 @@ const SelectableAccountsList = ({
   useFullBalance,
   ...props
 }: Props) => {
-  const { colors } = useTheme();
-  const navigation = useNavigation();
+  const navigation =
+    useNavigation<
+      StackNavigationProp<
+        AccountSettingsNavigatorParamList | AddAccountsNavigatorParamList
+      >
+    >();
 
   const onSelectAll = useCallback(() => {
     track("SelectAllAccounts");
@@ -109,7 +118,6 @@ const SelectableAccountsList = ({
             isSelected={forceSelected || selectedIds.indexOf(item.id) > -1}
             isDisabled={isDisabled}
             onPress={onPressAccount}
-            colors={colors}
             useFullBalance={useFullBalance}
           />
         )}
@@ -127,9 +135,10 @@ type SelectableAccountProps = {
   showHint: boolean;
   rowIndex: number;
   listIndex: number;
-  navigation: any;
+  navigation: StackNavigationProp<
+    AccountSettingsNavigatorParamList | AddAccountsNavigatorParamList
+  >;
   onAccountNameChange?: (name: string, changedAccount: Account) => void;
-  colors: any;
   useFullBalance?: boolean;
 };
 
@@ -174,7 +183,7 @@ const SelectableAccount = ({
         onPanResponderGrant: () => {
           if (swipedAccountSubject) {
             setStopAnimation(true);
-            swipedAccountSubject.next({ rowIndex, listIndex });
+            swipedAccountSubject.next({ row: rowIndex, list: listIndex });
           }
         },
         onShouldBlockNativeResponder: () => false,

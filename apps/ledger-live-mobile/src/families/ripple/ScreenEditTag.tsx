@@ -5,8 +5,8 @@ import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { BigNumber } from "bignumber.js";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
-import type { Transaction } from "@ledgerhq/live-common/families/ripple/types";
 import { useTheme } from "@react-navigation/native";
+import { StackScreenProps } from "@react-navigation/stack";
 import { i18n } from "../../context/Locale";
 import KeyboardView from "../../components/KeyboardView";
 import Button from "../../components/Button";
@@ -15,24 +15,20 @@ import { accountScreenSelector } from "../../reducers/accounts";
 import { ScreenName } from "../../const";
 import { track } from "../../analytics";
 import TextInput from "../../components/FocusedTextInput";
+import { BaseComposite } from "../../components/RootNavigator/types/helpers";
+import { SendFundsNavigatorStackParamList } from "../../components/RootNavigator/types/SendFundsNavigator";
 
-type Props = {
-  navigation: any;
-  route: {
-    params: RouteParams;
-  };
-};
-type RouteParams = {
-  accountId: string;
-  transaction: Transaction;
-};
+type NavigationProps = BaseComposite<
+  StackScreenProps<SendFundsNavigatorStackParamList, ScreenName.RippleEditTag>
+>;
+
 const uint32maxPlus1 = BigNumber(2).pow(32);
 const options = {
   title: i18n.t("send.summary.tag"),
   headerLeft: undefined,
 };
 
-function RippleEditTag({ route, navigation }: Props) {
+function RippleEditTag({ route, navigation }: NavigationProps) {
   const { colors } = useTheme();
   const { account } = useSelector(accountScreenSelector(route));
   const { t } = useTranslation();
@@ -62,6 +58,7 @@ function RippleEditTag({ route, navigation }: Props) {
   const onValidateText = useCallback(() => {
     if (!account) return;
     const bridge = getAccountBridge(account);
+    // @ts-expect-error FIXME: no current / next navigation param?
     navigation.navigate(ScreenName.SendSummary, {
       accountId: account.id,
       transaction: bridge.updateTransaction(transaction, {

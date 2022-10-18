@@ -35,9 +35,12 @@ const RatingsModal = () => {
    * height is stuck at 0.
    */
   const sharedHeight = useSharedValue<number | null>(null);
-  const onLayout = useCallback(({ nativeEvent: { layout } }) => {
-    sharedHeight.value = withTiming(layout.height, { duration: 200 });
-  }, []);
+  const onLayout = useCallback(
+    ({ nativeEvent: { layout } }) => {
+      sharedHeight.value = withTiming(layout.height, { duration: 200 });
+    },
+    [sharedHeight],
+  );
 
   const animatedStyle = useAnimatedStyle(
     () => ({

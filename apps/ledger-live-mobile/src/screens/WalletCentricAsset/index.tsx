@@ -1,5 +1,5 @@
 import React, { useMemo, useState, useCallback, useEffect } from "react";
-import { FlatList, LayoutChangeEvent } from "react-native";
+import { FlatList, LayoutChangeEvent, ListRenderItemInfo } from "react-native";
 import Animated, {
   useAnimatedScrollHandler,
   useSharedValue,
@@ -244,8 +244,10 @@ const AssetScreen = ({ route }: NavigationProps) => {
         style={{ flex: 1, paddingTop: 48 }}
         contentContainerStyle={{ paddingBottom: TAB_BAR_SAFE_HEIGHT }}
         data={data}
-        renderItem={({ item }: any) => item}
-        keyExtractor={(_: any, index: any) => String(index)}
+        renderItem={({ item }: ListRenderItemInfo<unknown>) =>
+          item as JSX.Element
+        }
+        keyExtractor={(_: unknown, index: number) => String(index)}
         showsVerticalScrollIndicator={false}
         onScroll={handleScroll}
       />

@@ -3,8 +3,6 @@ import { I18nManager, ScrollView } from "react-native";
 import { Trans } from "react-i18next";
 import { Flex, SelectableList, BottomDrawer } from "@ledgerhq/native-ui";
 import i18next from "i18next";
-// Lib is there but linter doesn't seem to want to find it
-// eslint-disable-next-line import/no-unresolved
 import RNRestart from "react-native-restart";
 import { useDispatch, useSelector } from "react-redux";
 import { useAvailableLanguagesForDevice } from "@ledgerhq/live-common/manager/hooks";
@@ -228,7 +226,6 @@ function OnboardingStepLanguage({ navigation }: NavigationProps) {
         </Flex>
       </BottomDrawer>
       <BottomDrawer
-        id="ContractAddress"
         isOpen={isRestartPromptOpened}
         preventBackdropClick={false}
         title={<Trans i18nKey={"onboarding.stepLanguage.RestartModal.title"} />}

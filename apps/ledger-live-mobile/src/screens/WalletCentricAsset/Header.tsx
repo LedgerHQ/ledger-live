@@ -73,7 +73,7 @@ function Header({
     navigation.navigate(ScreenName.CurrencySettings, {
       currencyId: (currency as Exclude<Currency, FiatCurrency>).id,
     });
-  }, [(currency as Exclude<Currency, FiatCurrency>).id, navigation]);
+  }, [currency, navigation]);
 
   return (
     <CurrencyHeaderLayout

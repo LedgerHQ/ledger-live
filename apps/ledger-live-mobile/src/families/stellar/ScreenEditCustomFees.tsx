@@ -13,30 +13,56 @@ import { useTheme } from "@react-navigation/native";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import { useSelector } from "react-redux";
-import type { Transaction } from "@ledgerhq/live-common/families/stellar/types";
 import Button from "../../components/Button";
 import KeyboardView from "../../components/KeyboardView";
 import LText from "../../components/LText";
 import { accountScreenSelector } from "../../reducers/accounts";
 import CurrencyInput from "../../components/CurrencyInput";
+import {
+  BaseComposite,
+  StackNavigatorProps,
+} from "../../components/RootNavigator/types/helpers";
+import { SendFundsNavigatorStackParamList } from "../../components/RootNavigator/types/SendFundsNavigator";
+import { ScreenName } from "../../const";
+import { SignTransactionNavigatorParamList } from "../../components/RootNavigator/types/SignTransactionNavigator";
+import { LendingEnableFlowParamsList } from "../../components/RootNavigator/types/LendingEnableFlowNavigator";
+import { LendingSupplyFlowNavigatorParamList } from "../../components/RootNavigator/types/LendingSupplyFlowNavigator";
+import { LendingWithdrawFlowNavigatorParamList } from "../../components/RootNavigator/types/LendingWithdrawFlowNavigator";
+import { SwapNavigatorParamList } from "../../components/RootNavigator/types/SwapNavigator";
 
 const options = {
   title: <Trans i18nKey="send.summary.fees" />,
   headerLeft: undefined,
 };
-type RouteParams = {
-  accountId: string;
-  transaction: Transaction;
-  currentNavigation: string;
-};
-type Props = {
-  navigation: any;
-  route: {
-    params: RouteParams;
-  };
-};
 
-function StellarEditCustomFees({ navigation, route }: Props) {
+type NavigationProps = BaseComposite<
+  | StackNavigatorProps<
+      SendFundsNavigatorStackParamList,
+      ScreenName.StellarEditCustomFees
+    >
+  | StackNavigatorProps<
+      SignTransactionNavigatorParamList,
+      ScreenName.StellarEditCustomFees
+    >
+  | StackNavigatorProps<
+      LendingEnableFlowParamsList,
+      ScreenName.StellarEditCustomFees
+    >
+  | StackNavigatorProps<
+      LendingSupplyFlowNavigatorParamList,
+      ScreenName.StellarEditCustomFees
+    >
+  | StackNavigatorProps<
+      LendingWithdrawFlowNavigatorParamList,
+      ScreenName.StellarEditCustomFees
+    >
+  | StackNavigatorProps<
+      SwapNavigatorParamList,
+      ScreenName.StellarEditCustomFees
+    >
+>;
+
+function StellarEditCustomFees({ navigation, route }: NavigationProps) {
   const { colors } = useTheme();
   const { t } = useTranslation();
   const { transaction } = route.params;
@@ -56,6 +82,7 @@ function StellarEditCustomFees({ navigation, route }: Props) {
     setCustomFee(BigNumber(customFee || 0));
     const bridge = getAccountBridge(account, parentAccount);
     const { currentNavigation } = route.params;
+    // @ts-expect-error ask your mom about it
     navigation.navigate(currentNavigation, {
       ...route.params,
       accountId: account.id,

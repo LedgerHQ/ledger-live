@@ -32,6 +32,16 @@ import AppUpdateAll from "./AppsList/AppUpdateAll";
 import Search from "../../components/Search";
 import FirmwareUpdateBanner from "../../components/FirmwareUpdateBanner";
 import { TAB_BAR_SAFE_HEIGHT } from "../../components/TabBar/shared";
+import type {
+  BaseComposite,
+  StackNavigatorProps,
+} from "../../components/RootNavigator/types/helpers";
+import { ManagerNavigatorStackParamList } from "../../components/RootNavigator/types/ManagerNavigator";
+import { ScreenName } from "../../const";
+
+type NavigationProps = BaseComposite<
+  StackNavigatorProps<ManagerNavigatorStackParamList, ScreenName.ManagerMain>
+>;
 
 type Props = {
   state: State;
@@ -41,7 +51,7 @@ type Props = {
   setStorageWarning: (value: string | null) => void;
   deviceId: string;
   initialDeviceName?: string | null;
-  navigation: any;
+  navigation: NavigationProps["navigation"];
   pendingInstalls: boolean;
   deviceInfo: DeviceInfo;
   device: Device;

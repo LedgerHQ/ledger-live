@@ -138,7 +138,7 @@ function AccountGraphCard({
       graph: "Account Graph",
       timeframe: timeRange,
     });
-  }, []);
+  }, [timeRange]);
 
   useEffect(() => {
     if (history && history.length > 0) {

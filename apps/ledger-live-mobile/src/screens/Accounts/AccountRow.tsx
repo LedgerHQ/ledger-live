@@ -23,14 +23,28 @@ import AccountRowLayout from "../../components/AccountRowLayout";
 import { parentAccountSelector } from "../../reducers/accounts";
 import { track } from "../../analytics";
 import { State } from "../../reducers/types";
+import { AccountsNavigatorParamList } from "../../components/RootNavigator/types/AccountsNavigator";
+import {
+  BaseComposite,
+  StackNavigatorProps,
+} from "../../components/RootNavigator/types/helpers";
+import { MarketNavigatorStackParamList } from "../../components/RootNavigator/types/MarketNavigator";
+
+type Navigation = BaseComposite<
+  | StackNavigatorProps<
+      AccountsNavigatorParamList,
+      ScreenName.Asset | ScreenName.Accounts
+    >
+  | StackNavigatorProps<MarketNavigatorStackParamList, ScreenName.MarketDetail>
+>;
 
 type Props = {
   account: AccountLike;
   accountId: string;
-  navigation: any;
+  navigation: Navigation["navigation"];
   isLast?: boolean;
   onSetAccount?: (arg: TokenAccount) => void;
-  navigationParams?: any[];
+  navigationParams?: [ScreenName, object];
   hideDelta?: boolean;
   topLink?: boolean;
   bottomLink?: boolean;
@@ -64,6 +78,8 @@ const AccountRow = ({
       (account as Account).derivationMode as DerivationMode,
     );
 
+  const parentId = (account as TokenAccount)?.parentId;
+
   const { countervalueChange } = useBalanceHistoryWithCountervalue({
     account,
     range: "day",
@@ -74,6 +90,7 @@ const AccountRow = ({
       currency: currency.name,
     });
     if (navigationParams) {
+      // @ts-expect-error navigagtion spread, ask your mom about it
       navigation.navigate(...navigationParams);
     } else if (account.type === "Account") {
       navigation.navigate(ScreenName.Account, {
@@ -84,20 +101,20 @@ const AccountRow = ({
         screen: ScreenName.Account,
         params: {
           currencyId: currency.id,
-          parentId: account?.parentId,
+          parentId,
           accountId: account.id,
         },
       });
     }
   }, [
     account.id,
-    (account as TokenAccount)?.parentId,
     account.type,
     accountId,
     currency.id,
     currency.name,
     navigation,
     navigationParams,
+    parentId,
   ]);
 
   return (

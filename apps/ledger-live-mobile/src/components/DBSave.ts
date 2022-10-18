@@ -67,13 +67,7 @@ function useFlushMechanism({
   cancel: () => void;
 }) {
   const cancelRef = useRef(cancel);
-  useEffect(
-    () =>
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-      () =>
-        cancelRef.current(),
-    [cancelRef],
-  );
+  useEffect(() => () => cancelRef.current(), []);
   useEffect(() => {
     flushes.push(flush);
     return () => {

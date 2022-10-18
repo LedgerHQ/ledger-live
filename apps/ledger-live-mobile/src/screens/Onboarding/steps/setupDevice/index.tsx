@@ -18,6 +18,7 @@ import { TrackScreen } from "../../../../analytics";
 import StepLottieAnimation from "./scenes/StepLottieAnimation";
 import { StackNavigatorProps } from "../../../../components/RootNavigator/types/helpers";
 import { OnboardingNavigatorParamList } from "../../../../components/RootNavigator/types/OnboardingNavigator";
+import { Step } from "./scenes/BaseStepperView";
 
 // @TODO Replace
 const images = {
@@ -58,7 +59,7 @@ const scenes = [
   RecoveryPhraseInstructions,
   RecoveryPhraseSetup,
   HideRecoveryPhrase,
-];
+] as Step[];
 
 type NavigationProps = StackNavigatorProps<
   OnboardingNavigatorParamList,

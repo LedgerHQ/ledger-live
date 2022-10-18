@@ -11,6 +11,7 @@ export type ExchangeLiveAppNavigatorParamList = {
         name?: string;
         mode?: string;
         account?: string;
+        parentId?: string;
       }
     | undefined;
   [ScreenName.ExchangeSell]:

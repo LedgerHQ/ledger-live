@@ -112,7 +112,7 @@ function SubAccountRow({
   );
 }
 
-const AccountCv = ({ children }: { children: React.ReactNode }) => (
+const AccountCv = ({ children }: { children?: React.ReactNode }) => (
   <Text variant={"large"} fontWeight={"semiBold"} color={"neutral.c100"}>
     {children}
   </Text>

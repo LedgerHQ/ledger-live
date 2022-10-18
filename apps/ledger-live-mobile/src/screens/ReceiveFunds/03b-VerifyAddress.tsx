@@ -55,7 +55,7 @@ export default function ReceiveVerifyAddress({ navigation, route }: Props) {
   const { theme: themeKind } = useTheme();
   const { account, parentAccount } = useSelector(accountScreenSelector(route));
   const { t } = useTranslation();
-  const [error, setError] = useState(null);
+  const [error, setError] = useState<Error | null>(null);
 
   const onModalClose = useCallback(() => {
     setError(null);
@@ -87,7 +87,7 @@ export default function ReceiveVerifyAddress({ navigation, route }: Props) {
               createTokenAccount: false,
             });
         },
-        error: (error: any) => {
+        error: (error: Error) => {
           if (error && error.name !== "UserRefusedAddress") {
             logger.critical(error);
           }

@@ -10,9 +10,17 @@ import type {
   RateMapRaw,
   CounterValuesStatus,
 } from "@ledgerhq/live-common/countervalues/types";
+import { Announcement } from "@ledgerhq/live-common/notifications/AnnouncementProvider/types";
 import store from "./logic/storeWrapper";
 import type { User } from "./types/store";
-import type { SettingsState } from "./reducers/types";
+import type { BleState, SettingsState } from "./reducers/types";
+
+export type Notifications = {
+  announcements: Announcement[];
+  seenIds: string[];
+  lastUpdateTime: number;
+  initDate?: number;
+};
 
 const ACCOUNTS_KEY = "accounts";
 const ACCOUNTS_KEY_SORT = "accounts.sort";
@@ -39,18 +47,18 @@ export async function getSettings(): Promise<Partial<SettingsState>> {
 export async function saveSettings(obj: Partial<SettingsState>): Promise<void> {
   await store.save("settings", obj);
 }
-export async function getWCSession(): Promise<any> {
+export async function getWCSession(): Promise<unknown> {
   const wcsession = await store.get("wcsession");
   return wcsession;
 }
-export async function saveWCSession(obj: any): Promise<void> {
+export async function saveWCSession(obj: unknown): Promise<void> {
   await store.save("wcsession", obj);
 }
-export async function getNotifications(): Promise<any> {
-  const notifications = await store.get("notifications");
+export async function getNotifications(): Promise<Notifications> {
+  const notifications = (await store.get("notifications")) as Notifications;
   return notifications;
 }
-export async function saveNotifications(obj: any): Promise<void> {
+export async function saveNotifications(obj: Notifications): Promise<void> {
   await store.save("notifications", obj);
 }
 export const getCountervalues: typeof unsafeGetCountervalues = atomicQueue(
@@ -111,11 +119,11 @@ async function unsafeSaveCountervalues(
   }
 }
 
-export async function getBle(): Promise<any> {
-  const ble = await store.get("ble");
+export async function getBle(): Promise<BleState> {
+  const ble = (await store.get("ble")) as BleState;
   return ble;
 }
-export async function saveBle(obj: any): Promise<void> {
+export async function saveBle(obj: BleState): Promise<void> {
   await store.save("ble", obj);
 }
 

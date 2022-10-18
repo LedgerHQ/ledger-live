@@ -27,16 +27,18 @@ import TabBarSafeAreaView, {
   TAB_BAR_SAFE_HEIGHT,
 } from "../../components/TabBar/TabBarSafeAreaView";
 import AccountsNavigationHeader from "./AccountsNavigationHeader";
-import { StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
+import {
+  BaseComposite,
+  StackNavigatorProps,
+} from "../../components/RootNavigator/types/helpers";
 import { AccountsNavigatorParamList } from "../../components/RootNavigator/types/AccountsNavigator";
 
 const List = globalSyncRefreshControl(
   FlatList as React.ComponentType<FlatListProps<AccountLike>>,
 );
 
-type NavigationProps = StackNavigatorProps<
-  AccountsNavigatorParamList,
-  ScreenName.Accounts
+type NavigationProps = BaseComposite<
+  StackNavigatorProps<AccountsNavigatorParamList, ScreenName.Accounts>
 >;
 
 function Accounts({ navigation, route }: NavigationProps) {
@@ -136,7 +138,7 @@ function Accounts({ navigation, route }: NavigationProps) {
         <List
           data={flattenedAccounts}
           renderItem={renderItem}
-          keyExtractor={(i: any) => i.id}
+          keyExtractor={(i: AccountLike) => i.id}
           ListHeaderComponent={
             <Flex mt={3} mb={3}>
               <Text variant="h4">

@@ -38,7 +38,7 @@ export type Props = ImageFileUri & {
 const ImageCropper = React.forwardRef<CropView, Props>((props, ref) => {
   const {
     style,
-    imageFileUri, // eslint-disable-line react/prop-types
+    imageFileUri,
     aspectRatio,
     onError,
     onResult,

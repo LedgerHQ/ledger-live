@@ -22,7 +22,7 @@ import { State } from "../../../reducers/types";
 
 const CollectionFlatList = styled(FlatList)`
   min-height: 100%;
-`;
+` as unknown as typeof FlatList;
 
 const CollectionImage = styled(NftMedia)`
   border-radius: 4px;
@@ -106,7 +106,7 @@ const HiddenNftCollections = () => {
   const dispatch = useDispatch();
 
   const renderItem = useCallback(
-    ({ item }: { item: any }) => {
+    ({ item }: { item: string }) => {
       const [accountId, contractAddress] = item.split("|");
       return (
         <HiddenNftCollectionRow

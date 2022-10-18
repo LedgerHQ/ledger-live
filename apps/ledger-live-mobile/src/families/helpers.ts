@@ -2,6 +2,7 @@ import type { Account } from "@ledgerhq/types-live";
 import { useRoute } from "@react-navigation/native";
 import { BigNumber } from "bignumber.js";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
+import { TransactionStatus } from "@ledgerhq/live-common/generated/types";
 import type {
   BaseComposite,
   StackNavigatorProps,
@@ -66,7 +67,9 @@ export function getFirstStatusError(
  *
  * @param {Object} status - The transaction status
  */
-export function hasStatusError(status: any): boolean | null | undefined {
+export function hasStatusError(
+  status: TransactionStatus,
+): boolean | null | undefined {
   if (!status || !status.errors) return false;
   return !!Object.keys(status.errors).length;
 }

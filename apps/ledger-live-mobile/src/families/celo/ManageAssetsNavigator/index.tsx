@@ -112,7 +112,7 @@ function ManageAssetsNavigator() {
           : ScreenName.CeloVoteSummary,
       params: {},
     });
-  }, [onNavigate]);
+  }, [onNavigate, votes?.length]);
 
   const onRevoke = useCallback(() => {
     onNavigate({

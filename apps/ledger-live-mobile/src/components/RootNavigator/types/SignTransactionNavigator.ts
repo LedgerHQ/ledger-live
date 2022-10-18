@@ -360,6 +360,7 @@ export type SignTransactionNavigatorParamList = {
     parentId?: string;
     account: Account;
     transaction: StellarTransaction;
+    memoType?: string;
     currentNavigation:
       | ScreenName.LendingWithdrawSummary
       | ScreenName.LendingSupplySummary

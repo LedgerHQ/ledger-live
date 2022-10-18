@@ -13,7 +13,6 @@ import {
 import { useSelector } from "react-redux";
 import { Trans } from "react-i18next";
 import { useTheme } from "@react-navigation/native";
-import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import type { Transaction as PolkadotTransaction } from "@ledgerhq/live-common/families/polkadot/types";
 import { useDebounce } from "@ledgerhq/live-common/hooks/useDebounce";
 import {
@@ -21,6 +20,7 @@ import {
   getMainAccount,
 } from "@ledgerhq/live-common/account/index";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
+import { StackScreenProps } from "@react-navigation/stack";
 import { accountScreenSelector } from "../../../reducers/accounts";
 import { ScreenName } from "../../../const";
 import { TrackScreen } from "../../../analytics";
@@ -33,18 +33,17 @@ import TranslatedError from "../../../components/TranslatedError";
 import { getFirstStatusError, hasStatusError } from "../../helpers";
 import FlowErrorBottomModal from "../components/FlowErrorBottomModal";
 import SendRowsFee from "../SendRowsFee";
+import { BaseComposite } from "../../../components/RootNavigator/types/helpers";
+import { PolkadotRebondFlowParamList } from "./type";
 
-type Props = {
-  navigation: any;
-  route: {
-    params: RouteParams;
-  };
-};
-type RouteParams = {
-  accountId: string;
-  transaction: Transaction;
-};
-export default function PolkadotRebondAmount({ navigation, route }: Props) {
+type NavigationProps = BaseComposite<
+  StackScreenProps<PolkadotRebondFlowParamList, ScreenName.PolkadotRebondAmount>
+>;
+
+export default function PolkadotRebondAmount({
+  navigation,
+  route,
+}: NavigationProps) {
   const { colors } = useTheme();
   const { account, parentAccount } = useSelector(accountScreenSelector(route));
   invariant(account, "account is required");
