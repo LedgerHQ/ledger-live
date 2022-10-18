@@ -11,7 +11,6 @@ import {
   Text,
 } from "@ledgerhq/native-ui";
 import { useDispatch, useSelector } from "react-redux";
-import { ProtoNFT } from "@ledgerhq/types-live";
 import { decodeNftId } from "@ledgerhq/live-common/lib/nft/nftId";
 import { track, TrackScreen } from "../../analytics";
 import { NavigatorName, ScreenName } from "../../const";

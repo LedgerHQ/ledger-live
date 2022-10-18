@@ -11,6 +11,7 @@ import { cryptocurrenciesById } from "@ledgerhq/cryptoassets";
 import Prando from "prando";
 import { inferSubOperations } from "../../account";
 import { genAddress, genHex } from "../helpers";
+import { encodeNftId } from "../../nft";
 
 const defaultEthCryptoFamily = cryptocurrenciesById["ethereum"];
 
@@ -338,17 +339,24 @@ const NFTs_POLYGON = [
   },
 ];
 export function createFixtureNFT(
+  accountId: string,
   currency: CryptoCurrency = defaultEthCryptoFamily
 ): ProtoNFT {
   const nfts = currency.id === "ethereum" ? NFTs : NFTs_POLYGON;
   const index = Math.floor(Math.random() * nfts.length);
 
+  const nft = nfts[index];
   return {
-    id: nfts[index].id,
-    tokenId: nfts[index].tokenId,
+    id: encodeNftId(
+      accountId,
+      nft.collection.contract,
+      nft.tokenId,
+      currency.id
+    ),
+    tokenId: nft.tokenId,
     amount: new BigNumber(0),
-    contract: nfts[index].collection.contract,
-    standard: nfts[index].collection.standard as NFTStandard,
+    contract: nft.collection.contract,
+    standard: nft.collection.standard as NFTStandard,
     currencyId: currency.id,
     metadata: undefined,
   };
