@@ -32,7 +32,6 @@ export class SettingsPage {
     this.languageSelector = page.locator(
       "div:nth-child(2) > .sc-dkzDqf.uXYMl > .css-198krsd-container > .select__control > .select__value-container",
     );
-    this.languageChoiceFrench = page.locator("#react-select-3-option-2");
     this.themeSelector = page.locator(
       "div:nth-child(4) > .sc-dkzDqf.uXYMl > .css-198krsd-container > .select__control > .select__value-container",
     );
@@ -68,11 +67,6 @@ export class SettingsPage {
     await this.counterValueSelector.click();
     await this.counterValueSearchBar.fill("euro");
     await this.counterValuedropdownChoiceEuro.click();
-  }
-
-  async changeLanguage() {
-    await this.languageSelector.click();
-    await this.languageChoiceFrench.click();
   }
 
   async changeTheme() {

@@ -12,16 +12,16 @@ test("User retrive data", async ({ page }) => {
   await test.step("user change currency", async () => {
     await layout.goToSettings();
     await settingsPage.changeCounterValue();
-    await expect.soft(settingsPage.counterValueSelector).toHaveText("Euro - EUR");
+    await expect(settingsPage.counterValueSelector).toHaveText("Euro - EUR");
   });
 
   await test.step("user change language", async () => {
-    await settingsPage.changeLanguage();
-    await expect.soft(settingsPage.languageSelector).toHaveText("Français");
+    await settingsPage.changeLanguage("English", "Français");
+    await expect(settingsPage.languageSelector).toHaveText("Français");
   });
 
   await test.step("user change Theme", async () => {
     await settingsPage.changeTheme();
-    await expect.soft(settingsPage.themeSelector).toHaveText("Clair");
+    await expect(settingsPage.themeSelector).toHaveText("Clair");
   });
 });
