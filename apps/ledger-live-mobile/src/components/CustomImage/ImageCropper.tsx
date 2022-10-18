@@ -1,9 +1,16 @@
 import React, { useCallback, useRef } from "react";
 import { Button, Flex } from "@ledgerhq/native-ui";
 import { CropView } from "react-native-image-crop-tools";
-import { StyleProp, ViewStyle } from "react-native";
+import styled from "styled-components/native";
+import { Image, StyleProp, ViewStyle } from "react-native";
 import { ImageDimensions, ImageFileUri } from "./types";
 import { ImageCropError } from "./errors";
+
+const HiddenImage = styled(Image)`
+  height: 0;
+  width: 0;
+  opacity: 0;
+`;
 
 export type CropResult = ImageDimensions & ImageFileUri;
 
@@ -56,12 +63,17 @@ const ImageCropper = React.forwardRef<CropView, Props>((props, ref) => {
     [onError, onResult],
   );
 
+  const handleLoadError = useCallback(() => {
+    onError(new ImageCropError());
+  }, [onError]);
+
   const handleSave = useCallback(() => {
     cropViewRef?.current?.saveImage(true, 100);
   }, []);
 
   return (
     <Flex>
+      <HiddenImage source={{ uri: imageFileUri }} onError={handleLoadError} />
       <CropView
         key={imageFileUri}
         sourceUrl={imageFileUri}

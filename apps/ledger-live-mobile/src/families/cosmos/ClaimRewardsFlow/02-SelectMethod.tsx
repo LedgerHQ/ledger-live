@@ -102,9 +102,6 @@ function ClaimRewardsAmount({ navigation, route }: Props) {
                 amount: route.params.value,
               },
             ],
-
-            /** @TODO remove this once the bridge handles it */
-            recipient: mainAccount.freshAddress,
           }),
         };
       }

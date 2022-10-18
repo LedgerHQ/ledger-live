@@ -1,4 +1,4 @@
-name: "[Bot] 'Cardano on Silicium'"
+name: "[Bot] Testing Cardano with 'Silicium'"
 on:
   push:
     branches:
@@ -60,3 +60,4 @@ jobs:
           SLACK_ICON_EMOJI: ":bot-seed3:"
           SLACK_CHANNEL: ci-ada-ll
           BOT_FILTER_FAMILY: cardano
+          BOT_ENVIRONMENT: testing

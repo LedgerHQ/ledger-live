@@ -36,6 +36,7 @@ import { getPortfolio } from "../portfolio/v2";
 import { Account } from "@ledgerhq/types-live";
 import { getContext } from "./bot-test-context";
 import { Transaction } from "../generated/types";
+import { sha256 } from "../crypto";
 
 type Arg = Partial<{
   currency: string;
@@ -86,6 +87,7 @@ function convertSpecReport<T extends Transaction>(
     accounts,
     mutations,
     existingMutationNames: result.spec.mutations.map((m) => m.name),
+    hintWarnings: result.hintWarnings,
   };
 }
 
@@ -157,14 +159,17 @@ export async function bot({
         log("bot", message);
         if (process.env.CI) console.log(message);
         logs.push(message);
-      }).catch((fatalError) => ({
-        spec,
-        fatalError,
-        mutations: [],
-        accountsBefore: [],
-        accountsAfter: [],
-        hintWarnings: [],
-      }));
+      }).catch(
+        (fatalError): SpecReport<any> => ({
+          spec,
+          fatalError,
+          mutations: [],
+          accountsBefore: [],
+          accountsAfter: [],
+          hintWarnings: [],
+          skipMutationsTimeoutReached: false,
+        })
+      );
     }
   );
   const totalDuration = Date.now() - timeBefore;
@@ -392,10 +397,6 @@ export async function bot({
     appendBody(warn);
     slackBody += warn;
   }
-
-  appendBody(
-    "\n> What is the bot and how does it work? [Everything is documented here!](https://github.com/LedgerHQ/ledger-live/wiki/LLC:bot)\n\n"
-  );
 
   appendBody("\n\n");
 
@@ -723,7 +724,11 @@ export async function bot({
 
   appendBody("\n</details>\n\n");
 
-  const { BOT_REPORT_FOLDER } = process.env;
+  appendBody(
+    "\n> What is the bot and how does it work? [Everything is documented here!](https://github.com/LedgerHQ/ledger-live/wiki/LLC:bot)\n\n"
+  );
+
+  const { BOT_REPORT_FOLDER, BOT_ENVIRONMENT } = process.env;
 
   const slackCommentTemplate = `${String(
     GITHUB_WORKFLOW
@@ -732,6 +737,8 @@ export async function bot({
   if (BOT_REPORT_FOLDER) {
     const serializedReport: MinimalSerializedReport = {
       results: results.map(convertSpecReport),
+      environment: BOT_ENVIRONMENT,
+      seedHash: sha256(getEnv("SEED")),
     };
 
     await Promise.all([

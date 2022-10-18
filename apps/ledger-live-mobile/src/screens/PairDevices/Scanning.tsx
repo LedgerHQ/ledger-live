@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect } from "react";
+import React, { useState, useCallback, useEffect, useMemo } from "react";
 import { StyleSheet, FlatList } from "react-native";
 import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
@@ -18,6 +18,8 @@ type Props = {
   onSelect: (device: Device, deviceMeta: any) => Promise<void>;
   onError: (_: Error) => void;
   onTimeout: () => void;
+  /** If defined, only show devices that have a device model id in this array */
+  deviceModelIds?: DeviceModelId[];
 };
 
 type Device = {
@@ -25,10 +27,25 @@ type Device = {
   name: string;
 };
 
-export default function Scanning({ onTimeout, onError, onSelect }: Props) {
+export default function Scanning({
+  onTimeout,
+  onError,
+  onSelect,
+  deviceModelIds,
+}: Props) {
   const { t } = useTranslation();
   const knownDevices = useSelector(knownDevicesSelector);
   const [devices, setDevices] = useState<Device[]>([]);
+
+  const filteredDevices = useMemo(() => {
+    if (!deviceModelIds) return devices;
+    return devices.filter(device => {
+      let modelId = "nanoX" as DeviceModelId;
+      const infos = getInfosForServiceUuid(device.serviceUUIDs[0]);
+      if (infos) modelId = infos.deviceModel.id;
+      return deviceModelIds.includes(modelId);
+    });
+  }, [devices, deviceModelIds]);
 
   const renderItem = useCallback(
     ({ item }) => {
@@ -90,7 +107,7 @@ export default function Scanning({ onTimeout, onError, onSelect }: Props) {
       <TrackScreen category="PairDevices" name="Scanning" />
       <FlatList
         style={styles.list}
-        data={devices}
+        data={filteredDevices}
         renderItem={renderItem}
         keyExtractor={item => item.id}
         ListHeaderComponent={ScanningHeader}

@@ -26,6 +26,7 @@ import openApp from "./openApp";
 import quitApp from "./quitApp";
 import { LatestFirmwareVersionRequired } from "../errors";
 import { mustUpgrade } from "../apps";
+import isUpdateAvailable from "./isUpdateAvailable";
 import manager from "../manager";
 import { DeviceInfo, FirmwareUpdateContext } from "@ledgerhq/types-live";
 
@@ -42,6 +43,7 @@ export type Input = {
   requiresDerivation?: RequiresDerivation;
   dependencies?: string[];
   requireLatestFirmware?: boolean;
+  outdatedApp?: AppAndVersion;
 };
 export type AppAndVersion = {
   name: string;
@@ -95,6 +97,10 @@ export type ConnectAppEvent =
   | {
       type: "ask-open-app";
       appName: string;
+    }
+  | {
+      type: "has-outdated-app";
+      outdatedApp: AppAndVersion;
     }
   | {
       type: "opened";
@@ -252,6 +258,7 @@ const cmd = ({
   requiresDerivation,
   dependencies,
   requireLatestFirmware,
+  outdatedApp,
 }: Input): Observable<ConnectAppEvent> =>
   withDevice(devicePath)(
     (transport) =>
@@ -273,7 +280,7 @@ const cmd = ({
 
               if (isDashboardName(appAndVersion.name)) {
                 // check if we meet minimum fw
-                if (requireLatestFirmware) {
+                if (requireLatestFirmware || outdatedApp) {
                   return from(getDeviceInfo(transport)).pipe(
                     mergeMap((deviceInfo: DeviceInfo) =>
                       from(manager.getLatestFirmwareForDevice(deviceInfo)).pipe(
@@ -281,13 +288,42 @@ const cmd = ({
                           (
                             latest: FirmwareUpdateContext | undefined | null
                           ) => {
-                            if (
+                            const isLatest =
                               !latest ||
                               semver.eq(
                                 deviceInfo.version,
                                 latest.final.version
-                              )
+                              );
+
+                            if (
+                              (!requireLatestFirmware ||
+                                (requireLatestFirmware && isLatest)) &&
+                              outdatedApp
                             ) {
+                              return from(
+                                isUpdateAvailable(deviceInfo, outdatedApp)
+                              ).pipe(
+                                mergeMap((isAvailable) =>
+                                  isAvailable
+                                    ? throwError(
+                                        new UpdateYourApp(undefined, {
+                                          managerAppName: outdatedApp.name,
+                                        })
+                                      )
+                                    : throwError(
+                                        new LatestFirmwareVersionRequired(
+                                          "LatestFirmwareVersionRequired",
+                                          {
+                                            latest: latest?.final.version,
+                                            current: deviceInfo.version,
+                                          }
+                                        )
+                                      )
+                                )
+                              );
+                            }
+
+                            if (isLatest) {
                               o.next({ type: "latest-firmware-resolved" });
                               return innerSub({ appName, dependencies }); // NB without the fw version check
                             } else {
@@ -340,25 +376,30 @@ const cmd = ({
                 return openAppFromDashboard(transport, appName);
               }
 
-              // in order to check the fw version, install deps, we need dashboard
+              const appNeedsUpgrade = mustUpgrade(
+                modelId,
+                appAndVersion.name,
+                appAndVersion.version
+              );
+              if (appNeedsUpgrade) {
+                // We need to quit the app first, then we need to get the device information to see if an
+                // app update that fulfills the minimum is available on this provider for this device version.
+                o.next({
+                  type: "has-outdated-app",
+                  outdatedApp: appAndVersion,
+                });
+              }
+
+              // in order to check the fw version, install deps, or check app update availability, we need dashboard
               if (
                 dependencies?.length ||
                 requireLatestFirmware ||
-                appAndVersion.name !== appName
+                appAndVersion.name !== appName ||
+                appNeedsUpgrade
               ) {
                 return attemptToQuitApp(
                   transport,
                   appAndVersion as AppAndVersion
-                );
-              }
-
-              if (
-                mustUpgrade(modelId, appAndVersion.name, appAndVersion.version)
-              ) {
-                return throwError(
-                  new UpdateYourApp(undefined, {
-                    managerAppName: appAndVersion.name,
-                  })
                 );
               }
 

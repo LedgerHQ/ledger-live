@@ -5,8 +5,6 @@ const fs = require("fs");
 const child_process = require("child_process");
 const path = require("path");
 
-console.log("running");
-
 const rebuildDeps = async (folder, file) => {
   await execa("npm", ["run", "install-deps"], {
     // env: { DEBUG: "electron-builder" },

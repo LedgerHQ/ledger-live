@@ -1,6 +1,6 @@
 import React, { useCallback, useState } from "react";
 import { Flex } from "@ledgerhq/native-ui";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import connectManager from "@ledgerhq/live-common/hw/connectManager";
 import { createAction } from "@ledgerhq/live-common/hw/actions/manager";
@@ -16,6 +16,7 @@ import {
   setReadOnlyMode,
 } from "../../../../../actions/settings";
 import { updateUser } from "../../../../../user";
+import { readOnlyModeEnabledSelector } from "../../../../../reducers/settings";
 
 const action = createAction(connectManager);
 
@@ -27,28 +28,35 @@ const ConnectNanoScene = ({
   deviceModelId: string;
 }) => {
   const dispatch = useDispatch();
+  const readOnlyMode = useSelector(readOnlyModeEnabledSelector);
   const [device, setDevice] = useState<Device | undefined>();
 
   const onSetDevice = useCallback(
     async device => {
+      if (readOnlyMode) {
+        await updateUser();
+        await updateIdentify();
+      }
       dispatch(setLastConnectedDevice(device));
       setDevice(device);
       dispatch(setReadOnlyMode(false));
       dispatch(setHasOrderedNano(false));
     },
-    [dispatch],
+    [dispatch, readOnlyMode],
   );
 
   const directNext = useCallback(
     async device => {
-      await updateUser();
-      await updateIdentify();
+      if (readOnlyMode) {
+        await updateUser();
+        await updateIdentify();
+      }
       dispatch(setLastConnectedDevice(device));
       dispatch(setReadOnlyMode(false));
       dispatch(setHasOrderedNano(false));
       onNext();
     },
-    [dispatch, onNext],
+    [dispatch, onNext, readOnlyMode],
   );
 
   const onResult = useCallback(

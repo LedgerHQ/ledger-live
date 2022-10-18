@@ -10,7 +10,7 @@ import { RefreshMedium } from "@ledgerhq/native-ui/assets/icons";
 import { flattenAccounts } from "@ledgerhq/live-common/account/index";
 import { useTranslation } from "react-i18next";
 import { useGlobalSyncState } from "@ledgerhq/live-common/bridge/react/index";
-import { getAccountCurrency } from "@ledgerhq/live-common/lib/account/helpers";
+import { getAccountCurrency } from "@ledgerhq/live-common/account/helpers";
 import { useRefreshAccountsOrdering } from "../../actions/general";
 import { accountsSelector, isUpToDateSelector } from "../../reducers/accounts";
 import globalSyncRefreshControl from "../../components/globalSyncRefreshControl";

@@ -13,7 +13,7 @@ import { Text, Flex } from "@ledgerhq/native-ui";
 import { Trans } from "react-i18next";
 import { ListAppsResult } from "@ledgerhq/live-common/apps/types";
 // eslint-disable-next-line import/no-cycle
-import type { Device } from "@ledgerhq/live-common/lib/hw/actions/types";
+import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { ManagerTab } from "../../const/manager";
 
 import AppFilter from "./AppsList/AppFilter";
@@ -274,9 +274,7 @@ const AppsScreen = ({
               onLanguageChange={onLanguageChange}
             />
             <Benchmarking state={state} />
-            <Flex mt={6}>
-              <FirmwareUpdateBanner />
-            </Flex>
+            <FirmwareUpdateBanner />
             <AppUpdateAll
               state={state}
               appsToUpdate={update}
@@ -311,24 +309,26 @@ const AppsScreen = ({
       />
     ),
     [
-      appFilter,
-      pendingInstalls,
-      device,
-      deviceId,
-      deviceInfo,
-      dispatch,
       distribution,
-      initialDeviceName,
-      order,
-      query,
-      renderNoResults,
-      renderRow,
-      result,
-      setAppUninstallWithDependencies,
-      sort,
       state,
+      result,
+      deviceId,
+      initialDeviceName,
+      pendingInstalls,
+      deviceInfo,
+      setAppUninstallWithDependencies,
+      dispatch,
+      device,
+      deviceApps,
+      onLanguageChange,
       update,
       updateModalOpened,
+      query,
+      appFilter,
+      sort,
+      order,
+      renderRow,
+      renderNoResults,
     ],
   );
 
