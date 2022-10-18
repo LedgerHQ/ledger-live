@@ -1,16 +1,20 @@
 
 name: CI
-
-env:
-  PR_NUMBER: ${{ github.event.number }}
-  PR_TITLE: ${{ github.event.pull_request.title }}
-  PR_DESCRIPTION: ${{ github.event.head_commit.message }}
 on:
   pull_request:
     branches: [ "release" ]
-
+    
+    #TODO check paths desktop & mobile
+    paths: 
+      - apps/ledger-live-desktop/static/i18n/**
+      - apps/ledger-live-mobile/src/locales/**
+ 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
+      inputs:
+        prNumber: 
+          description: Number of the PR
+          required: true
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
@@ -21,22 +25,8 @@ jobs:
     
     steps:
       - uses: actions/checkout@v3
-          
-      - name: Verify Changed files for translations
-        uses: tj-actions/verify-changed-files@v11.1
-        id: verify-changed-files
-        with:
-          files: |
-             static/i18n/*/*
 
 #time to slack this bad boi
-
-      - name: Perform action when test_directory changes
-        if: contains(steps.verify-changed-files.outputs.changed_files, 'test_directory')
-        run: |
-          echo "Translations files have changed on PR $PR_NUMBER"
-          echo $PR_TITLE
-          echo $PR_DESCRIPTION
 
   report-on-slack:
       runs-on: ubuntu-latest
@@ -48,12 +38,20 @@ jobs:
         with:
             script: |
               const fs = require("fs");
-
-              const output = {
-                "Translations files have changed on PR $PR_NUMBER"
-                 "- $PR_TITLE"
-                 "- $PR_DESCRIPTION"
-              };
+              onst output = "";
+              
+              with:
+               cond: ${{ github.event.event_name==" pull_request" }}
+                if_true: 
+                  output = {
+                   "Translations files have changed on PR ${{ github.event.pull_request.number }}"
+                   "- ${{ github.event.pull_request.title }}"
+                   "- ${{ github.event.head_commit.message }}"
+                  };
+                if_false: 
+                  output = {
+                   "[Manual trigger for test] Translations files have changed on PR ${{ prNumber }}"
+                  };
 
               fs.writeFileSync(`./payload-slack-content.json`, JSON.stringify(output, null, 2));
       - name: post to a Slack channel
