@@ -8,7 +8,7 @@ import styled from "styled-components";
 
 import { UserRefusedOnDevice } from "@ledgerhq/errors";
 import { Account, AccountLike, Operation, SignedOperation } from "@ledgerhq/types-live";
-import { NamedSpaceStorage } from "@ledgerhq/live-common/DataModel";
+import { NamedSpaceStorage } from "@ledgerhq/live-common/storage";
 import { flattenAccounts } from "@ledgerhq/live-common/account/index";
 import { Transaction } from "@ledgerhq/live-common/generated/types";
 import { MessageData } from "@ledgerhq/live-common/hw/signMessage/types";

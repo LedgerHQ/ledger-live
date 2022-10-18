@@ -28,7 +28,7 @@ import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { RawPlatformTransaction } from "./rawTypes";
 import { setSupportedCurrencies } from "../currencies";
 import { Transaction as EthereumTransaction } from "../families/ethereum/types";
-import { NamedSpaceStorage, SimpleStorage } from "../DataModel";
+import { NamedSpaceStorage, SimpleStorage } from "../storage";
 
 describe("receiveOnAccountLogic", () => {
   // Given

@@ -25,7 +25,7 @@ import { getAccountBridge } from "../bridge/index";
 import { Transaction } from "../generated/types";
 import { MessageData } from "../hw/signMessage/types";
 import { prepareMessageToSign } from "../hw/signMessage/index";
-import { NamedSpaceStorage, SimpleStorage } from "../DataModel";
+import { NamedSpaceStorage, SimpleStorage } from "../storage";
 
 export function translateContent(content: any, locale = "en"): string {
   if (!content || typeof content !== "object") return content;

@@ -7,7 +7,7 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { merge } from "lodash";
 
-import { SimpleStorage } from "@ledgerhq/live-common/DataModel";
+import { SimpleStorage } from "@ledgerhq/live-common/storage";
 
 const CHUNKED_KEY = "_-_CHUNKED";
 const CHUNK_SIZE = 1000000;
