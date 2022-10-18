@@ -22,6 +22,7 @@ import BottomModal from "../BottomModal";
 import { rgba } from "../../colors";
 import LText from "../LText";
 import HideNftDrawer from "./HideNftDrawer";
+import { track, TrackScreen } from "../../analytics";
 
 type Props = {
   links: NFTMetadata["links"] | null;
@@ -92,14 +93,29 @@ const NftLinksPanel = ({
   const showCustomImageButton = customImage?.enabled && !!customImageUri;
 
   const handleOpenOpenSea = useCallback(() => {
+    track("button_clicked", {
+      button: "OpenOpenSea",
+      drawer: "NFT settings drawer",
+      url: links?.opensea,
+    });
     links?.opensea && Linking.openURL(links?.opensea);
   }, [links?.opensea]);
 
   const handleOpenRarible = useCallback(() => {
+    track("button_clicked", {
+      button: "OpenRarible",
+      drawer: "NFT settings drawer",
+      url: links?.rarible,
+    });
     links?.rarible && Linking.openURL(links?.rarible);
   }, [links?.rarible]);
 
   const handleOpenExplorer = useCallback(() => {
+    track("button_clicked", {
+      button: "OpenExplorer",
+      drawer: "NFT settings drawer",
+      url: links?.explorer,
+    });
     links?.explorer && Linking.openURL(links?.explorer);
   }, [links?.explorer]);
 
@@ -246,8 +262,8 @@ const NftLinksPanel = ({
       isOpened={isOpen}
       onClose={onClose}
     >
+      <TrackScreen category="NFT settings drawer" type="drawer" />
       {content}
-
       <HideNftDrawer
         nftContract={nftContract}
         nftId={nftId}

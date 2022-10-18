@@ -58,7 +58,7 @@ const HideNftDrawer = ({ nftId, nftContract, isOpened, onClose }: Props) => {
       isOpen={isOpened}
       onClose={onPressClose}
     >
-      <TrackScreen category="Hide collection Drawer" type="drawer" />
+      <TrackScreen category="Hide collection Confirmation" type="drawer" />
       <Flex alignItems="center">
         <BoxedIcon Icon={<Icons.EyeNoneMedium />} />
 
@@ -85,7 +85,7 @@ const HideNftDrawer = ({ nftId, nftContract, isOpened, onClose }: Props) => {
           type="default"
           size="large"
           alignSelf="stretch"
-          onPress={onClose}
+          onPress={onPressClose}
         >
           {t("common.cancel")}
         </Button>
