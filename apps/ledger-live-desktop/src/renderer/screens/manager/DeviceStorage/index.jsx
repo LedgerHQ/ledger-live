@@ -6,13 +6,12 @@ import { Trans } from "react-i18next";
 import { Transition, TransitionGroup } from "react-transition-group";
 
 import manager from "@ledgerhq/live-common/manager/index";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 
 import type { DeviceInfo, FirmwareUpdateContext } from "@ledgerhq/types-live";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import type { AppsDistribution } from "@ledgerhq/live-common/apps/index";
 import { DeviceModelId } from "@ledgerhq/devices";
-import { FeatureToggle } from "@ledgerhq/live-common/featureFlags/index";
+import { useFeature, FeatureToggle } from "@ledgerhq/live-common/featureFlags/index";
 import { Flex } from "@ledgerhq/react-ui";
 import type { ThemedComponent } from "~/renderer/styles/StyleProvider";
 
@@ -350,13 +349,13 @@ const DeviceStorage = ({
                 <CustomImageManagerButton />
               </FeatureToggle>
             ) : null}
-          {deviceInfo.languageId !== undefined && deviceLocalizationFeatureFlag?.enabled && (
-            <DeviceLanguage
-              deviceInfo={deviceInfo}
-              device={device}
-              onRefreshDeviceInfo={onRefreshDeviceInfo}
-            />
-          )}
+            {deviceInfo.languageId !== undefined && deviceLocalizationFeatureFlag?.enabled && (
+              <DeviceLanguage
+                deviceInfo={deviceInfo}
+                device={device}
+                onRefreshDeviceInfo={onRefreshDeviceInfo}
+              />
+            )}
           </Flex>
         </Flex>
         <Separator />
