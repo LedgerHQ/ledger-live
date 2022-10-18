@@ -62,6 +62,12 @@ function MarketDetail({
   const isStarred = starredMarketCoins.includes(currencyId);
   const { triggerMarketPushNotificationModal } = useNotifications();
 
+  let loc = locale;
+  // TEMPORARY : quick win to transform arabic to english
+  if (locale === "ar") {
+    loc = "en";
+  }
+
   const {
     selectedCoinData: currency,
     selectCurrency,
@@ -227,7 +233,7 @@ function MarketDetail({
                     hoveredItem && hoveredItem.value
                       ? hoveredItem.value
                       : price,
-                  locale,
+                  locale: loc,
                   t,
                 })}
               </Text>

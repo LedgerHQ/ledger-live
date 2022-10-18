@@ -7,6 +7,7 @@ import {
   defaultFeatures,
 } from "@ledgerhq/live-common/featureFlags/index";
 import { FeatureId, Feature } from "@ledgerhq/types-live";
+import { getEnv } from "@ledgerhq/live-common/env";
 
 import { formatFeatureId } from "./FirebaseRemoteConfig";
 
@@ -15,15 +16,31 @@ import { languageSelector } from "../reducers/settings";
 // eslint-disable-next-line @typescript-eslint/ban-types
 type Props = PropsWithChildren<{}>;
 
-const getFeature = (
-  key: FeatureId,
-  appLanguage: string,
-  localOverrides?: { [key in FeatureId]?: Feature },
-) => {
+const getFeature = (args: {
+  key: FeatureId;
+  appLanguage: string;
+  localOverrides?: { [key in FeatureId]?: Feature };
+  allowOverride?: boolean;
+}) => {
+  const { key, appLanguage, localOverrides, allowOverride = true } = args;
   try {
     // Nb prioritize local overrides
-    if (localOverrides && localOverrides[key]) {
+    if (allowOverride && localOverrides && localOverrides[key]) {
       return localOverrides[key];
+    }
+
+    const envFlags = getEnv("FEATURE_FLAGS") as
+      | { [key in FeatureId]?: Feature }
+      | undefined;
+
+    if (allowOverride && envFlags) {
+      const feature = envFlags[key];
+      if (feature)
+        return {
+          ...feature,
+          overridesRemote: true,
+          overriddenByEnv: true,
+        };
     }
 
     const value = remoteConfig().getValue(formatFeatureId(key));
@@ -57,8 +74,8 @@ export const getAllDivergedFlags = (
   appLanguage: string,
 ): { [key in FeatureId]: boolean } => {
   const res: { [key in FeatureId]: boolean } = {};
-  Object.keys(defaultFeatures).forEach(key => {
-    const value = getFeature(key, appLanguage);
+  (Object.keys(defaultFeatures) as FeatureId[]).forEach(key => {
+    const value = getFeature({ key, appLanguage });
     if (value && value.enabled !== defaultFeatures[key].enabled) {
       res[key] = value.enabled;
     }
@@ -73,9 +90,14 @@ export const FirebaseFeatureFlagsProvider: React.FC<Props> = ({ children }) => {
 
   const overrideFeature = useCallback(
     (key: FeatureId, value: Feature): void => {
-      const actualRemoteValue = getFeature(key, appLanguage);
+      const actualRemoteValue = getFeature({
+        key,
+        appLanguage,
+        allowOverride: false,
+      });
       if (!isEqual(actualRemoteValue, value)) {
-        const overridenValue = { ...value, overridesRemote: true };
+        const { overriddenByEnv: _, ...pureValue } = value;
+        const overridenValue = { ...pureValue, overridesRemote: true };
         setLocalOverrides(currentOverrides => ({
           ...currentOverrides,
           [key]: overridenValue,
@@ -99,7 +121,8 @@ export const FirebaseFeatureFlagsProvider: React.FC<Props> = ({ children }) => {
 
   // Nb wrapped because the method is also called from outside.
   const wrappedGetFeature = useCallback(
-    (key: FeatureId): Feature => getFeature(key, appLanguage, localOverrides),
+    (key: FeatureId): Feature =>
+      getFeature({ key, appLanguage, localOverrides }),
     [localOverrides, appLanguage],
   );
 

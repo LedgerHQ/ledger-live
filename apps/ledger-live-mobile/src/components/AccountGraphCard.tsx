@@ -166,7 +166,7 @@ function AccountGraphCard({
   );
 
   return (
-    <Flex flexDirection="column" mt={2}>
+    <Flex mt={2}>
       <GraphCardHeader
         account={account}
         countervalueAvailable={countervalueAvailable}
@@ -276,75 +276,72 @@ const GraphCardHeader = ({
   }, [account.id, currency, navigation]);
 
   return (
-    <Flex px={6} justifyContent={"space-between"}>
-      <Flex>
-        <Touchable
-          event="SwitchAccountCurrency"
-          eventProperties={{ useCounterValue: shouldUseCounterValue }}
-          onPress={countervalueAvailable ? onSwitchAccountCurrency : undefined}
-        >
-          <Flex pb={4}>
-            <Flex flexDirection="row" alignItems="center" width="100%">
-              <Box maxWidth={"50%"}>
-                <Text variant={"large"} fontWeight={"medium"} numberOfLines={1}>
-                  {getAccountName(account)}
-                </Text>
-              </Box>
-              {isToken && (
-                <Tag marginLeft={3} numberOfLines={1} maxWidth={"50%"}>
-                  {getAccountName(parentAccount)}
-                </Tag>
-              )}
-            </Flex>
+    <Flex mx={6}>
+      <Touchable
+        event="SwitchAccountCurrency"
+        eventProperties={{ useCounterValue: shouldUseCounterValue }}
+        onPress={countervalueAvailable ? onSwitchAccountCurrency : undefined}
+      >
+        <Flex flexDirection="row" alignItems="center" width="100%">
+          <Box maxWidth={"50%"}>
+            <Text variant={"large"} fontWeight={"medium"} numberOfLines={1}>
+              {getAccountName(account)}
+            </Text>
+          </Box>
+          {isToken && (
+            <Tag marginLeft={3} numberOfLines={1} maxWidth={"50%"}>
+              {getAccountName(parentAccount)}
+            </Tag>
+          )}
+        </Flex>
 
-            <Flex flexDirection="row">
-              <Text
-                variant={"large"}
-                fontWeight={"medium"}
-                color={"neutral.c70"}
-              >
-                {typeof items[1]?.value === "number" ? (
-                  <CurrencyUnitValue {...items[1]} />
-                ) : (
-                  <NoCountervaluePlaceholder />
-                )}
-              </Text>
-              <TransactionsPendingConfirmationWarning maybeAccount={account} />
-            </Flex>
-          </Flex>
+        <Flex flexDirection="row" mb={4}>
           <Text
-            fontFamily="Inter"
-            fontWeight="semiBold"
-            fontSize="32px"
+            variant={"large"}
+            fontWeight={"medium"}
+            color={"neutral.c70"}
             numberOfLines={1}
-            adjustsFontSizeToFit
           >
-            <CurrencyUnitValue
-              disableRounding={shouldUseCounterValue}
-              {...items[0]}
-            />
+            {typeof items[1]?.value === "number" ? (
+              <CurrencyUnitValue {...items[1]} />
+            ) : (
+              <NoCountervaluePlaceholder />
+            )}
           </Text>
-          <Flex flexDirection="row" alignItems="center">
-            <Delta percent show0Delta valueChange={valueChange} />
-            <Flex ml={2}>
-              <Delta unit={items[0].unit} valueChange={valueChange} />
-            </Flex>
+          <TransactionsPendingConfirmationWarning maybeAccount={account} />
+        </Flex>
+        <Text
+          fontFamily="Inter"
+          fontWeight="semiBold"
+          fontSize="32px"
+          numberOfLines={1}
+          adjustsFontSizeToFit
+        >
+          <CurrencyUnitValue
+            disableRounding={shouldUseCounterValue}
+            {...items[0]}
+          />
+        </Text>
+        <Flex flexDirection="row" alignItems="center">
+          <Delta percent show0Delta valueChange={valueChange} />
+          <Flex ml={2}>
+            <Delta unit={items[0].unit} valueChange={valueChange} />
           </Flex>
-        </Touchable>
-        <Touchable onPress={openReceive}>
-          <Tag
-            Icon={QrCodeMedium}
-            numberOfLines={1}
-            maxWidth={"50%"}
-            size="medium"
-            ellipsizeMode="middle"
-            px={6}
-            mt={4}
-          >
-            {isToken ? parentAccount.freshAddress : account.freshAddress}
-          </Tag>
-        </Touchable>
-      </Flex>
+        </Flex>
+      </Touchable>
+      <Touchable onPress={openReceive}>
+        <Tag
+          Icon={QrCodeMedium}
+          numberOfLines={1}
+          maxWidth={"50%"}
+          size="medium"
+          ellipsizeMode="middle"
+          px={6}
+          mt={4}
+        >
+          {isToken ? parentAccount.freshAddress : account.freshAddress}
+        </Tag>
+      </Touchable>
     </Flex>
   );
 };

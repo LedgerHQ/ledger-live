@@ -1,5 +1,13 @@
 name: "[Bot] Testing with 'Phosphore'"
 on:
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: The branch to run on
+        required: true
+      family:
+        description: coin family to filter with (if any)
+        required: false
   push:
     branches:
       - support/bot-phosphore
@@ -46,6 +54,11 @@ jobs:
     needs: [start-runner]
     steps:
       - uses: actions/checkout@v3
+        if: ${{ github.event.inputs.ref != null }}
+        with:
+          ref: ${{ github.event.inputs.ref }}
+      - uses: actions/checkout@v3
+        if: ${{ !github.event.inputs.ref }}
       - name: Retrieving coin apps
         uses: actions/checkout@v3
         with:
@@ -62,3 +75,4 @@ jobs:
           SLACK_ICON_EMOJI: ":bot-seed6:"
           SEED: ${{ secrets.SEED6 }}
           BOT_ENVIRONMENT: testing
+          BOT_FILTER_FAMILY: ${{github.event.inputs.family}}
