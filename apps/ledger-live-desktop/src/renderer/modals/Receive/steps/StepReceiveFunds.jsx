@@ -25,6 +25,7 @@ import Receive2NoDevice from "~/renderer/components/Receive2NoDevice";
 import { renderVerifyUnwrapped } from "~/renderer/components/DeviceAction/rendering";
 import type { StepProps } from "../Body";
 import type { AccountLike } from "@ledgerhq/types-live";
+import { track } from "~/renderer/analytics/segment";
 import Modal from "~/renderer/components/Modal";
 import Alert from "~/renderer/components/Alert";
 import ModalBody from "~/renderer/components/Modal/ModalBody";
@@ -199,6 +200,17 @@ const StepReceiveFunds = (props: StepProps) => {
       receiveStakingFlowConfig?.enabled &&
       receiveStakingFlowConfig?.params[id]?.enabled
     ) {
+      track("button_clicked", {
+        button: "continue",
+        page: window.location.hash
+          .split("/")
+          .filter(e => e !== "#")
+          .join("/"),
+        currency: currencyName,
+        modal: "receive",
+        account,
+      });
+
       transitionTo("stakingFlow");
       history.push({
         pathname: `/account/${account.id}`,
@@ -207,8 +219,8 @@ const StepReceiveFunds = (props: StepProps) => {
       onClose();
     }
   }, [
-    account.currency.id,
-    account.id,
+    account,
+    currencyName,
     history,
     onClose,
     receiveStakingFlowConfig?.enabled,

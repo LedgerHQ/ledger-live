@@ -7,6 +7,7 @@ import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { StepProps } from "../Body";
 import StakingIllustration from "../assets/StakingIllustration";
 
+import { track } from "~/renderer/analytics/segment";
 import { openURL } from "~/renderer/linking";
 import { withV3StyleProvider } from "~/renderer/styles/StyleProviderV3";
 import Button from "~/renderer/components/ButtonV3";
@@ -54,16 +55,36 @@ const StepReceiveStakingFlow = (props: StepProps) => {
     }
   }, [action, description, familyManageActions, id, t, title]);
 
+  const getTrackProperties = useCallback(() => {
+    return {
+      page: window.location.hash
+        .split("/")
+        .filter(e => e !== "#")
+        .join("/"),
+      modal: "receive",
+    };
+  }, []);
+
   const openLink = useCallback(() => {
+    track("button_clicked", {
+      button: "learn_more",
+      ...getTrackProperties(),
+      link: supportLink,
+    });
     openURL(supportLink);
-  }, [supportLink]);
+  }, [getTrackProperties, supportLink]);
 
   const onChange = useCallback(
     value => {
       global.localStorage.setItem(`${LOCAL_STORAGE_KEY_PREFIX}${id}`, value);
       setDoNotShowAgain(value);
+      track("button_clicked", {
+        button: "not_show",
+        ...getTrackProperties(),
+        value,
+      });
     },
-    [id],
+    [getTrackProperties, id],
   );
 
   return (
@@ -108,17 +129,45 @@ export const StepReceiveStakingFooter = (props: StepProps) => {
     }
   }, [action, familyManageActions]);
 
+  const getTrackProperties = useCallback(() => {
+    return {
+      page: window.location.hash
+        .split("/")
+        .filter(e => e !== "#")
+        .join("/"),
+      flow: "swap",
+      currency: account?.currency?.name,
+      provider: action?.provider?.name || "Ledger",
+      modal: "receive",
+      account,
+    };
+  }, [account, action?.provider?.name]);
+
   const onStake = useCallback(() => {
     if (action?.onClick) {
+      track("button_clicked", {
+        button: "swap",
+        ...getTrackProperties(),
+      });
+
       closeModal();
       action.onClick();
     } else {
       closeModal();
     }
-  }, [action, closeModal]);
+  }, [action, closeModal, getTrackProperties]);
+
+  const onCloseModal = useCallback(() => {
+    track("button_clicked", {
+      button: "skip",
+      ...getTrackProperties(),
+    });
+    closeModal();
+  }, [closeModal, getTrackProperties]);
+
   return (
     <>
-      <Button onClick={closeModal}>{t("receive.steps.staking.footer.dismiss")}</Button>
+      <Button onClick={onCloseModal}>{t("receive.steps.staking.footer.dismiss")}</Button>
       <Button variant="color" onClick={onStake}>
         {t("receive.steps.staking.footer.stake", {
           provider: action?.provider?.name ? action?.provider?.name : "Ledger",
