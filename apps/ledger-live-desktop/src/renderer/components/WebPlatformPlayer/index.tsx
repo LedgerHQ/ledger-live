@@ -8,6 +8,7 @@ import styled from "styled-components";
 
 import { UserRefusedOnDevice } from "@ledgerhq/errors";
 import { Account, AccountLike, Operation, SignedOperation } from "@ledgerhq/types-live";
+import { NamedSpaceStorage } from "@ledgerhq/live-common/DataModel";
 import { flattenAccounts } from "@ledgerhq/live-common/account/index";
 import { Transaction } from "@ledgerhq/live-common/generated/types";
 import { MessageData } from "@ledgerhq/live-common/hw/signMessage/types";
@@ -19,6 +20,8 @@ import {
   CompleteExchangeRequest,
   CompleteExchangeUiRequest,
   signMessageLogic,
+  saveToStorage,
+  getFromStorage,
 } from "@ledgerhq/live-common/platform/logic";
 import { serializePlatformSignedTransaction } from "@ledgerhq/live-common/platform/serializers";
 import { AppManifest } from "@ledgerhq/live-common/platform/types";
@@ -41,6 +44,7 @@ import { accountsSelector } from "../../reducers/accounts";
 import BigSpinner from "../BigSpinner";
 import Box from "../Box";
 
+import { setKey, getKey } from "~/renderer/storage";
 import { track } from "~/renderer/analytics/segment";
 import TopBar from "./TopBar";
 import { TopBarConfig } from "./type";
@@ -326,6 +330,30 @@ export default function WebPlatformPlayer({ manifest, onClose, inputs = {}, conf
     [accounts, dispatch, manifest],
   );
 
+  // TODO: this object should be in `renderer/storage` file
+  // but it needs to be converted to TS before.
+  const deviceStorage: NamedSpaceStorage = {
+    save: async (ns: string, key: string, value: unknown) => {
+      setKey(ns, key, value);
+    },
+
+    get: async (ns: string, key: string): Promise<unknown> => {
+      return getKey(ns, key);
+    },
+  };
+
+  const setValue = useCallback(
+    ({ key, value }: { key: string; value: string }) =>
+      saveToStorage(manifest, deviceStorage, key, value),
+    [manifest],
+  );
+
+  const getValue = useCallback(
+    async ({ key }: { key: string; value: string }): Promise<string> =>
+      getFromStorage(manifest, deviceStorage, key),
+    [manifest],
+  );
+
   const handlers = useMemo(
     () => ({
       "account.list": listAccounts,
@@ -337,6 +365,9 @@ export default function WebPlatformPlayer({ manifest, onClose, inputs = {}, conf
       "exchange.start": startExchange,
       "exchange.complete": completeExchange,
       "message.sign": signMessage,
+
+      "storage.set": setValue,
+      "storage.get": getValue,
     }),
     [
       listAccounts,
@@ -348,6 +379,9 @@ export default function WebPlatformPlayer({ manifest, onClose, inputs = {}, conf
       startExchange,
       completeExchange,
       signMessage,
+
+      setValue,
+      getValue,
     ],
   );
 

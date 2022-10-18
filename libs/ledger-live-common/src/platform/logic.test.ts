@@ -2,6 +2,7 @@ import {
   broadcastTransactionLogic,
   completeExchangeLogic,
   receiveOnAccountLogic,
+  saveToStorage,
   signMessageLogic,
   WebPlatformContext,
 } from "./logic";
@@ -27,6 +28,7 @@ import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { RawPlatformTransaction } from "./rawTypes";
 import { setSupportedCurrencies } from "../currencies";
 import { Transaction as EthereumTransaction } from "../families/ethereum/types";
+import { NamedSpaceStorage, SimpleStorage } from "../DataModel";
 
 describe("receiveOnAccountLogic", () => {
   // Given
@@ -584,6 +586,74 @@ describe("signMessageLogic", () => {
       // Then
       expect(mockPlatformSignMessageRequested).toBeCalledTimes(1);
       expect(mockPlatformSignMessageFail).toBeCalledTimes(1);
+    });
+  });
+});
+
+describe("saveToStorage", () => {
+  const liveAppId = "LiveAppId";
+  const manifest = createAppManifest(liveAppId);
+
+  describe("with SimpleStorage", () => {
+    class MockSimpleStorage implements SimpleStorage {
+      kind: "simple" = "simple";
+      keyStored = "";
+      valueStore = "";
+      async save(key: string, value: unknown): Promise<void> {
+        this.keyStored = key;
+        this.valueStore = value as string;
+        await Promise.resolve();
+      }
+      get(_key: string): Promise<unknown> {
+        return Promise.resolve("N/A");
+      }
+    }
+
+    it("stores the value with a specific name space", () => {
+      // Given
+      const store = new MockSimpleStorage();
+      const keyToStore = (Math.random() + 1).toString(36);
+      const valueToStore = (Math.random() + 1).toString(36);
+
+      // When
+      saveToStorage(manifest, store, keyToStore, valueToStore);
+
+      // Then
+      const expectedKeyStored = `liveapp.${liveAppId}.${keyToStore}`;
+      expect(store.keyStored).toEqual(expectedKeyStored);
+    });
+  });
+
+  describe("with NamedSpaceStorage", () => {
+    class MockSimpleStorage implements NamedSpaceStorage {
+      kind: "namedspace" = "namedspace";
+      nameSpaceStored = "";
+      keyStored = "";
+      valueStore = "";
+      async save(ns: string, key: string, value: unknown): Promise<void> {
+        this.nameSpaceStored = ns;
+        this.keyStored = key;
+        this.valueStore = value as string;
+        await Promise.resolve();
+      }
+      get(_ns: string, _key: string): Promise<unknown> {
+        return Promise.resolve("N/A");
+      }
+    }
+
+    it("stores the value with a specific name space", () => {
+      // Given
+      const store = new MockSimpleStorage();
+      const keyToStore = (Math.random() + 1).toString(36);
+      const valueToStore = (Math.random() + 1).toString(36);
+
+      // When
+      saveToStorage(manifest, store, keyToStore, valueToStore);
+
+      // Then
+      const expectedNameSpaceStored = `liveapp.${liveAppId}`;
+      expect(store.nameSpaceStored).toEqual(expectedNameSpaceStored);
+      expect(store.keyStored).toEqual(keyToStore);
     });
   });
 });

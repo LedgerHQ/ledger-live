@@ -25,6 +25,7 @@ import { getAccountBridge } from "../bridge/index";
 import { Transaction } from "../generated/types";
 import { MessageData } from "../hw/signMessage/types";
 import { prepareMessageToSign } from "../hw/signMessage/index";
+import { NamedSpaceStorage, SimpleStorage } from "../DataModel";
 
 export function translateContent(content: any, locale = "en"): string {
   if (!content || typeof content !== "object") return content;
@@ -286,4 +287,38 @@ export function signMessageLogic(
   }
 
   return uiNavigation(account, formattedMessage);
+}
+
+export async function saveToStorage<
+  T extends SimpleStorage | NamedSpaceStorage
+>(manifest: AppManifest, store: T, key: string, value: string): Promise<void> {
+  if (store.kind === "simple") {
+    const uniqKey = buildUniqueKey(manifest, key);
+    await store.save(uniqKey, value);
+  } else {
+    const ns = buildNamespace(manifest);
+    await store.save(ns, key, value);
+  }
+}
+
+export async function getFromStorage<
+  T extends SimpleStorage | NamedSpaceStorage
+>(manifest: AppManifest, store: T, key: string): Promise<string> {
+  let value: unknown;
+  if (store.kind === "simple") {
+    const uniqKey = buildUniqueKey(manifest, key);
+    value = await store.get(uniqKey);
+  } else {
+    const ns = buildNamespace(manifest);
+    value = await store.get(ns, key);
+  }
+  return value as string;
+}
+
+function buildNamespace(manifest: AppManifest): string {
+  return `liveapp.${manifest.id}`;
+}
+
+function buildUniqueKey(manifest: AppManifest, key: string): string {
+  return `${buildNamespace(manifest)}.${key}`;
 }

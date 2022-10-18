@@ -48,6 +48,8 @@ import {
   completeExchangeLogic,
   CompleteExchangeUiRequest,
   signMessageLogic,
+  saveToStorage,
+  getFromStorage,
 } from "@ledgerhq/live-common/platform/logic";
 import { useJSONRPCServer } from "@ledgerhq/live-common/platform/JSONRPCServer";
 import { accountToPlatformAccount } from "@ledgerhq/live-common/platform/converters";
@@ -70,6 +72,8 @@ import InfoIcon from "../../icons/Info";
 import InfoPanel from "./InfoPanel";
 import { track } from "../../analytics/segment";
 import prepareSignTransaction from "./liveSDKLogic";
+
+import store from "../../logic/storeWrapper";
 
 const tracking = trackingWrapper(track);
 
@@ -509,6 +513,18 @@ const WebPlatformPlayer = ({ manifest, inputs }: Props) => {
     [accounts, manifest, navigation],
   );
 
+  const setValue = useCallback(
+    ({ key, value }: { key: string; value: string }) =>
+      saveToStorage(manifest, store, key, value),
+    [manifest],
+  );
+
+  const getValue = useCallback(
+    ({ key }: { key: string }): Promise<string> =>
+      getFromStorage(manifest, store, key),
+    [manifest],
+  );
+
   const handlers = useMemo(
     () => ({
       "account.list": listAccounts,
@@ -520,6 +536,9 @@ const WebPlatformPlayer = ({ manifest, inputs }: Props) => {
       "exchange.start": startExchange,
       "exchange.complete": completeExchange,
       "message.sign": signMessage,
+
+      "storage.set": setValue,
+      "storage.get": getValue,
     }),
     [
       listAccounts,
@@ -531,6 +550,9 @@ const WebPlatformPlayer = ({ manifest, inputs }: Props) => {
       startExchange,
       completeExchange,
       signMessage,
+
+      setValue,
+      getValue,
     ],
   );
   const handleSend = useCallback(

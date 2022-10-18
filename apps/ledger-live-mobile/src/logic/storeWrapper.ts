@@ -7,6 +7,8 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { merge } from "lodash";
 
+import { SimpleStorage } from "@ledgerhq/live-common/DataModel";
+
 const CHUNKED_KEY = "_-_CHUNKED";
 const CHUNK_SIZE = 1000000;
 
@@ -76,7 +78,14 @@ const getCompressedValue = async (key, value) => {
   }
 };
 
-const deviceStorage = {
+interface StoreWrapper {
+  update(key: any, value: any): any;
+  delete(key: any): Promise<void>;
+  keys(): Promise<Array<any>>;
+  push(key: any, value: any): Promise<void>;
+}
+
+const deviceStorage: SimpleStorage & StoreWrapper = {
   /**
    * Get a one or more value for a key or array of keys from AsyncStorage
    * @param {String|Array} key A key or array of keys
