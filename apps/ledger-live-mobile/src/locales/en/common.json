@@ -582,6 +582,9 @@
     "SourceHasMultiSign": {
       "title": "Please disable multisign to send {{currencyName}}"
     },
+    "DustLimit": {
+      "title": "Amount is lower than dust limit"
+    },
     "StratisDown2021Warning": {
       "description": "The Stratis blockchain evolved and may no longer work correctly. Support for the original Stratis blockchain will be maintained until 16 October 2021."
     },
