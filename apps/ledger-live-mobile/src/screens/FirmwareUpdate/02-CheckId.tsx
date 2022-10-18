@@ -4,6 +4,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { Trans } from "react-i18next";
 import firmwareUpdatePrepare from "@ledgerhq/live-common/hw/firmwareUpdate-prepare";
 import manager from "@ledgerhq/live-common/manager/index";
+import { Subscription } from "rxjs";
 import { TrackScreen } from "../../analytics";
 import { deviceNames } from "../../wording";
 import { ScreenName } from "../../const";
@@ -36,7 +37,7 @@ class FirmwareUpdateCheckId extends Component<Props, State> {
     progress: 0,
     displayedOnDevice: false,
   };
-  sub: any;
+  sub: Subscription | undefined;
 
   componentDidMount() {
     const { navigation, route } = this.props;

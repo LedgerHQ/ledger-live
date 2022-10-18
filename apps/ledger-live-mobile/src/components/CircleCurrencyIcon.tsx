@@ -6,11 +6,12 @@ import {
 } from "@ledgerhq/live-common/reactNative";
 import { getCurrencyColor } from "@ledgerhq/live-common/currencies/index";
 import { useTheme } from "@react-navigation/native";
+import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import LText from "./LText";
 import { ensureContrast, rgba } from "../colors";
 
 type Props = {
-  currency: any;
+  currency: CryptoOrTokenCurrency;
   size: number;
   color?: string;
   sizeRatio?: number;

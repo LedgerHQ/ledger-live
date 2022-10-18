@@ -47,7 +47,7 @@ export const store = createStore(
   compose(applyMiddleware(thunk)),
 );
 
-type StoreType = typeof store;
+export type StoreType = typeof store;
 
 export default class LedgerStoreProvider extends Component<
   {

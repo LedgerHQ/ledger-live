@@ -256,7 +256,7 @@ export default function Content({
 
       {subOperations.length > 0 && account.type === "Account" && (
         <>
-          <View style={[sectionStyles.wrapper, styles.infoContainer]}>
+          <View style={[sectionStyles.wrapper]}>
             <LText color="grey" semiBold>
               <Trans
                 i18nKey={
@@ -304,10 +304,7 @@ export default function Content({
 
       {internalOperations.length > 0 && account.type === "Account" && (
         <>
-          <Section
-            title={t("operationDetails.internalOperations")}
-            style={styles.infoContainer}
-          />
+          <Section title={t("operationDetails.internalOperations")} />
           {internalOperations.map((op, i) => (
             <OperationRow
               key={op.id}
@@ -326,7 +323,6 @@ export default function Content({
           title={t("operationDetails.details", {
             currency: currency.name,
           })}
-          style={styles.infoContainer}
         />
       ) : null}
 
@@ -514,10 +510,6 @@ const styles = StyleSheet.create({
   },
   info: {
     marginLeft: 5,
-  },
-  infoContainer: {
-    flexDirection: "row",
-    alignItems: "center",
   },
   bulletPoint: {
     borderRadius: 50,

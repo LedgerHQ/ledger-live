@@ -112,7 +112,7 @@ function Delegations({ account }: Props) {
       route: NavigatorName.CeloWithdrawFlow,
       screen: ScreenName.CeloWithdrawAmount,
     });
-  }, [onNavigate, vote, account]);
+  }, [onNavigate]);
 
   const onVote = useCallback(() => {
     onNavigate({
@@ -123,7 +123,7 @@ function Delegations({ account }: Props) {
           : ScreenName.CeloVoteSummary,
       params: {},
     });
-  }, [onNavigate]);
+  }, [onNavigate, votes?.length]);
 
   const onCloseDrawer = useCallback(() => {
     setVote(undefined);
@@ -137,7 +137,7 @@ function Delegations({ account }: Props) {
         ) || fallbackValidatorGroup(vote?.validatorGroup);
       return validatorInfo.name;
     },
-    [vote],
+    [validatorGroups],
   );
 
   const onOpenExplorer = useCallback(
@@ -273,7 +273,16 @@ function Delegations({ account }: Props) {
             : []),
         ]
       : [];
-  }, [vote, t, account, onOpenExplorer]);
+  }, [
+    vote,
+    t,
+    getValidatorName,
+    account,
+    colors.green,
+    colors.warning,
+    colors.grey,
+    onOpenExplorer,
+  ]);
 
   const actions = useMemo<DelegationDrawerActions>(() => {
     let activateEnabled = false;
@@ -349,7 +358,7 @@ function Delegations({ account }: Props) {
           },
         ]
       : [];
-  }, [vote, account, t, onActivate, onRevoke, onWithdraw, onVote]);
+  }, [vote, t, onActivate, onRevoke, colors.lightFog, colors.grey]);
 
   return (
     <View style={styles.root}>

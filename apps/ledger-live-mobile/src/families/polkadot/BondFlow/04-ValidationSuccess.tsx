@@ -9,6 +9,7 @@ import { isFirstBond } from "@ledgerhq/live-common/families/polkadot/logic";
 import { usePolkadotBondLoading } from "@ledgerhq/live-common/families/polkadot/react";
 import { useTheme } from "@react-navigation/native";
 import { PolkadotAccount } from "@ledgerhq/live-common/families/polkadot/types";
+import { Transaction } from "@ledgerhq/live-common/generated/types";
 import { accountScreenSelector } from "../../../reducers/accounts";
 import { TrackScreen } from "../../../analytics";
 import { NavigatorName, ScreenName } from "../../../const";
@@ -16,9 +17,13 @@ import PreventNativeBack from "../../../components/PreventNativeBack";
 import ValidateSuccess from "../../../components/ValidateSuccess";
 import Button from "../../../components/Button";
 import LText from "../../../components/LText";
+import {
+  BaseNavigation,
+  RootNavigation,
+} from "../../../components/RootNavigator/types/helpers";
 
 type Props = {
-  navigation: any;
+  navigation: BaseNavigation;
   route: {
     params: RouteParams;
   };
@@ -26,7 +31,7 @@ type Props = {
 type RouteParams = {
   accountId: string;
   deviceId: string;
-  transaction: any;
+  transaction: Transaction;
   result: Operation;
 };
 export default function ValidationSuccess({ navigation, route }: Props) {
@@ -37,7 +42,7 @@ export default function ValidationSuccess({ navigation, route }: Props) {
   const wasFirstBond = useRef(isFirstBond(mainAccount));
   const isLoading = usePolkadotBondLoading(mainAccount);
   const onClose = useCallback(() => {
-    navigation.getParent().pop();
+    navigation.getParent<RootNavigation>().pop();
   }, [navigation]);
   const goToNominate = useCallback(() => {
     onClose();

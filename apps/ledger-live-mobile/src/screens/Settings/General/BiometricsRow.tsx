@@ -9,7 +9,7 @@ import SettingsRow from "../../../components/SettingsRow";
 import { useBiometricAuth } from "../../../components/RequestBiometricAuth";
 
 type Props = {
-  iconLeft?: any;
+  iconLeft?: React.ReactNode;
 };
 
 export default function BiometricsRow({ iconLeft }: Props) {

@@ -8,6 +8,7 @@ import {
   Account,
   ValueChange,
   PortfolioRange,
+  BalanceHistoryWithCountervalue,
 } from "@ledgerhq/types-live";
 import { Currency } from "@ledgerhq/types-cryptoassets";
 import { CompoundAccountSummary } from "@ledgerhq/live-common/compound/types";
@@ -42,7 +43,7 @@ type Props = {
   countervalueAvailable: boolean;
   useCounterValue: boolean;
   range: PortfolioRange;
-  history: any;
+  history: BalanceHistoryWithCountervalue;
   countervalueChange: ValueChange;
   cryptoChange: ValueChange;
   counterValueCurrency: Currency;

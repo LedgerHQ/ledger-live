@@ -3,7 +3,14 @@ import { StackNavigationProp } from "@react-navigation/stack";
 import { useEffect, useState } from "react";
 import { BehaviorSubject } from "rxjs";
 
-export type BehaviorSubjectType = ((..._: unknown[]) => void) | undefined;
+export type BehaviorSubjectType =
+  | ((props: {
+      type: string;
+      payload?: object;
+      source?: string;
+      target?: string;
+    }) => void)
+  | undefined;
 
 export const lockSubject = new BehaviorSubject<boolean>(false);
 export const exposedManagerNavLockCallback =
@@ -44,7 +51,12 @@ export function useIsNavLocked(): boolean {
 /** use Effect to trigger lock navigation updates and callback to retrieve catched navigation actions */
 export const useLockNavigation = (
   when: boolean,
-  callback: (..._: unknown[]) => void = () => {
+  callback: (action: {
+    type: string;
+    payload?: object;
+    source?: string;
+    target?: string;
+  }) => void = () => {
     /* ignore */
   },
   navigation: StackNavigationProp<ParamListBase>,

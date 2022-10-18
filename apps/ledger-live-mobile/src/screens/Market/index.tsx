@@ -430,7 +430,14 @@ export default function Market({ navigation }: NavigationProps) {
       ) : (
         <InfiniteLoader size={30} />
       ), // shows up in case loading is ongoing
-    [filterByStarredAccount, starredMarketCoins, resetSearch, search, t],
+    [
+      search,
+      t,
+      resetSearch,
+      isConnected,
+      filterByStarredAccount,
+      starredMarketCoins.length,
+    ],
   );
 
   const onEndReached = useCallback(() => {

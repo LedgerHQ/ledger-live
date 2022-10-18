@@ -218,16 +218,14 @@ const ValidatorRow = ({
           >
             {validator.name || validator.voteAccount}
           </Text>
-          {true ? (
-            <Text
-              fontWeight="semiBold"
-              numberOfLines={1}
-              style={styles.overdelegated}
-            >
-              <Trans i18nKey="solana.delegation.commission" />{" "}
-              {validator.commission} %
-            </Text>
-          ) : null}
+          <Text
+            fontWeight="semiBold"
+            numberOfLines={1}
+            style={styles.overdelegated}
+          >
+            <Trans i18nKey="solana.delegation.commission" />{" "}
+            {validator.commission} %
+          </Text>
         </View>
         <Text
           fontWeight="semiBold"

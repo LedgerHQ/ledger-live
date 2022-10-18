@@ -27,7 +27,7 @@ function SearchHeader({ search, refresh }: Props) {
         limit: 20,
       });
     }
-  }, [debouncedSearch, refresh]);
+  }, [debouncedSearch, refresh, search]);
 
   useEffect(() => {
     setInputSearch(search);

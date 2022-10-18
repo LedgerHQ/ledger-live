@@ -69,8 +69,8 @@ const Section = ({
   copiedString,
 }: {
   title: string;
-  value?: any;
-  style?: any;
+  value?: string;
+  style?: React.ComponentProps<typeof TouchableOpacity>["style"];
   children?: React.ReactNode;
   copyAvailable?: boolean;
   copiedString?: string;
@@ -80,6 +80,7 @@ const Section = ({
     null,
   );
   const copy = useCallback(() => {
+    if (typeof value === "undefined") return null;
     Clipboard.setString(value);
     setCopied(true);
     setTimeoutFunction(

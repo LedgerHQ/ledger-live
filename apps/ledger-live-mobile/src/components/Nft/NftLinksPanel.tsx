@@ -30,12 +30,12 @@ const NftLink = ({
   subtitle,
   onPress,
 }: {
-  style?: any;
+  style?: React.ComponentProps<typeof TouchableOpacity>["style"];
   leftIcon: React.ReactNode;
   rightIcon?: React.ReactNode;
   title: string;
   subtitle?: string;
-  onPress?: () => any;
+  onPress?: React.ComponentProps<typeof TouchableOpacity>["onPress"];
 }) => (
   <TouchableOpacity style={[styles.section, style]} onPress={onPress}>
     <View style={styles.sectionBody}>

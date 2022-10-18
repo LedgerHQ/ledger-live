@@ -18,6 +18,7 @@ import {
   StackNavigatorProps,
 } from "../../../components/RootNavigator/types/helpers";
 import { BaseNavigatorStackParamList } from "../../../components/RootNavigator/types/BaseNavigator";
+import Touchable from "../../../components/Touchable";
 
 const images = {
   light: {
@@ -40,11 +41,8 @@ type PostWelcomeDiscoverCardProps = {
   event: string;
   eventProperties?: Record<string, unknown>;
   testID: string;
-
-  selectedOption: any;
-  // eslint-disable-next-line @typescript-eslint/ban-types
-  onPress: Function;
-  onValidate: () => void;
+  onPress: React.ComponentProps<typeof Touchable>["onPress"];
+  onValidate?: () => void;
   imageSource: {
     light: ImageSourcePropType;
     dark: ImageSourcePropType;
@@ -126,7 +124,7 @@ function PostWelcomeSelection({ route }: NavigationProps) {
     navigation.navigate(ScreenName.OnboardingImportAccounts);
   }, [navigation]);
 
-  const getSourceImageObj = key => ({
+  const getSourceImageObj = (key: keyof typeof images.light) => ({
     light: images.light[key],
     dark: images.dark[key],
   });

@@ -66,10 +66,12 @@ function SignSummary({
             </LText>
             <View style={styles.headerContainer}>
               <View style={styles.headerIconContainer}>
-                <ParentCurrencyIcon
-                  size={18}
-                  currency={account && getAccountCurrency(account)}
-                />
+                {account ? (
+                  <ParentCurrencyIcon
+                    size={18}
+                    currency={getAccountCurrency(account)}
+                  />
+                ) : null}
               </View>
               <LText semiBold secondary numberOfLines={1}>
                 {account && getAccountName(account)}

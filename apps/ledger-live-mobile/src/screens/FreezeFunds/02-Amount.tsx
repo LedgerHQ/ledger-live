@@ -85,21 +85,24 @@ export default function FreezeAmount({ navigation, route }: NavigatorProps) {
       return { account, transaction };
     });
 
-  const options = [
-    {
-      value: "BANDWIDTH",
-      label: t("account.bandwidth"),
-    },
-    {
-      value: "ENERGY",
-      label: t("account.energy"),
-    },
-  ];
+  const options = useMemo(
+    () => [
+      {
+        value: "BANDWIDTH",
+        label: t("account.bandwidth"),
+      },
+      {
+        value: "ENERGY",
+        label: t("account.energy"),
+      },
+    ],
+    [t],
+  );
 
   const resource = (transaction as Transaction)?.resource || "";
   const resourceIndex = useMemo(
     () => options.findIndex(option => option.value === resource),
-    [resource],
+    [options, resource],
   );
 
   const onChange = useCallback(
@@ -169,7 +172,7 @@ export default function FreezeAmount({ navigation, route }: NavigatorProps) {
         }),
       );
     },
-    [bridge, transaction, setTransaction],
+    [setTransaction, bridge, transaction, options],
   );
 
   /** show amount ratio buttons only if we can ratio the available assets to 25% or less */

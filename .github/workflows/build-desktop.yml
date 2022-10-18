@@ -95,7 +95,7 @@ jobs:
         with:
           server-token: "yolo"
           cleanup-cache-folder: "true"
-      - uses: ledgerhq/ledger-live/tools/actions/composites/build-desktop@develop
+      - uses: ./tools/actions/composites/build-desktop
         id: build-desktop
         with:
           os: linux
@@ -145,7 +145,7 @@ jobs:
         with:
           server-token: "yolo"
           cleanup-cache-folder: "true"
-      - uses: ledgerhq/ledger-live/tools/actions/composites/build-desktop@develop
+      - uses: ./tools/actions/composites/build-desktop
         id: build-desktop
         with:
           os: linux
@@ -186,7 +186,7 @@ jobs:
         with:
           server-token: "yolo"
           cleanup-cache-folder: "true"
-      - uses: ledgerhq/ledger-live/tools/actions/composites/build-desktop@develop
+      - uses: ./tools/actions/composites/build-desktop
         id: build-desktop
         with:
           os: win
@@ -229,7 +229,7 @@ jobs:
         with:
           server-token: "yolo"
           cleanup-cache-folder: "true"
-      - uses: ledgerhq/ledger-live/tools/actions/composites/build-desktop@develop
+      - uses: ./tools/actions/composites/build-desktop
         id: build-desktop
         with:
           os: mac

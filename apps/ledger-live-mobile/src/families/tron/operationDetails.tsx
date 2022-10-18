@@ -33,7 +33,11 @@ function getURLWhatIsThis(op: Operation): string | null | undefined {
 }
 
 type OperationDetailsExtraProps = {
-  extra: Record<string, any>;
+  extra: {
+    votes: Array<Vote>;
+    frozenAmount: BigNumber;
+    unfreezeAmount: BigNumber;
+  };
   type: string;
   account: Account;
 };

@@ -105,6 +105,18 @@ const renderTransitionSlide = ({
   </Transitions.Slide>
 );
 
+type StepProp =
+  | { success: boolean }
+  | { onNext: () => void }
+  | { deviceModelId: DeviceModelId }
+  | { onNext: () => void; deviceModelId: DeviceModelId };
+
+export type Step = {
+  (props: StepProp): JSX.Element;
+  id: string;
+  Next: (props: StepProp) => JSX.Element;
+};
+
 export function BaseStepperView({
   onNext,
   steps,
@@ -113,10 +125,10 @@ export function BaseStepperView({
   params,
 }: {
   onNext: () => void;
-  steps: any[];
+  steps: Step[];
   metadata: Metadata[];
   deviceModelId: DeviceModelId;
-  params?: any;
+  params?: object;
 }) {
   const [index, setIndex] = React.useState(0);
   const navigation = useNavigation();

@@ -45,7 +45,11 @@ class RequiresBLE extends Component<Props, State> {
   }
 }
 
-export default function RequiresBLEWrapped({ children }: any) {
+export default function RequiresBLEWrapped({
+  children,
+}: {
+  children?: React.ReactNode;
+}) {
   return (
     <RequiresLocationOnAndroid>
       <RequiresBLE>{children}</RequiresBLE>

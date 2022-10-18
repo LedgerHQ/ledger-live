@@ -10,7 +10,7 @@ export type PolkadotNominateFlowParamList = {
   [ScreenName.PolkadotNominateSelectValidators]: {
     accountId: string;
     parentId?: string;
-    transaction: Transaction;
+    transaction?: Transaction;
     fromSelectAmount?: true;
   };
   [ScreenName.PolkadotNominateSelectDevice]: {
