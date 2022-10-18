@@ -21,7 +21,7 @@ type Props = {
   currency: CryptoCurrency | TokenCurrency;
   onPress: (_: CryptoCurrency | TokenCurrency) => void;
   isOK?: boolean;
-  style?: any;
+  style?: React.ComponentProps<typeof RectButton>["style"];
   iconSize?: number;
 };
 

@@ -8,6 +8,7 @@ import {
 } from "@ledgerhq/native-ui";
 import { rangeDataTable } from "@ledgerhq/live-common/market/utils/rangeDataTable";
 import { useTranslation } from "react-i18next";
+import { SingleCoinProviderData } from "@ledgerhq/live-common/market/MarketDataProvider";
 import Graph from "../../../components/Graph";
 import getWindowDimensions from "../../../logic/getWindowDimensions";
 import { Item } from "../../../components/Graph/types";
@@ -23,7 +24,7 @@ function MarketGraph({
   chartData,
 }: {
   setHoverItem: (_: Item | null | undefined) => void;
-  chartRequestParams: any;
+  chartRequestParams: SingleCoinProviderData["chartRequestParams"];
   loading?: boolean;
   loadingChart?: boolean;
   refreshChart: (_: { range: string }) => void;
@@ -45,7 +46,7 @@ function MarketGraph({
   const activeRangeIndex = ranges.findIndex(r => r.value === range);
   const data = useMemo(
     () =>
-      chartData?.[range]
+      range && chartData?.[range]
         ? chartData[range].map(d => ({
             date: new Date(d[0]),
             value: d[1] || 0,

@@ -21,6 +21,7 @@ import {
 } from "../../../components/RootNavigator/types/helpers";
 import { OnboardingNavigatorParamList } from "../../../components/RootNavigator/types/OnboardingNavigator";
 import { BaseOnboardingNavigatorParamList } from "../../../components/RootNavigator/types/BaseOnboardingNavigator";
+import { Step } from "./setupDevice/scenes/BaseStepperView";
 
 const images = {
   light: {
@@ -44,7 +45,7 @@ type NavigationProps = RootComposite<
   >
 >;
 
-const scenes = [PairNew, ConnectNano];
+const scenes = [PairNew, ConnectNano] as Step[];
 
 function OnboardingStepPairNew() {
   const navigation = useNavigation<NavigationProps["navigation"]>();

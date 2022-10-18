@@ -3,6 +3,7 @@ import { View, StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Trans } from "react-i18next";
 import firmwareUpdateMain from "@ledgerhq/live-common/hw/firmwareUpdate-main";
+import { Subscription } from "rxjs";
 import logger from "../../logger";
 import { TrackScreen } from "../../analytics";
 import { ScreenName } from "../../const";
@@ -33,7 +34,7 @@ class FirmwareUpdateMCU extends Component<Props, State> {
     installing: null,
     progress: 0,
   };
-  sub: any;
+  sub: Subscription | undefined;
 
   async componentDidMount() {
     const { navigation, route } = this.props;

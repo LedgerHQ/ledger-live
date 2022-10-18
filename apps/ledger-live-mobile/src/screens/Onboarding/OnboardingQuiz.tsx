@@ -10,7 +10,7 @@ import { useTranslation } from "react-i18next";
 import { RenderTransitionProps } from "@ledgerhq/native-ui/components/Navigation/FlowStepper";
 import { StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useNavigation, useRoute, RouteProp } from "@react-navigation/native";
+import { useNavigation, useRoute } from "@react-navigation/native";
 import { StackScreenProps } from "@react-navigation/stack";
 import { TrackScreen } from "../../analytics";
 import { ScreenName } from "../../const";
@@ -21,6 +21,7 @@ import quizImage3 from "../../images/illustration/Light/_060.png";
 
 import OnboardingQuizItem from "./OnboardingQuizItem";
 import { OnboardingNavigatorParamList } from "../../components/RootNavigator/types/OnboardingNavigator";
+import { StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
 
 const transitionStyles = [StyleSheet.absoluteFill, { flex: 1 }];
 
@@ -82,21 +83,15 @@ const Header = ({ step }: { step: number }) => {
   );
 };
 
-function OnboardingQuiz({ navigation }: { navigation: any }) {
+type Props = StackNavigatorProps<
+  OnboardingNavigatorParamList,
+  ScreenName.OnboardingQuiz
+>;
+
+function OnboardingQuiz({ navigation, route }: Props) {
   const { t } = useTranslation();
   const [index, setIndex] = useState(0);
   const [bg, setBg] = useState("constant.purple");
-
-  const route = useRoute<
-    RouteProp<
-      {
-        params: {
-          deviceModelId: string;
-        };
-      },
-      "params"
-    >
-  >();
 
   const [userAnswers, setAnswers] = useState(0);
 

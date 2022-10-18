@@ -69,7 +69,7 @@ const DeviceLanguage: React.FC<Props> = ({
   const refreshDeviceLanguage = useCallback(() => {
     track("Page Manager LanguageInstalled", { selectedLanguage });
     onLanguageChange();
-  }, [selectedLanguage]);
+  }, [onLanguageChange, selectedLanguage]);
 
   return (
     <>

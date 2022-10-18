@@ -211,7 +211,7 @@ export default function SubAccountsList({
         />
       </Flex>
     ),
-    [onAccountPress, parentAccount],
+    [onAccountPress, parentAccount, useCounterValue],
   );
 
   if (!isToken && subAccounts.length === 0) {

@@ -47,7 +47,15 @@ function formatPalletMethod(palletMethod?: string): string {
 }
 
 type OperationDetailsExtraProps = {
-  extra: { [key: string]: any };
+  extra: {
+    palletMethod: string;
+    validators: string[];
+    transferAmount: BigNumber;
+    bondedAmount: BigNumber;
+    unbondedAmount: BigNumber;
+    withdrawUnbondedAmount: BigNumber;
+    validatorStash: string;
+  };
   type: string;
   account: Account;
 };

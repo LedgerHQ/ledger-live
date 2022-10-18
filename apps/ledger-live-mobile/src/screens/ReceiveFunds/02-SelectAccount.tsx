@@ -92,7 +92,7 @@ function ReceiveSelectAccount({
         });
       }
     },
-    [currency.name, navigation, route.params, selectedAccount],
+    [currency, navigation, route.params, selectedAccount],
   );
 
   const renderItem = useCallback(

@@ -90,7 +90,7 @@ function MarketCurrencySelect({ navigation }: Props) {
       setCounterCurrency(value);
       navigation.goBack();
     },
-    [navigation, setCounterCurrency],
+    [dispatch, navigation, setCounterCurrency],
   );
 
   const renderItem = useCallback(

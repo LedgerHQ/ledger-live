@@ -38,6 +38,9 @@ export default function ValidationError({ navigation, route }: Props) {
       setDisableRetry(true);
       setCurrentCallRequestError(error);
     }
+    // FIXME: IT LOOKS LIKE A COMPONENT DID MOUNT BUT NOT SURE
+    // IF IT NEEDS TO RERUN WHEN DEPS CHANGE
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   const onClose = useCallback(() => {
     navigation

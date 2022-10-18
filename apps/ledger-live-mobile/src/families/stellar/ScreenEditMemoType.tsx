@@ -9,13 +9,47 @@ import LText from "../../components/LText";
 import type { State } from "../../reducers/types";
 import { ScreenName } from "../../const";
 import makeGenericSelectScreen from "../../screens/makeGenericSelectScreen";
+import {
+  BaseComposite,
+  StackNavigatorProps,
+} from "../../components/RootNavigator/types/helpers";
+import { SendFundsNavigatorStackParamList } from "../../components/RootNavigator/types/SendFundsNavigator";
+import { SignTransactionNavigatorParamList } from "../../components/RootNavigator/types/SignTransactionNavigator";
+import { LendingEnableFlowParamsList } from "../../components/RootNavigator/types/LendingEnableFlowNavigator";
+import { LendingSupplyFlowNavigatorParamList } from "../../components/RootNavigator/types/LendingSupplyFlowNavigator";
+import { LendingWithdrawFlowNavigatorParamList } from "../../components/RootNavigator/types/LendingWithdrawFlowNavigator";
+import { SwapNavigatorParamList } from "../../components/RootNavigator/types/SwapNavigator";
 
 const items = StellarMemoType.map(type => ({
   label: type,
   value: type,
 }));
 
-const mapStateToProps = (_state: State, props: any) => ({
+type NavigationProps = BaseComposite<
+  | StackNavigatorProps<
+      SendFundsNavigatorStackParamList,
+      ScreenName.StellarEditMemoType
+    >
+  | StackNavigatorProps<
+      SignTransactionNavigatorParamList,
+      ScreenName.StellarEditMemoType
+    >
+  | StackNavigatorProps<
+      LendingEnableFlowParamsList,
+      ScreenName.StellarEditMemoType
+    >
+  | StackNavigatorProps<
+      LendingSupplyFlowNavigatorParamList,
+      ScreenName.StellarEditMemoType
+    >
+  | StackNavigatorProps<
+      LendingWithdrawFlowNavigatorParamList,
+      ScreenName.StellarEditMemoType
+    >
+  | StackNavigatorProps<SwapNavigatorParamList, ScreenName.StellarEditMemoType>
+>;
+
+const mapStateToProps = (_state: State, props: NavigationProps) => ({
   selectedKey: props.route.params.transaction.memoType
     ? props.route.params.transaction.memoType
     : "NO_MEMO",
@@ -27,6 +61,7 @@ const mapStateToProps = (_state: State, props: any) => ({
 
     if (value === "NO_MEMO") {
       const bridge = getAccountBridge(account);
+      // @ts-expect-error FIXME: No current / next navigation params?
       navigation.navigate(ScreenName.SendSummary, {
         accountId: account.id,
         transaction: bridge.updateTransaction(transaction, {
@@ -35,6 +70,7 @@ const mapStateToProps = (_state: State, props: any) => ({
         }),
       });
     } else {
+      // @ts-expect-error FIXME: No current / next navigation params?
       navigation.navigate(ScreenName.StellarEditMemoValue, {
         accountId: account.id,
         transaction,

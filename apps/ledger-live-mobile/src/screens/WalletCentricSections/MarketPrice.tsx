@@ -5,6 +5,7 @@ import { useTranslation } from "react-i18next";
 import { useNavigation } from "@react-navigation/native";
 import counterValueFormatter from "@ledgerhq/live-common/market/utils/countervalueFormatter";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { SingleCoinProviderData } from "@ledgerhq/live-common/market/MarketDataProvider";
 import { withDiscreetMode } from "../../context/DiscreetModeContext";
 import { ScreenName } from "../../const";
 import { localeSelector } from "../../reducers/settings";
@@ -13,7 +14,7 @@ import Touchable from "../../components/Touchable";
 
 type Props = {
   currency: CryptoCurrency;
-  selectedCoinData: any;
+  selectedCoinData: SingleCoinProviderData["selectedCoinData"];
   counterCurrency: string | undefined;
 };
 

@@ -58,9 +58,7 @@ function Discover() {
 
   const featuresList: {
     title: string;
-    titleProps?: any;
     subTitle?: string;
-    subTitleProps?: any;
     labelBadge?: string;
     Image: React.ReactNode;
     onPress: () => void;

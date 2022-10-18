@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import { Animated, Easing } from "react-native";
 
 type Props = {
-  children: any;
+  children?: React.ReactNode;
   paused?: boolean;
   clockwise?: boolean;
 };

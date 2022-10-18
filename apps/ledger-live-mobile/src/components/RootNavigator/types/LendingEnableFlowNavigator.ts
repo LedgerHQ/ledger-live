@@ -387,6 +387,7 @@ export type LendingEnableFlowParamsList = {
     parentId?: string | null;
     account: Account;
     transaction: StellarTransaction;
+    memoType?: string;
     currentNavigation:
       | ScreenName.LendingWithdrawSummary
       | ScreenName.LendingSupplySummary

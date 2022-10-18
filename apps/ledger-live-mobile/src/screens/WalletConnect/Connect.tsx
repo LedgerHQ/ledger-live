@@ -7,7 +7,6 @@ import { useSelector } from "react-redux";
 import { accountScreenSelector } from "../../reducers/accounts";
 import LText from "../../components/LText";
 import Button from "../../components/Button";
-
 import {
   context,
   STATUS,
@@ -16,7 +15,6 @@ import {
   connect,
   approveSession,
 } from "./Provider";
-
 import Spinning from "../../components/Spinning";
 import BigSpinner from "../../icons/BigSpinner";
 import Disconnect from "../../icons/Disconnect";
@@ -29,12 +27,12 @@ import Alert from "../../components/Alert";
 import HeaderRightClose from "../../components/HeaderRightClose";
 import { TrackScreen } from "../../analytics";
 import AccountHeaderTitle from "../Account/AccountHeaderTitle";
-import { rgba } from "../../colors";
+import { rgba, Theme } from "../../colors";
 import { StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
 import { WalletConnectNavigatorParamList } from "../../components/RootNavigator/types/WalletConnectNavigator";
 import { ScreenName } from "../../const";
 
-const DottedLine = ({ colors }: { colors: any }) => (
+const DottedLine = ({ colors }: { colors: Theme["colors"] }) => (
   <View style={styles.dottedLineContainer}>
     {_.map(_.range(0, 6), i => (
       <View

@@ -30,7 +30,6 @@ const HelpDrawer = ({ isOpen, onClose }: Props) => {
       <Button type="main" mb={6} onPress={handleDocumentationPress}>
         {t("syncOnboarding.helpDrawer.docCta")}
       </Button>
-      {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
       <Link Icon={ExternalLinkMedium} onPress={handleSupportPress}>
         {t("syncOnboarding.helpDrawer.supportCta")}
       </Link>

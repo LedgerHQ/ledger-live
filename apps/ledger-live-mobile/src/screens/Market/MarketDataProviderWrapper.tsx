@@ -4,6 +4,7 @@ import apiMock from "@ledgerhq/live-common/market/api/api.mock";
 import Config from "react-native-config";
 import { MarketDataProvider } from "@ledgerhq/live-common/market/MarketDataProvider";
 import { useNetInfo } from "@react-native-community/netinfo";
+import { Currency } from "@ledgerhq/types-cryptoassets";
 import {
   counterValueCurrencySelector,
   marketCounterCurrencySelector,
@@ -19,11 +20,11 @@ type Props = {
 export default function MarketDataProviderWrapper({
   children,
 }: Props): ReactElement {
-  const counterValueCurrency: any = useSelector(counterValueCurrencySelector);
-  const marketRequestParams: any = useSelector(marketRequestParamsSelector);
-  const marketCounterCurrency: any = useSelector(marketCounterCurrencySelector);
-  const starredMarketCoins: string[] = useSelector(starredMarketCoinsSelector);
-  const filterByStarredAccount: boolean = useSelector(
+  const counterValueCurrency = useSelector(counterValueCurrencySelector);
+  const marketRequestParams = useSelector(marketRequestParamsSelector);
+  const marketCounterCurrency = useSelector(marketCounterCurrencySelector);
+  const starredMarketCoins = useSelector(starredMarketCoinsSelector);
+  const filterByStarredAccount = useSelector(
     marketFilterByStarredAccountsSelector,
   );
   const { isConnected } = useNetInfo();
@@ -40,7 +41,7 @@ export default function MarketDataProviderWrapper({
   return (
     <MarketDataProvider
       {...(Config.MOCK ? { fetchApi: apiMock } : {})}
-      countervalue={counterCurrency}
+      countervalue={counterCurrency as Currency}
       initState={{
         requestParams: {
           range: "24h",

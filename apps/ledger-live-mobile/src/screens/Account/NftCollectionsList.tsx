@@ -165,7 +165,6 @@ export default function NftCollectionsList({ account }: Props) {
     [
       account.currency.family,
       colors.fog,
-      colors.live,
       data.length,
       navigateToGallery,
       navigateToReceiveConnectDevice,

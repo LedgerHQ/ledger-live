@@ -39,7 +39,7 @@ type Props = {
   disabledStrategies?: Array<string>;
 };
 
-const CVWrapper = ({ children }: { children: React.ReactNode }) => (
+const CVWrapper = ({ children }: { children?: React.ReactNode }) => (
   <LText semiBold color="grey">
     {children}
   </LText>

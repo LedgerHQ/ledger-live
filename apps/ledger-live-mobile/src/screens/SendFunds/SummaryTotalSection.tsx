@@ -6,6 +6,7 @@ import {
   getAccountCurrency,
 } from "@ledgerhq/live-common/account/index";
 import { Trans } from "react-i18next";
+import BigNumber from "bignumber.js";
 import SummaryRow from "./SummaryRow";
 import CounterValue from "../../components/CounterValue";
 import CurrencyUnitValue from "../../components/CurrencyUnitValue";
@@ -16,13 +17,13 @@ import Button from "../../components/Button";
 import Circle from "../../components/Circle";
 import Touchable from "../../components/Touchable";
 import Info from "../../icons/Info";
-import { withTheme } from "../../colors";
+import { withTheme, Theme } from "../../colors";
 
 type Props = {
   account: AccountLike;
   parentAccount: Account | null | undefined;
-  amount: any;
-  colors: any;
+  amount: number | BigNumber;
+  colors: Theme["colors"];
 };
 type State = {
   isModalOpened: boolean;

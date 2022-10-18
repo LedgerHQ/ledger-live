@@ -20,6 +20,7 @@ import {
 } from "../../../components/RootNavigator/types/helpers";
 import { OnboardingNavigatorParamList } from "../../../components/RootNavigator/types/OnboardingNavigator";
 import { RootStackParamList } from "../../../components/RootNavigator/types/RootNavigator";
+import { Step } from "./setupDevice/scenes/BaseStepperView";
 
 const images = {
   light: {
@@ -30,7 +31,7 @@ const images = {
   },
 };
 
-const scenes = [SyncDesktop, SyncDesktop];
+const scenes = [SyncDesktop, SyncDesktop] as Step[];
 
 type NavigationProps = RootComposite<
   StackNavigatorProps<

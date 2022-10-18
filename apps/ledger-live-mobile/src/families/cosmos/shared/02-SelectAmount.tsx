@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   TouchableWithoutFeedback,
   Platform,
+  KeyboardAvoidingViewProps,
 } from "react-native";
 import { Trans } from "react-i18next";
 import { useSelector } from "react-redux";
@@ -137,7 +138,7 @@ function DelegationAmount({ navigation, route }: Props) {
       (route.params.transaction.mode === "redelegate" && value.eq(0)),
     [value, max, min, route.params.transaction],
   );
-  let behaviorParam;
+  let behaviorParam: KeyboardAvoidingViewProps["behavior"] | undefined;
 
   if (Platform.OS === "ios") {
     behaviorParam = "padding";
