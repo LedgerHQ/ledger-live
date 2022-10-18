@@ -98,6 +98,7 @@ const cosmos: AppSpec<Transaction> = {
   mutations: [
     {
       name: "send some",
+      maxRun: 2,
       testDestination: genericTestDestination,
       test: ({ account, accountBeforeTransaction, operation }) => {
         expect(account.balance.toString()).toBe(

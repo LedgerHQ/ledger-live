@@ -688,6 +688,7 @@ importers:
       react-native-randombytes: ^3.6.1
       react-native-reanimated: ^2.8.0
       react-native-redash: ^16.0.11
+      react-native-restart: ^0.0.24
       react-native-safe-area-context: ^4.1.4
       react-native-safe-area-view: ^1.1.1
       react-native-screens: ^3.9.0
@@ -824,6 +825,7 @@ importers:
       react-native-randombytes: 3.6.1
       react-native-reanimated: 2.8.0_q4bsppkovizpw5uw6ytm5z2tba
       react-native-redash: 16.2.4_6ptwqggqeguczovyzjd66nh3be
+      react-native-restart: 0.0.24_zqxy7fpkavjkgz5xll7ed4r6rq
       react-native-safe-area-context: 4.2.5_zqxy7fpkavjkgz5xll7ed4r6rq
       react-native-safe-area-view: 1.1.1_srnuj64tiypnivv2jxjgshvqka
       react-native-screens: 3.13.1_zqxy7fpkavjkgz5xll7ed4r6rq
@@ -2440,6 +2442,7 @@ importers:
       '@svgr/plugin-svgo': ^5.5.0
       '@types/react': ^17.0.37
       '@types/react-dom': ^17.0.11
+      '@types/react-native': ^0.65.21
       '@types/styled-components': ^5.1.14
       '@types/styled-components-react-native': ^5.1.3
       '@types/styled-system': ^5.1.13
@@ -2455,6 +2458,7 @@ importers:
       '@svgr/plugin-svgo': 5.5.0
       '@types/react': 17.0.45
       '@types/react-dom': 17.0.16_@types+react@17.0.45
+      '@types/react-native': 0.65.22_@types+react@17.0.45
       '@types/styled-components': 5.1.25_@types+react@17.0.45
       '@types/styled-components-react-native': 5.1.3_@types+react@17.0.45
       '@types/styled-system': 5.1.15
@@ -7973,6 +7977,7 @@ packages:
   /@colors/colors/1.5.0:
     resolution: {integrity: sha512-ooWCrlZP11i8GImSjTHYHLkvFDP48nS4+204nGb1RiX/WXYHmJA2III9/e2DWVabCESdW7hBAEzHRqUn9OUVvQ==}
     engines: {node: '>=0.1.90'}
+    requiresBuild: true
 
   /@confio/ics23/0.6.8:
     resolution: {integrity: sha512-wB6uo+3A50m0sW/EWcU64xpV/8wShZ6bMTa7pF8eYsTrSkQA7oLUIJcs/wb8g4y2Oyq701BaGiO6n/ak5WXO1w==}
@@ -22747,7 +22752,7 @@ packages:
       babel-plugin-syntax-jsx: 6.18.0
       lodash: 4.17.21
       picomatch: 2.3.1
-      styled-components: 5.3.5_fane7jikarojcev26y27hpbhu4
+      styled-components: 5.3.5_ovpqj5wn7dv5iunpkty63trwiy
 
   /babel-plugin-syntax-jsx/6.18.0:
     resolution: {integrity: sha1-CvMqmm4Tyno/1QaeYtew9Y0NiUY=}
@@ -23332,6 +23337,7 @@ packages:
 
   /bindings/1.5.0:
     resolution: {integrity: sha512-p2q/t/mhvuOj/UeLlV6566GD/guowlr0hHxClI0W9m7MWYkL1F0hLo+0Aexs9HSPCtR1SXQ0TD3MMKrXZajbiQ==}
+    requiresBuild: true
     dependencies:
       file-uri-to-path: 1.0.0
 
@@ -25571,8 +25577,8 @@ packages:
     requiresBuild: true
 
   /core-js/1.2.7:
-    resolution: {integrity: sha1-ZSKUwUZR2yj6k70tX/KYOk8IxjY=}
-    deprecated: core-js@<3.4 is no longer maintained and not recommended for usage due to the number of issues. Because of the V8 engine whims, feature detection in old core-js versions could cause a slowdown up to 100x even if nothing is polyfilled. Please, upgrade your dependencies to the actual version of core-js.
+    resolution: {integrity: sha512-ZiPp9pZlgxpWRu0M+YWbm6+aQ84XEfH1JRXvfOc/fILWI0VKhLC2LX13X1NYq4fULzLMq7Hfh43CSo2/aIaUPA==}
+    deprecated: core-js@<3.23.3 is no longer maintained and not recommended for usage due to the number of issues. Because of the V8 engine whims, feature detection in old core-js versions could cause a slowdown up to 100x even if nothing is polyfilled. Some versions have web compatibility issues. Please, upgrade your dependencies to the actual version of core-js.
 
   /core-js/2.6.12:
     resolution: {integrity: sha512-Kb2wC0fvsWfQrgk8HU5lW6U/Lcs8+9aaYcy4ZFc6DDlo4nZ7n70dEgE5rtR0oG6ufKDUnrwfWL1mXR5ljDatrQ==}
@@ -28842,7 +28848,7 @@ packages:
     dependencies:
       eslint: 7.32.0
       eslint-config-airbnb-base: 14.2.1_hpmu7kn6tcn2vnxpfzvv33bxmy
-      eslint-plugin-import: 2.26.0_ffi3uiz42rv3jyhs6cr7p7qqry
+      eslint-plugin-import: 2.26.0_yuomakvifwhuugsn7tszrjtzoa
       eslint-plugin-jsx-a11y: 6.5.1_eslint@7.32.0
       eslint-plugin-react: 7.29.4_eslint@7.32.0
       eslint-plugin-react-hooks: 4.5.0_eslint@7.32.0
@@ -31659,6 +31665,7 @@ packages:
 
   /file-uri-to-path/1.0.0:
     resolution: {integrity: sha512-0Zt+s3L7Vf1biwWZ29aARiVYLx7iMGnEUl9x33fbB/j3jR81u/O2LbqK+Bm1CDSNDKVtJ/YjwY7TUd5SkeLQLw==}
+    requiresBuild: true
 
   /filelist/1.0.3:
     resolution: {integrity: sha512-LwjCsruLWQULGYKy7TX0OPtrL9kLpojOFKc5VCTxdFTV7w5zbsgqVKfnkKG7Qgjtq50gKfO56hJv88OfcGb70Q==}
@@ -36813,7 +36820,7 @@ packages:
       jest-resolve:
         optional: true
     dependencies:
-      jest-resolve: 28.1.3
+      jest-resolve: 28.1.3_metro@0.67.0
     dev: true
 
   /jest-regex-util/24.9.0:
@@ -41352,6 +41359,7 @@ packages:
 
   /nan/2.15.0:
     resolution: {integrity: sha512-8ZtvEnA2c5aYCZYd1cvgdnU6cqwixRoYg70xPLWUws5ORTa/lnw+u4amixRS/Ac5U5mQVgp9pnlSUnbNWFaWZQ==}
+    requiresBuild: true
 
   /nano-json-stream-parser/0.1.2:
     resolution: {integrity: sha1-DMj20OK2IrR5xA1JnEbWS3Vcb18=}
@@ -46556,6 +46564,16 @@ packages:
       react-native-reanimated: 2.8.0_q4bsppkovizpw5uw6ytm5z2tba
     dev: false
 
+  /react-native-restart/0.0.24_zqxy7fpkavjkgz5xll7ed4r6rq:
+    resolution: {integrity: sha512-pvJNU3NwQk6bCG2gOWcQpZ4IxhtELB0K9gzmtixfsaTFbW1UXXHkJNjk1kHazcbH5hrD7QbUkR63fsAVh8X4VQ==}
+    peerDependencies:
+      react: '*'
+      react-native: '*'
+    dependencies:
+      react: 17.0.2
+      react-native: 0.68.2_qiqqwmyv63yhnuboofexv3s7x4
+    dev: false
+
   /react-native-safe-area-context/4.2.5_zqxy7fpkavjkgz5xll7ed4r6rq:
     resolution: {integrity: sha512-nUil2de1gk/8ZB9IzIxFyGCiKeAYcHzJb/Tks2NzSkev1qH4MNR05DWYDSmW6vLT+y4mospLVyG/H5dyUd+KQQ==}
     peerDependencies:
@@ -50440,7 +50458,6 @@ packages:
       react-is: 17.0.2
       shallowequal: 1.1.0
       supports-color: 5.5.0
-    dev: false
 
   /styled-system/5.1.5:
     resolution: {integrity: sha512-7VoD0o2R3RKzOzPK0jYrVnS8iJdfkKsQJNiLRDjikOpQVqQHns/DXWaPZOH4tIKkhAT7I6wIsy9FWTWh2X3q+A==}

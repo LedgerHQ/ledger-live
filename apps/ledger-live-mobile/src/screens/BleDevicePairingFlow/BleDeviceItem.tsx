@@ -1,7 +1,7 @@
 import React, { useMemo } from "react";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { Flex, Icons, Text } from "@ledgerhq/native-ui";
-import { DroprightMedium } from "@ledgerhq/native-ui/assets/icons";
+import { ChevronRightMedium } from "@ledgerhq/native-ui/assets/icons";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { useTranslation } from "react-i18next";
 import { DeviceModelId } from "@ledgerhq/types-devices";
@@ -67,7 +67,7 @@ const BleDeviceItem = ({ deviceMeta, onSelect }: Props) => {
           <Text flex={1} ml={4} variant="large" fontWeight="semiBold">
             {deviceName}
           </Text>
-          <DroprightMedium size={20} color="primary.c80" />
+          <ChevronRightMedium size={20} color="primary.c80" />
         </Flex>
       </TouchableOpacity>
     </Flex>
