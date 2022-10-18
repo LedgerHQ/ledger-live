@@ -215,6 +215,8 @@ jobs:
   build-mobile-app-ios:
     runs-on: macos-latest
     name: "Build Ledger Live Mobile (Mac OS X)"
+    env:
+      NODE_OPTIONS: "--max-old-space-size=7168"
     steps:
       - uses: actions/checkout@v3
         with:
