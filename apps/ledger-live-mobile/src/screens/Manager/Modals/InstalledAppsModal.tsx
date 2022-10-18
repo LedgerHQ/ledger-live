@@ -2,7 +2,7 @@ import React, { memo, useCallback, useMemo, useEffect } from "react";
 
 import { Text, Flex, Button, BaseModal } from "@ledgerhq/native-ui";
 import { FlatList } from "react-native";
-import { App } from "@ledgerhq/types-live";
+import { App, DeviceInfo } from "@ledgerhq/types-live";
 import { State, Action } from "@ledgerhq/live-common/apps/index";
 import { Trans } from "react-i18next";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -12,7 +12,7 @@ import AppUninstallButton from "../AppsList/AppUninstallButton";
 import AppProgressButton from "../AppsList/AppProgressButton";
 
 type HeaderProps = {
-  illustration: any;
+  illustration: JSX.Element;
 };
 
 const Header = ({ illustration }: HeaderProps) => (
@@ -67,7 +67,7 @@ type RowProps = {
   state: State;
   dispatch: (_: Action) => void;
   setAppUninstallWithDependencies: (_: { dependents: App[]; app: App }) => void;
-  deviceInfo: any;
+  deviceInfo: DeviceInfo;
 };
 
 const Row = ({
@@ -130,8 +130,8 @@ type Props = {
   dispatch: (_: Action) => void;
   appList?: App[];
   setAppUninstallWithDependencies: (_: { dependents: App[]; app: App }) => void;
-  illustration: any;
-  deviceInfo: any;
+  illustration: JSX.Element;
+  deviceInfo: DeviceInfo;
 };
 
 const InstalledAppsModal = ({

@@ -1,7 +1,6 @@
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
-import { Transaction } from "@ledgerhq/live-common/families/solana/types";
-import { Account } from "@ledgerhq/types-live";
 import { useTheme } from "@react-navigation/native";
+import { StackScreenProps } from "@react-navigation/stack";
 import i18next from "i18next";
 import invariant from "invariant";
 import React, { useCallback, useState } from "react";
@@ -11,19 +10,15 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import Button from "../../components/Button";
 import TextInput from "../../components/FocusedTextInput";
 import KeyboardView from "../../components/KeyboardView";
+import { BaseComposite } from "../../components/RootNavigator/types/helpers";
+import { SendFundsNavigatorStackParamList } from "../../components/RootNavigator/types/SendFundsNavigator";
 import { ScreenName } from "../../const";
 
-type Props = {
-  navigation: any;
-  route: { params: RouteParams };
-};
+type NavigationProps = BaseComposite<
+  StackScreenProps<SendFundsNavigatorStackParamList, ScreenName.SolanaEditMemo>
+>;
 
-type RouteParams = {
-  account: Account;
-  transaction: Transaction;
-};
-
-function SolanaEditMemo({ navigation, route }: Props) {
+function SolanaEditMemo({ navigation, route }: NavigationProps) {
   const { colors } = useTheme();
   const { t } = useTranslation();
   const { model } = route.params.transaction;
@@ -45,6 +40,7 @@ function SolanaEditMemo({ navigation, route }: Props) {
         },
       },
     });
+    // @ts-expect-error FIXME: no current / next navigation param?
     navigation.navigate(ScreenName.SendSummary, {
       accountId: account.id,
       transaction: nextTx,

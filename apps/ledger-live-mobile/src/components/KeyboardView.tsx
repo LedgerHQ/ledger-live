@@ -14,7 +14,7 @@ const { DeviceInfo } = NativeModules;
 type Props = {
   style?: KeyboardAvoidingViewProps["style"];
   children: React.ReactNode;
-  behavior?: string;
+  behavior?: KeyboardAvoidingViewProps["behavior"];
 };
 const KeyboardView = React.memo<Props>(
   ({
@@ -23,10 +23,10 @@ const KeyboardView = React.memo<Props>(
     },
     children,
     behavior,
-  }: any) => {
+  }: Props) => {
     const isExperimental = useExperimental();
     const headerHeight = React.useContext(HeaderHeightContext) || 0;
-    let behaviorParam;
+    let behaviorParam: KeyboardAvoidingViewProps["behavior"] | undefined;
     let keyboardVerticalOffset = isExperimental ? ExperimentalHeaderHeight : 0;
 
     if (Platform.OS === "ios") {

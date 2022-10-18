@@ -245,7 +245,7 @@ function NominateSelectValidator({ navigation, route }: Props) {
         accountId: account.id,
       },
     });
-  }, [navigation, mainAccount]);
+  }, [navigation, account.id]);
   const drawerInfo = useMemo(
     () =>
       drawerValidator

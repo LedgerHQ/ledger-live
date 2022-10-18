@@ -3,7 +3,7 @@ import { Flex } from "@ledgerhq/native-ui";
 import { useDispatch, useSelector } from "react-redux";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import connectManager from "@ledgerhq/live-common/hw/connectManager";
-import { createAction } from "@ledgerhq/live-common/hw/actions/manager";
+import { createAction, Result } from "@ledgerhq/live-common/hw/actions/manager";
 import DeviceActionModal from "../../../../../components/DeviceActionModal";
 import SelectDevice from "../../../../../components/SelectDevice";
 import { TrackScreen, updateIdentify } from "../../../../../analytics";
@@ -60,13 +60,14 @@ const ConnectNanoScene = ({
   );
 
   const onResult = useCallback(
-    (info: any) => {
+    (info: Result) => {
       /** if list apps succeed we update settings with state of apps installed */
       if (info) {
-        const hasAnyAppinstalled =
+        const hasAnyAppinstalled = !!(
           info.result &&
           info.result.installed &&
-          info.result.installed.length > 0;
+          info.result.installed.length > 0
+        );
 
         dispatch(installAppFirstTime(hasAnyAppinstalled));
         setDevice(undefined);

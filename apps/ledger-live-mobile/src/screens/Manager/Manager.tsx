@@ -60,7 +60,12 @@ const Manager = ({ navigation, route }: NavigationProps) => {
 
   const optimisticState = useMemo(() => predictOptimisticState(state), [state]);
   const latestFirmware = useLatestFirmware(deviceInfo);
-  const [quitManagerAction, setQuitManagerAction] = useState<any>(null);
+  const [quitManagerAction, setQuitManagerAction] = useState<{
+    type: string;
+    payload?: object;
+    source?: string;
+    target?: string;
+  } | null>(null);
 
   const [isFirmwareUpdateOpen, setIsFirmwareUpdateOpen] = useState(false);
   useEffect(() => {
@@ -71,7 +76,7 @@ const Manager = ({ navigation, route }: NavigationProps) => {
     ) {
       setIsFirmwareUpdateOpen(true);
     }
-  }, [firmwareUpdate, latestFirmware]);
+  }, [device.modelId, deviceInfo, firmwareUpdate, latestFirmware]);
   /** general error state */
   const [error, setError] = useState<Error | null>(null);
   /** storage warning modal state */
@@ -118,8 +123,10 @@ const Manager = ({ navigation, route }: NavigationProps) => {
    * then trigger caught navigation action
    */
   const quitManager = useCallback(() => {
-    navigation.dispatch(quitManagerAction);
-    setQuitManagerAction(null);
+    if (quitManagerAction) {
+      navigation.dispatch(quitManagerAction);
+      setQuitManagerAction(null);
+    }
   }, [quitManagerAction, setQuitManagerAction, navigation]);
 
   const closeErrorModal = useCallback(() => setError(null), [setError]);
@@ -165,7 +172,7 @@ const Manager = ({ navigation, route }: NavigationProps) => {
         });
       }
     },
-    [installedApps, navigation, refreshDeviceInfo],
+    [device, installedApps, navigation, refreshDeviceInfo],
   );
 
   return (
@@ -199,7 +206,7 @@ const Manager = ({ navigation, route }: NavigationProps) => {
       />
       <GenericErrorBottomModal error={error} onClose={closeErrorModal} />
       <QuitManagerModal
-        isOpened={quitManagerAction}
+        isOpened={!!quitManagerAction}
         onConfirm={quitManager}
         onClose={closeQuitManagerModal}
         installQueue={installQueue}

@@ -363,13 +363,11 @@ export function useSignedTxHandler({
 export function useSignedTxHandlerWithoutBroadcast({
   onSuccess,
 }: {
-  onSuccess: (signedOp: any) => void;
+  onSuccess: (signedOp: { signedOperation: unknown }) => void;
 }) {
   const navigation = useNavigation();
   const route = useRoute();
   return useCallback(
-    // TODO: fix type error
-
     async ({ signedOperation, transactionSignError }) => {
       try {
         if (transactionSignError) {

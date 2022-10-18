@@ -108,7 +108,7 @@ const InfoModal = ({
   </BottomModal>
 );
 
-function BulletLine({ children }: { children: any }) {
+function BulletLine({ children }: { children?: React.ReactNode }) {
   const { colors } = useTheme();
   return (
     <View style={styles.bulletLine}>

@@ -32,7 +32,7 @@ type Props = {
   placeholderProps?: unknown;
   // as we can't render View inside Text, provide ability to pass
   // wrapper component from outside
-  Wrapper?: React.ComponentType<any>;
+  Wrapper?: React.ComponentType;
   subMagnitude?: number;
   joinFragmentsSeparator?: string;
   alwaysShowValue?: boolean;

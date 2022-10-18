@@ -2,11 +2,12 @@ import React, { memo, useMemo } from "react";
 import { Flex } from "@ledgerhq/native-ui";
 import { getCurrencyColor } from "@ledgerhq/live-common/currencies/index";
 import { useTheme } from "styled-components/native";
+import { Currency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { ensureContrast } from "../colors";
 import CurrencyIcon from "./CurrencyIcon";
 
 type Props = {
-  currency: any;
+  currency: Currency;
   size: number;
   hideParentIcon?: boolean;
   borderColor?: string;
@@ -24,11 +25,11 @@ const ParentCurrencyIcon = ({
     [colors, currency],
   );
   const parentColor = useMemo(() => {
-    if (!currency.parentCurrency) {
+    if (!(currency as TokenCurrency).parentCurrency) {
       return null;
     }
     return ensureContrast(
-      getCurrencyColor(currency.parentCurrency),
+      getCurrencyColor((currency as TokenCurrency).parentCurrency),
       colors.constant.white,
     );
   }, [colors, currency]);

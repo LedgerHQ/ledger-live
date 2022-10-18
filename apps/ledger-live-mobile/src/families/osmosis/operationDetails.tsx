@@ -12,6 +12,7 @@ import { BigNumber } from "bignumber.js";
 import { getAccountUnit } from "@ledgerhq/live-common/account/helpers";
 
 import { useSelector } from "react-redux";
+import { CosmosDelegationInfo } from "@ledgerhq/live-common/families/cosmos/types";
 import Section from "../../screens/OperationDetails/Section";
 import { urls } from "../../config/urls";
 import { discreetModeSelector, localeSelector } from "../../reducers/settings";
@@ -27,7 +28,12 @@ function getURLWhatIsThis(op: Operation): string | undefined {
 }
 
 type Props = {
-  extra: { [key: string]: any };
+  extra: {
+    validators: CosmosDelegationInfo[];
+    sourceValidator?: string;
+    memo?: string;
+    autoClaimedRewards?: BigNumber;
+  };
   type: OperationType;
   account: Account;
 };

@@ -87,7 +87,7 @@ const NftRow = memo(
         </View>
         <View style={styles.nftNameContainer}>
           <Skeleton
-            style={[styles.nftNameSkeleton, styles.nftName]}
+            style={[styles.nftNameSkeleton]}
             loading={status === "loading"}
           >
             <LText

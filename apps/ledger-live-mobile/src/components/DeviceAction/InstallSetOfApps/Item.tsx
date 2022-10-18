@@ -7,7 +7,7 @@ type Props = {
   appName: string;
   isActive?: boolean;
   installed?: boolean;
-  itemProgress: number;
+  itemProgress?: number;
   i: number;
 };
 

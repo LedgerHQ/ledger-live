@@ -8,7 +8,7 @@ import {
   ScrollView,
 } from "react-native";
 import { v4 as uuid } from "uuid";
-import { from, Observable } from "rxjs";
+import { from, Observable, Subscription } from "rxjs";
 import { listen } from "@ledgerhq/logs";
 import type { Log } from "@ledgerhq/logs";
 import { bufferTime, shareReplay } from "rxjs/operators";
@@ -23,6 +23,7 @@ import Switch from "../components/Switch";
 import { ScreenName } from "../const";
 import { SettingsNavigatorStackParamList } from "../components/RootNavigator/types/SettingsNavigator";
 import { StackNavigatorProps } from "../components/RootNavigator/types/helpers";
+import { Theme } from "../colors";
 
 const logsObservable = new Observable(o => listen(log => o.next(log))).pipe(
   shareReplay(1000),
@@ -35,7 +36,7 @@ const styles = StyleSheet.create({
   },
 });
 
-const mapLogToColor = (colors: any, log: Log) => {
+const mapLogToColor = (colors: Theme["colors"], log: Log) => {
   if (log.type.includes("error")) return colors.alert;
   if (log.type === "verbose") return colors.grey;
   if (log.type.includes("frame")) return colors.live;
@@ -101,7 +102,7 @@ class DebugBLE extends Component<
     bleframe: "0800000000",
     useBLEframe: false,
   };
-  sub: any;
+  sub: Subscription | undefined;
 
   componentDidMount() {
     this.sub = logsObservable.pipe(bufferTime(200)).subscribe(buffer => {

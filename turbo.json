@@ -15,17 +15,6 @@
         "build/**"
       ]
     },
-    "pack": {
-      "dependsOn": [
-        "^build"
-      ],
-      "outputs": [
-        "dist/**",
-        "lib/**",
-        "lib-es/**",
-        "build/**"
-      ]
-    },
     "lint": {
       "outputs": [],
       "env": [

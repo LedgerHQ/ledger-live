@@ -2,25 +2,30 @@ import React, { useCallback } from "react";
 import { StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useTheme } from "@react-navigation/native";
+import { StackScreenProps } from "@react-navigation/stack";
 import { TrackScreen } from "../../../analytics";
 import ValidateError from "../../../components/ValidateError";
+import {
+  BaseComposite,
+  BaseNavigation,
+} from "../../../components/RootNavigator/types/helpers";
+import { PolkadotRebondFlowParamList } from "./type";
+import { ScreenName } from "../../../const";
 
-type Props = {
-  navigation: any;
-  route: {
-    params: RouteParams;
-  };
-};
-type RouteParams = {
-  accountId: string;
-  deviceId: string;
-  transaction: any;
-  error: Error;
-};
-export default function ValidationError({ navigation, route }: Props) {
+type NavigationProps = BaseComposite<
+  StackScreenProps<
+    PolkadotRebondFlowParamList,
+    ScreenName.PolkadotRebondValidationError
+  >
+>;
+
+export default function ValidationError({
+  navigation,
+  route,
+}: NavigationProps) {
   const { colors } = useTheme();
   const onClose = useCallback(() => {
-    navigation.getParent().pop();
+    navigation.getParent<BaseNavigation>().pop();
   }, [navigation]);
   const retry = useCallback(() => {
     navigation.goBack();

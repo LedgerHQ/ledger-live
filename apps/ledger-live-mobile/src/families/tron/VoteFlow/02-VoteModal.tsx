@@ -1,4 +1,3 @@
-/* eslint-disable jsx-a11y/anchor-is-valid */
 import React, { memo, useCallback, useState, useMemo, useRef } from "react";
 import { View, StyleSheet, TextInput } from "react-native";
 import { Trans, useTranslation } from "react-i18next";

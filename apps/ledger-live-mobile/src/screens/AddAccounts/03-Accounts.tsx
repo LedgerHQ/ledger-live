@@ -141,7 +141,9 @@ function AddAccountsAccounts({
   useEffect(() => {
     startSubscription();
     return () => stopSubscription(false);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
   useEffect(() => {
     if (latestScannedAccount) {
       const hasAlreadyBeenScanned = scannedAccounts.some(
@@ -169,7 +171,13 @@ function AddAccountsAccounts({
         );
       }
     }
-  }, [latestScannedAccount]);
+  }, [
+    existingAccounts,
+    latestScannedAccount,
+    onlyNewAccounts,
+    scannedAccounts,
+    selectedIds,
+  ]);
   const startSubscription = useCallback(() => {
     const cryptoCurrency = isTokenCurrency(currency)
       ? currency.parentCurrency
@@ -207,7 +215,7 @@ function AddAccountsAccounts({
     setError(null);
     setCancelled(false);
     startSubscription();
-  }, []);
+  }, [startSubscription]);
   const stopSubscription = useCallback((syncUI = true) => {
     if (scanSubscription.current) {
       scanSubscription.current.unsubscribe();

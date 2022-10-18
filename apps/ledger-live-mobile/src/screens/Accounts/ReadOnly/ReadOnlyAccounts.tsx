@@ -46,7 +46,7 @@ function ReadOnlyAccounts({ navigation, route }: NavigationProps) {
     [listSupportedTokens],
   );
   const sortedCryptoCurrencies = useCurrenciesByMarketcap(cryptoCurrencies);
-  const accounts = useMemo(
+  const currencies = useMemo(
     () => sortedCryptoCurrencies.slice(0, maxReadOnlyCryptoCurrencies),
     [sortedCryptoCurrencies],
   );
@@ -84,9 +84,9 @@ function ReadOnlyAccounts({ navigation, route }: NavigationProps) {
       <Flex flex={1} bg={"background.main"}>
         <AccountsNavigationHeader readOnly />
         <FlatList
-          data={accounts}
+          data={currencies}
           renderItem={renderItem}
-          keyExtractor={(i: any) => i.id}
+          keyExtractor={(i: CryptoCurrency | TokenCurrency) => i.id}
           contentContainerStyle={{
             paddingHorizontal: 16,
             paddingBottom: TAB_BAR_SAFE_HEIGHT,

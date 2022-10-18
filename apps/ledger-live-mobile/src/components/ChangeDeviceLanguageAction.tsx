@@ -44,7 +44,7 @@ const ChangeDeviceLanguageAction: React.FC<Props> = ({
     if (onStart && device) {
       onStart();
     }
-  }, [device]);
+  }, [device, onStart]);
 
   return (
     <>

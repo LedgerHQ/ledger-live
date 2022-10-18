@@ -244,7 +244,7 @@ const useRatings = () => {
           (ratingsDataOfUser?.numberOfAppStartsSinceLastCrash ?? 0) + 1,
       });
     });
-  }, []);
+  }, [updateRatingsDataOfUserInStateAndStore]);
 
   const ratingsInitialStep = useMemo(
     () => (ratingsDataOfUser?.alreadyClosedFromEnjoyStep ? "enjoy" : "init"),
