@@ -1,5 +1,6 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useRef } from "react";
 import { useTranslation } from "react-i18next";
+import { useNavigation } from "@react-navigation/native";
 import styled from "styled-components/native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Flex, Text, Link as TextLink } from "@ledgerhq/native-ui";
@@ -8,7 +9,7 @@ import Video from "react-native-video";
 import { Linking } from "react-native";
 import Svg, { Defs, LinearGradient, Rect, Stop } from "react-native-svg";
 import { useDispatch } from "react-redux";
-import { ScreenName } from "../../../const";
+import { ScreenName, NavigatorName } from "../../../const";
 import StyledStatusBar from "../../../components/StyledStatusBar";
 import { urls } from "../../../config/urls";
 import { useTermsAccept } from "../../../logic/terms";
@@ -37,6 +38,7 @@ function OnboardingStepWelcome({ navigation }: any) {
   const dispatch = useDispatch();
   const { t } = useTranslation();
   const [, setAccepted] = useTermsAccept();
+  const nativeNavigation = useNavigation();
 
   const onLanguageSelect = useCallback(
     () => navigation.navigate(ScreenName.OnboardingLanguage),
@@ -72,6 +74,31 @@ function OnboardingStepWelcome({ navigation }: any) {
   }, [setAccepted, dispatch, navigation]);
 
   const videoMounted = !useIsAppInBackground();
+
+  const countTitle = useRef(0);
+  const countSubtitle = useRef(0);
+
+  const handleNavigateToFeatureFlagsSettings = useCallback(
+    nb => {
+      if (nb === "1") countTitle.current++;
+      else if (nb === "2") countSubtitle.current++;
+      if (countTitle.current > 3 /* && countSubtitle.current > 5*/) {
+        countTitle.current = 0;
+        countSubtitle.current = 0;
+        navigation.navigate(NavigatorName.Settings, {
+          screen: ScreenName.DebugFeatureFlags,
+        });
+      }
+      const timer = setTimeout(() => {
+        countTitle.current = 0;
+        countSubtitle.current = 0;
+      }, 15000);
+      return () => {
+        clearTimeout(timer);
+      };
+    },
+    [navigation],
+  );
 
   return (
     <ForceTheme selectedPalette={"dark"}>
@@ -136,10 +163,17 @@ function OnboardingStepWelcome({ navigation }: any) {
             color="neutral.c100"
             pb={3}
             style={{ textTransform: "uppercase" }}
+            onPress={() => handleNavigateToFeatureFlagsSettings("1")}
           >
             {t("onboarding.stepWelcome.title")}
           </Text>
-          <Text variant="large" fontWeight="medium" color="neutral.c80" pb={9}>
+          <Text
+            variant="large"
+            fontWeight="medium"
+            color="neutral.c80"
+            pb={9}
+            onPress={() => handleNavigateToFeatureFlagsSettings("2")}
+          >
             {t("onboarding.stepWelcome.subtitle")}
           </Text>
           <Button
