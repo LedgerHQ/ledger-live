@@ -4,33 +4,45 @@ import { useNavigation } from "@react-navigation/native";
 
 import {
   BottomDrawer,
-  Box,
   BoxedIcon,
   Button,
+  Flex,
   Icons,
   Text,
 } from "@ledgerhq/native-ui";
-import styled from "styled-components/native";
+import { useDispatch, useSelector } from "react-redux";
+import { ProtoNFT } from "@ledgerhq/types-live";
+import { decodeNftId } from "@ledgerhq/live-common/lib/nft/nftId";
 import { track, TrackScreen } from "../../analytics";
 import { NavigatorName, ScreenName } from "../../const";
+import { hideNftCollection } from "../../actions/settings";
+import { accountSelector } from "../../reducers/accounts";
 
 type Props = {
+  nftId?: string;
+  nftContract?: string;
   isOpened: boolean;
   onClose: () => void;
 };
-const HideNftDrawer = ({ isOpened, onClose }: Props) => {
+const HideNftDrawer = ({ nftId, nftContract, isOpened, onClose }: Props) => {
   const { t } = useTranslation();
   const navigation = useNavigation();
+  const dispatch = useDispatch();
+
+  const { accountId } = decodeNftId(nftId ?? "");
+  const account = useSelector(state => accountSelector(state, { accountId }));
+
   const onClickContinue = useCallback(() => {
     track("button_clicked", {
       button: "Continue",
       drawer: "HideCollectionModal",
     });
+    dispatch(hideNftCollection(`${account?.id}|${nftContract}`));
     onClose();
     navigation.navigate(NavigatorName.WalletTab, {
       screen: ScreenName.NftGallery,
     });
-  }, [navigation, onClose]);
+  }, [account?.id, dispatch, navigation, nftContract, onClose]);
 
   const onPressClose = useCallback(() => {
     track("button_clicked", {
@@ -47,7 +59,7 @@ const HideNftDrawer = ({ isOpened, onClose }: Props) => {
       onClose={onPressClose}
     >
       <TrackScreen category="Hide collection Drawer" type="drawer" />
-      <Box alignItems="center">
+      <Flex alignItems="center">
         <BoxedIcon Icon={<Icons.EyeNoneMedium />} />
 
         <Text variant="h4" fontWeight="semiBold" fontSize="24px" my={4}>
@@ -57,14 +69,27 @@ const HideNftDrawer = ({ isOpened, onClose }: Props) => {
         <Text variant="body" fontWeight="medium" color="neutral.c80">
           {t("wallet.nftGallery.hideNftModal.desc")}
         </Text>
-      </Box>
-      <Button type="main" size="large" onPress={onClickContinue} mt={4} mb={2}>
-        {t("common.continue")}
-      </Button>
 
-      <Button type="default" size="large" onPress={onClose}>
-        {t("common.cancel")}
-      </Button>
+        <Button
+          type="main"
+          size="large"
+          alignSelf="stretch"
+          onPress={onClickContinue}
+          mt={4}
+          mb={2}
+        >
+          {t("common.continue")}
+        </Button>
+
+        <Button
+          type="default"
+          size="large"
+          alignSelf="stretch"
+          onPress={onClose}
+        >
+          {t("common.cancel")}
+        </Button>
+      </Flex>
     </BottomDrawer>
   );
 };

@@ -1,4 +1,10 @@
-import React, { useMemo, useState, useCallback, useEffect } from "react";
+import React, {
+  useMemo,
+  useState,
+  useCallback,
+  useEffect,
+  ReactNode,
+} from "react";
 
 import {
   ScrollView,
@@ -6,6 +12,8 @@ import {
   StyleSheet,
   Platform,
   TouchableOpacity,
+  StyleProp,
+  ViewStyle,
 } from "react-native";
 import {
   useNftMetadata,
@@ -54,9 +62,9 @@ const Section = ({
   copiedString,
 }: {
   title: string;
-  value?: any;
-  style?: any;
-  children?: React$Node;
+  value?: string;
+  style?: StyleProp<ViewStyle>;
+  children?: ReactNode;
   copyAvailable?: boolean;
   copiedString?: string;
 }) => {
@@ -394,7 +402,8 @@ const NftViewer = ({ route }: Props) => {
         links={nftMetadata?.links}
         isOpen={bottomModalOpen}
         onClose={closeModal}
-        isCollectionShowedIngallery={true}
+        nftContract={nft.contract}
+        nftId={nft.id}
       />
     </View>
   );

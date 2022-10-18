@@ -1,7 +1,7 @@
 import React, { memo, useCallback, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigation, useTheme } from "@react-navigation/native";
-import { NFTMediaSize, NFTMetadata } from "@ledgerhq/types-live";
+import { NFTMediaSize, NFTMetadata, ProtoNFT } from "@ledgerhq/types-live";
 import {
   View,
   StyleSheet,
@@ -28,7 +28,8 @@ type Props = {
   isOpen: boolean;
   onClose: () => void;
   nftMetadata?: NFTMetadata;
-  isCollectionShowedIngallery?: boolean;
+  nftId?: string;
+  nftContract?: string;
 };
 
 const NftLink = ({
@@ -44,7 +45,7 @@ const NftLink = ({
   rightIcon?: React.ReactNode;
   title: string;
   subtitle?: string;
-  onPress?: () => any;
+  onPress?: () => void;
 }) => (
   <TouchableOpacity style={[styles.section, style]} onPress={onPress}>
     <View style={styles.sectionBody}>
@@ -61,11 +62,12 @@ const NftLink = ({
 );
 
 const NftLinksPanel = ({
+  nftContract,
+  nftId,
   links,
   isOpen,
   onClose,
   nftMetadata,
-  isCollectionShowedIngallery = true,
 }: Props) => {
   const { colors } = useTheme();
   const { t } = useTranslation();
@@ -103,10 +105,6 @@ const NftLinksPanel = ({
 
   const hide = useCallback(() => {
     setBottomHideCollectionOpen(true);
-  }, []);
-
-  const show = useCallback(() => {
-    console.log("show");
   }, []);
 
   const handlePressCustomImage = useCallback(() => {
@@ -165,39 +163,22 @@ const NftLinksPanel = ({
             />,
           ]
         : []),
-      ...(isCollectionShowedIngallery
-        ? [
-            <NftLink
-              leftIcon={
-                <View
-                  style={[
-                    styles.roundIconContainer,
-                    { backgroundColor: rgba(colors.live, 0.1) },
-                  ]}
-                >
-                  <Icons.EyeNoneMedium size={16} color={colors.live} />
-                </View>
-              }
-              title={t("nft.viewerModal.hide")}
-              onPress={hide}
-            />,
-          ]
-        : [
-            <NftLink
-              leftIcon={
-                <View
-                  style={[
-                    styles.roundIconContainer,
-                    { backgroundColor: rgba(colors.live, 0.1) },
-                  ]}
-                >
-                  <Icons.EyeMedium size={16} color={colors.live} />
-                </View>
-              }
-              title={t("nft.viewerModal.show")}
-              onPress={show}
-            />,
-          ]),
+      [
+        <NftLink
+          leftIcon={
+            <View
+              style={[
+                styles.roundIconContainer,
+                { backgroundColor: rgba(colors.live, 0.1) },
+              ]}
+            >
+              <Icons.EyeNoneMedium size={16} color={colors.live} />
+            </View>
+          }
+          title={t("nft.viewerModal.hide")}
+          onPress={hide}
+        />,
+      ],
       ...(showCustomImageButton
         ? [
             <NftLink
@@ -244,9 +225,7 @@ const NftLinksPanel = ({
     handleOpenOpenSea,
     handleOpenRarible,
     handleOpenExplorer,
-    isCollectionShowedIngallery,
     hide,
-    show,
     showCustomImageButton,
     handlePressCustomImage,
   ]);
@@ -270,6 +249,8 @@ const NftLinksPanel = ({
       {content}
 
       <HideNftDrawer
+        nftContract={nftContract}
+        nftId={nftId}
         isOpened={bottomHideCollectionOpen}
         onClose={closeHideModal}
       />
