@@ -1,11 +1,13 @@
-name: "[Bot] Testing Cosmos with 'Phosphore'"
+name: "[Bot] non-reg on develop with 'Phosphore'"
 on:
+  schedule:
+    - cron: "1 11 * * 2,4,6"
   push:
     branches:
-      - feat/cosmos
+      - develop
 
 concurrency:
-  group: bot-seed6-cosmos
+  group: bot-seed6
 
 jobs:
   start-runner:
@@ -56,9 +58,8 @@ jobs:
         id: bot
         timeout-minutes: 120
         with:
-          SEED: ${{ secrets.SEED6 }}
+          SHOW_LEGACY_NEW_ACCOUNT: "1"
           SLACK_API_TOKEN: ${{secrets.SLACK_API_TOKEN}}
           SLACK_ICON_EMOJI: ":bot-seed6:"
-          SLACK_CHANNEL: ci-atom-ll
-          BOT_FILTER_FAMILY: cosmos
-          BOT_ENVIRONMENT: testing
+          SEED: ${{ secrets.SEED6 }}
+          BOT_ENVIRONMENT: production
