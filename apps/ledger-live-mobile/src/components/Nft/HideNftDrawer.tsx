@@ -36,6 +36,7 @@ const HideNftDrawer = ({ nftId, nftContract, isOpened, onClose }: Props) => {
       button: "Continue",
       drawer: "HideCollectionModal",
     });
+
     dispatch(hideNftCollection(`${account?.id}|${nftContract}`));
     onClose();
     navigation.navigate(NavigatorName.WalletTab, {

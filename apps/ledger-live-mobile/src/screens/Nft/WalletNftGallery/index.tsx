@@ -1,11 +1,7 @@
 import React, { useMemo } from "react";
 import { Box } from "@ledgerhq/native-ui";
 import { useSelector } from "react-redux";
-import {
-  nftsByCollections,
-  orderByLastReceived,
-} from "@ledgerhq/live-common/lib/nft/helpers";
-import { ProtoNFT } from "@ledgerhq/types-live";
+import { orderByLastReceived } from "@ledgerhq/live-common/lib/nft/helpers";
 import { decodeNftId } from "@ledgerhq/live-common/lib/nft/nftId";
 import { NftList } from "../../../components/Nft/NftList";
 import { accountsSelector } from "../../../reducers/accounts";
@@ -18,18 +14,16 @@ const WalletNftGallery = () => {
 
   const hiddenNftCollections = useSelector(hiddenNftCollectionsSelector);
 
-  const nftCollections = useMemo(
+  const visibleNfts = useMemo(
     () =>
-      Object.entries(nftsByCollections(nfts)).filter(
-        ([id, contract]) =>
-          !hiddenNftCollections.includes(`${decodeNftId(id)}|${contract}`),
+      nfts.filter(
+        nft =>
+          !hiddenNftCollections.includes(
+            `${decodeNftId(nft.id).accountId}|${nft.contract}`,
+          ),
       ),
     [hiddenNftCollections, nfts],
-  ) as [string, ProtoNFT[]][];
-
-  const visibleNfts = Object.values(nftCollections)
-    .map(object => object[1])
-    .flat();
+  );
 
   const nftsOrdered = useMemo(
     () => orderByLastReceived(accounts, visibleNfts),
