@@ -54,6 +54,7 @@ runs:
     - name: bot logic
       env:
         SEED: ${{ inputs.SEED }}
+        BOT_ALLURE_FOLDER: allure
         BOT_REPORT_FOLDER: botreport
         VERBOSE_FILE: botreport/logs.txt
         GITHUB_RUN_ID: ${{ github.run_id }}
@@ -99,3 +100,9 @@ runs:
       with:
         name: report
         path: libs/ledger-live-common/report.json
+    - name: upload allure report
+      # TODO: for now, we put it in an artifact, replace by the actual allure integration
+      uses: actions/upload-artifact@v3
+      with:
+        name: allure
+        path: libs/ledger-live-common/allure
