@@ -823,7 +823,7 @@ importers:
       react-native-safe-area-context: 4.2.5_zqxy7fpkavjkgz5xll7ed4r6rq
       react-native-safe-area-view: 1.1.1_srnuj64tiypnivv2jxjgshvqka
       react-native-screens: 3.13.1_zqxy7fpkavjkgz5xll7ed4r6rq
-      react-native-share: 7.9.0
+      react-native-share: 7.9.1
       react-native-slider: 0.11.0
       react-native-splash-screen: 3.2.0_react-native@0.68.2
       react-native-svg: 12.3.0_zqxy7fpkavjkgz5xll7ed4r6rq
@@ -13700,7 +13700,7 @@ packages:
       glob: 7.2.0
       js-yaml: 3.14.1
       lodash: 4.17.21
-      plist: 3.0.6
+      plist: 3.0.5
       xcode: 2.1.0
     transitivePeerDependencies:
       - encoding
@@ -24150,7 +24150,7 @@ packages:
       mkdirp: 0.5.6
       move-concurrently: 1.0.1
       p-map: 3.0.0
-      promise-inflight: 1.0.1
+      promise-inflight: 1.0.1_bluebird@3.7.2
       rimraf: 2.7.1
       ssri: 7.1.1
       unique-filename: 1.1.1
@@ -39477,7 +39477,7 @@ packages:
     resolution: {integrity: sha512-v2kDEe57lecTulaDIuNTPy3Ry4gLGJ6Z1O3vE1krgXZNrsQ+LFTGHVxVjcXPs17LhbZVGedAJv8XZ1tvj5FvSg==}
 
   /log-symbols/1.0.2:
-    resolution: {integrity: sha512-mmPrW0Fh2fxOzdBbFv4g1m6pR72haFLPJ2G5SJEELf1y+iaQrDG6cWCPjy54RHYbZAt7X+ls690Kw62AdWXBzQ==}
+    resolution: {integrity: sha1-N2/3tY6jCGoPCfrMdGF+ylAeGhg=}
     engines: {node: '>=0.10.0'}
     dependencies:
       chalk: 1.1.3
@@ -42818,7 +42818,7 @@ packages:
       through: 2.3.8
 
   /pbkdf2/3.0.8:
-    resolution: {integrity: sha512-Bf7yBd61ChnMqPqf+PxHm34Iiq9M9Bkd/+JqzosPOqwG6FiTixtkpCs4PNd38+6/VYRvAxGe/GgPb4Q4GktFzg==}
+    resolution: {integrity: sha1-L4q/FuvsyCJ3lF10irodeHYfYeI=}
     engines: {node: '>=0.12'}
     dependencies:
       create-hmac: 1.1.7
@@ -45165,6 +45165,7 @@ packages:
     peerDependenciesMeta:
       bluebird:
         optional: true
+    dev: true
 
   /promise-inflight/1.0.1_bluebird@3.7.2:
     resolution: {integrity: sha512-6zWPyEOFaQBJYcGMHBKTKJ3u6TBsnMFOIZSa6ce1e/ZrrsOlnHRHbabMjLiBYKp+n44X9eUI6VUPaukCXHuG4g==}
@@ -46590,8 +46591,8 @@ packages:
       warn-once: 0.1.0
     dev: false
 
-  /react-native-share/7.9.0:
-    resolution: {integrity: sha512-I9RPp7Ph7dusPwN+/TgFq2V9vLVCN12gwUzpgM1eCoqTMN54dVWI+9k0loCgANv3CdajiKSOrGh+DTnsmhG9VA==}
+  /react-native-share/7.9.1:
+    resolution: {integrity: sha512-v4b6lD4YsiCJB14kjXons+d5cvvxgLv8OdBF0aP58X8Qqbcj81QNv1icAxiNmhxFx5OFYsu/E6v+o8S0GSaneQ==}
     dev: false
 
   /react-native-slider/0.11.0:
@@ -51329,7 +51330,7 @@ packages:
     dev: true
 
   /through/2.3.8:
-    resolution: {integrity: sha1-DdTJ/6q8NXlgsbckEV1+Doai4fU=}
+    resolution: {integrity: sha512-w89qg7PI8wAdvX60bMDP+bFoD5Dvhm9oLheFp5O4a2QF0cSBGsBX4qZmadPMvVqlLJBBci+WqGGOAPvcDeNSVg==}
 
   /through2-filter/3.0.0:
     resolution: {integrity: sha512-jaRjI2WxN3W1V8/FMZ9HKIBXixtiqs3SQSX4/YGIiP3gL6djW48VoZq9tDqeCWs3MT8YY5wb/zli8VW8snY1CA==}
@@ -55871,7 +55872,7 @@ packages:
     dev: false
 
   github.com/bitcoinjs/bip39/d8ea080a18b40f301d4e2219a2991cd2417e83c2:
-    resolution: {commit: d8ea080a18b40f301d4e2219a2991cd2417e83c2, repo: git+ssh://git@github.com/bitcoinjs/bip39.git, type: git}
+    resolution: {tarball: https://codeload.github.com/bitcoinjs/bip39/tar.gz/d8ea080a18b40f301d4e2219a2991cd2417e83c2}
     name: bip39
     version: 3.0.3
     dependencies:
