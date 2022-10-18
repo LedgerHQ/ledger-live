@@ -22,6 +22,7 @@
     "build:libs:force": "pnpm -r --filter=\"!./apps/**\" --filter=\"!ledger-live\" build",
     "build:actions": "pnpm turbo run build --filter=@actions/* --no-deps",
     "build:cli": "pnpm turbo run build --filter=live-cli",
+    "build:cli-live-bot": "pnpm turbo run build --filter=cli-live-bot",
     "build:llc": "pnpm turbo run build --filter=\"!./apps/**\" --scope=@ledgerhq/live-common --include-dependencies --no-deps",
     "build:lld": "pnpm turbo run build --filter=ledger-live-desktop",
     "build:lld:deps": "pnpm turbo run build --filter=\"ledger-live-desktop^...\"",
@@ -91,7 +92,8 @@
     "ui:icons": "pnpm --filter icons-ui",
     "ui:crypto-icons": "pnpm --filter crypto-icons-ui",
     "ui:shared": "pnpm --filter shared-ui",
-    "actions": "pnpm --filter @actions/*"
+    "actions": "pnpm --filter @actions/*",
+    "bootstrap-lib": "./tools/scripts/bootstrap-lib.sh"
   },
   "devDependencies": {
     "@changesets/changelog-github": "^0.4.6",

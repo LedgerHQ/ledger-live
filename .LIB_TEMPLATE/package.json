@@ -1,0 +1,34 @@
+{
+  "name": "@ledgerhq/TEMPLATE",
+  "version": "1.0.0",
+  "description": "",
+  "keywords": [
+    "Ledger"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/LedgerHQ/ledger-live.git"
+  },
+  "bugs": {
+    "url": "https://github.com/LedgerHQ/ledger-live/issues"
+  },
+  "homepage": "https://github.com/LedgerHQ/ledger-live/tree/develop/libs/TEMPLATE",
+  "publishConfig": {
+    "access": "public"
+  },
+  "main": "lib/index.js",
+  "module": "lib-es/index.js",
+  "types": "lib/index.d.ts",
+  "license": "Apache-2.0",
+  "dependencies": {},
+  "devDependencies": {},
+  "scripts": {
+    "clean": "rimraf lib lib-es",
+    "build": "tsc && tsc -m ES6 --outDir lib-es",
+    "prewatch": "pnpm build",
+    "watch": "tsc --watch",
+    "lint": "eslint ./src --no-error-on-unmatched-pattern --ext .ts,.tsx",
+    "lint:fix": "pnpm lint --fix",
+    "test": "jest"
+  }
+}
