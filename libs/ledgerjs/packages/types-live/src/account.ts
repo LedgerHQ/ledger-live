@@ -29,56 +29,46 @@ export type BalanceHistoryDataCache = {
   balances: number[];
 };
 
-/** A token belongs to an Account and share the parent account address */
-export type TokenAccount = {
-  type: "TokenAccount";
+interface SubAccountCommon {
   id: string;
   // id of the parent account this token account belongs to
   parentId: string;
-  token: TokenCurrency;
   balance: BigNumber;
-  spendableBalance: BigNumber;
-  // in case of compound, this is the associated balance for the associated ctoken
-  compoundBalance?: BigNumber;
   creationDate: Date;
+  // NOTE: How is it different from operations.length ?
   operationsCount: number;
   operations: Operation[];
   pendingOperations: Operation[];
-  starred: boolean;
   // Cache of balance history that allows a performant portfolio calculation.
   // currently there are no "raw" version of it because no need to at this stage.
   // could be in future when pagination is needed.
   balanceHistoryCache: BalanceHistoryCache;
   // Swap operations linked to this account
   swapHistory: SwapOperation[];
+  starred: boolean;
+  hidden?: boolean;
+}
+
+/** A token belongs to an Account and share the parent account address */
+export interface TokenAccount extends SubAccountCommon {
+  type: "TokenAccount";
+  token: TokenCurrency;
+  spendableBalance: BigNumber;
+  // in case of compound, this is the associated balance for the associated ctoken
+  compoundBalance?: BigNumber;
   approvals?: Array<{
     sender: string;
     value: string;
   }>;
-};
+}
 
 /** A child account belongs to an Account but has its own address */
-export type ChildAccount = {
+export interface ChildAccount extends SubAccountCommon {
   type: "ChildAccount";
-  id: string;
   name: string;
-  starred: boolean;
-  // id of the parent account this token account belongs to
-  parentId: string;
   currency: CryptoCurrency;
   address: string;
-  balance: BigNumber;
-  creationDate: Date;
-  operationsCount: number;
-  operations: Operation[];
-  pendingOperations: Operation[];
-  // Cache of balance history that allows a performant portfolio calculation.
-  // currently there are no "raw" version of it because no need to at this stage.
-  // could be in future when pagination is needed.
-  balanceHistoryCache: BalanceHistoryCache;
-  // Swap operations linked to this account
-  swapHistory: SwapOperation[];
-};
+}
 
 /** */
 export type Address = {

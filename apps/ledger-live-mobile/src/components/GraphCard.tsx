@@ -165,9 +165,7 @@ function GraphCard({
                             percent
                             show0Delta
                             valueChange={countervalueChange}
-                            // range={portfolio.range}
                           />
-                          <Text> </Text>
                           <Delta unit={unit} valueChange={countervalueChange} />
                         </>
                       )}

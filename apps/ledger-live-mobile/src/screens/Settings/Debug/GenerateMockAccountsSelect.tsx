@@ -1,11 +1,13 @@
 import React, { useCallback, useState } from "react";
 import { genAccount } from "@ledgerhq/live-common/mock/account";
 import { listSupportedCurrencies } from "@ledgerhq/live-common/currencies/index";
-import { useNavigation } from "@react-navigation/native";
+import { ParamListBase, useNavigation } from "@react-navigation/native";
 import { Alert, ScrollView } from "react-native";
 import { Button, Checkbox, Flex, Text } from "@ledgerhq/native-ui";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { StackNavigationProp } from "@react-navigation/stack";
+
 import SettingsRow from "../../../components/SettingsRow";
 import accountModel from "../../../logic/accountModel";
 import { saveAccounts } from "../../../db";
@@ -103,7 +105,7 @@ export const GenerateMockAccountSelectScreen = () => {
 };
 
 export default function GenerateMockAccount() {
-  const navigation = useNavigation();
+  const navigation = useNavigation<StackNavigationProp<ParamListBase>>();
 
   return (
     <SettingsRow
