@@ -24,10 +24,12 @@ import {
   importAccountsReduce,
   isUpToDateAccount,
   withoutToken,
+  enableToken,
   clearAccount,
   nestedSortAccounts,
   makeEmptyTokenAccount,
   ImportAccountsReduceInput,
+  isTokenAccount,
 } from "@ledgerhq/live-common/account/index";
 import type { State } from "./index";
 import accountModel from "../logic/accountModel";
@@ -35,9 +37,11 @@ import accountModel from "../logic/accountModel";
 export type AccountsState = {
   active: Account[];
 };
+
 const initialState: AccountsState = {
   active: [],
 };
+
 const handlers: Record<string, any> = {
   ACCOUNTS_IMPORT: (s, { state }) => state,
   ACCOUNTS_USER_IMPORT: (
@@ -108,6 +112,16 @@ const handlers: Record<string, any> = {
   CLEAN_CACHE: (state: AccountsState): AccountsState => ({
     active: state.active.map(clearAccount),
   }),
+  SHOW_TOKEN: (
+    state: AccountsState,
+    { payload: tokenId }: { payload: string },
+  ) => {
+    return {
+      active: state.active.map(activeAccount =>
+        enableToken(activeAccount, tokenId),
+      ),
+    };
+  },
   BLACKLIST_TOKEN: (
     state: AccountsState,
     {
@@ -115,19 +129,19 @@ const handlers: Record<string, any> = {
     }: {
       payload: string;
     },
-  ) => ({
-    active: state.active.map(a => withoutToken(a, tokenId)),
-  }),
+  ) => {
+    return { active: state.active.map(a => withoutToken(a, tokenId)) };
+  },
   DANGEROUSLY_OVERRIDE_STATE: (state: AccountsState): AccountsState => ({
     ...state,
   }),
 };
 // Selectors
-export const exportSelector = (s: any) => ({
+export const exportSelector = (s: State) => ({
   active: s.accounts.active.map(accountModel.encode),
 });
 
-export const accountsSelector = (s: any): Account[] => s.accounts.active;
+export const accountsSelector = (s: State): Account[] => s.accounts.active;
 
 // NB some components don't need to refresh every time an account is updated, usually it's only
 // when the balance/name/length/starred/swapHistory of accounts changes.
@@ -151,7 +165,7 @@ export const shallowAccountsSelector: OutputSelector<
   Account[]
 > = shallowAccountsSelectorCreator(accountsSelector, a => a);
 
-export const migratableAccountsSelector = (s: any): Account[] =>
+export const migratableAccountsSelector = (s: State): Account[] =>
   s.accounts.active.filter(canBeMigrated);
 
 export const flattenAccountsSelector = createSelector(
@@ -173,11 +187,33 @@ export const someAccountsNeedMigrationSelector = createSelector(
   accountsSelector,
   accounts => accounts.some(canBeMigrated),
 );
-export const currenciesSelector = createSelector(accountsSelector, accounts =>
-  uniq(flattenAccounts(accounts).map(a => getAccountCurrency(a))).sort((a, b) =>
-    a.name.localeCompare(b.name),
-  ),
-);
+export const currenciesSelector = createSelector(accountsSelector, accounts => {
+  console.log(
+    flattenAccounts(accounts)
+      .filter(account => {
+        console.log(account.hidden, account.id);
+        if (isTokenAccount(account)) {
+          return !account.hidden;
+        }
+
+        return true;
+      })
+      .map(a => getAccountCurrency(a)),
+  );
+
+  return uniq(
+    flattenAccounts(accounts)
+      .filter(account => {
+        if (isTokenAccount(account)) {
+          return !account.hidden;
+        }
+
+        return true;
+      })
+      .map(a => getAccountCurrency(a)),
+  ).sort((a, b) => a.name.localeCompare(b.name));
+});
+
 export const cryptoCurrenciesSelector = createSelector(
   accountsSelector,
   accounts =>
@@ -185,6 +221,7 @@ export const cryptoCurrenciesSelector = createSelector(
       a.name.localeCompare(b.name),
     ),
 );
+
 export const accountsTuplesByCurrencySelector = createSelector(
   accountsSelector,
   (_, { currency }) => currency,

@@ -39,7 +39,7 @@ export type AccountTuple = {
 export function getAccountTuplesForCurrency(
   currency: CryptoCurrency | TokenCurrency,
   allAccounts: Account[],
-  hideEmpty: boolean | null | undefined,
+  hideEmpty?: boolean,
 ): AccountTuple[] {
   if (currency.type === "TokenCurrency") {
     return allAccounts

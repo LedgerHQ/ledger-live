@@ -2,9 +2,15 @@ import React, { useCallback, useState, useMemo } from "react";
 import { Trans } from "react-i18next";
 import take from "lodash/take";
 import { StyleSheet, View, FlatList } from "react-native";
-import { useNavigation, useTheme } from "@react-navigation/native";
+import {
+  ParamListBase,
+  useNavigation,
+  useTheme,
+} from "@react-navigation/native";
 import { Account, SubAccount, TokenAccount } from "@ledgerhq/types-live";
 import useEnv from "@ledgerhq/live-common/hooks/useEnv";
+import { StackNavigationProp } from "@react-navigation/stack";
+
 import { listSubAccounts } from "@ledgerhq/live-common/account/index";
 import { listTokenTypesForCryptoCurrency } from "@ledgerhq/live-common/currencies/index";
 import { Button, Flex, Text } from "@ledgerhq/native-ui";
@@ -20,7 +26,7 @@ import TokenContextualModal from "../Settings/Accounts/TokenContextualModal";
 import perFamilySubAccountList from "../../generated/SubAccountList";
 import SectionTitle from "../WalletCentricSections/SectionTitle";
 
-const keyExtractor = (o: any) => o.id;
+const keyExtractor = (subAccount: SubAccount) => subAccount.id;
 
 const styles = StyleSheet.create({
   footer: {
@@ -58,7 +64,7 @@ export default function SubAccountsList({
   useEnv("HIDE_EMPTY_TOKEN_ACCOUNTS");
 
   const { colors } = useTheme();
-  const navigation = useNavigation();
+  const navigation = useNavigation<StackNavigationProp<ParamListBase>>();
   const [account, setAccount] = useState<TokenAccount | typeof undefined>();
   const [isCollapsed, setIsCollapsed] = useState(true);
   const subAccounts = listSubAccounts(parentAccount);
@@ -215,6 +221,15 @@ export default function SubAccountsList({
   if (!isToken && subAccounts.length === 0) {
     return null;
   }
+
+  console.log(subAccounts.map((sub) => sub.hidden))
+  console.log(
+    JSON.stringify(
+      subAccounts.map(sub => ({ id: sub.id, parentID: sub.parentId })),
+      null,
+      3,
+    ),
+  );
 
   return (
     <>

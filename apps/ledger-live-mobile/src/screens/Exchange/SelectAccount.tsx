@@ -47,6 +47,7 @@ export default function SelectAccount({ navigation, route }: Props) {
     () => (currency ? getAccountTuplesForCurrency(currency, accounts) : []),
     [currency, accounts],
   );
+
   const enhancedAccounts = useMemo(() => {
     const filteredAccounts = availableAccounts
       .map(t => t.account)

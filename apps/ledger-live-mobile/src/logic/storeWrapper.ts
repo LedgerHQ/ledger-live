@@ -5,26 +5,27 @@
 // It's based on https://github.com/jasonmerino/react-native-simple-store
 // with the new React-native-async-store package
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { KeyValuePair } from "@react-native-async-storage/async-storage/lib/typescript/types";
 import { merge } from "lodash";
 
 const CHUNKED_KEY = "_-_CHUNKED";
 const CHUNK_SIZE = 1000000;
 
-const getChunks = (str, size) => {
+const getChunks = (str: string, size: number) => {
   const strLength = str.length;
   const numChunks = Math.ceil(strLength / size);
-  const chunks = new Array(numChunks);
+  const chunks: string[] = new Array(numChunks);
   let i = 0;
   let o = 0;
 
   for (; i < numChunks; ++i, o += size) {
-    chunks[i] = str.substr(o, size);
+    chunks[i] = str.substring(o, o + size);
   }
 
   return chunks;
 };
 
-const stringifyPairs = pairs =>
+const stringifyPairs = (pairs: [string, unknown][]) =>
   pairs.reduce((acc, current) => {
     const key = current[0];
     const data = JSON.stringify(current[1]);
@@ -32,17 +33,21 @@ const stringifyPairs = pairs =>
     if (data.length > CHUNK_SIZE) {
       const chunks = getChunks(data, CHUNK_SIZE);
       const numberOfChunks = chunks.length;
+
       return [
         ...acc,
         [current[0], CHUNKED_KEY + numberOfChunks],
-        ...chunks.map((chunk, index) => [key + CHUNKED_KEY + index, chunk]),
+        ...chunks.map<[string, string]>((chunk, index) => [
+          key + CHUNKED_KEY + index,
+          chunk,
+        ]),
       ];
     }
 
     return [...acc, [key, data]];
-  }, []);
+  }, [] as string[][]);
 
-const getCompressedValue = async (key, value) => {
+const getCompressedValue = async (key: string, value: string | null) => {
   try {
     if (value && value.includes(CHUNKED_KEY)) {
       const numberOfChunk = Number(value.replace(CHUNKED_KEY, ""));
@@ -52,7 +57,7 @@ const getCompressedValue = async (key, value) => {
         keys.push(key + CHUNKED_KEY + i);
       }
 
-      let values = [];
+      let values: KeyValuePair[] = [];
 
       // multiget will failed when you got keys with a tons of data
       // it crash with 13 CHUNKS of 1MB string so we had splice it.
@@ -67,10 +72,11 @@ const getCompressedValue = async (key, value) => {
         (acc, current) => acc + current[1],
         "",
       );
+
       return JSON.parse(concatString);
     }
 
-    return JSON.parse(value);
+    return value ? JSON.parse(value) : value;
   } catch (e) {
     return undefined;
   }
@@ -82,7 +88,7 @@ const deviceStorage = {
    * @param {String|Array} key A key or array of keys
    * @return {Promise}
    */
-  async get(key) {
+  async get(key: string) {
     if (!Array.isArray(key)) {
       const value = await AsyncStorage.getItem(key);
       return getCompressedValue(key, value);
@@ -99,8 +105,8 @@ const deviceStorage = {
    * @param  {Any} value The value to save
    * @return {Promise}
    */
-  save(key, value) {
-    let pairs = [];
+  async save(key: string | [string, unknown][], value?: unknown) {
+    let pairs: [string, unknown][] = [];
 
     if (!Array.isArray(key)) {
       pairs.push([key, value]);
@@ -108,7 +114,7 @@ const deviceStorage = {
       pairs = key.map(pair => [pair[0], pair[1]]);
     }
 
-    return AsyncStorage.multiSet(stringifyPairs(pairs));
+    return AsyncStorage.multiSet(stringifyPairs(pairs) as [string, string][]);
   },
 
   /**
@@ -117,7 +123,7 @@ const deviceStorage = {
    * @param  {Value} value The value to update with
    * @return {Promise}
    */
-  update(key, value) {
+  async update(key: string, value: unknown) {
     return deviceStorage
       .get(key)
       .then(item =>
@@ -133,12 +139,12 @@ const deviceStorage = {
    * @param  {String|Array} key The key or an array of keys to be deleted
    * @return {Promise}
    */
-  async delete(key) {
+  async delete(key: string | string[]) {
     let keys;
     const existingKeys = await AsyncStorage.getAllKeys();
 
     if (!Array.isArray(key)) {
-      keys = existingKeys.filter(existingKey => existingKey.include(key));
+      keys = existingKeys.filter(existingKey => existingKey.includes(key));
     } else {
       keys = existingKeys.filter(existingKey =>
         key.some(keyToDelete => existingKey.includes(keyToDelete)),
@@ -152,7 +158,7 @@ const deviceStorage = {
    * Get all keys in AsyncStorage.
    * @return {Promise} A promise which when it resolves gets passed the saved keys in AsyncStorage.
    */
-  keys() {
+  async keys() {
     return AsyncStorage.getAllKeys().then(keys =>
       keys.filter(key => !key.includes(CHUNKED_KEY)),
     );
@@ -164,7 +170,7 @@ const deviceStorage = {
    * @param {Any} value The value to push onto the array
    * @return {Promise}
    */
-  push(key, value) {
+  async push(key: string, value: unknown) {
     return deviceStorage.get(key).then(currentValue => {
       if (currentValue === null) {
         // if there is no current value populate it with the new value
@@ -180,5 +186,11 @@ const deviceStorage = {
       );
     });
   },
+
+  /** clears the AsyncStorage */
+  clear() {
+    return AsyncStorage.clear();
+  },
 };
+
 export default deviceStorage;

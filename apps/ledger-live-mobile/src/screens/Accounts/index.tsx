@@ -56,7 +56,7 @@ function Accounts({ navigation, route }: Props) {
 
   const { params } = route;
 
-  const [account, setAccount] = useState<Account | undefined>(undefined);
+  const [account, setAccount] = useState<TokenAccount | undefined>(undefined);
   const flattenedAccounts = useMemo(
     () =>
       route?.params?.currencyId
@@ -157,11 +157,13 @@ function Accounts({ navigation, route }: Props) {
           }}
         />
         <MigrateAccountsBanner />
-        <TokenContextualModal
-          onClose={() => setAccount(undefined)}
-          isOpened={!!account}
-          account={account}
-        />
+        {account && (
+          <TokenContextualModal
+            onClose={() => setAccount(undefined)}
+            isOpened={!!account}
+            account={account}
+          />
+        )}
       </Flex>
     </TabBarSafeAreaView>
   );

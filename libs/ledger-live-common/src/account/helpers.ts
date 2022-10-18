@@ -320,13 +320,48 @@ export const accountWithMandatoryTokens = (
 export const withoutToken = (account: Account, tokenId: string): Account => {
   const { subAccounts } = account;
   if (!subAccounts) return account;
-  const tokenAccount = subAccounts.find(
-    (a) => a.type === "TokenAccount" && a.token.id === tokenId
-  );
+
+  const tokenAccount = subAccounts
+    .filter(isTokenAccount)
+    .find((a) => a.token.id === tokenId);
+
   if (!tokenAccount) return account;
+
+  const newSubAccounts = subAccounts.map((sub) => {
+    if (sub.id === tokenAccount.id) {
+      return { ...tokenAccount, hidden: true };
+    }
+
+    return sub;
+  });
+
   return {
     ...account,
-    subAccounts: subAccounts.filter((sa) => sa.id !== tokenAccount.id),
+    subAccounts: newSubAccounts,
+  };
+};
+
+export const enableToken = (account: Account, tokenId: string): Account => {
+  const { subAccounts } = account;
+  if (!subAccounts) return account;
+
+  const tokenAccount = subAccounts
+    .filter(isTokenAccount)
+    .find((a) => a.token.id === tokenId);
+
+  if (!tokenAccount) return account;
+
+  const newSubAccounts = subAccounts.map((sub) => {
+    if (sub.id === tokenAccount.id) {
+      return { ...tokenAccount, hidden: false };
+    }
+
+    return sub;
+  });
+
+  return {
+    ...account,
+    subAccounts: newSubAccounts,
   };
 };
 
