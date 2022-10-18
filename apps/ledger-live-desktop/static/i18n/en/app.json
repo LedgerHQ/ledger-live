@@ -2067,10 +2067,20 @@
   },
   "deviceLocalization": {
     "language": "Language",
-    "deviceLanguage": "Device Language",
+    "deviceLanguage": "Language",
     "changeLanguage": "Change language",
+    "changeDeviceLanguage": "Change your device language?",
+    "chooseLanguage": "Choose a language for your {{deviceName}}.",
+    "changeDeviceLanguagePrompt": {
+      "title": "{{language}} is also available for your {{deviceName}}",
+      "description": "Would you like to change its language to {{language}}?"
+    },
+    "firmwareUpdatePrompt": {
+      "title": "Set your {{deviceName}} in {{language}}?",
+      "description": "{{language}} is now available for your {{deviceName}}. You can set it now, or change your device language at any time from My Ledger."
+    },
     "allowLanguageInstallation": "Allow language installation",
-    "languageInstalled": "Language changed successfully",
+    "languageInstalled": "Language changed to {{language}}",
     "installingLanguage": "Installing language",
     "languages": {
       "english": "English",
@@ -4297,13 +4307,14 @@
       "4": {
         "deviceSelection": {
           "title": "What’s your device?",
-          "desc": "If you have a Nano S, you can try repairing your devices Firmware. For Nano X and Blue users, kindly contact Ledger support"
+          "desc": "If you’re trying to connect a Nano S, select the state displayed on your Nano. If you’re trying to connect a Nano S Plus or Nano X, <0>visit the Help Center</0>"
         },
         "notFixed": {
           "title": " USB connection problem still not fixed?",
           "desc": "If you've tried every possible solution, please reach out to Ledger Support. Otherwise, please follow the instructions of any solution you haven’t tried yet.",
           "back": "Back to portfolio",
-          "cta": "Contact Support"
+          "cta": "Contact Support",
+          "cta2": "Go Back"
         },
         "repair": {
           "title": "Repair your Nano S",

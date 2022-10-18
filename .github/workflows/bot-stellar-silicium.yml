@@ -1,4 +1,4 @@
-name: "[Bot] 'Stellar on Silicium'"
+name: "[Bot] Testing Stellar with 'Silicium'"
 on:
   push:
     branches:
@@ -61,3 +61,4 @@ jobs:
           SLACK_ICON_EMOJI: ":bot-seed3:"
           SLACK_CHANNEL: ci-xlm-ll
           BOT_FILTER_FAMILY: stellar
+          BOT_ENVIRONMENT: testing

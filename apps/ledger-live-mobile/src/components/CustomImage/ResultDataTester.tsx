@@ -99,7 +99,11 @@ export default class ResultDataTester extends React.Component<Props> {
     const { debug = false } = this.props;
     return (
       <>
-        <InjectedCodeDebugger debug={debug} injectedCode={injectedCode} />
+        <InjectedCodeDebugger
+          debug={debug}
+          injectedCode={injectedCode}
+          filename="resultDataTesting.ts"
+        />
         <Flex flex={0}>
           <WebView
             ref={c => (this.webViewRef = c)}

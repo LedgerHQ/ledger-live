@@ -16,18 +16,22 @@ import TabBarSafeAreaView, {
 // eslint-disable-next-line import/no-cycle
 import { AnalyticsContext } from "../../components/RootNavigator";
 
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const learnImg = require("../../images/illustration/Shared/_Learn.png");
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const appsImg = require("../../images/illustration/Shared/_Apps.png");
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const earnImg = require("../../images/illustration/Shared/_Earn.png");
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const mintImg = require("../../images/illustration/Shared/_Mint.png");
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const referralImgDark = require("../../images/illustration/Dark/_ReferralProgram.png");
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const referralImgLight = require("../../images/illustration/Light/_ReferralProgram.png");
+const images = {
+  light: {
+    learnImg: require("../../images/illustration/Light/_063.png"),
+    appsImg: require("../../images/illustration/Light/_086.png"),
+    earnImg: require("../../images/illustration/Light/_088.png"),
+    mintImg: require("../../images/illustration/Light/_087.png"),
+    referralImg: require("../../images/illustration/Light/_ReferralProgram.png"),
+  },
+  dark: {
+    learnImg: require("../../images/illustration/Dark/_063.png"),
+    appsImg: require("../../images/illustration/Dark/_086.png"),
+    earnImg: require("../../images/illustration/Dark/_088.png"),
+    mintImg: require("../../images/illustration/Dark/_087.png"),
+    referralImg: require("../../images/illustration/Dark/_ReferralProgram.png"),
+  },
+};
 
 const StyledSafeAreaView = styled(TabBarSafeAreaView)`
   background-color: ${({ theme }) => theme.colors.background.main};
@@ -72,9 +76,9 @@ function Discover() {
                 disabled: false,
                 Image: (
                   <Illustration
-                    size={130}
-                    darkSource={appsImg}
-                    lightSource={appsImg}
+                    size={110}
+                    darkSource={images.dark.appsImg}
+                    lightSource={images.light.appsImg}
                   />
                 ),
               },
@@ -97,9 +101,9 @@ function Discover() {
           disabled: false,
           Image: (
             <Illustration
-              size={130}
-              darkSource={learnImg}
-              lightSource={learnImg}
+              size={110}
+              darkSource={images.dark.learnImg}
+              lightSource={images.light.learnImg}
             />
           ),
         },
@@ -114,9 +118,9 @@ function Discover() {
           disabled: false,
           Image: (
             <Illustration
-              size={130}
-              darkSource={earnImg}
-              lightSource={earnImg}
+              size={110}
+              darkSource={images.dark.earnImg}
+              lightSource={images.light.earnImg}
             />
           ),
         },
@@ -131,9 +135,9 @@ function Discover() {
           disabled: false,
           Image: (
             <Illustration
-              size={130}
-              darkSource={mintImg}
-              lightSource={mintImg}
+              size={110}
+              darkSource={images.dark.mintImg}
+              lightSource={images.light.mintImg}
             />
           ),
         },
@@ -152,9 +156,9 @@ function Discover() {
                 disabled: false,
                 Image: (
                   <Illustration
-                    size={130}
-                    darkSource={referralImgDark}
-                    lightSource={referralImgLight}
+                    size={110}
+                    darkSource={images.dark.referralImg}
+                    lightSource={images.light.referralImg}
                   />
                 ),
               },
@@ -199,6 +203,14 @@ function Discover() {
               onPress={onPress}
               disabled={disabled}
               labelBadge={labelBadge}
+              imageContainerProps={{
+                position: "relative",
+                height: "auto",
+                alignItems: "center",
+                justifyContent: "center",
+                flex: 1,
+                paddingRight: 4,
+              }}
               Image={Image}
             />
           ),

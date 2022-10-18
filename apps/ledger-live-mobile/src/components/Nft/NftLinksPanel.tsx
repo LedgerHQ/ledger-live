@@ -91,6 +91,7 @@ const NftLinksPanel = ({ links, isOpen, onClose, nftMetadata }: Props) => {
       screen: ScreenName.CustomImageStep1Crop,
       params: {
         imageUrl: customImageUri,
+        device: null,
       },
     });
     onClose && onClose();

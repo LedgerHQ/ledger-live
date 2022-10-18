@@ -1,5 +1,25 @@
 # @ledgerhq/hw-transport-node-hid-singleton
 
+## 6.28.3
+
+### Patch Changes
+
+- [#1422](https://github.com/LedgerHQ/ledger-live/pull/1422) [`37d00208ab`](https://github.com/LedgerHQ/ledger-live/commit/37d00208abd18fc0f573370518a05e093f13f494) Thanks [@alexandremgo](https://github.com/alexandremgo)! - Refactor on listen HID devices on LLD:
+
+  - make the listenDevices definition command into TS, and rename into listenToHidDevices
+  - transform the ListenDevices component (that was mainly a useEffect returning null) into a hook useListenToHidDevices
+  - add the types-devices lib into LLD
+
+## 6.28.3-next.0
+
+### Patch Changes
+
+- [#1422](https://github.com/LedgerHQ/ledger-live/pull/1422) [`37d00208ab`](https://github.com/LedgerHQ/ledger-live/commit/37d00208abd18fc0f573370518a05e093f13f494) Thanks [@alexandremgo](https://github.com/alexandremgo)! - Refactor on listen HID devices on LLD:
+
+  - make the listenDevices definition command into TS, and rename into listenToHidDevices
+  - transform the ListenDevices component (that was mainly a useEffect returning null) into a hook useListenToHidDevices
+  - add the types-devices lib into LLD
+
 ## 6.28.2
 
 ### Patch Changes

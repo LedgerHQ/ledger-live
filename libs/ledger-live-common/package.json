@@ -4,7 +4,7 @@
   },
   "name": "@ledgerhq/live-common",
   "description": "Common ground for the Ledger Live apps",
-  "version": "27.3.2",
+  "version": "27.4.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/LedgerHQ/ledger-live.git"
@@ -68,7 +68,7 @@
     "build": "zx ./scripts/build-ts.mjs",
     "watch": "zx ./scripts/watch-ts.mjs",
     "updateAppSupportsQuitApp": "node scripts/updateAppSupportsQuitApp.js",
-    "prettier": "prettier --write 'src/**/*.?s' 'cli/src/**/*.?s'",
+    "prettier": "prettier --write 'src/**/*.?s'",
     "lint": "eslint src",
     "lint:fix": "pnpm lint --fix",
     "jest": "cross-env TZ=America/New_York jest",
@@ -108,7 +108,7 @@
     "https": false
   },
   "dependencies": {
-    "@cardano-foundation/ledgerjs-hw-app-cardano": "^5.0.0",
+    "@cardano-foundation/ledgerjs-hw-app-cardano": "^5.1.0",
     "@celo/connect": "^1.5.2",
     "@celo/contractkit": "^1.5.2",
     "@celo/utils": "^1.5.2",
@@ -160,6 +160,7 @@
     "@taquito/utils": "^13.0.1",
     "@types/bchaddrjs": "^0.4.0",
     "@types/bs58check": "^2.1.0",
+    "@types/pako": "^2.0.0",
     "@types/qs": "^6.9.7",
     "@walletconnect/client": "1.7.3",
     "@xstate/react": "^1.6.3",
@@ -207,6 +208,7 @@
     "minimatch": "^5.1.0",
     "numeral": "^2.0.6",
     "object-hash": "^2.2.0",
+    "pako": "^2.0.4",
     "performance-now": "^2.1.0",
     "prando": "^6.0.1",
     "qs": "^6.10.1",

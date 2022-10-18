@@ -1,6 +1,6 @@
 import { isTokenAccount } from "@ledgerhq/live-common/account/index";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
-import { Transaction } from "@ledgerhq/live-common/lib/generated/types";
+import { Transaction } from "@ledgerhq/live-common/generated/types";
 import { Account, AccountLike, TransactionCommon } from "@ledgerhq/types-live";
 
 export default function prepareSignTransaction(

@@ -2,10 +2,12 @@
 export type FeatureId =
   | "learn"
   | "pushNotifications"
+  | "llmNewDeviceSelection"
   | "llmUsbFirmwareUpdate"
   | "ratings"
   | "counterValue"
   | "deviceLocalization"
+  | "deviceInitialApps"
   | "buyDeviceFromLive"
   | "ptxSmartRouting"
   | "currencyOsmosis"
@@ -22,6 +24,7 @@ export type FeatureId =
   | "currencyFlareMobile"
   | "ptxSmartRoutingMobile"
   | "mockFeature"
+  | "syncOnboarding"
   | "walletConnectLiveApp"
   | "customImage"
   | "referralProgramDiscoverCard"
@@ -49,6 +52,8 @@ export type Feature = {
   enabledOverriddenForCurrentLanguage?: boolean;
   /** Whether the remote value of this object was overriden locally */
   overridesRemote?: boolean;
+  /** Whether the remote value of this object was overriden by an environment variable */
+  overriddenByEnv?: boolean;
   /** Additional params */
   params?: any;
 };
