@@ -1,4 +1,5 @@
 import { Page, Locator } from "@playwright/test";
+import { DeviceModelId } from "@ledgerhq/types-devices";
 import {
   deviceInfo155 as deviceInfo,
   deviceInfo210lo5,
@@ -66,8 +67,9 @@ export class DeviceAction {
   async accessManager(
     appDesc: string = "Bitcoin,Tron,Litecoin,Ethereum,Ripple,Stellar",
     installedDesc: string = "Bitcoin,Litecoin,Ethereum (outdated)",
+    deviceModelId?: DeviceModelId,
   ) {
-    const result = mockListAppsResult(appDesc, installedDesc, deviceInfo);
+    const result = mockListAppsResult(appDesc, installedDesc, deviceInfo, deviceModelId);
 
     await this.page.evaluate(
       args => {

@@ -11,7 +11,7 @@ import { ExchangeRate, Exchange } from "@ledgerhq/live-common/exchange/swap/type
 import { getProviderName } from "@ledgerhq/live-common/exchange/swap/utils/index";
 import { WrongDeviceForAccount, UpdateYourApp } from "@ledgerhq/errors";
 import { LatestFirmwareVersionRequired } from "@ledgerhq/live-common/errors";
-import { DeviceModelId } from "@ledgerhq/devices";
+import { DeviceModelId, getDeviceModel } from "@ledgerhq/devices";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import {
   getAccountUnit,
@@ -47,8 +47,9 @@ import { SWAP_VERSION } from "~/renderer/screens/exchange/Swap2/utils/index";
 import { context } from "~/renderer/drawers/Provider";
 import { track } from "~/renderer/analytics/segment";
 import { DrawerFooter } from "~/renderer/screens/exchange/Swap2/Form/DrawerFooter";
-import { Flex, Log, ProgressLoader } from "@ledgerhq/react-ui";
+import { Flex, Icons, Text as TextV3, Log, ProgressLoader } from "@ledgerhq/react-ui";
 import { withV3StyleProvider } from "~/renderer/styles/StyleProviderV3";
+import { FramedImageWithContext } from "../CustomImage/FramedImage";
 
 export const AnimationWrapper = styled.div`
   width: 600px;
@@ -806,3 +807,107 @@ export const renderBootloaderStep = ({ onAutoRepair }: { onAutoRepair: () => voi
     </Button>
   </Wrapper>
 );
+
+const ImageLoadingGenericWithoutStyleProvider: React.FC<{
+  title: string;
+  children?: React.ReactNode | undefined;
+  top?: React.ReactNode | undefined;
+  bottom?: React.ReactNode | undefined;
+  progress?: number;
+  backgroundPlaceholderText?: string;
+}> = ({ title, top, bottom, children, progress, backgroundPlaceholderText }) => {
+  return (
+    <Flex
+      flexDirection="column"
+      justifyContent="space-between"
+      alignItems="center"
+      flex={1}
+      alignSelf="stretch"
+    >
+      <Flex flex={1} flexDirection="column" alignItems={"center"}>
+        {top}
+      </Flex>
+      <Flex flexDirection={"column"} alignItems="center" alignSelf="stretch">
+        <TextV3
+          textAlign="center"
+          variant="h4Inter"
+          fontWeight="semiBold"
+          mb={12}
+          alignSelf="stretch"
+        >
+          {title}
+        </TextV3>
+        <FramedImageWithContext
+          loadingProgress={progress}
+          backgroundPlaceholderText={backgroundPlaceholderText}
+        >
+          {children}
+        </FramedImageWithContext>
+      </Flex>
+      <Flex flex={1} flexDirection="column" alignItems={"center"}>
+        {bottom}
+      </Flex>
+    </Flex>
+  );
+};
+const ImageLoadingGeneric = withV3StyleProvider(ImageLoadingGenericWithoutStyleProvider);
+
+export const renderImageLoadRequested = ({ t, device }: { t: TFunction; device: Device }) => {
+  return (
+    <ImageLoadingGeneric
+      title={t("customImage.steps.transfer.allowPreview", {
+        productName: device.deviceName || getDeviceModel(device.modelId)?.productName,
+      })}
+      progress={0}
+      backgroundPlaceholderText="load requested illustration placeholder"
+    />
+  );
+};
+
+export const renderLoadingImage = ({
+  t,
+  device,
+  progress,
+}: {
+  t: TFunction;
+  progress?: number;
+  device: Device;
+}) => {
+  return (
+    <ImageLoadingGeneric
+      title={t("customImage.steps.transfer.loadingPicture", {
+        productName: device.deviceName || getDeviceModel(device.modelId)?.productName,
+      })}
+      progress={progress}
+      backgroundPlaceholderText="image loading illustration placeholder"
+      bottom={
+        <Flex flexDirection="column" flex={1} justifyContent="flex-end" pb={8}>
+          <TextV3 textAlign="center" variant="bodyLineHeight" color="neutral.c60">
+            {t("customImage.steps.transfer.timeDisclaimer")}
+          </TextV3>
+        </Flex>
+      }
+    />
+  );
+};
+
+export const renderImageCommitRequested = ({ t, device }: { t: TFunction; device: Device }) => {
+  return (
+    <ImageLoadingGeneric
+      title={t("customImage.steps.transfer.confirmPicture", {
+        productName: device.deviceName || getDeviceModel(device.modelId)?.productName,
+      })}
+      backgroundPlaceholderText="commit requested illustration placeholder"
+      top={
+        <Flex flex={1} flexDirection="column" justifyContent="center" alignItems="center">
+          <Flex mb={3} p={4} backgroundColor="neutral.c30" borderRadius={999}>
+            <Icons.CheckAloneMedium size={16} color="success.c50" />
+          </Flex>
+          <TextV3 textAlign="center" color="neutral.c70" variant="bodyLineHeight">
+            {t("customImage.steps.transfer.pictureLoaded")}
+          </TextV3>
+        </Flex>
+      }
+    />
+  );
+};

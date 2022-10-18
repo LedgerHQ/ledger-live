@@ -5,7 +5,7 @@ import {
   WebViewErrorEvent,
   WebViewMessageEvent,
 } from "react-native-webview/lib/WebViewTypes";
-import { ImageProcessingError } from "./errors";
+import { ImageProcessingError } from "@ledgerhq/live-common/customImage/errors";
 import { injectedCode } from "./injectedCode/imageProcessing";
 import { InjectedCodeDebugger } from "./InjectedCodeDebugger";
 import { ImageBase64Data, ImageDimensions } from "./types";

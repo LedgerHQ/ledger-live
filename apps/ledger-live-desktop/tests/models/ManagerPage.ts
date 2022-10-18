@@ -15,6 +15,7 @@ export class ManagerPage {
   readonly uninstallAllAppsButton: Locator;
   readonly confirmButton: Locator;
   readonly installedAppEmptyState: Locator;
+  readonly customImageButton: Locator;
 
   constructor(page: Page) {
     this.page = page;
@@ -31,6 +32,7 @@ export class ManagerPage {
     this.uninstallAllAppsButton = page.locator('data-test-id=manager-uninstall-all-apps-button');
     this.confirmButton = page.locator('data-test-id=modal-confirm-button');
     this.installedAppEmptyState = page.locator('data-test-id=manager-no-apps-empty-state');
+    this.customImageButton = page.locator("data-test-id=manager-custom-image-button");
   }
 
   async goToInstalledAppTab() {
@@ -70,5 +72,10 @@ export class ManagerPage {
 
   async openFirmwareUpdateModal() {
     await this.firmwareUpdateButton.click();
+  }
+
+  async openCustomImage() {
+    await this.customImageButton.waitFor({ state: "attached" });
+    await this.customImageButton.click();
   }
 }

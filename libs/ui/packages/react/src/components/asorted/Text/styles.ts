@@ -88,6 +88,10 @@ export const textVariantStyle: Record<
     fontWeight: 500,
     "text-transform": "uppercase",
   },
+  h4Inter: {
+    fontFamily: "Inter, Sans",
+    fontWeight: 600,
+  },
   h5: {
     fontFamily: "Alpha, Inter, Sans",
     fontWeight: 500,
