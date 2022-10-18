@@ -23,10 +23,6 @@ const CollapsibleHeaderScrollView = ({
     syncScrollOffset(route.name);
   }, [route.name, syncScrollOffset]);
 
-  const onScrollEndDrag = useCallback(() => {
-    syncScrollOffset(route.name);
-  }, [route.name, syncScrollOffset]);
-
   return (
     <Animated.ScrollView
       scrollToOverflowEnabled={true}
@@ -38,7 +34,7 @@ const CollapsibleHeaderScrollView = ({
           useNativeDriver: true,
         },
       )}
-      onScrollEndDrag={onScrollEndDrag}
+      onScrollEndDrag={onMomentumScrollEnd}
       onMomentumScrollEnd={onMomentumScrollEnd}
       contentContainerStyle={[
         {

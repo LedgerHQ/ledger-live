@@ -24,10 +24,6 @@ function CollapsibleHeaderFlatList<T>({
     syncScrollOffset(route.name);
   }, [route.name, syncScrollOffset]);
 
-  const onScrollEndDrag = useCallback(() => {
-    syncScrollOffset(route.name);
-  }, [route.name, syncScrollOffset]);
-
   return (
     <Animated.FlatList<T>
       scrollToOverflowEnabled={true}
@@ -39,7 +35,7 @@ function CollapsibleHeaderFlatList<T>({
           useNativeDriver: true,
         },
       )}
-      onScrollEndDrag={onScrollEndDrag}
+      onScrollEndDrag={onMomentumScrollEnd}
       onMomentumScrollEnd={onMomentumScrollEnd}
       contentContainerStyle={[
         {

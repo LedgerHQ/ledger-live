@@ -1,11 +1,7 @@
 import React, { useCallback, useMemo, useState, memo } from "react";
 import { useSelector } from "react-redux";
-import { FlatList, LayoutChangeEvent } from "react-native";
-import Animated, {
-  useAnimatedScrollHandler,
-  useSharedValue,
-} from "react-native-reanimated";
-import { createNativeWrapper } from "react-native-gesture-handler";
+import { LayoutChangeEvent } from "react-native";
+import { useSharedValue } from "react-native-reanimated";
 import { useTranslation } from "react-i18next";
 import { useFocusEffect } from "@react-navigation/native";
 import { isAccountEmpty } from "@ledgerhq/live-common/account/index";
@@ -27,9 +23,7 @@ import {
   carouselVisibilitySelector,
 } from "../../reducers/settings";
 import { usePortfolio } from "../../actions/portfolio";
-import globalSyncRefreshControl from "../../components/globalSyncRefreshControl";
 import BackgroundGradient from "../../components/BackgroundGradient";
-
 import GraphCardContainer from "./GraphCardContainer";
 import Carousel from "../../components/Carousel";
 import TrackScreen from "../../analytics/TrackScreen";
@@ -41,9 +35,6 @@ import AddAccountsModal from "../AddAccounts/AddAccountsModal";
 import { useProviders } from "../Swap/SwapEntry";
 import CheckLanguageAvailability from "../../components/CheckLanguageAvailability";
 import CheckTermOfUseUpdate from "../../components/CheckTermOfUseUpdate";
-import TabBarSafeAreaView, {
-  TAB_BAR_SAFE_HEIGHT,
-} from "../../components/TabBar/TabBarSafeAreaView";
 import PortfolioEmptyState from "./PortfolioEmptyState";
 import SectionTitle from "../WalletCentricSections/SectionTitle";
 import SectionContainer from "../WalletCentricSections/SectionContainer";
@@ -54,14 +45,6 @@ import PostOnboardingEntryPointCard from "../../components/PostOnboarding/PostOn
 import CollapsibleHeaderFlatList from "../../components/WalletTab/CollapsibleHeaderFlatList";
 
 export { default as PortfolioTabIcon } from "./TabIcon";
-
-const AnimatedFlatListWithRefreshControl = createNativeWrapper(
-  Animated.createAnimatedComponent(globalSyncRefreshControl(FlatList)),
-  {
-    disallowInterruption: true,
-    shouldCancelWhenOutside: false,
-  },
-);
 
 type Props = {
   navigation: any;
@@ -109,9 +92,6 @@ function PortfolioScreen({ navigation }: Props) {
 
   const [graphCardEndPosition, setGraphCardEndPosition] = useState(0);
   const currentPositionY = useSharedValue(0);
-  const handleScroll = useAnimatedScrollHandler(event => {
-    currentPositionY.value = event.contentOffset.y;
-  });
 
   const onPortfolioCardLayout = useCallback((event: LayoutChangeEvent) => {
     const { y, height } = event.nativeEvent.layout;
@@ -259,12 +239,11 @@ function PortfolioScreen({ navigation }: Props) {
         currentPositionY={currentPositionY}
         graphCardEndPosition={graphCardEndPosition}
       />
-      <CollapsibleHeaderFlatList
+      <CollapsibleHeaderFlatList<React.ReactNode>
         data={data}
         renderItem={({ item }: { item: React.ReactNode }) => item}
         keyExtractor={(_: any, index: number) => String(index)}
         showsVerticalScrollIndicator={false}
-        // onScroll={handleScroll}
         testID={
           distribution.list && distribution.list.length
             ? "PortfolioAccountsList"
