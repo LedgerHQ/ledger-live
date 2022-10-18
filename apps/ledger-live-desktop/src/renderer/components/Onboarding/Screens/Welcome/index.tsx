@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useRef, useState } from "react";
 import { useHistory } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
@@ -16,7 +16,7 @@ import stayOffline from "./assets/stayOffline.png";
 import validateTransactions from "./assets/validateTransactions.png";
 
 import { registerAssets } from "~/renderer/components/Onboarding/preloadAssets";
-
+import { FeatureFlagsDrawerButton } from "~/renderer/screens/settings/sections/Developer/FeatureFlagsButton";
 import { hasCompletedOnboardingSelector, languageSelector } from "~/renderer/reducers/settings";
 
 const stepLogos = [accessCrypto, ownPrivateKey, stayOffline, validateTransactions, setupNano];
@@ -113,17 +113,44 @@ export function Welcome() {
     isLast: index === stepLogos.length - 1,
   }));
 
+  const countTitle = useRef(0);
+  const countSubtitle = useRef(0);
+  const [
+    isFeatureFlagsSettingsButtonDisplayed,
+    setIsFeatureFlagsSettingsButtonDisplayed,
+  ] = useState<boolean>(false);
+
+  const handleOpenFeatureFlagsDrawer = useCallback(nb => {
+    if (nb === "1") countTitle.current++;
+    else if (nb === "2") countSubtitle.current++;
+    if (countTitle.current > 4 && countSubtitle.current > 5) {
+      countTitle.current = 0;
+      countSubtitle.current = 0;
+      setIsFeatureFlagsSettingsButtonDisplayed(true);
+    }
+    const timer = setTimeout(() => {
+      countTitle.current = 0;
+      countSubtitle.current = 0;
+    }, 15000);
+    return () => {
+      clearTimeout(timer);
+    };
+  }, []);
+
   return (
     <WelcomeContainer>
       <LeftContainer>
         <Presentation>
           <Logos.LedgerLiveRegular color={colors.neutral.c100} />
-          <Text variant="h1" pt={10} pb={7}>
+          <Text variant="h1" pt={10} pb={7} onClick={() => handleOpenFeatureFlagsDrawer("1")}>
             {t("onboarding.screens.welcome.title")}
           </Text>
-          <Description variant="body">{t("onboarding.screens.welcome.description")}</Description>
+          <Description variant="body" onClick={() => handleOpenFeatureFlagsDrawer("2")}>
+            {t("onboarding.screens.welcome.description")}
+          </Description>
         </Presentation>
         <ProductHighlight>
+          {isFeatureFlagsSettingsButtonDisplayed && <FeatureFlagsDrawerButton />}
           <Button
             data-test-id="v3-onboarding-get-started-button"
             iconPosition="right"
