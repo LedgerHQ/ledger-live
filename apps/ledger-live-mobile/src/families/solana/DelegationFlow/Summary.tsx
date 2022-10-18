@@ -28,7 +28,7 @@ import React, {
   useState,
 } from "react";
 import { Trans } from "react-i18next";
-import { Animated, StyleSheet, View } from "react-native";
+import { Animated, StyleSheet, View, TextStyle, StyleProp } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Icon from "react-native-vector-icons/Feather";
 import { useSelector } from "react-redux";
@@ -551,7 +551,7 @@ const Words = ({
 }: {
   children: ReactNode;
   highlighted?: boolean;
-  style?: any;
+  style?: StyleProp<TextStyle>;
 }) => (
   <Text
     numberOfLines={1}

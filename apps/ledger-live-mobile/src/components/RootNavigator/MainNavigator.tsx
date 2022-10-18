@@ -55,9 +55,7 @@ export default function MainNavigator({
     callback => {
       // NB This is conditionally going to show the confirmation modal from the manager
       // in the event of having ongoing installs/uninstalls.
-      managerNavLockCallback
-        ? managerNavLockCallback(() => callback)
-        : callback();
+      managerNavLockCallback ? managerNavLockCallback(callback) : callback();
     },
     [managerNavLockCallback],
   );

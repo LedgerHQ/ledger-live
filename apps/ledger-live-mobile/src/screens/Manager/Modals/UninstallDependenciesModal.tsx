@@ -71,7 +71,7 @@ const UninstallDependenciesModal = ({
   }, [dispatch, onClose, name]);
 
   const renderDepLine = useCallback(
-    ({ item }: any) => (
+    ({ item }: { item: App }) => (
       <Flex
         flexDirection="row"
         position="relative"

@@ -400,6 +400,7 @@ export type SendFundsNavigatorStackParamList = {
     parentId?: string;
     account: Account;
     transaction: StellarTransaction;
+    memoType?: string;
     currentNavigation:
       | ScreenName.LendingWithdrawSummary
       | ScreenName.LendingSupplySummary

@@ -10,15 +10,24 @@ import { Flex, Text, Button } from "@ledgerhq/native-ui";
 import { App } from "@ledgerhq/types-live";
 import { urls } from "../../../config/urls";
 
-import { NavigatorName } from "../../../const";
+import { NavigatorName, ScreenName } from "../../../const";
 
 import AppIcon from "../AppsList/AppIcon";
 
 import BottomModal from "../../../components/BottomModal";
+import type {
+  BaseComposite,
+  StackNavigatorProps,
+} from "../../../components/RootNavigator/types/helpers";
+import { ManagerNavigatorStackParamList } from "../../../components/RootNavigator/types/ManagerNavigator";
+
+type NavigationProps = BaseComposite<
+  StackNavigatorProps<ManagerNavigatorStackParamList, ScreenName.ManagerMain>
+>;
 
 type Props = {
   state: State;
-  navigation: any;
+  navigation: NavigationProps["navigation"];
   disable: boolean;
 };
 

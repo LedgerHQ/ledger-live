@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { NativeModules } from "react-native";
 import { discoverDevices } from "@ledgerhq/live-common/hw/index";
+import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { lastConnectedDeviceSelector } from "../reducers/settings";
 import { knownDevicesSelector } from "../reducers/ble";
 import { AddAccountsNavigatorParamList } from "../components/RootNavigator/types/AddAccountsNavigator";
@@ -24,7 +25,7 @@ type Navigation =
     >;
 
 type Props = {
-  onResult: (device: any) => void;
+  onResult: (device: Device) => void;
   route?: Navigation["route"] & { params: { forceSelectDevice?: boolean } };
 };
 let usbTimeout: ReturnType<typeof setTimeout>;

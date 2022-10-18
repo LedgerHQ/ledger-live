@@ -72,7 +72,7 @@ const styles = StyleSheet.create({
   },
 });
 
-const OpCounterValue = ({ children }: { children: React.ReactNode }) => (
+const OpCounterValue = ({ children }: { children?: React.ReactNode }) => (
   <Text fontWeight={"medium"} numberOfLines={1} color="neutral.c70">
     {children}
   </Text>

@@ -72,7 +72,7 @@
     "watch": "zx ./scripts/watch-ts.mjs",
     "updateAppSupportsQuitApp": "node scripts/updateAppSupportsQuitApp.js",
     "prettier": "prettier --write 'src/**/*.?s'",
-    "lint": "eslint src",
+    "lint": "eslint src --cache",
     "lint:fix": "pnpm lint --fix",
     "jest": "cross-env TZ=America/New_York jest",
     "typecheck": "tsc --noEmit -p src/tsconfig.json",

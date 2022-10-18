@@ -31,7 +31,7 @@ const chainSteps = (
 ): Observable<StepEvent> =>
   Observable.create((o: Observer<unknown>) => {
     const obs: Observable<unknown> = steps.reduce(
-      (meta: Observable<any>, step: Step, i: number) =>
+      (meta: Observable<unknown>, step: Step, i: number) =>
         meta.pipe(
           tap(meta => {
             // we emit entering a new step
@@ -45,7 +45,11 @@ const chainSteps = (
             (
               meta, // for a given step, we chain the previous step result in. we also provide events of onDone taps (allow to interrupt the UI).
             ) =>
-              runStep(step, meta, onDoneO.pipe(filter(index => index === i))),
+              runStep(
+                step,
+                meta as Device & Record<string, unknown>,
+                onDoneO.pipe(filter(index => index === i)),
+              ),
           ),
           tap(meta => {
             // we need to emit globally the meta incremental updates
@@ -71,17 +75,19 @@ const chainSteps = (
     };
   });
 
+type Props = {
+  // as soon as meta is set, the DeviceJob starts
+  meta: Device | null | undefined;
+  steps: Step[];
+  onDone: (arg0: Record<string, unknown>) => void;
+  onCancel: () => void;
+  editMode?: boolean;
+  deviceModelId: DeviceModelId;
+  onStepEntered?: (arg0: number, arg1: Record<string, unknown>) => void;
+};
+
 class DeviceJob extends Component<
-  {
-    // as soon as meta is set, the DeviceJob starts
-    meta: Device | null | undefined;
-    steps: Step[];
-    onDone: (arg0: Record<string, unknown>) => void;
-    onCancel: () => void;
-    editMode?: boolean;
-    deviceModelId: DeviceModelId;
-    onStepEntered?: (arg0: number, arg1: Record<string, unknown>) => void;
-  },
+  Props,
   {
     meta: Record<string, unknown> | null | undefined;
     error: Error | null | undefined;
@@ -107,7 +113,7 @@ class DeviceJob extends Component<
     }
   }
 
-  componentDidUpdate(prevProps: any) {
+  componentDidUpdate(prevProps: Props) {
     const { meta } = this.props;
 
     if (meta !== prevProps.meta) {

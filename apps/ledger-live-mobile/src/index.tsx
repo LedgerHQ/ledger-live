@@ -601,14 +601,9 @@ const DeepLinkingNavigator = ({ children }: { children: React.ReactNode }) => {
 
 const AUTO_UPDATE_DEFAULT_DELAY = 1800 * 1000; // 1800 seconds
 
-export default class Root extends Component<
-  {
-    importDataString?: string;
-  },
-  {
-    appState: any;
-  }
-> {
+export default class Root extends Component<{
+  importDataString?: string;
+}> {
   initTimeout: ReturnType<typeof setTimeout> | undefined;
 
   componentWillUnmount() {

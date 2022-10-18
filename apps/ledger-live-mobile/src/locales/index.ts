@@ -28,6 +28,6 @@ export const zh = {
 export const pt = {
   common: require("./pt-BR/common.json"),
 };
-exports.ar = {
+export const ar = {
   common: require("./ar/common.json"),
 };

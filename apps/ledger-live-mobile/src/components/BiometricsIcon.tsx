@@ -4,7 +4,14 @@ import FaceID from "../icons/FaceID";
 import FaceIDFailed from "../icons/FaceIDFailed";
 import Fingerprint from "../icons/Fingerprint";
 
-const BiometricsIcon = ({ biometricsType, failed, ...props }: any) => {
+type Props = {
+  biometricsType?: string | null;
+  failed?: boolean;
+  size?: number;
+  color?: string;
+};
+
+const BiometricsIcon = ({ biometricsType, failed, ...props }: Props) => {
   switch (biometricsType) {
     case "TouchID":
       return <TouchID {...props} />;

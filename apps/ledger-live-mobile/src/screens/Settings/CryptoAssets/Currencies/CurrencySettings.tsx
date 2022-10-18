@@ -71,6 +71,7 @@ function EachCurrencySettings({
     navigation.setOptions({
       headerTitle: () => <CustomCurrencyHeader currency={currency} />,
     });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (

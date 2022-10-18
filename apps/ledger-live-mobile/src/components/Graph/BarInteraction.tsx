@@ -6,6 +6,10 @@ import {
   PanGestureHandler,
   State,
   LongPressGestureHandler,
+  HandlerStateChangeEvent,
+  PanGestureHandlerEventPayload,
+  LongPressGestureHandlerEventPayload,
+  GestureEvent,
 } from "react-native-gesture-handler";
 import { ScaleContinuousNumeric, ScaleTime } from "d3-scale";
 import type { Item, ItemArray } from "./types";
@@ -55,7 +59,11 @@ export default class BarInteraction extends Component<
       barOffsetY: y(value),
     };
   };
-  onHandlerStateChange = (e: any) => {
+  onHandlerStateChange = (
+    e: HandlerStateChangeEvent<
+      PanGestureHandlerEventPayload | LongPressGestureHandlerEventPayload
+    >,
+  ) => {
     const { nativeEvent } = e;
 
     if (nativeEvent.state === State.ACTIVE) {
@@ -75,7 +83,11 @@ export default class BarInteraction extends Component<
       });
     }
   };
-  onPanGestureEvent = (e: any) => {
+  onPanGestureEvent = (
+    e: GestureEvent<
+      PanGestureHandlerEventPayload | LongPressGestureHandlerEventPayload
+    >,
+  ) => {
     const r = this.collectHovered(e.nativeEvent.x);
     if (!r) return;
     this.setState(oldState => {

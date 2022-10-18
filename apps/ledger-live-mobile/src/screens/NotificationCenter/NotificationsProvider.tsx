@@ -46,7 +46,7 @@ export default function NotificationsProvider({ children }: Props) {
     },
   );
   const { pushToast } = useToasts();
-  const initDateRef = useRef();
+  const initDateRef = useRef<number>();
   const context = {
     language: locale,
     currencies,

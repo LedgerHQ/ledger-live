@@ -199,4 +199,4 @@ const styles = StyleSheet.create({
     fontSize: 13,
   },
 });
-export default memo(CollapsibleList);
+export default memo(CollapsibleList) as unknown as typeof CollapsibleList;

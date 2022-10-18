@@ -2,10 +2,11 @@ import React from "react";
 import Svg, { Defs, LinearGradient, Rect, Stop } from "react-native-svg";
 import { useTheme } from "styled-components/native";
 import { Flex } from "@ledgerhq/native-ui";
+import { StyleProp, ViewStyle } from "react-native";
 
 type Props = {
   color?: string;
-  containerStyle?: any;
+  containerStyle?: StyleProp<ViewStyle>;
   children: React.ReactNode;
 };
 

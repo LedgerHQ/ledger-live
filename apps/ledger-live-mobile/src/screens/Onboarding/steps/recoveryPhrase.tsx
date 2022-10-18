@@ -17,6 +17,7 @@ import StepLottieAnimation from "./setupDevice/scenes/StepLottieAnimation";
 import SeedWarning from "../shared/SeedWarning";
 import { StackNavigatorProps } from "../../../components/RootNavigator/types/helpers";
 import { OnboardingNavigatorParamList } from "../../../components/RootNavigator/types/OnboardingNavigator";
+import { Step } from "./setupDevice/scenes/BaseStepperView";
 
 // @TODO Replace
 const images = {
@@ -54,7 +55,7 @@ const scenes = [
   ExistingRecovery,
   ExistingRecoveryStep1,
   ExistingRecoveryStep2,
-];
+] as Step[];
 
 type NavigationProps = StackNavigatorProps<
   OnboardingNavigatorParamList,
@@ -166,7 +167,7 @@ function OnboardingStepRecoveryPhrase() {
         },
       },
     ],
-    [],
+    [deviceModelId, theme],
   );
 
   const nextPage = useCallback(() => {
