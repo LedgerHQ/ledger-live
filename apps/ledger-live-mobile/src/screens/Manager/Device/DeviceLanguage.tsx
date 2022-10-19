@@ -1,4 +1,4 @@
-import { Flex, Icons, Link, Text } from "@ledgerhq/native-ui";
+import { Icons, Text } from "@ledgerhq/native-ui";
 import React, { useCallback, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Language, DeviceInfo } from "@ledgerhq/types-live";

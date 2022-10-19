@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Flex, Icons, Link, Text } from "@ledgerhq/native-ui";
+import { Icons } from "@ledgerhq/native-ui";
 import { Device } from "@ledgerhq/types-devices";
 import { useTranslation } from "react-i18next";
 
