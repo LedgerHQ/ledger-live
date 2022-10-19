@@ -19,6 +19,8 @@ import Carousel from "~/renderer/components/Carousel";
 import AssetDistribution from "~/renderer/components/AssetDistribution";
 import MigrationBanner from "~/renderer/modals/MigrateAccounts/Banner";
 import ClearCacheBanner from "~/renderer/components/ClearCacheBanner";
+import { usePostOnboardingEntryPointVisibleOnWallet } from "@ledgerhq/live-common/postOnboarding/hooks/index";
+import useOpenPostOnboardingDrawerCallback from "~/renderer/hooks/useOpenPostOnboardingDrawerCallback";
 
 import { saveSettings } from "~/renderer/actions/settings";
 import { useDispatch, useSelector } from "react-redux";
@@ -38,6 +40,19 @@ export const TopBannerContainer: ThemedComponent<{}> = styled.div`
   }
 `;
 
+const PostOnboardingHubTriggerPlaceHolder: ThemedComponent<{}> = styled.div`
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: row;
+  cursor: pointer;
+  background: ${p => p.theme.colors.palette.background.paper};
+  margin-bottom: 20px;
+`;
+
 export default function DashboardPage() {
   const { t } = useTranslation();
   const dispatch = useDispatch();
@@ -52,6 +67,7 @@ export default function DashboardPage() {
   const totalOperations = useMemo(() => accounts.reduce((sum, a) => sum + a.operations.length, 0), [
     accounts,
   ]);
+  const isPostOnboardingBannerVisible = usePostOnboardingEntryPointVisibleOnWallet();
 
   const onAccountClick = useCallback(
     account => {
@@ -78,6 +94,8 @@ export default function DashboardPage() {
     [hiddenNftCollections],
   );
 
+  const handleTriggerPostOnboardingHub = useOpenPostOnboardingDrawerCallback();
+
   return (
     <>
       <TopBannerContainer>
@@ -86,6 +104,14 @@ export default function DashboardPage() {
         <CurrencyDownStatusAlert currencies={currencies} hideStatusIncidents />
       </TopBannerContainer>
       {showCarousel ? <Carousel /> : null}
+      {isPostOnboardingBannerVisible && (
+        <PostOnboardingHubTriggerPlaceHolder
+          onClick={handleTriggerPostOnboardingHub}
+          data-test-id="postonboarding-banner-entry-point"
+        >
+          {"THIS IS A PLACE HOLDER TO ACCESS POST ONBOARDING HUB CLICK ME!"}
+        </PostOnboardingHubTriggerPlaceHolder>
+      )}
       <TrackPage
         category="Portfolio"
         totalAccounts={totalAccounts}

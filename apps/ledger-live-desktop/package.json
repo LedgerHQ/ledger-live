@@ -112,7 +112,7 @@
     "react-markdown": "^4.3.0",
     "react-motion": "^0.5.2",
     "react-prismazoom": "^3.0.0",
-    "react-redux": "^7.2.6",
+    "react-redux": "^7.2.9",
     "react-router": "^5.2.0",
     "react-router-dom": "^5.2.0",
     "react-select": "^3.2.0",

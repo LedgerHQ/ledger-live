@@ -7,7 +7,6 @@ import SyncOnboardingDeviceConnection, {
 } from "./DeviceConnection";
 import SyncOnboardingManual from "./Manual";
 import CompletionScreen from "./Manual/CompletionScreen";
-import PostOnboardingScreen from "./PostOnboardingScreen";
 
 export type SyncOnboardingDeviceConnectionRouteProps = RouteComponentProps<
   SyncOnboardingDeviceConnectionProps
@@ -20,7 +19,6 @@ const SyncOnboarding = () => {
       <Switch>
         <Route exact path={[`${path}/manual`]} render={() => <SyncOnboardingManual />} />
         <Route exact path={`${path}/completion`} render={() => <CompletionScreen />} />
-        <Route exact path={`${path}/post-onboarding`} render={() => <PostOnboardingScreen />} />
         <Route
           exact
           path={[`${path}/:deviceModelId`, `${path}/connection/:deviceModelId`]}
