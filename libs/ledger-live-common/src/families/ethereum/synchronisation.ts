@@ -264,7 +264,7 @@ const txToOps =
                 id: `${id}-${hash}-i${i}`,
                 hash,
                 type: "IN",
-                actionValue,
+                value: actionValue,
                 fee,
                 blockHeight,
                 blockHash,
