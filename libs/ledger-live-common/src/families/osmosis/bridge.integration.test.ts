@@ -12,7 +12,6 @@ import {
   NotEnoughBalance,
   AmountRequired,
 } from "@ledgerhq/errors";
-import { ClaimRewardsFeesWarning } from "../../errors";
 import invariant from "invariant";
 import type { Transaction } from "./types";
 import transactionTransformer from "./transaction";
