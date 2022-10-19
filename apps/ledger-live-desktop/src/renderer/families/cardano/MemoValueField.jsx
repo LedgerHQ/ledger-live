@@ -6,17 +6,20 @@ import Input from "~/renderer/components/Input";
 import invariant from "invariant";
 import type { Account } from "@ledgerhq/types-live";
 import type { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
+import { track } from "~/renderer/analytics/segment";
 
 const MemoValueField = ({
   onChange,
   account,
   transaction,
   status,
+  trackProperties = {},
 }: {
   onChange: string => void,
   account: Account,
   transaction: Transaction,
   status: TransactionStatus,
+  trackProperties?: object,
 }) => {
   const { t } = useTranslation();
   invariant(transaction.family === "cardano", "Memo: cardano family expected");
@@ -25,13 +28,18 @@ const MemoValueField = ({
 
   const onMemoValueChange = useCallback(
     memo => {
+      track("button_clicked", {
+        ...trackProperties,
+        button: "input",
+        memo,
+      });
       onChange(
         bridge.updateTransaction(transaction, {
           memo,
         }),
       );
     },
-    [onChange, transaction, bridge],
+    [trackProperties, onChange, bridge, transaction],
   );
 
   return (

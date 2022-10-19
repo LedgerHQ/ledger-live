@@ -9,6 +9,7 @@ import { useFeesStrategy } from "@ledgerhq/live-common/families/ethereum/react";
 import { getGasLimit } from "@ledgerhq/live-common/families/ethereum/transaction";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { context } from "~/renderer/drawers/Provider";
+import { track } from "~/renderer/analytics/segment";
 
 const hasAdvancedStrategy = transaction => {
   return !["slow", "medium", "fast"].includes(transaction.feesStrategy);
@@ -27,8 +28,7 @@ const getAdvancedStrategy = transaction => {
 };
 
 const Root = (props: *) => {
-  const { transaction } = props;
-  const { account, updateTransaction } = props;
+  const { transaction, account, updateTransaction, trackProperties = {} } = props;
   const bridge = getAccountBridge(account);
   const { state: drawerState, setDrawer } = React.useContext(context);
 
@@ -44,11 +44,21 @@ const Root = (props: *) => {
     const newAdvancedStrategy = getAdvancedStrategy(transaction);
     if (newAdvancedStrategy) {
       setAdvancedStrategy(newAdvancedStrategy);
+      track("button_clicked", {
+        ...trackProperties,
+        ...newAdvancedStrategy,
+        button: "advanced",
+      });
     }
-  }, [transaction, setAdvancedStrategy]);
+  }, [transaction, setAdvancedStrategy, trackProperties]);
 
   const onFeeStrategyClick = useCallback(
     ({ amount, feesStrategy }) => {
+      track("button_clicked", {
+        ...trackProperties,
+        button: feesStrategy,
+        gasPrice: amount,
+      });
       updateTransaction(transaction =>
         bridge.updateTransaction(transaction, { gasPrice: amount, feesStrategy }),
       );
@@ -58,9 +68,24 @@ const Root = (props: *) => {
     [updateTransaction, bridge],
   );
 
+  const setAdvanceModeAndTrack = useCallback(
+    state => {
+      track("button_clicked", {
+        ...trackProperties,
+        button: state ? "advanced" : "standard",
+      });
+      setAdvanceMode(state);
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [updateTransaction, bridge],
+  );
   return (
     <>
-      <SendFeeMode isAdvanceMode={isAdvanceMode} setAdvanceMode={setAdvanceMode} />
+      <SendFeeMode
+        isAdvanceMode={isAdvanceMode}
+        setAdvanceMode={setAdvanceModeAndTrack}
+        trackProperties={trackProperties}
+      />
       {isAdvanceMode ? (
         <>
           <GasPriceField {...props} />

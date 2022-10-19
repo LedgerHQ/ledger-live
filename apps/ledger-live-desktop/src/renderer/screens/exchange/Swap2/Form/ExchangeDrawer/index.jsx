@@ -11,6 +11,7 @@ import { useDispatch } from "react-redux";
 import styled from "styled-components";
 import { updateAccountWithUpdater } from "~/renderer/actions/accounts";
 import TrackPage from "~/renderer/analytics/TrackPage";
+import { track } from "~/renderer/analytics/segment";
 import Box from "~/renderer/components/Box";
 import Button from "~/renderer/components/Button";
 import {
@@ -67,7 +68,12 @@ export default function ExchangeDrawer({ swapTransaction, exchangeRate, onComple
 
       // Consider the swap as cancelled (on provider perspective) in case of error
       postSwapCancelled({ provider: exchangeRate.provider, swapId });
-
+      track("error_message", {
+        message: "drawer_error",
+        page: "Page Swap Drawer",
+        flow: "swap",
+        error,
+      });
       setError(error);
     },
     [exchangeRate],

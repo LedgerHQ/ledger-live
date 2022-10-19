@@ -10,12 +10,14 @@ import { getAccountUnit } from "@ledgerhq/live-common/account/index";
 import InputCurrency from "~/renderer/components/InputCurrency";
 import Box from "~/renderer/components/Box";
 import GenericContainer from "~/renderer/components/FeesContainer";
+import { track } from "~/renderer/analytics/segment";
 
 type Props = {
   account: Account,
   transaction: Transaction,
   status: TransactionStatus,
   onChange: Transaction => void,
+  trackProperties?: object,
 };
 
 const InputRight = styled(Box).attrs(() => ({
@@ -26,16 +28,22 @@ const InputRight = styled(Box).attrs(() => ({
   pr: 3,
 }))``;
 
-function FeesField({ account, transaction, onChange, status }: Props) {
+function FeesField({ account, transaction, onChange, status, trackProperties = {} }: Props) {
   invariant(transaction.family === "ripple", "FeeField: ripple family expected");
 
   const bridge = getAccountBridge(account);
 
-  const onChangeFee = useCallback(fee => onChange(bridge.updateTransaction(transaction, { fee })), [
-    transaction,
-    onChange,
-    bridge,
-  ]);
+  const onChangeFee = useCallback(
+    fee => {
+      track("button_clicked", {
+        ...trackProperties,
+        fee,
+        button: "input",
+      });
+      onChange(bridge.updateTransaction(transaction, { fee }));
+    },
+    [trackProperties, onChange, bridge, transaction],
+  );
 
   const { errors } = status;
   const { fee: feeError } = errors;
