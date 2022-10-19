@@ -2,7 +2,7 @@ import React, { memo, useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigation } from "@react-navigation/native";
 
-import { BottomDrawer, BoxedIcon, Button, Icons } from "@ledgerhq/native-ui";
+import { BottomDrawer, Button, Icons } from "@ledgerhq/native-ui";
 import { useDispatch, useSelector } from "react-redux";
 import { decodeNftId } from "@ledgerhq/live-common/lib/nft/nftId";
 import { track, TrackScreen } from "../../analytics";

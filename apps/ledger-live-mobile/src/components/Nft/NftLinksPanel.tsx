@@ -12,7 +12,7 @@ import {
 } from "react-native";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { Box, Flex, Icons, Text } from "@ledgerhq/native-ui";
-import { useTheme } from "styled-components/native";
+import styled, { useTheme } from "styled-components/native";
 import { getMetadataMediaTypes } from "../../logic/nft";
 import { NavigatorName, ScreenName } from "../../const";
 import ExternalLinkIcon from "../../icons/ExternalLink";
@@ -33,6 +33,12 @@ type Props = {
   nftContract?: string;
 };
 
+const LinkTouchable = styled(TouchableOpacity)`
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+`;
+
 const NftLink = ({
   style,
   leftIcon,
@@ -50,7 +56,7 @@ const NftLink = ({
   onPress?: () => void;
   primary?: boolean;
 }) => (
-  <TouchableOpacity style={[styles.section, style]} onPress={onPress}>
+  <LinkTouchable style={style} onPress={onPress}>
     <Flex flexDirection="row" alignItems="center">
       <Box mr={16}>{leftIcon}</Box>
       <Flex flexDirection="column">
@@ -69,7 +75,7 @@ const NftLink = ({
       </Flex>
     </Flex>
     {rightIcon}
-  </TouchableOpacity>
+  </LinkTouchable>
 );
 
 const NftLinksPanel = ({
@@ -298,29 +304,8 @@ const styles = StyleSheet.create({
     paddingTop: 64,
     paddingBottom: 60,
   },
-  section: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-  },
-  sectionBody: {
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  sectionTitle: {
-    fontSize: 16,
-  },
-  sectionSubTitle: {
-    fontSize: 13,
-  },
   sectionMargin: {
     marginBottom: 30,
-  },
-  sectionMarginTop: {
-    marginTop: 30,
-  },
-  icon: {
-    marginRight: 16,
   },
   roundIconContainer: {
     height: 36,
@@ -328,11 +313,6 @@ const styles = StyleSheet.create({
     borderRadius: 36,
     justifyContent: "center",
     alignItems: "center",
-  },
-  badge: {
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    flexShrink: 0,
   },
   hr: {
     borderBottomWidth: 1,
