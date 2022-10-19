@@ -69,7 +69,7 @@ test("Custom image", async ({ page }) => {
     await expect(container).toHaveScreenshot(`${generateScreenshotPrefix()}adjust.png`);
 
     /** rotate */
-    customImageDrawer.rotate();
+    await customImageDrawer.rotate();
     await expect(container).toHaveScreenshot(`${generateScreenshotPrefix()}adjust-rotate-once.png`);
 
     /** confirm */
