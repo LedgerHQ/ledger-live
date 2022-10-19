@@ -57,7 +57,7 @@ const HideNftDrawer = ({
       testId="HideCollectionModal"
       isOpen={isOpened}
       onClose={onPressClose}
-      Icon={<BoxedIcon Icon={<Icons.EyeNoneMedium />} />}
+      Icon={Icons.EyeNoneMedium}
       title={t("wallet.nftGallery.hideNftModal.title")}
       description={t("wallet.nftGallery.hideNftModal.desc", {
         collectionName: collection,
