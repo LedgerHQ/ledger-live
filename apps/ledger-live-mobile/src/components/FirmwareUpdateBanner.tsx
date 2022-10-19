@@ -9,6 +9,7 @@ import { DownloadMedium, UsbMedium } from "@ledgerhq/native-ui/assets/icons";
 import { getDeviceModel } from "@ledgerhq/devices";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { StackNavigationProp } from "@react-navigation/stack";
+import { FlexBoxProps } from "@ledgerhq/native-ui/components/Layout/Flex";
 import { ScreenName, NavigatorName } from "../const";
 import {
   lastSeenDeviceSelector,
@@ -20,7 +21,11 @@ import Button from "./Button";
 import useLatestFirmware from "../hooks/useLatestFirmware";
 import { isFirmwareUpdateVersionSupported } from "../logic/firmwareUpdate";
 
-const FirmwareUpdateBanner = () => {
+const FirmwareUpdateBanner = ({
+  containerProps,
+}: {
+  containerProps?: FlexBoxProps;
+}) => {
   const lastSeenDevice: DeviceModelInfo | null = useSelector(
     lastSeenDeviceSelector,
   );
