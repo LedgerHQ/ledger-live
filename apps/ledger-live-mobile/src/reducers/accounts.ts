@@ -29,7 +29,6 @@ import {
   nestedSortAccounts,
   makeEmptyTokenAccount,
   ImportAccountsReduceInput,
-  isTokenAccount,
 } from "@ledgerhq/live-common/account/index";
 import type { State } from "./index";
 import accountModel from "../logic/accountModel";

@@ -188,7 +188,9 @@ test("withoutToken ethereum", () => {
   //See if we have added/removed them correctly
   for (const tokenId of tokenIds) {
     expect(saTokens.find((a) => isTokenAccount(a, tokenId))).toBeTruthy();
-    expect(saNoTokens.find((a) => isTokenAccount(a, tokenId))).toBeFalsy();
+    expect(
+      saNoTokens.find((a) => isTokenAccount(a, tokenId))?.hidden
+    ).toBeFalsy();
   }
 });
 test("withoutToken tron", () => {
