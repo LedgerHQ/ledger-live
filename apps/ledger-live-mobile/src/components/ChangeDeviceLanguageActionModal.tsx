@@ -1,9 +1,9 @@
 import React, { useMemo } from "react";
 
-import { Device } from "@ledgerhq/live-common/lib/hw/actions/types";
+import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { Language } from "@ledgerhq/types-live";
-import { createAction } from "@ledgerhq/live-common/lib/hw/actions/installLanguage";
-import installLanguage from "@ledgerhq/live-common/lib/hw/installLanguage";
+import { createAction } from "@ledgerhq/live-common/hw/actions/installLanguage";
+import installLanguage from "@ledgerhq/live-common/hw/installLanguage";
 import DeviceActionModal from "./DeviceActionModal";
 import DeviceLanguageInstalled from "./DeviceLanguageInstalled";
 

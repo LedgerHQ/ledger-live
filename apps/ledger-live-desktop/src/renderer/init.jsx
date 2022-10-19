@@ -2,6 +2,7 @@
 
 import React from "react";
 import Transport from "@ledgerhq/hw-transport";
+import { getEnv } from "@ledgerhq/live-common/env";
 import { NotEnoughBalance } from "@ledgerhq/errors";
 import { implicitMigration } from "@ledgerhq/live-common/migrations/accounts";
 import { log } from "@ledgerhq/logs";
@@ -60,7 +61,7 @@ async function init() {
     Transport,
   });
 
-  if (process.env.PLAYWRIGHT_RUN) {
+  if (getEnv("PLAYWRIGHT_RUN")) {
     const spectronData = await getKey("app", "PLAYWRIGHT_RUN", {});
     each(spectronData.localStorage, (value, key) => {
       global.localStorage.setItem(key, value);

@@ -25,7 +25,7 @@ const IntroScene = () => {
 
   return (
     <>
-      <Text variant="h2" mb={10} uppercase>
+      <Text variant="h2" mb={10} uppercase lineHeight="34.8px">
         {t("onboarding.stepSetupDevice.start.title")}
       </Text>
       <IconBoxList

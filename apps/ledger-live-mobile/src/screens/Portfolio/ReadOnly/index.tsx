@@ -9,7 +9,7 @@ import Animated, {
 import { createNativeWrapper } from "react-native-gesture-handler";
 import { useTranslation } from "react-i18next";
 
-import { Box, Flex, Button } from "@ledgerhq/native-ui";
+import { Box, Button } from "@ledgerhq/native-ui";
 
 import styled, { useTheme } from "styled-components/native";
 import {
@@ -32,8 +32,8 @@ import GraphCardContainer from "../GraphCardContainer";
 import Header from "../Header";
 import TrackScreen from "../../../analytics/TrackScreen";
 import { NavigatorName, ScreenName } from "../../../const";
+import { useProviders } from "../../Swap/Form/index";
 import MigrateAccountsBanner from "../../MigrateAccounts/Banner";
-import { useProviders } from "../../Swap/SwapEntry";
 import CheckLanguageAvailability from "../../../components/CheckLanguageAvailability";
 import CheckTermOfUseUpdate from "../../../components/CheckTermOfUseUpdate";
 import TabBarSafeAreaView, {
@@ -46,7 +46,6 @@ import BuyDeviceBanner, {
 // eslint-disable-next-line import/no-cycle
 import { AnalyticsContext } from "../../../components/RootNavigator";
 import Assets from "../Assets";
-import FirmwareUpdateBanner from "../../../components/FirmwareUpdateBanner";
 
 export { default as PortfolioTabIcon } from "../TabIcon";
 
@@ -194,9 +193,6 @@ function ReadOnlyPortfolio({ navigation }: Props) {
   return (
     <>
       <TabBarSafeAreaView>
-        <Flex px={6} py={4}>
-          <FirmwareUpdateBanner />
-        </Flex>
         <CheckLanguageAvailability />
         <CheckTermOfUseUpdate />
         <TrackScreen category="Wallet" source={source} />

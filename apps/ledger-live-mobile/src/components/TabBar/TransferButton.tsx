@@ -49,7 +49,6 @@ export default function TransferButton({
           ml="16px"
           py="1px"
           flexShrink={1}
-          flexWrap="wrap"
         >
           <Flex flexDirection="row" alignItems={"center"}>
             <Text
@@ -74,6 +73,7 @@ export default function TransferButton({
             variant="body"
             fontWeight="medium"
             color={disabled ? "neutral.c40" : "neutral.c70"}
+            numberOfLines={3}
           >
             {description}
           </Text>

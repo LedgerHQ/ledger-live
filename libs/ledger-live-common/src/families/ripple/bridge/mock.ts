@@ -7,6 +7,7 @@ import {
   InvalidAddress,
   RecipientRequired,
   FeeTooHigh,
+  AmountRequired,
 } from "@ledgerhq/errors";
 import type { Transaction } from "../types";
 import type {
@@ -122,6 +123,10 @@ const getTransactionStatus = (a, t) => {
     errors.recipient = new InvalidAddress("");
   } else if (a.freshAddress === t.recipient) {
     errors.recipient = new InvalidAddressBecauseDestinationIsAlsoSource();
+  }
+
+  if (!errors.amount && amount.eq(0)) {
+    errors.amount = new AmountRequired();
   }
 
   return Promise.resolve({

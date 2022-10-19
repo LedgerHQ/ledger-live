@@ -1,7 +1,6 @@
 import { maxBy, range, some } from "lodash";
 import BigNumber from "bignumber.js";
 import { TX, Address, IStorage } from "./storage/types";
-import EventEmitter from "./utils/eventemitter";
 import { IExplorer } from "./explorer/types";
 import { ICrypto } from "./crypto/types";
 import { PickingStrategy } from "./pickingstrategies/types";
@@ -9,7 +8,7 @@ import * as utils from "./utils";
 import { TransactionInfo, InputInfo, OutputInfo } from "./types";
 
 // names inside this class and discovery logic respect BIP32 standard
-class Xpub extends EventEmitter {
+class Xpub {
   storage: IStorage;
 
   explorer: IExplorer;
@@ -30,8 +29,6 @@ class Xpub extends EventEmitter {
 
   GAP = 20;
 
-  syncing: { [key: string]: boolean } = {};
-
   // need to be bigger than the number of tx from the same address that can be in the same block
   txsSyncArraySize = 1000;
 
@@ -48,7 +45,6 @@ class Xpub extends EventEmitter {
     xpub: string;
     derivationMode: string;
   }) {
-    super();
     this.storage = storage;
     this.explorer = explorer;
     this.crypto = crypto;
@@ -58,7 +54,7 @@ class Xpub extends EventEmitter {
     this.freshAddressIndex = 0;
   }
 
-  async syncAddress(account: number, index: number) {
+  async syncAddress(account: number, index: number): Promise<boolean> {
     const address = await this.crypto.getAddress(
       this.derivationMode,
       this.xpub,
@@ -70,43 +66,22 @@ class Xpub extends EventEmitter {
       `${this.crypto.network.name}-${this.derivationMode}-${this.xpub}-${account}-${index}`,
       address
     );
-    await this.whenSynced("address", address);
-
-    const data = {
-      type: "address",
-      key: address,
-      account,
-      index,
-      address,
-    };
-
-    this.emitSyncing(data);
 
     // TODO handle eventual reorg case using lastBlock
+    // TODO perf: bad : looping in the tx array
+    await this.checkAddressReorg(account, index);
 
-    let total = 0;
-    try {
-      // TODO perf: bad : looping in the tx array
-      await this.checkAddressReorg(account, index);
-
-      // in case pendings have changed we clean them out
-      // TODO perf : bad : looping in the tx array
-      const hasPendings = !!this.storage.getLastTx({
-        confirmed: false,
-        account,
-        index,
-      });
-      if (hasPendings) {
-        this.storage.removePendingTxs({ account, index });
-      }
-      total = await this.fetchHydrateAndStoreNewTxs(address, account, index);
-    } catch (e) {
-      this.emitSyncedFailed(data);
-      throw e;
+    // in case pendings have changed we clean them out
+    // TODO perf : bad : looping in the tx array
+    const hasPendings = !!this.storage.getLastTx({
+      confirmed: false,
+      account,
+      index,
+    });
+    if (hasPendings) {
+      this.storage.removePendingTxs({ account, index });
     }
-
-    this.emitSynced({ ...data, total });
-
+    await this.fetchHydrateAndStoreNewTxs(address, account, index);
     const lastTx = this.storage.getLastTx({
       account,
       index,
@@ -117,65 +92,31 @@ class Xpub extends EventEmitter {
     return !!lastTx;
   }
 
-  async checkAddressesBlock(account: number, index: number) {
+  async checkAddressesBlock(account: number, index: number): Promise<boolean> {
     const addressesResults = await Promise.all(
       range(this.GAP).map((_, key) => this.syncAddress(account, index + key))
     );
     return some(addressesResults, (lastTx) => !!lastTx);
   }
 
-  async syncAccount(account: number) {
-    await this.whenSynced("account", account.toString());
-
-    this.emitSyncing({
-      type: "account",
-      key: account,
-      account,
-    });
-
+  async syncAccount(account: number): Promise<number> {
     let index = 0;
-
-    try {
-      // eslint-disable-next-line no-await-in-loop
-      while (await this.checkAddressesBlock(account, index)) {
-        index += this.GAP;
-      }
-    } catch (e) {
-      this.emitSyncedFailed({
-        type: "account",
-        key: account,
-        account,
-      });
-      throw e;
+    // eslint-disable-next-line no-await-in-loop
+    while (await this.checkAddressesBlock(account, index)) {
+      index += this.GAP;
     }
-
-    this.emitSynced({
-      type: "account",
-      key: account,
-      account,
-      index,
-    });
     return index;
   }
 
   // TODO : test fail case + incremental
-  async sync() {
-    await this.whenSynced("all");
-    this.emitSyncing({ type: "all" });
+  async sync(): Promise<number> {
     this.freshAddressIndex = 0;
     let account = 0;
-    try {
-      // eslint-disable-next-line no-await-in-loop
-      while (account < 2 && (await this.syncAccount(account))) {
-        // account=0 for receive address; account=1 for change address. No need to handle account>1
-        account += 1;
-      }
-    } catch (e) {
-      this.emitSyncedFailed({ type: "all" });
-      throw e;
+    // eslint-disable-next-line no-await-in-loop
+    while (account < 2 && (await this.syncAccount(account))) {
+      // account=0 for receive address; account=1 for change address. No need to handle account>1
+      account += 1;
     }
-
-    this.emitSynced({ type: "all", account });
     this.freshAddress = await this.crypto.getAddress(
       this.derivationMode,
       this.xpub,
@@ -185,46 +126,33 @@ class Xpub extends EventEmitter {
     return account;
   }
 
-  async getXpubBalance() {
-    await this.whenSynced("all");
-
+  async getXpubBalance(): Promise<BigNumber> {
     const addresses = await this.getXpubAddresses();
-
     return this.getAddressesBalance(addresses);
   }
 
-  async getAccountBalance(account: number) {
-    await this.whenSynced("account", account.toString());
-
+  async getAccountBalance(account: number): Promise<BigNumber> {
     const addresses = await this.getAccountAddresses(account);
-
     return this.getAddressesBalance(addresses);
   }
 
-  async getAddressBalance(address: Address) {
-    await this.whenSynced("address", address.address);
-
+  async getAddressBalance(address: Address): Promise<BigNumber> {
     const unspentUtxos = this.storage.getAddressUnspentUtxos(address);
-
     return unspentUtxos.reduce(
       (total, { value }) => total.plus(value),
       new BigNumber(0)
     );
   }
 
-  async getXpubAddresses() {
-    await this.whenSynced("all");
+  async getXpubAddresses(): Promise<Address[]> {
     return this.storage.getUniquesAddresses({});
   }
 
-  async getAccountAddresses(account: number) {
-    await this.whenSynced("account", account.toString());
+  async getAccountAddresses(account: number): Promise<Address[]> {
     return this.storage.getUniquesAddresses({ account });
   }
 
-  async getNewAddress(account: number, gap: number) {
-    await this.whenSynced("account", account.toString());
-
+  async getNewAddress(account: number, gap: number): Promise<Address> {
     const accountAddresses = await this.getAccountAddresses(account);
     const lastIndex = (maxBy(accountAddresses, "index") || { index: -1 }).index;
     let index: number;
@@ -254,8 +182,6 @@ class Xpub extends EventEmitter {
     utxoPickingStrategy: PickingStrategy;
     sequence: number;
   }): Promise<TransactionInfo> {
-    await this.whenSynced("all");
-
     const outputs: OutputInfo[] = [];
 
     // outputs splitting
@@ -318,9 +244,12 @@ class Xpub extends EventEmitter {
       };
     });
     const associatedDerivations: [number, number][] = unspentUtxoSelected.map(
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      (utxo, index) => [txs[index].account, txs[index].index]
+      (_utxo, index) => {
+        if (txs[index] == null) {
+          throw new Error("Invalid index in txs[index]");
+        }
+        return [txs[index]?.account || 0, txs[index]?.index || 0];
+      }
     );
 
     const txSize = utils.maxTxSizeCeil(
@@ -334,7 +263,7 @@ class Xpub extends EventEmitter {
     // Abandon the change output if change output amount is less than dust amount
     if (
       needChangeoutput &&
-      total.minus(params.amount).minus(fee) > dustAmount
+      total.minus(params.amount).minus(fee).gt(dustAmount)
     ) {
       outputs.push({
         script: this.crypto.toOutputScript(params.changeAddress.address),
@@ -358,12 +287,12 @@ class Xpub extends EventEmitter {
     };
   }
 
-  async broadcastTx(rawTxHex: string) {
+  async broadcastTx(rawTxHex: string): Promise<any> {
     return this.explorer.broadcast(rawTxHex);
   }
 
   // internal
-  async getAddressesBalance(addresses: Address[]) {
+  async getAddressesBalance(addresses: Address[]): Promise<BigNumber> {
     const balances = await Promise.all(
       addresses.map((address) => this.getAddressBalance(address))
     );
@@ -374,49 +303,11 @@ class Xpub extends EventEmitter {
     );
   }
 
-  // TODO : test the different syncing protection logic
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  emitSyncing(data: any) {
-    this.syncing[`${data.type}-${data.key}`] = true;
-    this.emit("syncing", data);
-  }
-
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  emitSynced(data: any) {
-    this.syncing[`${data.type}-${data.key}`] = false;
-    this.emit("synced", data);
-  }
-
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  emitSyncedFailed(data: any) {
-    this.syncing[`${data.type}-${data.key}`] = false;
-    this.emit("syncfail", data);
-  }
-
-  whenSynced(type: string, key?: string): Promise<void> {
-    return new Promise((resolve) => {
-      if (!this.syncing[`${type}-${key}`]) {
-        resolve();
-      } else {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const handler = (evt: any) => {
-          if (evt.type === type && evt.key === key) {
-            resolve();
-            this.removeListener("synced", handler);
-          }
-        };
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
-        this.on("synced", handler);
-      }
-    });
-  }
-
   async fetchHydrateAndStoreNewTxs(
     address: string,
     account: number,
     index: number
-  ) {
+  ): Promise<number> {
     let pendingTxs: TX[] = [];
     let txs: TX[] = [];
     let inserted = 0;
@@ -441,7 +332,7 @@ class Xpub extends EventEmitter {
     return inserted;
   }
 
-  async checkAddressReorg(account: number, index: number) {
+  async checkAddressReorg(account: number, index: number): Promise<void> {
     const lastTx = this.storage.getLastTx({
       account,
       index,

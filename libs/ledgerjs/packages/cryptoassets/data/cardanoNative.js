@@ -8,6 +8,7 @@ module.exports = [
     "tToken",
     0,
     false,
+    true,
   ],
   [
     "cardano",
@@ -17,6 +18,7 @@ module.exports = [
     "HOSKY",
     0,
     false,
+    true,
   ],
   [
     "cardano",
@@ -26,6 +28,7 @@ module.exports = [
     "DRIP",
     6,
     false,
+    true,
   ],
   [
     "cardano",
@@ -34,6 +37,7 @@ module.exports = [
     "SUNDAE",
     "SUNDAE",
     6,
+    false,
     false,
   ],
   [
@@ -44,6 +48,7 @@ module.exports = [
     "Tokhun",
     0,
     false,
+    true,
   ],
   [
     "cardano",
@@ -53,6 +58,7 @@ module.exports = [
     "SPACE",
     0,
     false,
+    true,
   ],
   [
     "cardano",
@@ -62,6 +68,7 @@ module.exports = [
     "MIN",
     6,
     false,
+    true,
   ],
   [
     "cardano",
@@ -71,6 +78,7 @@ module.exports = [
     "ASHIB",
     6,
     false,
+    true,
   ],
   [
     "cardano",
@@ -80,6 +88,7 @@ module.exports = [
     "ADO",
     6,
     false,
+    true,
   ],
   [
     "cardano",
@@ -89,6 +98,7 @@ module.exports = [
     "$LOBSTER",
     0,
     false,
+    true,
   ],
   [
     "cardano",
@@ -98,6 +108,7 @@ module.exports = [
     "CDOG",
     0,
     false,
+    true,
   ],
   [
     "cardano",
@@ -107,6 +118,7 @@ module.exports = [
     "FIRE",
     0,
     false,
+    true,
   ],
   [
     "cardano",
@@ -116,6 +128,7 @@ module.exports = [
     "BISON",
     0,
     false,
+    true,
   ],
   [
     "cardano",
@@ -125,6 +138,7 @@ module.exports = [
     "DEFS",
     0,
     false,
+    true,
   ],
   [
     "cardano",
@@ -134,6 +148,7 @@ module.exports = [
     "GROW",
     0,
     false,
+    true,
   ],
   [
     "cardano",
@@ -143,6 +158,7 @@ module.exports = [
     "WOLF",
     0,
     false,
+    true,
   ],
   [
     "cardano",
@@ -152,6 +168,7 @@ module.exports = [
     "PAVIA",
     0,
     false,
+    true,
   ],
   [
     "cardano",
@@ -161,6 +178,7 @@ module.exports = [
     "BORGZ",
     0,
     false,
+    true,
   ],
   [
     "cardano",
@@ -170,6 +188,7 @@ module.exports = [
     "MYTH",
     0,
     false,
+    true,
   ],
   [
     "cardano",
@@ -179,6 +198,7 @@ module.exports = [
     "STRIP",
     3,
     false,
+    true,
   ],
   [
     "cardano",
@@ -187,6 +207,7 @@ module.exports = [
     "MELD",
     "MELD",
     6,
+    false,
     false,
   ],
   [
@@ -197,6 +218,7 @@ module.exports = [
     "QUID",
     0,
     false,
+    true,
   ],
   [
     "cardano",
@@ -206,6 +228,7 @@ module.exports = [
     "cbTHC",
     6,
     false,
+    true,
   ],
   [
     "cardano",
@@ -215,6 +238,7 @@ module.exports = [
     "DIBS",
     0,
     false,
+    true,
   ],
   [
     "cardano",
@@ -223,6 +247,7 @@ module.exports = [
     "World Mobile Token",
     "WMT",
     6,
+    false,
     false,
   ],
   [
@@ -233,6 +258,7 @@ module.exports = [
     "HI",
     0,
     false,
+    true,
   ],
   [
     "cardano",
@@ -242,6 +268,7 @@ module.exports = [
     "BROOM",
     0,
     false,
+    true,
   ],
   [
     "cardano",
@@ -251,6 +278,7 @@ module.exports = [
     "BEAG",
     0,
     false,
+    true,
   ],
   [
     "cardano",
@@ -260,6 +288,7 @@ module.exports = [
     "FGC",
     0,
     false,
+    true,
   ],
   [
     "cardano",
@@ -269,6 +298,7 @@ module.exports = [
     "EUS",
     0,
     false,
+    true,
   ],
   [
     "cardano",
@@ -278,6 +308,7 @@ module.exports = [
     "KAIZEN",
     6,
     false,
+    true,
   ],
   [
     "cardano",
@@ -287,6 +318,7 @@ module.exports = [
     "CHERRY",
     0,
     false,
+    true,
   ],
   [
     "cardano",
@@ -296,6 +328,7 @@ module.exports = [
     "ADAFOX",
     0,
     false,
+    true,
   ],
   [
     "cardano",
@@ -305,6 +338,7 @@ module.exports = [
     "LQ",
     6,
     false,
+    true,
   ],
   [
     "cardano",
@@ -314,6 +348,7 @@ module.exports = [
     "cNETA",
     0,
     false,
+    true,
   ],
   [
     "cardano",
@@ -323,6 +358,7 @@ module.exports = [
     "XT",
     0,
     false,
+    true,
   ],
   [
     "cardano",
@@ -332,6 +368,7 @@ module.exports = [
     "NEWM",
     6,
     false,
+    true,
   ],
   [
     "cardano",
@@ -341,6 +378,7 @@ module.exports = [
     "$PURR",
     0,
     false,
+    true,
   ],
   [
     "cardano",
@@ -350,6 +388,7 @@ module.exports = [
     "PTC",
     0,
     false,
+    true,
   ],
   [
     "cardano",
@@ -359,6 +398,7 @@ module.exports = [
     "WDAY",
     0,
     false,
+    true,
   ],
   [
     "cardano",
@@ -368,6 +408,7 @@ module.exports = [
     "MYST",
     0,
     false,
+    true,
   ],
   [
     "cardano",
@@ -377,6 +418,7 @@ module.exports = [
     "MINt",
     6,
     false,
+    true,
   ],
   [
     "cardano",
@@ -386,6 +428,7 @@ module.exports = [
     "MILK",
     0,
     false,
+    true,
   ],
   [
     "cardano",
@@ -395,6 +438,7 @@ module.exports = [
     "ETB",
     6,
     false,
+    true,
   ],
   [
     "cardano",
@@ -403,6 +447,7 @@ module.exports = [
     "DANA",
     "DANA",
     6,
+    false,
     false,
   ],
   [
@@ -413,6 +458,7 @@ module.exports = [
     "SWEET",
     0,
     false,
+    true,
   ],
   [
     "cardano",
@@ -422,6 +468,7 @@ module.exports = [
     "TOKEN",
     0,
     false,
+    true,
   ],
   [
     "cardano",
@@ -431,6 +478,7 @@ module.exports = [
     "RAT",
     6,
     false,
+    true,
   ],
   [
     "cardano",
@@ -440,6 +488,7 @@ module.exports = [
     "AADA",
     6,
     false,
+    true,
   ],
   [
     "cardano",
@@ -448,6 +497,7 @@ module.exports = [
     "ADAX",
     "ADAX",
     0,
+    false,
     false,
   ],
   [
@@ -458,6 +508,7 @@ module.exports = [
     "BLC",
     6,
     false,
+    true,
   ],
   [
     "cardano",
@@ -467,6 +518,7 @@ module.exports = [
     "PinacolADA",
     0,
     false,
+    true,
   ],
   [
     "cardano",
@@ -476,6 +528,7 @@ module.exports = [
     "MKA",
     2,
     false,
+    true,
   ],
   [
     "cardano",
@@ -485,6 +538,7 @@ module.exports = [
     "VYFI",
     6,
     false,
+    true,
   ],
   [
     "cardano",
@@ -494,6 +548,7 @@ module.exports = [
     "XRAY",
     0,
     false,
+    true,
   ],
   [
     "cardano",
@@ -503,6 +558,7 @@ module.exports = [
     "virus",
     0,
     false,
+    true,
   ],
   [
     "cardano",
@@ -512,6 +568,7 @@ module.exports = [
     "FLICK",
     0,
     false,
+    true,
   ],
   [
     "cardano",
@@ -521,6 +578,7 @@ module.exports = [
     "PROXIE",
     6,
     false,
+    true,
   ],
   [
     "cardano",
@@ -530,6 +588,7 @@ module.exports = [
     "CHRLZ",
     0,
     false,
+    true,
   ],
   [
     "cardano",
@@ -539,6 +598,7 @@ module.exports = [
     "RAD",
     0,
     false,
+    true,
   ],
   [
     "cardano",
@@ -548,6 +608,7 @@ module.exports = [
     "CLAP",
     3,
     false,
+    true,
   ],
   [
     "cardano",
@@ -557,6 +618,7 @@ module.exports = [
     "GTCHI",
     6,
     false,
+    true,
   ],
   [
     "cardano",
@@ -566,6 +628,7 @@ module.exports = [
     "RAVE",
     0,
     false,
+    true,
   ],
   [
     "cardano",
@@ -575,6 +638,7 @@ module.exports = [
     "GMBL",
     6,
     false,
+    true,
   ],
   [
     "cardano",
@@ -584,6 +648,7 @@ module.exports = [
     "BLOOM",
     6,
     false,
+    true,
   ],
   [
     "cardano",
@@ -593,6 +658,7 @@ module.exports = [
     "REVU",
     8,
     false,
+    true,
   ],
   [
     "cardano",
@@ -602,6 +668,7 @@ module.exports = [
     "KOZ",
     0,
     false,
+    true,
   ],
   [
     "cardano",
@@ -611,6 +678,7 @@ module.exports = [
     "SKULL",
     0,
     false,
+    true,
   ],
   [
     "cardano",
@@ -620,6 +688,7 @@ module.exports = [
     "TREES",
     0,
     false,
+    true,
   ],
   [
     "cardano",
@@ -629,6 +698,7 @@ module.exports = [
     "LOOKZ",
     0,
     false,
+    true,
   ],
   [
     "cardano",
@@ -638,6 +708,7 @@ module.exports = [
     "DOEX",
     0,
     false,
+    true,
   ],
   [
     "cardano",
@@ -647,6 +718,7 @@ module.exports = [
     "SOCIETY",
     6,
     false,
+    true,
   ],
   [
     "cardano",
@@ -656,6 +728,7 @@ module.exports = [
     "YAY",
     0,
     false,
+    true,
   ],
   [
     "cardano",
@@ -665,6 +738,7 @@ module.exports = [
     "LOG",
     6,
     false,
+    true,
   ],
   [
     "cardano",
@@ -674,6 +748,7 @@ module.exports = [
     "$CLAW",
     0,
     false,
+    true,
   ],
   [
     "cardano",
@@ -683,6 +758,7 @@ module.exports = [
     "PIGY",
     0,
     false,
+    true,
   ],
   [
     "cardano",
@@ -692,6 +768,7 @@ module.exports = [
     "CNT",
     0,
     false,
+    true,
   ],
   [
     "cardano",
@@ -701,6 +778,7 @@ module.exports = [
     "COPI",
     6,
     false,
+    true,
   ],
   [
     "cardano",
@@ -710,6 +788,7 @@ module.exports = [
     "SHIBA",
     0,
     false,
+    true,
   ],
   [
     "cardano",
@@ -719,6 +798,7 @@ module.exports = [
     "KIDZ",
     0,
     false,
+    true,
   ],
   [
     "cardano",
@@ -728,6 +808,7 @@ module.exports = [
     "FUD",
     6,
     false,
+    true,
   ],
   [
     "cardano",
@@ -737,6 +818,7 @@ module.exports = [
     "PoolPeekCoin",
     0,
     false,
+    true,
   ],
   [
     "cardano",
@@ -746,6 +828,7 @@ module.exports = [
     "SNOW",
     0,
     false,
+    true,
   ],
   [
     "cardano",
@@ -755,6 +838,7 @@ module.exports = [
     "FIRE",
     0,
     false,
+    true,
   ],
   [
     "cardano",
@@ -764,6 +848,7 @@ module.exports = [
     "GOKEY",
     0,
     false,
+    true,
   ],
   [
     "cardano",
@@ -773,6 +858,7 @@ module.exports = [
     "purrADA",
     6,
     false,
+    true,
   ],
   [
     "cardano",
@@ -782,6 +868,7 @@ module.exports = [
     "CardaniaFounderBlue",
     0,
     false,
+    true,
   ],
   [
     "cardano",
@@ -791,6 +878,7 @@ module.exports = [
     "CardaniaFounderRed",
     0,
     false,
+    true,
   ],
   [
     "cardano",
@@ -800,6 +888,7 @@ module.exports = [
     "HIS",
     0,
     false,
+    true,
   ],
   [
     "cardano",
@@ -809,6 +898,7 @@ module.exports = [
     "CardaniaFounderGreen",
     0,
     false,
+    true,
   ],
   [
     "cardano",
@@ -818,6 +908,7 @@ module.exports = [
     "DGADA",
     0,
     false,
+    true,
   ],
   [
     "cardano",
@@ -827,6 +918,7 @@ module.exports = [
     "PUDGY",
     0,
     false,
+    true,
   ],
   [
     "cardano",
@@ -836,6 +928,7 @@ module.exports = [
     "BDOGE",
     0,
     false,
+    true,
   ],
   [
     "cardano",
@@ -845,6 +938,7 @@ module.exports = [
     "MEOW",
     6,
     false,
+    true,
   ],
   [
     "cardano",
@@ -854,6 +948,7 @@ module.exports = [
     "C4",
     0,
     false,
+    true,
   ],
   [
     "cardano",
@@ -863,6 +958,7 @@ module.exports = [
     "CARGO",
     6,
     false,
+    true,
   ],
   [
     "cardano",
@@ -872,6 +968,7 @@ module.exports = [
     "BSEAL",
     0,
     false,
+    true,
   ],
   [
     "cardano",
@@ -881,6 +978,7 @@ module.exports = [
     "NFTC",
     0,
     false,
+    true,
   ],
   [
     "cardano",
@@ -890,6 +988,7 @@ module.exports = [
     "EMP",
     6,
     false,
+    true,
   ],
   [
     "cardano",
@@ -899,6 +998,7 @@ module.exports = [
     "RAG",
     0,
     false,
+    true,
   ],
   [
     "cardano",
@@ -908,5 +1008,6 @@ module.exports = [
     "BCG",
     6,
     false,
+    true,
   ],
 ];

@@ -29,6 +29,8 @@ import {
   lastSeenDeviceSelector,
   sensitiveAnalyticsSelector,
   firstConnectionHasDeviceSelector,
+  readOnlyModeEnabledSelector,
+  hasOrderedNanoSelector,
 } from "../reducers/settings";
 import { knownDevicesSelector } from "../reducers/ble";
 import { satisfactionSelector } from "../reducers/ratings";
@@ -36,11 +38,13 @@ import type { State } from "../reducers";
 import { NavigatorName } from "../const";
 import { previousRouteNameRef, currentRouteNameRef } from "./screenRefs";
 
-const sessionId = uuid();
+let sessionId = uuid();
 const appVersion = `${VersionNumber.appVersion || ""} (${
   VersionNumber.buildVersion || ""
 })`;
 const { ANALYTICS_LOGS, ANALYTICS_TOKEN } = Config;
+
+export const updateSessionId = () => (sessionId = uuid());
 
 const extraProperties = store => {
   const state: State = store.getState();
@@ -112,6 +116,8 @@ export const start = async (store: any) => {
   const { user, created } = await getOrCreateUser();
   storeInstance = store;
 
+  if (ANALYTICS_LOGS) console.log("analytics:identify", user.id);
+
   if (created) {
     if (ANALYTICS_LOGS) console.log("analytics:identify", user.id);
 
@@ -165,9 +171,15 @@ export const track = (
     level: "debug",
   });
 
+  const state = storeInstance && storeInstance.getState();
+
+  const readOnlyMode = state && readOnlyModeEnabledSelector(state);
+  const hasOrderedNano = state && hasOrderedNanoSelector(state);
+
   if (
-    !storeInstance ||
-    (!mandatory && !analyticsEnabledSelector(storeInstance.getState()))
+    !state ||
+    (!mandatory && !analyticsEnabledSelector(state)) ||
+    (readOnlyMode && hasOrderedNano) // do not track anything in the reborn state post purchase pre device setup
   ) {
     return;
   }
@@ -244,7 +256,16 @@ export const screen = (
     level: "info",
   });
 
-  if (!storeInstance || !analyticsEnabledSelector(storeInstance.getState())) {
+  const state = storeInstance && storeInstance.getState();
+
+  const readOnlyMode = state && readOnlyModeEnabledSelector(state);
+  const hasOrderedNano = state && hasOrderedNanoSelector(state);
+
+  if (
+    !state ||
+    !analyticsEnabledSelector(state) ||
+    (readOnlyMode && hasOrderedNano) // do not track anything in the reborn state post purchase pre device setup
+  ) {
     return;
   }
 
