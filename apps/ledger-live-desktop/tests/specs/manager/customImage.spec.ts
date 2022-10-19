@@ -84,6 +84,9 @@ test("Custom image", async ({ page }) => {
 
     /** go back to cropping */
     await customImageDrawer.contrastPrevious();
+    await expect(container).toHaveScreenshot(
+      `${generateScreenshotPrefix()}adjust-rotated-zoomed-preserved.png`,
+    );
 
     /** rotate back to 0° */
     await customImageDrawer.rotate();
