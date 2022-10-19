@@ -19,7 +19,7 @@ const DeviceOptionRow: React.FC<Props> = props => {
       <Text ml={3} variant="bodyLineHeight" color="neutral.c80">
         {label}
       </Text>
-      <Flex flex={1}></Flex>
+      <Flex flex={1} />
       {right || (
         <Link
           onPress={onPress}
