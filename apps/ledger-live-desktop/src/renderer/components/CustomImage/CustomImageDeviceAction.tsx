@@ -35,75 +35,80 @@ const errorNamesRetryAnotherImage = [
 ];
 const ftsLoadImageExec = command("ftsLoadImage");
 const action = createAction(getEnv("MOCK") ? mockedEventEmitter : ftsLoadImageExec);
+const mockedDevice = { deviceId: "", modelId: DeviceModelId.nanoFTS, wired: true };
 
-const CustomImageDeviceAction: React.FC<Props> = withRemountableWrapper(
-  ({ device, hexImage, onStart, onResult, onSkip, source, remountMe, onTryAnotherImage }) => {
-    const commandRequest = hexImage;
+const CustomImageDeviceAction: React.FC<Props> = withRemountableWrapper(props => {
+  const { hexImage, onStart, onResult, onSkip, source, remountMe, onTryAnotherImage } = props;
+  const device = getEnv("MOCK") ? mockedDevice : props.device;
+  const commandRequest = hexImage;
 
-    const { t } = useTranslation();
+  const { t } = useTranslation();
 
-    const validDevice = device?.modelId === DeviceModelId.nanoFTS ? device : null;
+  const validDevice = device?.modelId === DeviceModelId.nanoFTS ? device : null;
 
-    const status = action?.useHook(validDevice, commandRequest);
+  const status = action?.useHook(validDevice, commandRequest);
 
-    const payload = action?.mapResult(status);
+  const payload = action?.mapResult(status);
 
-    useEffect(() => {
-      if (onStart && validDevice) {
-        onStart();
-      }
-    }, [onStart, validDevice]);
+  useEffect(() => {
+    if (onStart && validDevice) {
+      onStart();
+    }
+  }, [onStart, validDevice]);
 
-    const { error, imageLoadRequested, loadingImage, imageCommitRequested, progress } = status;
-    const isError = !!error;
-    const isRefusedOnStaxError = error?.name && errorNamesRetryAnotherImage.includes(error?.name);
+  const handleResult = useCallback(() => {
+    if (onResult && validDevice) {
+      onResult();
+    }
+  }, [onResult, validDevice]);
 
-    const handleRetry = useCallback(() => {
-      if (isRefusedOnStaxError) onTryAnotherImage();
-      else remountMe();
-    }, [isRefusedOnStaxError, onTryAnotherImage, remountMe]);
+  const { error, imageLoadRequested, loadingImage, imageCommitRequested, progress } = status;
+  const isError = !!error;
+  const isRefusedOnStaxError = error?.name && errorNamesRetryAnotherImage.includes(error?.name);
 
-    return (
-      <ImageSourceContext.Provider value={{ src: source }}>
-        <Flex flexDirection="column" flex={1} justifyContent="center">
-          {imageLoadRequested && device ? (
-            renderImageLoadRequested({ t, device })
-          ) : loadingImage && device ? (
-            renderLoadingImage({ t, device, progress })
-          ) : imageCommitRequested && device ? (
-            renderImageCommitRequested({ t, device })
-          ) : isError ? (
-            <Flex flexDirection="column" alignItems="center">
-              {renderError({
-                error,
-                ...(isRefusedOnStaxError
-                  ? { Icon: Icons.CircledAlertMedium, iconColor: "warning.c100" }
-                  : {}),
-              })}
-              <Button size="large" variant="main" outline={false} onClick={handleRetry}>
-                {isRefusedOnStaxError
-                  ? t("customImage.steps.transfer.uploadAnotherImage")
-                  : t("common.retry")}
-              </Button>
-              {isRefusedOnStaxError ? (
-                <Flex py={7}>
-                  <Link onClick={onSkip}>{t("customImage.steps.transfer.doThisLater")}</Link>
-                </Flex>
-              ) : null}
+  const handleRetry = useCallback(() => {
+    if (isRefusedOnStaxError) onTryAnotherImage();
+    else remountMe();
+  }, [isRefusedOnStaxError, onTryAnotherImage, remountMe]);
+
+  return (
+    <Flex flexDirection="column" flex={1} justifyContent="center">
+      {imageLoadRequested && device ? (
+        renderImageLoadRequested({ t, device })
+      ) : loadingImage && device ? (
+        renderLoadingImage({ t, device, progress, src: source })
+      ) : imageCommitRequested && device ? (
+        renderImageCommitRequested({ t, device, src: source })
+      ) : isError ? (
+        <Flex flexDirection="column" alignItems="center">
+          {renderError({
+            error,
+            ...(isRefusedOnStaxError
+              ? { Icon: Icons.CircledAlertMedium, iconColor: "warning.c100" }
+              : {}),
+          })}
+          <Button size="large" variant="main" outline={false} onClick={handleRetry}>
+            {isRefusedOnStaxError
+              ? t("customImage.steps.transfer.uploadAnotherImage")
+              : t("common.retry")}
+          </Button>
+          {isRefusedOnStaxError ? (
+            <Flex py={7}>
+              <Link onClick={onSkip}>{t("customImage.steps.transfer.doThisLater")}</Link>
             </Flex>
-          ) : (
-            <DeviceActionDefaultRendering
-              overridesPreferredDeviceModel={DeviceModelId.nanoFTS}
-              status={status}
-              request={commandRequest}
-              payload={payload}
-              onResult={onResult}
-            />
-          )}
+          ) : null}
         </Flex>
-      </ImageSourceContext.Provider>
-    );
-  },
-);
+      ) : (
+        <DeviceActionDefaultRendering
+          overridesPreferredDeviceModel={DeviceModelId.nanoFTS}
+          status={status}
+          request={commandRequest}
+          payload={payload}
+          onResult={handleResult}
+        />
+      )}
+    </Flex>
+  );
+});
 
 export default CustomImageDeviceAction;

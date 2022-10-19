@@ -49,7 +49,7 @@ import { track } from "~/renderer/analytics/segment";
 import { DrawerFooter } from "~/renderer/screens/exchange/Swap2/Form/DrawerFooter";
 import { Flex, Icons, Text as TextV3, Log, ProgressLoader } from "@ledgerhq/react-ui";
 import { withV3StyleProvider } from "~/renderer/styles/StyleProviderV3";
-import { FramedImageWithContext } from "../CustomImage/FramedImage";
+import FramedImage from "../CustomImage/FramedImage";
 
 export const AnimationWrapper = styled.div`
   width: 600px;
@@ -815,7 +815,9 @@ const ImageLoadingGenericWithoutStyleProvider: React.FC<{
   bottom?: React.ReactNode | undefined;
   progress?: number;
   backgroundPlaceholderText?: string;
-}> = ({ title, top, bottom, children, progress, backgroundPlaceholderText }) => {
+  testId?: string;
+  src?: string | undefined;
+}> = ({ title, top, bottom, children, progress, backgroundPlaceholderText, testId, src }) => {
   return (
     <Flex
       flexDirection="column"
@@ -823,6 +825,7 @@ const ImageLoadingGenericWithoutStyleProvider: React.FC<{
       alignItems="center"
       flex={1}
       alignSelf="stretch"
+      data-test-id={testId}
     >
       <Flex flex={1} flexDirection="column" alignItems={"center"}>
         {top}
@@ -837,12 +840,13 @@ const ImageLoadingGenericWithoutStyleProvider: React.FC<{
         >
           {title}
         </TextV3>
-        <FramedImageWithContext
+        <FramedImage
+          src={src}
           loadingProgress={progress}
           backgroundPlaceholderText={backgroundPlaceholderText}
         >
           {children}
-        </FramedImageWithContext>
+        </FramedImage>
       </Flex>
       <Flex flex={1} flexDirection="column" alignItems={"center"}>
         {bottom}
@@ -860,6 +864,7 @@ export const renderImageLoadRequested = ({ t, device }: { t: TFunction; device: 
       })}
       progress={0}
       backgroundPlaceholderText="load requested illustration placeholder"
+      testId="device-action-image-load-requested"
     />
   );
 };
@@ -868,16 +873,19 @@ export const renderLoadingImage = ({
   t,
   device,
   progress,
+  src,
 }: {
   t: TFunction;
   progress?: number;
   device: Device;
+  src?: string | undefined;
 }) => {
   return (
     <ImageLoadingGeneric
       title={t("customImage.steps.transfer.loadingPicture", {
         productName: device.deviceName || getDeviceModel(device.modelId)?.productName,
       })}
+      src={src}
       progress={progress}
       backgroundPlaceholderText="image loading illustration placeholder"
       bottom={
@@ -887,16 +895,26 @@ export const renderLoadingImage = ({
           </TextV3>
         </Flex>
       }
+      testId={`device-action-image-loading-${progress}`}
     />
   );
 };
 
-export const renderImageCommitRequested = ({ t, device }: { t: TFunction; device: Device }) => {
+export const renderImageCommitRequested = ({
+  t,
+  device,
+  src,
+}: {
+  t: TFunction;
+  device: Device;
+  src?: string | undefined;
+}) => {
   return (
     <ImageLoadingGeneric
       title={t("customImage.steps.transfer.confirmPicture", {
         productName: device.deviceName || getDeviceModel(device.modelId)?.productName,
       })}
+      src={src}
       backgroundPlaceholderText="commit requested illustration placeholder"
       top={
         <Flex flex={1} flexDirection="column" justifyContent="center" alignItems="center">
@@ -908,6 +926,7 @@ export const renderImageCommitRequested = ({ t, device }: { t: TFunction; device
           </TextV3>
         </Flex>
       }
+      testId="device-action-image-commit-requested"
     />
   );
 };

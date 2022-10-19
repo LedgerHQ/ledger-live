@@ -1,10 +1,11 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { Flex } from "@ledgerhq/react-ui";
 import { ImageProcessingError } from "@ledgerhq/live-common/customImage/errors";
-import { createCanvas } from "./imageUtils";
+import { createCanvas, scaleDimensions } from "./imageUtils";
 import { ImageBase64Data, ImageDimensions } from "./types";
 import { targetDimensions } from "./shared";
 import ContrastChoice from "./ContrastChoice";
+import FramedImage from "./FramedImage";
 
 export type ProcessorPreviewResult = ImageBase64Data & ImageDimensions;
 export type ProcessorRawResult = { hexData: string } & ImageDimensions;
@@ -20,6 +21,8 @@ const contrasts = [
   { val: 2, color: "neutral.c40" },
   { val: 3, color: "neutral.c30" },
 ];
+
+const imageDimensions = scaleDimensions(targetDimensions, 0.6);
 
 function clamp(val: number, min: number, max: number) {
   return Math.min(max, Math.max(min, val));
@@ -201,10 +204,7 @@ const ImageGrayscalePreview: React.FC<Props> = props => {
         onLoad={handleSourceLoaded}
       />
       {previewResult ? (
-        <img
-          src={previewResult?.imageBase64DataUri}
-          style={{ height: 0.7 * targetDimensions.height, pointerEvents: "none" }}
-        />
+        <FramedImage src={previewResult?.imageBase64DataUri} dimensions={imageDimensions} />
       ) : null}
       <Flex alignSelf="center" flexDirection="row" mt={8} columnGap={6}>
         {contrasts.map(({ val, color }, index) => (

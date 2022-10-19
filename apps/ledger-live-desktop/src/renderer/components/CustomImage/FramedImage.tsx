@@ -4,6 +4,7 @@ import styled, { useTheme } from "styled-components";
 import { scaleDimensions } from "./imageUtils";
 import { targetDimensions } from "./shared";
 import StyleProviderV3 from "~/renderer/styles/StyleProviderV3";
+import { ImageDimensions } from "./types";
 
 type Props = Partial<React.ComponentProps<"img">> & {
   /** source of the image inside */
@@ -15,6 +16,7 @@ type Props = Partial<React.ComponentProps<"img">> & {
   /** float between 0 and 1 */
   loadingProgress?: number;
   children?: React.ReactNode | undefined;
+  dimensions?: ImageDimensions;
 };
 
 const absoluteFillObject = {
@@ -25,7 +27,7 @@ const absoluteFillObject = {
   right: 0,
 };
 
-const imageDimensions = scaleDimensions(targetDimensions, 0.4);
+const defaultImageDimensions = scaleDimensions(targetDimensions, 0.4);
 
 const px = 3;
 const py = 3;
@@ -64,8 +66,10 @@ const FramedImage: React.FC<Props> = ({
   backgroundPlaceholderText,
   loadingProgress = 1,
   children,
+  dimensions = defaultImageDimensions,
   ...imageProps
 }) => {
+  console.log({ src });
   const { space } = useTheme();
   return (
     <StyleProviderV3 selectedPalette="light">
@@ -75,8 +79,8 @@ const FramedImage: React.FC<Props> = ({
             <img
               src={backgroundSrc}
               style={{
-                height: imageDimensions.height + 2 * space[3],
-                width: imageDimensions.width + 2 * space[3],
+                height: dimensions.height + 2 * space[3],
+                width: dimensions.width + 2 * space[3],
               }}
             />
           ) : (
@@ -87,28 +91,19 @@ const FramedImage: React.FC<Props> = ({
             </BackgroundPlaceholder>
           )}
         </AbsoluteBackgroundContainer>
-        <AbsoluteInnerImageContainer style={{ height: loadingProgress * imageDimensions.height }}>
-          {src ? <img {...imageProps} src={src} style={imageDimensions} /> : null}
+        <AbsoluteInnerImageContainer style={{ height: loadingProgress * dimensions.height }}>
+          {src ? (
+            <img
+              {...imageProps}
+              src={src}
+              style={{ ...(imageProps.style || {}), ...dimensions, pointerEvents: "none" }}
+            />
+          ) : null}
         </AbsoluteInnerImageContainer>
-        <Flex style={imageDimensions}>{children}</Flex>
+        <Flex style={dimensions}>{children}</Flex>
       </Container>
     </StyleProviderV3>
   );
 };
 
 export default FramedImage;
-
-type SourceContext = {
-  src?: string | undefined;
-};
-
-const initialState = {
-  src: undefined,
-};
-
-export const ImageSourceContext = React.createContext<SourceContext>(initialState);
-
-export const FramedImageWithContext: React.FC<Omit<Props, "src">> = props => {
-  const { src } = useContext(ImageSourceContext);
-  return <FramedImage {...props} src={src} />;
-};

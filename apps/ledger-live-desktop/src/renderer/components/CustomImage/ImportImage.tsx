@@ -37,10 +37,8 @@ const ImportImage: React.FC<Props> = ({ setLoading, onResult, onError }) => {
     (file: File) => {
       let dead = false;
       try {
-        console.log("customImage file", file);
         const reader = new FileReader();
         if (!file) return;
-        console.log("customImage", file.type, file.type.startsWith("image/"));
         if (!file.type.startsWith("image/")) {
           onError(new ImageIncorrectFileTypeError());
           return;
@@ -48,7 +46,6 @@ const ImportImage: React.FC<Props> = ({ setLoading, onResult, onError }) => {
 
         setLoading(true);
         reader.onloadend = function() {
-          console.log("customImage ImportImage", reader.result?.slice(0, 100));
           if (!dead && typeof reader.result === "string")
             onResult({ imageBase64DataUri: reader.result });
         };
@@ -66,7 +63,6 @@ const ImportImage: React.FC<Props> = ({ setLoading, onResult, onError }) => {
   const onChange: React.ChangeEventHandler<HTMLInputElement> = useCallback(
     e => {
       const { files } = e.target;
-      console.log("customImage", files);
       if (!files) return;
       const file = files[0];
       if (!file) return;

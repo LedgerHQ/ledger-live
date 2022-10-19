@@ -40,6 +40,7 @@ const StepTransfer: React.FC<Props> = props => {
         <StepFooter
           previousStep={Step.chooseContrast}
           previousLabel={t("common.previous")}
+          previousDisabled={!!device}
           setStep={setStep}
         />
       }

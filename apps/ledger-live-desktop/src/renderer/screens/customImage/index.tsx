@@ -261,6 +261,7 @@ const CustomImage: React.FC<Props> = props => {
               nextLabel={t("customImage.finishCTA")}
               setStep={setStepWrapper}
               onClickNext={exit}
+              nextTestId="custom-image-finish-button"
             />
           }
         >
