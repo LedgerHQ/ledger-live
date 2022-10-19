@@ -59,6 +59,7 @@ import Drawer from "~/renderer/drawers/Drawer";
 import UpdateBanner from "~/renderer/components/Updater/Banner";
 import FirmwareUpdateBanner from "~/renderer/components/FirmwareUpdateBanner";
 import Onboarding from "~/renderer/components/Onboarding";
+import PostOnboardingScreen from "~/renderer/components/PostOnboardingScreen";
 
 import { hasCompletedOnboardingSelector } from "~/renderer/reducers/settings";
 
@@ -193,6 +194,8 @@ export default function Default() {
             ) : null}
             <Switch>
               <Route path="/onboarding" render={props => <Onboarding {...props} />} />
+              <Route path="/sync-onboarding" render={props => <SyncOnboarding {...props} />} />
+              <Route path="/post-onboarding" render={() => <PostOnboardingScreen />} />
               <Route path="/USBTroubleshooting">
                 <USBTroubleshooting onboarding={!hasCompletedOnboarding} />
               </Route>
