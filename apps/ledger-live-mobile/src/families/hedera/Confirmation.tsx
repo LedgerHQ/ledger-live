@@ -10,9 +10,9 @@ import {
   getMainAccount,
   getAccountCurrency,
   getAccountName,
-} from "@ledgerhq/live-common/lib/account";
+} from "@ledgerhq/live-common/account/index";
 import type { DeviceModelId } from "@ledgerhq/devices";
-import type { Device } from "@ledgerhq/live-common/lib/hw/actions/types";
+import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { useTheme } from "@react-navigation/native";
 // eslint-disable-next-line import/no-unresolved
 import getWindowDimensions from "../../logic/getWindowDimensions";

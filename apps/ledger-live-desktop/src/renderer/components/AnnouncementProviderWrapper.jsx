@@ -2,6 +2,7 @@
 import React, { useCallback, useMemo } from "react";
 import { AnnouncementProvider } from "@ledgerhq/live-common/notifications/AnnouncementProvider/index";
 import type { Announcement } from "@ledgerhq/live-common/notifications/AnnouncementProvider/types";
+import { getEnv } from "@ledgerhq/live-common/env";
 import { getKey, setKey } from "~/renderer/storage";
 import { cryptoCurrenciesSelector } from "~/renderer/reducers/accounts";
 import { languageSelector, lastSeenDeviceSelector } from "~/renderer/reducers/settings";
@@ -16,7 +17,7 @@ import networkApi from "../../../tests/mocks/serviceStatusHelpers";
 let notificationsApi;
 let serviceStatusApi;
 
-if (process.env.MOCK || process.env.PLAYWRIGHT_RUN) {
+if (getEnv("MOCK") || getEnv("PLAYWRIGHT_RUN")) {
   notificationsApi = fetchApi;
   serviceStatusApi = networkApi;
 }
@@ -137,7 +138,7 @@ export function AnnouncementProviderWrapper({ children }: Props) {
     [dismissToast],
   );
 
-  const autoUpdateDelay = process.env.PLAYWRIGHT_RUN || process.env.MOCK ? 16 : 60000;
+  const autoUpdateDelay = getEnv("PLAYWRIGHT_RUN") || getEnv("MOCK") ? 16 : 60000;
 
   return (
     <AnnouncementProvider

@@ -102,10 +102,6 @@ jobs:
         with:
           ruby-version: 2.6
           bundler-cache: true
-      - name: Bump npm to latest
-        run: |
-          npm i -g npm@8.12.2
-          npm --version
       - name: TurboRepo local caching server
         id: turborepo-cache-server
         uses: ./tools/actions/turborepo-gh-cache

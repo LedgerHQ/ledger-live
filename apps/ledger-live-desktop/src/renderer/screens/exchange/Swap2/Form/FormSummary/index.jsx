@@ -1,6 +1,5 @@
 // @flow
-import type { SwapTransactionType } from "@ledgerhq/live-common/exchange/swap/hooks/index";
-import type { KYCStatus } from "@ledgerhq/live-common/exchange/swap/utils/index";
+import type { SwapTransactionType, KYCStatus } from "@ledgerhq/live-common/exchange/swap/types";
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import type { ThemedComponent } from "~/renderer/styles/StyleProvider";

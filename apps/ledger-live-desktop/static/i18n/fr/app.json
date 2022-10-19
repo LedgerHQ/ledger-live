@@ -237,7 +237,7 @@
     "form" : {
       "changeCTA" : "Modifier",
       "rates" : {
-        "title" : "Prestataires",
+        "title" : "Prix",
         "registration" : "Inscription requise ",
         "noRegistration" : "Pas d’inscription requise",
         "fixed" : "Fixe",
@@ -246,14 +246,14 @@
         "loading" : "Chargement...",
         "name" : {
           "title" : "Prestataire",
-          "tooltip" : "Pour utiliser certains prestataires, vous devez vous inscrire et créer un compte auprès d’eux."
+          "tooltip" : "Certains prestataires vous demanderont de vous enregistrer et de créer un compte."
         },
         "rate" : {
           "title" : "Taux de change",
           "tooltip" : "Un <0>taux variable</0> fluctue en fonction des conditions du marché. Vous pourriez donc recevoir plus ou moins que ce qui est estimé.<br/><br/>Un <0>taux fixe</0> correspond au montant affiché au début du swap."
         },
         "receive" : {
-          "title" : "Recevoir",
+          "title" : "Recevez",
           "tooltip" : "Montant estimé que vous recevrez après le swap."
         }
       },
@@ -430,11 +430,13 @@
         }
       },
       "filter" : {
-        "all" : "Tous",
         "centralised" : "Centralisé",
-        "dedentralised" : "Décentralisé"
+        "decentralised" : "Décentralisé",
+        "float" : "Taux variable",
+        "fixed" : "Taux fixe"
       },
-      "noQuote" : "Prix disponible à l’étape suivante"
+      "noQuote" : "Prix disponible à l’étape suivante",
+      "noProviders" : "Aucun résultat. Il n’y a pas de résultat correspondant à ces préférences."
     },
     "ip" : {
       "title" : "Bienvenue dans le Swap",
@@ -752,7 +754,7 @@
     "settings" : {
       "title" : "Modifier le compte",
       "advancedLogs" : "Avancé",
-      "advancedTips" : "Votre xpub est une donnée sensible et privée. Faites preuve de prudence, en particulier lorsque vous la divulguez à des tiers.",
+      "advancedTips" : "Cet xpub est de type {{tag}}. Lorsque vous l’importez dans un wallet tiers, choisissez le même mode de dérivation.",
       "accountName" : {
         "title" : "Nom du compte",
         "desc" : "Description du compte"
@@ -1107,7 +1109,7 @@
     },
     "facebook" : {
       "title" : "Facebook",
-      "desc" : "Likez notre page."
+      "desc" : "Aimez notre page."
     },
     "twitter" : {
       "title" : "Twitter",
@@ -1182,6 +1184,10 @@
     "blackfriday" : {
       "title" : "BLACK FRIDAY ",
       "description" : "Profitez de 40 % de réduction sur les wallets Ledger avec le code promo BLACKFRIDAY20"
+    },
+    "referralProgram" : {
+      "title" : "Parrainez et gagnez 10 $ US",
+      "description" : "Parrainez un ami et gagnez tous les deux 10 $ US en bitcoins."
     }
   },
   "signmessage" : {
@@ -1573,7 +1579,7 @@
     "loading" : "Chargement...",
     "connectAndUnlockDevice" : "Connectez et déverrouillez votre appareil.",
     "unlockDevice" : "Déverrouillez votre appareil.",
-    "unlockDeviceAfterFirmwareUpdate" : "Patientez pendant la mise à jour du micrologiciel et déverrouillez votre appareil avec votre code PIN.",
+    "unlockDeviceAfterFirmwareUpdate" : "Patientez pendant la mise à jour du micrologiciel, puis déverrouillez votre Ledger avec votre code PIN.",
     "quitApp" : "Sortez de l’application sur votre appareil.",
     "appNotInstalledTitle" : "Application nécessaire manquante",
     "appNotInstalledTitle_plural" : "Applications nécessaires manquantes",
@@ -1637,7 +1643,7 @@
       "used" : "Utilisé",
       "firmwareAvailable" : "Micrologiciel obsolète :",
       "firmwareUpToDate" : "Le micrologiciel est à jour :",
-      "genuine" : "L’appareil est authentique.",
+      "genuine" : "Votre Ledger est authentique.",
       "incomplete" : "Certaines applications n’ont pas été reconnues. Merci de les désinstaller puis les réinstaller."
     },
     "applist" : {
@@ -2028,10 +2034,20 @@
   },
   "deviceLocalization" : {
     "language" : "Langue",
-    "deviceLanguage" : "Langue de l’appareil",
+    "deviceLanguage" : "Langue",
     "changeLanguage" : "Changer la langue",
+    "changeDeviceLanguage" : "Voulez-vous changer la langue de votre Ledger ?",
+    "chooseLanguage" : "Choisissez une langue pour votre {{deviceName}}.",
+    "changeDeviceLanguagePrompt" : {
+      "title" : "Vous pouvez utiliser votre {{deviceName}} en : {{language}}.",
+      "description" : "Souhaitez-vous l’utiliser en {{language}} ?"
+    },
+    "firmwareUpdatePrompt" : {
+      "title" : "Utiliser votre {{deviceName}} en {{language}} ?",
+      "description" : "Une nouvelle langue est disponible pour votre {{deviceName}} : {{language}}. Vous pouvez changer la langue de votre Ledger maintenant ou à tout moment à partir de My Ledger."
+    },
     "allowLanguageInstallation" : "Confirmez l’ajout de la langue",
-    "languageInstalled" : "La langue a bien été modifiée",
+    "languageInstalled" : "Votre Ledger est maintenant en {{language}}.",
     "installingLanguage" : "Installation de la langue",
     "languages" : {
       "english" : "English",
@@ -2834,7 +2850,7 @@
     "unlockedBalance" : "Délié",
     "unlockedTooltip" : "Les actifs déliés peuvent maintenant être déplacés en utilisant l’opération de retrait.",
     "networkFees" : "Les frais de réseau sont automatiquement définis par le consensus de Polkadot. Vous ne pourrez pas les voir sur votre appareil.",
-    "bondedBalanceBelowMinimum" : "Votre solde lié est inférieur au minimum requis ({{minimumBondBalance}}). Vos nominations risquent d’être supprimées.",
+    "bondedBalanceBelowMinimum" : "Votre solde lié est inférieur au minimum requis ({{minimumBondBalance}}). Vos nominations risquent d’être effacées.",
     "nomination" : {
       "emptyState" : {
         "description" : "Vous pouvez obtenir des récompenses en liant des actifs, puis en nommant un ou des validateur(s).",
@@ -3688,7 +3704,7 @@
         "continueCTA" : "Continuer",
         "title" : "Vérifiez le contenu de votre coffret.",
         "description" : "Si votre {{device}} est livré avec un code PIN ou une phrase de récupération, l’utiliser présente un risque. Contactez l’Assistance Ledger.",
-        "alert" : "Utilisez uniquement la phrase de récupération affichée par votre appareil Ledger lors de sa configuration."
+        "alert" : "Utilisez uniquement la phrase de récupération affichée sur votre appareil Ledger lors de sa configuration."
       }
     },
     "alerts" : {
@@ -3921,7 +3937,7 @@
           },
           "useRecoverySheet" : {
             "takeYourRecoverySheet" : {
-              "title" : "Utiliser votre feuille de récupération",
+              "title" : "Utilisez votre feuille de récupération",
               "descr" : "Prenez la feuille de récupération vierge incluse avec votre Nano. Contactez l’Assistance Ledger si la feuille de récupération fournie n’était pas vierge."
             },
             "writeDownWords" : {
@@ -4134,7 +4150,7 @@
     }
   },
   "connectTroubleshooting" : {
-    "desc" : "Des difficultés à connecter votre appareil ?",
+    "desc" : "Des difficultés à connecter votre Ledger ?",
     "cta" : "Réparer",
     "solution" : "Solution n°{{number}}",
     "applesInstructions" : "les instructions d’Apple",
@@ -4784,7 +4800,7 @@
     },
     "EthAppNftNotSupported" : {
       "title" : "Opération indisponible sur cet appareil",
-      "description" : "Send NFT feature is only available for Nano X and Nano S+. Please visit our customer support platform to know how to send a NFT with a Nano S."
+      "description" : "La fonctionnalité Envoi de NFT n’est disponible que pour le Nano X et le Nano S Plus. Visitez notre centre d’aide pour découvrir comment envoyer un NFT avec un Nano S."
     },
     "CantScanQRCode" : {
       "title" : "Échec du scan de ce code QR. Cette adresse ne prend pas en charge la vérification automatique."
@@ -5042,6 +5058,9 @@
     },
     "StellarSourceHasMultiSign" : {
       "title" : "Désactivez le multisig pour envoyer des transactions Stellar"
+    },
+    "HederaAddAccountError" : {
+      "title" : "Votre compte n’a pas été ajouté. Veuillez réessayer."
     }
   },
   "cryptoOrg" : {

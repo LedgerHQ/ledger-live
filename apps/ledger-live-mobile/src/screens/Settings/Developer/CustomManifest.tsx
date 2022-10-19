@@ -2,11 +2,12 @@ import React, { useState, useMemo, useCallback, useLayoutEffect } from "react";
 import { TextInput, StyleSheet, TouchableOpacity } from "react-native";
 import { useTheme, NavigationProp } from "@react-navigation/native";
 import { useLocalLiveAppContext } from "@ledgerhq/live-common/platform/providers/LocalLiveAppProvider/index";
+import { Box } from "@ledgerhq/native-ui";
 import NavigationScrollView from "../../../components/NavigationScrollView";
-import Button from "../../../components/Button";
 import { ScreenName } from "../../../const";
 import KeyboardView from "../../../components/KeyboardView";
 import ImportIcon from "../../../icons/Import";
+import ArrowRight from "../../../icons/ArrowRight";
 
 const DebuggerButton: React.ComponentType<{
   onPress: (..._: Array<any>) => any;
@@ -20,10 +21,27 @@ const DebuggerButton: React.ComponentType<{
   );
 };
 
+const OpenButton: React.ComponentType<{
+  onPress: (..._: Array<any>) => any;
+  disabled: boolean;
+  // eslint-disable-next-line react/prop-types
+}> = ({ onPress, disabled }) => {
+  const { colors } = useTheme();
+  return (
+    <TouchableOpacity
+      style={styles.buttons}
+      onPress={onPress}
+      disabled={disabled}
+    >
+      <ArrowRight size={18} color={colors.black} />
+    </TouchableOpacity>
+  );
+};
+
 export default function CustomManifest({
   navigation,
 }: {
-  navigation: NavigationProp;
+  navigation: NavigationProp<Record<string, unknown>>;
 }) {
   const { colors } = useTheme();
   const { manifest, disabled, addLocalManifest, onChange } =
@@ -50,9 +68,10 @@ export default function CustomManifest({
   useLayoutEffect(() => {
     navigation.setOptions({
       headerRight: () => (
-        <DebuggerButton
-          onPress={() =>
-            onChange(`
+        <Box flexDirection="row">
+          <DebuggerButton
+            onPress={() =>
+              onChange(`
             {
               "id": "debug",
               "name": "Debugger",
@@ -86,11 +105,13 @@ export default function CustomManifest({
               ]
             }
           `)
-          }
-        />
+            }
+          />
+          <OpenButton disabled={disabled} onPress={onOpen} />
+        </Box>
       ),
     });
-  }, [navigation, onChange]);
+  }, [disabled, navigation, onChange, onOpen]);
   return (
     <KeyboardView>
       <NavigationScrollView>
@@ -107,12 +128,7 @@ export default function CustomManifest({
           placeholder="Paste your manifest json"
           multiline
           autoCorrect={false}
-        />
-        <Button
-          type="primary"
-          title="Open"
-          disabled={disabled}
-          onPress={onOpen}
+          scrollEnabled={false}
         />
       </NavigationScrollView>
     </KeyboardView>

@@ -1,9 +1,9 @@
 import React, { useEffect } from "react";
-import { useLocalLiveAppManifest } from "@ledgerhq/live-common/lib/platform/providers/LocalLiveAppProvider";
+import { useLocalLiveAppManifest } from "@ledgerhq/live-common/platform/providers/LocalLiveAppProvider/index";
 import {
   useRemoteLiveAppContext,
   useRemoteLiveAppManifest,
-} from "@ledgerhq/live-common/lib/platform/providers/RemoteLiveAppProvider";
+} from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
 import type { StackScreenProps } from "@react-navigation/stack";
 import { useNavigation } from "@react-navigation/native";
 import { useTheme } from "styled-components/native";
@@ -24,12 +24,14 @@ const PlatformApp = ({ route }: StackScreenProps) => {
   const { state: remoteLiveAppState } = useRemoteLiveAppContext();
   const { locale } = useLocale();
   const manifest = localManifest || remoteManifest;
+
   useEffect(() => {
     manifest?.name &&
       setParams({
         name: manifest.name,
       });
   }, [manifest, setParams]);
+
   return manifest ? (
     <>
       <TrackScreen category="Platform" name="App" />

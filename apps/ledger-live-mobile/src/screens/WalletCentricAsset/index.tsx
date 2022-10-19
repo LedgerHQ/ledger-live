@@ -8,7 +8,7 @@ import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { Box, Flex } from "@ledgerhq/native-ui";
 import { getCurrencyColor } from "@ledgerhq/live-common/currencies/index";
-import { isAccountEmpty } from "@ledgerhq/live-common/lib/account/helpers";
+import { isAccountEmpty } from "@ledgerhq/live-common/account/helpers";
 import { useTheme } from "styled-components/native";
 import {
   CryptoCurrency,
@@ -16,7 +16,7 @@ import {
   TokenCurrency,
 } from "@ledgerhq/types-cryptoassets";
 import { useNavigation } from "@react-navigation/native";
-import { useSingleCoinMarketData } from "@ledgerhq/live-common/lib/market/MarketDataProvider";
+import { useSingleCoinMarketData } from "@ledgerhq/live-common/market/MarketDataProvider";
 import accountSyncRefreshControl from "../../components/accountSyncRefreshControl";
 import { withDiscreetMode } from "../../context/DiscreetModeContext";
 import TabBarSafeAreaView, {

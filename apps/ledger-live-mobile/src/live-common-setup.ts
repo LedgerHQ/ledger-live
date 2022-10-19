@@ -11,6 +11,8 @@ import { setPlatformVersion } from "@ledgerhq/live-common/platform/version";
 import { registerTransportModule } from "@ledgerhq/live-common/hw/index";
 import type { TransportModule } from "@ledgerhq/live-common/hw/index";
 import { setDeviceMode } from "@ledgerhq/live-common/hw/actions/app";
+import { getDeviceModel } from "@ledgerhq/devices";
+import { DescriptorEvent } from "@ledgerhq/hw-transport";
 import VersionNumber from "react-native-version-number";
 import { Platform } from "react-native";
 import axios from "axios";
@@ -101,13 +103,16 @@ registerTransportModule({
     id.startsWith("usb|")
       ? Promise.resolve() // nothing to do
       : null,
-  discovery: Observable.create(o => HIDTransport.listen(o)).pipe(
+  discovery: new Observable<DescriptorEvent<unknown>>(o =>
+    HIDTransport.listen(o),
+  ).pipe(
     map(({ type, descriptor, deviceModel }) => {
-      const name = deviceModel.productName;
+      const name = deviceModel?.productName ?? "";
       return {
         type,
-        deviceModel,
         id: `usb|${JSON.stringify(descriptor)}`,
+        deviceModel,
+        wired: true,
         name,
       };
     }),
@@ -131,6 +136,8 @@ if (__DEV__ && Config.DEVICE_PROXY_URL) {
     map(({ type, descriptor }) => ({
       type,
       id: `httpdebug|${descriptor}`,
+      deviceModel: getDeviceModel(Config?.FALLBACK_DEVICE_MODEL_ID || "nanoX"),
+      wired: Config?.FALLBACK_DEVICE_WIRED === "YES",
       name: descriptor,
     })),
   );

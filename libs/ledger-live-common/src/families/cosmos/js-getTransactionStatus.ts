@@ -307,7 +307,10 @@ export class CosmosTransactionStatusManager {
         })
       )
         return new CosmosRedelegationInProgress();
-      if (t.sourceValidator === t.validators[0].address)
+      if (
+        t.validators.length > 0 &&
+        t.sourceValidator === t.validators[0].address
+      )
         return new InvalidAddressBecauseDestinationIsAlsoSource();
     }
 

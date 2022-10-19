@@ -2,19 +2,13 @@ import React from "react";
 import { View, StyleSheet } from "react-native";
 import { Trans } from "react-i18next";
 import { useTheme } from "@react-navigation/native";
+
 import LText from "../../../components/LText";
 
 const EmptyState = () => {
   const { colors } = useTheme();
   return (
-    <View
-      style={[
-        styles.root,
-        {
-          backgroundColor: colors.background,
-        },
-      ]}
-    >
+    <View style={[styles.root, { backgroundColor: colors.background }]}>
       <LText secondary style={styles.title}>
         <Trans i18nKey="transfer.swap.history.empty.title" />
       </LText>
@@ -43,4 +37,5 @@ const styles = StyleSheet.create({
     marginHorizontal: 24,
   },
 });
+
 export default EmptyState;

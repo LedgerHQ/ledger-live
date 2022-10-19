@@ -69,10 +69,6 @@ jobs:
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
     steps:
-      - name: prepare runner
-        run: |
-          sudo growpart /dev/nvme0n1 1
-          sudo resize2fs /dev/nvme0n1p1
       - uses: actions/checkout@v3
         with:
           ref: ${{ github.event.pull_request.head.sha || github.event.push.head.sha }}
@@ -89,8 +85,6 @@ jobs:
           node-version: 16.x
           cache: pnpm
           cache-dependency-path: "**/pnpm-lock.yaml"
-      - name: bump npm
-        run: npm i -g npm@8.12.2
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: 2.7
@@ -166,8 +160,6 @@ jobs:
           node-version: 16.x
           cache: pnpm
           cache-dependency-path: "**/pnpm-lock.yaml"
-      - name: bump npm
-        run: npm i -g npm@8.12.2
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: 2.7
@@ -223,6 +215,8 @@ jobs:
   build-mobile-app-ios:
     runs-on: macos-latest
     name: "Build Ledger Live Mobile (Mac OS X)"
+    env:
+      NODE_OPTIONS: "--max-old-space-size=7168"
     steps:
       - uses: actions/checkout@v3
         with:
@@ -239,8 +233,6 @@ jobs:
           node-version: 16.x
           cache: pnpm
           cache-dependency-path: "**/pnpm-lock.yaml"
-      - name: bump npm
-        run: npm i -g npm@8.12.2
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: 2.7

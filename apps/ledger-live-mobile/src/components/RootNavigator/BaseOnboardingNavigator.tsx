@@ -1,8 +1,5 @@
 import React, { useCallback, useMemo } from "react";
-import {
-  createStackNavigator,
-  TransitionPresets,
-} from "@react-navigation/stack";
+import { createStackNavigator } from "@react-navigation/stack";
 import { useTranslation } from "react-i18next";
 import { useTheme } from "styled-components/native";
 import { TouchableOpacity } from "react-native";
@@ -11,6 +8,7 @@ import PairDevices from "../../screens/PairDevices";
 import EditDeviceName from "../../screens/EditDeviceName";
 // eslint-disable-next-line import/no-cycle
 import OnboardingNavigator from "./OnboardingNavigator";
+import { SyncOnboardingNavigator } from "./SyncOnboardingNavigator";
 import ImportAccountsNavigator from "./ImportAccountsNavigator";
 import PasswordAddFlowNavigator from "./PasswordAddFlowNavigator";
 import PasswordModifyFlowNavigator from "./PasswordModifyFlowNavigator";
@@ -57,12 +55,15 @@ export default function BaseOnboardingNavigator() {
       screenOptions={{
         ...stackNavigationConfig,
         headerShown: false,
-        ...TransitionPresets.ModalTransition,
       }}
     >
       <Stack.Screen
         name={NavigatorName.Onboarding}
         component={OnboardingNavigator}
+      />
+      <Stack.Screen
+        name={NavigatorName.SyncOnboarding}
+        component={SyncOnboardingNavigator}
       />
       <Stack.Screen
         name={NavigatorName.ImportAccounts}

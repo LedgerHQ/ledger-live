@@ -36,6 +36,7 @@ export const ScreenName = {
   DebugFeatureFlags: "DebugFeatureFlags",
   DebugHttpTransport: "DebugHttpTransport",
   DebugIcons: "DebugIcons",
+  DebugMultiAppInstall: "DebugMultiAppInstall",
   DebugLogs: "DebugLogs",
   DebugLottie: "DebugLottie",
   DebugMocks: "DebugMocks",
@@ -390,8 +391,6 @@ export const ScreenName = {
   SyncOnboardingCompanion: "SyncOnboardingCompanion",
   SyncOnboardingCompletion: "SyncOnboardingCompletion",
   DeviceModelSelection: "DeviceModelSelection",
-  BleDevicesScanning: "BleDevicesScanning",
-  BleDevicePairing: "BleDevicePairing",
 
   BleDevicePairingFlow: "BleDevicePairingFlow",
 
@@ -432,6 +431,7 @@ export const ScreenName = {
   // hedera
   HederaEditMemo: "HederaEditMemo",
 
+  CustomImageStep0Welcome: "CustomImageStep0Welcome",
   CustomImageStep1Crop: "CustomImageStep1Crop",
   CustomImageStep2Preview: "CustomImageStep2Preview",
   CustomImageStep3Transfer: "CustomImageStep3Transfer",
@@ -476,6 +476,7 @@ export const NavigatorName = {
   MigrateAccountsFlow: "MigrateAccountsFlow",
   NftNavigator: "NftNavigator",
   Onboarding: "Onboarding",
+  SyncOnboarding: "SyncOnboarding",
   PasswordAddFlow: "PasswordAddFlow",
   PasswordModifyFlow: "PasswordModifyFlow",
   Platform: "Platform",

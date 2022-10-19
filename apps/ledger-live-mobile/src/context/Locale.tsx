@@ -43,7 +43,8 @@ export { i18next as i18n };
 type Props = {
   children: React.ReactNode;
 };
-export type SupportedLanguages = "fr" | "en" | "es" | "zh" | "ru" | "pt";
+
+export type SupportedLanguages = "fr" | "en" | "es" | "zh" | "ru" | "pt" | "ar";
 
 type LocaleState = {
   i18n: any;

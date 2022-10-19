@@ -43,6 +43,8 @@ type PairDevicesProps = Props & {
 };
 type RouteParams = {
   onDone?: (_: Device) => void;
+  /** If defined, only show devices that have a device model id in this array */
+  deviceModelIds?: DeviceModelId[];
 };
 type BleDevice = {
   id: string;
@@ -182,7 +184,7 @@ function PairDevicesInner({ navigation, route }: Props) {
             setLastSeenDeviceInfo({
               modelId: device.modelId,
               deviceInfo,
-              appsInstalled,
+              apps: appsInstalled,
             }),
           );
           dispatchRedux(setReadOnlyMode(false));
@@ -253,6 +255,7 @@ function PairDevicesInner({ navigation, route }: Props) {
           onSelect={onSelect}
           onError={onError}
           onTimeout={onTimeout}
+          deviceModelIds={route.params?.deviceModelIds}
         />
       );
 

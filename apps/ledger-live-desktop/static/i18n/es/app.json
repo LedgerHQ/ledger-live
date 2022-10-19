@@ -237,16 +237,16 @@
     "form" : {
       "changeCTA" : "Cambiar",
       "rates" : {
-        "title" : "Proveedores",
+        "title" : "Cotizaciones",
         "registration" : "Es necesario registrarse ",
         "noRegistration" : "No es necesario registrarse",
         "fixed" : "Fija",
-        "float" : "Variable",
+        "float" : "Variables",
         "update" : "Las tasas se actualizarán en",
         "loading" : "Cargando...",
         "name" : {
           "title" : "Proveedor",
-          "tooltip" : "Dependiendo del proveedor, es posible que tengas que crear una cuenta para iniciar sesión"
+          "tooltip" : "Dependiendo del proveedor, es posible que tengas que registrarte para iniciar sesión."
         },
         "rate" : {
           "title" : "Tasa de cambio",
@@ -430,11 +430,13 @@
         }
       },
       "filter" : {
-        "all" : "Todas",
         "centralised" : "Centralizado",
-        "dedentralised" : "Descentralizado"
+        "decentralised" : "Descentralizado",
+        "float" : "Tasa variable",
+        "fixed" : "Tasa fija"
       },
-      "noQuote" : "Cotización disponible en el siguiente paso"
+      "noQuote" : "Cotización disponible en el siguiente paso",
+      "noProviders" : "No se han encontrado resultados. No hay cotizaciones disponibles con las preferencias actuales."
     },
     "ip" : {
       "title" : "Bienvenido a Permutar",
@@ -752,7 +754,7 @@
     "settings" : {
       "title" : "Editar cuenta",
       "advancedLogs" : "Avanzado",
-      "advancedTips" : "Tu clave pública extendida es un dato sensible. Utilízalo con cuidado, en especial cuando lo divulgues a terceros.",
+      "advancedTips" : "Esta es una xpub {{tag}}. Cuando la importes en una billetera de terceros, selecciona el mismo modo de derivación.",
       "accountName" : {
         "title" : "Nombre de la cuenta",
         "desc" : "Descripción de la cuenta"
@@ -1182,6 +1184,10 @@
     "blackfriday" : {
       "title" : "BLACK FRIDAY ",
       "description" : "Disfruta un descuento del 40% en billeteras de hardware Ledger con el código de promoción BLACKFRIDAY20"
+    },
+    "referralProgram" : {
+      "title" : "Refiere y llévate 10 USD",
+      "description" : "Refiere con éxito a un amigo para recibir 10 USD de Bitcoin cada uno."
     }
   },
   "signmessage" : {
@@ -2028,10 +2034,20 @@
   },
   "deviceLocalization" : {
     "language" : "Idioma",
-    "deviceLanguage" : "Idioma del dispositivo",
+    "deviceLanguage" : "Idioma",
     "changeLanguage" : "Cambiar idioma",
+    "changeDeviceLanguage" : "¿Deseas cambiar el idioma de tu dispositivo?",
+    "chooseLanguage" : "Elige un idioma para tu {{deviceName}}.",
+    "changeDeviceLanguagePrompt" : {
+      "title" : "El idioma {{language}} también está disponible para tu {{deviceName}}.",
+      "description" : "¿Quieres cambiar el idioma al {{language}}?"
+    },
+    "firmwareUpdatePrompt" : {
+      "title" : "¿Cambiar tu {{deviceName}} a {{language}}?",
+      "description" : "Ya está disponible el idioma {{language}} para tu {{deviceName}}. Puedes cambiar el idioma de tu dispositivo ahora o en cualquier momento desde My Ledger."
+    },
     "allowLanguageInstallation" : "Permitir instalación de idioma",
-    "languageInstalled" : "Idioma cambiado correctamente",
+    "languageInstalled" : "Idioma cambiado al {{language}}",
     "installingLanguage" : "Instalando idioma",
     "languages" : {
       "english" : "English",
@@ -4784,7 +4800,7 @@
     },
     "EthAppNftNotSupported" : {
       "title" : "Operación no disponible en este dispositivo",
-      "description" : "Send NFT feature is only available for Nano X and Nano S+. Please visit our customer support platform to know how to send a NFT with a Nano S."
+      "description" : "La función Enviar NFT sólo está disponible en el Nano X y el Nano S+. Visita nuestra plataforma de soporte al cliente para saber cómo enviar NFTs con un Nano S."
     },
     "CantScanQRCode" : {
       "title" : "No fue posible escanear este código QR: esta dirección no es compatible con la verificación automática"
@@ -5042,6 +5058,9 @@
     },
     "StellarSourceHasMultiSign" : {
       "title" : "Desactiva la multifirma para realizar transacciones de Stellar."
+    },
+    "HederaAddAccountError" : {
+      "title" : "Tu cuenta no ha sido agregada. Inténtalo de nuevo."
     }
   },
   "cryptoOrg" : {
