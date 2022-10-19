@@ -13,6 +13,7 @@ import {
 } from "@ledgerhq/live-common/currencies/index";
 import { useTheme } from "@react-navigation/native";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
+import useEnv from "@ledgerhq/live-common/hooks/useEnv";
 import { ScreenName } from "../../const";
 import { TrackScreen } from "../../analytics";
 import FilteredSearchBar from "../../components/FilteredSearchBar";
@@ -46,7 +47,9 @@ const listSupportedTokens = () =>
 
 export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
   const { colors } = useTheme();
+  const devMode = useEnv("MANAGER_DEV_MODE");
   const { filterCurrencyIds = [], currency } = route.params || {};
+
   const osmo = useFeature("currencyOsmosisMobile");
   const fantom = useFeature("currencyFantomMobile");
   const moonbeam = useFeature("currencyMoonbeamMobile");
@@ -78,8 +81,17 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
       .filter(([, feature]) => !feature?.enabled)
       .map(([name]) => name);
 
-    return currencies.filter(c => !deactivatedCurrencies.includes(c.id));
-  }, [featureFlaggedCurrencies, filterCurrencyIds]);
+    const currenciesFiltered = currencies.filter(
+      c => !deactivatedCurrencies.includes(c.id),
+    );
+
+    if (!devMode) {
+      return currenciesFiltered.filter(
+        c => c.type !== "CryptoCurrency" || !c.isTestnetFor,
+      );
+    }
+    return currenciesFiltered;
+  }, [devMode, featureFlaggedCurrencies, filterCurrencyIds]);
 
   const sortedCryptoCurrencies = useCurrenciesByMarketcap(cryptoCurrencies);
 

@@ -15,9 +15,6 @@ outputs:
 runs:
   using: "composite"
   steps:
-    - name: bump npm
-      run: npm i -g npm@8.12.2
-      shell: bash
     - name: install dependencies
       if: ${{ inputs.os != 'mac' }}
       run: pnpm i --filter="ledger-live-desktop..." --filter="ledger-live" --frozen-lockfile --unsafe-perm

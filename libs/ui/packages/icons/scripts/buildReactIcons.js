@@ -56,11 +56,11 @@ function reactTemplate({ template }, _, { imports, interfaces, componentName, __
     ${imports}
     import Svg from "./StyledSvg"
 
-    type Props = { size?: number | string; color?: string; };
+    type Props = { size?: number | string; color?: string; style?: object };
 
     ${interfaces}
 
-    function ${componentName} ({ size = 16, color = "currentColor" }: Props): JSX.Element {
+    function ${componentName} ({ size = 16, color = "currentColor", style }: Props): JSX.Element {
       return ${jsx};
     }
 
@@ -80,12 +80,41 @@ function reactNativeTemplate(
   return tpl.ast`
     ${imports}
     import Svg from "./StyledSvg";
+    import { StyleProp, ViewStyle } from "react-native"
 
-    type Props = { size?: number | string; color?: string; };
+    type Props = { size?: number | string; color?: string; style?: StyleProp<ViewStyle> };
 
     ${interfaces}
 
-    function ${componentName} ({ size = 16, color = "neutral.c100" }: Props): JSX.Element {
+    function ${componentName} ({ size = 16, color = "neutral.c100", style }: Props): JSX.Element {
+      return ${jsx};
+    }
+
+    ${exports}
+  `;
+}
+
+function reactNativeRTLTemplate(
+  { template },
+  _,
+  { imports, interfaces, componentName, __, jsx, exports },
+) {
+  const plugins = ["typescript"];
+  const tpl = template.smart({ plugins });
+
+  return tpl.ast`
+    ${imports}
+    import Svg from "./StyledSvg";
+    import styled from "styled-components";
+    import { I18nManager, StyleProp, ViewStyle } from "react-native";
+
+    type Props = { size?: number | string; color?: string; style?: StyleProp<ViewStyle> };
+
+    ${interfaces}
+
+    const rtlStyle = I18nManager.isRTL ? {transform: [{scaleX: -1}]} : {};
+
+    function ${componentName} ({ size = 16, color = "neutral.c100", style = rtlStyle }: Props): JSX.Element {
       return ${jsx};
     }
 
@@ -125,13 +154,20 @@ glob(`${rootDir}/svg/**/*.svg`, (err, icons) => {
 
   // Extract the icon weight
   icons.forEach(icon => {
+    let RTLShouldMirror = icon.endsWith('-rtl.svg')
+    let iconPathCleaned = icon
+    
+    if(RTLShouldMirror) {
+      iconPathCleaned = icon.slice(0, -8) + icon.substring(icon.length - 4, icon.length)
+    }
+
     const parts = icon.split("/");
     const weight = parts[parts.length - 2];
 
-    let name = camelcase([path.basename(icon, ".svg"), weight], {
+    let name = camelcase([path.basename(iconPathCleaned, ".svg"), weight], {
       pascalCase: true,
     });
-
+ 
     if (!isNaN(name.charAt(0))) name = `_${name}`; // fix variable name leading with a numerical value
 
     const exportString = `export { default as ${name} } from "./${name}";\n`;
@@ -148,6 +184,7 @@ glob(`${rootDir}/svg/**/*.svg`, (err, icons) => {
         height: "{size}",
         width: "{size}",
         fill: "{color}",
+        style: "{style}",
       },
       svgoConfig: {
         plugins: [{ removeXMLNS: true, removeViewBox: false }],
@@ -160,12 +197,22 @@ glob(`${rootDir}/svg/**/*.svg`, (err, icons) => {
       { componentName: name },
       `${reactDir}/${name}.tsx`,
     );
+  
+    if(!RTLShouldMirror) {
+      convert(
+        svg,
+        { ...options, native: true, template: reactNativeTemplate },
+        { componentName: name },
+        `${nativeDir}/${name}.tsx`,
+      );
+    } else {
+      convert(
+        svg,
+        { ...options, native: true, template: reactNativeRTLTemplate },
+        { componentName: name },
+        `${nativeDir}/${name}.tsx`,
+      );
+    }
 
-    convert(
-      svg,
-      { ...options, native: true, template: reactNativeTemplate },
-      { componentName: name },
-      `${nativeDir}/${name}.tsx`,
-    );
   });
 });

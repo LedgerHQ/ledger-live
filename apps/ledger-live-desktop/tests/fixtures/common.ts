@@ -3,6 +3,7 @@ import { test as base, expect, Page, ElectronApplication } from "@playwright/tes
 import * as fs from "fs";
 import * as path from "path";
 import * as crypto from "crypto";
+import { Feature, FeatureId } from "@ledgerhq/types-live";
 
 export function generateUUID(): string {
   return crypto.randomBytes(16).toString("hex");
@@ -17,6 +18,7 @@ type TestFixtures = {
   userdataFile: any;
   env: Record<string, any>;
   page: Page;
+  featureFlags: { [key in FeatureId]?: Feature };
 };
 
 const test = base.extend<TestFixtures>({
@@ -24,6 +26,7 @@ const test = base.extend<TestFixtures>({
   lang: "en-US",
   theme: "dark",
   userdata: undefined,
+  featureFlags: undefined,
   userdataDestinationPath: async ({}, use) => {
     use(path.join(__dirname, "../artifacts/userdata", generateUUID()));
   },
@@ -35,7 +38,15 @@ const test = base.extend<TestFixtures>({
     use(fullFilePath);
   },
   page: async (
-    { lang, theme, userdata, userdataDestinationPath, userdataOriginalFile, env }: TestFixtures,
+    {
+      lang,
+      theme,
+      userdata,
+      userdataDestinationPath,
+      userdataOriginalFile,
+      env,
+      featureFlags,
+    }: TestFixtures,
     use: (page: Page) => void,
   ) => {
     // create userdata path
@@ -55,6 +66,7 @@ const test = base.extend<TestFixtures>({
         CI: process.env.CI || undefined,
         PLAYWRIGHT_RUN: true,
         LEDGER_MIN_HEIGHT: 768,
+        FEATURE_FLAGS: JSON.stringify(featureFlags),
       },
       env,
     );
@@ -105,7 +117,7 @@ const test = base.extend<TestFixtures>({
     });
 
     // app is loaded
-    //expect(await page.title()).toBe("Ledger Live");
+    // expect(await page.title()).toBe("Ledger Live");
     await page.waitForLoadState("domcontentloaded");
     await page.waitForSelector("#loader-container", { state: "hidden" });
 
