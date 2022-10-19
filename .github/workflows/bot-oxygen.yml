@@ -1,11 +1,20 @@
-name: "[Bot] Testing Celo with 'Silicium'"
+name: "[Bot] Testing with 'Oxygen'"
 on:
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: The branch to run on
+        required: true
+      family:
+        description: coin family to filter with (if any)
+        required: false
   push:
     branches:
-      - feat/celo
+      - support/bot-oxygen
+      - support/bot-oxygen-*
 
 concurrency:
-  group: bot-seed3-celo
+  group: bot-seed5
 
 jobs:
   start-runner:
@@ -45,6 +54,11 @@ jobs:
     needs: [start-runner]
     steps:
       - uses: actions/checkout@v3
+        if: ${{ github.event.inputs.ref != null }}
+        with:
+          ref: ${{ github.event.inputs.ref }}
+      - uses: actions/checkout@v3
+        if: ${{ !github.event.inputs.ref }}
       - name: Retrieving coin apps
         uses: actions/checkout@v3
         with:
@@ -56,8 +70,9 @@ jobs:
         id: bot
         timeout-minutes: 120
         with:
-          SEED: ${{ secrets.SEED3 }}
+          SHOW_LEGACY_NEW_ACCOUNT: "1"
           SLACK_API_TOKEN: ${{secrets.SLACK_API_TOKEN}}
-          SLACK_CHANNEL: ci-celo-ll
-          BOT_FILTER_FAMILY: celo
+          SLACK_ICON_EMOJI: ":bot-seed5:"
+          SEED: ${{ secrets.SEED5 }}
           BOT_ENVIRONMENT: testing
+          BOT_FILTER_FAMILY: ${{github.event.inputs.family}}
