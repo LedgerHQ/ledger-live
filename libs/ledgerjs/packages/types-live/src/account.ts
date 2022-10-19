@@ -192,21 +192,26 @@ export type AccountLike = Account | SubAccount;
 export type AccountLikeArray = // $FlowFixMe wtf mobile
   AccountLike[] | TokenAccount[] | ChildAccount[] | Account[];
 
-/** */
-export type TokenAccountRaw = {
-  type: "TokenAccountRaw";
+type SubAccountCommonRaw = {
   id: string;
   starred?: boolean;
+  hidden?: boolean;
   parentId: string;
-  tokenId: string;
   creationDate?: string;
   operationsCount?: number;
   operations: OperationRaw[];
   pendingOperations: OperationRaw[];
   balance: string;
+  balanceHistoryCache?: BalanceHistoryCache;
+  swapHistory?: SwapOperationRaw[];
+};
+
+/** */
+export type TokenAccountRaw = SubAccountCommonRaw & {
+  type: "TokenAccountRaw";
+  tokenId: string;
   spendableBalance?: string;
   compoundBalance?: string;
-  balanceHistoryCache?: BalanceHistoryCache;
   swapHistory?: SwapOperationRaw[];
   approvals?: Array<{
     sender: string;
@@ -215,21 +220,11 @@ export type TokenAccountRaw = {
 };
 
 /** */
-export type ChildAccountRaw = {
+export type ChildAccountRaw = SubAccountCommonRaw & {
   type: "ChildAccountRaw";
-  id: string;
   name: string;
-  starred?: boolean;
-  parentId: string;
   currencyId: string;
   address: string;
-  creationDate?: string;
-  operationsCount?: number;
-  operations: OperationRaw[];
-  pendingOperations: OperationRaw[];
-  balance: string;
-  balanceHistoryCache?: BalanceHistoryCache;
-  swapHistory?: SwapOperationRaw[];
 };
 
 /** */

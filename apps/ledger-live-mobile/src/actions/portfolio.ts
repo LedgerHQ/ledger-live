@@ -1,5 +1,9 @@
 import { useSelector } from "react-redux";
-import type { AccountLike, PortfolioRange } from "@ledgerhq/types-live";
+import type {
+  Account,
+  AccountLike,
+  PortfolioRange,
+} from "@ledgerhq/types-live";
 import type {
   TokenCurrency,
   CryptoCurrency,
@@ -32,8 +36,8 @@ export function useBalanceHistoryWithCountervalue({
 }
 
 export function usePortfolio(
-  accounts: AccountLike[],
-  options: GetPortfolioOptionsType,
+  accounts?: Account[],
+  options?: GetPortfolioOptionsType,
 ) {
   const to = useSelector(counterValueCurrencySelector);
   const accountsSelected = useSelector(accountsSelector);
@@ -45,6 +49,7 @@ export function usePortfolio(
     options,
   });
 }
+
 export function useCurrencyPortfolio({
   currency,
   range,

@@ -29,7 +29,9 @@ const AssetRow = ({
   const name = currency.name;
   const unit = currency.units[0];
 
-  const { countervalueChange } = usePortfolio(asset.accounts);
+  const { countervalueChange } = usePortfolio(asset.accounts, {
+    flattenSourceAccounts: true,
+  });
 
   const onAssetPress = useCallback(() => {
     track("asset_clicked", {

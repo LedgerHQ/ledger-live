@@ -188,27 +188,10 @@ export const someAccountsNeedMigrationSelector = createSelector(
   accounts => accounts.some(canBeMigrated),
 );
 export const currenciesSelector = createSelector(accountsSelector, accounts => {
-  console.log(
-    flattenAccounts(accounts)
-      .filter(account => {
-        console.log(account.hidden, account.id);
-        if (isTokenAccount(account)) {
-          return !account.hidden;
-        }
-
-        return true;
-      })
-      .map(a => getAccountCurrency(a)),
-  );
-
   return uniq(
     flattenAccounts(accounts)
       .filter(account => {
-        if (isTokenAccount(account)) {
-          return !account.hidden;
-        }
-
-        return true;
+        return !account.hidden;
       })
       .map(a => getAccountCurrency(a)),
   ).sort((a, b) => a.name.localeCompare(b.name));

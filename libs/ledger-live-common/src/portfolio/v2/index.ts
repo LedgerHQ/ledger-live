@@ -168,11 +168,13 @@ type Available = {
   countervalueSendSum: number;
 };
 
-const defaultGetPortfolioOptions = {
-  flattenSourceAccounts: true,
+export type GetPortfolioOptionsType = {
+  flattenSourceAccounts: boolean;
 };
 
-export type GetPortfolioOptionsType = typeof defaultGetPortfolioOptions;
+const defaultGetPortfolioOptions: GetPortfolioOptionsType = {
+  flattenSourceAccounts: true,
+};
 
 /**
  * calculate the total balance history for all accounts in a reference fiat unit
@@ -354,7 +356,10 @@ export function getAssetsDistribution(
     }
 
     if (account.type === "TokenAccount") {
-      if (!hideEmptyTokenAccount || account.balance.isGreaterThan(0)) {
+      if (
+        !account.hidden &&
+        (!hideEmptyTokenAccount || account.balance.isGreaterThan(0))
+      ) {
         idCurrencies[id] = cur;
         idBalances[id] = (idBalances[id] ?? 0) + account.balance.toNumber();
       }
@@ -435,6 +440,7 @@ export function getAssetsDistribution(
   };
   return data;
 }
+
 const assetsDistributionNotAvailable: AssetsDistribution = {
   isAvailable: false,
   list: [],

@@ -153,6 +153,7 @@ export default function SubAccountsList({
         </Touchable>
       );
     }
+
     // If there is 3 or less sub accounts, no need for collapse button
     if (subAccounts.length <= 3) return null;
 
@@ -204,7 +205,7 @@ export default function SubAccountsList({
   ]);
 
   const renderItem = useCallback(
-    ({ item }) => (
+    ({ item }: { item: SubAccount }) => (
       <Flex alignItems={"center"}>
         <SubAccountRow
           account={item}
@@ -221,15 +222,6 @@ export default function SubAccountsList({
   if (!isToken && subAccounts.length === 0) {
     return null;
   }
-
-  console.log(subAccounts.map((sub) => sub.hidden))
-  console.log(
-    JSON.stringify(
-      subAccounts.map(sub => ({ id: sub.id, parentID: sub.parentId })),
-      null,
-      3,
-    ),
-  );
 
   return (
     <>

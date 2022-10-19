@@ -25,11 +25,15 @@ import { flushAll } from "../components/DBSave";
 const extraSessionTrackingPairsChanges: BehaviorSubject<TrackingPair[]> =
   new BehaviorSubject([]);
 
-export function useDistribution(opts) {
+export function useDistribution(opts: {
+  showEmptyAccounts: boolean;
+  hideEmptyTokenAccount: boolean;
+}) {
   const accounts = useSelector(accountsSelector);
   const to = useSelector(counterValueCurrencySelector);
   return useDistributionCommon({ accounts, to, ...opts });
 }
+
 export function useCalculateCountervalueCallback() {
   const to = useSelector(counterValueCurrencySelector);
   return useCalculateCountervalueCallbackCommon({

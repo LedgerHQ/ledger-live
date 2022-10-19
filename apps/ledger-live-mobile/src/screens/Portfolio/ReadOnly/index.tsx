@@ -19,6 +19,8 @@ import {
   useCurrenciesByMarketcap,
 } from "@ledgerhq/live-common/currencies/index";
 import { Currency } from "@ledgerhq/types-cryptoassets";
+import { Account } from "@ledgerhq/types-live";
+
 import { useRefreshAccountsOrdering } from "../../../actions/general";
 import {
   counterValueCurrencySelector,
@@ -112,7 +114,7 @@ function ReadOnlyPortfolio({ navigation }: Props) {
     () =>
       topCryptoCurrencies.slice(0, maxAssetsToDisplay).map(currency => ({
         amount: 0,
-        accounts: [],
+        accounts: [] as Account[],
         currency,
       })),
     [topCryptoCurrencies],

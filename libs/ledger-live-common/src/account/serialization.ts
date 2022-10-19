@@ -494,6 +494,7 @@ export function fromTokenAccountRaw(raw: TokenAccountRaw): TokenAccount {
     balanceHistoryCache,
     swapHistory,
     approvals,
+    hidden,
   } = raw;
   const token = getTokenById(tokenId);
 
@@ -519,6 +520,7 @@ export function fromTokenAccountRaw(raw: TokenAccountRaw): TokenAccount {
     pendingOperations: (pendingOperations || []).map(convertOperation),
     swapHistory: (swapHistory || []).map(fromSwapOperationRaw),
     approvals,
+    hidden,
     balanceHistoryCache: balanceHistoryCache || emptyHistoryCache,
   };
   res.balanceHistoryCache = generateHistoryFromOperations(res as TokenAccount);
@@ -530,6 +532,7 @@ export function toTokenAccountRaw(ta: TokenAccount): TokenAccountRaw {
     parentId,
     token,
     starred,
+    hidden,
     operations,
     operationsCount,
     pendingOperations,
@@ -545,6 +548,7 @@ export function toTokenAccountRaw(ta: TokenAccount): TokenAccountRaw {
     id,
     parentId,
     starred,
+    hidden,
     tokenId: token.id,
     balance: balance.toString(),
     spendableBalance: spendableBalance.toString(),
@@ -565,6 +569,7 @@ export function fromChildAccountRaw(raw: ChildAccountRaw): ChildAccount {
     parentId,
     currencyId,
     starred,
+    hidden,
     creationDate,
     operations,
     operationsCount,
@@ -583,6 +588,7 @@ export function fromChildAccountRaw(raw: ChildAccountRaw): ChildAccount {
     id,
     name,
     starred: starred || false,
+    hidden,
     parentId,
     currency,
     address,
@@ -603,6 +609,7 @@ export function toChildAccountRaw(ca: ChildAccount): ChildAccountRaw {
     name,
     parentId,
     starred,
+    hidden,
     currency,
     operations,
     operationsCount,
@@ -618,6 +625,7 @@ export function toChildAccountRaw(ca: ChildAccount): ChildAccountRaw {
     id,
     name,
     starred,
+    hidden,
     parentId,
     address,
     operationsCount,

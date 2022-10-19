@@ -188,7 +188,7 @@ const deviceStorage = {
   },
 
   /** clears the AsyncStorage */
-  clear() {
+  async clear() {
     return AsyncStorage.clear();
   },
 };

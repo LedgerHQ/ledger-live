@@ -9,13 +9,12 @@ import { createNativeWrapper } from "react-native-gesture-handler";
 import { useTranslation } from "react-i18next";
 import { useFocusEffect } from "@react-navigation/native";
 import { isAccountEmpty } from "@ledgerhq/live-common/account/index";
-
 import { Box, Flex, Button, Icons } from "@ledgerhq/native-ui";
-
 import { Currency } from "@ledgerhq/types-cryptoassets";
 import { useTheme } from "styled-components/native";
 import { usePostOnboardingEntryPointVisibleOnWallet } from "@ledgerhq/live-common/postOnboarding/hooks/index";
 import useEnv from "@ledgerhq/live-common/hooks/useEnv";
+
 import {
   useDistribution,
   useRefreshAccountsOrdering,
@@ -83,6 +82,7 @@ function PortfolioScreen({ navigation }: Props) {
     showEmptyAccounts: true,
     hideEmptyTokenAccount,
   });
+
   const accounts = useSelector(accountsSelector);
 
   const counterValueCurrency: Currency = useSelector(
@@ -132,6 +132,7 @@ function PortfolioScreen({ navigation }: Props) {
       ),
     [distribution],
   );
+
   const [showAssets, assetsToDisplay] = useMemo(
     () => [
       distribution.isAvailable && distribution.list.length > 0,

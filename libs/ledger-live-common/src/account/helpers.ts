@@ -175,7 +175,13 @@ export function findSubAccountById(
 
 // get the token accounts of an account, ignoring those that are zero IF user don't want them
 export function listSubAccounts(account: Account): SubAccount[] {
-  const accounts = account.subAccounts || [];
+  if (!account.subAccounts) {
+    return [];
+  }
+
+  const accounts = account.subAccounts.filter(
+    (subAccount) => !subAccount.hidden
+  );
 
   if (getEnv("HIDE_EMPTY_TOKEN_ACCOUNTS")) {
     return accounts.filter((a) => !a.balance.isZero());
