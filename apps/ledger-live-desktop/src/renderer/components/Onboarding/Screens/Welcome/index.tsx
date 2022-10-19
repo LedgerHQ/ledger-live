@@ -16,7 +16,7 @@ import stayOffline from "./assets/stayOffline.png";
 import validateTransactions from "./assets/validateTransactions.png";
 
 import { registerAssets } from "~/renderer/components/Onboarding/preloadAssets";
-import { FeatureFlagsDrawerButton } from "~/renderer/screens/settings/sections/Developer/FeatureFlagsButton";
+import { FeatureFlagDrawerButton } from "~/renderer/screens/settings/sections/Developer/FeatureFlagsSettings/FeatureFlagButtonDrawer";
 import { hasCompletedOnboardingSelector, languageSelector } from "~/renderer/reducers/settings";
 
 const stepLogos = [accessCrypto, ownPrivateKey, stayOffline, validateTransactions, setupNano];
@@ -150,7 +150,7 @@ export function Welcome() {
           </Description>
         </Presentation>
         <ProductHighlight>
-          {isFeatureFlagsSettingsButtonDisplayed && <FeatureFlagsDrawerButton />}
+          {isFeatureFlagsSettingsButtonDisplayed && <FeatureFlagDrawerButton />}
           <Button
             data-test-id="v3-onboarding-get-started-button"
             iconPosition="right"
