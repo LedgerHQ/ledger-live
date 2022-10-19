@@ -16,7 +16,6 @@ import {
 } from "../DeviceAction/rendering";
 import { mockedEventEmitter } from "~/renderer/components/debug/DebugMock";
 import { command } from "~/renderer/commands";
-import { ImageSourceContext } from "./FramedImage";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 
 type Props = {
@@ -76,10 +75,10 @@ const CustomImageDeviceAction: React.FC<Props> = withRemountableWrapper(props =>
   const isError = !!error;
   const isRefusedOnStaxError = error?.name && errorNamesRetryAnotherImage.includes(error?.name);
 
-  const shouldNavBeBlocked = validDevice && !isError;
+  const shouldNavBeBlocked = !!validDevice && !isError;
   useEffect(() => {
     blockNavigation && blockNavigation(shouldNavBeBlocked);
-  }, [shouldNavBeBlocked]);
+  }, [shouldNavBeBlocked, blockNavigation]);
 
   const handleRetry = useCallback(() => {
     if (isRefusedOnStaxError) onTryAnotherImage();
