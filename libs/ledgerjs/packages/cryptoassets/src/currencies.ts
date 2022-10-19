@@ -798,7 +798,6 @@ export const cryptocurrenciesById: Record<string, CryptoCurrency> = {
         address: "https://dexonscan.app/address/$address",
       },
     ],
-    explorerId: "eth",
   },
   digibyte: {
     type: "CryptoCurrency",
@@ -1008,6 +1007,7 @@ export const cryptocurrenciesById: Record<string, CryptoCurrency> = {
       },
     ],
     keywords: ["eth", "ethereum"],
+    explorerId: "eth",
   },
   ethereum_classic: {
     type: "CryptoCurrency",
