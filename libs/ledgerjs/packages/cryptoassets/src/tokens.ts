@@ -12,6 +12,7 @@ import asatokens from "../data/asa";
 import esdttokens from "../data/esdt";
 import cardanoNativeTokens from "../data/cardanoNative";
 import stellarTokens from "../data/stellar";
+import { ERC20Token } from "./types";
 //import spltokens from "../data/spl";
 const emptyArray = [];
 const tokensArray: TokenCurrency[] = [];
@@ -197,7 +198,7 @@ export function convertERC20([
   delisted,
   countervalueTicker,
   compoundFor,
-]): TokenCurrency {
+]: ERC20Token): TokenCurrency {
   const parentCurrency = getCryptoCurrencyById(parentCurrencyId);
   return {
     type: "TokenCurrency",

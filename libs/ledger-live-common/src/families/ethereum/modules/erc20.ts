@@ -8,6 +8,7 @@ import { AmountRequired } from "@ledgerhq/errors";
 import {
   findTokenByAddressInCurrency,
   convertERC20,
+  ERC20Token,
 } from "@ledgerhq/cryptoassets";
 import { inferTokenAccount, validateRecipient } from "../transaction";
 import {
@@ -156,8 +157,8 @@ export const modes: Record<Modes, ModeModule> = {
   "erc20.approve": erc20approve,
 };
 
-export const fetchERC20Tokens: () => Promise<any> = async () => {
-  let tokens: any;
+export const fetchERC20Tokens: () => Promise<ERC20Token[]> = async () => {
+  let tokens: ERC20Token[];
 
   try {
     const { data } = await network({
@@ -175,7 +176,7 @@ export const fetchERC20Tokens: () => Promise<any> = async () => {
 
 export async function preload(
   currency: CryptoCurrency
-): Promise<any | null | undefined> {
+): Promise<ERC20Token[] | null | undefined> {
   if (currency.id !== "ethereum") {
     return Promise.resolve(null);
   }
@@ -186,7 +187,7 @@ export async function preload(
 }
 
 export function hydrate(
-  value: any | null | undefined,
+  value: ERC20Token[] | null | undefined,
   currency: CryptoCurrency
 ): void {
   if (currency.id !== "ethereum" || !value) return;

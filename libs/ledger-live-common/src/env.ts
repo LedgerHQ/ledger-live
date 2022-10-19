@@ -669,7 +669,7 @@ const envDefinitions = {
   DYNAMIC_CAL_BASE_URL: {
     def: "https://cdn.live.ledger.com/cryptoassets",
     parser: stringParser,
-    desc: "bucket s3 of the dynamic cal ERC20-signatures",
+    desc: "bucket S3 of the dynamic cryptoassets list",
   },
   FEATURE_FLAGS: {
     def: "",
