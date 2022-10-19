@@ -19,6 +19,8 @@ const inferURLs = async (urls: In): Promise<string[]> => {
   return typeof r === "string" ? [r] : r;
 };
 
+export { HttpTransport, WebSocketTransport };
+
 export default (urls: In): new () => Transport => {
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
