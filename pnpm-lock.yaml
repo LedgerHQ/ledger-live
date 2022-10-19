@@ -55871,7 +55871,7 @@ packages:
     dev: false
 
   github.com/bitcoinjs/bip39/d8ea080a18b40f301d4e2219a2991cd2417e83c2:
-    resolution: {commit: d8ea080a18b40f301d4e2219a2991cd2417e83c2, repo: git+ssh://git@github.com/bitcoinjs/bip39.git, type: git}
+    resolution: {tarball: https://codeload.github.com/bitcoinjs/bip39/tar.gz/d8ea080a18b40f301d4e2219a2991cd2417e83c2}
     name: bip39
     version: 3.0.3
     dependencies:
