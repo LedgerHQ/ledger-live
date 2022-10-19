@@ -6,7 +6,6 @@ import {
 } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
 import type { StackScreenProps } from "@react-navigation/stack";
 import { useNavigation } from "@react-navigation/native";
-import { getEnv } from "@ledgerhq/live-common/env";
 import { useTheme } from "styled-components/native";
 import { Flex, InfiniteLoader } from "@ledgerhq/native-ui";
 import TrackScreen from "../../analytics/TrackScreen";
@@ -24,14 +23,7 @@ const PlatformApp = ({ route }: StackScreenProps) => {
   const remoteManifest = useRemoteLiveAppManifest(appId);
   const { state: remoteLiveAppState } = useRemoteLiveAppContext();
   const { locale } = useLocale();
-
   const manifest = localManifest || remoteManifest;
-
-  const buySellTestUrl = getEnv("BUY_SELL_TEST_URL");
-
-  if (buySellTestUrl) {
-    manifest.url = buySellTestUrl;
-  }
 
   useEffect(() => {
     manifest?.name &&

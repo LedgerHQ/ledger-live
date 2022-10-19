@@ -167,11 +167,6 @@ const envDefinitions = {
     def: "https://solana.coin.ledger.com",
     desc: "proxy url for solana API",
   },
-  BUY_SELL_TEST_URL: {
-    def: "",
-    parser: stringParser,
-    desc: "URL for loading a specific version of the Buy Sell app",
-  },
   SOLANA_VALIDATORS_APP_BASE_URL: {
     parser: stringParser,
     def: "https://validators-solana.coin.ledger.com/api/v1/validators",
