@@ -27,6 +27,7 @@ type Props = {
   onResult?: () => void;
   onSkip?: () => void;
   onTryAnotherImage: () => void;
+  blockNavigation?: (blocked: boolean) => void;
 };
 
 const errorNamesRetryAnotherImage = [
@@ -38,7 +39,16 @@ const action = createAction(getEnv("MOCK") ? mockedEventEmitter : ftsLoadImageEx
 const mockedDevice = { deviceId: "", modelId: DeviceModelId.nanoFTS, wired: true };
 
 const CustomImageDeviceAction: React.FC<Props> = withRemountableWrapper(props => {
-  const { hexImage, onStart, onResult, onSkip, source, remountMe, onTryAnotherImage } = props;
+  const {
+    hexImage,
+    onStart,
+    onResult,
+    onSkip,
+    source,
+    remountMe,
+    onTryAnotherImage,
+    blockNavigation,
+  } = props;
   const device = getEnv("MOCK") ? mockedDevice : props.device;
   const commandRequest = hexImage;
 
@@ -65,6 +75,11 @@ const CustomImageDeviceAction: React.FC<Props> = withRemountableWrapper(props =>
   const { error, imageLoadRequested, loadingImage, imageCommitRequested, progress } = status;
   const isError = !!error;
   const isRefusedOnStaxError = error?.name && errorNamesRetryAnotherImage.includes(error?.name);
+
+  const shouldNavBeBlocked = validDevice && !isError;
+  useEffect(() => {
+    blockNavigation && blockNavigation(shouldNavBeBlocked);
+  }, [shouldNavBeBlocked]);
 
   const handleRetry = useCallback(() => {
     if (isRefusedOnStaxError) onTryAnotherImage();

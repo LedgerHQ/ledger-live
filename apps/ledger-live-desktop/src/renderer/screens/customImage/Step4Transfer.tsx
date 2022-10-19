@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useState } from "react";
 import { ProcessorResult } from "~/renderer/components/CustomImage/ImageGrayscalePreview";
 import { Step, StepProps } from "./types";
 import { useTranslation } from "react-i18next";
@@ -18,6 +18,7 @@ type Props = StepProps & {
 const DEBUG = false;
 const StepTransfer: React.FC<Props> = props => {
   const { result, setStep, onError, onResult, onExit } = props;
+  const [navigationBlocked, setNavigationBlocked] = useState(false);
   const { t } = useTranslation();
 
   const device = useSelector(getCurrentDevice);
@@ -40,7 +41,7 @@ const StepTransfer: React.FC<Props> = props => {
         <StepFooter
           previousStep={Step.chooseContrast}
           previousLabel={t("common.previous")}
-          previousDisabled={!!device}
+          previousDisabled={navigationBlocked}
           setStep={setStep}
         />
       }
@@ -53,6 +54,7 @@ const StepTransfer: React.FC<Props> = props => {
           onResult={handleResult}
           onSkip={handleExit}
           onTryAnotherImage={handleTryAnotherImage}
+          blockNavigation={setNavigationBlocked}
         />
       ) : null}
       {DEBUG ? <TestImage result={result} onError={onError} /> : null}
