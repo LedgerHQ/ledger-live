@@ -4,6 +4,7 @@ import {
   getSecp256k1Instance,
   setSecp256k1Instance,
 } from "../crypto/secp256k1";
+import explorerBaseURI from "./explorer-uri";
 
 jest.setTimeout(180000);
 
@@ -26,8 +27,7 @@ describe("testing resilience of failures", () => {
             currency: "bitcoin",
             network: "mainnet",
             derivationMode: DerivationModes.LEGACY,
-            explorerURI:
-              "https://explorers.api.vault.ledger.com/blockchain/v3/btc",
+            explorerURI: `${explorerBaseURI}/v4/btc`,
             storage: "mock",
             storageParams: [],
           })

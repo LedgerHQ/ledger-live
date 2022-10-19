@@ -11,6 +11,7 @@ import BitcoinLikeStorage from "../storage";
 import { Merge } from "../pickingstrategies/Merge";
 import { DeepFirst } from "../pickingstrategies/DeepFirst";
 import { CoinSelect } from "../pickingstrategies/CoinSelect";
+import explorerBaseURI from "./explorer-uri";
 
 describe("testing xpub legacy transactions", () => {
   const network = coininfo.bitcoin.test.toBitcoinJS();
@@ -27,7 +28,7 @@ describe("testing xpub legacy transactions", () => {
   const xpub = new Xpub({
     storage,
     explorer: new BitcoinLikeExplorer({
-      explorerURI: "https://explorers.api.live.ledger.com/blockchain/v3/btc",
+      explorerURI: `${explorerBaseURI}/v4/btc`,
     }),
     crypto,
     xpub: node.neutered().toBase58(),

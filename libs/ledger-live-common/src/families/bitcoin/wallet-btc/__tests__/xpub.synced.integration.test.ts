@@ -9,10 +9,11 @@ import BitcoinLikeStorage from "../storage";
 import BitcoinLikeExplorer from "../explorer";
 import Crypto from "../crypto/bitcoincash";
 import Xpub from "../xpub";
+import explorerBaseURI from "./explorer-uri";
 
 describe("synced xpub utilites functions", () => {
   const explorer = new BitcoinLikeExplorer({
-    explorerURI: "https://explorers.api.vault.ledger.com/blockchain/v3/bch",
+    explorerURI: `${explorerBaseURI}/v4/bch`,
   });
   const crypto = new Crypto({
     network: coininfo.bitcoincash.main.toBitcoinJS(),

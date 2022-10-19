@@ -2,6 +2,7 @@ import { DerivationModes } from "../types";
 import BitcoinLikeWallet from "../wallet";
 import * as utils from "../utils";
 import { Account } from "../account";
+import explorerBaseURI from "./explorer-uri";
 
 describe("testing estimateMaxSpendable", () => {
   const wallet = new BitcoinLikeWallet();
@@ -14,7 +15,7 @@ describe("testing estimateMaxSpendable", () => {
       currency: "bitcoin",
       network: "mainnet",
       derivationMode: DerivationModes.LEGACY,
-      explorerURI: "https://explorers.api.vault.ledger.com/blockchain/v3/btc",
+      explorerURI: `${explorerBaseURI}/v4/btc`,
       storage: "mock",
       storageParams: [],
     });

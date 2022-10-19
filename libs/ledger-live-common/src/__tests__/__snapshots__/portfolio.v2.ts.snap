@@ -117,6 +117,7 @@ Object {
             "blockAvgTime": 900,
             "coinType": 0,
             "color": "#ffae35",
+            "explorerId": "btc",
             "explorerViews": Array [
               Object {
                 "address": "https://blockstream.info/address/$address",
@@ -656,6 +657,7 @@ Object {
         "blockAvgTime": 900,
         "coinType": 0,
         "color": "#ffae35",
+        "explorerId": "btc",
         "explorerViews": Array [
           Object {
             "address": "https://blockstream.info/address/$address",
@@ -2432,6 +2434,7 @@ Object {
         "blockAvgTime": 900,
         "coinType": 0,
         "color": "#ffae35",
+        "explorerId": "btc",
         "explorerViews": Array [
           Object {
             "address": "https://blockstream.info/address/$address",
@@ -4773,6 +4776,7 @@ Object {
         "blockAvgTime": 900,
         "coinType": 0,
         "color": "#ffae35",
+        "explorerId": "btc",
         "explorerViews": Array [
           Object {
             "address": "https://blockstream.info/address/$address",
@@ -5413,6 +5417,7 @@ Object {
         "blockAvgTime": 900,
         "coinType": 0,
         "color": "#ffae35",
+        "explorerId": "btc",
         "explorerViews": Array [
           Object {
             "address": "https://blockstream.info/address/$address",

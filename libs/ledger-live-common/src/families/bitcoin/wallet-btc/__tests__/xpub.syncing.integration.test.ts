@@ -8,6 +8,7 @@ import BitcoinLikeStorage from "../storage";
 import BitcoinLikeExplorer from "../explorer";
 import Xpub from "../xpub";
 import * as currency from "../crypto";
+import explorerBaseURI from "./explorer-uri";
 
 expect.extend({ toMatchFile });
 describe("xpub integration sync", () => {
@@ -279,7 +280,7 @@ describe("xpub integration sync", () => {
           throw new Error("Should not be reachable");
       }
       const explorer = new BitcoinLikeExplorer({
-        explorerURI: `https://explorers.api.vault.ledger.com/blockchain/${dataset.explorerVersion}/${dataset.coin}`,
+        explorerURI: `${explorerBaseURI}/${dataset.explorerVersion}/${dataset.coin}`,
       });
       const xpub = new Xpub({
         storage,

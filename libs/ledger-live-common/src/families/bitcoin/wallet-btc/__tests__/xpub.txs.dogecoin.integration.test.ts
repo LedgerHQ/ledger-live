@@ -8,11 +8,12 @@ import BitcoinLikeStorage from "../storage";
 import { Merge } from "../pickingstrategies/Merge";
 import BitcoinLikeWallet from "../wallet";
 import MockBtc from "../../mockBtc";
+import explorerBaseURI from "./explorer-uri";
 
 describe("testing dogecoin transactions", () => {
   const wallet = new BitcoinLikeWallet();
   const explorer = new BitcoinLikeExplorer({
-    explorerURI: "https://explorers.api.vault.ledger.com/blockchain/v3/doge",
+    explorerURI: `${explorerBaseURI}/v4/doge`,
     disableBatchSize: true,
   });
 
@@ -81,7 +82,7 @@ describe("testing dogecoin transactions", () => {
       currency: "dogecoin",
       network: "mainnet",
       derivationMode: DerivationModes.LEGACY,
-      explorerURI: "https://explorers.api.vault.ledger.com/blockchain/v3/doge",
+      explorerURI: `${explorerBaseURI}/v4/doge`,
       storage: "mock",
       storageParams: [],
     });
