@@ -24,12 +24,14 @@ const PlatformApp = ({ route }: StackScreenProps) => {
   const { state: remoteLiveAppState } = useRemoteLiveAppContext();
   const { locale } = useLocale();
   const manifest = localManifest || remoteManifest;
+
   useEffect(() => {
     manifest?.name &&
       setParams({
         name: manifest.name,
       });
   }, [manifest, setParams]);
+
   return manifest ? (
     <>
       <TrackScreen category="Platform" name="App" />
