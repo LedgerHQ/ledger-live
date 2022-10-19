@@ -46,9 +46,6 @@ function RedelegationSelectValidator({ navigation, route }: Props) {
         mode: "redelegate",
         validators: [],
         sourceValidator: route.params?.validatorSrcAddress,
-
-        /** @TODO remove this once the bridge handles it */
-        recipient: mainAccount.freshAddress,
       }),
     };
   });

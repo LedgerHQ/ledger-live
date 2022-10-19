@@ -64,7 +64,7 @@ export default function TransferDrawer({ onClose }: ModalProps) {
   const onSwap = useCallback(
     () =>
       onNavigate(NavigatorName.Swap, {
-        screen: ScreenName.Swap,
+        screen: "SwapForm",
       }),
     [onNavigate],
   );
@@ -153,6 +153,7 @@ export default function TransferDrawer({ onClose }: ModalProps) {
           disabled={!accountsCount || readOnlyModeEnabled || areAccountsEmpty}
         />
       </Box>
+
       <Box mb={8}>
         <TransferButton
           eventProperties={{
@@ -171,6 +172,7 @@ export default function TransferDrawer({ onClose }: ModalProps) {
           disabled={!accountsCount || readOnlyModeEnabled || areAccountsEmpty}
         />
       </Box>
+
       {lendingEnabled ? (
         <Box mb={8}>
           <TransferButton

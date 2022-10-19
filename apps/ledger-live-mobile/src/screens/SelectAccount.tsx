@@ -9,7 +9,7 @@ import { Flex } from "@ledgerhq/native-ui";
 import {
   isAccountEmpty,
   getAccountSpendableBalance,
-} from "@ledgerhq/live-common/lib/account";
+} from "@ledgerhq/live-common/account/index";
 import { NotEnoughBalance } from "@ledgerhq/errors";
 import { ScreenName } from "../const";
 import { accountsSelector } from "../reducers/accounts";

@@ -29,6 +29,23 @@ const boolParser = (v: unknown): boolean | null | undefined => {
 const stringParser = (v: unknown): string | null | undefined =>
   typeof v === "string" ? v : undefined;
 
+type JSONValue =
+  | string
+  | number
+  | boolean
+  | null
+  | { [x: string]: JSONValue }
+  | Array<JSONValue>;
+
+const jsonParser = (v: unknown): JSONValue | undefined => {
+  try {
+    if (typeof v !== "string") throw new Error();
+    return JSON.parse(v);
+  } catch (e) {
+    return undefined;
+  }
+};
+
 const envDefinitions = {
   ANALYTICS_CONSOLE: {
     def: false,
@@ -171,9 +188,14 @@ const envDefinitions = {
     desc: "Ledger script runner API",
   },
   BOT_TIMEOUT_SCAN_ACCOUNTS: {
-    def: 30 * 60 * 1000,
+    def: 10 * 60 * 1000,
     parser: intParser,
     desc: "bot's default timeout for scanAccounts",
+  },
+  BOT_SPEC_DEFAULT_TIMEOUT: {
+    def: 30 * 60 * 1000,
+    parser: intParser,
+    desc: "define the default value of spec.skipMutationsTimeout (if not overriden by spec)",
   },
   CARDANO_API_ENDPOINT: {
     def: "https://cardano.coin.ledger.com/api",
@@ -530,7 +552,7 @@ const envDefinitions = {
     desc: "maximum limit to synchronize accounts concurrently to limit overload",
   },
   BOT_MAX_CONCURRENT: {
-    def: 5,
+    def: 10,
     parser: intParser,
     desc: "maximum limit to run bot spec in parallel",
   },
@@ -643,6 +665,11 @@ const envDefinitions = {
     def: false,
     parser: boolParser,
     desc: "use the staging URL for the learn page",
+  },
+  FEATURE_FLAGS: {
+    def: "",
+    parser: jsonParser,
+    desc: "key value map for feature flags: {[key in FeatureId]?: Feature]}",
   },
 };
 

@@ -92,8 +92,6 @@ export default function DelegationSummary({ navigation, route }: Props) {
         transaction: bridge.updateTransaction(t, {
           mode: "delegate",
           validators: [],
-          /** @TODO remove this once the bridge handles it */
-          recipient: mainAccount.freshAddress,
         }),
       };
     }

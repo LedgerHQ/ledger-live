@@ -7,6 +7,7 @@ import appstate from "./appstate";
 import ble from "./ble";
 import ratings from "./ratings";
 import notifications from "./notifications";
+import swap, { SwapStateType } from "./swap";
 import walletconnect from "./walletconnect";
 import type { AccountsState } from "./accounts";
 import type { SettingsState } from "./settings";
@@ -23,6 +24,7 @@ export type State = {
   ble: BleState;
   ratings: RatingsState;
   notifications: NotificationsState;
+  swap: SwapStateType;
   walletconnect: WalletConnectState;
   postOnboarding: PostOnboardingState;
 };
@@ -34,6 +36,7 @@ const appReducer = combineReducers({
   ble,
   ratings,
   notifications,
+  swap,
   walletconnect,
   postOnboarding,
 });

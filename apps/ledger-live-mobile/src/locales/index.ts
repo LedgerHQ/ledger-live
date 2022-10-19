@@ -28,3 +28,6 @@ exports.zh = {
 exports.pt = {
   common: require("./pt-BR/common.json"),
 };
+exports.ar = {
+  common: require("./ar/common.json"),
+};
