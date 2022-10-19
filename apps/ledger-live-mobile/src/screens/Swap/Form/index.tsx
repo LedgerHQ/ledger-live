@@ -44,7 +44,7 @@ import { NotAvailable } from "./NotAvailable";
 import { TxForm } from "./TxForm";
 import { Summary } from "./Summary";
 import { Requirement } from "./Requirement";
-import { trackSwapError, SWAP_VERSION } from "../utils";
+import { trackSwapError, swapDefaultTrack } from "../utils";
 import { SwapFormProps } from "../types";
 import { Max } from "./Max";
 import { Modal } from "./Modal";
@@ -183,7 +183,7 @@ export function SwapForm({ route: { params } }: SwapFormProps) {
         trackSwapError(swapError, {
           sourcecurrency: swapTransaction.swap.from.currency?.name,
           provider,
-          swapVersion: SWAP_VERSION,
+          ...swapDefaultTrack,
         });
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -348,7 +348,7 @@ export function SwapForm({ route: { params } }: SwapFormProps) {
           "Page Swap Form - New Source Account",
           {
             provider,
-            swapVersion: SWAP_VERSION,
+            ...swapDefaultTrack,
           },
           undefined,
         );

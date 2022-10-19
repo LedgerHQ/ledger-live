@@ -43,7 +43,7 @@ import ProgressCircle from "~/renderer/components/ProgressCircle";
 import CrossCircle from "~/renderer/icons/CrossCircle";
 import { getProviderIcon } from "~/renderer/screens/exchange/Swap2/utils";
 import CryptoCurrencyIcon from "~/renderer/components/CryptoCurrencyIcon";
-import { SWAP_VERSION } from "~/renderer/screens/exchange/Swap2/utils/index";
+import { swapDefaultTrack } from "~/renderer/screens/exchange/Swap2/utils/index";
 import { context } from "~/renderer/drawers/Provider";
 import { track } from "~/renderer/analytics/segment";
 import { DrawerFooter } from "~/renderer/screens/exchange/Swap2/Form/DrawerFooter";
@@ -674,7 +674,7 @@ export const renderSwapDeviceConfirmation = ({
           sourcecurrency={sourceAccountCurrency?.name}
           targetcurrency={targetAccountCurrency?.name}
           provider={exchangeRate.provider}
-          swapVersion={SWAP_VERSION}
+          {...swapDefaultTrack}
         />
         <Box flex={0}>
           <Alert type="primary" learnMoreUrl={urls.swap.learnMore} mb={7} mx={4}>

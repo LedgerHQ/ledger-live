@@ -3,6 +3,7 @@ import React from "react";
 import { useTranslation } from "react-i18next";
 import { track } from "~/renderer/analytics/segment";
 import SectionInformative from "~/renderer/screens/exchange/Swap2/Form/FormSummary/SectionInformative";
+import { swapDefaultTrack } from "../../utils/index";
 
 const FormLoginBanner = ({ provider, onClick }: { provider?: string, onClick: Function }) => {
   const { t } = useTranslation();
@@ -19,7 +20,7 @@ const FormLoginBanner = ({ provider, onClick }: { provider?: string, onClick: Fu
       button: "Login",
       page: "Page Swap Form",
       partner: provider,
-      flow: "swap",
+      ...swapDefaultTrack,
     });
     onClick();
   };

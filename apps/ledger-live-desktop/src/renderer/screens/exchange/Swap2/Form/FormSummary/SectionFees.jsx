@@ -22,6 +22,7 @@ import TachometerHigh from "~/renderer/icons/TachometerHigh";
 import TachometerLow from "~/renderer/icons/TachometerLow";
 import TachometerMedium from "~/renderer/icons/TachometerMedium";
 import styled from "styled-components";
+import { swapDefaultTrack } from "../../utils/index";
 
 type Strategies = "slow" | "medium" | "fast" | "advanced";
 const FEES_STRATEGY_ICONS: {
@@ -111,7 +112,7 @@ const SectionFees = ({
         track("button_clicked", {
           button: "change network fees",
           page: "Page Swap Form",
-          flow: "swap",
+          ...swapDefaultTrack,
         });
         setDrawer(FeesDrawer, {
           setTransaction,

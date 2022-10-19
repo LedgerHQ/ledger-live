@@ -7,6 +7,7 @@ import { Flex, Text, Icon } from "@ledgerhq/react-ui";
 import FormattedVal from "~/renderer/components/FormattedVal";
 import { setTrackingSource } from "~/renderer/analytics/TrackPage";
 import { track } from "~/renderer/analytics/segment";
+import { swapDefaultTrack } from "~/renderer/screens/exchange/Swap2/utils/index";
 import counterValueFormatter from "@ledgerhq/live-common/market/utils/countervalueFormatter";
 import CryptoCurrencyIcon from "~/renderer/components/CryptoCurrencyIcon";
 import { TableCell, TableRow } from "./MarketList";
@@ -135,6 +136,7 @@ function MarketRowItem({
           button: "swap",
           currency: currency?.ticker,
           page: "Page Market",
+          ...swapDefaultTrack,
         });
         setTrackingSource("Page Market");
 

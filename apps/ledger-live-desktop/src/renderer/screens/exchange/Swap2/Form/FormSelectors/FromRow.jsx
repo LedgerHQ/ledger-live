@@ -20,7 +20,7 @@ import type {
   SwapDataType,
 } from "@ledgerhq/live-common/exchange/swap/types";
 import { track } from "~/renderer/analytics/segment";
-import { SWAP_VERSION } from "../../utils/index";
+import { swapDefaultTrack } from "../../utils/index";
 
 import { useCurrenciesByMarketcap } from "@ledgerhq/live-common/currencies/sortByMarketcap";
 import { listCryptoCurrencies, listTokens } from "@ledgerhq/live-common/currencies/index";
@@ -104,7 +104,7 @@ function FromRow({
     track("button_clicked", {
       button: "Edit source account",
       page: "Page Swap Form",
-      flow: "swap",
+      ...swapDefaultTrack,
     });
 
   const setAccountAndTrack = account => {
@@ -112,7 +112,7 @@ function FromRow({
     track("button_clicked", {
       button: "New source account",
       page: "Page Swap Form",
-      flow: "swap",
+      ...swapDefaultTrack,
       account: account,
     });
     setFromAccount(account);
@@ -122,7 +122,7 @@ function FromRow({
     track("button_clicked", {
       button: "Amount input",
       page: "Page Swap Form",
-      flow: "swap",
+      ...swapDefaultTrack,
       amount: fromAmount,
     });
     updateSelectedRate();
@@ -133,7 +133,7 @@ function FromRow({
     track("button_clicked", {
       button: "max",
       page: "Page Swap Form",
-      flow: "swap",
+      ...swapDefaultTrack,
       value: state,
     });
     toggleMax(state);

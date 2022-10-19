@@ -7,7 +7,12 @@ import { SwapExchangeRateAmountTooLow } from "@ledgerhq/live-common/errors";
 import { NotEnoughBalance } from "@ledgerhq/errors";
 import { track } from "~/renderer/analytics/segment";
 
-export const SWAP_VERSION = "2.34";
+export const SWAP_VERSION = "2.35";
+
+export const swapDefaultTrack = {
+  swapVersion: SWAP_VERSION,
+  flow: "swap",
+};
 
 export const useRedirectToSwapHistory = () => {
   const history = useHistory();

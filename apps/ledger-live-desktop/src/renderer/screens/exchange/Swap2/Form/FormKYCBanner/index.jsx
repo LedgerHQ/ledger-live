@@ -7,6 +7,7 @@ import { urls } from "~/config/urls";
 import { openURL } from "~/renderer/linking";
 import { track } from "~/renderer/analytics/segment";
 import SectionInformative from "~/renderer/screens/exchange/Swap2/Form/FormSummary/SectionInformative";
+import { swapDefaultTrack } from "../../utils/index";
 
 const FormKYCBanner = ({
   provider,
@@ -30,7 +31,7 @@ const FormKYCBanner = ({
     track("button_clicked", {
       button: "KYC",
       page: "Page Swap Form",
-      flow: "swap",
+      ...swapDefaultTrack,
       provider,
       status,
     });
