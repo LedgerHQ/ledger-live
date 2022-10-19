@@ -14,21 +14,16 @@ const WalletNftGallery = () => {
 
   const hiddenNftCollections = useSelector(hiddenNftCollectionsSelector);
 
-  const visibleNfts = useMemo(
-    () =>
-      nfts.filter(
-        nft =>
-          !hiddenNftCollections.includes(
-            `${decodeNftId(nft.id).accountId}|${nft.contract}`,
-          ),
-      ),
-    [hiddenNftCollections, nfts],
-  );
+  const nftsOrdered = useMemo(() => {
+    const visibleNfts = nfts.filter(
+      nft =>
+        !hiddenNftCollections.includes(
+          `${decodeNftId(nft.id).accountId}|${nft.contract}`,
+        ),
+    );
+    return orderByLastReceived(accounts, visibleNfts);
+  }, [accounts, hiddenNftCollections, nfts]);
 
-  const nftsOrdered = useMemo(
-    () => orderByLastReceived(accounts, visibleNfts),
-    [accounts, visibleNfts],
-  );
   const hasNFTs = nftsOrdered.length > 0;
   return (
     <Box mx={6} mt={6} mb={12} flex={1}>

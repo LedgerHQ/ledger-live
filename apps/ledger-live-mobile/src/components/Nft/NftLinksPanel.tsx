@@ -1,7 +1,7 @@
 import React, { memo, useCallback, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigation, useTheme } from "@react-navigation/native";
-import { NFTMediaSize, NFTMetadata, ProtoNFT } from "@ledgerhq/types-live";
+import { NFTMediaSize, NFTMetadata } from "@ledgerhq/types-live";
 import {
   View,
   StyleSheet,
@@ -267,6 +267,7 @@ const NftLinksPanel = ({
       <HideNftDrawer
         nftContract={nftContract}
         nftId={nftId}
+        collection={String(nftMetadata?.tokenName)}
         isOpened={bottomHideCollectionOpen}
         onClose={closeHideModal}
       />
