@@ -187,15 +187,12 @@ export const someAccountsNeedMigrationSelector = createSelector(
   accountsSelector,
   accounts => accounts.some(canBeMigrated),
 );
-export const currenciesSelector = createSelector(accountsSelector, accounts => {
-  return uniq(
-    flattenAccounts(accounts)
-      .filter(account => {
-        return !account.hidden;
-      })
-      .map(a => getAccountCurrency(a)),
-  ).sort((a, b) => a.name.localeCompare(b.name));
-});
+
+export const currenciesSelector = createSelector(accountsSelector, accounts =>
+  uniq(flattenAccounts(accounts).map(a => getAccountCurrency(a))).sort((a, b) =>
+    a.name.localeCompare(b.name),
+  ),
+);
 
 export const cryptoCurrenciesSelector = createSelector(
   accountsSelector,
