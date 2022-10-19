@@ -39,6 +39,8 @@ import { QuizFailure } from "~/renderer/components/Onboarding/Screens/Tutorial/s
 import { QuizSuccess } from "~/renderer/components/Onboarding/Screens/Tutorial/screens/QuizSuccess";
 import RecoveryWarning from "../../Help/RecoveryWarning";
 import { QuizzPopin } from "~/renderer/modals/OnboardingQuizz/OnboardingQuizzModal";
+import { getPostOnboardingActionsForDevice } from "~/renderer/components/PostOnboardingHub/logic";
+import { useStartPostOnboardingCallback } from "@ledgerhq/live-common/postOnboarding/hooks/index";
 
 import { UseCase } from "../../index";
 
@@ -230,6 +232,7 @@ export default function Tutorial({ useCase }: Props) {
   const [connectedDevice, setConnectedDevice] = useState(null);
 
   const [onboardingDone, setOnboardingDone] = useState(false);
+  const handleStartPostOnboarding = useStartPostOnboardingCallback();
 
   const [helpPinCode, setHelpPinCode] = useState(false);
   const [helpRecoveryPhrase, setHelpRecoveryPhrase] = useState(false);
@@ -485,12 +488,14 @@ export default function Tutorial({ useCase }: Props) {
         canContinue: !!connectedDevice,
         next: () => {
           setOnboardingDone(true);
+          handleStartPostOnboarding(connectedDevice.modelId, true, () => history.push("/"));
         },
         previous: () => history.push(`${path}/${ScreenId.pairMyNano}`),
       },
     ],
     [
       connectedDevice,
+      handleStartPostOnboarding,
       history,
       path,
       useCase,
