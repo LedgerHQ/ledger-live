@@ -1,6 +1,6 @@
 import React, { memo, useCallback, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useNavigation, useTheme } from "@react-navigation/native";
+import { useNavigation } from "@react-navigation/native";
 import { NFTMediaSize, NFTMetadata } from "@ledgerhq/types-live";
 import {
   View,
@@ -11,7 +11,8 @@ import {
   ViewStyle,
 } from "react-native";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
-import { Icons } from "@ledgerhq/native-ui";
+import { Box, Flex, Icons, Text } from "@ledgerhq/native-ui";
+import { useTheme } from "styled-components/native";
 import { getMetadataMediaTypes } from "../../logic/nft";
 import { NavigatorName, ScreenName } from "../../const";
 import ExternalLinkIcon from "../../icons/ExternalLink";
@@ -20,7 +21,6 @@ import RaribleIcon from "../../icons/Rarible";
 import GlobeIcon from "../../icons/Globe";
 import BottomModal from "../BottomModal";
 import { rgba } from "../../colors";
-import LText from "../LText";
 import HideNftDrawer from "./HideNftDrawer";
 import { track, TrackScreen } from "../../analytics";
 
@@ -40,6 +40,7 @@ const NftLink = ({
   title,
   subtitle,
   onPress,
+  primary,
 }: {
   style?: StyleProp<ViewStyle>;
   leftIcon: React.ReactNode;
@@ -47,17 +48,26 @@ const NftLink = ({
   title: string;
   subtitle?: string;
   onPress?: () => void;
+  primary?: boolean;
 }) => (
   <TouchableOpacity style={[styles.section, style]} onPress={onPress}>
-    <View style={styles.sectionBody}>
-      <View style={styles.icon}>{leftIcon}</View>
-      <View>
-        <LText semiBold style={styles.sectionTitle}>
+    <Flex flexDirection="row" alignItems="center">
+      <Box mr={16}>{leftIcon}</Box>
+      <Flex flexDirection="column">
+        <Text
+          fontWeight="semiBold"
+          fontSize={16}
+          color={primary ? "primary.c90" : "neutral.c100"}
+        >
           {title}
-        </LText>
-        {subtitle && <LText style={styles.sectionSubTitle}>{subtitle}</LText>}
-      </View>
-    </View>
+        </Text>
+        {subtitle && (
+          <Text fontSize={13} color={primary ? "primary.c90" : "neutral.c100"}>
+            {subtitle}
+          </Text>
+        )}
+      </Flex>
+    </Flex>
     {rightIcon}
   </TouchableOpacity>
 );
@@ -141,7 +151,9 @@ const NftLinksPanel = ({
             <NftLink
               leftIcon={<OpenSeaIcon size={36} />}
               title={`${t("nft.viewerModal.viewOn")} OpenSea`}
-              rightIcon={<ExternalLinkIcon size={20} color={colors.grey} />}
+              rightIcon={
+                <ExternalLinkIcon size={20} color={colors.neutral.c100} />
+              }
               onPress={handleOpenOpenSea}
             />,
           ]
@@ -152,7 +164,9 @@ const NftLinksPanel = ({
               style={styles.sectionMargin}
               leftIcon={<RaribleIcon size={36} />}
               title={`${t("nft.viewerModal.viewOn")} Rarible`}
-              rightIcon={<ExternalLinkIcon size={20} color={colors.grey} />}
+              rightIcon={
+                <ExternalLinkIcon size={20} color={colors.neutral.c100} />
+              }
               onPress={handleOpenRarible}
             />,
           ]
@@ -160,53 +174,55 @@ const NftLinksPanel = ({
     ];
 
     const bottomSection = [
-      ...(links?.explorer
-        ? [
-            <NftLink
-              leftIcon={
-                <View
-                  style={[
-                    styles.roundIconContainer,
-                    { backgroundColor: rgba(colors.live, 0.1) },
-                  ]}
-                >
-                  <GlobeIcon size={16} color={colors.live} />
-                </View>
-              }
-              title={t("nft.viewerModal.viewInExplorer")}
-              rightIcon={<ExternalLinkIcon size={20} color={colors.grey} />}
-              onPress={handleOpenExplorer}
-            />,
-          ]
-        : []),
       [
         <NftLink
+          primary
           leftIcon={
             <View
               style={[
                 styles.roundIconContainer,
-                { backgroundColor: rgba(colors.live, 0.1) },
+                { backgroundColor: rgba(colors.primary.c90, 0.1) },
               ]}
             >
-              <Icons.EyeNoneMedium size={16} color={colors.live} />
+              <Icons.EyeNoneMedium size={16} color={colors.primary.c90} />
             </View>
           }
           title={t("nft.viewerModal.hide")}
           onPress={hide}
         />,
       ],
+      ...(links?.explorer
+        ? [
+            <NftLink
+              primary
+              leftIcon={
+                <View
+                  style={[
+                    styles.roundIconContainer,
+                    { backgroundColor: rgba(colors.primary.c90, 0.1) },
+                  ]}
+                >
+                  <GlobeIcon size={16} color={colors.primary.c90} />
+                </View>
+              }
+              title={t("nft.viewerModal.viewInExplorer")}
+              onPress={handleOpenExplorer}
+            />,
+          ]
+        : []),
       ...(showCustomImageButton
         ? [
             <NftLink
+              primary
               title={"Custom image"} // TODO: there is no design nor wording for this for now
               leftIcon={
                 <View
                   style={[
                     styles.roundIconContainer,
-                    { backgroundColor: rgba(colors.live, 0.1) },
+                    { backgroundColor: rgba(colors.primary.c90, 0.1) },
                   ]}
                 >
-                  <Icons.BracketsMedium size={16} color={colors.live} />
+                  <Icons.BracketsMedium size={16} color={colors.primary.c90} />
                 </View>
               }
               onPress={handlePressCustomImage}
@@ -255,7 +271,7 @@ const NftLinksPanel = ({
       style={[
         styles.root,
         {
-          backgroundColor: colors.card,
+          backgroundColor: colors.background.drawer,
         },
       ]}
       id="NftLinksModal"
