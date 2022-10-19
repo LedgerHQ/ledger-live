@@ -4,7 +4,7 @@ import FastImage, {
   FastImageProps,
   ResizeMode,
 } from "react-native-fast-image";
-import { View, StyleSheet, Animated } from "react-native";
+import { View, StyleSheet, Animated, StyleProp, ViewStyle } from "react-native";
 import ImageNotFoundIcon from "../../icons/ImageNotFound";
 import { withTheme } from "../../colors";
 import Skeleton from "../Skeleton";
@@ -39,7 +39,7 @@ const NotFound: React.FC<{
 };
 
 type Props = {
-  style?: any;
+  style?: StyleProp<ViewStyle>;
   status: string;
   src: string;
   srcFallback: string;
@@ -68,7 +68,6 @@ class NftImage extends React.PureComponent<Props, State> {
   skeletonOpacityAnim = new Animated.Value(1);
 
   startAnimation = () => {
-    console.log("nft image loaded");
     Animated.timing(this.contentOpacityAnim, {
       toValue: 1,
       duration: 500,
@@ -84,7 +83,6 @@ class NftImage extends React.PureComponent<Props, State> {
   };
 
   onLoad = ({ nativeEvent }: OnLoadEvent) => {
-    console.log("nft image load");
     if (!nativeEvent) {
       if (this.state.usingFallback) {
         this.setState({ error: true });
@@ -156,7 +154,6 @@ class NftImage extends React.PureComponent<Props, State> {
               onLoad={this.onLoad}
               onLoadEnd={this.startAnimation}
               onError={this.onError}
-              onLoadStart={() => console.log("nft image load start", src)}
             />
           )}
         </Animated.View>
