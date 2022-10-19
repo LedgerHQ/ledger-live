@@ -8,7 +8,7 @@ import BitcoinLikeStorage from "../storage";
 import { Merge } from "../pickingstrategies/Merge";
 import BitcoinLikeWallet from "../wallet";
 import MockBtc from "../../mockBtc";
-import explorerBaseURI from "./explorer-uri";
+import { explorerBaseURI } from "./wallet.integration.test";
 
 describe("testing dogecoin transactions", () => {
   const wallet = new BitcoinLikeWallet();

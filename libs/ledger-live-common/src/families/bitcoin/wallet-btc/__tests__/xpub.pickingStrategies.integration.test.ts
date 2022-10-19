@@ -11,7 +11,7 @@ import BitcoinLikeStorage from "../storage";
 import { Merge } from "../pickingstrategies/Merge";
 import { DeepFirst } from "../pickingstrategies/DeepFirst";
 import { CoinSelect } from "../pickingstrategies/CoinSelect";
-import explorerBaseURI from "./explorer-uri";
+import { explorerBaseURI } from "./wallet.integration.test";
 
 describe("testing xpub legacy transactions", () => {
   const network = coininfo.bitcoin.test.toBitcoinJS();

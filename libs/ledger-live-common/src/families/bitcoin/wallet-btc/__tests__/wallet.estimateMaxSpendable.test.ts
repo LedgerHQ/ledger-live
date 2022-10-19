@@ -2,7 +2,7 @@ import { DerivationModes } from "../types";
 import BitcoinLikeWallet from "../wallet";
 import * as utils from "../utils";
 import { Account } from "../account";
-import explorerBaseURI from "./explorer-uri";
+import { explorerBaseURI } from "./wallet.integration.test";
 
 describe("testing estimateMaxSpendable", () => {
   const wallet = new BitcoinLikeWallet();

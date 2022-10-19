@@ -8,7 +8,7 @@ import BitcoinLikeStorage from "../storage";
 import BitcoinLikeExplorer from "../explorer";
 import Xpub from "../xpub";
 import * as currency from "../crypto";
-import explorerBaseURI from "./explorer-uri";
+import { explorerBaseURI } from "./wallet.integration.test";
 
 expect.extend({ toMatchFile });
 describe("xpub integration sync", () => {

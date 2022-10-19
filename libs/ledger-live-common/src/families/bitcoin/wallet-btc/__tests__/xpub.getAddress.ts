@@ -7,7 +7,7 @@ import BCHCrypto from "../crypto/bitcoincash";
 import BTCCrypto from "../crypto/bitcoin";
 import ZECCrypto from "../crypto/zec";
 import ZENCrypto from "../crypto/zen";
-import explorerBaseURI from "./explorer-uri";
+import { explorerBaseURI } from "./wallet.integration.test";
 
 describe("Unit tests for getAddress", () => {
   it("Test getAddress for bch and btc", async () => {

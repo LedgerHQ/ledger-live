@@ -4,7 +4,9 @@ import BitcoinLikeWallet from "../wallet";
 import { Account } from "../account";
 import { Merge } from "../pickingstrategies/Merge";
 import MockBtc from "../../mockBtc";
-import explorerBaseURI from "./explorer-uri";
+
+export const explorerBaseURI =
+  "https://explorers.api.live.ledger.com/blockchain";
 
 jest.setTimeout(180000);
 

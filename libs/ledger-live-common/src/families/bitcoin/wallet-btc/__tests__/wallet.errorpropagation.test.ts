@@ -4,7 +4,7 @@ import {
   getSecp256k1Instance,
   setSecp256k1Instance,
 } from "../crypto/secp256k1";
-import explorerBaseURI from "./explorer-uri";
+import { explorerBaseURI } from "./wallet.integration.test";
 
 jest.setTimeout(180000);
 

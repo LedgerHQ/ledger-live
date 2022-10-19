@@ -9,7 +9,7 @@ import BitcoinLikeStorage from "../storage";
 import BitcoinLikeExplorer from "../explorer";
 import Crypto from "../crypto/bitcoincash";
 import Xpub from "../xpub";
-import explorerBaseURI from "./explorer-uri";
+import { explorerBaseURI } from "./wallet.integration.test";
 
 describe("synced xpub utilites functions", () => {
   const explorer = new BitcoinLikeExplorer({
