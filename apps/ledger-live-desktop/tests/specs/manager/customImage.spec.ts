@@ -5,6 +5,7 @@ import { DeviceAction } from "../../models/DeviceAction";
 import { Layout } from "../../models/Layout";
 import { CustomImageDrawer } from "../../models/CustomImageDrawer";
 import { DeviceModelId } from "@ledgerhq/devices";
+import { padStart } from "lodash";
 
 test.use({ userdata: "skip-onboarding", featureFlags: { customImage: { enabled: true } } });
 
@@ -16,48 +17,70 @@ test("Custom image", async ({ page }) => {
 
   const container = customImageDrawer.container;
 
+  let screenshotIndex = 0;
+
+  /**
+   * Allows to easily navigate between screenshots in their order of execution.
+   * Yes if we remove/add screenshots it will shift everything but that should
+   * happened rarely, and even then it will be more convenient to check that the
+   * screenshots are correct by examining them in order.
+   * */
+  function generateScreenshotPrefix() {
+    const prefix = `custom-image-${padStart(screenshotIndex.toString(), 3, "0")}-`;
+    screenshotIndex += 1;
+    return prefix;
+  }
+
+  async function waitTimeout(timeoutMs: number) {
+    return new Promise(resolve => setTimeout(resolve, timeoutMs));
+  }
+
   await test.step("Access manager", async () => {
     await layout.goToManager();
     await deviceAction.accessManager("", "", DeviceModelId.nanoFTS);
     await managerPage.customImageButton.waitFor({ state: "visible" });
-    await expect(page).toHaveScreenshot("custom-image-manager-button.png");
+    await expect(page).toHaveScreenshot(`${generateScreenshotPrefix()}manager-button.png`);
   });
 
   await test.step("Open custom image drawer", async () => {
     await managerPage.openCustomImage();
     await container.waitFor({ state: "attached" });
-    await expect(container).toHaveScreenshot("custom-image-drawer.png");
+    await expect(container).toHaveScreenshot(`${generateScreenshotPrefix()}drawer.png`);
   });
 
   await test.step("Import image", async () => {
     await customImageDrawer.importImage("tests/specs/manager/sample-custom-image.webp");
     await customImageDrawer.importImageInput.waitFor({ state: "detached" });
-    await expect(container).toHaveScreenshot("custom-image-image-imported.png");
+    await expect(container).toHaveScreenshot(`${generateScreenshotPrefix()}image-imported.png`);
   });
 
   await test.step("Adjust image", async () => {
     await customImageDrawer.waitForCropConfirmable();
-    await expect(container).toHaveScreenshot("custom-image-adjust-0.png");
+    await expect(container).toHaveScreenshot(`${generateScreenshotPrefix()}adjust.png`);
 
     /** zoom in */
     await customImageDrawer.cropZoomInABit();
-    await expect(container).toHaveScreenshot("custom-image-adjust-1-zoomed.png");
+    await expect(container).toHaveScreenshot(`${generateScreenshotPrefix()}adjust-zoomed.png`);
 
     /** confirm */
     await customImageDrawer.confirmCrop();
-    await expect(container).toHaveScreenshot("custom-image-adjust-2-contrast-zoomed.png");
+    await expect(container).toHaveScreenshot(
+      `${generateScreenshotPrefix()}adjust-contrast-zoomed.png`,
+    );
 
     /** go back to cropping -> the cropping state should not be reinitialized */
     await customImageDrawer.contrastPrevious();
-    await expect(container).toHaveScreenshot("custom-image-adjust-3.png");
+    await expect(container).toHaveScreenshot(`${generateScreenshotPrefix()}adjust.png`);
 
     /** rotate */
     customImageDrawer.rotate();
-    await expect(container).toHaveScreenshot("custom-image-adjust-4-rotate-once.png");
+    await expect(container).toHaveScreenshot(`${generateScreenshotPrefix()}adjust-rotate-once.png`);
 
     /** confirm */
     await customImageDrawer.confirmCrop();
-    await expect(container).toHaveScreenshot("custom-image-adjust-5-rotated-zoomed.png");
+    await expect(container).toHaveScreenshot(
+      `${generateScreenshotPrefix()}adjust-rotated-zoomed.png`,
+    );
 
     /** go back to cropping */
     await customImageDrawer.contrastPrevious();
@@ -73,10 +96,10 @@ test("Custom image", async ({ page }) => {
      **/
     await customImageDrawer.cropZoomInMax();
     await customImageDrawer.cropZoomInMax();
-    await expect(container).toHaveScreenshot("custom-image-adjust-6-max-zoom.png");
+    await expect(container).toHaveScreenshot(`${generateScreenshotPrefix()}adjust-max-zoom.png`);
 
     await customImageDrawer.cropZoomOutABit();
-    await expect(container).toHaveScreenshot("custom-image-adjust-7-big-zoom.png");
+    await expect(container).toHaveScreenshot(`${generateScreenshotPrefix()}adjust-big-zoom.png`);
 
     /**
      * Min zoom
@@ -84,30 +107,82 @@ test("Custom image", async ({ page }) => {
      **/
     await customImageDrawer.cropZoomOutMax();
     await customImageDrawer.cropZoomOutMax();
-    await expect(container).toHaveScreenshot("custom-image-adjust-8-min-zoom.png");
+    await expect(container).toHaveScreenshot(`${generateScreenshotPrefix()}adjust-min-zoom.png`);
 
     await customImageDrawer.cropZoomInABit();
-    await expect(container).toHaveScreenshot("custom-image-adjust-9-small-zoom.png");
+    await expect(container).toHaveScreenshot(`${generateScreenshotPrefix()}adjust-small-zoom.png`);
 
     await customImageDrawer.confirmCrop();
   });
 
   await test.step("Choose contrast", async () => {
     await customImageDrawer.contrastContinueButton.waitFor({ state: "attached" });
-    await expect(container).toHaveScreenshot("custom-image-preview-contrast-initial.png");
+    await expect(container).toHaveScreenshot(
+      `${generateScreenshotPrefix()}preview-contrast-initial.png`,
+    );
     await customImageDrawer.chooseContrast(1);
-    await expect(container).toHaveScreenshot("custom-image-preview-contrast-1.png");
+    await expect(container).toHaveScreenshot(`${generateScreenshotPrefix()}preview-contrast-1.png`);
     await customImageDrawer.chooseContrast(2);
-    await expect(container).toHaveScreenshot("custom-image-preview-contrast-2.png");
+    await expect(container).toHaveScreenshot(`${generateScreenshotPrefix()}preview-contrast-2.png`);
     await customImageDrawer.chooseContrast(3);
-    await expect(container).toHaveScreenshot("custom-image-preview-contrast-3.png");
+    await expect(container).toHaveScreenshot(`${generateScreenshotPrefix()}preview-contrast-3.png`);
     await customImageDrawer.chooseContrast(0);
-    await expect(container).toHaveScreenshot("custom-image-preview-contrast-0.png");
+    await expect(container).toHaveScreenshot(`${generateScreenshotPrefix()}preview-contrast-0.png`);
     await customImageDrawer.confirmContrast();
   });
 
   await test.step("Transfer image", async () => {
     await customImageDrawer.contrastContinueButton.waitFor({ state: "detached" });
-    await expect(container).toHaveScreenshot("custom-image-transfer.png");
+
+    await deviceAction.requestImageLoad();
+    // await page.pause();
+    await customImageDrawer.deviceActionImageLoadRequested.waitFor({ state: "attached" });
+    await expect(container).toHaveScreenshot(
+      `${generateScreenshotPrefix()}transfer-load-requested.png`,
+    );
+    // await page.pause();
+    await deviceAction.loadImageWithProgress(0);
+    await customImageDrawer.deviceActionImageLoading(0).waitFor({ state: "attached" });
+    await expect(container).toHaveScreenshot(
+      `${generateScreenshotPrefix()}transfer-progress-000.png`,
+    );
+    // await page.pause();
+    await deviceAction.loadImageWithProgress(0.2);
+    await customImageDrawer.deviceActionImageLoading(0.2).waitFor({ state: "attached" });
+    await expect(container).toHaveScreenshot(
+      `${generateScreenshotPrefix()}transfer-progress-020.png`,
+    );
+    // await page.pause();
+    await deviceAction.loadImageWithProgress(0.5);
+    await customImageDrawer.deviceActionImageLoading(0.5).waitFor({ state: "attached" });
+    await expect(container).toHaveScreenshot(
+      `${generateScreenshotPrefix()}transfer-progress-050.png`,
+    );
+    // await page.pause();
+    await deviceAction.loadImageWithProgress(0.8);
+    await customImageDrawer.deviceActionImageLoading(0.8).waitFor({ state: "attached" });
+    await expect(container).toHaveScreenshot(
+      `${generateScreenshotPrefix()}transfer-progress-080.png`,
+    );
+    // await page.pause();
+    await deviceAction.loadImageWithProgress(1);
+    await customImageDrawer.deviceActionImageLoading(1).waitFor({ state: "attached" });
+    await expect(container).toHaveScreenshot(
+      `${generateScreenshotPrefix()}transfer-progress-100.png`,
+    );
+    // await page.pause();
+    await deviceAction.requestImageCommit();
+    await customImageDrawer.deviceActionImageCommitRequested.waitFor({ state: "attached" });
+    await expect(container).toHaveScreenshot(
+      `${generateScreenshotPrefix()}transfer-commit-requested.png`,
+    );
+    // await page.pause();
+    await deviceAction.confirmImageLoaded();
+    await customImageDrawer.finishButton.waitFor({ state: "attached" });
+    await expect(container).toHaveScreenshot(`${generateScreenshotPrefix()}transfer-loaded.png`);
+    // await page.pause();
+    await customImageDrawer.clickFinish();
+    await expect(page).toHaveScreenshot(`${generateScreenshotPrefix()}transfer-finished.png`);
+    // await page.pause();
   });
 });

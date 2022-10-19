@@ -32,6 +32,10 @@ export class CustomImageDrawer {
   readonly contrastOptionButton: (contrastIndex: number) => Locator;
   readonly contrastPreviousButton: Locator;
   readonly contrastContinueButton: Locator;
+  readonly deviceActionImageLoadRequested: Locator;
+  readonly deviceActionImageLoading: (progress: number) => Locator;
+  readonly deviceActionImageCommitRequested: Locator;
+  readonly finishButton: Locator;
 
   constructor(page: Page) {
     this.page = page;
@@ -48,6 +52,16 @@ export class CustomImageDrawer {
     );
     this.contrastContinueButton = page.locator(
       "data-test-id=custom-image-contrast-continue-button",
+    );
+    this.finishButton = page.locator("data-test-id=custom-image-finish-button");
+
+    this.deviceActionImageLoadRequested = page.locator(
+      "data-test-id=device-action-image-load-requested",
+    );
+    this.deviceActionImageLoading = (progress: number) =>
+      page.locator(`data-test-id=device-action-image-loading-${progress}`);
+    this.deviceActionImageCommitRequested = page.locator(
+      "data-test-id=device-action-image-commit-requested",
     );
   }
 
@@ -110,5 +124,10 @@ export class CustomImageDrawer {
   async confirmContrast() {
     await this.contrastContinueButton.waitFor({ state: "attached" });
     await this.contrastContinueButton.click();
+  }
+
+  async clickFinish() {
+    await this.finishButton.waitFor({ state: "attached" });
+    await this.finishButton.click();
   }
 }

@@ -39,7 +39,7 @@ export class DeviceAction {
     await this.loader.waitFor({ state: "detached" });
   }
 
-  async genuineCheck(appDesc: string = "Bitcoin", installedDesc: string = "Bitcoin") {
+  async genuineCheck(appDesc = "Bitcoin", installedDesc = "Bitcoin") {
     const result = mockListAppsResult(appDesc, installedDesc, deviceInfo);
 
     await this.page.evaluate(
@@ -65,8 +65,8 @@ export class DeviceAction {
   }
 
   async accessManager(
-    appDesc: string = "Bitcoin,Tron,Litecoin,Ethereum,Ripple,Stellar",
-    installedDesc: string = "Bitcoin,Litecoin,Ethereum (outdated)",
+    appDesc = "Bitcoin,Tron,Litecoin,Ethereum,Ripple,Stellar",
+    installedDesc = "Bitcoin,Litecoin,Ethereum (outdated)",
     deviceModelId?: DeviceModelId,
   ) {
     const result = mockListAppsResult(appDesc, installedDesc, deviceInfo, deviceModelId);
@@ -94,8 +94,8 @@ export class DeviceAction {
   }
 
   async accessManagerWithL10n(
-    appDesc: string = "Bitcoin,Tron,Litecoin,Ethereum,Ripple,Stellar",
-    installedDesc: string = "Bitcoin,Litecoin,Ethereum (outdated)",
+    appDesc = "Bitcoin,Tron,Litecoin,Ethereum,Ripple,Stellar",
+    installedDesc = "Bitcoin,Litecoin,Ethereum (outdated)",
   ) {
     const result = mockListAppsResult(appDesc, installedDesc, deviceInfo210lo5);
 
@@ -145,12 +145,43 @@ export class DeviceAction {
     });
   }
 
+  async requestImageLoad() {
+    await this.page.evaluate(() => {
+      (window as any).mock.events.mockDeviceEvent({ type: "loadImagePermissionRequested" });
+    });
+  }
+
+  async loadImageWithProgress(progress: number) {
+    await this.page.evaluate(
+      ([progress]) => {
+        (window as any).mock.events.mockDeviceEvent({ type: "progress", progress });
+      },
+      [progress],
+    );
+  }
+
+  async requestImageCommit() {
+    await this.page.evaluate(() => {
+      (window as any).mock.events.mockDeviceEvent({ type: "commitImagePermissionRequested" });
+    });
+  }
+
+  async confirmImageLoaded() {
+    await this.page.evaluate(() => {
+      (window as any).mock.events.mockDeviceEvent({ type: "imageLoaded" });
+    });
+  }
+
   async initiateSwap() {
     await this.page.evaluate(() => (window as any).mock.events.mockDeviceEvent({ type: "opened" }));
     await this.page.waitForTimeout(500);
-    await this.page.evaluate(() => (window as any).mock.events.mockDeviceEvent({ type: "complete" }));
+    await this.page.evaluate(() =>
+      (window as any).mock.events.mockDeviceEvent({ type: "complete" }),
+    );
     await this.page.waitForTimeout(500);
-    await this.page.evaluate(() => (window as any).mock.events.mockDeviceEvent({ type: "init-swap-requested" }));
+    await this.page.evaluate(() =>
+      (window as any).mock.events.mockDeviceEvent({ type: "init-swap-requested" }),
+    );
 
     await this.loader.waitFor({ state: "detached" });
     await this.swapSummary.waitFor({ state: "visible" });
