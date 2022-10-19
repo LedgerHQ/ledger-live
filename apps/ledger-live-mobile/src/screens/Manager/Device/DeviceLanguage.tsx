@@ -8,6 +8,7 @@ import BottomModal from "../../../components/BottomModal";
 import DeviceLanguageSelection from "./DeviceLanguageSelection";
 import ChangeDeviceLanguageActionModal from "../../../components/ChangeDeviceLanguageActionModal";
 import { track } from "../../../analytics";
+import DeviceOptionRow from "./DeviceOptionRow";
 
 type Props = {
   pendingInstalls: boolean;
@@ -69,29 +70,23 @@ const DeviceLanguage: React.FC<Props> = ({
   const refreshDeviceLanguage = useCallback(() => {
     track("Page Manager LanguageInstalled", { selectedLanguage });
     onLanguageChange();
-  }, [selectedLanguage]);
+  }, [selectedLanguage, onLanguageChange]);
 
   return (
     <>
-      <Flex flex={1} flexDirection="row" alignItems="center">
-        <Icons.LanguageMedium size={24} color="neutral.c80" />
-        <Text ml={3} flex={1} variant="bodyLineHeight" color="neutral.c80">
-          {t("deviceLocalization.language")}
-        </Text>
-        {availableLanguages.length ? (
-          <Link
-            onPress={pendingInstalls ? undefined : openChangeLanguageModal}
-            type="color"
-            Icon={Icons.ChevronRightMedium}
-          >
-            {t(`deviceLocalization.languages.${currentDeviceLanguage}`)}
-          </Link>
-        ) : (
-          <Text>
-            {t(`deviceLocalization.languages.${currentDeviceLanguage}`)}
-          </Text>
-        )}
-      </Flex>
+      <DeviceOptionRow
+        Icon={Icons.LanguageMedium}
+        label={t("deviceLocalization.language")}
+        onPress={pendingInstalls ? undefined : openChangeLanguageModal}
+        linkLabel={t(`deviceLocalization.languages.${currentDeviceLanguage}`)}
+        right={
+          availableLanguages.length ? undefined : (
+            <Text>
+              {t(`deviceLocalization.languages.${currentDeviceLanguage}`)}
+            </Text>
+          )
+        }
+      />
       <BottomModal
         isOpened={isChangeLanguageOpen}
         onClose={closeChangeLanguageModal}
