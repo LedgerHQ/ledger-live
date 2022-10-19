@@ -31,10 +31,6 @@ test("Custom image", async ({ page }) => {
     return prefix;
   }
 
-  async function waitTimeout(timeoutMs: number) {
-    return new Promise(resolve => setTimeout(resolve, timeoutMs));
-  }
-
   await test.step("Access manager", async () => {
     await layout.goToManager();
     await deviceAction.accessManager("", "", DeviceModelId.nanoFTS);
@@ -138,54 +134,52 @@ test("Custom image", async ({ page }) => {
     await customImageDrawer.contrastContinueButton.waitFor({ state: "detached" });
 
     await deviceAction.requestImageLoad();
-    // await page.pause();
     await customImageDrawer.deviceActionImageLoadRequested.waitFor({ state: "attached" });
     await expect(container).toHaveScreenshot(
       `${generateScreenshotPrefix()}transfer-load-requested.png`,
     );
-    // await page.pause();
+
     await deviceAction.loadImageWithProgress(0);
     await customImageDrawer.deviceActionImageLoading(0).waitFor({ state: "attached" });
     await expect(container).toHaveScreenshot(
       `${generateScreenshotPrefix()}transfer-progress-000.png`,
     );
-    // await page.pause();
+
     await deviceAction.loadImageWithProgress(0.2);
     await customImageDrawer.deviceActionImageLoading(0.2).waitFor({ state: "attached" });
     await expect(container).toHaveScreenshot(
       `${generateScreenshotPrefix()}transfer-progress-020.png`,
     );
-    // await page.pause();
+
     await deviceAction.loadImageWithProgress(0.5);
     await customImageDrawer.deviceActionImageLoading(0.5).waitFor({ state: "attached" });
     await expect(container).toHaveScreenshot(
       `${generateScreenshotPrefix()}transfer-progress-050.png`,
     );
-    // await page.pause();
+
     await deviceAction.loadImageWithProgress(0.8);
     await customImageDrawer.deviceActionImageLoading(0.8).waitFor({ state: "attached" });
     await expect(container).toHaveScreenshot(
       `${generateScreenshotPrefix()}transfer-progress-080.png`,
     );
-    // await page.pause();
+
     await deviceAction.loadImageWithProgress(1);
     await customImageDrawer.deviceActionImageLoading(1).waitFor({ state: "attached" });
     await expect(container).toHaveScreenshot(
       `${generateScreenshotPrefix()}transfer-progress-100.png`,
     );
-    // await page.pause();
+
     await deviceAction.requestImageCommit();
     await customImageDrawer.deviceActionImageCommitRequested.waitFor({ state: "attached" });
     await expect(container).toHaveScreenshot(
       `${generateScreenshotPrefix()}transfer-commit-requested.png`,
     );
-    // await page.pause();
+
     await deviceAction.confirmImageLoaded();
     await customImageDrawer.finishButton.waitFor({ state: "attached" });
     await expect(container).toHaveScreenshot(`${generateScreenshotPrefix()}transfer-loaded.png`);
-    // await page.pause();
+
     await customImageDrawer.clickFinish();
     await expect(page).toHaveScreenshot(`${generateScreenshotPrefix()}transfer-finished.png`);
-    // await page.pause();
   });
 });
