@@ -171,6 +171,7 @@
     "@zondax/cbor": "v8.1.0-zondax-no-bigint",
     "@zondax/ledger-casper": "^2.5.3",
     "@zondax/ledger-filecoin": "^0.11.2",
+    "casper-js-sdk": "^2.10.0",
     "algo-msgpack-with-bigint": "^2.1.1",
     "algosdk": "1.13.0",
     "async": "^3.2.3",
