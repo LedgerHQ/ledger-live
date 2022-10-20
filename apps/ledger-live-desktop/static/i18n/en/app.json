@@ -5114,6 +5114,14 @@
     "ImageProcessingError": {
       "title": "Processing of the image failed",
       "description": "Please try again with another image"
+    },
+    "ImageCommitRefusedOnDevice": {
+      "title": "Image commit refused on device (TODO: final wording)",
+      "description": "If this image wasn't the right fit, you can try again with another image."
+    },
+    "ImageLoadRefusedOnDevice": {
+      "title": "Image load refused on device (TODO: final wording)",
+      "description": "If this image wasn't the right fit, you can try again with another image."
     }
   },
   "cryptoOrg": {
