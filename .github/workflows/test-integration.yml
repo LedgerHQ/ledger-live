@@ -45,6 +45,10 @@ jobs:
           node-version: 16
           cache: pnpm
           cache-dependency-path: "**/pnpm-lock.yaml"
+      - name: Install node-gyp globally
+        if: ${{ matrix.os == 'windows-latest' }}
+        run: |
+          pnpm add -g node-gyp
       - name: Install dependencies
         run: pnpm i --filter="!./apps/**"
       - name: Build
