@@ -11,7 +11,7 @@ import {
 } from "@ledgerhq/live-common/account/index";
 import { useNavigation } from "@react-navigation/native";
 import { useSelector } from "react-redux";
-import { useCalculate } from "@ledgerhq/live-common/lib/countervalues/react";
+import { useCalculate } from "@ledgerhq/live-common/countervalues/react";
 import CurrencyUnitValue from "../../../../components/CurrencyUnitValue";
 import { providerIcons } from "../../../../icons/swap/index";
 import { StatusTag } from "./StatusTag";

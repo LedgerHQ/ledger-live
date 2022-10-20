@@ -85,8 +85,6 @@ jobs:
           node-version: 16.x
           cache: pnpm
           cache-dependency-path: "**/pnpm-lock.yaml"
-      - name: bump npm
-        run: npm i -g npm@8.12.2
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: 2.7
@@ -110,7 +108,7 @@ jobs:
           path: ${{ github.workspace }}/apps/ledger-live-mobile
       - name: Get short SHA
         id: slug
-        run: echo "::set-output name=sha8::$(git rev-parse HEAD)"
+        run: echo "sha8=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
       - name: make local version
         env:
           VERSION: ${{ steps.version.outputs.clean }}-sha.${{ steps.slug.outputs.sha8 }}
@@ -162,8 +160,6 @@ jobs:
           node-version: 16.x
           cache: pnpm
           cache-dependency-path: "**/pnpm-lock.yaml"
-      - name: bump npm
-        run: npm i -g npm@8.12.2
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: 2.7
@@ -187,7 +183,8 @@ jobs:
           path: ${{ github.workspace }}/apps/ledger-live-mobile
       - name: Get short SHA
         id: slug
-        run: echo "::set-output name=sha8::$(git rev-parse HEAD)"
+        run: echo "sha8=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+
       - name: make local version
         env:
           VERSION: ${{ steps.version.outputs.clean }}-sha.${{ steps.slug.outputs.sha8 }}
@@ -219,6 +216,8 @@ jobs:
   build-mobile-app-ios:
     runs-on: macos-latest
     name: "Build Ledger Live Mobile (Mac OS X)"
+    env:
+      NODE_OPTIONS: "--max-old-space-size=7168"
     steps:
       - uses: actions/checkout@v3
         with:
@@ -235,8 +234,6 @@ jobs:
           node-version: 16.x
           cache: pnpm
           cache-dependency-path: "**/pnpm-lock.yaml"
-      - name: bump npm
-        run: npm i -g npm@8.12.2
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: 2.7

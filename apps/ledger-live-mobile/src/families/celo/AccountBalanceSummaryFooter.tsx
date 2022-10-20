@@ -1,7 +1,7 @@
 import React, { useCallback, useState } from "react";
 import { ScrollView, StyleSheet } from "react-native";
 import { useTranslation } from "react-i18next";
-import { getCryptoCurrencyById } from "@ledgerhq/live-common/lib/currencies/index";
+import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
 import { getAccountUnit } from "@ledgerhq/live-common/account/helpers";
 import { getCryptoCurrencyIcon } from "@ledgerhq/live-common/reactNative";
 import type { Account } from "@ledgerhq/types-live";

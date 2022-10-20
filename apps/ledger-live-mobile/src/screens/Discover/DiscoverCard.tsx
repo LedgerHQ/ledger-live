@@ -13,6 +13,8 @@ const DiscoverCard = ({
   Image,
   disabled,
   cardProps,
+  imageContainerProps,
+  subtitleFirst,
   ...props
 }: {
   title: string;
@@ -27,6 +29,8 @@ const DiscoverCard = ({
   eventProperties?: any;
   testID?: string;
   cardProps?: any;
+  imageContainerProps?: any;
+  subtitleFirst?: boolean;
 }) => (
   <Touchable onPress={onPress} disabled={disabled} {...props}>
     <Flex
@@ -49,8 +53,13 @@ const DiscoverCard = ({
         flex={1}
         justifyContent="flex-start"
         alignItems="flex-start"
+        flexDirection={subtitleFirst ? "column-reverse" : "column"}
       >
-        <Flex flexDirection="row" alignItems="center" mb={6}>
+        <Flex
+          flexDirection="row"
+          alignItems="center"
+          mb={subtitleFirst ? 0 : 6}
+        >
           <Text
             mt={2}
             variant={"h2"}
@@ -61,9 +70,9 @@ const DiscoverCard = ({
             {title}
           </Text>
         </Flex>
-
         {subTitle && (
           <Text
+            mb={subtitleFirst ? 2 : 0}
             variant={"body"}
             fontWeight={"medium"}
             color={"neutral.c70"}
@@ -82,6 +91,7 @@ const DiscoverCard = ({
           alignItems={"flex-end"}
           justifyContent={"flex-end"}
           style={{ transform: [{ scale: 1.1 }] }}
+          {...imageContainerProps}
         >
           {Image}
         </Flex>

@@ -1,4 +1,4 @@
-import { ImportAccountsReduceInput } from "@ledgerhq/live-common/lib/account/index";
+import { ImportAccountsReduceInput } from "@ledgerhq/live-common/account/index";
 import { implicitMigration } from "@ledgerhq/live-common/migrations/accounts";
 import type { Account } from "@ledgerhq/types-live";
 import accountModel from "../logic/accountModel";

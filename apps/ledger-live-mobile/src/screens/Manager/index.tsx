@@ -1,67 +1,31 @@
-import React, { Component } from "react";
+import React, { useEffect, useState } from "react";
 import { StyleSheet } from "react-native";
-import { useIsFocused } from "@react-navigation/native";
-import { useDispatch } from "react-redux";
+import {
+  useIsFocused,
+  useNavigation,
+  useRoute,
+} from "@react-navigation/native";
 import { Trans } from "react-i18next";
-import manager from "@ledgerhq/live-common/manager/index";
-import { disconnect } from "@ledgerhq/live-common/hw/index";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 
 import connectManager from "@ledgerhq/live-common/hw/connectManager";
 import { createAction } from "@ledgerhq/live-common/hw/actions/manager";
-import { Text } from "@ledgerhq/native-ui";
-import { removeKnownDevice } from "../../actions/ble";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { Flex, Text } from "@ledgerhq/native-ui";
+
 import { ScreenName } from "../../const";
-import { ManagerTab } from "./Manager";
+import { ManagerTab } from "../../const/manager";
+import SelectDevice2 from "../../components/SelectDevice2";
 import SelectDevice from "../../components/SelectDevice";
+import RemoveDeviceMenu from "../../components/SelectDevice2/RemoveDeviceMenu";
 import TrackScreen from "../../analytics/TrackScreen";
 import { track } from "../../analytics";
-import Button from "../../components/Button";
 import type { DeviceLike } from "../../reducers/ble";
-import Trash from "../../icons/Trash";
-import BottomModal from "../../components/BottomModal";
-import ModalBottomAction from "../../components/ModalBottomAction";
 import NavigationScrollView from "../../components/NavigationScrollView";
 import DeviceActionModal from "../../components/DeviceActionModal";
-import Illustration from "../../images/illustration/Illustration";
-
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const darkImg = require("../../images/illustration/Dark/_079.png");
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const lightImg = require("../../images/illustration/Light/_079.png");
+import type { BaseNavigatorProps } from "../../components/RootNavigator/BaseNavigator";
 
 const action = createAction(connectManager);
-
-const RemoveDeviceModal = ({
-  onHideMenu,
-  remove,
-  open,
-  deviceName,
-}: {
-  onHideMenu: () => void;
-  remove: () => Promise<void>;
-  open: boolean;
-  deviceName: string;
-}) => (
-  <BottomModal id="DeviceItemModal" isOpened={open} onClose={onHideMenu}>
-    <ModalBottomAction
-      icon={
-        <Illustration size={100} darkSource={darkImg} lightSource={lightImg} />
-      }
-      title={deviceName}
-      uppercase={false}
-      footer={
-        <Button
-          event="HardResetModalAction"
-          type="alert"
-          IconLeft={Trash}
-          title={<Trans i18nKey="common.forgetDevice" />}
-          onPress={remove}
-        />
-      }
-    />
-  </BottomModal>
-);
 
 type RouteParams = {
   searchQuery?: string;
@@ -83,132 +47,101 @@ type Props = {
 
 type ChooseDeviceProps = Props & {
   isFocused: boolean;
-  removeKnownDevice: (_: string) => void;
 };
 
-class ChooseDevice extends Component<
-  ChooseDeviceProps,
-  {
-    showMenu: boolean;
-    device?: Device;
-    result?: any;
-  }
-> {
-  state = {
-    showMenu: false,
-    device: undefined,
-    result: undefined,
-  };
+const ChooseDevice: React.FC<ChooseDeviceProps> = ({ isFocused }) => {
+  const [device, setDevice] = useState<Device | undefined>();
 
-  chosenDevice: Device;
+  const [chosenDevice, setChosenDevice] = useState<Device | undefined>();
+  const [showMenu, setShowMenu] = useState<boolean>(false);
 
-  onShowMenu = (device: Device) => {
-    this.chosenDevice = device;
-    this.setState({ showMenu: true });
-  };
+  const navigation = useNavigation<BaseNavigatorProps>();
+  const { params } = useRoute<{
+    params: RouteParams;
+    name: string;
+    key: string;
+  }>();
 
-  onHideMenu = () => {
-    this.setState({ showMenu: false });
-  };
+  const newDeviceSelectionFeatureFlag = useFeature("llmNewDeviceSelection");
 
-  onSelectDevice = (device?: Device) => {
+  const onSelectDevice = (device?: Device) => {
     if (device)
       track("ManagerDeviceEntered", {
         modelId: device.modelId,
       });
-    this.setState({ device });
+    setDevice(device);
   };
 
-  onSelect = (result: any) => {
-    this.setState({ device: undefined, result });
-    const {
-      route: { params = {} },
-    } = this.props;
-    result?.result &&
-      this.props.navigation.navigate(ScreenName.ManagerMain, {
+  const onShowMenu = (device: Device) => {
+    setChosenDevice(device);
+    setShowMenu(true);
+  };
+
+  const onHideMenu = () => setShowMenu(false);
+
+  const onSelect = (result: unknown) => {
+    setDevice(undefined);
+
+    if (result && "result" in result) {
+      navigation.navigate(ScreenName.ManagerMain, {
         ...result,
         ...params,
-        searchQuery: params.searchQuery || params.installApp,
+        searchQuery: params?.searchQuery || params?.installApp,
       });
-  };
-
-  onModalHide = () => {
-    this.setState({ device: undefined });
-  };
-
-  onStepEntered = (i: number, meta: any) => {
-    if (i === 2) {
-      // we also preload as much info as possible in case of a MCU
-      manager.getLatestFirmwareForDevice(meta.deviceInfo).then(
-        // eslint-disable-next-line @typescript-eslint/no-empty-function
-        () => {},
-        // eslint-disable-next-line @typescript-eslint/no-empty-function
-        () => {},
-      );
     }
   };
 
-  remove = async () => {
-    const { removeKnownDevice } = this.props;
-    removeKnownDevice(this.chosenDevice.deviceId);
-    // eslint-disable-next-line @typescript-eslint/no-empty-function
-    await disconnect(this.chosenDevice.deviceId).catch(() => {});
-    this.onHideMenu();
+  const onModalHide = () => {
+    setDevice(undefined);
   };
 
-  componentDidMount() {
-    this.setState(state => ({
-      ...state,
-      device: this.props.route.params?.device,
-    }));
-  }
+  useEffect(() => {
+    setDevice(params?.device);
+  }, [params]);
 
-  render() {
-    const {
-      isFocused,
-      route: { params = {} },
-    } = this.props;
-    const { showMenu, device } = this.state;
+  if (!isFocused) return null;
 
-    if (!isFocused) return null;
-
-    return (
-      <NavigationScrollView
-        style={[styles.root]}
-        contentContainerStyle={styles.scrollContainer}
-      >
+  return (
+    <NavigationScrollView
+      style={[styles.root]}
+      contentContainerStyle={styles.scrollContainer}
+    >
+      <Flex mt={70}>
         <TrackScreen category="Manager" name="ChooseDevice" />
-        <Text fontWeight="semiBold" variant="h3">
-          <Trans i18nKey="manager.connect" />
+        <Text fontWeight="semiBold" variant="h4">
+          <Trans i18nKey="manager.title" />
         </Text>
-        <SelectDevice
-          usbOnly={params?.firmwareUpdate}
-          autoSelectOnAdd
-          onSelect={this.onSelectDevice}
-          onStepEntered={this.onStepEntered}
-          onBluetoothDeviceAction={this.onShowMenu}
-        />
+        {newDeviceSelectionFeatureFlag?.enabled ? (
+          <SelectDevice2 onSelect={onSelectDevice} />
+        ) : (
+          <>
+            <SelectDevice
+              usbOnly={params?.firmwareUpdate}
+              autoSelectOnAdd
+              onSelect={onSelectDevice}
+              onBluetoothDeviceAction={onShowMenu}
+            />
+            {chosenDevice ? (
+              <RemoveDeviceMenu
+                open={showMenu}
+                device={chosenDevice as Device}
+                onHideMenu={onHideMenu}
+              />
+            ) : null}
+          </>
+        )}
         <DeviceActionModal
-          onClose={() => this.onSelectDevice()}
+          onClose={() => onSelectDevice()}
           device={device}
-          onResult={this.onSelect}
-          onModalHide={this.onModalHide}
+          onResult={onSelect}
+          onModalHide={onModalHide}
           action={action}
           request={null}
         />
-
-        {this.chosenDevice && (
-          <RemoveDeviceModal
-            onHideMenu={this.onHideMenu}
-            open={showMenu}
-            remove={this.remove}
-            deviceName={this.chosenDevice.deviceName || ""}
-          />
-        )}
-      </NavigationScrollView>
-    );
-  }
-}
+      </Flex>
+    </NavigationScrollView>
+  );
+};
 
 const styles = StyleSheet.create({
   root: {
@@ -232,13 +165,6 @@ const styles = StyleSheet.create({
 
 export default function Screen(props: Props) {
   const isFocused = useIsFocused();
-  const dispatch = useDispatch();
 
-  return (
-    <ChooseDevice
-      {...props}
-      isFocused={isFocused}
-      removeKnownDevice={(...args) => dispatch(removeKnownDevice(...args))}
-    />
-  );
+  return <ChooseDevice {...props} isFocused={isFocused} />;
 }

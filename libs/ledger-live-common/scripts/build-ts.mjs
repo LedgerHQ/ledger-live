@@ -17,8 +17,8 @@ const promisifiedRimraf = (path) => {
 };
 
 await Promise.all([
-  await promisifiedRimraf("lib"),
-  await promisifiedRimraf("src/data/icons/react*"),
+  promisifiedRimraf("lib"),
+  promisifiedRimraf("src/data/icons/react*"),
 ]);
 
 await $`zx ./scripts/sync-families-dispatch.mjs`;
@@ -28,15 +28,9 @@ await $`node ./scripts/buildReactFlags.js`;
 
 const prefix = $.prefix;
 
-await Promise.all([
-  within(async () => {
-    $.prefix = prefix;
-    process.env.NODE_ENV = "production";
-    await $`pnpm tsc --project src/tsconfig.json`;
-  }),
-  within(async () => {
-    $.prefix = prefix;
-    process.env.NODE_ENV = "production";
-    await $`pnpm tsc --project src/tsconfig.json -m ES6 --outDir lib-es`;
-  }),
-]);
+await within(async () => {
+  $.prefix = prefix;
+  process.env.NODE_ENV = "production";
+  await $`pnpm tsc --project src/tsconfig.json`;
+  await $`pnpm tsc --project src/tsconfig.json -m ES6 --outDir lib-es`;
+});

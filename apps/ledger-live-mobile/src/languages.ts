@@ -23,6 +23,7 @@ export const languages = {
   sv: "Svenska",
   tr: "Türkçe",
   zh: "简体中文",
+  ar: "العربية",
 };
 
 export const localeIds: Locale[] = Object.keys(allLocales) as Locale[];
@@ -33,7 +34,7 @@ export const localeIds: Locale[] = Object.keys(allLocales) as Locale[];
  */
 export const supportedLocales: Locale[] = Config.LEDGER_DEBUG_ALL_LANGS
   ? localeIds
-  : ["en", "fr", "es", "ru", "zh", "de", "tr", "ja", "ko", "pt"];
+  : ["en", "fr", "es", "ru", "zh", "de", "tr", "ja", "ko", "pt", "ar"];
 
 export type Locale = keyof typeof languages;
 
@@ -56,6 +57,7 @@ export const localeIdToDeviceLanguage: { [key in Locale]?: Language } = {
  * or in the case of existing users, they will be prompted once to change their
  * Ledger Live language.
  */
+
 export const fullySupportedLocales: Locale[] = [
   "en",
   "fr",
@@ -67,6 +69,7 @@ export const fullySupportedLocales: Locale[] = [
   "ja",
   "ko",
   "pt",
+  "ar",
 ];
 type LocaleIndexed<T> = { [key in Locale]?: T };
 
@@ -108,6 +111,7 @@ const languageLocaleToDefaultLocaleMap = {
   sv: "sv-SV",
   tr: "tr-TR",
   zh: "zh-CN",
+  ar: "ar-EG",
 };
 
 /** For the "region" setting which is used for dates & numbers formatting. */

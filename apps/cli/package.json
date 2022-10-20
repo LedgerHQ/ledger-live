@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/live-cli",
-  "version": "22.4.2",
+  "version": "22.4.3",
   "description": "ledger-live CLI version",
   "repository": {
     "type": "git",
@@ -51,6 +51,7 @@
     "invariant": "^2.2.4",
     "lodash": "^4.17.21",
     "lodash.product": "^18.9.19",
+    "pako": "^2.0.4",
     "qrcode-terminal": "^0.12.0",
     "qrloop": "^1.2.0",
     "react": "^17.0.2",
@@ -61,11 +62,12 @@
     "ws": "^8.6.0"
   },
   "devDependencies": {
-    "@ledgerhq/types-live": "workspace:^",
     "@ledgerhq/types-cryptoassets": "workspace:^",
+    "@ledgerhq/types-live": "workspace:^",
     "@types/command-line-args": "^5.2.0",
     "@types/lodash": "^4.14.177",
     "@types/node": "^17.0.15",
+    "@types/pako": "^2.0.0",
     "ts-node": "^10.4.0",
     "typescript": "^4.5.5"
   }
