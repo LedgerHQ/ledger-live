@@ -514,7 +514,7 @@ const WebPlatformPlayer = ({ manifest, inputs }: Props) => {
   );
 
   const setValue = useCallback(
-    ({ key, value }: { key: string; value: string }) =>
+    ({ key, value }: { key: string; value: string }): Promise<boolean> =>
       saveToStorage(manifest, store, key, value),
     [manifest],
   );
@@ -536,7 +536,6 @@ const WebPlatformPlayer = ({ manifest, inputs }: Props) => {
       "exchange.start": startExchange,
       "exchange.complete": completeExchange,
       "message.sign": signMessage,
-
       "storage.set": setValue,
       "storage.get": getValue,
     }),
@@ -550,7 +549,6 @@ const WebPlatformPlayer = ({ manifest, inputs }: Props) => {
       startExchange,
       completeExchange,
       signMessage,
-
       setValue,
       getValue,
     ],

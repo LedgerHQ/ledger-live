@@ -333,6 +333,7 @@ export default function WebPlatformPlayer({ manifest, onClose, inputs = {}, conf
   // TODO: this object should be in `renderer/storage` file
   // but it needs to be converted to TS before.
   const deviceStorage: NamedSpaceStorage = {
+    kind: "namedspace",
     save: async (ns: string, key: string, value: unknown) => {
       setKey(ns, key, value);
     },
@@ -343,7 +344,7 @@ export default function WebPlatformPlayer({ manifest, onClose, inputs = {}, conf
   };
 
   const setValue = useCallback(
-    ({ key, value }: { key: string; value: string }) =>
+    ({ key, value }: { key: string; value: string }): Promise<boolean> =>
       saveToStorage(manifest, deviceStorage, key, value),
     [manifest],
   );
@@ -365,7 +366,6 @@ export default function WebPlatformPlayer({ manifest, onClose, inputs = {}, conf
       "exchange.start": startExchange,
       "exchange.complete": completeExchange,
       "message.sign": signMessage,
-
       "storage.set": setValue,
       "storage.get": getValue,
     }),
@@ -379,7 +379,6 @@ export default function WebPlatformPlayer({ manifest, onClose, inputs = {}, conf
       startExchange,
       completeExchange,
       signMessage,
-
       setValue,
       getValue,
     ],

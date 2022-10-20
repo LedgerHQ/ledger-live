@@ -86,6 +86,7 @@ interface StoreWrapper {
 }
 
 const deviceStorage: SimpleStorage & StoreWrapper = {
+  kind: "simple",
   /**
    * Get a one or more value for a key or array of keys from AsyncStorage
    * @param {String|Array} key A key or array of keys

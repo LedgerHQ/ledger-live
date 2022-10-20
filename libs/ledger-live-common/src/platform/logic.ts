@@ -291,14 +291,24 @@ export function signMessageLogic(
 
 export async function saveToStorage<
   T extends SimpleStorage | NamedSpaceStorage
->(manifest: AppManifest, store: T, key: string, value: string): Promise<void> {
-  if (store.kind === "simple") {
-    const uniqKey = buildUniqueKey(manifest, key);
-    await store.save(uniqKey, value);
-  } else {
-    const ns = buildNamespace(manifest);
-    await store.save(ns, key, value);
+>(
+  manifest: AppManifest,
+  store: T,
+  key: string,
+  value: string
+): Promise<boolean> {
+  try {
+    if (store.kind === "simple") {
+      const uniqKey = buildUniqueKey(manifest, key);
+      await store.save(uniqKey, value);
+    } else {
+      const ns = buildNamespace(manifest);
+      await store.save(ns, key, value);
+    }
+  } catch {
+    return Promise.resolve(false);
   }
+  return Promise.resolve(true);
 }
 
 export async function getFromStorage<
