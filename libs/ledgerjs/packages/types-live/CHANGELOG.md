@@ -1,5 +1,45 @@
 # @ledgerhq/types-live
 
+## 6.25.0
+
+### Minor Changes
+
+- [#1366](https://github.com/LedgerHQ/ledger-live/pull/1366) [`955b045459`](https://github.com/LedgerHQ/ledger-live/commit/955b045459cf568fb3c96a732bc5ec0d8d831b19) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - Added a desktop_version param to the feature flags with the semver format to only enable a feature flag for specific versions of the desktop app
+
+### Patch Changes
+
+- [#1447](https://github.com/LedgerHQ/ledger-live/pull/1447) [`777ccf8774`](https://github.com/LedgerHQ/ledger-live/commit/777ccf8774302cb17995a044f23972e2a9fc4045) Thanks [@LFBarreto](https://github.com/LFBarreto)! - Types - Add Referral Program Desktop Banner FeatureId Flag
+
+* [#1474](https://github.com/LedgerHQ/ledger-live/pull/1474) [`2802e2d684`](https://github.com/LedgerHQ/ledger-live/commit/2802e2d6844a7e17127ea7d103fe0d1a45afa032) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Introduce new feature flag for installSetOfApps
+
+- [#1439](https://github.com/LedgerHQ/ledger-live/pull/1439) [`c33c82cd32`](https://github.com/LedgerHQ/ledger-live/commit/c33c82cd3291b651238659a8b9eababe6f953ece) Thanks [@LFBarreto](https://github.com/LFBarreto)! - Types - Add new feature flag FeatureId type
+
+## 6.25.0-next.0
+
+### Minor Changes
+
+- [#1366](https://github.com/LedgerHQ/ledger-live/pull/1366) [`955b045459`](https://github.com/LedgerHQ/ledger-live/commit/955b045459cf568fb3c96a732bc5ec0d8d831b19) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - Added a desktop_version param to the feature flags with the semver format to only enable a feature flag for specific versions of the desktop app
+
+### Patch Changes
+
+- [#1447](https://github.com/LedgerHQ/ledger-live/pull/1447) [`777ccf8774`](https://github.com/LedgerHQ/ledger-live/commit/777ccf8774302cb17995a044f23972e2a9fc4045) Thanks [@LFBarreto](https://github.com/LFBarreto)! - Types - Add Referral Program Desktop Banner FeatureId Flag
+
+* [#1474](https://github.com/LedgerHQ/ledger-live/pull/1474) [`2802e2d684`](https://github.com/LedgerHQ/ledger-live/commit/2802e2d6844a7e17127ea7d103fe0d1a45afa032) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Introduce new feature flag for installSetOfApps
+
+- [#1439](https://github.com/LedgerHQ/ledger-live/pull/1439) [`c33c82cd32`](https://github.com/LedgerHQ/ledger-live/commit/c33c82cd3291b651238659a8b9eababe6f953ece) Thanks [@LFBarreto](https://github.com/LFBarreto)! - Types - Add new feature flag FeatureId type
+
+## 6.24.3
+
+### Patch Changes
+
+- [#1518](https://github.com/LedgerHQ/ledger-live/pull/1518) [`f255b258a9`](https://github.com/LedgerHQ/ledger-live/commit/f255b258a9c79c5eb89ec65d6647e52b90a9c52c) Thanks [@desirendr](https://github.com/desirendr)! - Types - Add new feature flag FeatureId type
+
+## 6.24.3-hotfix.0
+
+### Patch Changes
+
+- [#1518](https://github.com/LedgerHQ/ledger-live/pull/1518) [`f255b258a9`](https://github.com/LedgerHQ/ledger-live/commit/f255b258a9c79c5eb89ec65d6647e52b90a9c52c) Thanks [@desirendr](https://github.com/desirendr)! - Types - Add new feature flag FeatureId type
+
 ## 6.24.2
 
 ### Patch Changes

@@ -106,7 +106,7 @@ function OnboardingView({
           </Flex>
         ) : null}
       </Flex>
-      <ScrollListContainer flex={1} px={6} bg="background.main">
+      <ScrollListContainer flex={1} bg="background.main" mx={6}>
         {/* BODY */}
         {children ? <Flex flex={1}>{children}</Flex> : null}
       </ScrollListContainer>

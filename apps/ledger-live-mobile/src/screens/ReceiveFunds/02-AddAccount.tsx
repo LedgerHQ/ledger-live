@@ -11,7 +11,7 @@ import {
   TokenCurrency,
 } from "@ledgerhq/types-cryptoassets";
 import { getCurrencyBridge } from "@ledgerhq/live-common/bridge/index";
-import { Device } from "@ledgerhq/live-common/lib/hw/actions/types";
+import { Device } from "@ledgerhq/live-common/hw/actions/types";
 
 import { Flex, InfiniteLoader } from "@ledgerhq/native-ui";
 import { makeEmptyTokenAccount } from "@ledgerhq/live-common/account/index";

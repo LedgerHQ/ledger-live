@@ -28,6 +28,18 @@ export const LanguageInstallRefusedOnDevice = createCustomErrorClass(
   "LanguageInstallRefusedOnDevice"
 );
 
+export const ImageLoadRefusedOnDevice = createCustomErrorClass(
+  "ImageLoadRefusedOnDevice"
+);
+
+export const ImageDoesNotExistOnDevice = createCustomErrorClass(
+  "ImageDoesNotExistOnDevice"
+);
+
+export const ImageCommitRefusedOnDevice = createCustomErrorClass(
+  "ImageCommitRefusedOnDevice"
+);
+
 export const LanguageInstallTimeout = createCustomErrorClass(
   "LanguageInstallTimeout"
 );

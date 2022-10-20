@@ -69,7 +69,12 @@ const AccountSubHeader = () => {
         </CustomButton>
       </CardContent>
 
-      <AccountSubHeaderDrawer isOpen={isDrawerOpen} closeDrawer={closeDrawer} />
+      <AccountSubHeaderDrawer
+        isOpen={isDrawerOpen}
+        closeDrawer={closeDrawer}
+        team="Elrond"
+        family="Elrond"
+      />
     </Card>
   );
 };

@@ -45,6 +45,11 @@ export default function useAssetActions({
     [accounts],
   );
 
+  const hasMultipleAccounts = useMemo(
+    () => !!(accounts && accounts.length > 1),
+    [accounts],
+  );
+
   const swapSelectableCurrencies = useSelector(
     swapSelectableCurrenciesSelector,
   );
@@ -154,6 +159,13 @@ export default function useAssetActions({
                         currency,
                       },
                     }
+                  : hasMultipleAccounts
+                  ? {
+                      screen: ScreenName.ReceiveSelectAccount,
+                      params: {
+                        currency,
+                      },
+                    }
                   : {
                       screen: ScreenName.ReceiveSelectCrypto,
                       params: {
@@ -221,6 +233,7 @@ export default function useAssetActions({
       currency,
       defaultAccount,
       hasAccounts,
+      hasMultipleAccounts,
       readOnlyModeEnabled,
       t,
     ],
