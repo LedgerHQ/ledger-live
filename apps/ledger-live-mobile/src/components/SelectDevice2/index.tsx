@@ -229,7 +229,7 @@ export default function SelectDevice({ onSelect }: Props) {
         )}
       </Flex>
 
-      <Flex alignItems="center">
+      <Flex alignItems="center" mt={7}>
         <Touchable onPress={onBuyDevicePress}>
           <Text color="primary.c90">
             <Trans i18nKey="manager.selectDevice.buyDeviceCTA" />
