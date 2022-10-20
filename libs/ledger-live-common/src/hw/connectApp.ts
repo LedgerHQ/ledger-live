@@ -326,7 +326,7 @@ const cmd = ({
                             if (isLatest) {
                               o.next({ type: "latest-firmware-resolved" });
                               return innerSub({ appName, dependencies }); // NB without the fw version check
-                            } else {
+                            } else if (requireLatestFirmware) {
                               return throwError(
                                 new LatestFirmwareVersionRequired(
                                   "LatestFirmwareVersionRequired",
