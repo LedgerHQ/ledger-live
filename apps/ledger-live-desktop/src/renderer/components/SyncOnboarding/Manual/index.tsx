@@ -110,7 +110,11 @@ const SyncOnboardingManual = () => {
         renderBody: () => (
           <Flex flexDirection="column">
             <StepText mb={6}>{t("syncOnboarding.manual.pinContent.description")}</StepText>
-            <StepText>{t("syncOnboarding.manual.pinContent.text")}</StepText>
+            <StepText>
+              {t("syncOnboarding.manual.pinContent.text", {
+                deviceName: productName,
+              })}
+            </StepText>
           </Flex>
         ),
         estimatedTime: 120,
@@ -139,7 +143,10 @@ const SyncOnboardingManual = () => {
         status: "inactive",
         title: "Nano applications",
         renderBody: () => (
-          <ApplicationContent onComplete={handleInstallRecommendedApplicationComplete} />
+          <ApplicationContent
+            onComplete={handleInstallRecommendedApplicationComplete}
+            productName={productName}
+          />
         ),
       },
       {
