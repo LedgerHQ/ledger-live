@@ -198,7 +198,7 @@ export function hydrate(
   log("ethereum/preload", "hydrate " + value.length + " tokens");
 }
 
-export const accountNamesCache = makeLRUCache(
+export const erc20SignatureInfo = makeLRUCache(
   async (loadConfig: LoadConfig): Promise<string | null | undefined> =>
     findERC20SignaturesInfo(loadConfig),
   (loadConfig: LoadConfig) => loadConfig.cryptoassetsBaseURL,
