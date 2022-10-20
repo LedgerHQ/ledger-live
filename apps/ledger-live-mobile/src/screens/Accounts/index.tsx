@@ -56,7 +56,7 @@ function Accounts({ navigation, route }: Props) {
 
   const { params } = route;
 
-  const [account, setAccount] = useState<TokenAccount | undefined>(undefined);
+  const [account, setAccount] = useState<Account | undefined>(undefined);
   const flattenedAccounts = useMemo(
     () =>
       route?.params?.currencyId

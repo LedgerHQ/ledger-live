@@ -92,7 +92,9 @@ export default function AccountsSettings({ navigation }: { navigation: any }) {
           event="HideEmptyTokenAccountsRow"
           title={t("settings.accounts.blacklistedTokens")}
           desc={t("settings.accounts.blacklistedTokensDesc")}
-        />
+        >
+          {null}
+        </SettingsRow>
       </>
     ),
     [currencies.length, t, hiddenNftCollections.length, navigation],

@@ -186,11 +186,6 @@ const deviceStorage = {
       );
     });
   },
-
-  /** clears the AsyncStorage */
-  async clear() {
-    return AsyncStorage.clear();
-  },
 };
 
 export default deviceStorage;

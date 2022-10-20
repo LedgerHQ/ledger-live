@@ -41,7 +41,6 @@ const GraphCardContainer = ({
           portfolio={portfolio}
           currentPositionY={currentPositionY}
           graphCardEndPosition={graphCardEndPosition}
-          onItemHower={() => null}
         />
       )}
     </>

@@ -1,6 +1,6 @@
 import React, { useCallback, useState } from "react";
 import { connect } from "react-redux";
-import type { TokenAccount, Account } from "@ledgerhq/types-live";
+import type { Account, TokenAccount } from "@ledgerhq/types-live";
 import { View, StyleSheet } from "react-native";
 import { Trans, useTranslation } from "react-i18next";
 import {
