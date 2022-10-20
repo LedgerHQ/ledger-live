@@ -180,13 +180,11 @@ const CustomImage: React.FC<Props> = props => {
   return (
     <Flex
       flexDirection="column"
-      position="relative"
       rowGap={5}
       height="100%"
       width="100%"
       flex={1}
       px={12}
-      alignSelf="stretch"
       data-test-id="custom-image-container"
     >
       <Text alignSelf="center" variant="h3">

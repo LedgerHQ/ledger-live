@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { Flex } from "@ledgerhq/react-ui";
+import { Box, Flex } from "@ledgerhq/react-ui";
 import { ImageProcessingError } from "@ledgerhq/live-common/customImage/errors";
 import { createCanvas, scaleDimensions } from "./imageUtils";
 import { ImageBase64Data, ImageDimensions } from "./types";
@@ -22,7 +22,7 @@ const contrasts = [
   { val: 3, color: "neutral.c30" },
 ];
 
-const imageDimensions = scaleDimensions(targetDimensions, 0.6);
+const imageDimensions = scaleDimensions(targetDimensions, 0.45);
 
 function clamp(val: number, min: number, max: number) {
   return Math.min(max, Math.max(min, val));
@@ -196,7 +196,7 @@ const ImageGrayscalePreview: React.FC<Props> = props => {
   );
 
   return (
-    <Flex flexDirection="column" alignItems="center">
+    <Flex flexDirection="column" justifyContent="center" alignItems="center">
       <img
         ref={sourceImageRef}
         src={props.imageBase64DataUri}

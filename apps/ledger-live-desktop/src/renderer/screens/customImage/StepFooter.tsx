@@ -58,7 +58,7 @@ const StepFooter: React.FC<Props> = props => {
   return (
     <Flex flexDirection="column" alignSelf="stretch" mx={-16} mb={-5}>
       <Divider variant="light" />
-      <Flex alignSelf="stretch" flexDirection="row" justifyContent="space-between" px={16} py={6}>
+      <Flex alignSelf="stretch" flexDirection="row" justifyContent="space-between" px={16} py={4}>
         {showPrevious ? (
           <Button
             variant="main"
