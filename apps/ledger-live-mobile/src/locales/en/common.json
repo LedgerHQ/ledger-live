@@ -5157,6 +5157,10 @@
         "title": "Hide NFT collection",
         "desc": "This action will hide all NFTs from the {{collectionName}} collection, you can unhide them from the app settings",
         "cta": "Hide this NFT"
+      },
+      "media": {
+        "tag": "{{count}} NFT",
+        "tag_plural": "{{count}} NFTs"
       }
     }
   }
