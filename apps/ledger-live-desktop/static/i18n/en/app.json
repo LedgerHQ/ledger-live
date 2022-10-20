@@ -1152,7 +1152,7 @@
       "pinContent": {
         "title": "Set your PIN",
         "description": "Your PIN can be 4 to 8 digits long",
-        "text": "Anyone with access to your Nano and to your PIN can also access all your crypto and NFT assets."
+        "text": "Anyone with access to your {{deviceName}} and to your PIN can also access all your crypto and NFT assets."
       },
       "recoveryContent": {
         "title": "Recovery phrase",
@@ -1161,8 +1161,8 @@
       "softwareCheckContent": {
         "title": "Software check",
         "genuineCheck": {
-          "active": "Checking Nano",
-          "completed": "Nano is authentic"
+          "active": "Checking {{deviceName}}",
+          "completed": "{{deviceName}} is authentic"
         },
         "firmwareUpdate": {
           "inactive": "Software check",
@@ -1178,11 +1178,11 @@
         "title": "We recommend downloading a default set of apps. You can download more later",
         "install": "Install",
         "skip": "I'll do that later",
-        "info": "Apps on Nano are used to approve transactions. You can add or remove them at any time."
+        "info": "Apps on {{deviceName}} are used to approve transactions. You can add or remove them at any time."
       },
       "genuineCheckModal": {
         "title": "Authenticity Check",
-        "paragraph1": "Let's make sure your Nano is Authentic and safe to use",
+        "paragraph1": "Let's make sure your {{deviceName}} is Authentic and safe to use",
         "paragraph2": "We will perform a check to ensure your device hasn't been tampered with. You'll need to accept this on your {{deviceName}}.",
         "checkDeviceButton": "Check device"
       },
@@ -1226,7 +1226,7 @@
   "postOnboarding": {
     "postOnboardingScreen": {
       "title": "Nice one.You're all set.",
-      "description": "Cheers for setting up your Nano!",
+      "description": "Cheers for setting up your {{deviceName}}!",
       "paragraph": "We have prepared for you some steps to start with. If you feel like exploring Ledger Live on your own, don't hesitate to skip this step, you can always come back to it.",
       "bottomText": "Enjoy your travel into the Web3 securely with Ledger Live."
     },

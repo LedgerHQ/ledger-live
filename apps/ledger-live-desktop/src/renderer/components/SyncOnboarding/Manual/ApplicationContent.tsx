@@ -8,8 +8,14 @@ import Coins from "./assets/coins.png";
 
 export type Props = {
   onComplete: () => void;
+  productName: string;
 };
-const InstallingApplicationContent = () => {
+
+type InstallingApplicationContentProps = {
+  productName: string;
+};
+
+const InstallingApplicationContent = ({ productName }: InstallingApplicationContentProps) => {
   const { t } = useTranslation();
 
   return (
@@ -20,12 +26,16 @@ const InstallingApplicationContent = () => {
         <Bullet bulletText="2" status={Status.active} text={"Ethereum"} />
         <Bullet bulletText="3" status={Status.inactive} text={"Polygon"} />
       </Flex>
-      <StepText>{t("syncOnboarding.manual.installApplications.info")}</StepText>
+      <StepText>
+        {t("syncOnboarding.manual.installApplications.info", {
+          deviceName: productName,
+        })}
+      </StepText>
     </Flex>
   );
 };
 
-const ApplicationContent = ({ onComplete }: Props) => {
+const ApplicationContent = ({ onComplete, productName }: Props) => {
   const { t } = useTranslation();
 
   const [isInstallingApplications, setIsInstallingApplications] = useState<boolean>(false);
@@ -33,7 +43,7 @@ const ApplicationContent = ({ onComplete }: Props) => {
   if (isInstallingApplications) {
     // TODO: remove when we do the real app step content
     setTimeout(onComplete, 5000);
-    return <InstallingApplicationContent />;
+    return <InstallingApplicationContent productName={productName} />;
   }
 
   return (

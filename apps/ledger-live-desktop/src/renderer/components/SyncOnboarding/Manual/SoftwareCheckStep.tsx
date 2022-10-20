@@ -151,6 +151,7 @@ const SoftwareCheckStep = ({ isDisplayed, onComplete, productName }: Props) => {
         firmwareUpdateStatus={firmwareUpdateStatus}
         availableFirmwareVersion={availableFirmwareVersion}
         handleSkipFirmwareUpdate={onComplete}
+        productName={productName}
       />
     </Box>
   );

@@ -9,6 +9,7 @@ export type Props = {
   firmwareUpdateStatus: SoftwareCheckStatus;
   handleSkipFirmwareUpdate: () => void;
   availableFirmwareVersion: string;
+  productName: string;
 };
 
 const SoftwareCheckContent = ({
@@ -16,6 +17,7 @@ const SoftwareCheckContent = ({
   firmwareUpdateStatus,
   availableFirmwareVersion,
   handleSkipFirmwareUpdate,
+  productName,
 }: Props) => {
   const { t } = useTranslation();
 
@@ -27,8 +29,12 @@ const SoftwareCheckContent = ({
         status={genuineCheckStatus}
         text={
           genuineCheckStatus === SoftwareCheckStatus.completed
-            ? t("syncOnboarding.manual.softwareCheckContent.genuineCheck.completed")
-            : t("syncOnboarding.manual.softwareCheckContent.genuineCheck.active")
+            ? t("syncOnboarding.manual.softwareCheckContent.genuineCheck.completed", {
+                deviceName: productName,
+              })
+            : t("syncOnboarding.manual.softwareCheckContent.genuineCheck.active", {
+                deviceName: productName,
+              })
         }
       />
       <Bullet
