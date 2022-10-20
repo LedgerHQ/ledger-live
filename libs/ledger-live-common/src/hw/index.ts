@@ -1,7 +1,7 @@
 import { EMPTY, merge } from "rxjs";
 import type { Observable } from "rxjs";
 import { catchError } from "rxjs/operators";
-import type { DeviceModel } from "@ledgerhq/devices";
+import type { DeviceModel } from "@ledgerhq/types-devices";
 import Transport from "@ledgerhq/hw-transport";
 
 export type DeviceEvent = {

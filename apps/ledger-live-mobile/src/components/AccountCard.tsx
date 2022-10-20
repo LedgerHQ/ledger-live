@@ -11,7 +11,7 @@ import {
   DerivationMode,
   getTagDerivationMode,
 } from "@ledgerhq/live-common/derivation";
-import { Account, AccountLike } from "@ledgerhq/types-live";
+import { AccountLike } from "@ledgerhq/types-live";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { Flex, Tag, Text } from "@ledgerhq/native-ui";
 import { useTheme } from "styled-components/native";
@@ -44,11 +44,12 @@ const AccountCard = ({
   const currency = getAccountCurrency(account);
   const unit = getAccountUnit(account);
   const tag =
-    (account as Account)?.derivationMode !== undefined &&
-    (account as Account)?.derivationMode !== null &&
+    account.type === "Account" &&
+    account?.derivationMode !== undefined &&
+    account?.derivationMode !== null &&
     getTagDerivationMode(
       currency as CryptoCurrency,
-      (account as Account).derivationMode as DerivationMode,
+      account.derivationMode as DerivationMode,
     );
 
   return (

@@ -31,7 +31,7 @@ export interface BaseButtonProps extends Omit<ButtonProps, "type"> {
   // the button will toggle in a pending state and
   // will wait the promise to complete before enabling the button again
   // it also displays a spinner if it takes more than WAIT_TIME_BEFORE_SPINNER
-  onPress?: () => unknown;
+  onPress?: () => void;
   pending?: boolean;
   disabled?: boolean;
   IconLeft?: React.ComponentType<{ size?: number; color?: string }>;

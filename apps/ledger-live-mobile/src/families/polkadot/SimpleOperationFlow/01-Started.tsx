@@ -31,7 +31,7 @@ type Navigation = StackNavigatorProps<
 function getStatusError(
   status: TransactionStatus,
   type: "errors" | "warnings" = "errors",
-): Error | null | undefined {
+): Error | null {
   if (!status || !status[type]) return null;
   const firstKey = Object.keys(status[type])[0];
   return firstKey ? status[type][firstKey] : null;

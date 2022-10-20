@@ -1,4 +1,3 @@
-// FIXME This will be converted into string enum once TypeScript is supported in this project.
 export enum ScreenName {
   AboutSettings = "AboutSettings",
   Account = "Account",

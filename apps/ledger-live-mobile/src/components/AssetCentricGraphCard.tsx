@@ -160,12 +160,7 @@ function AssetCentricGraphCard({
                       minHeight={25}
                     >
                       {items[1].value !== undefined ? (
-                        <CurrencyUnitValue
-                          {...(items[1] as Merge<
-                            typeof items[1],
-                            { value: number }
-                          >)}
-                        />
+                        <CurrencyUnitValue {...items[1]} />
                       ) : null}
                     </Text>
                     <Text
