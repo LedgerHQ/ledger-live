@@ -9,7 +9,7 @@ import {
 } from "@ledgerhq/live-common/currencies/index";
 import { useValidators } from "@ledgerhq/live-common/families/solana/react";
 import {
-  Transaction as OsmosisTransaction,
+  Transaction as SolanaTransaction,
   TransactionModel,
 } from "@ledgerhq/live-common/families/solana/types";
 import { assertUnreachable } from "@ledgerhq/live-common/families/solana/utils";
@@ -164,7 +164,7 @@ export default function DelegationSummary({ navigation, route }: Props) {
     navigation.navigate(ScreenName.DelegationSelectDevice, {
       accountId: account.id,
       parentId: parentAccount?.id,
-      transaction: transaction as OsmosisTransaction,
+      transaction: transaction as SolanaTransaction,
       status,
     });
   }, [navigation, account.id, parentAccount?.id, transaction, status]);
@@ -263,7 +263,7 @@ function tx({
   defaultValidator: ValidatorsAppValidator;
   amount?: number;
   chosenValidator?: ValidatorsAppValidator;
-}): OsmosisTransaction {
+}): SolanaTransaction {
   return {
     family: "solana",
     amount: new BigNumber(

@@ -6,7 +6,6 @@ import { useTheme } from "@react-navigation/native";
 import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
 import { getAccountUnit } from "@ledgerhq/live-common/account/helpers";
 import { getCryptoCurrencyIcon } from "@ledgerhq/live-common/reactNative";
-import type { Account } from "@ledgerhq/types-live";
 import { hasMinimumBondBalance } from "@ledgerhq/live-common/families/polkadot/logic";
 import { PolkadotAccount } from "@ledgerhq/live-common/families/polkadot/types";
 import type { ModalInfo } from "../../modals/Info";
@@ -19,7 +18,7 @@ import Unbonded from "../../icons/Undelegate";
 import WarningIcon from "../../icons/Warning";
 
 type Props = {
-  account: Account & PolkadotAccount;
+  account: PolkadotAccount;
 };
 type InfoName =
   | "available"

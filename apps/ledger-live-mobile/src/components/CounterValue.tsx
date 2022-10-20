@@ -70,8 +70,9 @@ export default function CounterValue({
   currency,
   ...props
 }: Props) {
-  const value =
-    valueProp instanceof BigNumber ? valueProp.toNumber() : valueProp;
+  const value = BigNumber.isBigNumber(valueProp)
+    ? valueProp.toNumber()
+    : valueProp;
   const counterValueCurrency = useSelector(counterValueCurrencySelector);
   const trackingPairs = useTrackingPairs();
   const cvPolling = useCountervaluesPolling();

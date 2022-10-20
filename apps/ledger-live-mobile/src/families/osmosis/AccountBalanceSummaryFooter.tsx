@@ -5,7 +5,6 @@ import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
 import { getAccountUnit } from "@ledgerhq/live-common/account/helpers";
 import { getCryptoCurrencyIcon } from "@ledgerhq/live-common/reactNative";
 
-import type { Account } from "@ledgerhq/types-live";
 import type { CosmosAccount } from "@ledgerhq/live-common/families/cosmos/types";
 
 import invariant from "invariant";
@@ -15,7 +14,7 @@ import CurrencyUnitValue from "../../components/CurrencyUnitValue";
 import InfoItem from "../../components/BalanceSummaryInfoItem";
 
 type Props = {
-  account: Account & CosmosAccount;
+  account: CosmosAccount;
 };
 
 type InfoName = "available" | "delegated" | "undelegating";
@@ -25,7 +24,7 @@ function AccountBalanceSummaryFooter({ account }: Props) {
   const [infoName, setInfoName] = useState<InfoName | typeof undefined>();
   const info = useInfo();
 
-  const { spendableBalance, cosmosResources } = account as CosmosAccount;
+  const { spendableBalance, cosmosResources } = account;
   const { delegatedBalance, unbondingBalance } = cosmosResources || {};
 
   const unit = getAccountUnit(account);

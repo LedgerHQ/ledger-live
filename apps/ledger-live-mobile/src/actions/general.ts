@@ -93,11 +93,6 @@ export function useCleanCache() {
   return useCallback(async () => {
     dispatch(cleanCache());
 
-    // FIXME: THIS DOES NOT TRIGGER ANY REDUCER ACTION
-    dispatch({
-      type: "LEDGER_CV:WIPE",
-    });
-
     await clearBridgeCache();
     wipe();
     flushAll();
