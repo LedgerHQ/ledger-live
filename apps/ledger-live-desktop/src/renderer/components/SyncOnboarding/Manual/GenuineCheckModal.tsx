@@ -25,7 +25,9 @@ const GenuineCheckModal = ({ isOpen, onClose, productName }: Props) => {
           {t("syncOnboarding.manual.genuineCheckModal.title")}
         </Text>
         <Text mb={8} variant="body" fontSize={24} textAlign="center">
-          {t("syncOnboarding.manual.genuineCheckModal.paragraph1")}
+          {t("syncOnboarding.manual.genuineCheckModal.paragraph1", {
+            deviceName: productName,
+          })}
         </Text>
         <Text mb={14} variant="body" fontSize={16} color="palette.neutral.c80" textAlign="center">
           {t("syncOnboarding.manual.genuineCheckModal.paragraph2", {
