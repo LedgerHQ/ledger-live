@@ -117,6 +117,7 @@ export function SelectAccount({
         <Flex {...styleProps}>
           <AccountCard
             disabled={
+              // FIXME: I don't know where this disabled field comes from?
               (item.account as unknown as { disabled: boolean }).disabled
             }
             account={item.account}

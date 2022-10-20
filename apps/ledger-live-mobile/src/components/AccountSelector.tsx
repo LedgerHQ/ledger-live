@@ -6,10 +6,7 @@ import { useTranslation } from "react-i18next";
 import NoResultsFound from "../icons/NoResultsFound";
 import AccountList from "./AccountList";
 import FilteredSearchBar from "./FilteredSearchBar";
-import {
-  formatSearchResults,
-  SearchResult,
-} from "../helpers/formatAccountSearchResults";
+import { formatSearchResults } from "../helpers/formatAccountSearchResults";
 import { accountsSelector } from "../reducers/accounts";
 
 const SEARCH_KEYS = ["name", "unit.code", "token.name", "token.ticker"];
@@ -67,7 +64,7 @@ const AccountSelector = ({
 
       return (
         <AccountList
-          list={formatedList as SearchResult[]}
+          list={formatedList}
           showAddAccount={showAddAccount}
           onPress={onSelectAccount}
           onAddAccount={onAddAccount}

@@ -3,7 +3,10 @@ import React, { useMemo, useCallback } from "react";
 import { StyleSheet, Linking, View } from "react-native";
 import { useTranslation } from "react-i18next";
 import type { Account } from "@ledgerhq/types-live";
-import type { Transaction } from "@ledgerhq/live-common/families/polkadot/types";
+import type {
+  PolkadotValidator,
+  Transaction,
+} from "@ledgerhq/live-common/families/polkadot/types";
 import { usePolkadotPreloadData } from "@ledgerhq/live-common/families/polkadot/react";
 import {
   getDefaultExplorerView,
@@ -32,11 +35,11 @@ function PolkadotValidatorsField({ account, transaction, field }: FieldProps) {
   const mappedValidators = useMemo(
     () =>
       (validators || [])
-        .map<typeof polkadotValidators[0] | null>(address => {
+        .map<PolkadotValidator | null>(address => {
           const found = polkadotValidators.find(v => v.address === address);
           return found || null;
         })
-        .filter(Boolean) as typeof polkadotValidators[0][],
+        .filter(Boolean) as PolkadotValidator[],
     [validators, polkadotValidators],
   );
   const redirectAddressCreator = useCallback(

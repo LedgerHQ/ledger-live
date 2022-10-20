@@ -207,11 +207,11 @@ export type WalletConnectState = {
 // === SWAP STATE ===
 
 export type SwapStateType = {
-  providers: AvailableProviderV3[] | undefined;
-  pairs: AvailableProviderV3["pairs"] | undefined;
-  transaction: Transaction | undefined;
-  exchangeRate: ExchangeRate | undefined;
-  exchangeRateExpiration: Date | undefined;
+  providers?: AvailableProviderV3[];
+  pairs?: AvailableProviderV3["pairs"];
+  transaction?: Transaction;
+  exchangeRate?: ExchangeRate;
+  exchangeRateExpiration?: Date;
 };
 
 // === ROOT STATE ===
