@@ -1,5 +1,11 @@
 # live-mobile
 
+## 3.10.0-next.1
+
+### Patch Changes
+
+- [#1623](https://github.com/LedgerHQ/ledger-live/pull/1623) [`9d90943e38`](https://github.com/LedgerHQ/ledger-live/commit/9d90943e38f359b0a6ab6276af437d133990f6ca) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Fix device localization button layout in My Ledger
+
 ## 3.10.0-next.0
 
 ### Minor Changes
