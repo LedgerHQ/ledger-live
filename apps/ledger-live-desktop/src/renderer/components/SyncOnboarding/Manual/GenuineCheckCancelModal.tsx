@@ -6,9 +6,10 @@ export type Props = {
   isOpen: boolean;
   onClose: () => void;
   onSkip: () => void;
+  productName: string;
 };
 
-const GenuineCheckCancelModal = ({ isOpen, onClose, onSkip }: Props) => {
+const GenuineCheckCancelModal = ({ isOpen, onClose, onSkip, productName }: Props) => {
   const { t } = useTranslation();
 
   return (
@@ -28,7 +29,9 @@ const GenuineCheckCancelModal = ({ isOpen, onClose, onSkip }: Props) => {
           {t("syncOnboarding.manual.genuineCheckCancelModal.paragraph1")}
         </Text>
         <Text mb={14} fontSize={16} variant="body" color="palette.neutral.c80" textAlign="center">
-          {t("syncOnboarding.manual.genuineCheckCancelModal.paragraph2")}
+          {t("syncOnboarding.manual.genuineCheckCancelModal.paragraph2", {
+            deviceName: productName,
+          })}
         </Text>
         <Flex flexDirection="column" width="100%">
           <Button size="large" variant="main" width="100%" onClick={onClose} mb={8}>

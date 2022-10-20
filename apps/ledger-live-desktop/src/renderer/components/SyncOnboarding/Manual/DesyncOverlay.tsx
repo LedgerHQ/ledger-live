@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Flex, InfiniteLoader, Text, Box } from "@ledgerhq/react-ui";
 import styled, { useTheme } from "styled-components";
 
@@ -9,9 +10,12 @@ const Overlay = styled(Flex)`
 type Props = {
   isOpen: boolean;
   delay?: number;
+  productName: string;
 };
 
-export const DesyncOverlay = ({ isOpen, delay = 0 }: Props) => {
+export const DesyncOverlay = ({ isOpen, delay = 0, productName }: Props) => {
+  const { t } = useTranslation();
+
   const [showContent, setShowContent] = useState<boolean>(false);
   const { colors } = useTheme();
 
@@ -56,7 +60,9 @@ export const DesyncOverlay = ({ isOpen, delay = 0 }: Props) => {
         >
           <Box flexShrink={1}>
             <Text pr={3} variant="body" color={colors.constant.black}>
-              {`It looks like connection to your Nano was lost. We're trying to reconnect.`}
+              {t("syncOnboarding.manual.desyncOverlay.errorMessage", {
+                deviceName: productName,
+              })}
             </Text>
           </Box>
           <InfiniteLoader color="black" size={24} />

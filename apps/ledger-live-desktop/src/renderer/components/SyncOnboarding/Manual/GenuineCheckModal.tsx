@@ -5,9 +5,10 @@ import { useTranslation } from "react-i18next";
 export type Props = {
   isOpen: boolean;
   onClose: () => void;
+  productName: string;
 };
 
-const GenuineCheckModal = ({ isOpen, onClose }: Props) => {
+const GenuineCheckModal = ({ isOpen, onClose, productName }: Props) => {
   const { t } = useTranslation();
 
   return (
@@ -27,7 +28,9 @@ const GenuineCheckModal = ({ isOpen, onClose }: Props) => {
           {t("syncOnboarding.manual.genuineCheckModal.paragraph1")}
         </Text>
         <Text mb={14} variant="body" fontSize={16} color="palette.neutral.c80" textAlign="center">
-          {t("syncOnboarding.manual.genuineCheckModal.paragraph2")}
+          {t("syncOnboarding.manual.genuineCheckModal.paragraph2", {
+            deviceName: productName,
+          })}
         </Text>
         <Button size="large" variant="main" width="100%" onClick={onClose}>
           {t("syncOnboarding.manual.genuineCheckModal.checkDeviceButton")}

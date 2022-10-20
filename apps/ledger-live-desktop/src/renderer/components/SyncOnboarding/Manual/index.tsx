@@ -65,6 +65,12 @@ const SyncOnboardingManual = () => {
   const theme = useTheme();
   const history = useHistory();
   const [stepKey, setStepKey] = useState<StepKey>(StepKey.Paired);
+  const device = useSelector(getCurrentDevice);
+
+  const productName = device
+    ? getDeviceModel(device.modelId).productName || device.modelId
+    : "Ledger Device";
+  const deviceName = device?.deviceName || productName;
 
   const handleSoftwareCheckComplete = useCallback(() => {
     setStepKey(nextStepKey(StepKey.SoftwareCheck));
@@ -79,12 +85,20 @@ const SyncOnboardingManual = () => {
       {
         key: StepKey.Paired,
         status: "active",
-        title: "Nano is connected",
+        title: t("syncOnboarding.manual.pairedContent.title", {
+          deviceName: productName,
+        }),
         renderBody: () => (
           <Flex flexDirection="column">
-            <StepText mb={6}>{`Continue setup on Nano`}</StepText>
+            <StepText mb={6}>
+              {t("syncOnboarding.manual.pairedContent.description", {
+                deviceName: productName,
+              })}
+            </StepText>
             <StepText>
-              {`This screen will change dynamically to provide you with relevant information while you set up your Nano`}
+              {t("syncOnboarding.manual.pairedContent.text", {
+                deviceName: productName,
+              })}
             </StepText>
           </Flex>
         ),
@@ -92,13 +106,11 @@ const SyncOnboardingManual = () => {
       {
         key: StepKey.Pin,
         status: "inactive",
-        title: "Set your PIN",
+        title: t("syncOnboarding.manual.pinContent.title"),
         renderBody: () => (
           <Flex flexDirection="column">
-            <StepText mb={6}>{`Your PIN can be 4 to 8 digits long`}</StepText>
-            <StepText>
-              {`Anyone with access to your Nano and to your PIN can also access all your crypto and NFT assets.`}
-            </StepText>
+            <StepText mb={6}>{t("syncOnboarding.manual.pinContent.description")}</StepText>
+            <StepText>{t("syncOnboarding.manual.pinContent.text")}</StepText>
           </Flex>
         ),
         estimatedTime: 120,
@@ -115,7 +127,11 @@ const SyncOnboardingManual = () => {
         status: "inactive",
         title: t("syncOnboarding.manual.softwareCheckContent.title"),
         renderBody: (isDisplayed?: boolean) => (
-          <SoftwareCheckStep isDisplayed={isDisplayed} onComplete={handleSoftwareCheckComplete} />
+          <SoftwareCheckStep
+            isDisplayed={isDisplayed}
+            onComplete={handleSoftwareCheckComplete}
+            productName={productName}
+          />
         ),
       },
       {
@@ -132,7 +148,7 @@ const SyncOnboardingManual = () => {
         title: "Nano is ready",
       },
     ],
-    [t, handleSoftwareCheckComplete, handleInstallRecommendedApplicationComplete],
+    [t, productName, handleSoftwareCheckComplete, handleInstallRecommendedApplicationComplete],
   );
 
   const [steps, setSteps] = useState<Step[]>(defaultSteps);
@@ -140,12 +156,6 @@ const SyncOnboardingManual = () => {
   const [desyncTimer, setDesyncTimer] = useState<NodeJS.Timeout | null>(null);
   const [resyncDelay, setResyncDelay] = useState<number>(resyncDelayMs);
   const [desyncTimeout, setDesyncTimeout] = useState<number>(desyncTimeoutMs);
-  const device = useSelector(getCurrentDevice);
-
-  const productName = device
-    ? getDeviceModel(device.modelId).productName || device.modelId
-    : "Ledger Device";
-  const deviceName = device?.deviceName || productName;
 
   const {
     onboardingState: deviceOnboardingState,
@@ -297,7 +307,7 @@ const SyncOnboardingManual = () => {
         onClose={handleTroubleshootingDrawerClose}
       />
       <Flex flex={1} position="relative" overflow="hidden">
-        <DesyncOverlay isOpen={!!desyncTimer} delay={resyncDelay} />
+        <DesyncOverlay isOpen={!!desyncTimer} delay={resyncDelay} productName={productName} />
         <Flex flex={1} px="120px" py={0}>
           <Flex flex={1} flexDirection="column" overflow="hidden" justifyContent="center">
             <Flex flex={1} flexGrow={0} alignItems="center" mb={12}>
