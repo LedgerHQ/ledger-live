@@ -307,7 +307,7 @@ const DeviceStorage = ({
   const deviceLocalizationFeatureFlag = useFeature("deviceLocalization");
 
   return (
-    <Card p={20} mb={4} horizontal dataTestId="device-storage-card">
+    <Card p={20} mb={4} horizontal data-test-id="device-storage-card">
       <Box position="relative" flex="0 0 140px" mr={20}>
         <DeviceIllustration deviceModel={deviceModel} />
       </Box>

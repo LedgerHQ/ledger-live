@@ -22,13 +22,12 @@ export type CardProps = {
   ...RawCardProps,
   title?: any,
   children?: React$Node,
-  dataTestId?: string,
 };
 
-const Card = ({ title, dataTestId, ...props }: CardProps) => {
+const Card = ({ title, ...props }: CardProps) => {
   if (title) {
     return (
-      <Box flow={4} grow data-test-id={dataTestId}>
+      <Box flow={4} grow>
         <Text color="palette.text.shade100" ff="Inter" fontSize={6}>
           {title}
         </Text>
@@ -36,7 +35,7 @@ const Card = ({ title, dataTestId, ...props }: CardProps) => {
       </Box>
     );
   }
-  return <RawCard {...props} data-test-id={dataTestId} />;
+  return <RawCard {...props} />;
 };
 
 export default Card;
