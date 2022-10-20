@@ -40,7 +40,10 @@ const Delegations = (props: Props) => {
       {delegations.map(delegation => (
         <Delegation
           key={`delegation-${delegation.contract}`}
-          {...{ delegations, validators, account, ...delegation }}
+          delegations={delegations}
+          validators={validators}
+          account={account}
+          {...delegation}
         />
       ))}
     </Fragment>

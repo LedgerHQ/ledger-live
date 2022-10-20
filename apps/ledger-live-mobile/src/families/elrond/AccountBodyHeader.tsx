@@ -58,7 +58,7 @@ interface Props {
 }
 
 const withStaking = Component => (props: Props) =>
-  props.account.elrondResources ? <Component {...props.account} /> : null;
+  props.account.elrondResources ? <Component {...props} /> : null;
 
 const Staking = (props: Props) => {
   const { account } = props;
@@ -144,19 +144,33 @@ const Staking = (props: Props) => {
   return (
     <View style={styles.root}>
       {drawer && (
-        <Drawer {...{ drawer, account, onCloseDrawer: () => setDrawer() }} />
+        <Drawer
+          drawer={drawer}
+          account={account}
+          onCloseDrawer={() => setDrawer()}
+        />
       )}
 
       {rewards && rewards.gt(0) && (
-        <Rewards {...{ delegations, account, value: rewards }} />
+        <Rewards value={rewards} account={account} delegations={delegations} />
       )}
 
       {delegations && (
-        <Delegations {...{ delegations, account, validators, onDrawer }} />
+        <Delegations
+          onDrawer={onDrawer}
+          value={rewards}
+          account={account}
+          validators={validators}
+        />
       )}
 
       {unbondings && unbondings.length > 0 && (
-        <Unbondings {...{ unbondings, account, onDrawer, delegations }} />
+        <Unbondings
+          onDrawer={onDrawer}
+          delegations={delegations}
+          account={account}
+          unbondings={unbondings}
+        />
       )}
     </View>
   );

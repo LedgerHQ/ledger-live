@@ -114,13 +114,11 @@ const ValidatorList = (props: Props) => {
     (props: ValidatorItemType) =>
       props ? (
         <ValidatorItem
-          {...{
-            ...props,
-            account,
-            unit,
-            onSelectValidator,
-            active: isActiveValidator(props ? props.contract : ""),
-          }}
+          unit={unit}
+          account={account}
+          onSelectValidator={onSelectValidator}
+          active={isActiveValidator(props ? props.contract : "")}
+          {...props}
         />
       ) : null,
     [onSelectValidator, account, unit, isActiveValidator],

@@ -91,16 +91,14 @@ const StepClaimRewards = (props: StepProps) => {
       )}
 
       <DelegationSelectorField
-        {...{
-          contract,
-          validators,
-          delegations,
-          t,
-          bridge,
-          transaction,
-          onUpdateTransaction,
-          onChange: onDelegationChange,
-        }}
+        contract={contract}
+        validators={validators}
+        delegations={delegations}
+        bridge={bridge}
+        onUpdateTransaction={onUpdateTransaction}
+        onChange={onDelegationChange}
+        transaction={transaction}
+        t={t}
       />
     </Box>
   );

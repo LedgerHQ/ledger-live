@@ -282,7 +282,14 @@ const Validator = (props: Props) => {
 
   const renderItem = useCallback(
     props => (
-      <Item {...{ ...props, onSelect, unit, delegations, recipient, amount }} />
+      <Item
+        amount={amount}
+        onSelect={onSelect}
+        recipient={recipient}
+        delegations={delegations}
+        unit={unit}
+        {...props}
+      />
     ),
     [unit, onSelect, delegations, recipient, amount],
   );
@@ -309,7 +316,10 @@ const Validator = (props: Props) => {
     <SafeAreaView
       style={[styles.stack.root, { backgroundColor: colors.background }]}
     >
-      <SelectValidatorSearchBox {...{ searchQuery, setSearchQuery }} />
+      <SelectValidatorSearchBox
+        searchQuery={searchQuery}
+        setSearchQuery={setSearchQuery}
+      />
 
       {sections.length <= 0 && (
         <View style={styles.stack.noResult}>
@@ -430,7 +440,7 @@ const Item = (props: any) => {
             color={disabled ? "grey" : "darkBlue"}
           >
             {value.gt(0) && provider === recipient ? (
-              <CurrencyUnitValue {...{ unit, value, showCode: false }} />
+              <CurrencyUnitValue value={value} unit={unit} showCode={false} />
             ) : (
               "0"
             )}

@@ -7,7 +7,7 @@ import { ScrollView, StyleSheet, View } from "react-native";
 import { useTranslation } from "react-i18next";
 import { useTheme } from "@react-navigation/native";
 import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
-import { getAccountUnit } from "@ledgerhq/live-common/account/index";
+import { getAccountUnit } from "@ledgerhq/live-common/account/helpers";
 import { getCryptoCurrencyIcon } from "@ledgerhq/live-common/reactNative";
 import { BigNumber } from "bignumber.js";
 
@@ -31,11 +31,12 @@ const styles = StyleSheet.create({
 
 const withSummary = Component => (props: Props) =>
   props.account.elrondResources || props.account.balance.gt(0) ? (
-    <Component {...props.account} />
+    <Component {...props} />
   ) : null;
 
 const Summary = (props: Props) => {
   const { account } = props;
+
   const { colors } = useTheme();
   const { t } = useTranslation();
 

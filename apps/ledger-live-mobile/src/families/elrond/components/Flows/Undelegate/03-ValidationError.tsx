@@ -52,7 +52,12 @@ const Error = (props: Props) => {
     >
       <TrackScreen category="ElrondUndelegation" name="ValidationError" />
 
-      <ValidateError {...{ error, onClose, onContactUs, onRetry }} />
+      <ValidateError
+        onContactUs={onContactUs}
+        onClose={onClose}
+        onRetry={onRetry}
+        error={error}
+      />
     </SafeAreaView>
   );
 };

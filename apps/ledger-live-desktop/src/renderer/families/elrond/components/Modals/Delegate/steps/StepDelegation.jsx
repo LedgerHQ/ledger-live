@@ -37,7 +37,12 @@ const StepDelegation = (props: StepProps) => {
 
       {error && <ErrorBanner error={error} />}
 
-      <ValidatorList {...{ account, transaction, validators, onSelectValidator }} />
+      <ValidatorList
+        account={account}
+        transaction={transaction}
+        validators={validators}
+        onSelectValidator={onSelectValidator}
+      />
     </Box>
   );
 };
@@ -51,7 +56,7 @@ const StepDelegationFooter = (props: StepProps) => {
 
   return (
     <Fragment>
-      <AccountFooter {...{ account, status, parentAccount }} />
+      <AccountFooter account={account} status={status} parentAccount={parentAccount} />
 
       <Box horizontal={true}>
         <Button mr={1} secondary={true} onClick={onClose}>

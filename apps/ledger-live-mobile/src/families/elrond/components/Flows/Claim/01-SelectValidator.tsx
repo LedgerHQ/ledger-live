@@ -132,7 +132,7 @@ const Validator = (props: Props) => {
   );
 
   const renderItem = useCallback(
-    props => <Item {...{ ...props, unit, onSelect }} />,
+    props => <Item unit={unit} onSelect={onSelect} {...props} />,
     [unit, onSelect],
   );
 
@@ -147,7 +147,7 @@ const Validator = (props: Props) => {
             `${delegation.address}-${delegation.userActiveStake}-${delegation.claimableRewards}`
           }
           data={delegations}
-          {...{ renderItem }}
+          renderItem={renderItem}
         />
       </View>
     </SafeAreaView>

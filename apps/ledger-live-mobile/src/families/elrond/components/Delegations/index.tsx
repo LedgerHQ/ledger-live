@@ -106,7 +106,9 @@ const Delegations = (props: any) => {
         <Delegation
           key={`delegation-${index}`}
           last={delegations.length === index + 1}
-          {...{ ...delegation, onDelegate, currency }}
+          delegation={delegation}
+          onDelegate={onDelegate}
+          currency={currency}
         />
       ))}
     </View>

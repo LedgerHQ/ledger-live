@@ -74,16 +74,14 @@ const StepWithdraw = (props: StepProps) => {
       )}
 
       <DelegationSelectorField
-        {...{
-          contract,
-          unbondings,
-          t,
-          amount,
-          bridge,
-          transaction,
-          onChange: onDelegationChange,
-          onUpdateTransaction,
-        }}
+        contract={contract}
+        unbondings={unbondings}
+        t={t}
+        amount={amount}
+        bridge={bridge}
+        transaction={transaction}
+        onUpdateTransaction={onUpdateTransaction}
+        onChange={onDelegationChange}
       />
     </Box>
   );
@@ -99,7 +97,7 @@ const StepWithdrawFooter = (props: StepProps) => {
 
   return (
     <Fragment>
-      <AccountFooter {...{ status, account, parentAccount }} />
+      <AccountFooter status={status} account={account} parentAccount={parentAccount} />
 
       <Box horizontal={true}>
         <Button mr={1} secondary={true} onClick={onClose}>

@@ -52,7 +52,12 @@ const Error = (props: Props) => {
     >
       <TrackScreen category="CosmosDelegation" name="ValidationError" />
 
-      <ValidateError {...{ error, onRetry, onContactUs, onClose }} />
+      <ValidateError
+        onContactUs={onContactUs}
+        onClose={onClose}
+        onRetry={onRetry}
+        error={error}
+      />
     </SafeAreaView>
   );
 };

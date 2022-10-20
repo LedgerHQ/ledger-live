@@ -50,19 +50,21 @@ const StepAmount = (props: StepProps) => {
       {account && transaction && mainAccount && (
         <Fragment key={account.id}>
           {account && transaction ? (
-            <SpendableBanner {...{ account, transaction, parentAccount }} />
+            <SpendableBanner
+              account={account}
+              transaction={transaction}
+              parentAccount={parentAccount}
+            />
           ) : null}
 
           <AmountField
-            {...{
-              status,
-              account,
-              transaction,
-              t,
-              bridgePending,
-              parentAccount,
-              onChangeTransaction: onUpdateTransactionCallback,
-            }}
+            status={status}
+            account={account}
+            transaction={transaction}
+            t={t}
+            bridgePending={bridgePending}
+            parentAccount={parentAccount}
+            onChangeTransaction={onUpdateTransactionCallback}
           />
         </Fragment>
       )}
@@ -88,7 +90,7 @@ export class StepAmountFooter extends PureComponent<StepProps> {
 
     return (
       <Fragment>
-        <AccountFooter {...{ account, status, parentAccount }} />
+        <AccountFooter account={account} status={status} parentAccount={parentAccount} />
 
         <Button
           id="send-amount-continue-button"

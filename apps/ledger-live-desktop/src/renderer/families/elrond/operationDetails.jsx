@@ -132,7 +132,7 @@ const OperationDetailsExtra = (props: OperationDetailsExtraProps) => {
       const { providers } = account.elrondResources;
       if (!providers || providers.length <= 0) return null;
 
-      return <OperationDetailsDelegation {...{ account, operation }} />;
+      return <OperationDetailsDelegation account={account} operation={operation} />;
     }
 
     case "UNDELEGATE": {

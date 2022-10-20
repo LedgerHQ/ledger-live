@@ -116,7 +116,8 @@ const StepAmountFooter = (props: StepProps) => {
 
   return (
     <Fragment>
-      <AccountFooter {...{ account, status, parentAccount }} />
+      <AccountFooter account={account} parentAccount={parentAccount} status={status} />
+
       <Box horizontal>
         <Button mr={1} secondary={true} onClick={onClose}>
           {t("common.cancel")}

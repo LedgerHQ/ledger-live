@@ -84,8 +84,12 @@ const ValidatorItem = (props: ValidatorItemType) => {
 
   return (
     <StyledValidatorRow
-      {...{ disabled, unit, icon, onClick, onExternalLink }}
+      disabled={disabled}
+      unit={unit}
+      icon={icon}
+      onClick={onClick}
       key={contract}
+      onExternalLink={onExternalLink}
       validator={{ address: contract }}
       title={identity.name || contract}
       sideInfo={

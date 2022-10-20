@@ -29,7 +29,7 @@ import { constants } from "~/renderer/families/elrond/constants";
 import type { DelegationType, UnbondingType } from "~/renderer/families/elrond/types";
 import type { Account } from "@ledgerhq/types-live";
 
-interface Props {
+export interface WithDelegationPropsType {
   account: Account;
 }
 
@@ -42,12 +42,13 @@ const Wrapper = styled(Box).attrs(() => ({
 `;
 
 /* eslint-disable react/display-name */
-const withDelegation = (Component: JSX.Element) => (props: Props) =>
+const withDelegation = (Component: JSX.Element) => (props: WithDelegationPropsType) =>
   props.account.elrondResources ? <Component {...props} /> : null;
 
-const Delegation = (props: Props) => {
+const Delegation = (props: WithDelegationPropsType) => {
   const { account } = props;
-  const [delegationResources, setDelegationResources] = useState(
+
+  const [delegationResources, setDelegationResources] = useState<DelegationType[]>(
     account.elrondResources.delegations || [],
   );
 
@@ -77,7 +78,7 @@ const Delegation = (props: Props) => {
     [delegationResources],
   );
 
-  const delegations = useMemo((): Array<DelegationType> => {
+  const delegations = useMemo((): DelegationType[] => {
     const transform = (input: string): BigNumber =>
       BigNumber(denominate({ input, showLastNonZeroDecimal: true }));
 
@@ -100,10 +101,10 @@ const Delegation = (props: Props) => {
   }, [findValidator, delegationResources]);
 
   const unbondings = useMemo(
-    (): Array<UnbondingType> =>
+    (): UnbondingType[] =>
       delegationResources
         .reduce(
-          (total: Array<UnbondingType>, item: DelegationType) =>
+          (total: UnbondingType[], item: DelegationType) =>
             total.concat(
               item.userUndelegatedList.map(unbonding => ({
                 ...unbonding,
@@ -218,7 +219,7 @@ const Delegation = (props: Props) => {
         </TableHeader>
 
         {hasDelegations ? (
-          <Delegations {...{ delegations, validators, account }} />
+          <Delegations account={account} delegations={delegations} validators={validators} />
         ) : (
           <Wrapper horizontal={true}>
             <Box style={{ maxWidth: "65%" }}>
@@ -263,7 +264,7 @@ const Delegation = (props: Props) => {
         )}
       </TableContainer>
 
-      {hasUnbondings && <Unbondings {...{ account, unbondings }} />}
+      {hasUnbondings && <Unbondings account={account} unbondings={unbondings} />}
     </Fragment>
   );
 };

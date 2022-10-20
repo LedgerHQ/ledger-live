@@ -33,7 +33,10 @@ const Unbondings = (props: any) => {
         <Unbonding
           key={`unbonding-${index}`}
           last={unbondings.length === index + 1}
-          {...{ ...unbonding, currency, onDrawer, delegations }}
+          delegations={delegations}
+          onDrawer={onDrawer}
+          currency={currency}
+          {...unbonding}
         />
       ))}
     </View>

@@ -1,6 +1,6 @@
 [
   {
-    "tag_name": "2.48.0",
-    "body": "\n### 🚀 Features\n\n- Introducing a new way to swap crypto — **compare quotes from different platforms and choose the best offer**. Select the coin you want to swap and explore providers, KYC requirements, exchange rates, and more. In addition, you can now fully leverage DeFi protocols to swap ERC-20 tokens on decentralised exchanges.\n- Olá! From today, **Ledger Live supports Brazilian Portuguese** 🇧🇷 You can change the language in the settings menu under General → Display language.\n- When sending BTC, a **warning message** will alert you if there are any **pending incoming transactions**.\n\n### 🐛 Fixes\n\nWe’ve tidied up some bugs that caused issues when sending Zcash and signing transactions. Everything is running smoothly again.\n"
+    "tag_name": "2.49.0",
+    "body": "\nA few small but mighty improvements have been made to Ledger Live's swapping capabilities 👇\n\n### 🚀 Features\n\n- You can now filter swap quotes based on floating or fixed rates.\n\n### 🐛 Fixes\n\n- Trying to swap some assets with Changelly, such as GALA and MBOX, may have resulted in the app crashing. We've sorted this out and everything is working as it should now.\n"
   }
 ]

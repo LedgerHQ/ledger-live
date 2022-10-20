@@ -51,7 +51,12 @@ const Error = (props: Props) => {
       forceInset={forceInset}
     >
       <TrackScreen category="ElrondClaimRewards" name="ValidationError" />
-      <ValidateError {...{ error, onClose, onContactUs, onRetry }} />
+      <ValidateError
+        onContactUs={onContactUs}
+        onClose={onClose}
+        onRetry={onRetry}
+        error={error}
+      />
     </SafeAreaView>
   );
 };

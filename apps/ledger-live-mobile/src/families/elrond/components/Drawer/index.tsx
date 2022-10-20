@@ -284,6 +284,10 @@ const Drawer = (props: any) => {
     <DelegationDrawer
       isOpen={true}
       onClose={onCloseDrawer}
+      amount={drawer.amount ?? BigNumber(0)}
+      actions={actions}
+      account={account}
+      data={data}
       ValidatorImage={({ size }) => (
         <FirstLetterIcon
           label={letter || ""}
@@ -292,8 +296,6 @@ const Drawer = (props: any) => {
           fontSize={24}
         />
       )}
-      amount={drawer.amount ?? BigNumber(0)}
-      {...{ data, account, actions }}
     />
   );
 };

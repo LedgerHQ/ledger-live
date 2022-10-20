@@ -69,11 +69,15 @@ const Rewards = (props: any) => {
       <View style={[styles.rewardsWrapper, { backgroundColor: colors.card }]}>
         <View style={styles.column}>
           <LText semiBold={true} style={styles.label}>
-            <CurrencyUnitValue {...{ value, unit }} />
+            <CurrencyUnitValue value={value} unit={unit} />
           </LText>
 
           <LText semiBold={true} style={styles.subLabel} color="grey">
-            <CounterValue withPlaceholder={true} {...{ currency, value }} />
+            <CounterValue
+              withPlaceholder={true}
+              value={value}
+              currency={currency}
+            />
           </LText>
         </View>
 
