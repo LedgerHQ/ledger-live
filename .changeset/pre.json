@@ -76,5 +76,7 @@
     "native-modules-tools": "1.0.2",
     "pnpm-utils": "1.0.0"
   },
-  "changesets": []
+  "changesets": [
+    "rotten-jobs-fix"
+  ]
 }
