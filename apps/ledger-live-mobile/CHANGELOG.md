@@ -1,5 +1,11 @@
 # live-mobile
 
+## 3.10.0-next.2
+
+### Patch Changes
+
+- [#1633](https://github.com/LedgerHQ/ledger-live/pull/1633) [`269185cddf`](https://github.com/LedgerHQ/ledger-live/commit/269185cddf354b5ca4dcf710f5df4dc2524bcaf9) Thanks [@alexandremgo](https://github.com/alexandremgo)! - Fix MyLedger dot display condition
+
 ## 3.10.0-next.1
 
 ### Patch Changes
