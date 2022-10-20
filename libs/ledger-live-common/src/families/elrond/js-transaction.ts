@@ -2,7 +2,7 @@ import { $Shape } from "utility-types";
 import { BigNumber } from "bignumber.js";
 import type { ElrondAccount, Transaction } from "./types";
 import getEstimatedFees from "./js-getFeesForTransaction";
-import { NetworkConfig } from "@elrondnetwork/erdjs/out";
+import { MIN_GAS_LIMIT } from "./constants";
 
 const sameFees = (a, b) => (!a || !b ? false : a === b);
 
@@ -19,7 +19,7 @@ export const createTransaction = (): Transaction => {
     recipient: "",
     useAllAmount: false,
     fees: new BigNumber(50000),
-    gasLimit: NetworkConfig.getDefault().MinGasLimit.valueOf(),
+    gasLimit: MIN_GAS_LIMIT,
   };
 };
 

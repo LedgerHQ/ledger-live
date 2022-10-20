@@ -2,14 +2,15 @@ import type { ElrondProtocolTransaction, Transaction } from "./types";
 import { getAccountNonce, getNetworkConfig } from "./api";
 import {
   GAS,
+  GAS_PRICE,
   HASH_TRANSACTION,
   MIN_DELEGATION_AMOUNT,
   MIN_DELEGATION_AMOUNT_DENOMINATED,
 } from "./constants";
 import BigNumber from "bignumber.js";
 import { ElrondEncodeTransaction } from "./encode";
-import { NetworkConfig } from "@elrondnetwork/erdjs/out";
 import { Account, SubAccount } from "@ledgerhq/types-live";
+import { INetworkConfig } from "@elrondnetwork/erdjs/out";
 
 /**
  *
@@ -24,9 +25,8 @@ export const buildTransaction = async (
 ): Promise<string> => {
   const address = account.freshAddress;
   const nonce = await getAccountNonce(address);
-  const networkConfig: NetworkConfig = await getNetworkConfig();
+  const networkConfig: INetworkConfig = await getNetworkConfig();
   const chainID = networkConfig.ChainID.valueOf();
-  const gasPrice = networkConfig.MinGasPrice.valueOf();
   transaction.gasLimit = networkConfig.MinGasLimit.valueOf();
 
   let transactionValue: BigNumber;
@@ -110,7 +110,7 @@ export const buildTransaction = async (
     value: transactionValue.toString(),
     receiver: transaction.recipient,
     sender: address,
-    gasPrice,
+    gasPrice: GAS_PRICE,
     gasLimit: transaction.gasLimit,
     data: transaction.data,
     chainID,

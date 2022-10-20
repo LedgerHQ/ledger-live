@@ -16,19 +16,16 @@ import type {
 import { getEnv } from "../../../env";
 import { encodeOperationId } from "../../../operation";
 import {
-  Account as ErdjsAccount,
   Address,
-  GasLimit,
-  GasPrice,
-  GasPriceModifier,
-  NetworkConfig,
-  Nonce,
-  ProxyProvider,
+  INetworkConfig,
+  INonce,
   Transaction as ElrondSdkTransaction,
   TransactionPayload,
 } from "@elrondnetwork/erdjs/out";
+import { ApiNetworkProvider } from "@elrondnetwork/erdjs-network-providers";
 import { BinaryUtils } from "../utils/binary.utils";
 import {
+  CHAIN_ID,
   ELROND_STAKING_POOL,
   GAS_PER_DATA_BYTE,
   GAS_PRICE,
@@ -40,7 +37,7 @@ const api = new ElrondApi(
   getEnv("ELROND_DELEGATION_API_ENDPOINT")
 );
 
-const proxy = new ProxyProvider(getEnv("ELROND_API_ENDPOINT"));
+const proxy = new ApiNetworkProvider(getEnv("ELROND_API_ENDPOINT"));
 
 /**
  * Get account balances and nonce
@@ -60,17 +57,14 @@ export const getProviders = async (): Promise<ElrondProvider[]> => {
   return providers;
 };
 
-export const getNetworkConfig = async (): Promise<NetworkConfig> => {
-  await NetworkConfig.getDefault().sync(proxy);
-
-  return NetworkConfig.getDefault();
+export const getNetworkConfig = async (): Promise<INetworkConfig> => {
+  return await proxy.getNetworkConfig();
 };
 
-export const getAccountNonce = async (addr: string): Promise<Nonce> => {
+export const getAccountNonce = async (addr: string): Promise<INonce> => {
   const address = new Address(addr);
-  const account = new ErdjsAccount(address);
 
-  await account.sync(proxy);
+  const account = await proxy.getAccount(address);
 
   return account.nonce;
 };
@@ -295,15 +289,18 @@ export const getFees = async (t: Transaction): Promise<BigNumber> => {
   const transaction = new ElrondSdkTransaction({
     data: TransactionPayload.fromEncoded(t.data?.trim()),
     receiver: new Address(t.recipient),
-    chainID: NetworkConfig.getDefault().ChainID,
-    gasPrice: new GasPrice(GAS_PRICE),
-    gasLimit: new GasLimit(t.gasLimit),
+    chainID: CHAIN_ID,
+    gasPrice: GAS_PRICE,
+    gasLimit: t.gasLimit,
+    sender: new Address(),
   });
 
-  const networkConfig = new NetworkConfig();
-  networkConfig.MinGasLimit = new GasLimit(MIN_GAS_LIMIT);
-  networkConfig.GasPerDataByte = GAS_PER_DATA_BYTE;
-  networkConfig.GasPriceModifier = new GasPriceModifier(GAS_PRICE_MODIFIER);
+  const networkConfig: INetworkConfig = {
+    MinGasLimit: MIN_GAS_LIMIT,
+    GasPerDataByte: GAS_PER_DATA_BYTE,
+    GasPriceModifier: GAS_PRICE_MODIFIER,
+    ChainID: CHAIN_ID,
+  };
 
   const feesStr = transaction.computeFee(networkConfig).toFixed();
 
