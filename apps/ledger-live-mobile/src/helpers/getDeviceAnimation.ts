@@ -3,7 +3,19 @@ import { DeviceModelId } from "@ledgerhq/types-devices";
 import { AnimatedLottieViewProps } from "lottie-react-native";
 import Config from "react-native-config";
 
-const animations = {
+type Animation = AnimatedLottieViewProps["source"];
+type AnimationRecord = Record<"light" | "dark", Animation>;
+type S_SP_BLUE =
+  | DeviceModelId.nanoS
+  | DeviceModelId.nanoSP
+  | DeviceModelId.blue;
+export type Animations = {
+  [modelId in S_SP_BLUE]: Record<string, AnimationRecord>;
+} & {
+  [modelId in DeviceModelId]: Record<string, Record<string, AnimationRecord>>;
+};
+
+const animations: Animations = {
   nanoS: {
     plugAndPinCode: {
       light: require("../animations/nanoS/1PlugAndPinCode/light.json"),
@@ -208,13 +220,6 @@ const animations = {
   },
 };
 
-// export type Animations = Record<
-//   DeviceModelId,
-//   typeof animations[keyof typeof animations]
-// >;
-
-type Animations = AnimatedLottieViewProps["source"];
-
 export type GetDeviceAnimationArgs = {
   theme?: "light" | "dark";
   key: string;
@@ -230,18 +235,16 @@ export function getDeviceAnimation({
   const modelId = (Config.OVERRIDE_MODEL_ID as DeviceModelId) || device.modelId;
   const wired = Config.OVERRIDE_WIRED || device.wired;
 
-  let animation: Animations | undefined;
+  let animation: Animation | undefined;
 
   if (
     [DeviceModelId.nanoS, DeviceModelId.nanoSP, DeviceModelId.blue].includes(
       modelId,
     )
   ) {
-    // @ts-expect-error this is a nightmare to type
-    animation = animations[modelId][key][theme];
+    animation = animations[modelId as S_SP_BLUE][key][theme];
   } else {
     animation =
-      // @ts-expect-error this is a nightmare to type
       animations[modelId]?.[wired ? "wired" : "bluetooth"]?.[key][theme];
   }
 

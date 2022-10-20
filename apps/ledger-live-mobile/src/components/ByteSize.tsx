@@ -1,6 +1,6 @@
 import React from "react";
 import { Trans } from "react-i18next";
-import type { DeviceModel } from "@ledgerhq/devices";
+import type { DeviceModel } from "@ledgerhq/types-devices";
 
 const k = 1024; // 1kb unit
 

@@ -21,9 +21,7 @@ import ChillIcon from "../../icons/VoteNay";
 import { NavigatorName, ScreenName } from "../../const";
 import { ActionButtonEvent } from "../../components/FabActions";
 
-const getActions = (args: {
-  account: Account;
-}): ActionButtonEvent[] | null | undefined => {
+const getActions = (args: { account: Account }): ActionButtonEvent[] | null => {
   const account = args.account as PolkadotAccount;
   if (!account.polkadotResources) return null;
   const { staking } = getCurrentPolkadotPreloadData();

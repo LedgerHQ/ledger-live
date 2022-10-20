@@ -21,6 +21,8 @@ export const updateRateAction = createAction<ExchangeRate | null | undefined>(
   "SWAP/UPDATE_RATE",
 );
 
+export type SwapAccount = AccountLike & { disabled: boolean };
+
 export const resetSwapAction = createAction("SWAP/RESET_STATE");
 
 /* SELECTORS */
@@ -59,7 +61,7 @@ function filterAvailableToAssets(
 function filterAvailableFromAssets(
   pairs: Pair[],
   allAccounts: Account[],
-): (AccountLike & { disabled: boolean })[] {
+): SwapAccount[] {
   if (pairs === null || pairs === undefined) return [];
 
   return flattenAccounts(allAccounts).map(account => {
@@ -70,11 +72,9 @@ function filterAvailableFromAssets(
 }
 
 // Put disabled accounts and subaccounts at the bottom of the list while preserving the parent/children position.
-export function sortAccountsByStatus(
-  accounts: (AccountLike & { disabled: boolean })[],
-) {
-  let activeAccounts: (AccountLike & { disabled: boolean })[] = [];
-  let disabledAccounts: (AccountLike & { disabled: boolean })[] = [];
+export function sortAccountsByStatus(accounts: SwapAccount[]) {
+  let activeAccounts: SwapAccount[] = [];
+  let disabledAccounts: SwapAccount[] = [];
   let subAccounts = [];
   let disabledSubAccounts = [];
 
