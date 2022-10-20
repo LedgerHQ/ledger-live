@@ -7,6 +7,7 @@ const svgr = require("@svgr/core").default;
 const rootDir = path.join(__dirname, "..", "src");
 const reactDir = path.join(rootDir, "react");
 const nativeDir = path.join(rootDir, "native");
+const additionalIconsDir = path.join(__dirname, "..", "src", "additionalIcons");
 
 // Create folders if needed
 if (!fs.existsSync(reactDir)) {
@@ -55,50 +56,59 @@ function reactTemplate({ template }, _, { imports, interfaces, componentName, __
   return tpl.ast`
     ${imports}
     import Svg from "./StyledSvg"
-
     type Props = { size?: number | string; color?: string; style?: object };
-
     ${interfaces}
-
     function ${componentName} ({ size = 16, color = "currentColor", style }: Props): JSX.Element {
       return ${jsx};
     }
-
     ${exports}
   `;
 }
 
+// Additional Icons component template
+function reactAdditionalTemplate({ template }, _, { imports, interfaces, componentName, __, jsx, exports }) {
+    const plugins = ["typescript"];
+    const tpl = template.smart({ plugins });
+  
+    return tpl.ast`
+      ${imports}
+      import Svg from "../StyledSvg"
+  
+      type Props = { size?: number | string; };
+  
+      ${interfaces}
+  
+      function ${componentName} ({ size = 16 }: Props): JSX.Element {
+        return ${jsx};
+      }
+  
+      ${exports}
+    `;
+}
+
 // Component template
-function reactNativeTemplate(
-  { template },
-  _,
-  { imports, interfaces, componentName, __, jsx, exports },
-) {
+function reactNativeTemplate({ template }, _, { imports, interfaces, componentName, __, jsx, exports }) {
   const plugins = ["typescript"];
   const tpl = template.smart({ plugins });
 
   return tpl.ast`
     ${imports}
     import Svg from "./StyledSvg";
+
     import { StyleProp, ViewStyle } from "react-native"
 
     type Props = { size?: number | string; color?: string; style?: StyleProp<ViewStyle> };
 
     ${interfaces}
-
     function ${componentName} ({ size = 16, color = "neutral.c100", style }: Props): JSX.Element {
       return ${jsx};
     }
-
     ${exports}
   `;
 }
 
-function reactNativeRTLTemplate(
-  { template },
-  _,
-  { imports, interfaces, componentName, __, jsx, exports },
-) {
+// React native RTL template
+function reactNativeRTLTemplate({ template }, _, { imports, interfaces, componentName, __, jsx, exports }) {
   const plugins = ["typescript"];
   const tpl = template.smart({ plugins });
 
@@ -107,29 +117,25 @@ function reactNativeRTLTemplate(
     import Svg from "./StyledSvg";
     import styled from "styled-components";
     import { I18nManager, StyleProp, ViewStyle } from "react-native";
-
     type Props = { size?: number | string; color?: string; style?: StyleProp<ViewStyle> };
-
     ${interfaces}
-
     const rtlStyle = I18nManager.isRTL ? {transform: [{scaleX: -1}]} : {};
-
     function ${componentName} ({ size = 16, color = "neutral.c100", style = rtlStyle }: Props): JSX.Element {
       return ${jsx};
     }
-
     ${exports}
   `;
 }
 
-const convert = (svg, options, componentName, outputFile) => {
+const convert = (svg, options, componentName, outputFile, removeFills) => {
   svgr(svg, options, componentName)
     .then(result => {
       let component = result
         .replace("xlinkHref=", "href=")
-        .replace(/fill=("(?!none)\S*")/g, "")
-        .replace("import Svg,", "import ");
+        .replace("import Svg,", "import ")
 
+      if (!removeFills)
+        component = component.replace(/fill=("(?!none)\S*")/g, "");
       if (!options.native)
         component = component.replace(/(<\s*\/?\s*)svg(\s*([^>]*)?\s*>)/gi, "$1Svg$2");
 
@@ -137,6 +143,8 @@ const convert = (svg, options, componentName, outputFile) => {
     })
     .catch(e => console.error(e));
 };
+
+//====== create base icons =====
 
 glob(`${rootDir}/svg/**/*.svg`, (err, icons) => {
   // Create file stubs
@@ -216,3 +224,53 @@ glob(`${rootDir}/svg/**/*.svg`, (err, icons) => {
 
   });
 });
+//====== create additional icons =====
+
+// get subfolders
+const folders = fs.readdirSync(additionalIconsDir);
+
+folders.forEach(folder => {
+    // Create target folders
+    const folderName = `_${folder}`
+    if (!fs.existsSync(`${reactDir}/${folderName}`)) {
+        fs.mkdirSync(`${reactDir}/${folderName}`);
+    }
+
+    fs.writeFileSync(`${reactDir}/${folderName}/index.ts`, "", {
+        flag: "w",
+        encoding: "utf-8",
+    });
+    
+    glob(`${additionalIconsDir}/${folder}/*.svg`, (err, icons) => {
+        icons.forEach(icon => {
+            let name = camelcase(path.basename(icon, ".svg"), {pascalCase: true})
+            if (!isNaN(name.charAt(0))) name = `_${name}`; // fix variable name leading with a numerical value
+           
+            const exportString = `export { default as ${name} } from "./${name}";\n`;
+            fs.appendFileSync(`${reactDir}/${folderName}/index.ts`, exportString, "utf-8");
+
+            const svg = fs.readFileSync(icon, "utf-8");
+
+            const options = {
+                plugins: ["@svgr/plugin-svgo", "@svgr/plugin-jsx"],
+                expandProps: false,
+                componentName: name,
+                svgProps: {
+                  height: "{size}",
+                  width: "{size}",
+                },
+                svgoConfig: {
+                  plugins: [{ removeXMLNS: true, removeViewBox: false }],
+                },
+
+            };
+            convert(
+                svg,
+                {...options, template: reactAdditionalTemplate},
+                {componentName: name},
+                `${reactDir}/${folderName}/${name}.tsx`,
+                true
+            )
+        })
+    });
+ })
