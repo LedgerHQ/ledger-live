@@ -48,6 +48,11 @@ const Story = {
         options: Object.keys(providerSizes),
       },
     },
+    boxed: {
+      type: "boolean",
+      description: "Boxed",
+      defaultValue: false,
+    },
     name: {
       type: "enum",
       defaultValue: "France",
@@ -88,7 +93,7 @@ const ListTemplate = (args: ProviderIconProps) => {
             return (
               <IconContainer active={!!active}>
                 <Flex flex={1} justifyContent="center" alignItems="center">
-                  <ProviderIcon key={name} name={name} size={args.size} />
+                  <ProviderIcon key={name} name={name} size={args.size} boxed={args.boxed} />
                 </Flex>
                 <Text variant="extraSmall">
                   {active ? (
