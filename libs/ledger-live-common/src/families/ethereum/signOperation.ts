@@ -7,10 +7,7 @@ import { BigNumber } from "bignumber.js";
 import { log } from "@ledgerhq/logs";
 import { FeeNotLoaded } from "@ledgerhq/errors";
 import Eth from "@ledgerhq/hw-app-eth";
-import {
-  byContractAddressAndChainId,
-  findERC20SignaturesInfo,
-} from "@ledgerhq/hw-app-eth/erc20";
+import { byContractAddressAndChainId } from "@ledgerhq/hw-app-eth/erc20";
 import { ledgerService as ethLedgerServices } from "@ledgerhq/hw-app-eth";
 import type { Transaction } from "./types";
 import type {
@@ -26,6 +23,7 @@ import { isNFTActive } from "../../nft";
 import { getEnv } from "../../env";
 import type { LoadConfig } from "@ledgerhq/hw-app-eth/lib/services/types";
 import { Transaction as EthereumTx } from "@ethereumjs/tx";
+import { erc20SignatureInfo } from "./modules/erc20";
 export const signOperation = ({
   account,
   deviceId,
@@ -103,9 +101,7 @@ export const signOperation = ({
                   fillTransactionDataResult.erc20contracts) ||
                 [];
 
-              const erc20SignatureBlob = await findERC20SignaturesInfo(
-                loadConfig
-              );
+              const erc20SignatureBlob = await erc20SignatureInfo(loadConfig);
 
               for (const addr of addrs) {
                 const tokenInfo = byContractAddressAndChainId(

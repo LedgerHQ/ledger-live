@@ -28,6 +28,9 @@ import { DeviceTransactionField } from "../../../transaction";
 import { getEnv } from "../../../env";
 import { log } from "@ledgerhq/logs";
 import network from "../../../network";
+import { makeLRUCache } from "../../../cache";
+import { findERC20SignaturesInfo } from "@ledgerhq/hw-app-eth/erc20";
+import { LoadConfig } from "@ledgerhq/hw-app-eth/lib/services/types";
 
 const infinite = new BigNumber(2).pow(256).minus(1);
 
@@ -194,3 +197,12 @@ export function hydrate(
   addTokens(value.map(convertERC20));
   log("ethereum/preload", "hydrate " + value.length + " tokens");
 }
+
+export const accountNamesCache = makeLRUCache(
+  async (loadConfig: LoadConfig): Promise<string | null | undefined> =>
+    findERC20SignaturesInfo(loadConfig),
+  (loadConfig: LoadConfig) => loadConfig.cryptoassetsBaseURL,
+  {
+    maxAge: 60 * 60 * 1000, // 3hours
+  }
+);
