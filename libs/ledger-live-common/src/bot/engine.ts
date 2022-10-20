@@ -964,9 +964,9 @@ function transactionTest<T>({
   );
 
   botTest(
-    "successful tx should increase by 1 the number of account.operations",
+    "successful tx should increase by at least 1 the number of account.operations",
     () =>
-      expect(account.operations.length).toBe(
+      expect(account.operations.length).toBeGreaterThanOrEqual(
         accountBeforeTransaction.operations.length + 1
       )
   );
