@@ -80,7 +80,7 @@ const InstallSetOfApps = ({
           <Text mb={5} variant="paragraphLineHeight">
             {listingApps ? (
               <Trans i18nKey="installSetOfApps.ongoing.resolving" />
-            ) : progress && currentAppOp ? (
+            ) : typeof progress === "number" && currentAppOp ? (
               <Trans
                 i18nKey="installSetOfApps.ongoing.progress"
                 values={{ progress: Math.round(progress * 100) }}

@@ -399,7 +399,7 @@ export function DeviceActionDefaultRendering<R, H extends Status, P>({
   if (imageLoadRequested && device) {
     return renderImageLoadRequested({ t, device });
   }
-  if (loadingImage && device && progress) {
+  if (loadingImage && device && typeof progress === "number") {
     return renderLoadingImage({ t, device, progress });
   }
   if (imageCommitRequested && device) {

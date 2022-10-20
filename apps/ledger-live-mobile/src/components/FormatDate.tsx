@@ -7,14 +7,14 @@ type Props = {
   date: Date | null | undefined;
   withHoursMinutes?: boolean;
 };
-const defaultOptions = {
-  year: "numeric" as const,
-  month: "numeric" as const,
-  day: "numeric" as const,
+const defaultOptions: Intl.DateTimeFormatOptions = {
+  year: "numeric",
+  month: "numeric",
+  day: "numeric",
 };
-const hoursAndMinutesOptions = {
-  hour: "2-digit" as const,
-  minute: "2-digit" as const,
+const hoursAndMinutesOptions: Intl.DateTimeFormatOptions = {
+  hour: "2-digit",
+  minute: "2-digit",
 };
 
 function FormatDate({
