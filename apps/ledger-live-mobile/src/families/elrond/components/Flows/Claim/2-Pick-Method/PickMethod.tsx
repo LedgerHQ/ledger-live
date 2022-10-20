@@ -1,6 +1,6 @@
 // @flow
 import React, { useCallback, useState } from "react";
-import { View, StyleSheet, TouchableOpacity } from "react-native";
+import { View, TouchableOpacity } from "react-native";
 import { useTheme } from "@react-navigation/native";
 import SafeAreaView from "react-native-safe-area-view";
 import { Trans } from "react-i18next";
@@ -13,17 +13,23 @@ import {
   getAccountCurrency,
 } from "@ledgerhq/live-common/account/index";
 
-import Button from "../../../../../components/Button";
-import LText from "../../../../../components/LText";
-import { ScreenName } from "../../../../../const";
-import ToggleButton from "../../../../../components/ToggleButton";
+import Button from "../../../../../../components/Button";
+import LText from "../../../../../../components/LText";
+import { ScreenName } from "../../../../../../const";
+import ToggleButton from "../../../../../../components/ToggleButton";
 
-import InfoModal from "../../../../../modals/Info";
-import Info from "../../../../../icons/Info";
-import CurrencyUnitValue from "../../../../../components/CurrencyUnitValue";
-import CounterValue from "../../../../../components/CounterValue";
-import FirstLetterIcon from "../../../../../components/FirstLetterIcon";
-import TranslatedError from "../../../../../components/TranslatedError";
+import InfoModal from "../../../../../../modals/Info";
+import Info from "../../../../../../icons/Info";
+import CurrencyUnitValue from "../../../../../../components/CurrencyUnitValue";
+import CounterValue from "../../../../../../components/CounterValue";
+import FirstLetterIcon from "../../../../../../components/FirstLetterIcon";
+import TranslatedError from "../../../../../../components/TranslatedError";
+
+import type { AccountBridge } from "@ledgerhq/types-live";
+import type { Transaction } from "@ledgerhq/live-common/generated/types";
+
+import styles from "./styles";
+import { PickMethodPropsType } from "./types";
 
 const options = [
   {
@@ -59,137 +65,57 @@ const infoModalData = [
   },
 ];
 
-const styles = StyleSheet.create({
-  root: {
-    flex: 1,
-    padding: 16,
-  },
-  main: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-    paddingHorizontal: 32,
-  },
-  footer: {
-    alignSelf: "stretch",
-    padding: 16,
-  },
-  spacer: {
-    flex: 1,
-  },
-  info: {
-    flexShrink: 1,
-    marginTop: 8,
-    padding: 16,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  infoLabel: {
-    marginRight: 10,
-  },
-  sectionLabel: {
-    paddingVertical: 12,
-  },
-  label: {
-    fontSize: 18,
-    textAlign: "center",
-    paddingHorizontal: 16,
-  },
-  value: {
-    fontSize: 20,
-    paddingBottom: 8,
-  },
-  subLabel: {
-    fontSize: 14,
-    textAlign: "center",
-    paddingBottom: 8,
-  },
-  row: {
-    flexDirection: "row",
-    alignContent: "center",
-    justifyContent: "center",
-  },
-  desc: {
-    textAlign: "center",
-  },
-  warning: {
-    textAlign: "center",
-  },
-  warningSection: {
-    padding: 16,
-    height: 80,
-  },
-});
+const PickMethod = (props: PickMethodPropsType) => {
+  const [modal, setModal] = useState(false);
 
-function ClaimRewardsAmount({ navigation, route }: any) {
+  const { navigation, route } = props;
+  const { account, value, name, recipient } = route.params;
   const { colors } = useTheme();
 
-  const account = route.params.account;
-  const bridge = getAccountBridge(account);
-  const mainAccount = getMainAccount(account);
-  const unit = getAccountUnit(mainAccount);
+  const mainAccount = getMainAccount(account, undefined);
   const currency = getAccountCurrency(mainAccount);
+  const bridge: AccountBridge<Transaction> = getAccountBridge(account);
+  const unit = getAccountUnit(mainAccount);
 
   const { transaction, status, updateTransaction } = useBridgeTransaction(
     () => {
-      const transaction = route.params.transaction;
-
-      if (!transaction) {
+      if (route.params.transaction) {
         return {
           account,
-          transaction: bridge.updateTransaction(
-            bridge.createTransaction(mainAccount),
-            {
-              mode: "claimRewards",
-              recipient: route.params.contract,
-              amount: BigNumber(route.params.value),
-            },
-          ),
+          transaction: route.params.transaction,
         };
       }
 
       return {
         account,
-        transaction,
+        transaction: bridge.updateTransaction(
+          bridge.createTransaction(mainAccount),
+          {
+            recipient,
+            mode: "claimRewards",
+            amount: new BigNumber(value),
+          },
+        ),
       };
     },
   );
 
   const onNext = useCallback(() => {
     navigation.navigate(ScreenName.ElrondClaimRewardsSelectDevice, {
-      ...route.params,
       transaction,
     });
   }, [navigation, transaction, route]);
 
   const onChangeMode = useCallback(
-    mode => {
-      updateTransaction(() =>
-        bridge.updateTransaction(transaction, {
-          mode,
-        }),
-      );
+    (mode: string) => {
+      if (transaction) {
+        updateTransaction(() =>
+          bridge.updateTransaction(transaction, { mode }),
+        );
+      }
     },
     [transaction, bridge, updateTransaction],
   );
-
-  const [infoModalOpen, setInfoModalOpen] = useState();
-
-  const openInfoModal = useCallback(() => {
-    setInfoModalOpen(true);
-  }, [setInfoModalOpen]);
-
-  const closeInfoModal = useCallback(() => {
-    setInfoModalOpen(false);
-  }, [setInfoModalOpen]);
-
-  const value = route.params.value;
-  const name = route.params.validator
-    ? route.params.validator.name
-    : route.params.contract || "";
-
-  const mode = transaction.mode ? transaction.mode : "";
 
   const error =
     status.errors &&
@@ -204,9 +130,13 @@ function ClaimRewardsAmount({ navigation, route }: any) {
   return (
     <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]}>
       <View style={styles.main}>
-        <ToggleButton value={mode} options={options} onChange={onChangeMode} />
+        <ToggleButton
+          value={transaction ? transaction.mode : ""}
+          options={options}
+          onChange={onChangeMode}
+        />
 
-        <TouchableOpacity onPress={openInfoModal} style={styles.info}>
+        <TouchableOpacity onPress={() => setModal(true)} style={styles.info}>
           <LText semiBold={true} style={styles.infoLabel} color="grey">
             <Trans i18nKey="elrond.claimRewards.flow.steps.method.compoundOrCashIn" />
           </LText>
@@ -228,7 +158,6 @@ function ClaimRewardsAmount({ navigation, route }: any) {
           <LText semiBold={true} style={styles.subLabel} color="grey">
             <CounterValue
               currency={currency}
-              showCode={true}
               value={value}
               withPlaceholder={true}
             />
@@ -295,12 +224,12 @@ function ClaimRewardsAmount({ navigation, route }: any) {
       </View>
 
       <InfoModal
-        isOpened={!!infoModalOpen}
-        onClose={closeInfoModal}
+        isOpened={!!modal}
+        onClose={() => setModal(false)}
         data={infoModalData}
       />
     </SafeAreaView>
   );
-}
+};
 
-export default ClaimRewardsAmount;
+export default PickMethod;

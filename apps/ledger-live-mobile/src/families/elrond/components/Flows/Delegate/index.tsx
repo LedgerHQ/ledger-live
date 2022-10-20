@@ -10,7 +10,8 @@ import {
 } from "../../../../../navigation/navigatorConfig";
 import StepHeader from "../../../../../components/StepHeader";
 import { ScreenName } from "../../../../../const";
-import DelegationStarted from "./01-Started";
+
+import EarnRewards from "./1-Earn-Rewards";
 import DelegationSelectValidator from "./02-SelectValidator";
 import DelegationAmount from "../../../shared/02-SelectAmount";
 import SelectDevice from "../../../../../screens/SelectDevice";
@@ -20,13 +21,15 @@ import DelegationValidationSuccess from "./04-ValidationSuccess";
 
 const totalSteps = "3";
 
-function DelegationFlow() {
+const DelegationFlow = () => {
   const { t } = useTranslation();
   const { colors } = useTheme();
+
   const stackNavigationConfig = useMemo(
     () => getStackNavigatorConfig(colors, true),
     [colors],
   );
+
   return (
     <Stack.Navigator
       screenOptions={{
@@ -36,15 +39,19 @@ function DelegationFlow() {
     >
       <Stack.Screen
         name={ScreenName.ElrondDelegationStarted}
-        component={DelegationStarted}
+        component={EarnRewards}
         options={{
-          title: t("elrond.delegation.stepperHeader.starter"),
+          headerTitle: () => (
+            <StepHeader title={t("delegation.started.title")} />
+          ),
         }}
       />
+
       <Stack.Screen
         name={ScreenName.ElrondDelegationValidator}
         component={DelegationSelectValidator}
         options={{
+          gestureEnabled: false,
           headerTitle: () => (
             <StepHeader
               title={t("elrond.delegation.stepperHeader.validator")}
@@ -54,16 +61,9 @@ function DelegationFlow() {
               })}
             />
           ),
-          headerLeft: () => null,
-          headerStyle: {
-            ...defaultNavigationOptions.headerStyle,
-            elevation: 0,
-            shadowOpacity: 0,
-            borderBottomWidth: 0,
-          },
-          gestureEnabled: false,
         }}
       />
+
       <Stack.Screen
         name={ScreenName.ElrondDelegationAmount}
         component={DelegationAmount}
@@ -120,6 +120,7 @@ function DelegationFlow() {
           gestureEnabled: false,
         }}
       />
+
       <Stack.Screen
         name={ScreenName.ElrondDelegationValidationSuccess}
         component={DelegationValidationSuccess}
@@ -132,7 +133,7 @@ function DelegationFlow() {
       />
     </Stack.Navigator>
   );
-}
+};
 
 const options = {
   headerShown: false,

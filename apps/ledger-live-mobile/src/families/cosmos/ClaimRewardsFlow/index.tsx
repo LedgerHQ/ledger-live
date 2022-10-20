@@ -83,7 +83,7 @@ function ClaimRewardsFlow() {
         name={ScreenName.CosmosClaimRewardsConnectDevice}
         component={ClaimRewardsConnectDevice}
         options={{
-          headerLeft: false,
+          headerLeft: () => false,
           gestureEnabled: false,
           headerTitle: () => (
             <StepHeader
@@ -108,8 +108,8 @@ function ClaimRewardsFlow() {
         name={ScreenName.CosmosClaimRewardsValidationSuccess}
         component={ClaimRewardsValidationSuccess}
         options={{
-          headerLeft: null,
-          headerRight: null,
+          headerLeft: () => null,
+          headerRight: () => null,
           headerTitle: "",
           gestureEnabled: false,
         }}

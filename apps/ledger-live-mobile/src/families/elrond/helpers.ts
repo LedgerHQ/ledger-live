@@ -1,14 +1,14 @@
 // @flow
 
-import type { ValidatorType } from "~/renderer/families/elrond/types";
+import type { ValidatorType } from "./types";
 
-type DenominateType = {
+interface DenominateType {
   input: string;
   denomination?: number;
   decimals?: number;
   showLastNonZeroDecimal?: boolean;
   addCommas?: boolean;
-};
+}
 
 const format = (
   big: string,
@@ -137,11 +137,9 @@ interface SortedValidatorType {
   sort: number;
 }
 
-const randomizeProviders = (
-  providers: Array<ValidatorType>,
-): Array<ValidatorType> =>
+const randomizeProviders = (providers: ValidatorType[]) =>
   providers
-    .map((provider: ProviderType) => ({ provider, sort: Math.random() }))
+    .map(provider => ({ provider, sort: Math.random() }))
     .sort(
       (alpha: SortedValidatorType, beta: SortedValidatorType) =>
         alpha.sort - beta.sort,

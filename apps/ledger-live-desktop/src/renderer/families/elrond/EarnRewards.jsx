@@ -29,7 +29,7 @@ import { constants } from "~/renderer/families/elrond/constants";
 import type { DelegationType, UnbondingType } from "~/renderer/families/elrond/types";
 import type { Account } from "@ledgerhq/types-live";
 
-export interface WithDelegationPropsType {
+export interface DelegationPropsType {
   account: Account;
 }
 
@@ -42,10 +42,10 @@ const Wrapper = styled(Box).attrs(() => ({
 `;
 
 /* eslint-disable react/display-name */
-const withDelegation = (Component: JSX.Element) => (props: WithDelegationPropsType) =>
+const withDelegation = (Component: JSX.Element) => (props: DelegationPropsType) =>
   props.account.elrondResources ? <Component {...props} /> : null;
 
-const Delegation = (props: WithDelegationPropsType) => {
+const Delegation = (props: DelegationPropsType) => {
   const { account } = props;
 
   const [delegationResources, setDelegationResources] = useState<DelegationType[]>(

@@ -1,8 +1,9 @@
 // @flow
 
-import type { Account } from "@ledgerhq/types-live";
+import type { ElrondAccount } from "@ledgerhq/live-common/families/elrond/types";
+import type { DelegationType, ValidatorType } from "./types";
 
-import React, { useState, useEffect, useMemo, useCallback } from "react";
+import React, { useState, useEffect, useMemo, useCallback, FC } from "react";
 import { StyleSheet, View } from "react-native";
 import { BigNumber } from "bignumber.js";
 
@@ -53,18 +54,19 @@ const styles = StyleSheet.create({
   },
 });
 
-interface Props {
-  account: Account;
+export interface StakingPropsType {
+  account: ElrondAccount;
 }
 
-const withStaking = Component => (props: Props) =>
-  props.account.elrondResources ? <Component {...props} /> : null;
+const withStaking =
+  (Component: FC<StakingPropsType>) => (props: StakingPropsType) =>
+    props.account.elrondResources ? <Component {...props} /> : null;
 
-const Staking = (props: Props) => {
+const Staking = (props: StakingPropsType) => {
   const { account } = props;
 
   const [drawer, setDrawer] = useState();
-  const [delegationResources, setDelegationResources] = useState(
+  const [delegationResources, setDelegationResources] = useState<any[]>(
     account.elrondResources.delegations,
   );
 
@@ -75,21 +77,20 @@ const Staking = (props: Props) => {
 
   const onDrawer = useCallback(setDrawer, [setDrawer]);
   const findValidator = useCallback(
-    (contract: string) =>
+    (contract: string): ValidatorType | undefined =>
       validators.find(validator => validator.contract === contract),
     [validators],
   );
 
   const fetchDelegations = useCallback(() => {
-    setDelegationResources(account.elrondResources.delegations || []);
+    setDelegationResources(account.elrondResources.delegations);
 
-    return () =>
-      setDelegationResources(account.elrondResources.delegations || []);
-  }, [JSON.stringify(account.elrondResources.delegations)]);
+    return () => setDelegationResources(account.elrondResources.delegations);
+  }, [account.elrondResources.delegations]);
 
   const delegations = useMemo(() => {
     const transform = input =>
-      BigNumber(denominate({ input, showLastNonZeroDecimal: true }));
+      new BigNumber(denominate({ input, showLastNonZeroDecimal: true }));
 
     const assignValidator = delegation => ({
       ...delegation,
@@ -133,7 +134,7 @@ const Staking = (props: Props) => {
       delegations
         ? delegations.reduce(
             (total, delegation) => total.plus(delegation.claimableRewards || 0),
-            BigNumber(0),
+            new BigNumber(0),
           )
         : null,
     [delegations],
@@ -158,7 +159,7 @@ const Staking = (props: Props) => {
       {delegations && (
         <Delegations
           onDrawer={onDrawer}
-          value={rewards}
+          delegations={delegations}
           account={account}
           validators={validators}
         />

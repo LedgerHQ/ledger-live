@@ -10,8 +10,9 @@ import {
 } from "../../../../../navigation/navigatorConfig";
 import StepHeader from "../../../../../components/StepHeader";
 import { ScreenName } from "../../../../../const";
-import ClaimRewardsSelectValidator from "./01-SelectValidator";
-import ClaimRewardsMethod from "./02-SelectMethod";
+import PickValidator from "./1-Pick-Validator";
+import PickMethod from "./2-Pick-Method";
+
 import ClaimRewardsSelectDevice from "../../../../../screens/SelectDevice";
 import ClaimRewardsConnectDevice from "../../../../../screens/ConnectDevice";
 import ClaimRewardsValidationError from "./04-ValidationError";
@@ -36,7 +37,7 @@ const Claim = () => {
     () => [
       {
         name: ScreenName.ElrondClaimRewardsValidator,
-        component: ClaimRewardsSelectValidator,
+        component: PickValidator,
         heading: {
           title: "elrond.claimRewards.stepperHeader.validator",
           subtitle: {
@@ -48,8 +49,8 @@ const Claim = () => {
           },
         },
         options: {
+          headerLeft: null,
           gestureEnabled: false,
-          headerLeft: () => null,
           headerStyle: {
             ...defaultNavigationOptions.headerStyle,
             elevation: 0,
@@ -60,7 +61,7 @@ const Claim = () => {
       },
       {
         name: ScreenName.ElrondClaimRewardsMethod,
-        component: ClaimRewardsMethod,
+        component: PickMethod,
         heading: {
           title: "elrond.claimRewards.stepperHeader.method",
         },
@@ -91,6 +92,10 @@ const Claim = () => {
               totalSteps,
             },
           },
+        },
+        options: {
+          headerLeft: null,
+          gestureEnabled: false,
         },
       },
       {
@@ -127,8 +132,7 @@ const Claim = () => {
           key={stack.name}
           name={stack.name}
           component={stack.component}
-          options={{
-            ...stack.options,
+          options={Object.assign(stack.options || {}, {
             headerTitle: stack.heading
               ? () => (
                   <StepHeader
@@ -139,12 +143,12 @@ const Claim = () => {
                             stack.heading.subtitle.label,
                             stack.heading.subtitle.variables,
                           )
-                        : ""
+                        : null
                     }
                   />
                 )
-              : null,
-          }}
+              : undefined,
+          })}
         />
       ))}
     </Stack.Navigator>

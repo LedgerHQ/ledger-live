@@ -43,11 +43,12 @@ export interface UnbondingType {
 }
 
 export interface DelegationType {
+  [key: string]: any;
   address: string;
   claimableRewards: string;
   contract: string;
   userActiveStake: string;
   userUnBondable: string;
-  userUndelegatedList: Array<UnbondingType>;
+  userUndelegatedList: UnbondingType[];
   validator?: ValidatorType;
 }
