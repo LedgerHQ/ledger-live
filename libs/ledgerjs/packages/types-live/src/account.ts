@@ -29,13 +29,48 @@ export type BalanceHistoryDataCache = {
   balances: number[];
 };
 
-interface SubAccountCommon {
+/** A token belongs to an Account and share the parent account address */
+export type TokenAccount = {
+  type: "TokenAccount";
   id: string;
   // id of the parent account this token account belongs to
   parentId: string;
+  token: TokenCurrency;
+  balance: BigNumber;
+  spendableBalance: BigNumber;
+  // in case of compound, this is the associated balance for the associated ctoken
+  compoundBalance?: BigNumber;
+  creationDate: Date;
+  operationsCount: number;
+  operations: Operation[];
+  pendingOperations: Operation[];
+  starred: boolean;
+  hidden?: boolean;
+  // Cache of balance history that allows a performant portfolio calculation.
+  // currently there are no "raw" version of it because no need to at this stage.
+  // could be in future when pagination is needed.
+  balanceHistoryCache: BalanceHistoryCache;
+  // Swap operations linked to this account
+  swapHistory: SwapOperation[];
+  approvals?: Array<{
+    sender: string;
+    value: string;
+  }>;
+};
+
+/** A child account belongs to an Account but has its own address */
+export type ChildAccount = {
+  type: "ChildAccount";
+  id: string;
+  name: string;
+  starred: boolean;
+  hidden?: boolean;
+  // id of the parent account this token account belongs to
+  parentId: string;
+  currency: CryptoCurrency;
+  address: string;
   balance: BigNumber;
   creationDate: Date;
-  // NOTE: How is it different from operations.length ?
   operationsCount: number;
   operations: Operation[];
   pendingOperations: Operation[];
@@ -45,30 +80,7 @@ interface SubAccountCommon {
   balanceHistoryCache: BalanceHistoryCache;
   // Swap operations linked to this account
   swapHistory: SwapOperation[];
-  starred: boolean;
-  hidden?: boolean;
-}
-
-/** A token belongs to an Account and share the parent account address */
-export interface TokenAccount extends SubAccountCommon {
-  type: "TokenAccount";
-  token: TokenCurrency;
-  spendableBalance: BigNumber;
-  // in case of compound, this is the associated balance for the associated ctoken
-  compoundBalance?: BigNumber;
-  approvals?: Array<{
-    sender: string;
-    value: string;
-  }>;
-}
-
-/** A child account belongs to an Account but has its own address */
-export interface ChildAccount extends SubAccountCommon {
-  type: "ChildAccount";
-  name: string;
-  currency: CryptoCurrency;
-  address: string;
-}
+};
 
 /** */
 export type Address = {
@@ -192,26 +204,22 @@ export type AccountLike = Account | SubAccount;
 export type AccountLikeArray = // $FlowFixMe wtf mobile
   AccountLike[] | TokenAccount[] | ChildAccount[] | Account[];
 
-type SubAccountCommonRaw = {
+/** */
+export type TokenAccountRaw = {
+  type: "TokenAccountRaw";
   id: string;
   starred?: boolean;
   hidden?: boolean;
   parentId: string;
+  tokenId: string;
   creationDate?: string;
   operationsCount?: number;
   operations: OperationRaw[];
   pendingOperations: OperationRaw[];
   balance: string;
-  balanceHistoryCache?: BalanceHistoryCache;
-  swapHistory?: SwapOperationRaw[];
-};
-
-/** */
-export type TokenAccountRaw = SubAccountCommonRaw & {
-  type: "TokenAccountRaw";
-  tokenId: string;
   spendableBalance?: string;
   compoundBalance?: string;
+  balanceHistoryCache?: BalanceHistoryCache;
   swapHistory?: SwapOperationRaw[];
   approvals?: Array<{
     sender: string;
@@ -220,11 +228,22 @@ export type TokenAccountRaw = SubAccountCommonRaw & {
 };
 
 /** */
-export type ChildAccountRaw = SubAccountCommonRaw & {
+export type ChildAccountRaw = {
   type: "ChildAccountRaw";
+  id: string;
   name: string;
+  starred?: boolean;
+  hidden?: boolean;
+  parentId: string;
   currencyId: string;
   address: string;
+  creationDate?: string;
+  operationsCount?: number;
+  operations: OperationRaw[];
+  pendingOperations: OperationRaw[];
+  balance: string;
+  balanceHistoryCache?: BalanceHistoryCache;
+  swapHistory?: SwapOperationRaw[];
 };
 
 /** */
