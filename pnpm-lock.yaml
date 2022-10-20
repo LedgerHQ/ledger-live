@@ -663,6 +663,7 @@ importers:
       react-native-adjust: ^4.29.6
       react-native-android-location-services-dialog-box: ^2.8.2
       react-native-animatable: ^1.3.3
+      react-native-biometrics: ^3.0.1
       react-native-ble-plx: 2.0.3
       react-native-codegen: ^0.0.7
       react-native-config: 1.4.4
@@ -671,7 +672,6 @@ importers:
       react-native-extra-dimensions-android: ^1.2.5
       react-native-fast-crypto: ^2.2.0
       react-native-fast-image: ^8.5.11
-      react-native-fingerprint-scanner: git+https://github.com/hieuvp/react-native-fingerprint-scanner.git#f1d136f605412d58e4de9e7e155d6f818ba24731
       react-native-flipper: ^0.162.0
       react-native-gesture-handler: ^2.5.0
       react-native-image-crop-tools: ^1.6.2
@@ -804,6 +804,7 @@ importers:
       react-native-adjust: 4.29.6
       react-native-android-location-services-dialog-box: 2.8.2_react-native@0.68.2
       react-native-animatable: 1.3.3
+      react-native-biometrics: 3.0.1_react-native@0.68.2
       react-native-ble-plx: 2.0.3
       react-native-codegen: 0.0.7
       react-native-config: 1.4.4
@@ -811,7 +812,6 @@ importers:
       react-native-extra-dimensions-android: 1.2.5
       react-native-fast-crypto: 2.2.0_jdmv3zyvsaug2f6l23zgrmwdli_react-native@0.68.2
       react-native-fast-image: 8.5.11_zqxy7fpkavjkgz5xll7ed4r6rq
-      react-native-fingerprint-scanner: github.com/hieuvp/react-native-fingerprint-scanner/f1d136f605412d58e4de9e7e155d6f818ba24731_react-native@0.68.2
       react-native-gesture-handler: 2.5.0_mk7ksnag22facomrynqrp7v6gy
       react-native-image-crop-tools: 1.6.2_ykxjy5s7xujdxmsgrwxo5mh3y4_zqxy7fpkavjkgz5xll7ed4r6rq
       react-native-keyboard-aware-scroll-view: 0.9.5_react-native@0.68.2
@@ -22753,7 +22753,7 @@ packages:
       babel-plugin-syntax-jsx: 6.18.0
       lodash: 4.17.21
       picomatch: 2.3.1
-      styled-components: 5.3.5_ovpqj5wn7dv5iunpkty63trwiy
+      styled-components: 5.3.5_fane7jikarojcev26y27hpbhu4
 
   /babel-plugin-syntax-jsx/6.18.0:
     resolution: {integrity: sha1-CvMqmm4Tyno/1QaeYtew9Y0NiUY=}
@@ -28849,7 +28849,7 @@ packages:
     dependencies:
       eslint: 7.32.0
       eslint-config-airbnb-base: 14.2.1_hpmu7kn6tcn2vnxpfzvv33bxmy
-      eslint-plugin-import: 2.26.0_yuomakvifwhuugsn7tszrjtzoa
+      eslint-plugin-import: 2.26.0_ffi3uiz42rv3jyhs6cr7p7qqry
       eslint-plugin-jsx-a11y: 6.5.1_eslint@7.32.0
       eslint-plugin-react: 7.29.4_eslint@7.32.0
       eslint-plugin-react-hooks: 4.5.0_eslint@7.32.0
@@ -36821,7 +36821,7 @@ packages:
       jest-resolve:
         optional: true
     dependencies:
-      jest-resolve: 28.1.3_metro@0.67.0
+      jest-resolve: 28.1.3
     dev: true
 
   /jest-regex-util/24.9.0:
@@ -46183,6 +46183,14 @@ packages:
     dependencies:
       prop-types: 15.8.1
 
+  /react-native-biometrics/3.0.1_react-native@0.68.2:
+    resolution: {integrity: sha512-Ru80gXRa9KG04sl5AB9HyjLjVbduhqZVjA+AiOSGqr+fNqCDmCu9y5WEksnjbnniNLmq1yGcw+qcLXmR1ddLDQ==}
+    peerDependencies:
+      react-native: '>=0.60.0'
+    dependencies:
+      react-native: 0.68.2_qiqqwmyv63yhnuboofexv3s7x4
+    dev: false
+
   /react-native-ble-plx/2.0.3:
     resolution: {integrity: sha512-62LRDBPf/03K7sge+qq2ZuF8PWCGB782G+SBrpgNm5fA5Hs3FCY1ExTJZ1G0tB5ZhBPYEXcKRxPLuFegcDFrqA==}
     dev: false
@@ -50468,6 +50476,7 @@ packages:
       react-is: 17.0.2
       shallowequal: 1.1.0
       supports-color: 5.5.0
+    dev: false
 
   /styled-system/5.1.5:
     resolution: {integrity: sha512-7VoD0o2R3RKzOzPK0jYrVnS8iJdfkKsQJNiLRDjikOpQVqQHns/DXWaPZOH4tIKkhAT7I6wIsy9FWTWh2X3q+A==}
@@ -55895,15 +55904,4 @@ packages:
       mocha: 6.2.3
       ts-node: 8.10.2_typescript@3.9.10
       typescript: 3.9.10
-    dev: false
-
-  github.com/hieuvp/react-native-fingerprint-scanner/f1d136f605412d58e4de9e7e155d6f818ba24731_react-native@0.68.2:
-    resolution: {tarball: https://codeload.github.com/hieuvp/react-native-fingerprint-scanner/tar.gz/f1d136f605412d58e4de9e7e155d6f818ba24731}
-    id: github.com/hieuvp/react-native-fingerprint-scanner/f1d136f605412d58e4de9e7e155d6f818ba24731
-    name: react-native-fingerprint-scanner
-    version: 6.0.0
-    peerDependencies:
-      react-native: '>=0.60 <1.0.0'
-    dependencies:
-      react-native: 0.68.2_qiqqwmyv63yhnuboofexv3s7x4
     dev: false
