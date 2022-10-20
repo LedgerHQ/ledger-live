@@ -62,6 +62,8 @@ listCryptoCurrencies(true, true).forEach((a) => {
   ["Kiln", "Ethereum"],
   ["Alkemi", "Ethereum"],
   ["[ L ] Market", "Ethereum"],
+  ["cBridge", "Ethereum"],
+  ["Euler", "Ethereum"],
 ].forEach(([name, dep]) => declareDep(name, dep));
 export const getDependencies = (appName: string): string[] =>
   directDep[appName] || [];
