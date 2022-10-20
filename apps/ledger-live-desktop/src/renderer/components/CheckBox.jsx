@@ -2,10 +2,25 @@
 
 import React, { useCallback } from "react";
 import styled from "styled-components";
-
+import { Text } from "@ledgerhq/react-ui";
 import type { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import Check from "~/renderer/icons/Check";
 import { Tabbable } from "~/renderer/components/Box";
+
+const Container: ThemedComponent<{}> = styled.div`
+  display: inline-flex;
+  column-gap: ${p => p.theme.space[5]}px;
+  align-items: center;
+  cursor: pointer;
+`;
+
+const Label = styled(Text).attrs({ type: "body", fontWeight: "500" })`
+  color: ${props => props.theme.colors.neutral.c80};
+
+  &:first-letter {
+    text-transform: uppercase;
+  }
+`;
 
 const Base: ThemedComponent<{
   isChecked?: boolean,
@@ -70,9 +85,10 @@ type Props = {
   isRadio?: boolean,
   disabled?: boolean,
   inverted?: boolean,
+  label?: string,
 };
 
-function CheckBox(props: Props) {
+function CheckBox({ label, ...props }: Props) {
   const { isChecked, onChange, isRadio, disabled } = props;
 
   const onClick = useCallback(
@@ -85,15 +101,24 @@ function CheckBox(props: Props) {
   );
 
   return (
-    <Base {...props} isRadio={isRadio} isChecked={isChecked} disabled={disabled} onClick={onClick}>
-      <input
-        type="checkbox"
-        disabled={disabled || null}
-        checked={typeof isChecked === "boolean" ? isChecked : null}
-        onChange={onClick}
-      />
-      <Check size={12} />
-    </Base>
+    <Container>
+      <Base
+        {...props}
+        isRadio={isRadio}
+        isChecked={isChecked}
+        disabled={disabled}
+        onClick={onClick}
+      >
+        <input
+          type="checkbox"
+          disabled={disabled || null}
+          checked={typeof isChecked === "boolean" ? isChecked : null}
+          onChange={onClick}
+        />
+        <Check size={12} />
+      </Base>
+      {label ? <Label>{label}</Label> : null}
+    </Container>
   );
 }
 
