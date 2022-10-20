@@ -1,5 +1,7 @@
 import * as providers from "@ledgerhq/icons-ui/react/_ProvidersLogos";
+
 import React from "react";
+import styled from "styled-components";
 
 export const sizes = {
   XXS: 16,
@@ -15,7 +17,23 @@ export type ProviderSizes = keyof typeof sizes;
 export type Props = {
   name: string;
   size?: ProviderSizes;
+  boxed?: boolean;
 };
+
+// @ts-expect-error r is webpackContext
+function importAll(r) {
+  return r.keys().map(r);
+}
+
+const getFilenameFromPath = (path: string) => path.replace(/^.*[\\/]/, "").slice(0, -4);
+
+const providersFavicons = importAll(
+  // @ts-expect-error require not found
+  require.context("./ProvidersFavicons", false, /\.(png|jpe?g|svg)$/),
+).reduce((acc: Record<string, string>, path: string) => {
+  acc[getFilenameFromPath(path)] = path;
+  return acc;
+}, {} as Record<string, string>);
 
 export const iconNames = Array.from(
   Object.keys(providers).reduce((set, rawKey) => {
@@ -27,8 +45,17 @@ export const iconNames = Array.from(
   }, new Set<string>()),
 );
 
-const ProviderIcon = ({ name, size = "S" }: Props): JSX.Element | null => {
+const Favicon = styled.img`
+  border-radius: 8px;
+`;
+
+const ProviderIcon = ({ name, size = "S", boxed = false }: Props): JSX.Element | null => {
   const maybeIconName = `${name}`;
+  if (boxed) {
+    return (
+      <Favicon width={sizes[size]} height={sizes[size]} src={providersFavicons[maybeIconName]} />
+    );
+  }
   if (maybeIconName in providers) {
     // @ts-expect-error FIXME I don't know how to make you happy ts
     const Component = providers[maybeIconName];
