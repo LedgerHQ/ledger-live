@@ -51,10 +51,10 @@ export const getDeviceRunningMode = ({
   deviceId,
   unresponsiveTimeoutMs = 5000,
   cantOpenDeviceRetryLimit = 3,
-}: CheckDeviceModeArgs): Observable<GetDeviceRunningModeResult> => {
-  let cantOpenDeviceRetryCount = 0;
+}: CheckDeviceModeArgs): Observable<GetDeviceRunningModeResult> =>
+  new Observable<GetDeviceRunningModeResult>((o) => {
+    let cantOpenDeviceRetryCount = 0;
 
-  return new Observable<GetDeviceRunningModeResult>((o) => {
     withDevice(deviceId)((transport) => from(getDeviceInfo(transport)))
       .pipe(
         timeout(unresponsiveTimeoutMs),
@@ -102,7 +102,6 @@ export const getDeviceRunningMode = ({
         complete: () => o.complete(),
       });
   });
-};
 
 const isLockedDeviceError = (e: Error) => {
   return (
