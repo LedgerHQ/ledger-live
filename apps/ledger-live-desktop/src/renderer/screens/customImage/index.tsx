@@ -177,8 +177,6 @@ const CustomImage: React.FC<Props> = props => {
     [error, previousStep, t, setStepWrapper, handleErrorRetryClicked],
   );
 
-  const { colors } = useTheme();
-
   return (
     <Flex
       flexDirection="column"
