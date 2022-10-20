@@ -1,5 +1,5 @@
-import React, { useMemo } from "react";
-import { FlatList } from "react-native";
+import React, { useCallback, useMemo } from "react";
+import { FlatList, ListRenderItemInfo } from "react-native";
 import { ProtoNFT } from "@ledgerhq/types-live";
 import { Flex } from "@ledgerhq/native-ui";
 import { BigNumber } from "bignumber.js";
@@ -61,22 +61,28 @@ export function NftList({ data }: Props) {
     [dataWithAdd],
   );
 
-  const getNbItemsOfCollection = (contract: string) =>
-    groupedContracts.get(contract);
+  const getNbItemsOfCollection = useCallback(
+    (contract: string) => groupedContracts.get(contract),
+    [groupedContracts],
+  );
+
+  const renderElem = useCallback(
+    (elem: ListRenderItemInfo<ProtoNFT>) =>
+      renderItem({
+        ...elem,
+        count:
+          elem.item.standard === "ERC1155"
+            ? getNbItemsOfCollection(elem.item.contract)
+            : undefined,
+      }),
+    [getNbItemsOfCollection],
+  );
 
   return (
     <FlatList
       numColumns={2}
       data={dataWithAdd}
-      renderItem={elem =>
-        renderItem({
-          ...elem,
-          count:
-            elem.item.standard === "ERC1155"
-              ? getNbItemsOfCollection(elem.item.contract)
-              : undefined,
-        })
-      }
+      renderItem={renderElem}
       keyExtractor={keyExtractor}
       showsVerticalScrollIndicator={false}
       initialNumToRender={6}
