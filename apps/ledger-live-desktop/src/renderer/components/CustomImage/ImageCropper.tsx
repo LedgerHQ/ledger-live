@@ -253,6 +253,7 @@ const ImageCropper: React.FC<Props> = props => {
         backgroundColor="transparent"
         onClick={rotateCounterClockwise}
         Icon={Icons.ReverseMedium}
+        data-test-id="custom-image-crop-rotate-button"
       >
         Rotate
       </Button>
