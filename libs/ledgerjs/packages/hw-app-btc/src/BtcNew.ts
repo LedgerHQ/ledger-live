@@ -1,5 +1,4 @@
 import { crypto } from "bitcoinjs-lib";
-import semver from "semver";
 import { pointCompress } from "tiny-secp256k1";
 import {
   getXpubComponents,
@@ -10,7 +9,6 @@ import {
 } from "./bip32";
 import { BufferReader } from "./buffertools";
 import type { CreateTransactionArg } from "./createTransaction";
-import { AppAndVersion } from "./getAppAndVersion";
 import type { AddressFormat } from "./getWalletPublicKey";
 import {
   AccountType,
@@ -31,15 +29,6 @@ import { finalize } from "./newops/psbtFinalizer";
 import { psbtIn, PsbtV2 } from "./newops/psbtv2";
 import { serializeTransaction } from "./serializeTransaction";
 import type { Transaction } from "./types";
-
-const newSupportedApps = ["Bitcoin", "Bitcoin Test"];
-
-export function canSupportApp(appAndVersion: AppAndVersion): boolean {
-  return (
-    newSupportedApps.includes(appAndVersion.name) &&
-    semver.major(appAndVersion.version) >= 2
-  );
-}
 
 /**
  * This class implements the same interface as BtcOld (formerly
@@ -123,6 +112,9 @@ export default class BtcNew {
     bitcoinAddress: string;
     chainCode: string;
   }> {
+    if (!isPathNormal(path)) {
+      throw Error(`non-standard path: ${path}`);
+    }
     const pathElements: number[] = pathStringToArray(path);
     const xpub = await this.client.getExtendedPubkey(false, pathElements);
 
@@ -185,16 +177,14 @@ export default class BtcNew {
   }
 
   /**
-   * Build and sign a transaction. See Btc.createPaymentTransactionNew for
+   * Build and sign a transaction. See Btc.createPaymentTransaction for
    * details on how to use this method.
    *
    * This method will convert the legacy arguments, CreateTransactionArg, into
    * a psbt which is finally signed and finalized, and the extracted fully signed
    * transaction is returned.
    */
-  async createPaymentTransactionNew(
-    arg: CreateTransactionArg
-  ): Promise<string> {
+  async createPaymentTransaction(arg: CreateTransactionArg): Promise<string> {
     const inputCount = arg.inputs.length;
     if (inputCount == 0) {
       throw Error("No inputs");
@@ -452,4 +442,58 @@ function accountTypeFromArg(
   if (arg.additionals.includes("bech32")) return new p2wpkh(psbt, masterFp);
   if (arg.segwit) return new p2wpkhWrapped(psbt, masterFp);
   return new p2pkh(psbt, masterFp);
+}
+
+/*
+  The new protocol only allows standard path.
+  Standard paths are (currently):
+  M/44'/(1|0)'/X'
+  M/49'/(1|0)'/X'
+  M/84'/(1|0)'/X'
+  M/86'/(1|0)'/X'
+  M/48'/(1|0)'/X'/Y'
+  followed by "", "(0|1)", or "(0|1)/b", where a and b are 
+  non-hardened. For example, the following paths are standard
+  M/48'/1'/99'/7'
+  M/86'/1'/99'/0
+  M/48'/0'/99'/7'/1/17
+  The following paths are non-standard
+  M/48'/0'/99'           // Not deepest hardened path
+  M/48'/0'/99'/7'/1/17/2 // Too many non-hardened derivation steps
+  M/199'/0'/1'/0/88      // Not a known purpose 199
+  M/86'/1'/99'/2         // Change path item must be 0 or 1
+*/
+function isPathNormal(path: string): boolean {
+  //path is not deepest hardened node of a standard path or deeper, use BtcOld
+  const h = 0x80000000;
+  const pathElems = pathStringToArray(path);
+
+  const hard = (n: number) => n >= h;
+  const soft = (n: number | undefined) => !n || n < h;
+  const change = (n: number | undefined) => !n || n == 0 || n == 1;
+
+  if (
+    pathElems.length >= 3 &&
+    pathElems.length <= 5 &&
+    [44 + h, 49 + h, 84 + h, 86 + h].some((v) => v == pathElems[0]) &&
+    [0 + h, 1 + h].some((v) => v == pathElems[1]) &&
+    hard(pathElems[2]) &&
+    change(pathElems[3]) &&
+    soft(pathElems[4])
+  ) {
+    return true;
+  }
+  if (
+    pathElems.length >= 4 &&
+    pathElems.length <= 6 &&
+    48 + h == pathElems[0] &&
+    [0 + h, 1 + h].some((v) => v == pathElems[1]) &&
+    hard(pathElems[2]) &&
+    hard(pathElems[3]) &&
+    change(pathElems[4]) &&
+    soft(pathElems[5])
+  ) {
+    return true;
+  }
+  return false;
 }
