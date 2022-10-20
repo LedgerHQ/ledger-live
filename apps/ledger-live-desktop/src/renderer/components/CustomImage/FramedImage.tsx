@@ -69,7 +69,6 @@ const FramedImage: React.FC<Props> = ({
   dimensions = defaultImageDimensions,
   ...imageProps
 }) => {
-  console.log({ src });
   const { space } = useTheme();
   return (
     <StyleProviderV3 selectedPalette="light">
