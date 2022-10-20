@@ -627,7 +627,9 @@ export function testBridge<T extends TransactionCommon>(
           });
           makeTest("Default empty amount has an amount error", async () => {
             const account = await getSynced();
-            const t = { ...bridge.createTransaction(account) };
+            const t = await bridge.prepareTransaction(account, {
+              ...bridge.createTransaction(account),
+            });
             const status = await bridge.getTransactionStatus(account, t);
             expect(status.errors.amount).toBeInstanceOf(AmountRequired);
           });
