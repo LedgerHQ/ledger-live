@@ -1,7 +1,7 @@
 import React from "react";
 import styled, { DefaultTheme, StyledComponent, ThemeProps } from "styled-components";
 import nanoFTS from "~/renderer/images/nanoFTS.svg";
-import nanoFTSDark from "~/renderer/images/nanoFTS.svg";
+import nanoFTSDark from "~/renderer/images/nanoFTSDark.svg";
 import nanoX from "~/renderer/images/nanoX.v3.svg";
 import nanoS from "~/renderer/images/nanoS.v3.svg";
 import nanoS2 from "~/renderer/images/nanoS2.v3.svg";
