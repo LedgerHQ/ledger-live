@@ -19,6 +19,7 @@ const UIDelay = 2500;
 export type Props = {
   isDisplayed?: boolean;
   onComplete: () => void;
+  productName: string;
 };
 
 // The commands needs to be defined outside of the function component, to avoid creating it at
@@ -28,7 +29,7 @@ const getLatestAvailableFirmwareFromDeviceIdCommand = command(
   "getLatestAvailableFirmwareFromDeviceId",
 );
 
-const SoftwareCheckStep = ({ isDisplayed, onComplete }: Props) => {
+const SoftwareCheckStep = ({ isDisplayed, onComplete, productName }: Props) => {
   const [genuineCheckStatus, setGenuineCheckStatus] = useState<SoftwareCheckStatus>(
     SoftwareCheckStatus.inactive,
   );
@@ -112,6 +113,7 @@ const SoftwareCheckStep = ({ isDisplayed, onComplete }: Props) => {
       <GenuineCheckModal
         isOpen={genuineCheckStatus === SoftwareCheckStatus.requested}
         onClose={() => setGenuineCheckStatus(SoftwareCheckStatus.active)}
+        productName={productName}
       />
       <GenuineCheckCancelModal
         isOpen={genuineCheckStatus === SoftwareCheckStatus.cancelled}
@@ -123,6 +125,7 @@ const SoftwareCheckStep = ({ isDisplayed, onComplete }: Props) => {
           resetGenuineCheckState();
           setGenuineCheckStatus(SoftwareCheckStatus.failed);
         }}
+        productName={productName}
       />
       <GenuineCheckNotGenuineModal
         isOpen={genuineCheckStatus === SoftwareCheckStatus.notGenuine}
@@ -141,6 +144,7 @@ const SoftwareCheckStep = ({ isDisplayed, onComplete }: Props) => {
           devicePermissionState === "unlock-needed" ? "plugAndPinCode" : "allowManager"
         }
         deviceId={device?.modelId}
+        productName={productName}
       />
       <SoftwareCheckContent
         genuineCheckStatus={genuineCheckStatus}
