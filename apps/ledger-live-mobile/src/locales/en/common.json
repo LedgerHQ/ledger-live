@@ -3854,6 +3854,17 @@
       "pleaseConnectUsbDescription": "To start the firmware update, plug your {{deviceName}} to your mobile phone using a USB cable."
     }
   },
+  "firmwareUpdateRequired": {
+      "updateAvailableFromLLM": {
+        "title": "Firmware update required",
+        "description": "To perform this action, you first need to update the firmware of your {{ deviceName }}.",
+        "cta": "Go to My Ledger"
+      },
+      "updateNotAvailableFromLLM": {
+        "title": "Firmware update required on computer",
+        "description": "Update your {{ deviceName }} on Ledger Live Desktop."
+      }
+  },
   "FirmwareUpdateReleaseNotes": {
     "introTitle": "Update {{deviceName}} to version {{version}}",
     "recoveryPhraseBackupInstructions": "Ensure your 24-word recovery phrase is written down on the Recovery sheet and it is available, as a precaution.",

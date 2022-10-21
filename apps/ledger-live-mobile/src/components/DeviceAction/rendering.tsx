@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { ScrollView } from "react-native";
-import { useDispatch } from "react-redux";
+import { Platform, ScrollView } from "react-native";
+import { useDispatch, useSelector } from "react-redux";
 import styled from "styled-components/native";
 import { WrongDeviceForAccount } from "@ledgerhq/errors";
 import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
@@ -17,6 +17,7 @@ import {
   Tag,
   Icons,
   Log,
+  BoxedIcon,
 } from "@ledgerhq/native-ui";
 import BigNumber from "bignumber.js";
 import {
@@ -31,6 +32,11 @@ import {
 } from "@ledgerhq/live-common/account/index";
 import { TFunction } from "react-i18next";
 import { DeviceModelId } from "@ledgerhq/types-devices";
+import type { DeviceModelInfo } from "@ledgerhq/types-live";
+import { DownloadMedium } from "@ledgerhq/native-ui/assets/icons";
+import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
+import { isFirmwareUpdateVersionSupported } from "../../logic/firmwareUpdate";
+import { lastSeenDeviceSelector } from "../../reducers/settings";
 import { setModalLock } from "../../actions/appstate";
 import { urls } from "../../config/urls";
 import Alert from "../Alert";
@@ -575,6 +581,91 @@ export function renderError({
           </ActionContainer>
         ) : null}
       </GenericErrorView>
+    </Wrapper>
+  );
+}
+
+export function RequiredFirmwareUpdate({
+  t,
+  device,
+  navigation,
+}: RawProps & {
+  // Sorry for the any DX team 🙇
+  navigation: any;
+  device: Device;
+}) {
+  const lastSeenDevice: DeviceModelInfo | null | undefined = useSelector(
+    lastSeenDeviceSelector,
+  );
+
+  const usbFwUpdateFeatureFlag = useFeature("llmUsbFirmwareUpdate");
+  const isUsbFwVersionUpdateSupported =
+    lastSeenDevice &&
+    isFirmwareUpdateVersionSupported(lastSeenDevice.deviceInfo, device.modelId);
+
+  const usbFwUpdateActivated =
+    usbFwUpdateFeatureFlag?.enabled &&
+    Platform.OS === "android" &&
+    isUsbFwVersionUpdateSupported;
+
+  const deviceName = getDeviceModel(device.modelId).productName;
+
+  const onPress = () => {
+    navigation.navigate(NavigatorName.Manager, {
+      screen: ScreenName.Manager,
+    });
+  };
+
+  return (
+    <Wrapper>
+      <Flex flexDirection="column" alignItems="center" alignSelf="stretch">
+        <Flex mb={5}>
+          <BoxedIcon
+            size={64}
+            Icon={DownloadMedium}
+            iconSize={24}
+            iconColor="neutral.c100"
+          />
+        </Flex>
+
+        <Text
+          variant="h4"
+          fontWeight="semiBold"
+          textAlign="center"
+          numberOfLines={3}
+          mb={6}
+        >
+          {usbFwUpdateActivated
+            ? t("firmwareUpdateRequired.updateAvailableFromLLM.title", {
+                deviceName,
+              })
+            : t("firmwareUpdateRequired.updateNotAvailableFromLLM.title", {
+                deviceName,
+              })}
+        </Text>
+        <Text variant="paragraph" textAlign="center" numberOfLines={3} mb={6}>
+          {usbFwUpdateActivated
+            ? t("firmwareUpdateRequired.updateAvailableFromLLM.description", {
+                deviceName,
+              })
+            : t(
+                "firmwareUpdateRequired.updateNotAvailableFromLLM.description",
+                {
+                  deviceName,
+                },
+              )}
+        </Text>
+        {usbFwUpdateActivated ? (
+          <ActionContainer marginBottom={0} marginTop={32}>
+            <StyledButton
+              type="main"
+              outline={false}
+              title={t("firmwareUpdateRequired.updateAvailableFromLLM.cta")}
+              onPress={onPress}
+            />
+          </ActionContainer>
+        ) : null}
+      </Flex>
     </Wrapper>
   );
 }
