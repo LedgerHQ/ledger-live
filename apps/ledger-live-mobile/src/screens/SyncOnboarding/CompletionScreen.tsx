@@ -23,7 +23,7 @@ const CompletionScreen = ({ navigation, route }: Props) => {
   const delayRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const { device } = route.params;
-  const startPostOnboarding = useStartPostOnboardingCallback(device.modelId);
+  const startPostOnboarding = useStartPostOnboardingCallback();
 
   const redirectToPostOnboarding = useCallback(() => {
     // Resets the navigation stack to avoid allowing to go back to the onboarding welcome screen
@@ -42,8 +42,8 @@ const CompletionScreen = ({ navigation, route }: Props) => {
         },
       ],
     });
-    startPostOnboarding();
-  }, [navigation, startPostOnboarding]);
+    startPostOnboarding(device.modelId);
+  }, [device.modelId, navigation, startPostOnboarding]);
 
   const skipDelay = useCallback(() => {
     if (!delayRef.current) {
