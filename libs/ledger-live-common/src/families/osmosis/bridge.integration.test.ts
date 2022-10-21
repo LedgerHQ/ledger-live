@@ -12,7 +12,6 @@ import {
   NotEnoughBalance,
   AmountRequired,
 } from "@ledgerhq/errors";
-import { ClaimRewardsFeesWarning } from "../../errors";
 import invariant from "invariant";
 import type { Transaction } from "./types";
 import transactionTransformer from "./transaction";
@@ -339,26 +338,6 @@ const osmosis: CurrenciesData<Transaction> = {
           },
         },
         {
-          name: "ClaimReward - Warning",
-          transaction: (t) => ({
-            ...t,
-            validators: [
-              {
-                address: "osmovaloper1hjct6q7npsspsg3dgvzk3sdf89spmlpf6t4agt",
-                amount: new BigNumber(0),
-              },
-            ],
-            fees: new BigNumber(9999999999999999),
-            mode: "claimReward",
-          }),
-          expectedStatus: {
-            errors: {},
-            warnings: {
-              claimReward: new ClaimRewardsFeesWarning(),
-            },
-          },
-        },
-        {
           name: "ClaimReward - not a osmovaloper",
           transaction: (t) => ({
             ...t,
@@ -395,26 +374,6 @@ const osmosis: CurrenciesData<Transaction> = {
               errors: {},
               warnings: {},
             };
-          },
-        },
-        {
-          name: "ClaimRewardCompound - Warning",
-          transaction: (t) => ({
-            ...t,
-            validators: [
-              {
-                address: "osmovaloper1hjct6q7npsspsg3dgvzk3sdf89spmlpf6t4agt",
-                amount: new BigNumber(100),
-              },
-            ],
-            fees: new BigNumber(99999999999999999999),
-            mode: "claimRewardCompound",
-          }),
-          expectedStatus: {
-            errors: {},
-            warnings: {
-              claimReward: new ClaimRewardsFeesWarning(),
-            },
           },
         },
       ],
