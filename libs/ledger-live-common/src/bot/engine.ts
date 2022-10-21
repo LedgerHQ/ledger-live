@@ -200,10 +200,12 @@ export async function runWithAppSpec<T extends Transaction>(
       accounts[i] = await crossAccount(accounts[i]);
     }
     appReport.accountsBefore = accounts;
-    invariant(
-      accounts.length > 0,
-      "unexpected empty accounts for " + currency.name
-    );
+    if (!spec.allowEmptyAccounts) {
+      invariant(
+        accounts.length > 0,
+        "unexpected empty accounts for " + currency.name
+      );
+    }
     const preloadStats =
       preloadDuration > 10 ? ` (preload: ${formatTime(preloadDuration)})` : "";
     reportLog(
