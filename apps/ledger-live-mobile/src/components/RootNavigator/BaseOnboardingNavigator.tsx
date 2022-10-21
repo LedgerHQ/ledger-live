@@ -17,6 +17,7 @@ import styles from "../../navigation/styles";
 import Question from "../../icons/Question";
 // eslint-disable-next-line import/no-cycle
 import BuyDeviceNavigator from "./BuyDeviceNavigator";
+import DebugFeatureFlags from "../../screens/FeatureFlagsSettings";
 
 const hitSlop = {
   bottom: 10,
@@ -104,6 +105,14 @@ export default function BaseOnboardingNavigator() {
       <Stack.Screen
         name={NavigatorName.PasswordModifyFlow}
         component={PasswordModifyFlowNavigator}
+      />
+      <Stack.Screen
+        name={ScreenName.DebugFeatureFlags}
+        component={DebugFeatureFlags}
+        options={{
+          title: "Debug Feature Flags",
+          headerShown: true,
+        }}
       />
     </Stack.Navigator>
   );

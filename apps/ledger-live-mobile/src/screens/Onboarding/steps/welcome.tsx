@@ -1,6 +1,5 @@
-import React, { useCallback, useRef } from "react";
+import React, { useCallback, useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
-import { useNavigation } from "@react-navigation/native";
 import styled from "styled-components/native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Flex, Text, Link as TextLink } from "@ledgerhq/native-ui";
@@ -9,7 +8,7 @@ import Video from "react-native-video";
 import { Linking } from "react-native";
 import Svg, { Defs, LinearGradient, Rect, Stop } from "react-native-svg";
 import { useDispatch } from "react-redux";
-import { ScreenName, NavigatorName } from "../../../const";
+import { ScreenName } from "../../../const";
 import StyledStatusBar from "../../../components/StyledStatusBar";
 import { urls } from "../../../config/urls";
 import { useTermsAccept } from "../../../logic/terms";
@@ -38,7 +37,6 @@ function OnboardingStepWelcome({ navigation }: any) {
   const dispatch = useDispatch();
   const { t } = useTranslation();
   const [, setAccepted] = useTermsAccept();
-  const nativeNavigation = useNavigation();
 
   const onLanguageSelect = useCallback(
     () => navigation.navigate(ScreenName.OnboardingLanguage),
@@ -77,28 +75,31 @@ function OnboardingStepWelcome({ navigation }: any) {
 
   const countTitle = useRef(0);
   const countSubtitle = useRef(0);
+  const timeout = useRef<ReturnType<typeof setTimeout>>();
 
   const handleNavigateToFeatureFlagsSettings = useCallback(
     nb => {
       if (nb === "1") countTitle.current++;
       else if (nb === "2") countSubtitle.current++;
-      if (countTitle.current > 3 /* && countSubtitle.current > 5*/) {
+      if (countTitle.current > 3 && countSubtitle.current > 5) {
         countTitle.current = 0;
         countSubtitle.current = 0;
-        navigation.navigate(NavigatorName.Settings, {
-          screen: ScreenName.DebugFeatureFlags,
-        });
+        navigation.navigate(ScreenName.DebugFeatureFlags);
       }
-      const timer = setTimeout(() => {
+      if (timeout.current) clearTimeout(timeout.current);
+      timeout.current = setTimeout(() => {
         countTitle.current = 0;
         countSubtitle.current = 0;
-      }, 15000);
-      return () => {
-        clearTimeout(timer);
-      };
+      }, 1000);
     },
     [navigation],
   );
+
+  useEffect(() => {
+    return () => {
+      if (timeout.current) clearTimeout(timeout.current);
+    };
+  }, []);
 
   return (
     <ForceTheme selectedPalette={"dark"}>
@@ -164,6 +165,7 @@ function OnboardingStepWelcome({ navigation }: any) {
             pb={3}
             style={{ textTransform: "uppercase" }}
             onPress={() => handleNavigateToFeatureFlagsSettings("1")}
+            suppressHighlighting
           >
             {t("onboarding.stepWelcome.title")}
           </Text>
@@ -173,6 +175,7 @@ function OnboardingStepWelcome({ navigation }: any) {
             color="neutral.c80"
             pb={9}
             onPress={() => handleNavigateToFeatureFlagsSettings("2")}
+            suppressHighlighting
           >
             {t("onboarding.stepWelcome.subtitle")}
           </Text>
