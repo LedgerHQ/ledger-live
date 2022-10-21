@@ -23,7 +23,11 @@ test.describe.parallel("Onboarding", () => {
 
       await test.step("Get started", async () => {
         await onboardingPage.getStarted();
-        expect(await onboardingPage.page.screenshot()).toMatchSnapshot("v3-device-selection.png");
+        expect(
+          await onboardingPage.page.screenshot({
+            mask: [page.locator("video")],
+          }),
+        ).toMatchSnapshot("v3-device-selection.png");
       });
 
       await test.step(`[${nano}] Select Device`, async () => {
