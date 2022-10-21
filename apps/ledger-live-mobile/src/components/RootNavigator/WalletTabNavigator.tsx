@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
   createMaterialTopTabNavigator,
@@ -18,8 +18,9 @@ import { accountsSelector } from "../../reducers/accounts";
 // eslint-disable-next-line import/no-cycle
 import ReadOnlyPortfolio from "../../screens/Portfolio/ReadOnly";
 import { setWalletTabNavigatorLastVisitedTab } from "../../actions/settings";
-import WalletTabNavigatorTabBar from "../WalletTabNavigatorTabBar";
-import Header from "../../screens/Portfolio/Header";
+import WalletTabNavigatorTabBar from "../WalletTab/WalletTabNavigatorTabBar";
+import WalletTabNavigatorScrollManager from "../WalletTab/WalletTabNavigatorScrollManager";
+import WalletTabHeader from "../WalletTab/WalletTabHeader";
 
 const WalletTab = createMaterialTopTabNavigator();
 
@@ -35,54 +36,61 @@ export default function WalletTabNavigator() {
 
   const { t } = useTranslation();
 
+  const [currentRouteName, setCurrentRouteName] = useState<
+    string | undefined
+  >();
+
   return (
-    <>
-      <Box pt={10} pb={5} px={6}>
-        <Header hidePortfolio={false} />
-      </Box>
-      <WalletTab.Navigator
-        initialRouteName={lastVisitedTab}
-        tabBar={tabBarOptions}
-        style={{ backgroundColor: "transparent" }}
-        sceneContainerStyle={{ backgroundColor: "transparent" }}
-        tabBarOptions={{ style: { backgroundColor: "transparent" } }}
-        screenOptions={{
-          lazy: true,
-        }}
-        screenListeners={{
-          state: (e: NavigationContainerEventMap["state"]) => {
-            if (
-              e?.data?.state?.routeNames &&
-              (e?.data?.state?.index || e?.data?.state?.index === 0)
-            ) {
-              dispatch(
-                setWalletTabNavigatorLastVisitedTab(
+    <WalletTabNavigatorScrollManager currentRouteName={currentRouteName}>
+      <Box flex={1} bg={"background.main"}>
+        <WalletTab.Navigator
+          initialRouteName={lastVisitedTab}
+          tabBar={tabBarOptions}
+          style={{ backgroundColor: "transparent" }}
+          sceneContainerStyle={{ backgroundColor: "transparent" }}
+          tabBarOptions={{ style: { backgroundColor: "transparent" } }}
+          screenOptions={{
+            lazy: true,
+          }}
+          screenListeners={{
+            state: (e: NavigationContainerEventMap["state"]) => {
+              if (
+                e?.data?.state?.routeNames &&
+                (e?.data?.state?.index || e?.data?.state?.index === 0)
+              ) {
+                setCurrentRouteName(
                   e.data.state.routeNames[e.data.state.index],
-                ),
-              );
+                );
+                dispatch(
+                  setWalletTabNavigatorLastVisitedTab(
+                    e.data.state.routeNames[e.data.state.index],
+                  ),
+                );
+              }
+            },
+          }}
+        >
+          <WalletTab.Screen
+            name={ScreenName.Portfolio}
+            component={
+              readOnlyModeEnabled && accounts.length <= 0
+                ? ReadOnlyPortfolio
+                : Portfolio
             }
-          },
-        }}
-      >
-        <WalletTab.Screen
-          name={ScreenName.Portfolio}
-          component={
-            readOnlyModeEnabled && accounts.length <= 0
-              ? ReadOnlyPortfolio
-              : Portfolio
-          }
-          options={{
-            title: t("wallet.tabs.crypto"),
-          }}
-        />
-        <WalletTab.Screen
-          name={ScreenName.WalletNftGallery}
-          component={WalletNftGallery}
-          options={{
-            title: t("wallet.tabs.nft"),
-          }}
-        />
-      </WalletTab.Navigator>
-    </>
+            options={{
+              title: t("wallet.tabs.crypto"),
+            }}
+          />
+          <WalletTab.Screen
+            name={ScreenName.WalletNftGallery}
+            component={WalletNftGallery}
+            options={{
+              title: t("wallet.tabs.nft"),
+            }}
+          />
+        </WalletTab.Navigator>
+        <WalletTabHeader hidePortfolio={false} />
+      </Box>
+    </WalletTabNavigatorScrollManager>
   );
 }

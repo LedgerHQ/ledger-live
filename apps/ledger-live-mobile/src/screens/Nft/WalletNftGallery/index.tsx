@@ -1,11 +1,12 @@
 import React, { useMemo } from "react";
 import { Box } from "@ledgerhq/native-ui";
 import { useSelector } from "react-redux";
-import { orderByLastReceived } from "@ledgerhq/live-common/lib/nft/helpers";
-import { decodeNftId } from "@ledgerhq/live-common/lib/nft/nftId";
+import { orderByLastReceived } from "@ledgerhq/live-common/nft/helpers";
+import { decodeNftId } from "@ledgerhq/live-common/nft/nftId";
 import { NftList } from "../../../components/Nft/NftList";
 import { accountsSelector } from "../../../reducers/accounts";
 import NftGalleryEmptyState from "../NftGallery/NftGalleryEmptyState";
+import CollapsibleHeaderScrollView from "../../../components/WalletTab/CollapsibleHeaderScrollView";
 import { hiddenNftCollectionsSelector } from "../../../reducers/settings";
 
 const WalletNftGallery = () => {
@@ -26,8 +27,14 @@ const WalletNftGallery = () => {
 
   const hasNFTs = nftsOrdered.length > 0;
   return (
-    <Box mx={6} mt={6} mb={12} flex={1}>
-      {hasNFTs ? <NftList data={nftsOrdered} /> : <NftGalleryEmptyState />}
+    <Box mx={6}>
+      {hasNFTs ? (
+        <NftList data={nftsOrdered} />
+      ) : (
+        <CollapsibleHeaderScrollView contentContainerStyle={{ paddingTop: 0 }}>
+          <NftGalleryEmptyState />
+        </CollapsibleHeaderScrollView>
+      )}
     </Box>
   );
 };

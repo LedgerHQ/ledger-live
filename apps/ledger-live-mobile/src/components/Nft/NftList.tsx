@@ -1,10 +1,11 @@
 import React, { useCallback, useMemo } from "react";
-import { FlatList, ListRenderItemInfo } from "react-native";
+import { ListRenderItemInfo } from "react-native";
 import { ProtoNFT } from "@ledgerhq/types-live";
 import { Flex } from "@ledgerhq/native-ui";
 import { BigNumber } from "bignumber.js";
 import NftListItem from "./NftListItem";
 import { AddNewItem } from "./AddNewItemList";
+import CollapsibleHeaderFlatList from "../WalletTab/CollapsibleHeaderFlatList";
 
 type Props = {
   data: ProtoNFT[];
@@ -79,7 +80,7 @@ export function NftList({ data }: Props) {
   );
 
   return (
-    <FlatList
+    <CollapsibleHeaderFlatList
       numColumns={2}
       data={dataWithAdd}
       renderItem={renderElem}

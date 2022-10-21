@@ -47,6 +47,7 @@ import BuyDeviceBanner, {
 import { AnalyticsContext } from "../../../components/RootNavigator";
 import Assets from "../Assets";
 import FirmwareUpdateBanner from "../../../components/FirmwareUpdateBanner";
+import CollapsibleHeaderFlatList from "../../../components/WalletTab/CollapsibleHeaderFlatList";
 
 export { default as PortfolioTabIcon } from "../TabIcon";
 
@@ -61,8 +62,6 @@ const AnimatedFlatListWithRefreshControl = createNativeWrapper(
 type Props = {
   navigation: any;
 };
-
-export const Gradient = styled(BackgroundGradient)``;
 
 const maxAssetsToDisplay = 5;
 
@@ -193,41 +192,25 @@ function ReadOnlyPortfolio({ navigation }: Props) {
 
   return (
     <>
-      <TabBarSafeAreaView>
-        <Flex px={6} py={4}>
-          <FirmwareUpdateBanner />
-        </Flex>
-        <CheckLanguageAvailability />
-        <CheckTermOfUseUpdate />
-        <TrackScreen category="Wallet" source={source} />
-        <BackgroundGradient
-          currentPositionY={currentPositionY}
-          graphCardEndPosition={graphCardEndPosition}
-          color={colors.neutral.c30}
-        />
-        <AnimatedFlatListWithRefreshControl
-          data={data}
-          style={{
-            flex: 1,
-            position: "relative",
-            paddingTop: 48,
-            marginBottom: 64,
-          }}
-          contentContainerStyle={{ paddingBottom: TAB_BAR_SAFE_HEIGHT }}
-          renderItem={({ item }: { item: React.ReactNode }) => item}
-          keyExtractor={(_: any, index: number) => String(index)}
-          showsVerticalScrollIndicator={false}
-          onScroll={handleScroll}
-        />
-        <MigrateAccountsBanner />
-        <Header
-          counterValueCurrency={counterValueCurrency}
-          portfolio={portfolio}
-          currentPositionY={currentPositionY}
-          graphCardEndPosition={graphCardEndPosition}
-          hidePortfolio={false}
-        />
-      </TabBarSafeAreaView>
+      <Flex px={6} py={4}>
+        <FirmwareUpdateBanner />
+      </Flex>
+      <CheckLanguageAvailability />
+      <CheckTermOfUseUpdate />
+      <TrackScreen category="Wallet" source={source} />
+      <BackgroundGradient
+        currentPositionY={currentPositionY}
+        graphCardEndPosition={graphCardEndPosition}
+        color={colors.neutral.c30}
+      />
+      <CollapsibleHeaderFlatList<JSX.Element>
+        data={data}
+        contentContainerStyle={{ paddingBottom: TAB_BAR_SAFE_HEIGHT }}
+        renderItem={({ item }) => item}
+        keyExtractor={(_: any, index: number) => String(index)}
+        showsVerticalScrollIndicator={false}
+      />
+      <MigrateAccountsBanner />
     </>
   );
 }
