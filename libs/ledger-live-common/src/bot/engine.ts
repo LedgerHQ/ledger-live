@@ -11,6 +11,7 @@ import {
   tap,
   mergeMap,
   timeoutWith,
+  distinctUntilChanged,
 } from "rxjs/operators";
 import { log } from "@ledgerhq/logs";
 import { getCurrencyBridge, getAccountBridge } from "../bridge";
@@ -42,6 +43,7 @@ import type {
   TransactionArg,
   TransactionRes,
   TransactionDestinationTestInput,
+  DeviceActionEvent,
 } from "./types";
 import { makeBridgeCacheSystem } from "../bridge/cache";
 import { accountDataToAccount, accountToAccountData } from "../cross";
@@ -829,35 +831,42 @@ export function autoSignTransaction<T extends Transaction>({
             )
           );
         }, 60 * 1000);
-        sub = transport.automationEvents.subscribe({
-          next: (event) => {
-            recentEvents.push(event);
+        sub = transport.automationEvents
+          .pipe(
+            // deduplicate two successive identical text in events (that can sometimes occur with speculos)
+            distinctUntilChanged(
+              (a: DeviceActionEvent, b: DeviceActionEvent) => a.text === b.text
+            )
+          )
+          .subscribe({
+            next: (event) => {
+              recentEvents.push(event);
 
-            if (recentEvents.length > 5) {
-              recentEvents.shift();
-            }
+              if (recentEvents.length > 5) {
+                recentEvents.shift();
+              }
 
-            try {
-              state = deviceAction({
-                appCandidate,
-                account,
-                transaction,
-                event,
-                transport,
-                state,
-                status,
-              });
-            } catch (e) {
+              try {
+                state = deviceAction({
+                  appCandidate,
+                  account,
+                  transaction,
+                  event,
+                  transport,
+                  state,
+                  status,
+                });
+              } catch (e) {
+                o.error(e);
+              }
+            },
+            complete: () => {
+              o.complete();
+            },
+            error: (e) => {
               o.error(e);
-            }
-          },
-          complete: () => {
-            o.complete();
-          },
-          error: (e) => {
-            o.error(e);
-          },
-        });
+            },
+          });
         return () => {
           clearTimeout(timeout);
           sub.unsubscribe();
