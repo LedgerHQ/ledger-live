@@ -27,7 +27,7 @@ const FormKYCBanner = ({
     openURL(urls.swap.providers[provider]?.support);
   }, [provider]);
 
-  const onClickAction = useCallback(() => {
+  let onClickAction = useCallback(() => {
     track("button_clicked", {
       button: "KYC",
       page: "Page Swap Form",
