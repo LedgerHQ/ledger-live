@@ -49,9 +49,9 @@ const ethereumBasicMutations = ({ maxAccount }) => [
         "operation time to be older than 60s"
       );
       const gasPrice = EIP1559ShouldBeUsed(account.currency)
-        ? transaction?.maxBaseFeePerGas.plus(transaction.maxPriorityFeePerGas)
-        : transaction?.gasPrice;
-      const estimatedGas = getGasLimit(transaction).times(gasPrice || 0);
+        ? transaction.maxFeePerGas
+        : transaction.gasPrice;
+      const estimatedGas = getGasLimit(transaction).times(gasPrice);
       botTest("operation fee is not exceeding estimated gas", () =>
         expect(operation.fee.toNumber()).toBeLessThanOrEqual(
           estimatedGas.toNumber()

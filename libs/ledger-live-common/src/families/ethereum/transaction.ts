@@ -4,8 +4,8 @@ import { log } from "@ledgerhq/logs";
 import type { Transaction, TransactionRaw, TransactionStatus } from "./types";
 import Common from "@ethereumjs/common";
 import {
-  Transaction as LegacyEthereumTx,
-  FeeMarketEIP1559Transaction,
+  Transaction as LegacyTransaction,
+  FeeMarketEIP1559Transaction as EIP1559Transaction,
 } from "@ethereumjs/tx";
 import eip55 from "eip55";
 import {
@@ -24,11 +24,10 @@ import type { Account } from "@ledgerhq/types-live";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { getAccountUnit } from "../../account";
 import { formatCurrencyUnit } from "../../currencies";
-import { apiForCurrency } from "../../api/Ethereum";
-import { makeLRUCache } from "../../cache";
 import { getEnv } from "../../env";
 import { modes } from "./modules";
 import { fromRangeRaw, toRangeRaw } from "../../range";
+
 export function isRecipientValid(_currency: CryptoCurrency, recipient: string) {
   if (!recipient.match(/^0x[0-9a-fA-F]{40}$/)) return false;
   // To handle non-eip55 addresses we stop validation here if we detect
@@ -45,6 +44,7 @@ export function isRecipientValid(_currency: CryptoCurrency, recipient: string) {
     return false;
   }
 }
+
 // Returns a warning if we detect a non-eip address
 export function getRecipientWarning(
   currency: CryptoCurrency,
@@ -80,6 +80,7 @@ export function validateRecipient(
     });
   }
 }
+
 export const formatTransaction = (
   t: Transaction,
   mainAccount: Account
@@ -120,12 +121,13 @@ export const formatTransaction = (
         }`;
     }
   })();
+
   let feesMessage: string;
   if (EIP1559ShouldBeUsed(mainAccount.currency)) {
     feesMessage =
-      `with maxBaseFeePerGas=${formatCurrencyUnit(
+      `with maxFeePerGas=${formatCurrencyUnit(
         mainAccount.currency.units[1] || mainAccount.currency.units[0],
-        t.maxBaseFeePerGas || new BigNumber(0)
+        t.maxFeePerGas || new BigNumber(0)
       )}\n` +
       `with maxPriorityFeePerGas=${formatCurrencyUnit(
         mainAccount.currency.units[1] || mainAccount.currency.units[0],
@@ -137,6 +139,7 @@ export const formatTransaction = (
       t.gasPrice || new BigNumber(0)
     )}`;
   }
+
   return `
 ${header}
 TO ${t.recipient}
@@ -144,7 +147,7 @@ ${feesMessage}
 with gasLimit=${gasLimit.toString()}`;
 };
 
-const defaultGasLimit = new BigNumber(0x5208);
+const defaultGasLimit = new BigNumber(21000);
 export const getGasLimit = (t: Transaction): BigNumber =>
   t.userGasLimit || t.estimatedGasLimit || defaultGasLimit;
 
@@ -158,9 +161,7 @@ export const fromTransactionRaw = (tr: TransactionRaw): Transaction => {
     data: tr.data ? Buffer.from(tr.data, "hex") : undefined,
     family: tr.family,
     gasPrice: tr.gasPrice ? new BigNumber(tr.gasPrice) : null,
-    maxBaseFeePerGas: tr.maxBaseFeePerGas
-      ? new BigNumber(tr.maxBaseFeePerGas)
-      : null,
+    maxFeePerGas: tr.maxFeePerGas ? new BigNumber(tr.maxFeePerGas) : null,
     maxPriorityFeePerGas: tr.maxPriorityFeePerGas
       ? new BigNumber(tr.maxPriorityFeePerGas)
       : null,
@@ -190,6 +191,7 @@ export const fromTransactionRaw = (tr: TransactionRaw): Transaction => {
     quantities: tr.quantities?.map((q) => new BigNumber(q)),
   };
 };
+
 export const toTransactionRaw = (t: Transaction): TransactionRaw => {
   const common = toTransactionCommonRaw(t);
   const { networkInfo } = t;
@@ -200,7 +202,7 @@ export const toTransactionRaw = (t: Transaction): TransactionRaw => {
     family: t.family,
     data: t.data ? t.data.toString("hex") : undefined,
     gasPrice: t.gasPrice ? t.gasPrice.toString() : null,
-    maxBaseFeePerGas: t.maxBaseFeePerGas ? t.maxBaseFeePerGas.toString() : null,
+    maxFeePerGas: t.maxFeePerGas ? t.maxFeePerGas.toString() : null,
     maxPriorityFeePerGas: t.maxPriorityFeePerGas
       ? t.maxPriorityFeePerGas.toString()
       : null,
@@ -265,49 +267,56 @@ export function inferTokenAccount(a: Account, t: Transaction) {
     return tokenAccount;
   }
 }
+
 export function buildEthereumTx(
   account: Account,
   transaction: Transaction,
   nonce: number
 ) {
   const { currency } = account;
-  const { gasPrice, maxBaseFeePerGas, maxPriorityFeePerGas } = transaction;
+  const { gasPrice, maxFeePerGas, maxPriorityFeePerGas } = transaction;
   const subAccount = inferTokenAccount(account, transaction);
   invariant(
     !subAccount || subAccount.type === "TokenAccount",
     "only token accounts expected"
   );
+
   const common = getEthereumjsTxCommon(currency);
   if (!common) {
     throw new Error(`common not found for currency ${currency.name}`);
   }
+
   const gasLimit = getGasLimit(transaction);
   const ethTxObject: Record<string, any> = {
     nonce,
     gasLimit: `0x${new BigNumber(gasLimit).toString(16)}`,
   };
-  const m = modes[transaction.mode];
-  invariant(m, "missing module for mode=" + transaction.mode);
-  const fillTransactionDataResult = m.fillTransactionData(
+
+  const mode = modes[transaction.mode];
+  invariant(mode, "missing module for mode=" + transaction.mode);
+
+  const fillTransactionDataResult = mode.fillTransactionData(
     account,
     transaction,
     ethTxObject
   );
-  let tx: FeeMarketEIP1559Transaction | LegacyEthereumTx;
+
+  let tx: EIP1559Transaction | LegacyTransaction;
   if (EIP1559ShouldBeUsed(currency)) {
-    ethTxObject.maxFeePerGas = `0x${new BigNumber(maxBaseFeePerGas || 0)
-      .plus(new BigNumber(maxPriorityFeePerGas || 0))
-      .toString(16)}`;
+    ethTxObject.maxFeePerGas = `0x${new BigNumber(maxFeePerGas || 0).toString(
+      16
+    )}`;
     ethTxObject.maxPriorityFeePerGas = `0x${new BigNumber(
       maxPriorityFeePerGas || 0
     ).toString(16)}`;
-    log("ethereum", "buildFeeMarketEIP1559Transaction", ethTxObject);
-    tx = new FeeMarketEIP1559Transaction(ethTxObject, { common });
+    log("ethereum", "buildEIP1559Transaction", ethTxObject);
+    tx = new EIP1559Transaction(ethTxObject, { common });
   } else {
     ethTxObject.gasPrice = `0x${new BigNumber(gasPrice || 0).toString(16)}`;
-    log("ethereum", "buildLegacyEthereumTx", ethTxObject);
-    tx = new LegacyEthereumTx(ethTxObject, { common });
+    log("ethereum", "buildLegacyEthereumTransaction", ethTxObject);
+    tx = new LegacyTransaction(ethTxObject, { common });
   }
+
   return {
     tx,
     common,

@@ -135,13 +135,13 @@ export const parseCallRequest: Parser = async (account, payload) => {
       ) {
         const maxFeePerGas = new BigNumber(wcTransactionData.maxFeePerGas, 16);
         const maxPriorityFeePerGas = new BigNumber(
-          wcTransactionData.maxFeePerGas,
+          wcTransactionData.maxPriorityFeePerGas,
           16
         );
         if (maxFeePerGas.isGreaterThanOrEqualTo(maxPriorityFeePerGas)) {
           transaction = bridge.updateTransaction(transaction, {
-            maxBaseFeePerGas: maxFeePerGas.minus(maxPriorityFeePerGas),
-            maxPriorityFeePerGas: maxFeePerGas,
+            maxFeePerGas,
+            maxPriorityFeePerGas,
           });
         }
       }

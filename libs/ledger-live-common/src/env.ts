@@ -292,6 +292,16 @@ const envDefinitions = {
     parser: stringArrayParser,
     desc: "set the currency ids where EIP1559 is enabled",
   },
+  EIP1559_MINIMUM_FEES_GATE: {
+    def: true,
+    parser: boolParser,
+    desc: "prevents the user from doing an EIP1559 transaction with fees too low",
+  },
+  EIP1559_PRIORITY_FEE_LOWER_GATE: {
+    def: 0.85,
+    parser: floatParser,
+    desc: "minimum priority fee percents allowed compared to network conditions allowed when EIP1559_MINIMUM_FEES_GATE is activated",
+  },
   ETHEREUM_GAS_LIMIT_AMPLIFIER: {
     def: 1.2,
     parser: floatParser,

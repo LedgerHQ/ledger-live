@@ -16,26 +16,30 @@ export type MinimalGasLimitTransaction = {
   value: string;
   data: string;
 };
+
 export type NetworkInfo = {
   family: "ethereum";
   gasPrice?: Range;
   nextBaseFeePerGas?: BigNumber;
   maxPriorityFeePerGas?: Range;
 };
+
 export type NetworkInfoRaw = {
   family: "ethereum";
   gasPrice?: RangeRaw;
   nextBaseFeePerGas?: string;
   maxPriorityFeePerGas?: RangeRaw;
 };
+
 export type { TransactionMode, ModeModule };
+
 export type Transaction = TransactionCommon & {
   family: "ethereum";
   mode: TransactionMode;
   nonce?: number;
   data?: Buffer;
   gasPrice?: BigNumber | null | undefined;
-  maxBaseFeePerGas?: BigNumber | null | undefined;
+  maxFeePerGas?: BigNumber | null | undefined;
   maxPriorityFeePerGas?: BigNumber | null | undefined;
   userGasLimit: BigNumber | null | undefined;
   estimatedGasLimit: BigNumber | null | undefined;
@@ -47,13 +51,14 @@ export type Transaction = TransactionCommon & {
   tokenIds?: string[];
   quantities?: BigNumber[];
 };
+
 export type TransactionRaw = TransactionCommonRaw & {
   family: "ethereum";
   mode: TransactionMode;
   nonce?: number;
   data?: string;
   gasPrice?: string | null | undefined;
-  maxBaseFeePerGas?: string | null | undefined;
+  maxFeePerGas?: string | null | undefined;
   maxPriorityFeePerGas?: string | null | undefined;
   userGasLimit: string | null | undefined;
   estimatedGasLimit: string | null | undefined;
@@ -65,6 +70,7 @@ export type TransactionRaw = TransactionCommonRaw & {
   collectionName?: string;
   quantities?: string[];
 };
+
 export type TypedMessageData = Omit<MessageData, "message"> & {
   message: EIP712Message;
   hashes: {

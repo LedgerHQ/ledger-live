@@ -56,18 +56,18 @@ export const signOperation = ({
             async function main() {
               // First, we need to create a partial tx and send to the device
               const { freshAddressPath, freshAddress } = account;
-              const { gasPrice, maxBaseFeePerGas, maxPriorityFeePerGas } =
+              const { gasPrice, maxFeePerGas, maxPriorityFeePerGas } =
                 transaction;
               const gasLimit = getGasLimit(transaction);
 
               let dataMissing = !new BigNumber(gasLimit).gt(0);
               let missingDataString = "";
               if (EIP1559ShouldBeUsed(account.currency)) {
-                missingDataString = ` maxBaseFeePerGas=${String(
-                  maxBaseFeePerGas
+                missingDataString = ` maxFeePerGas=${String(
+                  maxFeePerGas
                 )} maxPriorityFeePerGas=${String(maxPriorityFeePerGas)}`;
                 dataMissing =
-                  dataMissing && (!maxBaseFeePerGas || !maxPriorityFeePerGas);
+                  dataMissing && (!maxFeePerGas || !maxPriorityFeePerGas);
               } else {
                 missingDataString = ` gasPrice=${String(gasPrice)}`;
                 dataMissing = dataMissing && !gasPrice;
@@ -90,7 +90,7 @@ export const signOperation = ({
               );
 
               // rawData Format: `rlp([nonce, gasPrice, gasLimit, to, value, data, v, r, s])`
-              // EIP1559 Format: 0x02 || rlp([chain_id, nonce, max_priority_fee_per_gas, max_fee_per_gas, gas_limit, destination, amount, data, access_list, signature_y_parity, signature_r, signature_s])
+              // EIP1559 Format: type 2 || rlp([chainId, nonce, maxPriorityFeePerGas, maxFeePerGas, gasLimit, destination, amount, data, access_list, v, r, s])
               const txHex = (() => {
                 if (EIP1559ShouldBeUsed(account.currency)) {
                   return tx.getMessageToSign(false).toString("hex");
