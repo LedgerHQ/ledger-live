@@ -27,6 +27,11 @@ const deviceVersionRangesForHardwareVersion: {
 } = {
   nanoX: ">=2.0.0",
 };
+
+/**
+ * @returns whether the Hardware Version bytes are included in the result of the
+ * getVersion APDU
+ * */
 export const isHardwareVersionSupported = (
   seVersion: string,
   modelId?: DeviceModelId
