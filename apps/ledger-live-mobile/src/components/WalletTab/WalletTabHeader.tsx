@@ -1,7 +1,7 @@
+import { Box } from "@ledgerhq/native-ui";
 import React, { useContext } from "react";
 import { Animated } from "react-native";
 import Header from "../../screens/Portfolio/Header";
-import { Box } from "../../../../../libs/ui/packages/native/lib";
 import { WalletTabNavigatorScrollContext } from "./WalletTabNavigatorScrollManager";
 
 function WalletTabHeader({ hidePortfolio }: { hidePortfolio: boolean }) {
