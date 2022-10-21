@@ -180,6 +180,7 @@ importers:
       '@storybook/react': ^6.3.12
       '@tippyjs/react': ^4.2.6
       '@trust/keyto': ^1.0.1
+      '@types/invariant': ^2.2.35
       '@types/jest': ^28.1.6
       '@types/lodash': ^4.14.182
       '@types/react': ^17.0.30
@@ -447,7 +448,8 @@ importers:
       '@storybook/addon-actions': 6.4.22_k2mvpji5i2ojml6m4ftklg47pa
       '@storybook/addon-essentials': 6.4.22_fiuzcodionxowgn5urbocdplem
       '@storybook/addon-links': 6.4.22_sfoxds7t5ydpegc3knd667wn6m
-      '@storybook/react': 6.4.22_3kr3wa4mofgy4qxpnlf4wekucq
+      '@storybook/react': 6.4.22_u6q72u2kfwa6v3dpkdl7a24zzm
+      '@types/invariant': 2.2.35
       '@types/jest': 28.1.6
       '@types/lodash': 4.14.182
       '@types/react': 17.0.45
