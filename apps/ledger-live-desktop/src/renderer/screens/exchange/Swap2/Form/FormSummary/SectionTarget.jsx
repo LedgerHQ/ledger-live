@@ -12,6 +12,7 @@ import type { TokenCurrency, CryptoCurrency } from "@ledgerhq/types-cryptoassets
 import SummarySection from "./SummarySection";
 import { openModal } from "~/renderer/actions/modals";
 import { context } from "~/renderer/drawers/Provider";
+import { swapDefaultTrack } from "../../utils/index";
 
 import type {
   SwapSelectorStateType,
@@ -35,7 +36,7 @@ const AccountSection = ({
     track("button_clicked", {
       button: "change target account",
       page: "Page Swap Form",
-      flow: "swap",
+      ...swapDefaultTrack,
     });
     handleChange();
   }, [handleChange]);
@@ -85,9 +86,9 @@ const SectionTarget = ({
     track("button_clicked", {
       button: "add account",
       page: "Page Swap Form",
-      flow: "swap",
+      ...swapDefaultTrack,
     });
-    dispatch(openModal("MODAL_ADD_ACCOUNTS", { currency, flow: "swap" }));
+    dispatch(openModal("MODAL_ADD_ACCOUNTS", { currency, ...swapDefaultTrack }));
   };
 
   const hideEdit = !targetAccounts || targetAccounts.length < 2;

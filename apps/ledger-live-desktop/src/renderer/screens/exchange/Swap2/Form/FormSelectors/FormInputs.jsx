@@ -13,6 +13,7 @@ import type {
   SwapTransactionType,
   SwapDataType,
 } from "@ledgerhq/live-common/exchange/swap/types";
+import { swapDefaultTrack } from "../../utils/index";
 
 type FormInputsProps = {
   fromAccount: $PropertyType<SwapSelectorStateType, "account">,
@@ -84,7 +85,7 @@ export default function FormInputs({
     track("button_clicked", {
       button: "switch",
       page: "Page Swap Form",
-      flow: "swap",
+      ...swapDefaultTrack,
     });
     reverseSwap();
   };

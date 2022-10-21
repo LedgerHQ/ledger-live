@@ -42,6 +42,7 @@ import {
   SendActionDefault,
   SwapActionDefault,
 } from "./AccountActionsDefault";
+import { swapDefaultTrack } from "~/renderer/screens/exchange/Swap2/utils/index";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 
 const ButtonSettings: ThemedComponent<{ disabled?: boolean }> = styled(Tabbable).attrs(() => ({
@@ -243,6 +244,7 @@ const AccountHeaderActions = ({ account, parentAccount, openModal }: Props) => {
       button: "swap",
       currency: currency.ticker,
       page: "Page Account",
+      ...swapDefaultTrack,
     });
     setTrackingSource("Page Account");
     history.push({

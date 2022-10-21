@@ -13,6 +13,7 @@ import Box, { Tabbable } from "~/renderer/components/Box";
 import FormattedVal from "~/renderer/components/FormattedVal";
 import Price from "~/renderer/components/Price";
 import PillsDaysCount from "~/renderer/components/PillsDaysCount";
+import { swapDefaultTrack } from "~/renderer/screens/exchange/Swap2/utils/index";
 import styled from "styled-components";
 import Swap from "~/renderer/icons/Swap";
 
@@ -129,6 +130,7 @@ export default function AssetBalanceSummaryHeader({
       button: "swap",
       currency: currency?.ticker,
       page: "Page Asset",
+      ...swapDefaultTrack,
     });
     setTrackingSource("Page Asset");
     history.push({

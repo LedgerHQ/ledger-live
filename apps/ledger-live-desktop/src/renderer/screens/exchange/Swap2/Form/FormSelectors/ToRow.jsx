@@ -25,6 +25,7 @@ import {
 import styled from "styled-components";
 import CounterValue from "~/renderer/components/CounterValue";
 import { track } from "~/renderer/analytics/segment";
+import { swapDefaultTrack } from "../../utils/index";
 
 type Props = {
   fromAccount: $PropertyType<SwapSelectorStateType, "account">,
@@ -74,14 +75,14 @@ function ToRow({
     track("button_clicked", {
       button: "Edit target currency",
       page: "Page Swap Form",
-      flow: "swap",
+      ...swapDefaultTrack,
     });
   const setCurrencyAndTrack = currency => {
     updateSelectedRate();
     track("button_clicked", {
       button: "New target currency",
       page: "Page Swap Form",
-      flow: "swap",
+      ...swapDefaultTrack,
       currency,
     });
     setToCurrency(currency);

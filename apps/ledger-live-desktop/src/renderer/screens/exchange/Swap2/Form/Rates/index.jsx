@@ -16,7 +16,7 @@ import type {
 } from "@ledgerhq/live-common/exchange/swap/types";
 import { rateSelector, updateRateAction } from "~/renderer/actions/swap";
 import TrackPage from "~/renderer/analytics/TrackPage";
-import { SWAP_VERSION } from "../../utils/index";
+import { swapDefaultTrack } from "../../utils/index";
 import styled from "styled-components";
 import Tooltip from "~/renderer/components/Tooltip";
 import IconInfoCircle from "~/renderer/icons/InfoCircle";
@@ -72,7 +72,7 @@ export default function ProviderRate({
       track("button_clicked", {
         button: "Partner Chosen",
         page: "Page Swap Form",
-        flow: "swap",
+        ...swapDefaultTrack,
         value: rate.tradeMethod,
       });
       setDexSelected(null);
@@ -87,7 +87,7 @@ export default function ProviderRate({
       track("button_clicked", {
         button: "Partner Dex Chosen",
         page: "Page Swap Form",
-        flow: "swap",
+        ...swapDefaultTrack,
         swap_type: "float",
         value: provider,
       });
@@ -101,7 +101,7 @@ export default function ProviderRate({
     track("button_clicked", {
       button: "Filter selected",
       page: "Page Swap Form",
-      flow: "swap",
+      ...swapDefaultTrack,
       value: filter,
     });
     if (filter.includes(FILTER.decentralised)) {
@@ -140,7 +140,7 @@ export default function ProviderRate({
         category="Swap"
         name="Form - Edit Rates"
         provider={provider}
-        swapVersion={SWAP_VERSION}
+        {...swapDefaultTrack}
       />
       <Box horizontal justifyContent="space-between" fontSize={5}>
         <Text

@@ -11,6 +11,7 @@ import CryptoCurrencyIcon from "~/renderer/components/CryptoCurrencyIcon";
 import { getCurrencyColor } from "~/renderer/getCurrencyColor";
 import { addStarredMarketCoins, removeStarredMarketCoins } from "~/renderer/actions/settings";
 import { track } from "~/renderer/analytics/segment";
+import { swapDefaultTrack } from "~/renderer/screens/exchange/Swap2/utils/index";
 import { Button } from "..";
 import MarketCoinChart from "./MarketCoinChart";
 import MarketInfo from "./MarketInfo";
@@ -180,6 +181,7 @@ export default function MarketCoinScreen() {
           button: "swap",
           currency: currency?.ticker,
           page: "Page Maket Coin",
+          ...swapDefaultTrack,
         });
         setTrackingSource("Page Maket Coin");
 

@@ -23,6 +23,7 @@ import { rgba } from "~/renderer/styles/helpers";
 import { shallowAccountsSelector } from "~/renderer/reducers/accounts";
 import { context } from "~/renderer/drawers/Provider";
 import { track } from "~/renderer/analytics/segment";
+import { swapDefaultTrack } from "../../utils/index";
 
 const AccountWrapper = styled(Tabbable)`
   cursor: pointer;
@@ -76,7 +77,7 @@ const TargetAccount = memo(function TargetAccount({
   const onClick = useCallback(() => {
     track("button_clicked", {
       page: "Swap accounts",
-      flow: "swap",
+      ...swapDefaultTrack,
       button: "account",
       currency,
       account,
@@ -152,7 +153,7 @@ export default function TargetAccountDrawer({
     };
   }, [setDrawerStateRef]);
   const handleAddAccount = () =>
-    dispatch(openModal("MODAL_ADD_ACCOUNTS", { currency, flow: "swap" }));
+    dispatch(openModal("MODAL_ADD_ACCOUNTS", { currency, ...swapDefaultTrack }));
   const handleAccountPick: $PropertyType<Props, "setToAccount"> = (
     currency,
     account,

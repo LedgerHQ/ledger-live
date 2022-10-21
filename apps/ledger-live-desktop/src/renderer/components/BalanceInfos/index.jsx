@@ -9,6 +9,7 @@ import Box from "~/renderer/components/Box";
 import FormattedVal from "~/renderer/components/FormattedVal";
 import PillsDaysCount from "~/renderer/components/PillsDaysCount";
 import TransactionsPendingConfirmationWarning from "~/renderer/components/TransactionsPendingConfirmationWarning";
+import { swapDefaultTrack } from "~/renderer/screens/exchange/Swap2/utils/index";
 import { PlaceholderLine } from "./Placeholder";
 
 // $FlowFixMe
@@ -164,6 +165,7 @@ export default function BalanceInfos({ totalBalance, valueChange, isAvailable, u
           eventProperties={{
             button: "swap",
             page: "Page Portafolio",
+            ...swapDefaultTrack,
           }}
           onClick={onSwap}
         >

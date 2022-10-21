@@ -37,7 +37,7 @@ import type { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import KYC from "../KYC";
 import Login from "../Login";
 import MFA from "../MFA";
-import { SWAP_VERSION, trackSwapError } from "../utils/index";
+import { swapDefaultTrack, trackSwapError } from "../utils/index";
 import ExchangeDrawer from "./ExchangeDrawer/index";
 import FormErrorBanner from "./FormErrorBanner";
 import FormKYCBanner from "./FormKYCBanner";
@@ -68,7 +68,7 @@ const trackNoRates = ({ toState }) => {
   track("error_message", {
     message: "no_rates",
     page: "Page Swap Form",
-    flow: "swap",
+    ...swapDefaultTrack,
     sourceCurrency: toState.currency?.name,
   });
 };
@@ -241,7 +241,7 @@ const SwapForm = () => {
       swapError &&
         trackSwapError(swapError, {
           page: "Page Swap Form",
-          flow: "swap",
+          ...swapDefaultTrack,
           sourcecurrency: swapTransaction.swap.from.currency?.name,
           provider,
         });
@@ -372,7 +372,7 @@ const SwapForm = () => {
     track("button_clicked", {
       button: "Request",
       page: "Page Swap Form",
-      flow: "swap",
+      ...swapDefaultTrack,
       sourceCurrency: sourceCurrency?.name,
       targetCurrency: targetCurrency?.name,
       partner: provider,
@@ -489,7 +489,7 @@ const SwapForm = () => {
   if (providers?.length)
     return (
       <Wrapper>
-        <TrackPage category="Swap" name="Form" provider={provider} swapVersion={SWAP_VERSION} />
+        <TrackPage category="Swap" name="Form" provider={provider} {...swapDefaultTrack} />
         <SwapFormSelectors
           fromAccount={sourceAccount}
           toAccount={swapTransaction.swap.to.account}

@@ -20,7 +20,7 @@ import {
 } from "~/renderer/components/DeviceAction/rendering";
 import ErrorDisplay from "~/renderer/components/ErrorDisplay";
 import { setDrawer } from "~/renderer/drawers/Provider";
-import { SWAP_VERSION, useRedirectToSwapHistory } from "../../utils/index";
+import { swapDefaultTrack, useRedirectToSwapHistory } from "../../utils/index";
 import { DrawerTitle } from "../DrawerTitle";
 import { Separator } from "../Separator";
 import SwapAction from "./SwapAction";
@@ -71,7 +71,7 @@ export default function ExchangeDrawer({ swapTransaction, exchangeRate, onComple
       track("error_message", {
         message: "drawer_error",
         page: "Page Swap Drawer",
-        flow: "swap",
+        ...swapDefaultTrack,
         error,
       });
       setError(error);
@@ -150,7 +150,7 @@ export default function ExchangeDrawer({ swapTransaction, exchangeRate, onComple
           sourceCurrency={sourceCurrency?.name}
           targetCurrency={targetCurrency?.name}
           provider={exchangeRate.provider}
-          swapVersion={SWAP_VERSION}
+          {...swapDefaultTrack}
         />
         <Box justifyContent="center" flex={1}>
           <ErrorDisplay error={error} />
@@ -176,7 +176,7 @@ export default function ExchangeDrawer({ swapTransaction, exchangeRate, onComple
           sourceCurrency={sourceCurrency?.name}
           targetCurrency={targetCurrency?.name}
           provider={exchangeRate.provider}
-          swapVersion={SWAP_VERSION}
+          {...swapDefaultTrack}
         />
         <Box justifyContent="center" flex={1}>
           <SwapCompleted
