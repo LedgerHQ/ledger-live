@@ -1,5 +1,5 @@
 // @flow
-import { setSupportedCurrencies } from "@ledgerhq/live-common/currencies";
+import { setSupportedCurrencies } from "@ledgerhq/live-common/currencies/index";
 import { setPlatformVersion } from "@ledgerhq/live-common/platform/version";
 
 setPlatformVersion("1.1.0");
