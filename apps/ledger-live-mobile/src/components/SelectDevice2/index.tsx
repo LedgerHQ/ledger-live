@@ -243,11 +243,9 @@ export default function SelectDevice({ onSelect }: Props) {
           </Touchable>
         )}
       </Flex>
-
       {deviceList.length === 0 && Platform.OS === "android" && (
         <Flex
           p={5}
-          mb={8}
           borderRadius={5}
           alignItems="center"
           flexDirection="row"
@@ -267,8 +265,7 @@ export default function SelectDevice({ onSelect }: Props) {
           </Text>
         </Flex>
       )}
-
-      <Flex alignItems="center">
+      <Flex alignItems="center" mt={8}>
         <Touchable onPress={onBuyDevicePress}>
           <Text color="primary.c90">
             <Trans i18nKey="manager.selectDevice.buyDeviceCTA" />
