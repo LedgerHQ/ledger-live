@@ -39,16 +39,20 @@ const AccountHeaderActions = ({ account, parentAccount }: Props) => {
     history.push({ pathname: `/platform/${provider.liveAppId}`, state: { accountId: account.id } });
   }, [history, provider.liveAppId, account.id]);
 
-  return [
-    {
-      key: "Stake",
-      onClick: onPlatformStake,
-      event: "Eth Stake Account Button",
-      icon: IconCoins,
-      label: t("account.stake", { currency: account.currency.name }),
-      provider,
-    },
-  ];
+  if (account.type === "Account") {
+    return [
+      {
+        key: "Stake",
+        onClick: onPlatformStake,
+        event: "Eth Stake Account Button",
+        icon: IconCoins,
+        label: t("account.stake", { currency: account?.currency?.name }),
+        provider,
+      },
+    ];
+  } else {
+    return [];
+  }
 };
 
 export default AccountHeaderActions;

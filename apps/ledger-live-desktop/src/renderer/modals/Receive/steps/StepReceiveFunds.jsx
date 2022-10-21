@@ -193,7 +193,7 @@ const StepReceiveFunds = (props: StepProps) => {
   }, [device, onChangeAddressVerified, onResetSkip, transitionTo, isAddressVerified]);
 
   const onFinishReceiveFlow = useCallback(() => {
-    const id = account.currency.id;
+    const id = account?.currency?.id;
     const dismissModal = global.localStorage.getItem(`${LOCAL_STORAGE_KEY_PREFIX}${id}`) === "true";
     if (
       !dismissModal &&
