@@ -208,7 +208,7 @@
     "@types/jest": "^27.4.1",
     "@types/lodash": "^4.14.182",
     "@types/react": "^17.0.30",
-    "@types/react-native": "0.68.2",
+    "@types/react-native": "^0.68.9",
     "@types/react-native-extra-dimensions-android": "^1.2.0",
     "@types/react-native-vector-icons": "^6.4.10",
     "@types/react-native-video": "^5.0.14",
