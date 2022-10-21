@@ -3,7 +3,7 @@ import invariant from "invariant";
 import { BigNumber } from "bignumber.js";
 import { LedgerAPINotAvailable } from "@ledgerhq/errors";
 import JSONBigNumber from "@ledgerhq/json-bignumber";
-import type { EthereumGasLimitRequest } from "../families/ethereum/types";
+import type { MinimalGasLimitTransaction } from "../families/ethereum/types";
 import { EIP1559ShouldBeUsed } from "../families/ethereum/transaction";
 import network from "../network";
 import { blockchainBaseURL } from "./Ledger";
@@ -139,7 +139,7 @@ export type API = {
   >;
   getDryRunGasLimit: (
     address: string,
-    request: EthereumGasLimitRequest
+    transaction: MinimalGasLimitTransaction
   ) => Promise<BigNumber>;
   getGasTrackerBarometer: (currency: CryptoCurrency) => Promise<{
     low: BigNumber;
@@ -303,17 +303,11 @@ export const apiForCurrency = (currency: CryptoCurrency): API => {
       return new BigNumber(data.estimated_gas_limit);
     },
 
-    async getDryRunGasLimit(address, request) {
-      const post: Record<string, any> = { ...request };
-      // .to not needed by backend as it's part of URL:
-      delete post.to;
-      // backend use gas_price casing:
-      post.gas_price = request.gasPrice;
-      delete post.gasPrice;
+    async getDryRunGasLimit(address, transaction) {
       const { data } = await network({
         method: "POST",
         url: `${baseURL}/addresses/${address}/estimate-gas-limit`,
-        data: post,
+        data: transaction,
         transformResponse: JSONBigNumber.parse,
       });
 

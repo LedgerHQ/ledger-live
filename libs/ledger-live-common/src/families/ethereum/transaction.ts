@@ -1,12 +1,7 @@
 import invariant from "invariant";
 import { BigNumber } from "bignumber.js";
 import { log } from "@ledgerhq/logs";
-import type {
-  Transaction,
-  TransactionRaw,
-  EthereumGasLimitRequest,
-  TransactionStatus,
-} from "./types";
+import type { Transaction, TransactionRaw, TransactionStatus } from "./types";
 import Common from "@ethereumjs/common";
 import {
   Transaction as LegacyEthereumTx,
@@ -320,80 +315,6 @@ export function buildEthereumTx(
     fillTransactionDataResult,
   };
 }
-export function inferEthereumGasLimitRequest(
-  account: Account,
-  transaction: Transaction
-): EthereumGasLimitRequest {
-  const r: EthereumGasLimitRequest = {
-    from: account.freshAddress,
-    amplifier: "1",
-  };
-
-  if (EIP1559ShouldBeUsed(account.currency)) {
-    if (transaction.maxBaseFeePerGas && transaction.maxPriorityFeePerGas) {
-      r.gasPrice =
-        "0x" +
-        transaction.maxBaseFeePerGas
-          .plus(transaction.maxPriorityFeePerGas)
-          .toString();
-    }
-  } else if (transaction.gasPrice) {
-    r.gasPrice = "0x" + transaction.gasPrice.toString();
-  }
-
-  try {
-    const { data, to, value } = buildEthereumTx(account, transaction, 1).tx;
-
-    if (value) {
-      r.value = "0x" + (value.toString("hex") || "0");
-    }
-
-    if (to) {
-      r.to = to.toString();
-    }
-
-    if (data) {
-      r.data = "0x" + data.toString("hex");
-    }
-  } catch (e) {
-    log("warn", "couldn't serializeTransactionData: " + e);
-  }
-
-  return r;
-}
-export const estimateGasLimit: (
-  account: Account,
-  addr: string,
-  request: EthereumGasLimitRequest
-) => Promise<BigNumber> = makeLRUCache(
-  (account: Account, addr: string, request: EthereumGasLimitRequest) => {
-    const api = apiForCurrency(account.currency);
-    return api
-      .getDryRunGasLimit(addr, request)
-      .then((value) =>
-        value.eq(21000) // regular ETH send should not be amplified
-          ? value
-          : value.times(getEnv("ETHEREUM_GAS_LIMIT_AMPLIFIER")).integerValue()
-      )
-      .catch(() => api.roughlyEstimateGasLimit(addr));
-  },
-  (a, addr, r) =>
-    a.id +
-    "|" +
-    addr +
-    "|" +
-    String(r.from) +
-    "+" +
-    String(r.to) +
-    "+" +
-    String(r.value) +
-    "+" +
-    String(r.data) +
-    "+" +
-    String(r.gasPrice) +
-    "+" +
-    String(r.amplifier)
-);
 
 export default {
   formatTransaction,
