@@ -63,7 +63,7 @@ jobs:
         run: pnpm mobile pod
       - name: status
         id: check-status
-        run: echo "::set-output name=status::$(git status --porcelain | wc -l)"
+        run: echo "status=$(git status --porcelain | wc -l)" >> $GITHUB_OUTPUT
       - name: commit and push changes
         if: steps.check-status.outputs.status != 0
         run: >

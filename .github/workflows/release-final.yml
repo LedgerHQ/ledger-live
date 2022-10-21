@@ -47,11 +47,11 @@ jobs:
       - name: check if desktop versions are different
         id: desktop-changed
         run: |
-          echo "::set-output name=status::$(git diff HEAD HEAD~1 ./apps/ledger-live-desktop/package.json | grep '"version": "' | wc -l)"
+          echo "status=$(git diff HEAD HEAD~1 ./apps/ledger-live-desktop/package.json | grep '"version": "' | wc -l)" >> $GITHUB_OUTPUT
       - name: check if mobile versions are different
         id: mobile-changed
         run: |
-          echo "::set-output name=status::$(git diff HEAD HEAD~1 ./apps/ledger-live-mobile/package.json | grep '"version": "' | wc -l)"
+          echo "status=$(git diff HEAD HEAD~1 ./apps/ledger-live-mobile/package.json | grep '"version": "' | wc -l)" >> $GITHUB_OUTPUT
       - uses: ledgerhq/ledger-live/tools/actions/get-package-infos@develop
         id: desktop-version
         with:
