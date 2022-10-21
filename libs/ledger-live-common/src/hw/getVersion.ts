@@ -1,40 +1,40 @@
 import { DeviceModelId, identifyTargetId } from "@ledgerhq/devices";
 import Transport from "@ledgerhq/hw-transport";
 import type { FirmwareInfo } from "@ledgerhq/types-live";
-import { satisfies as versionSatisfies } from "semver";
+import { satisfies as versionSatisfies, coerce as semverCoerce } from "semver";
 import { isDeviceLocalizationSupported } from "../manager/localization";
 
 const deviceVersionRangesForBootloaderVersion: {
   [key in DeviceModelId]?: string;
 } = {
   nanoS: ">=2.0.0",
-  nanoX: ">=2.0.0 || =2.1.0-lo2 || =2.1.0-lo4 || =2.1.0-lo5", // TODO: remove pre-release version
+  nanoX: ">=2.0.0",
   nanoSP: ">=1.0.0",
 };
 export const isBootloaderVersionSupported = (
   seVersion: string,
   modelId?: DeviceModelId
-) =>
+): boolean =>
   modelId &&
   deviceVersionRangesForBootloaderVersion[modelId] &&
   versionSatisfies(
-    seVersion,
+    semverCoerce(seVersion) || seVersion,
     deviceVersionRangesForBootloaderVersion[modelId] as string
   );
 
 const deviceVersionRangesForHardwareVersion: {
   [key in DeviceModelId]?: string;
 } = {
-  nanoX: ">=2.0.0 || =2.1.0-lo2 || =2.1.0-lo4 || =2.1.0-lo5", // TODO: remove pre-release version
+  nanoX: ">=2.0.0",
 };
 export const isHardwareVersionSupported = (
   seVersion: string,
   modelId?: DeviceModelId
-) =>
+): boolean =>
   modelId &&
   deviceVersionRangesForHardwareVersion[modelId] &&
   versionSatisfies(
-    seVersion,
+    semverCoerce(seVersion) || seVersion,
     deviceVersionRangesForHardwareVersion[modelId] as string
   );
 
