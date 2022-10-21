@@ -35,7 +35,7 @@ export default function NftPropertiesList({
       horizontal={true}
       initialNumToRender={6}
       ItemSeparatorComponent={() => <Box height={"100%"} width={6} />}
-      style={{ marginHorizontal: 16 }}
+      contentContainerStyle={{ paddingHorizontal: 16 }}
     />
   );
 }
