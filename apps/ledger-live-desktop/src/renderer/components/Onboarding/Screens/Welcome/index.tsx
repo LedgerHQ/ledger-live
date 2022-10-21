@@ -1,4 +1,4 @@
-import React, { useCallback, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useHistory } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
@@ -120,20 +120,26 @@ export function Welcome() {
     setIsFeatureFlagsSettingsButtonDisplayed,
   ] = useState<boolean>(false);
 
+  const timeout = useRef<ReturnType<typeof setTimeout>>();
+
   const handleOpenFeatureFlagsDrawer = useCallback(nb => {
     if (nb === "1") countTitle.current++;
     else if (nb === "2") countSubtitle.current++;
-    if (countTitle.current > 4 && countSubtitle.current > 5) {
+    if (countTitle.current > 3 && countSubtitle.current > 5) {
       countTitle.current = 0;
       countSubtitle.current = 0;
       setIsFeatureFlagsSettingsButtonDisplayed(true);
     }
-    const timer = setTimeout(() => {
+    if (timeout.current) clearTimeout(timeout.current);
+    timeout.current = setTimeout(() => {
       countTitle.current = 0;
       countSubtitle.current = 0;
-    }, 15000);
+    }, 1000);
+  }, []);
+
+  useEffect(() => {
     return () => {
-      clearTimeout(timer);
+      if (timeout.current) clearTimeout(timeout.current);
     };
   }, []);
 

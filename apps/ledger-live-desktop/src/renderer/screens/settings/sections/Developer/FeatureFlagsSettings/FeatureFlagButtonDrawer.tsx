@@ -10,7 +10,7 @@ const FeatureFlagDrawerButton = () => {
       <Drawer big isOpen={isOpen} onClose={() => setIsOpen(false)} direction="left">
         <FeatureFlagContent visible />
       </Drawer>
-      <Button mb="24px" type="main" onClick={() => setIsOpen(true)}>
+      <Button variant="main" outline mb="24px" onClick={() => setIsOpen(true)}>
         {"Open Feature Flags Settings"}
       </Button>
     </>
