@@ -332,27 +332,31 @@ export default function WebPlatformPlayer({ manifest, onClose, inputs = {}, conf
 
   // TODO: this object should be in `renderer/storage` file
   // but it needs to be converted to TS before.
-  const deviceStorage: NamedSpaceStorage = {
-    kind: "namedspace",
-    save: async (ns: string, key: string, value: unknown) => {
-      setKey(ns, key, value);
-    },
+  const deviceStorage: NamedSpaceStorage = useMemo(
+    () => ({
+      kind: "namedspace",
+      save: async (ns: string, key: string, value: unknown): Promise<boolean> => {
+        setKey(ns, key, value);
+        return Promise.resolve(true);
+      },
 
-    get: async (ns: string, key: string): Promise<unknown> => {
-      return getKey(ns, key);
-    },
-  };
+      get: async (ns: string, key: string): Promise<unknown> => {
+        return getKey(ns, key);
+      },
+    }),
+    [],
+  );
 
   const setValue = useCallback(
     ({ key, value }: { key: string; value: string }): Promise<boolean> =>
       saveToStorage(manifest, deviceStorage, key, value),
-    [manifest],
+    [manifest, deviceStorage],
   );
 
   const getValue = useCallback(
     async ({ key }: { key: string; value: string }): Promise<string> =>
       getFromStorage(manifest, deviceStorage, key),
-    [manifest],
+    [manifest, deviceStorage],
   );
 
   const handlers = useMemo(
