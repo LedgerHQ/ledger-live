@@ -160,7 +160,7 @@ function MarketRowItem({
         });
       }
     },
-    [currency?.internalCurrency, flattenedAccounts, openAddAccounts, history],
+    [currency?.internalCurrency, currency?.ticker, flattenedAccounts, openAddAccounts, history],
   );
 
   const onStarClick = useCallback(
