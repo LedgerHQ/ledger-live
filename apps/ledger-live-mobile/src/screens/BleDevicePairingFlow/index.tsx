@@ -19,17 +19,22 @@ export type NavigateInput = {
 
 // Necessary when the pairing flow is opened from a deeplink without any params
 // Shouldn't be relied upon for other usages
-const defaultSuccessNavigateToConfig = {
-  navigationType: "navigate",
-  pathToDeviceParam: "params.params.params.device",
-  navigateInput: {
-    name: NavigatorName.BaseOnboarding,
-    params: {
-      screen: NavigatorName.SyncOnboarding,
+const defaultNavigationParams = {
+  filterByDeviceModelId: DeviceModelId.nanoFTS, // This needs to be removed when nanos are supported
+  areKnownDevicesDisplayed: true,
+  onSuccessAddToKnownDevices: false,
+  successNavigateToConfig: {
+    navigationType: "navigate",
+    pathToDeviceParam: "params.params.params.device",
+    navigateInput: {
+      name: NavigatorName.BaseOnboarding,
       params: {
-        screen: ScreenName.SyncOnboardingCompanion,
+        screen: NavigatorName.SyncOnboarding,
         params: {
-          device: null,
+          screen: ScreenName.SyncOnboardingCompanion,
+          params: {
+            device: null,
+          },
         },
       },
     },
@@ -93,13 +98,13 @@ export const BleDevicePairingFlow = ({
 }: BleDevicePairingFlowProps) => {
   const dispatchRedux = useDispatch();
 
-  const params = route?.params || {};
+  const params = route?.params || defaultNavigationParams;
 
   const {
     filterByDeviceModelId = undefined,
     areKnownDevicesDisplayed = true,
     onSuccessAddToKnownDevices = false,
-    onSuccessNavigateToConfig = defaultSuccessNavigateToConfig,
+    onSuccessNavigateToConfig = defaultNavigationParams.successNavigateToConfig,
   } = params;
 
   const {
