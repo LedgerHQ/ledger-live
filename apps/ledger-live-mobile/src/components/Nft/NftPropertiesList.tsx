@@ -1,61 +1,41 @@
 import React from "react";
 import { FlatList, FlatListProps } from "react-native";
-import { ProtoNFT } from "@ledgerhq/types-live";
-import { Flex } from "@ledgerhq/native-ui";
-import { BigNumber } from "bignumber.js";
-import NftListItem from "./NftListItem";
-import { AddNewItem } from "./AddNewItemList";
-import { NFTMetadata } from "../../../../../libs/ledgerjs/packages/types-live/src";
+import { Flex, Text, Box } from "@ledgerhq/native-ui";
+import { NFTMetadata } from "@ledgerhq/types-live";
 
-type Props = {
-  data: ProtoNFT[];
-};
-
-// Fake ProtoNFT to be able to display "Add new" button at the end of the list
-const ADD_NEW: ProtoNFT = {
-  id: "addNew",
-  tokenId: "",
-  amount: new BigNumber(0),
-  contract: "",
-  standard: "ERC721",
-  currencyId: "",
-};
-
-const NB_COLUMNS = 2;
-
-const renderItem = ({
-  item,
-  index,
-}: {
-  item: Record<"key" | "value", string>;
-  index: number;
-}) => (
+const renderItem = ({ item }: { item: NFTMetadata["properties"][number] }) => (
   <Flex
-    flex={
-      item.id === ADD_NEW.id && (index + 1) % NB_COLUMNS !== 0
-        ? 1 / NB_COLUMNS
-        : 1
-    }
-    mr={(index + 1) % NB_COLUMNS > 0 ? 4 : 0}
+    py={3}
+    px={4}
+    borderRadius={1}
+    borderWidth={"1px"}
+    borderColor={"neutral.c30"}
   >
-    {item.id === ADD_NEW.id ? <AddNewItem /> : <NftListItem nft={item} />}
+    <Text variant={"subtitle"} uppercase color={"primary.c80"}>
+      {item.key}
+    </Text>
+    <Text variant={"bodyLineHeight"} color={"neutral.c100"}>
+      {item.value}
+    </Text>
   </Flex>
 );
 
 const keyExtractor = (item: Record<"key" | "value", string>) => item.key;
 
-export function NftPropertiesList({
+export default function NftPropertiesList({
   data,
-}: FlatListProps<NFTMetadata["properties"][number]>) {
-  const dataWithAdd = data.concat(ADD_NEW);
+}: Pick<FlatListProps<NFTMetadata["properties"][number]>, "data">) {
   return (
-    <FlatList
-      numColumns={2}
-      data={dataWithAdd}
+    <FlatList<NFTMetadata["properties"][number]>
+      data={data}
       renderItem={renderItem}
       keyExtractor={keyExtractor}
       showsVerticalScrollIndicator={false}
+      showsHorizontalScrollIndicator={false}
+      horizontal={true}
       initialNumToRender={6}
+      ItemSeparatorComponent={() => <Box height={"100%"} width={6} />}
+      style={{ marginHorizontal: 16 }}
     />
   );
 }

@@ -16,7 +16,7 @@ import {
 } from "@ledgerhq/live-common/nft/index";
 import { BigNumber } from "bignumber.js";
 import { useSelector } from "react-redux";
-import { Button, Icons } from "@ledgerhq/native-ui";
+import { Box, Button, Icons, Text } from "@ledgerhq/native-ui";
 import { useTranslation, Trans } from "react-i18next";
 import Clipboard from "@react-native-community/clipboard";
 import { ProtoNFT, FloorPrice } from "@ledgerhq/types-live";
@@ -24,14 +24,16 @@ import { FeatureToggle } from "@ledgerhq/live-common/featureFlags/index";
 import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
 import { useNavigation, useTheme } from "@react-navigation/native";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
+import styled from "styled-components/native";
 import { accountSelector } from "../../reducers/accounts";
 import { ScreenName, NavigatorName } from "../../const";
 import NftLinksPanel from "./NftLinksPanel";
-import { rgba } from "../../colors";
 import Skeleton from "../Skeleton";
 import NftMedia from "./NftMedia";
-import LText from "../LText";
 import { getMetadataMediaType } from "../../logic/nft";
+import NftPropertiesList from "./NftPropertiesList";
+import { Flex } from "../../../../../libs/ui/packages/native/lib";
+import CurrencyIcon from "../CurrencyIcon";
 
 type Props = {
   route: {
@@ -45,10 +47,24 @@ type RouteParams = {
 
 type TimeoutReturn = ReturnType<typeof setTimeout>;
 
+const SectionTitle = styled(Text).attrs(props => ({
+  variant: "small",
+  color: "neutral.c60",
+  uppercase: true,
+  fontWeight: "semiBold",
+  mb: 4,
+  ...props,
+}))``;
+
+const SectionContainer = styled(Box).attrs(props => ({
+  mb: 8,
+  px: 6,
+  ...props,
+}))``;
+
 const Section = ({
   title,
   value,
-  style,
   children,
   copyAvailable,
   copiedString,
@@ -76,15 +92,9 @@ const Section = ({
   }, [value, timeoutFunction]);
 
   return (
-    <View style={style}>
-      <View
-        flexDirection="row"
-        alignItems="center"
-        style={{ marginBottom: 10 }}
-      >
-        <LText style={styles.sectionTitle} semiBold>
-          {title}
-        </LText>
+    <SectionContainer>
+      <Flex flexDirection="row" alignItems="center" mb={4}>
+        <SectionTitle mb={0}>{title}</SectionTitle>
         {copyAvailable ? (
           <View flexDirection="row" alignItems="center">
             <TouchableOpacity onPress={copy} style={{ marginLeft: 10 }}>
@@ -94,15 +104,15 @@ const Section = ({
               />
             </TouchableOpacity>
             {copied ? (
-              <LText color="neutral.c80" marginLeft={3}>
+              <Text variant={"body"} color="neutral.c80" marginLeft={3}>
                 {copiedString}
-              </LText>
+              </Text>
             ) : null}
           </View>
         ) : null}
-      </View>
-      {value ? <LText>{value}</LText> : children}
-    </View>
+      </Flex>
+      {value ? <Text variant={"body"}>{value}</Text> : children}
+    </SectionContainer>
   );
 };
 
@@ -114,6 +124,7 @@ const NftViewer = ({ route }: Props) => {
     nft?.tokenId,
     nft?.currencyId,
   );
+
   const currency = useMemo(
     () => getCryptoCurrencyById(nft.currencyId),
     [nft.currencyId],
@@ -175,68 +186,53 @@ const NftViewer = ({ route }: Props) => {
   }, [account, nft, nftCapabilities.hasQuantity, navigation]);
 
   const properties = useMemo(() => {
-    if (isLoading) {
+    if (isLoading && !nftMetadata?.properties?.length) {
       return (
-        <View style={[styles.main, { flexDirection: "row" }]}>
+        <Box flexDirection={"row"} px={6}>
           <Skeleton
-            style={[styles.property, styles.propertySekeletonOne]}
+            height={"54px"}
+            width={"120px"}
+            borderRadius={1}
+            mr={6}
             loading={true}
           />
           <Skeleton
-            style={[styles.property, styles.propertySekeletonTwo]}
+            height={"54px"}
+            width={"120px"}
+            borderRadius={1}
+            mr={6}
             loading={true}
           />
           <Skeleton
-            style={[styles.property, styles.propertySekeletonThree]}
+            height={"54px"}
+            width={"120px"}
+            borderRadius={1}
             loading={true}
           />
-        </View>
+        </Box>
       );
     }
 
     if (nftMetadata?.properties?.length) {
-      return (
-        <ScrollView
-          showsHorizontalScrollIndicator={false}
-          horizontal={true}
-          contentContainerStyle={styles.properties}
-        >
-          {nftMetadata?.properties?.map?.((prop, i) => (
-            <View
-              style={[
-                styles.property,
-                {
-                  backgroundColor: rgba(colors.live, 0.1),
-                },
-              ]}
-              key={i}
-            >
-              <LText semiBold style={{ color: rgba(colors.live, 0.5) }}>
-                {prop.key}
-              </LText>
-              <LText style={{ color: colors.live }}>{prop.value}</LText>
-            </View>
-          ))}
-        </ScrollView>
-      );
+      return <NftPropertiesList data={nftMetadata?.properties} />;
     }
 
     return null;
   }, [colors, isLoading, nftMetadata]);
 
   const description = useMemo(() => {
-    if (isLoading) {
+    if (isLoading && !nftMetadata?.description) {
       return (
         <>
-          <Skeleton style={styles.partDescriptionSkeleton} loading={true} />
-          <Skeleton style={styles.partDescriptionSkeleton} loading={true} />
-          <Skeleton style={styles.partDescriptionSkeleton} loading={true} />
+          <Skeleton loading={true} height={"12px"} width={"100%"} mb={3} />
+          <Skeleton loading={true} height={"12px"} width={"100%"} mb={3} />
+          <Skeleton loading={true} height={"12px"} width={"100%"} mb={3} />
         </>
       );
     }
 
     if (nftMetadata?.description) {
-      return <LText>{nftMetadata.description}</LText>;
+      return <Text variant={"bodyLineHeight"}>{nftMetadata.description}</Text>;
     }
 
     return null;
@@ -261,28 +257,51 @@ const NftViewer = ({ route }: Props) => {
   );
 
   return (
-    <View>
+    <>
       <ScrollView contentContainerStyle={styles.scrollView}>
-        <View style={styles.main}>
-          <Skeleton
-            style={[styles.tokenName, styles.tokenNameSkeleton]}
-            loading={isLoading}
-          >
-            <LText style={styles.tokenName}>
-              {collectionMetadata?.tokenName || "-"}
-            </LText>
-          </Skeleton>
+        <Box mx={6}>
+          <Flex flexDirection={"row"} alignItems={"center"}>
+            <CurrencyIcon currency={currency} size={20} />
+            <Skeleton
+              height={"19px"}
+              flex={1}
+              my={"2px"}
+              ml={2}
+              borderRadius={1}
+              loading={isLoading && !collectionMetadata?.tokenName}
+            >
+              <Text
+                variant={"large"}
+                color={"neutral.c80"}
+                fontWeight={"semiBold"}
+                numberOfLines={3}
+                flexShrink={1}
+                ml={2}
+              >
+                {collectionMetadata?.tokenName || "-"}
+              </Text>
+            </Skeleton>
+          </Flex>
+          <Box mb={6}>
+            <Skeleton
+              height={"36px"}
+              width={"100%"}
+              my={"3px"}
+              borderRadius={1}
+              loading={isLoading && !nftMetadata?.nftName}
+            >
+              <Text
+                variant={"h1Inter"}
+                fontWeight={"semiBold"}
+                color={"neutral.c100"}
+                numberOfLines={3}
+              >
+                {nftMetadata?.nftName || "-"}
+              </Text>
+            </Skeleton>
+          </Box>
 
-          <Skeleton
-            style={[styles.nftName, styles.nftNameSkeleton]}
-            loading={isLoading}
-          >
-            <LText style={styles.nftName} numberOfLines={3} semiBold>
-              {nftMetadata?.nftName || "-"}
-            </LText>
-          </Skeleton>
-
-          <View style={styles.imageContainer}>
+          <Box style={styles.imageContainer} borderRadius={2} mb={8}>
             {nftMetadata?.media && mediaType !== "video" ? (
               <TouchableOpacity
                 onPress={() =>
@@ -301,10 +320,20 @@ const NftViewer = ({ route }: Props) => {
             ) : (
               <NftComponent />
             )}
-          </View>
+          </Box>
 
-          <View style={styles.buttons}>
-            <View style={styles.sendButtonContainer}>
+          <Box
+            mb={8}
+            flexWrap={"nowrap"}
+            flexDirection={"row"}
+            justifyContent={"center"}
+          >
+            <Box
+              flexGrow={1}
+              flexShrink={1}
+              mr={6}
+              style={styles.sendButtonContainer}
+            >
               <Button
                 type="main"
                 Icon={Icons.ArrowFromBottomMedium}
@@ -313,81 +342,67 @@ const NftViewer = ({ route }: Props) => {
               >
                 <Trans i18nKey="account.send" />
               </Button>
-            </View>
+            </Box>
             {nftMetadata?.links && (
-              <View style={styles.ellipsisButtonContainer}>
+              <Box
+                style={styles.ellipsisButtonContainer}
+                flexShrink={0}
+                width={"48px"}
+              >
                 <Button
                   type="main"
                   Icon={Icons.OthersMedium}
                   onPress={() => setBottomModalOpen(true)}
                 />
-              </View>
+              </Box>
             )}
-          </View>
-        </View>
+          </Box>
+        </Box>
 
         {/* This weird thing is because we want a full width scrollView withtout the paddings */}
         {properties && (
-          <>
-            <View style={styles.propertiesContainer}>
-              <LText style={styles.sectionTitle} semiBold>
-                {t("nft.viewer.properties")}
-              </LText>
-            </View>
+          <SectionContainer px={0}>
+            <SectionTitle mx={6}>{t("nft.viewer.properties")}</SectionTitle>
             {properties}
-            <View style={styles.hr} />
-          </>
+          </SectionContainer>
         )}
 
-        <View style={styles.main}>
-          {description && (
-            <>
-              <Section title={t("nft.viewer.description")}>
-                {description}
-              </Section>
-              <View style={styles.hr} />
-            </>
-          )}
+        {description && (
+          <Section title={t("nft.viewer.description")}>{description}</Section>
+        )}
 
-          <Section
-            title={t("nft.viewer.tokenContract")}
-            value={nft?.contract}
-            copyAvailable
-            copiedString={t("nft.viewer.tokenContractCopied")}
-          />
+        <Section
+          title={t("nft.viewer.tokenContract")}
+          value={nft?.contract}
+          copyAvailable
+          copiedString={t("nft.viewer.tokenContractCopied")}
+        />
 
-          <View style={styles.hr} />
+        <Section
+          title={t("nft.viewer.tokenId")}
+          value={nft?.tokenId}
+          copyAvailable
+          copiedString={t("nft.viewer.tokenIdCopied")}
+        />
 
-          <Section
-            title={t("nft.viewer.tokenId")}
-            value={nft?.tokenId}
-            copyAvailable
-            copiedString={t("nft.viewer.tokenIdCopied")}
-          />
-
-          {nft?.standard === "ERC1155" && (
-            <>
-              <View style={styles.hr} />
-              <TouchableOpacity onPress={closeModal}>
-                <Section
-                  title={t("nft.viewer.quantity")}
-                  value={nft?.amount?.toFixed()}
-                />
-              </TouchableOpacity>
-            </>
-          )}
-          <FeatureToggle feature="counterValue">
-            {!floorPriceLoading && floorPrice ? (
-              <>
-                <View style={styles.hr} />
-                <Section
-                  title={t("nft.viewer.attributes.floorPrice")}
-                  value={`${floorPrice} ${ticker}`}
-                />
-              </>
-            ) : null}
-          </FeatureToggle>
-        </View>
+        {nft?.standard === "ERC1155" && (
+          <>
+            <TouchableOpacity onPress={closeModal}>
+              <Section
+                title={t("nft.viewer.quantity")}
+                value={nft?.amount?.toFixed()}
+              />
+            </TouchableOpacity>
+          </>
+        )}
+        <FeatureToggle feature="counterValue">
+          {!floorPriceLoading && floorPrice ? (
+            <Section
+              title={t("nft.viewer.attributes.floorPrice")}
+              value={`${floorPrice} ${ticker}`}
+            />
+          ) : null}
+        </FeatureToggle>
       </ScrollView>
       <NftLinksPanel
         nftMetadata={nftMetadata}
@@ -395,7 +410,7 @@ const NftViewer = ({ route }: Props) => {
         isOpen={bottomModalOpen}
         onClose={closeModal}
       />
-    </View>
+    </>
   );
 };
 
@@ -404,30 +419,7 @@ const styles = StyleSheet.create({
     paddingTop: 8,
     paddingBottom: 64,
   },
-  main: {
-    paddingHorizontal: 16,
-  },
-  tokenNameSkeleton: {
-    height: 8,
-    width: 113,
-    borderRadius: 4,
-  },
-  tokenName: {
-    fontSize: 15,
-    marginBottom: 4,
-  },
-  nftNameSkeleton: {
-    height: 12,
-    width: 250,
-    borderRadius: 4,
-  },
-  nftName: {
-    fontSize: 24,
-    marginBottom: 24,
-  },
   imageContainer: {
-    borderRadius: 8,
-    marginBottom: 32,
     ...Platform.select({
       android: {
         elevation: 1,
@@ -448,16 +440,7 @@ const styles = StyleSheet.create({
     width: "100%",
     aspectRatio: 1,
   },
-  buttons: {
-    paddingBottom: 32,
-    flexWrap: "nowrap",
-    flexDirection: "row",
-    justifyContent: "center",
-  },
   sendButtonContainer: {
-    flexGrow: 1,
-    flexShrink: 1,
-    marginRight: 16,
     zIndex: 2,
     ...Platform.select({
       android: {
@@ -477,8 +460,6 @@ const styles = StyleSheet.create({
     borderRadius: 100,
   },
   ellipsisButtonContainer: {
-    flexShrink: 0,
-    width: 48,
     zIndex: 2,
     ...Platform.select({
       android: {
@@ -493,55 +474,6 @@ const styles = StyleSheet.create({
         },
       },
     }),
-  },
-  ellipsisButton: {
-    position: "relative",
-    borderRadius: 48,
-    paddingHorizontal: 0,
-  },
-  propertiesContainer: {
-    paddingLeft: 16,
-  },
-  properties: {
-    flexDirection: "row",
-    marginTop: 6,
-    paddingHorizontal: 16,
-  },
-  property: {
-    paddingVertical: 12,
-    paddingHorizontal: 8,
-    marginRight: 16,
-    borderRadius: 4,
-  },
-  propertySekeletonOne: {
-    height: 52,
-    width: 60,
-    borderRadius: 4,
-  },
-  propertySekeletonTwo: {
-    height: 52,
-    width: 80,
-    borderRadius: 4,
-  },
-  propertySekeletonThree: {
-    height: 52,
-    width: 60,
-    borderRadius: 4,
-  },
-  sectionTitle: {
-    fontSize: 14,
-    color: "grey",
-  },
-  partDescriptionSkeleton: {
-    marginBottom: 10,
-    height: 12,
-    width: "100%",
-  },
-  hr: {
-    flex: 1,
-    height: 1,
-    backgroundColor: "#DFDFDF",
-    marginVertical: 24,
   },
 });
 

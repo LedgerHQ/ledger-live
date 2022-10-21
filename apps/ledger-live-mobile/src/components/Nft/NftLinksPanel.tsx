@@ -4,7 +4,7 @@ import { useNavigation, useTheme } from "@react-navigation/native";
 import { NFTMediaSize, NFTMetadata } from "@ledgerhq/types-live";
 import { View, StyleSheet, TouchableOpacity, Linking } from "react-native";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
-import { Icons } from "@ledgerhq/native-ui";
+import { Box, Icons } from "@ledgerhq/native-ui";
 import { getMetadataMediaTypes } from "../../logic/nft";
 import { NavigatorName, ScreenName } from "../../const";
 import ExternalLinkIcon from "../../icons/ExternalLink";
@@ -175,7 +175,11 @@ const NftLinksPanel = ({ links, isOpen, onClose, nftMetadata }: Props) => {
       <>
         {renderSection(topSection, "top")}
         {topSection.length > 0 && bottomSection.length > 0 ? (
-          <View style={styles.hr} />
+          <Box
+            borderBottomWidth={"1px"}
+            borderBottomColor={"neutral.c30"}
+            mb={7}
+          />
         ) : null}
         {renderSection(bottomSection, "bottom")}
       </>
