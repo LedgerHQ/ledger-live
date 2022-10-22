@@ -613,6 +613,7 @@ export function RequiredFirmwareUpdate({
   const onPress = () => {
     navigation.navigate(NavigatorName.Manager, {
       screen: ScreenName.Manager,
+      params: { firmwareUpdate: true },
     });
   };
 
