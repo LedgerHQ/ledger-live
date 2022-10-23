@@ -1,20 +1,18 @@
-// @flow
-
 import React, { useState, useEffect, useMemo, useCallback, FC } from "react";
 import { View } from "react-native";
 import { BigNumber } from "bignumber.js";
+
+import type { ElrondProvider } from "@ledgerhq/live-common/families/elrond/types";
+import type { BodyPropsType } from "./types";
+import type { DrawerPropsType } from "./components/Drawer/types";
+import type { DelegationType } from "../../types";
+
+import { denominate, randomizeProviders } from "../../helpers";
 
 import Delegations from "./components/Delegations";
 import Unbondings from "./components/Unbondings";
 import Rewards from "./components/Rewards";
 import Drawer from "./components/Drawer";
-
-import { denominate, randomizeProviders } from "../../helpers";
-
-import type { ElrondProvider } from "@ledgerhq/live-common/families/elrond/types";
-import type { BodyPropsType } from "./types";
-import type { DrawerPropsType } from "./components/Drawer/types";
-import type { DelegationType, ValidatorType } from "../../types";
 
 import styles from "./styles";
 
@@ -41,12 +39,18 @@ const Body = (props: BodyPropsType) => {
     DelegationType[]
   >(account.elrondResources.delegations);
 
-  const providers = useMemo(
-    () => account.elrondResources.providers as any[],
+  /*
+   * Randomize the list of the memoized validators..
+   */
+
+  const validators = useMemo(
+    () => randomizeProviders(account.elrondResources.providers),
     [account.elrondResources.providers],
   );
 
-  const validators = useMemo(() => randomizeProviders(providers), [providers]);
+  /*
+   * Call the drawer callback and populate the state with the given data, thus activating it.
+   */
 
   const onDrawer = useCallback(
     (data: DrawerPropsType["data"] | false) => setDrawer(data),

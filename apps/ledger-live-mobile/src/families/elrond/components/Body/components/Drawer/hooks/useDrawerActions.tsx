@@ -3,6 +3,9 @@ import { useTranslation } from "react-i18next";
 import { useNavigation, useTheme } from "@react-navigation/native";
 import BigNumber from "bignumber.js";
 
+import type { ElrondAccount } from "@ledgerhq/live-common/families/elrond/types";
+import type { DrawerPropsType } from "../types";
+
 import Circle from "../../../../../../../components/Circle";
 import ClaimRewardIcon from "../../../../../../../icons/ClaimReward";
 import UndelegateIcon from "../../../../../../../icons/Undelegate";
@@ -14,9 +17,6 @@ import type {
   Action,
   IconProps,
 } from "../../../../../../../components/DelegationDrawer";
-
-import type { DrawerPropsType } from "../types";
-import type { ElrondAccount } from "@ledgerhq/live-common/families/elrond/types";
 
 const useDrawerActions = (
   data: DrawerPropsType["data"],
@@ -40,7 +40,7 @@ const useDrawerActions = (
         name: validator.identity.name || validator.contract,
       },
     });
-  }, [validator.contract, account, claimableRewards]);
+  }, [validator, account, navigation, onClose, claimableRewards]);
 
   const onWithdrawFunds = useCallback(() => {
     onClose();
@@ -52,7 +52,7 @@ const useDrawerActions = (
         validator,
       },
     });
-  }, [validator, account, amount]);
+  }, [validator, account, navigation, onClose, amount]);
 
   const [isDelegation, isUndelegation] = useMemo(
     () => [type === "delegation", type === "undelegation"],
@@ -96,7 +96,7 @@ const useDrawerActions = (
             },
             {
               label: t("delegation.actions.undelegate"),
-              onPress: console.log,
+              onPress: () => false,
               event: "DelegationActionUndelegate",
               disabled: false,
               Icon: (props: IconProps) => (

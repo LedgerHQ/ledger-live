@@ -2,16 +2,16 @@ import React, { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { Linking } from "react-native";
 
+import type { ElrondAccount } from "@ledgerhq/live-common/families/elrond/types";
+import type { FieldType } from "../../../../../../../components/DelegationDrawer";
+import type { DrawerPropsType, DrawerStatusType } from "../types";
+
 import DateFromNow from "../../../../../../../components/DateFromNow";
 import LText from "../../../../../../../components/LText";
 import Touchable from "../../../../../../../components/Touchable";
 
 import { constants } from "../../../../../constants";
 import { denominate } from "../../../../../helpers";
-
-import type { ElrondAccount } from "@ledgerhq/live-common/families/elrond/types";
-import type { FieldType } from "../../../../../../../components/DelegationDrawer";
-import type { DrawerPropsType, DrawerStatusType } from "../types";
 
 import styles from "../styles";
 
@@ -127,7 +127,7 @@ const useDrawerItems = (
         ),
       },
     ],
-    [constants.explorer, validator, name, t, account.name, status],
+    [validator, name, t, account.name, type, status],
   );
 
   const delegationItems: FieldType[] = useMemo(
@@ -148,7 +148,7 @@ const useDrawerItems = (
             },
           ]
         : [],
-    [isDelegation, rewards, t, constants.egldLabel],
+    [isDelegation, rewards, t],
   );
 
   const undelegationItems: FieldType[] = useMemo(

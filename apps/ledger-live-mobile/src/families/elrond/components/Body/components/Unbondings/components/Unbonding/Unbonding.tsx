@@ -1,6 +1,6 @@
 // @flow
 
-import React, { useMemo, useCallback } from "react";
+import React, { useCallback } from "react";
 import { View, TouchableOpacity } from "react-native";
 import { useTheme } from "@react-navigation/native";
 import { Text } from "@ledgerhq/native-ui";

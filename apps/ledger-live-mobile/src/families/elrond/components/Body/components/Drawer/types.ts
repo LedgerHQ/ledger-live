@@ -1,6 +1,8 @@
-import type { ElrondAccount } from "@ledgerhq/live-common/families/elrond/types";
+import type {
+  ElrondAccount,
+  ElrondProvider,
+} from "@ledgerhq/live-common/families/elrond/types";
 import type BigNumber from "bignumber.js";
-import type { ValidatorType } from "../../../../types";
 
 export interface DrawerPropsType {
   onClose: () => void;
@@ -8,7 +10,7 @@ export interface DrawerPropsType {
   data: {
     type: string;
     amount: string | BigNumber;
-    validator: ValidatorType;
+    validator: ElrondProvider;
     claimableRewards?: string | BigNumber;
     seconds?: number;
   };

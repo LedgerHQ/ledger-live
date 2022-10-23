@@ -243,6 +243,7 @@ export const ScreenName = {
   // elrond
   ElrondDelegationStarted: "ElrondDelegationStarted",
   ElrondDelegationValidator: "ElrondDelegationValidator",
+  ElrondDelegationValidatorList: "ElrondDelegationValidatorList",
   ElrondDelegationAmount: "ElrondDelegationAmount",
   ElrondDelegationSelectDevice: "ElrondDelegationSelectDevice",
   ElrondDelegationConnectDevice: "ElrondDelegationConnectDevice",

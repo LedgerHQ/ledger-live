@@ -15,16 +15,20 @@ import {
 } from "../../../../../navigation/navigatorConfig";
 import { ScreenName } from "../../../../../const";
 
-import PickValidator from "./1-Pick-Validator";
-import PickMethod from "./2-Pick-Method";
-import ValidationError from "./3-Validation-Error";
-import ValidationSuccess from "./4-Validation-Success";
+import PickValidator from "./components/PickValidator";
+import PickMethod from "./components/PickMethod";
+import ValidationError from "./components/ValidationError";
+import ValidationSuccess from "./components/ValidationSuccess";
 
 const Stack = createStackNavigator();
 const totalSteps = "3";
 const options = {
   headerShown: false,
 };
+
+/*
+ * Handle the component declaration.
+ */
 
 const Claim = () => {
   const { t } = useTranslation();
@@ -34,6 +38,10 @@ const Claim = () => {
     () => getStackNavigatorConfig(colors, true),
     [colors],
   );
+
+  /*
+   * Create a memoized list of all the stacks and their specific parameters.
+   */
 
   const stacks = useMemo(
     () => [
@@ -121,6 +129,10 @@ const Claim = () => {
     ],
     [],
   );
+
+  /*
+   * Return the rendered component.
+   */
 
   return (
     <Stack.Navigator

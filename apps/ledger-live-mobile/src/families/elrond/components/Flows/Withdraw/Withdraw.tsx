@@ -13,15 +13,19 @@ import WithdrawConnectDevice from "../../../../../screens/ConnectDevice";
 import { getStackNavigatorConfig } from "../../../../../navigation/navigatorConfig";
 import { ScreenName } from "../../../../../const";
 
-import WithdrawFunds from "./1-Withdraw-Funds";
-import ValidationError from "./2-Validation-Error";
-import ValidationSuccess from "./3-Validation-Success";
+import WithdrawFunds from "./components/WithdrawFunds";
+import ValidationError from "./components/ValidationError";
+import ValidationSuccess from "./components/ValidationSuccess";
 
 const Stack = createStackNavigator();
 const totalSteps = "3";
 const options = {
   headerShown: false,
 };
+
+/*
+ * Handle the component declaration.
+ */
 
 const Withdraw = () => {
   const { t } = useTranslation();
@@ -31,6 +35,10 @@ const Withdraw = () => {
     () => getStackNavigatorConfig(colors, true),
     [colors],
   );
+
+  /*
+   * Create a memoized list of all the stacks and their specific parameters.
+   */
 
   const stacks = useMemo(
     () => [
@@ -90,6 +98,10 @@ const Withdraw = () => {
     ],
     [],
   );
+
+  /*
+   * Return the rendered component.
+   */
 
   return (
     <Stack.Navigator

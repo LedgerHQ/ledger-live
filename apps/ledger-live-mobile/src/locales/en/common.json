@@ -4535,6 +4535,9 @@
       "delegate": "Restake",
       "undelegate": "Unstake",
       "reward": "Claim rewards",
+      "commission": "Commission",
+      "iDelegate": "I delegate",
+      "totalStake": "Total stake",
       "stepperHeader": {
         "starter": "Earn rewards",
         "validator": "Delegate assets",

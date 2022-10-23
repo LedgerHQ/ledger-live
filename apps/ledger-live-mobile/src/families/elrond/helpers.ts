@@ -2,7 +2,6 @@
 
 import type { TransactionStatus } from "@ledgerhq/live-common/generated/types";
 import type { ElrondProvider } from "@ledgerhq/live-common/families/elrond/types";
-import { ValidatorType } from "./types";
 
 interface DenominateType {
   input: string;
@@ -135,11 +134,11 @@ const nominate = (input: string, paramDenomination?: number) => {
 };
 
 interface SortedValidatorType {
-  provider: ValidatorType;
+  provider: ElrondProvider;
   sort: number;
 }
 
-const randomizeProviders = (providers: ValidatorType[]) =>
+const randomizeProviders = (providers: ElrondProvider[]) =>
   providers
     .map(provider => ({ provider, sort: Math.random() }))
     .sort(

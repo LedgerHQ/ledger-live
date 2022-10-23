@@ -34,6 +34,28 @@ export type ElrondProvider = {
   maxDelegateAmountAllowed: string;
   apr: string;
   explorerURL: string;
+  address: string;
+  aprValue: number;
+  automaticActivation: boolean;
+  changeableServiceFee: boolean;
+  checkCapOnRedelegate: boolean;
+  createdNonce: number;
+  featured: boolean;
+  numNodes: number;
+  numUsers: number;
+  ownerBelowRequiredBalanceThreshold: boolean;
+  unBondPeriod: number;
+  withDelegationCap: boolean;
+  disabled?: boolean;
+  identity: {
+    key: string;
+    name: string;
+    avatar: string;
+    description: string;
+    location?: string;
+    twitter: string;
+    url: string;
+  };
 };
 
 export type UserUndelegated = {

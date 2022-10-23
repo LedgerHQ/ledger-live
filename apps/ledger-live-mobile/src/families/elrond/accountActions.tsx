@@ -20,18 +20,16 @@ const getActions = (props: getActionsType): getActionsReturnType => {
   const balance = denominate({ input: String(account.spendableBalance) });
   const delegationEnabled = new BigNumber(balance).gt(1);
 
-  const screen =
-    account.elrondResources.delegations.length < 0
-      ? ScreenName.ElrondDelegationValidator
-      : ScreenName.ElrondDelegationStarted;
-
   return [
     {
       id: "stake",
       disabled: !delegationEnabled,
       label: <Trans i18nKey="account.stake" />,
       Icon: Icons.ClaimRewardsMedium,
-      navigationParams: [NavigatorName.ElrondDelegationFlow, { screen }],
+      navigationParams: [
+        NavigatorName.ElrondDelegationFlow,
+        { screen: ScreenName.ElrondDelegationStarted },
+      ],
     },
   ];
 };

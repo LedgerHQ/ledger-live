@@ -19,6 +19,10 @@ const Right = (props: RightPropsType) => {
   const { t } = useTranslation();
   const { onPress, disabled } = props;
 
+  /*
+   * Open and close the modal, conditionally, if there aren't enough funds to delegate.
+   */
+
   const onClose = useCallback(() => setOpen(false), []);
   const onClick = useCallback(
     () => (disabled ? setOpen(true) : onPress()),

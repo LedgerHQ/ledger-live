@@ -47,11 +47,19 @@ const Unbondings = (props: UnbondingsPropsType) => {
           ),
         );
       }, []),
-    [],
+    [delegations],
   );
 
   /*
-   * Return the rendered component.
+   * Should there not be any unbondings available, don't render anything.
+   */
+
+  if (unbondings.length === 0) {
+    return null;
+  }
+
+  /*
+   * Return the rendered component, if unbondings do exist.
    */
 
   return (
