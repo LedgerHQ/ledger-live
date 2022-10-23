@@ -36,7 +36,7 @@ const renderItem = (item: Option) => {
   const label: string = item.data.validator.identity.name || item.data.contract;
   const balance = denominate({
     input: item.data.amount,
-    decimals: 6,
+    decimals: 4,
   });
 
   return (

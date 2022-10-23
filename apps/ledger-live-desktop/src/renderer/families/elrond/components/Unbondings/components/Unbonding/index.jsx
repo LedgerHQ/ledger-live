@@ -33,7 +33,7 @@ const Unbonding = (props: UnbondingType) => {
     () =>
       denominate({
         input: amount,
-        decimals: 6,
+        decimals: 4,
       }),
     [amount],
   );

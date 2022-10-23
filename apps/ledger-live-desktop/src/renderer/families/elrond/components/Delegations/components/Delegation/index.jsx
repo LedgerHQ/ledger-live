@@ -127,7 +127,7 @@ const Delegation = (props: Props) => {
     () =>
       denominate({
         input: userActiveStake,
-        decimals: 6,
+        decimals: 4,
       }),
     [userActiveStake],
   );
@@ -136,7 +136,7 @@ const Delegation = (props: Props) => {
     () =>
       denominate({
         input: claimableRewards,
-        decimals: 6,
+        decimals: 4,
       }),
     [claimableRewards],
   );

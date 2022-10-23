@@ -40,7 +40,7 @@ const StepConfirmation = (props: StepProps) => {
 
     const amount = `${denominate({
       input: String(transaction.amount),
-      decimals: 6,
+      decimals: 4,
     })} ${constants.egldLabel}`;
 
     return (

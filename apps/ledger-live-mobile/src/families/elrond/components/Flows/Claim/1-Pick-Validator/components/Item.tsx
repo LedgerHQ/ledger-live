@@ -10,6 +10,7 @@ import CurrencyUnitValue from "../../../../../../../components/CurrencyUnitValue
 import ArrowRight from "../../../../../../../icons/ArrowRight";
 import Circle from "../../../../../../../components/Circle";
 import LedgerLogo from "../../../../../../../icons/LiveLogo";
+import { ledger } from "../../../../../constants";
 
 import type { ItemPropsType } from "./types";
 
@@ -36,7 +37,7 @@ const Item = (props: ItemPropsType) => {
     >
       <View style={styles.iconWrapper}>
         <Circle crop={true} size={32}>
-          {false ? (
+          {ledger === contract ? (
             <LedgerLogo size={32 * 0.7} color={colors.text} />
           ) : (
             <FirstLetterIcon

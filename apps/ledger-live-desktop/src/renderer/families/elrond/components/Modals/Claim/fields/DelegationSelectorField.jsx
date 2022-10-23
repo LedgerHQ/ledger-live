@@ -37,7 +37,7 @@ const renderItem = (item: Option) => {
   const name: string = item.data.identity.name || item.data.contract;
   const balance = denominate({
     input: item.data.delegation.claimableRewards,
-    decimals: 6,
+    decimals: 4,
   });
 
   return (

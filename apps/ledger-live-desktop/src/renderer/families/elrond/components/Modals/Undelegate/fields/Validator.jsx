@@ -28,7 +28,7 @@ interface Props {
 
 const Item = (item: Option) => {
   const label: string = item.data.validator.identity.name || item.data.validator.contract;
-  const amount = useMemo(() => denominate({ input: item.data.userActiveStake, decimals: 6 }), [
+  const amount = useMemo(() => denominate({ input: item.data.userActiveStake, decimals: 4 }), [
     item.data.userActiveStake,
   ]);
 

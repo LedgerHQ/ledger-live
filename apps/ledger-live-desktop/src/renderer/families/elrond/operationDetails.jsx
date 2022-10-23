@@ -81,7 +81,7 @@ const OperationDetailsDelegation = (props: OperationDetailsDelegationProps) => {
               <Trans
                 i18nKey="operationDetails.extra.votesAddress"
                 values={{
-                  votes: `${denominate({ input: operation.extra.amount, decimals: 6 })} ${
+                  votes: `${denominate({ input: operation.extra.amount, decimals: 4 })} ${
                     constants.egldLabel
                   }`,
                   name: formattedValidator

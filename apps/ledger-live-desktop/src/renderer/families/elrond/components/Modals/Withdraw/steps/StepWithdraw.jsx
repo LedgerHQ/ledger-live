@@ -64,7 +64,7 @@ const StepWithdraw = (props: StepProps) => {
               validator: name,
               amount: `${denominate({
                 input: String(transaction.amount),
-                decimals: 6,
+                decimals: 4,
               })} ${constants.egldLabel}`,
             }}
           >

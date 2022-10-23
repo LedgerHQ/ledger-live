@@ -106,7 +106,7 @@ const Summary = (props: Props) => {
 
           <Amount>
             <Discreet>
-              {denominate({ input: balance.amount, decimals: 6 })} {constants.egldLabel}
+              {denominate({ input: balance.amount, decimals: 4 })} {constants.egldLabel}
             </Discreet>
           </Amount>
         </Balance>

@@ -1,4 +1,6 @@
 const type = "mainnet";
+
+const ledger = "erd1qqqqqqqqqqqqqqqpqqqqqqqqqqqqqqqqqqqqqqqqqqqqq9lllllsf3mp40";
 const constants = {
   devnet: {
     explorer: "https://devnet-explorer.elrond.com",
@@ -20,4 +22,4 @@ const constants = {
   },
 }[type];
 
-export { constants };
+export { constants, ledger };

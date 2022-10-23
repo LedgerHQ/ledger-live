@@ -81,7 +81,7 @@ const StepClaimRewards = (props: StepProps) => {
             values={{
               amount: `${denominate({
                 input: String(transaction.amount),
-                decimals: 6,
+                decimals: 4,
               })} ${constants.egldLabel}`,
             }}
           >

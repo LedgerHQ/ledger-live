@@ -113,12 +113,12 @@ const nominate = (input: string, paramDenomination?: number) => {
   return transformed;
 };
 
-interface SortedValidatorType {
+export interface SortedValidatorType {
   provider: ValidatorType;
   sort: number;
 }
 
-const randomizeProviders = (providers: Array<ValidatorType>): Array<ValidatorType> =>
+const randomizeProviders = (providers: ValidatorType[]): ValidatorType[] =>
   providers
     .map((provider: ProviderType) => ({ provider, sort: Math.random() }))
     .sort((alpha: SortedValidatorType, beta: SortedValidatorType) => alpha.sort - beta.sort)

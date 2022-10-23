@@ -1,8 +1,10 @@
+import { ReactNode } from "react";
+
 import type { NavigationProp, ParamListBase } from "@react-navigation/native";
 import type { ElrondAccount } from "@ledgerhq/live-common/families/elrond/types";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
 
-interface PickMethodPropsType {
+export interface PickMethodPropsType {
   navigation: NavigationProp<ParamListBase>;
   route: {
     params: {
@@ -15,4 +17,12 @@ interface PickMethodPropsType {
   };
 }
 
-export type { PickMethodPropsType };
+export interface OptionType {
+  value: string;
+  label: ReactNode;
+}
+
+export interface ModalType {
+  title: ReactNode;
+  description: ReactNode;
+}

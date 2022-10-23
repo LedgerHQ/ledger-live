@@ -1,6 +1,6 @@
 import type { NavigationProp, ParamListBase } from "@react-navigation/native";
 
-interface EarnRewardsPropsType {
+export interface EarnRewardsPropsType {
   navigation: NavigationProp<ParamListBase>;
   route: {
     params: {
@@ -8,5 +8,3 @@ interface EarnRewardsPropsType {
     };
   };
 }
-
-export type { EarnRewardsPropsType };

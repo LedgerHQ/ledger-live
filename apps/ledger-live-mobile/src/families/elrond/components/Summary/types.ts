@@ -1,11 +1,11 @@
-import { BigNumber } from "bignumber.js";
+import type { BigNumber } from "bignumber.js";
 import type { ElrondAccount } from "@ledgerhq/live-common/families/elrond/types";
 
-interface SummaryPropsType {
+export interface SummaryPropsType {
   account: ElrondAccount;
 }
 
-interface ItemType {
+export interface ItemType {
   title: string;
   show: boolean;
   value: BigNumber | string;
@@ -14,5 +14,3 @@ interface ItemType {
     description: string;
   };
 }
-
-export type { SummaryPropsType, ItemType };

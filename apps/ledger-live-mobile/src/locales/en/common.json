@@ -1134,7 +1134,7 @@
       },
       "RestartModal": {
         "title": "Restart required",
-        "paragraph": "The selected language requires the application to restart. Are you sure you want to continue?",
+        "paragraph": "The selected language requires the application to restart. Are you sure you want to continue?"
       }
     },
     "stepSelectDevice": {
@@ -4597,7 +4597,8 @@
         "active": "Active",
         "inactive": "Inactive",
         "completionDate": "Completion date",
-        "redelegatedFrom": "Redelegated from"
+        "redelegatedFrom": "Redelegated from",
+        "completionDateHit": "Completed"
       }
     },
     "claimRewards": {
@@ -4625,8 +4626,8 @@
           },
           "verification": {
             "success": {
-              "title": "You have successfully claimed your rewards. They were added to your available balance.",
-              "titleCompound": "Your rewards were staked to the same Staking Provider.",
+              "claimRewardsSuccess": "You have successfully claimed your rewards. They were added to your available balance.",
+              "reDelegateRewardsSuccess": "Your rewards were staked to the same Staking Provider.",
               "text": "Your account balance will be updated when the network confirms the transaction.",
               "cta": "View details"
             },
@@ -4686,7 +4687,6 @@
           "verification": {
             "success": {
               "title": "You have successfully claimed your rewards. They were added to your available balance.",
-              "titleCompound": "Your rewards were staked to the Staking Provider.",
               "text": "Your account balance will be updated when the network confirms the transaction.",
               "cta": "View details"
             },

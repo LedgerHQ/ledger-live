@@ -2,25 +2,15 @@
 
 export interface ValidatorType {
   address: string;
-  apr: string;
   aprValue: number;
   automaticActivation: boolean;
   changeableServiceFee: boolean;
   checkCapOnRedelegate: boolean;
-  contract: string;
   createdNonce: number;
-  explorerURL: string;
   featured: boolean;
-  initialOwnerFunds: string;
-  maxDelegateAmountAllowed: string;
-  maxDelegationCap: string;
   numNodes: number;
   numUsers: number;
-  owner: string;
   ownerBelowRequiredBalanceThreshold: boolean;
-  serviceFee: string;
-  totalActiveStake: string;
-  totalUnStaked: string;
   unBondPeriod: number;
   withDelegationCap: boolean;
   disabled?: boolean;
@@ -38,7 +28,6 @@ export interface ValidatorType {
 export interface UnbondingType {
   amount: string;
   seconds: number;
-  contract?: string;
   validator?: ValidatorType;
 }
 

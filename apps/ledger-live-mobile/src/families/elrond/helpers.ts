@@ -1,6 +1,8 @@
 // @flow
 
-import type { ValidatorType } from "./types";
+import type { TransactionStatus } from "@ledgerhq/live-common/generated/types";
+import type { ElrondProvider } from "@ledgerhq/live-common/families/elrond/types";
+import { ValidatorType } from "./types";
 
 interface DenominateType {
   input: string;
@@ -146,4 +148,20 @@ const randomizeProviders = (providers: ValidatorType[]) =>
     )
     .map((item: SortedValidatorType) => item.provider);
 
-export { nominate, denominate, randomizeProviders };
+interface handleTransactionStatusType {
+  warning: Error | false;
+  error: Error | false;
+}
+
+const handleTransactionStatus = (
+  status: TransactionStatus,
+): handleTransactionStatusType => {
+  const [[warning], [error]] = [
+    Object.keys(status.warnings || {}),
+    Object.keys(status.errors || {}),
+  ];
+
+  return { warning: status.warnings[warning], error: status.errors[error] };
+};
+
+export { nominate, denominate, randomizeProviders, handleTransactionStatus };

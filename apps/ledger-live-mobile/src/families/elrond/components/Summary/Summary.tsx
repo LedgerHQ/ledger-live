@@ -5,15 +5,15 @@ import { ScrollView } from "react-native";
 import { useTranslation } from "react-i18next";
 import { BigNumber } from "bignumber.js";
 
-import type { DelegationType } from "../../types";
-
 import InfoModal from "../../../../modals/Info";
 import InfoItem from "../../../../components/BalanceSummaryInfoItem";
 
 import { denominate } from "../../helpers";
 import { constants } from "../../constants";
 
+import type { DelegationType } from "../../types";
 import type { SummaryPropsType, ItemType } from "./types";
+
 import styles from "./styles";
 
 /*
@@ -58,7 +58,7 @@ const Summary = (props: SummaryPropsType) => {
    */
 
   const total = useCallback(
-    (key: string): BigNumber =>
+    (key: string) =>
       delegationsResources.reduce(
         (total: BigNumber, delegation) => total.plus(delegation[key]),
         new BigNumber(0),
@@ -74,7 +74,7 @@ const Summary = (props: SummaryPropsType) => {
     (items: ItemType[]) =>
       items.reduce((total: ItemType[], current: ItemType) => {
         const item: ItemType = Object.assign(current, {
-          value: denominate({ input: String(current.value), decimals: 6 }),
+          value: denominate({ input: String(current.value), decimals: 4 }),
           modal: {
             description: t(current.modal.description),
             title: t(current.modal.description),

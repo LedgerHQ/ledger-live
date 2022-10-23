@@ -1,72 +1,44 @@
 // @flow
-import React, { useCallback, useState } from "react";
+
+import React, { useCallback, useMemo, useState } from "react";
 import { View, TouchableOpacity } from "react-native";
 import { useTheme } from "@react-navigation/native";
-import SafeAreaView from "react-native-safe-area-view";
 import { Trans } from "react-i18next";
 import { BigNumber } from "bignumber.js";
-import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import {
   getAccountUnit,
   getMainAccount,
   getAccountCurrency,
 } from "@ledgerhq/live-common/account/index";
+import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
+
+import type { AccountBridge } from "@ledgerhq/types-live";
+import type { Transaction } from "@ledgerhq/live-common/generated/types";
+import type { PickMethodPropsType, OptionType, ModalType } from "./types";
 
 import Button from "../../../../../../components/Button";
 import LText from "../../../../../../components/LText";
-import { ScreenName } from "../../../../../../const";
 import ToggleButton from "../../../../../../components/ToggleButton";
-
 import InfoModal from "../../../../../../modals/Info";
 import Info from "../../../../../../icons/Info";
 import CurrencyUnitValue from "../../../../../../components/CurrencyUnitValue";
 import CounterValue from "../../../../../../components/CounterValue";
 import FirstLetterIcon from "../../../../../../components/FirstLetterIcon";
 import TranslatedError from "../../../../../../components/TranslatedError";
+import { ScreenName } from "../../../../../../const";
 
-import type { AccountBridge } from "@ledgerhq/types-live";
-import type { Transaction } from "@ledgerhq/live-common/generated/types";
-
+import { handleTransactionStatus } from "../../../../helpers";
+import { TransactionMethodEnum } from "./enums";
 import styles from "./styles";
-import { PickMethodPropsType } from "./types";
 
-const options = [
-  {
-    value: "reDelegateRewards",
-    label: (
-      <Trans i18nKey="elrond.claimRewards.flow.steps.method.reDelegateRewards" />
-    ),
-  },
-  {
-    value: "claimRewards",
-    label: (
-      <Trans i18nKey="elrond.claimRewards.flow.steps.method.claimRewards" />
-    ),
-  },
-];
-
-const infoModalData = [
-  {
-    title: (
-      <Trans i18nKey="elrond.claimRewards.flow.steps.method.reDelegateRewards" />
-    ),
-    description: (
-      <Trans i18nKey="elrond.claimRewards.flow.steps.method.reDelegateRewardsTooltip" />
-    ),
-  },
-  {
-    title: (
-      <Trans i18nKey="elrond.claimRewards.flow.steps.method.claimRewards" />
-    ),
-    description: (
-      <Trans i18nKey="elrond.claimRewards.flow.steps.method.claimRewardsTooltip" />
-    ),
-  },
-];
+/*
+ * Handle the component declaration.
+ */
 
 const PickMethod = (props: PickMethodPropsType) => {
   const [modal, setModal] = useState(false);
+  const [mode, setMode] = useState<string>(TransactionMethodEnum.claimRewards);
 
   const { navigation, route } = props;
   const { account, value, name, recipient } = route.params;
@@ -76,6 +48,32 @@ const PickMethod = (props: PickMethodPropsType) => {
   const currency = getAccountCurrency(mainAccount);
   const bridge: AccountBridge<Transaction> = getAccountBridge(account);
   const unit = getAccountUnit(mainAccount);
+  const methods = [
+    TransactionMethodEnum.claimRewards,
+    TransactionMethodEnum.reDelegateRewards,
+  ];
+
+  /*
+   * Initialize the arrays for the modal data and mode options payload.
+   */
+
+  const options: OptionType[] = methods.map(value => ({
+    value,
+    label: <Trans i18nKey={`elrond.claimRewards.flow.steps.method.${value}`} />,
+  }));
+
+  const modals: ModalType[] = methods.map(value => ({
+    title: <Trans i18nKey={`elrond.claimRewards.flow.steps.method.${value}`} />,
+    description: (
+      <Trans
+        i18nKey={`elrond.claimRewards.flow.steps.method.${value}Tooltip`}
+      />
+    ),
+  }));
+
+  /*
+   * If no transaction sent through the parameters of the navigation, instantiate a new one, otherwise, return the old one.
+   */
 
   const { transaction, status, updateTransaction } = useBridgeTransaction(
     () => {
@@ -92,7 +90,7 @@ const PickMethod = (props: PickMethodPropsType) => {
           bridge.createTransaction(mainAccount),
           {
             recipient,
-            mode: "claimRewards",
+            mode: TransactionMethodEnum.claimRewards,
             amount: new BigNumber(value),
           },
         ),
@@ -100,15 +98,36 @@ const PickMethod = (props: PickMethodPropsType) => {
     },
   );
 
+  /*
+   * Handle the possible warnings and errors of the transaction status and return the first of each.
+   */
+
+  const { warning, error } = useMemo(
+    () => handleTransactionStatus(status),
+    [status],
+  );
+
+  /*
+   * Callback called when navigating to the next screen of the current flow.
+   */
+
   const onNext = useCallback(() => {
-    navigation.navigate(ScreenName.ElrondClaimRewardsSelectDevice, {
-      transaction,
-    });
+    navigation.navigate(
+      ScreenName.ElrondClaimRewardsSelectDevice,
+      Object.assign(route.params, {
+        transaction,
+      }),
+    );
   }, [navigation, transaction, route]);
+
+  /*
+   * Handle the mode change callback. Update the state and the transaction mode to either "claimRewards" or "reDelegateRewards".
+   */
 
   const onChangeMode = useCallback(
     (mode: string) => {
       if (transaction) {
+        setMode(mode);
         updateTransaction(() =>
           bridge.updateTransaction(transaction, { mode }),
         );
@@ -117,31 +136,21 @@ const PickMethod = (props: PickMethodPropsType) => {
     [transaction, bridge, updateTransaction],
   );
 
-  const error =
-    status.errors &&
-    Object.keys(status.errors).length > 0 &&
-    Object.values(status.errors)[0];
-
-  const warning =
-    status.warnings &&
-    Object.keys(status.warnings).length > 0 &&
-    Object.values(status.warnings)[0];
+  /*
+   * Return the rendered component.
+   */
 
   return (
-    <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]}>
+    <View style={[styles.root, { backgroundColor: colors.background }]}>
       <View style={styles.main}>
-        <ToggleButton
-          value={transaction ? transaction.mode : ""}
-          options={options}
-          onChange={onChangeMode}
-        />
+        <ToggleButton value={mode} options={options} onChange={onChangeMode} />
 
         <TouchableOpacity onPress={() => setModal(true)} style={styles.info}>
           <LText semiBold={true} style={styles.infoLabel} color="grey">
             <Trans i18nKey="elrond.claimRewards.flow.steps.method.compoundOrCashIn" />
           </LText>
 
-          <Info size={16} color={colors.grey} />
+          <Info size={16} color={colors.background} />
         </TouchableOpacity>
 
         <View style={styles.spacer} />
@@ -152,13 +161,17 @@ const PickMethod = (props: PickMethodPropsType) => {
           </LText>
 
           <LText semiBold={true} style={[styles.label, styles.value]}>
-            <CurrencyUnitValue unit={unit} value={value} showCode={true} />
+            <CurrencyUnitValue
+              unit={unit}
+              value={new BigNumber(value)}
+              showCode={true}
+            />
           </LText>
 
           <LText semiBold={true} style={styles.subLabel} color="grey">
             <CounterValue
               currency={currency}
-              value={value}
+              value={new BigNumber(value)}
               withPlaceholder={true}
             />
           </LText>
@@ -224,11 +237,11 @@ const PickMethod = (props: PickMethodPropsType) => {
       </View>
 
       <InfoModal
-        isOpened={!!modal}
+        isOpened={modal}
         onClose={() => setModal(false)}
-        data={infoModalData}
+        data={modals}
       />
-    </SafeAreaView>
+    </View>
   );
 };
 

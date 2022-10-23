@@ -22,7 +22,7 @@ import styles from "./styles";
 
 const PickValidator = (props: PickValidatorPropsType) => {
   const { navigation, route } = props;
-  const { account } = route.params;
+  const { account, delegations } = route.params;
   const { colors } = useTheme();
 
   const mainAccount = getMainAccount(account, undefined);
@@ -45,12 +45,12 @@ const PickValidator = (props: PickValidatorPropsType) => {
    * Filter the displayed delegations to only include those with rewards bigger than zero.
    */
 
-  const delegations = useMemo(
+  const data = useMemo(
     () =>
-      route.params.delegations.filter(delegation =>
+      delegations.filter(delegation =>
         new BigNumber(delegation.claimableRewards).gt(0),
       ),
-    [route.params.delegations],
+    [delegations],
   );
 
   /*
@@ -84,7 +84,7 @@ const PickValidator = (props: PickValidatorPropsType) => {
       <View style={styles.main}>
         <FlatList
           style={styles.list}
-          data={delegations}
+          data={data}
           keyExtractor={delegation =>
             `${delegation.address}-${delegation.userActiveStake}-${delegation.claimableRewards}`
           }
