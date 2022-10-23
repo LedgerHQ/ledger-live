@@ -365,7 +365,7 @@ export default function Content({
                   showCode
                   disableRounding={true}
                   date={operation.date}
-                  subMagnitude={1}
+                  subMagnitude={5}
                   currency={parentCurrency}
                   value={operation.fee}
                 />

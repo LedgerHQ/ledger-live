@@ -189,6 +189,7 @@ export default class StepSummary extends PureComponent<StepProps> {
                 unit={feesUnit}
                 alwaysShowValue
                 val={estimatedFees}
+                subMagnitude={5}
                 fontSize={4}
                 inline
                 showCode
@@ -200,6 +201,7 @@ export default class StepSummary extends PureComponent<StepProps> {
                   currency={feesCurrency}
                   value={estimatedFees}
                   alwaysShowSign={false}
+                  subMagnitude={5}
                   alwaysShowValue
                 />
               </Box>

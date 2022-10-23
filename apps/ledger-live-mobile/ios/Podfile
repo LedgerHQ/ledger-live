@@ -59,11 +59,23 @@ target 'ledgerlivemobile' do
   # Note that if you have use_frameworks! enabled, Flipper will not work and
   # you should disable these next few lines.
   use_flipper!({ 'Flipper' => flipperkit_version }) # should match the version of your Flipper client app
-  
+
+
   post_install do |installer|
     react_native_post_install(installer)
     flipper_post_install(installer)
     __apply_Xcode_12_5_M1_post_install_workaround(installer)
+
+ # This is necessary for Xcode 14, because it signs resource bundles by default
+    # when building for devices.
+    installer.target_installation_results.pod_target_installation_results
+      .each do |pod_name, target_installation_result|
+      target_installation_result.resource_bundle_targets.each do |resource_bundle_target|
+        resource_bundle_target.build_configurations.each do |config|
+          config.build_settings['CODE_SIGNING_ALLOWED'] = 'NO'
+        end
+      end
+    end
 
     # Workaround build error for classic quoted imports
     # See: https://github.com/expo/expo/issues/15622#issuecomment-997225774

@@ -28,6 +28,7 @@ import {
   fromSolanaResourcesRaw,
   fromCeloResourcesRaw,
   fromNFTRaw,
+  fromIconResourcesRaw,
   toTronResourcesRaw,
   toCosmosResourcesRaw,
   toAlgorandResourcesRaw,
@@ -54,6 +55,7 @@ import { SolanaAccount, SolanaAccountRaw } from "./families/solana/types";
 import { TezosAccount, TezosAccountRaw } from "./families/tezos/types";
 import { TronAccount, TronAccountRaw } from "./families/tron/types";
 import { CeloAccount, CeloAccountRaw } from "./families/celo/types";
+import { IconAccount, IconAccountRaw } from "./families/icon/types";
 
 // aim to build operations with the minimal diff & call to coin implementation possible
 export async function minimalOperationsBuilder<CO>(
@@ -488,6 +490,21 @@ export function patchAccount(
       ) {
         (next as SolanaAccount).solanaResources = fromSolanaResourcesRaw(
           solanaUpdatedRaw.solanaResources
+        );
+        changed = true;
+      }
+      break;
+    }
+    case "icon": {
+      const iconAcc = account as IconAccount;
+      const iconUpdatedRaw = updatedRaw as IconAccountRaw;
+
+      if (
+        iconUpdatedRaw.iconResources &&
+        areSameResources(iconAcc.iconResources, iconUpdatedRaw.iconResources)
+      ) {
+        (next as IconAccount).iconResources = fromIconResourcesRaw(
+          iconUpdatedRaw.iconResources
         );
         changed = true;
       }

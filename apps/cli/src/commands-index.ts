@@ -1,8 +1,8 @@
 import app from "./commands/app";
-import appUninstallAll from "./commands/appUninstallAll";
 import appsCheckAllAppVersions from "./commands/appsCheckAllAppVersions";
 import appsInstallAll from "./commands/appsInstallAll";
 import appsUpdateTestAll from "./commands/appsUpdateTestAll";
+import appUninstallAll from "./commands/appUninstallAll";
 import balanceHistory from "./commands/balanceHistory";
 import bot from "./commands/bot";
 import botPortfolio from "./commands/botPortfolio";
@@ -54,10 +54,10 @@ import walletconnect from "./commands/walletconnect";
 
 export default {
   app,
-  appUninstallAll,
   appsCheckAllAppVersions,
   appsInstallAll,
   appsUpdateTestAll,
+  appUninstallAll,
   balanceHistory,
   bot,
   botPortfolio,

@@ -9,6 +9,7 @@ import ethereum from "../families/ethereum/specs";
 import evm from "../families/evm/specs";
 import filecoin from "../families/filecoin/specs";
 import hedera from "../families/hedera/specs";
+import icon from "../families/icon/specs";
 import osmosis from "../families/osmosis/specs";
 import polkadot from "../families/polkadot/specs";
 import ripple from "../families/ripple/specs";
@@ -29,6 +30,7 @@ export default {
   evm,
   filecoin,
   hedera,
+  icon,
   osmosis,
   polkadot,
   ripple,

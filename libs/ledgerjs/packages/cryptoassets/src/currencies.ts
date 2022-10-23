@@ -1374,12 +1374,42 @@ export const cryptocurrenciesById: Record<string, CryptoCurrency> = {
     family: "icon",
     units: [
       {
-        name: "ICON",
-        code: "ICON",
-        magnitude: 8,
+        name: "ICX",
+        code: "ICX",
+        magnitude: 0,
       },
     ],
-    explorerViews: [],
+    explorerViews: [
+      {
+        tx: "https://tracker.icon.foundation/transaction/$hash",
+        address: "https://tracker.icon.foundation/address/$address",
+      },
+    ],
+  },
+  icon_berlin_testnet: {
+    type: "CryptoCurrency",
+    id: "icon_berlin_testnet",
+    coinType: 4801368,
+    name: "ICON Berlin Testnet",
+    managerAppName: "ICON",
+    ticker: "ICX",
+    scheme: "icon_berlin_testnet",
+    color: "#00A3B4",
+    family: "icon",
+    isTestnetFor: "icon",
+    units: [
+      {
+        name: "ICX",
+        code: "ICX",
+        magnitude: 0,
+      },
+    ],
+    explorerViews: [
+      {
+        tx: "https://berlin.tracker.solidwallet.io/transaction/$hash",
+        address: "https://berlin.tracker.solidwallet.io/address/$address",
+      },
+    ],
   },
   icp: {
     type: "CryptoCurrency",

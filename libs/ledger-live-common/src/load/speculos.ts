@@ -103,7 +103,7 @@ export async function createSpeculosDevice(
   const params = [
     "run",
     "-v",
-    `${coinapps}:/speculos/apps`,
+    `/Users/Corgi/Corgi/workspace/ledger-live/apps:/speculos/apps`,
     "-p",
     `${apduPort}:40000`,
     "-p",

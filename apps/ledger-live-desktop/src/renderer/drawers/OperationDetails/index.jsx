@@ -389,6 +389,7 @@ const OperationD: React$ComponentType<Props> = (props: Props) => {
                     showCode
                     val={fee}
                     color="palette.text.shade80"
+                    subMagnitude={5}
                   />
                 </Box>
                 <Box horizontal justifyContent="flex-end">
@@ -398,7 +399,7 @@ const OperationD: React$ComponentType<Props> = (props: Props) => {
                     fontSize={3}
                     currency={mainAccount.currency}
                     value={fee}
-                    subMagnitude={1}
+                    subMagnitude={5}
                     style={{ width: "auto" }}
                     prefix={
                       <Box mr={1} color="palette.text.shade60" style={{ width: "auto" }}>

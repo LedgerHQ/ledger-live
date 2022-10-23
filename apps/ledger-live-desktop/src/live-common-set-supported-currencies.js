@@ -50,4 +50,6 @@ setSupportedCurrencies([
   "moonbeam",
   "songbird",
   "flare",
+  "icon",
+  "icon_berlin_testnet",
 ]);

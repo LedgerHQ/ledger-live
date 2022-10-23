@@ -112,6 +112,26 @@ const envDefinitions = {
     def: "https://elrond.coin.ledger.com",
     desc: "Elrond API url",
   },
+  ICON_RPC_ENDPOINT: {
+    parser: stringParser,
+    def: "https://ctz.solidwallet.io/api/v3",
+    desc: "ICON API url",
+  },
+  ICON_TESTNET_RPC_ENDPOINT: {
+    parser: stringParser,
+    def: "https://berlin.net.solidwallet.io/api/v3",
+    desc: "ICON Berlin Testnet API url",
+  },
+  ICON_API_ENDPOINT: {
+    parser: stringParser,
+    def: "https://main.tracker.solidwallet.io/v3",
+    desc: "ICON API url",
+  },
+  ICON_TESTNET_API_ENDPOINT: {
+    parser: stringParser,
+    def: "https://berlin.tracker.solidwallet.io/v3",
+    desc: "ICON Berlin Testnet API url",
+  },
   API_STELLAR_HORIZON: {
     parser: stringParser,
     def: "https://stellar.coin.ledger.com",
@@ -208,7 +228,7 @@ const envDefinitions = {
     desc: "Cardano API url",
   },
   COINAPPS: {
-    def: "",
+    def: "apps",
     parser: stringParser,
     desc: "(dev feature) defines the folder for speculos mode that contains Nano apps binaries (.elf) in a specific structure: <device>/<firmware>/<appName>/app_<appVersion>.elf",
   },
@@ -263,7 +283,7 @@ const envDefinitions = {
     desc: "enable a mechanism that send a 0x00 apdu to force device to awake from its 'Processing' UI state",
   },
   DEVICE_PROXY_URL: {
-    def: "",
+    def: "ws://localhost:8435",
     parser: stringParser,
     desc: "enable a proxy to use instead of a physical device",
   },
@@ -293,7 +313,7 @@ const envDefinitions = {
     desc: "enable experimental support of Bluetooth",
   },
   EXPERIMENTAL_CURRENCIES: {
-    def: "",
+    def: "icon",
     parser: stringParser,
     desc: "enable experimental support of currencies (comma separated)",
   },
@@ -507,7 +527,7 @@ const envDefinitions = {
     desc: "enable searching accounts in exotic derivation paths",
   },
   SEED: {
-    def: "",
+    def: "inquiry february fall bacon family anchor possible cricket ankle ordinary promote wonder vessel vendor trophy angle now federal trash thrive equip adult various foot",
     parser: stringParser,
     desc: "(dev feature) seed to be used by speculos (device simulator)",
   },

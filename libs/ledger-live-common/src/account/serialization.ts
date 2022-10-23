@@ -60,6 +60,10 @@ import {
   fromCardanoResourceRaw,
   toCardanoResourceRaw,
 } from "../families/cardano/serialization";
+import {
+  toIconResourcesRaw,
+  fromIconResourcesRaw,
+} from "../families/icon/serialization";
 import type {
   Account,
   AccountLike,
@@ -96,6 +100,7 @@ import {
 } from "../families/crypto_org/types";
 import { SolanaAccount, SolanaAccountRaw } from "../families/solana/types";
 import { TezosAccount, TezosAccountRaw } from "../families/tezos/types";
+import { IconAccount, IconAccountRaw } from "../families/icon/types";
 import { CeloAccount, CeloAccountRaw } from "../families/celo/types";
 
 export { toCosmosResourcesRaw, fromCosmosResourcesRaw };
@@ -108,6 +113,7 @@ export { toCryptoOrgResourcesRaw, fromCryptoOrgResourcesRaw };
 export { toCardanoResourceRaw, fromCardanoResourceRaw };
 export { toSolanaResourcesRaw, fromSolanaResourcesRaw };
 export { toCeloResourcesRaw, fromCeloResourcesRaw };
+export { toIconResourcesRaw, fromIconResourcesRaw };
 
 export function toBalanceHistoryRaw(b: BalanceHistory): BalanceHistoryRaw {
   return b.map(({ date, value }) => [date.toISOString(), value.toString()]);
@@ -869,6 +875,14 @@ export function fromAccountRaw(rawAccount: AccountRaw): Account {
           fromCeloResourcesRaw(celoResourcesRaw);
       break;
     }
+    case "icon": {
+      const iconResourcesRaw = (rawAccount as IconAccountRaw).iconResources;
+
+      if (iconResourcesRaw)
+        (res as IconAccount).iconResources =
+          fromIconResourcesRaw(iconResourcesRaw);
+      break;
+    }
   }
 
   if (swapHistory) {
@@ -1053,6 +1067,14 @@ export function toAccountRaw(account: Account): AccountRaw {
       if (celoAccount.celoResources)
         (res as CeloAccountRaw).celoResources = toCeloResourcesRaw(
           celoAccount.celoResources
+        );
+      break;
+    }
+    case "icon": {
+      const iconAccount = account as IconAccount;
+      if (iconAccount.iconResources)
+        (res as IconAccountRaw).iconResources = toIconResourcesRaw(
+          iconAccount.iconResources
         );
       break;
     }
