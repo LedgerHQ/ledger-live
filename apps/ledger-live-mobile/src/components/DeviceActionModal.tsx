@@ -57,8 +57,7 @@ export default function DeviceActionModal<Req, Stt, Res>({
     >
       {onResult && result
         ? null
-        : device &&
-          request && (
+        : device && (
             <Flex alignItems="center">
               <DeviceActionContainer marginBottom={showAlert ? "16px" : 0}>
                 <DeviceAction
@@ -67,7 +66,7 @@ export default function DeviceActionModal<Req, Stt, Res>({
                   }
                   device={device}
                   onError={onError}
-                  request={request}
+                  request={request!}
                   onResult={onResult ? p => setResult(p) : undefined}
                   renderOnResult={renderOnResult}
                   onSelectDeviceLink={onSelectDeviceLink}
