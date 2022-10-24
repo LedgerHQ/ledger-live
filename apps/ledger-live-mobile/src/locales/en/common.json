@@ -410,11 +410,8 @@
       "title": "Sorry, this app is needed",
       "description": "Uninstall the Bitcoin or Ethereum app last."
     },
-    "MaxBaseFeeHigh": {
-      "title": "Your max base fee is overestimated. If applicable, you will be refunded by the network"
-    },
-    "MaxBaseFeeLow": {
-      "title": "Max base fee is too low. Your transaction might stay pending for a while"
+    "MaxFeeLow": {
+      "title": "Your max fee is too low. Your transaction might stay pending for a while"
     },
     "NetworkDown": {
       "title": "Sorry, internet seems to be down",
@@ -3236,7 +3233,7 @@
       "infoTotalDesc": "Includes transaction amount and the selected network fees",
       "gasLimit": "Gas limit",
       "gasPrice": "Gas price",
-      "maxBaseFee" : "Max base fee",
+      "maxFee" : "Max fee",
       "priorityFee" : "Priority fee",
       "nextBlock": "Next block: {{nextBaseFee}}",
       "suggestedPriorityFee": "Suggested: {{lowPriorityFee}} - {{highPriorityFee}}",

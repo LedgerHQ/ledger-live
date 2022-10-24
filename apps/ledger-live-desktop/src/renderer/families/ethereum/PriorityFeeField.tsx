@@ -1,23 +1,26 @@
-// @flow
 import React, { useCallback, useMemo } from "react";
-import { BigNumber } from "bignumber.js";
 import invariant from "invariant";
+import BigNumber from "bignumber.js";
 import styled from "styled-components";
 import { useTranslation } from "react-i18next";
-import type { Account, TransactionStatus } from "@ledgerhq/live-common/types/index";
-import type { Transaction } from "@ledgerhq/live-common/families/ethereum/types";
-import Label from "~/renderer/components/Label";
-import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
-import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
-import FeeSliderField from "~/renderer/components/FeeSliderField";
-import InputCurrency from "~/renderer/components/InputCurrency";
+import {
+  Transaction as EthereumTransaction,
+  TransactionStatus,
+} from "@ledgerhq/live-common/families/ethereum/types";
 import { inferDynamicRange } from "@ledgerhq/live-common/range";
-import Box from "~/renderer/components/Box";
+import { getMainAccount } from "@ledgerhq/live-common/account/index";
+import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
+import { Result } from "@ledgerhq/live-common/bridge/useBridgeTransaction";
+import { Account, AccountBridge, AccountLike } from "@ledgerhq/types-live";
+import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import LabelWithExternalIcon from "~/renderer/components/LabelWithExternalIcon";
-import { urls } from "~/config/urls";
-import { openURL } from "~/renderer/linking";
-import { track } from "~/renderer/analytics/segment";
 import TranslatedError from "~/renderer/components/TranslatedError";
+import InputCurrency from "~/renderer/components/InputCurrency";
+import { track } from "~/renderer/analytics/segment";
+import Label from "~/renderer/components/Label";
+import { openURL } from "~/renderer/linking";
+import Box from "~/renderer/components/Box";
+import { urls } from "~/config/urls";
 
 const ErrorContainer = styled(Box)`
   margin-top: 0px;
@@ -27,8 +30,8 @@ const ErrorContainer = styled(Box)`
   will-change: max-height;
   max-height: ${p => (p.hasError ? 60 : 0)}px;
   min-height: ${p => (p.hasError ? 22 : 0)}px;
-  `;
-  
+`;
+
 const ErrorDisplay = styled(Box)`
   color: ${p => p.theme.colors.pearl};
 `;
@@ -38,50 +41,49 @@ const WarningDisplay = styled(Box)`
 `;
 
 type Props = {
-  account: Account,
-  transaction: Transaction,
-  status: TransactionStatus,
-  updateTransaction: (updater: any) => void,
+  account: AccountLike;
+  parentAccount: Account | null | undefined;
+  transaction: EthereumTransaction;
+  status: TransactionStatus;
+  updateTransaction: Result<EthereumTransaction>["updateTransaction"];
 };
 
-const fallbackMaxPriorityFeePerGas = inferDynamicRange(BigNumber(10e9));
+const fallbackMaxPriorityFeePerGas = inferDynamicRange(new BigNumber(10e9));
 
-const FeesField = ({
-  account,
-  transaction,
-  status,
-  updateTransaction
-}: Props) => {
+const FeesField = ({ account, parentAccount, transaction, status, updateTransaction }: Props) => {
   invariant(transaction.family === "ethereum", "FeeField: ethereum family expected");
+  const mainAccount = getMainAccount(account, parentAccount);
 
-  const bridge = getAccountBridge(account);
+  const bridge: AccountBridge<EthereumTransaction> = getAccountBridge(mainAccount);
   const { t } = useTranslation();
 
   const onPriorityFeeChange = useCallback(
-    priorityFee => {
+    (maxPriorityFeePerGas: BigNumber) =>
       updateTransaction(transaction =>
-        bridge.updateTransaction(transaction, { maxPriorityFeePerGas: priorityFee, feesStrategy: "advanced" })
-      );
-    },
+        bridge.updateTransaction(transaction, {
+          maxPriorityFeePerGas,
+          feesStrategy: "custom",
+        }),
+      ),
     [updateTransaction, bridge],
   );
 
   const networkPriorityFee = useMemo(
     () => transaction.networkInfo?.maxPriorityFeePerGas || fallbackMaxPriorityFeePerGas,
-    [transaction.networkInfo]
+    [transaction.networkInfo],
   );
 
-  const maxPriorityFee = transaction.maxPriorityFeePerGas || range.initial;
-  const { units } = account.currency;
+  const maxPriorityFee = transaction.maxPriorityFeePerGas || fallbackMaxPriorityFeePerGas.initial;
+  const { units } = mainAccount.currency;
   const unit = units.length > 1 ? units[1] : units[0];
   const unitName = unit.code;
 
   const [lowPriorityFeeValue, highPriorityFeeValue] = useMemo(
     () => [
       formatCurrencyUnit(unit, networkPriorityFee.min),
-      formatCurrencyUnit(unit, networkPriorityFee.max)
+      formatCurrencyUnit(unit, networkPriorityFee.max),
     ],
-    [networkPriorityFee]
+    [networkPriorityFee.max, networkPriorityFee.min, unit],
   );
 
   const validTransactionError = status.errors.maxPriorityFee;
@@ -120,22 +122,13 @@ const FeesField = ({
       </ErrorContainer>
       <Label>
         {t("send.steps.details.suggestedPriorityFee", {
-            lowPriorityFee: lowPriorityFeeValue,
-            highPriorityFee: highPriorityFeeValue,
-            unitName
-          })}
+          lowPriorityFee: lowPriorityFeeValue,
+          highPriorityFee: highPriorityFeeValue,
+          unitName,
+        })}
       </Label>
     </Box>
   );
 };
-
-const InputRight = styled(Box).attrs(() => ({
-  ff: "Inter|Medium",
-  color: "palette.text.shade60",
-  fontSize: 4,
-  justifyContent: "center",
-}))`
-  padding-right: 10px;
-`;
 
 export default FeesField;

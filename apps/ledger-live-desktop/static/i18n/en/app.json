@@ -2137,8 +2137,8 @@
         "edit": "Edit",
         "ethereumGasLimit": "Gas limit",
         "ethereumGasPrice": "Gas price",
-        "ethereumMaxBaseFee": "Max Base Fee ({{unitName}})",
-        "ethereumPriorityFee": "Priority Fee ({{unitName}})",
+        "ethereumMaxFee": "Max Fee ({{unitName}})",
+        "ethereumPriorityFee": "Max Priority Fee ({{unitName}})",
         "nextBlock": "Next block: {{nextBaseFee}}",
         "suggestedPriorityFee": "Suggested: {{lowPriorityFee}} - {{highPriorityFee}} {{unitName}}",
         "unitPerByte": "{{unit}} per byte",
@@ -4995,17 +4995,17 @@
     "GasLessThanEstimate": {
       "title": "This may be too low. Please increase"
     },
-    "MaxBaseFeeLow": {
-      "title": "Max base fee is too low. Your transaction might stay pending for a while"
-    },
-    "MaxBaseFeeHigh": {
-      "title": "Your max base fee is overestimated. If applicable, you will be refunded by the network"
-    },
     "PriorityFeeTooLow": {
       "title": "Priority fee is lower than the recommended value"
     },
     "PriorityFeeTooHigh": {
       "title": "Priority fee is higher than necessary. You might be overpaying"
+    },
+    "MaxFeeTooLow": {
+      "title": "Max fee is lower than the recommended value"
+    },
+    "PriorityFeeHigherThanMaxFee": {
+      "title": "Max priority fee cannot be higher than max fee"
     },
     "UnknownMCU": {
       "title": "Unknown MCU version",

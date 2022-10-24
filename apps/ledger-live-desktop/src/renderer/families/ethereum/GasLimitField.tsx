@@ -1,43 +1,44 @@
-// @flow
-import invariant from "invariant";
 import React, { useCallback, useState } from "react";
-import { BigNumber } from "bignumber.js";
-import { Trans, withTranslation } from "react-i18next";
-import type { Account } from "@ledgerhq/types-live";
-import type { Transaction, TransactionStatus } from "@ledgerhq/live-common/families/ethereum/types";
+import { Transaction, TransactionStatus } from "@ledgerhq/live-common/families/ethereum/types";
 import { getGasLimit } from "@ledgerhq/live-common/families/ethereum/transaction";
+import { Result } from "@ledgerhq/live-common/lib/bridge/useBridgeTransaction";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
+import { useTranslation } from "react-i18next";
+import { Account } from "@ledgerhq/types-live";
+import { BigNumber } from "bignumber.js";
+import invariant from "invariant";
 import Box from "~/renderer/components/Box";
-import Button from "~/renderer/components/Button";
 import Input from "~/renderer/components/Input";
 import Label from "~/renderer/components/Label";
+import Button from "~/renderer/components/Button";
 
 type Props = {
-  transaction: Transaction,
-  account: Account,
-  status: TransactionStatus,
-  updateTransaction: (updater: any) => void,
+  transaction: Transaction;
+  account: Account;
+  status: TransactionStatus;
+  updateTransaction: Result["updateTransaction"];
 };
 
 const AdvancedOptions = ({ account, transaction, status, updateTransaction }: Props) => {
   invariant(transaction.family === "ethereum", "AdvancedOptions: ethereum family expected");
   const [editable, setEditable] = useState(false);
+  const { t } = useTranslation();
 
   const onGasLimitChange = useCallback(
     (str: string) => {
       const bridge = getAccountBridge(account);
-      let userGasLimit = BigNumber(str || 0);
+      let userGasLimit = new BigNumber(str || 0);
       if (userGasLimit.isNaN() || !userGasLimit.isFinite()) {
-        userGasLimit = BigNumber(0x5208);
+        userGasLimit = new BigNumber(21000);
       }
       updateTransaction(transaction =>
-        bridge.updateTransaction(transaction, { userGasLimit, feesStrategy: "advanced" }),
+        bridge.updateTransaction(transaction, { userGasLimit, feesStrategy: "custom" }),
       );
     },
     [account, updateTransaction],
   );
 
-  const onEditClick = useCallback(() => setEditable(true));
+  const onEditClick = useCallback(() => setEditable(true), [setEditable]);
 
   const gasLimit = getGasLimit(transaction);
   const { gasLimit: gasLimitError } = status.errors;
@@ -47,12 +48,10 @@ const AdvancedOptions = ({ account, transaction, status, updateTransaction }: Pr
     <Box horizontal alignItems="center" flow={1}>
       <Box>
         <Label>
-          <span>
-            <Trans i18nKey="send.steps.details.ethereumGasLimit" /> :
-          </span>
+          <span>{t("send.steps.details.ethereumGasLimit")}:</span>
         </Label>
       </Box>
-      {editable ?
+      {editable ? (
         <Box flex="1">
           <Input
             ff="Inter"
@@ -63,21 +62,18 @@ const AdvancedOptions = ({ account, transaction, status, updateTransaction }: Pr
             loading={!transaction.networkInfo && !transaction.userGasLimit}
           />
         </Box>
-        :
+      ) : (
         <Box horizontal justifyContent="left">
-          <Label color="p.theme.colors.palette.text.shade100">
-            {gasLimit.toString()}
-          </Label>
+          <Label color="p.theme.colors.palette.text.shade100">{gasLimit.toString()}</Label>
           <Button onClick={onEditClick} ml={1} px={2}>
             <Box horizontal alignItems="center">
-              <Trans i18nKey="send.steps.details.edit" />
+              {t("send.steps.details.edit")}
             </Box>
           </Button>
         </Box>
-      }
+      )}
     </Box>
-    
   );
 };
 
-export default withTranslation()(AdvancedOptions);
+export default AdvancedOptions;
