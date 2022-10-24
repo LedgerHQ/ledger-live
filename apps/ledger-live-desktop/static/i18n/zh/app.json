@@ -1944,6 +1944,39 @@
         "tezos" : {
           "text" : "已委托账户收到的数额会被添加到总的质押数额中。若要避免此情况则请选择另一个账户。"
         }
+      },
+      "staking" : {
+        "title" : "赚取{{currencyName}}",
+        "link" : "了解更多",
+        "notShow" : "不要再显示",
+        "footer" : {
+          "dismiss" : "以后再说",
+          "stake" : "使用 {{provider}} 进行权益质押"
+        },
+        "ethereum" : {
+          "title" : "增长您的以太币。立即进行权益质押。",
+          "description" : "使用 Lido 权益质押您的以太币，每天赚取奖励。无锁定期。无最低存款限制。",
+          "kiln" : {
+            "title" : "请不要仅仅长期持有。增长您的以太币。",
+            "description" : "有超过 32 个以太币？不妨使用 Kiln 安全权益质押您的以太币来赚取被动奖励。"
+          }
+        },
+        "cosmos" : {
+          "title" : "增长您的 ATOM。使用 Ledger 验证器进行权益质押。",
+          "description" : "使用可信的 Ledger 验证器权益质押您的 ATOM。您的币仍归您所有，由 Ledger 提供妥善的安全防护。"
+        },
+        "osmosis" : {
+          "title" : "增长您的 OSMO。使用 Ledger by Figment 进行权益质押。",
+          "description" : "使用 Ledger by Figment 验证器权益质押您的 OSMO。它收取的佣金最低，而且保证不削减。"
+        },
+        "solana" : {
+          "title" : "增长您的 SOL。使用 Ledger by Figment 进行权益质押。",
+          "description" : "使用 Ledger by Figment 验证器权益质押您的 SOL。您的币仍归您所有，由 Ledger 提供妥善的安全防护。"
+        },
+        "celo" : {
+          "title" : "增长您的 CELO。使用 Ledger by Figment 进行权益质押。",
+          "description" : "使用 Ledger by Figment 验证器权益质押您的 CELO。它保证全面防止削减，由 Ledger 提供妥善的安全防护。"
+        }
       }
     }
   },
@@ -4262,13 +4295,14 @@
       "4" : {
         "deviceSelection" : {
           "title" : "您使用的是哪种设备？",
-          "desc" : "如果您使用的是 Nano S，可以尝试修复设备的固件。如果您使用的是 Nano X 和 Blue，请联系 Ledger 客服。"
+          "desc" : "如果您要尝试连接 Nano S，请选择 Nano 上显示的状态。如果您要尝试连接 Nano S Plus 或 Nano X，请访问<0>帮助中心</0>"
         },
         "notFixed" : {
           "title" : " 依旧没有解决 USB 连接问题？",
           "desc" : "如果您已经尝试过了所有可能的解决方案，请联系 Ledger 客服。否则，请根据指示尝试还未使用过的解决方案。",
           "back" : "返回 Portfolio（资产组合）",
-          "cta" : "联系客服"
+          "cta" : "联系客服",
+          "cta2" : "返回"
         },
         "repair" : {
           "title" : "修复您的 Nano S",
