@@ -66,17 +66,7 @@ const Carousel = ({ cardsVisibility }: Props) => {
     () =>
       getDefaultSlides().filter(
         (slide: { id: string; Component: () => JSX.Element }) => {
-          if (!cardsVisibility[slide.id]) {
-            return false;
-          }
-          // FIXME: start / end field do not seem to be valid
-          // if (slide.start && slide.start > new Date()) {
-          //   return false;
-          // }
-          // if (slide.end && slide.end < new Date()) {
-          //   return false;
-          // }
-          return true;
+          return cardsVisibility[slide.id];
         },
       ),
     [cardsVisibility],
