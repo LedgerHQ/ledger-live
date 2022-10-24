@@ -2,6 +2,7 @@ import type { DeviceAction } from "../../bot/types";
 import type { Transaction } from "./types";
 import { formatCurrencyUnit } from "../../currencies";
 import { deviceActionFlow } from "../../bot/specs";
+import BigNumber from "bignumber.js";
 
 export const acceptMoveBalanceTransaction: DeviceAction<Transaction, any> =
   deviceActionFlow({
@@ -24,7 +25,16 @@ export const acceptMoveBalanceTransaction: DeviceAction<Transaction, any> =
       {
         title: "Fee",
         button: "Rr",
-        expectedValue: () => "50000",
+        expectedValue: ({ account, transaction }) =>
+          formatCurrencyUnit(
+            account.unit,
+            transaction.fees || new BigNumber(50000),
+            {
+              showCode: true,
+              disableRounding: true,
+              joinFragmentsSeparator: " ",
+            }
+          ).replace(/\s+/g, " "),
       },
       {
         title: "Data",
@@ -64,6 +74,16 @@ export const acceptDelegateTransaction: DeviceAction<Transaction, any> =
       {
         title: "Fee",
         button: "Rr",
+        expectedValue: ({ account, transaction }) =>
+          formatCurrencyUnit(
+            account.unit,
+            transaction.fees || new BigNumber(50000),
+            {
+              showCode: true,
+              disableRounding: true,
+              joinFragmentsSeparator: " ",
+            }
+          ).replace(/\s+/g, " "),
       },
       {
         title: "Data",
@@ -108,6 +128,16 @@ export const acceptEsdtTransferTransaction: DeviceAction<Transaction, any> =
       {
         title: "Fee",
         button: "Rr",
+        expectedValue: ({ account, transaction }) =>
+          formatCurrencyUnit(
+            account.unit,
+            transaction.fees || new BigNumber(50000),
+            {
+              showCode: true,
+              disableRounding: true,
+              joinFragmentsSeparator: " ",
+            }
+          ).replace(/\s+/g, " "),
       },
       {
         title: "Sign",
