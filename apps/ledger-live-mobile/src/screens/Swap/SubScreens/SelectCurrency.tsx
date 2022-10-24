@@ -9,6 +9,7 @@ import FilteredSearchBar from "../../../components/FilteredSearchBar";
 import KeyboardView from "../../../components/KeyboardView";
 import CurrencyRow from "../../../components/CurrencyRow";
 import { SelectCurrencyParamList } from "../types";
+import { ScreenName } from "../../../const";
 
 export function SelectCurrency({
   navigation,

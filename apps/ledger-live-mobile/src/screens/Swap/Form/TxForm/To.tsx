@@ -15,6 +15,7 @@ import { useSelector } from "react-redux";
 import { Selector } from "./Selector";
 import { CurrencyValue } from "./CurrencyValue";
 import { toSelector } from "../../../../actions/swap";
+import { ScreenName } from "../../../../const";
 
 interface Props {
   swapTx: SwapTransactionType;
