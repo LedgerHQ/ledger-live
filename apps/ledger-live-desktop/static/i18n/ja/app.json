@@ -1944,6 +1944,39 @@
         "tezos" : {
           "text" : "デリゲートアカウントで受け取った額は、合計ステーキング額に加算されます。これを回避したい場合は、別のアカウントを選択してください。"
         }
+      },
+      "staking" : {
+        "title" : "{{currencyName}}を獲得",
+        "link" : "詳細はこちら",
+        "notShow" : "今後は表示しない",
+        "footer" : {
+          "dismiss" : "後で",
+          "stake" : "{{provider}}でステーキング"
+        },
+        "ethereum" : {
+          "title" : "ETHを増やしましょう。今すぐステーキング。",
+          "description" : "LidoでEthereumをステーキングして、毎日報酬を獲得しましょう。ロックアップ（凍結）期間なし。最低入金額なし。",
+          "kiln" : {
+            "title" : "HODLだけではいけません。ETHを増やしましょう。",
+            "description" : "32ETH以上をお持ちですか？KilnでETHを安全にステーキングすることで、受動的な報酬を獲得できます。"
+          }
+        },
+        "cosmos" : {
+          "title" : "ATOMを増やしましょう。Ledgerバリデーターでステーキング。",
+          "description" : "信頼できるLedgerバリデーターでATOMをステーキングします。Ledgerの妥協のないセキュリティで保護されるため、お客様のコインがお客様の元から離れることはありません。"
+        },
+        "osmosis" : {
+          "title" : "OSMOを増やしましょう。Ledger by Figmentでステーキング。",
+          "description" : "Ledger by Figment バリデーターでOSMOをステーキングします。最安値の手数料と、スラッシング（自己資産が削られる）に対する保証をご提供します！"
+        },
+        "solana" : {
+          "title" : "SOLを増やしましょう。Ledger by Figmentでステーキング。",
+          "description" : "Ledger by FigmentバリデーターでSOLをステーキングします。Ledgerの妥協のないセキュリティで保護されるため、お客様のコインがお客様の元から離れることはありません。"
+        },
+        "celo" : {
+          "title" : "CELOを増やしましょう。Ledger by Figmentでステーキング。",
+          "description" : "Ledger by FigmentバリデーターでCELOをステーキングします。Ledgerの妥協のないセキュリティで保護することで、スラッシング（自己資産が削られる）に対する完全な保証をご提供します。"
+        }
       }
     }
   },
@@ -4262,13 +4295,14 @@
       "4" : {
         "deviceSelection" : {
           "title" : "どのデバイスをお使いですか？",
-          "desc" : "Nano Sをお使いの場合は、デバイスのファームウェアを修復してみてください。Nano XまたはBlueをお使いの場合は、Ledger サポートまでご連絡ください。"
+          "desc" : "Nano Sを接続しようとしている場合は、Nanoに表示されている状態を選択します。Nano S PlusまたはNano Xを接続しようとしている場合は、<0>ヘルプセンターにアクセス</0>してください。"
         },
         "notFixed" : {
           "title" : " USB接続の問題が解決されませんか？",
           "desc" : "全ての解決策を試しても解決できない場合は、Ledgerサポートまでご連絡ください。まだ試していない解決策がある場合は、それらの手順を実行してください。",
           "back" : "ポートフォリオに戻る",
-          "cta" : "サポートへのお問い合わせ"
+          "cta" : "サポートへのお問い合わせ",
+          "cta2" : "戻る"
         },
         "repair" : {
           "title" : "Nano Sを修理する",
