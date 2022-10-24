@@ -10,7 +10,9 @@ import Animated, {
   useSharedValue,
   withTiming,
 } from "react-native-reanimated";
-import proxyStyled from "@ledgerhq/native-ui/components/styled";
+import proxyStyled, {
+  BaseStyledProps,
+} from "@ledgerhq/native-ui/components/styled";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import styled, { useTheme } from "styled-components/native";
 import { useSelector } from "react-redux";
@@ -31,7 +33,7 @@ const MainButton = proxyStyled(Touchable).attrs({
   width: MAIN_BUTTON_SIZE,
   borderRadius: MAIN_BUTTON_SIZE / 2,
   overflow: "hidden",
-})`
+})<BaseStyledProps>`
   border-radius: 40px;
   align-items: center;
   justify-content: center;
@@ -218,8 +220,7 @@ export function TransferTabIcon() {
         disabled={lockSubject.getValue()}
         hitSlop={hitSlop}
         onPress={onPressButton}
-        // FIXME: what is this bottom prop?
-        // bottom={MAIN_BUTTON_BOTTOM + bottomInset}
+        bottom={MAIN_BUTTON_BOTTOM + bottomInset}
       >
         <ButtonAnimation
           source={themeType === "light" ? lightAnimSource : darkAnimSource}
