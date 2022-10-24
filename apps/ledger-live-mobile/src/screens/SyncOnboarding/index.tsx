@@ -210,8 +210,7 @@ export const SyncOnboarding = ({
         params: {
           screen: ScreenName.SyncOnboardingCompanion,
           params: {
-            // FIXME: A null device will crash SyncOnboarding…
-            // @ts-expect-error This seems very wrong :(
+            // @ts-expect-error BleDevicePairingFlow will set this param
             device: null,
           },
         },

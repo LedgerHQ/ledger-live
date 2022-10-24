@@ -79,8 +79,7 @@ function OnboardingStepDeviceSelection() {
           params: {
             screen: ScreenName.SyncOnboardingCompanion,
             params: {
-              // FIXME: A null device will crash SyncOnboarding…
-              // @ts-expect-error This seems to be very wrong :(
+              // @ts-expect-error BleDevicePairingFlow will set this param
               device: null,
             },
           },
