@@ -129,6 +129,7 @@
     "@ethersproject/shims": "^5.7.0",
     "@hashgraph/sdk": "^2.10.1",
     "@keplr-wallet/cosmos": "^0.9.16",
+    "@keplr-wallet/proto-types": "^0.10.4",
     "@ledgerhq/compressjs": "github:LedgerHQ/compressjs#d9e8e4d994923e0ea76a32b97289bcccfe71b82e",
     "@ledgerhq/cryptoassets": "workspace:^",
     "@ledgerhq/devices": "workspace:^",
@@ -240,7 +241,6 @@
     "zcash-bitcore-lib": "^0.13.20-rc3"
   },
   "devDependencies": {
-    "@keplr-wallet/proto-types": "^0.10.4",
     "@ledgerhq/types-cryptoassets": "workspace:^",
     "@ledgerhq/types-devices": "workspace:^",
     "@ledgerhq/types-live": "workspace:^",
