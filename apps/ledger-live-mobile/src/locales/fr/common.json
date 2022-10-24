@@ -245,7 +245,7 @@
       "description" : "Une erreur inattendue s’est produite. Veuillez réessayer."
     },
     "DeviceNotGenuine" : {
-      "title" : "L’appareil peut ne pas être authentique.",
+      "title" : "Votre Ledger peut ne pas être authentique.",
       "description" : "Enregistrez vos logs en utilisant le bouton ci-dessous et transmettez-les à l’Assistance Ledger."
     },
     "DeviceNameInvalid" : {
@@ -582,6 +582,9 @@
     "SourceHasMultiSign" : {
       "title" : "Désactivez la multisignature pour envoyer des {{currencyName}}."
     },
+    "DustLimit" : {
+      "title" : "Montant inférieur à la limite de poussière (dust limit)"
+    },
     "StratisDown2021Warning" : {
       "description" : "La blockchain Stratis a évolué et pourrait ne plus fonctionner correctement. La blockchain Stratis d’origine continuera d’être prise en charge jusqu’au 16 octobre 2021."
     },
@@ -728,6 +731,9 @@
     "ImageProcessingError" : {
       "title" : "Échec du traitement de l’image",
       "description" : "Veuillez réessayer avec une autre image."
+    },
+    "HederaAddAccountError" : {
+      "title" : "Votre compte n’a pas été ajouté. Veuillez réessayer."
     }
   },
   "crash" : {
@@ -775,6 +781,9 @@
     "failed" : {
       "biometrics" : {
         "title" : "Échec du déverrouillage par {{biometricsType}}",
+        "touchid" : "Touch ID",
+        "faceid" : "Face ID",
+        "fingerprint" : "Empreinte digitale",
         "description" : "Entrez votre mot de passe pour continuer",
         "authenticate" : "Authentifiez-vous avec l’app Ledger Live."
       },
@@ -803,7 +812,10 @@
     },
     "enableBiometrics" : {
       "title" : "{{biometricsType}}",
-      "desc" : "Déverrouillez avec : {{biometricsType}}."
+      "desc" : "Déverrouillez avec : {{biometricsType}}.",
+      "touchid" : "Touch ID",
+      "faceid" : "Face ID",
+      "fingerprint" : "Empreinte digitale"
     }
   },
   "reset" : {
@@ -893,7 +905,7 @@
         "cta" : "Parcourir"
       },
       "manageCard" : {
-        "title" : "Lancement de la carte CL",
+        "title" : "La nouvelle carte CL",
         "description" : "Commandez et gérez votre carte CL, propulsée par Ledger.",
         "cta" : "En savoir plus"
       },
@@ -946,7 +958,7 @@
     },
     "1" : {
       "title" : "Accédez à la DeFi et aux NFT",
-      "desc" : "Interagissez en toute sécurité avec des applications DeFi de confiance directement depuis l’app."
+      "desc" : "Interagissez en toute sécurité avec des applications DeFi de confiance directement depuis Ledger Live."
     },
     "2" : {
       "title" : "Vos clés vers le Web3",
@@ -957,15 +969,15 @@
       "desc" : "Nos produits sont les seuls wallets physiques dont la sécurité a été certifiée par l’Agence nationale de la cybersécurité."
     },
     "title" : "Vous avez besoin d’un Ledger",
-    "desc" : "Pour votre sécurité, Ledger Live ne fonctionne qu’avec un appareil. Vous avez besoin d’un appareil pour continuer. ",
+    "desc" : "Pour votre sécurité, Ledger Live ne fonctionne qu’avec un appareil. Vous avez besoin d’un Ledger pour continuer. ",
     "cta" : "Acheter votre Ledger maintenant",
-    "footer" : "J’ai déjà un appareil, je veux le configurer",
+    "footer" : "J’ai déjà un Ledger, je veux le configurer",
     "bannerTitle" : "Protégez vos cryptos et vos NFT",
     "bannerTitle2" : "Accédez au trading avec un Nano",
     "bannerSubtitle" : "avec un appareil Ledger",
     "bannerButtonTitle" : "Découvrez le Nano",
     "bannerButtonTitle2" : "Achetez un appareil",
-    "setupCta" : "J’ai déjà un appareil, je veux le configurer"
+    "setupCta" : "J’ai déjà un Ledger, je veux le configurer"
   },
   "postBuyDeviceSetupNanoWall" : {
     "title" : "Avez-vous reçu votre appareil ?",
@@ -1002,12 +1014,12 @@
   },
   "discover" : {
     "title" : "Discover",
-    "desc" : "Explorez le monde du Web3 avec Ledger Live",
+    "desc" : "Explorez le monde du Web3 en toute sécurité",
     "link" : "En savoir plus",
     "sections" : {
       "learn" : {
         "title" : "Apprendre",
-        "desc" : "Apprenez-en plus sur les cryptos, NFT, la sécurité numérique et bien plus."
+        "desc" : "Approfondissez vos connaissances crypto gratuitement avec des experts."
       },
       "ledgerApps" : {
         "title" : "Apps",
@@ -1015,11 +1027,15 @@
       },
       "earn" : {
         "title" : "Gagner",
-        "desc" : "Gagnez des récompenses passives et faites fructifier vos cryptos."
+        "desc" : "Faites fructifier vos cryptos avec le staking et le prêt."
       },
       "mint" : {
         "title" : "Minter",
-        "desc" : "Mintez et acquérez les NFT de collaborations exclusives sur le [ L ] Market."
+        "desc" : "Mintez des NFT exclusifs sur le [ L ] Market."
+      },
+      "referralProgram" : {
+        "title" : "Parrainage",
+        "desc" : "Gagnez 10 $ US en BTC lorsque votre ami(e) achète un Ledger. "
       }
     },
     "comingSoon" : "Prochainement",
@@ -1084,7 +1100,7 @@
     "stepLanguage" : {
       "title" : "Choisir la langue",
       "cta" : "Continuer",
-      "changeDeviceLanguage" : "Une autre langue est disponible pour votre {{deviceName}} : {{language}}.",
+      "changeDeviceLanguage" : "Vous pouvez utiliser votre {{deviceName}} en : {{language}}.",
       "changeDeviceLanguageDescription" : "Souhaitez-vous l’utiliser en {{language}} ?",
       "warning" : {
         "title" : "À noter",
@@ -1382,7 +1398,7 @@
             "label" : "Apprenez à interagir avec votre appareil. Lisez les instructions à l’écran."
           },
           "2" : {
-            "title" : "Choisir \"Restore from recovery phrase\"",
+            "title" : "Choisissez \"Restore from recovery phrase\"",
             "label" : "Appuyez simultanément sur les deux boutons pour valider."
           },
           "3" : {
@@ -1608,7 +1624,7 @@
       "seed" : {
         "title" : "Vérifiez le contenu de votre coffret.",
         "desc" : "Si votre {{deviceName}} est livré avec un code PIN ou une phrase de récupération, l’utiliser présente un risque. Contactez l’Assistance Ledger.",
-        "warning" : "Utilisez uniquement la phrase de récupération affichée par votre appareil Ledger lors de sa configuration.",
+        "warning" : "Utilisez uniquement la phrase de récupération affichée sur votre appareil Ledger lors de sa configuration.",
         "continueCTA" : "Continuer",
         "contactSupportCTA" : "Contacter l’Assistance"
       }
@@ -1622,7 +1638,7 @@
       },
       "withoutProductName" : {
         "title" : "Recherche d’appareils",
-        "description" : "Assurez-vous que votre appareil est allumé, déverrouillé et que le Bluetooth est activé."
+        "description" : "Assurez-vous que votre Ledger est allumé, déverrouillé et que le Bluetooth est activé."
       },
       "alreadyPaired" : "Déjà couplé"
     },
@@ -1959,7 +1975,7 @@
       },
       "delete" : {
         "title" : "Retirer ce compte du Portefeuille",
-        "desc" : "Les données enregistrées seront supprimées.",
+        "desc" : "Les données enregistrées seront effacées.",
         "confirmationTitle" : "Êtes-vous sûr(e) ?",
         "confirmationDesc" : "Cela n’a pas d’effet sur vos crypto-actifs. Vous pourrez de nouveau ajouter vos comptes existants.",
         "confirmationWarn" : "L’historique de vos transactions de swap en lien avec ce compte sera effacé."
@@ -1970,6 +1986,7 @@
       },
       "advanced" : {
         "title" : "Logs détaillés",
+        "warningDerivation" : "Cet xpub est de type {{tag}}. Lorsque vous l’importez dans un wallet tiers, choisissez le même mode de dérivation.",
         "desc" : ""
       }
     },
@@ -1977,7 +1994,7 @@
       "scan" : {
         "title" : "Importer depuis l’ordinateur",
         "descTop" : {
-          "line1" : "Dans Ledger Live pour l’ordinateur, accédez à :",
+          "line1" : "Dans Ledger Live pour l’ordinateur, ouvrez :",
           "line2" : "Paramètres > Comptes > Exporter les comptes > Exporter"
         },
         "descBottom" : "Ouvrez Ledger Live pour l’ordinateur et scannez le code QR."
@@ -2589,7 +2606,7 @@
       },
       "payoutModal" : {
         "title" : "Frais de réception",
-        "description" : "Les frais de réception ne sont pas affichés sur votre appareil et ne sont pas compris dans le montant.",
+        "description" : "Les frais de réception ne sont pas affichés sur votre Ledger et ne sont pas compris dans le montant.",
         "cta" : "Fermer"
       },
       "pendingOperation" : {
@@ -3437,7 +3454,7 @@
     "alreadyPaired" : "Déjà couplé"
   },
   "DeviceItemSummary" : {
-    "genuine" : "Votre appareil est authentique.",
+    "genuine" : "Votre Ledger est authentique.",
     "genuineFailed" : "<1><0>Échec</0></1> de l’authentification de l’appareil"
   },
   "DeviceNameRow" : {
@@ -3496,7 +3513,7 @@
     "storage" : {
       "title" : "Stockage",
       "used" : "utilisés",
-      "genuine" : "Votre appareil est authentique.",
+      "genuine" : "Votre Ledger est authentique.",
       "appsInstalled" : "<0>{{number}}</0> app",
       "appsInstalled_plural" : "<0>{{number}}</0> apps",
       "storageAvailable" : "disponibles",
@@ -4490,7 +4507,7 @@
     "unlockingBalance" : "Solde en fin de liaison",
     "unlockedBalance" : "Solde délié",
     "networkFees" : "Les frais de réseau sont automatiquement définis par le consensus de Polkadot. Vous ne pourrez pas les voir sur votre appareil.",
-    "bondedBalanceBelowMinimum" : "Votre solde lié est inférieur au minimum requis ({{minimumBondBalance}}). Vos nominations risquent d’être supprimées.",
+    "bondedBalanceBelowMinimum" : "Votre solde lié est inférieur au minimum requis ({{minimumBondBalance}}). Vos nominations risquent d’être effacées.",
     "info" : {
       "available" : {
         "title" : "DOT disponible",
@@ -4514,7 +4531,7 @@
       },
       "minBondWarning" : {
         "title" : "Solde lié insuffisant",
-        "description" : "Votre solde lié est inférieur au minimum requis pour effectuer des nominations. Vos nominations risquent d’être supprimées."
+        "description" : "Votre solde lié est inférieur au minimum requis pour effectuer des nominations. Vos nominations risquent d’être effacées."
       }
     },
     "nomination" : {
