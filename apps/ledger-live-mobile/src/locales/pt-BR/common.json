@@ -582,6 +582,9 @@
     "SourceHasMultiSign" : {
       "title" : "Desative a assinatura múltipla para enviar {{currencyName}}"
     },
+    "DustLimit" : {
+      "title" : "Quantia menor do que o limite de pó"
+    },
     "StratisDown2021Warning" : {
       "description" : "A blockchain Stratis evoluiu e pode não funcionar mais corretamente. Suporte à blockchain Stratis original foi mantido até 16 de outubro de 2021."
     },
@@ -728,6 +731,9 @@
     "ImageProcessingError" : {
       "title" : "Falha no processamento da imagem",
       "description" : "Tente novamente com outra imagem"
+    },
+    "HederaAddAccountError" : {
+      "title" : "Sua conta não foi adicionada. Tente Novamente."
     }
   },
   "crash" : {
@@ -775,6 +781,9 @@
     "failed" : {
       "biometrics" : {
         "title" : "desbloqueio por {{biometricsType}} falhou",
+        "touchid" : "TouchID",
+        "faceid" : "Face ID",
+        "fingerprint" : "Impressão digital",
         "description" : "Insira sua senha para continuar",
         "authenticate" : "Autentique com o aplicativo Ledger Live"
       },
@@ -803,7 +812,10 @@
     },
     "enableBiometrics" : {
       "title" : "{{biometricsType}}",
-      "desc" : "Desbloquear com {{biometricsType}}"
+      "desc" : "Desbloquear com {{biometricsType}}",
+      "touchid" : "TouchID",
+      "faceid" : "Face ID",
+      "fingerprint" : "Impressão digital"
     }
   },
   "reset" : {
@@ -831,12 +843,12 @@
       "tour" : {
         "title" : "Faça um tour",
         "description" : "Explore o aplicativo Ledger Live e aprenda como comprar, crescer e proteger seus ativos",
-        "cta" : "Navegue"
+        "cta" : "Navegar"
       },
       "academy" : {
         "title" : "Ledger Academy",
         "description" : "Tudo o que você precisa saber sobre Blockchain",
-        "cta" : "Navegue"
+        "cta" : "Navegar"
       },
       "stakeCosmos" : {
         "title" : "Aplicar COSMOS",
@@ -890,7 +902,7 @@
       "market" : {
         "title" : "Mercados Cripto",
         "description" : "Acompanhe preços e tendências do mercado cripto no aplicativo",
-        "cta" : "Navegue"
+        "cta" : "Navegar"
       },
       "manageCard" : {
         "title" : "Apresentando o CL Card",
@@ -941,7 +953,7 @@
   },
   "buyDevice" : {
     "0" : {
-      "title" : "O dinheiro é seu. Tome o controle.",
+      "title" : "É seu dinheiro. Tome o controle.",
       "desc" : "Assuma o controle e tome a liberdade para administrar suas criptomoedas por conta própria."
     },
     "1" : {
@@ -1002,24 +1014,28 @@
   },
   "discover" : {
     "title" : "Discover",
-    "desc" : "Explore o mundo da web3 através do Ledger Live",
+    "desc" : "Explore o mundo da Web3 com segurança",
     "link" : "Fale mais",
     "sections" : {
       "learn" : {
         "title" : "Aprender",
-        "desc" : "Aprenda sobre criptomoedas, NFTs, segurança digital e mais"
+        "desc" : "Aprenda sobre cripto e muito mais de graça com especialistas"
       },
       "ledgerApps" : {
         "title" : "Aplicativos",
         "desc" : "Explore os aplicativos parceiros da Ledger, tudo em um só lugar"
       },
       "earn" : {
-        "title" : "Ganhe",
-        "desc" : "Gere renda passiva e cresça seus criptoativos"
+        "title" : "Ganhar",
+        "desc" : "Aumente suas criptos com staking e empréstimos."
       },
       "mint" : {
         "title" : "Emitir",
-        "desc" : "Emita NFTs de colaborações exclusivas no [ L ] Market"
+        "desc" : "Emita NFTs de campanhas exclusivas do [ L ] Market"
+      },
+      "referralProgram" : {
+        "title" : "Indique um amigo",
+        "desc" : "Ganhe US$10 em BTC quando seu amigo comprar uma Ledger. "
       }
     },
     "comingSoon" : "Em breve",
@@ -1197,7 +1213,7 @@
             }
           },
           "1" : {
-            "title" : "Navegue",
+            "title" : "Navegar",
             "label" : "Aprenda como interagir com seu dispositivo lendo as instruções na tela."
           },
           "2" : {
@@ -1378,7 +1394,7 @@
             }
           },
           "1" : {
-            "title" : "Navegue",
+            "title" : "Navegar",
             "label" : "Aprenda a interagir com seu dispositivo lendo as instruções na tela."
           },
           "2" : {
@@ -1970,6 +1986,7 @@
       },
       "advanced" : {
         "title" : "Registros avançados",
+        "warningDerivation" : "Esta é uma xpub {{tag}}. Ao importá-la para uma carteira de terceiros, escolha o mesmo modo de derivação.",
         "desc" : ""
       }
     },
@@ -2790,7 +2807,7 @@
     },
     "lending" : {
       "title" : "Emprestar Cripto",
-      "titleTransferTab" : "Ganhe",
+      "titleTransferTab" : "Ganhar",
       "descriptionTransferTab" : "Gere renda passiva.",
       "actionTitle" : "Emprestar",
       "accountActions" : {
