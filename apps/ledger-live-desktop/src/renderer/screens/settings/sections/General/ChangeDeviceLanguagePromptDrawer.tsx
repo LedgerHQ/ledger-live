@@ -58,6 +58,22 @@ const ChangeDeviceLanguagePromptDrawer: React.FC<Props> = ({
 
   const deviceName = getDeviceModel(deviceModelId).productName;
 
+  const handleSuccess = useCallback(() => {
+    refreshDeviceInfo();
+    track("Page LiveLanguageChange LanguageInstalled", {
+      selectedLanguage: localeIdToDeviceLanguage[currentLanguage],
+    });
+    setLanguageInstalled(true);
+  }, [currentLanguage, refreshDeviceInfo]);
+
+  const handleError = useCallback(
+    (error: Error) => {
+      refreshDeviceInfo();
+      track("Page LiveLanguageChange LanguageInstallError", { error });
+    },
+    [refreshDeviceInfo],
+  );
+
   return (
     <Drawer
       isOpen={isOpen}
@@ -77,18 +93,8 @@ const ChangeDeviceLanguagePromptDrawer: React.FC<Props> = ({
           <>
             <ChangeDeviceLanguageAction
               language={localeIdToDeviceLanguage[currentLanguage]}
-              onSuccess={() => {
-                refreshDeviceInfo();
-                track("Page LiveLanguageChange LanguageInstalled", {
-                  selectedLanguage: localeIdToDeviceLanguage[currentLanguage],
-                });
-                refreshDeviceInfo();
-                setLanguageInstalled(true);
-              }}
-              onError={(error: Error) => {
-                refreshDeviceInfo();
-                track("Page LiveLanguageChange LanguageInstallError", { error });
-              }}
+              onSuccess={handleSuccess}
+              onError={handleError}
             />
             {languageInstalled && (
               <Flex flexDirection="column" rowGap={8} alignSelf="stretch">
@@ -133,4 +139,4 @@ const ChangeDeviceLanguagePromptDrawer: React.FC<Props> = ({
   );
 };
 
-export default withV3StyleProvider(ChangeDeviceLanguagePromptDrawer);
+export default withV3StyleProvider(React.memo(ChangeDeviceLanguagePromptDrawer));
