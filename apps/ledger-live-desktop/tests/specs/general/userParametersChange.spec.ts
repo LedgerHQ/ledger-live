@@ -5,7 +5,7 @@ import { Layout } from "../../models/Layout";
 
 test.use({ userdata: "skip-onboarding" });
 
-test("User retrive data", async ({ page }) => {
+test("User able to update parameters in settings", async ({ page }) => {
   const settingsPage = new SettingsPage(page);
   const layout = new Layout(page);
 

@@ -10,7 +10,7 @@ export class SettingsPage {
   readonly carouselSwitchButton: Locator;
   readonly counterValueSelector: Locator;
   readonly counterValueSearchBar: Locator;
-  readonly counterValuedropdownChoiceEuro: Locator;
+  readonly counterValueropdownChoiceEuro: Locator;
   readonly languageSelector: Locator;
   readonly languageChoiceFrench: Locator;
   readonly themeSelector: Locator;
@@ -24,18 +24,19 @@ export class SettingsPage {
     this.experimentalTab = page.locator("data-test-id=settings-experimental-tab");
     this.experimentalDevModeToggle = page.locator("data-test-id=MANAGER_DEV_MODE-button");
     this.carouselSwitchButton = page.locator("data-test-id=settings-carousel-switch-button");
-    this.counterValueSelector = page.locator(".select__value-container").first();
+    this.counterValueSelector = page.locator(
+      "//*[@data-test-id='setting-countervalue-dropDown']/div[2]/div/div",
+    );
     this.counterValueSearchBar = page.locator('[placeholder="Search"]');
-    this.counterValuedropdownChoiceEuro = page.locator(
+    this.counterValueropdownChoiceEuro = page.locator(
       "#react-select-2-option-15 >> text=Euro - EUR",
     );
     this.languageSelector = page.locator(
-      "div:nth-child(2) > .sc-dkzDqf.uXYMl > .css-198krsd-container > .select__control > .select__value-container",
+      "//*[@data-test-id='setting-language-dropDown']/div[2]/div/div",
     );
-    this.themeSelector = page.locator(
-      "div:nth-child(4) > .sc-dkzDqf.uXYMl > .css-198krsd-container > .select__control > .select__value-container",
-    );
-    this.themeChoiceLight = page.locator("#react-select-5-option-1");
+    this.themeSelector = page.locator("//*[@data-test-id='setting-theme-dropDown']/div[2]/div/div");
+
+    this.themeChoiceLight = page.locator("text='Clair'");
   }
 
   async goToAccountsTab() {
@@ -66,7 +67,7 @@ export class SettingsPage {
   async changeCounterValue() {
     await this.counterValueSelector.click();
     await this.counterValueSearchBar.fill("euro");
-    await this.counterValuedropdownChoiceEuro.click();
+    await this.counterValueropdownChoiceEuro.click();
   }
 
   async changeTheme() {
