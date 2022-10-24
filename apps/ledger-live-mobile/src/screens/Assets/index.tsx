@@ -6,10 +6,8 @@ import { RefreshMedium } from "@ledgerhq/native-ui/assets/icons";
 
 import { useTranslation } from "react-i18next";
 import { useGlobalSyncState } from "@ledgerhq/live-common/bridge/react/index";
-import { FlatList } from "react-native";
+import { FlatList, FlatListProps } from "react-native";
 import useEnv from "@ledgerhq/live-common/hooks/useEnv";
-import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { AccountLike } from "@ledgerhq/types-live";
 import {
   useDistribution,
   useRefreshAccountsOrdering,
@@ -27,15 +25,9 @@ import AssetsNavigationHeader from "./AssetsNavigationHeader";
 import globalSyncRefreshControl from "../../components/globalSyncRefreshControl";
 import AddAccountsModal from "../AddAccounts/AddAccountsModal";
 import { BaseNavigation } from "../../components/RootNavigator/types/helpers";
+import { Asset } from "../../types/asset";
 
-type Asset = {
-  currency: CryptoOrTokenCurrency;
-  accounts: AccountLike[];
-  distribution: number;
-  amount: number;
-  countervalue: number;
-};
-const List = globalSyncRefreshControl(FlatList);
+const List = globalSyncRefreshControl<FlatListProps<Asset>>(FlatList);
 
 function Assets() {
   const navigation = useNavigation<NavigationProp>();
@@ -54,7 +46,7 @@ function Assets() {
 
   const syncPending = globalSyncState.pending && !isUpToDate;
 
-  const assets = useMemo(
+  const assets: Asset[] = useMemo(
     () =>
       distribution.isAvailable && distribution.list.length > 0
         ? distribution.list
@@ -75,8 +67,8 @@ function Assets() {
   );
 
   const renderItem = useCallback(
-    ({ item }: { item: unknown }) => (
-      <AssetRow asset={item as Asset} navigation={navigation} />
+    ({ item }: { item: Asset }) => (
+      <AssetRow asset={item} navigation={navigation} />
     ),
     [navigation],
   );
@@ -100,8 +92,7 @@ function Assets() {
           <List
             data={assets}
             renderItem={renderItem}
-            // FIXME: Weird??? Isn't this supposed to be an "Asset" without an id field?
-            keyExtractor={i => (i as CryptoOrTokenCurrency).id}
+            keyExtractor={i => i.currency.id}
             contentContainerStyle={{
               paddingBottom: TAB_BAR_SAFE_HEIGHT,
             }}
