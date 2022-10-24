@@ -11,6 +11,7 @@ import { providerIcons } from "../../../icons/swap/index";
 import { SelectProviderParamList } from "../types";
 import CounterValue from "../../../components/CounterValue";
 import { TrackScreen } from "../../../analytics";
+import { ScreenName } from "../../../const";
 
 export function SelectProvider({
   navigation,
