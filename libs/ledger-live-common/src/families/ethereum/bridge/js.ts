@@ -5,6 +5,7 @@ import {
   FeeNotLoaded,
   FeeRequired,
   GasLessThanEstimate,
+  AmountRequired,
 } from "@ledgerhq/errors";
 import type { CurrencyBridge, AccountBridge } from "@ledgerhq/types-live";
 import {
@@ -82,6 +83,7 @@ const getTransactionStatus = (a, t) => {
     gasPrice?: Error;
     gasLimit?: Error;
     recipient?: Error;
+    amount?: Error;
   } = {};
   const warnings: {
     gasLimit?: Error;
@@ -106,6 +108,10 @@ const getTransactionStatus = (a, t) => {
     if (estimatedFees.gt(a.balance)) {
       errors.gasPrice = new NotEnoughGas();
     }
+  }
+
+  if (!t.amount.gt(0)) {
+    errors.amount = new AmountRequired();
   }
 
   if (t.estimatedGasLimit && gasLimit.lt(t.estimatedGasLimit)) {
