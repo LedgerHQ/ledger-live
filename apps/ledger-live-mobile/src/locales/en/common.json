@@ -5078,6 +5078,7 @@
     "viewerModal": {
       "viewOn": "View on",
       "viewInExplorer": "View in explorer",
+      "hide": "Hide NFT collection",
       "txDetails": "Transaction details"
     }
   },
@@ -5151,6 +5152,15 @@
           "1": "\u2022 Choose the account to receive the NFT \n— just like receiving any other crypto."
         },
         "cta": "Continue"
+      },
+      "hideNftModal": {
+        "title": "Hide NFT collection",
+        "desc": "This action will hide all NFTs from the {{collectionName}} collection, you can unhide them from the app settings",
+        "cta": "Hide this NFT"
+      },
+      "media": {
+        "tag": "{{count}} NFT",
+        "tag_plural": "{{count}} NFTs"
       }
     }
   }

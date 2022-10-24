@@ -369,9 +369,10 @@ export function genAccount(
   const outdated =
     ["ethereum_classic", "dogecoin"].includes(currency.id) &&
     `${id}`.endsWith("_2");
+  const accountId = `mock:${outdated ? 0 : 1}:${currency.id}:${id}:`;
   const account: Account = {
     type: "Account",
-    id: `mock:${outdated ? 0 : 1}:${currency.id}:${id}:`,
+    id: accountId,
     seedIdentifier: "mock",
     derivationMode: "",
     xpub: genHex(64, rng),
@@ -408,7 +409,7 @@ export function genAccount(
     nfts: withNft
       ? Array(10)
           .fill(null)
-          .map(() => createFixtureNFT(currency))
+          .map(() => createFixtureNFT(accountId, currency))
       : [],
   };
 
