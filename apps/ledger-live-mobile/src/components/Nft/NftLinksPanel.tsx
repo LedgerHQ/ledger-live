@@ -251,7 +251,11 @@ const NftLinksPanel = ({
       <>
         {renderSection(topSection, "top")}
         {topSection.length > 0 && bottomSection.length > 0 ? (
-          <View style={styles.hr} />
+          <Box
+            borderBottomWidth={"1px"}
+            borderBottomColor={"neutral.c30"}
+            mb={7}
+          />
         ) : null}
         {renderSection(bottomSection, "bottom")}
       </>
