@@ -1944,6 +1944,39 @@
         "tezos" : {
           "text" : "A quantia recebida em uma conta delegada será adicionada à quantia total em staking. Se quiser evitar isso, escolha outra conta."
         }
+      },
+      "staking" : {
+        "title" : "Ganhe {{currencyName}}",
+        "link" : "Saiba Mais",
+        "notShow" : "Não mostrar isto novamente",
+        "footer" : {
+          "dismiss" : "Agora não",
+          "stake" : "Aplicar com {{provider}}"
+        },
+        "ethereum" : {
+          "title" : "Aumente seus ETH. Faça staking agora.",
+          "description" : "Faça staking de Ethereum com Lido e ganhe recompensas diariamente. Sem período de bloqueio. Sem depósito mínimo.",
+          "kiln" : {
+            "title" : "Não se limite ao HODL. Aumente seus ETH.",
+            "description" : "Tem mais do que 32 ETH? Receba recompensas passivas fazendo staking seguro dos seus ETH com Kiln."
+          }
+        },
+        "cosmos" : {
+          "title" : "Aumente seus ATOM. Faça staking com o validador da Ledger.",
+          "description" : "Faça staking de ATOM com o validador confiável da Ledger. As suas moedas continuam sendo suas, suportadas pela segurança impenetrável da Ledger."
+        },
+        "osmosis" : {
+          "title" : "Aumente seus OSMO. Faça staking com a Ledger by Figment.",
+          "description" : "Faça staking dos seus OSMO com o validador Ledger by Figment. Ela oferece a menor taxa de comissão e uma garantia contra cortes!"
+        },
+        "solana" : {
+          "title" : "Aumente seus SOL. Faça staking com a Ledger by Figment.",
+          "description" : "Faça staking dos seus SOL com o validador Ledger by Figment. As suas moedas continuam sendo suas, suportadas pela segurança impenetrável da Ledger."
+        },
+        "celo" : {
+          "title" : "Aumente seus CELO. Faça staking com a Ledger by Figment.",
+          "description" : "Faça staking dos seus CELO com o validador Ledger by Figment. Ele garante cobertura completa contra cortes, com proteção da pela segurança impenetrável da Ledger."
+        }
       }
     }
   },
@@ -4262,13 +4295,14 @@
       "4" : {
         "deviceSelection" : {
           "title" : "Qual é seu dispositivo?",
-          "desc" : "Se você tem uma Nano S, você pode tentar reparar o firmware do seu dispositivo. Para usuários da Nano X e Blue, contate o Suporte Ledger"
+          "desc" : "Se estiver tentando conectar uma Nano S, selecione o estado exibido em sua Nano. Se estiver tentando conectar uma Nano S Plus ou Nano X, <0>visite o Centro de Ajuda</0>"
         },
         "notFixed" : {
           "title" : " O problema de conexão USB ainda não foi corrigido?",
           "desc" : "Se você já tentou todas as soluções possíveis, contate o Suporte Ledger. Caso contrário, siga as instruções das soluções que você ainda não tentou.",
           "back" : "Voltar ao portfólio",
-          "cta" : "Contatar Suporte"
+          "cta" : "Contatar Suporte",
+          "cta2" : "Voltar"
         },
         "repair" : {
           "title" : "Repare sua Nano S",
