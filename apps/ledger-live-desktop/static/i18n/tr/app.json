@@ -748,7 +748,7 @@
       "descToken" : "<1><0>{{managerAppName}}</0></1> uygulaması yüklüyse hesabınıza <3><0>{{ticker}}</0></3> ve <5><0>{{tokenList}}</0>token'larını</5> almaya başlayabilirsiniz",
       "buttons" : {
         "receiveFunds" : "Al",
-        "buy" : "Satın Alın"
+        "buy" : "Satın Al"
       }
     },
     "settings" : {
@@ -1944,6 +1944,39 @@
         "tezos" : {
           "text" : "Yetkisi devredilmiş hesaba alınan tutar, toplam stake bakiyesine eklenir. Bunu önlemek istiyorsanız başka bir hesap seçin."
         }
+      },
+      "staking" : {
+        "title" : "{{currencyName}} kazanın",
+        "link" : "Daha fazla bilgi",
+        "notShow" : "Bunu bir daha gösterme",
+        "footer" : {
+          "dismiss" : "Şimdi değil",
+          "stake" : "{{provider}} ile stake edin"
+        },
+        "ethereum" : {
+          "title" : "ETH varlıklarınızı artırın. Hemen stake edin.",
+          "description" : "Lido ile Ethereum stake edin ve her gün ödül kazanın. Kilitleme süresi yok. Minimum yatırma tutarı yok.",
+          "kiln" : {
+            "title" : "Sadece HODL ile yetinmeyin. ETH varlıklarınızı artırın.",
+            "description" : "32'den fazla ETH'niz mi var? Kiln ile ETH varlıklarınızı güvenle stake ederek pasif ödüller kazanın."
+          }
+        },
+        "cosmos" : {
+          "title" : "ATOM varlıklarınızı artırın. Ledger doğrulayıcı ile stake edin.",
+          "description" : "ATOM varlıklarınızı güvenilir Ledger doğrulayıcı ile stake edin. Coin'leriniz, Ledger'ın taviz vermeyen güvenliği sayesinde size ait olmaya devam eder."
+        },
+        "osmosis" : {
+          "title" : "OSMO varlıklarınızı artırın. Ledger by Figment ile stake edin.",
+          "description" : "OSMO varlıklarınızı, Ledger by Figment doğrulayıcı ile stake edin. En düşük komisyon ücretini ve slashing'e karşı koruma garantisini sunmaktadır!"
+        },
+        "solana" : {
+          "title" : "SOL varlıklarınızı artırın. Ledger by Figment ile stake edin.",
+          "description" : "SOL varlıklarınızı, Ledger by Figment doğrulayıcı ile stake edin. Coin'leriniz, Ledger'ın taviz vermeyen güvenliği sayesinde size ait olmaya devam eder."
+        },
+        "celo" : {
+          "title" : "CELO varlıklarınızı artırın. Ledger by Figment ile stake edin.",
+          "description" : "CELO'nuzu, Ledger by Figment doğrulayıcı ile stake edin. Ledger'ın taviz vermeyen güvenliği sayesinde slashing'e karşı tam koruma garantisini sunar."
+        }
       }
     }
   },
@@ -2194,7 +2227,7 @@
     },
     "lockedBalance" : "Kilitli bakiye",
     "lockedTooltip" : "Ödül kazanmak için öncelikle varlıkların kilitlenmesi ve doğrulayıcı gruplarına oylanması gerekir.",
-    "nonvotingLockedBalance" : "Oylanmayan kilitli bakiye",
+    "nonvotingLockedBalance" : "Oylamayan kilitli bakiye",
     "nonvotingLockedTooltip" : "Oylama için kullanılabilecek kilitli varlıkların bakiyesi",
     "withdrawableBalance" : "Çekilebilir bakiye",
     "withdrawableTooltip" : "Mevcut Bakiyenize çekebileceğiniz kilidi açık Celo varlıkları",
@@ -4262,13 +4295,14 @@
       "4" : {
         "deviceSelection" : {
           "title" : "Hangi cihazı kullanıyorsunuz?",
-          "desc" : "Nano S cihazınız varsa, donanım yazılımını onarmayı deneyebilirsiniz. Nano X veya Blue kullanıcısıysanız, lütfen Ledger desteğine başvurun"
+          "desc" : "Bir Nano S bağlamaya çalışıyorsanız Nano'nuzda gösterilen durumu seçin. Bir Nano S Plus veya Nano X bağlamaya çalışıyorsanız <0>Yardım Merkezini ziyaret edin</0>"
         },
         "notFixed" : {
           "title" : " USB bağlantı sorunu hâlâ düzeltilmedi mi?",
           "desc" : "Mümkün olan her çözümü denediyseniz lütfen Ledger Destek'e ulaşın. Aksi takdirde, lütfen henüz denemediğiniz çözümlerin yönergelerini izleyin.",
           "back" : "Portföye geri dön",
-          "cta" : "Destek Al"
+          "cta" : "Destek Al",
+          "cta2" : "Geri dön"
         },
         "repair" : {
           "title" : "Nano S cihazınızı onarın",
