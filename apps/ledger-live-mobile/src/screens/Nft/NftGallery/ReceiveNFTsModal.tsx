@@ -1,10 +1,19 @@
 import React, { useCallback } from "react";
 import { useTranslation } from "react-i18next";
-import { BottomDrawer, Button, Text } from "@ledgerhq/native-ui";
-
+import {
+  BottomDrawer,
+  Button,
+  CryptoIcon,
+  Flex,
+  Text,
+} from "@ledgerhq/native-ui";
 import { useNavigation } from "@react-navigation/native";
+import { Linking } from "react-native";
+import styled, { useTheme } from "styled-components/native";
 import { NavigatorName, ScreenName } from "../../../const";
 import { track, TrackScreen } from "../../../analytics";
+import { urls } from "../../../config/urls";
+import ForceTheme from "../../../components/theme/ForceTheme";
 
 type Props = {
   isOpened: boolean;
@@ -38,6 +47,20 @@ export default function ReceiveNFTsModal({ onClose, isOpened }: Props) {
     onClose();
   }, [onClose]);
 
+  const openSupportLink = useCallback(
+    () => Linking.openURL(urls.nft.howToSecure),
+    [],
+  );
+
+  const onClickLearnMore = useCallback(() => {
+    track("button_clicked", {
+      button: "Learn More",
+      drawer: "ReceiveNFTsModal",
+    });
+    openSupportLink();
+    onClose();
+  }, [onClose, openSupportLink]);
+
   return (
     <BottomDrawer
       testId="ReceiveNFTsModal"
@@ -45,7 +68,8 @@ export default function ReceiveNFTsModal({ onClose, isOpened }: Props) {
       onClose={onPressClose}
     >
       <TrackScreen category="Add/receive NFTs" type="drawer" />
-      <Text variant="h4" fontWeight="semiBold" fontSize="24px" mb={4}>
+      <ChainedIcons />
+      <Text variant="h4" fontWeight="semiBold" fontSize="24px" mt={2} mb={4}>
         {t("wallet.nftGallery.receiveModal.title")}
       </Text>
 
@@ -55,9 +79,57 @@ export default function ReceiveNFTsModal({ onClose, isOpened }: Props) {
         </Text>
       ))}
 
-      <Button type="main" size="large" onPress={onClickContinue} my={8}>
-        {t(`wallet.nftGallery.receiveModal.cta`)}
+      <Button type="main" onPress={onClickContinue} mt={8} mb={4}>
+        {t("wallet.nftGallery.receiveModal.cta")}
+      </Button>
+
+      <Button size="large" type="default" onPress={onClickLearnMore}>
+        {t("wallet.nftGallery.receiveModal.info")}
       </Button>
     </BottomDrawer>
   );
 }
+
+function ChainedIcons() {
+  const { colors } = useTheme();
+
+  return (
+    <ForceTheme selectedPalette="light">
+      <Flex
+        flexDirection="row"
+        justifyContent={"center"}
+        alignItems="center"
+        ml={4}
+      >
+        <CryptoIcon name="ETH" size={40} circleIcon />
+        <IconContainer
+          zIndex={1}
+          size={50}
+          borderColor={colors.background.drawer}
+          right={10}
+        >
+          <CryptoIcon name="MATIC" size={40} circleIcon />
+        </IconContainer>
+      </Flex>
+    </ForceTheme>
+  );
+}
+
+const IconContainer = styled(Flex).attrs(
+  (p: {
+    size: number;
+    borderColor: string;
+    backgroundColor: string;
+    zIndex: number;
+    right: number;
+  }) => ({
+    right: `${p.right}px`,
+    alignItems: "center",
+    justifyContent: "center",
+    heigth: p.size,
+    width: p.size,
+    border: `5px solid ${p.borderColor}`,
+    borderRadius: 50.0,
+    backgroundColor: p.backgroundColor,
+  }),
+)<{ size: number }>``;
