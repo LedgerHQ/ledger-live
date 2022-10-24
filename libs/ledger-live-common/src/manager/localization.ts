@@ -11,9 +11,9 @@ export const isDeviceLocalizationSupported = (
   seVersion: string,
   modelId?: DeviceModelId
 ): boolean =>
-  modelId &&
-  deviceVersionRangesForLocalization[modelId] &&
-  versionSatisfies(
+  !!modelId &&
+  !!deviceVersionRangesForLocalization[modelId] &&
+  !!versionSatisfies(
     semverCoerce(seVersion) || seVersion,
     deviceVersionRangesForLocalization[modelId] as string
   );

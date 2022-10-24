@@ -15,9 +15,9 @@ export const isBootloaderVersionSupported = (
   seVersion: string,
   modelId?: DeviceModelId
 ): boolean =>
-  modelId &&
-  deviceVersionRangesForBootloaderVersion[modelId] &&
-  versionSatisfies(
+  !!modelId &&
+  !!deviceVersionRangesForBootloaderVersion[modelId] &&
+  !!versionSatisfies(
     semverCoerce(seVersion) || seVersion,
     deviceVersionRangesForBootloaderVersion[modelId] as string
   );
@@ -36,9 +36,9 @@ export const isHardwareVersionSupported = (
   seVersion: string,
   modelId?: DeviceModelId
 ): boolean =>
-  modelId &&
-  deviceVersionRangesForHardwareVersion[modelId] &&
-  versionSatisfies(
+  !!modelId &&
+  !!deviceVersionRangesForHardwareVersion[modelId] &&
+  !!versionSatisfies(
     semverCoerce(seVersion) || seVersion,
     deviceVersionRangesForHardwareVersion[modelId] as string
   );
