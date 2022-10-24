@@ -1556,6 +1556,8 @@
       "undelegated": "Undelegated",
       "undelegatedFrom": "Undelegated from",
       "undelegatedAmount": "Undelegated amount",
+      "withdrawnFrom": "Withdrawn from",
+      "withdrawnAmount": "Withdrawn amount",
       "rewardFrom": "Reward from",
       "memo": "Memo",
       "assetId": "Asset ID",
@@ -2071,6 +2073,191 @@
     "amount": "Amount",
     "value": "Value",
     "header": "Account allocation ({{count}})"
+  },
+  "elrond": {
+    "summary": {
+      "availableBalanceTooltip": "This amount can be transferred.",
+      "availableBalance": "Available balance",
+      "delegatedAssetsTooltip": "Delegated assets are used indirectly by the staking provider to operate validator nodes, process transactions and secure the network by participating in the consensus mechanism.",
+      "delegatedAssets": "Delegated assets",
+      "undelegatingTooltip": "Undelegated assets are subject to a 10-day unbonding period, before being able to be withdrawn.",
+      "undelegating": "Pending Withdrawals"
+    },
+    "account": {
+      "subHeader": {
+        "cardTitle": "Powered by Elrond",
+        "moreInfo": "More info",
+        "drawerTitle": "Elrond integration",
+        "title": "Elrond eGold (EGLD) token is now available on Ledger Live",
+        "description": "You can now safely secure your eGold (EGLD) tokens and manage them through Ledger Live.",
+        "description2": "The Elrond eGold (EGLD) Token is native to the Elrond Network and will be used for everything from transactions, staking, smart contracts, governance and validator rewards.",
+        "description3": "We are actively working with the Elrond team to add more functionality, such as staking, native ESDT (Elrond Standard Digital Token) support, and more.",
+        "website": "The Internet Scale Blockchain"
+      }
+    },
+    "delegation": {
+      "emptyState": {
+        "description": "Delegate your EGLD to secure the network and capture your share of the rewards.",
+        "info": "What is a delegation?",
+        "delegation": "Earn rewards"
+      },
+      "commission": "Commission",
+      "claimRewards": "Claim rewards",
+      "header": "Delegation(s)",
+      "noRewards": "No rewards available",
+      "delegate": "Delegate",
+      "undelegate": "Undelegate",
+      "redelegateDisabledTooltip": "You can redelegate again <0>{{days}}</0>",
+      "redelegateMaxDisabledTooltip": "You cannot redelegate more than <0>7</0> validators at a time",
+      "undelegateDisabledTooltip": "You cannot undelegate more than <0>7</0> validators at a time",
+      "reward": "Claim rewards",
+      "currentDelegation": "Delegated: <0>{{amount}}</0>",
+      "apr": "APR",
+      "totalStake": "Total Stake",
+      "activeTooltip": "Delegated amounts generate rewards",
+      "inactiveTooltip": "Undelegated amounts do not generate rewards",
+      "minSafeWarning": "Not enough funds. You need at least 1 EGLD available.",
+      "flow": {
+        "title": "Delegate",
+        "steps": {
+          "amount": {
+            "title": "Delegate",
+            "subtitle": "Stake your assets to one of the following Staking Providers.",
+            "warning": "Choose your Staking Provider wisely: currently, the only risk is of not getting rewards due to various reasons, therefore you should select a provider based on Reliability, Communication and Economics.",
+            "fields": {
+              "validator": "Staking Provider"
+            }
+          },
+          "fields": {
+            "amount": "Amount to stake"
+          },
+          "starter": {
+            "description": "You can earn rewards by delegating your EGLD assets to a Staking Provider.",
+            "bullet": [
+              "You keep ownership of delegated assets",
+              "Delegate using your Ledger device",
+              "Assets will be available 10 days after Undelegation"
+            ],
+            "warning": {
+              "description": "Choose your Staking Provider wisely: currently, the only risk is of not getting rewards due to various reasons, therefore you should select a provider based on Reliability, Communication and Economics."
+            }
+          },
+          "validator": {
+            "title": "Staking Providers"
+          },
+          "connectDevice": {
+            "title": "Device"
+          },
+          "confirmation": {
+            "title": "Confirmation",
+            "success": {
+              "title": "You have successfully delegated your assets.",
+              "text": "Your account balance will be updated when the blockchain confirms the transaction.",
+              "cta": "View details"
+            },
+            "broadcastError": "Your transaction may have failed. Please wait a moment then check the transaction history before trying again."
+          }
+        }
+      }
+    },
+    "claimRewards": {
+      "flow": {
+        "title": "Claim rewards",
+        "steps": {
+          "claimRewards": {
+            "title": "Rewards",
+            "compound": "Compound Rewards",
+            "claim": "Claim Rewards",
+            "compoundOrClaim": "Compound Rewards or Claim Rewards",
+            "compoundDescription": "Rewards will be added to the delegated amount.",
+            "claimDescription": "Rewards will be added to your available balance.",
+            "compoundInfo": "You have earned <0>{{amount}}</0>. By clicking Continue, they will be claimed now and automatically delegated to the same Staking Provider.",
+            "claimInfo": "You have earned <0>{{amount}}</0> from the Staking Provider below. By clicking Continue, they will be claimed now and automatically added to the available balance.",
+            "selectLabel": "Select a delegation"
+          },
+          "connectDevice": {
+            "title": "Device"
+          },
+          "confirmation": {
+            "title": "Confirmation",
+            "label": "Confirmation",
+            "success": {
+              "title": "Claim rewards was successful",
+              "titleCompound": "Rewards compounded successfully",
+              "text": "The rewards have been added to your available balance",
+              "textCompound": "Your compound rewards transaction of <0>{{amount}}</0> EGLD to <0>{{validator}}</0> was successfully processed.",
+              "cta": "View details"
+            },
+            "pending": {
+              "title": "Broadcasting transaction..."
+            },
+            "broadcastError": "Your transaction may have failed. Please wait a moment then check the transaction history before trying again."
+          }
+        }
+      }
+    },
+    "undelegation": {
+      "header": "Undelegation(s)",
+      "headerTooltip": "Available after the 10-day unbonding period.",
+      "inactiveTooltip": "Undelegated amounts do not generate rewards.",
+      "withdraw": {
+        "cta": "Finalize Withdrawal"
+      },
+      "flow": {
+        "title": "Undelegate assets",
+        "steps": {
+          "amount": {
+            "title": "Amount",
+            "subtitle": "The undelegation process takes <0>10 days</0> to finalize.",
+            "warning": "Rewards will be claimed automatically. Undelegating is a 2 step process: undelegating request, followed by a  <0>10-day unbonding period</0> after which you can finalize the withdrawal and the undelegated amount will be transferred to your available balance.",
+            "fields": {
+              "validator": "Staking Provider",
+              "amount": "Amount to undelegate"
+            }
+          },
+          "device": {
+            "title": "Device"
+          },
+          "confirmation": {
+            "title": "Confirmation",
+            "success": {
+              "title": "You have successfully undelegated your assets.",
+              "description": "<0>{{amount}}</0> were undelegated from <0>{{validator}}</0>.",
+              "cta": "View details"
+            },
+            "broadcastError": "Your transaction may have failed. Please wait a moment then check the transaction history before trying again."
+          }
+        }
+      }
+    },
+    "withdraw": {
+      "flow": {
+        "title": "Finalize Withdrawal",
+        "steps": {
+          "withdraw": {
+            "title": "Finalize Withdrawal",
+            "description": "You undelegated <0>{{amount}}</0> EGLD from <0>{{validator}}</0>. By clicking Continue, they will be withdrawn now and automatically added back to your available balance.",
+            "selectLabel": "Select an undelegation"
+          },
+          "connectDevice": {
+            "title": "Device"
+          },
+          "confirmation": {
+            "title": "Confirmation",
+            "label": "Confirmation",
+            "success": {
+              "title": "Funds withdrawn successfully",
+              "text": "The amount of <0>{{amount}}</0> was withdrawn back into your account balance.",
+              "cta": "View details"
+            },
+            "pending": {
+              "title": "Broadcasting transaction..."
+            },
+            "broadcastError": "Your transaction may have failed. Please wait a moment then check the transaction history before trying again."
+          }
+        }
+      }
+    }
   },
   "cardano": {
     "account": {
@@ -4672,6 +4859,10 @@
     "NoAddressesFound": {
       "title": "Sorry, no accounts were found",
       "description": "Something went wrong with the address calculation, try again or contact Ledger Support"
+    },
+    "DecimalsLimitReached": {
+      "title": "Maximum decimals limit reached",
+      "description": "Please make sure that the amount provided has 18 decimals."
     },
     "NotEnoughBalance": {
       "title": "Sorry, insufficient funds",

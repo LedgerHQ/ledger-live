@@ -121,6 +121,8 @@
     "@cosmjs/proto-signing": "^0.26.5",
     "@cosmjs/stargate": "^0.26.5",
     "@crypto-com/chain-jslib": "0.0.19",
+    "@elrondnetwork/erdjs": "11.0.0",
+    "@elrondnetwork/erdjs-network-providers": "^1.1.2",
     "@ethereumjs/common": "^2.6.2",
     "@ethereumjs/tx": "^3.5.0",
     "@ethersproject/shims": "^5.7.0",

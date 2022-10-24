@@ -1,4 +1,3 @@
-import { BigNumber } from "bignumber.js";
 import {
   NotEnoughBalance,
   RecipientRequired,
@@ -7,17 +6,21 @@ import {
   InvalidAddressBecauseDestinationIsAlsoSource,
   FeeTooHigh,
 } from "@ledgerhq/errors";
-import type { Account } from "@ledgerhq/types-live";
-import type { Transaction, TransactionStatus } from "./types";
-import { isValidAddress, isSelfTransaction } from "./logic";
+import { DECIMALS_LIMIT } from "./constants";
+import type { ElrondAccount, Transaction, TransactionStatus } from "./types";
+import {
+  isValidAddress,
+  isSelfTransaction,
+  computeTransactionValue,
+} from "./logic";
+import { DecimalsLimitReached } from "./errors";
 
 const getTransactionStatus = async (
-  a: Account,
+  a: ElrondAccount,
   t: Transaction
 ): Promise<TransactionStatus> => {
   const errors: Record<string, Error> = {};
   const warnings: Record<string, Error> = {};
-  const useAllAmount = !!t.useAllAmount;
 
   if (!t.recipient) {
     errors.recipient = new RecipientRequired();
@@ -31,24 +34,38 @@ const getTransactionStatus = async (
     errors.fees = new FeeNotLoaded();
   }
 
-  const estimatedFees = t.fees || new BigNumber(0);
+  const tokenAccount =
+    (t.subAccountId &&
+      a.subAccounts &&
+      a.subAccounts.find((ta) => ta.id === t.subAccountId)) ||
+    null;
+
+  const { amount, totalSpent, estimatedFees } = await computeTransactionValue(
+    t,
+    a,
+    tokenAccount
+  );
+
   if (estimatedFees.gt(a.balance)) {
     errors.amount = new NotEnoughBalance();
   }
 
-  const totalSpent = useAllAmount
-    ? a.balance
-    : new BigNumber(t.amount).plus(estimatedFees);
-  const amount = useAllAmount
-    ? a.balance.minus(estimatedFees)
-    : new BigNumber(t.amount);
+  if (tokenAccount) {
+    if (totalSpent.gt(tokenAccount.balance)) {
+      errors.amount = new NotEnoughBalance();
+    }
+    if (!totalSpent.decimalPlaces(DECIMALS_LIMIT).isEqualTo(totalSpent)) {
+      errors.amount = new DecimalsLimitReached();
+    }
+  } else {
+    if (totalSpent.gt(a.balance)) {
+      errors.amount = new NotEnoughBalance();
+    }
 
-  if (totalSpent.gt(a.balance)) {
-    errors.amount = new NotEnoughBalance();
-  }
-
-  if (amount.div(10).lt(estimatedFees)) {
-    warnings.feeTooHigh = new FeeTooHigh();
+    const isZeroAmountOperation = t.mode !== "send" && t.mode !== "delegate";
+    if (!isZeroAmountOperation && amount.div(10).lt(estimatedFees)) {
+      warnings.feeTooHigh = new FeeTooHigh();
+    }
   }
 
   return Promise.resolve({

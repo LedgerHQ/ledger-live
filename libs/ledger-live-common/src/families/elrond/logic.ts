@@ -1,6 +1,9 @@
-import type { Account } from "@ledgerhq/types-live";
-import type { ElrondAccount, Transaction } from "./types";
+import type { ElrondAccount, Transaction, ElrondDelegation } from "./types";
 import * as bech32 from "bech32";
+import BigNumber from "bignumber.js";
+import { buildTransaction } from "./js-buildTransaction";
+import getEstimatedFees from "./js-getFeesForTransaction";
+import { Account, SubAccount } from "@ledgerhq/types-live";
 
 /**
  * The human-readable-part of the bech32 addresses.
@@ -51,18 +54,58 @@ export const isSelfTransaction = (a: Account, t: Transaction): boolean => {
   return t.recipient === a.freshAddress;
 };
 
-/**
- * Returns nonce for an account
- *
- * @param {Account} a
- */
-export const getNonce = (a: ElrondAccount): number => {
-  const lastPendingOp = a.pendingOperations[0];
-  const nonce = Math.max(
-    a.elrondResources?.nonce || 0,
-    lastPendingOp && typeof lastPendingOp.transactionSequenceNumber === "number"
-      ? lastPendingOp.transactionSequenceNumber + 1
-      : 0
-  );
-  return nonce;
+export const computeTransactionValue = async (
+  transaction: Transaction,
+  account: ElrondAccount,
+  tokenAccount: SubAccount | null
+): Promise<{
+  amount: BigNumber;
+  totalSpent: BigNumber;
+  estimatedFees: BigNumber;
+}> => {
+  let amount, totalSpent;
+
+  await buildTransaction(account, tokenAccount, transaction);
+
+  const estimatedFees = await getEstimatedFees(transaction);
+
+  if (tokenAccount) {
+    amount = transaction.useAllAmount
+      ? tokenAccount.balance
+      : transaction.amount;
+
+    totalSpent = amount;
+  } else {
+    totalSpent = transaction.useAllAmount
+      ? account.spendableBalance
+      : new BigNumber(transaction.amount).plus(estimatedFees);
+
+    amount = transaction.useAllAmount
+      ? account.spendableBalance.minus(estimatedFees)
+      : new BigNumber(transaction.amount);
+  }
+
+  return { amount, totalSpent, estimatedFees };
+};
+
+export const computeDelegationBalance = (
+  delegations: ElrondDelegation[]
+): BigNumber => {
+  let totalDelegationBalance = new BigNumber(0);
+
+  for (const delegation of delegations) {
+    let delegationBalance = new BigNumber(delegation.userActiveStake).plus(
+      new BigNumber(delegation.claimableRewards)
+    );
+
+    for (const undelegation of delegation.userUndelegatedList) {
+      delegationBalance = delegationBalance.plus(
+        new BigNumber(undelegation.amount)
+      );
+    }
+
+    totalDelegationBalance = totalDelegationBalance.plus(delegationBalance);
+  }
+
+  return totalDelegationBalance;
 };

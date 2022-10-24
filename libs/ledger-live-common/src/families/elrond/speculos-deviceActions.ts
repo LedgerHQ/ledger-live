@@ -1,8 +1,9 @@
 import type { DeviceAction } from "../../bot/types";
 import type { Transaction } from "./types";
-import { deviceActionFlow, formatDeviceAmount } from "../../bot/specs";
+import { formatCurrencyUnit } from "../../currencies";
+import { deviceActionFlow } from "../../bot/specs";
 
-export const acceptTransaction: DeviceAction<Transaction, any> =
+export const acceptMoveBalanceTransaction: DeviceAction<Transaction, any> =
   deviceActionFlow({
     steps: [
       {
@@ -14,14 +15,16 @@ export const acceptTransaction: DeviceAction<Transaction, any> =
         title: "Amount",
         button: "Rr",
         expectedValue: ({ account, transaction }) =>
-          formatDeviceAmount(account.currency, transaction.amount, {
-            postfixCode: true,
-          }),
+          formatCurrencyUnit(account.unit, transaction.amount, {
+            showCode: true,
+            disableRounding: true,
+            joinFragmentsSeparator: " ",
+          }).replace(/\s+/g, " "),
       },
       {
         title: "Fee",
         button: "Rr",
-        // TODO: add a expectedValue fn
+        expectedValue: () => "50000",
       },
       {
         title: "Data",
@@ -30,6 +33,7 @@ export const acceptTransaction: DeviceAction<Transaction, any> =
       {
         title: "Sign",
         button: "LRlr",
+        final: true,
       },
       {
         title: "Network",
@@ -38,3 +42,87 @@ export const acceptTransaction: DeviceAction<Transaction, any> =
       },
     ],
   });
+
+export const acceptDelegateTransaction: DeviceAction<Transaction, any> =
+  deviceActionFlow({
+    steps: [
+      {
+        title: "Receiver",
+        button: "Rr",
+        expectedValue: ({ transaction }) => transaction.recipient,
+      },
+      {
+        title: "Amount",
+        button: "Rr",
+        expectedValue: ({ account, transaction }) =>
+          formatCurrencyUnit(account.unit, transaction.amount, {
+            showCode: true,
+            disableRounding: true,
+            joinFragmentsSeparator: " ",
+          }).replace(/\s+/g, " "),
+      },
+      {
+        title: "Fee",
+        button: "Rr",
+      },
+      {
+        title: "Data",
+        button: "Rr",
+      },
+      {
+        title: "Sign",
+        button: "LRlr",
+        final: true,
+      },
+      {
+        title: "Network",
+        button: "Rr",
+        expectedValue: () => "Mainnet",
+      },
+    ],
+  });
+
+export const acceptEsdtTransferTransaction: DeviceAction<Transaction, any> =
+  deviceActionFlow({
+    steps: [
+      {
+        title: "Token",
+        button: "Rr",
+        expectedValue: () => "MEX",
+      },
+      {
+        title: "Value",
+        button: "Rr",
+        expectedValue: ({ account, transaction }) =>
+          formatCurrencyUnit(account.unit, transaction.amount, {
+            showCode: true,
+            disableRounding: true,
+            joinFragmentsSeparator: " ",
+          }).replace(/\s+/g, " "),
+      },
+      {
+        title: "Receiver",
+        button: "Rr",
+        expectedValue: ({ transaction }) => transaction.recipient,
+      },
+      {
+        title: "Fee",
+        button: "Rr",
+      },
+      {
+        title: "Sign",
+        button: "LRlr",
+        final: true,
+      },
+      {
+        title: "Network",
+        button: "Rr",
+        expectedValue: () => "Mainnet",
+      },
+    ],
+  });
+export default {
+  acceptMoveBalanceTransaction,
+  acceptEsdtTransferTransaction,
+  acceptDelegateTransaction,
+};
