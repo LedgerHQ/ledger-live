@@ -1944,6 +1944,39 @@
         "tezos" : {
           "text" : "Der Betrag, der auf einem delegierten Konto eingeht, wird zum eingesetzten Gesamtbetrag addiert. Wählen Sie ein anderes Konto, wenn Sie dies vermeiden möchten."
         }
+      },
+      "staking" : {
+        "title" : "Verdiene {{currencyName}}",
+        "link" : "Weitere Informationen",
+        "notShow" : "Nicht erneut anzeigen",
+        "footer" : {
+          "dismiss" : "Nicht jetzt",
+          "stake" : "Staken mit {{provider}}"
+        },
+        "ethereum" : {
+          "title" : "Vermehren Sie Ihre ETH. Jetzt staken.",
+          "description" : "Staken Sie Ihr Ethereum mit Lido ein und verdienen Sie täglich Belohnungen. Keine Sperrfrist. Keine Mindesteinzahlung.",
+          "kiln" : {
+            "title" : "HODLen Sie nicht einfach. Vermehren Sie Ihre ETH.",
+            "description" : "Sie haben mehr als 32 ETH? Verdienen Sie passive Belohnungen, indem Sie Ihre ETH sicher mit Kiln staken."
+          }
+        },
+        "cosmos" : {
+          "title" : "Vermehren Sie Ihre ATOM. Staken mit Ledger Validator.",
+          "description" : "Staken Sie Ihre ATOM mit dem vertrauenswürdigen Ledger Validator. Ihre Coins gehören stets Ihnen, unterstützt durch die kompromisslose Sicherheit von Ledger."
+        },
+        "osmosis" : {
+          "title" : "Vermehren Sie Ihre OSMO. Staken mit Ledger by Figment.",
+          "description" : "Staken Sie Ihre OSMO mit dem Ledger by Figment Validator. Er bietet die niedrigste Provisionsgebühr und eine Garantie gegen Slashing!"
+        },
+        "solana" : {
+          "title" : "Vermehren Sie Ihre SOL. Staken mit Ledger by Figment.",
+          "description" : "Staken Sie Ihre SOL mit dem Ledger by Figment Validator. Ihre Coins gehören stets Ihnen, unterstützt durch die kompromisslose Sicherheit von Ledger."
+        },
+        "celo" : {
+          "title" : "Vermehren Sie Ihre CELO. Staken mit Ledger by Figment.",
+          "description" : "Staken Sie Ihre CELO mit dem Ledger by Figment Validator. Garantiert vollständiger Schutz vor Slashing, unterstützt durch die kompromisslose Sicherheit von Ledger."
+        }
       }
     }
   },
@@ -4262,13 +4295,14 @@
       "4" : {
         "deviceSelection" : {
           "title" : "Was für ein Gerät haben Sie?",
-          "desc" : "Wenn Sie einen Nano S haben, können Sie versuchen, die Firmware Ihres Geräts zu reparieren. Für Nano X- und Blue-Benutzer wenden Sie sich bitte an den Ledger-Support"
+          "desc" : "Wenn Sie versuchen, einen Nano S anzuschließen, wählen Sie den Status aus, der auf Ihrem Nano angezeigt wird. Wenn Sie versuchen, einen Nano S Plus oder Nano X zu verbinden, <0>besuchen Sie das Hilfe-Center</0>"
         },
         "notFixed" : {
           "title" : " USB-Verbindungsproblem immer noch nicht behoben?",
           "desc" : "Wenn Sie alle möglichen Lösungen ausprobiert haben, wenden Sie sich bitte an den Ledger-Support. Ansonsten folgen Sie bitte den Anweisungen jeder Lösung, die Sie noch nicht ausprobiert haben.",
           "back" : "Zurück zum Portfolio",
-          "cta" : "Support kontaktieren"
+          "cta" : "Support kontaktieren",
+          "cta2" : "Zurückgehen"
         },
         "repair" : {
           "title" : "Reparieren Sie Ihren Nano S",
