@@ -102,7 +102,7 @@ export default function LockAmount({ navigation, route }: Props) {
 
     setTransaction(
       bridge.updateTransaction(transaction, {
-        amount: BigNumber(0),
+        amount: new BigNumber(0),
         useAllAmount: !transaction.useAllAmount,
       }),
     );
