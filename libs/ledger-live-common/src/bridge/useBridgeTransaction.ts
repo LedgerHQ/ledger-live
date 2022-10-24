@@ -15,10 +15,10 @@ export type State = {
   errorAccount: Error | null | undefined;
   errorStatus: Error | null | undefined;
 };
-export type Result = {
-  transaction: Transaction | null | undefined;
-  setTransaction: (arg0: Transaction) => void;
-  updateTransaction: (updater: (arg0: Transaction) => Transaction) => void;
+export type Result<T extends Transaction = Transaction> = {
+  transaction: T | null | undefined;
+  setTransaction: (arg0: T) => void;
+  updateTransaction: (updater: (arg0: T) => T) => void;
   account: AccountLike | null | undefined;
   parentAccount: Account | null | undefined;
   setAccount: (arg0: AccountLike, arg1: Account | null | undefined) => void;
