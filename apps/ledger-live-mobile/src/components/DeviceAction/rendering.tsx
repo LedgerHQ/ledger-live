@@ -610,10 +610,14 @@ export function RequiredFirmwareUpdate({
 
   const deviceName = getDeviceModel(device.modelId).productName;
 
+  const isDeviceConnectedViaUSB = device.wired;
+
+  // Goes to the manager if a firmware update is available, but only automatically
+  // displays the firmware update drawer if the device is already connected via USB
   const onPress = () => {
     navigation.navigate(NavigatorName.Manager, {
       screen: ScreenName.Manager,
-      params: { firmwareUpdate: true },
+      params: { device, firmwareUpdate: isDeviceConnectedViaUSB },
     });
   };
 
