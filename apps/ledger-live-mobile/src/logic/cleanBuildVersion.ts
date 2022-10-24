@@ -4,6 +4,7 @@ const mega = 1048576;
 export const getAndroidArchitecture = (
   buildVersion?: string | null | undefined,
 ) => {
+  if (!buildVersion) return "";
   const buildVersionNumber = parseInt(buildVersion, 10);
   if (!buildVersionNumber) return "";
 
@@ -18,6 +19,7 @@ export const getAndroidArchitecture = (
 export const getAndroidVersionCode = (
   buildVersion?: string | null | undefined,
 ) => {
+  if (!buildVersion) return "";
   const buildVersionNumber = parseInt(buildVersion, 10);
   if (!buildVersionNumber) return "";
   return Platform.OS === "android" && buildVersionNumber

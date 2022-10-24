@@ -9,7 +9,7 @@ export type PropsExceptModelId = {
   width: number;
   error?: Error;
 };
-type Props = PropsExceptModelId & {
+export type Props = PropsExceptModelId & {
   modelId?: "nanoS" | "nanoX" | "blue";
 };
 

@@ -1,12 +1,12 @@
 import React, { Component } from "react";
 import { View, StyleSheet } from "react-native";
-import LText from "../../components/LText/index";
+import LText, { Opts } from "../../components/LText/index";
 import Touchable from "../../components/Touchable";
 
 type Props = {
   title: React.ReactNode;
-  titleProps?: any;
-  additionalInfo?: any;
+  titleProps?: Partial<Opts>;
+  additionalInfo?: React.ReactNode;
   children: React.ReactNode;
   onPress?: () => void;
   event?: string;

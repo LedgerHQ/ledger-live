@@ -32,7 +32,7 @@ const ValidatorRow = ({
 
   const onPressT = useCallback(() => {
     onPress(validator, vote);
-  }, [validator, onPress]);
+  }, [onPress, validator, vote]);
 
   return (
     <Touchable

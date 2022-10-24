@@ -3,9 +3,9 @@ import { createStackNavigator } from "@react-navigation/stack";
 import { useTheme } from "styled-components/native";
 import { ScreenName } from "../../const";
 import { getStackNavigatorConfig } from "../../navigation/navigatorConfig";
-// eslint-disable-next-line import/no-cycle
 import Discover from "../../screens/Discover";
 import PlatformCatalog from "../../screens/Platform";
+import { DiscoverNavigatorStackParamList } from "./types/DiscoverNavigator";
 
 export default function DiscoverNavigator() {
   const { colors } = useTheme();
@@ -34,4 +34,4 @@ export default function DiscoverNavigator() {
   );
 }
 
-const Stack = createStackNavigator();
+const Stack = createStackNavigator<DiscoverNavigatorStackParamList>();

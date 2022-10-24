@@ -1,36 +1,34 @@
 import React, { useCallback, useContext, useEffect } from "react";
 import { View, StyleSheet } from "react-native";
 import { useSelector } from "react-redux";
-import type { Operation } from "@ledgerhq/types-live";
-import { useTheme } from "@react-navigation/native";
+import { CompositeScreenProps, useTheme } from "@react-navigation/native";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/helpers";
 import { accountScreenSelector } from "../../reducers/accounts";
 import { TrackScreen } from "../../analytics";
 import { ScreenName } from "../../const";
 import PreventNativeBack from "../../components/PreventNativeBack";
 import ValidateSuccess from "../../components/ValidateSuccess";
+import type { SendFundsNavigatorStackParamList } from "../../components/RootNavigator/types/SendFundsNavigator";
 
 import {
-  // eslint-disable-next-line import/named
   context as _wcContext,
-  // eslint-disable-next-line import/named
   setCurrentCallRequestResult,
-  // eslint-disable-next-line import/named
   STATUS,
 } from "../WalletConnect/Provider";
+import {
+  StackNavigatorNavigation,
+  StackNavigatorProps,
+} from "../../components/RootNavigator/types/helpers";
+import { BaseNavigatorStackParamList } from "../../components/RootNavigator/types/BaseNavigator";
 
-type Props = {
-  navigation: any;
-  route: {
-    params: RouteParams;
-  };
-};
-type RouteParams = {
-  accountId: string;
-  deviceId: string;
-  transaction: any;
-  result: Operation;
-};
+type Props = CompositeScreenProps<
+  StackNavigatorProps<
+    SendFundsNavigatorStackParamList,
+    ScreenName.SendValidationSuccess
+  >,
+  StackNavigatorProps<BaseNavigatorStackParamList>
+>;
+
 export default function ValidationSuccess({ navigation, route }: Props) {
   const { colors } = useTheme();
   const { account, parentAccount } = useSelector(accountScreenSelector(route));
@@ -48,9 +46,14 @@ export default function ValidationSuccess({ navigation, route }: Props) {
     if (wcContext.currentCallRequestId) {
       setCurrentCallRequestResult(result.hash);
     }
+    // FIXME: IT LOOKS LIKE A COMPONENT DID MOUNT BUT NOT SURE AT ALL IF
+    // IT NEEDS TO BE RERUN WHEN DEPS CHANGE
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   const onClose = useCallback(() => {
-    navigation.getParent().pop();
+    navigation
+      .getParent<StackNavigatorNavigation<BaseNavigatorStackParamList>>()
+      .pop();
   }, [navigation]);
   const goToOperationDetails = useCallback(() => {
     if (!account) return;
@@ -59,7 +62,7 @@ export default function ValidationSuccess({ navigation, route }: Props) {
     navigation.navigate(ScreenName.OperationDetails, {
       disableAllLinks: wcContext.status === STATUS.CONNECTED,
       accountId: account.id,
-      parentId: parentAccount && parentAccount.id,
+      parentId: (parentAccount && parentAccount.id) || undefined,
       operation:
         result.subOperations && result.subOperations[0]
           ? result.subOperations[0]

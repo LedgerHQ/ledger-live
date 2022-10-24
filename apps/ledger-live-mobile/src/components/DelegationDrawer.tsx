@@ -2,7 +2,7 @@ import { BigNumber } from "bignumber.js";
 import React from "react";
 import type { ComponentType } from "react";
 import { View, StyleSheet, ScrollView } from "react-native";
-import type { ViewStyleProp } from "react-native/Libraries/StyleSheet/StyleSheet";
+import type { StyleProp, ViewStyle } from "react-native";
 import {
   getAccountCurrency,
   getAccountUnit,
@@ -13,7 +13,6 @@ import type { AccountLike } from "@ledgerhq/types-live";
 import { useTheme } from "@react-navigation/native";
 import DelegatingContainer from "../families/tezos/DelegatingContainer";
 import { rgba } from "../colors";
-// eslint-disable-next-line import/no-unresolved
 import getWindowDimensions from "../logic/getWindowDimensions";
 import BottomModal from "./BottomModal";
 import Circle from "./Circle";
@@ -57,12 +56,7 @@ export default function DelegationDrawer({
   const unit = getAccountUnit(account);
   const iconWidth = normalize(64);
   return (
-    <BottomModal
-      id="InfoModal"
-      style={styles.modal}
-      isOpened={isOpen}
-      onClose={onClose}
-    >
+    <BottomModal style={styles.modal} isOpened={isOpen} onClose={onClose}>
       <View style={styles.root}>
         <DelegatingContainer
           left={
@@ -157,17 +151,17 @@ function DataField({ label, Component, isLast }: DataFieldProps) {
 }
 
 export type Action = {
-  label: React.ReactNode;
+  label?: React.ReactNode;
   Icon: string | ComponentType<IconProps>;
-  event: string;
-  eventProperties?: any;
+  event?: string;
+  eventProperties?: Record<string, unknown>;
   disabled?: boolean;
-  onPress: () => void;
+  onPress?: () => void;
 };
 
 export type IconProps = {
   size: number;
-  style: ViewStyleProp;
+  style: StyleProp<ViewStyle>;
   bg?: string;
 };
 

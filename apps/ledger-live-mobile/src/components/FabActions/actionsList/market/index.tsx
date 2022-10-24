@@ -11,7 +11,7 @@ type Props = {
   parentAccount?: Account;
   currency?: CryptoCurrency | TokenCurrency;
   accounts?: AccountLike[];
-  eventProperties?: { [key: string]: any };
+  eventProperties?: { [key: string]: unknown };
 };
 
 const FabMarketActionsComponent: React.FC<Props> = ({

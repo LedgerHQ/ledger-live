@@ -1,5 +1,5 @@
 import React, { memo } from "react";
-import { Trans } from "react-i18next";
+import { useTranslation } from "react-i18next";
 import { StyleSheet } from "react-native";
 import { useTheme } from "@react-navigation/native";
 import SummaryRowCustom from "./SummaryRowCustom";
@@ -13,9 +13,10 @@ type Props = {
 
 function SummaryToSection({ recipient }: Props) {
   const { colors } = useTheme();
+  const { t } = useTranslation();
   return (
     <SummaryRowCustom
-      label={<Trans i18nKey="send.summary.to" />}
+      label={t("send.summary.to")}
       iconLeft={
         <Circle bg={colors.lightLive} size={34}>
           <QRcode size={16} />

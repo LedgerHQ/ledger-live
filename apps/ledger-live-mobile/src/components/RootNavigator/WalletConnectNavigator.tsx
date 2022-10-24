@@ -1,6 +1,6 @@
 import React, { useMemo } from "react";
 import { createStackNavigator } from "@react-navigation/stack";
-import { useTheme } from "styled-components/native";
+import { useTheme } from "@react-navigation/native";
 import { useTranslation } from "react-i18next";
 
 import { ScreenName } from "../../const";
@@ -10,6 +10,7 @@ import WalletConnectConnect from "../../screens/WalletConnect/Connect";
 import WalletConnectDeeplinkingSelectAccount from "../../screens/WalletConnect/DeeplinkingSelectAccount";
 import HeaderRightClose from "../HeaderRightClose";
 import { getStackNavigatorConfig } from "../../navigation/navigatorConfig";
+import { WalletConnectNavigatorParamList } from "./types/WalletConnectNavigator";
 
 export default function WalletConnectNavigator() {
   const { colors } = useTheme();
@@ -56,4 +57,4 @@ export default function WalletConnectNavigator() {
   );
 }
 
-const Stack = createStackNavigator();
+const Stack = createStackNavigator<WalletConnectNavigatorParamList>();

@@ -8,19 +8,24 @@ import {
   ScrollView,
 } from "react-native";
 import { v4 as uuid } from "uuid";
-import { from, Observable } from "rxjs";
+import { from, Observable, Subscription } from "rxjs";
 import { listen } from "@ledgerhq/logs";
 import type { Log } from "@ledgerhq/logs";
 import { bufferTime, shareReplay } from "rxjs/operators";
 import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";
 import { disconnect } from "@ledgerhq/live-common/hw/index";
 import { useTheme } from "@react-navigation/native";
+import BluetoothTransport from "@ledgerhq/react-native-hw-transport-ble";
 import LText from "../components/LText";
 import Button from "../components/Button";
 import KeyboardView from "../components/KeyboardView";
 import Switch from "../components/Switch";
+import { ScreenName } from "../const";
+import { SettingsNavigatorStackParamList } from "../components/RootNavigator/types/SettingsNavigator";
+import { StackNavigatorProps } from "../components/RootNavigator/types/helpers";
+import { Theme } from "../colors";
 
-const logsObservable = Observable.create(o => listen(log => o.next(log))).pipe(
+const logsObservable = new Observable(o => listen(log => o.next(log))).pipe(
   shareReplay(1000),
 );
 logsObservable.subscribe();
@@ -31,7 +36,7 @@ const styles = StyleSheet.create({
   },
 });
 
-const mapLogToColor = (colors: any, log: Log) => {
+const mapLogToColor = (colors: Theme["colors"], log: Log) => {
   if (log.type.includes("error")) return colors.alert;
   if (log.type === "verbose") return colors.grey;
   if (log.type.includes("frame")) return colors.live;
@@ -79,19 +84,11 @@ function LogItemComponent({ log }: { log: Log }) {
 const LogItem = memo<{
   log: Log;
 }>(LogItemComponent);
-type Props = {
-  navigation: any;
-  route: {
-    params: RouteParams;
-  };
-  device: any;
-};
-type RouteParams = {
-  deviceId: string;
-};
+
+type Choices = "Balanced" | "High" | "LowPower";
 
 class DebugBLE extends Component<
-  Props,
+  StackNavigatorProps<SettingsNavigatorStackParamList, ScreenName.DebugBLE>,
   {
     logs: Log[];
     apdu: string;
@@ -105,7 +102,7 @@ class DebugBLE extends Component<
     bleframe: "0800000000",
     useBLEframe: false,
   };
-  sub: any;
+  sub: Subscription | undefined;
 
   componentDidMount() {
     this.sub = logsObservable.pipe(bufferTime(200)).subscribe(buffer => {
@@ -113,7 +110,7 @@ class DebugBLE extends Component<
         buffer.length === 0
           ? null
           : {
-              logs: logs.concat(buffer),
+              logs: logs.concat(buffer as Log[]),
             },
       );
     });
@@ -164,33 +161,33 @@ class DebugBLE extends Component<
     const msg = Buffer.from(useBLEframe ? bleframe : apdu, "hex");
 
     try {
-      await withDevice(deviceId)(
-        (
-          t, // $FlowFixMe
-        ) => from(useBLEframe ? t.write(msg) : t.exchange(msg)),
+      await withDevice(deviceId)(t =>
+        from(
+          useBLEframe
+            ? (t as BluetoothTransport).write(msg)
+            : (t as BluetoothTransport).exchange(msg),
+        ),
       ).toPromise();
     } catch (error) {
-      this.addError(error, "send");
+      this.addError(error as Error, "send");
     }
   };
   inferMTU = async () => {
     const deviceId = this.props.route.params?.deviceId;
 
     try {
-      const mtu = await withDevice(deviceId)(
-        (
-          t, // $FlowFixMe bro i know
-        ) => from(t.inferMTU()),
+      const mtu = await withDevice(deviceId)(t =>
+        from((t as BluetoothTransport).inferMTU()),
       ).toPromise();
       ToastAndroid.show("mtu set to " + mtu, ToastAndroid.SHORT);
     } catch (error) {
-      this.addError(error, "inferMTU");
+      this.addError(error as Error, "inferMTU");
     }
   };
-  currentConnectionPriority = "Balanced";
+  currentConnectionPriority: Choices = "Balanced";
   toggleConnectionPriority = async () => {
     const deviceId = this.props.route.params?.deviceId;
-    const choices = ["Balanced", "High", "LowPower"];
+    const choices = ["Balanced", "High", "LowPower"] as const;
     const nextPriority =
       choices[
         (choices.indexOf(this.currentConnectionPriority) + 1) % choices.length
@@ -198,17 +195,15 @@ class DebugBLE extends Component<
     this.currentConnectionPriority = nextPriority;
 
     try {
-      await withDevice(deviceId)(
-        (
-          t, // $FlowFixMe bro i know
-        ) => from(t.requestConnectionPriority(nextPriority)),
+      await withDevice(deviceId)(t =>
+        from((t as BluetoothTransport).requestConnectionPriority(nextPriority)),
       ).toPromise();
       ToastAndroid.show(
         "connection priority set to " + nextPriority,
         ToastAndroid.SHORT,
       );
     } catch (error) {
-      this.addError(error, "changePrio");
+      this.addError(error as Error, "changePrio");
     }
   };
   connect = async () => {
@@ -217,7 +212,7 @@ class DebugBLE extends Component<
     try {
       await withDevice(deviceId)(() => from([{}])).toPromise();
     } catch (error) {
-      this.addError(error, "connect");
+      this.addError(error as Error, "connect");
     }
   };
   disconnect = async () => {
@@ -226,7 +221,7 @@ class DebugBLE extends Component<
     try {
       await disconnect(deviceId);
     } catch (error) {
-      this.addError(error, "disconnect");
+      this.addError(error as Error, "disconnect");
     }
   };
   onBleFrameChange = () => {

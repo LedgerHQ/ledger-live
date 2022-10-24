@@ -9,7 +9,7 @@ import SettingsRow from "../../../components/SettingsRow";
 import { useBiometricAuth } from "../../../components/RequestBiometricAuth";
 
 type Props = {
-  iconLeft?: any;
+  iconLeft?: React.ReactNode;
 };
 
 export default function BiometricsRow({ iconLeft }: Props) {
@@ -20,7 +20,7 @@ export default function BiometricsRow({ iconLeft }: Props) {
 
   const [validationPending, setValidationPending] = useState(false);
   const [biometricsEnabled, setBiometricsEnabled] = useState(
-    privacy.biometricsEnabled || validationPending,
+    privacy?.biometricsEnabled || validationPending,
   );
 
   const biometricsType =

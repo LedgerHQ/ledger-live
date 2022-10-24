@@ -1,25 +1,25 @@
 import React, { useCallback } from "react";
 import { View, StyleSheet } from "react-native";
-import SafeAreaView from "react-native-safe-area-view";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { Trans } from "react-i18next";
-import { useTheme } from "@react-navigation/native";
+import { CompositeScreenProps, useTheme } from "@react-navigation/native";
 import { TrackScreen } from "../../analytics";
 import { ScreenName } from "../../const";
 import GenericSuccessView from "../../components/GenericSuccessView";
 import Button from "../../components/Button";
+import type { StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
+import { FirmwareUpdateNavigatorParamList } from "../../components/RootNavigator/types/FirmwareUpdateNavigator";
+import { ManagerNavigatorStackParamList } from "../../components/RootNavigator/types/ManagerNavigator";
 
-const forceInset = {
-  bottom: "always",
-};
-type Props = {
-  navigation: any;
-  route: {
-    params: RouteParams;
-  };
-};
-type RouteParams = {
-  deviceId: string;
-};
+type Navigation = CompositeScreenProps<
+  StackNavigatorProps<
+    FirmwareUpdateNavigatorParamList,
+    ScreenName.FirmwareUpdateConfirmation
+  >,
+  StackNavigatorProps<ManagerNavigatorStackParamList>
+>;
+type Props = Navigation;
+
 export default function FirmwareUpdateConfirmation({ navigation }: Props) {
   const { colors } = useTheme();
   const onClose = useCallback(() => {
@@ -33,7 +33,6 @@ export default function FirmwareUpdateConfirmation({ navigation }: Props) {
           backgroundColor: colors.background,
         },
       ]}
-      forceInset={forceInset}
     >
       <TrackScreen category="FirmwareUpdate" name="Confirmation" />
       <View style={styles.body}>

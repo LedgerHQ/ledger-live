@@ -4,7 +4,6 @@ import {
   accountWithMandatoryTokens,
   flattenAccounts,
 } from "@ledgerhq/live-common/account/helpers";
-import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { Flex } from "@ledgerhq/native-ui";
 import {
   isAccountEmpty,
@@ -16,20 +15,13 @@ import { accountsSelector } from "../reducers/accounts";
 import { TrackScreen } from "../analytics";
 import AccountSelector from "../components/AccountSelector";
 import GenericErrorBottomModal from "../components/GenericErrorBottomModal";
+import { SendFundsNavigatorStackParamList } from "../components/RootNavigator/types/SendFundsNavigator";
+import { StackNavigatorProps } from "../components/RootNavigator/types/helpers";
 
-type Props = {
-  navigation: any;
-  route: {
-    params?: {
-      currency?: string;
-      selectedCurrency?: CryptoCurrency | TokenCurrency;
-      next: string;
-      category: string;
-      notEmptyAccounts?: boolean;
-      minBalance?: number;
-    };
-  };
-};
+type Props = StackNavigatorProps<
+  SendFundsNavigatorStackParamList,
+  ScreenName.SendCoin
+>;
 
 export default function ReceiveFunds({ navigation, route }: Props) {
   const {
@@ -78,9 +70,20 @@ export default function ReceiveFunds({ navigation, route }: Props) {
     account => {
       const balance = getAccountSpendableBalance(account);
 
-      if (!isNaN(minBalance) && balance.lte(minBalance)) {
+      if (
+        typeof minBalance !== "undefined" &&
+        !isNaN(minBalance) &&
+        balance.lte(minBalance)
+      ) {
         setError(new NotEnoughBalance());
       } else {
+        // FIXME: Double check if this works because it seems very weird.
+        // 1) "next" does not seem to be passed as a param anywhere
+        // 2) This component belongs to "SendFundsNavigator", but ReceiveConnectDevice does not.
+        //    It belongs to "ReceiveFundsNavigator".
+        // Update: next is never passed as a dynamic param, it is only defined as an initial param
+        // Thus, next is always defined and the || condition seems to be kinda stupid.
+        // @ts-expect-error this seems impossible to type correctly…
         navigation.navigate(next || ScreenName.ReceiveConnectDevice, {
           ...route.params,
           account,
@@ -94,7 +97,7 @@ export default function ReceiveFunds({ navigation, route }: Props) {
 
   return (
     <Flex flex={1} color="background.main">
-      <TrackScreen category={category} name="SelectAccount" />
+      <TrackScreen category={category || ""} name="SelectAccount" />
       <Flex p={6}>
         <AccountSelector
           list={allAccounts}

@@ -1,14 +1,20 @@
 import React from "react";
-import { View, StyleSheet, PixelRatio } from "react-native";
-import Icon from "react-native-vector-icons/dist/Ionicons";
+import {
+  View,
+  StyleSheet,
+  PixelRatio,
+  ViewStyle,
+  StyleProp,
+} from "react-native";
+import Icon from "react-native-vector-icons/Ionicons";
 import { useTheme } from "@react-navigation/native";
 
 type Props = {
   thin?: boolean;
   lineColor?: string;
-  children?: any;
+  children?: React.ReactNode;
   noMargin?: boolean;
-  style?: any;
+  style?: StyleProp<ViewStyle>;
 };
 export const ArrowDownCircle = ({
   size = 24,
@@ -49,10 +55,12 @@ export default function SectionSeparator({
     {
       backgroundColor: colors.lightFog,
     },
-    thin && styles.thin,
-    lineColor && {
-      backgroundColor: lineColor,
-    },
+    thin ? styles.thin : undefined,
+    lineColor
+      ? {
+          backgroundColor: lineColor,
+        }
+      : undefined,
   ];
   return (
     <View style={[styles.root, style]}>

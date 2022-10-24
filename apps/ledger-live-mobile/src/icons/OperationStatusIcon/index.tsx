@@ -5,7 +5,6 @@ import {
   DEFAULT_BOX_SIZE,
   DEFAULT_ICON_SIZE,
   DEFAULT_BADGE_SIZE,
-  // eslint-disable-next-line import/no-unresolved
 } from "@ledgerhq/native-ui/components/Icon/BoxedIcon";
 
 const iconsComponent = {
@@ -55,10 +54,11 @@ const OperationStatusIcon = ({
   size?: number;
   type: OperationType;
   confirmed?: boolean;
-  Badge?: React.ComponentType<{ size: number }>;
+  Badge?: React.ComponentType<{ size?: number; color?: string }>;
   failed?: boolean;
 }) => {
-  const Icon = iconsComponent[type] || iconsComponent.NONE;
+  const Icon =
+    iconsComponent[type as keyof typeof iconsComponent] || iconsComponent.NONE;
   const BadgeIcon =
     Badge ||
     (failed

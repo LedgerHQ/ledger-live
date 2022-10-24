@@ -1,7 +1,8 @@
 declare global {
   interface Window {
-    ReactNativeWebView: any;
-    /* eslint-disable-next-line no-unused-vars */
+    ReactNativeWebView: {
+      postMessage(message: string): void;
+    };
     reconstructImage: (width: number, height: number, hexData: string) => void;
   }
 }
@@ -23,7 +24,7 @@ function codeToInject() {
 
   "show source";
 
-  const postDataToWebView = (data: any) => {
+  const postDataToWebView = (data: unknown) => {
     window.ReactNativeWebView.postMessage(JSON.stringify(data));
   };
 
@@ -32,7 +33,7 @@ function codeToInject() {
   };
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const log = (...args: any[]) => {
+  const log = (...args: unknown[]) => {
     postDataToWebView({ type: "LOG", payload: JSON.stringify(args) });
   };
 
@@ -75,7 +76,7 @@ function codeToInject() {
       }
 
       context.putImageData(
-        new ImageData(Uint8ClampedArray.from(imageData), width, height), // eslint-disable-line no-undef
+        new ImageData(Uint8ClampedArray.from(imageData), width, height),
         0,
         0,
       );

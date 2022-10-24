@@ -7,9 +7,16 @@ import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import { getCurrencyColor } from "@ledgerhq/live-common/currencies/index";
 import { isAccountDelegating } from "@ledgerhq/live-common/families/tezos/bakers";
 import { Text } from "@ledgerhq/native-ui";
-import { ScreenName } from "../../const";
+import { NavigatorName, ScreenName } from "../../const";
 import IlluStaking from "./IlluStaking";
 import Button from "../../components/wrappedUi/Button";
+import { BaseNavigatorStackParamList } from "../../components/RootNavigator/types/BaseNavigator";
+import { StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
+
+type Navigation = StackNavigatorProps<
+  BaseNavigatorStackParamList,
+  ScreenName.Account
+>;
 
 const styles = StyleSheet.create({
   banner: {
@@ -40,11 +47,11 @@ type Props = {
 };
 
 export default function TezosAccountHeader({ account, parentAccount }: Props) {
-  const navigation = useNavigation();
+  const navigation = useNavigation<Navigation["navigation"]>();
 
   const onEarnRewards = useCallback(() => {
-    navigation.navigate(ScreenName.TezosDelegationFlow, {
-      screen: "DelegationStarted",
+    navigation.navigate(NavigatorName.TezosDelegationFlow, {
+      screen: ScreenName.DelegationStarted,
       params: {
         accountId: account.id,
         parentId: parentAccount ? parentAccount.id : undefined,

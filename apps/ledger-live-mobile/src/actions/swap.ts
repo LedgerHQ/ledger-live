@@ -7,7 +7,7 @@ import { createSelector } from "reselect";
 import { Transaction } from "@ledgerhq/live-common/generated/types";
 import { ExchangeRate, Pair } from "@ledgerhq/live-common/exchange/swap/types";
 import { UPDATE_PROVIDERS_TYPE } from "../reducers/swap";
-import type { State } from "../reducers";
+import { State } from "../reducers/types";
 
 /* ACTIONS */
 export const updateProvidersAction = createAction<
@@ -20,6 +20,8 @@ export const updateTransactionAction = createAction<
 export const updateRateAction = createAction<ExchangeRate | null | undefined>(
   "SWAP/UPDATE_RATE",
 );
+
+export type SwapAccount = AccountLike & { disabled: boolean };
 
 export const resetSwapAction = createAction("SWAP/RESET_STATE");
 
@@ -56,7 +58,10 @@ function filterAvailableToAssets(
   return pairs.reduce<string[]>((acc, pair) => [...acc, pair.to], []);
 }
 
-function filterAvailableFromAssets(pairs: Pair[], allAccounts: AccountLike[]) {
+function filterAvailableFromAssets(
+  pairs: Pair[],
+  allAccounts: Account[],
+): SwapAccount[] {
   if (pairs === null || pairs === undefined) return [];
 
   return flattenAccounts(allAccounts).map(account => {
@@ -67,11 +72,9 @@ function filterAvailableFromAssets(pairs: Pair[], allAccounts: AccountLike[]) {
 }
 
 // Put disabled accounts and subaccounts at the bottom of the list while preserving the parent/children position.
-export function sortAccountsByStatus(
-  accounts: (Account & { disabled: boolean })[],
-) {
-  let activeAccounts: (Account & { disabled: boolean })[] = [];
-  let disabledAccounts: (Account & { disabled: boolean })[] = [];
+export function sortAccountsByStatus(accounts: SwapAccount[]) {
+  let activeAccounts: SwapAccount[] = [];
+  let disabledAccounts: SwapAccount[] = [];
   let subAccounts = [];
   let disabledSubAccounts = [];
 
