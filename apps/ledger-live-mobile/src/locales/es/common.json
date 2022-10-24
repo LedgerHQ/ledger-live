@@ -582,6 +582,9 @@
     "SourceHasMultiSign" : {
       "title" : "Desactiva la multifirma para enviar {{currencyName}}"
     },
+    "DustLimit" : {
+      "title" : "La cantidad es menor que el límite de remanente"
+    },
     "StratisDown2021Warning" : {
       "description" : "La cadena de bloques Stratis ha evolucionado y es posible que ya no funcione correctamente. La compatibilidad con la cadena de bloques Stratis original se mantendrá hasta el 16 de octubre de 2021."
     },
@@ -728,6 +731,9 @@
     "ImageProcessingError" : {
       "title" : "Error al procesar la imagen",
       "description" : "Vuelve a intentarlo con otra imagen"
+    },
+    "HederaAddAccountError" : {
+      "title" : "Tu cuenta no ha sido agregada. Inténtalo de nuevo."
     }
   },
   "crash" : {
@@ -775,6 +781,9 @@
     "failed" : {
       "biometrics" : {
         "title" : "El bloqueo por {{biometricsType}} ha fallado",
+        "touchid" : "Touch ID",
+        "faceid" : "Face ID",
+        "fingerprint" : "Huella dactilar",
         "description" : "Ingresa tu contraseña para continuar",
         "authenticate" : "Autentica con la aplicación Ledger Live"
       },
@@ -803,7 +812,10 @@
     },
     "enableBiometrics" : {
       "title" : "{{biometricsType}}",
-      "desc" : "Desbloquear con {{biometricsType}}"
+      "desc" : "Desbloquear con {{biometricsType}}",
+      "touchid" : "Touch ID",
+      "faceid" : "Face ID",
+      "fingerprint" : "Huella dactilar"
     }
   },
   "reset" : {
@@ -1002,12 +1014,12 @@
   },
   "discover" : {
     "title" : "Discover",
-    "desc" : "Explora el mundo de la web3 incorporado dentro de Ledger Live",
+    "desc" : "Explora el universo de la Web3 de forma segura",
     "link" : "Más información",
     "sections" : {
       "learn" : {
         "title" : "Información",
-        "desc" : "Obtén información sobre las cripto, los NFTs, la seguridad digital y mucho más"
+        "desc" : "Aprende de cripto y más, de expertos, gratuitamente."
       },
       "ledgerApps" : {
         "title" : "Aplicaciones",
@@ -1015,11 +1027,15 @@
       },
       "earn" : {
         "title" : "Gana",
-        "desc" : "Gana ingresos pasivos y haz crecer tus activos cripto"
+        "desc" : "Haz crecer tus cripto a través de la puesta en participación y los préstamos."
       },
       "mint" : {
         "title" : "Acuñar",
-        "desc" : "Acuña NFTs de colaboraciones exclusivas en [ L ] Market"
+        "desc" : "Acuña NFTs de campañas exclusivas de [ L ] Market."
+      },
+      "referralProgram" : {
+        "title" : "Recomiéndanos a un amigo",
+        "desc" : "Gana $10 en BTC cuando tu amigo compre un Ledger. "
       }
     },
     "comingSoon" : "próximamente",
@@ -1970,6 +1986,7 @@
       },
       "advanced" : {
         "title" : "Registros avanzados",
+        "warningDerivation" : "Esta es una xpub {{tag}}. Cuando la importes en una billetera de terceros, selecciona el mismo modo de derivación.",
         "desc" : ""
       }
     },
