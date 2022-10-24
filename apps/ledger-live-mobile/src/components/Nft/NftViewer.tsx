@@ -24,7 +24,7 @@ import {
 } from "@ledgerhq/live-common/nft/index";
 import { BigNumber } from "bignumber.js";
 import { useSelector } from "react-redux";
-import { Box, Button, Icons, Text } from "@ledgerhq/native-ui";
+import { Box, Button, Icons, Text, Flex } from "@ledgerhq/native-ui";
 import { useTranslation, Trans } from "react-i18next";
 import Clipboard from "@react-native-community/clipboard";
 import { ProtoNFT, FloorPrice } from "@ledgerhq/types-live";
@@ -40,7 +40,6 @@ import Skeleton from "../Skeleton";
 import NftMedia from "./NftMedia";
 import { getMetadataMediaType } from "../../logic/nft";
 import NftPropertiesList from "./NftPropertiesList";
-import { Flex } from "../../../../../libs/ui/packages/native/lib";
 import CurrencyIcon from "../CurrencyIcon";
 
 type Props = {
