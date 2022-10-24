@@ -105,6 +105,9 @@ export type FeeStrategy = {
   txParameters?: FeeStrategyTxParameters;
   label: string;
   unit?: Unit;
+  disabled?: boolean;
+  extra?: Record<string, BigNumber>;
+  // ^ can be used to add values necessary to transaction construction (e.g. maxFeePerGas/maxPriorityFeePerGas for EIP-1559)
 };
 
 export type FeeStrategyTxParameters = {

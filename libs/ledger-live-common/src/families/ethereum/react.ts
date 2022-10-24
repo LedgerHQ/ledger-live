@@ -3,105 +3,87 @@ import type { FeeStrategy } from "@ledgerhq/types-live";
 import { getGasLimit } from "./transaction";
 import type { Transaction } from "./types";
 
-export function useFeesStrategy(t: Transaction): FeeStrategy[] {
-  const networkInfo = t.networkInfo;
+const calculateEIP1559NetworkFees = (
+  maxFeePerGas: BigNumber,
+  maxPriorityFeePerGas: BigNumber,
+  gasLimit: BigNumber
+): BigNumber =>
+  maxFeePerGas.plus(maxPriorityFeePerGas).multipliedBy(gasLimit).integerValue();
 
-  const calculateEIP1559NetworkFees = (
-    maxBaseFeePerGas: BigNumber,
-    maxPriorityFeePerGas: BigNumber,
-    gasLimit: BigNumber
-  ) =>
-    maxBaseFeePerGas
-      .plus(maxPriorityFeePerGas)
-      .multipliedBy(gasLimit)
-      .integerValue();
+export function useFeesStrategy(tx: Transaction): FeeStrategy[] {
+  const { networkInfo } = tx;
+  const gasLimit = getGasLimit(tx);
 
-  if (!networkInfo) return [];
+  // EIP-1559 transaction
+  if (networkInfo?.nextBaseFeePerGas && networkInfo?.maxPriorityFeePerGas) {
+    const amplifiedBaseFee = networkInfo.nextBaseFeePerGas.times(2); // ensuring valid base fee for 6 blocks
 
-  const gasLimit = getGasLimit(t);
-  const slowStrategyBaseFeeMultiplier = 2;
-  const mediumStrategyBaseFeeMultiplier = 2;
-  const fastStrategyBaseFeeMultiplier = 2;
-  let strategies;
-
-  if (networkInfo.gasPrice) {
-    strategies = [
+    return [
       {
         label: "slow",
-        amount: networkInfo.gasPrice.min,
-        displayedAmount: networkInfo.gasPrice.min.multipliedBy(gasLimit),
-      },
-      {
-        label: "medium",
-        amount: networkInfo.gasPrice.initial,
-        displayedAmount: networkInfo.gasPrice.initial.multipliedBy(gasLimit),
-      },
-      {
-        label: "fast",
-        amount: networkInfo.gasPrice.max,
-        displayedAmount: networkInfo.gasPrice.max.multipliedBy(gasLimit),
-      },
-    ];
-  } else if (
-    networkInfo.nextBaseFeePerGas &&
-    networkInfo.maxPriorityFeePerGas
-  ) {
-    strategies = [
-      {
-        label: "slow",
-        amount: networkInfo.nextBaseFeePerGas
-          .times(slowStrategyBaseFeeMultiplier)
+        amount: amplifiedBaseFee
           .plus(networkInfo.maxPriorityFeePerGas.min)
           .integerValue(),
         displayedAmount: calculateEIP1559NetworkFees(
-          networkInfo.nextBaseFeePerGas.times(slowStrategyBaseFeeMultiplier),
+          amplifiedBaseFee,
           networkInfo.maxPriorityFeePerGas.min,
           gasLimit
         ),
-        txParameters: {
-          maxBaseFeePerGas: networkInfo.nextBaseFeePerGas
-            .times(slowStrategyBaseFeeMultiplier)
-            .integerValue(),
+        extra: {
+          maxFeePerGas: amplifiedBaseFee.integerValue(),
           maxPriorityFeePerGas: networkInfo.maxPriorityFeePerGas.min,
         },
       },
       {
         label: "medium",
-        amount: networkInfo.nextBaseFeePerGas
-          .times(mediumStrategyBaseFeeMultiplier)
-          .plus(networkInfo.maxPriorityFeePerGas?.initial)
+        amount: amplifiedBaseFee
+          .plus(networkInfo.maxPriorityFeePerGas.initial)
           .integerValue(),
         displayedAmount: calculateEIP1559NetworkFees(
-          networkInfo.nextBaseFeePerGas.times(mediumStrategyBaseFeeMultiplier),
+          amplifiedBaseFee,
           networkInfo.maxPriorityFeePerGas.initial,
           gasLimit
         ),
-        txParameters: {
-          maxBaseFeePerGas: networkInfo.nextBaseFeePerGas
-            .times(mediumStrategyBaseFeeMultiplier)
-            .integerValue(),
+        extra: {
+          maxFeePerGas: amplifiedBaseFee.integerValue(),
           maxPriorityFeePerGas: networkInfo.maxPriorityFeePerGas.initial,
         },
       },
       {
         label: "fast",
-        amount: networkInfo.nextBaseFeePerGas
-          .times(fastStrategyBaseFeeMultiplier)
+        amount: amplifiedBaseFee
           .plus(networkInfo.maxPriorityFeePerGas?.max)
           .integerValue(),
         displayedAmount: calculateEIP1559NetworkFees(
-          networkInfo.nextBaseFeePerGas.times(fastStrategyBaseFeeMultiplier),
+          amplifiedBaseFee,
           networkInfo.maxPriorityFeePerGas.max,
           gasLimit
         ),
-        txParameters: {
-          maxBaseFeePerGas: networkInfo.nextBaseFeePerGas
-            .times(fastStrategyBaseFeeMultiplier)
-            .integerValue(),
+        extra: {
+          maxFeePerGas: amplifiedBaseFee.integerValue(),
           maxPriorityFeePerGas: networkInfo.maxPriorityFeePerGas.max,
         },
       },
     ];
   }
-  return strategies;
+
+  return networkInfo?.gasPrice
+    ? [
+        {
+          label: "slow",
+          amount: networkInfo.gasPrice.min,
+          displayedAmount: networkInfo.gasPrice.min.multipliedBy(gasLimit),
+        },
+        {
+          label: "medium",
+          amount: networkInfo.gasPrice.initial,
+          displayedAmount: networkInfo.gasPrice.initial.multipliedBy(gasLimit),
+        },
+        {
+          label: "fast",
+          amount: networkInfo.gasPrice.max,
+          displayedAmount: networkInfo.gasPrice.max.multipliedBy(gasLimit),
+        },
+      ]
+    : [];
 }
