@@ -165,11 +165,13 @@ const signOperation = ({
           type: "device-signature-granted",
         });
 
+        const parsedUnsignedTx = JSON.parse(unsignedTx);
+
         const operation = buildOptimisticOperation(
           account,
           transaction,
           transaction.fees ?? new BigNumber(0),
-          JSON.parse(unsignedTx)
+          parsedUnsignedTx
         );
         o.next({
           type: "signed",
@@ -177,7 +179,7 @@ const signOperation = ({
             operation,
             signature: r,
             expirationDate: null,
-            signatureRaw: JSON.parse(unsignedTx),
+            signatureRaw: parsedUnsignedTx,
           } as SignedOperation,
         });
       }
