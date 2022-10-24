@@ -582,6 +582,9 @@
     "SourceHasMultiSign" : {
       "title" : "请禁用多重签名以发送 {{currencyName}}"
     },
+    "DustLimit" : {
+      "title" : "金额低于小额资产下限"
+    },
     "StratisDown2021Warning" : {
       "description" : "Stratis 区块链已经进化，可能无法正确工作。对原有 Stratis 区块链的技术支持，将会持续到 2021 年 10 月 16 日。"
     },
@@ -728,6 +731,9 @@
     "ImageProcessingError" : {
       "title" : "图片处理失败",
       "description" : "请使用另一张图片重试"
+    },
+    "HederaAddAccountError" : {
+      "title" : "您的账户尚未添加。请再次尝试。"
     }
   },
   "crash" : {
@@ -775,6 +781,9 @@
     "failed" : {
       "biometrics" : {
         "title" : "{{biometricsType}} 解锁失败",
+        "touchid" : "TouchID",
+        "faceid" : "FaceID",
+        "fingerprint" : "指纹",
         "description" : "请输入您的密码后继续操作",
         "authenticate" : "请使用 Ledger Live 应用程序验证身份"
       },
@@ -803,7 +812,10 @@
     },
     "enableBiometrics" : {
       "title" : "{{biometricsType}}",
-      "desc" : "使用 {{biometricsType}} 解锁"
+      "desc" : "使用 {{biometricsType}} 解锁",
+      "touchid" : "TouchID",
+      "faceid" : "FaceID",
+      "fingerprint" : "指纹"
     }
   },
   "reset" : {
@@ -1002,12 +1014,12 @@
   },
   "discover" : {
     "title" : "发现",
-    "desc" : "探索 Ledger Live 中的 Web3 世界",
+    "desc" : "安全地探索 Web3 的世界",
     "link" : "了解更多",
     "sections" : {
       "learn" : {
         "title" : "学习",
-        "desc" : "了解加密货币、NFT、数字安全等"
+        "desc" : "免费从专家那里了解加密货币以及更多信息。"
       },
       "ledgerApps" : {
         "title" : "应用程序",
@@ -1015,11 +1027,15 @@
       },
       "earn" : {
         "title" : "赚取",
-        "desc" : "赚取被动收入并增长加密资产"
+        "desc" : "通过权益质押和借贷来增长您的加密货币。"
       },
       "mint" : {
         "title" : "铸造",
-        "desc" : "通过 [ L ] 市场上的独家合作来铸造 NFT"
+        "desc" : "从 [ L ] 市场的独家活动中铸造 NFT。"
+      },
+      "referralProgram" : {
+        "title" : "推荐好友",
+        "desc" : "当您的朋友购买 Ledger 时，赚取 10 美元的 BTC。 "
       }
     },
     "comingSoon" : "敬请期待",
@@ -1970,6 +1986,7 @@
       },
       "advanced" : {
         "title" : "高级日志",
+        "warningDerivation" : "这是一个 {{tag}} xpub。将其导入第三方钱包时，请选择相同的衍生模式。",
         "desc" : ""
       }
     },
