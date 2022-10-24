@@ -220,7 +220,11 @@ export default function SendAmountCoin({ navigation, route }: Props) {
                       />
                     }
                     onPress={onContinue}
-                    disabled={!!status.errors.amount || bridgePending}
+                    disabled={
+                      !!status.errors.amount ||
+                      !!status.errors.dustLimit ||
+                      bridgePending
+                    }
                   />
                 </View>
               </View>
