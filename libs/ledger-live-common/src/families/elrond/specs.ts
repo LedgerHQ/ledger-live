@@ -138,6 +138,38 @@ const elrondSpec: AppSpec<Transaction> = {
       },
     },
     {
+      name: "send max",
+      maxRun: 1,
+      deviceAction: acceptMoveBalanceTransaction,
+      transaction: ({ account, siblings, bridge }) => {
+        invariant(account.spendableBalance.gt(0), "balance is 0");
+        const sibling = pickSiblings(siblings, maxAccounts);
+
+        if (!sibling.used) {
+          invariant(
+            account.spendableBalance.gt(ELROND_MIN_ACTIVATION_SAFE),
+            "send is too low to activate account"
+          );
+        }
+
+        return {
+          transaction: bridge.createTransaction(account),
+          updates: [
+            {
+              recipient: sibling.freshAddress,
+            },
+            {
+              useAllAmount: true,
+            },
+          ],
+        };
+      },
+      test: (input) => {
+        expectCorrectBalanceChange(input);
+        expectCorrectOptimisticOperation(input);
+      },
+    },
+    {
       name: "move some ESDT",
       maxRun: 1,
       deviceAction: acceptEsdtTransferTransaction,
