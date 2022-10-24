@@ -14,6 +14,8 @@ import { getCurrentDevice } from "~/renderer/reducers/devices";
 import ChangeDeviceLanguagePrompt from "~/renderer/components/ChangeDeviceLanguagePrompt";
 import { getDeviceModel } from "@ledgerhq/devices";
 import { DeviceModelId } from "@ledgerhq/types-devices";
+import { isEqual } from "lodash";
+import { lastSeenDeviceSelector } from "~/renderer/reducers/settings";
 
 type Props = {
   onClose: () => void;
@@ -32,6 +34,7 @@ const ChangeDeviceLanguagePromptDrawer: React.FC<Props> = ({
   const [languageInstalled, setLanguageInstalled] = useState(false);
 
   const currentDevice = useSelector(getCurrentDevice);
+  const lastSeenDevice = useSelector(lastSeenDeviceSelector);
 
   const { t } = useTranslation();
   const dispatch = useDispatch();
@@ -47,10 +50,11 @@ const ChangeDeviceLanguagePromptDrawer: React.FC<Props> = ({
       command("getDeviceInfo")(currentDevice.deviceId)
         .toPromise()
         .then((deviceInfo: DeviceInfo) => {
-          dispatch(setLastSeenDevice({ deviceInfo }));
+          if (!isEqual(deviceInfo, lastSeenDevice?.deviceInfo))
+            dispatch(setLastSeenDevice({ deviceInfo }));
         });
     }
-  }, [dispatch, currentDevice]);
+  }, [dispatch, currentDevice, lastSeenDevice]);
 
   const deviceName = getDeviceModel(deviceModelId).productName;
 
