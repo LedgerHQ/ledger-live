@@ -582,6 +582,9 @@
     "SourceHasMultiSign" : {
       "title" : "{{currencyName}} göndermek için lütfen çoklu imzayı devre dışı bırakın"
     },
+    "DustLimit" : {
+      "title" : "Miktar, dust sınırının altında"
+    },
     "StratisDown2021Warning" : {
       "description" : "Stratis blok zinciri evrimleşti ve artık düzgün çalışmayabilir. Orijinal Stratis blok zinciri desteği 16 Ekim 2021'e kadar sürdürülecektir."
     },
@@ -728,6 +731,9 @@
     "ImageProcessingError" : {
       "title" : "Görüntü işlenemedi",
       "description" : "Lütfen başka bir görüntüyle tekrar deneyin"
+    },
+    "HederaAddAccountError" : {
+      "title" : "Hesabınız eklenemedi. Lütfen tekrar deneyin."
     }
   },
   "crash" : {
@@ -775,6 +781,9 @@
     "failed" : {
       "biometrics" : {
         "title" : "{{biometricsType}} ile kilit açma başarısız",
+        "touchid" : "TouchID",
+        "faceid" : "FaceID",
+        "fingerprint" : "Parmak İzi",
         "description" : "Devam etmek için parolanızı girin",
         "authenticate" : "Lütfen Ledger Live uygulamasıyla kimlik doğrulaması yapın"
       },
@@ -803,7 +812,10 @@
     },
     "enableBiometrics" : {
       "title" : "{{biometricsType}}",
-      "desc" : "Kilidi {{biometricsType}} ile açın"
+      "desc" : "Kilidi {{biometricsType}} ile açın",
+      "touchid" : "TouchID",
+      "faceid" : "FaceID",
+      "fingerprint" : "Parmak İzi"
     }
   },
   "reset" : {
@@ -1002,12 +1014,12 @@
   },
   "discover" : {
     "title" : "Keşfedin",
-    "desc" : "Ledger Live'daki Web 3.0 dünyasını keşfedin",
+    "desc" : "Web3 dünyasını güvenle keşfedin",
     "link" : "Daha fazla bilgi ver",
     "sections" : {
       "learn" : {
         "title" : "Öğrenin",
-        "desc" : "Kripto, NFT'ler, dijital güvenlik ve daha fazlası hakkında bilgi edinin"
+        "desc" : "Uzmanlardan kripto ve daha fazlası hakkında ücretsiz bilgiler öğrenin."
       },
       "ledgerApps" : {
         "title" : "Uygulamalar",
@@ -1015,11 +1027,15 @@
       },
       "earn" : {
         "title" : "Kazanın",
-        "desc" : "Pasif gelir elde edin ve kripto varlıklarınızı artırın"
+        "desc" : "Kriptolarınızı stake ederek ve borç vererek artırın."
       },
       "mint" : {
         "title" : "Mint'leyin",
-        "desc" : "[ L ] Market'teki özel iş birliklerini kullanarak NFT'ler mint'leyin"
+        "desc" : "[L] Market'teki özel kampanyalara katılarak NFT'ler mint'leyin."
+      },
+      "referralProgram" : {
+        "title" : "Arkadaşına Öner",
+        "desc" : "Arkadaşınız bir Ledger satın aldığında 10$ değerinde BTC kazanın. "
       }
     },
     "comingSoon" : "Çok yakında",
@@ -1970,6 +1986,7 @@
       },
       "advanced" : {
         "title" : "Kapsamlı loglar",
+        "warningDerivation" : "Bu bir {{tag}} xpub'ıdır. Bunu bir üçüncü taraf cüzdanda içe aktarırken aynı türev modunu seçin.",
         "desc" : ""
       }
     },
@@ -2721,7 +2738,7 @@
         },
         "placeholder" : "Seç",
         "title" : "Takas edin",
-        "cta" : "Takas edin",
+        "cta" : "Takas et",
         "from" : "Gönderici",
         "to" : "Alıcı",
         "loading" : "Yükleniyor...",
@@ -3821,7 +3838,7 @@
         "description" : "Ödül kazanmak için öncelikle varlıkların kilitlenmesi ve doğrulayıcı gruplarına oylanması gerekir."
       },
       "nonvotingLockedBalance" : {
-        "title" : "Oylanmayan kilitli bakiye",
+        "title" : "Oylamayan kilitli bakiye",
         "description" : "Oylama için kullanılabilecek kilitli varlıkların bakiyesi."
       },
       "withdrawableBalance" : {
