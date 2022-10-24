@@ -89,10 +89,7 @@ const AssetScreen = ({ route }: NavigationProps) => {
     selectCurrency(
       tokenIDToMarketID[currency.id as keyof typeof tokenIDToMarketID] ||
         currency.id,
-      // FIXME: are we sure about this?
-      // Typescript is less then happy with casting a Currency to another complete different type CurrencyData…
-      // @ts-expect-error This is what happens when trying to fake pinguins with koalas.
-      currency,
+      undefined,
       "24h",
     );
     return () => selectCurrency();
