@@ -15,12 +15,13 @@ export const acceptMoveBalanceTransaction: DeviceAction<Transaction, any> =
       {
         title: "Amount",
         button: "Rr",
-        expectedValue: ({ account, transaction }) =>
-          formatCurrencyUnit(account.unit, transaction.amount, {
+        expectedValue: ({ account, status }) => {
+          return formatCurrencyUnit(account.unit, status.amount, {
             showCode: true,
             disableRounding: true,
             joinFragmentsSeparator: " ",
-          }).replace(/\s+/g, " "),
+          }).replace(/\s+/g, " ");
+        },
       },
       {
         title: "Fee",
