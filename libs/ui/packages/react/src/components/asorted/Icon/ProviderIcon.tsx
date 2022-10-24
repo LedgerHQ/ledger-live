@@ -38,6 +38,7 @@ const Favicon = styled.img`
 const ProviderIcon = ({ name, size = "S", boxed = false }: Props): JSX.Element | null => {
   const maybeIconName = `${name}`;
   if (boxed) {
+    // @ts-expect-error FIXME I don't know how to make you happy ts
     return <Favicon width={sizes[size]} height={sizes[size]} src={favicons[maybeIconName]} />;
   }
   if (maybeIconName in providers) {
