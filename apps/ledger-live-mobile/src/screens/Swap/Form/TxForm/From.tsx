@@ -16,6 +16,7 @@ import { shallowAccountsSelector } from "../../../../reducers/accounts";
 import { SwapFormParamList } from "../../types";
 import { fromSelector, pairsSelector } from "../../../../actions/swap";
 import TranslatedError from "../../../../components/TranslatedError";
+import { ScreenName } from "../../../../const";
 
 interface Props {
   provider?: string;
