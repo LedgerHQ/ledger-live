@@ -1,5 +1,11 @@
 # live-mobile
 
+## 3.10.0-next.3
+
+### Patch Changes
+
+- [#1648](https://github.com/LedgerHQ/ledger-live/pull/1648) [`6ee6bfd41a`](https://github.com/LedgerHQ/ledger-live/commit/6ee6bfd41a363962caba2e56c3470726db24d76e) Thanks [@alexandremgo](https://github.com/alexandremgo)! - fix: new rendering in the case of a LatestFirmwareVersionRequired error
+
 ## 3.10.0-next.2
 
 ### Patch Changes
