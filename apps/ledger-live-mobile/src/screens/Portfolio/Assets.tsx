@@ -1,18 +1,9 @@
 import React, { useCallback } from "react";
 import { FlatList } from "react-native";
 import { useNavigation } from "@react-navigation/native";
-import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { AccountLike } from "@ledgerhq/types-live";
 import AssetRow, { NavigationProp } from "../WalletCentricAsset/AssetRow";
 import { withDiscreetMode } from "../../context/DiscreetModeContext";
-
-export type Asset = {
-  currency: CryptoCurrency | TokenCurrency;
-  accounts: AccountLike[];
-  distribution?: number;
-  amount: number;
-  countervalue?: number;
-};
+import { Asset } from "../../types/asset";
 
 type ListProps = { assets: Asset[] };
 
@@ -26,10 +17,10 @@ const AssetsList = ({ assets }: ListProps) => {
   );
 
   return (
-    <FlatList
+    <FlatList<Asset>
       data={assets}
       renderItem={renderItem}
-      keyExtractor={item => item?.currency?.id}
+      keyExtractor={item => item.currency.id}
       contentContainerStyle={{ flex: 1 }}
     />
   );
