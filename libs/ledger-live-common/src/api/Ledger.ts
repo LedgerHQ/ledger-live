@@ -26,9 +26,6 @@ export const findCurrencyExplorer = (
   };
 };
 
-export const hasCurrencyExplorer = (currency: CryptoCurrency): boolean =>
-  !!findCurrencyExplorer(currency);
-
 export const getCurrencyExplorer = (
   currency: CryptoCurrency
 ): LedgerExplorer => {
