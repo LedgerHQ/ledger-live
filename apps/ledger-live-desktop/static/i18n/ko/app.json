@@ -1944,6 +1944,39 @@
         "tezos" : {
           "text" : "위임된 계정으로 받은 금액은 총 스테이킹 금액에 추가됩니다. 원하지 않으시면 다른 계정을 선택하세요"
         }
+      },
+      "staking" : {
+        "title" : "{{currencyName}} 수익 창출",
+        "link" : "자세히 알아보기",
+        "notShow" : "다시 보지 않기",
+        "footer" : {
+          "dismiss" : "나중에 하기",
+          "stake" : "{{provider}}을(를) 통한 스테이킹"
+        },
+        "ethereum" : {
+          "title" : "ETH를 성장시켜보세요. 지금 스테이킹하기",
+          "description" : "Lido를 통해 이더리움을 스테이킹하고 매일 보상을 받으세요. 락업 기간 없음. 최소 예치금 없음.",
+          "kiln" : {
+            "title" : "호들만으로는 부족합니다. 보유한 ETH로 더 큰 수익을 가져오세요.",
+            "description" : "ETH를 32개 이상 보유하고 계시나요? Kiln을 통해 ETH를 안전하게 스테이킹하여 불로소득을 올려보세요."
+          }
+        },
+        "cosmos" : {
+          "title" : "ATOM을 성장시켜보세요. Ledger 검증인을 통한 스테이킹.",
+          "description" : "신뢰할 수 있는 Ledger 검증인을 통해 ATOM을 스테이킹하세요. Ledger의 타협 없는 확실한 보안이 자산을 안전하게 보호합니다."
+        },
+        "osmosis" : {
+          "title" : "OSMO를 성장시켜보세요. Ledger를 통해 Figment로 스테이킹.",
+          "description" : "Ledger를 통해 Figment로 검증인을 통해 OSMO를 스테이킹하세요. 최저 수수료와 슬래싱에 대한 보장이 제공됩니다!"
+        },
+        "solana" : {
+          "title" : "SOL을 성장시켜보세요. Ledger를 통해 Figment로 스테이킹.",
+          "description" : "Ledger를 통해 Figment로 검증인을 통해 SOL을 스테이킹하세요. Ledger의 타협 없는 확실한 보안이 자산을 안전하게 보호합니다."
+        },
+        "celo" : {
+          "title" : "CELO를 성장시켜보세요. Ledger를 통해 Figment로 스테이킹.",
+          "description" : "Ledger를 통해 Figment로 검증인을 통해 CELO를 스테이킹하세요. Ledger의 타협 없는 확실한 보안을 통해 슬래싱에 완벽히 대비하세요."
+        }
       }
     }
   },
@@ -4262,13 +4295,14 @@
       "4" : {
         "deviceSelection" : {
           "title" : "어떤 장치를 이용 중인가요?",
-          "desc" : "Nano S를 이용 중이라면, 장치 펌웨어 복구를 시도하세요. Nano X와 Blue 사용자는 Ledger 지원 부서에 연락하시기 바랍니다"
+          "desc" : "Nano S를 연결하고 싶다면, Nano 장치에 표시된 상태를 선택하세요. Nano S Plus 또는 Nano X를 연결하고 싶다면, <0>지원 센터를 방문하세요</0>"
         },
         "notFixed" : {
           "title" : " USB 연결 문제가 여전히 해결되지 않았나요?",
           "desc" : "모든 해결책을 이미 시도해 보았다면, Ledger 지원 부서에 문의해주세요. 그렇지 않은 경우, 아직 시도해 보지 않은 해결책의 지침을 따라보세요.",
           "back" : "포트폴리오로 돌아가기",
-          "cta" : "지원 부서 문의"
+          "cta" : "지원 부서 문의",
+          "cta2" : "돌아가기"
         },
         "repair" : {
           "title" : "Nano S 복구",
