@@ -72,9 +72,6 @@ const handlers: Object = {
 
   // used to debug performance of redux updates
   DEBUG_TICK: state => state.slice(0),
-
-  BLACKLIST_TOKEN: (state: AccountsState, { payload: tokenId }: { payload: string }) =>
-    state.map(a => withoutToken(a, tokenId)),
 };
 
 // Selectors

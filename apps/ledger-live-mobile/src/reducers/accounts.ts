@@ -29,7 +29,6 @@ import {
   getAccountCurrency,
   importAccountsReduce,
   isUpToDateAccount,
-  withoutToken,
   clearAccount,
   nestedSortAccounts,
   makeEmptyTokenAccount,
@@ -113,17 +112,7 @@ const handlers: ReducerMap<AccountsState, Payload> = {
   [AccountsActionTypes.CLEAN_CACHE]: (state: AccountsState) => ({
     active: state.active.map(clearAccount),
   }),
-
-  [SettingsActionTypes.BLACKLIST_TOKEN]: (state, action) => ({
-    active: state.active.map(a =>
-      withoutToken(
-        a,
-        (action as Action<SettingsBlacklistTokenPayload>).payload.tokenId,
-      ),
-    ),
-  }),
-
-  [SettingsActionTypes.DANGEROUSLY_OVERRIDE_STATE]: (state: AccountsState) => ({
+  DANGEROUSLY_OVERRIDE_STATE: (state: AccountsState): AccountsState => ({
     ...state,
   }),
 };
