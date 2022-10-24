@@ -185,7 +185,7 @@ export default class ElrondApi {
 
     let allTokens: ESDTToken[] = [];
     let from = 0;
-    while (from <= tokensCount) {
+    while (from < tokensCount) {
       const { data: tokens } = await network({
         method: "GET",
         url: `${this.API_URL}/accounts/${addr}/tokens?from=${from}&size=${MAX_PAGINATION_SIZE}`,
