@@ -1944,6 +1944,39 @@
         "tezos" : {
           "text" : "El importe recibido en una cuenta delegada se añadirá al importe participado total. Elige otra cuenta si quieres evitar esto."
         }
+      },
+      "staking" : {
+        "title" : "Gana {{currencyName}}",
+        "link" : "Más información",
+        "notShow" : "No mostrar esto de nuevo",
+        "footer" : {
+          "dismiss" : "Ahora no",
+          "stake" : "Pon en participación con {{provider}}"
+        },
+        "ethereum" : {
+          "title" : "Haz crecer tus ETH. Ponlos en participación ahora.",
+          "description" : "Pon tus Ethereum en participación con Lido y gana recompensas diarias. Sin periodo de inmovilización. Sin depósito mínimo.",
+          "kiln" : {
+            "title" : "No hagas HODL. Haz crecer tus ETH.",
+            "description" : "¿Tienes más de 32 ETH? Consigue recompensas pasivas poniendo tu ETH de forma segura en participación con Kiln."
+          }
+        },
+        "cosmos" : {
+          "title" : "Haz crecer tus ATOM. Ponlos en participación con un validador de Ledger.",
+          "description" : "Pon tus ATOM en participación con el validador de confianza de Ledger. Tus monedas seguirán siendo tuyas y estarán respaldadas por la seguridad sin concesiones de Ledger."
+        },
+        "osmosis" : {
+          "title" : "Haz crecer tus OSMO. Ponlos en participación con Ledger by Figment.",
+          "description" : "Pon tus OSMO en participación con el validador Ledger by Figment. Ofrece las comisiones más bajas y garantía contra penalizaciones."
+        },
+        "solana" : {
+          "title" : "Haz crecer tus SOL. Ponlos en participación con Ledger by Figment.",
+          "description" : "Pon tus SOL en participación con el validador Ledger by Figment. Tus monedas seguirán siendo tuyas y estarán respaldadas por la seguridad sin concesiones de Ledger."
+        },
+        "celo" : {
+          "title" : "Haz crecer tus CELO. Ponlos en participación con Ledger by Figment.",
+          "description" : "Pon tus CELO en participación con el validador Ledger by Figment. Garantiza cobertura completa contra penalizaciones y está respaldado por la seguridad sin concesiones de Ledger."
+        }
       }
     }
   },
@@ -4262,13 +4295,14 @@
       "4" : {
         "deviceSelection" : {
           "title" : "¿Cuál es tu dispositivo?",
-          "desc" : "Si tienes un Nano S, puedes intentar reparar el firmware de tu dispositivo. Para los usuarios de Nano X y Blue, por favor contactar al soporte de Ledger."
+          "desc" : "Si estás intentando conectar un Nano S, selecciona el estado que se muestra en tu Nano. Si estás intentando conectar un Nano S Plus o un Nano X, <0>visita el Centro de ayuda</0>"
         },
         "notFixed" : {
           "title" : " ¿Aún no está resuelto el problema de la conexión USB?",
           "desc" : "Si ya has probado con todas las soluciones posibles, por favor ponte en contacto con el soporte de Ledger. De lo contrario, sigue las instrucciones de aquellas soluciones que todavía no hayas probado.",
           "back" : "Volver al Portfolio",
-          "cta" : "Ponte en contacto con Soporte"
+          "cta" : "Ponte en contacto con Soporte",
+          "cta2" : "Volver"
         },
         "repair" : {
           "title" : "Reparar tu Nano S",
