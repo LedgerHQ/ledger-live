@@ -46,11 +46,15 @@ const useDrawerActions = (
     onClose();
     navigation.navigate(NavigatorName.ElrondWithdrawFlow, {
       screen: ScreenName.ElrondWithdrawFunds,
-      params: {
-        account,
-        amount,
-        validator,
-      },
+      params: { account, amount, validator },
+    });
+  }, [validator, account, navigation, onClose, amount]);
+
+  const onUndelegation = useCallback(() => {
+    onClose();
+    navigation.navigate(NavigatorName.ElrondUndelegationFlow, {
+      screen: ScreenName.ElrondUndelegationValidator,
+      params: { account, validator, amount: new BigNumber(amount) },
     });
   }, [validator, account, navigation, onClose, amount]);
 
@@ -96,7 +100,7 @@ const useDrawerActions = (
             },
             {
               label: t("delegation.actions.undelegate"),
-              onPress: () => false,
+              onPress: onUndelegation,
               event: "DelegationActionUndelegate",
               disabled: false,
               Icon: (props: IconProps) => (

@@ -261,6 +261,12 @@ export const ScreenName = {
   ElrondWithdrawConnectDevice: "ElrondWithdrawConnectDevice",
   ElrondWithdrawValidationError: "ElrondWithdrawValidationError",
   ElrondWithdrawValidationSuccess: "ElrondWithdrawValidationSuccess",
+  ElrondUndelegationAmount: "ElrondUndelegationAmount",
+  ElrondUndelegationValidator: "ElrondUndelegationValidator",
+  ElrondUndelegationSelectDevice: "ElrondUndelegationSelectDevice",
+  ElrondUndelegationConnectDevice: "ElrondUndelegationConnectDevice",
+  ElrondUndelegationValidationError: "ElrondUndelegationValidationError",
+  ElrondUndelegationValidationSuccess: "ElrondUndelegationValidationSuccess",
 
   // osmosis
   OsmosisDelegationStarted: "OsmosisDelegationStarted",

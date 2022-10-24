@@ -4657,7 +4657,10 @@
       "flow": {
         "steps": {
           "amount": {
-            "allAssetsUsed": "All assets unstaked"
+            "allAssetsUsed": "All undelegation assets selected",
+            "assetsRemaining": "Assets remaining delegated: <0>{{amount}}</0>",
+            "minAmount": "Remaining delegation below {{min}}",
+            "incorrectAmount": "Maximum amount: <0>{{max}}</0>"
           },
           "verification": {
             "success": {

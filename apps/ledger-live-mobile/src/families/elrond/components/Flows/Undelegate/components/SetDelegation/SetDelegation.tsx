@@ -38,9 +38,9 @@ import styles from "./styles";
  * Handle the component declaration.
  */
 
-const SetDelegation = (props: SetDelegationPropsType) => {
+const SetDelegation = (props: any) => {
   const { navigation, route } = props;
-  const { account, validators } = route.params;
+  const { amount, account, validator } = route.params;
   const { colors } = useTheme();
 
   const currency = getAccountCurrency(account);
@@ -48,15 +48,6 @@ const SetDelegation = (props: SetDelegationPropsType) => {
   const bridge = getAccountBridge(account);
   const mainAccount = getMainAccount(account, undefined);
   const unit = useMemo(() => getAccountUnit(account), [account]);
-
-  /*
-   * Find the validator that'll be picked by default, which is the one from Ledger.
-   */
-
-  const defaultValidator = useMemo(
-    () => validators.find(validator => validator.contract === ledger),
-    [validators],
-  );
 
   /*
    * Instantiate the transaction when opening the flow. Only gets runned once.
@@ -69,24 +60,11 @@ const SetDelegation = (props: SetDelegationPropsType) => {
         bridge.createTransaction(mainAccount),
         {
           amount: new BigNumber(0),
-          recipient: defaultValidator ? defaultValidator.contract : "",
-          mode: "delegate",
+          recipient: validator.contract,
+          mode: "unDelegate",
         },
       ),
     }));
-
-  /*
-   * Use the transaction recipient to find the chosen validator and access more data about it..
-   */
-
-  const chosenValidator = useMemo(
-    () =>
-      validators.find(validator =>
-        transaction ? transaction.recipient === validator.contract : false,
-      ),
-    [transaction, validators],
-  );
-
   /*
    * Handle the possible errors of the transaction status and return the first one.
    */
@@ -137,7 +115,7 @@ const SetDelegation = (props: SetDelegationPropsType) => {
    * Callback function to be called when wanting to continue to the next panel.
    */
   const onContinue = useCallback(() => {
-    navigation.navigate(ScreenName.ElrondDelegationSelectDevice, {
+    navigation.navigate(ScreenName.ElrondUndelegationSelectDevice, {
       accountId: account.id,
       transaction,
       status,
@@ -149,24 +127,13 @@ const SetDelegation = (props: SetDelegationPropsType) => {
    */
 
   const onChangeAmount = useCallback(() => {
-    navigation.navigate(ScreenName.ElrondDelegationAmount, {
+    navigation.navigate(ScreenName.ElrondUndelegationAmount, {
       account,
-      validators,
+      amount,
+      validator,
       transaction,
     });
-  }, [transaction, account, validators, navigation]);
-
-  /*
-   * Callback function to be called when wanting to change the validator.
-   */
-
-  const onChangeValidator = useCallback(() => {
-    navigation.navigate(ScreenName.ElrondDelegationValidatorList, {
-      account,
-      validators,
-      transaction,
-    });
-  }, [account, navigation, transaction, validators]);
+  }, [transaction, account, validator, navigation]);
 
   /*
    * Run the callback when there's a change in the transaction, received from the route parameters.
@@ -203,14 +170,12 @@ const SetDelegation = (props: SetDelegationPropsType) => {
         name: `${transactionAmount} ${constants.egldLabel}`,
       },
       {
-        callback: onChangeValidator,
+        callback: console.log,
         i18nKey: "delegation.to",
-        name: chosenValidator
-          ? chosenValidator.identity.name || chosenValidator.contract
-          : "",
+        name: validator.identity.name || validator.contract,
       },
     ],
-    [onChangeAmount, onChangeValidator, transactionAmount, chosenValidator],
+    [onChangeAmount, transactionAmount, validator],
   );
 
   /*
@@ -219,6 +184,8 @@ const SetDelegation = (props: SetDelegationPropsType) => {
 
   useEffect(handleAnimation, [handleAnimation]);
   useEffect(trackTransactionUpdate, [trackTransactionUpdate]);
+
+  console.log(3583, transaction);
 
   /*
    * Return the rendered component.
@@ -263,7 +230,7 @@ const SetDelegation = (props: SetDelegationPropsType) => {
 
           <Touchable
             event="DelegationFlowSummaryChangeCircleBtn"
-            onPress={onChangeValidator}
+            onPress={console.log}
           >
             <Circle
               size={70}
@@ -271,7 +238,7 @@ const SetDelegation = (props: SetDelegationPropsType) => {
             >
               <Animated.View style={{ transform }}>
                 <Circle crop size={64}>
-                  {chosenValidator && chosenValidator.contract === ledger ? (
+                  {validator.contract === ledger ? (
                     <LedgerLogo size={64 * 0.7} color={colors.text} />
                   ) : (
                     <FirstLetterIcon

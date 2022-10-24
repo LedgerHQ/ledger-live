@@ -196,7 +196,7 @@ function DelegationAmount({ navigation, route }: Props) {
                   >
                     <Trans
                       i18nKey={
-                        value.lt(min)
+                        value.gt(min)
                           ? "cosmos.delegation.flow.steps.amount.minAmount"
                           : "cosmos.delegation.flow.steps.amount.incorrectAmount"
                       }

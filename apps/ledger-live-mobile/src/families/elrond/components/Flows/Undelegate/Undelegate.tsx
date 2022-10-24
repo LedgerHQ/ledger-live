@@ -8,15 +8,13 @@ import StepHeader from "../../../../../components/StepHeader";
 import { getStackNavigatorConfig } from "../../../../../navigation/navigatorConfig";
 import { ScreenName } from "../../../../../const";
 
-import EarnRewards from "./components/EarnRewards";
-import SetDelegation from "./components/SetDelegation";
-import PickValidator from "./components/PickValidator";
 import PickAmount from "./components/PickAmount";
 import ValidationError from "./components/ValidationError";
 import ValidationSuccess from "./components/ValidationSuccess";
 
 import SelectDevice from "../../../../../screens/SelectDevice";
 import ConnectDevice from "../../../../../screens/ConnectDevice";
+import SetDelegation from "./components/SetDelegation";
 
 const totalSteps = "3";
 const options = {
@@ -27,7 +25,7 @@ const options = {
  * Handle the component declaration.
  */
 
-const Delegate = () => {
+const Undelegate = () => {
   const { t } = useTranslation();
   const { colors } = useTheme();
 
@@ -43,14 +41,7 @@ const Delegate = () => {
   const stacks = useMemo(
     () => [
       {
-        name: ScreenName.ElrondDelegationStarted,
-        component: EarnRewards,
-        heading: {
-          title: "delegation.started.title",
-        },
-      },
-      {
-        name: ScreenName.ElrondDelegationValidator,
+        name: ScreenName.ElrondUndelegationValidator,
         component: SetDelegation,
         heading: {
           title: "elrond.delegation.stepperHeader.validator",
@@ -67,26 +58,12 @@ const Delegate = () => {
         },
       },
       {
-        name: ScreenName.ElrondDelegationValidatorList,
-        component: PickValidator,
-        heading: {
-          title: "elrond.delegation.stepperHeader.selectDevice",
-          subtitle: {
-            label: "elrond.delegation.stepperHeader.stepRange",
-            variables: {
-              currentStep: "2",
-              totalSteps,
-            },
-          },
-        },
-      },
-      {
-        name: ScreenName.ElrondDelegationAmount,
+        name: ScreenName.ElrondUndelegationAmount,
         component: PickAmount,
         heading: {
-          title: "elrond.delegation.stepperHeader.selectDevice",
+          title: "elrond.undelegation.stepperHeader.selectDevice",
           subtitle: {
-            label: "elrond.delegation.stepperHeader.stepRange",
+            label: "elrond.undelegation.stepperHeader.stepRange",
             variables: {
               currentStep: "2",
               totalSteps,
@@ -95,12 +72,12 @@ const Delegate = () => {
         },
       },
       {
-        name: ScreenName.ElrondDelegationSelectDevice,
+        name: ScreenName.ElrondUndelegationSelectDevice,
         component: SelectDevice,
         heading: {
-          title: "elrond.delegation.stepperHeader.selectDevice",
+          title: "elrond.undelegation.stepperHeader.selectDevice",
           subtitle: {
-            label: "elrond.delegation.stepperHeader.stepRange",
+            label: "elrond.undelegation.stepperHeader.stepRange",
             variables: {
               currentStep: "3",
               totalSteps,
@@ -109,12 +86,12 @@ const Delegate = () => {
         },
       },
       {
-        name: ScreenName.ElrondDelegationConnectDevice,
+        name: ScreenName.ElrondUndelegationConnectDevice,
         component: ConnectDevice,
         heading: {
-          title: "elrond.delegation.stepperHeader.connectDevice",
+          title: "elrond.undelegation.stepperHeader.connectDevice",
           subtitle: {
-            label: "elrond.delegation.stepperHeader.stepRange",
+            label: "elrond.undelegation.stepperHeader.stepRange",
             variables: {
               currentStep: "3",
               totalSteps,
@@ -127,7 +104,7 @@ const Delegate = () => {
         },
       },
       {
-        name: ScreenName.ElrondDelegationValidationError,
+        name: ScreenName.ElrondUndelegationValidationError,
         component: ValidationError,
         options: {
           headerShown: false,
@@ -135,7 +112,7 @@ const Delegate = () => {
         },
       },
       {
-        name: ScreenName.ElrondDelegationValidationSuccess,
+        name: ScreenName.ElrondUndelegationValidationSuccess,
         component: ValidationSuccess,
         options: {
           headerLeft: () => null,
@@ -187,6 +164,6 @@ const Delegate = () => {
   );
 };
 
-export { Delegate as component, options };
+export { Undelegate as component, options };
 
 const Stack = createStackNavigator();
