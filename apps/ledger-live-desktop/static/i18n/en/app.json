@@ -4860,6 +4860,10 @@
       "title": "Sorry, no accounts were found",
       "description": "Something went wrong with the address calculation, try again or contact Ledger Support"
     },
+    "DecimalsLimitReached": {
+      "title": "Maximum decimals limit reached",
+      "description": "Please make sure that the amount provided has 18 decimals."
+    },
     "NotEnoughBalance": {
       "title": "Sorry, insufficient funds",
       "description": "Please make sure the account has enough funds."

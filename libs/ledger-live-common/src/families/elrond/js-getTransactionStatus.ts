@@ -13,7 +13,7 @@ import {
   isSelfTransaction,
   computeTransactionValue,
 } from "./logic";
-import { DecimalsLimitReachedError } from "./errors";
+import { DecimalsLimitReached } from "./errors";
 
 const getTransactionStatus = async (
   a: ElrondAccount,
@@ -55,9 +55,7 @@ const getTransactionStatus = async (
       errors.amount = new NotEnoughBalance();
     }
     if (!totalSpent.decimalPlaces(DECIMALS_LIMIT).isEqualTo(totalSpent)) {
-      errors.amount = new DecimalsLimitReachedError(
-        `Maximum '${DECIMALS_LIMIT}' decimals allowed`
-      );
+      errors.amount = new DecimalsLimitReached();
     }
   } else {
     if (totalSpent.gt(a.balance)) {

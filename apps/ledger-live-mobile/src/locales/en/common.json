@@ -418,6 +418,10 @@
       "title": "Sorry, no account was found",
       "description": "Something went wrong with the address calculation. Please try again. If the problem persists, please save your logs using the button below and provide them to Ledger Support."
     },
+    "DecimalsLimitReached": {
+      "title": "Maximum decimals limit reached",
+      "description": "Please make sure that the amount provided has 18 decimals."
+    },
     "NotEnoughBalance": {
       "title": "Sorry, insufficient funds",
       "description": "Please make sure the account has enough funds."
