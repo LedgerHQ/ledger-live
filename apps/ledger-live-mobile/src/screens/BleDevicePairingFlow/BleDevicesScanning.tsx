@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
-import { ScrollView } from "react-native";
+import { BackHandler, ScrollView } from "react-native";
 import {
   Flex,
   InfiniteLoader,
@@ -13,6 +13,7 @@ import { useSelector } from "react-redux";
 import { getDeviceModel } from "@ledgerhq/devices";
 import { Device, DeviceModelId } from "@ledgerhq/types-devices";
 import TransportBLE from "@ledgerhq/react-native-hw-transport-ble";
+import { useNavigation } from "@react-navigation/native";
 
 import Animation from "../../components/Animation";
 import { knownDevicesSelector } from "../../reducers/ble";
@@ -20,6 +21,7 @@ import LocationRequired from "../LocationRequired";
 import BleDeviceItem from "./BleDeviceItem";
 import lottie from "./assets/bluetooth.json";
 import DeviceSetupView from "../../components/DeviceSetupView";
+import { NavigatorName, ScreenName } from "../../const";
 
 export type FilterByDeviceModelId = null | DeviceModelId;
 
@@ -35,6 +37,43 @@ export const BleDevicesScanning = ({
   areKnownDevicesDisplayed,
 }: BleDevicesScanningProps) => {
   const { t } = useTranslation();
+  const navigation = useNavigation();
+
+  const handleBack = useCallback(() => {
+    const routes = navigation.getState().routes;
+
+    const isNavigationFromDeeplink =
+      routes[routes.length - 1]?.params === undefined;
+
+    if (!isNavigationFromDeeplink) {
+      navigation.goBack();
+    } else {
+      navigation.reset({
+        index: 0,
+        routes: [
+          {
+            name: NavigatorName.BaseOnboarding,
+            state: {
+              routes: [
+                {
+                  name: ScreenName.OnboardingWelcome,
+                },
+              ],
+            },
+          },
+        ],
+      });
+    }
+  }, [navigation]);
+
+  useEffect(() => {
+    const listener = BackHandler.addEventListener("hardwareBackPress", () => {
+      handleBack();
+      return true;
+    });
+
+    return () => listener.remove();
+  }, [handleBack]);
 
   const productName = filterByDeviceModelId
     ? getDeviceModel(filterByDeviceModelId).productName || filterByDeviceModelId
@@ -107,7 +146,7 @@ export const BleDevicesScanning = ({
   }
 
   return (
-    <DeviceSetupView hasBackButton>
+    <DeviceSetupView onBack={handleBack}>
       <ScrollListContainer display="flex" flex={1} px={4}>
         <Flex height={180} alignItems="center" justifyContent="center">
           <Animation source={lottie} />
