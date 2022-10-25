@@ -41,6 +41,7 @@ function CollapsibleHeaderFlatList<T>({
         {
           paddingTop: headerHeight + tabBarHeight,
           minHeight: windowHeight + (StatusBar.currentHeight || 0),
+          paddingBottom: tabBarHeight + (StatusBar.currentHeight || 0 / 2),
         },
         contentContainerStyle,
       ]}

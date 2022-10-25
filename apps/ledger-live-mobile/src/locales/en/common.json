@@ -5146,12 +5146,13 @@
         "supportLink": "How to deposit from Metamask?"
       },
       "receiveModal": {
-        "title": "To receive an NFT...",
+        "title": "Receive an NFT the same way as any other crypto",
         "bullets": {
           "0": "\u2022 Select the NFT’s crypto blockchain.",
-          "1": "\u2022 Choose the account to receive the NFT \n— just like receiving any other crypto."
+          "1": "\u2022 Choose the account to receive the NFT"
         },
-        "cta": "Continue"
+        "cta": "OK, got it",
+        "info": "I’d like to learn more"
       },
       "hideNftModal": {
         "title": "Hide NFT collection",

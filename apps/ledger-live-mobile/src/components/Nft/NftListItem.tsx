@@ -60,7 +60,7 @@ const NftCardView = ({
     <StyledTouchableOpacity
       mb={3}
       borderRadius={1}
-      bg={"background.main"}
+      bg="background.main"
       onPress={navigateToNftViewer}
     >
       <NftMediaComponent
@@ -72,7 +72,7 @@ const NftCardView = ({
       <Box height={36} mb={4}>
         <Skeleton loading={loading} height={8} width={115} borderRadius={4}>
           <Flex flexDirection="column">
-            <Flex flexDirection={"row"}>
+            <Flex flexDirection="row">
               <Text
                 variant="body"
                 fontWeight="medium"
@@ -107,6 +107,7 @@ const NftCardView = ({
                 numberOfLines={1}
                 ml={2}
                 flexGrow={1}
+                flexShrink={1}
               >
                 {displayText(metadata?.tokenName)}
               </Text>
