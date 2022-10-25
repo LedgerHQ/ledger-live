@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { Flex, Button, Text, Icons, IconBox } from "@ledgerhq/native-ui";
 import { useNavigation, useRoute } from "@react-navigation/native";
@@ -16,10 +16,10 @@ const OnboardingSetupDeviceInformation = () => {
   const navigation = useNavigation();
   const route = useRoute<NavigationProps["route"]>();
 
-  const handlePress = () => {
+  const handlePress = useCallback(() => {
     navigation.goBack();
     if (route.params?.onNext) route.params.onNext();
-  };
+  }, [navigation, route]);
 
   return (
     <Flex

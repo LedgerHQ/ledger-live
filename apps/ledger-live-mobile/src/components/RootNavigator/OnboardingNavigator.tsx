@@ -55,7 +55,7 @@ const OnboardingPreQuizModalStack =
 function OnboardingCarefulWarning(
   props: StackNavigatorProps<
     OnboardingNavigatorParamList,
-    ScreenName.OnboardingModalWarning
+    NavigatorName.OnboardingCarefulWarning
   >,
 ) {
   const options: Partial<StackNavigationOptions> = {
@@ -203,7 +203,7 @@ export default function OnboardingNavigator() {
         component={OnboardingUseCase}
       />
       <Stack.Screen
-        name={ScreenName.OnboardingModalWarning}
+        name={NavigatorName.OnboardingCarefulWarning} // ScreenName.OnboardingModalWarning}
         component={OnboardingCarefulWarning}
         options={modalOptions}
       />
