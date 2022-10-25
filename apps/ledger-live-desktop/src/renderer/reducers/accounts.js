@@ -10,14 +10,13 @@ import {
   canBeMigrated,
   getAccountCurrency,
   isUpToDateAccount,
-  withoutToken,
   nestedSortAccounts,
 } from "@ledgerhq/live-common/account/index";
 import { getEnv } from "@ledgerhq/live-common/env";
+import isEqual from "lodash/isEqual";
 import logger from "./../../logger/logger";
 import accountModel from "./../../helpers/accountModel";
 import type { State } from ".";
-import isEqual from "lodash/isEqual";
 
 import useCompoundAccountEnabled from "../screens/lend/useCompoundAccountEnabled";
 
