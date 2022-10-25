@@ -1,28 +1,36 @@
 import React, { useCallback } from "react";
 import { View, StyleSheet } from "react-native";
-import SafeAreaView from "react-native-safe-area-view";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { Trans } from "react-i18next";
 import { useTheme } from "@react-navigation/native";
 import { ScreenName } from "../../../const";
 import Button from "../../../components/Button";
 import LText from "../../../components/LText";
 import IlluVotes from "../IlluVotes";
+import {
+  StackNavigatorNavigation,
+  StackNavigatorProps,
+} from "../../../components/RootNavigator/types/helpers";
+import { TronVoteFlowParamList } from "./types";
+import { BaseNavigatorStackParamList } from "../../../components/RootNavigator/types/BaseNavigator";
 
-type Props = {
-  navigation: any;
-  route: {
-    // eslint-disable-next-line @typescript-eslint/ban-types
-    params: {};
-  };
-};
+// FIXME: SUPPOSED TO BE A BaseComposite<> HOWEVER
+// THE navigation.replace IS BEING STUBBORN, SO CHEATING
+// HERE BECAUSE WE SHARE ScreenNames BETWEEN DIFFERENT NAVIGATOR
+// (I BELIEVE THIS IS THE ISSUE)
+type Props = StackNavigatorProps<TronVoteFlowParamList, ScreenName.VoteStarted>;
 
 function VoteStarted({ navigation, route }: Props) {
   const { colors } = useTheme();
   const onNext = useCallback(() => {
-    navigation.replace(ScreenName.VoteSelectValidator, route.params);
+    navigation.replace(ScreenName.VoteSelectValidator, {
+      ...route.params,
+    });
   }, [navigation, route.params]);
   const onCancel = useCallback(() => {
-    navigation.getParent().pop();
+    navigation
+      .getParent<StackNavigatorNavigation<BaseNavigatorStackParamList>>()
+      .pop();
   }, [navigation]);
   return (
     <SafeAreaView

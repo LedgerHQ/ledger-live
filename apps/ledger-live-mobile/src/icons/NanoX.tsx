@@ -6,7 +6,7 @@ type Props = {
   width?: number;
   height?: number;
   color: string;
-  style?: any;
+  style?: React.ComponentProps<typeof Svg>["style"];
 };
 export default function NanoX({
   size,

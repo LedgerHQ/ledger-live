@@ -1,27 +1,27 @@
 import React, { Component } from "react";
-import { Observable, Subject, from } from "rxjs";
+import { Observable, Subject, from, Observer, Subscription } from "rxjs";
 import debounce from "lodash/debounce";
 import { mergeMap, last, tap, filter } from "rxjs/operators";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
+import type { DeviceModelId } from "@ledgerhq/devices";
 import StepRunnerModal from "./StepRunnerModal";
 import type { Step } from "./types";
-import type { DeviceNames } from "../../screens/Onboarding/types";
 
 const runStep = (
   step: Step,
-  meta: Record<string, any>,
-  onDoneO: Observable<any>,
-): Observable<Record<string, any>> => step.run(meta, onDoneO);
+  meta: Device & Record<string, unknown>,
+  onDoneO: Observable<unknown>,
+): Observable<Record<string, unknown>> => step.run(meta, onDoneO);
 
 type StepEvent =
   | {
       type: "step";
       step: number;
-      meta: Record<string, any>;
+      meta: Device & Record<string, unknown>;
     }
   | {
       type: "meta";
-      meta: Record<string, any>;
+      meta: Device & Record<string, unknown>;
     };
 
 const chainSteps = (
@@ -29,9 +29,9 @@ const chainSteps = (
   meta: Device,
   onDoneO: Observable<number>,
 ): Observable<StepEvent> =>
-  Observable.create(o => {
-    const obs: Observable<any> = steps.reduce(
-      (meta: Observable<any>, step: Step, i: number) =>
+  Observable.create((o: Observer<unknown>) => {
+    const obs: Observable<unknown> = steps.reduce(
+      (meta: Observable<unknown>, step: Step, i: number) =>
         meta.pipe(
           tap(meta => {
             // we emit entering a new step
@@ -45,7 +45,11 @@ const chainSteps = (
             (
               meta, // for a given step, we chain the previous step result in. we also provide events of onDone taps (allow to interrupt the UI).
             ) =>
-              runStep(step, meta, onDoneO.pipe(filter(index => index === i))),
+              runStep(
+                step,
+                meta as Device & Record<string, unknown>,
+                onDoneO.pipe(filter(index => index === i)),
+              ),
           ),
           tap(meta => {
             // we need to emit globally the meta incremental updates
@@ -71,19 +75,21 @@ const chainSteps = (
     };
   });
 
+type Props = {
+  // as soon as meta is set, the DeviceJob starts
+  meta: Device | null | undefined;
+  steps: Step[];
+  onDone: (arg0: Record<string, unknown>) => void;
+  onCancel: () => void;
+  editMode?: boolean;
+  deviceModelId: DeviceModelId;
+  onStepEntered?: (arg0: number, arg1: Record<string, unknown>) => void;
+};
+
 class DeviceJob extends Component<
+  Props,
   {
-    // as soon as meta is set, the DeviceJob starts
-    meta: Device | null | undefined;
-    steps: Step[];
-    onDone: (arg0: Record<string, any>) => void;
-    onCancel: () => void;
-    editMode?: boolean;
-    deviceModelId: DeviceNames;
-    onStepEntered?: (arg0: number, arg1: Record<string, any>) => void;
-  },
-  {
-    meta: Record<string, any> | null | undefined;
+    meta: Record<string, unknown> | null | undefined;
     error: Error | null | undefined;
     stepIndex: number;
   }
@@ -96,7 +102,7 @@ class DeviceJob extends Component<
     error: null,
     meta: null,
   };
-  sub: any;
+  sub: Subscription | undefined;
   onDoneSubject: Subject<number> = new Subject();
 
   componentDidMount() {
@@ -107,7 +113,7 @@ class DeviceJob extends Component<
     }
   }
 
-  componentDidUpdate(prevProps: any) {
+  componentDidUpdate(prevProps: Props) {
     const { meta } = this.props;
 
     if (meta !== prevProps.meta) {

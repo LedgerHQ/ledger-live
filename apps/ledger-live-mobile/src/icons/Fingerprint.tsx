@@ -2,8 +2,8 @@ import React from "react";
 import Svg, { Path, Circle, G } from "react-native-svg";
 
 type Props = {
-  size: number;
-  color: string;
+  size?: number;
+  color?: string;
 };
 export default function Fingerprint({ size = 80, color }: Props) {
   return (

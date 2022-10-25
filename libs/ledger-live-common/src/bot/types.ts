@@ -132,6 +132,8 @@ export type AppSpec<T extends Transaction> = {
   minViableAmount?: BigNumber;
   // global timeout to consider the run due date for the spec. (since a seed could have theorically an infinite amount of accounts and mutation could take a lot of time to validate transactions, we need a way to limit the run time)
   skipMutationsTimeout?: number;
+  // do not expect an account to always be found (Hedera case)
+  allowEmptyAccounts?: boolean;
 };
 export type SpecReport<T extends Transaction> = {
   spec: AppSpec<T>;

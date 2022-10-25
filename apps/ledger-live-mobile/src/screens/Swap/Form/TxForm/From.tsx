@@ -13,9 +13,10 @@ import { useSelector } from "react-redux";
 import { Selector } from "./Selector";
 import { AmountInput } from "./AmountInput";
 import { shallowAccountsSelector } from "../../../../reducers/accounts";
-import { SwapFormProps } from "../../types";
+import { SwapFormParamList } from "../../types";
 import { fromSelector, pairsSelector } from "../../../../actions/swap";
 import TranslatedError from "../../../../components/TranslatedError";
+import { ScreenName } from "../../../../const";
 
 interface Props {
   provider?: string;
@@ -26,7 +27,7 @@ interface Props {
 
 export function From({ swapTx, provider, swapError, isSendMaxLoading }: Props) {
   const { t } = useTranslation();
-  const navigation = useNavigation<SwapFormProps>();
+  const navigation = useNavigation<SwapFormParamList>();
 
   const accounts = useSelector(fromSelector)(
     useSelector(shallowAccountsSelector),
@@ -58,7 +59,7 @@ export function From({ swapTx, provider, swapError, isSendMaxLoading }: Props) {
 
   const onPress = useCallback(() => {
     // @ts-expect-error navigation type is only partially declared
-    navigation.navigate("SelectAccount", {
+    navigation.navigate(ScreenName.SwapSelectAccount, {
       target: "from",
       provider,
       selectableCurrencyIds: [...new Set(pairs.map(p => p.from))],
@@ -100,7 +101,6 @@ export function From({ swapTx, provider, swapError, isSendMaxLoading }: Props) {
         </Flex>
 
         <Text color="error.c100" textAlign="right" variant="tiny">
-          {/* @ts-expect-error TranslatedError may return null */}
           {swapError ? <TranslatedError error={swapError} /> : ""}
         </Text>
       </Flex>

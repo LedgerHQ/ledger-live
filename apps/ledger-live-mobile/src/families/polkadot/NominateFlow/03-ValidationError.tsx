@@ -1,30 +1,30 @@
 import React, { useCallback } from "react";
-import { StyleSheet, Linking, SafeAreaView } from "react-native";
+import { StyleSheet, SafeAreaView } from "react-native";
 import { useTheme } from "@react-navigation/native";
 import { TrackScreen } from "../../../analytics";
-import { urls } from "../../../config/urls";
 import ValidateError from "../../../components/ValidateError";
+import type {
+  BaseComposite,
+  StackNavigatorNavigation,
+  StackNavigatorProps,
+} from "../../../components/RootNavigator/types/helpers";
+import type { PolkadotNominateFlowParamList } from "./types";
+import { ScreenName } from "../../../const";
+import { BaseNavigatorStackParamList } from "../../../components/RootNavigator/types/BaseNavigator";
 
-type Props = {
-  navigation: any;
-  route: {
-    params: RouteParams;
-  };
-};
-type RouteParams = {
-  accountId: string;
-  deviceId: string;
-  transaction: any;
-  error: Error;
-};
+type Props = BaseComposite<
+  StackNavigatorProps<
+    PolkadotNominateFlowParamList,
+    ScreenName.PolkadotNominateValidationError
+  >
+>;
 export default function ValidationError({ navigation, route }: Props) {
   const { colors } = useTheme();
   const onClose = useCallback(() => {
-    navigation.getParent().pop();
+    navigation
+      .getParent<StackNavigatorNavigation<BaseNavigatorStackParamList>>()
+      .pop();
   }, [navigation]);
-  const contactUs = useCallback(() => {
-    Linking.openURL(urls.contact);
-  }, []);
   const retry = useCallback(() => {
     navigation.goBack();
   }, [navigation]);
@@ -42,7 +42,6 @@ export default function ValidationError({ navigation, route }: Props) {
         error={route.params.error}
         onRetry={retry}
         onClose={onClose}
-        onContactUs={contactUs}
       />
     </SafeAreaView>
   );

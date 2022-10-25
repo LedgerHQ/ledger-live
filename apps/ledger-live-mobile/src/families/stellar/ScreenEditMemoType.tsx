@@ -6,27 +6,62 @@ import i18next from "i18next";
 import { StellarMemoType } from "@ledgerhq/live-common/families/stellar/types";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import LText from "../../components/LText";
-import type { State } from "../../reducers";
+import type { State } from "../../reducers/types";
 import { ScreenName } from "../../const";
 import makeGenericSelectScreen from "../../screens/makeGenericSelectScreen";
+import {
+  BaseComposite,
+  StackNavigatorProps,
+} from "../../components/RootNavigator/types/helpers";
+import { SendFundsNavigatorStackParamList } from "../../components/RootNavigator/types/SendFundsNavigator";
+import { SignTransactionNavigatorParamList } from "../../components/RootNavigator/types/SignTransactionNavigator";
+import { LendingEnableFlowParamsList } from "../../components/RootNavigator/types/LendingEnableFlowNavigator";
+import { LendingSupplyFlowNavigatorParamList } from "../../components/RootNavigator/types/LendingSupplyFlowNavigator";
+import { LendingWithdrawFlowNavigatorParamList } from "../../components/RootNavigator/types/LendingWithdrawFlowNavigator";
+import { SwapNavigatorParamList } from "../../components/RootNavigator/types/SwapNavigator";
 
 const items = StellarMemoType.map(type => ({
   label: type,
   value: type,
 }));
 
-const mapStateToProps = (state: State, props: any) => ({
+type NavigationProps = BaseComposite<
+  | StackNavigatorProps<
+      SendFundsNavigatorStackParamList,
+      ScreenName.StellarEditMemoType
+    >
+  | StackNavigatorProps<
+      SignTransactionNavigatorParamList,
+      ScreenName.StellarEditMemoType
+    >
+  | StackNavigatorProps<
+      LendingEnableFlowParamsList,
+      ScreenName.StellarEditMemoType
+    >
+  | StackNavigatorProps<
+      LendingSupplyFlowNavigatorParamList,
+      ScreenName.StellarEditMemoType
+    >
+  | StackNavigatorProps<
+      LendingWithdrawFlowNavigatorParamList,
+      ScreenName.StellarEditMemoType
+    >
+  | StackNavigatorProps<SwapNavigatorParamList, ScreenName.StellarEditMemoType>
+>;
+
+const mapStateToProps = (_state: State, props: NavigationProps) => ({
   selectedKey: props.route.params.transaction.memoType
     ? props.route.params.transaction.memoType
     : "NO_MEMO",
   items,
   cancelNavigateBack: true,
-  onValueChange: ({ value }) => {
+  onValueChange: ({ value }: { value: string; label: string }) => {
     const { navigation, route } = props;
     const { transaction, account } = route.params;
 
     if (value === "NO_MEMO") {
       const bridge = getAccountBridge(account);
+      // @ts-expect-error FIXME: No current / next navigation params?
       navigation.navigate(ScreenName.SendSummary, {
         accountId: account.id,
         transaction: bridge.updateTransaction(transaction, {
@@ -35,6 +70,7 @@ const mapStateToProps = (state: State, props: any) => ({
         }),
       });
     } else {
+      // @ts-expect-error FIXME: No current / next navigation params?
       navigation.navigate(ScreenName.StellarEditMemoValue, {
         accountId: account.id,
         transaction,
@@ -63,7 +99,7 @@ const Screen = connect(mapStateToProps)(
 );
 const options = {
   title: i18next.t("send.summary.memo.type"),
-  headerLeft: null,
+  headerLeft: undefined,
 };
 const styles = StyleSheet.create({
   memo: {

@@ -1,6 +1,7 @@
 import React from "react";
-import { TouchableOpacityProps } from "react-native";
 import { Flex, Text } from "@ledgerhq/native-ui";
+import { BaseTextProps } from "@ledgerhq/native-ui/components/Text";
+import { FlexBoxProps } from "@ledgerhq/native-ui/components/Layout/Flex";
 import Touchable from "../../components/Touchable";
 
 const DiscoverCard = ({
@@ -18,18 +19,18 @@ const DiscoverCard = ({
   ...props
 }: {
   title: string;
-  titleProps?: any;
+  titleProps?: Partial<BaseTextProps>;
   subTitle?: string;
-  subTitleProps?: any;
+  subTitleProps?: Partial<BaseTextProps>;
   labelBadge?: string;
   Image: React.ReactNode;
-  onPress: TouchableOpacityProps["onPress"];
+  onPress: React.ComponentProps<typeof Touchable>["onPress"];
   disabled?: boolean;
   event?: string;
-  eventProperties?: any;
+  eventProperties?: Record<string, unknown>;
   testID?: string;
-  cardProps?: any;
-  imageContainerProps?: any;
+  cardProps?: Partial<FlexBoxProps>;
+  imageContainerProps?: Partial<FlexBoxProps>;
   subtitleFirst?: boolean;
 }) => (
   <Touchable onPress={onPress} disabled={disabled} {...props}>

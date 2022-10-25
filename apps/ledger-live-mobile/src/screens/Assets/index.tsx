@@ -8,6 +8,8 @@ import { useTranslation } from "react-i18next";
 import { useGlobalSyncState } from "@ledgerhq/live-common/bridge/react/index";
 import { FlatList } from "react-native";
 import useEnv from "@ledgerhq/live-common/hooks/useEnv";
+import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { AccountLike } from "@ledgerhq/types-live";
 import {
   useDistribution,
   useRefreshAccountsOrdering,
@@ -15,7 +17,7 @@ import {
 import { isUpToDateSelector } from "../../reducers/accounts";
 import TrackScreen from "../../analytics/TrackScreen";
 import { withDiscreetMode } from "../../context/DiscreetModeContext";
-import AssetRow from "../WalletCentricAsset/AssetRow";
+import AssetRow, { NavigationProp } from "../WalletCentricAsset/AssetRow";
 
 import Spinning from "../../components/Spinning";
 import TabBarSafeAreaView, {
@@ -24,11 +26,19 @@ import TabBarSafeAreaView, {
 import AssetsNavigationHeader from "./AssetsNavigationHeader";
 import globalSyncRefreshControl from "../../components/globalSyncRefreshControl";
 import AddAccountsModal from "../AddAccounts/AddAccountsModal";
+import { BaseNavigation } from "../../components/RootNavigator/types/helpers";
 
+type Asset = {
+  currency: CryptoOrTokenCurrency;
+  accounts: AccountLike[];
+  distribution: number;
+  amount: number;
+  countervalue: number;
+};
 const List = globalSyncRefreshControl(FlatList);
 
 function Assets() {
-  const navigation = useNavigation();
+  const navigation = useNavigation<NavigationProp>();
   const isUpToDate = useSelector(isUpToDateSelector);
   const globalSyncState = useGlobalSyncState();
   const hideEmptyTokenAccount = useEnv("HIDE_EMPTY_TOKEN_ACCOUNTS");
@@ -65,8 +75,8 @@ function Assets() {
   );
 
   const renderItem = useCallback(
-    ({ item }: { item: any; index: number }) => (
-      <AssetRow asset={item} navigation={navigation} />
+    ({ item }: { item: unknown }) => (
+      <AssetRow asset={item as Asset} navigation={navigation} />
     ),
     [navigation],
   );
@@ -90,7 +100,8 @@ function Assets() {
           <List
             data={assets}
             renderItem={renderItem}
-            keyExtractor={(i: any) => i.id}
+            // FIXME: Weird??? Isn't this supposed to be an "Asset" without an id field?
+            keyExtractor={i => (i as CryptoOrTokenCurrency).id}
             contentContainerStyle={{
               paddingBottom: TAB_BAR_SAFE_HEIGHT,
             }}
@@ -117,7 +128,7 @@ function Assets() {
         </Flex>
       </Flex>
       <AddAccountsModal
-        navigation={navigation}
+        navigation={navigation as unknown as BaseNavigation}
         isOpened={isAddModalOpened}
         onClose={closeAddModal}
       />

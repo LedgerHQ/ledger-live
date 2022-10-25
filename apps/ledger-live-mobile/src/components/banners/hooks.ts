@@ -9,5 +9,5 @@ export function useBanner(bannerId: string) {
 
   const dismiss = () => dispatch(dismissBanner(bannerId));
 
-  return [isDismissed, dismiss];
+  return [isDismissed, dismiss] as const;
 }

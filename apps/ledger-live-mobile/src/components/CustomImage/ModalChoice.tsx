@@ -1,14 +1,14 @@
 import { Flex, Icon, Text } from "@ledgerhq/native-ui";
 import React from "react";
 import styled from "styled-components/native";
-import Touchable from "../Touchable";
+import Touchable, { Props as TouchableProps } from "../Touchable";
 
 type Props = {
-  onPress: (_?: any) => any;
+  onPress: TouchableProps["onPress"];
   iconName: string;
   title: string;
   event: string;
-  eventProperties?: any;
+  eventProperties?: TouchableProps["eventProperties"];
 };
 
 const StyledTouchable = styled(Touchable)`

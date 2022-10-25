@@ -1,8 +1,21 @@
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { DeviceModelId } from "@ledgerhq/types-devices";
+import { AnimatedLottieViewProps } from "lottie-react-native";
 import Config from "react-native-config";
 
-const animations: { [modelId in DeviceModelId]: any } = {
+type Animation = AnimatedLottieViewProps["source"];
+type AnimationRecord = Record<"light" | "dark", Animation>;
+type S_SP_BLUE =
+  | DeviceModelId.nanoS
+  | DeviceModelId.nanoSP
+  | DeviceModelId.blue;
+export type Animations = {
+  [modelId in S_SP_BLUE]: Record<string, AnimationRecord>;
+} & {
+  [modelId in DeviceModelId]: Record<string, Record<string, AnimationRecord>>;
+};
+
+const animations: Animations = {
   nanoS: {
     plugAndPinCode: {
       light: require("../animations/nanoS/1PlugAndPinCode/light.json"),
@@ -218,18 +231,18 @@ export function getDeviceAnimation({
   theme = "light",
   key,
   device,
-}: GetDeviceAnimationArgs) {
+}: GetDeviceAnimationArgs): AnimatedLottieViewProps["source"] {
   const modelId = (Config.OVERRIDE_MODEL_ID as DeviceModelId) || device.modelId;
   const wired = Config.OVERRIDE_WIRED || device.wired;
 
-  let animation;
+  let animation: Animation | undefined;
 
   if (
     [DeviceModelId.nanoS, DeviceModelId.nanoSP, DeviceModelId.blue].includes(
       modelId,
     )
   ) {
-    animation = animations[modelId][key][theme];
+    animation = animations[modelId as S_SP_BLUE][key][theme];
   } else {
     animation =
       animations[modelId]?.[wired ? "wired" : "bluetooth"]?.[key][theme];
@@ -237,7 +250,8 @@ export function getDeviceAnimation({
 
   if (!animation) {
     console.error(`No animation for ${modelId} ${key}`);
-    return null;
+    // @ts-expect-error Halp :()
+    return undefined;
   }
 
   return animation;

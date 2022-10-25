@@ -1,4 +1,3 @@
-/* eslint-disable import/no-unresolved */
 import React, { memo } from "react";
 import styled from "styled-components/native";
 import { Flex, Text } from "@ledgerhq/native-ui";

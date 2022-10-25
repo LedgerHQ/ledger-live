@@ -17,13 +17,14 @@ import Receive from "../../icons/Receive";
 import Exchange from "../../icons/Exchange";
 import EmptyStateAccountIllu from "../../images/EmptyStateAccount";
 
-import { withTheme } from "../../colors";
+import { Theme, withTheme } from "../../colors";
+import { BaseNavigation } from "../../components/RootNavigator/types/helpers";
 
 type Props = {
   account: AccountLike;
   parentAccount?: Account;
-  navigation: any;
-  colors: any;
+  navigation: BaseNavigation;
+  colors: Theme["colors"];
 };
 
 function EmptyStateAccount({
@@ -96,7 +97,7 @@ function EmptyStateAccount({
               {"and"}
               <LText semiBold color="darkBlue">
                 {account &&
-                  account.currency &&
+                  (account as Account).currency &&
                   listTokenTypesForCryptoCurrency(mainAccount.currency).join(
                     ", ",
                   )}

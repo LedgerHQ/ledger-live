@@ -1,13 +1,8 @@
 import React, { useMemo } from "react";
 import { View, StyleSheet, ActivityIndicator } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
-import SafeAreaView from "react-native-safe-area-view";
+import { SafeAreaView } from "react-native-safe-area-context";
 import invariant from "invariant";
-import type {
-  Transaction,
-  TransactionStatus,
-} from "@ledgerhq/live-common/generated/types";
-import type { DeviceModelId } from "@ledgerhq/devices";
 import { useTheme } from "@react-navigation/native";
 import { useSignWithDevice } from "../../../logic/screenTransactionHooks";
 import { updateAccountWithUpdater } from "../../../actions/accounts";
@@ -16,25 +11,15 @@ import { TrackScreen } from "../../../analytics";
 import PreventNativeBack from "../../../components/PreventNativeBack";
 import ValidateOnDevice from "../../../components/ValidateOnDevice";
 import SkipLock from "../../../components/behaviour/SkipLock";
+import { ScreenName } from "../../../const";
+import type { StackNavigatorProps } from "../../../components/RootNavigator/types/helpers";
+import type { AlgorandOptInFlowParamList } from "./types";
 
-const forceInset = {
-  bottom: "always",
-};
-type RouteParams = {
-  accountId: string;
-  deviceId: string;
-  modelId: DeviceModelId;
-  wired: boolean;
-  transaction: Transaction;
-  status: TransactionStatus;
-};
-type Props = {
-  navigation: any;
-  route: {
-    params: RouteParams;
-  };
-};
-export default function Validation({ navigation, route }: Props) {
+type Props = StackNavigatorProps<
+  AlgorandOptInFlowParamList,
+  ScreenName.AlgorandOptInSummary
+>;
+export default function Validation({ route }: Props) {
   const { colors } = useTheme();
   const { account } = useSelector(accountScreenSelector(route));
   invariant(account, "account is required");
@@ -43,7 +28,6 @@ export default function Validation({ navigation, route }: Props) {
     context: "AlgorandOptIn",
     account,
     parentAccount: undefined,
-    navigation,
     updateAccountWithUpdater: (...args) =>
       dispatch(updateAccountWithUpdater(...args)),
   });
@@ -64,7 +48,6 @@ export default function Validation({ navigation, route }: Props) {
           backgroundColor: colors.background,
         },
       ]}
-      forceInset={forceInset}
     >
       <TrackScreen category="AlgorandOptIn" name="Validation" signed={signed} />
       {signing && (

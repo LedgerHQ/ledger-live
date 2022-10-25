@@ -2,10 +2,9 @@ import React, { memo, useCallback, useMemo, useEffect } from "react";
 
 import { Text, Flex, Button, BaseModal } from "@ledgerhq/native-ui";
 import { FlatList } from "react-native";
-import { App } from "@ledgerhq/types-live";
+import { App, DeviceInfo } from "@ledgerhq/types-live";
 import { State, Action } from "@ledgerhq/live-common/apps/index";
 import { Trans } from "react-i18next";
-import { ListAppsResult } from "@ledgerhq/live-common/apps/types";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import AppIcon from "../AppsList/AppIcon";
 import ByteSize from "../../../components/ByteSize";
@@ -13,7 +12,7 @@ import AppUninstallButton from "../AppsList/AppUninstallButton";
 import AppProgressButton from "../AppsList/AppProgressButton";
 
 type HeaderProps = {
-  illustration: any;
+  illustration: JSX.Element;
 };
 
 const Header = ({ illustration }: HeaderProps) => (
@@ -68,7 +67,7 @@ type RowProps = {
   state: State;
   dispatch: (_: Action) => void;
   setAppUninstallWithDependencies: (_: { dependents: App[]; app: App }) => void;
-  deviceInfo: any;
+  deviceInfo: DeviceInfo;
 };
 
 const Row = ({
@@ -111,7 +110,7 @@ const Row = ({
 const modalStyleOverrides = {
   modal: {
     flex: 1,
-    justifyContent: "flex-end",
+    justifyContent: "flex-end" as const,
     margin: 0,
   },
   container: {
@@ -129,10 +128,10 @@ type Props = {
   onClose: () => void;
   state: State;
   dispatch: (_: Action) => void;
-  appList: ListAppsResult;
+  appList?: App[];
   setAppUninstallWithDependencies: (_: { dependents: App[]; app: App }) => void;
-  illustration: any;
-  deviceInfo: any;
+  illustration: JSX.Element;
+  deviceInfo: DeviceInfo;
 };
 
 const InstalledAppsModal = ({
@@ -165,7 +164,7 @@ const InstalledAppsModal = ({
 
   useEffect(() => {
     if (!appList || !appList.length) onClose();
-  }, [appList]);
+  }, [appList, onClose]);
 
   const insets = useSafeAreaInsets();
   const { top: safeAreaTop, bottom: safeAreaBottom } = insets;
@@ -188,7 +187,7 @@ const InstalledAppsModal = ({
         <FlatList
           data={appList}
           renderItem={renderItem}
-          keyExtractor={item => item.id}
+          keyExtractor={item => "" + item.id}
           ListHeaderComponent={<Header illustration={illustration} />}
           showsVerticalScrollIndicator={false}
         />

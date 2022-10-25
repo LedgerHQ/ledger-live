@@ -1,52 +1,74 @@
 import React, { useCallback, useMemo, useState } from "react";
-import { FlatList } from "react-native";
+import { FlatList, ListRenderItemInfo } from "react-native";
 import { useSelector } from "react-redux";
 
 import { Flex } from "@ledgerhq/native-ui";
 import { useTranslation } from "react-i18next";
-import { AccountLike } from "@ledgerhq/types-live";
-import { Currency } from "@ledgerhq/types-cryptoassets";
+import {
+  Account,
+  AccountLike,
+  SubAccount,
+  TokenAccount,
+} from "@ledgerhq/types-live";
 import { makeEmptyTokenAccount } from "@ledgerhq/live-common/account/index";
 import { flattenAccountsByCryptoCurrencyScreenSelector } from "../../reducers/accounts";
 import { ScreenName } from "../../const";
 import { track, TrackScreen } from "../../analytics";
 import AccountCard from "../../components/AccountCard";
 import LText from "../../components/LText";
+import { ReceiveFundsStackParamList } from "../../components/RootNavigator/types/ReceiveFundsNavigator";
+import { StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
 
-type Props = {
-  navigation: any;
-  route: { params?: { currency?: Currency } };
+type SubAccountEnhanced = SubAccount & {
+  parentAccount: Account;
+  triggerCreateAccount: boolean;
 };
 
-function ReceiveSelectAccount({ navigation, route }: Props) {
-  const currency = route.params?.currency;
+function ReceiveSelectAccount({
+  navigation,
+  route,
+}: StackNavigatorProps<
+  ReceiveFundsStackParamList,
+  ScreenName.ReceiveSelectAccount
+>) {
+  const currency = route?.params?.currency;
   const { t } = useTranslation();
   const [selectedAccount, setSelectedAccount] = useState<string | null>(null);
 
   const accounts = useSelector(
-    flattenAccountsByCryptoCurrencyScreenSelector(currency),
+    currency && currency.type === "CryptoCurrency"
+      ? flattenAccountsByCryptoCurrencyScreenSelector(currency)
+      : () => null,
   );
   const parentAccounts = useSelector(
-    flattenAccountsByCryptoCurrencyScreenSelector(currency?.parentCurrency),
+    currency && currency.type === "TokenCurrency"
+      ? flattenAccountsByCryptoCurrencyScreenSelector(currency?.parentCurrency)
+      : () => null,
   );
 
   const aggregatedAccounts = useMemo(
     () =>
-      currency.type === "TokenCurrency"
-        ? parentAccounts.reduce((accs, pa) => {
-            const tokenAccounts = pa.subAccounts
-              ? pa.subAccounts.filter(
-                  (acc: any) => acc.token.id === currency.id,
+      currency && currency.type === "TokenCurrency"
+        ? parentAccounts!.reduce<AccountLike[]>((accs, pa) => {
+            const tokenAccounts = (pa as Account).subAccounts
+              ? (pa as Account).subAccounts?.filter(
+                  acc =>
+                    acc.type === "TokenAccount" && acc.token.id === currency.id,
                 )
               : [];
 
-            if (tokenAccounts.length > 0) {
+            if (tokenAccounts && tokenAccounts.length > 0) {
               accs.push(...tokenAccounts);
             } else {
-              const tokenAcc = makeEmptyTokenAccount(pa, currency);
-              tokenAcc.parentAccount = pa;
-              tokenAcc.triggerCreateAccount = true;
-              accs.push(tokenAcc);
+              const tokenAcc = makeEmptyTokenAccount(pa as Account, currency);
+
+              const tokenA: SubAccountEnhanced = {
+                ...tokenAcc,
+                parentAccount: pa as Account,
+                triggerCreateAccount: true,
+              };
+
+              accs.push(tokenA);
             }
 
             return accs;
@@ -57,34 +79,41 @@ function ReceiveSelectAccount({ navigation, route }: Props) {
 
   const selectAccount = useCallback(
     (account: AccountLike) => {
-      if (!selectedAccount) {
+      if (!selectedAccount && currency) {
         setSelectedAccount(account.id);
         track("account_clicked", {
           currency: currency.name,
         });
         navigation.navigate(ScreenName.ReceiveConfirmation, {
           ...route.params,
-          accountId: account?.parentId || account.id,
-          createTokenAccount: account?.triggerCreateAccount,
+          accountId: (account as SubAccountEnhanced)?.parentId || account.id,
+          createTokenAccount: (account as SubAccountEnhanced)
+            ?.triggerCreateAccount,
         });
       }
     },
-    [currency.name, navigation, route.params, selectedAccount],
+    [currency, navigation, route.params, selectedAccount],
   );
 
   const renderItem = useCallback(
-    ({ item: account }: { item: SearchResult }) => (
+    ({ item }: ListRenderItemInfo<AccountLike>) => (
       <Flex px={6}>
         <AccountCard
-          account={account}
+          account={item}
           AccountSubTitle={
-            account.parentAccount || account.token?.parentCurrency ? (
+            (item as SubAccountEnhanced).parentAccount ||
+            (item as TokenAccount).token?.parentCurrency ? (
               <LText color="neutral.c70">
-                {(account.parentAccount || account.token.parentCurrency).name}
+                {
+                  (
+                    ((item as SubAccountEnhanced).parentAccount as Account) ||
+                    (item as TokenAccount).token.parentCurrency
+                  ).name
+                }
               </LText>
             ) : null
           }
-          onPress={() => selectAccount(account)}
+          onPress={() => selectAccount(item)}
         />
       </Flex>
     ),
@@ -93,7 +122,7 @@ function ReceiveSelectAccount({ navigation, route }: Props) {
 
   const keyExtractor = useCallback(item => item?.id, []);
 
-  return aggregatedAccounts.length > 1 ? (
+  return currency && aggregatedAccounts && aggregatedAccounts.length > 1 ? (
     <>
       <TrackScreen
         category="ReceiveFunds"

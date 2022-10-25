@@ -9,11 +9,10 @@ import React, {
   useMemo,
   useEffect,
 } from "react";
-import { connect, useDispatch, useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import * as Sentry from "@sentry/react-native";
 import {
   StyleSheet,
-  Text,
   Linking,
   Appearance,
   AppState,
@@ -76,28 +75,23 @@ import useDBSaveEffect from "./components/DBSave";
 import useAppStateListener from "./components/useAppStateListener";
 import SyncNewAccounts from "./bridge/SyncNewAccounts";
 import { OnboardingContextProvider } from "./screens/Onboarding/onboardingContext";
-
-/* eslint-disable import/named */
 import WalletConnectProvider, {
   context as _wcContext,
 } from "./screens/WalletConnect/Provider";
-
-/* eslint-enable import/named */
 import HookAnalytics from "./analytics/HookAnalytics";
 import HookSentry from "./components/HookSentry";
 import RootNavigator from "./components/RootNavigator";
 import SetEnvsFromSettings from "./components/SetEnvsFromSettings";
 import CounterValuesProvider from "./components/CounterValuesProvider";
-import type { State } from "./reducers";
+import type { State } from "./reducers/types";
 import { navigationRef, isReadyRef } from "./rootnavigation";
 import { useTrackingPairs } from "./actions/general";
 import { ScreenName, NavigatorName } from "./const";
 import ExperimentalHeader from "./screens/Settings/Experimental/ExperimentalHeader";
 import Modals from "./screens/Modals";
-import { lightTheme, darkTheme } from "./colors";
+import { lightTheme, darkTheme, Theme } from "./colors";
 import NotificationsProvider from "./screens/NotificationCenter/NotificationsProvider";
 import SnackbarContainer from "./screens/NotificationCenter/Snackbar/SnackbarContainer";
-// eslint-disable-next-line import/no-unresolved
 import NavBarColorHandler from "./components/NavBarColorHandler";
 import { setOsTheme } from "./actions/settings";
 import { FirebaseRemoteConfigProvider } from "./components/FirebaseRemoteConfig";
@@ -109,8 +103,11 @@ import DelayedTrackingProvider from "./components/DelayedTrackingProvider";
 import { useFilteredManifests } from "./screens/Platform/shared";
 import { setWallectConnectUri } from "./actions/walletconnect";
 import PostOnboardingProviderWrapped from "./logic/postOnboarding/PostOnboardingProviderWrapped";
+import type { Writeable } from "./types/helpers";
 
-const themes = {
+const themes: {
+  [key: string]: Theme;
+} = {
   light: lightTheme,
   dark: darkTheme,
 };
@@ -119,7 +116,6 @@ checkLibs({
   React,
   log,
   Transport,
-  connect,
 });
 // useScreens();
 const styles = StyleSheet.create({
@@ -127,9 +123,6 @@ const styles = StyleSheet.create({
     flex: 1,
   },
 });
-// Fixme until third parties address this themselves, still relevant?
-Text.defaultProps = Text.defaultProps || {};
-Text.defaultProps.allowFontScaling = false;
 
 type AppProps = {
   importDataString?: string;
@@ -270,7 +263,7 @@ function getProxyURL(url: string) {
 }
 
 // DeepLinking
-const linkingOptions: LinkingOptions<ReactNavigation.RootParamList> = {
+const linkingOptions = {
   async getInitialURL() {
     const url = await Linking.getInitialURL();
     return url && !isInvalidWalletConnectLink(url) ? getProxyURL(url) : null;
@@ -467,76 +460,77 @@ const DeepLinkingNavigator = ({ children }: { children: React.ReactNode }) => {
     !!remoteLiveAppState.value || !!remoteLiveAppState.error;
   const filteredManifests = useFilteredManifests(platformManifestFilterParams);
   const linking = useMemo<LinkingOptions<ReactNavigation.RootParamList>>(
-    () => ({
-      ...(hasCompletedOnboarding ? linkingOptions : linkingOptionsOnboarding),
-      enabled: wcContext.initDone && !wcContext.session.session,
-      subscribe(listener) {
-        const sub = Linking.addEventListener("url", ({ url }) => {
-          // Prevent default deeplink if invalid wallet connect link
-          if (isInvalidWalletConnectLink(url)) {
-            return;
-          }
+    () =>
+      ({
+        ...(hasCompletedOnboarding ? linkingOptions : linkingOptionsOnboarding),
+        enabled: wcContext.initDone && !wcContext.session.session,
+        subscribe(listener) {
+          const sub = Linking.addEventListener("url", ({ url }) => {
+            // Prevent default deeplink if invalid wallet connect link
+            if (isInvalidWalletConnectLink(url)) {
+              return;
+            }
 
-          // Prevent default deeplink if we're already in a wallet connect route.
-          const route = navigationRef.current?.getCurrentRoute();
-          if (
-            isWalletConnectLink(url) &&
-            route &&
-            [
-              ScreenName.WalletConnectScan,
-              ScreenName.WalletConnectDeeplinkingSelectAccount,
-              ScreenName.WalletConnectConnect,
-            ].includes(route.name)
-          ) {
-            const uri = isWalletConnectUrl(url)
-              ? url
-              : // we know uri exists in the searchParams because we check it in isValidWalletConnectUrl
-                new URL(url).searchParams.get("uri")!;
-            dispatch(setWallectConnectUri(uri));
-            return;
-          }
+            // Prevent default deeplink if we're already in a wallet connect route.
+            const route = navigationRef.current?.getCurrentRoute();
+            if (
+              isWalletConnectLink(url) &&
+              route &&
+              [
+                ScreenName.WalletConnectScan,
+                ScreenName.WalletConnectDeeplinkingSelectAccount,
+                ScreenName.WalletConnectConnect,
+              ].includes(route.name as ScreenName)
+            ) {
+              const uri = isWalletConnectUrl(url)
+                ? url
+                : // we know uri exists in the searchParams because we check it in isValidWalletConnectUrl
+                  new URL(url).searchParams.get("uri")!;
+              dispatch(setWallectConnectUri(uri));
+              return;
+            }
 
-          listener(getProxyURL(url));
-        });
-        // Clean up the event listeners
-        return () => {
-          sub.remove();
-        };
-      },
-      getStateFromPath: (path, config) => {
-        const url = new URL(`ledgerlive://${path}`);
-        const { hostname, pathname } = url;
-        const platform = pathname.split("/")[1];
+            listener(getProxyURL(url));
+          });
+          // Clean up the event listeners
+          return () => {
+            sub.remove();
+          };
+        },
+        getStateFromPath: (path, config) => {
+          const url = new URL(`ledgerlive://${path}`);
+          const { hostname, pathname } = url;
+          const platform = pathname.split("/")[1];
 
-        if (hostname === "discover" && platform) {
-          /**
-           * Upstream validation of "ledgerlive://discover/:platform":
-           *  - checking that a manifest exists
-           *  - adding "name" search param
-           * */
-          if (!liveAppProviderInitialized) {
+          if (hostname === "discover" && platform) {
             /**
-             * The provider isn't initialized yet so the manifest will possibly
-             * not be found.
-             * We redirect because this scenario happens when deep linking
-             * triggers a cold app start. The platform app screen will show an
-             * error in case the app isn't found.
-             */
-            return getStateFromPath(path, config);
+             * Upstream validation of "ledgerlive://discover/:platform":
+             *  - checking that a manifest exists
+             *  - adding "name" search param
+             * */
+            if (!liveAppProviderInitialized) {
+              /**
+               * The provider isn't initialized yet so the manifest will possibly
+               * not be found.
+               * We redirect because this scenario happens when deep linking
+               * triggers a cold app start. The platform app screen will show an
+               * error in case the app isn't found.
+               */
+              return getStateFromPath(path, config);
+            }
+
+            const manifest = filteredManifests.find(
+              m => m.id.toLowerCase() === platform.toLowerCase(),
+            );
+            if (!manifest) return undefined;
+            url.pathname = `/${manifest.id}`;
+            url.searchParams.set("name", manifest.name);
+            return getStateFromPath(url.href?.split("://")[1], config);
           }
 
-          const manifest = filteredManifests.find(
-            m => m.id.toLowerCase() === platform.toLowerCase(),
-          );
-          if (!manifest) return undefined;
-          url.pathname = `/${manifest.id}`;
-          url.searchParams.set("name", manifest.name);
-          return getStateFromPath(url.href?.split("://")[1], config);
-        }
-
-        return getStateFromPath(path, config);
-      },
-    }),
+          return getStateFromPath(path, config);
+        },
+      } as LinkingOptions<ReactNavigation.RootParamList>),
     [
       hasCompletedOnboarding,
       wcContext.initDone,
@@ -553,7 +547,7 @@ const DeepLinkingNavigator = ({ children }: { children: React.ReactNode }) => {
   }, [wcContext.initDone]);
   React.useEffect(
     () => () => {
-      isReadyRef.current = false;
+      (isReadyRef as Writeable<typeof isReadyRef>).current = false;
     },
     [],
   );
@@ -594,7 +588,7 @@ const DeepLinkingNavigator = ({ children }: { children: React.ReactNode }) => {
         linking={linking}
         ref={navigationRef}
         onReady={() => {
-          isReadyRef.current = true;
+          (isReadyRef as Writeable<typeof isReadyRef>).current = true;
           setTimeout(() => SplashScreen.hide(), 300);
           routingInstrumentation.registerNavigationContainer(navigationRef);
         }}
@@ -607,21 +601,16 @@ const DeepLinkingNavigator = ({ children }: { children: React.ReactNode }) => {
 
 const AUTO_UPDATE_DEFAULT_DELAY = 1800 * 1000; // 1800 seconds
 
-export default class Root extends Component<
-  {
-    importDataString?: string;
-  },
-  {
-    appState: any;
-  }
-> {
-  initTimeout: any;
+export default class Root extends Component<{
+  importDataString?: string;
+}> {
+  initTimeout: ReturnType<typeof setTimeout> | undefined;
 
   componentWillUnmount() {
     clearTimeout(this.initTimeout);
   }
 
-  componentDidCatch(e: any) {
+  componentDidCatch(e: Error) {
     logger.critical(e);
     throw e;
   }
@@ -719,8 +708,4 @@ export default class Root extends Component<
       </RebootProvider>
     );
   }
-}
-
-if (__DEV__) {
-  require("./snoopy");
 }

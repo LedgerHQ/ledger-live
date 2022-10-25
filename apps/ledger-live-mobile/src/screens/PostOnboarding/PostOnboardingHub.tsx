@@ -19,10 +19,7 @@ import Animated, {
   withDelay,
   withTiming,
 } from "react-native-reanimated";
-import {
-  StackNavigationEventMap,
-  StackScreenProps,
-} from "@react-navigation/stack";
+import { StackNavigationEventMap } from "@react-navigation/stack";
 import {
   useAllPostOnboardingActionsCompleted,
   usePostOnboardingHubState,
@@ -30,7 +27,12 @@ import {
 import { clearPostOnboardingLastActionCompleted } from "@ledgerhq/live-common/postOnboarding/actions";
 import { useDispatch } from "react-redux";
 import PostOnboardingActionRow from "../../components/PostOnboarding/PostOnboardingActionRow";
-import { NavigatorName } from "../../const";
+import { NavigatorName, ScreenName } from "../../const";
+import {
+  BaseComposite,
+  StackNavigatorProps,
+} from "../../components/RootNavigator/types/helpers";
+import { PostOnboardingNavigatorParamList } from "../../components/RootNavigator/types/PostOnboardingNavigator";
 
 const SafeContainer = styled(SafeAreaView).attrs({
   edges: ["left", "bottom", "right"],
@@ -40,11 +42,14 @@ const SafeContainer = styled(SafeAreaView).attrs({
 
 const AnimatedFlex = Animated.createAnimatedComponent(Flex);
 
-type Props = Record<string, never>;
+type NavigationProps = BaseComposite<
+  StackNavigatorProps<
+    PostOnboardingNavigatorParamList,
+    ScreenName.PostOnboardingHub
+  >
+>;
 
-const PostOnboardingHub: React.FC<StackScreenProps<Props>> = ({
-  navigation,
-}) => {
+const PostOnboardingHub = ({ navigation }: NavigationProps) => {
   const dispatch = useDispatch();
   const { t } = useTranslation();
   const { lastActionCompleted, actionsState } = usePostOnboardingHubState();
@@ -68,6 +73,8 @@ const PostOnboardingHub: React.FC<StackScreenProps<Props>> = ({
 
   const navigateToMainScreen = useCallback(() => {
     allowClosingScreen.current = true;
+    // FIXME: Why are navigating to a nested navigator directly…
+    // @ts-expect-error Typescript rightfully complains here.
     navigation.replace(NavigatorName.Base, {
       screen: NavigatorName.Main,
     });
@@ -113,7 +120,8 @@ const PostOnboardingHub: React.FC<StackScreenProps<Props>> = ({
     navigation.getParent()?.setOptions({ gestureEnabled: false });
     allowClosingScreen.current = false;
     const beforeRemoveCallback: EventListenerCallback<
-      StackNavigationEventMap & EventMapCore<StackNavigationState<Props>>,
+      StackNavigationEventMap &
+        EventMapCore<StackNavigationState<NavigationProps>>,
       "beforeRemove"
     > = e => {
       if (!allowClosingScreen.current) e.preventDefault();

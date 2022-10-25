@@ -5,6 +5,7 @@ import { Flex, Text } from "@ledgerhq/native-ui";
 import { useTranslation } from "react-i18next";
 import { useNavigation, useFocusEffect } from "@react-navigation/native";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
+import { StackNavigationProp } from "@react-navigation/stack";
 import Illustration from "../../images/illustration/Illustration";
 import { NavigatorName, ScreenName } from "../../const";
 import DiscoverCard from "./DiscoverCard";
@@ -13,8 +14,9 @@ import { TrackScreen, track } from "../../analytics";
 import TabBarSafeAreaView, {
   TAB_BAR_SAFE_HEIGHT,
 } from "../../components/TabBar/TabBarSafeAreaView";
-// eslint-disable-next-line import/no-cycle
-import { AnalyticsContext } from "../../components/RootNavigator";
+import { AnalyticsContext } from "../../analytics/AnalyticsContext";
+import { BaseNavigatorStackParamList } from "../../components/RootNavigator/types/BaseNavigator";
+import { MainNavigatorParamList } from "../../components/RootNavigator/types/MainNavigator";
 
 const images = {
   light: {
@@ -39,7 +41,10 @@ const StyledSafeAreaView = styled(TabBarSafeAreaView)`
 
 function Discover() {
   const { t } = useTranslation();
-  const navigation = useNavigation();
+  const navigation =
+    useNavigation<
+      StackNavigationProp<BaseNavigatorStackParamList & MainNavigatorParamList>
+    >();
 
   const learn = useFeature("learn");
   const referralProgramConfig = useFeature("referralProgramDiscoverCard");
@@ -53,9 +58,7 @@ function Discover() {
 
   const featuresList: {
     title: string;
-    titleProps?: any;
     subTitle?: string;
-    subTitleProps?: any;
     labelBadge?: string;
     Image: React.ReactNode;
     onPress: () => void;
@@ -172,7 +175,7 @@ function Discover() {
 
   useFocusEffect(
     useCallback(() => {
-      setScreen("Discover");
+      setScreen && setScreen("Discover");
 
       return () => {
         setSource("Discover");
