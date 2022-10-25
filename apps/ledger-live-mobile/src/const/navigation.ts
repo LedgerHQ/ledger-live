@@ -470,6 +470,7 @@ export enum NavigatorName {
   MigrateAccountsFlow = "MigrateAccountsFlow",
   NftNavigator = "NftNavigator",
   Onboarding = "Onboarding",
+  OnboardingCarefulWarning = "OnboardingCarefulWarning",
   PasswordAddFlow = "PasswordAddFlow",
   PasswordModifyFlow = "PasswordModifyFlow",
   Platform = "Platform",
