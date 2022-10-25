@@ -42,6 +42,7 @@ interface DropDownItemType {
   key: string;
   label: string;
   show: boolean;
+  divider?: boolean;
   parameters: {
     account: AccountType,
     contract: string,
@@ -59,7 +60,7 @@ type Props = DelegationType &
 
 const RenderDropdownItem = ({ item, isActive }: RenderDropdownItemType) => (
   <Fragment>
-    {item.key === constants.modals.claim && <Divider />}
+    {item.key === constants.modals.claim && item.divider && <Divider />}
 
     <ToolTip content={item.tooltip} containerStyle={{ width: "100%" }}>
       <DropDownItem disabled={item.disabled} isActive={isActive}>
@@ -98,7 +99,7 @@ const Delegation = (props: Props) => {
         {
           key: constants.modals.unstake,
           label: "elrond.delegation.undelegate",
-          show: true,
+          show: BigNumber(userActiveStake).gt(0),
           parameters: {
             account,
             contract,
@@ -110,6 +111,7 @@ const Delegation = (props: Props) => {
         {
           key: constants.modals.claim,
           label: "elrond.delegation.reward",
+          divider: BigNumber(userActiveStake).gt(0),
           show: BigNumber(claimableRewards).gt(0),
           parameters: {
             account,

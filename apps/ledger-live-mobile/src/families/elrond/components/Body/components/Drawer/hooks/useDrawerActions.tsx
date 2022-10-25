@@ -53,7 +53,7 @@ const useDrawerActions = (
   const onUndelegation = useCallback(() => {
     onClose();
     navigation.navigate(NavigatorName.ElrondUndelegationFlow, {
-      screen: ScreenName.ElrondUndelegationValidator,
+      screen: ScreenName.ElrondUndelegationAmount,
       params: { account, validator, amount: new BigNumber(amount) },
     });
   }, [validator, account, navigation, onClose, amount]);
@@ -102,16 +102,23 @@ const useDrawerActions = (
               label: t("delegation.actions.undelegate"),
               onPress: onUndelegation,
               event: "DelegationActionUndelegate",
-              disabled: false,
+              disabled: amount.isZero(),
               Icon: (props: IconProps) => (
-                <Circle {...props} bg={rgba(colors.alert, 0.2)}>
-                  <UndelegateIcon />
+                <Circle
+                  {...props}
+                  bg={
+                    amount.isZero() ? colors.lightFog : rgba(colors.alert, 0.2)
+                  }
+                >
+                  <UndelegateIcon
+                    color={amount.isZero() ? colors.grey : undefined}
+                  />
                 </Circle>
               ),
             },
           ]
         : [],
-    [isDelegation, rewardsEnabled, colors, t, onCollectRwards],
+    [isDelegation, rewardsEnabled, colors, amount, t, onCollectRwards],
   );
 
   const undelegationActions: Action[] = useMemo(

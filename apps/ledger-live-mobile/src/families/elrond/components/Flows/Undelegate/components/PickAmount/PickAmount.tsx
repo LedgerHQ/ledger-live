@@ -32,19 +32,37 @@ import type { PickAmountPropsType } from "./types";
 
 import styles from "./styles";
 
-const PickAmount = (props: any) => {
+/*
+ * Handle the component declaration.
+ */
+
+const PickAmount = (props: PickAmountPropsType) => {
   const { colors } = useTheme();
   const { navigation, route } = props;
-  const { amount, account, validator, transaction } = route.params;
+  const { amount, account, validator } = route.params;
 
   const unit = getAccountUnit(account);
+  const bridge = getAccountBridge(account, undefined);
   const locale = useSelector(localeSelector);
-  const bridge = useMemo(() => getAccountBridge(account), [account]);
+
+  const [value, setValue] = useState(new BigNumber(amount));
+
   /*
    * Instantiate the transaction when opening the flow. Only gets runned once.
    */
 
-  const [value, setValue] = useState(new BigNumber(amount));
+  const { transaction, updateTransaction } = useBridgeTransaction(() => ({
+    account,
+    transaction: bridge.updateTransaction(bridge.createTransaction(account), {
+      recipient: validator.contract,
+      mode: "unDelegate",
+      amount,
+    }),
+  }));
+
+  /*
+   * Created a memoized list of all the ratios and expose the calculated value based on each percentage.
+   */
 
   const ratios = useMemo(
     () =>
@@ -55,31 +73,61 @@ const PickAmount = (props: any) => {
     [amount],
   );
 
+  /*
+   * Create a minimum delegation amount condition.
+   */
+
   const minimumDelegationAmount = useMemo(
     () => new BigNumber(nominate("1")),
     [],
   );
+
+  /*
+   * Check if the currently selected amount exceeds the maximum amount of assets available.
+   */
+
+  const amountAboveMaximum = useMemo(() => value.gt(amount), [amount, value]);
+
+  /*
+   * Check if all the assets have been chosen for undelegation.
+   */
 
   const allAssetsUndelegated = useMemo(
     () => amount.minus(value).isZero(),
     [amount, value],
   );
 
-  const undelegationBelowMinimum = useMemo(
+  /*
+   * Check if the assets chosen for undelegation are below the minimum required.
+   */
+
+  const amountBelowMinimum = useMemo(
+    () => (value.eq(amount) ? false : value.lt(minimumDelegationAmount)),
+    [amount, minimumDelegationAmount, value],
+  );
+
+  /*
+   * Check if the assets remaining after undelegation are below the minimum required.
+   */
+
+  const amountRemainingInvalid = useMemo(
     () =>
-      value.eq(amount)
-        ? false
-        : amount.minus(value).lt(minimumDelegationAmount),
-    [amount, value],
+      amount.minus(value).lt(minimumDelegationAmount) &&
+      !amount.minus(value).isZero(),
+    [amount, minimumDelegationAmount, value],
   );
 
-  const undelegationAboveMaximum = useMemo(
-    () => value.gt(amount),
-    [amount, value],
-  );
+  /*
+   * Return two booleans, one showing if there are any errors, and the second if there aren't.
+   */
 
-  const showAssetsRemaining =
-    amount.gt(value) && !undelegationBelowMinimum && !undelegationAboveMaximum;
+  const [hasErrors, noErrors] = useMemo(
+    () => [
+      amountBelowMinimum || amountAboveMaximum || amountRemainingInvalid,
+      !amountBelowMinimum && !amountAboveMaximum && !amountRemainingInvalid,
+    ],
+    [amountBelowMinimum, amountAboveMaximum, amountRemainingInvalid],
+  );
 
   const [denominatedMinimum, denominatedMaximum] = [
     denominate({ input: String(minimumDelegationAmount), decimals: 4 }),
@@ -87,23 +135,27 @@ const PickAmount = (props: any) => {
   ];
 
   const onContinue = useCallback(() => {
-    navigation.navigate(ScreenName.ElrondUndelegationValidator, {
+    navigation.navigate(ScreenName.ElrondUndelegationSelectDevice, {
       account,
-      amount: value,
-      validator,
-      transaction: bridge.updateTransaction(transaction, {
-        amount: value,
-      }),
+      transaction,
     });
-  }, [account, bridge, validator, navigation, value, transaction]);
+  }, [account, transaction, value, navigation]);
 
   const updateValue = useCallback(
     (value: BigNumber) => {
       setValue(value);
-      bridge.updateTransaction(transaction, { amount: value });
+      updateTransaction(transaction =>
+        bridge.updateTransaction(transaction, {
+          amount: value,
+        }),
+      );
     },
     [bridge],
   );
+
+  /*
+   * Return the rendered component.
+   */
 
   return (
     <View style={[styles.root, { backgroundColor: colors.background.main }]}>
@@ -116,7 +168,7 @@ const PickAmount = (props: any) => {
                 value={value}
                 onChange={setValue}
                 inputStyle={styles.inputStyle}
-                hasError={undelegationBelowMinimum || undelegationAboveMaximum}
+                hasError={hasErrors}
               />
 
               <View style={styles.ratioButtonContainer}>
@@ -160,7 +212,7 @@ const PickAmount = (props: any) => {
                 { backgroundColor: colors.background.main },
               ]}
             >
-              {(undelegationBelowMinimum || undelegationAboveMaximum) && (
+              {hasErrors && (
                 <View style={styles.labelContainer}>
                   <Warning size={16} color={colors.error.c100} />
 
@@ -170,9 +222,11 @@ const PickAmount = (props: any) => {
                   >
                     <Trans
                       i18nKey={
-                        undelegationAboveMaximum
+                        amountAboveMaximum
                           ? "elrond.undelegation.flow.steps.amount.incorrectAmount"
-                          : "elrond.undelegation.flow.steps.amount.minAmount"
+                          : amountAboveMaximum
+                          ? "elrond.undelegation.flow.steps.amount.minAmount"
+                          : "elrond.undelegation.flow.steps.amount.minRemaining"
                       }
                       values={{
                         min: `${denominatedMinimum} ${constants.egldLabel}`,
@@ -197,7 +251,7 @@ const PickAmount = (props: any) => {
                 </View>
               )}
 
-              {showAssetsRemaining && (
+              {!allAssetsUndelegated && noErrors && (
                 <View style={styles.labelContainer}>
                   <LText style={styles.assetsRemaining}>
                     <Trans
@@ -216,7 +270,7 @@ const PickAmount = (props: any) => {
               )}
 
               <Button
-                disabled={undelegationBelowMinimum || undelegationAboveMaximum}
+                disabled={hasErrors}
                 event="Elrond UndelegationAmountContinueBtn"
                 onPress={onContinue}
                 type="primary"

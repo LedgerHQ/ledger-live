@@ -4581,6 +4581,7 @@
             "allAssetsUsed": "All assets used",
             "minAmount": "Minimum amount: <0>{{min}}</0>",
             "incorrectAmount": "Maximum amount: <0>{{max}}</0>",
+            "minRemaining": "Minimum remaining: <0>{{min}}</0>",
             "insufficientDelegation": "Your total staking amout must be at least 1 {{label}} per Staking Provider.",
             "wrongUndelegations": "The remaining amount of staked {{label}} should either be 0 or above 1 {{label}} per Staking Provider.",
             "cta": "Continue"
@@ -4657,7 +4658,7 @@
       "flow": {
         "steps": {
           "amount": {
-            "allAssetsUsed": "All undelegation assets selected",
+            "allAssetsUsed": "All assets selected",
             "assetsRemaining": "Assets remaining delegated: <0>{{amount}}</0>",
             "minAmount": "Remaining delegation below {{min}}",
             "incorrectAmount": "Maximum amount: <0>{{max}}</0>"

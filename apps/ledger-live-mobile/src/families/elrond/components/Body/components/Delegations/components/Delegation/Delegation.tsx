@@ -54,7 +54,7 @@ const Delegation = (props: DelegationPropsType) => {
     if (validator) {
       onDrawer({
         type: "delegation",
-        amount: userActiveStake,
+        amount: new BigNumber(userActiveStake),
         validator,
         claimableRewards,
       });

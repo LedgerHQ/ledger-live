@@ -14,7 +14,6 @@ import ValidationSuccess from "./components/ValidationSuccess";
 
 import SelectDevice from "../../../../../screens/SelectDevice";
 import ConnectDevice from "../../../../../screens/ConnectDevice";
-import SetDelegation from "./components/SetDelegation";
 
 const totalSteps = "3";
 const options = {
@@ -40,23 +39,6 @@ const Undelegate = () => {
 
   const stacks = useMemo(
     () => [
-      {
-        name: ScreenName.ElrondUndelegationValidator,
-        component: SetDelegation,
-        heading: {
-          title: "elrond.delegation.stepperHeader.validator",
-          subtitle: {
-            label: "elrond.delegation.stepperHeader.stepRange",
-            variables: {
-              currentStep: "1",
-              totalSteps,
-            },
-          },
-        },
-        options: {
-          gestureEnabled: false,
-        },
-      },
       {
         name: ScreenName.ElrondUndelegationAmount,
         component: PickAmount,

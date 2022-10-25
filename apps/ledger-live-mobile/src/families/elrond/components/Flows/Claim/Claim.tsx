@@ -20,7 +20,9 @@ import PickMethod from "./components/PickMethod";
 import ValidationError from "./components/ValidationError";
 import ValidationSuccess from "./components/ValidationSuccess";
 
-const Stack = createStackNavigator();
+import type { ElrondClaimRewardsFlowParamList } from "./types";
+
+const Stack = createStackNavigator<ElrondClaimRewardsFlowParamList>();
 const totalSteps = "3";
 const options = {
   headerShown: false,
@@ -144,8 +146,8 @@ const Claim = () => {
       {stacks.map(stack => (
         <Stack.Screen
           key={stack.name}
-          name={stack.name}
-          component={stack.component}
+          name={stack.name as keyof ElrondClaimRewardsFlowParamList}
+          component={stack.component as any}
           options={Object.assign(stack.options || {}, {
             headerTitle: stack.heading
               ? () => (

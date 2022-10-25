@@ -9,7 +9,7 @@ export interface DrawerPropsType {
   account: ElrondAccount;
   data: {
     type: string;
-    amount: string | BigNumber;
+    amount: BigNumber;
     validator: ElrondProvider;
     claimableRewards?: string | BigNumber;
     seconds?: number;
