@@ -96,7 +96,6 @@ export const buildTransaction = async (
 
         //amount of EGLD to be sent should be 0 in a unDelegate transaction
         transactionValue = new BigNumber(0);
-        transaction.amount = new BigNumber(0);
         break;
       case "send":
         break;
