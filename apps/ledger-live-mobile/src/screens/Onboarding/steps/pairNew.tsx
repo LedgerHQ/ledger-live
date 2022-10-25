@@ -112,10 +112,8 @@ function OnboardingStepPairNew() {
       parentNav.popToTop();
     }
 
-    // @ts-expect-error TS requires params to be defined, but it crashes the app
     navigation.replace(NavigatorName.Base, {
       screen: NavigatorName.Main,
-      params: undefined,
     });
 
     startPostOnboarding();
