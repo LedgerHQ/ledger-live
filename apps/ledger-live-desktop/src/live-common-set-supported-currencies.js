@@ -55,4 +55,6 @@ setSupportedCurrencies([
   "songbird",
   "flare",
   "near",
+  "icon",
+  "icon_berlin_testnet",
 ]);

@@ -9,6 +9,7 @@ import ethereum from "../families/ethereum/cli-transaction";
 import filecoin from "../families/filecoin/cli-transaction";
 import hedera from "../families/hedera/cli-transaction";
 import near from "../families/near/cli-transaction";
+import icon from "../families/icon/cli-transaction";
 import osmosis from "../families/osmosis/cli-transaction";
 import polkadot from "../families/polkadot/cli-transaction";
 import ripple from "../families/ripple/cli-transaction";
@@ -29,6 +30,7 @@ export default {
   filecoin,
   hedera,
   near,
+  icon,
   osmosis,
   polkadot,
   ripple,

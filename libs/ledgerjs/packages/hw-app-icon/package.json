@@ -1,0 +1,47 @@
+{
+  "name": "@ledgerhq/hw-app-icon",
+  "version": "6.27.1",
+  "description": "Ledger Hardware Wallet ICON Application API",
+  "keywords": [
+    "Ledger",
+    "LedgerWallet",
+    "icx",
+    "Icon",
+    "NanoS",
+    "Blue",
+    "Hardware Wallet"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/LedgerHQ/ledgerjs"
+  },
+  "bugs": {
+    "url": "https://github.com/LedgerHQ/ledgerjs/issues"
+  },
+  "homepage": "https://github.com/LedgerHQ/ledgerjs",
+  "publishConfig": {
+    "access": "public"
+  },
+  "main": "lib/Icon.js",
+  "module": "lib-es/Icon.js",
+  "types": "lib/Icon.d.ts",
+  "license": "Apache-2.0",
+  "dependencies": {
+    "@ledgerhq/errors": "workspace:^",
+    "@ledgerhq/hw-transport": "workspace:^",
+    "bip32-path": "^0.4.2"
+  },
+  "devDependencies": {
+    "@ledgerhq/hw-transport-mocker": "workspace:^"
+  },
+  "scripts": {
+    "clean": "rimraf lib lib-es",
+    "build": "tsc && tsc -m ES6 --outDir lib-es",
+    "prewatch": "pnpm build",
+    "watch": "tsc --watch",
+    "doc": "documentation readme src/** --section=API --pe ts --re ts --re d.ts",
+    "lint": "eslint ./src --no-error-on-unmatched-pattern --ext .ts,.tsx",
+    "lint:fix": "pnpm lint --fix",
+    "test": "jest"
+  }
+}

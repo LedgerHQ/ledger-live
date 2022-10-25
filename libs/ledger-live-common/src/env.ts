@@ -137,6 +137,26 @@ const envDefinitions = {
     def: "https://elrond.coin.ledger.com",
     desc: "Elrond API url",
   },
+  ICON_RPC_ENDPOINT: {
+    parser: stringParser,
+    def: "https://ctz.solidwallet.io/api/v3",
+    desc: "ICON API url",
+  },
+  ICON_TESTNET_RPC_ENDPOINT: {
+    parser: stringParser,
+    def: "https://berlin.net.solidwallet.io/api/v3",
+    desc: "ICON Berlin Testnet API url",
+  },
+  ICON_API_ENDPOINT: {
+    parser: stringParser,
+    def: "https://main.tracker.solidwallet.io/v3",
+    desc: "ICON API url",
+  },
+  ICON_TESTNET_API_ENDPOINT: {
+    parser: stringParser,
+    def: "https://berlin.tracker.solidwallet.io/v3",
+    desc: "ICON Berlin Testnet API url",
+  },
   API_STELLAR_HORIZON: {
     parser: stringParser,
     def: "https://stellar.coin.ledger.com",
