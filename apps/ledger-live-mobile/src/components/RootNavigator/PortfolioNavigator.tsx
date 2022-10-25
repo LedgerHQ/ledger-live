@@ -4,13 +4,14 @@ import { createStackNavigator } from "@react-navigation/stack";
 import { useTheme } from "styled-components/native";
 import { NavigatorName, ScreenName } from "../../const";
 import Portfolio from "../../screens/Portfolio";
-// eslint-disable-next-line import/no-cycle
 import ReadOnlyPortfolio from "../../screens/Portfolio/ReadOnly";
-// eslint-disable-next-line import/no-cycle
 import AccountsNavigator from "./AccountsNavigator";
 import { getStackNavigatorConfig } from "../../navigation/navigatorConfig";
 import { readOnlyModeEnabledSelector } from "../../reducers/settings";
 import { accountsSelector } from "../../reducers/accounts";
+import { PortfolioNavigatorStackParamList } from "./types/PortfolioNavigator";
+
+const Stack = createStackNavigator<PortfolioNavigatorStackParamList>();
 
 export default function PortfolioNavigator() {
   const { colors } = useTheme();
@@ -25,7 +26,6 @@ export default function PortfolioNavigator() {
     <Stack.Navigator
       screenOptions={stackNavigationConfig}
       initialRouteName={ScreenName.Portfolio}
-      backBehavior={"initialRoute"}
     >
       <Stack.Screen
         name={ScreenName.Portfolio}
@@ -46,5 +46,3 @@ export default function PortfolioNavigator() {
     </Stack.Navigator>
   );
 }
-
-const Stack = createStackNavigator();

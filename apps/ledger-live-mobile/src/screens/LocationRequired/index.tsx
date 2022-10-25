@@ -7,7 +7,7 @@ import AppPermissionsButton from "./AppPermissionsButton";
 import LText from "../../components/LText";
 
 type Props = {
-  onRetry: (..._: Array<any>) => any;
+  onRetry: () => void;
   errorType: "disabled" | "unauthorized";
 };
 export default function LocationRequired({ errorType, onRetry }: Props) {

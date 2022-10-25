@@ -28,17 +28,15 @@ const DeviceSetupView = ({
   const navigation = useNavigation();
   const { colors } = useTheme();
 
-  const canGoBack = navigation.canGoBack();
-  const canRenderBackButton = (canGoBack && hasBackButton) || onBack;
-  const canRenderCloseButton = (canGoBack && hasCloseButton) || onClose;
+  const canRenderBackButton = hasBackButton || onBack;
+  const canRenderCloseButton = hasCloseButton || onClose;
 
   const handleBack = () => {
     navigation.goBack();
   };
 
   return (
-    // eslint-disable-next-line react-native/no-inline-styles
-    <SafeAreaView style={{ flex: 1, background: colors.background.main }}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: colors.background.main }}>
       <Flex
         px={6}
         pt={8}

@@ -10,7 +10,7 @@ export async function clearBridgeCache() {
   );
 }
 
-function currencyCacheId(currency) {
+function currencyCacheId(currency: CryptoCurrency) {
   return `bridgeproxypreload_${currency.id}`;
 }
 

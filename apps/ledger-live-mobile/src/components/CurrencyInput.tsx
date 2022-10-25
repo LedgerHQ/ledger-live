@@ -1,5 +1,12 @@
 import React, { PureComponent } from "react";
-import { StyleSheet, View, Dimensions } from "react-native";
+import {
+  StyleSheet,
+  View,
+  Dimensions,
+  StyleProp,
+  ViewStyle,
+  TextInputProps,
+} from "react-native";
 import { connect } from "react-redux";
 import { BigNumber } from "bignumber.js";
 import {
@@ -10,15 +17,24 @@ import noop from "lodash/noop";
 import clamp from "lodash/clamp";
 import type { Unit } from "@ledgerhq/types-cryptoassets";
 import { localeSelector } from "../reducers/settings";
-// eslint-disable-next-line import/no-unresolved
 import getFontStyle from "./LText/getFontStyle";
-import { withTheme } from "../colors";
+import { Theme, withTheme } from "../colors";
 import TextInput from "./FocusedTextInput";
 
 function format(
   unit: Unit,
   value: BigNumber,
-  { isFocused, showAllDigits, subMagnitude, locale },
+  {
+    isFocused,
+    showAllDigits,
+    subMagnitude,
+    locale,
+  }: {
+    isFocused?: boolean;
+    showAllDigits?: boolean;
+    subMagnitude: number;
+    locale: string;
+  },
 ) {
   return formatCurrencyUnit(unit, value, {
     locale,
@@ -32,22 +48,22 @@ function format(
 type Props = {
   isActive: boolean;
   onFocus: (_: boolean) => void;
-  onChange: (_: BigNumber) => void;
+  onChange: (_: BigNumber, keepRatio?: boolean) => void;
   unit: Unit;
   value: BigNumber | null | undefined;
   showAllDigits?: boolean;
   subMagnitude: number;
   allowZero: boolean;
-  renderLeft?: any;
-  renderRight?: any;
+  renderLeft?: React.ReactNode;
+  renderRight?: React.ReactNode;
   hasError?: boolean;
   hasWarning?: boolean;
   autoFocus?: boolean;
   editable: boolean;
   placeholder?: string;
-  style?: any;
-  inputStyle?: any;
-  colors: any;
+  style?: StyleProp<ViewStyle>;
+  inputStyle?: TextInputProps["style"];
+  colors: Theme["colors"];
   dynamicFontRatio?: number;
   locale: string;
 };
@@ -241,7 +257,7 @@ const styles = StyleSheet.create({
   },
 });
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state: Parameters<typeof localeSelector>[0]) => ({
   locale: localeSelector(state),
 });
 

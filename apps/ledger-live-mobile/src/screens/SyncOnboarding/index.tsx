@@ -25,8 +25,6 @@ import { CompositeScreenProps } from "@react-navigation/native";
 
 import { addKnownDevice } from "../../actions/ble";
 import { NavigatorName, ScreenName } from "../../const";
-import type { BaseNavigatorStackParamList } from "../../components/RootNavigator/BaseNavigator";
-import type { SyncOnboardingStackParamList } from "../../components/RootNavigator/SyncOnboardingNavigator";
 import HelpDrawer from "./HelpDrawer";
 import DesyncDrawer from "./DesyncDrawer";
 import ResyncOverlay from "./ResyncOverlay";
@@ -39,6 +37,12 @@ import {
   setReadOnlyMode,
 } from "../../actions/settings";
 import DeviceSetupView from "../../components/DeviceSetupView";
+import {
+  BaseNavigatorStackParamList,
+  NavigateInput,
+} from "../../components/RootNavigator/types/BaseNavigator";
+import { RootStackParamList } from "../../components/RootNavigator/types/RootNavigator";
+import { SyncOnboardingStackParamList } from "../../components/RootNavigator/types/SyncOnboardingNavigator";
 
 type StepStatus = "completed" | "active" | "inactive";
 
@@ -51,8 +55,14 @@ type Step = {
 };
 
 export type SyncOnboardingCompanionProps = CompositeScreenProps<
-  StackScreenProps<SyncOnboardingStackParamList, "SyncOnboardingCompanion">,
-  StackScreenProps<BaseNavigatorStackParamList>
+  StackScreenProps<
+    SyncOnboardingStackParamList,
+    ScreenName.SyncOnboardingCompanion
+  >,
+  CompositeScreenProps<
+    StackScreenProps<BaseNavigatorStackParamList>,
+    StackScreenProps<RootStackParamList>
+  >
 >;
 
 const normalPollingPeriodMs = 1000;
@@ -190,10 +200,27 @@ export const SyncOnboarding = ({
   );
 
   const goBackToPairingFlow = useCallback(() => {
+    const navigateInput: NavigateInput<
+      RootStackParamList,
+      NavigatorName.BaseOnboarding
+    > = {
+      name: NavigatorName.BaseOnboarding,
+      params: {
+        screen: NavigatorName.SyncOnboarding,
+        params: {
+          screen: ScreenName.SyncOnboardingCompanion,
+          params: {
+            // @ts-expect-error BleDevicePairingFlow will set this param
+            device: null,
+          },
+        },
+      },
+    };
+
     // On pairing success, navigate to the Sync Onboarding Companion
     // Replace to avoid going back to this screen on return from the pairing flow
-    navigation.navigate(NavigatorName.Base as "Base", {
-      screen: ScreenName.BleDevicePairingFlow as "BleDevicePairingFlow",
+    navigation.navigate(NavigatorName.Base, {
+      screen: ScreenName.BleDevicePairingFlow,
       params: {
         // TODO: For now, don't do that because nanoFTS shows up as nanoX
         // filterByDeviceModelId: device.modelId,
@@ -201,18 +228,7 @@ export const SyncOnboarding = ({
         onSuccessAddToKnownDevices: false,
         onSuccessNavigateToConfig: {
           navigationType: "navigate",
-          navigateInput: {
-            name: NavigatorName.BaseOnboarding,
-            params: {
-              screen: NavigatorName.SyncOnboarding,
-              params: {
-                screen: ScreenName.SyncOnboardingCompanion,
-                params: {
-                  device: null,
-                },
-              },
-            },
-          },
+          navigateInput,
           pathToDeviceParam: "params.params.params.device",
         },
       },
@@ -261,10 +277,7 @@ export const SyncOnboarding = ({
       }),
     );
 
-    navigation.navigate(
-      ScreenName.SyncOnboardingCompletion as "SyncOnboardingCompletion",
-      { device },
-    );
+    navigation.navigate(ScreenName.SyncOnboardingCompletion, { device });
   }, [device, dispatchRedux, navigation]);
 
   useEffect(() => {

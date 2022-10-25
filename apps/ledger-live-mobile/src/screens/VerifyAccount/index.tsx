@@ -1,13 +1,12 @@
 import React, { useCallback, useMemo, useState } from "react";
 import { View, StyleSheet } from "react-native";
-import SafeAreaView from "react-native-safe-area-view";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { useSelector } from "react-redux";
 import { useTheme } from "@react-navigation/native";
 import {
   getMainAccount,
   getReceiveFlowError,
 } from "@ledgerhq/live-common/account/index";
-import type { Account } from "@ledgerhq/types-live";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { createAction } from "@ledgerhq/live-common/hw/actions/app";
 import connectApp from "@ledgerhq/live-common/hw/connectApp";
@@ -20,27 +19,22 @@ import GenericErrorView from "../../components/GenericErrorView";
 import SkipDeviceVerification from "./SkipDeviceVerification";
 import VerifyAddress from "./VerifyAddress";
 import BottomModal from "../../components/BottomModal";
+import {
+  RootComposite,
+  StackNavigatorNavigation,
+  StackNavigatorProps,
+} from "../../components/RootNavigator/types/helpers";
+import { BaseNavigatorStackParamList } from "../../components/RootNavigator/types/BaseNavigator";
+import { ScreenName } from "../../const";
+import { RootStackParamList } from "../../components/RootNavigator/types/RootNavigator";
 
 const action = createAction(connectApp);
-const forceInset = {
-  bottom: "always",
-};
-type Props = {
-  navigation: any;
-  route: {
-    params: RouteParams;
-  };
-};
-type RouteParams = {
-  accountId: string;
-  parentId: string;
-  title: string;
-  account: Account;
-  onSuccess: (_: Account) => void;
-  onError: (_: Error) => void;
-  onClose: () => void;
-};
-export default function VerifyAccount({ navigation, route }: Props) {
+
+type NavigationProps = RootComposite<
+  StackNavigatorProps<BaseNavigatorStackParamList, ScreenName.VerifyAccount>
+>;
+
+export default function VerifyAccount({ navigation, route }: NavigationProps) {
   const { colors } = useTheme();
   const { parentAccount } = useSelector(accountScreenSelector(route));
   const [device, setDevice] = useState<Device | null | undefined>();
@@ -52,7 +46,8 @@ export default function VerifyAccount({ navigation, route }: Props) {
     [account, parentAccount],
   );
   const onDone = useCallback(() => {
-    const n = navigation.getParent();
+    const n =
+      navigation.getParent<StackNavigatorNavigation<RootStackParamList>>();
 
     if (n) {
       n.pop();
@@ -85,7 +80,7 @@ export default function VerifyAccount({ navigation, route }: Props) {
 
   if (error) {
     return (
-      <SafeAreaView style={styles.root} forceInset={forceInset}>
+      <SafeAreaView style={styles.root}>
         <View style={styles.bodyError}>
           <GenericErrorView error={error} />
         </View>
@@ -94,7 +89,7 @@ export default function VerifyAccount({ navigation, route }: Props) {
   }
 
   const tokenCurrency =
-    account && account.type === "TokenAccount" && account.token;
+    account && account.type === "TokenAccount" ? account.token : undefined;
   return (
     <SafeAreaView
       style={[
@@ -103,18 +98,13 @@ export default function VerifyAccount({ navigation, route }: Props) {
           backgroundColor: colors.background,
         },
       ]}
-      forceInset={forceInset}
     >
       <TrackScreen category="VerifyAccount" name="ConnectDevice" />
       <NavigationScrollView
         style={styles.scroll}
         contentContainerStyle={styles.scrollContainer}
       >
-        <SelectDevice
-          onSelect={setDevice}
-          onWithoutDevice={onSkipDevice}
-          withoutDevice
-        />
+        <SelectDevice onSelect={setDevice} onWithoutDevice={onSkipDevice} />
       </NavigationScrollView>
 
       {device ? (
@@ -135,7 +125,7 @@ export default function VerifyAccount({ navigation, route }: Props) {
           )}
         />
       ) : !device && skipDevice ? (
-        <BottomModal id="DeviceActionModal" isOpened={true}>
+        <BottomModal isOpened={true}>
           <View style={styles.modalContainer}>
             <SkipDeviceVerification
               onCancel={handleClose}

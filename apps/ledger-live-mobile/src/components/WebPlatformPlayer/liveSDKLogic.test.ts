@@ -40,7 +40,9 @@ describe("prepareSignTransaction", () => {
     const result = prepareSignTransaction(
       childAccount,
       parentAccount,
-      createEtherumTransaction() as Partial<Transaction>,
+      createEtherumTransaction() as Partial<
+        Transaction & { gasLimit: BigNumber }
+      >,
     );
 
     // Then
@@ -51,7 +53,8 @@ describe("prepareSignTransaction", () => {
 // *** UTIL FUNCTIONS ***
 function createEtherumTransaction(): PlatformTransaction {
   return {
-    family: "ethereum" as any,
+    // @ts-expect-error SDK does not expose the right type here
+    family: "ethereum",
     amount: new BigNumber("1000"),
     recipient: "0x0123456",
     nonce: 8,

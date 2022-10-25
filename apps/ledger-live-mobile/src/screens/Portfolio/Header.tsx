@@ -53,12 +53,12 @@ function PortfolioHeader({
     track("button_clicked", {
       button: "Notification Center",
     });
-    // @ts-expect-error navigation ts issue
-    navigation.navigate(NavigatorName.NotificationCenter);
+    navigation.navigate(NavigatorName.NotificationCenter, {
+      screen: ScreenName.NotificationCenterNews,
+    });
   }, [navigation]);
 
   const onStatusErrorButtonPress = useCallback(() => {
-    // @ts-expect-error navigation ts issue
     navigation.navigate(NavigatorName.NotificationCenter, {
       screen: ScreenName.NotificationCenterStatus,
     });
@@ -126,7 +126,7 @@ function PortfolioHeader({
     position: absolute;
   `;
 
-  const CenteredElement = styled(Flex).attrs((p: { width?: number }) => ({
+  const CenteredElement = styled(Flex).attrs((p: { width: number }) => ({
     flexDirection: "row",
     justifyContent: "center",
     alignItems: "center",
@@ -189,11 +189,7 @@ function PortfolioHeader({
       </Flex>
       <Flex flexDirection={"row"} alignItems={"center"}>
         <CenteredElement width={windowsWidth}>
-          <Animated.View
-            height={"100%"}
-            justifyContent={"center"}
-            style={[PortfolioValueAnimation]}
-          >
+          <Animated.View style={[PortfolioValueAnimation]}>
             <Flex flexDirection={"column"} alignItems={"center"} mr={9}>
               {balanceHistory ? (
                 <>
@@ -227,11 +223,7 @@ function PortfolioHeader({
           </Animated.View>
         </CenteredElement>
         <CenteredElement width={windowsWidth}>
-          <Animated.View
-            height={"100%"}
-            justifyContent={"center"}
-            style={[WalletTitleAnimation]}
-          >
+          <Animated.View style={[WalletTitleAnimation]}>
             <Flex flexDirection={"row"} alignItems={"center"} mr={9}>
               <Text
                 variant={"small"}

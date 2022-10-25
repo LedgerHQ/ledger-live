@@ -16,7 +16,7 @@ import { rgba } from "../../colors";
 import LText from "../LText";
 
 type Props = {
-  links: NFTMetadata["links"] | null;
+  links?: NFTMetadata["links"] | null;
   isOpen: boolean;
   onClose: () => void;
   nftMetadata?: NFTMetadata;
@@ -30,12 +30,12 @@ const NftLink = ({
   subtitle,
   onPress,
 }: {
-  style?: any;
+  style?: React.ComponentProps<typeof TouchableOpacity>["style"];
   leftIcon: React.ReactNode;
   rightIcon?: React.ReactNode;
   title: string;
   subtitle?: string;
-  onPress?: () => any;
+  onPress?: React.ComponentProps<typeof TouchableOpacity>["onPress"];
 }) => (
   <TouchableOpacity style={[styles.section, style]} onPress={onPress}>
     <View style={styles.sectionBody}>
@@ -200,7 +200,6 @@ const NftLinksPanel = ({ links, isOpen, onClose, nftMetadata }: Props) => {
           backgroundColor: colors.card,
         },
       ]}
-      id="NftLinksModal"
       isOpened={isOpen}
       onClose={onClose}
     >

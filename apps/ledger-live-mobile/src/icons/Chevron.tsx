@@ -2,8 +2,8 @@ import React from "react";
 import Svg, { Path } from "react-native-svg";
 
 type Props = {
-  size: number;
-  color: string;
+  size?: number;
+  color?: string;
 };
 export default function Chevron({ size = 10, color }: Props) {
   return (

@@ -1,17 +1,23 @@
 import React, { memo, useMemo, useCallback } from "react";
-import { SectionBase, SectionList } from "react-native";
+import { SectionList, SectionListRenderItemInfo } from "react-native";
 import { Button, Flex } from "@ledgerhq/native-ui";
 import { groupAccountsOperationsByDay } from "@ledgerhq/live-common/account/groupOperations";
 import { useTranslation } from "react-i18next";
 import { useNavigation } from "@react-navigation/native";
 import { useSelector } from "react-redux";
-import { AccountLikeArray, Operation } from "@ledgerhq/types-live";
+import {
+  AccountLikeArray,
+  DailyOperationsSection,
+  Operation,
+  SubAccount,
+} from "@ledgerhq/types-live";
 import OperationRow from "../../components/OperationRow";
 import SectionHeader from "../../components/SectionHeader";
 import { withDiscreetMode } from "../../context/DiscreetModeContext";
 import { ScreenName } from "../../const";
 import { parentAccountSelector } from "../../reducers/accounts";
 import { track } from "../../analytics";
+import { State } from "../../reducers/types";
 
 type Props = {
   accounts: AccountLikeArray;
@@ -43,14 +49,10 @@ const OperationsHistory = ({ accounts }: Props) => {
       item,
       index,
       section,
-    }: {
-      item: Operation;
-      index: number;
-      section: SectionBase<any>;
-    }) => {
-      const account = accounts.find(a => a.id === item.accountId);
+    }: SectionListRenderItemInfo<Operation, DailyOperationsSection>) => {
+      const account = accounts.find(a => a.id === item.accountId) as SubAccount;
       // eslint-disable-next-line react-hooks/rules-of-hooks
-      const parentAccount = useSelector(state =>
+      const parentAccount = useSelector((state: State) =>
         parentAccountSelector(state, { account }),
       );
 

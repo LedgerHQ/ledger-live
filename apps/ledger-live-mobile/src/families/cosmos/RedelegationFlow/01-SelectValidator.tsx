@@ -1,10 +1,20 @@
 import invariant from "invariant";
 import React, { useCallback, useMemo, useState } from "react";
-import { View, StyleSheet, SectionList } from "react-native";
-import SafeAreaView from "react-native-safe-area-view";
+import {
+  View,
+  StyleSheet,
+  SectionList,
+  SectionListData,
+  SectionListRenderItemInfo,
+} from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { Trans } from "react-i18next";
 import { useSelector } from "react-redux";
-import type { Transaction } from "@ledgerhq/live-common/families/cosmos/types";
+import type {
+  CosmosAccount,
+  CosmosValidatorItem,
+  Transaction,
+} from "@ledgerhq/live-common/families/cosmos/types";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
@@ -16,29 +26,24 @@ import ValidatorHead from "../shared/ValidatorHead";
 import { accountScreenSelector } from "../../../reducers/accounts";
 import { ScreenName } from "../../../const";
 import LText from "../../../components/LText";
+import type { StackNavigatorProps } from "../../../components/RootNavigator/types/helpers";
+import type { CosmosRedelegationFlowParamList } from "./types";
 
-type RouteParams = {
-  accountId: string;
-  validatorSrcAddress: string;
-  transaction: Transaction;
-};
-type Props = {
-  navigation: any;
-  route: {
-    params: RouteParams;
-  };
-};
+type Props = StackNavigatorProps<
+  CosmosRedelegationFlowParamList,
+  ScreenName.CosmosRedelegationValidator
+>;
 
 function RedelegationSelectValidator({ navigation, route }: Props) {
   const { colors } = useTheme();
   const { account } = useSelector(accountScreenSelector(route));
   invariant(account, "account required");
-  const mainAccount = getMainAccount(account, undefined);
+  const mainAccount = getMainAccount(account, undefined) as CosmosAccount;
   const bridge = getAccountBridge(account, undefined);
   const { cosmosResources } = mainAccount;
   invariant(cosmosResources, "cosmosResources required");
   const delegations = cosmosResources.delegations;
-  const { transaction, status } = useBridgeTransaction(() => {
+  const bridgeTransaction = useBridgeTransaction(() => {
     const t = bridge.createTransaction(mainAccount);
     return {
       account,
@@ -49,6 +54,8 @@ function RedelegationSelectValidator({ navigation, route }: Props) {
       }),
     };
   });
+  const { status } = bridgeTransaction;
+  const transaction = bridgeTransaction.transaction as Transaction;
   invariant(
     transaction && transaction.sourceValidator,
     "transaction src validator required",
@@ -76,7 +83,7 @@ function RedelegationSelectValidator({ navigation, route }: Props) {
   );
   invariant(srcDelegation, "source delegation required");
   const max = srcDelegation.amount;
-  const sections = useMemo(
+  const sections: SectionListData<CosmosValidatorItem>[] = useMemo(
     () =>
       validators
         .reduce(
@@ -98,13 +105,13 @@ function RedelegationSelectValidator({ navigation, route }: Props) {
               title: (
                 <Trans i18nKey="cosmos.redelegation.flow.steps.validator.myDelegations" />
               ),
-              data: [],
+              data: [] as CosmosValidatorItem[],
             },
             {
               title: (
                 <Trans i18nKey="cosmos.redelegation.flow.steps.validator.validators" />
               ),
-              data: [],
+              data: [] as CosmosValidatorItem[],
             },
           ],
         )
@@ -112,14 +119,13 @@ function RedelegationSelectValidator({ navigation, route }: Props) {
     [delegations, transaction, validators],
   );
   const onSelect = useCallback(
-    (validator, redelegatedBalance) => {
+    (validator: CosmosValidatorItem) => {
       navigation.navigate(ScreenName.CosmosRedelegationAmount, {
         ...route.params,
         transaction,
         validatorSrc,
         validator,
         max,
-        redelegatedBalance,
         status,
         nextScreen: ScreenName.CosmosRedelegationSelectDevice,
       });
@@ -127,10 +133,10 @@ function RedelegationSelectValidator({ navigation, route }: Props) {
     [navigation, route.params, transaction, status, max, validatorSrc],
   );
   const renderItem = useCallback(
-    ({ item }) => (
+    ({ item }: SectionListRenderItemInfo<CosmosValidatorItem>) => (
       <ValidatorRow account={account} validator={item} onPress={onSelect} />
     ),
-    [onSelect],
+    [onSelect, account],
   );
   return (
     <SafeAreaView
@@ -157,7 +163,10 @@ function RedelegationSelectValidator({ navigation, route }: Props) {
       <SectionList
         style={[styles.section]}
         sections={sections}
-        keyExtractor={(item, index) => item + index}
+        // FIXME: an addition with an object?
+        keyExtractor={(item: CosmosValidatorItem, index: number) =>
+          item.toString() + index
+        }
         renderItem={renderItem}
         renderSectionHeader={({ section: { title } }) => (
           <View style={[styles.header]}>

@@ -69,7 +69,7 @@ export type ManagerRequest =
   | null
   | undefined;
 
-type Result = {
+export type Result = {
   device: Device;
   deviceInfo: DeviceInfo;
   result: ListAppsResult | null | undefined;
@@ -395,18 +395,32 @@ export const createAction = (
           : null
       );
     }, []);
+
     const closeRepairModal = useCallback(() => {
+      // Sets isBootloader to true to avoid having the renderBootloaderStep rendered,
+      // on which the user could re-trigger a bootloader repairing scenario that is not needed
+      setState((prevState) => {
+        return {
+          ...prevState,
+          deviceInfo: prevState.deviceInfo
+            ? { ...prevState.deviceInfo, isBootloader: false }
+            : null,
+        };
+      });
       setRepairModalOpened(null);
     }, []);
+
     const onRetry = useCallback(() => {
       setResetIndex((currIndex) => currIndex + 1);
       setState((s) => getInitialState(s.device));
     }, []);
+
     const onAutoRepair = useCallback(() => {
       setRepairModalOpened({
         auto: true,
       });
     }, []);
+
     return {
       ...state,
       repairModalOpened,

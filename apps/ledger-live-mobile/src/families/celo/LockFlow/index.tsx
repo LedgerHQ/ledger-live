@@ -11,6 +11,7 @@ import SelectDevice from "../../../screens/SelectDevice";
 import ConnectDevice from "../../../screens/ConnectDevice";
 import ValidationSuccess from "./ValidationSuccess";
 import ValidationError from "./ValidationError";
+import type { CeloLockFlowParamList } from "./types";
 
 const totalSteps = "3";
 
@@ -38,7 +39,7 @@ function LockFlow() {
               })}
             />
           ),
-          headerLeft: null,
+          headerLeft: undefined,
         }}
       />
       <Stack.Screen
@@ -77,8 +78,8 @@ function LockFlow() {
         options={{
           headerTitle: "",
           gestureEnabled: false,
-          headerLeft: null,
-          headerRight: null,
+          headerLeft: undefined,
+          headerRight: undefined,
         }}
       />
       <Stack.Screen
@@ -96,4 +97,4 @@ const options = {
 
 export { LockFlow as component, options };
 
-const Stack = createStackNavigator();
+const Stack = createStackNavigator<CeloLockFlowParamList>();

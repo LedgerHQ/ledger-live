@@ -1,5 +1,4 @@
-import { combineReducers } from "redux";
-import { PostOnboardingState } from "@ledgerhq/types-live";
+import { combineReducers, Store } from "redux";
 import postOnboarding from "@ledgerhq/live-common/postOnboarding/reducer";
 import accounts from "./accounts";
 import settings from "./settings";
@@ -7,27 +6,12 @@ import appstate from "./appstate";
 import ble from "./ble";
 import ratings from "./ratings";
 import notifications from "./notifications";
-import swap, { SwapStateType } from "./swap";
+import swap from "./swap";
 import walletconnect from "./walletconnect";
-import type { AccountsState } from "./accounts";
-import type { SettingsState } from "./settings";
-import type { AppState } from "./appstate";
-import type { BleState } from "./ble";
-import type { RatingsState } from "./ratings";
-import type { NotificationsState } from "./notifications";
-import type { WalletConnectState } from "./walletconnect";
+import { State } from "./types";
+import { ActionsPayload, SettingsActionTypes } from "../actions/types";
 
-export type State = {
-  accounts: AccountsState;
-  settings: SettingsState;
-  appstate: AppState;
-  ble: BleState;
-  ratings: RatingsState;
-  notifications: NotificationsState;
-  swap: SwapStateType;
-  walletconnect: WalletConnectState;
-  postOnboarding: PostOnboardingState;
-};
+export type AppStore = Store<State>;
 
 const appReducer = combineReducers({
   accounts,
@@ -41,9 +25,13 @@ const appReducer = combineReducers({
   postOnboarding,
 });
 
-const rootReducer = (state: State, action: any) => {
-  if (__DEV__ && action.type === "DANGEROUSLY_OVERRIDE_STATE") {
-    appReducer({ ...action.payload }, action);
+// TODO: EXPORT ALL POSSIBLE ACTION TYPES AND USE ACTION<TYPES>
+const rootReducer = (state: State | undefined, action: ActionsPayload) => {
+  if (
+    __DEV__ &&
+    action.type === SettingsActionTypes.DANGEROUSLY_OVERRIDE_STATE
+  ) {
+    appReducer({ ...action.payload } as State, action);
   }
 
   return appReducer(state, action);

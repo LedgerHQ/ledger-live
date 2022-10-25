@@ -3,6 +3,7 @@ import { StyleSheet, View, Linking } from "react-native";
 import { Trans } from "react-i18next";
 import { getDeviceModel } from "@ledgerhq/devices";
 import { useTheme } from "@react-navigation/native";
+import { DeviceModelId } from "@ledgerhq/types-devices";
 import { urls } from "../../config/urls";
 import { TrackScreen } from "../../analytics";
 import Touchable from "../../components/Touchable";
@@ -31,7 +32,7 @@ function ScanningTimeout({ onRetry }: Props) {
         <LText style={styles.SubtitleText} color="smoke">
           <Trans
             i18nKey="PairDevices.ScanningTimeout.desc"
-            values={getDeviceModel("nanoX")}
+            values={getDeviceModel("nanoX" as DeviceModelId)}
           />
         </LText>
 

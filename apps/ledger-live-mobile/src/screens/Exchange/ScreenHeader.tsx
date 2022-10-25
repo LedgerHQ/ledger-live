@@ -4,8 +4,8 @@ import AppIcon from "../Platform/AppIcon";
 import LText from "../../components/LText";
 
 type Props = {
-  icon: string;
-  name: string;
+  icon?: string | null;
+  name?: string | null;
 };
 export default function ScreenHeader({ icon, name }: Props) {
   return (

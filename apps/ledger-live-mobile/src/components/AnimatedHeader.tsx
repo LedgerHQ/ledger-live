@@ -5,6 +5,9 @@ import {
   Platform,
   TouchableOpacity,
   FlatList,
+  StyleProp,
+  ViewStyle,
+  TextStyle,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import {
@@ -14,11 +17,17 @@ import {
 } from "@react-navigation/native";
 import Animated from "react-native-reanimated";
 import * as Animatable from "react-native-animatable";
+import { StackNavigationProp } from "@react-navigation/stack";
 import Styles from "../navigation/styles";
 import LText from "./LText";
 import { width } from "../helpers/normalizeSize";
 import ArrowLeft from "../icons/ArrowLeft";
 import Close from "../icons/Close";
+import { Theme } from "../colors";
+
+type WildcardNavigation = StackNavigationProp<
+  Record<string, object | undefined>
+>;
 
 const { interpolateNode, Extrapolate } = Animated;
 const AnimatedView = Animatable.View;
@@ -34,8 +43,8 @@ const BackButton = ({
   navigation,
   action,
 }: {
-  colors: any;
-  navigation: any;
+  colors: Theme["colors"];
+  navigation: WildcardNavigation;
   action?: () => void;
 }) => (
   <TouchableOpacity
@@ -52,8 +61,8 @@ const CloseButton = ({
   navigation,
   action,
 }: {
-  colors: any;
-  navigation: any;
+  colors: Theme["colors"];
+  navigation: WildcardNavigation;
   action?: () => void;
 }) => (
   <TouchableOpacity
@@ -73,8 +82,8 @@ type Props = {
   closeAction?: () => void;
   children?: React.ReactNode;
   footer?: React.ReactNode;
-  style?: any;
-  titleStyle?: any;
+  style?: StyleProp<ViewStyle>;
+  titleStyle?: StyleProp<TextStyle>;
   edges?: ("top" | "right" | "left" | "bottom")[];
 };
 const AnimatedFlatList = Animated.createAnimatedComponent(FlatList);
@@ -91,7 +100,7 @@ export default function AnimatedHeaderView({
   edges,
 }: Props) {
   const { colors } = useTheme();
-  const navigation = useNavigation();
+  const navigation = useNavigation<WildcardNavigation>();
   const [textHeight, setTextHeight] = useState(250);
   const [isReady, setReady] = useState(false);
   const onLayoutText = useCallback(event => {
@@ -100,7 +109,7 @@ export default function AnimatedHeaderView({
   }, []);
   const [scrollY] = useState(new Animated.Value(0));
   const isFocused = useIsFocused();
-  const event = Animated.event([
+  const eventArgs = [
     {
       nativeEvent: {
         contentOffset: {
@@ -111,7 +120,8 @@ export default function AnimatedHeaderView({
     {
       useNativeDriver: true,
     },
-  ]);
+  ];
+  const event = Animated.event<typeof eventArgs>(eventArgs);
   const translateY = interpolateNode(scrollY, {
     inputRange: [0, 76],
     outputRange: [0, -50],
@@ -165,7 +175,6 @@ export default function AnimatedHeaderView({
         </View>
 
         <Animated.View
-          bold
           style={[
             styles.titleContainer,
             {

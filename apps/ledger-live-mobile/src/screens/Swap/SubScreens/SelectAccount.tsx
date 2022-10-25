@@ -1,4 +1,3 @@
-/* eslint-disable react/prop-types */
 import React, { useCallback, useMemo } from "react";
 import { StyleSheet, FlatList, TouchableOpacity } from "react-native";
 import { useSelector } from "react-redux";
@@ -19,14 +18,14 @@ import {
   formatSearchResults,
   SearchResult,
 } from "../../../helpers/formatAccountSearchResults";
-import { SelectAccountProps } from "../types";
+import { SelectAccountParamList } from "../types";
 import { NavigatorName, ScreenName } from "../../../const";
 import { accountsSelector } from "../../../reducers/accounts";
 
 export function SelectAccount({
   navigation,
   route: { params },
-}: SelectAccountProps) {
+}: SelectAccountParamList) {
   const { provider, target, selectableCurrencyIds, selectedCurrency } = params;
 
   const unfilteredAccounts = useSelector(accountsSelector);
@@ -75,7 +74,7 @@ export function SelectAccount({
             disabled:
               (selectedCurrency.type === "TokenCurrency" &&
                 c.type === "CryptoCurrency") ||
-              !c.id === selectedCurrency.id,
+              c.id !== selectedCurrency.id,
           };
         });
     }
@@ -94,7 +93,7 @@ export function SelectAccount({
   const onSelect = useCallback(
     (account: AccountLike) => {
       // @ts-expect-error navigation type is only partially declared
-      navigation.navigate("SwapForm", {
+      navigation.navigate(ScreenName.SwapForm, {
         accountId: account.id,
         currency: selectedCurrency,
         target,
@@ -136,7 +135,7 @@ export function SelectAccount({
         returnToSwap: true,
         filterCurrencyIds: selectableCurrencyIds,
         onSuccess: () => {
-          navigation.navigate("SelectAccount", params);
+          navigation.navigate(ScreenName.SwapSelectAccount, params);
         },
         analyticsPropertyFlow: "swap",
       },

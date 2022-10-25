@@ -6,15 +6,15 @@ import { Icon } from "@ledgerhq/native-ui";
 import { useTheme } from "@react-navigation/native";
 import React from "react";
 import { StyleSheet, View } from "react-native";
-import { rgba } from "../../colors";
+import { rgba, Theme } from "../../colors";
 import { SwapIcon } from "../../icons/swap/index";
 
 export const getStatusColor = (
   status: string,
-  colors: any,
+  colors: Theme["colors"],
   colorKey = false,
 ) => {
-  let key = "grey";
+  let key: keyof Theme["colors"] = "grey";
 
   if (isSwapOperationPending(status)) {
     key = status === "onhold" ? "orange" : "live";

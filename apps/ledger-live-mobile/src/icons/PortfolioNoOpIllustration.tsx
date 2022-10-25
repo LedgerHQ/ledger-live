@@ -3,12 +3,7 @@ import Svg, { Path, G, Rect } from "react-native-svg";
 
 export default function PortfolioNoOpIllustration() {
   return (
-    <Svg
-      xmlns="http://www.w3.org/2000/svg"
-      width="256"
-      height="66"
-      viewBox="0 0 256 66"
-    >
+    <Svg width="256" height="66" viewBox="0 0 256 66">
       <G fill="none" fillRule="evenodd">
         <Path
           fill="#F9F9F9"
