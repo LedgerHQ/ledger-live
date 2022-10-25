@@ -4,6 +4,8 @@ import test from "../../fixtures/common";
 import { OnboardingPage } from "../../models/OnboardingPage";
 import { ManualPage } from "../../models/ManualPage";
 
+test.use({ featureFlags: { syncOnboarding: { enabled: true } } });
+
 test("Manual", async ({ page }) => {
   const manualPage = new ManualPage(page);
   const onboardingPage = new OnboardingPage(page);
@@ -13,7 +15,7 @@ test("Manual", async ({ page }) => {
   });
 
   await test.step("Select device", async () => {
-    await onboardingPage.selectDevice("nanoFTS" as "nanoX"); // TODO: do better
+    await onboardingPage.selectDevice("nanoFTS"); // TODO: do better
   });
 
   await test.step("Take screenshot of main screen", async () => {
