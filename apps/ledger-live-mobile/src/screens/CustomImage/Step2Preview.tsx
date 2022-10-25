@@ -141,7 +141,7 @@ const Step2Preview = ({ navigation, route }: NavigationProps) => {
   }, [imageProcessorRef, setRawResultLoading]);
 
   return (
-    <SafeAreaView edges={["bottom"]}>
+    <SafeAreaView edges={["bottom"]} style={{ flex: 1 }}>
       {resizedImage?.imageBase64DataUri && (
         <ImageProcessor
           ref={imageProcessorRef}
