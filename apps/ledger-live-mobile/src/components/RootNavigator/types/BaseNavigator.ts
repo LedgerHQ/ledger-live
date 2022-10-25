@@ -96,9 +96,11 @@ export type PathToDeviceParam = PropertyPath;
 export type NavigationType = "navigate" | "replace" | "push";
 
 export type BaseNavigatorStackParamList = {
-  [NavigatorName.Main]: NavigatorScreenParams<MainNavigatorParamList> & {
-    hideTabNavigation?: boolean;
-  };
+  [NavigatorName.Main]:
+    | (NavigatorScreenParams<MainNavigatorParamList> & {
+        hideTabNavigation?: boolean;
+      })
+    | undefined;
   [NavigatorName.BuyDevice]:
     | NavigatorScreenParams<BuyDeviceNavigatorParamList>
     | undefined;
