@@ -2,7 +2,7 @@ import React, { useCallback, useMemo, memo } from "react";
 import { useNavigation, useRoute } from "@react-navigation/native";
 
 import { useTheme } from "styled-components/native";
-import { ScreenName } from "../../../../const";
+import { NavigatorName, ScreenName } from "../../../../const";
 import Illustration from "../../../../images/illustration/Illustration";
 import BaseStepperView, {
   Intro,
@@ -184,13 +184,14 @@ function OnboardingStepNewDevice() {
   );
 
   const nextPage = useCallback(() => {
-    // @ts-expect-error TS requires state to be defined, but it crashes the app
-    navigation.navigate(ScreenName.OnboardingPreQuizModal, {
-      screen: undefined,
-      onNext: () =>
-        navigation.navigate(ScreenName.OnboardingQuiz, {
-          deviceModelId: route.params.deviceModelId,
-        }),
+    navigation.navigate(NavigatorName.OnboardingPreQuiz, {
+      screen: ScreenName.OnboardingPreQuizModal,
+      params: {
+        onNext: () =>
+          navigation.navigate(ScreenName.OnboardingQuiz, {
+            deviceModelId: route.params.deviceModelId,
+          }),
+      },
     });
   }, [navigation, route.params]);
 
