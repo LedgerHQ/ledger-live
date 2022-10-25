@@ -5,7 +5,7 @@ import styled from "styled-components/native";
 import type { FlexBoxProps } from "@ledgerhq/native-ui/components/Layout/Flex";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { OnboardingNavigatorParamList } from "./RootNavigator/types/OnboardingNavigator";
-import { ScreenName } from "../const";
+import { NavigatorName } from "../const";
 import { StackNavigatorProps } from "./RootNavigator/types/helpers";
 
 export const MIN_MODAL_HEIGHT = 30;
@@ -34,7 +34,7 @@ const InnerContainer = styled(Flex).attrs({
 
 type Props = StackNavigatorProps<
   OnboardingNavigatorParamList,
-  ScreenName.OnboardingModalWarning | ScreenName.OnboardingPreQuizModal
+  NavigatorName.OnboardingCarefulWarning | NavigatorName.OnboardingPreQuiz
 > &
   React.PropsWithChildren<{
     children: React.ReactNode;

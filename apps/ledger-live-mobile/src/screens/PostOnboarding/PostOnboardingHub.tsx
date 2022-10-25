@@ -73,8 +73,6 @@ const PostOnboardingHub = ({ navigation }: NavigationProps) => {
 
   const navigateToMainScreen = useCallback(() => {
     allowClosingScreen.current = true;
-    // FIXME: Why are navigating to a nested navigator directly…
-    // @ts-expect-error Typescript rightfully complains here.
     navigation.replace(NavigatorName.Base, {
       screen: NavigatorName.Main,
     });
