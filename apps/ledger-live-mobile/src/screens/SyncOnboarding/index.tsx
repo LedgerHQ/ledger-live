@@ -22,6 +22,7 @@ import { useTranslation } from "react-i18next";
 import { getDeviceModel } from "@ledgerhq/devices";
 import { useDispatch } from "react-redux";
 import { CompositeScreenProps } from "@react-navigation/native";
+import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 
 import { addKnownDevice } from "../../actions/ble";
 import { NavigatorName, ScreenName } from "../../const";
@@ -43,6 +44,7 @@ import {
 } from "../../components/RootNavigator/types/BaseNavigator";
 import { RootStackParamList } from "../../components/RootNavigator/types/RootNavigator";
 import { SyncOnboardingStackParamList } from "../../components/RootNavigator/types/SyncOnboardingNavigator";
+import InstallSetOfApps from "../../components/DeviceAction/InstallSetOfApps";
 
 type StepStatus = "completed" | "active" | "inactive";
 
@@ -73,12 +75,15 @@ const normalResyncOverlayDisplayDelayMs = 10000;
 const longResyncOverlayDisplayDelayMs = 60000;
 const readyRedirectDelayMs = 2500;
 
+const fallbackDefaultAppsToInstall = ["Bitcoin", "Ethereum", "Polygon"];
+
 // Because of https://github.com/typescript-eslint/typescript-eslint/issues/1197
 enum CompanionStepKey {
   Paired = 0,
   Pin,
   Seed,
   SoftwareCheck,
+  Apps,
   Ready,
   Exit,
 }
@@ -96,20 +101,47 @@ export const SyncOnboarding = ({
 }: SyncOnboardingCompanionProps) => {
   const { t } = useTranslation();
   const dispatchRedux = useDispatch();
+  const deviceInitialApps = useFeature("deviceInitialApps");
   const { device } = route.params;
 
   const productName =
     getDeviceModel(device.modelId).productName || device.modelId;
   const deviceName = device.deviceName || productName;
 
+  const initialAppsToInstall =
+    deviceInitialApps?.params?.apps || fallbackDefaultAppsToInstall;
+
   const handleSoftwareCheckComplete = useCallback(() => {
     setCompanionStepKey(nextStepKey(CompanionStepKey.SoftwareCheck));
+  }, []);
+
+  const handleInstallAppsComplete = useCallback(() => {
+    setCompanionStepKey(nextStepKey(CompanionStepKey.Apps));
   }, []);
 
   const formatEstimatedTime = (estimatedTime: number) =>
     t("syncOnboarding.estimatedTimeFormat", {
       estimatedTime: estimatedTime / 60,
     });
+
+  const installSetOfAppsSteps: Step[] = useMemo(
+    () => [
+      {
+        key: CompanionStepKey.Apps,
+        title: t("syncOnboarding.appsStep.title", { productName }),
+        status: "inactive",
+        estimatedTime: 60,
+        renderBody: () => (
+          <InstallSetOfApps
+            device={device}
+            onResult={handleInstallAppsComplete}
+            dependencies={initialAppsToInstall}
+          />
+        ),
+      },
+    ],
+    [productName, t, device, handleInstallAppsComplete, initialAppsToInstall],
+  );
 
   const defaultCompanionSteps: Step[] = useMemo(
     () => [
@@ -162,14 +194,31 @@ export const SyncOnboarding = ({
           />
         ),
       },
+    ],
+    [t, productName, device, handleSoftwareCheckComplete],
+  );
+
+  const getCompanionSteps = useCallback(() => {
+    let steps = defaultCompanionSteps;
+
+    if (deviceInitialApps?.enabled) {
+      steps = steps.concat(installSetOfAppsSteps);
+    }
+
+    return steps.concat([
       {
         key: CompanionStepKey.Ready,
         title: t("syncOnboarding.readyStep.title", { productName }),
         status: "inactive",
       },
-    ],
-    [t, productName, device, handleSoftwareCheckComplete],
-  );
+    ]);
+  }, [
+    t,
+    productName,
+    defaultCompanionSteps,
+    installSetOfAppsSteps,
+    deviceInitialApps?.enabled,
+  ]);
 
   const [stopPolling, setStopPolling] = useState<boolean>(false);
   const [pollingPeriodMs, setPollingPeriodMs] = useState<number>(
@@ -193,7 +242,7 @@ export const SyncOnboarding = ({
   const [isHelpDrawerOpen, setHelpDrawerOpen] = useState<boolean>(false);
 
   const [companionSteps, setCompanionSteps] = useState<Step[]>(
-    defaultCompanionSteps,
+    getCompanionSteps(),
   );
   const [companionStepKey, setCompanionStepKey] = useState<CompanionStepKey>(
     CompanionStepKey.Paired,
@@ -398,7 +447,7 @@ export const SyncOnboarding = ({
     }
 
     setCompanionSteps(
-      defaultCompanionSteps.map(step => {
+      getCompanionSteps().map(step => {
         const stepStatus =
           step.key > companionStepKey
             ? "inactive"
@@ -419,7 +468,7 @@ export const SyncOnboarding = ({
         readyRedirectTimerRef.current = null;
       }
     };
-  }, [companionStepKey, defaultCompanionSteps, handleDeviceReady]);
+  }, [companionStepKey, getCompanionSteps, handleDeviceReady]);
 
   return (
     <DeviceSetupView

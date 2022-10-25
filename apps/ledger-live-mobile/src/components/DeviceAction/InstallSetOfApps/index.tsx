@@ -11,12 +11,13 @@ import BottomModal from "../../BottomModal";
 
 import Item from "./Item";
 import Confirmation from "./Confirmation";
+import withRemountableWrapper from "../../withRemountableWrapper";
 
 type Props = {
   dependencies?: string[];
   device: Device;
   onResult: (done: boolean) => void;
-  onError: (error: Error) => void;
+  onError?: (error: Error) => void;
 };
 
 const action = createAction(connectApp);
@@ -33,7 +34,8 @@ const InstallSetOfApps = ({
   device: selectedDevice,
   onResult,
   onError,
-}: Props) => {
+  remountMe,
+}: Props & { remountMe: () => void }) => {
   const [userConfirmed, setUserConfirmed] = useState(false);
   const productName = getDeviceModel(selectedDevice.modelId).productName;
 
@@ -63,10 +65,13 @@ const InstallSetOfApps = ({
   } = status;
 
   const onWrappedError = useCallback(() => {
-    if (onError && error) {
-      onError(error);
+    if (error) {
+      remountMe();
+      if (onError) {
+        onError(error);
+      }
     }
-  }, [error, onError]);
+  }, [remountMe, error, onError]);
 
   if (opened) {
     onResult(true);
@@ -134,4 +139,4 @@ const InstallSetOfApps = ({
   );
 };
 
-export default InstallSetOfApps;
+export default withRemountableWrapper(InstallSetOfApps);
