@@ -471,6 +471,7 @@ export enum NavigatorName {
   NftNavigator = "NftNavigator",
   Onboarding = "Onboarding",
   OnboardingCarefulWarning = "OnboardingCarefulWarning",
+  OnboardingPreQuiz = "OnboardingPreQuiz",
   PasswordAddFlow = "PasswordAddFlow",
   PasswordModifyFlow = "PasswordModifyFlow",
   Platform = "Platform",

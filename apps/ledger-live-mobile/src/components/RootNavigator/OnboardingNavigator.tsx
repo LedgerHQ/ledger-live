@@ -109,7 +109,7 @@ function OnboardingCarefulWarning(
 function OnboardingPreQuizModalNavigator(
   props: StackNavigatorProps<
     OnboardingNavigatorParamList,
-    ScreenName.OnboardingPreQuizModal
+    NavigatorName.OnboardingPreQuiz
   >,
 ) {
   const options: Partial<StackNavigationOptions> = {
@@ -139,7 +139,7 @@ function OnboardingPreQuizModalNavigator(
           name={ScreenName.OnboardingPreQuizModal}
           component={OnboardingPreQuizModal}
           options={{ title: "", ...options }}
-          initialParams={props.route.params}
+          // initialParams={props.route.params}
         />
       </OnboardingPreQuizModalStack.Navigator>
     </NavigationModalContainer>
@@ -203,12 +203,12 @@ export default function OnboardingNavigator() {
         component={OnboardingUseCase}
       />
       <Stack.Screen
-        name={NavigatorName.OnboardingCarefulWarning} // ScreenName.OnboardingModalWarning}
+        name={NavigatorName.OnboardingCarefulWarning}
         component={OnboardingCarefulWarning}
         options={modalOptions}
       />
       <Stack.Screen
-        name={ScreenName.OnboardingPreQuizModal}
+        name={NavigatorName.OnboardingPreQuiz}
         component={OnboardingPreQuizModalNavigator}
         options={modalOptions}
       />
