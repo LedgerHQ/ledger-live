@@ -40,6 +40,7 @@ import {
   renderRequiresAppInstallation,
   renderAllowManager,
   renderInWrongAppForAccount,
+  renderError,
   renderDeviceNotOnboarded,
   renderBootloaderStep,
   renderExchange,
@@ -68,6 +69,7 @@ type Status = PartialNullable<{
   unresponsive: boolean;
   error: LedgerError & {
     name?: string;
+    managerAppName?: string;
   };
   isLoading: boolean;
   allowManagerRequestedWording: string;
