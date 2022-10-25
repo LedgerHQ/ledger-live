@@ -111,6 +111,7 @@ import { useFilteredManifests } from "./screens/Platform/shared";
 import { setWallectConnectUri } from "./actions/walletconnect";
 import PostOnboardingProviderWrapped from "./logic/postOnboarding/PostOnboardingProviderWrapped";
 import { isAcceptedTerms } from "./logic/terms";
+import Braze from "react-native-appboy-sdk";
 
 const themes = {
   light: lightTheme,
@@ -215,6 +216,10 @@ function App({ importDataString }: AppProps) {
     getChangesStats: getPostOnboardingStateChanged,
     lense: postOnboardingSelector,
   });
+
+  useEffect(() => {
+    Braze.changeUser("come-id");
+  }, []);
 
   return (
     <GestureHandlerRootView style={styles.root}>
