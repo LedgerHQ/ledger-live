@@ -37,6 +37,7 @@ import {
   renderRequiresAppInstallation,
   renderAllowManager,
   renderInWrongAppForAccount,
+  renderError,
   renderDeviceNotOnboarded,
   renderBootloaderStep,
   renderExchange,
@@ -64,6 +65,7 @@ type Status = PartialNullable<{
   unresponsive: boolean;
   error: LedgerError & {
     name?: string;
+    managerAppName?: string;
   };
   isLoading: boolean;
   allowManagerRequestedWording: string;
@@ -416,6 +418,17 @@ export function DeviceActionDefaultRendering<R, H extends Status, P>({
     ) {
       return renderDeviceNotOnboarded({ t, device, navigation });
     }
+
+    return renderError({
+      t,
+      navigation,
+      error,
+      managerAppName:
+        error.name === "UpdateYourApp" ? error.managerAppName : undefined,
+      onRetry,
+      colors,
+      theme,
+    });
   }
 
   if ((!isLoading && !device) || unresponsive) {
