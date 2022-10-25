@@ -23,9 +23,10 @@ import { useTranslation } from "react-i18next";
 import {
   flattenAccounts,
   accountWithMandatoryTokens,
+  getParentAccount,
+  isTokenAccount,
 } from "@ledgerhq/live-common/account/index";
 import { getSwapSelectableCurrencies } from "@ledgerhq/live-common/exchange/swap/logic";
-import { Account } from "@ledgerhq/types-live";
 import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { shallowAccountsSelector } from "../../../reducers/accounts";
 import {
@@ -175,7 +176,7 @@ export function SwapForm({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [accounts]);
 
-  // FIXME: update usePollKYCStatus to use checkQuote for KYC status (?)
+  // TODO: update usePollKYCStatus to use checkQuote for KYC status (?)
   usePollKYCStatus(
     {
       provider,
@@ -217,7 +218,7 @@ export function SwapForm({
   }, [providerKYC?.id, currentFlow]);
 
   /**
-   * FIXME
+   * TODO
    * Too complicated, seems to handle to much things (KYC status + non KYC related errors)
    * KYC related stuff should be handled in usePollKYCStatus
    */
@@ -378,8 +379,9 @@ export function SwapForm({
         swapTransaction.setToAccount(
           swapTransaction.swap.to.currency,
           account,
-          // FIXME: where does this parent field come from?
-          (account as unknown as { parent: Account })?.parent,
+          isTokenAccount(account)
+            ? getParentAccount(account, accounts)
+            : undefined,
         );
       }
     }

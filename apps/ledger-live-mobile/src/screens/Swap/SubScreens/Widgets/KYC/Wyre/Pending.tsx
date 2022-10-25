@@ -21,7 +21,6 @@ export function Pending({
   onContinue: () => void;
   status?: string;
 }) {
-  // FIXME if we ever have dynamic KYC fields, or more than one provider with KYC, backend to provide the fields
   const swapKYC = useSelector(swapKYCSelector);
   const dispatch = useDispatch();
   const providerKYC = swapKYC.wyre;
