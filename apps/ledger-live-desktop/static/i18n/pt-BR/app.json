@@ -4262,13 +4262,14 @@
       "4" : {
         "deviceSelection" : {
           "title" : "Qual é seu dispositivo?",
-          "desc" : "Se você tem uma Nano S, você pode tentar reparar o firmware do seu dispositivo. Para usuários da Nano X e Blue, contate o Suporte Ledger"
+          "desc" : "Se estiver tentando conectar uma Nano S, selecione o estado exibido em sua Nano. Se estiver tentando conectar uma Nano S Plus ou Nano X, <0>visite o Centro de Ajuda</0>"
         },
         "notFixed" : {
           "title" : " O problema de conexão USB ainda não foi corrigido?",
           "desc" : "Se você já tentou todas as soluções possíveis, contate o Suporte Ledger. Caso contrário, siga as instruções das soluções que você ainda não tentou.",
           "back" : "Voltar ao portfólio",
-          "cta" : "Contatar Suporte"
+          "cta" : "Contatar Suporte",
+          "cta2" : "Voltar"
         },
         "repair" : {
           "title" : "Repare sua Nano S",
@@ -4947,6 +4948,9 @@
     },
     "FeeTooHigh" : {
       "title" : "As taxas de rede estão acima de 10% da quantia"
+    },
+    "DustLimit" : {
+      "title" : "Quantia menor do que o limite de pó"
     },
     "SourceHasMultiSign" : {
       "title" : "Desative a assinatura múltipla para enviar {{currencyName}}"
