@@ -71,5 +71,7 @@ setSupportedCurrencies([
   "optimism",
   "optimism_sepolia",
   "linea",
-  "linea_sepolia"
+  "linea_sepolia",
+  "icon",
+  "icon_berlin_testnet",
 ]);

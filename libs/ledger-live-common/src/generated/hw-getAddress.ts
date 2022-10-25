@@ -7,6 +7,7 @@ import filecoin from "../families/filecoin/hw-getAddress";
 import hedera from "../families/hedera/hw-getAddress";
 import internet_computer from "../families/internet_computer/hw-getAddress";
 import stacks from "../families/stacks/hw-getAddress";
+import icon from "../families/icon/hw-getAddress";
 import stellar from "../families/stellar/hw-getAddress";
 import tron from "../families/tron/hw-getAddress";
 import vechain from "../families/vechain/hw-getAddress";
@@ -30,6 +31,7 @@ export default {
   hedera,
   internet_computer,
   stacks,
+  icon,
   stellar,
   tron,
   vechain,

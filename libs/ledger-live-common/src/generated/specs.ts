@@ -7,6 +7,7 @@ import filecoin from "../families/filecoin/specs";
 import hedera from "../families/hedera/specs";
 import internet_computer from "../families/internet_computer/specs";
 import stacks from "../families/stacks/specs";
+import icon from "../families/icon/specs";
 import stellar from "../families/stellar/specs";
 import tron from "../families/tron/specs";
 import vechain from "../families/vechain/specs";
@@ -30,6 +31,7 @@ export default {
   hedera,
   internet_computer,
   stacks,
+  icon,
   stellar,
   tron,
   vechain,

@@ -124,6 +124,10 @@ import type {
   TransactionStatus as xrpTransactionStatus,
   TransactionStatusRaw as xrpTransactionStatusRaw,
 } from "@ledgerhq/coin-xrp/types";
+import { Transaction as iconTransaction } from "../families/icon/types";
+import { TransactionRaw as iconTransactionRaw } from "../families/icon/types";
+import { TransactionStatus as iconTransactionStatus } from "../families/icon/types";
+import { TransactionStatusRaw as iconTransactionStatusRaw } from "../families/icon/types";
 
 export type Transaction =
   | algorandTransaction
@@ -139,6 +143,7 @@ export type Transaction =
   | hederaTransaction
   | internet_computerTransaction
   | nearTransaction
+  | iconTransaction
   | polkadotTransaction
   | solanaTransaction
   | stacksTransaction
@@ -162,6 +167,7 @@ export type TransactionRaw =
   | hederaTransactionRaw
   | internet_computerTransactionRaw
   | nearTransactionRaw
+  | iconTransactionRaw
   | polkadotTransactionRaw
   | solanaTransactionRaw
   | stacksTransactionRaw
@@ -185,6 +191,7 @@ export type TransactionStatus =
   | hederaTransactionStatus
   | internet_computerTransactionStatus
   | nearTransactionStatus
+  | iconTransactionStatus
   | polkadotTransactionStatus
   | solanaTransactionStatus
   | stacksTransactionStatus
@@ -208,6 +215,7 @@ export type TransactionStatusRaw =
   | hederaTransactionStatusRaw
   | internet_computerTransactionStatusRaw
   | nearTransactionStatusRaw
+  | iconTransactionStatusRaw
   | polkadotTransactionStatusRaw
   | solanaTransactionStatusRaw
   | stacksTransactionStatusRaw

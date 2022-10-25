@@ -7,6 +7,7 @@ import filecoin from "../families/filecoin/deviceTransactionConfig";
 import hedera from "../families/hedera/deviceTransactionConfig";
 import internet_computer from "../families/internet_computer/deviceTransactionConfig";
 import stacks from "../families/stacks/deviceTransactionConfig";
+import icon from "../families/icon/deviceTransactionConfig";
 import stellar from "../families/stellar/deviceTransactionConfig";
 import tron from "../families/tron/deviceTransactionConfig";
 import algorand from "@ledgerhq/coin-algorand/deviceTransactionConfig";
@@ -29,6 +30,7 @@ export default {
   hedera,
   internet_computer,
   stacks,
+  icon,
   stellar,
   tron,
   algorand,

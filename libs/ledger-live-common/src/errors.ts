@@ -135,3 +135,4 @@ export * from "@ledgerhq/coin-near/errors";
 export * from "@ledgerhq/coin-polkadot/errors";
 export * from "@ledgerhq/coin-solana/errors";
 export * from "@ledgerhq/coin-tezos/errors";
+export * from "./families/icon/errors";

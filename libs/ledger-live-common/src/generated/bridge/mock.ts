@@ -5,6 +5,9 @@ import casper from "../../families/casper/bridge/mock";
 import cosmos from "../../families/cosmos/bridge/mock";
 import evm from "../../families/evm/bridge/mock";
 import polkadot from "../../families/polkadot/bridge/mock";
+import ethereum from "../../families/ethereum/bridge/mock";
+import icon from "../../families/icon/bridge/mock";
+import ripple from "../../families/ripple/bridge/mock";
 import solana from "../../families/solana/bridge/mock";
 import stellar from "../../families/stellar/bridge/mock";
 import tezos from "../../families/tezos/bridge/mock";
@@ -20,6 +23,9 @@ export default {
   cosmos,
   evm,
   polkadot,
+  ethereum,
+  icon,
+  ripple,
   solana,
   stellar,
   tezos,

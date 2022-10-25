@@ -7,6 +7,7 @@ import filecoin from "../../families/filecoin/bridge/js";
 import hedera from "../../families/hedera/bridge/js";
 import internet_computer from "../../families/internet_computer/bridge/js";
 import stacks from "../../families/stacks/bridge/js";
+import icon from "../../families/icon/bridge/js";
 import stellar from "../../families/stellar/bridge/js";
 import tron from "../../families/tron/bridge/js";
 import vechain from "../../families/vechain/bridge/js";
@@ -30,6 +31,10 @@ export default {
   hedera,
   internet_computer,
   stacks,
+  near,
+  icon,
+  polkadot,
+  solana,
   stellar,
   tron,
   vechain,
@@ -37,9 +42,6 @@ export default {
   bitcoin,
   cardano,
   evm,
-  near,
-  polkadot,
-  solana,
   tezos,
   xrp,
 };

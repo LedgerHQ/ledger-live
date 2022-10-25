@@ -5,6 +5,7 @@ import elrond from "../families/elrond/cli-transaction";
 import filecoin from "../families/filecoin/cli-transaction";
 import hedera from "../families/hedera/cli-transaction";
 import stacks from "../families/stacks/cli-transaction";
+import icon from "../families/icon/cli-transaction";
 import stellar from "../families/stellar/cli-transaction";
 import tron from "../families/tron/cli-transaction";
 import vechain from "../families/vechain/cli-transaction";
@@ -26,6 +27,7 @@ export default {
   filecoin,
   hedera,
   stacks,
+  icon,
   stellar,
   tron,
   vechain,

@@ -186,7 +186,11 @@ const modes: Readonly<Partial<Record<DerivationMode, unknown>>> = Object.freeze(
     startsAt: 1,
     tag: "third-party",
   },
+  icon: {
+    overridesDerivation: "44'/4801368'/0'/0'/<account>'",
+  },
 });
+
 modes as Record<DerivationMode, ModeSpec>; // eslint-disable-line
 
 const legacyDerivations: Partial<Record<CryptoCurrency["id"], DerivationMode[]>> = {
@@ -205,6 +209,11 @@ const legacyDerivations: Partial<Record<CryptoCurrency["id"], DerivationMode[]>>
   near: ["nearbip44h"],
   vechain: ["vechain"],
   stacks: ["stacks_wallet"],
+  icon: ["icon"],
+  icon_berlin_testnet: ["icon"],
+};
+
+const legacyDerivationsPerFamily: Record<string, DerivationMode[]> = {
   ethereum: ["ethM", "ethMM"],
   ethereum_classic: ["ethM", "ethMM", "etcM"],
   solana: ["solanaMain", "solanaSub"],
@@ -216,6 +225,7 @@ export const asDerivationMode = (derivationMode: string): DerivationMode => {
   invariant(derivationMode in modes, "not a derivationMode. Got: '%s'", derivationMode);
   return derivationMode as DerivationMode;
 };
+
 export const getAllDerivationModes = (): DerivationMode[] => Object.keys(modes) as DerivationMode[];
 export const getMandatoryEmptyAccountSkip = (derivationMode: DerivationMode): number =>
   (modes[derivationMode] as { mandatoryEmptyAccountSkip: number }).mandatoryEmptyAccountSkip || 0;
@@ -258,6 +268,7 @@ export const getTagDerivationMode = (
 };
 export const getAddressFormatDerivationMode = (derivationMode: DerivationMode): string =>
   (modes[derivationMode] as { addressFormat: string }).addressFormat || "legacy";
+
 export const derivationModeSupportsIndex = (
   derivationMode: DerivationMode,
   index: number,
@@ -346,11 +357,15 @@ const disableBIP44: Record<string, boolean> = {
   internet_computer: true,
   casper: true,
   filecoin: true,
+  icon: true,
+  icon_berlin_testnet: true,
 };
+
 type SeedInfo = {
   purpose: number;
   coinType: number;
 };
+
 type SeedPathFn = (info: SeedInfo) => string;
 const seedIdentifierPath: Record<string, SeedPathFn> = {
   neo: ({ purpose, coinType }) => `${purpose}'/${coinType}'/0'/0/0`,
@@ -366,6 +381,7 @@ const seedIdentifierPath: Record<string, SeedPathFn> = {
   vechain: ({ purpose, coinType }) => `${purpose}'/${coinType}'/0'/0/0`,
   _: ({ purpose, coinType }) => `${purpose}'/${coinType}'/0'`,
 };
+
 export const getSeedIdentifierDerivation = (
   currency: CryptoCurrency,
   derivationMode: DerivationMode,
@@ -379,6 +395,7 @@ export const getSeedIdentifierDerivation = (
     coinType,
   });
 };
+
 // return an array of ways to derivate, by convention the latest is the standard one.
 export const getDerivationModesForCurrency = (currency: CryptoCurrency): DerivationMode[] => {
   let all: DerivationMode[] = [];
@@ -419,6 +436,7 @@ export const getDerivationModesForCurrency = (currency: CryptoCurrency): Derivat
 
   return all;
 };
+
 const preferredList: DerivationMode[] = ["native_segwit", "taproot", "segwit", ""];
 // null => no settings
 // [ .. ]
@@ -431,12 +449,14 @@ export const getPreferredNewAccountScheme = (
   if (list.length === 1) return null;
   return list as DerivationMode[];
 };
+
 export const getDefaultPreferredNewAccountScheme = (
   currency: CryptoCurrency,
 ): DerivationMode | null | undefined => {
   const list = getPreferredNewAccountScheme(currency);
   return list && list[0];
 };
+
 export type StepAddressInput = {
   index: number;
   parentDerivation: Result;
@@ -445,6 +465,7 @@ export type StepAddressInput = {
   shouldSkipEmpty: boolean;
   seedIdentifier: string;
 };
+
 export type WalletDerivationInput<R> = {
   currency: CryptoCurrency;
   derivationMode: DerivationMode;
@@ -455,6 +476,7 @@ export type WalletDerivationInput<R> = {
   }>;
   shouldDerivesOnAccount?: boolean;
 };
+
 export function walletDerivation<R>({
   currency,
   derivationMode,
