@@ -133,13 +133,7 @@ export const BleDevicePairing = ({
 
   return (
     <DeviceSetupView onClose={handleClose}>
-      <Flex
-        flex={1}
-        px={10}
-        pt={36}
-        justifyContent="center"
-        alignItems="center"
-      >
+      <Flex flex={1} px={10} pt={36} alignItems="center">
         {content}
       </Flex>
     </DeviceSetupView>
