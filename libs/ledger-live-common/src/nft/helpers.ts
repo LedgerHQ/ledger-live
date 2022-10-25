@@ -214,12 +214,14 @@ export const metadataCallBatcher = (
   };
 };
 
-const getNFTByTokenId = (tokenId?: string, nfts?: ProtoNFT[]) =>
-  nfts?.find((nft) => nft.tokenId === tokenId);
+export const getNFTByTokenId = (
+  tokenId?: string,
+  nfts?: ProtoNFT[]
+): ProtoNFT | undefined => nfts?.find((nft) => nft.tokenId === tokenId);
 
 const SUPPORTED_CURRENCIES = ["ethereum", "polygon"];
 
-const groupByCurrency = (nfts: ProtoNFT[]) => {
+export const groupByCurrency = (nfts: ProtoNFT[]): ProtoNFT[] => {
   const groupMap = new Map<string, ProtoNFT[]>();
   SUPPORTED_CURRENCIES.forEach((elem) => groupMap.set(elem, []));
 
