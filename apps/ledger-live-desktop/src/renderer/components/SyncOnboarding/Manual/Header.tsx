@@ -29,7 +29,7 @@ const Header = ({ onClose, onHelp }: Props) => {
       <LangSwitcherButtonLikeWrapper>
         <LangSwitcher />
       </LangSwitcherButtonLikeWrapper>
-      <Button ml={4} onClick={onHelp}>
+      <Button ml={4} onClick={onHelp} data-test-id="manual-help-button">
         {t("syncOnboarding.manual.header.helpButton")}
       </Button>
       <Button ml={12} variant="neutral" onClick={onClose} Icon={CloseMedium} />

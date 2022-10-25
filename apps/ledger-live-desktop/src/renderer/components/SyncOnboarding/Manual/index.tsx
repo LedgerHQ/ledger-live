@@ -23,6 +23,7 @@ import { StepText } from "./shared";
 import Header from "./Header";
 import Animation from "~/renderer/animations";
 import { getDeviceAnimation } from "../../DeviceAction/animations";
+import DeviceIllustration from "../../DeviceIllustration";
 
 const readyRedirectDelayMs = 2500;
 const pollingPeriodMs = 1000;
@@ -327,14 +328,18 @@ const SyncOnboardingManual = () => {
             </Flex>
           </Flex>
           <Flex flex={1} justifyContent="center" alignItems="center">
-            <Animation
-              height="540px"
-              animation={getDeviceAnimation(
-                device?.modelId || ("nanoFTS" as DeviceModelId),
-                theme.theme as "light" | "dark",
-                "placeHolder",
-              )}
-            />
+            {device?.modelId === "nanoFTS" ? (
+              <Animation
+                height="540px"
+                animation={getDeviceAnimation(
+                  "nanoFTS" as DeviceModelId,
+                  theme.theme as "light" | "dark",
+                  "placeHolder",
+                )}
+              />
+            ) : (
+              <DeviceIllustration deviceId={device?.modelId || ("nanoS" as DeviceModelId)} />
+            )}
           </Flex>
         </Flex>
       </Flex>
