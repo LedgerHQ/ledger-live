@@ -664,6 +664,7 @@ importers:
       react-native-android-location-services-dialog-box: ^2.8.2
       react-native-animatable: ^1.3.3
       react-native-biometrics: ^3.0.1
+      react-native-appboy-sdk: ^1.39.0
       react-native-ble-plx: 2.0.3
       react-native-codegen: ^0.0.7
       react-native-config: 1.4.4
@@ -805,6 +806,7 @@ importers:
       react-native-android-location-services-dialog-box: 2.8.2_react-native@0.68.2
       react-native-animatable: 1.3.3
       react-native-biometrics: 3.0.1_react-native@0.68.2
+      react-native-appboy-sdk: 1.39.0
       react-native-ble-plx: 2.0.3
       react-native-codegen: 0.0.7
       react-native-config: 1.4.4
@@ -22753,7 +22755,7 @@ packages:
       babel-plugin-syntax-jsx: 6.18.0
       lodash: 4.17.21
       picomatch: 2.3.1
-      styled-components: 5.3.5_fane7jikarojcev26y27hpbhu4
+      styled-components: 5.3.5_ovpqj5wn7dv5iunpkty63trwiy
 
   /babel-plugin-syntax-jsx/6.18.0:
     resolution: {integrity: sha1-CvMqmm4Tyno/1QaeYtew9Y0NiUY=}
@@ -28849,7 +28851,7 @@ packages:
     dependencies:
       eslint: 7.32.0
       eslint-config-airbnb-base: 14.2.1_hpmu7kn6tcn2vnxpfzvv33bxmy
-      eslint-plugin-import: 2.26.0_ffi3uiz42rv3jyhs6cr7p7qqry
+      eslint-plugin-import: 2.26.0_yuomakvifwhuugsn7tszrjtzoa
       eslint-plugin-jsx-a11y: 6.5.1_eslint@7.32.0
       eslint-plugin-react: 7.29.4_eslint@7.32.0
       eslint-plugin-react-hooks: 4.5.0_eslint@7.32.0
@@ -36821,7 +36823,7 @@ packages:
       jest-resolve:
         optional: true
     dependencies:
-      jest-resolve: 28.1.3
+      jest-resolve: 28.1.3_metro@0.67.0
     dev: true
 
   /jest-regex-util/24.9.0:
@@ -40412,6 +40414,55 @@ packages:
       react-refresh: 0.4.3
     transitivePeerDependencies:
       - supports-color
+    dev: true
+
+  /metro-react-native-babel-preset/0.64.0_@babel+core@7.17.10:
+    resolution: {integrity: sha512-HcZ0RWQRuJfpPiaHyFQJzcym+/dDIVUPwUAXWoub/C4GkGu+mPjp8vqK6g0FxokCnnI2TK0gZTza2IDfiNNscQ==}
+    peerDependencies:
+      '@babel/core': '*'
+    dependencies:
+      '@babel/core': 7.17.10
+      '@babel/plugin-proposal-class-properties': 7.16.7_@babel+core@7.17.10
+      '@babel/plugin-proposal-export-default-from': 7.16.7_@babel+core@7.17.10
+      '@babel/plugin-proposal-nullish-coalescing-operator': 7.16.7_@babel+core@7.17.10
+      '@babel/plugin-proposal-object-rest-spread': 7.17.3_@babel+core@7.17.10
+      '@babel/plugin-proposal-optional-catch-binding': 7.16.7_@babel+core@7.17.10
+      '@babel/plugin-proposal-optional-chaining': 7.16.7_@babel+core@7.17.10
+      '@babel/plugin-syntax-dynamic-import': 7.8.3_@babel+core@7.17.10
+      '@babel/plugin-syntax-export-default-from': 7.16.7_@babel+core@7.17.10
+      '@babel/plugin-syntax-flow': 7.16.7_@babel+core@7.17.10
+      '@babel/plugin-syntax-nullish-coalescing-operator': 7.8.3_@babel+core@7.17.10
+      '@babel/plugin-syntax-optional-chaining': 7.8.3_@babel+core@7.17.10
+      '@babel/plugin-transform-arrow-functions': 7.16.7_@babel+core@7.17.10
+      '@babel/plugin-transform-block-scoping': 7.16.7_@babel+core@7.17.10
+      '@babel/plugin-transform-classes': 7.16.7_@babel+core@7.17.10
+      '@babel/plugin-transform-computed-properties': 7.16.7_@babel+core@7.17.10
+      '@babel/plugin-transform-destructuring': 7.17.7_@babel+core@7.17.10
+      '@babel/plugin-transform-exponentiation-operator': 7.16.7_@babel+core@7.17.10
+      '@babel/plugin-transform-flow-strip-types': 7.16.7_@babel+core@7.17.10
+      '@babel/plugin-transform-for-of': 7.16.7_@babel+core@7.17.10
+      '@babel/plugin-transform-function-name': 7.16.7_@babel+core@7.17.10
+      '@babel/plugin-transform-literals': 7.16.7_@babel+core@7.17.10
+      '@babel/plugin-transform-modules-commonjs': 7.17.9_@babel+core@7.17.10
+      '@babel/plugin-transform-object-assign': 7.16.7_@babel+core@7.17.10
+      '@babel/plugin-transform-parameters': 7.16.7_@babel+core@7.17.10
+      '@babel/plugin-transform-react-display-name': 7.16.7_@babel+core@7.17.10
+      '@babel/plugin-transform-react-jsx': 7.18.10_@babel+core@7.17.10
+      '@babel/plugin-transform-react-jsx-self': 7.16.7_@babel+core@7.17.10
+      '@babel/plugin-transform-react-jsx-source': 7.16.7_@babel+core@7.17.10
+      '@babel/plugin-transform-regenerator': 7.17.9_@babel+core@7.17.10
+      '@babel/plugin-transform-runtime': 7.17.10_@babel+core@7.17.10
+      '@babel/plugin-transform-shorthand-properties': 7.16.7_@babel+core@7.17.10
+      '@babel/plugin-transform-spread': 7.16.7_@babel+core@7.17.10
+      '@babel/plugin-transform-sticky-regex': 7.16.7_@babel+core@7.17.10
+      '@babel/plugin-transform-template-literals': 7.16.7_@babel+core@7.17.10
+      '@babel/plugin-transform-typescript': 7.16.8_@babel+core@7.17.10
+      '@babel/plugin-transform-unicode-regex': 7.16.7_@babel+core@7.17.10
+      '@babel/template': 7.18.10
+      react-refresh: 0.4.3
+    transitivePeerDependencies:
+      - supports-color
+    dev: false
 
   /metro-react-native-babel-preset/0.67.0:
     resolution: {integrity: sha512-tgTG4j0SKwLHbLRELMmgkgkjV1biYkWlGGKOmM484/fJC6bpDikdaFhfjsyE+W+qt7I5szbCPCickMTNQ+zwig==}
@@ -46189,6 +46240,8 @@ packages:
       react-native: '>=0.60.0'
     dependencies:
       react-native: 0.68.2_qiqqwmyv63yhnuboofexv3s7x4
+  /react-native-appboy-sdk/1.39.0:
+    resolution: {integrity: sha512-wznVPwW5v+8JlukRKsFrPhm6tD1k7Xo9KvD0BEZ1/n6ABwwz972D6HVvW3IICPMbZ70OaBv3rrdsR9fCzwDkxg==}
     dev: false
 
   /react-native-ble-plx/2.0.3:
@@ -50476,7 +50529,6 @@ packages:
       react-is: 17.0.2
       shallowequal: 1.1.0
       supports-color: 5.5.0
-    dev: false
 
   /styled-system/5.1.5:
     resolution: {integrity: sha512-7VoD0o2R3RKzOzPK0jYrVnS8iJdfkKsQJNiLRDjikOpQVqQHns/DXWaPZOH4tIKkhAT7I6wIsy9FWTWh2X3q+A==}
