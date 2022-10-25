@@ -11,7 +11,7 @@ import { ScreenName } from "../../../const";
 
 type Props = {
   deviceId: string;
-  initialDeviceName?: string | null;
+  initialDeviceName: string;
   deviceModel: { id: string; productName: string };
   disabled: boolean;
 };

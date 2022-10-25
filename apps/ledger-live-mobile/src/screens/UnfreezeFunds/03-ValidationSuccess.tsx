@@ -2,37 +2,33 @@ import React, { useCallback } from "react";
 import { View, StyleSheet } from "react-native";
 import { useSelector } from "react-redux";
 import { Trans } from "react-i18next";
-import { CompositeScreenProps, useTheme } from "@react-navigation/native";
-import type { Transaction as TronTransaction } from "@ledgerhq/live-common/families/tron/types";
+import type { Operation } from "@ledgerhq/types-live";
+import { useTheme } from "@react-navigation/native";
 import { accountScreenSelector } from "../../reducers/accounts";
 import { TrackScreen } from "../../analytics";
 import { ScreenName } from "../../const";
 import PreventNativeBack from "../../components/PreventNativeBack";
 import ValidateSuccess from "../../components/ValidateSuccess";
-import type {
-  StackNavigatorNavigation,
-  StackNavigatorProps,
-} from "../../components/RootNavigator/types/helpers";
-import { UnfreezeNavigatorParamList } from "../../components/RootNavigator/types/UnfreezeNavigator";
-import { BaseNavigatorStackParamList } from "../../components/RootNavigator/types/BaseNavigator";
 
-type Props = CompositeScreenProps<
-  StackNavigatorProps<
-    UnfreezeNavigatorParamList,
-    ScreenName.UnfreezeValidationSuccess
-  >,
-  StackNavigatorProps<BaseNavigatorStackParamList>
->;
-
+type Props = {
+  navigation: any;
+  route: {
+    params: RouteParams;
+  };
+};
+type RouteParams = {
+  accountId: string;
+  deviceId: string;
+  transaction: any;
+  result: Operation;
+};
 export default function ValidationSuccess({ navigation, route }: Props) {
   const { colors } = useTheme();
   const { account } = useSelector(accountScreenSelector(route));
   const transaction = route.params.transaction;
-  const resource = (transaction as TronTransaction).resource || "";
+  const resource = transaction.resource || "";
   const onClose = useCallback(() => {
-    navigation
-      .getParent<StackNavigatorNavigation<BaseNavigatorStackParamList>>()
-      .pop();
+    navigation.getParent().pop();
   }, [navigation]);
   const goToOperationDetails = useCallback(() => {
     if (!account) return;

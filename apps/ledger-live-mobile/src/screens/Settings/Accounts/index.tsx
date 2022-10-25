@@ -4,7 +4,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { TouchableOpacity, View, StyleSheet, SectionList } from "react-native";
 import { findTokenById } from "@ledgerhq/live-common/currencies/index";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { DefaultTheme, useTheme } from "styled-components/native";
+import { useTheme } from "styled-components/native";
 import SettingsRow from "../../../components/SettingsRow";
 import { showToken } from "../../../actions/settings";
 import {
@@ -18,17 +18,9 @@ import { TrackScreen } from "../../../analytics";
 import HideEmptyTokenAccountsRow from "./HideEmptyTokenAccountsRow";
 import Close from "../../../icons/Close";
 import { ScreenName } from "../../../const";
-import { SettingsNavigatorStackParamList } from "../../../components/RootNavigator/types/SettingsNavigator";
-import type { Theme } from "../../../colors";
-import { StackNavigatorProps } from "../../../components/RootNavigator/types/helpers";
 
-export default function AccountsSettings({
-  navigation,
-}: StackNavigatorProps<
-  SettingsNavigatorStackParamList,
-  ScreenName.AccountsSettings
->) {
-  const { colors } = useTheme() as DefaultTheme & Theme;
+export default function AccountsSettings({ navigation }: { navigation: any }) {
+  const { colors } = useTheme();
   const { t } = useTranslation();
   const blacklistedTokenIds = useSelector(blacklistedTokenIdsSelector);
   const currencies = useSelector(cryptoCurrenciesSelector);
@@ -42,7 +34,10 @@ export default function AccountsSettings({
       section: { parentCurrency: CryptoCurrency };
     }) => (
       <View style={styles.section}>
-        <LText style={[styles.sectionTitle, { backgroundColor: colors.card }]}>
+        <LText
+          primary
+          style={[styles.sectionTitle, { backgroundColor: colors.card }]}
+        >
           {parentCurrency.name}
         </LText>
       </View>

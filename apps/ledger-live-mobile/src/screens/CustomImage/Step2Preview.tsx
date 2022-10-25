@@ -7,6 +7,7 @@ import {
   NativeSyntheticEvent,
   Pressable,
 } from "react-native";
+import { StackScreenProps } from "@react-navigation/stack";
 import { SafeAreaView } from "react-native-safe-area-context";
 import useResizedImage, {
   Params as ImageResizerParams,
@@ -22,12 +23,8 @@ import BottomButtonsContainer from "../../components/CustomImage/BottomButtonsCo
 import ContrastChoice from "../../components/CustomImage/ContrastChoice";
 import { ScreenName } from "../../const";
 import { ImagePreviewError } from "../../components/CustomImage/errors";
+import { ParamList } from "./types";
 import FramedImage from "../../components/CustomImage/FramedImage";
-import { CustomImageNavigatorParamList } from "../../components/RootNavigator/types/CustomImageNavigator";
-import {
-  BaseComposite,
-  StackNavigatorProps,
-} from "../../components/RootNavigator/types/helpers";
 
 export const PreviewImage = styled.Image.attrs({
   resizeMode: "contain",
@@ -44,13 +41,6 @@ const contrasts = [
   { val: 3, color: "neutral.c30" },
 ];
 
-type NavigationProps = BaseComposite<
-  StackNavigatorProps<
-    CustomImageNavigatorParamList,
-    ScreenName.CustomImageStep2Preview
-  >
->;
-
 /**
  * UI component that loads the input image (from the route params) &
  * displays it in a preview UI with some contrast options & a confirm button at
@@ -58,7 +48,9 @@ type NavigationProps = BaseComposite<
  * Then on confirmation it navigates to the transfer step with the raw hex data
  * of the image & the preview base 64 data URI of the image as params.
  */
-const Step2Preview = ({ navigation, route }: NavigationProps) => {
+const Step2Preview: React.FC<
+  StackScreenProps<ParamList, "CustomImageStep2Preview">
+> = ({ navigation, route }) => {
   const imageProcessorRef = useRef<ImageProcessor>(null);
   const [loading, setLoading] = useState(true);
   const [resizedImage, setResizedImage] = useState<ResizeResult | null>(null);
@@ -76,7 +68,10 @@ const Step2Preview = ({ navigation, route }: NavigationProps) => {
   const handleError = useCallback(
     (error: Error) => {
       console.error(error);
-      navigation.navigate(ScreenName.CustomImageErrorScreen, { error, device });
+      navigation.navigate(
+        ScreenName.CustomImageErrorScreen as "CustomImageErrorScreen",
+        { error, device },
+      );
     },
     [navigation, device],
   );
@@ -117,11 +112,14 @@ const Step2Preview = ({ navigation, route }: NavigationProps) => {
          * */
         throw new ImagePreviewError();
       }
-      navigation.navigate(ScreenName.CustomImageStep3Transfer, {
-        rawData: data,
-        previewData: processorPreviewImage,
-        device,
-      });
+      navigation.navigate(
+        ScreenName.CustomImageStep3Transfer as "CustomImageStep3Transfer",
+        {
+          rawData: data,
+          previewData: processorPreviewImage,
+          device,
+        },
+      );
       setRawResultLoading(false);
     },
     [navigation, setRawResultLoading, processorPreviewImage, device],
@@ -141,7 +139,7 @@ const Step2Preview = ({ navigation, route }: NavigationProps) => {
   }, [imageProcessorRef, setRawResultLoading]);
 
   return (
-    <SafeAreaView edges={["bottom"]}>
+    <SafeAreaView edges={["bottom"]} flex={1}>
       {resizedImage?.imageBase64DataUri && (
         <ImageProcessor
           ref={imageProcessorRef}

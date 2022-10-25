@@ -5,9 +5,6 @@ import { useTheme } from "styled-components/native";
 import { ScreenName } from "../../const";
 import PasswordRemove from "../../screens/Settings/General/PasswordRemove";
 import { getStackNavigatorConfig } from "../../navigation/navigatorConfig";
-import { PasswordModifyFlowParamList } from "./types/PasswordModifyFlowNavigator";
-
-const Stack = createStackNavigator<PasswordModifyFlowParamList>();
 
 export default function PasswordModifyFlowNavigator() {
   const { t } = useTranslation();
@@ -28,3 +25,4 @@ export default function PasswordModifyFlowNavigator() {
     </Stack.Navigator>
   );
 }
+const Stack = createStackNavigator();

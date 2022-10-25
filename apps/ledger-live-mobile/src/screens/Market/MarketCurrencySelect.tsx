@@ -2,15 +2,12 @@ import { useMarketData } from "@ledgerhq/live-common/market/MarketDataProvider";
 import { Flex, Icon, SearchInput, Text } from "@ledgerhq/native-ui";
 import React, { useCallback, memo, useState, useRef, useEffect } from "react";
 import { Trans, useTranslation } from "react-i18next";
-import { FlatList, TouchableOpacity, Image, TextInput } from "react-native";
+import { FlatList, TouchableOpacity, Image } from "react-native";
 import styled, { useTheme } from "styled-components/native";
 import { useDispatch } from "react-redux";
 import Search from "../../components/Search";
 import { supportedCountervalues } from "../../reducers/settings";
 import { setMarketCounterCurrency } from "../../actions/settings";
-import type { StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
-import type { BaseNavigatorStackParamList } from "../../components/RootNavigator/types/BaseNavigator";
-import { ScreenName } from "../../const";
 
 const RenderEmptyList = ({
   theme,
@@ -19,8 +16,7 @@ const RenderEmptyList = ({
   theme: string;
   search: string;
 }) => (
-  // FIXME: NO textAlign ON VIEW COMPONENTS
-  <Flex alignItems="center">
+  <Flex alignItems="center" textAlign="center">
     <Image
       style={{ width: 164, height: 164 }}
       source={
@@ -56,19 +52,14 @@ const CheckIconContainer = styled(Flex).attrs({
   border-radius: 24px;
 `;
 
-type Props = StackNavigatorProps<
-  BaseNavigatorStackParamList,
-  ScreenName.MarketCurrencySelect
->;
-
-function MarketCurrencySelect({ navigation }: Props) {
+function MarketCurrencySelect({ navigation }: { navigation: any }) {
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const { colors } = useTheme();
   const { counterCurrency, supportedCounterCurrencies, setCounterCurrency } =
     useMarketData();
   const [search, setSearch] = useState("");
-  const ref = useRef<TextInput | null>(null);
+  const ref = useRef();
 
   useEffect(() => {
     if (ref && ref?.current?.focus) ref.current.focus();
@@ -90,7 +81,7 @@ function MarketCurrencySelect({ navigation }: Props) {
       setCounterCurrency(value);
       navigation.goBack();
     },
-    [dispatch, navigation, setCounterCurrency],
+    [navigation, setCounterCurrency],
   );
 
   const renderItem = useCallback(
@@ -149,6 +140,7 @@ function MarketCurrencySelect({ navigation }: Props) {
         value={search}
         onChange={setSearch}
         ref={ref}
+        bg="background.main"
       />
 
       <Search

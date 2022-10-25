@@ -1,18 +1,17 @@
 import React, { memo, useState, useCallback } from "react";
 import { Image, View, StyleSheet } from "react-native";
-import { DefaultTheme, useTheme } from "styled-components/native";
-import { Theme } from "../../colors";
+import { useTheme } from "styled-components/native";
 import LText from "../../components/LText";
 
 type Props = {
-  name?: string | null;
+  name?: string;
   icon?: string | null;
   size?: number;
   isDisabled?: boolean;
 };
 
 function AppIcon({ size = 48, name, icon, isDisabled }: Props) {
-  const { colors } = useTheme() as DefaultTheme & Theme;
+  const { colors } = useTheme();
   const [imageLoaded, setImageLoaded] = useState(true);
   const handleImageLoad = useCallback(() => setImageLoaded(true), []);
   const handleImageError = useCallback(() => setImageLoaded(false), []);

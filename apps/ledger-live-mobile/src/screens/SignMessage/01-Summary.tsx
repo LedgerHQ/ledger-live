@@ -1,7 +1,9 @@
 import React, { useCallback } from "react";
 import { View, StyleSheet, ScrollView } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import SafeAreaView from "react-native-safe-area-view";
 import { Trans } from "react-i18next";
+import type { TypedMessageData } from "@ledgerhq/live-common/families/ethereum/types";
+import type { MessageData } from "@ledgerhq/live-common/hw/signMessage/types";
 import {
   getAccountCurrency,
   getAccountName,
@@ -15,25 +17,39 @@ import Button from "../../components/Button";
 import WalletIcon from "../../icons/Wallet";
 import LText from "../../components/LText";
 import ParentCurrencyIcon from "../../components/ParentCurrencyIcon";
-import { SignMessageNavigatorStackParamList } from "../../components/RootNavigator/types/SignMessageNavigator";
-import { StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
 
-function SignSummary({
-  navigation,
-  route,
-}: StackNavigatorProps<
-  SignMessageNavigatorStackParamList,
-  ScreenName.SignSummary
->) {
+const forceInset = {
+  bottom: "always",
+};
+type Props = {
+  navigation: any;
+  route: {
+    params: RouteParams;
+  };
+};
+export type RouteParams = {
+  accountId: string;
+  message: MessageData | TypedMessageData;
+  onConfirmationHandler?: (_: MessageData | TypedMessageData) => void;
+  onFailHandler?: (_: Error) => void;
+  currentNavigation?: string;
+  nextNavigation?: string;
+};
+const defaultParams = {
+  currentNavigation: ScreenName.SignSummary,
+  nextNavigation: ScreenName.SignSelectDevice,
+};
+
+function SignSummary({ navigation, route: initialRoute }: Props) {
   const { colors } = useTheme();
+  const route = {
+    ...initialRoute,
+    params: { ...defaultParams, ...initialRoute.params },
+  };
   const { account } = useSelector(accountScreenSelector(route));
   const { nextNavigation, message } = route.params;
   const navigateToNext = useCallback(() => {
-    nextNavigation &&
-      // @ts-expect-error impossible to type navigation hacks
-      navigation.navigate(nextNavigation, {
-        ...route.params,
-      });
+    navigation.navigate(nextNavigation, { ...route.params });
   }, [navigation, nextNavigation, route.params]);
   const onContinue = useCallback(() => {
     navigateToNext();
@@ -46,6 +62,7 @@ function SignSummary({
           backgroundColor: colors.background,
         },
       ]}
+      forceInset={forceInset}
     >
       <TrackScreen category="SignMessage" name="Summary" />
       <View style={styles.body}>
@@ -58,7 +75,7 @@ function SignSummary({
               },
             ]}
           >
-            <WalletIcon size={16} />
+            <WalletIcon color={colors.live} size={16} />
           </View>
           <View style={styles.fromInnerContainer}>
             <LText style={styles.from}>
@@ -66,12 +83,10 @@ function SignSummary({
             </LText>
             <View style={styles.headerContainer}>
               <View style={styles.headerIconContainer}>
-                {account ? (
-                  <ParentCurrencyIcon
-                    size={18}
-                    currency={getAccountCurrency(account)}
-                  />
-                ) : null}
+                <ParentCurrencyIcon
+                  size={18}
+                  currency={account && getAccountCurrency(account)}
+                />
               </View>
               <LText semiBold secondary numberOfLines={1}>
                 {account && getAccountName(account)}
@@ -92,7 +107,7 @@ function SignSummary({
             <Trans i18nKey="walletconnect.message" />
           </LText>
           <LText semiBold>
-            {(message.message as { domain?: unknown }).domain
+            {message.message.domain
               ? JSON.stringify(message.message)
               : message.message}
           </LText>

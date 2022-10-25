@@ -8,7 +8,6 @@ import { getAccountUnit } from "@ledgerhq/live-common/account/helpers";
 import { getCryptoCurrencyIcon } from "@ledgerhq/live-common/reactNative";
 import type { Account } from "@ledgerhq/types-live";
 import invariant from "invariant";
-import { TronAccount } from "@ledgerhq/live-common/families/tron/types";
 import InfoModal from "../../modals/Info";
 import type { ModalInfo } from "../../modals/Info";
 import FreezeIcon from "../../icons/Freeze";
@@ -32,7 +31,7 @@ function AccountBalanceSummaryFooter({ account }: Props) {
     energy: formattedEnergy,
     bandwidth,
     tronPower,
-  } = (account as TronAccount).tronResources || {};
+  } = account.tronResources || {};
   const { freeUsed, freeLimit, gainedUsed, gainedLimit } = bandwidth || {};
   const unit = getAccountUnit(account);
   const formattedBandwidth = useMemo(
@@ -97,7 +96,7 @@ function AccountBalanceSummaryFooter({ account }: Props) {
 }
 
 export default function AccountBalanceFooter({ account }: Props) {
-  if (!(account as TronAccount).tronResources) return null;
+  if (!account.tronResources) return null;
   return <AccountBalanceSummaryFooter account={account} />;
 }
 

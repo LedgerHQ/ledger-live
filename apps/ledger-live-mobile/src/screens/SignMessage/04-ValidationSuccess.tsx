@@ -1,33 +1,33 @@
 import React, { useCallback, useContext, useEffect } from "react";
 import { View, StyleSheet } from "react-native";
 import { useTranslation } from "react-i18next";
-import { CompositeScreenProps, useTheme } from "@react-navigation/native";
+import type { TypedMessageData } from "@ledgerhq/live-common/families/ethereum/types";
+import type { MessageData } from "@ledgerhq/live-common/hw/signMessage/types";
+import { useTheme } from "@react-navigation/native";
 import { TrackScreen } from "../../analytics";
 import PreventNativeBack from "../../components/PreventNativeBack";
 import ValidateSuccess from "../../components/ValidateSuccess";
 
 import {
+  // eslint-disable-next-line import/named
   context as _wcContext,
+  // eslint-disable-next-line import/named
   setCurrentCallRequestResult,
 } from "../WalletConnect/Provider";
-import { ScreenName } from "../../const";
-import type { BaseNavigatorStackParamList } from "../../components/RootNavigator/types/BaseNavigator";
-import type { SignMessageNavigatorStackParamList } from "../../components/RootNavigator/types/SignMessageNavigator";
-import type {
-  StackNavigatorNavigation,
-  StackNavigatorProps,
-} from "../../components/RootNavigator/types/helpers";
 
-export default function ValidationSuccess({
-  navigation,
-  route,
-}: CompositeScreenProps<
-  StackNavigatorProps<
-    SignMessageNavigatorStackParamList,
-    ScreenName.SignValidationSuccess
-  >,
-  StackNavigatorProps<BaseNavigatorStackParamList>
->) {
+type Props = {
+  navigation: any;
+  route: {
+    params: RouteParams;
+  };
+};
+type RouteParams = {
+  accountId: string;
+  message: TypedMessageData | MessageData;
+  signature: string;
+  onConfirmationHandler?: (_: MessageData | TypedMessageData) => void;
+};
+export default function ValidationSuccess({ navigation, route }: Props) {
   const { colors } = useTheme();
   const { t } = useTranslation();
   const { signature, onConfirmationHandler } = route.params;
@@ -37,14 +37,12 @@ export default function ValidationSuccess({
       setCurrentCallRequestResult(signature);
     }
 
-    if (onConfirmationHandler && signature) {
+    if (onConfirmationHandler) {
       onConfirmationHandler(signature);
     }
   }, [wcContext.currentCallRequestId, onConfirmationHandler, signature]);
   const onClose = useCallback(() => {
-    navigation
-      .getParent<StackNavigatorNavigation<BaseNavigatorStackParamList>>()
-      .pop();
+    navigation.getParent().pop();
   }, [navigation]);
   return (
     <View

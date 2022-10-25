@@ -37,7 +37,8 @@ const DeviceSetupView = ({
   };
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: colors.background.main }}>
+    // eslint-disable-next-line react-native/no-inline-styles
+    <SafeAreaView style={{ flex: 1, background: colors.background.main }}>
       <Flex
         px={6}
         pt={8}

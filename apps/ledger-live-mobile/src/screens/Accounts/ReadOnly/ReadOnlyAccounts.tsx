@@ -10,7 +10,7 @@ import {
   listTokens,
   useCurrenciesByMarketcap,
 } from "@ledgerhq/live-common/currencies/index";
-import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import TrackScreen from "../../../analytics/TrackScreen";
 
 import ReadOnlyAccountRow from "./ReadOnlyAccountRow";
@@ -21,32 +21,27 @@ import TabBarSafeAreaView, {
   TAB_BAR_SAFE_HEIGHT,
 } from "../../../components/TabBar/TabBarSafeAreaView";
 import AccountsNavigationHeader from "../AccountsNavigationHeader";
-import { AnalyticsContext } from "../../../analytics/AnalyticsContext";
-import { StackNavigatorProps } from "../../../components/RootNavigator/types/helpers";
-import { AccountsNavigatorParamList } from "../../../components/RootNavigator/types/AccountsNavigator";
-import { ScreenName } from "../../../const";
+// eslint-disable-next-line import/no-cycle
+import { AnalyticsContext } from "../../../components/RootNavigator";
 
-type NavigationProps = StackNavigatorProps<
-  AccountsNavigatorParamList,
-  ScreenName.Accounts
->;
+type Props = {
+  navigation: any;
+  route: { params?: { currency?: string; search?: string } };
+};
 
 const maxReadOnlyCryptoCurrencies = 10;
 
-function ReadOnlyAccounts({ navigation, route }: NavigationProps) {
+function ReadOnlyAccounts({ navigation, route }: Props) {
   const listSupportedTokens = useCallback(
     () => listTokens().filter(t => isCurrencySupported(t.parentCurrency)),
     [],
   );
   const cryptoCurrencies = useMemo(
-    () =>
-      (listSupportedCurrencies() as (TokenCurrency | CryptoCurrency)[]).concat(
-        listSupportedTokens(),
-      ),
+    () => listSupportedCurrencies().concat(listSupportedTokens()),
     [listSupportedTokens],
   );
   const sortedCryptoCurrencies = useCurrenciesByMarketcap(cryptoCurrencies);
-  const currencies = useMemo(
+  const accounts = useMemo(
     () => sortedCryptoCurrencies.slice(0, maxReadOnlyCryptoCurrencies),
     [sortedCryptoCurrencies],
   );
@@ -56,7 +51,7 @@ function ReadOnlyAccounts({ navigation, route }: NavigationProps) {
   const { params } = route;
 
   const renderItem = useCallback(
-    ({ item }: { item: CryptoCurrency | TokenCurrency }) => (
+    ({ item }: { item: CryptoCurrency }) => (
       <ReadOnlyAccountRow
         navigation={navigation}
         currency={item}
@@ -70,7 +65,7 @@ function ReadOnlyAccounts({ navigation, route }: NavigationProps) {
 
   useFocusEffect(
     useCallback(() => {
-      setScreen && setScreen("Assets");
+      setScreen("Assets");
 
       return () => {
         setSource("Assets");
@@ -84,9 +79,9 @@ function ReadOnlyAccounts({ navigation, route }: NavigationProps) {
       <Flex flex={1} bg={"background.main"}>
         <AccountsNavigationHeader readOnly />
         <FlatList
-          data={currencies}
+          data={accounts}
           renderItem={renderItem}
-          keyExtractor={(i: CryptoCurrency | TokenCurrency) => i.id}
+          keyExtractor={(i: any) => i.id}
           contentContainerStyle={{
             paddingHorizontal: 16,
             paddingBottom: TAB_BAR_SAFE_HEIGHT,

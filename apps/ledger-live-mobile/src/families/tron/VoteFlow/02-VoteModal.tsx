@@ -1,13 +1,17 @@
+/* eslint-disable jsx-a11y/anchor-is-valid */
 import React, { memo, useCallback, useState, useMemo, useRef } from "react";
 import { View, StyleSheet, TextInput } from "react-native";
 import { Trans, useTranslation } from "react-i18next";
 import { Vote } from "@ledgerhq/live-common/families/tron/types";
+
 import { useTheme } from "@react-navigation/native";
 import { BottomDrawer, Flex, Link } from "@ledgerhq/native-ui";
 import { TrashMedium } from "@ledgerhq/native-ui/assets/icons";
 import Switch from "../../../components/Switch";
 import LText from "../../../components/LText";
 import Check from "../../../icons/Check";
+
+// eslint-disable-next-line import/no-unresolved
 import getFontStyle from "../../../components/LText/getFontStyle";
 import KeyboardView from "../../../components/KeyboardView";
 
@@ -40,7 +44,7 @@ const VoteModal = ({
 
   const [useAllAmount, setUseAllAmount] = useState(false);
 
-  const inputRef = useRef<TextInput>(null);
+  const inputRef = useRef();
 
   const { current: votesAvailable } = useRef(
     tronPower -
@@ -84,6 +88,7 @@ const VoteModal = ({
     <BottomDrawer
       isOpen={!!vote}
       onClose={onClose}
+      coverScreen
       onModalShow={focusInput}
       title={name || address}
       subtitle={t("vote.castVotes.voteFor")}

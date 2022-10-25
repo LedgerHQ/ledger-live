@@ -2,11 +2,19 @@ import React, { useMemo } from "react";
 import { useTheme } from "styled-components/native";
 import { createStackNavigator } from "@react-navigation/stack";
 
-import { ScreenName } from "../../const";
-import CompletionScreen from "../../screens/SyncOnboarding/CompletionScreen";
-import { SyncOnboardingStackParamList } from "./types/SyncOnboardingNavigator";
-import { SyncOnboarding } from "../../screens/SyncOnboarding";
 import { getStackNavigatorConfig } from "../../navigation/navigatorConfig";
+import { ScreenName } from "../../const";
+import { SyncOnboarding } from "../../screens/SyncOnboarding/index";
+import CompletionScreen from "../../screens/SyncOnboarding/CompletionScreen";
+import {
+  SyncOnboardingCompanionParams,
+  SyncOnboardingCompletionScreenParams,
+} from "../../screens/SyncOnboarding/types";
+
+export type SyncOnboardingStackParamList = {
+  SyncOnboardingCompanion: SyncOnboardingCompanionParams;
+  SyncOnboardingCompletion: SyncOnboardingCompletionScreenParams;
+};
 
 const Stack = createStackNavigator<SyncOnboardingStackParamList>();
 
@@ -25,11 +33,11 @@ export const SyncOnboardingNavigator = () => {
       }}
     >
       <Stack.Screen
-        name={ScreenName.SyncOnboardingCompanion}
+        name={ScreenName.SyncOnboardingCompanion as "SyncOnboardingCompanion"}
         component={SyncOnboarding}
       />
       <Stack.Screen
-        name={ScreenName.SyncOnboardingCompletion}
+        name={ScreenName.SyncOnboardingCompletion as "SyncOnboardingCompletion"}
         component={CompletionScreen}
       />
     </Stack.Navigator>

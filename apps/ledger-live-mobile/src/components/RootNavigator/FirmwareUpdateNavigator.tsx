@@ -10,7 +10,6 @@ import FirmwareUpdateConfirmation from "../../screens/FirmwareUpdate/04-Confirma
 import FirmwareUpdateFailure from "../../screens/FirmwareUpdate/04-Failure";
 import { getStackNavigatorConfig } from "../../navigation/navigatorConfig";
 import StepHeader from "../StepHeader";
-import { FirmwareUpdateNavigatorParamList } from "./types/FirmwareUpdateNavigator";
 
 export default function FirmwareUpdateNavigator() {
   const { t } = useTranslation();
@@ -32,7 +31,7 @@ export default function FirmwareUpdateNavigator() {
         name={ScreenName.FirmwareUpdateCheckId}
         component={FirmwareUpdateCheckId}
         options={{
-          headerLeft: undefined,
+          headerLeft: null,
           headerTitle: () => (
             <StepHeader
               subtitle={<Trans i18nKey="FirmwareUpdate.title" />}
@@ -45,7 +44,7 @@ export default function FirmwareUpdateNavigator() {
         name={ScreenName.FirmwareUpdateMCU}
         component={FirmwareUpdateMCU}
         options={{
-          headerLeft: undefined,
+          headerLeft: null,
           headerTitle: () => (
             <StepHeader
               subtitle={<Trans i18nKey="FirmwareUpdate.title" />}
@@ -71,4 +70,4 @@ export default function FirmwareUpdateNavigator() {
     </Stack.Navigator>
   );
 }
-const Stack = createStackNavigator<FirmwareUpdateNavigatorParamList>();
+const Stack = createStackNavigator();

@@ -30,6 +30,7 @@ export default function HardResetRow() {
         arrowRight
       />
       <BottomDrawer
+        id="HardResetModal"
         isOpen={isModalOpened}
         onClose={onRequestClose}
         Icon={InfoMedium}

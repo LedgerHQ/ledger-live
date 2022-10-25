@@ -9,22 +9,10 @@ import Button from "../components/wrappedUi/Button";
 import { NavigatorName, ScreenName } from "../const";
 import { useNavigationInterceptor } from "./Onboarding/onboardingContext";
 import { TrackScreen } from "../analytics";
-import {
-  RootNavigationComposite,
-  StackNavigatorNavigation,
-} from "../components/RootNavigator/types/helpers";
-import { BaseNavigatorStackParamList } from "../components/RootNavigator/types/BaseNavigator";
-
-type NavigationProp = RootNavigationComposite<
-  StackNavigatorNavigation<
-    BaseNavigatorStackParamList,
-    ScreenName.NoDeviceWallScreen
-  >
->;
 
 export default function PostBuyDeviceSetupNanoWallScreen() {
   const { t } = useTranslation();
-  const navigation = useNavigation<NavigationProp>();
+  const navigation = useNavigation();
   const { setShowWelcome, setFirstTimeOnboarding } = useNavigationInterceptor();
 
   const setupDevice = useCallback(() => {

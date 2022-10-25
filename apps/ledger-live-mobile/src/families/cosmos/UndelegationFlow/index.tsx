@@ -11,7 +11,6 @@ import SelectDevice from "../../../screens/SelectDevice";
 import ConnectDevice from "../../../screens/ConnectDevice";
 import UndelegationValidationError from "./03-ValidationError";
 import UndelegationValidationSuccess from "./03-ValidationSuccess";
-import type { CosmosUndelegationFlowParamList } from "./types";
 
 const totalSteps = "3";
 
@@ -60,7 +59,7 @@ function UndelegationFlow() {
         name={ScreenName.CosmosUndelegationConnectDevice}
         component={ConnectDevice}
         options={{
-          headerLeft: undefined,
+          headerLeft: null,
           gestureEnabled: false,
           headerTitle: () => (
             <StepHeader
@@ -85,9 +84,9 @@ function UndelegationFlow() {
         name={ScreenName.CosmosUndelegationValidationSuccess}
         component={UndelegationValidationSuccess}
         options={{
-          headerLeft: undefined,
+          headerLeft: null,
           headerTitle: "",
-          headerRight: undefined,
+          headerRight: null,
           gestureEnabled: false,
         }}
       />
@@ -99,4 +98,4 @@ const options = {
   headerShown: false,
 };
 export { UndelegationFlow as component, options };
-const Stack = createStackNavigator<CosmosUndelegationFlowParamList>();
+const Stack = createStackNavigator();

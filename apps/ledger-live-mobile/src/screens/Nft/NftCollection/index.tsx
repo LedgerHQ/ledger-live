@@ -6,20 +6,14 @@ import {
   Platform,
   SectionList,
   FlatList,
-  SectionListData,
-  SectionListRenderItemInfo,
 } from "react-native";
 import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { useNavigation, useTheme } from "@react-navigation/native";
 import { groupAccountOperationsByDay } from "@ledgerhq/live-common/account/index";
 import Animated, { Value, event } from "react-native-reanimated";
-import {
-  Account,
-  DailyOperationsSection,
-  Operation,
-  ProtoNFT,
-} from "@ledgerhq/types-live";
+import { SectionBase } from "react-native/Libraries/Lists/SectionList";
+import { Operation, ProtoNFT } from "@ledgerhq/types-live";
 import NoMoreOperationFooter from "../../../components/NoMoreOperationFooter";
 import { accountScreenSelector } from "../../../reducers/accounts";
 import LoadingFooter from "../../../components/LoadingFooter";
@@ -33,31 +27,30 @@ import { withDiscreetMode } from "../../../context/DiscreetModeContext";
 import TabBarSafeAreaView, {
   TAB_BAR_SAFE_HEIGHT,
 } from "../../../components/TabBar/TabBarSafeAreaView";
-import {
-  BaseComposite,
-  StackNavigatorProps,
-} from "../../../components/RootNavigator/types/helpers";
-import { AccountsNavigatorParamList } from "../../../components/RootNavigator/types/AccountsNavigator";
 
 const MAX_NFT_FIRST_RENDER = 12;
 const NFTS_TO_ADD_ON_LIST_END_REACHED = 6;
 
-type NavigationProps = BaseComposite<
-  StackNavigatorProps<AccountsNavigatorParamList, ScreenName.NftCollection>
->;
+type Props = {
+  navigation: any;
+  route: RouteParams;
+};
 
-const NftList = Animated.createAnimatedComponent(FlatList) as typeof FlatList;
-const OperationsList = Animated.createAnimatedComponent(
-  SectionList,
-) as typeof SectionList;
+type RouteParams = {
+  params: {
+    accountId: string;
+    collection: ProtoNFT[];
+  };
+};
 
-const renderOperationSectionHeader = ({
-  section,
-}: {
-  section: SectionListData<Operation, DailyOperationsSection>;
-}) => <SectionHeader section={section} />;
+const NftList = Animated.createAnimatedComponent(FlatList);
+const OperationsList = Animated.createAnimatedComponent(SectionList);
 
-const NftCollection = ({ route }: NavigationProps) => {
+const renderOperationSectionHeader = ({ section }: any) => (
+  <SectionHeader section={section} />
+);
+
+const NftCollection = ({ route }: Props) => {
   const navigation = useNavigation();
   const { t } = useTranslation();
   const { colors } = useTheme();
@@ -86,14 +79,13 @@ const NftCollection = ({ route }: NavigationProps) => {
     [nftCount, collection],
   );
   const sendToken = () => {
-    account &&
-      navigation.navigate(NavigatorName.SendFunds, {
-        screen: ScreenName.SendNft,
-        params: {
-          account: account as Account,
-          collection,
-        },
-      });
+    navigation.navigate(NavigatorName.SendFunds, {
+      screen: ScreenName.SendNft,
+      params: {
+        account,
+        collection,
+      },
+    });
   };
 
   const renderNftItem = useCallback(
@@ -129,7 +121,15 @@ const NftCollection = ({ route }: NavigationProps) => {
   });
 
   const renderOperationItem = useCallback(
-    ({ item, index, section }: SectionListRenderItemInfo<Operation>) => {
+    ({
+      item,
+      index,
+      section,
+    }: {
+      item: Operation;
+      index: number;
+      section: SectionBase<any>;
+    }) => {
       if (!account) return null;
 
       return (

@@ -6,7 +6,7 @@ import { accountScreenSelector } from "../../reducers/accounts";
 import { NavigatorName, ScreenName } from "../../const";
 import { navigate, isReadyRef } from "../../rootnavigation";
 
-const useAccount = (accountId: string) => {
+const useAccount = accountId => {
   const { account } = useSelector(
     accountScreenSelector({
       params: {
@@ -31,6 +31,7 @@ const Provider = ({ children }: { children: React.ReactNode }) => {
     return () => clearInterval(interval);
   });
   return (
+    // $FlowFixMe
     <ProviderCommon
       onMessage={(wcCallRequest, account) => {
         if (

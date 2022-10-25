@@ -49,11 +49,7 @@ type State = {
   progress?: number;
 };
 
-type InstallLanguageAction = Action<
-  Language | undefined,
-  State,
-  boolean | undefined
->;
+type InstallLanguageAction = Action<Language, State, boolean | undefined>;
 
 const mapResult = ({ languageInstalled }: State) => languageInstalled;
 
@@ -299,7 +295,7 @@ export const createAction = (
 
   const useHook = (
     device: Device | null | undefined,
-    language: Language | undefined
+    language: Language
   ): State => {
     const [state, setState] = useState(() => getInitialState(device));
     const deviceSubject = useReplaySubject(device);

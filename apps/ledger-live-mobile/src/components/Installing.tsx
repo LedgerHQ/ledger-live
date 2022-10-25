@@ -29,7 +29,7 @@ export default function Installing({ progress, installing }: Props) {
           </Spinning>
         </View>
       ) : (
-        <DeviceActionProgress progress={progress} />
+        <DeviceActionProgress progress={progress} size={60} />
       )}
       <LText semiBold style={styles.title}>
         <Trans

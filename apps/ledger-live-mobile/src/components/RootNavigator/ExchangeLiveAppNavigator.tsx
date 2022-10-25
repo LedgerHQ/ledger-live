@@ -9,73 +9,19 @@ import { getStackNavigatorConfig } from "../../navigation/navigatorConfig";
 
 import PlatformApp from "../../screens/Platform/App";
 import styles from "../../navigation/styles";
-import type { ExchangeLiveAppNavigatorParamList } from "./types/ExchangeLiveAppNavigator";
-import type { StackNavigatorProps } from "./types/helpers";
 
-const Stack = createStackNavigator<ExchangeLiveAppNavigatorParamList>();
-
-const ExchangeBuy = (
-  _props: StackNavigatorProps<
-    ExchangeLiveAppNavigatorParamList,
-    ScreenName.ExchangeBuy
-  >,
-) => {
-  // PTX smart routing feature flag - buy sell live app flag
-  const ptxSmartRoutingMobile = useFeature("ptxSmartRoutingMobile");
-  return (
-    <PlatformApp
-      {..._props}
-      route={{
-        ..._props.route,
-        params: {
-          platform: ptxSmartRoutingMobile?.params?.liveAppId || "multibuy",
-          mode: "buy",
-          currency: _props.route.params?.currency
-            ? findCryptoCurrencyByKeyword(_props.route.params?.currency)?.id
-            : _props.route.params?.defaultCurrencyId,
-          account: _props.route.params?.defaultAccountId,
-        },
-      }}
-    />
-  );
-};
-
-const ExchangeSell = (
-  _props: StackNavigatorProps<
-    ExchangeLiveAppNavigatorParamList,
-    ScreenName.ExchangeSell
-  >,
-) => {
-  // PTX smart routing feature flag - buy sell live app flag
-  const ptxSmartRoutingMobile = useFeature("ptxSmartRoutingMobile");
-
-  return (
-    <PlatformApp
-      {..._props}
-      route={{
-        ..._props.route,
-        params: {
-          platform: ptxSmartRoutingMobile?.params?.liveAppId || "multibuy",
-          mode: "sell",
-          currency: _props.route.params?.currency
-            ? findCryptoCurrencyByKeyword(_props.route.params?.currency)?.id
-            : _props.route.params?.defaultCurrencyId,
-          account: _props.route.params?.defaultAccountId,
-        },
-      }}
-    />
-  );
-};
-
-export default function ExchangeLiveAppNavigator(
-  _props?: Record<string, unknown>,
-) {
+export default function ExchangeLiveAppNavigator({ route }: any) {
   const { colors } = useTheme();
+
+  // PTX smart routing feature flag - buy sell live app flag
+  const ptxSmartRoutingMobile = useFeature("ptxSmartRoutingMobile");
 
   const stackNavigationConfig = useMemo(
     () => getStackNavigatorConfig(colors, true),
     [colors],
   );
+
+  const { params: routeParams } = route;
 
   return (
     <Stack.Navigator {...stackNavigationConfig}>
@@ -91,9 +37,26 @@ export default function ExchangeLiveAppNavigator(
           headerTitle: () => null,
         }}
       >
-        {props => <ExchangeBuy {...props} />}
+        {(_props: any) => (
+          <PlatformApp
+            {..._props}
+            {...routeParams}
+            route={{
+              ..._props.route,
+              params: {
+                platform:
+                  ptxSmartRoutingMobile?.params?.liveAppId || "multibuy",
+                mode: "buy",
+                currency: _props.route.params?.currency
+                  ? findCryptoCurrencyByKeyword(_props.route.params?.currency)
+                      ?.id
+                  : _props.route.params?.defaultCurrencyId,
+                account: _props.route.params?.defaultAccountId,
+              },
+            }}
+          />
+        )}
       </Stack.Screen>
-
       <Stack.Screen
         name={ScreenName.ExchangeSell}
         options={{
@@ -106,8 +69,28 @@ export default function ExchangeLiveAppNavigator(
           headerTitle: () => null,
         }}
       >
-        {props => <ExchangeSell {...props} />}
+        {(_props: any) => (
+          <PlatformApp
+            {..._props}
+            {...routeParams}
+            route={{
+              ..._props.route,
+              params: {
+                platform:
+                  ptxSmartRoutingMobile?.params?.liveAppId || "multibuy",
+                mode: "sell",
+                currency: _props.route.params?.currency
+                  ? findCryptoCurrencyByKeyword(_props.route.params?.currency)
+                      ?.id
+                  : _props.route.params?.defaultCurrencyId,
+                account: _props.route.params?.defaultAccountId,
+              },
+            }}
+          />
+        )}
       </Stack.Screen>
     </Stack.Navigator>
   );
 }
+
+const Stack = createStackNavigator();

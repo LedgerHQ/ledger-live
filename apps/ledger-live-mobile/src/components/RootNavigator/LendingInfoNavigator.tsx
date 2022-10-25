@@ -1,8 +1,8 @@
 import React, { useMemo } from "react";
 import { StyleSheet, TouchableOpacity } from "react-native";
 import { createStackNavigator } from "@react-navigation/stack";
-import { useTheme } from "@react-navigation/native";
 import { useTranslation } from "react-i18next";
+import { useTheme } from "styled-components/native";
 import { ScreenName } from "../../const";
 import LendingTerms from "../../screens/Lending/modals/InfoModals/TermsStep";
 import LendingInfo1 from "../../screens/Lending/modals/InfoModals/Step-1";
@@ -11,23 +11,12 @@ import LendingInfo3 from "../../screens/Lending/modals/InfoModals/Step-3";
 import { CloseButton } from "../../screens/OperationDetails";
 import Close from "../../icons/Close";
 import { getStackNavigatorConfig } from "../../navigation/navigatorConfig";
-import { Theme } from "../../colors";
-import { LendingInfoNavigatorParamList } from "./types/LendingInfoNavigator";
-import { StackNavigatorProps } from "./types/helpers";
-
-const Stack = createStackNavigator<LendingInfoNavigatorParamList>();
 
 const goBackOptions =
-  (colors: Theme["colors"]) =>
-  ({
-    route: { params },
-    navigation,
-  }: StackNavigatorProps<
-    LendingInfoNavigatorParamList,
-    ScreenName.LendingInfo1 | ScreenName.LendingInfo2 | ScreenName.LendingInfo3
-  >) => ({
+  colors =>
+  ({ route: { params }, navigation }) => ({
     headerRight: () => (
-      <TouchableOpacity
+      <TouchableOpacity // $FlowFixMe
         onPress={() => {
           params?.endCallback && params.endCallback();
           const n = navigation.getParent() || navigation;
@@ -52,7 +41,7 @@ export default function LendingInfoNavigator() {
       screenOptions={({ navigation }) => ({
         ...stackNavigationConfig,
         title: t("transfer.lending.info.title"),
-        headerLeft: undefined,
+        headerLeft: null,
         headerRight: () => <CloseButton navigation={navigation} />,
         gestureEnabled: false,
       })}
@@ -76,7 +65,7 @@ export default function LendingInfoNavigator() {
     </Stack.Navigator>
   );
 }
-
+const Stack = createStackNavigator();
 const styles = StyleSheet.create({
   buttons: {
     padding: 16,

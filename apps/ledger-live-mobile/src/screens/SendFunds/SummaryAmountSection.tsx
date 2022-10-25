@@ -6,7 +6,6 @@ import {
   getAccountUnit,
   getAccountCurrency,
 } from "@ledgerhq/live-common/account/helpers";
-import BigNumber from "bignumber.js";
 import SummaryRow from "./SummaryRow";
 import CurrencyUnitValue from "../../components/CurrencyUnitValue";
 import CounterValue from "../../components/CounterValue";
@@ -15,7 +14,7 @@ import LText from "../../components/LText";
 type Props = {
   account: AccountLike;
   parentAccount: Account | null | undefined;
-  amount: number | BigNumber;
+  amount: any;
   overrideAmountLabel?: string;
 };
 export default class SummaryAmountSection extends PureComponent<Props> {

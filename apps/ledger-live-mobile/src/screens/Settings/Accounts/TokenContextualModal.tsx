@@ -1,6 +1,6 @@
 import React, { useCallback, useState } from "react";
 import { connect } from "react-redux";
-import type { TokenAccount, Account, SubAccount } from "@ledgerhq/types-live";
+import type { TokenAccount, Account } from "@ledgerhq/types-live";
 import { View, StyleSheet } from "react-native";
 import { Trans, useTranslation } from "react-i18next";
 import {
@@ -22,9 +22,6 @@ import { parentAccountSelector } from "../../../reducers/accounts";
 import ParentCurrencyIcon from "../../../components/ParentCurrencyIcon";
 import BottomModalChoice from "../../../components/BottomModalChoice";
 import { ScreenName } from "../../../const";
-import { StackNavigatorNavigation } from "../../../components/RootNavigator/types/helpers";
-import { PortfolioNavigatorStackParamList } from "../../../components/RootNavigator/types/PortfolioNavigator";
-import { State } from "../../../reducers/types";
 
 const mapDispatchToProps = {
   blacklistToken,
@@ -35,7 +32,7 @@ type OwnProps = {
   account?: TokenAccount;
 };
 type Props = OwnProps & {
-  parentAccount?: Account;
+  parentAccount: Account;
   blacklistToken: (_: string) => void;
 };
 
@@ -47,8 +44,7 @@ const TokenContextualModal = ({
   blacklistToken,
 }: Props) => {
   const { t } = useTranslation();
-  const navigation =
-    useNavigation<StackNavigatorNavigation<PortfolioNavigatorStackParamList>>();
+  const navigation = useNavigation();
 
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [showContract, setShowContract] = useState(false);
@@ -71,21 +67,22 @@ const TokenContextualModal = ({
     ? getDefaultExplorerView(mainAccount.currency)
     : null;
   const url = explorerView
-    ? getAccountContractExplorer(explorerView, account, parentAccount!)
+    ? getAccountContractExplorer(explorerView, account, parentAccount)
     : null;
   return (
     <BottomDrawer
+      id="ContractAddress"
       isOpen={isOpened}
       preventBackdropClick={false}
       Icon={
-        showingContextMenu ? (
+        showingContextMenu && (
           <ParentCurrencyIcon
             size={48}
             currency={getAccountCurrency(account)}
           />
-        ) : undefined
+        )
       }
-      title={showingContextMenu ? account.token.name : undefined}
+      title={showingContextMenu && account.token.name}
       onClose={onCloseModal}
     >
       {!showingContextMenu && showConfirmation ? (
@@ -152,19 +149,14 @@ const TokenContextualModal = ({
   );
 };
 
-const mapStateToProps = createStructuredSelector<
-  State,
-  { account?: SubAccount },
-  { parentAccount: Account | undefined }
->({
+const mapStateToProps = createStructuredSelector({
   parentAccount: parentAccountSelector,
 });
-
-export default connect(
+const m: React.ComponentType<OwnProps> = connect(
   mapStateToProps,
   mapDispatchToProps,
-)(TokenContextualModal) as React.ComponentType<OwnProps>;
-
+)(TokenContextualModal);
+export default m;
 const styles = StyleSheet.create({
   header: {
     justifyContent: "center",

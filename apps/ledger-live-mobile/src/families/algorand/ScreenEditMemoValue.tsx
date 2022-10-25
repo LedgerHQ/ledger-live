@@ -1,26 +1,35 @@
 import React, { useCallback, useState } from "react";
 import { View, StyleSheet, ScrollView } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import SafeAreaView from "react-native-safe-area-view";
 import { useTranslation } from "react-i18next";
 import i18next from "i18next";
+import type { Account } from "@ledgerhq/types-live";
+import type { Transaction } from "@ledgerhq/live-common/families/algorand/types";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { useTheme } from "@react-navigation/native";
 import KeyboardView from "../../components/KeyboardView";
 import Button from "../../components/Button";
 import { ScreenName } from "../../const";
 import TextInput from "../../components/FocusedTextInput";
-import type { StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
-import { SendFundsNavigatorStackParamList } from "../../components/RootNavigator/types/SendFundsNavigator";
 
-type Props = StackNavigatorProps<
-  SendFundsNavigatorStackParamList,
-  ScreenName.AlgorandEditMemo
->;
+const forceInset = {
+  bottom: "always",
+};
+type Props = {
+  navigation: any;
+  route: {
+    params: RouteParams;
+  };
+};
+type RouteParams = {
+  account: Account;
+  transaction: Transaction;
+};
 
 function AlgorandEditMemo({ navigation, route }: Props) {
   const { colors } = useTheme();
   const { t } = useTranslation();
-  const [memo, setMemo] = useState(route.params.transaction.memo ?? undefined);
+  const [memo, setMemo] = useState(route.params.transaction.memo);
   const account = route.params.account;
   const onValidateText = useCallback(() => {
     const bridge = getAccountBridge(account);
@@ -30,12 +39,10 @@ function AlgorandEditMemo({ navigation, route }: Props) {
       transaction: bridge.updateTransaction(transaction, {
         memo,
       }),
-      currentNavigation: ScreenName.SendSummary,
-      nextNavigation: ScreenName.SendSelectDevice,
     });
   }, [navigation, route.params, account, memo]);
   return (
-    <SafeAreaView style={styles.root}>
+    <SafeAreaView style={styles.root} forceInset={forceInset}>
       <KeyboardView
         style={[
           styles.body,
@@ -81,7 +88,7 @@ function AlgorandEditMemo({ navigation, route }: Props) {
 
 const options = {
   title: i18next.t("send.summary.memo.title"),
-  headerLeft: undefined,
+  headerLeft: null,
 };
 export { AlgorandEditMemo as component, options };
 const styles = StyleSheet.create({

@@ -1,18 +1,12 @@
 import React from "react";
-import {
-  StyleProp,
-  StyleSheet,
-  TextStyle,
-  View,
-  ViewStyle,
-} from "react-native";
+import { StyleSheet, View } from "react-native";
 import { useTheme } from "@react-navigation/native";
 import LText from "./LText";
 
 type Props = {
   label: string;
-  style?: StyleProp<ViewStyle>;
-  labelStyle?: StyleProp<TextStyle>;
+  style?: any;
+  labelStyle?: any;
   size?: number;
   fontSize?: number;
   round?: boolean;
@@ -43,6 +37,7 @@ const FirstLetterIcon = ({
         {
           width: size,
           height: size,
+          lineHeight: size,
         },
         round
           ? {

@@ -1,11 +1,6 @@
 import React, { useState, useMemo, useCallback, useLayoutEffect } from "react";
-import {
-  TextInput,
-  StyleSheet,
-  TouchableOpacity,
-  TouchableOpacityProps,
-} from "react-native";
-import { useTheme, CompositeScreenProps } from "@react-navigation/native";
+import { TextInput, StyleSheet, TouchableOpacity } from "react-native";
+import { useTheme, NavigationProp } from "@react-navigation/native";
 import { useLocalLiveAppContext } from "@ledgerhq/live-common/platform/providers/LocalLiveAppProvider/index";
 import { Box } from "@ledgerhq/native-ui";
 import NavigationScrollView from "../../../components/NavigationScrollView";
@@ -13,12 +8,10 @@ import { ScreenName } from "../../../const";
 import KeyboardView from "../../../components/KeyboardView";
 import ImportIcon from "../../../icons/Import";
 import ArrowRight from "../../../icons/ArrowRight";
-import type { SettingsNavigatorStackParamList } from "../../../components/RootNavigator/types/SettingsNavigator";
-import type { BaseNavigatorStackParamList } from "../../../components/RootNavigator/types/BaseNavigator";
-import type { StackNavigatorProps } from "../../../components/RootNavigator/types/helpers";
 
 const DebuggerButton: React.ComponentType<{
-  onPress: TouchableOpacityProps["onPress"];
+  onPress: (..._: Array<any>) => any;
+  // eslint-disable-next-line react/prop-types
 }> = ({ onPress }) => {
   const { colors } = useTheme();
   return (
@@ -29,8 +22,9 @@ const DebuggerButton: React.ComponentType<{
 };
 
 const OpenButton: React.ComponentType<{
-  onPress: TouchableOpacityProps["onPress"];
+  onPress: (..._: Array<any>) => any;
   disabled: boolean;
+  // eslint-disable-next-line react/prop-types
 }> = ({ onPress, disabled }) => {
   const { colors } = useTheme();
   return (
@@ -44,15 +38,11 @@ const OpenButton: React.ComponentType<{
   );
 };
 
-type Props = CompositeScreenProps<
-  StackNavigatorProps<
-    SettingsNavigatorStackParamList,
-    ScreenName.DeveloperCustomManifest
-  >,
-  StackNavigatorProps<BaseNavigatorStackParamList>
->;
-
-export default function CustomManifest({ navigation }: Props) {
+export default function CustomManifest({
+  navigation,
+}: {
+  navigation: NavigationProp<Record<string, unknown>>;
+}) {
   const { colors } = useTheme();
   const { manifest, disabled, addLocalManifest, onChange } =
     useCustomManifest();

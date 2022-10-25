@@ -1,11 +1,5 @@
 import React, { useCallback } from "react";
-import {
-  StyleSheet,
-  SectionList,
-  RefreshControl,
-  View,
-  ViewToken,
-} from "react-native";
+import { StyleSheet, SectionList, RefreshControl, View } from "react-native";
 import { useAnnouncements } from "@ledgerhq/live-common/notifications/AnnouncementProvider/index";
 import { groupAnnouncements } from "@ledgerhq/live-common/notifications/AnnouncementProvider/helpers";
 
@@ -21,7 +15,7 @@ const viewabilityConfig = {
 };
 
 const SectionHeader = styled.View`
-  background-color: ${p => p.theme.colors.neutral.c30};
+  background-color: ${p => p.theme.colors.palette.neutral.c30};
   padding: 12px;
   border-radius: 4px;
 `;
@@ -31,15 +25,9 @@ export default function NotificationCenter() {
   const { cache, setAsSeen, updateCache, allIds, seenIds } = useAnnouncements();
 
   const onViewableItemsChanged = useCallback(
-    ({ viewableItems }: { viewableItems: ViewToken[] }) => {
+    ({ viewableItems }) => {
       viewableItems
-        .reduce(
-          (s, a) =>
-            s.concat(
-              a.item ? a.item : (a as unknown as { data: unknown }).data,
-            ),
-          [],
-        )
+        .reduce((s, a) => s.concat(a.item ? a.item : a.data), [])
         .map(({ uuid }) => uuid)
         .filter(Boolean)
         .forEach(setAsSeen);

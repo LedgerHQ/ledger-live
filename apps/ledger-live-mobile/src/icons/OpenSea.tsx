@@ -6,7 +6,13 @@ type Props = {
 };
 
 const OpenSeaIcon = ({ size }: Props) => (
-  <Svg width={size ?? 32} height={size ?? 32} viewBox="0 0 32 33" fill="none">
+  <Svg
+    width={size ?? 32}
+    height={size ?? 32}
+    viewBox="0 0 32 33"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+  >
     <G clipPath="url(#clip0_387:5686)">
       <Rect y={0.967896} width={32} height={32} rx={4} fill="#2081E2" />
       <Path

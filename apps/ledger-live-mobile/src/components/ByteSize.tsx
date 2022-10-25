@@ -1,6 +1,6 @@
 import React from "react";
 import { Trans } from "react-i18next";
-import type { DeviceModel } from "@ledgerhq/types-devices";
+import type { DeviceModel } from "@ledgerhq/devices";
 
 const k = 1024; // 1kb unit
 
@@ -14,19 +14,19 @@ const ByteSize = ({
   firmwareVersion,
   formatFunction,
 }: {
-  value?: number | null;
+  value: number;
   deviceModel: DeviceModel;
   decimals?: number;
   firmwareVersion: string;
   formatFunction?: (_: number) => number;
 }) => {
-  if (!value) return <>{"-"}</>;
+  if (!value) return "–";
   const blockSize = deviceModel.getBlockSize(firmwareVersion);
   // FIXME it should be on live-common side
   const bytes = Math.ceil(value / blockSize) * blockSize;
   const i = Math.floor(Math.log(bytes) / Math.log(k)) || 1; // Nb no more bytes
 
-  const rawSize = bytes / k ** i;
+  const rawSize = parseFloat(bytes / k ** i);
   const dm = rawSize < 1 ? 1 : i > 1 ? Math.max(0, decimals) : 0;
   const divider = 10 ** dm;
   const toFormat = rawSize * divider;

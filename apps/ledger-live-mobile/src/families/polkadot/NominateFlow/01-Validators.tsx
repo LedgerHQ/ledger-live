@@ -8,7 +8,7 @@ import {
   SectionList,
   Linking,
 } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import SafeAreaView from "react-native-safe-area-view";
 import { Trans, useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
 import { useTheme } from "styled-components/native";
@@ -16,7 +16,6 @@ import { Polkadot as PolkadotIdenticon } from "@polkadot/reactnative-identicon/i
 import type {
   Transaction,
   PolkadotValidator,
-  PolkadotAccount,
 } from "@ledgerhq/live-common/families/polkadot/types";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
@@ -50,62 +49,57 @@ import NominationDrawer from "../components/NominationDrawer";
 import SendRowsFee from "../SendRowsFee";
 import ValidatorItem from "./ValidatorItem";
 import { getDrawerInfo } from "./drawerInfo";
-import type {
-  BaseComposite,
-  StackNavigatorNavigation,
-  StackNavigatorProps,
-} from "../../../components/RootNavigator/types/helpers";
-import type { PolkadotNominateFlowParamList } from "./types";
-import { BaseNavigatorStackParamList } from "../../../components/RootNavigator/types/BaseNavigator";
 
-type Props = BaseComposite<
-  StackNavigatorProps<
-    PolkadotNominateFlowParamList,
-    ScreenName.PolkadotNominateSelectValidators
-  >
->;
+type RouteParams = {
+  accountId: string;
+  transaction: Transaction;
+  fromSelectAmount?: true;
+};
+type Props = {
+  navigation: any;
+  route: {
+    params: RouteParams;
+  };
+};
+
 function NominateSelectValidator({ navigation, route }: Props) {
   const { colors } = useTheme();
   const { t } = useTranslation();
   const { account, parentAccount } = useSelector(accountScreenSelector(route));
   const locale = useSelector(localeSelector);
   invariant(account, "account required");
-  const mainAccount = getMainAccount(account, parentAccount) as PolkadotAccount;
+  const mainAccount = getMainAccount(account, parentAccount);
   const bridge = getAccountBridge(account, parentAccount);
   const [drawerValidator, setDrawerValidator] = useState<
     PolkadotValidator | null | undefined
   >();
   const { polkadotResources } = mainAccount;
   invariant(polkadotResources, "polkadotResources required");
-  const bridgeTransaction = useBridgeTransaction(() => {
-    const tx = route.params.transaction;
+  const { transaction, setTransaction, status, bridgePending, bridgeError } =
+    useBridgeTransaction(() => {
+      const tx = route.params.transaction;
 
-    if (!tx) {
-      const t = bridge.createTransaction(mainAccount);
-      const initialValidators = (
-        mainAccount.polkadotResources?.nominations || []
-      )
-        .filter(nomination => !!nomination.status)
-        .map(nomination => nomination.address);
+      if (!tx) {
+        const t = bridge.createTransaction(mainAccount);
+        const initialValidators = (
+          mainAccount.polkadotResources?.nominations || []
+        )
+          .filter(nomination => !!nomination.status)
+          .map(nomination => nomination.address);
+        return {
+          account,
+          transaction: bridge.updateTransaction(t, {
+            mode: "nominate",
+            validators: initialValidators,
+          }),
+        };
+      }
+
       return {
         account,
-        transaction: bridge.updateTransaction(t, {
-          mode: "nominate",
-          validators: initialValidators,
-        }),
+        transaction: tx,
       };
-    }
-
-    return {
-      account,
-      transaction: tx,
-    };
-  });
-
-  const { setTransaction, status, bridgePending, bridgeError } =
-    bridgeTransaction;
-  const { transaction } = bridgeTransaction as { transaction: Transaction };
-
+    });
   invariant(
     transaction && transaction.validators,
     "transaction and validators required",
@@ -173,19 +167,19 @@ function NominateSelectValidator({ navigation, route }: Props) {
               title: (
                 <Trans i18nKey="polkadot.nominate.steps.validators.myNominations" />
               ),
-              data: [] as PolkadotValidator[],
+              data: [],
             },
             {
               title: (
                 <Trans i18nKey="polkadot.nominate.steps.validators.electedValidators" />
               ),
-              data: [] as PolkadotValidator[],
+              data: [],
             },
             {
               title: (
                 <Trans i18nKey="polkadot.nominate.steps.validators.waitingValidators" />
               ),
-              data: [] as PolkadotValidator[],
+              data: [],
             },
           ],
         )
@@ -193,7 +187,7 @@ function NominateSelectValidator({ navigation, route }: Props) {
     [sorted, nominations],
   );
   const onNext = useCallback(() => {
-    setDrawerValidator(undefined);
+    setDrawerValidator();
     navigation.navigate(ScreenName.PolkadotNominateSelectDevice, {
       ...route.params,
       transaction,
@@ -202,7 +196,7 @@ function NominateSelectValidator({ navigation, route }: Props) {
   }, [navigation, route.params, transaction, status]);
   const onSelect = useCallback(
     (validator, selected) => {
-      setDrawerValidator(undefined);
+      setDrawerValidator();
       const newValidators = selected
         ? validators.filter(v => v !== validator.address)
         : [...validators, validator.address];
@@ -231,21 +225,19 @@ function NominateSelectValidator({ navigation, route }: Props) {
     [polkadotValidators],
   );
   const onCloseDrawer = useCallback(() => {
-    setDrawerValidator(undefined);
+    setDrawerValidator();
   }, []);
   const onGoToChill = useCallback(() => {
-    setDrawerValidator(undefined);
-    navigation
-      .getParent<StackNavigatorNavigation<BaseNavigatorStackParamList>>()
-      .pop();
+    setDrawerValidator();
+    navigation.getParent().pop();
     navigation.navigate(NavigatorName.PolkadotSimpleOperationFlow, {
       screen: ScreenName.PolkadotSimpleOperationStarted,
       params: {
         mode: "chill",
-        accountId: account.id,
+        accountId: mainAccount.id,
       },
     });
-  }, [navigation, account.id]);
+  }, [navigation, mainAccount]);
   const drawerInfo = useMemo(
     () =>
       drawerValidator
@@ -303,17 +295,12 @@ function NominateSelectValidator({ navigation, route }: Props) {
         account={account}
         ValidatorImage={({ size }) =>
           drawerValidator ? (
-            <PolkadotIdenticon
-              address={drawerValidator.address}
-              size={size}
-              // publicKey is not really needed, ts is wrong here but well…
-              publicKey=""
-            />
+            <PolkadotIdenticon address={drawerValidator.address} size={size} />
           ) : null
         }
         data={drawerInfo}
       />
-      <View>
+      <View marginHorizontal={16}>
         {!hasMinBondBalance ? (
           <Alert type="warning">
             <Trans
@@ -429,7 +416,11 @@ function NominateSelectValidator({ navigation, route }: Props) {
             )}
           </View>
         </View>
-        <SendRowsFee account={account} transaction={transaction} />
+        <SendRowsFee
+          account={account}
+          parentAccount={parentAccount}
+          transaction={transaction}
+        />
         <Button
           disabled={!!error || bridgePending}
           event="PolkadotNominateSelectValidatorsContinue"

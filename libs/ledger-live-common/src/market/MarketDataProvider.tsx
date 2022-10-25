@@ -380,7 +380,7 @@ export function useMarketData(): MarketDataContextType {
   return useContext(MarketDataContext);
 }
 
-export type SingleCoinProviderData = SingleCoinState & {
+type SingleCoinProviderData = SingleCoinState & {
   selectCurrency: (id?: string, data?: CurrencyData, range?: string) => void;
   refreshChart: (param?: MarketCurrencyChartDataRequestParams) => void;
   setCounterCurrency: (counterCurrency: string) => void;

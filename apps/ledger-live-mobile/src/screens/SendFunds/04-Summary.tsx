@@ -1,19 +1,17 @@
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import React, { useState, useCallback, Component, useEffect } from "react";
 import { View, StyleSheet } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import SafeAreaView from "react-native-safe-area-view";
 import { useSelector } from "react-redux";
 import { Trans } from "react-i18next";
+import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import {
   getMainAccount,
   getAccountCurrency,
 } from "@ledgerhq/live-common/account/index";
-import type { Account } from "@ledgerhq/types-live";
-import type { TransactionStatus as BitcoinTransactionStatus } from "@ledgerhq/live-common/families/bitcoin/types";
 import { isNftTransaction } from "@ledgerhq/live-common/nft/index";
 import { NotEnoughGas } from "@ledgerhq/errors";
 import { useTheme } from "@react-navigation/native";
-import { StackNavigationProp } from "@react-navigation/stack";
 import { accountScreenSelector } from "../../reducers/accounts";
 import { ScreenName, NavigatorName } from "../../const";
 import { TrackScreen } from "../../analytics";
@@ -36,47 +34,37 @@ import NavigationScrollView from "../../components/NavigationScrollView";
 import Info from "../../icons/Info";
 import TooMuchUTXOBottomModal from "./TooMuchUTXOBottomModal";
 import { isCurrencySupported } from "../Exchange/coinifyConfig";
-import type { SendFundsNavigatorStackParamList } from "../../components/RootNavigator/types/SendFundsNavigator";
-import {
-  BaseComposite,
-  StackNavigatorProps,
-} from "../../components/RootNavigator/types/helpers";
-import { SignTransactionNavigatorParamList } from "../../components/RootNavigator/types/SignTransactionNavigator";
-import { LendingEnableFlowParamsList } from "../../components/RootNavigator/types/LendingEnableFlowNavigator";
-import { LendingSupplyFlowNavigatorParamList } from "../../components/RootNavigator/types/LendingSupplyFlowNavigator";
-import { LendingWithdrawFlowNavigatorParamList } from "../../components/RootNavigator/types/LendingWithdrawFlowNavigator";
-import { SwapNavigatorParamList } from "../../components/RootNavigator/types/SwapNavigator";
 
-type Navigation = BaseComposite<
-  | StackNavigatorProps<
-      SendFundsNavigatorStackParamList,
-      ScreenName.SendSummary
-    >
-  | StackNavigatorProps<
-      SignTransactionNavigatorParamList,
-      ScreenName.SignTransactionSummary
-    >
-  | StackNavigatorProps<
-      LendingEnableFlowParamsList,
-      ScreenName.LendingEnableSummary
-    >
-  | StackNavigatorProps<
-      LendingSupplyFlowNavigatorParamList,
-      ScreenName.LendingSupplySummary
-    >
-  | StackNavigatorProps<
-      LendingWithdrawFlowNavigatorParamList,
-      ScreenName.LendingWithdrawSummary
-    >
-  | StackNavigatorProps<SwapNavigatorParamList, ScreenName.SwapSelectFees>
->;
-
-type Props = Navigation;
-
+const forceInset = {
+  bottom: "always",
+};
+type Props = {
+  navigation: any;
+  route: {
+    params: RouteParams;
+  };
+};
 const WARN_FROM_UTXO_COUNT = 50;
+export type RouteParams = {
+  accountId: string;
+  transaction: Transaction;
+  currentNavigation?: string;
+  nextNavigation?: string;
+  overrideAmountLabel?: string;
+  hideTotal?: boolean;
+  appName?: string;
+};
+const defaultParams = {
+  currentNavigation: ScreenName.SendSummary,
+  nextNavigation: ScreenName.SendSelectDevice,
+};
 
-function SendSummary({ navigation, route }: Props) {
+function SendSummary({ navigation, route: initialRoute }: Props) {
   const { colors } = useTheme();
+  const route = {
+    ...initialRoute,
+    params: { ...defaultParams, ...initialRoute.params },
+  };
   const { nextNavigation, overrideAmountLabel, hideTotal } = route.params;
   const { account, parentAccount } = useSelector(accountScreenSelector(route));
   const { transaction, setTransaction, status, bridgePending } =
@@ -94,29 +82,19 @@ function SendSummary({ navigation, route }: Props) {
   const [utxoWarningOpen, setUtxoWarningOpen] = useState(false);
   const [utxoWarningPassed, setUtxoWarningPassed] = useState(false);
   const navigateToNext = useCallback(() => {
-    if (!nextNavigation) return null;
-    return (
-      // This component is used in a wild bunch of navigators.
-      // nextNavigation is a param which can have too many shapes
-      // Unfortunately for this reason let's keep it untyped for now.
-      (navigation as StackNavigationProp<{ [key: string]: object }>).navigate(
-        nextNavigation,
-        {
-          ...route.params,
-          transaction,
-          status,
-          selectDeviceLink: true,
-        },
-      )
-    );
+    navigation.navigate(nextNavigation, {
+      ...route.params,
+      transaction,
+      status,
+      selectDeviceLink: true,
+    });
   }, [navigation, nextNavigation, route.params, transaction, status]);
   useEffect(() => {
     if (!continuing) {
       return;
     }
-    // FIXME: NOT SURE BITCOIN TRANSACTION STATUS IS CORRECT HERE
-    //  BUT WE TYPE LIKE ANIMALS SO...
-    const { warnings, txInputs } = status as BitcoinTransactionStatus;
+
+    const { warnings, txInputs } = status;
 
     if (
       Object.keys(warnings).includes("feeTooHigh") &&
@@ -186,9 +164,8 @@ function SendSummary({ navigation, route }: Props) {
       },
     });
   }, [navigation, account?.id, currency?.id]);
-  // FIXME: why is recipient sometimes empty?
-  if (!account || !transaction || !transaction.recipient || !currency)
-    return null;
+  if (!account || !transaction || !transaction.recipient) return null; // FIXME why is recipient sometimes empty?
+
   return (
     <SafeAreaView
       style={[
@@ -197,6 +174,7 @@ function SendSummary({ navigation, route }: Props) {
           backgroundColor: colors.background,
         },
       ]}
+      forceInset={forceInset}
     >
       <TrackScreen
         category="SendFunds"
@@ -233,15 +211,14 @@ function SendSummary({ navigation, route }: Props) {
         ) : null}
         <SendRowsCustom
           transaction={transaction}
-          account={mainAccount as Account}
+          account={mainAccount}
           navigation={navigation}
-          route={route}
         />
         <SectionSeparator lineColor={colors.lightFog} />
         {isNFTSend ? (
           <SummaryNft
             transaction={transaction}
-            currencyId={(account as Account).currency.id}
+            currencyId={account.currency.id}
           />
         ) : (
           <SummaryAmountSection
@@ -385,12 +362,7 @@ const styles = StyleSheet.create({
   },
 });
 
-// FIXME: PROBABLY SOME TYPE OF StyleProp<ViewProp>
-class VerticalConnector extends Component<{
-  style:
-    | Record<string, string | number>
-    | Array<Record<string, string | number>>;
-}> {
+class VerticalConnector extends Component<any> {
   render() {
     const { style } = this.props;
     return <View style={style} />;

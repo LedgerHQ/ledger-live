@@ -1,15 +1,13 @@
-import React, { useMemo } from "react";
+import React, { useCallback, useMemo } from "react";
 import { Platform, SectionList } from "react-native";
 import { useTranslation } from "react-i18next";
-import { useNavigation, useRoute } from "@react-navigation/native";
+import { useNavigation, useRoute, RouteProp } from "@react-navigation/native";
 import { Flex, Text } from "@ledgerhq/native-ui";
 import Illustration from "../../../images/illustration/Illustration";
 import { TrackScreen } from "../../../analytics";
 import { ScreenName } from "../../../const";
 import OnboardingView from "../OnboardingView";
 import DiscoverCard from "../../Discover/DiscoverCard";
-import { StackNavigatorProps } from "../../../components/RootNavigator/types/helpers";
-import { OnboardingNavigatorParamList } from "../../../components/RootNavigator/types/OnboardingNavigator";
 
 // @TODO Replace
 const images = {
@@ -17,27 +15,35 @@ const images = {
     pairNew: require("../../../images/illustration/Light/_ConnectYourNano.png"),
     setupNano: require("../../../images/illustration/Light/_NewNano.png"),
     restoreRecoveryPhrase: require("../../../images/illustration/Light/_RestoreRecoveryPhrase.png"),
-    syncCrypto: require("../../../images/illustration/Light/_SyncCrypto.png"),
   },
   dark: {
     pairNew: require("../../../images/illustration/Dark/_ConnectYourNano.png"),
     setupNano: require("../../../images/illustration/Dark/_NewNano.png"),
     restoreRecoveryPhrase: require("../../../images/illustration/Dark/_RestoreRecoveryPhrase.png"),
-    syncCrypto: require("../../../images/illustration/Dark/_SyncCrypto.png"),
   },
 };
 
-type NavigationProps = StackNavigatorProps<
-  OnboardingNavigatorParamList,
-  ScreenName.OnboardingUseCase
+type CurrentRouteType = RouteProp<
+  { params: { deviceModelId: string } },
+  "params"
 >;
 
 const OnboardingStepUseCaseSelection = () => {
   const { t } = useTranslation();
-  const route = useRoute<NavigationProps["route"]>();
-  const navigation = useNavigation<NavigationProps["navigation"]>();
+  const route = useRoute<CurrentRouteType>();
+  const navigation = useNavigation();
 
   const deviceModelId = route?.params?.deviceModelId;
+
+  const navigateTo = useCallback(
+    (screen: string, params?: any) => {
+      navigation.navigate(screen, {
+        ...route.params,
+        ...params,
+      });
+    },
+    [navigation, route.params],
+  );
 
   const useCases = useMemo(
     () =>
@@ -48,8 +54,8 @@ const OnboardingStepUseCaseSelection = () => {
               data: [
                 {
                   onPress: () =>
-                    navigation.navigate(ScreenName.OnboardingImportAccounts, {
-                      deviceModelId: route.params.deviceModelId,
+                    navigateTo(ScreenName.OnboardingImportAccounts, {
+                      showRecoveryWarning: true,
                     }),
                   Image: (
                     <Illustration
@@ -71,10 +77,7 @@ const OnboardingStepUseCaseSelection = () => {
               data: [
                 {
                   onPress: () =>
-                    navigation.navigate(
-                      ScreenName.OnboardingModalSetupNewDevice,
-                      { deviceModelId: route.params.deviceModelId },
-                    ),
+                    navigateTo(ScreenName.OnboardingModalSetupNewDevice),
                   Image: (
                     <Illustration
                       size={130}
@@ -93,8 +96,7 @@ const OnboardingStepUseCaseSelection = () => {
               data: [
                 {
                   onPress: () =>
-                    navigation.navigate(ScreenName.OnboardingPairNew, {
-                      deviceModelId: route.params.deviceModelId,
+                    navigateTo(ScreenName.OnboardingPairNew, {
                       showSeedWarning: true,
                     }),
                   Image: (
@@ -109,8 +111,7 @@ const OnboardingStepUseCaseSelection = () => {
                 },
                 {
                   onPress: () =>
-                    navigation.navigate(ScreenName.OnboardingRecoveryPhrase, {
-                      deviceModelId: route.params.deviceModelId,
+                    navigateTo(ScreenName.OnboardingRecoveryPhrase, {
                       showSeedWarning: true,
                     }),
                   Image: (
@@ -127,7 +128,7 @@ const OnboardingStepUseCaseSelection = () => {
               ],
             },
           ],
-    [deviceModelId, navigation, route.params, t],
+    [deviceModelId, navigateTo, t],
   );
 
   return (

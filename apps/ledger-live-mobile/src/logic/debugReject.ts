@@ -1,4 +1,4 @@
-import { Subject, Observable, throwError, PartialObserver } from "rxjs";
+import { Subject, Observable, throwError } from "rxjs";
 import Config from "react-native-config";
 import { flatMap } from "rxjs/operators";
 
@@ -12,7 +12,7 @@ export const rejectionOp =
   <T>(observable: Observable<T>): Observable<T> =>
     !Config.MOCK
       ? observable
-      : Observable.create((o: PartialObserver<T>) => {
+      : Observable.create(o => {
           const s = observable.subscribe(o);
           const s2 = rejections
             .pipe(flatMap(() => throwError(createError())))
@@ -23,14 +23,10 @@ export const rejectionOp =
           };
         });
 // usage: hookRejections(promise)
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
 export const hookRejections = <T>(
   p: Promise<T>,
   createError: () => Error = defaultErrorCreator,
 ): Promise<T> =>
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore
   !Config.MOCK
     ? p
     : Promise.race([

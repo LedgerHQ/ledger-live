@@ -12,7 +12,7 @@ export default function ToggleMockServiceStatusButton({
 }) {
   const { updateData, incidents } = useServiceStatus();
   return getEnv("MOCK") ? (
-    <SettingsRow title={title}>
+    <SettingsRow title={title} onPress={null}>
       <Switch
         value={incidents.length > 0}
         onValueChange={() => {

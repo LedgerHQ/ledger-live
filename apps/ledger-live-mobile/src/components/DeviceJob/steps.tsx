@@ -14,20 +14,15 @@ import {
 } from "@ledgerhq/live-common/hw/deviceAccess";
 import getDeviceNameTransport from "@ledgerhq/live-common/hw/getDeviceName";
 import editDeviceNameTransport from "@ledgerhq/live-common/hw/editDeviceName";
-import { Device, DeviceModel } from "@ledgerhq/types-devices";
 import BluetoothScanning from "../BluetoothScanning";
-import DeviceNanoAction, {
-  Props as DeviceNanoActionProps,
-} from "../DeviceNanoAction";
+import DeviceNanoAction from "../DeviceNanoAction";
 import RoundedCurrencyIcon from "../RoundedCurrencyIcon";
 import { rejectionOp } from "../../logic/debugReject";
 import type { Step } from "./types";
 import { RenderStep } from "./StepRenders";
 
-const inferWordingValues = (meta: Device) => {
-  const deviceModel = meta.modelId
-    ? getDeviceModel(meta.modelId)
-    : ({} as Partial<DeviceModel>);
+const inferWordingValues = meta => {
+  const deviceModel = meta.modelId ? getDeviceModel(meta.modelId) : {};
   return {
     productName: deviceModel.productName,
     deviceName: meta.deviceName,
@@ -35,16 +30,13 @@ const inferWordingValues = (meta: Device) => {
 };
 
 export const connectingStep: Step = {
-  Body: ({ meta }) => {
+  Body: ({ meta }: any) => {
     const usbOnly = meta.modelId !== "nanoX";
     return (
       <RenderStep
         icon={
           usbOnly ? (
-            <DeviceNanoAction
-              modelId={meta.modelId as DeviceNanoActionProps["modelId"]}
-              wired={meta.wired}
-            />
+            <DeviceNanoAction modelId={meta.modelId} wired={meta.wired} />
           ) : (
             <BluetoothScanning isAnimated />
           )
@@ -67,12 +59,12 @@ export const connectingStep: Step = {
     );
   },
   run: meta =>
-    withDevice(meta.deviceId as string)(() => from([meta])).pipe(
+    withDevice(meta.deviceId)(() => from([meta])).pipe(
       rejectionOp(() => new CantOpenDevice()),
     ),
 };
 export const accountApp: (_: Account) => Step = account => ({
-  Body: ({ meta }) => {
+  Body: ({ meta }: any) => {
     const wordingValues = {
       ...inferWordingValues(meta),
       managerAppName: account.currency.managerAppName,
@@ -99,7 +91,7 @@ export const accountApp: (_: Account) => Step = account => ({
   },
   run: meta =>
     account.id.startsWith("mock")
-      ? withDevicePolling(meta.deviceId as string)(() =>
+      ? withDevicePolling(meta.deviceId)(() =>
           from([
             {
               ...meta,
@@ -111,22 +103,22 @@ export const accountApp: (_: Account) => Step = account => ({
         )
       : getAccountBridge(account)
           .receive(account, {
-            deviceId: meta.deviceId as string,
+            deviceId: meta.deviceId,
           })
           .pipe(
-            map(addressInfo => ({ ...meta, addressInfo })),
+            map(addressInfo => ({ ...meta, addressInfo })), // $FlowFixMe
             retryWhen(retryWhileErrors(genericCanRetryOnError)),
           ),
 });
 export const getDeviceName: Step = {
-  Body: ({ meta }) => (
+  Body: ({ meta }: any) => (
     <RenderStep
       icon={
         <DeviceNanoAction
           width={240}
           action="accept"
           screen="validation"
-          modelId={meta.modelId as DeviceNanoActionProps["modelId"]}
+          modelId={meta.modelId}
           wired={meta.wired}
         />
       }
@@ -134,7 +126,7 @@ export const getDeviceName: Step = {
     />
   ),
   run: meta =>
-    withDevice(meta.deviceId as string)(transport =>
+    withDevice(meta.deviceId)(transport =>
       from(
         getDeviceNameTransport(transport).then(deviceName => ({
           ...meta,
@@ -144,14 +136,14 @@ export const getDeviceName: Step = {
     ),
 };
 export const editDeviceName: (_: string) => Step = deviceName => ({
-  Body: ({ meta }) => (
+  Body: ({ meta }: any) => (
     <RenderStep
       icon={
         <DeviceNanoAction
           width={240}
           action="accept"
           screen="validation"
-          modelId={meta.modelId as DeviceNanoActionProps["modelId"]}
+          modelId={meta.modelId}
           wired={meta.wired}
         />
       }
@@ -159,7 +151,7 @@ export const editDeviceName: (_: string) => Step = deviceName => ({
     />
   ),
   run: meta =>
-    withDevice(meta.deviceId as string)(transport =>
+    withDevice(meta.deviceId)(transport =>
       from(editDeviceNameTransport(transport, deviceName).then(() => meta)),
     ),
 });

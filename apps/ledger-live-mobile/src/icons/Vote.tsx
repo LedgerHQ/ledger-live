@@ -1,7 +1,7 @@
 import React from "react";
 import Svg, { Path, G, Defs, ClipPath, Rect } from "react-native-svg";
 
-const Vote = ({ size = 16, color }: { size?: number; color?: string }) => (
+const Vote = ({ size, color }: { size: number; color: string }) => (
   <Svg width={size} height={size} viewBox="0 0 16 16" fill="none">
     <G clip-path="url(#clip0)">
       <Path

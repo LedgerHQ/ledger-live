@@ -25,8 +25,6 @@ import {
   accountWithMandatoryTokens,
 } from "@ledgerhq/live-common/account/index";
 import { getSwapSelectableCurrencies } from "@ledgerhq/live-common/exchange/swap/logic";
-import { Account } from "@ledgerhq/types-live";
-import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { shallowAccountsSelector } from "../../../reducers/accounts";
 import {
   swapAcceptedProvidersSelector,
@@ -51,14 +49,12 @@ import { TxForm } from "./TxForm";
 import { Summary } from "./Summary";
 import { Requirement } from "./Requirement";
 import { trackSwapError, SWAP_VERSION } from "../utils";
+import { SwapFormProps } from "../types";
 import { Max } from "./Max";
 import { Modal } from "./Modal";
 import { Connect } from "./Connect";
 import { DeviceMeta } from "./Modal/Confirmation";
 import { ErrorBanner } from "./ErrorBanner";
-import { MaterialTopTabNavigatorProps } from "../../../components/RootNavigator/types/helpers";
-import { ScreenName } from "../../../const";
-import { SwapFormNavigatorParamList } from "../../../components/RootNavigator/types/SwapFormNavigator";
 
 export const useProviders = () => {
   const dispatch = useDispatch();
@@ -86,12 +82,7 @@ export const useProviders = () => {
   };
 };
 
-export function SwapForm({
-  route: { params },
-}: MaterialTopTabNavigatorProps<
-  SwapFormNavigatorParamList,
-  ScreenName.SwapForm
->) {
+export function SwapForm({ route: { params } }: SwapFormProps) {
   const [currentFlow, setCurrentFlow] = useState<ActionRequired>(
     ActionRequired.None,
   );
@@ -155,7 +146,6 @@ export function SwapForm({
     // we don't display it if user needs to login first
     if (
       currentBanner !== ActionRequired.Login &&
-      kycStatus &&
       shouldShowKYCBanner({ provider, kycStatus })
     ) {
       setCurrentBanner(ActionRequired.KYC);
@@ -355,9 +345,7 @@ export function SwapForm({
         params.target === "from"
           ? accounts
           : accounts.map(acc =>
-              accountWithMandatoryTokens(acc, [
-                (params?.currency as TokenCurrency) || [],
-              ]),
+              accountWithMandatoryTokens(acc, [params?.currency || []]),
             );
 
       const account = flattenAccounts(enhancedAccounts).find(
@@ -378,8 +366,7 @@ export function SwapForm({
         swapTransaction.setToAccount(
           swapTransaction.swap.to.currency,
           account,
-          // FIXME: where does this parent field come from?
-          (account as unknown as { parent: Account })?.parent,
+          account.parent,
         );
       }
     }
@@ -406,6 +393,7 @@ export function SwapForm({
 
   if (providers?.length) {
     return (
+      // @ts-expect-error KeyboardAwareScrollView doens't come with right typings
       <KeyboardAwareScrollView>
         <Flex flex={1} justifyContent="space-between" padding={6}>
           <Flex flex={1}>
@@ -459,6 +447,7 @@ export function SwapForm({
           onClose={onCloseModal}
           deviceMeta={deviceMeta}
           exchangeRate={exchangeRate}
+          setError={setError}
         />
       </KeyboardAwareScrollView>
     );

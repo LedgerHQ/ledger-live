@@ -1,13 +1,13 @@
 import { useCallback, useMemo, useState } from "react";
 import { Linking, Platform } from "react-native";
 import { useSelector, useDispatch } from "react-redux";
+import { useToasts } from "@ledgerhq/live-common/notifications/ToastProvider/index";
 import { useNavigation } from "@react-navigation/native";
 import { add, isBefore, parseISO } from "date-fns";
+import type { Account } from "@ledgerhq/types-live";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import messaging from "@react-native-firebase/messaging";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
-import { useToasts } from "@ledgerhq/live-common/notifications/ToastProvider/index";
-import { ToastData } from "@ledgerhq/live-common/notifications/ToastProvider/types";
 import { accountsSelector } from "../reducers/accounts";
 import {
   notificationsModalOpenSelector,
@@ -30,15 +30,14 @@ import { setRatingsModalLocked } from "../actions/ratings";
 import { track } from "../analytics";
 
 export type EventTrigger = {
-  timeout: NodeJS.Timeout;
   /** Name of the route that will trigger the push notification modal */
-  // camelcase perhaps it should
-  // eslint-disable-next-line camelcase
+  // camelcase perhps it should
+  // eslint-disable-next-line
   route_name: string;
   /** In milliseconds, delay before triggering the push notification modal */
   timer: number;
   /** Whether the push notification modal is triggered when entering or when leaving the screen */
-  type?: "on_enter" | "on_leave";
+  type: "on_enter" | "on_leave";
 };
 
 export type DataOfUser = {
@@ -61,12 +60,11 @@ async function getPushNotificationsDataOfUserFromStorage() {
   const dataOfUser = await AsyncStorage.getItem(
     pushNotificationsDataOfUserAsyncStorageKey,
   );
-  if (!dataOfUser) return null;
 
   return JSON.parse(dataOfUser);
 }
 
-async function setPushNotificationsDataOfUserInStorage(dataOfUser: DataOfUser) {
+async function setPushNotificationsDataOfUserInStorage(dataOfUser) {
   await AsyncStorage.setItem(
     pushNotificationsDataOfUserAsyncStorageKey,
     JSON.stringify(dataOfUser),
@@ -87,9 +85,7 @@ const useNotifications = () => {
   const { pushToast } = useToasts();
   const notificationsSettings = useSelector(notificationsSelector);
 
-  const [notificationsToken, setNotificationsToken] = useState<
-    string | undefined
-  >();
+  const [notificationsToken, setNotificationsToken] = useState();
   const isPushNotificationsModalOpen = useSelector(
     notificationsModalOpenSelector,
   );
@@ -108,7 +104,7 @@ const useNotifications = () => {
   const pushNotificationsDataOfUser = useSelector(
     notificationsDataOfUserSelector,
   );
-  const accounts = useSelector(accountsSelector);
+  const accounts: Account[] = useSelector(accountsSelector);
 
   const accountsWithAmountCount = useMemo(
     () => accounts.filter(account => account.balance?.gt(0)).length,
@@ -126,11 +122,11 @@ const useNotifications = () => {
       fcm.onMessage(async remoteMessage => {
         if (remoteMessage && remoteMessage.notification) {
           pushToast({
-            id: remoteMessage.messageId && remoteMessage.messageId,
+            id: remoteMessage.messageId,
             title: remoteMessage.notification.title,
             text: remoteMessage.notification.body,
             icon: "info",
-          } as ToastData);
+          });
         }
       });
       // Needed to avoid a warning
@@ -141,7 +137,7 @@ const useNotifications = () => {
 
   const clearNotificationsListeners = useCallback(() => {
     if (notificationsToken) {
-      messaging().deleteToken();
+      messaging().deleteToken(notificationsToken);
       setNotificationsToken(undefined);
     }
   }, [notificationsToken]);
@@ -216,7 +212,6 @@ const useNotifications = () => {
     const minimumAppStartsNumber: number =
       pushNotificationsFeature?.params?.conditions?.minimum_app_starts_number;
     if (
-      pushNotificationsDataOfUser.numberOfAppStarts &&
       pushNotificationsDataOfUser.numberOfAppStarts < minimumAppStartsNumber
     ) {
       return false;
@@ -226,15 +221,13 @@ const useNotifications = () => {
     const minimumDurationSinceAppFirstStart: Duration =
       pushNotificationsFeature?.params?.conditions
         ?.minimum_duration_since_app_first_start;
+    const dateAllowedAfterAppFirstStart = add(
+      pushNotificationsDataOfUser?.appFirstStartDate,
+      minimumDurationSinceAppFirstStart,
+    );
     if (
-      pushNotificationsDataOfUser.appFirstStartDate &&
-      isBefore(
-        Date.now(),
-        add(
-          pushNotificationsDataOfUser.appFirstStartDate,
-          minimumDurationSinceAppFirstStart,
-        ),
-      )
+      pushNotificationsDataOfUser?.appFirstStartDate &&
+      isBefore(Date.now(), dateAllowedAfterAppFirstStart)
     ) {
       return false;
     }
@@ -299,7 +292,7 @@ const useNotifications = () => {
   );
 
   const updatePushNotificationsDataOfUserInStateAndStore = useCallback(
-    (dataOfUserUpdated: DataOfUser) => {
+    dataOfUserUpdated => {
       dispatch(setNotificationsDataOfUser(dataOfUserUpdated));
       setPushNotificationsDataOfUserInStorage(dataOfUserUpdated);
     },
@@ -314,7 +307,7 @@ const useNotifications = () => {
         numberOfAppStarts: (dataOfUser?.numberOfAppStarts ?? 0) + 1,
       });
     });
-  }, [updatePushNotificationsDataOfUserInStateAndStore]);
+  }, []);
 
   const triggerMarketPushNotificationModal = useCallback(() => {
     if (
@@ -374,7 +367,7 @@ const useNotifications = () => {
     ]);
 
   const handleSetDateOfNextAllowedRequest = useCallback(
-    (delay, additionalParams?: Partial<DataOfUser>) => {
+    (delay, additionalParams) => {
       if (delay !== null && delay !== undefined) {
         const dateOfNextAllowedRequest: Date = add(Date.now(), delay);
         updatePushNotificationsDataOfUserInStateAndStore({

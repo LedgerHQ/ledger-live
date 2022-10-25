@@ -31,12 +31,11 @@ export type Props = {
   ) => void;
   // handles an error / log / do action with it
   // if the function returns falsy, the sync will ignore error, otherwise it's treated as error with the error you return (likely the same)
-  recoverError: (arg0: Error) => Error | null | undefined | void;
+  recoverError: (arg0: Error) => Error | null | undefined;
   // track sync lifecycle for analytics
   trackAnalytics: (
     arg0: string,
-    arg1?: Record<string, any> | null,
-    mandatory?: boolean
+    arg1: Record<string, any> | null | undefined
   ) => void;
   // load all data needed for a currency (it's calling currencyBridge prepare mechanism)
   prepareCurrency: (currency: CryptoCurrency) => Promise<any>;
@@ -60,7 +59,7 @@ export const BridgeSync = ({
   prepareCurrency,
   hydrateCurrency,
   blacklistedTokenIds,
-}: Props): JSX.Element => {
+}: Props) => {
   useHydrate({
     accounts,
     hydrateCurrency,

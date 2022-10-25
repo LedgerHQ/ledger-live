@@ -3,10 +3,9 @@ import hoistNonReactStatic from "hoist-non-react-statics";
 import { useCountervaluesPolling } from "@ledgerhq/live-common/countervalues/react";
 import { clearDb } from "../db";
 
-export type RebootFunc = (_?: boolean) => Promise<void>;
-export const RebootContext = React.createContext<RebootFunc>(async () => {
-  // empty function
-});
+type RebootFunc = (_?: boolean) => Promise<void>;
+// eslint-disable-next-line @typescript-eslint/no-empty-function
+export const RebootContext = React.createContext<RebootFunc>(async () => {});
 export default function RebootProvider({
   children,
   onRebootStart,
@@ -37,15 +36,14 @@ export default function RebootProvider({
       <Fragment key={rebootId}>{children}</Fragment>
     </RebootContext.Provider>
   );
-}
-// NOTE: the comma is not a mistake, it's for TS to understand we
-// are declaring a generic and not a JSX Element (due to .tsx file extension)
-export const withReboot = <T,>(Cmp: React.ComponentType<T>) => {
-  class WithReboot extends React.Component<Omit<T, "reboot">> {
+} // TODO improve flow types
+
+export const withReboot = (Cmp: any) => {
+  class WithReboot extends React.Component<any> {
     render() {
       return (
         <RebootContext.Consumer>
-          {reboot => <Cmp reboot={reboot} {...(this.props as T)} />}
+          {reboot => <Cmp reboot={reboot} {...this.props} />}
         </RebootContext.Consumer>
       );
     }

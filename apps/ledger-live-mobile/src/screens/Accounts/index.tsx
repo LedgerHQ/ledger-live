@@ -1,8 +1,8 @@
 import React, { useCallback, useState, useEffect, memo, useMemo } from "react";
-import { FlatList, FlatListProps, ListRenderItemInfo } from "react-native";
+import { FlatList } from "react-native";
 import { useSelector } from "react-redux";
 import { useFocusEffect } from "@react-navigation/native";
-import { Account, AccountLike, TokenAccount } from "@ledgerhq/types-live";
+import { Account, TokenAccount } from "@ledgerhq/types-live";
 import { findCryptoCurrencyByKeyword } from "@ledgerhq/live-common/currencies/index";
 import { Flex, Text } from "@ledgerhq/native-ui";
 import { RefreshMedium } from "@ledgerhq/native-ui/assets/icons";
@@ -27,21 +27,23 @@ import TabBarSafeAreaView, {
   TAB_BAR_SAFE_HEIGHT,
 } from "../../components/TabBar/TabBarSafeAreaView";
 import AccountsNavigationHeader from "./AccountsNavigationHeader";
-import {
-  BaseComposite,
-  StackNavigatorProps,
-} from "../../components/RootNavigator/types/helpers";
-import { AccountsNavigatorParamList } from "../../components/RootNavigator/types/AccountsNavigator";
 
-const List = globalSyncRefreshControl(
-  FlatList as React.ComponentType<FlatListProps<AccountLike>>,
-);
+const List = globalSyncRefreshControl(FlatList);
 
-type NavigationProps = BaseComposite<
-  StackNavigatorProps<AccountsNavigatorParamList, ScreenName.Accounts>
->;
+type Props = {
+  navigation: any;
+  route: { params?: Params };
+};
 
-function Accounts({ navigation, route }: NavigationProps) {
+type Params = {
+  currency?: string;
+  search?: string;
+  address?: string;
+  currencyTicker?: string;
+  currencyId?: string;
+};
+
+function Accounts({ navigation, route }: Props) {
   const accounts = useSelector(accountsSelector);
   const isUpToDate = useSelector(isUpToDateSelector);
   const globalSyncState = useGlobalSyncState();
@@ -54,16 +56,14 @@ function Accounts({ navigation, route }: NavigationProps) {
 
   const { params } = route;
 
-  const [account, setAccount] = useState<Account | TokenAccount | undefined>(
-    undefined,
-  );
+  const [account, setAccount] = useState<Account | undefined>(undefined);
   const flattenedAccounts = useMemo(
     () =>
       route?.params?.currencyId
         ? flattenAccounts(accounts, {
             enforceHideEmptySubAccounts: true,
           }).filter(
-            (account: AccountLike) =>
+            (account: Account | TokenAccount) =>
               getAccountCurrency(account).id === route?.params?.currencyId,
           )
         : flattenAccounts(accounts, {
@@ -95,6 +95,7 @@ function Accounts({ navigation, route }: NavigationProps) {
           } else {
             navigation.replace(ScreenName.Asset, {
               currency,
+              isForwardedFromAccounts: true,
             });
           }
         }
@@ -103,7 +104,7 @@ function Accounts({ navigation, route }: NavigationProps) {
   }, [params, accounts, navigation, account]);
 
   const renderItem = useCallback(
-    ({ item, index }: ListRenderItemInfo<AccountLike>) => (
+    ({ item, index }: { item: Account | TokenAccount; index: number }) => (
       <AccountRow
         navigation={navigation}
         account={item}
@@ -138,7 +139,7 @@ function Accounts({ navigation, route }: NavigationProps) {
         <List
           data={flattenedAccounts}
           renderItem={renderItem}
-          keyExtractor={(i: AccountLike) => i.id}
+          keyExtractor={(i: any) => i.id}
           ListHeaderComponent={
             <Flex mt={3} mb={3}>
               <Text variant="h4">
@@ -159,7 +160,7 @@ function Accounts({ navigation, route }: NavigationProps) {
         <TokenContextualModal
           onClose={() => setAccount(undefined)}
           isOpened={!!account}
-          account={account as TokenAccount}
+          account={account}
         />
       </Flex>
     </TabBarSafeAreaView>

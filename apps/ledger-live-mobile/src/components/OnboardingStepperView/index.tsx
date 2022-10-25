@@ -8,7 +8,7 @@ import {
   Platform,
 } from "react-native";
 import { TabView, SceneMap } from "react-native-tab-view";
-import { NavigationProp, RouteProp, useTheme } from "@react-navigation/native";
+import { useTheme } from "@react-navigation/native";
 import { NavigatorName, ScreenName } from "../../const";
 import ArrowLeft from "../../icons/ArrowLeft";
 import Question from "../../icons/Question";
@@ -26,8 +26,8 @@ export type OnboardingScene = {
 };
 type Props = {
   scenes: OnboardingScene[];
-  navigation: NavigationProp<Record<string, object | undefined>>;
-  route: RouteProp<Record<string, object | undefined>>;
+  navigation: any;
+  route: any;
   onFinish: () => void;
   hideStepper?: boolean;
   hideBackButton?: boolean;

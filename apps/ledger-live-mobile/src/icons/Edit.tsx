@@ -2,10 +2,9 @@ import React from "react";
 import Svg, { Path, Line } from "react-native-svg";
 
 type Props = {
-  size?: number;
-  color?: string;
+  size: number;
+  color: string;
 };
-
 export default function Edit({ size = 16, color }: Props) {
   return (
     <Svg width={size} height={size} viewBox="0 0 13 14" fill="none">

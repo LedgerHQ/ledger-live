@@ -11,13 +11,16 @@ import { accountScreenSelector } from "../../../reducers/accounts";
 import ValidatorHead from "../ValidatorHead";
 import ValidatorRow from "../ValidatorRow";
 import SelectValidatorSearchBox from "../../tron/VoteFlow/01-SelectValidator/SearchBox";
-import type { StackNavigatorProps } from "../../../components/RootNavigator/types/helpers";
-import type { CeloVoteFlowParamList } from "./types";
 
-type Props = StackNavigatorProps<
-  CeloVoteFlowParamList,
-  ScreenName.CeloVoteValidatorSelect
->;
+type Props = {
+  navigation: any;
+  route: { params: RouteParams };
+};
+
+type RouteParams = {
+  accountId: string;
+  validator?: CeloValidatorGroup;
+};
 
 export default function SelectValidator({ navigation, route }: Props) {
   const { colors } = useTheme();

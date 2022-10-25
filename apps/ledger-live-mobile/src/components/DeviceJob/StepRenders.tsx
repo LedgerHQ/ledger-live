@@ -1,11 +1,14 @@
 import React from "react";
 import { StyleSheet, View } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import SafeAreaView from "react-native-safe-area-view";
 import { Trans } from "react-i18next";
 import GenericSuccessView from "../GenericSuccessView";
 import GenericErrorView from "../GenericErrorView";
 import Button from "../Button";
 
+const forceInset = {
+  bottom: "always",
+};
 export const ErrorFooterGeneric = ({ onRetry }: { onRetry: () => void }) => (
   <Button
     event="DeviceJobErrorRetry"
@@ -26,7 +29,7 @@ export const RenderError = ({
     onRetry: () => void;
   }>;
 }) => (
-  <SafeAreaView style={styles.root}>
+  <SafeAreaView forceInset={forceInset} style={styles.root}>
     <View style={styles.body}>
       <GenericErrorView error={error} />
     </View>
@@ -47,7 +50,7 @@ export const RenderStep = ({
   description?: React.ReactNode;
   children?: React.ReactNode;
 }) => (
-  <SafeAreaView style={styles.root}>
+  <SafeAreaView forceInset={forceInset} style={styles.root}>
     <View style={styles.body}>
       <GenericSuccessView icon={icon} title={title} description={description} />
     </View>

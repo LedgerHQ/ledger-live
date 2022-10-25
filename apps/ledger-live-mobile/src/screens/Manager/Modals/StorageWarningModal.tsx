@@ -6,7 +6,7 @@ import { Text, Flex, Icons, Button } from "@ledgerhq/native-ui";
 import BottomModal from "../../../components/BottomModal";
 
 type Props = {
-  warning: string | null;
+  warning: boolean;
   onClose: () => void;
 };
 

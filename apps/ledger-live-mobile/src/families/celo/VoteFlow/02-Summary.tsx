@@ -10,7 +10,10 @@ import {
   getCurrencyColor,
 } from "@ledgerhq/live-common/currencies/index";
 import { useValidatorGroups } from "@ledgerhq/live-common/families/celo/react";
-import { CeloValidatorGroup } from "@ledgerhq/live-common/families/celo/types";
+import {
+  CeloValidatorGroup,
+  Transaction,
+} from "@ledgerhq/live-common/families/celo/types";
 import { defaultValidatorGroupAddress } from "@ledgerhq/live-common/families/celo/logic";
 import { AccountLike } from "@ledgerhq/types-live";
 import { Text } from "@ledgerhq/native-ui";
@@ -20,7 +23,7 @@ import invariant from "invariant";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { Trans } from "react-i18next";
 import { Animated, SafeAreaView, StyleSheet, View } from "react-native";
-import Icon from "react-native-vector-icons/Feather";
+import Icon from "react-native-vector-icons/dist/Feather";
 import { useSelector } from "react-redux";
 import { TrackScreen } from "../../../analytics";
 import { rgba } from "../../../colors";
@@ -36,13 +39,18 @@ import ValidatorImage from "../ValidatorImage";
 import Selectable from "../components/Selectable";
 import Line from "../components/Line";
 import Words from "../components/Words";
-import { StackNavigatorProps } from "../../../components/RootNavigator/types/helpers";
-import { CeloVoteFlowParamList } from "./types";
 
-type Props = StackNavigatorProps<
-  CeloVoteFlowParamList,
-  ScreenName.CeloVoteSummary
->;
+type Props = {
+  navigation: any;
+  route: { params: RouteParams };
+};
+
+type RouteParams = {
+  validator: CeloValidatorGroup;
+  transaction?: Transaction;
+  fromSelectAmount: boolean;
+  amount?: number;
+};
 
 export default function VoteSummary({ navigation, route }: Props) {
   const { validator } = route.params;
@@ -99,7 +107,6 @@ export default function VoteSummary({ navigation, route }: Props) {
         recipient: chosenValidator.address,
       }),
     );
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     route.params.amount,
     updateTransaction,
@@ -163,11 +170,11 @@ export default function VoteSummary({ navigation, route }: Props) {
   const onContinue = useCallback(async () => {
     navigation.navigate(ScreenName.CeloVoteSelectDevice, {
       accountId: account.id,
-      parentId: parentAccount?.id,
+      parentId: parentAccount && parentAccount.id,
       transaction,
       status,
     });
-  }, [navigation, account.id, parentAccount?.id, transaction, status]);
+  }, [status, account, parentAccount, navigation, transaction]);
 
   const hasErrors = Object.keys(status.errors).length > 0;
 

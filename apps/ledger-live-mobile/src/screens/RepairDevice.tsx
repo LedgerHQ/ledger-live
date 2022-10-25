@@ -1,12 +1,9 @@
 import React, { Component } from "react";
 import { View, StyleSheet, Dimensions } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import SafeAreaView from "react-native-safe-area-view";
 import { Trans } from "react-i18next";
 import firmwareUpdateRepair from "@ledgerhq/live-common/hw/firmwareUpdate-repair";
-import { Device } from "@ledgerhq/live-common/hw/actions/types";
-import { Subscription } from "rxjs";
-import { CompositeScreenProps } from "@react-navigation/native";
-import { NavigatorName, ScreenName } from "../const";
+import { NavigatorName } from "../const";
 import logger from "../logger";
 import Button from "../components/Button";
 import { BulletItem } from "../components/BulletList";
@@ -15,20 +12,17 @@ import SelectDevice from "../components/SelectDevice";
 import GenericErrorView from "../components/GenericErrorView";
 import Installing from "../components/Installing";
 import NavigationScrollView from "../components/NavigationScrollView";
+import { connectingStep } from "../components/DeviceJob/steps";
 import { TrackScreen } from "../analytics";
-import { Theme, withTheme } from "../colors";
-import { SettingsNavigatorStackParamList } from "../components/RootNavigator/types/SettingsNavigator";
-import { StackNavigatorProps } from "../components/RootNavigator/types/helpers";
-import { MainNavigatorParamList } from "../components/RootNavigator/types/MainNavigator";
+import { withTheme } from "../colors";
 
-type Props = {
-  colors: Theme["colors"];
+const forceInset = {
+  bottom: "always",
 };
-type NavigationProps = CompositeScreenProps<
-  StackNavigatorProps<SettingsNavigatorStackParamList, ScreenName.RepairDevice>,
-  StackNavigatorProps<MainNavigatorParamList>
->;
-
+type Props = {
+  navigation: any;
+  colors: any;
+};
 type State = {
   ready: boolean;
   error: Error | null | undefined;
@@ -36,7 +30,7 @@ type State = {
   selected: boolean;
 };
 
-class RepairDevice extends Component<Props & NavigationProps, State> {
+class RepairDevice extends Component<Props, State> {
   state = {
     error: null,
     progress: 0,
@@ -53,7 +47,7 @@ class RepairDevice extends Component<Props & NavigationProps, State> {
       ready: true,
     });
   };
-  onSelectDevice = (meta: Device) => {
+  onSelectDevice = (meta: any) => {
     this.setState({
       selected: true,
     });
@@ -63,9 +57,7 @@ class RepairDevice extends Component<Props & NavigationProps, State> {
       },
       complete: () => {
         this.props.navigation.goBack();
-        this.props.navigation.navigate(NavigatorName.Manager, {
-          screen: ScreenName.Manager,
-        });
+        this.props.navigation.navigate(NavigatorName.Manager);
       },
       error: error => {
         logger.critical(error);
@@ -75,7 +67,7 @@ class RepairDevice extends Component<Props & NavigationProps, State> {
       },
     });
   };
-  sub: Subscription | undefined;
+  sub: any;
 
   render() {
     const { colors } = this.props;
@@ -122,11 +114,14 @@ class RepairDevice extends Component<Props & NavigationProps, State> {
         </NavigationScrollView>
       );
     } else {
-      body = <SelectDevice onSelect={this.onSelectDevice} />;
+      body = (
+        <SelectDevice onSelect={this.onSelectDevice} steps={[connectingStep]} />
+      );
     }
 
     return (
       <SafeAreaView
+        forceInset={forceInset}
         style={[
           styles.root,
           {

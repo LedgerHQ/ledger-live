@@ -15,7 +15,6 @@ import ClaimRewardsSelectDevice from "../../../screens/SelectDevice";
 import ClaimRewardsConnectDevice from "../../../screens/ConnectDevice";
 import ClaimRewardsValidationError from "./04-ValidationError";
 import ClaimRewardsValidationSuccess from "./04-ValidationSuccess";
-import type { CosmosClaimRewardsFlowParamList } from "./types";
 
 const totalSteps = "3";
 
@@ -84,7 +83,7 @@ function ClaimRewardsFlow() {
         name={ScreenName.CosmosClaimRewardsConnectDevice}
         component={ClaimRewardsConnectDevice}
         options={{
-          headerLeft: undefined,
+          headerLeft: () => false,
           gestureEnabled: false,
           headerTitle: () => (
             <StepHeader
@@ -109,8 +108,8 @@ function ClaimRewardsFlow() {
         name={ScreenName.CosmosClaimRewardsValidationSuccess}
         component={ClaimRewardsValidationSuccess}
         options={{
-          headerLeft: undefined,
-          headerRight: undefined,
+          headerLeft: () => null,
+          headerRight: () => null,
           headerTitle: "",
           gestureEnabled: false,
         }}
@@ -123,4 +122,4 @@ const options = {
   headerShown: false,
 };
 export { ClaimRewardsFlow as component, options };
-const Stack = createStackNavigator<CosmosClaimRewardsFlowParamList>();
+const Stack = createStackNavigator();

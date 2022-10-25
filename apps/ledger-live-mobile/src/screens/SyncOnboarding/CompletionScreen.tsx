@@ -1,26 +1,22 @@
 import React, { useCallback, useEffect, useRef } from "react";
 import { Flex } from "@ledgerhq/native-ui";
 import { StackScreenProps } from "@react-navigation/stack";
+import { CompositeScreenProps } from "@react-navigation/native";
 import { TouchableWithoutFeedback } from "react-native-gesture-handler";
 import { useStartPostOnboardingCallback } from "@ledgerhq/live-common/postOnboarding/hooks/useStartPostOnboardingCallback";
 
-import { NavigatorName, ScreenName } from "../../const";
+import { NavigatorName } from "../../const";
+import type { BaseNavigatorStackParamList } from "../../components/RootNavigator/BaseNavigator";
+import type { SyncOnboardingStackParamList } from "../../components/RootNavigator/SyncOnboardingNavigator";
 import Illustration from "../../images/illustration/Illustration";
 import DeviceDark from "../../images/illustration/Dark/_000_PLACEHOLDER.png";
 import DeviceLight from "../../images/illustration/Light/_000_PLACEHOLDER.png";
-import { SyncOnboardingStackParamList } from "../../components/RootNavigator/types/SyncOnboardingNavigator";
-import {
-  BaseComposite,
-  RootNavigation,
-} from "../../components/RootNavigator/types/helpers";
 
 const redirectDelay = 5000;
 
-type Props = BaseComposite<
-  StackScreenProps<
-    SyncOnboardingStackParamList,
-    ScreenName.SyncOnboardingCompletion
-  >
+type Props = CompositeScreenProps<
+  StackScreenProps<SyncOnboardingStackParamList, "SyncOnboardingCompletion">,
+  StackScreenProps<BaseNavigatorStackParamList>
 >;
 
 const CompletionScreen = ({ navigation, route }: Props) => {
@@ -31,12 +27,11 @@ const CompletionScreen = ({ navigation, route }: Props) => {
 
   const redirectToPostOnboarding = useCallback(() => {
     // Resets the navigation stack to avoid allowing to go back to the onboarding welcome screen
-    // FIXME: bindings to react-navigation seem to have issues with composites
-    (navigation as unknown as RootNavigation).reset({
+    navigation.reset({
       index: 0,
       routes: [
         {
-          name: NavigatorName.Base,
+          name: NavigatorName.Base as "Base",
           state: {
             routes: [
               {

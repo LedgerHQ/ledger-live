@@ -10,10 +10,6 @@ import {
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/formatCurrencyUnit";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
-import type {
-  AlgorandAccount,
-  AlgorandTransaction,
-} from "@ledgerhq/live-common/families/algorand/types";
 import { useTheme } from "@react-navigation/native";
 import { Flex } from "@ledgerhq/native-ui";
 import { ScreenName } from "../../../../const";
@@ -26,20 +22,22 @@ import { TrackScreen } from "../../../../analytics";
 import Alert from "../../../../components/Alert";
 import TranslatedError from "../../../../components/TranslatedError";
 import Illustration from "../../../../images/illustration/Illustration";
-import type { StackNavigatorProps } from "../../../../components/RootNavigator/types/helpers";
-import type { AlgorandClaimRewardsFlowParamList } from "./type";
 
-type Props = StackNavigatorProps<
-  AlgorandClaimRewardsFlowParamList,
-  ScreenName.AlgorandClaimRewardsStarted
->;
-
+type RouteParams = {
+  accountId: string;
+};
+type Props = {
+  navigation: any;
+  route: {
+    params: RouteParams;
+  };
+};
 export default function DelegationStarted({ navigation, route }: Props) {
   const { colors } = useTheme();
   const { account } = useSelector(accountScreenSelector(route));
   const locale = useSelector(localeSelector);
   invariant(account, "Account required");
-  const mainAccount = getMainAccount(account, undefined) as AlgorandAccount;
+  const mainAccount = getMainAccount(account, undefined);
   const bridge = getAccountBridge(mainAccount, undefined);
   invariant(
     mainAccount && mainAccount.algorandResources,
@@ -64,7 +62,7 @@ export default function DelegationStarted({ navigation, route }: Props) {
   const onNext = useCallback(() => {
     navigation.navigate(ScreenName.AlgorandClaimRewardsSelectDevice, {
       ...route.params,
-      transaction: transaction as AlgorandTransaction,
+      transaction,
     });
   }, [navigation, route.params, transaction]);
   const warning =
@@ -94,6 +92,7 @@ export default function DelegationStarted({ navigation, route }: Props) {
         </Flex>
         <LText semiBold style={styles.description}>
           <Trans
+            secondary
             i18nKey="algorand.claimRewards.flow.steps.starter.title"
             values={{
               amount: formattedRewards,

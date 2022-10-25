@@ -3,16 +3,12 @@ import { StackScreenProps } from "@react-navigation/stack";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Button, Flex, Text } from "@ledgerhq/native-ui";
 import { useTranslation } from "react-i18next";
+import { ParamList } from "./types";
 import CustomImageBottomModal from "../../components/CustomImage/CustomImageBottomModal";
 import BottomButtonsContainer from "../../components/CustomImage/BottomButtonsContainer";
-import { ScreenName } from "../../const";
-import { CustomImageNavigatorParamList } from "../../components/RootNavigator/types/CustomImageNavigator";
 
 const Step0Welcome: React.FC<
-  StackScreenProps<
-    CustomImageNavigatorParamList,
-    ScreenName.CustomImageStep0Welcome
-  >
+  StackScreenProps<ParamList, "CustomImageStep0Welcome">
 > = ({ route }) => {
   const [modalOpened, setModalOpened] = useState(false);
   const { t } = useTranslation();
@@ -30,7 +26,6 @@ const Step0Welcome: React.FC<
   }, [setModalOpened]);
 
   return (
-    // @ts-expect-error Bindings are wrong…
     <SafeAreaView flex={1} edges={["bottom"]}>
       <Flex flex={1}>
         <Flex

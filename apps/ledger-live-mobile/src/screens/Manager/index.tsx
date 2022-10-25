@@ -9,44 +9,58 @@ import { Trans } from "react-i18next";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 
 import connectManager from "@ledgerhq/live-common/hw/connectManager";
-import { createAction, Result } from "@ledgerhq/live-common/hw/actions/manager";
+import { createAction } from "@ledgerhq/live-common/hw/actions/manager";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { Flex, Text } from "@ledgerhq/native-ui";
 
 import { ScreenName } from "../../const";
+import { ManagerTab } from "../../const/manager";
 import SelectDevice2 from "../../components/SelectDevice2";
 import SelectDevice from "../../components/SelectDevice";
 import RemoveDeviceMenu from "../../components/SelectDevice2/RemoveDeviceMenu";
 import TrackScreen from "../../analytics/TrackScreen";
 import { track } from "../../analytics";
+import type { DeviceLike } from "../../reducers/ble";
 import NavigationScrollView from "../../components/NavigationScrollView";
 import DeviceActionModal from "../../components/DeviceActionModal";
-import {
-  BaseComposite,
-  StackNavigatorProps,
-} from "../../components/RootNavigator/types/helpers";
-import { ManagerNavigatorStackParamList } from "../../components/RootNavigator/types/ManagerNavigator";
+import type { BaseNavigatorProps } from "../../components/RootNavigator/BaseNavigator";
 
 const action = createAction(connectManager);
 
-type NavigationProps = BaseComposite<
-  StackNavigatorProps<ManagerNavigatorStackParamList, ScreenName.Manager>
->;
+type RouteParams = {
+  searchQuery?: string;
+  tab?: ManagerTab;
+  installApp?: string;
+  firmwareUpdate?: boolean;
+  device?: Device;
+  appsToRestore?: string[];
+};
 
-type Props = NavigationProps;
+type Props = {
+  navigation: any;
+  knownDevices: DeviceLike[];
+  route: {
+    params: RouteParams;
+    name: string;
+  };
+};
 
 type ChooseDeviceProps = Props & {
   isFocused: boolean;
 };
 
 const ChooseDevice: React.FC<ChooseDeviceProps> = ({ isFocused }) => {
-  const [device, setDevice] = useState<Device | null>();
+  const [device, setDevice] = useState<Device | undefined>();
 
-  const [chosenDevice, setChosenDevice] = useState<Device | null>();
+  const [chosenDevice, setChosenDevice] = useState<Device | undefined>();
   const [showMenu, setShowMenu] = useState<boolean>(false);
 
-  const navigation = useNavigation<NavigationProps["navigation"]>();
-  const { params } = useRoute<NavigationProps["route"]>();
+  const navigation = useNavigation<BaseNavigatorProps>();
+  const { params } = useRoute<{
+    params: RouteParams;
+    name: string;
+    key: string;
+  }>();
 
   const newDeviceSelectionFeatureFlag = useFeature("llmNewDeviceSelection");
 
@@ -65,12 +79,10 @@ const ChooseDevice: React.FC<ChooseDeviceProps> = ({ isFocused }) => {
 
   const onHideMenu = () => setShowMenu(false);
 
-  const onSelect = (result: Result) => {
+  const onSelect = (result: unknown) => {
     setDevice(undefined);
 
     if (result && "result" in result) {
-      // FIXME: nullable stuff not taken into account here?
-      // @ts-expect-error Result has nullable fields
       navigation.navigate(ScreenName.ManagerMain, {
         ...result,
         ...params,

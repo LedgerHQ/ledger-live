@@ -2,7 +2,7 @@ import React from "react";
 import Svg, { Path } from "react-native-svg";
 
 type Props = {
-  height?: number;
+  height: number;
   color: string;
 };
 export default function ListTreeLine({ height = 50, color }: Props) {

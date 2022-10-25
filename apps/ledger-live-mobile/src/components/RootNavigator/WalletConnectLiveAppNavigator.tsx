@@ -5,7 +5,6 @@ import { useDispatch, useSelector } from "react-redux";
 
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import { Flex, Icons } from "@ledgerhq/native-ui";
-import { useRoute } from "@react-navigation/native";
 import { ScreenName } from "../../const";
 import { getStackNavigatorConfig } from "../../navigation/navigatorConfig";
 import styles from "../../navigation/styles";
@@ -13,8 +12,6 @@ import styles from "../../navigation/styles";
 import PlatformApp from "../../screens/Platform/App";
 import { uriSelector } from "../../reducers/walletconnect";
 import { setWallectConnectUri } from "../../actions/walletconnect";
-import { WalletConnectLiveAppNavigatorParamList } from "./types/WalletConnectLiveAppNavigator";
-import { StackNavigatorProps } from "./types/helpers";
 
 const options = {
   headerBackImage: () => (
@@ -26,12 +23,9 @@ const options = {
   headerTitle: () => null,
 };
 
-type Navigation = StackNavigatorProps<WalletConnectLiveAppNavigatorParamList>;
-
-export default function WalletConnectLiveAppNavigator() {
+export default function WalletConnectLiveAppNavigator({ route }: any) {
   const dispatch = useDispatch();
   const { colors } = useTheme();
-  const route = useRoute<Navigation["route"]>();
   const walletConnectLiveApp = useFeature("walletConnectLiveApp");
   const stackNavigationConfig = useMemo(
     () => getStackNavigatorConfig(colors, true),
@@ -54,10 +48,9 @@ export default function WalletConnectLiveAppNavigator() {
   return (
     <Stack.Navigator screenOptions={stackNavigationConfig}>
       <Stack.Screen name={ScreenName.WalletConnectScan} options={options}>
-        {_props => (
+        {(_props: any) => (
           <PlatformApp
             {..._props}
-            // @ts-expect-error What are you expecting when spreading 3 times in a row?
             {...routeParams}
             route={{
               ..._props.route,
@@ -75,10 +68,9 @@ export default function WalletConnectLiveAppNavigator() {
         name={ScreenName.WalletConnectDeeplinkingSelectAccount}
         options={options}
       >
-        {_props => (
+        {(_props: any) => (
           <PlatformApp
             {..._props}
-            // @ts-expect-error What are you expecting when spreading 3 times in a row?
             {...routeParams}
             route={{
               ..._props.route,
@@ -92,10 +84,9 @@ export default function WalletConnectLiveAppNavigator() {
         )}
       </Stack.Screen>
       <Stack.Screen name={ScreenName.WalletConnectConnect} options={options}>
-        {_props => (
+        {(_props: any) => (
           <PlatformApp
             {..._props}
-            // @ts-expect-error What are you expecting when spreading 3 times in a row?
             {...routeParams}
             route={{
               ..._props.route,
@@ -112,4 +103,4 @@ export default function WalletConnectLiveAppNavigator() {
   );
 }
 
-const Stack = createStackNavigator<WalletConnectLiveAppNavigatorParamList>();
+const Stack = createStackNavigator();

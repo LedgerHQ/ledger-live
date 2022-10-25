@@ -4,26 +4,31 @@ import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransact
 import React, { useCallback } from "react";
 import { useSelector } from "react-redux";
 import { makeCompoundSummaryForAccount } from "@ledgerhq/live-common/compound/logic";
+import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import {
   findCompoundToken,
   formatCurrencyUnit,
 } from "@ledgerhq/live-common/currencies/index";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { getAccountUnit } from "@ledgerhq/live-common/account/helpers";
-import { StackScreenProps } from "@react-navigation/stack";
 import { accountScreenSelector } from "../../../reducers/accounts";
 import { localeSelector } from "../../../reducers/settings";
 import { ScreenName } from "../../../const";
 import AmountScreen from "../shared/01-Amount";
 import LendingWarnings from "../shared/LendingWarnings";
-import { LendingWithdrawFlowNavigatorParamList } from "../../../components/RootNavigator/types/LendingWithdrawFlowNavigator";
 
-type NavigationProps = StackScreenProps<
-  LendingWithdrawFlowNavigatorParamList,
-  ScreenName.LendingWithdrawAmount
->;
-
-export default function WithdrawAmount({ navigation, route }: NavigationProps) {
+type Props = {
+  navigation: any;
+  route: {
+    params: RouteParams;
+  };
+};
+type RouteParams = {
+  accountId: string;
+  parentId: string;
+  currency: TokenCurrency;
+};
+export default function WithdrawAmount({ navigation, route }: Props) {
   const { account, parentAccount } = useSelector(accountScreenSelector(route));
   const locale = useSelector(localeSelector);
   invariant(
@@ -38,6 +43,7 @@ export default function WithdrawAmount({ navigation, route }: NavigationProps) {
   const tokenUnit = ctoken?.units[0];
   const { transaction, setTransaction, status, bridgePending, bridgeError } =
     useBridgeTransaction(() => {
+      // $FlowFixMe
       const t = bridge.createTransaction(account);
       const transaction = bridge.updateTransaction(t, {
         recipient: ctoken?.contractAddress || "",
@@ -82,6 +88,7 @@ export default function WithdrawAmount({ navigation, route }: NavigationProps) {
     navigation.navigate(ScreenName.LendingWithdrawSummary, {
       ...route.params,
       accountId: account.id,
+      parentId: parentAccount && parentAccount.id,
       transaction,
       currentNavigation: ScreenName.LendingWithdrawSummary,
       nextNavigation: ScreenName.LendingWithdrawSelectDevice,
@@ -91,12 +98,12 @@ export default function WithdrawAmount({ navigation, route }: NavigationProps) {
   }, [
     account.id,
     navigation,
+    parentAccount,
     route.params,
     status.amount,
     tokenUnit,
     transaction,
     unit,
-    locale,
   ]);
   return (
     <>

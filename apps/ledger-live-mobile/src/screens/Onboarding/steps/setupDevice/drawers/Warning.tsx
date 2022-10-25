@@ -1,24 +1,21 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { Flex, Button, Text, Icons, IconBox } from "@ledgerhq/native-ui";
-import { useNavigation, useRoute } from "@react-navigation/native";
-import { StackNavigatorProps } from "../../../../../components/RootNavigator/types/helpers";
-import { ScreenName } from "../../../../../const";
-import { OnboardingCarefulWarningParamList } from "../../../../../components/RootNavigator/types/OnboardingNavigator";
+import { useNavigation, useRoute, RouteProp } from "@react-navigation/native";
 
-type NavigationProps = StackNavigatorProps<
-  OnboardingCarefulWarningParamList,
-  ScreenName.OnboardingModalWarning
+type WarningRouteProps = RouteProp<
+  { params: { onNext?: () => void } },
+  "params"
 >;
 
 const OnboardingSetupDeviceInformation = () => {
   const { t } = useTranslation();
   const navigation = useNavigation();
-  const route = useRoute<NavigationProps["route"]>();
+  const route = useRoute<WarningRouteProps>();
 
   const handlePress = () => {
     navigation.goBack();
-    if (route.params?.onNext) route.params.onNext();
+    if (route.params.onNext) route.params.onNext();
   };
 
   return (

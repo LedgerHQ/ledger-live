@@ -1,9 +1,9 @@
 import React from "react";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { useTheme } from "@react-navigation/native";
-import { DeviceModelId } from "@ledgerhq/devices";
 import BottomModal from "../BottomModal";
 import type { Step } from "./types";
+import type { DeviceNames } from "../../screens/Onboarding/types";
 import { ErrorFooterGeneric, RenderError } from "./StepRenders";
 
 type Props = {
@@ -13,7 +13,7 @@ type Props = {
   onStepDone: () => void;
   step: Step;
   error: Error | null | undefined;
-  deviceModelId: DeviceModelId;
+  deviceModelId: DeviceNames;
 };
 export default function SelectDeviceConnectModal({
   meta,
@@ -26,6 +26,7 @@ export default function SelectDeviceConnectModal({
   const { colors } = useTheme();
   return (
     <BottomModal
+      id="DeviceJobModal"
       isOpened={!!meta}
       onClose={onClose}
       preventBackdropClick={error ? undefined : true}

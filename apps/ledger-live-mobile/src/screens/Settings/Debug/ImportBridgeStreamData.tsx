@@ -6,7 +6,7 @@ import SettingsRow from "../../../components/SettingsRow";
 
 type Props = {
   title: string;
-  dataStr: Parameters<typeof Buffer.from>[0];
+  dataStr: any;
 };
 export default function ImportBridgeStreamData({ title, dataStr }: Props) {
   const navigation = useNavigation();

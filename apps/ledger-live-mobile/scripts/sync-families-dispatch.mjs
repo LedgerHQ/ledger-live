@@ -7,12 +7,12 @@ const generatedPath = path.join(basePath, "generated");
 
 await new Promise((resolve, reject) => {
   rimraf(generatedPath, e => {
-    if (e) {
+    if (!!e) {
       echo(chalk.red(e));
-      return reject(e);
+      return reject(e)
     }
     return resolve(fs.promises.mkdir(generatedPath));
-  });
+  })
 });
 
 const dirContent = await fs.promises.readdir(path.join(basePath, "families"), {
@@ -54,8 +54,7 @@ async function genTarget(target) {
       .map(ent => ent.name);
     const file = files.find(f => f.startsWith(target));
     if (file) {
-      imports += `import ${family} from "../families/${family}/${target}";
-`;
+      imports += `import ${family} from "../families/${family}/${target}";`;
       exprts += `
   ${family},`;
     }
@@ -66,6 +65,7 @@ async function genTarget(target) {
 `;
 
   const str = `${imports}
+
 ${exprts}`;
 
   await fs.promises.writeFile(outpath, str, "utf8");

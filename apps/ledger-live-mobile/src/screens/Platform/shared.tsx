@@ -5,8 +5,8 @@ import {
   filterPlatformApps,
 } from "@ledgerhq/live-common/platform/filters";
 import { getPlatformVersion } from "@ledgerhq/live-common/platform/version";
-import type { LiveAppManifest } from "@ledgerhq/live-common/platform/providers/types";
-import type { AppManifest } from "@ledgerhq/live-common/platform/types";
+import { LiveAppManifest } from "@ledgerhq/live-common/platform/providers/types";
+import { AppManifest } from "@ledgerhq/live-common/platform/types";
 import { useMemo } from "react";
 
 const defaultArray: LiveAppManifest[] = [];

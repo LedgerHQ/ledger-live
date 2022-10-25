@@ -2,30 +2,27 @@ import invariant from "invariant";
 import React, { useCallback } from "react";
 import { View, StyleSheet, FlatList } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
-import { Unit } from "@ledgerhq/types-cryptoassets";
 import { accountScreenSelector } from "../../reducers/accounts";
 import { updateAccount } from "../../actions/accounts";
 import SettingsRow from "../../components/SettingsRow";
 import Touchable from "../../components/Touchable";
 import NavigationScrollView from "../../components/NavigationScrollView";
-import { StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
-import { AccountSettingsNavigatorParamList } from "../../components/RootNavigator/types/AccountSettingsNavigator";
-import { ScreenName } from "../../const";
 
-type NavigationProps = StackNavigatorProps<
-  AccountSettingsNavigatorParamList,
-  ScreenName.EditAccountUnits
->;
-
-export default function EditAccountUnits({
-  navigation,
-  route,
-}: NavigationProps) {
+type Props = {
+  navigation: any;
+  route: {
+    params: RouteParams;
+  };
+};
+type RouteParams = {
+  accountId: string;
+};
+export default function EditAccountUnits({ navigation, route }: Props) {
   const dispatch = useDispatch();
   const { account } = useSelector(accountScreenSelector(route));
   invariant(account?.type === "Account", "account must be a main account");
   const onPressItem = useCallback(
-    (item: Unit) => {
+    (item: any) => {
       const newAccount = { ...account, unit: item };
       dispatch(updateAccount(newAccount));
       navigation.goBack();
@@ -38,7 +35,7 @@ export default function EditAccountUnits({
       <View style={styles.body}>
         <FlatList
           data={accountUnits}
-          keyExtractor={(item: Unit) => item.code}
+          keyExtractor={(item: any) => item.code}
           renderItem={({ item }) => (
             <Touchable
               event="EditAccountUnits"

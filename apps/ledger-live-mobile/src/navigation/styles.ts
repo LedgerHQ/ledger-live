@@ -15,7 +15,7 @@ if (Platform.OS === "ios") {
 function Styles() {
   return StyleSheet.create({
     header: {
-      ...headerStyle,
+      ...headerStyle, // $FlowFixMe
     },
     headerNoShadow: { ...headerStyle },
     transparentHeader: {

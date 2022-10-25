@@ -1,8 +1,8 @@
 import React from "react";
-import { StyleProp, ImageStyle, Image } from "react-native";
+import { Image } from "react-native";
 import RewardsPng from "../../images/rewards.png";
 
-const Rewards = ({ style }: { style?: StyleProp<ImageStyle> }) => (
+const Rewards = ({ style }: any) => (
   <Image
     style={[
       {

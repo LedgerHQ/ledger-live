@@ -2,36 +2,22 @@
 import React, { useCallback } from "react";
 import { View, StyleSheet, Image } from "react-native";
 import { Trans } from "react-i18next";
-import { CompositeScreenProps, useNavigation } from "@react-navigation/native";
+import { useNavigation } from "@react-navigation/native";
 import BaseInfoModal from "../BaseModal";
 import termsImg from "../../../../images/lending-info-3.png";
 import { Track } from "../../../../analytics";
-import {
-  StackNavigatorNavigation,
-  StackNavigatorProps,
-} from "../../../../components/RootNavigator/types/helpers";
-import { LendingInfoNavigatorParamList } from "../../../../components/RootNavigator/types/LendingInfoNavigator";
-import { ScreenName } from "../../../../const";
-import type { BaseNavigatorStackParamList } from "../../../../components/RootNavigator/types/BaseNavigator";
 
-type Navigation = CompositeScreenProps<
-  StackNavigatorProps<LendingInfoNavigatorParamList, ScreenName.LendingInfo3>,
-  StackNavigatorProps<BaseNavigatorStackParamList>
->;
-
-export default function LendingInfoStep3({ route: { params } }: Navigation) {
-  const navigation =
-    useNavigation<
-      StackNavigatorNavigation<
-        LendingInfoNavigatorParamList,
-        ScreenName.LendingInfo3
-      >
-    >();
+type Props = {
+  route: {
+    params: {
+      endCallback: () => void;
+    };
+  };
+};
+export default function LendingInfoStep3({ route: { params } }: Props) {
+  const navigation = useNavigation();
   const onNext = useCallback(() => {
-    const n =
-      navigation.getParent<
-        StackNavigatorNavigation<BaseNavigatorStackParamList>
-      >() || navigation;
+    const n = navigation.getParent() || navigation;
     n.pop();
     params?.endCallback && params.endCallback();
   }, [navigation, params]);

@@ -8,10 +8,12 @@ const permission = PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION;
 
 class RequiresBLE extends Component<
   {
-    children: React.ReactNode;
+    children: any;
   },
   {
-    granted: boolean | null | undefined;
+    state: {
+      granted: boolean | null | undefined;
+    };
   }
 > {
   state = {

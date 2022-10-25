@@ -18,9 +18,6 @@ import { Message } from "@ledgerhq/live-common/exchange/swap/types";
 import { swapKYCSelector } from "../../../../reducers/settings";
 import { setSwapKYCStatus } from "../../../../actions/settings";
 import { Loading } from "../../Loading";
-import { ScreenName } from "../../../../const";
-import { StackNavigatorNavigation } from "../../../../components/RootNavigator/types/helpers";
-import { SwapFormNavigatorParamList } from "../../../../components/RootNavigator/types/SwapFormNavigator";
 
 interface Props {
   provider: string;
@@ -28,8 +25,7 @@ interface Props {
 }
 
 export function Widget({ provider, type }: Props) {
-  const navigation =
-    useNavigation<StackNavigatorNavigation<SwapFormNavigatorParamList>>();
+  const navigation = useNavigation<any>();
   const dispatch = useDispatch();
   const { dark } = useTheme();
 
@@ -94,7 +90,7 @@ export function Widget({ provider, type }: Props) {
             );
             break;
           case "closeWidget":
-            navigation.navigate(ScreenName.SwapForm, {});
+            navigation.navigate("SwapForm");
             break;
           default:
             break;
@@ -121,8 +117,8 @@ export function Widget({ provider, type }: Props) {
   }, [navigation, reload]);
 
   return (
+    // @ts-expect-error lib type has issues
     <WebView
-      // @ts-expect-error lib type has issues
       ref={ref}
       source={{
         uri,

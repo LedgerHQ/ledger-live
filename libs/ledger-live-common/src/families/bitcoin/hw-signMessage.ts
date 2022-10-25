@@ -3,7 +3,7 @@ import type { SignMessage } from "../../hw/signMessage/types";
 
 const signMessage: SignMessage = async (transport, { path, message }) => {
   const btc = new Btc(transport);
-  const hexMessage = Buffer.from(message as string).toString("hex");
+  const hexMessage = Buffer.from(message).toString("hex");
   const result = await btc.signMessageNew(path, hexMessage);
   const v = result["v"] + 27 + 4;
   const signature = Buffer.from(

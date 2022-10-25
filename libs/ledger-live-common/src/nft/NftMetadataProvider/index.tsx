@@ -97,14 +97,14 @@ export function useNft(protoNft: ProtoNFT): UseNFTResponse {
 
   const nft = useMemo(
     () => (status === "loaded" && metadata ? { ...protoNft, metadata } : null),
-    [protoNft, metadata, status]
+    [protoNft, metadata]
   ) as NFT | null;
 
   return status !== "loaded"
     ? { status }
     : {
         status,
-        nft: nft as NFT,
+        nft: nft!,
       };
 }
 

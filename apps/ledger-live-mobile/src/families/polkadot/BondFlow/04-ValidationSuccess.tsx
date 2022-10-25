@@ -8,8 +8,6 @@ import type { Operation } from "@ledgerhq/types-live";
 import { isFirstBond } from "@ledgerhq/live-common/families/polkadot/logic";
 import { usePolkadotBondLoading } from "@ledgerhq/live-common/families/polkadot/react";
 import { useTheme } from "@react-navigation/native";
-import { PolkadotAccount } from "@ledgerhq/live-common/families/polkadot/types";
-import { Transaction } from "@ledgerhq/live-common/generated/types";
 import { accountScreenSelector } from "../../../reducers/accounts";
 import { TrackScreen } from "../../../analytics";
 import { NavigatorName, ScreenName } from "../../../const";
@@ -17,13 +15,9 @@ import PreventNativeBack from "../../../components/PreventNativeBack";
 import ValidateSuccess from "../../../components/ValidateSuccess";
 import Button from "../../../components/Button";
 import LText from "../../../components/LText";
-import {
-  BaseNavigation,
-  RootNavigation,
-} from "../../../components/RootNavigator/types/helpers";
 
 type Props = {
-  navigation: BaseNavigation;
+  navigation: any;
   route: {
     params: RouteParams;
   };
@@ -31,18 +25,18 @@ type Props = {
 type RouteParams = {
   accountId: string;
   deviceId: string;
-  transaction: Transaction;
+  transaction: any;
   result: Operation;
 };
 export default function ValidationSuccess({ navigation, route }: Props) {
   const { colors } = useTheme();
   const { account, parentAccount } = useSelector(accountScreenSelector(route));
   invariant(account, "account is required");
-  const mainAccount = getMainAccount(account, parentAccount) as PolkadotAccount;
+  const mainAccount = getMainAccount(account, parentAccount);
   const wasFirstBond = useRef(isFirstBond(mainAccount));
   const isLoading = usePolkadotBondLoading(mainAccount);
   const onClose = useCallback(() => {
-    navigation.getParent<RootNavigation>().pop();
+    navigation.getParent().pop();
   }, [navigation]);
   const goToNominate = useCallback(() => {
     onClose();
@@ -101,6 +95,7 @@ export default function ValidationSuccess({ navigation, route }: Props) {
                 title={
                   <Trans i18nKey="polkadot.bond.steps.validation.success.nominate" />
                 }
+                isLoading={isLoading}
                 disabled={isLoading}
                 type="primary"
                 onPress={goToNominate}

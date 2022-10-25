@@ -5,7 +5,6 @@ import { useNavigation, useTheme } from "@react-navigation/native";
 import type {
   Account,
   AccountLikeArray,
-  DailyOperationsSection,
   Operation,
 } from "@ledgerhq/types-live";
 import { groupAccountsOperationsByDay } from "@ledgerhq/live-common/account/index";
@@ -17,8 +16,6 @@ import OperationRow from "../../../components/OperationRow";
 import SectionHeader from "../../../components/SectionHeader";
 import NoMoreOperationFooter from "../../../components/NoMoreOperationFooter";
 import LoadingFooter from "../../../components/LoadingFooter";
-import { StackNavigatorNavigation } from "../../../components/RootNavigator/types/helpers";
-import { LendingNavigatorParamList } from "../../../components/RootNavigator/types/LendingNavigator";
 
 const useCompoundHistory = (accounts: AccountLikeArray): AccountLikeArray => {
   const filterOps = (op: Operation): boolean =>
@@ -32,7 +29,7 @@ const useCompoundHistory = (accounts: AccountLikeArray): AccountLikeArray => {
       }),
     [accounts],
   );
-
+  // $FlowFixMe
   return history;
 };
 
@@ -51,13 +48,7 @@ export default function History() {
     count: opCount,
     withSubAccounts: false,
   });
-  const navigation =
-    useNavigation<
-      StackNavigatorNavigation<
-        LendingNavigatorParamList,
-        ScreenName.LendingHistory
-      >
-    >();
+  const navigation = useNavigation();
   const navigateToCompoundDashboard = useCallback(() => {
     navigation.navigate(ScreenName.LendingDashboard);
   }, [navigation]);
@@ -75,11 +66,9 @@ export default function History() {
         {/** $FlowFixMe */}
         <SectionList
           sections={sections}
-          renderSectionHeader={({
-            section,
-          }: {
-            section: DailyOperationsSection;
-          }) => <SectionHeader section={section} />}
+          renderSectionHeader={({ section }: { section: any }) => (
+            <SectionHeader section={section} />
+          )}
           renderItem={({
             item,
             index,
@@ -87,12 +76,12 @@ export default function History() {
           }: {
             item: Operation;
             index: number;
-            section: DailyOperationsSection;
+            section: any;
           }) => {
             const account = accounts.find(a => a.id === item.accountId);
             const parentAccount: Account | null | undefined =
-              account && account.type !== "Account"
-                ? (accounts.find(a => a.id === account.parentId) as Account)
+              account && account.type !== "Account" // $FlowFixMe
+                ? accounts.find(a => a.id === account.parentId)
                 : null;
             if (!account) return null;
             return (

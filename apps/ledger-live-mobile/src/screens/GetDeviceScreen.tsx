@@ -10,6 +10,7 @@ import {
 import Video from "react-native-video";
 import styled, { useTheme } from "styled-components/native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { StackNavigationProp } from "@react-navigation/stack";
 import { useNavigation } from "@react-navigation/native";
 import { useTranslation } from "react-i18next";
 import { Linking, TouchableOpacity } from "react-native";
@@ -26,14 +27,8 @@ import {
   readOnlyModeEnabledSelector,
 } from "../reducers/settings";
 import { track, TrackScreen } from "../analytics";
-import { AnalyticsContext } from "../analytics/AnalyticsContext";
-import type { Context } from "../analytics/AnalyticsContext";
-import {
-  BaseNavigationComposite,
-  StackNavigatorNavigation,
-} from "../components/RootNavigator/types/helpers";
-import { BuyDeviceNavigatorParamList } from "../components/RootNavigator/types/BuyDeviceNavigator";
-import { OnboardingNavigatorParamList } from "../components/RootNavigator/types/OnboardingNavigator";
+// eslint-disable-next-line import/no-cycle
+import { AnalyticsContext } from "../components/RootNavigator";
 
 const hitSlop = {
   bottom: 10,
@@ -85,14 +80,10 @@ const videoStyle = {
   right: 0,
 };
 
-type NavigationProp = BaseNavigationComposite<
-  | StackNavigatorNavigation<BuyDeviceNavigatorParamList, ScreenName.GetDevice>
-  | StackNavigatorNavigation<OnboardingNavigatorParamList, ScreenName.GetDevice>
->;
-
 export default function GetDeviceScreen() {
   const { t } = useTranslation();
-  const navigation = useNavigation<NavigationProp>();
+  // @TODO replace any with RootStackParamList once ready
+  const navigation = useNavigation<StackNavigationProp<any>>();
   const { theme, colors } = useTheme();
   const { setShowWelcome, setFirstTimeOnboarding } = useNavigationInterceptor();
   const buyDeviceFromLive = useFeature("buyDeviceFromLive");
@@ -128,18 +119,15 @@ export default function GetDeviceScreen() {
 
   const buyLedger = useCallback(() => {
     if (buyDeviceFromLive?.enabled) {
-      // FIXME: ScreenName.PurchaseDevice does not exist when coming from the Onboarding navigator
-      // @ts-expect-error This seem very impossible to type because ts is right…
       navigation.navigate(ScreenName.PurchaseDevice);
     } else {
       Linking.openURL(urls.buyNanoX);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [buyDeviceFromLive?.enabled]);
 
   const videoMounted = !useIsAppInBackground();
 
-  const { source } = useContext<Context>(AnalyticsContext);
+  const { source } = useContext(AnalyticsContext);
 
   return (
     <StyledSafeAreaView>
@@ -185,19 +173,21 @@ export default function GetDeviceScreen() {
             <Video
               disableFocus
               source={theme === "light" ? sourceLight : sourceDark}
+              // @ts-expect-error issue in typings
               style={{
                 backgroundColor: colors.background.main,
                 transform: [{ scale: 1.4 }],
-                ...(videoStyle as object),
+                ...videoStyle,
               }}
               muted
               resizeMode={"cover"}
             />
           )}
           <Flex
+            // @ts-expect-error issue in typings
             style={{
               opacity: 0.1,
-              ...(videoStyle as object),
+              ...videoStyle,
             }}
             bg="background.main"
           />

@@ -1,44 +1,28 @@
 import React, { useState, useEffect } from "react";
 import { StyleSheet, View } from "react-native";
-import {
-  CompositeNavigationProp,
-  useNavigation,
-  useRoute,
-} from "@react-navigation/native";
-import { BarCodeScanningResult, Camera } from "expo-camera";
+import { useNavigation } from "@react-navigation/native";
+import { Camera } from "expo-camera";
 import { BarCodeScanner } from "expo-barcode-scanner";
 import StyledStatusBar from "./StyledStatusBar";
 import CameraScreen from "./CameraScreen";
 import FallBackCamera from "../screens/ImportAccounts/FallBackCamera";
+// eslint-disable-next-line import/no-unresolved
 import getWindowDimensions from "../logic/getWindowDimensions";
-import type {
-  StackNavigatorNavigation,
-  StackNavigatorRoute,
-} from "./RootNavigator/types/helpers";
-import { BaseNavigatorStackParamList } from "./RootNavigator/types/BaseNavigator";
-import { ImportAccountsNavigatorParamList } from "./RootNavigator/types/ImportAccountsNavigator";
 
 type Props = {
-  onResult: (_: string) => void;
+  onResult: (..._: Array<any>) => any;
   liveQrCode?: boolean;
   progress?: number;
   instruction?: React.ReactNode | string;
 };
 
 const Scanner = ({ onResult, liveQrCode, progress, instruction }: Props) => {
-  const [hasPermission, setHasPermission] = useState<boolean | null>(null);
+  const [hasPermission, setHasPermission] = useState(null);
   const { width, height } = getWindowDimensions();
-  const navigation =
-    useNavigation<
-      CompositeNavigationProp<
-        StackNavigatorNavigation<ImportAccountsNavigatorParamList>,
-        StackNavigatorNavigation<BaseNavigatorStackParamList>
-      >
-    >();
-  const route = useRoute<StackNavigatorRoute<BaseNavigatorStackParamList>>();
+  const navigation = useNavigation();
   useEffect(() => {
     (async () => {
-      const { status } = await Camera.requestCameraPermissionsAsync();
+      const { status } = await Camera.requestPermissionsAsync();
       setHasPermission(status === "granted");
     })();
   }, []);
@@ -48,9 +32,7 @@ const Scanner = ({ onResult, liveQrCode, progress, instruction }: Props) => {
   }
 
   if (hasPermission === false) {
-    // FIXME: OSKOUR pleas use navigation.navigate to access to this component instead of passing
-    // the navigation and route props manually
-    return <FallBackCamera navigation={navigation} route={route} />;
+    return <FallBackCamera navigation={navigation} />;
   }
 
   return (
@@ -60,7 +42,7 @@ const Scanner = ({ onResult, liveQrCode, progress, instruction }: Props) => {
         style={styles.camera}
         type={Camera.Constants.Type.back}
         ratio="16:9"
-        onBarCodeScanned={({ data }: BarCodeScanningResult) => onResult(data)}
+        onBarCodeScanned={({ data }) => onResult(data)}
         barCodeScannerSettings={{
           barCodeTypes: [BarCodeScanner.Constants.BarCodeType.qr],
         }}

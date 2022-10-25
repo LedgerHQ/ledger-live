@@ -2,28 +2,22 @@ import React, { PureComponent } from "react";
 import * as Keychain from "react-native-keychain";
 import { connect } from "react-redux";
 import { compose } from "redux";
-import { TFunction, withTranslation } from "react-i18next";
+import { withTranslation } from "react-i18next";
 import { PasswordsDontMatchError } from "@ledgerhq/errors";
 import { Vibration } from "react-native";
 import { disablePrivacy } from "../../../actions/settings";
+import { T } from "../../../types/common";
 import PasswordForm from "./PasswordForm";
 import { VIBRATION_PATTERN_ERROR } from "../../../constants";
-import { ScreenName } from "../../../const";
-import type { PasswordModifyFlowParamList } from "../../../components/RootNavigator/types/PasswordModifyFlowNavigator";
-import type { StackNavigatorProps } from "../../../components/RootNavigator/types/helpers";
-
-type NavigationProps = StackNavigatorProps<
-  PasswordModifyFlowParamList,
-  ScreenName.PasswordRemove
->;
 
 type Props = {
-  t: TFunction;
+  t: T;
   disablePrivacy: () => void;
-} & NavigationProps;
+  navigation: any;
+};
 
 type State = {
-  error?: Error | null;
+  error?: Error;
   confirmPassword: string;
 };
 
@@ -58,7 +52,7 @@ class PasswordRemove extends PureComponent<Props, State> {
       const n = navigation.getParent();
       if (n) n.goBack();
     } catch (error) {
-      this.setState({ error: error as Error, confirmPassword: "" });
+      this.setState({ error, confirmPassword: "" });
     }
   }
 
@@ -81,7 +75,7 @@ class PasswordRemove extends PureComponent<Props, State> {
   }
 }
 
-export default compose<React.ComponentType<NavigationProps>>(
+export default compose(
   connect(null, mapDispatchToProps),
   withTranslation(),
 )(PasswordRemove);

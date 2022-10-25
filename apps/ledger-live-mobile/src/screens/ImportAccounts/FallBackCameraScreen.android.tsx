@@ -1,38 +1,34 @@
 import React, { PureComponent } from "react";
-import { TFunction, withTranslation } from "react-i18next";
+import { withTranslation } from "react-i18next";
 import { AppState, Linking } from "react-native";
 import { ScreenName } from "../../const";
+import type { T } from "../../types/common";
 import FallbackCameraBody from "../../components/FallbackCameraBody";
-import type { NavigationProps } from "./FallBackCameraScreen";
 
 type Props = {
-  t: TFunction;
-} & NavigationProps;
-
+  navigation: any;
+  t: T;
+};
 type State = {
-  appState: string;
+  appSTate: string;
   openSettingsPressed: boolean;
 };
 
 class FallBackCameraScreen extends PureComponent<Props, State> {
-  listener: ReturnType<typeof AppState.addEventListener> | undefined;
   state = {
     appState: AppState.currentState,
     openSettingsPressed: false,
   };
 
   componentDidMount() {
-    this.listener = AppState.addEventListener(
-      "change",
-      this.handleAppStateChange,
-    );
+    AppState.addEventListener("change", this.handleAppStateChange);
   }
 
   componentWillUnmount() {
-    this.listener?.remove();
+    AppState.removeEventListener("change", this.handleAppStateChange);
   }
 
-  handleAppStateChange = (nextAppState: string) => {
+  handleAppStateChange = nextAppState => {
     const { appState, openSettingsPressed } = this.state;
     const { navigation } = this.props;
 
@@ -41,7 +37,7 @@ class FallBackCameraScreen extends PureComponent<Props, State> {
       nextAppState === "active" &&
       openSettingsPressed
     ) {
-      navigation.replace(ScreenName.ScanAccounts, {});
+      navigation.replace(ScreenName.ScanAccounts);
     }
 
     this.setState({

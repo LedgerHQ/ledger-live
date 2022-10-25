@@ -17,6 +17,7 @@ import {
   TrophyMedium,
   PenMedium,
 } from "@ledgerhq/native-ui/assets/icons";
+// eslint-disable-next-line import/no-unresolved
 import getWindowDimensions from "../../../logic/getWindowDimensions";
 import Trash from "../../../icons/Trash";
 
@@ -26,7 +27,7 @@ const RightAction = ({
   dragX,
   onRemove,
 }: {
-  dragX: Animated.AnimatedInterpolation;
+  dragX: any;
   onRemove: () => void;
 }) => {
   const { colors } = useTheme();
@@ -58,7 +59,7 @@ type VoteRowProps = {
   vote: Vote & {
     isSR: boolean;
     rank: number;
-    validator?: SuperRepresentative | null;
+    validator?: SuperRepresentative;
   };
   onEdit: (vote: Vote, name: string) => void;
   onRemove: (vote: Vote) => void;
@@ -76,8 +77,8 @@ const VoteRow = ({
   openIndex,
 }: VoteRowProps) => {
   const { colors } = useTheme();
-  const rowRef = useRef<Animatable.View & View>(null);
-  const swipeRef = useRef<Swipeable>(null);
+  const rowRef = useRef();
+  const swipeRef = useRef();
   const { address, voteCount, isSR, rank, validator } = vote;
   const { name } = validator || {};
 
@@ -126,7 +127,7 @@ const VoteRow = ({
         friction={2}
         rightThreshold={27}
         overshootRight={false}
-        renderRightActions={(_progress, dragX) => (
+        renderRightActions={(progress, dragX) => (
           <RightAction dragX={dragX} onRemove={removeVoteAnimStart} />
         )}
         onSwipeableRightWillOpen={() => onOpen(index)}

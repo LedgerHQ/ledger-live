@@ -3,12 +3,8 @@ import { connect } from "react-redux";
 import { createStructuredSelector } from "reselect";
 import { setEnvUnsafe } from "@ledgerhq/live-common/env";
 import { hideEmptyTokenAccountsEnabledSelector } from "../reducers/settings";
-import { State } from "../reducers/types";
 
-const mapStateToProps = createStructuredSelector<
-  State,
-  { hideEmptyTokenAccountsEnabled: boolean }
->({
+const mapStateToProps = createStructuredSelector({
   hideEmptyTokenAccountsEnabled: hideEmptyTokenAccountsEnabledSelector,
 });
 
@@ -33,4 +29,7 @@ class SetEnvsFromSettings extends PureComponent<{
   }
 }
 
-export default connect(mapStateToProps)(SetEnvsFromSettings);
+// eslint-disable-next-line @typescript-eslint/ban-types
+const m: React.ComponentType<{}> =
+  connect(mapStateToProps)(SetEnvsFromSettings);
+export default m;

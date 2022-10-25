@@ -19,21 +19,20 @@ import { TrackScreen } from "../../analytics";
 import FilteredSearchBar from "../../components/FilteredSearchBar";
 import CurrencyRow from "../../components/CurrencyRow";
 import LText from "../../components/LText";
-import { AddAccountsNavigatorParamList } from "../../components/RootNavigator/types/AddAccountsNavigator";
-import { StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
 
 const SEARCH_KEYS = ["name", "ticker"];
-
-type NavigationProps = StackNavigatorProps<
-  AddAccountsNavigatorParamList,
-  ScreenName.AddAccountsSelectCrypto
->;
-
 type Props = {
-  devMode?: boolean;
-} & NavigationProps;
+  devMode: boolean;
+  navigation: any;
+  route: {
+    params: {
+      filterCurrencyIds?: string[];
+      currency?: string;
+    };
+  };
+};
 
-const keyExtractor = (currency: CryptoCurrency) => currency.id;
+const keyExtractor = currency => currency.id;
 
 const renderEmptyList = () => (
   <View style={styles.emptySearch}>
@@ -117,10 +116,10 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
     }
   };
 
-  const renderList = (items: (CryptoCurrency | TokenCurrency)[]) => (
+  const renderList = items => (
     <FlatList
       contentContainerStyle={styles.list}
-      data={items as CryptoCurrency[]}
+      data={items}
       renderItem={({ item }) => (
         <CurrencyRow currency={item} onPress={onPressItem} />
       )}

@@ -2,27 +2,26 @@ import React, { useEffect, useContext } from "react";
 import Config from "react-native-config";
 import Clipboard from "@react-native-community/clipboard";
 import { Trans } from "react-i18next";
-import { CompositeScreenProps } from "@react-navigation/native";
 import Scanner from "../../components/Scanner";
 import { NavigatorName, ScreenName } from "../../const";
 import { TrackScreen } from "../../analytics";
+// eslint-disable-next-line import/named
 import { connect, context, STATUS } from "./Provider";
-import { StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
-import { WalletConnectNavigatorParamList } from "../../components/RootNavigator/types/WalletConnectNavigator";
-import { BaseNavigatorStackParamList } from "../../components/RootNavigator/types/BaseNavigator";
 
-type Props = CompositeScreenProps<
-  StackNavigatorProps<
-    WalletConnectNavigatorParamList,
-    ScreenName.WalletConnectScan
-  >,
-  StackNavigatorProps<BaseNavigatorStackParamList>
->;
+type Props = {
+  navigation: any;
+  route: {
+    params: RouteParams;
+  };
+};
+type RouteParams = {
+  accountId: string;
+};
 
 const ScanWalletConnect = ({ navigation, route }: Props) => {
   const wcContext = useContext(context);
   useEffect(() => {
-    let mockTO: ReturnType<typeof setTimeout>;
+    let mockTO;
 
     if (Config.MOCK_SCAN_WALLETCONNECT) {
       mockTO = setTimeout(async () => {
@@ -52,6 +51,7 @@ const ScanWalletConnect = ({ navigation, route }: Props) => {
     <>
       <TrackScreen category="WalletConnect" screen="Scan" />
       <Scanner
+        navigation={navigation}
         onResult={onResult}
         instruction={<Trans i18nKey="walletconnect.scan" />}
       />

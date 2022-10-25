@@ -4,9 +4,7 @@ import {
   StyleSheet,
   FlatList,
   TouchableOpacity,
-  TouchableOpacityProps,
   SafeAreaView,
-  ListRenderItemInfo,
 } from "react-native";
 import { useTranslation } from "react-i18next";
 import {
@@ -15,9 +13,8 @@ import {
   getAccountCurrency,
 } from "@ledgerhq/live-common/account/index";
 import { useTheme } from "@react-navigation/native";
-import type { Account, AccountLike, FeeStrategy } from "@ledgerhq/types-live";
+import type { Account, AccountLike } from "@ledgerhq/types-live";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
-import BigNumber from "bignumber.js";
 import LText from "./LText";
 import SummaryRow from "../screens/SendFunds/SummaryRow";
 import CheckBox from "./CheckBox";
@@ -29,17 +26,17 @@ import Info from "../icons/Info";
 import NetworkFeeInfo from "./NetworkFeeInfo";
 
 type Props = {
-  strategies: (FeeStrategy & { userGasLimit?: BigNumber })[];
+  strategies: any;
   account: AccountLike;
-  parentAccount?: Account | null;
+  parentAccount: Account | null | undefined;
   transaction: Transaction;
-  onStrategySelect: (_: FeeStrategy & { userGasLimit?: BigNumber }) => void;
-  onCustomFeesPress: TouchableOpacityProps["onPress"];
-  forceUnitLabel?: boolean | React.ReactNode;
+  onStrategySelect: (..._: Array<any>) => any;
+  onCustomFeesPress: (..._: Array<any>) => any;
+  forceUnitLabel?: any;
   disabledStrategies?: Array<string>;
 };
 
-const CVWrapper = ({ children }: { children?: React.ReactNode }) => (
+const CVWrapper = ({ children }: { children: any }) => (
   <LText semiBold color="grey">
     {children}
   </LText>
@@ -70,18 +67,17 @@ export default function SelectFeesStrategy({
   const closeNetworkFeeHelpModal = () => setNetworkFeeHelpOpened(false);
 
   const onPressStrategySelect = useCallback(
-    (item: FeeStrategy) => {
+    (item: any) => {
       onStrategySelect({
         amount: item.amount,
-        label:
-          (item as { forceValueLabel?: string }).forceValueLabel ?? item.label,
-        userGasLimit: (item as { userGasLimit?: BigNumber }).userGasLimit,
+        label: item.forceValueLabel ?? item.label,
+        userGasLimit: item.userGasLimit,
       });
     },
     [onStrategySelect],
   );
 
-  const renderItem = ({ item }: ListRenderItemInfo<FeeStrategy>) => (
+  const renderItem = ({ item }) => (
     <TouchableOpacity
       onPress={() => onPressStrategySelect(item)}
       disabled={
@@ -108,6 +104,7 @@ export default function SelectFeesStrategy({
         <View style={styles.leftBox}>
           <CheckBox
             onChange={() => onPressStrategySelect(item)}
+            style={styles.checkbox}
             isChecked={feesStrategy === item.label}
           />
           <LText semiBold style={styles.feeLabel}>
@@ -142,11 +139,12 @@ export default function SelectFeesStrategy({
   return (
     <>
       <BottomModal
+        id="NetworkFee"
         isOpened={isNetworkFeeHelpOpened}
         preventBackdropClick={false}
         onClose={closeNetworkFeeHelpModal}
       >
-        <NetworkFeeInfo />
+        <NetworkFeeInfo onClose={closeNetworkFeeHelpModal} />
       </BottomModal>
 
       <View>
@@ -222,6 +220,11 @@ const styles = StyleSheet.create({
   },
   feesAmount: {
     fontSize: 15,
+  },
+  checkbox: {
+    borderRadius: 24,
+    width: 20,
+    height: 20,
   },
   customizeFeesButton: {
     flex: 1,

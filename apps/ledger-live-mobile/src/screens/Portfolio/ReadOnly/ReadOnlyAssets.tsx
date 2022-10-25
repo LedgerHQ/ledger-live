@@ -1,29 +1,18 @@
 import React, { useCallback } from "react";
 import { FlatList } from "react-native";
 import { useNavigation } from "@react-navigation/native";
-import type {
-  CryptoCurrency,
-  TokenCurrency,
-} from "@ledgerhq/types-cryptoassets";
+import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import ReadOnlyAccountRow from "../../Accounts/ReadOnly/ReadOnlyAccountRow";
 import { withDiscreetMode } from "../../../context/DiscreetModeContext";
-import { AccountsNavigatorParamList } from "../../../components/RootNavigator/types/AccountsNavigator";
-import { StackNavigatorNavigation } from "../../../components/RootNavigator/types/helpers";
-import { ScreenName } from "../../../const";
-
-type Navigation = StackNavigatorNavigation<
-  AccountsNavigatorParamList,
-  ScreenName.Accounts
->;
 
 type ListProps = {
   assets: CryptoCurrency[];
 };
 
 const ReadOnlyAssetsList = ({ assets }: ListProps) => {
-  const navigation = useNavigation<Navigation>();
+  const navigation = useNavigation();
   const renderItem = useCallback(
-    ({ item }: { item: CryptoCurrency | TokenCurrency }) => (
+    ({ item }: { item: any }) => (
       <ReadOnlyAccountRow
         navigation={navigation}
         currency={item}

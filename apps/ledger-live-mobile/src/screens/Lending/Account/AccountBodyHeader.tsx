@@ -23,6 +23,7 @@ export default function AccountBodyHeader({
   const { colors } = useTheme();
   const { closed, opened } = compoundSummary;
   const renderClosedRow = useCallback(
+    // $FlowFixMe
     ({ item }) => <ClosedLoansRow item={{ ...item, account, parentAccount }} />,
     [account, parentAccount],
   );
@@ -43,7 +44,7 @@ export default function AccountBodyHeader({
             ]}
           >
             {opened.map((item, index) => (
-              <ActiveAccountRow
+              <ActiveAccountRow // $FlowFixMe
                 item={{
                   ...item,
                   account,

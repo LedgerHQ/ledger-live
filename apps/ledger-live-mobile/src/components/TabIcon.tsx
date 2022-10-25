@@ -5,8 +5,9 @@ import styled from "styled-components/native";
 
 type Props = {
   color: string;
+  focused: boolean;
   i18nKey: string;
-  Icon: React.ComponentType<{ size?: number; color?: string }>;
+  Icon: (_: { size?: number; color?: string }) => React.ReactElement;
 };
 
 const TabIconContainer = styled.View`

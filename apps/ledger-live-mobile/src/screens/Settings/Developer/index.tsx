@@ -1,3 +1,4 @@
+import { NavigationProp } from "@react-navigation/native";
 import { isEnvDefault } from "@ledgerhq/live-common/env";
 import React from "react";
 import { ScrollView } from "react-native";
@@ -7,16 +8,13 @@ import { ScreenName } from "../../../const";
 import { developerFeatures } from "../../../experimental";
 import { TrackScreen } from "../../../analytics";
 import FeatureRow from "../Experimental/FeatureRow";
-import { SettingsNavigatorStackParamList } from "../../../components/RootNavigator/types/SettingsNavigator";
-import { StackNavigatorProps } from "../../../components/RootNavigator/types/helpers";
 
 export { default as DeveloperCustomManifest } from "./CustomManifest";
 export default function DeveloperSettings({
   navigation,
-}: StackNavigatorProps<
-  SettingsNavigatorStackParamList,
-  ScreenName.DeveloperSettings
->) {
+}: {
+  navigation: NavigationProp;
+}) {
   const { t } = useTranslation();
   return (
     <ScrollView>
@@ -24,7 +22,7 @@ export default function DeveloperSettings({
 
       {developerFeatures.map(
         feat =>
-          (!feat.shadow || (feat.shadow && !isEnvDefault(feat.name))) && (
+          (!feat.shadow || (feat.shadow && !isEnvDefault(feat.name))) && ( // $FlowFixMe
             <FeatureRow key={feat.name} feature={feat} />
           ),
       )}

@@ -5,7 +5,7 @@ import SettingsIcon from "../../icons/SettingsIcon";
 import Button from "../../components/Button";
 
 export default class LocationServicesButton extends PureComponent<{
-  onRetry: () => void;
+  onRetry: (..._: Array<any>) => any;
 }> {
   openLocationServicesSetting = () => {
     LocationServicesDialogBox.checkLocationServicesIsEnabled({

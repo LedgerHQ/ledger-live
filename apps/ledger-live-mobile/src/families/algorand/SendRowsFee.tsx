@@ -2,58 +2,26 @@ import React, { useCallback } from "react";
 import { View, StyleSheet, Linking } from "react-native";
 import type { AccountLike, Account } from "@ledgerhq/types-live";
 import { Trans } from "react-i18next";
-import type { Transaction as AlgorandTransaction } from "@ledgerhq/live-common/families/algorand/types";
-import type { Transaction } from "@ledgerhq/live-common/generated/types";
+import type { Transaction } from "@ledgerhq/live-common/families/algorand/types";
 import {
   getAccountUnit,
   getAccountCurrency,
 } from "@ledgerhq/live-common/account/index";
 import { getMainAccount } from "@ledgerhq/live-common/account/helpers";
-import { CompositeScreenProps, useTheme } from "@react-navigation/native";
+import { useTheme } from "@react-navigation/native";
 import SummaryRow from "../../screens/SendFunds/SummaryRow";
 import LText from "../../components/LText";
 import CurrencyUnitValue from "../../components/CurrencyUnitValue";
 import CounterValue from "../../components/CounterValue";
 import ExternalLink from "../../icons/ExternalLink";
 import { urls } from "../../config/urls";
-import type { StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
-import type { SendFundsNavigatorStackParamList } from "../../components/RootNavigator/types/SendFundsNavigator";
-import type { BaseNavigatorStackParamList } from "../../components/RootNavigator/types/BaseNavigator";
-import { ScreenName } from "../../const";
-import type { LendingEnableFlowParamsList } from "../../components/RootNavigator/types/LendingEnableFlowNavigator";
-import type { LendingSupplyFlowNavigatorParamList } from "../../components/RootNavigator/types/LendingSupplyFlowNavigator";
-import type { LendingWithdrawFlowNavigatorParamList } from "../../components/RootNavigator/types/LendingWithdrawFlowNavigator";
-import type { SignTransactionNavigatorParamList } from "../../components/RootNavigator/types/SignTransactionNavigator";
-import type { SwapNavigatorParamList } from "../../components/RootNavigator/types/SwapNavigator";
 
 type Props = {
   transaction: Transaction;
   account: AccountLike;
-  parentAccount?: Account | null;
-} & CompositeScreenProps<
-  | StackNavigatorProps<
-      SendFundsNavigatorStackParamList,
-      ScreenName.SendSummary
-    >
-  | StackNavigatorProps<
-      SignTransactionNavigatorParamList,
-      ScreenName.SignTransactionSummary
-    >
-  | StackNavigatorProps<
-      LendingEnableFlowParamsList,
-      ScreenName.LendingEnableSummary
-    >
-  | StackNavigatorProps<
-      LendingSupplyFlowNavigatorParamList,
-      ScreenName.LendingSupplySummary
-    >
-  | StackNavigatorProps<
-      LendingWithdrawFlowNavigatorParamList,
-      ScreenName.LendingWithdrawSummary
-    >
-  | StackNavigatorProps<SwapNavigatorParamList, ScreenName.SwapSelectFees>,
-  StackNavigatorProps<BaseNavigatorStackParamList>
->;
+  parentAccount: Account | null | undefined;
+  navigation: any;
+};
 export default function AlgorandFeeRow({
   account,
   parentAccount,
@@ -63,7 +31,7 @@ export default function AlgorandFeeRow({
   const extraInfoFees = useCallback(() => {
     Linking.openURL(urls.feesMoreInfo);
   }, []);
-  const fees = (transaction as AlgorandTransaction).fees;
+  const fees = transaction.fees;
   const mainAccount = getMainAccount(account, parentAccount);
   const unit = getAccountUnit(mainAccount);
   const currency = getAccountCurrency(account);

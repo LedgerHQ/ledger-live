@@ -17,7 +17,7 @@ const makeSummaries = (accounts: AccountLikeArray): CompoundAccountSummary[] =>
       const summary = makeCompoundSummaryForAccount(acc, parentAccount);
       return summary;
     })
-    .filter(Boolean) as CompoundAccountSummary[];
+    .filter(Boolean);
 
 export function useCompoundSummaries(
   accounts: AccountLikeArray,

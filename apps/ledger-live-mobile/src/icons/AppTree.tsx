@@ -2,13 +2,12 @@ import React from "react";
 import Svg, { Path, G, Image } from "react-native-svg";
 import manager from "@ledgerhq/live-common/manager/index";
 import { Flex } from "@ledgerhq/native-ui";
-import { App } from "@ledgerhq/types-live";
 import AppIcon from "../screens/Manager/AppsList/AppIcon";
 
 type Props = {
   color: string;
   icon: string;
-  app: App;
+  app: any;
 };
 
 export default function AppTree({ color, icon, app }: Props) {
@@ -28,7 +27,6 @@ export default function AppTree({ color, icon, app }: Props) {
             height="22"
             rx="11"
             ry="11"
-            // @ts-expect-error Wrong bindings?
             href={uri}
           />
         </G>
@@ -40,7 +38,6 @@ export default function AppTree({ color, icon, app }: Props) {
             height="22"
             rx="11"
             ry="11"
-            // @ts-expect-error Wrong bindings?
             href={uri}
           />
         </G>
@@ -52,20 +49,11 @@ export default function AppTree({ color, icon, app }: Props) {
             height="22"
             rx="11"
             ry="11"
-            // @ts-expect-error Wrong bindings?
             href={uri}
           />
         </G>
         <G opacity="0.25">
-          <Image
-            y="27"
-            width="22"
-            height="22"
-            rx="11"
-            ry="11"
-            // @ts-expect-error Wrong bindings?
-            href={uri}
-          />
+          <Image y="27" width="22" height="22" rx="11" ry="11" href={uri} />
         </G>
         <Path
           d="M82 3V11.5H13C11.8954 11.5 11 12.3954 11 13.5V20"

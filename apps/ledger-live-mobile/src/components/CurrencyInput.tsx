@@ -1,12 +1,5 @@
 import React, { PureComponent } from "react";
-import {
-  StyleSheet,
-  View,
-  Dimensions,
-  StyleProp,
-  ViewStyle,
-  TextInputProps,
-} from "react-native";
+import { StyleSheet, View, Dimensions } from "react-native";
 import { connect } from "react-redux";
 import { BigNumber } from "bignumber.js";
 import {
@@ -17,24 +10,15 @@ import noop from "lodash/noop";
 import clamp from "lodash/clamp";
 import type { Unit } from "@ledgerhq/types-cryptoassets";
 import { localeSelector } from "../reducers/settings";
+// eslint-disable-next-line import/no-unresolved
 import getFontStyle from "./LText/getFontStyle";
-import { Theme, withTheme } from "../colors";
+import { withTheme } from "../colors";
 import TextInput from "./FocusedTextInput";
 
 function format(
   unit: Unit,
   value: BigNumber,
-  {
-    isFocused,
-    showAllDigits,
-    subMagnitude,
-    locale,
-  }: {
-    isFocused?: boolean;
-    showAllDigits?: boolean;
-    subMagnitude: number;
-    locale: string;
-  },
+  { isFocused, showAllDigits, subMagnitude, locale },
 ) {
   return formatCurrencyUnit(unit, value, {
     locale,
@@ -48,22 +32,22 @@ function format(
 type Props = {
   isActive: boolean;
   onFocus: (_: boolean) => void;
-  onChange: (_: BigNumber, keepRatio?: boolean) => void;
+  onChange: (_: BigNumber) => void;
   unit: Unit;
   value: BigNumber | null | undefined;
   showAllDigits?: boolean;
   subMagnitude: number;
   allowZero: boolean;
-  renderLeft?: React.ReactNode;
-  renderRight?: React.ReactNode;
+  renderLeft?: any;
+  renderRight?: any;
   hasError?: boolean;
   hasWarning?: boolean;
   autoFocus?: boolean;
   editable: boolean;
   placeholder?: string;
-  style?: StyleProp<ViewStyle>;
-  inputStyle?: TextInputProps["style"];
-  colors: Theme["colors"];
+  style?: any;
+  inputStyle?: any;
+  colors: any;
   dynamicFontRatio?: number;
   locale: string;
 };
@@ -257,7 +241,7 @@ const styles = StyleSheet.create({
   },
 });
 
-const mapStateToProps = (state: Parameters<typeof localeSelector>[0]) => ({
+const mapStateToProps = state => ({
   locale: localeSelector(state),
 });
 

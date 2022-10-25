@@ -19,7 +19,12 @@ export type ModalInfo = {
 };
 export default function InfoModal({ data, isOpened, onClose }: Props) {
   return (
-    <BottomModal style={styles.root} isOpened={isOpened} onClose={onClose}>
+    <BottomModal
+      id="InfoModal"
+      style={styles.root}
+      isOpened={isOpened}
+      onClose={onClose}
+    >
       {data.map(({ description, Icon, title, footer }, i) => (
         <View style={styles.section} key={i}>
           <View style={styles.header}>

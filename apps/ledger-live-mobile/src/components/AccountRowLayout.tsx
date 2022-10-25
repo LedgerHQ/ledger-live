@@ -117,20 +117,14 @@ const AccountRowLayout = ({
                 joinFragmentsSeparator=""
               />
             </Text>
-            {currencyUnit ? (
-              <Text
-                variant="body"
-                fontWeight="medium"
-                color="neutral.c70"
-                flex={1}
-              >
-                <CurrencyUnitValue
-                  showCode
-                  unit={currencyUnit}
-                  value={balance}
-                />
-              </Text>
-            ) : null}
+            <Text
+              variant="body"
+              fontWeight="medium"
+              color="neutral.c70"
+              flex={1}
+            >
+              <CurrencyUnitValue showCode unit={currencyUnit} value={balance} />
+            </Text>
           </Flex>
           <Icons.ChevronRightMedium size={24} />
         </Flex>

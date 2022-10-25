@@ -15,7 +15,7 @@ const shouldNotRemindUserAgainToVerifyAddressOnReceive =
 const ReceiveSecurityModal = ({
   onVerifyAddress,
 }: {
-  onVerifyAddress: () => void;
+  onVerifyAddress: any;
 }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -49,7 +49,6 @@ const ReceiveSecurityModal = ({
   const sharedHeight = useSharedValue(0);
   const onLayout = useCallback(({ nativeEvent: { layout } }) => {
     sharedHeight.value = withTiming(layout.height, { duration: 200 });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const animatedStyle = useAnimatedStyle(
@@ -82,7 +81,7 @@ const ReceiveSecurityModal = ({
       ),
     };
 
-    return components[step as keyof typeof components];
+    return components[step];
   }, [closeModal, onVerify, step]);
 
   return (

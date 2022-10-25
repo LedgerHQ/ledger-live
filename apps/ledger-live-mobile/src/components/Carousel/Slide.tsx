@@ -1,15 +1,9 @@
 import React, { useCallback } from "react";
-import {
-  Linking,
-  Image,
-  ImageSourcePropType,
-  StyleProp,
-  ImageStyle,
-} from "react-native";
+import { Linking, Image } from "react-native";
 import { Flex, Text, Link as TextLink, Icons } from "@ledgerhq/native-ui";
 import { useTranslation } from "react-i18next";
 import styled from "styled-components/native";
-import { NavigationProp, useNavigation } from "@react-navigation/native";
+import { useNavigation } from "@react-navigation/native";
 
 // eslint-disable-next-line import/no-cycle
 import Touchable from "../Touchable";
@@ -22,17 +16,15 @@ const StyledTouchable = styled(Touchable)`
 
 export type SlideProps = {
   url: string;
-  onPress?: (
-    _: NavigationProp<Record<string, object | undefined>>["navigate"],
-  ) => void;
+  onPress?: (_: (..._: any) => void) => void;
   name: string;
   title: string;
-  description: string;
-  cta?: string;
-  image?: ImageSourcePropType;
+  description: any;
+  cta: any;
+  image?: any;
   width?: number;
-  icon?: React.ReactNode;
-  position?: StyleProp<ImageStyle>;
+  icon?: any;
+  position?: any;
 };
 
 const Slide = ({
@@ -59,7 +51,7 @@ const Slide = ({
     } else {
       Linking.openURL(url);
     }
-  }, [name, url, onPress, navigate]);
+  }, [onPress, navigate, url]);
   return (
     <StyledTouchable event={`${name} Carousel`} onPress={onClick}>
       <Flex

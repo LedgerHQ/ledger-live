@@ -6,35 +6,21 @@ import { useNavigation } from "@react-navigation/native";
 import { useTranslation } from "react-i18next";
 import { useDispatch } from "react-redux";
 import Button from "../components/wrappedUi/Button";
-import { NavigatorName, ScreenName } from "../const";
+import { NavigatorName } from "../const";
 import { setHasOrderedNano, setSensitiveAnalytics } from "../actions/settings";
 import { TrackScreen } from "../analytics";
-import {
-  RootNavigationComposite,
-  StackNavigatorNavigation,
-} from "../components/RootNavigator/types/helpers";
-import { BaseNavigatorStackParamList } from "../components/RootNavigator/types/BaseNavigator";
 
 const StyledSafeAreaView = styled(SafeAreaView)`
   flex: 1;
   background-color: ${({ theme }) => theme.colors.background.main};
 `;
 
-type NavigationProp = RootNavigationComposite<
-  StackNavigatorNavigation<
-    BaseNavigatorStackParamList,
-    ScreenName.PostBuyDeviceScreen
-  >
->;
-
 export default function PostBuyDeviceScreen() {
   const { t } = useTranslation();
   const dispatch = useDispatch();
-  const navigation = useNavigation<NavigationProp>();
+  const navigation = useNavigation();
 
   const onClose = useCallback(() => {
-    // FIXME: navigating to a nested navigator without providing a key / screen name…
-    // @ts-expect-error typescript is rightfully screaming that this is wrong
     navigation.navigate(NavigatorName.Base, {
       screen: NavigatorName.Main,
     });

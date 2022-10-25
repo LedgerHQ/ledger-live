@@ -4,9 +4,10 @@ import manager from "@ledgerhq/live-common/manager/index";
 
 const useLatestFirmware: (
   _?: DeviceInfo,
-) => FirmwareUpdateContext | null = deviceInfo => {
-  const [latestFirmware, setLatestFirmware] =
-    useState<FirmwareUpdateContext | null>(null);
+) => FirmwareUpdateContext | null | undefined = deviceInfo => {
+  const [latestFirmware, setLatestFirmware] = useState<
+    FirmwareUpdateContext | null | undefined
+  >(null);
 
   useEffect(() => {
     const getLatestFirmwareForDevice = async () => {

@@ -15,7 +15,6 @@ import { useSelector } from "react-redux";
 import { Selector } from "./Selector";
 import { CurrencyValue } from "./CurrencyValue";
 import { toSelector } from "../../../../actions/swap";
-import { ScreenName } from "../../../../const";
 
 interface Props {
   swapTx: SwapTransactionType;
@@ -42,10 +41,7 @@ export function To({ swapTx, provider, exchangeRate }: Props) {
 
   const onPress = useCallback(() => {
     // @ts-expect-error navigation type is only partially declared
-    navigation.navigate(ScreenName.SwapSelectCurrency, {
-      currencies,
-      provider,
-    });
+    navigation.navigate("SelectCurrency", { currencies, provider });
   }, [navigation, currencies, provider]);
 
   return (

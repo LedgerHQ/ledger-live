@@ -11,9 +11,6 @@ import LendingSupplyValidationSuccess from "../../screens/Lending/SupplyFlow/03-
 import LendingSupplyValidationError from "../../screens/Lending/SupplyFlow/03-ValidationError";
 import { getStackNavigatorConfig } from "../../navigation/navigatorConfig";
 import StepHeader from "../StepHeader";
-import { LendingSupplyFlowNavigatorParamList } from "./types/LendingSupplyFlowNavigator";
-
-const Stack = createStackNavigator<LendingSupplyFlowNavigatorParamList>();
 
 const totalSteps = "4";
 export default function LendingSupplyFlowNavigator() {
@@ -89,9 +86,10 @@ export default function LendingSupplyFlowNavigator() {
         name={ScreenName.LendingSupplyValidationSuccess}
         component={LendingSupplyValidationSuccess}
         options={{
-          headerLeft: undefined,
+          headerLeft: null,
           headerShown: false,
-          headerRight: undefined,
+          headerRight: null,
+          gestureSupplyd: false,
         }}
       />
       <Stack.Screen
@@ -104,3 +102,4 @@ export default function LendingSupplyFlowNavigator() {
     </Stack.Navigator>
   );
 }
+const Stack = createStackNavigator();

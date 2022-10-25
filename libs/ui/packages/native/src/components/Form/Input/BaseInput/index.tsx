@@ -196,5 +196,5 @@ function Input<T = string>(props: InputProps<T>, ref?: any): JSX.Element {
 }
 
 export default React.forwardRef(Input) as <T>(
-  props: InputProps<T> & { ref?: React.ForwardedRef<TextInput> | null },
+  props: InputProps<T> & { ref?: React.ForwardedRef<TextInput> },
 ) => ReturnType<typeof Input>;

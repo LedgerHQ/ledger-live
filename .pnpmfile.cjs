@@ -130,7 +130,7 @@ function readPackage(pkg, context) {
       addPeerDependencies("metro-transform-worker", {
         "metro-minify-uglify": "*",
       }),
-      /* Expo packages… */
+      /* @expo/* packages */
       addDependencies("@expo/webpack-config", {
         "resolve-from": "*",
         "fs-extra": "*",
@@ -142,16 +142,6 @@ function readPackage(pkg, context) {
         "@expo/config": "*",
         "@expo/spawn-async": "*",
         glob: "*",
-      }),
-      addPeerDependencies(/^expo-/, {
-        "expo-modules-core": "*",
-        "expo-constants": "*",
-      }),
-      addPeerDependencies("expo-asset", {
-        "expo-file-system": "*",
-      }),
-      addPeerDependencies("expo-font", {
-        "expo-asset": "*",
       }),
       /* Other packages */
       addPeerDependencies("@svgr/core", { "@svgr/plugin-svgo": "*" }),
@@ -201,6 +191,10 @@ function readPackage(pkg, context) {
       // Try to prevent pnpm-lock.yaml flakiness
       removeDependencies("follow-redirects", ["debug"], {
         kind: "peerDependencies",
+      }),
+      /* Packages that are missing @types/* dependencies */
+      addPeerDependencies("react-native-gesture-handler", {
+        "@types/react": "*",
       }),
     ],
     pkg,

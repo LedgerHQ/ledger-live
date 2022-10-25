@@ -1,19 +1,12 @@
 import React, { PureComponent } from "react";
-import {
-  View,
-  StyleSheet,
-  Animated,
-  StyleProp,
-  ViewStyle,
-  TextStyle,
-} from "react-native";
-import Icon from "react-native-vector-icons/Feather";
+import { View, StyleSheet, Animated } from "react-native";
+import Icon from "react-native-vector-icons/dist/Feather";
 import { useTheme } from "@react-navigation/native";
 import LText from "./LText";
 import Circle from "./Circle";
 // TODO fade in animation
 export class Bullet extends PureComponent<{
-  children: React.ReactNode;
+  children: any;
   big?: boolean;
 }> {
   render() {
@@ -29,7 +22,7 @@ export class Bullet extends PureComponent<{
 }
 export class BulletItemText extends PureComponent<{
   children: React.ReactNode;
-  style?: StyleProp<TextStyle>;
+  style?: any;
 }> {
   render() {
     return (
@@ -43,10 +36,10 @@ export class BulletItem extends PureComponent<{
   value: React.ReactNode | (() => React.ReactNode);
   index: number;
   animated?: boolean;
-  itemContainerStyle?: StyleProp<ViewStyle>;
-  itemStyle?: StyleProp<ViewStyle>;
-  itemTextStyle?: StyleProp<TextStyle>;
-  Bullet: React.ComponentType<unknown>;
+  itemContainerStyle?: any;
+  itemStyle?: any;
+  itemTextStyle?: any;
+  Bullet: React.ComponentType<any>;
 }> {
   static defaultProps = {
     Bullet,
@@ -118,14 +111,12 @@ export function BulletSmallDot() {
 }
 
 class BulletList extends PureComponent<{
-  list: React.ComponentProps<typeof BulletItem>["value"][];
+  list: any;
   animated?: boolean;
-  Bullet: React.ComponentType<unknown>;
-  itemContainerStyle?: React.ComponentProps<
-    typeof BulletItem
-  >["itemContainerStyle"];
-  itemStyle?: React.ComponentProps<typeof BulletItem>["itemStyle"];
-  style?: StyleProp<ViewStyle>;
+  Bullet: React.ComponentType<any>;
+  itemContainerStyle?: any;
+  itemStyle?: any;
+  style?: any;
 }> {
   static defaultProps = {
     Bullet,

@@ -4,6 +4,7 @@ import {
   CardStyleInterpolators,
   TransitionPresets,
   StackNavigationOptions,
+  StackScreenProps,
 } from "@react-navigation/stack";
 import { Flex } from "@ledgerhq/native-ui";
 import { useTranslation } from "react-i18next";
@@ -15,6 +16,7 @@ import OnboardingTerms from "../../screens/Onboarding/steps/terms";
 import OnboardingDeviceSelection from "../../screens/Onboarding/steps/deviceSelection";
 import OnboardingUseCase from "../../screens/Onboarding/steps/useCaseSelection";
 import OnboardingNewDeviceInfo from "../../screens/Onboarding/steps/newDeviceInfo";
+// eslint-disable-next-line import/no-cycle
 import OnboardingNewDiscoverLiveInfo from "../../screens/Onboarding/steps/discoverLiveInfo";
 import OnboardingNewDevice from "../../screens/Onboarding/steps/setupDevice";
 import OnboardingRecoveryPhrase from "../../screens/Onboarding/steps/recoveryPhrase";
@@ -36,28 +38,19 @@ import OnboardingBluetoothInformation from "../../screens/Onboarding/steps/setup
 import OnboardingWarning from "../../screens/Onboarding/steps/setupDevice/drawers/Warning";
 import OnboardingSyncDesktopInformation from "../../screens/Onboarding/steps/setupDevice/drawers/SyncDesktopInformation";
 import OnboardingRecoveryPhraseWarning from "../../screens/Onboarding/steps/setupDevice/drawers/RecoveryPhraseWarning";
+// eslint-disable-next-line import/no-cycle
 import PostWelcomeSelection from "../../screens/Onboarding/steps/postWelcomeSelection";
+// eslint-disable-next-line import/no-cycle
 import GetDeviceScreen from "../../screens/GetDeviceScreen";
+// eslint-disable-next-line import/no-cycle
 import OnboardingStepDoYouHaveALedgerDevice from "../../screens/Onboarding/steps/doYouHaveALedger";
-import {
-  OnboardingCarefulWarningParamList,
-  OnboardingNavigatorParamList,
-  OnboardingPreQuizModalNavigatorParamList,
-} from "./types/OnboardingNavigator";
-import { StackNavigatorProps } from "./types/helpers";
 
-const Stack = createStackNavigator<OnboardingNavigatorParamList>();
-const OnboardingCarefulWarningStack =
-  createStackNavigator<OnboardingCarefulWarningParamList>();
-const OnboardingPreQuizModalStack =
-  createStackNavigator<OnboardingPreQuizModalNavigatorParamList>();
+const Stack = createStackNavigator();
+const OnboardingCarefulWarningStack = createStackNavigator();
+const OnboardingPreQuizModalStack = createStackNavigator();
 
-function OnboardingCarefulWarning(
-  props: StackNavigatorProps<
-    OnboardingNavigatorParamList,
-    ScreenName.OnboardingModalWarning
-  >,
-) {
+// eslint-disable-next-line @typescript-eslint/ban-types
+function OnboardingCarefulWarning(props: StackScreenProps<{}>) {
   const options: Partial<StackNavigationOptions> = {
     header: props => (
       // TODO: Replace this value with constant.purple as soon as the value is fixed in the theme
@@ -87,31 +80,26 @@ function OnboardingCarefulWarning(
           name={ScreenName.OnboardingModalWarning}
           component={OnboardingWarning}
           options={{ title: "", ...options }}
-          // initialParams={props.route.params}
+          initialParams={props.route.params}
         />
         <OnboardingCarefulWarningStack.Screen
           name={ScreenName.OnboardingModalSyncDesktopInformation}
           component={OnboardingSyncDesktopInformation}
           options={{ title: "", ...options }}
-          // initialParams={props.route.params}
+          initialParams={props.route.params}
         />
         <OnboardingCarefulWarningStack.Screen
           name={ScreenName.OnboardingModalRecoveryPhraseWarning}
           component={OnboardingRecoveryPhraseWarning}
           options={{ title: "", ...options }}
-          // initialParams={props.route.params}
+          initialParams={props.route.params}
         />
       </OnboardingCarefulWarningStack.Navigator>
     </NavigationModalContainer>
   );
 }
-
-function OnboardingPreQuizModalNavigator(
-  props: StackNavigatorProps<
-    OnboardingNavigatorParamList,
-    ScreenName.OnboardingPreQuizModal
-  >,
-) {
+// eslint-disable-next-line @typescript-eslint/ban-types
+function OnboardingPreQuizModalNavigator(props: StackScreenProps<{}>) {
   const options: Partial<StackNavigationOptions> = {
     header: props => (
       // TODO: Replace this value with constant.purple as soon as the value is fixed in the theme

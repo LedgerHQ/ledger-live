@@ -50,7 +50,7 @@ const RemoveDeviceMenu = ({
   }, [device, dispatch, onHideMenu]);
 
   return (
-    <BottomModal isOpened={open} onClose={onHideMenu}>
+    <BottomModal id="DeviceItemModal" isOpened={open} onClose={onHideMenu}>
       <Flex alignItems="center" mb={8}>
         {illustration}
       </Flex>

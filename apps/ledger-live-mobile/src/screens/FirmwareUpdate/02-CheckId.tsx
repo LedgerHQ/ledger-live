@@ -1,10 +1,10 @@
 import React, { Component } from "react";
 import { View, StyleSheet } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import SafeAreaView from "react-native-safe-area-view";
 import { Trans } from "react-i18next";
 import firmwareUpdatePrepare from "@ledgerhq/live-common/hw/firmwareUpdate-prepare";
+import type { FirmwareUpdateContext } from "@ledgerhq/types-live";
 import manager from "@ledgerhq/live-common/manager/index";
-import { Subscription } from "rxjs";
 import { TrackScreen } from "../../analytics";
 import { deviceNames } from "../../wording";
 import { ScreenName } from "../../const";
@@ -14,19 +14,22 @@ import LiveLogo from "../../icons/LiveLogoIcon";
 import Spinning from "../../components/Spinning";
 import DeviceActionProgress from "../../components/DeviceActionProgress";
 import getWindowDimensions from "../../logic/getWindowDimensions";
-import { withTheme, Theme } from "../../colors";
-import type { StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
-import type { FirmwareUpdateNavigatorParamList } from "../../components/RootNavigator/types/FirmwareUpdateNavigator";
+import { withTheme } from "../../colors";
 
-type Navigation = StackNavigatorProps<
-  FirmwareUpdateNavigatorParamList,
-  ScreenName.FirmwareUpdateCheckId
->;
-
+const forceInset = {
+  bottom: "always",
+};
 type Props = {
-  colors: Theme["colors"];
-} & Navigation;
-
+  navigation: any;
+  route: {
+    params: RouteParams;
+  };
+  colors: any;
+};
+type RouteParams = {
+  deviceId: string;
+  firmware: FirmwareUpdateContext;
+};
 type State = {
   progress: number;
   displayedOnDevice: boolean;
@@ -37,7 +40,7 @@ class FirmwareUpdateCheckId extends Component<Props, State> {
     progress: 0,
     displayedOnDevice: false,
   };
-  sub: Subscription | undefined;
+  sub: any;
 
   componentDidMount() {
     const { navigation, route } = this.props;
@@ -89,6 +92,7 @@ class FirmwareUpdateCheckId extends Component<Props, State> {
             backgroundColor: colors.background,
           },
         ]}
+        forceInset={forceInset}
       >
         <TrackScreen category="FirmwareUpdate" name="CheckId" />
         <View style={styles.body}>
@@ -134,7 +138,7 @@ class FirmwareUpdateCheckId extends Component<Props, State> {
                 </Spinning>
               </View>
             ) : (
-              <DeviceActionProgress progress={progress} />
+              <DeviceActionProgress progress={progress} size={60} />
             )}
           </View>
         </View>

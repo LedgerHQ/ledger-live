@@ -8,7 +8,13 @@ interface Props {
 export function getFTXLogo(isUS = false) {
   return React.memo(function FTX({ size }: Props) {
     return (
-      <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+      <Svg
+        width={size}
+        height={size}
+        viewBox="0 0 24 24"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+      >
         <G clipPath="url(#clip0_1694_20090)">
           <G clipPath="url(#clip1_1694_20090)">
             <Path

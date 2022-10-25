@@ -14,7 +14,7 @@ type Props = {
   state: State;
   dispatch: (_: Action) => void;
   setAppUninstallWithDependencies: (_: { dependents: App[]; app: App }) => void;
-  size?: number;
+  size: number;
 };
 
 const ButtonContainer = styled(Box).attrs({

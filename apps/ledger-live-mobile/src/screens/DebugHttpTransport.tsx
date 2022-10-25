@@ -6,32 +6,26 @@ import {
   TouchableWithoutFeedback,
 } from "react-native";
 import { connect } from "react-redux";
-import { SafeAreaView } from "react-native-safe-area-context";
+import SafeAreaView from "react-native-safe-area-view";
 import { compose } from "redux";
-import { CompositeScreenProps } from "@react-navigation/native";
-import { NavigatorName, ScreenName } from "../const";
+import { ScreenName } from "../const";
 import { addKnownDevice } from "../actions/ble";
 import { getFontStyle } from "../components/LText";
 import TextInput from "../components/TextInput";
 import KeyboardView from "../components/KeyboardView";
 import Button from "../components/Button";
-import { Theme, withTheme } from "../colors";
-import { SettingsNavigatorStackParamList } from "../components/RootNavigator/types/SettingsNavigator";
-import { StackNavigatorProps } from "../components/RootNavigator/types/helpers";
-import { MainNavigatorParamList } from "../components/RootNavigator/types/MainNavigator";
+import { withTheme } from "../colors";
 
-type NavigatorProps = CompositeScreenProps<
-  StackNavigatorProps<
-    SettingsNavigatorStackParamList,
-    ScreenName.DebugHttpTransport
-  >,
-  StackNavigatorProps<MainNavigatorParamList>
->;
-
-type Props = {
-  addKnownDevice: (_: { id: string; name: string }) => void;
-  colors: Theme["colors"];
-} & NavigatorProps;
+const forceInset = {
+  bottom: "always",
+};
+// eslint-disable-next-line @typescript-eslint/ban-types
+type OwnProps = {};
+type Props = OwnProps & {
+  navigation: any;
+  addKnownDevice: (arg0: any) => void;
+  colors: any;
+};
 
 class DebugHttpTransport extends Component<
   Props,
@@ -54,14 +48,12 @@ class DebugHttpTransport extends Component<
     if (!m) return;
     let [, ip, , port] = m; // eslint-disable-line prefer-const
 
-    if (!port) port = "8435";
+    if (!port) port = 8435;
     this.props.addKnownDevice({
       id: `httpdebug|ws://${ip}:${port}`,
       name: ip,
     });
-    this.props.navigation.navigate(NavigatorName.Manager, {
-      screen: ScreenName.Manager,
-    });
+    this.props.navigation.navigate(ScreenName.Manager);
   };
 
   render() {
@@ -75,6 +67,7 @@ class DebugHttpTransport extends Component<
             backgroundColor: colors.background,
           },
         ]}
+        forceInset={forceInset}
       >
         <KeyboardView style={styles.container}>
           <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
@@ -135,10 +128,10 @@ const styles = StyleSheet.create({
     fontSize: 22,
   },
 });
-
-export default compose<React.ComponentType<NavigatorProps>>(
+const m: React.ComponentType<OwnProps> = compose(
   connect(null, {
     addKnownDevice,
   }),
   withTheme,
 )(DebugHttpTransport);
+export default m;

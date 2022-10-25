@@ -3,22 +3,20 @@ import { useTheme } from "@react-navigation/native";
 import React, { useCallback } from "react";
 import { Trans } from "react-i18next";
 import { Linking, StyleSheet, View } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import SafeAreaView from "react-native-safe-area-view";
 import { TrackScreen } from "../../../analytics";
 import BulletList, { BulletGreenCheck } from "../../../components/BulletList";
 import Button from "../../../components/Button";
 import ExternalLink from "../../../components/ExternalLink";
 import NavigationScrollView from "../../../components/NavigationScrollView";
-import { StackNavigatorProps } from "../../../components/RootNavigator/types/helpers";
 import { urls } from "../../../config/urls";
 import { ScreenName } from "../../../const";
 import IlluStaking from "../../tezos/IlluStaking";
-import { SolanaDelegationFlowParamList } from "./types";
 
-type Props = StackNavigatorProps<
-  SolanaDelegationFlowParamList,
-  ScreenName.SolanaDelegationStarted
->;
+type Props = {
+  navigation: any;
+  route: { params: any };
+};
 
 export default function DelegationStarted({ navigation, route }: Props) {
   const { colors } = useTheme();
@@ -33,7 +31,10 @@ export default function DelegationStarted({ navigation, route }: Props) {
   }, []);
 
   return (
-    <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]}>
+    <SafeAreaView
+      style={[styles.root, { backgroundColor: colors.background }]}
+      forceInset={{ bottom: "always" }}
+    >
       <NavigationScrollView
         style={styles.scroll}
         contentContainerStyle={styles.scrollContainer}

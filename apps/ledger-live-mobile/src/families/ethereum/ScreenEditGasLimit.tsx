@@ -2,42 +2,36 @@ import { BigNumber } from "bignumber.js";
 import React, { useState, useCallback } from "react";
 import { useTranslation, Trans } from "react-i18next";
 import { Keyboard, StyleSheet, View } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import SafeAreaView from "react-native-safe-area-view";
 import { useTheme } from "@react-navigation/native";
+import type { Transaction } from "@ledgerhq/live-common/families/ethereum/types";
 import Button from "../../components/Button";
 import KeyboardView from "../../components/KeyboardView";
 import NavigationScrollView from "../../components/NavigationScrollView";
 import TextInput from "../../components/FocusedTextInput";
-import {
-  BaseComposite,
-  StackNavigatorProps,
-} from "../../components/RootNavigator/types/helpers";
-import { LendingEnableFlowParamsList } from "../../components/RootNavigator/types/LendingEnableFlowNavigator";
-import { LendingWithdrawFlowNavigatorParamList } from "../../components/RootNavigator/types/LendingWithdrawFlowNavigator";
-import { SendFundsNavigatorStackParamList } from "../../components/RootNavigator/types/SendFundsNavigator";
-import { SignTransactionNavigatorParamList } from "../../components/RootNavigator/types/SignTransactionNavigator";
-import { SwapNavigatorParamList } from "../../components/RootNavigator/types/SwapNavigator";
-import { LendingSupplyFlowNavigatorParamList } from "../../components/RootNavigator/types/LendingSupplyFlowNavigator";
-import { ScreenName } from "../../const";
 
+const forceInset = {
+  bottom: "always",
+};
 const options = {
   title: <Trans i18nKey="send.summary.gasLimit" />,
-  headerLeft: undefined,
+  headerLeft: null,
+};
+type RouteParams = {
+  accountId: string;
+  transaction: Transaction;
+  currentNavigation: string;
+  gasLimit: BigNumber | null | undefined;
+  setGasLimit: (..._: Array<any>) => any;
+};
+type Props = {
+  navigation: any;
+  route: {
+    params: RouteParams;
+  };
 };
 
-type NavigationProps = BaseComposite<
-  StackNavigatorProps<
-    | LendingEnableFlowParamsList
-    | LendingSupplyFlowNavigatorParamList
-    | LendingWithdrawFlowNavigatorParamList
-    | SendFundsNavigatorStackParamList
-    | SignTransactionNavigatorParamList
-    | SwapNavigatorParamList,
-    ScreenName.EthereumEditGasLimit
-  >
->;
-
-function EthereumEditGasLimit({ navigation, route }: NavigationProps) {
+function EthereumEditGasLimit({ navigation, route }: Props) {
   const { colors } = useTheme();
   const { t } = useTranslation();
   const gasLimit = route.params?.gasLimit;
@@ -48,16 +42,12 @@ function EthereumEditGasLimit({ navigation, route }: NavigationProps) {
     navigation.goBack();
     setGasLimit(BigNumber(ownGasLimit || 0));
   }, [setGasLimit, ownGasLimit, navigation]);
-
-  const onChangeText = useCallback((v: string) => {
-    const n = BigNumber(v);
-    setOwnGasLimit(n);
-  }, []);
   return (
     <SafeAreaView
       style={{
         flex: 1,
       }}
+      forceInset={forceInset}
     >
       <KeyboardView
         style={[
@@ -80,7 +70,7 @@ function EthereumEditGasLimit({ navigation, route }: NavigationProps) {
             keyboardType="numeric"
             returnKeyType="done"
             maxLength={10}
-            onChangeText={onChangeText}
+            onChangeText={setOwnGasLimit}
             onSubmitEditing={onValidateText}
           />
 

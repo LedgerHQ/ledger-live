@@ -4,7 +4,7 @@ import { track } from "../../analytics/segment";
 
 export const SWAP_VERSION = "2.34";
 
-export const trackSwapError = (error: Error, properties = {}) => {
+export const trackSwapError = (error: any, properties: any = {}) => {
   if (!error) return;
   if (error instanceof SwapExchangeRateAmountTooLow) {
     track("Page Swap Form - Error Less Mini", {

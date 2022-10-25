@@ -2,14 +2,13 @@ import { connect } from "react-redux";
 import upperFirst from "lodash/upperFirst";
 import { setLocale } from "../../../actions/settings";
 import { localeSelector } from "../../../reducers/settings";
-import type { State } from "../../../reducers/types";
+import type { State } from "../../../reducers";
 import makeGenericSelectScreen from "../../makeGenericSelectScreen";
 import regionByKeys from "./regions.json";
 
 const items = Object.keys(regionByKeys)
   .map(key => {
-    const { languageDisplayName, regionDisplayName } =
-      regionByKeys[key as keyof typeof regionByKeys];
+    const { languageDisplayName, regionDisplayName } = regionByKeys[key];
     const label = `${upperFirst(regionDisplayName)} (${upperFirst(
       languageDisplayName,
     )})`;
@@ -31,7 +30,7 @@ const mapStateToProps = (state: State) => {
 };
 
 const mapDispatchToProps = {
-  onValueChange: ({ value }: { value: string }) => setLocale(value),
+  onValueChange: ({ value }: any) => setLocale(value),
 };
 const Screen = makeGenericSelectScreen({
   id: "RegionSettingsSelect",
@@ -40,8 +39,8 @@ const Screen = makeGenericSelectScreen({
   }),
   keyExtractor: item => item.value,
   formatItem: item => item.label,
-  // searchable: true, TODO: SEEMS TO BE IN THE FUTURE (SEE makeGenericSelectScreen DEFINITION)
-  // searchKeys: ["label", "value"], // FIXME: NOT USED BY makeGenericSelectScreen
+  searchable: true,
+  searchKeys: ["label", "value"],
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Screen);

@@ -1,29 +1,19 @@
 import React, { Component } from "react";
+import { View, StyleSheet, FlatList, TouchableOpacity } from "react-native";
+import SafeAreaView from "react-native-safe-area-view";
+import { createStructuredSelector } from "reselect";
 import { connect } from "react-redux";
-import {
-  View,
-  StyleSheet,
-  FlatList,
-  TouchableOpacity,
-  ListRenderItemInfo,
-  ListRenderItem,
-} from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
 import { compose } from "redux";
 import { Trans } from "react-i18next";
-import type {
-  Account,
-  AccountLike,
-  AccountLikeArray,
-} from "@ledgerhq/types-live";
+import type { Account, AccountLikeArray } from "@ledgerhq/types-live";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
-import { createStructuredSelector } from "reselect";
-import { CompositeScreenProps } from "@react-navigation/native";
+import {
+  flattenAccountsEnforceHideEmptyTokenSelector,
+  accountsSelector,
+} from "../../reducers/accounts";
 import withEnv from "../../logic/withEnv";
 import { withTheme } from "../../colors";
-import type { Theme } from "../../colors";
-import type { State as StoreState } from "../../reducers/types";
 import { ScreenName, NavigatorName } from "../../const";
 import { TrackScreen } from "../../analytics";
 import LText from "../../components/LText";
@@ -33,44 +23,35 @@ import KeyboardView from "../../components/KeyboardView";
 import PlusIcon from "../../icons/Plus";
 import { formatSearchResults } from "../../helpers/formatAccountSearchResults";
 import type { SearchResult } from "../../helpers/formatAccountSearchResults";
+// eslint-disable-next-line import/named
 import { connect as WCconnect } from "./Provider";
-import {
-  accountsCountSelector,
-  flattenAccountsEnforceHideEmptyTokenSelector,
-} from "../../reducers/accounts";
-import { StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
-import { WalletConnectNavigatorParamList } from "../../components/RootNavigator/types/WalletConnectNavigator";
-import { BaseNavigatorStackParamList } from "../../components/RootNavigator/types/BaseNavigator";
 
 const SEARCH_KEYS = ["name", "unit.code", "token.name", "token.ticker"];
-type Navigation = CompositeScreenProps<
-  StackNavigatorProps<
-    WalletConnectNavigatorParamList,
-    ScreenName.WalletConnectDeeplinkingSelectAccount
-  >,
-  StackNavigatorProps<BaseNavigatorStackParamList>
->;
+const forceInset = {
+  bottom: "always",
+};
 type Props = {
   accounts: Account[];
   allAccounts: AccountLikeArray;
-  colors: Theme["colors"];
-} & Navigation;
+  navigation: any;
+  route: {
+    params: {
+      uri: string;
+    };
+  };
+  colors: any;
+};
+// eslint-disable-next-line @typescript-eslint/ban-types
+type State = {};
 
-class SendFundsSelectAccount extends Component<Props> {
-  renderList = (items: AccountLike[]) => {
+class SendFundsSelectAccount extends Component<Props, State> {
+  renderList = items => {
     const { accounts } = this.props;
     const formatedList = formatSearchResults(items, accounts);
     return (
       <FlatList
         data={formatedList}
-        renderItem={
-          this.renderItem as ListRenderItem<
-            | SearchResult
-            | (AccountLike & {
-                match: boolean;
-              })
-          >
-        }
+        renderItem={this.renderItem}
         keyExtractor={this.keyExtractor}
         showsVerticalScrollIndicator={false}
         keyboardDismissMode="on-drag"
@@ -86,7 +67,6 @@ class SendFundsSelectAccount extends Component<Props> {
         <PlusIcon size={16} color={colors.live} />
         <TouchableOpacity
           onPress={() => {
-            // FIXME: OSKOUR AGAIN
             this.props.navigation.navigate(NavigatorName.AddAccounts, {
               currency: getCryptoCurrencyById("ethereum"),
             });
@@ -99,7 +79,7 @@ class SendFundsSelectAccount extends Component<Props> {
       </View>
     );
   };
-  renderItem = ({ item: result }: ListRenderItemInfo<SearchResult>) => {
+  renderItem = ({ item: result }: { item: SearchResult }) => {
     const { account, match } = result;
     return (
       <AccountCard
@@ -107,8 +87,7 @@ class SendFundsSelectAccount extends Component<Props> {
         account={account}
         style={styles.cardStyle}
         onPress={() => {
-          WCconnect(this.props.route.params?.uri || "");
-
+          WCconnect(this.props.route.params.uri);
           this.props.navigation.replace(NavigatorName.WalletConnect, {
             screen: ScreenName.WalletConnectConnect,
             params: {
@@ -127,7 +106,7 @@ class SendFundsSelectAccount extends Component<Props> {
       </LText>
     </View>
   );
-  keyExtractor = (item: SearchResult) => item.account.id;
+  keyExtractor = item => item.account.id;
 
   render() {
     const { allAccounts, colors } = this.props;
@@ -139,6 +118,7 @@ class SendFundsSelectAccount extends Component<Props> {
             backgroundColor: colors.background,
           },
         ]}
+        forceInset={forceInset}
       >
         <TrackScreen category="WalletConnect" name="DeeplinkingSelectAccount" />
         <KeyboardView
@@ -167,17 +147,10 @@ class SendFundsSelectAccount extends Component<Props> {
   }
 }
 
-const mapStateToProps = createStructuredSelector<
-  StoreState,
-  {
-    allAccounts: AccountLike[];
-    accounts: number;
-  }
->({
+const mapStateToProps = createStructuredSelector({
   allAccounts: flattenAccountsEnforceHideEmptyTokenSelector,
-  accounts: accountsCountSelector,
+  accounts: accountsSelector,
 });
-
 const styles = StyleSheet.create({
   root: {
     flex: 1,
@@ -214,11 +187,9 @@ const styles = StyleSheet.create({
     backgroundColor: "transparent",
   },
 });
-
-const m = compose<React.ComponentType<Navigation>>(
+export default compose(
+  // $FlowFixMe
   connect(mapStateToProps),
   withEnv("HIDE_EMPTY_TOKEN_ACCOUNTS"),
   withTheme,
 )(SendFundsSelectAccount);
-
-export default m;

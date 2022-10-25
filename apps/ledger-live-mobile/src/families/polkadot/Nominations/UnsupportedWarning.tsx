@@ -8,10 +8,10 @@ export const ExternalControllerUnsupportedWarning = ({
   address,
   onOpenExplorer,
 }: {
-  address?: string | null;
-  onOpenExplorer: (t?: string | null) => void;
+  address: string | null | undefined;
+  onOpenExplorer: (..._: Array<any>) => any;
 }) => (
-  <Alert type="help" learnMoreUrl={urls.polkadotStaking}>
+  <Alert type="help" learnMoreUrl={urls.polkadotStaking} vertical>
     <Trans
       i18nKey="polkadot.nomination.externalControllerUnsupported"
       values={{
@@ -28,10 +28,10 @@ export const ExternalStashUnsupportedWarning = ({
   address,
   onOpenExplorer,
 }: {
-  address?: string | null;
-  onOpenExplorer: (t?: string | null) => void;
+  address: string | null | undefined;
+  onOpenExplorer: (..._: Array<any>) => any;
 }) => (
-  <Alert type="help" learnMoreUrl={urls.polkadotStaking}>
+  <Alert type="help" learnMoreUrl={urls.polkadotStaking} vertical>
     <Trans
       i18nKey="polkadot.nomination.externalStashUnsupported"
       values={{

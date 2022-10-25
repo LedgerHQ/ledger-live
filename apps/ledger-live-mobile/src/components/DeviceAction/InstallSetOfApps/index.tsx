@@ -46,7 +46,7 @@ const InstallSetOfApps = ({
     [dependencies],
   );
 
-  const status = action.useHook(
+  const status: any = action.useHook(
     userConfirmed ? selectedDevice : undefined,
     commandRequest,
   );
@@ -80,7 +80,7 @@ const InstallSetOfApps = ({
           <Text mb={5} variant="paragraphLineHeight">
             {listingApps ? (
               <Trans i18nKey="installSetOfApps.ongoing.resolving" />
-            ) : typeof progress === "number" && currentAppOp ? (
+            ) : progress || currentAppOp ? (
               <Trans
                 i18nKey="installSetOfApps.ongoing.progress"
                 values={{ progress: Math.round(progress * 100) }}
@@ -89,19 +89,16 @@ const InstallSetOfApps = ({
               <Trans i18nKey="installSetOfApps.ongoing.loading" />
             )}
           </Text>
-          {itemProgress &&
-            dependencies?.map((appName, i) => (
-              <Item
-                key={appName}
-                i={i}
-                appName={appName}
-                isActive={currentAppOp?.name === appName}
-                installed={
-                  progress ? !installQueue?.includes(appName) : undefined
-                }
-                itemProgress={itemProgress}
-              />
-            ))}
+          {dependencies?.map((appName, i) => (
+            <Item
+              key={appName}
+              i={i}
+              appName={appName}
+              isActive={currentAppOp?.name === appName}
+              installed={progress && !installQueue.includes(appName)}
+              itemProgress={itemProgress}
+            />
+          ))}
         </Flex>
       </Flex>
       <Text textAlign="center" color="neutral.c70">
@@ -111,7 +108,8 @@ const InstallSetOfApps = ({
         />
       </Text>
       <BottomModal
-        isOpened={!!allowManagerRequestedWording || !!error}
+        id="DeviceActionModal"
+        isOpened={allowManagerRequestedWording || error}
         onClose={onWrappedError}
         onModalHide={onWrappedError}
       >

@@ -4,6 +4,6 @@ import { createContext } from "react";
 // e.g inside a Modal
 //
 // issue has been raised here:
-// https://github.com/kmagiera/react-native-gesture-handler/issues/139
+// @ts-expect-error https://github.com/kmagiera/react-native-gesture-handler/issues/139
 
 export default createContext(false);

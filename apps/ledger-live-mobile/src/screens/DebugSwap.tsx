@@ -20,6 +20,7 @@ export default function DebugSwap() {
     Config.SWAP_OVERRIDE_KYC_USER_ID || "",
   );
   const onToggleWyreId = useCallback(() => {
+    // $FlowFixMe debugs dont need typing
     setConfigIDWrapper(configIDWrapper ? "" : "wadus");
   }, [configIDWrapper]);
   const onFlushWyreKYC = useCallback(() => {
@@ -69,7 +70,10 @@ export default function DebugSwap() {
         onPress={() => onToggleProvider("changelly")}
         style={styles.switchRow}
       >
-        <CheckBox isChecked={currentDisabledProviders.includes("changelly")} />
+        <CheckBox
+          style={styles.checkbox}
+          isChecked={currentDisabledProviders.includes("changelly")}
+        />
         <LText semiBold style={styles.switchLabel}>
           {"Disable Changelly"}
         </LText>
@@ -78,13 +82,16 @@ export default function DebugSwap() {
         onPress={() => onToggleProvider("wyre")}
         style={styles.switchRow}
       >
-        <CheckBox isChecked={currentDisabledProviders.includes("wyre")} />
+        <CheckBox
+          style={styles.checkbox}
+          isChecked={currentDisabledProviders.includes("wyre")}
+        />
         <LText semiBold style={styles.switchLabel}>
           {"Disable Wyre"}
         </LText>
       </Touchable>
       <Touchable onPress={onToggleWyreId} style={styles.switchRow}>
-        <CheckBox isChecked={!!configIDWrapper} />
+        <CheckBox style={styles.checkbox} isChecked={configIDWrapper} />
         <LText semiBold style={styles.switchLabel}>
           {"Use invalid Wyre ID"}
         </LText>
@@ -109,5 +116,10 @@ const styles = StyleSheet.create({
     marginLeft: 8,
     fontSize: 13,
     paddingRight: 16,
+  },
+  checkbox: {
+    borderRadius: 4,
+    width: 22,
+    height: 22,
   },
 });

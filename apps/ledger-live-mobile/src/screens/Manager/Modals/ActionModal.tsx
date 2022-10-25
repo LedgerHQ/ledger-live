@@ -3,13 +3,14 @@ import { StyleSheet, View } from "react-native";
 import type { BaseButtonProps } from "../../../components/Button";
 import Button from "../../../components/Button";
 import BottomModal from "../../../components/BottomModal";
+// eslint-disable-next-line import/no-unresolved
 import getWindowDimensions from "../../../logic/getWindowDimensions";
 
 const { height } = getWindowDimensions();
 type Props = {
   isOpened: boolean;
   onClose: () => void;
-  children: React.ReactNode;
+  children: Node;
   actions: Array<BaseButtonProps>;
 };
 
@@ -28,6 +29,7 @@ const ActionModal = ({
     containerStyle={{
       paddingBottom: 116,
     }}
+    coverScreen
   >
     <View style={styles.root}>
       {children}
@@ -40,6 +42,7 @@ const ActionModal = ({
               type={type}
               title={title}
               onPress={onPress}
+              useTouchable
               {...props}
             />
           ))}

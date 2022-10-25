@@ -17,7 +17,8 @@ import {
   getAccountName,
 } from "@ledgerhq/live-common/account/index";
 import { getCurrencyColor } from "@ledgerhq/live-common/currencies/index";
-import Icon from "react-native-vector-icons/Feather";
+import Icon from "react-native-vector-icons/dist/Feather";
+// eslint-disable-next-line import/no-unresolved
 import getWindowDimensions from "../../logic/getWindowDimensions";
 import IconReceive from "../../icons/Receive";
 import LText from "../../components/LText";
@@ -130,7 +131,7 @@ const FooterBtn = ({
 }: {
   label: React.ReactNode;
   icon: React.ReactNode;
-  event: string;
+  event: any;
   onPress: () => void;
 }) => (
   <Touchable event={event} style={styles.footerBtn} onPress={onPress}>
@@ -161,7 +162,7 @@ export default function DelegationDetailsModal({
   const bakerURL = getAddressExplorer(explorerView, delegation.address);
   const txURL = getTransactionExplorer(explorerView, delegation.operation.hash);
   const accountId = account.id;
-  const parentId = parentAccount?.id;
+  const parentId = parentAccount && parentAccount.id;
   const onOpenBaker = useCallback(() => {
     if (bakerURL) Linking.openURL(bakerURL);
   }, [bakerURL]);
@@ -204,7 +205,12 @@ export default function DelegationDetailsModal({
   const height = Math.min(getWindowDimensions().height - 400, 280);
   return (
     // TODO use DelegationDrawer component
-    <BottomModal isOpened={isOpened} onClose={onClose} style={styles.modal}>
+    <BottomModal
+      id="DelegationDetailsModal"
+      isOpened={isOpened}
+      onClose={onClose}
+      style={styles.modal}
+    >
       <View style={styles.root}>
         <DelegatingContainer
           left={

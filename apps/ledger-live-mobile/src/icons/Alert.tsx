@@ -4,7 +4,7 @@ import Svg, { Path } from "react-native-svg";
 type Props = {
   size: number;
   color: string;
-} & Partial<React.ComponentProps<typeof Svg>>;
+};
 export default function Alert({ size = 16, color }: Props) {
   return (
     <Svg viewBox="0 0 16 16" width={size} height={size}>

@@ -1,7 +1,7 @@
 import React, { useCallback, useMemo } from "react";
 import { StyleSheet, View } from "react-native";
 import { useTheme } from "@react-navigation/native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import SafeAreaView from "react-native-safe-area-view";
 import { Trans } from "react-i18next";
 
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
@@ -12,14 +12,12 @@ import IconCheck from "../../../icons/Check";
 import IconClock from "../../../icons/Clock";
 import { rgba } from "../../../colors";
 import { TrackScreen } from "../../../analytics";
-import { PendingOperationParamList } from "../types";
+import { PendingOperationProps } from "../types";
 import { flattenAccountsSelector } from "../../../reducers/accounts";
-import { ScreenName } from "../../../const";
 
-export function PendingOperation({
-  route,
-  navigation,
-}: PendingOperationParamList) {
+const forceInset = { bottom: "always" };
+
+export function PendingOperation({ route, navigation }: PendingOperationProps) {
   const { colors } = useTheme();
   const { swapId, provider, toAccountId, fromAccountId } =
     route.params.swapOperation;
@@ -37,14 +35,17 @@ export function PendingOperation({
   const targetCurrency = toAccount && getAccountCurrency(toAccount);
 
   const onComplete = useCallback(() => {
-    navigation.navigate(ScreenName.SwapOperationDetails, {
+    navigation.navigate("OperationDetails", {
       swapOperation: route.params.swapOperation,
       fromPendingOperation: true,
     });
   }, [navigation, route.params.swapOperation]);
 
   return (
-    <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]}>
+    <SafeAreaView
+      style={[styles.root, { backgroundColor: colors.background }]}
+      forceInset={forceInset}
+    >
       <TrackScreen
         category="Swap Form"
         name="Confirmation Success"
@@ -83,12 +84,10 @@ export function PendingOperation({
             </LText>
           </View>
           <LText style={styles.description} color="grey">
-            {targetCurrency ? (
-              <Trans
-                i18nKey={"transfer.swap.pendingOperation.description"}
-                values={{ targetCurrency: targetCurrency.name }}
-              />
-            ) : null}
+            <Trans
+              i18nKey={"transfer.swap.pendingOperation.description"}
+              values={{ targetCurrency: targetCurrency.name }}
+            />
           </LText>
         </View>
       </View>

@@ -1,19 +1,15 @@
 import React, { useCallback } from "react";
-import {
-  Pressable as BasePressable,
-  Switch as NativeSwitch,
-  SwitchProps as NativeSwitchProps,
-} from "react-native";
+import { Pressable as BasePressable, Switch as NativeSwitch } from "react-native";
 import { useTheme } from "styled-components/native";
 import Text from "../../Text";
 import proxyStyled from "../../../components/styled";
 
-export type SwitchProps = {
+type SwitchProps = {
   checked: boolean;
   onChange?: (value: boolean) => void;
   disabled?: boolean;
   label?: string;
-} & Omit<Partial<NativeSwitchProps>, "onChange">;
+};
 
 const Pressable = proxyStyled(BasePressable).attrs({
   flexDirection: "row",

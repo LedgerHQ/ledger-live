@@ -1,16 +1,10 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useState, useMemo } from "react";
 import { View, StyleSheet, Linking } from "react-native";
 import uniq from "lodash/uniq";
 import { useSelector } from "react-redux";
 import { Trans, useTranslation } from "react-i18next";
 import { useNavigation, useTheme } from "@react-navigation/native";
-import type {
-  Account,
-  Operation,
-  AccountLike,
-  NFTMetadataResponse,
-  NFTCollectionMetadataResponse,
-} from "@ledgerhq/types-live";
+import type { Account, Operation, AccountLike } from "@ledgerhq/types-live";
 import {
   getMainAccount,
   getAccountCurrency,
@@ -26,7 +20,6 @@ import {
   useNftCollectionMetadata,
   useNftMetadata,
 } from "@ledgerhq/live-common/nft/index";
-import { NFTResource } from "@ledgerhq/live-common/nft/NftMetadataProvider/types";
 import { NavigatorName, ScreenName } from "../../const";
 import LText from "../../components/LText";
 import OperationIcon from "../../components/OperationIcon";
@@ -44,19 +37,13 @@ import Section, { styles as sectionStyles } from "./Section";
 import byFamiliesOperationDetails from "../../generated/operationDetails";
 import DefaultOperationDetailsExtra from "./Extra";
 import Skeleton from "../../components/Skeleton";
-import type { State } from "../../reducers/types";
 import Title from "./Title";
 import FormatDate from "../../components/FormatDate";
-import type {
-  RootNavigationComposite,
-  StackNavigatorNavigation,
-} from "../../components/RootNavigator/types/helpers";
-import type { BaseNavigatorStackParamList } from "../../components/RootNavigator/types/BaseNavigator";
 
 type HelpLinkProps = {
   event: string;
   title: React.ReactNode;
-  onPress: () => Promise<void> | null | undefined;
+  onPress: () => Promise<any> | null | undefined;
 };
 
 const HelpLink = ({ title, event, onPress }: HelpLinkProps) => {
@@ -73,7 +60,7 @@ const HelpLink = ({ title, event, onPress }: HelpLinkProps) => {
 
 type Props = {
   account: AccountLike;
-  parentAccount?: Account | null;
+  parentAccount: Account | null | undefined;
   operation: Operation;
   disableAllLinks?: boolean;
 };
@@ -84,12 +71,7 @@ export default function Content({
   disableAllLinks,
 }: Props) {
   const { colors } = useTheme();
-  const navigation =
-    useNavigation<
-      RootNavigationComposite<
-        StackNavigatorNavigation<BaseNavigatorStackParamList>
-      >
-    >();
+  const navigation = useNavigation();
   const { t } = useTranslation();
   const [isModalOpened, setIsModalOpened] = useState(false);
   const onPress = useCallback(() => {
@@ -108,7 +90,7 @@ export default function Content({
     setIsModalOpened(false);
   }, []);
   const mainAccount = getMainAccount(account, parentAccount);
-  const currencySettings = useSelector((s: State) =>
+  const currencySettings = useSelector(s =>
     currencySettingsForAccountSelector(s, {
       account: mainAccount,
     }),
@@ -124,10 +106,8 @@ export default function Content({
     operation,
     mainAccount,
   );
-  const uniqueSenders = uniq<typeof operation.senders[0]>(operation.senders);
-  const uniqueRecipients = uniq<typeof operation.recipients[0]>(
-    operation.recipients,
-  );
+  const uniqueSenders = uniq(operation.senders);
+  const uniqueRecipients = uniq(operation.recipients);
   const { extra, type } = operation;
   const { hasFailed } = operation;
   const subOperations = operation.subOperations || [];
@@ -138,45 +118,28 @@ export default function Content({
     mainAccount,
     currencySettings.confirmationsNb,
   );
-  const specific =
-    byFamiliesOperationDetails[
-      mainAccount.currency.family as keyof typeof byFamiliesOperationDetails
-    ];
+  const specific = byFamiliesOperationDetails[mainAccount.currency.family];
   const urlFeesInfo =
-    specific &&
-    (specific as { getURLFeesInfo: (o: Operation) => string })
-      ?.getURLFeesInfo &&
-    (specific as { getURLFeesInfo: (o: Operation) => string })?.getURLFeesInfo(
-      operation,
-    );
+    specific && specific.getURLFeesInfo && specific.getURLFeesInfo(operation);
   const Extra =
-    specific &&
-    (specific as { OperationDetailsExtra: React.ComponentType })
-      .OperationDetailsExtra
-      ? (
-          specific as {
-            OperationDetailsExtra: React.ComponentType<{
-              type: typeof type;
-              account: AccountLike;
-            }>;
-          }
-        ).OperationDetailsExtra
+    specific && specific.OperationDetailsExtra
+      ? specific.OperationDetailsExtra
       : DefaultOperationDetailsExtra;
   const isNftOperation =
     ["NFT_IN", "NFT_OUT"].includes(type) &&
     operation.contract &&
     operation.tokenId;
   const { status: collectionStatus, metadata: collectionMetadata } =
-    useNftCollectionMetadata(operation.contract, currency.id) as NFTResource & {
-      metadata: NFTCollectionMetadataResponse["result"];
-    };
+    useNftCollectionMetadata(operation.contract, currency.id);
   const { status: nftStatus, metadata: nftMetadata } = useNftMetadata(
     operation.contract,
     operation.tokenId,
     currency.id,
-  ) as NFTResource & {
-    metadata: NFTMetadataResponse["result"];
-  };
+  );
+  const status = useMemo(
+    () => nftStatus === "loading" || collectionStatus === "loading",
+    [nftStatus, collectionStatus],
+  );
   return (
     <>
       <View style={styles.header}>
@@ -190,12 +153,12 @@ export default function Content({
         </View>
 
         <Title
-          hasFailed={!!hasFailed}
+          hasFailed={hasFailed}
           amount={amount}
           operation={operation}
           currency={currency}
           unit={unit}
-          isNftOperation={!!isNftOperation}
+          isNftOperation={isNftOperation}
           status={nftStatus}
           metadata={nftMetadata}
           styles={styles}
@@ -256,7 +219,7 @@ export default function Content({
 
       {subOperations.length > 0 && account.type === "Account" && (
         <>
-          <View style={[sectionStyles.wrapper]}>
+          <View style={[sectionStyles.wrapper, styles.infoContainer]}>
             <LText color="grey" semiBold>
               <Trans
                 i18nKey={
@@ -304,7 +267,10 @@ export default function Content({
 
       {internalOperations.length > 0 && account.type === "Account" && (
         <>
-          <Section title={t("operationDetails.internalOperations")} />
+          <Section
+            title={t("operationDetails.internalOperations")}
+            style={styles.infoContainer}
+          />
           {internalOperations.map((op, i) => (
             <OperationRow
               key={op.id}
@@ -323,6 +289,7 @@ export default function Content({
           title={t("operationDetails.details", {
             currency: currency.name,
           })}
+          style={styles.infoContainer}
         />
       ) : null}
 
@@ -339,7 +306,7 @@ export default function Content({
           <Section title={t("operationDetails.tokenName")}>
             <Skeleton
               style={styles.tokenNameSkeleton}
-              loading={collectionStatus === "loading"}
+              loading={status === "loading"}
             >
               <LText semiBold>{collectionMetadata?.tokenName || "-"}</LText>
             </Skeleton>
@@ -422,6 +389,7 @@ export default function Content({
           <DataList
             data={uniqueSenders}
             title={<Trans i18nKey="operationDetails.from" />}
+            titleStyle={sectionStyles.title}
           />
         </View>
       )}
@@ -510,6 +478,10 @@ const styles = StyleSheet.create({
   },
   info: {
     marginLeft: 5,
+  },
+  infoContainer: {
+    flexDirection: "row",
+    alignItems: "center",
   },
   bulletPoint: {
     borderRadius: 50,

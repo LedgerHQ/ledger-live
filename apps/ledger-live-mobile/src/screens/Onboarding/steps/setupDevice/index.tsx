@@ -1,8 +1,9 @@
 import React, { useCallback, useMemo, memo } from "react";
-import { useNavigation, useRoute } from "@react-navigation/native";
+import { useNavigation, useRoute, RouteProp } from "@react-navigation/native";
 
 import { useTheme } from "styled-components/native";
 import { ScreenName } from "../../../../const";
+import { DeviceNames } from "../../types";
 import Illustration from "../../../../images/illustration/Illustration";
 import BaseStepperView, {
   Intro,
@@ -16,9 +17,6 @@ import BaseStepperView, {
 } from "./scenes";
 import { TrackScreen } from "../../../../analytics";
 import StepLottieAnimation from "./scenes/StepLottieAnimation";
-import { StackNavigatorProps } from "../../../../components/RootNavigator/types/helpers";
-import { OnboardingNavigatorParamList } from "../../../../components/RootNavigator/types/OnboardingNavigator";
-import { Step } from "./scenes/BaseStepperView";
 
 // @TODO Replace
 const images = {
@@ -59,17 +57,13 @@ const scenes = [
   RecoveryPhraseInstructions,
   RecoveryPhraseSetup,
   HideRecoveryPhrase,
-] as Step[];
-
-type NavigationProps = StackNavigatorProps<
-  OnboardingNavigatorParamList,
-  ScreenName.OnboardingSetNewDevice
->;
+];
 
 function OnboardingStepNewDevice() {
-  const navigation = useNavigation<NavigationProps["navigation"]>();
+  const navigation = useNavigation();
   const { theme } = useTheme();
-  const route = useRoute<NavigationProps["route"]>();
+  const route =
+    useRoute<RouteProp<{ params: { deviceModelId: DeviceNames } }, "params">>();
 
   const { deviceModelId } = route.params;
 
@@ -184,13 +178,9 @@ function OnboardingStepNewDevice() {
   );
 
   const nextPage = useCallback(() => {
-    // @ts-expect-error TS requires state to be defined, but it crashes the app
     navigation.navigate(ScreenName.OnboardingPreQuizModal, {
-      screen: undefined,
       onNext: () =>
-        navigation.navigate(ScreenName.OnboardingQuiz, {
-          deviceModelId: route.params.deviceModelId,
-        }),
+        navigation.navigate(ScreenName.OnboardingQuiz, { ...route.params }),
     });
   }, [navigation, route.params]);
 

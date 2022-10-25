@@ -1,29 +1,33 @@
 import React, { Component } from "react";
 import { View, StyleSheet } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import SafeAreaView from "react-native-safe-area-view";
 import { Trans } from "react-i18next";
 import firmwareUpdateMain from "@ledgerhq/live-common/hw/firmwareUpdate-main";
-import { Subscription } from "rxjs";
+import type { FirmwareUpdateContext } from "@ledgerhq/types-live";
 import logger from "../../logger";
 import { TrackScreen } from "../../analytics";
 import { ScreenName } from "../../const";
 import DeviceNanoAction from "../../components/DeviceNanoAction";
 import { BulletItem } from "../../components/BulletList";
+// eslint-disable-next-line import/no-unresolved
 import getWindowDimensions from "../../logic/getWindowDimensions";
 import Installing from "../../components/Installing";
-import { Theme, withTheme } from "../../colors";
-import type { StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
-import type { FirmwareUpdateNavigatorParamList } from "../../components/RootNavigator/types/FirmwareUpdateNavigator";
+import { withTheme } from "../../colors";
 
-type Navigation = StackNavigatorProps<
-  FirmwareUpdateNavigatorParamList,
-  ScreenName.FirmwareUpdateMCU
->;
-
+const forceInset = {
+  bottom: "always",
+};
 type Props = {
-  colors: Theme["colors"];
-} & Navigation;
-
+  navigation: any;
+  route: {
+    params: RouteParams;
+  };
+  colors: any;
+};
+type RouteParams = {
+  deviceId: string;
+  firmware: FirmwareUpdateContext;
+};
 type State = {
   installing: string | null | undefined;
   progress: number;
@@ -34,7 +38,7 @@ class FirmwareUpdateMCU extends Component<Props, State> {
     installing: null,
     progress: 0,
   };
-  sub: Subscription | undefined;
+  sub: any;
 
   async componentDidMount() {
     const { navigation, route } = this.props;
@@ -80,6 +84,7 @@ class FirmwareUpdateMCU extends Component<Props, State> {
             backgroundColor: colors.background,
           },
         ]}
+        forceInset={forceInset}
       >
         <TrackScreen category="FirmwareUpdate" name="MCU" />
         {installing ? (

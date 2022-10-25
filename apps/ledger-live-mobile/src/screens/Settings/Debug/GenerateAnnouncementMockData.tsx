@@ -26,7 +26,7 @@ export default function AddMockAnnouncementButton({
   const { colors } = useTheme();
   const { updateCache } = useAnnouncements();
   const [open, setIsopen] = useState(false);
-  const [announcementLink, setAnnouncementLink] = useState("");
+  const [announcementLink, setAnnouncementLink] = useState();
   const [notifPlatform, setNotifPlatform] = useState("");
   const [notifAppVersions, setNotifAppVersions] = useState("");
   const [notifLiveCommonVersions, setNotifLiveCommonVersions] = useState("");
@@ -45,24 +45,10 @@ export default function AddMockAnnouncementButton({
       liveCommonVersions: formatInputValue(notifLiveCommonVersions),
       languages: formatInputValue(notifLanguages),
     };
-    const formattedParams = (Object.keys(params) as Array<keyof typeof params>)
-      .filter(k => !!params[k] && params[k]!.length && params[k]!.length > 0)
-      .reduce<Partial<typeof params>>(
-        (sum, k) => ({ ...sum, [k]: params[k] }),
-        {},
-      );
-    const extra: Partial<{
-      content: {
-        [k: string]: {
-          title: string;
-          text: string;
-          link: {
-            href: string;
-            label: string;
-          };
-        };
-      };
-    }> = {};
+    const formattedParams: any = Object.keys(params)
+      .filter(k => !!params[k] && params[k].length > 0)
+      .reduce((sum, k: string) => ({ ...sum, [k]: params[k] }), {});
+    const extra = {};
 
     if (announcementLink) {
       extra.content = {

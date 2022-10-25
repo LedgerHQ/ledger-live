@@ -3,7 +3,7 @@ import styled, { useTheme } from "styled-components/native";
 import { IconOrElementType } from "../type";
 import Flex, { FlexBoxProps } from "../../Layout/Flex";
 
-export type Props = {
+type Props = {
   Icon: IconOrElementType;
   color?: string;
   boxSize?: number;

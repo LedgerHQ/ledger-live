@@ -15,8 +15,6 @@ import { useLocale } from "../../../context/Locale";
 import { urls } from "../../../config/urls";
 import OnboardingView from "../OnboardingView";
 import StyledStatusBar from "../../../components/StyledStatusBar";
-import { StackNavigatorNavigation } from "../../../components/RootNavigator/types/helpers";
-import { OnboardingNavigatorParamList } from "../../../components/RootNavigator/types/OnboardingNavigator";
 
 type LinkBoxProps = {
   text: React.ReactNode;
@@ -50,17 +48,12 @@ const LinkBox = React.memo(({ text, url, event, mb = 0 }: LinkBoxProps) => (
   </Touchable>
 ));
 
-type NavigationProp = StackNavigatorNavigation<
-  OnboardingNavigatorParamList,
-  ScreenName.OnboardingTermsOfUse
->;
-
 function OnboardingStepTerms() {
   const { locale = "en" } = useLocale();
   const dispatch = useDispatch();
   const [, setAccepted] = useTermsAccept();
   const [toggle, setToggle] = useState(false);
-  const navigation = useNavigation<NavigationProp>();
+  const navigation = useNavigation();
   const { t } = useTranslation();
 
   const onSwitch = useCallback(() => {
@@ -71,7 +64,7 @@ function OnboardingStepTerms() {
     setAccepted();
     dispatch(setAnalytics(true));
 
-    navigation.navigate(ScreenName.OnboardingDeviceSelection);
+    navigation.navigate({ name: ScreenName.OnboardingDeviceSelection });
   }, [setAccepted, dispatch, navigation]);
 
   return (
@@ -98,10 +91,7 @@ function OnboardingStepTerms() {
       />
       <LinkBox
         text={t("settings.about.privacyPolicy")}
-        url={
-          urls.privacyPolicy[locale as keyof typeof urls.privacyPolicy] ??
-          urls.privacyPolicy.en
-        }
+        url={urls.privacyPolicy[locale] ?? urls.privacyPolicy.en}
         event="OpenPrivacyPolicy"
       />
       <Flex flexDirection="row" mt={9}>

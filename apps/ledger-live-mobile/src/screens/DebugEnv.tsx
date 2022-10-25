@@ -1,14 +1,14 @@
 import React, { useState, useCallback } from "react";
 import { View, Text } from "react-native";
 import Config from "react-native-config";
-import { EnvName, setEnvUnsafe } from "@ledgerhq/live-common/env";
+import { setEnvUnsafe } from "@ledgerhq/live-common/env";
 import NavigationScrollView from "../components/NavigationScrollView";
 import Button from "../components/Button";
 import TextInput from "../components/TextInput";
 
 export default function DebugEnv() {
-  const [value, setValue] = useState<string>("");
-  const [status, setStatus] = useState<string>();
+  const [value, setValue] = useState();
+  const [status, setStatus] = useState();
   const onSetEnv = useCallback(() => {
     if (!value) return;
     // Attempt to parse this input
@@ -18,12 +18,12 @@ export default function DebugEnv() {
       setStatus("Can't parse input");
     } else if (match[2] === "0") {
       setStatus(`Unsetting ${match[1]}`);
-      setEnvUnsafe(match[1] as EnvName, match[2]);
+      setEnvUnsafe(match[1], match[2]);
       delete Config[match[1]];
     } else {
       setStatus(`Set value '${match[2]}' for '${match[1]}'`);
       Config[match[1]] = match[2];
-      setEnvUnsafe(match[1] as EnvName, match[2]);
+      setEnvUnsafe(match[1], match[2]);
     }
   }, [value]);
   return (
@@ -36,7 +36,6 @@ export default function DebugEnv() {
       >
         <Text>{status}</Text>
         <TextInput
-          value={value}
           maxLength={100}
           onChangeText={setValue}
           placeholder={"DEBUG_THEME=1"}

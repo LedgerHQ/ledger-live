@@ -36,7 +36,7 @@ function HideEmptyTokenAccountsRow({
   );
 }
 
-export default compose<React.ComponentType<Record<string, unknown>>>(
+export default compose(
   withEnv("HIDE_EMPTY_TOKEN_ACCOUNTS", "hideEmptyTokenAccountsEnabled"),
   connect(null, mapDispatchToProps),
 )(HideEmptyTokenAccountsRow);

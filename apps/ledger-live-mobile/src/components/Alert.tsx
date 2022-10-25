@@ -27,7 +27,7 @@ type Props = {
   children?: React.ReactNode;
   title?: string;
   noIcon?: boolean;
-  onLearnMore?: () => void;
+  onLearnMore?: () => any;
   learnMoreKey?: string;
   learnMoreUrl?: string;
   learnMoreIsInternal?: boolean;
@@ -172,7 +172,7 @@ export default function Alert(props: Props) {
   );
 
   const isDismissed = useMemo(
-    () => (id ? dismissedBanners.includes(id) : false),
+    () => dismissedBanners.includes(id),
     [dismissedBanners, id],
   );
 

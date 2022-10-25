@@ -1,5 +1,4 @@
 import React, { ReactNode, useState, memo, useCallback } from "react";
-import { StyleProp, ViewStyle } from "react-native";
 import { SearchInput, Flex } from "@ledgerhq/native-ui";
 import { useTranslation } from "react-i18next";
 import { useTheme } from "styled-components/native";
@@ -9,23 +8,23 @@ import Search from "./Search";
 import { track } from "../analytics";
 import { ScreenName } from "../const";
 
-type Props<T> = {
+type Props = {
   initialQuery?: string;
-  renderList: (_: T[]) => ReactNode;
+  renderList: (_: any[]) => ReactNode;
   renderEmptySearch: () => ReactNode;
   keys?: string[];
-  list: T[];
-  inputWrapperStyle?: StyleProp<ViewStyle>;
+  list: any[];
+  inputWrapperStyle?: any;
 };
 
-const FilteredSearchBar = <T,>({
+const FilteredSearchBar = ({
   keys = ["name"],
   initialQuery,
   renderList,
   list,
   renderEmptySearch,
   inputWrapperStyle,
-}: Props<T>) => {
+}: Props) => {
   const { t } = useTranslation();
   const { colors } = useTheme();
   const [query, setQuery] = useState<string>(initialQuery || "");
@@ -49,6 +48,7 @@ const FilteredSearchBar = <T,>({
           onChange={onChange}
           placeholder={t("common.search")}
           placeholderTextColor={colors.neutral.c70}
+          color={colors.neutral.c100}
         />
       </Flex>
       <Search
@@ -66,4 +66,4 @@ const FilteredSearchBar = <T,>({
   );
 };
 
-export default memo(FilteredSearchBar) as typeof FilteredSearchBar;
+export default memo<Props>(FilteredSearchBar);

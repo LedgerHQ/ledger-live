@@ -7,11 +7,12 @@ import { SYNC_DELAY } from "../constants";
 
 type Props = {
   error?: Error;
-  isError?: boolean;
-  forwardedRef?: React.Ref<unknown>;
+  isError: boolean;
+  forwardedRef?: any;
+  setSyncBehavior: any;
 };
-export default <P,>(ScrollListLike: React.ComponentType<P>) => {
-  function Inner({ forwardedRef, ...scrollListLikeProps }: Props & P) {
+export default (ScrollListLike: any) => {
+  function Inner({ forwardedRef, ...scrollListLikeProps }: Props) {
     const { colors, dark } = useTheme();
     const [refreshing, setRefreshing] = useState(false);
     const setSyncBehavior = useBridgeSync();
@@ -42,7 +43,7 @@ export default <P,>(ScrollListLike: React.ComponentType<P>) => {
     }, [refreshing]);
     return (
       <ScrollListLike
-        {...(scrollListLikeProps as P)}
+        {...scrollListLikeProps}
         ref={forwardedRef}
         refreshControl={
           <RefreshControl
@@ -57,7 +58,8 @@ export default <P,>(ScrollListLike: React.ComponentType<P>) => {
     );
   }
 
-  return React.forwardRef((props: P & Props, ref) => (
+  // $FlowFixMe
+  return React.forwardRef((props, ref) => (
     <Inner {...props} forwardedRef={ref} />
   ));
 };

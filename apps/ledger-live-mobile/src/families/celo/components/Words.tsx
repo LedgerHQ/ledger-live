@@ -1,5 +1,5 @@
 import React, { ReactNode, memo } from "react";
-import { StyleProp, StyleSheet, TextStyle } from "react-native";
+import { StyleSheet } from "react-native";
 import { Text } from "@ledgerhq/native-ui";
 
 const Words = ({
@@ -9,7 +9,7 @@ const Words = ({
 }: {
   children: ReactNode;
   highlighted?: boolean;
-  style?: StyleProp<TextStyle>;
+  style?: any;
 }) => (
   <Text
     numberOfLines={1}

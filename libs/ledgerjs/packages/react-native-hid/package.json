@@ -36,7 +36,7 @@
     "rxjs": "6"
   },
   "devDependencies": {
-    "@types/react-native": "^0.66.24",
+    "@types/react-native": "^0.66.12",
     "yarn-add-no-save": "^1.0.3"
   },
   "peerDependencies": {

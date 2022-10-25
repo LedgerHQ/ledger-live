@@ -2,21 +2,20 @@ import React from "react";
 import { changes, getAllEnvs } from "@ledgerhq/live-common/env";
 import type { EnvName } from "@ledgerhq/live-common/env";
 import hoistNonReactStatics from "hoist-non-react-statics";
-import { Subscription } from "rxjs";
 
 const withEnv =
-  <Props,>(name: EnvName, propName = "env") =>
-  (Comp: React.ComponentType<Props>) => {
+  (name: EnvName, propName = "env") =>
+  (Comp: any) => {
     class WithEnv extends React.Component<
-      Props,
+      any,
       {
-        env: string;
+        env: any;
       }
     > {
       state = {
         env: getAllEnvs()[name],
       };
-      sub: Subscription | undefined;
+      sub: any;
 
       componentDidMount() {
         this.subscribe();

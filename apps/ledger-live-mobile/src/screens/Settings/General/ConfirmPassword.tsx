@@ -1,37 +1,59 @@
-import React, { memo, useCallback, useEffect, useState } from "react";
+import React, { PureComponent } from "react";
 import { Platform, Vibration } from "react-native";
 import * as Keychain from "react-native-keychain";
-import { useDispatch } from "react-redux";
-import { useTranslation } from "react-i18next";
+import { connect } from "react-redux";
+import { compose } from "redux";
+import { withTranslation } from "react-i18next";
 import { PasswordsDontMatchError } from "@ledgerhq/errors";
 
-import { CompositeScreenProps } from "@react-navigation/native";
 import { setPrivacy } from "../../../actions/settings";
+import { Privacy } from "../../../reducers/settings";
+import { T } from "../../../types/common";
 import PasswordForm from "./PasswordForm";
 import { VIBRATION_PATTERN_ERROR } from "../../../constants";
-import { ScreenName } from "../../../const";
-import type { PasswordAddFlowParamList } from "../../../components/RootNavigator/types/PasswordAddFlowNavigator";
-import type { BaseNavigatorStackParamList } from "../../../components/RootNavigator/types/BaseNavigator";
-import {
-  StackNavigatorNavigation,
-  StackNavigatorProps,
-} from "../../../components/RootNavigator/types/helpers";
 
-type Props = CompositeScreenProps<
-  StackNavigatorProps<PasswordAddFlowParamList, ScreenName.ConfirmPassword>,
-  StackNavigatorProps<BaseNavigatorStackParamList>
->;
+type Props = {
+  t: T;
+  setPrivacy: (_: Privacy) => void;
+  navigation: any;
+  route: any;
+};
 
-const ConfirmPassword = ({ route, navigation }: Props) => {
-  const { t } = useTranslation();
-  const dispatch = useDispatch();
-  const [confirmPassword, setConfirmPassword] = useState<string>("");
-  const [error, setError] = useState<Error | null>(null);
-  const [biometricsType, setPBiometricType] =
-    useState<Keychain.BIOMETRY_TYPE | null>(null);
+type State = {
+  password: string;
+  confirmPassword: string;
+  error?: Error;
+  biometricsType?: string;
+};
 
-  const save = useCallback(async () => {
-    if (!route.params?.password) return;
+const mapDispatchToProps = {
+  setPrivacy,
+};
+
+class ConfirmPassword extends PureComponent<Props, State> {
+  componentDidMount() {
+    Keychain.getSupportedBiometryType().then(biometricsType => {
+      if (biometricsType) this.setState({ biometricsType });
+    });
+  }
+
+  constructor({ route }) {
+    super();
+    const password = route.params?.password;
+    this.state = {
+      password,
+      confirmPassword: "",
+      error: null,
+    };
+  }
+
+  onChange = (confirmPassword: string) => {
+    this.setState({ confirmPassword, error: null });
+  };
+
+  async save() {
+    const { password, biometricsType } = this.state;
+    const { setPrivacy, navigation } = this.props;
     const options =
       Platform.OS === "ios"
         ? {}
@@ -40,59 +62,49 @@ const ConfirmPassword = ({ route, navigation }: Props) => {
             rules: Keychain.SECURITY_RULES.NONE,
           };
     try {
-      await Keychain.setGenericPassword(
-        "ledger",
-        route.params?.password,
-        options,
-      );
-      dispatch(
-        setPrivacy({
-          biometricsType,
-          biometricsEnabled: false,
-        }),
-      );
-      const n =
-        navigation.getParent<
-          StackNavigatorNavigation<BaseNavigatorStackParamList>
-        >();
+      await Keychain.setGenericPassword("ledger", password, options);
+      setPrivacy({
+        biometricsType,
+        biometricsEnabled: false,
+      });
+      const n = navigation.getParent();
       if (n) n.goBack();
     } catch (err) {
       // eslint-disable-next-line no-console
       if (__DEV__) console.log("could not save credentials");
     }
-  }, [biometricsType, dispatch, navigation, route.params?.password]);
+  }
 
-  const onChange = useCallback((confirmPassword: string) => {
-    setConfirmPassword(confirmPassword);
-    setError(null);
-  }, []);
-
-  const onSubmit = useCallback(() => {
-    if (!route.params?.password) return;
-    if (route.params?.password === confirmPassword) {
-      save();
+  onSubmit = () => {
+    if (!this.state.password) return;
+    if (this.state.password === this.state.confirmPassword) {
+      this.save();
     } else {
       Vibration.vibrate(VIBRATION_PATTERN_ERROR);
-      setError(new PasswordsDontMatchError());
-      setConfirmPassword("");
+      this.setState({
+        error: new PasswordsDontMatchError(),
+        confirmPassword: "",
+      });
     }
-  }, [route.params?.password, save, confirmPassword]);
+  };
 
-  useEffect(() => {
-    Keychain.getSupportedBiometryType().then(biometricsType => {
-      if (biometricsType) setPBiometricType(biometricsType);
-    });
-  }, []);
+  render() {
+    const { t } = this.props;
+    const { error, confirmPassword } = this.state;
+    return (
+      <PasswordForm
+        placeholder={t("auth.confirmPassword.placeholder")}
+        onChange={this.onChange}
+        onSubmit={this.onSubmit}
+        error={error}
+        value={confirmPassword}
+      />
+    );
+  }
+}
 
-  return (
-    <PasswordForm
-      placeholder={t("auth.confirmPassword.placeholder")}
-      onChange={onChange}
-      onSubmit={onSubmit}
-      error={error}
-      value={confirmPassword}
-    />
-  );
-};
-
-export default memo(ConfirmPassword);
+export default compose(
+  // $FlowFixMe
+  connect(null, mapDispatchToProps),
+  withTranslation(),
+)(ConfirmPassword);

@@ -9,11 +9,10 @@ const mimeTypesCategories = Object.keys(mimeTypesMap) as Array<
 >;
 
 export const getMetadataMediaType = (
-  metadata?: NFTMetadata | null,
+  metadata: NFTMetadata,
   mediaFormat: NFTMediaSize = "preview",
 ): keyof typeof mimeTypesMap | undefined => {
   const { mediaType } = metadata?.medias?.[mediaFormat] || {};
-  if (!mediaType) return undefined;
   return mimeTypesCategories.find(type =>
     mimeTypesMap[type].includes(mediaType),
   );

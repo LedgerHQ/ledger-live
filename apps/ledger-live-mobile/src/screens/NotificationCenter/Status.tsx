@@ -2,7 +2,7 @@ import React, { useCallback } from "react";
 import { Linking, FlatList } from "react-native";
 import { Trans, useTranslation } from "react-i18next";
 import { useFilteredServiceStatus } from "@ledgerhq/live-common/notifications/ServiceStatusProvider/index";
-import type { Incident } from "@ledgerhq/live-common/notifications/ServiceStatusProvider/types";
+import { Incident } from "@ledgerhq/live-common/notifications/AnnouncementProvider/types";
 import { Alert, Flex, IconBox, Notification, Text } from "@ledgerhq/native-ui";
 import { CheckAloneMedium } from "@ledgerhq/native-ui/assets/icons";
 import styled, { useTheme } from "styled-components/native";
@@ -14,13 +14,13 @@ type Props = {
 };
 
 const MainContainer = styled.SafeAreaView`
-  background-color: ${p => p.theme.colors.background.main};
+  background-color: ${p => p.theme.colors.palette.background.main};
   padding: ${p => p.theme.space[6]}px;
   flex: 1;
 `;
 
 const BorderedIncidentContainer = styled.View`
-  border: 1px solid ${p => p.theme.colors.neutral.c40};
+  border: 1px solid ${p => p.theme.colors.palette.neutral.c40};
   padding: ${p => p.theme.space[5]}px;
   margin-bottom: ${p => p.theme.space[5]}px;
 

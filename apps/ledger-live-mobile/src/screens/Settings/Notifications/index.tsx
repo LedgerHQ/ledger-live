@@ -17,7 +17,7 @@ import Track from "../../../analytics/Track";
 import { track, TrackScreen } from "../../../analytics";
 import { notificationsSelector } from "../../../reducers/settings";
 import { setNotifications } from "../../../actions/settings";
-import type { State } from "../../../reducers/types";
+import { State } from "../../../reducers";
 import useNotifications from "../../../logic/notifications";
 
 type NotificationRowProps = {
@@ -84,8 +84,7 @@ function NotificationsSettings() {
   const notifications = useSelector(notificationsSelector);
   const { getIsNotifEnabled, handlePushNotificationsPermission } =
     useNotifications();
-  const [isNotifPermissionEnabled, setIsNotifPermissionEnabled] =
-    useState<boolean>(false);
+  const [isNotifPermissionEnabled, setIsNotifPermissionEnabled] = useState();
 
   const refreshNotifPermission = useCallback(() => {
     getIsNotifEnabled().then(isNotifPermissionEnabled => {

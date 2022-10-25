@@ -13,7 +13,7 @@ import {
   TouchableOpacity,
   SafeAreaView,
 } from "react-native";
-import { WebView as WebViewComponent } from "react-native-webview";
+import { WebView } from "react-native-webview";
 import { useNavigation } from "@react-navigation/native";
 import { JSONRPCRequest } from "json-rpc-2.0";
 import { UserRefusedOnDevice } from "@ledgerhq/errors";
@@ -62,9 +62,6 @@ import {
 } from "@ledgerhq/live-common/platform/react";
 import trackingWrapper from "@ledgerhq/live-common/platform/tracking";
 import { useTheme } from "styled-components/native";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import { TypedMessageData } from "@ledgerhq/live-common/families/ethereum/types";
-import BigNumber from "bignumber.js";
 import { NavigatorName, ScreenName } from "../../const";
 import { broadcastSignedTx } from "../../logic/screenTransactionHooks";
 import { accountsSelector } from "../../reducers/accounts";
@@ -73,31 +70,19 @@ import InfoIcon from "../../icons/Info";
 import InfoPanel from "./InfoPanel";
 import { track } from "../../analytics/segment";
 import prepareSignTransaction from "./liveSDKLogic";
-import {
-  RootNavigationComposite,
-  StackNavigatorNavigation,
-} from "../RootNavigator/types/helpers";
-import { BaseNavigatorStackParamList } from "../RootNavigator/types/BaseNavigator";
 
 const tracking = trackingWrapper(track);
 
-// Typings are missing the style prop…
-const WebView = WebViewComponent as {
-  new (): WebViewComponent<{
-    style: Record<string, string | number>;
-  }>;
-};
-
 type Props = {
   manifest: AppManifest;
-  inputs?: Record<string, string>;
+  inputs?: Record<string, any>;
 };
 
 const ReloadButton = ({
   onReload,
   loading,
 }: {
-  onReload: () => void;
+  onReload: (..._: Array<any>) => any;
   loading: boolean;
 }) => {
   const { colors } = useTheme();
@@ -138,27 +123,20 @@ const InfoPanelButton = ({
 
 const WebPlatformPlayer = ({ manifest, inputs }: Props) => {
   const targetRef: {
-    current: null | WebViewComponent<{
-      style: Record<string, string | number>;
-    }>;
+    current: null | WebView;
   } = useRef(null);
   const accounts = flattenAccounts(useSelector(accountsSelector));
-  const navigation =
-    useNavigation<
-      RootNavigationComposite<
-        StackNavigatorNavigation<BaseNavigatorStackParamList>
-      >
-    >();
-  const [loadDate, setLoadDate] = useState(new Date());
+  const navigation = useNavigation();
+  const [loadDate, setLoadDate] = useState(Date.now());
   const [widgetLoaded, setWidgetLoaded] = useState(false);
   const [isInfoPanelOpened, setIsInfoPanelOpened] = useState(false);
-  const [device, setDevice] = useState<Device>();
+  const [device, setDevice] = useState();
   const uri = usePlatformUrl(
     manifest,
     {
       loadDate,
     },
-    inputs!,
+    inputs,
   );
   const listAccounts = useListPlatformAccounts(accounts);
   const listPlatformCurrencies = useListPlatformCurrencies();
@@ -186,7 +164,7 @@ const WebPlatformPlayer = ({ manifest, inputs }: Props) => {
         const cryptoCurrencyIds =
           currencyIds && currencyIds.length > 0
             ? currencyIds
-            : allCurrencies.map(currency => (currency as CryptoCurrency).id);
+            : allCurrencies.map(({ id }) => id);
 
         const foundAccounts = cryptoCurrencyIds?.length
           ? accounts.filter(a =>
@@ -213,7 +191,7 @@ const WebPlatformPlayer = ({ manifest, inputs }: Props) => {
                   cryptoCurrencyIds.includes(c) && i === arr.indexOf(c),
               );
 
-        const onSuccess = (account: AccountLike, parentAccount?: Account) => {
+        const onSuccess = (account: AccountLike, parentAccount: Account) => {
           tracking.platformRequestAccountSuccess(manifest);
           resolve(
             serializePlatformAccount(
@@ -244,6 +222,7 @@ const WebPlatformPlayer = ({ manifest, inputs }: Props) => {
               currencies: allCurrencies,
               currency,
               allowAddAccount,
+              includeTokens,
               onSuccess,
               onError,
             },
@@ -254,6 +233,7 @@ const WebPlatformPlayer = ({ manifest, inputs }: Props) => {
             params: {
               currencies: allCurrencies,
               allowAddAccount,
+              includeTokens,
               onSuccess,
               onError,
             },
@@ -326,23 +306,17 @@ const WebPlatformPlayer = ({ manifest, inputs }: Props) => {
             liveTx: Partial<Transaction>;
           },
         ) => {
-          const tx = prepareSignTransaction(
-            account,
-            parentAccount,
-            liveTx as Partial<Transaction & { gasLimit: BigNumber }>,
-          );
+          const tx = prepareSignTransaction(account, parentAccount, liveTx);
 
           return new Promise((resolve, reject) => {
-            (
-              navigation as StackNavigatorNavigation<BaseNavigatorStackParamList>
-            ).navigate(NavigatorName.SignTransaction, {
+            navigation.navigate(NavigatorName.SignTransaction, {
               screen: ScreenName.SignTransactionSummary,
               params: {
                 currentNavigation: ScreenName.SignTransactionSummary,
                 nextNavigation: ScreenName.SignTransactionSelectDevice,
-                transaction: tx as Transaction,
+                transaction: tx,
                 accountId,
-                parentId: parentAccount?.id,
+                parentId: parentAccount ? parentAccount.id : undefined,
                 appName: params?.useApp,
                 onSuccess: ({
                   signedOperation,
@@ -359,10 +333,7 @@ const WebPlatformPlayer = ({ manifest, inputs }: Props) => {
                     resolve(
                       serializePlatformSignedTransaction(signedOperation),
                     );
-                    const n =
-                      navigation.getParent<
-                        StackNavigatorNavigation<BaseNavigatorStackParamList>
-                      >() || navigation;
+                    const n = navigation.getParent() || navigation;
                     n.pop();
                   }
                 },
@@ -421,9 +392,9 @@ const WebPlatformPlayer = ({ manifest, inputs }: Props) => {
               exchangeType,
             },
             onResult: (result: {
-              startExchangeResult?: string;
+              startExchangeResult?: number;
               startExchangeError?: Error;
-              device?: Device;
+              device: Device;
             }) => {
               if (result.startExchangeError) {
                 tracking.platformStartExchangeFail(manifest);
@@ -436,10 +407,7 @@ const WebPlatformPlayer = ({ manifest, inputs }: Props) => {
                 resolve(result.startExchangeResult);
               }
 
-              const n =
-                navigation.getParent<
-                  StackNavigatorNavigation<BaseNavigatorStackParamList>
-                >() || navigation;
+              const n = navigation.getParent() || navigation;
               n.pop();
             },
           },
@@ -480,7 +448,7 @@ const WebPlatformPlayer = ({ manifest, inputs }: Props) => {
                   exchangeType,
                   provider,
                   exchange,
-                  transaction: transaction as Transaction,
+                  transaction,
                   binaryPayload,
                   signature,
                   feesStrategy,
@@ -498,11 +466,8 @@ const WebPlatformPlayer = ({ manifest, inputs }: Props) => {
                     tracking.platformStartExchangeSuccess(manifest);
                     resolve(result.operation);
                   }
-                  setDevice(undefined);
-                  const n =
-                    navigation.getParent<
-                      StackNavigatorNavigation<BaseNavigatorStackParamList>
-                    >() || navigation;
+                  setDevice();
+                  const n = navigation.getParent() || navigation;
                   n.pop();
                 },
               },
@@ -518,17 +483,14 @@ const WebPlatformPlayer = ({ manifest, inputs }: Props) => {
         { manifest, accounts, tracking },
         accountId,
         message,
-        (
-          { id: accountId }: AccountLike,
-          message: MessageData | TypedMessageData,
-        ) =>
+        ({ id: accountId }: AccountLike, message: MessageData | null) =>
           new Promise((resolve, reject) => {
             navigation.navigate(NavigatorName.SignMessage, {
               screen: ScreenName.SignSummary,
               params: {
                 message,
                 accountId,
-                onConfirmationHandler: (message: string) => {
+                onConfirmationHandler: (message: any) => {
                   tracking.platformSignMessageSuccess(manifest);
                   resolve(message);
                 },
@@ -571,11 +533,19 @@ const WebPlatformPlayer = ({ manifest, inputs }: Props) => {
       signMessage,
     ],
   );
-  const handleSend = useCallback((request: JSONRPCRequest): Promise<void> => {
-    targetRef?.current?.postMessage(JSON.stringify(request));
+  const handleSend = useCallback(
+    (request: JSONRPCRequest): Promise<void> => {
+      targetRef?.current?.postMessage(
+        JSON.stringify(request),
+        typeof manifest.url === "string"
+          ? manifest.url
+          : manifest.url?.origin ?? "",
+      );
 
-    return Promise.resolve();
-  }, []);
+      return Promise.resolve();
+    },
+    [manifest],
+  );
   const [receive] = useJSONRPCServer(handlers, handleSend);
   const handleMessage = useCallback(
     e => {
@@ -597,7 +567,7 @@ const WebPlatformPlayer = ({ manifest, inputs }: Props) => {
 
   const handleReload = useCallback(() => {
     tracking.platformReload(manifest);
-    setLoadDate(new Date());
+    setLoadDate(Date.now());
     setWidgetLoaded(false);
   }, [manifest]);
 
@@ -611,7 +581,9 @@ const WebPlatformPlayer = ({ manifest, inputs }: Props) => {
         <View style={styles.headerRight}>
           <ReloadButton onReload={handleReload} loading={!widgetLoaded} />
           <InfoPanelButton
+            onReload={handleReload}
             loading={!widgetLoaded}
+            isInfoPanelOpened={isInfoPanelOpened}
             setIsInfoPanelOpened={setIsInfoPanelOpened}
           />
         </View>
@@ -653,6 +625,7 @@ const WebPlatformPlayer = ({ manifest, inputs }: Props) => {
         overScrollMode="content"
         bounces={false}
         mediaPlaybackRequiresUserAction={false}
+        scalesPageToFitmediaPlaybackRequiresUserAction
         automaticallyAdjustContentInsets={false}
         scrollEnabled={true}
         style={styles.webview}

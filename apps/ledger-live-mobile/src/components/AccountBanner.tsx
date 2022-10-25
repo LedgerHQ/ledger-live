@@ -4,7 +4,10 @@ import Button from "./wrappedUi/Button";
 
 type Props = {
   description: string;
-  cta: string;
+  cta: {
+    text: string;
+    id: string;
+  };
   onPress: () => void;
 };
 
@@ -13,10 +16,15 @@ export default function AccountBanner({ description, cta, onPress }: Props) {
     <Alert
       type="info"
       showIcon={false}
-      renderContent={({ textColor }) => (
+      renderContent={({ textProps }) => (
         <Flex flexDirection="row" alignItems="center">
           <Flex flex={1} width={"100%"}>
-            <Text color={textColor} variant="body" fontWeight="medium">
+            <Text
+              {...textProps}
+              variant="body"
+              fontWeight="medium"
+              color="primary.c90"
+            >
               {description}
             </Text>
           </Flex>

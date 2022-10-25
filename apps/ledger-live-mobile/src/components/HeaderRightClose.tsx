@@ -1,12 +1,9 @@
 import React, { useCallback, useState } from "react";
 import { StyleSheet } from "react-native";
 import { useNavigation, useTheme } from "@react-navigation/native";
-import type { Props as BottomModalProps } from "./BottomModal";
 import Touchable from "./Touchable";
 import CloseIcon from "../icons/Close";
 import ConfirmationModal from "./ConfirmationModal";
-import { StackNavigatorNavigation } from "./RootNavigator/types/helpers";
-import { BaseNavigatorStackParamList } from "./RootNavigator/types/BaseNavigator";
 
 type Props = {
   preferDismiss?: boolean;
@@ -15,7 +12,7 @@ type Props = {
   withConfirmation?: boolean;
   confirmationTitle?: React.ReactNode;
   confirmationDesc?: React.ReactNode;
-  onClose?: () => void;
+  onClose?: (..._: Array<any>) => any;
 };
 
 // eslint-disable-next-line @typescript-eslint/no-empty-function
@@ -34,26 +31,22 @@ export default function HeaderRightClose({
   const navigation = useNavigation();
   const [isConfirmationModalOpened, setIsConfirmationModalOpened] =
     useState(false);
-  const [onModalHide, setOnModalHide] =
-    useState<BottomModalProps["onModalHide"]>();
+  const [onModalHide, setOnModalHide] = useState();
   const close = useCallback(() => {
     if (skipNavigation) {
       // onClose should always be called at the end of the close method,
       // so the callback will not interfere with the expected behavior of this component
-      onClose && onClose();
+      onClose();
       return;
     }
 
-    if ((navigation.getParent() as { pop?: unknown }).pop && preferDismiss) {
-      navigation
-        .getParent<StackNavigatorNavigation<BaseNavigatorStackParamList>>()
-        .pop();
-      onClose && onClose();
+    if (navigation.getParent().pop && preferDismiss) {
+      navigation.getParent().pop();
+      onClose();
       return;
     }
 
-    if ((navigation as { closeDrawer?: unknown }).closeDrawer)
-      (navigation as unknown as { closeDrawer: () => void }).closeDrawer();
+    if (navigation.closeDrawer) navigation.closeDrawer();
     navigation.goBack();
     onClose();
   }, [navigation, onClose, preferDismiss, skipNavigation]);

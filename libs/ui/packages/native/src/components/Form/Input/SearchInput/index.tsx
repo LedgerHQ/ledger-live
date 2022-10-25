@@ -11,7 +11,7 @@ const Icon = styled(SearchMedium).attrs((p) => ({
 
 function SearchInput(
   { onChange, value, ...props }: InputProps,
-  ref?: React.ForwardedRef<TextInput> | null,
+  ref?: React.ForwardedRef<TextInput>,
 ): JSX.Element {
   const onClear = useCallback((): void => {
     if (onChange) {

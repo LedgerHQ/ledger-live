@@ -1,63 +1,37 @@
-import type { Dispatch } from "redux";
-import { createAction } from "redux-actions";
 import { isConnectedSelector } from "../reducers/appstate";
-import type { FwUpdateBackgroundEvent, State } from "../reducers/types";
-import type {
-  AppStateAddBackgroundEventPayload,
-  AppStateIsConnectedPayload,
-  AppStateSetHasConnectedDevicePayload,
-  AppStateSetModalLockPayload,
-} from "./types";
-import { AppStateActionTypes } from "./types";
 
-const syncIsConnectedAction = createAction<AppStateIsConnectedPayload>(
-  AppStateActionTypes.SYNC_IS_CONNECTED,
-);
 export const syncIsConnected =
-  (isConnected: boolean | null) =>
-  (dispatch: Dispatch, getState: () => State) => {
+  (isConnected: boolean | null) => (dispatch: any, getState: any) => {
     const currently = isConnectedSelector(getState());
 
     if (currently !== isConnected) {
-      dispatch(syncIsConnectedAction({ isConnected }));
+      dispatch({
+        type: "SYNC_IS_CONNECTED",
+        isConnected,
+      });
     }
   };
-
-const setHasConnectedDeviceAction =
-  createAction<AppStateSetHasConnectedDevicePayload>(
-    AppStateActionTypes.HAS_CONNECTED_DEVICE,
-  );
 export const setHasConnectedDevice =
-  (hasConnectedDevice: boolean) => (dispatch: Dispatch) =>
-    dispatch(setHasConnectedDeviceAction({ hasConnectedDevice }));
-
-const setModalLockAction = createAction<AppStateSetModalLockPayload>(
-  AppStateActionTypes.SET_MODAL_LOCK,
-);
-export const setModalLock = (modalLock: boolean) => (dispatch: Dispatch) =>
-  dispatch(
-    setModalLockAction({
-      modalLock,
-    }),
-  );
-
-const addBackgroundEventAction =
-  createAction<AppStateAddBackgroundEventPayload>(
-    AppStateActionTypes.QUEUE_BACKGROUND_EVENT,
-  );
-export const addBackgroundEvent = (event: FwUpdateBackgroundEvent) =>
-  addBackgroundEventAction({
+  (hasConnectedDevice: boolean) => (dispatch: any) =>
+    dispatch({
+      type: "HAS_CONNECTED_DEVICE",
+      hasConnectedDevice,
+    });
+export const setModalLock = (modalLock: boolean) => (dispatch: any) =>
+  dispatch({
+    type: "SET_MODAL_LOCK",
+    modalLock,
+  });
+export const addBackgroundEvent = (event: any) => (dispatch: any) =>
+  dispatch({
+    type: "QUEUE_BACKGROUND_EVENT",
     event,
   });
-
-const dequeueBackgroundEventAction = createAction(
-  AppStateActionTypes.DEQUEUE_BACKGROUND_EVENT,
-);
-export const dequeueBackgroundEvent = () => (dispatch: Dispatch) =>
-  dispatch(dequeueBackgroundEventAction());
-
-const clearBackgroundEventsAction = createAction(
-  AppStateActionTypes.CLEAR_BACKGROUND_EVENTS,
-);
-export const clearBackgroundEvents = () => (dispatch: Dispatch) =>
-  dispatch(clearBackgroundEventsAction());
+export const dequeueBackgroundEvent = () => (dispatch: any) =>
+  dispatch({
+    type: "DEQUEUE_BACKGROUND_EVENT",
+  });
+export const clearBackgroundEvents = () => (dispatch: any) =>
+  dispatch({
+    type: "CLEAR_BACKGROUND_EVENTS",
+  });

@@ -1,7 +1,8 @@
 import React, { useCallback, useMemo, memo } from "react";
-import { useNavigation, useRoute } from "@react-navigation/native";
+import { useNavigation, useRoute, RouteProp } from "@react-navigation/native";
 import { useTheme } from "styled-components/native";
 import { ScreenName } from "../../../const";
+import { DeviceNames } from "../types";
 import Illustration from "../../../images/illustration/Illustration";
 import BaseStepperView, {
   RestoreRecovery,
@@ -15,9 +16,6 @@ import BaseStepperView, {
 import { TrackScreen } from "../../../analytics";
 import StepLottieAnimation from "./setupDevice/scenes/StepLottieAnimation";
 import SeedWarning from "../shared/SeedWarning";
-import { StackNavigatorProps } from "../../../components/RootNavigator/types/helpers";
-import { OnboardingNavigatorParamList } from "../../../components/RootNavigator/types/OnboardingNavigator";
-import { Step } from "./setupDevice/scenes/BaseStepperView";
 
 // @TODO Replace
 const images = {
@@ -55,17 +53,13 @@ const scenes = [
   ExistingRecovery,
   ExistingRecoveryStep1,
   ExistingRecoveryStep2,
-] as Step[];
-
-type NavigationProps = StackNavigatorProps<
-  OnboardingNavigatorParamList,
-  ScreenName.OnboardingRecoveryPhrase
->;
+];
 
 function OnboardingStepRecoveryPhrase() {
-  const navigation = useNavigation<NavigationProps["navigation"]>();
+  const navigation = useNavigation();
   const { theme } = useTheme();
-  const route = useRoute<NavigationProps["route"]>();
+  const route =
+    useRoute<RouteProp<{ params: { deviceModelId: DeviceNames } }, "params">>();
 
   const { deviceModelId, showSeedWarning } = route.params;
 
@@ -167,7 +161,7 @@ function OnboardingStepRecoveryPhrase() {
         },
       },
     ],
-    [deviceModelId, theme],
+    [],
   );
 
   const nextPage = useCallback(() => {

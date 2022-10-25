@@ -7,7 +7,7 @@ import { Account, SubAccount, TokenAccount } from "@ledgerhq/types-live";
 import useEnv from "@ledgerhq/live-common/hooks/useEnv";
 import { listSubAccounts } from "@ledgerhq/live-common/account/index";
 import { listTokenTypesForCryptoCurrency } from "@ledgerhq/live-common/currencies/index";
-import { Flex, Text } from "@ledgerhq/native-ui";
+import { Button, Flex, Text } from "@ledgerhq/native-ui";
 import {
   DropdownMedium,
   DropupMedium,
@@ -19,9 +19,8 @@ import Touchable from "../../components/Touchable";
 import TokenContextualModal from "../Settings/Accounts/TokenContextualModal";
 import perFamilySubAccountList from "../../generated/SubAccountList";
 import SectionTitle from "../WalletCentricSections/SectionTitle";
-import Button from "../../components/Button";
 
-const keyExtractor = (item: SubAccount): string => item.id;
+const keyExtractor = (o: any) => o.id;
 
 const styles = StyleSheet.create({
   footer: {
@@ -64,8 +63,7 @@ export default function SubAccountsList({
   const [isCollapsed, setIsCollapsed] = useState(true);
   const subAccounts = listSubAccounts(parentAccount);
   const family = parentAccount.currency.family;
-  const specific =
-    perFamilySubAccountList[family as keyof typeof perFamilySubAccountList];
+  const specific = perFamilySubAccountList[family];
 
   const hasSpecificTokenWording = specific && specific.hasSpecificTokenWording;
 
@@ -211,7 +209,7 @@ export default function SubAccountsList({
         />
       </Flex>
     ),
-    [onAccountPress, parentAccount, useCounterValue],
+    [onAccountPress, parentAccount],
   );
 
   if (!isToken && subAccounts.length === 0) {

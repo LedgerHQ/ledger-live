@@ -12,7 +12,7 @@ type OperationDetailsExtraProps = {
 const OperationDetailsExtra = ({ extra, type }: OperationDetailsExtraProps) => {
   const { t } = useTranslation();
   const entries = Object.keys(extra);
-
+  // $FlowFixMe
   return (
     type === "REDEEM" || type === "SUPPLY"
       ? entries.filter(key => !["compoundValue", "rate"].includes(key))

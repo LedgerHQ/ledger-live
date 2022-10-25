@@ -17,7 +17,7 @@ type Props = {
   /**
    * float number between 0 and 1
    */
-  progress?: number | null;
+  progress?: number;
   infinite?: boolean;
 
   onPress?: () => void;
@@ -51,7 +51,7 @@ const ProgressLoader = ({
   const normalizedRadius = radius - strokeWidth / 2;
   const circumference = normalizedRadius * 2 * Math.PI;
 
-  const strokeDashoffset = circumference * (1 - (progress ?? 0));
+  const strokeDashoffset = circumference * (1 - progress);
 
   const rotation = useSharedValue(0);
   const animatedStyles = useAnimatedStyle(

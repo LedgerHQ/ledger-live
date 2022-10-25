@@ -1,6 +1,6 @@
 import React, { useCallback } from "react";
 import { View, StyleSheet } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import SafeAreaView from "react-native-safe-area-view";
 import { Trans } from "react-i18next";
 import { useTheme } from "@react-navigation/native";
 import { TrackScreen } from "../../analytics";
@@ -8,15 +8,20 @@ import GenericErrorView from "../../components/GenericErrorView";
 import Button from "../../components/Button";
 import NeedHelp from "../../components/NeedHelp";
 import { ScreenName } from "../../const";
-import type { StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
-import type { FirmwareUpdateNavigatorParamList } from "../../components/RootNavigator/types/FirmwareUpdateNavigator";
 
-type Navigation = StackNavigatorProps<
-  FirmwareUpdateNavigatorParamList,
-  ScreenName.FirmwareUpdateFailure
->;
-type Props = Navigation;
-
+const forceInset = {
+  bottom: "always",
+};
+type Props = {
+  navigation: any;
+  route: {
+    params: RouteParams;
+  };
+};
+type RouteParams = {
+  deviceId: string;
+  error: Error;
+};
 export default function FirmwareUpdateFailure({ navigation, route }: Props) {
   const { colors } = useTheme();
   const onRetry = useCallback(() => {
@@ -37,6 +42,7 @@ export default function FirmwareUpdateFailure({ navigation, route }: Props) {
           backgroundColor: colors.background,
         },
       ]}
+      forceInset={forceInset}
     >
       <TrackScreen category="FirmwareUpdate" name="Failure" />
       <View style={styles.body}>

@@ -1,6 +1,6 @@
 import React, { useCallback } from "react";
 import { View, StyleSheet, Linking } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import SafeAreaView from "react-native-safe-area-view";
 import { Trans } from "react-i18next";
 import { useTheme } from "@react-navigation/native";
 import { Flex } from "@ledgerhq/native-ui";
@@ -15,19 +15,19 @@ import NavigationScrollView from "../../../../components/NavigationScrollView";
 import { urls } from "../../../../config/urls";
 import { TrackScreen } from "../../../../analytics";
 import Illustration from "../../../../images/illustration/Illustration";
-import {
-  BaseComposite,
-  StackNavigatorProps,
-} from "../../../../components/RootNavigator/types/helpers";
-import { AlgorandClaimRewardsFlowParamList } from "./type";
 
-type Props = BaseComposite<
-  StackNavigatorProps<
-    AlgorandClaimRewardsFlowParamList,
-    ScreenName.AlgorandClaimRewardsInfo
-  >
->;
-
+const forceInset = {
+  bottom: "always",
+};
+type RouteParams = {
+  accountId: string;
+};
+type Props = {
+  navigation: any;
+  route: {
+    params: RouteParams;
+  };
+};
 export default function ClaimRewardsStarted({ navigation, route }: Props) {
   const { colors } = useTheme();
   const onNext = useCallback(() => {
@@ -48,6 +48,7 @@ export default function ClaimRewardsStarted({ navigation, route }: Props) {
           backgroundColor: colors.background,
         },
       ]}
+      forceInset={forceInset}
     >
       <NavigationScrollView
         style={styles.scroll}
@@ -90,6 +91,9 @@ export default function ClaimRewardsStarted({ navigation, route }: Props) {
             text={
               <Trans i18nKey="algorand.claimRewards.flow.steps.info.howItWorks" />
             }
+            ltextProps={{
+              secondary: true,
+            }}
           />
         </View>
       </NavigationScrollView>

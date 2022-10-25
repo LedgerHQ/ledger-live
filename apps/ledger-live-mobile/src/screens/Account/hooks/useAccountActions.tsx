@@ -10,7 +10,6 @@ import { useTranslation } from "react-i18next";
 import { Icons } from "@ledgerhq/native-ui";
 import { useRampCatalog } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/index";
 import { getAllSupportedCryptoCurrencyIds } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/helpers";
-import { DefaultTheme } from "styled-components/native";
 import { NavigatorName, ScreenName } from "../../../const";
 import {
   readOnlyModeEnabledSelector,
@@ -24,7 +23,7 @@ import { ActionButtonEvent } from "../../../components/FabActions";
 type Props = {
   account: AccountLike;
   parentAccount?: Account;
-  colors?: DefaultTheme["colors"];
+  colors: any;
 };
 
 const iconBuy = Icons.PlusMedium;

@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/anchor-is-valid */
 import React, { useCallback, useMemo, useState } from "react";
 
 import { useSelector } from "react-redux";
@@ -165,6 +166,7 @@ export default function NftCollectionsList({ account }: Props) {
     [
       account.currency.family,
       colors.fog,
+      colors.live,
       data.length,
       navigateToGallery,
       navigateToReceiveConnectDevice,

@@ -1,55 +1,51 @@
 import React, { PureComponent } from "react";
 import i18next from "i18next";
 import { StyleSheet } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import SafeAreaView from "react-native-safe-area-view";
+import { Account } from "@ledgerhq/types-live";
 import { connect } from "react-redux";
 import { Trans } from "react-i18next";
 import { compose } from "redux";
 import { Box } from "@ledgerhq/native-ui";
-import { Account } from "@ledgerhq/types-live";
 import { accountScreenSelector } from "../../reducers/accounts";
 import { updateAccount } from "../../actions/accounts";
 import TextInput from "../../components/TextInput";
 import { getFontStyle } from "../../components/LText";
-import { Theme, withTheme } from "../../colors";
+import { withTheme } from "../../colors";
 import Button from "../../components/wrappedUi/Button";
-import { StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
-import { ScreenName } from "../../const";
-import { AddAccountsNavigatorParamList } from "../../components/RootNavigator/types/AddAccountsNavigator";
-import { State } from "../../reducers/types";
-import { AccountSettingsNavigatorParamList } from "../../components/RootNavigator/types/AccountSettingsNavigator";
 
 export const MAX_ACCOUNT_NAME_LENGHT = 50;
 
-type NavigationProps =
-  | StackNavigatorProps<
-      AddAccountsNavigatorParamList,
-      ScreenName.EditAccountName
-    >
-  | StackNavigatorProps<
-      AccountSettingsNavigatorParamList,
-      ScreenName.EditAccountName
-    >;
+const forceInset = { bottom: "always" };
 
 type Props = {
-  updateAccount: typeof updateAccount;
-  colors: Theme["colors"];
+  navigation: any;
+  route: { params: RouteParams };
+  // eslint-disable-next-line @typescript-eslint/ban-types
+  updateAccount: Function;
   account: Account;
-} & NavigationProps;
+  colors: any;
+};
 
-const mapStateToProps = (state: State, { route }: NavigationProps) =>
+type RouteParams = {
+  account: any;
+  accountId?: string;
+  accountName?: string;
+  onAccountNameChange: (name: string, changedAccount: Account) => void;
+};
+
+type State = {
+  accountName: string;
+};
+
+const mapStateToProps = (state, { route }) =>
   accountScreenSelector(route)(state);
 
 const mapDispatchToProps = {
   updateAccount,
 };
 
-class EditAccountName extends PureComponent<
-  Props,
-  {
-    accountName: string;
-  }
-> {
+class EditAccountName extends PureComponent<Props, State> {
   state = {
     accountName: "",
   };
@@ -62,15 +58,14 @@ class EditAccountName extends PureComponent<
     const { updateAccount, account, navigation } = this.props;
     const { accountName } = this.state;
     const { onAccountNameChange, account: accountFromAdd } =
-      this.props.route.params || {};
+      this.props.route.params;
 
     const isImportingAccounts = !!accountFromAdd;
     const cleanAccountName = accountName.trim();
 
     if (cleanAccountName.length) {
       if (isImportingAccounts) {
-        onAccountNameChange &&
-          onAccountNameChange(cleanAccountName, accountFromAdd);
+        onAccountNameChange(cleanAccountName, accountFromAdd);
       } else {
         updateAccount({
           ...account,
@@ -84,18 +79,18 @@ class EditAccountName extends PureComponent<
   render() {
     const { account, colors } = this.props;
     const { accountName } = this.state;
-    const { account: accountFromAdd } = this.props.route.params || {};
+    const { account: accountFromAdd } = this.props.route.params;
 
-    const initialAccountName = account ? account.name : accountFromAdd?.name;
+    const initialAccountName = account ? account.name : accountFromAdd.name;
 
     return (
       <SafeAreaView
         style={[styles.safeArea, { backgroundColor: colors.background }]}
+        forceInset={forceInset}
       >
         <Box px={6} flex={1}>
           <TextInput
             autoFocus
-            value={accountName}
             defaultValue={initialAccountName}
             returnKeyType="done"
             maxLength={MAX_ACCOUNT_NAME_LENGHT}
@@ -119,10 +114,13 @@ class EditAccountName extends PureComponent<
   }
 }
 
-export default compose(
+// eslint-disable-next-line @typescript-eslint/ban-types
+const m: React.ComponentType<{}> = compose(
   connect(mapStateToProps, mapDispatchToProps),
   withTheme,
-)(EditAccountName) as React.ComponentType<object>;
+)(EditAccountName);
+
+export default m;
 
 const styles = StyleSheet.create({
   root: {

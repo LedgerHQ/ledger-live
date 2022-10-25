@@ -3,8 +3,8 @@ import React from "react";
 import Svg, { Path } from "react-native-svg";
 
 type Props = {
-  size?: number;
-  color?: string;
+  size: number;
+  color: string;
 };
 export default function TransferIcon({ size = 16, color }: Props) {
   return (

@@ -1,66 +1,79 @@
-import React, { memo, useCallback, useEffect } from "react";
+import React, { PureComponent } from "react";
+import { connect } from "react-redux";
 import Config from "react-native-config";
 import { decodeURIScheme } from "@ledgerhq/live-common/currencies/index";
+import type { Account, AccountLike } from "@ledgerhq/types-live";
+import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
-import { useSelector } from "react-redux";
 import { ScreenName } from "../../const";
 import { accountScreenSelector } from "../../reducers/accounts";
 import Scanner from "../../components/Scanner";
-import type { BaseNavigatorStackParamList } from "../../components/RootNavigator/types/BaseNavigator";
-import type { SendFundsNavigatorStackParamList } from "../../components/RootNavigator/types/SendFundsNavigator";
-import type { StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
 
-type NavigationProps =
-  | StackNavigatorProps<
-      SendFundsNavigatorStackParamList,
-      ScreenName.SendSelectRecipient
-    >
-  | StackNavigatorProps<BaseNavigatorStackParamList, ScreenName.ScanRecipient>;
-
-const ScanRecipient = ({ route, navigation }: NavigationProps) => {
-  const { account, parentAccount } = useSelector(accountScreenSelector(route));
-
-  const onResult = useCallback(
-    (result: string) => {
-      if (!account) return;
-      const bridge = getAccountBridge(account, parentAccount);
-      const { amount, address, currency, ...rest } = decodeURIScheme(result);
-      const transaction = route.params?.transaction;
-      const patch: Record<string, unknown> = {};
-      patch.recipient = address;
-
-      if (amount) {
-        patch.amount = amount;
-      }
-
-      for (const k in rest) {
-        if (transaction && k in transaction) {
-          patch[k] = rest[k as keyof typeof rest];
-        }
-      }
-
-      // FIXME: how can this work?
-      // This screen belongs to 2 navigators, Base & SendFunds,
-      // but ScreenName.SendSelectRecipient does not exist in Base.
-      // @ts-expect-error Crash when in coming from the base navigator?
-      navigation.navigate(ScreenName.SendSelectRecipient, {
-        ...route.params,
-        accountId: account.id,
-        parentId: parentAccount?.id,
-        transaction: bridge.updateTransaction(transaction, patch),
-        justScanned: true,
-      });
-    },
-    [account, navigation, parentAccount, route.params],
-  );
-
-  useEffect(() => {
-    if (Config.MOCK_SCAN_RECIPIENT) {
-      onResult(Config.MOCK_SCAN_RECIPIENT);
-    }
-  }, [onResult]);
-
-  return <Scanner onResult={onResult} />;
+type Props = {
+  navigation: any;
+  route: {
+    params: RouteParams;
+  };
+  account: AccountLike;
+  parentAccount: Account | null | undefined;
 };
+type RouteParams = {
+  accountId: string;
+  transaction: Transaction;
+};
+// eslint-disable-next-line @typescript-eslint/ban-types
+type State = {};
 
-export default memo<NavigationProps>(ScanRecipient);
+class ScanRecipient extends PureComponent<Props, State> {
+  componentDidMount() {
+    if (Config.MOCK_SCAN_RECIPIENT) {
+      this.onResult(Config.MOCK_SCAN_RECIPIENT);
+    }
+  }
+
+  onResult = (result: string) => {
+    const { account, parentAccount, route } = this.props;
+    if (!account) return;
+    const bridge = getAccountBridge(account, parentAccount);
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { amount, address, currency, ...rest } = decodeURIScheme(result);
+    const transaction = route.params?.transaction;
+    const patch: Record<string, any> = {};
+    patch.recipient = address;
+
+    if (amount) {
+      patch.amount = amount;
+    }
+
+    for (const k in rest) {
+      if (k in transaction) {
+        patch[k] = rest[k];
+      }
+    }
+
+    this.props.navigation.navigate(ScreenName.SendSelectRecipient, {
+      accountId: account.id,
+      parentId: parentAccount && parentAccount.id,
+      transaction: bridge.updateTransaction(transaction, patch),
+      justScanned: true,
+    });
+  };
+
+  render() {
+    const { navigation } = this.props;
+    return (
+      <Scanner
+        navigation={navigation}
+        screenName={ScreenName.SendCoin}
+        onResult={this.onResult}
+      />
+    );
+  }
+}
+
+const mapStateToProps = (state, { route }) =>
+  accountScreenSelector(route)(state);
+
+// eslint-disable-next-line @typescript-eslint/ban-types
+const m: React.ComponentType<{}> = connect(mapStateToProps)(ScanRecipient);
+export default m;

@@ -34,7 +34,7 @@ export type BaseStyledProps = SpaceProps &
     color?: string;
     display?: string;
     position?: string;
-    maxHeight?: string | number;
+    maxHeight?: number;
   };
 
 export const baseStyles: InterpolationFunction<unknown> = compose(

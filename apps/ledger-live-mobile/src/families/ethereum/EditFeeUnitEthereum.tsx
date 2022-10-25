@@ -7,7 +7,6 @@ import { useTheme } from "@react-navigation/native";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
 import type { Transaction } from "@ledgerhq/live-common/families/ethereum/types";
 import {
-  Range,
   reverseRangeIndex,
   projectRangeIndex,
 } from "@ledgerhq/live-common/range";
@@ -15,42 +14,32 @@ import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import LText from "../../components/LText";
 import CurrencyUnitValue from "../../components/CurrencyUnitValue";
 
-const GasSlider = React.memo(
-  ({
-    value,
-    onChange,
-    range,
-  }: {
-    value: BigNumber;
-    onChange: (_: BigNumber) => void;
-    range: Range;
-  }) => {
-    const { colors } = useTheme();
-    const index = reverseRangeIndex(range, value);
-    const setValueIndex = useCallback(
-      i => onChange(projectRangeIndex(range, i)),
-      [range, onChange],
-    );
-    return (
-      <Slider
-        value={index}
-        step={1}
-        onValueChange={setValueIndex}
-        minimumValue={0}
-        maximumValue={range.steps - 1}
-        thumbTintColor={colors.live}
-        minimumTrackTintColor={colors.live}
-      />
-    );
-  },
-);
+const GasSlider = React.memo(({ value, onChange, range }: any) => {
+  const { colors } = useTheme();
+  const index = reverseRangeIndex(range, value);
+  const setValueIndex = useCallback(
+    i => onChange(projectRangeIndex(range, i)),
+    [range, onChange],
+  );
+  return (
+    <Slider
+      value={index}
+      step={1}
+      onValueChange={setValueIndex}
+      minimumValue={0}
+      maximumValue={range.steps - 1}
+      thumbTintColor={colors.live}
+      minimumTrackTintColor={colors.live}
+    />
+  );
+});
 type Props = {
   account: AccountLike;
-  parentAccount?: Account | null;
+  parentAccount: Account | null | undefined;
   transaction: Transaction;
   gasPrice: BigNumber;
-  onChange: (..._: Array<BigNumber>) => void;
-  range: Range;
+  onChange: (..._: Array<any>) => any;
+  range: any;
 };
 export default function EditFeeUnitEthereum({
   account,
@@ -72,6 +61,7 @@ export default function EditFeeUnitEthereum({
   );
   const { networkInfo } = transaction;
   if (!networkInfo) return null;
+  const { gasPrice: serverGas } = networkInfo;
   return (
     <View>
       <View
@@ -110,7 +100,12 @@ export default function EditFeeUnitEthereum({
           </View>
         </View>
         <View style={styles.container}>
-          <GasSlider value={gasPrice} range={range} onChange={onChangeF} />
+          <GasSlider
+            defaultGas={serverGas}
+            value={gasPrice}
+            range={range}
+            onChange={onChangeF}
+          />
           <View style={styles.textContainer}>
             <LText color="grey" style={styles.currencyUnitText}>
               {t("fees.speed.slow")}

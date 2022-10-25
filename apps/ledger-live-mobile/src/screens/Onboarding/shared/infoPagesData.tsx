@@ -470,10 +470,7 @@ export const infoModalScenes = {
   pairNewErrorInfoModalProps,
 };
 
-const pinCodeScenes = (
-  deviceModelId: "nanoS" | "nanoSP" | "nanoX" | "blue" | "nanoFTS",
-  theme: "dark" | "light",
-) => [
+const pinCodeScenes = (deviceModelId, theme: "dark" | "light") => [
   {
     sceneProps: {
       trackPage: "Pin code step 1",
@@ -488,7 +485,7 @@ const pinCodeScenes = (
       },
     },
     sceneInfoKey: "pinCodeInfoModalProps",
-    type: "primary" as "primary" | "secondary",
+    type: "primary",
     id: "pinCode",
   },
   {
@@ -524,7 +521,7 @@ const pinCodeScenes = (
       ctaText: <Trans i18nKey="onboarding.stepSetupDevice.pinCodeSetup.cta" />,
     },
     sceneInfoKey: "pinCodeInfoModalProps",
-    type: "secondary" as "primary" | "secondary",
+    type: "secondary",
     id: "pinCodeSetup",
   },
 ];
@@ -616,7 +613,7 @@ const getSetupDeviceScenes: (
       ],
       ctaText: <Trans i18nKey="onboarding.stepSetupDevice.setup.cta" />,
     },
-    type: "secondary" as "primary" | "secondary",
+    type: "secondary",
     id: "setup",
   },
   ...pinCodeScenes(deviceModelId, theme),
@@ -641,7 +638,7 @@ const getSetupDeviceScenes: (
       },
     },
     sceneInfoKey: "recoveryPhraseInfoModalProps",
-    type: "primary" as "primary" | "secondary",
+    type: "primary",
     id: "recoveryPhrase",
   },
   {
@@ -672,7 +669,7 @@ const getSetupDeviceScenes: (
       ),
     },
     sceneInfoKey: "recoveryPhraseInfoModalProps",
-    type: "secondary" as "primary" | "secondary",
+    type: "secondary",
     id: "recoveryPhraseSetup",
   },
   {
@@ -703,7 +700,7 @@ const getSetupDeviceScenes: (
       ),
     },
     sceneInfoKey: "recoveryPhraseInfoModalProps",
-    type: "secondary" as "primary" | "secondary",
+    type: "secondary",
     id: "recoveryPhraseSetup_1",
   },
   {
@@ -749,13 +746,13 @@ const getSetupDeviceScenes: (
       },
     },
     sceneInfoKey: "hideRecoveryPhraseInfoModalProps",
-    type: "primary" as "primary" | "secondary",
+    type: "primary",
     id: "hideRecoveryPhrase",
   },
 ];
 
 const getRecoveryPhraseScenes = (
-  deviceModelId: keyof typeof lottieAnimations,
+  deviceModelId: string,
   theme: "dark" | "light",
 ) => [
   {
@@ -833,7 +830,7 @@ const getRecoveryPhraseScenes = (
         <Trans i18nKey="onboarding.stepRecoveryPhrase.importRecoveryPhrase.nextStep" />
       ),
     },
-    type: "secondary" as "primary" | "secondary",
+    type: "secondary",
     id: "importRecoveryPhrase_1",
   },
   ...pinCodeScenes(deviceModelId, theme),
@@ -858,7 +855,7 @@ const getRecoveryPhraseScenes = (
       },
     },
     sceneInfoKey: "recoveryPhraseInfoModalProps",
-    type: "primary" as "primary" | "secondary",
+    type: "primary",
     id: "existingRecoveryPhrase",
   },
   {

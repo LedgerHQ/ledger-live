@@ -19,7 +19,9 @@ const inferURLs = async (urls: In): Promise<string[]> => {
   return typeof r === "string" ? [r] : r;
 };
 
-export default (urls: In): typeof Transport => {
+export default (urls: In): new () => Transport => {
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore
   class StaticTransport extends Transport {
     static isSupported = HttpTransport.isSupported;
     static list = (): Promise<string[]> =>
@@ -36,7 +38,7 @@ export default (urls: In): typeof Transport => {
         )
         .then((arrs) => arrs.reduce<string[]>((acc, a) => acc.concat(a), []));
     static listen = (
-      observer: Observer<DescriptorEvent<unknown>>
+      observer: Observer<DescriptorEvent<any>>
     ): Subscription => {
       let unsubscribed = false;
       const seen = {};

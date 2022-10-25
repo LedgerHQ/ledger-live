@@ -1,31 +1,39 @@
 import React, { useCallback, useContext, useEffect, useState } from "react";
-import { StyleSheet } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { CompositeScreenProps, useTheme } from "@react-navigation/native";
+import { StyleSheet, Linking } from "react-native";
+import SafeAreaView from "react-native-safe-area-view";
+import type { Account, AccountLike } from "@ledgerhq/types-live";
+import { useTheme } from "@react-navigation/native";
 import { TrackScreen } from "../../analytics";
 import ValidateError from "../../components/ValidateError";
+import { urls } from "../../config/urls";
 
 import {
+  // eslint-disable-next-line import/named
   context as _wcContext,
+  // eslint-disable-next-line import/named
   setCurrentCallRequestError,
 } from "../WalletConnect/Provider";
-import { ScreenName } from "../../const";
-import type { SignTransactionNavigatorParamList } from "../../components/RootNavigator/types/SignTransactionNavigator";
-import type { BaseNavigatorStackParamList } from "../../components/RootNavigator/types/BaseNavigator";
-import {
-  StackNavigatorNavigation,
-  StackNavigatorProps,
-} from "../../components/RootNavigator/types/helpers";
 
-type Navigation = CompositeScreenProps<
-  StackNavigatorProps<
-    SignTransactionNavigatorParamList,
-    ScreenName.SignTransactionValidationError
-  >,
-  StackNavigatorProps<BaseNavigatorStackParamList>
->;
-
-export default function ValidationError({ navigation, route }: Navigation) {
+const forceInset = {
+  bottom: "always",
+};
+type Props = {
+  account: AccountLike;
+  parentAccount: Account | null | undefined;
+  navigation: any;
+  route: {
+    params: RouteParams;
+  };
+};
+type RouteParams = {
+  accountId: string;
+  parentId: string;
+  deviceId: string;
+  transaction: any;
+  error: Error;
+  onReject: (_: Error) => void;
+};
+export default function ValidationError({ navigation, route }: Props) {
   const { colors } = useTheme();
   const { error } = route.params;
   const wcContext = useContext(_wcContext);
@@ -35,13 +43,13 @@ export default function ValidationError({ navigation, route }: Navigation) {
       setDisableRetry(true);
       setCurrentCallRequestError(error);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   const onClose = useCallback(() => {
-    navigation
-      .getParent<StackNavigatorNavigation<BaseNavigatorStackParamList>>()
-      .pop();
+    navigation.getParent().pop();
   }, [navigation]);
+  const contactUs = useCallback(() => {
+    Linking.openURL(urls.contact);
+  }, []);
   const retry = useCallback(() => {
     navigation.goBack();
   }, [navigation]);
@@ -53,15 +61,15 @@ export default function ValidationError({ navigation, route }: Navigation) {
           backgroundColor: colors.background,
         },
       ]}
+      forceInset={forceInset}
     >
       <TrackScreen category="SignTransaction" name="ValidationError" />
-      {error && (
-        <ValidateError
-          error={error}
-          onRetry={!disableRetry ? retry : undefined}
-          onClose={onClose}
-        />
-      )}
+      <ValidateError
+        error={error}
+        onRetry={!disableRetry ? retry : undefined}
+        onClose={onClose}
+        onContactUs={contactUs}
+      />
     </SafeAreaView>
   );
 }

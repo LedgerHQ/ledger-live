@@ -1,10 +1,11 @@
 import React, { useCallback, useMemo, memo } from "react";
-import { useNavigation, useRoute } from "@react-navigation/native";
+import { useNavigation, useRoute, RouteProp } from "@react-navigation/native";
 import { useTheme } from "styled-components/native";
 import { useDispatch } from "react-redux";
 import { DeviceModelId } from "@ledgerhq/devices";
 import { useStartPostOnboardingCallback } from "@ledgerhq/live-common/postOnboarding/hooks/index";
 import { NavigatorName, ScreenName } from "../../../const";
+import { DeviceNames } from "../types";
 import BaseStepperView, { PairNew, ConnectNano } from "./setupDevice/scenes";
 import { TrackScreen } from "../../../analytics";
 import SeedWarning from "../shared/SeedWarning";
@@ -14,14 +15,6 @@ import StepLottieAnimation from "./setupDevice/scenes/StepLottieAnimation";
 import { completeOnboarding } from "../../../actions/settings";
 import { useNavigationInterceptor } from "../onboardingContext";
 import useNotifications from "../../../logic/notifications";
-import {
-  RootComposite,
-  StackNavigatorNavigation,
-  StackNavigatorProps,
-} from "../../../components/RootNavigator/types/helpers";
-import { OnboardingNavigatorParamList } from "../../../components/RootNavigator/types/OnboardingNavigator";
-import { BaseOnboardingNavigatorParamList } from "../../../components/RootNavigator/types/BaseOnboardingNavigator";
-import { Step } from "./setupDevice/scenes/BaseStepperView";
 
 const images = {
   light: {
@@ -38,19 +31,23 @@ type Metadata = {
   drawer: null | { route: string; screen: string };
 };
 
-type NavigationProps = RootComposite<
-  StackNavigatorProps<
-    OnboardingNavigatorParamList,
-    ScreenName.OnboardingPairNew
-  >
->;
-
-const scenes = [PairNew, ConnectNano] as Step[];
+const scenes = [PairNew, ConnectNano];
 
 function OnboardingStepPairNew() {
-  const navigation = useNavigation<NavigationProps["navigation"]>();
+  const navigation = useNavigation();
   const { theme } = useTheme();
-  const route = useRoute<NavigationProps["route"]>();
+  const route = useRoute<
+    RouteProp<
+      {
+        params: {
+          deviceModelId: DeviceNames;
+          next: any;
+          showSeedWarning: boolean;
+        };
+      },
+      "params"
+    >
+  >();
 
   const dispatch = useDispatch();
   const { triggerJustFinishedOnboardingNewDevicePushNotificationModal } =
@@ -101,21 +98,13 @@ function OnboardingStepPairNew() {
     dispatch(completeOnboarding());
     resetCurrentStep();
 
-    const parentNav =
-      navigation.getParent<
-        StackNavigatorNavigation<
-          BaseOnboardingNavigatorParamList,
-          NavigatorName.Onboarding
-        >
-      >();
+    const parentNav = navigation.getParent();
     if (parentNav) {
       parentNav.popToTop();
     }
 
-    // @ts-expect-error TS requires params to be defined, but it crashes the app
     navigation.replace(NavigatorName.Base, {
       screen: NavigatorName.Main,
-      params: undefined,
     });
 
     startPostOnboarding();

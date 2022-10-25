@@ -4,34 +4,31 @@ import { StyleSheet, View } from "react-native";
 import { useTranslation, Trans } from "react-i18next";
 import { useSelector } from "react-redux";
 import { useTheme } from "@react-navigation/native";
-import type {
-  Transaction as PolkadotTransaction,
-  TransactionStatus,
-} from "@ledgerhq/live-common/families/polkadot/types";
+import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { Button, Alert, Text, Log } from "@ledgerhq/native-ui";
-import { PolkadotAccount } from "@ledgerhq/live-common/families/polkadot/types";
 import { accountScreenSelector } from "../../../reducers/accounts";
 import { ScreenName } from "../../../const";
 import { TrackScreen } from "../../../analytics";
 import TranslatedError from "../../../components/TranslatedError";
 import FlowErrorBottomModal from "../components/FlowErrorBottomModal";
 import SendRowsFee from "../SendRowsFee";
-import type { StackNavigatorProps } from "../../../components/RootNavigator/types/helpers";
-import { PolkadotSimpleOperationFlowParamList } from "./types";
 
-type Navigation = StackNavigatorProps<
-  PolkadotSimpleOperationFlowParamList,
-  ScreenName.PolkadotSimpleOperationStarted
->;
+type RouteParams = {
+  transaction: Transaction;
+  mode: "chill" | "withdrawUnbonded" | "setController";
+};
+type Props = {
+  navigation: any;
+  route: {
+    params: RouteParams;
+  };
+};
 
 // returns the first error
-function getStatusError(
-  status: TransactionStatus,
-  type: "errors" | "warnings" = "errors",
-): Error | null {
+function getStatusError(status, type = "errors"): Error | null | undefined {
   if (!status || !status[type]) return null;
   const firstKey = Object.keys(status[type])[0];
   return firstKey ? status[type][firstKey] : null;
@@ -40,7 +37,7 @@ function getStatusError(
 export default function PolkadotSimpleOperationStarted({
   navigation,
   route,
-}: Navigation) {
+}: Props) {
   const { colors } = useTheme();
   const { t } = useTranslation();
   const { mode } = route.params;
@@ -48,7 +45,7 @@ export default function PolkadotSimpleOperationStarted({
   invariant(account, "account required");
   const mainAccount = getMainAccount(account, parentAccount);
   const bridge = getAccountBridge(account, parentAccount);
-  const { polkadotResources } = mainAccount as PolkadotAccount;
+  const { polkadotResources } = mainAccount;
   invariant(polkadotResources, "polkadotResources required");
   const { transaction, setTransaction, status, bridgePending, bridgeError } =
     useBridgeTransaction(() => {
@@ -65,7 +62,7 @@ export default function PolkadotSimpleOperationStarted({
     navigation.navigate(ScreenName.PolkadotSimpleOperationSelectDevice, {
       accountId: account.id,
       mode,
-      transaction: transaction as PolkadotTransaction,
+      transaction,
       status,
     });
   }, [account, navigation, transaction, status, mode]);
@@ -114,9 +111,11 @@ export default function PolkadotSimpleOperationStarted({
           )}
           <SendRowsFee
             account={account}
-            transaction={transaction as PolkadotTransaction}
+            parentAccount={parentAccount}
+            transaction={transaction}
           />
           <Button
+            event="PolkadotSimpleOperationContinue"
             type="main"
             onPress={onContinue}
             disabled={!!error || bridgePending}
@@ -134,7 +133,7 @@ export default function PolkadotSimpleOperationStarted({
 
       <FlowErrorBottomModal
         navigation={navigation}
-        transaction={transaction as PolkadotTransaction}
+        transaction={transaction}
         account={account}
         parentAccount={parentAccount}
         setTransaction={setTransaction}

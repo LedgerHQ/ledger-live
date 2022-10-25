@@ -1,10 +1,9 @@
-import React, { useCallback } from "react";
+import React, { PureComponent } from "react";
 import { RectButton } from "react-native-gesture-handler";
 import type {
   CryptoCurrency,
   TokenCurrency,
-} from "@ledgerhq/types-cryptoassets";
-import { useTheme } from "@react-navigation/native";
+} from "@ledgerhq/live-common/types";
 
 import styled from "styled-components/native";
 import { Flex, Tag } from "@ledgerhq/native-ui";
@@ -21,60 +20,57 @@ type Props = {
   currency: CryptoCurrency | TokenCurrency;
   onPress: (_: CryptoCurrency | TokenCurrency) => void;
   isOK?: boolean;
-  style?: React.ComponentProps<typeof RectButton>["style"];
+  style?: any;
+  colors: any;
   iconSize?: number;
 };
 
-const CurrencyRow = ({
-  currency,
-  style,
-  isOK = true,
-  iconSize = 32,
-  onPress,
-}: Props) => {
-  const onPressAction = useCallback(() => {
-    onPress(currency);
-  }, [onPress, currency]);
+class CurrencyRow extends PureComponent<Props> {
+  onPress = () => {
+    this.props.onPress(this.props.currency);
+  };
 
-  const { colors } = useTheme();
+  render() {
+    const { currency, style, isOK = true, colors, iconSize = 32 } = this.props;
 
-  return (
-    <StyledRectButton style={[style]} onPress={onPressAction}>
-      <CircleCurrencyIcon
-        size={iconSize}
-        currency={currency}
-        color={!isOK ? colors.lightFog : undefined}
-      />
-      <Flex
-        flexDirection="row"
-        flex={1}
-        alignItems="center"
-        justifyContent="flex-start"
-      >
-        <LText
-          semiBold
-          variant="body"
-          numberOfLines={1}
-          ml={4}
-          color={!isOK ? "neutral.c70" : "neutral.c100"}
+    return (
+      <StyledRectButton style={[style]} onPress={this.onPress}>
+        <CircleCurrencyIcon
+          size={iconSize}
+          currency={currency}
+          color={!isOK ? colors.lightFog : undefined}
+        />
+        <Flex
+          flexDirection="row"
+          flex={1}
+          alignItems="center"
+          justifyContent="flex-start"
         >
-          {currency.name}
-        </LText>
-        <LText
-          semiBold
-          variant="body"
-          numberOfLines={1}
-          ml={3}
-          color={!isOK ? "neutral.c50" : "neutral.c70"}
-        >
-          {currency.ticker}
-        </LText>
-      </Flex>
-      {currency.type === "TokenCurrency" && currency.parentCurrency ? (
-        <Tag>{currency.parentCurrency.name}</Tag>
-      ) : null}
-    </StyledRectButton>
-  );
-};
+          <LText
+            semiBold
+            variant="body"
+            numberOfLines={1}
+            ml={4}
+            color={!isOK ? "neutral.c70" : "neutral.c100"}
+          >
+            {currency.name}
+          </LText>
+          <LText
+            semiBold
+            variant="body"
+            numberOfLines={1}
+            ml={3}
+            color={!isOK ? "neutral.c50" : "neutral.c70"}
+          >
+            {currency.ticker}
+          </LText>
+        </Flex>
+        {currency.type === "TokenCurrency" && currency.parentCurrency ? (
+          <Tag>{currency.parentCurrency.name}</Tag>
+        ) : null}
+      </StyledRectButton>
+    );
+  }
+}
 
 export default CurrencyRow;

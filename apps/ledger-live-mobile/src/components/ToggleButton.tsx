@@ -22,11 +22,7 @@ const {
  * @param {Animated.Value} dest position to interpolate to
  * @returns {Animated.Node<number>}
  */
-const runTranslate = (
-  clock: Animated.Clock,
-  value: Animated.Value<number> | number,
-  dest: Animated.Value<number> | number,
-) => {
+const runTranslate = (clock, value, dest) => {
   const state = {
     finished: new Value(0),
     position: new Value(0),
@@ -138,6 +134,7 @@ const ToggleButton = ({ value, options, onChange }: Props) => {
                   : undefined,
               ]}
               color={activeIndex === index ? "white" : "live"}
+              active={activeIndex === index}
             >
               {label}
             </LText>

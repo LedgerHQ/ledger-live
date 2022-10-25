@@ -1,3 +1,4 @@
+/* eslint-disable react-native/no-inline-styles */
 import React from "react";
 import { Box, Flex } from "@ledgerhq/native-ui";
 
@@ -76,7 +77,7 @@ function CurrencyHeaderLayout({
     position: absolute;
   `;
 
-  const CenteredElement = styled(Flex).attrs((p: { width: number }) => ({
+  const CenteredElement = styled(Flex).attrs((p: { width?: number }) => ({
     flexDirection: "row",
     justifyContent: "center",
     alignItems: "center",
@@ -110,18 +111,28 @@ function CurrencyHeaderLayout({
         ]}
       >
         <Box height={"100%"} width={windowsWidth}>
-          <CurrencyGradient gradientColor={currencyColor} />
+          <CurrencyGradient
+            gradientColor={currencyColor || colors.primary.c80}
+          />
         </Box>
       </Animated.View>
       <Box width={24}>{leftElement}</Box>
       <Flex flexDirection={"row"} alignItems={"center"}>
         <CenteredElement width={windowsWidth}>
-          <Animated.View style={[AfterScrollAnimation]}>
+          <Animated.View
+            height={"100%"}
+            justifyContent={"center"}
+            style={[AfterScrollAnimation]}
+          >
             {centerAfterScrollElement}
           </Animated.View>
         </CenteredElement>
         <CenteredElement width={windowsWidth}>
-          <Animated.View style={[BeforeScrollAnimation]}>
+          <Animated.View
+            height={"100%"}
+            justifyContent={"center"}
+            style={[BeforeScrollAnimation]}
+          >
             {centerBeforeScrollElement}
           </Animated.View>
         </CenteredElement>

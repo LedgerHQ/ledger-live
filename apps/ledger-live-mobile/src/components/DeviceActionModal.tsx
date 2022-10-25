@@ -1,10 +1,9 @@
 import { SyncSkipUnderPriority } from "@ledgerhq/live-common/bridge/react/index";
-import { Action, Device } from "@ledgerhq/live-common/hw/actions/types";
+import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { Alert, Flex } from "@ledgerhq/native-ui";
 import React, { useCallback, useState } from "react";
 import { useTranslation } from "react-i18next";
 import styled from "styled-components/native";
-import { PartialNullable } from "../types/helpers";
 import BottomModal from "./BottomModal";
 import DeviceAction from "./DeviceAction";
 
@@ -12,20 +11,22 @@ const DeviceActionContainer = styled(Flex).attrs({
   flexDirection: "row",
 })``;
 
-type Props<Req, Stt, Res> = {
-  action: Action<Req, Stt, Res>;
+type Props = {
+  // TODO: fix action type
+  action: any;
   device: Device | null | undefined;
-  request?: Req;
+  // TODO: fix request type
+  request?: any;
   onClose?: () => void;
   onError?: (error: Error) => void;
   onModalHide?: () => void;
-  onResult?: (payload: NonNullable<Res>) => Promise<void> | void | null;
-  renderOnResult?: (_: Res) => JSX.Element | null;
+  onResult?: (payload: any) => Promise<void> | void;
+  renderOnResult?: (_: any) => React.ReactNode;
   onSelectDeviceLink?: () => void;
   analyticsPropertyFlow?: string;
 };
 
-export default function DeviceActionModal<Req, Stt, Res>({
+export default function DeviceActionModal({
   action,
   device,
   request,
@@ -36,10 +37,10 @@ export default function DeviceActionModal<Req, Stt, Res>({
   onModalHide,
   onSelectDeviceLink,
   analyticsPropertyFlow,
-}: Props<Req, Stt, Res>) {
+}: Props) {
   const { t } = useTranslation();
   const showAlert = !device?.wired;
-  const [result, setResult] = useState<Res | null>(null);
+  const [result, setResult] = useState<any | null>(null);
 
   const handleModalHide = useCallback(() => {
     if (onModalHide) onModalHide();
@@ -51,6 +52,7 @@ export default function DeviceActionModal<Req, Stt, Res>({
 
   return (
     <BottomModal
+      id="DeviceActionModal"
       isOpened={result ? false : !!device}
       onClose={result ? undefined : onClose}
       onModalHide={handleModalHide}
@@ -61,12 +63,10 @@ export default function DeviceActionModal<Req, Stt, Res>({
             <Flex alignItems="center">
               <DeviceActionContainer marginBottom={showAlert ? "16px" : 0}>
                 <DeviceAction
-                  action={
-                    action as unknown as Action<Req, PartialNullable<Stt>, Res>
-                  }
+                  action={action}
                   device={device}
                   onError={onError}
-                  request={request!}
+                  request={request}
                   onResult={onResult ? p => setResult(p) : undefined}
                   renderOnResult={renderOnResult}
                   onSelectDeviceLink={onSelectDeviceLink}

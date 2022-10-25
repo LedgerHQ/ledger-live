@@ -1,12 +1,14 @@
 import React, { Component } from "react";
-import { View, StyleSheet, SectionList, SectionListData } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { useNavigation, useTheme } from "@react-navigation/native";
+import { View, StyleSheet, SectionList } from "react-native";
+import SafeAreaView from "react-native-safe-area-view";
+import { useNavigation } from "@react-navigation/native";
 import { HeaderBackButton } from "@react-navigation/elements";
 import groupBy from "lodash/groupBy";
+import concat from "lodash/concat";
 import { connect } from "react-redux";
 import { createStructuredSelector } from "reselect";
 import { Account } from "@ledgerhq/types-live";
+import { Result } from "@ledgerhq/live-common/cross";
 import {
   ImportItem,
   importAccountsMakeItems,
@@ -17,6 +19,7 @@ import { Trans } from "react-i18next";
 
 import { compose } from "redux";
 import { Flex } from "@ledgerhq/native-ui";
+import { useTheme } from "styled-components/native";
 import { importDesktopSettings } from "../../actions/settings";
 import { importAccounts } from "../../actions/accounts";
 import { accountsSelector } from "../../reducers/accounts";
@@ -30,31 +33,23 @@ import DisplayResultSettingsSection from "./DisplayResultSettingsSection";
 import ResultSection from "./ResultSection";
 import HeaderBackImage from "../../components/HeaderBackImage";
 import { blacklistedTokenIdsSelector } from "../../reducers/settings";
-import type { State as StoreState } from "../../reducers/types";
-import type { ImportAccountsNavigatorParamList } from "../../components/RootNavigator/types/ImportAccountsNavigator";
 import { bridgeCache } from "../../bridge/cache";
-import type {
-  BaseComposite,
-  StackNavigatorNavigation,
-  StackNavigatorProps,
-} from "../../components/RootNavigator/types/helpers";
-import { SettingsImportDesktopPayload } from "../../actions/types";
 
-type NavigationProps = BaseComposite<
-  StackNavigatorProps<
-    ImportAccountsNavigatorParamList,
-    ScreenName.DisplayResult
-  >
->;
+const forceInset = { bottom: "always" };
 
-type ConnectProps = {
+type Props = {
+  navigation: any;
+  route: { params: RouteParams };
   backlistedTokenIds: string[];
   accounts: Account[];
   importAccounts: (_: ImportAccountsReduceInput) => void;
-  importDesktopSettings: typeof importDesktopSettings;
+  importDesktopSettings: (_: any) => void;
 };
 
-type Props = ConnectProps & NavigationProps;
+type RouteParams = {
+  result: Result;
+  onFinish?: () => void;
+};
 
 type State = {
   selectedAccounts: string[];
@@ -63,32 +58,25 @@ type State = {
   importSettings: boolean;
 };
 
-type SectionData = SectionListData<ImportItem, { mode: ImportItem["mode"] }>;
-
 export function BackButton() {
   const { colors } = useTheme();
-  const navigation =
-    useNavigation<
-      StackNavigatorNavigation<
-        ImportAccountsNavigatorParamList,
-        ScreenName.DisplayResult
-      >
-    >();
+  const navigation = useNavigation();
   return (
     <HeaderBackButton
       tintColor={colors.grey}
       onPress={() => {
         if (navigation.replace) navigation.replace(ScreenName.ScanAccounts);
       }}
-      backImage={HeaderBackImage}
-    />
+    >
+      <HeaderBackImage />
+    </HeaderBackButton>
   );
 }
 
 class DisplayResult extends Component<Props, State> {
   state = {
     selectedAccounts: [],
-    items: [] as ImportItem[],
+    items: [],
     importSettings: true,
     importing: false,
   };
@@ -101,7 +89,7 @@ class DisplayResult extends Component<Props, State> {
 
   onRetry = () => {
     const { navigation } = this.props;
-    if (navigation.replace) navigation.replace(ScreenName.ScanAccounts, {});
+    if (navigation.replace) navigation.replace(ScreenName.ScanAccounts);
   };
 
   static getDerivedStateFromProps(nextProps: Props, prevState: State) {
@@ -113,14 +101,13 @@ class DisplayResult extends Component<Props, State> {
     let selectedAccounts = prevState.selectedAccounts;
     if (prevState.items.length === 0) {
       // select all by default
-      selectedAccounts = items.reduce<string[]>((acc, cur) => {
-        if (cur.mode !== "id" && cur.mode !== "unsupported") {
-          const combined = acc.concat(cur.account.id);
-          return combined;
-        }
-
-        return acc;
-      }, []);
+      selectedAccounts = items.reduce(
+        (acc, cur) =>
+          cur.mode !== "id" && cur.mode !== "unsupported"
+            ? concat(acc, cur.account.id)
+            : acc,
+        [],
+      );
     }
     return { items, selectedAccounts };
   }
@@ -146,17 +133,11 @@ class DisplayResult extends Component<Props, State> {
     );
     importAccounts({ items, selectedAccounts, syncResult });
     if (importSettings) {
-      importDesktopSettings(
-        this.props.route.params?.result
-          .settings as SettingsImportDesktopPayload,
-      );
+      importDesktopSettings(this.props.route.params?.result.settings);
     }
 
     if (onFinish) onFinish();
-    else
-      navigation.navigate(NavigatorName.Main, {
-        screen: NavigatorName.Portfolio,
-      });
+    else navigation.navigate(NavigatorName.Portfolio);
   };
 
   onSwitchResultItem = (checked: boolean, account: Account) => {
@@ -171,7 +152,7 @@ class DisplayResult extends Component<Props, State> {
     }
   };
 
-  renderItem = ({ item: { account, mode } }: { item: ImportItem }) => (
+  renderItem = ({ item: { account, mode } }) => (
     <DisplayResultItem
       key={account.id}
       account={account}
@@ -182,12 +163,11 @@ class DisplayResult extends Component<Props, State> {
     />
   );
 
-  renderSectionHeader = ({ section: { mode } }: { section: SectionData }) => (
+  renderSectionHeader = ({ section: { mode } }) => (
     <ResultSection mode={mode} />
   );
 
-  onSwitchSettings = (importSettings: boolean) =>
-    this.setState({ importSettings });
+  onSwitchSettings = importSettings => this.setState({ importSettings });
 
   ListFooterComponent = () => (
     <DisplayResultSettingsSection
@@ -210,19 +190,14 @@ class DisplayResult extends Component<Props, State> {
     </View>
   );
 
-  keyExtractor = (item: ImportItem): string => item.account.id;
+  keyExtractor = item => item.account.id;
 
   render() {
     const { items, importing } = this.state;
-    const itemsGroupedByMode = groupBy<ImportItem>(items, "mode");
-
-    const sections = Object.keys(itemsGroupedByMode).map(mode => ({
-      mode,
-      data: itemsGroupedByMode[mode],
-    })) as SectionData[];
+    const itemsGroupedByMode = groupBy(items, "mode");
 
     return (
-      <SafeAreaView style={[styles.root]}>
+      <SafeAreaView forceInset={forceInset} style={[styles.root]}>
         <Flex bg="background.main" flex={1}>
           <TrackScreen category="ImportAccounts" name="DisplayResult" />
           <StyledStatusBar />
@@ -235,7 +210,10 @@ class DisplayResult extends Component<Props, State> {
             ListEmptyComponent={this.ListEmptyComponent}
             keyExtractor={this.keyExtractor}
             extraData={importing}
-            sections={sections}
+            sections={Object.keys(itemsGroupedByMode).map(mode => ({
+              mode,
+              data: itemsGroupedByMode[mode],
+            }))}
           />
           <View style={styles.footer}>
             <Button
@@ -260,15 +238,10 @@ class DisplayResult extends Component<Props, State> {
   }
 }
 
+// $FlowFixMe
 export default compose(
   connect(
-    createStructuredSelector<
-      StoreState,
-      {
-        accounts: Account[];
-        backlistedTokenIds: string[];
-      }
-    >({
+    createStructuredSelector({
       accounts: accountsSelector,
       backlistedTokenIds: blacklistedTokenIdsSelector,
     }),

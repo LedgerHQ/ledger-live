@@ -10,7 +10,6 @@ import SelectDevice from "../../../screens/SelectDevice";
 import ConnectDevice from "../../../screens/ConnectDevice";
 import ValidationSuccess from "./03-ValidationSuccess";
 import ValidationError from "./03-ValidationError";
-import type { PolkadotRebondFlowParamList } from "./type";
 
 const totalSteps = "3";
 
@@ -36,7 +35,7 @@ function RebondFlow() {
               })}
             />
           ),
-          headerLeft: undefined,
+          headerLeft: null,
         }}
       />
       <Stack.Screen
@@ -75,8 +74,8 @@ function RebondFlow() {
         options={{
           headerTitle: "",
           gestureEnabled: false,
-          headerLeft: undefined,
-          headerRight: undefined,
+          headerLeft: null,
+          headerRight: null,
         }}
       />
       <Stack.Screen
@@ -94,4 +93,4 @@ const options = {
   headerShown: false,
 };
 export { RebondFlow as component, options };
-const Stack = createStackNavigator<PolkadotRebondFlowParamList>();
+const Stack = createStackNavigator();

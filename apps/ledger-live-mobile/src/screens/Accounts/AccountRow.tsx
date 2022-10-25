@@ -5,41 +5,23 @@ import {
   getAccountName,
   getAccountUnit,
 } from "@ledgerhq/live-common/account/index";
-import { TokenAccount, AccountLike, ChildAccount } from "@ledgerhq/types-live";
+import { Account, TokenAccount } from "@ledgerhq/types-live";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import {
-  DerivationMode,
-  getTagDerivationMode,
-} from "@ledgerhq/live-common/derivation";
+import { getTagDerivationMode } from "@ledgerhq/live-common/derivation";
 import { useSelector } from "react-redux";
 import { NavigatorName, ScreenName } from "../../const";
-import { useBalanceHistoryWithCountervalue } from "../../hooks/portfolio";
+import { useBalanceHistoryWithCountervalue } from "../../actions/portfolio";
 import AccountRowLayout from "../../components/AccountRowLayout";
 import { parentAccountSelector } from "../../reducers/accounts";
 import { track } from "../../analytics";
-import { State } from "../../reducers/types";
-import { AccountsNavigatorParamList } from "../../components/RootNavigator/types/AccountsNavigator";
-import {
-  BaseComposite,
-  StackNavigatorProps,
-} from "../../components/RootNavigator/types/helpers";
-import { MarketNavigatorStackParamList } from "../../components/RootNavigator/types/MarketNavigator";
-
-type Navigation = BaseComposite<
-  | StackNavigatorProps<
-      AccountsNavigatorParamList,
-      ScreenName.Asset | ScreenName.Accounts
-    >
-  | StackNavigatorProps<MarketNavigatorStackParamList, ScreenName.MarketDetail>
->;
 
 type Props = {
-  account: AccountLike;
+  account: Account | TokenAccount;
   accountId: string;
-  navigation: Navigation["navigation"];
+  navigation: any;
   isLast?: boolean;
   onSetAccount?: (arg: TokenAccount) => void;
-  navigationParams?: [ScreenName, object];
+  navigationParams?: any[];
   hideDelta?: boolean;
   topLink?: boolean;
   bottomLink?: boolean;
@@ -58,23 +40,17 @@ const AccountRow = ({
   // makes it refresh if this changes
   useEnv("HIDE_EMPTY_TOKEN_ACCOUNTS");
   const currency = getAccountCurrency(account);
-  const parentAccount = useSelector((state: State) =>
-    parentAccountSelector(state, { account: account as ChildAccount }),
+  const parentAccount = useSelector(state =>
+    parentAccountSelector(state, { account }),
   );
 
   const name = getAccountName(account);
   const unit = getAccountUnit(account);
 
   const tag =
-    account.type === "Account" &&
-    account?.derivationMode !== undefined &&
-    account?.derivationMode !== null &&
-    getTagDerivationMode(
-      currency as CryptoCurrency,
-      account.derivationMode as DerivationMode,
-    );
-
-  const parentId = (account as TokenAccount)?.parentId;
+    account.derivationMode !== undefined &&
+    account.derivationMode !== null &&
+    getTagDerivationMode(currency as CryptoCurrency, account.derivationMode);
 
   const { countervalueChange } = useBalanceHistoryWithCountervalue({
     account,
@@ -86,7 +62,6 @@ const AccountRow = ({
       currency: currency.name,
     });
     if (navigationParams) {
-      // @ts-expect-error navigagtion spread, ask your mom about it
       navigation.navigate(...navigationParams);
     } else if (account.type === "Account") {
       navigation.navigate(ScreenName.Account, {
@@ -97,20 +72,19 @@ const AccountRow = ({
         screen: ScreenName.Account,
         params: {
           currencyId: currency.id,
-          parentId,
+          parentId: account?.parentId,
           accountId: account.id,
         },
       });
     }
   }, [
     account.id,
+    account?.parentId,
     account.type,
     accountId,
     currency.id,
-    currency.name,
     navigation,
     navigationParams,
-    parentId,
   ]);
 
   return (

@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo, useContext } from "react";
-import { FlatList, ListRenderItemInfo } from "react-native";
+import { FlatList } from "react-native";
 import { useSelector } from "react-redux";
 import { Trans, useTranslation } from "react-i18next";
 import { Box, Flex, Text } from "@ledgerhq/native-ui";
@@ -27,26 +27,27 @@ import {
   counterValueCurrencySelector,
   hasOrderedNanoSelector,
 } from "../../../reducers/settings";
-import { AnalyticsContext } from "../../../analytics/AnalyticsContext";
-import type { AccountsNavigatorParamList } from "../../../components/RootNavigator/types/AccountsNavigator";
-import type { StackNavigatorProps } from "../../../components/RootNavigator/types/helpers";
-import { ScreenName } from "../../../const";
+// eslint-disable-next-line import/no-cycle
+import { AnalyticsContext } from "../../../components/RootNavigator";
 
-type Props = StackNavigatorProps<
-  AccountsNavigatorParamList,
-  ScreenName.Account
->;
+type RouteParams = {
+  currencyId: string;
+  currencyType: "CryptoCurrency" | "TokenCurrency";
+};
+
+type Props = {
+  navigation: any;
+  route: { params: RouteParams };
+};
 
 function ReadOnlyAccount({ route }: Props) {
   const { currencyId, currencyType } = route.params;
 
-  const currency: Currency | null = useMemo(
+  const currency: Currency = useMemo(
     () =>
-      currencyId
-        ? currencyType === "CryptoCurrency"
-          ? getCryptoCurrencyById(currencyId)
-          : getTokenById(currencyId)
-        : null,
+      currencyType === "CryptoCurrency"
+        ? getCryptoCurrencyById(currencyId)
+        : getTokenById(currencyId),
     [currencyType, currencyId],
   );
   const { t } = useTranslation();
@@ -56,29 +57,6 @@ function ReadOnlyAccount({ route }: Props) {
   );
 
   const hasOrderedNano = useSelector(hasOrderedNanoSelector);
-
-  const renderItem = useCallback(
-    ({ item }: ListRenderItemInfo<JSX.Element>) => item,
-    [],
-  );
-  const keyExtractor = useCallback(
-    (_: JSX.Element, index: number) => String(index),
-    [],
-  );
-
-  const { source, setSource, setScreen } = useContext(AnalyticsContext);
-
-  useFocusEffect(
-    useCallback(() => {
-      setScreen && setScreen("Account");
-
-      return () => {
-        setSource("Account");
-      };
-    }, [setSource, setScreen]),
-  );
-
-  if (!currency) return null;
 
   const data = [
     <Box mx={6} my={6}>
@@ -152,6 +130,21 @@ function ReadOnlyAccount({ route }: Props) {
       )}
     </Box>,
   ];
+
+  const renderItem = useCallback(({ item }: any) => item, []);
+  const keyExtractor = useCallback((_: any, index: any) => String(index), []);
+
+  const { source, setSource, setScreen } = useContext(AnalyticsContext);
+
+  useFocusEffect(
+    useCallback(() => {
+      setScreen("Account");
+
+      return () => {
+        setSource("Account");
+      };
+    }, [setSource, setScreen]),
+  );
 
   return (
     <SafeAreaView style={{ flex: 1 }} edges={["bottom", "left", "right"]}>

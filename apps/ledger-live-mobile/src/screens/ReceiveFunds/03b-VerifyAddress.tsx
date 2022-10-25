@@ -1,15 +1,17 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { of, Subscription } from "rxjs";
+import { of } from "rxjs";
 import { delay } from "rxjs/operators";
 import { TouchableOpacity, Linking } from "react-native";
 import { useSelector } from "react-redux";
 import { useTranslation, Trans } from "react-i18next";
-import type { Account, TokenAccount } from "@ledgerhq/types-live";
+import type { Account, TokenAccount, AccountLike } from "@ledgerhq/types-live";
+import { Currency } from "@ledgerhq/types-cryptoassets";
 import {
   getMainAccount,
   getAccountCurrency,
 } from "@ledgerhq/live-common/account/index";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
+import type { DeviceModelId } from "@ledgerhq/devices";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import styled, { useTheme } from "styled-components/native";
 import { Flex } from "@ledgerhq/native-ui";
@@ -26,8 +28,6 @@ import Animation from "../../components/Animation";
 import { getDeviceAnimation } from "../../helpers/getDeviceAnimation";
 import Illustration from "../../images/illustration/Illustration";
 import { urls } from "../../config/urls";
-import { ReceiveFundsStackParamList } from "../../components/RootNavigator/types/ReceiveFundsNavigator";
-import { StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
 
 const illustrations = {
   dark: require("../../images/illustration/Dark/_080.png"),
@@ -37,11 +37,23 @@ const illustrations = {
 type Props = {
   account?: TokenAccount | Account;
   parentAccount?: Account;
-  readOnlyModeEnabled?: boolean;
-} & StackNavigatorProps<
-  ReceiveFundsStackParamList,
-  ScreenName.ReceiveVerifyAddress
->;
+  navigation: any;
+  route: { params: RouteParams };
+  readOnlyModeEnabled: boolean;
+};
+
+type RouteParams = {
+  account?: AccountLike;
+  accountId: string;
+  parentId?: string;
+  modelId: DeviceModelId;
+  wired: boolean;
+  device?: Device;
+  currency?: Currency;
+  createTokenAccount?: boolean;
+  onSuccess?: (address?: string) => void;
+  onError?: () => void;
+};
 
 const AnimationContainer = styled(Flex).attrs({
   alignSelf: "stretch",
@@ -52,16 +64,16 @@ const AnimationContainer = styled(Flex).attrs({
 })``;
 
 export default function ReceiveVerifyAddress({ navigation, route }: Props) {
-  const { theme: themeKind } = useTheme();
+  const { type } = useTheme();
   const { account, parentAccount } = useSelector(accountScreenSelector(route));
   const { t } = useTranslation();
-  const [error, setError] = useState<Error | null>(null);
+  const [error, setError] = useState(null);
 
   const onModalClose = useCallback(() => {
     setError(null);
   }, []);
 
-  const sub = useRef<Subscription>();
+  const sub = useRef();
 
   const { onSuccess, onError, device } = route.params;
 
@@ -87,7 +99,7 @@ export default function ReceiveVerifyAddress({ navigation, route }: Props) {
               createTokenAccount: false,
             });
         },
-        error: (error: Error) => {
+        error: (error: any) => {
           if (error && error.name !== "UserRefusedAddress") {
             logger.critical(error);
           }
@@ -160,7 +172,7 @@ export default function ReceiveVerifyAddress({ navigation, route }: Props) {
             </LText>
 
             <TouchableOpacity onPress={redirectToSupport}>
-              <LText variant="body" color="neutral.c70" textAlign="center">
+              <LText variant="body" color="neutral.c70" textALign="center">
                 <Trans i18nKey="transfer.receive.verifyAddress.cancel.info">
                   <LText
                     color="primary.c80"
@@ -210,7 +222,7 @@ export default function ReceiveVerifyAddress({ navigation, route }: Props) {
               source={getDeviceAnimation({
                 device,
                 key: "validate",
-                theme: themeKind,
+                theme: type,
               })}
             />
           </AnimationContainer>

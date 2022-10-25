@@ -3,47 +3,46 @@ import React, { useCallback, useMemo, memo } from "react";
 import {
   View,
   StyleSheet,
+  SafeAreaView,
   TextInput,
   TouchableWithoutFeedback,
   Keyboard,
 } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
 import { BigNumber } from "bignumber.js";
 import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { useNavigation, useTheme } from "@react-navigation/native";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
-import type { Transaction as EthereumTransaction } from "@ledgerhq/live-common/families/ethereum/types";
-import type { Account } from "@ledgerhq/types-live";
+import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import { accountScreenSelector } from "../../reducers/accounts";
 import TranslatedError from "../../components/TranslatedError";
 import KeyboardView from "../../components/KeyboardView";
 import Button from "../../components/Button";
 import LText from "../../components/LText";
 import { ScreenName } from "../../const";
-import type { SendFundsNavigatorStackParamList } from "../../components/RootNavigator/types/SendFundsNavigator";
-import {
-  BaseComposite,
-  StackNavigatorProps,
-} from "../../components/RootNavigator/types/helpers";
 
-type Props = BaseComposite<
-  StackNavigatorProps<
-    SendFundsNavigatorStackParamList,
-    ScreenName.SendAmountNft
-  >
->;
+const forceInset = { bottom: "always" };
+
+type Props = {
+  navigation: any;
+  route: {
+    params: {
+      accountId: string;
+      transaction: Transaction;
+    };
+  };
+};
 
 const SendAmountNFT = ({ route }: Props) => {
-  const navigation = useNavigation<Props["navigation"]>();
+  const navigation = useNavigation();
   const { t } = useTranslation();
 
   const { colors } = useTheme();
   const { account, parentAccount } = useSelector(accountScreenSelector(route));
 
   const bridge = useMemo(
-    () => (account ? getAccountBridge(account, parentAccount) : null),
+    () => getAccountBridge(account, parentAccount),
     [account, parentAccount],
   );
   const { transaction, setTransaction, status, bridgePending } =
@@ -56,7 +55,6 @@ const SendAmountNFT = ({ route }: Props) => {
   const onQuantityChange = useCallback(
     text => {
       const newQuantity = text ? new BigNumber(text.replace(/\D/g, "")) : null;
-      if (!bridge) return;
 
       setTransaction(
         bridge.updateTransaction(transaction, {
@@ -67,34 +65,27 @@ const SendAmountNFT = ({ route }: Props) => {
     [bridge, setTransaction, transaction],
   );
   const quantity = useMemo(
-    () => (transaction as EthereumTransaction)?.quantities?.[0]?.toNumber(),
-    [transaction],
+    () => transaction.quantities?.[0]?.toNumber(),
+    [transaction.quantities],
   );
 
   const nft = useMemo(
     () =>
-      (account as Account)?.nfts?.find(nft => {
-        const tokensIds = (transaction as EthereumTransaction)?.tokenIds;
-        return (
-          nft?.contract === (transaction as EthereumTransaction)?.collection &&
-          tokensIds &&
-          tokensIds.length > 0 &&
-          nft?.tokenId === tokensIds[0]
-        );
-      }),
-    [account, transaction],
+      account?.nfts?.find(
+        nft =>
+          nft?.contract === transaction?.collection &&
+          nft?.tokenId === transaction?.tokenIds[0],
+      ),
+    [account?.nfts, transaction?.collection, transaction?.tokenIds],
   );
 
   const onContinue = useCallback(() => {
-    if (!account || !transaction) return;
     navigation.navigate(ScreenName.SendSummary, {
-      accountId: account.id,
+      accountId: account?.id,
       parentId: parentAccount?.id,
       transaction,
-      currentNavigation: ScreenName.SendSummary,
-      nextNavigation: ScreenName.SendSelectDevice,
     });
-  }, [account, navigation, parentAccount?.id, transaction]);
+  }, [account, parentAccount, navigation, transaction]);
   const blur = useCallback(() => Keyboard.dismiss(), []);
 
   const error = useMemo(() => {
@@ -115,12 +106,13 @@ const SendAmountNFT = ({ route }: Props) => {
     }
 
     return <LText style={styles.error} numberOfLines={2} />;
-  }, [status, quantity]);
+  }, [status?.errors?.amount, status?.warnings?.amount]);
 
   return (
     <>
       <SafeAreaView
         style={[styles.root, { backgroundColor: colors.background }]}
+        forceInset={forceInset}
       >
         <KeyboardView style={styles.container}>
           <TouchableWithoutFeedback onPress={blur}>

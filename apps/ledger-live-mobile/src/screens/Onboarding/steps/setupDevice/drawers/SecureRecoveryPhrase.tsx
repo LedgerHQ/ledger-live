@@ -38,6 +38,7 @@ const OnboardingSetupRecoveryPhrase = () => {
             title: <Trans i18nKey={item} components={{ bold: <Bold /> }} />,
             bullet: <Icons.CheckAloneMedium size={20} color="success.c100" />,
           }))}
+          itemSeparatorProps={{ mb: 7 }}
         />
       </ScrollListContainer>
       <Button type="main" m={6} size="large" onPress={navigation.goBack}>

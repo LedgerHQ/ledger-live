@@ -1,10 +1,10 @@
 import React, { useMemo } from "react";
 import List, { BaseListItemProps, BaseListProps } from "../List";
+import { IconType } from "../../../Icon/type";
 import BoxedIcon from "../../../Icon/BoxedIcon";
-import { IconOrElementType } from "src/components/Icon/type";
 
 export type IconBoxListItemProps = Omit<BaseListItemProps, "bullet"> & {
-  Icon: IconOrElementType;
+  Icon: IconType;
 };
 
 export type IconBoxListProps = Omit<BaseListProps, "items"> & {

@@ -7,16 +7,19 @@ import {
   Keyboard,
   Platform,
   Linking,
-  KeyboardEventListener,
 } from "react-native";
 import { useSelector } from "react-redux";
-import { SafeAreaView } from "react-native-safe-area-context";
+import SafeAreaView from "react-native-safe-area-view";
 import { useTranslation, Trans } from "react-i18next";
-import Icon from "react-native-vector-icons/Feather";
+import Icon from "react-native-vector-icons/dist/Feather";
+import type { AccountLike, Account } from "@ledgerhq/types-live";
+import type {
+  Transaction,
+  TransactionStatus,
+} from "@ledgerhq/live-common/generated/types";
 import { RecipientRequired } from "@ledgerhq/errors";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
-import type { Transaction as TezosTransaction } from "@ledgerhq/live-common/families/tezos/types";
 import type { Baker } from "@ledgerhq/live-common/families/tezos/bakers";
 import { useBakers } from "@ledgerhq/live-common/families/tezos/bakers";
 import whitelist from "@ledgerhq/live-common/families/tezos/bakers.whitelist-default";
@@ -33,10 +36,12 @@ import TranslatedError from "../../../components/TranslatedError";
 import ExternalLink from "../../../components/ExternalLink";
 import Info from "../../../icons/Info";
 import BakerImage from "../BakerImage";
-import { StackNavigatorProps } from "../../../components/RootNavigator/types/helpers";
-import { TezosDelegationFlowParamList } from "./types";
 
-const keyExtractor = (baker: Baker) => baker.address;
+const forceInset = {
+  bottom: "always",
+};
+
+const keyExtractor = baker => baker.address;
 
 const BakerHead = ({ onPressHelp }: { onPressHelp: () => void }) => {
   const { colors } = useTheme();
@@ -139,11 +144,19 @@ const ModalIcon = () => {
   return <Icon name="user-plus" size={24} color={colors.live} />;
 };
 
-type Props = StackNavigatorProps<
-  TezosDelegationFlowParamList,
-  ScreenName.DelegationSelectValidator
->;
-
+type Props = {
+  account: AccountLike;
+  parentAccount: Account | null | undefined;
+  navigation: any;
+  route: {
+    params: RouteParams;
+  };
+};
+type RouteParams = {
+  accountId: string;
+  transaction: Transaction;
+  status: TransactionStatus;
+};
 export default function SelectValidator({ navigation, route }: Props) {
   const { colors } = useTheme();
   const { t } = useTranslation();
@@ -154,7 +167,7 @@ export default function SelectValidator({ navigation, route }: Props) {
   const [showInfos, setShowInfos] = useState(false);
 
   if (Platform.OS === "ios") {
-    const keyboardDidShow: KeyboardEventListener = event => {
+    const keyboardDidShow = event => {
       const { height } = event.endCoordinates;
       setKeyboardHeight(height);
     };
@@ -194,7 +207,7 @@ export default function SelectValidator({ navigation, route }: Props) {
       };
     });
   invariant(transaction, "transaction is undefined");
-  let error: Error | null = bridgeError || status.errors.recipient;
+  let error = bridgeError || status.errors.recipient;
 
   if (error instanceof RecipientRequired) {
     error = null;
@@ -211,14 +224,14 @@ export default function SelectValidator({ navigation, route }: Props) {
     },
     [account, parentAccount, setTransaction, transaction],
   );
+  const clear = useCallback(() => onChangeText(""), [onChangeText]);
   const continueCustom = useCallback(() => {
     setEditingCustom(false);
     navigation.navigate(ScreenName.DelegationSummary, {
       ...route.params,
-      transaction: transaction as TezosTransaction,
-      status,
+      transaction,
     });
-  }, [navigation, route.params, transaction, status]);
+  }, [navigation, transaction, route.params]);
   const enableCustomValidator = useCallback(() => {
     setEditingCustom(true);
   }, []);
@@ -239,11 +252,10 @@ export default function SelectValidator({ navigation, route }: Props) {
       });
       navigation.navigate(ScreenName.DelegationSummary, {
         ...route.params,
-        transaction: transaction as TezosTransaction,
-        status,
+        transaction,
       });
     },
-    [account, parentAccount, route.params, navigation, status],
+    [navigation, account, parentAccount, route.params],
   );
   const renderItem = useCallback(
     ({ item }) => <BakerRow baker={item} onPress={onItemPress} />,
@@ -257,6 +269,7 @@ export default function SelectValidator({ navigation, route }: Props) {
           backgroundColor: colors.background,
         },
       ]}
+      forceInset={forceInset}
     >
       <TrackScreen category="DelegationFlow" name="SelectValidator" />
       <View style={styles.header}>
@@ -307,6 +320,7 @@ export default function SelectValidator({ navigation, route }: Props) {
                 },
           ]}
           onChangeText={onChangeText}
+          onInputCleared={clear}
           value={transaction.recipient}
           blurOnSubmit
           autoCapitalize="none"

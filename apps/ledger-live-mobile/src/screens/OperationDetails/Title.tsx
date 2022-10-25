@@ -1,5 +1,4 @@
 import React, { memo } from "react";
-import { StyleProp, ViewStyle, TextStyle } from "react-native";
 import { useTheme } from "@react-navigation/native";
 import type { NFTMetadataResponse, Operation } from "@ledgerhq/types-live";
 import type { Currency, Unit } from "@ledgerhq/types-cryptoassets";
@@ -17,8 +16,8 @@ type Props = {
   unit: Unit;
   isNftOperation: boolean;
   status: string;
-  metadata: NFTMetadataResponse["result"];
-  styles: Record<string, StyleProp<ViewStyle | TextStyle>>;
+  metadata: $PropertyType<NFTMetadataResponse, "result">;
+  styles: Record<string, any>;
 };
 
 const Title = ({

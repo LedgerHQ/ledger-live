@@ -9,7 +9,6 @@ import {
   listTokens,
   useCurrenciesByMarketcap,
 } from "@ledgerhq/live-common/currencies/index";
-import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import TrackScreen from "../../analytics/TrackScreen";
 import { withDiscreetMode } from "../../context/DiscreetModeContext";
 
@@ -17,31 +16,27 @@ import GradientContainer from "../../components/GradientContainer";
 import TabBarSafeAreaView, {
   TAB_BAR_SAFE_HEIGHT,
 } from "../../components/TabBar/TabBarSafeAreaView";
-import AssetRow, { NavigationProp } from "../WalletCentricAsset/AssetRow";
+import AssetRow from "../WalletCentricAsset/AssetRow";
 import AssetsNavigationHeader from "../Assets/AssetsNavigationHeader";
+
+type Props = {
+  navigation: any;
+  route: { params?: { currency?: string; search?: string } };
+};
 
 const maxReadOnlyCryptoCurrencies = 10;
 
-type Asset = {
-  amount: number;
-  accounts: never[];
-  currency: TokenCurrency | CryptoCurrency;
-};
-
-function ReadOnlyAssets({ navigation }: { navigation: NavigationProp }) {
+function ReadOnlyAssets({ navigation }: Props) {
   const listSupportedTokens = useCallback(
     () => listTokens().filter(t => isCurrencySupported(t.parentCurrency)),
     [],
   );
   const cryptoCurrencies = useMemo(
-    () =>
-      (listSupportedCurrencies() as (CryptoCurrency | TokenCurrency)[]).concat(
-        listSupportedTokens(),
-      ),
+    () => listSupportedCurrencies().concat(listSupportedTokens()),
     [listSupportedTokens],
   );
   const sortedCryptoCurrencies = useCurrenciesByMarketcap(cryptoCurrencies);
-  const assets: Asset[] = useMemo(
+  const assets = useMemo(
     () =>
       sortedCryptoCurrencies
         .slice(0, maxReadOnlyCryptoCurrencies)
@@ -56,7 +51,7 @@ function ReadOnlyAssets({ navigation }: { navigation: NavigationProp }) {
   const { t } = useTranslation();
 
   const renderItem = useCallback(
-    ({ item }: { item: Asset }) => (
+    ({ item }: { item: any }) => (
       <AssetRow asset={item} navigation={navigation} />
     ),
     [navigation],
@@ -70,11 +65,7 @@ function ReadOnlyAssets({ navigation }: { navigation: NavigationProp }) {
         <FlatList
           data={assets}
           renderItem={renderItem}
-          keyExtractor={(i: Asset, _index: number) =>
-            // FIXME: Asset does not have a string id field
-            // @ts-expect-error This seems very wrong :(
-            i.id
-          }
+          keyExtractor={(i: any) => i.id}
           contentContainerStyle={{
             paddingHorizontal: 16,
             paddingBottom: TAB_BAR_SAFE_HEIGHT,

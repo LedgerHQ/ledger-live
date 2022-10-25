@@ -1,6 +1,6 @@
 import React, { memo } from "react";
 import { View, StyleSheet } from "react-native";
-import { useTranslation } from "react-i18next";
+import { Trans } from "react-i18next";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
 import {
   getAccountCurrency,
@@ -20,14 +20,13 @@ type Props = {
 
 function SummaryFromSection({ account }: Props) {
   const { colors } = useTheme();
-  const { t } = useTranslation();
   const currency = getAccountCurrency(account);
   return (
     <SummaryRowCustom
-      label={t("send.summary.from")}
+      label={<Trans i18nKey="send.summary.from" />}
       iconLeft={
         <Circle bg={colors.lightLive} size={34}>
-          <Wallet size={16} />
+          <Wallet size={16} color={colors.live} />
         </Circle>
       }
       data={

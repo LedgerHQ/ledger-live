@@ -4,8 +4,7 @@ import Svg, { Path, G } from "react-native-svg";
 type Props = {
   size: number;
   color: string;
-} & Partial<React.ComponentProps<typeof Svg>>;
-
+};
 export default function CheckCircle({ size = 37, color, ...props }: Props) {
   return (
     <Svg {...props} viewBox="0 0 37.084 37.084" width={size} height={size}>

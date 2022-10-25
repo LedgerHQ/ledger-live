@@ -7,15 +7,13 @@ import {
   FlatList,
   TouchableOpacity,
 } from "react-native";
-import { Trans } from "react-i18next";
+import { Trans, useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
 import { getMainAccount } from "@ledgerhq/live-common/account/helpers";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/impl";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { listTokensForCryptoCurrency } from "@ledgerhq/live-common/currencies/index";
-import type { Transaction as StellarTransaction } from "@ledgerhq/live-common/families/stellar/types";
-import type { SubAccount } from "@ledgerhq/types-live";
-import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import type { TokenCurrency, SubAccount } from "@ledgerhq/types-live";
 import { useTheme } from "@react-navigation/native";
 import { ScreenName } from "../../../const";
 import LText from "../../../components/LText";
@@ -27,8 +25,6 @@ import KeyboardView from "../../../components/KeyboardView";
 import InfoIcon from "../../../components/InfoIcon";
 import Info from "../../../icons/Info";
 import BottomModal from "../../../components/BottomModal";
-import { StackNavigatorProps } from "../../../components/RootNavigator/types/helpers";
-import { StellarAddAssetFlowParamList } from "./types";
 
 const Row = ({
   item,
@@ -87,7 +83,7 @@ const Row = ({
   );
 };
 
-const keyExtractor = (token: TokenCurrency) => token.id;
+const keyExtractor = token => token.id;
 
 const renderEmptyList = () => (
   <View style={styles.emptySearch}>
@@ -97,19 +93,24 @@ const renderEmptyList = () => (
   </View>
 );
 
-type Props = StackNavigatorProps<
-  StellarAddAssetFlowParamList,
-  ScreenName.StellarAddAssetSelectAsset
->;
-
+type RouteParams = {
+  accountId: string;
+};
+type Props = {
+  navigation: any;
+  route: {
+    params: RouteParams;
+  };
+};
 export default function DelegationStarted({ navigation, route }: Props) {
   const { colors } = useTheme();
   const { account } = useSelector(accountScreenSelector(route));
+  const { t } = useTranslation();
   invariant(account, "Account required");
   const mainAccount = getMainAccount(account);
   const bridge = getAccountBridge(mainAccount);
   invariant(mainAccount, "stellar Account required");
-  const { transaction, status } = useBridgeTransaction(() => {
+  const { transaction } = useBridgeTransaction(() => {
     const t = bridge.createTransaction(mainAccount);
     return {
       account,
@@ -122,17 +123,15 @@ export default function DelegationStarted({ navigation, route }: Props) {
     (assetId: string) => {
       const tokenId = assetId.split("/")[2];
       const [assetCode, assetIssuer] = tokenId.split(":");
-      const t = bridge.updateTransaction(transaction, {
-        assetCode,
-        assetIssuer,
-      }) as StellarTransaction;
       navigation.navigate(ScreenName.StellarAddAssetSelectDevice, {
         ...route.params,
-        transaction: t,
-        status,
+        transaction: bridge.updateTransaction(transaction, {
+          assetCode,
+          assetIssuer,
+        }),
       });
     },
-    [bridge, transaction, navigation, route.params, status],
+    [navigation, route.params, bridge, transaction],
   );
   const options = listTokensForCryptoCurrency(mainAccount.currency);
   const [infoModalOpen, setInfoModalOpen] = useState(false);
@@ -184,6 +183,7 @@ export default function DelegationStarted({ navigation, route }: Props) {
             renderEmptySearch={renderEmptyList}
             keys={["name", "ticker"]}
             list={options}
+            t={t}
           />
         </View>
       </KeyboardView>

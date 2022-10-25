@@ -83,7 +83,7 @@ const StepReceiveFunds = ({
   invariant(account && mainAccount, "No account given");
   const name = token ? token.name : getAccountName(account);
   const initialDevice = useRef(device);
-  const address = mainAccount.freshAddress;
+  const address = mainAccount.hederaResources?.accountId?.toString() ?? mainAccount.freshAddress;
   const [modalVisible, setModalVisible] = useState(false);
 
   const hideQRCodeModal = useCallback(() => setModalVisible(false), [setModalVisible]);

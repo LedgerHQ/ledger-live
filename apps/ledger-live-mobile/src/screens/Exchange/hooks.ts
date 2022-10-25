@@ -10,7 +10,7 @@ import type {
   CryptoCurrency,
   TokenCurrency,
 } from "@ledgerhq/types-cryptoassets";
-import type { Account, AccountLike, SubAccount } from "@ledgerhq/types-live";
+import type { Account, SubAccount } from "@ledgerhq/types-live";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useSelector } from "react-redux";
 import { blacklistedTokenIdsSelector } from "../../reducers/settings";
@@ -19,10 +19,7 @@ export const useRampCatalogCurrencies = (entries: RampCatalogEntry[]) => {
   const devMode = useEnv("MANAGER_DEV_MODE");
   // fetching all live supported currencies including tokens
   const cryptoCurrencies = useMemo(
-    () =>
-      ([] as (CryptoCurrency | TokenCurrency)[])
-        .concat(listCryptoCurrencies(devMode))
-        .concat(listTokens()),
+    () => listCryptoCurrencies(devMode).concat(listTokens()),
     [devMode],
   );
   const blacklistedTokenIds = useSelector(blacklistedTokenIdsSelector);
@@ -36,13 +33,13 @@ export const useRampCatalogCurrencies = (entries: RampCatalogEntry[]) => {
   }, [blacklistedTokenIds, cryptoCurrencies, entries]);
 };
 export type AccountTuple = {
-  account: Account;
-  subAccount?: SubAccount | null;
+  account: Account | null | undefined;
+  subAccount: SubAccount | null | undefined;
 };
 export function getAccountTuplesForCurrency(
   currency: CryptoCurrency | TokenCurrency,
   allAccounts: Account[],
-  hideEmpty?: boolean | null,
+  hideEmpty: boolean | null | undefined,
 ): AccountTuple[] {
   if (currency.type === "TokenCurrency") {
     return allAccounts
@@ -77,14 +74,14 @@ const getIdsFromTuple = (accountTuple: AccountTuple) => ({
 
 export type UseCurrencyAccountSelectReturnType = {
   availableAccounts: Array<AccountTuple>;
-  currency?: CryptoCurrency | TokenCurrency | null;
-  account?: Account | null;
-  subAccount?: SubAccount | null;
+  currency: (CryptoCurrency | null | undefined) | TokenCurrency;
+  account: (Account | null | undefined) | any;
+  subAccount: (SubAccount | null | undefined) | any;
   setAccount: (
-    account?: AccountLike | null,
-    subAccount?: SubAccount | null,
+    account: Account | null | undefined,
+    subAccount: SubAccount | null | undefined,
   ) => void;
-  setCurrency: (_?: CryptoCurrency | TokenCurrency | null) => void;
+  setCurrency: (_: (CryptoCurrency | TokenCurrency) | null | undefined) => void;
 };
 export function useCurrencyAccountSelect({
   allCurrencies,
@@ -95,15 +92,11 @@ export function useCurrencyAccountSelect({
 }: {
   allCurrencies: Array<CryptoCurrency | TokenCurrency>;
   allAccounts: Account[];
-  defaultCurrencyId?: string | null;
-  defaultAccountId?: string | null;
-  hideEmpty?: boolean | null;
+  defaultCurrencyId: string | null | undefined;
+  defaultAccountId: string | null | undefined;
+  hideEmpty?: boolean | null | undefined;
 }): UseCurrencyAccountSelectReturnType {
-  const [state, setState] = useState<{
-    currency: CryptoCurrency | TokenCurrency | null;
-    accountId: string | null;
-    subAccountId?: string | null;
-  }>(() => {
+  const [state, setState] = useState(() => {
     const currency = defaultCurrencyId
       ? allCurrencies.find(currency => currency.id === defaultCurrencyId)
       : allCurrencies.length > 0
@@ -138,7 +131,7 @@ export function useCurrencyAccountSelect({
   });
   const { currency, accountId } = state;
   const setCurrency = useCallback(
-    (currency?: CryptoCurrency | TokenCurrency | null) => {
+    (currency: (CryptoCurrency | null | undefined) | TokenCurrency) => {
       if (currency) {
         const availableAccounts = getAccountTuplesForCurrency(
           currency,
@@ -155,14 +148,14 @@ export function useCurrencyAccountSelect({
 
       return setState(currState => ({
         ...currState,
-        currency: null,
+        currency,
         accountId: null,
       }));
     },
     [allAccounts, hideEmpty],
   );
   const setAccount = useCallback(
-    (account?: AccountLike | null, _?: SubAccount | null) => {
+    (account: Account | null | undefined, _: SubAccount | null | undefined) => {
       setState(currState => ({
         ...currState,
         accountId: account ? account.id : null,
@@ -193,9 +186,8 @@ export function useCurrencyAccountSelect({
     if (!accountId && availableAccounts.length > 0) {
       setState(currState => ({
         ...currState,
-        accountId: availableAccounts[0].account
-          ? availableAccounts[0].account.id
-          : null,
+        accountId:
+          availableAccounts[0].account && availableAccounts[0].account.id,
         subAccountId: availableAccounts[0].subAccount
           ? availableAccounts[0].subAccount.id
           : null,

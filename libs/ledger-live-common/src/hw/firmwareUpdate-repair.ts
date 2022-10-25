@@ -54,7 +54,7 @@ const filterMCUForDeviceInfo = (deviceInfo) => {
 
 const repair = (
   deviceId: string,
-  forceMCU_?: string | null
+  forceMCU_: string | null | undefined
 ): Observable<{
   progress: number;
 }> => {

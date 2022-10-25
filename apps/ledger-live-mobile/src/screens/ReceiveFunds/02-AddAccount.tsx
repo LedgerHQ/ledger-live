@@ -1,13 +1,17 @@
 import React, { useEffect, useCallback, useState, useRef, memo } from "react";
 import { FlatList } from "react-native";
 import { concat, from } from "rxjs";
-import type { Subscription } from "rxjs";
 import { ignoreElements } from "rxjs/operators";
 import { useDispatch } from "react-redux";
 import { useTranslation } from "react-i18next";
-import type { Account, TokenAccount } from "@ledgerhq/types-live";
-import { Currency } from "@ledgerhq/types-cryptoassets";
+import { Account, TokenAccount } from "@ledgerhq/types-live";
+import {
+  CryptoCurrency,
+  Currency,
+  TokenCurrency,
+} from "@ledgerhq/types-cryptoassets";
 import { getCurrencyBridge } from "@ledgerhq/live-common/bridge/index";
+import { Device } from "@ledgerhq/live-common/hw/actions/types";
 
 import { Flex, InfiniteLoader } from "@ledgerhq/native-ui";
 import { makeEmptyTokenAccount } from "@ledgerhq/live-common/account/index";
@@ -23,17 +27,19 @@ import CancelButton from "../../components/CancelButton";
 import GenericErrorBottomModal from "../../components/GenericErrorBottomModal";
 import { prepareCurrency } from "../../bridge/cache";
 import AccountCard from "../../components/AccountCard";
-import { ReceiveFundsStackParamList } from "../../components/RootNavigator/types/ReceiveFundsNavigator";
-import {
-  StackNavigatorNavigation,
-  StackNavigatorProps,
-} from "../../components/RootNavigator/types/helpers";
-import { RootStackParamList } from "../../components/RootNavigator/types/RootNavigator";
 
-type Props = StackNavigatorProps<
-  ReceiveFundsStackParamList,
-  ScreenName.ReceiveAddAccount
->;
+type RouteParams = {
+  currency: CryptoCurrency | TokenCurrency;
+  device: Device;
+  onSuccess?: (_?: any) => void;
+};
+
+type Props = {
+  navigation: any;
+  route: { params: RouteParams };
+  blacklistedTokenIds?: string[];
+  colors: any;
+};
 
 function AddAccountsAccounts({ navigation, route }: Props) {
   const dispatch = useDispatch();
@@ -45,7 +51,7 @@ function AddAccountsAccounts({ navigation, route }: Props) {
   const [cancelled, setCancelled] = useState(false);
   const [selectedAccount, setSelectedAccount] = useState<string | null>(null);
 
-  const scanSubscription = useRef<Subscription | null>();
+  const scanSubscription = useRef<any>();
 
   const {
     currency,
@@ -55,7 +61,6 @@ function AddAccountsAccounts({ navigation, route }: Props) {
   useEffect(() => {
     startSubscription();
     return () => stopSubscription(false);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const startSubscription = useCallback(() => {
@@ -64,7 +69,7 @@ function AddAccountsAccounts({ navigation, route }: Props) {
     const bridge = getCurrencyBridge(c);
     const syncConfig = {
       paginationConfig: {
-        operations: 0,
+        operation: 0,
       },
       blacklistedTokenIds: [],
     };
@@ -86,16 +91,12 @@ function AddAccountsAccounts({ navigation, route }: Props) {
           if (
             !pa.subAccounts ||
             !pa.subAccounts.find(
-              a => (a as TokenAccount)?.token?.id === currency.id,
+              (a: { token: { id: any } }) => a.token.id === currency.id,
             ) // in case we dont already have one we create an empty token account
           ) {
             const tokenAcc = makeEmptyTokenAccount(pa, currency);
-            const tokenA = {
-              ...tokenAcc,
-              parentAccount: pa,
-            };
-
-            pa.subAccounts = [...(pa.subAccounts || []), tokenA];
+            tokenAcc.parentAccount = pa;
+            pa.subAccounts = [...(pa.subAccounts || []), tokenAcc];
           }
 
           setScannedAccounts((accs: Account[]) => [...accs, pa]); // add the account with the newly added token account to the list of scanned accounts
@@ -117,7 +118,6 @@ function AddAccountsAccounts({ navigation, route }: Props) {
     setError(null);
     setCancelled(false);
     startSubscription();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const stopSubscription = useCallback((syncUI = true) => {
@@ -137,9 +137,7 @@ function AddAccountsAccounts({ navigation, route }: Props) {
 
   const onModalHide = useCallback(() => {
     if (cancelled) {
-      navigation
-        .getParent<StackNavigatorNavigation<RootStackParamList>>()
-        ?.pop();
+      navigation.getParent().pop();
     }
   }, [cancelled, navigation]);
 
@@ -167,12 +165,12 @@ function AddAccountsAccounts({ navigation, route }: Props) {
     ({ item: account }: { item: Account }) => {
       const acc =
         currency.type === "TokenCurrency"
-          ? account.subAccounts?.find(
-              a => (a as TokenAccount).token.id === currency.id,
+          ? account.subAccounts.find(
+              (a: TokenAccount) => a.token.id === currency.id,
             )
           : account;
 
-      return acc ? (
+      return (
         <Flex px={6}>
           <AccountCard
             account={acc}
@@ -184,7 +182,7 @@ function AddAccountsAccounts({ navigation, route }: Props) {
             }
           />
         </Flex>
-      ) : null;
+      );
     },
     [currency.id, currency.type, selectAccount],
   );

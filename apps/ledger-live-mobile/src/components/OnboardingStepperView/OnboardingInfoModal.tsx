@@ -9,17 +9,13 @@ import {
   Linking,
 } from "react-native";
 import { useTheme } from "@react-navigation/native";
-import { IconType } from "@ledgerhq/native-ui/components/Icon/type";
 import { rgba } from "../../colors";
 import Styles from "../../navigation/styles";
+// eslint-disable-next-line import/no-unresolved
 import getWindowDimensions from "../../logic/getWindowDimensions";
 import LText from "../LText";
 import Close from "../../icons/Close";
 import { infoModalScenes } from "../../screens/Onboarding/shared/infoPagesData";
-import { UnionToIntersection } from "../../types/helpers";
-import { StackNavigatorProps } from "../RootNavigator/types/helpers";
-import { OnboardingNavigatorParamList } from "../RootNavigator/types/OnboardingNavigator";
-import { ScreenName } from "../../const";
 
 export type SceneInfoProp = {
   title?: React.ReactNode;
@@ -29,7 +25,7 @@ export type SceneInfoProp = {
     url: string;
   };
   bullets?: {
-    Icon: IconType;
+    Icon: any;
     title?: React.ReactNode;
     label?: React.ReactNode;
     color?: string;
@@ -39,16 +35,14 @@ export type SceneInfoProp = {
     };
   }[];
 };
-type InfoModalSceneKey = keyof typeof infoModalScenes;
-type InfoModalSceneValues = UnionToIntersection<
-  typeof infoModalScenes[InfoModalSceneKey]
->;
-
-type NavigationProps = StackNavigatorProps<
-  OnboardingNavigatorParamList,
-  ScreenName.OnboardingInfoModal
->;
-
+type Props = {
+  navigation: any;
+  route: {
+    params: {
+      sceneInfoKey: string;
+    };
+  };
+};
 const hitSlop = {
   bottom: 10,
   left: 24,
@@ -56,15 +50,10 @@ const hitSlop = {
   top: 10,
 };
 const { height } = getWindowDimensions();
-export default function OnboardingInfoModal({
-  navigation,
-  route,
-}: NavigationProps) {
+export default function OnboardingInfoModal({ navigation, route }: Props) {
   const { colors } = useTheme();
   const { sceneInfoKey } = route.params;
-  const sceneInfoProps = infoModalScenes[
-    sceneInfoKey as keyof typeof infoModalScenes
-  ] as InfoModalSceneValues;
+  const sceneInfoProps = infoModalScenes[sceneInfoKey];
   const close = useCallback(() => navigation.goBack(), [navigation]);
   const [primaryColor, textColor, bulletColor] = [
     colors.card,
@@ -92,20 +81,14 @@ export default function OnboardingInfoModal({
         </View>
       </View>
       <ScrollView style={styles.root}>
-        {sceneInfoProps.map((sceneInfoProp, i) => {
-          const { Icon, iconColor, title, desc, link } = sceneInfoProp;
-          const { bullets } = sceneInfoProp as SceneInfoProp;
-          return (
+        {sceneInfoProps.map(
+          ({ Icon, iconColor, title, desc, link, bullets }, i) => (
             <View key={`infoModalSection-${i}`}>
               {Icon && (
                 <View style={styles.iconContainer}>
                   <Icon
                     size={56}
-                    color={
-                      iconColor
-                        ? colors[iconColor as keyof typeof colors]
-                        : colors.live
-                    }
+                    color={iconColor ? colors[iconColor] : colors.live}
                   />
                 </View>
               )}
@@ -138,9 +121,7 @@ export default function OnboardingInfoModal({
                 <TouchableOpacity
                   style={styles.desc}
                   onPress={() => {
-                    Linking.canOpenURL(link.url).then(
-                      ok => ok && Linking.openURL(link.url),
-                    );
+                    Linking.canOpenURL(link.url) && Linking.openURL(link.url);
                   }}
                 >
                   <LText
@@ -166,10 +147,7 @@ export default function OnboardingInfoModal({
                             styles.bulletIcon,
                             {
                               backgroundColor: color
-                                ? rgba(
-                                    colors[color as keyof typeof colors],
-                                    0.1,
-                                  )
+                                ? rgba(colors[color], 0.1)
                                 : bulletColor,
                             },
                           ]}
@@ -177,11 +155,7 @@ export default function OnboardingInfoModal({
                           {Icon ? (
                             <Icon
                               size={10}
-                              color={
-                                color
-                                  ? colors[color as keyof typeof colors]
-                                  : colors.live
-                              }
+                              color={color ? colors[color] : colors.live}
                             />
                           ) : (
                             <LText
@@ -220,9 +194,8 @@ export default function OnboardingInfoModal({
                           {bulletLink && (
                             <TouchableOpacity
                               onPress={() => {
-                                Linking.canOpenURL(bulletLink.url).then(
-                                  ok => ok && Linking.openURL(bulletLink.url),
-                                );
+                                Linking.canOpenURL(bulletLink.url) &&
+                                  Linking.openURL(bulletLink.url);
                               }}
                             >
                               <LText
@@ -245,8 +218,8 @@ export default function OnboardingInfoModal({
                 </View>
               )}
             </View>
-          );
-        })}
+          ),
+        )}
       </ScrollView>
     </SafeAreaView>
   ) : null;

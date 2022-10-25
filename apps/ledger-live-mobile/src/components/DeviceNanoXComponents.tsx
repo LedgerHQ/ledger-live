@@ -120,7 +120,7 @@ export const EmptyScreen = ({
   children = null,
 }: {
   color: string;
-  children?: React.ReactNode;
+  children?: Rect.Node;
 }) => {
   const { colors } = useTheme();
   return (

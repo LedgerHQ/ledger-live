@@ -4,12 +4,14 @@ import { useTheme } from "styled-components/native";
 import { useTranslation } from "react-i18next";
 import { ScreenName } from "../../const";
 import { getStackNavigatorConfig } from "../../navigation/navigatorConfig";
+import { ParamList } from "../../screens/CustomImage/types";
 import Step1Cropping from "../../screens/CustomImage/Step1Crop";
 import Step2Preview from "../../screens/CustomImage/Step2Preview";
 import Step3Transfer from "../../screens/CustomImage/Step3Transfer";
 import ErrorScreen from "../../screens/CustomImage/ErrorScreen";
 import Step0Welcome from "../../screens/CustomImage/Step0Welcome";
-import { CustomImageNavigatorParamList } from "./types/CustomImageNavigator";
+
+export type CustomImageParamList = ParamList;
 
 export default function CustomImageNavigator() {
   const { colors } = useTheme();
@@ -22,17 +24,17 @@ export default function CustomImageNavigator() {
   return (
     <Stack.Navigator screenOptions={stackNavigationConfig}>
       <Stack.Screen
-        name={ScreenName.CustomImageStep0Welcome}
+        name={ScreenName.CustomImageStep0Welcome as "CustomImageStep0Welcome"}
         component={Step0Welcome}
         options={{ title: "", headerRight: undefined }}
       />
       <Stack.Screen
-        name={ScreenName.CustomImageStep1Crop}
+        name={ScreenName.CustomImageStep1Crop as "CustomImageStep1Crop"}
         component={Step1Cropping}
         options={{ title: t("customImage.cropImage"), headerRight: undefined }}
       />
       <Stack.Screen
-        name={ScreenName.CustomImageStep2Preview}
+        name={ScreenName.CustomImageStep2Preview as "CustomImageStep2Preview"}
         component={Step2Preview}
         options={{
           title: t("customImage.chooseConstrast"),
@@ -40,12 +42,12 @@ export default function CustomImageNavigator() {
         }}
       />
       <Stack.Screen
-        name={ScreenName.CustomImageStep3Transfer}
+        name={ScreenName.CustomImageStep3Transfer as "CustomImageStep3Transfer"}
         component={Step3Transfer}
         options={{ title: "" }}
       />
       <Stack.Screen
-        name={ScreenName.CustomImageErrorScreen}
+        name={ScreenName.CustomImageErrorScreen as "CustomImageErrorScreen"}
         component={ErrorScreen}
         options={{ title: "", headerLeft: undefined, gestureEnabled: false }}
       />
@@ -53,4 +55,4 @@ export default function CustomImageNavigator() {
   );
 }
 
-const Stack = createStackNavigator<CustomImageNavigatorParamList>();
+const Stack = createStackNavigator<ParamList>();

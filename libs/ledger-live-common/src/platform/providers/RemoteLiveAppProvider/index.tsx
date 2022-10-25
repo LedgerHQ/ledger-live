@@ -34,11 +34,11 @@ type LiveAppProviderProps = {
 };
 
 export function useRemoteLiveAppManifest(
-  appId?: string
+  appId: string
 ): LiveAppManifest | undefined {
   const liveAppRegistry = useContext(liveAppContext).state;
 
-  if (!liveAppRegistry.value || !appId) {
+  if (!liveAppRegistry.value) {
     return undefined;
   }
 

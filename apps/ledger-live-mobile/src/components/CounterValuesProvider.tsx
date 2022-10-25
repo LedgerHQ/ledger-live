@@ -1,11 +1,10 @@
 import React, { useState, useEffect, useRef } from "react";
-import { AppState, AppStateStatus } from "react-native";
+import { AppState } from "react-native";
 import { useNetInfo } from "@react-native-community/netinfo";
 import {
   Countervalues,
   useCountervaluesPolling,
 } from "@ledgerhq/live-common/countervalues/react";
-import { CounterValuesStateRaw } from "@ledgerhq/live-common/countervalues/types";
 import { useUserSettings } from "../actions/general";
 
 export default function CountervaluesProvider({
@@ -13,7 +12,7 @@ export default function CountervaluesProvider({
   initialState,
 }: {
   children: React.ReactNode;
-  initialState?: CounterValuesStateRaw;
+  initialState: any;
 }) {
   const userSettings = useUserSettings();
   return (
@@ -25,20 +24,19 @@ export default function CountervaluesProvider({
 
 function CountervaluesManager({ children }: { children: React.ReactNode }) {
   usePollingManager();
-  return <>{children}</>;
+  return children;
 }
 
 function usePollingManager() {
   const { start, stop } = useCountervaluesPolling();
   const appState = useRef(AppState.currentState ?? "");
   const { isInternetReachable } = useNetInfo();
-  const [isActive, setIsActive] = useState<boolean>(!!appState.current);
+  const [isActive, setIsActive] = useState(!!appState.current);
   useEffect(() => {
-    function handleChange(nextAppState: AppStateStatus) {
+    function handleChange(nextAppState) {
       setIsActive(
-        (appState.current.match(/inactive|background/) &&
-          nextAppState === "active") ||
-          false,
+        appState.current.match(/inactive|background/) &&
+          nextAppState === "active",
       );
       appState.current = nextAppState;
     }

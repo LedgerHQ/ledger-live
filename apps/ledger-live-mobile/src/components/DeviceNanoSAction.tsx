@@ -49,7 +49,13 @@ function DeviceNanoSAction({
           strokeWidth="2.394"
           d="M135 1.197c-10.937 0-19.803 8.866-19.803 19.803 0 10.937 8.866 19.803 19.803 19.803h135A2.803 2.803 0 0 0 272.803 38V4A2.803 2.803 0 0 0 270 1.197H135z"
         />
-        <Circle cx="135" cy="21" r="10.5" stroke={colors.darkBlue} />
+        <Circle
+          cx="135"
+          cy="21"
+          r="10.5"
+          stroke={colors.darkBlue}
+          strokeLinejoin="square"
+        />
         <Circle cx="135" cy="21" r="11.5" stroke={colors.fog} />
         <Rect
           width="65"

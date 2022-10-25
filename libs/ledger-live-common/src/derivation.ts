@@ -35,8 +35,6 @@ export type ModeSpec = {
   addressFormat?: string;
 };
 
-// FIXME: DerivationMode SHOULD BE IN LIVE-TYPES ?
-// IN LIVE-TYPES DerivationMode = string which does not work
 export type DerivationMode = keyof typeof modes;
 
 const modes = Object.freeze({

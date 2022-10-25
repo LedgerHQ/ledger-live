@@ -9,8 +9,6 @@ import TrackScreen from "../../../analytics/TrackScreen";
 import EmptyState from "../shared/EmptyState";
 import { ScreenName } from "../../../const";
 import ClosedLoansRow from "./ClosedLoansRow";
-import { StackNavigatorNavigation } from "../../../components/RootNavigator/types/helpers";
-import { LendingNavigatorParamList } from "../../../components/RootNavigator/types/LendingNavigator";
 
 export default function ClosedLoans() {
   const { t } = useTranslation();
@@ -18,13 +16,7 @@ export default function ClosedLoans() {
   const accounts = useFlattenSortAccounts();
   const summaries = useCompoundSummaries(accounts);
   const closedLoans = makeClosedHistoryForAccounts(summaries);
-  const navigation =
-    useNavigation<
-      StackNavigatorNavigation<
-        LendingNavigatorParamList,
-        ScreenName.LendingClosedLoans
-      >
-    >();
+  const navigation = useNavigation();
   const navigateToCompoundDashboard = useCallback(() => {
     navigation.navigate(ScreenName.LendingDashboard);
   }, [navigation]);

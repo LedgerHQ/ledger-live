@@ -1,10 +1,10 @@
 import React, { useCallback } from "react";
-import { useNavigation, useRoute } from "@react-navigation/native";
+import { useNavigation, useRoute, RouteProp } from "@react-navigation/native";
 
 import { useDispatch } from "react-redux";
-import { StackNavigationProp } from "@react-navigation/stack";
 import Illustration from "../../../images/illustration/Illustration";
 import { NavigatorName, ScreenName } from "../../../const";
+import { DeviceNames } from "../types";
 import BaseStepperView, { SyncDesktop, Metadata } from "./setupDevice/scenes";
 import { TrackScreen } from "../../../analytics";
 
@@ -14,13 +14,6 @@ import {
   setReadOnlyMode,
 } from "../../../actions/settings";
 import { useNavigationInterceptor } from "../onboardingContext";
-import {
-  RootComposite,
-  StackNavigatorProps,
-} from "../../../components/RootNavigator/types/helpers";
-import { OnboardingNavigatorParamList } from "../../../components/RootNavigator/types/OnboardingNavigator";
-import { RootStackParamList } from "../../../components/RootNavigator/types/RootNavigator";
-import { Step } from "./setupDevice/scenes/BaseStepperView";
 
 const images = {
   light: {
@@ -31,18 +24,20 @@ const images = {
   },
 };
 
-const scenes = [SyncDesktop, SyncDesktop] as Step[];
-
-type NavigationProps = RootComposite<
-  StackNavigatorProps<
-    OnboardingNavigatorParamList,
-    ScreenName.OnboardingImportAccounts
-  >
->;
+const scenes = [SyncDesktop, SyncDesktop];
 
 function OnboardingStepPairNew() {
-  const navigation = useNavigation<NavigationProps["navigation"]>();
-  const route = useRoute<NavigationProps["route"]>();
+  const navigation = useNavigation();
+  const route = useRoute<
+    RouteProp<
+      {
+        params: {
+          deviceModelId: DeviceNames;
+        };
+      },
+      "params"
+    >
+  >();
 
   const deviceModelId = route?.params?.deviceModelId;
 
@@ -70,29 +65,24 @@ function OnboardingStepPairNew() {
     dispatch(setHasOrderedNano(false));
     resetCurrentStep();
 
-    const parentNav =
-      navigation.getParent<StackNavigationProp<RootStackParamList>>();
+    const parentNav = navigation.getParent();
     if (parentNav) {
       parentNav.popToTop();
     }
 
-    // @ts-expect-error TS requires params to be defined, but it crashes the app
     navigation.replace(NavigatorName.Base, {
       screen: NavigatorName.Main,
-      params: undefined,
     });
   }, [dispatch, navigation, resetCurrentStep]);
 
-  const onNext = useCallback(
-    () =>
-      navigation.navigate(NavigatorName.ImportAccounts, {
-        screen: ScreenName.ScanAccounts,
-        params: {
-          onFinish,
-        },
-      }),
-    [navigation, onFinish],
-  );
+  const onNext = useCallback(() => {
+    navigation.navigate(NavigatorName.ImportAccounts, {
+      screen: ScreenName.ScanAccounts,
+      params: {
+        onFinish,
+      },
+    });
+  }, [navigation, onFinish]);
 
   const nextPage = useCallback(() => {
     navigation.navigate(ScreenName.OnboardingModalWarning, {
@@ -104,14 +94,12 @@ function OnboardingStepPairNew() {
   return (
     <>
       <TrackScreen category="Onboarding" name="PairNew" />
-      {deviceModelId ? (
-        <BaseStepperView
-          onNext={nextPage}
-          steps={scenes}
-          metadata={metadata}
-          deviceModelId={deviceModelId}
-        />
-      ) : null}
+      <BaseStepperView
+        onNext={nextPage}
+        steps={scenes}
+        metadata={metadata}
+        deviceModelId={deviceModelId}
+      />
     </>
   );
 }

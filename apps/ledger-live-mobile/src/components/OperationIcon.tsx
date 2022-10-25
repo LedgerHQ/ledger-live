@@ -11,23 +11,17 @@ import { isConfirmedOperation } from "@ledgerhq/live-common/operation";
 import OperationStatusIcon from "../icons/OperationStatusIcon";
 import { currencySettingsForAccountSelector } from "../reducers/settings";
 import perFamilyOperationDetails from "../generated/operationDetails";
-import { UnionToIntersection } from "../types/helpers";
-import { State } from "../reducers/types";
 
 type OwnProps = {
   size: number;
   operation: Operation;
   account: AccountLike;
-  parentAccount?: Account | null;
+  parentAccount: Account | null | undefined;
 };
 type Props = OwnProps & {
   type: OperationType;
   confirmed: boolean;
 };
-
-type FamilyOperationDetailsIntersection = UnionToIntersection<
-  typeof perFamilyOperationDetails[keyof typeof perFamilyOperationDetails]
->;
 
 class OperationIcon extends PureComponent<Props> {
   static defaultProps = {
@@ -46,15 +40,11 @@ class OperationIcon extends PureComponent<Props> {
     } = this.props;
     const mainAccount = getMainAccount(account, parentAccount);
     const specific = mainAccount.currency.family
-      ? (perFamilyOperationDetails[
-          mainAccount.currency.family as keyof typeof perFamilyOperationDetails
-        ] as FamilyOperationDetailsIntersection)
+      ? perFamilyOperationDetails[mainAccount.currency.family]
       : null;
     const SpecificOperationStatusIcon =
       specific && specific.operationStatusIcon
-        ? specific.operationStatusIcon[
-            type as keyof typeof specific.operationStatusIcon
-          ]
+        ? specific.operationStatusIcon[type]
         : null;
     return SpecificOperationStatusIcon ? (
       <SpecificOperationStatusIcon
@@ -75,7 +65,7 @@ class OperationIcon extends PureComponent<Props> {
   }
 }
 
-export default connect((state: State, props: OwnProps) => {
+const m: React.ComponentType<OwnProps> = connect((state, props) => {
   const { account, parentAccount, operation } = props;
   const { type } = operation;
   const mainAccount = getMainAccount(account, parentAccount);
@@ -90,3 +80,4 @@ export default connect((state: State, props: OwnProps) => {
     confirmed: isConfirmed,
   };
 })(OperationIcon);
+export default m;

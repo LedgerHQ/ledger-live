@@ -180,16 +180,14 @@ export default function MarketStats({
       <Separator />
       <Title>{t("market.marketList.marketCap")}</Title>
       <StatRow label={t("market.marketList.marketCap")}>
-        {typeof marketcap === "number" ? (
-          <TextLabel>
-            {counterValueFormatter({
-              currency: counterCurrency,
-              value: marketcap,
-              locale: loc,
-              t,
-            })}
-          </TextLabel>
-        ) : null}
+        <TextLabel>
+          {counterValueFormatter({
+            currency: counterCurrency,
+            value: marketcap,
+            locale: loc,
+            t,
+          })}
+        </TextLabel>
       </StatRow>
       <StatRow label={t("market.detailsPage.marketCapRank")}>
         <TextLabel

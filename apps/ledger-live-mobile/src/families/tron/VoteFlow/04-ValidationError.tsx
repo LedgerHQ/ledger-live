@@ -1,29 +1,34 @@
 import React, { useCallback } from "react";
-import { StyleSheet } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { StyleSheet, Linking } from "react-native";
+import SafeAreaView from "react-native-safe-area-view";
 import { useTheme } from "@react-navigation/native";
 import { TrackScreen } from "../../../analytics";
 import ValidateError from "../../../components/ValidateError";
-import { ScreenName } from "../../../const";
-import type {
-  BaseComposite,
-  StackNavigatorNavigation,
-  StackNavigatorProps,
-} from "../../../components/RootNavigator/types/helpers";
-import type { TronVoteFlowParamList } from "./types";
-import type { BaseNavigatorStackParamList } from "../../../components/RootNavigator/types/BaseNavigator";
+import { urls } from "../../../config/urls";
 
-type Props = BaseComposite<
-  StackNavigatorProps<TronVoteFlowParamList, ScreenName.VoteValidationError>
->;
-
+const forceInset = {
+  bottom: "always",
+};
+type RouteParams = {
+  accountId: string;
+  deviceId: string;
+  transaction: any;
+  error: Error;
+};
+type Props = {
+  navigation: any;
+  route: {
+    params: RouteParams;
+  };
+};
 export default function ValidationError({ navigation, route }: Props) {
   const { colors } = useTheme();
   const onClose = useCallback(() => {
-    navigation
-      .getParent<StackNavigatorNavigation<BaseNavigatorStackParamList>>()
-      .pop();
+    navigation.getParent().pop();
   }, [navigation]);
+  const contactUs = useCallback(() => {
+    Linking.openURL(urls.contact);
+  }, []);
   const retry = useCallback(() => {
     navigation.goBack();
   }, [navigation]);
@@ -36,9 +41,15 @@ export default function ValidationError({ navigation, route }: Props) {
           backgroundColor: colors.background,
         },
       ]}
+      forceInset={forceInset}
     >
       <TrackScreen category="votes" name="ValidationError" />
-      <ValidateError error={error} onRetry={retry} onClose={onClose} />
+      <ValidateError
+        error={error}
+        onRetry={retry}
+        onClose={onClose}
+        onContactUs={contactUs}
+      />
     </SafeAreaView>
   );
 }

@@ -86,7 +86,7 @@ function TextField({ field }: FieldComponentProps) {
   return <TextValueField label={field.label} value={field.value} />;
 }
 
-const commonFieldComponents: Record<string, FieldComponent> = {
+const commonFieldComponents: { [key: any]: FieldComponent } = {
   amount: AmountField,
   fees: FeesField,
   address: AddressField,
@@ -96,16 +96,9 @@ const commonFieldComponents: Record<string, FieldComponent> = {
 type Props = {
   device: Device;
   status: TransactionStatus;
-  transaction: Transaction & { mode?: string };
+  transaction: Transaction;
   account: AccountLike;
   parentAccount: Account | null | undefined;
-};
-
-type SubComponentCommonProps = {
-  account: AccountLike;
-  parentAccount?: Account | null | undefined;
-  transaction: Transaction;
-  status: TransactionStatus;
 };
 
 export default function ValidateOnDevice({
@@ -119,42 +112,15 @@ export default function ValidateOnDevice({
   const theme = dark ? "dark" : "light";
   const { t } = useTranslation();
   const mainAccount = getMainAccount(account, parentAccount);
-  const r =
-    perFamilyTransactionConfirmFields[
-      mainAccount.currency
-        .family as keyof typeof perFamilyTransactionConfirmFields
-    ];
+  const r = perFamilyTransactionConfirmFields[mainAccount.currency.family];
 
   const fieldComponents = {
     ...commonFieldComponents,
     ...(r && r.fieldComponents),
   };
-  const Warning =
-    r &&
-    (
-      r as {
-        warning?: React.ComponentType<
-          SubComponentCommonProps & { recipientWording: string }
-        >;
-      }
-    ).warning;
-  const Title =
-    r &&
-    (
-      r as {
-        title?: React.ComponentType<SubComponentCommonProps>;
-      }
-    ).title;
-  const Footer =
-    r &&
-    (
-      r as {
-        footer?: React.ComponentType<{
-          transaction: Transaction;
-          recipientWording: string;
-        }>;
-      }
-    ).footer;
+  const Warning = r && r.warning;
+  const Title = r && r.title;
+  const Footer = r && r.footer;
 
   const fields = getDeviceTransactionConfig({
     account,
@@ -203,9 +169,7 @@ export default function ValidateOnDevice({
 
           <DataRowsContainer>
             {fields.map((field, i) => {
-              const MaybeComponent = fieldComponents[
-                field.type as keyof typeof fieldComponents
-              ] as React.ComponentType<FieldComponentProps> | undefined;
+              const MaybeComponent = fieldComponents[field.type];
               if (!MaybeComponent) {
                 console.warn(
                   `TransactionConfirm field ${field.type} is not implemented! add a generic implementation in components/TransactionConfirm.js or inside families/*/TransactionConfirmFields.js`,

@@ -1,6 +1,6 @@
 import React, { useCallback, useMemo, useState, memo } from "react";
 import { useSelector } from "react-redux";
-import { FlatList, LayoutChangeEvent, ListRenderItemInfo } from "react-native";
+import { FlatList, LayoutChangeEvent } from "react-native";
 import Animated, {
   useAnimatedScrollHandler,
   useSharedValue,
@@ -26,7 +26,7 @@ import {
   counterValueCurrencySelector,
   carouselVisibilitySelector,
 } from "../../reducers/settings";
-import { usePortfolio } from "../../hooks/portfolio";
+import { usePortfolio } from "../../actions/portfolio";
 import globalSyncRefreshControl from "../../components/globalSyncRefreshControl";
 import BackgroundGradient from "../../components/BackgroundGradient";
 
@@ -52,12 +52,6 @@ import AllocationsSection from "../WalletCentricSections/Allocations";
 import OperationsHistorySection from "../WalletCentricSections/OperationsHistory";
 import { track } from "../../analytics";
 import PostOnboardingEntryPointCard from "../../components/PostOnboarding/PostOnboardingEntryPointCard";
-import { PortfolioNavigatorStackParamList } from "../../components/RootNavigator/types/PortfolioNavigator";
-import {
-  BaseComposite,
-  BaseNavigation,
-  StackNavigatorProps,
-} from "../../components/RootNavigator/types/helpers";
 
 export { default as PortfolioTabIcon } from "./TabIcon";
 
@@ -69,13 +63,13 @@ const AnimatedFlatListWithRefreshControl = createNativeWrapper(
   },
 );
 
-type NavigationProps = BaseComposite<
-  StackNavigatorProps<PortfolioNavigatorStackParamList, ScreenName.Portfolio>
->;
+type Props = {
+  navigation: any;
+};
 
 const maxAssetsToDisplay = 5;
 
-function PortfolioScreen({ navigation }: NavigationProps) {
+function PortfolioScreen({ navigation }: Props) {
   const hideEmptyTokenAccount = useEnv("HIDE_EMPTY_TOKEN_ACCOUNTS");
 
   const { t } = useTranslation();
@@ -271,10 +265,8 @@ function PortfolioScreen({ navigation }: NavigationProps) {
             paddingTop: 48,
           }}
           contentContainerStyle={{ paddingBottom: TAB_BAR_SAFE_HEIGHT }}
-          renderItem={({ item }: ListRenderItemInfo<unknown>) =>
-            item as JSX.Element
-          }
-          keyExtractor={(_: unknown, index: number) => String(index)}
+          renderItem={({ item }: { item: React.ReactNode }) => item}
+          keyExtractor={(_: any, index: number) => String(index)}
           showsVerticalScrollIndicator={false}
           onScroll={handleScroll}
           testID={
@@ -294,7 +286,7 @@ function PortfolioScreen({ navigation }: NavigationProps) {
       </TabBarSafeAreaView>
 
       <AddAccountsModal
-        navigation={navigation as unknown as BaseNavigation}
+        navigation={navigation}
         isOpened={isAddModalOpened}
         onClose={closeAddModal}
       />
@@ -302,4 +294,4 @@ function PortfolioScreen({ navigation }: NavigationProps) {
   );
 }
 
-export default memo(PortfolioScreen);
+export default memo<Props>(PortfolioScreen);

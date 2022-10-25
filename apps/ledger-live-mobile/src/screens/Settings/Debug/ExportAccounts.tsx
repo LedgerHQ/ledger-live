@@ -4,32 +4,27 @@ import { StyleSheet, Dimensions, View } from "react-native";
 import QRCode from "react-native-qrcode-svg";
 import VersionNumber from "react-native-version-number";
 import { createStructuredSelector } from "reselect";
-import { encode, Settings } from "@ledgerhq/live-common/cross";
+import { encode } from "@ledgerhq/live-common/cross";
 import { dataToFrames } from "qrloop";
-import { Account } from "@ledgerhq/types-live";
 import { accountsSelector } from "../../../reducers/accounts";
 import { exportSettingsSelector } from "../../../reducers/settings";
 import LText from "../../../components/LText";
 import NavigationScrollView from "../../../components/NavigationScrollView";
-import { State } from "../../../reducers/types";
 
 export type Props = {
-  accounts: Account[];
-  settings: Settings;
-  children?: React.ReactNode;
+  accounts: any;
+  settings: any;
+};
+export type State = {
+  frame: number;
 };
 
-class ExportAccounts extends PureComponent<
-  Props,
-  {
-    frame: number;
-  }
-> {
+class ExportAccounts extends PureComponent<Props, State> {
   state = {
     frame: 0,
   };
-  chunks: string[] | undefined;
-  timer: NodeJS.Timeout | undefined;
+  chunks: string[];
+  timer: any;
 
   componentDidMount() {
     const { accounts, settings } = this.props;
@@ -43,9 +38,7 @@ class ExportAccounts extends PureComponent<
     const fps = 3;
 
     const animate = () => {
-      this.setState(state => {
-        if (!this.chunks) return state;
-        const { frame } = state;
+      this.setState(({ frame }) => {
         if (frame < this.chunks.length - 1)
           return {
             frame: frame + 1,
@@ -87,19 +80,14 @@ class ExportAccounts extends PureComponent<
   }
 }
 
-export default connect(
-  createStructuredSelector<
-    State,
-    {
-      accounts: Account[];
-      settings: Settings;
-    }
-  >({
+// eslint-disable-next-line @typescript-eslint/ban-types
+const m: React.ComponentType<{}> = connect(
+  createStructuredSelector({
     accounts: accountsSelector,
     settings: exportSettingsSelector,
   }),
 )(ExportAccounts);
-
+export default m;
 const styles = StyleSheet.create({
   root: {
     padding: 16,

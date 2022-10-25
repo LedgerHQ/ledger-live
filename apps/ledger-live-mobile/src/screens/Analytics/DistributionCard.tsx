@@ -17,7 +17,7 @@ export type DistributionItem = {
   currency: CryptoCurrency | TokenCurrency;
   distribution: number; // % of the total (normalized in 0-1)
   amount: number;
-  countervalue?: number; // countervalue of the amount that was calculated based of the rate provided
+  countervalue: number; // countervalue of the amount that was calculated based of the rate provided
 };
 
 type Props = {
@@ -71,6 +71,7 @@ function DistributionCard({ item: { currency, amount, distribution } }: Props) {
   const percentage = Math.round(distribution * 1e4) / 1e2;
 
   const navigateToAccounts = useCallback(() => {
+    // @ts-expect-error navigation type issue
     navigation.navigate(NavigatorName.Accounts, {
       screen: ScreenName.Asset,
       params: {

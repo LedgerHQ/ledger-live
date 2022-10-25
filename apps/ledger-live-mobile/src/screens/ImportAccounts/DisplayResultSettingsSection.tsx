@@ -1,7 +1,7 @@
 import React, { memo } from "react";
 import { View, StyleSheet } from "react-native";
 import { Trans } from "react-i18next";
-import Icon from "react-native-vector-icons/Feather";
+import Icon from "react-native-vector-icons/dist/Feather";
 import { useTheme } from "@react-navigation/native";
 import LText from "../../components/LText";
 import ResultSection from "./ResultSection";

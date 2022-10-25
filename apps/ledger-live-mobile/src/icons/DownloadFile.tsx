@@ -2,7 +2,7 @@ import React from "react";
 import Svg, { Path } from "react-native-svg";
 
 type Props = {
-  color?: string;
+  color: string;
 };
 export default function DownloadFile({ color }: Props) {
   return (

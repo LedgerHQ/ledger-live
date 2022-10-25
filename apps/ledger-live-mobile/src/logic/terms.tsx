@@ -84,5 +84,5 @@ export const useTermsAccept = () => {
     isAcceptedTerms().then(setAccepted);
   }, []);
 
-  return [accepted, accept] as const;
+  return [accepted, accept];
 };

@@ -1,10 +1,9 @@
 import React, { useCallback, useEffect, useMemo } from "react";
 import { Trans, useTranslation } from "react-i18next";
 import { StyleSheet, FlatList } from "react-native";
-import type { AccountLike, TokenAccount } from "@ledgerhq/types-live";
+import type { Account, TokenAccount } from "@ledgerhq/types-live";
 import type {
   CryptoCurrency,
-  CryptoOrTokenCurrency,
   TokenCurrency,
 } from "@ledgerhq/types-cryptoassets";
 import {
@@ -23,17 +22,14 @@ import FilteredSearchBar from "../../components/FilteredSearchBar";
 import CurrencyRow from "../../components/CurrencyRow";
 import LText from "../../components/LText";
 import { flattenAccountsSelector } from "../../reducers/accounts";
-import { ReceiveFundsStackParamList } from "../../components/RootNavigator/types/ReceiveFundsNavigator";
-import { StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
 
 const SEARCH_KEYS = ["name", "ticker"];
 
 type Props = {
-  devMode?: boolean;
-} & StackNavigatorProps<
-  ReceiveFundsStackParamList,
-  ScreenName.ReceiveSelectCrypto
->;
+  devMode: boolean;
+  navigation: any;
+  route: { params: { filterCurrencyIds?: string[]; currency?: string } };
+};
 
 const keyExtractor = (currency: CryptoCurrency | TokenCurrency) => currency.id;
 
@@ -49,14 +45,13 @@ const listSupportedTokens = () =>
   listTokens().filter(t => isCurrencySupported(t.parentCurrency));
 
 const findAccountByCurrency = (
-  accounts: AccountLike[],
+  accounts: (TokenAccount | Account)[],
   currency: CryptoCurrency | TokenCurrency,
 ) =>
   accounts.filter(
-    (acc: AccountLike) =>
-      (acc.type === "Account"
-        ? acc.currency?.id
-        : (acc as TokenAccount).token?.id) === currency.id,
+    (acc: TokenAccount | Account) =>
+      (acc.type === "Account" ? acc.currency?.id : acc.token.id) ===
+      currency.id,
   );
 
 export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
@@ -69,7 +64,7 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
   );
   const cryptoCurrencies = useMemo(
     () =>
-      (listSupportedCurrencies() as (CryptoCurrency | TokenCurrency)[])
+      listSupportedCurrencies()
         .concat(listSupportedTokens())
         .filter(
           ({ id }) =>
@@ -79,6 +74,18 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
   );
 
   const accounts = useSelector(flattenAccountsSelector);
+
+  useEffect(() => {
+    if (paramsCurrency) {
+      const selectedCurrency = findCryptoCurrencyByKeyword(
+        paramsCurrency.toUpperCase(),
+      );
+
+      if (selectedCurrency) {
+        onPressItem(selectedCurrency);
+      }
+    }
+  }, [onPressItem, paramsCurrency]);
 
   const sortedCryptoCurrencies = useCurrenciesByMarketcap(cryptoCurrencies);
 
@@ -98,7 +105,7 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
         // if we found only one account of the given currency we go straight to QR code
         navigation.navigate(ScreenName.ReceiveConfirmation, {
           accountId: accs[0].id,
-          parentId: (accs[0] as TokenAccount)?.parentId,
+          parentId: accs[0]?.parentId,
         });
       } else if (currency.type === "TokenCurrency") {
         // cases for token currencies
@@ -138,20 +145,8 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
     [accounts, navigation],
   );
 
-  useEffect(() => {
-    if (paramsCurrency) {
-      const selectedCurrency = findCryptoCurrencyByKeyword(
-        paramsCurrency.toUpperCase(),
-      );
-
-      if (selectedCurrency) {
-        onPressItem(selectedCurrency);
-      }
-    }
-  }, [onPressItem, paramsCurrency]);
-
   const renderList = useCallback(
-    (items: CryptoOrTokenCurrency[]) => (
+    (items: any) => (
       <FlatList
         contentContainerStyle={styles.list}
         data={items}
@@ -169,7 +164,7 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
   return (
     <>
       <TrackScreen category="Receive" name="Select Crypto" />
-      <LText fontSize={"32"} fontFamily="InterMedium" semiBold px={6} my={3}>
+      <LText fontSize={32} fontFamily="InterMedium" semiBold px={6} my={3}>
         {t("transfer.receive.selectCrypto.title")}
       </LText>
       <FilteredSearchBar

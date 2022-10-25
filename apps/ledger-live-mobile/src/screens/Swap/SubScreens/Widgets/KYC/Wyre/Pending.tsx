@@ -2,7 +2,7 @@ import React, { useEffect, useCallback } from "react";
 import { StyleSheet, View } from "react-native";
 import { useSelector, useDispatch } from "react-redux";
 import { useTheme } from "@react-navigation/native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import SafeAreaView from "react-native-safe-area-view";
 import { Trans } from "react-i18next";
 import { getKYCStatus } from "@ledgerhq/live-common/exchange/swap/index";
 import { swapKYCSelector } from "../../../../../../reducers/settings";
@@ -13,6 +13,8 @@ import Button from "../../../../../../components/Button";
 import IconCheck from "../../../../../../icons/Check";
 import IconClose from "../../../../../../icons/Close";
 import { rgba } from "../../../../../../colors";
+
+const forceInset = { bottom: "always" };
 
 export function Pending({
   onContinue,
@@ -62,14 +64,17 @@ export function Pending({
   }, [dispatch, onContinue]);
 
   return (
-    <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]}>
+    <SafeAreaView
+      style={[styles.root, { backgroundColor: colors.background }]}
+      forceInset={forceInset}
+    >
       <View style={styles.wrapper}>
         <View
           style={[
             styles.iconWrapper,
             {
               backgroundColor: rgba(
-                rejected ? colors.alert : colors.green,
+                rejected ? colors.alertRed : colors.green,
                 0.1,
               ),
             },

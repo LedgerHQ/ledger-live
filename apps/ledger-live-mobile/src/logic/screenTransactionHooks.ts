@@ -1,5 +1,5 @@
 import invariant from "invariant";
-import { concat, of, from, Subscription } from "rxjs";
+import { concat, of, from } from "rxjs";
 import { concatMap, filter } from "rxjs/operators";
 import { useState, useCallback, useEffect, useRef } from "react";
 import { Platform } from "react-native";
@@ -25,99 +25,22 @@ import { execAndWaitAtLeast } from "@ledgerhq/live-common/promise";
 import { getEnv } from "@ledgerhq/live-common/env";
 import { useDispatch } from "react-redux";
 import { TransactionRefusedOnDevice } from "@ledgerhq/live-common/errors";
-import { StackNavigationProp } from "@react-navigation/stack";
 import { updateAccountWithUpdater } from "../actions/accounts";
 import logger from "../logger";
-import { ScreenName } from "../const";
-import type {
-  StackNavigatorNavigation,
-  StackNavigatorRoute,
-} from "../components/RootNavigator/types/helpers";
-import type { SendFundsNavigatorStackParamList } from "../components/RootNavigator/types/SendFundsNavigator";
-import type { SignTransactionNavigatorParamList } from "../components/RootNavigator/types/SignTransactionNavigator";
-import type { LendingEnableFlowParamsList } from "../components/RootNavigator/types/LendingEnableFlowNavigator";
-import type { LendingSupplyFlowNavigatorParamList } from "../components/RootNavigator/types/LendingSupplyFlowNavigator";
-import type { LendingWithdrawFlowNavigatorParamList } from "../components/RootNavigator/types/LendingWithdrawFlowNavigator";
-import type { AlgorandClaimRewardsFlowParamList } from "../families/algorand/Rewards/ClaimRewardsFlow/type";
-import type { StellarAddAssetFlowParamList } from "../families/stellar/AddAssetFlow/types";
-
-type Navigation =
-  | StackNavigatorNavigation<
-      SendFundsNavigatorStackParamList,
-      ScreenName.SendSummary
-    >
-  | StackNavigatorNavigation<
-      SignTransactionNavigatorParamList,
-      ScreenName.SignTransactionSummary
-    >
-  | StackNavigatorNavigation<
-      LendingEnableFlowParamsList,
-      ScreenName.LendingEnableSummary
-    >
-  | StackNavigatorNavigation<
-      LendingSupplyFlowNavigatorParamList,
-      ScreenName.LendingSupplySummary
-    >
-  | StackNavigatorNavigation<
-      LendingWithdrawFlowNavigatorParamList,
-      ScreenName.LendingWithdrawSummary
-    >
-  | StackNavigatorNavigation<
-      AlgorandClaimRewardsFlowParamList,
-      ScreenName.AlgorandClaimRewardsSummary
-    >
-  | StackNavigatorNavigation<
-      StellarAddAssetFlowParamList,
-      ScreenName.StellarAddAssetValidation
-    >;
-
-type Route =
-  | StackNavigatorRoute<
-      SendFundsNavigatorStackParamList,
-      ScreenName.SendSummary
-    >
-  | StackNavigatorRoute<
-      SignTransactionNavigatorParamList,
-      ScreenName.SignTransactionSummary
-    >
-  | StackNavigatorRoute<
-      LendingEnableFlowParamsList,
-      ScreenName.LendingEnableSummary
-    >
-  | StackNavigatorRoute<
-      LendingSupplyFlowNavigatorParamList,
-      ScreenName.LendingSupplySummary
-    >
-  | StackNavigatorRoute<
-      LendingWithdrawFlowNavigatorParamList,
-      ScreenName.LendingWithdrawSummary
-    >
-  | StackNavigatorRoute<
-      AlgorandClaimRewardsFlowParamList,
-      ScreenName.AlgorandClaimRewardsSummary
-    >
-  | StackNavigatorRoute<
-      StellarAddAssetFlowParamList,
-      ScreenName.StellarAddAssetValidation
-    >;
 
 export const useTransactionChangeFromNavigation = (
   setTransaction: (_: Transaction) => void,
 ) => {
-  const route = useRoute<Route>();
+  const route = useRoute();
   const navigationTransaction = route.params?.transaction;
   const navigationTxRef = useRef(navigationTransaction);
   useEffect(() => {
-    if (
-      navigationTransaction &&
-      navigationTxRef.current !== navigationTransaction
-    ) {
+    if (navigationTxRef.current !== navigationTransaction) {
       navigationTxRef.current = navigationTransaction;
       setTransaction(navigationTransaction);
     }
   }, [setTransaction, navigationTransaction]);
 };
-
 export const useSignWithDevice = ({
   account,
   parentAccount,
@@ -132,11 +55,11 @@ export const useSignWithDevice = ({
     arg1: (arg0: Account) => Account,
   ) => void;
 }) => {
-  const route = useRoute<Route>();
-  const navigation = useNavigation<Navigation>();
+  const route = useRoute();
+  const navigation = useNavigation();
   const [signing, setSigning] = useState(false);
   const [signed, setSigned] = useState(false);
-  const subscription = useRef<null | Subscription>(null);
+  const subscription = useRef(null);
   const signWithDevice = useCallback(() => {
     const { deviceId, transaction } = route.params || {};
     const bridge = getAccountBridge(account, parentAccount);
@@ -148,16 +71,13 @@ export const useSignWithDevice = ({
     log("transaction-summary", `→ FROM ${formatAccount(mainAccount, "basic")}`);
     log(
       "transaction-summary",
-      `✔️ transaction ${
-        transaction && formatTransaction(transaction, mainAccount)
-      }`,
+      `✔️ transaction ${formatTransaction(transaction, mainAccount)}`,
     );
     subscription.current = bridge
       .signOperation({
         account: mainAccount,
         transaction,
-        // FIXME: deviceId could be undefined apparently
-        deviceId: deviceId!,
+        deviceId,
       })
       .pipe(
         // FIXME later we will need to treat more events
@@ -172,8 +92,7 @@ export const useSignWithDevice = ({
                 bridge
                   .broadcast({
                     account: mainAccount,
-                    signedOperation: (e as { signedOperation: SignedOperation })
-                      .signedOperation,
+                    signedOperation: e.signedOperation,
                   })
                   .then(operation => ({
                     type: "broadcasted",
@@ -189,9 +108,7 @@ export const useSignWithDevice = ({
             case "signed":
               log(
                 "transaction-summary",
-                `✔️ has been signed! ${JSON.stringify(
-                  (e as { signedOperation?: SignedOperation }).signedOperation,
-                )}`,
+                `✔️ has been signed! ${JSON.stringify(e.signedOperation)}`,
               );
               setSigned(true);
               break;
@@ -203,9 +120,7 @@ export const useSignWithDevice = ({
                   mainAccount,
                 )(e.operation)}`,
               );
-              (
-                navigation as StackNavigationProp<{ [key: string]: object }>
-              ).replace(context + "ValidationSuccess", {
+              navigation.replace(context + "ValidationSuccess", {
                 ...route.params,
                 result: e.operation,
               });
@@ -226,9 +141,7 @@ export const useSignWithDevice = ({
             logger.critical(error);
           }
 
-          (
-            navigation as StackNavigationProp<{ [key: string]: object }>
-          ).replace(context + "ValidationError", {
+          navigation.replace(context + "ValidationError", {
             ...route.params,
             error,
           });
@@ -318,7 +231,7 @@ export function useSignedTxHandler({
   const mainAccount = getMainAccount(account, parentAccount);
   return useCallback(
     // TODO: fix type error
-
+    // $FlowFixMe
     async ({ signedOperation, transactionSignError }) => {
       try {
         if (transactionSignError) {
@@ -332,7 +245,7 @@ export function useSignedTxHandler({
             operation,
           )}`,
         );
-        (navigation as StackNavigationProp<{ [key: string]: object }>).replace(
+        navigation.replace(
           route.name.replace("ConnectDevice", "ValidationSuccess"),
           { ...route.params, result: operation },
         );
@@ -348,10 +261,10 @@ export function useSignedTxHandler({
             error instanceof TransactionRefusedOnDevice
           )
         ) {
-          logger.critical(error as Error);
+          logger.critical(error);
         }
 
-        (navigation as StackNavigationProp<{ [key: string]: object }>).replace(
+        navigation.replace(
           route.name.replace("ConnectDevice", "ValidationError"),
           { ...route.params, error },
         );
@@ -363,11 +276,13 @@ export function useSignedTxHandler({
 export function useSignedTxHandlerWithoutBroadcast({
   onSuccess,
 }: {
-  onSuccess: (signedOp: { signedOperation: unknown }) => void;
+  onSuccess: (signedOp: any) => void;
 }) {
   const navigation = useNavigation();
   const route = useRoute();
   return useCallback(
+    // TODO: fix type error
+    // $FlowFixMe
     async ({ signedOperation, transactionSignError }) => {
       try {
         if (transactionSignError) {
@@ -384,10 +299,10 @@ export function useSignedTxHandlerWithoutBroadcast({
             error instanceof TransactionRefusedOnDevice
           )
         ) {
-          logger.critical(error as Error);
+          logger.critical(error);
         }
 
-        (navigation as StackNavigationProp<{ [key: string]: object }>).replace(
+        navigation.replace(
           route.name.replace("ConnectDevice", "ValidationError"),
           { ...route.params, error },
         );

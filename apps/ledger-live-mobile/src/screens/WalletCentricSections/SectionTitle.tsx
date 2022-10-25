@@ -2,16 +2,14 @@ import React, { memo, useCallback } from "react";
 import { Flex, Link as TextLink, Text } from "@ledgerhq/native-ui";
 import { useTranslation } from "react-i18next";
 import proxyStyled from "@ledgerhq/native-ui/components/styled";
-import { FlexBoxProps } from "@ledgerhq/native-ui/components/Layout/Flex";
-import { NavigationProp } from "@react-navigation/native";
 
 type Props = {
-  title: React.ReactNode;
+  title: React.ReactElement;
   onSeeAllPress?: () => void;
   navigatorName?: string;
   screenName?: string;
-  params?: object | undefined;
-  navigation?: NavigationProp<{ [key: string]: object | undefined }>;
+  params?: any;
+  navigation?: any;
   seeMoreText?: React.ReactElement;
   containerProps?: FlexBoxProps;
 };

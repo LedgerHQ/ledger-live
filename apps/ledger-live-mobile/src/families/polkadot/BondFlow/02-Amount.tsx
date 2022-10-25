@@ -15,7 +15,7 @@ import { useSelector } from "react-redux";
 import { Trans } from "react-i18next";
 import invariant from "invariant";
 import { useTheme } from "@react-navigation/native";
-import type { Transaction as PolkadotTransaction } from "@ledgerhq/live-common/families/polkadot/types";
+import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import { useDebounce } from "@ledgerhq/live-common/hooks/useDebounce";
 import {
   getAccountUnit,
@@ -23,7 +23,6 @@ import {
 } from "@ledgerhq/live-common/account/index";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { isFirstBond } from "@ledgerhq/live-common/families/polkadot/logic";
-import { PolkadotAccount } from "@ledgerhq/live-common/families/polkadot/types";
 import { urls } from "../../../config/urls";
 import { accountScreenSelector } from "../../../reducers/accounts";
 import { ScreenName } from "../../../const";
@@ -40,11 +39,6 @@ import Info from "../../../icons/Info";
 import { getFirstStatusError, hasStatusError } from "../../helpers";
 import FlowErrorBottomModal from "../components/FlowErrorBottomModal";
 import SendRowsFee from "../SendRowsFee";
-import {
-  BaseComposite,
-  StackNavigatorProps,
-} from "../../../components/RootNavigator/types/helpers";
-import { PolkadotBondFlowParamList } from "./types";
 
 const options = [
   {
@@ -81,34 +75,37 @@ const infoModalData = [
     ),
   },
 ];
-
-type Props = BaseComposite<
-  StackNavigatorProps<PolkadotBondFlowParamList, ScreenName.PolkadotBondAmount>
->;
-
+type Props = {
+  navigation: any;
+  route: {
+    params: RouteParams;
+  };
+};
+type RouteParams = {
+  accountId: string;
+  transaction: Transaction;
+};
 export default function PolkadotBondAmount({ navigation, route }: Props) {
   const { colors } = useTheme();
   const { account, parentAccount } = useSelector(accountScreenSelector(route));
   invariant(account, "account is required");
   const bridge = getAccountBridge(account, parentAccount);
-  const mainAccount = getMainAccount(account, parentAccount) as PolkadotAccount;
-  const [maxSpendable, setMaxSpendable] = useState<BigNumber | null>(null);
-  const [infoModalOpen, setInfoModalOpen] = useState<boolean>();
-  const bridgeTransaction = useBridgeTransaction(() => {
-    const t = bridge.createTransaction(mainAccount);
-    const transaction = bridge.updateTransaction(t, {
-      mode: "bond",
-      recipient: mainAccount.freshAddress,
-      rewardDestination: "Stash",
+  const mainAccount = getMainAccount(account, parentAccount);
+  const [maxSpendable, setMaxSpendable] = useState(null);
+  const [infoModalOpen, setInfoModalOpen] = useState();
+  const { transaction, setTransaction, status, bridgePending, bridgeError } =
+    useBridgeTransaction(() => {
+      const t = bridge.createTransaction(mainAccount);
+      const transaction = bridge.updateTransaction(t, {
+        mode: "bond",
+        recipient: mainAccount.freshAddress,
+        rewardDestination: "Stash",
+      });
+      return {
+        account: mainAccount,
+        transaction,
+      };
     });
-    return {
-      account: mainAccount,
-      transaction,
-    };
-  });
-  const { setTransaction, status, bridgePending, bridgeError } =
-    bridgeTransaction;
-  const transaction = bridgeTransaction.transaction as PolkadotTransaction;
   const debouncedTransaction = useDebounce(transaction, 500);
   useEffect(() => {
     if (!account) return;
@@ -178,8 +175,7 @@ export default function PolkadotBondAmount({ navigation, route }: Props) {
   const { useAllAmount } = transaction;
   const { amount } = status;
   const unit = getAccountUnit(account);
-  const rewardDestination =
-    (transaction as { rewardDestination?: string }).rewardDestination || "";
+  const rewardDestination = transaction.rewardDestination || "";
   const firstBond = isFirstBond(mainAccount);
   const error =
     amount.eq(0) || bridgePending
@@ -293,9 +289,8 @@ export default function PolkadotBondAmount({ navigation, route }: Props) {
                 </View>
                 <SendRowsFee
                   account={account}
+                  parentAccount={parentAccount}
                   transaction={transaction}
-                  navigation={navigation}
-                  route={route}
                 />
                 <View style={styles.continueWrapper}>
                   <Button

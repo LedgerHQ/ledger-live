@@ -1,20 +1,40 @@
 import completeExchange from "@ledgerhq/live-common/exchange/platform/completeExchange";
+import { Exchange } from "@ledgerhq/live-common/exchange/platform/types";
 import { createAction } from "@ledgerhq/live-common/hw/actions/completeExchange";
 import { createAction as txCreateAction } from "@ledgerhq/live-common/hw/actions/transaction";
+import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import connectApp from "@ledgerhq/live-common/hw/connectApp";
+import type { Operation } from "@ledgerhq/types-live";
+import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import React, { useCallback, useEffect, useState } from "react";
 import { StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import DeviceActionModal from "../../../components/DeviceActionModal";
 import { useBroadcast } from "../../../components/useBroadcast";
-import { StackNavigatorProps } from "../../../components/RootNavigator/types/helpers";
-import { PlatformExchangeNavigatorParamList } from "../../../components/RootNavigator/types/PlatformExchangeNavigator";
-import { ScreenName } from "../../../const";
 
-type Props = StackNavigatorProps<
-  PlatformExchangeNavigatorParamList,
-  ScreenName.PlatformCompleteExchange
->;
+type Result = {
+  operation?: Operation;
+  error?: Error;
+};
+
+type Props = {
+  navigation: any;
+  route: {
+    params: {
+      request: {
+        exchangeType: number;
+        provider: string;
+        exchange: Exchange;
+        transaction: Transaction;
+        binaryPayload: string;
+        signature: string;
+        feesStrategy: string;
+      };
+      device: Device;
+      onResult: (_: Result) => void;
+    };
+  };
+};
 
 const PlatformCompleteExchange: React.FC<Props> = ({
   route: {
@@ -78,7 +98,6 @@ const PlatformCompleteExchange: React.FC<Props> = ({
           action={exchangeAction}
           onClose={onClose}
           onResult={onCompleteExchange}
-          // @ts-expect-error Wrong types?
           request={request}
         />
       ) : (
@@ -88,7 +107,6 @@ const PlatformCompleteExchange: React.FC<Props> = ({
           action={sendAction}
           onClose={onClose}
           onResult={onSign}
-          // @ts-expect-error Wrong types?
           request={{
             tokenCurrency,
             parentAccount,

@@ -34,7 +34,6 @@ const PushNotificationsModal = () => {
 
   useEffect(() => {
     initPushNotificationsData();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
@@ -47,12 +46,7 @@ const PushNotificationsModal = () => {
         }
       }
     });
-  }, [
-    clearNotificationsListeners,
-    getIsNotifEnabled,
-    listenForNotifications,
-    notificationsSettings.allowed,
-  ]);
+  }, [notificationsSettings.allowed]);
 
   const NotifIllustration = () =>
     pushNotificationsModalType === "market" ? (
@@ -71,7 +65,11 @@ const PushNotificationsModal = () => {
       />
     );
   return (
-    <BottomDrawer isOpen={isPushNotificationsModalOpen} noCloseButton>
+    <BottomDrawer
+      id="PromptNotification"
+      isOpen={isPushNotificationsModalOpen}
+      noCloseButton
+    >
       <TrackScreen
         category="Notification Prompt"
         name={

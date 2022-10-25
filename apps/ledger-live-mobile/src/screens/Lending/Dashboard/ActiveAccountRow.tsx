@@ -1,9 +1,6 @@
 import React, { useCallback, useState, useMemo } from "react";
 import { TouchableOpacity, View, StyleSheet } from "react-native";
-import type {
-  CompoundAccountStatus,
-  CompoundAccountSummary,
-} from "@ledgerhq/live-common/compound/types";
+import type { CompoundAccountSummary } from "@ledgerhq/live-common/compound/types";
 import {
   getAccountName,
   getAccountCurrency,
@@ -11,7 +8,6 @@ import {
 import { getAccountCapabilities } from "@ledgerhq/live-common/compound/logic";
 import { useNavigation, useTheme } from "@react-navigation/native";
 import { Trans } from "react-i18next";
-import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import LText from "../../../components/LText";
 import CurrencyUnitValue from "../../../components/CurrencyUnitValue";
 import CurrencyIcon from "../../../components/CurrencyIcon";
@@ -24,17 +20,13 @@ import Supply from "../../../icons/Supply";
 import Withdraw from "../../../icons/Withdraw";
 import Compound, { compoundColor } from "../../../icons/Compound";
 import { NavigatorName, ScreenName } from "../../../const";
-import { BaseNavigation } from "../../../components/RootNavigator/types/helpers";
 
 type RowProps = {
-  item: Omit<
-    CompoundAccountSummary,
-    "opened" | "closed" | "allTimeEarned" | "status"
-  > & { status?: CompoundAccountStatus };
+  item: CompoundAccountSummary;
 };
 export default function ActiveAccountRow({ item }: RowProps) {
   const { colors } = useTheme();
-  const navigation = useNavigation<BaseNavigation>();
+  const navigation = useNavigation();
   const { account, parentAccount, totalSupplied, accruedInterests, status } =
     item;
   const { token } = account;
@@ -146,7 +138,7 @@ export default function ActiveAccountRow({ item }: RowProps) {
         label: (
           <Trans i18nKey="transfer.lending.dashboard.activeAccount.approve" />
         ),
-        Icon: (props: React.ComponentProps<typeof Circle>) => (
+        Icon: (props: any) => (
           <Circle {...props} bg={colors.lightLive}>
             <Plus size={24} color={colors.live} />
           </Circle>
@@ -163,7 +155,7 @@ export default function ActiveAccountRow({ item }: RowProps) {
             params: {
               accountId: account.id,
               parentId: account.parentId,
-              currency: currency as TokenCurrency,
+              currency,
             },
           });
         },
@@ -172,7 +164,7 @@ export default function ActiveAccountRow({ item }: RowProps) {
         label: (
           <Trans i18nKey="transfer.lending.dashboard.activeAccount.supply" />
         ),
-        Icon: (props: React.ComponentProps<typeof Circle>) => (
+        Icon: (props: any) => (
           <Circle
             {...props}
             bg={!canSupply ? colors.lightFog : colors.lightLive}
@@ -192,7 +184,7 @@ export default function ActiveAccountRow({ item }: RowProps) {
             params: {
               accountId: account.id,
               parentId: account.parentId,
-              currency: currency as TokenCurrency,
+              currency,
             },
           });
         },
@@ -201,7 +193,7 @@ export default function ActiveAccountRow({ item }: RowProps) {
         label: (
           <Trans i18nKey="transfer.lending.dashboard.activeAccount.withdraw" />
         ),
-        Icon: (props: React.ComponentProps<typeof Circle>) => (
+        Icon: (props: any) => (
           <Circle
             {...props}
             bg={!canWithdraw ? colors.lightFog : colors.lightLive}
@@ -224,7 +216,7 @@ export default function ActiveAccountRow({ item }: RowProps) {
             params: {
               accountId: account.id,
               parentId: account.parentId,
-              currency: currency as TokenCurrency,
+              currency,
             },
           });
         },
@@ -282,6 +274,7 @@ export default function ActiveAccountRow({ item }: RowProps) {
               currency={token}
               value={totalSupplied}
               disableRounding
+              fontSize={3}
               showCode
               alwaysShowSign={false}
             />

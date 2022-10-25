@@ -1,46 +1,36 @@
 import React from "react";
-import { DefaultTheme } from "styled-components/native";
-import { HeaderTitleProps } from "@react-navigation/elements";
 import HeaderRightClose from "../components/HeaderRightClose";
 import HeaderTitle from "../components/HeaderTitle";
 import HeaderBackImage from "../components/HeaderBackImage";
 import styles from "./styles";
-import { Theme } from "../colors";
 
 export const defaultNavigationOptions = {
   headerStyle: styles.header,
-  headerTitle: (props: HeaderTitleProps) => <HeaderTitle {...props} />,
+  headerTitle: (props: any) => <HeaderTitle {...props} />,
   headerBackTitleVisible: false,
   headerBackImage: () => <HeaderBackImage />,
   headerTitleAllowFontScaling: false,
 };
 
-type ColorV2 = Theme["colors"];
-type ColorV3 = DefaultTheme["colors"];
-
 export const getStackNavigatorConfig = (
-  c: ColorV2 | ColorV3,
+  c: any,
   closable = false,
-  onClose?: () => void,
+  onClose?: any,
 ) => ({
   ...defaultNavigationOptions,
-  cardStyle: {
-    backgroundColor:
-      (c as ColorV3).background?.main || (c as ColorV2).background,
-  },
+  cardStyle: { backgroundColor: c.background.main || c.background },
   headerStyle: {
-    backgroundColor:
-      (c as ColorV3).background?.main || (c as ColorV2).background,
-    borderBottomColor: (c as ColorV3).neutral?.c40 || (c as ColorV2).white,
+    backgroundColor: c.background.main || c.background,
+    borderBottomColor: c.neutral?.c40 || c.white,
     // borderBottomWidth: 1,
     elevation: 0, // remove shadow on Android
     shadowOpacity: 0, // remove shadow on iOS
   },
+  headerTitleAlign: "center",
   headerTitleStyle: {
-    color: (c as ColorV3).neutral?.c100 || (c as ColorV2).darkBlue,
+    color: c.neutral?.c100 || c.darkBlue,
   },
   headerRight: closable
     ? () => <HeaderRightClose onClose={onClose} />
     : undefined,
 });
-export type StackNavigatorConfig = ReturnType<typeof getStackNavigatorConfig>;

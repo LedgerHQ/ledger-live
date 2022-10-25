@@ -199,11 +199,8 @@ export type AccountLike = Account | SubAccount;
 /**
  * An array of AccountLikes
  */
-export type AccountLikeArray =
-  | AccountLike[]
-  | TokenAccount[]
-  | ChildAccount[]
-  | Account[];
+export type AccountLikeArray = // $FlowFixMe wtf mobile
+  AccountLike[] | TokenAccount[] | ChildAccount[] | Account[];
 
 /** */
 export type TokenAccountRaw = {

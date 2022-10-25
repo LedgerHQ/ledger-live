@@ -1,7 +1,7 @@
 import invariant from "invariant";
 import React from "react";
 import { StyleSheet } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import SafeAreaView from "react-native-safe-area-view";
 import { useSelector } from "react-redux";
 import type { Transaction } from "@ledgerhq/live-common/families/ripple/types";
 import { useTheme } from "@react-navigation/native";
@@ -10,9 +10,12 @@ import { accountScreenSelector } from "../../reducers/accounts";
 import KeyboardView from "../../components/KeyboardView";
 import EditFeeUnit from "../../components/EditFeeUnit";
 
+const forceInset = {
+  bottom: "always",
+};
 const options = {
   title: i18n.t("send.fees.title"),
-  headerLeft: undefined,
+  headerLeft: null,
 };
 type Props = {
   route: {
@@ -39,6 +42,7 @@ function RippleEditFee({ route }: Props) {
           backgroundColor: colors.background,
         },
       ]}
+      forceInset={forceInset}
     >
       <KeyboardView style={styles.container}>
         <EditFeeUnit account={account} field="fee" />

@@ -14,9 +14,10 @@ import { useSelector } from "react-redux";
 import { Trans } from "react-i18next";
 import invariant from "invariant";
 import { useTheme } from "@react-navigation/native";
+import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import { getAccountUnit } from "@ledgerhq/live-common/account/index";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
-import { Transaction as CeloTransaction } from "@ledgerhq/live-common/families/celo/types";
+import { CeloVote } from "@ledgerhq/live-common/families/celo/types";
 import { accountScreenSelector } from "../../../reducers/accounts";
 import { ScreenName } from "../../../const";
 import { TrackScreen } from "../../../analytics";
@@ -28,15 +29,18 @@ import CurrencyInput from "../../../components/CurrencyInput";
 import TranslatedError from "../../../components/TranslatedError";
 import SendRowsFee from "../SendRowsFee";
 import { getFirstStatusError } from "../../helpers";
-import type {
-  BaseComposite,
-  StackNavigatorProps,
-} from "../../../components/RootNavigator/types/helpers";
-import { CeloRevokeFlowFlowParamList } from "./types";
 
-type Props = BaseComposite<
-  StackNavigatorProps<CeloRevokeFlowFlowParamList, ScreenName.CeloRevokeAmount>
->;
+type Props = {
+  navigation: any;
+  route: { params: RouteParams };
+};
+
+type RouteParams = {
+  accountId: string;
+  transaction: Transaction;
+  amount?: number;
+  vote: CeloVote;
+};
 
 export default function VoteAmount({ navigation, route }: Props) {
   const { colors } = useTheme();
@@ -57,7 +61,7 @@ export default function VoteAmount({ navigation, route }: Props) {
           amount: new BigNumber(route.params.amount ?? 0),
           mode: "revoke",
           index: route.params.vote?.index,
-        } as CeloTransaction,
+        },
       };
     });
 
@@ -73,7 +77,7 @@ export default function VoteAmount({ navigation, route }: Props) {
     return () => {
       cancelled = true;
     };
-  }, [transaction, setMaxSpendable, bridge, account]);
+  }, [transaction, setMaxSpendable]);
 
   const onChange = (amount: BigNumber) => {
     setTransaction(bridge.updateTransaction(transaction, { amount }));
@@ -178,12 +182,7 @@ export default function VoteAmount({ navigation, route }: Props) {
                     </View>
                   ) : null}
                 </View>
-                <SendRowsFee
-                  account={account}
-                  transaction={transaction}
-                  navigation={navigation}
-                  route={route}
-                />
+                <SendRowsFee account={account} transaction={transaction} />
                 <View style={styles.continueWrapper}>
                   <Button
                     event="CeloVoteAmountContinue"

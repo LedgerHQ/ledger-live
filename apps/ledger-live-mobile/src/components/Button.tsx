@@ -1,8 +1,9 @@
+/* eslint-disable import/named */
 import React, { useCallback, memo, useContext, useMemo } from "react";
-import { StyleProp, ViewStyle } from "react-native";
+import { ViewStyle } from "react-native";
 import { useIsFocused } from "@react-navigation/native";
 import { Button } from "@ledgerhq/native-ui";
-import type { ButtonProps } from "@ledgerhq/native-ui/components/cta/Button";
+import { ButtonProps } from "@ledgerhq/native-ui/components/cta/Button";
 import ButtonUseTouchable from "../context/ButtonUseTouchable";
 import { track } from "../analytics";
 
@@ -31,16 +32,16 @@ export interface BaseButtonProps extends Omit<ButtonProps, "type"> {
   // the button will toggle in a pending state and
   // will wait the promise to complete before enabling the button again
   // it also displays a spinner if it takes more than WAIT_TIME_BEFORE_SPINNER
-  onPress?: () => void;
+  onPress?: () => any;
   pending?: boolean;
   disabled?: boolean;
-  IconLeft?: React.ComponentType<{ size?: number; color?: string }>;
-  IconRight?: React.ComponentType<{ size?: number; color?: string }>;
-  containerStyle?: StyleProp<ViewStyle>;
+  IconLeft?: React.ComponentType<{ size: number; color: string }>;
+  IconRight?: React.ComponentType<{ size: number; color: string }>;
+  containerStyle?: ViewStyle;
   type?: string;
   // for analytics
   event?: string;
-  eventProperties?: Record<string, unknown>;
+  eventProperties?: any;
   // for testing
   testID?: string;
 }

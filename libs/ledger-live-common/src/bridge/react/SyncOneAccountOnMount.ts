@@ -7,7 +7,7 @@ export const SyncOneAccountOnMount = ({
 }: {
   accountId: string;
   priority: number;
-  reason?: string;
+  reason: string;
 }): null => {
   const sync = useBridgeSync();
   useEffect(() => {

@@ -45,13 +45,9 @@ import {
   setMarketFilterByStarredAccounts,
   setMarketRequestParams,
 } from "../../actions/settings";
-import { AnalyticsContext } from "../../analytics/AnalyticsContext";
+// eslint-disable-next-line import/no-cycle
+import { AnalyticsContext } from "../../components/RootNavigator";
 import EmptyStarredCoins from "./EmptyStarredCoins";
-import {
-  BaseComposite,
-  StackNavigatorProps,
-} from "../../components/RootNavigator/types/helpers";
-import { MarketNavigatorStackParamList } from "../../components/RootNavigator/types/MarketNavigator";
 
 const noResultIllustration = {
   dark: require("../../images/illustration/Dark/_051.png"),
@@ -63,9 +59,9 @@ const noNetworkIllustration = {
   light: require("../../images/illustration/Light/_078.png"),
 };
 
-function getAnalyticsProperties<P extends object>(
+function getAnalyticsProperties(
   requestParams: MarketListRequestParams,
-  otherProperties?: P,
+  otherProperties?: any,
 ) {
   return {
     ...otherProperties,
@@ -77,15 +73,7 @@ function getAnalyticsProperties<P extends object>(
   };
 }
 
-type NavigationProps = BaseComposite<
-  StackNavigatorProps<MarketNavigatorStackParamList, ScreenName.MarketList>
->;
-
-const BottomSection = ({
-  navigation,
-}: {
-  navigation: NavigationProps["navigation"];
-}) => {
+const BottomSection = ({ navigation }: { navigation: any }) => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const { requestParams, counterCurrency, refresh } = useMarketData();
@@ -119,7 +107,7 @@ const BottomSection = ({
       );
     }
     dispatch(setMarketFilterByStarredAccounts(!filterByStarredAccount));
-  }, [dispatch, filterByStarredAccount, requestParams, starredMarketCoins]);
+  }, [dispatch, filterByStarredAccount]);
 
   const timeRanges = useMemo(
     () =>
@@ -139,16 +127,13 @@ const BottomSection = ({
    * TODO: investigate this for a possible optimization with useCallback
    * */
   const onChange = useCallback(
-    (value: unknown) => {
+    (value: any) => {
       track(
         "Page Market",
-        getAnalyticsProperties({
-          ...requestParams,
-          ...(value as MarketListRequestParams),
-        }),
+        getAnalyticsProperties({ ...requestParams, ...value }),
       );
-      dispatch(setMarketRequestParams(value as MarketListRequestParams));
-      refresh(value as MarketListRequestParams);
+      dispatch(setMarketRequestParams(value));
+      refresh(value);
     },
     [dispatch, refresh, requestParams],
   );
@@ -160,7 +145,7 @@ const BottomSection = ({
   return (
     <ScrollContainer
       style={{ marginHorizontal: -overflowX, marginTop: 16 }}
-      contentContainerStyle={{ paddingHorizontal: overflowX - 6 }}
+      contentContainerStyle={{ paddingHorizontal: overflowX - Badge.mx }}
       height={40}
       horizontal
       showsHorizontalScrollIndicator={false}
@@ -283,11 +268,11 @@ const BottomSection = ({
   );
 };
 
-export default function Market({ navigation }: NavigationProps) {
+export default function Market({ navigation }: { navigation: any }) {
   const { t } = useTranslation();
   const { colors } = useTheme();
   const { locale } = useLocale();
-  const { params } = useRoute<NavigationProps["route"]>();
+  const { params }: { params: any } = useRoute();
   const initialTop100 = params?.top100;
   const { isConnected } = useNetInfo();
   const starredMarketCoins: string[] = useSelector(starredMarketCoinsSelector);
@@ -430,14 +415,7 @@ export default function Market({ navigation }: NavigationProps) {
       ) : (
         <InfiniteLoader size={30} />
       ), // shows up in case loading is ongoing
-    [
-      search,
-      t,
-      resetSearch,
-      isConnected,
-      filterByStarredAccount,
-      starredMarketCoins.length,
-    ],
+    [filterByStarredAccount, starredMarketCoins, resetSearch, search, t],
   );
 
   const onEndReached = useCallback(() => {
@@ -489,7 +467,7 @@ export default function Market({ navigation }: NavigationProps) {
 
   useFocusEffect(
     useCallback(() => {
-      setScreen && setScreen("Market");
+      setScreen("Market");
 
       return () => {
         setSource("Market");

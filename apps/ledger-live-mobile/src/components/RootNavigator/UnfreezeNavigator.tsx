@@ -10,7 +10,6 @@ import ConnectDevice from "../../screens/ConnectDevice";
 import ValidationSuccess from "../../screens/UnfreezeFunds/03-ValidationSuccess";
 import ValidationError from "../../screens/UnfreezeFunds/03-ValidationError";
 import StepHeader from "../StepHeader";
-import { UnfreezeNavigatorParamList } from "./types/UnfreezeNavigator";
 
 const totalSteps = "3";
 export default function UnfreezeNavigator() {
@@ -73,8 +72,8 @@ export default function UnfreezeNavigator() {
         options={{
           headerTitle: "",
           gestureEnabled: false,
-          headerLeft: undefined,
-          headerRight: undefined,
+          headerLeft: null,
+          headerRight: null,
         }}
       />
       <Stack.Screen
@@ -87,4 +86,4 @@ export default function UnfreezeNavigator() {
     </Stack.Navigator>
   );
 }
-const Stack = createStackNavigator<UnfreezeNavigatorParamList>();
+const Stack = createStackNavigator();

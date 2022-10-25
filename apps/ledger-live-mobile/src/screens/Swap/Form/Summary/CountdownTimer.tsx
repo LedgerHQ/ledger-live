@@ -13,7 +13,7 @@ export function CountdownTimer({
   callback: () => void;
 }) {
   const [timeLeft, setTimeLeft] = useState(
-    moment.utc(end.getTime() - new Date().getTime()).format(format),
+    moment.utc(end - new Date()).format(format),
   );
   const [finished, setFinished] = useState(false);
 
@@ -22,7 +22,7 @@ export function CountdownTimer({
       return;
     }
 
-    const seconds = end.getTime() - new Date().getTime();
+    const seconds = end - new Date();
 
     if (seconds <= 1 && callback) {
       setFinished(true);

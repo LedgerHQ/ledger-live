@@ -32,6 +32,7 @@ const ReceiveButton = ({ accountId }: { accountId: string }) => {
       }}
       type="lightSecondary"
       event="AccountReceiveASA"
+      size={14}
     />
   );
 };
@@ -89,6 +90,10 @@ const Placeholder = ({ accountId }: { accountId: string }) => {
           event="AlgorandHowAsaWork"
           onPress={howAsaWorks}
           text={<Trans i18nKey="account.tokens.algorand.howAsaWorks" />}
+          ltextProps={{
+            secondary: true,
+            style: styles.howAsaWorksText,
+          }}
         />
       </View>
       <Button

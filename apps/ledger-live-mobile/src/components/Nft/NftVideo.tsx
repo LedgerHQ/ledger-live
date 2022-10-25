@@ -1,18 +1,17 @@
 import React from "react";
 import Video, { OnLoadData, VideoProperties } from "react-native-video";
-import { View, StyleSheet, Animated, StyleProp, ViewStyle } from "react-native";
-import { ResizeMode } from "react-native-fast-image";
-import { Theme, withTheme } from "../../colors";
+import { View, StyleSheet, Animated } from "react-native";
+import { withTheme } from "../../colors";
 import Skeleton from "../Skeleton";
 import NftImage from "./NftImage";
 
 type Props = {
-  style?: StyleProp<ViewStyle>;
+  style?: any;
   status: string;
   src: string;
   srcFallback: string;
-  resizeMode?: VideoProperties["resizeMode"] & ResizeMode;
-  colors: Theme["colors"];
+  resizeMode?: VideoProperties["resizeMode"];
+  colors: any;
 };
 
 class NftVideo extends React.PureComponent<Props> {

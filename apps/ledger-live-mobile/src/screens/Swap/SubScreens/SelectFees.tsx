@@ -1,13 +1,12 @@
 import React, { useCallback } from "react";
 import { StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { SelectFeesParamList } from "../types";
+import { SelectFeesProps } from "../types";
 import SendRowsFee from "../../../components/SendRowsFee";
 import NavigationScrollView from "../../../components/NavigationScrollView";
 import { TrackScreen } from "../../../analytics";
-import { ScreenName } from "../../../const";
 
-export function SelectFees({ navigation, route }: SelectFeesParamList) {
+export function SelectFees({ navigation, route }: SelectFeesProps) {
   const { params } = route;
   const {
     swap: {
@@ -20,7 +19,7 @@ export function SelectFees({ navigation, route }: SelectFeesParamList) {
   const onSetTransaction = useCallback(
     updatedTransaction => {
       // @ts-expect-error navigation type is only partially declared
-      navigation.navigate(ScreenName.SwapForm, {
+      navigation.navigate("SwapForm", {
         ...route.params,
         transaction: updatedTransaction,
       });
@@ -36,7 +35,7 @@ export function SelectFees({ navigation, route }: SelectFeesParamList) {
         provider={params.provider}
       />
       <NavigationScrollView contentContainerStyle={styles.scrollView}>
-        {account && transaction ? (
+        {account && (
           <SendRowsFee
             setTransaction={onSetTransaction}
             account={account}
@@ -49,12 +48,12 @@ export function SelectFees({ navigation, route }: SelectFeesParamList) {
                 ...params,
                 accountId: account.id,
                 parentAccountId: parentAccount?.id,
-                currentNavigation: ScreenName.SwapForm,
+                currentNavigation: "SwapForm",
               },
             }}
             disabledStrategies={isFixed ? ["slow"] : []}
           />
-        ) : null}
+        )}
       </NavigationScrollView>
     </SafeAreaView>
   );

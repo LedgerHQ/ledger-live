@@ -1,9 +1,9 @@
+/* eslint-disable import/no-dynamic-require */
 import React from "react";
-import type { StyleProp, ViewStyle } from "react-native";
 
 import { Flex } from "@ledgerhq/native-ui";
 
-import { DeviceModelId } from "@ledgerhq/types-devices";
+import { DeviceNames } from "../../../types";
 import Animation from "../../../../../components/Animation";
 
 import pinCodeNanoXLight from "../../../assets/nanoX/pinCode/light.json";
@@ -166,22 +166,18 @@ export default function StepLottieAnimation({
   style,
 }: {
   stepId: string;
-  deviceModelId: DeviceModelId;
+  deviceModelId: DeviceNames;
   theme: "dark" | "light";
-  style?: StyleProp<ViewStyle>;
+  style?: any;
 }) {
   return (
     <Flex alignItems="center" justifyContent="center" width="100%" height={150}>
-      {
-        // @ts-expect-error Indexing that way is not well supported by TS
-        lottieAnimations?.[deviceModelId]?.[stepId]?.[theme] ? (
-          <Animation
-            // @ts-expect-error Indexing that way is not well supported by TS
-            source={lottieAnimations[deviceModelId][stepId][theme]}
-            style={[{ width: "110%" }, style]}
-          />
-        ) : null
-      }
+      {lottieAnimations?.[deviceModelId]?.[stepId]?.[theme] ? (
+        <Animation
+          source={lottieAnimations[deviceModelId][stepId][theme]}
+          style={[{ width: "110%" }, style]}
+        />
+      ) : null}
     </Flex>
   );
 }

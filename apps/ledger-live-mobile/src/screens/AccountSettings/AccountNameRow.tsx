@@ -5,10 +5,9 @@ import type { Account } from "@ledgerhq/types-live";
 import { ScreenName } from "../../const";
 import SettingsRow from "../../components/SettingsRow";
 import LText from "../../components/LText";
-import type { NavigationProps } from "./index";
 
 type Props = {
-  navigation: NavigationProps["navigation"];
+  navigation: any;
   account: Account;
 };
 
@@ -21,6 +20,7 @@ class AccountNameRow extends PureComponent<Props> {
         title={<Trans i18nKey="account.settings.accountName.title" />}
         desc={<Trans i18nKey="account.settings.accountName.desc" />}
         arrowRight
+        alignedTop
         onPress={() =>
           navigation.navigate(ScreenName.EditAccountName, {
             accountId: account.id,

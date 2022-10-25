@@ -7,14 +7,22 @@ import { useSelector } from "react-redux";
 import { accountScreenSelector } from "../../reducers/accounts";
 import LText from "../../components/LText";
 import Button from "../../components/Button";
+
 import {
+  // eslint-disable-next-line import/named
   context,
+  // eslint-disable-next-line import/named
   STATUS,
+  // eslint-disable-next-line import/named
   setCurrentCallRequestError,
+  // eslint-disable-next-line import/named
   disconnect,
+  // eslint-disable-next-line import/named
   connect,
+  // eslint-disable-next-line import/named
   approveSession,
 } from "./Provider";
+
 import Spinning from "../../components/Spinning";
 import BigSpinner from "../../icons/BigSpinner";
 import Disconnect from "../../icons/Disconnect";
@@ -27,12 +35,9 @@ import Alert from "../../components/Alert";
 import HeaderRightClose from "../../components/HeaderRightClose";
 import { TrackScreen } from "../../analytics";
 import AccountHeaderTitle from "../Account/AccountHeaderTitle";
-import { rgba, Theme } from "../../colors";
-import { StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
-import { WalletConnectNavigatorParamList } from "../../components/RootNavigator/types/WalletConnectNavigator";
-import { ScreenName } from "../../const";
+import { rgba } from "../../colors";
 
-const DottedLine = ({ colors }: { colors: Theme["colors"] }) => (
+const DottedLine = ({ colors }: { colors: any }) => (
   <View style={styles.dottedLineContainer}>
     {_.map(_.range(0, 6), i => (
       <View
@@ -48,11 +53,16 @@ const DottedLine = ({ colors }: { colors: Theme["colors"] }) => (
   </View>
 );
 
-type Props = StackNavigatorProps<
-  WalletConnectNavigatorParamList,
-  ScreenName.WalletConnectConnect
->;
-
+type Props = {
+  navigation: any;
+  route: {
+    params: RouteParams;
+  };
+};
+type RouteParams = {
+  accountId: string;
+  uri?: string;
+};
 export default function Connect({ route, navigation }: Props) {
   const { colors } = useTheme();
   const { t } = useTranslation();
@@ -111,7 +121,7 @@ export default function Connect({ route, navigation }: Props) {
         wcContext.status === STATUS.ERROR ? (
           <View style={styles.centerContainer}>
             <CrossRound size={50} color={colors.alert} />
-            <LText style={styles.error}>
+            <LText primary style={styles.error}>
               {wcContext.error?.message || "Invalid account id"}
             </LText>
           </View>
@@ -136,9 +146,11 @@ export default function Connect({ route, navigation }: Props) {
               <LText semiBold style={styles.peerName}>
                 {wcContext.dappInfo.name}
               </LText>
-              <LText style={styles.details}>{wcContext.dappInfo.url}</LText>
+              <LText primary style={styles.details}>
+                {wcContext.dappInfo.url}
+              </LText>
             </View>
-            <LText style={[styles.details, styles.infos]}>
+            <LText primary style={[styles.details, styles.infos]}>
               {t("walletconnect.disclaimer")}
             </LText>
             <View
@@ -151,11 +163,13 @@ export default function Connect({ route, navigation }: Props) {
             >
               <View style={styles.accountTitleContainer}>
                 <CurrencyIcon size={24} currency={account.currency} />
-                <LText semiBold style={styles.accountName}>
+                <LText semiBold primary style={styles.accountName}>
                   {account.name}
                 </LText>
               </View>
-              <LText style={styles.details}>{account.freshAddress}</LText>
+              <LText primary style={styles.details}>
+                {account.freshAddress}
+              </LText>
             </View>
           </>
         ) : wcContext.status === STATUS.CONNECTED ? (
@@ -186,7 +200,7 @@ export default function Connect({ route, navigation }: Props) {
               <LText semiBold style={styles.peerName}>
                 {wcContext.dappInfo?.name}
               </LText>
-              <LText style={styles.details}>
+              <LText primary style={styles.details}>
                 {wcContext.socketReady
                   ? t("walletconnect.connected")
                   : t("walletconnect.disconnected")}
@@ -224,7 +238,7 @@ export default function Connect({ route, navigation }: Props) {
                   <LText semiBold style={styles.peerName}>
                     {wcContext.dappInfo.name}
                   </LText>
-                  <LText style={styles.details}>
+                  <LText primary style={styles.details}>
                     {t("walletconnect.isconnecting")}
                   </LText>
                 </>

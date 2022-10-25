@@ -18,18 +18,14 @@ import CounterValue from "./CounterValue";
 import CurrencyIcon from "./CurrencyIcon";
 import { accountSelector } from "../reducers/accounts";
 import { selectedTimeRangeSelector } from "../reducers/settings";
-import { useBalanceHistoryWithCountervalue } from "../hooks/portfolio";
+import { useBalanceHistoryWithCountervalue } from "../actions/portfolio";
 import Delta from "./Delta";
-import { State as RootState } from "../reducers/types";
 
 type Props = {
   account: SubAccount;
-  parentAccount?: Account;
-  onSubAccountPress: (subAccount: SubAccount) => void;
-  onSubAccountLongPress: (
-    tokenAccount: TokenAccount,
-    account?: Account,
-  ) => void;
+  parentAccount: Account;
+  onSubAccountPress: (subAccount: SubAccount) => any;
+  onSubAccountLongPress: (tokenAccount: TokenAccount, account: Account) => any;
   useCounterValue?: boolean;
 };
 
@@ -67,7 +63,7 @@ function SubAccountRow({
         onPress={() => onSubAccountPress(account)}
         style={{ alignItems: "center" }}
       >
-        <Flex flexDirection={"row"} alignItems={"center"} py={6}>
+        <Flex flexDirection={"row"} alignItemps={"center"} py={6}>
           <Box justifyContent={"center"}>
             <CurrencyIcon size={32} currency={currency} />
           </Box>
@@ -112,22 +108,16 @@ function SubAccountRow({
   );
 }
 
-const AccountCv = ({ children }: { children?: React.ReactNode }) => (
+const AccountCv = ({ children }: { children: any }) => (
   <Text variant={"large"} fontWeight={"semiBold"} color={"neutral.c100"}>
     {children}
   </Text>
 );
 
-const mapStateToProps = createStructuredSelector<
-  RootState,
-  { accountId?: string; parentAccount?: Account },
-  {
-    parentAccount: Account | undefined;
-  }
->({
+const mapStateToProps = createStructuredSelector({
   parentAccount: accountSelector,
 });
 
 const SubAccountRowComponent = connect(mapStateToProps)(SubAccountRow);
 
-export default memo(SubAccountRowComponent);
+export default memo<Props>(SubAccountRowComponent);

@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Flex, Text } from "@ledgerhq/native-ui";
 import { Base as BaseButton } from "@ledgerhq/native-ui/components/cta/Button";
-import { Image, ImageSourcePropType } from "react-native";
+import { Image } from "react-native";
 import Button from "../../components/PreventDoubleClickButton";
 
 import successImage from "../../images/illustration/Light/_053.png";
@@ -17,7 +17,7 @@ type Answer = {
 type Props = {
   data: {
     question: string;
-    image: ImageSourcePropType;
+    image: any;
     answers: Answer[];
   };
   onNext: (correct: boolean) => void;

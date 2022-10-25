@@ -1,27 +1,28 @@
 // renders children if BLE is available
 // otherwise render an error
 import React, { Component } from "react";
-import { Observable, Subscription } from "rxjs";
+import { Observable } from "rxjs";
 import TransportBLE from "../../react-native-hw-transport-ble";
+// eslint-disable-next-line import/no-unresolved
 import RequiresLocationOnAndroid from "./RequiresLocationOnAndroid";
 import BluetoothDisabled from "./BluetoothDisabled";
 
 type Props = {
-  children: React.ReactNode;
+  children: any;
 };
 type State = {
-  type: string;
+  type: any;
 };
 
 class RequiresBLE extends Component<Props, State> {
   state = {
     type: "Unknown",
   };
-  sub: Subscription | undefined;
+  sub: any;
 
   componentDidMount() {
     this.sub = Observable.create(TransportBLE.observeState).subscribe({
-      next: ({ type }: { type: string }) =>
+      next: ({ type }) =>
         this.setState({
           type,
         }),
@@ -29,7 +30,7 @@ class RequiresBLE extends Component<Props, State> {
   }
 
   componentWillUnmount() {
-    this.sub?.unsubscribe();
+    this.sub.unsubscribe();
   }
 
   render() {
@@ -45,11 +46,7 @@ class RequiresBLE extends Component<Props, State> {
   }
 }
 
-export default function RequiresBLEWrapped({
-  children,
-}: {
-  children?: React.ReactNode;
-}) {
+export default function RequiresBLEWrapped({ children }: any) {
   return (
     <RequiresLocationOnAndroid>
       <RequiresBLE>{children}</RequiresBLE>

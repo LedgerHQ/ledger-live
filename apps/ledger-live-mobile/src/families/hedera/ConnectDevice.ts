@@ -1,16 +1,23 @@
 import { useSelector } from "react-redux";
+import type { AccountLike } from "@ledgerhq/types-live";
 import { accountScreenSelector } from "../../reducers/accounts";
 import { ScreenName } from "../../const";
-import { StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
-import { ReceiveFundsStackParamList } from "../../components/RootNavigator/types/ReceiveFundsNavigator";
 
-type Navigation = StackNavigatorProps<
-  ReceiveFundsStackParamList,
-  ScreenName.ReceiveConnectDevice
->;
-
-type Props = Navigation;
-
+type Props = {
+  navigation: any;
+  route: {
+    params: RouteParams;
+  };
+};
+type RouteParams = {
+  account?: AccountLike;
+  accountId: string;
+  parentId?: string;
+  title: string;
+  appName?: string;
+  onSuccess?: () => void;
+  onError?: () => void;
+};
 export default function ConnectDevice({ navigation, route }: Props) {
   const { account } = useSelector(accountScreenSelector(route));
   if (!account) return null;

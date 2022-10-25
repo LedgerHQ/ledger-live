@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { TouchableOpacity, StyleSheet, View } from "react-native";
 import { useSelector } from "react-redux";
-import type { Account, AccountLike } from "@ledgerhq/types-live";
+import type { AccountLike } from "@ledgerhq/types-live";
 import { isAccountBalanceUnconfirmed } from "@ledgerhq/live-common/account/index";
 import { Trans } from "react-i18next";
 import { useTheme } from "@react-navigation/native";
@@ -28,7 +28,7 @@ const TransactionsPendingConfirmationWarning = ({
   const { colors } = useTheme();
   let accounts = useSelector(accountsSelector);
   const [isModalOpened, setIsModalOpened] = useState(false);
-  accounts = maybeAccount ? [maybeAccount as Account] : accounts;
+  accounts = maybeAccount ? [maybeAccount] : accounts;
   return accounts.some(isAccountBalanceUnconfirmed) ? (
     <View style={styles.wrapper}>
       <TouchableOpacity

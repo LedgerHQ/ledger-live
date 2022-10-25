@@ -1,71 +1,27 @@
 import React, { useCallback } from "react";
 import { View, StyleSheet } from "react-native";
 import { useTranslation } from "react-i18next";
-import { useNavigation, useRoute, useTheme } from "@react-navigation/native";
+import { useNavigation, useTheme } from "@react-navigation/native";
 import type { Account } from "@ledgerhq/types-live";
-import { Transaction } from "@ledgerhq/live-common/generated/types";
-import type {
-  CryptoOrgAccount,
-  Transaction as CryptoOrgTransaction,
-} from "@ledgerhq/live-common/families/crypto_org/types";
+import type { Transaction } from "@ledgerhq/live-common/families/crypto_org/types";
 import LText from "../../components/LText";
 import { ScreenName } from "../../const";
 import SummaryRow from "../../screens/SendFunds/SummaryRow";
-import {
-  BaseComposite,
-  StackNavigatorProps,
-} from "../../components/RootNavigator/types/helpers";
-import { LendingEnableFlowParamsList } from "../../components/RootNavigator/types/LendingEnableFlowNavigator";
-import { LendingSupplyFlowNavigatorParamList } from "../../components/RootNavigator/types/LendingSupplyFlowNavigator";
-import { LendingWithdrawFlowNavigatorParamList } from "../../components/RootNavigator/types/LendingWithdrawFlowNavigator";
-import { SendFundsNavigatorStackParamList } from "../../components/RootNavigator/types/SendFundsNavigator";
-import { SignTransactionNavigatorParamList } from "../../components/RootNavigator/types/SignTransactionNavigator";
-import { SwapNavigatorParamList } from "../../components/RootNavigator/types/SwapNavigator";
-
-type Navigation = BaseComposite<
-  | StackNavigatorProps<
-      SendFundsNavigatorStackParamList,
-      ScreenName.SendSummary
-    >
-  | StackNavigatorProps<
-      SignTransactionNavigatorParamList,
-      ScreenName.SignTransactionSummary
-    >
-  | StackNavigatorProps<
-      LendingEnableFlowParamsList,
-      ScreenName.LendingEnableSummary
-    >
-  | StackNavigatorProps<
-      LendingSupplyFlowNavigatorParamList,
-      ScreenName.LendingSupplySummary
-    >
-  | StackNavigatorProps<
-      LendingWithdrawFlowNavigatorParamList,
-      ScreenName.LendingWithdrawSummary
-    >
-  | StackNavigatorProps<SwapNavigatorParamList, ScreenName.SwapSelectFees>
->;
 
 type Props = {
   account: Account;
   transaction: Transaction;
-} & Navigation;
-export default function CryptoSendRowsCustom(props: Props) {
-  const { account } = props;
-  const transaction = props.transaction as CryptoOrgTransaction;
+};
+export default function CryptoSendRowsCustom({ account, transaction }: Props) {
   const { colors } = useTheme();
   const { t } = useTranslation();
-  const navigation = useNavigation<Navigation["navigation"]>();
-  const route = useRoute<Navigation["route"]>();
+  const navigation = useNavigation();
   const editMemo = useCallback(() => {
     navigation.navigate(ScreenName.CryptoOrgEditMemo, {
-      ...route.params,
-      account: account as CryptoOrgAccount,
-      accountId: account.id,
-      parentId: undefined,
+      account,
       transaction,
     });
-  }, [navigation, route.params, account, transaction]);
+  }, [navigation, account, transaction]);
   return (
     <View>
       <SummaryRow title={t("send.summary.memo.title")} onPress={editMemo}>

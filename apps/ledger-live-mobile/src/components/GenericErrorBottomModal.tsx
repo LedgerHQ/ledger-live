@@ -19,7 +19,12 @@ function GenericErrorBottomModal({
   ...otherProps
 }: Props) {
   return (
-    <BottomModal {...otherProps} isOpened={!!error} onClose={onClose}>
+    <BottomModal
+      {...otherProps}
+      id="ErrorModal"
+      isOpened={!!error}
+      onClose={onClose}
+    >
       {error ? (
         <View style={styles.root}>
           <GenericErrorView

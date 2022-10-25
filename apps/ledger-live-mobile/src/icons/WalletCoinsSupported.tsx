@@ -5,17 +5,22 @@ const SvgComponent = ({
   props,
   moreAssetsBackgroundColor,
 }: {
-  props?: SvgProps;
+  props: SvgProps;
   moreAssetsBackgroundColor: string;
 }) => (
-  <Svg width={197} height={52} fill="none" {...props}>
+  <Svg
+    width={197}
+    height={52}
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+    {...props}
+  >
     <Mask
       id="a"
       style={{
         maskType: "alpha",
       }}
-      // @ts-expect-error Bindings issue - EMaskUnits.USER_SPACE_ON_USE will not work.
-      maskUnits={"userSpaceOnUse" as const}
+      maskUnits="userSpaceOnUse"
       x={1}
       y={-5}
       width={95}
@@ -40,8 +45,7 @@ const SvgComponent = ({
       style={{
         maskType: "alpha",
       }}
-      // @ts-expect-error Bindings issue - EMaskUnits.USER_SPACE_ON_USE will not work.
-      maskUnits={"userSpaceOnUse" as const}
+      maskUnits="userSpaceOnUse"
       x={41}
       y={-5}
       width={95}
@@ -70,8 +74,7 @@ const SvgComponent = ({
       style={{
         maskType: "alpha",
       }}
-      // @ts-expect-error Bindings issue - EMaskUnits.USER_SPACE_ON_USE will not work.
-      maskUnits={"userSpaceOnUse" as const}
+      maskUnits="userSpaceOnUse"
       x={81}
       y={-5}
       width={150}

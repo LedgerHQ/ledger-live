@@ -1,10 +1,4 @@
-import type { AccountBannerState } from "@ledgerhq/live-common/families/cosmos/banner";
-import { TFunction } from "react-i18next";
-
-const getAccountBannerProps = (
-  state: AccountBannerState,
-  { t }: { t: TFunction },
-) => {
+const getAccountBannerProps = (state, account, { t }) => {
   const { redelegate } = state;
 
   const description = redelegate

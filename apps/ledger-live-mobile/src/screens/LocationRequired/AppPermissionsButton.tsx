@@ -6,7 +6,7 @@ import Button from "../../components/Button";
 
 export default class AppPermissionsButton extends PureComponent<
   {
-    onRetry: () => void;
+    onRetry: (..._: Array<any>) => any;
   },
   {
     appState: string | null | undefined;

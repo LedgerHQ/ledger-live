@@ -1,21 +1,17 @@
 import React, { useCallback, useMemo } from "react";
 import { useNavigation } from "@react-navigation/native";
-// import { ActionRequired } from "@ledgerhq/live-common/exchange/swap/types";
+import { ActionRequired } from "@ledgerhq/live-common/exchange/swap/types";
 import { useTranslation } from "react-i18next";
 import { Banner } from "../Banner";
-import { StackNavigatorNavigation } from "../../../../components/RootNavigator/types/helpers";
-import { SwapNavigatorParamList } from "../../../../components/RootNavigator/types/SwapNavigator";
-import { ScreenName } from "../../../../const";
 
 interface Props {
-  required: ScreenName.SwapLogin | ScreenName.SwapKYC | ScreenName.SwapMFA;
+  required: ActionRequired;
   provider?: string;
 }
 
 export function RequirementBanner({ provider, required }: Props) {
   const { t } = useTranslation();
-  const navigation =
-    useNavigation<StackNavigatorNavigation<SwapNavigatorParamList>>();
+  const navigation = useNavigation<any>();
 
   const onPress = useCallback(() => {
     if (provider) {

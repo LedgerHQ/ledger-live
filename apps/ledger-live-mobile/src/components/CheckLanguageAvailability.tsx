@@ -58,7 +58,11 @@ export default function CheckLanguageAvailability() {
         event={`Discoverability - Prompt - ${defaultLanguage}`}
         eventProperties={{ language: defaultLanguage }}
       />
-      <BottomModal isOpened onClose={onRequestClose}>
+      <BottomModal
+        id="CheckLanguageAvailabilityModal"
+        isOpened
+        onClose={onRequestClose}
+      >
         <ModalBottomAction
           title={<Trans i18nKey="systemLanguageAvailable.title" />}
           icon={<Icons.LanguageMedium color="primary.c80" size={50} />}

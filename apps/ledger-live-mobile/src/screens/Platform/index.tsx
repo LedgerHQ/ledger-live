@@ -2,6 +2,7 @@ import React, { useCallback, useState, useEffect } from "react";
 import { StyleSheet, View } from "react-native";
 import { Trans } from "react-i18next";
 import { useNavigation } from "@react-navigation/native";
+import type { AccountLike, Account } from "@ledgerhq/types-live";
 import type { AppManifest } from "@ledgerhq/live-common/platform/types";
 import { useSelector } from "react-redux";
 import { useBanner } from "../../components/banners/hooks";
@@ -17,29 +18,29 @@ import { TAB_BAR_SAFE_HEIGHT } from "../../components/TabBar/shared";
 import TabBarSafeAreaView from "../../components/TabBar/TabBarSafeAreaView";
 import { readOnlyModeEnabledSelector } from "../../reducers/settings";
 import { useFilteredManifests } from "./shared";
-import {
-  BaseComposite,
-  StackNavigatorProps,
-} from "../../components/RootNavigator/types/helpers";
-import { DiscoverNavigatorStackParamList } from "../../components/RootNavigator/types/DiscoverNavigator";
 
-type NavigationProps = BaseComposite<
-  StackNavigatorProps<
-    DiscoverNavigatorStackParamList,
-    ScreenName.PlatformCatalog
-  >
->;
-
-type DisclaimerOpts =
-  | (DisclaimerProps & {
-      isOpened: boolean;
-    })
-  | null;
+type RouteParams = {
+  defaultAccount: AccountLike | null | undefined;
+  defaultParentAccount: Account | null | undefined;
+  platform?: string | null | undefined;
+};
+type DisclaimerOpts = $Diff<
+  DisclaimerProps,
+  {
+    isOpened: boolean;
+  }
+> | null;
 const DAPP_DISCLAIMER_ID = "PlatformAppDisclaimer";
 
-const PlatformCatalog = ({ route }: NavigationProps) => {
+const PlatformCatalog = ({
+  route,
+}: {
+  route: {
+    params: RouteParams;
+  };
+}) => {
   const { platform, ...routeParams } = route.params ?? {};
-  const navigation = useNavigation<NavigationProps["navigation"]>();
+  const navigation = useNavigation();
   const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector);
   const filteredManifests = useFilteredManifests();
   // Disclaimer State
@@ -58,17 +59,11 @@ const PlatformCatalog = ({ route }: NavigationProps) => {
 
       if (!disclaimerDisabled && !readOnlyModeEnabled) {
         setDisclaimerOpts({
-          disableDisclaimer: () => {
-            if (typeof setDisclaimerDisabled === "function")
-              setDisclaimerDisabled();
-          },
-          closeDisclaimer: () => {
-            setDisclaimerOpened(false);
-          },
+          disableDisclaimer: () => setDisclaimerDisabled(),
+          closeDisclaimer: () => setDisclaimerOpened(false),
           icon: manifest.icon,
           name: manifest.name,
           onContinue: openDApp,
-          isOpened: false,
         });
         setDisclaimerOpened(true);
       } else {

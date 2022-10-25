@@ -13,13 +13,15 @@ import { useSelector } from "react-redux";
 import { Trans } from "react-i18next";
 import invariant from "invariant";
 import { useTheme } from "@react-navigation/native";
+
+import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import { useDebounce } from "@ledgerhq/live-common/hooks/useDebounce";
 import {
   getAccountUnit,
   getMainAccount,
 } from "@ledgerhq/live-common/account/index";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
-import { Transaction as CeloTransaction } from "@ledgerhq/live-common/families/celo/types";
+
 import { accountScreenSelector } from "../../../reducers/accounts";
 import { ScreenName } from "../../../const";
 import { TrackScreen } from "../../../analytics";
@@ -32,15 +34,16 @@ import TranslatedError from "../../../components/TranslatedError";
 
 import { getFirstStatusError, hasStatusError } from "../../helpers";
 import SendRowsFee from "../SendRowsFee";
-import {
-  BaseComposite,
-  StackNavigatorProps,
-} from "../../../components/RootNavigator/types/helpers";
-import { CeloLockFlowParamList } from "./types";
 
-type Props = BaseComposite<
-  StackNavigatorProps<CeloLockFlowParamList, ScreenName.CeloLockAmount>
->;
+type Props = {
+  navigation: any;
+  route: { params: RouteParams };
+};
+
+type RouteParams = {
+  accountId: string;
+  transaction: Transaction;
+};
 
 export default function LockAmount({ navigation, route }: Props) {
   const { colors } = useTheme();
@@ -50,7 +53,7 @@ export default function LockAmount({ navigation, route }: Props) {
   const bridge = getAccountBridge(account, parentAccount);
   const mainAccount = getMainAccount(account, parentAccount);
 
-  const [maxSpendable, setMaxSpendable] = useState<BigNumber | null>(null);
+  const [maxSpendable, setMaxSpendable] = useState(null);
 
   const { transaction, setTransaction, status, bridgePending } =
     useBridgeTransaction(() => {
@@ -102,7 +105,7 @@ export default function LockAmount({ navigation, route }: Props) {
 
     setTransaction(
       bridge.updateTransaction(transaction, {
-        amount: new BigNumber(0),
+        amount: BigNumber(0),
         useAllAmount: !transaction.useAllAmount,
       }),
     );
@@ -111,7 +114,7 @@ export default function LockAmount({ navigation, route }: Props) {
   const onContinue = useCallback(() => {
     navigation.navigate(ScreenName.CeloLockSelectDevice, {
       accountId: account.id,
-      transaction: transaction as CeloTransaction,
+      transaction,
       status,
     });
   }, [account, navigation, transaction, status]);
@@ -207,12 +210,7 @@ export default function LockAmount({ navigation, route }: Props) {
                     </View>
                   ) : null}
                 </View>
-                <SendRowsFee
-                  account={account}
-                  transaction={transaction}
-                  navigation={navigation}
-                  route={route}
-                />
+                <SendRowsFee account={account} transaction={transaction} />
                 <View style={styles.continueWrapper}>
                   <Button
                     event="CeloLockAmountContinue"

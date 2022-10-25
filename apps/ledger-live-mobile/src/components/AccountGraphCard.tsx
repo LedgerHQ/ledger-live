@@ -37,6 +37,8 @@ import { useTimeRange } from "../actions/settings";
 import Delta from "./Delta";
 import CurrencyUnitValue from "./CurrencyUnitValue";
 import { Item } from "./Graph/types";
+import { useBalanceHistoryWithCountervalue } from "../actions/portfolio";
+// eslint-disable-next-line import/no-unresolved
 import getWindowDimensions from "../logic/getWindowDimensions";
 import Graph from "./Graph";
 import Touchable from "./Touchable";
@@ -45,13 +47,11 @@ import { NoCountervaluePlaceholder } from "./CounterValue";
 import { ensureContrast } from "../colors";
 import { NavigatorName, ScreenName } from "../const";
 import { track } from "../analytics";
-import { StackNavigatorNavigation } from "./RootNavigator/types/helpers";
-import { BaseNavigatorStackParamList } from "./RootNavigator/types/BaseNavigator";
 
 const { width } = getWindowDimensions();
 
 type FooterProps = {
-  renderAccountSummary?: () => ReactNode;
+  renderAccountSummary: () => ReactNode;
 };
 
 const Footer = ({ renderAccountSummary }: FooterProps) => {
@@ -76,12 +76,12 @@ type Props = {
   countervalueAvailable: boolean;
   counterValueCurrency: Currency;
   useCounterValue?: boolean;
-  renderAccountSummary?: () => ReactNode;
+  renderAccountSummary: () => ReactNode;
   onSwitchAccountCurrency: () => void;
   parentAccount?: Account;
 };
 
-const timeRangeMapped = {
+const timeRangeMapped: any = {
   "24h": "day",
   "7d": "week",
   "30d": "month",
@@ -107,12 +107,16 @@ function AccountGraphCard({
 
   const [timeRange, setTimeRange] = useTimeRange();
   const [loading, setLoading] = useState(false);
+  const { countervalueChange } = useBalanceHistoryWithCountervalue({
+    account,
+    range: timeRange,
+  });
 
   const ranges = useMemo(
     () =>
-      Object.values(timeRangeMapped).map(value => ({
-        label: t(`common:time.${value}`),
-        value,
+      Object.keys(timeRangeMapped).map(r => ({
+        label: t(`common:time.${timeRangeMapped[r]}`),
+        value: timeRangeMapped[r],
       })),
     [t],
   );
@@ -121,10 +125,12 @@ function AccountGraphCard({
 
   const activeRangeIndex = ranges.findIndex(r => r.value === timeRange);
 
+  const isAvailable = !useCounterValue || countervalueAvailable;
+
   const updateRange = useCallback(
     index => {
       if (ranges[index]) {
-        const range = ranges[index].value as PortfolioRange;
+        const range: PortfolioRange = ranges[index].value;
         track("timeframe_clicked", { timeframe: range });
         setLoading(true);
         setTimeRange(range);
@@ -138,7 +144,7 @@ function AccountGraphCard({
       graph: "Account Graph",
       timeframe: timeRange,
     });
-  }, [timeRange]);
+  });
 
   useEffect(() => {
     if (history && history.length > 0) {
@@ -146,7 +152,7 @@ function AccountGraphCard({
     }
   }, [history]);
 
-  const [hoveredItem, setHoverItem] = useState<Item | null>();
+  const [hoveredItem, setHoverItem] = useState<Item>();
 
   const mapCryptoValue = useCallback(d => d.value || 0, []);
   const mapCounterValue = useCallback(
@@ -165,6 +171,7 @@ function AccountGraphCard({
         account={account}
         countervalueAvailable={countervalueAvailable}
         onSwitchAccountCurrency={onSwitchAccountCurrency}
+        countervalueChange={countervalueChange}
         counterValueUnit={counterValueCurrency.units[0]}
         useCounterValue={useCounterValue}
         cryptoCurrencyUnit={getAccountUnit(account)}
@@ -182,8 +189,10 @@ function AccountGraphCard({
       >
         {!loading ? (
           <Transitions.Fade duration={400} status="entering">
+            {/** @ts-expect-error import js issue */}
             <Graph
               isInteractive
+              isLoading={!isAvailable}
               height={120}
               width={width}
               color={graphColor}
@@ -242,7 +251,7 @@ const GraphCardHeader = ({
     },
     {
       unit: counterValueUnit,
-      value: (item as { countervalue: number }).countervalue,
+      value: item.countervalue,
       joinFragmentsSeparator: "",
     },
   ];
@@ -253,8 +262,7 @@ const GraphCardHeader = ({
   }
   const isToken = parentAccount && parentAccount.name !== undefined;
 
-  const navigation =
-    useNavigation<StackNavigatorNavigation<BaseNavigatorStackParamList>>();
+  const navigation = useNavigation();
 
   const openReceive = useCallback(() => {
     navigation.navigate(NavigatorName.ReceiveFunds, {
@@ -265,7 +273,7 @@ const GraphCardHeader = ({
         currency,
       },
     });
-  }, [account.id, currency, navigation, parentAccount?.id]);
+  }, [account.id, currency, navigation]);
 
   return (
     <Flex mx={6}>
@@ -331,9 +339,7 @@ const GraphCardHeader = ({
           px={6}
           mt={4}
         >
-          {isToken
-            ? parentAccount.freshAddress
-            : (account as Account).freshAddress}
+          {isToken ? parentAccount.freshAddress : account.freshAddress}
         </Tag>
       </Touchable>
     </Flex>

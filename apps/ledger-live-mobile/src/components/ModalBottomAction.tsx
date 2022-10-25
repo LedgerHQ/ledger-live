@@ -2,11 +2,11 @@ import React, { Component } from "react";
 import { Flex, Text } from "@ledgerhq/native-ui";
 
 export default class ModalBottomAction extends Component<{
-  icon?: React.ReactNode;
-  title?: React.ReactNode;
+  icon?: any;
+  title?: any;
   uppercase?: boolean;
-  description?: React.ReactNode;
-  footer: React.ReactNode;
+  description?: any;
+  footer: any;
   shouldWrapDesc?: boolean;
 }> {
   render() {

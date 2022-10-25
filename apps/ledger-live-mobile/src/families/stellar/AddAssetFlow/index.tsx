@@ -15,7 +15,6 @@ import ConnectDevice from "../../../screens/ConnectDevice";
 import Validation from "./03-Validation";
 import ValidationError from "./03-ValidationError";
 import ValidationSuccess from "./03-ValidationSuccess";
-import { StellarAddAssetFlowParamList } from "./types";
 
 function AddAssetFlow() {
   const { t } = useTranslation();
@@ -97,8 +96,8 @@ function AddAssetFlow() {
               })}
             />
           ),
-          headerLeft: undefined,
-          headerRight: undefined,
+          headerLeft: null,
+          headerRight: null,
           gestureEnabled: false,
         }}
       />
@@ -126,4 +125,4 @@ const options = {
   headerShown: false,
 };
 export { AddAssetFlow as component, options };
-const Stack = createStackNavigator<StellarAddAssetFlowParamList>();
+const Stack = createStackNavigator();

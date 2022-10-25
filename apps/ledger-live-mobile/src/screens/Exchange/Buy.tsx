@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { View, StyleSheet } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import SafeAreaView from "react-native-safe-area-view";
 import { useTheme } from "@react-navigation/native";
 import {
   currenciesByMarketcap,
@@ -11,27 +11,29 @@ import type {
   CryptoCurrency,
   TokenCurrency,
 } from "@ledgerhq/types-cryptoassets";
-import { RampCatalogEntry } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/types";
 import extraStatusBarPadding from "../../logic/extraStatusBarPadding";
 import TrackScreen from "../../analytics/TrackScreen";
 import BigSpinner from "../../icons/BigSpinner";
 import { useRampCatalogCurrencies } from "./hooks";
 import SelectAccountCurrency from "./SelectAccountCurrency";
-import { StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
-import { ExchangeNavigatorParamList } from "../../components/RootNavigator/types/ExchangeNavigator";
-import { ScreenName } from "../../const";
 
-type Props = StackNavigatorProps<
-  ExchangeNavigatorParamList,
-  ScreenName.ExchangeBuy
->;
-
+type Props = {
+  navigation: any;
+  route: {
+    params: {
+      defaultAccountId?: string;
+      defaultCurrencyId?: string;
+      defaultTicker?: string;
+      currency?: string; // Used for the deeplink only
+    };
+  };
+};
 type State = {
   sortedCurrencies: Array<TokenCurrency | CryptoCurrency>;
   isLoading: boolean;
 };
 // To avoid recreating a ref on each render and triggering hooks
-const emptyArray: RampCatalogEntry[] = [];
+const emptyArray = [];
 export default function OnRamp({ route }: Props) {
   const [currencyState, setCurrencyState] = useState<State>({
     sortedCurrencies: [],

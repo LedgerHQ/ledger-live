@@ -47,7 +47,7 @@ export interface BaseTextProps
   bracket?: boolean;
   textTransform?: TextStyle["textTransform"];
   uppercase?: boolean;
-  children?: React.ReactNode;
+  children: React.ReactNode;
 }
 
 const Base = baseStyled.Text.attrs((p: BaseTextProps) => ({

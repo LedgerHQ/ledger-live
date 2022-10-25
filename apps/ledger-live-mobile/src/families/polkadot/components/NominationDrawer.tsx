@@ -8,6 +8,7 @@ import type { AccountLike } from "@ledgerhq/types-live";
 import { useTheme } from "@react-navigation/native";
 import DelegatingContainer from "../../tezos/DelegatingContainer";
 import { rgba } from "../../../colors";
+// eslint-disable-next-line import/no-unresolved
 import getWindowDimensions from "../../../logic/getWindowDimensions";
 import BottomModal from "../../../components/BottomModal";
 import Circle from "../../../components/Circle";
@@ -41,7 +42,12 @@ export default function NominationDrawer({
   const color = getCurrencyColor(currency);
   const iconWidth = normalize(64);
   return (
-    <BottomModal style={styles.modal} isOpened={isOpen} onClose={onClose}>
+    <BottomModal
+      id="InfoModal"
+      style={styles.modal}
+      isOpened={isOpen}
+      onClose={onClose}
+    >
       <View style={styles.root}>
         {isNominated ? (
           <DelegatingContainer

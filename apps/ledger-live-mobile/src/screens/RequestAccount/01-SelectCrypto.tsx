@@ -1,10 +1,8 @@
 import React, { useCallback } from "react";
 import { Trans } from "react-i18next";
 import { StyleSheet, View, FlatList, SafeAreaView } from "react-native";
-import type {
-  CryptoOrTokenCurrency,
-  Currency,
-} from "@ledgerhq/types-cryptoassets";
+import type { CryptoCurrency, Currency } from "@ledgerhq/types-cryptoassets";
+import type { AccountLike } from "@ledgerhq/types-live";
 import { useCurrenciesByMarketcap } from "@ledgerhq/live-common/currencies/index";
 import { useTheme } from "@react-navigation/native";
 import { ScreenName } from "../../const";
@@ -13,19 +11,22 @@ import FilteredSearchBar from "../../components/FilteredSearchBar";
 import KeyboardView from "../../components/KeyboardView";
 import CurrencyRow from "../../components/CurrencyRow";
 import LText from "../../components/LText";
-import type { StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
-import type { RequestAccountNavigatorParamList } from "../../components/RootNavigator/types/RequestAccountNavigator";
 
 const SEARCH_KEYS = ["name", "ticker"];
+type Props = {
+  devMode: boolean;
+  navigation: any;
+  route: {
+    params: RouteParams;
+  };
+};
+type RouteParams = {
+  currencies: Currency[];
+  allowAddAccount?: boolean;
+  accounts: AccountLike[];
+};
 
-type Navigation = StackNavigatorProps<
-  RequestAccountNavigatorParamList,
-  ScreenName.RequestAccountsSelectCrypto
->;
-
-type Props = Navigation;
-
-const keyExtractor = (currency: CryptoOrTokenCurrency) => currency.id;
+const keyExtractor = currency => currency.id;
 
 const renderEmptyList = () => (
   <View style={styles.emptySearch}>
@@ -43,7 +44,7 @@ export default function RequestAccountsSelectCrypto({
   const { currencies } = route.params;
   const sortedCryptoCurrencies = useCurrenciesByMarketcap(currencies);
   const onPressCurrency = useCallback(
-    (currency: Currency) => {
+    (currency: CryptoCurrency) => {
       navigation.navigate(ScreenName.RequestAccountsSelectAccount, {
         ...route.params,
         currency,

@@ -8,7 +8,7 @@ const options = {
   // "react-native",
   // "react-native-reanimated",
   // "expo",
-  // "expo-asset",
+  // "expo-assets",
   // "expo-file-system",
   // "expo-font",
   // "expo-modules-core",

@@ -7,7 +7,6 @@ import styles from "../../navigation/styles";
 import { ScreenName } from "../../const";
 import PlatformStartExchange from "../../screens/Platform/exchange/StartExchange";
 import PlatformCompleteExchange from "../../screens/Platform/exchange/CompleteExchange";
-import { PlatformExchangeNavigatorParamList } from "./types/PlatformExchangeNavigator";
 
 export default function PlatformExchangeNavigator() {
   const { t } = useTranslation();
@@ -41,4 +40,4 @@ export default function PlatformExchangeNavigator() {
   );
 }
 
-const Stack = createStackNavigator<PlatformExchangeNavigatorParamList>();
+const Stack = createStackNavigator();

@@ -1,6 +1,6 @@
 import React, { memo } from "react";
 import { View, StyleSheet } from "react-native";
-import Icon from "react-native-vector-icons/Feather";
+import Icon from "react-native-vector-icons/dist/Feather";
 import { useTheme } from "@react-navigation/native";
 import LText from "./LText";
 import Button from "./Button";

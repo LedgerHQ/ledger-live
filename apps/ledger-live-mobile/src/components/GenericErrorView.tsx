@@ -15,7 +15,7 @@ type Props = {
   // sometimes we want to "hide" the technical error into a category
   // for instance, for Genuine check we want to express "Genuine check failed" because "<actual error>"
   // in such case, the outerError is GenuineCheckFailed and the actual error is still error
-  outerError?: Error | null;
+  outerError?: Error;
   withDescription?: boolean;
   withIcon?: boolean;
   hasExportLogButton?: boolean;

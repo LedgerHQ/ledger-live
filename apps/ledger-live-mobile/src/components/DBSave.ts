@@ -2,10 +2,7 @@ import { useRef, useEffect, useMemo } from "react";
 import identity from "lodash/identity";
 import throttleFn from "lodash/throttle";
 import { useSelector } from "react-redux";
-import { Maybe } from "../types/helpers";
-import { State } from "../reducers/types";
-
-type MaybeState = Maybe<State>;
+import type { State } from "../reducers";
 
 type Props<Data, Stats> = {
   throttle: number;
@@ -19,7 +16,7 @@ export default function useDBSaveEffect<D, S>({
   save,
   getChangesStats,
 }: Props<D, S>) {
-  const state: MaybeState = useSelector(identity);
+  const state: State = useSelector(identity);
   const lastSavedState = useRef(state);
   // we keep an updated version of current props in "latestProps" ref
   const latestProps = useRef({
@@ -34,13 +31,13 @@ export default function useDBSaveEffect<D, S>({
       // nb it does not prevent race condition here. save must be idempotent and atomic
       throttleFn(async () => {
         const { lense, save, state, getChangesStats } = latestProps.current;
-        if (lastSavedState?.current && state) {
-          const changedStats = getChangesStats(lastSavedState.current, state); // we compare last saved with latest state
-          if (!changedStats) return; // if it's falsy, it means there is no changes
+        const changedStats = getChangesStats(lastSavedState.current, state); // we compare last saved with latest state
 
-          await save(lense(state), changedStats); // we save it for real
-          lastSavedState.current = state; // for the next round, we will be able to compare with latest successful state
-        }
+        if (!changedStats) return; // if it's falsy, it means there is no changes
+
+        await save(lense(state), changedStats); // we save it for real
+
+        lastSavedState.current = state; // for the next round, we will be able to compare with latest successful state
       }, throttle),
     [throttle],
   );
@@ -56,7 +53,7 @@ export default function useDBSaveEffect<D, S>({
     checkForSave();
   }, [lense, save, state, checkForSave, getChangesStats]);
 }
-const flushes: Array<() => void> = [];
+const flushes = [];
 export const flushAll = () => Promise.all(flushes.map(flush => flush()));
 
 function useFlushMechanism({
@@ -67,7 +64,13 @@ function useFlushMechanism({
   cancel: () => void;
 }) {
   const cancelRef = useRef(cancel);
-  useEffect(() => () => cancelRef.current(), []);
+  useEffect(
+    () =>
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+      () =>
+        cancelRef.current(),
+    [cancelRef],
+  );
   useEffect(() => {
     flushes.push(flush);
     return () => {

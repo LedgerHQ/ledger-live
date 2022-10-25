@@ -16,9 +16,11 @@ type Props = {
   app: App;
   state: State;
   dispatch: (_: Action) => void;
+  isInstalledView: boolean;
   setAppInstallWithDependencies: (_: { app: App; dependencies: App[] }) => void;
   setAppUninstallWithDependencies: (_: { dependents: App[]; app: App }) => void;
-  setStorageWarning: (value: string | null) => void;
+  setStorageWarning: () => void;
+  managerTabs: any;
   optimisticState: State;
 };
 
@@ -54,6 +56,7 @@ const AppRow = ({
   app,
   state,
   dispatch,
+  isInstalledView,
   setAppInstallWithDependencies,
   setAppUninstallWithDependencies,
   setStorageWarning,
@@ -131,6 +134,7 @@ const AppRow = ({
         dispatch={dispatch}
         notEnoughMemoryToInstall={notEnoughMemoryToInstall}
         isInstalled={!!isInstalled}
+        isInstalledView={isInstalledView}
         setAppInstallWithDependencies={setAppInstallWithDependencies}
         setAppUninstallWithDependencies={setAppUninstallWithDependencies}
         storageWarning={onSizePress}

@@ -30,7 +30,7 @@ export function useBiometricAuth({ disabled, onSuccess, onError }: Props) {
         }
         pending.current = false;
       })
-      .catch((e: Error) => {
+      .catch(e => {
         onError(e);
       });
   }, [onError, onSuccess, t]);

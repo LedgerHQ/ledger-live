@@ -17,6 +17,7 @@ function compile() {
     ...config.options,
     noEmit: true,
   });
+  program.type;
 
   console.log(
     `⏳ - Running typescript type checker on ${config.fileNames.length} files…`,

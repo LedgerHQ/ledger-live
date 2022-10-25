@@ -8,7 +8,7 @@ import accountModel from "../../../logic/accountModel";
 import { saveAccounts } from "../../../db";
 import { useReboot } from "../../../context/Reboot";
 
-async function injectMockAccountsInDB(count: number) {
+async function injectMockAccountsInDB(count) {
   await saveAccounts({
     active: Array(count)
       .fill(null)

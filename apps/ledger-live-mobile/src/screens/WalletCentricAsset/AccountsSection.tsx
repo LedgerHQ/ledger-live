@@ -8,17 +8,8 @@ import AccountRow from "../Accounts/AccountRow";
 import { withDiscreetMode } from "../../context/DiscreetModeContext";
 import { NavigatorName, ScreenName } from "../../const";
 import { track } from "../../analytics";
-import { AccountsNavigatorParamList } from "../../components/RootNavigator/types/AccountsNavigator";
-import {
-  BaseComposite,
-  StackNavigatorProps,
-} from "../../components/RootNavigator/types/helpers";
 
 const NB_MAX_ACCOUNTS_TO_DISPLAY = 3;
-
-type Navigation = BaseComposite<
-  StackNavigatorProps<AccountsNavigatorParamList, ScreenName.Asset>
->;
 
 type ListProps = {
   accounts: Account[] | TokenAccount[];
@@ -31,7 +22,7 @@ const AccountsSection = ({
   currencyId,
   currencyTicker,
 }: ListProps) => {
-  const navigation = useNavigation<Navigation["navigation"]>();
+  const navigation = useNavigation();
   const { t } = useTranslation();
 
   const accountsToDisplay = useMemo(
@@ -48,7 +39,7 @@ const AccountsSection = ({
         isLast={index === accountsToDisplay.length - 1}
       />
     ),
-    [accountsToDisplay.length, navigation],
+    [navigation],
   );
 
   const goToAccountsScreen = useCallback(() => {

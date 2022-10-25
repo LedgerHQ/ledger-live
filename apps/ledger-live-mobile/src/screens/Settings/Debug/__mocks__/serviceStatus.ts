@@ -1,8 +1,8 @@
-import {
-  Incident,
+import type {
   ServiceStatusApi,
   ServiceStatusSummary,
-} from "@ledgerhq/live-common/notifications/ServiceStatusProvider/types";
+  Incident,
+} from "@ledgerhq/live-common/notifications/AnnouncementProvider/types";
 
 const statuses = {
   page: {
@@ -554,7 +554,7 @@ const statuses = {
       only_show_if_degraded: false,
     },
   ],
-  incidents: [] as Incident[],
+  incidents: [],
   scheduled_maintenances: [],
   status: {
     indicator: "none",
@@ -586,9 +586,6 @@ const mockedIncidents: Incident[] = [
     updated_at: "2021-02-22T17:58:18.792+02:00",
     components: [
       {
-        // FIXME: Is typescript right?
-        // @ts-expect-error id should be defined according to typescript?
-        id: undefined,
         name: "Bitcoin - Btc",
       },
     ],
@@ -640,9 +637,6 @@ const mockedIncidents: Incident[] = [
     updated_at: "2021-02-22T17:58:18.792+02:00",
     components: [
       {
-        // FIXME: Is typescript right?
-        // @ts-expect-error id should be defined according to typescript?
-        id: undefined,
         name: "Ethereum - Eth",
       },
     ],

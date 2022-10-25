@@ -74,9 +74,9 @@ const announcementsPool: RawAnnouncement[] = [
     currencies: ["bitcoin"],
   },
 ];
-const announcements = ([] as RawAnnouncement[]).concat(announcementsPool);
+const announcements: RawAnnouncement[] = [].concat(announcementsPool);
 const rng = new Prando(getEnv("MOCK"));
-export const addMockAnnouncement = (params?: Record<string, unknown>) => {
+export const addMockAnnouncement = (params?: any) => {
   const now = new Date();
   const expiryDate = new Date(now.getTime() + 2 * 60 * 1000);
   const newAnnouncement = {

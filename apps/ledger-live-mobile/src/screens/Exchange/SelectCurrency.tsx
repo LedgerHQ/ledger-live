@@ -1,14 +1,14 @@
 import React, { useCallback } from "react";
 import { Trans } from "react-i18next";
 import { StyleSheet, View, FlatList } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import SafeAreaView from "react-native-safe-area-view";
 import type {
   CryptoCurrency,
   TokenCurrency,
 } from "@ledgerhq/types-cryptoassets";
 import { useCurrenciesByMarketcap } from "@ledgerhq/live-common/currencies/index";
 import { useRampCatalog } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/index";
-import { CompositeScreenProps, useTheme } from "@react-navigation/native";
+import { useTheme } from "@react-navigation/native";
 import { track } from "../../analytics/segment";
 import { TrackScreen } from "../../analytics";
 import FilteredSearchBar from "../../components/FilteredSearchBar";
@@ -17,22 +17,24 @@ import CurrencyRow from "../../components/CurrencyRow";
 import LText from "../../components/LText";
 import { NavigatorName, ScreenName } from "../../const";
 import { useRampCatalogCurrencies } from "./hooks";
-import { StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
-import { ExchangeStackNavigatorParamList } from "../../components/RootNavigator/types/ExchangeStackNavigator";
-import { BaseNavigatorStackParamList } from "../../components/RootNavigator/types/BaseNavigator";
-
-type Navigation = CompositeScreenProps<
-  StackNavigatorProps<
-    ExchangeStackNavigatorParamList,
-    ScreenName.ExchangeSelectCurrency
-  >,
-  StackNavigatorProps<BaseNavigatorStackParamList>
->;
 
 const SEARCH_KEYS = ["name", "ticker"];
-type Props = Navigation;
+const forceInset = {
+  bottom: "always",
+};
+type Props = {
+  devMode: boolean;
+  navigation: any;
+  route: {
+    params?: {
+      currency?: string;
+      mode: "buy" | "sell";
+      onCurrencyChange: (_: CryptoCurrency | TokenCurrency) => void;
+    };
+  };
+};
 
-const keyExtractor = (currency: CryptoCurrency | TokenCurrency) => currency.id;
+const keyExtractor = currency => currency.id;
 
 const renderEmptyList = () => (
   <View style={styles.emptySearch}>
@@ -44,7 +46,7 @@ const renderEmptyList = () => (
 
 export default function ExchangeSelectCrypto({ navigation, route }: Props) {
   const { colors } = useTheme();
-  const { params } = route;
+  const { params = {} } = route;
   const {
     currency: initialCurrencySelected,
     mode = "buy",
@@ -52,7 +54,7 @@ export default function ExchangeSelectCrypto({ navigation, route }: Props) {
   } = params;
   const rampCatalog = useRampCatalog();
   const cryptoCurrencies = useRampCatalogCurrencies(
-    mode === "buy" ? rampCatalog!.value!.onRamp : rampCatalog!.value!.offRamp,
+    mode === "buy" ? rampCatalog.value.onRamp : rampCatalog.value.offRamp,
   );
   const sortedCryptoCurrencies = useCurrenciesByMarketcap(cryptoCurrencies);
   const onPressCurrency = useCallback(
@@ -98,7 +100,7 @@ export default function ExchangeSelectCrypto({ navigation, route }: Props) {
     [onPressCurrency, onPressToken],
   );
 
-  const renderList = (items: (CryptoCurrency | TokenCurrency)[]) => (
+  const renderList = items => (
     <FlatList
       contentContainerStyle={styles.list}
       data={items}
@@ -119,6 +121,7 @@ export default function ExchangeSelectCrypto({ navigation, route }: Props) {
           backgroundColor: colors.background,
         },
       ]}
+      forceInset={forceInset}
     >
       <TrackScreen category="Exchange" name="SelectCrypto" />
       <KeyboardView style={styles.keybaordContainer}>

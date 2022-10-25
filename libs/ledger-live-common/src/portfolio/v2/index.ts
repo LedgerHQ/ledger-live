@@ -172,9 +172,7 @@ const defaultGetPortfolioOptions = {
   flattenSourceAccounts: true,
 };
 
-export type GetPortfolioOptionsType = {
-  flattenSourceAccounts?: boolean;
-};
+export type GetPortfolioOptionsType = typeof defaultGetPortfolioOptions;
 
 /**
  * calculate the total balance history for all accounts in a reference fiat unit
@@ -183,7 +181,7 @@ export type GetPortfolioOptionsType = {
  * @memberof account
  */
 export function getPortfolio(
-  topAccounts: AccountLike[],
+  topAccounts: Account[],
   range: PortfolioRange,
   cvState: CounterValuesState,
   cvCurrency: Currency,

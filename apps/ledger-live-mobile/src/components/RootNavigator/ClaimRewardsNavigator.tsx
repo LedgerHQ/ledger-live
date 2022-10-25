@@ -9,7 +9,6 @@ import ConnectDevice from "../../screens/ConnectDevice";
 import ValidationSuccess from "../../screens/ClaimRewards/02-ValidationSuccess";
 import ValidationError from "../../screens/ClaimRewards/02-ValidationError";
 import StepHeader from "../StepHeader";
-import type { ClaimRewardsNavigatorParamList } from "./types/ClaimRewardsNavigator";
 
 const totalSteps = "2";
 export default function ClaimRewardsNavigator() {
@@ -57,6 +56,8 @@ export default function ClaimRewardsNavigator() {
         options={{
           headerTitle: "",
           gestureEnabled: false,
+          headerLeft: null,
+          headerRight: null,
         }}
       />
       <Stack.Screen
@@ -69,4 +70,4 @@ export default function ClaimRewardsNavigator() {
     </Stack.Navigator>
   );
 }
-const Stack = createStackNavigator<ClaimRewardsNavigatorParamList>();
+const Stack = createStackNavigator();

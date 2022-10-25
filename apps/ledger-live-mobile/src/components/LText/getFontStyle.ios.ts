@@ -1,13 +1,9 @@
 import { StyleSheet } from "react-native";
 import type { Opts, Res } from ".";
 
-const getFontStyle = ({
-  bold,
-  semiBold,
-  monospace,
-}: Partial<Opts> = {}): Res => {
+const getFontStyle = ({ bold, semiBold, monospace }: Opts = {}): Res => {
   const fontFamily = monospace ? "Menlo" : "Inter";
-  let fontWeight: Res["fontWeight"];
+  let fontWeight;
 
   if (semiBold) {
     fontWeight = "600";
@@ -23,9 +19,9 @@ const getFontStyle = ({
   };
 };
 
-const cache: Record<string, Res> = StyleSheet.create({});
+const cache = StyleSheet.create({});
 
-const cachedGetFontStyle = (opts: Partial<Opts> = {}): Res => {
+const cachedGetFontStyle = (opts: Opts = {}): Res => {
   const r = getFontStyle(opts);
   const key = `${r.fontFamily}_${r.fontWeight}`;
 

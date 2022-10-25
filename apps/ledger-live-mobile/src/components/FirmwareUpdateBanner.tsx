@@ -21,7 +21,7 @@ import useLatestFirmware from "../hooks/useLatestFirmware";
 import { isFirmwareUpdateVersionSupported } from "../logic/firmwareUpdate";
 
 const FirmwareUpdateBanner = () => {
-  const lastSeenDevice: DeviceModelInfo | undefined | null = useSelector(
+  const lastSeenDevice: DeviceModelInfo | null = useSelector(
     lastSeenDeviceSelector,
   );
   const lastConnectedDevice = useSelector(lastConnectedDeviceSelector);
@@ -35,8 +35,7 @@ const FirmwareUpdateBanner = () => {
   const { t } = useTranslation();
 
   const route = useRoute();
-  const navigation =
-    useNavigation<StackNavigationProp<Record<string, object | undefined>>>();
+  const navigation = useNavigation<StackNavigationProp<any>>();
 
   const onExperimentalFirmwareUpdate = useCallback(() => {
     // if we're already in the manager page, only update the params
@@ -50,7 +49,7 @@ const FirmwareUpdateBanner = () => {
     }
 
     setShowDrawer(false);
-  }, [navigation, route.name]);
+  }, [navigation]);
 
   const latestFirmware = useLatestFirmware(lastSeenDevice?.deviceInfo);
   const showBanner = Boolean(latestFirmware);

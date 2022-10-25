@@ -1,27 +1,11 @@
 import { useCallback, useMemo } from "react";
-import { CompositeScreenProps, useNavigation } from "@react-navigation/native";
+import { useNavigation } from "@react-navigation/native";
 import { useRemoteLiveAppContext } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
 import { filterPlatformApps } from "@ledgerhq/live-common/platform/filters";
 import { getPlatformVersion } from "@ledgerhq/live-common/platform/version";
-import { findCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
-import { AppManifest } from "@ledgerhq/live-common/platform/types";
 import { NavigatorName, ScreenName } from "../const";
-import {
-  BaseComposite,
-  StackNavigatorProps,
-} from "../components/RootNavigator/types/helpers";
-import { MainNavigatorParamList } from "../components/RootNavigator/types/MainNavigator";
-import { ManagerNavigatorStackParamList } from "../components/RootNavigator/types/ManagerNavigator";
 
-type Screens =
-  | ScreenName.GeneralSettings
-  | ScreenName.AccountsSettings
-  | ScreenName.AboutSettings
-  | ScreenName.HelpSettings
-  | ScreenName.DeveloperSettings
-  | ScreenName.SettingsScreen;
-
-function getSettingsScreen(pathname: string): Screens {
+function getSettingsScreen(pathname: string) {
   const secondPath = pathname.replace(/(^\/+|\/+$)/g, "");
   let screen;
 
@@ -54,23 +38,18 @@ function getSettingsScreen(pathname: string): Screens {
       screen = ScreenName.SettingsScreen;
   }
 
-  return screen as Screens;
+  return screen;
 }
 
-type Navigation = BaseComposite<
-  CompositeScreenProps<
-    StackNavigatorProps<ManagerNavigatorStackParamList>,
-    StackNavigatorProps<MainNavigatorParamList>
-  >
->;
-const emptyObject: AppManifest[] = [];
+// To avoid recreating a ref on each render and triggering hooks
+const emptyObject = {};
 export function useDeepLinkHandler() {
-  const { navigate } = useNavigation<Navigation["navigation"]>();
+  const { navigate } = useNavigation();
   const { state } = useRemoteLiveAppContext();
   const manifests = state?.value?.liveAppByIndex || emptyObject;
   const filteredManifests = useMemo(() => {
     const branches = ["stable", "soon"];
-    return filterPlatformApps([...(manifests as AppManifest[])], {
+    return filterPlatformApps(Array.from(manifests.values()), {
       version: getPlatformVersion(),
       platform: "mobile",
       branches,
@@ -86,13 +65,10 @@ export function useDeepLinkHandler() {
       switch (hostname) {
         case "accounts":
           if (currency) {
-            const c = findCryptoCurrencyById(currency);
-            if (c) {
-              navigate(NavigatorName.Accounts, {
-                screen: ScreenName.Asset,
-                params: { currency: c },
-              });
-            }
+            navigate(NavigatorName.Accounts, {
+              screen: ScreenName.Asset,
+              params: { currency },
+            });
           } else navigate(NavigatorName.Accounts);
           break;
 
@@ -140,15 +116,11 @@ export function useDeepLinkHandler() {
           });
           break;
 
-        case "settings": {
-          const screen = getSettingsScreen(pathname);
-          if (screen) {
-            navigate(NavigatorName.Settings, {
-              screen,
-            });
-          }
+        case "settings":
+          navigate(NavigatorName.Settings, {
+            screen: getSettingsScreen(pathname),
+          });
           break;
-        }
 
         case "discover": {
           const dapp =
@@ -159,6 +131,7 @@ export function useDeepLinkHandler() {
               ? {
                   platform: dapp.id,
                   name: dapp.name,
+                  // $FlowFixMe Nope I want query to be spread last. Sry Flow.
                   ...query,
                 }
               : query,
@@ -186,7 +159,7 @@ export function useDeepLinkHandler() {
 
         case "portfolio":
         default:
-          navigate(NavigatorName.Portfolio, {
+          navigate(NavigatorName.Main, {
             screen: ScreenName.Portfolio,
           });
           break;

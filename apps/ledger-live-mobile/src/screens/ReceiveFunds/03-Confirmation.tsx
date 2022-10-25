@@ -4,11 +4,6 @@ import { useDispatch, useSelector } from "react-redux";
 import QRCode from "react-native-qrcode-svg";
 import { useTranslation, Trans } from "react-i18next";
 import type { Account, TokenAccount, AccountLike } from "@ledgerhq/types-live";
-import type {
-  CryptoCurrency,
-  CryptoOrTokenCurrency,
-  TokenCurrency,
-} from "@ledgerhq/types-cryptoassets";
 import {
   makeEmptyTokenAccount,
   getMainAccount,
@@ -18,6 +13,9 @@ import {
 import { useTheme } from "styled-components/native";
 import { Flex, Text, Icons, Button, Notification } from "@ledgerhq/native-ui";
 import { useRoute } from "@react-navigation/native";
+// eslint-disable-next-line import/no-unresolved
+import { DeviceModelId } from "@ledgerhq/devices/lib/";
+import { Currency } from "@ledgerhq/types-cryptoassets";
 import getWindowDimensions from "../../logic/getWindowDimensions";
 import { accountScreenSelector } from "../../reducers/accounts";
 import CurrencyIcon from "../../components/CurrencyIcon";
@@ -30,35 +28,38 @@ import { ScreenName } from "../../const";
 import { track, TrackScreen } from "../../analytics";
 import PreventNativeBack from "../../components/PreventNativeBack";
 import byFamily from "../../generated/Confirmation";
-import { ReceiveFundsStackParamList } from "../../components/RootNavigator/types/ReceiveFundsNavigator";
-import {
-  BaseComposite,
-  StackNavigatorProps,
-} from "../../components/RootNavigator/types/helpers";
-
-type ScreenProps = BaseComposite<
-  StackNavigatorProps<
-    ReceiveFundsStackParamList,
-    ScreenName.ReceiveConfirmation | ScreenName.ReceiveVerificationConfirmation
-  >
->;
 
 type Props = {
   account?: TokenAccount | Account;
   parentAccount?: Account;
-  readOnlyModeEnabled?: boolean;
-} & ScreenProps;
+  navigation: any;
+  route: { params: RouteParams };
+  readOnlyModeEnabled: boolean;
+};
+
+type RouteParams = {
+  account?: AccountLike;
+  accountId: string;
+  parentId?: string;
+  modelId: DeviceModelId;
+  wired: boolean;
+  device?: Device;
+  currency?: Currency;
+  createTokenAccount?: boolean;
+  onSuccess?: (_?: string) => void;
+  onError?: () => void;
+};
 
 export default function ReceiveConfirmation({ navigation }: Props) {
-  const route = useRoute<ScreenProps["route"]>();
+  const route = useRoute();
   const { account, parentAccount } = useSelector(accountScreenSelector(route));
 
   return account ? (
     <ReceiveConfirmationInner
       navigation={navigation}
       route={route}
-      account={account as Account | TokenAccount}
-      parentAccount={parentAccount ?? undefined}
+      account={account}
+      parentAccount={parentAccount}
     />
   ) : null;
 }
@@ -71,9 +72,9 @@ function ReceiveConfirmationInner({
 }: Props) {
   const { colors } = useTheme();
   const { t } = useTranslation();
-  const verified = route.params?.verified ?? false;
+  const verified = route.params?.verified;
   const [isModalOpened, setIsModalOpened] = useState(true);
-  const [hasAddedTokenAccount, setHasAddedTokenAccount] = useState(false);
+  const [hasAddedTokenAccount, setHasAddedTokenAccount] = useState();
   const [isToastDisplayed, setIsToastDisplayed] = useState(false);
   const [isVerifiedToastDisplayed, setIsVerifiedToastDisplayed] =
     useState(verified);
@@ -120,14 +121,12 @@ function ReceiveConfirmationInner({
       if (
         !newMainAccount.subAccounts ||
         !newMainAccount.subAccounts.find(
-          acc =>
-            (acc as TokenAccount)?.token?.id ===
-            (currency as CryptoOrTokenCurrency).id,
+          (acc: TokenAccount) => acc?.token?.id === currency.id,
         )
       ) {
         const emptyTokenAccount = makeEmptyTokenAccount(
-          newMainAccount as Account,
-          currency as TokenCurrency,
+          newMainAccount,
+          currency,
         );
         newMainAccount.subAccounts = [
           ...(newMainAccount.subAccounts || []),
@@ -137,8 +136,8 @@ function ReceiveConfirmationInner({
         // @TODO create a new action for adding a single account at a time instead of replacing
         dispatch(
           replaceAccounts({
-            scannedAccounts: [newMainAccount as Account],
-            selectedIds: [(newMainAccount as Account).id],
+            scannedAccounts: [newMainAccount],
+            selectedIds: [newMainAccount.id],
             renamings: {},
           }),
         );
@@ -156,16 +155,16 @@ function ReceiveConfirmationInner({
 
   useEffect(() => {
     navigation.setOptions({
-      headerTitle: getAccountName(account as AccountLike),
+      headerTitle: getAccountName(account),
     });
   }, [colors, navigation, account]);
 
   useEffect(() => {
     setIsVerifiedToastDisplayed(verified);
-    if (verified && currency) {
+    if (verified) {
       track("Verification Success", { currency: currency.name });
     }
-  }, [verified, currency]);
+  }, [verified, currency.name]);
 
   const onShare = useCallback(() => {
     track("button_clicked", {
@@ -185,19 +184,9 @@ function ReceiveConfirmationInner({
   if (!account || !currency || !mainAccount) return null;
 
   // check for coin specific UI
-  if (Object.keys(byFamily).includes((currency as CryptoCurrency).family)) {
-    const CustomConfirmation =
-      byFamily[(currency as CryptoCurrency).family as keyof typeof byFamily];
-    if (CustomConfirmation) {
-      return (
-        <CustomConfirmation
-          account={mainAccount || account}
-          parentAccount={mainAccount}
-          {...{ navigation, route }}
-        />
-      );
-    }
-  }
+  const CustomConfirmation = byFamily[currency.family];
+  if (CustomConfirmation)
+    return <CustomConfirmation {...{ navigation, route }} />;
 
   return (
     <Flex flex={1} mb={9}>
@@ -288,8 +277,8 @@ function ReceiveConfirmationInner({
                 currency={currency}
                 color={colors.constant.white}
                 bg={
-                  (currency as CryptoCurrency)?.color ||
-                  (currency as TokenCurrency).parentCurrency?.color ||
+                  currency?.color ||
+                  currency.parentCurrency?.color ||
                   colors.constant.black
                 }
                 size={48}

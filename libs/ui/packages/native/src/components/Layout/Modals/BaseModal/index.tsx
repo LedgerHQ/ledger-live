@@ -22,8 +22,8 @@ export type BaseModalProps = {
   preventBackdropClick?: boolean;
   Icon?: IconOrElementType;
   iconColor?: string;
-  title?: React.ReactNode;
-  description?: React.ReactNode;
+  title?: string;
+  description?: string;
   subtitle?: string;
   children?: React.ReactNode;
   noCloseButton?: boolean;

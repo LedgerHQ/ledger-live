@@ -48,12 +48,13 @@ export default function SettingsRow({
   desc?: ReactNode;
   selected?: boolean;
   arrowRight?: boolean;
-  iconLeft?: React.ReactNode;
+  iconLeft?: any;
   centeredIcon?: boolean;
   children?: ReactNode;
   noTextDesc?: boolean;
   event?: string;
-  eventProperties?: Record<string, unknown>;
+  // eslint-disable-next-line @typescript-eslint/ban-types
+  eventProperties?: Object;
   compact?: boolean;
   label?: string;
 }) {
@@ -63,7 +64,7 @@ export default function SettingsRow({
       alignItems={"center"}
       style={titleContainerStyle}
     >
-      <Flex flexDirection={"row"} alignItems={"center"}>
+      <Box flexDirection={"row"} alignItems={"center"}>
         <Text
           variant={"large"}
           fontWeight={"semiBold"}
@@ -73,7 +74,7 @@ export default function SettingsRow({
           {title}
         </Text>
         {label ? <Tag ml={3}>{label}</Tag> : null}
-      </Flex>
+      </Box>
       {subtitle && (
         <Text
           variant={"body"}
@@ -105,12 +106,9 @@ export default function SettingsRow({
       compact={compact}
     >
       {iconLeft && (
-        <Flex
-          paddingRight={6}
-          justifyContent={centeredIcon ? "center" : undefined}
-        >
+        <Box paddingRight={6} justifyContent={centeredIcon && "center"}>
           {iconLeft}
-        </Flex>
+        </Box>
       )}
       <Box flexShrink={1} paddingRight={6} marginRight={"auto"}>
         {title$}

@@ -1,5 +1,5 @@
 import React, { memo } from "react";
-import { View, StyleSheet, ViewStyle, StyleProp } from "react-native";
+import { View, StyleSheet } from "react-native";
 import { Unit } from "@ledgerhq/types-cryptoassets";
 import { PortfolioRange, ValueChange } from "@ledgerhq/types-live";
 import { Text } from "@ledgerhq/native-ui";
@@ -16,7 +16,7 @@ type Props = {
   percent?: boolean;
   unit?: Unit;
   range?: PortfolioRange;
-  style?: StyleProp<ViewStyle>;
+  style?: any;
   /** whether to still render something for a 0% variation */
   show0Delta?: boolean;
   /** whether to show a placeholder in case the percent value is not valid */

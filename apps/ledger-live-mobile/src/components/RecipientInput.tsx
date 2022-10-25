@@ -5,6 +5,7 @@ import { useTranslation } from "react-i18next";
 import { TextInput as BaseTextInput } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import styled from "styled-components/native";
+
 import TextInput, { Props as TextInputProps } from "./TextInput";
 
 const PasteButton = styled(TouchableOpacity).attrs(() => ({

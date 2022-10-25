@@ -47,14 +47,16 @@ const ValidatorRow = ({
           >
             {validator.name || validator.validatorAddress}
           </Text>
-          <Text
-            fontWeight="semiBold"
-            numberOfLines={1}
-            style={styles.overdelegated}
-          >
-            <Trans i18nKey="cosmos.delegation.commission" />{" "}
-            {validator.commission * 100} %
-          </Text>
+          {true ? (
+            <Text
+              fontWeight="semiBold"
+              numberOfLines={1}
+              style={styles.overdelegated}
+            >
+              <Trans i18nKey="cosmos.delegation.commission" />{" "}
+              {validator.commission * 100} %
+            </Text>
+          ) : null}
         </View>
         <Text
           fontWeight="semiBold"

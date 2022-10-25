@@ -4,8 +4,8 @@ import { useTranslation } from "react-i18next";
 import { Language, DeviceInfo } from "@ledgerhq/types-live";
 import { useAvailableLanguagesForDevice } from "@ledgerhq/live-common/manager/hooks";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
-import DeviceLanguageSelection from "./DeviceLanguageSelection";
 import BottomModal from "../../../components/BottomModal";
+import DeviceLanguageSelection from "./DeviceLanguageSelection";
 import ChangeDeviceLanguageActionModal from "../../../components/ChangeDeviceLanguageActionModal";
 import { track } from "../../../analytics";
 
@@ -69,7 +69,7 @@ const DeviceLanguage: React.FC<Props> = ({
   const refreshDeviceLanguage = useCallback(() => {
     track("Page Manager LanguageInstalled", { selectedLanguage });
     onLanguageChange();
-  }, [onLanguageChange, selectedLanguage]);
+  }, [selectedLanguage]);
 
   return (
     <>

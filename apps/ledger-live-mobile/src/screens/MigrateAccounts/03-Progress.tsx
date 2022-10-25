@@ -5,11 +5,10 @@ import type { ScanAccountEvent, Account } from "@ledgerhq/types-live";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { Trans } from "react-i18next";
 import { StyleSheet, View } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import SafeAreaView from "react-native-safe-area-view";
 import { useDispatch, useSelector } from "react-redux";
 import { reduce } from "rxjs/operators";
-import { CompositeScreenProps, useTheme } from "@react-navigation/native";
-import { Subscription } from "rxjs";
+import { useTheme } from "@react-navigation/native";
 import { setAccounts } from "../../actions/accounts";
 import { ScreenName } from "../../const";
 import Button from "../../components/Button";
@@ -23,39 +22,31 @@ import {
   migratableAccountsSelector,
 } from "../../reducers/accounts";
 import { blacklistedTokenIdsSelector } from "../../reducers/settings";
-import type { State } from "../../reducers/types";
-import type { MigrateAccountsNavigatorParamList } from "../../components/RootNavigator/types/MigrateAccountsFlowNavigator";
-import { BaseNavigatorStackParamList } from "../../components/RootNavigator/types/BaseNavigator";
-import {
-  StackNavigatorNavigation,
-  StackNavigatorProps,
-} from "../../components/RootNavigator/types/helpers";
 
-type Props = CompositeScreenProps<
-  StackNavigatorProps<
-    MigrateAccountsNavigatorParamList,
-    ScreenName.MigrateAccountsProgress
-  >,
-  StackNavigatorProps<BaseNavigatorStackParamList>
->;
-
+const forceInset = {
+  bottom: "always",
+};
+type Props = {
+  navigation: any;
+  route: any;
+};
 export default function Progress({ navigation, route }: Props) {
   const { colors } = useTheme();
   const accounts = useSelector(accountsSelector);
   const blacklistedTokenIds = useSelector(blacklistedTokenIdsSelector);
   const migratableAccounts = useSelector(migratableAccountsSelector);
-  const currencyIds = useSelector<State, string[]>(state =>
+  const currencyIds = useSelector(state =>
     migratableAccountsSelector(state)
-      .reduce<string[]>(
+      .reduce(
         (c, a) => (c.includes(a.currency.id) ? c : [...c, a.currency.id]),
         [],
       )
       .sort(),
   );
   const dispatch = useDispatch();
-  const [status, setStatus] = useState<"done" | "pending" | "error">("pending");
+  const [status, setStatus] = useState("pending");
   const [error, setError] = useState(null);
-  const scanSubscription = useRef<Subscription | null>(null);
+  const scanSubscription = useRef(null);
   const prevAccountCount = useRef(migratableAccounts.length);
   const prevCurrencyIds = useRef(currencyIds);
   const { currency, device } = route.params || {};
@@ -89,9 +80,7 @@ export default function Progress({ navigation, route }: Props) {
         });
       }
     } else {
-      navigation
-        .getParent<StackNavigatorNavigation<BaseNavigatorStackParamList>>()
-        .pop();
+      navigation.getParent().pop();
     }
   }, [
     navigation,
@@ -148,6 +137,7 @@ export default function Progress({ navigation, route }: Props) {
   }, [startScanAccountsDevice, unsub]);
   return (
     <SafeAreaView
+      forceInset={forceInset}
       style={[
         styles.root,
         {

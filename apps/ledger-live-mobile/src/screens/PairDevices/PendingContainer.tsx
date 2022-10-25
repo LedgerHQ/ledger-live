@@ -13,7 +13,7 @@ export const PendingSpinner = () => {
   );
 };
 
-class PendingContainer extends PureComponent<{ children: React.ReactNode }> {
+class PendingContainer extends PureComponent<any> {
   render() {
     const { children } = this.props;
     return (

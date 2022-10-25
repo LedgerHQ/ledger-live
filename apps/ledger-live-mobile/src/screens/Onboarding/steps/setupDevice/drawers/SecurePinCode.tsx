@@ -40,6 +40,7 @@ const OnboardingSetupDeviceInformation = () => {
             title: t(item),
             bullet: <Icons.CheckAloneMedium size={20} color="success.c100" />,
           }))}
+          itemSeparatorProps={{ mb: 7 }}
         />
         <Flex my={8} borderBottomColor="neutral.c40" borderBottomWidth={1} />
         <List
@@ -47,6 +48,7 @@ const OnboardingSetupDeviceInformation = () => {
             title: t(item),
             bullet: <Icons.CloseMedium size={20} color="error.c100" />,
           }))}
+          itemSeparatorProps={{ mb: 7 }}
         />
       </ScrollListContainer>
       <Button m={6} type="main" size="large" onPress={navigation.goBack}>

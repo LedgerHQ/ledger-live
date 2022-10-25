@@ -1,65 +1,85 @@
 import { handleActions } from "redux-actions";
-import type { Action, ReducerMap } from "redux-actions";
 import { createSelector } from "reselect";
 import { NetworkDown } from "@ledgerhq/errors";
-import type { AppState, State } from "./types";
-
-import type {
-  AppStateAddBackgroundEventPayload,
-  AppStateIsConnectedPayload,
-  AppStatePayload,
-  AppStateSetHasConnectedDevicePayload,
-  AppStateSetModalLockPayload,
-} from "../actions/types";
-import { AppStateActionTypes } from "../actions/types";
+import { DeviceInfo } from "@ledgerhq/types-live";
+import type { State } from ".";
 
 export type AsyncState = {
   isConnected: boolean | null;
 };
 
-export const INITIAL_STATE: AppState = {
+export type FwUpdateBackgroundEvent =
+  | {
+      type: "confirmPin";
+    }
+  | {
+      type: "downloadingUpdate";
+      progress?: number;
+    }
+  | {
+      type: "confirmUpdate";
+    }
+  | {
+      type: "flashingMcu";
+      progress?: number;
+      installing?: string | null;
+    }
+  | {
+      type: "firmwareUpdated";
+      updatedDeviceInfo?: DeviceInfo;
+    }
+  | {
+      type: "error";
+      error: any;
+    }
+  | {
+      type: "log";
+      message: string;
+    };
+
+export type AppState = {
+  isConnected: boolean | null;
+  hasConnectedDevice: boolean;
+  modalLock: boolean;
+  backgroundEvents: Array<FwUpdateBackgroundEvent>;
+};
+
+const initialState: AppState = {
   isConnected: true,
   hasConnectedDevice: false, // NB for this current session, have we done a device action with a device.
   modalLock: false,
   backgroundEvents: [],
 };
 
-const handlers: ReducerMap<AppState, AppStatePayload> = {
-  [AppStateActionTypes.SYNC_IS_CONNECTED]: (state, action) => ({
+const handlers: any = {
+  SYNC_IS_CONNECTED: (
+    state: AppState,
+    { isConnected }: { isConnected: boolean | null },
+  ) => ({
     ...state,
-    isConnected: (action as Action<AppStateIsConnectedPayload>).payload
-      .isConnected,
+    isConnected,
   }),
-
-  [AppStateActionTypes.HAS_CONNECTED_DEVICE]: (state, action) => ({
+  HAS_CONNECTED_DEVICE: (
+    state: AppState,
+    { hasConnectedDevice }: { hasConnectedDevice: boolean },
+  ) => ({ ...state, hasConnectedDevice }),
+  SET_MODAL_LOCK: (state: AppState, { modalLock }: { modalLock: boolean }) => ({
     ...state,
-    hasConnectedDevice: (action as Action<AppStateSetHasConnectedDevicePayload>)
-      .payload.hasConnectedDevice,
+    modalLock,
   }),
-
-  [AppStateActionTypes.SET_MODAL_LOCK]: (state, action) => ({
+  QUEUE_BACKGROUND_EVENT: (state: AppState, { event }: any) => ({
     ...state,
-    modalLock: (action as Action<AppStateSetModalLockPayload>).payload
-      .modalLock,
+    backgroundEvents: [...state.backgroundEvents, event],
   }),
-
-  [AppStateActionTypes.QUEUE_BACKGROUND_EVENT]: (state, action) => ({
-    ...state,
-    backgroundEvents: [
-      ...state.backgroundEvents,
-      (action as Action<AppStateAddBackgroundEventPayload>).payload.event,
-    ],
-  }),
-
-  [AppStateActionTypes.DEQUEUE_BACKGROUND_EVENT]: (state: AppState) => {
+  DEQUEUE_BACKGROUND_EVENT: (state: AppState) => {
+    // eslint-disable-next-line no-unused-vars, @typescript-eslint/no-unused-vars
     const [_, ...tail] = state.backgroundEvents;
     return {
       ...state,
       backgroundEvents: tail,
     };
   },
-
-  [AppStateActionTypes.CLEAR_BACKGROUND_EVENTS]: (state: AppState) => ({
+  CLEAR_BACKGROUND_EVENTS: (state: AppState) => ({
     ...state,
     backgroundEvents: [],
   }),
@@ -80,12 +100,10 @@ export const nextBackgroundEventSelector = (state: State) =>
 
 const globalNetworkDown = new NetworkDown();
 
+// $FlowFixMe
 export const networkErrorSelector = createSelector(
   isConnectedSelector,
-  (isConnected: boolean | null) => (!isConnected ? globalNetworkDown : null),
+  (isConnected: boolean) => (!isConnected ? globalNetworkDown : null),
 );
 
-export default handleActions<AppState, AppStatePayload>(
-  handlers,
-  INITIAL_STATE,
-);
+export default handleActions(handlers, initialState);

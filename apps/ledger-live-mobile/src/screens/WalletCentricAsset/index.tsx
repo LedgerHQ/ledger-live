@@ -1,5 +1,5 @@
 import React, { useMemo, useState, useCallback, useEffect } from "react";
-import { FlatList, LayoutChangeEvent, ListRenderItemInfo } from "react-native";
+import { FlatList, LayoutChangeEvent } from "react-native";
 import Animated, {
   useAnimatedScrollHandler,
   useSharedValue,
@@ -10,10 +10,13 @@ import { Box, Flex } from "@ledgerhq/native-ui";
 import { getCurrencyColor } from "@ledgerhq/live-common/currencies/index";
 import { isAccountEmpty } from "@ledgerhq/live-common/account/helpers";
 import { useTheme } from "styled-components/native";
-import { CryptoCurrency, Currency } from "@ledgerhq/types-cryptoassets";
+import {
+  CryptoCurrency,
+  Currency,
+  TokenCurrency,
+} from "@ledgerhq/types-cryptoassets";
 import { useNavigation } from "@react-navigation/native";
 import { useSingleCoinMarketData } from "@ledgerhq/live-common/market/MarketDataProvider";
-import { Account, TokenAccount } from "@ledgerhq/types-live";
 import accountSyncRefreshControl from "../../components/accountSyncRefreshControl";
 import { withDiscreetMode } from "../../context/DiscreetModeContext";
 import TabBarSafeAreaView, {
@@ -25,23 +28,27 @@ import SectionTitle from "../WalletCentricSections/SectionTitle";
 import OperationsHistorySection from "../WalletCentricSections/OperationsHistory";
 import MarketPriceSection from "../WalletCentricSections/MarketPrice";
 import AccountsSection from "./AccountsSection";
-import { NavigatorName, ScreenName } from "../../const";
+import { NavigatorName } from "../../const";
 import EmptyAccountCard from "../Account/EmptyAccountCard";
 import AssetCentricGraphCard from "../../components/AssetCentricGraphCard";
 import CurrencyBackgroundGradient from "../../components/CurrencyBackgroundGradient";
 import Header from "./Header";
-import { usePortfolio } from "../../hooks/portfolio";
+import { usePortfolio } from "../../actions/portfolio";
 import {
   counterValueCurrencySelector,
   countervalueFirstSelector,
 } from "../../reducers/settings";
 import { track, TrackScreen } from "../../analytics";
 import { FabAssetActions } from "../../components/FabActions/actionsList/asset";
-import { AccountsNavigatorParamList } from "../../components/RootNavigator/types/AccountsNavigator";
-import {
-  BaseComposite,
-  StackNavigatorProps,
-} from "../../components/RootNavigator/types/helpers";
+
+type RouteParams = {
+  currency: CryptoCurrency | TokenCurrency;
+};
+
+type Props = {
+  navigation: any;
+  route: { params: RouteParams };
+};
 
 // @FIXME workarround for main tokens
 const tokenIDToMarketID = {
@@ -53,14 +60,10 @@ const AnimatedFlatListWithRefreshControl = Animated.createAnimatedComponent(
   accountSyncRefreshControl(FlatList),
 );
 
-type NavigationProps = BaseComposite<
-  StackNavigatorProps<AccountsNavigatorParamList, ScreenName.Asset>
->;
-
-const AssetScreen = ({ route }: NavigationProps) => {
+const AssetScreen = ({ route }: Props) => {
   const { t } = useTranslation();
   const { colors } = useTheme();
-  const navigation = useNavigation<NavigationProps["navigation"]>();
+  const navigation = useNavigation();
   const useCounterValue = useSelector(countervalueFirstSelector);
   const { currency } = route?.params;
   const isCryptoCurrency = currency?.type === "CryptoCurrency";
@@ -87,11 +90,7 @@ const AssetScreen = ({ route }: NavigationProps) => {
 
   useEffect(() => {
     selectCurrency(
-      tokenIDToMarketID[currency.id as keyof typeof tokenIDToMarketID] ||
-        currency.id,
-      // FIXME: are we sure about this?
-      // Typescript is less then happy with casting a Currency to another complete different type CurrencyData…
-      // @ts-expect-error This is what happens when trying to fake pinguins with koalas.
+      tokenIDToMarketID[currency.id] || currency.id,
       currency,
       "24h",
     );
@@ -125,14 +124,10 @@ const AssetScreen = ({ route }: NavigationProps) => {
     });
     if (currency && currency.type === "TokenCurrency") {
       navigation.navigate(NavigatorName.AddAccounts, {
-        screen: undefined,
-        params: {
-          token: currency,
-        },
+        token: currency,
       });
     } else {
       navigation.navigate(NavigatorName.AddAccounts, {
-        screen: undefined,
         currency,
       });
     }
@@ -181,7 +176,7 @@ const AssetScreen = ({ route }: NavigationProps) => {
           onSeeAllPress={onAddAccount}
         />
         <AccountsSection
-          accounts={cryptoAccounts as Account[] | TokenAccount[]}
+          accounts={cryptoAccounts}
           currencyId={currency.id}
           currencyTicker={currency.ticker}
         />
@@ -196,7 +191,7 @@ const AssetScreen = ({ route }: NavigationProps) => {
               />
               <Flex minHeight={65}>
                 <MarketPriceSection
-                  currency={currency as CryptoCurrency}
+                  currency={currency}
                   selectedCoinData={selectedCoinData}
                   counterCurrency={counterCurrency}
                 />
@@ -244,10 +239,8 @@ const AssetScreen = ({ route }: NavigationProps) => {
         style={{ flex: 1, paddingTop: 48 }}
         contentContainerStyle={{ paddingBottom: TAB_BAR_SAFE_HEIGHT }}
         data={data}
-        renderItem={({ item }: ListRenderItemInfo<unknown>) =>
-          item as JSX.Element
-        }
-        keyExtractor={(_: unknown, index: number) => String(index)}
+        renderItem={({ item }: any) => item}
+        keyExtractor={(_: any, index: any) => String(index)}
         showsVerticalScrollIndicator={false}
         onScroll={handleScroll}
       />

@@ -1,7 +1,3 @@
-import { DeviceModelId } from "@ledgerhq/types-devices";
-import { NavigationProp } from "@react-navigation/native";
-import { TFunction } from "i18next";
-
 export type Step = {
   id: string;
   isGhost?: boolean;
@@ -12,7 +8,7 @@ export type OnboardingContextType = {
   currentStep: string;
   // list of the currently active steps
   mode: OnboardingMode;
-  deviceModelId: DeviceModelId;
+  deviceModelId: DeviceNames;
   showWelcome: boolean;
   setShowWelcome: (_: boolean) => Promise<void>;
   firstTimeOnboarding?: boolean;
@@ -29,21 +25,17 @@ export type OnboardingContextType = {
   resetCurrentStep: Noop;
 };
 export type OnboardingStepProps = OnboardingContextType & {
-  t: TFunction;
-  navigation: NavigationProp<{ [key: string]: object | unknown }>;
+  t: any;
+  navigation: any;
   next: Noop;
   prev: Noop;
 };
 export type SetOnboardingModeType = (_: OnboardingMode) => Promise<void>;
-export type SetOnboardingDeviceModelType = (_: DeviceModelId) => Promise<void>;
+export type SetOnboardingDeviceModelType = (_: DeviceNames) => Promise<void>;
 export type OnboardingContextProviderProps = {
-  children: React.ReactNode;
+  children: any;
 };
-export type OnboardingMode = "full" | "alreadyInitialized" | "restore" | "qr";
-type StepNavigateType = (
-  arg0: NavigationProp<{ [key: string]: object | unknown }>,
-  arg1: string,
-) => void;
-// Seems ok to use any for this wildcard function
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-type Noop = (...args: any[]) => void;
+type OnboardingMode = "full" | "alreadyInitialized" | "restore" | "qr";
+export type DeviceNames = "nanoS" | "nanoX" | "blue";
+type StepNavigateType = (arg0: any, arg1: any) => void;
+type Noop = (_: any) => any;

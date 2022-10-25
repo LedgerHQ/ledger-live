@@ -2,6 +2,7 @@ import React, { useCallback, useMemo } from "react";
 import { View, StyleSheet } from "react-native";
 import { useSelector } from "react-redux";
 import { Trans } from "react-i18next";
+import type { Operation } from "@ledgerhq/types-live";
 import { listTokensForCryptoCurrency } from "@ledgerhq/live-common/currencies/index";
 import { useTheme } from "@react-navigation/native";
 import { accountScreenSelector } from "../../../reducers/accounts";
@@ -9,28 +10,25 @@ import { TrackScreen } from "../../../analytics";
 import { ScreenName } from "../../../const";
 import PreventNativeBack from "../../../components/PreventNativeBack";
 import ValidateSuccess from "../../../components/ValidateSuccess";
-import type {
-  BaseComposite,
-  StackNavigatorNavigation,
-  StackNavigatorProps,
-} from "../../../components/RootNavigator/types/helpers";
-import type { StellarAddAssetFlowParamList } from "./types";
-import type { BaseNavigatorStackParamList } from "../../../components/RootNavigator/types/BaseNavigator";
 
-type Props = BaseComposite<
-  StackNavigatorProps<
-    StellarAddAssetFlowParamList,
-    ScreenName.StellarAddAssetValidationSuccess
-  >
->;
+type Props = {
+  navigation: any;
+  route: {
+    params: RouteParams;
+  };
+};
+type RouteParams = {
+  accountId: string;
+  deviceId: string;
+  transaction: any;
+  result: Operation;
+};
 export default function ValidationSuccess({ navigation, route }: Props) {
   const { colors } = useTheme();
   const { account } = useSelector(accountScreenSelector(route));
   const { transaction } = route.params;
   const onClose = useCallback(() => {
-    navigation
-      .getParent<StackNavigatorNavigation<BaseNavigatorStackParamList>>()
-      .pop();
+    navigation.getParent().pop();
   }, [navigation]);
   const goToOperationDetails = useCallback(() => {
     if (!account) return;
@@ -46,11 +44,7 @@ export default function ValidationSuccess({ navigation, route }: Props) {
       account && account.type === "Account"
         ? listTokensForCryptoCurrency(account.currency)
         : [];
-    return options.find(
-      ({ tokenType, contractAddress }) =>
-        tokenType === transaction.assetCode &&
-        contractAddress === transaction.assetIssuer,
-    );
+    return options.find(({ id }) => id === transaction.assetId);
   }, [account, transaction]);
   return (
     <View

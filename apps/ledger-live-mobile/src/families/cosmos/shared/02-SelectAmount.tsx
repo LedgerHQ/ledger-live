@@ -7,12 +7,14 @@ import {
   TouchableOpacity,
   TouchableWithoutFeedback,
   Platform,
-  KeyboardAvoidingViewProps,
 } from "react-native";
 import { Trans } from "react-i18next";
 import { useSelector } from "react-redux";
 import { BigNumber } from "bignumber.js";
-import type { CosmosAccount } from "@ledgerhq/live-common/families/cosmos/types";
+import type {
+  CosmosValidatorItem,
+  Transaction,
+} from "@ledgerhq/live-common/families/cosmos/types";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { getAccountUnit } from "@ledgerhq/live-common/account/index";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
@@ -25,50 +27,32 @@ import LText from "../../../components/LText";
 import Warning from "../../../icons/Warning";
 import Check from "../../../icons/Check";
 import KeyboardView from "../../../components/KeyboardView";
-import { ScreenName } from "../../../const";
-import type { StackNavigatorProps } from "../../../components/RootNavigator/types/helpers";
-import type { CosmosDelegationFlowParamList } from "../DelegationFlow/types";
-import type { CosmosRedelegationFlowParamList } from "../RedelegationFlow/types";
-import type { OsmosisDelegationFlowParamList } from "../../osmosis/DelegationFlow/types";
-import { OsmosisRedelegationFlowParamList } from "../../osmosis/RedelegationFlow/types";
-import { OsmosisUndelegationFlowParamList } from "../../osmosis/UndelegationFlow/types";
-import { CosmosUndelegationFlowParamList } from "../UndelegationFlow/types";
 
-type Props =
-  | StackNavigatorProps<
-      CosmosDelegationFlowParamList,
-      ScreenName.CosmosDelegationAmount
-    >
-  | StackNavigatorProps<
-      CosmosRedelegationFlowParamList,
-      | ScreenName.CosmosDefaultRedelegationAmount
-      | ScreenName.CosmosRedelegationAmount
-    >
-  | StackNavigatorProps<
-      OsmosisDelegationFlowParamList,
-      ScreenName.OsmosisDelegationAmount
-    >
-  | StackNavigatorProps<
-      OsmosisRedelegationFlowParamList,
-      ScreenName.OsmosisRedelegationAmount
-    >
-  | StackNavigatorProps<
-      OsmosisUndelegationFlowParamList,
-      ScreenName.OsmosisUndelegationAmount
-    >
-  | StackNavigatorProps<
-      CosmosUndelegationFlowParamList,
-      ScreenName.CosmosUndelegationAmount
-    >;
+type RouteParams = {
+  accountId: string;
+  transaction: Transaction;
+  validator: CosmosValidatorItem;
+  validatorSrc?: CosmosValidatorItem;
+  min?: BigNumber;
+  max?: BigNumber;
+  value?: BigNumber;
+  redelegatedBalance?: BigNumber;
+  mode: string;
+  nextScreen: string;
+};
+type Props = {
+  navigation: any;
+  route: {
+    params: RouteParams;
+  };
+};
 
 function DelegationAmount({ navigation, route }: Props) {
   const { colors } = useTheme();
   const { account } = useSelector(accountScreenSelector(route));
   const locale = useSelector(localeSelector);
   invariant(
-    account &&
-      (account as CosmosAccount).cosmosResources &&
-      route.params.transaction,
+    account && account.cosmosResources && route.params.transaction,
     "account and cosmos transaction required",
   );
   const bridge = getAccountBridge(account, undefined);
@@ -118,7 +102,6 @@ function DelegationAmount({ navigation, route }: Props) {
             validators: filteredValidators,
           },
     );
-    // @ts-expect-error navigate cannot infer the correct navigator + route
     navigation.navigate(route.params.nextScreen, {
       ...route.params,
       transaction,
@@ -138,7 +121,7 @@ function DelegationAmount({ navigation, route }: Props) {
       (route.params.transaction.mode === "redelegate" && value.eq(0)),
     [value, max, min, route.params.transaction],
   );
-  let behaviorParam: KeyboardAvoidingViewProps["behavior"] | undefined;
+  let behaviorParam;
 
   if (Platform.OS === "ios") {
     behaviorParam = "padding";

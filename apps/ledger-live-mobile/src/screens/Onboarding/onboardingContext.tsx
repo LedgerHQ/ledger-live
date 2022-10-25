@@ -5,37 +5,34 @@ import React, {
   useEffect,
 } from "react";
 import {
-  NavigationProp,
   useIsFocused,
   useNavigation,
   useRoute,
 } from "@react-navigation/native";
 import { useTranslation } from "react-i18next";
-import { DeviceModelId } from "@ledgerhq/types-devices";
 import getStep from "./steps";
 import type {
   OnboardingContextType,
   OnboardingContextProviderProps,
   SetOnboardingModeType,
   SetOnboardingDeviceModelType,
-  OnboardingMode,
 } from "./types";
 
-const INITIAL_CONTEXT = {
+const INITIAL_CONTEXT: $Shape<OnboardingContextType> = {
   // We assume onboarding always starts at this step
   // in the future we could allow to init with custom value
   currentStep: "OnboardingStepGetStarted",
   // Can be changed on the fly with `setOnboardingMode`
   // prop, passed to steps components
-  mode: "full" as OnboardingMode,
+  mode: "full",
   // whether or not should "welcome to ledger live" in first step
   showWelcome: true,
   firstTimeOnboarding: true,
-  deviceModelId: DeviceModelId.nanoX,
-} as OnboardingContextType;
+  deviceModelId: "nanoX",
+};
 
 const OnboardingContext = createContext(INITIAL_CONTEXT);
-const getStepForState = (state: OnboardingContextType) =>
+const getStepForState = state =>
   getStep(state.mode, !!state.firstTimeOnboarding);
 
 // Provide each step screen a set of props used
@@ -62,19 +59,13 @@ export class OnboardingContextProvider extends PureComponent<
 
   // Navigate to next step
   // we may want to handle onboarding finish here (e.g update settings)
-  next = (
-    navigation: NavigationProp<{ [key: string]: object | unknown }>,
-    currentStep: string,
-  ) => {
+  next = (navigation: any, currentStep: any) => {
     const steps = getStepForState(this.state);
     const i = steps.findIndex(s => s.id === currentStep) + 1;
     this.navigate(navigation, i);
   };
   // Navigate to previous step
-  prev = (
-    navigation: NavigationProp<{ [key: string]: object | unknown }>,
-    currentStep: string,
-  ) => {
+  prev = (navigation: any, currentStep: any) => {
     const steps = getStepForState(this.state);
     const i = steps.findIndex(s => s.id === currentStep) - 1;
     this.navigate(navigation, i);
@@ -116,10 +107,7 @@ export class OnboardingContextProvider extends PureComponent<
         r,
       ),
     );
-  navigate = (
-    navigation: NavigationProp<{ [key: string]: object | unknown }>,
-    index: number,
-  ) => {
+  navigate = (navigation: any, index: number) => {
     const steps = getStepForState(this.state);
     if (index === -1 || index === steps.length) return;
     const currentStep = steps[index].id;
@@ -180,8 +168,8 @@ export function useNavigationInterceptor() {
   }, [isFocused, routeName, onboardingContext]);
   return { ...onboardingContext, next, prev };
 }
-export function withOnboardingContext<T>(Comp: React.ComponentType<T>) {
-  return (props: T) => {
+export function withOnboardingContext(Comp: React.ComponentType<any>) {
+  return (props: any) => {
     const navigationInterceptor = useNavigationInterceptor();
     const { t } = useTranslation();
     return <Comp {...props} {...navigationInterceptor} t={t} />;

@@ -28,7 +28,7 @@ const SearchbarTextInput = styled(TextInput).attrs({
 export default ({ searchQuery, onQueryUpdate }: Props) => {
   const { t } = useTranslation();
   const { colors } = useTheme();
-  const textInput = useRef<TextInput>(null);
+  const textInput = useRef();
 
   const clear = useCallback(() => onQueryUpdate(""), [onQueryUpdate]);
 
@@ -42,6 +42,7 @@ export default ({ searchQuery, onQueryUpdate }: Props) => {
         onChangeText={onQueryUpdate}
         placeholder={t("manager.appList.searchApps")}
         placeholderTextColor={colors.neutral.c70}
+        onInputCleared={clear}
         value={searchQuery}
         numberOfLines={1}
         style={{ color: colors.neutral.c100 }}

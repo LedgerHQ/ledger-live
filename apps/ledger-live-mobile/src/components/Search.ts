@@ -2,20 +2,20 @@ import { PureComponent } from "react";
 import Fuse from "fuse.js";
 import type FuseType from "fuse.js";
 
-type Props<T> = {
-  items: Array<T>;
+type Props = {
+  items: Array<Record<string, any>>;
   value: string;
-  render: (_: Array<T>) => React.ReactNode;
+  render: (_: Array<Record<string, any>>) => React.ReactNode;
   renderEmptySearch: () => React.ReactNode;
-  fuseOptions?: Fuse.IFuseOptions<T>;
+  fuseOptions?: Record<string, any>;
   // if true, it will display no items when value is empty
   filterEmpty?: boolean;
 };
-type State<T> = {
-  results: T[];
+type State = {
+  results: Array<Record<string, any>>;
 };
 
-class Search<T> extends PureComponent<Props<T>, State<T>> {
+class Search extends PureComponent<Props, State> {
   static defaultProps = {
     fuseOptions: {},
     filterEmpty: false,
@@ -24,12 +24,11 @@ class Search<T> extends PureComponent<Props<T>, State<T>> {
     results: [],
   };
 
-  // eslint-disable-next-line camelcase
-  UNSAFE_componentWillMount() {
+  componentWillMount() {
     this.initFuse(this.props);
   }
 
-  componentDidUpdate(prevProps: Props<T>) {
+  componentDidUpdate(prevProps: Props) {
     if (prevProps.value !== this.props.value) {
       if (this.fuse) {
         const results = this.fuse.search(this.props.value);
@@ -42,16 +41,16 @@ class Search<T> extends PureComponent<Props<T>, State<T>> {
     }
   }
 
-  fuse: FuseType<T> | null = null;
+  fuse: FuseType<any> | null = null;
 
-  initFuse(props: Props<T>) {
+  initFuse(props: Props) {
     const { fuseOptions, items, value } = props;
-    this.fuse = new Fuse<T>(items, { ...fuseOptions });
-    const results = this.fuse.search<T>(value);
+    this.fuse = new Fuse(items, { ...fuseOptions });
+    const results = this.fuse.search(value);
     this.formatResults(results);
   }
 
-  formatResults(results: Array<Fuse.FuseResult<T>>) {
+  formatResults(results: Array<Record<string, any>>) {
     this.setState({
       results: results.map(r => r.item),
     });

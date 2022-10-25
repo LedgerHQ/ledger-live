@@ -106,12 +106,10 @@ export const urls = {
       ftx: {
         main: "https://ftx.com",
         support: "https://ftx.com/support",
-        tos: null,
       },
       ftxus: {
         main: "https://ftx.us/",
         support: "https://help.ftx.us/hc/en-us",
-        tos: null,
       },
     },
   },

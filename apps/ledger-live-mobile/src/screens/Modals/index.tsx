@@ -11,7 +11,7 @@ import useNotifications from "../../logic/notifications";
 
 const getCurrentRouteName = (
   state: NavigationState | Required<NavigationState["routes"][0]>["state"],
-): string | undefined => {
+): Routes | undefined => {
   if (state.index === undefined || state.index < 0) {
     return undefined;
   }

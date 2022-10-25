@@ -2,40 +2,43 @@ import React, { useCallback, useMemo } from "react";
 import { useTheme } from "styled-components/native";
 import { Icons } from "@ledgerhq/native-ui";
 
-import {
-  BottomTabBarProps,
-  createBottomTabNavigator,
-} from "@react-navigation/bottom-tabs";
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { useSelector } from "react-redux";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useManagerNavLockCallback } from "./CustomBlockRouterNavigator";
 import { ScreenName, NavigatorName } from "../../const";
 import { PortfolioTabIcon } from "../../screens/Portfolio";
+// eslint-disable-next-line import/no-cycle
 import Transfer, { TransferTabIcon } from "../TabBar/Transfer";
 import TabIcon from "../TabIcon";
+// eslint-disable-next-line import/no-cycle
 import MarketNavigator from "./MarketNavigator";
+// eslint-disable-next-line import/no-cycle
 import PortfolioNavigator from "./PortfolioNavigator";
 import {
   hasOrderedNanoSelector,
   readOnlyModeEnabledSelector,
 } from "../../reducers/settings";
 import ManagerNavigator, { ManagerTabIcon } from "./ManagerNavigator";
+// eslint-disable-next-line import/no-cycle
 import DiscoverNavigator from "./DiscoverNavigator";
 import customTabBar from "../TabBar/CustomTabBar";
-import { StackNavigatorProps } from "./types/helpers";
-import { MainNavigatorParamList } from "./types/MainNavigator";
-import { BaseNavigatorStackParamList } from "./types/BaseNavigator";
 
-const Tab = createBottomTabNavigator<MainNavigatorParamList>();
+const Tab = createBottomTabNavigator();
 
 // NB The default behaviour is not reset route params, leading to always having the same
 // search query or preselected tab after the first time (ie from Swap/Sell), that's why we
 // override the navigation from tabs.
 // https://github.com/react-navigation/react-navigation/issues/6674#issuecomment-562813152
 
+type RouteParams = {
+  hideTabNavigation?: boolean;
+};
 export default function MainNavigator({
   route: { params },
-}: StackNavigatorProps<BaseNavigatorStackParamList, NavigatorName.Main>) {
+}: {
+  route: { params: RouteParams };
+}) {
   const { colors } = useTheme();
   const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector);
   const hasOrderedNano = useSelector(hasOrderedNanoSelector);
@@ -46,7 +49,7 @@ export default function MainNavigator({
   const insets = useSafeAreaInsets();
   const tabBar = useMemo(
     () =>
-      ({ ...props }: BottomTabBarProps): JSX.Element =>
+      ({ ...props }) =>
         customTabBar({ ...props, colors, insets }),
     [insets, colors],
   );
@@ -55,7 +58,9 @@ export default function MainNavigator({
     callback => {
       // NB This is conditionally going to show the confirmation modal from the manager
       // in the event of having ongoing installs/uninstalls.
-      managerNavLockCallback ? managerNavLockCallback(callback) : callback();
+      managerNavLockCallback
+        ? managerNavLockCallback(() => callback)
+        : callback();
     },
     [managerNavLockCallback],
   );
@@ -89,10 +94,10 @@ export default function MainNavigator({
         options={{
           headerShown: false,
           unmountOnBlur: true,
-          tabBarIcon: props => <PortfolioTabIcon {...props} />,
+          tabBarIcon: (props: any) => <PortfolioTabIcon {...props} />,
         }}
         listeners={({ navigation }) => ({
-          tabPress: e => {
+          tabPress: (e: any) => {
             e.preventDefault();
             managerLockAwareCallback(() => {
               navigation.navigate(NavigatorName.Portfolio, {
@@ -108,7 +113,7 @@ export default function MainNavigator({
         options={{
           headerShown: false,
           unmountOnBlur: true,
-          tabBarIcon: props => (
+          tabBarIcon: (props: any) => (
             <TabIcon
               Icon={Icons.GraphGrowMedium}
               i18nKey="tabs.market"
@@ -117,7 +122,7 @@ export default function MainNavigator({
           ),
         }}
         listeners={({ navigation }) => ({
-          tabPress: e => {
+          tabPress: (e: any) => {
             e.preventDefault();
             managerLockAwareCallback(() => {
               navigation.navigate(NavigatorName.Market, {
@@ -133,7 +138,7 @@ export default function MainNavigator({
         component={Transfer}
         options={{
           headerShown: false,
-          tabBarIcon: () => <TransferTabIcon />,
+          tabBarIcon: (props: any) => <TransferTabIcon {...props} />,
         }}
       />
       <Tab.Screen
@@ -141,7 +146,7 @@ export default function MainNavigator({
         component={DiscoverNavigator}
         options={{
           headerShown: false,
-          tabBarIcon: props => (
+          tabBarIcon: (props: any) => (
             <TabIcon
               Icon={Icons.PlanetMedium}
               i18nKey="tabs.discover"
@@ -150,7 +155,7 @@ export default function MainNavigator({
           ),
         }}
         listeners={({ navigation }) => ({
-          tabPress: e => {
+          tabPress: (e: any) => {
             e.preventDefault();
             managerLockAwareCallback(() => {
               navigation.navigate(NavigatorName.Discover, {
@@ -164,11 +169,11 @@ export default function MainNavigator({
         name={NavigatorName.Manager}
         component={ManagerNavigator}
         options={{
-          tabBarIcon: props => <ManagerTabIcon {...props} />,
+          tabBarIcon: (props: any) => <ManagerTabIcon {...props} />,
           tabBarTestID: "TabBarManager",
         }}
         listeners={({ navigation }) => ({
-          tabPress: e => {
+          tabPress: (e: any) => {
             e.preventDefault();
             managerLockAwareCallback(() => {
               if (hasOrderedNano) {

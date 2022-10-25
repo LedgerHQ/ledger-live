@@ -18,6 +18,7 @@ export default function AccountSubHeaderDrawer({
   const { t } = useTranslation();
   return (
     <BottomDrawer
+      id="more-info-modal"
       isOpen={isOpen}
       onClose={onClose}
       title={t("account.subHeader.drawer.title", { family })}

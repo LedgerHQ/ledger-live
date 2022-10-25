@@ -9,13 +9,13 @@ import {
   SafeAreaView,
 } from "react-native";
 import { Trans } from "react-i18next";
-import type { Transaction } from "@ledgerhq/live-common/generated/types";
+import type { Transaction } from "@ledgerhq/live-common/families/stellar/types";
 import {
   getMainAccount,
   getAccountCurrency,
 } from "@ledgerhq/live-common/account/index";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
-import { CompositeScreenProps, useTheme } from "@react-navigation/native";
+import { useTheme } from "@react-navigation/native";
 import SummaryRow from "../../screens/SendFunds/SummaryRow";
 import LText from "../../components/LText";
 import CheckBox from "../../components/CheckBox";
@@ -25,44 +25,17 @@ import SectionSeparator from "../../components/SectionSeparator";
 import ExternalLink from "../../icons/ExternalLink";
 import { urls } from "../../config/urls";
 import { ScreenName } from "../../const";
-import type { BaseNavigatorStackParamList } from "../../components/RootNavigator/types/BaseNavigator";
-import type { StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
-import type { SendFundsNavigatorStackParamList } from "../../components/RootNavigator/types/SendFundsNavigator";
-import { LendingEnableFlowParamsList } from "../../components/RootNavigator/types/LendingEnableFlowNavigator";
-import { LendingSupplyFlowNavigatorParamList } from "../../components/RootNavigator/types/LendingSupplyFlowNavigator";
-import { LendingWithdrawFlowNavigatorParamList } from "../../components/RootNavigator/types/LendingWithdrawFlowNavigator";
-import { SignTransactionNavigatorParamList } from "../../components/RootNavigator/types/SignTransactionNavigator";
-import { SwapNavigatorParamList } from "../../components/RootNavigator/types/SwapNavigator";
 
 type Props = {
   account: AccountLike;
   transaction: Transaction;
-  parentAccount?: Account | null;
-  setTransaction: (..._: Array<Transaction>) => void;
-} & CompositeScreenProps<
-  | StackNavigatorProps<
-      SendFundsNavigatorStackParamList,
-      ScreenName.SendSummary
-    >
-  | StackNavigatorProps<
-      SignTransactionNavigatorParamList,
-      ScreenName.SignTransactionSummary
-    >
-  | StackNavigatorProps<
-      LendingEnableFlowParamsList,
-      ScreenName.LendingEnableSummary
-    >
-  | StackNavigatorProps<
-      LendingSupplyFlowNavigatorParamList,
-      ScreenName.LendingSupplySummary
-    >
-  | StackNavigatorProps<
-      LendingWithdrawFlowNavigatorParamList,
-      ScreenName.LendingWithdrawSummary
-    >
-  | StackNavigatorProps<SwapNavigatorParamList, ScreenName.SwapSelectFees>,
-  StackNavigatorProps<BaseNavigatorStackParamList>
->;
+  parentAccount: Account;
+  navigation: any;
+  route: {
+    params: any;
+  };
+  setTransaction: (..._: Array<any>) => any;
+};
 export default function StellarFeeRow({
   account,
   parentAccount,
@@ -77,9 +50,9 @@ export default function StellarFeeRow({
   }, []);
   if (transaction.family !== "stellar") return null;
   const bridge = getAccountBridge(account, parentAccount);
-  const suggestedFee = transaction.networkInfo?.fees;
+  const suggestedFee = transaction.networkInfo.fees;
   const fees = transaction.fees;
-  const isCustomFee = fees && suggestedFee ? !fees.eq(suggestedFee) : false;
+  const isCustomFee = !fees.eq(suggestedFee);
   const mainAccount = getMainAccount(account, parentAccount);
   const currency = getAccountCurrency(account);
 
@@ -107,8 +80,8 @@ export default function StellarFeeRow({
   }: {
     label: React.ReactNode;
     isSelected: boolean;
-    fee?: BigNumber | null;
-    onSelect: () => void;
+    fee: BigNumber | null;
+    onSelect: (isCustom: boolean) => void;
   }) => (
     <TouchableOpacity
       onPress={onSelect}
@@ -122,7 +95,7 @@ export default function StellarFeeRow({
     >
       <View style={[styles.feeContainer]}>
         <View style={styles.leftBox}>
-          <CheckBox isChecked={isSelected} />
+          <CheckBox style={styles.checkbox} isChecked={isSelected} />
           <LText semiBold style={styles.feeLabel}>
             {label}
           </LText>
@@ -219,5 +192,10 @@ const styles = StyleSheet.create({
     fontSize: 16,
     textTransform: "capitalize",
     marginLeft: 10,
+  },
+  checkbox: {
+    borderRadius: 24,
+    width: 20,
+    height: 20,
   },
 });

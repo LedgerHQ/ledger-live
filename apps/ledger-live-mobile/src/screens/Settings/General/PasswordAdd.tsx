@@ -1,18 +1,13 @@
 import React, { PureComponent } from "react";
-import { TFunction, withTranslation } from "react-i18next";
-import { StackNavigatorProps } from "../../../components/RootNavigator/types/helpers";
-import { PasswordAddFlowParamList } from "../../../components/RootNavigator/types/PasswordAddFlowNavigator";
+import { withTranslation } from "react-i18next";
 import { ScreenName } from "../../../const";
+import type { T } from "../../../types/common";
 import PasswordForm from "./PasswordForm";
 
-type NavigationProps = StackNavigatorProps<
-  PasswordAddFlowParamList,
-  ScreenName.PasswordAdd
->;
-
 type Props = {
-  t: TFunction;
-} & NavigationProps;
+  t: T;
+  navigation: any;
+};
 type State = {
   password: string;
 };
@@ -49,6 +44,4 @@ class PasswordAdd extends PureComponent<Props, State> {
   }
 }
 
-const m: React.ComponentType<NavigationProps> = withTranslation()(PasswordAdd);
-
-export default m;
+export default withTranslation()(PasswordAdd);

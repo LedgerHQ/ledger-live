@@ -2,8 +2,6 @@ import invariant from "invariant";
 import React from "react";
 import { StyleSheet } from "react-native";
 import { DeviceTransactionField } from "@ledgerhq/live-common/transaction/index";
-import { Transaction } from "@ledgerhq/live-common/generated/types";
-import { ExtraDeviceTransactionField } from "@ledgerhq/live-common/families/filecoin/deviceTransactionConfig";
 import LText from "../../components/LText";
 import { DataRow } from "../../components/ValidateOnDeviceDataRow";
 
@@ -19,14 +17,14 @@ const FilecoinField = ({
   transaction,
   field,
 }: {
-  transaction: Transaction;
+  transaction: any;
   field: DeviceTransactionField;
 }) => {
   invariant(transaction.family === "filecoin", "filecoin transaction");
   return (
     <DataRow label={field.label}>
       <LText semiBold style={styles.text}>
-        {(field as ExtraDeviceTransactionField).value}
+        {field.value}
       </LText>
     </DataRow>
   );

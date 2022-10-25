@@ -7,8 +7,6 @@ import { NavigatorName, ScreenName } from "../../const";
 import BottomModal, { Props as BottomModalProps } from "../BottomModal";
 import ModalChoice from "./ModalChoice";
 import { importImageFromPhoneGallery } from "./imageUtils";
-import { BaseNavigatorStackParamList } from "../RootNavigator/types/BaseNavigator";
-import { StackNavigatorNavigation } from "../RootNavigator/types/helpers";
 
 type Props = {
   isOpened?: boolean;
@@ -20,8 +18,7 @@ const CustomImageBottomModal: React.FC<Props> = props => {
   const [isLoading, setIsLoading] = useState(false);
   const { isOpened, onClose, device } = props;
   const { t } = useTranslation();
-  const navigation =
-    useNavigation<StackNavigatorNavigation<BaseNavigatorStackParamList>>();
+  const navigation = useNavigation();
   const handleUploadFromPhone = useCallback(async () => {
     try {
       setIsLoading(true);
@@ -40,7 +37,7 @@ const CustomImageBottomModal: React.FC<Props> = props => {
       console.error(error);
       navigation.navigate(NavigatorName.CustomImage, {
         screen: ScreenName.CustomImageErrorScreen,
-        params: { error: error as Error, device },
+        params: { error, device },
       });
     }
     setIsLoading(false);

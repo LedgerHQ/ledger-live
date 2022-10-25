@@ -7,6 +7,7 @@ import {
 } from "@ledgerhq/live-common/account/helpers";
 import { Trans } from "react-i18next";
 import { useTheme } from "@react-navigation/native";
+import { useSelector } from "react-redux";
 import LText from "../../../components/LText";
 import CurrencyUnitValue from "../../../components/CurrencyUnitValue";
 import CurrencyIcon from "../../../components/CurrencyIcon";
@@ -15,6 +16,7 @@ import DelegationDrawer from "../../../components/DelegationDrawer";
 import Circle from "../../../components/Circle";
 import Compound, { compoundColor } from "../../../icons/Compound";
 import { rgba } from "../../../colors";
+import { localeSelector } from "../../../reducers/settings";
 import FormatDate from "../../../components/FormatDate";
 
 type RowProps = {
@@ -32,7 +34,7 @@ export default function ClosedLoansRow({ item }: RowProps) {
   const [isOpened, setIsOpened] = useState(false);
   const onOpenDrawer = useCallback(() => setIsOpened(true), []);
   const onCloseDrawer = useCallback(() => setIsOpened(false), []);
-
+  const locale = useSelector(localeSelector);
   const data = useMemo(
     () => [
       {
@@ -80,7 +82,7 @@ export default function ClosedLoansRow({ item }: RowProps) {
         ),
       },
     ],
-    [name, token.units, totalRedeemed, interestsEarned, endDate],
+    [name, token.units, totalRedeemed, interestsEarned, endDate, locale],
   );
   return (
     <>
@@ -120,6 +122,7 @@ export default function ClosedLoansRow({ item }: RowProps) {
               currency={token}
               value={amountSupplied}
               disableRounding
+              fontSize={3}
               showCode
               alwaysShowSign={false}
             />

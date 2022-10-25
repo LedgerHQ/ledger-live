@@ -50,7 +50,7 @@ import type {
   TokenCurrency,
 } from "@ledgerhq/types-cryptoassets";
 
-export type State = {
+type State = {
   isLoading: boolean;
   requestQuitApp: boolean;
   requestOpenApp: string | null | undefined;
@@ -102,7 +102,7 @@ export type AppState = State & {
 
 export type AppRequest = {
   appName?: string;
-  currency?: CryptoCurrency | null;
+  currency?: CryptoCurrency;
   account?: Account;
   tokenCurrency?: TokenCurrency;
   dependencies?: AppRequest[];

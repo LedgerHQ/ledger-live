@@ -34,6 +34,7 @@ function MockModeRow({ reboot }: Props) {
   );
 }
 
-const m = withReboot(MockModeRow);
+// eslint-disable-next-line @typescript-eslint/ban-types
+const m: React.ComponentType<{}> = withReboot(MockModeRow);
 
-export default memo(m);
+export default memo<Props>(m);

@@ -41,7 +41,7 @@ function AppIcon({
   );
 
   const currency = currencyId && findCryptoCurrencyById(currencyId);
-  const currencyColor = (currency && getCurrencyColor(currency)) || undefined;
+  const currencyColor = currency && getCurrencyColor(currency);
   const IconComponent = currency ? getCryptoCurrencyIcon(currency) : null;
 
   return IconComponent ? (

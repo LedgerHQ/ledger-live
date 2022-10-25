@@ -1,29 +1,36 @@
 import React, { useCallback } from "react";
-import { StyleSheet, SafeAreaView } from "react-native";
+import { StyleSheet, Linking, SafeAreaView } from "react-native";
+import type { Account, AccountLike } from "@ledgerhq/types-live";
+import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { useTheme } from "@react-navigation/native";
 import { TrackScreen } from "../../../analytics";
 import ValidateError from "../../../components/ValidateError";
-import {
-  StackNavigatorNavigation,
-  StackNavigatorProps,
-} from "../../../components/RootNavigator/types/helpers";
-import { LendingEnableFlowParamsList } from "../../../components/RootNavigator/types/LendingEnableFlowNavigator";
-import { ScreenName } from "../../../const";
-import { BaseNavigatorStackParamList } from "../../../components/RootNavigator/types/BaseNavigator";
+import { urls } from "../../../config/urls";
 
-export default function ValidationError({
-  navigation,
-  route,
-}: StackNavigatorProps<
-  LendingEnableFlowParamsList,
-  ScreenName.LendingEnableValidationError
->) {
+type Props = {
+  account: AccountLike;
+  parentAccount: Account | null | undefined;
+  navigation: any;
+  route: {
+    params: RouteParams;
+  };
+};
+type RouteParams = {
+  accountId: string;
+  parentId: string;
+  deviceId: string;
+  transaction: any;
+  error: Error;
+  currency: TokenCurrency;
+};
+export default function ValidationError({ navigation, route }: Props) {
   const { colors } = useTheme();
   const onClose = useCallback(() => {
-    navigation
-      .getParent<StackNavigatorNavigation<BaseNavigatorStackParamList>>()
-      .pop();
+    navigation.getParent().pop();
   }, [navigation]);
+  const contactUs = useCallback(() => {
+    Linking.openURL(urls.contact);
+  }, []);
   const retry = useCallback(() => {
     navigation.goBack();
   }, [navigation]);
@@ -44,7 +51,12 @@ export default function ValidationError({
           currencyName: currency?.name,
         }}
       />
-      <ValidateError error={error} onRetry={retry} onClose={onClose} />
+      <ValidateError
+        error={error}
+        onRetry={retry}
+        onClose={onClose}
+        onContactUs={contactUs}
+      />
     </SafeAreaView>
   );
 }

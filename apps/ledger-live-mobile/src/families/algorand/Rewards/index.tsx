@@ -8,8 +8,7 @@ import {
 } from "@ledgerhq/live-common/account/index";
 import { Box, Button, Flex, Text } from "@ledgerhq/native-ui";
 import { InfoMedium } from "@ledgerhq/native-ui/assets/icons";
-import { AlgorandAccount } from "@ledgerhq/live-common/families/algorand/types";
-import type { AccountLike } from "@ledgerhq/types-live";
+import { Account, AccountLike } from "@ledgerhq/types-live";
 import AccountSectionLabel from "../../../components/AccountSectionLabel";
 import CurrencyUnitValue from "../../../components/CurrencyUnitValue";
 import CounterValue from "../../../components/CounterValue";
@@ -17,9 +16,10 @@ import { ScreenName, NavigatorName } from "../../../const";
 
 type Props = {
   account: AccountLike;
+  parentAccount?: Account;
 };
 
-const RewardsSection = ({ account }: { account: AlgorandAccount }) => {
+const RewardsSection = ({ account }: Props) => {
   invariant(
     account && account.algorandResources,
     "algorand resources required",
@@ -72,11 +72,11 @@ const RewardsSection = ({ account }: { account: AlgorandAccount }) => {
 };
 
 const Rewards = ({ account }: Props) => {
-  const { algorandResources } = account as AlgorandAccount;
+  const { algorandResources } = account;
 
   if (!algorandResources) return null;
 
-  return <RewardsSection account={account as AlgorandAccount} />;
+  return <RewardsSection account={account} />;
 };
 
 export default Rewards;

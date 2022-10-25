@@ -5,10 +5,9 @@ import { useTheme } from "@react-navigation/native";
 import { ScreenName } from "../../const";
 import SettingsRow from "../../components/SettingsRow";
 import LText from "../../components/LText";
-import type { NavigationProps } from "./index";
 
 type Props = {
-  navigation: NavigationProps["navigation"];
+  navigation: any;
   account: Account;
 };
 
@@ -20,6 +19,7 @@ function AccountUnitsRow({ navigation, account }: Props) {
       title={<Trans i18nKey="account.settings.unit.title" />}
       desc={<Trans i18nKey="account.settings.unit.desc" />}
       arrowRight
+      alignedTop
       onPress={() =>
         navigation.navigate(ScreenName.EditAccountUnits, {
           accountId: account.id,

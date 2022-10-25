@@ -18,4 +18,5 @@ const Header = () => {
   ) : null;
 };
 
-export default memo(Header);
+// eslint-disable-next-line @typescript-eslint/ban-types
+export default memo<{}>(Header);

@@ -3,8 +3,9 @@ import React from "react";
 import Svg, { Path } from "react-native-svg";
 
 type Props = {
-  size?: number;
-  color?: string;
+  size: number;
+  color: string;
+  strokeColor: string;
 };
 export default function Genuine({ size = 15, color }: Props) {
   const { colors } = useTheme();

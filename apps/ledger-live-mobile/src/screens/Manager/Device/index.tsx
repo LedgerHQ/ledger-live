@@ -1,11 +1,7 @@
 import React, { memo, useCallback, useMemo, useState } from "react";
 import { Trans } from "react-i18next";
 
-import {
-  State,
-  AppsDistribution,
-  Action,
-} from "@ledgerhq/live-common/apps/index";
+import { State, AppsDistribution } from "@ledgerhq/live-common/apps/index";
 import { App, DeviceInfo, idsToLanguage } from "@ledgerhq/types-live";
 
 import { Flex, Text, Button, Divider } from "@ledgerhq/native-ui";
@@ -41,7 +37,7 @@ type Props = {
   state: State;
   result: ListAppsResult;
   deviceId: string;
-  initialDeviceName?: string | null;
+  initialDeviceName: string;
   pendingInstalls: boolean;
   deviceInfo: DeviceInfo;
   device: Device;
@@ -49,7 +45,7 @@ type Props = {
     dependents: App[];
     app: App;
   }) => void;
-  dispatch: (action: Action) => void;
+  dispatch: (action: any) => void;
   appList: App[];
   onLanguageChange: () => void;
 };
@@ -164,11 +160,7 @@ const DeviceCard = ({
               <Flex mt={hasCustomImage ? 6 : 0}>
                 <DeviceLanguage
                   pendingInstalls={pendingInstalls}
-                  currentDeviceLanguage={
-                    idsToLanguage[
-                      deviceInfo.languageId as keyof typeof idsToLanguage
-                    ]
-                  }
+                  currentDeviceLanguage={idsToLanguage[deviceInfo.languageId]}
                   deviceInfo={deviceInfo}
                   device={device}
                   onLanguageChange={onLanguageChange}

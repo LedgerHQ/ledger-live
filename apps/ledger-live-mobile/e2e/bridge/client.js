@@ -1,4 +1,3 @@
-// @flow
 import { Platform } from "react-native";
 import invariant from "invariant";
 import { Subject } from "rxjs/Subject";

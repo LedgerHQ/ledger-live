@@ -1,20 +1,17 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { StyleSheet } from "react-native";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
-import type { Transaction } from "@ledgerhq/live-common/families/polkadot/types";
-import { Account, AccountLike } from "@ledgerhq/types-live";
-import { NavigationProp } from "@react-navigation/native";
 import GenericErrorBottomModal from "../../../components/GenericErrorBottomModal";
 import RetryButton from "../../../components/RetryButton";
 import CancelButton from "../../../components/CancelButton";
 
 type Props = {
-  navigation: NavigationProp<Record<string, object | undefined>>;
+  navigation: any;
   transaction?: Transaction;
-  account: AccountLike;
-  parentAccount?: Account | null;
+  account: any;
+  parentAccount: any;
   setTransaction: (_: Transaction) => void;
-  bridgeError?: Error | null;
+  bridgeError?: Error;
 };
 
 const FlowErrorBottomModal = ({

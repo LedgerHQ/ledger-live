@@ -14,6 +14,7 @@ export default function AccountOrderModal({ onClose, isOpened }: Props) {
   const { t } = useTranslation();
   return (
     <BottomDrawer
+      id="AccountOrderModal"
       onClose={onClose}
       isOpen={isOpened}
       title={t("common.sortBy")}

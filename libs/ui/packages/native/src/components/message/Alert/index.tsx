@@ -18,7 +18,7 @@ export interface AlertProps {
    * It will receive a `color: string` and a `size: number` as props.
    * */
   Icon?: IconType;
-  title?: React.ReactNode;
+  title?: string;
   showIcon?: boolean;
   children?: React.ReactNode;
   /**

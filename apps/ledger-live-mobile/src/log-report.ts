@@ -1,6 +1,7 @@
-import { listen, Log } from "@ledgerhq/logs";
+/* eslint-disable no-console */
+import { listen } from "@ledgerhq/logs";
 
-const logs: Log[] = [];
+const logs = [];
 const logLimit = 1000; // the number of latest log we want to conserve
 
 export default {

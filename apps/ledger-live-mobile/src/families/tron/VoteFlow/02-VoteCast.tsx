@@ -2,12 +2,12 @@ import invariant from "invariant";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import React, { useCallback, useState, useMemo, useEffect } from "react";
 import { View, StyleSheet, ScrollView, TouchableOpacity } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import SafeAreaView from "react-native-safe-area-view";
 import { useSelector } from "react-redux";
 import { Trans } from "react-i18next";
 import type {
   Vote,
-  TronAccount,
+  Transaction,
 } from "@ledgerhq/live-common/families/tron/types";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import {
@@ -28,18 +28,27 @@ import ArrowRight from "../../../icons/ArrowRight";
 import VoteRow from "./02-VoteRow";
 import VoteModal from "./02-VoteModal";
 import Check from "../../../icons/Check";
-import { StackNavigatorProps } from "../../../components/RootNavigator/types/helpers";
-import { TronVoteFlowParamList } from "./types";
 
-type Props = StackNavigatorProps<TronVoteFlowParamList, ScreenName.VoteCast>;
-
+const forceInset = {
+  bottom: "always",
+};
+type RouteParams = {
+  accountId: string;
+  transaction: Transaction;
+};
+type Props = {
+  navigation: any;
+  route: {
+    params: RouteParams;
+  };
+};
 export default function VoteCast({ route, navigation }: Props) {
   const { colors } = useTheme();
   const { account } = useSelector(accountScreenSelector(route));
   invariant(account, "account is required");
   invariant(account.type === "Account", "account must be a main Account");
   const bridge = getAccountBridge(account, undefined);
-  const { tronResources } = account as TronAccount;
+  const { tronResources } = account;
   invariant(tronResources, "tron resources required");
   const { tronPower } = tronResources;
   const { transaction, status, setTransaction, bridgeError, bridgePending } =
@@ -72,10 +81,7 @@ export default function VoteCast({ route, navigation }: Props) {
     () => tronPower - votes.reduce((sum, { voteCount }) => sum + voteCount, 0),
     [tronPower, votes],
   );
-  const [editVote, setEditVote] = useState<{
-    vote: Vote;
-    name: string;
-  } | null>();
+  const [editVote, setEditVote] = useState();
   const closeEditVote = useCallback(() => setEditVote(null), [setEditVote]);
   const onChange = useCallback(
     (vote: Vote) => {
@@ -158,6 +164,7 @@ export default function VoteCast({ route, navigation }: Props) {
             backgroundColor: colors.background,
           },
         ]}
+        forceInset={forceInset}
       >
         <ScrollView style={[styles.root]}>
           {formattedVotes.map((vote, i) => (

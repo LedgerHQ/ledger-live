@@ -17,14 +17,12 @@ import useIsAppInBackground from "../../../components/useIsAppInBackground";
 import InvertTheme from "../../../components/theme/InvertTheme";
 import ForceTheme from "../../../components/theme/ForceTheme";
 import Button from "../../../components/wrappedUi/Button";
-import { OnboardingNavigatorParamList } from "../../../components/RootNavigator/types/OnboardingNavigator";
-import { StackNavigatorProps } from "../../../components/RootNavigator/types/helpers";
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const source = require("../../../../assets/videos/onboarding.mp4");
 
 const absoluteStyle = {
-  position: "absolute" as const,
+  position: "absolute",
   bottom: 0,
   left: 0,
   top: 0,
@@ -35,12 +33,7 @@ const SafeFlex = styled(SafeAreaView)`
   padding-top: 24px;
 `;
 
-type NavigationProps = StackNavigatorProps<
-  OnboardingNavigatorParamList,
-  ScreenName.OnboardingWelcome
->;
-
-function OnboardingStepWelcome({ navigation }: NavigationProps) {
+function OnboardingStepWelcome({ navigation }: any) {
   const dispatch = useDispatch();
   const { t } = useTranslation();
   const [, setAccepted] = useTermsAccept();
@@ -75,7 +68,7 @@ function OnboardingStepWelcome({ navigation }: NavigationProps) {
     setAccepted();
     dispatch(setAnalytics(true));
 
-    navigation.navigate(ScreenName.OnboardingDoYouHaveALedgerDevice);
+    navigation.navigate({ name: ScreenName.OnboardingDoYouHaveALedgerDevice });
   }, [setAccepted, dispatch, navigation]);
 
   const videoMounted = !useIsAppInBackground();
@@ -122,7 +115,6 @@ function OnboardingStepWelcome({ navigation }: NavigationProps) {
           flex={1}
           overflow="hidden"
         >
-          {/* @ts-expect-error Bindings for SafeAreaView are not written properly. */}
           <SafeFlex position="absolute" top={0} right={0}>
             <InvertTheme>
               <Button

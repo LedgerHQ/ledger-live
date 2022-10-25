@@ -1,11 +1,15 @@
 import React, { useCallback, useMemo } from "react";
 import { View, StyleSheet, FlatList, SafeAreaView } from "react-native";
 import { Trans, useTranslation } from "react-i18next";
+import type { Account, AccountLike } from "@ledgerhq/types-live";
+import type {
+  CryptoCurrency,
+  TokenCurrency,
+} from "@ledgerhq/types-cryptoassets";
 import { useSelector } from "react-redux";
 import { accountWithMandatoryTokens } from "@ledgerhq/live-common/account/helpers";
-import { CompositeScreenProps, useTheme } from "@react-navigation/native";
+import { useTheme } from "@react-navigation/native";
 import { Button, Icons } from "@ledgerhq/native-ui";
-import { Account, SubAccount } from "@ledgerhq/types-live";
 import { accountsSelector } from "../../reducers/accounts";
 import { TrackScreen } from "../../analytics";
 import LText from "../../components/LText";
@@ -17,21 +21,19 @@ import type { SearchResult } from "../../helpers/formatAccountSearchResults";
 import InfoIcon from "../../icons/Info";
 import { NavigatorName, ScreenName } from "../../const";
 import { getAccountTuplesForCurrency } from "./hooks";
-import type { StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
-import { ExchangeStackNavigatorParamList } from "../../components/RootNavigator/types/ExchangeStackNavigator";
-import { BaseNavigatorStackParamList } from "../../components/RootNavigator/types/BaseNavigator";
-
-type Navigation = CompositeScreenProps<
-  StackNavigatorProps<
-    ExchangeStackNavigatorParamList,
-    ScreenName.ExchangeSelectAccount
-  >,
-  StackNavigatorProps<BaseNavigatorStackParamList>
->;
 
 const SEARCH_KEYS = ["name", "unit.code", "token.name", "token.ticker"];
-type Props = Navigation;
-
+type Props = {
+  navigation: any;
+  route: {
+    params: {
+      mode: "buy" | "sell";
+      currency: CryptoCurrency | TokenCurrency;
+      onAccountChange: (_: Account | AccountLike) => void;
+      analyticsPropertyFlow?: string;
+    };
+  };
+};
 export default function SelectAccount({ navigation, route }: Props) {
   const { colors } = useTheme();
   const {
@@ -59,22 +61,18 @@ export default function SelectAccount({ navigation, route }: Props) {
       );
 
     if (currency.type === "TokenCurrency") {
-      return filteredAccounts.map(
-        acc => acc && accountWithMandatoryTokens(acc, [currency]),
+      return filteredAccounts.map(acc =>
+        accountWithMandatoryTokens(acc, [currency]),
       );
     }
 
     return filteredAccounts;
   }, [availableAccounts, currency]);
   const allAccounts = useMemo(() => {
-    const accounts: (Account | SubAccount | null)[] = enhancedAccounts;
+    const accounts = enhancedAccounts;
 
     if (currency.type === "TokenCurrency") {
-      const subAccounts = availableAccounts
-        .map(t => {
-          return t.subAccount ? t.subAccount : null;
-        })
-        .filter(Boolean);
+      const subAccounts = availableAccounts.map(t => t.subAccount);
 
       for (let i = 0; i < subAccounts.length; i++) {
         accounts.push(subAccounts[i]);
@@ -85,7 +83,7 @@ export default function SelectAccount({ navigation, route }: Props) {
   }, [enhancedAccounts, currency.type, availableAccounts]);
   const { t } = useTranslation();
 
-  const keyExtractor = (item: SearchResult) => item.account.id;
+  const keyExtractor = item => item.account.id;
 
   const renderItem = useCallback(
     ({ item: result }: { item: SearchResult }) => {
@@ -109,17 +107,12 @@ export default function SelectAccount({ navigation, route }: Props) {
             style={styles.card}
             onPress={() => {
               onAccountChange && onAccountChange(account);
-              if (mode === "buy") {
-                navigation.navigate(NavigatorName.Exchange, {
-                  screen: ScreenName.ExchangeBuy,
-                  params: {},
-                });
-              } else {
-                navigation.navigate(NavigatorName.Exchange, {
-                  screen: ScreenName.ExchangeSell,
-                  params: {},
-                });
-              }
+              navigation.navigate(NavigatorName.Exchange, {
+                screen:
+                  mode === "buy"
+                    ? ScreenName.ExchangeBuy
+                    : ScreenName.ExchangeSell,
+              });
             }}
           />
         </View>
@@ -140,24 +133,19 @@ export default function SelectAccount({ navigation, route }: Props) {
   const onAddAccount = useCallback(() => {
     if (currency && currency.type === "TokenCurrency") {
       navigation.navigate(NavigatorName.AddAccounts, {
-        screen: ScreenName.AddAccountsTokenCurrencyDisclaimer,
-        params: {
-          token: currency,
-          analyticsPropertyFlow,
-        },
+        token: currency,
+        analyticsPropertyFlow,
       });
     } else {
       navigation.navigate(NavigatorName.AddAccounts, {
-        screen: ScreenName.AddAccountsSelectDevice,
-        params: {
-          currency,
-          analyticsPropertyFlow,
-        },
+        currency,
+        analyticsPropertyFlow,
       });
     }
   }, [analyticsPropertyFlow, currency, navigation]);
   const renderList = useCallback(
     items => {
+      // $FlowFixMe seriously WTF (60 errors just on this 😱)
       const formatedList = formatSearchResults(items, enhancedAccounts);
       return (
         <FlatList
@@ -167,6 +155,7 @@ export default function SelectAccount({ navigation, route }: Props) {
           showsVerticalScrollIndicator={false}
           ListFooterComponent={
             <Button
+              event="ExchangeStartBuyFlow"
               type="main"
               Icon={Icons.PlusMedium}
               iconPosition="left"
@@ -208,7 +197,11 @@ export default function SelectAccount({ navigation, route }: Props) {
           })}
         </LText>
         <View style={styles.buttonContainer}>
-          <Button type="main" onPress={onAddAccount}>
+          <Button
+            event="ExchangeStartBuyFlow"
+            type="main"
+            onPress={onAddAccount}
+          >
             <Trans i18nKey="exchange.buy.emptyState.CTAButton" />
           </Button>
         </View>

@@ -1,6 +1,6 @@
 import React, { memo } from "react";
 import { RectButton } from "react-native-gesture-handler";
-import { View, StyleSheet, Platform, StyleProp, ViewStyle } from "react-native";
+import { View, StyleSheet, Platform } from "react-native";
 import { useNftMetadata } from "@ledgerhq/live-common/nft/index";
 import { useTheme, useNavigation } from "@react-navigation/native";
 import { NFTMetadata, ProtoNFT } from "@ledgerhq/types-live";
@@ -12,7 +12,7 @@ import LText from "../LText";
 
 type Props = {
   nft: ProtoNFT;
-  style?: StyleProp<ViewStyle>;
+  style?: any;
 };
 
 const NftCardView = ({
@@ -22,7 +22,7 @@ const NftCardView = ({
   metadata,
 }: {
   nft: ProtoNFT;
-  style?: StyleProp<ViewStyle>;
+  style?: any;
   status: NFTResource["status"];
   metadata: NFTMetadata;
 }) => {
@@ -76,7 +76,7 @@ const NftCardView = ({
           >
             ID {nft?.tokenId}
           </LText>
-          {amount > "1" ? (
+          {amount > 1 ? (
             <LText
               semiBold
               style={[styles.amount, { color: colors.grey }]}
@@ -96,23 +96,14 @@ const NftCardMemo = memo(NftCardView);
 // this technique of splitting the usage of context and memoing the presentational component is used to prevent
 // the rerender of all NftCards whenever the NFT cache changes (whenever a new NFT is loaded)
 const NftCard = ({ nft, style }: Props) => {
-  const nftMetadata = useNftMetadata(
+  const { status, metadata } = useNftMetadata(
     nft?.contract,
     nft?.tokenId,
     nft?.currencyId,
   );
-  // FIXME: wtf is this metadata property and where does it come from?
-  const { status, metadata } = nftMetadata as NFTResource & {
-    metadata: NFTMetadata;
-  };
 
   return (
-    <NftCardMemo
-      nft={nft}
-      style={style}
-      status={status}
-      metadata={metadata as NFTMetadata}
-    />
+    <NftCardMemo nft={nft} style={style} status={status} metadata={metadata} />
   );
 };
 
@@ -130,7 +121,6 @@ const styles = StyleSheet.create({
         shadowRadius: 6,
         shadowOffset: {
           height: 4,
-          width: 0,
         },
       },
     }),

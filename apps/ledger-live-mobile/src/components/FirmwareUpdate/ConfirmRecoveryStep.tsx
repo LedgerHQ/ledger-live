@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/anchor-is-valid */
 import {
   Divider,
   Flex,
@@ -47,7 +48,7 @@ const ConfirmRecoveryStep = ({
     // Opening the link with some app, if the URL scheme is "http" the web link should be opened
     // by some browser in the mobile
     await Linking.openURL(urls.recoveryPhraseInfo);
-  }, []);
+  }, [urls.recoveryPhraseInfo]);
 
   return (
     <Flex height="100%">
@@ -79,7 +80,7 @@ const ConfirmRecoveryStep = ({
               )}
             </Link>
           </Flex>
-          {firmwareNotes ? <SafeMarkdown markdown={firmwareNotes} /> : null}
+          <SafeMarkdown markdown={firmwareNotes} />
         </Flex>
       </ScrollView>
       <Divider />

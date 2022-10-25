@@ -16,11 +16,8 @@ import SendValidationSuccess from "../../screens/SendFunds/07-ValidationSuccess"
 import SendValidationError from "../../screens/SendFunds/07-ValidationError";
 import { getStackNavigatorConfig } from "../../navigation/navigatorConfig";
 import StepHeader from "../StepHeader";
-import type { SendFundsNavigatorStackParamList } from "./types/SendFundsNavigator";
 
 const totalSteps = "5";
-
-const Stack = createStackNavigator<SendFundsNavigatorStackParamList>();
 
 export default function SendFundsNavigator() {
   const { t } = useTranslation();
@@ -141,10 +138,6 @@ export default function SendFundsNavigator() {
             />
           ),
         }}
-        initialParams={{
-          currentNavigation: ScreenName.SendSummary,
-          nextNavigation: ScreenName.SendSelectDevice,
-        }}
       />
       <Stack.Screen
         name={ScreenName.SendSelectDevice}
@@ -183,9 +176,9 @@ export default function SendFundsNavigator() {
         name={ScreenName.SendValidationSuccess}
         component={SendValidationSuccess}
         options={{
-          headerLeft: undefined,
+          headerLeft: null,
           headerShown: false,
-          headerRight: undefined,
+          headerRight: null,
           gestureEnabled: false,
         }}
       />
@@ -199,3 +192,5 @@ export default function SendFundsNavigator() {
     </Stack.Navigator>
   );
 }
+
+const Stack = createStackNavigator();

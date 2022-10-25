@@ -6,14 +6,8 @@ import { trackSubject } from "../analytics/segment";
 
 let id = 0;
 
-type Item = {
-  id: string;
-  event: string;
-  properties?: Error | Record<string, unknown> | null;
-};
-
 const AnalyticsConsole = () => {
-  const [items, setItems] = useState<Item[]>([]);
+  const [items, setItems] = useState([]);
   const filter = useCallback((curr, prev) => {
     if (!prev || !curr.properties) return curr;
     // We repeat a bunch of data over and over again, filter that out unless it changes.
@@ -48,10 +42,8 @@ const AnalyticsConsole = () => {
               {filteredData.properties
                 ? JSON.stringify({
                     ...filteredData.properties,
-                    source: (item.properties as null | Record<string, unknown>)
-                      ?.source,
-                    screen: (item.properties as null | Record<string, unknown>)
-                      ?.screen,
+                    source: item.properties?.source,
+                    screen: item.properties?.screen,
                   })
                 : null}
             </Text>

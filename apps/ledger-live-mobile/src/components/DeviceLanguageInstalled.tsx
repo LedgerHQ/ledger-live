@@ -13,7 +13,6 @@ const DeviceLanguageInstalled: React.FC<{
     if (onMount) {
       onMount();
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   const { t } = useTranslation();
 

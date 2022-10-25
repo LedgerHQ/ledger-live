@@ -1,3 +1,3 @@
 export { SwapForm } from "./Form/index";
 export * from "./SubScreens/index";
-export type { SwapFormNavParamList } from "./types";
+export { SwapNavParamList, SwapFormNavParamList } from "./types";

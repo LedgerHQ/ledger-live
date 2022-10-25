@@ -5,7 +5,7 @@ import { useTheme } from "@react-navigation/native";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import type { TypedMessageData } from "@ledgerhq/live-common/families/ethereum/types";
 import type { MessageData } from "@ledgerhq/live-common/hw/signMessage/types";
-import type { Account, AccountLike } from "@ledgerhq/types-live";
+import type { AccountLike } from "@ledgerhq/types-live";
 import LText from "./LText";
 import Animation from "./Animation";
 import { getDeviceAnimation } from "../helpers/getDeviceAnimation";
@@ -50,42 +50,48 @@ export default function ValidateOnDevice({ device, message, account }: Props) {
           <LText style={messageTextStyle}>
             {t("walletconnect.stepVerification.accountName")}
           </LText>
-          <LText semiBold>{(account as Account)?.name || ""}</LText>
+          <LText semiBold>{account && account.name ? account.name : ""}</LText>
         </View>
-        {(message as TypedMessageData)?.hashes?.domainHash ? (
+        {message && message.hashes && message.hashes.domainHash ? (
           <View style={messageContainerStyle}>
             <LText style={messageTextStyle}>
               {t("walletconnect.domainHash")}
             </LText>
             <LText semiBold>
-              {(message as TypedMessageData)?.hashes?.domainHash || ""}
+              {message && message.hashes && message.hashes.domainHash
+                ? message.hashes.domainHash
+                : ""}
             </LText>
           </View>
         ) : null}
-        {(message as TypedMessageData)?.hashes?.messageHash ? (
+        {message && message.hashes && message.hashes.messageHash ? (
           <View style={messageContainerStyle}>
             <LText style={messageTextStyle}>
               {t("walletconnect.messageHash")}
             </LText>
             <LText semiBold>
-              {(message as TypedMessageData)?.hashes?.messageHash || ""}
+              {message && message.hashes && message.hashes.messageHash
+                ? message.hashes.messageHash
+                : ""}
             </LText>
           </View>
         ) : null}
-        {(message as TypedMessageData)?.hashes?.stringHash ? (
+        {message && message.hashes && message.hashes.stringHash ? (
           <View style={messageContainerStyle}>
             <LText style={messageTextStyle}>
               {t("walletconnect.stringHash")}
             </LText>
             <LText semiBold>
-              {(message as TypedMessageData)?.hashes?.stringHash || ""}
+              {message && message.hashes && message.hashes.stringHash
+                ? message.hashes.stringHash
+                : ""}
             </LText>
           </View>
         ) : null}
         <View style={messageContainerStyle}>
           <LText style={messageTextStyle}>{t("walletconnect.message")}</LText>
           <LText semiBold>
-            {(message as TypedMessageData)?.message?.domain
+            {message.message.domain
               ? JSON.stringify(message.message)
               : message.message}
           </LText>

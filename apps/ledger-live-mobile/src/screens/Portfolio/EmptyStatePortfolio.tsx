@@ -3,7 +3,6 @@ import { useSelector } from "react-redux";
 import { Trans } from "react-i18next";
 import { Box, Flex, Text } from "@ledgerhq/native-ui";
 import { useNavigation } from "@react-navigation/native";
-import { StackNavigationProp } from "@react-navigation/stack";
 import { hasInstalledAnyAppSelector } from "../../reducers/settings";
 import { NavigatorName } from "../../const";
 import Button from "../../components/Button";
@@ -15,22 +14,13 @@ import noAppsImgLight from "../../images/illustration/Light/_056.png";
 import HelpLink from "../../components/HelpLink";
 import { urls } from "../../config/urls";
 import Illustration from "../../images/illustration/Illustration";
-import {
-  BaseNavigation,
-  BaseNavigationComposite,
-} from "../../components/RootNavigator/types/helpers";
-import { MainNavigatorParamList } from "../../components/RootNavigator/types/MainNavigator";
 
 type Props = {
   showHelp?: boolean;
 };
 
-type NavigationProp = BaseNavigationComposite<
-  StackNavigationProp<MainNavigatorParamList>
->;
-
 function EmptyStatePortfolio({ showHelp = true }: Props) {
-  const navigation = useNavigation<NavigationProp>();
+  const navigation = useNavigation();
   const hasInstalledAnyApp = useSelector(hasInstalledAnyAppSelector);
   const [isAddModalOpened, setAddModalOpened] = useState(false);
 
@@ -45,6 +35,7 @@ function EmptyStatePortfolio({ showHelp = true }: Props) {
   );
 
   const navigateToManager = useCallback(() => {
+    // @ts-expect-error navigation ts issue
     navigation.navigate(NavigatorName.Manager);
   }, [navigation]);
 
@@ -121,7 +112,7 @@ function EmptyStatePortfolio({ showHelp = true }: Props) {
             )}
           </Flex>
           <AddAccountsModal
-            navigation={navigation as unknown as BaseNavigation}
+            navigation={navigation}
             isOpened={isAddModalOpened}
             onClose={closeAddModal}
           />

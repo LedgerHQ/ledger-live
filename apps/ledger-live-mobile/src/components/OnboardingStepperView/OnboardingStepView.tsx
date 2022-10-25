@@ -5,8 +5,6 @@ import {
   TouchableOpacity,
   Image,
   ScrollView,
-  StyleProp,
-  ViewStyle,
 } from "react-native";
 import { useTheme } from "@react-navigation/native";
 import { normalize } from "../../helpers/normalizeSize";
@@ -14,7 +12,7 @@ import { Track } from "../../analytics";
 import CheckBox from "../CheckBox";
 import ConfirmationModal from "../ConfirmationModal";
 import LText from "../LText";
-import Animation, { LottieProps } from "../Animation";
+import Animation from "../Animation";
 
 export type InfoStepViewProps = {
   trackPage?: string;
@@ -22,10 +20,10 @@ export type InfoStepViewProps = {
   warning?: React.ReactNode;
   descs?: React.ReactNode[];
   image?: number;
-  lottie?: LottieProps["source"];
-  lottieStyle?: StyleProp<ViewStyle>;
+  lottie?: number;
+  lottieStyle?: any;
   bullets?: {
-    Icon?: React.ComponentType<{ size: number; color?: string }>;
+    Icon?: any;
     label?: React.ReactNode;
     labels?: React.ReactNode[];
     title?: React.ReactNode;
@@ -34,7 +32,7 @@ export type InfoStepViewProps = {
   }[];
   ctaText?: React.ReactNode;
   ctaWarningModal?: {
-    Icon?: React.ComponentType<{ size: number; color?: string }>;
+    Icon?: any;
     image?: number;
     title: React.ReactNode;
     desc?: React.ReactNode;
@@ -153,11 +151,7 @@ export function InfoStepView({
                           {Icon ? (
                             <Icon
                               size={10}
-                              color={
-                                color
-                                  ? colors[color as keyof typeof colors]
-                                  : colors.live
-                              }
+                              color={color ? colors[color] : colors.live}
                             />
                           ) : (
                             <LText
@@ -228,6 +222,7 @@ export function InfoStepView({
         {ctaWarningCheckbox && (
           <View style={styles.warningCheckboxContainer}>
             <CheckBox
+              style={styles.checkbox}
               onChange={setHasValidatedCheckbox}
               isChecked={hasValidatedCheckbox}
             />
@@ -345,6 +340,11 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "flex-start",
     marginVertical: 16,
+  },
+  checkbox: {
+    borderRadius: 4,
+    width: 24,
+    height: 24,
   },
   checkboxLabel: {
     flex: 1,

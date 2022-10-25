@@ -1,6 +1,5 @@
 import React, { PureComponent } from "react";
 import { StyleSheet, View, AppState } from "react-native";
-import type { TFunction } from "i18next";
 import { connect } from "react-redux";
 import { withTranslation } from "react-i18next";
 import { createStructuredSelector } from "reselect";
@@ -8,14 +7,11 @@ import { compose } from "redux";
 import { privacySelector } from "../../reducers/settings";
 import { SkipLockContext } from "../../components/behaviour/SkipLock";
 import { AUTOLOCK_TIMEOUT } from "../../constants";
-import type { Privacy, State as GlobalState } from "../../reducers/types";
+import type { Privacy } from "../../reducers/settings";
 import AuthScreen from "./AuthScreen";
 import RequestBiometricAuth from "../../components/RequestBiometricAuth";
 
-const mapStateToProps = createStructuredSelector<
-  GlobalState,
-  { privacy: Privacy | null | undefined }
->({
+const mapStateToProps = createStructuredSelector({
   privacy: privacySelector,
 });
 type State = {
@@ -28,10 +24,10 @@ type State = {
   mounted: boolean;
 };
 type OwnProps = {
-  children: JSX.Element;
+  children: any;
 };
 type Props = OwnProps & {
-  t: TFunction;
+  t: any;
   privacy: Privacy | null | undefined;
 };
 // as we needs to be resilient to reboots (not showing unlock again after a reboot)
@@ -55,7 +51,7 @@ class AuthPass extends PureComponent<Props, State> {
     mounted: false,
   };
 
-  static getDerivedStateFromProps({ privacy }: Props, { isLocked }: State) {
+  static getDerivedStateFromProps({ privacy }, { isLocked }) {
     if (isLocked && !privacy) {
       return {
         isLocked: false,
@@ -75,12 +71,11 @@ class AuthPass extends PureComponent<Props, State> {
     this.state.mounted = false;
   }
 
-  appInBg: number | undefined;
-  handleAppStateChange = (nextAppState: string) => {
+  appInBg: number;
+  handleAppStateChange = nextAppState => {
     if (
       this.state.appState.match(/inactive|background/) &&
       nextAppState === "active" &&
-      !!this.appInBg &&
       this.appInBg + AUTOLOCK_TIMEOUT < Date.now()
     ) {
       this.lock();
@@ -121,7 +116,7 @@ class AuthPass extends PureComponent<Props, State> {
       });
     this.unlock();
   };
-  onError = (error: Error) => {
+  onError = error => {
     if (this.state.mounted) {
       this.setState({
         authModalOpen: false,
@@ -201,7 +196,9 @@ const styles = StyleSheet.create({
   },
 });
 
-export default compose<React.ComponentType<OwnProps>>(
+const m: React$AbstractComponent<OwnProps> = compose(
   withTranslation(),
   connect(mapStateToProps),
 )(AuthPass);
+
+export default m;

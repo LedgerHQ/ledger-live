@@ -1,59 +1,76 @@
 import { handleActions } from "redux-actions";
-import type { Action, ReducerMap } from "redux-actions";
-import type { BleState, State } from "./types";
-import type {
-  BleAddKnownDevicePayload,
-  BleImportBlePayload,
-  BlePayload,
-  BleRemoveKnownDevicePayload,
-  BleRemoveKnownDevicesPayload,
-  BleSaveDeviceNamePayload,
-} from "../actions/types";
-import { BleActionTypes } from "../actions/types";
+import type { DeviceInfo } from "@ledgerhq/types-live";
+import type { DeviceModelId } from "@ledgerhq/devices";
+import type { State } from ".";
 
-export const INITIAL_STATE = {
+export type DeviceLike = {
+  id: string;
+  name: string;
+  deviceInfo?: DeviceInfo;
+  appsInstalled?: number;
+  modelId?: DeviceModelId;
+};
+export type BleState = {
+  knownDevices: DeviceLike[];
+};
+const initialState: BleState = {
   knownDevices: [],
 };
-const handlers: ReducerMap<BleState, BlePayload> = {
-  [BleActionTypes.BLE_ADD_DEVICE]: (state, action) => {
-    const {
-      payload: { device },
-    } = action as Action<BleAddKnownDevicePayload>;
-    return {
-      knownDevices: state.knownDevices
-        .filter(d => d.id !== device.id)
-        .concat({ ...device }),
-    };
-  },
-  [BleActionTypes.BLE_REMOVE_DEVICE]: (state, action) => ({
-    knownDevices: state.knownDevices.filter(
-      d =>
-        d.id !==
-        (action as Action<BleRemoveKnownDevicePayload>).payload.deviceId,
+const handlers: Record<string, any> = {
+  BLE_ADD_DEVICE: (
+    state: BleState,
+    {
+      device,
+    }: {
+      device: DeviceLike;
+    },
+  ) => ({
+    knownDevices: state.knownDevices
+      .filter(d => d.id !== device.id)
+      .concat({ ...device }),
+  }),
+  BLE_REMOVE_DEVICE: (
+    state: BleState,
+    {
+      deviceId,
+    }: {
+      deviceId: string;
+    },
+  ) => ({
+    knownDevices: state.knownDevices.filter(d => d.id !== deviceId),
+  }),
+  BLE_REMOVE_DEVICES: (
+    state: BleState,
+    {
+      ids,
+    }: {
+      ids: string[];
+    },
+  ) => ({
+    knownDevices: state.knownDevices.filter(d => !ids.includes(d.id)),
+  }),
+  BLE_IMPORT: (
+    state: BleState,
+    {
+      ble,
+    }: {
+      ble: BleState;
+    },
+  ) => ({ ...state, ...ble }),
+  BLE_SAVE_DEVICE_NAME: (
+    state: BleState,
+    {
+      deviceId,
+      name,
+    }: {
+      deviceId: string;
+      name: string;
+    },
+  ) => ({
+    knownDevices: state.knownDevices.map(d =>
+      d.id === deviceId ? { ...d, name } : d,
     ),
   }),
-  [BleActionTypes.BLE_REMOVE_DEVICES]: (state, action) => ({
-    knownDevices: state.knownDevices.filter(
-      d =>
-        !(action as Action<BleRemoveKnownDevicesPayload>).payload.ids.includes(
-          d.id,
-        ),
-    ),
-  }),
-  [BleActionTypes.BLE_IMPORT]: (state, action) => ({
-    ...state,
-    ...(action as Action<BleImportBlePayload>).payload,
-  }),
-  [BleActionTypes.BLE_SAVE_DEVICE_NAME]: (state, action) => {
-    const {
-      payload: { deviceId, name },
-    } = action as Action<BleSaveDeviceNamePayload>;
-    return {
-      knownDevices: state.knownDevices.map(d =>
-        d.id === deviceId ? { ...d, name } : d,
-      ),
-    };
-  },
 };
 // Selectors
 export const exportSelector = (s: State) => s.ble;
@@ -63,5 +80,4 @@ export const deviceNameByDeviceIdSelectorCreator =
     const d = s.ble.knownDevices.find(d => d.id === deviceId);
     return d ? d.name : "";
   };
-
-export default handleActions<BleState, BlePayload>(handlers, INITIAL_STATE);
+export default handleActions(handlers, initialState);

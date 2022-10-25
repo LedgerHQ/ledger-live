@@ -1,18 +1,12 @@
+/* eslint-disable import/named */
 import React, { memo, useMemo, useState, useCallback } from "react";
-import {
-  SectionList,
-  SectionListData,
-  SectionListRenderItem,
-} from "react-native";
+import { SectionList } from "react-native";
 import { Flex } from "@ledgerhq/native-ui";
+
 import { useSelector } from "react-redux";
 import { useFocusEffect } from "@react-navigation/native";
-import {
-  Account,
-  AccountLikeArray,
-  DailyOperationsSection,
-  Operation,
-} from "@ledgerhq/types-live";
+import { SectionBase } from "react-native/Libraries/Lists/SectionList";
+import { AccountLikeArray, Operation } from "@ledgerhq/types-live";
 import { groupAccountsOperationsByDay } from "@ledgerhq/live-common/account/groupOperations";
 import { isAccountEmpty } from "@ledgerhq/live-common/account/helpers";
 
@@ -32,16 +26,21 @@ import Button from "../../components/Button";
 import { ScreenName } from "../../const";
 import { TrackScreen } from "../../analytics";
 import { withDiscreetMode } from "../../context/DiscreetModeContext";
-import type { BaseNavigatorStackParamList } from "../../components/RootNavigator/types/BaseNavigator";
-import type { StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
 
-type Props = StackNavigatorProps<
-  BaseNavigatorStackParamList,
-  ScreenName.AnalyticsOperations
->;
+type RouteParams = {
+  accountsIds: [string];
+};
+
+type Props = {
+  navigation: any;
+  route: {
+    params: RouteParams;
+  };
+};
 
 export function Operations({ navigation, route }: Props) {
   const accountsIds = route?.params?.accountsIds;
+
   const [opCount, setOpCount] = useState(50);
 
   function onEndReached() {
@@ -85,14 +84,19 @@ export function Operations({ navigation, route }: Props) {
     return item.id;
   }
 
-  const renderItem: SectionListRenderItem<
-    Operation,
-    DailyOperationsSection
-  > = ({ item, index, section }) => {
+  function renderItem({
+    item,
+    index,
+    section,
+  }: {
+    item: Operation;
+    index: number;
+    section: SectionBase<any>;
+  }) {
     const account = allAccounts.find(a => a.id === item.accountId);
     const parentAccount =
       account && account.type !== "Account"
-        ? (allAccounts.find(a => a.id === account.parentId) as Account)
+        ? allAccounts.find(a => a.id === account.parentId)
         : null;
 
     if (!account) return null;
@@ -106,13 +110,9 @@ export function Operations({ navigation, route }: Props) {
         isLast={section.data.length - 1 === index}
       />
     );
-  };
+  }
 
-  function renderSectionHeader({
-    section,
-  }: {
-    section: SectionListData<Operation, DailyOperationsSection>;
-  }) {
+  function renderSectionHeader({ section }: { section: { day: Date } }) {
     return <SectionHeader section={section} />;
   }
 

@@ -14,7 +14,6 @@ import { Account, Operation, OperationType } from "@ledgerhq/types-live";
 import { Currency, Unit } from "@ledgerhq/types-cryptoassets";
 import { useSelector } from "react-redux";
 import { Text } from "@ledgerhq/native-ui";
-import { PolkadotValidator } from "@ledgerhq/live-common/families/polkadot/types";
 import CurrencyUnitValue from "../../components/CurrencyUnitValue";
 import CounterValue from "../../components/CounterValue";
 import Section from "../../screens/OperationDetails/Section";
@@ -47,15 +46,7 @@ function formatPalletMethod(palletMethod?: string): string {
 }
 
 type OperationDetailsExtraProps = {
-  extra: {
-    palletMethod: string;
-    validators: string[];
-    transferAmount: BigNumber;
-    bondedAmount: BigNumber;
-    unbondedAmount: BigNumber;
-    withdrawUnbondedAmount: BigNumber;
-    validatorStash: string;
-  };
+  extra: { [key: string]: any };
   type: string;
   account: Account;
 };
@@ -259,12 +250,7 @@ export function OperationDetailsValidators({
   const mappedValidators = useMemo(
     () =>
       (validators || [])
-        .map<PolkadotValidator>(
-          address =>
-            polkadotValidators.find(
-              v => v.address === address,
-            ) as PolkadotValidator,
-        )
+        .map(address => polkadotValidators.find(v => v.address === address))
         .filter(Boolean),
     [validators, polkadotValidators],
   );
@@ -399,7 +385,7 @@ const NominateAmountCell = ({ operation }: Props) => {
 };
 
 const createOperationIcon =
-  (Icon: React.ComponentType<{ size?: number; color?: string }>) =>
+  Icon =>
   ({
     confirmed,
     failed,

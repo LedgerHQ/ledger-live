@@ -18,7 +18,9 @@ const PortfolioEmptyState = ({
 
   const goToReceiveFunds = useCallback(() => {
     track("button_clicked", { button: "Receive" });
-    navigation.navigate(NavigatorName.ReceiveFunds);
+    navigation.navigate(NavigatorName.ReceiveFunds, {
+      // screen: ScreenName.ReceiveConnectDevice,
+    });
   }, [navigation]);
 
   const goToBuyCrypto = useCallback(() => {

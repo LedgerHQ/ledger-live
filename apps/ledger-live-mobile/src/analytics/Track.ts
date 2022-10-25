@@ -1,43 +1,48 @@
-import { useEffect, memo } from "react";
+import { PureComponent } from "react";
 // eslint-disable-next-line import/no-cycle
 import { track } from "./segment";
 
-type Props = {
+class Track extends PureComponent<{
   onMount?: boolean;
   onUnmount?: boolean;
   onUpdate?: boolean;
   event: string;
   mandatory?: boolean;
-  [key: string]: unknown;
-};
+}> {
+  componentDidMount() {
+    if (typeof this.props.event !== "string") {
+      console.warn("analytics Track: invalid event=", this.props.event);
+    }
 
-export default memo((props: Props): null => {
-  const { event, onMount, onUnmount, onUpdate } = props;
+    if (this.props.onMount) this.track();
+  }
 
-  function doTrack() {
-    const { event, onMount, onUnmount, onUpdate, mandatory, ...properties } =
-      props;
+  componentDidUpdate() {
+    if (this.props.onUpdate) this.track();
+  }
+
+  componentWillUnmount() {
+    if (this.props.onUnmount) this.track();
+  }
+
+  track = () => {
+    const {
+      event,
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      onMount,
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      onUnmount,
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      onUpdate,
+      mandatory,
+      ...properties
+    } = this.props;
     track(event, properties, mandatory);
+  };
+
+  render() {
+    return null;
   }
+}
 
-  useEffect(
-    function mount() {
-      if (typeof event !== "string") {
-        console.warn("analytics Track: invalid event=", event);
-      }
-
-      if (onMount) doTrack();
-      return function unmount() {
-        if (onUnmount) doTrack();
-      };
-    },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [],
-  );
-
-  if (onUpdate) {
-    doTrack();
-  }
-
-  return null;
-});
+export default Track;

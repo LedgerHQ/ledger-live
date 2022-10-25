@@ -13,15 +13,8 @@ import { DeviceModelId } from "@ledgerhq/types-devices";
 
 import SettingsRow from "../../../components/SettingsRow";
 import { NavigatorName, ScreenName } from "../../../const";
-import type { SettingsNavigatorStackParamList } from "../../../components/RootNavigator/types/SettingsNavigator";
-import type {
-  BaseNavigatorStackParamList,
-  NavigateInput,
-} from "../../../components/RootNavigator/types/BaseNavigator";
-import {
-  StackNavigatorNavigation,
-  StackNavigatorRoute,
-} from "../../../components/RootNavigator/types/helpers";
+import type { BaseNavigatorProps } from "../../../components/RootNavigator/BaseNavigator";
+import type { DebugMockScreenProps } from "./index";
 
 const availableDeviceModelFilter = [
   "none",
@@ -38,23 +31,12 @@ export default () => {
     useState<boolean>(false);
   const [onSuccessAddToKnownDevices, setOnSuccessAddToKnownDevices] =
     useState<boolean>(false);
-  const navigation =
-    useNavigation<
-      StackNavigatorNavigation<
-        BaseNavigatorStackParamList,
-        ScreenName.DebugMocks
-      >
-    >();
+  const navigation = useNavigation<BaseNavigatorProps>();
 
   // Example using the route to get the current screen name and any params
   // But no current way to get the navigator name (even from the navigation state)
   const { name: screenName, params } =
-    useRoute<
-      StackNavigatorRoute<
-        SettingsNavigatorStackParamList,
-        ScreenName.DebugMocks
-      >
-    >();
+    useRoute<DebugMockScreenProps["route"]>();
   const { pairedDevice } = params ?? { pairedDevice: null };
 
   const goToBlePairingFlow = useCallback(() => {
@@ -63,38 +45,36 @@ export default () => {
     // To avoid an unsuccesful return that would keep the current (if any) paired device object
     // This cleaning strategy would depend on the use case.
     const newParams = { ...params, pairedDevice: null };
-    // @ts-expect-error react navigation does not like having undefined as possible params
     navigation.setParams(newParams);
 
     // Prompts user to enable bluetooth before navigating to the screen.
     // Not mandatory as BleDevicePairingFlow screen handles the ble requirement, but it smooths the transition
     NativeModules.BluetoothHelperModule.prompt()
-      .then(() => {
-        const navigateInput: NavigateInput<
-          BaseNavigatorStackParamList,
-          NavigatorName.Settings
-        > = {
-          name: NavigatorName.Settings,
-          params: {
-            screen: screenName,
-            params: {
-              ...newParams,
+      .then(() =>
+        navigation.navigate(
+          ScreenName.BleDevicePairingFlow as "BleDevicePairingFlow",
+          {
+            filterByDeviceModelId:
+              chosenDeviceModelFilter === "none"
+                ? undefined
+                : chosenDeviceModelFilter,
+            areKnownDevicesDisplayed,
+            onSuccessAddToKnownDevices,
+            onSuccessNavigateToConfig: {
+              navigateInput: {
+                name: NavigatorName.Settings,
+                params: {
+                  screen: screenName,
+                  params: {
+                    ...newParams,
+                  },
+                },
+              },
+              pathToDeviceParam: "params.params.pairedDevice",
             },
           },
-        };
-        navigation.navigate(ScreenName.BleDevicePairingFlow, {
-          filterByDeviceModelId:
-            chosenDeviceModelFilter === "none"
-              ? undefined
-              : chosenDeviceModelFilter,
-          areKnownDevicesDisplayed,
-          onSuccessAddToKnownDevices,
-          onSuccessNavigateToConfig: {
-            navigateInput,
-            pathToDeviceParam: "params.params.pairedDevice",
-          },
-        });
-      })
+        ),
+      )
       .catch(() => {
         // ignore
       });

@@ -3,14 +3,12 @@ import i18next from "i18next";
 import { useTheme } from "@react-navigation/native";
 import { StyleSheet, Linking, Text } from "react-native";
 import { urls } from "../../config/urls";
-import Touchable, { Props as TouchableProps } from "../../components/Touchable";
+import Touchable from "../../components/Touchable";
 import LText from "../../components/LText";
 import ExternalLink from "../../icons/ExternalLink";
 
 type Props = {
-  style?: {
-    paddingHorizontal?: TouchableProps["style"];
-  };
+  style?: any;
 };
 
 // "no associated accounts" text when adding/importing accounts
@@ -23,10 +21,7 @@ function NoAssociatedAccounts({ style }: Props) {
     [],
   );
   return (
-    <Touchable
-      onPress={onPress}
-      style={[style?.paddingHorizontal, styles.root]}
-    >
+    <Touchable onPress={onPress} style={[style.paddingHorizontal, styles.root]}>
       <Text>{i18next.t("hedera.createHederaAccountHelp.text")}</Text>
       <LText
         style={[

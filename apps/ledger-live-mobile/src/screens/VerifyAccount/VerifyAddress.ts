@@ -1,6 +1,6 @@
 import { useCallback, useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { useTheme } from "styled-components/native";
+import { useTheme } from "@react-navigation/native";
 import type { Account } from "@ledgerhq/types-live";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
@@ -29,7 +29,7 @@ function VerifyAddress({
         .toPromise();
       onResult(true);
     } catch (err) {
-      onResult(false, err as Error);
+      onResult(false, err);
     }
   }, [account, device, onResult]);
   useEffect(() => {

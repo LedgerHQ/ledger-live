@@ -26,7 +26,7 @@ const oldAppsInstallDisabled = [
   "Zcoin",
 ];
 
-const canHandleInstall = (app: { name: string }): boolean =>
+const canHandleInstall = (app: ApplicationVersion) =>
   !oldAppsInstallDisabled.includes(app.name) &&
   !listCryptoCurrencies(true, true).some(
     (coin) =>
@@ -110,7 +110,7 @@ const CacheAPI = {
   canHandleInstall,
   getLatestFirmwareForDevice: async (
     deviceInfo: DeviceInfo
-  ): Promise<FirmwareUpdateContext | null> => {
+  ): Promise<FirmwareUpdateContext | null | undefined> => {
     const mcusPromise = ManagerAPI.getMcus();
     // Get device infos from targetId
     const deviceVersion = await ManagerAPI.getDeviceVersion(

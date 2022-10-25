@@ -9,16 +9,10 @@ import Svg, { Defs, LinearGradient, Rect, Stop } from "react-native-svg";
 import { TrackScreen } from "../../../analytics";
 import { completeOnboarding } from "../../../actions/settings";
 import { useNavigationInterceptor } from "../onboardingContext";
-import { NavigatorName, ScreenName } from "../../../const";
+import { NavigatorName } from "../../../const";
 
 import Button from "../../../components/wrappedUi/Button";
 import StyledStatusBar from "../../../components/StyledStatusBar";
-import {
-  RootComposite,
-  RootNavigation,
-  StackNavigatorProps,
-} from "../../../components/RootNavigator/types/helpers";
-import { OnboardingNavigatorParamList } from "../../../components/RootNavigator/types/OnboardingNavigator";
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const source = require("../../../../assets/videos/onboarding.mp4");
@@ -29,7 +23,7 @@ const StyledSafeAreaView = styled(SafeAreaView)`
 `;
 
 const absoluteStyle = {
-  position: "absolute" as const,
+  position: "absolute",
   bottom: 0,
   left: 0,
   top: 0,
@@ -59,11 +53,11 @@ const items = [
   },
 ];
 
-type NavigationProps = RootComposite<
-  StackNavigatorProps<OnboardingNavigatorParamList, ScreenName.OnboardingFinish>
->;
+type Props = {
+  navigation: any;
+};
 
-export default function OnboardingStepFinish({ navigation }: NavigationProps) {
+export default function OnboardingStepFinish({ navigation }: Props) {
   const dispatch = useDispatch();
   const { resetCurrentStep } = useNavigationInterceptor();
   const { t } = useTranslation();
@@ -73,15 +67,13 @@ export default function OnboardingStepFinish({ navigation }: NavigationProps) {
     dispatch(completeOnboarding());
     resetCurrentStep();
 
-    const parentNav = navigation.getParent<RootNavigation>();
+    const parentNav = navigation.getParent();
     if (parentNav) {
       parentNav.popToTop();
     }
 
-    // @ts-expect-error TS requires params to be defined, but it crashes the app
     navigation.replace(NavigatorName.Base, {
       screen: NavigatorName.Main,
-      params: undefined,
     });
   }
 

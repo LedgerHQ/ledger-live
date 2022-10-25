@@ -5,11 +5,6 @@ import { TouchableOpacity, ScrollView } from "react-native";
 import { useTranslation } from "react-i18next";
 import BaseSkeleton from "../../components/Skeleton";
 
-// FIXME: PRETTY SURE THIS FILE WAS NOT USED, SO WE REMOVED ALL
-// ERRORS (WRONG PASSED PROPS) BECAUSE THEY WOULD JUST NOT WORK
-// THE GOOD THING IS, SINCE IT WAS NOT USED YET IN PRODUCTION
-// WE CAN GO OVER THIS WHENEVER WE DECIDE TO WORK ON IT AGAIN
-
 const Skeleton = styled(BaseSkeleton).attrs({
   backgroundColor: "neutral.c30",
 })``;
@@ -53,17 +48,17 @@ const PlaceholderShow = styled(PlaceholderBig).attrs({
 
 const PlaceholderVideo = () => (
   <Flex flexDirection="column" mr="12px">
-    <PlaceholderBig />
-    <PlaceholderMedium />
-    <PlaceholderSmall />
+    <PlaceholderBig height={112} width={200} mb="12px" />
+    <PlaceholderMedium width="80%" mb="7px" />
+    <PlaceholderSmall width="60%" />
   </Flex>
 );
 
 const PlaceholderPodcast = () => (
   <Flex flexDirection="column" mr="12px">
-    <PlaceholderBig />
-    <PlaceholderMedium />
-    <PlaceholderSmall />
+    <PlaceholderBig height={120} width={120} mb="8px" />
+    <PlaceholderMedium width="100%" mb="7px" />
+    <PlaceholderSmall width="70%" />
   </Flex>
 );
 
@@ -75,11 +70,11 @@ const PlaceholderArticle = () => (
     mb="20px"
     width={269}
   >
-    <PlaceholderBig />
+    <PlaceholderBig height={53} width={53} mr="16px" />
     <Flex flex={1} flexDirection="column">
-      <PlaceholderMedium />
-      <PlaceholderMedium />
-      <PlaceholderSmall />
+      <PlaceholderMedium width="100%" mb="7px" />
+      <PlaceholderMedium width="55%" mb="7px" />
+      <PlaceholderSmall width="15%" />
     </Flex>
   </Flex>
 );

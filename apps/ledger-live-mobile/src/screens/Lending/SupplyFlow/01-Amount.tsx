@@ -2,27 +2,27 @@ import invariant from "invariant";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import React, { useCallback } from "react";
 import { useSelector } from "react-redux";
+import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { findCompoundToken } from "@ledgerhq/live-common/currencies/index";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { useSupplyMax } from "@ledgerhq/live-common/compound/react";
-import { CompositeScreenProps } from "@react-navigation/native";
 import { accountScreenSelector } from "../../../reducers/accounts";
 import { ScreenName } from "../../../const";
 import AmountScreen from "../shared/01-Amount";
 import LendingWarnings from "../shared/LendingWarnings";
-import { StackNavigatorProps } from "../../../components/RootNavigator/types/helpers";
-import { LendingSupplyFlowNavigatorParamList } from "../../../components/RootNavigator/types/LendingSupplyFlowNavigator";
-import { BaseNavigatorStackParamList } from "../../../components/RootNavigator/types/BaseNavigator";
 
-type NavigationProps = CompositeScreenProps<
-  StackNavigatorProps<
-    LendingSupplyFlowNavigatorParamList,
-    ScreenName.LendingSupplyAmount
-  >,
-  StackNavigatorProps<BaseNavigatorStackParamList>
->;
-
-export default function SupplyAmount({ navigation, route }: NavigationProps) {
+type Props = {
+  navigation: any;
+  route: {
+    params: RouteParams;
+  };
+};
+type RouteParams = {
+  accountId: string;
+  parentId: string;
+  currency: TokenCurrency;
+};
+export default function SupplyAmount({ navigation, route }: Props) {
   const { account, parentAccount } = useSelector(accountScreenSelector(route));
   invariant(
     account && account.type === "TokenAccount",
@@ -33,7 +33,7 @@ export default function SupplyAmount({ navigation, route }: NavigationProps) {
     useBridgeTransaction(() => {
       const bridge = getAccountBridge(account, parentAccount);
       const ctoken = findCompoundToken(account.token);
-
+      // $FlowFixMe
       const t = bridge.createTransaction(account);
       const transaction = bridge.updateTransaction(t, {
         recipient: ctoken?.contractAddress || "",
@@ -54,7 +54,7 @@ export default function SupplyAmount({ navigation, route }: NavigationProps) {
     navigation.navigate(ScreenName.LendingSupplySummary, {
       ...route.params,
       accountId: account.id,
-      parentId: parentAccount?.id,
+      parentId: parentAccount && parentAccount.id,
       transaction,
       currentNavigation: ScreenName.LendingSupplySummary,
       nextNavigation: ScreenName.LendingSupplySelectDevice,

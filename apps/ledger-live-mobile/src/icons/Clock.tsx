@@ -1,7 +1,7 @@
 import React from "react";
 import Svg, { Path } from "react-native-svg";
 
-const Clock = ({ size, color }: { size?: number; color?: string }) => (
+const Clock = ({ size, color }: { size: number; color: string }) => (
   <Svg width={size} height={size} viewBox="0 0 12 12" fill="none">
     <Path
       fillRule="evenodd"

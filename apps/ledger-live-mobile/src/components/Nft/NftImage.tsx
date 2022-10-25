@@ -4,9 +4,9 @@ import FastImage, {
   FastImageProps,
   ResizeMode,
 } from "react-native-fast-image";
-import { View, StyleSheet, Animated, StyleProp, ViewStyle } from "react-native";
+import { View, StyleSheet, Animated } from "react-native";
 import ImageNotFoundIcon from "../../icons/ImageNotFound";
-import { Theme, withTheme } from "../../colors";
+import { withTheme } from "../../colors";
 import Skeleton from "../Skeleton";
 
 const ImageComponent: React.FC<FastImageProps> = props =>
@@ -39,12 +39,12 @@ const NotFound: React.FC<{
 };
 
 type Props = {
-  style?: StyleProp<ViewStyle>;
+  style?: any;
   status: string;
   src: string;
   srcFallback: string;
   resizeMode?: ResizeMode;
-  colors: Theme["colors"];
+  colors: any;
   transaprency?: boolean;
 };
 

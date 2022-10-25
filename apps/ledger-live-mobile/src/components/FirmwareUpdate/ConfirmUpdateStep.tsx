@@ -62,7 +62,7 @@ const ConfirmUpdateStep = ({ device, deviceInfo, latestFirmware }: Props) => {
         </Flex>
       ) : null}
       <Flex
-        flexGrow={1}
+        grow={1}
         justifyContent="space-between"
         flexDirection="row"
         alignSelf="stretch"
@@ -74,7 +74,7 @@ const ConfirmUpdateStep = ({ device, deviceInfo, latestFirmware }: Props) => {
         <Text variant="subtitle">{deviceInfo.version}</Text>
       </Flex>
       <Flex
-        flexGrow={1}
+        grow={1}
         justifyContent="space-between"
         flexDirection="row"
         alignSelf="stretch"

@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/anchor-is-valid */
 import React, { ReactNode, useCallback } from "react";
 import { Linking } from "react-native";
 import { useTranslation } from "react-i18next";
@@ -37,6 +38,7 @@ const CheckTermOfUseUpdateModal = () => {
 
   return (
     <BottomDrawer
+      id="TermOfUseUpdate"
       noCloseButton={true}
       title={t("updatedTerms.title")}
       isOpen={!accepted}

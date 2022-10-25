@@ -6,18 +6,21 @@ import React, { useCallback, useState } from "react";
 import { FlatList, StyleSheet, View, SafeAreaView } from "react-native";
 import { useSelector } from "react-redux";
 import { TrackScreen } from "../../../analytics";
-import type { StackNavigatorProps } from "../../../components/RootNavigator/types/helpers";
 import { ScreenName } from "../../../const";
 import { accountScreenSelector } from "../../../reducers/accounts";
 import ValidatorHead from "../../cosmos/shared/ValidatorHead";
 import ValidatorRow from "../../cosmos/shared/ValidatorRow";
 import SelectValidatorSearchBox from "../../tron/VoteFlow/01-SelectValidator/SearchBox";
-import type { OsmosisDelegationFlowParamList } from "./types";
 
-type Props = StackNavigatorProps<
-  OsmosisDelegationFlowParamList,
-  ScreenName.OsmosisDelegationValidatorSelect
->;
+type Props = {
+  navigation: any;
+  route: { params: RouteParams };
+};
+
+type RouteParams = {
+  accountId: string;
+  validator?: CosmosValidatorItem;
+};
 
 export default function SelectValidator({ navigation, route }: Props) {
   const { colors } = useTheme();

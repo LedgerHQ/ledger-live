@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "allowJs": false,
+    "allowJs": true,
     "allowSyntheticDefaultImports": true,
     "checkJs": false,
     "skipLibCheck": true,
@@ -14,13 +14,8 @@
     "resolveJsonModule": true,
     "noEmit": true,
     "strict": true,
-    "target": "esnext",
-    "incremental": true,
+    "target": "esnext"
   },
-  "include": [
-    "src/**/*",
-    "**/*.d.ts"
-  ],
   "exclude": [
     "node_modules",
     "babel.config.js",

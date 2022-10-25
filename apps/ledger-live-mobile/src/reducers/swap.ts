@@ -1,18 +1,19 @@
-import { Action, handleActions, ReducerMap } from "redux-actions";
+import { handleActions } from "redux-actions";
 import {
   AvailableProviderV3,
-  Pair,
+  ExchangeRate,
 } from "@ledgerhq/live-common/exchange/swap/types";
-import { SwapStateType } from "./types";
-import {
-  SwapActionTypes,
-  SwapPayload,
-  UpdateProvidersPayload,
-  UpdateRatePayload,
-  UpdateTransactionPayload,
-} from "../actions/types";
+import { Transaction } from "@ledgerhq/live-common/generated/types";
 
-export const INITIAL_STATE: SwapStateType = {
+export type SwapStateType = {
+  providers: AvailableProviderV3[] | undefined;
+  pairs: AvailableProviderV3["pairs"] | undefined;
+  transaction: Transaction | undefined;
+  exchangeRate: ExchangeRate | undefined;
+  exchangeRateExpiration: Date | undefined;
+};
+
+const initialState: SwapStateType = {
   providers: undefined,
   pairs: undefined,
   transaction: undefined,
@@ -23,43 +24,45 @@ export const INITIAL_STATE: SwapStateType = {
 export const ratesExpirationThreshold = 30000;
 
 export const flattenPairs = (
-  acc: Array<Pair>,
+  acc: Array<{ from: string; to: string }>,
   value: AvailableProviderV3,
-): Pair[] => [...acc, ...value.pairs];
+) => [...acc, ...value.pairs];
 
 export type UPDATE_PROVIDERS_TYPE = {
   payload: SwapStateType["providers"];
 };
+const updateProviders = (
+  state: SwapStateType,
+  { payload: providers }: UPDATE_PROVIDERS_TYPE,
+) => {
+  const pairs = (providers || []).reduce(flattenPairs, []);
 
-const handlers: ReducerMap<SwapStateType, SwapPayload> = {
-  [SwapActionTypes.UPDATE_PROVIDERS]: (_state, action) => {
-    const providers = (action as Action<UpdateProvidersPayload>).payload;
-    const pairs = (providers || []).reduce(flattenPairs, []);
+  return { ...initialState, providers, pairs };
+};
 
-    return { ...INITIAL_STATE, providers, pairs };
-  },
-  [SwapActionTypes.UPDATE_TRANSACTION]: (state, action) => ({
+const handlers = {
+  UPDATE_PROVIDERS: updateProviders,
+  UPDATE_TRANSACTION: (
+    state: SwapStateType,
+    { payload }: { payload: Transaction | undefined },
+  ) => ({
     ...state,
-    transaction: (action as Action<UpdateTransactionPayload>).payload,
+    transaction: payload,
   }),
-  [SwapActionTypes.UPDATE_RATE]: (state, action) => {
-    const payload = (action as Action<UpdateRatePayload>).payload;
-    return {
-      ...state,
-      exchangeRate: payload,
-      exchangeRateExpiration:
-        payload?.tradeMethod === "fixed"
-          ? new Date(new Date().getTime() + ratesExpirationThreshold)
-          : undefined,
-    };
-  },
-  RESET_STATE: () => ({ ...INITIAL_STATE }),
+  UPDATE_RATE: (
+    state: SwapStateType,
+    { payload }: { payload: ExchangeRate | undefined },
+  ) => ({
+    ...state,
+    exchangeRate: payload,
+    exchangeRateExpiration:
+      payload?.tradeMethod === "fixed"
+        ? new Date(new Date().getTime() + ratesExpirationThreshold)
+        : null,
+  }),
+  RESET_STATE: () => ({ ...initialState }),
 };
 
 const options = { prefix: "SWAP" };
 
-export default handleActions<SwapStateType, SwapPayload>(
-  handlers,
-  INITIAL_STATE,
-  options,
-);
+export default handleActions(handlers, initialState, options);

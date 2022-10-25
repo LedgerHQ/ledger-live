@@ -1,9 +1,8 @@
 import React, { memo } from "react";
 import { StyleSheet, View, Linking } from "react-native";
 import { Trans } from "react-i18next";
-import { SafeAreaView } from "react-native-safe-area-context";
+import SafeAreaView from "react-native-safe-area-view";
 import { useTheme } from "@react-navigation/native";
-import { Currency } from "@ledgerhq/types-cryptoassets";
 import BottomModal from "../../components/BottomModal";
 import Circle from "../../components/Circle";
 import IconInfo from "../../icons/Info";
@@ -12,10 +11,13 @@ import Button from "../../components/Button";
 import { rgba } from "../../colors";
 import { urls } from "../../config/urls";
 
+const forceInset = {
+  bottom: "always",
+};
 export type Props = {
   isOpened: boolean;
   onClose: () => void;
-  currency: Currency;
+  currency: any;
 };
 
 function Modal({ isOpened, onClose, currency }: Props) {
@@ -23,8 +25,8 @@ function Modal({ isOpened, onClose, currency }: Props) {
   const tokenType =
     currency.type === "TokenCurrency" ? currency.tokenType : "erc20";
   return (
-    <BottomModal isOpened={isOpened} onClose={onClose}>
-      <SafeAreaView style={styles.modal}>
+    <BottomModal id="TokenOperationsInfo" isOpened={isOpened} onClose={onClose}>
+      <SafeAreaView forceInset={forceInset} style={styles.modal}>
         <Circle bg={rgba(colors.live, 0.1)} size={56}>
           <IconInfo size={24} color={colors.live} />
         </Circle>
@@ -45,11 +47,7 @@ function Modal({ isOpened, onClose, currency }: Props) {
             title={<Trans i18nKey="common.learnMore" />}
             containerStyle={[styles.modalBtn, styles.learnMore]}
             onPress={() =>
-              Linking.openURL(
-                urls.supportLinkByTokenType[
-                  tokenType as keyof typeof urls.supportLinkByTokenType
-                ],
-              )
+              Linking.openURL(urls.supportLinkByTokenType[tokenType])
             }
           />
         </View>

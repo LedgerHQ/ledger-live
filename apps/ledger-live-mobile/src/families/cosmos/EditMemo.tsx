@@ -1,21 +1,31 @@
 import React, { useCallback, useState } from "react";
 import { View, StyleSheet, ScrollView } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import SafeAreaView from "react-native-safe-area-view";
 import { useTranslation } from "react-i18next";
 import i18next from "i18next";
+import type { Account } from "@ledgerhq/types-live";
+import type { Transaction as CosmosTransaction } from "@ledgerhq/live-common/families/cosmos/types";
+import type { Transaction as OsmosisTransaction } from "@ledgerhq/live-common/families/osmosis/types";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { useTheme } from "@react-navigation/native";
 import KeyboardView from "../../components/KeyboardView";
 import Button from "../../components/Button";
 import { ScreenName } from "../../const";
 import TextInput from "../../components/FocusedTextInput";
-import { StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
-import { SendFundsNavigatorStackParamList } from "../../components/RootNavigator/types/SendFundsNavigator";
 
-type Props = StackNavigatorProps<
-  SendFundsNavigatorStackParamList,
-  ScreenName.CosmosFamilyEditMemo
->;
+const forceInset = {
+  bottom: "always",
+};
+type Props = {
+  navigation: any;
+  route: {
+    params: RouteParams;
+  };
+};
+type RouteParams = {
+  account: Account;
+  transaction: CosmosTransaction | OsmosisTransaction;
+};
 
 function CosmosFamilyEditMemo({ navigation, route }: Props) {
   const { colors } = useTheme();
@@ -28,7 +38,6 @@ function CosmosFamilyEditMemo({ navigation, route }: Props) {
     const bridge = getAccountBridge(account);
     const { transaction } = route.params;
     navigation.navigate(ScreenName.SendSummary, {
-      ...route.params,
       accountId: account.id,
       transaction: bridge.updateTransaction(transaction, {
         memo,
@@ -36,7 +45,7 @@ function CosmosFamilyEditMemo({ navigation, route }: Props) {
     });
   }, [navigation, route.params, account, memo]);
   return (
-    <SafeAreaView style={styles.root}>
+    <SafeAreaView style={styles.root} forceInset={forceInset}>
       <KeyboardView
         style={[
           styles.body,
@@ -58,7 +67,7 @@ function CosmosFamilyEditMemo({ navigation, route }: Props) {
                 color: colors.darkBlue,
               },
             ]}
-            defaultValue={memo || ""}
+            defaultValue={memo}
             keyboardType="default"
             returnKeyType="done"
             onChangeText={setMemo}
@@ -82,7 +91,7 @@ function CosmosFamilyEditMemo({ navigation, route }: Props) {
 
 const options = {
   title: i18next.t("send.summary.memo.title"),
-  headerLeft: undefined,
+  headerLeft: null,
 };
 
 export { CosmosFamilyEditMemo as component, options };

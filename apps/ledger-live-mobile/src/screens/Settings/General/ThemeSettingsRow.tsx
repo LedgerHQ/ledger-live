@@ -6,8 +6,7 @@ import styled from "styled-components/native";
 import { themeSelector } from "../../../reducers/settings";
 import SettingsRow from "../../../components/SettingsRow";
 import Touchable from "../../../components/Touchable";
-import { setTheme } from "../../../actions/settings";
-import { Theme } from "../../../reducers/types";
+import { setTheme, Theme } from "../../../actions/settings";
 
 const StyledTouchableThemeRow = styled(Touchable)`
   align-items: center;

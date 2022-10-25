@@ -14,11 +14,8 @@ import LendingEnableValidationSuccess from "../../screens/Lending/EnableFlow/04-
 import LendingEnableValidationError from "../../screens/Lending/EnableFlow/04-ValidationError";
 import { getStackNavigatorConfig } from "../../navigation/navigatorConfig";
 import StepHeader from "../StepHeader";
-import { LendingEnableFlowParamsList } from "./types/LendingEnableFlowNavigator";
 
 const totalSteps = "5";
-const Stack = createStackNavigator<LendingEnableFlowParamsList>();
-
 export default function LendingEnableFlowNavigator() {
   const { t } = useTranslation();
   const { colors } = useTheme();
@@ -137,9 +134,9 @@ export default function LendingEnableFlowNavigator() {
         name={ScreenName.LendingEnableValidationSuccess}
         component={LendingEnableValidationSuccess}
         options={{
-          headerLeft: undefined,
+          headerLeft: null,
           headerShown: false,
-          headerRight: undefined,
+          headerRight: null,
           gestureEnabled: false,
         }}
       />
@@ -153,3 +150,4 @@ export default function LendingEnableFlowNavigator() {
     </Stack.Navigator>
   );
 }
+const Stack = createStackNavigator();

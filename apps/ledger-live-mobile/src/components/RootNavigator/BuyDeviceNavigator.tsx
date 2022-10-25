@@ -5,11 +5,11 @@ import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 
 import { ScreenName } from "../../const";
 import { getStackNavigatorConfig } from "../../navigation/navigatorConfig";
+// eslint-disable-next-line import/no-cycle
 import GetDevice from "../../screens/GetDeviceScreen";
 import PurchaseDevice from "../../screens/PurchaseDevice";
-import { BuyDeviceNavigatorParamList } from "./types/BuyDeviceNavigator";
 
-const Stack = createStackNavigator<BuyDeviceNavigatorParamList>();
+const Stack = createStackNavigator();
 
 const BuyDeviceNavigator = () => {
   const { colors } = useTheme();

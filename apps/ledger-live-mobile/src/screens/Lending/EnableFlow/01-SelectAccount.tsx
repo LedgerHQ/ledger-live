@@ -5,6 +5,7 @@ import { View, StyleSheet, FlatList, SafeAreaView } from "react-native";
 import { useSelector } from "react-redux";
 import { Trans } from "react-i18next";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
+import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { isAccountEmpty } from "@ledgerhq/live-common/account/index";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { getAccountCapabilities } from "@ledgerhq/live-common/compound/logic";
@@ -13,7 +14,7 @@ import {
   getAccountCurrency,
   getAccountUnit,
 } from "@ledgerhq/live-common/account/helpers";
-import { CompositeScreenProps, useTheme } from "@react-navigation/native";
+import { useTheme } from "@react-navigation/native";
 import { subAccountByCurrencyOrderedScreenSelector } from "../../../reducers/accounts";
 import { rgba } from "../../../colors";
 import { ScreenName, NavigatorName } from "../../../const";
@@ -32,12 +33,6 @@ import Circle from "../../../components/Circle";
 import Info from "../../../icons/Info";
 import { urls } from "../../../config/urls";
 import { localeSelector } from "../../../reducers/settings";
-import { LendingEnableFlowParamsList } from "../../../components/RootNavigator/types/LendingEnableFlowNavigator";
-import {
-  StackNavigatorNavigation,
-  StackNavigatorProps,
-} from "../../../components/RootNavigator/types/helpers";
-import { BaseNavigatorStackParamList } from "../../../components/RootNavigator/types/BaseNavigator";
 
 const SEARCH_KEYS = [
   "account.name",
@@ -45,24 +40,23 @@ const SEARCH_KEYS = [
   "account.token.name",
   "account.token.ticker",
 ];
+type Props = {
+  navigation: any;
+  route: {
+    params?: {
+      token: TokenCurrency;
+    };
+  };
+};
 
-const keyExtractor = (item: { account: AccountLike }) => item.account.id;
-
-type Props = CompositeScreenProps<
-  StackNavigatorProps<
-    LendingEnableFlowParamsList,
-    ScreenName.LendingEnableSelectAccount
-  >,
-  StackNavigatorProps<BaseNavigatorStackParamList>
->;
-type ParentNavigation = StackNavigatorNavigation<BaseNavigatorStackParamList>;
+const keyExtractor = item => item.account.id;
 
 function LendingEnableSelectAccount({ route, navigation }: Props) {
   const { colors } = useTheme();
   const locale = useSelector(localeSelector);
   const token = route?.params?.token;
   invariant(token, "token required");
-  let enabledTotalAmount: number | BigNumber | null = null;
+  let enabledTotalAmount = null;
   const accounts = useSelector(
     subAccountByCurrencyOrderedScreenSelector(route),
   );
@@ -72,7 +66,7 @@ function LendingEnableSelectAccount({ route, navigation }: Props) {
   );
   useEffect(() => {
     if (!filteredAccounts.length) {
-      const n = navigation.getParent<ParentNavigation>() || navigation;
+      const n = navigation.getParent() || navigation;
       n.replace(NavigatorName.AddAccounts, {
         screen: ScreenName.AddAccountsTokenCurrencyDisclaimer,
         params: {
@@ -105,8 +99,7 @@ function LendingEnableSelectAccount({ route, navigation }: Props) {
     }
   });
   const formattedEnabledAmount =
-    enabledTotalAmount &&
-    (enabledTotalAmount as unknown) instanceof BigNumber &&
+    enabledTotalAmount instanceof BigNumber &&
     formatCurrencyUnit(token.units[0], enabledTotalAmount, {
       showCode: true,
       disableRounding: false,
@@ -118,21 +111,13 @@ function LendingEnableSelectAccount({ route, navigation }: Props) {
     [],
   );
   const redirectToEnableFlow = useCallback(() => {
-    // Not sure this is correct…
-    // Navigation parent is base navigator and we push a screen from the LendingEnableFlow navigator…
-    const n =
-      navigation.getParent<
-        StackNavigatorNavigation<
-          LendingEnableFlowParamsList,
-          ScreenName.LendingEnableSelectAccount
-        >
-      >() || navigation;
-    n.push(ScreenName.LendingEnableAmount);
+    const n = navigation.getParent() || navigation;
+    n.push(ScreenName.LendingEnableAmount, { ...approveInfoModalOpen });
     closeApproveInfoModal();
-  }, [closeApproveInfoModal, navigation]);
+  }, [approveInfoModalOpen, closeApproveInfoModal, navigation]);
   const redirectToSupplyFlow = useCallback(
     params => {
-      const n = navigation.getParent<ParentNavigation>() || navigation;
+      const n = navigation.getParent() || navigation;
       n.replace(NavigatorName.LendingSupplyFlow, {
         screen: ScreenName.LendingSupplyAmount,
         params,
@@ -177,12 +162,18 @@ function LendingEnableSelectAccount({ route, navigation }: Props) {
               isEnabled
                 ? redirectToSupplyFlow({
                     accountId: account.id,
-                    parentId: account.parentId,
+                    parentId:
+                      account.type !== "Account"
+                        ? account.parentId
+                        : parentAccount?.id,
                     currency,
                   })
-                : redirectToSupplyFlow({
+                : setApproveInfoModalOpen({
                     accountId: account.id,
-                    parentId: parentAccount?.id,
+                    parentId:
+                      account.type !== "Account"
+                        ? account.parentId
+                        : parentAccount?.id,
                     currency,
                   });
             }}

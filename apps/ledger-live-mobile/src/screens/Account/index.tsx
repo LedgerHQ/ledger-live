@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useMemo } from "react";
-import { FlatList, LayoutChangeEvent, ListRenderItemInfo } from "react-native";
+import { FlatList } from "react-native";
 import Animated, {
   useAnimatedScrollHandler,
   useSharedValue,
@@ -18,9 +18,8 @@ import { useTranslation } from "react-i18next";
 import { getCurrencyColor } from "@ledgerhq/live-common/currencies/index";
 import { useTheme } from "styled-components/native";
 import { isAccountEmpty } from "@ledgerhq/live-common/account/helpers";
-import { StackNavigationProp } from "@react-navigation/stack";
 import { switchCountervalueFirst } from "../../actions/settings";
-import { useBalanceHistoryWithCountervalue } from "../../hooks/portfolio";
+import { useBalanceHistoryWithCountervalue } from "../../actions/portfolio";
 import {
   selectedTimeRangeSelector,
   counterValueCurrencySelector,
@@ -42,13 +41,16 @@ import SectionTitle from "../WalletCentricSections/SectionTitle";
 import OperationsHistorySection from "../WalletCentricSections/OperationsHistory";
 import EmptyAccountCard from "./EmptyAccountCard";
 import useAccountActions from "./hooks/useAccountActions";
-import type { AccountsNavigatorParamList } from "../../components/RootNavigator/types/AccountsNavigator";
-import type { BaseNavigatorStackParamList } from "../../components/RootNavigator/types/BaseNavigator";
-import type { StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
 
-type Props =
-  | StackNavigatorProps<AccountsNavigatorParamList, ScreenName.Account>
-  | StackNavigatorProps<BaseNavigatorStackParamList, ScreenName.Account>;
+type Props = {
+  navigation: any;
+  route: { params: RouteParams };
+};
+
+type RouteParams = {
+  accountId: string;
+  parentId?: string;
+};
 
 const AnimatedFlatListWithRefreshControl = Animated.createAnimatedComponent(
   accountSyncRefreshControl(FlatList),
@@ -57,12 +59,7 @@ const AnimatedFlatListWithRefreshControl = Animated.createAnimatedComponent(
 function AccountScreen({ route }: Props) {
   const { account, parentAccount } = useSelector(accountScreenSelector(route));
   if (!account) return null;
-  return (
-    <AccountScreenInner
-      account={account}
-      parentAccount={parentAccount || undefined}
-    />
-  );
+  return <AccountScreenInner account={account} parentAccount={parentAccount} />;
 }
 
 const AccountScreenInner = ({
@@ -70,12 +67,11 @@ const AccountScreenInner = ({
   parentAccount,
 }: {
   account: AccountLike;
-  parentAccount?: Account | undefined;
+  parentAccount: Account | undefined;
 }) => {
   const { t } = useTranslation();
   const { colors } = useTheme();
-  const navigation =
-    useNavigation<StackNavigationProp<AccountsNavigatorParamList>>();
+  const navigation = useNavigation();
   const dispatch = useDispatch();
   const range = useSelector(selectedTimeRangeSelector);
   const { countervalueAvailable, countervalueChange, cryptoChange, history } =
@@ -92,8 +88,7 @@ const AccountScreenInner = ({
     });
   }, [dispatch, useCounterValue]);
 
-  const onAccountPress = debounce((tokenAccount?: TokenAccount) => {
-    if (!tokenAccount) return;
+  const onAccountPress = debounce((tokenAccount: TokenAccount) => {
     navigation.push(ScreenName.Account, {
       parentId: account.id,
       accountId: tokenAccount.id,
@@ -110,16 +105,17 @@ const AccountScreenInner = ({
     />
   );
 
-  const compoundCapabilities =
-    account.type === "TokenAccount" && !!account.compoundBalance
-      ? getAccountCapabilities(account)
-      : undefined;
+  const compoundCapabilities: any =
+    account.type === "TokenAccount" &&
+    !!account.compoundBalance &&
+    getAccountCapabilities(account);
 
   const compoundSummary =
-    (compoundCapabilities?.status &&
-      account.type === "TokenAccount" &&
-      makeCompoundSummaryForAccount(account, parentAccount)) ||
-    undefined;
+    compoundCapabilities?.status && account.type === "TokenAccount"
+      ? makeCompoundSummaryForAccount(account, parentAccount)
+      : undefined;
+
+  const [isCollapsed, setIsCollapsed] = useState(true);
 
   const [graphCardEndPosition, setGraphCardEndPosition] = useState(100);
   const currentPositionY = useSharedValue(0);
@@ -149,6 +145,8 @@ const AccountScreenInner = ({
         counterValueCurrency,
         onSwitchAccountCurrency,
         compoundSummary,
+        isCollapsed,
+        setIsCollapsed,
         onAccountCardLayout,
         colors,
         secondaryActions,
@@ -167,6 +165,7 @@ const AccountScreenInner = ({
       counterValueCurrency,
       onSwitchAccountCurrency,
       compoundSummary,
+      isCollapsed,
       onAccountCardLayout,
       colors,
       secondaryActions,
@@ -205,10 +204,8 @@ const AccountScreenInner = ({
           marginTop: 92,
         }}
         data={data}
-        renderItem={({ item }: ListRenderItemInfo<unknown>) =>
-          item as JSX.Element
-        }
-        keyExtractor={(_: unknown, index: number) => String(index)}
+        renderItem={({ item }: any) => item}
+        keyExtractor={(_: any, index: any) => String(index)}
         showsVerticalScrollIndicator={false}
         onScroll={handleScroll}
       />

@@ -4,12 +4,10 @@ import { useIsFocused } from "@react-navigation/native";
 // eslint-disable-next-line @typescript-eslint/no-empty-function
 export const SkipLockContext = React.createContext((_: boolean) => {});
 
-type Props = {
+class SkipLockClass extends PureComponent<{
   setEnabled: (_: boolean) => void;
   isFocused: boolean;
-};
-
-class SkipLockClass extends PureComponent<Props> {
+}> {
   lastValue = false;
 
   componentDidMount() {
@@ -36,13 +34,10 @@ class SkipLockClass extends PureComponent<Props> {
   }
 }
 
-export default function SkipLock(
-  props: Omit<Props, "isFocused" | "setEnabled">,
-) {
+export default function SkipLock(props: any) {
   const isFocused = useIsFocused();
   const setEnabled = useContext(SkipLockContext);
   return (
-    // FIXME: this seems weird since the props object has only 2 properties: isFocused ans setEnabled
     <SkipLockClass {...props} isFocused={isFocused} setEnabled={setEnabled} />
   );
 }

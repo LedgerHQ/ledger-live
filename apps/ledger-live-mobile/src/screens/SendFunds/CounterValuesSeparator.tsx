@@ -40,4 +40,4 @@ const styles = StyleSheet.create({
     height: 1,
   },
 });
-export default memo(CounterValuesSeparator);
+export default memo<any>(CounterValuesSeparator);

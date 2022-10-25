@@ -7,7 +7,6 @@ import { getStackNavigatorConfig } from "../../navigation/navigatorConfig";
 import AddAccountsHeaderRightClose from "../../screens/AddAccounts/AddAccountsHeaderRightClose";
 import ExchangeSelectAccount from "../../screens/Exchange/SelectAccount";
 import ExchangeSelectCurrency from "../../screens/Exchange/SelectCurrency";
-import { ExchangeStackNavigatorParamList } from "./types/ExchangeStackNavigator";
 
 export default function ExchangeStackNavigator() {
   const { t } = useTranslation();
@@ -40,4 +39,4 @@ export default function ExchangeStackNavigator() {
   );
 }
 
-const Stack = createStackNavigator<ExchangeStackNavigatorParamList>();
+const Stack = createStackNavigator();

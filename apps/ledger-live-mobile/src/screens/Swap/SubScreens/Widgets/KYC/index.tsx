@@ -1,5 +1,5 @@
 import React from "react";
-import { KYCParamList } from "../../../types";
+import { KYCProps } from "../../../types";
 import { Widget } from "../Widget";
 import { WyreKYC } from "./Wyre";
 
@@ -9,7 +9,7 @@ export function KYC({
   route: {
     params: { provider },
   },
-}: KYCParamList) {
+}: KYCProps) {
   switch (provider) {
     case "ftx":
     case "ftxus":

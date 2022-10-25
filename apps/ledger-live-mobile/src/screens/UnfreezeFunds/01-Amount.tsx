@@ -2,21 +2,18 @@ import { BigNumber } from "bignumber.js";
 import invariant from "invariant";
 import React, { useCallback, useMemo, useEffect, useState } from "react";
 import { View, StyleSheet, TouchableOpacity } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import SafeAreaView from "react-native-safe-area-view";
 import { useSelector } from "react-redux";
 import { Trans } from "react-i18next";
 import { useNavigation, useTheme } from "@react-navigation/native";
 import type { Account } from "@ledgerhq/types-live";
+import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import {
   getMainAccount,
   getAccountUnit,
 } from "@ledgerhq/live-common/account/index";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
-import type {
-  TronAccount,
-  Transaction as TronTransaction,
-} from "@ledgerhq/live-common/families/tron/types";
 import { accountScreenSelector } from "../../reducers/accounts";
 import { ScreenName } from "../../const";
 import { TrackScreen } from "../../analytics";
@@ -33,11 +30,6 @@ import Bandwidth from "../../icons/Bandwidth";
 import Bolt from "../../icons/Bolt";
 import ClockIcon from "../../icons/Clock";
 import DateFromNow from "../../components/DateFromNow";
-import {
-  StackNavigatorNavigation,
-  StackNavigatorProps,
-} from "../../components/RootNavigator/types/helpers";
-import { UnfreezeNavigatorParamList } from "../../components/RootNavigator/types/UnfreezeNavigator";
 
 /** @TODO move this to common */
 const getUnfreezeData = (
@@ -47,10 +39,10 @@ const getUnfreezeData = (
   unfreezeEnergy: BigNumber;
   canUnfreezeBandwidth: boolean;
   canUnfreezeEnergy: boolean;
-  bandwidthExpiredAt?: Date;
-  energyExpiredAt?: Date;
+  bandwidthExpiredAt: Date;
+  energyExpiredAt: Date;
 } => {
-  const { tronResources } = account as TronAccount;
+  const { tronResources } = account;
   const {
     frozen: { bandwidth, energy },
   } = tronResources || {};
@@ -60,16 +52,12 @@ const getUnfreezeData = (
     bandwidth || {};
 
   // eslint-disable-next-line no-underscore-dangle
-  const _bandwidthExpiredAt = bandwidthExpiredAt
-    ? +new Date(bandwidthExpiredAt)
-    : +new Date();
+  const _bandwidthExpiredAt = +new Date(bandwidthExpiredAt);
 
   const { amount: energyAmount, expiredAt: energyExpiredAt } = energy || {};
 
   // eslint-disable-next-line no-underscore-dangle
-  const _energyExpiredAt = energyExpiredAt
-    ? +new Date(energyExpiredAt)
-    : +new Date();
+  const _energyExpiredAt = +new Date(energyExpiredAt);
 
   const unfreezeBandwidth = BigNumber(bandwidthAmount || 0);
 
@@ -91,11 +79,19 @@ const getUnfreezeData = (
   };
 };
 
-type Props = StackNavigatorProps<
-  UnfreezeNavigatorParamList,
-  ScreenName.UnfreezeAmount
->;
-
+const forceInset = {
+  bottom: "always",
+};
+type Props = {
+  navigation: any;
+  route: {
+    params: RouteParams;
+  };
+};
+type RouteParams = {
+  accountId: string;
+  transaction: Transaction;
+};
 export default function UnfreezeAmount({ route }: Props) {
   const { account: accountLike, parentAccount } = useSelector(
     accountScreenSelector(route),
@@ -114,11 +110,10 @@ type InnerProps = {
 
 function UnfreezeAmountInner({ account }: InnerProps) {
   const { colors } = useTheme();
-  const navigation =
-    useNavigation<StackNavigatorNavigation<UnfreezeNavigatorParamList>>();
+  const navigation = useNavigation();
   const bridge = getAccountBridge(account, undefined);
   const unit = getAccountUnit(account);
-  const { tronResources } = account as TronAccount;
+  const { tronResources } = account;
   invariant(tronResources, "tron resources expected");
   const {
     unfreezeBandwidth,
@@ -141,9 +136,7 @@ function UnfreezeAmountInner({ account }: InnerProps) {
       };
     });
   const resource =
-    transaction && (transaction as TronTransaction).resource
-      ? (transaction as TronTransaction).resource
-      : "";
+    transaction && transaction.resource ? transaction.resource : "";
   const onContinue = useCallback(() => {
     navigation.navigate(ScreenName.UnfreezeSelectDevice, {
       accountId: account.id,
@@ -188,6 +181,7 @@ function UnfreezeAmountInner({ account }: InnerProps) {
             backgroundColor: colors.background,
           },
         ]}
+        forceInset={forceInset}
       >
         <View style={styles.container}>
           <View style={styles.wrapper}>
@@ -211,9 +205,7 @@ function UnfreezeAmountInner({ account }: InnerProps) {
                 >
                   <Trans i18nKey="account.bandwidth" />
                 </LText>
-                {bandwidthExpiredAt &&
-                unfreezeBandwidth.gt(0) &&
-                !canUnfreezeBandwidth ? (
+                {unfreezeBandwidth.gt(0) && !canUnfreezeBandwidth ? (
                   <View style={styles.timeWarn}>
                     <ClockIcon color={colors.grey} size={12} />
                     <LText style={styles.timeLabel} semiBold color="grey">
@@ -255,9 +247,7 @@ function UnfreezeAmountInner({ account }: InnerProps) {
                 >
                   <Trans i18nKey="account.energy" />
                 </LText>
-                {energyExpiredAt &&
-                unfreezeEnergy.gt(0) &&
-                !canUnfreezeEnergy ? (
+                {unfreezeEnergy.gt(0) && !canUnfreezeEnergy ? (
                   <View
                     style={[
                       styles.timeWarn,

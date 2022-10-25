@@ -1,8 +1,7 @@
 import { v4 as uuid } from "uuid";
 import { getUser, setUser, updateUser as _updateUser } from "./db";
-import type { MaybeUser } from "./types/store";
 // Nb a user is an anonymous way to identify a same instance of the app
-let user: MaybeUser;
+let user;
 
 async function updateUser() {
   user = {

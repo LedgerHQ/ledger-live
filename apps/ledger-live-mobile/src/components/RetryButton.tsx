@@ -1,8 +1,8 @@
 import React from "react";
 import { Trans } from "react-i18next";
-import Button, { BaseButtonProps } from "./Button";
+import Button from "./Button";
 
-export default function RetryButton(props: BaseButtonProps) {
+export default function RetryButton(props: any) {
   return (
     <Button
       type="primary"

@@ -14,7 +14,6 @@ import DelegationSummary from "./Summary";
 import DelegationValidationError from "./ValidationError";
 import DelegationValidationSuccess from "./ValidationSuccess";
 import DelegationSelectAmount from "./SelectAmount";
-import type { SolanaDelegationFlowParamList } from "./types";
 
 const totalSteps = "3";
 
@@ -136,4 +135,4 @@ const options = {
 
 export { DelegationFlow as component, options };
 
-const Stack = createStackNavigator<SolanaDelegationFlowParamList>();
+const Stack = createStackNavigator();

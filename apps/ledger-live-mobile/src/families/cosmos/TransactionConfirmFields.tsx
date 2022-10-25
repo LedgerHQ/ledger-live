@@ -49,7 +49,7 @@ function CosmosDelegateValidatorsField({ account, transaction }: FieldProps) {
           <View style={styles.lineLabel}>
             <LText semiBold>{shortAddressPreview(address)}</LText>
             <LText style={styles.validatorLabel} color="grey">
-              {validator?.name ?? null}
+              {validator.name}
             </LText>
           </View>
         }

@@ -1,11 +1,11 @@
 declare global {
   interface Window {
-    ReactNativeWebView: {
-      postMessage(message: string): void;
-    };
+    ReactNativeWebView: any;
+    /* eslint-disable no-unused-vars */
     processImage: (imgBase64: string) => void;
     setImageContrast: (val: number) => void;
     setAndApplyImageContrast: (val: number) => void;
+    /* eslint-enable no-unused-vars */
     requestRawResult: () => void;
   }
 }
@@ -172,7 +172,7 @@ function codeToInject() {
 
     // 3. putting the result in canvas
     context.putImageData(
-      new ImageData(grayData, image.width, image.height),
+      new ImageData(grayData, image.width, image.height), // eslint-disable-line no-undef
       0,
       0,
     );
@@ -199,12 +199,12 @@ function codeToInject() {
    *   still accessible after code minification.
    * */
 
-  const postDataToWebView = (data: unknown) => {
+  const postDataToWebView = (data: any) => {
     window.ReactNativeWebView.postMessage(JSON.stringify(data));
   };
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const log = (data: unknown) => {
+  // eslint-disable-next-line no-unused-vars, @typescript-eslint/no-unused-vars
+  const log = (data: any) => {
     postDataToWebView({ type: "LOG", payload: data });
   };
 
@@ -221,7 +221,7 @@ function codeToInject() {
   let tmpStore: Store;
   const initTmpStore = () => {
     tmpStore = {
-      image: new Image(),
+      image: new Image(), // eslint-disable-line no-undef
       rawResult: "",
       contrast: 1,
     };

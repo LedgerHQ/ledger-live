@@ -1,5 +1,5 @@
 import React from "react";
-import { Image, ImageStyle, StyleProp } from "react-native";
+import { Image } from "react-native";
 import illustakingPng from "./illustaking.png";
 
 const defaultStyle = {
@@ -7,7 +7,7 @@ const defaultStyle = {
   height: 154,
 };
 
-const IlluStaking = ({ style }: { style?: StyleProp<ImageStyle> }) => (
+const IlluStaking = ({ style }: any) => (
   <Image style={[defaultStyle, style]} source={illustakingPng} />
 );
 

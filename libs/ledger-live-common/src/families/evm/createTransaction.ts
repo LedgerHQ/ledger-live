@@ -1,5 +1,5 @@
 import BigNumber from "bignumber.js";
-import { Account, AccountBridge } from "@ledgerhq/types-live";
+import { AccountBridge } from "@ledgerhq/types-live";
 import { Transaction as EvmTransaction } from "./types";
 
 /**
@@ -18,7 +18,7 @@ export const createTransaction: AccountBridge<EvmTransaction>["createTransaction
     maxPriorityFeePerGas: new BigNumber(0),
     gasLimit: new BigNumber(21000),
     nonce: account.operationsCount + 1,
-    chainId: (account as Account).currency?.ethereumLikeInfo?.chainId || 0,
+    chainId: account.currency?.ethereumLikeInfo?.chainId || 0,
     feesStrategy: "medium",
     type: 2,
   });

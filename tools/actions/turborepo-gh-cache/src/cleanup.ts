@@ -29,7 +29,7 @@ try {
   }
   // Remove the turbo cache folder to avoid node_modules caching including it.
   if (cleanupCacheFolder) {
-    fs.rmSync(absoluteCacheDirectory, { recursive: true });
+    fs.rmdirSync(absoluteCacheDirectory);
   }
 } catch (err) {
   console.error(err);

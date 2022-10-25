@@ -2,10 +2,10 @@ import React, { useMemo } from "react";
 import { createStackNavigator } from "@react-navigation/stack";
 import { useTheme } from "styled-components/native";
 import { ScreenName } from "../../const";
+// eslint-disable-next-line import/no-cycle
 import MarketList from "../../screens/Market";
 import MarketDetail from "../../screens/Market/MarketDetail";
 import { getStackNavigatorConfig } from "../../navigation/navigatorConfig";
-import { MarketNavigatorStackParamList } from "./types/MarketNavigator";
 
 export default function MarketNavigator() {
   const { colors } = useTheme();
@@ -17,6 +17,7 @@ export default function MarketNavigator() {
     <Stack.Navigator
       screenOptions={stackNavigationConfig}
       initialRouteName={ScreenName.MarketList}
+      backBehavior={"initialRoute"}
     >
       <Stack.Screen
         name={ScreenName.MarketList}
@@ -35,4 +36,4 @@ export default function MarketNavigator() {
     </Stack.Navigator>
   );
 }
-const Stack = createStackNavigator<MarketNavigatorStackParamList>();
+const Stack = createStackNavigator();

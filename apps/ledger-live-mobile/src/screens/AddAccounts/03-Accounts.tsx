@@ -8,7 +8,7 @@ import React, {
   useMemo,
 } from "react";
 import { StyleSheet, View, Linking, SafeAreaView } from "react-native";
-import { concat, from, Subscription } from "rxjs";
+import { concat, from } from "rxjs";
 import { ignoreElements } from "rxjs/operators";
 import { connect } from "react-redux";
 import { compose } from "redux";
@@ -21,16 +21,20 @@ import { createStructuredSelector } from "reselect";
 import uniq from "lodash/uniq";
 import { Trans } from "react-i18next";
 import type { Account } from "@ledgerhq/types-live";
-import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import type {
+  CryptoCurrency,
+  TokenCurrency,
+} from "@ledgerhq/types-cryptoassets";
 import { getCurrencyBridge } from "@ledgerhq/live-common/bridge/index";
+import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { isTokenCurrency } from "@ledgerhq/live-common/currencies/index";
 import type { DerivationMode } from "@ledgerhq/live-common/derivation";
 import { useTheme } from "@react-navigation/native";
 import { replaceAccounts } from "../../actions/accounts";
 import { accountsSelector } from "../../reducers/accounts";
 import logger from "../../logger";
-import { Theme, withTheme } from "../../colors";
-import { NavigatorName, ScreenName } from "../../const";
+import { withTheme } from "../../colors";
+import { ScreenName } from "../../const";
 import { TrackScreen } from "../../analytics";
 import Button from "../../components/Button";
 import PreventNativeBack from "../../components/PreventNativeBack";
@@ -51,21 +55,8 @@ import { blacklistedTokenIdsSelector } from "../../reducers/settings";
 import BottomModal from "../../components/BottomModal";
 import { urls } from "../../config/urls";
 import noAssociatedAccountsByFamily from "../../generated/NoAssociatedAccounts";
-import { State } from "../../reducers/types";
-import {
-  BaseComposite,
-  StackNavigatorNavigation,
-  StackNavigatorProps,
-} from "../../components/RootNavigator/types/helpers";
-import { AddAccountsNavigatorParamList } from "../../components/RootNavigator/types/AddAccountsNavigator";
-import { BaseNavigatorStackParamList } from "../../components/RootNavigator/types/BaseNavigator";
 
-const SectionAccounts = ({
-  defaultSelected,
-  ...rest
-}: {
-  defaultSelected?: boolean;
-} & React.ComponentProps<typeof SelectableAccountsList>): JSX.Element => {
+const SectionAccounts = ({ defaultSelected, ...rest }: any) => {
   useEffect(() => {
     if (defaultSelected && rest.onSelectAll) {
       rest.onSelectAll(rest.accounts);
@@ -74,13 +65,20 @@ const SectionAccounts = ({
   return <SelectableAccountsList useFullBalance {...rest} />;
 };
 
-type NavigationProps = BaseComposite<
-  StackNavigatorProps<
-    AddAccountsNavigatorParamList,
-    ScreenName.AddAccountsAccounts
-  >
->;
+type RouteParams = {
+  currency: CryptoCurrency | TokenCurrency;
+  device: Device;
+  inline?: boolean;
+  returnToSwap?: boolean;
+  onSuccess?: (_?: any) => void;
+};
+// eslint-disable-next-line @typescript-eslint/ban-types
+type OwnProps = {};
 type Props = {
+  navigation: any;
+  route: {
+    params: RouteParams;
+  };
   replaceAccounts: (_: {
     scannedAccounts: Account[];
     selectedIds: string[];
@@ -88,12 +86,9 @@ type Props = {
   }) => void;
   existingAccounts: Account[];
   blacklistedTokenIds?: string[];
-  colors: Theme["colors"];
-} & NavigationProps;
-const mapStateToProps = createStructuredSelector<
-  State,
-  { existingAccounts: Account[]; blacklistedTokenIds: string[] }
->({
+  colors: any;
+};
+const mapStateToProps = createStructuredSelector({
   existingAccounts: accountsSelector,
   blacklistedTokenIds: blacklistedTokenIdsSelector,
 });
@@ -111,14 +106,14 @@ function AddAccountsAccounts({
   const { colors } = useTheme();
   const [scanning, setScanning] = useState(true);
   const [error, setError] = useState(null);
-  const [latestScannedAccount, setLatestScannedAccount] =
-    useState<Account | null>(null);
-  const [scannedAccounts, setScannedAccounts] = useState<Account[]>([]);
+  const [latestScannedAccount, setLatestScannedAccount] = useState(null);
+  const [scannedAccounts, setScannedAccounts] = useState([]);
   const [onlyNewAccounts, setOnlyNewAccounts] = useState(true);
   const [showAllCreatedAccounts, setShowAllCreatedAccounts] = useState(false);
-  const [selectedIds, setSelectedIds] = useState<string[]>([]);
+  const [selectedIds, setSelectedIds] = useState([]);
   const [cancelled, setCancelled] = useState(false);
-  const scanSubscription = useRef<Subscription | null>(null);
+  const scanSubscription = useRef();
+  const scrollView = useRef();
   const {
     currency,
     device: { deviceId },
@@ -127,7 +122,7 @@ function AddAccountsAccounts({
   } = route.params || {};
   // Find accounts that are (scanned && !existing && !used)
   const newAccountSchemes = scannedAccounts
-    ?.filter(
+    .filter(
       a1 => !existingAccounts.map(a2 => a2.id).includes(a1.id) && !a1.used,
     )
     .map(a => a.derivationMode);
@@ -141,9 +136,7 @@ function AddAccountsAccounts({
   useEffect(() => {
     startSubscription();
     return () => stopSubscription(false);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
   useEffect(() => {
     if (latestScannedAccount) {
       const hasAlreadyBeenScanned = scannedAccounts.some(
@@ -171,13 +164,15 @@ function AddAccountsAccounts({
         );
       }
     }
-  }, [
-    existingAccounts,
-    latestScannedAccount,
-    onlyNewAccounts,
-    scannedAccounts,
-    selectedIds,
-  ]);
+  }, [latestScannedAccount]);
+  // workarround to apply changes of subscription with current react state -> only react to this variable
+  const handleContentSizeChange = useCallback(() => {
+    if (scrollView.current) {
+      scrollView.current.scrollToEnd({
+        animated: true,
+      });
+    }
+  }, []);
   const startSubscription = useCallback(() => {
     const cryptoCurrency = isTokenCurrency(currency)
       ? currency.parentCurrency
@@ -185,7 +180,7 @@ function AddAccountsAccounts({
     const bridge = getCurrencyBridge(cryptoCurrency);
     const syncConfig = {
       paginationConfig: {
-        operations: 0,
+        operation: 0,
       },
       blacklistedTokenIds,
     };
@@ -215,7 +210,7 @@ function AddAccountsAccounts({
     setError(null);
     setCancelled(false);
     startSubscription();
-  }, [startSubscription]);
+  }, []);
   const stopSubscription = useCallback((syncUI = true) => {
     if (scanSubscription.current) {
       scanSubscription.current.unsubscribe();
@@ -227,7 +222,7 @@ function AddAccountsAccounts({
     }
   }, []);
   const quitFlow = useCallback(() => {
-    navigation.navigate(NavigatorName.Accounts);
+    navigation.navigate(ScreenName.Accounts);
   }, [navigation]);
   const onPressAccount = useCallback(
     (account: Account) => {
@@ -290,9 +285,7 @@ function AddAccountsAccounts({
   }, []);
   const onModalHide = useCallback(() => {
     if (cancelled) {
-      navigation
-        .getParent<StackNavigatorNavigation<BaseNavigatorStackParamList>>()
-        .pop();
+      navigation.getParent().pop();
     }
   }, [cancelled, navigation]);
   const viewAllCreatedAccounts = useCallback(
@@ -315,7 +308,7 @@ function AddAccountsAccounts({
         scanning,
         preferredNewAccountSchemes: showAllCreatedAccounts
           ? undefined
-          : [preferredNewAccountScheme!],
+          : [preferredNewAccountScheme],
       }),
     [
       existingAccounts,
@@ -330,10 +323,7 @@ function AddAccountsAccounts({
     s => s.id === "importable" || s.id === "creatable" || s.id === "migrate",
   );
   const CustomNoAssociatedAccounts =
-    noAssociatedAccountsByFamily[
-      (currency as CryptoCurrency)
-        .family as keyof typeof noAssociatedAccountsByFamily
-    ];
+    noAssociatedAccountsByFamily[currency.family];
   const emptyTexts = {
     creatable: alreadyEmptyAccount ? (
       <LText style={styles.paddingHorizontal}>
@@ -372,7 +362,9 @@ function AddAccountsAccounts({
       <PreventNativeBack />
       <NavigationScrollView
         style={styles.inner}
-        contentContainerStyle={styles.innerContent}
+        contentContainerStyle={styles.innerContent} // $FlowFixMe
+        ref={scrollView}
+        onContentSizeChange={handleContentSizeChange}
       >
         {sections.map(({ id, selectable, defaultSelected, data }, i) => {
           const hasMultipleSchemes =
@@ -406,7 +398,7 @@ function AddAccountsAccounts({
                 }
                 onUnselectAll={!selectable ? undefined : unselectAll}
                 selectedIds={selectedIds}
-                emptyState={emptyTexts[id as keyof typeof emptyTexts]}
+                emptyState={emptyTexts[id]}
                 isDisabled={!selectable}
                 forceSelected={id === "existing"}
                 style={hasMultipleSchemes ? styles.smallMarginBottom : {}}
@@ -415,14 +407,15 @@ function AddAccountsAccounts({
                 <View style={styles.moreAddressTypesContainer}>
                   {showAllCreatedAccounts ? (
                     <AddressTypeTooltip
-                      accountSchemes={newAccountSchemes as DerivationMode[]}
-                      currency={currency as CryptoCurrency}
+                      accountSchemes={newAccountSchemes}
+                      currency={currency}
                     />
                   ) : (
                     <Button
                       event={"AddAccountsMoreAddressType"}
                       type="secondary"
                       title={<Trans i18nKey="addAccounts.showMoreChainType" />}
+                      titleStyle={styles.subtitle}
                       onPress={viewAllCreatedAccounts}
                       IconRight={Chevron}
                     />
@@ -494,6 +487,7 @@ const AddressTypeTooltip = ({
         event={"AddAccountsAddressTypeTooltip"}
         type="lightSecondary"
         title={<Trans i18nKey="addAccounts.addressTypeInfo.title" />}
+        titleStyle={styles.subtitle}
         onPress={onOpen}
         IconRight={Info}
       />
@@ -546,7 +540,7 @@ class Footer extends PureComponent<{
   onDone: () => void;
   isDisabled: boolean;
   supportLink?: AddAccountSupportLink;
-  colors: Theme["colors"];
+  colors: any;
   returnToSwap?: boolean;
 }> {
   render() {
@@ -606,7 +600,7 @@ class Footer extends PureComponent<{
 }
 
 class ScanLoading extends PureComponent<{
-  colors: Theme["colors"];
+  colors: any;
 }> {
   render() {
     const { colors } = this.props;
@@ -707,7 +701,8 @@ const styles = StyleSheet.create({
     marginVertical: 16,
   },
 });
-export default compose<React.ComponentType<NavigationProps>>(
+const m: React.ComponentType<OwnProps> = compose(
   connect(mapStateToProps, mapDispatchToProps),
   withTheme,
 )(memo<Props>(AddAccountsAccounts));
+export default m;

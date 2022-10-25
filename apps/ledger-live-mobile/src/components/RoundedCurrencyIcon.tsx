@@ -1,7 +1,7 @@
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import React, { memo } from "react";
 import { StyleSheet, View } from "react-native";
-import Icon from "react-native-vector-icons/Feather";
+import Icon from "react-native-vector-icons/dist/Feather";
 import { useTheme } from "@react-navigation/native";
 import { rgba } from "../colors";
 import Alert from "../icons/Alert";

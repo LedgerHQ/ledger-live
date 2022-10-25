@@ -2,9 +2,8 @@ import React, { useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { Linking } from "react-native";
 import FallbackCameraBody from "../../components/FallbackCameraBody";
-import type { NavigationProps } from "./FallBackCameraScreen";
 
-export default function FallBackCameraScreen(_: NavigationProps) {
+export default function FallBackCameraScreen() {
   const { t } = useTranslation();
   const openNativeSettings = useCallback(() => {
     Linking.openURL("app-settings:");

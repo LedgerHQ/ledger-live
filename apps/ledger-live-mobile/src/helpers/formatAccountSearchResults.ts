@@ -1,23 +1,25 @@
 import reduce from "lodash/reduce";
 import forEach from "lodash/forEach";
-import type { Account, AccountLike, SubAccount } from "@ledgerhq/types-live";
+import type {
+  Account,
+  AccountLike,
+  AccountLikeArray,
+  SubAccount,
+} from "@ledgerhq/types-live";
 
 export type SearchResult = {
   account: AccountLike;
-  parentAccount?: Account;
-  tokenAccounts?: (AccountLike & { match: boolean })[];
+  parentAccount?: AccountLike;
   match?: boolean;
 };
 
-const flattenStructuredSearchResults = (
-  structuredResults: Record<string, SearchResult>,
-): SearchResult[] =>
-  reduce<Record<string, SearchResult>, SearchResult[]>(
+const flattenStructuredSearchResults = structuredResults =>
+  reduce(
     structuredResults,
-    (acc, searchResult) => {
-      acc.push(searchResult);
-      forEach(searchResult.tokenAccounts, tokenAccount => {
-        acc.push({ account: tokenAccount });
+    (acc, account) => {
+      acc.push(account);
+      forEach(account.tokenAccounts, tokenAccount => {
+        acc.push(tokenAccount);
       });
       return acc;
     },
@@ -25,12 +27,12 @@ const flattenStructuredSearchResults = (
   );
 
 export const formatSearchResults = (
-  searchResults: AccountLike[],
-  accounts: Account[],
-) => {
-  const formated = reduce<AccountLike, { [key: string]: SearchResult }>(
+  searchResults: AccountLikeArray,
+  accounts: AccountLike[],
+): SearchResult[] => {
+  const formated = reduce(
     searchResults,
-    (acc, account) => {
+    (acc, account: AccountLike) => {
       if (account.type === "Account") {
         if (!acc[account.id]) {
           acc[account.id] = {
@@ -46,16 +48,16 @@ export const formatSearchResults = (
 
         if (!acc[parentId]) {
           acc[parentId] = {
-            account: parentAccount as AccountLike,
+            account: parentAccount,
             tokenAccounts: [],
             match: false,
           };
         }
 
         acc[parentId].tokenAccounts = [
-          ...acc[parentId].tokenAccounts!,
+          ...acc[parentId].tokenAccounts,
           {
-            ...account,
+            account,
             match: true,
           },
         ];
@@ -67,7 +69,6 @@ export const formatSearchResults = (
   );
   return flattenStructuredSearchResults(formated);
 };
-
 export const formatSearchResultsTuples = (
   searchResults: {
     account: AccountLike;
@@ -76,7 +77,7 @@ export const formatSearchResultsTuples = (
 ): SearchResult[] => {
   const formated = reduce(
     searchResults,
-    (acc: Record<string, SearchResult>, tuple) => {
+    (acc, tuple) => {
       const accountId = tuple.subAccount
         ? tuple.subAccount.id
         : tuple.account.id;
@@ -84,9 +85,7 @@ export const formatSearchResultsTuples = (
       if (!acc[accountId]) {
         acc[accountId] = {
           account: tuple.subAccount || tuple.account,
-          parentAccount: tuple.subAccount
-            ? (tuple.account as Account)
-            : undefined,
+          parentAccount: tuple.subAccount ? tuple.account : null,
           tokenAccounts: [],
         };
       }
@@ -94,7 +93,7 @@ export const formatSearchResultsTuples = (
       acc[accountId].match = true;
       return acc;
     },
-    {} as Record<string, SearchResult>,
+    {},
   );
   return flattenStructuredSearchResults(formated);
 };

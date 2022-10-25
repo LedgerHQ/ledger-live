@@ -11,6 +11,7 @@ import {
   getDefaultExplorerView,
   getAddressExplorer,
 } from "@ledgerhq/live-common/explorers";
+import { Account } from "@ledgerhq/types-live";
 import {
   canNominate,
   isStash,
@@ -19,15 +20,9 @@ import {
   hasPendingOperationType,
 } from "@ledgerhq/live-common/families/polkadot/logic";
 import { usePolkadotPreloadData } from "@ledgerhq/live-common/families/polkadot/react";
-import type {
-  PolkadotAccount,
-  PolkadotNomination,
-  PolkadotValidator,
-} from "@ledgerhq/live-common/families/polkadot/types";
+import type { PolkadotNomination } from "@ledgerhq/live-common/families/polkadot/types";
 
 import { Box, Flex } from "@ledgerhq/native-ui";
-import { AccountLike } from "@ledgerhq/types-live";
-import { StackNavigationProp } from "@react-navigation/stack";
 import { ScreenName, NavigatorName } from "../../../const";
 import AccountDelegationInfo from "../../../components/AccountDelegationInfo";
 import { urls } from "../../../config/urls";
@@ -49,18 +44,12 @@ import EarnLight from "../../../images/illustration/Light/_003.png";
 import EarnDark from "../../../images/illustration/Dark/_003.png";
 
 type Props = {
-  account: AccountLike;
+  account: Account;
 };
 
-type Section = {
-  nomination: PolkadotNomination;
-  validator: PolkadotValidator | undefined;
-};
-
-export default function Nominations(props: Props) {
-  const { account } = props as { account: PolkadotAccount };
+export default function Nominations({ account }: Props) {
   const { t } = useTranslation();
-  const mainAccount = getMainAccount(account) as PolkadotAccount;
+  const mainAccount = getMainAccount(account);
 
   const navigation = useNavigation();
 
@@ -94,10 +83,7 @@ export default function Nominations(props: Props) {
         }
         return sections;
       },
-      {
-        uncollapsed: [] as Section[],
-        collapsed: [] as Section[],
-      },
+      { uncollapsed: [], collapsed: [] },
     );
   }, [nominations, validators]);
 
@@ -133,19 +119,15 @@ export default function Nominations(props: Props) {
       screen,
       params,
     }: {
-      route: string;
-      screen?: string;
-      params?: { [key: string]: unknown };
+      route: typeof NavigatorName | typeof ScreenName;
+      screen?: typeof ScreenName;
+      params?: { [key: string]: any };
     }) => {
-      setNomination(undefined);
-      // This is complicated (even impossible?) to type properly…
-      (navigation as StackNavigationProp<{ [key: string]: object }>).navigate(
-        route,
-        {
-          screen,
-          params: { ...params, accountId: account.id },
-        },
-      );
+      setNomination();
+      navigation.navigate(route, {
+        screen,
+        params: { ...params, accountId: account.id },
+      });
     },
     [navigation, account.id],
   );
@@ -197,14 +179,15 @@ export default function Nominations(props: Props) {
   }, [onNavigate]);
 
   const onCloseDrawer = useCallback(() => {
-    setNomination(undefined);
+    setNomination();
   }, []);
 
   const onOpenExplorer = useCallback(
-    (address?: string | null) => {
-      const url =
-        address &&
-        getAddressExplorer(getDefaultExplorerView(account.currency), address);
+    (address: string) => {
+      const url = getAddressExplorer(
+        getDefaultExplorerView(account.currency),
+        address,
+      );
       if (url) Linking.openURL(url);
     },
     [account.currency],
@@ -338,8 +321,6 @@ export default function Nominations(props: Props) {
             <PolkadotIdenticon
               address={mappedNomination?.nomination.address}
               size={size}
-              // publicKey is not really needed, ts is wrong here but well…
-              publicKey=""
             />
           ) : null
         }

@@ -6,7 +6,6 @@ import {
   getAccountCurrency,
 } from "@ledgerhq/live-common/account/index";
 import { Trans } from "react-i18next";
-import BigNumber from "bignumber.js";
 import SummaryRow from "./SummaryRow";
 import CounterValue from "../../components/CounterValue";
 import CurrencyUnitValue from "../../components/CurrencyUnitValue";
@@ -17,13 +16,13 @@ import Button from "../../components/Button";
 import Circle from "../../components/Circle";
 import Touchable from "../../components/Touchable";
 import Info from "../../icons/Info";
-import { withTheme, Theme } from "../../colors";
+import { withTheme } from "../../colors";
 
 type Props = {
   account: AccountLike;
   parentAccount: Account | null | undefined;
-  amount: number | BigNumber;
-  colors: Theme["colors"];
+  amount: any;
+  colors: any;
 };
 type State = {
   isModalOpened: boolean;
@@ -77,7 +76,11 @@ class SummaryTotalSection extends PureComponent<Props, State> {
             </LText>
           </View>
         </SummaryRow>
-        <BottomModal isOpened={isModalOpened} onClose={this.onRequestClose}>
+        <BottomModal
+          id="SummaryTotalModal"
+          isOpened={isModalOpened}
+          onClose={this.onRequestClose}
+        >
           <ModalBottomAction
             title={<Trans i18nKey="send.summary.infoTotalTitle" />}
             icon={

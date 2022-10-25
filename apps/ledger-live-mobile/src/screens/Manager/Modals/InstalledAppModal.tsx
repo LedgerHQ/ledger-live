@@ -7,27 +7,17 @@ import { isLiveSupportedApp } from "@ledgerhq/live-common/apps/logic";
 
 import styled from "styled-components/native";
 import { Flex, Text, Button } from "@ledgerhq/native-ui";
-import { App } from "@ledgerhq/types-live";
 import { urls } from "../../../config/urls";
 
-import { NavigatorName, ScreenName } from "../../../const";
+import { NavigatorName } from "../../../const";
 
 import AppIcon from "../AppsList/AppIcon";
 
 import BottomModal from "../../../components/BottomModal";
-import type {
-  BaseComposite,
-  StackNavigatorProps,
-} from "../../../components/RootNavigator/types/helpers";
-import { ManagerNavigatorStackParamList } from "../../../components/RootNavigator/types/ManagerNavigator";
-
-type NavigationProps = BaseComposite<
-  StackNavigatorProps<ManagerNavigatorStackParamList, ScreenName.ManagerMain>
->;
 
 type Props = {
   state: State;
-  navigation: NavigationProps["navigation"];
+  navigation: any;
   disable: boolean;
 };
 
@@ -91,10 +81,10 @@ const InstallSuccessBar = ({ state, navigation, disable }: Props) => {
     [successInstalls],
   );
 
-  const app: App | undefined = useMemo(
+  const app = useMemo(
     () =>
       (successInstalls && successInstalls.length > 0 && successInstalls[0]) ||
-      undefined,
+      {},
     [successInstalls],
   );
 
@@ -103,7 +93,7 @@ const InstallSuccessBar = ({ state, navigation, disable }: Props) => {
   return (
     <BottomModal isOpened={successInstalls.length >= 1} onClose={onClose}>
       <Flex alignItems="center">
-        {app && <AppIcon app={app} size={48} radius={14} />}
+        <AppIcon app={app} size={48} radius={14} />
         <TextContainer>
           <ModalText color="neutral.c100" fontWeight="medium" variant="h2">
             <Trans i18nKey="AppAction.install.done.title" />
@@ -112,7 +102,7 @@ const InstallSuccessBar = ({ state, navigation, disable }: Props) => {
             {hasLiveSupported ? (
               <Trans
                 i18nKey="AppAction.install.done.description"
-                values={{ app: app?.name }}
+                values={{ app: app.name }}
               />
             ) : (
               <Trans i18nKey="manager.installSuccess.notSupported" />

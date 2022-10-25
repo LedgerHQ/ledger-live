@@ -1,23 +1,38 @@
 import React, { useCallback, useState } from "react";
 import { useDispatch } from "react-redux";
 import { has as hasFromPath, set as setFromPath } from "lodash";
+import type { PropertyPath } from "lodash";
+import { DeviceModelId } from "@ledgerhq/types-devices";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
+import { StackScreenProps } from "@react-navigation/stack";
+import type { BaseNavigatorStackParamList } from "../../components/RootNavigator/BaseNavigator";
 import RequiresBLE from "../../components/RequiresBLE";
 import { BleDevicesScanning } from "./BleDevicesScanning";
 import { BleDevicePairing } from "./BleDevicePairing";
 import { addKnownDevice } from "../../actions/ble";
-import { ScreenName } from "../../const";
-import { BaseNavigatorStackParamList } from "../../components/RootNavigator/types/BaseNavigator";
-import {
-  RootComposite,
-  StackNavigatorProps,
-} from "../../components/RootNavigator/types/helpers";
 
-export type Props = RootComposite<
-  StackNavigatorProps<
-    BaseNavigatorStackParamList,
-    ScreenName.BleDevicePairingFlow
-  >
+export type NavigateInput = {
+  name: string;
+  params: object;
+};
+
+export type PathToDeviceParam = PropertyPath;
+export type NavigationType = "navigate" | "replace" | "push";
+
+export type BleDevicePairingFlowParams = {
+  filterByDeviceModelId?: DeviceModelId;
+  areKnownDevicesDisplayed?: boolean;
+  onSuccessAddToKnownDevices?: boolean;
+  onSuccessNavigateToConfig: {
+    navigateInput: NavigateInput;
+    pathToDeviceParam: PathToDeviceParam;
+    navigationType?: NavigationType;
+  };
+};
+
+export type BleDevicePairingFlowProps = StackScreenProps<
+  BaseNavigatorStackParamList,
+  "BleDevicePairingFlow"
 >;
 
 /**
@@ -50,7 +65,10 @@ export type Props = RootComposite<
  *   list of known devices. Not added if false (default to false).
  * @returns a JSX component
  */
-export const BleDevicePairingFlow = ({ navigation, route }: Props) => {
+export const BleDevicePairingFlow = ({
+  navigation,
+  route,
+}: BleDevicePairingFlowProps) => {
   const dispatchRedux = useDispatch();
 
   const {
@@ -102,22 +120,12 @@ export const BleDevicePairingFlow = ({ navigation, route }: Props) => {
       // Before navigating, to never come back a the successful pairing but to the scanning part
       setDeviceToPair(null);
 
-      const params = navigateInput.params
-        ? {
-            ...navigateInput.params,
-          }
-        : undefined;
-
       if (navigationType === "push") {
-        // @ts-expect-error this seems complicated to type properly
-        // the typings for react-navigation cannot reconciliate screens having "undefined" params and object params
-        navigation.push(navigateInput.name, params);
+        navigation.push(navigateInput.name, { ...navigateInput.params });
       } else if (navigationType === "replace") {
-        // @ts-expect-error this seems complicated to type properly
-        navigation.replace(navigateInput.name, params);
+        navigation.replace(navigateInput.name, { ...navigateInput.params });
       } else {
-        // @ts-expect-error this seems complicated to type properly
-        navigation.navigate(navigateInput.name, params);
+        navigation.navigate(navigateInput);
       }
     },
     [

@@ -1,15 +1,19 @@
 import React from "react";
 import { StyleSheet, View } from "react-native";
 import { Trans } from "react-i18next";
-import { SafeAreaView } from "react-native-safe-area-context";
-import Icon from "react-native-vector-icons/Feather";
+import SafeAreaView from "react-native-safe-area-view";
+import Icon from "react-native-vector-icons/dist/Feather";
 import { useTheme } from "@react-navigation/native";
 import LText from "./LText";
+
+const forceInset = {
+  bottom: "always",
+};
 
 const NetworkFeeInfo = () => {
   const { colors } = useTheme();
   return (
-    <SafeAreaView style={styles.root}>
+    <SafeAreaView forceInset={forceInset} style={styles.root}>
       <View
         style={[
           styles.iconWrapper,

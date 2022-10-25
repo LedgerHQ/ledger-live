@@ -54,7 +54,7 @@ const CarouselCardContainer = ({
 );
 
 type Props = {
-  cardsVisibility: { [key: string]: boolean };
+  cardsVisibility: boolean[];
 };
 
 const Carousel = ({ cardsVisibility }: Props) => {
@@ -64,11 +64,18 @@ const Carousel = ({ cardsVisibility }: Props) => {
 
   const slides = useMemo(
     () =>
-      getDefaultSlides().filter(
-        (slide: { id: string; Component: () => JSX.Element }) => {
-          return cardsVisibility[slide.id];
-        },
-      ),
+      getDefaultSlides().filter((slide: any) => {
+        if (!cardsVisibility[slide.id]) {
+          return false;
+        }
+        if (slide.start && slide.start > new Date()) {
+          return false;
+        }
+        if (slide.end && slide.end < new Date()) {
+          return false;
+        }
+        return true;
+      }),
     [cardsVisibility],
   );
 

@@ -3,7 +3,6 @@ import * as d3shape from "d3-shape";
 import { View } from "react-native";
 import Svg, { Path, G, Circle } from "react-native-svg";
 import { getCurrencyColor } from "@ledgerhq/live-common/currencies/index";
-import { DefaultTheme } from "styled-components/native";
 import type { DistributionItem } from "./DistributionCard";
 import { ensureContrast, withTheme } from "../../colors";
 
@@ -11,19 +10,14 @@ type Props = {
   data: Array<DistributionItem>;
   size: number;
   strokeWidth?: number;
-  colors: DefaultTheme["colors"];
-};
-
-type Paths = {
-  items: { pathData?: string; color: string; id: string }[];
-  angle: number;
+  colors: any;
 };
 
 class RingChart extends PureComponent<Props> {
   arcGenerator = d3shape.arc();
   offsetX = 0;
   offsetY = 0;
-  paths: Paths | null = null;
+  paths: any = {};
   innerRadius = 0;
   outerRadius = 30;
 
@@ -44,16 +38,15 @@ class RingChart extends PureComponent<Props> {
     this.generatePaths();
   }
 
-  reducer = (data: Paths, item: DistributionItem, index: number): Paths => {
+  reducer = (data: any, item: DistributionItem, index: number) => {
     const increment = item.distribution * 2 * Math.PI;
 
-    const pathData =
-      this.arcGenerator({
-        startAngle: data.angle,
-        endAngle: data.angle + increment,
-        innerRadius: this.innerRadius,
-        outerRadius: this.outerRadius,
-      }) ?? undefined;
+    const pathData = this.arcGenerator({
+      startAngle: data.angle,
+      endAngle: data.angle + increment,
+      innerRadius: this.innerRadius,
+      outerRadius: this.outerRadius,
+    });
 
     const parsedItem = {
       color: ensureContrast(
@@ -79,7 +72,7 @@ class RingChart extends PureComponent<Props> {
       <View>
         <Svg width={size} height={size} viewBox="0 0 76 76">
           <G transform="translate(38, 38)">
-            {(this.paths?.items || []).map(({ pathData, color, id }) => (
+            {(this.paths.items || []).map(({ pathData, color, id }) => (
               <Path
                 key={id}
                 stroke={colors.background.main}

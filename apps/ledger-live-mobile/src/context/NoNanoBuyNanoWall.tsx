@@ -3,6 +3,7 @@ import {
   CardStyleInterpolators,
   StackNavigationOptions,
 } from "@react-navigation/stack";
+// eslint-disable-next-line import/no-cycle
 import BuyDeviceNavigator from "../components/RootNavigator/BuyDeviceNavigator";
 import {
   hasOrderedNanoSelector,
@@ -14,12 +15,10 @@ import PostBuyDeviceSetupNanoWallScreen from "../screens/PostBuyDeviceSetupNanoW
  * Get options to spread in a Stack.Screen you want to have a wall preventing
  * to access it when you are in a read only mode or "ordered a nano" mode.
  */
-export const useNoNanoBuyNanoWallScreenOptions = ():
-  | {
-      component: () => JSX.Element;
-      options: StackNavigationOptions;
-    }
-  | object => {
+export function useNoNanoBuyNanoWallScreenOptions(): {
+  component?: React.ComponentType<any>;
+  options?: StackNavigationOptions;
+} {
   const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector);
   const hasOrderedNano = useSelector(hasOrderedNanoSelector);
 
@@ -51,4 +50,4 @@ export const useNoNanoBuyNanoWallScreenOptions = ():
   }
 
   return {};
-};
+}

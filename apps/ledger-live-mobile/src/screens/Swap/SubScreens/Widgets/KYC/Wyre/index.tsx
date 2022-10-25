@@ -3,15 +3,12 @@ import { View, TouchableOpacity, ScrollView, StyleSheet } from "react-native";
 import { useSelector, useDispatch } from "react-redux";
 import { useTranslation, Trans } from "react-i18next";
 import { useNavigation, useTheme } from "@react-navigation/native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import SafeAreaView from "react-native-safe-area-view";
 import {
   submitKYC,
   countries,
 } from "@ledgerhq/live-common/exchange/swap/index";
-import type {
-  KYCData,
-  KYCStatus,
-} from "@ledgerhq/live-common/exchange/swap/types";
+import type { KYCData } from "@ledgerhq/live-common/exchange/swap/types";
 import { ScreenName } from "../../../../../../const";
 import { Wyre as IconWyre } from "../../../../../../icons/swap/Wyre";
 import LText from "../../../../../../components/LText";
@@ -20,18 +17,14 @@ import { swapKYCSelector } from "../../../../../../reducers/settings";
 import { setSwapKYCStatus } from "../../../../../../actions/settings";
 import { Pending } from "./Pending";
 import { Field } from "./Field";
-import type { SwapNavigatorParamList } from "../../../../../../components/RootNavigator/types/SwapNavigator";
-import type { StackNavigatorNavigation } from "../../../../../../components/RootNavigator/types/helpers";
 
 export function WyreKYC() {
   const { t } = useTranslation();
-  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [errors, setErrors] = useState({});
   const [isLoading, setLoading] = useState(false);
   const [hasSubmittedOnce, setHasSubmittedOnce] = useState(false);
-  const { navigate } =
-    useNavigation<
-      StackNavigatorNavigation<SwapNavigatorParamList, ScreenName.SwapKYC>
-    >();
+
+  const { navigate } = useNavigation();
   const swapKYC = useSelector(swapKYCSelector);
   const dispatch = useDispatch();
   const { colors } = useTheme();
@@ -48,7 +41,7 @@ export function WyreKYC() {
   const [street1, setStreet1] = useState("");
   const [street2, setStreet2] = useState("");
   const [city, setCity] = useState("");
-  const [state, setState] = useState<{ value?: string }>({});
+  const [state, setState] = useState({});
   const [country] = useState(countryOptions[0]);
   const [postalCode, setPostalCode] = useState("");
 
@@ -74,7 +67,7 @@ export function WyreKYC() {
         street1,
         street2,
         city,
-        state: state?.value || "",
+        state: state?.value,
         country: country?.value,
         postalCode,
       },
@@ -102,11 +95,10 @@ export function WyreKYC() {
   );
 
   const onValidateFields = useCallback(() => {
-    const errors: Record<string, string> = {};
-
+    const errors = {};
     for (const field in requiredFields) {
       if (
-        !requiredFields[field as keyof typeof requiredFields] ||
+        !requiredFields[field] ||
         (field === "dateOfBirth" && requiredFields[field] && !isValidDate) ||
         (field === "state" && !Object.keys(requiredFields[field]).length)
       ) {
@@ -128,14 +120,14 @@ export function WyreKYC() {
     let cancelled = false;
     async function onSubmitKYC() {
       setLoading(true);
-
+      // $FlowFixMe
       const res = await submitKYC("wyre", kycData);
       if (cancelled) return;
       dispatch(
         setSwapKYCStatus({
           provider: "wyre",
-          id: (res as KYCStatus)?.id,
-          status: (res as KYCStatus).status,
+          id: res?.id,
+          status: res.status,
         }),
       );
       setLoading(false);
@@ -156,7 +148,7 @@ export function WyreKYC() {
         {swapKYC.wyre ? (
           <Pending
             status={swapKYC.wyre.status}
-            onContinue={() => navigate(ScreenName.SwapTab)}
+            onContinue={() => navigate(ScreenName.Swap)}
           />
         ) : (
           <>

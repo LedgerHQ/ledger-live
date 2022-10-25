@@ -10,8 +10,7 @@ import { useTranslation } from "react-i18next";
 import { RenderTransitionProps } from "@ledgerhq/native-ui/components/Navigation/FlowStepper";
 import { StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useNavigation, useRoute } from "@react-navigation/native";
-import { StackScreenProps } from "@react-navigation/stack";
+import { useNavigation, useRoute, RouteProp } from "@react-navigation/native";
 import { TrackScreen } from "../../analytics";
 import { ScreenName } from "../../const";
 
@@ -20,8 +19,6 @@ import quizImage2 from "../../images/illustration/Light/_021.png";
 import quizImage3 from "../../images/illustration/Light/_060.png";
 
 import OnboardingQuizItem from "./OnboardingQuizItem";
-import { OnboardingNavigatorParamList } from "../../components/RootNavigator/types/OnboardingNavigator";
-import { StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
 
 const transitionStyles = [StyleSheet.absoluteFill, { flex: 1 }];
 
@@ -42,12 +39,10 @@ const renderTransitionSlide = ({
   </Transitions.Slide>
 );
 
-type NavigationProp = StackScreenProps<OnboardingNavigatorParamList>;
-
 const Header = ({ step }: { step: number }) => {
   const { t } = useTranslation();
-  const navigation = useNavigation<NavigationProp["navigation"]>();
-  const route = useRoute<NavigationProp["route"]>();
+  const navigation = useNavigation();
+  const route = useRoute();
 
   const onBack = useCallback(() => {
     navigation.goBack();
@@ -73,7 +68,6 @@ const Header = ({ step }: { step: number }) => {
         iconName="Close"
         size="large"
         onPress={() => {
-          // @ts-expect-error Complicated to type this properly
           navigation.navigate(ScreenName.OnboardingPairNew, {
             ...route.params,
           });
@@ -83,15 +77,21 @@ const Header = ({ step }: { step: number }) => {
   );
 };
 
-type Props = StackNavigatorProps<
-  OnboardingNavigatorParamList,
-  ScreenName.OnboardingQuiz
->;
-
-function OnboardingQuiz({ navigation, route }: Props) {
+function OnboardingQuiz({ navigation }: { navigation: any }) {
   const { t } = useTranslation();
   const [index, setIndex] = useState(0);
   const [bg, setBg] = useState("constant.purple");
+
+  const route = useRoute<
+    RouteProp<
+      {
+        params: {
+          deviceModelId: string;
+        };
+      },
+      "params"
+    >
+  >();
 
   const [userAnswers, setAnswers] = useState(0);
 

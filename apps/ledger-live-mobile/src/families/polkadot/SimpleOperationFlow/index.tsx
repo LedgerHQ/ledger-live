@@ -10,7 +10,6 @@ import SelectDevice from "../../../screens/SelectDevice";
 import ConnectDevice from "../../../screens/ConnectDevice";
 import ValidationSuccess from "./03-ValidationSuccess";
 import ValidationError from "./03-ValidationError";
-import { PolkadotSimpleOperationFlowParamList } from "./types";
 
 const totalSteps = "2";
 
@@ -30,7 +29,7 @@ function SimpleOperationFlow() {
           title: route.params.mode
             ? t(`polkadot.simpleOperation.modes.${route.params.mode}.title`)
             : t("polkadot.simpleOperation.stepperHeader.info"),
-          headerLeft: undefined,
+          headerLeft: null,
         })}
       />
       <Stack.Screen
@@ -69,8 +68,8 @@ function SimpleOperationFlow() {
         options={{
           headerTitle: "",
           gestureEnabled: false,
-          headerLeft: undefined,
-          headerRight: undefined,
+          headerLeft: null,
+          headerRight: null,
         }}
       />
       <Stack.Screen
@@ -88,4 +87,4 @@ const options = {
   headerShown: false,
 };
 export { SimpleOperationFlow as component, options };
-const Stack = createStackNavigator<PolkadotSimpleOperationFlowParamList>();
+const Stack = createStackNavigator();

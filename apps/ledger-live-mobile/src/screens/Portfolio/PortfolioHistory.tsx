@@ -1,12 +1,9 @@
 import React, { memo, useState, useCallback } from "react";
-import {
-  SectionList,
-  SectionListData,
-  SectionListRenderItemInfo,
-} from "react-native";
+import { SectionList } from "react-native";
 import { useSelector } from "react-redux";
 import { useFocusEffect } from "@react-navigation/native";
-import type { DailyOperationsSection, Operation } from "@ledgerhq/types-live";
+import type { SectionBase } from "react-native/Libraries/Lists/SectionList";
+import type { Operation } from "@ledgerhq/types-live";
 import { groupAccountsOperationsByDay } from "@ledgerhq/live-common/account/groupOperations";
 import { isAccountEmpty } from "@ledgerhq/live-common/account/helpers";
 
@@ -25,13 +22,10 @@ import Button from "../../components/Button";
 import { ScreenName } from "../../const";
 import { withDiscreetMode } from "../../context/DiscreetModeContext";
 import { track } from "../../analytics";
-import { StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
-import { BaseNavigatorStackParamList } from "../../components/RootNavigator/types/BaseNavigator";
 
-type Props = StackNavigatorProps<
-  BaseNavigatorStackParamList,
-  ScreenName.PortfolioOperationHistory
->;
+type Props = {
+  navigation: any;
+};
 
 export const PortfolioHistoryList = withDiscreetMode(
   ({
@@ -41,7 +35,7 @@ export const PortfolioHistoryList = withDiscreetMode(
   }: {
     onEndReached?: () => void;
     opCount?: number;
-    navigation: Props["navigation"];
+    navigation: any;
   }) => {
     const accounts = useSelector(accountsSelector);
     const allAccounts = useSelector(flattenAccountsSelector);
@@ -66,7 +60,11 @@ export const PortfolioHistoryList = withDiscreetMode(
       item,
       index,
       section,
-    }: SectionListRenderItemInfo<Operation>) {
+    }: {
+      item: Operation;
+      index: number;
+      section: SectionBase<any>;
+    }) {
       const account = allAccounts.find(a => a.id === item.accountId);
       const parentAccount =
         account && account.type !== "Account"
@@ -86,11 +84,7 @@ export const PortfolioHistoryList = withDiscreetMode(
       );
     }
 
-    function renderSectionHeader({
-      section,
-    }: {
-      section: SectionListData<Operation, DailyOperationsSection>;
-    }) {
+    function renderSectionHeader({ section }: { section: { day: Date } }) {
       return <SectionHeader section={section} />;
     }
 
@@ -103,10 +97,12 @@ export const PortfolioHistoryList = withDiscreetMode(
 
     return (
       <SectionList
+        // $FlowFixMe
         sections={sections}
         style={{ flex: 1, paddingHorizontal: 16 }}
         keyExtractor={keyExtractor}
         renderItem={renderItem}
+        // $FlowFixMe
         renderSectionHeader={renderSectionHeader}
         stickySectionHeadersEnabled={false}
         onEndReached={onEndReached}

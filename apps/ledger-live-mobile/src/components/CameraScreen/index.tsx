@@ -27,7 +27,7 @@ export default function CameraScreen({
     width > height
       ? {
           height,
-          alignSelf: "stretch" as const,
+          alignSelf: "stretch",
         }
       : {
           width,
@@ -49,6 +49,7 @@ export default function CameraScreen({
       </View>
       <QRCodeRectangleViewport viewFinderSize={viewFinderSize} />
       <QRCodeBottomLayer
+        viewFinderSize={viewFinderSize}
         progress={progress}
         liveQrCode={liveQrCode}
         instruction={instruction}

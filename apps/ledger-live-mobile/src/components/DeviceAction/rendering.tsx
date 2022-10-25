@@ -24,19 +24,17 @@ import {
   Exchange,
 } from "@ledgerhq/live-common/exchange/swap/types";
 import {
+  getAccountCurrency,
   getAccountUnit,
   getMainAccount,
   getAccountName,
-  getAccountCurrency,
 } from "@ledgerhq/live-common/account/index";
 import { TFunction } from "react-i18next";
 import { DeviceModelId } from "@ledgerhq/types-devices";
-import { StackNavigationProp } from "@react-navigation/stack";
-import { ParamListBase } from "@react-navigation/native";
 import { setModalLock } from "../../actions/appstate";
 import { urls } from "../../config/urls";
 import Alert from "../Alert";
-import { lighten, Theme } from "../../colors";
+import { lighten } from "../../colors";
 import Button from "../Button";
 import DeviceActionProgress from "../DeviceActionProgress";
 import { NavigatorName, ScreenName } from "../../const";
@@ -49,8 +47,8 @@ import { providerIcons } from "../../icons/swap/index";
 import ExternalLink from "../ExternalLink";
 import { track } from "../../analytics";
 import CurrencyUnitValue from "../CurrencyUnitValue";
-import TermsFooter, { TermsProviders } from "../TermsFooter";
 import CurrencyIcon from "../CurrencyIcon";
+import TermsFooter from "../TermsFooter";
 import Illustration from "../../images/illustration/Illustration";
 import { FramedImageWithContext } from "../CustomImage/FramedImage";
 
@@ -64,22 +62,16 @@ const Wrapper = styled(Flex).attrs({
   minHeight: "160px",
 })``;
 
-type AnimationContainerExtraProps = {
-  withConnectDeviceHeight?: boolean;
-  withVerifyAddressHeight?: boolean;
-};
-const AnimationContainer = styled(Flex).attrs(
-  (p: AnimationContainerExtraProps) => ({
-    alignSelf: "stretch",
-    alignItems: "center",
-    justifyContent: "center",
-    height: p.withConnectDeviceHeight
-      ? "100px"
-      : p.withVerifyAddressHeight
-      ? "72px"
-      : undefined,
-  }),
-)<AnimationContainerExtraProps>``;
+const AnimationContainer = styled(Flex).attrs(p => ({
+  alignSelf: "stretch",
+  alignItems: "center",
+  justifyContent: "center",
+  height: p.withConnectDeviceHeight
+    ? "100px"
+    : p.withVerifyAddressHeight
+    ? "72px"
+    : undefined,
+}))``;
 
 const ActionContainer = styled(Flex).attrs({
   alignSelf: "stretch",
@@ -142,7 +134,7 @@ const ConnectDeviceExtraContentWrapper = styled(Flex).attrs({
 
 type RawProps = {
   t: (key: string, options?: { [key: string]: string | number }) => string;
-  colors?: Theme["colors"];
+  colors?: any;
   theme?: "light" | "dark";
 };
 
@@ -170,7 +162,7 @@ export function renderRequiresAppInstallation({
   navigation,
   appNames,
 }: RawProps & {
-  navigation: StackNavigationProp<ParamListBase>;
+  navigation: any;
   appNames: string[];
 }) {
   const appNamesCSV = appNames.join(", ");
@@ -253,8 +245,8 @@ export function renderConfirmSwap({
   transaction: Transaction;
   exchangeRate: ExchangeRate;
   exchange: Exchange;
-  amountExpectedTo?: string | null;
-  estimatedFees?: string | null;
+  amountExpectedTo?: string;
+  estimatedFees?: string;
 }) {
   const ProviderIcon = providerIcons[exchangeRate.provider.toLowerCase()];
 
@@ -348,7 +340,7 @@ export function renderConfirmSwap({
           </FieldItem>
         </Flex>
 
-        <TermsFooter provider={exchangeRate.provider as TermsProviders} />
+        <TermsFooter provider={exchangeRate.provider} />
       </Wrapper>
     </ScrollView>
   );
@@ -450,7 +442,7 @@ const AllowOpeningApp = ({
   device,
   theme,
 }: RawProps & {
-  navigation: StackNavigationProp<ParamListBase>;
+  navigation: any;
   wording: string;
   tokenContext?: TokenCurrency | null | undefined;
   isDeviceBlocker?: boolean;
@@ -493,7 +485,7 @@ export function renderAllowOpeningApp({
   device,
   theme,
 }: RawProps & {
-  navigation: StackNavigationProp<ParamListBase>;
+  navigation: any;
   wording: string;
   tokenContext?: TokenCurrency | undefined | null;
   isDeviceBlocker?: boolean;
@@ -518,7 +510,7 @@ export function renderInWrongAppForAccount({
   colors,
   theme,
 }: RawProps & {
-  onRetry?: (() => void) | null;
+  onRetry?: () => void;
 }) {
   return renderError({
     t,
@@ -538,9 +530,9 @@ export function renderError({
   Icon,
   iconColor,
 }: RawProps & {
-  navigation?: StackNavigationProp<ParamListBase>;
+  navigation?: any;
   error: Error;
-  onRetry?: (() => void) | null;
+  onRetry?: () => void;
   managerAppName?: string;
   Icon?: React.ComponentProps<typeof GenericErrorView>["Icon"];
   iconColor?: string;
@@ -594,7 +586,8 @@ export function renderDeviceNotOnboarded({
 }: {
   t: TFunction;
   device: Device;
-  navigation: StackNavigationProp<ParamListBase>;
+  // TODO: correctly type the navigation prop here AND in the DeviceAction component
+  navigation: any;
 }) {
   const navigateToOnboarding = () => {
     if (device.modelId === DeviceModelId.nanoFTS) {
@@ -658,7 +651,7 @@ export function renderConnectYourDevice({
   theme,
   onSelectDeviceLink,
 }: RawProps & {
-  unresponsive?: boolean | null;
+  unresponsive: boolean;
   device: Device;
   onSelectDeviceLink?: () => void;
 }) {
@@ -793,15 +786,15 @@ export function LoadingAppInstall({
     const trackingArgs = [
       "In-line app install",
       { appName, flow: analyticsPropertyFlow },
-    ] as const;
+    ];
     track(...trackingArgs);
   }, [appName, analyticsPropertyFlow]);
   return renderLoading(props);
 }
 
 type WarningOutdatedProps = RawProps & {
-  colors: Theme["colors"];
-  navigation: StackNavigationProp<ParamListBase>;
+  colors: any;
+  navigation: any;
   appName: string;
   passWarning: () => void;
 };
@@ -878,7 +871,7 @@ export const AutoRepair = ({
 }: RawProps & {
   onDone: () => void;
   device: Device;
-  navigation: StackNavigationProp<ParamListBase>;
+  navigation: StackNavigationProp<any>;
 }) => {
   const [error, setError] = useState<Error | null>(null);
   const [progress, setProgress] = useState<number>(0);

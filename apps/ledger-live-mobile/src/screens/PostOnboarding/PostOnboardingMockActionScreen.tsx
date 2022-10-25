@@ -1,27 +1,16 @@
 import React, { useCallback } from "react";
 import { Button, Flex, Text } from "@ledgerhq/native-ui";
+import { StackScreenProps } from "@react-navigation/stack";
 
 import { getPostOnboardingAction } from "../../logic/postOnboarding";
 import { NavigatorName, ScreenName } from "../../const";
+import { ParamList } from "./types";
 import { useNavigateToPostOnboardingHubCallback } from "../../logic/postOnboarding/useNavigateToPostOnboardingHubCallback";
 import { useCompleteActionCallback } from "../../logic/postOnboarding/useCompleteAction";
-import {
-  BaseComposite,
-  StackNavigatorProps,
-} from "../../components/RootNavigator/types/helpers";
-import { PostOnboardingNavigatorParamList } from "../../components/RootNavigator/types/PostOnboardingNavigator";
 
-type NavigationProps = BaseComposite<
-  StackNavigatorProps<
-    PostOnboardingNavigatorParamList,
-    ScreenName.PostOnboardingMockActionScreen
-  >
->;
-
-const PostOnboardingMockActionScreen = ({
-  navigation,
-  route,
-}: NavigationProps) => {
+const PostOnboardingMockActionScreen: React.FC<
+  StackScreenProps<ParamList, "PostOnboardingMockActionScreen">
+> = ({ navigation, route }) => {
   const { params } = route;
   const { id } = params;
   const navigateToHub = useNavigateToPostOnboardingHubCallback();
@@ -35,10 +24,7 @@ const PostOnboardingMockActionScreen = ({
   }, [completeAction, id]);
 
   const navigateToWallet = useCallback(() => {
-    navigation.navigate(NavigatorName.Main, {
-      screen: NavigatorName.Portfolio,
-      params: { screen: ScreenName.Portfolio },
-    });
+    navigation.navigate(NavigatorName.Main, { screen: ScreenName.Portfolio });
   }, [navigation]);
 
   const handleCompleteAndGoToWallet = useCallback(() => {

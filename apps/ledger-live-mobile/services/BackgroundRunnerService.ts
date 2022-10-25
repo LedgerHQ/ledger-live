@@ -8,9 +8,10 @@ import { hasFinalFirmware } from "@ledgerhq/live-common/hw/hasFinalFirmware";
 import { FirmwareUpdateContext } from "@ledgerhq/types-live";
 import prepareFirmwareUpdate from "@ledgerhq/live-common/hw/firmwareUpdate-prepare";
 import mainFirmwareUpdate from "@ledgerhq/live-common/hw/firmwareUpdate-main";
-import { store } from "../src/context/LedgerStore";
-import type { FwUpdateBackgroundEvent } from "../src/reducers/types";
+
 import { addBackgroundEvent } from "../src/actions/appstate";
+import { store } from "../src/context/LedgerStore";
+import { FwUpdateBackgroundEvent } from "../src/reducers/appstate";
 
 const FIVE_MINUTES_IN_MS = 5 * 60 * 1000;
 
@@ -40,7 +41,7 @@ const BackgroundRunnerService = async ({
     return 0;
   }
 
-  const onError = (error: Error) => {
+  const onError = (error: any) => {
     emitEvent({ type: "error", error });
     NativeModules.BackgroundRunner.stop();
   };
@@ -88,8 +89,7 @@ const BackgroundRunnerService = async ({
             emitEvent({ type: "confirmPin" });
             waitForOnlineDevice(5 * 60 * 1000).subscribe({
               error: onError,
-              next: updatedDeviceInfo =>
-                emitEvent({ type: "firmwareUpdated", updatedDeviceInfo }),
+              next: (updatedDeviceInfo) => emitEvent({ type: "firmwareUpdated", updatedDeviceInfo }),
               complete: onFirmwareUpdated,
             });
           },
@@ -99,8 +99,7 @@ const BackgroundRunnerService = async ({
         // We're waiting forever condition that make getDeviceInfo work
         waitForOnlineDevice(FIVE_MINUTES_IN_MS).subscribe({
           error: onError,
-          next: updatedDeviceInfo =>
-            emitEvent({ type: "firmwareUpdated", updatedDeviceInfo }),
+          next: (updatedDeviceInfo) => emitEvent({ type: "firmwareUpdated", updatedDeviceInfo }),
           complete: onFirmwareUpdated,
         });
       }

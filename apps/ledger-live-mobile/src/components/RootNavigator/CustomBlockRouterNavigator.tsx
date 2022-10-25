@@ -1,23 +1,11 @@
-import { ParamListBase } from "@react-navigation/native";
-import { StackNavigationProp } from "@react-navigation/stack";
 import { useEffect, useState } from "react";
 import { BehaviorSubject } from "rxjs";
 
-export type BehaviorSubjectType =
-  | ((props: {
-      type: string;
-      payload?: object;
-      source?: string;
-      target?: string;
-    }) => void)
-  | undefined;
-
 export const lockSubject = new BehaviorSubject<boolean>(false);
-export const exposedManagerNavLockCallback =
-  new BehaviorSubject<BehaviorSubjectType>(undefined);
+export const exposedManagerNavLockCallback = new BehaviorSubject();
 
-export function useManagerNavLockCallback() {
-  const [callback, setCallback] = useState<BehaviorSubjectType>();
+export function useManagerNavLockCallback(): any {
+  const [callback, setCallback] = useState(null);
 
   useEffect(() => {
     const subscription = exposedManagerNavLockCallback.subscribe(cb => {
@@ -51,20 +39,14 @@ export function useIsNavLocked(): boolean {
 /** use Effect to trigger lock navigation updates and callback to retrieve catched navigation actions */
 export const useLockNavigation = (
   when: boolean,
-  callback: (action: {
-    type: string;
-    payload?: object;
-    source?: string;
-    target?: string;
-  }) => void = () => {
-    /* ignore */
-  },
-  navigation: StackNavigationProp<ParamListBase>,
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
+  callback: (..._: any[]) => void = () => {},
+  navigation: any,
 ) => {
   useEffect(() => {
     exposedManagerNavLockCallback.next(when ? callback : undefined);
     lockSubject.next(when);
-    const listener = navigation.addListener("beforeRemove", e => {
+    navigation.addListener("beforeRemove", (e: any) => {
       if (!when) {
         // If we don't have unsaved changes, then we don't need to do anything
         return;
@@ -79,7 +61,7 @@ export const useLockNavigation = (
     return () => {
       lockSubject.next(false);
       exposedManagerNavLockCallback.next(undefined);
-      navigation.removeListener("beforeRemove", listener);
+      navigation.removeListener("beforeRemove");
     };
   }, [callback, navigation, when]);
 };

@@ -14,10 +14,7 @@ const signMessage: SignMessage = async (
 
   if (!message) throw new Error(`Message cannot be empty`);
 
-  const r = await fil.sign(
-    getPath(path),
-    getBufferFromString(message as string)
-  );
+  const r = await fil.sign(getPath(path), getBufferFromString(message));
   isError(r);
 
   return {

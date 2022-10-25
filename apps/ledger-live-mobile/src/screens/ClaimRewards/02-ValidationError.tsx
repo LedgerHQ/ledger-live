@@ -1,32 +1,35 @@
 import React, { useCallback } from "react";
-import { StyleSheet } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { CompositeScreenProps, useTheme } from "@react-navigation/native";
+import { StyleSheet, Linking } from "react-native";
+import SafeAreaView from "react-native-safe-area-view";
+import { useTheme } from "@react-navigation/native";
 import { TrackScreen } from "../../analytics";
 import { ScreenName } from "../../const";
 import ValidateError from "../../components/ValidateError";
-import type {
-  StackNavigatorNavigation,
-  StackNavigatorProps,
-} from "../../components/RootNavigator/types/helpers";
-import type { ClaimRewardsNavigatorParamList } from "../../components/RootNavigator/types/ClaimRewardsNavigator";
-import type { BaseNavigatorStackParamList } from "../../components/RootNavigator/types/BaseNavigator";
+import { urls } from "../../config/urls";
 
-type Props = CompositeScreenProps<
-  StackNavigatorProps<
-    ClaimRewardsNavigatorParamList,
-    ScreenName.ClaimRewardsValidationError
-  >,
-  StackNavigatorProps<BaseNavigatorStackParamList>
->;
-
+const forceInset = {
+  bottom: "always",
+};
+type Props = {
+  navigation: any;
+  route: {
+    params: RouteParams;
+  };
+};
+type RouteParams = {
+  accountId: string;
+  deviceId: string;
+  transaction: any;
+  error: Error;
+};
 export default function ValidationError({ navigation, route }: Props) {
   const { colors } = useTheme();
   const onClose = useCallback(() => {
-    navigation
-      .getParent<StackNavigatorNavigation<BaseNavigatorStackParamList>>()
-      .pop();
+    navigation.getParent().pop();
   }, [navigation]);
+  const contactUs = useCallback(() => {
+    Linking.openURL(urls.contact);
+  }, []);
   const retry = useCallback(() => {
     navigation.navigate(ScreenName.ClaimRewardsSelectDevice, route.params);
   }, [navigation, route.params]);
@@ -38,12 +41,14 @@ export default function ValidationError({ navigation, route }: Props) {
           backgroundColor: colors.background,
         },
       ]}
+      forceInset={forceInset}
     >
       <TrackScreen category="ClaimRewards" name="ValidationError" />
       <ValidateError
         error={route.params.error}
         onRetry={retry}
         onClose={onClose}
+        onContactUs={contactUs}
       />
     </SafeAreaView>
   );

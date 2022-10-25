@@ -11,9 +11,6 @@ import ConnectDevice from "../../screens/ConnectDevice";
 import ValidationSuccess from "../../screens/FreezeFunds/04-ValidationSuccess";
 import ValidationError from "../../screens/FreezeFunds/04-ValidationError";
 import StepHeader from "../StepHeader";
-import { FreezeNavigatorParamList } from "./types/FreezeNavigator";
-
-const Stack = createStackNavigator<FreezeNavigatorParamList>();
 
 const totalSteps = "3";
 export default function FreezeNavigator() {
@@ -47,7 +44,7 @@ export default function FreezeNavigator() {
               })}
             />
           ),
-          headerLeft: undefined,
+          headerLeft: null,
         }}
       />
       <Stack.Screen
@@ -86,8 +83,8 @@ export default function FreezeNavigator() {
         options={{
           headerTitle: "",
           gestureEnabled: false,
-          headerLeft: undefined,
-          headerRight: undefined,
+          headerLeft: null,
+          headerRight: null,
         }}
       />
       <Stack.Screen
@@ -100,3 +97,4 @@ export default function FreezeNavigator() {
     </Stack.Navigator>
   );
 }
+const Stack = createStackNavigator();

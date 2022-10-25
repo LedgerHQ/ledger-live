@@ -10,12 +10,16 @@ export default function ConfigUSBDeviceSupport() {
   const experimentalUSBEnabled = useSelector(experimentalUSBEnabledSelector);
   return (
     <>
-      <SettingsRow title="Enable Experimental USB Support">
+      <SettingsRow
+        title="Enable Experimental USB Support"
+        onPress={null}
+        alignedTop
+      >
         <Switch
           value={experimentalUSBEnabled}
-          onValueChange={args => {
-            dispatch(setExperimentalUSBSupport(args));
-          }}
+          onValueChange={(...args) =>
+            dispatch(setExperimentalUSBSupport(...args))
+          }
         />
       </SettingsRow>
     </>

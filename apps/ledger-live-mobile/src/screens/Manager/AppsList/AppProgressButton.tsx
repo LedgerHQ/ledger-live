@@ -3,14 +3,13 @@ import React from "react";
 import { useTheme } from "styled-components/native";
 import { ProgressLoader } from "@ledgerhq/native-ui";
 import { useAppInstallProgress } from "@ledgerhq/live-common/apps/react";
-import type { State } from "@ledgerhq/live-common/apps/types";
 
 type Props = {
   state: State;
   name: string;
-  installing?: boolean;
-  updating?: boolean;
-  size?: number;
+  installing: boolean;
+  updating: boolean;
+  size: number;
 };
 
 export default function AppProgressButton({
