@@ -16,9 +16,10 @@ import DebugBLE from "../../screens/DebugBLE";
 import DebugBLEBenchmark from "../../screens/DebugBLEBenchmark";
 import DebugCrash from "../../screens/DebugCrash";
 import DebugHttpTransport from "../../screens/DebugHttpTransport";
-import DebugFeatureFlags from "../../screens/DebugFeatureFlags";
+import DebugFeatureFlags from "../../screens/FeatureFlagsSettings";
 import DebugIcons from "../../screens/DebugIcons";
 import DebugLottie from "../../screens/DebugLottie";
+import DebugMultiAppInstall from "../../screens/DebugMultiAppInstall";
 import DebugLogs from "../../screens/DebugLogs";
 import DebugStore from "../../screens/DebugStore";
 import DebugEnv from "../../screens/DebugEnv";
@@ -203,6 +204,9 @@ export default function SettingsNavigator() {
         component={DeveloperCustomManifest}
         options={{
           title: t("settings.developer.customManifest.title"),
+          headerTitleStyle: {
+            width: "80%",
+          },
         }}
       />
       <Stack.Screen
@@ -328,6 +332,13 @@ export default function SettingsNavigator() {
         component={DebugLottie}
         options={{
           title: "Debug Lottie",
+        }}
+      />
+      <Stack.Screen
+        name={ScreenName.DebugMultiAppInstall}
+        component={DebugMultiAppInstall}
+        options={{
+          title: "Debug MultiAppInstall",
         }}
       />
       <Stack.Screen

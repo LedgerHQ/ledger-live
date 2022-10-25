@@ -185,7 +185,7 @@
       "week" : "1週",
       "month" : "1月",
       "year" : "1年",
-      "all" : "全期間"
+      "all" : "ALL"
     }
   },
   "fees" : {
@@ -237,7 +237,7 @@
     "form" : {
       "changeCTA" : "変更",
       "rates" : {
-        "title" : "プロバイダー",
+        "title" : "見積もり",
         "registration" : "登録が必要です ",
         "noRegistration" : "いいえ、登録は不要です。",
         "fixed" : "固定",
@@ -246,7 +246,7 @@
         "loading" : "読み込み中...",
         "name" : {
           "title" : "プロバイダー",
-          "tooltip" : "プロバイダーによっては、アカウントを作成し、プロバイダーにサインインする必要があります。"
+          "tooltip" : "プロバイダーによっては、アカウントを作成し、プロバイダーに登録する必要があります。"
         },
         "rate" : {
           "title" : "取引レート",
@@ -430,11 +430,13 @@
         }
       },
       "filter" : {
-        "all" : "全て",
         "centralised" : "中央集権型",
-        "dedentralised" : "分散型"
+        "decentralised" : "分散型",
+        "float" : "変動レート",
+        "fixed" : "固定レート"
       },
-      "noQuote" : "お見積もりは次のページでご利用可能です"
+      "noQuote" : "お見積もりは次のページでご利用可能です",
+      "noProviders" : "結果が見つかりません。現在の設定で利用できる見積もりはありません。"
     },
     "ip" : {
       "title" : "スワップへようこそ",
@@ -752,7 +754,7 @@
     "settings" : {
       "title" : "アカウントを編集",
       "advancedLogs" : "アドバンス",
-      "advancedTips" : "xpubはプライバシーに関わるデータです。第三者に開示する場合は、十分ご注意ください。",
+      "advancedTips" : "これは {{tag}}のxpubです。サードパーティのウォレットにインポートする際は、同じ派生モードを選択してください。",
       "accountName" : {
         "title" : "アカウント名",
         "desc" : "アカウントの名前"
@@ -1182,6 +1184,10 @@
     "blackfriday" : {
       "title" : "ブラックフライデー ",
       "description" : "プロモーションコードBLACKFRIDAY20を使用して、Ledgerハードウェアウォレットを40%オフでゲットしましょう"
+    },
+    "referralProgram" : {
+      "title" : "紹介して$10を獲得",
+      "description" : "ご友人の紹介に成功すると、お客様とご友人の両者が$10相当のBitcoinを獲得できます。"
     }
   },
   "signmessage" : {
@@ -2025,6 +2031,29 @@
     },
     "switchButton" : "{{language}}に切り替える",
     "no" : "不要"
+  },
+  "deviceLocalization" : {
+    "language" : "言語",
+    "deviceLanguage" : "言語",
+    "changeLanguage" : "言語の変更",
+    "changeDeviceLanguage" : "デバイスの言語を変更しますか？",
+    "chooseLanguage" : "{{deviceName}}の言語を選択してください。",
+    "changeDeviceLanguagePrompt" : {
+      "title" : "{{language}}が{{deviceName}}でもご利用可能になりました",
+      "description" : "言語を{{language}}に変更しますか？"
+    },
+    "firmwareUpdatePrompt" : {
+      "title" : "{{deviceName}}を{{language}}に設定しますか？",
+      "description" : "{{language}}が{{deviceName}}でご利用可能になりました。今すぐ設定できます。また、My Ledgerからいつでもデバイスの言語を変更することが可能です。"
+    },
+    "allowLanguageInstallation" : "言語のインストールを許可する",
+    "languageInstalled" : "言語が{{language}}に変更されました",
+    "installingLanguage" : "言語をインストール",
+    "languages" : {
+      "english" : "英語",
+      "french" : "フランス語",
+      "spanish" : "スペイン語"
+    }
   },
   "distribution" : {
     "asset" : "資産",
@@ -4550,6 +4579,14 @@
       "title" : "リセットできませんでした。",
       "description" : "問題が解決しない場合は、再度お試しいただくか、Ledgerサポートにお問い合わせください。"
     },
+    "LanguageInstallRefusedOnDevice" : {
+      "title" : "言語のインストールがデバイス上で拒否されました",
+      "description" : "もう一度お試しください。問題が解決しない場合は、以下のボタンを使ってログを保存し、Ledgerサポートに提出してください。"
+    },
+    "LanguageNotFound" : {
+      "title" : "言語が見つかりません",
+      "description" : "インストールしようとしている言語が見つかりませんでした。他の言語のインストールをお試しください。"
+    },
     "LatestMCUInstalledError" : {
       "title" : "アップデートの必要はありません。",
       "description" : "デバイスを使用できない場合は、Ledgerサポートに連絡してください。"
@@ -4763,7 +4800,7 @@
     },
     "EthAppNftNotSupported" : {
       "title" : "お使いのデバイスではこの操作をご利用いただけません",
-      "description" : "Send NFT feature is only available for Nano X and Nano S+. Please visit our customer support platform to know how to send a NFT with a Nano S."
+      "description" : "NFTの送付機能は、Nano XとNano S+でのみご利用いただけます。Nano SでNFTを送付する方法については、当社のカスタマーサポートのプラットフォームをご覧ください。"
     },
     "CantScanQRCode" : {
       "title" : "このQRコードをスキャンできませんでした：このアドレスでは自動認証がサポートされていません。"
@@ -5021,6 +5058,9 @@
     },
     "StellarSourceHasMultiSign" : {
       "title" : "Stellarトランザクションを行うには、マルチシグを無効にしてください"
+    },
+    "HederaAddAccountError" : {
+      "title" : "アカウントが追加されていません。もう一度お試しください。"
     }
   },
   "cryptoOrg" : {

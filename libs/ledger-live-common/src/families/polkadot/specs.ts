@@ -82,7 +82,7 @@ const polkadot: AppSpec<Transaction> = {
             ),
             "send is too low to activate account"
           );
-          amount = EXISTENTIAL_DEPOSIT.plus(POLKADOT_MIN_SAFE);
+          amount = EXISTENTIAL_DEPOSIT;
         }
 
         const minimumBalanceExistential = getMinimumBalance(account);

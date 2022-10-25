@@ -45,10 +45,6 @@ jobs:
           node-version: 16
           cache: pnpm
           cache-dependency-path: "**/pnpm-lock.yaml"
-      - name: Bump npm to latest
-        run: |
-          npm i -g npm
-          npm --version
       - name: Install dependencies
         run: pnpm i --filter="!./apps/**"
       - name: Build

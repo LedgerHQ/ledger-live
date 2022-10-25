@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import { TouchableHighlight } from "react-native";
 import Animated, {
   set,
@@ -10,7 +10,11 @@ import Animated, {
 import { useClock, timing } from "react-native-redash/lib/module/v1";
 import { ToastData } from "@ledgerhq/live-common/notifications/ToastProvider/types";
 import { Notification } from "@ledgerhq/native-ui";
-import { InfoMedium, WarningMedium } from "@ledgerhq/native-ui/assets/icons";
+import {
+  CircledCheckSolidMedium,
+  InfoMedium,
+  WarningMedium,
+} from "@ledgerhq/native-ui/assets/icons";
 // eslint-disable-next-line import/no-unresolved
 import getWindowDimensions from "../../../logic/getWindowDimensions";
 
@@ -29,9 +33,11 @@ type Props = {
 const icons = {
   info: InfoMedium,
   warning: WarningMedium,
+  success: CircledCheckSolidMedium,
 };
 
 export default function Snackbar({ toast, cta, onPress, onClose }: Props) {
+  const { title, text, type, icon } = toast;
   const [anim] = useState(new Animated.Value(0));
   const clock = useClock();
   const [closed, setIsClosed] = useState(false);
@@ -56,11 +62,20 @@ export default function Snackbar({ toast, cta, onPress, onClose }: Props) {
     setTimeout(() => onClose && onClose(toast), 1000);
   }, [onClose, toast]);
 
+  useEffect(() => {
+    let timeout: ReturnType<typeof setTimeout>;
+    if (type === "success") {
+      timeout = setTimeout(handleClose, 5000);
+    }
+    return () => {
+      timeout && clearTimeout(timeout);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const handleOnPress = useCallback(() => {
     onPress(toast);
   }, [onPress, toast]);
-
-  const { title, text, type, icon } = toast;
 
   const Icon = icon && icons[icon];
 
@@ -88,6 +103,20 @@ export default function Snackbar({ toast, cta, onPress, onClose }: Props) {
     extrapolate: Extrapolate.CLAMP,
   });
 
+  const notificationProps =
+    type === "success"
+      ? {
+          variant: "plain",
+          iconColor: "success.c50",
+          title,
+          subtitle: text,
+        }
+      : {
+          variant: "primary",
+          title: type || title,
+          subtitle: type ? title : text,
+        };
+
   return (
     <AnimatedTouchableOpacity
       style={[
@@ -104,10 +133,8 @@ export default function Snackbar({ toast, cta, onPress, onClose }: Props) {
       onPress={handleOnPress}
     >
       <Notification
-        variant={"primary"}
+        {...notificationProps}
         Icon={Icon}
-        title={type || title}
-        subtitle={type ? title : text}
         linkText={cta}
         onLinkPress={handleOnPress}
         onClose={onClose && handleClose}

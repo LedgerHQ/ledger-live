@@ -3,8 +3,8 @@ import { TouchableOpacity } from "react-native";
 import styled from "styled-components/native";
 import { Flex, Text, BottomDrawer, Icon as IconUI } from "@ledgerhq/native-ui";
 
-export const Badge = styled(Flex).attrs({
-  bg: "neutral.c30",
+export const Badge = styled(Flex).attrs(p => ({
+  bg: p.bg ?? "neutral.c30",
   flexDirection: "row",
   mx: "6px",
   px: 4,
@@ -12,9 +12,10 @@ export const Badge = styled(Flex).attrs({
   justifyContent: " center",
   alignItems: "center",
   height: 32,
-})`
+}))`
   border-radius: 32px;
 `;
+
 Badge.mx = 6;
 
 const CheckIconContainer = styled(Flex).attrs({
