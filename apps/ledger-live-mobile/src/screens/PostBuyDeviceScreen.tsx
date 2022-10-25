@@ -33,8 +33,6 @@ export default function PostBuyDeviceScreen() {
   const navigation = useNavigation<NavigationProp>();
 
   const onClose = useCallback(() => {
-    // FIXME: navigating to a nested navigator without providing a key / screen name…
-    // @ts-expect-error typescript is rightfully screaming that this is wrong
     navigation.navigate(NavigatorName.Base, {
       screen: NavigatorName.Main,
     });

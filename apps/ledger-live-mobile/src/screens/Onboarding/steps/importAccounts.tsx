@@ -76,10 +76,8 @@ function OnboardingStepPairNew() {
       parentNav.popToTop();
     }
 
-    // @ts-expect-error TS requires params to be defined, but it crashes the app
     navigation.replace(NavigatorName.Base, {
       screen: NavigatorName.Main,
-      params: undefined,
     });
   }, [dispatch, navigation, resetCurrentStep]);
 
@@ -95,7 +93,7 @@ function OnboardingStepPairNew() {
   );
 
   const nextPage = useCallback(() => {
-    navigation.navigate(ScreenName.OnboardingModalWarning, {
+    navigation.navigate(NavigatorName.OnboardingCarefulWarning, {
       screen: ScreenName.OnboardingModalSyncDesktopInformation,
       params: { onNext },
     });

@@ -2,7 +2,7 @@ import React, { useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { Text } from "@ledgerhq/native-ui";
 import { useNavigation } from "@react-navigation/native";
-import { ScreenName } from "../../../../../const";
+import { NavigatorName, ScreenName } from "../../../../../const";
 import Button from "../../../../../components/PreventDoubleClickButton";
 import { StackNavigatorNavigation } from "../../../../../components/RootNavigator/types/helpers";
 import { OnboardingNavigatorParamList } from "../../../../../components/RootNavigator/types/OnboardingNavigator";
@@ -32,7 +32,7 @@ const Next = ({ onNext }: { onNext: () => void }) => {
     useNavigation<StackNavigatorNavigation<OnboardingNavigatorParamList>>();
 
   const handlePress = useCallback(() => {
-    navigation.navigate(ScreenName.OnboardingModalWarning, {
+    navigation.navigate(NavigatorName.OnboardingCarefulWarning, {
       screen: ScreenName.OnboardingModalRecoveryPhraseWarning,
       params: { onNext },
     });
