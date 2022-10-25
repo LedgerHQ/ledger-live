@@ -30,8 +30,7 @@ const Step0Welcome: React.FC<
   }, [setModalOpened]);
 
   return (
-    // @ts-expect-error Bindings are wrong…
-    <SafeAreaView flex={1} edges={["bottom"]}>
+    <SafeAreaView style={{ flex: 1 }} edges={["bottom"]}>
       <Flex flex={1}>
         <Flex
           backgroundColor="neutral.c40"
