@@ -1,11 +1,11 @@
-import React from "react";
+import React, { useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { Text, IconBoxList, Icons } from "@ledgerhq/native-ui";
 import { useNavigation } from "@react-navigation/native";
-import { ScreenName } from "../../../../../const";
+import { NavigatorName, ScreenName } from "../../../../../const";
 import Button from "../../../../../components/PreventDoubleClickButton";
 import { StackNavigatorNavigation } from "../../../../../components/RootNavigator/types/helpers";
-import { OnboardingCarefulWarningParamList } from "../../../../../components/RootNavigator/types/OnboardingNavigator";
+import { OnboardingNavigatorParamList } from "../../../../../components/RootNavigator/types/OnboardingNavigator";
 
 const items = [
   {
@@ -42,15 +42,16 @@ IntroScene.id = "IntroScene";
 const Next = ({ onNext }: { onNext: () => void }) => {
   const { t } = useTranslation();
   const navigation =
-    useNavigation<
-      StackNavigatorNavigation<OnboardingCarefulWarningParamList>
-    >();
+    useNavigation<StackNavigatorNavigation<OnboardingNavigatorParamList>>();
 
-  const next = () => {
-    navigation.navigate(ScreenName.OnboardingModalWarning, {
-      onNext,
+  const next = useCallback(() => {
+    navigation.navigate(NavigatorName.OnboardingCarefulWarning, {
+      screen: ScreenName.OnboardingModalWarning,
+      params: {
+        onNext,
+      },
     });
-  };
+  }, [onNext, navigation]);
 
   return (
     <Button type="main" size="large" onPress={next}>
