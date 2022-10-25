@@ -15,5 +15,5 @@ export default function OperationRowDate({ date }: Props) {
       }),
     [date, locale],
   );
-  return <>`${localeTimeString}`</>;
+  return <>{localeTimeString}</>;
 }
