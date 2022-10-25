@@ -34,7 +34,7 @@ function ManageAssetsNavigator() {
   navigation.setOptions({ title: t("celo.manage.title") });
 
   const route = useRoute<NavigationProps["route"]>();
-  const { account } = useSelector(accountScreenSelector(route));
+  const { account } = useSelector(accountScreenSelector(route?.params));
   const { celoResources } = account as CeloAccount;
   const { votes } = celoResources;
 
