@@ -41,7 +41,7 @@ const getTransactionStatus = async (
       a.subAccounts.find((ta) => ta.id === t.subAccountId)) ||
     null;
 
-  if (!errors.amount && t.amount.eq(0)) {
+  if (!errors.amount && t.amount.eq(0) && !t.useAllAmount) {
     errors.amount = new AmountRequired();
   }
 
