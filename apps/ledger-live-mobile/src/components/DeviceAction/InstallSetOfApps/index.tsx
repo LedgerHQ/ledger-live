@@ -66,10 +66,12 @@ const InstallSetOfApps = ({
 
   const onWrappedError = useCallback(() => {
     if (error) {
-      remountMe();
       if (onError) {
         onError(error);
       }
+      // We force the component to remount for action.useHook to re-run from
+      // scratch and reset the status value
+      remountMe();
     }
   }, [remountMe, error, onError]);
 
