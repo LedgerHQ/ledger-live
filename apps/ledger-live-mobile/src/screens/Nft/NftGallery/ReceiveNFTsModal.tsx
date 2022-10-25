@@ -13,7 +13,6 @@ import styled, { useTheme } from "styled-components/native";
 import { NavigatorName, ScreenName } from "../../../const";
 import { track, TrackScreen } from "../../../analytics";
 import { urls } from "../../../config/urls";
-import ForceTheme from "../../../components/theme/ForceTheme";
 
 type Props = {
   isOpened: boolean;
@@ -94,24 +93,22 @@ function ChainedIcons() {
   const { colors } = useTheme();
 
   return (
-    <ForceTheme selectedPalette="light">
-      <Flex
-        flexDirection="row"
-        justifyContent={"center"}
-        alignItems="center"
-        ml={4}
+    <Flex
+      flexDirection="row"
+      justifyContent={"center"}
+      alignItems="center"
+      ml={4}
+    >
+      <CryptoIcon name="ETH" size={40} circleIcon />
+      <IconContainer
+        zIndex={1}
+        size={50}
+        borderColor={colors.background.drawer}
+        right={10}
       >
-        <CryptoIcon name="ETH" size={40} circleIcon />
-        <IconContainer
-          zIndex={1}
-          size={50}
-          borderColor={colors.background.drawer}
-          right={10}
-        >
-          <CryptoIcon name="MATIC" size={40} circleIcon />
-        </IconContainer>
-      </Flex>
-    </ForceTheme>
+        <CryptoIcon name="MATIC" size={40} circleIcon />
+      </IconContainer>
+    </Flex>
   );
 }
 
