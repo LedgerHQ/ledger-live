@@ -288,9 +288,11 @@ export type BaseNavigatorStackParamList = {
   // This is not a navigator
   [NavigatorName.CeloManageAssetsNavigator]:
     | {
-        account?: AccountLike;
-        accountId?: string | null;
-        parentId?: string | null;
+        params?: {
+          account?: AccountLike;
+          accountId?: string | null;
+          parentId?: string | null;
+        };
       }
     | undefined;
 
