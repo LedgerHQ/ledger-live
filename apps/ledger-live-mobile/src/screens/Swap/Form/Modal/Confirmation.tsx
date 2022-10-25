@@ -210,9 +210,6 @@ export function Confirmation({
                 key={"initSwap"}
                 action={swapAction}
                 device={deviceMeta.device}
-                // FIXME: types mismatch ???
-                // @ts-expect-error Seems like the callback expect an Error argument.
-                onError={onError}
                 request={{
                   exchange,
                   exchangeRate: exchangeRate.current,
