@@ -233,7 +233,7 @@ export const cryptocurrenciesById: Record<string, CryptoCurrency> = {
     ],
     explorerViews: [],
   },
-  avalanchecchain: {
+  avalanche_c_chain: {
     type: "CryptoCurrency",
     id: "avalanchecchain",
     coinType: 60,
@@ -3438,6 +3438,7 @@ export const cryptocurrenciesById: Record<string, CryptoCurrency> = {
     ],
   },
 };
+
 const cryptocurrenciesByScheme: Record<string, CryptoCurrency> = {};
 const cryptocurrenciesByTicker: Record<string, CryptoCurrency> = {};
 const cryptocurrenciesArray: CryptoCurrency[] = [];

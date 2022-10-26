@@ -103,7 +103,7 @@ export type CryptoCurrency = CurrencyCommon & {
   ethereumLikeInfo?: {
     chainId: number;
     networkId?: number;
-    baseChain?: string;
+    baseChain?: "mainnet" | "goerli" | "ropsten";
     hardfork?: string;
     // used by evm light integration
     rpc?: string;
