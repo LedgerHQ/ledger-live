@@ -37,6 +37,7 @@ const PostOnboardingMockAction = ({ id }: Props) => {
 
   const handleCompleteAndGoToHub = useCallback(() => {
     completeAction();
+    setDrawer();
     openPostOnboardingHubDrawer();
   }, [completeAction, openPostOnboardingHubDrawer]);
 
