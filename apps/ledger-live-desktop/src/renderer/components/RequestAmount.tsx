@@ -1,10 +1,10 @@
-// @flow
+import { AccountLike } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
 import React, { useCallback } from "react";
 import { useSelector } from "react-redux";
 import styled from "styled-components";
-import type { AccountLike } from "@ledgerhq/types-live";
 import { useSendAmount } from "@ledgerhq/live-common/countervalues/react";
+
 import Box from "~/renderer/components/Box";
 import InputCurrency from "~/renderer/components/InputCurrency";
 import IconTransfer from "~/renderer/icons/Transfer";
@@ -29,17 +29,35 @@ const WarningDisplay = styled(Box)`
   color: ${p => p.theme.colors.warning};
 `;
 
+const InputRight = styled(Box).attrs(() => ({
+  ff: "Inter|Medium",
+  color: "palette.text.shade60",
+  fontSize: 4,
+  justifyContent: "center",
+}))`
+  padding-right: 10px;
+`;
+
+const InputCenter = styled(Box).attrs(() => ({
+  alignItems: "center",
+  justifyContent: "center",
+  color: "palette.text.shade40",
+}))`
+  margin-left: 19px;
+  margin-right: 19px;
+`;
+
 type Props = {
-  autoFocus?: boolean,
+  autoFocus?: boolean;
   // crypto value (always the one which is returned)
-  value: BigNumber,
-  disabled?: boolean,
-  validTransactionError?: ?Error,
-  validTransactionWarning?: ?Error,
+  value: BigNumber;
+  disabled?: boolean;
+  validTransactionError?: Error;
+  validTransactionWarning?: Error;
   // change handler
-  onChange: BigNumber => void,
+  onChange: (_: BigNumber) => void;
   // used to determine the crypto input unit
-  account: AccountLike,
+  account: AccountLike;
 };
 
 export default function RequestAmount({
@@ -109,21 +127,3 @@ export default function RequestAmount({
     </Box>
   );
 }
-
-const InputRight = styled(Box).attrs(() => ({
-  ff: "Inter|Medium",
-  color: "palette.text.shade60",
-  fontSize: 4,
-  justifyContent: "center",
-}))`
-  padding-right: 10px;
-`;
-
-const InputCenter = styled(Box).attrs(() => ({
-  alignItems: "center",
-  justifyContent: "center",
-  color: "palette.text.shade40",
-}))`
-  margin-left: 19px;
-  margin-right: 19px;
-`;
