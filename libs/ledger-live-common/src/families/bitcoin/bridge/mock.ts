@@ -5,6 +5,7 @@ import {
   InvalidAddress,
   FeeTooHigh,
   AmountRequired,
+  DustLimit,
 } from "@ledgerhq/errors";
 import type { Transaction } from "../types";
 import { getFeeItems } from "../../../api/FeesBitcoin";
@@ -18,6 +19,9 @@ import {
 import { getMainAccount } from "../../../account";
 import { makeAccountBridgeReceive } from "../../../bridge/mockHelpers";
 import type { AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
+import cryptoFactory from "../wallet-btc/crypto/factory";
+import { Currency } from "../wallet-btc";
+
 const receive = makeAccountBridgeReceive();
 
 const defaultGetFees = (a, t: any) =>
@@ -70,6 +74,7 @@ const getTransactionStatus = (account, t) => {
       ? new NotEnoughBalance()
       : new AmountRequired();
   }
+
   if (amount.gt(0) && estimatedFees.times(10).gt(amount)) {
     warnings.feeTooHigh = new FeeTooHigh();
   }
@@ -77,6 +82,11 @@ const getTransactionStatus = (account, t) => {
   // Fill up transaction errors...
   if (!errors.amount && totalSpent.gt(account.balance)) {
     errors.amount = new NotEnoughBalance();
+  }
+
+  const crypto = cryptoFactory(account.currency.id as Currency);
+  if (amount.gt(0) && amount.lt(crypto.getDustLimit())) {
+    errors.dustLimit = new DustLimit();
   }
 
   // Fill up recipient errors...
