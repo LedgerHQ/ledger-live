@@ -3,7 +3,6 @@ import axios, { AxiosInstance } from "axios";
 import axiosRetry, { isNetworkOrIdempotentRequestError } from "axios-retry";
 import BigNumber from "bignumber.js";
 import genericPool, { Pool } from "generic-pool";
-import https from "https";
 import JSONBigNumber from "@ledgerhq/json-bignumber";
 import { Address, Block, TX } from "../storage/types";
 import { IExplorer } from "./types";
@@ -47,6 +46,8 @@ class BitcoinLikeExplorer implements IExplorer {
     if (
       !(typeof navigator !== "undefined" && navigator.product === "ReactNative")
     ) {
+      // eslint-disable-next-line global-require,@typescript-eslint/no-var-requires
+      const https = require("https");
       // uses max 20 keep alive request in parallel
       clientParams.httpsAgent = new https.Agent({
         keepAlive: true,
