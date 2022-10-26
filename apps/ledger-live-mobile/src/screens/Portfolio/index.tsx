@@ -262,7 +262,7 @@ function PortfolioScreen({ navigation }: Props) {
           currentPositionY={currentPositionY}
           graphCardEndPosition={graphCardEndPosition}
         />
-        <FirmwareUpdateBanner containerProps={{ mt: 7, mb: 0 }} />
+        <FirmwareUpdateBanner containerProps={{ mt: 9, mb: 0 }} />
         <AnimatedFlatListWithRefreshControl
           data={data}
           style={{
