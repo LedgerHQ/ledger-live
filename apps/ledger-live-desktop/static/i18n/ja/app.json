@@ -130,6 +130,7 @@
     "nanoS" : "Nano S",
     "nanoSP" : "Nano S Plus",
     "nanoX" : "Nano X",
+    "nanoFTS" : "Nano FTS",
     "blue" : "Blue"
   },
   "operation" : {
@@ -597,6 +598,12 @@
     }
   },
   "lottieDebugger" : {
+    "buttonTitle" : "テスト"
+  },
+  "storylyDebugger" : {
+    "buttonTitle" : "テスト"
+  },
+  "postOnboardingDebugger" : {
     "buttonTitle" : "テスト"
   },
   "fullNode" : {
@@ -1124,6 +1131,110 @@
     "title" : "トークンを非表示",
     "desc" : "この操作により、すべての<1><0>{{tokenName}}</0></1>アカウントが非表示になります。<3>設定</3>から再度表示可能です。",
     "hideCTA" : "トークンを非表示"
+  },
+  "syncOnboarding" : {
+    "connection" : {
+      "searching" : {
+        "title" : "{{deviceModelName}}をコンピュータに接続",
+        "connectionTrouble" : "デバイスの接続に問題がありますか？"
+      },
+      "success" : {
+        "title" : "{{ deviceName }}を接続"
+      }
+    },
+    "manual" : {
+      "pairedContent" : {
+        "title" : "{{deviceName}}接続済み",
+        "description" : "{{deviceName}}でセットアップを続行する",
+        "text" : "こちらの画面は、{{deviceName}}のセットアップ中に動的に変化し、関連情報をご提供します。"
+      },
+      "pinContent" : {
+        "title" : "PINコードを設定する",
+        "description" : "PINコードの長さは4～8桁で設定可能です",
+        "text" : "お客様の{{deviceName}}とPINコードにアクセスできる人は誰でも、お客様の暗号資産とNFT資産すべてにアクセスできます。"
+      },
+      "recoveryContent" : {
+        "title" : "リカバリーフレーズ",
+        "content" : "下の動画をタップして、秘密のリカバリーフレーズを詳しく学ぶ"
+      },
+      "softwareCheckContent" : {
+        "title" : "ソフトウェアのチェック",
+        "genuineCheck" : {
+          "active" : "{{deviceName}}をチェックしています",
+          "completed" : "{{deviceName}}は正規品です"
+        },
+        "firmwareUpdate" : {
+          "inactive" : "ソフトウェアのチェック",
+          "active" : "ソフトウェアの更新をチェックしています",
+          "updateAvailable" : "ソフトウェアのアップデートが利用可能です{{firmwareVersion}}",
+          "recommendation" : "今すぐアップデートをダウンロードすることをお勧めします",
+          "downloadUpdate" : "アップデートをダウンロード",
+          "skipUpdate" : "今はしない",
+          "completed" : "ソフトウェアは最新です"
+        }
+      },
+      "installApplications" : {
+        "title" : "既定のアプリ一式をダウンロードすることをお勧めします。ダウンロードは後でさらに可能です",
+        "install" : "インストール",
+        "skip" : "後で",
+        "info" : "{{deviceName}}のアプリはトランザクションの承認に使用されます。これはいつでも追加、または削除できます。"
+      },
+      "genuineCheckModal" : {
+        "title" : "真正性確認",
+        "paragraph1" : "{{deviceName}}が正規品で安全に使用できることを確認しましょう",
+        "paragraph2" : "お客様のデバイスが改ざんされていないことを確認するためのチェックを行います。お使いの{{deviceName}}でこれを承諾していただく必要があります。",
+        "checkDeviceButton" : "デバイスをチェック"
+      },
+      "genuineCheckCancelModal" : {
+        "title" : "正規品チェック",
+        "paragraph1" : "正規品チェックがキャンセルされました",
+        "paragraph2" : "このチェックは、お客様の{{deviceName}}が安全に使用できることを確認するために重要です。",
+        "checkDeviceButton" : "再度チェックを実行する",
+        "cancelButton" : "後で"
+      },
+      "genuineCheckNotGenuineModal" : {
+        "title" : "正規品チェック",
+        "paragraph1" : "お使いのデバイスは正規品ではありません",
+        "paragraph2" : "真正性チェックに失敗しました",
+        "checkDeviceButton" : "再度チェックを実行する",
+        "cancelButton" : "後で"
+      },
+      "genuineCheckAnimationModal" : {
+        "message" : "{{deviceName}}でマネージャーを許可する"
+      },
+      "helpDrawer" : {
+        "title" : "セットアップマニュアルでお困りですか？",
+        "description" : "Lorem Elsass ipsum aliquam bissame Oberschaeffolsheim geht's messti de Bischheim tellus blottkopf, dui sed libero.hopla libero, placerat leo eget Gal.",
+        "docButton" : "よくあるご質問（FAQ）に移動",
+        "supportButton" : "人と話す"
+      },
+      "troubleshootingDrawer" : {
+        "title" : "USB接続のトラブル解決",
+        "description" : "デバイスとの接続に問題があるようですが、ご心配なく。デバイスが正常に接続されるまで、いろいろな解決策を1つずつお試しいただけます！",
+        "fixButton" : "修正する",
+        "closeButton" : "閉じる"
+      },
+      "desyncOverlay" : {
+        "errorMessage" : "{{deviceName}}との接続が失われたようです。再接続を試みています。"
+      },
+      "header" : {
+        "helpButton" : "お困りですか？"
+      }
+    }
+  },
+  "postOnboarding" : {
+    "postOnboardingScreen" : {
+      "title" : "素晴らしい。これで準備完了です。",
+      "description" : "{{deviceName}}のセットアップに成功しました！",
+      "paragraph" : "開始の手順をいくつかご用意しました。Ledger Liveをご自分で探索されたい場合は、お気軽にこのステップをスキップしてください。いつでも戻って来れます。",
+      "bottomText" : "Ledger Liveで、安全に、Web 3.0への旅をお楽しみください。"
+    },
+    "postOnboardingContent" : {
+      "title" : "素晴らしい。これで準備完了です。",
+      "description" : "次にできること：",
+      "skipLink" : "アプリにスキップする",
+      "skipLinkInDrawer" : "後で行う"
+    }
   },
   "hideNftCollection" : {
     "title" : "NFTコレクションを非表示",
@@ -3476,6 +3587,14 @@
         "testAnimations" : {
           "title" : "Lottieアニメーションのテスト",
           "description" : "Ledger Liveで使用される全アニメーションをテストする"
+        },
+        "testStories" : {
+          "title" : "Storylyストーリーをテストする",
+          "description" : "Ledger Liveで使用される全ストーリーをテストする"
+        },
+        "testPostonboarding" : {
+          "title" : "ポストオンボーディングをテストする",
+          "description" : "すべてのポストオンボーディング機能をテストする"
         }
       }
     },
@@ -4262,13 +4381,14 @@
       "4" : {
         "deviceSelection" : {
           "title" : "どのデバイスをお使いですか？",
-          "desc" : "Nano Sをお使いの場合は、デバイスのファームウェアを修復してみてください。Nano XまたはBlueをお使いの場合は、Ledger サポートまでご連絡ください。"
+          "desc" : "Nano Sを接続しようとしている場合は、Nanoに表示されている状態を選択します。Nano S PlusまたはNano Xを接続しようとしている場合は、<0>ヘルプセンターにアクセス</0>してください。"
         },
         "notFixed" : {
           "title" : " USB接続の問題が解決されませんか？",
           "desc" : "全ての解決策を試しても解決できない場合は、Ledgerサポートまでご連絡ください。まだ試していない解決策がある場合は、それらの手順を実行してください。",
           "back" : "ポートフォリオに戻る",
-          "cta" : "サポートへのお問い合わせ"
+          "cta" : "サポートへのお問い合わせ",
+          "cta2" : "戻る"
         },
         "repair" : {
           "title" : "Nano Sを修理する",
