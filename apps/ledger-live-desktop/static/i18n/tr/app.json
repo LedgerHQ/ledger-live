@@ -748,13 +748,13 @@
       "descToken" : "<1><0>{{managerAppName}}</0></1> uygulaması yüklüyse hesabınıza <3><0>{{ticker}}</0></3> ve <5><0>{{tokenList}}</0>token'larını</5> almaya başlayabilirsiniz",
       "buttons" : {
         "receiveFunds" : "Al",
-        "buy" : "Satın Alın"
+        "buy" : "Satın Al"
       }
     },
     "settings" : {
       "title" : "Hesabı düzenle",
       "advancedLogs" : "Gelişmiş",
-      "advancedTips" : "Bu bir {{tag}} xpub'ıdır. Bunu bir üçüncü taraf cüzdanda içe aktarırken aynı türev modunu seçin.",
+      "advancedTips" : "This is a {{tag}} xpub. When importing it into a third-party wallet, choose the same derivation mode.",
       "accountName" : {
         "title" : "Hesap adı",
         "desc" : "Hesap tanımı"
@@ -2194,7 +2194,7 @@
     },
     "lockedBalance" : "Kilitli bakiye",
     "lockedTooltip" : "Ödül kazanmak için öncelikle varlıkların kilitlenmesi ve doğrulayıcı gruplarına oylanması gerekir.",
-    "nonvotingLockedBalance" : "Oylanmayan kilitli bakiye",
+    "nonvotingLockedBalance" : "Oylamayan kilitli bakiye",
     "nonvotingLockedTooltip" : "Oylama için kullanılabilecek kilitli varlıkların bakiyesi",
     "withdrawableBalance" : "Çekilebilir bakiye",
     "withdrawableTooltip" : "Mevcut Bakiyenize çekebileceğiniz kilidi açık Celo varlıkları",
@@ -4262,13 +4262,14 @@
       "4" : {
         "deviceSelection" : {
           "title" : "Hangi cihazı kullanıyorsunuz?",
-          "desc" : "Nano S cihazınız varsa, donanım yazılımını onarmayı deneyebilirsiniz. Nano X veya Blue kullanıcısıysanız, lütfen Ledger desteğine başvurun"
+          "desc" : "Bir Nano S bağlamaya çalışıyorsanız Nano'nuzda gösterilen durumu seçin. Bir Nano S Plus veya Nano X bağlamaya çalışıyorsanız <0>Yardım Merkezini ziyaret edin</0>"
         },
         "notFixed" : {
           "title" : " USB bağlantı sorunu hâlâ düzeltilmedi mi?",
           "desc" : "Mümkün olan her çözümü denediyseniz lütfen Ledger Destek'e ulaşın. Aksi takdirde, lütfen henüz denemediğiniz çözümlerin yönergelerini izleyin.",
           "back" : "Portföye geri dön",
-          "cta" : "Destek Al"
+          "cta" : "Destek Al",
+          "cta2" : "Geri dön"
         },
         "repair" : {
           "title" : "Nano S cihazınızı onarın",
@@ -4947,6 +4948,9 @@
     },
     "FeeTooHigh" : {
       "title" : "Ağ ücretleri, tutarın % 10'unun üzerindedir"
+    },
+    "DustLimit" : {
+      "title" : "Miktar, dust sınırının altında"
     },
     "SourceHasMultiSign" : {
       "title" : "{{currencyName}} göndermek için lütfen çoklu imzayı devre dışı bırakın"
