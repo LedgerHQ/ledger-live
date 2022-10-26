@@ -28,7 +28,7 @@ export const byContractAddressAndChainId = (
 ): TokenInfo | null | undefined => {
   // If we are able to fetch data from s3 bucket that contains dynamic CAL
   if (erc20SignaturesBlob) {
-    parse(erc20SignaturesBlob).byContractAndChainId(
+    return parse(erc20SignaturesBlob).byContractAndChainId(
       asContractAddress(contract),
       chainId
     );
