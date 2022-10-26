@@ -7,8 +7,8 @@ export class PostOnboarding {
   readonly postOnboardingHubActionRowMigrateAssetsMock: Locator;
   readonly postOnboardingHubActionRowPersonalizeMock: Locator;
 
-  readonly goToDashboardButton: Function;
-  readonly goToHubButton: Function;
+  readonly goToDashboardButton: Locator;
+  readonly goToHubButton: Locator;
   readonly postOnboardingBannerEntryPoint: Locator;
   readonly postOnboardingHubScreenSkipButton: Locator;
   readonly postOnboardingHubDrawerSkipButton: Locator;
@@ -26,19 +26,19 @@ export class PostOnboarding {
     this.postOnboardingHubActionRowPersonalizeMock = page.locator(
       "data-test-id=postonboarding-action-row-personalizeMock",
     );
-    this.goToDashboardButton = (actionId: string): Locator =>
-      page.locator(`data-test-id=postonboarding-go-to-dashboard-button-from-${actionId}`);
-    this.goToHubButton = (actionId: string): Locator =>
-      page.locator(`data-test-id=postonboarding-go-to-hub-button-from-${actionId}`);
+    this.goToDashboardButton = page
+      .locator("data-test-id=postonboarding-go-to-dashboard-button")
+      .nth(0);
+    this.goToHubButton = page.locator("data-test-id=postonboarding-go-to-hub-button").nth(0);
     this.postOnboardingBannerEntryPoint = page.locator(
       "data-test-id=postonboarding-banner-entry-point",
     );
     this.postOnboardingHubScreenSkipButton = page.locator(
       "data-test-id=postonboarding-hub-screen-skip-button",
     );
-    this.postOnboardingHubDrawerSkipButton = page.locator(
-      "data-test-id=postonboarding-hub-drawer-skip-button",
-    );
+    this.postOnboardingHubDrawerSkipButton = page
+      .locator("data-test-id=postonboarding-hub-drawer-skip-button")
+      .nth(0);
   }
 
   async waitForLaunch() {
@@ -61,12 +61,12 @@ export class PostOnboarding {
     await this.postOnboardingHubActionRowPersonalizeMock.click();
   }
 
-  async goToDashboard(actionId: string) {
-    await this.goToDashboardButton(actionId).click();
+  async goToDashboard() {
+    await this.goToDashboardButton.click();
   }
 
-  async goToHub(actionId: string) {
-    await this.goToHubButton(actionId).click();
+  async goToHub() {
+    await this.goToHubButton.click();
   }
 
   async goPostOnboardingHubFromDashboardBanner() {
