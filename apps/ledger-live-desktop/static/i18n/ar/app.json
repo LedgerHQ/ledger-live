@@ -130,6 +130,7 @@
     "nanoS" : "Nano S",
     "nanoSP" : "Nano S Plus",
     "nanoX" : "Nano X",
+    "nanoFTS" : "Nano FTS",
     "blue" : "Blue"
   },
   "operation" : {
@@ -597,6 +598,12 @@
     }
   },
   "lottieDebugger" : {
+    "buttonTitle" : "اختبر"
+  },
+  "storylyDebugger" : {
+    "buttonTitle" : "اختبر"
+  },
+  "postOnboardingDebugger" : {
     "buttonTitle" : "اختبر"
   },
   "fullNode" : {
@@ -1124,6 +1131,110 @@
     "title" : "إخفاء رمز التوكن",
     "desc" : "هذا الإجراء سيخفي جميع حسابات <1><0>{{tokenName}}</0></1>، يمكنك إظهارهم مرة أخرى باستخدام <3>الإعدادات</3>",
     "hideCTA" : "إخفاء رمز التوكن"
+  },
+  "syncOnboarding" : {
+    "connection" : {
+      "searching" : {
+        "title" : "قم بتوصيل {{deviceModelName}} بالكمبيوتر الخاص بك",
+        "connectionTrouble" : "تواجه مشكلة في توصيل جهازك؟"
+      },
+      "success" : {
+        "title" : "متّصل بـ {{ deviceName }}"
+      }
+    },
+    "manual" : {
+      "pairedContent" : {
+        "title" : "{{deviceName}} is connected",
+        "description" : "Continue setup on {{deviceName}}",
+        "text" : "This screen will change dynamically to provide you with relevant information while you set up your {{deviceName}}"
+      },
+      "pinContent" : {
+        "title" : "Set your PIN",
+        "description" : "Your PIN can be 4 to 8 digits long",
+        "text" : "Anyone with access to your {{deviceName}} and to your PIN can also access all your crypto and NFT assets."
+      },
+      "recoveryContent" : {
+        "title" : "عبارة الاسترداد",
+        "content" : "انقر على مقاطع الفيديو أدناه لتعلُم المزيد عن عبارة الاسترداد السرية خاصتك"
+      },
+      "softwareCheckContent" : {
+        "title" : "التحقق من البرامج",
+        "genuineCheck" : {
+          "active" : "يتم التحقق من {{deviceName}}",
+          "completed" : "{{deviceName}} is authentic"
+        },
+        "firmwareUpdate" : {
+          "inactive" : "التحقق من البرامج",
+          "active" : "يتم التحقق من وجود تحديثات للبرامج",
+          "updateAvailable" : "متوفر تحديث البرامج {{firmwareVersion}}",
+          "recommendation" : "نوصي بتنزيل التحديث الآن",
+          "downloadUpdate" : "تنزيل التحديث",
+          "skipUpdate" : "التخطي في الوقت الحالي",
+          "completed" : "البرامج مُحدثة"
+        }
+      },
+      "installApplications" : {
+        "title" : "نوصي بتنزيل مجموعة محددة من التطبيقات. يُمكنك تنزيل المزيد لاحقاً",
+        "install" : "تثبيت",
+        "skip" : "سأقوم بذلك في وقت لاحق",
+        "info" : "التطبيقات على {{deviceName}} تُستخدم للموافقة على المعاملات. يمكنك إضافتهم أو حذفهم في أي وقت."
+      },
+      "genuineCheckModal" : {
+        "title" : "اختبار الأصالة",
+        "paragraph1" : "Let's make sure your {{deviceName}} is Authentic and safe to use",
+        "paragraph2" : "We will perform a check to ensure your device hasn't been tampered with. You'll need to accept this on your {{deviceName}}.",
+        "checkDeviceButton" : "تحقق من الجهاز"
+      },
+      "genuineCheckCancelModal" : {
+        "title" : "اختبار الأصالة",
+        "paragraph1" : "تم إلغاء اختبار الأصالة",
+        "paragraph2" : "This check is very important to make sure your {{deviceName}} is safe to use.",
+        "checkDeviceButton" : "إجراء الاختبار مرةً اخرى",
+        "cancelButton" : "ربّما في وقت لاحق"
+      },
+      "genuineCheckNotGenuineModal" : {
+        "title" : "اختبار الأصالة",
+        "paragraph1" : "جهازك غير أصلي",
+        "paragraph2" : "فشل اختبار الأصالة",
+        "checkDeviceButton" : "إجراء الاختبار مرةً أخرى",
+        "cancelButton" : "ربّما في وقت لاحق"
+      },
+      "genuineCheckAnimationModal" : {
+        "message" : "Allow manager on {{deviceName}}"
+      },
+      "helpDrawer" : {
+        "title" : "هل تحتاج بعض المساعدة في كُتيّب الإعداد خاصتك؟",
+        "description" : "Lorem Elsass ipsum aliquam bissame Oberschaeffolsheim geht's messti de Bischheim tellus blottkopf, dui sed libero. hopla libero, placerat leo eget Gal.",
+        "docButton" : "انتقل إلى الأسئلة الأكثر شيوعاً",
+        "supportButton" : "التحدث مع شخص"
+      },
+      "troubleshootingDrawer" : {
+        "title" : "استكشاف وحل مشكلات اتصال USB",
+        "description" : "يبدو أن هناك مشكلة في الاتصال بجهازك. لا تقلق، يمكنك تجربة حلول مختلفة واحداً تلو الآخر حتى يتصل جهازك!",
+        "fixButton" : "أصلحة",
+        "closeButton" : "إغلاق"
+      },
+      "desyncOverlay" : {
+        "errorMessage" : "It looks like connection to your {{deviceName}} was lost. We're trying to reconnect."
+      },
+      "header" : {
+        "helpButton" : "تحتاج إلى مساعدة؟"
+      }
+    }
+  },
+  "postOnboarding" : {
+    "postOnboardingScreen" : {
+      "title" : "رائع جداً.أنت مستعد.",
+      "description" : "Cheers for setting up your {{deviceName}}!",
+      "paragraph" : "We have prepared for you some steps to start with. If you feel like exploring Ledger Live on your own, don't hesitate to skip this step, you can always come back to it.",
+      "bottomText" : "Enjoy your travel into the Web3 securely with Ledger Live."
+    },
+    "postOnboardingContent" : {
+      "title" : "رائع جداً.أنت مستعد.",
+      "description" : "Here's what you can do next:",
+      "skipLink" : "التخطي إلى التطبيق",
+      "skipLinkInDrawer" : "سأفعل هذا لاحقاً"
+    }
   },
   "hideNftCollection" : {
     "title" : "إخفاء مجموعة NFT",
@@ -3476,6 +3587,14 @@
         "testAnimations" : {
           "title" : "اختبر الرسوم المتحركة Lottie",
           "description" : "اختبر جميع الرسوم المتحركة المستخدمة في Ledger Live"
+        },
+        "testStories" : {
+          "title" : "اختبر قصص Storyly",
+          "description" : "اختبر جميع القصص المستخدمة في Ledger Live"
+        },
+        "testPostonboarding" : {
+          "title" : "اختبر ما بعد التهيئة (post onboarding)",
+          "description" : "اختبر جميع ميزات ما بعد التهيئة (post onboarding)"
         }
       }
     },
@@ -4262,13 +4381,14 @@
       "4" : {
         "deviceSelection" : {
           "title" : "ما نوع جهازك؟",
-          "desc" : "اذا كان لديك Nano S ، يمكنك محاولة إصلاح البرنامج الثابت لجهازك. بالنسبة لمستخدمي Nano X وBlue ، يرجى أن تقم بالتواصل مع دعم Ledger"
+          "desc" : "إذا كنت تحاول توصيل Nano S، اختر الحالة المعروضة على Nano خاصتك. إذا كنت تحاول توصيل Nano S Plus أو Nano X، <0>زُر مركز المساعدة</0>"
         },
         "notFixed" : {
           "title" : " لم يتم حل مشكلة توصيل USB بعد؟",
           "desc" : "إذا جربت كل الحلول الممكنة، يرجى التواصل مع دعم Ledger. خلاف ذلك، يرجى إتباع إرشادات أي حل لم تجربه حتى الآن.",
           "back" : "الرجوع إلى المحفظة الاستثمارية",
-          "cta" : "تواصل مع الدعم"
+          "cta" : "تواصل مع الدعم",
+          "cta2" : "العودة للخلف"
         },
         "repair" : {
           "title" : "إصلاح Nano S الخاص بك",
