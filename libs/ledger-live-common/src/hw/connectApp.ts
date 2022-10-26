@@ -150,16 +150,16 @@ export const openAppFromDashboard = (
               if (e && e instanceof TransportStatusError) {
                 // @ts-expect-error TransportStatusError to be typed on ledgerjs
                 switch (e.statusCode) {
-                  case 0x6984:
-                  case 0x6807:
+                  case 0x6984: // No StatusCodes definition
+                  case 0x6807: // No StatusCodes definition
                     return streamAppInstall({
                       transport,
                       appNames: [appName],
                       onSuccessObs: () =>
                         from(openAppFromDashboard(transport, appName)),
                     }) as Observable<ConnectAppEvent>;
-                  case 0x6985:
-                  case 0x5501:
+                  case StatusCodes.CONDITIONS_OF_USE_NOT_SATISFIED:
+                  case 0x5501: // No StatusCodes definition
                     return throwError(new UserRefusedOnDevice());
                   // openAppFromDashboard is exported, so LOCKED_DEVICE should be handled too
                   case StatusCodes.LOCKED_DEVICE:
@@ -237,8 +237,8 @@ const derivationLogic = (
         const { statusCode } = e;
 
         if (
-          statusCode === 0x6982 ||
-          statusCode === 0x6700 ||
+          statusCode === StatusCodes.SECURITY_STATUS_NOT_SATISFIED ||
+          statusCode === StatusCodes.INCORRECT_LENGTH ||
           (0x6600 <= statusCode && statusCode <= 0x67ff)
         ) {
           return of<ConnectAppEvent>({
@@ -248,9 +248,9 @@ const derivationLogic = (
         }
 
         switch (statusCode) {
-          case 0x6f04: // FW-90. app was locked...
-          case 0x6faa: // FW-90. app bricked, a reboot fixes it.
-          case 0x6d00:
+          case 0x6f04: // FW-90. app was locked... | No StatusCodes definition
+          case StatusCodes.HALTED: // FW-90. app bricked, a reboot fixes it.
+          case StatusCodes.INS_NOT_SUPPORTED:
             // this is likely because it's the wrong app (LNS 1.3.1)
             return attemptToQuitApp(transport, appAndVersion);
           // derivationLogic is also called inside the catchError of cmd below
@@ -445,8 +445,8 @@ const cmd = ({
               if (e && e instanceof TransportStatusError) {
                 // @ts-expect-error TransportStatusError to be typed on ledgerjs
                 switch (e.statusCode) {
-                  case 0x6e00: // in 1.3.1 dashboard
-                  case 0x6d00: // in 1.3.1 and bitcoin app
+                  case StatusCodes.CLA_NOT_SUPPORTED: // in 1.3.1 dashboard
+                  case StatusCodes.INS_NOT_SUPPORTED: // in 1.3.1 and bitcoin app
                     // fallback on "old way" because device does not support getAppAndVersion
                     if (!requiresDerivation) {
                       // if there is no derivation, there is nothing we can do to check an app (e.g. requiring non coin app)

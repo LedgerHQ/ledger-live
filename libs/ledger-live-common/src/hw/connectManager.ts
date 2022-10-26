@@ -101,7 +101,13 @@ const cmd = ({
                 e instanceof DeviceOnDashboardExpected ||
                 (e &&
                   e instanceof TransportStatusError &&
-                  [0x6e00, 0x6d00, 0x6e01, 0x6d01, 0x6d02].includes(
+                  [
+                    StatusCodes.CLA_NOT_SUPPORTED,
+                    StatusCodes.INS_NOT_SUPPORTED,
+                    0x6e01, // No StatusCodes definition
+                    0x6d01, // No StatusCodes definition
+                    0x6d02, // No StatusCodes definition
+                  ].includes(
                     // @ts-expect-error typescript not checking agains the instanceof
                     e.statusCode
                   ))
