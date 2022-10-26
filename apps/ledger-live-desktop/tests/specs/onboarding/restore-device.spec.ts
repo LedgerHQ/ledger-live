@@ -39,7 +39,7 @@ test.describe.parallel("Onboarding", () => {
       });
 
       await test.step(`[${nano}] Restore device`, async () => {
-        expect(await page.screenshot()).toMatchSnapshot("v3-restore-device.png");
+        expect(await page.screenshot()).toMatchSnapshot(`v3-restore-device-${nano}.png`);
         await onboardingPage.restoreDevice();
 
         expect(await onboardingPage.page.screenshot()).toMatchSnapshot([
