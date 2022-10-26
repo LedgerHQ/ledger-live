@@ -79,8 +79,8 @@ jobs:
       FORCE_COLOR: 3
       CI_OS: ${{ matrix.os }}
       PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: 1
-      DEBUG: "pw:browser*"
-      DEBUG_LOGS: 1
+      # DEBUG: "pw:browser*"
+      # DEBUG_LOGS: 1
     strategy:
       fail-fast: false
       matrix: ${{fromJson(needs.matrix_prep.outputs.matrix)}}
