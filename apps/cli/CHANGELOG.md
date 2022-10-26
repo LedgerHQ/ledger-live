@@ -44,8 +44,6 @@
   - @ledgerhq/live-common@27.4.0-next.0
   - @ledgerhq/cryptoassets@6.36.0-next.0
 
-<<<<<<< HEAD
-=======
 ## 22.4.3
 
 ### Patch Changes
@@ -53,7 +51,6 @@
 - Updated dependencies []:
   - @ledgerhq/live-common@27.3.2
 
->>>>>>> ledger/develop
 ## 22.4.3-hotfix.0
 
 ### Patch Changes
