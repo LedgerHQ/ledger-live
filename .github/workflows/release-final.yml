@@ -1,6 +1,18 @@
 name: "[Release] Publish packages and apps"
 on:
   workflow_dispatch:
+    inputs:
+      app:
+        description: "which app to release (libraries are always published, chose NONE to release libs only)"
+        required: true
+        type: choice
+        default: NONE
+        options:
+          - NONE
+          - LLD
+          - LLM
+          - ALL
+
   workflow_run:
     workflows:
       - \[Release\] Prepare for releasing
@@ -45,13 +57,25 @@ jobs:
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPMJS_TOKEN }}
       - name: check if desktop versions are different
+        if: ${{ github.event_name == 'workflow_run' }}
         id: desktop-changed
         run: |
-          echo "::set-output name=status::$(git diff HEAD HEAD~1 ./apps/ledger-live-desktop/package.json | grep '"version": "' | wc -l)"
+          echo "status=$(git diff HEAD HEAD~1 ./apps/ledger-live-desktop/package.json | grep '"version": "' | wc -l)" >> $GITHUB_OUTPUT
+      - name: check if desktop versions are different
+        if: ${{ github.event_name == 'workflow_dispatch' && contains(fromJson('["LLD", "ALL"]'), github.event.inputs.app) }}
+        id: desktop-changed
+        run: |
+          echo "status=1" >> $GITHUB_OUTPUT
       - name: check if mobile versions are different
+        if: ${{ github.event_name == 'workflow_run' }}
         id: mobile-changed
         run: |
-          echo "::set-output name=status::$(git diff HEAD HEAD~1 ./apps/ledger-live-mobile/package.json | grep '"version": "' | wc -l)"
+          echo "status=$(git diff HEAD HEAD~1 ./apps/ledger-live-mobile/package.json | grep '"version": "' | wc -l)" >> $GITHUB_OUTPUT
+      - name: check if mobile versions are different
+        if: ${{ github.event_name == 'workflow_dispatch' && contains(fromJson('["LLM", "ALL"]'), github.event.inputs.app) }}
+        id: mobile-changed
+        run: |
+          echo "status=1" >> $GITHUB_OUTPUT
       - uses: ledgerhq/ledger-live/tools/actions/get-package-infos@develop
         id: desktop-version
         with:

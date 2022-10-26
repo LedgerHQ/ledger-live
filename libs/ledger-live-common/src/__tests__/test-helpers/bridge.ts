@@ -95,6 +95,7 @@ export function testBridge<T extends TransactionCommon>(
       currencyData,
       currency,
     });
+
     const accounts = currencyData.accounts || [];
     accounts.forEach((accountData) =>
       implementations.forEach((impl) => {
@@ -358,6 +359,7 @@ export function testBridge<T extends TransactionCommon>(
       }
     }
   });
+
   accountsRelated
     .map(({ account, ...rest }) => {
       const bridge = getAccountBridge(account, null);
@@ -580,6 +582,7 @@ export function testBridge<T extends TransactionCommon>(
             }
           );
         });
+
         describe("getTransactionStatus", () => {
           makeTest("can be called on an empty transaction", async () => {
             const account = await getSynced();
@@ -670,6 +673,7 @@ export function testBridge<T extends TransactionCommon>(
                       ? expectedStatus(account, t, s)
                       : expectedStatus;
                   const { errors, warnings } = es;
+
                   // we match errors and warnings
                   errors && expect(s.errors).toMatchObject(errors);
                   warnings && expect(s.warnings).toMatchObject(warnings);
