@@ -2140,7 +2140,7 @@
       },
       "advanced": {
         "title": "Advanced logs",
-        "warningDerivation": "This is a {{tag}} xpub. When importing it into a third-party wallet, chose the same derivation mode.",
+        "warningDerivation": "This is a {{tag}} xpub. When importing it into a third-party wallet, choose the same derivation mode.",
         "desc": ""
       }
     },
