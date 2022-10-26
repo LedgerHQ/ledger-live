@@ -746,7 +746,7 @@
       "descToken" : "<1><0>{{managerAppName}}</0></1> uygulaması yüklüyse hesabınıza <3><0>{{ticker}}</0></3> ve <5><0>{{tokenList}}</0>token'larını</5> almaya başlayabilirsiniz",
       "buttons" : {
         "receiveFunds" : "Al",
-        "buy" : "Satın Alın"
+        "buy" : "Satın Al"
       }
     },
     "settings" : {
@@ -2165,7 +2165,7 @@
     },
     "lockedBalance" : "Kilitli bakiye",
     "lockedTooltip" : "Ödül kazanmak için öncelikle varlıkların kilitlenmesi ve doğrulayıcı gruplarına oylanması gerekir.",
-    "nonvotingLockedBalance" : "Oylanmayan kilitli bakiye",
+    "nonvotingLockedBalance" : "Oylamayan kilitli bakiye",
     "nonvotingLockedTooltip" : "Oylama için kullanılabilecek kilitli varlıkların bakiyesi",
     "withdrawableBalance" : "Çekilebilir bakiye",
     "withdrawableTooltip" : "Mevcut Bakiyenize çekebileceğiniz kilidi açık Celo varlıkları",
