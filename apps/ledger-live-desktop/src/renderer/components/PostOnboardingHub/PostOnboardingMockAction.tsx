@@ -51,7 +51,7 @@ const PostOnboardingMockAction = ({ id }: Props) => {
         mt={6}
         variant="main"
         onClick={handleCompleteAndGoToDashboard}
-        data-test-id={`postonboarding-go-to-dashboard-button-from-${action?.id}`}
+        data-test-id={"postonboarding-go-to-dashboard-button"}
       >
         Complete action & go to Wallet
       </Button>
@@ -59,7 +59,7 @@ const PostOnboardingMockAction = ({ id }: Props) => {
         mt={6}
         variant="main"
         onClick={handleCompleteAndGoToHub}
-        data-test-id={`postonboarding-go-to-hub-button-from-${action?.id}`}
+        data-test-id={"postonboarding-go-to-hub-button"}
       >
         Complete action & go back to onboarding hub
       </Button>

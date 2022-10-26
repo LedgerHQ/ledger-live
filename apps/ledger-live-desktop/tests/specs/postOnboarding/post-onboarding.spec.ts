@@ -25,7 +25,7 @@ test("PostOnboarding", async ({ page }) => {
   });
 
   await test.step("go back to dashboard", async () => {
-    await postOnboarding.goToDashboard("claimMock");
+    await postOnboarding.goToDashboard();
     await expect(page).toHaveScreenshot("postonboarding-dashboard-banner.png");
   });
 
@@ -40,7 +40,7 @@ test("PostOnboarding", async ({ page }) => {
   });
 
   await test.step("go back to postonboarding hub in drawer", async () => {
-    await postOnboarding.goToHub("migrateAssetsMock");
+    await postOnboarding.goToHub();
     await expect(page).toHaveScreenshot("postonboarding-hub-inside-drawer-2-actions-completed.png");
   });
 
