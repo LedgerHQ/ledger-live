@@ -83,7 +83,7 @@ export class OnboardingPage {
     await this.getStartedButton.click();
   }
 
-  async selectDevice(device: "nanoS" | "nanoX" | "nanoSPlus") {
+  async selectDevice(device: "nanoS" | "nanoX" | "nanoSP" | "nanoFTS") {
     await this.page.hover(`[data-test-id=v3-container-device-${device}]`);
     await this.selectDeviceButton(device).click();
   }
