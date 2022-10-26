@@ -26,17 +26,28 @@ export const byContractAddressAndChainId = (
   chainId: number,
   erc20SignaturesBlob?: string
 ): TokenInfo | null | undefined => {
-  return get(erc20SignaturesBlob).byContractAndChainId(
-    asContractAddress(contract),
-    chainId
-  );
+  // If we are able to fetch data from s3 bucket that contains dynamic CAL
+  if (erc20SignaturesBlob) {
+    parse(erc20SignaturesBlob).byContractAndChainId(
+      asContractAddress(contract),
+      chainId
+    );
+  }
+  // the static fallback when dynamic cal is not provided
+  return get().byContractAndChainId(asContractAddress(contract), chainId);
 };
 
 /**
  * list all the ERC20 tokens informations
  */
-export const list = (erc20SignaturesBlob?: string): TokenInfo[] =>
-  get(erc20SignaturesBlob).list();
+export const list = (erc20SignaturesBlob?: string): TokenInfo[] => {
+  // If we are able to fetch data from s3 bucket that contains dynamic CAL
+  if (erc20SignaturesBlob) {
+    return parse(erc20SignaturesBlob).list();
+  }
+  // the static fallback when dynamic cal is not provided
+  return get().list();
+};
 
 export type TokenInfo = {
   contractAddress: string;
@@ -59,54 +70,58 @@ const asContractAddress = (addr: string) => {
   return a.startsWith("0x") ? a : "0x" + a;
 };
 
-// this internal get() will lazy load and cache the data from the erc20 data blob
-const get: (erc20SignaturesBlob?: string) => API = (() => {
-  const cache: { [k: string]: API } = {};
-  return (erc20SignaturesBlob) => {
-    const cacheKey = erc20SignaturesBlob ?? "";
-    if (cache[cacheKey]) return cache[cacheKey];
-    const buf = Buffer.from(erc20SignaturesBlob ?? blob, "base64");
-    const map = {};
-    const entries: TokenInfo[] = [];
-    let i = 0;
+const parse = (erc20SignaturesBlob: string) => {
+  const buf = Buffer.from(erc20SignaturesBlob, "base64");
+  const map = {};
+  const entries: TokenInfo[] = [];
+  let i = 0;
 
-    while (i < buf.length) {
-      const length = buf.readUInt32BE(i);
-      i += 4;
-      const item = buf.slice(i, i + length);
-      let j = 0;
-      const tickerLength = item.readUInt8(j);
-      j += 1;
-      const ticker = item.slice(j, j + tickerLength).toString("ascii");
-      j += tickerLength;
-      const contractAddress = asContractAddress(
-        item.slice(j, j + 20).toString("hex")
-      );
-      j += 20;
-      const decimals = item.readUInt32BE(j);
-      j += 4;
-      const chainId = item.readUInt32BE(j);
-      j += 4;
-      const signature = item.slice(j);
-      const entry: TokenInfo = {
-        ticker,
-        contractAddress,
-        decimals,
-        chainId,
-        signature,
-        data: item,
-      };
-      entries.push(entry);
-      map[String(chainId) + ":" + contractAddress] = entry;
-      i += length;
-    }
-
-    const api = {
-      list: () => entries,
-      byContractAndChainId: (contractAddress, chainId) =>
-        map[String(chainId) + ":" + contractAddress],
+  while (i < buf.length) {
+    const length = buf.readUInt32BE(i);
+    i += 4;
+    const item = buf.slice(i, i + length);
+    let j = 0;
+    const tickerLength = item.readUInt8(j);
+    j += 1;
+    const ticker = item.slice(j, j + tickerLength).toString("ascii");
+    j += tickerLength;
+    const contractAddress = asContractAddress(
+      item.slice(j, j + 20).toString("hex")
+    );
+    j += 20;
+    const decimals = item.readUInt32BE(j);
+    j += 4;
+    const chainId = item.readUInt32BE(j);
+    j += 4;
+    const signature = item.slice(j);
+    const entry: TokenInfo = {
+      ticker,
+      contractAddress,
+      decimals,
+      chainId,
+      signature,
+      data: item,
     };
-    cache[cacheKey] = api;
+    entries.push(entry);
+    map[String(chainId) + ":" + contractAddress] = entry;
+    i += length;
+  }
+
+  const api = {
+    list: () => entries,
+    byContractAndChainId: (contractAddress, chainId) =>
+      map[String(chainId) + ":" + contractAddress],
+  };
+  return api;
+};
+
+// this internal get() will lazy load and cache the data from the erc20 data blob
+const get: () => API = (() => {
+  let cache: API | undefined;
+  return () => {
+    if (cache) return cache;
+    const api = parse(blob);
+    cache = api;
     return api;
   };
 })();
