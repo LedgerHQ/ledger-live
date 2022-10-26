@@ -194,6 +194,7 @@ class Xpub {
       address: params.destAddress,
       isChange: false,
     };
+
     while (desiredOutputLeftToFit.value.gt(this.OUTPUT_VALUE_MAX)) {
       outputs.push({
         script: desiredOutputLeftToFit.script,
@@ -227,6 +228,7 @@ class Xpub {
         this.explorer.getTxHex(unspentUtxo.output_hash)
       )
     );
+
     const txs = await Promise.all(
       unspentUtxoSelected.map((unspentUtxo) =>
         this.storage.getTx(unspentUtxo.address, unspentUtxo.output_hash)
@@ -243,6 +245,7 @@ class Xpub {
         sequence: params.sequence,
       };
     });
+
     const associatedDerivations: [number, number][] = unspentUtxoSelected.map(
       (_utxo, index) => {
         if (txs[index] == null) {
@@ -259,7 +262,9 @@ class Xpub {
       this.crypto,
       this.derivationMode
     );
+
     const dustAmount = utils.computeDustAmount(this.crypto, txSize);
+
     // Abandon the change output if change output amount is less than dust amount
     if (
       needChangeoutput &&
