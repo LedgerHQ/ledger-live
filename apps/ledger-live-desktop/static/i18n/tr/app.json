@@ -130,6 +130,7 @@
     "nanoS" : "Nano S",
     "nanoSP" : "Nano S Plus",
     "nanoX" : "Nano X",
+    "nanoFTS" : "Nano FTS",
     "blue" : "Blue"
   },
   "operation" : {
@@ -599,6 +600,12 @@
   "lottieDebugger" : {
     "buttonTitle" : "Test"
   },
+  "storylyDebugger" : {
+    "buttonTitle" : "Test"
+  },
+  "postOnboardingDebugger" : {
+    "buttonTitle" : "Test"
+  },
   "fullNode" : {
     "status" : "Durum",
     "connect" : "Bağlan",
@@ -748,7 +755,7 @@
       "descToken" : "<1><0>{{managerAppName}}</0></1> uygulaması yüklüyse hesabınıza <3><0>{{ticker}}</0></3> ve <5><0>{{tokenList}}</0>token'larını</5> almaya başlayabilirsiniz",
       "buttons" : {
         "receiveFunds" : "Al",
-        "buy" : "Satın Alın"
+        "buy" : "Satın Al"
       }
     },
     "settings" : {
@@ -1124,6 +1131,110 @@
     "title" : "Token'ı gizle",
     "desc" : "Bu eylem tüm <1><0>{{tokenName}}</0></1> hesaplarını gizleyecek; <3>Ayarlar'ı</3> kullanarak onları tekrar görünür hale getirebilirsiniz",
     "hideCTA" : "Token'ı gizle"
+  },
+  "syncOnboarding" : {
+    "connection" : {
+      "searching" : {
+        "title" : "{{deviceModelName}} cihazınızı bilgisayarınıza bağlayın",
+        "connectionTrouble" : "Cihazınızı bağlarken sorun mu yaşıyorsunuz?"
+      },
+      "success" : {
+        "title" : "{{ deviceName }} cihazına bağlandı"
+      }
+    },
+    "manual" : {
+      "pairedContent" : {
+        "title" : "{{deviceName}} bağlandı",
+        "description" : "{{deviceName}} üzerinde kuruluma devam edin",
+        "text" : "Bu ekran, {{deviceName}} cihazınızın kurulumunu yaparken ilgili bilgileri sunmak üzere dinamik olarak değişecek"
+      },
+      "pinContent" : {
+        "title" : "PIN Kodunuzu belirleyin",
+        "description" : "PIN Kodunuz 4 ila 8 rakam uzunluğunda olabilir",
+        "text" : "{{deviceName}} cihazınıza ve PIN Kodunuza erişimi olan herkes tüm kripto ve NFT varlıklarınıza erişebilir."
+      },
+      "recoveryContent" : {
+        "title" : "Kurtarma ifadesi",
+        "content" : "Gizli kurtarma ifadeniz hakkında daha fazla bilgi için aşağıdaki videolara dokunun"
+      },
+      "softwareCheckContent" : {
+        "title" : "Yazılım kontrolü",
+        "genuineCheck" : {
+          "active" : "{{deviceName}} kontrol ediliyor",
+          "completed" : "{{deviceName}} cihazınız orijinal"
+        },
+        "firmwareUpdate" : {
+          "inactive" : "Yazılım kontrolü",
+          "active" : "Yazılım güncellemeleri kontrol ediliyor",
+          "updateAvailable" : "Yazılım güncellemesi mevcut {{firmwareVersion}}",
+          "recommendation" : "Güncellemeyi şimdi indirmenizi öneririz",
+          "downloadUpdate" : "Güncellemeyi indir",
+          "skipUpdate" : "Şimdilik atla",
+          "completed" : "Yazılım güncel"
+        }
+      },
+      "installApplications" : {
+        "title" : "Varsayılan bir uygulama grubunu indirmenizi öneririz Daha sonra diğer uygulamaları da indirebilirsiniz",
+        "install" : "Yükle",
+        "skip" : "Daha sonra yapacağım",
+        "info" : "{{deviceName}} cihazındaki uygulamalar işlemleri onaylamak için kullanılır. İstediğiniz zaman bu uygulamaları ekleyebilir ve silebilirsiniz."
+      },
+      "genuineCheckModal" : {
+        "title" : "Orijinallik Kontrolü",
+        "paragraph1" : "{{deviceName}} cihazınızın Orijinal ve güvenli olduğundan emin olalım",
+        "paragraph2" : "Cihazınızın kurcalanmadığından emin olmak için bir kontrol yapacağız. Bunu {{deviceName}} cihazınızda kabul etmeniz gerekecek.",
+        "checkDeviceButton" : "Cihazı kontrol et"
+      },
+      "genuineCheckCancelModal" : {
+        "title" : "Orijinallik Kontrolü",
+        "paragraph1" : "Orijinallik kontrolü iptal edildi",
+        "paragraph2" : "Bu kontrol, {{deviceName}} cihazınızın güvenli bir şekilde kullanılabileceğinden emin olmak için çok önemlidir.",
+        "checkDeviceButton" : "Kontrolü tekrar çalıştırın",
+        "cancelButton" : "Belki sonra"
+      },
+      "genuineCheckNotGenuineModal" : {
+        "title" : "Orijinallik Kontrolü",
+        "paragraph1" : "Cihazınız orijinal değil",
+        "paragraph2" : "Orijinallik kontrolü başarısız oldu",
+        "checkDeviceButton" : "Kontrolü tekrar çalıştırın",
+        "cancelButton" : "Belki sonra"
+      },
+      "genuineCheckAnimationModal" : {
+        "message" : "{{deviceName}} cihazında yöneticiye izin verin"
+      },
+      "helpDrawer" : {
+        "title" : "Kurulum kılavuzuyla ilgili yardıma mı ihtiyacınız var?",
+        "description" : "Lorem Elsass ipsum aliquam bissame Oberschaeffolsheim geht's messti de Bischheim tellus blottkopf, dui sed libero. hopla libero, placerat leo eget Gal.",
+        "docButton" : "SSS'ye git",
+        "supportButton" : "Bir temsilciyle görüş"
+      },
+      "troubleshootingDrawer" : {
+        "title" : "USB bağlantı sorunlarını giderme",
+        "description" : "Cihazınıza bağlanırken bir sorun var gibi görünüyor. Endişelenmeyin, cihazınız bağlanana kadar farklı çözümleri tek tek deneyebilirsiniz!",
+        "fixButton" : "Düzeltin",
+        "closeButton" : "Kapat"
+      },
+      "desyncOverlay" : {
+        "errorMessage" : "{{deviceName}} bağlantısı kesilmiş. Yeniden bağlanmaya çalışıyoruz."
+      },
+      "header" : {
+        "helpButton" : "Yardım mı gerekli?"
+      }
+    }
+  },
+  "postOnboarding" : {
+    "postOnboardingScreen" : {
+      "title" : "Bravo.\nArtık tamamen hazırsınız.",
+      "description" : "Tebrikler! {{deviceName}} cihazınızı kurdunuz!",
+      "paragraph" : "Başlangıçta size yardımcı olacak bazı adımlar hazırladık. Ledger Live'ı kendiniz keşfetmek istiyorsanız bu adımı atlayabilirsiniz. İstediğiniz zaman buraya geri dönebilirsiniz.",
+      "bottomText" : "Ledger Live ile Web 3.0'a güvenli yolculuğunuzun tadını çıkarın."
+    },
+    "postOnboardingContent" : {
+      "title" : "Bravo.\nArtık tamamen hazırsınız.",
+      "description" : "Şimdi şunları yapabilirsiniz:",
+      "skipLink" : "Uygulamaya geç",
+      "skipLinkInDrawer" : "Daha sonra yapacağım"
+    }
   },
   "hideNftCollection" : {
     "title" : "NFT Koleksiyonunu Gizleyin",
@@ -2194,7 +2305,7 @@
     },
     "lockedBalance" : "Kilitli bakiye",
     "lockedTooltip" : "Ödül kazanmak için öncelikle varlıkların kilitlenmesi ve doğrulayıcı gruplarına oylanması gerekir.",
-    "nonvotingLockedBalance" : "Oylanmayan kilitli bakiye",
+    "nonvotingLockedBalance" : "Oylamayan kilitli bakiye",
     "nonvotingLockedTooltip" : "Oylama için kullanılabilecek kilitli varlıkların bakiyesi",
     "withdrawableBalance" : "Çekilebilir bakiye",
     "withdrawableTooltip" : "Mevcut Bakiyenize çekebileceğiniz kilidi açık Celo varlıkları",
@@ -3476,6 +3587,14 @@
         "testAnimations" : {
           "title" : "Lottie animasyonlarını test edin",
           "description" : "Ledger Live'da kullanılan tüm animasyonları test edin"
+        },
+        "testStories" : {
+          "title" : "Storyly hikâyeleri testi",
+          "description" : "Ledger Live'da kullanılan tüm hikâyeleri test edin"
+        },
+        "testPostonboarding" : {
+          "title" : "İlk Kurulum Sonrası testi",
+          "description" : "İlk kurulum sonrası tüm özellikleri test edin"
         }
       }
     },
@@ -4262,13 +4381,14 @@
       "4" : {
         "deviceSelection" : {
           "title" : "Hangi cihazı kullanıyorsunuz?",
-          "desc" : "Nano S cihazınız varsa, donanım yazılımını onarmayı deneyebilirsiniz. Nano X veya Blue kullanıcısıysanız, lütfen Ledger desteğine başvurun"
+          "desc" : "Bir Nano S bağlamaya çalışıyorsanız Nano'nuzda gösterilen durumu seçin. Bir Nano S Plus veya Nano X bağlamaya çalışıyorsanız <0>Yardım Merkezini ziyaret edin</0>"
         },
         "notFixed" : {
           "title" : " USB bağlantı sorunu hâlâ düzeltilmedi mi?",
           "desc" : "Mümkün olan her çözümü denediyseniz lütfen Ledger Destek'e ulaşın. Aksi takdirde, lütfen henüz denemediğiniz çözümlerin yönergelerini izleyin.",
           "back" : "Portföye geri dön",
-          "cta" : "Destek Al"
+          "cta" : "Destek Al",
+          "cta2" : "Geri dön"
         },
         "repair" : {
           "title" : "Nano S cihazınızı onarın",
