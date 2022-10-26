@@ -754,7 +754,7 @@
     "settings" : {
       "title" : "Konto bearbeiten",
       "advancedLogs" : "Erweitert",
-      "advancedTips" : "Das ist ein {{tag}} xpub. Wenn Sie es in eine Wallet eines Drittanbieters importieren, wählen Sie denselben Ableitungsmodus.",
+      "advancedTips" : "This is a {{tag}} xpub. When importing it into a third-party wallet, choose the same derivation mode.",
       "accountName" : {
         "title" : "Kontoname",
         "desc" : "Beschreibung des Kontos"
@@ -4262,13 +4262,14 @@
       "4" : {
         "deviceSelection" : {
           "title" : "Was für ein Gerät haben Sie?",
-          "desc" : "Wenn Sie einen Nano S haben, können Sie versuchen, die Firmware Ihres Geräts zu reparieren. Für Nano X- und Blue-Benutzer wenden Sie sich bitte an den Ledger-Support"
+          "desc" : "Wenn Sie versuchen, einen Nano S anzuschließen, wählen Sie den Status aus, der auf Ihrem Nano angezeigt wird. Wenn Sie versuchen, einen Nano S Plus oder Nano X zu verbinden, <0>besuchen Sie das Hilfe-Center</0>"
         },
         "notFixed" : {
           "title" : " USB-Verbindungsproblem immer noch nicht behoben?",
           "desc" : "Wenn Sie alle möglichen Lösungen ausprobiert haben, wenden Sie sich bitte an den Ledger-Support. Ansonsten folgen Sie bitte den Anweisungen jeder Lösung, die Sie noch nicht ausprobiert haben.",
           "back" : "Zurück zum Portfolio",
-          "cta" : "Support kontaktieren"
+          "cta" : "Support kontaktieren",
+          "cta2" : "Zurückgehen"
         },
         "repair" : {
           "title" : "Reparieren Sie Ihren Nano S",
@@ -4947,6 +4948,9 @@
     },
     "FeeTooHigh" : {
       "title" : "Die Netzwerkgebühren liegen über 10 % des Betrags"
+    },
+    "DustLimit" : {
+      "title" : "Die Menge ist niedriger als das Staub (dust) -Limit"
     },
     "SourceHasMultiSign" : {
       "title" : "Bitte deaktivieren Sie Multisign um {{currencyName}} zu senden"
