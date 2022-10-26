@@ -7,7 +7,6 @@ import {
 } from "./gas";
 import { EIP1559ShouldBeUsed } from "./transaction";
 import { NetworkInfo, Transaction } from "./types";
-import { estimateGasLimit, getMinimalGasLimitTransaction } from "./gas";
 import { prepareTransaction as prepareTransactionModules } from "./modules";
 
 export const prepareTransaction: AccountBridge<Transaction>["prepareTransaction"] =
@@ -45,13 +44,16 @@ export const prepareTransaction: AccountBridge<Transaction>["prepareTransaction"
     }
 
     let estimatedGasLimit;
-    const minimalGasLimitTx = getMinimalGasLimitTransaction(account, tx);
-
     if (tx.recipient) {
       estimatedGasLimit = await estimateGasLimit(
         account,
         tx.recipient,
-        minimalGasLimitTx
+        // Those are the only elements from a transaction necessary to estimate the gas limit
+        {
+          from: account.freshAddress,
+          value: "0x" + (tx.amount.toString(16) || "0"),
+          data: "0x" + (tx.data?.toString("hex") || "0"),
+        }
       );
     }
 

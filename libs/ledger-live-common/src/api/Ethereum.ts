@@ -3,7 +3,6 @@ import invariant from "invariant";
 import { BigNumber } from "bignumber.js";
 import { LedgerAPINotAvailable } from "@ledgerhq/errors";
 import JSONBigNumber from "@ledgerhq/json-bignumber";
-import type { MinimalGasLimitTransaction } from "../families/ethereum/types";
 import { EIP1559ShouldBeUsed } from "../families/ethereum/transaction";
 import network from "../network";
 import { blockchainBaseURL } from "./Ledger";
@@ -139,7 +138,7 @@ export type API = {
   >;
   getDryRunGasLimit: (
     address: string,
-    transaction: MinimalGasLimitTransaction
+    transaction: { from: string; value: string; data: string }
   ) => Promise<BigNumber>;
   getGasTrackerBarometer: (currency: CryptoCurrency) => Promise<{
     low: BigNumber;

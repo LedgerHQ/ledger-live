@@ -2,7 +2,7 @@ import BigNumber from "bignumber.js";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { apiForCurrency } from "../../api/Ethereum";
 import { EIP1559ShouldBeUsed } from "./transaction";
-import { MinimalGasLimitTransaction, NetworkInfo, Transaction } from "./types";
+import { NetworkInfo, Transaction } from "./types";
 import { inferDynamicRange } from "../../range";
 import { Account } from "@ledgerhq/types-live";
 import { makeLRUCache } from "../../cache";
@@ -83,29 +83,16 @@ export const inferMaxFeePerGas = (
   return amplifiedBaseFee?.plus(priorityFeePerGas || 0);
 };
 
-/**
- * Returns only the strict minimum needed from a transaction to
- * determine its gas limit.
- *
- * @param account
- * @param transaction
- * @returns { from: string, value: string, data: string }
- */
-export const getMinimalGasLimitTransaction = (
-  account: Account,
-  transaction: Transaction
-): MinimalGasLimitTransaction => ({
-  from: account.freshAddress,
-  value: "0x" + (transaction.amount.toString(16) || "0"),
-  data: "0x" + (transaction.data?.toString("hex") || "0"),
-});
-
 export const estimateGasLimit: (
   account: Account,
   addr: string,
-  transaction: MinimalGasLimitTransaction
+  transaction: { from: string; value: string; data: string }
 ) => Promise<BigNumber> = makeLRUCache(
-  (account: Account, addr: string, transaction: MinimalGasLimitTransaction) => {
+  (
+    account: Account,
+    addr: string,
+    transaction: { from: string; value: string; data: string }
+  ) => {
     const api = apiForCurrency(account.currency);
     return api
       .getDryRunGasLimit(addr, transaction)
@@ -124,5 +111,4 @@ export default {
   inferGasPrice,
   inferMaxFeePerGas,
   inferMaxPriorityFeePerGas,
-  getMinimalGasLimitTransaction,
 };

@@ -11,12 +11,6 @@ import type {
 } from "@ledgerhq/types-live";
 import type { MessageData } from "../../hw/signMessage/types";
 
-export type MinimalGasLimitTransaction = {
-  from: string;
-  value: string;
-  data: string;
-};
-
 export type NetworkInfo = {
   family: "ethereum";
   gasPrice?: Range;
