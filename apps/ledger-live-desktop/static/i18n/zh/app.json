@@ -754,7 +754,7 @@
     "settings" : {
       "title" : "编辑账户",
       "advancedLogs" : "高级",
-      "advancedTips" : "这是一个 {{tag}} xpub。将其导入第三方钱包时，请选择相同的衍生模式。",
+      "advancedTips" : "This is a {{tag}} xpub. When importing it into a third-party wallet, choose the same derivation mode.",
       "accountName" : {
         "title" : "账户名",
         "desc" : "账户描述"
@@ -4262,13 +4262,14 @@
       "4" : {
         "deviceSelection" : {
           "title" : "您使用的是哪种设备？",
-          "desc" : "如果您使用的是 Nano S，可以尝试修复设备的固件。如果您使用的是 Nano X 和 Blue，请联系 Ledger 客服。"
+          "desc" : "如果您要尝试连接 Nano S，请选择 Nano 上显示的状态。如果您要尝试连接 Nano S Plus 或 Nano X，请访问<0>帮助中心</0>"
         },
         "notFixed" : {
           "title" : " 依旧没有解决 USB 连接问题？",
           "desc" : "如果您已经尝试过了所有可能的解决方案，请联系 Ledger 客服。否则，请根据指示尝试还未使用过的解决方案。",
           "back" : "返回 Portfolio（资产组合）",
-          "cta" : "联系客服"
+          "cta" : "联系客服",
+          "cta2" : "返回"
         },
         "repair" : {
           "title" : "修复您的 Nano S",
