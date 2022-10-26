@@ -1,5 +1,11 @@
 # @ledgerhq/live-common
 
+## 27.5.0
+
+### Minor Changes
+
+- [#1620](https://github.com/LedgerHQ/ledger-live/pull/1620) [`455e43b34c`](https://github.com/LedgerHQ/ledger-live/commit/455e43b34c13ca7ed1d2920a36653caa250e42ab) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Update getEstimationFee for evm family to prevent usage of hardcoded values by `ether.js`
+
 ## 27.5.0-hotfix.0
 
 ### Minor Changes
