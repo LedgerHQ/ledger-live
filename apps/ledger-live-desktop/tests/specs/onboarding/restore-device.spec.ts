@@ -18,7 +18,11 @@ test.describe.parallel("Onboarding", () => {
 
       await test.step("Wait for launch", async () => {
         await onboardingPage.waitForLaunch();
-        expect(await onboardingPage.page.screenshot()).toMatchSnapshot("v3-get-started.png");
+        expect(
+          await onboardingPage.page.screenshot({
+            mask: [page.locator("video")],
+          }),
+        ).toMatchSnapshot("v3-get-started.png");
       });
 
       await test.step("Get started", async () => {

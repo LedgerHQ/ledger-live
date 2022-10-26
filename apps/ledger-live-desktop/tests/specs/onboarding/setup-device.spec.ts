@@ -100,7 +100,11 @@ test.describe.parallel("Onboarding", () => {
         await onboardingPage.continueTutorial();
 
         expect
-          .soft(await onboardingPage.page.screenshot())
+          .soft(
+            await onboardingPage.page.screenshot({
+              mask: [onboardingPage.page.locator("[role=animation]")],
+            }),
+          )
           .toMatchSnapshot(["v3-setup-new-device", `pin-code-${nano}-3.png`]);
         await onboardingPage.continueTutorial();
 
