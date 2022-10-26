@@ -41,7 +41,7 @@
     "test": "pnpm test:jest && pnpm test:playwright",
     "test:codecheck": "node ./tools/ci.js",
     "test:jest": "jest src --silent --ci --coverage --json --testLocationInResults --outputFile=report.json",
-    "test:playwright": "nyc playwright test --config=tests/playwright.config.ts",
+    "test:playwright": "playwright test --config=tests/playwright.config.ts",
     "test:playwright:update-snapshots": "pnpm test:playwright --update-snapshots",
     "test:playwright:recorder": "playwright test tests/specs/recorder.spec.ts",
     "test:playwright:clean": "git clean -fdX tests/artifacts",
