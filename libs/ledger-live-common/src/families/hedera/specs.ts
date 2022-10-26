@@ -45,6 +45,7 @@ const hedera: AppSpec<Transaction> = {
   transactionCheck: ({ maxSpendable }) => {
     invariant(maxSpendable.gt(0), "Balance is too low");
   },
+  allowEmptyAccounts: true,
   mutations: [
     {
       name: "Send ~50%",

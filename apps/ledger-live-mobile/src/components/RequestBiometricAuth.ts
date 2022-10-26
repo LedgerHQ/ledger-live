@@ -1,6 +1,9 @@
 import { useCallback, useEffect, useRef } from "react";
-import FingerprintScanner from "react-native-fingerprint-scanner";
 import { useTranslation } from "react-i18next";
+
+import ReactNativeBiometrics from "react-native-biometrics";
+
+const rnBiometrics = new ReactNativeBiometrics();
 
 type Props = {
   disabled: boolean;
@@ -17,18 +20,19 @@ export function useBiometricAuth({ disabled, onSuccess, onError }: Props) {
 
     pending.current = true;
 
-    try {
-      await FingerprintScanner.authenticate({
-        description: t("auth.unlock.biometricsTitle"),
-        onAttempt: onError,
+    rnBiometrics
+      .simplePrompt({ promptMessage: t("auth.unlock.biometricsTitle") })
+      .then(resultObject => {
+        const { success } = resultObject;
+
+        if (success) {
+          onSuccess();
+        }
+        pending.current = false;
+      })
+      .catch(e => {
+        onError(e);
       });
-      onSuccess();
-    } catch (error) {
-      onError(error);
-    } finally {
-      FingerprintScanner.release();
-      pending.current = false;
-    }
   }, [onError, onSuccess, t]);
   useEffect(() => {
     if (disabled) {
