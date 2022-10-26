@@ -1,18 +1,13 @@
 import invariant from "invariant";
 import { BigNumber } from "bignumber.js";
 import { log } from "@ledgerhq/logs";
-import type { Transaction, TransactionRaw, TransactionStatus } from "./types";
+import type { Transaction, TransactionRaw } from "./types";
 import Common from "@ethereumjs/common";
 import {
   Transaction as LegacyTransaction,
   FeeMarketEIP1559Transaction as EIP1559Transaction,
+  FeeMarketEIP1559TxData,
 } from "@ethereumjs/tx";
-import eip55 from "eip55";
-import {
-  InvalidAddress,
-  ETHAddressNonEIP,
-  RecipientRequired,
-} from "@ledgerhq/errors";
 import {
   formatTransactionStatusCommon as formatTransactionStatus,
   fromTransactionCommonRaw,
@@ -20,66 +15,13 @@ import {
   toTransactionCommonRaw,
   toTransactionStatusRawCommon as toTransactionStatusRaw,
 } from "../../transaction/common";
-import type { Account } from "@ledgerhq/types-live";
+import type { Account, TokenAccount } from "@ledgerhq/types-live";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { getAccountUnit } from "../../account";
 import { formatCurrencyUnit } from "../../currencies";
 import { getEnv } from "../../env";
-import { modes } from "./modules";
+import { ModeModule, modes } from "./modules";
 import { fromRangeRaw, toRangeRaw } from "../../range";
-
-export function isRecipientValid(_currency: CryptoCurrency, recipient: string) {
-  if (!recipient.match(/^0x[0-9a-fA-F]{40}$/)) return false;
-  // To handle non-eip55 addresses we stop validation here if we detect
-  // address is either full upper or full lower.
-  // see https://github.com/LedgerHQ/ledger-live-desktop/issues/1397
-  const slice = recipient.substr(2);
-  const isFullUpper = slice === slice.toUpperCase();
-  const isFullLower = slice === slice.toLowerCase();
-  if (isFullUpper || isFullLower) return true;
-
-  try {
-    return eip55.verify(recipient);
-  } catch (error) {
-    return false;
-  }
-}
-
-// Returns a warning if we detect a non-eip address
-export function getRecipientWarning(
-  currency: CryptoCurrency,
-  recipient: string
-) {
-  if (!recipient.match(/^0x[0-9a-fA-F]{40}$/)) return null;
-  const slice = recipient.substr(2);
-  const isFullUpper = slice === slice.toUpperCase();
-  const isFullLower = slice === slice.toLowerCase();
-
-  if (isFullUpper || isFullLower) {
-    return new ETHAddressNonEIP();
-  }
-
-  return null;
-}
-export function validateRecipient(
-  currency: CryptoCurrency,
-  recipient: string,
-  { errors, warnings }: TransactionStatus
-) {
-  const recipientWarning = getRecipientWarning(currency, recipient);
-
-  if (recipientWarning) {
-    warnings.recipient = recipientWarning;
-  }
-
-  if (!recipient) {
-    errors.recipient = new RecipientRequired("");
-  } else if (!isRecipientValid(currency, recipient)) {
-    errors.recipient = new InvalidAddress("", {
-      currencyName: currency.name,
-    });
-  }
-}
 
 export const formatTransaction = (
   t: Transaction,
@@ -258,7 +200,10 @@ export function EIP1559ShouldBeUsed(currency: CryptoCurrency): boolean {
   return getEnv("EIP1559_ENABLED_CURRENCIES").includes(currency.id);
 }
 
-export function inferTokenAccount(a: Account, t: Transaction) {
+export function inferTokenAccount(
+  a: Account,
+  t: Transaction
+): TokenAccount | undefined {
   const tokenAccount = !t.subAccountId
     ? null
     : a.subAccounts && a.subAccounts.find((ta) => ta.id === t.subAccountId);
@@ -272,7 +217,18 @@ export function buildEthereumTx(
   account: Account,
   transaction: Transaction,
   nonce: number
-) {
+): {
+  tx: EIP1559Transaction | LegacyTransaction;
+  common: Common;
+  ethTxObject: {
+    nonce: number;
+    gasLimit: string;
+    gasPrice?: string;
+    maxFeePerGas?: string;
+    maxPriorityFeePerGas?: string;
+  };
+  fillTransactionDataResult: ReturnType<ModeModule["fillTransactionData"]>;
+} {
   const { currency } = account;
   const { gasPrice, maxFeePerGas, maxPriorityFeePerGas } = transaction;
   const subAccount = inferTokenAccount(account, transaction);
@@ -287,7 +243,13 @@ export function buildEthereumTx(
   }
 
   const gasLimit = getGasLimit(transaction);
-  const ethTxObject: Record<string, any> = {
+  const ethTxObject: {
+    nonce: number;
+    gasLimit: string;
+    gasPrice?: string;
+    maxFeePerGas?: string;
+    maxPriorityFeePerGas?: string;
+  } = {
     nonce,
     gasLimit: `0x${new BigNumber(gasLimit).toString(16)}`,
   };
@@ -310,7 +272,9 @@ export function buildEthereumTx(
       maxPriorityFeePerGas || 0
     ).toString(16)}`;
     log("ethereum", "buildEIP1559Transaction", ethTxObject);
-    tx = new EIP1559Transaction(ethTxObject, { common });
+    tx = new EIP1559Transaction(ethTxObject as FeeMarketEIP1559TxData, {
+      common,
+    });
   } else {
     ethTxObject.gasPrice = `0x${new BigNumber(gasPrice || 0).toString(16)}`;
     log("ethereum", "buildLegacyEthereumTransaction", ethTxObject);

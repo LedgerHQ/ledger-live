@@ -6,7 +6,6 @@ import {
   createCustomErrorClass,
   NotEnoughBalanceInParentAccount,
 } from "@ledgerhq/errors";
-import { validateRecipient } from "../transaction";
 import type { ModeModule, Transaction } from "../types";
 import type { Account } from "@ledgerhq/types-live";
 import { prepareTransaction } from "./erc721";
@@ -36,8 +35,6 @@ const erc1155Transfer: ModeModule = {
    * Tx status is filled after the buildEthereumTx
    */
   fillTransactionStatus: (a, t, result) => {
-    validateRecipient(a.currency, t.recipient, result);
-
     if (!result.errors.recipient) {
       result.totalSpent = result.estimatedFees;
       result.amount = new BigNumber(t.amount);

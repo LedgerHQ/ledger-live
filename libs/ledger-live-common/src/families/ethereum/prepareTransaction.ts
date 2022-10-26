@@ -5,8 +5,10 @@ import {
   inferMaxFeePerGas,
   inferMaxPriorityFeePerGas,
 } from "./gas";
-import { EIP1559ShouldBeUsed } from "./transaction";
+import { estimateGasLimit } from "./gas";
+import { isEthereumAddress } from "./logic";
 import { NetworkInfo, Transaction } from "./types";
+import { EIP1559ShouldBeUsed } from "./transaction";
 import { prepareTransaction as prepareTransactionModules } from "./modules";
 
 export const prepareTransaction: AccountBridge<Transaction>["prepareTransaction"] =
@@ -24,6 +26,7 @@ export const prepareTransaction: AccountBridge<Transaction>["prepareTransaction"
         maxPriorityFeePerGas,
         networkInfo as NetworkInfo
       );
+
       if (
         tx.maxFeePerGas !== maxFeePerGas ||
         tx.maxPriorityFeePerGas !== maxPriorityFeePerGas ||
@@ -44,7 +47,7 @@ export const prepareTransaction: AccountBridge<Transaction>["prepareTransaction"
     }
 
     let estimatedGasLimit;
-    if (tx.recipient) {
+    if (isEthereumAddress(tx.recipient)) {
       estimatedGasLimit = await estimateGasLimit(
         account,
         tx.recipient,

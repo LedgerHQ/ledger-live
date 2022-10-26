@@ -10,17 +10,12 @@ import {
   NotEnoughBalanceInParentAccount,
   AmountRequired,
 } from "@ledgerhq/errors";
-import {
-  inferTokenAccount,
-  getGasLimit,
-  validateRecipient,
-} from "../transaction";
+import { inferTokenAccount, getGasLimit } from "../transaction";
 export type Modes = "send";
 const send: ModeModule = {
   fillTransactionStatus(a, t, result) {
     const tokenAccount = inferTokenAccount(a, t);
     const account = tokenAccount || a;
-    validateRecipient(a.currency, t.recipient, result);
 
     if (!result.errors.recipient) {
       if (tokenAccount) {
