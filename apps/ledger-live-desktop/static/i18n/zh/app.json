@@ -130,6 +130,7 @@
     "nanoS" : "Nano S",
     "nanoSP" : "Nano S Plus",
     "nanoX" : "Nano X",
+    "nanoFTS" : "Nano FTS",
     "blue" : "Blue"
   },
   "operation" : {
@@ -599,6 +600,12 @@
   "lottieDebugger" : {
     "buttonTitle" : "测试"
   },
+  "storylyDebugger" : {
+    "buttonTitle" : "测试"
+  },
+  "postOnboardingDebugger" : {
+    "buttonTitle" : "测试"
+  },
   "fullNode" : {
     "status" : "状态",
     "connect" : "连接",
@@ -754,7 +761,7 @@
     "settings" : {
       "title" : "编辑账户",
       "advancedLogs" : "高级",
-      "advancedTips" : "这是一个 {{tag}} xpub。将其导入第三方钱包时，请选择相同的衍生模式。",
+      "advancedTips" : "This is a {{tag}} xpub. When importing it into a third-party wallet, choose the same derivation mode.",
       "accountName" : {
         "title" : "账户名",
         "desc" : "账户描述"
@@ -1124,6 +1131,110 @@
     "title" : "隐藏代币",
     "desc" : "此操作将隐藏全部 <1><0>{{tokenName}}</0></1> 账户，您可以使用 <3>设置</3> 再次显示这些账户。",
     "hideCTA" : "隐藏代币"
+  },
+  "syncOnboarding" : {
+    "connection" : {
+      "searching" : {
+        "title" : "将 {{deviceModelName}} 连接到您的计算机",
+        "connectionTrouble" : "无法连接设备？"
+      },
+      "success" : {
+        "title" : "已连接到 {{ deviceName }}"
+      }
+    },
+    "manual" : {
+      "pairedContent" : {
+        "title" : "{{deviceName}} 已连接",
+        "description" : "在 {{deviceName}} 上继续设置",
+        "text" : "在您设置 {{deviceName}} 时，此屏幕将动态变化，向您提供相关信息"
+      },
+      "pinContent" : {
+        "title" : "设置您的识别码",
+        "description" : "您的识别码可以长 4 到 8 位",
+        "text" : "任何可获取您的 {{deviceName}} 和识别码的人都可以访问您的所有加密资产和 NFT 资产。"
+      },
+      "recoveryContent" : {
+        "title" : "恢复短语",
+        "content" : "点按下面的视频，详细了解您的秘密恢复短语"
+      },
+      "softwareCheckContent" : {
+        "title" : "软件检查",
+        "genuineCheck" : {
+          "active" : "正在检查 {{deviceName}}",
+          "completed" : "{{deviceName}} 是正品"
+        },
+        "firmwareUpdate" : {
+          "inactive" : "软件检查",
+          "active" : "检查软件更新",
+          "updateAvailable" : "有可用的软件更新 {{firmwareVersion}}",
+          "recommendation" : "我们建议立即下载更新",
+          "downloadUpdate" : "下载更新",
+          "skipUpdate" : "暂时跳过",
+          "completed" : "软件是最新的"
+        }
+      },
+      "installApplications" : {
+        "title" : "我们建议下载一组默认应用程序。以后可以下载更多",
+        "install" : "安装",
+        "skip" : "我以后再下载",
+        "info" : "{{deviceName}} 上的应用程序用于批准交易。您可以随时添加或删除它们。"
+      },
+      "genuineCheckModal" : {
+        "title" : "真伪检查",
+        "paragraph1" : "我们要确保 {{deviceName}} 为正品，可以安全使用",
+        "paragraph2" : "我们将进行检查，确保设备未被篡改。您需要在 {{deviceName}} 上接受此检查。",
+        "checkDeviceButton" : "检查设备"
+      },
+      "genuineCheckCancelModal" : {
+        "title" : "真伪检查",
+        "paragraph1" : "正品检查已取消",
+        "paragraph2" : "该检查对确保 {{deviceName}} 能够安全使用至关重要。",
+        "checkDeviceButton" : "再次运行检查",
+        "cancelButton" : "以后再说"
+      },
+      "genuineCheckNotGenuineModal" : {
+        "title" : "真伪检查",
+        "paragraph1" : "您的设备不是正品",
+        "paragraph2" : "真伪检查失败",
+        "checkDeviceButton" : "再次运行检查",
+        "cancelButton" : "以后再说"
+      },
+      "genuineCheckAnimationModal" : {
+        "message" : "在 {{deviceName}} 上允许使用管理器"
+      },
+      "helpDrawer" : {
+        "title" : "需要安装手册方面的一些帮助？",
+        "description" : "Lorem Elsass ipsum aliquam bissame Oberschaeffolsheim geht's messti de Bischheim tellus blottkopf, dui sed libero. hopla libero, placerat leo eget Gal.",
+        "docButton" : "转至常见问题解答",
+        "supportButton" : "人工服务"
+      },
+      "troubleshootingDrawer" : {
+        "title" : "USB 连接的故障排除",
+        "description" : "连接到您的设备似乎有问题。不要担心，您可以逐一尝试不同的解决方案，直到您的设备连接上为止！",
+        "fixButton" : "解决这个问题",
+        "closeButton" : "关闭"
+      },
+      "desyncOverlay" : {
+        "errorMessage" : "您的 {{deviceName}} 似乎已断开连接。我们正在尝试重新连接。"
+      },
+      "header" : {
+        "helpButton" : "需要帮助？"
+      }
+    }
+  },
+  "postOnboarding" : {
+    "postOnboardingScreen" : {
+      "title" : "不错。\n一切准备就绪。",
+      "description" : "您的 {{deviceName}} 设置完毕！",
+      "paragraph" : "我们为您准备了一些开始使用的步骤。如果您想自己探索 Ledger Live，请跳过此步骤，您可以随时返回。",
+      "bottomText" : "使用 Ledger Live 安全享受 Web3 之旅。"
+    },
+    "postOnboardingContent" : {
+      "title" : "不错。\n一切准备就绪。",
+      "description" : "以下是您接下来可以执行的操作：",
+      "skipLink" : "跳到应用程序",
+      "skipLinkInDrawer" : "我以后再下载"
+    }
   },
   "hideNftCollection" : {
     "title" : "隐藏 NFT 藏品",
@@ -3476,6 +3587,14 @@
         "testAnimations" : {
           "title" : "测试 Lottie 动画",
           "description" : "测试 Ledger Live 中使用的所有动画"
+        },
+        "testStories" : {
+          "title" : "测试 Storyly 文章",
+          "description" : "测试 Ledger Live 中使用的所有文章"
+        },
+        "testPostonboarding" : {
+          "title" : "测试新手引导后的功能",
+          "description" : "测试新手引导后的所有功能"
         }
       }
     },
@@ -4262,13 +4381,14 @@
       "4" : {
         "deviceSelection" : {
           "title" : "您使用的是哪种设备？",
-          "desc" : "如果您使用的是 Nano S，可以尝试修复设备的固件。如果您使用的是 Nano X 和 Blue，请联系 Ledger 客服。"
+          "desc" : "如果您要尝试连接 Nano S，请选择 Nano 上显示的状态。如果您要尝试连接 Nano S Plus 或 Nano X，请访问<0>帮助中心</0>"
         },
         "notFixed" : {
           "title" : " 依旧没有解决 USB 连接问题？",
           "desc" : "如果您已经尝试过了所有可能的解决方案，请联系 Ledger 客服。否则，请根据指示尝试还未使用过的解决方案。",
           "back" : "返回 Portfolio（资产组合）",
-          "cta" : "联系客服"
+          "cta" : "联系客服",
+          "cta2" : "返回"
         },
         "repair" : {
           "title" : "修复您的 Nano S",
@@ -4947,6 +5067,9 @@
     },
     "FeeTooHigh" : {
       "title" : "网络费用超过数额的10%"
+    },
+    "DustLimit" : {
+      "title" : "金额低于小额资产下限"
     },
     "SourceHasMultiSign" : {
       "title" : "请禁用多重签名以发送 {{currencyName}}"
