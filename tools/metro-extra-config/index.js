@@ -42,6 +42,8 @@ module.exports = function(options = {}, config = {}) {
     remapModule,
     // Gives to ability to hijack the resolver early on
     earlyResolver,
+    // Guards against resolving globally installed packages
+    globalPackagesGuard = true,
     // Useful callbacks
     callbackSymlinkResolution,
     callbackSymlinkResolutionError,
@@ -63,6 +65,17 @@ module.exports = function(options = {}, config = {}) {
       "node_modules"
     ),
   ];
+
+  function checkGlobalPackage(resolution) {
+    if (
+      globalPackagesGuard &&
+      path
+        .relative(path.resolve(__dirname, "..", ".."), resolution)
+        .startsWith("..")
+    ) {
+      throw new Error("Global package resolution is not allowed", resolution);
+    }
+  }
 
   const symlinkResolver = MetroSymlinksResolver({
     remapModule: (context, moduleName, platform) => {
@@ -122,6 +135,7 @@ module.exports = function(options = {}, config = {}) {
               platform,
             });
           }
+          checkGlobalPackage(resolution.filePath);
           return resolution;
         } catch (error) {
           try {
@@ -152,6 +166,7 @@ module.exports = function(options = {}, config = {}) {
               });
             }
             if (path.isAbsolute(resolution)) {
+              checkGlobalPackage(resolution);
               return {
                 filePath: resolution,
                 type: "sourceFile",

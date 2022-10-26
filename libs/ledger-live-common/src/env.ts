@@ -671,6 +671,11 @@ const envDefinitions = {
     parser: boolParser,
     desc: "use the staging URL for the learn page",
   },
+  DYNAMIC_CAL_BASE_URL: {
+    def: "https://cdn.live.ledger.com/cryptoassets",
+    parser: stringParser,
+    desc: "bucket S3 of the dynamic cryptoassets list",
+  },
   FEATURE_FLAGS: {
     def: "",
     parser: jsonParser,

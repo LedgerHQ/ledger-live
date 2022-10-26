@@ -599,6 +599,9 @@
     "SourceHasMultiSign": {
       "title": "Please disable multisign to send {{currencyName}}"
     },
+    "DustLimit": {
+      "title": "Amount is lower than dust limit"
+    },
     "StratisDown2021Warning": {
       "description": "The Stratis blockchain evolved and may no longer work correctly. Support for the original Stratis blockchain will be maintained until 16 October 2021."
     },
@@ -2144,7 +2147,7 @@
       },
       "advanced": {
         "title": "Advanced logs",
-        "warningDerivation": "This is a {{tag}} xpub. When importing it into a third-party wallet, chose the same derivation mode.",
+        "warningDerivation": "This is a {{tag}} xpub. When importing it into a third-party wallet, choose the same derivation mode.",
         "desc": ""
       }
     },

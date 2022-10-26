@@ -96,7 +96,7 @@ export default function SendAmountCoin({ navigation, route }: Props) {
     if (!transaction) return;
     setTransaction(
       bridge.updateTransaction(transaction, {
-        amount: BigNumber(0),
+        amount: new BigNumber(0),
         useAllAmount: !transaction.useAllAmount,
       }),
     );
@@ -130,6 +130,7 @@ export default function SendAmountCoin({ navigation, route }: Props) {
   const { amount } = status;
   const unit = getAccountUnit(account);
   const currency = getAccountCurrency(account);
+
   return (
     <>
       <TrackScreen
@@ -154,7 +155,10 @@ export default function SendAmountCoin({ navigation, route }: Props) {
                 onChange={onChange}
                 value={amount}
                 error={
-                  amount.eq(0) && (bridgePending || !transaction.useAllAmount)
+                  status.errors.dustLimit
+                    ? status.errors.dustLimit
+                    : amount.eq(0) &&
+                      (bridgePending || !transaction.useAllAmount)
                     ? null
                     : status.errors.amount
                 }
@@ -211,7 +215,11 @@ export default function SendAmountCoin({ navigation, route }: Props) {
                       />
                     }
                     onPress={onContinue}
-                    disabled={!!status.errors.amount || bridgePending}
+                    disabled={
+                      !!status.errors.amount ||
+                      !!status.errors.dustLimit ||
+                      bridgePending
+                    }
                   />
                 </View>
               </View>
