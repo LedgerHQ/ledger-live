@@ -130,6 +130,7 @@
     "nanoS" : "Nano S",
     "nanoSP" : "Nano S Plus",
     "nanoX" : "Nano X",
+    "nanoFTS" : "Nano FTS",
     "blue" : "Blue"
   },
   "operation" : {
@@ -597,6 +598,12 @@
     }
   },
   "lottieDebugger" : {
+    "buttonTitle" : "Prueba"
+  },
+  "storylyDebugger" : {
+    "buttonTitle" : "Prueba"
+  },
+  "postOnboardingDebugger" : {
     "buttonTitle" : "Prueba"
   },
   "fullNode" : {
@@ -1124,6 +1131,110 @@
     "title" : "Ocultar token",
     "desc" : "Esta acción ocultará todas las cuentas de <1><0>{{tokenName}}</0></1>, pero puedes visualizarlas de nuevo ingresando a <3>Ajustes</3>.",
     "hideCTA" : "Ocultar token"
+  },
+  "syncOnboarding" : {
+    "connection" : {
+      "searching" : {
+        "title" : "Conectar {{deviceModelName}} a tu PC",
+        "connectionTrouble" : "¿Tienes problemas para conectar tu dispositivo?"
+      },
+      "success" : {
+        "title" : "Conectado a tu {{ deviceName }}"
+      }
+    },
+    "manual" : {
+      "pairedContent" : {
+        "title" : "Tu {{deviceName}} está conectado",
+        "description" : "Continúa con la configuración en tu {{deviceName}}",
+        "text" : "Esta pantalla cambiará de forma dinámica para proporcionarte información pertinente mientras configuras tu {{deviceName}}."
+      },
+      "pinContent" : {
+        "title" : "Define tu PIN",
+        "description" : "El PIN puede tener entre 4 y 8 dígitos",
+        "text" : "Cualquier persona que tenga acceso a tu {{deviceName}} y a tu PIN también podrá acceder a todos tus activos cripto y NFT."
+      },
+      "recoveryContent" : {
+        "title" : "Frase de recuperación",
+        "content" : "Consulta los siguientes videos para obtener más información sobre tu Frase de recuperación"
+      },
+      "softwareCheckContent" : {
+        "title" : "Comprobación de software",
+        "genuineCheck" : {
+          "active" : "Comprobando {{deviceName}}",
+          "completed" : "Tu {{deviceName}} es auténtico"
+        },
+        "firmwareUpdate" : {
+          "inactive" : "Comprobación de software",
+          "active" : "Buscando actualizaciones de software",
+          "updateAvailable" : "Actualización de software disponible {{firmwareVersion}}",
+          "recommendation" : "Te recomendamos descargar ahora la actualización",
+          "downloadUpdate" : "Descargar actualización",
+          "skipUpdate" : "Omitir por el momento",
+          "completed" : "El software está actualizado"
+        }
+      },
+      "installApplications" : {
+        "title" : "Te recomendamos descargar un conjunto de aplicaciones por defecto. Puedes descargar otras más adelante",
+        "install" : "Instalar",
+        "skip" : "Recordar más adelante",
+        "info" : "Las aplicaciones el {{deviceName}} se usan para aprobar transacciones. Puedes añadirlas o eliminarlas cuando quieras."
+      },
+      "genuineCheckModal" : {
+        "title" : "Comprobación de autenticidad",
+        "paragraph1" : "Vamos a asegurarnos de que tu {{deviceName}} sea auténtico y seguro de usar",
+        "paragraph2" : "Realizaremos una comprobación para asegurarnos de que el dispositivo no ha sido manipulado. Tendrás que aceptar la operación en tu {{deviceName}}.",
+        "checkDeviceButton" : "Comprobar dispositivo"
+      },
+      "genuineCheckCancelModal" : {
+        "title" : "Comprobación de autenticidad",
+        "paragraph1" : "La verificación de autenticidad se ha cancelado",
+        "paragraph2" : "Es importante que hagas esta comprobación para asegurarte de que es seguro usar tu {{deviceName}}.",
+        "checkDeviceButton" : "Volver a ejecutar la verificación de autenticidad",
+        "cancelButton" : "Quizás más tarde"
+      },
+      "genuineCheckNotGenuineModal" : {
+        "title" : "Comprobación de autenticidad",
+        "paragraph1" : "Tu dispositivo no es original",
+        "paragraph2" : "La comprobación de autenticidad ha fallado",
+        "checkDeviceButton" : "Volver a ejecutar la verificación de autenticidad",
+        "cancelButton" : "Quizás más tarde"
+      },
+      "genuineCheckAnimationModal" : {
+        "message" : "Permitir manager en {{deviceName}}"
+      },
+      "helpDrawer" : {
+        "title" : "¿Necesitas ayuda con el manual de configuración?",
+        "description" : "Lorem Elsass ipsum aliquam bissame Oberschaeffolsheim geht's messti de Bischheim tellus blottkopf, dui sed libero. hopla libero, placerat leo eget Gal.",
+        "docButton" : "Ir a Preguntas más frecuentes",
+        "supportButton" : "Hablar con una persona"
+      },
+      "troubleshootingDrawer" : {
+        "title" : "Solucionar problemas de la conexión USB",
+        "description" : "Parece que hay un problema al conectar tu dispositivo. No te preocupes, puedes probar con distintas soluciones, una por vez, hasta que se conecte tu dispositivo.",
+        "fixButton" : "Corregir",
+        "closeButton" : "Cerrar"
+      },
+      "desyncOverlay" : {
+        "errorMessage" : "Parece que se ha perdido la conexión con tu {{deviceName}}. Estamos intentando volver a conectar."
+      },
+      "header" : {
+        "helpButton" : "¿Necesitas ayuda?"
+      }
+    }
+  },
+  "postOnboarding" : {
+    "postOnboardingScreen" : {
+      "title" : "Muy bien. Todo listo.",
+      "description" : "¡Enhorabuena por configurar tu {{deviceName}}!",
+      "paragraph" : "Te hemos preparado algunos pasos con los que puedes empezar. Si prefieres explorar Ledger Live por tu cuenta, omite este paso; siempre puedes volver aquí más tarde.",
+      "bottomText" : "Disfruta de tu viaje por la Web3 de forma segura con Ledger Live."
+    },
+    "postOnboardingContent" : {
+      "title" : "Muy bien. Todo listo.",
+      "description" : "Esto es lo que puedes hacer a continuación:",
+      "skipLink" : "Ir a la aplicación",
+      "skipLinkInDrawer" : "Lo haré más tarde"
+    }
   },
   "hideNftCollection" : {
     "title" : "Ocultar colección de NFTs",
@@ -3476,6 +3587,14 @@
         "testAnimations" : {
           "title" : "Probar animaciones Lottie",
           "description" : "Probar todas las animaciones utilizadas en Ledger Live"
+        },
+        "testStories" : {
+          "title" : "Probar las historias de Storyly",
+          "description" : "Probar todas las historias usadas en Ledger Live"
+        },
+        "testPostonboarding" : {
+          "title" : "Probar el Post Onboarding",
+          "description" : "Probar todas las funciones de Post Onboarding"
         }
       }
     },
@@ -4262,13 +4381,14 @@
       "4" : {
         "deviceSelection" : {
           "title" : "¿Cuál es tu dispositivo?",
-          "desc" : "Si tienes un Nano S, puedes intentar reparar el firmware de tu dispositivo. Para los usuarios de Nano X y Blue, por favor contactar al soporte de Ledger."
+          "desc" : "Si estás intentando conectar un Nano S, selecciona el estado que se muestra en tu Nano. Si estás intentando conectar un Nano S Plus o un Nano X, <0>visita el Centro de ayuda</0>"
         },
         "notFixed" : {
           "title" : " ¿Aún no está resuelto el problema de la conexión USB?",
           "desc" : "Si ya has probado con todas las soluciones posibles, por favor ponte en contacto con el soporte de Ledger. De lo contrario, sigue las instrucciones de aquellas soluciones que todavía no hayas probado.",
           "back" : "Volver al Portfolio",
-          "cta" : "Ponte en contacto con Soporte"
+          "cta" : "Ponte en contacto con Soporte",
+          "cta2" : "Volver"
         },
         "repair" : {
           "title" : "Reparar tu Nano S",
