@@ -27,9 +27,10 @@ import {
   findTokenById,
   findTokenByAddress,
   hasTokenId,
-  getTokenById,
   findCompoundToken,
   getAbandonSeedAddress,
+  getTokenById,
+  addTokens,
 } from "@ledgerhq/cryptoassets";
 export * from "./support";
 export * from "./helpers";
@@ -66,7 +67,6 @@ export {
   findCryptoCurrencyByKeyword,
   findFiatCurrencyByTicker,
   hasFiatCurrencyTicker,
-  listTokens,
   listTokensForCryptoCurrency,
   listTokenTypesForCryptoCurrency,
   findTokenByAddress,
@@ -88,4 +88,6 @@ export {
   sanitizeValueString,
   getCurrencyColor,
   findCompoundToken,
+  listTokens,
+  addTokens,
 };
