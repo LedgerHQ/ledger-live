@@ -754,7 +754,7 @@
     "settings" : {
       "title" : "تعديل الحساب",
       "advancedLogs" : "مُتَقدم",
-      "advancedTips" : "هذا مفتاح عام ممتد {{tag}}. عند استيراده إلى محفظة طرف ثالث، اختر نفس نمط الاشتقاق.",
+      "advancedTips" : "This is a {{tag}} xpub. When importing it into a third-party wallet, choose the same derivation mode.",
       "accountName" : {
         "title" : "اسم الحساب",
         "desc" : "وصف الحساب"
@@ -4262,13 +4262,14 @@
       "4" : {
         "deviceSelection" : {
           "title" : "ما نوع جهازك؟",
-          "desc" : "اذا كان لديك Nano S ، يمكنك محاولة إصلاح البرنامج الثابت لجهازك. بالنسبة لمستخدمي Nano X وBlue ، يرجى أن تقم بالتواصل مع دعم Ledger"
+          "desc" : "إذا كنت تحاول توصيل Nano S، اختر الحالة المعروضة على Nano خاصتك. إذا كنت تحاول توصيل Nano S Plus أو Nano X، <0>زُر مركز المساعدة</0>"
         },
         "notFixed" : {
           "title" : " لم يتم حل مشكلة توصيل USB بعد؟",
           "desc" : "إذا جربت كل الحلول الممكنة، يرجى التواصل مع دعم Ledger. خلاف ذلك، يرجى إتباع إرشادات أي حل لم تجربه حتى الآن.",
           "back" : "الرجوع إلى المحفظة الاستثمارية",
-          "cta" : "تواصل مع الدعم"
+          "cta" : "تواصل مع الدعم",
+          "cta2" : "العودة للخلف"
         },
         "repair" : {
           "title" : "إصلاح Nano S الخاص بك",
