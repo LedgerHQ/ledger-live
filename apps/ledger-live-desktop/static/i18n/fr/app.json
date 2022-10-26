@@ -130,6 +130,7 @@
     "nanoS" : "Nano S",
     "nanoSP" : "Nano S Plus",
     "nanoX" : "Nano X",
+    "nanoFTS" : "Nano FTS",
     "blue" : "Blue"
   },
   "operation" : {
@@ -597,6 +598,12 @@
     }
   },
   "lottieDebugger" : {
+    "buttonTitle" : "Tester"
+  },
+  "storylyDebugger" : {
+    "buttonTitle" : "Tester"
+  },
+  "postOnboardingDebugger" : {
     "buttonTitle" : "Tester"
   },
   "fullNode" : {
@@ -1124,6 +1131,110 @@
     "title" : "Masquer le token",
     "desc" : "Vous vous apprêtez à cacher tous vos comptes <1><0>{{tokenName}}</0></1>. Vous pouvez restaurer leur visibilité à tout moment à partir des <3>Paramètres</3>.",
     "hideCTA" : "Masquer le token"
+  },
+  "syncOnboarding" : {
+    "connection" : {
+      "searching" : {
+        "title" : "Connectez votre {{deviceModelName}} à votre ordinateur",
+        "connectionTrouble" : "Des difficultés à connecter votre Ledger ?"
+      },
+      "success" : {
+        "title" : "Connecté à {{ deviceName }}"
+      }
+    },
+    "manual" : {
+      "pairedContent" : {
+        "title" : "Votre {{deviceName}} est connecté",
+        "description" : "Poursuivez la configuration sur votre {{deviceName}}.",
+        "text" : "Cet écran va évoluer pour vous guider à chaque étape de la configuration de votre {{deviceName}}."
+      },
+      "pinContent" : {
+        "title" : "Définir votre code PIN",
+        "description" : "Choisissez un code PIN de 4 à 8 chiffres.",
+        "text" : "Toute personne ayant accès à votre {{deviceName}} et à votre code PIN peut avoir accès à vos crypto-actifs."
+      },
+      "recoveryContent" : {
+        "title" : "Phrase de récupération",
+        "content" : "Regardez les vidéos ci-dessous pour en savoir plus sur votre phrase secrète de récupération."
+      },
+      "softwareCheckContent" : {
+        "title" : "Vérification du logiciel",
+        "genuineCheck" : {
+          "active" : "Vérification du {{deviceName}}",
+          "completed" : "Votre {{deviceName}} authentique"
+        },
+        "firmwareUpdate" : {
+          "inactive" : "Vérification du logiciel",
+          "active" : "Recherche de mises à jour",
+          "updateAvailable" : "Mise à jour du logiciel disponible : {{firmwareVersion}}",
+          "recommendation" : "Nous vous recommandons d’installer la mise à jour maintenant.",
+          "downloadUpdate" : "Télécharger la mise à jour",
+          "skipUpdate" : "Ignorer pour le moment",
+          "completed" : "Le logiciel est à jour."
+        }
+      },
+      "installApplications" : {
+        "title" : "Nous vous recommandons de télécharger une sélection d’applications par défaut. Vous pourrez en télécharger d’autres plus tard.",
+        "install" : "Installer",
+        "skip" : "Plus tard",
+        "info" : "Les apps sur votre {{deviceName}} vous permettent de valider vos opérations. Vous pouvez les ajouter ou supprimer à tout moment."
+      },
+      "genuineCheckModal" : {
+        "title" : "Vérification de l’authenticité",
+        "paragraph1" : "Vérifions que votre {{deviceName}} est authentique et peut être utilisé en toute sécurité.",
+        "paragraph2" : "Nous procéderons à une vérification pour nous assurer que votre appareil n’a pas été compromis. Vous devrez accepter la vérification sur votre {{deviceName}}.",
+        "checkDeviceButton" : "Vérifier mon appareil"
+      },
+      "genuineCheckCancelModal" : {
+        "title" : "Vérification de l’authenticité",
+        "paragraph1" : "La vérification de l’authenticité a été annulée.",
+        "paragraph2" : "Cette vérification cruciale vous permet de vous assurer que votre {{deviceName}} peut être utilisé en toute sécurité.",
+        "checkDeviceButton" : "Exécuter à nouveau la vérification",
+        "cancelButton" : "Pas maintenant"
+      },
+      "genuineCheckNotGenuineModal" : {
+        "title" : "Vérification de l’authenticité",
+        "paragraph1" : "Votre Ledger n’est pas authentique.",
+        "paragraph2" : "Échec de la vérification de l’authenticité.",
+        "checkDeviceButton" : "Exécuter à nouveau la vérification",
+        "cancelButton" : "Pas maintenant"
+      },
+      "genuineCheckAnimationModal" : {
+        "message" : "Autorisez le Manager sur {{deviceName}}"
+      },
+      "helpDrawer" : {
+        "title" : "Besoin d’aide pour configurer votre Ledger ?",
+        "description" : "Lorem Elsass ipsum aliquam bissame Oberschaeffolsheim geht’s messti de Bischheim tellus blottkopf, dui sed libero. hopla libero, placerat leo eget Gal.",
+        "docButton" : "Accéder à la FAQ",
+        "supportButton" : "S’adresser à un agent"
+      },
+      "troubleshootingDrawer" : {
+        "title" : "Réparer la connexion USB",
+        "description" : "Votre appareil semble avoir du mal à se connecter. Vous pouvez essayer les solutions suivantes jusqu’à ce que votre appareil se connecte.",
+        "fixButton" : "Réparer",
+        "closeButton" : "Fermer"
+      },
+      "desyncOverlay" : {
+        "errorMessage" : "La connexion à votre {{deviceName}} semble avoir été perdue. Reconnexion en cours..."
+      },
+      "header" : {
+        "helpButton" : "Besoin d’aide ?"
+      }
+    }
+  },
+  "postOnboarding" : {
+    "postOnboardingScreen" : {
+      "title" : "Voilà. Tout est configuré.",
+      "description" : "Votre {{deviceName}} est configuré !",
+      "paragraph" : "Voici quelques étapes à suivre pour commencer. Si vous voulez explorer Ledger Live par vous-même, n’hésitez pas à passer cette étape, vous pourrez toujours y revenir.",
+      "bottomText" : "Explorez le Web3 en toute sécurité avec Ledger Live."
+    },
+    "postOnboardingContent" : {
+      "title" : "Voilà. Tout est configuré.",
+      "description" : "Vous pouvez maintenant :",
+      "skipLink" : "Accéder à l’app",
+      "skipLinkInDrawer" : "Plus tard"
+    }
   },
   "hideNftCollection" : {
     "title" : "Cacher la collection de NFT",
@@ -3476,6 +3587,14 @@
         "testAnimations" : {
           "title" : "Tester les animations Lottie",
           "description" : "Testez toutes les animations utilisées dans Ledger Live."
+        },
+        "testStories" : {
+          "title" : "Testez les animations Storyly",
+          "description" : "Testez toutes les animations utilisées dans Ledger Live."
+        },
+        "testPostonboarding" : {
+          "title" : "Tester le Post-Onboarding",
+          "description" : "Testez toutes les fonctionnalités des pages Post-Onboarding."
         }
       }
     },
@@ -4262,13 +4381,14 @@
       "4" : {
         "deviceSelection" : {
           "title" : "Quel appareil avez-vous ?",
-          "desc" : "Si vous avez un Nano S, vous pouvez essayer de réparer son micrologiciel. Pour les utilisateurs de Nano X et Blue, veuillez contacter l’Assistance Ledger."
+          "desc" : "Si vous essayez de connecter un Nano S, veuillez sélectionner le message affiché sur votre Nano. Si vous essayer de connecter un Nano S Plus ou un Nano X, <0>veuillez consulter notre centre d’aide</0>."
         },
         "notFixed" : {
           "title" : " Le problème de connexion USB persiste ?",
           "desc" : "Si vous avez tout essayé, merci de contacter l’Assistance Ledger. Sinon, veuillez suivre les instructions des solutions que vous n’avez pas encore essayées.",
           "back" : "Retour au Portefeuille",
-          "cta" : "Contacter l’Assistance"
+          "cta" : "Contacter l’Assistance",
+          "cta2" : "Retour"
         },
         "repair" : {
           "title" : "Réparer votre Nano S",
