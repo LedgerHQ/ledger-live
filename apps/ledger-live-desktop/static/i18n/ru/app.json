@@ -1288,7 +1288,7 @@
     "marketList" : {
       "crypto" : "Криптовалюты",
       "price" : "Цена",
-      "change" : "Изменить",
+      "change" : "Изменение",
       "marketCap" : "Рын. капитализация",
       "last7d" : "За 7 дней"
     },
@@ -4635,7 +4635,7 @@
       "description" : "Повторите попытку"
     },
     "PasswordIncorrect" : {
-      "title" : "Введён неправильный пароль",
+      "title" : "Неправильный пароль",
       "description" : "Повторите попытку"
     },
     "QuantityNeedsToBePositive" : {
