@@ -21,7 +21,7 @@ const lenseTicker = (a) => a[9] || a[2];
 module.exports = {
   // FIXME not yet sure if it's our final path
   paths: ["tokens/polygon/erc20"],
-  output: "data/polygon-erc20.js",
+  output: (toJSON) => `data/polygon-erc20.js${toJSON ? "on" : ""}`,
 
   validate: (everything, countervaluesTickers) =>
     ["polygon"].flatMap((cid) => {
@@ -82,8 +82,10 @@ module.exports = {
 
       return all.filter((a) => !contractGroup[a[6]]);
     }),
-  outputTemplate: (data) =>
-    `module.exports = [
+  outputTemplate: (data, toJSON) =>
+    toJSON
+      ? JSON.stringify(data)
+      : `module.exports = [
 ${data
   .map(
     (item) =>
