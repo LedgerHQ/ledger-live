@@ -754,7 +754,7 @@
     "settings" : {
       "title" : "Editar Conta",
       "advancedLogs" : "Avançado",
-      "advancedTips" : "Esta é uma xpub {{tag}}. Ao importá-la para uma carteira de terceiros, escolha o mesmo modo de derivação.",
+      "advancedTips" : "This is a {{tag}} xpub. When importing it into a third-party wallet, choose the same derivation mode.",
       "accountName" : {
         "title" : "Nome da conta",
         "desc" : "Descrição da conta"
@@ -4262,13 +4262,14 @@
       "4" : {
         "deviceSelection" : {
           "title" : "Qual é seu dispositivo?",
-          "desc" : "Se você tem uma Nano S, você pode tentar reparar o firmware do seu dispositivo. Para usuários da Nano X e Blue, contate o Suporte Ledger"
+          "desc" : "Se estiver tentando conectar uma Nano S, selecione o estado exibido em sua Nano. Se estiver tentando conectar uma Nano S Plus ou Nano X, <0>visite o Centro de Ajuda</0>"
         },
         "notFixed" : {
           "title" : " O problema de conexão USB ainda não foi corrigido?",
           "desc" : "Se você já tentou todas as soluções possíveis, contate o Suporte Ledger. Caso contrário, siga as instruções das soluções que você ainda não tentou.",
           "back" : "Voltar ao portfólio",
-          "cta" : "Contatar Suporte"
+          "cta" : "Contatar Suporte",
+          "cta2" : "Voltar"
         },
         "repair" : {
           "title" : "Repare sua Nano S",
