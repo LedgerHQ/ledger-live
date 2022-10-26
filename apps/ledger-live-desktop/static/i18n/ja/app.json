@@ -754,7 +754,7 @@
     "settings" : {
       "title" : "アカウントを編集",
       "advancedLogs" : "アドバンス",
-      "advancedTips" : "これは {{tag}}のxpubです。サードパーティのウォレットにインポートする際は、同じ派生モードを選択してください。",
+      "advancedTips" : "This is a {{tag}} xpub. When importing it into a third-party wallet, choose the same derivation mode.",
       "accountName" : {
         "title" : "アカウント名",
         "desc" : "アカウントの名前"
@@ -4262,13 +4262,14 @@
       "4" : {
         "deviceSelection" : {
           "title" : "どのデバイスをお使いですか？",
-          "desc" : "Nano Sをお使いの場合は、デバイスのファームウェアを修復してみてください。Nano XまたはBlueをお使いの場合は、Ledger サポートまでご連絡ください。"
+          "desc" : "Nano Sを接続しようとしている場合は、Nanoに表示されている状態を選択します。Nano S PlusまたはNano Xを接続しようとしている場合は、<0>ヘルプセンターにアクセス</0>してください。"
         },
         "notFixed" : {
           "title" : " USB接続の問題が解決されませんか？",
           "desc" : "全ての解決策を試しても解決できない場合は、Ledgerサポートまでご連絡ください。まだ試していない解決策がある場合は、それらの手順を実行してください。",
           "back" : "ポートフォリオに戻る",
-          "cta" : "サポートへのお問い合わせ"
+          "cta" : "サポートへのお問い合わせ",
+          "cta2" : "戻る"
         },
         "repair" : {
           "title" : "Nano Sを修理する",
