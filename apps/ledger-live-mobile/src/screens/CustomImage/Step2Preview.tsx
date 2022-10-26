@@ -1,9 +1,8 @@
-import React, { useCallback, useMemo, useRef, useState } from "react";
+import React, { useCallback, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import styled from "styled-components/native";
 import { Button, Flex, InfiniteLoader, Text } from "@ledgerhq/native-ui";
 import {
-  Dimensions,
   ImageErrorEventData,
   NativeSyntheticEvent,
   Pressable,
@@ -20,12 +19,12 @@ import ImageProcessor, {
   ProcessorRawResult,
 } from "../../components/CustomImage/ImageProcessor";
 import { targetDimensions } from "./shared";
-import { fitImageContain } from "../../components/CustomImage/imageUtils";
 import BottomButtonsContainer from "../../components/CustomImage/BottomButtonsContainer";
 import ContrastChoice from "../../components/CustomImage/ContrastChoice";
 import { ScreenName } from "../../const";
 import { ImagePreviewError } from "../../components/CustomImage/errors";
 import { ParamList } from "./types";
+import FramedImage from "../../components/CustomImage/FramedImage";
 
 export const PreviewImage = styled.Image.attrs({
   resizeMode: "contain",
@@ -34,11 +33,6 @@ export const PreviewImage = styled.Image.attrs({
   width: 200px;
   height: 200px;
 `;
-
-const boxToFitDimensions = {
-  height: (Dimensions.get("screen").height * 2) / 3,
-  width: (Dimensions.get("screen").width * 2) / 3,
-};
 
 const contrasts = [
   { val: 1, color: "neutral.c70" },
@@ -69,17 +63,17 @@ const Step2Preview: React.FC<
 
   const { params } = route;
 
-  const croppedImage = params;
+  const { cropResult: croppedImage, device } = params;
 
   const handleError = useCallback(
     (error: Error) => {
       console.error(error);
       navigation.navigate(
         ScreenName.CustomImageErrorScreen as "CustomImageErrorScreen",
-        { error },
+        { error, device },
       );
     },
-    [navigation],
+    [navigation, device],
   );
 
   /** IMAGE RESIZING */
@@ -123,11 +117,12 @@ const Step2Preview: React.FC<
         {
           rawData: data,
           previewData: processorPreviewImage,
+          device,
         },
       );
       setRawResultLoading(false);
     },
-    [navigation, setRawResultLoading, processorPreviewImage],
+    [navigation, setRawResultLoading, processorPreviewImage, device],
   );
 
   const handlePreviewImageError = useCallback(
@@ -142,18 +137,6 @@ const Step2Preview: React.FC<
     imageProcessorRef?.current?.requestRawResult();
     setRawResultLoading(true);
   }, [imageProcessorRef, setRawResultLoading]);
-
-  const previewDimensions = useMemo(
-    () =>
-      fitImageContain(
-        {
-          width: processorPreviewImage?.width ?? 200,
-          height: processorPreviewImage?.height ?? 200,
-        },
-        boxToFitDimensions,
-      ),
-    [processorPreviewImage?.height, processorPreviewImage?.width],
-  );
 
   return (
     <SafeAreaView edges={["bottom"]} flex={1}>
@@ -174,14 +157,10 @@ const Step2Preview: React.FC<
         justifyContent="center"
       >
         {processorPreviewImage?.imageBase64DataUri ? (
-          <PreviewImage
+          <FramedImage
             onError={handlePreviewImageError}
             fadeDuration={0}
             source={{ uri: processorPreviewImage.imageBase64DataUri }}
-            style={{
-              height: previewDimensions?.height,
-              width: previewDimensions?.width,
-            }}
           />
         ) : (
           <InfiniteLoader />

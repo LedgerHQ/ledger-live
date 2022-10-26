@@ -411,6 +411,8 @@ PODS:
   - react-native-adjust (4.29.6):
     - Adjust (= 4.29.6)
     - React
+  - react-native-biometrics (3.0.1):
+    - React-Core
   - react-native-ble-plx (2.0.3):
     - MultiplatformBleAdapter (= 0.1.9)
     - React-Core
@@ -419,8 +421,6 @@ PODS:
   - react-native-config/App (1.4.4):
     - React-Core
   - react-native-fast-crypto (2.2.0):
-    - React
-  - react-native-fingerprint-scanner (6.0.0):
     - React
   - react-native-flipper (0.162.0):
     - React-Core
@@ -432,6 +432,8 @@ PODS:
   - react-native-performance (3.1.2):
     - React-Core
   - react-native-randombytes (3.6.1):
+    - React-Core
+  - react-native-restart (0.0.24):
     - React-Core
   - react-native-safe-area-context (4.2.5):
     - RCT-Folly
@@ -679,15 +681,16 @@ DEPENDENCIES:
   - "React-jsinspector (from `../../../node_modules/.pnpm/react-native@0.68.2_qiqqwmyv63yhnuboofexv3s7x4/node_modules/react-native/ReactCommon/jsinspector`)"
   - "React-logger (from `../../../node_modules/.pnpm/react-native@0.68.2_qiqqwmyv63yhnuboofexv3s7x4/node_modules/react-native/ReactCommon/logger`)"
   - "react-native-adjust (from `../../../node_modules/.pnpm/react-native-adjust@4.29.6/node_modules/react-native-adjust`)"
+  - "react-native-biometrics (from `../../../node_modules/.pnpm/react-native-biometrics@3.0.1_react-native@0.68.2/node_modules/react-native-biometrics`)"
   - "react-native-ble-plx (from `../../../node_modules/.pnpm/react-native-ble-plx@2.0.3/node_modules/react-native-ble-plx`)"
   - "react-native-config (from `../../../node_modules/.pnpm/react-native-config@1.4.4/node_modules/react-native-config`)"
   - "react-native-fast-crypto (from `../../../node_modules/.pnpm/react-native-fast-crypto@2.2.0_jdmv3zyvsaug2f6l23zgrmwdli_react-native@0.68.2/node_modules/react-native-fast-crypto`)"
-  - "react-native-fingerprint-scanner (from `../../../node_modules/.pnpm/github.com+hieuvp+react-native-fingerprint-scanner@f1d136f605412d58e4de9e7e155d6f818ba24731_react-native@0.68.2/node_modules/react-native-fingerprint-scanner`)"
   - "react-native-flipper (from `../../../node_modules/.pnpm/react-native-flipper@0.162.0_zqxy7fpkavjkgz5xll7ed4r6rq/node_modules/react-native-flipper`)"
   - "react-native-image-crop-tools (from `../../../node_modules/.pnpm/react-native-image-crop-tools@1.6.2_ykxjy5s7xujdxmsgrwxo5mh3y4_zqxy7fpkavjkgz5xll7ed4r6rq/node_modules/react-native-image-crop-tools`)"
   - "react-native-netinfo (from `../../../node_modules/.pnpm/@react-native-community+netinfo@6.2.1_react-native@0.68.2/node_modules/@react-native-community/netinfo`)"
   - "react-native-performance (from `../../../node_modules/.pnpm/react-native-performance@3.1.2_react-native@0.68.2/node_modules/react-native-performance`)"
   - "react-native-randombytes (from `../../../node_modules/.pnpm/react-native-randombytes@3.6.1/node_modules/react-native-randombytes`)"
+  - "react-native-restart (from `../../../node_modules/.pnpm/react-native-restart@0.0.24_zqxy7fpkavjkgz5xll7ed4r6rq/node_modules/react-native-restart`)"
   - "react-native-safe-area-context (from `../../../node_modules/.pnpm/react-native-safe-area-context@4.2.5_zqxy7fpkavjkgz5xll7ed4r6rq/node_modules/react-native-safe-area-context`)"
   - "react-native-splash-screen (from `../../../node_modules/.pnpm/react-native-splash-screen@3.2.0_react-native@0.68.2/node_modules/react-native-splash-screen`)"
   - "react-native-text-input-mask (from `../../../node_modules/.pnpm/react-native-text-input-mask@3.1.4_react-native@0.68.2/node_modules/react-native-text-input-mask`)"
@@ -834,14 +837,14 @@ EXTERNAL SOURCES:
     :path: "../../../node_modules/.pnpm/react-native@0.68.2_qiqqwmyv63yhnuboofexv3s7x4/node_modules/react-native/ReactCommon/logger"
   react-native-adjust:
     :path: "../../../node_modules/.pnpm/react-native-adjust@4.29.6/node_modules/react-native-adjust"
+  react-native-biometrics:
+    :path: "../../../node_modules/.pnpm/react-native-biometrics@3.0.1_react-native@0.68.2/node_modules/react-native-biometrics"
   react-native-ble-plx:
     :path: "../../../node_modules/.pnpm/react-native-ble-plx@2.0.3/node_modules/react-native-ble-plx"
   react-native-config:
     :path: "../../../node_modules/.pnpm/react-native-config@1.4.4/node_modules/react-native-config"
   react-native-fast-crypto:
     :path: "../../../node_modules/.pnpm/react-native-fast-crypto@2.2.0_jdmv3zyvsaug2f6l23zgrmwdli_react-native@0.68.2/node_modules/react-native-fast-crypto"
-  react-native-fingerprint-scanner:
-    :path: "../../../node_modules/.pnpm/github.com+hieuvp+react-native-fingerprint-scanner@f1d136f605412d58e4de9e7e155d6f818ba24731_react-native@0.68.2/node_modules/react-native-fingerprint-scanner"
   react-native-flipper:
     :path: "../../../node_modules/.pnpm/react-native-flipper@0.162.0_zqxy7fpkavjkgz5xll7ed4r6rq/node_modules/react-native-flipper"
   react-native-image-crop-tools:
@@ -852,6 +855,8 @@ EXTERNAL SOURCES:
     :path: "../../../node_modules/.pnpm/react-native-performance@3.1.2_react-native@0.68.2/node_modules/react-native-performance"
   react-native-randombytes:
     :path: "../../../node_modules/.pnpm/react-native-randombytes@3.6.1/node_modules/react-native-randombytes"
+  react-native-restart:
+    :path: "../../../node_modules/.pnpm/react-native-restart@0.0.24_zqxy7fpkavjkgz5xll7ed4r6rq/node_modules/react-native-restart"
   react-native-safe-area-context:
     :path: "../../../node_modules/.pnpm/react-native-safe-area-context@4.2.5_zqxy7fpkavjkgz5xll7ed4r6rq/node_modules/react-native-safe-area-context"
   react-native-splash-screen:
@@ -997,15 +1002,16 @@ SPEC CHECKSUMS:
   React-jsinspector: c5989c77cb89ae6a69561095a61cce56a44ae8e8
   React-logger: a0833912d93b36b791b7a521672d8ee89107aff1
   react-native-adjust: 8152efdf7a2e94a85ce427f2096b4167f2824273
+  react-native-biometrics: 352e5a794bfffc46a0c86725ea7dc62deb085bdc
   react-native-ble-plx: f10240444452dfb2d2a13a0e4f58d7783e92d76e
   react-native-config: 72d948053a442779b3178fddd571e37f118ef606
   react-native-fast-crypto: 5943c42466b86ad70be60d3a5f64bd22251e5d9e
-  react-native-fingerprint-scanner: ac6656f18c8e45a7459302b84da41a44ad96dbbe
   react-native-flipper: 7eeb9b59b667dd0619372c7349cf7c78032d1de2
   react-native-image-crop-tools: 06b171ac13f1cd520e633a0d190c00f664b4cb79
   react-native-netinfo: 3d3769f0d65de15c83a9bf1346f8be71de5a24bf
   react-native-performance: e66c3730f9e463b959dc21ff38fd2c8b8e53ea79
   react-native-randombytes: 421f1c7d48c0af8dbcd471b0324393ebf8fe7846
+  react-native-restart: 45c8dca02491980f2958595333cbccd6877cb57e
   react-native-safe-area-context: ebf8c413eb8b5f7c392a036a315eb7b46b96845f
   react-native-splash-screen: 200d11d188e2e78cea3ad319964f6142b6384865
   react-native-text-input-mask: 36a546b378fadd2efe1b7484a859d34bc2c80395

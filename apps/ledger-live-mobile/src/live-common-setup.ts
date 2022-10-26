@@ -6,16 +6,22 @@ import HIDTransport from "@ledgerhq/react-native-hid";
 import withStaticURLs from "@ledgerhq/hw-transport-http";
 import { retry } from "@ledgerhq/live-common/promise";
 import { setEnv } from "@ledgerhq/live-common/env";
-import { setSupportedCurrencies } from "@ledgerhq/live-common/currencies/index";
+import {
+  getCryptoCurrencyById,
+  setSupportedCurrencies,
+} from "@ledgerhq/live-common/currencies/index";
 import { setPlatformVersion } from "@ledgerhq/live-common/platform/version";
 import { registerTransportModule } from "@ledgerhq/live-common/hw/index";
 import type { TransportModule } from "@ledgerhq/live-common/hw/index";
 import { setDeviceMode } from "@ledgerhq/live-common/hw/actions/app";
+import { getDeviceModel } from "@ledgerhq/devices";
+import { DescriptorEvent } from "@ledgerhq/hw-transport";
 import VersionNumber from "react-native-version-number";
 import { Platform } from "react-native";
 import axios from "axios";
 import { setSecp256k1Instance } from "@ledgerhq/live-common/families/bitcoin/wallet-btc/crypto/secp256k1";
 import { setGlobalOnBridgeError } from "@ledgerhq/live-common/bridge/useBridgeTransaction";
+import { prepareCurrency } from "./bridge/cache";
 import BluetoothTransport from "./react-native-hw-transport-ble";
 import "./experimental";
 import logger from "./logger";
@@ -101,13 +107,16 @@ registerTransportModule({
     id.startsWith("usb|")
       ? Promise.resolve() // nothing to do
       : null,
-  discovery: Observable.create(o => HIDTransport.listen(o)).pipe(
+  discovery: new Observable<DescriptorEvent<unknown>>(o =>
+    HIDTransport.listen(o),
+  ).pipe(
     map(({ type, descriptor, deviceModel }) => {
-      const name = deviceModel.productName;
+      const name = deviceModel?.productName ?? "";
       return {
         type,
-        deviceModel,
         id: `usb|${JSON.stringify(descriptor)}`,
+        deviceModel,
+        wired: true,
         name,
       };
     }),
@@ -131,6 +140,8 @@ if (__DEV__ && Config.DEVICE_PROXY_URL) {
     map(({ type, descriptor }) => ({
       type,
       id: `httpdebug|${descriptor}`,
+      deviceModel: getDeviceModel(Config?.FALLBACK_DEVICE_MODEL_ID || "nanoX"),
+      wired: Config?.FALLBACK_DEVICE_WIRED === "YES",
       name: descriptor,
     })),
   );
@@ -155,3 +166,5 @@ if (process.env.NODE_ENV === "production") {
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 setSecp256k1Instance(require("./logic/secp256k1"));
+
+prepareCurrency(getCryptoCurrencyById("ethereum"));
