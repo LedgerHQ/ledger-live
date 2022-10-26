@@ -1,32 +1,43 @@
 import type { Operation } from "@ledgerhq/types-live";
+import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import type {
   ElrondAccount,
-  Transaction,
+  ElrondProvider,
   TransactionStatus,
 } from "@ledgerhq/live-common/families/elrond/types";
 import type { ScreenName } from "../../../../../const";
 import type { DelegationType } from "../../../types";
 
-export type ElrondClaimRewardsFlowParamList = {
-  [ScreenName.ElrondClaimRewardsValidator]: {
+export type ElrondDelegationFlowParamList = {
+  [ScreenName.ElrondDelegationStarted]: {
     delegations: DelegationType[];
+    transaction: Transaction;
+    validators: ElrondProvider[];
     account: ElrondAccount;
   };
-  [ScreenName.ElrondClaimRewardsMethod]: {
-    transaction?: Transaction;
+  [ScreenName.ElrondDelegationValidator]: {
+    validators: ElrondProvider[];
     account: ElrondAccount;
-    recipient: string;
-    value: string;
-    name: string;
+    transaction: Transaction;
   };
-  [ScreenName.ElrondClaimRewardsSelectDevice]: {
+  [ScreenName.ElrondDelegationValidatorList]: {
+    transaction: Transaction | null | undefined;
+    validators: ElrondProvider[];
+    account: ElrondAccount;
+  };
+  [ScreenName.ElrondDelegationAmount]: {
+    transaction: Transaction;
+    validators: ElrondProvider[];
+    account: ElrondAccount;
+  };
+  [ScreenName.ElrondDelegationSelectDevice]: {
     accountId: string;
     parentId?: string;
-    transaction?: Transaction;
+    transaction?: Transaction | null | undefined;
     status?: TransactionStatus;
   };
-  [ScreenName.ElrondClaimRewardsConnectDevice]: {
+  [ScreenName.ElrondDelegationConnectDevice]: {
     device: Device;
     accountId: string;
     parentId?: string;
@@ -39,13 +50,13 @@ export type ElrondClaimRewardsFlowParamList = {
     analyticsPropertyFlow?: string;
     forceSelectDevice?: boolean;
   };
-  [ScreenName.ElrondClaimRewardsValidationError]: {
+  [ScreenName.ElrondDelegationValidationError]: {
     accountId: string;
     deviceId: string;
     transaction: Transaction;
     error: Error;
   };
-  [ScreenName.ElrondClaimRewardsValidationSuccess]: {
+  [ScreenName.ElrondDelegationValidationSuccess]: {
     accountId: string;
     deviceId: string;
     transaction: Transaction;

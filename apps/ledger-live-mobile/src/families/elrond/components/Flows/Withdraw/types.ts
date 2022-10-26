@@ -1,32 +1,27 @@
+import type BigNumber from "bignumber.js";
 import type { Operation } from "@ledgerhq/types-live";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
+import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import type {
   ElrondAccount,
-  Transaction,
+  ElrondProvider,
   TransactionStatus,
 } from "@ledgerhq/live-common/families/elrond/types";
 import type { ScreenName } from "../../../../../const";
-import type { DelegationType } from "../../../types";
 
-export type ElrondClaimRewardsFlowParamList = {
-  [ScreenName.ElrondClaimRewardsValidator]: {
-    delegations: DelegationType[];
+export type ElrondWithdrawFlowParamList = {
+  [ScreenName.ElrondWithdrawFunds]: {
     account: ElrondAccount;
+    validator: ElrondProvider;
+    amount: BigNumber;
   };
-  [ScreenName.ElrondClaimRewardsMethod]: {
-    transaction?: Transaction;
-    account: ElrondAccount;
-    recipient: string;
-    value: string;
-    name: string;
-  };
-  [ScreenName.ElrondClaimRewardsSelectDevice]: {
+  [ScreenName.ElrondWithdrawSelectDevice]: {
     accountId: string;
     parentId?: string;
     transaction?: Transaction;
     status?: TransactionStatus;
   };
-  [ScreenName.ElrondClaimRewardsConnectDevice]: {
+  [ScreenName.ElrondWithdrawConnectDevice]: {
     device: Device;
     accountId: string;
     parentId?: string;
@@ -39,13 +34,13 @@ export type ElrondClaimRewardsFlowParamList = {
     analyticsPropertyFlow?: string;
     forceSelectDevice?: boolean;
   };
-  [ScreenName.ElrondClaimRewardsValidationError]: {
+  [ScreenName.ElrondWithdrawValidationError]: {
     accountId: string;
     deviceId: string;
     transaction: Transaction;
     error: Error;
   };
-  [ScreenName.ElrondClaimRewardsValidationSuccess]: {
+  [ScreenName.ElrondWithdrawValidationSuccess]: {
     accountId: string;
     deviceId: string;
     transaction: Transaction;

@@ -1,5 +1,4 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
-
 import {
   View,
   Keyboard,
@@ -16,6 +15,9 @@ import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { useTheme } from "styled-components/native";
 import estimateMaxSpendable from "@ledgerhq/live-common/families/elrond/js-estimateMaxSpendable";
 
+import type { Transaction } from "@ledgerhq/live-common/families/elrond/types";
+import type { PickAmountPropsType } from "./types";
+
 import { localeSelector } from "../../../../../../../reducers/settings";
 import { ScreenName } from "../../../../../../../const";
 import Button from "../../../../../../../components/Button";
@@ -28,21 +30,28 @@ import KeyboardView from "../../../../../../../components/KeyboardView";
 import { denominate, nominate } from "../../../../../helpers";
 import { constants } from "../../../../../constants";
 
-import type { PickAmountPropsType } from "./types";
-
 import styles from "./styles";
+
+/*
+ * Handle the component declaration.
+ */
 
 const PickAmount = (props: PickAmountPropsType) => {
   const { colors } = useTheme();
   const { navigation, route } = props;
-  const { transaction, account, validators } = route.params;
-
-  const [maxSpendable, setMaxSpendable] = useState(new BigNumber(0));
-  const [amount, setAmount] = useState(new BigNumber(transaction.amount || 0));
+  const { account, validators } = route.params;
 
   const unit = getAccountUnit(account);
   const locale = useSelector(localeSelector);
   const bridge = getAccountBridge(account);
+  const transaction = route.params.transaction as Transaction;
+
+  const [maxSpendable, setMaxSpendable] = useState(new BigNumber(0));
+  const [amount, setAmount] = useState(new BigNumber(transaction.amount || 0));
+
+  /*
+   * Fetch the maximum assets' spendable amount estimation, and assign it to it's state.
+   */
 
   const getMaxSpendable = useCallback(() => {
     const fetchMaxSpendable = async () => {
@@ -52,11 +61,17 @@ const PickAmount = (props: PickAmountPropsType) => {
         parentAccount: undefined,
       });
 
-      setMaxSpendable(amount);
+      if (transaction) {
+        setMaxSpendable(amount);
+      }
     };
 
     fetchMaxSpendable();
   }, [transaction, account]);
+
+  /*
+   * Created a memoized list of all the ratios and expose the calculated value based on each percentage.
+   */
 
   const ratios = useMemo(
     () =>
@@ -67,15 +82,27 @@ const PickAmount = (props: PickAmountPropsType) => {
     [maxSpendable],
   );
 
+  /*
+   * Create a minimum delegation amount condition.
+   */
+
   const minimumDelegationAmount = useMemo(
     () => new BigNumber(nominate("1")),
     [],
   );
 
+  /*
+   * Check maximum spendable amount of assets has been selected for delegation.
+   */
+
   const allAssetsUsed = useMemo(
     () => maxSpendable.minus(amount).isZero(),
     [amount, maxSpendable],
   );
+
+  /*
+   * Check if the assets chosen for delegation are below the minimum required.
+   */
 
   const delegationBelowMinimum = useMemo(() => {
     const amountBelowMinimum = amount.lt(minimumDelegationAmount);
@@ -87,6 +114,10 @@ const PickAmount = (props: PickAmountPropsType) => {
 
     return amountBelowMinimum || balanceBelowMinimum;
   }, [amount, maxSpendable, minimumDelegationAmount]);
+
+  /*
+   * Check if the currently selected amount exceeds the maximum amount of assets available.
+   */
 
   const delegationAboveMaximum = useMemo(
     () => amount.gt(maxSpendable),
@@ -103,6 +134,10 @@ const PickAmount = (props: PickAmountPropsType) => {
     denominate({ input: String(maxSpendable), decimals: 4 }),
   ];
 
+  /*
+   * Callback running when changing the screen to select the device, passing along the needed data.
+   */
+
   const onContinue = useCallback(() => {
     navigation.navigate(ScreenName.ElrondDelegationValidator, {
       account,
@@ -111,7 +146,15 @@ const PickAmount = (props: PickAmountPropsType) => {
     });
   }, [account, validators, bridge, amount, navigation, transaction]);
 
+  /*
+   * Track all callback reference updates and run the effect conditionally.
+   */
+
   useEffect(getMaxSpendable, [getMaxSpendable]);
+
+  /*
+   * Return the rendered component.
+   */
 
   return (
     <View style={[styles.root, { backgroundColor: colors.background.main }]}>

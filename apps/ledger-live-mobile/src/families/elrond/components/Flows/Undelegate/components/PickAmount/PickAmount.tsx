@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useCallback, useMemo, useState } from "react";
 
 import {
   View,
@@ -134,12 +134,22 @@ const PickAmount = (props: PickAmountPropsType) => {
     denominate({ input: String(amount), decimals: 4 }),
   ];
 
+  /*
+   * Callback running when changing the screen to select the device, passing along the needed data.
+   */
+
   const onContinue = useCallback(() => {
-    navigation.navigate(ScreenName.ElrondUndelegationSelectDevice, {
-      account,
-      transaction,
-    });
-  }, [account, transaction, value, navigation]);
+    if (transaction) {
+      navigation.navigate(ScreenName.ElrondUndelegationSelectDevice, {
+        accountId: account.id,
+        transaction,
+      });
+    }
+  }, [account, transaction, navigation]);
+
+  /*
+   * When updating the value through input or percentages, update the state and the bridge transaction.
+   */
 
   const updateValue = useCallback(
     (value: BigNumber) => {
@@ -150,7 +160,7 @@ const PickAmount = (props: PickAmountPropsType) => {
         }),
       );
     },
-    [bridge],
+    [bridge, updateTransaction],
   );
 
   /*

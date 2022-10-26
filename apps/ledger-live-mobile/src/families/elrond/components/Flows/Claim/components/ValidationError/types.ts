@@ -1,8 +1,13 @@
-import { StackNavigatorProps } from "../../../../../../../components/RootNavigator/types/helpers";
+import {
+  BaseComposite,
+  StackNavigatorProps,
+} from "../../../../../../../components/RootNavigator/types/helpers";
 import { ElrondClaimRewardsFlowParamList } from "../../types";
 import { ScreenName } from "../../../../../../../const";
 
-export type ValidationErrorPropsType = StackNavigatorProps<
-  ElrondClaimRewardsFlowParamList,
-  ScreenName.ElrondClaimRewardsValidator
+export type ValidationErrorPropsType = BaseComposite<
+  StackNavigatorProps<
+    ElrondClaimRewardsFlowParamList,
+    ScreenName.ElrondClaimRewardsValidationError
+  >
 >;

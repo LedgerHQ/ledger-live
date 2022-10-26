@@ -12,9 +12,12 @@ import PickAmount from "./components/PickAmount";
 import ValidationError from "./components/ValidationError";
 import ValidationSuccess from "./components/ValidationSuccess";
 
-import SelectDevice from "../../../../../screens/SelectDevice";
-import ConnectDevice from "../../../../../screens/ConnectDevice";
+import ElrondUndelegationSelectDevice from "../../../../../screens/SelectDevice";
+import ElrondUndelegationConnectDevice from "../../../../../screens/ConnectDevice";
 
+import type { ElrondUndelegationFlowParamList } from "./types";
+
+const Stack = createStackNavigator<ElrondUndelegationFlowParamList>();
 const totalSteps = "3";
 const options = {
   headerShown: false,
@@ -34,80 +37,6 @@ const Undelegate = () => {
   );
 
   /*
-   * Create a memoized list of all the stacks and their specific parameters.
-   */
-
-  const stacks = useMemo(
-    () => [
-      {
-        name: ScreenName.ElrondUndelegationAmount,
-        component: PickAmount,
-        heading: {
-          title: "elrond.undelegation.stepperHeader.selectDevice",
-          subtitle: {
-            label: "elrond.undelegation.stepperHeader.stepRange",
-            variables: {
-              currentStep: "2",
-              totalSteps,
-            },
-          },
-        },
-      },
-      {
-        name: ScreenName.ElrondUndelegationSelectDevice,
-        component: SelectDevice,
-        heading: {
-          title: "elrond.undelegation.stepperHeader.selectDevice",
-          subtitle: {
-            label: "elrond.undelegation.stepperHeader.stepRange",
-            variables: {
-              currentStep: "3",
-              totalSteps,
-            },
-          },
-        },
-      },
-      {
-        name: ScreenName.ElrondUndelegationConnectDevice,
-        component: ConnectDevice,
-        heading: {
-          title: "elrond.undelegation.stepperHeader.connectDevice",
-          subtitle: {
-            label: "elrond.undelegation.stepperHeader.stepRange",
-            variables: {
-              currentStep: "3",
-              totalSteps,
-            },
-          },
-        },
-        options: {
-          headerLeft: null,
-          gestureEnabled: false,
-        },
-      },
-      {
-        name: ScreenName.ElrondUndelegationValidationError,
-        component: ValidationError,
-        options: {
-          headerShown: false,
-          gestureEnabled: false,
-        },
-      },
-      {
-        name: ScreenName.ElrondUndelegationValidationSuccess,
-        component: ValidationSuccess,
-        options: {
-          headerLeft: () => null,
-          headerRight: () => null,
-          headerTitle: "",
-          gestureEnabled: false,
-        },
-      },
-    ],
-    [],
-  );
-
-  /*
    * Return the rendered component.
    */
 
@@ -118,34 +47,74 @@ const Undelegate = () => {
         gestureEnabled: Platform.OS === "ios",
       }}
     >
-      {stacks.map(stack => (
-        <Stack.Screen
-          key={stack.name}
-          name={stack.name}
-          component={stack.component}
-          options={Object.assign(stack.options || {}, {
-            headerTitle: stack.heading
-              ? () => (
-                  <StepHeader
-                    title={t(stack.heading.title)}
-                    subtitle={
-                      stack.heading.subtitle
-                        ? t(
-                            stack.heading.subtitle.label,
-                            stack.heading.subtitle.variables,
-                          )
-                        : null
-                    }
-                  />
-                )
-              : undefined,
-          })}
-        />
-      ))}
+      <Stack.Screen
+        name={ScreenName.ElrondUndelegationAmount}
+        component={PickAmount}
+        options={{
+          headerTitle: () => (
+            <StepHeader
+              title={t("elrond.undelegation.stepperHeader.amountSubTitle")}
+              subtitle={t("elrond.undelegation.stepperHeader.amountSubTitle")}
+            />
+          ),
+        }}
+      />
+
+      <Stack.Screen
+        name={ScreenName.ElrondUndelegationSelectDevice}
+        component={ElrondUndelegationSelectDevice}
+        options={{
+          headerTitle: () => (
+            <StepHeader
+              title={t("elrond.undelegation.stepperHeader.selectDevice")}
+              subtitle={t("elrond.undelegation.stepperHeader.stepRange", {
+                currentStep: "2",
+                totalSteps,
+              })}
+            />
+          ),
+        }}
+      />
+
+      <Stack.Screen
+        name={ScreenName.ElrondUndelegationConnectDevice}
+        component={ElrondUndelegationConnectDevice}
+        options={{
+          headerLeft: undefined,
+          gestureEnabled: false,
+          headerTitle: () => (
+            <StepHeader
+              title={t("elrond.undelegation.stepperHeader.connectDevice")}
+              subtitle={t("elrond.undelegation.stepperHeader.stepRange", {
+                currentStep: "3",
+                totalSteps,
+              })}
+            />
+          ),
+        }}
+      />
+
+      <Stack.Screen
+        name={ScreenName.ElrondUndelegationValidationError}
+        component={ValidationError}
+        options={{
+          headerShown: false,
+          gestureEnabled: false,
+        }}
+      />
+
+      <Stack.Screen
+        name={ScreenName.ElrondUndelegationValidationSuccess}
+        component={ValidationSuccess}
+        options={{
+          headerLeft: undefined,
+          headerRight: undefined,
+          headerTitle: "",
+          gestureEnabled: false,
+        }}
+      />
     </Stack.Navigator>
   );
 };
 
 export { Undelegate as component, options };
-
-const Stack = createStackNavigator();

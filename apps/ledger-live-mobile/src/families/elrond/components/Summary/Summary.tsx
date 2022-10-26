@@ -54,19 +54,6 @@ const Summary = (props: SummaryPropsType) => {
   }, [account.elrondResources.delegations]);
 
   /*
-   * Calculate the total of the requested resource (cumulated unbondings or stake).
-   */
-
-  const total = useCallback(
-    (key: string) =>
-      delegationsResources.reduce(
-        (total: BigNumber, delegation) => total.plus(delegation[key]),
-        new BigNumber(0),
-      ),
-    [delegationsResources],
-  );
-
-  /*
    * Format the three data items by denominating the value and filtering out zero resources.
    */
 
@@ -95,12 +82,31 @@ const Summary = (props: SummaryPropsType) => {
   }, []);
 
   /*
-   * Extract the memoized data for total spendable balance, cumulate delegated stake and cumulated unbondings.
+   * Cumulate all the active stake for each delegation into one single sum.
    */
 
-  const delegations = useMemo(() => total("userActiveStake"), [total]);
-  const unbondings = useMemo(() => total("userUnBondable"), [total]);
-  const available = useMemo(() => account.spendableBalance, [account]);
+  const delegations = useMemo(
+    () =>
+      delegationsResources.reduce(
+        (total: BigNumber, delegation) =>
+          total.plus(delegation.userActiveStake),
+        new BigNumber(0),
+      ),
+    [delegationsResources],
+  );
+
+  /*
+   * Cumulate all the unbonded stake for each delegation into one single sum.
+   */
+
+  const unbondings = useMemo(
+    () =>
+      delegationsResources.reduce(
+        (total: BigNumber, delegation) => total.plus(delegation.userUnBondable),
+        new BigNumber(0),
+      ),
+    [delegationsResources],
+  );
 
   /*
    * Handle the data displayed, formatted and memoized.
@@ -112,7 +118,7 @@ const Summary = (props: SummaryPropsType) => {
         {
           title: "account.availableBalance",
           show: true,
-          value: available,
+          value: account.spendableBalance,
           modal: {
             title: "elrond.info.available.title",
             description: "elrond.info.available.description",
@@ -137,7 +143,7 @@ const Summary = (props: SummaryPropsType) => {
           },
         },
       ]),
-    [available, delegations, unbondings, formatItems],
+    [account.spendableBalance, delegations, unbondings, formatItems],
   );
 
   /*

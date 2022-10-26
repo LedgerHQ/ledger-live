@@ -1,5 +1,3 @@
-// @flow
-
 import React, { useCallback } from "react";
 import { View, TouchableOpacity } from "react-native";
 import { useTheme } from "@react-navigation/native";
@@ -47,7 +45,7 @@ const Unbonding = (props: UnbondingPropsType) => {
     if (validator) {
       onDrawer({
         type: "undelegation",
-        amount,
+        amount: new BigNumber(amount),
         validator,
         seconds,
       });

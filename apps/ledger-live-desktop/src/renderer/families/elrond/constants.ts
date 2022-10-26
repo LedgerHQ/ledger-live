@@ -1,5 +1,3 @@
-// @flow
-
 const type = "mainnet";
 const modals = {
   rewards: "MODAL_ELROND_REWARDS_INFO",

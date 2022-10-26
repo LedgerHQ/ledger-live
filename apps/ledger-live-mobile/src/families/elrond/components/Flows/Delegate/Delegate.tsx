@@ -18,10 +18,14 @@ import ValidationSuccess from "./components/ValidationSuccess";
 import SelectDevice from "../../../../../screens/SelectDevice";
 import ConnectDevice from "../../../../../screens/ConnectDevice";
 
+import type { ElrondDelegationFlowParamList } from "./types";
+
 const totalSteps = "3";
 const options = {
   headerShown: false,
 };
+
+const Stack = createStackNavigator<ElrondDelegationFlowParamList>();
 
 /*
  * Handle the component declaration.
@@ -37,118 +41,6 @@ const Delegate = () => {
   );
 
   /*
-   * Create a memoized list of all the stacks and their specific parameters.
-   */
-
-  const stacks = useMemo(
-    () => [
-      {
-        name: ScreenName.ElrondDelegationStarted,
-        component: EarnRewards,
-        heading: {
-          title: "delegation.started.title",
-        },
-      },
-      {
-        name: ScreenName.ElrondDelegationValidator,
-        component: SetDelegation,
-        heading: {
-          title: "elrond.delegation.stepperHeader.validator",
-          subtitle: {
-            label: "elrond.delegation.stepperHeader.stepRange",
-            variables: {
-              currentStep: "1",
-              totalSteps,
-            },
-          },
-        },
-        options: {
-          gestureEnabled: false,
-        },
-      },
-      {
-        name: ScreenName.ElrondDelegationValidatorList,
-        component: PickValidator,
-        heading: {
-          title: "elrond.delegation.stepperHeader.selectDevice",
-          subtitle: {
-            label: "elrond.delegation.stepperHeader.stepRange",
-            variables: {
-              currentStep: "2",
-              totalSteps,
-            },
-          },
-        },
-      },
-      {
-        name: ScreenName.ElrondDelegationAmount,
-        component: PickAmount,
-        heading: {
-          title: "elrond.delegation.stepperHeader.selectDevice",
-          subtitle: {
-            label: "elrond.delegation.stepperHeader.stepRange",
-            variables: {
-              currentStep: "2",
-              totalSteps,
-            },
-          },
-        },
-      },
-      {
-        name: ScreenName.ElrondDelegationSelectDevice,
-        component: SelectDevice,
-        heading: {
-          title: "elrond.delegation.stepperHeader.selectDevice",
-          subtitle: {
-            label: "elrond.delegation.stepperHeader.stepRange",
-            variables: {
-              currentStep: "3",
-              totalSteps,
-            },
-          },
-        },
-      },
-      {
-        name: ScreenName.ElrondDelegationConnectDevice,
-        component: ConnectDevice,
-        heading: {
-          title: "elrond.delegation.stepperHeader.connectDevice",
-          subtitle: {
-            label: "elrond.delegation.stepperHeader.stepRange",
-            variables: {
-              currentStep: "3",
-              totalSteps,
-            },
-          },
-        },
-        options: {
-          headerLeft: null,
-          gestureEnabled: false,
-        },
-      },
-      {
-        name: ScreenName.ElrondDelegationValidationError,
-        component: ValidationError,
-        options: {
-          headerShown: false,
-          gestureEnabled: false,
-        },
-      },
-      {
-        name: ScreenName.ElrondDelegationValidationSuccess,
-        component: ValidationSuccess,
-        options: {
-          headerLeft: () => null,
-          headerRight: () => null,
-          headerTitle: "",
-          gestureEnabled: false,
-        },
-      },
-    ],
-    [],
-  );
-
-  /*
    * Return the rendered component.
    */
 
@@ -159,34 +51,121 @@ const Delegate = () => {
         gestureEnabled: Platform.OS === "ios",
       }}
     >
-      {stacks.map(stack => (
-        <Stack.Screen
-          key={stack.name}
-          name={stack.name}
-          component={stack.component}
-          options={Object.assign(stack.options || {}, {
-            headerTitle: stack.heading
-              ? () => (
-                  <StepHeader
-                    title={t(stack.heading.title)}
-                    subtitle={
-                      stack.heading.subtitle
-                        ? t(
-                            stack.heading.subtitle.label,
-                            stack.heading.subtitle.variables,
-                          )
-                        : null
-                    }
-                  />
-                )
-              : undefined,
-          })}
-        />
-      ))}
+      <Stack.Screen
+        name={ScreenName.ElrondDelegationStarted}
+        component={EarnRewards}
+        options={{
+          headerTitle: () => (
+            <StepHeader title={t("delegation.started.title")} />
+          ),
+        }}
+      />
+
+      <Stack.Screen
+        name={ScreenName.ElrondDelegationValidator}
+        component={SetDelegation}
+        options={{
+          gestureEnabled: false,
+          headerTitle: () => (
+            <StepHeader
+              title={t("elrond.delegation.stepperHeader.validator")}
+              subtitle={t("elrond.delegation.stepperHeader.stepRange", {
+                currentStep: "1",
+                totalSteps,
+              })}
+            />
+          ),
+        }}
+      />
+
+      <Stack.Screen
+        name={ScreenName.ElrondDelegationValidatorList}
+        component={PickValidator}
+        options={{
+          gestureEnabled: false,
+          headerTitle: () => (
+            <StepHeader
+              title={t("elrond.delegation.stepperHeader.validator")}
+              subtitle={t("elrond.delegation.stepperHeader.stepRange", {
+                currentStep: "2",
+                totalSteps,
+              })}
+            />
+          ),
+        }}
+      />
+
+      <Stack.Screen
+        name={ScreenName.ElrondDelegationAmount}
+        component={PickAmount}
+        options={{
+          headerTitle: () => (
+            <StepHeader
+              title={t("elrond.delegation.stepperHeader.amountSubTitle")}
+              subtitle={t("elrond.delegation.stepperHeader.stepRange", {
+                currentStep: "2",
+                totalSteps,
+              })}
+            />
+          ),
+        }}
+      />
+
+      <Stack.Screen
+        name={ScreenName.ElrondDelegationSelectDevice}
+        component={SelectDevice}
+        options={{
+          headerTitle: () => (
+            <StepHeader
+              title={t("elrond.delegation.stepperHeader.selectDevice")}
+              subtitle={t("elrond.delegation.stepperHeader.stepRange", {
+                currentStep: "2",
+                totalSteps,
+              })}
+            />
+          ),
+        }}
+      />
+
+      <Stack.Screen
+        name={ScreenName.ElrondDelegationConnectDevice}
+        component={ConnectDevice}
+        options={{
+          headerLeft: undefined,
+          gestureEnabled: false,
+          headerTitle: () => (
+            <StepHeader
+              title={t("cosmos.delegation.stepperHeader.connectDevice")}
+              subtitle={t("cosmos.delegation.stepperHeader.stepRange", {
+                currentStep: "3",
+                totalSteps,
+              })}
+            />
+          ),
+        }}
+      />
+
+      <Stack.Screen
+        name={ScreenName.ElrondDelegationValidationError}
+        component={ValidationError}
+        options={{
+          headerShown: false,
+          gestureEnabled: false,
+        }}
+      />
+
+      <Stack.Screen
+        name={ScreenName.ElrondDelegationValidationSuccess}
+        component={ValidationSuccess}
+        options={{
+          headerLeft: undefined,
+          headerRight: undefined,
+          headerTitle: "",
+          gestureEnabled: false,
+        }}
+      />
     </Stack.Navigator>
   );
 };
 
 export { Delegate as component, options };
-
-const Stack = createStackNavigator();

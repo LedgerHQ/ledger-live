@@ -41,6 +41,10 @@ const Delegation = (props: DelegationPropsType) => {
     ? validator.identity.name || validator.contract
     : "";
 
+  /*
+   * Memoize the denominate active stake as the amount.
+   */
+
   const amount = useMemo(
     () =>
       denominate({
@@ -49,6 +53,10 @@ const Delegation = (props: DelegationPropsType) => {
       }),
     [userActiveStake],
   );
+
+  /*
+   * Trigger the drawer callback and pass along the required data.
+   */
 
   const onPress = useCallback(() => {
     if (validator) {

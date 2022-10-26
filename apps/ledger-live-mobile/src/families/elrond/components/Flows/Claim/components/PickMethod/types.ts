@@ -6,7 +6,7 @@ import { ScreenName } from "../../../../../../../const";
 
 export type PickMethodPropsType = StackNavigatorProps<
   ElrondClaimRewardsFlowParamList,
-  ScreenName.ElrondClaimRewardsValidator
+  ScreenName.ElrondClaimRewardsMethod
 >;
 
 export interface OptionType {

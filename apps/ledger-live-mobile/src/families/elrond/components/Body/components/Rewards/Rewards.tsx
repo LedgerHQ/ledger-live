@@ -1,5 +1,3 @@
-// @flow
-
 import React, { useCallback } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { View } from "react-native";
@@ -10,14 +8,16 @@ import {
   getMainAccount,
 } from "@ledgerhq/live-common/account/index";
 
+import type { StackNavigationProp } from "@react-navigation/stack";
+import type { NavigationType } from "../../../../types";
+import type { RewardsPropsType } from "./types";
+
 import AccountSectionLabel from "../../../../../../components/AccountSectionLabel";
 import CurrencyUnitValue from "../../../../../../components/CurrencyUnitValue";
 import CounterValue from "../../../../../../components/CounterValue";
 import Button from "../../../../../../components/Button";
 import LText from "../../../../../../components/LText";
 import { ScreenName, NavigatorName } from "../../../../../../const";
-
-import { RewardsPropsType } from "./types";
 
 import styles from "./styles";
 
@@ -30,7 +30,7 @@ const Rewards = (props: RewardsPropsType) => {
   const { t } = useTranslation();
 
   const unit = getAccountUnit(account);
-  const navigation = useNavigation();
+  const navigation: StackNavigationProp<NavigationType> = useNavigation();
   const currency = getAccountCurrency(getMainAccount(account, undefined));
 
   /*

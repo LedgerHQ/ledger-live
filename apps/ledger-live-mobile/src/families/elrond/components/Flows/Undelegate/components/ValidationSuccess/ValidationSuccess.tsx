@@ -1,10 +1,8 @@
-// @flow
-
-import React, { useCallback } from "react";
+import React, { useCallback, useMemo } from "react";
 import { View } from "react-native";
 import { useSelector } from "react-redux";
 import { Trans } from "react-i18next";
-import { useTheme, StackActions } from "@react-navigation/native";
+import { useTheme } from "@react-navigation/native";
 
 import { accountScreenSelector } from "../../../../../../../reducers/accounts";
 import { TrackScreen } from "../../../../../../../analytics";
@@ -13,6 +11,8 @@ import PreventNativeBack from "../../../../../../../components/PreventNativeBack
 import ValidateSuccess from "../../../../../../../components/ValidateSuccess";
 
 import type { ValidationSuccessPropsType } from "./types";
+import type { StackNavigatorNavigation } from "../../../../../../../components/RootNavigator/types/helpers";
+import type { BaseNavigatorStackParamList } from "../../../../../../../components/RootNavigator/types/BaseNavigator";
 
 import styles from "./styles";
 
@@ -28,16 +28,20 @@ const ValidationSuccess = (props: ValidationSuccessPropsType) => {
   const { colors } = useTheme();
   const { account } = useSelector(accountScreenSelector(route));
 
+  const parent = useMemo<StackNavigatorNavigation<BaseNavigatorStackParamList>>(
+    () => navigation.getParent(),
+    [navigation],
+  );
+
   /*
    * Should the validation fail, close all stacks, on callback click.
    */
 
   const onClose = useCallback(() => {
-    if (navigation) {
-      navigation.dispatch(StackActions.popToTop());
-      navigation.goBack();
+    if (parent) {
+      parent.pop();
     }
-  }, [navigation]);
+  }, [parent]);
 
   /*
    * Callback taking the user to the operation details panel, on successful operation.

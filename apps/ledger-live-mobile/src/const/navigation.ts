@@ -242,7 +242,8 @@ export enum ScreenName {
   CosmosClaimRewardsValidation = "CosmosClaimRewardsValidation",
   CosmosClaimRewardsValidationError = "CosmosClaimRewardsValidationError",
   CosmosClaimRewardsValidationSuccess = "CosmosClaimRewardsValidationSuccess",
-  //osmosis
+
+  // osmosis
   OsmosisDelegationStarted = "OsmosisDelegationStarted",
   OsmosisDelegationValidator = "OsmosisDelegationValidator",
   OsmosisDelegationValidatorSelect = "OsmosisDelegationValidatorSelect",
@@ -340,6 +341,7 @@ export enum ScreenName {
   PolkadotSimpleOperationConnectDevice = "PolkadotSimpleOperationConnectDevice",
   PolkadotSimpleOperationValidationError = "PolkadotSimpleOperationValidationError",
   PolkadotSimpleOperationValidationSuccess = "PolkadotSimpleOperationValidationSuccess",
+
   // Stellar
   StellarEditMemoType = "StellarEditMemoType",
   StellarEditMemoValue = "StellarEditMemoValue",

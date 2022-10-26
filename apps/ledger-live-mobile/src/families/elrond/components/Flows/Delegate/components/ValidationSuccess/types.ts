@@ -1,15 +1,13 @@
-import type { NavigationProp, ParamListBase } from "@react-navigation/native";
-import type { Transaction } from "@ledgerhq/live-common/families/elrond/types";
-import type { Operation } from "@ledgerhq/types-live";
+import {
+  BaseComposite,
+  StackNavigatorProps,
+} from "../../../../../../../components/RootNavigator/types/helpers";
+import { ElrondDelegationFlowParamList } from "../../types";
+import { ScreenName } from "../../../../../../../const";
 
-export interface ValidationSuccessPropsType {
-  navigation: NavigationProp<ParamListBase>;
-  route: {
-    params: {
-      transaction: Transaction;
-      accountId: string;
-      deviceId: string;
-      result: Operation;
-    };
-  };
-}
+export type ValidationSuccessPropsType = BaseComposite<
+  StackNavigatorProps<
+    ElrondDelegationFlowParamList,
+    ScreenName.ElrondDelegationValidationSuccess
+  >
+>;

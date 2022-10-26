@@ -3,8 +3,14 @@ import { useTranslation } from "react-i18next";
 import { useNavigation, useTheme } from "@react-navigation/native";
 import BigNumber from "bignumber.js";
 
+import type { StackNavigationProp } from "@react-navigation/stack";
 import type { ElrondAccount } from "@ledgerhq/live-common/families/elrond/types";
+import type { NavigationType } from "../../../../../types";
 import type { DrawerPropsType } from "../types";
+import type {
+  Action,
+  IconProps,
+} from "../../../../../../../components/DelegationDrawer";
 
 import Circle from "../../../../../../../components/Circle";
 import ClaimRewardIcon from "../../../../../../../icons/ClaimReward";
@@ -13,21 +19,24 @@ import WithdrawIcon from "../../../../../../../icons/Withdraw";
 import { ScreenName, NavigatorName } from "../../../../../../../const";
 import { rgba } from "../../../../../../../colors";
 
-import type {
-  Action,
-  IconProps,
-} from "../../../../../../../components/DelegationDrawer";
+/*
+ * Handle the hook declaration.
+ */
 
 const useDrawerActions = (
   data: DrawerPropsType["data"],
   account: ElrondAccount,
   onClose: DrawerPropsType["onClose"],
 ) => {
-  const navigation = useNavigation();
+  const navigation: StackNavigationProp<NavigationType> = useNavigation();
 
   const { type, claimableRewards, seconds, validator, amount } = data;
   const { t } = useTranslation();
   const { colors } = useTheme();
+
+  /*
+   * Callback triggering the collect rewards action in the drawer.
+   */
 
   const onCollectRwards = useCallback(() => {
     onClose();
@@ -42,6 +51,10 @@ const useDrawerActions = (
     });
   }, [validator, account, navigation, onClose, claimableRewards]);
 
+  /*
+   * Callback triggering the withdraw funds action in the drawer.
+   */
+
   const onWithdrawFunds = useCallback(() => {
     onClose();
     navigation.navigate(NavigatorName.ElrondWithdrawFlow, {
@@ -49,6 +62,10 @@ const useDrawerActions = (
       params: { account, amount, validator },
     });
   }, [validator, account, navigation, onClose, amount]);
+
+  /*
+   * Callback triggering the assets' undelegation action in the drawer.
+   */
 
   const onUndelegation = useCallback(() => {
     onClose();
@@ -63,6 +80,10 @@ const useDrawerActions = (
     [type],
   );
 
+  /*
+   * Check if the current delegation has any rewards available to collect.
+   */
+
   const rewardsEnabled = useMemo(
     () =>
       isDelegation && claimableRewards
@@ -71,10 +92,18 @@ const useDrawerActions = (
     [isDelegation, claimableRewards],
   );
 
+  /*
+   * Check if the current undelegation's withdrawal's seconds remaining to collect have hit zero.
+   */
+
   const withdrawalEnabled = useMemo(
     () => (isUndelegation ? seconds === 0 : false),
     [isUndelegation, seconds],
   );
+
+  /*
+   * If the current used actions are for a delegation, push to the actions' array the rewards collecting and undelegation actions.
+   */
 
   const delegationActions: Action[] = useMemo(
     () =>
@@ -118,8 +147,20 @@ const useDrawerActions = (
             },
           ]
         : [],
-    [isDelegation, rewardsEnabled, colors, amount, t, onCollectRwards],
+    [
+      isDelegation,
+      rewardsEnabled,
+      colors,
+      amount,
+      t,
+      onUndelegation,
+      onCollectRwards,
+    ],
   );
+
+  /*
+   * If the current used actions are for a undelegation, push to the actions' array the withdrawal action.
+   */
 
   const undelegationActions: Action[] = useMemo(
     () =>
@@ -151,6 +192,10 @@ const useDrawerActions = (
     [isUndelegation, colors, t, onWithdrawFunds, withdrawalEnabled],
   );
 
+  /*
+   * Conditionally return the memoized actions, based on the array with available items.
+   */
+
   const actions = useMemo(
     () =>
       delegationActions.length
@@ -160,6 +205,10 @@ const useDrawerActions = (
         : [],
     [delegationActions, undelegationActions],
   );
+
+  /*
+   * Return the hook's payload.
+   */
 
   return actions;
 };

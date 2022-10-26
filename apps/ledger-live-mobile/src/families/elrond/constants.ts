@@ -1,4 +1,4 @@
-const type = "testnet";
+const type = "mainnet";
 
 const ledger = "erd1qqqqqqqqqqqqqqqpqqqqqqqqqqqqqqqqqqqqqqqqqqqqq9lllllsf3mp40";
 const constants = {

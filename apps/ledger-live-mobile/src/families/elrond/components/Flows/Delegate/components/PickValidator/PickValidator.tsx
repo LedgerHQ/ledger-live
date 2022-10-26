@@ -69,7 +69,7 @@ const PickValidator = (props: PickValidatorPropsType) => {
 
     const sort = (validator: EnhancedProviderType) =>
       validator.contract === ledger ? -1 : 1;
-    const items = validators.sort(sort).map(disable);
+    const items = validators.map(disable).sort(sort);
 
     return search ? items.filter(filter) : items;
   }, [validators, search]);
@@ -83,14 +83,14 @@ const PickValidator = (props: PickValidatorPropsType) => {
       if (validator) {
         navigation.navigate(ScreenName.ElrondDelegationValidator, {
           account,
-          validators: providers,
+          validators,
           transaction: bridge.updateTransaction(transaction, {
             recipient: validator.contract,
           }),
         });
       }
     },
-    [navigation, bridge, account, transaction, providers],
+    [navigation, bridge, account, transaction, validators],
   );
 
   /*

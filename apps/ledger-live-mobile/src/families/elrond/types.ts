@@ -1,5 +1,3 @@
-// @flow
-
 import type { ElrondProvider } from "@ledgerhq/live-common/families/elrond/types";
 
 export interface UnbondingType {
@@ -9,7 +7,6 @@ export interface UnbondingType {
 }
 
 export interface DelegationType {
-  [key: string]: any;
   address: string;
   claimableRewards: string;
   contract: string;
@@ -17,4 +14,8 @@ export interface DelegationType {
   userUnBondable: string;
   userUndelegatedList: UnbondingType[];
   validator?: ElrondProvider;
+}
+
+export interface NavigationType {
+  [key: string]: object;
 }

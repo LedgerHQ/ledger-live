@@ -134,8 +134,9 @@ const SetDelegation = (props: SetDelegationPropsType) => {
   }, [animation]);
 
   /*
-   * Callback function to be called when wanting to continue to the next panel.
+   * Callback function to be called when wanting to continue to the select device panel.
    */
+
   const onContinue = useCallback(() => {
     navigation.navigate(ScreenName.ElrondDelegationSelectDevice, {
       accountId: account.id,
@@ -149,11 +150,13 @@ const SetDelegation = (props: SetDelegationPropsType) => {
    */
 
   const onChangeAmount = useCallback(() => {
-    navigation.navigate(ScreenName.ElrondDelegationAmount, {
-      account,
-      validators,
-      transaction,
-    });
+    if (transaction) {
+      navigation.navigate(ScreenName.ElrondDelegationAmount, {
+        account,
+        validators,
+        transaction,
+      });
+    }
   }, [transaction, account, validators, navigation]);
 
   /*
@@ -225,7 +228,7 @@ const SetDelegation = (props: SetDelegationPropsType) => {
    */
 
   return (
-    <SafeAreaView style={[styles.root, { background: colors.background }]}>
+    <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]}>
       <TrackScreen category="DelegationFlow" name="Summary" />
 
       <View style={styles.body}>

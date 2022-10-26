@@ -15,6 +15,10 @@ import { denominate } from "../../../../../helpers";
 
 import styles from "../styles";
 
+/*
+ * Handle the hook declaration.
+ */
+
 const useDrawerItems = (
   data: DrawerPropsType["data"],
   account: ElrondAccount,
@@ -27,6 +31,10 @@ const useDrawerItems = (
     [type],
   );
 
+  /*
+   * Memoize the amount of seconds left into a valid date format, relative to now.
+   */
+
   const date = useMemo(
     () =>
       seconds
@@ -34,6 +42,10 @@ const useDrawerItems = (
         : false,
     [seconds],
   );
+
+  /*
+   * Memoize current status of the delegation, if it produces anything or not.
+   */
 
   const status: DrawerStatusType = useMemo(
     () => ({
@@ -48,6 +60,10 @@ const useDrawerItems = (
     [validator],
   );
 
+  /*
+   * Memoize the denominated amount of claimable rewards, if it's a delegation item.
+   */
+
   const rewards = useMemo(
     () =>
       isDelegation && claimableRewards
@@ -58,6 +74,10 @@ const useDrawerItems = (
         : false,
     [isDelegation, claimableRewards],
   );
+
+  /*
+   * Compose the array of common items between the two types of drawers (validator name, validator address, account name and item status).
+   */
 
   const commonItems: FieldType[] = useMemo(
     () => [
@@ -130,6 +150,10 @@ const useDrawerItems = (
     [validator, name, t, account.name, type, status],
   );
 
+  /*
+   * Should the current item be a delegation, create a specific array for specific items, including only claimable rewards.
+   */
+
   const delegationItems: FieldType[] = useMemo(
     () =>
       isDelegation
@@ -150,6 +174,10 @@ const useDrawerItems = (
         : [],
     [isDelegation, rewards, t],
   );
+
+  /*
+   * Should the current item be an undelegation, create a specific array for specific items, including only time remaining for completion.
+   */
 
   const undelegationItems: FieldType[] = useMemo(
     () =>
@@ -172,6 +200,10 @@ const useDrawerItems = (
     [isUndelegation, date, t],
   );
 
+  /*
+   * Conditionally and dynamically concatenate the common items' array with the specific arrays, based on array with available items.
+   */
+
   const items = useMemo(
     () =>
       delegationItems.length
@@ -181,6 +213,10 @@ const useDrawerItems = (
         : [],
     [commonItems, delegationItems, undelegationItems],
   );
+
+  /*
+   * Return the hook's payload.
+   */
 
   return items;
 };

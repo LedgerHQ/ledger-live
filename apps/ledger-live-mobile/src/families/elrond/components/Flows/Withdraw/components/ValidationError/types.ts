@@ -1,14 +1,13 @@
-import type { NavigationProp, ParamListBase } from "@react-navigation/native";
-import type { Transaction } from "@ledgerhq/live-common/families/elrond/types";
+import {
+  BaseComposite,
+  StackNavigatorProps,
+} from "../../../../../../../components/RootNavigator/types/helpers";
+import { ElrondWithdrawFlowParamList } from "../../types";
+import { ScreenName } from "../../../../../../../const";
 
-export interface ValidationErrorPropsType {
-  navigation: NavigationProp<ParamListBase>;
-  route: {
-    params: {
-      transaction: Transaction;
-      accountId: string;
-      deviceId: string;
-      error: Error;
-    };
-  };
-}
+export type ValidationErrorPropsType = BaseComposite<
+  StackNavigatorProps<
+    ElrondWithdrawFlowParamList,
+    ScreenName.ElrondWithdrawValidationError
+  >
+>;
