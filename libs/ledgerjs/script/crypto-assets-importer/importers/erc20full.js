@@ -29,10 +29,16 @@ module.exports = {
     "tokens/ethereum_ropsten/erc20",
     "tokens/ethereum_sepolia/erc20",
   ],
-  output: "data/erc20.js",
+  output: (toJSON) => `data/erc20.js${toJSON ? "on" : ""}`,
 
   validate: (everything, countervaluesTickers) =>
-    ["ethereum", "ethereum_goerli", "ethereum_rinkeby", "ethereum_ropsten", "ethereum_sepolia"].flatMap((cid) => {
+    [
+      "ethereum",
+      "ethereum_goerli",
+      "ethereum_rinkeby",
+      "ethereum_ropsten",
+      "ethereum_sepolia",
+    ].flatMap((cid) => {
       const all = everything.filter((a) => a[0] === cid);
       const fiatCollisions = all.filter(
         (a) =>
@@ -90,8 +96,10 @@ module.exports = {
 
       return all.filter((a) => !contractGroup[a[6]]);
     }),
-  outputTemplate: (data) =>
-    `module.exports = [
+  outputTemplate: (data, toJSON) =>
+    toJSON
+      ? JSON.stringify(data)
+      : `module.exports = [
 ${data
   .map(
     (item) =>
