@@ -28,6 +28,8 @@ const tabBarOptions = (props: MaterialTopTabBarProps) => (
   <WalletTabNavigatorTabBar {...props} />
 );
 
+const tabBarEmptyOptions = (props: MaterialTopTabBarProps) => null;
+
 export default function WalletTabNavigator() {
   const dispatch = useDispatch();
   const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector);
@@ -45,7 +47,7 @@ export default function WalletTabNavigator() {
       <Box flex={1} bg={"background.main"}>
         <WalletTab.Navigator
           initialRouteName={lastVisitedTab}
-          tabBar={tabBarOptions}
+          tabBar={false ? tabBarEmptyOptions : tabBarOptions}
           style={{ backgroundColor: "transparent" }}
           sceneContainerStyle={{ backgroundColor: "transparent" }}
           tabBarOptions={{ style: { backgroundColor: "transparent" } }}
@@ -81,13 +83,15 @@ export default function WalletTabNavigator() {
               title: t("wallet.tabs.crypto"),
             }}
           />
-          <WalletTab.Screen
-            name={ScreenName.WalletNftGallery}
-            component={WalletNftGallery}
-            options={{
-              title: t("wallet.tabs.nft"),
-            }}
-          />
+          {true && (
+            <WalletTab.Screen
+              name={ScreenName.WalletNftGallery}
+              component={WalletNftGallery}
+              options={{
+                title: t("wallet.tabs.nft"),
+              }}
+            />
+          )}
         </WalletTab.Navigator>
         <WalletTabHeader hidePortfolio={false} />
       </Box>

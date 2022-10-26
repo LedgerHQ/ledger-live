@@ -1,9 +1,9 @@
 import { MaterialTopTabBarProps } from "@react-navigation/material-top-tabs";
 import { useTheme } from "styled-components/native";
-import React, { memo, useCallback, useContext } from "react";
+import React, { memo, useCallback, useContext, useEffect } from "react";
 import styled from "@ledgerhq/native-ui/components/styled";
 import { Flex, Text } from "@ledgerhq/native-ui";
-import { Animated } from "react-native";
+import { Animated, Easing } from "react-native";
 import { track } from "../../analytics";
 import { rgba } from "../../colors";
 import { WalletTabNavigatorScrollContext } from "./WalletTabNavigatorScrollManager";
@@ -73,41 +73,66 @@ function WalletTabNavigatorTabBar({
     extrapolateRight: "clamp",
   });
 
-  return (
-    <Animated.View
-      style={{
-        top: 0,
-        zIndex: 1,
-        position: "absolute",
-        transform: [{ translateY: y }],
-        width: "100%",
-        height: tabBarHeight,
-      }}
-    >
-      <Flex
-        flex={1}
-        px={6}
-        pb={4}
-        justifyContent={"flex-end"}
-        bg={"background.main"}
-      >
-        <Flex flexDirection={"row"}>
-          {state.routes.map((route, index) => {
-            const { options } = descriptors[route.key];
+  const opacity = scrollY.interpolate({
+    inputRange: [headerHeight, tabBarHeight + headerHeight + 12],
+    outputRange: [0, 1],
+    extrapolate: "clamp",
+  });
 
-            return (
-              <MemoTab
-                key={index}
-                route={route}
-                label={options.title}
-                isActive={state.index === index}
-                navigation={navigation}
-              />
-            );
-          })}
+  return (
+    <>
+      {/* <Animated.View */}
+      {/*  style={{ */}
+      {/*    top: 0, */}
+      {/*    zIndex: 1, */}
+      {/*    position: "absolute", */}
+      {/*    transform: [{ translateY: y }], */}
+      {/*    width: "100%", */}
+      {/*    height: tabBarHeight, */}
+      {/*    backgroundColor: "black", */}
+      {/*    opacity, */}
+      {/*  }} */}
+      {/* /> */}
+      <Animated.View
+        style={{
+          top: 0,
+          zIndex: 1,
+          position: "absolute",
+          transform: [{ translateY: y }],
+          width: "100%",
+          height: tabBarHeight,
+        }}
+      >
+        <Animated.View
+          style={{
+            top: 0,
+            position: "absolute",
+            // transform: [{ translateY: y }],
+            width: "100%",
+            height: tabBarHeight,
+            backgroundColor: "black",
+            opacity,
+          }}
+        />
+        <Flex flex={1} px={6} pb={4} justifyContent={"flex-end"}>
+          <Flex flexDirection={"row"}>
+            {state.routes.map((route, index) => {
+              const { options } = descriptors[route.key];
+
+              return (
+                <MemoTab
+                  key={index}
+                  route={route}
+                  label={options.title}
+                  isActive={state.index === index}
+                  navigation={navigation}
+                />
+              );
+            })}
+          </Flex>
         </Flex>
-      </Flex>
-    </Animated.View>
+      </Animated.View>
+    </>
   );
 }
 

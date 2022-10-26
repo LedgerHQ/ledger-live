@@ -123,8 +123,8 @@ export default function WalletTabNavigatorScrollManager({
         scrollableOffsetMap,
         onGetRef,
         syncScrollOffset,
-        tabBarHeight,
-        headerHeight,
+        tabBarHeight: false ? 0 : tabBarHeight,
+        headerHeight: false ? 88 : headerHeight,
       }}
     >
       {children}
