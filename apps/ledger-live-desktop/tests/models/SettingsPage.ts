@@ -12,7 +12,6 @@ export class SettingsPage {
   readonly counterValueSearchBar: Locator;
   readonly counterValueropdownChoiceEuro: Locator;
   readonly languageSelector: Locator;
-  readonly languageChoiceFrench: Locator;
   readonly themeSelector: Locator;
   readonly themeChoiceLight: Locator;
 
@@ -25,16 +24,16 @@ export class SettingsPage {
     this.experimentalDevModeToggle = page.locator("data-test-id=MANAGER_DEV_MODE-button");
     this.carouselSwitchButton = page.locator("data-test-id=settings-carousel-switch-button");
     this.counterValueSelector = page.locator(
-      "//*[@data-test-id='setting-countervalue-dropDown']/div[2]/div/div",
+      "[data-test-id='setting-countervalue-dropDown'] .select__value-container",
     );
     this.counterValueSearchBar = page.locator('[placeholder="Search"]');
-    this.counterValueropdownChoiceEuro = page.locator(
-      "#react-select-2-option-15 >> text=Euro - EUR",
-    );
+    this.counterValueropdownChoiceEuro = page.locator(".select__option");
     this.languageSelector = page.locator(
-      "//*[@data-test-id='setting-language-dropDown']/div[2]/div/div",
+      "[data-test-id='setting-language-dropDown'] .select__value-container",
     );
-    this.themeSelector = page.locator("//*[@data-test-id='setting-theme-dropDown']/div[2]/div/div");
+    this.themeSelector = page.locator(
+      "[data-test-id='setting-theme-dropDown'] .select__value-container",
+    );
 
     this.themeChoiceLight = page.locator("text='Clair'");
   }
