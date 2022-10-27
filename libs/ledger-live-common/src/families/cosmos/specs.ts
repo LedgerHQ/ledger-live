@@ -168,7 +168,7 @@ const cosmos: AppSpec<Transaction> = {
           "already enough delegations"
         );
         const data = getCurrentCosmosPreloadData();
-        const count = 1; // we always gonna be have only one validator because of the new delegation flow.
+        const count = 1; // we'r always going to have only one validator because of the new delegation flow.
         let remaining = getMaxDelegationAvailable(
           account as CosmosAccount,
           count
