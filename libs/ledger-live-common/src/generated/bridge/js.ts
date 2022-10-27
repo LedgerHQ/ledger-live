@@ -1,6 +1,7 @@
 import algorand from "../../families/algorand/bridge/js";
 import bitcoin from "../../families/bitcoin/bridge/js";
 import cardano from "../../families/cardano/bridge/js";
+import casper from "../../families/casper/bridge/js";
 import celo from "../../families/celo/bridge/js";
 import cosmos from "../../families/cosmos/bridge/js";
 import crypto_org from "../../families/crypto_org/bridge/js";
@@ -22,6 +23,7 @@ export default {
   algorand,
   bitcoin,
   cardano,
+  casper,
   celo,
   cosmos,
   crypto_org,

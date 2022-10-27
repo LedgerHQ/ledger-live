@@ -28,7 +28,7 @@ const createTransaction = (a: Account): Transaction => {
   const payment = DeployUtil.standardPayment(CASPER_FEES);
   const deploy = DeployUtil.makeDeploy(deployParams, session, payment);
 
-  return { deploy, amount: new BigNumber(0), recipient: "" };
+  return { family: "casper", deploy, amount: new BigNumber(0), recipient: "" };
 };
 
 const updateTransaction = (t: Transaction, patch: Transaction): Transaction => {
@@ -41,9 +41,6 @@ const prepareTransaction = () => {
   throw new Error("prepareTransaction not implemented");
 };
 
-const updateTransaction = () => {
-  throw new Error("updateTransaction not implemented");
-};
 
 const getTransactionStatus = () => {
   throw new Error("getTransactionStatus not implemented");
