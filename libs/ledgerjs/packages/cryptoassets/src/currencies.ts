@@ -22,6 +22,7 @@
  */
 
 import { CryptoCurrency, CoinType, Unit } from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrencyId } from "./types";
 
 const makeTestnetUnit = (u) => ({ ...u, code: `𝚝${u.code}` });
 
@@ -76,7 +77,7 @@ const ethereumUnits = (name, code) => [
   },
 ];
 
-export const cryptocurrenciesById: Record<string, CryptoCurrency> = {
+export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
   near: {
     type: "CryptoCurrency",
     id: "near",
@@ -3446,20 +3447,16 @@ const prodCryptoArray: CryptoCurrency[] = [];
 const cryptocurrenciesArrayWithoutTerminated: CryptoCurrency[] = [];
 const prodCryptoArrayWithoutTerminated: CryptoCurrency[] = [];
 
-for (const id in cryptocurrenciesById) {
-  const definition = cryptocurrenciesById[id];
-  registerCryptoCurrency(id, definition);
-}
+Object.values(cryptocurrenciesById).forEach((cryptoCurrency) => {
+  registerCryptoCurrency(cryptoCurrency);
+});
 
 /**
  *
  * @param {string} id
  * @param {CryptoCurrency} currency
  */
-export function registerCryptoCurrency(
-  id: string,
-  currency: CryptoCurrency
-): void {
+export function registerCryptoCurrency(currency: CryptoCurrency): void {
   cryptocurrenciesById[currency.id] = currency;
   cryptocurrenciesByScheme[currency.scheme] = currency;
 
