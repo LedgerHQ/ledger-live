@@ -17,7 +17,7 @@ export type Config = {
   experimental?: EndpointConfig;
 };
 
-export type FullConfig = Record<CryptoCurrencyId, Config | null | undefined>;
+export type FullConfig = Partial<Record<CryptoCurrencyId, Config>>;
 
 export type EndpointConfigOverrides = {
   version?: string;
