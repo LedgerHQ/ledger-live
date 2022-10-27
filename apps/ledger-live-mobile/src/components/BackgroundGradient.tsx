@@ -41,12 +41,10 @@ function BackgroundGradient({
 
   return (
     <Animated.View
-      height={"100%"}
-      justifyContent={"center"}
       style={[
         BackgroundOverlayOpacity,
         {
-          background: colors.background.main,
+          backgroundColor: colors.background.main,
           position: "absolute",
           width: 541,
           height: 450,

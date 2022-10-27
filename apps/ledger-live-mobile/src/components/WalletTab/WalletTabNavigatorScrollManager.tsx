@@ -29,8 +29,6 @@ export const WalletTabNavigatorScrollContext =
     {} as WalletTabNavigatorScrollContextData,
   );
 
-type AnimatedValueWithPrivate = Animated.Value & { _value: number };
-
 export default function WalletTabNavigatorScrollManager({
   children,
   currentRouteName,
@@ -60,10 +58,12 @@ export default function WalletTabNavigatorScrollManager({
     (currentRouteKey: string) => {
       scrollableRefArray.current.forEach(item => {
         if (item.key !== currentRouteKey) {
-          // eslint-disable-next-line no-underscore-dangle
-          const scrollYValue = (scrollY as AnimatedValueWithPrivate)._value;
+          const scrollYValue = currentRouteName
+            ? scrollableOffsetMap.current[currentRouteName]
+            : null;
 
           if (
+            scrollYValue !== null &&
             item.value &&
             ((scrollYValue < headerHeight && scrollYValue >= 0) ||
               (scrollYValue >= headerHeight &&
@@ -96,7 +96,7 @@ export default function WalletTabNavigatorScrollManager({
         }
       });
     },
-    [scrollY],
+    [currentRouteName],
   );
 
   const onGetRef = useCallback(
@@ -117,8 +117,6 @@ export default function WalletTabNavigatorScrollManager({
     },
     [currentRouteName, syncScrollOffset],
   );
-
-  console.log("walletNftGalleryFeature", walletNftGalleryFeature);
 
   return (
     <WalletTabNavigatorScrollContext.Provider

@@ -1,6 +1,6 @@
 import { MaterialTopTabBarProps } from "@react-navigation/material-top-tabs";
 import { useTheme } from "styled-components/native";
-import React, { memo, useCallback, useContext, useMemo } from "react";
+import React, { memo, useCallback, useContext } from "react";
 import styled from "@ledgerhq/native-ui/components/styled";
 import { Flex, Text } from "@ledgerhq/native-ui";
 import { Animated } from "react-native";
@@ -10,23 +10,41 @@ import { rgba } from "../../colors";
 import { WalletTabNavigatorScrollContext } from "./WalletTabNavigatorScrollManager";
 import WalletTabBackgroundGradient from "./WalletTabBackgroundGradient";
 import { readOnlyModeEnabledSelector } from "../../reducers/settings";
-import { pairId } from "../../../../../libs/ledger-live-common/lib-es/countervalues/helpers";
 import { accountsSelector } from "../../reducers/accounts";
+import { Box } from "../../../../../libs/ui/packages/native/lib";
 
-const StyledTab = styled.TouchableOpacity``;
+const StyledTouchableOpacity = styled.TouchableOpacity``;
+
+const StyledAnimatedView = styled(Animated.View)``;
 
 function Tab({
   route,
   label,
   isActive,
   navigation,
+  index,
+  scrollX,
 }: {
   route: { name: string; key: string };
   label?: string;
   isActive: boolean;
   navigation: MaterialTopTabBarProps["navigation"];
+  index: number;
+  scrollX: MaterialTopTabBarProps["position"];
 }) {
   const { colors } = useTheme();
+
+  const opacity = scrollX.interpolate({
+    inputRange: [index - 1, index, index + 1],
+    outputRange: [0, 1, 0],
+    extrapolate: "clamp",
+  });
+
+  const opacityInactive = opacity.interpolate({
+    inputRange: [0, 1],
+    outputRange: [1, 0],
+    extrapolate: "clamp",
+  });
 
   const onPress = useCallback(() => {
     const event = navigation.emit({
@@ -44,20 +62,35 @@ function Tab({
   }, [isActive, navigation, route.key, route.name]);
 
   return (
-    <StyledTab
-      backgroundColor={
-        isActive ? "primary.c70" : rgba(colors.constant.white, 0.08)
-      }
-      borderRadius={2}
-      px={4}
-      py={3}
-      mr={4}
-      onPress={onPress}
-    >
-      <Text fontWeight={"semiBold"} variant={"body"} color={"neutral.c100"}>
-        {label}
-      </Text>
-    </StyledTab>
+    <StyledTouchableOpacity onPress={onPress} mr={4}>
+      <StyledAnimatedView
+        position={"absolute"}
+        top={0}
+        height={"100%"}
+        width={"100%"}
+        bg={rgba(colors.constant.white, 0.08)}
+        borderRadius={2}
+        style={{
+          opacity: opacityInactive,
+        }}
+      />
+      <StyledAnimatedView
+        position={"absolute"}
+        top={0}
+        height={"100%"}
+        width={"100%"}
+        bg={"primary.c70"}
+        borderRadius={2}
+        style={{
+          opacity,
+        }}
+      />
+      <Box borderRadius={2} px={4} py={3}>
+        <Text fontWeight={"semiBold"} variant={"body"} color={"neutral.c100"}>
+          {label}
+        </Text>
+      </Box>
+    </StyledTouchableOpacity>
   );
 }
 
@@ -113,7 +146,6 @@ function WalletTabNavigatorTabBar({
           style={{
             top: 0,
             position: "absolute",
-            // transform: [{ translateY: y }],
             width: "100%",
             height: tabBarHeight,
             backgroundColor: colors.background.main,
@@ -132,6 +164,8 @@ function WalletTabNavigatorTabBar({
                   label={options.title}
                   isActive={state.index === index}
                   navigation={navigation}
+                  index={index}
+                  scrollX={position}
                 />
               );
             })}

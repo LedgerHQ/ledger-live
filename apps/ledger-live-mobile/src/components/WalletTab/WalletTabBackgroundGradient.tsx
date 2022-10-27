@@ -1,5 +1,6 @@
 import React, { memo, useContext } from "react";
-import { Animated } from "react-native";
+import { Animated, ColorValue } from "react-native";
+import { MaterialTopTabBarProps } from "@react-navigation/material-top-tabs";
 import Svg, {
   Path,
   Defs,
@@ -13,7 +14,8 @@ import { WalletTabNavigatorScrollContext } from "./WalletTabNavigatorScrollManag
 import multiply = Animated.multiply;
 
 type Props = {
-  scrollX: Animated.AnimatedNode<number>;
+  scrollX: MaterialTopTabBarProps["position"];
+  color?: ColorValue;
 };
 
 function WalletTabBackgroundGradient({ color, scrollX }: Props) {

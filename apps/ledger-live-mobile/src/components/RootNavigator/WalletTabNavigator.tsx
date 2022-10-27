@@ -65,7 +65,7 @@ export default function WalletTabNavigator() {
           sceneContainerStyle={{ backgroundColor: "transparent" }}
           tabBarOptions={{ style: { backgroundColor: "transparent" } }}
           screenOptions={{
-            lazy: true,
+            lazy: walletNftGalleryFeature?.params?.lazyLoadScreens ?? true,
           }}
           screenListeners={{
             state: (e: NavigationContainerEventMap["state"]) => {
