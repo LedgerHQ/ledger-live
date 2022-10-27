@@ -3,25 +3,20 @@ import type {
   CryptoCurrency,
   TokenCurrency,
 } from "@ledgerhq/types-cryptoassets";
-import { AccountFilters, CurrencyFilters } from "./filters";
-import {
-  Account as PlatformAccount,
-  Currency as PlatformCurrency,
-} from "@ledgerhq/live-app-sdk";
 
 export type {
-  Account as PlatformAccount,
-  Currency as PlatformCurrency,
-  Unit as PlatformUnit,
-  Transaction as PlatformTransaction,
-  CryptoCurrency as PlatformCryptoCurrency,
-  ERC20TokenCurrency as PlatformERC20TokenCurrency,
-} from "@ledgerhq/live-app-sdk";
+  Families as WalletAPIFamilies,
+  Account as WalletAPIAccount,
+  Currency as WalletAPICurrency,
+  Transaction as WalletAPITransaction,
+  CryptoCurrency as WalletAPICryptoCurrency,
+  ERC20TokenCurrency as WalletAPIERC20TokenCurrency,
+} from "@ledgerhq/wallet-api-core";
 
 export {
-  CurrencyType as PlatformCurrencyType,
-  TokenStandard as PlatformTokenStandard,
-} from "@ledgerhq/live-app-sdk";
+  CurrencyType as WalletAPICurrencyType,
+  TokenStandard as WalletAPITokenStandard,
+} from "@ledgerhq/wallet-api-core";
 
 export type TranslatableString = {
   en: string;
@@ -40,6 +35,7 @@ export type AppPermission = {
   params?: any;
 };
 
+// TODO update to the new manifest types from wallet-api when released
 export type AppManifest = {
   id: string;
   private?: boolean;
@@ -63,18 +59,6 @@ export type AppManifest = {
   domains: string[];
 };
 
-export type PlatformApi = {
-  fetchManifest: () => Promise<AppManifest[]>;
-};
+export type WalletAPISignedTransaction = SignedOperation;
 
-export type PlatformSignedTransaction = SignedOperation;
-
-export type ListPlatformAccount = (
-  filters?: AccountFilters
-) => PlatformAccount[];
-
-export type ListPlatformCurrency = (
-  filters?: CurrencyFilters
-) => PlatformCurrency[];
-
-export type PlatformSupportedCurrency = CryptoCurrency | TokenCurrency;
+export type WalletAPISupportedCurrency = CryptoCurrency | TokenCurrency;
