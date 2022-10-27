@@ -47,6 +47,7 @@ import { LocalLiveAppProvider } from "@ledgerhq/live-common/platform/providers/L
 
 import { isEqual } from "lodash";
 import { postOnboardingSelector } from "@ledgerhq/live-common/postOnboarding/reducer";
+import Braze from "react-native-appboy-sdk";
 import logger from "./logger";
 import {
   saveAccounts,
@@ -277,7 +278,17 @@ function getProxyURL(url: string) {
 const linkingOptions: LinkingOptions<ReactNavigation.RootParamList> = {
   async getInitialURL() {
     const url = await Linking.getInitialURL();
-    return url && !isInvalidWalletConnectLink(url) ? getProxyURL(url) : null;
+    if (url) {
+      return url && !isInvalidWalletConnectLink(url) ? getProxyURL(url) : null;
+    }
+    const brazeUrl: string = await new Promise(resolve => {
+      Braze.getInitialURL(initialUrl => {
+        resolve(initialUrl);
+      });
+    });
+    return brazeUrl && !isInvalidWalletConnectLink(brazeUrl)
+      ? getProxyURL(brazeUrl)
+      : null;
   },
 
   prefixes: ["ledgerlive://", "https://ledger.com"],

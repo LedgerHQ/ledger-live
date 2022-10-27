@@ -7,6 +7,7 @@
 #import "ReactNativeConfig.h"
 #import "RNSplashScreen.h"  // here
 #import "Appboy-iOS-SDK/AppboyKit.h"
+#import "AppboyReactUtils.h"
 
 #import <Firebase.h>
 
@@ -49,6 +50,8 @@
     [[UIApplication sharedApplication] registerForRemoteNotifications];
     [[UIApplication sharedApplication] registerUserNotificationSettings:settings];
   }
+
+  [[AppboyReactUtils sharedInstance] populateInitialUrlFromLaunchOptions:launchOptions];
 
   // Retrieve the correct GoogleService-Info.plist file name for a given environment
   NSString *googleServiceInfoEnvName = [ReactNativeConfig envFor:@"GOOGLE_SERVICE_INFO_NAME"];

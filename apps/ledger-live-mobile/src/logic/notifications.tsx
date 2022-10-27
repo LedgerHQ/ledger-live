@@ -1,7 +1,6 @@
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useMemo } from "react";
 import { Linking, Platform } from "react-native";
 import { useSelector, useDispatch } from "react-redux";
-import { useToasts } from "@ledgerhq/live-common/notifications/ToastProvider/index";
 import { useNavigation } from "@react-navigation/native";
 import { add, isBefore, parseISO } from "date-fns";
 import type { Account } from "@ledgerhq/types-live";
@@ -74,18 +73,13 @@ async function setPushNotificationsDataOfUserInStorage(dataOfUser) {
 const getIsNotifEnabled = async () => {
   const authStatus = await messaging().hasPermission();
 
-  return (
-    authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
-    authStatus === messaging.AuthorizationStatus.PROVISIONAL
-  );
+  return authStatus === messaging.AuthorizationStatus.AUTHORIZED;
 };
 
 const useNotifications = () => {
   const pushNotificationsFeature = useFeature("pushNotifications");
-  const { pushToast } = useToasts();
   const notificationsSettings = useSelector(notificationsSelector);
 
-  const [notificationsToken, setNotificationsToken] = useState();
   const isPushNotificationsModalOpen = useSelector(
     notificationsModalOpenSelector,
   );
@@ -114,34 +108,6 @@ const useNotifications = () => {
   const dispatch = useDispatch();
   const navigation = useNavigation();
 
-  const listenForNotifications = useCallback(async () => {
-    if (!notificationsToken) {
-      const fcm = messaging();
-      const token = await fcm.getToken();
-      setNotificationsToken(token);
-      fcm.onMessage(async remoteMessage => {
-        if (remoteMessage && remoteMessage.notification) {
-          pushToast({
-            id: remoteMessage.messageId,
-            title: remoteMessage.notification.title,
-            text: remoteMessage.notification.body,
-            icon: "info",
-          });
-        }
-      });
-      // Needed to avoid a warning
-      // eslint-disable-next-line @typescript-eslint/no-empty-function
-      fcm.setBackgroundMessageHandler(async _ => {});
-    }
-  }, [notificationsToken, pushToast]);
-
-  const clearNotificationsListeners = useCallback(() => {
-    if (notificationsToken) {
-      messaging().deleteToken(notificationsToken);
-      setNotificationsToken(undefined);
-    }
-  }, [notificationsToken]);
-
   const handlePushNotificationsPermission = useCallback(async () => {
     track("button_clicked", {
       button: "Go to system settings",
@@ -155,7 +121,10 @@ const useNotifications = () => {
 
       if (permission === messaging.AuthorizationStatus.DENIED) {
         Linking.openSettings();
-      } else if (permission === messaging.AuthorizationStatus.NOT_DETERMINED) {
+      } else if (
+        permission === messaging.AuthorizationStatus.NOT_DETERMINED ||
+        permission === messaging.AuthorizationStatus.PROVISIONAL
+      ) {
         fcm.requestPermission();
       }
     }
@@ -212,7 +181,7 @@ const useNotifications = () => {
     const minimumAppStartsNumber: number =
       pushNotificationsFeature?.params?.conditions?.minimum_app_starts_number;
     if (
-      pushNotificationsDataOfUser.numberOfAppStarts < minimumAppStartsNumber
+      pushNotificationsDataOfUser?.numberOfAppStarts < minimumAppStartsNumber
     ) {
       return false;
     }
@@ -454,8 +423,6 @@ const useNotifications = () => {
     handlePushNotificationsPermission,
     triggerMarketPushNotificationModal,
     triggerJustFinishedOnboardingNewDevicePushNotificationModal,
-    listenForNotifications,
-    clearNotificationsListeners,
     modalAllowNotifications,
     modalDelayLater,
   };
