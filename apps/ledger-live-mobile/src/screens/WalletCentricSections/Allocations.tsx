@@ -68,10 +68,11 @@ const Allocations = () => {
       },
     );
 
-    // if there is less than NUMBER_MAX_ALLOCATION_ASSETS_TO_DISPLAY and that there are no blacklisted tokens
+    // if there are no blacklisted tokens and there is less than NUMBER_MAX_ALLOCATION_ASSETS_TO_DISPLAY
+    // then we display the whole list
     if (
-      distribution.list.length <= NUMBER_MAX_ALLOCATION_ASSETS_TO_DISPLAY &&
-      displayedCurrencies.length === distribution.list.length
+      displayedCurrencies.length === distribution.list.length &&
+      displayedCurrencies.length <= NUMBER_MAX_ALLOCATION_ASSETS_TO_DISPLAY
     ) {
       return distribution.list;
     }
