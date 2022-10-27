@@ -8,7 +8,7 @@ import Video from "react-native-video";
 import { Linking } from "react-native";
 import Svg, { Defs, LinearGradient, Rect, Stop } from "react-native-svg";
 import { useDispatch } from "react-redux";
-import { ScreenName } from "../../../const";
+import { NavigatorName, ScreenName } from "../../../const";
 import StyledStatusBar from "../../../components/StyledStatusBar";
 import { urls } from "../../../config/urls";
 import { useTermsAccept } from "../../../logic/terms";
@@ -84,7 +84,13 @@ function OnboardingStepWelcome({ navigation }: any) {
       if (countTitle.current > 3 && countSubtitle.current > 5) {
         countTitle.current = 0;
         countSubtitle.current = 0;
-        navigation.navigate(ScreenName.DebugFeatureFlags);
+        navigation.navigate(NavigatorName.Base, {
+          screen: NavigatorName.Settings,
+          params: {
+            screen: ScreenName.SettingsScreen,
+            params: {},
+          },
+        });
       }
       if (timeout.current) clearTimeout(timeout.current);
       timeout.current = setTimeout(() => {
