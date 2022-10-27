@@ -1,6 +1,6 @@
 import { makeRe } from "minimatch";
-import { PlatformAccount, PlatformCurrency, AppManifest } from "./types";
-import { isPlatformTokenCurrency } from "./helpers";
+import { WalletAPIAccount, WalletAPICurrency, AppManifest } from "./types";
+import { isWalletAPITokenCurrency } from "./helpers";
 import semver from "semver";
 
 export type FilterParams = {
@@ -14,10 +14,10 @@ export type AccountFilters = {
   currencies?: string[];
 };
 
-export function filterPlatformAccounts(
-  accounts: PlatformAccount[],
+export function filterWalletAPIAccounts(
+  accounts: WalletAPIAccount[],
   filters: AccountFilters
-): PlatformAccount[] {
+): WalletAPIAccount[] {
   const filterCurrencyRegexes = filters.currencies
     ? filters.currencies.map((filter) => makeRe(filter))
     : null;
@@ -38,16 +38,16 @@ export type CurrencyFilters = {
   currencies?: string[];
 };
 
-export function filterPlatformCurrencies(
-  currencies: PlatformCurrency[],
+export function filterWalletAPICurrencies(
+  currencies: WalletAPICurrency[],
   filters: CurrencyFilters
-): PlatformCurrency[] {
+): WalletAPICurrency[] {
   const filterCurrencyRegexes = filters.currencies
     ? filters.currencies.map((filter) => makeRe(filter))
     : null;
 
   return currencies.filter((currency) => {
-    if (!filters.includeTokens && isPlatformTokenCurrency(currency)) {
+    if (!filters.includeTokens && isWalletAPITokenCurrency(currency)) {
       return false;
     }
 
@@ -90,7 +90,7 @@ function matchPrivate(filterParams: FilterParams, manifest: AppManifest) {
   return filterParams.private === true || !(manifest.private === true);
 }
 
-export function filterPlatformApps(
+export function filterWalletAPIApps(
   appManifests: AppManifest[],
   filterParams: FilterParams
 ): AppManifest[] {

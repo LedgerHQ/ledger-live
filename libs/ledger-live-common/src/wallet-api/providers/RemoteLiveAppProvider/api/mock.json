@@ -1,0 +1,765 @@
+[
+  {
+    "id": "moonpay",
+    "name": "MoonPay",
+    "url": "https://buy.moonpay.com/?apiKey=pk_live_j5CLt1qxbqGtYhkxUxyk6VQnSd5CBXI&ledgerlive",
+    "homepageUrl": "https://www.moonpay.com/",
+    "icon": "https://cdn.live.ledger.com/icons/platform/moonpay.png",
+    "platform": "all",
+    "apiVersion": "^1.0.0 || ~0.0.1",
+    "manifestVersion": "1",
+    "branch": "stable",
+    "categories": ["buy"],
+    "currencies": [
+      "bitcoin",
+      "bitcoin_cash",
+      "bsc",
+      "digibyte",
+      "dogecoin",
+      "ethereum",
+      "litecoin",
+      "polkadot",
+      "ripple",
+      "stellar",
+      "tron"
+    ],
+    "content": {
+      "shortDescription": {
+        "en": "A fast, simple, and secure way to buy crypto."
+      },
+      "description": {
+        "en": "MoonPay accepts all major payment methods and over 30 fiat currencies, enabling people from all over the world to buy crypto."
+      }
+    },
+    "permissions": [],
+    "domains": ["https://*"]
+  },
+  {
+    "id": "ramp",
+    "name": "Ramp",
+    "url": "https://integrations.ramp.network/ledger/",
+    "homepageUrl": "https://ramp.network/buy",
+    "icon": "https://cdn.live.ledger.com/icons/platform/ramp.png",
+    "platform": "all",
+    "apiVersion": "^1.0.0 || ~0.0.1",
+    "manifestVersion": "1",
+    "branch": "stable",
+    "categories": ["buy"],
+    "currencies": [
+      "ethereum",
+      "bitcoin",
+      "bsc",
+      "polkadot",
+      "ripple",
+      "litecoin",
+      "polygon",
+      "bitcoin_cash",
+      "stellar",
+      "dogecoin",
+      "tezos",
+      "elrond"
+    ],
+    "content": {
+      "shortDescription": {
+        "en": "An easy, low-fee and secure way to buy your favorite crypto assets."
+      },
+      "description": {
+        "en": "Ramp - Use instant payment methods to buy crypto from anywhere on the globe."
+      }
+    },
+    "permissions": [],
+    "domains": ["https://*"]
+  },
+  {
+    "id": "paraswap",
+    "name": "ParaSwap",
+    "url": "https://dapp-browser.apps.ledger.com/?params=%7B%22dappUrl%22%3A%22https%3A%2F%2Fv5.paraswap.io%2Fledger-live%22%2C%22nanoApp%22%3A%22Paraswap%22%2C%22dappName%22%3A%22ParaSwap%22%2C%22networks%22%3A%5B%7B%22currency%22%3A%22ethereum%22%2C%22chainID%22%3A1%2C%22nodeURL%22%3A%22wss%3A%2F%2Feth-mainnet.ws.alchemyapi.io%2Fv2%2F0fyudoTG94QWC0tEtfJViM9v2ZXJuij2%22%7D%2C%7B%22currency%22%3A%22bsc%22%2C%22chainID%22%3A56%2C%22nodeURL%22%3A%22https%3A%2F%2Fbsc-dataseed.binance.org%2F%22%7D%2C%7B%22currency%22%3A%20%22polygon%22%2C%22chainID%22%3A%20137%2C%22nodeURL%22%3A%20%22https%3A%2F%2Fpolygon-mainnet.g.alchemy.com%2Fv2%2FoPIxZM7kXsPVVY1Sk0kOQwkoIOpSu8PE%22%7D%5D%7D",
+    "params": {
+      "dappUrl": "https://v5.paraswap.io/?referrer=ledger2&embed=true&enableStaking=false&displayMenu=false&enableNetworkSwitch=false",
+      "nanoApp": "Paraswap",
+      "dappName": "ParaSwap",
+      "networks": [
+        {
+          "currency": "ethereum",
+          "chainID": 1,
+          "nodeURL": "wss://eth-mainnet.ws.alchemyapi.io/v2/0fyudoTG94QWC0tEtfJViM9v2ZXJuij2"
+        },
+        {
+          "currency": "bsc",
+          "chainID": 56,
+          "nodeURL": "https://bsc-dataseed.binance.org/"
+        },
+        {
+          "currency": "polygon",
+          "chainID": 137,
+          "nodeURL": "https://polygon-mainnet.g.alchemy.com/v2/oPIxZM7kXsPVVY1Sk0kOQwkoIOpSu8PE"
+        }
+      ]
+    },
+    "homepageUrl": "https://paraswap.io",
+    "supportUrl": "https://paraswap.io",
+    "icon": "https://cdn.live.ledger.com/icons/platform/paraswap.png",
+    "platform": "all",
+    "apiVersion": "^1.0.0 || ~0.0.1",
+    "manifestVersion": "1",
+    "branch": "stable",
+    "categories": ["swap", "defi"],
+    "currencies": ["ethereum", "bsc"],
+    "content": {
+      "shortDescription": {
+        "en": "Swap your crypto with ParaSwap that aggregates and provides the best quotes decentralised exchanges."
+      },
+      "description": {
+        "en": "Swap your crypto with ParaSwap that aggregates and provides the best quotes decentralised exchanges."
+      }
+    },
+    "permissions": [
+      {
+        "method": "account.list",
+        "params": {
+          "currencies": ["ethereum", "bsc"]
+        }
+      },
+      {
+        "method": "account.request",
+        "params": {
+          "currencies": ["ethereum", "bsc"]
+        }
+      },
+      {
+        "method": "transaction.sign",
+        "params": {
+          "nanoApp": ["paraswap"]
+        }
+      },
+      {
+        "method": "transaction.broadcast"
+      }
+    ],
+    "domains": ["https://*"]
+  },
+  {
+    "id": "paraswap v5",
+    "name": "ParaSwap v5",
+    "url": "https://dapp-browser.apps.ledger.com/?params=%7B%22dappUrl%22%3A%22https%3A%2F%2Fv5.paraswap.io%2Fledger-live%22%2C%22nanoApp%22%3A%22Paraswap%22%2C%22dappName%22%3A%22ParaSwap%22%2C%22networks%22%3A%5B%7B%22currency%22%3A%22ethereum%22%2C%22chainID%22%3A1%2C%22nodeURL%22%3A%22wss%3A%2F%2Feth-mainnet.ws.alchemyapi.io%2Fv2%2F0fyudoTG94QWC0tEtfJViM9v2ZXJuij2%22%7D%2C%7B%22currency%22%3A%22bsc%22%2C%22chainID%22%3A56%2C%22nodeURL%22%3A%22https%3A%2F%2Fbsc-dataseed.binance.org%2F%22%7D%2C%7B%22currency%22%3A%20%22polygon%22%2C%22chainID%22%3A%20137%2C%22nodeURL%22%3A%20%22https%3A%2F%2Fpolygon-mainnet.g.alchemy.com%2Fv2%2FoPIxZM7kXsPVVY1Sk0kOQwkoIOpSu8PE%22%7D%5D%7D",
+    "params": {
+      "dappUrl": "https://v5.paraswap.io/?referrer=ledger2&embed=true&enableStaking=false&displayMenu=false",
+      "nanoApp": "Paraswap",
+      "dappName": "ParaSwap",
+      "networks": [
+        {
+          "currency": "ethereum",
+          "chainID": 1,
+          "nodeURL": "wss://eth-mainnet.ws.alchemyapi.io/v2/0fyudoTG94QWC0tEtfJViM9v2ZXJuij2"
+        },
+        {
+          "currency": "bsc",
+          "chainID": 56,
+          "nodeURL": "https://bsc-dataseed.binance.org/"
+        },
+        {
+          "currency": "polygon",
+          "chainID": 137,
+          "nodeURL": "https://polygon-mainnet.g.alchemy.com/v2/oPIxZM7kXsPVVY1Sk0kOQwkoIOpSu8PE"
+        }
+      ]
+    },
+    "homepageUrl": "https://paraswap.io",
+    "supportUrl": "https://paraswap.io",
+    "icon": "https://cdn.live.ledger.com/icons/platform/paraswap.png",
+    "platform": "all",
+    "apiVersion": "^1.0.0 || ~0.0.1",
+    "manifestVersion": "1",
+    "branch": "experimental",
+    "categories": ["swap", "defi"],
+    "currencies": ["ethereum", "bsc"],
+    "content": {
+      "shortDescription": {
+        "en": "Swap your crypto with ParaSwap that aggregates and provides the best quotes decentralised exchanges."
+      },
+      "description": {
+        "en": "Swap your crypto with ParaSwap that aggregates and provides the best quotes decentralised exchanges."
+      }
+    },
+    "permissions": [
+      {
+        "method": "account.list",
+        "params": {
+          "currencies": ["ethereum", "bsc"]
+        }
+      },
+      {
+        "method": "account.request",
+        "params": {
+          "currencies": ["ethereum", "bsc"]
+        }
+      },
+      {
+        "method": "transaction.sign",
+        "params": {
+          "nanoApp": ["paraswap"]
+        }
+      },
+      {
+        "method": "transaction.broadcast"
+      }
+    ],
+    "domains": ["https://*"]
+  },
+  {
+    "id": "lido",
+    "name": "Lido",
+    "url": "https://dapp-browser.apps.ledger.com/?params=%7B%22dappUrl%22%3A%22https%3A%2F%2Fstake.lido.fi%2F%3Fref%3D0x558247e365be655f9144e1a0140D793984372Ef3%26embed%3Dtrue%22%2C%22nanoApp%22%3A%22Lido%22%2C%22dappName%22%3A%22Lido%22%2C%22networks%22%3A%5B%7B%22currency%22%3A%22ethereum%22%2C%22chainID%22%3A1%2C%22nodeURL%22%3A%22wss%3A%2F%2Feth-mainnet.ws.alchemyapi.io%2Fv2%2F0fyudoTG94QWC0tEtfJViM9v2ZXJuij2%22%7D%5D%7D",
+    "params": {
+      "dappUrl": "https://stake.lido.fi/?ref=0x558247e365be655f9144e1a0140D793984372Ef3&embed=true",
+      "nanoApp": "Lido",
+      "dappName": "Lido",
+      "networks": [
+        {
+          "currency": "ethereum",
+          "chainID": 1,
+          "nodeURL": "wss://eth-mainnet.ws.alchemyapi.io/v2/0fyudoTG94QWC0tEtfJViM9v2ZXJuij2"
+        }
+      ]
+    },
+    "homepageUrl": "https://lido.fi/",
+    "icon": "https://cdn.live.ledger.com/icons/platform/lido.png",
+    "platform": "all",
+    "apiVersion": "^1.0.0 || ~0.0.1",
+    "manifestVersion": "1",
+    "branch": "stable",
+    "categories": ["staking", "defi"],
+    "currencies": ["ethereum"],
+    "content": {
+      "shortDescription": {
+        "en": "Stake your ETH with Lido to earn daily staking rewards."
+      },
+      "description": {
+        "en": "Stake your ETH with Lido to earn daily staking rewards."
+      }
+    },
+    "permissions": [],
+    "domains": ["https://*"]
+  },
+  {
+    "id": "1inch",
+    "name": "1inch",
+    "url": "https://dapp-browser.apps.ledger.com/?params=%7B%22dappUrl%22%3A%22https%3A%2F%2Fapp.1inch.io%2F%3FledgerLive%3Dtrue%22%2C%22nanoApp%22%3A%221inch%22%2C%22dappName%22%3A%221inch%22%2C%22networks%22%3A%5B%7B%22currency%22%3A%22ethereum%22%2C%22chainID%22%3A1%2C%22nodeURL%22%3A%22wss%3A%2F%2Feth-mainnet.ws.alchemyapi.io%2Fv2%2F0fyudoTG94QWC0tEtfJViM9v2ZXJuij2%22%7D%2C%7B%22currency%22%3A%22bsc%22%2C%22chainID%22%3A56%2C%22nodeURL%22%3A%22https%3A%2F%2Fbsc-dataseed.binance.org%2F%22%7D%2C%7B%22currency%22%3A%20%22polygon%22%2C%22chainID%22%3A%20137%2C%22nodeURL%22%3A%20%22https%3A%2F%2Fpolygon-mainnet.g.alchemy.com%2Fv2%2FoPIxZM7kXsPVVY1Sk0kOQwkoIOpSu8PE%22%7D%5D%7D",
+    "params": {
+      "dappUrl": "https://app.1inch.io/?ledgerLive=true",
+      "nanoApp": "1inch",
+      "dappName": "1inch",
+      "networks": [
+        {
+          "currency": "ethereum",
+          "chainID": 1,
+          "nodeURL": "wss://eth-mainnet.ws.alchemyapi.io/v2/0fyudoTG94QWC0tEtfJViM9v2ZXJuij2"
+        },
+        {
+          "currency": "bsc",
+          "chainID": 56,
+          "nodeURL": "https://bsc-dataseed.binance.org/"
+        },
+        {
+          "currency": "polygon",
+          "chainID": 137,
+          "nodeURL": "https://polygon-mainnet.g.alchemy.com/v2/oPIxZM7kXsPVVY1Sk0kOQwkoIOpSu8PE"
+        }
+      ]
+    },
+    "homepageUrl": "https://1inch.io/",
+    "icon": "https://cdn.live.ledger.com/icons/platform/1inch.png",
+    "platform": "all",
+    "apiVersion": "^1.0.0 || ~0.0.1",
+    "manifestVersion": "1",
+    "branch": "stable",
+    "categories": ["swap", "defi"],
+    "currencies": ["ethereum"],
+    "content": {
+      "shortDescription": {
+        "en": "Exchange crypto via a Defi/DEX aggregator on Ethereum mainnet, BSC or Polygon"
+      },
+      "description": {
+        "en": "Exchange crypto via a Defi/DEX aggregator on Ethereum mainnet, BSC or Polygon"
+      }
+    },
+    "permissions": [],
+    "domains": ["https://*"]
+  },
+  {
+    "id": "btcdirect",
+    "name": "BTC Direct",
+    "url": "https://ledger.btcdirect.eu/",
+    "homepageUrl": "https://btcdirect.eu/",
+    "icon": "https://cdn.live.ledger.com/icons/platform/btcdirect.png",
+    "platform": "all",
+    "apiVersion": "^1.0.0 || ~0.0.1",
+    "manifestVersion": "1",
+    "branch": "stable",
+    "categories": ["buy"],
+    "currencies": ["bitcoin", "bitcoin_cash", "ethereum", "litecoin", "ripple"],
+    "content": {
+      "shortDescription": {
+        "en": "Buy crypto easily and quickly from your Ledger Live via BTC Direct."
+      },
+      "description": {
+        "en": "Buy crypto easily and quickly from your Ledger Live via BTC Direct."
+      }
+    },
+    "permissions": [],
+    "domains": ["https://*"]
+  },
+  {
+    "id": "banxa",
+    "name": "Banxa",
+    "url": "https://ledger.banxa.com/",
+    "homepageUrl": "https://banxa.com/",
+    "icon": "https://cdn.live.ledger.com/icons/platform/banxa.png",
+    "platform": "desktop",
+    "apiVersion": "^1.0.0 || ~0.0.1",
+    "manifestVersion": "1",
+    "branch": "stable",
+    "categories": ["buy"],
+    "currencies": ["ethereum", "bitcoin", "litecoin", "ripple", "tether"],
+    "content": {
+      "shortDescription": {
+        "en": "Banxa supports the widest choice of payment options locally and globally, enabling people to purchase crypto"
+      },
+      "description": {
+        "en": "Banxa supports the widest choice of payment options locally and globally, enabling people to purchase crypto"
+      }
+    },
+    "permissions": [],
+    "domains": ["https://*"]
+  },
+  {
+    "id": "bitrefill",
+    "name": "Bitrefill",
+    "url": "https://embed.bitrefill.com/buy/?utm_source=ledger_live&paymentMethods=bitcoin,ethereum,litecoin,dogecoin&ref=ftbYHzmt",
+    "homepageUrl": "https://bitrefill.com",
+    "icon": "https://cdn.live.ledger.com/icons/platform/bitrefill.png",
+    "platform": "desktop",
+    "apiVersion": "^1.0.0 || ~0.0.1",
+    "manifestVersion": "1",
+    "branch": "stable",
+    "categories": ["gift cards"],
+    "currencies": ["bitcoin", "ethereum"],
+    "content": {
+      "shortDescription": {
+        "en": "Buy gift cards and top up airtime"
+      },
+      "description": {
+        "en": "Buy gift cards and top up airtime with Bitcoin and Ethereum"
+      }
+    },
+    "permissions": [],
+    "domains": ["https://*"]
+  },
+  {
+    "id": "mercuryo",
+    "name": "Mercuryo",
+    "url": "https://exchange.mercuryo.io/?widget_id=13806834-fd92-460c-b8a4-14b58a09b2a6&fix_currency=true&ledger=true&type=buy&hide_address=true",
+    "homepageUrl": "https://www.mercuryo.io/",
+    "icon": "https://cdn.live.ledger.com/icons/platform/mercuryo.png",
+    "platform": "all",
+    "apiVersion": "^1.0.0 || ~0.0.1",
+    "manifestVersion": "1",
+    "branch": "stable",
+    "categories": ["buy", "sell"],
+    "currencies": [
+      "bitcoin",
+      "ethereum",
+      "algorand",
+      "bitcoin cash",
+      "binance coin",
+      "tron",
+      "tether"
+    ],
+    "content": {
+      "shortDescription": {
+        "en": "Buy and sell crypto in a heartbeat."
+      },
+      "description": {
+        "en": "Mercuryo widget allows you to seamlessly buy crypto, supporting dozens of local payment methods and currencies. Liquidity, chargebacks, support, anti-fraud, and KYC checks included."
+      }
+    },
+    "permissions": [],
+    "domains": []
+  },
+  {
+    "id": "wyre_buy",
+    "name": "Wyre",
+    "url": "https://platform.apps.ledger.com/app/wyre",
+    "homepageUrl": "https://www.sendwyre.com/",
+    "icon": "https://cdn.live.ledger.com/icons/platform/wyre.png",
+    "platform": "all",
+    "apiVersion": "^1.0.0 || ~0.0.1",
+    "manifestVersion": "1",
+    "branch": "stable",
+    "categories": ["exchange", "buy"],
+    "currencies": ["ethereum", "bitcoin", "algorand"],
+    "content": {
+      "shortDescription": {
+        "en": "Purchase Bitcoin, Ethereum and more crypto with Wyre, only available to our US customers."
+      },
+      "description": {
+        "en": "Purchase Bitcoin, Ethereum and more crypto with Wyre, only available to our US customers."
+      }
+    },
+    "permissions": [
+      {
+        "method": "account.request",
+        "params": {
+          "currencies": ["ethereum", "bitcoin", "algorand"]
+        }
+      }
+    ],
+    "domains": ["https://*"]
+  },
+  {
+    "id": "zerion",
+    "name": "Zerion",
+    "url": "https://dapp-browser.apps.ledger.com/?params=%7B%22dappUrl%22%3A%22https%3A%2F%2Fapp.zerion.io%2F%3Fembed%3Dledgerdappbrowser%22%2C%22nanoApp%22%3A%22Paraswap%22%2C%22dappName%22%3A%22Zerion%22%2C%22networks%22%3A%5B%7B%22currency%22%3A%22ethereum%22%2C%22chainID%22%3A1%2C%22nodeURL%22%3A%22wss%3A%2F%2Feth-mainnet.ws.alchemyapi.io%2Fv2%2F0fyudoTG94QWC0tEtfJViM9v2ZXJuij2%22%7D%5D%7D",
+    "params": {
+      "dappUrl": "https://app.zerion.io/?embed=ledgerdappbrowser",
+      "nanoApp": "Paraswap",
+      "dappName": "Zerion",
+      "networks": [
+        {
+          "currency": "ethereum",
+          "chainID": 1,
+          "nodeURL": "wss://eth-mainnet.ws.alchemyapi.io/v2/0fyudoTG94QWC0tEtfJViM9v2ZXJuij2"
+        }
+      ]
+    },
+    "homepageUrl": "https://zerion.io/",
+    "icon": "https://cdn.live.ledger.com/icons/platform/zerion.png",
+    "platform": "all",
+    "apiVersion": "^1.0.0 || ~0.0.1",
+    "manifestVersion": "1",
+    "branch": "stable",
+    "categories": ["portfolio", "defi"],
+    "currencies": ["ethereum"],
+    "content": {
+      "shortDescription": {
+        "en": "The smart way to manage your DeFi portfolio."
+      },
+      "description": {
+        "en": "The smart way to manage your DeFi portfolio."
+      }
+    },
+    "permissions": [],
+    "domains": ["https://*"]
+  },
+  {
+    "id": "rainbow",
+    "name": "Rainbow.me",
+    "url": "https://platform.apps.ledger.com/app/web-browser?url=https%3A%2F%2Frainbow.me%2F%7Baccount.address%7D&currencies=ethereum&webAppName=Rainbow.me",
+    "homepageUrl": "https://rainbow.me",
+    "icon": "https://cdn.live.ledger.com/icons/platform/rainbow.png",
+    "platform": "all",
+    "apiVersion": "^1.0.0 || ~0.0.1",
+    "manifestVersion": "1",
+    "branch": "stable",
+    "categories": ["nft"],
+    "currencies": ["ethereum"],
+    "content": {
+      "shortDescription": {
+        "en": "An easy way to visualize the NFT secured by your hardware wallet."
+      },
+      "description": {
+        "en": "An easy way to visualize the NFT secured by your hardware wallet."
+      }
+    },
+    "permissions": [],
+    "domains": ["https://*"]
+  },
+  {
+    "id": "poap",
+    "name": "POAP",
+    "url": "https://platform.apps.ledger.com/app/web-browser?url=https%3A%2F%2Fapp.poap.xyz%2Fscan%2F%7Baccount.address%7D&currencies=ethereum&webAppName=Poap",
+    "homepageUrl": "https://app.poap.xyz/",
+    "icon": "https://cdn.live.ledger.com/icons/platform/poap.png",
+    "platform": "all",
+    "apiVersion": "^1.0.0 || ~0.0.1",
+    "manifestVersion": "1",
+    "branch": "stable",
+    "categories": ["nft", "defi"],
+    "currencies": ["ethereum"],
+    "content": {
+      "shortDescription": {
+        "en": "Proof of Attendance Protocol"
+      },
+      "description": {
+        "en": "The Proof of attendance protocol (POAP) reminds you of the cool places you’ve been to."
+      }
+    },
+    "permissions": [],
+    "domains": ["https://*"]
+  },
+  {
+    "id": "aave",
+    "name": "Aave",
+    "url": "",
+    "homepageUrl": "https://aave.com/",
+    "icon": "https://cdn.live.ledger.com/icons/platform/aave.png",
+    "platform": "all",
+    "apiVersion": "^1.0.0 || ~0.0.1",
+    "manifestVersion": "1",
+    "branch": "soon",
+    "categories": ["lend"],
+    "currencies": ["ethereum"],
+    "content": {
+      "shortDescription": {
+        "en": "Lend or Borrow your crypto through a liquidity market protocol and stay in control of your funds."
+      },
+      "description": {
+        "en": "Lend or Borrow your crypto through a liquidity market protocol and stay in control of your funds."
+      }
+    },
+    "permissions": [],
+    "domains": []
+  },
+  {
+    "id": "compound",
+    "name": "Compound",
+    "url": "",
+    "homepageUrl": "https://compound.finance/",
+    "icon": "https://cdn.live.ledger.com/icons/platform/compound.png",
+    "platform": "all",
+    "apiVersion": "^1.0.0 || ~0.0.1",
+    "manifestVersion": "1",
+    "branch": "soon",
+    "categories": ["lend", "compound"],
+    "currencies": ["ethereum"],
+    "content": {
+      "shortDescription": {
+        "en": "Lend or Borrow your crypto via a completely decentralized and open-source protocol."
+      },
+      "description": {
+        "en": "Lend or Borrow your crypto via a completely decentralized and open-source protocol."
+      }
+    },
+    "permissions": [],
+    "domains": []
+  },
+  {
+    "id": "alkemi",
+    "name": "Alkemi",
+    "url": "",
+    "homepageUrl": "https://alkemi.network/",
+    "icon": "https://cdn.live.ledger.com/icons/platform/alkemi.png",
+    "platform": "all",
+    "apiVersion": "^1.0.0 || ~0.0.1",
+    "manifestVersion": "1",
+    "branch": "soon",
+    "categories": ["lend"],
+    "currencies": ["ethereum"],
+    "content": {
+      "shortDescription": {
+        "en": "Earn high yields on your assets with our professional DeFi borrowing and lending platform."
+      },
+      "description": {
+        "en": "Earn high yields on your assets with our professional DeFi borrowing and lending platform."
+      }
+    },
+    "permissions": [],
+    "domains": []
+  },
+  {
+    "id": "deversifi",
+    "name": "DeversiFi",
+    "url": "",
+    "homepageUrl": "https://www.deversifi.com/",
+    "icon": "https://cdn.live.ledger.com/icons/platform/deversifi.png",
+    "platform": "all",
+    "apiVersion": "^1.0.0 || ~0.0.1",
+    "manifestVersion": "1",
+    "branch": "soon",
+    "categories": ["dex"],
+    "currencies": ["ethereum"],
+    "content": {
+      "shortDescription": {
+        "en": "Trade through a self-custody decentralized exchange on Ethereum layer-2."
+      },
+      "description": {
+        "en": "Trade through a self-custody decentralized exchange on Ethereum layer-2."
+      }
+    },
+    "permissions": [],
+    "domains": []
+  },
+  {
+    "id": "yearn",
+    "name": "Yearn",
+    "url": "https://dapp-browser.apps.ledger.com",
+    "params": {
+      "dappUrl": "https://beta.yearn.finance?embed=true",
+      "nanoApp": "Yearn",
+      "dappName": "Yearn",
+      "networks": [
+        {
+          "currency": "ethereum",
+          "chainID": 1,
+          "nodeURL": "wss://eth-mainnet.ws.alchemyapi.io/v2/0fyudoTG94QWC0tEtfJViM9v2ZXJuij2"
+        }
+      ]
+    },
+    "homepageUrl": "https://beta.yearn.finance",
+    "icon": "https://cdn.live.ledger.com/icons/platform/yearn.png",
+    "platform": "all",
+    "apiVersion": "^1.0.0 || ~0.0.1",
+    "manifestVersion": "1",
+    "branch": "experimental",
+    "categories": ["staking", "defi"],
+    "currencies": ["ethereum"],
+    "content": {
+      "shortDescription": {
+        "en": "Generate yield automatically with Yearn products"
+      },
+      "description": {
+        "en": "Generate yield automatically with Yearn products"
+      }
+    },
+    "permissions": [],
+    "domains": ["https://*"]
+  },
+  {
+    "id": "changenow",
+    "name": "ChangeNOW",
+    "url": "https://changenow.io/ledger",
+    "homepageUrl": "https://changenow.io/",
+    "icon": "https://content-api.changenow.io/uploads/changenow_3fec68652e.png",
+    "platform": "all",
+    "apiVersion": "^1.0.0 || ~0.0.1",
+    "manifestVersion": "1",
+    "branch": "experimental",
+    "categories": ["swap"],
+    "currencies": ["bitcoin", "ethereum"],
+    "content": {
+      "shortDescription": {
+        "en": "Exchange 300+ coins and tokens free of limits",
+        "fr": "Échangez plus de 300 pièces et jetons sans limites",
+        "es": "Intercambia más de 300 monedas y tokens sin límites",
+        "ru": "Обменивайте 300+ монет и токенов без ограничений",
+        "zh": "无限制地兑换 300 多个硬币和代币",
+        "de": "Tauschen Sie über 300 Münzen und Token ohne Limits ein",
+        "tr": "300'den fazla jeton ve jetonu sınırsız olarak değiştirin",
+        "jp": "300以上のコインとトークンを制限なしで交換します",
+        "kr": "300개 이상의 코인과 토큰을 무제한으로 교환"
+      },
+      "description": {
+        "en": "ChangeNOW is a limitless crypto exchange and processing service offering fast crypto swaps with no hidden fees. It supports a wide range of assets including over 300 cryptocurrencies. The transactions start from $2, have no upper limit, and take about 5 minutes to complete.",
+        "fr": "ChangeNOW est un service d’échange et de traitement de crypto-monnaies illimité offrant des échanges de crypto-monnaies rapides sans frais cachés. Il prend en charge un large éventail d’actifs, notamment plus de 300 devises cryptographiques. Les transactions commencent à partir de 2 $, n’ont pas de limite supérieure et prennent environ 5 minutes.",
+        "es": "ChangeNOW es un servicio ilimitado de procesamiento y intercambio de cifrado que ofrece intercambios de cifrado rápidos sin tarifas ocultas. Admite una amplia gama de activos que incluyen más de 300 criptomonedas y más. Las transacciones comienzan desde $ 2 dólares, no tienen límite superior y tardan unos 5 minutos en completarse.",
+        "ru": "ChangeNOW - это безграничный сервис обмена и обработки криптовалют, предлагающий быстрые обмены криптовалют без скрытых комиссий. Он поддерживает широкий спектр активов из более чем более 300 криптовалют. Транзакции начинаются с 2 долларов, не имеют верхнего предела и занимают около 5 минут.",
+        "zh": "ChangeNOW 是一种无限的加密交换和处理服务，提供快速的加密交换，没有隐藏费用。 它支持广泛的资产，包括 300 多种加密货币。 交易从 2 美元起，没有上限，大约需要 5 分钟才能完成。",
+        "de": "ChangeNOW ist ein grenzenloser Krypto-Austausch- und Verarbeitungsservice, der schnelle Krypto-Swaps ohne versteckte Gebühren anbietet. Es unterstützt eine breite Palette von über 300 Kryptowährungen. Die Transaktionen beginnen bei 2 $, haben keine Obergrenze und dauern etwa 5 Minuten.",
+        "tr": "ChangeNOW, gizli ücretler olmadan hızlı kripto takasları sunan sınırsız bir kripto değişimi ve işleme hizmetidir. 300'den fazla kripto para birimi dahil olmak üzere çok çeşitli varlıkları destekler. İşlemler 2 dolardan başlar, üst limiti yoktur ve tamamlanması yaklaşık 5 dakika sürer.",
+        "jp": "ChangeNOWは、隠れた料金なしで高速暗号スワップを提供する無制限の暗号交換および処理サービスです。 300以上の暗号通貨を含む幅広い資産をサポートします。 トランザクションは$ 2から始まり、上限はなく、完了するまでに約5分かかります。",
+        "kr": "ChangeNOW는 숨겨진 수수료 없이 빠른 암호화 스왑을 제공하는 무제한 암호화 교환 및 처리 서비스입니다. 300개 이상의 암호화폐를 포함한 광범위한 자산을 지원합니다. 거래는 $2부터 시작하며 상한선이 없으며 완료하는 데 약 5분이 걸립니다."
+      }
+    },
+    "permissions": [
+      {
+        "method": "*"
+      }
+    ],
+    "domains": ["https://*"]
+  },
+  {
+    "id": "mercuryo",
+    "name": "Mercuryo",
+    "url": "https://exchange.mercuryo.io/?widget_id=13806834-fd92-460c-b8a4-14b58a09b2a6&fix_currency=true&ledger=true&type=buy&hide_address=true",
+    "homepageUrl": "https://www.mercuryo.io/",
+    "icon": "https://inlnk.ru/84PnYo",
+    "platform": "all",
+    "apiVersion": "^1.0.0 || ~0.0.1",
+    "manifestVersion": "1",
+    "branch": "experimental",
+    "categories": ["buy", "sell"],
+    "currencies": [
+      "bitcoin",
+      "ethereum",
+      "algorand",
+      "bitcoin cash",
+      "binance coin",
+      "tron",
+      "tether"
+    ],
+    "content": {
+      "shortDescription": {
+        "en": "Buy and sell crypto in a heartbeat."
+      },
+      "description": {
+        "en": "Mercuryo widget allows you to seamlessly buy and sell crypto, supporting dozens of local payment methods and currencies. Liquidity, chargebacks, support, anti-fraud, and KYC checks included."
+      }
+    },
+    "permissions": [],
+    "domains": []
+  },
+  {
+    "id": "transak",
+    "name": "Transak",
+    "url": "https://global.transak.com?apiKey=e95c1914-e525-4d85-870e-0e7297baedf9&isFeeCalculationHidden=true",
+    "homepageUrl": "https://transak.com",
+    "icon": "https://d1wvnwyfte65eg.cloudfront.net/logo_main.png",
+    "platform": "all",
+    "apiVersion": "^1.0.0 || ~0.0.1",
+    "manifestVersion": "1",
+    "branch": "experimental",
+    "categories": ["tools"],
+    "currencies": [
+      "bitcoin",
+      "ethereum",
+      "algorand",
+      "ripple",
+      "cosmos",
+      "tezos",
+      "polkadot",
+      "stellar",
+      "tron"
+    ],
+    "content": {
+      "shortDescription": {
+        "en": "Buy 80+ different cryptocurrencies easily by card or bank transfer. Transak accepts over 45 fiat currencies from 115 countries and territories."
+      },
+      "description": {
+        "en": "Buy 80+ different cryptocurrencies easily by card or bank transfer. Transak accepts over 45 fiat currencies from 115 countries and territories."
+      }
+    },
+    "permissions": [
+      {
+        "method": "*"
+      }
+    ],
+    "domains": ["https://*"]
+  },
+  {
+    "id": "debug",
+    "name": "Debugger",
+    "url": "https://debug.apps.ledger.com/",
+    "homepageUrl": "https://developers.ledger.com/",
+    "icon": "https://cdn.live.ledger.com/icons/platform/debugger.png",
+    "platform": "all",
+    "apiVersion": "^1.0.0 || ~0.0.1",
+    "manifestVersion": "1",
+    "branch": "debug",
+    "categories": ["tools"],
+    "currencies": "*",
+    "content": {
+      "shortDescription": {
+        "en": "Try out the Ledger Live API to test capabilities of our platform integration solution. Use at your own risk."
+      },
+      "description": {
+        "en": "Try out the Ledger Live API to test capabilities of our platform integration solution. Use at your own risk."
+      }
+    },
+    "permissions": [
+      {
+        "method": "*"
+      }
+    ],
+    "domains": ["https://*"]
+  }
+]
