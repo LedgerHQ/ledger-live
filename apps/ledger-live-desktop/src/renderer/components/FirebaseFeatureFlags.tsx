@@ -23,21 +23,6 @@ const checkFeatureFlagVersion = (feature: Feature) => {
   return feature;
 };
 
-const checkFeatureFlagVersion = (feature: Feature) => {
-  if (
-    feature.enabled &&
-    feature.desktop_version &&
-    !semver.satisfies(__APP_VERSION__, feature.desktop_version)
-  ) {
-    return {
-      enabledOverriddenForCurrentDesktopVersion: true,
-      ...feature,
-      enabled: false,
-    };
-  }
-  return feature;
-};
-
 type Props = {
   children?: ReactNode;
 };
