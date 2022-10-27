@@ -145,9 +145,10 @@ function PortfolioScreen({ navigation }: NavigationProps) {
       distribution.isAvailable && distribution.list.length > 0,
       distribution.list
         .filter(asset => {
-          return asset.currency.type === "TokenCurrency"
-            ? !blacklistedTokenIds.includes(asset.currency.id)
-            : true;
+          return (
+            asset.currency.type !== "TokenCurrency" ||
+            !blacklistedTokenIds.includes(asset.currency.id)
+          );
         })
         .slice(0, maxAssetsToDisplay),
     ],

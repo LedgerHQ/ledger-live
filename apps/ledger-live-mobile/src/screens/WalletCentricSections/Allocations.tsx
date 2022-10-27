@@ -61,9 +61,10 @@ const Allocations = () => {
   const distributionListFormatted = useMemo(() => {
     const displayedCurrencies: DistributionItem[] = distribution.list.filter(
       asset => {
-        return asset.currency.type === "TokenCurrency"
-          ? !blacklistedTokenIds.includes(asset.currency.id)
-          : true;
+        return (
+          asset.currency.type !== "TokenCurrency" ||
+          !blacklistedTokenIds.includes(asset.currency.id)
+        );
       },
     );
 
