@@ -1,15 +1,11 @@
 import React from "react";
-import { RouterHistory, Match, Location } from "react-router-dom";
+import { RouteComponentProps } from "react-router-dom";
 import { Icons, Link } from "@ledgerhq/react-ui";
 import Box from "~/renderer/components/Box";
 import Page from "~/renderer/components/Page";
 import Settings from ".";
 
-type Props = {
-  history: RouterHistory;
-  location: Location;
-  match: Match;
-};
+type Props = RouteComponentProps;
 
 const WelcomeScreenSettings: React.FC<Props> = props => {
   return (
