@@ -1,3 +1,8 @@
+# 2.49.1
+
+We’ve done few small but important changes behind the curtain.
+Don’t forget to update your Ledger Live app so that you can access these new features.
+
 # 2.49.0
 
 A few small but mighty improvements have been made to Ledger Live's swapping capabilities 👇
