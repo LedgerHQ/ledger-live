@@ -166,6 +166,9 @@ function readPackage(pkg, context) {
       addPeerDependencies("any-observable", {
         rxjs: "*",
       }),
+      addPeerDependencies("rxjs-compat", {
+        rxjs: "*",
+      }),
       addPeerDependencies("@cspotcode/source-map-support", {
         "source-map-support": "*",
       }),
@@ -179,6 +182,7 @@ function readPackage(pkg, context) {
         "prop-types": "*",
       }),
       addDependencies("@actions/cache", { "@azure/abort-controller": "*" }),
+      addDependencies("rn-fetch-blob", { lodash: "*" }),
       // "dmg-builder" is required to build .dmg electron apps on macs,
       // but is not declared as such by app-builder-lib.
       // I'm not adding it as a dependency because if I did,

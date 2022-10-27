@@ -20,6 +20,8 @@ import "~/renderer/styles/global";
 import "~/renderer/live-common-setup";
 import { getLocalStorageEnvs } from "~/renderer/experimental";
 import "~/renderer/i18n/init";
+import { prepareCurrency } from "~/renderer/bridge/cache";
+import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
 
 import logger, { enableDebugLogger } from "~/logger";
 import LoggerTransport from "~/logger/logger-transport-renderer";
@@ -130,6 +132,11 @@ async function init() {
   if (accounts) {
     accounts = implicitMigration(accounts);
     await store.dispatch(setAccounts(accounts));
+
+    // preload currency that's not in accounts list
+    if (accounts.some(a => a.currency.id !== "ethereum")) {
+      prepareCurrency(getCryptoCurrencyById("ethereum"));
+    }
   } else {
     store.dispatch(lock());
   }
