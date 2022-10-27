@@ -2,7 +2,11 @@ import React, { useState, useEffect, useMemo, useCallback, FC } from "react";
 import { View } from "react-native";
 import { BigNumber } from "bignumber.js";
 
-import type { ElrondProvider } from "@ledgerhq/live-common/families/elrond/types";
+import type { AccountLike } from "@ledgerhq/types-live";
+import type {
+  ElrondProvider,
+  ElrondAccount,
+} from "@ledgerhq/live-common/families/elrond/types";
 import type { BodyPropsType } from "./types";
 import type { DrawerPropsType } from "./components/Drawer/types";
 import type { DelegationType } from "../../types";
@@ -20,8 +24,14 @@ import styles from "./styles";
  * Create a higher order component that will return null if there are no resources for Elrond staking.
  */
 
-const withBody = (Component: FC<BodyPropsType>) => (props: BodyPropsType) =>
-  props.account.elrondResources ? <Component {...props} /> : null;
+const withBody =
+  (Component: FC<BodyPropsType>) =>
+  ({ account }: { account: AccountLike }) => {
+    const elrondAccount = account as ElrondAccount;
+    return elrondAccount.elrondResources ? (
+      <Component account={elrondAccount} />
+    ) : null;
+  };
 
 /*
  * Handle the component declaration.
