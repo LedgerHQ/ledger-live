@@ -29,6 +29,7 @@
     "ios:device:add": "bundle exec fastlane ios add_ios_device",
     "ios:sync:profiles": "bundle exec fastlane ios sync_ios_profiles",
     "preandroid:apk": "bundle install",
+    "android:apk:local": "bundle exec fastlane android apk_local --env android.staging",
     "android:apk": "bundle exec fastlane android apk --env android.staging",
     "preandroid:ci:playstore": "bundle install",
     "android:ci:playstore": "bundle exec fastlane android ci_playstore --env android.release",

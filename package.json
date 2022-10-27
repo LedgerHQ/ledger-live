@@ -25,7 +25,7 @@
     "build:llc": "pnpm turbo build --no-daemon --filter=\"!./apps/**\" --scope=@ledgerhq/live-common --include-dependencies --no-deps",
     "build:lld": "pnpm turbo build --no-daemon --filter=ledger-live-desktop",
     "build:lld:deps": "pnpm turbo build --no-daemon --filter=\"ledger-live-desktop^...\"",
-    "build:llm:android": "pnpm turbo android:apk --no-daemon --filter=live-mobile",
+    "build:llm:android": "pnpm turbo android:apk:local --no-daemon --filter=live-mobile",
     "build:llm:ios": "pnpm turbo ios:local:ipa --no-daemon --filter=live-mobile",
     "build:llm:deps": "pnpm turbo build --no-daemon --filter=\"live-mobile^...\"",
     "build:ljs": "pnpm turbo build --no-daemon --filter=\"./libs/ledgerjs/**\"",
