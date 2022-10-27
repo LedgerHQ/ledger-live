@@ -1,5 +1,5 @@
 // @flow
-import React, { useCallback, useEffect, useRef } from "react";
+import React, { useEffect, useRef } from "react";
 import styled from "styled-components";
 import { ipcRenderer } from "electron";
 import { Redirect, Route, Switch, useLocation, useHistory } from "react-router-dom";
