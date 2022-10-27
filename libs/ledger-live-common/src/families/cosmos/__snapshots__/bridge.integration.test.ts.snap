@@ -3,7 +3,7 @@
 exports[`cosmos currency bridge scanAccounts cosmos seed 1 1`] = `
 Array [
   Object {
-    "balance": "2608888",
+    "balance": "2355096",
     "cosmosResources": Object {
       "delegatedBalance": "2180065",
       "withdrawAddress": "cosmos1g84934jpu3v5de5yqukkkhxmcvsw3u2ajxvpdl",
@@ -22,7 +22,7 @@ Array [
     "index": 0,
     "name": "Cosmos 1",
     "nfts": undefined,
-    "operationsCount": 33,
+    "operationsCount": 34,
     "pendingOperations": Array [],
     "seedIdentifier": "0388459b2653519948b12492f1a0b464720110c147a8155d23d423a5cc3c21d89a",
     "starred": false,
@@ -93,7 +93,7 @@ Array [
     "xpub": "cosmos1cgc696ay2pg6d4gcejek2y8la66j7e5y3c7kyw",
   },
   Object {
-    "balance": "200000",
+    "balance": "4853",
     "cosmosResources": Object {
       "delegatedBalance": "0",
       "withdrawAddress": "cosmos14tg4vsd0q745fxhzn329pkx0krqtszcxyzl5ku",
@@ -112,7 +112,7 @@ Array [
     "index": 3,
     "name": "Cosmos 4",
     "nfts": undefined,
-    "operationsCount": 2,
+    "operationsCount": 3,
     "pendingOperations": Array [],
     "seedIdentifier": "0388459b2653519948b12492f1a0b464720110c147a8155d23d423a5cc3c21d89a",
     "starred": false,
@@ -375,6 +375,30 @@ Array [
       "transactionSequenceNumber": 71,
       "type": "OUT",
       "value": "5286",
+    },
+    Object {
+      "accountId": "js:2:cosmos:cosmos1g84934jpu3v5de5yqukkkhxmcvsw3u2ajxvpdl:",
+      "blockHash": null,
+      "blockHeight": "12611872",
+      "contract": undefined,
+      "extra": Object {
+        "validators": Array [],
+      },
+      "fee": "3792",
+      "hash": "42746606B0FD693CB917730D9A568124DA64846C2D2F5FA273B0AA7A6E909FAF",
+      "id": "js:2:cosmos:cosmos1g84934jpu3v5de5yqukkkhxmcvsw3u2ajxvpdl:-42746606B0FD693CB917730D9A568124DA64846C2D2F5FA273B0AA7A6E909FAF-OUT",
+      "operator": undefined,
+      "recipients": Array [
+        "cosmos1dxu62uza8ja9edcfwfrgem8453dnn4zcwnjrue",
+      ],
+      "senders": Array [
+        "cosmos1g84934jpu3v5de5yqukkkhxmcvsw3u2ajxvpdl",
+      ],
+      "standard": undefined,
+      "tokenId": undefined,
+      "transactionSequenceNumber": 90,
+      "type": "OUT",
+      "value": "253792",
     },
     Object {
       "accountId": "js:2:cosmos:cosmos1g84934jpu3v5de5yqukkkhxmcvsw3u2ajxvpdl:",
@@ -1748,6 +1772,30 @@ Array [
     },
   ],
   Array [
+    Object {
+      "accountId": "js:2:cosmos:cosmos14tg4vsd0q745fxhzn329pkx0krqtszcxyzl5ku:",
+      "blockHash": null,
+      "blockHeight": "12612170",
+      "contract": undefined,
+      "extra": Object {
+        "validators": Array [],
+      },
+      "fee": "5147",
+      "hash": "5A26153E186B65787EE6AB06749DF5486310769EA9D4A843881A227361D72E7A",
+      "id": "js:2:cosmos:cosmos14tg4vsd0q745fxhzn329pkx0krqtszcxyzl5ku:-5A26153E186B65787EE6AB06749DF5486310769EA9D4A843881A227361D72E7A-OUT",
+      "operator": undefined,
+      "recipients": Array [
+        "cosmos17xzxawqvlslf30wq0hc5r6s992j5qgejpvca38",
+      ],
+      "senders": Array [
+        "cosmos14tg4vsd0q745fxhzn329pkx0krqtszcxyzl5ku",
+      ],
+      "standard": undefined,
+      "tokenId": undefined,
+      "transactionSequenceNumber": 0,
+      "type": "OUT",
+      "value": "195147",
+    },
     Object {
       "accountId": "js:2:cosmos:cosmos14tg4vsd0q745fxhzn329pkx0krqtszcxyzl5ku:",
       "blockHash": null,

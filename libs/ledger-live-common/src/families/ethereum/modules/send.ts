@@ -52,20 +52,15 @@ const send: ModeModule = {
           result.errors.amount = new NotEnoughBalanceInParentAccount();
         }
       }
-
-      if (!t.data) {
-        if (
-          !t.allowZeroAmount &&
-          !result.errors.amount &&
-          result.amount.eq(0)
-        ) {
-          result.errors.amount = new AmountRequired();
-        } else if (
-          !result.totalSpent.gt(0) ||
-          result.totalSpent.gt(account.spendableBalance)
-        ) {
-          result.errors.amount = new NotEnoughBalance();
-        }
+    }
+    if (!t.data) {
+      if (!t.allowZeroAmount && !result.errors.amount && result.amount.eq(0)) {
+        result.errors.amount = new AmountRequired();
+      } else if (
+        !result.totalSpent.gt(0) ||
+        result.totalSpent.gt(account.spendableBalance)
+      ) {
+        result.errors.amount = new NotEnoughBalance();
       }
     }
   },
