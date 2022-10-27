@@ -113,7 +113,6 @@ import { useFilteredManifests } from "./screens/Platform/shared";
 import { setWallectConnectUri } from "./actions/walletconnect";
 import PostOnboardingProviderWrapped from "./logic/postOnboarding/PostOnboardingProviderWrapped";
 import { isAcceptedTerms } from "./logic/terms";
-import Braze from "react-native-appboy-sdk";
 
 const themes = {
   light: lightTheme,
