@@ -100,7 +100,7 @@ type SettingsSectionRowProps = {
   contentContainerStyle?: React.CSSProperties,
   descContainerStyle?: React.CSSProperties,
   childrenContainerStyle?: React.CSSProperties,
-  dataTestId?: string;
+  dataTestId?: string,
 };
 
 export const SettingsSectionRow = ({
@@ -114,7 +114,12 @@ export const SettingsSectionRow = ({
   childrenContainerStyle,
   dataTestId,
 }: SettingsSectionRowProps) => (
-  <SettingsSectionRowContainer onClick={onClick} tabIndex={-1} inset={inset} data-test-id ={dataTestId}>
+  <SettingsSectionRowContainer
+    onClick={onClick}
+    tabIndex={-1}
+    inset={inset}
+    data-test-id={dataTestId}
+  >
     <Box grow shrink style={{ marginRight: "10%", ...(contentContainerStyle || {}) }}>
       {title && (
         <Box ff="Inter|SemiBold" color="palette.text.shade100" fontSize={14}>
