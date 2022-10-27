@@ -13,7 +13,7 @@ import type { Account } from "@ledgerhq/types-live";
 import type { Transaction, TransactionStatus } from "./types";
 import { calculateFees, validateRecipient, isTaprootRecipient } from "./cache";
 import { TaprootNotActivated } from "./errors";
-import * as utils from "./wallet-btc/utils";
+import { computeDustAmount } from "./wallet-btc/utils";
 import { Currency } from "./wallet-btc";
 import cryptoFactory from "./wallet-btc/crypto/factory";
 
@@ -120,7 +120,7 @@ const getTransactionStatus = async (
   const txSize = Math.ceil(estimatedFees.toNumber() / t.feePerByte!.toNumber());
   const crypto = cryptoFactory(a.currency.id as Currency);
 
-  if (amount.gt(0) && amount.lt(utils.computeDustAmount(crypto, txSize))) {
+  if (amount.gt(0) && amount.lt(computeDustAmount(crypto, txSize))) {
     errors.dustLimit = new DustLimit();
   }
 
