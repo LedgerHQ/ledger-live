@@ -2,4 +2,4 @@
 "ledger-live-desktop": patch
 ---
 
-Add new entry points for feature flags settings
+Add hidden button in Welcome screen to access the settings.
