@@ -55,7 +55,18 @@ export const allLanguages: Locale[] = [
   "zh",
 ];
 
-export const prodStableLanguages: Locale[] = ["en", "fr", "es", "ru", "zh", "de", "tr", "ja", "ko"];
+export const prodStableLanguages: Locale[] = [
+  "en",
+  "fr",
+  "es",
+  "ru",
+  "zh",
+  "de",
+  "tr",
+  "ja",
+  "ko",
+  "pt",
+];
 
 /**
  * List of languages that should be prompted to existing users once if they are
@@ -80,7 +91,7 @@ export const defaultLocaleForLanguage = {
   nl: "nl-NL",
   no: "no-NO",
   pl: "pl-PL",
-  pt: "pt-PT",
+  pt: "pt-BR",
   ru: "ru-RU",
   sr: "sr-SR",
   sv: "sv-SV",
