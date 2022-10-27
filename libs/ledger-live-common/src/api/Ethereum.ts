@@ -132,7 +132,6 @@ export type API = {
     chainId: string
   ) => Promise<NFTCollectionMetadataResponse[]>;
   getAccountBalance: (address: string) => Promise<BigNumber>;
-  roughlyEstimateGasLimit: (address: string) => Promise<BigNumber>;
   getERC20ApprovalsPerContract: (
     owner: string,
     contract: string
@@ -142,10 +141,7 @@ export type API = {
       value: string;
     }>
   >;
-  getDryRunGasLimit: (
-    address: string,
-    request: EthereumGasLimitRequest
-  ) => Promise<BigNumber>;
+  getDryRunGasLimit: (request: EthereumGasLimitRequest) => Promise<BigNumber>;
   getGasTrackerBarometer: () => Promise<{
     low: BigNumber;
     medium: BigNumber;
@@ -311,26 +307,15 @@ export const apiForCurrency = (currency: CryptoCurrency): API => {
       }
     },
 
-    async roughlyEstimateGasLimit(address): Promise<BigNumber> {
-      const { data } = await network({
-        method: "GET",
-        url: `https://explorers.api-01.live.ledger-stg.com/blockchain/v3/eth/addresses/${address}/estimate-gas-limit`,
-        //url: `${baseURL}/address/${address}/estimate-gas-limit`,
-      });
-      return new BigNumber(data.estimated_gas_limit);
-    },
-
-    async getDryRunGasLimit(address, request): Promise<BigNumber> {
+    async getDryRunGasLimit(request): Promise<BigNumber> {
       const post: Record<string, any> = { ...request };
-      // .to not needed by backend as it's part of URL:
-      delete post.to;
       // backend use gas_price casing:
       post.gas_price = request.gasPrice;
       delete post.gasPrice;
       const { data } = await network({
         method: "POST",
-        url: `https://explorers.api-01.live.ledger-stg.com/blockchain/v3/eth/addresses/${address}/estimate-gas-limit`,
-        //url: `${baseURL}/address/${address}/estimate-gas-limit`,
+        // url: `${baseURL}/tx/estimate-gas-limit`,
+        url: `https://explorers.api-01.live.ledger-stg.com/blockchain/v4/eth/tx/estimate-gas-limit`,
         data: post,
       });
 

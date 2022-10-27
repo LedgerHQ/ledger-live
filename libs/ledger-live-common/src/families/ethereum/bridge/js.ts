@@ -179,7 +179,7 @@ const prepareTransaction = async (a, t: Transaction): Promise<Transaction> => {
   const request = inferEthereumGasLimitRequest(a, t);
 
   if (request.to) {
-    estimatedGasLimit = await estimateGasLimit(a, request.to, request);
+    estimatedGasLimit = await estimateGasLimit(a, request);
   }
 
   if (

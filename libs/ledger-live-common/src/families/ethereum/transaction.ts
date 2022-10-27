@@ -299,24 +299,18 @@ export function inferEthereumGasLimitRequest(
 }
 export const estimateGasLimit: (
   account: Account,
-  addr: string,
   request: EthereumGasLimitRequest
 ) => Promise<BigNumber> = makeLRUCache(
-  (account: Account, addr: string, request: EthereumGasLimitRequest) => {
+  (account: Account, request: EthereumGasLimitRequest) => {
     const api = apiForCurrency(account.currency);
-    return api
-      .getDryRunGasLimit(addr, request)
-      .then((value) =>
-        value.eq(21000) // regular ETH send should not be amplified
-          ? value
-          : value.times(getEnv("ETHEREUM_GAS_LIMIT_AMPLIFIER")).integerValue()
-      )
-      .catch(() => api.roughlyEstimateGasLimit(addr));
+    return api.getDryRunGasLimit(request).then((value) =>
+      value.eq(21000) // regular ETH send should not be amplified
+        ? value
+        : value.times(getEnv("ETHEREUM_GAS_LIMIT_AMPLIFIER")).integerValue()
+    );
   },
-  (a, addr, r) =>
+  (a, r) =>
     a.id +
-    "|" +
-    addr +
     "|" +
     String(r.from) +
     "+" +
