@@ -143,9 +143,7 @@ type CoinLogic = {
 export const bchToCashaddrAddressWithoutPrefix = (recipient): string =>
   recipient ? recipient.substring(recipient.indexOf(":") + 1) : recipient;
 
-export const perCoinLogic: Partial<
-  Record<Partial<CryptoCurrencyId>, CoinLogic>
-> = {
+export const perCoinLogic: Partial<Record<CryptoCurrencyId, CoinLogic>> = {
   zencash: {
     hasExtraData: true, // FIXME (legacy) investigate why we need this here and drop
   },
