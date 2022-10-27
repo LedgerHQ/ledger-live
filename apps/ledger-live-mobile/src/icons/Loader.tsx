@@ -1,4 +1,3 @@
-// @flow
 import React, { memo } from "react";
 import Svg, { Path } from "react-native-svg";
 
