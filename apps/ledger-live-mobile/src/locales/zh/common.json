@@ -85,8 +85,9 @@
     "moreInfo" : "更多信息",
     "buyEth" : "购买以太坊",
     "popular" : "热门",
+    "getSupport" : "获取支持",
     "comingSoon" : "敬请期待",
-    "getSupport" : "获取支持"
+    "restart" : "Restart"
   },
   "errors" : {
     "countervaluesUnavailable" : {
@@ -321,6 +322,14 @@
       "title" : "抱歉，无法重置",
       "description" : "请重试。如果问题依旧存在，请使用下面的按钮保存您的日志，并将其提供给 Ledger 客服。"
     },
+    "ImageCommitRefusedOnDevice" : {
+      "title" : "图像提交在设备上被拒绝",
+      "description" : "如果这张图片不合适，您可以使用另一张图片重试。"
+    },
+    "ImageLoadRefusedOnDevice" : {
+      "title" : "图像加载在设备上被拒绝",
+      "description" : "如果这张图片不合适，您可以使用另一张图片重试。"
+    },
     "InvalidAddress" : {
       "title" : "该{{currencyName}} 地址无效"
     },
@@ -412,6 +421,10 @@
     "NotEnoughBalance" : {
       "title" : "抱歉，资金不足",
       "description" : "请确保该账户资金充足。"
+    },
+    "NoSuchAppOnProvider" : {
+      "title" : "无法为您的特定配置找到 {{appName}} 应用程序。",
+      "description" : "尝试从管理器重新安装应用程序"
     },
     "NotEnoughGas" : {
       "title" : "以太币 ETH 不足以支付网络费用",
@@ -728,6 +741,9 @@
     "ImageProcessingError" : {
       "title" : "图片处理失败",
       "description" : "请使用另一张图片重试"
+    },
+    "HederaAddAccountError" : {
+      "title" : "您的账户尚未添加。请再次尝试。"
     }
   },
   "crash" : {
@@ -775,6 +791,9 @@
     "failed" : {
       "biometrics" : {
         "title" : "{{biometricsType}} 解锁失败",
+        "touchid" : "TouchID",
+        "faceid" : "FaceID",
+        "fingerprint" : "指纹",
         "description" : "请输入您的密码后继续操作",
         "authenticate" : "请使用 Ledger Live 应用程序验证身份"
       },
@@ -803,7 +822,10 @@
     },
     "enableBiometrics" : {
       "title" : "{{biometricsType}}",
-      "desc" : "使用 {{biometricsType}} 解锁"
+      "desc" : "使用 {{biometricsType}} 解锁",
+      "touchid" : "TouchID",
+      "faceid" : "FaceID",
+      "fingerprint" : "指纹"
     }
   },
   "reset" : {
@@ -1029,6 +1051,21 @@
     "comingSoon" : "敬请期待",
     "mostPopular" : "最受欢迎"
   },
+  "installSetOfApps" : {
+    "landing" : {
+      "estimatedTime" : "{{ minutes }} 分钟",
+      "title" : "{{ productName }} 使用应用程序完成安全的区块链交易",
+      "subtitle" : "我们建议下载一组默认应用程序。您以后可以下载更多。",
+      "installCTA" : "安装应用程序",
+      "skipCTA" : "我以后再下载"
+    },
+    "ongoing" : {
+      "loading" : "正在加载……",
+      "resolving" : "解决依赖关系",
+      "progress" : "正在安装应用程序 {{progress}}%",
+      "disclaimer" : "{{ productName }} 上的应用程序用于批准交易。您可以随时添加或删除它们。"
+    }
+  },
   "onboarding" : {
     "stepWelcome" : {
       "title" : "欢迎使用 Ledger",
@@ -1094,6 +1131,10 @@
         "title" : "以英语开始",
         "cta" : "知道了！",
         "desc" : "为了让大家更好地使用 Ledger，我们正在推出其他语言版本。需要注意的是，Ledger 其他功能目前只有英语版可用。"
+      },
+      "RestartModal" : {
+        "title" : "Restart required",
+        "paragraph" : "The selected language requires the application to restart. Are you sure you want to continue?"
       }
     },
     "stepSelectDevice" : {
@@ -1101,6 +1142,7 @@
       "nanoS" : "Nano S",
       "nanoSP" : "Nano S Plus",
       "nanoX" : "Nano X",
+      "nanoFTS" : "Nano FTS",
       "blue" : "Blue",
       "chooseDevice" : "选择您的设备"
     },
@@ -1639,10 +1681,134 @@
         "subtitle" : "在您的 {{productName}} 上确认代码"
       },
       "error" : {
-        "title" : "配对成功",
-        "subtitle" : "似乎出了点问题！检查蓝牙是否开启，以及 {{productName}} 是否在附近",
+        "title" : "配对不成功",
+        "subtitle" : "似乎出了点问题！\n检查蓝牙是否已打开，以及 {{productName}} 是否在附近。",
         "retryCta" : "请重试"
       }
+    }
+  },
+  "syncOnboarding" : {
+    "title" : "设置 {{deviceName}}",
+    "estimatedTimeFormat" : "{{estimatedTime}} 分钟",
+    "deviceSelection" : {
+      "title" : "您拥有何种设备？",
+      "subtitle" : "选择您想要通过 Ledger Live 设置的 Ledger 钱包",
+      "brand" : "Ledger",
+      "setupTime" : "{{time}} 分钟"
+    },
+    "scanning" : {
+      "title" : "正在寻找您的 {{productName}}",
+      "description" : "请确保您的 {{productName}} 已解锁并且已启用蓝牙"
+    },
+    "pairing" : {
+      "success" : {
+        "title" : "已和 {{deviceName}} 配对"
+      },
+      "loading" : {
+        "title" : "正在和 {{deviceName}} 配对",
+        "subtitle" : "在您的 {{productName}} 上确认代码"
+      },
+      "error" : {
+        "title" : "配对不成功",
+        "subtitle" : "似乎出了点问题！检查蓝牙是否开启，以及 {{productName}} 是否在附近"
+      }
+    },
+    "languageSelect" : {
+      "title" : "应用程序语言"
+    },
+    "firmwareLanguageUpdateDrawer" : {
+      "title" : "更改您 {{productName}} 的语言",
+      "description" : "Ledger Live 现在支持{{newLanguage}}。您想在 {{productName}} 上也使用{{newLanguage}}吗？",
+      "updateCta" : "更改语言",
+      "cancelCta" : "取消"
+    },
+    "desyncDrawer" : {
+      "title" : "无法连接 {{productName}}",
+      "description" : "请确保您的 {{productName}} 在附近并且已经解锁。检查手机蓝牙是否启用",
+      "retryCta" : "请重试",
+      "helpCta" : "获得帮助"
+    },
+    "resyncOverlay" : {
+      "content" : "您的 {{productName}} 似乎已断开连接。正在重新连接"
+    },
+    "helpDrawer" : {
+      "title" : "需要安装手册方面的一些帮助？",
+      "description" : "Lorem Elsass ipsum aliquam bissame Ober schae ffolsheim gehts messti de Bischheim tellus blottkopf, dui sed libero. hopla libero, placerat leo eget Gal",
+      "docCta" : "查看我们的常见问题解答",
+      "supportCta" : "人工服务"
+    },
+    "pairingStep" : {
+      "title" : "{{productName}} 已配对",
+      "description" : "请继续设置 {{productName}}，如需分步协助，请返回此处查看"
+    },
+    "pinStep" : {
+      "title" : "选择您的识别码",
+      "description" : "识别码可防止任何人未经许可访问您的 {{productName}}。切勿告诉他人",
+      "warning" : "任何知晓识别码的人都能够访问您的 {{productName}} 并永久窃取您的资产"
+    },
+    "seedStep" : {
+      "title" : "设置恢复短语",
+      "description" : "恢复短语是私钥的备份，是由 24 个助记词组成的秘密列表。您的 {{productName}} 会生成独一无二的恢复短语。Ledger 不会保存它的副本"
+    },
+    "softwareChecksSteps" : {
+      "title" : "检查操作系统",
+      "genuineCheckRequestDrawer" : {
+        "title" : "请确保您的 {{productName}} 为正品",
+        "checkCta" : "检查是否为正品"
+      },
+      "allowManagerDrawer" : {
+        "wording" : "Ledger Live"
+      },
+      "genuineCheckCancelledDrawer" : {
+        "title" : "您取消了 Nano 真伪检查",
+        "description" : "该检查对确保能够安全使用 {{productName}} 而言至关重要",
+        "retryCta" : "再次运行真伪检查",
+        "skipCta" : "以后再说"
+      },
+      "updateAvailableDrawer" : {
+        "title" : "找到新软件",
+        "description" : "要使用最新的安全功能，我们强烈建议更新您的 {{productName}}",
+        "updateCta" : "更新"
+      },
+      "genuineCheckStep" : {
+        "inactive" : {
+          "title" : "真伪检查"
+        },
+        "active" : {
+          "title" : "正在检查 {{productName}}"
+        },
+        "completed" : {
+          "title" : "您的 {{productName}} 为正品"
+        },
+        "failed" : {
+          "title" : "未检查设备安全性"
+        }
+      },
+      "firmwareUpdateStep" : {
+        "inactive" : {
+          "title" : "软件检查"
+        },
+        "active" : {
+          "title" : "正在检查软件版本"
+        },
+        "completed" : {
+          "updateAvailable" : {
+            "title" : "软件版本 {{firmwareVersion}} 已可用"
+          },
+          "noUpdateAvailable" : {
+            "title" : "软件为最新版本"
+          }
+        },
+        "failed" : {
+          "title" : "软件更新失败"
+        }
+      }
+    },
+    "readyStep" : {
+      "title" : "{{productName}} 已经就绪"
+    },
+    "completion" : {
+      "title" : "现在一切尽在您的掌控。"
     }
   },
   "tabs" : {
@@ -1974,6 +2140,7 @@
       },
       "advanced" : {
         "title" : "高级日志",
+        "warningDerivation" : "这是一个 {{tag}} xpub。将其导入第三方钱包时，请选择相同的衍生模式。",
         "desc" : ""
       }
     },
@@ -3309,6 +3476,10 @@
     "appNotInstalled" : "请安装 {{appName}} 应用程序",
     "appNotInstalled_plural" : "请安装 {{appName}} 应用程序",
     "useAnotherDevice" : "使用其他设备",
+    "deviceNotOnboarded" : {
+      "title" : "您的 Ledger 设备尚未准备就绪",
+      "description" : "您需要先设置 {{deviceName}}。我们将引导您完成设备设置流程"
+    },
     "deviceInBootloader" : {
       "title" : "设备处于 Bootloader（引导加载程序）模式。",
       "description" : "点击“Continue”（继续）进行更新。"
@@ -3457,6 +3628,23 @@
   "manager" : {
     "tabTitle" : "我的 Ledger",
     "title" : "我的 Ledger",
+    "selectDevice" : {
+      "saved" : {
+        "title" : "设备",
+        "description" : "管理您保存的 Ledger 设备"
+      },
+      "addNewCTA" : "添加新的",
+      "connectExistingLedger" : "连接现有 Ledger 设备",
+      "connectExistingLedgerDescription" : "已有设置过的 Ledger 设备？使用蓝牙配对",
+      "setUpNewLedger" : "设置新 Ledger 设备",
+      "setUpNewLedgerDescription" : "购买了新 Ledger 设备？点击此处完成设置",
+      "buyDeviceCTA" : "需要新 Ledger 设备？购买一台",
+      "item" : {
+        "usb" : "通过 USB 连接",
+        "available" : "可用。点按以连接",
+        "unavailable" : "未连接"
+      }
+    },
     "connect" : "选择您的设备",
     "appsCatalog" : "应用程序目录",
     "installedApps" : "已安装的应用程序",
@@ -3663,6 +3851,17 @@
       "description" : "将您的 Ledger Nano 固件连接到桌面板的 Ledger Live 应用程序以更新",
       "pleaseConnectUsbTitle" : "需要使用 USB 线",
       "pleaseConnectUsbDescription" : "要开始固件更新，请使用 USB 线将 {{deviceName}} 插入手机。"
+    }
+  },
+  "firmwareUpdateRequired" : {
+    "updateAvailableFromLLM" : {
+      "title" : "Firmware update required",
+      "description" : "To perform this action, you first need to update the firmware of your {{ deviceName }}.",
+      "cta" : "Go to My Ledger"
+    },
+    "updateNotAvailableFromLLM" : {
+      "title" : "Firmware update required on computer",
+      "description" : "Update your {{ deviceName }} on Ledger Live Desktop."
     }
   },
   "FirmwareUpdateReleaseNotes" : {
@@ -5123,7 +5322,11 @@
       "retrySearchParams" : "请用其他参数重新进行搜索。",
       "trackFavAssets" : "追踪您最喜爱的",
       "clickOnStarIcon" : "点击资产旁边的星形图标将自动把它们添加到您的收藏夹。",
-      "browseAssets" : "浏览资产"
+      "browseAssets" : "浏览资产",
+      "starred" : {
+        "title" : "跟踪您喜欢的资产！",
+        "desc" : "点击资产旁的星形图标，即可自动添加到收藏夹"
+      }
     }
   },
   "nft" : {
@@ -5179,6 +5382,8 @@
     }
   },
   "customImage" : {
+    "title" : "锁屏图片",
+    "replace" : "替换",
     "drawer" : {
       "title" : "选择一张图片",
       "options" : {
@@ -5188,7 +5393,18 @@
     "cropImage" : "裁剪图片",
     "chooseConstrast" : "选择对比度",
     "uploadAnotherImage" : "上传另一张图片",
-    "selectContrast" : "选择对比度"
+    "selectContrast" : "选择对比度",
+    "allowPreview" : "允许在 {{productName}} 上预览图片",
+    "loadingPicture" : "正在 {{productName}} 上加载图片",
+    "pictureLoaded" : "图片已加载",
+    "timeDisclaimer" : "可能最多需要 30 秒",
+    "imageLoaded" : "图片已加载到 {{productName}}",
+    "confirmPicture" : "在 {{productName}} 上确认",
+    "title" : "选择图片。\n创造氛围。\n打造您的专属 Ledger。",
+    "subtitle" : "设置您喜欢的 NFT 的图片或手机中的图片。",
+    "customImage" : "自定义图片",
+    "choosePicture" : "选择图片",
+    "doThisLater" : "以后再说"
   },
   "postOnboarding" : {
     "hub" : {
@@ -5202,6 +5418,14 @@
     "walletCard" : {
       "title" : "快速入门",
       "description" : "点击此处使用 Ledger Live 完成 {{productName}} 设置"
+    },
+    "actions" : {
+      "customImage" : {
+        "title" : "个性化我的 Ledger 设备",
+        "description" : "通过添加图片",
+        "popupLabel" : "设备已个性化",
+        "hubTitleAfterAction" : "那个屏幕看起来很简洁"
+      }
     }
   }
 }
