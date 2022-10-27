@@ -1,9 +1,7 @@
-// @flow
 import React, { useEffect, Component } from "react";
-import { createStructuredSelector } from "reselect";
 import { Trans, useTranslation } from "react-i18next";
-import { connect } from "react-redux";
-import type { Device, Action } from "@ledgerhq/live-common/hw/actions/types";
+import { useDispatch, useSelector } from "react-redux";
+import { Action } from "@ledgerhq/live-common/hw/actions/types";
 import {
   OutdatedApp,
   LatestFirmwareVersionRequired,
@@ -13,7 +11,7 @@ import {
 import { getCurrentDevice } from "~/renderer/reducers/devices";
 import { setPreferredDeviceModel, setLastSeenDeviceInfo } from "~/renderer/actions/settings";
 import { preferredDeviceModelSelector } from "~/renderer/reducers/settings";
-import type { DeviceModelId } from "@ledgerhq/devices";
+import { DeviceModelId } from "@ledgerhq/devices";
 import AutoRepair from "~/renderer/components/AutoRepair";
 import TransactionConfirm from "~/renderer/components/TransactionConfirm";
 import SignMessageConfirm from "~/renderer/components/SignMessageConfirm";
@@ -38,26 +36,22 @@ import {
   renderInstallingLanguage,
 } from "./rendering";
 
-type OwnProps<R, H, P> = {
-  overridesPreferredDeviceModel?: DeviceModelId,
-  Result?: React$ComponentType<P>,
-  onResult?: P => void,
-  onError?: () => void,
-  action: Action<R, H, P>,
-  request: R,
+type Props<R, H, P> = {
+  overridesPreferredDeviceModel?: DeviceModelId;
+  Result?: React.ComponentType<P>;
+  onResult?: (_: P) => void;
+  onError?: () => void;
+  action: Action<R, H, P>;
+  request: R;
+  status?: H;
+  payload?: P | null | undefined;
+  analyticsPropertyFlow?: string; // if there are some events to be sent, there will be a property "flow" with this value (e.g: "send"/"receive"/"add account" etc.)
 };
 
-type Props<R, H, P> = OwnProps<R, H, P> & {
-  reduxDevice?: Device,
-  preferredDeviceModel: DeviceModelId,
-  dispatch: (*) => void,
-  analyticsPropertyFlow?: string, // if there are some events to be sent, there will be a property "flow" with this value (e.g: "send"/"receive"/"add account" etc.)
-};
-
-class OnResult extends Component<*> {
+class OnResult<R, H, P> extends Component<P & { onResult: Props<R, H, P>["onResult"] }> {
   componentDidMount() {
-    const { onResult, ...rest } = this.props;
-    onResult(rest);
+    const { onResult } = this.props;
+    onResult && onResult(this.props);
   }
 
   render() {
@@ -65,29 +59,16 @@ class OnResult extends Component<*> {
   }
 }
 
-/**
- * Perform an action involving a device.
- * @prop action: one of the actions/*
- * @prop request: an object that is the input of that action
- * @prop Result optional: an action produces a result, this gives a component to render it
- * @prop onResult optional: an action produces a result, this gives a callback to be called with it
- */
-const DeviceAction = <R, H, P>({
-  // $FlowFixMe god of flow help me
-  action,
-  // $FlowFixMe god of flow help me
+export const DeviceActionDefaultRendering = <R, H, P>({
+  status: hookState,
+  payload,
   request,
   Result,
   onResult,
   onError,
-  // $FlowFixMe god of flow help me
-  reduxDevice,
   overridesPreferredDeviceModel,
-  preferredDeviceModel,
-  dispatch,
   analyticsPropertyFlow,
-}: Props<R, H, P>) => {
-  const hookState = action.useHook(reduxDevice, request);
+}: DefaultRenderingProps<R, H, P>) => {
   const {
     appAndVersion,
     device,
@@ -128,6 +109,9 @@ const DeviceAction = <R, H, P>({
     initSellError,
     signMessageRequested,
   } = hookState;
+
+  const dispatch = useDispatch();
+  const preferredDeviceModel = useSelector(preferredDeviceModelSelector);
 
   const type = useTheme("colors.palette.type");
 
@@ -372,8 +356,6 @@ const DeviceAction = <R, H, P>({
     });
   }
 
-  const payload = action.mapResult(hookState);
-
   if (!payload) {
     return null;
   }
@@ -386,11 +368,28 @@ const DeviceAction = <R, H, P>({
   );
 };
 
-const mapStateToProps = createStructuredSelector({
-  reduxDevice: getCurrentDevice,
-  preferredDeviceModel: preferredDeviceModelSelector,
-});
+/**
+ * Perform an action involving a device.
+ * @prop action: one of the actions/*
+ * @prop request: an object that is the input of that action
+ * @prop Result optional: an action produces a result, this gives a component to render it
+ * @prop onResult optional: an action produces a result, this gives a callback to be called with it
+ */
+const DeviceAction = <R, H, P>({ action, request, ...props }: Props<R, H, P>) => {
+  const device = useSelector(getCurrentDevice);
+  const hookState = action.useHook(device, request);
+  const payload = action.mapResult(hookState);
 
-const component: React$ComponentType<OwnProps<*, *, *>> = connect(mapStateToProps)(DeviceAction);
+  return (
+    <DeviceActionDefaultRendering
+      status={hookState}
+      request={request}
+      payload={payload}
+      {...props}
+    />
+  );
+};
 
-export default component;
+type DefaultRenderingProps<R, H, P> = Omit<Props<R, H, P>, "device" | "action">;
+
+export default DeviceAction;
