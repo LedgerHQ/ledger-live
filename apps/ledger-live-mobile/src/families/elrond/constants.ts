@@ -1,25 +1,8 @@
-const type = "mainnet";
+import BigNumber from "bignumber.js";
 
-const ledger = "erd1qqqqqqqqqqqqqqqpqqqqqqqqqqqqqqqqqqqqqqqqqqqqq9lllllsf3mp40";
-const constants = {
-  devnet: {
-    explorer: "https://devnet-explorer.elrond.com",
-    identities: "https://devnet-api.elrond.com/identities",
-    delegations: "https://devnet-delegation-api.elrond.com",
-    egldLabel: "xEGLD",
-  },
-  testnet: {
-    explorer: "https://testnet-explorer.elrond.com",
-    identities: "https://testnet-api.elrond.com/identities",
-    delegations: "https://testnet-delegation-api.elrond.com",
-    egldLabel: "xEGLD",
-  },
-  mainnet: {
-    explorer: "https://explorer.elrond.com",
-    identities: "https://api.elrond.com/identities",
-    delegations: "https://delegation-api.elrond.com",
-    egldLabel: "EGLD",
-  },
-}[type];
+export const ELROND_LEDGER_ADDRESS =
+  "erd1qqqqqqqqqqqqqqqpqqqqqqqqqqqqqqqqqqqqqqqqqqqqq9lllllsf3mp40";
 
-export { constants, ledger };
+export const MIN_DELEGATION_AMOUNT: BigNumber = new BigNumber(
+  1000000000000000000,
+);

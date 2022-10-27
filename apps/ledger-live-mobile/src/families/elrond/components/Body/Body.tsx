@@ -11,7 +11,8 @@ import type { BodyPropsType } from "./types";
 import type { DrawerPropsType } from "./components/Drawer/types";
 import type { DelegationType } from "../../types";
 
-import { denominate, randomizeProviders } from "../../helpers";
+import { denominate } from "../../helpers/denominate";
+import { randomizeProviders } from "../../helpers/randomizeProviders";
 
 import Delegations from "./components/Delegations";
 import Unbondings from "./components/Unbondings";

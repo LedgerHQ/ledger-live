@@ -1,5 +1,6 @@
 import React, { useMemo } from "react";
 import { useTranslation } from "react-i18next";
+import { getAccountUnit } from "@ledgerhq/live-common/account/helpers";
 import { Linking } from "react-native";
 
 import type { ElrondAccount } from "@ledgerhq/live-common/families/elrond/types";
@@ -10,8 +11,7 @@ import DateFromNow from "../../../../../../../components/DateFromNow";
 import LText from "../../../../../../../components/LText";
 import Touchable from "../../../../../../../components/Touchable";
 
-import { constants } from "../../../../../constants";
-import { denominate } from "../../../../../helpers";
+import { denominate } from "../../../../../helpers/denominate";
 
 import styles from "../styles";
 
@@ -26,6 +26,7 @@ const useDrawerItems = (
   const { type, validator, claimableRewards, seconds } = data;
   const { t } = useTranslation();
 
+  const unit = useMemo(() => getAccountUnit(account), [account]);
   const [isDelegation, isUndelegation] = useMemo(
     () => [type === "delegation", type === "undelegation"],
     [type],
@@ -102,7 +103,7 @@ const useDrawerItems = (
             event="DelegationOpenExplorer"
             onPress={() =>
               Linking.openURL(
-                `${constants.explorer}/providers/${validator.contract}`,
+                `https://explorer.elrond.com/providers/${validator.contract}`,
               )
             }
           >
@@ -166,13 +167,13 @@ const useDrawerItems = (
                   semiBold={true}
                   style={styles.valueText}
                 >
-                  {`${rewards} ${constants.egldLabel}`}
+                  {`${rewards} ${unit.code}`}
                 </LText>
               ),
             },
           ]
         : [],
-    [isDelegation, rewards, t],
+    [isDelegation, rewards, t, unit.code],
   );
 
   /*

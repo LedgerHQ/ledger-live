@@ -10,7 +10,8 @@ import CurrencyUnitValue from "../../../../../../../../../components/CurrencyUni
 import ArrowRight from "../../../../../../../../../icons/ArrowRight";
 import Circle from "../../../../../../../../../components/Circle";
 import LedgerLogo from "../../../../../../../../../icons/LiveLogo";
-import { ledger } from "../../../../../../../constants";
+
+import { ELROND_LEDGER_ADDRESS } from "../../../../../../../constants";
 
 import type { ItemPropsType } from "./types";
 
@@ -37,7 +38,7 @@ const Item = (props: ItemPropsType) => {
     >
       <View style={styles.iconWrapper}>
         <Circle crop={true} size={32}>
-          {ledger === contract ? (
+          {ELROND_LEDGER_ADDRESS === contract ? (
             <LedgerLogo size={32 * 0.7} color={colors.text} />
           ) : (
             <FirstLetterIcon

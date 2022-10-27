@@ -1,5 +1,4 @@
 import React, { useCallback, useMemo, useState } from "react";
-
 import {
   View,
   Keyboard,
@@ -25,8 +24,8 @@ import Warning from "../../../../../../../icons/Warning";
 import Check from "../../../../../../../icons/Check";
 import KeyboardView from "../../../../../../../components/KeyboardView";
 
-import { denominate, nominate } from "../../../../../helpers";
-import { constants } from "../../../../../constants";
+import { denominate } from "../../../../../helpers/denominate";
+import { MIN_DELEGATION_AMOUNT } from "../../../../../constants";
 
 import type { PickAmountPropsType } from "./types";
 
@@ -74,15 +73,6 @@ const PickAmount = (props: PickAmountPropsType) => {
   );
 
   /*
-   * Create a minimum delegation amount condition.
-   */
-
-  const minimumDelegationAmount = useMemo(
-    () => new BigNumber(nominate("1")),
-    [],
-  );
-
-  /*
    * Check if the currently selected amount exceeds the maximum amount of assets available.
    */
 
@@ -102,8 +92,8 @@ const PickAmount = (props: PickAmountPropsType) => {
    */
 
   const amountBelowMinimum = useMemo(
-    () => (value.eq(amount) ? false : value.lt(minimumDelegationAmount)),
-    [amount, minimumDelegationAmount, value],
+    () => (value.eq(amount) ? false : value.lt(MIN_DELEGATION_AMOUNT)),
+    [amount, value],
   );
 
   /*
@@ -112,9 +102,9 @@ const PickAmount = (props: PickAmountPropsType) => {
 
   const amountRemainingInvalid = useMemo(
     () =>
-      amount.minus(value).lt(minimumDelegationAmount) &&
+      amount.minus(value).lt(MIN_DELEGATION_AMOUNT) &&
       !amount.minus(value).isZero(),
-    [amount, minimumDelegationAmount, value],
+    [amount, value],
   );
 
   /*
@@ -130,7 +120,7 @@ const PickAmount = (props: PickAmountPropsType) => {
   );
 
   const [denominatedMinimum, denominatedMaximum] = [
-    denominate({ input: String(minimumDelegationAmount), decimals: 4 }),
+    denominate({ input: String(MIN_DELEGATION_AMOUNT), decimals: 4 }),
     denominate({ input: String(amount), decimals: 4 }),
   ];
 
@@ -234,17 +224,15 @@ const PickAmount = (props: PickAmountPropsType) => {
                       i18nKey={
                         amountAboveMaximum
                           ? "elrond.undelegation.flow.steps.amount.incorrectAmount"
-                          : amountAboveMaximum
+                          : amountBelowMinimum
                           ? "elrond.undelegation.flow.steps.amount.minAmount"
                           : "elrond.undelegation.flow.steps.amount.minRemaining"
                       }
                       values={{
-                        min: `${denominatedMinimum} ${constants.egldLabel}`,
-                        max: `${denominatedMaximum} ${constants.egldLabel}`,
+                        min: `${denominatedMinimum} ${unit.code}`,
+                        max: `${denominatedMaximum} ${unit.code}`,
                       }}
-                    >
-                      <LText semiBold={true}>{""}</LText>
-                    </Trans>
+                    />
                   </LText>
                 </View>
               )}

@@ -27,8 +27,8 @@ import Warning from "../../../../../../../icons/Warning";
 import Check from "../../../../../../../icons/Check";
 import KeyboardView from "../../../../../../../components/KeyboardView";
 
-import { denominate, nominate } from "../../../../../helpers";
-import { constants } from "../../../../../constants";
+import { denominate } from "../../../../../helpers/denominate";
+import { MIN_DELEGATION_AMOUNT } from "../../../../../constants";
 
 import styles from "./styles";
 
@@ -83,15 +83,6 @@ const PickAmount = (props: PickAmountPropsType) => {
   );
 
   /*
-   * Create a minimum delegation amount condition.
-   */
-
-  const minimumDelegationAmount = useMemo(
-    () => new BigNumber(nominate("1")),
-    [],
-  );
-
-  /*
    * Check maximum spendable amount of assets has been selected for delegation.
    */
 
@@ -105,15 +96,15 @@ const PickAmount = (props: PickAmountPropsType) => {
    */
 
   const delegationBelowMinimum = useMemo(() => {
-    const amountBelowMinimum = amount.lt(minimumDelegationAmount);
-    const balanceBelowMinimum = maxSpendable.lt(minimumDelegationAmount);
+    const amountBelowMinimum = amount.lt(MIN_DELEGATION_AMOUNT);
+    const balanceBelowMinimum = maxSpendable.lt(MIN_DELEGATION_AMOUNT);
 
     if (amount.eq(0)) {
       return false;
     }
 
     return amountBelowMinimum || balanceBelowMinimum;
-  }, [amount, maxSpendable, minimumDelegationAmount]);
+  }, [amount, maxSpendable]);
 
   /*
    * Check if the currently selected amount exceeds the maximum amount of assets available.
@@ -130,7 +121,7 @@ const PickAmount = (props: PickAmountPropsType) => {
     !delegationBelowMinimum;
 
   const [denominatedMinimum, denominatedMaximum] = [
-    denominate({ input: String(minimumDelegationAmount), decimals: 4 }),
+    denominate({ input: String(MIN_DELEGATION_AMOUNT), decimals: 4 }),
     denominate({ input: String(maxSpendable), decimals: 4 }),
   ];
 
@@ -226,8 +217,8 @@ const PickAmount = (props: PickAmountPropsType) => {
                           : "elrond.delegation.flow.steps.amount.incorrectAmount"
                       }
                       values={{
-                        min: `${denominatedMinimum} ${constants.egldLabel}`,
-                        max: `${denominatedMaximum} ${constants.egldLabel}`,
+                        min: `${denominatedMinimum} ${unit.code}`,
+                        max: `${denominatedMaximum} ${unit.code}`,
                       }}
                     >
                       <LText semiBold={true}>{""}</LText>

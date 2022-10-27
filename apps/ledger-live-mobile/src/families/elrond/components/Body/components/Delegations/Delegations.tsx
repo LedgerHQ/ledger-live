@@ -15,10 +15,10 @@ import type { DelegationsPropsType } from "./types";
 import AccountDelegationInfo from "../../../../../../components/AccountDelegationInfo";
 import AccountSectionLabel from "../../../../../../components/AccountSectionLabel";
 import IlluRewards from "../../../../../../icons/images/Rewards";
+import { ScreenName, NavigatorName } from "../../../../../../const";
 
 import { urls } from "../../../../../../config/urls";
-import { ScreenName, NavigatorName } from "../../../../../../const";
-import { denominate } from "../../../../helpers";
+import { denominate } from "../../../../helpers/denominate";
 
 import Delegation from "./components/Delegation";
 import Right from "./components/Right";
@@ -63,12 +63,7 @@ const Delegations = (props: DelegationsPropsType) => {
 
     navigation.navigate(NavigatorName.ElrondDelegationFlow, {
       screen,
-      params: {
-        accountId: account.id,
-        validators,
-        delegations,
-        account,
-      },
+      params: { validators, account },
     });
   }, [navigation, account, delegations, validators]);
 

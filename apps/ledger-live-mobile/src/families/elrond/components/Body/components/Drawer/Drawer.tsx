@@ -6,7 +6,8 @@ import DelegationDrawer from "../../../../../../components/DelegationDrawer";
 import Circle from "../../../../../../components/Circle";
 import FirstLetterIcon from "../../../../../../components/FirstLetterIcon";
 import LedgerLogo from "../../../../../../icons/LiveLogo";
-import { ledger } from "../../../../constants";
+
+import { ELROND_LEDGER_ADDRESS } from "../../../../constants";
 
 import useDrawerActions from "./hooks/useDrawerActions";
 import useDrawerItems from "./hooks/useDrawerItems";
@@ -47,7 +48,7 @@ const Drawer = (props: DrawerPropsType) => {
       data={items}
       ValidatorImage={({ size }) => (
         <Circle crop={true} size={size}>
-          {ledger === data.validator.contract ? (
+          {ELROND_LEDGER_ADDRESS === data.validator.contract ? (
             <LedgerLogo size={size * 0.7} color={colors.text} />
           ) : (
             <FirstLetterIcon

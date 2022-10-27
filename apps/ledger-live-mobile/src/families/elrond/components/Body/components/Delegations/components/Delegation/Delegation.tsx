@@ -12,8 +12,8 @@ import LedgerLogo from "../../../../../../../../icons/LiveLogo";
 import FirstLetterIcon from "../../../../../../../../components/FirstLetterIcon";
 import Circle from "../../../../../../../../components/Circle";
 
-import { denominate } from "../../../../../../helpers";
-import { constants, ledger } from "../../../../../../constants";
+import { denominate } from "../../../../../../helpers/denominate";
+import { ELROND_LEDGER_ADDRESS } from "../../../../../../constants";
 
 import type { DelegationPropsType } from "./types";
 
@@ -84,7 +84,7 @@ const Delegation = (props: DelegationPropsType) => {
         <View style={styles.icon}>
           {validator && (
             <Circle crop={true} size={42}>
-              {ledger === validator.contract ? (
+              {ELROND_LEDGER_ADDRESS === validator.contract ? (
                 <LedgerLogo size={42 * 0.7} color={colors.text} />
               ) : (
                 <FirstLetterIcon
@@ -114,7 +114,7 @@ const Delegation = (props: DelegationPropsType) => {
 
         <View style={styles.rightWrapper}>
           <Text variant="body" fontWeight="semiBold">
-            {amount} {constants.egldLabel}
+            {amount} {currency.ticker}
           </Text>
 
           <LText color="grey">

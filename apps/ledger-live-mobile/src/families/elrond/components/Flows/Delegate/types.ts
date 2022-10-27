@@ -7,19 +7,16 @@ import type {
   TransactionStatus,
 } from "@ledgerhq/live-common/families/elrond/types";
 import type { ScreenName } from "../../../../../const";
-import type { DelegationType } from "../../../types";
 
 export type ElrondDelegationFlowParamList = {
   [ScreenName.ElrondDelegationStarted]: {
-    delegations: DelegationType[];
-    transaction: Transaction;
     validators: ElrondProvider[];
     account: ElrondAccount;
   };
   [ScreenName.ElrondDelegationValidator]: {
     validators: ElrondProvider[];
     account: ElrondAccount;
-    transaction: Transaction;
+    transaction?: Transaction;
   };
   [ScreenName.ElrondDelegationValidatorList]: {
     transaction: Transaction | null | undefined;
@@ -30,6 +27,7 @@ export type ElrondDelegationFlowParamList = {
     transaction: Transaction;
     validators: ElrondProvider[];
     account: ElrondAccount;
+    validatorName: string;
   };
   [ScreenName.ElrondDelegationSelectDevice]: {
     accountId: string;

@@ -27,8 +27,9 @@ import { TrackScreen } from "../../../../../../../analytics";
 import { ScreenName } from "../../../../../../../const";
 
 import { rgba } from "../../../../../../../colors";
-import { denominate, handleTransactionStatus } from "../../../../../helpers";
-import { constants, ledger } from "../../../../../constants";
+import { denominate } from "../../../../../helpers/denominate";
+import { handleTransactionStatus } from "../../../../../helpers/handleTransactionStatus";
+import { ELROND_LEDGER_ADDRESS } from "../../../../../constants";
 
 import type { SetDelegationPropsType } from "./types";
 
@@ -54,7 +55,10 @@ const SetDelegation = (props: SetDelegationPropsType) => {
    */
 
   const defaultValidator = useMemo(
-    () => validators.find(validator => validator.contract === ledger),
+    () =>
+      validators.find(
+        validator => validator.contract === ELROND_LEDGER_ADDRESS,
+      ),
     [validators],
   );
 
@@ -155,9 +159,12 @@ const SetDelegation = (props: SetDelegationPropsType) => {
         account,
         validators,
         transaction,
+        validatorName: chosenValidator
+          ? chosenValidator.identity.name || chosenValidator.contract
+          : "",
       });
     }
-  }, [transaction, account, validators, navigation]);
+  }, [transaction, account, chosenValidator, validators, navigation]);
 
   /*
    * Callback function to be called when wanting to change the validator.
@@ -176,8 +183,10 @@ const SetDelegation = (props: SetDelegationPropsType) => {
    */
 
   const trackTransactionUpdate = useCallback(() => {
-    if (route.params.transaction) {
-      updateTransaction(() => route.params.transaction);
+    const returnedTransaction = route.params.transaction;
+
+    if (returnedTransaction) {
+      updateTransaction(() => returnedTransaction);
     }
   }, [route.params.transaction, updateTransaction]);
 
@@ -203,7 +212,7 @@ const SetDelegation = (props: SetDelegationPropsType) => {
       {
         callback: onChangeAmount,
         i18nKey: "elrond.delegation.iDelegate",
-        name: `${transactionAmount} ${constants.egldLabel}`,
+        name: `${transactionAmount} ${unit.code}`,
       },
       {
         callback: onChangeValidator,
@@ -213,7 +222,13 @@ const SetDelegation = (props: SetDelegationPropsType) => {
           : "",
       },
     ],
-    [onChangeAmount, onChangeValidator, transactionAmount, chosenValidator],
+    [
+      onChangeAmount,
+      onChangeValidator,
+      transactionAmount,
+      chosenValidator,
+      unit.code,
+    ],
   );
 
   /*
@@ -274,16 +289,23 @@ const SetDelegation = (props: SetDelegationPropsType) => {
             >
               <Animated.View style={{ transform }}>
                 <Circle crop size={64}>
-                  {chosenValidator && chosenValidator.contract === ledger ? (
-                    <LedgerLogo size={64 * 0.7} color={colors.text} />
-                  ) : (
-                    <FirstLetterIcon
-                      label={"name" ?? "-"}
-                      round={true}
-                      size={64}
-                      fontSize={24}
-                    />
-                  )}
+                  {chosenValidator ? (
+                    ELROND_LEDGER_ADDRESS === chosenValidator.contract ? (
+                      <LedgerLogo size={64 * 0.7} color={colors.text} />
+                    ) : (
+                      <FirstLetterIcon
+                        round={true}
+                        size={64}
+                        fontSize={24}
+                        label={
+                          chosenValidator
+                            ? chosenValidator.identity.name ||
+                              chosenValidator.contract
+                            : "-"
+                        }
+                      />
+                    )
+                  ) : null}
                 </Circle>
               </Animated.View>
 

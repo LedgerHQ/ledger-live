@@ -12,7 +12,7 @@ import Touchable from "../../../../../../../../../components/Touchable";
 import Circle from "../../../../../../../../../components/Circle";
 import LedgerLogo from "../../../../../../../../../icons/LiveLogo";
 
-import { ledger } from "../../../../../../../constants";
+import { ELROND_LEDGER_ADDRESS } from "../../../../../../../constants";
 
 import type { ItemPropsType } from "./types";
 
@@ -28,20 +28,25 @@ const Item = (props: ItemPropsType) => {
   const name = item.identity.name || item.contract;
 
   /*
-   * Return the rendered component.
+   * Return null in case the item has a setting of disabled.
+   */
+
+  if (item.disabled) {
+    return null;
+  }
+
+  /*
+   * Return the rendered component if the item isn't disabled.
    */
 
   return (
     <Touchable
       event="DelegationFlowChosevalidator"
       onPress={() => onSelect(item)}
-      eventProperties={{
-        validatorName: name,
-      }}
     >
       <View style={styles.validator}>
         <Circle crop={true} size={32}>
-          {ledger === item.contract ? (
+          {ELROND_LEDGER_ADDRESS === item.contract ? (
             <LedgerLogo size={32 * 0.7} color={colors.text} />
           ) : (
             <FirstLetterIcon

@@ -12,8 +12,8 @@ import FirstLetterIcon from "../../../../../../../../components/FirstLetterIcon"
 import LedgerLogo from "../../../../../../../../icons/LiveLogo";
 import Circle from "../../../../../../../../components/Circle";
 
-import { denominate } from "../../../../../../helpers";
-import { constants, ledger } from "../../../../../../constants";
+import { denominate } from "../../../../../../helpers/denominate";
+import { ELROND_LEDGER_ADDRESS } from "../../../../../../constants";
 
 import type { UnbondingPropsType } from "./types";
 
@@ -69,7 +69,7 @@ const Unbonding = (props: UnbondingPropsType) => {
         <View style={styles.icon}>
           {validator && (
             <Circle crop={true} size={42}>
-              {ledger === validator.contract ? (
+              {ELROND_LEDGER_ADDRESS === validator.contract ? (
                 <LedgerLogo size={42 * 0.7} color={colors.text} />
               ) : (
                 <FirstLetterIcon
@@ -99,7 +99,7 @@ const Unbonding = (props: UnbondingPropsType) => {
 
         <View style={styles.rightWrapper}>
           <Text variant="body" fontWeight="semiBold">
-            {value} {constants.egldLabel}
+            {value} {currency.ticker}
           </Text>
 
           <LText color="grey">

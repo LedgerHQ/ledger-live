@@ -50,14 +50,14 @@ const Undelegate = () => {
       <Stack.Screen
         name={ScreenName.ElrondUndelegationAmount}
         component={PickAmount}
-        options={{
+        options={props => ({
           headerTitle: () => (
             <StepHeader
-              title={t("elrond.undelegation.stepperHeader.amountSubTitle")}
+              title={props.route.params.validator.identity.name}
               subtitle={t("elrond.undelegation.stepperHeader.amountSubTitle")}
             />
           ),
-        }}
+        })}
       />
 
       <Stack.Screen

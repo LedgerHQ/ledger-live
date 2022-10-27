@@ -15,8 +15,10 @@ import type {
 
 import { TrackScreen } from "../../../../../../../analytics";
 import { ScreenName } from "../../../../../../../const";
-import { nominate } from "../../../../../helpers";
-import { ledger } from "../../../../../constants";
+import {
+  ELROND_LEDGER_ADDRESS,
+  MIN_DELEGATION_AMOUNT,
+} from "../../../../../constants";
 
 import Item from "./components/Item";
 
@@ -60,15 +62,14 @@ const PickValidator = (props: PickValidatorPropsType) => {
       ];
       const delegative = alpha !== "0" && validator.withDelegationCap;
       const difference = new BigNumber(alpha).minus(beta);
-      const minimum = nominate("1");
 
       return Object.assign(validator, {
-        disabled: delegative && difference.isLessThan(minimum),
+        disabled: delegative ? difference.lt(MIN_DELEGATION_AMOUNT) : false,
       });
     };
 
     const sort = (validator: EnhancedProviderType) =>
-      validator.contract === ledger ? -1 : 1;
+      validator.contract === ELROND_LEDGER_ADDRESS ? -1 : 1;
     const items = validators.map(disable).sort(sort);
 
     return search ? items.filter(filter) : items;
@@ -120,7 +121,7 @@ const PickValidator = (props: PickValidatorPropsType) => {
             numberOfLines={1}
             fontWeight="semiBold"
           >
-            {"title" ?? <Trans i18nKey="delegation.validator" />}
+            <Trans i18nKey="delegation.validator" />
           </Text>
 
           <View style={styles.validatorHeadContainer}>
