@@ -1,9 +1,6 @@
-// @flow
-
 import React, { useCallback, useMemo } from "react";
 import { View } from "react-native";
 import { Trans } from "react-i18next";
-import { BigNumber } from "bignumber.js";
 import { useTheme } from "@react-navigation/native";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import {
@@ -53,7 +50,7 @@ const WithdrawFunds = (props: WithdrawFundsPropsType) => {
       {
         mode: "withdraw",
         recipient: validator.contract,
-        amount: new BigNumber(amount),
+        amount,
       },
     ),
   }));
@@ -63,13 +60,16 @@ const WithdrawFunds = (props: WithdrawFundsPropsType) => {
    */
 
   const onNext = useCallback(() => {
-    navigation.navigate(
-      ScreenName.ElrondWithdrawSelectDevice,
-      Object.assign(route.params, {
-        transaction,
-      }),
-    );
-  }, [navigation, transaction, route]);
+    if (transaction) {
+      navigation.navigate(
+        ScreenName.ElrondWithdrawSelectDevice,
+        Object.assign(route.params, {
+          transaction,
+          accountId: account.id,
+        }),
+      );
+    }
+  }, [navigation, account, transaction, route]);
 
   /*
    * Handle the possible warnings and errors of the transaction status and return the first of each.
@@ -93,17 +93,13 @@ const WithdrawFunds = (props: WithdrawFundsPropsType) => {
           </LText>
 
           <LText semiBold={true} style={[styles.label, styles.value]}>
-            <CurrencyUnitValue
-              unit={unit}
-              value={new BigNumber(amount)}
-              showCode={true}
-            />
+            <CurrencyUnitValue unit={unit} value={amount} showCode={true} />
           </LText>
 
           <LText semiBold={true} style={styles.subLabel} color="grey">
             <CounterValue
               currency={currency}
-              value={new BigNumber(amount)}
+              value={amount}
               withPlaceholder={true}
             />
           </LText>

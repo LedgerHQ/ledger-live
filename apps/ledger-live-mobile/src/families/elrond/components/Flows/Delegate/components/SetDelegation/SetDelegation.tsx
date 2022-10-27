@@ -3,10 +3,7 @@ import { Image, View, Animated } from "react-native";
 import { useTheme } from "@react-navigation/native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
-import {
-  formatCurrencyUnit,
-  getCurrencyColor,
-} from "@ledgerhq/live-common/currencies/index";
+import { getCurrencyColor } from "@ledgerhq/live-common/currencies/index";
 import {
   getAccountCurrency,
   getAccountUnit,
@@ -30,8 +27,8 @@ import { TrackScreen } from "../../../../../../../analytics";
 import { ScreenName } from "../../../../../../../const";
 
 import { rgba } from "../../../../../../../colors";
-import { handleTransactionStatus } from "../../../../../helpers";
-import { ledger } from "../../../../../constants";
+import { denominate, handleTransactionStatus } from "../../../../../helpers";
+import { constants, ledger } from "../../../../../constants";
 
 import type { SetDelegationPropsType } from "./types";
 
@@ -137,10 +134,11 @@ const SetDelegation = (props: SetDelegationPropsType) => {
   }, [animation]);
 
   /*
-   * Callback function to be called when wanting to continue to the next panel.
+   * Callback function to be called when wanting to continue to the select device panel.
    */
+
   const onContinue = useCallback(() => {
-    navigation.navigate(ScreenName.CosmosDelegationSelectDevice, {
+    navigation.navigate(ScreenName.ElrondDelegationSelectDevice, {
       accountId: account.id,
       transaction,
       status,
@@ -152,8 +150,14 @@ const SetDelegation = (props: SetDelegationPropsType) => {
    */
 
   const onChangeAmount = useCallback(() => {
-    return null;
-  }, []);
+    if (transaction) {
+      navigation.navigate(ScreenName.ElrondDelegationAmount, {
+        account,
+        validators,
+        transaction,
+      });
+    }
+  }, [transaction, account, validators, navigation]);
 
   /*
    * Callback function to be called when wanting to change the validator.
@@ -178,6 +182,19 @@ const SetDelegation = (props: SetDelegationPropsType) => {
   }, [route.params.transaction, updateTransaction]);
 
   /*
+   * Parse the transaction amount as a denominated value.
+   */
+
+  const transactionAmount = useMemo(
+    () =>
+      denominate({
+        input: String(transaction ? transaction.amount : 0),
+        decimals: 4,
+      }),
+    [transaction],
+  );
+
+  /*
    * Handle the data for the two lines of text, showcasing the current transaction amount and recipient.
    */
 
@@ -186,15 +203,7 @@ const SetDelegation = (props: SetDelegationPropsType) => {
       {
         callback: onChangeAmount,
         i18nKey: "elrond.delegation.iDelegate",
-        name: formatCurrencyUnit(
-          unit,
-          transaction ? transaction.amount : new BigNumber(0),
-          {
-            disableRounding: true,
-            alwaysShowSign: false,
-            showCode: true,
-          },
-        ),
+        name: `${transactionAmount} ${constants.egldLabel}`,
       },
       {
         callback: onChangeValidator,
@@ -204,7 +213,7 @@ const SetDelegation = (props: SetDelegationPropsType) => {
           : "",
       },
     ],
-    [onChangeAmount, onChangeValidator, unit, transaction, chosenValidator],
+    [onChangeAmount, onChangeValidator, transactionAmount, chosenValidator],
   );
 
   /*
@@ -219,7 +228,7 @@ const SetDelegation = (props: SetDelegationPropsType) => {
    */
 
   return (
-    <SafeAreaView style={[styles.root, { background: colors.background }]}>
+    <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]}>
       <TrackScreen category="DelegationFlow" name="Summary" />
 
       <View style={styles.body}>

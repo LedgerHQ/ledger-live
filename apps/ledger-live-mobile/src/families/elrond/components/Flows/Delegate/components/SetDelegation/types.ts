@@ -1,20 +1,8 @@
-import type {
-  ElrondAccount,
-  ElrondProvider,
-  Transaction,
-} from "@ledgerhq/live-common/families/elrond/types";
-import type { NavigationProp, ParamListBase } from "@react-navigation/native";
-import type { DelegationType } from "../../../../../types";
+import type { StackNavigatorProps } from "../../../../../../../components/RootNavigator/types/helpers";
+import type { ElrondDelegationFlowParamList } from "../../types";
+import type { ScreenName } from "../../../../../../../const";
 
-export interface SetDelegationPropsType {
-  navigation: NavigationProp<ParamListBase>;
-  route: {
-    params: {
-      accountId: string;
-      delegations: DelegationType[];
-      validators: ElrondProvider[];
-      account: ElrondAccount;
-      transaction: Transaction;
-    };
-  };
-}
+export type SetDelegationPropsType = StackNavigatorProps<
+  ElrondDelegationFlowParamList,
+  ScreenName.ElrondDelegationValidator
+>;

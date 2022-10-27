@@ -3,7 +3,7 @@ import type { TransactionStatus, Transaction } from "./types";
 import { findTokenById } from "@ledgerhq/cryptoassets";
 
 function getDeviceTransactionConfig({
-  transaction: { recipient, subAccountId },
+  transaction,
   status: { estimatedFees },
 }: {
   transaction: Transaction;
@@ -11,10 +11,11 @@ function getDeviceTransactionConfig({
 }): Array<DeviceTransactionField> {
   const fields: Array<DeviceTransactionField> = [];
 
-  const isEsdtTransfer = subAccountId !== undefined && subAccountId !== null;
+  const isEsdtTransfer =
+    transaction.subAccountId !== undefined && transaction.subAccountId !== null;
 
   if (isEsdtTransfer) {
-    const tokenIdentifier = subAccountId.split("+")[1];
+    const tokenIdentifier = transaction.subAccountId?.split("+")[1];
     const token = findTokenById(`${tokenIdentifier}`);
 
     if (token) {
@@ -34,10 +35,10 @@ function getDeviceTransactionConfig({
   fields.push({
     type: "address",
     label: "Receiver",
-    address: recipient,
+    address: transaction.recipient,
   });
 
-  if (!isEsdtTransfer) {
+  if (!isEsdtTransfer && transaction.mode !== "unDelegate") {
     fields.push({
       type: "amount",
       label: "Amount",

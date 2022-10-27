@@ -20,6 +20,7 @@ import { urls } from "../../../../../../../config/urls";
 import { TrackScreen } from "../../../../../../../analytics";
 
 import type { EarnRewardsPropsType } from "./types";
+
 import styles from "./styles";
 
 /*

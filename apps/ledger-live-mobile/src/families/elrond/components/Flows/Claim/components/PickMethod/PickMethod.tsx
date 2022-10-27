@@ -1,5 +1,3 @@
-// @flow
-
 import React, { useCallback, useMemo, useState } from "react";
 import { View, TouchableOpacity } from "react-native";
 import { useTheme } from "@react-navigation/native";
@@ -30,6 +28,7 @@ import { ScreenName } from "../../../../../../../const";
 
 import { handleTransactionStatus } from "../../../../../helpers";
 import { TransactionMethodEnum } from "./enums";
+
 import styles from "./styles";
 
 /*
@@ -116,9 +115,10 @@ const PickMethod = (props: PickMethodPropsType) => {
       ScreenName.ElrondClaimRewardsSelectDevice,
       Object.assign(route.params, {
         transaction,
+        accountId: account.id,
       }),
     );
-  }, [navigation, transaction, route]);
+  }, [navigation, transaction, account, route]);
 
   /*
    * Handle the mode change callback. Update the state and the transaction mode to either "claimRewards" or "reDelegateRewards".

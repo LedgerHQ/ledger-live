@@ -1,5 +1,3 @@
-// @flow
-
 import React, { useMemo } from "react";
 import { Platform } from "react-native";
 import { useTranslation } from "react-i18next";
@@ -17,7 +15,9 @@ import WithdrawFunds from "./components/WithdrawFunds";
 import ValidationError from "./components/ValidationError";
 import ValidationSuccess from "./components/ValidationSuccess";
 
-const Stack = createStackNavigator();
+import type { ElrondWithdrawFlowParamList } from "./types";
+
+const Stack = createStackNavigator<ElrondWithdrawFlowParamList>();
 const totalSteps = "3";
 const options = {
   headerShown: false,
@@ -37,69 +37,6 @@ const Withdraw = () => {
   );
 
   /*
-   * Create a memoized list of all the stacks and their specific parameters.
-   */
-
-  const stacks = useMemo(
-    () => [
-      {
-        name: ScreenName.ElrondWithdrawFunds,
-        component: WithdrawFunds,
-        heading: {
-          title: "elrond.withdraw.stepperHeader.method",
-        },
-      },
-      {
-        name: ScreenName.ElrondWithdrawSelectDevice,
-        component: WithdrawSelectDevice,
-        heading: {
-          title: "elrond.withdraw.stepperHeader.selectDevice",
-          subtitle: {
-            label: "elrond.withdraw.stepperHeader.stepRange",
-            variables: {
-              currentStep: "2",
-              totalSteps,
-            },
-          },
-        },
-      },
-      {
-        name: ScreenName.ElrondWithdrawConnectDevice,
-        component: WithdrawConnectDevice,
-        heading: {
-          title: "elrond.withdraw.stepperHeader.connectDevice",
-          subtitle: {
-            label: "elrond.withdraw.stepperHeader.stepRange",
-            variables: {
-              currentStep: "3",
-              totalSteps,
-            },
-          },
-        },
-      },
-      {
-        name: ScreenName.ElrondWithdrawValidationError,
-        component: ValidationError,
-        options: {
-          headerShown: false,
-          gestureEnabled: false,
-        },
-      },
-      {
-        name: ScreenName.ElrondWithdrawValidationSuccess,
-        component: ValidationSuccess,
-        options: {
-          headerLeft: null,
-          headerRight: null,
-          headerTitle: null,
-          gestureEnabled: false,
-        },
-      },
-    ],
-    [],
-  );
-
-  /*
    * Return the rendered component.
    */
 
@@ -110,30 +47,69 @@ const Withdraw = () => {
         gestureEnabled: Platform.OS === "ios",
       }}
     >
-      {stacks.map(stack => (
-        <Stack.Screen
-          key={stack.name}
-          name={stack.name}
-          component={stack.component}
-          options={Object.assign(stack.options || {}, {
-            headerTitle: stack.heading
-              ? () => (
-                  <StepHeader
-                    title={t(stack.heading.title)}
-                    subtitle={
-                      stack.heading.subtitle
-                        ? t(
-                            stack.heading.subtitle.label,
-                            stack.heading.subtitle.variables,
-                          )
-                        : null
-                    }
-                  />
-                )
-              : undefined,
-          })}
-        />
-      ))}
+      <Stack.Screen
+        name={ScreenName.ElrondWithdrawFunds}
+        component={WithdrawFunds}
+        options={{
+          headerTitle: () => (
+            <StepHeader title={t("elrond.withdraw.stepperHeader.method")} />
+          ),
+        }}
+      />
+
+      <Stack.Screen
+        name={ScreenName.ElrondWithdrawSelectDevice}
+        component={WithdrawSelectDevice}
+        options={{
+          headerTitle: () => (
+            <StepHeader
+              title={t("elrond.claimRewards.stepperHeader.selectDevice")}
+              subtitle={t("elrond.claimRewards.stepperHeader.stepRange", {
+                currentStep: "2",
+                totalSteps,
+              })}
+            />
+          ),
+        }}
+      />
+
+      <Stack.Screen
+        name={ScreenName.ElrondWithdrawConnectDevice}
+        component={WithdrawConnectDevice}
+        options={{
+          headerLeft: undefined,
+          gestureEnabled: false,
+          headerTitle: () => (
+            <StepHeader
+              title={t("elrond.claimRewards.stepperHeader.connectDevice")}
+              subtitle={t("elrond.claimRewards.stepperHeader.stepRange", {
+                currentStep: "3",
+                totalSteps,
+              })}
+            />
+          ),
+        }}
+      />
+
+      <Stack.Screen
+        name={ScreenName.ElrondWithdrawValidationError}
+        component={ValidationError}
+        options={{
+          headerShown: false,
+          gestureEnabled: false,
+        }}
+      />
+
+      <Stack.Screen
+        name={ScreenName.ElrondWithdrawValidationSuccess}
+        component={ValidationSuccess}
+        options={{
+          headerLeft: undefined,
+          headerRight: undefined,
+          headerTitle: "",
+          gestureEnabled: false,
+        }}
+      />
     </Stack.Navigator>
   );
 };

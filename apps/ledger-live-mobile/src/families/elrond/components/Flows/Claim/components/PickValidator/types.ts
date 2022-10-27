@@ -1,19 +1,12 @@
-import type { NavigationProp, ParamListBase } from "@react-navigation/native";
-import type {
-  ElrondAccount,
-  ElrondProvider,
-} from "@ledgerhq/live-common/families/elrond/types";
-import type { DelegationType } from "../../../../../types";
+import type { ElrondProvider } from "@ledgerhq/live-common/families/elrond/types";
+import type { StackNavigatorProps } from "../../../../../../../components/RootNavigator/types/helpers";
+import type { ElrondClaimRewardsFlowParamList } from "../../types";
+import type { ScreenName } from "../../../../../../../const";
 
-export interface PickValidatorPropsType {
-  navigation: NavigationProp<ParamListBase>;
-  route: {
-    params: {
-      delegations: DelegationType[];
-      account: ElrondAccount;
-    };
-  };
-}
+export type PickValidatorPropsType = StackNavigatorProps<
+  ElrondClaimRewardsFlowParamList,
+  ScreenName.ElrondClaimRewardsValidator
+>;
 
 export interface onSelectType {
   validator: ElrondProvider | undefined;

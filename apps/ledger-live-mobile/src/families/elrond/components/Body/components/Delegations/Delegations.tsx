@@ -1,5 +1,3 @@
-// @flow
-
 import React, { useCallback, useMemo } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { useTranslation } from "react-i18next";
@@ -9,6 +7,10 @@ import {
   getAccountCurrency,
   getMainAccount,
 } from "@ledgerhq/live-common/account/index";
+
+import type { StackNavigationProp } from "@react-navigation/stack";
+import type { NavigationType } from "../../../../types";
+import type { DelegationsPropsType } from "./types";
 
 import AccountDelegationInfo from "../../../../../../components/AccountDelegationInfo";
 import AccountSectionLabel from "../../../../../../components/AccountSectionLabel";
@@ -21,8 +23,6 @@ import { denominate } from "../../../../helpers";
 import Delegation from "./components/Delegation";
 import Right from "./components/Right";
 
-import type { DelegationsPropsType } from "./types";
-
 import styles from "./styles";
 
 /*
@@ -33,7 +33,7 @@ const Delegations = (props: DelegationsPropsType) => {
   const { delegations, validators, account, onDrawer } = props;
   const { t } = useTranslation();
 
-  const navigation = useNavigation();
+  const navigation: StackNavigationProp<NavigationType> = useNavigation();
   const currency = useMemo(
     () => getAccountCurrency(getMainAccount(account, undefined)),
     [account],

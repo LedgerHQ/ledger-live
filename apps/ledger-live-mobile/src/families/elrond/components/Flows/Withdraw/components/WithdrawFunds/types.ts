@@ -1,17 +1,8 @@
-import type { NavigationProp, ParamListBase } from "@react-navigation/native";
-import type {
-  ElrondAccount,
-  ElrondProvider,
-} from "@ledgerhq/live-common/families/elrond/types";
-import type BigNumber from "bignumber.js";
+import type { StackNavigatorProps } from "../../../../../../../components/RootNavigator/types/helpers";
+import type { ElrondWithdrawFlowParamList } from "../../types";
+import type { ScreenName } from "../../../../../../../const";
 
-export interface WithdrawFundsPropsType {
-  navigation: NavigationProp<ParamListBase>;
-  route: {
-    params: {
-      account: ElrondAccount;
-      validator: ElrondProvider;
-      amount: BigNumber | string;
-    };
-  };
-}
+export type WithdrawFundsPropsType = StackNavigatorProps<
+  ElrondWithdrawFlowParamList,
+  ScreenName.ElrondWithdrawFunds
+>;

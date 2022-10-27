@@ -1,5 +1,3 @@
-// @flow
-
 import type { TransactionStatus } from "@ledgerhq/live-common/generated/types";
 import type { ElrondProvider } from "@ledgerhq/live-common/families/elrond/types";
 

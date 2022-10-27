@@ -1,21 +1,13 @@
 import { ReactNode } from "react";
 
-import type { NavigationProp, ParamListBase } from "@react-navigation/native";
-import type { ElrondAccount } from "@ledgerhq/live-common/families/elrond/types";
-import type { Transaction } from "@ledgerhq/live-common/generated/types";
+import { StackNavigatorProps } from "../../../../../../../components/RootNavigator/types/helpers";
+import { ElrondClaimRewardsFlowParamList } from "../../types";
+import { ScreenName } from "../../../../../../../const";
 
-export interface PickMethodPropsType {
-  navigation: NavigationProp<ParamListBase>;
-  route: {
-    params: {
-      transaction?: Transaction;
-      account: ElrondAccount;
-      recipient: string;
-      value: string;
-      name: string;
-    };
-  };
-}
+export type PickMethodPropsType = StackNavigatorProps<
+  ElrondClaimRewardsFlowParamList,
+  ScreenName.ElrondClaimRewardsMethod
+>;
 
 export interface OptionType {
   value: string;

@@ -334,6 +334,7 @@ export enum ScreenName {
   PolkadotSimpleOperationConnectDevice = "PolkadotSimpleOperationConnectDevice",
   PolkadotSimpleOperationValidationError = "PolkadotSimpleOperationValidationError",
   PolkadotSimpleOperationValidationSuccess = "PolkadotSimpleOperationValidationSuccess",
+
   // Stellar
   StellarEditMemoType = "StellarEditMemoType",
   StellarEditMemoValue = "StellarEditMemoValue",

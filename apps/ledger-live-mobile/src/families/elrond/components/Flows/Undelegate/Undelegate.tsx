@@ -1,27 +1,45 @@
-// @flow
 import React, { useMemo } from "react";
 import { Platform } from "react-native";
 import { useTranslation } from "react-i18next";
 import { createStackNavigator } from "@react-navigation/stack";
 import { useTheme } from "@react-navigation/native";
-import { getStackNavigatorConfig } from "../../../../../navigation/navigatorConfig";
+
 import StepHeader from "../../../../../components/StepHeader";
+import { getStackNavigatorConfig } from "../../../../../navigation/navigatorConfig";
 import { ScreenName } from "../../../../../const";
-import UndelegationAmount from "./01-Amount";
-import SelectDevice from "../../../../../screens/SelectDevice";
-import ConnectDevice from "../../../../../screens/ConnectDevice";
-import UndelegationValidationError from "./03-ValidationError";
-import UndelegationValidationSuccess from "./03-ValidationSuccess";
 
+import PickAmount from "./components/PickAmount";
+import ValidationError from "./components/ValidationError";
+import ValidationSuccess from "./components/ValidationSuccess";
+
+import ElrondUndelegationSelectDevice from "../../../../../screens/SelectDevice";
+import ElrondUndelegationConnectDevice from "../../../../../screens/ConnectDevice";
+
+import type { ElrondUndelegationFlowParamList } from "./types";
+
+const Stack = createStackNavigator<ElrondUndelegationFlowParamList>();
 const totalSteps = "3";
+const options = {
+  headerShown: false,
+};
 
-function UndelegationFlow() {
+/*
+ * Handle the component declaration.
+ */
+
+const Undelegate = () => {
   const { t } = useTranslation();
   const { colors } = useTheme();
+
   const stackNavigationConfig = useMemo(
     () => getStackNavigatorConfig(colors, true),
     [colors],
   );
+
+  /*
+   * Return the rendered component.
+   */
+
   return (
     <Stack.Navigator
       screenOptions={{
@@ -31,19 +49,20 @@ function UndelegationFlow() {
     >
       <Stack.Screen
         name={ScreenName.ElrondUndelegationAmount}
-        component={UndelegationAmount}
-        options={({ route }) => ({
+        component={PickAmount}
+        options={{
           headerTitle: () => (
             <StepHeader
-              title={route.params?.delegation?.validator?.name ?? ""}
+              title={t("elrond.undelegation.stepperHeader.amountSubTitle")}
               subtitle={t("elrond.undelegation.stepperHeader.amountSubTitle")}
             />
           ),
-        })}
+        }}
       />
+
       <Stack.Screen
         name={ScreenName.ElrondUndelegationSelectDevice}
-        component={SelectDevice}
+        component={ElrondUndelegationSelectDevice}
         options={{
           headerTitle: () => (
             <StepHeader
@@ -56,11 +75,12 @@ function UndelegationFlow() {
           ),
         }}
       />
+
       <Stack.Screen
         name={ScreenName.ElrondUndelegationConnectDevice}
-        component={ConnectDevice}
+        component={ElrondUndelegationConnectDevice}
         options={{
-          headerLeft: null,
+          headerLeft: undefined,
           gestureEnabled: false,
           headerTitle: () => (
             <StepHeader
@@ -73,32 +93,28 @@ function UndelegationFlow() {
           ),
         }}
       />
+
       <Stack.Screen
         name={ScreenName.ElrondUndelegationValidationError}
-        component={UndelegationValidationError}
+        component={ValidationError}
         options={{
-          headerTitle: null,
+          headerShown: false,
           gestureEnabled: false,
         }}
       />
+
       <Stack.Screen
         name={ScreenName.ElrondUndelegationValidationSuccess}
-        component={UndelegationValidationSuccess}
+        component={ValidationSuccess}
         options={{
-          headerLeft: null,
-          headerTitle: null,
-          headerRight: null,
+          headerLeft: undefined,
+          headerRight: undefined,
+          headerTitle: "",
           gestureEnabled: false,
         }}
       />
     </Stack.Navigator>
   );
-}
-
-const options = {
-  headerShown: false,
 };
 
-export { UndelegationFlow as component, options };
-
-const Stack = createStackNavigator();
+export { Undelegate as component, options };

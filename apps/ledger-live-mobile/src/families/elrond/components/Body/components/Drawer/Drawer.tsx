@@ -13,9 +13,17 @@ import useDrawerItems from "./hooks/useDrawerItems";
 
 import type { DrawerPropsType } from "./types";
 
+/*
+ * Handle the component declaration.
+ */
+
 const Drawer = (props: DrawerPropsType) => {
   const { data, account, onClose } = props;
   const { colors } = useTheme();
+
+  /*
+   * Extract the list of actions and items from the specific hooks.
+   */
 
   const actions = useDrawerActions(data, account, onClose);
   const items = useDrawerItems(data, account);
@@ -24,6 +32,10 @@ const Drawer = (props: DrawerPropsType) => {
     () => data.validator.identity.name || data.validator.contract,
     [data.validator],
   );
+
+  /*
+   * Return the rendered component.
+   */
 
   return (
     <DelegationDrawer
