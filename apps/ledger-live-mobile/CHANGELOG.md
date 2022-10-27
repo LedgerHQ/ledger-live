@@ -1,5 +1,11 @@
 # live-mobile
 
+## 3.10.0-next.4
+
+### Patch Changes
+
+- [#1702](https://github.com/LedgerHQ/ledger-live/pull/1702) [`fe339a8d05`](https://github.com/LedgerHQ/ledger-live/commit/fe339a8d0571ca6a502bb8f7a4c1c1250085d83c) Thanks [@nparigi-ledger](https://github.com/nparigi-ledger)! - Fix update firmware notif breaking layout
+
 ## 3.10.0-next.3
 
 ### Patch Changes
