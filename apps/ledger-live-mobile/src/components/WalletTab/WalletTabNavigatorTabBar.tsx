@@ -2,7 +2,7 @@ import { MaterialTopTabBarProps } from "@react-navigation/material-top-tabs";
 import { useTheme } from "styled-components/native";
 import React, { memo, useCallback, useContext } from "react";
 import styled from "@ledgerhq/native-ui/components/styled";
-import { Flex, Text } from "@ledgerhq/native-ui";
+import { Box, Flex, Text } from "@ledgerhq/native-ui";
 import { Animated } from "react-native";
 import { useSelector } from "react-redux";
 import { track } from "../../analytics";
@@ -11,10 +11,8 @@ import { WalletTabNavigatorScrollContext } from "./WalletTabNavigatorScrollManag
 import WalletTabBackgroundGradient from "./WalletTabBackgroundGradient";
 import { readOnlyModeEnabledSelector } from "../../reducers/settings";
 import { accountsSelector } from "../../reducers/accounts";
-import { Box } from "../../../../../libs/ui/packages/native/lib";
 
 const StyledTouchableOpacity = styled.TouchableOpacity``;
-
 const StyledAnimatedView = styled(Animated.View)``;
 
 function Tab({
