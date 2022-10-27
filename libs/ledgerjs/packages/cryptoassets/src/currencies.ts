@@ -533,7 +533,7 @@ export const cryptocurrenciesById: Record<string, CryptoCurrency> = {
   cardano_testnet: {
     type: "CryptoCurrency",
     id: "cardano_testnet",
-    coinType: CoinType.ADA,
+    coinType: CoinType.CARDANO,
     name: "Cardano (Testnet)",
     managerAppName: "Cardano ADA",
     ticker: "tADA",
