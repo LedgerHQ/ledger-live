@@ -1,24 +1,5 @@
 import { Page, Locator } from "@playwright/test";
-
-async function waitFor(
-  predicate: () => Promise<boolean>,
-  intervalMs = 100,
-  timeout = 10000,
-): Promise<boolean> {
-  return new Promise((resolve, reject) => {
-    const interval = setInterval(async () => {
-      const condition = await predicate();
-      if (condition) {
-        clearTimeout(interval);
-        resolve(true);
-      }
-    }, intervalMs);
-    setTimeout(() => {
-      clearTimeout(interval);
-      reject(new Error("waitFor timeout"));
-    }, timeout);
-  });
-}
+import { waitFor } from "../utils/waitFor";
 
 export class CustomImageDrawer {
   readonly page: Page;
