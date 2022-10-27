@@ -1,5 +1,13 @@
 # @ledgerhq/hw-app-trx
 
+## 6.27.7-nightly.0
+
+### Patch Changes
+
+- Updated dependencies [[`df8cbb8dd1`](https://github.com/LedgerHQ/ledger-live/commit/df8cbb8dd166a66325eb96d8192f3f985b71df60)]:
+  - @ledgerhq/errors@6.11.2-nightly.0
+  - @ledgerhq/hw-transport@6.27.7-nightly.0
+
 ## 6.27.6
 
 ### Patch Changes

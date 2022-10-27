@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/hw-app-helium",
-  "version": "6.29.1",
+  "version": "6.29.2-nightly.0",
   "description": "Ledger Hardware Wallet Helium Application API",
   "keywords": [
     "Ledger",

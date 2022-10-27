@@ -1,5 +1,11 @@
 # @ledgerhq/errors
 
+## 6.11.2-nightly.0
+
+### Patch Changes
+
+- [#1622](https://github.com/LedgerHQ/ledger-live/pull/1622) [`df8cbb8dd1`](https://github.com/LedgerHQ/ledger-live/commit/df8cbb8dd166a66325eb96d8192f3f985b71df60) Thanks [@alexandremgo](https://github.com/alexandremgo)! - Fix bootloader repairing steps
+
 ## 6.11.1
 
 ### Patch Changes

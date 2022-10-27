@@ -1,5 +1,21 @@
 # @ledgerhq/hw-app-eth
 
+## 6.30.0-nightly.0
+
+### Minor Changes
+
+- [#1618](https://github.com/LedgerHQ/ledger-live/pull/1618) [`8bf7626bbe`](https://github.com/LedgerHQ/ledger-live/commit/8bf7626bbeb4f766868ab37b7fc943bb7e84e2ca) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Add the NFT endpoint to the default loadConfig
+
+* [#1288](https://github.com/LedgerHQ/ledger-live/pull/1288) [`f5f4db47d2`](https://github.com/LedgerHQ/ledger-live/commit/f5f4db47d214bc30390b7be91d3bab4814c5fb45) Thanks [@henrily-ledger](https://github.com/henrily-ledger)! - Dynamic cal for erc20
+
+### Patch Changes
+
+- Updated dependencies [[`627f928b9d`](https://github.com/LedgerHQ/ledger-live/commit/627f928b9dc93f072f47b85d09e34c41b1948d0b), [`df8cbb8dd1`](https://github.com/LedgerHQ/ledger-live/commit/df8cbb8dd166a66325eb96d8192f3f985b71df60), [`5b8315df30`](https://github.com/LedgerHQ/ledger-live/commit/5b8315df306d72e8b0191aa5136760142f9d3447), [`ab40db1288`](https://github.com/LedgerHQ/ledger-live/commit/ab40db1288bf4a795819a8a636821dbccf33073a)]:
+  - @ledgerhq/cryptoassets@6.37.0-nightly.0
+  - @ledgerhq/errors@6.11.2-nightly.0
+  - @ledgerhq/hw-transport@6.27.7-nightly.0
+  - @ledgerhq/hw-transport-mocker@6.27.7-nightly.0
+
 ## 6.29.10
 
 ### Patch Changes
