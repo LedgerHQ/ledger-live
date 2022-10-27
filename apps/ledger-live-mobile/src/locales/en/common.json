@@ -1134,7 +1134,7 @@
       },
       "RestartModal": {
         "title": "Restart required",
-        "paragraph": "The selected language requires the application to restart. Are you sure you want to continue?",
+        "paragraph": "The selected language requires the application to restart. Are you sure you want to continue?"
       }
     },
     "stepSelectDevice": {
@@ -3852,15 +3852,15 @@
     }
   },
   "firmwareUpdateRequired": {
-      "updateAvailableFromLLM": {
-        "title": "Firmware update required",
-        "description": "To perform this action, you first need to update the firmware of your {{ deviceName }}.",
-        "cta": "Go to My Ledger"
-      },
-      "updateNotAvailableFromLLM": {
-        "title": "Firmware update required on computer",
-        "description": "Update your {{ deviceName }} on Ledger Live Desktop."
-      }
+    "updateAvailableFromLLM": {
+      "title": "Firmware update required",
+      "description": "To perform this action, you first need to update the firmware of your {{ deviceName }}.",
+      "cta": "Go to My Ledger"
+    },
+    "updateNotAvailableFromLLM": {
+      "title": "Firmware update required on computer",
+      "description": "Update your {{ deviceName }} on Ledger Live Desktop."
+    }
   },
   "FirmwareUpdateReleaseNotes": {
     "introTitle": "Update {{deviceName}} to version {{version}}",

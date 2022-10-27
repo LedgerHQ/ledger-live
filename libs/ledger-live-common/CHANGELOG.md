@@ -1,6 +1,6 @@
 # @ledgerhq/live-common
 
-## 27.5.0-next.0
+## 27.5.1-next.0
 
 ### Minor Changes
 
@@ -29,6 +29,18 @@
 - Updated dependencies [[`627f928b9d`](https://github.com/LedgerHQ/ledger-live/commit/627f928b9dc93f072f47b85d09e34c41b1948d0b)]:
   - @ledgerhq/cryptoassets@6.36.1-next.0
   - @ledgerhq/hw-app-eth@6.29.11-next.0
+
+## 27.5.0
+
+### Minor Changes
+
+- [#1620](https://github.com/LedgerHQ/ledger-live/pull/1620) [`455e43b34c`](https://github.com/LedgerHQ/ledger-live/commit/455e43b34c13ca7ed1d2920a36653caa250e42ab) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Update getEstimationFee for evm family to prevent usage of hardcoded values by `ether.js`
+
+## 27.5.0-hotfix.0
+
+### Minor Changes
+
+- [#1620](https://github.com/LedgerHQ/ledger-live/pull/1620) [`455e43b34c`](https://github.com/LedgerHQ/ledger-live/commit/455e43b34c13ca7ed1d2920a36653caa250e42ab) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Update getEstimationFee for evm family to prevent usage of hardcoded values by `ether.js`
 
 ## 27.4.0
 
