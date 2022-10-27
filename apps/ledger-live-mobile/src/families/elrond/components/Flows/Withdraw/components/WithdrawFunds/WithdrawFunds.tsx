@@ -18,7 +18,7 @@ import FirstLetterIcon from "../../../../../../../components/FirstLetterIcon";
 import TranslatedError from "../../../../../../../components/TranslatedError";
 import { ScreenName } from "../../../../../../../const";
 
-import { handleTransactionStatus } from "../../../../../helpers";
+import { handleTransactionStatus } from "../../../../../helpers/handleTransactionStatus";
 
 import type { WithdrawFundsPropsType } from "./types";
 

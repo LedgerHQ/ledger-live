@@ -1,18 +1,17 @@
-// @flow
-
 import React, { useCallback, useMemo, useEffect, useState, FC } from "react";
 import { ScrollView } from "react-native";
 import { useTranslation } from "react-i18next";
 import { BigNumber } from "bignumber.js";
+import { getAccountUnit } from "@ledgerhq/live-common/account/helpers";
+
+import type { ElrondAccount } from "@ledgerhq/live-common/families/elrond/types";
+import type { DelegationType } from "../../types";
+import type { SummaryPropsType, ItemType } from "./types";
 
 import InfoModal from "../../../../modals/Info";
 import InfoItem from "../../../../components/BalanceSummaryInfoItem";
 
-import { denominate } from "../../helpers";
-import { constants } from "../../constants";
-
-import type { DelegationType } from "../../types";
-import type { SummaryPropsType, ItemType } from "./types";
+import { denominate } from "../../helpers/denominate";
 
 import styles from "./styles";
 
@@ -22,17 +21,16 @@ import styles from "./styles";
 
 const withSummary =
   (Component: FC<SummaryPropsType>) => (props: SummaryPropsType) =>
-    props.account.elrondResources || props.account.balance.gt(0) ? (
-      <Component {...props} />
-    ) : null;
+    props.account.balance.gt(0) ? <Component {...props} /> : null;
 
 /*
  * Handle the component declaration.
  */
 
 const Summary = (props: SummaryPropsType) => {
-  const { account } = props;
+  const account = props.account as ElrondAccount;
   const { t } = useTranslation();
+  const unit = getAccountUnit(account);
 
   /*
    * Declare the data state (for the dynamic information modal) and the delegation resources state (tracking server updates).
@@ -173,7 +171,7 @@ const Summary = (props: SummaryPropsType) => {
           key={item.title}
           title={t(item.title)}
           onPress={() => setData([item.modal])}
-          value={`${item.value} ${constants.egldLabel}`}
+          value={`${item.value} ${unit.code}`}
           isLast={index === items.length - 1}
         />
       ))}

@@ -68,8 +68,8 @@ const Delegate = () => {
           gestureEnabled: false,
           headerTitle: () => (
             <StepHeader
-              title={t("elrond.delegation.stepperHeader.validator")}
-              subtitle={t("elrond.delegation.stepperHeader.stepRange", {
+              title={t("delegation.summaryTitle")}
+              subtitle={t("send.stepperHeader.stepRange", {
                 currentStep: "1",
                 totalSteps,
               })}
@@ -84,13 +84,7 @@ const Delegate = () => {
         options={{
           gestureEnabled: false,
           headerTitle: () => (
-            <StepHeader
-              title={t("elrond.delegation.stepperHeader.validator")}
-              subtitle={t("elrond.delegation.stepperHeader.stepRange", {
-                currentStep: "2",
-                totalSteps,
-              })}
-            />
+            <StepHeader title={t("delegation.selectValidatorTitle")} />
           ),
         }}
       />
@@ -98,17 +92,14 @@ const Delegate = () => {
       <Stack.Screen
         name={ScreenName.ElrondDelegationAmount}
         component={PickAmount}
-        options={{
+        options={props => ({
           headerTitle: () => (
             <StepHeader
-              title={t("elrond.delegation.stepperHeader.amountSubTitle")}
-              subtitle={t("elrond.delegation.stepperHeader.stepRange", {
-                currentStep: "2",
-                totalSteps,
-              })}
+              title={props.route.params.validatorName}
+              subtitle={t("elrond.delegation.stepperHeader.amountSubTitle")}
             />
           ),
-        }}
+        })}
       />
 
       <Stack.Screen

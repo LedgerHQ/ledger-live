@@ -26,7 +26,7 @@ import FirstLetterIcon from "../../../../../../../components/FirstLetterIcon";
 import TranslatedError from "../../../../../../../components/TranslatedError";
 import { ScreenName } from "../../../../../../../const";
 
-import { handleTransactionStatus } from "../../../../../helpers";
+import { handleTransactionStatus } from "../../../../../helpers/handleTransactionStatus";
 import { TransactionMethodEnum } from "./enums";
 
 import styles from "./styles";

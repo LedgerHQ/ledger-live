@@ -1,8 +1,8 @@
+import type { Account } from "@ledgerhq/types-live";
 import type { BigNumber } from "bignumber.js";
-import type { ElrondAccount } from "@ledgerhq/live-common/families/elrond/types";
 
 export interface SummaryPropsType {
-  account: ElrondAccount;
+  account: Account;
 }
 
 export interface ItemType {
