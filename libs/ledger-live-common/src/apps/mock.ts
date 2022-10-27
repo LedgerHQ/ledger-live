@@ -183,8 +183,8 @@ export function mockListAppsResult(
     deviceModelId:
       deviceModelId ||
       (deviceInfo.seTargetId
-        ? identifyTargetId(deviceInfo.seTargetId)?.id ?? <DeviceModelId>"nanoS"
-        : <DeviceModelId>"nanoS"),
+        ? identifyTargetId(deviceInfo.seTargetId)?.id ?? DeviceModelId.nanoS
+        : DeviceModelId.nanoS),
     firmware: firmware155,
     installed,
     installedAvailable: true,
