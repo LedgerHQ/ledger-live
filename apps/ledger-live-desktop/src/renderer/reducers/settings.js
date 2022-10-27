@@ -388,7 +388,7 @@ export const deepLinkUrlSelector = (state: State) => state.settings.deepLinkUrl;
 export const counterValueCurrencyLocalSelector = (state: SettingsState): Currency =>
   findCurrencyByTicker(state.counterValue) || getFiatCurrencyByTicker("USD");
 
-export const counterValueCurrencySelector: OutputSelector<State, void, Currency> = createSelector(
+export const counterValueCurrencySelector = createSelector(
   storeSelector,
   counterValueCurrencyLocalSelector,
 );
