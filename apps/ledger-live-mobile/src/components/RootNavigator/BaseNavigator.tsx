@@ -569,7 +569,6 @@ export default function BaseNavigator() {
         name={ScreenName.BleDevicePairingFlow}
         component={BleDevicePairingFlow}
         options={{
-          title: "",
           headerShown: false,
         }}
       />

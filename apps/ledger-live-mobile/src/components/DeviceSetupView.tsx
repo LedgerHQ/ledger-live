@@ -28,9 +28,8 @@ const DeviceSetupView = ({
   const navigation = useNavigation();
   const { colors } = useTheme();
 
-  const canGoBack = navigation.canGoBack();
-  const canRenderBackButton = (canGoBack && hasBackButton) || onBack;
-  const canRenderCloseButton = (canGoBack && hasCloseButton) || onClose;
+  const canRenderBackButton = hasBackButton || onBack;
+  const canRenderCloseButton = hasCloseButton || onClose;
 
   const handleBack = () => {
     navigation.goBack();

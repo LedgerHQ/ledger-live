@@ -19,14 +19,9 @@ import TabBarSafeAreaView, {
 } from "../../components/TabBar/TabBarSafeAreaView";
 import AssetRow, { NavigationProp } from "../WalletCentricAsset/AssetRow";
 import AssetsNavigationHeader from "../Assets/AssetsNavigationHeader";
+import { Asset } from "../../types/asset";
 
 const maxReadOnlyCryptoCurrencies = 10;
-
-type Asset = {
-  amount: number;
-  accounts: never[];
-  currency: TokenCurrency | CryptoCurrency;
-};
 
 function ReadOnlyAssets({ navigation }: { navigation: NavigationProp }) {
   const listSupportedTokens = useCallback(
@@ -67,14 +62,10 @@ function ReadOnlyAssets({ navigation }: { navigation: NavigationProp }) {
       <TrackScreen category="ReadOnly" name="Assets" />
       <Flex flex={1} bg={"background.main"}>
         <AssetsNavigationHeader readOnly />
-        <FlatList
+        <FlatList<Asset>
           data={assets}
           renderItem={renderItem}
-          keyExtractor={(i: Asset, _index: number) =>
-            // FIXME: Asset does not have a string id field
-            // @ts-expect-error This seems very wrong :(
-            i.id
-          }
+          keyExtractor={item => item.currency.id}
           contentContainerStyle={{
             paddingHorizontal: 16,
             paddingBottom: TAB_BAR_SAFE_HEIGHT,

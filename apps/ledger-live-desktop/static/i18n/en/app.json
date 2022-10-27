@@ -754,7 +754,7 @@
     "settings": {
       "title": "Edit account",
       "advancedLogs": "Advanced",
-      "advancedTips": "This is a {{tag}} xpub. When importing it into a third-party wallet, chose the same derivation mode.",
+      "advancedTips": "This is a {{tag}} xpub. When importing it into a third-party wallet, choose the same derivation mode.",
       "accountName": {
         "title": "Account name",
         "desc": "Description of the account"
@@ -5154,6 +5154,9 @@
     },
     "FeeTooHigh": {
       "title": "Network fees are above 10% of the amount"
+    },
+    "DustLimit": {
+      "title": "Amount is lower than dust limit"
     },
     "SourceHasMultiSign": {
       "title": "Please disable multisign to send {{currencyName}}"

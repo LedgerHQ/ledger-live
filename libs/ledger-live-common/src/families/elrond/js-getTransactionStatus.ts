@@ -5,6 +5,7 @@ import {
   FeeNotLoaded,
   InvalidAddressBecauseDestinationIsAlsoSource,
   FeeTooHigh,
+  AmountRequired,
 } from "@ledgerhq/errors";
 import { DECIMALS_LIMIT } from "./constants";
 import type { ElrondAccount, Transaction, TransactionStatus } from "./types";
@@ -39,6 +40,10 @@ const getTransactionStatus = async (
       a.subAccounts &&
       a.subAccounts.find((ta) => ta.id === t.subAccountId)) ||
     null;
+
+  if (!errors.amount && t.amount.eq(0) && !t.useAllAmount) {
+    errors.amount = new AmountRequired();
+  }
 
   const { amount, totalSpent, estimatedFees } = await computeTransactionValue(
     t,

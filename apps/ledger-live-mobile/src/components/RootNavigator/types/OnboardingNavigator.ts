@@ -23,10 +23,8 @@ export type OnboardingNavigatorParamList = {
   [ScreenName.OnboardingTermsOfUse]: undefined;
   [ScreenName.OnboardingDeviceSelection]: undefined;
   [ScreenName.OnboardingUseCase]: { deviceModelId: DeviceModelId };
-  [ScreenName.OnboardingModalWarning]: NavigatorScreenParams<OnboardingCarefulWarningParamList>;
-  [ScreenName.OnboardingPreQuizModal]: NavigatorScreenParams<OnboardingPreQuizModalNavigatorParamList> & {
-    onNext?: () => void;
-  };
+  [NavigatorName.OnboardingCarefulWarning]: NavigatorScreenParams<OnboardingCarefulWarningParamList>;
+  [NavigatorName.OnboardingPreQuiz]: NavigatorScreenParams<OnboardingPreQuizModalNavigatorParamList>;
   [ScreenName.OnboardingDoYouHaveALedgerDevice]: undefined;
   [ScreenName.OnboardingModalDiscoverLive]: undefined;
   [ScreenName.OnboardingModalSetupNewDevice]: { deviceModelId: DeviceModelId };

@@ -8,6 +8,7 @@ import React, {
   useContext,
   useMemo,
   useEffect,
+  useState,
 } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import * as Sentry from "@sentry/react-native";
@@ -103,6 +104,7 @@ import DelayedTrackingProvider from "./components/DelayedTrackingProvider";
 import { useFilteredManifests } from "./screens/Platform/shared";
 import { setWallectConnectUri } from "./actions/walletconnect";
 import PostOnboardingProviderWrapped from "./logic/postOnboarding/PostOnboardingProviderWrapped";
+import { isAcceptedTerms } from "./logic/terms";
 import type { Writeable } from "./types/helpers";
 
 const themes: {
@@ -287,6 +289,8 @@ const linkingOptions = {
 
           [ScreenName.PostBuyDeviceScreen]: "hw-purchase-success",
 
+          [ScreenName.BleDevicePairingFlow]: "sync-onboarding",
+
           /**
            * @params ?platform: string
            * ie: "ledgerlive://discover/paraswap?theme=light" will open the catalog and the paraswap dapp with a light theme as parameter
@@ -433,19 +437,24 @@ const linkingOptions = {
     },
   },
 };
-const linkingOptionsOnboarding = {
+
+const getOnboardingLinkingOptions = (acceptedTermsOfUse: boolean) => ({
   ...linkingOptions,
   config: {
-    screens: {
-      [NavigatorName.Base]: {
-        initialRouteName: NavigatorName.Main,
-        screens: {
-          [ScreenName.PostBuyDeviceScreen]: "hw-purchase-success",
+    screens: !acceptedTermsOfUse
+      ? {}
+      : {
+          [NavigatorName.Base]: {
+            initialRouteName: NavigatorName.Main,
+            screens: {
+              [ScreenName.PostBuyDeviceScreen]: "hw-purchase-success",
+              [ScreenName.BleDevicePairingFlow]: "sync-onboarding",
+            },
+          },
         },
-      },
-    },
   },
-};
+});
+
 const platformManifestFilterParams = {
   private: true,
   branches: undefined, // will override & having it to undefined makes all branches valid
@@ -459,10 +468,17 @@ const DeepLinkingNavigator = ({ children }: { children: React.ReactNode }) => {
   const liveAppProviderInitialized =
     !!remoteLiveAppState.value || !!remoteLiveAppState.error;
   const filteredManifests = useFilteredManifests(platformManifestFilterParams);
+  // Can be either true, false or null, meaning we don't know yet
+  const [userAcceptedTerms, setUserAcceptedTerms] = useState<boolean | null>(
+    null,
+  );
+
   const linking = useMemo<LinkingOptions<ReactNavigation.RootParamList>>(
     () =>
       ({
-        ...(hasCompletedOnboarding ? linkingOptions : linkingOptionsOnboarding),
+        ...(hasCompletedOnboarding
+          ? linkingOptions
+          : getOnboardingLinkingOptions(!!userAcceptedTerms)),
         enabled: wcContext.initDone && !wcContext.session.session,
         subscribe(listener) {
           const sub = Linking.addEventListener("url", ({ url }) => {
@@ -538,13 +554,17 @@ const DeepLinkingNavigator = ({ children }: { children: React.ReactNode }) => {
       dispatch,
       liveAppProviderInitialized,
       filteredManifests,
+      userAcceptedTerms,
     ],
   );
   const [isReady, setIsReady] = React.useState(false);
+
   useEffect(() => {
     if (!wcContext.initDone) return;
+    if (userAcceptedTerms === null) return;
     setIsReady(true);
-  }, [wcContext.initDone]);
+  }, [wcContext.initDone, userAcceptedTerms]);
+
   React.useEffect(
     () => () => {
       (isReadyRef as Writeable<typeof isReadyRef>).current = false;
@@ -560,6 +580,12 @@ const DeepLinkingNavigator = ({ children }: { children: React.ReactNode }) => {
       dispatch(setOsTheme(currentOsTheme));
     }
   }, [dispatch, osTheme]);
+
+  useEffect(() => {
+    const loadTerms = async () => setUserAcceptedTerms(await isAcceptedTerms());
+    loadTerms();
+  }, []);
+
   useEffect(() => {
     compareOsTheme();
 

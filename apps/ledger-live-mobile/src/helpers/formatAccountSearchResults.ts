@@ -3,7 +3,7 @@ import forEach from "lodash/forEach";
 import type { Account, AccountLike, SubAccount } from "@ledgerhq/types-live";
 
 export type SearchResult = {
-  account: AccountLike;
+  account: AccountLike & { disabled?: boolean };
   parentAccount?: Account;
   tokenAccounts?: (AccountLike & { match: boolean })[];
   match?: boolean;

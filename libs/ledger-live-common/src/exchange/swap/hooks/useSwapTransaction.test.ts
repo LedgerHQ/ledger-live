@@ -1,6 +1,6 @@
 import { renderHook } from "@testing-library/react-hooks";
-
 import { AmountRequired } from "@ledgerhq/errors";
+
 import { useFromAmountError } from "./useSwapTransaction";
 
 /**

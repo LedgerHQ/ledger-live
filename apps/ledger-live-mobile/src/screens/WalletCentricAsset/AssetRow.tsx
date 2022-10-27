@@ -1,8 +1,6 @@
 import React, { useCallback } from "react";
 import useEnv from "@ledgerhq/live-common/hooks/useEnv";
 import { BigNumber } from "bignumber.js";
-import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { AccountLike } from "@ledgerhq/types-live";
 import { NavigatorName, ScreenName } from "../../const";
 import { usePortfolio } from "../../hooks/portfolio";
 import AssetRowLayout from "../../components/AssetRowLayout";
@@ -13,14 +11,7 @@ import {
 } from "../../components/RootNavigator/types/helpers";
 import { AccountsNavigatorParamList } from "../../components/RootNavigator/types/AccountsNavigator";
 import { PortfolioNavigatorStackParamList } from "../../components/RootNavigator/types/PortfolioNavigator";
-
-type Asset = {
-  currency: CryptoOrTokenCurrency;
-  accounts: AccountLike[];
-  distribution?: number;
-  amount: number;
-  countervalue?: number;
-};
+import { Asset } from "../../types/asset";
 
 export type NavigationProp = BaseNavigationComposite<
   | StackNavigatorNavigation<AccountsNavigatorParamList, ScreenName.Assets>
@@ -30,7 +21,6 @@ export type NavigationProp = BaseNavigationComposite<
 type Props = {
   asset: Asset;
   navigation: NavigationProp;
-  navigationParams?: Parameters<NavigationProp["navigate"]>;
   hideDelta?: boolean;
   topLink?: boolean;
   bottomLink?: boolean;
@@ -39,7 +29,6 @@ type Props = {
 const AssetRow = ({
   asset,
   navigation,
-  navigationParams,
   hideDelta,
   topLink,
   bottomLink,
@@ -56,18 +45,13 @@ const AssetRow = ({
     track("asset_clicked", {
       asset: currency.name,
     });
-    if (navigationParams) {
-      // @ts-expect-error Ok, please stop doing this.
-      navigation.navigate(...navigationParams);
-    } else {
-      navigation.navigate(NavigatorName.Accounts, {
-        screen: ScreenName.Asset,
-        params: {
-          currency,
-        },
-      });
-    }
-  }, [currency, navigation, navigationParams]);
+    navigation.navigate(NavigatorName.Accounts, {
+      screen: ScreenName.Asset,
+      params: {
+        currency,
+      },
+    });
+  }, [currency, navigation]);
 
   return (
     <AssetRowLayout

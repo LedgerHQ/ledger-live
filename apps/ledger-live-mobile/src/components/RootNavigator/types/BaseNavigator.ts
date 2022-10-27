@@ -96,9 +96,11 @@ export type PathToDeviceParam = PropertyPath;
 export type NavigationType = "navigate" | "replace" | "push";
 
 export type BaseNavigatorStackParamList = {
-  [NavigatorName.Main]: NavigatorScreenParams<MainNavigatorParamList> & {
-    hideTabNavigation?: boolean;
-  };
+  [NavigatorName.Main]:
+    | (NavigatorScreenParams<MainNavigatorParamList> & {
+        hideTabNavigation?: boolean;
+      })
+    | undefined;
   [NavigatorName.BuyDevice]:
     | NavigatorScreenParams<BuyDeviceNavigatorParamList>
     | undefined;
@@ -288,9 +290,11 @@ export type BaseNavigatorStackParamList = {
   // This is not a navigator
   [NavigatorName.CeloManageAssetsNavigator]:
     | {
-        account?: AccountLike;
-        accountId?: string | null;
-        parentId?: string | null;
+        params?: {
+          account?: AccountLike;
+          accountId?: string | null;
+          parentId?: string | null;
+        };
       }
     | undefined;
 
