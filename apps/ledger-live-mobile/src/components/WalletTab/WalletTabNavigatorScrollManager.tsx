@@ -1,8 +1,10 @@
 import React, { createContext, useCallback, useEffect, useRef } from "react";
 import { Animated, FlatList, ScrollView } from "react-native";
+import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 
 const tabBarHeight = 74;
 const headerHeight = 72;
+const headerHeightWithTabNavigatorDisabled = 88;
 
 type WalletTabNavigatorScrollContextData = {
   scrollY: Animated.Value;
@@ -36,6 +38,7 @@ export default function WalletTabNavigatorScrollManager({
   children: React.ReactNode;
   currentRouteName?: string;
 }) {
+  const walletNftGalleryFeature = useFeature("walletNftGallery");
   const scrollY = useRef(new Animated.Value(0)).current;
   const scrollableRefArray = useRef<
     { key: string; value: ScrollView | FlatList }[]
@@ -115,6 +118,8 @@ export default function WalletTabNavigatorScrollManager({
     [currentRouteName, syncScrollOffset],
   );
 
+  console.log("walletNftGalleryFeature", walletNftGalleryFeature);
+
   return (
     <WalletTabNavigatorScrollContext.Provider
       value={{
@@ -123,8 +128,10 @@ export default function WalletTabNavigatorScrollManager({
         scrollableOffsetMap,
         onGetRef,
         syncScrollOffset,
-        tabBarHeight: false ? 0 : tabBarHeight,
-        headerHeight: false ? 88 : headerHeight,
+        tabBarHeight: walletNftGalleryFeature?.enabled ? tabBarHeight : 0,
+        headerHeight: walletNftGalleryFeature?.enabled
+          ? headerHeight
+          : headerHeightWithTabNavigatorDisabled,
       }}
     >
       {children}

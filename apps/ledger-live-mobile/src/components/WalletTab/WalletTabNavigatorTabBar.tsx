@@ -1,12 +1,17 @@
 import { MaterialTopTabBarProps } from "@react-navigation/material-top-tabs";
 import { useTheme } from "styled-components/native";
-import React, { memo, useCallback, useContext, useEffect } from "react";
+import React, { memo, useCallback, useContext, useMemo } from "react";
 import styled from "@ledgerhq/native-ui/components/styled";
 import { Flex, Text } from "@ledgerhq/native-ui";
-import { Animated, Easing } from "react-native";
+import { Animated } from "react-native";
+import { useSelector } from "react-redux";
 import { track } from "../../analytics";
 import { rgba } from "../../colors";
 import { WalletTabNavigatorScrollContext } from "./WalletTabNavigatorScrollManager";
+import WalletTabBackgroundGradient from "./WalletTabBackgroundGradient";
+import { readOnlyModeEnabledSelector } from "../../reducers/settings";
+import { pairId } from "../../../../../libs/ledger-live-common/lib-es/countervalues/helpers";
+import { accountsSelector } from "../../reducers/accounts";
 
 const StyledTab = styled.TouchableOpacity``;
 
@@ -62,7 +67,12 @@ function WalletTabNavigatorTabBar({
   state,
   descriptors,
   navigation,
+  position,
 }: MaterialTopTabBarProps) {
+  const { colors } = useTheme();
+  const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector);
+  const accounts = useSelector(accountsSelector);
+
   const { scrollY, headerHeight, tabBarHeight } = useContext(
     WalletTabNavigatorScrollContext,
   );
@@ -74,25 +84,21 @@ function WalletTabNavigatorTabBar({
   });
 
   const opacity = scrollY.interpolate({
-    inputRange: [headerHeight, tabBarHeight + headerHeight + 12],
+    inputRange: [headerHeight, headerHeight + 1],
     outputRange: [0, 1],
     extrapolate: "clamp",
   });
 
   return (
     <>
-      {/* <Animated.View */}
-      {/*  style={{ */}
-      {/*    top: 0, */}
-      {/*    zIndex: 1, */}
-      {/*    position: "absolute", */}
-      {/*    transform: [{ translateY: y }], */}
-      {/*    width: "100%", */}
-      {/*    height: tabBarHeight, */}
-      {/*    backgroundColor: "black", */}
-      {/*    opacity, */}
-      {/*  }} */}
-      {/* /> */}
+      <WalletTabBackgroundGradient
+        scrollX={position}
+        color={
+          readOnlyModeEnabled && accounts.length <= 0
+            ? colors.neutral.c30
+            : undefined
+        }
+      />
       <Animated.View
         style={{
           top: 0,
@@ -110,7 +116,7 @@ function WalletTabNavigatorTabBar({
             // transform: [{ translateY: y }],
             width: "100%",
             height: tabBarHeight,
-            backgroundColor: "black",
+            backgroundColor: colors.background.main,
             opacity,
           }}
         />

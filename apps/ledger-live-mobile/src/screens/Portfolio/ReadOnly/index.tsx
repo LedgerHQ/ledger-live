@@ -198,11 +198,11 @@ function ReadOnlyPortfolio({ navigation }: Props) {
       <CheckLanguageAvailability />
       <CheckTermOfUseUpdate />
       <TrackScreen category="Wallet" source={source} />
-      <BackgroundGradient
-        currentPositionY={currentPositionY}
-        graphCardEndPosition={graphCardEndPosition}
-        color={colors.neutral.c30}
-      />
+      {/*<BackgroundGradient*/}
+      {/*  currentPositionY={currentPositionY}*/}
+      {/*  graphCardEndPosition={graphCardEndPosition}*/}
+      {/*  color={colors.neutral.c30}*/}
+      {/*/>*/}
       <CollapsibleHeaderFlatList<JSX.Element>
         data={data}
         contentContainerStyle={{ paddingBottom: TAB_BAR_SAFE_HEIGHT }}

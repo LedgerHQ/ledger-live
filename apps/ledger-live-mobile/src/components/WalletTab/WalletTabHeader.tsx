@@ -1,6 +1,7 @@
 import { Box } from "@ledgerhq/native-ui";
 import React, { useContext } from "react";
 import { Animated } from "react-native";
+import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import Header from "../../screens/Portfolio/Header";
 import { WalletTabNavigatorScrollContext } from "./WalletTabNavigatorScrollManager";
 
@@ -11,6 +12,7 @@ function WalletTabHeader({
   hidePortfolio: boolean;
   animated?: boolean;
 }) {
+  const walletNftGalleryFeature = useFeature("walletNftGallery");
   const { scrollY, headerHeight } = useContext(WalletTabNavigatorScrollContext);
   const y = animated
     ? 0
@@ -28,22 +30,29 @@ function WalletTabHeader({
       });
 
   return (
-    <Animated.View
-      style={[
-        {
-          top: 0,
-          height: headerHeight,
-          width: "100%",
-          position: "absolute",
-          opacity,
-        },
-        { transform: [{ translateY: y }] },
-      ]}
-    >
-      <Box flex={1} px={6} pb={false ? 6 : 0} justifyContent={"flex-end"}>
-        <Header hidePortfolio={hidePortfolio} />
-      </Box>
-    </Animated.View>
+    <>
+      <Animated.View
+        style={[
+          {
+            top: 0,
+            height: headerHeight,
+            width: "100%",
+            position: "absolute",
+            opacity,
+          },
+          { transform: [{ translateY: y }] },
+        ]}
+      >
+        <Box
+          flex={1}
+          px={6}
+          pb={walletNftGalleryFeature?.enabled ? 0 : 6}
+          justifyContent={"flex-end"}
+        >
+          <Header hidePortfolio={hidePortfolio} />
+        </Box>
+      </Animated.View>
+    </>
   );
 }
 

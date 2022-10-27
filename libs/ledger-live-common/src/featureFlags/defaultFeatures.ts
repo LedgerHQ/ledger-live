@@ -116,6 +116,6 @@ export const defaultFeatures: DefaultFeatures = {
     enabled: false,
   },
   walletNftGallery: {
-    enable: false
-  }
+    enabled: false,
+  },
 };

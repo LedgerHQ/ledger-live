@@ -235,10 +235,10 @@ function PortfolioScreen({ navigation }: Props) {
         accountsLength={distribution.list && distribution.list.length}
         discreet={discreetMode}
       />
-      <BackgroundGradient
-        currentPositionY={currentPositionY}
-        graphCardEndPosition={graphCardEndPosition}
-      />
+      {/*<BackgroundGradient*/}
+      {/*  currentPositionY={currentPositionY}*/}
+      {/*  graphCardEndPosition={graphCardEndPosition}*/}
+      {/*/>*/}
       <CollapsibleHeaderFlatList<React.ReactNode>
         data={data}
         renderItem={({ item }: { item: React.ReactNode }) => item}
