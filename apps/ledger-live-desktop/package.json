@@ -59,7 +59,6 @@
     "@ledgerhq/logs": "workspace:^",
     "@ledgerhq/react-ui": "workspace:^",
     "@ledgerhq/types-cryptoassets": "workspace:^",
-    "@ledgerhq/types-devices": "workspace:^6.22.1",
     "@ledgerhq/types-live": "workspace:^",
     "@ledgerhq/types-devices": "workspace:^",
     "@polkadot/react-identicon": "0.89.2",

@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React from "react";
 import { Flex, Box, Text } from "@ledgerhq/react-ui";
 import styled, { useTheme } from "styled-components";
 import { scaleDimensions } from "./imageUtils";

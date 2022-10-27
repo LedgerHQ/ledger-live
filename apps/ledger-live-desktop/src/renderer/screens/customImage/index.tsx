@@ -1,8 +1,6 @@
 import React, { ComponentProps, useCallback, useEffect, useMemo, useState } from "react";
 import { BoxedIcon, Flex, FlowStepper, Icons, InfiniteLoader, Log, Text } from "@ledgerhq/react-ui";
 import { ImageDownloadError } from "@ledgerhq/live-common/customImage/errors";
-import { DeviceModelId } from "@ledgerhq/types-devices";
-import { useTheme } from "styled-components";
 import { useTranslation } from "react-i18next";
 import { withV3StyleProvider } from "~/renderer/styles/StyleProviderV3";
 import { ImageBase64Data } from "~/renderer/components/CustomImage/types";
@@ -11,7 +9,6 @@ import { urlContentToDataUri } from "~/renderer/components/CustomImage/shared";
 import { ProcessorResult } from "~/renderer/components/CustomImage/ImageGrayscalePreview";
 import ErrorDisplay from "~/renderer/components/ErrorDisplay";
 import { withV2StyleProvider } from "~/renderer/styles/StyleProvider";
-import Animation from "~/renderer/animations";
 import StepChooseImage from "./Step1ChooseImage";
 import StepAdjustImage from "./Step2AdjustImage";
 import StepChooseContrast from "./Step3ChooseContrast";
@@ -20,7 +17,6 @@ import { Step } from "./types";
 import StepContainer from "./StepContainer";
 import StepFooter from "./StepFooter";
 import { setDrawer } from "~/renderer/drawers/Provider";
-import { getDeviceAnimation } from "~/renderer/components/DeviceAction/animations";
 
 type Props = {
   imageUri?: string;

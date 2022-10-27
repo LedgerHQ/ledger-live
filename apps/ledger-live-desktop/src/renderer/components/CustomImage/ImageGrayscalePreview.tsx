@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { Box, Flex } from "@ledgerhq/react-ui";
+import { Flex } from "@ledgerhq/react-ui";
 import { ImageProcessingError } from "@ledgerhq/live-common/customImage/errors";
 import { createCanvas, scaleDimensions } from "./imageUtils";
 import { ImageBase64Data, ImageDimensions } from "./types";
