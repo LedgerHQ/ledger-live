@@ -1,23 +1,12 @@
-import { useCallback, useMemo } from "react";
+import { useMemo, useState, useEffect } from "react";
 import { AccountLike } from "@ledgerhq/types-live";
+import { Observable } from "@ledgerhq/wallet-api-server";
 import {
-  accountToPlatformAccount,
-  currencyToPlatformCurrency,
+  accountToWalletAPIAccount,
+  currencyToWalletAPICurrency,
 } from "./converters";
-import {
-  filterPlatformAccounts,
-  filterPlatformCurrencies,
-  AccountFilters,
-  CurrencyFilters,
-} from "./filters";
-import { isPlatformSupportedCurrency } from "./helpers";
-import {
-  ListPlatformAccount,
-  ListPlatformCurrency,
-  PlatformCurrency,
-  AppManifest,
-  PlatformAccount,
-} from "./types";
+import { isWalletAPISupportedCurrency } from "./helpers";
+import { WalletAPICurrency, AppManifest, WalletAPIAccount } from "./types";
 import { getParentAccount } from "../account";
 import { listCurrencies } from "../currencies";
 
@@ -27,7 +16,7 @@ import { listCurrencies } from "../currencies";
  *
  * We can also use the stringify method of qs (https://github.com/ljharb/qs#stringifying)
  */
-export function usePlatformUrl(
+export function useWalletAPIUrl(
   manifest: AppManifest,
   params: { background?: string; text?: string; loadDate?: Date },
   inputs?: Record<string, string>
@@ -61,47 +50,55 @@ export function usePlatformUrl(
   }, [manifest.url, manifest.params, params, inputs]);
 }
 
-export function usePlatformAccounts(
+export function useWalletAPIAccounts(
   accounts: AccountLike[]
-): PlatformAccount[] {
+): WalletAPIAccount[] {
   return useMemo(() => {
     return accounts.map((account) => {
       const parentAccount = getParentAccount(account, accounts);
 
-      return accountToPlatformAccount(account, parentAccount);
+      return accountToWalletAPIAccount(account, parentAccount);
     });
   }, [accounts]);
 }
 
-export function useListPlatformAccounts(
-  accounts: AccountLike[]
-): ListPlatformAccount {
-  const platformAccounts = usePlatformAccounts(accounts);
-  return useCallback(
-    (filters: AccountFilters = {}) => {
-      return filterPlatformAccounts(platformAccounts, filters);
-    },
-    [platformAccounts]
-  );
-}
-
-export function usePlatformCurrencies(): PlatformCurrency[] {
+export function useWalletAPICurrencies(): WalletAPICurrency[] {
   return useMemo(
     () =>
       listCurrencies(true)
-        .filter(isPlatformSupportedCurrency)
-        .map(currencyToPlatformCurrency),
+        .filter(isWalletAPISupportedCurrency)
+        .map(currencyToWalletAPICurrency),
     []
   );
 }
 
-export function useListPlatformCurrencies(): ListPlatformCurrency {
-  const currencies = usePlatformCurrencies();
+export function useGetAccountIds(
+  accounts$: Observable<WalletAPIAccount[]> | undefined
+): Map<string, boolean> | undefined {
+  const [accounts, setAccounts] = useState<WalletAPIAccount[]>([]);
 
-  return useCallback(
-    (filters?: CurrencyFilters) => {
-      return filterPlatformCurrencies(currencies, filters || {});
-    },
-    [currencies]
-  );
+  useEffect(() => {
+    if (!accounts$) {
+      return undefined;
+    }
+
+    const subscription = accounts$.subscribe((walletAccounts) => {
+      setAccounts(walletAccounts);
+    });
+
+    return () => {
+      subscription.unsubscribe();
+    };
+  }, [accounts$]);
+
+  return useMemo(() => {
+    if (!accounts$) {
+      return undefined;
+    }
+
+    return accounts.reduce((accountIds, account) => {
+      accountIds.set(account.id, true);
+      return accountIds;
+    }, new Map());
+  }, [accounts, accounts$]);
 }
