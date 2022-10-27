@@ -21,6 +21,7 @@ import { makeAccountBridgeReceive } from "../../../bridge/mockHelpers";
 import type { AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
 import cryptoFactory from "../wallet-btc/crypto/factory";
 import { Currency } from "../wallet-btc";
+import * as utils from "../wallet-btc/utils";
 
 const receive = makeAccountBridgeReceive();
 
@@ -84,8 +85,10 @@ const getTransactionStatus = (account, t) => {
     errors.amount = new NotEnoughBalance();
   }
 
+  const txSize = Math.ceil(estimatedFees.toNumber() / t.feePerByte!.toNumber());
   const crypto = cryptoFactory(account.currency.id as Currency);
-  if (amount.gt(0) && amount.lt(crypto.getDustLimit())) {
+
+  if (amount.gt(0) && amount.lt(utils.computeDustAmount(crypto, txSize))) {
     errors.dustLimit = new DustLimit();
   }
 

@@ -136,11 +136,6 @@ class Base implements ICrypto {
     return bs58check.encode(payload);
   }
 
-  // default getDustLimit value - implement this method for specific coins to override value
-  public getDustLimit(): number {
-    return 0;
-  }
-
   // get address given an address type
   async getAddress(
     derivationMode: string,
