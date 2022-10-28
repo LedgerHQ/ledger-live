@@ -59,7 +59,7 @@ export default function ReceiveNFTsModal({ onClose, isOpened }: Props) {
       testId="ReceiveNFTsModal"
       isOpen={isOpened}
       onClose={onPressClose}
-      Icon={<TwoIcons />}
+      Icon={<EthPolygonIcons />}
     >
       <TrackScreen category="Add/receive NFTs" type="drawer" />
 
@@ -84,7 +84,7 @@ export default function ReceiveNFTsModal({ onClose, isOpened }: Props) {
   );
 }
 
-const TwoIcons = () => {
+const EthPolygonIcons = () => {
   return (
     <Svg
       width="77"
