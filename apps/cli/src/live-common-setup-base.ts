@@ -13,6 +13,7 @@ setPlatformVersion(PLATFORM_VERSION);
 setWalletAPIVersion(WALLET_API_VERSION);
 
 setSupportedCurrencies([
+  "avalanche_c_chain",
   "bitcoin",
   "ethereum",
   "bsc",
@@ -56,7 +57,6 @@ setSupportedCurrencies([
   "cronos",
   "songbird",
   "flare",
-  "near",
 ]);
 
 for (const k in process.env) setEnvUnsafe(k as EnvName, process.env[k]);

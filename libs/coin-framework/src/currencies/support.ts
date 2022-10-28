@@ -2,7 +2,7 @@ import {
   getFiatCurrencyByTicker,
   getCryptoCurrencyById,
   hasCryptoCurrencyId,
-  CryptoCurrencyIds,
+  CryptoCurrencyId,
 } from "@ledgerhq/cryptoassets";
 import { CryptoCurrency, FiatCurrency } from "@ledgerhq/types-cryptoassets";
 import { getEnv } from "../env";
@@ -65,6 +65,7 @@ setSupportedFiats([
   "VUV",
   "ZAR",
 ]);
+
 export function isFiatSupported(fiat: FiatCurrency) {
   return userSupportedFiats.includes(fiat);
 }
@@ -74,7 +75,7 @@ export function setSupportedFiats(ids: string[]) {
 export function listSupportedFiats(): FiatCurrency[] {
   return userSupportedFiats;
 }
-export function setSupportedCurrencies(ids: CryptoCurrencyIds[]) {
+export function setSupportedCurrencies(ids: CryptoCurrencyId[]) {
   userSupportedCurrencies = Array.from(new Set(ids)) // Make sure to remove duplicates
     .map((id) => getCryptoCurrencyById(id));
 }
