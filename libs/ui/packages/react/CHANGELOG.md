@@ -1,5 +1,13 @@
 # @ledgerhq/react-ui
 
+## 0.9.3-nightly.0
+
+### Patch Changes
+
+- [#1352](https://github.com/LedgerHQ/ledger-live/pull/1352) [`0d7e0f713a`](https://github.com/LedgerHQ/ledger-live/commit/0d7e0f713ab4fbb3d4bd7df147a96c7de73123b7) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Remove background color in Button "shade" variant (following design)
+
+* [#1352](https://github.com/LedgerHQ/ledger-live/pull/1352) [`0d7e0f713a`](https://github.com/LedgerHQ/ledger-live/commit/0d7e0f713ab4fbb3d4bd7df147a96c7de73123b7) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Add h4Inter text variant
+
 ## 0.9.2
 
 ### Patch Changes

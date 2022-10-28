@@ -1,5 +1,14 @@
 # live-mobile
 
+## 3.10.0-nightly.1
+
+### Patch Changes
+
+- [#1352](https://github.com/LedgerHQ/ledger-live/pull/1352) [`0d7e0f713a`](https://github.com/LedgerHQ/ledger-live/commit/0d7e0f713ab4fbb3d4bd7df147a96c7de73123b7) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Moved custom image errors from ledger-live-mobile to live-common
+
+- Updated dependencies [[`4aa4d42cb1`](https://github.com/LedgerHQ/ledger-live/commit/4aa4d42cb103612c130b01f36100eb6fdd87e8b1), [`0d7e0f713a`](https://github.com/LedgerHQ/ledger-live/commit/0d7e0f713ab4fbb3d4bd7df147a96c7de73123b7)]:
+  - @ledgerhq/live-common@27.6.0-nightly.0
+
 ## 3.10.0-nightly.0
 
 ### Minor Changes
