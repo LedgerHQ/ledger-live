@@ -314,9 +314,7 @@ export const apiForCurrency = (currency: CryptoCurrency): API => {
       delete post.gasPrice;
       const { data } = await network({
         method: "POST",
-        url: `${baseURL}/tx/estimate-gas-limit`
-          .replace("ledger", "ledger-stg")
-          .replace("api", "api-01"),
+        url: `${baseURL}/tx/estimate-gas-limit`,
         data: post,
       });
 
