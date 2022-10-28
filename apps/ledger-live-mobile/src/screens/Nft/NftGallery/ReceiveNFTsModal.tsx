@@ -1,15 +1,8 @@
 import React, { useCallback } from "react";
 import { useTranslation } from "react-i18next";
-import {
-  BottomDrawer,
-  Button,
-  CryptoIcon,
-  Flex,
-  Text,
-} from "@ledgerhq/native-ui";
+import { BottomDrawer, Button, Text } from "@ledgerhq/native-ui";
 import { useNavigation } from "@react-navigation/native";
 import { Linking } from "react-native";
-import styled, { useTheme } from "styled-components/native";
 import Svg, { G, Path, Rect, Mask } from "react-native-svg";
 import { NavigatorName, ScreenName } from "../../../const";
 import { track, TrackScreen } from "../../../analytics";
