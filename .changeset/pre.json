@@ -3,7 +3,7 @@
   "tag": "next",
   "initialVersions": {
     "@ledgerhq/live-cli": "22.4.4",
-    "ledger-live-desktop": "2.49.1",
+    "ledger-live-desktop": "2.49.2",
     "dummy-live-app": "0.1.0",
     "live-mobile": "3.9.2",
     "@ledgerhq/live-common": "27.5.0",
