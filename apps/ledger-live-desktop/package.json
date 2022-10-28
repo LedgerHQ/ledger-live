@@ -32,7 +32,7 @@
     "preinstall-deps": "rimraf node_modules/paralleljs/package.json",
     "install-deps": "electron-builder install-app-deps",
     "postinstall": "node ./scripts/post-install.js",
-    "dist:internal": "cross-env NODE_ENV=production DEBUG=electron-builder electron-builder",
+    "dist:internal": "cross-env NODE_ENV=production DEBUG=electron-builder,electron-universal electron-builder",
     "dist:dirty": "node ./tools/dist --dirty",
     "dist:dir": "node ./tools/dist --dir",
     "nightly": "node ./tools/dist --nightly -v",
