@@ -152,7 +152,11 @@ const NftMediaComponent = ({
   ownedNftsInCollection,
 }: NftMediaProps) => {
   const { t } = useTranslation();
-  if (standard === "ERC1155") {
+  if (
+    standard === "ERC1155" &&
+    ownedNftsInCollection &&
+    ownedNftsInCollection > 1
+  ) {
     return (
       <Box position="relative">
         <Tag
@@ -160,6 +164,7 @@ const NftMediaComponent = ({
           top="10px"
           right="10px"
           backgroundColor="neutral.c30"
+          borderRadius={1}
         >
           {t("wallet.nftGallery.media.tag", { count: ownedNftsInCollection })}
         </Tag>
@@ -185,7 +190,7 @@ const NftMediaComponent = ({
 const styles = StyleSheet.create({
   image: {
     position: "absolute",
-    borderRadius: 4,
+    borderRadius: 8,
     marginBottom: 12,
     width: "100%",
     aspectRatio: 1,

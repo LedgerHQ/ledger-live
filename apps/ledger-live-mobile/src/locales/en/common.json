@@ -5160,8 +5160,7 @@
         "cta": "Hide this NFT"
       },
       "media": {
-        "tag": "{{count}} NFT",
-        "tag_plural": "{{count}} NFTs"
+        "tag": "{{count}} NFTs"
       }
     }
   }
