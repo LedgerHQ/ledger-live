@@ -104,10 +104,6 @@ export const textVariantStyle: Record<
   },
   h4Inter: {
     fontFamily: "Inter, Sans",
-    fontWeight: 500,
-  },
-  h4Inter: {
-    fontFamily: "Inter, Sans",
     fontWeight: 600,
   },
   h5: {
