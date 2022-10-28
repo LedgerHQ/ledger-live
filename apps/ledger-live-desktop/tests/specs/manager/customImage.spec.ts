@@ -69,6 +69,7 @@ test("Custom image", async ({ page }) => {
 
     /** go back to cropping -> the cropping state should not be reinitialized */
     await customImageDrawer.contrastPrevious();
+    await customImageDrawer.waitForCropConfirmable();
     await expect(container).toHaveScreenshot(`${generateScreenshotPrefix()}adjust.png`);
 
     /** rotate */
@@ -83,6 +84,7 @@ test("Custom image", async ({ page }) => {
 
     /** go back to cropping */
     await customImageDrawer.contrastPrevious();
+    await customImageDrawer.waitForCropConfirmable();
     await expect(container).toHaveScreenshot(
       `${generateScreenshotPrefix()}adjust-rotated-zoomed-preserved.png`,
     );
