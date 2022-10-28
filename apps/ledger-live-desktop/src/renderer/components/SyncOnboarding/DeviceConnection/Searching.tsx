@@ -30,7 +30,7 @@ const SyncOnboardingDeviceConnectionSearching = ({
       <OnboardingNavHeader onClickPrevious={() => history.push("/onboarding/select-device")} />
       <Flex flex={1} alignItems="center" justifyContent="center" flexDirection="column">
         <DeviceIllustration deviceId={deviceModelId} />
-        <Text variant="h3" color="neutral.c100" mt={16}>
+        <Text variant="h3Inter" color="neutral.c100" mt={16}>
           {t("syncOnboarding.connection.searching.title", { deviceModelName })}
         </Text>
       </Flex>

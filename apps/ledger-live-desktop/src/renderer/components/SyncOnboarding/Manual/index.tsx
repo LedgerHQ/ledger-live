@@ -319,8 +319,8 @@ const SyncOnboardingManual = () => {
         <Flex flex={1} px="120px" py={0}>
           <Flex flex={1} flexDirection="column" overflow="hidden" justifyContent="center">
             <Flex flex={1} flexGrow={0} alignItems="center" mb={12}>
-              <Text variant="h3" fontSize="28px" fontWeight="semiBold">
-                Setup {deviceName}
+              <Text variant="h3Inter" fontSize="28px" fontWeight="semiBold">
+                {t("syncOnboarding.manual.title", { deviceName })}
               </Text>
             </Flex>
             <Flex maxWidth="680px" flexShrink={1} overflowY="scroll">

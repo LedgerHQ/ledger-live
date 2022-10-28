@@ -25,7 +25,7 @@ const SyncOnboardingDeviceConnectionSuccess = ({
       <OnboardingNavHeader onClickPrevious={() => history.push("/onboarding/select-device")} />
       <Flex flex={1} alignItems="center" justifyContent="center" flexDirection="column">
         <DeviceIllustration deviceId={device.modelId} />
-        <Text variant="h3" color="neutral.c100" mt={16}>
+        <Text variant="h3Inter" color="neutral.c100" mt={16}>
           {t("syncOnboarding.connection.success.title", { deviceName })}
         </Text>
       </Flex>

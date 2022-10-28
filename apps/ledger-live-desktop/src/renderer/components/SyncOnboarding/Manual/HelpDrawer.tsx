@@ -15,7 +15,7 @@ const HelpDrawer = ({ isOpen, onClose }: Props) => {
     <Drawer big isOpen={isOpen} onClose={onClose}>
       <Flex position="relative" flexDirection="column" height="100%" px={6}>
         <Flex flexDirection="column" flex={1}>
-          <Text variant="h4" fontSize={24} fontWeight="semiBold">
+          <Text variant="h4Inter" fontSize={24} fontWeight="semiBold">
             {t("syncOnboarding.manual.helpDrawer.title")}
           </Text>
           <Text variant="body" mt={8}>

@@ -31,7 +31,7 @@ const TroubleshootingDrawer = ({ isOpen, onClose, lastKnownDeviceId }: Props) =>
               "plugAndPinCode",
             )}
           />
-          <Text variant="h4" textAlign="center" fontSize={24} fontWeight="semiBold">
+          <Text variant="h4Inter" textAlign="center" fontSize={24} fontWeight="semiBold">
             {t("syncOnboarding.manual.troubleshootingDrawer.title")}
           </Text>
           <Text variant="large" textAlign="center" mt={6} color="neutral.c70">

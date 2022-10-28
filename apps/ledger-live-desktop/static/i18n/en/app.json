@@ -1144,6 +1144,7 @@
       }
     },
     "manual": {
+      "title": "Setup {{deviceName}}",
       "pairedContent": {
         "title": "{{deviceName}} is connected",
         "description": "Continue setup on {{deviceName}}",

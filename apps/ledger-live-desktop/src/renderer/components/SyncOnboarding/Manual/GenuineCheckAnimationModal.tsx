@@ -20,7 +20,7 @@ const GenuineCheckModal = ({ isOpen, deviceId, animationName, productName }: Pro
   return (
     <Popin position="relative" isOpen={isOpen}>
       <Flex flexDirection="column" alignItems="center" height="100%" px={8} py={16}>
-        <Text variant="h4" fontWeight="semiBold">
+        <Text variant="h4Inter" fontWeight="semiBold">
           {t("syncOnboarding.manual.genuineCheckAnimationModal.message", {
             deviceName: productName,
           })}

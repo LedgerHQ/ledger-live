@@ -20,7 +20,7 @@ const InstallingApplicationContent = ({ productName }: InstallingApplicationCont
 
   return (
     <Flex flexDirection="column" rowGap="24px">
-      <Text variant="h5">{"Installing apps 22%"}</Text>
+      <Text variant="h5Inter">{"Installing apps 22%"}</Text>
       <Flex flexDirection="column">
         <Bullet bulletText="1" status={Status.completed} text={"Bitcoin"} />
         <Bullet bulletText="2" status={Status.active} text={"Ethereum"} />
@@ -49,7 +49,7 @@ const ApplicationContent = ({ onComplete, productName }: Props) => {
   return (
     <Flex flexDirection="column" alignItems="center" rowGap="24px">
       <Illustration lightSource={Coins} darkSource={Coins} size={106} height={40} />
-      <Text variant="h5">{"Nano uses apps to enable secure blockchain transactions"}</Text>
+      <Text variant="h5Inter">{"Nano uses apps to enable secure blockchain transactions"}</Text>
       <StepText>{t("syncOnboarding.manual.installApplications.title")}</StepText>
       <Flex flex="1" justifyContent="space-around" width="100%">
         <Button
