@@ -1,12 +1,10 @@
-// @flow
-
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
-import type { DeviceModelId } from "@ledgerhq/devices";
+import { DeviceModelId } from "@ledgerhq/devices";
 import manager from "@ledgerhq/live-common/manager/index";
-import type { FirmwareUpdateContext, DeviceInfo } from "@ledgerhq/types-live";
+import { FirmwareUpdateContext, DeviceInfo } from "@ledgerhq/types-live";
 import { hasFinalFirmware } from "@ledgerhq/live-common/hw/hasFinalFirmware";
 import { command } from "~/renderer/commands";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
@@ -17,9 +15,8 @@ import Box from "~/renderer/components/Box";
 import Text from "~/renderer/components/Text";
 import ProgressCircle from "~/renderer/components/ProgressCircle";
 import Interactions from "~/renderer/icons/device/interactions";
-import type { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import { mockedEventEmitter } from "~/renderer/components/debug/DebugMock";
-import type { StepProps } from "../";
+import { StepProps } from "../";
 import { getEnv } from "@ledgerhq/live-common/env";
 
 import Animation from "~/renderer/animations";
@@ -27,7 +24,7 @@ import { getDeviceAnimation } from "~/renderer/components/DeviceAction/animation
 import { AnimationWrapper } from "~/renderer/components/DeviceAction/rendering";
 import useTheme from "~/renderer/hooks/useTheme";
 
-const Container: ThemedComponent<{}> = styled(Box).attrs(() => ({
+const Container = styled(Box).attrs(() => ({
   alignItems: "center",
   fontSize: 4,
   color: "palette.text.shade100",
@@ -65,11 +62,11 @@ const Body = ({
   firmware,
   deviceInfo,
 }: {
-  displayedOnDevice: boolean,
-  progress: number,
-  deviceModelId: DeviceModelId,
-  firmware: FirmwareUpdateContext,
-  deviceInfo: DeviceInfo,
+  displayedOnDevice: boolean;
+  progress: number;
+  deviceModelId: DeviceModelId;
+  firmware: FirmwareUpdateContext;
+  deviceInfo: DeviceInfo;
 }) => {
   const { t } = useTranslation();
   const type = useTheme("colors.palette.type");
@@ -118,7 +115,7 @@ const Body = ({
             />
           </Box>
         ) : (
-          <AnimationWrapper modelId={deviceModelId}>
+          <AnimationWrapper>
             <Animation animation={getDeviceAnimation(deviceModelId, type, "validate")} />
           </AnimationWrapper>
         )}
@@ -145,7 +142,7 @@ const Body = ({
           />
         </Box>
       ) : (
-        <AnimationWrapper modelId={deviceModelId}>
+        <AnimationWrapper>
           <Animation animation={getDeviceAnimation(deviceModelId, type, "validate")} />
         </AnimationWrapper>
       )}
