@@ -54,11 +54,14 @@ const ProviderIcon = ({ name, size = "S", boxed = false }: Props): JSX.Element |
       <Favicon
         width={sizes[size]}
         height={sizes[size]}
-        src={getIconCaseInsensitive({ search: maybeIconName, object: favicons })}
+        src={getIconCaseInsensitive({ search: maybeIconName, object: favicons }) as string}
       />
     );
   }
-  const Component = getIconCaseInsensitive({ search: maybeIconName, object: providers });
+  const Component = getIconCaseInsensitive({
+    search: maybeIconName,
+    object: providers,
+  }) as React.ElementType;
   if (Component) {
     return <Component size={sizes[size]} />;
   }

@@ -42,7 +42,10 @@ const getIconCaseInsensitive = ({ search, object }: IconGetterProps) => {
 const PaymentIcon = ({ name, size = "S" }: Props): JSX.Element | null => {
   const maybeIconName = `${name}`;
 
-  const Component = getIconCaseInsensitive({ search: maybeIconName, object: paymentProviders });
+  const Component = getIconCaseInsensitive({
+    search: maybeIconName,
+    object: paymentProviders,
+  }) as React.ElementType;
   if (Component) {
     return <Component size={sizes[size]} />;
   }
