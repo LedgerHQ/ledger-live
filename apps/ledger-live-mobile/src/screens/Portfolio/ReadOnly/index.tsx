@@ -80,9 +80,6 @@ function ReadOnlyPortfolio({ navigation }: Props) {
 
   const [graphCardEndPosition, setGraphCardEndPosition] = useState(0);
   const currentPositionY = useSharedValue(0);
-  const handleScroll = useAnimatedScrollHandler(event => {
-    currentPositionY.value = event.contentOffset.y;
-  });
 
   const onPortfolioCardLayout = useCallback((event: LayoutChangeEvent) => {
     const { y, height } = event.nativeEvent.layout;
@@ -198,11 +195,6 @@ function ReadOnlyPortfolio({ navigation }: Props) {
       <CheckLanguageAvailability />
       <CheckTermOfUseUpdate />
       <TrackScreen category="Wallet" source={source} />
-      <BackgroundGradient
-        currentPositionY={currentPositionY}
-        graphCardEndPosition={graphCardEndPosition}
-        color={colors.neutral.c30}
-      />
       <CollapsibleHeaderFlatList<JSX.Element>
         data={data}
         contentContainerStyle={{ paddingBottom: TAB_BAR_SAFE_HEIGHT }}

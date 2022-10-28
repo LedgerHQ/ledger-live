@@ -23,7 +23,6 @@ import {
   carouselVisibilitySelector,
 } from "../../reducers/settings";
 import { usePortfolio } from "../../actions/portfolio";
-import BackgroundGradient from "../../components/BackgroundGradient";
 import GraphCardContainer from "./GraphCardContainer";
 import Carousel from "../../components/Carousel";
 import TrackScreen from "../../analytics/TrackScreen";
@@ -234,10 +233,6 @@ function PortfolioScreen({ navigation }: Props) {
         category="Wallet"
         accountsLength={distribution.list && distribution.list.length}
         discreet={discreetMode}
-      />
-      <BackgroundGradient
-        currentPositionY={currentPositionY}
-        graphCardEndPosition={graphCardEndPosition}
       />
       <CollapsibleHeaderFlatList<React.ReactNode>
         data={data}

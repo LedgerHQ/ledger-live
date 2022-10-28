@@ -1,4 +1,6 @@
-import React, { memo } from "react";
+import React, { memo, useContext } from "react";
+import { Animated, ColorValue } from "react-native";
+import { MaterialTopTabBarProps } from "@react-navigation/material-top-tabs";
 import Svg, {
   Path,
   Defs,
@@ -6,49 +8,44 @@ import Svg, {
   Stop,
   RadialGradient,
 } from "react-native-svg";
-import Animated, {
-  Extrapolate,
-  interpolate,
-  useAnimatedStyle,
-} from "react-native-reanimated";
 import { useTheme } from "styled-components/native";
+import { WalletTabNavigatorScrollContext } from "./WalletTabNavigatorScrollManager";
+
+import multiply = Animated.multiply;
 
 type Props = {
-  currentPositionY: Animated.SharedValue<number>;
-  graphCardEndPosition: number;
-  color?: string;
+  scrollX: MaterialTopTabBarProps["position"];
+  color?: ColorValue;
 };
 
-function BackgroundGradient({
-  currentPositionY,
-  graphCardEndPosition,
-  color,
-}: Props) {
-  const BackgroundOverlayOpacity = useAnimatedStyle(() => {
-    const opacity = interpolate(
-      currentPositionY.value,
-      [graphCardEndPosition + 10, graphCardEndPosition + 90],
-      [1, 0],
-      Extrapolate.CLAMP,
-    );
-
-    return {
-      opacity,
-    };
-  }, [graphCardEndPosition]);
-
+function WalletTabBackgroundGradient({ color, scrollX }: Props) {
   const { colors } = useTheme();
+
+  const { scrollY, headerHeight } = useContext(WalletTabNavigatorScrollContext);
+
+  const opacity = multiply(
+    scrollY.interpolate({
+      inputRange: [0, headerHeight],
+      outputRange: [1, 0],
+      extrapolate: "clamp",
+    }),
+    scrollX.interpolate({
+      inputRange: [0, 1],
+      outputRange: [1, 0],
+      extrapolate: "clamp",
+    }),
+  );
 
   return (
     <Animated.View
       style={[
-        BackgroundOverlayOpacity,
         {
           backgroundColor: colors.background.main,
           position: "absolute",
           width: 541,
           height: 450,
           top: -130,
+          opacity,
         },
       ]}
     >
@@ -128,4 +125,4 @@ function BackgroundGradient({
   );
 }
 
-export default memo<Props>(BackgroundGradient);
+export default memo<Props>(WalletTabBackgroundGradient);

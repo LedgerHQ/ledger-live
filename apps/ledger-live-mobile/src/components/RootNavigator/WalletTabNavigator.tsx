@@ -7,6 +7,7 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import { NavigationContainerEventMap } from "@react-navigation/native";
 import { Box } from "@ledgerhq/native-ui";
+import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import { ScreenName } from "../../const";
 import Portfolio from "../../screens/Portfolio";
 import WalletNftGallery from "../../screens/Nft/WalletNftGallery";
@@ -21,6 +22,7 @@ import { setWalletTabNavigatorLastVisitedTab } from "../../actions/settings";
 import WalletTabNavigatorTabBar from "../WalletTab/WalletTabNavigatorTabBar";
 import WalletTabNavigatorScrollManager from "../WalletTab/WalletTabNavigatorScrollManager";
 import WalletTabHeader from "../WalletTab/WalletTabHeader";
+import WalletTabNavigatorTabBarDisabled from "../WalletTab/WalletTabNavigatorTabBarDisabled";
 
 const WalletTab = createMaterialTopTabNavigator();
 
@@ -28,7 +30,12 @@ const tabBarOptions = (props: MaterialTopTabBarProps) => (
   <WalletTabNavigatorTabBar {...props} />
 );
 
+const tabBarDisabledOptions = (props: MaterialTopTabBarProps) => (
+  <WalletTabNavigatorTabBarDisabled {...props} />
+);
+
 export default function WalletTabNavigator() {
+  const walletNftGalleryFeature = useFeature("walletNftGallery");
   const dispatch = useDispatch();
   const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector);
   const accounts = useSelector(accountsSelector);
@@ -44,13 +51,21 @@ export default function WalletTabNavigator() {
     <WalletTabNavigatorScrollManager currentRouteName={currentRouteName}>
       <Box flex={1} bg={"background.main"}>
         <WalletTab.Navigator
-          initialRouteName={lastVisitedTab}
-          tabBar={tabBarOptions}
+          initialRouteName={
+            walletNftGalleryFeature?.enabled
+              ? lastVisitedTab
+              : ScreenName.Portfolio
+          }
+          tabBar={
+            walletNftGalleryFeature?.enabled
+              ? tabBarOptions
+              : tabBarDisabledOptions
+          }
           style={{ backgroundColor: "transparent" }}
           sceneContainerStyle={{ backgroundColor: "transparent" }}
           tabBarOptions={{ style: { backgroundColor: "transparent" } }}
           screenOptions={{
-            lazy: true,
+            lazy: walletNftGalleryFeature?.params?.lazyLoadScreens ?? true,
           }}
           screenListeners={{
             state: (e: NavigationContainerEventMap["state"]) => {
@@ -81,13 +96,15 @@ export default function WalletTabNavigator() {
               title: t("wallet.tabs.crypto"),
             }}
           />
-          <WalletTab.Screen
-            name={ScreenName.WalletNftGallery}
-            component={WalletNftGallery}
-            options={{
-              title: t("wallet.tabs.nft"),
-            }}
-          />
+          {walletNftGalleryFeature?.enabled && (
+            <WalletTab.Screen
+              name={ScreenName.WalletNftGallery}
+              component={WalletNftGallery}
+              options={{
+                title: t("wallet.tabs.nft"),
+              }}
+            />
+          )}
         </WalletTab.Navigator>
         <WalletTabHeader hidePortfolio={false} />
       </Box>
