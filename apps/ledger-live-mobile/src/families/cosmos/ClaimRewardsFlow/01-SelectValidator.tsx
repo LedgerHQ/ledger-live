@@ -41,9 +41,6 @@ function ClaimRewardsSelectValidator({ navigation, route }: Props) {
       transaction: bridge.updateTransaction(t, {
         mode: "claimReward",
         validators: [],
-
-        /** @TODO remove this once the bridge handles it */
-        recipient: mainAccount.freshAddress,
       }),
     };
   });

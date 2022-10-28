@@ -1,13 +1,13 @@
 import { Image, NativeModules, Platform } from "react-native";
 import RNFetchBlob from "rn-fetch-blob";
 import * as ImagePicker from "expo-image-picker";
-import { ImageDimensions, ImageFileUri, ImageUrl } from "./types";
 import {
   ImageDownloadError,
   ImageLoadFromGalleryError,
   ImageMetadataLoadingError,
   ImageTooLargeError,
-} from "./errors";
+} from "@ledgerhq/live-common/customImage/errors";
+import { ImageDimensions, ImageFileUri, ImageUrl } from "./types";
 
 /**
  * Call this to prompt the user to pick an image from its phone.
@@ -156,5 +156,12 @@ export function fitImageContain(
   return {
     width: (imageWidth / imageHeight) * boxHeight,
     height: boxHeight,
+  };
+}
+
+export function scaleDimensions(dimensions: ImageDimensions, scale: number) {
+  return {
+    width: dimensions.width * scale,
+    height: dimensions.height * scale,
   };
 }

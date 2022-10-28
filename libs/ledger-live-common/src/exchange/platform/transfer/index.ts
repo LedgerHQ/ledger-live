@@ -53,6 +53,27 @@ const fundProviders: Record<
     ),
     curve: "secp256r1",
   },
+  youhodler: {
+    /**
+     * nameAndPubkey is the concatenation of:
+     * - an empty buffer of the size of the partner name
+     * - a buffer created from the partner name string in ascii encoding
+     * - a buffer created from the hexadecimal version of the partner public key
+     */
+    nameAndPubkey: Buffer.concat([
+      Buffer.from([9]),
+      Buffer.from("Youhodler", "ascii"),
+      Buffer.from(
+        "0457123c7248eb61b5554121e9a606a7238c547c02e0ffe908ae7e83641bd47f36e86d6f9a129ffbdaf9237cdb5985e66ac6c9684bea0e4fda89e7d85ac6e6f081",
+        "hex"
+      ),
+    ]),
+    signature: Buffer.from(
+      "304402202336e2c71dbaa36f3333bde05da3848db981f906ab70a43583584b4424b651030220402d328768e016fadf535fb6605131cb658553df13d3e7f2c46bcf14847a2f29",
+      "hex"
+    ),
+    curve: "secp256r1",
+  },
 };
 
 const getProvider = (

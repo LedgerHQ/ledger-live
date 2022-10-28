@@ -44,7 +44,11 @@ class Zen extends Base {
   }
 
   // eslint-disable-next-line
-  async getLegacyAddress(xpub: string, account: number, index: number): Promise<string> {
+  async getLegacyAddress(
+    xpub: string,
+    account: number,
+    index: number
+  ): Promise<string> {
     const pk = bjs.crypto.hash160(await this.getPubkeyAt(xpub, account, index));
     const payload = Buffer.allocUnsafe(22);
     payload.writeUInt16BE(this.network.pubKeyHash, 0);

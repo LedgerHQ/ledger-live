@@ -98,6 +98,7 @@ const cosmos: AppSpec<Transaction> = {
   mutations: [
     {
       name: "send some",
+      maxRun: 2,
       testDestination: genericTestDestination,
       test: ({ account, accountBeforeTransaction, operation }) => {
         expect(account.balance.toString()).toBe(
@@ -167,7 +168,7 @@ const cosmos: AppSpec<Transaction> = {
           "already enough delegations"
         );
         const data = getCurrentCosmosPreloadData();
-        const count = 1 + Math.round(2 * Math.random() * Math.random());
+        const count = 1; // we'r always going to have only one validator because of the new delegation flow.
         let remaining = getMaxDelegationAvailable(
           account as CosmosAccount,
           count
@@ -182,6 +183,7 @@ const cosmos: AppSpec<Transaction> = {
               (d) => d.validatorAddress === v.validatorAddress
             )
         );
+        invariant(all.length > 0, "no validators found");
         const validators = sampleSize(all, count)
           .map((delegation) => {
             // take a bit of remaining each time (less is preferred with the random() square)
@@ -203,9 +205,10 @@ const cosmos: AppSpec<Transaction> = {
               memo: "LedgerLiveBot",
               mode: "delegate",
             },
-            ...validators.map((_, i) => ({
-              validators: validators.slice(0, i + 1),
-            })),
+            {
+              validators: validators,
+            },
+            { amount: validators[0].amount },
           ],
         };
       },

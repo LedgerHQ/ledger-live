@@ -1,14 +1,8 @@
 name: "[Bot] Ethereum on Staging"
 on:
-  schedule:
-    - cron: 0 8,12,16 * * 1-5
-
   workflow_dispatch:
-    inputs:
-      ref:
-        description: "Which ref (branch or tag) to pull from ?"
-        required: false
-        default: develop
+  schedule:
+    - cron: 0 8 * * 1-5
 
 concurrency:
   group: bot-seed2
@@ -51,6 +45,8 @@ jobs:
     needs: [start-runner]
     steps:
       - uses: actions/checkout@v3
+        with:
+          ref: main
       - name: Retrieving coin apps
         uses: actions/checkout@v3
         with:

@@ -69,6 +69,7 @@ import MarketCoinScreen from "~/renderer/screens/market/MarketCoinScreen";
 import Learn from "~/renderer/screens/learn";
 
 import { useProviders } from "~/renderer/screens/exchange/Swap2/Form";
+import WelcomeScreenSettings from "~/renderer/screens/settings/WelcomeScreenSettings";
 
 // in order to test sentry integration, we need the ability to test it out.
 const LetThisCrashForCrashTest = () => {
@@ -192,7 +193,9 @@ export default function Default() {
               <Route path="/USBTroubleshooting">
                 <USBTroubleshooting onboarding={!hasCompletedOnboarding} />
               </Route>
-              {hasCompletedOnboarding && (
+              {!hasCompletedOnboarding ? (
+                <Route path="/settings" render={props => <WelcomeScreenSettings {...props} />} />
+              ) : (
                 <Route>
                   <Switch>
                     <Route exact path="/walletconnect">

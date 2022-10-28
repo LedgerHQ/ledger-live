@@ -16,7 +16,7 @@
   "license": "MIT",
   "private": true,
   "main": "./.webpack/main.bundle.js",
-  "version": "2.48.0",
+  "version": "2.49.2",
   "scripts": {
     "start:prod": "electron ./.webpack/main.bundle.js",
     "start": "cross-env NODE_ENV=development node ./tools/main.js",
@@ -104,6 +104,7 @@
     "qs": "^6.10.1",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
+    "react-easy-crop": "^4.5.0",
     "react-i18next": "^11.15.5",
     "react-intersection-observer": "^8.32.4",
     "react-is": "^17.0.2",

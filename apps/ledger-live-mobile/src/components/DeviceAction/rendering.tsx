@@ -22,13 +22,13 @@ import BigNumber from "bignumber.js";
 import {
   ExchangeRate,
   Exchange,
-} from "@ledgerhq/live-common/src/exchange/swap/types";
+} from "@ledgerhq/live-common/exchange/swap/types";
 import {
+  getAccountCurrency,
   getAccountUnit,
   getMainAccount,
   getAccountName,
 } from "@ledgerhq/live-common/account/index";
-import { getAccountCurrency } from "@ledgerhq/live-common/src/account";
 import { TFunction } from "react-i18next";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { setModalLock } from "../../actions/appstate";
@@ -50,6 +50,7 @@ import CurrencyUnitValue from "../CurrencyUnitValue";
 import CurrencyIcon from "../CurrencyIcon";
 import TermsFooter from "../TermsFooter";
 import Illustration from "../../images/illustration/Illustration";
+import { FramedImageWithContext } from "../CustomImage/FramedImage";
 
 import notOnboardedDarkImg from "../../images/illustration/Dark/_010.png";
 import notOnboardedLightImg from "../../images/illustration/Light/_010.png";
@@ -526,11 +527,15 @@ export function renderError({
   onRetry,
   managerAppName,
   navigation,
+  Icon,
+  iconColor,
 }: RawProps & {
   navigation?: any;
   error: Error;
   onRetry?: () => void;
   managerAppName?: string;
+  Icon?: React.ComponentProps<typeof GenericErrorView>["Icon"];
+  iconColor?: string;
 }) {
   const onPress = () => {
     if (managerAppName && navigation) {
@@ -547,7 +552,13 @@ export function renderError({
   };
   return (
     <Wrapper>
-      <GenericErrorView error={error} withDescription withIcon>
+      <GenericErrorView
+        error={error}
+        withDescription
+        withIcon
+        Icon={Icon}
+        iconColor={iconColor}
+      >
         {onRetry || managerAppName ? (
           <ActionContainer marginBottom={0} marginTop={32}>
             <StyledButton
@@ -900,5 +911,119 @@ export const AutoRepair = ({
       <DeviceActionProgress progress={progress} />
       <DescriptionText>{t("FirmwareUpdate.pleaseWaitUpdate")}</DescriptionText>
     </Wrapper>
+  );
+};
+
+const ImageLoadingGeneric: React.FC<{
+  title: string;
+  children?: React.ReactNode | undefined;
+  top?: React.ReactNode | undefined;
+  bottom?: React.ReactNode | undefined;
+  progress?: number;
+  backgroundPlaceholderText?: string;
+}> = ({
+  title,
+  top,
+  bottom,
+  children,
+  progress,
+  backgroundPlaceholderText,
+}) => {
+  return (
+    <Flex
+      flexDirection="column"
+      justifyContent="space-between"
+      alignItems="center"
+      flex={1}
+      alignSelf="stretch"
+    >
+      <Flex flex={1} flexDirection="column" alignItems={"center"}>
+        {top}
+      </Flex>
+      <Flex flexDirection={"column"} alignItems="center" alignSelf="stretch">
+        <Text textAlign="center" variant="large" mb={10} alignSelf="stretch">
+          {title}
+        </Text>
+        <FramedImageWithContext
+          loadingProgress={progress}
+          backgroundPlaceholderText={backgroundPlaceholderText}
+        >
+          {children}
+        </FramedImageWithContext>
+      </Flex>
+      <Flex flex={1} flexDirection="column" alignItems={"center"}>
+        {bottom}
+      </Flex>
+    </Flex>
+  );
+};
+
+export const renderImageLoadRequested = ({
+  t,
+  device,
+}: RawProps & { device: Device }) => {
+  return (
+    <ImageLoadingGeneric
+      title={t("customImage.allowPreview", {
+        productName:
+          device.deviceName || getDeviceModel(device.modelId)?.productName,
+      })}
+      progress={0}
+      backgroundPlaceholderText="load requested illustration placeholder"
+    />
+  );
+};
+
+export const renderLoadingImage = ({
+  t,
+  device,
+  progress,
+}: RawProps & { progress: number; device: Device }) => {
+  return (
+    <ImageLoadingGeneric
+      title={t("customImage.loadingPicture", {
+        productName:
+          device.deviceName || getDeviceModel(device.modelId)?.productName,
+      })}
+      progress={progress}
+      backgroundPlaceholderText="image loading illustration placeholder"
+      bottom={
+        <Flex flexDirection="column" flex={1} justifyContent="flex-end" pb={8}>
+          <Text textAlign="center" variant="bodyLineHeight" color="neutral.c60">
+            {t("customImage.timeDisclaimer")}
+          </Text>
+        </Flex>
+      }
+    />
+  );
+};
+
+export const renderImageCommitRequested = ({
+  t,
+  device,
+}: RawProps & { device: Device }) => {
+  return (
+    <ImageLoadingGeneric
+      title={t("customImage.confirmPicture", {
+        productName:
+          device.deviceName || getDeviceModel(device.modelId)?.productName,
+      })}
+      backgroundPlaceholderText="commit requested illustration placeholder"
+      top={
+        <Flex
+          flex={1}
+          flexDirection="column"
+          justifyContent="center"
+          alignItems="center"
+        >
+          <Flex mb={3} p={4} backgroundColor="neutral.c30" borderRadius={999}>
+            <Icons.CheckAloneMedium size={16} color="success.c50" />
+          </Flex>
+          <Text textAlign="center" color="neutral.c70" variant="bodyLineHeight">
+            {t("customImage.pictureLoaded")}
+          </Text>
+        </Flex>
+      }
+    />
   );
 };

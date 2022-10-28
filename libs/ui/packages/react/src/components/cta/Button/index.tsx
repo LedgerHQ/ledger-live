@@ -64,7 +64,6 @@ const getVariantColors = (p: StyledProps<BaseProps>) => ({
   shade: `
       border-color: ${p.theme.colors.neutral.c40};
       color: ${p.theme.colors.neutral.c100};
-      background-color: ${p.theme.colors.neutral.c00};
       &:focus {
         border-color: ${p.theme.colors.primary.c80};
       }

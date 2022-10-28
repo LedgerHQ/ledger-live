@@ -13,6 +13,7 @@ const DiscoverCard = ({
   Image,
   disabled,
   cardProps,
+  imageContainerProps,
   subtitleFirst,
   ...props
 }: {
@@ -28,6 +29,7 @@ const DiscoverCard = ({
   eventProperties?: any;
   testID?: string;
   cardProps?: any;
+  imageContainerProps?: any;
   subtitleFirst?: boolean;
 }) => (
   <Touchable onPress={onPress} disabled={disabled} {...props}>
@@ -89,6 +91,7 @@ const DiscoverCard = ({
           alignItems={"flex-end"}
           justifyContent={"flex-end"}
           style={{ transform: [{ scale: 1.1 }] }}
+          {...imageContainerProps}
         >
           {Image}
         </Flex>

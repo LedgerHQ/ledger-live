@@ -54,7 +54,6 @@ runs:
     - name: bot logic
       env:
         SEED: ${{ inputs.SEED }}
-        BOT_ENVIRONMENT: ${{ inputs.BOT_ENVIRONMENT }}
         BOT_REPORT_FOLDER: botreport
         VERBOSE_FILE: botreport/logs.txt
         GITHUB_RUN_ID: ${{ github.run_id }}

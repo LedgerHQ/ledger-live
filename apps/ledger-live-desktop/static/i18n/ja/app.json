@@ -237,7 +237,7 @@
     "form" : {
       "changeCTA" : "変更",
       "rates" : {
-        "title" : "プロバイダー",
+        "title" : "見積もり",
         "registration" : "登録が必要です ",
         "noRegistration" : "いいえ、登録は不要です。",
         "fixed" : "固定",
@@ -246,7 +246,7 @@
         "loading" : "読み込み中...",
         "name" : {
           "title" : "プロバイダー",
-          "tooltip" : "プロバイダーによっては、アカウントを作成し、プロバイダーにサインインする必要があります。"
+          "tooltip" : "プロバイダーによっては、アカウントを作成し、プロバイダーに登録する必要があります。"
         },
         "rate" : {
           "title" : "取引レート",
@@ -430,11 +430,13 @@
         }
       },
       "filter" : {
-        "all" : "全て",
         "centralised" : "中央集権型",
-        "dedentralised" : "分散型"
+        "decentralised" : "分散型",
+        "float" : "変動レート",
+        "fixed" : "固定レート"
       },
-      "noQuote" : "お見積もりは次のページでご利用可能です"
+      "noQuote" : "お見積もりは次のページでご利用可能です",
+      "noProviders" : "結果が見つかりません。現在の設定で利用できる見積もりはありません。"
     },
     "ip" : {
       "title" : "スワップへようこそ",
@@ -752,7 +754,7 @@
     "settings" : {
       "title" : "アカウントを編集",
       "advancedLogs" : "アドバンス",
-      "advancedTips" : "xpubはプライバシーに関わるデータです。第三者に開示する場合は、十分ご注意ください。",
+      "advancedTips" : "これは {{tag}}のxpubです。サードパーティのウォレットにインポートする際は、同じ派生モードを選択してください。",
       "accountName" : {
         "title" : "アカウント名",
         "desc" : "アカウントの名前"
@@ -1182,6 +1184,10 @@
     "blackfriday" : {
       "title" : "ブラックフライデー ",
       "description" : "プロモーションコードBLACKFRIDAY20を使用して、Ledgerハードウェアウォレットを40%オフでゲットしましょう"
+    },
+    "referralProgram" : {
+      "title" : "紹介して$10を獲得",
+      "description" : "ご友人の紹介に成功すると、お客様とご友人の両者が$10相当のBitcoinを獲得できます。"
     }
   },
   "signmessage" : {
@@ -5052,6 +5058,9 @@
     },
     "StellarSourceHasMultiSign" : {
       "title" : "Stellarトランザクションを行うには、マルチシグを無効にしてください"
+    },
+    "HederaAddAccountError" : {
+      "title" : "アカウントが追加されていません。もう一度お試しください。"
     }
   },
   "cryptoOrg" : {

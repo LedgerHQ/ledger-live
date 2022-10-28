@@ -5,17 +5,40 @@ import type { PropertyPath } from "lodash";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { StackScreenProps } from "@react-navigation/stack";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { Flex } from "@ledgerhq/native-ui";
 import type { BaseNavigatorStackParamList } from "../../components/RootNavigator/BaseNavigator";
 import RequiresBLE from "../../components/RequiresBLE";
 import { BleDevicesScanning } from "./BleDevicesScanning";
 import { BleDevicePairing } from "./BleDevicePairing";
 import { addKnownDevice } from "../../actions/ble";
+import { NavigatorName, ScreenName } from "../../const";
 
 export type NavigateInput = {
   name: string;
   params: object;
+};
+
+// Necessary when the pairing flow is opened from a deeplink without any params
+// Shouldn't be relied upon for other usages
+const defaultNavigationParams = {
+  filterByDeviceModelId: DeviceModelId.nanoFTS, // This needs to be removed when nanos are supported
+  areKnownDevicesDisplayed: true,
+  onSuccessAddToKnownDevices: false,
+  successNavigateToConfig: {
+    navigationType: "navigate",
+    pathToDeviceParam: "params.params.params.device",
+    navigateInput: {
+      name: NavigatorName.BaseOnboarding,
+      params: {
+        screen: NavigatorName.SyncOnboarding,
+        params: {
+          screen: ScreenName.SyncOnboardingCompanion,
+          params: {
+            device: null,
+          },
+        },
+      },
+    },
+  },
 };
 
 export type PathToDeviceParam = PropertyPath;
@@ -63,6 +86,8 @@ export type BleDevicePairingFlowProps = StackScreenProps<
  *     From the ex of navigateInput, it would be: "params.params.pairedDevice"
  *   - navigationType: (optional, default to "navigate") when navigating after a successful pairing,
  *     choose between a "replace" or a "navigate"
+ *   The default success config will navigate to the synchronous onboarding, however it shouldn't be
+ *   relied upon and exist solely to simplify deeplinking to the sync onboarding.
  * - onSuccessAddToKnownDevices: boolean, if true the successfully paired device is added to the redux
  *   list of known devices. Not added if false (default to false).
  * @returns a JSX component
@@ -73,16 +98,21 @@ export const BleDevicePairingFlow = ({
 }: BleDevicePairingFlowProps) => {
   const dispatchRedux = useDispatch();
 
+  const params = route?.params || defaultNavigationParams;
+
   const {
-    filterByDeviceModelId,
+    filterByDeviceModelId = undefined,
     areKnownDevicesDisplayed = true,
     onSuccessAddToKnownDevices = false,
-    onSuccessNavigateToConfig: {
-      navigateInput,
-      pathToDeviceParam,
-      navigationType = "navigate",
-    },
-  } = route.params;
+    onSuccessNavigateToConfig = defaultNavigationParams.successNavigateToConfig,
+  } = params;
+
+  const {
+    navigateInput,
+    pathToDeviceParam,
+    navigationType = "navigate",
+  } = onSuccessNavigateToConfig;
+
   const [deviceToPair, setDeviceToPair] = useState<Device | null>(null);
 
   const onDeviceSelect = useCallback((item: Device) => {
@@ -146,23 +176,19 @@ export const BleDevicePairingFlow = ({
 
   return (
     <RequiresBLE>
-      <SafeAreaView>
-        <Flex bg="background.main" height="100%">
-          {deviceToPair ? (
-            <BleDevicePairing
-              deviceToPair={deviceToPair}
-              onPaired={onPaired}
-              onRetry={onRetryPairingFlow}
-            />
-          ) : (
-            <BleDevicesScanning
-              filterByDeviceModelId={filterByDeviceModelId}
-              areKnownDevicesDisplayed={areKnownDevicesDisplayed}
-              onDeviceSelect={onDeviceSelect}
-            />
-          )}
-        </Flex>
-      </SafeAreaView>
+      {deviceToPair ? (
+        <BleDevicePairing
+          deviceToPair={deviceToPair}
+          onPaired={onPaired}
+          onRetry={onRetryPairingFlow}
+        />
+      ) : (
+        <BleDevicesScanning
+          filterByDeviceModelId={filterByDeviceModelId}
+          areKnownDevicesDisplayed={areKnownDevicesDisplayed}
+          onDeviceSelect={onDeviceSelect}
+        />
+      )}
     </RequiresBLE>
   );
 };

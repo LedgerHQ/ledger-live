@@ -85,8 +85,9 @@
     "moreInfo": "More info",
     "buyEth": "Buy Ethereum",
     "popular": "popular",
+    "getSupport": "Get support",
     "comingSoon": "Coming soon",
-    "getSupport": "Get support"
+    "restart": "Restart"
   },
   "errors": {
     "countervaluesUnavailable": {
@@ -321,6 +322,14 @@
       "title": "Sorry, could not reset",
       "description": "Please try again. If the problem persists, please save your logs using the button below and provide them to Ledger Support."
     },
+    "ImageCommitRefusedOnDevice": {
+      "title": "Image commit refused on device (TODO: final wording)",
+      "description": "If this image wasn't the right fit, you can try again with another image."
+    },
+    "ImageLoadRefusedOnDevice": {
+      "title": "Image load refused on device (TODO: final wording)",
+      "description": "If this image wasn't the right fit, you can try again with another image."
+    },
     "InvalidAddress": {
       "title": "This is not a valid {{currencyName}} address"
     },
@@ -413,9 +422,9 @@
       "title": "Sorry, insufficient funds",
       "description": "Please make sure the account has enough funds."
     },
-    "NoSuchAppOnProvider" : {
-      "title" : "The {{appName}} app cannot be found for your specific configuration.",
-      "description" : "Try reinstalling the app from the Manager"
+    "NoSuchAppOnProvider": {
+      "title": "The {{appName}} app cannot be found for your specific configuration.",
+      "description": "Try reinstalling the app from the Manager"
     },
     "NotEnoughGas": {
       "title": "Insufficient ETH for network fee",
@@ -585,6 +594,9 @@
     },
     "SourceHasMultiSign": {
       "title": "Please disable multisign to send {{currencyName}}"
+    },
+    "DustLimit": {
+      "title": "Amount is lower than dust limit"
     },
     "StratisDown2021Warning": {
       "description": "The Stratis blockchain evolved and may no longer work correctly. Support for the original Stratis blockchain will be maintained until 16 October 2021."
@@ -1122,6 +1134,10 @@
         "title": "Get started in English",
         "cta": "Got it!",
         "desc": "We are introducing additional languages in order to help your onboarding with Ledger. Please be aware that the rest of the Ledger experience is currently only available in English."
+      },
+      "RestartModal": {
+        "title": "Restart required",
+        "paragraph": "The selected language requires the application to restart. Are you sure you want to continue?"
       }
     },
     "stepSelectDevice": {
@@ -2127,7 +2143,7 @@
       },
       "advanced": {
         "title": "Advanced logs",
-        "warningDerivation": "This is a {{tag}} xpub. When importing it into a third-party wallet, chose the same derivation mode.",
+        "warningDerivation": "This is a {{tag}} xpub. When importing it into a third-party wallet, choose the same derivation mode.",
         "desc": ""
       }
     },
@@ -5375,7 +5391,18 @@
     "cropImage": "Crop image",
     "chooseConstrast": "Choose contrast",
     "uploadAnotherImage": "Upload another image",
-    "selectContrast": "Select your contrast"
+    "selectContrast": "Select your contrast",
+    "allowPreview": "Allow picture preview on {{productName}}",
+    "loadingPicture": "Loading picture on {{productName}}",
+    "pictureLoaded": "Picture loaded",
+    "timeDisclaimer": "This can take up to 30 seconds",
+    "imageLoaded": "Image loaded on {{productName}}",
+    "confirmPicture": "Confirm on {{productName}}",
+    "title": "Choose a picture.\nCreate a vibe.\nMake your Ledger yours.",
+    "subtitle": "Set a picture of your favourite NFT or a picture from your phone.",
+    "customImage": "Custom picture",
+    "choosePicture": "Choose a picture",
+    "doThisLater": "Maybe later"
   },
   "postOnboarding": {
     "hub": {
@@ -5389,6 +5416,14 @@
     "walletCard": {
       "title": "Getting started",
       "description": "Click here to finish setting up your {{productName}} with Ledger Live"
+    },
+    "actions": {
+      "customImage": {
+        "title": "Personalize my Ledger device",
+        "description": "By adding an image",
+        "popupLabel": "Device personalized",
+        "hubTitleAfterAction": "That screen is looking neat"
+      }
     }
   }
 }

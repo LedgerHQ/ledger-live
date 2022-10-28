@@ -54,7 +54,7 @@ type RouteParams = {
 export default function SendAmountCoin({ navigation, route }: Props) {
   const { colors } = useTheme();
   const { account, parentAccount } = useSelector(accountScreenSelector(route));
-  const [maxSpendable, setMaxSpendable] = useState(null);
+  const [maxSpendable, setMaxSpendable] = useState<BigNumber | null>(null);
   const { modalInfos, modalInfoName, openInfoModal, closeInfoModal } =
     useModalInfo();
   const { transaction, setTransaction, status, bridgePending, bridgeError } =
@@ -103,7 +103,7 @@ export default function SendAmountCoin({ navigation, route }: Props) {
     if (!transaction) return;
     setTransaction(
       bridge.updateTransaction(transaction, {
-        amount: BigNumber(0),
+        amount: new BigNumber(0),
         useAllAmount: !transaction.useAllAmount,
       }),
     );
@@ -134,6 +134,7 @@ export default function SendAmountCoin({ navigation, route }: Props) {
   const { amount } = status;
   const unit = getAccountUnit(account);
   const currency = getAccountCurrency(account);
+
   return (
     <>
       <TrackScreen
@@ -159,7 +160,10 @@ export default function SendAmountCoin({ navigation, route }: Props) {
                 onChange={onChange}
                 value={amount}
                 error={
-                  amount.eq(0) && (bridgePending || !transaction.useAllAmount)
+                  status.errors.dustLimit
+                    ? status.errors.dustLimit
+                    : amount.eq(0) &&
+                      (bridgePending || !transaction.useAllAmount)
                     ? null
                     : status.errors.amount
                 }
@@ -216,7 +220,11 @@ export default function SendAmountCoin({ navigation, route }: Props) {
                       />
                     }
                     onPress={onContinue}
-                    disabled={!!status.errors.amount || bridgePending}
+                    disabled={
+                      !!status.errors.amount ||
+                      !!status.errors.dustLimit ||
+                      bridgePending
+                    }
                   />
                 </View>
               </View>
