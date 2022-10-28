@@ -35,15 +35,31 @@ const Favicon = styled.img`
   border-radius: 8px;
 `;
 
+export type IconGetterProps = {
+  search: string;
+  object: Record<string, React.ReactNode>;
+};
+
+const getIconCaseInsensitive = ({ search, object }: IconGetterProps) => {
+  const asLower = search.toLowerCase();
+  const key = Object.keys(object).find((key) => key.toLowerCase() === asLower);
+  return key ? object[key] : null;
+};
+
 const ProviderIcon = ({ name, size = "S", boxed = false }: Props): JSX.Element | null => {
   const maybeIconName = `${name}`;
+
   if (boxed) {
-    // @ts-expect-error FIXME I don't know how to make you happy ts
-    return <Favicon width={sizes[size]} height={sizes[size]} src={favicons[maybeIconName]} />;
+    return (
+      <Favicon
+        width={sizes[size]}
+        height={sizes[size]}
+        src={getIconCaseInsensitive({ search: maybeIconName, object: favicons })}
+      />
+    );
   }
-  if (maybeIconName in providers) {
-    // @ts-expect-error FIXME I don't know how to make you happy ts
-    const Component = providers[maybeIconName];
+  const Component = getIconCaseInsensitive({ search: maybeIconName, object: providers });
+  if (Component) {
     return <Component size={sizes[size]} />;
   }
   return null;
