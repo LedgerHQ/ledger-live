@@ -1,7 +1,7 @@
-import React, { useRef, useState, useCallback, useEffect } from "react";
+import React, { useRef, useState, useCallback } from "react";
 import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
-import { View, TouchableWithoutFeedback, Alert } from "react-native";
+import { View, TouchableWithoutFeedback } from "react-native";
 import { Icons } from "@ledgerhq/native-ui";
 import { FeatureToggle } from "@ledgerhq/live-common/featureFlags/index";
 import Config from "react-native-config";
@@ -13,7 +13,6 @@ import { TrackScreen } from "../../analytics";
 import timer from "../../timer";
 import SettingsNavigationScrollView from "./SettingsNavigationScrollView";
 import useRatings from "../../logic/ratings";
-import getOrCreateUser from "../../user";
 
 type Props = {
   navigation: any;
@@ -47,23 +46,9 @@ export default function Settings({ navigation }: Props) {
     }
   }, [debugVisible]);
 
-  const [segmentID, setSegmentID] = useState("loading...");
-
-  useEffect(() => {
-    getOrCreateUser().then(({ user }) => {
-      setSegmentID(user.id);
-    });
-  });
-
   return (
     <SettingsNavigationScrollView>
       <TrackScreen category="Settings" />
-      <SettingsCard
-        title={"Segment ID"}
-        desc={segmentID}
-        onClick={() => Alert.alert("YOUR ENV", JSON.stringify(Config, null, 2))}
-        Icon={Icons.MobileMedium}
-      />
       <SettingsCard
         title={t("settings.display.title")}
         desc={t("settings.display.desc")}
