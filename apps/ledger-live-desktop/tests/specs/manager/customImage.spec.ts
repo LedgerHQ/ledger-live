@@ -49,6 +49,7 @@ test("Custom image", async ({ page }) => {
   await test.step("Import image", async () => {
     await customImageDrawer.importImage("tests/specs/manager/sample-custom-image.webp");
     await customImageDrawer.importImageInput.waitFor({ state: "detached" });
+    await customImageDrawer.waitForCropConfirmable();
     await expect(container).toHaveScreenshot(`${generateScreenshotPrefix()}image-imported.png`);
   });
 
