@@ -1,6 +1,7 @@
 // @flow
 import React, { useState, useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
+import { timeout } from "rxjs/operators";
 import styled from "styled-components";
 import type { DeviceModelId } from "@ledgerhq/devices";
 import type { FirmwareUpdateContext } from "@ledgerhq/types-live";
@@ -51,7 +52,13 @@ type Props = StepProps;
 
 const DELAY_PHASE = 10000;
 
-const StepFlashMcu = ({ firmware, deviceModelId, setError, transitionTo }: Props) => {
+const StepFlashMcu = ({
+  firmware,
+  deviceModelId,
+  setError,
+  transitionTo,
+  setUpdatedDeviceInfo,
+}: Props) => {
   const { t } = useTranslation();
   const [installing, setInstalling] = useState<MaybeString>(null);
   const [initialDelayPhase, setInitialDelayPhase] = useState(true);
@@ -60,9 +67,49 @@ const StepFlashMcu = ({ firmware, deviceModelId, setError, transitionTo }: Props
   const [progress, setProgress] = useState(0);
   const withFinal = useMemo(() => hasFinalFirmware(firmware?.final), [firmware]);
 
+  const [isMcuUpdateFinished, setIsMcuUpdateFinished] = useState<boolean>(false);
   const deviceLocalizationFeatureFlag = useFeature("deviceLocalization");
 
-  // didMount
+  // Gets the updated device info from the command firmwareUpdating
+  // after a successful MCU update
+  useEffect(() => {
+    let sub;
+
+    if (isMcuUpdateFinished) {
+      sub = (getEnv("MOCK") ? mockedEventEmitter() : command("firmwareUpdating")({ deviceId: "" }))
+        .pipe(timeout(5 * 60 * 1000))
+        .subscribe({
+          next: setUpdatedDeviceInfo,
+          complete: () => {
+            const shouldGoToLanguageStep =
+              firmware &&
+              isDeviceLocalizationSupported(firmware.final.name, deviceModelId) &&
+              deviceLocalizationFeatureFlag?.enabled;
+            transitionTo(shouldGoToLanguageStep ? "deviceLanguage" : "finish");
+          },
+          error: (error: Error) => {
+            setError(error);
+            transitionTo("finish");
+          },
+        });
+    }
+
+    return () => {
+      if (sub) {
+        sub.unsubscribe();
+      }
+    };
+  }, [
+    deviceLocalizationFeatureFlag?.enabled,
+    deviceModelId,
+    firmware,
+    isMcuUpdateFinished,
+    setError,
+    setUpdatedDeviceInfo,
+    transitionTo,
+  ]);
+
+  // Updates the MCU
   useEffect(() => {
     setTimeout(() => {
       setInitialDelayPhase(false);
@@ -88,11 +135,7 @@ const StepFlashMcu = ({ firmware, deviceModelId, setError, transitionTo }: Props
         }
       },
       complete: () => {
-        const shouldGoToLanguageStep =
-          firmware &&
-          isDeviceLocalizationSupported(firmware.final.name, deviceModelId) &&
-          deviceLocalizationFeatureFlag?.enabled;
-        transitionTo(shouldGoToLanguageStep ? "deviceLanguage" : "finish");
+        setIsMcuUpdateFinished(true);
       },
       error: error => {
         setError(error);
@@ -108,14 +151,7 @@ const StepFlashMcu = ({ firmware, deviceModelId, setError, transitionTo }: Props
         sub.unsubscribe();
       }
     };
-  }, [
-    deviceLocalizationFeatureFlag?.enabled,
-    deviceModelId,
-    firmware,
-    setError,
-    transitionTo,
-    withFinal,
-  ]);
+  }, [deviceModelId, firmware, setError, transitionTo, withFinal]);
 
   if (autoUpdatingMode) {
     return (
