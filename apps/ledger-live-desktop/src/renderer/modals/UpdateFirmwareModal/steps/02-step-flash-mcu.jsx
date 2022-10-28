@@ -108,8 +108,14 @@ const StepFlashMcu = ({ firmware, deviceModelId, setError, transitionTo }: Props
         sub.unsubscribe();
       }
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [deviceLocalizationFeatureFlag?.enabled]);
+  }, [
+    deviceLocalizationFeatureFlag?.enabled,
+    deviceModelId,
+    firmware,
+    setError,
+    transitionTo,
+    withFinal,
+  ]);
 
   if (autoUpdatingMode) {
     return (
