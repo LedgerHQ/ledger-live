@@ -1,34 +1,18 @@
 # ledger-live-desktop
 
-## 2.50.0-nightly.0
-
-### Minor Changes
-
-- [#1531](https://github.com/LedgerHQ/ledger-live/pull/1531) [`52ecc411d3`](https://github.com/LedgerHQ/ledger-live/commit/52ecc411d3289f9153c66daba6daaa3ff64d5478) Thanks [@grsoares21](https://github.com/grsoares21)! - Adds prompts suggesting the user to update their device language according to a few set of conditions
-
-* [#1288](https://github.com/LedgerHQ/ledger-live/pull/1288) [`f5f4db47d2`](https://github.com/LedgerHQ/ledger-live/commit/f5f4db47d214bc30390b7be91d3bab4814c5fb45) Thanks [@henrily-ledger](https://github.com/henrily-ledger)! - Dynamic cal for erc20
+## 2.49.1
 
 ### Patch Changes
 
-- [#1668](https://github.com/LedgerHQ/ledger-live/pull/1668) [`d51a138cf8`](https://github.com/LedgerHQ/ledger-live/commit/d51a138cf8839747631d303340a54d0bd1c17c07) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Typo on warning message in Advanced account settings
+- Updated dependencies [[`455e43b34c`](https://github.com/LedgerHQ/ledger-live/commit/455e43b34c13ca7ed1d2920a36653caa250e42ab)]:
+  - @ledgerhq/live-common@27.5.0
 
-* [#1654](https://github.com/LedgerHQ/ledger-live/pull/1654) [`086ab8dc23`](https://github.com/LedgerHQ/ledger-live/commit/086ab8dc23d6f34473bcbf9b93ed24e57a0e4570) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Fix infinite loop in ChangeDeviceLanguagePromptDrawer
+## 2.49.1-hotfix.0
 
-- [#1372](https://github.com/LedgerHQ/ledger-live/pull/1372) [`b53d648424`](https://github.com/LedgerHQ/ledger-live/commit/b53d64842471eb2382066aecfc9f2b3b15ef7aed) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Feature flags: take into account env variable FEATURE_FLAGS to override feature flags
+### Patch Changes
 
-* [#1513](https://github.com/LedgerHQ/ledger-live/pull/1513) [`ffc377ddf0`](https://github.com/LedgerHQ/ledger-live/commit/ffc377ddf0c354f450e3790bd221e8d57f58e9e1) Thanks [@lvndry](https://github.com/lvndry)! - Addition of a dust limit for bitcoin transactions
-
-- [#1479](https://github.com/LedgerHQ/ledger-live/pull/1479) [`465b8e4564`](https://github.com/LedgerHQ/ledger-live/commit/465b8e45646e2d00fa85aec93063bc77486aa3bb) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Improve UX of USB Troubleshooting flow
-
-- Updated dependencies [[`0f1bf87fdc`](https://github.com/LedgerHQ/ledger-live/commit/0f1bf87fdc8b80a4edb2556222b255d644fdd5da), [`24cdfe3869`](https://github.com/LedgerHQ/ledger-live/commit/24cdfe38695b60c7f3bc4827ea46893c8062dbad), [`cbcc0c1989`](https://github.com/LedgerHQ/ledger-live/commit/cbcc0c19899ffecbdbeda2e4b230a130d0fe1899), [`f7b27a97f6`](https://github.com/LedgerHQ/ledger-live/commit/f7b27a97f6cd2b2c553cbe83d008e4ce907c9ad2), [`2f615db01b`](https://github.com/LedgerHQ/ledger-live/commit/2f615db01be43e7c21b5654b28bd122dab140252), [`57699a19fa`](https://github.com/LedgerHQ/ledger-live/commit/57699a19fa545ba359e457deb7ba0632b15342b5), [`df8cbb8dd1`](https://github.com/LedgerHQ/ledger-live/commit/df8cbb8dd166a66325eb96d8192f3f985b71df60), [`6bcbd3967a`](https://github.com/LedgerHQ/ledger-live/commit/6bcbd3967a9841779a60708eab4b70144af880d7), [`b53d648424`](https://github.com/LedgerHQ/ledger-live/commit/b53d64842471eb2382066aecfc9f2b3b15ef7aed), [`2c3d6b53ea`](https://github.com/LedgerHQ/ledger-live/commit/2c3d6b53eaaefc0f2ab766addf8584d2f83a5eb9), [`b49a269bb2`](https://github.com/LedgerHQ/ledger-live/commit/b49a269bb2d3ff1cdaae5e74d85fb8e1c33da978), [`f7a8df09f8`](https://github.com/LedgerHQ/ledger-live/commit/f7a8df09f8115da779b7082384d5db0823317d53), [`f7a8df09f8`](https://github.com/LedgerHQ/ledger-live/commit/f7a8df09f8115da779b7082384d5db0823317d53)]:
-  - @ledgerhq/live-common@27.5.0-nightly.0
-  - @ledgerhq/errors@6.11.2-nightly.0
-  - @ledgerhq/types-live@6.25.1-nightly.0
-  - @ledgerhq/types-devices@6.22.3-nightly.0
-  - @ledgerhq/devices@7.0.4-nightly.0
-  - @ledgerhq/hw-transport@6.27.7-nightly.0
-  - @ledgerhq/hw-transport-http@6.27.7-nightly.0
-  - @ledgerhq/hw-transport-node-hid-singleton@6.28.4-nightly.0
+- Updated dependencies [[`455e43b34c`](https://github.com/LedgerHQ/ledger-live/commit/455e43b34c13ca7ed1d2920a36653caa250e42ab)]:
+  - @ledgerhq/live-common@27.5.0-hotfix.0
 
 ## 2.49.0
 

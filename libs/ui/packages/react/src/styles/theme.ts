@@ -11,10 +11,9 @@ export const breakpoints = {
   xxl: "1536px",
 } as Record<screensBreakpoints, string>;
 
-/* space indexes:
-  0, 1, 2, 3, 4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21
- */
 export const space = [
+  /* space indexes:
+  0, 1, 2, 3, 4,  5,  6,  7,  8,  9,  10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21 */
   0, 2, 4, 8, 10, 12, 16, 20, 24, 28, 32, 36, 40, 44, 48, 52, 56, 60, 64, 68, 72, 76,
 ];
 
@@ -23,6 +22,7 @@ export type TextVariants =
   | "h2"
   | "h3"
   | "h4"
+  | "h4Inter"
   | "h5"
   | "large"
   | "largeLineHeight"
@@ -61,6 +61,7 @@ fontSizes.largeLineHeight = fontSizes.large;
 fontSizes.bodyLineHeight = fontSizes.body;
 fontSizes.paragraphLineHeight = fontSizes.paragraph;
 fontSizes.subtitle = fontSizes.extraSmall;
+fontSizes.h4Inter = fontSizes.h4;
 
 const fontWeights = {
   extraLight: "100",

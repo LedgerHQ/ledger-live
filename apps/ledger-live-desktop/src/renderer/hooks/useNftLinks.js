@@ -3,12 +3,18 @@ import { useMemo } from "react";
 import { useDispatch } from "react-redux";
 import { useTranslation } from "react-i18next";
 import type { Account, ProtoNFT, NFTMetadata } from "@ledgerhq/types-live";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { Icons } from "@ledgerhq/react-ui";
 import { openModal } from "~/renderer/actions/modals";
 import IconOpensea from "~/renderer/icons/Opensea";
 import IconRarible from "~/renderer/icons/Rarible";
 import IconGlobe from "~/renderer/icons/Globe";
 import { openURL } from "~/renderer/linking";
 import IconBan from "~/renderer/icons/Ban";
+import { getMetadataMediaTypes } from "~/helpers/nft";
+import { setDrawer } from "../drawers/Provider";
+import CustomImage from "~/renderer/screens/customImage";
+import NFTViewerDrawer from "~/renderer/drawers/NFTViewerDrawer";
 
 const linksPerCurrency = {
   ethereum: (t, links) => [
@@ -77,7 +83,13 @@ const linksPerCurrency = {
   ],
 };
 
-export default (account: Account, nft: ProtoNFT, metadata: NFTMetadata, onClose?: () => void) => {
+export default (
+  account: Account,
+  nft: ProtoNFT,
+  metadata: NFTMetadata,
+  onClose?: () => void,
+  isInsideDrawer?: boolean,
+) => {
   const dispatch = useDispatch();
   const { t } = useTranslation();
 
@@ -100,12 +112,63 @@ export default (account: Account, nft: ProtoNFT, metadata: NFTMetadata, onClose?
     }),
     [account.id, dispatch, metadata?.tokenName, nft.contract, onClose, t],
   );
+
+  const customImageUri = useMemo(() => {
+    const mediaTypes = metadata ? getMetadataMediaTypes(metadata) : null;
+    const mediaSizeForCustomImage = mediaTypes
+      ? ["original", "big", "preview"].find(size => mediaTypes[size] === "image")
+      : null;
+    const customImageUri =
+      (mediaSizeForCustomImage && metadata?.medias?.[mediaSizeForCustomImage]?.uri) || null;
+    return customImageUri;
+  }, [metadata]);
+
+  const customImage = useMemo(
+    () => ({
+      key: "custom-image",
+      id: "custom-image",
+      label: "Custom image", // TODO: get proper wording for this
+      Icon: Icons.ToolsMedium,
+      type: null,
+      callback: () => {
+        if (customImageUri)
+          setDrawer(CustomImage, {
+            imageUri: customImageUri,
+            isFromNFTEntryPoint: true,
+            reopenPreviousDrawer: isInsideDrawer
+              ? () =>
+                  setDrawer(NFTViewerDrawer, {
+                    account,
+                    nftId: nft.id,
+                    isOpen: true,
+                  })
+              : undefined,
+          });
+      },
+    }),
+    [account, customImageUri, isInsideDrawer, nft.id],
+  );
+
+  const customImageEnabled = useFeature("customImage")?.enabled;
+
   const links = useMemo(() => {
     const metadataLinks =
       linksPerCurrency?.[account.currency.id]?.(t, metadata?.links).filter(x => x) || [];
 
-    return [...metadataLinks, hideCollection];
-  }, [account.currency.id, hideCollection, metadata?.links, t]);
+    return [
+      ...metadataLinks,
+      ...(customImageEnabled && customImageUri ? [customImage] : []),
+      hideCollection,
+    ];
+  }, [
+    account.currency.id,
+    hideCollection,
+    metadata?.links,
+    customImageUri,
+    customImageEnabled,
+    customImage,
+    t,
+  ]);
 
   return links;
 };
