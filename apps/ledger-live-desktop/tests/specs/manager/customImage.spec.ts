@@ -35,7 +35,7 @@ test("Custom image", async ({ page }) => {
     await layout.goToManager();
     await deviceAction.accessManager("", "", DeviceModelId.nanoFTS);
     await managerPage.customImageButton.waitFor({ state: "visible" });
-    await expect(managerPage.deviceStorageCard).toHaveScreenshot(
+    await expect(managerPage.deviceOptionsContainer).toHaveScreenshot(
       `${generateScreenshotPrefix()}manager-button.png`,
     );
   });
@@ -183,7 +183,7 @@ test("Custom image", async ({ page }) => {
     await expect(container).toHaveScreenshot(`${generateScreenshotPrefix()}transfer-loaded.png`);
 
     await customImageDrawer.clickFinish();
-    await expect(managerPage.deviceStorageCard).toHaveScreenshot(
+    await expect(managerPage.deviceOptionsContainer).toHaveScreenshot(
       `${generateScreenshotPrefix()}transfer-finished.png`,
     );
   });

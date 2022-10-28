@@ -338,6 +338,7 @@ const DeviceStorage = ({
             {<HighlightVersion>{deviceInfo.version}</HighlightVersion>}
           </Text>
           <Flex
+            data-test-id="device-options-container"
             flexDirection="column"
             alignSelf="flex-start"
             justifyContent="flex-start"
