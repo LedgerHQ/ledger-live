@@ -119,8 +119,9 @@ const getTransactionStatus = async (
 
   const txSize = Math.ceil(estimatedFees.toNumber() / t.feePerByte!.toNumber());
   const crypto = cryptoFactory(a.currency.id as Currency);
+  const dustAmount = computeDustAmount(crypto, txSize);
 
-  if (amount.gt(0) && amount.lt(computeDustAmount(crypto, txSize))) {
+  if (amount.gt(0) && amount.lt(dustAmount)) {
     errors.dustLimit = new DustLimit();
   }
 
