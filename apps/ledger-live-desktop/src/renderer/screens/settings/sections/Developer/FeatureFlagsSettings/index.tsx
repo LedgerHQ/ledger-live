@@ -17,7 +17,7 @@ the input field below and it will appear in the list. Type the \
 flag name in camelCase without the "feature" prefix.\
 `;
 
-const Content = withV3StyleProvider((props: { visible?: boolean }) => {
+export const FeatureFlagContent = withV3StyleProvider((props: { visible?: boolean }) => {
   const { t } = useTranslation();
   const [focusedName, setFocusedName] = useState<string | undefined>();
   const [hiddenFlagName, setHiddenFlagName] = useState("");
@@ -104,7 +104,7 @@ const FeatureFlagsSettings = () => {
       descContainerStyle={{ maxWidth: undefined }}
       contentContainerStyle={{ marginRight: 0 }}
       childrenContainerStyle={{ alignSelf: visible ? "flex-start" : "center" }}
-      desc={<Content visible={visible} />}
+      desc={<FeatureFlagContent visible={visible} />}
     >
       <ButtonV2 small primary onClick={handleClick}>
         {visible ? "Hide" : "Show"}
