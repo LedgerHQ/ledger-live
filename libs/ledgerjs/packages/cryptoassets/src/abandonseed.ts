@@ -1,5 +1,9 @@
 import invariant from "invariant";
+<<<<<<< HEAD
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+=======
+import { CryptoCurrencyId } from "./types";
+>>>>>>> 973596d0aa (add abandon adress for avax)
 
 /**
  * these are either "dead"/"burn" addresses OR "abandon" seed addresses.
@@ -7,7 +11,11 @@ import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
  * We use them for tests and also for dry-run estimations
  * DO NOT USE AS RECIPIENT OR SIGN TRANSACTIONS INTO THEM
  */
+<<<<<<< HEAD
 const abandonSeedAddresses: Partial<Record<CryptoCurrency["id"], string>> = {
+=======
+const abandonSeedAddresses: Partial<Record<CryptoCurrencyId, string>> = {
+>>>>>>> 973596d0aa (add abandon adress for avax)
   algorand: "PSHLIWQKDEETIIBQEOTLGCT5IF7BTTOKCUULONOGVGF2HYDT2IHW3H4CCI",
   // https://snowtrace.io/address/0x000000000000000000000000000000000000dead/tokens
   avalanche_c_chain: "0x000000000000000000000000000000000000dEaD",
