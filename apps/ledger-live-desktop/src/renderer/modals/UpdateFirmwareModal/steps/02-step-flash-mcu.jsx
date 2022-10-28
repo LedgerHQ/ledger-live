@@ -4,7 +4,9 @@ import { useTranslation } from "react-i18next";
 import styled from "styled-components";
 import type { DeviceModelId } from "@ledgerhq/devices";
 import type { FirmwareUpdateContext } from "@ledgerhq/types-live";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { hasFinalFirmware } from "@ledgerhq/live-common/hw/hasFinalFirmware";
+import { isDeviceLocalizationSupported } from "@ledgerhq/live-common/manager/localization";
 import { command } from "~/renderer/commands";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import Box from "~/renderer/components/Box";
@@ -58,6 +60,8 @@ const StepFlashMcu = ({ firmware, deviceModelId, setError, transitionTo }: Props
   const [progress, setProgress] = useState(0);
   const withFinal = useMemo(() => hasFinalFirmware(firmware?.final), [firmware]);
 
+  const deviceLocalizationFeatureFlag = useFeature("deviceLocalization");
+
   // didMount
   useEffect(() => {
     setTimeout(() => {
@@ -84,7 +88,11 @@ const StepFlashMcu = ({ firmware, deviceModelId, setError, transitionTo }: Props
         }
       },
       complete: () => {
-        transitionTo("finish");
+        const shouldGoToLanguageStep =
+          firmware &&
+          isDeviceLocalizationSupported(firmware.final.name, deviceModelId) &&
+          deviceLocalizationFeatureFlag?.enabled;
+        transitionTo(shouldGoToLanguageStep ? "deviceLanguage" : "finish");
       },
       error: error => {
         setError(error);
@@ -101,7 +109,7 @@ const StepFlashMcu = ({ firmware, deviceModelId, setError, transitionTo }: Props
       }
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [deviceLocalizationFeatureFlag?.enabled]);
 
   if (autoUpdatingMode) {
     return (
