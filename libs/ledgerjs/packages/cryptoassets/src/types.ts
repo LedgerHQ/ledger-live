@@ -11,6 +11,7 @@ export type ERC20Token = [
   string,
   string
 ];
+
 export type CryptoCurrencyId =
   | "aeternity"
   | "aion"
@@ -102,7 +103,7 @@ export type CryptoCurrencyId =
   | "stratis"
   | "stealthcoin"
   | "stellar"
-  | "osmosis"
+  | "osmo"
   | "shyft"
   | "tezos"
   | "thundercore"
