@@ -1,3 +1,5 @@
+import { CoinType } from "./slip44";
+
 /**
  *
  */
@@ -80,7 +82,7 @@ export type CryptoCurrency = CurrencyCommon & {
   // name of the app as shown in the Manager
   managerAppName: string;
   // coin type according to slip44. THIS IS NOT GUARANTEED UNIQUE across currencies (e.g testnets,..)
-  coinType: number;
+  coinType: CoinType;
   // the scheme name to use when formatting an URI (without the ':')
   scheme: string;
   // used for UI
@@ -103,7 +105,7 @@ export type CryptoCurrency = CurrencyCommon & {
   ethereumLikeInfo?: {
     chainId: number;
     networkId?: number;
-    baseChain?: string;
+    baseChain?: "mainnet" | "goerli" | "ropsten";
     hardfork?: string;
     // used by evm light integration
     rpc?: string;
@@ -126,3 +128,5 @@ export type CryptoCurrency = CurrencyCommon & {
 export type Currency = FiatCurrency | CryptoCurrency | TokenCurrency;
 
 export type CryptoOrTokenCurrency = CryptoCurrency | TokenCurrency;
+
+export { CoinType };
