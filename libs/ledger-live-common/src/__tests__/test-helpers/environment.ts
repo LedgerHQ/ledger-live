@@ -7,6 +7,7 @@ import { EnvName, setEnvUnsafe } from "../../env";
 setPlatformVersion("1.1.0");
 
 setSupportedCurrencies([
+  "avalanche_c_chain",
   "bitcoin",
   "ethereum",
   "bsc",

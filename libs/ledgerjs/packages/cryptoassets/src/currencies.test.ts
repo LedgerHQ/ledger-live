@@ -318,6 +318,6 @@ test("can register a new coin externally", () => {
       },
     ],
   };
-  registerCryptoCurrency(coinId, mycoin as CryptoCurrency);
+  registerCryptoCurrency(mycoin as CryptoCurrency);
   expect(getCryptoCurrencyById(coinId)).toEqual(mycoin);
 });

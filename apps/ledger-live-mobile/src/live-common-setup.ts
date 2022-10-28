@@ -31,6 +31,7 @@ setGlobalOnBridgeError(e => logger.critical(e));
 setDeviceMode("polling");
 setPlatformVersion("1.1.0");
 setSupportedCurrencies([
+  "avalanche_c_chain",
   "bitcoin",
   "ethereum",
   "bsc",

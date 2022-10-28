@@ -9,6 +9,7 @@ import { setPlatformVersion } from "@ledgerhq/live-common/platform/version";
 setPlatformVersion("1.1.0");
 
 setSupportedCurrencies([
+  "avalanche_c_chain",
   "bitcoin",
   "ethereum",
   "bsc",
@@ -53,7 +54,7 @@ setSupportedCurrencies([
   "moonbeam",
   "cronos",
   "songbird",
-  "flare"
+  "flare",
 ]);
 
 for (const k in process.env) setEnvUnsafe(k as EnvName, process.env[k]);
