@@ -49,15 +49,15 @@ const Story = {
       },
     },
     name: {
-      type: "enum",
-      defaultValue: "France",
-      description: "[Only for single icon], Icon name",
-      control: {
-        options: iconNames,
-        control: {
-          type: "select",
-        },
-      },
+      type: "string",
+      // defaultValue: "France",
+      // description: "[Only for single icon], Icon name",
+      // control: {
+      //   options: iconNames,
+      //   control: {
+      //     type: "select",
+      //   },
+      // },
     },
   },
 };
