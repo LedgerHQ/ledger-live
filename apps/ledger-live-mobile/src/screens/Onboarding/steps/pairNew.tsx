@@ -90,9 +90,7 @@ function OnboardingStepPairNew() {
     [deviceModelId, theme],
   );
 
-  const startPostOnboarding = useStartPostOnboardingCallback(
-    deviceModelId as DeviceModelId,
-  );
+  const startPostOnboarding = useStartPostOnboardingCallback();
 
   const onFinish = useCallback(() => {
     dispatch(completeOnboarding());
@@ -107,7 +105,7 @@ function OnboardingStepPairNew() {
       screen: NavigatorName.Main,
     });
 
-    startPostOnboarding();
+    startPostOnboarding(deviceModelId as DeviceModelId);
 
     triggerJustFinishedOnboardingNewDevicePushNotificationModal();
   }, [
@@ -116,6 +114,7 @@ function OnboardingStepPairNew() {
     resetCurrentStep,
     triggerJustFinishedOnboardingNewDevicePushNotificationModal,
     startPostOnboarding,
+    deviceModelId,
   ]);
 
   const nextPage = useCallback(() => {

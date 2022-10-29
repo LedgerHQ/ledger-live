@@ -1,21 +1,26 @@
 import { DeviceModelId } from "@ledgerhq/devices/index";
 import { Flex } from "@ledgerhq/native-ui";
-import React from "react";
+import React, { useCallback } from "react";
 import { useStartPostOnboardingCallback } from "@ledgerhq/live-common/postOnboarding/hooks/index";
 import PostOnboardingEntryPointCard from "../../components/PostOnboarding/PostOnboardingEntryPointCard";
 import SettingsRow from "../../components/SettingsRow";
 import { useNavigateToPostOnboardingHubCallback } from "../../logic/postOnboarding/useNavigateToPostOnboardingHubCallback";
 
 export default () => {
-  const handleInitFTSMock = useStartPostOnboardingCallback(
-    DeviceModelId.nanoFTS,
-    true,
+  const startPostOnboarding = useStartPostOnboardingCallback();
+
+  const handleInitFTSMock = useCallback(
+    () => startPostOnboarding(DeviceModelId.nanoFTS, true),
+    [startPostOnboarding],
   );
-  const handleInitNanoXMock = useStartPostOnboardingCallback(
-    DeviceModelId.nanoX,
-    true,
+  const handleInitFTS = useCallback(
+    () => startPostOnboarding(DeviceModelId.nanoFTS),
+    [startPostOnboarding],
   );
-  const handleInitFTS = useStartPostOnboardingCallback(DeviceModelId.nanoFTS);
+  const handleInitNanoXMock = useCallback(
+    () => startPostOnboarding(DeviceModelId.nanoX, true),
+    [startPostOnboarding],
+  );
   const navigateToPostOnboardingHub = useNavigateToPostOnboardingHubCallback();
   return (
     <Flex>

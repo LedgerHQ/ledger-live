@@ -33,7 +33,7 @@
     "react-native-crypto": "^2.2.0",
     "react-native-randombytes": "^3.6.1",
     "react-native-tcp": "gre/react-native-tcp",
-    "react-redux": "^7.2.4",
+    "react-redux": "^7.2.9",
     "rn-nodeify": "tradle/rn-nodeify",
     "rxjs": "^6.6.7",
     "stream-browserify": "^2.0.2",
