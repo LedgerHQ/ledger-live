@@ -16,7 +16,6 @@ export class ManagerPage {
   readonly confirmButton: Locator;
   readonly installedAppEmptyState: Locator;
   readonly customImageButton: Locator;
-  readonly deviceOptionsContainer: Locator;
 
   constructor(page: Page) {
     this.page = page;
@@ -38,7 +37,6 @@ export class ManagerPage {
     this.confirmButton = page.locator("data-test-id=modal-confirm-button");
     this.installedAppEmptyState = page.locator("data-test-id=manager-no-apps-empty-state");
     this.customImageButton = page.locator("data-test-id=manager-custom-image-button");
-    this.deviceOptionsContainer = page.locator("data-test-id=device-options-container");
   }
 
   async goToInstalledAppTab() {
