@@ -6,6 +6,7 @@ import type {
   CurrencyBridge,
   ScanAccountEvent,
   ScanAccountEventRaw,
+  TransactionCommon,
 } from "@ledgerhq/types-live";
 import { fromAccountRaw, toAccountRaw } from "../account";
 import * as impl from "./impl";
@@ -25,11 +26,10 @@ export const setBridgeProxy = (p: Proxy | null | undefined): void => {
 };
 export const getCurrencyBridge = (currency: CryptoCurrency): CurrencyBridge =>
   (proxy || impl).getCurrencyBridge(currency);
-export const getAccountBridge = (
+export const getAccountBridge = <T extends TransactionCommon = any>(
   account: AccountLike,
   parentAccount?: Account | null | undefined
-): AccountBridge<any> =>
-  (proxy || impl).getAccountBridge(account, parentAccount);
+): AccountBridge<T> => (proxy || impl).getAccountBridge(account, parentAccount);
 export function fromScanAccountEventRaw(
   raw: ScanAccountEventRaw
 ): ScanAccountEvent {
