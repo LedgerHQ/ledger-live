@@ -1,5 +1,11 @@
 # live-mobile
 
+## 3.10.0-nightly.2
+
+### Patch Changes
+
+- [#1615](https://github.com/LedgerHQ/ledger-live/pull/1615) [`34546edc55`](https://github.com/LedgerHQ/ledger-live/commit/34546edc55674e49b22c6d3be08777ee13d306f9) Thanks [@pierrelouis-c](https://github.com/pierrelouis-c)! - Add hidden button in Welcome screen to access the settings.
+
 ## 3.10.0-nightly.1
 
 ### Patch Changes
