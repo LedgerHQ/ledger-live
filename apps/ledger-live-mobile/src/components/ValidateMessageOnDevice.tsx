@@ -5,12 +5,12 @@ import { useTheme } from "@react-navigation/native";
 import {
   getNanoDisplayedInfosFor712,
   isEIP712Message,
-} from "@ledgerhq/live-common/lib/families/ethereum/hw-signMessage";
+} from "@ledgerhq/live-common/families/ethereum/hw-signMessage";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import type { TypedMessageData } from "@ledgerhq/live-common/families/ethereum/types";
 import type { MessageData } from "@ledgerhq/live-common/hw/signMessage/types";
-import type { Account, AccountLike } from "@ledgerhq/types-live";
-import { getMainAccount } from "@ledgerhq/live-common/lib/account/helpers";
+import type { AccountLike } from "@ledgerhq/types-live";
+import { getMainAccount } from "@ledgerhq/live-common/account/helpers";
 import LText from "./LText";
 import Animation from "./Animation";
 import { getDeviceAnimation } from "../helpers/getDeviceAnimation";
@@ -20,6 +20,7 @@ type Props = {
   message: TypedMessageData | MessageData;
   account: AccountLike;
 };
+
 export default function ValidateOnDevice({
   device,
   message: messageData,
@@ -45,7 +46,7 @@ export default function ValidateOnDevice({
     message,
     fields,
   }: {
-    message?: string | null | undefined;
+    message?: string | null;
     fields?: ReturnType<typeof getNanoDisplayedInfosFor712>;
   } = useMemo(() => {
     try {
