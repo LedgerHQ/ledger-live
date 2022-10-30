@@ -1,46 +1,57 @@
 import React, { useCallback } from "react";
-import { BigNumber } from "bignumber.js";
-import { View, StyleSheet } from "react-native";
-import { useTranslation } from "react-i18next";
 import Slider from "react-native-slider";
+import { BigNumber } from "bignumber.js";
+import { useTranslation } from "react-i18next";
+import { View, StyleSheet } from "react-native";
 import { useTheme } from "@react-navigation/native";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
+import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import type { Transaction } from "@ledgerhq/live-common/families/ethereum/types";
 import {
-  Range,
   reverseRangeIndex,
   projectRangeIndex,
+  Range,
 } from "@ledgerhq/live-common/range";
-import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import LText from "../../components/LText";
 import CurrencyUnitValue from "../../components/CurrencyUnitValue";
 
-const FeeSlider = React.memo(({ value, onChange, range }: *) => {
-  const { colors } = useTheme();
-  const index = reverseRangeIndex(range, value);
-  const setValueIndex = useCallback(
-    i => onChange(projectRangeIndex(range, i)),
-    [range, onChange],
-  );
-  return (
-    <Slider
-      value={index}
-      step={1}
-      onValueChange={setValueIndex}
-      minimumValue={0}
-      maximumValue={range.steps - 1}
-      thumbTintColor={colors.live}
-      minimumTrackTintColor={colors.live}
-    />
-  );
-});
+const FeeSlider = React.memo(
+  ({
+    value,
+    onChange,
+    range,
+  }: {
+    value: BigNumber;
+    onChange: (arg: unknown) => void;
+    range: Range;
+  }) => {
+    const { colors } = useTheme();
+    const index = reverseRangeIndex(range, value);
+    const setValueIndex = useCallback(
+      i => onChange(projectRangeIndex(range, i)),
+      [range, onChange],
+    );
+    return (
+      <Slider
+        value={index}
+        step={1}
+        onValueChange={setValueIndex}
+        minimumValue={0}
+        maximumValue={range.steps - 1}
+        thumbTintColor={colors.live}
+        minimumTrackTintColor={colors.live}
+      />
+    );
+  },
+);
+
 type Props = {
   account: AccountLike;
-  parentAccount: ?Account;
+  parentAccount: Account | null | undefined;
   transaction: Transaction;
   feeAmount: BigNumber;
-  onChange: Function;
-  range: any;
+  onChange: (arg: unknown) => void;
+  range: Range;
   title: string;
 };
 export default function EditFeeUnitEthereum({
@@ -66,8 +77,7 @@ export default function EditFeeUnitEthereum({
     },
     [onChange],
   );
-  const { networkInfo } = transaction;
-  if (!networkInfo) return null;
+
   return (
     <View>
       <View style={[styles.sliderContainer, { backgroundColor: colors.card }]}>
@@ -94,12 +104,7 @@ export default function EditFeeUnitEthereum({
           </View>
         </View>
         <View style={styles.container}>
-          <FeeSlider
-            defaultGas={serverGas}
-            value={feeAmount}
-            range={range}
-            onChange={onChangeF}
-          />
+          <FeeSlider value={feeAmount} range={range} onChange={onChangeF} />
           <View style={styles.textContainer}>
             <LText color="grey" style={styles.currencyUnitText}>
               {t("fees.speed.slow")}
@@ -113,6 +118,7 @@ export default function EditFeeUnitEthereum({
     </View>
   );
 }
+
 const styles = StyleSheet.create({
   sliderContainer: {
     paddingLeft: 0,

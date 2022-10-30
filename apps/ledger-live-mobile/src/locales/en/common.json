@@ -460,12 +460,6 @@
       "title": "Password does not match",
       "description": "Please try again."
     },
-    "PriorityFeeTooHigh": {
-      "title": "Priority fee is higher than necessary. You might be overpaying"
-    },
-    "PriorityFeeTooLow": {
-      "title": "Priority fee is lower than the recommended value"
-    },
     "SelectExchangesLoadError": {
       "title": "Unable to load",
       "description": "Cannot load the exchanges."
@@ -756,6 +750,18 @@
     },
     "HederaAddAccountError": {
       "title": "Your account has not been added. Please try again."
+    },
+    "PriorityFeeTooLow": {
+      "title": "Priority fee is lower than the recommended value"
+    },
+    "PriorityFeeTooHigh": {
+      "title": "Priority fee is higher than necessary. You might be overpaying"
+    },
+    "MaxFeeTooLow": {
+      "title": "Max fee is lower than the recommended value"
+    },
+    "PriorityFeeHigherThanMaxFee": {
+      "title": "Max priority fee cannot be higher than max fee"
     }
   },
   "crash": {
@@ -3234,7 +3240,7 @@
       "gasLimit": "Gas limit",
       "gasPrice": "Gas price",
       "maxFee" : "Max fee",
-      "priorityFee" : "Priority fee",
+      "maxPriorityFee" : "Max priority fee",
       "nextBlock": "Next block: {{nextBaseFee}}",
       "suggestedPriorityFee": "Suggested: {{lowPriorityFee}} - {{highPriorityFee}}",
       "maxFees": "Max fees",
