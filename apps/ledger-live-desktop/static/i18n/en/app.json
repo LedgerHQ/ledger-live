@@ -131,6 +131,7 @@
     "nanoS": "Nano S",
     "nanoSP": "Nano S Plus",
     "nanoX": "Nano X",
+    "nanoFTS": "Nano FTS",
     "blue": "Blue"
   },
   "operation": {
@@ -598,6 +599,12 @@
     }
   },
   "lottieDebugger": {
+    "buttonTitle": "Test"
+  },
+  "storylyDebugger": {
+    "buttonTitle": "Test"
+  },
+  "postOnboardingDebugger": {
     "buttonTitle": "Test"
   },
   "fullNode": {
@@ -1125,6 +1132,111 @@
     "title": "Hide token",
     "desc": "This action will hide all <1><0>{{tokenName}}</0></1> accounts, you can show them again using <3>Settings</3>",
     "hideCTA": "Hide token"
+  },
+  "syncOnboarding": {
+    "connection": {
+      "searching": {
+        "title": "Connect {{deviceModelName}} to your computer",
+        "connectionTrouble": "Having trouble connecting your device?"
+      },
+      "success": {
+        "title": "Connected to {{ deviceName }}"
+      }
+    },
+    "manual": {
+      "title": "Setup {{deviceName}}",
+      "pairedContent": {
+        "title": "{{deviceName}} is connected",
+        "description": "Continue setup on {{deviceName}}",
+        "text": "This screen will change dynamically to provide you with relevant information while you set up your {{deviceName}}"
+      },
+      "pinContent": {
+        "title": "Set your PIN",
+        "description": "Your PIN can be 4 to 8 digits long",
+        "text": "Anyone with access to your {{deviceName}} and to your PIN can also access all your crypto and NFT assets."
+      },
+      "recoveryContent": {
+        "title": "Recovery phrase",
+        "content": "Tap on the videos below to learn more about your secret recovery phrase"
+      },
+      "softwareCheckContent": {
+        "title": "Software check",
+        "genuineCheck": {
+          "active": "Checking {{deviceName}}",
+          "completed": "{{deviceName}} is authentic"
+        },
+        "firmwareUpdate": {
+          "inactive": "Software check",
+          "active": "Checking for software updates",
+          "updateAvailable": "Software update available {{firmwareVersion}}",
+          "recommendation": "We recommend downloading the update now",
+          "downloadUpdate": "Download update",
+          "skipUpdate": "Skip for now",
+          "completed": "Software is up to date"
+        }
+      },
+      "installApplications": {
+        "title": "We recommend downloading a default set of apps. You can download more later",
+        "install": "Install",
+        "skip": "I'll do that later",
+        "info": "Apps on {{deviceName}} are used to approve transactions. You can add or remove them at any time."
+      },
+      "genuineCheckModal": {
+        "title": "Authenticity Check",
+        "paragraph1": "Let's make sure your {{deviceName}} is Authentic and safe to use",
+        "paragraph2": "We will perform a check to ensure your device hasn't been tampered with. You'll need to accept this on your {{deviceName}}.",
+        "checkDeviceButton": "Check device"
+      },
+      "genuineCheckCancelModal": {
+        "title": "Authenticity Check",
+        "paragraph1": "The genuine check was cancelled",
+        "paragraph2": "This check is very important to make sure your {{deviceName}} is safe to use.",
+        "checkDeviceButton": "Run check again",
+        "cancelButton": "Maybe later"
+      },
+      "genuineCheckNotGenuineModal": {
+        "title": "Authenticity Check",
+        "paragraph1": "Your device is not genuine",
+        "paragraph2": "Authenticity check failed",
+        "checkDeviceButton": "Run check again",
+        "cancelButton": "Maybe later"
+      },
+      "genuineCheckAnimationModal": {
+        "message": "Allow manager on {{deviceName}}"
+      },
+      "helpDrawer": {
+        "title": "Need some help with your setup manual?",
+        "description": "Lorem Elsass ipsum aliquam bissame Oberschaeffolsheim geht's messti de Bischheim tellus blottkopf, dui sed libero. hopla libero, placerat leo eget Gal.",
+        "docButton": "Go to FAQ",
+        "supportButton": "Speak to a human"
+      },
+      "troubleshootingDrawer": {
+        "title": "Troubleshoot USB connection",
+        "description": "There seems to be a problem connecting to your device. Don’t worry, you can try different solutions one by one until your device connects!",
+        "fixButton": "Fix it",
+        "closeButton": "Close"
+      },
+      "desyncOverlay": {
+        "errorMessage": "It looks like connection to your {{deviceName}} was lost. We're trying to reconnect."
+      },
+      "header": {
+        "helpButton": "Need help?"
+      }
+    }
+  },
+  "postOnboarding": {
+    "postOnboardingScreen": {
+      "title": "Nice one.You're all set.",
+      "description": "Cheers for setting up your {{deviceName}}!",
+      "paragraph": "We have prepared for you some steps to start with. If you feel like exploring Ledger Live on your own, don't hesitate to skip this step, you can always come back to it.",
+      "bottomText": "Enjoy your travel into the Web3 securely with Ledger Live."
+    },
+    "postOnboardingContent": {
+      "title": "Nice one.You're all set.",
+      "description": "Here's what you can do next:",
+      "skipLink": "Skip to the app",
+      "skipLinkInDrawer": "I'll do this later"
+    }
   },
   "hideNftCollection": {
     "title": "Hide NFT Collection",
@@ -3489,6 +3601,14 @@
         "testAnimations": {
           "title": "Test Lottie animations",
           "description": "Test all animations used in Ledger Live"
+        },
+        "testStories": {
+          "title": "Test Storyly stories",
+          "description": "Test all stories used in Ledger Live"
+        },
+        "testPostonboarding": {
+          "title": "Test Post Onboarding",
+          "description": "Test all post onboarding features"
         }
       }
     },

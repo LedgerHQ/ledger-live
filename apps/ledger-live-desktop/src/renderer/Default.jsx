@@ -51,6 +51,7 @@ import DebugSkeletons from "~/renderer/components/debug/DebugSkeletons";
 import { DisableTransactionBroadcastWarning } from "~/renderer/components/debug/DisableTransactionBroadcastWarning";
 import { DebugWrapper } from "~/renderer/components/debug/shared";
 import useDeeplink from "~/renderer/hooks/useDeeplinking";
+import useStoryly from "~/renderer/hooks/useStoryly";
 import useUSBTroubleshooting from "~/renderer/hooks/useUSBTroubleshooting";
 import ModalsLayer from "./ModalsLayer";
 import { ToastOverlay } from "~/renderer/components/ToastOverlay";
@@ -58,6 +59,7 @@ import Drawer from "~/renderer/drawers/Drawer";
 import UpdateBanner from "~/renderer/components/Updater/Banner";
 import FirmwareUpdateBanner from "~/renderer/components/FirmwareUpdateBanner";
 import Onboarding from "~/renderer/components/Onboarding";
+import PostOnboardingScreen from "~/renderer/components/PostOnboardingScreen";
 
 import { hasCompletedOnboardingSelector } from "~/renderer/reducers/settings";
 
@@ -70,6 +72,7 @@ import Learn from "~/renderer/screens/learn";
 
 import { useProviders } from "~/renderer/screens/exchange/Swap2/Form";
 import WelcomeScreenSettings from "~/renderer/screens/settings/WelcomeScreenSettings";
+import SyncOnboarding from "./components/SyncOnboarding";
 
 // in order to test sentry integration, we need the ability to test it out.
 const LetThisCrashForCrashTest = () => {
@@ -150,6 +153,7 @@ export default function Default() {
   useListenToHidDevices();
   useDeeplink();
   useUSBTroubleshooting();
+  useStoryly();
 
   useProviders(); // prefetch data from swap providers here
 
@@ -190,6 +194,8 @@ export default function Default() {
             ) : null}
             <Switch>
               <Route path="/onboarding" render={props => <Onboarding {...props} />} />
+              <Route path="/sync-onboarding" render={props => <SyncOnboarding {...props} />} />
+              <Route path="/post-onboarding" render={() => <PostOnboardingScreen />} />
               <Route path="/USBTroubleshooting">
                 <USBTroubleshooting onboarding={!hasCompletedOnboarding} />
               </Route>

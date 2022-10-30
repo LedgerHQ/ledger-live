@@ -80,7 +80,6 @@ importers:
       qrloop: ^1.2.0
       react: ^17.0.2
       react-dom: ^17.0.2
-      react-redux: ^7.2.6
       rxjs: ^6.6.7
       ts-node: ^10.4.0
       typescript: ^4.5.5
@@ -113,7 +112,6 @@ importers:
       qrloop: 1.2.0
       react: 17.0.2
       react-dom: 17.0.2_react@17.0.2
-      react-redux: 7.2.8_react@17.0.2
       rxjs: 6.6.7
       winston: 3.7.2
       ws: 8.6.0
@@ -275,7 +273,7 @@ importers:
       react-markdown: ^4.3.0
       react-motion: ^0.5.2
       react-prismazoom: ^3.0.0
-      react-redux: ^7.2.6
+      react-redux: ^7.2.9
       react-refresh: ^0.11.0
       react-router: ^5.2.0
       react-router-dom: ^5.2.0
@@ -384,7 +382,7 @@ importers:
       react-markdown: 4.3.1_react@17.0.2
       react-motion: 0.5.2_react@17.0.2
       react-prismazoom: 3.0.3_oxfzelaz5ynxsop2v2nu2h2m64
-      react-redux: 7.2.8_hx2b44akkvgcgvvtmk7ds2qk6q
+      react-redux: 7.2.9_hx2b44akkvgcgvvtmk7ds2qk6q
       react-router: 5.3.1_react@17.0.2
       react-router-dom: 5.3.1_react@17.0.2
       react-select: 3.2.0_sfoxds7t5ydpegc3knd667wn6m
@@ -708,7 +706,7 @@ importers:
       react-native-version-number: ^0.3.6
       react-native-video: ^5.2.0
       react-native-webview: ^11.17.1
-      react-redux: 7.2.6
+      react-redux: ^7.2.9
       redux: ^4.1.2
       redux-actions: 2.6.5
       redux-thunk: 2.3.0
@@ -846,7 +844,7 @@ importers:
       react-native-version-number: 0.3.6
       react-native-video: 5.2.0_lojvl6twgoj4rxeqeytmq4uduq
       react-native-webview: 11.18.2_zqxy7fpkavjkgz5xll7ed4r6rq
-      react-redux: 7.2.6_hx2b44akkvgcgvvtmk7ds2qk6q
+      react-redux: 7.2.9_hx2b44akkvgcgvvtmk7ds2qk6q
       redux: 4.2.0
       redux-actions: 2.6.5
       redux-thunk: 2.3.0_redux@4.2.0
@@ -1067,7 +1065,7 @@ importers:
       react-native: 0.65.1
       react-native-get-random-values: ^1.8.0
       react-native-svg: ^12.1.1
-      react-redux: 7.2.6
+      react-redux: ^7.2.9
       react-test-renderer: ^17.0.2
       redux: ^4.1.2
       redux-actions: 2.6.5
@@ -1268,7 +1266,7 @@ importers:
       react-dom: 17.0.2_react@17.0.2
       react-native: 0.65.1_react@17.0.2
       react-native-svg: 12.3.0_fvyp5h33mdlmlhalc4xfh32q7e
-      react-redux: 7.2.6_hx2b44akkvgcgvvtmk7ds2qk6q
+      react-redux: 7.2.9_hx2b44akkvgcgvvtmk7ds2qk6q
       react-test-renderer: 17.0.2_react@17.0.2
       redux-actions: 2.6.5
       timemachine: 0.3.2
@@ -8510,7 +8508,7 @@ packages:
         optional: true
     dependencies:
       '@babel/core': 7.17.10
-      '@babel/runtime': 7.17.9
+      '@babel/runtime': 7.18.9
       '@emotion/babel-plugin': 11.9.2_@babel+core@7.17.10
       '@emotion/cache': 11.7.1
       '@emotion/serialize': 1.0.3
@@ -8533,7 +8531,7 @@ packages:
       '@types/react':
         optional: true
     dependencies:
-      '@babel/runtime': 7.17.9
+      '@babel/runtime': 7.18.9
       '@emotion/babel-plugin': 11.9.2
       '@emotion/cache': 11.7.1
       '@emotion/serialize': 1.0.3
@@ -12567,7 +12565,7 @@ packages:
       '@polkadot/util': '*'
       '@polkadot/util-crypto': '*'
     dependencies:
-      '@babel/runtime': 7.17.9
+      '@babel/runtime': 7.18.9
       '@polkadot/util': 9.2.1
       '@polkadot/util-crypto': 9.2.1
       color: 3.2.1
@@ -12613,7 +12611,7 @@ packages:
     resolution: {integrity: sha512-vAao00qNq6zv5UbDCn5+TN4DlWtYdru2gJBGroxzLHH6JzxWrCPGu3iDW+o3CE8v4XJGI42W4nDDGjdxyzVN7Q==}
     engines: {node: '>=14.0.0'}
     dependencies:
-      '@babel/runtime': 7.17.9
+      '@babel/runtime': 7.18.9
       '@noble/hashes': 1.0.0
       '@noble/secp256k1': 1.5.5
       '@polkadot/networks': 9.2.1
@@ -12670,7 +12668,7 @@ packages:
     resolution: {integrity: sha512-6B+NWfibxKNlWv67dJygjxZsNtjp9nERYZ+EaulOST9/KrnGLyKEh5ZRxP9lTSXeo+kuZhEfQFl3VQk13xgmJg==}
     engines: {node: '>=14.0.0'}
     dependencies:
-      '@babel/runtime': 7.17.9
+      '@babel/runtime': 7.18.9
       '@polkadot/x-bigint': 9.2.1
       '@polkadot/x-global': 9.2.1
       '@polkadot/x-textdecoder': 9.2.1
@@ -12965,7 +12963,7 @@ packages:
     resolution: {integrity: sha512-2aP6edHMPE14mQUFA8ipiB74PKoS6/wFWjTSbGqVOkGN0B7/kvX0/bW2fb6jPcfQlutPeqGN6dZnraoqzTzv6w==}
     engines: {node: '>=14.0.0'}
     dependencies:
-      '@babel/runtime': 7.17.9
+      '@babel/runtime': 7.18.9
     dev: false
 
   /@polkadot/x-global/9.2.1:
@@ -18373,17 +18371,6 @@ packages:
     resolution: {integrity: sha512-qjDJRrmvBMiTx+jyLxvLfJU7UznFuokDv4f3WRuriHKERccVpFU+8XMQUAbDzoiJCsmexxRExQeMwwCdamSKDA==}
     dev: true
 
-  /@types/hoist-non-react-statics/3.3.1:
-    resolution: {integrity: sha512-iMIqiko6ooLrTh1joXodJK5X9xeEALT1kM5G3ZLhD3hszxBdIEd5C75U834D9mLcINgD4OyZf5uQXjkuYydWvA==}
-    peerDependencies:
-      '@types/react': '*'
-    peerDependenciesMeta:
-      '@types/react':
-        optional: true
-    dependencies:
-      hoist-non-react-statics: 3.3.2
-    dev: false
-
   /@types/hoist-non-react-statics/3.3.1_@types+react@17.0.45:
     resolution: {integrity: sha512-iMIqiko6ooLrTh1joXodJK5X9xeEALT1kM5G3ZLhD3hszxBdIEd5C75U834D9mLcINgD4OyZf5uQXjkuYydWvA==}
     peerDependencies:
@@ -18785,19 +18772,6 @@ packages:
     dependencies:
       '@types/react': 17.0.45
     dev: true
-
-  /@types/react-redux/7.1.24:
-    resolution: {integrity: sha512-7FkurKcS1k0FHZEtdbbgN8Oc6b+stGSfZYjQGicofJ0j4U0qIn/jaSvnP2pLwZKiai3/17xqqxkkrxTgN8UNbQ==}
-    peerDependencies:
-      '@types/react': '*'
-    peerDependenciesMeta:
-      '@types/react':
-        optional: true
-    dependencies:
-      '@types/hoist-non-react-statics': 3.3.1
-      hoist-non-react-statics: 3.3.2
-      redux: 4.2.0
-    dev: false
 
   /@types/react-redux/7.1.24_@types+react@17.0.45:
     resolution: {integrity: sha512-7FkurKcS1k0FHZEtdbbgN8Oc6b+stGSfZYjQGicofJ0j4U0qIn/jaSvnP2pLwZKiai3/17xqqxkkrxTgN8UNbQ==}
@@ -26936,7 +26910,7 @@ packages:
   /dom-helpers/5.2.1:
     resolution: {integrity: sha512-nRCa7CK3VTrM2NmGkIy4cbK7IZlgBE/PYMn55rrXefr5xXDP0LdtfPnblFDoVdcAfslJ7or6iqAUnx0CCGIWQA==}
     dependencies:
-      '@babel/runtime': 7.17.9
+      '@babel/runtime': 7.18.9
       csstype: 3.0.11
 
   /dom-serializer/0.2.2:
@@ -35708,7 +35682,7 @@ packages:
       pretty-format: 28.1.3
       slash: 3.0.0
       strip-json-comments: 3.1.1
-      ts-node: 10.7.0_sihq2egcoz3xk6sc4vk74xvt4u
+      ts-node: 10.7.0_33lso24kgdvwdhve7eirdtgycu
     transitivePeerDependencies:
       - metro
       - supports-color
@@ -37656,7 +37630,7 @@ packages:
     dev: true
 
   /js-tokens/3.0.2:
-    resolution: {integrity: sha1-mGbfOVECEw449/mWvOtlRDIJwls=}
+    resolution: {integrity: sha512-RjTcuD4xjtthQkaWH7dFlH85L+QaVtSoOyGdZ3g6HFhS9dFNDfLyqgm2NFe2X6cQpeFmt0452FJjFG5UameExg==}
 
   /js-tokens/4.0.0:
     resolution: {integrity: sha512-RdJUflcE3cUzKiMqQgsCu06FPu9UdIJO0beYbPhHN4k6apgJtifcoCtT9bcxOpYBtpD2kCM6Sbzg4CausW/PKQ==}
@@ -39924,6 +39898,24 @@ packages:
       - supports-color
       - utf-8-validate
 
+  /metro-config/0.67.0_5rj3ktdhebdtkdjqejo5rbxriu:
+    resolution: {integrity: sha512-ThAwUmzZwTbKyyrIn2bKIcJDPDBS0LKAbqJZQioflvBGfcgA21h3fdL3IxRmvCEl6OnkEWI0Tn1Z9w2GLAjf2g==}
+    peerDependencies:
+      metro-transform-worker: '*'
+    peerDependenciesMeta:
+      metro-transform-worker:
+        optional: true
+    dependencies:
+      cosmiconfig: 5.2.1
+      jest-validate: 26.6.2
+      metro: 0.67.0
+      metro-cache: 0.67.0_metro@0.67.0
+      metro-core: 0.67.0_metro@0.67.0
+      metro-runtime: 0.67.0
+      metro-transform-worker: 0.67.0_metro-minify-uglify@0.67.0
+    transitivePeerDependencies:
+      - metro
+
   /metro-config/0.67.0_h77kaxayu5kga6qsud7rauzt6a:
     resolution: {integrity: sha512-ThAwUmzZwTbKyyrIn2bKIcJDPDBS0LKAbqJZQioflvBGfcgA21h3fdL3IxRmvCEl6OnkEWI0Tn1Z9w2GLAjf2g==}
     peerDependencies:
@@ -40262,7 +40254,7 @@ packages:
       '@babel/parser': 7.18.11
       '@babel/types': 7.18.10
       babel-preset-fbjs: 3.4.0_@babel+core@7.18.10
-      metro: 0.67.0
+      metro: 0.67.0_h77kaxayu5kga6qsud7rauzt6a
       metro-babel-transformer: 0.67.0
       metro-cache: 0.67.0_metro@0.67.0
       metro-cache-key: 0.67.0
@@ -40335,6 +40327,68 @@ packages:
     transitivePeerDependencies:
       - bufferutil
       - encoding
+      - supports-color
+      - utf-8-validate
+
+  /metro/0.67.0_h77kaxayu5kga6qsud7rauzt6a:
+    resolution: {integrity: sha512-DwuBGAFcAivoac/swz8Lp7Y5Bcge1tzT7T6K0nf1ubqJP8YzBUtyR4pkjEYVUzVu/NZf7O54kHSPVu1ibYzOBQ==}
+    hasBin: true
+    dependencies:
+      '@babel/code-frame': 7.16.7
+      '@babel/core': 7.17.10
+      '@babel/generator': 7.17.10
+      '@babel/parser': 7.17.10
+      '@babel/template': 7.16.7
+      '@babel/traverse': 7.17.10
+      '@babel/types': 7.17.10
+      absolute-path: 0.0.0
+      accepts: 1.3.8
+      async: 2.6.4
+      chalk: 4.1.2
+      ci-info: 2.0.0
+      connect: 3.7.0
+      debug: 2.6.9
+      denodeify: 1.2.1
+      error-stack-parser: 2.0.7
+      fs-extra: 1.0.0
+      graceful-fs: 4.2.10
+      hermes-parser: 0.5.0
+      image-size: 0.6.3
+      invariant: 2.2.4
+      jest-haste-map: 27.5.1_metro@0.67.0
+      jest-worker: 26.6.2_metro@0.67.0
+      lodash.throttle: 4.1.1
+      metro-babel-transformer: 0.67.0
+      metro-cache: 0.67.0_metro@0.67.0
+      metro-cache-key: 0.67.0
+      metro-config: 0.67.0_5rj3ktdhebdtkdjqejo5rbxriu
+      metro-core: 0.67.0_metro@0.67.0
+      metro-hermes-compiler: 0.67.0
+      metro-inspector-proxy: 0.67.0
+      metro-minify-uglify: 0.67.0
+      metro-react-native-babel-preset: 0.67.0_@babel+core@7.17.10
+      metro-resolver: 0.67.0
+      metro-runtime: 0.67.0
+      metro-source-map: 0.67.0
+      metro-symbolicate: 0.67.0
+      metro-transform-plugins: 0.67.0
+      metro-transform-worker: 0.67.0_metro-minify-uglify@0.67.0
+      mime-types: 2.1.35
+      mkdirp: 0.5.6
+      node-fetch: 2.6.7
+      nullthrows: 1.1.1
+      rimraf: 2.7.1
+      serialize-error: 2.1.0
+      source-map: 0.5.7
+      strip-ansi: 6.0.1
+      temp: 0.8.3
+      throat: 5.0.0
+      ws: 7.5.7
+      yargs: 15.4.1
+    transitivePeerDependencies:
+      - bufferutil
+      - encoding
+      - metro-transform-worker
       - supports-color
       - utf-8-validate
 
@@ -46627,10 +46681,10 @@ packages:
       fsevents: 2.3.2
     dev: false
 
-  /react-redux/7.2.6_hx2b44akkvgcgvvtmk7ds2qk6q:
-    resolution: {integrity: sha512-10RPdsz0UUrRL1NZE0ejTkucnclYSgXp5q+tB5SWx2qeG2ZJQJyymgAhwKy73yiL/13btfB6fPr+rgbMAaZIAQ==}
+  /react-redux/7.2.9_hx2b44akkvgcgvvtmk7ds2qk6q:
+    resolution: {integrity: sha512-Gx4L3uM182jEEayZfRbI/G11ZpYdNAnBs70lFVMNdHJI76XYtR+7m0MN+eAs7UHBPhWXcnFPaS+9owSCJQHNpQ==}
     peerDependencies:
-      react: ^16.8.3 || ^17
+      react: ^16.8.3 || ^17 || ^18
     dependencies:
       '@babel/runtime': 7.18.9
       '@types/react-redux': 7.1.24_@types+react@17.0.45
@@ -46639,42 +46693,8 @@ packages:
       prop-types: 15.8.1
       react: 17.0.2
       react-is: 17.0.2
-      react-native: 0.68.2_qiqqwmyv63yhnuboofexv3s7x4
     transitivePeerDependencies:
       - '@types/react'
-
-  /react-redux/7.2.8_hx2b44akkvgcgvvtmk7ds2qk6q:
-    resolution: {integrity: sha512-6+uDjhs3PSIclqoCk0kd6iX74gzrGc3W5zcAjbrFgEdIjRSQObdIwfx80unTkVUYvbQ95Y8Av3OvFHq1w5EOUw==}
-    peerDependencies:
-      react: ^16.8.3 || ^17 || ^18
-    dependencies:
-      '@babel/runtime': 7.17.9
-      '@types/react-redux': 7.1.24_@types+react@17.0.45
-      hoist-non-react-statics: 3.3.2
-      loose-envify: 1.4.0
-      prop-types: 15.8.1
-      react: 17.0.2
-      react-is: 17.0.2
-      react-native: 0.68.2_qiqqwmyv63yhnuboofexv3s7x4
-    transitivePeerDependencies:
-      - '@types/react'
-    dev: false
-
-  /react-redux/7.2.8_react@17.0.2:
-    resolution: {integrity: sha512-6+uDjhs3PSIclqoCk0kd6iX74gzrGc3W5zcAjbrFgEdIjRSQObdIwfx80unTkVUYvbQ95Y8Av3OvFHq1w5EOUw==}
-    peerDependencies:
-      react: ^16.8.3 || ^17 || ^18
-    dependencies:
-      '@babel/runtime': 7.17.9
-      '@types/react-redux': 7.1.24
-      hoist-non-react-statics: 3.3.2
-      loose-envify: 1.4.0
-      prop-types: 15.8.1
-      react: 17.0.2
-      react-is: 17.0.2
-    transitivePeerDependencies:
-      - '@types/react'
-    dev: false
 
   /react-refresh/0.11.0:
     resolution: {integrity: sha512-F27qZr8uUqwhWZboondsPx8tnC3Ct3SxZA3V5WyEvujRyyNv0VYPhoBg1gZ8/MV5tubQp76Trw8lTv9hzRBa+A==}
@@ -51380,7 +51400,7 @@ packages:
     dependencies:
       bs-logger: 0.2.6
       fast-json-stable-stringify: 2.1.0
-      jest: 28.1.3_csdo2gfejusb3n4cacufvlevtu
+      jest: 28.1.3_r5rwvyw2qgx3fnijwswldzdnfy
       jest-util: 28.1.0
       json5: 2.2.1
       lodash.memoize: 4.1.2
