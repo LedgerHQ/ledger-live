@@ -1,5 +1,38 @@
 # ledger-live-desktop
 
+## 2.50.0-nightly.1
+
+### Minor Changes
+
+- [#700](https://github.com/LedgerHQ/ledger-live/pull/700) [`bf9e7a242c`](https://github.com/LedgerHQ/ledger-live/commit/bf9e7a242c349d565a0fdcd6823059295920fb58) Thanks [@thomasrogerlux](https://github.com/thomasrogerlux)! - Add debug screen for storyly
+
+* [#700](https://github.com/LedgerHQ/ledger-live/pull/700) [`bf9e7a242c`](https://github.com/LedgerHQ/ledger-live/commit/bf9e7a242c349d565a0fdcd6823059295920fb58) Thanks [@thomasrogerlux](https://github.com/thomasrogerlux)! - Add UI for update available in sync onboarding
+
+- [#700](https://github.com/LedgerHQ/ledger-live/pull/700) [`bf9e7a242c`](https://github.com/LedgerHQ/ledger-live/commit/bf9e7a242c349d565a0fdcd6823059295920fb58) Thanks [@thomasrogerlux](https://github.com/thomasrogerlux)! - Add post onboarding logic and mock actions
+
+* [#700](https://github.com/LedgerHQ/ledger-live/pull/700) [`bf9e7a242c`](https://github.com/LedgerHQ/ledger-live/commit/bf9e7a242c349d565a0fdcd6823059295920fb58) Thanks [@thomasrogerlux](https://github.com/thomasrogerlux)! - Add completion screen to the Onboarding
+
+- [#700](https://github.com/LedgerHQ/ledger-live/pull/700) [`bf9e7a242c`](https://github.com/LedgerHQ/ledger-live/commit/bf9e7a242c349d565a0fdcd6823059295920fb58) Thanks [@thomasrogerlux](https://github.com/thomasrogerlux)! - Add not genuine device flow to the sync onboarding
+
+* [#700](https://github.com/LedgerHQ/ledger-live/pull/700) [`bf9e7a242c`](https://github.com/LedgerHQ/ledger-live/commit/bf9e7a242c349d565a0fdcd6823059295920fb58) Thanks [@thomasrogerlux](https://github.com/thomasrogerlux)! - Add USB troubleshooting drawer in sync onboarding
+
+- [#700](https://github.com/LedgerHQ/ledger-live/pull/700) [`bf9e7a242c`](https://github.com/LedgerHQ/ledger-live/commit/bf9e7a242c349d565a0fdcd6823059295920fb58) Thanks [@thomasrogerlux](https://github.com/thomasrogerlux)! - Add a new help drawer in the new synchronous onboarding screen. Also update the drawer component from UI library to comply with recent designs.
+
+* [#700](https://github.com/LedgerHQ/ledger-live/pull/700) [`bf9e7a242c`](https://github.com/LedgerHQ/ledger-live/commit/bf9e7a242c349d565a0fdcd6823059295920fb58) Thanks [@thomasrogerlux](https://github.com/thomasrogerlux)! - Add postonboarding entry point
+
+- [#700](https://github.com/LedgerHQ/ledger-live/pull/700) [`bf9e7a242c`](https://github.com/LedgerHQ/ledger-live/commit/bf9e7a242c349d565a0fdcd6823059295920fb58) Thanks [@thomasrogerlux](https://github.com/thomasrogerlux)! - Plug synchronous onboarding logic from live-common with desktop UI
+
+* [#700](https://github.com/LedgerHQ/ledger-live/pull/700) [`bf9e7a242c`](https://github.com/LedgerHQ/ledger-live/commit/bf9e7a242c349d565a0fdcd6823059295920fb58) Thanks [@thomasrogerlux](https://github.com/thomasrogerlux)! - Add the UI for the install recommended apps step in the sync onboarding
+
+- [#700](https://github.com/LedgerHQ/ledger-live/pull/700) [`bf9e7a242c`](https://github.com/LedgerHQ/ledger-live/commit/bf9e7a242c349d565a0fdcd6823059295920fb58) Thanks [@thomasrogerlux](https://github.com/thomasrogerlux)! - Add cancel genuine check flow
+
+### Patch Changes
+
+- [#700](https://github.com/LedgerHQ/ledger-live/pull/700) [`bf9e7a242c`](https://github.com/LedgerHQ/ledger-live/commit/bf9e7a242c349d565a0fdcd6823059295920fb58) Thanks [@thomasrogerlux](https://github.com/thomasrogerlux)! - Add Playwright test suite for the new sync onboarding screen
+
+- Updated dependencies [[`bf9e7a242c`](https://github.com/LedgerHQ/ledger-live/commit/bf9e7a242c349d565a0fdcd6823059295920fb58)]:
+  - @ledgerhq/react-ui@0.10.0-nightly.1
+
 ## 2.49.3-nightly.0
 
 ### Patch Changes

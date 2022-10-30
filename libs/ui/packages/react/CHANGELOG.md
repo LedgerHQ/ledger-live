@@ -1,5 +1,11 @@
 # @ledgerhq/react-ui
 
+## 0.10.0-nightly.1
+
+### Minor Changes
+
+- [#700](https://github.com/LedgerHQ/ledger-live/pull/700) [`bf9e7a242c`](https://github.com/LedgerHQ/ledger-live/commit/bf9e7a242c349d565a0fdcd6823059295920fb58) Thanks [@thomasrogerlux](https://github.com/thomasrogerlux)! - Add a new help drawer in the new synchronous onboarding screen. Also update the drawer component from UI library to comply with recent designs.
+
 ## 0.9.3-nightly.0
 
 ### Patch Changes
