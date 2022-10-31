@@ -730,7 +730,7 @@ DEPENDENCIES:
   - "RNSVG (from `../../../node_modules/.pnpm/react-native-svg@12.3.0_zqxy7fpkavjkgz5xll7ed4r6rq/node_modules/react-native-svg`)"
   - "RNVectorIcons (from `../../../node_modules/.pnpm/react-native-vector-icons@8.1.0/node_modules/react-native-vector-icons`)"
   - "storyly-react-native (from `../../../node_modules/.pnpm/storyly-react-native@1.24.1_zqxy7fpkavjkgz5xll7ed4r6rq/node_modules/storyly-react-native`)"
-  - "TcpSockets (from `../../../node_modules/.pnpm/react-native-tcp@4.0.0_hbs5j5acfso7omcqwa66ov7iaq_react-native@0.68.2/node_modules/react-native-tcp`)"
+  - "TcpSockets (from `../../../node_modules/.pnpm/react-native-tcp@4.0.0_react-native@0.68.2/node_modules/react-native-tcp`)"
   - "Yoga (from `../../../node_modules/.pnpm/react-native@0.68.2_qiqqwmyv63yhnuboofexv3s7x4/node_modules/react-native/ReactCommon/yoga`)"
 
 SPEC REPOS:
@@ -936,7 +936,7 @@ EXTERNAL SOURCES:
   storyly-react-native:
     :path: "../../../node_modules/.pnpm/storyly-react-native@1.24.1_zqxy7fpkavjkgz5xll7ed4r6rq/node_modules/storyly-react-native"
   TcpSockets:
-    :path: "../../../node_modules/.pnpm/react-native-tcp@4.0.0_hbs5j5acfso7omcqwa66ov7iaq_react-native@0.68.2/node_modules/react-native-tcp"
+    :path: "../../../node_modules/.pnpm/react-native-tcp@4.0.0_react-native@0.68.2/node_modules/react-native-tcp"
   Yoga:
     :path: "../../../node_modules/.pnpm/react-native@0.68.2_qiqqwmyv63yhnuboofexv3s7x4/node_modules/react-native/ReactCommon/yoga"
 
