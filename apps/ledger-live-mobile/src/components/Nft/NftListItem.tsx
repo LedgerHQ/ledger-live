@@ -72,29 +72,16 @@ const NftCardView = ({
       <Box height={36} mb={4}>
         <Skeleton loading={loading} height={8} width={115} borderRadius={4}>
           <Flex flexDirection="column">
-            <Flex flexDirection="row">
-              <Text
-                variant="body"
-                fontWeight="medium"
-                color="neutral.c100"
-                ellipsizeMode="tail"
-                numberOfLines={1}
-                flexShrink={1}
-              >
-                {displayText(metadata?.nftName)}
-              </Text>
-
-              <Text
-                variant="body"
-                fontWeight="medium"
-                color="neutral.c100"
-                ellipsizeMode="tail"
-                numberOfLines={1}
-                flexGrow={1}
-              >
-                {` #${displayText(nft.tokenId)}`}
-              </Text>
-            </Flex>
+            <Text
+              variant="body"
+              fontWeight="medium"
+              color="neutral.c100"
+              ellipsizeMode="tail"
+              numberOfLines={1}
+              flexGrow={1}
+            >
+              {displayText(metadata?.nftName)}
+            </Text>
 
             <Flex flexDirection="row" alignItems="center">
               <CurrencyIcon currency={currency} size={20} />
@@ -152,7 +139,11 @@ const NftMediaComponent = ({
   ownedNftsInCollection,
 }: NftMediaProps) => {
   const { t } = useTranslation();
-  if (standard === "ERC1155") {
+  if (
+    standard === "ERC1155" &&
+    ownedNftsInCollection &&
+    ownedNftsInCollection > 1
+  ) {
     return (
       <Box position="relative">
         <Tag
@@ -160,6 +151,7 @@ const NftMediaComponent = ({
           top="10px"
           right="10px"
           backgroundColor="neutral.c30"
+          borderRadius={1}
         >
           {t("wallet.nftGallery.media.tag", { count: ownedNftsInCollection })}
         </Tag>
@@ -185,7 +177,7 @@ const NftMediaComponent = ({
 const styles = StyleSheet.create({
   image: {
     position: "absolute",
-    borderRadius: 4,
+    borderRadius: 8,
     marginBottom: 12,
     width: "100%",
     aspectRatio: 1,

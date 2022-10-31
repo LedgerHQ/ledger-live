@@ -10,10 +10,11 @@ import { useReceiveNFTsModal } from "../../screens/Nft/NftGallery/ReceiveNFTsMod
 const StyledBox = styled(TouchableOpacity)`
   background-color: ${props => props.theme.colors.background.main};
   margin-bottom: 8;
-  border-radius: 4;
+  border-radius: 8;
   height: 160;
   border-width: 1;
   border-color: ${props => props.theme.colors.neutral.c60};
+  border-style: dashed;
 `;
 
 export const AddNewItem = () => {
@@ -27,7 +28,6 @@ export const AddNewItem = () => {
       flexDirection="column"
       alignItems="center"
       justifyContent="center"
-      borderStyle="dashed"
       onPress={openModal}
     >
       <Flex flexDirection="column" alignItems="center" justifyContent="center">
