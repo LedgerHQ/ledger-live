@@ -102,8 +102,9 @@ export type SettingsState = {
     allowed: boolean;
     transactions: boolean;
     market: boolean;
-    announcement: boolean;
+    announcements: boolean;
     price: boolean;
+    tipsAndOffers: boolean;
   };
 };
 export const INITIAL_STATE: SettingsState = {
@@ -161,11 +162,12 @@ export const INITIAL_STATE: SettingsState = {
   sensitiveAnalytics: false,
   firstConnectionHasDevice: null,
   notifications: {
-    allowed: false,
-    transactions: false,
-    market: false,
-    announcement: false,
-    price: false,
+    allowed: true,
+    transactions: true,
+    market: true,
+    announcements: true,
+    price: true,
+    tipsAndOffers: true,
   },
 };
 

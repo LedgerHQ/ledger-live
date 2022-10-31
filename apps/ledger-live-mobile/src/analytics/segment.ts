@@ -31,6 +31,7 @@ import {
   firstConnectionHasDeviceSelector,
   readOnlyModeEnabledSelector,
   hasOrderedNanoSelector,
+  notificationsSelector,
 } from "../reducers/settings";
 import { knownDevicesSelector } from "../reducers/ble";
 import { satisfactionSelector } from "../reducers/ratings";
@@ -43,7 +44,7 @@ const appVersion = `${VersionNumber.appVersion || ""} (${
   VersionNumber.buildVersion || ""
 })`;
 const { ANALYTICS_LOGS, ANALYTICS_TOKEN } = Config;
-let userId;
+let userId: string | undefined;
 
 export const updateSessionId = () => (sessionId = uuid());
 
@@ -71,6 +72,8 @@ const extraProperties = store => {
       }
     : {};
   const firstConnectionHasDevice = firstConnectionHasDeviceSelector(state);
+  const notifications = notificationsSelector(state);
+  const notificationsBlacklisted = Object.entries(notifications).filter(([key, value]) => key !== "allowed" && value === false).map(([key]) => key);
 
   return {
     appVersion,
@@ -79,6 +82,7 @@ const extraProperties = store => {
     environment: "come",
     systemLanguage: sensitiveAnalytics ? null : systemLanguage,
     language,
+    appLanguage: language, // In Braze it can't be called language
     region: region?.split("-")[1] || region,
     platformOS: Platform.OS,
     platformVersion: Platform.Version,
@@ -93,6 +97,7 @@ const extraProperties = store => {
       : {}),
     ...deviceInfo,
     userId,
+    notificationsBlacklisted,
   };
 };
 
@@ -102,10 +107,8 @@ const context = {
 let storeInstance; // is the redux store. it's also used as a flag to know if analytics is on or off.
 let segmentClient: SegmentClient | undefined;
 
-// const token = __DEV__ ? null : ANALYTICS_TOKEN;
 const token = ANALYTICS_TOKEN;
 export const start = async (store: any): Promise<SegmentClient | undefined> => {
-  console.log("TOKEN ", ANALYTICS_TOKEN);
   const { user, created } = await getOrCreateUser();
   userId = user.id;
   storeInstance = store;
@@ -129,7 +132,6 @@ export const start = async (store: any): Promise<SegmentClient | undefined> => {
   }
 
   track("Start", extraProperties(store), true);
-  segmentClient?.identify(user.id, extraProperties(storeInstance));
   return segmentClient;
 };
 export const updateIdentify = async () => {

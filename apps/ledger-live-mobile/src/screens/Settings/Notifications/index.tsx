@@ -19,6 +19,7 @@ import { notificationsSelector } from "../../../reducers/settings";
 import { setNotifications } from "../../../actions/settings";
 import { State } from "../../../reducers";
 import useNotifications from "../../../logic/notifications";
+import { updateIdentify } from "../../../analytics";
 
 type NotificationRowProps = {
   disabled?: boolean;
@@ -100,6 +101,11 @@ function NotificationsSettings() {
     };
   }, [refreshNotifPermission]);
 
+  // Refresh user properties and send them to Segment when notifications preferences are updated
+  useEffect(() => {
+    updateIdentify();
+  }, [notifications]);
+
   const disableSubSettings = !notifications.allowed;
 
   const platformData = useMemo(
@@ -162,11 +168,11 @@ function NotificationsSettings() {
           </Box>
           <Box opacity={isNotifPermissionEnabled && notifications.allowed ? 1 : 0.2}>
             <NotificationSettingsRow
-              notificationKey={"announcement"}
+              notificationKey={"announcements"}
               disabled={disableSubSettings}
             />
             <NotificationSettingsRow
-              notificationKey={"announcement"}
+              notificationKey={"tipsAndOffers"}
               disabled={disableSubSettings}
             />
             {/* <NotificationSettingsRow
@@ -184,6 +190,11 @@ function NotificationsSettings() {
               label={t(`common.comingSoon`)}
               disabled={disableSubSettings}
             /> */}
+          </Box>
+          <Box m={6}>
+            <Text color={"neutral.c70"} variant={"bodyLineHeight"}>
+              {t("settings.notifications.disclaimer")}
+            </Text>
           </Box>
         </Box>
       )}

@@ -2438,14 +2438,19 @@
         "title": "Market",
         "desc": "Receive significant market changes updates"
       },
-      "announcement": {
+      "announcements": {
         "title": "Announcements",
         "desc": "Receive important Ledger Live updates"
+      },
+      "tipsAndOffers": {
+        "title": "Tips and Offers",
+        "desc": "Enrich your experience with personalized recommendations and special offers"
       },
       "price": {
         "title": "Price Alerts",
         "desc": "Set price alerts for your favorite coins so that you don't miss a market move"
-      }
+      },
+      "disclaimer": "Data and privacy are paramount at Ledger. That is why the data collected is completely anonymous and would never be shared to third party services"
     },
     "help": {
       "title": "Help",

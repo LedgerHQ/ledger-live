@@ -359,9 +359,10 @@ const useNotifications = () => {
       drawer: "Notif",
     });
     setPushNotificationsModalOpenCallback(false);
-    navigation.navigate(NavigatorName.Settings, {
-      screen: ScreenName.NotificationsSettings,
-    });
+    handlePushNotificationsPermission();
+    // navigation.navigate(NavigatorName.Settings, {
+    //   screen: ScreenName.NotificationsSettings,
+    // });
     if (
       pushNotificationsFeature?.params?.conditions
         ?.default_delay_between_two_prompts

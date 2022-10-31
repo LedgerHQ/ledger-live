@@ -20,8 +20,6 @@ const AnalyticsProvider = ({
   const loadSegment = async (store: any) => {
     try {
       const result: SegmentClient | undefined = await start(store);
-      console.log("------ SEGMENT CLIENT -----");
-      console.log(result);
       setSegmentClient(result);
     } catch (error) {
       console.error(`Failed to initialize Segment with error: ${error}`);
@@ -30,7 +28,6 @@ const AnalyticsProvider = ({
   };
 
   useEffect(() => {
-    console.log("----- LOADING SEGMENT... -----");
     loadSegment(store);
   }, []);
 

@@ -38,7 +38,7 @@ import {
 } from "../../../reducers/settings";
 import ChangeDeviceLanguageAction from "../../../components/ChangeDeviceLanguageAction";
 import ChangeDeviceLanguagePrompt from "../../../components/ChangeDeviceLanguagePrompt";
-import { track } from "../../../analytics";
+import { track, updateIdentify } from "../../../analytics";
 
 // eslint-disable-next-line @typescript-eslint/ban-types
 function OnboardingStepLanguage({ navigation }: StackScreenProps<{}>) {
@@ -101,6 +101,7 @@ function OnboardingStepLanguage({ navigation }: StackScreenProps<{}>) {
     await Promise.all([
       I18nManager.forceRTL(!I18nManager.isRTL),
       dispatch(setLanguage(selectedLanguage)),
+      updateIdentify(),
     ]);
     setTimeout(() => RNRestart.Restart(), 0);
   };
@@ -114,6 +115,7 @@ function OnboardingStepLanguage({ navigation }: StackScreenProps<{}>) {
         toggleModal();
       } else {
         dispatch(setLanguage(l));
+        updateIdentify();
 
         const deviceLanguageId = lastSeenDevice?.deviceInfo.languageId;
         const potentialDeviceLanguage = localeIdToDeviceLanguage[l];
