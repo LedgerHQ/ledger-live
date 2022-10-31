@@ -37,7 +37,6 @@ buildscript {
 
 allprojects {
     repositories {
-        mavenLocal()
         def REPOSITORY_URL = 'https://repo1.maven.org/maven2'
         all { ArtifactRepository repo ->
             if(repo instanceof MavenArtifactRepository){
@@ -51,6 +50,7 @@ allprojects {
         maven {
             url REPOSITORY_URL
         }
+        mavenLocal()
         maven {
             // All of React Native (JS, Obj-C sources, Android binaries) is installed from npm
             url("$rootDir/../node_modules/react-native/android")
