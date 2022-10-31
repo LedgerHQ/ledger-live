@@ -62,6 +62,7 @@ export const GraphTab = ({
           variant="small"
           size={size}
           color={disabled ? "neutral.c40" : "neutral.c70"}
+          fontWeight={"semiBold"}
           uppercase
         >
           {label}
