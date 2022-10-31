@@ -49,13 +49,20 @@ const Container = styled(Flex).attrs((p: BorderProps) => ({
 `;
 
 const ContentContainer = styled(Flex).attrs({
+  paddingTop: 16,
   flex: 1,
   flexDirection: "column",
   alignItems: "center",
   alignSelf: "center",
 })``;
 
-const DeviceName = styled(Text).attrs({ color: "neutral.c100" })``;
+const DeviceName = styled(Text).attrs({
+  color: "neutral.c100",
+  variant: "h4Inter",
+  fontSize: 24,
+  fontWeight: "semiBold",
+  fontFamily: "Inter",
+})``;
 
 interface DeviceSelectOptionProps {
   label: string;
@@ -79,9 +86,7 @@ export function DeviceSelectorOption({
     <Container data-test-id={`v3-container-${id}`} {...{ id, isFirst, isLast }}>
       <ContentContainer>
         <DeviceIllustrationContainer>{Illu}</DeviceIllustrationContainer>
-        <DeviceName marginTop="32px" variant="h2">
-          {label}
-        </DeviceName>
+        <DeviceName marginTop="32px">{label}</DeviceName>
         <SelectButton data-test-id={`v3-${id}`} variant="main" onClick={onClick}>
           {t("onboarding.screens.selectDevice.selectLabel")}
         </SelectButton>

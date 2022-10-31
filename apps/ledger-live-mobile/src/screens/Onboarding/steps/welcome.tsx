@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import styled from "styled-components/native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -8,7 +8,7 @@ import Video from "react-native-video";
 import { Linking } from "react-native";
 import Svg, { Defs, LinearGradient, Rect, Stop } from "react-native-svg";
 import { useDispatch } from "react-redux";
-import { ScreenName } from "../../../const";
+import { NavigatorName, ScreenName } from "../../../const";
 import StyledStatusBar from "../../../components/StyledStatusBar";
 import { urls } from "../../../config/urls";
 import { useTermsAccept } from "../../../logic/terms";
@@ -73,6 +73,40 @@ function OnboardingStepWelcome({ navigation }: any) {
 
   const videoMounted = !useIsAppInBackground();
 
+  const countTitle = useRef(0);
+  const countSubtitle = useRef(0);
+  const timeout = useRef<ReturnType<typeof setTimeout>>();
+
+  const handleNavigateToFeatureFlagsSettings = useCallback(
+    nb => {
+      if (nb === "1") countTitle.current++;
+      else if (nb === "2") countSubtitle.current++;
+      if (countTitle.current > 3 && countSubtitle.current > 5) {
+        countTitle.current = 0;
+        countSubtitle.current = 0;
+        navigation.navigate(NavigatorName.Base, {
+          screen: NavigatorName.Settings,
+          params: {
+            screen: ScreenName.SettingsScreen,
+            params: {},
+          },
+        });
+      }
+      if (timeout.current) clearTimeout(timeout.current);
+      timeout.current = setTimeout(() => {
+        countTitle.current = 0;
+        countSubtitle.current = 0;
+      }, 1000);
+    },
+    [navigation],
+  );
+
+  useEffect(() => {
+    return () => {
+      if (timeout.current) clearTimeout(timeout.current);
+    };
+  }, []);
+
   return (
     <ForceTheme selectedPalette={"dark"}>
       <Flex flex={1} position="relative" bg="constant.purple">
@@ -136,10 +170,19 @@ function OnboardingStepWelcome({ navigation }: any) {
             color="neutral.c100"
             pb={3}
             style={{ textTransform: "uppercase" }}
+            onPress={() => handleNavigateToFeatureFlagsSettings("1")}
+            suppressHighlighting
           >
             {t("onboarding.stepWelcome.title")}
           </Text>
-          <Text variant="large" fontWeight="medium" color="neutral.c80" pb={9}>
+          <Text
+            variant="large"
+            fontWeight="medium"
+            color="neutral.c80"
+            pb={9}
+            onPress={() => handleNavigateToFeatureFlagsSettings("2")}
+            suppressHighlighting
+          >
             {t("onboarding.stepWelcome.subtitle")}
           </Text>
           <Button

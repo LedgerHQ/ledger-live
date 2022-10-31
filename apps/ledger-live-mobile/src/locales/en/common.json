@@ -1137,7 +1137,7 @@
       },
       "RestartModal": {
         "title": "Restart required",
-        "paragraph": "The selected language requires the application to restart. Are you sure you want to continue?",
+        "paragraph": "The selected language requires the application to restart. Are you sure you want to continue?"
       }
     },
     "stepSelectDevice": {

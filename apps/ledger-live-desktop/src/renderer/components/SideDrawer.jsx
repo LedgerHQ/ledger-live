@@ -1,6 +1,7 @@
 // @flow
 
-import React, { useEffect, useCallback, useState, useRef } from "react";
+import React, { useEffect, useCallback, useRef } from "react";
+import { useSelector } from "react-redux";
 import styled from "styled-components";
 import { color } from "styled-system";
 import { Transition } from "react-transition-group";
@@ -12,6 +13,7 @@ import IconAngleLeft from "~/renderer/icons/AngleLeft";
 import { Base as Button } from "./Button";
 import Box from "./Box/Box";
 import { createPortal } from "react-dom";
+import { modalsStateSelector } from "~/renderer/reducers/modals";
 
 const TouchButton = styled.button`
   border: none;
@@ -135,8 +137,6 @@ export function SideDrawer({
   preventBackdropClick = false,
   ...props
 }: DrawerProps) {
-  const [isMounted, setMounted] = useState(false);
-
   const onKeyPress = useCallback(
     e => {
       if (isOpen && !preventBackdropClick && e.key === "Escape" && onRequestClose) {
@@ -148,13 +148,6 @@ export function SideDrawer({
   );
 
   useEffect(() => {
-    setMounted(true);
-    return () => {
-      setMounted(false);
-    };
-  }, []);
-
-  useEffect(() => {
     window.addEventListener("keydown", onKeyPress, false);
     return () => {
       window.removeEventListener("keydown", onKeyPress, false);
@@ -163,37 +156,31 @@ export function SideDrawer({
 
   const focusTrapElem = useRef(null);
   const focusTrap = useRef(null);
+  const modalsState = useSelector(modalsStateSelector);
+  const shouldDisableFocusTrap = Object.values(modalsState).reduce(
+    (previous, current) => previous.isOpened || current.isOpened,
+    false,
+  );
 
   useEffect(() => {
-    if (!isMounted || !focusTrapElem.current) return;
-
-    focusTrap.current = createFocusTrap(focusTrapElem.current, {
-      fallbackFocus: focusTrapElem.current,
-      escapeDeactivates: false,
-      clickOutsideDeactivates: false,
-      preventScroll: true,
-    });
+    if (isOpen && focusTrapElem.current && !shouldDisableFocusTrap) {
+      focusTrap.current = createFocusTrap(focusTrapElem.current, {
+        fallbackFocus: focusTrapElem.current,
+        escapeDeactivates: false,
+        clickOutsideDeactivates: false,
+        preventScroll: true,
+      });
+      focusTrap.current.activate();
+    } else if (shouldDisableFocusTrap) {
+      focusTrap.current?.deactivate();
+      focusTrap.current = null;
+    }
 
     return () => {
+      focusTrap.current?.deactivate();
       focusTrap.current = null;
     };
-  }, [isMounted]);
-
-  const onEntered = useCallback(() => {
-    if (!focusTrap.current) return;
-
-    focusTrap.current.activate();
-  }, []);
-
-  const onExited = useCallback(() => {
-    if (!focusTrap.current) return;
-
-    focusTrap.current.deactivate();
-  }, []);
-
-  if (!isMounted) {
-    return null;
-  }
+  }, [isOpen, shouldDisableFocusTrap]);
 
   return domNode
     ? createPortal(
@@ -204,8 +191,6 @@ export function SideDrawer({
             enter: DURATION,
             exit: DURATION * 3, // leaves extra time for the animation to end before unmount
           }}
-          onEntered={onEntered}
-          onExited={onExited}
           unmountOnExit
         >
           {state => (

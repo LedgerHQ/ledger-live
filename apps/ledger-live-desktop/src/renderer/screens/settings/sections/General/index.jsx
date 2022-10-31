@@ -29,11 +29,16 @@ const SectionGeneral = () => {
         <Row
           title={t("settings.display.counterValue")}
           desc={t("settings.display.counterValueDesc")}
+          dataTestId="setting-countervalue-dropDown"
         >
           <CounterValueSelect />
         </Row>
 
-        <Row title={t("settings.display.language")} desc={t("settings.display.languageDesc")}>
+        <Row
+          title={t("settings.display.language")}
+          desc={t("settings.display.languageDesc")}
+          dataTestId="setting-language-dropDown"
+        >
           <LanguageSelect />
         </Row>
 
@@ -41,7 +46,11 @@ const SectionGeneral = () => {
           <RegionSelect />
         </Row>
 
-        <Row title={t("settings.display.theme")} desc={t("settings.display.themeDesc")}>
+        <Row
+          title={t("settings.display.theme")}
+          desc={t("settings.display.themeDesc")}
+          dataTestId="setting-theme-dropDown"
+        >
           <ThemeSelect />
         </Row>
 

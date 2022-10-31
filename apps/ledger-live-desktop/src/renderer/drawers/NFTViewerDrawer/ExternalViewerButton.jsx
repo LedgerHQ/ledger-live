@@ -73,7 +73,7 @@ const ExternalViewerButton = ({ nft, account, metadata }: ExternalViewerButtonPr
     setDrawer();
     history.replace(`/account/${account.id}/`);
   }, [account.id, history]);
-  const items = useNftLinks(account, nft, metadata, onHideCollection);
+  const items = useNftLinks(account, nft, metadata, onHideCollection, true);
 
   return (
     <DropDownSelector
