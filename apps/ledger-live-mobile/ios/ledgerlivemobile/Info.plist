@@ -118,5 +118,10 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
+	<key>Braze</key>
+	<dict>
+		<key>Endpoint</key>
+		<string>sdk.fra-02.braze.eu</string>
+	</dict>
 </dict>
 </plist>

@@ -16,9 +16,6 @@ patchedDependencies:
   react-native-fast-crypto@2.2.0:
     hash: jdmv3zyvsaug2f6l23zgrmwdli
     path: patches/react-native-fast-crypto@2.2.0.patch
-  react-native-video@5.2.0:
-    hash: lojvl6twgoj4rxeqeytmq4uduq
-    path: patches/react-native-video@5.2.0.patch
   react-native-image-crop-tools@1.6.2:
     hash: ykxjy5s7xujdxmsgrwxo5mh3y4
     path: patches/react-native-image-crop-tools@1.6.2.patch
@@ -576,7 +573,8 @@ importers:
       '@react-navigation/material-top-tabs': ^6.2.4
       '@react-navigation/native': ^6.0.13
       '@react-navigation/stack': ^6.3.1
-      '@segment/analytics-react-native': ^1.5.0
+      '@segment/analytics-react-native': ^2.9.0
+      '@segment/sovran-react-native': ^0.4.4
       '@sentry/cli': ^2.5.2
       '@sentry/react-native': ^4.2.4
       '@types/color': ^3.0.3
@@ -663,6 +661,7 @@ importers:
       react-native-adjust: ^4.29.6
       react-native-android-location-services-dialog-box: ^2.8.2
       react-native-animatable: ^1.3.3
+      react-native-appboy-sdk: ^1.39.0
       react-native-biometrics: ^3.0.1
       react-native-ble-plx: 2.0.3
       react-native-codegen: ^0.0.7
@@ -761,7 +760,8 @@ importers:
       '@react-navigation/material-top-tabs': 6.2.4_rgj3wu6tgb6admp3us4pfytzkm
       '@react-navigation/native': 6.0.13_zqxy7fpkavjkgz5xll7ed4r6rq
       '@react-navigation/stack': 6.3.1_zwmyepb37hrtoreh4mxfzm5jui
-      '@segment/analytics-react-native': 1.5.3
+      '@segment/analytics-react-native': 2.9.0_zqxy7fpkavjkgz5xll7ed4r6rq
+      '@segment/sovran-react-native': 0.4.4_zqxy7fpkavjkgz5xll7ed4r6rq
       '@sentry/cli': 2.5.2
       '@sentry/react-native': 4.2.4_zqxy7fpkavjkgz5xll7ed4r6rq
       asyncstorage-down: 4.2.0
@@ -804,6 +804,7 @@ importers:
       react-native-adjust: 4.29.6
       react-native-android-location-services-dialog-box: 2.8.2_react-native@0.68.2
       react-native-animatable: 1.3.3
+      react-native-appboy-sdk: 1.39.0
       react-native-biometrics: 3.0.1_react-native@0.68.2
       react-native-ble-plx: 2.0.3
       react-native-codegen: 0.0.7
@@ -840,7 +841,7 @@ importers:
       react-native-url-polyfill: 1.3.0_react-native@0.68.2
       react-native-vector-icons: 8.1.0
       react-native-version-number: 0.3.6
-      react-native-video: 5.2.0_lojvl6twgoj4rxeqeytmq4uduq
+      react-native-video: 5.2.0
       react-native-webview: 11.18.2_zqxy7fpkavjkgz5xll7ed4r6rq
       react-redux: 7.2.9_hx2b44akkvgcgvvtmk7ds2qk6q
       redux: 4.2.0
@@ -14521,8 +14522,21 @@ packages:
     resolution: {integrity: sha512-ZxOhsSyxYwLJj3pLZCefNitxsj093tb2vq90mp2txoYeBqbcjDjqFhyM8eUjq/uFm6zJ+mUuqxlS2FkuSY1MTA==}
     dev: false
 
-  /@segment/analytics-react-native/1.5.3:
-    resolution: {integrity: sha512-sCUSqppTHKEB1FkvplO1e+uALyidTZSa/LnxrvuClsjP8Q5s5rfxLgK/aj3D3ffScIefQd+v9gY2cBjAo3zMWw==}
+  /@segment/analytics-react-native/2.9.0_zqxy7fpkavjkgz5xll7ed4r6rq:
+    resolution: {integrity: sha512-fQmz/LdbdBwxN1+9bTsPya4I3NRS4jiK2nsEGh82X6u3OZZ4Bml8A1t+Ju74YxY2QdsmTQ3qGfwKGOBL/HdTJw==}
+    engines: {node: '>=12'}
+    peerDependencies:
+      react: '*'
+      react-native: '*'
+    dependencies:
+      '@react-native-async-storage/async-storage': 1.17.4_react-native@0.68.2
+      '@segment/sovran-react-native': 0.4.4_zqxy7fpkavjkgz5xll7ed4r6rq
+      deepmerge: 4.2.2
+      js-base64: 3.7.2
+      nanoid: 3.3.4
+      promise.allsettled: 1.0.5
+      react: 17.0.2
+      react-native: 0.68.2_qiqqwmyv63yhnuboofexv3s7x4
     dev: false
 
   /@segment/loosely-validate-event/2.0.0:
@@ -14531,6 +14545,20 @@ packages:
       component-type: 1.2.1
       join-component: 1.1.0
     dev: true
+
+  /@segment/sovran-react-native/0.4.4_zqxy7fpkavjkgz5xll7ed4r6rq:
+    resolution: {integrity: sha512-YnXhHfFIdqjMb+6ejMA+1oO0KeJPK3Hv0dHYgcWmq5oxVAWrJNTK8rGiRVuVaVQHfSkGg0zQ/nGB09oMUVteDg==}
+    peerDependencies:
+      react: '*'
+      react-native: '*'
+    dependencies:
+      '@react-native-async-storage/async-storage': 1.17.4_react-native@0.68.2
+      ansi-regex: 5.0.1
+      deepmerge: 4.2.2
+      react: 17.0.2
+      react-native: 0.68.2_qiqqwmyv63yhnuboofexv3s7x4
+      shell-quote: 1.7.3
+    dev: false
 
   /@sentry/browser/7.8.1:
     resolution: {integrity: sha512-9JuagYqHyaZu/4RqyxrAgEHo71oV592XBuUKC33gajCVKWbyG3mNqudSMoHtdM1DrV9REZ4Elha7zFaE2cJX6g==}
@@ -21824,7 +21852,6 @@ packages:
       es-abstract: 1.20.1
       es-array-method-boxes-properly: 1.0.0
       is-string: 1.0.7
-    dev: true
 
   /array.prototype.reduce/1.0.4:
     resolution: {integrity: sha512-WnM+AjG/DvLRLo4DDl+r+SvCzYtD2Jd9oeBYMcEaI7t3fFrHY9M53/wdLcTvmZNQ70IU6Htj0emFkZ5TS+lrdw==}
@@ -24191,7 +24218,7 @@ packages:
       mkdirp: 0.5.6
       move-concurrently: 1.0.1
       p-map: 3.0.0
-      promise-inflight: 1.0.1
+      promise-inflight: 1.0.1_bluebird@3.7.2
       rimraf: 2.7.1
       ssri: 7.1.1
       unique-filename: 1.1.1
@@ -35362,14 +35389,12 @@ packages:
 
   /iterate-iterator/1.0.2:
     resolution: {integrity: sha512-t91HubM4ZDQ70M9wqp+pcNpu8OyJ9UAtXntT/Bcsvp5tZMnz9vRa+IunKXeI8AnfZMTv0jNuVEmGeLSMjVvfPw==}
-    dev: true
 
   /iterate-value/1.0.2:
     resolution: {integrity: sha512-A6fMAio4D2ot2r/TYzr4yUWrmwNdsN5xL7+HUiyACE4DXm+q8HtPcnFTp+NnW3k4N05tZ7FVYFFb2CR13NxyHQ==}
     dependencies:
       es-get-iterator: 1.1.2
       iterate-iterator: 1.0.2
-    dev: true
 
   /jake/10.8.5:
     resolution: {integrity: sha512-sVpxYeuAhWt0OTWITwT98oyV0GsXyMlXCF+3L1SuafBVUIr/uILGRB+NqwkzhgXKvoJpDIpQvqkUALgdmQsQxw==}
@@ -45223,6 +45248,7 @@ packages:
     peerDependenciesMeta:
       bluebird:
         optional: true
+    dev: true
 
   /promise-inflight/1.0.1_bluebird@3.7.2:
     resolution: {integrity: sha512-6zWPyEOFaQBJYcGMHBKTKJ3u6TBsnMFOIZSa6ce1e/ZrrsOlnHRHbabMjLiBYKp+n44X9eUI6VUPaukCXHuG4g==}
@@ -45252,7 +45278,6 @@ packages:
       es-abstract: 1.20.1
       get-intrinsic: 1.1.2
       iterate-value: 1.0.2
-    dev: true
 
   /promise.prototype.finally/3.1.3:
     resolution: {integrity: sha512-EXRF3fC9/0gz4qkt/f5EP5iW4kj9oFpBICNpCNOb/52+8nlHIX07FPLbi/q4qYBQ1xZqivMzTpNQSnArVASolQ==}
@@ -46215,6 +46240,10 @@ packages:
     dependencies:
       prop-types: 15.8.1
 
+  /react-native-appboy-sdk/1.39.0:
+    resolution: {integrity: sha512-wznVPwW5v+8JlukRKsFrPhm6tD1k7Xo9KvD0BEZ1/n6ABwwz972D6HVvW3IICPMbZ70OaBv3rrdsR9fCzwDkxg==}
+    dev: false
+
   /react-native-biometrics/3.0.1_react-native@0.68.2:
     resolution: {integrity: sha512-Ru80gXRa9KG04sl5AB9HyjLjVbduhqZVjA+AiOSGqr+fNqCDmCu9y5WEksnjbnniNLmq1yGcw+qcLXmR1ddLDQ==}
     peerDependencies:
@@ -46820,14 +46849,13 @@ packages:
     resolution: {integrity: sha512-TdyXiK90NiwmSbmAUlUBOV6WI1QGoqtvZZzI5zQY4fKl67B3ZrZn/h+Wy/OYIKKFMfePSiyfeIs8LtHGOZ/NgA==}
     dev: false
 
-  /react-native-video/5.2.0_lojvl6twgoj4rxeqeytmq4uduq:
+  /react-native-video/5.2.0:
     resolution: {integrity: sha512-5SK1lxyzrCkZF+WuxUxLR1Pt65E0rsWB1w1GrGxSLdC9zWYBumcmuHl+wPJ7UQvznjaH2Ze7uU1R3arejI7+WQ==}
     dependencies:
       keymirror: 0.1.1
       prop-types: 15.8.1
       shaka-player: 2.5.23
     dev: false
-    patched: true
 
   /react-native-web/0.17.7_sfoxds7t5ydpegc3knd667wn6m:
     resolution: {integrity: sha512-4OOU/QjyRySOXyHfTvljEMS4VXKn42Qs3y9uHDPMwaCUFjwg0oasR/j706OaVgan9kF4Ipa2vJ3F6Z/Xqy8KeQ==}

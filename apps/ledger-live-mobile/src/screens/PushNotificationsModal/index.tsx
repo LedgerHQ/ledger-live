@@ -14,7 +14,6 @@ import PromptNotifGenericDark from "../../images/illustration/Dark/_PromptNotifG
 import PromptNotifGenericLight from "../../images/illustration/Light/_PromptNotifGeneric.png";
 import PromptNotifMarketDark from "../../images/illustration/Dark/_PromptNotifMarket.png";
 import PromptNotifMarketLight from "../../images/illustration/Light/_PromptNotifMarket.png";
-import { notificationsSelector } from "../../reducers/settings";
 import { TrackScreen } from "../../analytics";
 
 const PushNotificationsModal = () => {
@@ -25,28 +24,12 @@ const PushNotificationsModal = () => {
     isPushNotificationsModalOpen,
     modalAllowNotifications,
     modalDelayLater,
-    getIsNotifEnabled,
-    listenForNotifications,
-    clearNotificationsListeners,
     pushNotificationsOldRoute,
   } = useNotifications();
-  const notificationsSettings = useSelector(notificationsSelector);
 
   useEffect(() => {
     initPushNotificationsData();
   }, []);
-
-  useEffect(() => {
-    getIsNotifEnabled().then(isNotifEnabled => {
-      if (isNotifEnabled) {
-        if (notificationsSettings.allowed) {
-          listenForNotifications();
-        } else {
-          clearNotificationsListeners();
-        }
-      }
-    });
-  }, [notificationsSettings.allowed]);
 
   const NotifIllustration = () =>
     pushNotificationsModalType === "market" ? (

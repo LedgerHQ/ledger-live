@@ -4,7 +4,7 @@ import { v4 as uuid } from "uuid";
 import * as Sentry from "@sentry/react-native";
 import Config from "react-native-config";
 import { Platform } from "react-native";
-import analytics from "@segment/analytics-react-native";
+import { createClient, SegmentClient } from "@segment/analytics-react-native";
 import VersionNumber from "react-native-version-number";
 import RNLocalize from "react-native-localize";
 import { ReplaySubject } from "rxjs";
@@ -31,6 +31,7 @@ import {
   firstConnectionHasDeviceSelector,
   readOnlyModeEnabledSelector,
   hasOrderedNanoSelector,
+  notificationsSelector,
 } from "../reducers/settings";
 import { knownDevicesSelector } from "../reducers/ble";
 import { satisfactionSelector } from "../reducers/ratings";
@@ -43,6 +44,7 @@ const appVersion = `${VersionNumber.appVersion || ""} (${
   VersionNumber.buildVersion || ""
 })`;
 const { ANALYTICS_LOGS, ANALYTICS_TOKEN } = Config;
+let userId: string | undefined;
 
 export const updateSessionId = () => (sessionId = uuid());
 
@@ -70,14 +72,17 @@ const extraProperties = store => {
       }
     : {};
   const firstConnectionHasDevice = firstConnectionHasDeviceSelector(state);
+  const notifications = notificationsSelector(state);
+  const notificationsBlacklisted = Object.entries(notifications).filter(([key, value]) => key !== "allowed" && value === false).map(([key]) => key);
 
   return {
     appVersion,
     androidVersionCode: getAndroidVersionCode(VersionNumber.buildVersion),
     androidArchitecture: getAndroidArchitecture(VersionNumber.buildVersion),
-    environment: ANALYTICS_LOGS ? "development" : "production",
+    environment: "come",
     systemLanguage: sensitiveAnalytics ? null : systemLanguage,
     language,
+    appLanguage: language, // In Braze it can't be called language
     region: region?.split("-")[1] || region,
     platformOS: Platform.OS,
     platformVersion: Platform.Version,
@@ -91,6 +96,8 @@ const extraProperties = store => {
         }
       : {}),
     ...deviceInfo,
+    userId,
+    notificationsBlacklisted,
   };
 };
 
@@ -98,38 +105,34 @@ const context = {
   ip: "0.0.0.0",
 };
 let storeInstance; // is the redux store. it's also used as a flag to know if analytics is on or off.
+let segmentClient: SegmentClient | undefined;
 
-const token = __DEV__ ? null : ANALYTICS_TOKEN;
-export const start = async (store: any) => {
-  if (token) {
-    await analytics.setup(token, {
-      android: {
-        collectDeviceId: false,
-      },
-      ios: {
-        trackAdvertising: false,
-        trackDeepLinks: false,
-      },
-    });
-  }
-
+const token = ANALYTICS_TOKEN;
+export const start = async (store: any): Promise<SegmentClient | undefined> => {
   const { user, created } = await getOrCreateUser();
+  userId = user.id;
   storeInstance = store;
 
-  if (ANALYTICS_LOGS) console.log("analytics:identify", user.id);
+  if (created && ANALYTICS_LOGS) {
+    console.log("analytics:identify", user.id);
+  }
 
-  if (created) {
-    if (ANALYTICS_LOGS) console.log("analytics:identify", user.id);
+  if (token) {
+    segmentClient = createClient({
+      writeKey: token,
+      trackAdvertising: false,
+    });
 
-    if (token) {
-      await analytics.reset();
-      await analytics.identify(user.id, extraProperties(store), {
+    if (created) {
+      segmentClient.reset();
+      segmentClient.identify(user.id, extraProperties(store), {
         context,
       });
     }
   }
 
   track("Start", extraProperties(store), true);
+  return segmentClient;
 };
 export const updateIdentify = async () => {
   Sentry.addBreadcrumb({
@@ -147,7 +150,8 @@ export const updateIdentify = async () => {
     });
   if (!token) return;
   const { user } = await getOrCreateUser();
-  analytics.identify(user.id, extraProperties(storeInstance), {
+  userId = user.id;
+  segmentClient?.identify(user.id, extraProperties(storeInstance), {
     context,
   });
 };
@@ -197,7 +201,7 @@ export const track = (
     properties: allProperties,
   });
   if (!token) return;
-  analytics.track(event, allProperties, {
+  segmentClient?.track(event, allProperties, {
     context,
   });
 };
@@ -283,7 +287,7 @@ export const screen = (
     properties: allProperties,
   });
   if (!token) return;
-  analytics.track(title, allProperties, {
+  segmentClient?.track(title, allProperties, {
     context,
   });
 };
