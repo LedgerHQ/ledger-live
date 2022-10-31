@@ -166,7 +166,11 @@ function NotificationsSettings() {
               disabled={!isNotifPermissionEnabled}
             />
           </Box>
-          <Box opacity={isNotifPermissionEnabled && notifications.allowed ? 1 : 0.2}>
+          <Box
+            opacity={
+              isNotifPermissionEnabled && notifications.allowed ? 1 : 0.2
+            }
+          >
             <NotificationSettingsRow
               notificationKey={"announcements"}
               disabled={disableSubSettings}
