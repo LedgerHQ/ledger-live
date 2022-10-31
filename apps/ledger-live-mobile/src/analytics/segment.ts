@@ -73,7 +73,9 @@ const extraProperties = store => {
     : {};
   const firstConnectionHasDevice = firstConnectionHasDeviceSelector(state);
   const notifications = notificationsSelector(state);
-  const notificationsBlacklisted = Object.entries(notifications).filter(([key, value]) => key !== "allowed" && value === false).map(([key]) => key);
+  const notificationsBlacklisted = Object.entries(notifications)
+    .filter(([key, value]) => key !== "allowed" && value === false)
+    .map(([key]) => key);
 
   return {
     appVersion,

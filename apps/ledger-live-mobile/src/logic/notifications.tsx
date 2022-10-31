@@ -24,7 +24,6 @@ import {
   setNotificationsDataOfUser,
 } from "../actions/notifications";
 import { notificationsSelector } from "../reducers/settings";
-import { ScreenName, NavigatorName } from "../const";
 import { setRatingsModalLocked } from "../actions/ratings";
 import { track } from "../analytics";
 
