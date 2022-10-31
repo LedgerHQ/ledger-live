@@ -44,7 +44,6 @@ const appVersion = `${VersionNumber.appVersion || ""} (${
   VersionNumber.buildVersion || ""
 })`;
 const { ANALYTICS_LOGS, ANALYTICS_TOKEN } = Config;
-let userId: string | undefined;
 
 export const updateSessionId = () => (sessionId = uuid());
 
@@ -98,7 +97,6 @@ const extraProperties = store => {
         }
       : {}),
     ...deviceInfo,
-    userId,
     notificationsBlacklisted,
   };
 };
@@ -112,13 +110,13 @@ let segmentClient: SegmentClient | undefined;
 const token = ANALYTICS_TOKEN;
 export const start = async (store: any): Promise<SegmentClient | undefined> => {
   const { user, created } = await getOrCreateUser();
-  userId = user.id;
   storeInstance = store;
 
   if (created && ANALYTICS_LOGS) {
     console.log("analytics:identify", user.id);
   }
 
+  console.log("START ANALYTICS", ANALYTICS_LOGS);
   if (token) {
     segmentClient = createClient({
       writeKey: token,
@@ -153,7 +151,6 @@ export const updateIdentify = async () => {
     });
   if (!token) return;
   const { user } = await getOrCreateUser();
-  userId = user.id;
   segmentClient?.identify(user.id, extraProperties(storeInstance), {
     context,
   });
