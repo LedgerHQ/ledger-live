@@ -1,5 +1,5 @@
 import invariant from "invariant";
-import { CryptoCurrencyId } from "./types";
+import { CryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
 
 /**
  * these are either "dead"/"burn" addresses OR "abandon" seed addresses.
@@ -75,7 +75,8 @@ const abandonSeedAddresses: Partial<Record<CryptoCurrencyId, string>> = {
  * DO NOT USE AS RECIPIENT OR SIGN TRANSACTIONS INTO THEM
  * @param {*} currencyId
  */
-export const getAbandonSeedAddress = (currencyId: CryptoCurrencyId): string => {
+// TODO: signature should be  getAbandonSeedAddress(currencyId: CryptoCurencyId)
+export const getAbandonSeedAddress = (currencyId: string): string => {
   invariant(
     abandonSeedAddresses[currencyId] !== undefined,
     `No abandonseed available for ${currencyId}`

@@ -21,8 +21,12 @@
  * if bitcoin family, supportsSegwit defines if it supports segwit.
  */
 
-import { CryptoCurrency, CoinType, Unit } from "@ledgerhq/types-cryptoassets";
-import { CryptoCurrencyId } from "./types";
+import {
+  CryptoCurrency,
+  CoinType,
+  Unit,
+  CryptoCurrencyId,
+} from "@ledgerhq/types-cryptoassets";
 
 const makeTestnetUnit = (u) => ({ ...u, code: `𝚝${u.code}` });
 
@@ -3536,13 +3540,8 @@ export function findCryptoCurrencyByTicker(
   return cryptocurrenciesByTicker[ticker];
 }
 
-/**
- *
- * @param {*} id
- */
-export function findCryptoCurrencyById(
-  id: string
-): CryptoCurrency | null | undefined {
+// TODO: signature should be findCryptoCurrencyById(id: CryptoCurrencyId)
+export function findCryptoCurrencyById(id: string): CryptoCurrency {
   return cryptocurrenciesById[id];
 }
 
@@ -3605,10 +3604,7 @@ export const findCryptoCurrencyByManagerAppName = (
 export const hasCryptoCurrencyId = (id: string): boolean =>
   id in cryptocurrenciesById;
 
-/**
- *
- * @param {*} id
- */
+// TODO: signature should be getCryptoCurrencyById(id: CryptoCurrencyId)
 export function getCryptoCurrencyById(id: string): CryptoCurrency {
   const currency = findCryptoCurrencyById(id);
 

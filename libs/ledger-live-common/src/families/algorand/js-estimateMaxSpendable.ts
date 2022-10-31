@@ -6,6 +6,7 @@ import { computeAlgoMaxSpendable } from "./logic";
 import { createTransaction } from "./js-prepareTransaction";
 import { getAbandonSeedAddress } from "@ledgerhq/cryptoassets";
 import { getEstimatedFees } from "./js-getFeesForTransaction";
+import { CryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
 
 export const estimateMaxSpendable = async ({
   account,
@@ -27,7 +28,7 @@ export const estimateMaxSpendable = async ({
     subAccountId: account.type === "Account" ? null : account.id,
     ...transaction,
     recipient:
-      transaction?.recipient || getAbandonSeedAddress(mainAccount.currency.id),
+      transaction?.recipient || getAbandonSeedAddress(mainAccount.currency.id as CryptoCurrencyId),
     useAllAmount: true,
   };
 

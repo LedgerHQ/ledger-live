@@ -1,6 +1,7 @@
 import { getAbandonSeedAddress } from "@ledgerhq/cryptoassets";
 import { TransportStatusError, WrongDeviceForAccount } from "@ledgerhq/errors";
 import { log } from "@ledgerhq/logs";
+import { CryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
 import { BigNumber } from "bignumber.js";
 import invariant from "invariant";
 import { from, Observable } from "rxjs";
@@ -148,8 +149,8 @@ const initSwap = (input: InitSwapInput): Observable<SwapRequestEvent> => {
           transaction.recipient !==
             getAbandonSeedAddress(
               refundCurrency.type === "TokenCurrency"
-                ? refundCurrency.parentCurrency.id
-                : refundCurrency.id
+                ? (refundCurrency.parentCurrency.id as CryptoCurrencyId)
+                : (refundCurrency.id as CryptoCurrencyId)
             ),
           "Recipient address should never be the abandonseed address"
         );

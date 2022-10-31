@@ -2,6 +2,7 @@ import { getTokenById } from "@ledgerhq/cryptoassets";
 import type {
   CryptoCurrency,
   TokenCurrency,
+  CryptoCurrencyId
 } from "@ledgerhq/types-cryptoassets";
 import type { Account, SubAccount } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
@@ -25,7 +26,7 @@ function* accountGenerator(currency: CryptoCurrency): Generator<Account> {
     yield genAccount(`mocked-account-${id}`, { currency, operationsSize: 0 });
   }
 }
-const getAccountCreator = (currencyId: string) => {
+const getAccountCreator = (currencyId: CryptoCurrencyId) => {
   const generator = accountGenerator(getCryptoCurrencyById(currencyId));
   return () => generator.next().value;
 };

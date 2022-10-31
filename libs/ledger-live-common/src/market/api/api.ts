@@ -20,7 +20,7 @@ const cryptoCurrenciesList = [...listCryptoCurrencies(), ...listTokens()];
 
 const supportedCurrencies = listSupportedCurrencies();
 
-const liveCompatibleIds = supportedCurrencies
+const liveCompatibleIds: string[] = supportedCurrencies
   .map(({ id }: CryptoCurrency) => id)
   .filter(Boolean);
 

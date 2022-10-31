@@ -13,6 +13,7 @@ import { isCurrencySupported } from "../../currencies";
 import type { AccountLike } from "@ledgerhq/types-live";
 import type {
   CryptoCurrency,
+  CryptoCurrencyId,
   TokenCurrency,
 } from "@ledgerhq/types-cryptoassets";
 
@@ -121,7 +122,7 @@ export const getSupportedCurrencies = ({
   }
 
   const { pairs } = providerData;
-  const ids: string[] = uniq(
+  const ids: CryptoCurrencyId[] = uniq(
     pairs.map(({ from, to, tradeMethods }) => {
       const isTo = fromCurrency;
       if (
