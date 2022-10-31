@@ -81,7 +81,7 @@ const extraProperties = store => {
     appVersion,
     androidVersionCode: getAndroidVersionCode(VersionNumber.buildVersion),
     androidArchitecture: getAndroidArchitecture(VersionNumber.buildVersion),
-    environment: "come",
+    environment: ANALYTICS_LOGS ? "development" : "production",
     systemLanguage: sensitiveAnalytics ? null : systemLanguage,
     language,
     appLanguage: language, // In Braze it can't be called language
