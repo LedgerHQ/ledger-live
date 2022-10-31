@@ -116,7 +116,7 @@ const SectionExperimental = () => {
         {process.env.SHOW_ETHEREUM_BRIDGE ? <EthereumBridgeRow /> : null}
         {process.env.DEBUG_LOTTIE ? <LottieTester /> : null}
         {process.env.DEBUG_STORYLY ? <StorylyTester /> : null}
-        {process.env.DEBUG_POSTONBOARDINGHUB ? <PostOnboardingHubTester /> : null}
+        {true || process.env.DEBUG_POSTONBOARDINGHUB ? <PostOnboardingHubTester /> : null}
 
         <FullNode />
       </Body>

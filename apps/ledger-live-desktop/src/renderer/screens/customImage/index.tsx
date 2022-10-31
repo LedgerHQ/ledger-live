@@ -1,6 +1,9 @@
 import React, { ComponentProps, useCallback, useEffect, useMemo, useState } from "react";
 import { BoxedIcon, Flex, FlowStepper, Icons, InfiniteLoader, Log, Text } from "@ledgerhq/react-ui";
+import { useDispatch } from "react-redux";
 import { ImageDownloadError } from "@ledgerhq/live-common/customImage/errors";
+import { PostOnboardingActionId } from "@ledgerhq/types-live";
+import { setPostOnboardingActionCompleted } from "@ledgerhq/live-common/postOnboarding/actions";
 import { useTranslation } from "react-i18next";
 import { withV3StyleProvider } from "~/renderer/styles/StyleProviderV3";
 import { ImageBase64Data } from "~/renderer/components/CustomImage/types";
@@ -17,10 +20,12 @@ import { Step } from "./types";
 import StepContainer from "./StepContainer";
 import StepFooter from "./StepFooter";
 import { setDrawer } from "~/renderer/drawers/Provider";
+import useOpenPostOnboardingDrawerCallback from "~/renderer/hooks/useOpenPostOnboardingDrawerCallback";
 
 type Props = {
   imageUri?: string;
   isFromNFTEntryPoint?: boolean;
+  isFromPostOnboardingEntryPoint?: boolean;
   reopenPreviousDrawer?: () => void;
 };
 
@@ -34,7 +39,12 @@ const orderedSteps: Step[] = [
 const ErrorDisplayV2 = withV2StyleProvider(ErrorDisplay);
 
 const CustomImage: React.FC<Props> = props => {
-  const { imageUri, isFromNFTEntryPoint, reopenPreviousDrawer } = props;
+  const {
+    imageUri,
+    isFromNFTEntryPoint,
+    reopenPreviousDrawer,
+    isFromPostOnboardingEntryPoint,
+  } = props;
   const { t } = useTranslation();
 
   const [stepError, setStepError] = useState<{ [key in Step]?: Error }>({});
@@ -151,6 +161,16 @@ const CustomImage: React.FC<Props> = props => {
 
   const previousStep: Step | undefined = orderedSteps[orderedSteps.findIndex(s => s === step) - 1];
 
+  const openPostOnboarding = useOpenPostOnboardingDrawerCallback();
+  const dispatch = useDispatch();
+  const handleDone = useCallback(() => {
+    exit();
+    if (isFromPostOnboardingEntryPoint) {
+      dispatch(setPostOnboardingActionCompleted({ actionId: PostOnboardingActionId.customImage }));
+      openPostOnboarding();
+    }
+  }, [exit, openPostOnboarding, dispatch, isFromPostOnboardingEntryPoint]);
+
   const renderError = useMemo(
     () =>
       error
@@ -252,7 +272,7 @@ const CustomImage: React.FC<Props> = props => {
             <StepFooter
               nextLabel={t("customImage.finishCTA")}
               setStep={setStepWrapper}
-              onClickNext={exit}
+              onClickNext={handleDone}
               nextTestId="custom-image-finish-button"
             />
           }

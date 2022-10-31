@@ -3,6 +3,7 @@ import { PostOnboardingAction, PostOnboardingActionId } from "@ledgerhq/types-li
 import { Icons } from "@ledgerhq/react-ui";
 import { setDrawer } from "~/renderer/drawers/Provider";
 import PostOnboardingMockAction from "~/renderer/components/PostOnboardingHub/PostOnboardingMockAction";
+import CustomImage from "~/renderer/screens/customImage";
 
 const claimMock: PostOnboardingAction = {
   id: PostOnboardingActionId.claimMock,
@@ -38,6 +39,17 @@ const migrateAssetsMock: PostOnboardingAction = {
     setDrawer(PostOnboardingMockAction, { id: PostOnboardingActionId.migrateAssetsMock }),
 };
 
+const customImage: PostOnboardingAction = {
+  id: PostOnboardingActionId.customImage,
+  Icon: Icons.BracketsMedium,
+  featureFlagId: "customImage",
+  title: `Personalize my ${getDeviceModel(DeviceModelId.nanoFTS).productName}`,
+  description: "By customizing the screen.",
+  actionCompletedPopupLabel: "Device personalized",
+  actionCompletedHubTitle: "That screen is looking neat.",
+  startAction: () => setDrawer(CustomImage, { isFromPostOnboardingEntryPoint: true }),
+};
+
 /**
  * All implemented post onboarding actions.
  */
@@ -45,6 +57,7 @@ const postOnboardingActions: Record<PostOnboardingActionId, PostOnboardingAction
   claimMock,
   migrateAssetsMock,
   personalizeMock,
+  customImage,
 };
 
 /**
@@ -85,7 +98,7 @@ export function getPostOnboardingActionsForDevice(
        * Set here the list of actions for the post onboarding of the
        * DeviceModelId.nanoFTS
        * */
-      return [];
+      return [customImage];
     default:
       return [];
   }
