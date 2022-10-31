@@ -163,13 +163,19 @@ const CustomImage: React.FC<Props> = props => {
 
   const openPostOnboarding = useOpenPostOnboardingDrawerCallback();
   const dispatch = useDispatch();
+
+  useEffect(() => {
+    if (transferDone && isFromPostOnboardingEntryPoint) {
+      dispatch(setPostOnboardingActionCompleted({ actionId: PostOnboardingActionId.customImage }));
+    }
+  }, [dispatch, transferDone, isFromPostOnboardingEntryPoint]);
+
   const handleDone = useCallback(() => {
     exit();
     if (isFromPostOnboardingEntryPoint) {
-      dispatch(setPostOnboardingActionCompleted({ actionId: PostOnboardingActionId.customImage }));
       openPostOnboarding();
     }
-  }, [exit, openPostOnboarding, dispatch, isFromPostOnboardingEntryPoint]);
+  }, [exit, openPostOnboarding, isFromPostOnboardingEntryPoint]);
 
   const renderError = useMemo(
     () =>
