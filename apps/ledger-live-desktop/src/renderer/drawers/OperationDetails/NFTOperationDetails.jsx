@@ -55,7 +55,9 @@ const NFTOperationDetails = ({ operation }: { operation: Operation }) => {
             </Skeleton>
             <Box ml={2}>
               <Skeleton width={200} barHeight={10} minHeight={32} show={show}>
-                <TextEllipsis>{collectionMetadata?.tokenName || "-"}</TextEllipsis>
+                <TextEllipsis>
+                  {centerEllipsis(collectionMetadata?.tokenName, 33) || "-"}
+                </TextEllipsis>
               </Skeleton>
             </Box>
           </Box>
