@@ -57,11 +57,6 @@ allprojects {
         maven {
             url "$rootDir/../node_modules/expo-camera/android/maven"
         }
-        jcenter() {
-            content {
-                includeModule("com.theartofdev.edmodo", "android-image-cropper") // for expo-image-picker
-            }
-        }
     }
     configurations.all {
         resolutionStrategy {
