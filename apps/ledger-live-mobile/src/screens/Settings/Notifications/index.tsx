@@ -179,21 +179,6 @@ function NotificationsSettings() {
               notificationKey={"tipsAndOffers"}
               disabled={disableSubSettings}
             />
-            {/* <NotificationSettingsRow
-              notificationKey={"transactions"}
-              label={t(`common.comingSoon`)}
-              disabled={disableSubSettings}
-            />
-            <NotificationSettingsRow
-              notificationKey={"market"}
-              label={t(`common.comingSoon`)}
-              disabled={disableSubSettings}
-            />
-            <NotificationSettingsRow
-              notificationKey={"price"}
-              label={t(`common.comingSoon`)}
-              disabled={disableSubSettings}
-            /> */}
           </Box>
           <Box m={6}>
             <Text color={"neutral.c70"} variant={"bodyLineHeight"}>

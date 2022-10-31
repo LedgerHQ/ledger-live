@@ -1,4 +1,4 @@
-import React, { ReactNode, useEffect, useState } from "react";
+import React, { ReactNode, useEffect, useState, useCallback } from "react";
 import {
   AnalyticsProvider as SegmentAnalyticsProvider,
   SegmentClient,
@@ -17,7 +17,7 @@ const AnalyticsProvider = ({
     SegmentClient | undefined
   >();
 
-  const loadSegment = async (store: any) => {
+  const loadSegment = useCallback(async (store: any) => {
     try {
       const result: SegmentClient | undefined = await start(store);
       setSegmentClient(result);
@@ -25,7 +25,7 @@ const AnalyticsProvider = ({
       console.error(`Failed to initialize Segment with error: ${error}`);
     }
     setLoaded(true);
-  };
+  }, []);
 
   useEffect(() => {
     loadSegment(store);

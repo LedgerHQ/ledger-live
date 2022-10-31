@@ -100,10 +100,7 @@ export type SettingsState = {
   firstConnectionHasDevice: boolean | null;
   notifications: {
     allowed: boolean;
-    transactions: boolean;
-    market: boolean;
     announcements: boolean;
-    price: boolean;
     tipsAndOffers: boolean;
   };
 };
@@ -163,10 +160,7 @@ export const INITIAL_STATE: SettingsState = {
   firstConnectionHasDevice: null,
   notifications: {
     allowed: true,
-    transactions: true,
-    market: true,
     announcements: true,
-    price: true,
     tipsAndOffers: true,
   },
 };

@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 import Braze from "react-native-appboy-sdk";
 import getOrCreateUser from "../user";
 

@@ -16,6 +16,9 @@ patchedDependencies:
   react-native-fast-crypto@2.2.0:
     hash: jdmv3zyvsaug2f6l23zgrmwdli
     path: patches/react-native-fast-crypto@2.2.0.patch
+  react-native-video@5.2.0:
+    hash: lojvl6twgoj4rxeqeytmq4uduq
+    path: patches/react-native-video@5.2.0.patch
   react-native-image-crop-tools@1.6.2:
     hash: ykxjy5s7xujdxmsgrwxo5mh3y4
     path: patches/react-native-image-crop-tools@1.6.2.patch
