@@ -38,7 +38,10 @@ import type {
   TransactionCommon,
   TransactionStatusCommon,
 } from "@ledgerhq/types-live";
-import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import type {
+  CryptoCurrency,
+  CryptoCurrencyId,
+} from "@ledgerhq/types-cryptoassets";
 const warnDev = process.env.CI
   ? (..._args) => {}
   : (...msg) => console.warn(...msg);
@@ -90,7 +93,7 @@ export function testBridge<T extends TransactionCommon>(
   const { implementations, currencies } = data;
   Object.keys(currencies).forEach((currencyId) => {
     const currencyData = currencies[currencyId];
-    const currency = getCryptoCurrencyById(currencyId);
+    const currency = getCryptoCurrencyById(currencyId as CryptoCurrencyId);
     currenciesRelated.push({
       currencyData,
       currency,

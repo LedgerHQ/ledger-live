@@ -6,6 +6,7 @@ import {
   fromTransactionRaw,
   toTransactionRaw,
 } from "../transaction";
+import { CryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
 
 const account: Account = {
   type: "Account",

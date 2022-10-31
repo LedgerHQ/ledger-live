@@ -6,6 +6,7 @@ import {
   updateTransaction,
   prepareTransaction,
 } from "../js-transaction";
+import { CryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
 
 const account: Account = {
   type: "Account",

@@ -1,5 +1,7 @@
+import { CryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
+
 export type ERC20Token = [
-  string,
+  CryptoCurrencyId,
   string,
   string,
   number,

@@ -3542,13 +3542,8 @@ export function findCryptoCurrencyByTicker(
   return cryptocurrenciesByTicker[ticker];
 }
 
-/**
- *
- * @param {*} id
- */
-export function findCryptoCurrencyById(
-  id: string
-): CryptoCurrency | null | undefined {
+// TODO: signature should be findCryptoCurrencyById(id: CryptoCurrencyId)
+export function findCryptoCurrencyById(id: string): CryptoCurrency {
   return cryptocurrenciesById[id];
 }
 
