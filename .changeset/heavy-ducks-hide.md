@@ -2,4 +2,4 @@
 "live-mobile": patch
 ---
 
-Pixel polish in new device selection screen.
+New device selection screen: pixel polish
