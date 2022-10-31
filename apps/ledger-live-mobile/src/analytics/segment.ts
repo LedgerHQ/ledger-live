@@ -121,6 +121,7 @@ export const start = async (store: any): Promise<SegmentClient | undefined> => {
     segmentClient = createClient({
       writeKey: token,
       trackAdvertising: false,
+      debug: ANALYTICS_LOGS,
     });
 
     if (created) {
