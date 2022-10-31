@@ -6,12 +6,13 @@ import { Trans } from "react-i18next";
 import { Transition, TransitionGroup } from "react-transition-group";
 
 import manager from "@ledgerhq/live-common/manager/index";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 
 import type { DeviceInfo, FirmwareUpdateContext } from "@ledgerhq/types-live";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import type { AppsDistribution } from "@ledgerhq/live-common/apps/index";
-import type { DeviceModel } from "@ledgerhq/devices";
+import { DeviceModelId } from "@ledgerhq/devices";
+import { useFeature, FeatureToggle } from "@ledgerhq/live-common/featureFlags/index";
+import { Flex } from "@ledgerhq/react-ui";
 import type { ThemedComponent } from "~/renderer/styles/StyleProvider";
 
 import ByteSize from "~/renderer/components/ByteSize";
@@ -31,8 +32,8 @@ import nanoSPDark from "~/renderer/images/devices/nanoSP_dark.png";
 import nanoX from "~/renderer/images/devices/nanoX.png";
 import nanoXDark from "~/renderer/images/devices/nanoX_dark.png";
 import blue from "~/renderer/images/devices/blue.png";
-import { Flex } from "@ledgerhq/react-ui";
 
+import CustomImageManagerButton from "./CustomImageManagerButton";
 import DeviceLanguage from "./DeviceLanguage";
 
 const illustrations = {
@@ -306,7 +307,7 @@ const DeviceStorage = ({
   const deviceLocalizationFeatureFlag = useFeature("deviceLocalization");
 
   return (
-    <Card p={20} mb={4} horizontal>
+    <Card p={20} mb={4} horizontal data-test-id="device-storage-card">
       <Box position="relative" flex="0 0 140px" mr={20}>
         <DeviceIllustration deviceModel={deviceModel} />
       </Box>
@@ -321,7 +322,7 @@ const DeviceStorage = ({
             </Tooltip>
           </Box>
         </Box>
-        <Flex justifyContent="space-between">
+        <Flex justifyContent="space-between" alignItems="center" mt={1}>
           <Text ff="Inter|SemiBold" color="palette.text.shade40" fontSize={4}>
             {firmwareOutdated ? (
               <Trans
@@ -336,13 +337,27 @@ const DeviceStorage = ({
             )}{" "}
             {<HighlightVersion>{deviceInfo.version}</HighlightVersion>}
           </Text>
-          {deviceInfo.languageId !== undefined && deviceLocalizationFeatureFlag?.enabled && (
-            <DeviceLanguage
-              deviceInfo={deviceInfo}
-              device={device}
-              onRefreshDeviceInfo={onRefreshDeviceInfo}
-            />
-          )}
+          <Flex
+            data-test-id="device-options-container"
+            flexDirection="column"
+            alignSelf="flex-start"
+            justifyContent="flex-start"
+            alignItems="flex-end"
+            rowGap={3}
+          >
+            {deviceModel.id === DeviceModelId.nanoFTS ? (
+              <FeatureToggle feature="customImage">
+                <CustomImageManagerButton />
+              </FeatureToggle>
+            ) : null}
+            {deviceInfo.languageId !== undefined && deviceLocalizationFeatureFlag?.enabled && (
+              <DeviceLanguage
+                deviceInfo={deviceInfo}
+                device={device}
+                onRefreshDeviceInfo={onRefreshDeviceInfo}
+              />
+            )}
+          </Flex>
         </Flex>
         <Separator />
         <Info>

@@ -1,5 +1,19 @@
 # live-common-tools
 
+## 0.2.12
+
+### Patch Changes
+
+- Updated dependencies [[`455e43b34c`](https://github.com/LedgerHQ/ledger-live/commit/455e43b34c13ca7ed1d2920a36653caa250e42ab)]:
+  - @ledgerhq/live-common@27.5.0
+
+## 0.2.12-hotfix.0
+
+### Patch Changes
+
+- Updated dependencies [[`455e43b34c`](https://github.com/LedgerHQ/ledger-live/commit/455e43b34c13ca7ed1d2920a36653caa250e42ab)]:
+  - @ledgerhq/live-common@27.5.0-hotfix.0
+
 ## 0.2.11
 
 ### Patch Changes
@@ -8,6 +22,13 @@
   - @ledgerhq/live-common@27.4.0
   - @ledgerhq/cryptoassets@6.36.0
 
+## 0.2.11-hotfix.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/live-common@27.3.2
+
 ## 0.2.11-next.2
 
 ### Patch Changes
@@ -15,6 +36,7 @@
 - Updated dependencies [[`5fba025686`](https://github.com/LedgerHQ/ledger-live/commit/5fba025686d799badad3f7a7c7c8491cba14be8a)]:
   - @ledgerhq/live-common@27.4.0-next.2
 
+## 0.2.11-next.1
 
 ### Patch Changes
 
@@ -29,12 +51,19 @@
   - @ledgerhq/live-common@27.4.0-next.0
   - @ledgerhq/cryptoassets@6.36.0-next.0
 
-## 0.2.11-hotfix.0
+## 0.2.10
 
 ### Patch Changes
 
-- Updated dependencies []:
+- Updated dependencies [[`c7e40bfef7`](https://github.com/LedgerHQ/ledger-live/commit/c7e40bfef718b2f806d2f6e942f2ca61b03a0110)]:
   - @ledgerhq/live-common@27.3.2
+
+## 0.2.10-hotfix.0
+
+### Patch Changes
+
+- Updated dependencies [[`c7e40bfef7`](https://github.com/LedgerHQ/ledger-live/commit/c7e40bfef718b2f806d2f6e942f2ca61b03a0110)]:
+  - @ledgerhq/live-common@27.3.2-hotfix.0
 
 ## 0.2.10
 

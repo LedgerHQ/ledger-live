@@ -398,6 +398,10 @@ export async function bot({
     slackBody += warn;
   }
 
+  appendBody(
+    "\n> What is the bot and how does it work? [Everything is documented here!](https://github.com/LedgerHQ/ledger-live/wiki/LLC:bot)\n\n"
+  );
+
   appendBody("\n\n");
 
   if (specFatals.length) {
