@@ -27,11 +27,20 @@ const NftGalleryEmptyState = () => {
       >
         {t("wallet.nftGallery.empty.title")}
       </Text>
-      <Button onPress={openModal} size={"large"} type={"main"} mb={6}>
+      <Text
+        variant={"bodyLineHeight"}
+        fontWeight={"semiBold"}
+        color={"neutral.c80"}
+        mb={8}
+      >
+        {t("wallet.nftGallery.empty.subtitle")}
+      </Text>
+      <Button onPress={openModal} size={"large"} type={"main"} mb={8}>
         {t("wallet.nftGallery.empty.receive")}
       </Button>
       <Link
         onPress={openSupportLink}
+        size={"medium"}
         Icon={Icons.ExternalLinkMedium}
         iconPosition="right"
       >
