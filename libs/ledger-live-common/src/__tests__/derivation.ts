@@ -1,4 +1,3 @@
-import { CryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
 import { getCryptoCurrencyById } from "../currencies";
 import {
   getPreferredNewAccountScheme,
@@ -14,7 +13,7 @@ describe("derivation", () => {
       ["qtum", ["segwit", ""]],
     ];
     testData.forEach(([currencyId, derivationModes]) => {
-      const currency = getCryptoCurrencyById(currencyId as CryptoCurrencyId);
+      const currency = getCryptoCurrencyById(<string>currencyId);
       const p = getPreferredNewAccountScheme(currency);
       expect(p).toEqual(derivationModes);
     });
@@ -28,7 +27,7 @@ describe("derivation", () => {
       ["qtum", "segwit"],
     ];
     testData.forEach(([currencyId, derivationMode]) => {
-      const currency = getCryptoCurrencyById(currencyId as CryptoCurrencyId);
+      const currency = getCryptoCurrencyById(<string>currencyId);
       const defaultP = getDefaultPreferredNewAccountScheme(currency);
       expect(defaultP).toEqual(derivationMode);
     });

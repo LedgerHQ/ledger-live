@@ -75,7 +75,7 @@ const abandonSeedAddresses: Partial<Record<CryptoCurrencyId, string>> = {
  * DO NOT USE AS RECIPIENT OR SIGN TRANSACTIONS INTO THEM
  * @param {*} currencyId
  */
-// TODO: signature should be  getAbandonSeedAddress(currencyId: CryptoCurencyId)
+// TODO: signature should be  getAbandonSeedAddress(currencyId: CryptoCurrencyId)
 export const getAbandonSeedAddress = (currencyId: string): string => {
   invariant(
     abandonSeedAddresses[currencyId] !== undefined,
