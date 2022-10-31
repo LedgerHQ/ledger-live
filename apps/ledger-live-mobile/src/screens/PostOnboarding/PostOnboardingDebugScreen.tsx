@@ -1,12 +1,15 @@
 import { DeviceModelId } from "@ledgerhq/devices/index";
 import { Flex } from "@ledgerhq/native-ui";
 import React, { useCallback } from "react";
+import { useNavigation } from "@react-navigation/native";
 import { useStartPostOnboardingCallback } from "@ledgerhq/live-common/postOnboarding/hooks/index";
 import PostOnboardingEntryPointCard from "../../components/PostOnboarding/PostOnboardingEntryPointCard";
 import SettingsRow from "../../components/SettingsRow";
 import { useNavigateToPostOnboardingHubCallback } from "../../logic/postOnboarding/useNavigateToPostOnboardingHubCallback";
+import { NavigatorName } from "../../const";
 
 export default () => {
+  const navigation = useNavigation();
   const startPostOnboarding = useStartPostOnboardingCallback();
 
   const handleInitFTSMock = useCallback(
@@ -14,8 +17,13 @@ export default () => {
     [startPostOnboarding],
   );
   const handleInitFTS = useCallback(
-    () => startPostOnboarding(DeviceModelId.nanoFTS),
-    [startPostOnboarding],
+    () =>
+      startPostOnboarding(DeviceModelId.nanoFTS, false, () =>
+        navigation.navigate(NavigatorName.Base, {
+          screen: NavigatorName.Main,
+        }),
+      ),
+    [navigation, startPostOnboarding],
   );
   const handleInitNanoXMock = useCallback(
     () => startPostOnboarding(DeviceModelId.nanoX, true),
