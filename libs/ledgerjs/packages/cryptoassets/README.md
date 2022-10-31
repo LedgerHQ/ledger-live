@@ -32,39 +32,35 @@ There are two modes of usage of this library.
     *   [Parameters](#parameters-4)
 *   [findCryptoCurrencyByTicker](#findcryptocurrencybyticker)
     *   [Parameters](#parameters-5)
-*   [findCryptoCurrencyById](#findcryptocurrencybyid)
-    *   [Parameters](#parameters-6)
 *   [findCryptoCurrencyByKeyword](#findcryptocurrencybykeyword)
-    *   [Parameters](#parameters-7)
+    *   [Parameters](#parameters-6)
 *   [hasCryptoCurrencyId](#hascryptocurrencyid)
-    *   [Parameters](#parameters-8)
-*   [getCryptoCurrencyById](#getcryptocurrencybyid)
-    *   [Parameters](#parameters-9)
+    *   [Parameters](#parameters-7)
 *   [findExchangeCurrencyConfig](#findexchangecurrencyconfig)
-    *   [Parameters](#parameters-10)
+    *   [Parameters](#parameters-8)
 *   [hasFiatCurrencyTicker](#hasfiatcurrencyticker)
-    *   [Parameters](#parameters-11)
+    *   [Parameters](#parameters-9)
 *   [findFiatCurrencyByTicker](#findfiatcurrencybyticker)
-    *   [Parameters](#parameters-12)
+    *   [Parameters](#parameters-10)
 *   [getFiatCurrencyByTicker](#getfiatcurrencybyticker)
-    *   [Parameters](#parameters-13)
+    *   [Parameters](#parameters-11)
 *   [listFiatCurrencies](#listfiatcurrencies)
 *   [listTokens](#listtokens)
-    *   [Parameters](#parameters-14)
+    *   [Parameters](#parameters-12)
 *   [listTokensForCryptoCurrency](#listtokensforcryptocurrency)
-    *   [Parameters](#parameters-15)
+    *   [Parameters](#parameters-13)
 *   [listTokenTypesForCryptoCurrency](#listtokentypesforcryptocurrency)
-    *   [Parameters](#parameters-16)
+    *   [Parameters](#parameters-14)
 *   [findTokenByTicker](#findtokenbyticker)
-    *   [Parameters](#parameters-17)
+    *   [Parameters](#parameters-15)
 *   [findTokenById](#findtokenbyid)
-    *   [Parameters](#parameters-18)
+    *   [Parameters](#parameters-16)
 *   [hasTokenId](#hastokenid)
-    *   [Parameters](#parameters-19)
+    *   [Parameters](#parameters-17)
 *   [getTokenById](#gettokenbyid)
-    *   [Parameters](#parameters-20)
+    *   [Parameters](#parameters-18)
 *   [findCompoundToken](#findcompoundtoken)
-    *   [Parameters](#parameters-21)
+    *   [Parameters](#parameters-19)
 
 ### abandonSeedAddresses
 
@@ -130,14 +126,6 @@ Returns **(CryptoCurrency | null | [undefined](https://developer.mozilla.org/doc
 
 Returns **(CryptoCurrency | null | [undefined](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/undefined))** 
 
-### findCryptoCurrencyById
-
-#### Parameters
-
-*   `id` **any** 
-
-Returns **(CryptoCurrency | null | [undefined](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/undefined))** 
-
 ### findCryptoCurrencyByKeyword
 
 #### Parameters
@@ -154,14 +142,6 @@ Returns **(CryptoCurrency | null | [undefined](https://developer.mozilla.org/doc
 *   `id` **any** 
 
 Returns **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)** 
-
-### getCryptoCurrencyById
-
-#### Parameters
-
-*   `id` **any** 
-
-Returns **CryptoCurrency** 
 
 ### findExchangeCurrencyConfig
 
