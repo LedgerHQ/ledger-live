@@ -8,6 +8,7 @@ import type { MessageData, Result } from "../../hw/signMessage/types";
 import type { TypedMessageData } from "./types";
 import { DerivationMode } from "../../derivation";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { getEnv } from "../../env";
 
 type EthSignMessage = (
   transport: Transport,
@@ -189,15 +190,19 @@ const getValueFromPath = (
 /**
  * Gets the fields visible on the nano for a specific EIP712 message
  */
-export const getNanoDisplayedInfosFor712 = (
-  message: Record<string, any>
-): { label: string; value: string | string[] }[] | null => {
+export const getNanoDisplayedInfosFor712 = async (
+  message: Record<string, any>,
+  remoteCryptoAssetsListURI: string = getEnv("DYNAMIC_CAL_BASE_URL")
+): Promise<{ label: string; value: string | string[] }[] | null> => {
   if (!isEIP712Message(message)) {
     return null;
   }
 
   const displayedInfos: { label: string; value: string | string[] }[] = [];
-  const filters = getFiltersForMessage(message);
+  const filters = await getFiltersForMessage(
+    message,
+    remoteCryptoAssetsListURI
+  );
 
   if (!filters) {
     const { types } = message;

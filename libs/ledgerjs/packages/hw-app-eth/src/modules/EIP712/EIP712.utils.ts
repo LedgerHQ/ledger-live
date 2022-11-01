@@ -1,3 +1,4 @@
+import axios from "axios";
 import SHA224 from "crypto-js/sha224";
 import { hexBuffer, intAsHexBytes } from "../../utils";
 import {
@@ -321,13 +322,24 @@ export const getSchemaHashForMessage = (message: EIP712Message): string => {
  * @param {EIP712Message} message
  * @returns {MessageFilters | undefined}
  */
-export const getFiltersForMessage = (
-  message: EIP712Message
-): MessageFilters | undefined => {
+export const getFiltersForMessage = async (
+  message: EIP712Message,
+  remoteCryptoAssetsListURI?: string | null
+): Promise<MessageFilters | undefined> => {
   const schemaHash = getSchemaHashForMessage(message);
   const messageId = `${message.domain?.chainId ?? 0}:${
     message.domain?.verifyingContract ?? NULL_ADDRESS
   }:${schemaHash}`;
 
-  return EIP712CAL[messageId];
+  try {
+    if (remoteCryptoAssetsListURI) {
+      const { data: dynamicCAL } = await axios.get(
+        `${remoteCryptoAssetsListURI}/eip712.json`
+      );
+      return dynamicCAL[messageId] || EIP712CAL[messageId];
+    }
+    throw new Error();
+  } catch (e) {
+    return EIP712CAL[messageId];
+  }
 };

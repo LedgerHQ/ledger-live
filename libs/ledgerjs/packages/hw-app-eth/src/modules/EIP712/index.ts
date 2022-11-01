@@ -10,6 +10,8 @@ import {
   StructImplemData,
 } from "./EIP712.types";
 import { hexBuffer, intAsHexBytes, splitPath } from "../../utils";
+import { getLoadConfig } from "../../services/ledger/loadConfig";
+import { LoadConfig } from "../../services/types";
 import {
   destructTypeFromString,
   EIP712_TYPE_ENCODERS,
@@ -380,7 +382,8 @@ export const signEIP712Message = async (
   transport: Transport,
   path: string,
   jsonMessage: EIP712Message,
-  fullImplem = false
+  fullImplem = false,
+  loadConfig: LoadConfig
 ): Promise<{
   v: number;
   s: string;
@@ -394,9 +397,10 @@ export const signEIP712Message = async (
     P2_full = 0x01,
   }
   const { primaryType, types: unsortedTypes, domain, message } = jsonMessage;
+  const { cryptoassetsBaseURL } = getLoadConfig(loadConfig);
   // Types are sorted by alphabetical order in order to get the same schema hash no matter the JSON format
   const types = sortObjectAlphabetically(unsortedTypes) as EIP712MessageTypes;
-  const filters = getFiltersForMessage(jsonMessage);
+  const filters = await getFiltersForMessage(jsonMessage, cryptoassetsBaseURL);
 
   const typeEntries = Object.entries(types) as [
     keyof EIP712MessageTypes,
