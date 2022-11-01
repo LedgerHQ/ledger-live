@@ -1,19 +1,19 @@
-import React, { useMemo } from "react";
 import { View, StyleSheet, ScrollView } from "react-native";
+import React, { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useTheme } from "@react-navigation/native";
-import {
-  getNanoDisplayedInfosFor712,
-  isEIP712Message,
-} from "@ledgerhq/live-common/families/ethereum/hw-signMessage";
-import type { Device } from "@ledgerhq/live-common/hw/actions/types";
-import type { TypedMessageData } from "@ledgerhq/live-common/families/ethereum/types";
-import type { MessageData } from "@ledgerhq/live-common/hw/signMessage/types";
 import type { AccountLike } from "@ledgerhq/types-live";
+import { useTheme } from "@react-navigation/native";
+import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { getMainAccount } from "@ledgerhq/live-common/account/helpers";
+import type { MessageData } from "@ledgerhq/live-common/hw/signMessage/types";
+import type { TypedMessageData } from "@ledgerhq/live-common/families/ethereum/types";
 import LText from "./LText";
 import Animation from "./Animation";
 import { getDeviceAnimation } from "../helpers/getDeviceAnimation";
+import {
+  getMessageProperties,
+  NanoDisplayedInfoFor712,
+} from "../helpers/signMessageUtils";
 
 type Props = {
   device: Device;
@@ -28,50 +28,39 @@ export default function ValidateOnDevice({
 }: Props) {
   const { t } = useTranslation();
   const { colors } = useTheme();
-  const messageContainerStyle = [
-    styles.messageContainer,
-    {
-      backgroundColor: colors.background,
-    },
-  ];
-  const messageTextStyle = [
-    styles.property,
-    {
-      color: colors.text,
-    },
-  ];
 
+  const messageContainerStyle = useMemo(
+    () => [
+      styles.messageContainer,
+      {
+        backgroundColor: colors.background,
+      },
+    ],
+    [colors.background],
+  );
+  const messageTextStyle = useMemo(
+    () => [
+      styles.property,
+      {
+        color: colors.text,
+      },
+    ],
+    [colors.text],
+  );
   const mainAccount = getMainAccount(account, null);
-  const {
-    message,
-    fields,
-  }: {
-    message?: string | null;
-    fields?: ReturnType<typeof getNanoDisplayedInfosFor712>;
-  } = useMemo(() => {
-    try {
-      if (mainAccount.currency.family === "ethereum") {
-        const parsedMessage =
-          typeof messageData.message === "string"
-            ? JSON.parse(messageData.message)
-            : messageData.message;
 
-        return {
-          fields: isEIP712Message(messageData.message)
-            ? getNanoDisplayedInfosFor712(parsedMessage)
-            : null,
-        };
-      }
-      throw new Error();
-    } catch (e) {
-      return {
-        message:
-          typeof messageData.message === "string"
-            ? messageData.message
-            : messageData.message.toString(),
-      };
-    }
-  }, [mainAccount.currency.family, messageData.message]);
+  const [messageProperties, setMessageProperties] = useState<{
+    message?: string;
+    fields?: NanoDisplayedInfoFor712;
+  }>({});
+
+  useEffect(() => {
+    getMessageProperties(mainAccount.currency, messageData).then(
+      setMessageProperties,
+    );
+  }, [mainAccount.currency, messageData, setMessageProperties]);
+
+  const { message, fields } = messageProperties;
 
   return (
     <View style={styles.root}>
