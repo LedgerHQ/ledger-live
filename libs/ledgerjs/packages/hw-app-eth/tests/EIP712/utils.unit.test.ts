@@ -1,11 +1,21 @@
+import axios from "axios";
 import BigNumber from "bignumber.js";
+import { dynamicCAL, messageNotInCAL } from "../fixtures/dynamicCAL";
+import messageInCAL from "../fixtures/messages/2.json";
 import {
   constructTypeDescByteString,
   destructTypeFromString,
   EIP712_TYPE_ENCODERS,
   makeTypeEntryStructBuffer,
   sortObjectAlphabetically,
+  getFiltersForMessage,
 } from "../../src/modules/EIP712/EIP712.utils";
+
+const CAL = require("../fixtures/CAL");
+jest.mock("@ledgerhq/cryptoassets/data/eip712", () =>
+  require("../fixtures/CAL")
+);
+jest.mock("axios");
 
 const padHexString = (str: string) => {
   return str.length % 2 ? "0" + str : str;
@@ -506,36 +516,65 @@ describe("EIP712", () => {
             G: 1,
             F: 2,
           },
-        }
+        };
         const expectedObj = {
           A: {
             F: 2,
-            G: 1
+            G: 1,
           },
           B: {
             H: 2,
-            I: 1
+            I: 1,
           },
           C: {
             J: 2,
-            K: 1
+            K: 1,
           },
           D: {
             L: 2,
-            M: 1
+            M: 1,
           },
           E: {
             N: 2,
-            O: 1
+            O: 1,
           },
           F: {
             P: 2,
-            Q: 1
+            Q: 1,
           },
-        }
+        };
 
-        expect(sortObjectAlphabetically(obj)).toEqual(expectedObj)
-      })
+        expect(sortObjectAlphabetically(obj)).toEqual(expectedObj);
+      });
+    });
+
+    describe("getFiltersForMessage", () => {
+      test("should find the filters for a message from dynamic CAL if not in static CAL", async () => {
+        // @ts-expect-error not detected as mocked with jest
+        axios.get.mockReturnValueOnce({ data: dynamicCAL });
+
+        const result = await getFiltersForMessage(
+          messageNotInCAL,
+          "http://CAL-ADDRESS"
+        );
+        expect(result).toEqual("found");
+      });
+
+      test("should find the filters for a message not in dynamic CAL if in static CAL", async () => {
+        // @ts-expect-error not detected as mocked with jest
+        axios.get.mockRejectedValue();
+        const schemaHash =
+          "d8e4f2bd77f7562e99ea5df4adb127291a2bfbc225ae55450038f27f";
+
+        const result = await getFiltersForMessage(
+          messageInCAL,
+          "http://CAL-ADDRESS"
+        );
+
+        expect(result).toEqual(
+          CAL[`1:0x7f268357a8c2552623316e2562d90e642bb538e5:${schemaHash}`]
+        );
+      });
     });
   });
 });
