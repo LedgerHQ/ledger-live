@@ -1,5 +1,11 @@
 # ledger-live-desktop
 
+## 2.50.0-nightly.2
+
+### Patch Changes
+
+- [#1669](https://github.com/LedgerHQ/ledger-live/pull/1669) [`380086b2fe`](https://github.com/LedgerHQ/ledger-live/commit/380086b2fef163a1fc7d19fe072783410a72cb47) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - UI glitch in Operation details drawer when Collection name is too long
+
 ## 2.50.0-nightly.1
 
 ### Minor Changes
