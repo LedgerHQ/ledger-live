@@ -92,8 +92,7 @@ export type CryptoCurrencyId =
   | "stratis"
   | "stealthcoin"
   | "stellar"
-  // osmosis
-  | "osmo"
+  | "osmosis"
   | "shyft"
   | "tezos"
   | "thundercore"
@@ -203,7 +202,7 @@ export type ExplorerView = {
 export type CryptoCurrency = CurrencyCommon & {
   type: "CryptoCurrency";
   // unique internal id of a crypto currency
-  id: CryptoCurrencyId | "LBRY" | "groestcoin";
+  id: CryptoCurrencyId | "LBRY" | "groestcoin" | "osmo";
   // define if a crypto is a fork from another coin. helps dealing with split/unsplit
   forkedFrom?: string;
   // name of the app as shown in the Manager

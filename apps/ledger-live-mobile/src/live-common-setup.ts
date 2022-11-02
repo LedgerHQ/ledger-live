@@ -70,7 +70,7 @@ setSupportedCurrencies([
   "elrond",
   "hedera",
   "cardano",
-  "osmo",
+  "osmosis",
   "filecoin",
   "fantom",
   "cronos",

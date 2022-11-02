@@ -2499,8 +2499,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     ],
     keywords: ["xlm", "stellar"],
   },
-  // osmosi
-  osmo: {
+  osmosis: {
     type: "CryptoCurrency",
     id: "osmo",
     coinType: CoinType.ATOM,

@@ -60,7 +60,7 @@ const abandonSeedAddresses: Partial<Record<CryptoCurrencyId, string>> = {
   cardano:
     "addr1qykrup76qz622wxgmqtuumr6mn3vvkqc4jgxj6ytqudchccayfawlf9hwv2fzuygt2km5v92kvf8e3s3mk7ynxw77cwq80z2rm",
   filecoin: "f1qode47ievxlxzk6z2viuovedabmn3tq6t57uqhq",
-  osmo: "cosmos19rl4cm2hmr8afy4kldpxz3fka4jguq0auqdal4",
+  osmosis: "cosmos19rl4cm2hmr8afy4kldpxz3fka4jguq0auqdal4",
   fantom: "0x0000000000000000000000000000000000000000",
   cronos: "0x0000000000000000000000000000000000000000",
   moonbeam: "0x0000000000000000000000000000000000000000",
