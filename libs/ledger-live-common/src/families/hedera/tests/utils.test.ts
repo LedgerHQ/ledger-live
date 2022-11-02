@@ -2,7 +2,6 @@ import BigNumber from "bignumber.js";
 import type { Account } from "@ledgerhq/types-live";
 import type { Transaction } from "../types";
 import { calculateAmount } from "../utils";
-import { CryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
 
 const account: Account = {
   type: "Account",
@@ -22,7 +21,7 @@ const account: Account = {
   blockHeight: 0,
   currency: {
     type: "CryptoCurrency",
-    id: "" as CryptoCurrencyId,
+    id: "hedera",
     managerAppName: "",
     coinType: 0,
     scheme: "",
