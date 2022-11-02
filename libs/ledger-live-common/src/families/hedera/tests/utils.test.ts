@@ -2,7 +2,6 @@ import BigNumber from "bignumber.js";
 import type { Account } from "@ledgerhq/types-live";
 import type { Transaction } from "../types";
 import { calculateAmount } from "../utils";
-import { CryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
 
 const account: Account = {
   type: "Account",
