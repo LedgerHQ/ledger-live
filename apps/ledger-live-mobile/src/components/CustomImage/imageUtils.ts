@@ -1,6 +1,6 @@
 import { Image, NativeModules, Platform } from "react-native";
 import RNFetchBlob from "rn-fetch-blob";
-import * as ImagePicker from "expo-image-picker";
+import * as ImagePicker from "react-native-image-picker";
 import {
   ImageDownloadError,
   ImageLoadFromGalleryError,
@@ -26,11 +26,21 @@ export async function importImageFromPhoneGallery(): Promise<ImageFileUri | null
     const pickImagePromise =
       Platform.OS === "android"
         ? NativeModules.ImagePickerModule.pickImage()
-        : ImagePicker.launchImageLibraryAsync({
-            mediaTypes: ImagePicker.MediaTypeOptions.Images,
-            allowsEditing: false,
+        : ImagePicker.launchImageLibrary({
+            mediaType: "photo",
             quality: 1,
-            base64: false,
+            includeBase64: false,
+          }).then(res => {
+            if (res.errorCode)
+              throw new Error(
+                `ImagePicker.launchImageLibrary Error (error code: ${res.errorCode}): ${res.errorMessage}`,
+              );
+            const assets = res?.assets || [];
+            if (assets.length === 0) throw new Error("Assets length is 0");
+            return {
+              cancelled: res.didCancel,
+              uri: assets[0]?.uri,
+            };
           });
     const { uri, cancelled } = await pickImagePromise;
     if (cancelled) return null;

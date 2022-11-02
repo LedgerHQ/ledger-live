@@ -21,8 +21,6 @@ PODS:
   - EXImageManipulator (10.2.1):
     - EXImageLoader
     - ExpoModulesCore
-  - EXImagePicker (12.0.2):
-    - ExpoModulesCore
   - Expo (43.0.5):
     - ExpoModulesCore
   - ExpoModulesCore (0.6.5):
@@ -427,6 +425,8 @@ PODS:
   - react-native-image-crop-tools (1.6.2):
     - React
     - TOCropViewController (= 2.5.3)
+  - react-native-image-picker (4.8.5):
+    - React-Core
   - react-native-netinfo (6.2.1):
     - React-Core
   - react-native-performance (3.1.2):
@@ -631,7 +631,6 @@ DEPENDENCIES:
   - "EXFileSystem (from `../../../node_modules/.pnpm/expo-file-system@13.1.4_expo@43.0.5/node_modules/expo-file-system/ios`)"
   - "EXImageLoader (from `../../../node_modules/.pnpm/expo-image-loader@3.1.1_expo@43.0.5/node_modules/expo-image-loader/ios`)"
   - "EXImageManipulator (from `../../../node_modules/.pnpm/expo-image-manipulator@10.2.1_expo@43.0.5/node_modules/expo-image-manipulator/ios`)"
-  - "EXImagePicker (from `../../../node_modules/.pnpm/expo-image-picker@12.0.2_expo@43.0.5/node_modules/expo-image-picker/ios`)"
   - "Expo (from `../../../node_modules/.pnpm/expo@43.0.5_@babel+core@7.17.10/node_modules/expo/ios`)"
   - "ExpoModulesCore (from `../../../node_modules/.pnpm/expo-modules-core@0.6.5/node_modules/expo-modules-core/ios`)"
   - "FBLazyVector (from `../../../node_modules/.pnpm/react-native@0.68.2_qiqqwmyv63yhnuboofexv3s7x4/node_modules/react-native/Libraries/FBLazyVector`)"
@@ -687,6 +686,7 @@ DEPENDENCIES:
   - "react-native-fast-crypto (from `../../../node_modules/.pnpm/react-native-fast-crypto@2.2.0_jdmv3zyvsaug2f6l23zgrmwdli_react-native@0.68.2/node_modules/react-native-fast-crypto`)"
   - "react-native-flipper (from `../../../node_modules/.pnpm/react-native-flipper@0.162.0_zqxy7fpkavjkgz5xll7ed4r6rq/node_modules/react-native-flipper`)"
   - "react-native-image-crop-tools (from `../../../node_modules/.pnpm/react-native-image-crop-tools@1.6.2_ykxjy5s7xujdxmsgrwxo5mh3y4_zqxy7fpkavjkgz5xll7ed4r6rq/node_modules/react-native-image-crop-tools`)"
+  - "react-native-image-picker (from `../../../node_modules/.pnpm/react-native-image-picker@4.8.5_zqxy7fpkavjkgz5xll7ed4r6rq/node_modules/react-native-image-picker`)"
   - "react-native-netinfo (from `../../../node_modules/.pnpm/@react-native-community+netinfo@6.2.1_react-native@0.68.2/node_modules/@react-native-community/netinfo`)"
   - "react-native-performance (from `../../../node_modules/.pnpm/react-native-performance@3.1.2_react-native@0.68.2/node_modules/react-native-performance`)"
   - "react-native-randombytes (from `../../../node_modules/.pnpm/react-native-randombytes@3.6.1/node_modules/react-native-randombytes`)"
@@ -710,7 +710,7 @@ DEPENDENCIES:
   - "React-RCTVibration (from `../../../node_modules/.pnpm/react-native@0.68.2_qiqqwmyv63yhnuboofexv3s7x4/node_modules/react-native/Libraries/Vibration`)"
   - "React-runtimeexecutor (from `../../../node_modules/.pnpm/react-native@0.68.2_qiqqwmyv63yhnuboofexv3s7x4/node_modules/react-native/ReactCommon/runtimeexecutor`)"
   - "ReactCommon/turbomodule/core (from `../../../node_modules/.pnpm/react-native@0.68.2_qiqqwmyv63yhnuboofexv3s7x4/node_modules/react-native/ReactCommon`)"
-  - "rn-fetch-blob (from `../../../node_modules/.pnpm/rn-fetch-blob@0.12.0/node_modules/rn-fetch-blob`)"
+  - "rn-fetch-blob (from `../../../node_modules/.pnpm/rn-fetch-blob@0.12.0_n5yzdsrxz654upecs5xliebtmm/node_modules/rn-fetch-blob`)"
   - "RNAnalytics (from `../../../node_modules/.pnpm/@segment+analytics-react-native@1.5.3/node_modules/@segment/analytics-react-native`)"
   - "RNCAsyncStorage (from `../../../node_modules/.pnpm/@react-native-async-storage+async-storage@1.17.4_react-native@0.68.2/node_modules/@react-native-async-storage/async-storage`)"
   - "RNCClipboard (from `../../../node_modules/.pnpm/@react-native-community+clipboard@1.5.1_zqxy7fpkavjkgz5xll7ed4r6rq/node_modules/@react-native-community/clipboard`)"
@@ -722,7 +722,7 @@ DEPENDENCIES:
   - "RNGestureHandler (from `../../../node_modules/.pnpm/react-native-gesture-handler@2.5.0_mk7ksnag22facomrynqrp7v6gy/node_modules/react-native-gesture-handler`)"
   - "RNKeychain (from `../../../node_modules/.pnpm/react-native-keychain@7.0.0/node_modules/react-native-keychain`)"
   - "RNLocalize (from `../../../node_modules/.pnpm/react-native-localize@2.2.1_zqxy7fpkavjkgz5xll7ed4r6rq/node_modules/react-native-localize`)"
-  - "RNOS (from `../../../node_modules/.pnpm/react-native-os@1.2.6/node_modules/react-native-os`)"
+  - "RNOS (from `../../../node_modules/.pnpm/react-native-os@1.2.6_2e25ffb547hjiczrnsjhxl6geu/node_modules/react-native-os`)"
   - "RNReanimated (from `../../../node_modules/.pnpm/react-native-reanimated@2.8.0_q4bsppkovizpw5uw6ytm5z2tba/node_modules/react-native-reanimated`)"
   - "RNScreens (from `../../../node_modules/.pnpm/react-native-screens@3.13.1_zqxy7fpkavjkgz5xll7ed4r6rq/node_modules/react-native-screens`)"
   - "RNSentry (from `../../../node_modules/.pnpm/@sentry+react-native@4.2.4_zqxy7fpkavjkgz5xll7ed4r6rq/node_modules/@sentry/react-native`)"
@@ -789,8 +789,6 @@ EXTERNAL SOURCES:
     :path: "../../../node_modules/.pnpm/expo-image-loader@3.1.1_expo@43.0.5/node_modules/expo-image-loader/ios"
   EXImageManipulator:
     :path: "../../../node_modules/.pnpm/expo-image-manipulator@10.2.1_expo@43.0.5/node_modules/expo-image-manipulator/ios"
-  EXImagePicker:
-    :path: "../../../node_modules/.pnpm/expo-image-picker@12.0.2_expo@43.0.5/node_modules/expo-image-picker/ios"
   Expo:
     :path: "../../../node_modules/.pnpm/expo@43.0.5_@babel+core@7.17.10/node_modules/expo/ios"
   ExpoModulesCore:
@@ -849,6 +847,8 @@ EXTERNAL SOURCES:
     :path: "../../../node_modules/.pnpm/react-native-flipper@0.162.0_zqxy7fpkavjkgz5xll7ed4r6rq/node_modules/react-native-flipper"
   react-native-image-crop-tools:
     :path: "../../../node_modules/.pnpm/react-native-image-crop-tools@1.6.2_ykxjy5s7xujdxmsgrwxo5mh3y4_zqxy7fpkavjkgz5xll7ed4r6rq/node_modules/react-native-image-crop-tools"
+  react-native-image-picker:
+    :path: "../../../node_modules/.pnpm/react-native-image-picker@4.8.5_zqxy7fpkavjkgz5xll7ed4r6rq/node_modules/react-native-image-picker"
   react-native-netinfo:
     :path: "../../../node_modules/.pnpm/@react-native-community+netinfo@6.2.1_react-native@0.68.2/node_modules/@react-native-community/netinfo"
   react-native-performance:
@@ -896,7 +896,7 @@ EXTERNAL SOURCES:
   ReactCommon:
     :path: "../../../node_modules/.pnpm/react-native@0.68.2_qiqqwmyv63yhnuboofexv3s7x4/node_modules/react-native/ReactCommon"
   rn-fetch-blob:
-    :path: "../../../node_modules/.pnpm/rn-fetch-blob@0.12.0/node_modules/rn-fetch-blob"
+    :path: "../../../node_modules/.pnpm/rn-fetch-blob@0.12.0_n5yzdsrxz654upecs5xliebtmm/node_modules/rn-fetch-blob"
   RNAnalytics:
     :path: "../../../node_modules/.pnpm/@segment+analytics-react-native@1.5.3/node_modules/@segment/analytics-react-native"
   RNCAsyncStorage:
@@ -920,7 +920,7 @@ EXTERNAL SOURCES:
   RNLocalize:
     :path: "../../../node_modules/.pnpm/react-native-localize@2.2.1_zqxy7fpkavjkgz5xll7ed4r6rq/node_modules/react-native-localize"
   RNOS:
-    :path: "../../../node_modules/.pnpm/react-native-os@1.2.6/node_modules/react-native-os"
+    :path: "../../../node_modules/.pnpm/react-native-os@1.2.6_2e25ffb547hjiczrnsjhxl6geu/node_modules/react-native-os"
   RNReanimated:
     :path: "../../../node_modules/.pnpm/react-native-reanimated@2.8.0_q4bsppkovizpw5uw6ytm5z2tba/node_modules/react-native-reanimated"
   RNScreens:
@@ -951,7 +951,6 @@ SPEC CHECKSUMS:
   EXFileSystem: 08a3033ac372b6346becf07839e1ccef26fb1058
   EXImageLoader: 347b72c2ec2df65120ccec40ea65a4c4f24317ff
   EXImageManipulator: 60d1bf3f1d7709453b1feb38adf8594b7f58710f
-  EXImagePicker: bf4d62532cc2bf217edbe4abbb0014e73e079eac
   Expo: d9588796cd19999da4d440d87bf7eb7ae4dbd608
   ExpoModulesCore: 32c0ccb47f477d330ee93db72505380adf0de09a
   FBLazyVector: a7a655862f6b09625d11c772296b01cd5164b648
@@ -1008,6 +1007,7 @@ SPEC CHECKSUMS:
   react-native-fast-crypto: 5943c42466b86ad70be60d3a5f64bd22251e5d9e
   react-native-flipper: 7eeb9b59b667dd0619372c7349cf7c78032d1de2
   react-native-image-crop-tools: 06b171ac13f1cd520e633a0d190c00f664b4cb79
+  react-native-image-picker: cd420f97f6ed6ff74fc4686d27dbcfdbd051db91
   react-native-netinfo: 3d3769f0d65de15c83a9bf1346f8be71de5a24bf
   react-native-performance: e66c3730f9e463b959dc21ff38fd2c8b8e53ea79
   react-native-randombytes: 421f1c7d48c0af8dbcd471b0324393ebf8fe7846
