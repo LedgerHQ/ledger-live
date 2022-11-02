@@ -96,12 +96,12 @@ const DeviceIcon = ({ color, size }: { color: string; size: number }) => {
   }
 
   return hasAvailableUpdate ? (
-    icon
-  ) : (
     <Box>
       {icon}
       <Badge />
     </Box>
+  ) : (
+    icon
   );
 };
 

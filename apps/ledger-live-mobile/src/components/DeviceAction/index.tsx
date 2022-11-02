@@ -1,7 +1,10 @@
 import React, { useEffect } from "react";
 import { useDispatch } from "react-redux";
 import type { Action, Device } from "@ledgerhq/live-common/hw/actions/types";
-import { DeviceNotOnboarded } from "@ledgerhq/live-common/errors";
+import {
+  DeviceNotOnboarded,
+  LatestFirmwareVersionRequired,
+} from "@ledgerhq/live-common/errors";
 import { TransportStatusError } from "@ledgerhq/errors";
 import { useTranslation } from "react-i18next";
 import { useNavigation, useTheme } from "@react-navigation/native";
@@ -30,6 +33,7 @@ import {
   renderImageLoadRequested,
   renderLoadingImage,
   renderImageCommitRequested,
+  RequiredFirmwareUpdate,
 } from "./rendering";
 import PreventNativeBack from "../PreventNativeBack";
 import SkipLock from "../behaviour/SkipLock";
@@ -327,6 +331,16 @@ export function DeviceActionDefaultRendering<R, H, P>({
         error.message.includes("0x6d06"))
     ) {
       return renderDeviceNotOnboarded({ t, device, navigation });
+    }
+
+    if (error instanceof LatestFirmwareVersionRequired) {
+      return (
+        <RequiredFirmwareUpdate
+          t={t}
+          navigation={navigation}
+          device={selectedDevice}
+        />
+      );
     }
 
     return renderError({

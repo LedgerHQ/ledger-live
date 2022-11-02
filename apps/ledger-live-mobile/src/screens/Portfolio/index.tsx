@@ -144,7 +144,6 @@ function PortfolioScreen({ navigation }: Props) {
 
   const data = useMemo(
     () => [
-      <FirmwareUpdateBanner />,
       postOnboardingVisible && (
         <Box m={6}>
           <PostOnboardingEntryPointCard />
@@ -246,7 +245,12 @@ function PortfolioScreen({ navigation }: Props) {
 
   return (
     <>
-      <TabBarSafeAreaView>
+      <TabBarSafeAreaView
+        style={{
+          flex: 1,
+          paddingTop: 48,
+        }}
+      >
         <CheckLanguageAvailability />
         <CheckTermOfUseUpdate />
         <TrackScreen
@@ -258,11 +262,11 @@ function PortfolioScreen({ navigation }: Props) {
           currentPositionY={currentPositionY}
           graphCardEndPosition={graphCardEndPosition}
         />
+        <FirmwareUpdateBanner containerProps={{ mt: 9, mb: 0 }} />
         <AnimatedFlatListWithRefreshControl
           data={data}
           style={{
             flex: 1,
-            paddingTop: 48,
           }}
           contentContainerStyle={{ paddingBottom: TAB_BAR_SAFE_HEIGHT }}
           renderItem={({ item }: { item: React.ReactNode }) => item}
