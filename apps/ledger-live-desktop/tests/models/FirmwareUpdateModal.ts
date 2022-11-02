@@ -22,7 +22,7 @@ export class FirmwareUpdateModal extends Modal {
     await this.readyCheckbox.click();
   }
 
-  async firmwareUpdating() {
+  async waitForDeviceInfo() {
     await this.page.evaluate(
       args => {
         const [deviceInfo] = args;

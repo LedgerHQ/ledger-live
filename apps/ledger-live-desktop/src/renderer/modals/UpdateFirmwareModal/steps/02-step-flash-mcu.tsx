@@ -68,13 +68,13 @@ const StepFlashMcu = ({
   const [isMcuUpdateFinished, setIsMcuUpdateFinished] = useState<boolean>(false);
   const deviceLocalizationFeatureFlag = useFeature("deviceLocalization");
 
-  // Gets the updated device info from the command firmwareUpdating
+  // Gets the updated device info from the command waitForDeviceInfo
   // after a successful MCU update
   useEffect(() => {
     let sub: null | Subscriber<DeviceInfo>;
 
     if (isMcuUpdateFinished) {
-      sub = (getEnv("MOCK") ? mockedEventEmitter() : command("firmwareUpdating")({ deviceId: "" }))
+      sub = (getEnv("MOCK") ? mockedEventEmitter() : command("waitForDeviceInfo")({ deviceId: "" }))
         .pipe(timeout(5 * 60 * 1000))
         .subscribe({
           next: setUpdatedDeviceInfo,

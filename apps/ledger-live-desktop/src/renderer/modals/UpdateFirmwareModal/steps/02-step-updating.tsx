@@ -42,7 +42,7 @@ const StepUpdating = ({
   useEffect(() => {
     const sub = (getEnv("MOCK")
       ? mockedEventEmitter()
-      : command("firmwareUpdating")({ deviceId: "" })
+      : command("waitForDeviceInfo")({ deviceId: "" })
     )
       .pipe(timeout(5 * 60 * 1000))
       .subscribe({

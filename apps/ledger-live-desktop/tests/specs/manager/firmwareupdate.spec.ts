@@ -43,7 +43,7 @@ test("Firmware Update", async ({ page }) => {
 
   await test.step("Firmware update done", async () => {
     await deviceAction.complete(); // .complete() flash mcu -> completed
-    await firmwareUpdateModal.firmwareUpdating(); // 2nd step to get the latest device info
+    await firmwareUpdateModal.waitForDeviceInfo(); // 2nd step to get the latest device info
     await firmwareUpdateModal.updateDone.waitFor({ state: "visible" });
     await expect.soft(firmwareUpdateModal.container).toHaveScreenshot("flash-mcu-done.png");
   });

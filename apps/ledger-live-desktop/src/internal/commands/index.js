@@ -4,7 +4,7 @@ import firmwarePrepare from "./firmwarePrepare";
 import firmwareMain from "./firmwareMain";
 import firmwareRepair from "./firmwareRepair";
 import flushDevice from "./flushDevice";
-import firmwareUpdating from "./firmwareUpdating";
+import waitForDeviceInfo from "./waitForDeviceInfo";
 import getLatestFirmwareForDevice from "./getLatestFirmwareForDevice";
 import getSatStackStatus from "./getSatStackStatus";
 import listenToHidDevices from "./listenToHidDevices";
@@ -38,7 +38,7 @@ export const commandsById = {
   firmwareMain,
   firmwareRepair,
   flushDevice,
-  firmwareUpdating,
+  waitForDeviceInfo,
   getLatestFirmwareForDevice,
   getSatStackStatus,
   listenToHidDevices,

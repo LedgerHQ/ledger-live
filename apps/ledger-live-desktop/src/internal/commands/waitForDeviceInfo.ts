@@ -1,21 +1,19 @@
-// @flow
-
-import type { Observable } from "rxjs";
-import { from } from "rxjs";
+import { from, Observable } from "rxjs";
 import { withDevicePolling } from "@ledgerhq/live-common/hw/deviceAccess";
 import getDeviceInfo from "@ledgerhq/live-common/hw/getDeviceInfo";
-import type { DeviceInfo } from "@ledgerhq/types-live";
+import { DeviceInfo } from "@ledgerhq/types-live";
 
 type Input = {
-  deviceId: string,
+  deviceId: string;
 };
 
 type Result = DeviceInfo;
 
+// Waits until getting device info
 const cmd = ({ deviceId }: Input): Observable<Result> =>
   withDevicePolling(deviceId)(
     transport => from(getDeviceInfo(transport)),
-    () => true, // accept all errors. we're waiting forever condition that make getDeviceInfo work
+    () => true, // Accepts all errors, making the command waits forever until getDeviceInfo works
   );
 
 cmd.inferSentryTransaction = () => ({});
