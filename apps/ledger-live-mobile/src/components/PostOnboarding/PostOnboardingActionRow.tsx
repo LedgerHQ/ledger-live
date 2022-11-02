@@ -38,7 +38,6 @@ const PostOnboardingActionRow: React.FC<Props> = props => {
 
   const handlePress = useCallback(() => {
     if (navigationParams) {
-      // @ts-expect-error FIXME: stop using "any" in LLC and learn how to type stuff
       navigation.navigate(...navigationParams);
       startEvent && track(startEvent, startEventProperties);
     }
