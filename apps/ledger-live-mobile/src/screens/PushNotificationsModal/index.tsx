@@ -20,9 +20,7 @@ import { TrackScreen } from "../../analytics";
 const PushNotificationsModal = () => {
   const { t } = useTranslation();
   const {
-    initPushNotifications,
     initPushNotificationsData,
-    cleanPushNotifications,
     pushNotificationsModalType,
     isPushNotificationsModalOpen,
     modalAllowNotifications,
@@ -33,14 +31,6 @@ const PushNotificationsModal = () => {
     pushNotificationsOldRoute,
   } = useNotifications();
   const notificationsSettings = useSelector(notificationsSelector);
-
-  useEffect(() => {
-    initPushNotifications();
-
-    return () => {
-      cleanPushNotifications();
-    };
-  }, [initPushNotifications, cleanPushNotifications]);
 
   useEffect(() => {
     initPushNotificationsData();

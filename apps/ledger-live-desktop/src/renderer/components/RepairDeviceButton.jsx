@@ -14,13 +14,14 @@ import { openModal, closeModal } from "~/renderer/actions/modals";
 
 type Props = {
   buttonProps?: *,
+  disableDescription?: boolean,
   onRepair?: boolean => void,
   onClose?: ({ needHelp?: boolean }) => void,
   Component?: any,
 };
 
 const RepairDeviceButton: React$ComponentType<Props> = React.forwardRef(function RepairDevice(
-  { onRepair, onClose, buttonProps, Component }: Props,
+  { onRepair, onClose, buttonProps, Component, disableDescription }: Props,
   ref: React$ElementRef<*>,
 ) {
   const { t } = useTranslation();
@@ -127,7 +128,7 @@ const RepairDeviceButton: React$ComponentType<Props> = React.forwardRef(function
         repair={repair}
         isLoading={isLoading}
         title={t("settings.repairDevice.title")}
-        desc={t("settings.repairDevice.desc")}
+        desc={!disableDescription ? t("settings.repairDevice.desc") : undefined}
         progress={progress}
         error={error}
         enableSomethingElseChoice

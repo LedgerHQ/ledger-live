@@ -85,8 +85,9 @@
     "moreInfo" : "مزيد من المعلومات",
     "buyEth" : "شراء إثيريوم",
     "popular" : "شائع",
+    "getSupport" : "احصل على الدعم",
     "comingSoon" : "قريباً",
-    "getSupport" : "احصل على الدعم"
+    "restart" : "Restart"
   },
   "errors" : {
     "countervaluesUnavailable" : {
@@ -321,6 +322,14 @@
       "title" : "عذراً، لا يمكن إعادة التعيين",
       "description" : "يرجى إعادة المحاولة مرة أخرى. إذا استمرت المشكلة، يرجى حفظ سجلاتك باستخدام الزر أدناه وتقديمها إلى فريق دعم Ledger."
     },
+    "ImageCommitRefusedOnDevice" : {
+      "title" : "الالتزام بالصورة رُفِض على الجهاز (TODO: final wording)",
+      "description" : "إذا لم تكن هذه الصورة بالمقاس المناسب، يُمكنك المحاولة مرة ثانية مع صورة أخرى."
+    },
+    "ImageLoadRefusedOnDevice" : {
+      "title" : "تحميل الصورة رُفض على الجهاز (TODO: final wording)",
+      "description" : "إذا لم تكن هذه الصورة بالمقاس المناسب، يُمكنك المحاولة مرة ثانية مع صورة أخرى."
+    },
     "InvalidAddress" : {
       "title" : "هذا ليس عنوان {{currencyName}} صحيح"
     },
@@ -412,6 +421,10 @@
     "NotEnoughBalance" : {
       "title" : "عفواً، الأموال المتوفرة غير كافية",
       "description" : "يرجى التأكد من وجود أموال كافية في الحساب."
+    },
+    "NoSuchAppOnProvider" : {
+      "title" : "لا يمكن العثور على التطبيق {{appName}} للتهيئة الخاصة بك.",
+      "description" : "حاول إعادة تثبيت التطبيق من المدير"
     },
     "NotEnoughGas" : {
       "title" : "ETH غير كافٍ لتغطية رسوم الشبكة",
@@ -728,6 +741,9 @@
     "ImageProcessingError" : {
       "title" : "فشل معالجة الصورة",
       "description" : "يُرجى المحاولة مرة أخرى بصورة أخرى"
+    },
+    "HederaAddAccountError" : {
+      "title" : "لم تتم إضافة حسابك. يرجى إعادة المحاولة."
     }
   },
   "crash" : {
@@ -775,6 +791,9 @@
     "failed" : {
       "biometrics" : {
         "title" : "إلغاء قفل {{biometricsType}} فشل",
+        "touchid" : "مُعرّف البصمة (TouchID)",
+        "faceid" : "مُعرّف الوجه (FaceID)",
+        "fingerprint" : "بصمة الإصبع",
         "description" : "أدخل كلمة المرور الخاصة بك للمتابعة",
         "authenticate" : "يرجى التوثيق باستخدام تطبيق Ledger Live"
       },
@@ -803,7 +822,10 @@
     },
     "enableBiometrics" : {
       "title" : "{{biometricsType}}",
-      "desc" : "إلغاء القفل باستخدام {{biometricsType}}"
+      "desc" : "إلغاء القفل باستخدام {{biometricsType}}",
+      "touchid" : "مُعرّف البصمة (TouchID)",
+      "faceid" : "مُعرّف الوجه (FaceID)",
+      "fingerprint" : "بصمة الإصبع"
     }
   },
   "reset" : {
@@ -1029,6 +1051,21 @@
     "comingSoon" : "قريباً",
     "mostPopular" : "الأكثر شعبية"
   },
+  "installSetOfApps" : {
+    "landing" : {
+      "estimatedTime" : "{{ minutes }} دقيقة",
+      "title" : "{{ productName }} يستخدم تطبيقات لتمكين المعاملات الآمنة على سلسلة الكتل",
+      "subtitle" : "نوصي بتنزيل مجموعة محددة من التطبيقات. يُمكنك تنزيل المزيد لاحقاً.",
+      "installCTA" : "تثبيت التطبيقات",
+      "skipCTA" : "سأفعل هذا لاحقاً"
+    },
+    "ongoing" : {
+      "loading" : "جاري التحميل ...",
+      "resolving" : "حل التبعيات",
+      "progress" : "تثبيت التطبيقات %{{progress}}",
+      "disclaimer" : "التطبيقات على {{ productName }} تُستخدم للموافقة على المعاملات. يمكنك إضافتها أو حذفها في أي وقت."
+    }
+  },
   "onboarding" : {
     "stepWelcome" : {
       "title" : "مرحبا بكم في Ledger",
@@ -1094,6 +1131,10 @@
         "title" : "ابدأ باللغة الإنجليزية",
         "cta" : "فهمت!",
         "desc" : "نحن نقوم بتقديم لغات إضافية لمساعدتك في بدء استخدام Ledger. يرجى العلم أن الجزء المتبقي من تجربة Ledger متاح حالياً باللغة الإنجليزية فقط."
+      },
+      "RestartModal" : {
+        "title" : "Restart required",
+        "paragraph" : "The selected language requires the application to restart. Are you sure you want to continue?"
       }
     },
     "stepSelectDevice" : {
@@ -1101,6 +1142,7 @@
       "nanoS" : "Nano S",
       "nanoSP" : "Nano S Plus",
       "nanoX" : "Nano X",
+      "nanoFTS" : "Nano FTS",
       "blue" : "أزرق",
       "chooseDevice" : "اختر جهازك"
     },
@@ -1497,7 +1539,7 @@
       "cta" : "أنا مستعد لإجراء المسح الضوئي",
       "bullets" : {
         "0" : {
-          "label" : "في تطبيق سطح المكتب، اختر <1>إعدادات > حسابات > تصدير الحساب</1>."
+          "label" : "في تطبيق سطح المكتب، اختر\n<1>إعدادات > حسابات > تصدير الحساب</1>."
         },
         "1" : {
           "label" : "قم بإجراء مسح ضوئي لكود LiveQR بهاتفك."
@@ -1639,10 +1681,134 @@
         "subtitle" : "قم بتأكيد الكود على {{productName}} خاصتك"
       },
       "error" : {
-        "title" : "لم يتم إجراء الإقران بنجاح",
-        "subtitle" : "يبدو أنه قد حدث خطأ ما! تأكد من تشغيل البلوتوث لديك وأن {{productName}} خاصتك قريبة",
+        "title" : "الإقران لم ينجح",
+        "subtitle" : "يبدو أنه قد حدث خطأ ما!تأكد من تشغيل البلوتوث لديك وأن {{productName}} خاصتك قريبة.",
         "retryCta" : "أعد المحاولة"
       }
+    }
+  },
+  "syncOnboarding" : {
+    "title" : "إعداد {{deviceName}}",
+    "estimatedTimeFormat" : "{{estimatedTime}} دقيقة",
+    "deviceSelection" : {
+      "title" : "ما الجهاز الذي تمتلكه؟",
+      "subtitle" : "اختر محفظة Ledger التي تريد إعدادها مع Ledger Live",
+      "brand" : "Ledger",
+      "setupTime" : "{{time}} دقيقة"
+    },
+    "scanning" : {
+      "title" : "هل تبحث عن {{productName}} خاصتك",
+      "description" : "يرجى التأكد من إلغاء قفل {{productName}} خاصتك وأنه تم تمكين البلوتوث"
+    },
+    "pairing" : {
+      "success" : {
+        "title" : "تم الإقران مع {{deviceName}}"
+      },
+      "loading" : {
+        "title" : "جارٍ الإقران مع {{deviceName}}",
+        "subtitle" : "قم بتأكيد الكود على {{productName}} خاصتك"
+      },
+      "error" : {
+        "title" : "الإقران لم ينجح",
+        "subtitle" : "يبدو أنه قد حدث خطأ ما! تأكد من تشغيل البلوتوث لديك وأن {{productName}} خاصتك قريبة"
+      }
+    },
+    "languageSelect" : {
+      "title" : "لغة التطبيق"
+    },
+    "firmwareLanguageUpdateDrawer" : {
+      "title" : "تغيير اللغة على {{productName}} خاصتك",
+      "description" : "Ledger Live الآن باللغة {{newLanguage}}. هل ترغب في استخدام اللغة {{newLanguage}} على {{productName}} خاصتك أيضاً؟",
+      "updateCta" : "تغيير اللغة",
+      "cancelCta" : "إلغاء"
+    },
+    "desyncDrawer" : {
+      "title" : "لا يمكننا الاتصال بـ {{productName}} خاصتك",
+      "description" : "يرجى التأكد من أن {{productName}} خاصتك قريبة وغير مُقفلة. تحقق لمعرفة إذا كان البلوتوث مُمكن على هاتفك الجوّال",
+      "retryCta" : "أعد المحاولة",
+      "helpCta" : "احصل على مساعدة"
+    },
+    "resyncOverlay" : {
+      "content" : "يبدو أن الاتصال بـ {{productName}} خاصتك قد فُقد. جارٍ إعادة الاتصال"
+    },
+    "helpDrawer" : {
+      "title" : "هل تحتاج إلى بعض المساعدة بخصوص كُتيّب الإعداد؟",
+      "description" : "Lorem Elsass ipsum aliquam bissame Ober schae ffolsheim gehts messti de Bischheim tellus blottkopf, dui sed libero. hopla libero, placerat leo eget Gal",
+      "docCta" : "عرض الأسئلة الأكثر شيوعاً لدينا",
+      "supportCta" : "التحدث مع شخص"
+    },
+    "pairingStep" : {
+      "title" : "تم إقران {{productName}}",
+      "description" : "واصل إعداد {{productName}} خاصتك وعاود النظر هنا للحصول على مساعدة خطوة بخطوة"
+    },
+    "pinStep" : {
+      "title" : "اختر كود PIN خاصتك",
+      "description" : "كود PIN خاصتك يمنع أي وصول غير مرغوب به إلى {{productName}} خاصتك. لا تشاركه مطلقاً",
+      "warning" : "أي شخص يعرف كود PIN خاصتك ولديه إمكانية الوصول إلى {{productName}} خاصتك يستطيع سرقة أصولك إلى الأبد"
+    },
+    "seedStep" : {
+      "title" : "قم بإعداد عبارة الاسترداد خاصتك",
+      "description" : "عبارة الاسترداد الخاصة بك هي قائمة سرية من 24 كلمة تقوم بنسخ مفاتيحك الخاصة أحتيطياً. {{productName}} خاصتك تنتج عبارة استرداد فريدة. Ledger لا تحتفظ بنسخة منها"
+    },
+    "softwareChecksSteps" : {
+      "title" : "التحقق من نظام التشغيل",
+      "genuineCheckRequestDrawer" : {
+        "title" : "لنتأكد من أن {{productName}} خاصتك أصلية",
+        "checkCta" : "اختبار الأصالة"
+      },
+      "allowManagerDrawer" : {
+        "wording" : "Ledger Live"
+      },
+      "genuineCheckCancelledDrawer" : {
+        "title" : "تم إلغاء اختبار الأصالة على Nano خاصتك",
+        "description" : "هذا الاختبار ضروري للتأكد من أن {{productName}} خاصتك آمنة للاستخدام",
+        "retryCta" : "إجراء اختبار الأصالة مجدداً",
+        "skipCta" : "ربّما في وقت لاحق"
+      },
+      "updateAvailableDrawer" : {
+        "title" : "تم العثور على برنامج جديد",
+        "description" : "لتصل إلى أحدث ميزات الأمان، نوصي بشدة بتحديث {{productName}} خاصتك",
+        "updateCta" : "تحديث"
+      },
+      "genuineCheckStep" : {
+        "inactive" : {
+          "title" : "اختبار الأصالة"
+        },
+        "active" : {
+          "title" : "التحقق من {{productName}}"
+        },
+        "completed" : {
+          "title" : "{{productName}} خاصتك أصلية"
+        },
+        "failed" : {
+          "title" : "لم يتم التحقق من أمان الجهاز"
+        }
+      },
+      "firmwareUpdateStep" : {
+        "inactive" : {
+          "title" : "التحقق من البرامج"
+        },
+        "active" : {
+          "title" : "التحقق من إصدار البرنامج"
+        },
+        "completed" : {
+          "updateAvailable" : {
+            "title" : "إصدار البرنامج {{firmwareVersion}} متاح"
+          },
+          "noUpdateAvailable" : {
+            "title" : "البرنامج مُحدّث إلى آخر إصدار"
+          }
+        },
+        "failed" : {
+          "title" : "فشل تحديث البرنامج"
+        }
+      }
+    },
+    "readyStep" : {
+      "title" : "{{productName}} مستعد"
+    },
+    "completion" : {
+      "title" : "أنت المتحكّم الآن"
     }
   },
   "tabs" : {
@@ -1974,6 +2140,7 @@
       },
       "advanced" : {
         "title" : "سجلات متقدمة",
+        "warningDerivation" : "هذا مفتاح عام ممتد {{tag}}. عند استيراده إلى محفظة طرف ثالث، اختر نفس نمط الاشتقاق.",
         "desc" : ""
       }
     },
@@ -3309,6 +3476,10 @@
     "appNotInstalled" : "يُرجى تثبيت تطبيق {{appName}}",
     "appNotInstalled_plural" : "الرجاء تثبيت تطبيقات {{appName}}",
     "useAnotherDevice" : "استخدام جهاز آخر",
+    "deviceNotOnboarded" : {
+      "title" : "Ledger خاصتك غير مُستعدة للاستخدام بعد",
+      "description" : "ينبغي أن تقوم بإعداد {{deviceName}} أولاً. سنرشدك خلال عملية إعداد الجهاز"
+    },
     "deviceInBootloader" : {
       "title" : "الجهاز في وضع Bootloader.",
       "description" : "انقر \"Continue [متابعة]\" لتحديثه."
@@ -3457,6 +3628,23 @@
   "manager" : {
     "tabTitle" : "جهازي Ledger",
     "title" : "جهازي Ledger",
+    "selectDevice" : {
+      "saved" : {
+        "title" : "الأجهزة",
+        "description" : "قم بإدارة أجهزة Ledger المحفوظة خاصتك"
+      },
+      "addNewCTA" : "إضافة جديد",
+      "connectExistingLedger" : "توصيل Ledger موجود بالفعل",
+      "connectExistingLedgerDescription" : "لديك Ledger تم إعدادها؟ قم بإقرانها عبر البلوتوث",
+      "setUpNewLedger" : "إعداد Ledger جديدة",
+      "setUpNewLedgerDescription" : "اشتريت Ledger جديدة؟ انقر هنا لإعدادها",
+      "buyDeviceCTA" : "تحتاج Ledger جديدة؟ شراء واحدة",
+      "item" : {
+        "usb" : "متّصلة عبر USB",
+        "available" : "متوفرة. انقر للتوصيل",
+        "unavailable" : "غير مُتّصلة"
+      }
+    },
     "connect" : "اختر جهازك",
     "appsCatalog" : "كتالوج التطبيقات",
     "installedApps" : "التطبيقات المثبّتة",
@@ -3663,6 +3851,17 @@
       "description" : "قم بتحديث برنامج Ledger Nano الثابت عن طريق توصيله إلى تطبيق Ledger Live على سطح المكتب",
       "pleaseConnectUsbTitle" : "كبل USB مطلوب",
       "pleaseConnectUsbDescription" : "لبدء تحديث البرنامج الثابت، قم بتوصيل {{deviceName}} خاصتك بهاتفك الجوال باستخدام كبل USB."
+    }
+  },
+  "firmwareUpdateRequired" : {
+    "updateAvailableFromLLM" : {
+      "title" : "تحديث البرنامج الثابت مطلوب",
+      "description" : "لتنفيذ هذا الإجراء، تحتاج أولاً إلى تحديث البرنامج الثابت لجهازك {{ deviceName }}.",
+      "cta" : "انتقل إلى My Ledger"
+    },
+    "updateNotAvailableFromLLM" : {
+      "title" : "تحديث البرنامج الثابت مطلوب على الكمبيوتر",
+      "description" : "تحديث {{ deviceName }} الخاص بك على Ledger Live لسطح المكتب."
     }
   },
   "FirmwareUpdateReleaseNotes" : {
@@ -5123,7 +5322,11 @@
       "retrySearchParams" : "يرجى إعادة محاولة البحث مع معلمات أخرى.",
       "trackFavAssets" : "قم بتتبع المفضلة لديك",
       "clickOnStarIcon" : "النقر على أيقونة النجمة بجوار أحد الأصول سيضفها تلقائياً إلى المفضلة لديك.",
-      "browseAssets" : "تصفح الأصول"
+      "browseAssets" : "تصفح الأصول",
+      "starred" : {
+        "title" : "تتبّع أصولك المفضلة!",
+        "desc" : "النقر على أيقونة \"النجمة\" بجوار أحد الأصول سيضيفهم تلقائياً إلى مفضلاتك"
+      }
     }
   },
   "nft" : {
@@ -5179,6 +5382,8 @@
     }
   },
   "customImage" : {
+    "title" : "صورة شاشة القَفل",
+    "replace" : "استبدال",
     "drawer" : {
       "title" : "اختر صورة",
       "options" : {
@@ -5188,7 +5393,18 @@
     "cropImage" : "قُصّ الصورة",
     "chooseConstrast" : "اختر التباين",
     "uploadAnotherImage" : "قم بتحميل صورة أخرى",
-    "selectContrast" : "اختر مستوى التباين"
+    "selectContrast" : "اختر مستوى التباين",
+    "allowPreview" : "السماح بعرض الصورة على {{productName}}",
+    "loadingPicture" : "تحميل الصورة على {{productName}}",
+    "pictureLoaded" : "تم تحميل الصورة",
+    "timeDisclaimer" : "قد يستغرق هذا حتى 30 ثانية",
+    "imageLoaded" : "تم تحميل الصورة على {{productName}}",
+    "confirmPicture" : "قم بالتأكيد على {{productName}}",
+    "title" : "اختر صورة.\nاخلق أسلوب.\nاجعل Ledger خاصة بك.",
+    "subtitle" : "ضع صورة لرمزك غير القابل للاستبدال المفضل أو صورة من هاتفك.",
+    "customImage" : "صورة مخصصة",
+    "choosePicture" : "اختر صورة",
+    "doThisLater" : "ربّما في وقت لاحق"
   },
   "postOnboarding" : {
     "hub" : {
@@ -5202,6 +5418,14 @@
     "walletCard" : {
       "title" : "بدء التشغيل",
       "description" : "انقر هنا لإنهاء إعداد {{productName}} الخاصة بك مع Ledger Live"
+    },
+    "actions" : {
+      "customImage" : {
+        "title" : "تخصيص جهازي Ledger",
+        "description" : "عن طريق إضافة صورة",
+        "popupLabel" : "تم تخصيص الجهاز",
+        "hubTitleAfterAction" : "الشاشة تبدو أنيقة"
+      }
     }
   }
 }

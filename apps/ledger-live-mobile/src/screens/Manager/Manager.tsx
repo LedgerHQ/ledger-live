@@ -8,8 +8,8 @@ import { predictOptimisticState } from "@ledgerhq/live-common/apps/index";
 import { SyncSkipUnderPriority } from "@ledgerhq/live-common/bridge/react/index";
 import { CommonActions } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
-import getDeviceInfo from "@ledgerhq/live-common/lib/hw/getDeviceInfo";
-import { withDevice } from "@ledgerhq/live-common/lib/hw/deviceAccess";
+import getDeviceInfo from "@ledgerhq/live-common/hw/getDeviceInfo";
+import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";
 import { useApps } from "./shared";
 // eslint-disable-next-line import/no-cycle
 import AppsScreen from "./AppsScreen";

@@ -16,7 +16,7 @@ import DebugBLE from "../../screens/DebugBLE";
 import DebugBLEBenchmark from "../../screens/DebugBLEBenchmark";
 import DebugCrash from "../../screens/DebugCrash";
 import DebugHttpTransport from "../../screens/DebugHttpTransport";
-import DebugFeatureFlags from "../../screens/DebugFeatureFlags";
+import DebugFeatureFlags from "../../screens/FeatureFlagsSettings";
 import DebugIcons from "../../screens/DebugIcons";
 import DebugLottie from "../../screens/DebugLottie";
 import DebugMultiAppInstall from "../../screens/DebugMultiAppInstall";

@@ -85,8 +85,9 @@
     "moreInfo" : "Mais Informações",
     "buyEth" : "Comprar Ethereum",
     "popular" : "populares",
+    "getSupport" : "Obter Ajuda",
     "comingSoon" : "Em Breve",
-    "getSupport" : "Obter Ajuda"
+    "restart" : "Reiniciar"
   },
   "errors" : {
     "countervaluesUnavailable" : {
@@ -321,6 +322,14 @@
       "title" : "Não foi possível redefinir",
       "description" : "Tente Novamente. Se o problema persistir, salve seus registros usando o botão abaixo e os forneça ao Suporte Ledger."
     },
+    "ImageCommitRefusedOnDevice" : {
+      "title" : "Commit de imagem recusado no dispositivo (TODO: final wording)",
+      "description" : "Se esta imagem não era a mais adequada, você pode tentar novamente com outra imagem."
+    },
+    "ImageLoadRefusedOnDevice" : {
+      "title" : "Carregamento de imagem recusada no dispositivo (TODO: final wording)",
+      "description" : "Se esta imagem não era a mais adequada, você pode tentar novamente com outra imagem."
+    },
     "InvalidAddress" : {
       "title" : "Este não é um endereço válido de {{currencyName}}."
     },
@@ -412,6 +421,10 @@
     "NotEnoughBalance" : {
       "title" : "Desculpe, fundos insuficientes",
       "description" : "Certifique-se de que a conta tenha fundos suficientes."
+    },
+    "NoSuchAppOnProvider" : {
+      "title" : "O aplicativo {{appName}} não pode ser encontrado para a sua configuração específica.",
+      "description" : "Tente reinstalar o aplicativo através do Manager"
     },
     "NotEnoughGas" : {
       "title" : "ETH insuficiente para a taxa de rede",
@@ -728,6 +741,9 @@
     "ImageProcessingError" : {
       "title" : "Falha no processamento da imagem",
       "description" : "Tente novamente com outra imagem"
+    },
+    "HederaAddAccountError" : {
+      "title" : "Sua conta não foi adicionada. Tente Novamente."
     }
   },
   "crash" : {
@@ -775,6 +791,9 @@
     "failed" : {
       "biometrics" : {
         "title" : "desbloqueio por {{biometricsType}} falhou",
+        "touchid" : "TouchID",
+        "faceid" : "Face ID",
+        "fingerprint" : "Impressão digital",
         "description" : "Insira sua senha para continuar",
         "authenticate" : "Autentique com o aplicativo Ledger Live"
       },
@@ -803,7 +822,10 @@
     },
     "enableBiometrics" : {
       "title" : "{{biometricsType}}",
-      "desc" : "Desbloquear com {{biometricsType}}"
+      "desc" : "Desbloquear com {{biometricsType}}",
+      "touchid" : "TouchID",
+      "faceid" : "Face ID",
+      "fingerprint" : "Impressão digital"
     }
   },
   "reset" : {
@@ -941,7 +963,7 @@
   },
   "buyDevice" : {
     "0" : {
-      "title" : "O dinheiro é seu. Tome o controle.",
+      "title" : "É seu dinheiro. Tome o controle.",
       "desc" : "Assuma o controle e tome a liberdade para administrar suas criptomoedas por conta própria."
     },
     "1" : {
@@ -1014,7 +1036,7 @@
         "desc" : "Explore os aplicativos parceiros da Ledger, tudo em um só lugar"
       },
       "earn" : {
-        "title" : "Ganhe",
+        "title" : "Ganhar",
         "desc" : "Aumente suas criptos com staking e empréstimos."
       },
       "mint" : {
@@ -1028,6 +1050,21 @@
     },
     "comingSoon" : "Em breve",
     "mostPopular" : "Mais populares"
+  },
+  "installSetOfApps" : {
+    "landing" : {
+      "estimatedTime" : "{{ minutes }} min",
+      "title" : "A {{ productName }} utiliza aplicativos para permitir transações seguras em blockchains",
+      "subtitle" : "Recomendamos que você baixe um conjunto padrão de aplicativos. Você pode baixar outros mais tarde",
+      "installCTA" : "Instalar aplicativos",
+      "skipCTA" : "Farei isso mais tarde."
+    },
+    "ongoing" : {
+      "loading" : "Carregando...",
+      "resolving" : "Resolvendo dependências",
+      "progress" : "Instalando aplicativos {{progress}}%",
+      "disclaimer" : "Aplicativos da {{ productName }} são usados para aprovar transações. Você pode adicioná-los ou removê-los a qualquer momento."
+    }
   },
   "onboarding" : {
     "stepWelcome" : {
@@ -1094,6 +1131,10 @@
         "title" : "Começar em inglês",
         "cta" : "Entendi!",
         "desc" : "Estamos introduzindo mais idiomas para ajudar seu embarque na Ledger. Esteja ciente de que o resto da experiência Ledger só está disponível em inglês atualmente."
+      },
+      "RestartModal" : {
+        "title" : "Necessário reiniciar",
+        "paragraph" : "O idioma selecionado exige que o aplicativo seja reiniciado. Tem certeza que deseja continuar?"
       }
     },
     "stepSelectDevice" : {
@@ -1101,6 +1142,7 @@
       "nanoS" : "Nano S",
       "nanoSP" : "Nano S Plus",
       "nanoX" : "Nano X",
+      "nanoFTS" : "Nano FTS",
       "blue" : "Blue",
       "chooseDevice" : "Escolha seu dispositivo"
     },
@@ -1497,7 +1539,7 @@
       "cta" : "Tudo pronto para escanear",
       "bullets" : {
         "0" : {
-          "label" : "No aplicativo de desktop, selecione <1>Configurações > Contas > Exportar Contas</1>."
+          "label" : "No aplicativo de desktop, selecione\n<1>Configurações > Contas > Exportar Contas</1>."
         },
         "1" : {
           "label" : "Escaneie o LiveQR Code com seu telefone."
@@ -1640,9 +1682,133 @@
       },
       "error" : {
         "title" : "Emparelhamento sem sucesso",
-        "subtitle" : "Parece que algo deu errado! Verifique se o seu bluetooth está ativado e se sua {{productName}} está próxima",
+        "subtitle" : "Parece que algo deu errado!\nVerifique se seu Bluetooth está habilitado e se sua {{productName}} está próxima.",
         "retryCta" : "Tente novamente"
       }
+    }
+  },
+  "syncOnboarding" : {
+    "title" : "Configurar {{deviceName}}",
+    "estimatedTimeFormat" : "{{estimatedTime}} min",
+    "deviceSelection" : {
+      "title" : "Qual dispositivo você tem?",
+      "subtitle" : "Escolha qual carteira Ledger você quer configurar com o Ledger Live",
+      "brand" : "Ledger",
+      "setupTime" : "{{time}} min"
+    },
+    "scanning" : {
+      "title" : "Buscando sua {{productName}}",
+      "description" : "Verifique se sua {{productName}} está desbloqueada e se o Bluetooth está habilitado."
+    },
+    "pairing" : {
+      "success" : {
+        "title" : "Emparelhado com {{deviceName}}"
+      },
+      "loading" : {
+        "title" : "Emparelhando com {{deviceName}}",
+        "subtitle" : "Confirme o código em sua {{productName}}"
+      },
+      "error" : {
+        "title" : "Emparelhamento sem sucesso",
+        "subtitle" : "Parece que algo deu errado! Verifique se o seu bluetooth está ativado e se sua {{productName}} está próxima"
+      }
+    },
+    "languageSelect" : {
+      "title" : "Idioma do aplicativo"
+    },
+    "firmwareLanguageUpdateDrawer" : {
+      "title" : "Mudar idioma na sua {{productName}}",
+      "description" : "A Ledger Live agora está em {{newLanguage}}. Você quer usar sua {{productName}} em {{newLanguage}} também?",
+      "updateCta" : "Mudar Idioma",
+      "cancelCta" : "Cancelar"
+    },
+    "desyncDrawer" : {
+      "title" : "Não foi possível se conectar sua {{productName}}",
+      "description" : "Certifique-se de que sua {{productName}} está próxima e desbloqueada. Verifique se o Bluetooth está habilitado no seu celular",
+      "retryCta" : "Tente novamente",
+      "helpCta" : "Obter Ajuda"
+    },
+    "resyncOverlay" : {
+      "content" : "Parece que a conexão com sua {{productName}} foi perdida. Reconectando"
+    },
+    "helpDrawer" : {
+      "title" : "Precisa de ajuda com o seu manual de configuração?",
+      "description" : "Lorem Elsass ipsum aliquam bissame Ober schae ffolsheim gehts messti de Bischheim tellus blottkopf, dui sed libero. hopla libero, placerat leo eget Gal",
+      "docCta" : "Vejas nossas Perguntas Frequentes",
+      "supportCta" : "Fale com um humano"
+    },
+    "pairingStep" : {
+      "title" : "A {{productName}} está pareada",
+      "description" : "Continue configurando sua {{productName}} e retorne aqui para uma assistência passo a passo"
+    },
+    "pinStep" : {
+      "title" : "Escolha seu PIN",
+      "description" : "O seu PIN previne qualquer acesso indesejado à sua {{productName}}. Nunca o compartilhe",
+      "warning" : "Qualquer pessoa que saiba o seu PIN e tenha acesso à sua {{productName}} pode roubar seus ativos para sempre"
+    },
+    "seedStep" : {
+      "title" : "Configure a sua frase de recuperação",
+      "description" : "Sua frase de recuperação é uma lista secreta de 24 palavras que respaldam suas chaves privadas. Sua {{productName}} gera uma frase de recuperação única. A Ledger não guarda uma cópia dela"
+    },
+    "softwareChecksSteps" : {
+      "title" : "Verificação do sistema operacional",
+      "genuineCheckRequestDrawer" : {
+        "title" : "Vamos certificar que sua {{productName}} é autêntica",
+        "checkCta" : "Verificar autenticidade"
+      },
+      "allowManagerDrawer" : {
+        "wording" : "Ledger Live"
+      },
+      "genuineCheckCancelledDrawer" : {
+        "title" : "A verificação de autenticidade foi cancelada na sua Nano",
+        "description" : "Está verificação é importante para garantir que sua {{productName}} é segura para usar",
+        "retryCta" : "Execute a verificação de autenticidade novamente",
+        "skipCta" : "Talvez mais tarde"
+      },
+      "updateAvailableDrawer" : {
+        "title" : "Novo software encontrado",
+        "description" : "Para acessar os últimos recursos de segurança, recomendamos muito atualizar sua {{productName}}",
+        "updateCta" : "Atualização"
+      },
+      "genuineCheckStep" : {
+        "inactive" : {
+          "title" : "Verificação de autenticidade"
+        },
+        "active" : {
+          "title" : "Verificando {{productName}}"
+        },
+        "completed" : {
+          "title" : "Sua {{productName}} é autêntica"
+        },
+        "failed" : {
+          "title" : "Segurança do dispositivo não verificada"
+        }
+      },
+      "firmwareUpdateStep" : {
+        "inactive" : {
+          "title" : "Verificação de software"
+        },
+        "active" : {
+          "title" : "Verificando versão do software"
+        },
+        "completed" : {
+          "updateAvailable" : {
+            "title" : "Versão {{firmwareVersion}} do software disponível"
+          },
+          "noUpdateAvailable" : {
+            "title" : "Versão do software atualizada"
+          }
+        },
+        "failed" : {
+          "title" : "Atualização do software falhou"
+        }
+      }
+    },
+    "readyStep" : {
+      "title" : "A {{productName}} está pronta"
+    },
+    "completion" : {
+      "title" : "Agora você está no controle"
     }
   },
   "tabs" : {
@@ -1974,6 +2140,7 @@
       },
       "advanced" : {
         "title" : "Registros avançados",
+        "warningDerivation" : "Esta é uma xpub {{tag}}. Ao importá-la para uma carteira de terceiros, escolha o mesmo modo de derivação.",
         "desc" : ""
       }
     },
@@ -2794,7 +2961,7 @@
     },
     "lending" : {
       "title" : "Emprestar Cripto",
-      "titleTransferTab" : "Ganhe",
+      "titleTransferTab" : "Ganhar",
       "descriptionTransferTab" : "Gere renda passiva.",
       "actionTitle" : "Emprestar",
       "accountActions" : {
@@ -3309,6 +3476,10 @@
     "appNotInstalled" : "Por favor, instale o aplicativo {{appName}}.",
     "appNotInstalled_plural" : "Por favor, instale os aplicativos {{appName}}.",
     "useAnotherDevice" : "Use outro dispositivo",
+    "deviceNotOnboarded" : {
+      "title" : "Sua Ledger ainda não está pronta para ser usada",
+      "description" : "Você precisa configurar a {{deviceName}} primeiro. Nós vamos guiar você pelo processo de configuração do dispositivo"
+    },
     "deviceInBootloader" : {
       "title" : "Dispositivo no modo Bootloader.",
       "description" : "Clique em \"Continuar\" para atualizá-lo."
@@ -3457,6 +3628,23 @@
   "manager" : {
     "tabTitle" : "My Ledger",
     "title" : "My Ledger",
+    "selectDevice" : {
+      "saved" : {
+        "title" : "Dispositivos",
+        "description" : "Gerencie suas Ledgers salvas"
+      },
+      "addNewCTA" : "Adicionar Novo",
+      "connectExistingLedger" : "Conectar uma Ledger existente",
+      "connectExistingLedgerDescription" : "Já tem uma Ledger configurada? Emparelhe-a com bluetooth",
+      "setUpNewLedger" : "Configurar uma nova Ledger",
+      "setUpNewLedgerDescription" : "Comprou uma nova Ledger? Clique aqui para configurá-la",
+      "buyDeviceCTA" : "Precisa de uma nova Ledger? Compre uma",
+      "item" : {
+        "usb" : "Conectada com USB",
+        "available" : "Disponível. Toque para conectar",
+        "unavailable" : "Não conectada"
+      }
+    },
     "connect" : "Selecione seu dispositivo",
     "appsCatalog" : "Catálogo de aplicativos",
     "installedApps" : "Aplicativos Instalados",
@@ -3663,6 +3851,17 @@
       "description" : "Atualize o firmware da sua Ledger Nano conectando-a ao aplicativo Ledger Live no desktop",
       "pleaseConnectUsbTitle" : "Necessário cabo USB",
       "pleaseConnectUsbDescription" : "Para iniciar a atualização do firmware, conecte sua {{deviceName}} ao seu celular usando um cabo USB."
+    }
+  },
+  "firmwareUpdateRequired" : {
+    "updateAvailableFromLLM" : {
+      "title" : "Atualização de firmware necessária",
+      "description" : "Para realizar esta ação, você precisa primeiro atualizar o firmware da sua {{ deviceName }}.",
+      "cta" : "Vá a Minha Ledger"
+    },
+    "updateNotAvailableFromLLM" : {
+      "title" : "Atualização de firmware necessária no computador",
+      "description" : "Atualize sua {{ deviceName }} no Ledger Live Desktop."
     }
   },
   "FirmwareUpdateReleaseNotes" : {
@@ -5123,7 +5322,11 @@
       "retrySearchParams" : "Tente pesquisar novamente usando outros parâmetros.",
       "trackFavAssets" : "Acompanhe seus favoritos",
       "clickOnStarIcon" : "Selecione o ícone de estrela ao lado de um ativo para adicioná-lo automaticamente aos seus favoritos.",
-      "browseAssets" : "Pesquisar Ativos"
+      "browseAssets" : "Pesquisar Ativos",
+      "starred" : {
+        "title" : "Rastreie seus ativos favoritos!",
+        "desc" : "Para adicionar um ativo aos seus favoritos automaticamente, clique no ícone de estrela próximo a ele"
+      }
     }
   },
   "nft" : {
@@ -5179,6 +5382,8 @@
     }
   },
   "customImage" : {
+    "title" : "Imagem da tela de bloqueio",
+    "replace" : "Substituir",
     "drawer" : {
       "title" : "Escolha uma imagem",
       "options" : {
@@ -5188,7 +5393,18 @@
     "cropImage" : "Cortar imagem",
     "chooseConstrast" : "Escolher contraste",
     "uploadAnotherImage" : "Enviar outra imagem",
-    "selectContrast" : "Selecione o contraste"
+    "selectContrast" : "Selecione o contraste",
+    "allowPreview" : "Permitir a visualização da imagem em {{productName}}",
+    "loadingPicture" : "Carregando imagem em {{productName}}",
+    "pictureLoaded" : "Foto carregada",
+    "timeDisclaimer" : "Isso pode demorar até 30 segundos",
+    "imageLoaded" : "Imagem carregada em {{productName}}",
+    "confirmPicture" : "Confirme na {{productName}}",
+    "title" : "Escolha uma foto.\nCrie uma clima.\nTorne a sua Ledger só sua.",
+    "subtitle" : "Coloque uma foto do seu NFT favorito ou uma foto do seu telefone.",
+    "customImage" : "Imagem personalizada",
+    "choosePicture" : "Escolha uma foto",
+    "doThisLater" : "Talvez mais tarde"
   },
   "postOnboarding" : {
     "hub" : {
@@ -5202,6 +5418,14 @@
     "walletCard" : {
       "title" : "Como Começar",
       "description" : "Clique aqui para finalizar a configuração da sua {{productName}} com a Ledger Live"
+    },
+    "actions" : {
+      "customImage" : {
+        "title" : "Personalizar meu dispositivo Ledger",
+        "description" : "Ao adicionar uma imagem",
+        "popupLabel" : "Dispositivo personalizado",
+        "hubTitleAfterAction" : "Essa tela ficou demais"
+      }
     }
   }
 }

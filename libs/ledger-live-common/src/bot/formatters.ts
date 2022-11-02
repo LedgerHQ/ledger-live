@@ -79,6 +79,7 @@ export function formatReportForConsole<T extends Transaction>({
   testDestinationDuration,
   testDuration,
   error,
+  errorTime,
 }: MutationReport<T>): string {
   let str = "";
   str += `necessary accounts resynced in ${formatTime(
@@ -189,6 +190,11 @@ export function formatReportForConsole<T extends Transaction>({
 
   if (error) {
     str += `⚠️ ${formatError(error, true)}\n`;
+    if (mutationTime && errorTime) {
+      str += `(totally spent ${formatTime(
+        errorTime - mutationTime
+      )} – ends at ${new Date().toISOString()})`;
+    }
   }
 
   return str;

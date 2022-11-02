@@ -1,6 +1,5 @@
 {
   "$schema": "https://turborepo.org/schema.json",
-  "baseBranch": "origin/develop",
   "globalDependencies": ["turbo.json"],
   "pipeline": {
     "build": {
@@ -13,17 +12,19 @@
     },
     "lint": {
       "outputs": [],
-      "dependsOn": ["$CI_OS"]
+      "env": ["CI_OS"]
     },
     "lint:fix": {
       "outputs": []
     },
     "typecheck": {
       "outputs": [],
-      "dependsOn": ["^build", "$CI_OS"]
+      "dependsOn": ["^build"],
+      "env": ["CI_OS"]
     },
     "test": {
-      "dependsOn": ["lint", "typecheck", "build", "$CI_OS"],
+      "dependsOn": ["lint", "typecheck", "build"],
+      "env": ["CI_OS"],
       "outputs": []
     },
     "start": {
@@ -85,19 +86,23 @@
       ]
     },
     "@ledgerhq/live-common#typecheck": {
-      "dependsOn": ["build", "$CI_OS"],
+      "dependsOn": ["build"],
+      "env": ["CI_OS"],
       "outputs": []
     },
     "live-mobile#lint": {
-      "dependsOn": ["^build", "$CI_OS"],
+      "dependsOn": ["^build"],
+      "env": ["CI_OS"],
       "outputs": []
     },
     "ledger-live-desktop#lint": {
-      "dependsOn": ["^build", "$CI_OS"],
+      "dependsOn": ["^build"],
+      "env": ["CI_OS"],
       "outputs": []
     },
     "ledger-live-desktop#test": {
-      "dependsOn": ["ledger-live-desktop#build:testing", "$CI_OS"],
+      "dependsOn": ["ledger-live-desktop#build:testing"],
+      "env": ["CI_OS"],
       "outputs": []
     },
     "ledger-live-desktop#build:testing": {
@@ -106,11 +111,13 @@
     },
     "@ledgerhq/native-ui#typecheck": {
       "outputs": [],
-      "dependsOn": ["build", "$CI_OS"]
+      "dependsOn": ["build"],
+      "env": ["CI_OS"]
     },
     "@ledgerhq/react-ui#typecheck": {
       "outputs": [],
-      "dependsOn": ["build", "$CI_OS"]
+      "dependsOn": ["build"],
+      "env": ["CI_OS"]
     }
   }
 }

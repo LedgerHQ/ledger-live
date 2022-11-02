@@ -85,8 +85,9 @@
     "moreInfo" : "Mehr Infos",
     "buyEth" : "Ethereum kaufen",
     "popular" : "beliebt",
+    "getSupport" : "Hilfe",
     "comingSoon" : "In Kürze verfügbar",
-    "getSupport" : "Hilfe"
+    "restart" : "Neustarten"
   },
   "errors" : {
     "countervaluesUnavailable" : {
@@ -321,6 +322,14 @@
       "title" : "Entschuldigung, die Verbindung konnte nicht zurückgesetzt werden",
       "description" : "Bitte versuchen Sie es erneut. Wenn das Problem weiterhin besteht, speichern Sie bitte Ihre Protokolle über die Schaltfläche unten und stellen Sie sie dem Ledger-Support zur Verfügung."
     },
+    "ImageCommitRefusedOnDevice" : {
+      "title" : "Bildübertragung auf Gerät verweigert (TODO: endgültiger Wortlaut)",
+      "description" : "Sollte dieses Bild nicht passen, können Sie es mit einem anderen Bild erneut versuchen."
+    },
+    "ImageLoadRefusedOnDevice" : {
+      "title" : "Laden von Bildern auf Gerät verweigert (TODO: endgültige Formulierung)",
+      "description" : "Sollte dieses Bild nicht passen, können Sie es mit einem anderen Bild erneut versuchen."
+    },
     "InvalidAddress" : {
       "title" : "Dies ist keine gültige {{currencyName}} Adresse"
     },
@@ -412,6 +421,10 @@
     "NotEnoughBalance" : {
       "title" : "Entschuldigung, Guthaben reicht nicht aus",
       "description" : "Bitte stellen Sie sicher, dass das Konto ausreichend gedeckt ist."
+    },
+    "NoSuchAppOnProvider" : {
+      "title" : "Die {{appName}}-App kann für Ihre spezifische Konfiguration nicht gefunden werden.",
+      "description" : "Versuchen Sie, die App aus dem Manager heraus neu zu installieren"
     },
     "NotEnoughGas" : {
       "title" : "Nicht genügend ETH für Netzwerkgebühr",
@@ -728,6 +741,9 @@
     "ImageProcessingError" : {
       "title" : "Die Verarbeitung des Bildes ist fehlgeschlagen",
       "description" : "Bitte versuchen Sie es noch einmal mit einem anderen Bild"
+    },
+    "HederaAddAccountError" : {
+      "title" : "Ihr Konto wurde nicht hinzugefügt. Bitte versuchen Sie es erneut."
     }
   },
   "crash" : {
@@ -775,6 +791,9 @@
     "failed" : {
       "biometrics" : {
         "title" : "{{biometricsType}} Entsperren fehlgeschlagen",
+        "touchid" : "TouchID",
+        "faceid" : "FaceID",
+        "fingerprint" : "Fingerabdruck",
         "description" : "Passwort eingeben um fortzufahren",
         "authenticate" : "Bitte authentifizieren Sie sich mit der Ledger Live-App"
       },
@@ -803,7 +822,10 @@
     },
     "enableBiometrics" : {
       "title" : "{{biometricsType}}",
-      "desc" : "Entsperren mit {{biometricsType}}"
+      "desc" : "Entsperren mit {{biometricsType}}",
+      "touchid" : "TouchID",
+      "faceid" : "FaceID",
+      "fingerprint" : "Fingerabdruck"
     }
   },
   "reset" : {
@@ -1029,6 +1051,21 @@
     "comingSoon" : "In Kürze verfügbar",
     "mostPopular" : "Am beliebtesten"
   },
+  "installSetOfApps" : {
+    "landing" : {
+      "estimatedTime" : "{{ minutes }} Min.",
+      "title" : "{{ productName }} nutzt Apps, um sichere Blockchain-Transaktionen zu ermöglichen",
+      "subtitle" : "Wir empfehlen, eine Standardauswahl an Apps herunterzuladen. Sie können später mehr herunterladen.",
+      "installCTA" : "Apps installieren",
+      "skipCTA" : "Ich mache das später"
+    },
+    "ongoing" : {
+      "loading" : "Lade Daten...",
+      "resolving" : "Auflösen von Abhängigkeiten",
+      "progress" : "Installieren von Apps {{progress}} %",
+      "disclaimer" : "Apps auf {{ productName }} werden zur Autorisierung von Transaktionen verwendet. Sie können sie jederzeit hinzufügen oder entfernen."
+    }
+  },
   "onboarding" : {
     "stepWelcome" : {
       "title" : "Willkommen bei Ledger",
@@ -1094,6 +1131,10 @@
         "title" : "Erste Schritte auf Englisch",
         "cta" : "Verstanden!",
         "desc" : "Wir führen zusätzliche Sprachen ein, um Ihnen das Onboarding mit Ledger zu erleichtern. Bitte beachten Sie, dass der Rest der Ledger-Erfahrung derzeit nur auf Englisch verfügbar ist."
+      },
+      "RestartModal" : {
+        "title" : "Neustart erforderlich",
+        "paragraph" : "Für die ausgewählte Sprache muss die Anwendung neu gestartet werden. Sind Sie sicher, dass Sie weitermachen möchten?"
       }
     },
     "stepSelectDevice" : {
@@ -1101,6 +1142,7 @@
       "nanoS" : "Nano S",
       "nanoSP" : "Nano S Plus",
       "nanoX" : "Nano X",
+      "nanoFTS" : "Nano FTS",
       "blue" : "Blau",
       "chooseDevice" : "Wählen Sie Ihr Gerät"
     },
@@ -1640,9 +1682,133 @@
       },
       "error" : {
         "title" : "Kopplung fehlgeschlagen",
-        "subtitle" : "Offenbar ist ein Problem aufgetreten. Überprüfen Sie, ob Bluetooth aktiviert ist und sich Ihre {{productName}} in der Nähe befindet.",
+        "subtitle" : "Offenbar ist ein Problem aufgetreten!\nÜberprüfen Sie, ob Ihr Bluetooth aktiviert ist und sich Ihre {{productName}} in der Nähe befindet.",
         "retryCta" : "Wiederholen"
       }
+    }
+  },
+  "syncOnboarding" : {
+    "title" : "{{deviceName}} einrichten",
+    "estimatedTimeFormat" : "{{estimatedTime}} Min.",
+    "deviceSelection" : {
+      "title" : "Welches Gerät nutzen Sie?",
+      "subtitle" : "Wählen Sie aus, welche Ledger-Wallet Sie mit Ledger Live einrichten möchten",
+      "brand" : "Ledger",
+      "setupTime" : "{{time}} Min."
+    },
+    "scanning" : {
+      "title" : "Nach Ihrer {{productName}} wird gesucht",
+      "description" : "Bitte stellen Sie sicher, dass Ihre {{productName}} entsperrt und Bluetooth aktiviert ist."
+    },
+    "pairing" : {
+      "success" : {
+        "title" : "Gekoppelt mit {{deviceName}}"
+      },
+      "loading" : {
+        "title" : "Koppeln mit {{deviceName}}",
+        "subtitle" : "Bestätigen Sie den Code auf Ihrer {{productName}}"
+      },
+      "error" : {
+        "title" : "Kopplung fehlgeschlagen",
+        "subtitle" : "Offenbar ist ein Problem aufgetreten. Überprüfen Sie, ob Bluetooth aktiviert ist und sich Ihre {{productName}} in der Nähe befindet."
+      }
+    },
+    "languageSelect" : {
+      "title" : "App-Sprache"
+    },
+    "firmwareLanguageUpdateDrawer" : {
+      "title" : "Umstellen der Sprache auf Ihrer {{productName}}",
+      "description" : "Ledger Live läuft gegenwärtig auf {{newLanguage}}. Möchten Sie auch {{newLanguage}} auf Ihrer {{productName}} verwenden?",
+      "updateCta" : "Sprache wechseln",
+      "cancelCta" : "Abbrechen"
+    },
+    "desyncDrawer" : {
+      "title" : "Wir konnten keine Verbindung mit Ihrer {{productName}} herstellen",
+      "description" : "Bitte stellen Sie sicher, dass sich Ihre {{productName}} in der Nähe befindet und entsperrt ist. Überprüfen Sie, ob Bluetooth auf Ihrem Handy aktiviert ist",
+      "retryCta" : "Wiederholen",
+      "helpCta" : "Hilfe erhalten"
+    },
+    "resyncOverlay" : {
+      "content" : "Offenbar wurde die Verbindung zu Ihrem {{productName}} getrennt. Verbindung wird wiederhergestellt."
+    },
+    "helpDrawer" : {
+      "title" : "Benötigen Sie Hilfe mit Ihrem Einrichtungshandbuch?",
+      "description" : "Lorem Elsass ipsum aliquam bissame Ober schae ffolsheim gehts messti de Bischheim tellus blottkopf, dui sed libero. hopla libero, placerat leo eget Gal.",
+      "docCta" : "Unsere FAQ anzeigen",
+      "supportCta" : "Sprechen Sie mit einem Menschen"
+    },
+    "pairingStep" : {
+      "title" : "{{productName}} ist gekoppelt",
+      "description" : "Sie können die Einrichtung Ihrer {{productName}} jetzt fortsetzen. Bei Bedarf finden Sie hier eine ausführliche Anleitung."
+    },
+    "pinStep" : {
+      "title" : "PIN auswählen",
+      "description" : "Ihre PIN verhindert unerwünschten Zugriff auf Ihre {{productName}}. Niemals weitergeben",
+      "warning" : "Jede Person, die Ihre PIN kennt und Zugriff auf Ihre {{productName}} hat, kann Ihr Vermögen für immer stehlen."
+    },
+    "seedStep" : {
+      "title" : "Wiederherstellungsphrase festlegen",
+      "description" : "Ihre Wiederherstellungsphrase ist eine geheime Liste mit 24 Wörtern, mit denen Ihre privaten Schlüssel gesichert werden. Ihre {{productName}} erzeugt eine eindeutige Wiederherstellungsphrase. Ledger bewahrt keine Kopie davon auf."
+    },
+    "softwareChecksSteps" : {
+      "title" : "Betriebssystemprüfung",
+      "genuineCheckRequestDrawer" : {
+        "title" : "Wir überprüfen nun, ob Ihre {{productName}} ein Originalgerät ist",
+        "checkCta" : "Echtheit prüfen"
+      },
+      "allowManagerDrawer" : {
+        "wording" : "Ledger Live"
+      },
+      "genuineCheckCancelledDrawer" : {
+        "title" : "Die Echtheitsprüfung auf Ihrer Nano wurde abgebrochen",
+        "description" : "Diese Überprüfung ist unverzichtbar, um dafür zu sorgen, dass Ihre {{productName}} sicher verwendet werden kann.",
+        "retryCta" : "Echtheitsprüfung wiederholen",
+        "skipCta" : "Vielleicht später"
+      },
+      "updateAvailableDrawer" : {
+        "title" : "Neue Software gefunden",
+        "description" : "Damit Sie auf die neuesten Sicherheitsfunktionen zugreifen können, empfehlen wir dringend, ein Update Ihrer {{productName}} durchzuführen.",
+        "updateCta" : "Aktualisieren"
+      },
+      "genuineCheckStep" : {
+        "inactive" : {
+          "title" : "Echtheitsprüfung"
+        },
+        "active" : {
+          "title" : "{{productName}} wird überprüft"
+        },
+        "completed" : {
+          "title" : "Ihre {{productName}} ist ein Originalgerät"
+        },
+        "failed" : {
+          "title" : "Gerätesicherheit wurde nicht geprüft"
+        }
+      },
+      "firmwareUpdateStep" : {
+        "inactive" : {
+          "title" : "Prüfung der Software"
+        },
+        "active" : {
+          "title" : "Softwareversion wird geprüft"
+        },
+        "completed" : {
+          "updateAvailable" : {
+            "title" : "Softwareversion {{firmwareVersion}} vorhanden"
+          },
+          "noUpdateAvailable" : {
+            "title" : "Softwareversion aktuell"
+          }
+        },
+        "failed" : {
+          "title" : "Softwareupdate fehlgeschlagen"
+        }
+      }
+    },
+    "readyStep" : {
+      "title" : "{{productName}} ist bereit"
+    },
+    "completion" : {
+      "title" : "Jetzt haben Sie alles unter Kontrolle"
     }
   },
   "tabs" : {
@@ -1974,6 +2140,7 @@
       },
       "advanced" : {
         "title" : "Erweiterte Protokolle",
+        "warningDerivation" : "Das ist ein {{tag}} xpub. Wenn Sie es in eine Wallet eines Drittanbieters importieren, wählen Sie denselben Ableitungsmodus.",
         "desc" : ""
       }
     },
@@ -3309,6 +3476,10 @@
     "appNotInstalled" : "Bitte installieren Sie die {{appName}} App",
     "appNotInstalled_plural" : "Bitte installieren Sie die {{appName}} Apps",
     "useAnotherDevice" : "Anderes Gerät verwenden",
+    "deviceNotOnboarded" : {
+      "title" : "Ihr Ledger ist noch nicht einsatzbereit",
+      "description" : "Sie müssen {{deviceName}} zuerst einrichten. Wir führen Sie durch den Einrichtungsprozess des Geräts"
+    },
     "deviceInBootloader" : {
       "title" : "Gerät im Bootloader-Modus.",
       "description" : "Klicken Sie auf „Weiter“, um das Update zu starten."
@@ -3457,6 +3628,23 @@
   "manager" : {
     "tabTitle" : "My Ledger",
     "title" : "My Ledger",
+    "selectDevice" : {
+      "saved" : {
+        "title" : "Geräte",
+        "description" : "Ihre gespeicherten Ledger verwalten"
+      },
+      "addNewCTA" : "Neu hinzufügen",
+      "connectExistingLedger" : "Vorhandenes Ledger verbinden",
+      "connectExistingLedgerDescription" : "Haben Sie bereits ein Ledger, das eingerichtet ist? Verbinden Sie es mit Bluetooth",
+      "setUpNewLedger" : "Richten Sie ein neues Ledger ein",
+      "setUpNewLedgerDescription" : "Sie haben ein neues Ledger gekauft? Klicken Sie hier, um es einzurichten",
+      "buyDeviceCTA" : "Benötigen Sie ein neues Ledger? Kaufen Sie eins",
+      "item" : {
+        "usb" : "Mit USB verbunden",
+        "available" : "Verfügbar. Zum Verbinden antippen",
+        "unavailable" : "Nicht verbunden"
+      }
+    },
     "connect" : "Gerät auswählen",
     "appsCatalog" : "App-Katalog",
     "installedApps" : "Installierte Apps",
@@ -3663,6 +3851,17 @@
       "description" : "Aktualisieren Sie Ihre Ledger Nano Firmware, indem Sie sie mit der Ledger Live Anwendung auf dem Desktop verbinden",
       "pleaseConnectUsbTitle" : "USB-Kabel erforderlich",
       "pleaseConnectUsbDescription" : "Um die Firmware-Aktualisierung zu starten, schließen Sie Ihr {{deviceName}} über ein USB-Kabel an Ihr Mobiltelefon an."
+    }
+  },
+  "firmwareUpdateRequired" : {
+    "updateAvailableFromLLM" : {
+      "title" : "Firmware-Update erforderlich",
+      "description" : "Um diese Aktion durchzuführen, müssen Sie zunächst die Firmware Ihres {{ deviceName }} aktualisieren.",
+      "cta" : "Zu My Ledger wechseln"
+    },
+    "updateNotAvailableFromLLM" : {
+      "title" : "Firmware-Update auf dem Computer erforderlich",
+      "description" : "Aktualisieren Sie Ihren {{ deviceName }} auf Ledger Live Desktop."
     }
   },
   "FirmwareUpdateReleaseNotes" : {
@@ -5123,7 +5322,11 @@
       "retrySearchParams" : "Bitte versuchen Sie die Suche mit anderen Parametern erneut.",
       "trackFavAssets" : "Verfolgen Sie Ihre Favoriten",
       "clickOnStarIcon" : "Klicken Sie auf das Sternsymbol neben einem Wert, um ihn zu Ihren Favoriten hinzuzufügen.",
-      "browseAssets" : "Werte durchsuchen"
+      "browseAssets" : "Werte durchsuchen",
+      "starred" : {
+        "title" : "Verfolgen Sie Ihre Favoriten unter den Vermögenswerten!",
+        "desc" : "Klicken Sie auf das Sternsymbol neben einem Vermögenswert, um es zu Ihren Favoriten hinzuzufügen."
+      }
     }
   },
   "nft" : {
@@ -5179,6 +5382,8 @@
     }
   },
   "customImage" : {
+    "title" : "Bild für Bildschirmsperre",
+    "replace" : "Ersetzen",
     "drawer" : {
       "title" : "Wählen Sie ein Bild aus",
       "options" : {
@@ -5188,7 +5393,18 @@
     "cropImage" : "Bild zuschneiden",
     "chooseConstrast" : "Kontrast auswählen",
     "uploadAnotherImage" : "Ein weiteres Bild hochladen",
-    "selectContrast" : "Wählen Sie Ihren Kontrast"
+    "selectContrast" : "Wählen Sie Ihren Kontrast",
+    "allowPreview" : "Bildvorschau zulassen auf {{productName}}",
+    "loadingPicture" : "Bild wird geladen auf {{productName}}",
+    "pictureLoaded" : "Bild geladen",
+    "timeDisclaimer" : "Dies kann bis zu 30 Sekunden dauern",
+    "imageLoaded" : "Bild geladen auf {{productName}}",
+    "confirmPicture" : "Bestätigen auf {{productName}}",
+    "title" : "Wählen Sie ein Bild aus.\nSchaffen Sie eine Stimmung.\nMachen Sie Ihr Ledger zu Ihrem Gerät.",
+    "subtitle" : "Verwenden Sie ein Bild Ihres Lieblings-NFTs oder ein Bild von Ihrem Handy.",
+    "customImage" : "Benutzerdefiniertes Bild",
+    "choosePicture" : "Wählen Sie ein Bild aus",
+    "doThisLater" : "Vielleicht später"
   },
   "postOnboarding" : {
     "hub" : {
@@ -5202,6 +5418,14 @@
     "walletCard" : {
       "title" : "Erste Schritte",
       "description" : "Klicken Sie hier, um die Einrichtung Ihres {{productName}} mit Ledger Live abzuschließen"
+    },
+    "actions" : {
+      "customImage" : {
+        "title" : "Personalisiere mein Ledger-Gerät",
+        "description" : "Durch Hinzufügen eines Bildes",
+        "popupLabel" : "Gerät personalisiert",
+        "hubTitleAfterAction" : "Dieser Bildschirm sieht gut aus"
+      }
     }
   }
 }

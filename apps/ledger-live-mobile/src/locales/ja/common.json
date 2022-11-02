@@ -85,8 +85,9 @@
     "moreInfo" : "詳細はこちら",
     "buyEth" : "Ethereumを購入",
     "popular" : "人気",
+    "getSupport" : "サポートを利用する",
     "comingSoon" : "近日公開",
-    "getSupport" : "サポートを利用する"
+    "restart" : "再起動"
   },
   "errors" : {
     "countervaluesUnavailable" : {
@@ -321,6 +322,14 @@
       "title" : "リセットできませんでした。",
       "description" : "もう一度お試しください。問題が解決しない場合は、以下のボタンを使ってログを保存し、Ledgerサポートに提出してください。"
     },
+    "ImageCommitRefusedOnDevice" : {
+      "title" : "デバイスで画像のコミットが拒否されました",
+      "description" : "この画像が正しくない場合は、別の画像で再度お試しいただけます。"
+    },
+    "ImageLoadRefusedOnDevice" : {
+      "title" : "デバイスで画像の読み込みが拒否されました",
+      "description" : "この画像が正しくない場合は、別の画像で再度お試しいただけます。"
+    },
     "InvalidAddress" : {
       "title" : "これは有効な{{currencyName}} アドレスではありません。"
     },
@@ -412,6 +421,10 @@
     "NotEnoughBalance" : {
       "title" : "資金が不足しています。",
       "description" : "アカウントに十分な資金があることを確認してください。"
+    },
+    "NoSuchAppOnProvider" : {
+      "title" : "特定の設定に必要な{{appName}}アプリが見つかりません。",
+      "description" : "管理画面からアプリの再インストールを試す"
     },
     "NotEnoughGas" : {
       "title" : "ネットワーク手数料に必要なETHが不足しています",
@@ -728,6 +741,9 @@
     "ImageProcessingError" : {
       "title" : "画像の処理に失敗しました",
       "description" : "別の画像でもう一度お試しください"
+    },
+    "HederaAddAccountError" : {
+      "title" : "アカウントが追加されていません。もう一度お試しください。"
     }
   },
   "crash" : {
@@ -775,6 +791,9 @@
     "failed" : {
       "biometrics" : {
         "title" : "{{biometricsType}}によるロック解除に失敗しました",
+        "touchid" : "TouchID",
+        "faceid" : "FaceID",
+        "fingerprint" : "指紋",
         "description" : "パスワードを入力して続行",
         "authenticate" : "Ledger Liveアプリで認証してください。"
       },
@@ -803,7 +822,10 @@
     },
     "enableBiometrics" : {
       "title" : "{{biometricsType}}",
-      "desc" : "{{biometricsType}}でロック解除"
+      "desc" : "{{biometricsType}}でロック解除",
+      "touchid" : "TouchID",
+      "faceid" : "FaceID",
+      "fingerprint" : "指紋"
     }
   },
   "reset" : {
@@ -1029,6 +1051,21 @@
     "comingSoon" : "近日公開",
     "mostPopular" : "一番人気"
   },
+  "installSetOfApps" : {
+    "landing" : {
+      "estimatedTime" : "{{ minutes }}分",
+      "title" : "{{ productName }} はアプリを使用し、安全なブロックチェーントランザクションを有効にします",
+      "subtitle" : "既定のアプリ一式をダウンロードすることをお勧めします。後でさらにダウンロードできます。",
+      "installCTA" : "アプリをインストール",
+      "skipCTA" : "後で行う"
+    },
+    "ongoing" : {
+      "loading" : "読み込み中...",
+      "resolving" : "依存関係を解決しています",
+      "progress" : "アプリのインストール中{{progress}}%",
+      "disclaimer" : "{{ productName }}のアプリはトランザクションの承認に使用されます。これはいつでも追加、または削除できます。"
+    }
+  },
   "onboarding" : {
     "stepWelcome" : {
       "title" : "ようこそ、Ledgerへ",
@@ -1094,6 +1131,10 @@
         "title" : "ご利用ガイド（英語版）",
         "cta" : "了解！",
         "desc" : "Ledgerをよりスムーズに導入していただけるよう、多数の言語でガイドをご用意しております。なお現時点では、その他Ledger関連コンテンツは英語でのみ提供されています。予めご了承ください。"
+      },
+      "RestartModal" : {
+        "title" : "再起動が必要です",
+        "paragraph" : "選択された言語では、アプリを再起動する必要があります。続行してもよろしいですか？"
       }
     },
     "stepSelectDevice" : {
@@ -1101,6 +1142,7 @@
       "nanoS" : "Nano S",
       "nanoSP" : "Nano S Plus",
       "nanoX" : "Nano X",
+      "nanoFTS" : "Nano FTS",
       "blue" : "Blue",
       "chooseDevice" : "デバイスを選択してください"
     },
@@ -1497,7 +1539,7 @@
       "cta" : "スキャン準備完了",
       "bullets" : {
         "0" : {
-          "label" : "デスクトップアプリで<1>「設定」>「アカウント」>「アカウントのエクスポート」</1>を選択。"
+          "label" : "デスクトップアプリで\n<1>「設定」>「アカウント」>「アカウントをエクスポート」</1>を選択。"
         },
         "1" : {
           "label" : "スマートフォンで、LiveQRコードをスキャンする。"
@@ -1640,9 +1682,133 @@
       },
       "error" : {
         "title" : "ペアリング失敗",
-        "subtitle" : "何か問題が発生したようです。Bluetoothがオンになっていて、{{productName}}が近くにあることを確認してください",
+        "subtitle" : "何か問題が発生したようです。\nBluetoothがオンになっており、{{productName}}が近くにあることをご確認ください。",
         "retryCta" : "再試行"
       }
+    }
+  },
+  "syncOnboarding" : {
+    "title" : "{{deviceName}}をセットアップ",
+    "estimatedTimeFormat" : "{{estimatedTime}}分",
+    "deviceSelection" : {
+      "title" : "どのデバイスをお持ちですか？",
+      "subtitle" : "Ledger LiveでセットアップしたいLedgerウォレットを選択してください",
+      "brand" : "Ledger",
+      "setupTime" : "{{time}}分"
+    },
+    "scanning" : {
+      "title" : "{{productName}}を検出中",
+      "description" : "{{productName}}のロックが解除済みで、Bluetoothが有効であることを確認してください"
+    },
+    "pairing" : {
+      "success" : {
+        "title" : "{{deviceName}}とペアリング完了"
+      },
+      "loading" : {
+        "title" : "{{deviceName}}とペアリング中",
+        "subtitle" : "{{productName}}のコードを確認してください"
+      },
+      "error" : {
+        "title" : "ペアリング失敗",
+        "subtitle" : "何か問題が発生したようです。Bluetoothがオンになっており、{{productName}}が近くにあることを確認してください"
+      }
+    },
+    "languageSelect" : {
+      "title" : "アプリの言語"
+    },
+    "firmwareLanguageUpdateDrawer" : {
+      "title" : "{{productName}}の言語を変更する",
+      "description" : "Ledger Liveの言語は現在、{{newLanguage}}です。{{newLanguage}}を{{productName}}でも使用しますか？",
+      "updateCta" : "言語の変更",
+      "cancelCta" : "キャンセル"
+    },
+    "desyncDrawer" : {
+      "title" : "{{productName}}に接続できませんでした",
+      "description" : "{{productName}}が近くにあり、ロックが解除されていることを確認してください。携帯電話でBluetoothが有効になっているかどうかを確認してください",
+      "retryCta" : "再試行",
+      "helpCta" : "ヘルプ"
+    },
+    "resyncOverlay" : {
+      "content" : "{{productName}}との接続が失われたようです。再接続しています"
+    },
+    "helpDrawer" : {
+      "title" : "セットアップマニュアルでお困りですか？",
+      "description" : "Lorem Elsass ipsum aliquam bissame Ober schae ffolsheim gehts messti de Bischheim tellus blottkopf, dui sed libero.hopla libero, placerat leo eget Gal",
+      "docCta" : "よくある質問（FAQ）を見る",
+      "supportCta" : "人と話す"
+    },
+    "pairingStep" : {
+      "title" : "{{productName}}はペアリングされています",
+      "description" : "{{productName}}のセットアップを続行し、こちらに戻って手順の説明を確認してください"
+    },
+    "pinStep" : {
+      "title" : "PINコードを選択する",
+      "description" : "PINコードは、{{productName}}への望ましくないアクセスを防ぎます。絶対に共有しないでください",
+      "warning" : "お客様のPINコードを知っていて、お客様の {{productName}}にアクセスできる人は、誰でも資産を盗むことができます"
+    },
+    "seedStep" : {
+      "title" : "リカバリーフレーズを設定する",
+      "description" : "リカバリーフレーズは、秘密鍵をバックアップする24単語からなる秘密のリストです。{{productName}}は唯一無二のリカバリフレーズを生成します。Ledgerはそのコピーを保持しません"
+    },
+    "softwareChecksSteps" : {
+      "title" : "オペレーティングシステムのチェック",
+      "genuineCheckRequestDrawer" : {
+        "title" : "{{productName}}が正規品であることを確認しましょう",
+        "checkCta" : "正規品チェック"
+      },
+      "allowManagerDrawer" : {
+        "wording" : "Ledger Live"
+      },
+      "genuineCheckCancelledDrawer" : {
+        "title" : "Nanoで正規品チェックがキャンセルされました",
+        "description" : "このチェックは、{{productName}}が安全に使用できることを確認するために重要です",
+        "retryCta" : "正規品チェックを再度実行する",
+        "skipCta" : "後で"
+      },
+      "updateAvailableDrawer" : {
+        "title" : "新しいソフトウェアが見つかりました",
+        "description" : "最新のセキュリティ機能にアクセスするには、{{productName}}を更新することを強くお勧めします",
+        "updateCta" : "アップデート"
+      },
+      "genuineCheckStep" : {
+        "inactive" : {
+          "title" : "真正性確認"
+        },
+        "active" : {
+          "title" : "{{productName}}をチェックしています"
+        },
+        "completed" : {
+          "title" : "お客様の{{productName}}は正規品です"
+        },
+        "failed" : {
+          "title" : "デバイスのセキュリティがチェックされていません"
+        }
+      },
+      "firmwareUpdateStep" : {
+        "inactive" : {
+          "title" : "ソフトウェアのチェック"
+        },
+        "active" : {
+          "title" : "ソフトウェアのバージョンを確認しています"
+        },
+        "completed" : {
+          "updateAvailable" : {
+            "title" : "ソフトウェアのバージョン{{firmwareVersion}}が利用可能です"
+          },
+          "noUpdateAvailable" : {
+            "title" : "ソフトウェアのバージョンは最新です"
+          }
+        },
+        "failed" : {
+          "title" : "ソフトウェアのアップデートに失敗しました"
+        }
+      }
+    },
+    "readyStep" : {
+      "title" : "{{productName}} の準備ができました"
+    },
+    "completion" : {
+      "title" : "コントロール可能です"
     }
   },
   "tabs" : {
@@ -1974,6 +2140,7 @@
       },
       "advanced" : {
         "title" : "詳細ログ",
+        "warningDerivation" : "これは {{tag}}のxpubです。サードパーティのウォレットにインポートする際は、同じ派生モードを選択してください。",
         "desc" : ""
       }
     },
@@ -3309,6 +3476,10 @@
     "appNotInstalled" : "{{appName}}アプリをインストールしてください。",
     "appNotInstalled_plural" : "{{appName}}アプリをインストールしてください。",
     "useAnotherDevice" : "別のデバイスを使用",
+    "deviceNotOnboarded" : {
+      "title" : "お客様のLedgerはまだ使用する準備ができていません",
+      "description" : "最初に{{deviceName}}をセットアップする必要があります。デバイスのセットアッププロセスをご案内します"
+    },
     "deviceInBootloader" : {
       "title" : "デバイスはBootloaderモードです。",
       "description" : "「続行」をクリックしてアップデートします。"
@@ -3457,6 +3628,23 @@
   "manager" : {
     "tabTitle" : "My Ledger",
     "title" : "My Ledger",
+    "selectDevice" : {
+      "saved" : {
+        "title" : "デバイス",
+        "description" : "保存済みのLedgerを管理する"
+      },
+      "addNewCTA" : "新規で追加",
+      "connectExistingLedger" : "既存のLedgerを接続する",
+      "connectExistingLedgerDescription" : "すでに設定されているLedgerをお持ちですか？ブルートゥースとペアリングしてください",
+      "setUpNewLedger" : "新しいLedgerをセットアップ",
+      "setUpNewLedgerDescription" : "新しいLedgerをご購入されましたか？こちらをクリックして設定してください",
+      "buyDeviceCTA" : "新しいLedgerがご必要ですか？購入する",
+      "item" : {
+        "usb" : "USBで接続",
+        "available" : "利用可能。タップして接続",
+        "unavailable" : "接続されていません"
+      }
+    },
     "connect" : "お使いのデバイスを選択してください",
     "appsCatalog" : "アプリカタログ",
     "installedApps" : "インストール済みアプリ",
@@ -3663,6 +3851,17 @@
       "description" : "Ledger Nanoをデスクトップ版Ledger Liveアプリに接続して、Ledger Nanoのファームウェアをアップデートします。",
       "pleaseConnectUsbTitle" : "USBケーブルが必要です",
       "pleaseConnectUsbDescription" : "ファームウェアのアップデートを開始するには、 {{deviceName}}をUSBケーブルでスマートフォンに接続します。"
+    }
+  },
+  "firmwareUpdateRequired" : {
+    "updateAvailableFromLLM" : {
+      "title" : "ファームウェアのアップデートが必要です",
+      "description" : "この操作を実行するには、まず {{ deviceName }}のファームウェアをアップデートする必要があります。",
+      "cta" : "My Ledgerに移動"
+    },
+    "updateNotAvailableFromLLM" : {
+      "title" : "パソコンでファームウェアをアップデートしてください",
+      "description" : "Ledger Live Desktopで{{ deviceName }}をアップデートしてください。"
     }
   },
   "FirmwareUpdateReleaseNotes" : {
@@ -5123,7 +5322,11 @@
       "retrySearchParams" : "別のパラメータで再度検索してください。",
       "trackFavAssets" : "お気に入りを追跡する",
       "clickOnStarIcon" : "資産の横にある星アイコンをクリックすると、お気に入りに追加されます。",
-      "browseAssets" : "資産をチェック"
+      "browseAssets" : "資産をチェック",
+      "starred" : {
+        "title" : "お気に入りの資産を追跡しましょう！",
+        "desc" : "資産の横にある「星」アイコンをクリックすると、お気に入りに追加されます。"
+      }
     }
   },
   "nft" : {
@@ -5179,6 +5382,8 @@
     }
   },
   "customImage" : {
+    "title" : "画面写真をロック",
+    "replace" : "置き換える",
     "drawer" : {
       "title" : "画像を選択してください",
       "options" : {
@@ -5188,7 +5393,18 @@
     "cropImage" : "画像をトリミング",
     "chooseConstrast" : "コントラストを選択",
     "uploadAnotherImage" : "他の画像をアップロードする",
-    "selectContrast" : "コントラストを選択する"
+    "selectContrast" : "コントラストを選択する",
+    "allowPreview" : "{{productName}}で画像のプレビューを許可する",
+    "loadingPicture" : "{{productName}}で画像を読み込んでいます",
+    "pictureLoaded" : "画像が読み込まれました",
+    "timeDisclaimer" : "これには最大30秒かかる場合があります",
+    "imageLoaded" : "{{productName}}に画像が読み込まれました",
+    "confirmPicture" : "{{productName}}で確認",
+    "title" : "写真を選択してください。\n雰囲気を作ってください。\nLedgerをあなたのものにしましょう。",
+    "subtitle" : "お気に入りのNFTの写真やスマホの写真を設定します。",
+    "customImage" : "画像をカスタマイズ",
+    "choosePicture" : "写真を選択",
+    "doThisLater" : "後で"
   },
   "postOnboarding" : {
     "hub" : {
@@ -5202,6 +5418,14 @@
     "walletCard" : {
       "title" : "ご利用ガイド",
       "description" : "こちらをクリックして、Ledger Liveで{{productName}}を設定"
+    },
+    "actions" : {
+      "customImage" : {
+        "title" : "Ledgerデバイスをパーソナライズ",
+        "description" : "画像を追加することで",
+        "popupLabel" : "デバイスがパーソナライズされました",
+        "hubTitleAfterAction" : "画面状態は良好です"
+      }
     }
   }
 }

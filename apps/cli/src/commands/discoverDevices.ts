@@ -1,5 +1,7 @@
 import { map, tap, scan as rxScan } from "rxjs/operators";
 import { discoverDevices } from "@ledgerhq/live-common/hw/index";
+import type { DeviceEvent } from "@ledgerhq/live-common/hw/index";
+
 export default {
   args: [
     {
@@ -29,7 +31,7 @@ export default {
     if (!interactive) return events;
     return events
       .pipe(
-        rxScan((acc: any[], value) => {
+        rxScan((acc: DeviceEvent[], value) => {
           let copy;
 
           if (value.type === "remove") {
@@ -46,8 +48,7 @@ export default {
               }
             } else {
               copy = acc.concat({
-                id: value.id,
-                name: value.name,
+                ...value
               });
             }
           }

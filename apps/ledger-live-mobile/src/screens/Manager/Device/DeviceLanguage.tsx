@@ -1,13 +1,14 @@
-import { Flex, Icons, Text, Button } from "@ledgerhq/native-ui";
+import { Icons, Text } from "@ledgerhq/native-ui";
 import React, { useCallback, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Language, DeviceInfo } from "@ledgerhq/types-live";
-import { useAvailableLanguagesForDevice } from "@ledgerhq/live-common/lib/manager/hooks";
-import { Device } from "@ledgerhq/live-common/lib/hw/actions/types";
+import { useAvailableLanguagesForDevice } from "@ledgerhq/live-common/manager/hooks";
+import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import BottomModal from "../../../components/BottomModal";
 import DeviceLanguageSelection from "./DeviceLanguageSelection";
 import ChangeDeviceLanguageActionModal from "../../../components/ChangeDeviceLanguageActionModal";
 import { track } from "../../../analytics";
+import DeviceOptionRow from "./DeviceOptionRow";
 
 type Props = {
   pendingInstalls: boolean;
@@ -69,35 +70,23 @@ const DeviceLanguage: React.FC<Props> = ({
   const refreshDeviceLanguage = useCallback(() => {
     track("Page Manager LanguageInstalled", { selectedLanguage });
     onLanguageChange();
-  }, [selectedLanguage]);
+  }, [selectedLanguage, onLanguageChange]);
 
   return (
     <>
-      <Flex
-        flexDirection="row"
-        alignItems="center"
-        justifyContent="space-between"
-      >
-        <Flex flexDirection="row">
-          <Icons.LanguageMedium size={24} color="neutral.c80" />
-          <Text ml={2} color="neutral.c80">
-            {t("deviceLocalization.language")}
-          </Text>
-        </Flex>
-        {availableLanguages.length ? (
-          <Button
-            disabled={pendingInstalls}
-            Icon={Icons.DropdownMedium}
-            onPress={openChangeLanguageModal}
-          >
-            {t(`deviceLocalization.languages.${currentDeviceLanguage}`)}
-          </Button>
-        ) : (
-          <Text>
-            {t(`deviceLocalization.languages.${currentDeviceLanguage}`)}
-          </Text>
-        )}
-      </Flex>
+      <DeviceOptionRow
+        Icon={Icons.LanguageMedium}
+        label={t("deviceLocalization.language")}
+        onPress={pendingInstalls ? undefined : openChangeLanguageModal}
+        linkLabel={t(`deviceLocalization.languages.${currentDeviceLanguage}`)}
+        right={
+          availableLanguages.length ? undefined : (
+            <Text>
+              {t(`deviceLocalization.languages.${currentDeviceLanguage}`)}
+            </Text>
+          )
+        }
+      />
       <BottomModal
         isOpened={isChangeLanguageOpen}
         onClose={closeChangeLanguageModal}

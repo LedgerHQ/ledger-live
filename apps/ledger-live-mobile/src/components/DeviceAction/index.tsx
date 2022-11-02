@@ -1,7 +1,10 @@
 import React, { useEffect } from "react";
 import { useDispatch } from "react-redux";
 import type { Action, Device } from "@ledgerhq/live-common/hw/actions/types";
-import { DeviceNotOnboarded } from "@ledgerhq/live-common/errors";
+import {
+  DeviceNotOnboarded,
+  LatestFirmwareVersionRequired,
+} from "@ledgerhq/live-common/errors";
 import { TransportStatusError } from "@ledgerhq/errors";
 import { useTranslation } from "react-i18next";
 import { useNavigation, useTheme } from "@react-navigation/native";
@@ -19,6 +22,7 @@ import {
   renderAllowManager,
   renderInWrongAppForAccount,
   renderError,
+  renderDeviceNotOnboarded,
   renderBootloaderStep,
   renderExchange,
   renderConfirmSwap,
@@ -26,6 +30,10 @@ import {
   LoadingAppInstall,
   AutoRepair,
   renderAllowLanguageInstallation,
+  renderImageLoadRequested,
+  renderLoadingImage,
+  renderImageCommitRequested,
+  RequiredFirmwareUpdate,
 } from "./rendering";
 import PreventNativeBack from "../PreventNativeBack";
 import SkipLock from "../behaviour/SkipLock";
@@ -118,6 +126,9 @@ export function DeviceActionDefaultRendering<R, H, P>({
     installingApp,
     progress,
     listingApps,
+    imageLoadRequested,
+    loadingImage,
+    imageCommitRequested,
   } = status;
 
   useEffect(() => {
@@ -298,6 +309,16 @@ export function DeviceActionDefaultRendering<R, H, P>({
     });
   }
 
+  if (imageLoadRequested) {
+    return renderImageLoadRequested({ t, device });
+  }
+  if (loadingImage) {
+    return renderLoadingImage({ t, device, progress });
+  }
+  if (imageCommitRequested) {
+    return renderImageCommitRequested({ t, device });
+  }
+
   if (!isLoading && error) {
     /** @TODO Put that back if the app is still crashing */
     // track("DeviceActionError", error);
@@ -309,14 +330,17 @@ export function DeviceActionDefaultRendering<R, H, P>({
       (error instanceof TransportStatusError &&
         error.message.includes("0x6d06"))
     ) {
-      return renderError({
-        t,
-        navigation,
-        error: new DeviceNotOnboarded(),
-        withOnboardingCTA: true,
-        colors,
-        theme,
-      });
+      return renderDeviceNotOnboarded({ t, device, navigation });
+    }
+
+    if (error instanceof LatestFirmwareVersionRequired) {
+      return (
+        <RequiredFirmwareUpdate
+          t={t}
+          navigation={navigation}
+          device={selectedDevice}
+        />
+      );
     }
 
     return renderError({

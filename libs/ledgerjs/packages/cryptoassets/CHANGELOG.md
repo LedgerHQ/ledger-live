@@ -1,5 +1,17 @@
 # @ledgerhq/cryptoassets
 
+## 6.36.1
+
+### Patch Changes
+
+- [#1561](https://github.com/LedgerHQ/ledger-live/pull/1561) [`627f928b9d`](https://github.com/LedgerHQ/ledger-live/commit/627f928b9dc93f072f47b85d09e34c41b1948d0b) Thanks [@haammar-ledger](https://github.com/haammar-ledger)! - Disable countervalue for Cardano tokens unsupported in CoinGecko
+
+## 6.36.1-next.0
+
+### Patch Changes
+
+- [#1561](https://github.com/LedgerHQ/ledger-live/pull/1561) [`627f928b9d`](https://github.com/LedgerHQ/ledger-live/commit/627f928b9dc93f072f47b85d09e34c41b1948d0b) Thanks [@haammar-ledger](https://github.com/haammar-ledger)! - Disable countervalue for Cardano tokens unsupported in CoinGecko
+
 ## 6.36.0
 
 ### Minor Changes

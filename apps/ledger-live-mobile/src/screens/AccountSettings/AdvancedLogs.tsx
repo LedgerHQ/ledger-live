@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next";
 import { View, StyleSheet } from "react-native";
 import { useSelector } from "react-redux";
 import { Alert } from "@ledgerhq/native-ui";
-import { getTagDerivationMode } from "@ledgerhq/live-common/lib/derivation";
+import { getTagDerivationMode } from "@ledgerhq/live-common/derivation";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import { accountScreenSelector } from "../../reducers/accounts";
