@@ -8,7 +8,6 @@ import { App } from "@ledgerhq/types-live";
 
 import styled from "styled-components/native";
 import { Flex, Text, Button } from "@ledgerhq/native-ui";
-import { App } from "@ledgerhq/types-live";
 import { urls } from "../../../config/urls";
 
 import { NavigatorName, ScreenName } from "../../../const";
