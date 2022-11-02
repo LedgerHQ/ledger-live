@@ -146,6 +146,12 @@ const NftMediaComponent = ({
   ) {
     return (
       <Box position="relative">
+        <NftMedia
+          style={styles.image}
+          metadata={metadata}
+          mediaFormat="preview"
+          status={status}
+        />
         <Tag
           position="absolute"
           top="10px"
@@ -155,12 +161,6 @@ const NftMediaComponent = ({
         >
           {t("wallet.nftGallery.media.tag", { count: ownedNftsInCollection })}
         </Tag>
-        <NftMedia
-          style={styles.image}
-          metadata={metadata}
-          mediaFormat="preview"
-          status={status}
-        />
       </Box>
     );
   }
@@ -182,8 +182,6 @@ const styles = StyleSheet.create({
     width: "100%",
     aspectRatio: 1,
     overflow: "hidden",
-    height: 160,
-    zIndex: -1,
   },
 });
 

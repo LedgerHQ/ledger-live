@@ -15,10 +15,10 @@ type GraphTabItemProps = TabItemProps & {
 
 const TabBox = styled.TouchableOpacity`
   text-align: center;
-  border-radius: 4px;
+  border-radius: ${(p) => p.theme.radii[1]}px;
   box-sizing: border-box;
   overflow: hidden;
-  margin-left: 2px;
+  margin-left: ${(p) => p.theme.space[1]}px;
 `;
 
 const TabText = styled(Text).attrs<GraphTabItemProps>((p) => ({
@@ -61,7 +61,8 @@ export const GraphTab = ({
         <TabText
           variant="small"
           size={size}
-          color={disabled ? "neutral.c70" : "neutral.c90"}
+          color={disabled ? "neutral.c40" : "neutral.c70"}
+          fontWeight={"semiBold"}
           uppercase
         >
           {label}

@@ -57,15 +57,12 @@ export default function ReceiveNFTsModal({ onClose, isOpened }: Props) {
   return (
     <BottomDrawer
       testId="ReceiveNFTsModal"
+      title={t("wallet.nftGallery.receiveModal.title")}
       isOpen={isOpened}
       onClose={onPressClose}
       Icon={<EthPolygonIcons />}
     >
       <TrackScreen category="Add/receive NFTs" type="drawer" />
-
-      <Text variant="h4" fontWeight="semiBold" fontSize="24px" mb={4}>
-        {t("wallet.nftGallery.receiveModal.title")}
-      </Text>
 
       {new Array(2).fill(null).map((_e, index) => (
         <Text variant="body" fontWeight="medium" color="neutral.c80">

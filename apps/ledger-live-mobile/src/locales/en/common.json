@@ -5141,9 +5141,10 @@
     },
     "nftGallery": {
       "empty": {
-        "title": "Your NFTs live securely here",
+        "title": "No NFTs to show, yet",
+        "subtitle": "Get started by receiving your first NFT.",
         "receive": "Receive NFTs",
-        "supportLink": "How to deposit from Metamask?"
+        "supportLink": "How to get NFTs from other wallets?"
       },
       "receiveModal": {
         "title": "Receive an NFT the same way as any other crypto",

@@ -60,7 +60,12 @@ function Tab({
   }, [isActive, navigation, route.key, route.name]);
 
   return (
-    <StyledTouchableOpacity onPress={onPress} mr={4}>
+    <StyledTouchableOpacity
+      onPress={onPress}
+      height={"32px"}
+      justifyContent={"center"}
+      mr={4}
+    >
       <StyledAnimatedView
         position={"absolute"}
         top={0}
@@ -83,7 +88,7 @@ function Tab({
           opacity,
         }}
       />
-      <Box borderRadius={2} px={4} py={3}>
+      <Box borderRadius={2} px={4}>
         <Text fontWeight={"semiBold"} variant={"body"} color={"neutral.c100"}>
           {label}
         </Text>

@@ -38,7 +38,7 @@ const renderItem = ({
         ? 1 / NB_COLUMNS
         : 1
     }
-    mr={(index + 1) % NB_COLUMNS > 0 ? 4 : 0}
+    mr={(index + 1) % NB_COLUMNS > 0 ? 6 : 0}
   >
     {item.id === ADD_NEW.id ? (
       <AddNewItem />
@@ -87,6 +87,8 @@ export function NftList({ data }: Props) {
       keyExtractor={keyExtractor}
       showsVerticalScrollIndicator={false}
       initialNumToRender={6}
+      windowSize={11}
+      contentContainerStyle={{ marginTop: 16 }}
     />
   );
 }

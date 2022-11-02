@@ -33,68 +33,65 @@ const PortfolioEmptyState = ({
   }, [navigation]);
 
   return (
-    <Flex flex={1} alignItems="center" justifyContent="center">
+    <Flex alignItems="center" justifyContent="center" mx={6}>
       <TrackScreen category="Start CTAs" />
       <WalletCoinsSupported moreAssetsBackgroundColor={colors.neutral.c100} />
-      <Flex mt={8} alignItems="center" justifyContent="center">
-        <Text variant="h4" fontWeight="semiBold" textAlign="center">
-          {t("portfolio.emptyState.title")}
-        </Text>
-        <Text
-          variant="body"
-          fontWeight="medium"
-          color="neutral.c70"
-          textAlign="center"
-          mt={4}
-        >
-          {t("portfolio.emptyState.subtitle")}
-        </Text>
-      </Flex>
+      <Text variant="h4" fontWeight="semiBold" textAlign="center" mt={8}>
+        {t("portfolio.emptyState.title")}
+      </Text>
+      <Text
+        variant="body"
+        fontWeight="medium"
+        color="neutral.c70"
+        textAlign="center"
+        mt={4}
+      >
+        {t("portfolio.emptyState.subtitle")}
+      </Text>
       <Flex flex={1} flexDirection="row" mt={9}>
-        <Flex width="50%" pl={6} pr={3}>
-          <Button
-            type="main"
-            size="large"
-            iconName="Plus"
-            iconPosition="left"
-            mr={3}
-            onPress={goToBuyCrypto}
-          >
-            {t("account.buy")}
-          </Button>
-        </Flex>
-        <Flex width="50%" pl={3} pr={6}>
-          <Button
-            type="main"
-            size="large"
-            iconName="ArrowBottom"
-            iconPosition="left"
-            ml={3}
-            onPress={goToReceiveFunds}
-          >
-            {t("account.receive")}
-          </Button>
-        </Flex>
+        <Button
+          type="main"
+          size="large"
+          iconName="Plus"
+          iconPosition="left"
+          mr={3}
+          onPress={goToBuyCrypto}
+          flex={1}
+        >
+          {t("account.buy")}
+        </Button>
+        <Button
+          type="main"
+          size="large"
+          iconName="ArrowBottom"
+          iconPosition="left"
+          ml={3}
+          onPress={goToReceiveFunds}
+          flex={1}
+        >
+          {t("account.receive")}
+        </Button>
       </Flex>
-      <Flex flexDirection="row" alignItems="center" mt={7} mx={6}>
+      <Flex flexDirection="row" alignItems="center" mt={7}>
         <Flex flex={1} borderBottomWidth={1} borderColor="neutral.c30" />
-        <Text variant="subtitle" fontWeight="medium" color="neutral.c80" mx={6}>
+        <Text variant="subtitle" fontWeight="medium" color="neutral.c80">
           {t("portfolio.emptyState.addAccount")}
         </Text>
         <Flex flex={1} borderBottomWidth={1} borderColor="neutral.c30" />
       </Flex>
-      <Flex width="100%" mt={7} mb={11} px={6}>
-        <Button
-          type="shade"
-          outline
-          size="large"
-          iconName="Plus"
-          iconPosition="left"
-          onPress={openAddAccountModal}
-        >
-          {t("account.emptyState.addAccountCta")}
-        </Button>
-      </Flex>
+      <Button
+        type="shade"
+        outline
+        size="large"
+        iconName="Plus"
+        iconPosition="left"
+        onPress={openAddAccountModal}
+        width={"100%"}
+        mt={7}
+        mb={11}
+      >
+        {t("account.emptyState.addAccountCta")}
+      </Button>
     </Flex>
   );
 };

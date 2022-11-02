@@ -29,6 +29,7 @@ export const WalletTabNavigatorScrollContext =
     {} as WalletTabNavigatorScrollContextData,
   );
 
+// Partly based on https://github.com/JungHsuan/react-native-collapsible-tabview/blob/master/src/CollapsibleTabView.js
 export default function WalletTabNavigatorScrollManager({
   children,
   currentRouteName,
