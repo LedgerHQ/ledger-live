@@ -1,5 +1,17 @@
 # @ledgerhq/native-ui
 
+## 0.12.0
+
+### Minor Changes
+
+- [#330](https://github.com/LedgerHQ/ledger-live/pull/330) [`f7a8df09f8`](https://github.com/LedgerHQ/ledger-live/commit/f7a8df09f8115da779b7082384d5db0823317d53) Thanks [@alexandremgo](https://github.com/alexandremgo)! - Add a vertical timeline component to Native UI
+
+### Patch Changes
+
+- [#330](https://github.com/LedgerHQ/ledger-live/pull/330) [`f7a8df09f8`](https://github.com/LedgerHQ/ledger-live/commit/f7a8df09f8115da779b7082384d5db0823317d53) Thanks [@alexandremgo](https://github.com/alexandremgo)! - Feat: Sync onboarding software checks UI
+
+  - handling unlock device during genuine check
+
 ## 0.12.0-next.0
 
 ### Minor Changes

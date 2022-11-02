@@ -1,5 +1,11 @@
 # @ledgerhq/types-live
 
+## 6.25.1
+
+### Patch Changes
+
+- [#1372](https://github.com/LedgerHQ/ledger-live/pull/1372) [`b53d648424`](https://github.com/LedgerHQ/ledger-live/commit/b53d64842471eb2382066aecfc9f2b3b15ef7aed) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Add FEATURE_FLAGS env variable to override feature flags
+
 ## 6.25.1-next.0
 
 ### Patch Changes
