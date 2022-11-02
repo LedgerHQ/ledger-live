@@ -4,6 +4,7 @@ import { Trans } from "react-i18next";
 
 import { State } from "@ledgerhq/live-common/apps/index";
 import { isLiveSupportedApp } from "@ledgerhq/live-common/apps/logic";
+import { App } from "@ledgerhq/types-live";
 
 import styled from "styled-components/native";
 import { Flex, Text, Button } from "@ledgerhq/native-ui";

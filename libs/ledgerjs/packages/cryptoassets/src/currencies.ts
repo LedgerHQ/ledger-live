@@ -242,10 +242,10 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     type: "CryptoCurrency",
     id: "avalanche_c_chain",
     coinType: CoinType.ETH,
-    name: "Avalanche (C-chain)",
-    managerAppName: "Avalanche (C-Chain)",
+    name: "Avalanche C-Chain",
+    managerAppName: "Ethereum",
     ticker: "AVAXC",
-    scheme: "avalanchecchain",
+    scheme: "avalanche_c_chain",
     color: "#E84142",
     family: "ethereum",
     units: [
@@ -256,7 +256,9 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
       },
     ],
     ethereumLikeInfo: {
+      baseChain: "mainnet",
       chainId: 43114,
+      networkId: 43114,
     },
     explorerViews: [
       {
@@ -266,7 +268,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
           "https://cchain.explorer.avax.network/token/$contractAddress?a=$address",
       },
     ],
-    keywords: ["avax", "avalanche"],
+    keywords: ["avax", "avalanche", "c-chain"],
   },
   banano: {
     type: "CryptoCurrency",
