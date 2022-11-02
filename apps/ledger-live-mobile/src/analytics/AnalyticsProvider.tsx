@@ -4,12 +4,13 @@ import {
   SegmentClient,
 } from "@segment/analytics-react-native";
 import { start } from "./segment";
+import type { AppStore } from "../reducers";
 
 const AnalyticsProvider = ({
   store,
   children,
 }: {
-  store: any;
+  store: AppStore;
   children?: ReactNode;
 }): JSX.Element | null => {
   const [loaded, setLoaded] = useState<boolean>(false);
@@ -17,7 +18,7 @@ const AnalyticsProvider = ({
     SegmentClient | undefined
   >();
 
-  const loadSegment = useCallback(async (store: any) => {
+  const loadSegment = useCallback(async (store: AppStore) => {
     try {
       const result: SegmentClient | undefined = await start(store);
       setSegmentClient(result);
