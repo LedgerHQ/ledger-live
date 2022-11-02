@@ -47,6 +47,7 @@ type State = {
   deviceInfo: DeviceInfo | null | undefined;
   result: ListAppsResult | null | undefined;
   error: Error | null | undefined;
+  isLocked: boolean;
 };
 
 type ManagerState = State & {
@@ -101,6 +102,7 @@ const getInitialState = (device?: Device | null | undefined): State => ({
   isLoading: !!device,
   requestQuitApp: false,
   unresponsive: false,
+  isLocked: false,
   allowManagerRequestedWording: null,
   allowManagerGranted: false,
   device,
@@ -114,6 +116,9 @@ const reducer = (state: State, e: Event): State => {
     case "unresponsiveDevice":
       return { ...state, unresponsive: true };
 
+    case "lockedDevice":
+      return { ...state, isLocked: true };
+
     case "deviceChange":
       return getInitialState(e.device);
 
@@ -122,10 +127,16 @@ const reducer = (state: State, e: Event): State => {
         ...getInitialState(state.device),
         error: e.error,
         isLoading: false,
+        isLocked: false,
       };
 
     case "appDetected":
-      return { ...state, unresponsive: false, requestQuitApp: true };
+      return {
+        ...state,
+        unresponsive: false,
+        isLocked: false,
+        requestQuitApp: true,
+      };
 
     case "osu":
     case "bootloader":
@@ -133,6 +144,7 @@ const reducer = (state: State, e: Event): State => {
         ...state,
         isLoading: false,
         unresponsive: false,
+        isLocked: false,
         requestQuitApp: false,
         deviceInfo: e.deviceInfo,
       };
@@ -142,6 +154,7 @@ const reducer = (state: State, e: Event): State => {
         ...state,
         requestQuitApp: false,
         unresponsive: false,
+        isLocked: false,
         deviceInfo: e.deviceInfo,
       };
 
@@ -149,6 +162,7 @@ const reducer = (state: State, e: Event): State => {
       return {
         ...state,
         unresponsive: false,
+        isLocked: false,
         allowManagerRequestedWording: e.wording,
       };
 
@@ -156,6 +170,7 @@ const reducer = (state: State, e: Event): State => {
       return {
         ...state,
         unresponsive: false,
+        isLocked: false,
         allowManagerRequestedWording: null,
         allowManagerGranted: true,
       };
@@ -165,6 +180,7 @@ const reducer = (state: State, e: Event): State => {
         ...state,
         isLoading: false,
         unresponsive: false,
+        isLocked: false,
         result: e.result,
       };
   }
@@ -312,6 +328,7 @@ const implementations = {
       };
     }).pipe(distinctUntilChanged(isEqual)),
 };
+
 export const createAction = (
   connectManagerExec: (
     arg0: ConnectManagerInput
@@ -349,6 +366,7 @@ export const createAction = (
     const [state, setState] = useState(() => getInitialState(device));
     const [resetIndex, setResetIndex] = useState(0);
     const deviceSubject = useReplaySubject(device);
+
     useEffect(() => {
       const impl = implementations[currentMode]({
         deviceSubject,
@@ -378,6 +396,7 @@ export const createAction = (
         sub.unsubscribe();
       };
     }, [deviceSubject, resetIndex, repairModalOpened, managerRequest]);
+
     const { deviceInfo } = state;
     useEffect(() => {
       if (!deviceInfo) return;
