@@ -11,7 +11,7 @@ import BitcoinLikeStorage from "../storage";
 import { Merge } from "../pickingstrategies/Merge";
 import { DeepFirst } from "../pickingstrategies/DeepFirst";
 import { CoinSelect } from "../pickingstrategies/CoinSelect";
-import { explorerBaseURI } from "./wallet.integration.test";
+import explorerUrl from "../test-explorer-url";
 
 describe("testing xpub legacy transactions", () => {
   const network = coininfo.bitcoin.test.toBitcoinJS();
@@ -28,7 +28,7 @@ describe("testing xpub legacy transactions", () => {
   const xpub = new Xpub({
     storage,
     explorer: new BitcoinLikeExplorer({
-      explorerURI: `${explorerBaseURI}/v4/btc`,
+      explorerURI: `${explorerUrl}/v4/btc`,
     }),
     crypto,
     xpub: node.neutered().toBase58(),

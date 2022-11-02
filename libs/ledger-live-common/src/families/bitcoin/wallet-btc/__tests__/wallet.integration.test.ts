@@ -4,9 +4,7 @@ import BitcoinLikeWallet from "../wallet";
 import { Account } from "../account";
 import { Merge } from "../pickingstrategies/Merge";
 import MockBtc from "../../mockBtc";
-
-export const explorerBaseURI =
-  "https://explorers.api.live.ledger.com/blockchain";
+import explorerUrl from "../test-explorer-url";
 
 jest.setTimeout(180000);
 
@@ -21,7 +19,7 @@ describe("testing wallet", () => {
       currency: "bitcoin",
       network: "mainnet",
       derivationMode: DerivationModes.LEGACY,
-      explorerURI: `${explorerBaseURI}/v4/btc`,
+      explorerURI: `${explorerUrl}/v4/btc`,
       storage: "mock",
       storageParams: [],
     });
