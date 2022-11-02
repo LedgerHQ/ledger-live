@@ -22,6 +22,7 @@ import BleDeviceItem from "./BleDeviceItem";
 import lottie from "./assets/bluetooth.json";
 import DeviceSetupView from "../../components/DeviceSetupView";
 import { NavigatorName, ScreenName } from "../../const";
+import { RootNavigation } from "../../components/RootNavigator/types/helpers";
 
 export type FilterByDeviceModelId = null | DeviceModelId;
 
@@ -37,7 +38,7 @@ export const BleDevicesScanning = ({
   areKnownDevicesDisplayed,
 }: BleDevicesScanningProps) => {
   const { t } = useTranslation();
-  const navigation = useNavigation();
+  const navigation = useNavigation<RootNavigation>();
 
   const handleBack = useCallback(() => {
     const routes = navigation.getState().routes;

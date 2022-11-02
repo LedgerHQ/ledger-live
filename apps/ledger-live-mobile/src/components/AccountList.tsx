@@ -1,4 +1,3 @@
-/* eslint-disable jsx-a11y/anchor-is-valid */
 import React from "react";
 import { FlatList } from "react-native";
 import { useTheme } from "styled-components/native";
@@ -40,7 +39,7 @@ const AccountList = ({
           }
         />
         <AccountCard
-          account={account as any}
+          account={account}
           disabled={!result.match}
           onPress={() => onPress(account)}
           py={2}

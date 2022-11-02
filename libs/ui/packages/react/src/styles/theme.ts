@@ -19,11 +19,15 @@ export const space = [
 
 export type TextVariants =
   | "h1"
+  | "h1Inter"
   | "h2"
+  | "h2Inter"
   | "h3"
+  | "h3Inter"
   | "h4"
   | "h4Inter"
   | "h5"
+  | "h5Inter"
   | "large"
   | "largeLineHeight"
   | "body"
@@ -61,7 +65,11 @@ fontSizes.largeLineHeight = fontSizes.large;
 fontSizes.bodyLineHeight = fontSizes.body;
 fontSizes.paragraphLineHeight = fontSizes.paragraph;
 fontSizes.subtitle = fontSizes.extraSmall;
+fontSizes.h1Inter = fontSizes.h1;
+fontSizes.h2Inter = fontSizes.h2;
+fontSizes.h3Inter = fontSizes.h3;
 fontSizes.h4Inter = fontSizes.h4;
+fontSizes.h5Inter = fontSizes.h5;
 
 const fontWeights = {
   extraLight: "100",

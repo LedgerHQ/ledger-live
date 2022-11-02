@@ -15,7 +15,7 @@ const NotNowButton = styled(TouchableOpacity)`
 `;
 
 type Props = {
-  closeModal: any;
+  closeModal: () => void;
 };
 
 const Enjoy = ({ closeModal }: Props) => {
@@ -26,7 +26,7 @@ const Enjoy = ({ closeModal }: Props) => {
     handleGoToStore,
   } = useRatings();
   const goToStore = useCallback(() => {
-    track("RedirectedToStore", { source: ratingsHappyMoment.route_name });
+    track("RedirectedToStore", { source: ratingsHappyMoment?.route_name });
     track("button_clicked", {
       flow: "review",
       page: "review_satisfiedstep1",
@@ -40,7 +40,7 @@ const Enjoy = ({ closeModal }: Props) => {
     closeModal();
     handleGoToStore();
   }, [
-    ratingsHappyMoment.route_name,
+    ratingsHappyMoment?.route_name,
     ratingsFeatureParams,
     closeModal,
     handleGoToStore,

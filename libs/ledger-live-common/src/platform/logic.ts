@@ -25,6 +25,7 @@ import { getAccountBridge } from "../bridge/index";
 import { Transaction } from "../generated/types";
 import { MessageData } from "../hw/signMessage/types";
 import { prepareMessageToSign } from "../hw/signMessage/index";
+import { TypedMessageData } from "../families/ethereum/types";
 
 export function translateContent(content: any, locale = "en"): string {
   if (!content || typeof content !== "object") return content;
@@ -262,7 +263,7 @@ export function signMessageLogic(
   message: string,
   uiNavigation: (
     account: AccountLike,
-    message: MessageData | null
+    message: MessageData | TypedMessageData
   ) => Promise<string>
 ): Promise<string> {
   tracking.platformSignMessageRequested(manifest);
@@ -273,7 +274,7 @@ export function signMessageLogic(
     return Promise.reject(new Error("account not found"));
   }
 
-  let formattedMessage: MessageData | null;
+  let formattedMessage: MessageData | TypedMessageData;
   try {
     if (isAccount(account)) {
       formattedMessage = prepareMessageToSign(account, message);

@@ -35,9 +35,6 @@ test("Custom image", async ({ page }) => {
     await layout.goToManager();
     await deviceAction.accessManager("", "", DeviceModelId.nanoFTS);
     await managerPage.customImageButton.waitFor({ state: "visible" });
-    await expect(managerPage.deviceStorageCard).toHaveScreenshot(
-      `${generateScreenshotPrefix()}manager-button.png`,
-    );
   });
 
   await test.step("Open custom image drawer", async () => {
@@ -49,6 +46,7 @@ test("Custom image", async ({ page }) => {
   await test.step("Import image", async () => {
     await customImageDrawer.importImage("tests/specs/manager/sample-custom-image.webp");
     await customImageDrawer.importImageInput.waitFor({ state: "detached" });
+    await customImageDrawer.waitForCropConfirmable();
     await expect(container).toHaveScreenshot(`${generateScreenshotPrefix()}image-imported.png`);
   });
 
@@ -68,6 +66,7 @@ test("Custom image", async ({ page }) => {
 
     /** go back to cropping -> the cropping state should not be reinitialized */
     await customImageDrawer.contrastPrevious();
+    await customImageDrawer.waitForCropConfirmable();
     await expect(container).toHaveScreenshot(`${generateScreenshotPrefix()}adjust.png`);
 
     /** rotate */
@@ -82,6 +81,7 @@ test("Custom image", async ({ page }) => {
 
     /** go back to cropping */
     await customImageDrawer.contrastPrevious();
+    await customImageDrawer.waitForCropConfirmable();
     await expect(container).toHaveScreenshot(
       `${generateScreenshotPrefix()}adjust-rotated-zoomed-preserved.png`,
     );
@@ -182,8 +182,5 @@ test("Custom image", async ({ page }) => {
     await expect(container).toHaveScreenshot(`${generateScreenshotPrefix()}transfer-loaded.png`);
 
     await customImageDrawer.clickFinish();
-    await expect(managerPage.deviceStorageCard).toHaveScreenshot(
-      `${generateScreenshotPrefix()}transfer-finished.png`,
-    );
   });
 });

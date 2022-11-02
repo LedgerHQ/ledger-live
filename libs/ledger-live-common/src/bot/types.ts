@@ -13,7 +13,7 @@ import {
 } from "@ledgerhq/types-live";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 export type { AppCandidate };
-type DeviceActionEvent = {
+export type DeviceActionEvent = {
   text: string;
   x: number;
   y: number;

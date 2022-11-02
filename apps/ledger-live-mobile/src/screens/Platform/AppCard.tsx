@@ -2,14 +2,18 @@ import React, { useCallback, useMemo, memo } from "react";
 import { useTheme } from "@react-navigation/native";
 import { StyleSheet, View, Platform, TouchableOpacity } from "react-native";
 import { useTranslation } from "react-i18next";
-import type { AppManifest } from "@ledgerhq/live-common/platform/types";
+import type {
+  AppBranch,
+  AppManifest,
+} from "@ledgerhq/live-common/platform/types";
 import { translateContent } from "@ledgerhq/live-common/platform/logic";
 import { useLocale } from "../../context/Locale";
 import LText from "../../components/LText";
 import IconChevron from "../../icons/ArrowRight";
 import AppIcon from "./AppIcon";
+import { Theme } from "../../colors";
 
-function getBranchStyle(branch, colors) {
+function getBranchStyle(branch: AppBranch, colors: Theme["colors"]) {
   switch (branch) {
     case "soon":
       return {
@@ -155,6 +159,7 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.03,
         shadowRadius: 8,
         shadowOffset: {
+          width: 0,
           height: 4,
         },
       },

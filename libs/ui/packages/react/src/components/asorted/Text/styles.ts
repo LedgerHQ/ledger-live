@@ -73,8 +73,18 @@ export const textVariantStyle: Record<
     fontWeight: 500,
     "text-transform": "uppercase",
   },
+  h1Inter: {
+    fontFamily: "Inter, Sans",
+    fontWeight: 500,
+    "text-transform": "uppercase",
+  },
   h2: {
     fontFamily: "Alpha, Inter, Sans",
+    fontWeight: 500,
+    "text-transform": "uppercase",
+  },
+  h2Inter: {
+    fontFamily: "Inter, Sans",
     fontWeight: 500,
     "text-transform": "uppercase",
   },
@@ -82,6 +92,10 @@ export const textVariantStyle: Record<
     fontFamily: "Alpha, Inter, Sans",
     fontWeight: 500,
     "text-transform": "uppercase",
+  },
+  h3Inter: {
+    fontFamily: "Inter, Sans",
+    fontWeight: 500,
   },
   h4: {
     fontFamily: "Alpha, Inter, Sans",
@@ -96,6 +110,10 @@ export const textVariantStyle: Record<
     fontFamily: "Alpha, Inter, Sans",
     fontWeight: 500,
     "text-transform": "uppercase",
+  },
+  h5Inter: {
+    fontFamily: "Inter, Sans",
+    fontWeight: 500,
   },
   large: {
     fontFamily: "Inter, Sans",

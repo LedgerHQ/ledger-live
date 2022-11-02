@@ -14,14 +14,13 @@ import {
 } from "@ledgerhq/live-common/hw/index";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { DeviceModelId } from "@ledgerhq/types-devices";
-import { Button, Flex } from "@ledgerhq/native-ui";
+import { Flex } from "@ledgerhq/native-ui";
 import { useTheme } from "styled-components/native";
 import { ScreenName } from "../../const";
 import { knownDevicesSelector } from "../../reducers/ble";
 import { setHasConnectedDevice } from "../../actions/appstate";
 import DeviceItem from "./DeviceItem";
 import BluetoothEmpty from "./BluetoothEmpty";
-// eslint-disable-next-line import/no-unresolved
 import USBEmpty from "./USBEmpty";
 import LText from "../LText";
 import Animation from "../Animation";
@@ -30,9 +29,11 @@ import {
   setLastConnectedDevice,
   setReadOnlyMode,
 } from "../../actions/settings";
+import Button from "../wrappedUi/Button";
 
 import PairLight from "../../screens/Onboarding/assets/nanoX/pairDevice/light.json";
 import PairDark from "../../screens/Onboarding/assets/nanoX/pairDevice/dark.json";
+import { DeviceLike } from "../../reducers/types";
 
 type Props = {
   onBluetoothDeviceAction?: (_: Device) => void;
@@ -98,7 +99,7 @@ export default function SelectDevice({
     [dispatch, onSelect],
   );
 
-  const [devices, setDevices] = useState([]);
+  const [devices, setDevices] = useState<Device[]>([]);
 
   const onPairNewDevice = useCallback(() => {
     track("button_clicked", {
@@ -107,7 +108,6 @@ export default function SelectDevice({
     });
     NativeModules.BluetoothHelperModule.prompt()
       .then(() =>
-        // @ts-expect-error navigation issue
         navigation.navigate(ScreenName.PairDevices, {
           onDone: autoSelectOnAdd ? handleOnSelect : null,
           deviceModelIds,
@@ -138,7 +138,7 @@ export default function SelectDevice({
     });
   }, [knownDevices, devices, deviceModelIds]);
 
-  const [ble, other] = all.reduce(
+  const [ble, other] = all.reduce<[Array<Device>, Array<Device>]>(
     ([ble, other], device) =>
       device.wired ? [ble, [...other, device]] : [[...ble, device], other],
     [[], []],
@@ -160,8 +160,8 @@ export default function SelectDevice({
               deviceId: e.id,
               deviceName: e.name || "",
               modelId:
-                (e.deviceModel && e.deviceModel.id) ||
-                Config?.FALLBACK_DEVICE_MODEL_ID ||
+                (e.deviceModel && (e.deviceModel.id as DeviceModelId)) ||
+                (Config?.FALLBACK_DEVICE_MODEL_ID as DeviceModelId) ||
                 "nanoX",
               wired: e.id.startsWith("httpdebug|")
                 ? Config?.FALLBACK_DEVICE_WIRED === "YES"
@@ -264,7 +264,10 @@ const UsbPlaceholder = () => {
   );
 };
 
-function getAll({ knownDevices }, { devices }): Device[] {
+function getAll(
+  { knownDevices }: { knownDevices: DeviceLike[] },
+  { devices }: { devices: Device[] },
+): Device[] {
   return [
     ...devices,
     ...knownDevices.map(d => ({

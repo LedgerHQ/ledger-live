@@ -1,9 +1,9 @@
 import React, { memo } from "react";
-import type { ViewStyleProp } from "react-native/Libraries/StyleSheet/StyleSheet";
 import Animated, { EasingNode } from "react-native-reanimated";
 import Svg, { Path } from "react-native-svg";
 import { interpolatePath } from "react-native-redash/lib/module/v1";
 import Config from "react-native-config";
+import { StyleProp, ViewStyle } from "react-native";
 
 const AnimatedPath = Animated.createAnimatedComponent(Path);
 const paths = [
@@ -49,10 +49,13 @@ const runProgression = () => {
 const progress = runProgression();
 type Props = {
   color: string;
-  style?: ViewStyleProp;
+  style?: StyleProp<ViewStyle> & Record<string, string | number>;
 };
 
 const AnimatedSvgBackground = ({ style, color }: Props) => {
+  // NOTE: interpolatePath CANNOT TAKE UNDEFINED
+  if (!progress) return null;
+
   const d = interpolatePath(progress, {
     inputRange: [0, 0.33, 0.66, 1],
     outputRange: paths,
