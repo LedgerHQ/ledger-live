@@ -465,7 +465,7 @@ function accountTypeFromArg(
 */
 function isPathNormal(path: string): boolean {
   //path is not deepest hardened node of a standard path or deeper, use BtcOld
-  const h = 0x80000000;
+  const h = 0x80000000; //HARDENED from bip32
   const pathElems = pathStringToArray(path);
 
   const hard = (n: number) => n >= h;
