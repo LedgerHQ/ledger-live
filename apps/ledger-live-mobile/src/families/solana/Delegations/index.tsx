@@ -14,6 +14,7 @@ import {
 } from "@ledgerhq/live-common/families/solana/logic";
 import { useSolanaStakesWithMeta } from "@ledgerhq/live-common/families/solana/react";
 import {
+  SolanaAccount,
   SolanaStakeWithMeta,
   StakeAction,
 } from "@ledgerhq/live-common/families/solana/types";
@@ -22,15 +23,16 @@ import {
   sweetch,
   tupleOfUnion,
 } from "@ledgerhq/live-common/families/solana/utils";
-import { Account } from "@ledgerhq/types-live";
+import { AccountLike } from "@ledgerhq/types-live";
 import { Box, Text } from "@ledgerhq/native-ui";
 import { useNavigation, useTheme } from "@react-navigation/native";
 import { BigNumber } from "bignumber.js";
 import invariant from "invariant";
 import { capitalize } from "lodash/fp";
-import React, { useMemo, useState } from "react";
+import React, { useCallback, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Linking, StyleSheet, View } from "react-native";
+import { StackNavigationProp } from "@react-navigation/stack";
 import { rgba } from "../../../colors";
 import AccountDelegationInfo from "../../../components/AccountDelegationInfo";
 import AccountSectionLabel from "../../../components/AccountSectionLabel";
@@ -50,7 +52,7 @@ import DelegationLabelRight from "./LabelRight";
 import DelegationRow from "./Row";
 
 type Props = {
-  account: Account;
+  account: SolanaAccount;
 };
 
 type DelegationDrawerProps = Parameters<typeof DelegationDrawer>[0];
@@ -59,7 +61,7 @@ type DelegationDrawerActions = DelegationDrawerProps["actions"];
 function Delegations({ account }: Props) {
   const { colors } = useTheme();
   const { t } = useTranslation();
-  const mainAccount = getMainAccount(account, undefined);
+  const mainAccount = getMainAccount(account, undefined) as SolanaAccount;
   const currency = getAccountCurrency(mainAccount);
 
   invariant(currency.type === "CryptoCurrency", "expected crypto currency");
@@ -70,7 +72,7 @@ function Delegations({ account }: Props) {
   );
 
   const unit = getAccountUnit(mainAccount);
-  const navigation: any = useNavigation();
+  const navigation = useNavigation();
 
   const [selectedStakeWithMeta, setSelectedStakeWithMeta] = useState<
     SolanaStakeWithMeta | undefined
@@ -78,46 +80,57 @@ function Delegations({ account }: Props) {
 
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
-  const onNavigate: any = ({
-    route,
-    screen,
-    params,
-  }: {
-    route: keyof typeof NavigatorName | keyof typeof ScreenName;
-    screen?: keyof typeof ScreenName;
-    params?: { [key: string]: any };
-  }) => {
-    setSelectedStakeWithMeta(undefined);
-    navigation.navigate(route, {
+  const onNavigate = useCallback(
+    ({
+      route,
       screen,
-      params: { ...params, accountId: account.id },
-    });
-  };
+      params,
+    }: {
+      route: string;
+      screen?: string;
+      params?: { [key: string]: unknown };
+    }) => {
+      setSelectedStakeWithMeta(undefined);
+      (
+        navigation as StackNavigationProp<{ [key: string]: object | undefined }>
+      ).navigate(route, {
+        screen,
+        params: { ...params, accountId: account.id },
+      });
+    },
+    [account.id, navigation],
+  );
 
   const onCloseDrawer = () => {
     setIsDrawerOpen(false);
   };
 
-  const openValidatorUrl = ({ stake, meta }: SolanaStakeWithMeta) => {
-    const { delegation } = stake;
-    const url =
-      meta.validator?.url ??
-      (delegation?.voteAccAddr &&
-        getAddressExplorer(
-          getDefaultExplorerView(account.currency),
-          delegation.voteAccAddr,
-        ));
-    if (url) {
-      Linking.openURL(url);
-    }
-  };
+  const openValidatorUrl = useCallback(
+    ({ stake, meta }: SolanaStakeWithMeta) => {
+      const { delegation } = stake;
+      const url =
+        meta.validator?.url ??
+        (delegation?.voteAccAddr &&
+          getAddressExplorer(
+            getDefaultExplorerView(account.currency),
+            delegation.voteAccAddr,
+          ));
+      if (url) {
+        Linking.openURL(url);
+      }
+    },
+    [account.currency],
+  );
 
-  const formatAmount = (amount: number) =>
-    formatCurrencyUnit(unit, new BigNumber(amount), {
-      disableRounding: true,
-      alwaysShowSign: false,
-      showCode: true,
-    });
+  const formatAmount = useCallback(
+    (amount: number) =>
+      formatCurrencyUnit(unit, new BigNumber(amount), {
+        disableRounding: true,
+        alwaysShowSign: false,
+        showCode: true,
+      }),
+    [unit],
+  );
 
   const data = useMemo<DelegationDrawerProps["data"]>(() => {
     if (selectedStakeWithMeta === undefined) {
@@ -192,7 +205,7 @@ function Delegations({ account }: Props) {
         ),
       },
     ];
-  }, [selectedStakeWithMeta, t, account]);
+  }, [selectedStakeWithMeta, t, formatAmount, openValidatorUrl]);
 
   const delegationActions = useMemo<DelegationDrawerActions>(() => {
     const allStakeActions = tupleOfUnion<StakeAction>()([
@@ -245,7 +258,14 @@ function Delegations({ account }: Props) {
       };
       return drawerAction;
     });
-  }, [t, selectedStakeWithMeta, account, onNavigate]);
+  }, [
+    selectedStakeWithMeta,
+    colors.fog,
+    colors.alert,
+    colors.yellow,
+    colors.lightFog,
+    onNavigate,
+  ]);
 
   const onDelegate = () => {
     onNavigate({
@@ -354,9 +374,13 @@ function DrawerStakeActionIcon({
   }
 }
 
-export default function SolanaDelegations({ account }: Props) {
-  if (!account.solanaResources) return null;
-  return <Delegations account={account} />;
+export default function SolanaDelegations({
+  account,
+}: {
+  account: AccountLike;
+}) {
+  if (!(account as SolanaAccount).solanaResources) return null;
+  return <Delegations account={account as SolanaAccount} />;
 }
 
 const styles = StyleSheet.create({

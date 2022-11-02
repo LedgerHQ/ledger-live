@@ -1,19 +1,29 @@
 import React, { useCallback, useState } from "react";
 import { ScrollView } from "react-native";
 import { Flex } from "@ledgerhq/native-ui";
-import { StackScreenProps } from "@react-navigation/stack";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { PostOnboardingActionId } from "@ledgerhq/types-live";
 import { ScreenName } from "../../const";
-import { ParamList } from "./types";
 import CustomImageDeviceAction from "../../components/CustomImageDeviceAction";
 import TestImage from "../../components/CustomImage/TestImage";
 import SelectDevice from "../../components/SelectDevice";
 import { useCompleteActionCallback } from "../../logic/postOnboarding/useCompleteAction";
+import {
+  BaseComposite,
+  StackNavigatorProps,
+} from "../../components/RootNavigator/types/helpers";
+import { CustomImageNavigatorParamList } from "../../components/RootNavigator/types/CustomImageNavigator";
 
 const deviceModelIds = [DeviceModelId.nanoFTS];
+
+type NavigationProps = BaseComposite<
+  StackNavigatorProps<
+    CustomImageNavigatorParamList,
+    ScreenName.CustomImageStep3Transfer
+  >
+>;
 
 /**
  * UI component that reconstructs an image from the raw hex data received as a
@@ -28,19 +38,14 @@ const deviceModelIds = [DeviceModelId.nanoFTS];
  * we try to match the binary value of the "previewed" image and the "reconstructed"
  * image.
  */
-const Step3Transfer: React.FC<
-  StackScreenProps<ParamList, "CustomImageStep3Transfer">
-> = ({ route, navigation }) => {
+const Step3Transfer = ({ route, navigation }: NavigationProps) => {
   const { rawData, device: deviceFromRoute, previewData } = route.params;
   const [device, setDevice] = useState<Device | null>(deviceFromRoute);
 
   const handleError = useCallback(
     (error: Error) => {
       console.error(error);
-      navigation.navigate(
-        ScreenName.CustomImageErrorScreen as "CustomImageErrorScreen",
-        { error, device },
-      );
+      navigation.navigate(ScreenName.CustomImageErrorScreen, { error, device });
     },
     [navigation, device],
   );

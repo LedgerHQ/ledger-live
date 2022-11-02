@@ -5,8 +5,7 @@ import { track } from "../../analytics";
 
 export type WrappedButtonProps = ButtonProps & {
   event?: string;
-  // eslint-disable-next-line @typescript-eslint/ban-types
-  eventProperties?: Object;
+  eventProperties?: unknown;
 };
 
 function Button({
@@ -19,7 +18,7 @@ function Button({
     async pressEvent => {
       if (!onPress) return;
       if (event) {
-        track(event, eventProperties);
+        track(event, eventProperties as Record<string, unknown>);
       }
       onPress(pressEvent);
     },

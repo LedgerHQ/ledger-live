@@ -1,7 +1,7 @@
 const NativeLocale = {
-  decimalStyle: (number: any) => `${number}`,
-  numberFromDecimalString: (number: any) => parseFloat(number),
-  dateFormat: (date: any, _1: any, _2: any) => date.toString(),
+  decimalStyle: (number: string | number) => `${number}`,
+  numberFromDecimalString: (number: string) => parseFloat(number),
+  dateFormat: (date: Date, _1: string, _2: string) => date.toString(),
   currencyCode: "USD",
   currencySymbol: "$",
   decimalSeparator: ".",
@@ -35,7 +35,7 @@ const m = {
     return valid.indexOf(style) >= 0;
   },
 
-  dateFormat(date: any, dateStyle: string, timeStyle: string) {
+  dateFormat(date: Date, dateStyle: string, timeStyle: string) {
     return NativeLocale.dateFormat(date, dateStyle, timeStyle);
   },
 };

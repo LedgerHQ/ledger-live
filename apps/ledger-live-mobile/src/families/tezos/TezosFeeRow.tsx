@@ -1,8 +1,8 @@
 import React, { useCallback } from "react";
 import { View, StyleSheet, Linking } from "react-native";
-import type { AccountLike } from "@ledgerhq/types-live";
+import type { Account, AccountLike } from "@ledgerhq/types-live";
 import { Trans } from "react-i18next";
-import type { Transaction } from "@ledgerhq/live-common/families/tezos/types";
+import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import {
   getAccountUnit,
   getAccountCurrency,
@@ -17,6 +17,7 @@ import { urls } from "../../config/urls";
 
 type Props = {
   account: AccountLike;
+  parentAccount?: Account | null;
   transaction: Transaction;
 };
 export default function TezosFeeRow({ account, transaction }: Props) {

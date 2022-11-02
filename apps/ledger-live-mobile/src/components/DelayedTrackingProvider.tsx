@@ -8,7 +8,7 @@ export type SegmentTrackingEvent = {
   type: "segment";
   payload: {
     id: string;
-    properties: any;
+    properties?: Error | Record<string, unknown> | null;
   };
 };
 
@@ -93,7 +93,7 @@ export default function DelayedTrackingProvider() {
             default:
               console.error(
                 `Badly formatted tracking event found with the type "${
-                  (event as any).type
+                  (event as { type: unknown }).type
                 }"`,
               );
               break;

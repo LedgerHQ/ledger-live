@@ -69,7 +69,7 @@ export type ManagerRequest =
   | null
   | undefined;
 
-type Result = {
+export type Result = {
   device: Device;
   deviceInfo: DeviceInfo;
   result: ListAppsResult | null | undefined;

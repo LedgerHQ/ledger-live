@@ -3,7 +3,6 @@ import { Linking, Platform } from "react-native";
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigation } from "@react-navigation/native";
 import { add, isBefore, parseISO } from "date-fns";
-import type { Account } from "@ledgerhq/types-live";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import messaging from "@react-native-firebase/messaging";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
@@ -28,14 +27,15 @@ import { setRatingsModalLocked } from "../actions/ratings";
 import { track } from "../analytics";
 
 export type EventTrigger = {
+  timeout: NodeJS.Timeout;
   /** Name of the route that will trigger the push notification modal */
-  // camelcase perhps it should
-  // eslint-disable-next-line
+  // camelcase perhaps it should
+  // eslint-disable-next-line camelcase
   route_name: string;
   /** In milliseconds, delay before triggering the push notification modal */
   timer: number;
   /** Whether the push notification modal is triggered when entering or when leaving the screen */
-  type: "on_enter" | "on_leave";
+  type?: "on_enter" | "on_leave";
 };
 
 export type DataOfUser = {
@@ -58,11 +58,12 @@ async function getPushNotificationsDataOfUserFromStorage() {
   const dataOfUser = await AsyncStorage.getItem(
     pushNotificationsDataOfUserAsyncStorageKey,
   );
+  if (!dataOfUser) return null;
 
   return JSON.parse(dataOfUser);
 }
 
-async function setPushNotificationsDataOfUserInStorage(dataOfUser) {
+async function setPushNotificationsDataOfUserInStorage(dataOfUser: DataOfUser) {
   await AsyncStorage.setItem(
     pushNotificationsDataOfUserAsyncStorageKey,
     JSON.stringify(dataOfUser),
@@ -97,7 +98,7 @@ const useNotifications = () => {
   const pushNotificationsDataOfUser = useSelector(
     notificationsDataOfUserSelector,
   );
-  const accounts: Account[] = useSelector(accountsSelector);
+  const accounts = useSelector(accountsSelector);
 
   const accountsWithAmountCount = useMemo(
     () => accounts.filter(account => account.balance?.gt(0)).length,
@@ -180,7 +181,8 @@ const useNotifications = () => {
     const minimumAppStartsNumber: number =
       pushNotificationsFeature?.params?.conditions?.minimum_app_starts_number;
     if (
-      pushNotificationsDataOfUser?.numberOfAppStarts < minimumAppStartsNumber
+      pushNotificationsDataOfUser.numberOfAppStarts &&
+      pushNotificationsDataOfUser.numberOfAppStarts < minimumAppStartsNumber
     ) {
       return false;
     }
@@ -189,13 +191,15 @@ const useNotifications = () => {
     const minimumDurationSinceAppFirstStart: Duration =
       pushNotificationsFeature?.params?.conditions
         ?.minimum_duration_since_app_first_start;
-    const dateAllowedAfterAppFirstStart = add(
-      pushNotificationsDataOfUser?.appFirstStartDate,
-      minimumDurationSinceAppFirstStart,
-    );
     if (
-      pushNotificationsDataOfUser?.appFirstStartDate &&
-      isBefore(Date.now(), dateAllowedAfterAppFirstStart)
+      pushNotificationsDataOfUser.appFirstStartDate &&
+      isBefore(
+        Date.now(),
+        add(
+          pushNotificationsDataOfUser.appFirstStartDate,
+          minimumDurationSinceAppFirstStart,
+        ),
+      )
     ) {
       return false;
     }
@@ -260,7 +264,7 @@ const useNotifications = () => {
   );
 
   const updatePushNotificationsDataOfUserInStateAndStore = useCallback(
-    dataOfUserUpdated => {
+    (dataOfUserUpdated: DataOfUser) => {
       dispatch(setNotificationsDataOfUser(dataOfUserUpdated));
       setPushNotificationsDataOfUserInStorage(dataOfUserUpdated);
     },
@@ -275,7 +279,7 @@ const useNotifications = () => {
         numberOfAppStarts: (dataOfUser?.numberOfAppStarts ?? 0) + 1,
       });
     });
-  }, []);
+  }, [updatePushNotificationsDataOfUserInStateAndStore]);
 
   const triggerMarketPushNotificationModal = useCallback(() => {
     if (
@@ -335,7 +339,7 @@ const useNotifications = () => {
     ]);
 
   const handleSetDateOfNextAllowedRequest = useCallback(
-    (delay, additionalParams) => {
+    (delay, additionalParams?: Partial<DataOfUser>) => {
       if (delay !== null && delay !== undefined) {
         const dateOfNextAllowedRequest: Date = add(Date.now(), delay);
         updatePushNotificationsDataOfUserInStateAndStore({

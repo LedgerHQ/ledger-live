@@ -41,26 +41,26 @@ export type StellarTransactionMode = "send" | "changeTrust";
 
 export type Transaction = TransactionCommon & {
   family: "stellar";
-  networkInfo: NetworkInfo | null | undefined;
-  fees: BigNumber | null | undefined;
-  baseReserve: BigNumber | null | undefined;
-  memoType: string | null | undefined;
-  memoValue: string | null | undefined;
+  networkInfo?: NetworkInfo | null;
+  fees?: BigNumber | null;
+  baseReserve?: BigNumber | null;
+  memoType?: string | null;
+  memoValue?: string | null;
   mode: StellarTransactionMode;
-  assetCode: string | undefined;
-  assetIssuer: string | undefined;
+  assetCode?: string;
+  assetIssuer?: string;
 };
 
 export type TransactionRaw = TransactionCommonRaw & {
   family: "stellar";
-  networkInfo: NetworkInfoRaw | null | undefined;
-  fees: string | null | undefined;
-  baseReserve: string | null | undefined;
-  memoType: string | null | undefined;
-  memoValue: string | null | undefined;
+  networkInfo?: NetworkInfoRaw | null;
+  fees?: string | null;
+  baseReserve?: string | null;
+  memoType?: string | null;
+  memoValue?: string | null;
   mode: StellarTransactionMode;
-  assetCode: string | undefined;
-  assetIssuer: string | undefined;
+  assetCode?: string;
+  assetIssuer?: string;
 };
 
 export type BalanceAsset = {

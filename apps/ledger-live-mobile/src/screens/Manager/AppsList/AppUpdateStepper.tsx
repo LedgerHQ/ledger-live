@@ -9,7 +9,7 @@ const AnimatedFlex = Animatable.createAnimatableComponent(Flex);
 
 type Props = {
   state: State;
-  disabled: boolean;
+  disabled?: boolean;
 };
 
 const AppUpdateStepper = ({ state }: Props) => {

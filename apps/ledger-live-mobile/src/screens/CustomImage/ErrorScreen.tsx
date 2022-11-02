@@ -1,5 +1,4 @@
 import { Flex } from "@ledgerhq/native-ui";
-import { StackScreenProps } from "@react-navigation/stack";
 import React, { useCallback, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -7,7 +6,12 @@ import styled from "styled-components/native";
 import Button from "../../components/Button";
 import CustomImageBottomModal from "../../components/CustomImage/CustomImageBottomModal";
 import GenericErrorView from "../../components/GenericErrorView";
-import { ParamList } from "./types";
+import { CustomImageNavigatorParamList } from "../../components/RootNavigator/types/CustomImageNavigator";
+import {
+  BaseComposite,
+  StackNavigatorProps,
+} from "../../components/RootNavigator/types/helpers";
+import { ScreenName } from "../../const";
 
 const Container = styled(SafeAreaView).attrs({
   edges: ["left", "right", "bottom"],
@@ -15,9 +19,14 @@ const Container = styled(SafeAreaView).attrs({
   flex: 1;
 `;
 
-const ErrorScreen: React.FC<
-  StackScreenProps<ParamList, "CustomImageErrorScreen">
-> = ({ route }) => {
+type NavigationProps = BaseComposite<
+  StackNavigatorProps<
+    CustomImageNavigatorParamList,
+    ScreenName.CustomImageErrorScreen
+  >
+>;
+
+const ErrorScreen = ({ route }: NavigationProps) => {
   const [isModalOpened, setIsModalOpened] = useState(false);
   const { params } = route;
   const { error, device } = params;

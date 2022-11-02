@@ -15,7 +15,6 @@ import {
   InfoMedium,
   WarningMedium,
 } from "@ledgerhq/native-ui/assets/icons";
-// eslint-disable-next-line import/no-unresolved
 import getWindowDimensions from "../../../logic/getWindowDimensions";
 
 const { width } = getWindowDimensions();
@@ -35,6 +34,8 @@ const icons = {
   warning: WarningMedium,
   success: CircledCheckSolidMedium,
 };
+
+type IconsKeys = keyof typeof icons;
 
 export default function Snackbar({ toast, cta, onPress, onClose }: Props) {
   const { title, text, type, icon } = toast;
@@ -77,7 +78,7 @@ export default function Snackbar({ toast, cta, onPress, onClose }: Props) {
     onPress(toast);
   }, [onPress, toast]);
 
-  const Icon = icon && icons[icon];
+  const Icon = icon ? icons[icon as IconsKeys] : undefined;
 
   const maxHeight = interpolateNode(anim, {
     inputRange: [0, 0.4, 1],
