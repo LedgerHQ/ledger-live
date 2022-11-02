@@ -26,7 +26,7 @@ const FirmwareUpdateBanner = ({
 }: {
   containerProps?: FlexBoxProps;
 }) => {
-  const lastSeenDevice: DeviceModelInfo | null = useSelector(
+  const lastSeenDevice: DeviceModelInfo | null | undefined = useSelector(
     lastSeenDeviceSelector,
   );
   const lastConnectedDevice = useSelector(lastConnectedDeviceSelector);

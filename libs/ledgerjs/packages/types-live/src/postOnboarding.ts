@@ -11,7 +11,7 @@ export enum PostOnboardingActionId {
   customImage = "customImage",
 }
 
-type WithNavigationParams = {
+export type WithNavigationParams = {
   /**
    * Navigation params when the user presses the button for this action
    * - In LLM, this will be used like this:

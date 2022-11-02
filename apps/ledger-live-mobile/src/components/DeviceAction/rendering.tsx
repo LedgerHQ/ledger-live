@@ -598,8 +598,7 @@ export function RequiredFirmwareUpdate({
   device,
   navigation,
 }: RawProps & {
-  // Sorry for the any DX team 🙇
-  navigation: any;
+  navigation: StackNavigationProp<ParamListBase>;
   device: Device;
 }) {
   const lastSeenDevice: DeviceModelInfo | null | undefined = useSelector(

@@ -438,7 +438,9 @@ export function DeviceActionDefaultRendering<R, H extends Status, P>({
       navigation,
       error,
       managerAppName:
-        error.name === "UpdateYourApp" ? error.managerAppName : undefined,
+        (error as Status["error"])?.name === "UpdateYourApp"
+          ? (error as Status["error"])?.managerAppName
+          : undefined,
       onRetry,
       colors,
       theme,

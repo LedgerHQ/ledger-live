@@ -18,7 +18,10 @@ import InvertTheme from "../../../components/theme/InvertTheme";
 import ForceTheme from "../../../components/theme/ForceTheme";
 import Button from "../../../components/wrappedUi/Button";
 import { OnboardingNavigatorParamList } from "../../../components/RootNavigator/types/OnboardingNavigator";
-import { StackNavigatorProps } from "../../../components/RootNavigator/types/helpers";
+import {
+  BaseComposite,
+  StackNavigatorProps,
+} from "../../../components/RootNavigator/types/helpers";
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const source = require("../../../../assets/videos/onboarding.mp4");
@@ -35,9 +38,11 @@ const SafeFlex = styled(SafeAreaView)`
   padding-top: 24px;
 `;
 
-type NavigationProps = StackNavigatorProps<
-  OnboardingNavigatorParamList,
-  ScreenName.OnboardingWelcome
+type NavigationProps = BaseComposite<
+  StackNavigatorProps<
+    OnboardingNavigatorParamList,
+    ScreenName.OnboardingWelcome
+  >
 >;
 
 function OnboardingStepWelcome({ navigation }: NavigationProps) {
@@ -95,7 +100,6 @@ function OnboardingStepWelcome({ navigation }: NavigationProps) {
           screen: NavigatorName.Settings,
           params: {
             screen: ScreenName.SettingsScreen,
-            params: {},
           },
         });
       }
