@@ -124,12 +124,14 @@
     },
     "exchange" : "교환",
     "info" : "정보",
-    "connectDevice" : "내 장치 연결하기"
+    "connectDevice" : "내 장치 연결하기",
+    "add" : "추가"
   },
   "devices" : {
     "nanoS" : "Nano S",
     "nanoSP" : "Nano S Plus",
     "nanoX" : "Nano X",
+    "nanoFTS" : "Nano FTS",
     "blue" : "Blue"
   },
   "operation" : {
@@ -599,6 +601,12 @@
   "lottieDebugger" : {
     "buttonTitle" : "테스트"
   },
+  "storylyDebugger" : {
+    "buttonTitle" : "테스트"
+  },
+  "postOnboardingDebugger" : {
+    "buttonTitle" : "테스트"
+  },
   "fullNode" : {
     "status" : "상태",
     "connect" : "연결",
@@ -754,7 +762,7 @@
     "settings" : {
       "title" : "계정 편집",
       "advancedLogs" : "고급",
-      "advancedTips" : "{{tag}} xpub 입니다. 타사 지갑으로 가져올 때 동일한 파생 모드를 선택하세요.",
+      "advancedTips" : "{{tag}} xpub입니다. 타사 지갑으로 가져올 때 동일한 파생 모드를 선택하세요.",
       "accountName" : {
         "title" : "계정 이름",
         "desc" : "계정 설명"
@@ -1124,6 +1132,111 @@
     "title" : "토큰 숨기기",
     "desc" : "이 작업은 모든 <1><0>{{tokenName}}</0></1>의 계정을 숨기며 <3>설정</3>을 사용하여 다시 표시할 수 있습니다",
     "hideCTA" : "토큰 숨기기"
+  },
+  "syncOnboarding" : {
+    "connection" : {
+      "searching" : {
+        "title" : "{{deviceModelName}} 장치를 컴퓨터에 연결",
+        "connectionTrouble" : "장치 연결에 문제가 있나요?"
+      },
+      "success" : {
+        "title" : "{{ deviceName }}에 연결"
+      }
+    },
+    "manual" : {
+      "title" : "{{deviceName}} 설정",
+      "pairedContent" : {
+        "title" : "{{deviceName}} 장치가 연결되었습니다.",
+        "description" : "{{deviceName}}에서 설정을 계속 진행하세요",
+        "text" : "이 화면은 {{deviceName}} 설정이 진행되는 동안 관련 정보 제공을 위해 동적으로 변경됩니다."
+      },
+      "pinContent" : {
+        "title" : "PIN 설정",
+        "description" : "PIN은 4~8자리입니다.",
+        "text" : "{{deviceName}} 및 PIN에 액세스할 수 있으면 누구나 사용자가 가진 모든 암호화폐와 NFT 자산에 액세스할 수 있습니다."
+      },
+      "recoveryContent" : {
+        "title" : "복구 문구",
+        "content" : "아래 영상을 탭하여 비밀 복구 문구에 대해 자세히 알아보세요"
+      },
+      "softwareCheckContent" : {
+        "title" : "소프트웨어 점검",
+        "genuineCheck" : {
+          "active" : "{{deviceName}} 확인 중",
+          "completed" : "{{deviceName}} 장치는 정품입니다"
+        },
+        "firmwareUpdate" : {
+          "inactive" : "소프트웨어 점검",
+          "active" : "소프트웨어 업데이트 확인",
+          "updateAvailable" : "{{firmwareVersion}} 소프트웨어 업데이트가 가능합니다",
+          "recommendation" : "지금 업데이트를 다운로드할 것을 권장드립니다.",
+          "downloadUpdate" : "업데이트 다운로드",
+          "skipUpdate" : "다음에",
+          "completed" : "최신 소프트웨어입니다"
+        }
+      },
+      "installApplications" : {
+        "title" : "기본 앱 세트 다운로드를 권장드립니다. 이후 추가로 다운로드할 수 있습니다",
+        "install" : "설치",
+        "skip" : "나중에",
+        "info" : "{{deviceName}}의 앱은 트랜잭션 승인에 사용됩니다. 언제든지 추가나 삭제가 가능합니다."
+      },
+      "genuineCheckModal" : {
+        "title" : "정품 확인",
+        "paragraph1" : "{{deviceName}}의 사용 안전성과 정품 여부를 확인하세요.",
+        "paragraph2" : "장치가 변조되지 않았는지 확인하기 위해 검사를 수행합니다. {{deviceName}}에서 이를 수락해야 합니다.",
+        "checkDeviceButton" : "장치 확인"
+      },
+      "genuineCheckCancelModal" : {
+        "title" : "정품 확인",
+        "paragraph1" : "정품 확인이 취소되었습니다",
+        "paragraph2" : "정품 확인은 {{deviceName}}의 사용 안전성을 확인하는 데 매우 중요한 절차입니다.",
+        "checkDeviceButton" : "확인 절차를 다시 실행하세요",
+        "cancelButton" : "다음에 결정하기"
+      },
+      "genuineCheckNotGenuineModal" : {
+        "title" : "정품 확인",
+        "paragraph1" : "사용하시는 장치가 정품이 아닙니다",
+        "paragraph2" : "정품 확인 실패",
+        "checkDeviceButton" : "확인 절차를 다시 실행하세요",
+        "cancelButton" : "다음에 결정하기"
+      },
+      "genuineCheckAnimationModal" : {
+        "message" : "{{deviceName}}에서 관리자 허용"
+      },
+      "helpDrawer" : {
+        "title" : "설정 안내와 관련하 도움이 필요하신가요?",
+        "description" : "Lorem Elsass ipsum aliquam bissame Oberschaeffolsheim geht's messti de Bischheim tellus blottkopf, dui sed libero. hopla libero, placerat leo eget Gal.",
+        "docButton" : "FAQ로 이동",
+        "supportButton" : "상담원과 대화"
+      },
+      "troubleshootingDrawer" : {
+        "title" : "USB 연결 문제 해결",
+        "description" : "장치 연결에 문제가 있는 것 같습니다. 걱정 마세요. 장치가 무사히 연결될 때까지 다양한 해결책을 하나씩 시도해볼 수 있습니다!",
+        "fixButton" : "해결하세요",
+        "closeButton" : "닫기"
+      },
+      "desyncOverlay" : {
+        "errorMessage" : "{{deviceName}}와의 연결이 끊어진 것 같습니다. 다시 연결을 시도하고 있습니다."
+      },
+      "header" : {
+        "helpButton" : "도움이 필요하십니까?"
+      }
+    }
+  },
+  "postOnboarding" : {
+    "postOnboardingScreen" : {
+      "title" : "좋습니다.\n설정이 모두 완료되었습니다.",
+      "description" : "축하합니다! {{deviceName}} 설정을 모두 완료하셨습니다.",
+      "paragraph" : "먼저 몇 가지 단계를 준비했습니다. Ledger Live를 직접 살펴보고 싶다면 주저 없이 이 단계를 건너뛰세요. 필요하다면 언제든지 다시 시작할 수 있습니다.",
+      "bottomText" : "Ledger Live와 함께 안전한 Web3 여행을 즐겨보세요."
+    },
+    "postOnboardingContent" : {
+      "title" : "좋습니다.\n설정이 모두 완료되었습니다.",
+      "description" : "다음 단계를 수행하세요.",
+      "skipLink" : "앱으로 건너뛰기",
+      "skipLinkInDrawer" : "나중에 할게요"
+    }
   },
   "hideNftCollection" : {
     "title" : "NFT 컬렉션 숨기기",
@@ -3476,6 +3589,14 @@
         "testAnimations" : {
           "title" : "테스트 로티 애니메이션",
           "description" : "Ledger Live에서 사용되는 모든 애니메이션 테스트"
+        },
+        "testStories" : {
+          "title" : "Storyly 스토리 테스트",
+          "description" : "Ledger Live의 모든 스토리 테스트"
+        },
+        "testPostonboarding" : {
+          "title" : "Post Onboarding 테스트",
+          "description" : "모든 post onboarding 기능 테스트"
         }
       }
     },
@@ -4949,6 +5070,9 @@
     "FeeTooHigh" : {
       "title" : "네트워크 수수료가 금액의 10%를 넘습니다"
     },
+    "DustLimit" : {
+      "title" : "금액이 더스트(소액) 한도보다 낮습니다."
+    },
     "SourceHasMultiSign" : {
       "title" : "{{currencyName}}(을)를 보내려면 다중서명을 비활성화하세요"
     },
@@ -5062,6 +5186,50 @@
     },
     "HederaAddAccountError" : {
       "title" : "귀하의 계정이 추가되지 않았습니다. 다시 시도해 주세요."
+    },
+    "ImageIncorrectFileTypeError" : {
+      "title" : "파일 이미지 로딩 실패.",
+      "description" : "다른 이미지로 재시도해보세요."
+    },
+    "ImageLoadFromFileError" : {
+      "title" : "파일 이미지 로딩 실패",
+      "description" : "다른 이미지로 다시 시도하세요"
+    },
+    "ImageDownloadError" : {
+      "title" : "이미지 다운로드 실패",
+      "description" : "다른 이미지로 다시 시도하세요"
+    },
+    "ImageMetadataLoadingError" : {
+      "title" : "이미지 메타데이터 로딩 실패",
+      "description" : "다른 이미지로 다시 시도하세요"
+    },
+    "ImageTooLargeError" : {
+      "title" : "이미지 크기 초과",
+      "description" : "작은 이미지로 다시 시도하세요"
+    },
+    "ImageCropError" : {
+      "title" : "이미지 크롭 실패",
+      "description" : "다른 이미지로 다시 시도하세요"
+    },
+    "ImageResizeError" : {
+      "title" : "이미지 사이즈 변경 실패",
+      "description" : "다른 이미지로 다시 시도하세요"
+    },
+    "ImagePreviewError" : {
+      "title" : "이미지 미리보기 실패",
+      "description" : "다른 이미지로 다시 시도하세요"
+    },
+    "ImageProcessingError" : {
+      "title" : "이미지 처리 실패",
+      "description" : "다른 이미지로 다시 시도하세요"
+    },
+    "ImageCommitRefusedOnDevice" : {
+      "title" : "장치에서 이미지 커밋이 거부됨(할 일: 최종 문구)",
+      "description" : "적합한 이미지가 아니라면 다른 이미지로 다시 시도해볼 수 있습니다."
+    },
+    "ImageLoadRefusedOnDevice" : {
+      "title" : "장치에서 이미지 로드가 거부됨(할 일: 최종 문구)",
+      "description" : "적합한 이미지가 아니라면 다른 이미지로 다시 시도해볼 수 있습니다."
     }
   },
   "cryptoOrg" : {
@@ -5092,5 +5260,36 @@
     "selectAccount" : {
       "title" : "계정 선택"
     }
+  },
+  "customImage" : {
+    "title" : "맞춤 이미지",
+    "steps" : {
+      "choose" : {
+        "stepLabel" : "이미지 선택",
+        "description" : "(...)로 설정할 이미지 선택",
+        "pickFromNftGallery" : "내 NFT 갤러리에서 선택",
+        "upload" : "내 컴퓨터에서 업로드"
+      },
+      "adjust" : {
+        "stepLabel" : "이미지 조정",
+        "rotate" : "회전"
+      },
+      "contrast" : {
+        "stepLabel" : "대비 선택"
+      },
+      "transfer" : {
+        "stepLabel" : "전송",
+        "uploadAnotherImage" : "다른 이미지 업로드",
+        "allowPreview" : "{{productName}}에서 사진 미리보기 허용",
+        "loadingPicture" : "{{productName}}에서 사진 로드 중",
+        "pictureLoaded" : "사진 로드 완료",
+        "imageLoaded" : "{{productName}}에서 로드한 이미지",
+        "confirmPicture" : "{{productName}}에서 확인",
+        "doThisLater" : "다음에 결정하기",
+        "timeDisclaimer" : "최대 30초가 소요될 수 있습니다"
+      }
+    },
+    "customImageSet" : "맞춤 이미지 세트",
+    "finishCTA" : "완료"
   }
 }
