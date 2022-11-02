@@ -21,7 +21,7 @@ const final = async () => {
   const exists = fs.existsSync(".env");
   if (!exists) {
     const str = `APP_NAME="LL [DEV]"
-ANALYTICS_TOKEN=jfUZbw28ig8JpEi9DZpTUc21dKUKu1e3
+ANALYTICS_TOKEN=ICid4O5K4AE2Utbv1ZT5CLmZalVWz8V9
 BRAZE_ANDROID_API_KEY="be5e1bc8-43f1-4864-b097-076a3c693a43"
 BRAZE_IOS_API_KEY="e0a7dfaf-fc30-48f6-b998-01dbebbb73a4"
 BRAZE_CUSTOM_ENDPOINT="sdk.fra-02.braze.eu"`;
