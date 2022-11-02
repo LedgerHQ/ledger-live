@@ -14,6 +14,7 @@ export const getNetworkParameters = (
       shelleySlotDuration: 1000,
       shelleySlotsPerEpoch: 432000,
       addressPrefix: "addr",
+      poolIdPrefix: "pool",
     };
   } else if (networkName === "cardano_testnet") {
     return {
@@ -26,6 +27,7 @@ export const getNetworkParameters = (
       shelleySlotDuration: 1000,
       shelleySlotsPerEpoch: 432000,
       addressPrefix: "addr_test",
+      poolIdPrefix: "pool",
     };
   }
 

@@ -29,6 +29,7 @@ import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import ShelleyTypeAddress from "@stricahq/typhonjs/dist/address/ShelleyTypeAddress";
 import type { OperationType } from "@ledgerhq/types-live";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import bech32 from "bech32";
 
 /**
  *  returns BipPath object with account, chain and index field for cardano
@@ -339,4 +340,11 @@ export function decodeTokenName(assetName: string): string {
     }
   }
   return assetName;
+}
+
+export function getBech32PoolId(poolId: string, networkName: string): string {
+  const networkParams = getNetworkParameters(networkName);
+  const words = bech32.toWords(Buffer.from(poolId, "hex"));
+  const encoded = bech32.encode(networkParams.poolIdPrefix, words, 1000);
+  return encoded;
 }
