@@ -43,10 +43,10 @@ const customImage: PostOnboardingAction = {
   id: PostOnboardingActionId.customImage,
   Icon: Icons.BracketsMedium,
   featureFlagId: "customImage",
-  title: `Personalize my ${getDeviceModel(DeviceModelId.nanoFTS).productName}`,
-  description: "By customizing the screen.",
-  actionCompletedPopupLabel: "Device personalized",
-  actionCompletedHubTitle: "That screen is looking neat.",
+  title: "customImage.postOnboarding.title",
+  description: "customImage.postOnboarding.description",
+  actionCompletedPopupLabel: "customImage.postOnboarding.actionCompletedPopupLabel",
+  actionCompletedHubTitle: "customImage.postOnboarding.actionCompletedHubTitle",
   startAction: () => setDrawer(CustomImage, { isFromPostOnboardingEntryPoint: true }),
 };
 
