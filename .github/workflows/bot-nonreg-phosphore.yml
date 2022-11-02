@@ -44,6 +44,8 @@ jobs:
 
   run-bot:
     runs-on: ${{ needs.start-runner.outputs.label }}
+    env:
+      NODE_OPTIONS: "--max-old-space-size=7168"
     needs: [start-runner]
     steps:
       - uses: actions/checkout@v3
