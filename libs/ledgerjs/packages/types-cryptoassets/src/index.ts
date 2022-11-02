@@ -47,7 +47,6 @@ export type CryptoCurrencyId =
   | "groestlcoin"
   | "hcash"
   | "hedera"
-  | "hedera"
   | "helium"
   | "hpb"
   | "hycon"
@@ -93,6 +92,7 @@ export type CryptoCurrencyId =
   | "stratis"
   | "stealthcoin"
   | "stellar"
+  // osmosis
   | "osmo"
   | "shyft"
   | "tezos"
