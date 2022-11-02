@@ -429,11 +429,7 @@ PODS:
     - React-Core
   - react-native-netinfo (6.2.1):
     - React-Core
-<<<<<<< HEAD
-  - react-native-pager-view (6.0.1):
-=======
   - react-native-pager-view (6.0.2):
->>>>>>> ledger/develop
     - React-Core
   - react-native-performance (3.1.2):
     - React-Core
@@ -637,10 +633,6 @@ DEPENDENCIES:
   - "EXFileSystem (from `../../../node_modules/.pnpm/expo-file-system@13.1.4_lmagrnehrl23al7wh32wgazeaa/node_modules/expo-file-system/ios`)"
   - "EXImageLoader (from `../../../node_modules/.pnpm/expo-image-loader@3.1.1_lmagrnehrl23al7wh32wgazeaa/node_modules/expo-image-loader/ios`)"
   - "EXImageManipulator (from `../../../node_modules/.pnpm/expo-image-manipulator@10.2.1_lmagrnehrl23al7wh32wgazeaa/node_modules/expo-image-manipulator/ios`)"
-<<<<<<< HEAD
-  - "EXImagePicker (from `../../../node_modules/.pnpm/expo-image-picker@12.0.2_lmagrnehrl23al7wh32wgazeaa/node_modules/expo-image-picker/ios`)"
-=======
->>>>>>> ledger/develop
   - "Expo (from `../../../node_modules/.pnpm/expo@43.0.5_@babel+core@7.17.10/node_modules/expo/ios`)"
   - "ExpoModulesCore (from `../../../node_modules/.pnpm/expo-modules-core@0.6.5/node_modules/expo-modules-core/ios`)"
   - "FBLazyVector (from `../../../node_modules/.pnpm/react-native@0.68.2_qiqqwmyv63yhnuboofexv3s7x4/node_modules/react-native/Libraries/FBLazyVector`)"
@@ -698,11 +690,7 @@ DEPENDENCIES:
   - "react-native-image-crop-tools (from `../../../node_modules/.pnpm/react-native-image-crop-tools@1.6.2_ykxjy5s7xujdxmsgrwxo5mh3y4_zqxy7fpkavjkgz5xll7ed4r6rq/node_modules/react-native-image-crop-tools`)"
   - "react-native-image-picker (from `../../../node_modules/.pnpm/react-native-image-picker@4.8.5_zqxy7fpkavjkgz5xll7ed4r6rq/node_modules/react-native-image-picker`)"
   - "react-native-netinfo (from `../../../node_modules/.pnpm/@react-native-community+netinfo@6.2.1_react-native@0.68.2/node_modules/@react-native-community/netinfo`)"
-<<<<<<< HEAD
-  - "react-native-pager-view (from `../../../node_modules/.pnpm/react-native-pager-view@6.0.1_zqxy7fpkavjkgz5xll7ed4r6rq/node_modules/react-native-pager-view`)"
-=======
   - "react-native-pager-view (from `../../../node_modules/.pnpm/react-native-pager-view@6.0.2_zqxy7fpkavjkgz5xll7ed4r6rq/node_modules/react-native-pager-view`)"
->>>>>>> ledger/develop
   - "react-native-performance (from `../../../node_modules/.pnpm/react-native-performance@3.1.2_react-native@0.68.2/node_modules/react-native-performance`)"
   - "react-native-randombytes (from `../../../node_modules/.pnpm/react-native-randombytes@3.6.1/node_modules/react-native-randombytes`)"
   - "react-native-restart (from `../../../node_modules/.pnpm/react-native-restart@0.0.24_zqxy7fpkavjkgz5xll7ed4r6rq/node_modules/react-native-restart`)"
@@ -804,11 +792,6 @@ EXTERNAL SOURCES:
     :path: "../../../node_modules/.pnpm/expo-image-loader@3.1.1_lmagrnehrl23al7wh32wgazeaa/node_modules/expo-image-loader/ios"
   EXImageManipulator:
     :path: "../../../node_modules/.pnpm/expo-image-manipulator@10.2.1_lmagrnehrl23al7wh32wgazeaa/node_modules/expo-image-manipulator/ios"
-<<<<<<< HEAD
-  EXImagePicker:
-    :path: "../../../node_modules/.pnpm/expo-image-picker@12.0.2_lmagrnehrl23al7wh32wgazeaa/node_modules/expo-image-picker/ios"
-=======
->>>>>>> ledger/develop
   Expo:
     :path: "../../../node_modules/.pnpm/expo@43.0.5_@babel+core@7.17.10/node_modules/expo/ios"
   ExpoModulesCore:
@@ -872,11 +855,7 @@ EXTERNAL SOURCES:
   react-native-netinfo:
     :path: "../../../node_modules/.pnpm/@react-native-community+netinfo@6.2.1_react-native@0.68.2/node_modules/@react-native-community/netinfo"
   react-native-pager-view:
-<<<<<<< HEAD
-    :path: "../../../node_modules/.pnpm/react-native-pager-view@6.0.1_zqxy7fpkavjkgz5xll7ed4r6rq/node_modules/react-native-pager-view"
-=======
     :path: "../../../node_modules/.pnpm/react-native-pager-view@6.0.2_zqxy7fpkavjkgz5xll7ed4r6rq/node_modules/react-native-pager-view"
->>>>>>> ledger/develop
   react-native-performance:
     :path: "../../../node_modules/.pnpm/react-native-performance@3.1.2_react-native@0.68.2/node_modules/react-native-performance"
   react-native-randombytes:
@@ -1035,11 +1014,7 @@ SPEC CHECKSUMS:
   react-native-image-crop-tools: 06b171ac13f1cd520e633a0d190c00f664b4cb79
   react-native-image-picker: cd420f97f6ed6ff74fc4686d27dbcfdbd051db91
   react-native-netinfo: 3d3769f0d65de15c83a9bf1346f8be71de5a24bf
-<<<<<<< HEAD
-  react-native-pager-view: 3051346698a0ba0c4e13e40097cc11b00ee03cca
-=======
   react-native-pager-view: 592421df0259bf7a7a4fe85b74c24f3f39905605
->>>>>>> ledger/develop
   react-native-performance: e66c3730f9e463b959dc21ff38fd2c8b8e53ea79
   react-native-randombytes: 421f1c7d48c0af8dbcd471b0324393ebf8fe7846
   react-native-restart: 45c8dca02491980f2958595333cbccd6877cb57e
