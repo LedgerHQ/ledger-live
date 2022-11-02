@@ -15,6 +15,7 @@ import {
   addExtraSessionTrackingPair,
 } from "../actions/general";
 import CurrencyUnitValue from "./CurrencyUnitValue";
+import type { Props as CurrencyUnitValueProps } from "./CurrencyUnitValue";
 import LText from "./LText";
 import Circle from "./Circle";
 import IconHelp from "../icons/Info";
@@ -31,11 +32,11 @@ type Props = {
   placeholderProps?: unknown;
   // as we can't render View inside Text, provide ability to pass
   // wrapper component from outside
-  Wrapper?: React.ComponentType<any>;
+  Wrapper?: React.ComponentType;
   subMagnitude?: number;
   joinFragmentsSeparator?: string;
   alwaysShowValue?: boolean;
-};
+} & Partial<CurrencyUnitValueProps>;
 export const NoCountervaluePlaceholder = () => {
   const { colors } = useTheme();
   const [modalOpened, setModalOpened] = useState(false);
@@ -64,14 +65,14 @@ export default function CounterValue({
   value: valueProp,
   date,
   withPlaceholder,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   placeholderProps,
   Wrapper,
   currency,
   ...props
 }: Props) {
-  const value =
-    valueProp instanceof BigNumber ? valueProp.toNumber() : valueProp;
+  const value = BigNumber.isBigNumber(valueProp)
+    ? valueProp.toNumber()
+    : valueProp;
   const counterValueCurrency = useSelector(counterValueCurrencySelector);
   const trackingPairs = useTrackingPairs();
   const cvPolling = useCountervaluesPolling();
@@ -83,7 +84,7 @@ export default function CounterValue({
     [counterValueCurrency, currency, trackingPairs],
   );
   useEffect(() => {
-    let t;
+    let t: NodeJS.Timeout | undefined;
 
     if (!hasTrackingPair) {
       addExtraSessionTrackingPair({
@@ -119,7 +120,6 @@ export default function CounterValue({
   const inner = (
     <CurrencyUnitValue
       {...props}
-      currency={currency}
       unit={counterValueCurrency.units[0]}
       value={countervalue}
     />

@@ -1,7 +1,7 @@
 import type { DeviceModelId } from "@ledgerhq/devices";
 export type Device = {
   deviceId: string;
-  deviceName?: string;
+  deviceName?: string | null;
   modelId: DeviceModelId;
   wired: boolean;
 };

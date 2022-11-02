@@ -23,8 +23,11 @@ import { useTranslation } from "react-i18next";
 import {
   flattenAccounts,
   accountWithMandatoryTokens,
+  getParentAccount,
+  isTokenAccount,
 } from "@ledgerhq/live-common/account/index";
 import { getSwapSelectableCurrencies } from "@ledgerhq/live-common/exchange/swap/logic";
+import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { shallowAccountsSelector } from "../../../reducers/accounts";
 import {
   swapAcceptedProvidersSelector,
@@ -49,12 +52,14 @@ import { TxForm } from "./TxForm";
 import { Summary } from "./Summary";
 import { Requirement } from "./Requirement";
 import { trackSwapError, SWAP_VERSION } from "../utils";
-import { SwapFormProps } from "../types";
 import { Max } from "./Max";
 import { Modal } from "./Modal";
 import { Connect } from "./Connect";
 import { DeviceMeta } from "./Modal/Confirmation";
 import { ErrorBanner } from "./ErrorBanner";
+import { MaterialTopTabNavigatorProps } from "../../../components/RootNavigator/types/helpers";
+import { ScreenName } from "../../../const";
+import { SwapFormNavigatorParamList } from "../../../components/RootNavigator/types/SwapFormNavigator";
 
 export const useProviders = () => {
   const dispatch = useDispatch();
@@ -82,7 +87,12 @@ export const useProviders = () => {
   };
 };
 
-export function SwapForm({ route: { params } }: SwapFormProps) {
+export function SwapForm({
+  route: { params },
+}: MaterialTopTabNavigatorProps<
+  SwapFormNavigatorParamList,
+  ScreenName.SwapForm
+>) {
   const [currentFlow, setCurrentFlow] = useState<ActionRequired>(
     ActionRequired.None,
   );
@@ -146,6 +156,7 @@ export function SwapForm({ route: { params } }: SwapFormProps) {
     // we don't display it if user needs to login first
     if (
       currentBanner !== ActionRequired.Login &&
+      kycStatus &&
       shouldShowKYCBanner({ provider, kycStatus })
     ) {
       setCurrentBanner(ActionRequired.KYC);
@@ -165,7 +176,7 @@ export function SwapForm({ route: { params } }: SwapFormProps) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [accounts]);
 
-  // FIXME: update usePollKYCStatus to use checkQuote for KYC status (?)
+  // TODO: update usePollKYCStatus to use checkQuote for KYC status (?)
   usePollKYCStatus(
     {
       provider,
@@ -207,7 +218,7 @@ export function SwapForm({ route: { params } }: SwapFormProps) {
   }, [providerKYC?.id, currentFlow]);
 
   /**
-   * FIXME
+   * TODO
    * Too complicated, seems to handle to much things (KYC status + non KYC related errors)
    * KYC related stuff should be handled in usePollKYCStatus
    */
@@ -345,7 +356,9 @@ export function SwapForm({ route: { params } }: SwapFormProps) {
         params.target === "from"
           ? accounts
           : accounts.map(acc =>
-              accountWithMandatoryTokens(acc, [params?.currency || []]),
+              accountWithMandatoryTokens(acc, [
+                (params?.currency as TokenCurrency) || [],
+              ]),
             );
 
       const account = flattenAccounts(enhancedAccounts).find(
@@ -366,7 +379,9 @@ export function SwapForm({ route: { params } }: SwapFormProps) {
         swapTransaction.setToAccount(
           swapTransaction.swap.to.currency,
           account,
-          account.parent,
+          isTokenAccount(account)
+            ? getParentAccount(account, accounts)
+            : undefined,
         );
       }
     }
@@ -393,7 +408,6 @@ export function SwapForm({ route: { params } }: SwapFormProps) {
 
   if (providers?.length) {
     return (
-      // @ts-expect-error KeyboardAwareScrollView doens't come with right typings
       <KeyboardAwareScrollView>
         <Flex flex={1} justifyContent="space-between" padding={6}>
           <Flex flex={1}>
@@ -447,7 +461,6 @@ export function SwapForm({ route: { params } }: SwapFormProps) {
           onClose={onCloseModal}
           deviceMeta={deviceMeta}
           exchangeRate={exchangeRate}
-          setError={setError}
         />
       </KeyboardAwareScrollView>
     );

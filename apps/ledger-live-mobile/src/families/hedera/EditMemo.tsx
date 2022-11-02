@@ -1,32 +1,28 @@
 import React, { useCallback, useState } from "react";
 import { View, StyleSheet, ScrollView } from "react-native";
-import SafeAreaView from "react-native-safe-area-view";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { useTranslation } from "react-i18next";
 import i18next from "i18next";
-import type { Account } from "@ledgerhq/types-live";
-import type { Transaction } from "@ledgerhq/live-common/families/hedera/types";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { useTheme } from "@react-navigation/native";
 import KeyboardView from "../../components/KeyboardView";
 import Button from "../../components/Button";
 import { ScreenName } from "../../const";
 import TextInput from "../../components/FocusedTextInput";
+import {
+  BaseComposite,
+  StackNavigatorProps,
+} from "../../components/RootNavigator/types/helpers";
+import { SendFundsNavigatorStackParamList } from "../../components/RootNavigator/types/SendFundsNavigator";
 
-const forceInset = {
-  bottom: "always",
-};
-type Props = {
-  navigation: any;
-  route: {
-    params: RouteParams;
-  };
-};
-type RouteParams = {
-  account: Account;
-  transaction: Transaction;
-};
+type NavigationProps = BaseComposite<
+  StackNavigatorProps<
+    SendFundsNavigatorStackParamList,
+    ScreenName.HederaEditMemo
+  >
+>;
 
-function HederaEditMemo({ navigation, route }: Props) {
+function HederaEditMemo({ navigation, route }: NavigationProps) {
   const { colors } = useTheme();
   const { t } = useTranslation();
   const [memo, setMemo] = useState(route.params.transaction.memo);
@@ -34,6 +30,7 @@ function HederaEditMemo({ navigation, route }: Props) {
   const onValidateText = useCallback(() => {
     const bridge = getAccountBridge(account);
     const { transaction } = route.params;
+    // @ts-expect-error FIXME: No currennt/next navigation provided?
     navigation.navigate(ScreenName.SendSummary, {
       accountId: account.id,
       transaction: bridge.updateTransaction(transaction, {
@@ -42,7 +39,7 @@ function HederaEditMemo({ navigation, route }: Props) {
     });
   }, [navigation, route.params, account, memo]);
   return (
-    <SafeAreaView style={styles.root} forceInset={forceInset}>
+    <SafeAreaView style={styles.root}>
       <KeyboardView
         style={[
           styles.body,
@@ -88,7 +85,7 @@ function HederaEditMemo({ navigation, route }: Props) {
 
 const options = {
   title: i18next.t("send.summary.memo.title"),
-  headerLeft: null,
+  headerLeft: undefined,
 };
 export { HederaEditMemo as component, options };
 const styles = StyleSheet.create({

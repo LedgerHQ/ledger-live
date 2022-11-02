@@ -14,6 +14,7 @@ import SelectValidator from "./SelectValidator";
 import VoteSummary from "./02-Summary";
 import DelegationValidationError from "./ValidationError";
 import DelegationValidationSuccess from "./ValidationSuccess";
+import type { CeloVoteFlowParamList } from "./types";
 
 const totalSteps = "3";
 
@@ -136,4 +137,4 @@ const options = {
 
 export { VoteFlow as component, options };
 
-const Stack = createStackNavigator();
+const Stack = createStackNavigator<CeloVoteFlowParamList>();

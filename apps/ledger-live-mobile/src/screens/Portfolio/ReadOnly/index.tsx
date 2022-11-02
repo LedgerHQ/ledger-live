@@ -1,6 +1,6 @@
 import React, { useCallback, useMemo, useState, memo, useContext } from "react";
 import { useSelector } from "react-redux";
-import { FlatList, LayoutChangeEvent } from "react-native";
+import { FlatList, LayoutChangeEvent, ListRenderItemInfo } from "react-native";
 import { useFocusEffect } from "@react-navigation/native";
 import Animated, {
   useAnimatedScrollHandler,
@@ -18,13 +18,17 @@ import {
   listSupportedCurrencies,
   useCurrenciesByMarketcap,
 } from "@ledgerhq/live-common/currencies/index";
-import { Currency } from "@ledgerhq/types-cryptoassets";
+import {
+  CryptoCurrency,
+  Currency,
+  TokenCurrency,
+} from "@ledgerhq/types-cryptoassets";
 import { useRefreshAccountsOrdering } from "../../../actions/general";
 import {
   counterValueCurrencySelector,
   hasOrderedNanoSelector,
 } from "../../../reducers/settings";
-import { usePortfolio } from "../../../actions/portfolio";
+import { usePortfolio } from "../../../hooks/portfolio";
 import globalSyncRefreshControl from "../../../components/globalSyncRefreshControl";
 import BackgroundGradient from "../../../components/BackgroundGradient";
 
@@ -43,9 +47,13 @@ import SetupDeviceBanner from "../../../components/SetupDeviceBanner";
 import BuyDeviceBanner, {
   IMAGE_PROPS_BIG_NANO,
 } from "../../../components/BuyDeviceBanner";
-// eslint-disable-next-line import/no-cycle
-import { AnalyticsContext } from "../../../components/RootNavigator";
 import Assets from "../Assets";
+import { AnalyticsContext } from "../../../analytics/AnalyticsContext";
+import {
+  BaseComposite,
+  StackNavigatorProps,
+} from "../../../components/RootNavigator/types/helpers";
+import { PortfolioNavigatorStackParamList } from "../../../components/RootNavigator/types/PortfolioNavigator";
 
 export { default as PortfolioTabIcon } from "../TabIcon";
 
@@ -57,15 +65,15 @@ const AnimatedFlatListWithRefreshControl = createNativeWrapper(
   },
 );
 
-type Props = {
-  navigation: any;
-};
-
 export const Gradient = styled(BackgroundGradient)``;
 
 const maxAssetsToDisplay = 5;
 
-function ReadOnlyPortfolio({ navigation }: Props) {
+type NavigationProps = BaseComposite<
+  StackNavigatorProps<PortfolioNavigatorStackParamList, ScreenName.Portfolio>
+>;
+
+function ReadOnlyPortfolio({ navigation }: NavigationProps) {
   const { t } = useTranslation();
   const counterValueCurrency: Currency = useSelector(
     counterValueCurrencySelector,
@@ -100,7 +108,10 @@ function ReadOnlyPortfolio({ navigation }: Props) {
     [],
   );
   const cryptoCurrencies = useMemo(
-    () => listSupportedCurrencies().concat(listSupportedTokens()),
+    () =>
+      (listSupportedCurrencies() as (TokenCurrency | CryptoCurrency)[]).concat(
+        listSupportedTokens(),
+      ),
     [listSupportedTokens],
   );
   const sortedCryptoCurrencies = useCurrenciesByMarketcap(cryptoCurrencies);
@@ -182,7 +193,7 @@ function ReadOnlyPortfolio({ navigation }: Props) {
 
   useFocusEffect(
     useCallback(() => {
-      setScreen("Wallet");
+      setScreen && setScreen("Wallet");
 
       return () => {
         setSource("Wallet");
@@ -210,8 +221,10 @@ function ReadOnlyPortfolio({ navigation }: Props) {
             marginBottom: 64,
           }}
           contentContainerStyle={{ paddingBottom: TAB_BAR_SAFE_HEIGHT }}
-          renderItem={({ item }: { item: React.ReactNode }) => item}
-          keyExtractor={(_: any, index: number) => String(index)}
+          renderItem={({ item }: ListRenderItemInfo<unknown>) =>
+            item as JSX.Element
+          }
+          keyExtractor={(_: unknown, index: number) => String(index)}
           showsVerticalScrollIndicator={false}
           onScroll={handleScroll}
         />
@@ -228,4 +241,4 @@ function ReadOnlyPortfolio({ navigation }: Props) {
   );
 }
 
-export default memo<Props>(ReadOnlyPortfolio);
+export default memo(ReadOnlyPortfolio);

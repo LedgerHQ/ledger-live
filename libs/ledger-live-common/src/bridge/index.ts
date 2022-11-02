@@ -14,7 +14,7 @@ export type Proxy = {
   getCurrencyBridge: typeof getCurrencyBridge;
 };
 let proxy: Proxy | null | undefined;
-export const setBridgeProxy = (p: Proxy | null | undefined) => {
+export const setBridgeProxy = (p: Proxy | null | undefined): void => {
   if (p && p.getAccountBridge === getAccountBridge) {
     throw new Error(
       "setBridgeProxy can't be called with same bridge functions!"

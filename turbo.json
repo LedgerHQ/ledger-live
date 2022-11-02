@@ -6,10 +6,6 @@
       "dependsOn": ["^build"],
       "outputs": ["dist/**", "lib/**", "lib-es/**", "build/**"]
     },
-    "pack": {
-      "dependsOn": ["^build"],
-      "outputs": ["dist/**", "lib/**", "lib-es/**", "build/**"]
-    },
     "lint": {
       "outputs": [],
       "env": ["CI_OS"]
@@ -29,6 +25,9 @@
     },
     "start": {
       "cache": false,
+      "dependsOn": ["^build"]
+    },
+    "android:apk:local": {
       "dependsOn": ["^build"]
     },
     "android:apk": {

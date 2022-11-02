@@ -3,13 +3,14 @@ import { TouchableOpacity } from "react-native";
 import { getCurrencyColor } from "@ledgerhq/live-common/currencies/index";
 import { Flex, Icons, Text } from "@ledgerhq/native-ui";
 import { useTranslation } from "react-i18next";
-import { useTheme } from "styled-components/native";
+import { DefaultTheme, useTheme } from "styled-components/native";
 import { useNavigation } from "@react-navigation/native";
 import { ensureContrast } from "../../colors";
 import { ScreenName } from "../../const";
 import { useDistribution } from "../../actions/general";
 import RingChart from "../Analytics/RingChart";
 import { track } from "../../analytics";
+import { DistributionItem } from "../Analytics/DistributionCard";
 
 const NUMBER_MAX_ALLOCATION_ASSETS_TO_DISPLAY = 4;
 
@@ -17,8 +18,8 @@ const AllocationCaption = ({
   assetAllocation,
   colors,
 }: {
-  assetAllocation: any;
-  colors: any;
+  assetAllocation: DistributionItem;
+  colors: DefaultTheme["colors"];
 }) => {
   if (!assetAllocation?.currency) return <></>;
 
@@ -54,7 +55,7 @@ const Allocations = () => {
     if (distribution.list.length <= NUMBER_MAX_ALLOCATION_ASSETS_TO_DISPLAY) {
       return distribution.list;
     }
-    const data = distribution.list.slice(
+    const data: DistributionItem[] = distribution.list.slice(
       0,
       NUMBER_MAX_ALLOCATION_ASSETS_TO_DISPLAY - 1,
     );
@@ -74,7 +75,7 @@ const Allocations = () => {
       othersAllocations.distribution += assetAllocation.distribution;
       othersAllocations.amount += assetAllocation.amount;
     }
-    data.push(othersAllocations);
+    data.push(othersAllocations as DistributionItem);
 
     return data;
   }, [distribution.list, colors.neutral.c70, t]);
@@ -88,7 +89,6 @@ const Allocations = () => {
               size={94}
               strokeWidth={5}
               data={distributionListFormatted}
-              colors={colors}
             />
           </Flex>
           <Flex flex={1} ml={8} flexDirection="row" mt={3}>

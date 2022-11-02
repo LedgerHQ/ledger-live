@@ -14,7 +14,7 @@ import ByteSize from "../../../components/ByteSize";
 const keyExtractor = (item: App, index: number) => String(item.id) + index;
 
 type Props = {
-  isOpened: boolean;
+  isOpened?: boolean;
   apps: App[];
   installed: InstalledItem[];
   onClose: () => void;
@@ -74,7 +74,7 @@ const FlatListContainer = styled(FlatList).attrs({
   width: "100%",
   maxHeight: 250,
   marginBottom: 20,
-})``;
+})`` as unknown as typeof FlatList;
 
 const UpdateAllModal = ({
   isOpened,

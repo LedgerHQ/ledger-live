@@ -3,7 +3,7 @@ import { Trans } from "react-i18next";
 import { StyleSheet, View } from "react-native";
 import React from "react";
 
-const ValidatorHead = ({ title }: { title?: string }) => (
+const ValidatorHead = ({ title }: { title?: React.ReactNode }) => (
   <View style={styles.validatorHead}>
     <Text
       style={styles.validatorHeadText}

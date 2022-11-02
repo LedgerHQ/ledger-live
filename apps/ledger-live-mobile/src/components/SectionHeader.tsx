@@ -10,13 +10,15 @@ type Props = {
   withoutMarginBottom?: boolean;
 };
 
-const Container = styled(Flex).attrs(p => ({
-  backgroundColor: "neutral.c30",
-  padding: 5,
-  borderRadius: 2,
-  marginTop: 7,
-  marginBottom: !p.withoutMarginBottom && 3,
-}))``;
+const Container = styled(Flex).attrs(
+  (p: { withoutMarginBottom?: boolean }) => ({
+    backgroundColor: "neutral.c30",
+    padding: 5,
+    borderRadius: 2,
+    marginTop: 7,
+    marginBottom: !p.withoutMarginBottom && 3,
+  }),
+)<{ withoutMarginBottom?: boolean }>``;
 
 export default function SectionHeader({
   section,

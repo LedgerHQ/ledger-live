@@ -19,6 +19,8 @@ import ParentCurrencyIcon from "./ParentCurrencyIcon";
 import FormatDate from "./FormatDate";
 import { ensureContrast } from "../colors";
 import { track } from "../analytics";
+import { Item } from "./Graph/types";
+import { Merge } from "../types/helpers";
 
 const Placeholder = styled(Flex).attrs({
   backgroundColor: "neutral.c40",
@@ -63,7 +65,7 @@ function AssetCentricGraphCard({
 
   const unit = counterValueCurrency.units[0];
 
-  const [hoveredItem, setHoverItem] = useState();
+  const [hoveredItem, setHoverItem] = useState<Item | null>();
 
   const item = useMemo(() => {
     if (hoveredItem) {
@@ -170,7 +172,12 @@ function AssetCentricGraphCard({
                       adjustsFontSizeToFit
                     >
                       {items[0].value !== undefined ? (
-                        <CurrencyUnitValue {...items[0]} />
+                        <CurrencyUnitValue
+                          {...(items[0] as Merge<
+                            typeof items[0],
+                            { value: number }
+                          >)}
+                        />
                       ) : null}
                     </Text>
                   </Flex>
@@ -210,7 +217,6 @@ function AssetCentricGraphCard({
           <Flex onTouchEnd={handleGraphTouch}>
             <Graph
               isInteractive={isAvailable}
-              isLoading={!isAvailable}
               height={110}
               width={getWindowDimensions().width + 1}
               color={graphColor}

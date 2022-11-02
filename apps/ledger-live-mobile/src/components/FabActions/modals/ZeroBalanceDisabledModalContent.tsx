@@ -3,10 +3,16 @@ import { BottomDrawer, Flex } from "@ledgerhq/native-ui";
 import { useTranslation } from "react-i18next";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import { useNavigation } from "@react-navigation/native";
+import { Currency } from "@ledgerhq/types-cryptoassets";
 import { ModalOnDisabledClickComponentProps } from "../index";
 import ParentCurrencyIcon from "../../ParentCurrencyIcon";
 import { NavigatorName, ScreenName } from "../../../const";
 import Button from "../../wrappedUi/Button";
+import {
+  RootNavigationComposite,
+  StackNavigatorNavigation,
+} from "../../RootNavigator/types/helpers";
+import { BaseNavigatorStackParamList } from "../../RootNavigator/types/BaseNavigator";
 
 function ZeroBalanceDisabledModalContent({
   account,
@@ -17,7 +23,12 @@ function ZeroBalanceDisabledModalContent({
   isOpen,
 }: ModalOnDisabledClickComponentProps) {
   const { t } = useTranslation();
-  const navigation = useNavigation();
+  const navigation =
+    useNavigation<
+      RootNavigationComposite<
+        StackNavigatorNavigation<BaseNavigatorStackParamList>
+      >
+    >();
 
   const actionCurrency = account ? getAccountCurrency(account) : currency;
 
@@ -33,21 +44,27 @@ function ZeroBalanceDisabledModalContent({
   }, [account?.id, actionCurrency?.id, navigation, onClose]);
 
   const goToReceive = useCallback(() => {
-    navigation.navigate(NavigatorName.ReceiveFunds, {
-      screen: account
-        ? ScreenName.ReceiveConfirmation
-        : ScreenName.ReceiveSelectAccount,
-      params: {
-        selectedCurrency: actionCurrency,
-        currency: actionCurrency,
-        accountId: account?.id,
-        parentId:
-          parentAccount?.id ||
-          (account?.type === "TokenAccount" && account?.parentId),
-      },
-    });
+    if (account) {
+      navigation.navigate(NavigatorName.ReceiveFunds, {
+        screen: ScreenName.ReceiveConfirmation,
+        params: {
+          currency: actionCurrency,
+          accountId: account?.id || "",
+          parentId:
+            parentAccount?.id ||
+            (account?.type === "TokenAccount" ? account?.parentId : undefined),
+        },
+      });
+    } else {
+      navigation.navigate(NavigatorName.ReceiveFunds, {
+        screen: ScreenName.ReceiveSelectAccount,
+        params: {
+          currency: actionCurrency!,
+        },
+      });
+    }
     onClose();
-  }, [account, actionCurrency, navigation, onClose]);
+  }, [account, parentAccount?.id, actionCurrency, navigation, onClose]);
 
   return (
     <BottomDrawer
@@ -60,7 +77,9 @@ function ZeroBalanceDisabledModalContent({
         currencyTicker: actionCurrency?.ticker,
         actionName: action.label,
       })}
-      Icon={<ParentCurrencyIcon size={48} currency={actionCurrency} />}
+      Icon={
+        <ParentCurrencyIcon size={48} currency={actionCurrency as Currency} />
+      }
     >
       <Flex mx={16} flexDirection={"row"}>
         <Button

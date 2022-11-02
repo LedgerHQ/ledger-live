@@ -1,12 +1,12 @@
 import React, { Component } from "react";
-import { StyleSheet, View } from "react-native";
+import { StyleProp, ViewStyle, StyleSheet, View } from "react-native";
 
 type Props = {
   bg?: string;
   size: number;
-  children?: any;
+  children?: React.ReactNode;
   crop?: boolean;
-  style?: any;
+  style?: StyleProp<ViewStyle>;
 };
 
 class Circle extends Component<Props> {
