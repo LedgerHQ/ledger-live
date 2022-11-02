@@ -8,7 +8,7 @@ import BitcoinLikeStorage from "../storage";
 import BitcoinLikeExplorer from "../explorer";
 import Xpub from "../xpub";
 import * as currency from "../crypto";
-import { explorerBaseURI } from "./wallet.integration.test";
+import explorerUrl from "../test-explorer-url";
 
 expect.extend({ toMatchFile });
 describe("xpub integration sync", () => {
@@ -280,7 +280,7 @@ describe("xpub integration sync", () => {
           throw new Error("Should not be reachable");
       }
       const explorer = new BitcoinLikeExplorer({
-        explorerURI: `${explorerBaseURI}/${dataset.explorerVersion}/${dataset.coin}`,
+        explorerURI: `${explorerUrl}/${dataset.explorerVersion}/${dataset.coin}`,
       });
       const xpub = new Xpub({
         storage,

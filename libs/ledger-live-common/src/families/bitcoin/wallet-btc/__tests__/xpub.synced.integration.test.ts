@@ -9,11 +9,11 @@ import BitcoinLikeStorage from "../storage";
 import BitcoinLikeExplorer from "../explorer";
 import Crypto from "../crypto/bitcoincash";
 import Xpub from "../xpub";
-import { explorerBaseURI } from "./wallet.integration.test";
+import explorerUrl from "../test-explorer-url";
 
 describe("synced xpub utilites functions", () => {
   const explorer = new BitcoinLikeExplorer({
-    explorerURI: `${explorerBaseURI}/v4/bch`,
+    explorerURI: `${explorerUrl}/v4/bch`,
   });
   const crypto = new Crypto({
     network: coininfo.bitcoincash.main.toBitcoinJS(),
