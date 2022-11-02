@@ -1,4 +1,5 @@
 import * as paymentProviders from "@ledgerhq/icons-ui/react/_Payment";
+
 import React from "react";
 
 export const sizes = {
@@ -27,11 +28,25 @@ export const iconNames = Array.from(
   }, new Set<string>()),
 );
 
+export type IconGetterProps = {
+  search: string;
+  object: Record<string, React.ReactNode>;
+};
+
+const getIconCaseInsensitive = ({ search, object }: IconGetterProps) => {
+  const asLower = search.toLowerCase();
+  const key = Object.keys(object).find((key) => key.toLowerCase() === asLower);
+  return key ? object[key] : null;
+};
+
 const PaymentIcon = ({ name, size = "S" }: Props): JSX.Element | null => {
   const maybeIconName = `${name}`;
-  if (maybeIconName in paymentProviders) {
-    // @ts-expect-error FIXME I don't know how to make you happy ts
-    const Component = paymentProviders[maybeIconName];
+
+  const Component = getIconCaseInsensitive({
+    search: maybeIconName,
+    object: paymentProviders,
+  }) as React.ElementType;
+  if (Component) {
     return <Component size={sizes[size]} />;
   }
   return null;

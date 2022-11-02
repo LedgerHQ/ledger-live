@@ -1,26 +1,16 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useHistory } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 import styled, { useTheme } from "styled-components";
 import { openURL } from "~/renderer/linking";
 import LangSwitcher from "~/renderer/components/Onboarding/LangSwitcher";
-import Carousel from "~/renderer/components/Onboarding/Screens/Welcome/Carousel";
 import { urls } from "~/config/urls";
 import { Text, Button, Logos, Icons, InvertThemeV3, Flex } from "@ledgerhq/react-ui";
 
-import accessCrypto from "./assets/accessCrypto.png";
-import ownPrivateKey from "./assets/ownPrivateKey.png";
-import setupNano from "./assets/setupNano.png";
-import stayOffline from "./assets/stayOffline.png";
-import validateTransactions from "./assets/validateTransactions.png";
-
-import { registerAssets } from "~/renderer/components/Onboarding/preloadAssets";
+import BuyNanoX from "./assets/buyNanoX.webm";
 
 import { hasCompletedOnboardingSelector, languageSelector } from "~/renderer/reducers/settings";
-
-const stepLogos = [accessCrypto, ownPrivateKey, stayOffline, validateTransactions, setupNano];
-registerAssets(stepLogos);
 
 const StyledLink = styled(Text)`
   text-decoration: underline;
@@ -77,6 +67,12 @@ const CarouselTopBar = styled(Flex).attrs({
   alignItems: "center",
   padding: "40px",
   width: "100%",
+  zIndex: 1,
+})``;
+
+const VideoWrapper = styled(Flex).attrs({
+  objectFit: "cover",
+  position: "fixed",
 })``;
 
 const Description = styled(Text)`
@@ -106,24 +102,54 @@ export function Welcome() {
     openURL(urls.privacyPolicy[locale in urls.privacyPolicy ? locale : "en"]);
   }, [locale]);
 
-  const steps = stepLogos.map((logo, index) => ({
-    image: logo,
-    title: t(`onboarding.screens.welcome.steps.${index}.title`),
-    description: t(`onboarding.screens.welcome.steps.${index}.desc`),
-    isLast: index === stepLogos.length - 1,
-  }));
+  const countTitle = useRef(0);
+  const countSubtitle = useRef(0);
+  const [
+    isFeatureFlagsSettingsButtonDisplayed,
+    setIsFeatureFlagsSettingsButtonDisplayed,
+  ] = useState<boolean>(false);
+
+  const timeout = useRef<ReturnType<typeof setTimeout>>();
+
+  const handleOpenFeatureFlagsDrawer = useCallback(nb => {
+    if (nb === "1") countTitle.current++;
+    else if (nb === "2") countSubtitle.current++;
+    if (countTitle.current > 3 && countSubtitle.current > 5) {
+      countTitle.current = 0;
+      countSubtitle.current = 0;
+      setIsFeatureFlagsSettingsButtonDisplayed(true);
+    }
+    if (timeout.current) clearTimeout(timeout.current);
+    timeout.current = setTimeout(() => {
+      countTitle.current = 0;
+      countSubtitle.current = 0;
+    }, 1000);
+  }, []);
+
+  useEffect(() => {
+    return () => {
+      if (timeout.current) clearTimeout(timeout.current);
+    };
+  }, []);
 
   return (
     <WelcomeContainer>
       <LeftContainer>
         <Presentation>
           <Logos.LedgerLiveRegular color={colors.neutral.c100} />
-          <Text variant="h1" pt={10} pb={7}>
+          <Text variant="h1" pt={10} pb={7} onClick={() => handleOpenFeatureFlagsDrawer("1")}>
             {t("onboarding.screens.welcome.title")}
           </Text>
-          <Description variant="body">{t("onboarding.screens.welcome.description")}</Description>
+          <Description variant="body" onClick={() => handleOpenFeatureFlagsDrawer("2")}>
+            {t("onboarding.screens.welcome.description")}
+          </Description>
         </Presentation>
         <ProductHighlight>
+          {isFeatureFlagsSettingsButtonDisplayed && (
+            <Button variant="main" outline mb="24px" onClick={() => history.push("/settings")}>
+              {t("settings.title")}
+            </Button>
+          )}
           <Button
             data-test-id="v3-onboarding-get-started-button"
             iconPosition="right"
@@ -172,7 +198,11 @@ export function Welcome() {
             <LangSwitcher />
           )}
         </CarouselTopBar>
-        <Carousel queue={steps} />
+        <VideoWrapper>
+          <video autoPlay loop>
+            <source src={BuyNanoX} type="video/webm" />
+          </video>
+        </VideoWrapper>
       </RightContainer>
     </WelcomeContainer>
   );

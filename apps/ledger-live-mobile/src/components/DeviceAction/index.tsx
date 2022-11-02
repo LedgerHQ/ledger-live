@@ -1,7 +1,10 @@
 import React, { useEffect } from "react";
 import { useDispatch } from "react-redux";
 import type { Action, Device } from "@ledgerhq/live-common/hw/actions/types";
-import { DeviceNotOnboarded } from "@ledgerhq/live-common/errors";
+import {
+  DeviceNotOnboarded,
+  LatestFirmwareVersionRequired,
+} from "@ledgerhq/live-common/errors";
 import { TransportStatusError } from "@ledgerhq/errors";
 import { useTranslation } from "react-i18next";
 import {
@@ -49,6 +52,7 @@ import {
   renderImageLoadRequested,
   renderLoadingImage,
   renderImageCommitRequested,
+  RequiredFirmwareUpdate,
 } from "./rendering";
 import PreventNativeBack from "../PreventNativeBack";
 import SkipLock from "../behaviour/SkipLock";
@@ -63,6 +67,7 @@ type Status = PartialNullable<{
   appAndVersion: AppAndVersion;
   device: Device;
   unresponsive: boolean;
+  isLocked: boolean;
   error: LedgerError & {
     name?: string;
     managerAppName?: string;
@@ -170,6 +175,7 @@ export function DeviceActionDefaultRendering<R, H extends Status, P>({
     appAndVersion,
     device,
     unresponsive,
+    isLocked,
     error,
     isLoading,
     allowManagerRequestedWording,
@@ -419,23 +425,36 @@ export function DeviceActionDefaultRendering<R, H extends Status, P>({
       return renderDeviceNotOnboarded({ t, device, navigation });
     }
 
+    if (error instanceof LatestFirmwareVersionRequired) {
+      return (
+        <RequiredFirmwareUpdate
+          t={t}
+          navigation={navigation}
+          device={selectedDevice}
+        />
+      );
+    }
+
     return renderError({
       t,
       navigation,
       error,
       managerAppName:
-        error.name === "UpdateYourApp" ? error.managerAppName : undefined,
+        (error as Status["error"])?.name === "UpdateYourApp"
+          ? (error as Status["error"])?.managerAppName
+          : undefined,
       onRetry,
       colors,
       theme,
     });
   }
 
-  if ((!isLoading && !device) || unresponsive) {
+  if ((!isLoading && !device) || unresponsive || isLocked) {
     return renderConnectYourDevice({
       t,
       device: selectedDevice,
       unresponsive,
+      isLocked: isLocked === null ? undefined : isLocked,
       colors,
       theme,
       onSelectDeviceLink,

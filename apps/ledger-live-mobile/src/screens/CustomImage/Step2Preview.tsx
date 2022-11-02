@@ -8,6 +8,7 @@ import {
   Pressable,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { ImagePreviewError } from "@ledgerhq/live-common/customImage/errors";
 import useResizedImage, {
   Params as ImageResizerParams,
   ResizeResult,
@@ -21,7 +22,6 @@ import { targetDimensions } from "./shared";
 import BottomButtonsContainer from "../../components/CustomImage/BottomButtonsContainer";
 import ContrastChoice from "../../components/CustomImage/ContrastChoice";
 import { ScreenName } from "../../const";
-import { ImagePreviewError } from "../../components/CustomImage/errors";
 import FramedImage from "../../components/CustomImage/FramedImage";
 import { CustomImageNavigatorParamList } from "../../components/RootNavigator/types/CustomImageNavigator";
 import {

@@ -2172,6 +2172,7 @@ Array [
   "ethereum/erc20/coinmetro_token_old",
   "ethereum/erc20/coinoil",
   "ethereum/erc20/coinpulsetoken",
+  "ethereum/erc20/coinscan",
   "ethereum/erc20/coinshares_gold_and_cryptoassets_index_lite",
   "ethereum/erc20/coinspaid",
   "ethereum/erc20/coinstar",

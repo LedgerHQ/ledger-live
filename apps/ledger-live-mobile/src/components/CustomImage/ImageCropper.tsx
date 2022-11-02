@@ -3,8 +3,8 @@ import { Button, Flex } from "@ledgerhq/native-ui";
 import { CropView } from "react-native-image-crop-tools";
 import styled from "styled-components/native";
 import { Image, StyleProp, ViewStyle } from "react-native";
+import { ImageCropError } from "@ledgerhq/live-common/customImage/errors";
 import { ImageDimensions, ImageFileUri } from "./types";
-import { ImageCropError } from "./errors";
 
 const HiddenImage = styled(Image)`
   height: 0;

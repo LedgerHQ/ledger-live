@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import styled from "styled-components/native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -8,7 +8,7 @@ import Video from "react-native-video";
 import { Linking } from "react-native";
 import Svg, { Defs, LinearGradient, Rect, Stop } from "react-native-svg";
 import { useDispatch } from "react-redux";
-import { ScreenName } from "../../../const";
+import { NavigatorName, ScreenName } from "../../../const";
 import StyledStatusBar from "../../../components/StyledStatusBar";
 import { urls } from "../../../config/urls";
 import { useTermsAccept } from "../../../logic/terms";
@@ -18,7 +18,10 @@ import InvertTheme from "../../../components/theme/InvertTheme";
 import ForceTheme from "../../../components/theme/ForceTheme";
 import Button from "../../../components/wrappedUi/Button";
 import { OnboardingNavigatorParamList } from "../../../components/RootNavigator/types/OnboardingNavigator";
-import { StackNavigatorProps } from "../../../components/RootNavigator/types/helpers";
+import {
+  BaseComposite,
+  StackNavigatorProps,
+} from "../../../components/RootNavigator/types/helpers";
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const source = require("../../../../assets/videos/onboarding.mp4");
@@ -35,9 +38,11 @@ const SafeFlex = styled(SafeAreaView)`
   padding-top: 24px;
 `;
 
-type NavigationProps = StackNavigatorProps<
-  OnboardingNavigatorParamList,
-  ScreenName.OnboardingWelcome
+type NavigationProps = BaseComposite<
+  StackNavigatorProps<
+    OnboardingNavigatorParamList,
+    ScreenName.OnboardingWelcome
+  >
 >;
 
 function OnboardingStepWelcome({ navigation }: NavigationProps) {
@@ -79,6 +84,39 @@ function OnboardingStepWelcome({ navigation }: NavigationProps) {
   }, [setAccepted, dispatch, navigation]);
 
   const videoMounted = !useIsAppInBackground();
+
+  const countTitle = useRef(0);
+  const countSubtitle = useRef(0);
+  const timeout = useRef<ReturnType<typeof setTimeout>>();
+
+  const handleNavigateToFeatureFlagsSettings = useCallback(
+    nb => {
+      if (nb === "1") countTitle.current++;
+      else if (nb === "2") countSubtitle.current++;
+      if (countTitle.current > 3 && countSubtitle.current > 5) {
+        countTitle.current = 0;
+        countSubtitle.current = 0;
+        navigation.navigate(NavigatorName.Base, {
+          screen: NavigatorName.Settings,
+          params: {
+            screen: ScreenName.SettingsScreen,
+          },
+        });
+      }
+      if (timeout.current) clearTimeout(timeout.current);
+      timeout.current = setTimeout(() => {
+        countTitle.current = 0;
+        countSubtitle.current = 0;
+      }, 1000);
+    },
+    [navigation],
+  );
+
+  useEffect(() => {
+    return () => {
+      if (timeout.current) clearTimeout(timeout.current);
+    };
+  }, []);
 
   return (
     <ForceTheme selectedPalette={"dark"}>
@@ -144,10 +182,19 @@ function OnboardingStepWelcome({ navigation }: NavigationProps) {
             color="neutral.c100"
             pb={3}
             style={{ textTransform: "uppercase" }}
+            onPress={() => handleNavigateToFeatureFlagsSettings("1")}
+            suppressHighlighting
           >
             {t("onboarding.stepWelcome.title")}
           </Text>
-          <Text variant="large" fontWeight="medium" color="neutral.c80" pb={9}>
+          <Text
+            variant="large"
+            fontWeight="medium"
+            color="neutral.c80"
+            pb={9}
+            onPress={() => handleNavigateToFeatureFlagsSettings("2")}
+            suppressHighlighting
+          >
             {t("onboarding.stepWelcome.subtitle")}
           </Text>
           <Button

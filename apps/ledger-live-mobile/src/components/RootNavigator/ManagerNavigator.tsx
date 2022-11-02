@@ -103,12 +103,12 @@ const DeviceIcon = ({
   }
 
   return hasAvailableUpdate ? (
-    icon
-  ) : (
     <Box>
       {icon}
       <Badge />
     </Box>
+  ) : (
+    icon
   );
 };
 

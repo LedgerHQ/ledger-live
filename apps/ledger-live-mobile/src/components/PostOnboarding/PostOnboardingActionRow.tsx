@@ -18,6 +18,7 @@ export type Props = PostOnboardingAction & PostOnboardingActionState;
 
 const PostOnboardingActionRow: React.FC<Props> = props => {
   const {
+    // @ts-expect-error oskour those `any` navigation params are killing us
     navigationParams,
     Icon,
     title,
