@@ -124,12 +124,14 @@
     },
     "exchange" : "取引",
     "info" : "情報",
-    "connectDevice" : "デバイスを接続"
+    "connectDevice" : "デバイスを接続",
+    "add" : "追加"
   },
   "devices" : {
     "nanoS" : "Nano S",
     "nanoSP" : "Nano S Plus",
     "nanoX" : "Nano X",
+    "nanoFTS" : "Nano FTS",
     "blue" : "Blue"
   },
   "operation" : {
@@ -597,6 +599,12 @@
     }
   },
   "lottieDebugger" : {
+    "buttonTitle" : "テスト"
+  },
+  "storylyDebugger" : {
+    "buttonTitle" : "テスト"
+  },
+  "postOnboardingDebugger" : {
     "buttonTitle" : "テスト"
   },
   "fullNode" : {
@@ -1124,6 +1132,111 @@
     "title" : "トークンを非表示",
     "desc" : "この操作により、すべての<1><0>{{tokenName}}</0></1>アカウントが非表示になります。<3>設定</3>から再度表示可能です。",
     "hideCTA" : "トークンを非表示"
+  },
+  "syncOnboarding" : {
+    "connection" : {
+      "searching" : {
+        "title" : "{{deviceModelName}}をコンピュータに接続",
+        "connectionTrouble" : "デバイスの接続に問題がありますか？"
+      },
+      "success" : {
+        "title" : "{{ deviceName }}を接続"
+      }
+    },
+    "manual" : {
+      "title" : "{{deviceName}}をセットアップ",
+      "pairedContent" : {
+        "title" : "{{deviceName}}接続済み",
+        "description" : "{{deviceName}}でセットアップを続行する",
+        "text" : "こちらの画面は、{{deviceName}}のセットアップ中に動的に変化し、関連情報をご提供します。"
+      },
+      "pinContent" : {
+        "title" : "PINコードを設定する",
+        "description" : "PINコードの長さは4～8桁で設定可能です",
+        "text" : "お客様の{{deviceName}}とPINコードにアクセスできる人は誰でも、お客様の暗号資産とNFT資産すべてにアクセスできます。"
+      },
+      "recoveryContent" : {
+        "title" : "リカバリーフレーズ",
+        "content" : "下の動画をタップして、秘密のリカバリーフレーズを詳しく学ぶ"
+      },
+      "softwareCheckContent" : {
+        "title" : "ソフトウェアのチェック",
+        "genuineCheck" : {
+          "active" : "{{deviceName}}をチェックしています",
+          "completed" : "{{deviceName}}は正規品です"
+        },
+        "firmwareUpdate" : {
+          "inactive" : "ソフトウェアのチェック",
+          "active" : "ソフトウェアの更新をチェックしています",
+          "updateAvailable" : "ソフトウェアのアップデートが利用可能です{{firmwareVersion}}",
+          "recommendation" : "今すぐアップデートをダウンロードすることをお勧めします",
+          "downloadUpdate" : "アップデートをダウンロード",
+          "skipUpdate" : "今はしない",
+          "completed" : "ソフトウェアは最新です"
+        }
+      },
+      "installApplications" : {
+        "title" : "既定のアプリ一式をダウンロードすることをお勧めします。ダウンロードは後でさらに可能です",
+        "install" : "インストール",
+        "skip" : "後で",
+        "info" : "{{deviceName}}のアプリはトランザクションの承認に使用されます。これはいつでも追加、または削除できます。"
+      },
+      "genuineCheckModal" : {
+        "title" : "真正性確認",
+        "paragraph1" : "{{deviceName}}が正規品で安全に使用できることを確認しましょう",
+        "paragraph2" : "お客様のデバイスが改ざんされていないことを確認するためのチェックを行います。お使いの{{deviceName}}でこれを承諾していただく必要があります。",
+        "checkDeviceButton" : "デバイスをチェック"
+      },
+      "genuineCheckCancelModal" : {
+        "title" : "正規品チェック",
+        "paragraph1" : "正規品チェックがキャンセルされました",
+        "paragraph2" : "このチェックは、お客様の{{deviceName}}が安全に使用できることを確認するために重要です。",
+        "checkDeviceButton" : "再度チェックを実行する",
+        "cancelButton" : "後で"
+      },
+      "genuineCheckNotGenuineModal" : {
+        "title" : "正規品チェック",
+        "paragraph1" : "お使いのデバイスは正規品ではありません",
+        "paragraph2" : "真正性チェックに失敗しました",
+        "checkDeviceButton" : "再度チェックを実行する",
+        "cancelButton" : "後で"
+      },
+      "genuineCheckAnimationModal" : {
+        "message" : "{{deviceName}}でマネージャーを許可する"
+      },
+      "helpDrawer" : {
+        "title" : "セットアップマニュアルでお困りですか？",
+        "description" : "Lorem Elsass ipsum aliquam bissame Oberschaeffolsheim geht's messti de Bischheim tellus blottkopf, dui sed libero.hopla libero, placerat leo eget Gal.",
+        "docButton" : "よくあるご質問（FAQ）に移動",
+        "supportButton" : "人と話す"
+      },
+      "troubleshootingDrawer" : {
+        "title" : "USB接続のトラブル解決",
+        "description" : "デバイスとの接続に問題があるようですが、ご心配なく。デバイスが正常に接続されるまで、いろいろな解決策を1つずつお試しいただけます！",
+        "fixButton" : "修正する",
+        "closeButton" : "閉じる"
+      },
+      "desyncOverlay" : {
+        "errorMessage" : "{{deviceName}}との接続が失われたようです。再接続を試みています。"
+      },
+      "header" : {
+        "helpButton" : "お困りですか？"
+      }
+    }
+  },
+  "postOnboarding" : {
+    "postOnboardingScreen" : {
+      "title" : "素晴らしい。これで準備完了です。",
+      "description" : "{{deviceName}}のセットアップに成功しました！",
+      "paragraph" : "開始の手順をいくつかご用意しました。Ledger Liveをご自分で探索されたい場合は、お気軽にこのステップをスキップしてください。いつでも戻って来れます。",
+      "bottomText" : "Ledger Liveで、安全に、Web 3.0への旅をお楽しみください。"
+    },
+    "postOnboardingContent" : {
+      "title" : "素晴らしい。これで準備完了です。",
+      "description" : "次にできること：",
+      "skipLink" : "アプリにスキップする",
+      "skipLinkInDrawer" : "後で行う"
+    }
   },
   "hideNftCollection" : {
     "title" : "NFTコレクションを非表示",
@@ -3476,6 +3589,14 @@
         "testAnimations" : {
           "title" : "Lottieアニメーションのテスト",
           "description" : "Ledger Liveで使用される全アニメーションをテストする"
+        },
+        "testStories" : {
+          "title" : "Storylyストーリーをテストする",
+          "description" : "Ledger Liveで使用される全ストーリーをテストする"
+        },
+        "testPostonboarding" : {
+          "title" : "ポストオンボーディングをテストする",
+          "description" : "すべてのポストオンボーディング機能をテストする"
         }
       }
     },
@@ -4949,6 +5070,9 @@
     "FeeTooHigh" : {
       "title" : "ネットワーク手数料が10%を超えています。"
     },
+    "DustLimit" : {
+      "title" : "金額がダスト制限を下回っています"
+    },
     "SourceHasMultiSign" : {
       "title" : "{{currencyName}}を送付するにはマルチシグを無効にしてください。"
     },
@@ -5062,6 +5186,50 @@
     },
     "HederaAddAccountError" : {
       "title" : "アカウントが追加されていません。もう一度お試しください。"
+    },
+    "ImageIncorrectFileTypeError" : {
+      "title" : "ファイルからの画像の読み込みに失敗しました。",
+      "description" : "画像でもう一度お試しください。"
+    },
+    "ImageLoadFromFileError" : {
+      "title" : "ファイルからの画像の読み込みに失敗しました",
+      "description" : "別の画像でもう一度お試しください"
+    },
+    "ImageDownloadError" : {
+      "title" : "画像のダウンロードに失敗しました",
+      "description" : "別の画像でもう一度お試しください"
+    },
+    "ImageMetadataLoadingError" : {
+      "title" : "画像メタデータの読み込みに失敗しました",
+      "description" : "別の画像でもう一度お試しください"
+    },
+    "ImageTooLargeError" : {
+      "title" : "画像が大きすぎます",
+      "description" : "小さい画像でもう一度お試しください"
+    },
+    "ImageCropError" : {
+      "title" : "画像のトリミングに失敗しました",
+      "description" : "別の画像でもう一度お試しください"
+    },
+    "ImageResizeError" : {
+      "title" : "画像のサイズ変更に失敗しました",
+      "description" : "別の画像でもう一度お試しください"
+    },
+    "ImagePreviewError" : {
+      "title" : "画像のプレビューに失敗しました",
+      "description" : "別の画像でもう一度お試しください"
+    },
+    "ImageProcessingError" : {
+      "title" : "画像の処理に失敗しました",
+      "description" : "別の画像でもう一度お試しください"
+    },
+    "ImageCommitRefusedOnDevice" : {
+      "title" : "デバイスで画像のコミットが拒否されました",
+      "description" : "この画像が正しくない場合は、別の画像で再度お試しいただけます。"
+    },
+    "ImageLoadRefusedOnDevice" : {
+      "title" : "デバイスで画像の読み込みが拒否されました",
+      "description" : "この画像が正しくない場合は、別の画像で再度お試しいただけます。"
     }
   },
   "cryptoOrg" : {
@@ -5092,5 +5260,36 @@
     "selectAccount" : {
       "title" : "アカウントを選択"
     }
+  },
+  "customImage" : {
+    "title" : "画像をカスタマイズ",
+    "steps" : {
+      "choose" : {
+        "stepLabel" : "画像を選択してください",
+        "description" : "(...) として設定する画像を選択",
+        "pickFromNftGallery" : "NFTギャラリーから選択",
+        "upload" : "パソコンからアップロード"
+      },
+      "adjust" : {
+        "stepLabel" : "画像を調整",
+        "rotate" : "回転"
+      },
+      "contrast" : {
+        "stepLabel" : "コントラストを選択"
+      },
+      "transfer" : {
+        "stepLabel" : "送金",
+        "uploadAnotherImage" : "他の画像をアップロードする",
+        "allowPreview" : "{{productName}}で画像のプレビューを許可する",
+        "loadingPicture" : "{{productName}}で画像を読み込んでいます",
+        "pictureLoaded" : "画像が読み込まれました",
+        "imageLoaded" : "{{productName}}に画像が読み込まれました",
+        "confirmPicture" : "{{productName}}で確認",
+        "doThisLater" : "後で",
+        "timeDisclaimer" : "これには最大30秒かかる場合があります"
+      }
+    },
+    "customImageSet" : "画像セットをカスタマイズ",
+    "finishCTA" : "終了する"
   }
 }
