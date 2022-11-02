@@ -297,6 +297,7 @@ export class CosmosTransactionStatusManager {
         redelegations.length < COSMOS_MAX_REDELEGATIONS,
         "redelegation should not have more than 6 entries"
       );
+
       if (
         redelegations.some((redelegation) => {
           const dstValidator = redelegation.validatorDstAddress;
@@ -305,16 +306,20 @@ export class CosmosTransactionStatusManager {
             redelegation.completionDate > new Date()
           );
         })
-      )
+      ) {
         return new CosmosRedelegationInProgress();
-      if (
-        t.validators.length > 0 &&
-        t.sourceValidator === t.validators[0].address
-      )
-        return new InvalidAddressBecauseDestinationIsAlsoSource();
+      }
+
+      if (t.validators.length > 0) {
+        if (t.sourceValidator === t.validators[0].address) {
+          return new InvalidAddressBecauseDestinationIsAlsoSource();
+        } else {
+          return this.isDelegable(a, t.sourceValidator, t.validators[0].amount);
+        }
+      }
     }
 
-    return this.isDelegable(a, t.sourceValidator, t.validators[0].amount);
+    return null;
   };
 
   private isDelegable = (
