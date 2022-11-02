@@ -2009,6 +2009,11 @@
       "subHeader": {
         "cardTitle": "Total balance doesn't include staking rewards"
       }
+    },
+    "delegation": {
+      "cost": "Cost",
+      "pool": "Pool",
+      "changeDelegation": "Change Delegation"
     }
   },
   "tron": {

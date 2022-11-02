@@ -42,6 +42,8 @@ import MODAL_VOTE_TRON_INFO from "./VoteTron/Info";
 import MODAL_BLACKLIST_TOKEN from "./BlacklistToken";
 import MODAL_HIDE_NFT_COLLECTION from "./HideNftCollection";
 
+import MODAL_CARDANO_DELEGATE from "../families/cardano/DelegationFlowModal";
+
 import MODAL_COSMOS_DELEGATE from "../families/cosmos/DelegationFlowModal";
 import MODAL_COSMOS_REWARDS_INFO from "../families/cosmos/DelegationFlowModal/Info";
 import MODAL_COSMOS_CLAIM_REWARDS from "../families/cosmos/ClaimRewardsFlowModal";
@@ -111,6 +113,7 @@ const modals: { [_: string]: React$ComponentType<any> } = {
   MODAL_VOTE_TRON_INFO,
   MODAL_BLACKLIST_TOKEN,
   MODAL_HIDE_NFT_COLLECTION,
+  MODAL_CARDANO_DELEGATE,
   MODAL_COSMOS_DELEGATE,
   MODAL_COSMOS_REWARDS_INFO,
   MODAL_COSMOS_CLAIM_REWARDS,

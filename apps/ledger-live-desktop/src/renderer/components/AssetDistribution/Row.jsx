@@ -89,7 +89,6 @@ const Amount: ThemedComponent<{}> = styled.div`
 const Value: ThemedComponent<{}> = styled.div`
   width: 15%;
   box-sizing: border-box;
-  padding-left: 24px;
   justify-content: flex-end;
   white-space: nowrap;
   overflow: hidden;

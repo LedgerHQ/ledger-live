@@ -1,5 +1,5 @@
 // @flow
 
-import StakingRewardsBanner from "./StakingRewardsBanner";
+import Delegation from "./Delegation";
 
-export default StakingRewardsBanner;
+export default Delegation;
