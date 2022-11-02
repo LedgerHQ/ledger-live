@@ -12,40 +12,35 @@ export default () => {
   const navigation = useNavigation();
   const startPostOnboarding = useStartPostOnboardingCallback();
 
-  const handleInitFTSMock = useCallback(
-    () => startPostOnboarding(DeviceModelId.nanoFTS, true),
-    [startPostOnboarding],
-  );
-  const handleInitFTS = useCallback(
-    () =>
-      startPostOnboarding(DeviceModelId.nanoFTS, false, () =>
+  const handleInitPostOnboardingHub = useCallback(
+    (deviceId, mock) =>
+      startPostOnboarding(deviceId, mock, () =>
         navigation.navigate(NavigatorName.Base, {
           screen: NavigatorName.Main,
         }),
       ),
     [navigation, startPostOnboarding],
   );
-  const handleInitNanoXMock = useCallback(
-    () => startPostOnboarding(DeviceModelId.nanoX, true),
-    [startPostOnboarding],
-  );
+
   const navigateToPostOnboardingHub = useNavigateToPostOnboardingHubCallback();
   return (
     <Flex>
       <SettingsRow
         title="Start (mock) post onboarding for nanoFTS"
         desc="Pressing this should trigger navigation to the post onboarding hub populated with a list of actions."
-        onPress={handleInitFTSMock}
+        onPress={() => handleInitPostOnboardingHub(DeviceModelId.nanoFTS, true)}
       />
       <SettingsRow
         title="Start post onboarding for nanoFTS"
         desc="Pressing this should trigger navigation to the post onboarding hub populated with a list of actions."
-        onPress={handleInitFTS}
+        onPress={() =>
+          handleInitPostOnboardingHub(DeviceModelId.nanoFTS, false)
+        }
       />
       <SettingsRow
         title="Start (mock) post onboarding for nanoX"
         desc="Pressing this should not do anything. (no actions configured for this device)."
-        onPress={handleInitNanoXMock}
+        onPress={() => handleInitPostOnboardingHub(DeviceModelId.nanoX, true)}
       />
       <SettingsRow
         title="Open post onboarding hub"
