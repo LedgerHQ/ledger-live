@@ -168,7 +168,7 @@ export type Transaction = TransactionCommon & {
   family: "cardano";
   fees?: BigNumber;
   memo?: string;
-  poolId?: string;
+  poolId: string | undefined;
   // add here all transaction-specific fields if you implement other modes than "send"
 };
 
@@ -180,7 +180,7 @@ export type TransactionRaw = TransactionCommonRaw & {
   mode: CardanoOperationMode;
   fees?: string;
   memo?: string;
-  poolId?: string;
+  poolId: string | undefined;
   // also the transaction fields as raw JSON data
 };
 
@@ -194,6 +194,7 @@ export type CardanoLikeNetworkParameters = {
   shelleySlotDuration: number;
   shelleySlotsPerEpoch: number;
   addressPrefix: string;
+  poolIdPrefix: string;
 };
 
 /**
