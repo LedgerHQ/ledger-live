@@ -1807,6 +1807,9 @@
         }
       }
     },
+    "appsStep": {
+      "title": "{{productName}} applications"
+    },
     "readyStep": {
       "title": "{{productName}} is ready"
     },
