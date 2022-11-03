@@ -3,8 +3,7 @@ import { Platform, ScrollView } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import styled from "styled-components/native";
 import {
-  StatusCodes,
-  TransportStatusError,
+  LockedDeviceError,
   WrongDeviceForAccount,
 } from "@ledgerhq/errors";
 import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
@@ -540,9 +539,11 @@ export function renderInWrongAppForAccount({
   });
 }
 
-// Quick fix: the error TransportStatusError with status code LOCKED_DEVICE should be catched
+// Quick fix: the error LockedDeviceError should be catched
 // inside all the device actions and mapped to an event of type "lockedDevice".
-// With this fix, we can catch all the error that were not catched upstream.
+// With this fix, we can catch all the device action error that were not catched upstream.
+// If LockedDeviceError is thrown from outside a device action and renderError was not called
+// it is still handled by GenericErrorView.
 export function renderLockedDeviceError({
   t,
   onRetry,
@@ -633,11 +634,7 @@ export function renderError({
 
   // Redirects from renderError and not from DeviceActionDefaultRendering because renderError
   // can be used directly by other component
-  if (
-    error instanceof TransportStatusError &&
-    (error as unknown as { statusCode: number })?.statusCode ===
-      StatusCodes.LOCKED_DEVICE
-  ) {
+  if (error instanceof LockedDeviceError) {
     return renderLockedDeviceError({ t, onRetry, device });
   }
 
