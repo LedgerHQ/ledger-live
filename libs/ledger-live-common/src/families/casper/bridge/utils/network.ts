@@ -37,7 +37,7 @@ const live = async <T>(path: string) => {
   const fetch = async (page: number) => {
     // We force data to this way as network func is not using the correct param type. Changing that func will generate errors in other implementations
     const opts: AxiosRequestConfig = {
-      method: "POST",
+      method: "GET",
       url: `${url}&limit=100&page=${page}`,
     };
 
@@ -101,7 +101,12 @@ const node = async <T>(payload: NodeRPCPayload) => {
 //   return responseData;
 // };
 
-export const getPurseURef = async (publicKey: string): Promise<CLURef> => {
+export const getAccountStateInfo = async (
+  publicKey: string
+): Promise<{
+  purseUref: CLURef | undefined;
+  accountHash: string | undefined;
+}> => {
   const accountStateInfo = await node<NAccountInfo>({
     jsonrpc: "2.0",
     method: "state_get_account_info",
@@ -111,17 +116,26 @@ export const getPurseURef = async (publicKey: string): Promise<CLURef> => {
     id: 1,
   });
 
+  if (!accountStateInfo) {
+    return {
+      purseUref: undefined,
+      accountHash: undefined,
+    };
+  }
+
+  const accountHash = accountStateInfo.account.account_hash.split("-")[2];
   const purseURefString = accountStateInfo.account.main_purse.split("-")[1];
+
   const uRef = new CLURef(
     Buffer.from(purseURefString, "hex"),
     AccessRights.READ_ADD_WRITE
   );
 
-  return uRef;
+  return { purseUref: uRef, accountHash };
 };
 
 export const fetchBalances = async (
-  publicKey: string
+  purseUref: CLURef
 ): Promise<NAccountBalance> => {
   const stateRootInfo = await node<NStateRootHashResponse>({
     jsonrpc: "2.0",
@@ -130,13 +144,11 @@ export const fetchBalances = async (
     id: 1,
   });
 
-  const uRef = await getPurseURef(publicKey);
-
   const accountBalance = await node<NAccountBalance>({
     jsonrpc: "2.0",
     method: "state_get_balance",
     params: {
-      purse_uref: uRef.toFormattedStr(),
+      purse_uref: purseUref.toFormattedStr(),
       state_root_hash: stateRootInfo.state_root_hash,
     },
     id: 1,
@@ -181,7 +193,7 @@ export const broadcastTx = async (
     id: 1,
     jsonrpc: "2.0",
     method: "account_put_deploy",
-    params: deploy,
+    params: DeployUtil.deployToJson(deploy),
   });
 
   return response; // TODO Validate if the response fits this interface
