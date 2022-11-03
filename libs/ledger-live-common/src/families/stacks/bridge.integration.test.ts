@@ -82,7 +82,7 @@ const stacks: CurrenciesData<Transaction> = {
             network: "mainnet",
             anchorMode: AnchorMode.Any,
             recipient: ACCOUNT_1,
-            amount: "100000000000000000000000000",
+            amount: "10000000000",
           }),
           expectedStatus: {
             errors: {
