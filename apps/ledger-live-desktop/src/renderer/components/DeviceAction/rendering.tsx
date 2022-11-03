@@ -485,6 +485,7 @@ export const renderWarningOutdated = ({
 
 export const renderError = ({
   error,
+  t,
   withOpenManager,
   onRetry,
   withExportLogs,
@@ -495,8 +496,10 @@ export const renderError = ({
   managerAppName,
   requireFirmwareUpdate,
   withOnboardingCTA,
+  device,
 }: {
   error: Error;
+  t: TFunction;
   withOpenManager?: boolean;
   onRetry?: () => void;
   withExportLogs?: boolean;
@@ -561,13 +564,16 @@ export const renderError = ({
 );
 
 export const renderInWrongAppForAccount = ({
+  t,
   onRetry,
   accountName,
 }: {
+  t: TFunction;
   onRetry: () => void;
   accountName: string;
 }) =>
   renderError({
+    t,
     error: new WrongDeviceForAccount(null, { accountName }),
     withExportLogs: true,
     onRetry,
