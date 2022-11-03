@@ -67,6 +67,7 @@ type Status = PartialNullable<{
   appAndVersion: AppAndVersion;
   device: Device;
   unresponsive: boolean;
+  isLocked: boolean;
   error: LedgerError & {
     name?: string;
     managerAppName?: string;
@@ -174,6 +175,7 @@ export function DeviceActionDefaultRendering<R, H extends Status, P>({
     appAndVersion,
     device,
     unresponsive,
+    isLocked,
     error,
     isLoading,
     allowManagerRequestedWording,
@@ -447,11 +449,12 @@ export function DeviceActionDefaultRendering<R, H extends Status, P>({
     });
   }
 
-  if ((!isLoading && !device) || unresponsive) {
+  if ((!isLoading && !device) || unresponsive || isLocked) {
     return renderConnectYourDevice({
       t,
       device: selectedDevice,
       unresponsive,
+      isLocked: isLocked === null ? undefined : isLocked,
       colors,
       theme,
       onSelectDeviceLink,
