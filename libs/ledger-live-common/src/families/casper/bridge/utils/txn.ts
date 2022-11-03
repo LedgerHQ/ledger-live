@@ -1,28 +1,24 @@
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import { Unit } from "@ledgerhq/types-cryptoassets";
 import { Operation } from "@ledgerhq/types-live";
-import { GetAccountShapeArg0 } from "../../../../bridge/jsHelpers";
-import { parseCurrencyUnit } from "../../../../currencies";
+import BigNumber from "bignumber.js";
 import { encodeOperationId } from "../../../../operation";
 import { CASPER_FEES } from "../../consts";
 import { LTxnHistoryData } from "./types";
 
 export const getUnit = (): Unit => getCryptoCurrencyById("filecoin").units[0];
 
-export function mapTxToOps(
-  accountId: string,
-  { address }: GetAccountShapeArg0
-) {
+export function mapTxToOps(accountId: string, addressHash: string) {
   return (tx: LTxnHistoryData): Operation[] => {
     const ops: Operation[] = [];
     const { timestamp, amount, toAccount, fromAccount, deployHash: hash } = tx;
 
     const date = new Date(timestamp);
-    const value = parseCurrencyUnit(getUnit(), amount.toString());
-    const feeToUse = parseCurrencyUnit(getUnit(), CASPER_FEES.toString());
+    const value = new BigNumber(amount);
+    const feeToUse = new BigNumber(CASPER_FEES);
 
-    const isSending = address === fromAccount;
-    const isReceiving = address === toAccount;
+    const isSending = addressHash === fromAccount;
+    const isReceiving = addressHash === toAccount;
 
     if (isSending) {
       ops.push({
@@ -58,7 +54,6 @@ export function mapTxToOps(
       });
     }
 
-    return ops;
     return ops;
   };
 }
