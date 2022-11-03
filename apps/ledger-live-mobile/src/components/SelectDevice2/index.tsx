@@ -1,6 +1,7 @@
 import React, { useMemo, useCallback, useEffect, useState } from "react";
 import { Trans, useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
+import { Platform } from "react-native";
 import { discoverDevices } from "@ledgerhq/live-common/hw/index";
 import { CompositeScreenProps, useNavigation } from "@react-navigation/native";
 import { Text, Flex, Icons, BottomDrawer } from "@ledgerhq/native-ui";
@@ -234,6 +235,30 @@ export default function SelectDevice({ onSelect }: Props) {
           </Touchable>
         )}
       </Flex>
+
+      {deviceList.length === 0 && Platform.OS === "android" && (
+        <Flex
+          p={5}
+          mb={8}
+          borderRadius={5}
+          alignItems="center"
+          flexDirection="row"
+          backgroundColor="primary.c10"
+        >
+          <Icons.InfoAltFillMedium color="primary.c80" size={20} />
+          <Text
+            color="neutral.c100"
+            variant="large"
+            fontWeight="semiBold"
+            fontSize={4}
+            ml={5}
+            mr={3}
+            lineHeight="21px"
+          >
+            <Trans i18nKey="manager.selectDevice.otgBanner" />
+          </Text>
+        </Flex>
+      )}
 
       <Flex alignItems="center">
         <Touchable onPress={onBuyDevicePress}>
