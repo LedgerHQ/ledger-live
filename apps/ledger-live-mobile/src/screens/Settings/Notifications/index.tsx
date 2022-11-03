@@ -14,12 +14,11 @@ import {
 import SettingsNavigationScrollView from "../SettingsNavigationScrollView";
 import SettingsRow from "../../../components/SettingsRow";
 import Track from "../../../analytics/Track";
-import { track, TrackScreen } from "../../../analytics";
+import { track, TrackScreen, updateIdentify } from "../../../analytics";
 import { notificationsSelector } from "../../../reducers/settings";
 import { setNotifications } from "../../../actions/settings";
 import type { State } from "../../../reducers/types";
 import useNotifications from "../../../logic/notifications";
-import { updateIdentify } from "../../../analytics";
 
 type NotificationRowProps = {
   disabled?: boolean;
@@ -182,7 +181,11 @@ function NotificationsSettings() {
             />
           </Box>
           <Box m={6}>
-            <Text color={notifications.allowed ? "neutral.c40" : "neutral.c70"} variant={"bodyLineHeight"} textAlign="center">
+            <Text
+              color={notifications.allowed ? "neutral.c40" : "neutral.c70"}
+              variant={"bodyLineHeight"}
+              textAlign="center"
+            >
               {t("settings.notifications.disclaimer")}
             </Text>
           </Box>
