@@ -1,4 +1,3 @@
-// @flow
 import React from "react";
 import { useTranslation } from "react-i18next";
 
@@ -7,8 +6,8 @@ import Text from "~/renderer/components/Text";
 import ProgressCircle from "~/renderer/components/ProgressCircle";
 
 type Props = {
-  progress: number,
-  installing: ?string,
+  progress: number;
+  installing?: string;
 };
 
 function Installing({ progress, installing }: Props) {
