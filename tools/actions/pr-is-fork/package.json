@@ -1,6 +1,6 @@
 {
   "name": "@actions/pr-is-fork",
-  "version": "1.0.0",
+  "version": "1.0.1-ts-llm.0",
   "description": "returns true if the pr is a fork",
   "author": "Julien Elbaz <elbywan@hotmail.com>",
   "license": "MIT",

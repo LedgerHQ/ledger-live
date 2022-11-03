@@ -1,5 +1,43 @@
 # live-mobile
 
+## 3.11.0-ts-llm.0
+
+### Minor Changes
+
+- [#1455](https://github.com/LedgerHQ/ledger-live/pull/1455) [`61240d25a1`](https://github.com/LedgerHQ/ledger-live/commit/61240d25a13cea07b08ee09fa76f31127928a8c6) Thanks [@thomasrogerlux](https://github.com/thomasrogerlux)! - Add deeplink to open the sync onboarding flow
+
+* [#1288](https://github.com/LedgerHQ/ledger-live/pull/1288) [`f5f4db47d2`](https://github.com/LedgerHQ/ledger-live/commit/f5f4db47d214bc30390b7be91d3bab4814c5fb45) Thanks [@henrily-ledger](https://github.com/henrily-ledger)! - Dynamic cal for erc20
+
+### Patch Changes
+
+- [#1728](https://github.com/LedgerHQ/ledger-live/pull/1728) [`135838d354`](https://github.com/LedgerHQ/ledger-live/commit/135838d35439aae1565959ead31944f7a5c7a6fa) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Migrate from expo-image-picker to react-native-image-picker to kill a JCenter dependency
+
+* [#1639](https://github.com/LedgerHQ/ledger-live/pull/1639) [`4ebe39596e`](https://github.com/LedgerHQ/ledger-live/commit/4ebe39596e23662e878395d16282d003db745b57) Thanks [@mlegall-ledger](https://github.com/mlegall-ledger)! - Replaced a deprecated biometrics lib by a newer one
+
+- [#1668](https://github.com/LedgerHQ/ledger-live/pull/1668) [`d51a138cf8`](https://github.com/LedgerHQ/ledger-live/commit/d51a138cf8839747631d303340a54d0bd1c17c07) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Typo on warning message in Advanced account settings
+
+* [#1141](https://github.com/LedgerHQ/ledger-live/pull/1141) [`24ea9cd15f`](https://github.com/LedgerHQ/ledger-live/commit/24ea9cd15f92d5a2c74c4b936bacb89d5d4d36fd) Thanks [@valpinkman](https://github.com/valpinkman)! - Fixed all typescript/eslint errors/warnings.
+
+- [#1320](https://github.com/LedgerHQ/ledger-live/pull/1320) [`bc892dc3ef`](https://github.com/LedgerHQ/ledger-live/commit/bc892dc3ef0671c049c650bf05e71c254e688bf7) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Add account flow: Testnet currencies shouldn't be available by default
+
+* [#1513](https://github.com/LedgerHQ/ledger-live/pull/1513) [`ffc377ddf0`](https://github.com/LedgerHQ/ledger-live/commit/ffc377ddf0c354f450e3790bd221e8d57f58e9e1) Thanks [@lvndry](https://github.com/lvndry)! - Addition of a dust limit for bitcoin transactions
+
+- [#1352](https://github.com/LedgerHQ/ledger-live/pull/1352) [`0d7e0f713a`](https://github.com/LedgerHQ/ledger-live/commit/0d7e0f713ab4fbb3d4bd7df147a96c7de73123b7) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Moved custom image errors from ledger-live-mobile to live-common
+
+* [#1615](https://github.com/LedgerHQ/ledger-live/pull/1615) [`34546edc55`](https://github.com/LedgerHQ/ledger-live/commit/34546edc55674e49b22c6d3be08777ee13d306f9) Thanks [@pierrelouis-c](https://github.com/pierrelouis-c)! - Add hidden button in Welcome screen to access the settings.
+
+* Updated dependencies [[`4aa4d42cb1`](https://github.com/LedgerHQ/ledger-live/commit/4aa4d42cb103612c130b01f36100eb6fdd87e8b1), [`f7b27a97f6`](https://github.com/LedgerHQ/ledger-live/commit/f7b27a97f6cd2b2c553cbe83d008e4ce907c9ad2), [`57699a19fa`](https://github.com/LedgerHQ/ledger-live/commit/57699a19fa545ba359e457deb7ba0632b15342b5), [`df8cbb8dd1`](https://github.com/LedgerHQ/ledger-live/commit/df8cbb8dd166a66325eb96d8192f3f985b71df60), [`0d7e0f713a`](https://github.com/LedgerHQ/ledger-live/commit/0d7e0f713ab4fbb3d4bd7df147a96c7de73123b7), [`24ea9cd15f`](https://github.com/LedgerHQ/ledger-live/commit/24ea9cd15f92d5a2c74c4b936bacb89d5d4d36fd)]:
+  - @ledgerhq/live-common@27.7.0-ts-llm.0
+  - @ledgerhq/errors@6.11.2-ts-llm.0
+  - @ledgerhq/hw-transport-http@6.27.7-ts-llm.0
+  - @ledgerhq/types-cryptoassets@6.23.3-ts-llm.0
+  - @ledgerhq/types-live@6.25.2-ts-llm.0
+  - @ledgerhq/native-ui@0.12.1-ts-llm.0
+  - @ledgerhq/devices@7.0.4-ts-llm.0
+  - @ledgerhq/hw-transport@6.27.7-ts-llm.0
+  - @ledgerhq/react-native-hid@6.28.9-ts-llm.0
+  - @ledgerhq/react-native-hw-transport-ble@6.27.9-ts-llm.0
+
 ## 3.10.0
 
 ### Minor Changes

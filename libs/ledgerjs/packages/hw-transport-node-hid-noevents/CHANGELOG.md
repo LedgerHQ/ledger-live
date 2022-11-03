@@ -1,5 +1,14 @@
 # @ledgerhq/hw-transport-node-hid-noevents
 
+## 6.27.7-ts-llm.0
+
+### Patch Changes
+
+- Updated dependencies [[`df8cbb8dd1`](https://github.com/LedgerHQ/ledger-live/commit/df8cbb8dd166a66325eb96d8192f3f985b71df60), [`24ea9cd15f`](https://github.com/LedgerHQ/ledger-live/commit/24ea9cd15f92d5a2c74c4b936bacb89d5d4d36fd)]:
+  - @ledgerhq/errors@6.11.2-ts-llm.0
+  - @ledgerhq/devices@7.0.4-ts-llm.0
+  - @ledgerhq/hw-transport@6.27.7-ts-llm.0
+
 ## 6.27.6
 
 ### Patch Changes

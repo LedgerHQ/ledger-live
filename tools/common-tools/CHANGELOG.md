@@ -1,5 +1,20 @@
 # live-common-tools
 
+## 0.2.14-ts-llm.0
+
+### Patch Changes
+
+- [#1141](https://github.com/LedgerHQ/ledger-live/pull/1141) [`24ea9cd15f`](https://github.com/LedgerHQ/ledger-live/commit/24ea9cd15f92d5a2c74c4b936bacb89d5d4d36fd) Thanks [@valpinkman](https://github.com/valpinkman)! - Collateral changes due to solving all LLM typescript/eslint issues/warnings.
+
+- Updated dependencies [[`4aa4d42cb1`](https://github.com/LedgerHQ/ledger-live/commit/4aa4d42cb103612c130b01f36100eb6fdd87e8b1), [`f7b27a97f6`](https://github.com/LedgerHQ/ledger-live/commit/f7b27a97f6cd2b2c553cbe83d008e4ce907c9ad2), [`57699a19fa`](https://github.com/LedgerHQ/ledger-live/commit/57699a19fa545ba359e457deb7ba0632b15342b5), [`df8cbb8dd1`](https://github.com/LedgerHQ/ledger-live/commit/df8cbb8dd166a66325eb96d8192f3f985b71df60), [`0d7e0f713a`](https://github.com/LedgerHQ/ledger-live/commit/0d7e0f713ab4fbb3d4bd7df147a96c7de73123b7), [`5b8315df30`](https://github.com/LedgerHQ/ledger-live/commit/5b8315df306d72e8b0191aa5136760142f9d3447), [`24ea9cd15f`](https://github.com/LedgerHQ/ledger-live/commit/24ea9cd15f92d5a2c74c4b936bacb89d5d4d36fd), [`ab40db1288`](https://github.com/LedgerHQ/ledger-live/commit/ab40db1288bf4a795819a8a636821dbccf33073a)]:
+  - @ledgerhq/live-common@27.7.0-ts-llm.0
+  - @ledgerhq/cryptoassets@6.37.0-ts-llm.0
+  - @ledgerhq/hw-transport-http@6.27.7-ts-llm.0
+  - @ledgerhq/hw-transport@6.27.7-ts-llm.0
+  - @ledgerhq/hw-transport-web-ble@6.27.7-ts-llm.0
+  - @ledgerhq/hw-transport-webhid@6.27.7-ts-llm.0
+  - @ledgerhq/hw-transport-webusb@6.27.7-ts-llm.0
+
 ## 0.2.13
 
 ### Patch Changes

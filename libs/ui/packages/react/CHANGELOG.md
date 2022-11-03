@@ -1,5 +1,24 @@
 # @ledgerhq/react-ui
 
+## 0.10.0-ts-llm.0
+
+### Minor Changes
+
+- [#700](https://github.com/LedgerHQ/ledger-live/pull/700) [`bf9e7a242c`](https://github.com/LedgerHQ/ledger-live/commit/bf9e7a242c349d565a0fdcd6823059295920fb58) Thanks [@thomasrogerlux](https://github.com/thomasrogerlux)! - Add a new help drawer in the new synchronous onboarding screen. Also update the drawer component from UI library to comply with recent designs.
+
+### Patch Changes
+
+- [#1352](https://github.com/LedgerHQ/ledger-live/pull/1352) [`0d7e0f713a`](https://github.com/LedgerHQ/ledger-live/commit/0d7e0f713ab4fbb3d4bd7df147a96c7de73123b7) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Remove background color in Button "shade" variant (following design)
+
+* [#1352](https://github.com/LedgerHQ/ledger-live/pull/1352) [`0d7e0f713a`](https://github.com/LedgerHQ/ledger-live/commit/0d7e0f713ab4fbb3d4bd7df147a96c7de73123b7) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Add h4Inter text variant
+
+- [#1141](https://github.com/LedgerHQ/ledger-live/pull/1141) [`24ea9cd15f`](https://github.com/LedgerHQ/ledger-live/commit/24ea9cd15f92d5a2c74c4b936bacb89d5d4d36fd) Thanks [@valpinkman](https://github.com/valpinkman)! - Collateral changes due to solving all LLM typescript/eslint issues/warnings.
+
+- Updated dependencies [[`24ea9cd15f`](https://github.com/LedgerHQ/ledger-live/commit/24ea9cd15f92d5a2c74c4b936bacb89d5d4d36fd)]:
+  - @ledgerhq/crypto-icons-ui@0.2.1-ts-llm.0
+  - @ledgerhq/icons-ui@0.2.8-ts-llm.0
+  - @ledgerhq/ui-shared@0.1.10-ts-llm.0
+
 ## 0.9.2
 
 ### Patch Changes

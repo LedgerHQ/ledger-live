@@ -1,5 +1,17 @@
 # @ledgerhq/cryptoassets
 
+## 6.37.0-ts-llm.0
+
+### Minor Changes
+
+- [#1616](https://github.com/LedgerHQ/ledger-live/pull/1616) [`5b8315df30`](https://github.com/LedgerHQ/ledger-live/commit/5b8315df306d72e8b0191aa5136760142f9d3447) Thanks [@adrienlacombe-ledger](https://github.com/adrienlacombe-ledger)! - 20221019 CAL update
+
+* [#1650](https://github.com/LedgerHQ/ledger-live/pull/1650) [`ab40db1288`](https://github.com/LedgerHQ/ledger-live/commit/ab40db1288bf4a795819a8a636821dbccf33073a) Thanks [@adrienlacombe-ledger](https://github.com/adrienlacombe-ledger)! - 20221021 CAL update
+
+### Patch Changes
+
+- [#1141](https://github.com/LedgerHQ/ledger-live/pull/1141) [`24ea9cd15f`](https://github.com/LedgerHQ/ledger-live/commit/24ea9cd15f92d5a2c74c4b936bacb89d5d4d36fd) Thanks [@valpinkman](https://github.com/valpinkman)! - Collateral changes due to solving all LLM typescript/eslint issues/warnings.
+
 ## 6.36.1
 
 ### Patch Changes

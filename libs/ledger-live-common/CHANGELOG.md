@@ -1,5 +1,41 @@
 # @ledgerhq/live-common
 
+## 27.7.0-ts-llm.0
+
+### Minor Changes
+
+- [#1629](https://github.com/LedgerHQ/ledger-live/pull/1629) [`4aa4d42cb1`](https://github.com/LedgerHQ/ledger-live/commit/4aa4d42cb103612c130b01f36100eb6fdd87e8b1) Thanks [@adrienlacombe-ledger](https://github.com/adrienlacombe-ledger)! - add youhodler as fund provider
+
+* [#1628](https://github.com/LedgerHQ/ledger-live/pull/1628) [`57699a19fa`](https://github.com/LedgerHQ/ledger-live/commit/57699a19fa545ba359e457deb7ba0632b15342b5) Thanks [@adrienlacombe-ledger](https://github.com/adrienlacombe-ledger)! - add plugins
+
+### Patch Changes
+
+- [#1651](https://github.com/LedgerHQ/ledger-live/pull/1651) [`f7b27a97f6`](https://github.com/LedgerHQ/ledger-live/commit/f7b27a97f6cd2b2c553cbe83d008e4ce907c9ad2) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Fix hardware version checking logic in getVersion command
+
+* [#1622](https://github.com/LedgerHQ/ledger-live/pull/1622) [`df8cbb8dd1`](https://github.com/LedgerHQ/ledger-live/commit/df8cbb8dd166a66325eb96d8192f3f985b71df60) Thanks [@alexandremgo](https://github.com/alexandremgo)! - Fix bootloader repairing steps
+
+- [#1352](https://github.com/LedgerHQ/ledger-live/pull/1352) [`0d7e0f713a`](https://github.com/LedgerHQ/ledger-live/commit/0d7e0f713ab4fbb3d4bd7df147a96c7de73123b7) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Moved custom image errors from ledger-live-mobile to live-common
+
+* [#1141](https://github.com/LedgerHQ/ledger-live/pull/1141) [`24ea9cd15f`](https://github.com/LedgerHQ/ledger-live/commit/24ea9cd15f92d5a2c74c4b936bacb89d5d4d36fd) Thanks [@valpinkman](https://github.com/valpinkman)! - Collateral changes due to solving all LLM typescript/eslint issues/warnings.
+
+* Updated dependencies [[`8bf7626bbe`](https://github.com/LedgerHQ/ledger-live/commit/8bf7626bbeb4f766868ab37b7fc943bb7e84e2ca), [`f5f4db47d2`](https://github.com/LedgerHQ/ledger-live/commit/f5f4db47d214bc30390b7be91d3bab4814c5fb45), [`df8cbb8dd1`](https://github.com/LedgerHQ/ledger-live/commit/df8cbb8dd166a66325eb96d8192f3f985b71df60), [`5b8315df30`](https://github.com/LedgerHQ/ledger-live/commit/5b8315df306d72e8b0191aa5136760142f9d3447), [`24ea9cd15f`](https://github.com/LedgerHQ/ledger-live/commit/24ea9cd15f92d5a2c74c4b936bacb89d5d4d36fd), [`ab40db1288`](https://github.com/LedgerHQ/ledger-live/commit/ab40db1288bf4a795819a8a636821dbccf33073a)]:
+  - @ledgerhq/hw-app-eth@6.30.0-ts-llm.0
+  - @ledgerhq/errors@6.11.2-ts-llm.0
+  - @ledgerhq/cryptoassets@6.37.0-ts-llm.0
+  - @ledgerhq/hw-app-solana@7.0.1-ts-llm.0
+  - @ledgerhq/devices@7.0.4-ts-llm.0
+  - @ledgerhq/hw-app-algorand@6.27.7-ts-llm.0
+  - @ledgerhq/hw-app-cosmos@6.27.7-ts-llm.0
+  - @ledgerhq/hw-app-polkadot@6.27.7-ts-llm.0
+  - @ledgerhq/hw-app-trx@6.27.7-ts-llm.0
+  - @ledgerhq/hw-transport@6.27.7-ts-llm.0
+  - @ledgerhq/hw-transport-node-speculos@6.27.7-ts-llm.0
+  - @ledgerhq/hw-app-btc@8.1.2-ts-llm.0
+  - @ledgerhq/hw-app-str@6.27.7-ts-llm.0
+  - @ledgerhq/hw-app-tezos@6.27.7-ts-llm.0
+  - @ledgerhq/hw-app-xrp@6.27.7-ts-llm.0
+  - @ledgerhq/hw-transport-mocker@6.27.7-ts-llm.0
+
 ## 27.6.0
 
 ### Minor Changes
