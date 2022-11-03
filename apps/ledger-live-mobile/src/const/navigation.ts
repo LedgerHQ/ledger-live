@@ -432,6 +432,7 @@ export enum ScreenName {
   CustomImageStep2Preview = "CustomImageStep2Preview",
   CustomImageStep3Transfer = "CustomImageStep3Transfer",
   CustomImageErrorScreen = "CustomImageErrorScreen",
+  CustomImageNFTGallery = "CustomImageNFTGallery",
 
   PostOnboardingHub = "PostOnboardingHub",
   PostOnboardingDebugScreen = "PostOnboardingDebugScreen",
