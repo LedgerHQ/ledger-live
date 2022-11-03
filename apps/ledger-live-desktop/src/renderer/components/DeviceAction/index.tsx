@@ -34,6 +34,7 @@ import {
   renderSecureTransferDeviceConfirmation,
   renderAllowLanguageInstallation,
   renderInstallingLanguage,
+  renderLockedDeviceError,
 } from "./rendering";
 
 type Props<R, H, P> = {
@@ -73,6 +74,7 @@ export const DeviceActionDefaultRendering = <R, H, P>({
     appAndVersion,
     device,
     unresponsive,
+    isLocked,
     error,
     isLoading,
     allowManagerRequestedWording,
@@ -298,6 +300,11 @@ export const DeviceActionDefaultRendering = <R, H, P>({
       withExportLogs: true,
       device: device ?? undefined,
     });
+  }
+
+  // Renders an error as long as LLD is using the "event" implementation of device actions
+  if (isLocked) {
+    return renderLockedDeviceError({ t, device, onRetry });
   }
 
   if ((!isLoading && !device) || unresponsive) {
