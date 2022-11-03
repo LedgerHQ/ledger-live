@@ -3650,6 +3650,11 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
         code: "CSPR",
         magnitude: 9,
       },
+      {
+        name: "motes",
+        code: "motes",
+        magnitude: 0,
+      },
     ],
   },
   // ethereum nanoapp currencies
