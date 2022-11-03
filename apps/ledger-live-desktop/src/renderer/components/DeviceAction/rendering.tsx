@@ -9,7 +9,12 @@ import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
 import { ExchangeRate, Exchange } from "@ledgerhq/live-common/exchange/swap/types";
 import { getProviderName } from "@ledgerhq/live-common/exchange/swap/utils/index";
-import { WrongDeviceForAccount, UpdateYourApp } from "@ledgerhq/errors";
+import {
+  WrongDeviceForAccount,
+  UpdateYourApp,
+  TransportStatusError,
+  StatusCodes,
+} from "@ledgerhq/errors";
 import { LatestFirmwareVersionRequired } from "@ledgerhq/live-common/errors";
 import { DeviceModelId, getDeviceModel } from "@ledgerhq/devices";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
@@ -47,7 +52,8 @@ import { SWAP_VERSION } from "~/renderer/screens/exchange/Swap2/utils/index";
 import { context } from "~/renderer/drawers/Provider";
 import { track } from "~/renderer/analytics/segment";
 import { DrawerFooter } from "~/renderer/screens/exchange/Swap2/Form/DrawerFooter";
-import { Flex, Icons, Text as TextV3, Log, ProgressLoader } from "@ledgerhq/react-ui";
+import { Flex, Icons, Text as TextV3, Log, ProgressLoader, BoxedIcon } from "@ledgerhq/react-ui";
+import { LockAltMedium } from "@ledgerhq/react-ui/assets/icons";
 import { withV3StyleProvider } from "~/renderer/styles/StyleProviderV3";
 import FramedImage from "../CustomImage/FramedImage";
 
@@ -483,6 +489,44 @@ export const renderWarningOutdated = ({
   </Wrapper>
 );
 
+// Quick fix: the error TransportStatusError with status code LOCKED_DEVICE should be catched
+// inside all the device actions and mapped to an event of type "lockedDevice".
+// With this fix, we can catch all the error that were not catched upstream.
+export const renderLockedDeviceError = ({
+  t,
+  device,
+  onRetry,
+}: {
+  t: TFunction;
+  device?: Device;
+  onRetry?: () => void;
+}) => {
+  const productName = device ? getDeviceModel(device.modelId).productName : null;
+
+  return (
+    <Wrapper id="error-locked-device">
+      <Flex mb={5}>
+        <BoxedIcon size={64} Icon={LockAltMedium} iconSize={24} iconColor="neutral.c100" />
+      </Flex>
+      <ErrorTitle>{t("errors.LockedDeviceError.title")}</ErrorTitle>
+      <ErrorDescription>
+        {productName
+          ? t("errors.LockedDeviceError.descriptionWithProductName", {
+              productName,
+            })
+          : t("errors.LockedDeviceError.description")}
+      </ErrorDescription>
+      <ButtonContainer>
+        {onRetry ? (
+          <Button primary onClick={onRetry}>
+            <Trans i18nKey="common.retry" />
+          </Button>
+        ) : null}
+      </ButtonContainer>
+    </Wrapper>
+  );
+};
+
 export const renderError = ({
   error,
   t,
@@ -510,58 +554,70 @@ export const renderError = ({
   managerAppName?: string;
   requireFirmwareUpdate?: boolean;
   withOnboardingCTA?: boolean;
-}) => (
-  <Wrapper id={`error-${error.name}`}>
-    <Logo info={info} warning={warning}>
-      <ErrorIcon size={44} error={error} />
-    </Logo>
-    <ErrorTitle>
-      <TranslatedError error={error} />
-    </ErrorTitle>
-    <ErrorDescription>
-      <TranslatedError error={error} field="description" /> <SupportLinkError error={error} />
-    </ErrorDescription>
-    {list ? (
+  device?: Device;
+}) => {
+  // Redirects from renderError and not from DeviceActionDefaultRendering because renderError
+  // can be used directly by other component
+  if (
+    error instanceof TransportStatusError &&
+    ((error as unknown) as { statusCode: number })?.statusCode === StatusCodes.LOCKED_DEVICE
+  ) {
+    return renderLockedDeviceError({ t, onRetry, device });
+  }
+
+  return (
+    <Wrapper id={`error-${error.name}`}>
+      <Logo info={info} warning={warning}>
+        <ErrorIcon size={44} error={error} />
+      </Logo>
+      <ErrorTitle>
+        <TranslatedError error={error} />
+      </ErrorTitle>
       <ErrorDescription>
-        <ol style={{ textAlign: "justify" }}>
-          <TranslatedError error={error} field="list" />
-        </ol>
+        <TranslatedError error={error} field="description" /> <SupportLinkError error={error} />
       </ErrorDescription>
-    ) : null}
-    <ButtonContainer>
-      {managerAppName || requireFirmwareUpdate ? (
-        <OpenManagerButton
-          appName={managerAppName}
-          updateApp={error instanceof UpdateYourApp}
-          firmwareUpdate={error instanceof LatestFirmwareVersionRequired}
-        />
-      ) : (
-        <>
-          {supportLink ? (
-            <ExternalLinkButton label={<Trans i18nKey="common.getSupport" />} url={supportLink} />
-          ) : null}
-          {withExportLogs ? (
-            <ExportLogsButton
-              title={<Trans i18nKey="settings.exportLogs.title" />}
-              small={false}
-              primary={false}
-              outlineGrey
-              mx={1}
-            />
-          ) : null}
-          {withOpenManager ? (
-            <OpenManagerButton mt={0} ml={withExportLogs ? 4 : 0} />
-          ) : onRetry ? (
-            <Button primary ml={withExportLogs ? 4 : 0} onClick={onRetry}>
-              <Trans i18nKey="common.retry" />
-            </Button>
-          ) : null}
-          {withOnboardingCTA ? <OpenOnboardingBtn /> : null}
-        </>
-      )}
-    </ButtonContainer>
-  </Wrapper>
-);
+      {list ? (
+        <ErrorDescription>
+          <ol style={{ textAlign: "justify" }}>
+            <TranslatedError error={error} field="list" />
+          </ol>
+        </ErrorDescription>
+      ) : null}
+      <ButtonContainer>
+        {managerAppName || requireFirmwareUpdate ? (
+          <OpenManagerButton
+            appName={managerAppName}
+            updateApp={error instanceof UpdateYourApp}
+            firmwareUpdate={error instanceof LatestFirmwareVersionRequired}
+          />
+        ) : (
+          <>
+            {supportLink ? (
+              <ExternalLinkButton label={<Trans i18nKey="common.getSupport" />} url={supportLink} />
+            ) : null}
+            {withExportLogs ? (
+              <ExportLogsButton
+                title={<Trans i18nKey="settings.exportLogs.title" />}
+                small={false}
+                primary={false}
+                outlineGrey
+                mx={1}
+              />
+            ) : null}
+            {withOpenManager ? (
+              <OpenManagerButton mt={0} ml={withExportLogs ? 4 : 0} />
+            ) : onRetry ? (
+              <Button primary ml={withExportLogs ? 4 : 0} onClick={onRetry}>
+                <Trans i18nKey="common.retry" />
+              </Button>
+            ) : null}
+            {withOnboardingCTA ? <OpenOnboardingBtn /> : null}
+          </>
+        )}
+      </ButtonContainer>
+    </Wrapper>
+  );
+};
 
 export const renderInWrongAppForAccount = ({
   t,
