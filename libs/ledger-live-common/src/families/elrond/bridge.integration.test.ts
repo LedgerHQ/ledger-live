@@ -79,23 +79,6 @@ const elrond: CurrenciesData<Transaction> = {
           },
         },
         {
-          name: "Not a valid address",
-          transaction: fromTransactionRaw({
-            family: "elrond",
-            recipient: "elrondinv",
-            amount: "100000000",
-            mode: "send",
-            fees: null,
-            gasLimit: 50000000,
-          }),
-          expectedStatus: {
-            errors: {
-              recipient: new InvalidAddress(),
-            },
-            warnings: {},
-          },
-        },
-        {
           name: "Not enough balance",
           transaction: fromTransactionRaw({
             family: "elrond",
