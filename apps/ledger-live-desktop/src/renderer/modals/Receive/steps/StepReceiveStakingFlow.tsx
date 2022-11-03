@@ -34,7 +34,8 @@ const StepReceiveStakingFlow = (props: StepProps) => {
     const manageList =
       familyManageActions && familyManageActions.length > 0 ? familyManageActions : [];
     const newAction = manageList && manageList.find(item => item.key === "Stake");
-    const provider = action?.provider?.liveAppId ? action?.provider?.liveAppId : "ledger";
+
+    const provider = newAction?.provider?.liveAppId ? newAction?.provider?.liveAppId : "ledger";
     const altTitle = t(`receive.steps.staking.${id}.${provider}.title`);
     const newTitle =
       altTitle === `receive.steps.staking.${id}.${provider}.title`
@@ -44,7 +45,7 @@ const StepReceiveStakingFlow = (props: StepProps) => {
     const newDescription =
       altDescription === `receive.steps.staking.${id}.${provider}.description`
         ? t(`receive.steps.staking.${id}.description`)
-        : altTitle;
+        : altDescription;
     if (JSON.stringify(title) !== JSON.stringify(newTitle)) {
       setTitle(newTitle);
     }
@@ -147,7 +148,7 @@ export const StepReceiveStakingFooter = (props: StepProps) => {
   const onStake = useCallback(() => {
     if (action?.onClick) {
       track("button_clicked", {
-        button: "swap",
+        button: "stake",
         ...getTrackProperties(),
       });
 
