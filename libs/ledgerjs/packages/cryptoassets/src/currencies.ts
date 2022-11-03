@@ -259,6 +259,10 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
       baseChain: "mainnet",
       chainId: 43114,
       networkId: 43114,
+      explorer: {
+        uri: "https://api.snowtrace.io",
+        type: "etherscan",
+      },
     },
     explorerViews: [
       {
@@ -3542,7 +3546,7 @@ export function findCryptoCurrencyByTicker(
 }
 
 // TODO: signature should be findCryptoCurrencyById(id: CryptoCurrencyId)
-export function findCryptoCurrencyById(id: string): CryptoCurrency {
+export function findCryptoCurrencyById(id: string): CryptoCurrency | undefined {
   return cryptocurrenciesById[id];
 }
 
