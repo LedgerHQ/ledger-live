@@ -28,7 +28,9 @@ const getTransactionStatus = async (
   } else if (isSelfTransaction(a, t)) {
     errors.recipient = new InvalidAddressBecauseDestinationIsAlsoSource();
   } else if (!isValidAddress(t.recipient)) {
-    errors.recipient = new InvalidAddress();
+    errors.recipient = new InvalidAddress("", {
+      currencyName: a.currency.name,
+    });
   }
 
   if (!t.fees) {
