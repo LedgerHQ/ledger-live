@@ -2,10 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Platform, ScrollView } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import styled from "styled-components/native";
-import {
-  LockedDeviceError,
-  WrongDeviceForAccount,
-} from "@ledgerhq/errors";
+import { LockedDeviceError, WrongDeviceForAccount } from "@ledgerhq/errors";
 import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { Transaction } from "@ledgerhq/live-common/generated/types";
 import { getDeviceModel } from "@ledgerhq/devices";
