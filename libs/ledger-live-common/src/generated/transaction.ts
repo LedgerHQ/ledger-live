@@ -1,5 +1,6 @@
 import bitcoin from "../families/bitcoin/transaction";
 import cardano from "../families/cardano/transaction";
+import casper from "../families/casper/transaction";
 import celo from "../families/celo/transaction";
 import cosmos from "../families/cosmos/transaction";
 import crypto_org from "../families/crypto_org/transaction";
@@ -21,6 +22,7 @@ import polkadot from "@ledgerhq/coin-polkadot/transaction";
 export default {
   bitcoin,
   cardano,
+  casper,
   celo,
   cosmos,
   crypto_org,
