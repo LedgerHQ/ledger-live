@@ -13,7 +13,7 @@ export default () => {
   const startPostOnboarding = useStartPostOnboardingCallback();
 
   const handleInitPostOnboardingHub = useCallback(
-    (deviceId, mock) =>
+    (deviceId: DeviceModelId, mock: boolean) =>
       startPostOnboarding(deviceId, mock, () =>
         navigation.navigate(NavigatorName.Base, {
           screen: NavigatorName.Main,
