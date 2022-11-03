@@ -3251,8 +3251,8 @@
       "infoTotalDesc": "Includes transaction amount and the selected network fees",
       "gasLimit": "Gas limit",
       "gasPrice": "Gas price",
-      "maxFee" : "Max fee",
-      "maxPriorityFee" : "Max priority fee",
+      "maxFee": "Max fee",
+      "maxPriorityFee": "Max priority fee",
       "nextBlock": "Next block: {{nextBaseFee}}",
       "suggestedPriorityFee": "Suggested: {{lowPriorityFee}} - {{highPriorityFee}}",
       "maxFees": "Max fees",
@@ -5445,7 +5445,8 @@
     "drawer": {
       "title": "Choose an image",
       "options": {
-        "uploadFromPhone": "Upload from my phone"
+        "uploadFromPhone": "Upload from my phone",
+        "selectFromNFTGallery": "Select from NFT gallery"
       }
     },
     "cropImage": "Crop image",
@@ -5464,7 +5465,10 @@
       "choosePicture": "Choose a picture"
     },
     "customImage": "Custom picture",
-    "doThisLater": "Maybe later"
+    "doThisLater": "Maybe later",
+    "nftGallery": {
+      "title": "My NFTs"
+    }
   },
   "postOnboarding": {
     "hub": {

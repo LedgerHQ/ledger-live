@@ -22,6 +22,7 @@ const CustomImageBottomModal: React.FC<Props> = props => {
   const { t } = useTranslation();
   const navigation =
     useNavigation<StackNavigatorNavigation<BaseNavigatorStackParamList>>();
+
   const handleUploadFromPhone = useCallback(async () => {
     try {
       setIsLoading(true);
@@ -47,6 +48,14 @@ const CustomImageBottomModal: React.FC<Props> = props => {
     onClose && onClose();
   }, [navigation, onClose, setIsLoading, device]);
 
+  const handleSelectFromNFTGallery = useCallback(() => {
+    navigation.navigate(NavigatorName.CustomImage, {
+      screen: ScreenName.CustomImageNFTGallery,
+      params: { device },
+    });
+    onClose && onClose();
+  }, []);
+
   return (
     <BottomModal isOpened={isOpened} onClose={onClose}>
       <Text variant="h4" fontWeight="semiBold" pb={5}>
@@ -61,6 +70,12 @@ const CustomImageBottomModal: React.FC<Props> = props => {
           <ModalChoice
             onPress={handleUploadFromPhone}
             title={t("customImage.drawer.options.uploadFromPhone")}
+            iconName={"Brackets"}
+            event=""
+          />
+          <ModalChoice
+            onPress={handleSelectFromNFTGallery}
+            title={t("customImage.drawer.options.selectFromNFTGallery")}
             iconName={"ArrowFromBottom"}
             event=""
           />

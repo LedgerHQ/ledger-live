@@ -25,4 +25,5 @@ export type CustomImageNavigatorParamList = {
     previewData: ProcessorPreviewResult;
   };
   [ScreenName.CustomImageErrorScreen]: BaseParams & { error: Error };
+  [ScreenName.CustomImageNFTGallery]: BaseParams;
 };

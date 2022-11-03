@@ -9,6 +9,7 @@ import Step2Preview from "../../screens/CustomImage/Step2Preview";
 import Step3Transfer from "../../screens/CustomImage/Step3Transfer";
 import ErrorScreen from "../../screens/CustomImage/ErrorScreen";
 import Step0Welcome from "../../screens/CustomImage/Step0Welcome";
+import NFTGallerySelector from "../../screens/CustomImage/NFTGallerySelector";
 import { CustomImageNavigatorParamList } from "./types/CustomImageNavigator";
 
 export default function CustomImageNavigator() {
@@ -48,6 +49,14 @@ export default function CustomImageNavigator() {
         name={ScreenName.CustomImageErrorScreen}
         component={ErrorScreen}
         options={{ title: "", headerLeft: undefined, gestureEnabled: false }}
+      />
+      <Stack.Screen
+        name={ScreenName.CustomImageNFTGallery}
+        component={NFTGallerySelector}
+        options={{
+          title: t("customImage.nftGallery.title"),
+          headerRight: undefined,
+        }}
       />
     </Stack.Navigator>
   );
