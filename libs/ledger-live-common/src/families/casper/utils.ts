@@ -1,4 +1,3 @@
-import { BigNumber } from "bignumber.js";
 import { flatMap } from "lodash";
 import { encodeAccountId } from "../../account";
 import { GetAccountShape } from "../../bridge/jsHelpers";
@@ -7,7 +6,12 @@ import {
   fetchBalances,
   fetchBlockHeight,
   fetchTxs,
+  getAccountStateInfo,
 } from "./bridge/utils/network";
+import { log } from "@ledgerhq/logs";
+import BigNumber from "bignumber.js";
+import { LTxnHistoryData, NAccountBalance } from "./bridge/utils/types";
+import { CASPER_FEES } from "./consts";
 
 const validHexRegExp = new RegExp(/[0-9A-Fa-f]{6}/g);
 const validBase64RegExp = new RegExp(
@@ -64,17 +68,40 @@ export const getAccountShape: GetAccountShape = async (info) => {
     derivationMode,
   });
 
-  const blockHeight = await fetchBlockHeight();
-  const balance = await fetchBalances(address.substring(2));
-  const txs = await fetchTxs(address);
+  log("debug", `Generation account shape for ${address}`);
 
+  const { purseUref, accountHash } = await getAccountStateInfo(address);
+
+  const blockHeight = await fetchBlockHeight();
+
+  let balance: NAccountBalance, txs: LTxnHistoryData[];
+  if (purseUref && accountHash) {
+    balance = await fetchBalances(purseUref);
+    txs = await fetchTxs(accountHash);
+  } else {
+    balance = { balance_value: "0", api_version: "", merkle_proof: "" };
+    txs = [];
+  }
+
+  const csprBalance = new BigNumber(balance.balance_value);
   const result = {
     id: accountId,
-    balance: new BigNumber(balance.balance_value),
-    spendableBalance: new BigNumber(balance.balance_value),
+    balance: csprBalance,
+    spendableBalance: csprBalance.minus(CASPER_FEES),
     operations: flatMap(txs, mapTxToOps(accountId, info)),
     blockHeight: blockHeight.last_added_block_info.height,
   };
 
   return result;
 };
+
+export function motesToCSPR(motes: number | string): BigNumber {
+  if (!motes) return new BigNumber(0);
+
+  return new BigNumber(motes).div(1000000000);
+}
+
+export function csprToMotes(cspr: number | string): BigNumber {
+  if (!cspr) return new BigNumber(0);
+  return new BigNumber(cspr).multipliedBy(1000000000);
+}

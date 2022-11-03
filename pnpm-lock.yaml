@@ -1219,6 +1219,7 @@ importers:
       '@testing-library/react': '12'
       '@testing-library/react-hooks': ^4.0.1
       '@types/bchaddrjs': ^0.4.0
+      '@types/blake2': ^4.0.1
       '@types/bs58': ^4.0.1
       '@types/bs58check': ^2.1.0
       '@types/cbor': ^6.0.0
@@ -1485,6 +1486,7 @@ importers:
       '@svgr/core': 5.5.0
       '@testing-library/react': 12.1.5_k2mvpji5i2ojml6m4ftklg47pa
       '@testing-library/react-hooks': 4.0.1_rmfdlrtvj5fy7r2bxuk4wb2wvq
+      '@types/blake2': 4.0.1
       '@types/bs58': 4.0.1
       '@types/cbor': 6.0.0
       '@types/jest': 27.5.0
@@ -19912,6 +19914,12 @@ packages:
   /@types/bchaddrjs/0.4.0:
     resolution: {integrity: sha512-Nvv3haWpXNWYfKasVoEp3VBgVsBTLTh45anhHUN8xVUPhn4ErU3FPS5AEcZtACWc5ICGUxbaiLTWOnwDkwYF1Q==}
     dev: false
+
+  /@types/blake2/4.0.1:
+    resolution: {integrity: sha512-zcBydVD4uEsGo5gFRfm2phVMLqgrGJqcTZaT6lkZMWJzYovUi6wwraUJKdY1eO92q0bhWWVSAH4OnSp2m7rCfQ==}
+    dependencies:
+      '@types/node': 18.11.7
+    dev: true
 
   /@types/bn.js/4.11.6:
     resolution: {integrity: sha512-pqr857jrp2kPuO9uRjZ3PwnJTjoQy+fcdxvBTvHm6dkmEL9q+hDD/2j/0ELOBPtPnS8LjCX0gI9nbl8lVkadpg==}

@@ -1,5 +1,32 @@
-import blake2 from "blake2";
 import { SMALL_BYTES_COUNT } from "../../consts";
+
+import { Account, Address } from "@ledgerhq/types-live";
+import { CLPublicKeyTag } from "casper-js-sdk";
+import { blake2bFinal, blake2bInit, blake2bUpdate } from "blakejs";
+
+export const getAddress = (a: Account): Address =>
+  a.freshAddresses.length > 0
+    ? a.freshAddresses[0]
+    : { address: a.freshAddress, derivationPath: a.freshAddressPath };
+
+export const getPublicKey = (a: Account): string => {
+  const address =
+    a.freshAddresses.length > 0
+      ? a.freshAddresses[0]
+      : { address: a.freshAddress, derivationPath: a.freshAddressPath };
+
+  return address.address.substring(2);
+};
+
+export const getPubKeySignature = (pubKey: string): CLPublicKeyTag => {
+  const signature = pubKey.substring(0, 2);
+
+  if (signature === "01") return CLPublicKeyTag.ED25519;
+
+  if (signature === "02") return CLPublicKeyTag.SECP256K1;
+
+  return 0;
+};
 
 function numberToBin(num: number) {
   return (num >>> 0).toString(2);
@@ -21,17 +48,15 @@ function bytesToBitsString(buf: Buffer) {
  * similar to [EIP-55](https://eips.ethereum.org/EIPS/eip-55).
  */
 function encode(inputBytes: Buffer) {
-  const blakeHash = blake2
-    .createHash("blake2b", { digestLength: inputBytes.length })
-    .update(inputBytes)
-    .digest("hex");
+  const context = blake2bInit(inputBytes.length);
+  blake2bUpdate(context, inputBytes);
+  const hashBuf = Buffer.from(blake2bFinal(context));
 
   const nibbles = inputBytes
     .toString("hex")
     .split("")
     .map((v) => parseInt(v, 16));
 
-  const hashBuf = Buffer.from(blakeHash, "hex");
   const bitsArray = bytesToBitsString(hashBuf);
 
   const res: Array<number | string> = [];
@@ -52,7 +77,7 @@ function encode(inputBytes: Buffer) {
 
 // Decodes a mixed-case hexadecimal string
 // Checksum hex encoding for casper docs: https://docs.casperlabs.io/design/checksummed-hex/
-export function decode(inputString: string): string {
+function decode(inputString: string): string {
   if (Buffer.from(inputString, "hex").length > SMALL_BYTES_COUNT)
     return inputString;
 
@@ -67,4 +92,13 @@ export function decode(inputString: string): string {
   }
 
   return inputString;
+}
+
+export function validateAddress(address: string): { isValid: boolean } {
+  try {
+    decode(address);
+    return { isValid: true };
+  } catch (err) {
+    return { isValid: false };
+  }
 }
