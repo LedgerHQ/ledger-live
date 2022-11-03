@@ -15,7 +15,7 @@ import { encodeNftId } from "../../nft";
 
 const defaultEthCryptoFamily = cryptocurrenciesById["ethereum"];
 
-const NFTs = [
+export const NFTs = [
   {
     id: "js:2:ethereum:0xB98d10d9f6d07bA283bFD21B2dFEc050f9Ae282A:+0xb1540922Be7c7Ed011cb41cc0Cc4adDf089b3AaF+7833",
     tokenId: "7833",
@@ -307,7 +307,7 @@ const NFTs = [
   },
 ];
 
-const NFTs_POLYGON = [
+export const NFTs_POLYGON = [
   {
     id: "js:2:ethereum:0xB98d10d9f6d07bA283bFD21B2dFEc050f9Ae282A:+0x68a0B29526f342de944BBd6bF61D9c644B96b771+7",
     tokenId: "7",
