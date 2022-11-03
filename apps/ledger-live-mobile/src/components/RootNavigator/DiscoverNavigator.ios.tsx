@@ -4,6 +4,7 @@ import { useTheme } from "styled-components/native";
 import { ScreenName } from "../../const";
 import { getStackNavigatorConfig } from "../../navigation/navigatorConfig";
 import Discover from "../../screens/Discover";
+import { DiscoverNavigatorStackParamList } from "./types/DiscoverNavigator";
 
 export default function DiscoverNavigator() {
   const { colors } = useTheme();
@@ -25,4 +26,4 @@ export default function DiscoverNavigator() {
   );
 }
 
-const Stack = createStackNavigator();
+const Stack = createStackNavigator<DiscoverNavigatorStackParamList>();

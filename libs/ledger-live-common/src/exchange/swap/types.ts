@@ -134,7 +134,7 @@ export type CheckQuote = ({
   bearerToken,
 }: {
   provider: string;
-  quoteId: string;
+  quoteId?: string;
   bearerToken: string;
 }) => Promise<CheckQuoteStatus>;
 export type AvailableProvider = AvailableProviderV2 | AvailableProviderV3;

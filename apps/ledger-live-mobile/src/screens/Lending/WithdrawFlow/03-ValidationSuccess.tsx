@@ -1,33 +1,38 @@
 import React, { useCallback } from "react";
 import { View, StyleSheet } from "react-native";
-import type { Operation } from "@ledgerhq/types-live";
-import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { Trans } from "react-i18next";
 import { useSelector } from "react-redux";
-import { useTheme } from "@react-navigation/native";
+import { CompositeScreenProps, useTheme } from "@react-navigation/native";
 import { TrackScreen } from "../../../analytics";
 import PreventNativeBack from "../../../components/PreventNativeBack";
 import ValidateSuccess from "../../../components/ValidateSuccess";
 import { accountScreenSelector } from "../../../reducers/accounts";
 import { ScreenName } from "../../../const";
+import { LendingWithdrawFlowNavigatorParamList } from "../../../components/RootNavigator/types/LendingWithdrawFlowNavigator";
+import {
+  StackNavigatorNavigation,
+  StackNavigatorProps,
+} from "../../../components/RootNavigator/types/helpers";
+import { BaseNavigatorStackParamList } from "../../../components/RootNavigator/types/BaseNavigator";
 
-type Props = {
-  navigation: any;
-  route: {
-    params: RouteParams;
-  };
-};
-type RouteParams = {
-  accountId: string;
-  deviceId: string;
-  transaction: any;
-  result: Operation;
-  currency: TokenCurrency;
-};
-export default function ValidationSuccess({ navigation, route }: Props) {
+type NavigationProps = CompositeScreenProps<
+  StackNavigatorProps<
+    LendingWithdrawFlowNavigatorParamList,
+    ScreenName.LendingWithdrawValidationSuccess
+  >,
+  StackNavigatorProps<BaseNavigatorStackParamList>
+>;
+
+export default function ValidationSuccess({
+  navigation,
+  route,
+}: NavigationProps) {
   const { colors } = useTheme();
   const onClose = useCallback(() => {
-    const n = navigation.getParent() || navigation;
+    const n =
+      navigation.getParent<
+        StackNavigatorNavigation<BaseNavigatorStackParamList>
+      >() || navigation;
     n.pop();
   }, [navigation]);
   const { account, parentAccount } = useSelector(accountScreenSelector(route));

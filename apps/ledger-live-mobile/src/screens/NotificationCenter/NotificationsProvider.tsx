@@ -17,8 +17,8 @@ import { lastSeenDeviceSelector } from "../../reducers/settings";
 import fetchApi from "../Settings/Debug/__mocks__/announcements";
 import networkApi from "../Settings/Debug/__mocks__/serviceStatus";
 
-let notificationsApi;
-let serviceStatusApi;
+let notificationsApi: typeof fetchApi;
+let serviceStatusApi: typeof networkApi;
 
 if (Config.MOCK || getEnv("MOCK")) {
   notificationsApi = fetchApi;
@@ -32,7 +32,10 @@ export default function NotificationsProvider({ children }: Props) {
   const { locale } = useLocale();
   const currenciesRaw: CryptoCurrency[] = useSelector(cryptoCurrenciesSelector);
   const lastSeenDevice = useSelector(lastSeenDeviceSelector);
-  const { currencies, tickers } = currenciesRaw.reduce(
+  const { currencies, tickers } = currenciesRaw.reduce<{
+    currencies: string[];
+    tickers: string[];
+  }>(
     ({ currencies, tickers }, { id, ticker }) => ({
       currencies: [...currencies, id],
       tickers: [...tickers, ticker],
@@ -42,9 +45,8 @@ export default function NotificationsProvider({ children }: Props) {
       tickers: [],
     },
   );
-  // $FlowFixMe until live-common is bumped
   const { pushToast } = useToasts();
-  const initDateRef = useRef();
+  const initDateRef = useRef<number>();
   const context = {
     language: locale,
     currencies,
@@ -104,8 +106,8 @@ export default function NotificationsProvider({ children }: Props) {
           id: uuid,
           type: "announcement",
           title: content.title,
-          text: content.text,
-          icon,
+          text: content?.text || "",
+          icon: icon || "",
         });
     },
     [pushToast, initDateRef],

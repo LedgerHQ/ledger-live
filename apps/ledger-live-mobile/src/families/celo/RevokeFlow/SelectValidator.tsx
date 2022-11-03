@@ -18,16 +18,13 @@ import { ScreenName } from "../../../const";
 import { accountScreenSelector } from "../../../reducers/accounts";
 import ValidatorHead from "../ValidatorHead";
 import ValidatorRow from "../ValidatorRow";
+import type { StackNavigatorProps } from "../../../components/RootNavigator/types/helpers";
+import type { CeloRevokeFlowFlowParamList } from "./types";
 
-type Props = {
-  navigation: any;
-  route: { params: RouteParams };
-};
-
-type RouteParams = {
-  accountId: string;
-  validator?: CeloValidatorGroup;
-};
+type Props = StackNavigatorProps<
+  CeloRevokeFlowFlowParamList,
+  ScreenName.CeloRevokeValidatorSelect
+>;
 
 export default function SelectValidator({ navigation, route }: Props) {
   const { colors } = useTheme();

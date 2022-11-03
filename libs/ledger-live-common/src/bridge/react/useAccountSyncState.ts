@@ -7,8 +7,8 @@ const nothingState = {
 export function useAccountSyncState({
   accountId,
 }: {
-  accountId: string;
-}): SyncState {
+  accountId?: string | null;
+} = {}): SyncState {
   const syncState = useBridgeSyncState();
-  return syncState[accountId] || nothingState;
+  return (accountId && syncState[accountId]) || nothingState;
 }

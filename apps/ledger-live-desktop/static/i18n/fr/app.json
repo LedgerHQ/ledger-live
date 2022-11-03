@@ -4262,13 +4262,14 @@
       "4" : {
         "deviceSelection" : {
           "title" : "Quel appareil avez-vous ?",
-          "desc" : "Si vous avez un Nano S, vous pouvez essayer de réparer son micrologiciel. Pour les utilisateurs de Nano X et Blue, veuillez contacter l’Assistance Ledger."
+          "desc" : "Si vous essayez de connecter un Nano S, veuillez sélectionner le message affiché sur votre Nano. Si vous essayer de connecter un Nano S Plus ou un Nano X, <0>veuillez consulter notre centre d’aide</0>."
         },
         "notFixed" : {
           "title" : " Le problème de connexion USB persiste ?",
           "desc" : "Si vous avez tout essayé, merci de contacter l’Assistance Ledger. Sinon, veuillez suivre les instructions des solutions que vous n’avez pas encore essayées.",
           "back" : "Retour au Portefeuille",
-          "cta" : "Contacter l’Assistance"
+          "cta" : "Contacter l’Assistance",
+          "cta2" : "Retour"
         },
         "repair" : {
           "title" : "Réparer votre Nano S",

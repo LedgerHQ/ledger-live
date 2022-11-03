@@ -7,6 +7,7 @@ import { Trans } from "react-i18next";
 import { StyleSheet, View } from "react-native";
 import { getMainAccount } from "@ledgerhq/live-common/account/helpers";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
+import { Transaction as CeloTransaction } from "@ledgerhq/live-common/families/celo/types";
 import { useSelector } from "react-redux";
 import { TrackScreen } from "../../../analytics";
 import Button from "../../../components/Button";
@@ -14,16 +15,19 @@ import { ScreenName } from "../../../const";
 import { accountScreenSelector } from "../../../reducers/accounts";
 import LText from "../../../components/LText";
 import TranslatedError from "../../../components/TranslatedError";
+import { StackNavigatorProps } from "../../../components/RootNavigator/types/helpers";
+import { CeloRegistrationFlowParamList } from "./types";
 
-type Props = {
-  navigation: any;
-  route: { params: any };
-};
+type Props = StackNavigatorProps<
+  CeloRegistrationFlowParamList,
+  ScreenName.CeloRegistrationStarted
+>;
 
 export default function RegisterAccountStarted({ navigation, route }: Props) {
   const { colors } = useTheme();
 
   const { account, parentAccount } = useSelector(accountScreenSelector(route));
+  invariant(account, "account needed");
 
   const mainAccount = getMainAccount(account, parentAccount);
   const bridge = getAccountBridge(account, parentAccount);
@@ -43,7 +47,7 @@ export default function RegisterAccountStarted({ navigation, route }: Props) {
   const onNext = useCallback(() => {
     navigation.navigate(ScreenName.CeloRegistrationSelectDevice, {
       ...route.params,
-      transaction,
+      transaction: transaction as CeloTransaction,
     });
   }, [navigation, route.params, transaction]);
 
@@ -58,13 +62,11 @@ export default function RegisterAccountStarted({ navigation, route }: Props) {
     Object.values(status.warnings)[0];
 
   return (
-    <View
-      style={[styles.root, { backgroundColor: colors.background }]}
-      forceInset={{ bottom: "always" }}
-    >
+    <View style={[styles.root, { backgroundColor: colors.background }]}>
       <View
         style={styles.scroll}
-        contentContainerStyle={styles.scrollContainer}
+        // FIXME: PROP DOESN'T EXIST ON View BUT DOES ON ScrollView
+        // contentContainerStyle={styles.scrollContainer}
       >
         <TrackScreen category="CeloRegistrationFlow" name="Started" />
         <Text fontWeight="semiBold" style={styles.title}>

@@ -1,8 +1,8 @@
 import React, { useCallback } from "react";
 import { StyleSheet, ScrollView, View, Linking } from "react-native";
-import SafeAreaView from "react-native-safe-area-view";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { Trans } from "react-i18next";
-import { useTheme } from "@react-navigation/native";
+import { CompositeScreenProps, useTheme } from "@react-navigation/native";
 import { ScreenName } from "../../const";
 import { TrackScreen } from "../../analytics";
 import Button from "../../components/Button";
@@ -11,19 +11,16 @@ import ExternalLink from "../../components/ExternalLink";
 import BulletList, { BulletGreenCheck } from "../../components/BulletList";
 import IlluRewards from "../../icons/images/Rewards";
 import { urls } from "../../config/urls";
+import { BaseNavigatorStackParamList } from "../../components/RootNavigator/types/BaseNavigator";
+import { StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
+import { FreezeNavigatorParamList } from "../../components/RootNavigator/types/FreezeNavigator";
 
-const forceInset = {
-  bottom: "always",
-};
-type Props = {
-  navigation: any;
-  route: {
-    params: RouteParams;
-  };
-};
-// eslint-disable-next-line @typescript-eslint/ban-types
-type RouteParams = {};
-export default function FreezeInfo({ navigation, route }: Props) {
+type NavigatorProps = CompositeScreenProps<
+  StackNavigatorProps<FreezeNavigatorParamList, ScreenName.FreezeInfo>,
+  StackNavigatorProps<BaseNavigatorStackParamList>
+>;
+
+export default function FreezeInfo({ navigation, route }: NavigatorProps) {
   const { colors } = useTheme();
   const onNext = useCallback(() => {
     navigation.navigate(ScreenName.FreezeAmount, route.params);
@@ -42,7 +39,6 @@ export default function FreezeInfo({ navigation, route }: Props) {
           backgroundColor: colors.background,
         },
       ]}
-      forceInset={forceInset}
     >
       <ScrollView
         style={styles.scroll}
@@ -79,9 +75,6 @@ export default function FreezeInfo({ navigation, route }: Props) {
             event="FreezeInfoHowVotingWorks"
             onPress={howVotingWorks}
             text={<Trans i18nKey="freeze.info.howVotingWorks" />}
-            ltextProps={{
-              secondary: true,
-            }}
           />
         </View>
       </ScrollView>
