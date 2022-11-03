@@ -1,9 +1,8 @@
 import React, { useState, memo, useMemo } from "react";
 import { getGasLimit } from "@ledgerhq/live-common/families/ethereum/transaction";
 import { Transaction } from "@ledgerhq/live-common/families/ethereum/types";
-import { Result } from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { inferDynamicRange, Range } from "@ledgerhq/live-common/range";
-import { useRoute, useTheme } from "@react-navigation/native";
+import { useTheme } from "@react-navigation/native";
 import { Account, AccountLike } from "@ledgerhq/types-live";
 import { StyleSheet, View } from "react-native";
 import { BigNumber } from "bignumber.js";
@@ -13,13 +12,11 @@ import Button from "../../../components/Button";
 import EthereumGasLimit from "../SendRowGasLimit";
 import EditFeeUnitEthereum from "../EditFeeUnitEthereum";
 import SectionSeparator from "../../../components/SectionSeparator";
-import { RouteParams } from "../../../screens/SendFunds/04-Summary";
 
 type Props = {
   account: AccountLike;
   parentAccount: Account | null | undefined;
   transaction: Transaction;
-  status: Result["status"];
   onValidateFees: (transaction: Partial<Transaction>) => () => void;
 };
 
@@ -32,7 +29,6 @@ const EthereumLegacyCustomFees = ({
   onValidateFees,
   transaction,
 }: Props) => {
-  const route = useRoute();
   const { colors } = useTheme();
 
   invariant(transaction.family === "ethereum", "not ethereum family");
@@ -83,7 +79,6 @@ const EthereumLegacyCustomFees = ({
           account={account}
           parentAccount={parentAccount}
           transaction={transaction}
-          route={route as { params: RouteParams }}
           gasLimit={gasLimit}
           setGasLimit={setGasLimit}
         />

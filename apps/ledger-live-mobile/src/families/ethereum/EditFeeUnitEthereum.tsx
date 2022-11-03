@@ -50,7 +50,7 @@ type Props = {
   parentAccount: Account | null | undefined;
   transaction: Transaction;
   feeAmount: BigNumber;
-  onChange: (arg: unknown) => void;
+  onChange: (value: BigNumber) => void;
   range: Range;
   title: string;
 };

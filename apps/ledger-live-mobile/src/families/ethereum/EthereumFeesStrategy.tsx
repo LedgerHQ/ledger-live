@@ -1,36 +1,27 @@
 import React, { useCallback, useState, useMemo, useEffect } from "react";
+import type { Transaction as EthereumTransaction } from "@ledgerhq/live-common/families/ethereum/types";
 import { useFeesStrategy } from "@ledgerhq/live-common/families/ethereum/react";
-import { Result } from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { getMainAccount } from "@ledgerhq/live-common/account/helpers";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
-import type { CompositeScreenProps } from "@react-navigation/native";
-import type { Account, AccountLike } from "@ledgerhq/types-live";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import {
   EIP1559ShouldBeUsed,
   getGasLimit,
 } from "@ledgerhq/live-common/families/ethereum/transaction";
-import type { Transaction } from "@ledgerhq/live-common/families/ethereum/types";
-import { LendingWithdrawFlowNavigatorParamList } from "../../components/RootNavigator/types/LendingWithdrawFlowNavigator";
-import { LendingSupplyFlowNavigatorParamList } from "../../components/RootNavigator/types/LendingSupplyFlowNavigator";
-import { SignTransactionNavigatorParamList } from "../../components/RootNavigator/types/SignTransactionNavigator";
-import type { SendFundsNavigatorStackParamList } from "../../components/RootNavigator/types/SendFundsNavigator";
-import { LendingEnableFlowParamsList } from "../../components/RootNavigator/types/LendingEnableFlowNavigator";
-import type { BaseNavigatorStackParamList } from "../../components/RootNavigator/types/BaseNavigator";
-import { SwapNavigatorParamList } from "../../components/RootNavigator/types/SwapNavigator";
-import type { StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
+import { FeeStrategy } from "@ledgerhq/types-live";
+import BigNumber from "bignumber.js";
 import SelectFeesStrategy from "../../components/SelectFeesStrategy";
+import { SendRowsFeeProps as Props } from "./types";
 import { ScreenName } from "../../const";
 
 const getCustomStrategy = (
-  transaction: Transaction,
+  transaction: EthereumTransaction,
   currency: CryptoCurrency,
-) => {
+): (FeeStrategy & { userGasLimit?: BigNumber }) | null => {
   if (transaction.feesStrategy === "custom") {
     return {
       label: "custom",
-      forceValueLabel: null,
-      amount: transaction.gasPrice,
+      amount: transaction.gasPrice || new BigNumber(0),
       displayedAmount: EIP1559ShouldBeUsed(currency)
         ? transaction.maxFeePerGas?.multipliedBy(getGasLimit(transaction))
         : transaction.gasPrice?.multipliedBy(getGasLimit(transaction)),
@@ -41,48 +32,17 @@ const getCustomStrategy = (
   return null;
 };
 
-type Props = {
-  transaction: Transaction;
-  account: AccountLike;
-  parentAccount?: Account | null;
-  setTransaction?: Result["setTransaction"];
-  status?: Result["status"];
-} & CompositeScreenProps<
-  | StackNavigatorProps<
-      SendFundsNavigatorStackParamList,
-      ScreenName.SendSummary
-    >
-  | StackNavigatorProps<
-      SignTransactionNavigatorParamList,
-      ScreenName.SignTransactionSummary
-    >
-  | StackNavigatorProps<
-      LendingEnableFlowParamsList,
-      ScreenName.LendingEnableSummary
-    >
-  | StackNavigatorProps<
-      LendingSupplyFlowNavigatorParamList,
-      ScreenName.LendingSupplySummary
-    >
-  | StackNavigatorProps<
-      LendingWithdrawFlowNavigatorParamList,
-      ScreenName.LendingWithdrawSummary
-    >
-  | StackNavigatorProps<SwapNavigatorParamList, ScreenName.SwapSelectFees>,
-  StackNavigatorProps<BaseNavigatorStackParamList>
->;
-
 export default function EthereumFeesStrategy({
   account,
   parentAccount,
   transaction,
   setTransaction,
   navigation,
-  status,
   route,
   ...props
-}: Props) {
+}: Props<EthereumTransaction>) {
   const { currency } = getMainAccount(account, parentAccount);
+
   const defaultStrategies = useFeesStrategy(transaction);
   const [customStrategy, setCustomStrategy] = useState(
     getCustomStrategy(transaction, currency),
@@ -94,6 +54,7 @@ export default function EthereumFeesStrategy({
         : defaultStrategies,
     [defaultStrategies, customStrategy],
   );
+
   useEffect(() => {
     const newCustomStrategy = getCustomStrategy(transaction, currency);
 
@@ -101,6 +62,7 @@ export default function EthereumFeesStrategy({
       setCustomStrategy(newCustomStrategy);
     }
   }, [transaction, setCustomStrategy, currency]);
+
   const onFeesSelected = useCallback(
     ({ amount, label, userGasLimit, extra }) => {
       const bridge = getAccountBridge(account, parentAccount);
@@ -116,6 +78,7 @@ export default function EthereumFeesStrategy({
     },
     [setTransaction, account, parentAccount, transaction],
   );
+
   const openCustomFees = useCallback(() => {
     navigation.navigate(ScreenName.EthereumCustomFees, {
       ...route.params,
@@ -125,7 +88,6 @@ export default function EthereumFeesStrategy({
       currentNavigation: ScreenName.SendSummary,
       nextNavigation: ScreenName.SendSelectDevice,
       setTransaction,
-      status,
     });
   }, [
     navigation,
@@ -134,7 +96,6 @@ export default function EthereumFeesStrategy({
     parentAccount,
     transaction,
     setTransaction,
-    status,
   ]);
 
   return (
