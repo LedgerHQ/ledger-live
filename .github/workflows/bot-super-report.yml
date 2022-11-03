@@ -27,3 +27,4 @@ jobs:
           days: 7
           githubToken: ${{github.token}}
           slackApiToken: ${{secrets.SLACK_API_TOKEN}}
+          slackChannel: ledger-live
