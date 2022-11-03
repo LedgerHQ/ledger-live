@@ -1,9 +1,9 @@
-import type { ElrondAccount, Transaction, ElrondDelegation } from "./types";
-import * as bech32 from "bech32";
+import { decode, fromWords } from "bech32";
 import BigNumber from "bignumber.js";
+import type { Account, SubAccount } from "@ledgerhq/types-live";
+import type { ElrondAccount, Transaction, ElrondDelegation } from "./types";
 import { buildTransaction } from "./js-buildTransaction";
-import getEstimatedFees from "./js-getFeesForTransaction";
-import { Account, SubAccount } from "@ledgerhq/types-live";
+import { getFees } from "./api";
 
 /**
  * The human-readable-part of the bech32 addresses.
@@ -19,7 +19,7 @@ function fromBech32(value: string): string {
   let decoded;
 
   try {
-    decoded = bech32.decode(value);
+    decoded = decode(value);
   } catch (err) {
     throw new Error("Erd address can't be created");
   }
@@ -29,7 +29,7 @@ function fromBech32(value: string): string {
     throw new Error("Bad HRP");
   }
 
-  const pubkey = Buffer.from(bech32.fromWords(decoded.words));
+  const pubkey = Buffer.from(fromWords(decoded.words));
   if (pubkey.length != PUBKEY_LENGTH) {
     throw new Error("Erd address can't be created");
   }
@@ -67,7 +67,7 @@ export const computeTransactionValue = async (
 
   await buildTransaction(account, tokenAccount, transaction);
 
-  const estimatedFees = await getEstimatedFees(transaction);
+  const estimatedFees = await getFees(transaction);
 
   if (tokenAccount) {
     amount = transaction.useAllAmount

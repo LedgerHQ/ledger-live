@@ -13,6 +13,7 @@ import type {
   OperationType,
   SignedOperation,
 } from "@ledgerhq/types-live";
+import { getAbandonSeedAddress } from "@ledgerhq/cryptoassets";
 import { getEnv } from "../../../env";
 import { encodeOperationId } from "../../../operation";
 import {
@@ -286,21 +287,21 @@ export const getAccountESDTOperations = async (
  * Obtain fees from blockchain
  */
 export const getFees = async (t: Transaction): Promise<BigNumber> => {
-  const transaction = new ElrondSdkTransaction({
-    data: TransactionPayload.fromEncoded(t.data?.trim()),
-    receiver: new Address(t.recipient),
-    chainID: CHAIN_ID,
-    gasPrice: GAS_PRICE,
-    gasLimit: t.gasLimit,
-    sender: new Address(),
-  });
-
   const networkConfig: INetworkConfig = {
     MinGasLimit: MIN_GAS_LIMIT,
     GasPerDataByte: GAS_PER_DATA_BYTE,
     GasPriceModifier: GAS_PRICE_MODIFIER,
     ChainID: CHAIN_ID,
   };
+
+  const transaction = new ElrondSdkTransaction({
+    data: TransactionPayload.fromEncoded(t.data?.trim()),
+    receiver: new Address(getAbandonSeedAddress("elrond")),
+    chainID: CHAIN_ID,
+    gasPrice: GAS_PRICE,
+    gasLimit: t.gasLimit ?? networkConfig.MinGasLimit,
+    sender: new Address(),
+  });
 
   const feesStr = transaction.computeFee(networkConfig).toFixed();
 

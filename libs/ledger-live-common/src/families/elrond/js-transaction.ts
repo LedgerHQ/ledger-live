@@ -1,8 +1,9 @@
 import { $Shape } from "utility-types";
 import { BigNumber } from "bignumber.js";
 import type { ElrondAccount, Transaction } from "./types";
-import getEstimatedFees from "./js-getFeesForTransaction";
-import { MIN_GAS_LIMIT } from "./constants";
+import { getFees } from "./api";
+import { GAS, MIN_GAS_LIMIT } from "./constants";
+import { ElrondEncodeTransaction } from "./encode";
 
 const sameFees = (a, b) => (!a || !b ? false : a === b);
 
@@ -46,8 +47,37 @@ export const prepareTransaction = async (
   a: ElrondAccount,
   t: Transaction
 ): Promise<Transaction> => {
-  let fees = t.fees;
-  fees = await getEstimatedFees(t);
+  switch (t.mode) {
+    case "reDelegateRewards":
+      t.gasLimit = GAS.DELEGATE;
+      t.data = ElrondEncodeTransaction.reDelegateRewards();
+      break;
+
+    case "withdraw":
+      t.gasLimit = GAS.DELEGATE;
+      t.data = ElrondEncodeTransaction.withdraw();
+      break;
+
+    case "unDelegate":
+      t.gasLimit = GAS.DELEGATE;
+      t.data = ElrondEncodeTransaction.unDelegate(t);
+      break;
+
+    case "delegate":
+      t.gasLimit = GAS.DELEGATE;
+      t.data = ElrondEncodeTransaction.delegate();
+      break;
+
+    case "claimRewards":
+      t.gasLimit = GAS.CLAIM;
+      t.data = ElrondEncodeTransaction.claimRewards();
+      break;
+
+    default:
+      break;
+  }
+
+  const fees = await getFees(t);
 
   if (!sameFees(t.fees, fees)) {
     return { ...t, fees };
