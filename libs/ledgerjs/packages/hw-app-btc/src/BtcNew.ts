@@ -469,8 +469,9 @@ function isPathNormal(path: string): boolean {
   const pathElems = pathStringToArray(path);
 
   const hard = (n: number) => n >= h;
-  const soft = (n: number | undefined) => !n || n < h;
-  const change = (n: number | undefined) => !n || n == 0 || n == 1;
+  const soft = (n: number | undefined) => n === undefined || n < h;
+  const change = (n: number | undefined) =>
+    n === undefined || n === 0 || n === 1;
 
   if (
     pathElems.length >= 3 &&
