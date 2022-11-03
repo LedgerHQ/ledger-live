@@ -47,7 +47,11 @@ const CompletionScreen = ({ navigation, route }: Props) => {
         },
       ],
     });
-    startPostOnboarding(device.modelId);
+    startPostOnboarding(device.modelId, false, () =>
+      navigation.navigate(NavigatorName.Base, {
+        screen: NavigatorName.Main,
+      }),
+    );
   }, [device.modelId, navigation, startPostOnboarding]);
 
   const skipDelay = useCallback(() => {
