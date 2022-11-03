@@ -102,14 +102,12 @@ function OnboardingStepPairNew() {
   return (
     <>
       <TrackScreen category="Onboarding" name="PairNew" />
-      {deviceModelId ? (
-        <BaseStepperView
-          onNext={nextPage}
-          steps={scenes}
-          metadata={metadata}
-          deviceModelId={deviceModelId}
-        />
-      ) : null}
+      <BaseStepperView
+        onNext={nextPage}
+        steps={scenes}
+        metadata={metadata}
+        deviceModelId={deviceModelId}
+      />
     </>
   );
 }
