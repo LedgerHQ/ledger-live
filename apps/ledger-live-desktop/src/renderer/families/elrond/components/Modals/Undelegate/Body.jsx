@@ -88,6 +88,10 @@ const Body = (props: Props) => {
     const bridge: AccountBridge<Transaction> = getAccountBridge(accountProp, undefined);
     const transaction: Transaction = bridge.createTransaction(accountProp);
 
+    bridge.updateTransaction(transaction, {
+      mode: "unDelegate",
+    });
+
     return {
       account: accountProp,
       transaction: contract

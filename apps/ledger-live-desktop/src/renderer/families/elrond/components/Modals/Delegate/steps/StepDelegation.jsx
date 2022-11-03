@@ -50,8 +50,8 @@ const StepDelegation = (props: StepProps) => {
 const StepDelegationFooter = (props: StepProps) => {
   const { transitionTo, account, parentAccount, onClose, status, bridgePending } = props;
 
-  const { errors } = status;
-  const hasErrors = Object.keys(errors).length;
+  const { recipient: recipientError, fees: feesError } = status.errors;
+  const hasErrors = recipientError || feesError;
   const canNext = !bridgePending && !hasErrors;
 
   return (

@@ -65,7 +65,6 @@ const StepAmount = (props: StepProps) => {
       }
 
       return bridge.updateTransaction(transaction, {
-        mode: "unDelegate",
         amount: value,
       });
     });

@@ -125,6 +125,7 @@ const Body = (props: Props) => {
       account,
       parentAccount: undefined,
       transaction: bridge.updateTransaction(transaction, {
+        mode: "delegate",
         recipient: defaultValidator ? defaultValidator.contract : "",
       }),
     };

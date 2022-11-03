@@ -31,11 +31,7 @@ const StepAmount = (props: StepProps) => {
   const mainAccount = account ? getMainAccount(account, parentAccount) : null;
 
   const onUpdateTransactionCallback = useCallback(
-    (transaction: Transaction) =>
-      onChangeTransaction({
-        ...transaction,
-        mode: "delegate",
-      }),
+    (transaction: Transaction) => onChangeTransaction(transaction),
     [onChangeTransaction],
   );
 
