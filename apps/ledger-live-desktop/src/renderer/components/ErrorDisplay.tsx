@@ -20,7 +20,7 @@ const ErrorDisplay = ({
 }: ErrorDisplayProps) => {
   const { t } = useTranslation();
 
-  renderError({ t, error, onRetry, withExportLogs, list, supportLink, warning });
+  return renderError({ t, error, onRetry, withExportLogs, list, supportLink, warning });
 };
 
 export default ErrorDisplay;
