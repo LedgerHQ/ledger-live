@@ -88,7 +88,7 @@ export const getAccountShape: GetAccountShape = async (info) => {
     id: accountId,
     balance: csprBalance,
     spendableBalance: csprBalance.minus(CASPER_FEES),
-    operations: flatMap(txs, mapTxToOps(accountId, info)),
+    operations: flatMap(txs, mapTxToOps(accountId, accountHash ?? "")),
     blockHeight: blockHeight.last_added_block_info.height,
   };
 
