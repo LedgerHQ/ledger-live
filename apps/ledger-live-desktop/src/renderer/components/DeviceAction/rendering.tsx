@@ -587,11 +587,11 @@ export const renderError = ({
         ) : (
           <>
             {supportLink ? (
-              <ExternalLinkButton label={<Trans i18nKey="common.getSupport" />} url={supportLink} />
+              <ExternalLinkButton label={t("common.getSupport")} url={supportLink} />
             ) : null}
             {withExportLogs ? (
               <ExportLogsButton
-                title={<Trans i18nKey="settings.exportLogs.title" />}
+                title={t("settings.exportLogs.title")}
                 small={false}
                 primary={false}
                 outlineGrey
@@ -602,7 +602,7 @@ export const renderError = ({
               <OpenManagerButton mt={0} ml={withExportLogs ? 4 : 0} />
             ) : onRetry ? (
               <Button primary ml={withExportLogs ? 4 : 0} onClick={onRetry}>
-                <Trans i18nKey="common.retry" />
+                {t("common.retry")}
               </Button>
             ) : null}
             {withOnboardingCTA ? <OpenOnboardingBtn /> : null}
