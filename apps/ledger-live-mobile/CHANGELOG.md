@@ -1,5 +1,14 @@
 # live-mobile
 
+## 3.11.0-ts-llm.1
+
+### Patch Changes
+
+- [#1739](https://github.com/LedgerHQ/ledger-live/pull/1739) [`30a1c47c04`](https://github.com/LedgerHQ/ledger-live/commit/30a1c47c0461ab197a2d8b29163a02609297aed0) Thanks [@valpinkman](https://github.com/valpinkman)! - Handle 0x5515 response for allow manager and connect app device actions on LLM
+
+- Updated dependencies [[`30a1c47c04`](https://github.com/LedgerHQ/ledger-live/commit/30a1c47c0461ab197a2d8b29163a02609297aed0)]:
+  - @ledgerhq/live-common@27.7.0-ts-llm.1
+
 ## 3.11.0-ts-llm.0
 
 ### Minor Changes

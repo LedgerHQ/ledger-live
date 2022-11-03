@@ -1,5 +1,12 @@
 # @ledgerhq/live-cli
 
+## 22.4.6-ts-llm.1
+
+### Patch Changes
+
+- Updated dependencies [[`30a1c47c04`](https://github.com/LedgerHQ/ledger-live/commit/30a1c47c0461ab197a2d8b29163a02609297aed0)]:
+  - @ledgerhq/live-common@27.7.0-ts-llm.1
+
 ## 22.4.6-ts-llm.0
 
 ### Patch Changes
