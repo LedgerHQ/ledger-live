@@ -243,7 +243,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     id: "avalanche_c_chain",
     coinType: CoinType.ETH,
     name: "Avalanche C-Chain",
-    managerAppName: "Ethereum",
+    managerAppName: "Avalanche",
     ticker: "AVAXC",
     scheme: "avalanche_c_chain",
     color: "#E84142",
@@ -272,7 +272,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
           "https://cchain.explorer.avax.network/token/$contractAddress?a=$address",
       },
     ],
-    keywords: ["avax", "avalanche", "c-chain"],
+    keywords: ["avax", "avalanche", "c-chain", "snow"],
   },
   banano: {
     type: "CryptoCurrency",
@@ -3449,6 +3449,8 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     ],
   },
 };
+
+console.log(cryptocurrenciesById);
 
 const cryptocurrenciesByScheme: Record<string, CryptoCurrency> = {};
 const cryptocurrenciesByTicker: Record<string, CryptoCurrency> = {};
