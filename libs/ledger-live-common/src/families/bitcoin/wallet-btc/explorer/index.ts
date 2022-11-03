@@ -1,4 +1,4 @@
-import type { AxiosRequestConfig, AxiosResponse } from "axios";
+import type { AxiosRequestConfig } from "axios";
 import axios, { AxiosInstance } from "axios";
 import axiosRetry, { isNetworkOrIdempotentRequestError } from "axios-retry";
 import BigNumber from "bignumber.js";
@@ -86,7 +86,7 @@ class BitcoinLikeExplorer implements IExplorer {
     client.interceptors.response.use(responseInterceptor, errorInterceptor);
   }
 
-  async broadcast(tx: string): Promise<AxiosResponse<any, any>> {
+  async broadcast(tx: string): Promise<{ data: { result: string } }> {
     const url = "/transactions/send";
     const client = await this.client.acquire();
     const res = await client.client.post(url, { tx });

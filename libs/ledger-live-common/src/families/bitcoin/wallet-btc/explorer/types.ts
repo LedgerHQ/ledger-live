@@ -1,11 +1,10 @@
-import { AxiosInstance, AxiosResponse } from "axios";
+import { AxiosInstance } from "axios";
 import { TX, Address, Block } from "../storage/types";
 
 // abstract explorer api used, abstract batching logic, pagination, and retries
 export interface IExplorer {
   underlyingClient: AxiosInstance;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  broadcast(tx: string): Promise<AxiosResponse<any, any>>;
+  broadcast(tx: string): Promise<{ data: { result: string } }>;
   getTxHex(txId: string): Promise<string>;
   getFees(): Promise<{ [key: string]: number }>;
   getRelayFee(): Promise<number>;
