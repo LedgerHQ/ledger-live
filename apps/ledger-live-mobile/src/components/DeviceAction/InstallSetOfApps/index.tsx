@@ -2,6 +2,7 @@ import React, { useCallback, useState, useMemo } from "react";
 import { Trans } from "react-i18next";
 import { createAction } from "@ledgerhq/live-common/hw/actions/app";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
+import withRemountableWrapper from "@ledgerhq/live-common/hoc/withRemountableWrapper";
 import connectApp from "@ledgerhq/live-common/hw/connectApp";
 import { Flex, Text } from "@ledgerhq/native-ui";
 import { getDeviceModel } from "@ledgerhq/devices";
@@ -11,7 +12,6 @@ import BottomModal from "../../BottomModal";
 
 import Item from "./Item";
 import Confirmation from "./Confirmation";
-import withRemountableWrapper from "../../withRemountableWrapper";
 
 type Props = {
   dependencies?: string[];
