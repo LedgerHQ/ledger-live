@@ -9,11 +9,7 @@ import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
 import { ExchangeRate, Exchange } from "@ledgerhq/live-common/exchange/swap/types";
 import { getProviderName } from "@ledgerhq/live-common/exchange/swap/utils/index";
-import {
-  WrongDeviceForAccount,
-  UpdateYourApp,
-  LockedDeviceError,
-} from "@ledgerhq/errors";
+import { WrongDeviceForAccount, UpdateYourApp, LockedDeviceError } from "@ledgerhq/errors";
 import { LatestFirmwareVersionRequired } from "@ledgerhq/live-common/errors";
 import { DeviceModelId, getDeviceModel } from "@ledgerhq/devices";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
@@ -520,7 +516,7 @@ export const renderLockedDeviceError = ({
       <ButtonContainer>
         {onRetry ? (
           <Button primary onClick={onRetry}>
-            <Trans i18nKey="common.retry" />
+            {t("common.retry")}
           </Button>
         ) : null}
       </ButtonContainer>
