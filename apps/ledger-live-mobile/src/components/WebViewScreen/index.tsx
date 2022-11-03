@@ -34,7 +34,7 @@ export type Props = {
   onMessage?: (_: WebViewMessageEvent) => void;
   renderHeader?: () => ReactNode;
   renderLoading?: () => ReactNode;
-  renderError?: () => ReactNode;
+  renderError?: () => JSX.Element;
 };
 
 const WebViewScreen = ({
@@ -101,7 +101,7 @@ const WebViewScreen = ({
               startInLoadingState
               javaScriptCanOpenWindowsAutomatically
               allowsBackForwardNavigationGestures
-              onNavigationStateChange={(navState: any) => {
+              onNavigationStateChange={navState => {
                 setCanGoBack(!navState.canGoBack);
               }}
             />

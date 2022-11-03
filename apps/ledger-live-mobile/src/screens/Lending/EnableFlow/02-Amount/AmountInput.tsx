@@ -10,8 +10,6 @@ import {
 } from "react-native";
 import { useSelector } from "react-redux";
 import { Trans } from "react-i18next";
-import type { Transaction } from "@ledgerhq/live-common/generated/types";
-import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { getAccountUnit } from "@ledgerhq/live-common/account/index";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { useTheme } from "@react-navigation/native";
@@ -26,19 +24,16 @@ import GenericErrorBottomModal from "../../../../components/GenericErrorBottomMo
 import AmountInput from "../../../SendFunds/AmountInput";
 import LText from "../../../../components/LText";
 import CurrencyUnitValue from "../../../../components/CurrencyUnitValue";
+import { StackNavigatorProps } from "../../../../components/RootNavigator/types/helpers";
+import { LendingEnableFlowParamsList } from "../../../../components/RootNavigator/types/LendingEnableFlowNavigator";
 
-type Props = {
-  navigation: any;
-  route: {
-    params: RouteParams;
-  };
-};
-type RouteParams = {
-  accountId: string;
-  transaction: Transaction;
-  currency: TokenCurrency;
-};
-export default function SendAmount({ navigation, route }: Props) {
+export default function SendAmount({
+  navigation,
+  route,
+}: StackNavigatorProps<
+  LendingEnableFlowParamsList,
+  ScreenName.LendingEnableAmountInput
+>) {
   const { colors } = useTheme();
   const { currency } = route.params;
   const { account, parentAccount } = useSelector(accountScreenSelector(route));
@@ -93,7 +88,7 @@ export default function SendAmount({ navigation, route }: Props) {
         category="Lend Approve"
         name="step 1 (Amount)"
         eventProperties={{
-          currencyName: currency.name,
+          currencyName: currency?.name,
         }}
       />
       <SafeAreaView
@@ -111,7 +106,6 @@ export default function SendAmount({ navigation, route }: Props) {
                 editable={!useAllAmount}
                 account={account}
                 onChange={onChange}
-                currency={unit.code}
                 value={amount}
                 error={status.errors.amount}
                 warning={status.warnings.amount}

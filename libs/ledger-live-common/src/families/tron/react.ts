@@ -82,7 +82,7 @@ export const formatVotes = (
   superRepresentatives: Array<SuperRepresentative> | null | undefined
 ): Array<
   Vote & {
-    validator: SuperRepresentative | null | undefined;
+    validator?: SuperRepresentative | null;
     isSR: boolean;
     rank: number;
   }

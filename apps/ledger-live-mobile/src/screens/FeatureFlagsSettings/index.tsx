@@ -1,5 +1,4 @@
 import React, { useCallback, useState, useMemo } from "react";
-import { StyleSheet, View } from "react-native";
 import { useTranslation } from "react-i18next";
 import { defaultFeatures } from "@ledgerhq/live-common/featureFlags/index";
 import type { FeatureId } from "@ledgerhq/types-live";
@@ -7,6 +6,7 @@ import type { FeatureId } from "@ledgerhq/types-live";
 import { BaseInput, Text, Flex, SearchInput, Icons } from "@ledgerhq/native-ui";
 import { includes, lowerCase, trim } from "lodash";
 import { InputRenderLeftContainer } from "@ledgerhq/native-ui/components/Form/Input/BaseInput";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import NavigationScrollView from "../../components/NavigationScrollView";
 import FeatureFlagDetails, {
   Divider,
@@ -17,8 +17,8 @@ import Alert from "../../components/Alert";
 
 const addFlagHint = `\
 If a feature flag is defined in the targeted Firebase environment \
-but it is missing from the following list, you can type its name in \
-the input field below and it will appear in the list.\nType the \
+but it is missing from the list, you can type its name in \
+the input field "Add missing flag" above and it will appear in the list.\nType the \
 flag name in camelCase without the "feature" prefix.\
 `;
 
@@ -71,48 +71,46 @@ export default function DebugFeatureFlags() {
     [filteredFlags, focusedName],
   );
 
+  const insets = useSafeAreaInsets();
+
   return (
-    <NavigationScrollView>
-      <View style={styles.root}>
-        <Text mb={6}>{t("settings.debug.featureFlagsTitle")}</Text>
-        <Flex flexDirection="row">
-          <Text>Legend: </Text>
-          <TagEnabled mx={2}>enabled flag</TagEnabled>
-          <TagDisabled mx={2}>disabled flag</TagDisabled>
+    <>
+      <NavigationScrollView>
+        <Flex p={16}>
+          <Text mb={6}>{t("settings.debug.featureFlagsTitle")}</Text>
+          <SearchInput
+            value={searchInput}
+            placeholder="Search flag"
+            onChange={handleSearch}
+            autoCapitalize="none"
+          />
+          <Flex mt={3} />
+          <BaseInput
+            value={undefined}
+            renderLeft={() => (
+              <InputRenderLeftContainer>
+                <Icons.PlusMedium color="neutral.c70" />
+              </InputRenderLeftContainer>
+            )}
+            placeholder="Add missing flag (instructions above)"
+            onChange={handleAddHiddenFlag}
+            autoCapitalize="none"
+          />
+          <Flex flexDirection="row" mt={4}>
+            <Text>Legend: </Text>
+            <TagEnabled mx={2}>enabled flag</TagEnabled>
+            <TagDisabled mx={2}>disabled flag</TagDisabled>
+          </Flex>
+          <Divider />
+          {filteredFlags.length === 0 ? (
+            <Text>{`No flag matching "${searchInput}"`}</Text>
+          ) : null}
+          {content}
         </Flex>
-        <Divider />
-        <SearchInput
-          value={searchInput}
-          placeholder="Search flag"
-          onChange={handleSearch}
-          autoCapitalize="none"
-        />
-        <Flex my={3}>
-          <Alert title={addFlagHint} type="hint" />
-        </Flex>
-        <BaseInput
-          value={undefined}
-          renderLeft={() => (
-            <InputRenderLeftContainer>
-              <Icons.PlusMedium color="neutral.c70" />
-            </InputRenderLeftContainer>
-          )}
-          placeholder="Add missing flag (instructions above)"
-          onChange={handleAddHiddenFlag}
-          autoCapitalize="none"
-        />
-        <Divider />
-        {filteredFlags.length === 0 ? (
-          <Text>{`No flag matching "${searchInput}"`}</Text>
-        ) : null}
-        {content}
-      </View>
-    </NavigationScrollView>
+      </NavigationScrollView>
+      <Flex px={16} mt={3} mb={insets.bottom}>
+        <Alert title={addFlagHint} type="hint" />
+      </Flex>
+    </>
   );
 }
-
-const styles = StyleSheet.create({
-  root: {
-    padding: 16,
-  },
-});

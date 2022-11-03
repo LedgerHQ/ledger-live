@@ -1,11 +1,10 @@
 import invariant from "invariant";
 import React, { useCallback, useState } from "react";
 import { View, StyleSheet, ScrollView } from "react-native";
-import SafeAreaView from "react-native-safe-area-view";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 import i18next from "i18next";
-import type { Transaction } from "@ledgerhq/live-common/families/stellar/types";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { useIsFocused, useTheme } from "@react-navigation/native";
 import KeyboardView from "../../components/KeyboardView";
@@ -13,23 +12,45 @@ import Button from "../../components/Button";
 import { ScreenName } from "../../const";
 import { accountScreenSelector } from "../../reducers/accounts";
 import TextInput from "../../components/FocusedTextInput";
+import {
+  BaseComposite,
+  StackNavigatorProps,
+} from "../../components/RootNavigator/types/helpers";
+import { SendFundsNavigatorStackParamList } from "../../components/RootNavigator/types/SendFundsNavigator";
+import { SignTransactionNavigatorParamList } from "../../components/RootNavigator/types/SignTransactionNavigator";
+import { LendingEnableFlowParamsList } from "../../components/RootNavigator/types/LendingEnableFlowNavigator";
+import { LendingSupplyFlowNavigatorParamList } from "../../components/RootNavigator/types/LendingSupplyFlowNavigator";
+import { LendingWithdrawFlowNavigatorParamList } from "../../components/RootNavigator/types/LendingWithdrawFlowNavigator";
+import { SwapFormNavigatorParamList } from "../../components/RootNavigator/types/SwapFormNavigator";
 
-const forceInset = {
-  bottom: "always",
-};
-type Props = {
-  navigation: any;
-  route: {
-    params: RouteParams;
-  };
-};
-type RouteParams = {
-  accountId: string;
-  transaction: Transaction;
-  memoType: string;
-};
+type NavigationProps = BaseComposite<
+  | StackNavigatorProps<
+      SendFundsNavigatorStackParamList,
+      ScreenName.StellarEditMemoValue
+    >
+  | StackNavigatorProps<
+      SignTransactionNavigatorParamList,
+      ScreenName.StellarEditMemoType
+    >
+  | StackNavigatorProps<
+      LendingEnableFlowParamsList,
+      ScreenName.StellarEditMemoType
+    >
+  | StackNavigatorProps<
+      LendingSupplyFlowNavigatorParamList,
+      ScreenName.StellarEditMemoType
+    >
+  | StackNavigatorProps<
+      LendingWithdrawFlowNavigatorParamList,
+      ScreenName.StellarEditMemoType
+    >
+  | StackNavigatorProps<
+      SwapFormNavigatorParamList,
+      ScreenName.StellarEditMemoType
+    >
+>;
 
-function StellarEditMemoValue({ navigation, route }: Props) {
+function StellarEditMemoValue({ navigation, route }: NavigationProps) {
   const isFocused = useIsFocused();
   const { colors } = useTheme();
   const { t } = useTranslation();
@@ -44,6 +65,7 @@ function StellarEditMemoValue({ navigation, route }: Props) {
   const onValidateText = useCallback(() => {
     const bridge = getAccountBridge(account);
     const { transaction, memoType } = route.params;
+    // @ts-expect-error FIXME: No current / next navigation params?
     navigation.navigate(ScreenName.SendSummary, {
       accountId: account.id,
       transaction: bridge.updateTransaction(transaction, {
@@ -53,7 +75,7 @@ function StellarEditMemoValue({ navigation, route }: Props) {
     });
   }, [navigation, route.params, account, memoValue]);
   return (
-    <SafeAreaView style={styles.root} forceInset={forceInset}>
+    <SafeAreaView style={styles.root}>
       <KeyboardView
         style={[
           styles.body,
@@ -101,7 +123,7 @@ function StellarEditMemoValue({ navigation, route }: Props) {
 
 const options = {
   title: i18next.t("send.summary.memo.value"),
-  headerLeft: null,
+  headerLeft: undefined,
 };
 export { StellarEditMemoValue as component, options };
 const styles = StyleSheet.create({

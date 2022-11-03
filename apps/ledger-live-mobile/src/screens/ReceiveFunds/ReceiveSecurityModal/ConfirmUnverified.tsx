@@ -5,9 +5,9 @@ import { Flex, Text, Button, Checkbox } from "@ledgerhq/native-ui";
 import { track, TrackScreen } from "../../../analytics";
 
 type Props = {
-  closeModal: any;
-  setStep: any;
-  setShouldNotRemindUserAgain: any;
+  closeModal: () => void;
+  setStep: (arg: string) => void;
+  setShouldNotRemindUserAgain: () => void;
 };
 
 const ConfirmUnverified = ({

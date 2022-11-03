@@ -2,7 +2,10 @@ import invariant from "invariant";
 import React, { useCallback } from "react";
 import { View, StyleSheet, FlatList } from "react-native";
 import { useSelector } from "react-redux";
-import type { Transaction } from "@ledgerhq/live-common/families/cosmos/types";
+import type {
+  CosmosAccount,
+  Transaction,
+} from "@ledgerhq/live-common/families/cosmos/types";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import {
   getMainAccount,
@@ -14,27 +17,23 @@ import { useTheme } from "@react-navigation/native";
 import { accountScreenSelector } from "../../../reducers/accounts";
 import { ScreenName } from "../../../const";
 import Item from "../shared/Item";
+import type { StackNavigatorProps } from "../../../components/RootNavigator/types/helpers";
+import type { CosmosClaimRewardsFlowParamList } from "./types";
 
-type RouteParams = {
-  accountId: string;
-  transaction: Transaction;
-};
-type Props = {
-  navigation: any;
-  route: {
-    params: RouteParams;
-  };
-};
+type Props = StackNavigatorProps<
+  CosmosClaimRewardsFlowParamList,
+  ScreenName.CosmosClaimRewardsValidator
+>;
 
 function ClaimRewardsSelectValidator({ navigation, route }: Props) {
   const { colors } = useTheme();
   const { account } = useSelector(accountScreenSelector(route));
   invariant(account, "account required");
-  const mainAccount = getMainAccount(account, undefined);
+  const mainAccount = getMainAccount(account, undefined) as CosmosAccount;
   const bridge = getAccountBridge(account, undefined);
   const { cosmosResources } = mainAccount;
   invariant(cosmosResources, "cosmosResources required");
-  const { transaction } = useBridgeTransaction(() => {
+  const transaction = useBridgeTransaction(() => {
     const t = bridge.createTransaction(mainAccount);
     return {
       account,
@@ -43,7 +42,7 @@ function ClaimRewardsSelectValidator({ navigation, route }: Props) {
         validators: [],
       }),
     };
-  });
+  }).transaction as Transaction;
   invariant(
     transaction && transaction.validators,
     "transaction and validators required",

@@ -1,22 +1,21 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { StyleProp, ViewStyle } from "react-native";
 import { BottomDrawer } from "@ledgerhq/native-ui";
+import type { BaseModalProps } from "@ledgerhq/native-ui/components/Layout/Modals/BaseModal";
 import { useSelector } from "react-redux";
 import { isModalLockedSelector } from "../reducers/appstate";
+import { Merge } from "../types/helpers";
 
 let isModalOpenedref: boolean | undefined = false;
 
-export type Props = {
-  id?: string;
-  isOpened?: boolean;
-  onClose?: () => void;
-  onModalHide?: () => void;
-  children?: React.ReactNode;
-  style?: StyleProp<ViewStyle>;
-  preventBackdropClick?: boolean;
-  noCloseButton?: boolean;
-  containerStyle?: StyleProp<ViewStyle>;
-};
+export type Props = Merge<
+  BaseModalProps,
+  {
+    isOpened?: boolean;
+    style?: StyleProp<ViewStyle>;
+    containerStyle?: StyleProp<ViewStyle>;
+  }
+>;
 
 const BottomModal = ({
   isOpened,

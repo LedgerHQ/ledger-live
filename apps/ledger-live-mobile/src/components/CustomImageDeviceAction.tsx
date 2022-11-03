@@ -1,10 +1,11 @@
 import React, { ComponentProps, useCallback, useEffect, useState } from "react";
 import { Image } from "react-native";
+import { Link, Flex, Icons } from "@ledgerhq/native-ui";
+import { useTranslation } from "react-i18next";
+import withRemountableWrapper from "@ledgerhq/live-common/hoc/withRemountableWrapper";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { createAction } from "@ledgerhq/live-common/hw/actions/ftsLoadImage";
 import loadImage from "@ledgerhq/live-common/hw/ftsLoadImage";
-import { Link, Flex, Icons } from "@ledgerhq/native-ui";
-import { useTranslation } from "react-i18next";
 import {
   ImageLoadRefusedOnDevice,
   ImageCommitRefusedOnDevice,
@@ -14,7 +15,6 @@ import { ImageSourceContext } from "./CustomImage/FramedImage";
 import { renderError } from "./DeviceAction/rendering";
 import CustomImageBottomModal from "./CustomImage/CustomImageBottomModal";
 import Button from "./Button";
-import withRemountableWrapper from "./withRemountableWrapper";
 
 type Props = {
   device: Device;
@@ -23,7 +23,6 @@ type Props = {
   onStart?: () => void;
   onResult?: () => void;
   onSkip?: () => void;
-  onRetryWithAnotherImage?: () => void;
 };
 
 const errorNamesRetryAnotherImage = [

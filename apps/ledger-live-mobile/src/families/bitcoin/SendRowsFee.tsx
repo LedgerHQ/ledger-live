@@ -1,23 +1,54 @@
 import invariant from "invariant";
 import React, { useCallback, useMemo, useState } from "react";
-import type { Account, AccountLike } from "@ledgerhq/types-live";
+import type { Account, AccountLike, FeeStrategy } from "@ledgerhq/types-live";
 import { Trans } from "react-i18next";
-import type { Transaction } from "@ledgerhq/live-common/families/bitcoin/types";
+import type { Transaction as BitcoinTransaction } from "@ledgerhq/live-common/families/bitcoin/types";
+import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { useFeesStrategy } from "@ledgerhq/live-common/families/bitcoin/react";
+import { CompositeScreenProps } from "@react-navigation/native";
+import BigNumber from "bignumber.js";
 import { ScreenName } from "../../const";
 import SelectFeesStrategy from "../../components/SelectFeesStrategy";
+import type { StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
+import type { SendFundsNavigatorStackParamList } from "../../components/RootNavigator/types/SendFundsNavigator";
+import type { BaseNavigatorStackParamList } from "../../components/RootNavigator/types/BaseNavigator";
+import type { LendingEnableFlowParamsList } from "../../components/RootNavigator/types/LendingEnableFlowNavigator";
+import type { LendingSupplyFlowNavigatorParamList } from "../../components/RootNavigator/types/LendingSupplyFlowNavigator";
+import type { LendingWithdrawFlowNavigatorParamList } from "../../components/RootNavigator/types/LendingWithdrawFlowNavigator";
+import type { SignTransactionNavigatorParamList } from "../../components/RootNavigator/types/SignTransactionNavigator";
+import type { SwapNavigatorParamList } from "../../components/RootNavigator/types/SwapNavigator";
 
 type Props = {
   transaction: Transaction;
   account: AccountLike;
-  parentAccount: Account | null | undefined;
-  navigation: any;
-  route: {
-    params: any;
-  };
-  setTransaction: (..._: Array<any>) => any;
-};
+  parentAccount?: Account | null;
+  setTransaction: (..._: Array<Transaction>) => void;
+} & CompositeScreenProps<
+  | StackNavigatorProps<
+      SendFundsNavigatorStackParamList,
+      ScreenName.SendSummary
+    >
+  | StackNavigatorProps<
+      SignTransactionNavigatorParamList,
+      ScreenName.SignTransactionSummary
+    >
+  | StackNavigatorProps<
+      LendingEnableFlowParamsList,
+      ScreenName.LendingEnableSummary
+    >
+  | StackNavigatorProps<
+      LendingSupplyFlowNavigatorParamList,
+      ScreenName.LendingSupplySummary
+    >
+  | StackNavigatorProps<
+      LendingWithdrawFlowNavigatorParamList,
+      ScreenName.LendingWithdrawSummary
+    >
+  | StackNavigatorProps<SwapNavigatorParamList, ScreenName.SwapSelectFees>,
+  StackNavigatorProps<BaseNavigatorStackParamList>
+>;
+
 export default function BitcoinSendRowsFee({
   account,
   transaction,
@@ -28,8 +59,11 @@ export default function BitcoinSendRowsFee({
   ...props
 }: Props) {
   invariant(account.type === "Account", "account not found");
-  const defaultStrategies = useFeesStrategy(account, transaction);
-  const [satPerByte, setSatPerByte] = useState(null);
+  const defaultStrategies = useFeesStrategy(
+    account,
+    transaction as BitcoinTransaction,
+  );
+  const [satPerByte, setSatPerByte] = useState<BigNumber | null>(null);
   const strategies = useMemo(
     () =>
       transaction.feesStrategy === "custom"
@@ -38,7 +72,7 @@ export default function BitcoinSendRowsFee({
             {
               label: transaction.feesStrategy,
               forceValueLabel: null,
-              amount: transaction.feePerByte,
+              amount: (transaction as BitcoinTransaction).feePerByte,
               unit: defaultStrategies[0].unit,
             },
           ]
@@ -61,15 +95,23 @@ export default function BitcoinSendRowsFee({
     navigation.navigate(ScreenName.BitcoinEditCustomFees, {
       ...route.params,
       accountId: account.id,
-      transaction,
+      parentId: parentAccount?.id,
+      transaction: transaction as BitcoinTransaction,
       satPerByte,
       setSatPerByte,
     });
-  }, [navigation, route.params, account.id, transaction, satPerByte]);
+  }, [
+    navigation,
+    route.params,
+    account.id,
+    parentAccount?.id,
+    transaction,
+    satPerByte,
+  ]);
   return (
     <SelectFeesStrategy
       {...props}
-      strategies={strategies}
+      strategies={strategies as FeeStrategy[]}
       onStrategySelect={onFeesSelected}
       onCustomFeesPress={openCustomFees}
       account={account}

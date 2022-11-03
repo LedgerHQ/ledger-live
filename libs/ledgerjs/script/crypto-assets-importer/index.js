@@ -21,6 +21,7 @@ if (!inputFolder) {
   );
   process.exit(1);
 }
+const toJSON = process.argv[3] === "true";
 
 axios
   .get("https://countervalues.live.ledger.com/v2/tickers")
@@ -28,23 +29,23 @@ axios
     importers.forEach((imp) => {
       const outputJS = path.join(
         outputFolder,
-        imp.output ? imp.output : imp.path + ".js"
+        imp.output ? imp.output(toJSON) : imp.path + toJSON ? ".json" : ".js"
       );
       Promise.all(
         imp.paths.map((p) => {
           const folder = path.join(inputFolder, "assets", p);
           const signatureFolder = path.join(inputFolder, "signatures/prod/", p);
           const items = fs.readdirSync(folder);
-          const shouldLoad = ((id) => imp.shouldLoad ? imp.shouldLoad({ folder, id }) : !id.endsWith(".json"));
-          return promiseAllBatched(
-            50,
-            items.sort().filter(shouldLoad),
-            (id) =>
-              Promise.resolve()
-                .then(() => imp.loader({ signatureFolder, folder, id }))
-                .catch((e) => {
-                  console.log("FAILED " + id + " " + e);
-                })
+          const shouldLoad = (id) =>
+            imp.shouldLoad
+              ? imp.shouldLoad({ folder, id })
+              : !id.endsWith(".json");
+          return promiseAllBatched(50, items.sort().filter(shouldLoad), (id) =>
+            Promise.resolve()
+              .then(() => imp.loader({ signatureFolder, folder, id }))
+              .catch((e) => {
+                console.log("FAILED " + id + " " + e);
+              })
           );
         })
       )
@@ -55,7 +56,7 @@ axios
         )
         .then((all) => {
           const data = imp.join ? imp.join(all) : all;
-          fs.writeFileSync(outputJS, imp.outputTemplate(data), "utf-8");
+          fs.writeFileSync(outputJS, imp.outputTemplate(data, toJSON), "utf-8");
         });
     });
   });
