@@ -2450,7 +2450,7 @@
         "title": "Price Alerts",
         "desc": "Set price alerts for your favorite coins so that you don't miss a market move"
       },
-      "disclaimer": "Data and privacy are paramount at Ledger. That is why the data collected is completely anonymous and would never be shared to third party services"
+      "disclaimer": "Data and privacy are paramount at Ledger. Data collected is never shared to our partners"
     },
     "help": {
       "title": "Help",
@@ -2537,7 +2537,7 @@
   "notifications": {
     "prompt": {
       "title": "Turn notifications on",
-      "desc": "Get important updates on Ledger Live, Ledger products and security. Opt out anytime.",
+      "desc": "Get the latest updates on Ledger Live, Ledger products, the market, and personalised recommendations. Opt-out anytime in the settings",
       "allow": "Allow notifications",
       "later": "Maybe later"
     }

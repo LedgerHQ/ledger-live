@@ -182,7 +182,7 @@ function NotificationsSettings() {
             />
           </Box>
           <Box m={6}>
-            <Text color={"neutral.c70"} variant={"bodyLineHeight"}>
+            <Text color={notifications.allowed ? "neutral.c40" : "neutral.c70"} variant={"bodyLineHeight"} textAlign="center">
               {t("settings.notifications.disclaimer")}
             </Text>
           </Box>
