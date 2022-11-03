@@ -220,33 +220,45 @@ export const makeSync =
             syncConfig
           );
 
-          o.next((acc) => {
-            const a = needClear ? clearAccount(acc) : acc;
+          const updater = (acc: Account): Account => {
+            let a = acc; // a is a immutable version of Account, based on acc
+
+            if (needClear) {
+              a = clearAccount(acc);
+            }
+
             // FIXME reconsider doing mergeOps here. work is redundant for impl like eth
             const operations = shouldMergeOps
               ? mergeOps(a.operations, shape.operations || [])
               : shape.operations || [];
 
-            return recalculateAccountBalanceHistories(
-              postSync(a, {
-                ...a,
-                id: accountId,
-                spendableBalance: shape.balance || a.balance,
-                operationsCount: shape.operationsCount || operations.length,
-                lastSyncDate: new Date(),
-                creationDate:
-                  operations.length > 0
-                    ? operations[operations.length - 1].date
-                    : new Date(),
-                ...shape,
-                operations,
-                pendingOperations: a.pendingOperations.filter((op) =>
-                  shouldRetainPendingOperation(a, op)
-                ),
-              }),
-              acc
-            );
-          });
+            a = postSync(a, {
+              ...a,
+              id: accountId,
+              spendableBalance: shape.balance || a.balance,
+              operationsCount: shape.operationsCount || operations.length,
+              lastSyncDate: new Date(),
+              creationDate:
+                operations.length > 0
+                  ? operations[operations.length - 1].date
+                  : new Date(),
+              ...shape,
+              operations,
+              pendingOperations: a.pendingOperations.filter((op) =>
+                shouldRetainPendingOperation(a, op)
+              ),
+            });
+
+            a = recalculateAccountBalanceHistories(a, acc);
+
+            if (!a.used) {
+              a.used = !isAccountEmpty(a);
+            }
+
+            return a;
+          };
+
+          o.next(updater);
           o.complete();
         } catch (e) {
           o.error(e);
