@@ -35,4 +35,5 @@ export type CustomImageNavigatorParamList = {
     imageData: ProcessorRawResult;
     imagePreview: ProcessorPreviewResult;
   };
+  [ScreenName.CustomImageNFTGallery]: BaseParams;
 };
