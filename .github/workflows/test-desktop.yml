@@ -65,9 +65,9 @@ jobs:
       - id: set-matrix
         run: |
           if [[ "${{ needs.pr-is-fork.outputs.pr-is-fork }}" == "true" ]]; then
-            echo "::set-output name=matrix::{\"os\": [\"ubuntu-latest\", \"windows-latest\", \"macos-latest\"]}"
+            echo "matrix={\"os\": [\"ubuntu-latest\", \"windows-latest\", \"macos-latest\"]}" >> $GITHUB_OUTPUT
           else
-            echo "::set-output name=matrix::{\"os\": [\"ubuntu-latest\", \"windows-latest\"]}"
+            echo "matrix={\"os\": [\"ubuntu-latest\", \"windows-latest\"]}" >> $GITHUB_OUTPUT
           fi
 
   test-desktop-app:

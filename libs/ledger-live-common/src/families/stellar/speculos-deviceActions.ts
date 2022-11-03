@@ -5,7 +5,9 @@ import { deviceActionFlow, formatDeviceAmount } from "../../bot/specs";
 
 const expectedAmount = ({ account, status, transaction }) => {
   if (transaction.assetCode && transaction.assetIssuer) {
-    const amount = formatDeviceAmount(account.currency, status.amount);
+    const amount = formatDeviceAmount(account.currency, status.amount, {
+      hideCode: true,
+    });
 
     return `${amount} ${transaction.assetCode}@${truncateAddress(
       transaction.assetIssuer,

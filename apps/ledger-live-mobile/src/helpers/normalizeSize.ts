@@ -5,7 +5,7 @@ const { width: SCREEN_WIDTH, height } = Dimensions.get("window");
 const scale = SCREEN_WIDTH / 375;
 const width = SCREEN_WIDTH;
 
-function normalize(size) {
+function normalize(size: number) {
   const newSize = size * scale;
 
   if (Platform.OS === "ios") {

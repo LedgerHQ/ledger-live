@@ -164,6 +164,7 @@ export function computeDustAmount(currency: ICrypto, txSize: number): number {
     default:
       break;
   }
+
   return dustAmount;
 }
 

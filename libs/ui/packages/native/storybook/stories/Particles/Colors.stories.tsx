@@ -34,7 +34,7 @@ const { type: _, ...palette } = palettes.dark;
 
 export const Colors = (): JSX.Element => (
   <ScrollContainer width="100%">
-    {Object.entries(palette).map(([type, shades]: [string, Array<string>], i) => (
+    {Object.entries(palette).map(([type, shades], i) => (
       <Flex my={8} key={type + i} flexDirection="column" rowGap="1rem">
         <Text m={3} variant="h2" textTransform="uppercase">
           {type}

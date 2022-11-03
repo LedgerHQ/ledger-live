@@ -3,6 +3,7 @@
 /* eslint-disable consistent-return */
 
 import { setKey } from "~/renderer/storage";
+import { hubStateSelector } from "@ledgerhq/live-common/postOnboarding/reducer";
 
 import { accountsSelector } from "./../reducers/accounts";
 import { settingsExportSelector, areSettingsLoaded } from "./../reducers/settings";
@@ -22,6 +23,10 @@ export default (store: any) => (next: any) => (action: any) => {
     const state = store.getState();
     setKey("app", "accounts", accountsSelector(state));
     // ^ TODO ultimately we'll do same for accounts to drop DB: pattern
+  } else if (DB_MIDDLEWARE_ENABLED && action.type.startsWith("POST_ONBOARDING")) {
+    next(action);
+    const state = store.getState();
+    setKey("app", "postOnboarding", hubStateSelector(state));
   } else {
     const oldState = store.getState();
     const res = next(action);

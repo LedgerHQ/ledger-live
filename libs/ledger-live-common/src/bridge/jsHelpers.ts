@@ -44,18 +44,29 @@ import type {
 
 // Customize the way to iterate on the keychain derivation
 type IterateResult = ({
-  transport: Transport,
-  index: number,
-  derivationsCache: Object,
-  derivationScheme: string,
-  derivationMode: DerivationMode,
-  currency: CryptoCurrency,
+  transport,
+  index,
+  derivationsCache,
+  derivationScheme,
+  derivationMode,
+  currency,
+}: {
+  transport: Transport;
+  index: number;
+  derivationsCache: Record<string, unknown>;
+  derivationScheme: string;
+  derivationMode: DerivationMode;
+  currency: CryptoCurrency;
 }) => Promise<Result | null>;
 
 export type IterateResultBuilder = ({
-  result: Result, // derivation on the "root" of the derivation
-  derivationMode: DerivationMode, // identify the current derivation scheme
-  derivationScheme: string,
+  result, // derivation on the "root" of the derivation
+  derivationMode, // identify the current derivation scheme
+  derivationScheme,
+}: {
+  result: Result;
+  derivationMode: DerivationMode;
+  derivationScheme: string;
 }) => Promise<IterateResult>;
 
 export type GetAccountShapeArg0 = {

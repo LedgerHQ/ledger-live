@@ -2,8 +2,8 @@ import React from "react";
 import Svg, { Path } from "react-native-svg";
 
 type Props = {
-  size: number;
-  color: string;
+  size?: number;
+  color?: string;
   bgColor?: string;
 };
 export default function Warning({

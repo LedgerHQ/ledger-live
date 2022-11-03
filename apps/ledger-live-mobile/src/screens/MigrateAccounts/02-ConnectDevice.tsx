@@ -1,37 +1,30 @@
 import React, { useCallback, useState } from "react";
 import { StyleSheet } from "react-native";
-import SafeAreaView from "react-native-safe-area-view";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { createAction } from "@ledgerhq/live-common/hw/actions/app";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import connectApp from "@ledgerhq/live-common/hw/connectApp";
-import type { Currency } from "@ledgerhq/types-cryptoassets";
 import { useTheme } from "@react-navigation/native";
 import { TrackScreen } from "../../analytics";
 import { ScreenName } from "../../const";
 import SelectDevice from "../../components/SelectDevice";
 import NavigationScrollView from "../../components/NavigationScrollView";
 import DeviceActionModal from "../../components/DeviceActionModal";
+import type { MigrateAccountsNavigatorParamList } from "../../components/RootNavigator/types/MigrateAccountsFlowNavigator";
+import type { StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
 
-const forceInset = {
-  bottom: "always",
-};
 const action = createAction(connectApp);
-type Props = {
-  navigation: any;
-  route: {
-    params: RouteParams;
-  };
-};
-type RouteParams = {
-  currency: Currency;
-  appName?: string;
-};
+type Props = StackNavigatorProps<
+  MigrateAccountsNavigatorParamList,
+  ScreenName.MigrateAccountsConnectDevice
+>;
+
 export default function ConnectDevice({ navigation, route }: Props) {
   const { colors } = useTheme();
-  const [device, setDevice] = useState<Device | null | undefined>();
+  const [device, setDevice] = useState<Device | null>(null);
   const onResult = useCallback(
     result => {
-      setDevice();
+      setDevice(null);
       navigation.navigate(ScreenName.MigrateAccountsProgress, {
         currency: route.params?.currency,
         ...result,
@@ -40,7 +33,7 @@ export default function ConnectDevice({ navigation, route }: Props) {
     [navigation, route.params],
   );
   const onClose = useCallback(() => {
-    setDevice();
+    setDevice(null);
   }, []);
   return (
     <SafeAreaView
@@ -50,7 +43,6 @@ export default function ConnectDevice({ navigation, route }: Props) {
           backgroundColor: colors.background,
         },
       ]}
-      forceInset={forceInset}
     >
       <TrackScreen category="MigrateAccount" name="ConnectDevice" />
       <NavigationScrollView
@@ -67,7 +59,8 @@ export default function ConnectDevice({ navigation, route }: Props) {
         request={{
           currency: route.params.currency,
         }}
-        appName={route.params.appName}
+        // FIXME: DeviceActionModal DOES NOT ACCEPT appName
+        // appName={route.params.appName}
       />
     </SafeAreaView>
   );

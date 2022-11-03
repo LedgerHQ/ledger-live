@@ -8,6 +8,7 @@ import type {
 } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
 import { mapValues } from "lodash";
+
 import { getAccountUnit } from "../account";
 import { formatCurrencyUnit } from "../currencies";
 
@@ -29,6 +30,7 @@ export const fromTransactionCommonRaw = (
 
   return common;
 };
+
 export const toTransactionCommonRaw = (
   raw: TransactionCommon
 ): TransactionCommonRaw => {
@@ -69,8 +71,8 @@ export const fromTransactionStatusRawCommon = (
 export const toTransactionStatusRawCommon = (
   ts: TransactionStatusCommon
 ): TransactionStatusCommonRaw => ({
-  errors: mapValues(ts.errors, toErrorRaw),
-  warnings: mapValues(ts.warnings, toErrorRaw),
+  errors: mapValues<Record<string, Error>, string>(ts.errors, toErrorRaw),
+  warnings: mapValues<Record<string, Error>, string>(ts.warnings, toErrorRaw),
   estimatedFees: ts.estimatedFees.toString(),
   amount: ts.amount.toString(),
   totalSpent: ts.totalSpent.toString(),
@@ -115,23 +117,18 @@ export const formatTransactionStatusCommon = (
       showCode: true,
       disableRounding: true,
     });
-  const errorKeys = Object.keys(errors);
 
-  if (errorKeys.length) {
-    str +=
-      "\n  errors: " +
-      errorKeys.map((k) => `${k}: ${formatErrorSmall(errors[k])}`).join(", ");
-  }
+  str +=
+    "\n" +
+    `errors: ${Object.entries(errors)
+      .map(([key, error]) => `${key} ${formatErrorSmall(error)}`)
+      .join(", ")}`;
 
-  const warningKeys = Object.keys(warnings);
-
-  if (warningKeys.length) {
-    str +=
-      "\n  warnings: " +
-      warningKeys
-        .map((k) => `${k}: ${formatErrorSmall(warnings[k])}`)
-        .join(", ");
-  }
+  str +=
+    "\n" +
+    `errors: ${Object.entries(warnings)
+      .map(([key, warning]) => `${key} ${formatErrorSmall(warning)}`)
+      .join(", ")}`;
 
   return str;
 };

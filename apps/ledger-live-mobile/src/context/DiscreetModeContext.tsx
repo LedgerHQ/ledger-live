@@ -40,8 +40,8 @@ export function DiscreetModeProvider({
 export function withDiscreetMode<T>(
   Component: React.ComponentType<T>,
   shouldApplyDiscreetMode = true,
-) {
-  return (props: T) => (
+): React.ComponentType<T> {
+  return (props: React.PropsWithChildren<T>) => (
     <DiscreetModeProvider shouldApplyDiscreetMode={shouldApplyDiscreetMode}>
       <Component {...props} />
     </DiscreetModeProvider>

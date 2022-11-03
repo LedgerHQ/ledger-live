@@ -1,23 +1,20 @@
 import { useRampCatalog } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/index";
 import { filterRampCatalogEntries } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/helpers";
 import {
+  PaymentServiceProvider,
   RampCatalogEntry,
   RampLiveAppCatalogEntry,
 } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/types";
 import { useRemoteLiveAppManifest } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
-import type {
-  CryptoCurrency,
-  TokenCurrency,
-} from "@ledgerhq/types-cryptoassets";
-import { useNavigation, useTheme } from "@react-navigation/native";
+import { useTheme } from "@react-navigation/native";
 import React, { useCallback, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { StyleSheet, TouchableOpacity, View } from "react-native";
-import SafeAreaView from "react-native-safe-area-view";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { useSelector } from "react-redux";
 import TrackScreen from "../../analytics/TrackScreen";
 import LText from "../../components/LText";
-import { NavigatorName } from "../../const";
+import { ScreenName } from "../../const";
 import ApplePay from "../../icons/ApplePay";
 import ArrowRight from "../../icons/ArrowRight";
 import GooglePay from "../../icons/GooglePay";
@@ -29,11 +26,10 @@ import Visa from "../../icons/Visa";
 import extraStatusBarPadding from "../../logic/extraStatusBarPadding";
 import { counterValueCurrencySelector } from "../../reducers/settings";
 import AppIcon from "../Platform/AppIcon";
+import type { StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
+import type { BaseNavigatorStackParamList } from "../../components/RootNavigator/types/BaseNavigator";
 
-const forceInset = {
-  bottom: "always",
-};
-const assetMap = {
+const assetMap: Partial<Record<PaymentServiceProvider, JSX.Element>> = {
   applepay: <ApplePay />,
   googlepay: <GooglePay />,
   maestro: <Maestro />,
@@ -46,19 +42,19 @@ type ProviderItemProps = {
   provider: RampLiveAppCatalogEntry;
   onClick: (
     provider: RampLiveAppCatalogEntry,
-    icon: string,
-    name: string,
+    icon?: string | null,
+    name?: string | null,
   ) => void;
 };
 
 const ProviderItem = ({ provider, onClick }: ProviderItemProps) => {
-  const [displayedPMs, setDisplayedPMs] = useState<string[]>(
+  const [displayedPMs, setDisplayedPMs] = useState<PaymentServiceProvider[]>(
     provider.paymentProviders.slice(0, 4),
   );
   const { colors } = useTheme();
   const manifest = useRemoteLiveAppManifest(provider.appId);
   const onItemClick = useCallback(() => {
-    onClick(provider, manifest.icon, manifest.name);
+    onClick(provider, manifest?.icon, manifest?.name);
   }, [provider, manifest, onClick]);
   const onMorePMsClick = useCallback(() => {
     setDisplayedPMs([...provider.paymentProviders]);
@@ -127,32 +123,30 @@ const ProviderItem = ({ provider, onClick }: ProviderItemProps) => {
   );
 };
 
-type Props = {
-  navigation: any;
-  route: {
-    params: RouteParams;
-    name: string;
-  };
-};
-type RouteParams = {
-  accountId: string;
-  accountAddress: string;
-  currency: CryptoCurrency | TokenCurrency;
-  type: "onRamp" | "offRamp";
-};
-export default function ProviderList({ route }: Props) {
-  const navigation = useNavigation();
+type Props = StackNavigatorProps<
+  BaseNavigatorStackParamList,
+  ScreenName.ProviderList
+>;
+
+export default function ProviderList({ route, navigation }: Props) {
   const { t } = useTranslation();
   const { colors } = useTheme();
   const rampCatalog = useRampCatalog();
   const { currency, type, accountId, accountAddress } = route.params;
   const fiatCurrency = useSelector(counterValueCurrencySelector);
-  const filteredProviders = filterRampCatalogEntries(rampCatalog.value[type], {
-    cryptoCurrencies: currency.id ? [currency.id] : undefined,
-  });
+  const filteredProviders = filterRampCatalogEntries(
+    rampCatalog.value?.[type] || [],
+    {
+      cryptoCurrencies: currency.id ? [currency.id] : undefined,
+    },
+  );
   const onProviderClick = useCallback(
-    (provider: RampCatalogEntry, icon: string, name: string) => {
-      navigation.navigate(NavigatorName.ProviderView, {
+    (
+      provider: RampCatalogEntry,
+      icon?: string | null,
+      name?: string | null,
+    ) => {
+      navigation.navigate(ScreenName.ProviderView, {
         provider,
         accountId,
         accountAddress,
@@ -184,7 +178,6 @@ export default function ProviderList({ route }: Props) {
           paddingTop: extraStatusBarPadding,
         },
       ]}
-      forceInset={forceInset}
     >
       <LText style={styles.title}>{t("exchange.providerList.title")}</LText>
       {filteredProviders.map(provider =>

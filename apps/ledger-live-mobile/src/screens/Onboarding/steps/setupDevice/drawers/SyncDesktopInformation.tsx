@@ -1,18 +1,21 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { Flex, Button, Icons, ScrollContainer } from "@ledgerhq/native-ui";
-import { useNavigation, useRoute, RouteProp } from "@react-navigation/native";
+import { useNavigation, useRoute } from "@react-navigation/native";
 import { ModalHeader } from "@ledgerhq/native-ui/components/Layout/Modals/BaseModal";
+import { StackNavigatorProps } from "../../../../../components/RootNavigator/types/helpers";
+import { OnboardingCarefulWarningParamList } from "../../../../../components/RootNavigator/types/OnboardingNavigator";
+import { ScreenName } from "../../../../../const";
 
-type WarningRouteProps = RouteProp<
-  { params: { onNext?: () => void } },
-  "params"
+type NavigationProps = StackNavigatorProps<
+  OnboardingCarefulWarningParamList,
+  ScreenName.OnboardingModalSyncDesktopInformation
 >;
 
 const OnboardingSyncDesktopInformation = () => {
   const { t } = useTranslation();
-  const navigation = useNavigation();
-  const route = useRoute<WarningRouteProps>();
+  const navigation = useNavigation<NavigationProps["navigation"]>();
+  const route = useRoute<NavigationProps["route"]>();
 
   const handlePress = () => {
     navigation.goBack();

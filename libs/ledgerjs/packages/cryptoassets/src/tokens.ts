@@ -12,6 +12,7 @@ import asatokens from "../data/asa";
 import esdttokens from "../data/esdt";
 import cardanoNativeTokens from "../data/cardanoNative";
 import stellarTokens from "../data/stellar";
+import { ERC20Token } from "./types";
 //import spltokens from "../data/spl";
 const emptyArray = [];
 const tokensArray: TokenCurrency[] = [];
@@ -153,8 +154,9 @@ function comparePriority(a: TokenCurrency, b: TokenCurrency) {
   return Number(!!b.disableCountervalue) - Number(!!a.disableCountervalue);
 }
 
-function addTokens(list: TokenCurrency[]) {
+export function addTokens(list: TokenCurrency[]): void {
   list.forEach((token) => {
+    if (tokensById[token.id]) return;
     if (!token.delisted) tokensArray.push(token);
     tokensArrayWithDelisted.push(token);
     tokensById[token.id] = token;
@@ -184,7 +186,7 @@ function addTokens(list: TokenCurrency[]) {
   });
 }
 
-function convertERC20([
+export function convertERC20([
   parentCurrencyId,
   token,
   ticker,
@@ -196,7 +198,7 @@ function convertERC20([
   delisted,
   countervalueTicker,
   compoundFor,
-]): TokenCurrency {
+]: ERC20Token): TokenCurrency {
   const parentCurrency = getCryptoCurrencyById(parentCurrencyId);
   return {
     type: "TokenCurrency",

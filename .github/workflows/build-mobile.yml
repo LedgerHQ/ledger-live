@@ -108,7 +108,7 @@ jobs:
           path: ${{ github.workspace }}/apps/ledger-live-mobile
       - name: Get short SHA
         id: slug
-        run: echo "::set-output name=sha8::$(git rev-parse HEAD)"
+        run: echo "sha8=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
       - name: make local version
         env:
           VERSION: ${{ steps.version.outputs.clean }}-sha.${{ steps.slug.outputs.sha8 }}
@@ -126,7 +126,7 @@ jobs:
           ANDROID_KEY_PASS: staging
           NODE_OPTIONS: "--max-old-space-size=7168"
           ANDROID_KEYSTORE_FILE: ${{ github.workspace }}/apps/ledger-live-mobile/android/app/staging.kstr
-        run: pnpm build:llm:android --api="http://127.0.0.1:${{ steps.turborepo-cache-server.outputs.port }}" --token="yolo" --team="foo"
+        run: pnpm build-ci:llm:android --api="http://127.0.0.1:${{ steps.turborepo-cache-server.outputs.port }}" --token="yolo" --team="foo"
       - uses: ledgerhq/ledger-live/tools/actions/get-package-infos@develop
         id: post-version
         with:
@@ -183,7 +183,8 @@ jobs:
           path: ${{ github.workspace }}/apps/ledger-live-mobile
       - name: Get short SHA
         id: slug
-        run: echo "::set-output name=sha8::$(git rev-parse HEAD)"
+        run: echo "sha8=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+
       - name: make local version
         env:
           VERSION: ${{ steps.version.outputs.clean }}-sha.${{ steps.slug.outputs.sha8 }}

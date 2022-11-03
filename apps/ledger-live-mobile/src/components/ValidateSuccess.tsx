@@ -1,8 +1,10 @@
 import React, { memo } from "react";
 import { Trans } from "react-i18next";
-import { Icons, IconBox, Text, Flex, Button, Log } from "@ledgerhq/native-ui";
+import { Icons, IconBox, Text, Flex, Log } from "@ledgerhq/native-ui";
 
+import { IconOrElementType } from "@ledgerhq/native-ui/components/Icon/type";
 import Alert from "./Alert";
+import Button from "./Button";
 
 type Props = {
   onClose?: () => void;
@@ -11,10 +13,10 @@ type Props = {
   description?: React.ReactNode;
   primaryButton?: React.ReactNode;
   secondaryButton?: React.ReactNode;
-  icon?: React.ReactNode;
+  icon?: IconOrElementType;
   iconColor?: string;
-  iconBoxSize: number;
-  iconSize: number;
+  iconBoxSize?: number;
+  iconSize?: number;
   info?: React.ReactNode;
   onLearnMore?: () => void;
 };
@@ -41,12 +43,14 @@ function ValidateSuccess({
         justifyContent="center"
         alignItems="center"
       >
-        <IconBox
-          Icon={icon}
-          color={iconColor}
-          boxSize={iconBoxSize}
-          iconSize={iconSize}
-        />
+        {icon ? (
+          <IconBox
+            Icon={icon}
+            color={iconColor}
+            boxSize={iconBoxSize}
+            iconSize={iconSize}
+          />
+        ) : null}
         <Flex py={8}>
           <Log>{title || <Trans i18nKey="send.validation.sent" />}</Log>
         </Flex>

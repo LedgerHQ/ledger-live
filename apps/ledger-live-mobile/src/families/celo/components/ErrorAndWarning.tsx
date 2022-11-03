@@ -1,5 +1,5 @@
 import React, { memo } from "react";
-import { StyleSheet, View } from "react-native";
+import { StyleProp, ViewStyle, StyleSheet, View } from "react-native";
 import LText from "../../../components/LText";
 import TranslatedError from "../../../components/TranslatedError";
 
@@ -9,7 +9,7 @@ const ErrorAndWarning = ({
 }: {
   error?: Error;
   warning?: Error;
-  style?: any;
+  style?: StyleProp<ViewStyle>;
 }) => {
   return (
     <View style={styles.errorSection}>

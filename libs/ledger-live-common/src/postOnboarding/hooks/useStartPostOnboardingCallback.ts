@@ -1,7 +1,7 @@
 import { useDispatch } from "react-redux";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { usePostOnboardingContext } from "./usePostOnboardingContext";
-import { useCallback, useMemo } from "react";
+import { useCallback } from "react";
 import { initPostOnboarding } from "../actions";
 
 /**
@@ -14,25 +14,37 @@ import { initPostOnboarding } from "../actions";
  * hub.
  * TODO: unit test this
  */
-export function useStartPostOnboardingCallback(
+export function useStartPostOnboardingCallback(): (
   deviceModelId: DeviceModelId,
-  mock = false
-): () => void {
+  mock?: boolean,
+  fallbackIfNoAction?: () => void
+) => void {
   const dispatch = useDispatch();
   const { getPostOnboardingActionsForDevice, navigateToPostOnboardingHub } =
     usePostOnboardingContext();
-  const actions = useMemo(
-    () => getPostOnboardingActionsForDevice(deviceModelId, mock),
-    [deviceModelId, mock, getPostOnboardingActionsForDevice]
+
+  return useCallback(
+    (
+      deviceModelId: DeviceModelId,
+      mock = false,
+      fallbackIfNoAction?: () => void
+    ) => {
+      const actions = getPostOnboardingActionsForDevice(deviceModelId, mock);
+      dispatch(
+        initPostOnboarding({
+          deviceModelId,
+          actionsIds: actions.map((action) => action.id),
+        })
+      );
+
+      if (actions.length === 0) {
+        if (fallbackIfNoAction) {
+          fallbackIfNoAction();
+        }
+        return;
+      }
+      navigateToPostOnboardingHub();
+    },
+    [dispatch, getPostOnboardingActionsForDevice, navigateToPostOnboardingHub]
   );
-  return useCallback(() => {
-    dispatch(
-      initPostOnboarding({
-        deviceModelId,
-        actionsIds: actions.map((action) => action.id),
-      })
-    );
-    if (actions.length === 0) return;
-    navigateToPostOnboardingHub();
-  }, [actions, deviceModelId, dispatch, navigateToPostOnboardingHub]);
 }

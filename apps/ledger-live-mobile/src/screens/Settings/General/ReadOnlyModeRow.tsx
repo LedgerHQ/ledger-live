@@ -7,13 +7,17 @@ import { readOnlyModeEnabledSelector } from "../../../reducers/settings";
 import Track from "../../../analytics/Track";
 import { withReboot } from "../../../context/Reboot";
 import Switch from "../../../components/Switch";
+import type { State } from "../../../reducers/types";
 
 type Props = {
   readOnlyModeEnabled: boolean;
   setReadOnlyMode: (_: boolean) => void;
-  reboot: (_: boolean | null | undefined) => any;
+  reboot: (_?: boolean | null) => void;
 };
-const mapStateToProps = createStructuredSelector({
+const mapStateToProps = createStructuredSelector<
+  State,
+  { readOnlyModeEnabled: boolean }
+>({
   readOnlyModeEnabled: readOnlyModeEnabledSelector,
 });
 const mapDispatchToProps = {
@@ -35,8 +39,6 @@ class DeveloperModeRow extends PureComponent<Props> {
         event="ReadOnlyModeRow"
         title="ReadOnly mode"
         desc="Toggle readonly mode for testing, relaunch to refresh topbar"
-        onPress={null}
-        alignedTop
       >
         <Track
           event={
@@ -53,8 +55,7 @@ class DeveloperModeRow extends PureComponent<Props> {
   }
 }
 
-// eslint-disable-next-line @typescript-eslint/ban-types
-const m: React.ComponentType<{}> = connect(
+const m = connect(
   mapStateToProps,
   mapDispatchToProps,
 )(withReboot(DeveloperModeRow));

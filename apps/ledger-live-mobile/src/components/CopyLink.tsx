@@ -2,11 +2,11 @@ import React, { PureComponent } from "react";
 import { StyleSheet } from "react-native";
 import Clipboard from "@react-native-community/clipboard";
 import { Icons, Text } from "@ledgerhq/native-ui";
-import Touchable from "./Touchable";
+import Touchable, { Props as TouchableProps } from "./Touchable";
 import { withTheme } from "../colors";
 
 type Props = {
-  style?: any;
+  style?: TouchableProps["style"];
   children: string | React.ReactNode;
   /**
    * String to be copied
@@ -16,7 +16,6 @@ type Props = {
    * String to display in place of children on copy
    */
   replacement?: string | React.ReactNode;
-  colors: any;
   onCopy?: () => void;
 };
 
@@ -29,7 +28,7 @@ class CopyLink extends PureComponent<Props, State> {
     copied: false,
   };
 
-  timeout = null;
+  timeout: NodeJS.Timeout | null = null;
 
   onPress = () => {
     const { string, onCopy } = this.props;

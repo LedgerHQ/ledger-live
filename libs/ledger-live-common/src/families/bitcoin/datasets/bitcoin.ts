@@ -1,9 +1,10 @@
 import { BigNumber } from "bignumber.js";
-// import { FeeTooHigh } from "@ledgerhq/errors";
 import type { CurrenciesData } from "@ledgerhq/types-live";
 import type { BitcoinAccountRaw, NetworkInfoRaw, Transaction } from "../types";
 import { fromTransactionRaw } from "../transaction";
 import scanAccounts1 from "./bitcoin.scanAccounts.1";
+import { DustLimit } from "@ledgerhq/errors";
+
 const networkInfo: NetworkInfoRaw = {
   family: "bitcoin",
   feeItems: {
@@ -27,6 +28,7 @@ const networkInfo: NetworkInfoRaw = {
     defaultFeePerByte: "1",
   },
 };
+
 const dataset: CurrenciesData<Transaction> = {
   FIXME_ignoreAccountFields: [
     "bitcoinResources.walletAccount", // it is not "stable"
@@ -109,6 +111,27 @@ const dataset: CurrenciesData<Transaction> = {
             warnings: {
               // feeTooHigh: new FeeTooHigh(),
             },
+          },
+        },
+        {
+          name: "dust limit",
+          transaction: fromTransactionRaw({
+            family: "bitcoin",
+            recipient: "BC1QQMXQDRKXGX6SWRVJL9L2E6SZVVKG45ALL5U4FL",
+            amount: "1",
+            feePerByte: "1",
+            networkInfo,
+            rbf: false,
+            utxoStrategy: {
+              strategy: 0,
+              excludeUTXOs: [],
+            },
+          }),
+          expectedStatus: {
+            errors: {
+              dustLimit: new DustLimit(),
+            },
+            warnings: {},
           },
         },
       ],

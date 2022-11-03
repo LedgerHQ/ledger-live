@@ -2208,7 +2208,7 @@
 | Ethereum | XCM | 0x44E2ca91ceA1147f1B503e669f06CD11FB0C5490 | CoinMetro Token (old) | countervalues disabled | ethereum/erc20/coinmetro_token_old |
 | Ethereum | COIL | 0x0C91B015AbA6f7B4738dcD36E7410138b29ADC29 | CoinOil |  | ethereum/erc20/coinoil |
 | Ethereum | CPEX | 0xb787d4eAc8899730bb8C57fc3c998c49c5244ec0 | CoinPulseToken |  | ethereum/erc20/coinpulsetoken |
-| Ethereum | SCAN | 0x234D51eE02be808A0160b19b689660Fb7BFA871b | CoinScan | delisted, countervalues disabled | ethereum/erc20/coinscan |
+| Ethereum | SCAN | 0x234D51eE02be808A0160b19b689660Fb7BFA871b | CoinScan |  | ethereum/erc20/coinscan |
 | Ethereum | CGI | 0xAdA0A1202462085999652Dc5310a7A9e2BF3eD42 | CoinShares Gold and Cryptoassets Index Lite | countervalues disabled | ethereum/erc20/coinshares_gold_and_cryptoassets_index_lite |
 | Ethereum | CNUS | 0x722F2f3EaC7e9597C73a593f7CF3de33Fbfc3308 | CoinUs |  | ethereum/erc20/coinus |
 | Ethereum | CVCA | 0x22b59a7387F7D25fe2b1c692Ee825e1802E6E3d5 | CoinViewCap |  | ethereum/erc20/coinviewcap |

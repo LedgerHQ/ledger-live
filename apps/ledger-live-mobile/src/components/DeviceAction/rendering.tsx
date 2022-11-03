@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { ScrollView } from "react-native";
-import { useDispatch } from "react-redux";
+import { Platform, ScrollView } from "react-native";
+import { useDispatch, useSelector } from "react-redux";
 import styled from "styled-components/native";
 import { WrongDeviceForAccount } from "@ledgerhq/errors";
 import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
@@ -17,6 +17,7 @@ import {
   Tag,
   Icons,
   Log,
+  BoxedIcon,
 } from "@ledgerhq/native-ui";
 import BigNumber from "bignumber.js";
 import {
@@ -24,17 +25,24 @@ import {
   Exchange,
 } from "@ledgerhq/live-common/exchange/swap/types";
 import {
-  getAccountCurrency,
   getAccountUnit,
   getMainAccount,
   getAccountName,
+  getAccountCurrency,
 } from "@ledgerhq/live-common/account/index";
 import { TFunction } from "react-i18next";
 import { DeviceModelId } from "@ledgerhq/types-devices";
+import type { DeviceModelInfo } from "@ledgerhq/types-live";
+import { DownloadMedium } from "@ledgerhq/native-ui/assets/icons";
+import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
+import { StackNavigationProp } from "@react-navigation/stack";
+import { ParamListBase } from "@react-navigation/native";
+import { isFirmwareUpdateVersionSupported } from "../../logic/firmwareUpdate";
+import { lastSeenDeviceSelector } from "../../reducers/settings";
 import { setModalLock } from "../../actions/appstate";
 import { urls } from "../../config/urls";
 import Alert from "../Alert";
-import { lighten } from "../../colors";
+import { lighten, Theme } from "../../colors";
 import Button from "../Button";
 import DeviceActionProgress from "../DeviceActionProgress";
 import { NavigatorName, ScreenName } from "../../const";
@@ -47,8 +55,8 @@ import { providerIcons } from "../../icons/swap/index";
 import ExternalLink from "../ExternalLink";
 import { track } from "../../analytics";
 import CurrencyUnitValue from "../CurrencyUnitValue";
+import TermsFooter, { TermsProviders } from "../TermsFooter";
 import CurrencyIcon from "../CurrencyIcon";
-import TermsFooter from "../TermsFooter";
 import Illustration from "../../images/illustration/Illustration";
 import { FramedImageWithContext } from "../CustomImage/FramedImage";
 
@@ -62,16 +70,22 @@ const Wrapper = styled(Flex).attrs({
   minHeight: "160px",
 })``;
 
-const AnimationContainer = styled(Flex).attrs(p => ({
-  alignSelf: "stretch",
-  alignItems: "center",
-  justifyContent: "center",
-  height: p.withConnectDeviceHeight
-    ? "100px"
-    : p.withVerifyAddressHeight
-    ? "72px"
-    : undefined,
-}))``;
+type AnimationContainerExtraProps = {
+  withConnectDeviceHeight?: boolean;
+  withVerifyAddressHeight?: boolean;
+};
+const AnimationContainer = styled(Flex).attrs(
+  (p: AnimationContainerExtraProps) => ({
+    alignSelf: "stretch",
+    alignItems: "center",
+    justifyContent: "center",
+    height: p.withConnectDeviceHeight
+      ? "100px"
+      : p.withVerifyAddressHeight
+      ? "72px"
+      : undefined,
+  }),
+)<AnimationContainerExtraProps>``;
 
 const ActionContainer = styled(Flex).attrs({
   alignSelf: "stretch",
@@ -134,7 +148,7 @@ const ConnectDeviceExtraContentWrapper = styled(Flex).attrs({
 
 type RawProps = {
   t: (key: string, options?: { [key: string]: string | number }) => string;
-  colors?: any;
+  colors?: Theme["colors"];
   theme?: "light" | "dark";
 };
 
@@ -162,7 +176,7 @@ export function renderRequiresAppInstallation({
   navigation,
   appNames,
 }: RawProps & {
-  navigation: any;
+  navigation: StackNavigationProp<ParamListBase>;
   appNames: string[];
 }) {
   const appNamesCSV = appNames.join(", ");
@@ -245,8 +259,8 @@ export function renderConfirmSwap({
   transaction: Transaction;
   exchangeRate: ExchangeRate;
   exchange: Exchange;
-  amountExpectedTo?: string;
-  estimatedFees?: string;
+  amountExpectedTo?: string | null;
+  estimatedFees?: string | null;
 }) {
   const ProviderIcon = providerIcons[exchangeRate.provider.toLowerCase()];
 
@@ -340,7 +354,7 @@ export function renderConfirmSwap({
           </FieldItem>
         </Flex>
 
-        <TermsFooter provider={exchangeRate.provider} />
+        <TermsFooter provider={exchangeRate.provider as TermsProviders} />
       </Wrapper>
     </ScrollView>
   );
@@ -442,7 +456,7 @@ const AllowOpeningApp = ({
   device,
   theme,
 }: RawProps & {
-  navigation: any;
+  navigation: StackNavigationProp<ParamListBase>;
   wording: string;
   tokenContext?: TokenCurrency | null | undefined;
   isDeviceBlocker?: boolean;
@@ -485,7 +499,7 @@ export function renderAllowOpeningApp({
   device,
   theme,
 }: RawProps & {
-  navigation: any;
+  navigation: StackNavigationProp<ParamListBase>;
   wording: string;
   tokenContext?: TokenCurrency | undefined | null;
   isDeviceBlocker?: boolean;
@@ -510,7 +524,7 @@ export function renderInWrongAppForAccount({
   colors,
   theme,
 }: RawProps & {
-  onRetry?: () => void;
+  onRetry?: (() => void) | null;
 }) {
   return renderError({
     t,
@@ -530,9 +544,9 @@ export function renderError({
   Icon,
   iconColor,
 }: RawProps & {
-  navigation?: any;
+  navigation?: StackNavigationProp<ParamListBase>;
   error: Error;
-  onRetry?: () => void;
+  onRetry?: (() => void) | null;
   managerAppName?: string;
   Icon?: React.ComponentProps<typeof GenericErrorView>["Icon"];
   iconColor?: string;
@@ -579,6 +593,95 @@ export function renderError({
   );
 }
 
+export function RequiredFirmwareUpdate({
+  t,
+  device,
+  navigation,
+}: RawProps & {
+  navigation: StackNavigationProp<ParamListBase>;
+  device: Device;
+}) {
+  const lastSeenDevice: DeviceModelInfo | null | undefined = useSelector(
+    lastSeenDeviceSelector,
+  );
+
+  const usbFwUpdateFeatureFlag = useFeature("llmUsbFirmwareUpdate");
+  const isUsbFwVersionUpdateSupported =
+    lastSeenDevice &&
+    isFirmwareUpdateVersionSupported(lastSeenDevice.deviceInfo, device.modelId);
+
+  const usbFwUpdateActivated =
+    usbFwUpdateFeatureFlag?.enabled &&
+    Platform.OS === "android" &&
+    isUsbFwVersionUpdateSupported;
+
+  const deviceName = getDeviceModel(device.modelId).productName;
+
+  const isDeviceConnectedViaUSB = device.wired;
+
+  // Goes to the manager if a firmware update is available, but only automatically
+  // displays the firmware update drawer if the device is already connected via USB
+  const onPress = () => {
+    navigation.navigate(NavigatorName.Manager, {
+      screen: ScreenName.Manager,
+      params: { device, firmwareUpdate: isDeviceConnectedViaUSB },
+    });
+  };
+
+  return (
+    <Wrapper>
+      <Flex flexDirection="column" alignItems="center" alignSelf="stretch">
+        <Flex mb={5}>
+          <BoxedIcon
+            size={64}
+            Icon={DownloadMedium}
+            iconSize={24}
+            iconColor="neutral.c100"
+          />
+        </Flex>
+
+        <Text
+          variant="h4"
+          fontWeight="semiBold"
+          textAlign="center"
+          numberOfLines={3}
+          mb={6}
+        >
+          {usbFwUpdateActivated
+            ? t("firmwareUpdateRequired.updateAvailableFromLLM.title", {
+                deviceName,
+              })
+            : t("firmwareUpdateRequired.updateNotAvailableFromLLM.title", {
+                deviceName,
+              })}
+        </Text>
+        <Text variant="paragraph" textAlign="center" numberOfLines={3} mb={6}>
+          {usbFwUpdateActivated
+            ? t("firmwareUpdateRequired.updateAvailableFromLLM.description", {
+                deviceName,
+              })
+            : t(
+                "firmwareUpdateRequired.updateNotAvailableFromLLM.description",
+                {
+                  deviceName,
+                },
+              )}
+        </Text>
+        {usbFwUpdateActivated ? (
+          <ActionContainer marginBottom={0} marginTop={32}>
+            <StyledButton
+              type="main"
+              outline={false}
+              title={t("firmwareUpdateRequired.updateAvailableFromLLM.cta")}
+              onPress={onPress}
+            />
+          </ActionContainer>
+        ) : null}
+      </Flex>
+    </Wrapper>
+  );
+}
+
 export function renderDeviceNotOnboarded({
   t,
   device,
@@ -586,8 +689,7 @@ export function renderDeviceNotOnboarded({
 }: {
   t: TFunction;
   device: Device;
-  // TODO: correctly type the navigation prop here AND in the DeviceAction component
-  navigation: any;
+  navigation: StackNavigationProp<ParamListBase>;
 }) {
   const navigateToOnboarding = () => {
     if (device.modelId === DeviceModelId.nanoFTS) {
@@ -647,11 +749,13 @@ export function renderDeviceNotOnboarded({
 export function renderConnectYourDevice({
   t,
   unresponsive,
+  isLocked = false,
   device,
   theme,
   onSelectDeviceLink,
 }: RawProps & {
-  unresponsive: boolean;
+  unresponsive?: boolean | null;
+  isLocked?: boolean;
   device: Device;
   onSelectDeviceLink?: () => void;
 }) {
@@ -665,7 +769,7 @@ export function renderConnectYourDevice({
         <Animation
           source={getDeviceAnimation({
             device,
-            key: unresponsive ? "enterPinCode" : "plugAndPinCode",
+            key: isLocked || unresponsive ? "enterPinCode" : "plugAndPinCode",
             theme,
           })}
         />
@@ -675,7 +779,7 @@ export function renderConnectYourDevice({
       )}
       <TitleText>
         {t(
-          unresponsive
+          isLocked || unresponsive
             ? "DeviceAction.unlockDevice"
             : device.wired
             ? "DeviceAction.connectAndUnlockDevice"
@@ -786,15 +890,15 @@ export function LoadingAppInstall({
     const trackingArgs = [
       "In-line app install",
       { appName, flow: analyticsPropertyFlow },
-    ];
+    ] as const;
     track(...trackingArgs);
   }, [appName, analyticsPropertyFlow]);
   return renderLoading(props);
 }
 
 type WarningOutdatedProps = RawProps & {
-  colors: any;
-  navigation: any;
+  colors: Theme["colors"];
+  navigation: StackNavigationProp<ParamListBase>;
   appName: string;
   passWarning: () => void;
 };
@@ -871,7 +975,7 @@ export const AutoRepair = ({
 }: RawProps & {
   onDone: () => void;
   device: Device;
-  navigation: StackNavigationProp<any>;
+  navigation: StackNavigationProp<ParamListBase>;
 }) => {
   const [error, setError] = useState<Error | null>(null);
   const [progress, setProgress] = useState<number>(0);

@@ -30,7 +30,6 @@ const UnlockDeviceDrawer = ({ isOpen, device, onClose }: Props) => {
           device={device}
           unresponsive={true}
           theme={theme}
-          colors={colors}
         />
       </Flex>
     </BottomDrawer>

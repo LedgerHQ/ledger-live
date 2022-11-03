@@ -39,7 +39,7 @@ Ledger Live releases are signed. The automatic update mechanism makes use of the
 
 ### Requirements
 
-- [NodeJS](https://nodejs.org) `lts/gallium` (v16.x)
+- [NodeJS](https://nodejs.org) `lts/gallium` (v16.x) + [npm](https://www.npmjs.com/)
 - [PnPm](https://pnpm.io) (v7.x)
 - [Python](https://www.python.org/) (v3.5+)
 - A C/C++ toolchain (see [node-gyp documentation](https://github.com/nodejs/node-gyp#on-unix))

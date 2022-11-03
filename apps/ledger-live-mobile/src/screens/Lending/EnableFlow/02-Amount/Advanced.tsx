@@ -4,8 +4,6 @@ import React, { useCallback } from "react";
 import { StyleSheet, View, TouchableOpacity, SafeAreaView } from "react-native";
 import { useSelector } from "react-redux";
 import { Trans } from "react-i18next";
-import type { Transaction } from "@ledgerhq/live-common/generated/types";
-import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { BigNumber } from "bignumber.js";
 import { getAccountUnit } from "@ledgerhq/live-common/account/helpers";
@@ -23,19 +21,16 @@ import CurrencyUnitValue from "../../../../components/CurrencyUnitValue";
 import CounterValue from "../../../../components/CounterValue";
 import TranslatedError from "../../../../components/TranslatedError";
 import Switch from "../../../../components/Switch";
+import { LendingEnableFlowParamsList } from "../../../../components/RootNavigator/types/LendingEnableFlowNavigator";
+import { StackNavigatorProps } from "../../../../components/RootNavigator/types/helpers";
 
-type Props = {
-  navigation: any;
-  route: {
-    params: RouteParams;
-  };
-};
-type RouteParams = {
-  accountId: string;
-  transaction: Transaction;
-  currency: TokenCurrency;
-};
-export default function EnableAdvanced({ navigation, route }: Props) {
+export default function EnableAdvanced({
+  navigation,
+  route,
+}: StackNavigatorProps<
+  LendingEnableFlowParamsList,
+  ScreenName.LendingEnableAmountAdvanced
+>) {
   const { colors } = useTheme();
   const { account, parentAccount } = useSelector(accountScreenSelector(route));
   invariant(
@@ -94,7 +89,7 @@ export default function EnableAdvanced({ navigation, route }: Props) {
         category="Lend Approve"
         name="step 1 (Advanced)"
         eventProperties={{
-          currencyName: currency.name,
+          currencyName: currency?.name,
         }}
       />
       <SafeAreaView
@@ -122,9 +117,8 @@ export default function EnableAdvanced({ navigation, route }: Props) {
                 </LText>
               )}
               <Switch
-                style={styles.switch}
                 onValueChange={updateLimitTransaction}
-                value={useAllAmount}
+                value={!!useAllAmount}
               />
             </View>
           </View>
@@ -156,13 +150,15 @@ export default function EnableAdvanced({ navigation, route }: Props) {
                   <Trans i18nKey="common.edit" />{" "}
                 </LText>
                 <LText style={styles.countervalue} color="grey">
-                  <CounterValue
-                    showCode
-                    currency={currency}
-                    value={amount}
-                    withPlaceholder
-                    before="≈ "
-                  />
+                  {currency ? (
+                    <CounterValue
+                      showCode
+                      currency={currency}
+                      value={amount}
+                      withPlaceholder
+                      before="≈ "
+                    />
+                  ) : null}
                 </LText>
               </TouchableOpacity>
             )}
@@ -245,9 +241,6 @@ const styles = StyleSheet.create({
     marginHorizontal: 8,
   },
   buttonRight: {
-    marginLeft: 8,
-  },
-  switch: {
     marginLeft: 8,
   },
   limitLabel: {

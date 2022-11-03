@@ -21,7 +21,7 @@ const lenseTicker = (a) => a[9] || a[2];
 module.exports = {
   // FIXME not yet sure if it's our final path
   paths: ["tokens/bsc/bep20"],
-  output: "data/bep20.js",
+  output: (toJSON) => `data/bep20.js${toJSON ? "on" : ""}`,
 
   validate: (everything, countervaluesTickers) =>
     ["bsc"].flatMap((cid) => {
@@ -82,8 +82,10 @@ module.exports = {
 
       return all.filter((a) => !contractGroup[a[6]]);
     }),
-  outputTemplate: (data) =>
-    `module.exports = [
+  outputTemplate: (data, toJSON) =>
+    toJSON
+      ? JSON.stringify(data)
+      : `module.exports = [
 ${data
   .map(
     (item) =>
