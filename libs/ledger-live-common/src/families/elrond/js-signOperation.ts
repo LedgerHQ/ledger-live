@@ -1,6 +1,7 @@
 import { BigNumber } from "bignumber.js";
 import { Observable } from "rxjs";
 import { FeeNotLoaded } from "@ledgerhq/errors";
+import { Address } from "@elrondnetwork/erdjs/out";
 import type {
   ElrondProtocolTransaction,
   ElrondTransactionMode,
@@ -93,6 +94,9 @@ const buildOptimisticOperation = (
     accountId: account.id,
     transactionSequenceNumber: unsignedTx.nonce,
     date: new Date(),
+    contract: new Address(transaction.recipient).isContractAddress()
+      ? transaction.recipient
+      : undefined,
     extra: {
       amount: delegationAmount,
     },
