@@ -28,7 +28,7 @@ const AdvancedOptions = ({ account, transaction, status, updateTransaction }: Pr
     (str: string) => {
       const bridge = getAccountBridge(account);
       let userGasLimit = new BigNumber(str || 0);
-      if (userGasLimit.isNaN() || !userGasLimit.isFinite()) {
+      if (!userGasLimit.isFinite()) {
         userGasLimit = new BigNumber(21000);
       }
       updateTransaction(transaction =>
