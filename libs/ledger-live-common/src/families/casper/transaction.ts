@@ -10,6 +10,7 @@ import type { Account } from "@ledgerhq/types-live";
 import { getAccountUnit } from "../../account";
 import { formatCurrencyUnit } from "../../currencies";
 import BigNumber from "bignumber.js";
+import { DeployUtil } from "casper-js-sdk";
 
 export const formatTransaction = (
   { recipient, useAllAmount, amount }: Transaction,
@@ -32,7 +33,7 @@ export const fromTransactionRaw = (tr: TransactionRaw): Transaction => {
   const common = fromTransactionCommonRaw(tr);
   return {
     ...common,
-    deploy: tr.deploy,
+    deploy: DeployUtil.deployFromJson(tr.deploy).unwrap(),
     family: tr.family,
     amount: new BigNumber(tr.amount),
   };
@@ -45,7 +46,7 @@ const toTransactionRaw = (t: Transaction): TransactionRaw => {
     ...common,
     family: t.family,
     amount: t.amount.toFixed(),
-    deploy: t.deploy,
+    deploy: DeployUtil.deployToJson(t.deploy),
   };
 };
 
