@@ -278,7 +278,7 @@ const signOperation: SignOperationFnSignature<Transaction> = ({
               blockHeight: null,
               date: new Date(),
               extra: {
-                deploy: transaction.deploy,
+                deploy: DeployUtil.deployToJson(transaction.deploy),
               },
             };
 
@@ -309,8 +309,9 @@ const broadcast: BroadcastFnSignature = async ({
 }) => {
   // log("debug", "[broadcast] start fn");
 
-  const tx = operation.extra.deploy;
+  const tx = DeployUtil.deployFromJson(operation.extra.deploy).unwrap();
 
+  // log("debug", `[broadcast] isDeployOk ${DeployUtil.validateDeploy(tx).ok}`);
   const resp = await broadcastTx(tx);
   const { deploy_hash } = resp;
 

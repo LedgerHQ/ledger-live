@@ -15,7 +15,7 @@ export type Transaction = TransactionCommon & {
 
 export type TransactionRaw = TransactionCommonRaw & {
   family: FamilyType;
-  deploy: DeployUtil.Deploy;
+  deploy: ReturnType<typeof DeployUtil.deployToJson>;
 };
 
 export type TransactionStatus = TransactionStatusCommon;
