@@ -12,11 +12,7 @@ const EquipmentIdRow = () => {
   });
 
   return (
-    <SettingsRow
-      title="Equipment Id"
-      desc={segmentId}
-      onPress={undefined}
-    />
+    <SettingsRow title="Equipment Id" desc={segmentId} onPress={undefined} />
   );
 };
 
