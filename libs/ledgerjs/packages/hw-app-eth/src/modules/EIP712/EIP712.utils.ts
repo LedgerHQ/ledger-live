@@ -333,9 +333,9 @@ export const getFiltersForMessage = async (
 
   try {
     if (remoteCryptoAssetsListURI) {
-      const { data: dynamicCAL } = await axios.get(
-        `${remoteCryptoAssetsListURI}/eip712.json`
-      );
+      const { data: dynamicCAL } = await axios.get<
+        Record<string, MessageFilters>
+      >(`${remoteCryptoAssetsListURI}/eip712.json`);
       return dynamicCAL[messageId] || EIP712CAL[messageId];
     }
     throw new Error();
