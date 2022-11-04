@@ -1,12 +1,13 @@
 import React, { useState, memo, useMemo, useCallback } from "react";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/formatCurrencyUnit";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
+import { getDefaultFeeUnit } from "@ledgerhq/live-common/families/ethereum/logic";
 import { getGasLimit } from "@ledgerhq/live-common/families/ethereum/transaction";
-import { useTheme } from "@react-navigation/native";
 import { Transaction } from "@ledgerhq/live-common/families/ethereum/types";
 import { getMainAccount } from "@ledgerhq/live-common/account/helpers";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { Account, AccountLike } from "@ledgerhq/types-live";
+import { useTheme } from "@react-navigation/native";
 import { StyleSheet, View } from "react-native";
 import { BigNumber } from "bignumber.js";
 import { Trans } from "react-i18next";
@@ -37,8 +38,7 @@ const Ethereum1559CustomFees = ({
   invariant(account, "no account found");
 
   const { currency } = getMainAccount(account, parentAccount);
-  const feeUnit =
-    currency.units.length > 1 ? currency.units[1] : currency.units[0];
+  const feeUnit = getDefaultFeeUnit(currency);
 
   const { networkInfo } = originalTransaction;
   const [maxFeePerGas, setMaxFeePerGas] = useState(

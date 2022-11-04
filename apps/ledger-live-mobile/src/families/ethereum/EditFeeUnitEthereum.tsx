@@ -7,6 +7,7 @@ import { useTheme } from "@react-navigation/native";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import type { Transaction } from "@ledgerhq/live-common/families/ethereum/types";
+import { getDefaultFeeUnit } from "@ledgerhq/live-common/families/ethereum/logic";
 import {
   reverseRangeIndex,
   projectRangeIndex,
@@ -66,8 +67,7 @@ export default function EditFeeUnitEthereum({
   const { colors } = useTheme();
   const { t } = useTranslation();
   const mainAccount = getMainAccount(account, parentAccount);
-  const { units } = mainAccount.currency;
-  const unit = units.length > 1 ? units[1] : units[0];
+  const unit = getDefaultFeeUnit(mainAccount.currency);
 
   const feeCustomUnit = transaction.feeCustomUnit;
 

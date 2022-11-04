@@ -22,6 +22,7 @@ import { formatCurrencyUnit } from "../../currencies";
 import { getEnv } from "../../env";
 import { ModeModule, modes } from "./modules";
 import { fromRangeRaw, toRangeRaw } from "../../range";
+import { getDefaultFeeUnit } from "./logic";
 
 export const formatTransaction = (
   t: Transaction,
@@ -68,16 +69,16 @@ export const formatTransaction = (
   if (EIP1559ShouldBeUsed(mainAccount.currency)) {
     feesMessage =
       `with maxFeePerGas=${formatCurrencyUnit(
-        mainAccount.currency.units[1] || mainAccount.currency.units[0],
+        getDefaultFeeUnit(mainAccount.currency),
         t.maxFeePerGas || new BigNumber(0)
       )}\n` +
       `with maxPriorityFeePerGas=${formatCurrencyUnit(
-        mainAccount.currency.units[1] || mainAccount.currency.units[0],
+        getDefaultFeeUnit(mainAccount.currency),
         t.maxPriorityFeePerGas || new BigNumber(0)
       )}`;
   } else {
     feesMessage = `with gasPrice=${formatCurrencyUnit(
-      mainAccount.currency.units[1] || mainAccount.currency.units[0],
+      getDefaultFeeUnit(mainAccount.currency),
       t.gasPrice || new BigNumber(0)
     )}`;
   }
