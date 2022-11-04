@@ -47,9 +47,12 @@ const NftGallery = () => {
     accountSelector(state, { accountId: params?.accountId }),
   );
   const [isOpen, setOpen] = useState<boolean>(false);
-  const onOpenModal = () => {
+  const onOpenModal = useCallback(() => {
     setOpen(true);
-  };
+  }, []);
+  const onCloseModal = useCallback(() => {
+    setOpen(false);
+  }, []);
 
   const hiddenNftCollections = useSelector(hiddenNftCollectionsSelector);
 
@@ -120,9 +123,7 @@ const NftGallery = () => {
     <>
       <InfoModal
         isOpened={isOpen}
-        onClose={() => {
-          setOpen(false);
-        }}
+        onClose={onCloseModal}
         data={notAvailableModalInfo}
       />
       <TabBarSafeAreaView
