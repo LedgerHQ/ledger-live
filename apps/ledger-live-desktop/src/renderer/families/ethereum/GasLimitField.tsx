@@ -19,6 +19,8 @@ type Props = {
   updateTransaction: Result["updateTransaction"];
 };
 
+const DEFAULT_GAS_LIMIT = new BigNumber(21000);
+
 const AdvancedOptions = ({ account, transaction, status, updateTransaction }: Props) => {
   invariant(transaction.family === "ethereum", "AdvancedOptions: ethereum family expected");
   const [editable, setEditable] = useState(false);
@@ -29,7 +31,7 @@ const AdvancedOptions = ({ account, transaction, status, updateTransaction }: Pr
       const bridge = getAccountBridge(account);
       let userGasLimit = new BigNumber(str || 0);
       if (!userGasLimit.isFinite()) {
-        userGasLimit = new BigNumber(21000);
+        userGasLimit = DEFAULT_GAS_LIMIT;
       }
       updateTransaction(transaction =>
         bridge.updateTransaction(transaction, { userGasLimit, feesStrategy: "custom" }),
