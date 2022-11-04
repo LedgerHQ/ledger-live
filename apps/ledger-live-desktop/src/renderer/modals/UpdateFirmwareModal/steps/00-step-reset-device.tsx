@@ -1,10 +1,7 @@
-// @flow
-
 import React from "react";
 import styled from "styled-components";
 import { Trans } from "react-i18next";
-import { getDeviceModel } from "@ledgerhq/devices";
-import type { DeviceModelId } from "@ledgerhq/devices";
+import { getDeviceModel, DeviceModelId } from "@ledgerhq/devices";
 import {
   powerOff,
   powerOffDevice,
@@ -15,10 +12,9 @@ import TrackPage from "~/renderer/analytics/TrackPage";
 import Box from "~/renderer/components/Box";
 import Text from "~/renderer/components/Text";
 import Button from "~/renderer/components/Button";
-import type { ThemedComponent } from "~/renderer/styles/StyleProvider";
-import type { StepProps } from "../";
+import { StepProps } from "../";
 
-const Container: ThemedComponent<{}> = styled(Box).attrs(() => ({
+const Container = styled(Box).attrs(() => ({
   alignItems: "center",
   fontSize: 4,
   color: "palette.text.shade100",
@@ -44,7 +40,7 @@ const BulletText = styled(Text).attrs(() => ({
 }))``;
 
 type Props = {
-  deviceModelId: DeviceModelId,
+  deviceModelId: DeviceModelId;
 };
 
 const StepResetDevice = ({ deviceModelId }: Props) => {
