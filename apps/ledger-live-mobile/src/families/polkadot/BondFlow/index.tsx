@@ -11,6 +11,7 @@ import SelectDevice from "../../../screens/SelectDevice";
 import ConnectDevice from "../../../screens/ConnectDevice";
 import ValidationSuccess from "./04-ValidationSuccess";
 import ValidationError from "./04-ValidationError";
+import type { PolkadotBondFlowParamList } from "./types";
 
 const totalSteps = "3";
 
@@ -45,7 +46,7 @@ function BondFlow() {
               })}
             />
           ),
-          headerLeft: null,
+          headerLeft: undefined,
         }}
       />
       <Stack.Screen
@@ -84,8 +85,8 @@ function BondFlow() {
         options={{
           headerTitle: "",
           gestureEnabled: false,
-          headerLeft: null,
-          headerRight: null,
+          headerLeft: undefined,
+          headerRight: undefined,
         }}
       />
       <Stack.Screen
@@ -103,4 +104,4 @@ const options = {
   headerShown: false,
 };
 export { BondFlow as component, options };
-const Stack = createStackNavigator();
+const Stack = createStackNavigator<PolkadotBondFlowParamList>();

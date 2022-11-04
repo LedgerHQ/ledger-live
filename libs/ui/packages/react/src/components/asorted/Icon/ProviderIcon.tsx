@@ -1,5 +1,8 @@
 import * as providers from "@ledgerhq/icons-ui/react/_ProvidersLogos";
+import * as favicons from "./ProvidersFavicons";
+
 import React from "react";
+import styled from "styled-components";
 
 export const sizes = {
   XXS: 16,
@@ -15,6 +18,7 @@ export type ProviderSizes = keyof typeof sizes;
 export type Props = {
   name: string;
   size?: ProviderSizes;
+  boxed?: boolean;
 };
 
 export const iconNames = Array.from(
@@ -27,11 +31,38 @@ export const iconNames = Array.from(
   }, new Set<string>()),
 );
 
-const ProviderIcon = ({ name, size = "S" }: Props): JSX.Element | null => {
+const Favicon = styled.img`
+  border-radius: 8px;
+`;
+
+export type IconGetterProps = {
+  search: string;
+  object: Record<string, React.ReactNode>;
+};
+
+const getIconCaseInsensitive = ({ search, object }: IconGetterProps) => {
+  const asLower = search.toLowerCase();
+  const key = Object.keys(object).find((key) => key.toLowerCase() === asLower);
+  return key ? object[key] : null;
+};
+
+const ProviderIcon = ({ name, size = "S", boxed = false }: Props): JSX.Element | null => {
   const maybeIconName = `${name}`;
-  if (maybeIconName in providers) {
-    // @ts-expect-error FIXME I don't know how to make you happy ts
-    const Component = providers[maybeIconName];
+
+  if (boxed) {
+    return (
+      <Favicon
+        width={sizes[size]}
+        height={sizes[size]}
+        src={getIconCaseInsensitive({ search: maybeIconName, object: favicons }) as string}
+      />
+    );
+  }
+  const Component = getIconCaseInsensitive({
+    search: maybeIconName,
+    object: providers,
+  }) as React.ElementType;
+  if (Component) {
     return <Component size={sizes[size]} />;
   }
   return null;

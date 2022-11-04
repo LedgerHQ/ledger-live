@@ -8,16 +8,15 @@ import {
   Keyboard,
   TouchableOpacity,
 } from "react-native";
-import SafeAreaView from "react-native-safe-area-view";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { useSelector } from "react-redux";
 import { Trans, useTranslation } from "react-i18next";
 import invariant from "invariant";
-import { Transaction } from "@ledgerhq/live-common/generated/types";
 import { getAccountUnit } from "@ledgerhq/live-common/account/index";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
-import { useTheme } from "@react-navigation/native";
-import { GraphTabs, Text } from "@ledgerhq/native-ui";
-import { InfoMedium } from "@ledgerhq/native-ui/assets/icons";
+import { CompositeScreenProps, useTheme } from "@react-navigation/native";
+import { GraphTabs, Text, Icons } from "@ledgerhq/native-ui";
+import { Transaction } from "@ledgerhq/live-common/families/tron/types";
 import { accountScreenSelector } from "../../reducers/accounts";
 import { ScreenName } from "../../const";
 import { TrackScreen } from "../../analytics";
@@ -33,8 +32,9 @@ import InfoModal from "../../modals/Info";
 import BandwidthIcon from "../../icons/Bandwidth";
 import EnergyIcon from "../../icons/Energy";
 import Button from "../../components/wrappedUi/Button";
-
-const forceInset = { bottom: "always" };
+import { FreezeNavigatorParamList } from "../../components/RootNavigator/types/FreezeNavigator";
+import { StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
+import { BaseNavigatorStackParamList } from "../../components/RootNavigator/types/BaseNavigator";
 
 const infoModalData = [
   {
@@ -52,17 +52,12 @@ const infoModalData = [
 const getDecimalPart = (value: BigNumber, magnitude: number) =>
   value.minus(value.modulo(10 ** magnitude));
 
-type Props = {
-  navigation: any;
-  route: { params: RouteParams };
-};
+type NavigatorProps = CompositeScreenProps<
+  StackNavigatorProps<FreezeNavigatorParamList, ScreenName.FreezeAmount>,
+  StackNavigatorProps<BaseNavigatorStackParamList>
+>;
 
-type RouteParams = {
-  accountId: string;
-  transaction: Transaction;
-};
-
-export default function FreezeAmount({ navigation, route }: Props) {
+export default function FreezeAmount({ navigation, route }: NavigatorProps) {
   const { colors } = useTheme();
   const { account } = useSelector(accountScreenSelector(route));
   const { t } = useTranslation();
@@ -76,7 +71,7 @@ export default function FreezeAmount({ navigation, route }: Props) {
 
   const [selectedRatio, selectRatio] = useState();
 
-  const [infoModalOpen, setInfoModalOpen] = useState();
+  const [infoModalOpen, setInfoModalOpen] = useState<boolean>();
 
   const { transaction, setTransaction, status, bridgePending, bridgeError } =
     useBridgeTransaction(() => {
@@ -90,27 +85,30 @@ export default function FreezeAmount({ navigation, route }: Props) {
       return { account, transaction };
     });
 
-  const options = [
-    {
-      value: "BANDWIDTH",
-      label: t("account.bandwidth"),
-    },
-    {
-      value: "ENERGY",
-      label: t("account.energy"),
-    },
-  ];
+  const options = useMemo(
+    () => [
+      {
+        value: "BANDWIDTH",
+        label: t("account.bandwidth"),
+      },
+      {
+        value: "ENERGY",
+        label: t("account.energy"),
+      },
+    ],
+    [t],
+  );
 
-  const resource = transaction?.resource || "";
+  const resource = (transaction as Transaction)?.resource || "";
   const resourceIndex = useMemo(
     () => options.findIndex(option => option.value === resource),
-    [resource],
+    [options, resource],
   );
 
   const onChange = useCallback(
-    (amount, keepRatio) => {
+    (amount: BigNumber, keepRatio?: boolean) => {
       if (!amount.isNaN()) {
-        if (!keepRatio) selectRatio();
+        if (!keepRatio) selectRatio(undefined);
         setTransaction(
           bridge.updateTransaction(transaction, {
             amount: getDecimalPart(amount, defaultUnit.magnitude),
@@ -174,7 +172,7 @@ export default function FreezeAmount({ navigation, route }: Props) {
         }),
       );
     },
-    [bridge, transaction, setTransaction],
+    [setTransaction, bridge, transaction, options],
   );
 
   /** show amount ratio buttons only if we can ratio the available assets to 25% or less */
@@ -219,7 +217,6 @@ export default function FreezeAmount({ navigation, route }: Props) {
       <TrackScreen category="FreezeFunds" name="Amount" />
       <SafeAreaView
         style={[styles.root, { backgroundColor: colors.background }]}
-        forceInset={forceInset}
       >
         <KeyboardView style={styles.container}>
           <View style={styles.topContainer}>
@@ -235,7 +232,7 @@ export default function FreezeAmount({ navigation, route }: Props) {
                 <Text variant={"paragraph"} color="neutral.c70" mr={3}>
                   <Trans i18nKey="freeze.amount.infoLabel" />
                 </Text>
-                <InfoMedium size={20} color="neutral.c70" />
+                <Icons.InfoMedium size={20} color="neutral.c70" />
               </TouchableOpacity>
               <View style={styles.wrapper}>
                 <CurrencyInput

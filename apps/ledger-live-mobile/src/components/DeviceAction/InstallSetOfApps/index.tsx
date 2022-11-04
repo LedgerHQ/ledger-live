@@ -2,6 +2,7 @@ import React, { useCallback, useState, useMemo } from "react";
 import { Trans } from "react-i18next";
 import { createAction } from "@ledgerhq/live-common/hw/actions/app";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
+import withRemountableWrapper from "@ledgerhq/live-common/hoc/withRemountableWrapper";
 import connectApp from "@ledgerhq/live-common/hw/connectApp";
 import { Flex, Text } from "@ledgerhq/native-ui";
 import { getDeviceModel } from "@ledgerhq/devices";
@@ -16,7 +17,7 @@ type Props = {
   dependencies?: string[];
   device: Device;
   onResult: (done: boolean) => void;
-  onError: (error: Error) => void;
+  onError?: (error: Error) => void;
 };
 
 const action = createAction(connectApp);
@@ -33,7 +34,8 @@ const InstallSetOfApps = ({
   device: selectedDevice,
   onResult,
   onError,
-}: Props) => {
+  remountMe,
+}: Props & { remountMe: () => void }) => {
   const [userConfirmed, setUserConfirmed] = useState(false);
   const productName = getDeviceModel(selectedDevice.modelId).productName;
 
@@ -46,7 +48,7 @@ const InstallSetOfApps = ({
     [dependencies],
   );
 
-  const status: any = action.useHook(
+  const status = action.useHook(
     userConfirmed ? selectedDevice : undefined,
     commandRequest,
   );
@@ -63,10 +65,15 @@ const InstallSetOfApps = ({
   } = status;
 
   const onWrappedError = useCallback(() => {
-    if (onError && error) {
-      onError(error);
+    if (error) {
+      if (onError) {
+        onError(error);
+      }
+      // We force the component to remount for action.useHook to re-run from
+      // scratch and reset the status value
+      remountMe();
     }
-  }, [error, onError]);
+  }, [remountMe, error, onError]);
 
   if (opened) {
     onResult(true);
@@ -80,7 +87,7 @@ const InstallSetOfApps = ({
           <Text mb={5} variant="paragraphLineHeight">
             {listingApps ? (
               <Trans i18nKey="installSetOfApps.ongoing.resolving" />
-            ) : progress || currentAppOp ? (
+            ) : typeof progress === "number" && currentAppOp ? (
               <Trans
                 i18nKey="installSetOfApps.ongoing.progress"
                 values={{ progress: Math.round(progress * 100) }}
@@ -89,16 +96,19 @@ const InstallSetOfApps = ({
               <Trans i18nKey="installSetOfApps.ongoing.loading" />
             )}
           </Text>
-          {dependencies?.map((appName, i) => (
-            <Item
-              key={appName}
-              i={i}
-              appName={appName}
-              isActive={currentAppOp?.name === appName}
-              installed={progress && !installQueue.includes(appName)}
-              itemProgress={itemProgress}
-            />
-          ))}
+          {itemProgress &&
+            dependencies?.map((appName, i) => (
+              <Item
+                key={appName}
+                i={i}
+                appName={appName}
+                isActive={currentAppOp?.name === appName}
+                installed={
+                  progress ? !installQueue?.includes(appName) : undefined
+                }
+                itemProgress={itemProgress}
+              />
+            ))}
         </Flex>
       </Flex>
       <Text textAlign="center" color="neutral.c70">
@@ -108,8 +118,7 @@ const InstallSetOfApps = ({
         />
       </Text>
       <BottomModal
-        id="DeviceActionModal"
-        isOpened={allowManagerRequestedWording || error}
+        isOpened={!!allowManagerRequestedWording || !!error}
         onClose={onWrappedError}
         onModalHide={onWrappedError}
       >
@@ -132,4 +141,4 @@ const InstallSetOfApps = ({
   );
 };
 
-export default InstallSetOfApps;
+export default withRemountableWrapper(InstallSetOfApps);

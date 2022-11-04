@@ -14,7 +14,6 @@ export default function Header({ count, onPress }: Props) {
     <AccountSectionLabel
       name={t("tron.voting.header", { total: count })}
       RightComponent={
-        // eslint-disable-next-line jsx-a11y/anchor-is-valid
         <Link type="color" event="TronManageVotes" onPress={onPress}>
           <Trans i18nKey="tron.voting.manageVotes" />
         </Link>

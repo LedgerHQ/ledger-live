@@ -14,15 +14,13 @@ import { TrackScreen } from "../../../analytics";
 import Illustration from "../../../images/illustration/Illustration";
 import EarnLight from "../../../images/illustration/Light/_003.png";
 import EarnDark from "../../../images/illustration/Dark/_003.png";
+import type { StackNavigatorProps } from "../../../components/RootNavigator/types/helpers";
+import type { OsmosisDelegationFlowParamList } from "./types";
 
-type RouteParams = {
-  accountId: string;
-};
-
-type Props = {
-  navigation: any;
-  route: { params: RouteParams };
-};
+type Props = StackNavigatorProps<
+  OsmosisDelegationFlowParamList,
+  ScreenName.OsmosisDelegationStarted
+>;
 
 export default function DelegationStarted({ navigation, route }: Props) {
   const { colors } = useTheme();

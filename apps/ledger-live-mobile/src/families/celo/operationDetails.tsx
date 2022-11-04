@@ -14,6 +14,9 @@ import { getAccountUnit } from "@ledgerhq/live-common/account/helpers";
 import { useRoute } from "@react-navigation/native";
 import Section from "../../screens/OperationDetails/Section";
 import { discreetModeSelector, localeSelector } from "../../reducers/settings";
+import { StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
+import { BaseNavigatorStackParamList } from "../../components/RootNavigator/types/BaseNavigator";
+import { ScreenName } from "../../const";
 
 type Props = {
   extra: {
@@ -25,13 +28,19 @@ type Props = {
   account: Account;
 };
 
+type Navigation = StackNavigatorProps<
+  BaseNavigatorStackParamList,
+  ScreenName.OperationDetails
+>;
+
 const OperationDetailsExtra = ({ extra, type, account }: Props) => {
   const { t } = useTranslation();
   const discreet = useSelector(discreetModeSelector);
   const locale = useSelector(localeSelector);
   const unit = getAccountUnit(account);
   const { validatorGroups: celoValidators } = useCeloPreloadData();
-  const optimisticOperation = useRoute().params?.operation ?? null;
+  const optimisticOperation =
+    useRoute<Navigation["route"]>().params?.operation ?? null;
 
   const redirectAddressCreator = useCallback(
     address => () => {
@@ -57,7 +66,7 @@ const OperationDetailsExtra = ({ extra, type, account }: Props) => {
   if (extra.celoOperationValue != null) {
     opValue = extra.celoOperationValue;
   } else if (optimisticOperation.value != null) {
-    opValue = optimisticOperation.value;
+    opValue = optimisticOperation.value.toString();
   }
 
   const formattedAmount = formatCurrencyUnit(unit, new BigNumber(opValue), {

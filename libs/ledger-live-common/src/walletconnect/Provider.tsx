@@ -63,6 +63,18 @@ const initialState = {
 };
 export const context = React.createContext<State>(initialState);
 
+type Props = {
+  children: React.ReactNode;
+  useAccount: (...args: Array<any>) => any;
+  onMessage: (...args: Array<any>) => any;
+  onSessionRestarted: (...args: Array<any>) => any;
+  onRemoteDisconnected: (...args: Array<any>) => any;
+  isReady: boolean;
+  saveWCSession: (...args: Array<any>) => any;
+  getWCSession: (...args: Array<any>) => any;
+  WalletConnect?: typeof WalletConnectClient;
+};
+
 const ProviderCommon = ({
   children,
   useAccount,
@@ -73,17 +85,7 @@ const ProviderCommon = ({
   saveWCSession,
   getWCSession,
   WalletConnect = WalletConnectClient,
-}: {
-  children: React.ReactNode;
-  useAccount: (...args: Array<any>) => any;
-  onMessage: (...args: Array<any>) => any;
-  onSessionRestarted: (...args: Array<any>) => any;
-  onRemoteDisconnected: (...args: Array<any>) => any;
-  isReady: boolean;
-  saveWCSession: (...args: Array<any>) => any;
-  getWCSession: (...args: Array<any>) => any;
-  WalletConnect: any;
-}) => {
+}: Props): JSX.Element => {
   const [state, dispatch] = useReducer(reducer, initialState);
   const account = useAccount(state.session.accountId);
 

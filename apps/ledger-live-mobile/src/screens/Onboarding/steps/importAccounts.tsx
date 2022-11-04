@@ -1,10 +1,10 @@
 import React, { useCallback } from "react";
-import { useNavigation, useRoute, RouteProp } from "@react-navigation/native";
+import { useNavigation, useRoute } from "@react-navigation/native";
 
 import { useDispatch } from "react-redux";
+import { StackNavigationProp } from "@react-navigation/stack";
 import Illustration from "../../../images/illustration/Illustration";
 import { NavigatorName, ScreenName } from "../../../const";
-import { DeviceNames } from "../types";
 import BaseStepperView, { SyncDesktop, Metadata } from "./setupDevice/scenes";
 import { TrackScreen } from "../../../analytics";
 
@@ -14,6 +14,13 @@ import {
   setReadOnlyMode,
 } from "../../../actions/settings";
 import { useNavigationInterceptor } from "../onboardingContext";
+import {
+  RootComposite,
+  StackNavigatorProps,
+} from "../../../components/RootNavigator/types/helpers";
+import { OnboardingNavigatorParamList } from "../../../components/RootNavigator/types/OnboardingNavigator";
+import { RootStackParamList } from "../../../components/RootNavigator/types/RootNavigator";
+import { Step } from "./setupDevice/scenes/BaseStepperView";
 
 const images = {
   light: {
@@ -24,20 +31,18 @@ const images = {
   },
 };
 
-const scenes = [SyncDesktop, SyncDesktop];
+const scenes = [SyncDesktop, SyncDesktop] as Step[];
+
+type NavigationProps = RootComposite<
+  StackNavigatorProps<
+    OnboardingNavigatorParamList,
+    ScreenName.OnboardingImportAccounts
+  >
+>;
 
 function OnboardingStepPairNew() {
-  const navigation = useNavigation();
-  const route = useRoute<
-    RouteProp<
-      {
-        params: {
-          deviceModelId: DeviceNames;
-        };
-      },
-      "params"
-    >
-  >();
+  const navigation = useNavigation<NavigationProps["navigation"]>();
+  const route = useRoute<NavigationProps["route"]>();
 
   const deviceModelId = route?.params?.deviceModelId;
 
@@ -65,7 +70,8 @@ function OnboardingStepPairNew() {
     dispatch(setHasOrderedNano(false));
     resetCurrentStep();
 
-    const parentNav = navigation.getParent();
+    const parentNav =
+      navigation.getParent<StackNavigationProp<RootStackParamList>>();
     if (parentNav) {
       parentNav.popToTop();
     }
@@ -75,17 +81,19 @@ function OnboardingStepPairNew() {
     });
   }, [dispatch, navigation, resetCurrentStep]);
 
-  const onNext = useCallback(() => {
-    navigation.navigate(NavigatorName.ImportAccounts, {
-      screen: ScreenName.ScanAccounts,
-      params: {
-        onFinish,
-      },
-    });
-  }, [navigation, onFinish]);
+  const onNext = useCallback(
+    () =>
+      navigation.navigate(NavigatorName.ImportAccounts, {
+        screen: ScreenName.ScanAccounts,
+        params: {
+          onFinish,
+        },
+      }),
+    [navigation, onFinish],
+  );
 
   const nextPage = useCallback(() => {
-    navigation.navigate(ScreenName.OnboardingModalWarning, {
+    navigation.navigate(NavigatorName.OnboardingCarefulWarning, {
       screen: ScreenName.OnboardingModalSyncDesktopInformation,
       params: { onNext },
     });
@@ -94,12 +102,14 @@ function OnboardingStepPairNew() {
   return (
     <>
       <TrackScreen category="Onboarding" name="PairNew" />
-      <BaseStepperView
-        onNext={nextPage}
-        steps={scenes}
-        metadata={metadata}
-        deviceModelId={deviceModelId}
-      />
+      {deviceModelId ? (
+        <BaseStepperView
+          onNext={nextPage}
+          steps={scenes}
+          metadata={metadata}
+          deviceModelId={deviceModelId}
+        />
+      ) : null}
     </>
   );
 }

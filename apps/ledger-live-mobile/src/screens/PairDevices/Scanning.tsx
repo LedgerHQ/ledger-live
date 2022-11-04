@@ -6,6 +6,8 @@ import { Observable } from "rxjs";
 import { InfiniteLoader, Flex } from "@ledgerhq/native-ui";
 import { getInfosForServiceUuid, DeviceModelId } from "@ledgerhq/devices";
 import { DescriptorEvent } from "@ledgerhq/hw-transport";
+import { Device as DeviceMeta } from "@ledgerhq/live-common/hw/actions/types";
+import { TransportBleDevice } from "@ledgerhq/live-common/ble/types";
 import logger from "../../logger";
 import { BLE_SCANNING_NOTHING_TIMEOUT } from "../../constants";
 import { knownDevicesSelector } from "../../reducers/ble";
@@ -15,16 +17,14 @@ import DeviceItem from "../../components/SelectDevice/DeviceItem";
 import ScanningHeader from "./ScanningHeader";
 
 type Props = {
-  onSelect: (device: Device, deviceMeta: any) => Promise<void>;
+  onSelect: (
+    device: TransportBleDevice,
+    deviceMeta?: DeviceMeta,
+  ) => Promise<void>;
   onError: (_: Error) => void;
   onTimeout: () => void;
   /** If defined, only show devices that have a device model id in this array */
   deviceModelIds?: DeviceModelId[];
-};
-
-type Device = {
-  id: string;
-  name: string;
 };
 
 export default function Scanning({
@@ -35,28 +35,30 @@ export default function Scanning({
 }: Props) {
   const { t } = useTranslation();
   const knownDevices = useSelector(knownDevicesSelector);
-  const [devices, setDevices] = useState<Device[]>([]);
+  const [devices, setDevices] = useState<TransportBleDevice[]>([]);
 
   const filteredDevices = useMemo(() => {
     if (!deviceModelIds) return devices;
     return devices.filter(device => {
       let modelId = "nanoX" as DeviceModelId;
-      const infos = getInfosForServiceUuid(device.serviceUUIDs[0]);
+      const infos =
+        device?.serviceUUIDs && getInfosForServiceUuid(device.serviceUUIDs[0]);
       if (infos) modelId = infos.deviceModel.id;
       return deviceModelIds.includes(modelId);
     });
   }, [devices, deviceModelIds]);
 
   const renderItem = useCallback(
-    ({ item }) => {
+    ({ item }: { item: TransportBleDevice }) => {
       const knownDevice = knownDevices.find(d => d.id === item.id);
       let modelId = "nanoX" as DeviceModelId;
-      const infos = getInfosForServiceUuid(item.serviceUUIDs[0]);
+      const infos =
+        item.serviceUUIDs && getInfosForServiceUuid(item.serviceUUIDs[0]);
       if (infos) modelId = infos.deviceModel.id;
 
       const deviceMeta = {
         deviceId: item.id,
-        deviceName: item.localName ?? item.name,
+        deviceName: item.localName ?? (item.name || undefined),
         wired: false,
         modelId,
       };
@@ -78,7 +80,7 @@ export default function Scanning({
     }, BLE_SCANNING_NOTHING_TIMEOUT);
 
     const sub = Observable.create(TransportBLE.listen).subscribe({
-      next: (e: DescriptorEvent<Device>) => {
+      next: (e: DescriptorEvent<TransportBleDevice>) => {
         if (e.type === "add") {
           clearTimeout(timeout);
           const device = e.descriptor;

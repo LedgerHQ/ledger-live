@@ -2,14 +2,25 @@ import React, { useCallback } from "react";
 import useEnv from "@ledgerhq/live-common/hooks/useEnv";
 import { BigNumber } from "bignumber.js";
 import { NavigatorName, ScreenName } from "../../const";
-import { usePortfolio } from "../../actions/portfolio";
+import { usePortfolio } from "../../hooks/portfolio";
 import AssetRowLayout from "../../components/AssetRowLayout";
 import { track } from "../../analytics";
+import {
+  BaseNavigationComposite,
+  StackNavigatorNavigation,
+} from "../../components/RootNavigator/types/helpers";
+import { AccountsNavigatorParamList } from "../../components/RootNavigator/types/AccountsNavigator";
+import { PortfolioNavigatorStackParamList } from "../../components/RootNavigator/types/PortfolioNavigator";
+import { Asset } from "../../types/asset";
+
+export type NavigationProp = BaseNavigationComposite<
+  | StackNavigatorNavigation<AccountsNavigatorParamList, ScreenName.Assets>
+  | StackNavigatorNavigation<PortfolioNavigatorStackParamList>
+>;
 
 type Props = {
-  asset: any;
-  navigation: any;
-  navigationParams?: any[];
+  asset: Asset;
+  navigation: NavigationProp;
   hideDelta?: boolean;
   topLink?: boolean;
   bottomLink?: boolean;
@@ -18,7 +29,6 @@ type Props = {
 const AssetRow = ({
   asset,
   navigation,
-  navigationParams,
   hideDelta,
   topLink,
   bottomLink,
@@ -35,17 +45,13 @@ const AssetRow = ({
     track("asset_clicked", {
       asset: currency.name,
     });
-    if (navigationParams) {
-      navigation.navigate(...navigationParams);
-    } else {
-      navigation.navigate(NavigatorName.Accounts, {
-        screen: ScreenName.Asset,
-        params: {
-          currency,
-        },
-      });
-    }
-  }, [currency, navigation, navigationParams]);
+    navigation.navigate(NavigatorName.Accounts, {
+      screen: ScreenName.Asset,
+      params: {
+        currency,
+      },
+    });
+  }, [currency, navigation]);
 
   return (
     <AssetRowLayout
@@ -62,4 +68,4 @@ const AssetRow = ({
   );
 };
 
-export default React.memo<Props>(AssetRow);
+export default React.memo(AssetRow);

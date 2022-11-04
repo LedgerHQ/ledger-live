@@ -1,5 +1,5 @@
 import React, { useEffect, useCallback, useState } from "react";
-import { listen } from "@ledgerhq/logs";
+import { listen, Log } from "@ledgerhq/logs";
 import { ScrollView, View, StyleSheet } from "react-native";
 import logReport from "../log-report";
 import Button from "../components/Button";
@@ -7,9 +7,9 @@ import LText from "../components/LText";
 import useExportLogs from "../components/useExportLogs";
 
 export default function DebugLogs() {
-  const [logs, setLogs] = useState([]);
+  const [logs, setLogs] = useState<Log[]>([]);
   const prependToLogs = useCallback(
-    log => setLogs(currentLogs => [log, ...currentLogs]),
+    (log: Log) => setLogs(currentLogs => [log, ...currentLogs]),
     [],
   );
   useEffect(() => listen(prependToLogs), [prependToLogs]);

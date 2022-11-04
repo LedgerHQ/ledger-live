@@ -23,6 +23,7 @@ import { isNFTActive } from "../../nft";
 import { getEnv } from "../../env";
 import type { LoadConfig } from "@ledgerhq/hw-app-eth/lib/services/types";
 import { Transaction as EthereumTx } from "@ethereumjs/tx";
+import { erc20SignatureInfo } from "./modules/erc20";
 export const signOperation = ({
   account,
   deviceId,
@@ -70,7 +71,9 @@ export const signOperation = ({
               const rawData = tx.raw();
               rawData[6] = Buffer.from([common.chainIdBN().toNumber()]);
               const txHex = Buffer.from(encode(rawData)).toString("hex");
-              const loadConfig: LoadConfig = {};
+              const loadConfig: LoadConfig = {
+                cryptoassetsBaseURL: getEnv("DYNAMIC_CAL_BASE_URL"),
+              };
               if (isNFTActive(account.currency)) {
                 loadConfig.nftExplorerBaseURL =
                   getEnv("NFT_ETH_METADATA_SERVICE") + "/v1/ethereum";
@@ -98,10 +101,13 @@ export const signOperation = ({
                   fillTransactionDataResult.erc20contracts) ||
                 [];
 
+              const erc20SignatureBlob = await erc20SignatureInfo(loadConfig);
+
               for (const addr of addrs) {
                 const tokenInfo = byContractAddressAndChainId(
                   addr,
-                  account.currency.ethereumLikeInfo?.chainId || 0
+                  account.currency.ethereumLikeInfo?.chainId || 0,
+                  erc20SignatureBlob
                 );
 
                 if (tokenInfo) {

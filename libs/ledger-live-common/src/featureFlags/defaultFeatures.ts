@@ -121,10 +121,10 @@ export const defaultFeatures: DefaultFeatures = {
   ptxSmartRoutingMobile: {
     enabled: false,
   },
-  mockFeature: {
+  syncOnboarding: {
     enabled: false,
   },
-  syncOnboarding: {
+  mockFeature: {
     enabled: false,
   },
 };

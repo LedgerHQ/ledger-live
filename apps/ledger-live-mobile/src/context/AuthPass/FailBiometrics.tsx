@@ -3,8 +3,8 @@ import { StyleSheet, View, TouchableWithoutFeedback } from "react-native";
 import { useTranslation } from "react-i18next";
 import { useTheme } from "@react-navigation/native";
 import LText from "../../components/LText";
-import type { Privacy } from "../../reducers/settings";
 import BiometricsIcon from "../../components/BiometricsIcon";
+import type { Privacy } from "../../reducers/types";
 
 type Props = {
   privacy: Privacy;

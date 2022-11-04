@@ -1,7 +1,12 @@
 import React, { useState, useCallback, useEffect } from "react";
 import { View } from "react-native";
 import { useSelector } from "react-redux";
-import { useNavigation, useRoute } from "@react-navigation/native";
+import {
+  NavigationProp,
+  RouteProp,
+  useNavigation,
+  useRoute,
+} from "@react-navigation/native";
 import { SettingsMedium, OthersMedium } from "@ledgerhq/native-ui/assets/icons";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import { NavigatorName, ScreenName } from "../../const";
@@ -11,10 +16,24 @@ import {
   accountsSelector,
 } from "../../reducers/accounts";
 import TokenContextualModal from "../Settings/Accounts/TokenContextualModal";
+import type { BaseNavigatorStackParamList } from "../../components/RootNavigator/types/BaseNavigator";
+import type { AccountsNavigatorParamList } from "../../components/RootNavigator/types/AccountsNavigator";
 
 export default function AccountHeaderRight() {
-  const navigation = useNavigation();
-  const route = useRoute();
+  const navigation =
+    useNavigation<
+      NavigationProp<
+        AccountsNavigatorParamList & BaseNavigatorStackParamList,
+        ScreenName.Account
+      >
+    >();
+  const route =
+    useRoute<
+      RouteProp<
+        AccountsNavigatorParamList & BaseNavigatorStackParamList,
+        ScreenName.Account
+      >
+    >();
   const { account, parentAccount } = useSelector(accountScreenSelector(route));
   const accounts = useSelector(accountsSelector);
 

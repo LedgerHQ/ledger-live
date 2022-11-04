@@ -1,0 +1,58 @@
+name: "Dynamic cal importer ERC20"
+on:
+  schedule:
+    - cron: 0 7 * * *
+  workflow_dispatch:
+  push:
+    branches:
+      - feat/LIVE-2174-dynamic-cal
+
+concurrency:
+  group: bot-dyn-cal
+
+jobs:
+  run-bot:
+    runs-on: [self-hosted, ledger-live-assets]
+    steps:
+      - uses: actions/checkout@v3
+      - name: Retrieving crypto-assets
+        uses: actions/checkout@v3
+        with:
+          submodules: true
+          repository: LedgerHQ/crypto-assets
+          token: ${{ secrets.CI_BOT_TOKEN }}
+          path: crypto-assets
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16.x
+      - uses: pnpm/action-setup@v2.0.1
+        id: pnpm-install
+        with:
+          version: latest
+          run_install: false
+      - name: Get pnpm store directory
+        id: pnpm-cache
+        run: |
+          echo "::set-output name=pnpm_cache_dir::$(pnpm store path)"
+      - uses: actions/cache@v3
+        name: Setup pnpm cache
+        with:
+          path: ${{ steps.pnpm-cache.outputs.pnpm_cache_dir }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+      - name: install and build
+        continue-on-error: true
+        run: |
+          pnpm i --filter="live-cli..." --filter="ledger-live" --filter="ledger-libs" --frozen-lockfile
+          pnpm build:ljs
+        shell: bash
+      - name: run script
+        run: |
+          mkdir cal
+          node libs/ledgerjs/script/crypto-assets-importer/index.js $PWD/crypto-assets true
+          mv libs/ledgerjs/packages/cryptoassets/data/**.json cal
+      - name: Deploy json to s3
+        run: aws s3 sync ./cal/ s3://ledger-live-cryptoassets-prd/cryptoassets --delete
+      - name: Cache invalidate
+        run: aws cloudfront create-invalidation --distribution-id E53IORS7MW883 --paths "/cryptoassets/*" --debug

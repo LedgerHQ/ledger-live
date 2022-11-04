@@ -10,18 +10,31 @@ import {
   hasActivatableVotes,
   hasRevokableVotes,
 } from "@ledgerhq/live-common/families/celo/logic";
+import { StackNavigationProp } from "@react-navigation/stack";
 import { accountScreenSelector } from "../../../reducers/accounts";
 import { ScreenName, NavigatorName } from "../../../const";
 import Button from "../../../components/Button";
+import {
+  RootComposite,
+  StackNavigatorProps,
+} from "../../../components/RootNavigator/types/helpers";
+import { BaseNavigatorStackParamList } from "../../../components/RootNavigator/types/BaseNavigator";
+
+type NavigationProps = RootComposite<
+  StackNavigatorProps<
+    BaseNavigatorStackParamList,
+    NavigatorName.CeloManageAssetsNavigator
+  >
+>;
 
 function ManageAssetsNavigator() {
   const { t } = useTranslation();
 
-  const navigation = useNavigation();
+  const navigation = useNavigation<NavigationProps["navigation"]>();
   navigation.setOptions({ title: t("celo.manage.title") });
 
-  const routeParams = useRoute().params;
-  const { account } = useSelector(accountScreenSelector(routeParams));
+  const route = useRoute<NavigationProps["route"]>();
+  const { account } = useSelector(accountScreenSelector(route?.params));
   const { celoResources } = account as CeloAccount;
   const { votes } = celoResources;
 
@@ -31,14 +44,18 @@ function ManageAssetsNavigator() {
       screen,
       params,
     }: {
-      route: typeof NavigatorName | typeof ScreenName;
-      screen?: typeof ScreenName;
-      params?: { [key: string]: any };
+      route: string;
+      screen?: string;
+      params?: { [key: string]: unknown };
     }) => {
-      navigation.navigate(route, {
-        screen,
-        params: { ...params, accountId: account?.id },
-      });
+      // This is complicated (even impossible?) to type properly…
+      (navigation as StackNavigationProp<{ [key: string]: object }>).navigate(
+        route,
+        {
+          screen,
+          params: { ...params, accountId: account?.id },
+        },
+      );
     },
     [navigation, account?.id],
   );
@@ -95,7 +112,7 @@ function ManageAssetsNavigator() {
           : ScreenName.CeloVoteSummary,
       params: {},
     });
-  }, [onNavigate]);
+  }, [onNavigate, votes?.length]);
 
   const onRevoke = useCallback(() => {
     onNavigate({

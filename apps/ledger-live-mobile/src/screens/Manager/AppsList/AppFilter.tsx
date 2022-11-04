@@ -4,20 +4,22 @@ import { TouchableOpacity } from "react-native";
 import { Icons, Box } from "@ledgerhq/native-ui";
 
 import styled from "styled-components/native";
+import { AppType, SortOptions } from "@ledgerhq/live-common/apps/filtering";
 import NotifBadge from "../NotifBadge";
 
 import FilterModalComponent from "../Modals/FilterModal";
 
 type Props = {
-  filter: string;
-  setFilter: (_: string) => void;
-  sort: string;
-  setSort: (_: string) => void;
-  order: string;
-  setOrder: (_: string) => void;
-  disabled: boolean;
-  filters: string[];
+  filter: string | null | undefined;
+  setFilter: (_: AppType | null | undefined) => void;
+  sort: string | null | undefined;
+  setSort: (_: SortOptions["type"] | null | undefined) => void;
+  order: string | null | undefined;
+  setOrder: (_: SortOptions["order"] | null | undefined) => void;
+  disabled?: boolean;
 };
+
+type SetStateCallback = (_: string | null | undefined) => void;
 
 const FilterButtonContainer = styled(Box).attrs({
   width: 48,
@@ -54,11 +56,11 @@ const AppFilter = ({
       <FilterModalComponent
         isOpened={isOpened}
         filter={filter}
-        setFilter={setFilter}
+        setFilter={setFilter as SetStateCallback}
         sort={sort}
-        setSort={setSort}
+        setSort={setSort as SetStateCallback}
         order={order}
-        setOrder={setOrder}
+        setOrder={setOrder as SetStateCallback}
         onClose={closeModal}
       />
     </>
