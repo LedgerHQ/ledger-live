@@ -1,15 +1,12 @@
-import React from "react";
+import React, { memo } from "react";
 import Svg, { Path } from "react-native-svg";
 
 type Props = {
-  size: number;
-  color: string;
+  size?: number;
+  color?: string;
 };
 
-export default function TachometerFast({
-  size = 16,
-  color = "#C3C3C3",
-}: Props) {
+const TachometerFast = ({ size = 16, color = "#C3C3C3" }: Props) => {
   return (
     <Svg viewBox="0 0 16 14" width={(size / 14) * 16} height={size} fill="none">
       <Path
@@ -18,4 +15,6 @@ export default function TachometerFast({
       />
     </Svg>
   );
-}
+};
+
+export default memo(TachometerFast);
