@@ -3157,6 +3157,12 @@
       }
     }
   },
+  "signMessage": {
+    "eip712": {
+      "showFullMessage": "Show full message",
+      "hideFullMessage": "Hide full message"
+    }
+  },
   "sync": {
     "error": "Sync Error",
     "loading": "Sync"

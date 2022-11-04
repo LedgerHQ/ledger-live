@@ -1,7 +1,7 @@
 // @flow
 import React, { memo, useMemo, useState } from "react";
 import styled from "styled-components";
-import { Trans } from "react-i18next";
+import { Trans, useTranslation } from "react-i18next";
 import {
   isEIP712Message,
   getNanoDisplayedInfosFor712,
@@ -99,6 +99,7 @@ const MessageProperties = memo(
 MessageProperties.displayName = "MessageProperties";
 
 export default function StepSummary({ account, message: messageData }: StepProps) {
+  const { t } = useTranslation();
   const [showAdvanced, setShowAdvanced] = useState(false);
   const mainAccount = getMainAccount(account, null);
   const {
@@ -165,7 +166,9 @@ export default function StepSummary({ account, message: messageData }: StepProps
       {fields ? (
         <Box flex="1">
           <Button outline small mb={2} onClick={e => setShowAdvanced(!showAdvanced)}>
-            {showAdvanced ? "- Hide full message" : "+ Show full message"}
+            {showAdvanced
+              ? `- ${t("signmessage.eip712.hideFullMessage")}`
+              : `+ ${t("signmessage.eip712.showFullMessage")}`}
           </Button>
           {showAdvanced ? (
             <AdvancedMessageArea>

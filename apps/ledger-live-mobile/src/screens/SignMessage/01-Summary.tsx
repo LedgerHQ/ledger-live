@@ -1,7 +1,7 @@
 import React, { useCallback, useMemo, useState, memo } from "react";
 import { View, StyleSheet, ScrollView } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Trans } from "react-i18next";
+import { Trans, useTranslation } from "react-i18next";
 import {
   getAccountCurrency,
   getAccountName,
@@ -94,6 +94,7 @@ function SignSummary({
   SignMessageNavigatorStackParamList,
   ScreenName.SignSummary
 >) {
+  const { t } = useTranslation();
   const { colors } = useTheme();
   const { account, parentAccount } = useSelector(accountScreenSelector(route));
 
@@ -207,7 +208,9 @@ function SignSummary({
                 type="color"
                 onPress={() => setShowAdvanced(!showAdvanced)}
               >
-                {showAdvanced ? "- Hide full message" : "+ Show full message"}
+                {showAdvanced
+                  ? `- ${t("signMessage.eip712.hideFullMessage")}`
+                  : `+ ${t("signMessage.eip712.showFullMessage")}`}
               </Button>
               {showAdvanced ? (
                 <LText
