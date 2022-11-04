@@ -22,7 +22,7 @@ export const darken = (c: string, a: number) => color(c).darken(a).toString();
 export const lighten = (c: string, a: number) => color(c).lighten(a).toString();
 
 export function withTheme<P>(Component: React.ComponentType<P>) {
-  return (props: Omit<P, "colors">) => {
+  return (props: P) => {
     const { colors } = useTheme();
     return <Component colors={colors} {...(props as P)} />;
   };
