@@ -277,7 +277,7 @@ const txToOps =
               };
             }
           })
-          .filter(Boolean) as unknown as Operation[]);
+          .filter(Boolean) as Operation[]);
     // We are putting the sub operations in place for now, but they will later be exploded out of the operations back to their token accounts
     const subOperations = !transfer_events
       ? []
