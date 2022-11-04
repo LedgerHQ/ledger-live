@@ -1,7 +1,7 @@
 import React, { useCallback, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import styled from "styled-components/native";
-import { Button, Flex, InfiniteLoader, Text } from "@ledgerhq/native-ui";
+import { Box, Button, Flex, InfiniteLoader, Text } from "@ledgerhq/native-ui";
 import {
   ImageErrorEventData,
   NativeSyntheticEvent,
@@ -39,56 +39,20 @@ export const PreviewImage = styled.Image.attrs({
 
 const contrasts = [
   {
-    displayWith: [1],
-    val: -5,
-    color: { topLeft: "transparent", bottomRight: "transparent" },
-  },
-  {
-    displayWith: [1, 1.5],
-    val: -4,
-    color: { topLeft: "transparent", bottomRight: "transparent" },
-  },
-  {
-    displayWith: [1, 1.5, 2],
-    val: -3,
-    color: { topLeft: "transparent", bottomRight: "transparent" },
-  },
-
-  {
-    displayWith: [],
     val: 1,
     color: { topLeft: "neutral.c40", bottomRight: "neutral.c30" },
   },
   {
-    displayWith: [],
     val: 1.5,
     color: { topLeft: "neutral.c50", bottomRight: "neutral.c30" },
   },
   {
-    displayWith: [],
     val: 2,
     color: { topLeft: "neutral.c60", bottomRight: "neutral.c30" },
   },
   {
-    displayWith: [],
     val: 3,
     color: { topLeft: "neutral.c70", bottomRight: "neutral.c30" },
-  },
-
-  {
-    displayWith: [1.5, 2, 3],
-    val: -2,
-    color: { topLeft: "transparent", bottomRight: "transparent" },
-  },
-  {
-    displayWith: [2, 3],
-    val: -1,
-    color: { topLeft: "transparent", bottomRight: "transparent" },
-  },
-  {
-    displayWith: [3],
-    val: 0,
-    color: { topLeft: "transparent", bottomRight: "transparent" },
   },
 ];
 
@@ -224,29 +188,37 @@ const Step2Preview = ({ navigation, route }: NavigationProps) => {
         </Text>
         {resizedImage?.imageBase64DataUri && (
           <Flex flexDirection="row" my={6}>
-            {contrasts
-              .filter(
-                ({ val, displayWith }) =>
-                  displayWith.includes(contrast) || val > 0,
-              )
-              .map(({ val, color }) => (
-                <Pressable
-                  disabled={loading}
-                  key={val}
-                  onPress={() => {
-                    if (val > 0 && contrast !== val) {
-                      setLoading(true);
-                      setContrast(val);
-                    }
-                  }}
-                >
-                  <ContrastChoice
-                    selected={contrast === val}
-                    loading={loading}
-                    color={color}
-                  />
-                </Pressable>
-              ))}
+            <Box
+              width={
+                (7 -
+                  contrasts.length -
+                  contrasts.findIndex(element => element.val === contrast)) *
+                54
+              }
+            />
+            {contrasts.map(({ val, color }) => (
+              <Pressable
+                disabled={loading}
+                key={val}
+                onPress={() => {
+                  if (contrast !== val) {
+                    setLoading(true);
+                    setContrast(val);
+                  }
+                }}
+              >
+                <ContrastChoice
+                  selected={contrast === val}
+                  loading={loading}
+                  color={color}
+                />
+              </Pressable>
+            ))}
+            <Box
+              width={
+                contrasts.findIndex(element => element.val === contrast) * 54
+              }
+            />
           </Flex>
         )}
         <Button
