@@ -5413,8 +5413,8 @@
     "uploadAnotherImage": "Upload another image",
     "rotateImage": "rotate",
     "selectContrast": {
-      "1": "High Contrast",
-      "15": "Mid Contrast",
+      "0": "High Contrast",
+      "1": "Mid Contrast",
       "2": "RE MID CONTRAST MISSING TEXT",
       "3": "LOW CONTRAST MISSING TEST"
     },
