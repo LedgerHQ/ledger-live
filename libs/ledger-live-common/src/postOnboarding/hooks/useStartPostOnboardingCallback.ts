@@ -2,6 +2,7 @@ import { useDispatch } from "react-redux";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { usePostOnboardingContext } from "./usePostOnboardingContext";
 import { useCallback } from "react";
+import { useFeatureFlags } from "../../featureFlags";
 import { initPostOnboarding } from "../actions";
 
 /**
@@ -20,6 +21,7 @@ export function useStartPostOnboardingCallback(): (
   fallbackIfNoAction?: () => void
 ) => void {
   const dispatch = useDispatch();
+  const { getFeature } = useFeatureFlags();
   const { getPostOnboardingActionsForDevice, navigateToPostOnboardingHub } =
     usePostOnboardingContext();
 
@@ -29,7 +31,14 @@ export function useStartPostOnboardingCallback(): (
       mock = false,
       fallbackIfNoAction?: () => void
     ) => {
-      const actions = getPostOnboardingActionsForDevice(deviceModelId, mock);
+      const actions = getPostOnboardingActionsForDevice(
+        deviceModelId,
+        mock
+      ).filter(
+        (actionWithState) =>
+          !actionWithState.featureFlagId ||
+          getFeature(actionWithState.featureFlagId)?.enabled
+      );
       dispatch(
         initPostOnboarding({
           deviceModelId,
@@ -45,6 +54,11 @@ export function useStartPostOnboardingCallback(): (
       }
       navigateToPostOnboardingHub();
     },
-    [dispatch, getPostOnboardingActionsForDevice, navigateToPostOnboardingHub]
+    [
+      dispatch,
+      getFeature,
+      getPostOnboardingActionsForDevice,
+      navigateToPostOnboardingHub,
+    ]
   );
 }
