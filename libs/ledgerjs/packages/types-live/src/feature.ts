@@ -28,7 +28,10 @@ export type FeatureId =
   | "walletConnectLiveApp"
   | "customImage"
   | "referralProgramDiscoverCard"
-  | "referralProgramDesktopBanner";
+  | "referralProgramDesktopBanner"
+  | "disableNftSend"
+  | "disableNftLedgerMarket"
+  | "disableNftRaribleOpensea";
 
 /**  We use objects instead of direct booleans for potential future improvements
 like feature versioning etc */

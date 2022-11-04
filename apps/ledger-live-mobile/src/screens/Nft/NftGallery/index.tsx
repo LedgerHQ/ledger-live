@@ -7,6 +7,7 @@ import { Account, ProtoNFT } from "@ledgerhq/types-live";
 import Animated, { Value, event } from "react-native-reanimated";
 import { nftsByCollections } from "@ledgerhq/live-common/nft/index";
 import { useNavigation, useRoute, useTheme } from "@react-navigation/native";
+import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import { withDiscreetMode } from "../../../context/DiscreetModeContext";
 import LoadingFooter from "../../../components/LoadingFooter";
 import { accountSelector } from "../../../reducers/accounts";
@@ -24,6 +25,8 @@ import {
   StackNavigatorProps,
 } from "../../../components/RootNavigator/types/helpers";
 import { AccountsNavigatorParamList } from "../../../components/RootNavigator/types/AccountsNavigator";
+import InfoModal from "../../../modals/Info";
+import { notAvailableModalInfo } from "../NftInfoNotAvailable";
 
 const MAX_COLLECTIONS_FIRST_RENDER = 12;
 const COLLECTIONS_TO_ADD_ON_LIST_END_REACHED = 6;
@@ -43,6 +46,13 @@ const NftGallery = () => {
   const account = useSelector<State, Account | undefined>(state =>
     accountSelector(state, { accountId: params?.accountId }),
   );
+  const [isOpen, setOpen] = useState<boolean>(false);
+  const onCloseModal = useCallback(() => {
+    setOpen(false);
+  }, []);
+  const onOpenModal = useCallback(() => {
+    setOpen(true);
+  }, []);
 
   const hiddenNftCollections = useSelector(hiddenNftCollectionsSelector);
 
@@ -106,41 +116,54 @@ const NftGallery = () => {
       },
     });
 
+  const isNFTDisabled = useFeature("disableNftSend")?.enabled;
+
   return (
-    <TabBarSafeAreaView
-      edges={["left", "right", "bottom"]}
-      style={[
-        styles.root,
-        {
-          backgroundColor: colors.background,
-        },
-      ]}
-    >
-      <CollectionsList
-        data={collectionsSlice}
-        contentContainerStyle={styles.collectionsList}
-        renderItem={renderItem}
-        onEndReached={onEndReached}
-        onScroll={onScroll}
-        maxToRenderPerBatch={1}
-        initialNumToRender={1}
-        showsVerticalScrollIndicator={false}
-        ListHeaderComponent={
-          <View style={styles.sendButtonContainer}>
-            <Button
-              type="primary"
-              IconLeft={SendIcon}
-              containerStyle={styles.sendButton}
-              title={t("account.send")}
-              onPress={goToCollectionSelection}
-            />
-          </View>
-        }
-        ListFooterComponent={() =>
-          collections.length > collectionsCount ? <LoadingFooter /> : null
-        }
+    <>
+      <InfoModal
+        isOpened={!!isOpen}
+        onClose={onCloseModal}
+        data={notAvailableModalInfo}
       />
-    </TabBarSafeAreaView>
+      <TabBarSafeAreaView
+        edges={["left", "right", "bottom"]}
+        style={[
+          styles.root,
+          {
+            backgroundColor: colors.background,
+          },
+        ]}
+      >
+        <CollectionsList
+          data={collectionsSlice}
+          contentContainerStyle={styles.collectionsList}
+          renderItem={renderItem}
+          onEndReached={onEndReached}
+          onScroll={onScroll}
+          maxToRenderPerBatch={1}
+          initialNumToRender={1}
+          showsVerticalScrollIndicator={false}
+          ListHeaderComponent={
+            <View style={styles.sendButtonContainer}>
+              <Button
+                type="primary"
+                IconLeft={SendIcon}
+                containerStyle={styles.sendButton}
+                title={t("account.send")}
+                onPress={
+                  Platform.OS === "ios" && isNFTDisabled
+                    ? onOpenModal
+                    : goToCollectionSelection
+                }
+              />
+            </View>
+          }
+          ListFooterComponent={() =>
+            collections.length > collectionsCount ? <LoadingFooter /> : null
+          }
+        />
+      </TabBarSafeAreaView>
+    </>
   );
 };
 
