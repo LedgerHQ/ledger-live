@@ -7,6 +7,11 @@ import {
   NativeSyntheticEvent,
   Pressable,
 } from "react-native";
+import Animated, {
+  useAnimatedStyle,
+  useSharedValue,
+  withTiming,
+} from "react-native-reanimated";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { ImagePreviewError } from "@ledgerhq/live-common/customImage/errors";
 import useResizedImage, {
@@ -74,7 +79,9 @@ const Step2Preview = ({ navigation, route }: NavigationProps) => {
   const imageProcessorRef = useRef<ImageProcessor>(null);
   const [loading, setLoading] = useState(true);
   const [resizedImage, setResizedImage] = useState<ResizeResult | null>(null);
-  const [selectedIndex, setSelectedIndex] = useState(0);
+  const initialIndex = 0;
+  const [selectedIndex, setSelectedIndex] = useState(initialIndex);
+  const animSelectedIndex = useSharedValue(initialIndex);
   const [processorPreviewImage, setProcessorPreviewImage] =
     useState<ProcessorPreviewResult | null>(null);
   const [rawResultLoading, setRawResultLoading] = useState(false);
@@ -152,6 +159,22 @@ const Step2Preview = ({ navigation, route }: NavigationProps) => {
     setRawResultLoading(true);
   }, [imageProcessorRef, setRawResultLoading]);
 
+  const setSelectedIndexWrapped = useCallback(
+    newIndex => {
+      setSelectedIndex(newIndex);
+      animSelectedIndex.value = withTiming(newIndex, { duration: 300 });
+    },
+    [animSelectedIndex],
+  );
+
+  const leftBoxAnimatedStyle = useAnimatedStyle(() => ({
+    width: (3 - animSelectedIndex.value) * 54,
+  }));
+
+  const rightBoxAnimatedStyle = useAnimatedStyle(() => ({
+    width: animSelectedIndex.value * 54,
+  }));
+
   return (
     <SafeAreaView edges={["bottom"]} style={{ flex: 1 }}>
       {resizedImage?.imageBase64DataUri && (
@@ -181,14 +204,14 @@ const Step2Preview = ({ navigation, route }: NavigationProps) => {
         )}
       </Flex>
       <BottomButtonsContainer>
-        <Flex alignItems="center">
-          <Text fontSize="14px" lineHeight="17px">
-            {t("customImage.selectContrast." + selectedIndex)}
-          </Text>
-        </Flex>
+        <Text fontSize="14px" lineHeight="17px">
+          {t("customImage.selectContrast." + selectedIndex)}
+        </Text>
         {resizedImage?.imageBase64DataUri && (
           <Flex flexDirection="row" my={6}>
-            <Box width={(3 - selectedIndex) * 54} />
+            <Animated.View style={leftBoxAnimatedStyle}>
+              <Box width={(3 - selectedIndex) * 54} />
+            </Animated.View>
             {contrasts.map(({ val, color }, index) => (
               <Pressable
                 disabled={loading}
@@ -196,7 +219,7 @@ const Step2Preview = ({ navigation, route }: NavigationProps) => {
                 onPress={() => {
                   if (selectedIndex !== index) {
                     setLoading(true);
-                    setSelectedIndex(index);
+                    setSelectedIndexWrapped(index);
                   }
                 }}
               >
@@ -207,10 +230,13 @@ const Step2Preview = ({ navigation, route }: NavigationProps) => {
                 />
               </Pressable>
             ))}
-            <Box width={selectedIndex * 54} />
+            <Animated.View style={rightBoxAnimatedStyle}>
+              <Box width={selectedIndex * 54} />
+            </Animated.View>
           </Flex>
         )}
         <Button
+          width="100%"
           disabled={!processorPreviewImage?.imageBase64DataUri}
           mt={6}
           size="large"
