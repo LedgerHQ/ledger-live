@@ -45,7 +45,7 @@ import type {
   AccountsUpdateAccountWithUpdaterPayload,
   SettingsBlacklistTokenPayload,
 } from "../actions/types";
-import { AccountsActionTypes, SettingsActionTypes } from "../actions/types";
+import { AccountsActionTypes } from "../actions/types";
 import accountModel from "../logic/accountModel";
 
 export const INITIAL_STATE: AccountsState = {
