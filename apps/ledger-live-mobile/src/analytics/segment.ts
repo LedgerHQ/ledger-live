@@ -40,6 +40,7 @@ import { satisfactionSelector } from "../reducers/ratings";
 import type { AppStore } from "../reducers";
 import { NavigatorName } from "../const";
 import { previousRouteNameRef, currentRouteNameRef } from "./screenRefs";
+import { AnonymousIpPlugin } from "./AnonymousIpPlugin";
 import { Maybe } from "../types/helpers";
 
 let sessionId = uuid();
@@ -127,6 +128,8 @@ export const start = async (
       writeKey: token,
       debug: !!ANALYTICS_LOGS,
     });
+    // This allows us to not retrieve users ip addresses for privacy reasons
+    segmentClient.add({ plugin: new AnonymousIpPlugin() });
 
     if (created) {
       segmentClient.reset();
