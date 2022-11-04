@@ -1,4 +1,4 @@
-import { SMALL_BYTES_COUNT } from "../../consts";
+import { CHECKSUM_HEX_LEN, SMALL_BYTES_COUNT } from "../../consts";
 
 import { Account, Address } from "@ledgerhq/types-live";
 import { CLPublicKeyTag } from "casper-js-sdk";
@@ -29,10 +29,14 @@ export const getPubKeySignature = (pubKey: string): CLPublicKeyTag => {
 };
 
 function numberToBin(num: number) {
-  return (num >>> 0).toString(2);
+  let binStr = (num >>> 0).toString(2);
+  while (binStr.length < 8) {
+    binStr = "0" + binStr;
+  }
+  return binStr.split("").reverse().join("");
 }
 
-function bytesToBitsString(buf: Buffer) {
+function bytesToBitsString(buf: Buffer | Uint8Array) {
   const bitsArray: string[] = [];
 
   for (const num of buf) {
@@ -48,16 +52,16 @@ function bytesToBitsString(buf: Buffer) {
  * similar to [EIP-55](https://eips.ethereum.org/EIPS/eip-55).
  */
 function encode(inputBytes: Buffer) {
-  const context = blake2bInit(inputBytes.length);
+  const context = blake2bInit(CHECKSUM_HEX_LEN);
   blake2bUpdate(context, inputBytes);
-  const hashBuf = Buffer.from(blake2bFinal(context));
+  const blakeHash = blake2bFinal(context);
 
   const nibbles = inputBytes
     .toString("hex")
     .split("")
     .map((v) => parseInt(v, 16));
 
-  const bitsArray = bytesToBitsString(hashBuf);
+  const bitsArray = bytesToBitsString(blakeHash);
 
   const res: Array<number | string> = [];
 
@@ -65,7 +69,7 @@ function encode(inputBytes: Buffer) {
   for (const num of nibbles) {
     if (num < 10) res.push(num);
     else {
-      steamIndex++;
+      steamIndex += 1;
       if (parseInt(bitsArray[steamIndex], 10))
         res.push(num.toString(16).toUpperCase());
       else res.push(num.toString(16).toLowerCase());
@@ -86,7 +90,7 @@ function decode(inputString: string): string {
 
   const encoded = encode(Buffer.from(inputString, "hex"));
 
-  for (let i = 0; i < encode.length; i++) {
+  for (let i = 0; i < encoded.length; i++) {
     if (encoded.charAt(i) !== inputString.charAt(i))
       throw Error("Checksum invalid, decoding failed.");
   }
@@ -95,9 +99,8 @@ function decode(inputString: string): string {
 }
 
 export function validateAddress(address: string): { isValid: boolean } {
-  return { isValid: true };
   try {
-    decode(address);
+    decode(address.substring(2));
     return { isValid: true };
   } catch (err) {
     return { isValid: false };
