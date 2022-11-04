@@ -74,7 +74,7 @@ const Step2Preview = ({ navigation, route }: NavigationProps) => {
   const imageProcessorRef = useRef<ImageProcessor>(null);
   const [loading, setLoading] = useState(true);
   const [resizedImage, setResizedImage] = useState<ResizeResult | null>(null);
-  const [contrast, setContrast] = useState(1);
+  const [selectedIndex, setSelectedIndex] = useState(0);
   const [processorPreviewImage, setProcessorPreviewImage] =
     useState<ProcessorPreviewResult | null>(null);
   const [rawResultLoading, setRawResultLoading] = useState(false);
@@ -161,7 +161,7 @@ const Step2Preview = ({ navigation, route }: NavigationProps) => {
           onPreviewResult={handlePreviewResult}
           onError={handleError}
           onRawResult={handleRawResult}
-          contrast={contrast}
+          contrast={contrasts[selectedIndex].val}
         />
       )}
       <Flex
@@ -180,45 +180,34 @@ const Step2Preview = ({ navigation, route }: NavigationProps) => {
           <InfiniteLoader />
         )}
       </Flex>
-      <BottomButtonsContainer alignItems="center">
-        <Text fontSize="14px" lineHeight="17px">
-          {t(
-            "customImage.selectContrast." + (contrast === 1.5 ? 15 : contrast),
-          )}
-        </Text>
+      <BottomButtonsContainer>
+        <Flex alignItems="center">
+          <Text fontSize="14px" lineHeight="17px">
+            {t("customImage.selectContrast." + selectedIndex)}
+          </Text>
+        </Flex>
         {resizedImage?.imageBase64DataUri && (
           <Flex flexDirection="row" my={6}>
-            <Box
-              width={
-                (7 -
-                  contrasts.length -
-                  contrasts.findIndex(element => element.val === contrast)) *
-                54
-              }
-            />
-            {contrasts.map(({ val, color }) => (
+            <Box width={(3 - selectedIndex) * 54} />
+            {contrasts.map(({ val, color }, index) => (
               <Pressable
                 disabled={loading}
                 key={val}
                 onPress={() => {
-                  if (contrast !== val) {
+                  if (selectedIndex !== index) {
                     setLoading(true);
-                    setContrast(val);
+                    setSelectedIndex(index);
                   }
                 }}
               >
                 <ContrastChoice
-                  selected={contrast === val}
+                  selected={selectedIndex === index}
                   loading={loading}
                   color={color}
                 />
               </Pressable>
             ))}
-            <Box
-              width={
-                contrasts.findIndex(element => element.val === contrast) * 54
-              }
-            />
+            <Box width={selectedIndex * 54} />
           </Flex>
         )}
         <Button
