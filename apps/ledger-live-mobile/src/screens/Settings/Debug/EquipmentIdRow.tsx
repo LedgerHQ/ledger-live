@@ -15,8 +15,7 @@ const EquipmentIdRow = () => {
     <SettingsRow
       title="Equipment Id"
       desc={segmentId}
-      onPress={null}
-      alignedTop
+      onPress={undefined}
     />
   );
 };

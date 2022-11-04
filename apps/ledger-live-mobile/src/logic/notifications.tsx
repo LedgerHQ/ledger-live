@@ -109,10 +109,6 @@ const useNotifications = () => {
   const navigation = useNavigation();
 
   const handlePushNotificationsPermission = useCallback(async () => {
-    track("button_clicked", {
-      button: "Go to system settings",
-      screen: pushNotificationsOldRoute,
-    });
     if (Platform.OS === "android") {
       Linking.openSettings();
     } else {
