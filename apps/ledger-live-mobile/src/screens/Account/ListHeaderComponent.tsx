@@ -138,6 +138,7 @@ export function getListHeaderComponents({
           countervalueAvailable={countervalueAvailable}
           counterValueCurrency={counterValueCurrency}
           onSwitchAccountCurrency={onSwitchAccountCurrency}
+          parentAccount={parentAccount}
         />
       </Box>,
       <Header />,
