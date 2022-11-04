@@ -74,7 +74,7 @@ const makeRecursiveFieldStructImplem = (
       for (const [fieldName, fieldValue] of Object.entries(
         data as EIP712Message["message"]
       )) {
-        const fieldType = typesMap?.[typeDescription?.name || ""][fieldName];
+        const fieldType = typesMap[typeDescription?.name || ""]?.[fieldName];
 
         if (fieldType) {
           await recursiveFieldStructImplem(
@@ -85,14 +85,13 @@ const makeRecursiveFieldStructImplem = (
         }
       }
     } else {
-      if (filters) {
-        const filter = filters.fields.find((f) => path === f.path);
-        if (filter) {
-          await sendFilteringInfo(transport, "showField", {
-            displayName: filter.label,
-            sig: filter.signature,
-          });
-        }
+      const filter = filters?.fields.find((f) => path === f.path);
+
+      if (filter) {
+        await sendFilteringInfo(transport, "showField", {
+          displayName: filter.label,
+          sig: filter.signature,
+        });
       }
 
       await sendStructImplem(transport, {
