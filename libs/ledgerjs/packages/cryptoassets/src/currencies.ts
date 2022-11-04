@@ -272,7 +272,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
           "https://cchain.explorer.avax.network/token/$contractAddress?a=$address",
       },
     ],
-    keywords: ["avax", "avalanche", "c-chain", "snow"],
+    keywords: ["avax", "avalanche", "c-chain"],
   },
   banano: {
     type: "CryptoCurrency",
