@@ -61,6 +61,8 @@ const AdvancedMessageArea = styled.pre`
 `;
 
 const MessageProperty = memo(({ label, value }: { label: string, value: string | string[] }) => {
+  if (!value) return null;
+
   return (
     <Box flex="1" mb={20}>
       <Text ff="Inter|Medium" bold color="palette.text.shade40" fontSize={4}>

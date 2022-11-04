@@ -34,7 +34,7 @@ const MessageProperty = memo(
   }) => {
     const { colors } = useTheme();
 
-    if (!value) return <></>;
+    if (!value) return null;
 
     return (
       <View style={styles.messageProperty}>
