@@ -17,7 +17,7 @@ export const notAvailableModalInfo = [
         <Link
           type="color"
           size="medium"
-          onPress={() => Linking.openURL(urls.nft.supportDisableIos)} // TODO REPLACE WHEN SUPPORT LINK IS AVAILABLE
+          onPress={() => Linking.openURL(urls.nft.supportDisableIos)}
         >
           <Trans i18nKey={"nft.modalDisabled.contactSupport"} />
         </Link>
