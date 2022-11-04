@@ -295,19 +295,19 @@ const NftViewer = ({ route }: Props) => {
   );
 
   const [isOpen, setOpen] = useState<boolean>(false);
-  const onCloseModal = useCallback(() => {
-    setOpen(false);
-  }, []);
-  const onOpenModal = useCallback(() => {
+  const onOpenModal = () => {
     setOpen(true);
-  }, []);
-  const isNFTDisabled = useFeature("disableNftSend")?.enabled;
+  };
+  const isNFTDisabled =
+    useFeature("disableNftSend")?.enabled && Platform.OS === "ios";
 
   return (
     <>
       <InfoModal
-        isOpened={!!isOpen}
-        onClose={onCloseModal}
+        isOpened={isOpen}
+        onClose={() => {
+          setOpen(false);
+        }}
         data={notAvailableModalInfo}
       />
       <View>
@@ -358,11 +358,7 @@ const NftViewer = ({ route }: Props) => {
                   type="main"
                   Icon={Icons.ArrowFromBottomMedium}
                   iconPosition="left"
-                  onPress={
-                    Platform.OS === "ios" && isNFTDisabled
-                      ? onOpenModal
-                      : goToRecipientSelection
-                  }
+                  onPress={isNFTDisabled ? onOpenModal : goToRecipientSelection}
                 >
                   <Trans i18nKey="account.send" />
                 </Button>

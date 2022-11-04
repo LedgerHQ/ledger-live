@@ -48,7 +48,8 @@ function Discover() {
 
   const learn = useFeature("learn");
   const referralProgramConfig = useFeature("referralProgramDiscoverCard");
-  const isNFTDisabled = useFeature("disableNftLedgerMarket")?.enabled;
+  const isNFTDisabled =
+    useFeature("disableNftLedgerMarket")?.enabled && Platform.OS === "ios";
 
   const readOnlyTrack = useCallback((bannerName: string) => {
     track("banner_clicked", {
@@ -128,7 +129,7 @@ function Discover() {
             />
           ),
         },
-        ...(Platform.OS === "ios" && isNFTDisabled
+        ...(isNFTDisabled
           ? []
           : [
               {

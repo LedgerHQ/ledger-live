@@ -151,13 +151,11 @@ const NftCollection = ({ route }: NavigationProps) => {
     setOpCount(opCount + 50);
   }, [setOpCount, opCount]);
   const [isOpen, setOpen] = useState<boolean>(false);
-  const onCloseModal = useCallback(() => {
-    setOpen(false);
-  }, []);
-  const onOpenModal = useCallback(() => {
+  const onOpenModal = () => {
     setOpen(true);
-  }, []);
-  const isNFTDisabled = useFeature("disableNftSend")?.enabled;
+  };
+  const isNFTDisabled =
+    useFeature("disableNftSend")?.enabled && Platform.OS === "ios";
 
   const data = [
     <View style={styles.buttonContainer}>
@@ -166,9 +164,7 @@ const NftCollection = ({ route }: NavigationProps) => {
         IconLeft={SendIcon}
         containerStyle={styles.button}
         title={t("account.send")}
-        onPress={
-          Platform.OS === "ios" && isNFTDisabled ? onOpenModal : sendToken
-        }
+        onPress={isNFTDisabled ? onOpenModal : sendToken}
       />
     </View>,
     <View style={styles.nftList}>
@@ -203,8 +199,10 @@ const NftCollection = ({ route }: NavigationProps) => {
   return (
     <>
       <InfoModal
-        isOpened={!!isOpen}
-        onClose={onCloseModal}
+        isOpened={isOpen}
+        onClose={() => {
+          setOpen(false);
+        }}
         data={notAvailableModalInfo}
       />
       <TabBarSafeAreaView

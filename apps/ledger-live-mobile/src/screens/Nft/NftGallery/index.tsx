@@ -47,12 +47,9 @@ const NftGallery = () => {
     accountSelector(state, { accountId: params?.accountId }),
   );
   const [isOpen, setOpen] = useState<boolean>(false);
-  const onCloseModal = useCallback(() => {
-    setOpen(false);
-  }, []);
-  const onOpenModal = useCallback(() => {
+  const onOpenModal = () => {
     setOpen(true);
-  }, []);
+  };
 
   const hiddenNftCollections = useSelector(hiddenNftCollectionsSelector);
 
@@ -116,13 +113,16 @@ const NftGallery = () => {
       },
     });
 
-  const isNFTDisabled = useFeature("disableNftSend")?.enabled;
+  const isNFTDisabled =
+    useFeature("disableNftSend")?.enabled && Platform.OS === "ios";
 
   return (
     <>
       <InfoModal
-        isOpened={!!isOpen}
-        onClose={onCloseModal}
+        isOpened={isOpen}
+        onClose={() => {
+          setOpen(false);
+        }}
         data={notAvailableModalInfo}
       />
       <TabBarSafeAreaView
@@ -150,11 +150,7 @@ const NftGallery = () => {
                 IconLeft={SendIcon}
                 containerStyle={styles.sendButton}
                 title={t("account.send")}
-                onPress={
-                  Platform.OS === "ios" && isNFTDisabled
-                    ? onOpenModal
-                    : goToCollectionSelection
-                }
+                onPress={isNFTDisabled ? onOpenModal : goToCollectionSelection}
               />
             </View>
           }
