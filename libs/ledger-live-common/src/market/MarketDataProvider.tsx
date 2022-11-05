@@ -294,14 +294,16 @@ export const MarketDataProvider = ({
           limit: 1,
           page: 1,
         })
-        .then(
-          ([{ chartData: _, ...marketData }]) =>
+        .then(([marketData]) => {
+          if (marketData) {
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
+            const { chartData, ...rest } = marketData;
             dispatch({
               type: ACTIONS.UPDATE_SINGLE_MARKET_DATA,
-              payload: marketData,
-            }),
-          handleError
-        );
+              payload: rest,
+            });
+          }
+        }, handleError);
     }
   }, [api, chartRequestParams, handleError, loading]);
 

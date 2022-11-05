@@ -1,4 +1,4 @@
-import * as paymentProviders from "@ledgerhq/icons-ui/react/_Payment";
+import * as paymentProviders from "@ledgerhq/icons-ui/react/_Payment/index";
 
 import React from "react";
 

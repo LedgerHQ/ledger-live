@@ -2,9 +2,6 @@ name: "[Bot] Testing with 'Oxygen'"
 on:
   workflow_dispatch:
     inputs:
-      ref:
-        description: The branch to run on
-        required: true
       family:
         description: coin family to filter with (if any)
         required: false
@@ -54,11 +51,6 @@ jobs:
     needs: [start-runner]
     steps:
       - uses: actions/checkout@v3
-        if: ${{ github.event.inputs.ref != null }}
-        with:
-          ref: ${{ github.event.inputs.ref }}
-      - uses: actions/checkout@v3
-        if: ${{ !github.event.inputs.ref }}
       - name: Retrieving coin apps
         uses: actions/checkout@v3
         with:
