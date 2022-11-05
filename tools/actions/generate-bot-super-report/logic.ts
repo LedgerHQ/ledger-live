@@ -368,7 +368,7 @@ export function generateSuperReport(
     }
   });
 
-  reportSlackText = `:confetti_ball: *${summary} <{{url}}|Full Report>* @here`;
+  reportSlackText = `:confetti_ball: *${summary} <{{url}}|Full Report>*`;
 
   return {
     reportMarkdownBody,

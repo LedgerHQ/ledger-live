@@ -114,16 +114,20 @@ function OnboardingStepPairNew() {
       screen: NavigatorName.Main,
     });
 
-    startPostOnboarding(deviceModelId as DeviceModelId);
+    startPostOnboarding(deviceModelId as DeviceModelId, false, () =>
+      navigation.navigate(NavigatorName.Base, {
+        screen: NavigatorName.Main,
+      }),
+    );
 
     triggerJustFinishedOnboardingNewDevicePushNotificationModal();
   }, [
     dispatch,
-    navigation,
     resetCurrentStep,
-    triggerJustFinishedOnboardingNewDevicePushNotificationModal,
+    navigation,
     startPostOnboarding,
     deviceModelId,
+    triggerJustFinishedOnboardingNewDevicePushNotificationModal,
   ]);
 
   const nextPage = useCallback(() => {

@@ -24482,7 +24482,7 @@ function generateSuperReport(all, days) {
       }
     }
   });
-  reportSlackText = `:confetti_ball: *${summary} <{{url}}|Full Report>* @here`;
+  reportSlackText = `:confetti_ball: *${summary} <{{url}}|Full Report>*`;
   return {
     reportMarkdownBody,
     reportSlackText
