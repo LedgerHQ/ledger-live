@@ -191,8 +191,7 @@ const estimateMaxSpendable = async ({
 
   if (balance.lte(estimatedFees)) return new BigNumber(0);
 
-  balance = balance.minus(estimatedFees);
-  if (amount) balance = balance.minus(amount);
+  if (amount) balance = balance.minus(estimatedFees);
 
   // log("debug", "[estimateMaxSpendable] finish fn");
 
