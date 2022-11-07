@@ -1,5 +1,3 @@
-// @flow
-
 import React, { useCallback, useEffect } from "react";
 import styled from "styled-components";
 import { useTranslation } from "react-i18next";
@@ -13,10 +11,9 @@ import Text from "~/renderer/components/Text";
 import Button from "~/renderer/components/Button";
 import ErrorDisplay from "~/renderer/components/ErrorDisplay";
 import CheckCircle from "~/renderer/icons/CheckCircle";
-import type { ThemedComponent } from "~/renderer/styles/StyleProvider";
-import type { StepProps } from "../";
+import { StepProps } from "../";
 
-const Container: ThemedComponent<{}> = styled(Box).attrs(() => ({
+const Container = styled(Box).attrs(() => ({
   alignItems: "center",
   fontSize: 4,
   color: "palette.text.shade100",
