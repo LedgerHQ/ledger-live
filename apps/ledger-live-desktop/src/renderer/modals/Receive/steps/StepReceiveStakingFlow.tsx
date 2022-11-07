@@ -137,7 +137,7 @@ export const StepReceiveStakingFooter = (props: StepProps) => {
         .split("/")
         .filter(e => e !== "#")
         .join("/"),
-      flow: "swap",
+      flow: "stake",
       currency: account?.currency?.name,
       provider: action?.provider?.name || "Ledger",
       modal: "receive",
