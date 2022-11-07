@@ -1,7 +1,7 @@
 import React, { useCallback, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import styled from "styled-components/native";
-import { Box, Button, Flex, InfiniteLoader, Text } from "@ledgerhq/native-ui";
+import { Box, Button, Flex, InfiniteLoader } from "@ledgerhq/native-ui";
 import {
   ImageErrorEventData,
   NativeSyntheticEvent,
@@ -204,9 +204,6 @@ const Step2Preview = ({ navigation, route }: NavigationProps) => {
         )}
       </Flex>
       <BottomButtonsContainer>
-        <Text fontSize="14px" lineHeight="17px">
-          {t("customImage.selectContrast." + selectedIndex)}
-        </Text>
         {resizedImage?.imageBase64DataUri && (
           <Flex flexDirection="row" my={6}>
             <Animated.View style={leftBoxAnimatedStyle}>
