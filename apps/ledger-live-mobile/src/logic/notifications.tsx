@@ -1,7 +1,6 @@
 import { useCallback, useMemo } from "react";
 import { Linking, Platform } from "react-native";
 import { useSelector, useDispatch } from "react-redux";
-import { useNavigation } from "@react-navigation/native";
 import { add, isBefore, parseISO } from "date-fns";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import messaging from "@react-native-firebase/messaging";
@@ -106,7 +105,6 @@ const useNotifications = () => {
   );
 
   const dispatch = useDispatch();
-  const navigation = useNavigation();
 
   const handlePushNotificationsPermission = useCallback(async () => {
     if (Platform.OS === "android") {
