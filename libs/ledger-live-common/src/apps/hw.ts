@@ -368,7 +368,6 @@ export const listApps = (
             indexOfMarketCap,
             isDevTools,
           });
-
           return app;
         })
         .filter(Boolean);

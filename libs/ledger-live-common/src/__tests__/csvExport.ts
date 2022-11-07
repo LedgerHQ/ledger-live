@@ -5,7 +5,6 @@ import { getCryptoCurrencyById } from "../currencies";
 import { accountsOpToCSV } from "../csvExport";
 import { initialState, loadCountervalues } from "../countervalues/logic";
 import { getFiatCurrencyByTicker } from "../currencies";
-
 setEnv("MOCK", "1");
 setEnv("MOCK_COUNTERVALUES", "1");
 test("export CSV", async () => {

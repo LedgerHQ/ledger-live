@@ -22,7 +22,6 @@ export const findCurrencyExplorer = (
       version: "v3",
     };
   }
-
   if (config.experimental && getEnv("EXPERIMENTAL_EXPLORERS")) {
     const base = config.experimental.base;
     const version = config.experimental.version;
