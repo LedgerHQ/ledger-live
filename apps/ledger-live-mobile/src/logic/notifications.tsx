@@ -124,7 +124,7 @@ const useNotifications = () => {
         fcm.requestPermission();
       }
     }
-  }, [pushNotificationsOldRoute]);
+  }, []);
 
   const setPushNotificationsModalOpenCallback = useCallback(
     isModalOpen => {
@@ -370,11 +370,11 @@ const useNotifications = () => {
     }
   }, [
     pushNotificationsOldRoute,
-    handleSetDateOfNextAllowedRequest,
-    navigation,
+    setPushNotificationsModalOpenCallback,
+    handlePushNotificationsPermission,
     pushNotificationsFeature?.params?.conditions
       ?.default_delay_between_two_prompts,
-    setPushNotificationsModalOpenCallback,
+    handleSetDateOfNextAllowedRequest,
   ]);
 
   const modalDelayLater = useCallback(() => {
