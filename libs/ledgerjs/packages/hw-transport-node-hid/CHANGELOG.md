@@ -1,5 +1,17 @@
 # @ledgerhq/hw-transport-node-hid
 
+## 6.27.7-nightly.1
+
+### Patch Changes
+
+- [#1729](https://github.com/LedgerHQ/ledger-live/pull/1729) [`d3c91a53e0`](https://github.com/LedgerHQ/ledger-live/commit/d3c91a53e06f9f47817e96c452f69e2d9f71d80f) Thanks [@gre](https://github.com/gre)! - update node-hid to 2.1.2
+
+- Updated dependencies [[`d3c91a53e0`](https://github.com/LedgerHQ/ledger-live/commit/d3c91a53e06f9f47817e96c452f69e2d9f71d80f), [`24ea9cd15f`](https://github.com/LedgerHQ/ledger-live/commit/24ea9cd15f92d5a2c74c4b936bacb89d5d4d36fd)]:
+  - @ledgerhq/hw-transport@6.27.7-nightly.1
+  - @ledgerhq/errors@6.11.2-nightly.1
+  - @ledgerhq/hw-transport-node-hid-noevents@6.27.7-nightly.1
+  - @ledgerhq/devices@7.0.4-nightly.1
+
 ## 6.27.7-nightly.0
 
 ### Patch Changes

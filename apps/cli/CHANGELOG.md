@@ -1,5 +1,23 @@
 # @ledgerhq/live-cli
 
+## 22.4.6-nightly.0
+
+### Patch Changes
+
+- [#1141](https://github.com/LedgerHQ/ledger-live/pull/1141) [`24ea9cd15f`](https://github.com/LedgerHQ/ledger-live/commit/24ea9cd15f92d5a2c74c4b936bacb89d5d4d36fd) Thanks [@valpinkman](https://github.com/valpinkman)! - Collateral changes due to solving all LLM typescript/eslint issues/warnings.
+
+- Updated dependencies [[`aec68cca70`](https://github.com/LedgerHQ/ledger-live/commit/aec68cca70194f7890a09dca62a737046af13305), [`3f516ea41e`](https://github.com/LedgerHQ/ledger-live/commit/3f516ea41e6e1a485be452872c91bd4a315eb167), [`d3c91a53e0`](https://github.com/LedgerHQ/ledger-live/commit/d3c91a53e06f9f47817e96c452f69e2d9f71d80f), [`ddeace7163`](https://github.com/LedgerHQ/ledger-live/commit/ddeace7163f0c9186f4f48cc4baa2b9273c5ebf3), [`e89044242d`](https://github.com/LedgerHQ/ledger-live/commit/e89044242d005bfc3349abbbf1921e9056686d0b), [`24ea9cd15f`](https://github.com/LedgerHQ/ledger-live/commit/24ea9cd15f92d5a2c74c4b936bacb89d5d4d36fd)]:
+  - @ledgerhq/live-common@27.7.0-nightly.0
+  - @ledgerhq/hw-transport-node-hid@6.27.7-nightly.1
+  - @ledgerhq/hw-transport@6.27.7-nightly.1
+  - @ledgerhq/cryptoassets@6.36.2-nightly.0
+  - @ledgerhq/errors@6.11.2-nightly.1
+  - @ledgerhq/hw-transport-http@6.27.7-nightly.1
+  - @ledgerhq/hw-app-btc@8.1.2-nightly.1
+  - @ledgerhq/hw-transport-mocker@6.27.7-nightly.1
+  - @ledgerhq/hw-transport-node-ble@6.27.7-nightly.1
+  - @ledgerhq/hw-transport-node-speculos@6.27.7-nightly.1
+
 ## 22.4.5
 
 ### Patch Changes

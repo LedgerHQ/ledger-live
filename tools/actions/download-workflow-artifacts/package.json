@@ -1,6 +1,6 @@
 {
   "name": "@actions/download-workflow-artifacts",
-  "version": "1.0.0",
+  "version": "1.0.1-nightly.0",
   "description": "Download artifacts from previous workflow",
   "author": "Valentin D. Pinkman <valentin.d.pinkman@icloud.com>",
   "license": "MIT",

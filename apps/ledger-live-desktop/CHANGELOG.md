@@ -1,5 +1,24 @@
 # ledger-live-desktop
 
+## 2.50.0-nightly.3
+
+### Patch Changes
+
+- [#1141](https://github.com/LedgerHQ/ledger-live/pull/1141) [`24ea9cd15f`](https://github.com/LedgerHQ/ledger-live/commit/24ea9cd15f92d5a2c74c4b936bacb89d5d4d36fd) Thanks [@valpinkman](https://github.com/valpinkman)! - Collateral changes due to solving all LLM typescript/eslint issues/warnings.
+
+* [#1717](https://github.com/LedgerHQ/ledger-live/pull/1717) [`070f58e1d8`](https://github.com/LedgerHQ/ledger-live/commit/070f58e1d83e91f68181cd0a8cbb4b268a79d89e) Thanks [@alexandremgo](https://github.com/alexandremgo)! - Fix language step during firmware update on LLD
+
+* Updated dependencies [[`aec68cca70`](https://github.com/LedgerHQ/ledger-live/commit/aec68cca70194f7890a09dca62a737046af13305), [`3f516ea41e`](https://github.com/LedgerHQ/ledger-live/commit/3f516ea41e6e1a485be452872c91bd4a315eb167), [`d3c91a53e0`](https://github.com/LedgerHQ/ledger-live/commit/d3c91a53e06f9f47817e96c452f69e2d9f71d80f), [`ddeace7163`](https://github.com/LedgerHQ/ledger-live/commit/ddeace7163f0c9186f4f48cc4baa2b9273c5ebf3), [`ce040b4020`](https://github.com/LedgerHQ/ledger-live/commit/ce040b4020ffc9b19fa46ac5edf2122cd38fde62), [`e89044242d`](https://github.com/LedgerHQ/ledger-live/commit/e89044242d005bfc3349abbbf1921e9056686d0b), [`24ea9cd15f`](https://github.com/LedgerHQ/ledger-live/commit/24ea9cd15f92d5a2c74c4b936bacb89d5d4d36fd)]:
+  - @ledgerhq/live-common@27.7.0-nightly.0
+  - @ledgerhq/hw-transport@6.27.7-nightly.1
+  - @ledgerhq/react-ui@0.10.0-nightly.2
+  - @ledgerhq/errors@6.11.2-nightly.1
+  - @ledgerhq/hw-transport-http@6.27.7-nightly.1
+  - @ledgerhq/hw-transport-node-hid-singleton@6.28.4-nightly.1
+  - @ledgerhq/types-cryptoassets@6.23.3-nightly.0
+  - @ledgerhq/types-live@6.25.2-nightly.0
+  - @ledgerhq/devices@7.0.4-nightly.1
+
 ## 2.50.0-nightly.2
 
 ### Patch Changes

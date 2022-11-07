@@ -1,5 +1,13 @@
 # @ledgerhq/icons-ui
 
+## 0.2.8-nightly.0
+
+### Patch Changes
+
+- [#1748](https://github.com/LedgerHQ/ledger-live/pull/1748) [`f7a162c356`](https://github.com/LedgerHQ/ledger-live/commit/f7a162c356a0cd84b6eb635493ee56af06e306e5) Thanks [@mlegall-ledger](https://github.com/mlegall-ledger)! - Updated payment providers icons
+
+* [#1141](https://github.com/LedgerHQ/ledger-live/pull/1141) [`24ea9cd15f`](https://github.com/LedgerHQ/ledger-live/commit/24ea9cd15f92d5a2c74c4b936bacb89d5d4d36fd) Thanks [@valpinkman](https://github.com/valpinkman)! - Collateral changes due to solving all LLM typescript/eslint issues/warnings.
+
 ## 0.2.7
 
 ### Patch Changes

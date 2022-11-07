@@ -1,5 +1,39 @@
 # @ledgerhq/live-common
 
+## 27.7.0-nightly.0
+
+### Minor Changes
+
+- [#1757](https://github.com/LedgerHQ/ledger-live/pull/1757) [`aec68cca70`](https://github.com/LedgerHQ/ledger-live/commit/aec68cca70194f7890a09dca62a737046af13305) Thanks [@henrily-ledger](https://github.com/henrily-ledger)! - disable nft on ios with feature flag
+
+### Patch Changes
+
+- [#1758](https://github.com/LedgerHQ/ledger-live/pull/1758) [`3f516ea41e`](https://github.com/LedgerHQ/ledger-live/commit/3f516ea41e6e1a485be452872c91bd4a315eb167) Thanks [@LFBarreto](https://github.com/LFBarreto)! - bugfix - MarketDataProvider - undefined chartData in specific cases
+
+* [#1731](https://github.com/LedgerHQ/ledger-live/pull/1731) [`ddeace7163`](https://github.com/LedgerHQ/ledger-live/commit/ddeace7163f0c9186f4f48cc4baa2b9273c5ebf3) Thanks [@pierrelouis-c](https://github.com/pierrelouis-c)! - Filter the post onboarding actions using Feature Flags
+
+- [#1685](https://github.com/LedgerHQ/ledger-live/pull/1685) [`e89044242d`](https://github.com/LedgerHQ/ledger-live/commit/e89044242d005bfc3349abbbf1921e9056686d0b) Thanks [@alexandremgo](https://github.com/alexandremgo)! - Handle 0x5515 response for allow manager and connect app device actions on LLM
+
+* [#1141](https://github.com/LedgerHQ/ledger-live/pull/1141) [`24ea9cd15f`](https://github.com/LedgerHQ/ledger-live/commit/24ea9cd15f92d5a2c74c4b936bacb89d5d4d36fd) Thanks [@valpinkman](https://github.com/valpinkman)! - Collateral changes due to solving all LLM typescript/eslint issues/warnings.
+
+* Updated dependencies [[`d3c91a53e0`](https://github.com/LedgerHQ/ledger-live/commit/d3c91a53e06f9f47817e96c452f69e2d9f71d80f), [`24ea9cd15f`](https://github.com/LedgerHQ/ledger-live/commit/24ea9cd15f92d5a2c74c4b936bacb89d5d4d36fd)]:
+  - @ledgerhq/hw-transport@6.27.7-nightly.1
+  - @ledgerhq/cryptoassets@6.36.2-nightly.0
+  - @ledgerhq/errors@6.11.2-nightly.1
+  - @ledgerhq/hw-app-eth@6.29.12-nightly.0
+  - @ledgerhq/hw-app-solana@7.0.1-nightly.1
+  - @ledgerhq/hw-app-algorand@6.27.7-nightly.1
+  - @ledgerhq/hw-app-btc@8.1.2-nightly.1
+  - @ledgerhq/hw-app-cosmos@6.27.7-nightly.1
+  - @ledgerhq/hw-app-polkadot@6.27.7-nightly.1
+  - @ledgerhq/hw-app-str@6.27.7-nightly.1
+  - @ledgerhq/hw-app-tezos@6.27.7-nightly.1
+  - @ledgerhq/hw-app-trx@6.27.7-nightly.1
+  - @ledgerhq/hw-app-xrp@6.27.7-nightly.1
+  - @ledgerhq/hw-transport-mocker@6.27.7-nightly.1
+  - @ledgerhq/hw-transport-node-speculos@6.27.7-nightly.1
+  - @ledgerhq/devices@7.0.4-nightly.1
+
 ## 27.6.0
 
 ### Minor Changes
