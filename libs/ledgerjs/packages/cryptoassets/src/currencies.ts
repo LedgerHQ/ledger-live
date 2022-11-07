@@ -259,10 +259,6 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
       baseChain: "mainnet",
       chainId: 43114,
       networkId: 43114,
-      explorer: {
-        uri: "https://api.snowtrace.io",
-        type: "etherscan",
-      },
     },
     explorerViews: [
       {
@@ -297,7 +293,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     type: "CryptoCurrency",
     id: "bitcoin",
     coinType: CoinType.BTC,
-    name: "Bitcoin",
+    name: "Bitcoin TEST",
     managerAppName: "Bitcoin",
     ticker: "BTC",
     scheme: "bitcoin",

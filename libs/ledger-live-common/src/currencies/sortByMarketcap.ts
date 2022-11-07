@@ -78,7 +78,6 @@ export const useMarketcapTickers = (): string[] | null | undefined => {
   }, []);
   return tickers;
 };
-
 export const currenciesByMarketcap = <C extends Currency>(
   currencies: C[]
 ): Promise<C[]> =>
@@ -86,7 +85,6 @@ export const currenciesByMarketcap = <C extends Currency>(
     (tickers) => sortByMarketcap(currencies, tickers),
     () => currencies
   );
-
 // React style version of currenciesByMarketcap
 export const useCurrenciesByMarketcap = <C extends Currency>(
   currencies: C[]

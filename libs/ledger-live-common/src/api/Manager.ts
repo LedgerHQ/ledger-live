@@ -129,7 +129,6 @@ const applicationsByDevice: (params: {
   (p) =>
     `${p.provider}_${p.current_se_firmware_final_version}_${p.device_version}`
 );
-
 const listApps: () => Promise<Array<Application>> = makeLRUCache(
   async () => {
     const { data } = await network({
