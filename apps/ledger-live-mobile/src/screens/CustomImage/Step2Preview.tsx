@@ -235,19 +235,20 @@ const Step2Preview = ({ navigation, route }: NavigationProps) => {
             </Animated.View>
           </Flex>
         )}
-        <Button
-          width="100%"
-          disabled={!processorPreviewImage?.imageBase64DataUri}
-          mt={6}
-          size="large"
-          type="main"
-          outline={false}
-          onPress={requestRawResult}
-          pending={rawResultLoading}
-          displayContentWhenPending
-        >
-          {t("common.confirm")}
-        </Button>
+        <Flex width="100%">
+          <Button
+            disabled={!processorPreviewImage?.imageBase64DataUri}
+            mt={6}
+            size="large"
+            type="main"
+            outline={false}
+            onPress={requestRawResult}
+            pending={rawResultLoading}
+            displayContentWhenPending
+          >
+            {t("common.confirm")}
+          </Button>
+        </Flex>
       </BottomButtonsContainer>
     </SafeAreaView>
   );
