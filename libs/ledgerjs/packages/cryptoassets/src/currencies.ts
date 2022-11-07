@@ -3450,8 +3450,6 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
   },
 };
 
-console.log(cryptocurrenciesById);
-
 const cryptocurrenciesByScheme: Record<string, CryptoCurrency> = {};
 const cryptocurrenciesByTicker: Record<string, CryptoCurrency> = {};
 const cryptocurrenciesArray: CryptoCurrency[] = [];
@@ -3547,7 +3545,6 @@ export function findCryptoCurrencyByTicker(
   return cryptocurrenciesByTicker[ticker];
 }
 
-// TODO: signature should be findCryptoCurrencyById(id: CryptoCurrencyId)
 export function findCryptoCurrencyById(id: string): CryptoCurrency | undefined {
   return cryptocurrenciesById[id];
 }
