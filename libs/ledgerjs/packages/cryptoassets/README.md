@@ -126,6 +126,14 @@ Returns **(CryptoCurrency | null | [undefined](https://developer.mozilla.org/doc
 
 Returns **(CryptoCurrency | null | [undefined](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/undefined))** 
 
+### findCryptoCurrencyById
+
+#### Parameters
+
+*   `id` **string** 
+
+Returns **(CryptoCurrency | [undefined](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/undefined))** 
+
 ### findCryptoCurrencyByKeyword
 
 #### Parameters
@@ -135,6 +143,7 @@ Returns **(CryptoCurrency | null | [undefined](https://developer.mozilla.org/doc
 
 Returns **(CryptoCurrency | null | [undefined](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/undefined))** 
 
+
 ### hasCryptoCurrencyId
 
 #### Parameters
@@ -142,6 +151,14 @@ Returns **(CryptoCurrency | null | [undefined](https://developer.mozilla.org/doc
 *   `id` **any** 
 
 Returns **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)** 
+
+### getCryptoCurrencyById
+
+#### Parameters
+
+*   `id` **string** 
+
+Returns **CryptoCurrency** 
 
 ### findExchangeCurrencyConfig
 
