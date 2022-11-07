@@ -10,7 +10,7 @@ import type {
 import type { Transaction, TransactionStatus } from "../types";
 import { makeAccountBridgeReceive, makeSync } from "../../../bridge/jsHelpers";
 
-import { getAccountShape, getPath, isError } from "../utils";
+import { getAccountShape, getPath, isError, motesToCSPR } from "../utils";
 import { CLPublicKey, DeployUtil } from "casper-js-sdk";
 import BigNumber from "bignumber.js";
 import { CASPER_FEES, CASPER_NETWORK, MINIMUM_VALID_AMOUNT } from "../consts";
@@ -28,6 +28,7 @@ import CasperApp from "@zondax/ledger-casper";
 import {
   AmountRequired,
   InvalidAddress,
+  InvalidAmountTransfer,
   NotEnoughBalance,
   RecipientRequired,
 } from "@ledgerhq/errors";
@@ -130,8 +131,10 @@ const getTransactionStatus = async (
 
   let totalSpent;
   if (amount.lte(MINIMUM_VALID_AMOUNT))
-    errors.amount = new NotEnoughBalance(
-      `Minimum CSPR to transfer is ${MINIMUM_VALID_AMOUNT} CSPR`
+    errors.amount = new InvalidAmountTransfer(
+      `Minimum CSPR to transfer is ${motesToCSPR(
+        MINIMUM_VALID_AMOUNT
+      ).toNumber()} CSPR`
     );
   if (useAllAmount) {
     totalSpent = a.spendableBalance;
