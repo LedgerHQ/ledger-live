@@ -64,6 +64,7 @@ const StepReceiveStakingFlow = (props: StepProps) => {
         .filter(e => e !== "#")
         .join("/"),
       modal: "receive",
+      flow: "stake",
     };
   }, []);
 
@@ -73,7 +74,7 @@ const StepReceiveStakingFlow = (props: StepProps) => {
       ...getTrackProperties(),
       link: supportLink,
     });
-    openURL(supportLink);
+    openURL(supportLink, "OpenURL", getTrackProperties());
   }, [getTrackProperties, supportLink]);
 
   const onChange = useCallback(() => {
