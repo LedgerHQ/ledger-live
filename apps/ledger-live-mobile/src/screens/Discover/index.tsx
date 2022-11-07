@@ -48,6 +48,8 @@ function Discover() {
 
   const learn = useFeature("learn");
   const referralProgramConfig = useFeature("referralProgramDiscoverCard");
+  const isNFTDisabled =
+    useFeature("disableNftLedgerMarket")?.enabled && Platform.OS === "ios";
 
   const readOnlyTrack = useCallback((bannerName: string) => {
     track("banner_clicked", {
@@ -127,23 +129,29 @@ function Discover() {
             />
           ),
         },
-        {
-          title: t("discover.sections.mint.title"),
-          subTitle: t("discover.sections.mint.desc"),
-          onPress: () => {
-            readOnlyTrack("Mint");
-            track("Discover - Mint - OpenUrl", { url: urls.discover.mint });
-            Linking.openURL(urls.discover.mint);
-          },
-          disabled: false,
-          Image: (
-            <Illustration
-              size={110}
-              darkSource={images.dark.mintImg}
-              lightSource={images.light.mintImg}
-            />
-          ),
-        },
+        ...(isNFTDisabled
+          ? []
+          : [
+              {
+                title: t("discover.sections.mint.title"),
+                subTitle: t("discover.sections.mint.desc"),
+                onPress: () => {
+                  readOnlyTrack("Mint");
+                  track("Discover - Mint - OpenUrl", {
+                    url: urls.discover.mint,
+                  });
+                  Linking.openURL(urls.discover.mint);
+                },
+                disabled: false,
+                Image: (
+                  <Illustration
+                    size={110}
+                    darkSource={images.dark.mintImg}
+                    lightSource={images.light.mintImg}
+                  />
+                ),
+              },
+            ]),
         ...(referralProgramConfig?.enabled && referralProgramConfig?.params.url
           ? [
               {
