@@ -68,10 +68,36 @@ const Delegations = (props: DelegationsPropsType) => {
   }, [navigation, account, delegations, validators]);
 
   /*
+   * Get the total amount of rewards, cumulated, from all active delegations.
+   */
+
+  const rewardsAmount = useMemo(
+    () =>
+      delegations.reduce(
+        (total, delegation) => total.plus(delegation.claimableRewards),
+        new BigNumber(0),
+      ),
+    [delegations],
+  );
+
+  /*
+   * Get the total delegated amount, from all active delegations.
+   */
+
+  const delegatedAmount = useMemo(
+    () =>
+      delegations.reduce(
+        (total, delegation) => total.plus(delegation.userActiveStake),
+        new BigNumber(0),
+      ),
+    [delegations],
+  );
+
+  /*
    * Return an introductory panel to delegations if the user hasn't previously delegated.
    */
 
-  if (delegations.length === 0) {
+  if (delegatedAmount.eq(0) && rewardsAmount.eq(0)) {
     return (
       <AccountDelegationInfo
         title={t("account.delegation.info.title")}

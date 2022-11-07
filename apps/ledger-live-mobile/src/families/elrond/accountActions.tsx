@@ -33,7 +33,10 @@ const getActions = (props: getActionsType): getActionsReturnType => {
    * Get a list of all the providers, randomize, and also the screen, conditionally, based on existing amount of delegations.
    */
 
-  const validators = randomizeProviders(account.elrondResources.providers);
+  const validators = randomizeProviders(
+    account.elrondResources ? account.elrondResources.providers : [],
+  );
+
   const screen =
     account.elrondResources.delegations.length === 0
       ? ScreenName.ElrondDelegationStarted

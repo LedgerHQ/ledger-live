@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useMemo } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { View } from "react-native";
 import { useTranslation } from "react-i18next";
@@ -7,6 +7,7 @@ import {
   getAccountUnit,
   getMainAccount,
 } from "@ledgerhq/live-common/account/index";
+import BigNumber from "bignumber.js";
 
 import type { StackNavigationProp } from "@react-navigation/stack";
 import type { NavigationType } from "../../../../types";
@@ -26,7 +27,7 @@ import styles from "./styles";
  */
 
 const Rewards = (props: RewardsPropsType) => {
-  const { account, value, delegations } = props;
+  const { account, delegations } = props;
   const { t } = useTranslation();
 
   const unit = getAccountUnit(account);
@@ -47,6 +48,27 @@ const Rewards = (props: RewardsPropsType) => {
   );
 
   /*
+   * Get the total amount of rewards, cumulated, from all active delegations.
+   */
+
+  const rewardsAmount = useMemo(
+    () =>
+      delegations.reduce(
+        (total, delegation) => total.plus(delegation.claimableRewards),
+        new BigNumber(0),
+      ),
+    [delegations],
+  );
+
+  /*
+   * Don't render anything if the total cumulated rewards from all active delegations is zero.
+   */
+
+  if (rewardsAmount.eq(0)) {
+    return null;
+  }
+
+  /*
    * Return the rendered component.
    */
 
@@ -57,13 +79,13 @@ const Rewards = (props: RewardsPropsType) => {
       <View style={styles.rewardsWrapper}>
         <View style={styles.column}>
           <LText semiBold={true} style={styles.label}>
-            <CurrencyUnitValue value={value} unit={unit} />
+            <CurrencyUnitValue value={rewardsAmount} unit={unit} />
           </LText>
 
           <LText semiBold={true} style={styles.subLabel} color="grey">
             <CounterValue
               withPlaceholder={true}
-              value={value}
+              value={rewardsAmount}
               currency={currency}
             />
           </LText>

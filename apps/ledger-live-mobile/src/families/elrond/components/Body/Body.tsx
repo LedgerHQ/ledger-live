@@ -96,23 +96,10 @@ const Body = (props: BodyPropsType) => {
     const transform = (input: string) =>
       new BigNumber(denominate({ input, showLastNonZeroDecimal: true }));
 
-    const formatDelegations = (
-      delegations: DelegationType[],
-      delegation: DelegationType,
-    ) => {
-      const zeroStake = new BigNumber(delegation.userActiveStake).isZero();
-      const zeroRewards = new BigNumber(delegation.claimableRewards).isZero();
-
-      if (zeroStake && zeroRewards) {
-        return delegations;
-      }
-
-      return delegations.concat([
-        Object.assign(delegation, {
-          validator: findValidator(delegation.contract),
-        }),
-      ]);
-    };
+    const formatDelegations = (delegation: DelegationType) =>
+      Object.assign(delegation, {
+        validator: findValidator(delegation.contract),
+      });
 
     const sortDelegations = (alpha: DelegationType, beta: DelegationType) =>
       transform(alpha.userActiveStake).isGreaterThan(
@@ -121,23 +108,8 @@ const Body = (props: BodyPropsType) => {
         ? -1
         : 1;
 
-    return delegationResources
-      .sort(sortDelegations)
-      .reduce(formatDelegations, []);
+    return delegationResources.sort(sortDelegations).map(formatDelegations);
   }, [findValidator, delegationResources]);
-
-  /*
-   * Reduce all rewards into one number and see if it exceeds zero (thus, if there are any available).
-   */
-
-  const rewards = useMemo(
-    () =>
-      delegations.reduce(
-        (total, delegation) => total.plus(delegation.claimableRewards),
-        new BigNumber(0),
-      ),
-    [delegations],
-  );
 
   /*
    * Track all callback reference updates and run the effect conditionally.
@@ -159,9 +131,7 @@ const Body = (props: BodyPropsType) => {
         />
       )}
 
-      {rewards.gt(0) && (
-        <Rewards value={rewards} account={account} delegations={delegations} />
-      )}
+      <Rewards account={account} delegations={delegations} />
 
       <Delegations
         onDrawer={onDrawer}
