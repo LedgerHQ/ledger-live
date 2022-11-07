@@ -18,6 +18,7 @@ import { notificationsSelector } from "../../../reducers/settings";
 import { setNotifications } from "../../../actions/settings";
 import type { State } from "../../../reducers/types";
 import useNotifications from "../../../logic/notifications";
+import { updateUserPreferences } from "../../../notifications/braze";
 
 type NotificationRowProps = {
   disabled?: boolean;
@@ -105,8 +106,10 @@ function NotificationsSettings() {
   }, [refreshNotifPermission]);
 
   // Refresh user properties and send them to Segment when notifications preferences are updated
+  // Also send user notifications preferences to Braze when updated
   useEffect(() => {
     updateIdentify();
+    updateUserPreferences(notifications);
   }, [notifications]);
 
   const disableSubSettings = !notifications.allowed;

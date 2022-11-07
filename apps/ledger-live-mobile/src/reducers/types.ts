@@ -189,11 +189,13 @@ export type SettingsState = {
   marketFilterByStarredAccounts: boolean;
   sensitiveAnalytics: boolean;
   firstConnectionHasDevice: boolean | null;
-  notifications: {
-    allowed: boolean;
-    announcements: boolean;
-    tipsAndOffers: boolean;
-  };
+  notifications: NotificationsSettings;
+};
+
+export type NotificationsSettings = {
+  allowed: boolean;
+  announcements: boolean;
+  tipsAndOffers: boolean;
 };
 
 // === WALLET CONNECT STATE ===
