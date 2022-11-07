@@ -248,7 +248,7 @@ const signOperation: SignOperationFnSignature<Transaction> = ({
               type: "device-signature-granted",
             });
 
-            const ledgerPublicKey = await casper.showAddressAndPubKey(
+            const ledgerPublicKey = await casper.getAddressAndPubKey(
               getPath(derivationPath)
             );
             // signature verification
