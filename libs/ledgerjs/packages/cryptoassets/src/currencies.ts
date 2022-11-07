@@ -293,7 +293,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     type: "CryptoCurrency",
     id: "bitcoin",
     coinType: CoinType.BTC,
-    name: "Bitcoin TEST",
+    name: "Bitcoin",
     managerAppName: "Bitcoin",
     ticker: "BTC",
     scheme: "bitcoin",
@@ -3541,6 +3541,10 @@ export function findCryptoCurrencyByTicker(
   return cryptocurrenciesByTicker[ticker];
 }
 
+/**
+ *
+ * @param {*} id
+ */
 export function findCryptoCurrencyById(id: string): CryptoCurrency | undefined {
   return cryptocurrenciesById[id];
 }
