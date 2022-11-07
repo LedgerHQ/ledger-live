@@ -2,12 +2,12 @@ import "@ledgerhq/react-ui/assets/fonts";
 import React, { useMemo } from "react";
 import { StyledComponent, ThemeProvider, useTheme } from "styled-components";
 import defaultTheme, { Theme } from "./theme";
-import palettes from "./palettes";
+import v2Palettes from "./palettes";
 
 import {
   GlobalStyle,
-  defaultTheme as V3dDfaultTheme,
-  palettes as V3Palettes,
+  defaultTheme as v3DefaultTheme,
+  palettes as v3Palettes,
 } from "@ledgerhq/react-ui/styles/index";
 
 type Props = {
@@ -18,20 +18,19 @@ type Props = {
 export type ThemedComponent<T> = StyledComponent<T, Theme, any>;
 
 const StyleProviderV3 = ({ children, selectedPalette }: Props) => {
-  const palettesAny: any = palettes;
-  const v3SelectedPalettes = selectedPalette === "light" ? "light" : "dark";
   const theme: Theme = useMemo(
     () => ({
       ...defaultTheme,
-      ...V3dDfaultTheme,
+      ...v3DefaultTheme,
       colors: {
         ...defaultTheme.colors,
-        ...V3Palettes[v3SelectedPalettes],
-        palette: { ...palettesAny[v3SelectedPalettes], ...V3Palettes[v3SelectedPalettes] },
+        ...v3Palettes[selectedPalette],
+        palette: { ...v2Palettes[selectedPalette], ...v3Palettes[selectedPalette] },
+        v2Palette: v2Palettes[selectedPalette],
       },
-      theme: v3SelectedPalettes,
+      theme: selectedPalette,
     }),
-    [palettesAny, v3SelectedPalettes],
+    [selectedPalette],
   );
 
   return (

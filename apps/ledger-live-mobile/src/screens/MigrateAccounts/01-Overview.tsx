@@ -1,10 +1,17 @@
 import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
 import React, { useCallback, useMemo } from "react";
 import { Trans } from "react-i18next";
-import { StyleSheet, View, SectionList } from "react-native";
-import SafeAreaView from "react-native-safe-area-view";
+import {
+  StyleSheet,
+  View,
+  SectionList,
+  SectionListData,
+  SectionListRenderItemInfo,
+} from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { useSelector } from "react-redux";
 import { useTheme } from "@react-navigation/native";
+import { Account } from "@ledgerhq/types-live";
 import { ScreenName } from "../../const";
 import AccountCard from "../../components/AccountCard";
 import Button from "../../components/Button";
@@ -14,21 +21,21 @@ import IconExclamationCircle from "../../icons/ExclamationCircle";
 import LiveLogo from "../../icons/LiveLogoIcon";
 import extraStatusBarPadding from "../../logic/extraStatusBarPadding";
 import { migratableAccountsSelector } from "../../reducers/accounts";
+import type { MigrateAccountsNavigatorParamList } from "../../components/RootNavigator/types/MigrateAccountsFlowNavigator";
+import type { StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
 
-type Props = {
-  navigation: any;
-  route: any;
-};
-const forceInset = {
-  bottom: "always",
-};
+type Props = StackNavigatorProps<
+  MigrateAccountsNavigatorParamList,
+  ScreenName.MigrateAccountsOverview
+>;
+
 export default function Overview({ route, navigation }: Props) {
   const { colors } = useTheme();
   const migratableAccounts = useSelector(migratableAccountsSelector);
   const currencyIds = useMemo(
     () =>
       migratableAccounts
-        .reduce(
+        .reduce<string[]>(
           (c, a) => (c.includes(a.currency.id) ? c : [...c, a.currency.id]),
           [],
         )
@@ -42,7 +49,11 @@ export default function Overview({ route, navigation }: Props) {
     });
   }, [navigation, currencyIds]);
 
-  const renderSectionHeader = ({ section }: { section: any }) => (
+  const renderSectionHeader = ({
+    section,
+  }: {
+    section: SectionListData<Account>;
+  }) => (
     <LText
       style={[
         styles.currencyTitle,
@@ -64,11 +75,10 @@ export default function Overview({ route, navigation }: Props) {
     </LText>
   );
 
-  const renderItem = ({ item }: { item: any }) => (
+  const renderItem = ({ item }: SectionListRenderItemInfo<Account>) => (
     <View style={styles.cardWrapper}>
       <AccountCard
         account={item}
-        parentAccount={null}
         style={[
           styles.card,
           {
@@ -81,7 +91,6 @@ export default function Overview({ route, navigation }: Props) {
 
   return (
     <SafeAreaView
-      forceInset={forceInset}
       style={[
         styles.root,
         {

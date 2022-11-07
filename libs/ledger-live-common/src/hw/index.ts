@@ -1,12 +1,18 @@
 import { EMPTY, merge } from "rxjs";
 import type { Observable } from "rxjs";
 import { catchError } from "rxjs/operators";
+import type { DeviceModel } from "@ledgerhq/types-devices";
 import Transport from "@ledgerhq/hw-transport";
-type Discovery = Observable<{
+
+export type DeviceEvent = {
   type: "add" | "remove";
   id: string;
   name: string;
-}>;
+  deviceModel?: DeviceModel | null;
+  wired?: boolean;
+};
+
+export type Discovery = Observable<DeviceEvent>;
 // NB open/close/disconnect semantic will have to be refined...
 export type TransportModule = {
   // unique transport name that identify the transport module
@@ -35,7 +41,7 @@ export type TransportModule = {
   discovery?: Discovery;
 };
 const modules: TransportModule[] = [];
-export const registerTransportModule = (module: TransportModule) => {
+export const registerTransportModule = (module: TransportModule): void => {
   modules.push(module);
 };
 export const discoverDevices = (

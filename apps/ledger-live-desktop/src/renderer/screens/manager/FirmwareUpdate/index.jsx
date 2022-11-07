@@ -164,6 +164,7 @@ class FirmwareUpdate extends PureComponent<Props, State> {
           onClose={this.handleCloseModal}
           firmware={firmware}
           deviceInfo={deviceInfo}
+          device={device}
           error={error}
           deviceModelId={deviceSpecs.id}
           setFirmwareUpdateOpened={setFirmwareUpdateOpened}

@@ -417,7 +417,7 @@ function parseAppSearch(query: string):
   let dependency;
 
   if (currency) {
-    dependency = getDependencies(currency.managerAppName)[0];
+    dependency = getDependencies(currency.managerAppName)[0]?.replace(/ /g, "");
   }
 
   return {

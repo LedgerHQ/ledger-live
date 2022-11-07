@@ -1,5 +1,17 @@
 # @ledgerhq/react-ui
 
+## 0.9.2
+
+### Patch Changes
+
+- [#693](https://github.com/LedgerHQ/ledger-live/pull/693) [`c784c33547`](https://github.com/LedgerHQ/ledger-live/commit/c784c33547f233f246bb14fef29643afe46d397e) Thanks [@grsoares21](https://github.com/grsoares21)! - Fix ProgressLoader color on React UI lib
+
+## 0.9.2-next.0
+
+### Patch Changes
+
+- [#693](https://github.com/LedgerHQ/ledger-live/pull/693) [`c784c33547`](https://github.com/LedgerHQ/ledger-live/commit/c784c33547f233f246bb14fef29643afe46d397e) Thanks [@grsoares21](https://github.com/grsoares21)! - Fix ProgressLoader color on React UI lib
+
 ## 0.9.1
 
 ### Patch Changes

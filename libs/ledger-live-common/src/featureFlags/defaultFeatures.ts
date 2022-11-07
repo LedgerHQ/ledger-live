@@ -53,6 +53,21 @@ export const defaultFeatures: DefaultFeatures = {
   currencyFlareMobile: {
     enabled: false,
   },
+  deviceInitialApps: {
+    enabled: false,
+    params: {
+      apps: ["Boilerplate", "Boilerplate_2", "Boilerplate_3"],
+    },
+  },
+  disableNftSend: {
+    enabled: false,
+  },
+  disableNftLedgerMarket: {
+    enabled: false,
+  },
+  disableNftRaribleOpensea: {
+    enabled: false,
+  },
   ratings: {
     enabled: false,
     params: {
@@ -103,6 +118,9 @@ export const defaultFeatures: DefaultFeatures = {
   counterValue: {
     enabled: false,
   },
+  llmNewDeviceSelection: {
+    enabled: false,
+  },
   llmUsbFirmwareUpdate: {
     enabled: false,
   },
@@ -110,6 +128,9 @@ export const defaultFeatures: DefaultFeatures = {
     enabled: false,
   },
   ptxSmartRoutingMobile: {
+    enabled: false,
+  },
+  syncOnboarding: {
     enabled: false,
   },
   mockFeature: {

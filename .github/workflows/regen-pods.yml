@@ -46,8 +46,6 @@ jobs:
           node-version: 16.x
           cache: pnpm
           cache-dependency-path: "**/pnpm-lock.yaml"
-      - name: bump npm
-        run: npm i -g npm@8.12.2
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: 2.7
@@ -65,7 +63,7 @@ jobs:
         run: pnpm mobile pod
       - name: status
         id: check-status
-        run: echo "::set-output name=status::$(git status --porcelain | wc -l)"
+        run: echo "status=$(git status --porcelain | wc -l)" >> $GITHUB_OUTPUT
       - name: commit and push changes
         if: steps.check-status.outputs.status != 0
         run: >

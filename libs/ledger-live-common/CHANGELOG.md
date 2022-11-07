@@ -1,5 +1,147 @@
 # @ledgerhq/live-common
 
+## 27.6.0
+
+### Minor Changes
+
+- [#1279](https://github.com/LedgerHQ/ledger-live/pull/1279) [`0f1bf87fdc`](https://github.com/LedgerHQ/ledger-live/commit/0f1bf87fdc8b80a4edb2556222b255d644fdd5da) Thanks [@grsoares21](https://github.com/grsoares21)! - Addad feature flag and type definitions
+
+* [#1520](https://github.com/LedgerHQ/ledger-live/pull/1520) [`24cdfe3869`](https://github.com/LedgerHQ/ledger-live/commit/24cdfe38695b60c7f3bc4827ea46893c8062dbad) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Minimum version for Ethereum nano app from 1.9.17 to 1.9.20
+
+- [#1603](https://github.com/LedgerHQ/ledger-live/pull/1603) [`6bcbd3967a`](https://github.com/LedgerHQ/ledger-live/commit/6bcbd3967a9841779a60708eab4b70144af880d7) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Update getEstimationFee for evm family to prevent usage of hardcoded values by `ether.js`
+
+* [#1558](https://github.com/LedgerHQ/ledger-live/pull/1558) [`2c3d6b53ea`](https://github.com/LedgerHQ/ledger-live/commit/2c3d6b53eaaefc0f2ab766addf8584d2f83a5eb9) Thanks [@henrily-ledger](https://github.com/henrily-ledger)! - Update hw-app-cardano package
+
+### Patch Changes
+
+- [#1537](https://github.com/LedgerHQ/ledger-live/pull/1537) [`cbcc0c1989`](https://github.com/LedgerHQ/ledger-live/commit/cbcc0c19899ffecbdbeda2e4b230a130d0fe1899) Thanks [@LFBarreto](https://github.com/LFBarreto)! - LLC - Market Provider - fix potential issue on chartData
+
+* [#1199](https://github.com/LedgerHQ/ledger-live/pull/1199) [`2f615db01b`](https://github.com/LedgerHQ/ledger-live/commit/2f615db01be43e7c21b5654b28bd122dab140252) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Prevent update app loop for users on old fw and old apps
+
+- [#1372](https://github.com/LedgerHQ/ledger-live/pull/1372) [`b53d648424`](https://github.com/LedgerHQ/ledger-live/commit/b53d64842471eb2382066aecfc9f2b3b15ef7aed) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Add FEATURE_FLAGS env variable to override feature flags
+
+* [#1477](https://github.com/LedgerHQ/ledger-live/pull/1477) [`b49a269bb2`](https://github.com/LedgerHQ/ledger-live/commit/b49a269bb2d3ff1cdaae5e74d85fb8e1c33da978) Thanks [@haammar-ledger](https://github.com/haammar-ledger)! - Force Polkadot minimum app version 14.9290.0
+
+- [#330](https://github.com/LedgerHQ/ledger-live/pull/330) [`f7a8df09f8`](https://github.com/LedgerHQ/ledger-live/commit/f7a8df09f8115da779b7082384d5db0823317d53) Thanks [@alexandremgo](https://github.com/alexandremgo)! - Feat: Sync onboarding software checks UI
+
+  - handling unlock device during genuine check
+
+- Updated dependencies [[`627f928b9d`](https://github.com/LedgerHQ/ledger-live/commit/627f928b9dc93f072f47b85d09e34c41b1948d0b)]:
+  - @ledgerhq/cryptoassets@6.36.1
+  - @ledgerhq/hw-app-eth@6.29.11
+
+## 27.5.1-next.0
+
+### Minor Changes
+
+- [#1279](https://github.com/LedgerHQ/ledger-live/pull/1279) [`0f1bf87fdc`](https://github.com/LedgerHQ/ledger-live/commit/0f1bf87fdc8b80a4edb2556222b255d644fdd5da) Thanks [@grsoares21](https://github.com/grsoares21)! - Addad feature flag and type definitions
+
+* [#1520](https://github.com/LedgerHQ/ledger-live/pull/1520) [`24cdfe3869`](https://github.com/LedgerHQ/ledger-live/commit/24cdfe38695b60c7f3bc4827ea46893c8062dbad) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Minimum version for Ethereum nano app from 1.9.17 to 1.9.20
+
+- [#1603](https://github.com/LedgerHQ/ledger-live/pull/1603) [`6bcbd3967a`](https://github.com/LedgerHQ/ledger-live/commit/6bcbd3967a9841779a60708eab4b70144af880d7) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Update getEstimationFee for evm family to prevent usage of hardcoded values by `ether.js`
+
+* [#1558](https://github.com/LedgerHQ/ledger-live/pull/1558) [`2c3d6b53ea`](https://github.com/LedgerHQ/ledger-live/commit/2c3d6b53eaaefc0f2ab766addf8584d2f83a5eb9) Thanks [@henrily-ledger](https://github.com/henrily-ledger)! - Update hw-app-cardano package
+
+### Patch Changes
+
+- [#1537](https://github.com/LedgerHQ/ledger-live/pull/1537) [`cbcc0c1989`](https://github.com/LedgerHQ/ledger-live/commit/cbcc0c19899ffecbdbeda2e4b230a130d0fe1899) Thanks [@LFBarreto](https://github.com/LFBarreto)! - LLC - Market Provider - fix potential issue on chartData
+
+* [#1199](https://github.com/LedgerHQ/ledger-live/pull/1199) [`2f615db01b`](https://github.com/LedgerHQ/ledger-live/commit/2f615db01be43e7c21b5654b28bd122dab140252) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Prevent update app loop for users on old fw and old apps
+
+- [#1372](https://github.com/LedgerHQ/ledger-live/pull/1372) [`b53d648424`](https://github.com/LedgerHQ/ledger-live/commit/b53d64842471eb2382066aecfc9f2b3b15ef7aed) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Add FEATURE_FLAGS env variable to override feature flags
+
+* [#1477](https://github.com/LedgerHQ/ledger-live/pull/1477) [`b49a269bb2`](https://github.com/LedgerHQ/ledger-live/commit/b49a269bb2d3ff1cdaae5e74d85fb8e1c33da978) Thanks [@haammar-ledger](https://github.com/haammar-ledger)! - Force Polkadot minimum app version 14.9290.0
+
+- [#330](https://github.com/LedgerHQ/ledger-live/pull/330) [`f7a8df09f8`](https://github.com/LedgerHQ/ledger-live/commit/f7a8df09f8115da779b7082384d5db0823317d53) Thanks [@alexandremgo](https://github.com/alexandremgo)! - Feat: Sync onboarding software checks UI
+
+  - handling unlock device during genuine check
+
+- Updated dependencies [[`627f928b9d`](https://github.com/LedgerHQ/ledger-live/commit/627f928b9dc93f072f47b85d09e34c41b1948d0b)]:
+  - @ledgerhq/cryptoassets@6.36.1-next.0
+  - @ledgerhq/hw-app-eth@6.29.11-next.0
+
+## 27.5.0
+
+### Minor Changes
+
+- [#1620](https://github.com/LedgerHQ/ledger-live/pull/1620) [`455e43b34c`](https://github.com/LedgerHQ/ledger-live/commit/455e43b34c13ca7ed1d2920a36653caa250e42ab) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Update getEstimationFee for evm family to prevent usage of hardcoded values by `ether.js`
+
+## 27.5.0-hotfix.0
+
+### Minor Changes
+
+- [#1620](https://github.com/LedgerHQ/ledger-live/pull/1620) [`455e43b34c`](https://github.com/LedgerHQ/ledger-live/commit/455e43b34c13ca7ed1d2920a36653caa250e42ab) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Update getEstimationFee for evm family to prevent usage of hardcoded values by `ether.js`
+
+## 27.4.0
+
+### Minor Changes
+
+- [#1525](https://github.com/LedgerHQ/ledger-live/pull/1525) [`64e00a9e30`](https://github.com/LedgerHQ/ledger-live/commit/64e00a9e30cf67b1e34552037e4405379af04a67) Thanks [@github-actions](https://github.com/apps/github-actions)! - Minimum version for Ethereum nano app from 1.9.17 to 1.9.20
+
+* [#1442](https://github.com/LedgerHQ/ledger-live/pull/1442) [`12d40b578b`](https://github.com/LedgerHQ/ledger-live/commit/12d40b578bee2b52de197b679c3db0299bc9a716) Thanks [@sarneijim](https://github.com/sarneijim)! - Update CAL
+
+- [#1474](https://github.com/LedgerHQ/ledger-live/pull/1474) [`2802e2d684`](https://github.com/LedgerHQ/ledger-live/commit/2802e2d6844a7e17127ea7d103fe0d1a45afa032) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Expose more information from inline app installs, allow dashboard as a target app in device actions
+
+### Patch Changes
+
+- [#1419](https://github.com/LedgerHQ/ledger-live/pull/1419) [`2100b9fb81`](https://github.com/LedgerHQ/ledger-live/commit/2100b9fb81a4fd04f65b96561c0a7d618658843a) Thanks [@gre](https://github.com/gre)! - Introduce tests to ensure we define abandonseed values for coin we support
+
+* [#1525](https://github.com/LedgerHQ/ledger-live/pull/1525) [`5fba025686`](https://github.com/LedgerHQ/ledger-live/commit/5fba025686d799badad3f7a7c7c8491cba14be8a) Thanks [@github-actions](https://github.com/apps/github-actions)! - Fix ts rework error
+
+- [#1420](https://github.com/LedgerHQ/ledger-live/pull/1420) [`bd884848bd`](https://github.com/LedgerHQ/ledger-live/commit/bd884848bd3dc2ef3cb5ea4df0127ff8ec6be8b7) Thanks [@gre](https://github.com/gre)! - Tezos: properly remap 'not enough balance' errors
+
+* [#1357](https://github.com/LedgerHQ/ledger-live/pull/1357) [`b34e55181c`](https://github.com/LedgerHQ/ledger-live/commit/b34e55181c12bb0a59ef5dee5e808d7597a21edb) Thanks [@hzheng-ledger](https://github.com/hzheng-ledger)! - fix typescript lint rules warning
+
+- [#1306](https://github.com/LedgerHQ/ledger-live/pull/1306) [`f6854a3fd7`](https://github.com/LedgerHQ/ledger-live/commit/f6854a3fd79a28eb5507796b69105c85b40bbe98) Thanks [@jnicoulaud-ledger](https://github.com/jnicoulaud-ledger)! - Fix outdated assertion on exchange signature size
+
+* [#1409](https://github.com/LedgerHQ/ledger-live/pull/1409) [`d1aab06a96`](https://github.com/LedgerHQ/ledger-live/commit/d1aab06a966e06269b037b574e51593fe45e987f) Thanks [@crypto-smoke](https://github.com/crypto-smoke)! - Crypto Icons - Add support for YAE token icon
+
+- [#1256](https://github.com/LedgerHQ/ledger-live/pull/1256) [`824efb6e62`](https://github.com/LedgerHQ/ledger-live/commit/824efb6e62b4b042fef700896f0bfd54ccfee5c7) Thanks [@jackthta](https://github.com/jackthta)! - Add user friendly error if add account flow fails to fetch account balance.
+
+- Updated dependencies [[`2100b9fb81`](https://github.com/LedgerHQ/ledger-live/commit/2100b9fb81a4fd04f65b96561c0a7d618658843a), [`1b43ce613f`](https://github.com/LedgerHQ/ledger-live/commit/1b43ce613f599cef9f69e40e7e3cfa8c1033c786), [`d3dc2c6877`](https://github.com/LedgerHQ/ledger-live/commit/d3dc2c6877fbdcaf68e442a781798d752fc5152d)]:
+  - @ledgerhq/cryptoassets@6.36.0
+  - @ledgerhq/hw-app-solana@7.0.0
+  - @ledgerhq/hw-app-eth@6.29.10
+
+## 27.4.0-next.2
+
+### Patch Changes
+
+- [#1525](https://github.com/LedgerHQ/ledger-live/pull/1525) [`5fba025686`](https://github.com/LedgerHQ/ledger-live/commit/5fba025686d799badad3f7a7c7c8491cba14be8a) Thanks [@github-actions](https://github.com/apps/github-actions)! - Fix ts rework error
+
+## 27.4.0-next.1
+
+### Minor Changes
+
+- [#1525](https://github.com/LedgerHQ/ledger-live/pull/1525) [`64e00a9e30`](https://github.com/LedgerHQ/ledger-live/commit/64e00a9e30cf67b1e34552037e4405379af04a67) Thanks [@github-actions](https://github.com/apps/github-actions)! - Minimum version for Ethereum nano app from 1.9.17 to 1.9.20
+
+## 27.4.0-next.0
+
+### Minor Changes
+
+- [#1442](https://github.com/LedgerHQ/ledger-live/pull/1442) [`12d40b578b`](https://github.com/LedgerHQ/ledger-live/commit/12d40b578bee2b52de197b679c3db0299bc9a716) Thanks [@sarneijim](https://github.com/sarneijim)! - Update CAL
+
+* [#1474](https://github.com/LedgerHQ/ledger-live/pull/1474) [`2802e2d684`](https://github.com/LedgerHQ/ledger-live/commit/2802e2d6844a7e17127ea7d103fe0d1a45afa032) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Expose more information from inline app installs, allow dashboard as a target app in device actions
+
+### Patch Changes
+
+- [#1419](https://github.com/LedgerHQ/ledger-live/pull/1419) [`2100b9fb81`](https://github.com/LedgerHQ/ledger-live/commit/2100b9fb81a4fd04f65b96561c0a7d618658843a) Thanks [@gre](https://github.com/gre)! - Introduce tests to ensure we define abandonseed values for coin we support
+
+* [#1420](https://github.com/LedgerHQ/ledger-live/pull/1420) [`bd884848bd`](https://github.com/LedgerHQ/ledger-live/commit/bd884848bd3dc2ef3cb5ea4df0127ff8ec6be8b7) Thanks [@gre](https://github.com/gre)! - Tezos: properly remap 'not enough balance' errors
+
+- [#1357](https://github.com/LedgerHQ/ledger-live/pull/1357) [`b34e55181c`](https://github.com/LedgerHQ/ledger-live/commit/b34e55181c12bb0a59ef5dee5e808d7597a21edb) Thanks [@hzheng-ledger](https://github.com/hzheng-ledger)! - fix typescript lint rules warning
+
+* [#1306](https://github.com/LedgerHQ/ledger-live/pull/1306) [`f6854a3fd7`](https://github.com/LedgerHQ/ledger-live/commit/f6854a3fd79a28eb5507796b69105c85b40bbe98) Thanks [@jnicoulaud-ledger](https://github.com/jnicoulaud-ledger)! - Fix outdated assertion on exchange signature size
+
+- [#1409](https://github.com/LedgerHQ/ledger-live/pull/1409) [`d1aab06a96`](https://github.com/LedgerHQ/ledger-live/commit/d1aab06a966e06269b037b574e51593fe45e987f) Thanks [@crypto-smoke](https://github.com/crypto-smoke)! - Crypto Icons - Add support for YAE token icon
+
+* [#1256](https://github.com/LedgerHQ/ledger-live/pull/1256) [`824efb6e62`](https://github.com/LedgerHQ/ledger-live/commit/824efb6e62b4b042fef700896f0bfd54ccfee5c7) Thanks [@jackthta](https://github.com/jackthta)! - Add user friendly error if add account flow fails to fetch account balance.
+
+* Updated dependencies [[`2100b9fb81`](https://github.com/LedgerHQ/ledger-live/commit/2100b9fb81a4fd04f65b96561c0a7d618658843a), [`1b43ce613f`](https://github.com/LedgerHQ/ledger-live/commit/1b43ce613f599cef9f69e40e7e3cfa8c1033c786), [`d3dc2c6877`](https://github.com/LedgerHQ/ledger-live/commit/d3dc2c6877fbdcaf68e442a781798d752fc5152d)]:
+  - @ledgerhq/cryptoassets@6.36.0-next.0
+  - @ledgerhq/hw-app-solana@7.0.0-next.0
+  - @ledgerhq/hw-app-eth@6.29.10-next.0
+
 ## 27.3.2
 
 ### Patch Changes

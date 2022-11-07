@@ -2,7 +2,7 @@ import React from "react";
 import { canDelegate } from "@ledgerhq/live-common/families/cosmos/logic";
 import { Icons } from "@ledgerhq/native-ui";
 import { Trans } from "react-i18next";
-import { CosmosAccount } from "@ledgerhq/live-common/lib/families/cosmos/types";
+import { CosmosAccount } from "@ledgerhq/live-common/families/cosmos/types";
 
 import { NavigatorName, ScreenName } from "../../const";
 import { ActionButtonEvent } from "../../components/FabActions";

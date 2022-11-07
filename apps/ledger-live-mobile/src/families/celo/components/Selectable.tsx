@@ -1,7 +1,7 @@
 import React, { memo } from "react";
 import { useTheme } from "@react-navigation/native";
 import { StyleSheet, View } from "react-native";
-import Icon from "react-native-vector-icons/dist/Feather";
+import Icon from "react-native-vector-icons/Feather";
 import { Text } from "@ledgerhq/native-ui";
 import { rgba } from "../../../colors";
 

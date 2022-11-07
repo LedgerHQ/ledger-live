@@ -131,7 +131,7 @@ const ethereum: AppSpec<Transaction> = {
   appQuery: {
     model: DeviceModelId.nanoS,
     appName: "Ethereum",
-    appVersion: "1.9.20-dev", // FIXME remove this line once 1.9.20 lands on coin-apps (branch ledger-live-bot)
+    appVersion: "1.9.20",
   },
   genericDeviceAction: acceptTransaction,
   testTimeout,
@@ -403,7 +403,7 @@ const ethereumGoerli: AppSpec<Transaction> = {
   appQuery: {
     model: DeviceModelId.nanoS,
     appName: "Ethereum",
-    appVersion: "1.9.20-dev", // FIXME remove this line once 1.9.20 lands on coin-apps (branch ledger-live-bot)
+    appVersion: "1.9.20",
   },
   genericDeviceAction: acceptTransaction,
   testTimeout,

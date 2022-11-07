@@ -3,7 +3,7 @@ import { ethers } from "ethers";
 import BigNumber from "bignumber.js";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { transactionToEthersTransaction } from "../adapters";
-import { Transaction as EvmTransaction } from "../types";
+import { FeeHistory, Transaction as EvmTransaction } from "../types";
 import { Account } from "@ledgerhq/types-live";
 
 export const DEFAULT_RETRIES_RPC_METHODS = 2;
@@ -118,7 +118,39 @@ export const getFeesEstimation = (
   gasPrice: null | BigNumber;
 }> =>
   withApi(currency, async (api) => {
-    const feeData = await api.getFeeData();
+    const block = await api.getBlock("latest");
+    const supports1559 = Boolean(block.baseFeePerGas);
+    const feeData = await (async () => {
+      if (supports1559) {
+        const feeHistory: FeeHistory = await api.send("eth_feeHistory", [
+          "0x5", // Fetching the history for 5 blocks
+          "latest", // from the latest block
+          [50], // 50% percentile sample
+        ]);
+        // Taking the average priority fee used on the last 5 blocks
+        const maxPriorityFeePerGas = feeHistory.reward
+          .reduce(
+            (acc, [curr]) => acc.plus(new BigNumber(curr)),
+            new BigNumber(0)
+          )
+          .dividedToIntegerBy(feeHistory.reward.length);
+        const nextBaseFee = new BigNumber(
+          feeHistory.baseFeePerGas[feeHistory.baseFeePerGas.length - 1]
+        );
+
+        return {
+          maxPriorityFeePerGas,
+          maxFeePerGas: nextBaseFee.multipliedBy(2).plus(maxPriorityFeePerGas),
+        };
+      } else {
+        const gasPrice = await api.getGasPrice();
+
+        return {
+          gasPrice,
+        };
+      }
+    })();
+
     return {
       maxFeePerGas: feeData.maxFeePerGas
         ? new BigNumber(feeData.maxFeePerGas.toString())

@@ -5,7 +5,7 @@ import {
   WebViewErrorEvent,
   WebViewMessageEvent,
 } from "react-native-webview/lib/WebViewTypes";
-import { ImageProcessingError } from "./errors";
+import { ImageProcessingError } from "@ledgerhq/live-common/customImage/errors";
 import { ProcessorPreviewResult, ProcessorRawResult } from "./ImageProcessor";
 import { injectedCode } from "./injectedCode/resultDataTesting";
 import { InjectedCodeDebugger } from "./InjectedCodeDebugger";
@@ -99,7 +99,11 @@ export default class ResultDataTester extends React.Component<Props> {
     const { debug = false } = this.props;
     return (
       <>
-        <InjectedCodeDebugger debug={debug} injectedCode={injectedCode} />
+        <InjectedCodeDebugger
+          debug={debug}
+          injectedCode={injectedCode}
+          filename="resultDataTesting.ts"
+        />
         <Flex flex={0}>
           <WebView
             ref={c => (this.webViewRef = c)}

@@ -78,7 +78,7 @@ const AccountRowLayout = ({
                 fontWeight="semiBold"
                 color="neutral.c100"
                 numberOfLines={1}
-                flexGrow={1}
+                flexGrow={0}
                 flexShrink={1}
               >
                 {name}
@@ -117,16 +117,22 @@ const AccountRowLayout = ({
                 joinFragmentsSeparator=""
               />
             </Text>
-            <Text
-              variant="body"
-              fontWeight="medium"
-              color="neutral.c70"
-              flex={1}
-            >
-              <CurrencyUnitValue showCode unit={currencyUnit} value={balance} />
-            </Text>
+            {currencyUnit ? (
+              <Text
+                variant="body"
+                fontWeight="medium"
+                color="neutral.c70"
+                flex={1}
+              >
+                <CurrencyUnitValue
+                  showCode
+                  unit={currencyUnit}
+                  value={balance}
+                />
+              </Text>
+            ) : null}
           </Flex>
-          <Icons.DroprightMedium size={24} />
+          <Icons.ChevronRightMedium size={24} />
         </Flex>
       </Flex>
       {bottomLink && (

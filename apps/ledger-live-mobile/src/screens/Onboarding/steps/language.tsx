@@ -1,17 +1,11 @@
 import React, { useCallback, useState } from "react";
-import { ScrollView } from "react-native";
+import { I18nManager, ScrollView } from "react-native";
 import { Trans } from "react-i18next";
-import {
-  Flex,
-  SelectableList,
-  IconBox,
-  Icons,
-  Text,
-  BottomDrawer,
-} from "@ledgerhq/native-ui";
-import { StackScreenProps } from "@react-navigation/stack";
+import { Flex, SelectableList, BottomDrawer } from "@ledgerhq/native-ui";
+import i18next from "i18next";
+import RNRestart from "react-native-restart";
 import { useDispatch, useSelector } from "react-redux";
-import { useAvailableLanguagesForDevice } from "@ledgerhq/live-common/lib/manager/hooks";
+import { useAvailableLanguagesForDevice } from "@ledgerhq/live-common/manager/hooks";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { from } from "rxjs";
 import { DeviceModelInfo, idsToLanguage, Language } from "@ledgerhq/types-live";
@@ -19,6 +13,7 @@ import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";
 import getDeviceInfo from "@ledgerhq/live-common/hw/getDeviceInfo";
 import { getDeviceModel } from "@ledgerhq/devices";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { CompositeScreenProps } from "@react-navigation/native";
 import { useLocale } from "../../../context/Locale";
 import {
   languages,
@@ -26,7 +21,6 @@ import {
   localeIdToDeviceLanguage,
   Locale,
 } from "../../../languages";
-import Button from "../../../components/Button";
 import { ScreenName } from "../../../const";
 import { setLanguage, setLastSeenDevice } from "../../../actions/settings";
 import {
@@ -36,15 +30,25 @@ import {
 import ChangeDeviceLanguageAction from "../../../components/ChangeDeviceLanguageAction";
 import ChangeDeviceLanguagePrompt from "../../../components/ChangeDeviceLanguagePrompt";
 import { track } from "../../../analytics";
+import {
+  BaseComposite,
+  StackNavigatorProps,
+} from "../../../components/RootNavigator/types/helpers";
+import { OnboardingNavigatorParamList } from "../../../components/RootNavigator/types/OnboardingNavigator";
+import { BaseOnboardingNavigatorParamList } from "../../../components/RootNavigator/types/BaseOnboardingNavigator";
+import Button from "../../../components/Button";
 
-// eslint-disable-next-line @typescript-eslint/ban-types
-function OnboardingStepLanguage({ navigation }: StackScreenProps<{}>) {
+type NavigationProps = CompositeScreenProps<
+  StackNavigatorProps<
+    OnboardingNavigatorParamList,
+    ScreenName.OnboardingLanguage
+  >,
+  BaseComposite<StackNavigatorProps<BaseOnboardingNavigatorParamList>>
+>;
+
+function OnboardingStepLanguage({ navigation }: NavigationProps) {
   const { locale: currentLocale } = useLocale();
   const dispatch = useDispatch();
-
-  const next = useCallback(() => {
-    navigation.goBack();
-  }, [navigation]);
 
   const [isDeviceLanguagePromptOpen, setIsDeviceLanguagePromptOpen] =
     useState<boolean>(false);
@@ -81,32 +85,64 @@ function OnboardingStepLanguage({ navigation }: StackScreenProps<{}>) {
     lastSeenDevice?.deviceInfo,
   );
 
+  const [isRestartPromptOpened, setRestartPromptOpened] =
+    useState<boolean>(false);
+  const [selectedLanguage, setSelectedLanguage] = useState("");
+
+  const toggleModal = useCallback(
+    () => setRestartPromptOpened(!isRestartPromptOpened),
+    [isRestartPromptOpened],
+  );
+  const closeRestartPromptModal = () => {
+    setRestartPromptOpened(false);
+  };
+
+  const next = useCallback(() => {
+    navigation.goBack();
+  }, [navigation]);
+
+  // no useCallBack around RNRRestart, or the app might crash.
+  const changeLanguageRTL = async () => {
+    await Promise.all([
+      I18nManager.forceRTL(!I18nManager.isRTL),
+      dispatch(setLanguage(selectedLanguage)),
+    ]);
+    setTimeout(() => RNRestart.Restart(), 0);
+  };
+
   const changeLanguage = useCallback(
-    (l: Locale) => {
-      dispatch(setLanguage(l));
-
-      const deviceLanguageId = lastSeenDevice?.deviceInfo.languageId;
-      const potentialDeviceLanguage = localeIdToDeviceLanguage[l];
-      const langAvailableOnDevice =
-        potentialDeviceLanguage !== undefined &&
-        availableLanguages.includes(potentialDeviceLanguage);
-
-      // firmware version verification is not really needed here, the presence of a language id
-      // indicates that we are in a firmware that supports localization
-      if (
-        l !== currentLocale &&
-        loaded &&
-        langAvailableOnDevice &&
-        deviceLanguageId !== undefined &&
-        idsToLanguage[deviceLanguageId] !== potentialDeviceLanguage &&
-        deviceLocalizationFeatureFlag?.enabled
-      ) {
-        track("Page LiveLanguageChange DeviceLanguagePrompt", {
-          selectedLanguage: potentialDeviceLanguage,
-        });
-        setIsDeviceLanguagePromptOpen(true);
+    async (l: Locale) => {
+      const newDirection = i18next.dir(l);
+      const currentDirection = I18nManager.isRTL ? "rtl" : "ltr";
+      if (newDirection !== currentDirection) {
+        setSelectedLanguage(l);
+        toggleModal();
       } else {
-        next();
+        dispatch(setLanguage(l));
+
+        const deviceLanguageId = lastSeenDevice?.deviceInfo.languageId;
+        const potentialDeviceLanguage = localeIdToDeviceLanguage[l];
+        const langAvailableOnDevice =
+          potentialDeviceLanguage !== undefined &&
+          availableLanguages.includes(potentialDeviceLanguage);
+
+        // firmware version verification is not really needed here, the presence of a language id
+        // indicates that we are in a firmware that supports localization
+        if (
+          l !== currentLocale &&
+          loaded &&
+          langAvailableOnDevice &&
+          deviceLanguageId !== undefined &&
+          idsToLanguage[deviceLanguageId] !== potentialDeviceLanguage &&
+          deviceLocalizationFeatureFlag?.enabled
+        ) {
+          track("Page LiveLanguageChange DeviceLanguagePrompt", {
+            selectedLanguage: potentialDeviceLanguage,
+          });
+          setIsDeviceLanguagePromptOpen(true);
+        } else {
+          next();
+        }
       }
     },
     [
@@ -117,6 +153,7 @@ function OnboardingStepLanguage({ navigation }: StackScreenProps<{}>) {
       loaded,
       deviceLocalizationFeatureFlag?.enabled,
       next,
+      toggleModal,
     ],
   );
 
@@ -188,37 +225,33 @@ function OnboardingStepLanguage({ navigation }: StackScreenProps<{}>) {
           )}
         </Flex>
       </BottomDrawer>
-    </>
-  );
-}
-
-export function OnboardingStepLanguageGetStarted({
-  navigation,
-}: // eslint-disable-next-line @typescript-eslint/ban-types
-StackScreenProps<{}>) {
-  const next = () => {
-    navigation.getParent()?.replace(ScreenName.OnboardingTermsOfUse);
-  };
-
-  return (
-    <>
-      <Flex flex={1} px={4} justifyContent="center" alignItems="center">
-        <Flex mb={8}>
-          <IconBox Icon={Icons.WarningMedium} />
+      <BottomDrawer
+        isOpen={isRestartPromptOpened}
+        preventBackdropClick={false}
+        title={<Trans i18nKey={"onboarding.stepLanguage.RestartModal.title"} />}
+        description={
+          <Trans i18nKey={"onboarding.stepLanguage.RestartModal.paragraph"} />
+        }
+        onClose={closeRestartPromptModal}
+      >
+        <Flex flexDirection={"row"}>
+          <Button
+            event="ConfirmationModalCancel"
+            type="secondary"
+            flexGrow="1"
+            title={<Trans i18nKey="common.cancel" />}
+            onPress={closeRestartPromptModal}
+            marginRight={4}
+          />
+          <Button
+            event="ConfirmationModalConfirm"
+            type={"primary"}
+            flexGrow="1"
+            title={<Trans i18nKey="common.restart" />}
+            onPress={changeLanguageRTL}
+          />
         </Flex>
-        <Text variant="large" mb={5} fontWeight="semiBold">
-          <Trans i18nKey="onboarding.stepLanguage.warning.title" />
-        </Text>
-        <Text variant="body" color="palette.neutral.c80" textAlign="center">
-          <Trans i18nKey="onboarding.stepLanguage.warning.desc" />
-        </Text>
-      </Flex>
-      <Button
-        type="primary"
-        onPress={next}
-        outline={false}
-        title={<Trans i18nKey="onboarding.stepLanguage.cta" />}
-      />
+      </BottomDrawer>
     </>
   );
 }

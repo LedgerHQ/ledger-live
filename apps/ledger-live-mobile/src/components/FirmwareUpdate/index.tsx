@@ -11,10 +11,7 @@ import {
   DisconnectedDeviceDuringOperation,
   WebsocketConnectionError,
 } from "@ledgerhq/errors";
-import {
-  FwUpdateBackgroundEvent,
-  nextBackgroundEventSelector,
-} from "../../reducers/appstate";
+import { nextBackgroundEventSelector } from "../../reducers/appstate";
 import {
   clearBackgroundEvents,
   dequeueBackgroundEvent,
@@ -31,6 +28,7 @@ import DownloadingUpdateStep from "./DownloadingUpdateStep";
 import DeviceLanguageStep from "./DeviceLanguageStep";
 import { track } from "../../analytics";
 import { FwUpdateForegroundEvent } from "./types";
+import { FwUpdateBackgroundEvent } from "../../reducers/types";
 
 type Props = {
   device: Device;
@@ -141,7 +139,7 @@ export default function FirmwareUpdate({
     dispatchEvent({ type: "reset", wired: device.wired });
     dispatch(clearBackgroundEvents());
     NativeModules.BackgroundRunner.stop();
-  }, [dispatch]);
+  }, [device.wired, dispatch]);
 
   // only allow closing of the modal when the update is not in an intermediate step
   const canClose =
@@ -180,7 +178,7 @@ export default function FirmwareUpdate({
     if (step === "error") {
       track("FirmwareUpdateError", error ?? null);
     }
-  }, [step]);
+  }, [error, step]);
 
   const launchUpdate = useCallback(() => {
     if (latestFirmware) {
@@ -191,13 +189,12 @@ export default function FirmwareUpdate({
       );
       dispatchEvent({ type: "downloadingUpdate", progress: 0 });
     }
-  }, [latestFirmware]);
+  }, [device.deviceId, latestFirmware, t]);
 
   const firmwareVersion = latestFirmware?.final?.name ?? "";
 
   return (
     <BottomModal
-      id="DeviceActionModal"
       noCloseButton={!canClose}
       isOpened={isOpen}
       onClose={onCloseSilently}
@@ -231,7 +228,7 @@ export default function FirmwareUpdate({
             error={error as Error}
             withDescription={
               error instanceof DisconnectedDevice ||
-              error instanceof DisconnectedDeviceDuringOperation
+              error! instanceof DisconnectedDeviceDuringOperation
             }
             hasExportLogButton={!(error instanceof BluetoothNotSupportedError)}
             Icon={
@@ -247,7 +244,7 @@ export default function FirmwareUpdate({
           />
           {!(
             error instanceof BluetoothNotSupportedError ||
-            error instanceof WebsocketConnectionError
+            error! instanceof WebsocketConnectionError
           ) &&
             hasAppsToRestore && (
               <Button

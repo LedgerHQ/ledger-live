@@ -1,0 +1,26 @@
+name: generate-bot-super-report
+description: Gather many uploaded bot reports to generate a higher level bot report
+author: gre
+inputs:
+  githubToken:
+    description: github token to push a comment
+    required: true
+  branch:
+    description: branch to filter on
+  days:
+    description: number of days to pull from
+  slackApiToken:
+    description: slack API token (if wanting to post to slack)
+  slackChannel:
+    description: slack channel to post on (optional)
+  slackIconEmoji:
+    description: slack icon emoji to post with (optional)
+  environment:
+    description: if defined, filter a given environment
+runs:
+  using: node16
+  main: build/main.js
+
+branding:
+  icon: image
+  color: orange

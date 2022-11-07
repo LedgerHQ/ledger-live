@@ -48,8 +48,11 @@ If ledger returns error `6808` - enable blind signature in settings (not needed 
     *   [signTransaction](#signtransaction)
         *   [Parameters](#parameters-2)
         *   [Examples](#examples-2)
-    *   [getAppConfiguration](#getappconfiguration)
+    *   [signOffchainMessage](#signoffchainmessage)
+        *   [Parameters](#parameters-3)
         *   [Examples](#examples-3)
+    *   [getAppConfiguration](#getappconfiguration)
+        *   [Examples](#examples-4)
 
 ### Solana
 
@@ -100,6 +103,23 @@ Sign a Solana transaction.
 
 ```javascript
 solana.signTransaction("44'/501'/0'", txBuffer).then(r => r.signature)
+```
+
+Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)<{signature: [Buffer](https://nodejs.org/api/buffer.html)}>** an object with the signature field
+
+#### signOffchainMessage
+
+Sign a Solana off-chain message.
+
+##### Parameters
+
+*   `path` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** a BIP32 path
+*   `msgBuffer` **[Buffer](https://nodejs.org/api/buffer.html)** serialized off-chain message
+
+##### Examples
+
+```javascript
+solana.signOffchainMessage("44'/501'/0'", msgBuffer).then(r => r.signature)
 ```
 
 Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)<{signature: [Buffer](https://nodejs.org/api/buffer.html)}>** an object with the signature field
