@@ -1,6 +1,7 @@
 // @flow
 
 import React from "react";
+import { timeout } from "rxjs/operators";
 import Transport from "@ledgerhq/hw-transport";
 import { getEnv } from "@ledgerhq/live-common/env";
 import { NotEnoughBalance } from "@ledgerhq/errors";
@@ -16,14 +17,12 @@ import moment from "moment";
 import each from "lodash/each";
 import { reload, getKey, loadLSS } from "~/renderer/storage";
 import { hardReset } from "~/renderer/reset";
-
 import "~/renderer/styles/global";
 import "~/renderer/live-common-setup";
 import { getLocalStorageEnvs } from "~/renderer/experimental";
 import "~/renderer/i18n/init";
 import { prepareCurrency } from "~/renderer/bridge/cache";
 import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
-
 import logger, { enableDebugLogger } from "~/logger";
 import LoggerTransport from "~/logger/logger-transport-renderer";
 import { enableGlobalTab, disableGlobalTab, isGlobalTabEnabled } from "~/config/global-tab";
@@ -35,16 +34,15 @@ import events from "~/renderer/events";
 import { setAccounts } from "~/renderer/actions/accounts";
 import { fetchSettings, setDeepLinkUrl } from "~/renderer/actions/settings";
 import { lock, setOSDarkMode } from "~/renderer/actions/application";
-
 import {
   languageSelector,
   sentryLogsSelector,
   hideEmptyTokenAccountsSelector,
   localeSelector,
 } from "~/renderer/reducers/settings";
-
 import ReactRoot from "~/renderer/ReactRoot";
 import AppError from "~/renderer/AppError";
+import { command } from "~/renderer/commands";
 
 logger.add(new LoggerTransport());
 
@@ -158,6 +156,11 @@ async function init() {
     matcher.addListener(updateOSTheme);
 
     events({ store });
+
+    // trigger the basic "ping" command to ensure internal process correctly works
+    await command("ping")()
+      .pipe(timeout(10000))
+      .toPromise();
 
     window.addEventListener("keydown", (e: SyntheticKeyboardEvent<any>) => {
       if (e.which === TAB_KEY) {
