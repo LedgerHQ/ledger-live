@@ -211,7 +211,7 @@ const initialExplorerConfig: FullConfig = {
       version: "v3",
     },
   },
-  avax: {
+  avalanche_c_chain: {
     id: "avax",
     stable: {
       base: "EXPLORER",
