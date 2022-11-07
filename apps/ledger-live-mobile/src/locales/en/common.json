@@ -5443,12 +5443,6 @@
     "chooseConstrast": "Choose contrast",
     "uploadAnotherImage": "Upload another image",
     "rotateImage": "rotate",
-    "selectContrast": {
-      "0": "High Contrast",
-      "1": "Mid Contrast",
-      "2": "RE MID CONTRAST MISSING TEXT",
-      "3": "LOW CONTRAST MISSING TEST"
-    },
     "allowPreview": "Allow picture preview on {{productName}}",
     "loadingPicture": "Loading picture on {{productName}}",
     "pictureLoaded": "Picture loaded",
