@@ -74,14 +74,7 @@ export default function EditFeeUnitEthereum({
   if (!networkInfo) return null;
   return (
     <View>
-      <View
-        style={[
-          styles.sliderContainer,
-          {
-            backgroundColor: colors.card,
-          },
-        ]}
-      >
+      <View style={[styles.sliderContainer]}>
         <View style={styles.gasPriceHeader}>
           <LText style={styles.gasPriceLabel} semiBold>
             {t("send.summary.gasPrice")}

@@ -90,14 +90,7 @@ function OperationDetails({ route }: NavigatorProps) {
       }
     ).getURLWhatIsThis(operation);
   return (
-    <SafeAreaView
-      style={[
-        styles.container,
-        {
-          backgroundColor: colors.background,
-        },
-      ]}
-    >
+    <SafeAreaView edges={["bottom"]} style={[styles.container]}>
       <TrackScreen category="OperationDetails" />
       <NavigationScrollView>
         <View style={styles.root}>
