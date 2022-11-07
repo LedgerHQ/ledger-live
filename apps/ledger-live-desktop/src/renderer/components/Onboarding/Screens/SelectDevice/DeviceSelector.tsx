@@ -2,6 +2,7 @@ import React from "react";
 import styled from "styled-components";
 import { DeviceModelId, getDeviceModel } from "@ledgerhq/devices";
 import { Flex } from "@ledgerhq/react-ui";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 
 import { DeviceSelectorOption } from "./DeviceSelectorOption";
 import DeviceIllustration from "~/renderer/components/DeviceIllustration";
@@ -13,7 +14,7 @@ const DeviceSelectContainer = styled(Flex).attrs({
   height: "100%",
 })``;
 
-const devices = [
+const allDevices = [
   {
     id: "nanoS",
     enabled: true,
@@ -32,6 +33,17 @@ interface DeviceSelectorProps {
 }
 
 export function DeviceSelector({ onClick }: DeviceSelectorProps) {
+  const syncOnboarding = useFeature("syncOnboarding");
+
+  const devices = syncOnboarding?.enabled
+    ? [
+        {
+          id: "nanoFTS",
+          enabled: true,
+        },
+      ].concat(allDevices)
+    : allDevices;
+
   return (
     <DeviceSelectContainer>
       {devices.map(({ id, enabled }, index, arr) => (

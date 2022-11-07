@@ -1,30 +1,21 @@
 import React, { useCallback, useState } from "react";
 import { View, StyleSheet, ScrollView } from "react-native";
-import SafeAreaView from "react-native-safe-area-view";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { useTranslation } from "react-i18next";
 import i18next from "i18next";
-import type { Account } from "@ledgerhq/types-live";
-import type { Transaction } from "@ledgerhq/live-common/families/crypto_org/types";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { useTheme } from "@react-navigation/native";
 import KeyboardView from "../../components/KeyboardView";
 import Button from "../../components/Button";
 import { ScreenName } from "../../const";
 import TextInput from "../../components/FocusedTextInput";
+import { StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
+import { SendFundsNavigatorStackParamList } from "../../components/RootNavigator/types/SendFundsNavigator";
 
-const forceInset = {
-  bottom: "always",
-};
-type Props = {
-  navigation: any;
-  route: {
-    params: RouteParams;
-  };
-};
-type RouteParams = {
-  account: Account;
-  transaction: Transaction;
-};
+type Props = StackNavigatorProps<
+  SendFundsNavigatorStackParamList,
+  ScreenName.CryptoOrgEditMemo
+>;
 
 function CryptoOrgEditMemo({ navigation, route }: Props) {
   const { colors } = useTheme();
@@ -35,6 +26,7 @@ function CryptoOrgEditMemo({ navigation, route }: Props) {
     const bridge = getAccountBridge(account);
     const { transaction } = route.params;
     navigation.navigate(ScreenName.SendSummary, {
+      ...route.params,
       accountId: account.id,
       transaction: bridge.updateTransaction(transaction, {
         memo,
@@ -42,7 +34,7 @@ function CryptoOrgEditMemo({ navigation, route }: Props) {
     });
   }, [navigation, route.params, account, memo]);
   return (
-    <SafeAreaView style={styles.root} forceInset={forceInset}>
+    <SafeAreaView style={styles.root}>
       <KeyboardView
         style={[
           styles.body,
@@ -64,7 +56,7 @@ function CryptoOrgEditMemo({ navigation, route }: Props) {
                 color: colors.darkBlue,
               },
             ]}
-            defaultValue={memo}
+            defaultValue={memo || ""}
             keyboardType="default"
             returnKeyType="done"
             onChangeText={setMemo}
@@ -88,7 +80,7 @@ function CryptoOrgEditMemo({ navigation, route }: Props) {
 
 const options = {
   title: i18next.t("send.summary.memo.title"),
-  headerLeft: null,
+  headerLeft: undefined,
 };
 export { CryptoOrgEditMemo as component, options };
 const styles = StyleSheet.create({

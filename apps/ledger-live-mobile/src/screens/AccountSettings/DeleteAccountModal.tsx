@@ -17,7 +17,6 @@ function DeleteAccountModal({ isOpen, onRequestClose, deleteAccount }: Props) {
 
   return (
     <BottomDrawer
-      id="DeleteAccountModal"
       isOpen={isOpen}
       onClose={onRequestClose}
       Icon={InfoMedium}

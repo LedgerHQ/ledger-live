@@ -6,10 +6,8 @@ import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { useValidatorGroups } from "@ledgerhq/live-common/families/celo/react";
-import {
+import type {
   CeloValidatorGroup,
-  CeloVote,
-  Transaction,
   CeloAccount,
 } from "@ledgerhq/live-common/families/celo/types";
 import { revokableVotes } from "@ledgerhq/live-common/families/celo/logic";
@@ -29,19 +27,15 @@ import { accountScreenSelector } from "../../../reducers/accounts";
 import Selectable from "../components/Selectable";
 import Line from "../components/Line";
 import Words from "../components/Words";
+import type {
+  BaseComposite,
+  StackNavigatorProps,
+} from "../../../components/RootNavigator/types/helpers";
+import { CeloRevokeFlowFlowParamList } from "./types";
 
-type Props = {
-  navigation: any;
-  route: { params: RouteParams };
-};
-
-type RouteParams = {
-  validator: CeloValidatorGroup;
-  transaction?: Transaction;
-  fromSelectAmount: boolean;
-  amount?: number;
-  vote: CeloVote;
-};
+type Props = BaseComposite<
+  StackNavigatorProps<CeloRevokeFlowFlowParamList, ScreenName.CeloRevokeSummary>
+>;
 
 export default function RevokeSummary({ navigation, route }: Props) {
   const { validator } = route.params;
@@ -78,7 +72,7 @@ export default function RevokeSummary({ navigation, route }: Props) {
     }
 
     return undefined;
-  }, [votes]);
+  }, [vote, votes]);
 
   const {
     transaction,
@@ -116,6 +110,7 @@ export default function RevokeSummary({ navigation, route }: Props) {
         index: chosenVote?.index,
       }),
     );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     route.params,
     updateTransaction,
@@ -128,13 +123,17 @@ export default function RevokeSummary({ navigation, route }: Props) {
   const onChangeDelegator = useCallback(() => {
     navigation.navigate(ScreenName.CeloRevokeValidatorSelect, {
       ...route.params,
+      accountId: account.id,
+      parentId: parentAccount?.id,
       transaction,
     });
-  }, [navigation, transaction, route.params]);
+  }, [navigation, route.params, account.id, parentAccount?.id, transaction]);
 
   const onChangeAmount = () => {
     navigation.navigate(ScreenName.CeloRevokeAmount, {
       ...route.params,
+      accountId: account.id,
+      parentId: parentAccount?.id,
       transaction,
       vote: chosenVote,
     });
@@ -143,11 +142,11 @@ export default function RevokeSummary({ navigation, route }: Props) {
   const onContinue = useCallback(async () => {
     navigation.navigate(ScreenName.CeloRevokeSelectDevice, {
       accountId: account.id,
-      parentId: parentAccount && parentAccount.id,
+      parentId: parentAccount?.id,
       transaction,
       status,
     });
-  }, [status, account, parentAccount, navigation, transaction]);
+  }, [navigation, account.id, parentAccount?.id, transaction, status]);
 
   const hasErrors = Object.keys(status.errors).length > 0;
 

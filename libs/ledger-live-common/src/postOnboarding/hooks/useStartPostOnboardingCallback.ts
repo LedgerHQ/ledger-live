@@ -1,7 +1,8 @@
 import { useDispatch } from "react-redux";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { usePostOnboardingContext } from "./usePostOnboardingContext";
-import { useCallback, useMemo } from "react";
+import { useCallback } from "react";
+import { useFeatureFlags } from "../../featureFlags";
 import { initPostOnboarding } from "../actions";
 
 /**
@@ -14,25 +15,50 @@ import { initPostOnboarding } from "../actions";
  * hub.
  * TODO: unit test this
  */
-export function useStartPostOnboardingCallback(
+export function useStartPostOnboardingCallback(): (
   deviceModelId: DeviceModelId,
-  mock = false
-): () => void {
+  mock?: boolean,
+  fallbackIfNoAction?: () => void
+) => void {
   const dispatch = useDispatch();
+  const { getFeature } = useFeatureFlags();
   const { getPostOnboardingActionsForDevice, navigateToPostOnboardingHub } =
     usePostOnboardingContext();
-  const actions = useMemo(
-    () => getPostOnboardingActionsForDevice(deviceModelId, mock),
-    [deviceModelId, mock, getPostOnboardingActionsForDevice]
-  );
-  return useCallback(() => {
-    dispatch(
-      initPostOnboarding({
+
+  return useCallback(
+    (
+      deviceModelId: DeviceModelId,
+      mock = false,
+      fallbackIfNoAction?: () => void
+    ) => {
+      const actions = getPostOnboardingActionsForDevice(
         deviceModelId,
-        actionsIds: actions.map((action) => action.id),
-      })
-    );
-    if (actions.length === 0) return;
-    navigateToPostOnboardingHub();
-  }, [actions, deviceModelId, dispatch, navigateToPostOnboardingHub]);
+        mock
+      ).filter(
+        (actionWithState) =>
+          !actionWithState.featureFlagId ||
+          getFeature(actionWithState.featureFlagId)?.enabled
+      );
+      dispatch(
+        initPostOnboarding({
+          deviceModelId,
+          actionsIds: actions.map((action) => action.id),
+        })
+      );
+
+      if (actions.length === 0) {
+        if (fallbackIfNoAction) {
+          fallbackIfNoAction();
+        }
+        return;
+      }
+      navigateToPostOnboardingHub();
+    },
+    [
+      dispatch,
+      getFeature,
+      getPostOnboardingActionsForDevice,
+      navigateToPostOnboardingHub,
+    ]
+  );
 }

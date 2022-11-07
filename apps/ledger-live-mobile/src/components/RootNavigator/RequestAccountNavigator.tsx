@@ -8,6 +8,7 @@ import RequestAccountSelectAccount from "../../screens/RequestAccount/02-SelectA
 import { getStackNavigatorConfig } from "../../navigation/navigatorConfig";
 import AddAccountsNavigator from "./AddAccountsNavigator";
 import StepHeader from "../StepHeader";
+import type { RequestAccountNavigatorParamList } from "./types/RequestAccountNavigator";
 
 const totalSteps = "2";
 export default function RequestAccountNavigator() {
@@ -59,4 +60,4 @@ export default function RequestAccountNavigator() {
     </Stack.Navigator>
   );
 }
-const Stack = createStackNavigator();
+const Stack = createStackNavigator<RequestAccountNavigatorParamList>();

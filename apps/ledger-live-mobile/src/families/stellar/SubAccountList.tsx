@@ -27,7 +27,6 @@ const ReceiveButton = ({ accountId }: { accountId: string }) => {
       title={<Trans i18nKey="account.tokens.stellar.addTokens" />}
       type="lightSecondary"
       event="AccountAddAsset"
-      size={14}
     />
   );
 };

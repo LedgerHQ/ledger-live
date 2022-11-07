@@ -1,7 +1,9 @@
 import React, { PureComponent } from "react";
 import Svg, { Path, G, Circle } from "react-native-svg";
 
-export default class NoLocationImage extends PureComponent<any> {
+export default class NoLocationImage extends PureComponent<
+  React.ComponentProps<typeof Svg>
+> {
   render() {
     return (
       <Svg width={113} height={114} {...this.props}>

@@ -3,10 +3,9 @@ import { View, StyleSheet } from "react-native";
 import LText from "../../components/LText/index";
 
 export default class SummaryRowCustom extends PureComponent<{
-  onPress: () => void;
   label: string;
-  data: any;
-  iconLeft: any;
+  data: React.ReactNode;
+  iconLeft: React.ReactElement;
 }> {
   render() {
     const { label, data, iconLeft } = this.props;

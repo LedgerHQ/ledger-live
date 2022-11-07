@@ -1,5 +1,5 @@
 import { BigNumber } from "bignumber.js";
-import React, { useCallback, useState, useMemo, ElementProps } from "react";
+import React, { useCallback, useState, useMemo } from "react";
 import { View, StyleSheet, Linking } from "react-native";
 import { useNavigation, useTheme } from "@react-navigation/native";
 import { useTranslation } from "react-i18next";
@@ -17,10 +17,10 @@ import {
   useCosmosFamilyPreloadData,
 } from "@ledgerhq/live-common/families/cosmos/react";
 import type {
+  CosmosAccount,
   CosmosMappedDelegation,
   CosmosMappedUnbonding,
 } from "@ledgerhq/live-common/families/cosmos/types";
-import type { Account } from "@ledgerhq/live-common/types/index";
 import {
   mapUnbondings,
   canRedelegate,
@@ -30,6 +30,8 @@ import {
 import { canDelegate } from "@ledgerhq/live-common/families/osmosis/logic";
 import { Text } from "@ledgerhq/native-ui";
 import { LEDGER_OSMOSIS_VALIDATOR_ADDRESS } from "@ledgerhq/live-common/families/osmosis/utils";
+import { AccountLike } from "@ledgerhq/types-live";
+import { StackNavigationProp } from "@react-navigation/stack";
 import AccountDelegationInfo from "../../../components/AccountDelegationInfo";
 import IlluRewards from "../../../icons/images/Rewards";
 import { urls } from "../../../config/urls";
@@ -53,16 +55,16 @@ import DateFromNow from "../../../components/DateFromNow";
 import ValidatorImage from "../../cosmos/shared/ValidatorImage";
 
 type Props = {
-  account: Account;
+  account: CosmosAccount;
 };
 
-type DelegationDrawerProps = ElementProps<typeof DelegationDrawer>;
+type DelegationDrawerProps = React.ComponentProps<typeof DelegationDrawer>;
 type DelegationDrawerActions = DelegationDrawerProps["actions"];
 
 function Delegations({ account }: Props) {
   const { colors } = useTheme();
   const { t } = useTranslation();
-  const mainAccount = getMainAccount(account);
+  const mainAccount = getMainAccount(account) as CosmosAccount;
   const delegations: CosmosMappedDelegation[] =
     useCosmosFamilyMappedDelegations(mainAccount);
 
@@ -93,15 +95,19 @@ function Delegations({ account }: Props) {
       screen,
       params,
     }: {
-      route: typeof NavigatorName | typeof ScreenName;
-      screen?: typeof ScreenName;
-      params?: { [key: string]: any };
+      route: string;
+      screen?: string;
+      params?: { [key: string]: unknown };
     }) => {
-      setDelegation();
-      navigation.navigate(route, {
-        screen,
-        params: { ...params, accountId: account.id },
-      });
+      setDelegation(undefined);
+      // This is complicated (even impossible?) to type properly…
+      (navigation as StackNavigationProp<{ [key: string]: object }>).navigate(
+        route,
+        {
+          screen,
+          params: { ...params, accountId: account.id },
+        },
+      );
     },
     [navigation, account.id],
   );
@@ -154,8 +160,8 @@ function Delegations({ account }: Props) {
   }, [onNavigate, delegation, account]);
 
   const onCloseDrawer = useCallback(() => {
-    setDelegation();
-    setUndelegation();
+    setDelegation(undefined);
+    setUndelegation(undefined);
   }, []);
 
   const onOpenExplorer = useCallback(
@@ -233,7 +239,7 @@ function Delegations({ account }: Props) {
                 style={[styles.valueText]}
                 color="live"
               >
-                {d.status === "bonded"
+                {(d as CosmosMappedDelegation).status === "bonded"
                   ? t("cosmos.delegation.drawer.active")
                   : t("cosmos.delegation.drawer.inactive")}
               </LText>
@@ -503,9 +509,13 @@ function Delegations({ account }: Props) {
   );
 }
 
-export default function CosmosDelegations({ account }: Props) {
-  if (!account.cosmosResources) return null;
-  return <Delegations account={account} />;
+export default function CosmosDelegations({
+  account,
+}: {
+  account: AccountLike;
+}) {
+  if (!(account as CosmosAccount).cosmosResources) return null;
+  return <Delegations account={account as CosmosAccount} />;
 }
 
 const styles = StyleSheet.create({

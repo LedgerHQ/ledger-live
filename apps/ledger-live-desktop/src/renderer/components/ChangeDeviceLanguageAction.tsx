@@ -53,4 +53,4 @@ const ChangeDeviceLanguageAction: React.FC<Props> = ({ language, onError, onSucc
   );
 };
 
-export default withV3StyleProvider(ChangeDeviceLanguageAction);
+export default withV3StyleProvider(React.memo(ChangeDeviceLanguageAction));

@@ -4,6 +4,7 @@ import i18next from "i18next";
 import { differenceInCalendarDays } from "date-fns";
 import compareDate from "../logic/compareDate";
 import { localeSelector } from "../reducers/settings";
+import { State } from "../reducers/types";
 
 type Props = {
   day: Date;
@@ -32,7 +33,7 @@ class FormatDay extends Component<Props> {
   }
 }
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state: State) => ({
   locale: localeSelector(state),
 });
 

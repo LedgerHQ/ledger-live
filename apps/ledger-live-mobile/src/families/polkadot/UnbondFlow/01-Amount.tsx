@@ -13,7 +13,7 @@ import {
 import { useSelector } from "react-redux";
 import { Trans } from "react-i18next";
 import { useTheme } from "@react-navigation/native";
-import type { Transaction } from "@ledgerhq/live-common/generated/types";
+import type { Transaction as PolkadotTransaction } from "@ledgerhq/live-common/families/polkadot/types";
 import { useDebounce } from "@ledgerhq/live-common/hooks/useDebounce";
 import {
   getAccountUnit,
@@ -32,24 +32,21 @@ import TranslatedError from "../../../components/TranslatedError";
 import { getFirstStatusError, hasStatusError } from "../../helpers";
 import FlowErrorBottomModal from "../components/FlowErrorBottomModal";
 import SendRowsFee from "../SendRowsFee";
+import type { StackNavigatorProps } from "../../../components/RootNavigator/types/helpers";
+import { PolkadotUnbondFlowParamList } from "./type";
 
-type Props = {
-  navigation: any;
-  route: {
-    params: RouteParams;
-  };
-};
-type RouteParams = {
-  accountId: string;
-  transaction: Transaction;
-};
+type Props = StackNavigatorProps<
+  PolkadotUnbondFlowParamList,
+  ScreenName.PolkadotUnbondAmount
+>;
+
 export default function PolkadotUnbondAmount({ navigation, route }: Props) {
   const { colors } = useTheme();
   const { account, parentAccount } = useSelector(accountScreenSelector(route));
   invariant(account, "account is required");
   const bridge = getAccountBridge(account, parentAccount);
   const mainAccount = getMainAccount(account, parentAccount);
-  const [maxSpendable, setMaxSpendable] = useState(null);
+  const [maxSpendable, setMaxSpendable] = useState<BigNumber | null>(null);
   const { transaction, setTransaction, status, bridgePending, bridgeError } =
     useBridgeTransaction(() => {
       const t = bridge.createTransaction(mainAccount);
@@ -105,7 +102,7 @@ export default function PolkadotUnbondAmount({ navigation, route }: Props) {
   const onContinue = useCallback(() => {
     navigation.navigate(ScreenName.PolkadotUnbondSelectDevice, {
       accountId: account.id,
-      transaction,
+      transaction: transaction as PolkadotTransaction,
       status,
     });
   }, [account, navigation, transaction, status]);
@@ -204,8 +201,7 @@ export default function PolkadotUnbondAmount({ navigation, route }: Props) {
                 </View>
                 <SendRowsFee
                   account={account}
-                  parentAccount={parentAccount}
-                  transaction={transaction}
+                  transaction={transaction as PolkadotTransaction}
                 />
                 <View style={styles.continueWrapper}>
                   <Button
@@ -232,7 +228,7 @@ export default function PolkadotUnbondAmount({ navigation, route }: Props) {
 
       <FlowErrorBottomModal
         navigation={navigation}
-        transaction={transaction}
+        transaction={transaction as PolkadotTransaction}
         account={account}
         parentAccount={parentAccount}
         setTransaction={setTransaction}

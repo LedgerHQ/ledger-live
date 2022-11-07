@@ -1,13 +1,13 @@
 import merge from "lodash/merge";
 
-const cache = {};
+const cache: Record<string, unknown> = {};
 const deviceStorage = {
   /**
    * Get a one or more value for a key or array of keys from AsyncStorage
    * @param {String|Array} key A key or array of keys
    * @return {Promise}
    */
-  get(key) {
+  get(key: string | string[]): Promise<unknown> {
     if (!Array.isArray(key)) {
       const value = cache[key];
       return Promise.resolve(value);
@@ -22,7 +22,7 @@ const deviceStorage = {
    * @param  {Any} value The value to save
    * @return {Promise}
    */
-  save(key, value) {
+  save<T>(key: string | Array<string>, value: T): Promise<void> {
     if (!Array.isArray(key)) {
       cache[key] = value;
     } else {
@@ -40,9 +40,9 @@ const deviceStorage = {
    * @param  {Value} value The value to update with
    * @return {Promise}
    */
-  update(key, v) {
+  update<T>(key: string, v: T): Promise<void> {
     const item = cache[key];
-    const value = typeof value === "string" ? v : merge({}, item, v);
+    const value = typeof v === "string" ? v : merge({}, item, v);
     cache[key] = value;
     return Promise.resolve();
   },
@@ -52,7 +52,7 @@ const deviceStorage = {
    * @param  {String|Array} key The key or an array of keys to be deleted
    * @return {Promise}
    */
-  delete(key) {
+  delete(key: string | Array<string>): Promise<void> {
     if (Array.isArray(key)) {
       key.forEach(k => {
         delete cache[k];
@@ -68,7 +68,7 @@ const deviceStorage = {
    * Get all keys in AsyncStorage.
    * @return {Promise} A promise which when it resolves gets passed the saved keys in AsyncStorage.
    */
-  keys() {
+  keys(): Promise<string[]> {
     return Promise.resolve(Object.keys(cache));
   },
 
@@ -78,7 +78,7 @@ const deviceStorage = {
    * @param {Any} value The value to push onto the array
    * @return {Promise}
    */
-  push(key, value) {
+  push<T>(key: string, value: T): Promise<void> {
     const currentValue = cache[key];
 
     if (!currentValue) {

@@ -9,9 +9,10 @@ import {
 import Touchable from "../../components/Touchable";
 import AddAccountsModal from "../AddAccounts/AddAccountsModal";
 import { track } from "../../analytics";
+import { BaseNavigation } from "../../components/RootNavigator/types/helpers";
 
 function AddAccount({ currencyId }: { currencyId?: string }) {
-  const navigation = useNavigation();
+  const navigation = useNavigation<BaseNavigation>();
   const currency = currencyId
     ? findCryptoCurrencyById(currencyId) || findTokenById(currencyId)
     : undefined;

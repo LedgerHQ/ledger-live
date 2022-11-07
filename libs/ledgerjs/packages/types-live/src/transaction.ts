@@ -1,6 +1,6 @@
 import type { BigNumber } from "bignumber.js";
-import type { Operation, OperationRaw } from "./operation";
 import type { Unit } from "@ledgerhq/types-cryptoassets";
+import type { Operation, OperationRaw } from "./operation";
 
 /**
  *

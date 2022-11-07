@@ -29,6 +29,9 @@ export type FeatureId =
   | "customImage"
   | "referralProgramDiscoverCard"
   | "referralProgramDesktopBanner"
+  | "disableNftSend"
+  | "disableNftLedgerMarket"
+  | "disableNftRaribleOpensea"
   | "receiveStakingFlowConfigDesktop"
   | "ethStakingProviders";
 

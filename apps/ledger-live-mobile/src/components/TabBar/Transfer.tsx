@@ -10,7 +10,9 @@ import Animated, {
   useSharedValue,
   withTiming,
 } from "react-native-reanimated";
-import proxyStyled from "@ledgerhq/native-ui/components/styled";
+import proxyStyled, {
+  BaseStyledProps,
+} from "@ledgerhq/native-ui/components/styled";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import styled, { useTheme } from "styled-components/native";
 import { useSelector } from "react-redux";
@@ -21,12 +23,9 @@ import { MAIN_BUTTON_BOTTOM, MAIN_BUTTON_SIZE } from "./shared";
 import { useTrack } from "../../analytics";
 import { readOnlyModeEnabledSelector } from "../../reducers/settings";
 
-// FIXME me shouldn't have cycle dependencies
-// eslint-disable-next-line import/no-cycle
-import { AnalyticsContext } from "../RootNavigator";
-
 import lightAnimSource from "../../animations/mainButton/light.json";
 import darkAnimSource from "../../animations/mainButton/dark.json";
+import { AnalyticsContext } from "../../analytics/AnalyticsContext";
 
 const MainButton = proxyStyled(Touchable).attrs({
   backgroundColor: "primary.c80",
@@ -34,7 +33,7 @@ const MainButton = proxyStyled(Touchable).attrs({
   width: MAIN_BUTTON_SIZE,
   borderRadius: MAIN_BUTTON_SIZE / 2,
   overflow: "hidden",
-})`
+})<BaseStyledProps>`
   border-radius: 40px;
   align-items: center;
   justify-content: center;
@@ -100,11 +99,13 @@ export function TransferTabIcon() {
   );
 
   const backdropProps = useAnimatedProps(() => ({
-    pointerEvents: openAnimValue.value === 1 ? "auto" : "box-none",
+    pointerEvents:
+      openAnimValue.value === 1 ? ("auto" as const) : ("box-none" as const),
   }));
 
   const drawerContainerProps = useAnimatedProps(() => ({
-    pointerEvents: openAnimValue.value === 1 ? "auto" : "none",
+    pointerEvents:
+      openAnimValue.value === 1 ? ("auto" as const) : ("none" as const),
   }));
 
   const translateYStyle = useAnimatedStyle(() => ({

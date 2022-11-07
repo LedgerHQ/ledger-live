@@ -82,3 +82,10 @@ export type EtherscanOperation = {
 export type TransactionStatus = TransactionStatusCommon;
 
 export type TransactionStatusRaw = TransactionStatusCommonRaw;
+
+export type FeeHistory = {
+  baseFeePerGas: string[];
+  gasUsedRatio: number[];
+  oldestBlock: string;
+  reward: string[][];
+};

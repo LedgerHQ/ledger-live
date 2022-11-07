@@ -1,6 +1,7 @@
 import React from "react";
 import { Trans } from "react-i18next";
 import type { Account } from "@ledgerhq/types-live";
+import type { TronAccount } from "@ledgerhq/live-common/families/tron/types";
 import { BigNumber } from "bignumber.js";
 import {
   MIN_TRANSACTION_AMOUNT,
@@ -17,7 +18,7 @@ const getActions = ({
   account: Account;
   parentAccount: Account;
 }): ActionButtonEvent[] | null | undefined => {
-  if (!account.tronResources) return null;
+  if (!(account as TronAccount).tronResources) return null;
   const {
     spendableBalance,
     tronResources: {
@@ -25,7 +26,7 @@ const getActions = ({
       frozen: { bandwidth, energy } = {},
       frozen,
     } = {},
-  } = account;
+  } = account as TronAccount;
   const accountId = account.id;
   const canFreeze =
     spendableBalance && spendableBalance.gt(MIN_TRANSACTION_AMOUNT);
@@ -43,8 +44,8 @@ const getActions = ({
       .plus((energy && energy.amount) || 0)
       .gt(MIN_TRANSACTION_AMOUNT) &&
     effectiveTimeToUnfreeze < Date.now();
-  const canVote = tronPower > 0;
-  const lastVotedDate = getLastVotedDate(account);
+  const canVote = (tronPower || 0) > 0;
+  const lastVotedDate = getLastVotedDate(account as TronAccount);
   return [
     {
       id: "stake",

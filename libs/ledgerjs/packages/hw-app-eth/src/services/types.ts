@@ -18,6 +18,7 @@ export type LoadConfig = {
   // provide manually some extra plugins to add for the resolution (e.g. for dev purpose)
   // object will be merged with the returned value of the Ledger cdn payload
   extraPlugins?: any | null;
+  cryptoassetsBaseURL?: string | null;
 };
 
 /**

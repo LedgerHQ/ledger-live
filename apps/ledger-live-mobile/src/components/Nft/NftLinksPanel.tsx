@@ -2,7 +2,13 @@ import React, { memo, useCallback, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigation, useTheme } from "@react-navigation/native";
 import { NFTMediaSize, NFTMetadata } from "@ledgerhq/types-live";
-import { View, StyleSheet, TouchableOpacity, Linking } from "react-native";
+import {
+  View,
+  StyleSheet,
+  TouchableOpacity,
+  Linking,
+  Platform,
+} from "react-native";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { Icons } from "@ledgerhq/native-ui";
 import { getMetadataMediaTypes } from "../../logic/nft";
@@ -16,7 +22,7 @@ import { rgba } from "../../colors";
 import LText from "../LText";
 
 type Props = {
-  links: NFTMetadata["links"] | null;
+  links?: NFTMetadata["links"] | null;
   isOpen: boolean;
   onClose: () => void;
   nftMetadata?: NFTMetadata;
@@ -30,12 +36,12 @@ const NftLink = ({
   subtitle,
   onPress,
 }: {
-  style?: any;
+  style?: React.ComponentProps<typeof TouchableOpacity>["style"];
   leftIcon: React.ReactNode;
   rightIcon?: React.ReactNode;
   title: string;
   subtitle?: string;
-  onPress?: () => any;
+  onPress?: React.ComponentProps<typeof TouchableOpacity>["onPress"];
 }) => (
   <TouchableOpacity style={[styles.section, style]} onPress={onPress}>
     <View style={styles.sectionBody}>
@@ -56,6 +62,8 @@ const NftLinksPanel = ({ links, isOpen, onClose, nftMetadata }: Props) => {
   const { t } = useTranslation();
   const navigation = useNavigation();
   const customImage = useFeature("customImage");
+  const areRaribleOpenseaDisabled =
+    useFeature("disableNftRaribleOpensea")?.enabled && Platform.OS === "ios";
 
   const mediaTypes = useMemo(
     () => (nftMetadata ? getMetadataMediaTypes(nftMetadata) : null),
@@ -99,7 +107,7 @@ const NftLinksPanel = ({ links, isOpen, onClose, nftMetadata }: Props) => {
 
   const content = useMemo(() => {
     const topSection = [
-      ...(links?.opensea
+      ...(links?.opensea && !areRaribleOpenseaDisabled
         ? [
             <NftLink
               leftIcon={<OpenSeaIcon size={36} />}
@@ -109,7 +117,7 @@ const NftLinksPanel = ({ links, isOpen, onClose, nftMetadata }: Props) => {
             />,
           ]
         : []),
-      ...(links?.rarible
+      ...(links?.rarible && !areRaribleOpenseaDisabled
         ? [
             <NftLink
               style={styles.sectionMargin}
@@ -200,7 +208,6 @@ const NftLinksPanel = ({ links, isOpen, onClose, nftMetadata }: Props) => {
           backgroundColor: colors.card,
         },
       ]}
-      id="NftLinksModal"
       isOpened={isOpen}
       onClose={onClose}
     >
