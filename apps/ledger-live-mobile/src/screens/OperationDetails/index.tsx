@@ -64,7 +64,6 @@ export const CloseButton = ({
 };
 
 function OperationDetails({ route }: NavigatorProps) {
-  const { colors } = useTheme();
   const { account, parentAccount } = useSelector(accountScreenSelector(route));
   if (!account) return null;
   const operation = route.params?.operation;
