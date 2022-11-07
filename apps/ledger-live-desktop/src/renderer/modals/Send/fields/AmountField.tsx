@@ -40,14 +40,16 @@ const AmountField = ({
 
   useEffect(() => {
     if (initValue && !initValue.eq(transaction.amount || new BigNumber(0))) {
-      onChangeTransaction(bridge.updateTransaction(transaction, { amount: initValue }));
+      onChangeTransaction(
+        bridge.updateTransaction(transaction, { amount: initValue, mode: "delegate" }),
+      );
       resetInitValue && resetInitValue();
     }
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const onChange = useCallback(
     (amount: BigNumber) => {
-      onChangeTransaction(bridge.updateTransaction(transaction, { amount }));
+      onChangeTransaction(bridge.updateTransaction(transaction, { amount, mode: "delegate" }));
     },
     [bridge, transaction, onChangeTransaction],
   );
@@ -55,7 +57,11 @@ const AmountField = ({
   const onChangeSendMax = useCallback(
     (useAllAmount: boolean) => {
       onChangeTransaction(
-        bridge.updateTransaction(transaction, { useAllAmount, amount: new BigNumber(0) }),
+        bridge.updateTransaction(transaction, {
+          useAllAmount,
+          amount: new BigNumber(0),
+          mode: "delegate",
+        }),
       );
     },
     [bridge, transaction, onChangeTransaction],
