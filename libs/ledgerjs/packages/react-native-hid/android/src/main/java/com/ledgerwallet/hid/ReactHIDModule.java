@@ -10,6 +10,7 @@ import android.hardware.usb.UsbDeviceConnection;
 import android.hardware.usb.UsbEndpoint;
 import android.hardware.usb.UsbInterface;
 import android.hardware.usb.UsbManager;
+import android.os.Build;
 
 import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.Promise;
@@ -162,10 +163,18 @@ public class ReactHIDModule extends ReactContextBaseJavaModule {
         return result.toByteArray();
     }
 
+    public static PendingIntent createPendingIntentGetBroadcast(Context context, int id, Intent intent, int flag) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            return PendingIntent.getBroadcast(context, id, intent, PendingIntent.FLAG_MUTABLE | flag);
+        } else {
+            return PendingIntent.getBroadcast(context, id, intent, flag);
+        }
+    }
+
     private void requestUsbPermission(UsbManager manager, UsbDevice device, Promise p) {
         try {
             ReactApplicationContext rAppContext = getReactApplicationContext();
-            PendingIntent permIntent = PendingIntent.getBroadcast(rAppContext, 0, new Intent(ACTION_USB_PERMISSION), 0);
+            PendingIntent permIntent = createPendingIntentGetBroadcast(rAppContext, 0, new Intent(ACTION_USB_PERMISSION), 0);
             registerBroadcastReceiver(p);
             manager.requestPermission(device, permIntent);
         } catch (Exception e) {
