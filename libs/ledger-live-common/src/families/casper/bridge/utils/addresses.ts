@@ -51,7 +51,7 @@ function bytesToBitsString(buf: Buffer | Uint8Array) {
  * Returns the bytes encoded as hexadecimal with mixed-case based checksums following a scheme
  * similar to [EIP-55](https://eips.ethereum.org/EIPS/eip-55).
  */
-function encode(inputBytes: Buffer) {
+export function encode(inputBytes: Buffer): string {
   const context = blake2bInit(CHECKSUM_HEX_LEN);
   blake2bUpdate(context, inputBytes);
   const blakeHash = blake2bFinal(context);
