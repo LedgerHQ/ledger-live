@@ -1,7 +1,7 @@
 import React, { useCallback, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import styled from "styled-components/native";
-import { Box, Button, Flex, InfiniteLoader } from "@ledgerhq/native-ui";
+import { Button, Flex, InfiniteLoader } from "@ledgerhq/native-ui";
 import {
   Image,
   ImageErrorEventData,
@@ -28,7 +28,6 @@ import { targetDimensions } from "./shared";
 import BottomButtonsContainer from "../../components/CustomImage/BottomButtonsContainer";
 import ContrastChoice from "../../components/CustomImage/ContrastChoice";
 import { ScreenName } from "../../const";
-import FramedImage from "../../components/CustomImage/FramedImage";
 import { CustomImageNavigatorParamList } from "../../components/RootNavigator/types/CustomImageNavigator";
 import {
   BaseComposite,
