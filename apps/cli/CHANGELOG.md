@@ -1,5 +1,15 @@
 # @ledgerhq/live-cli
 
+## 22.4.6-nightly.1
+
+### Patch Changes
+
+- [#1493](https://github.com/LedgerHQ/ledger-live/pull/1493) [`658303322b`](https://github.com/LedgerHQ/ledger-live/commit/658303322b767f5ed3821def8384b5342ab03089) Thanks [@hzheng-ledger](https://github.com/hzheng-ledger)! - Change hw-app-btc to remove any dependency to the legacy Bitcoin Nano app API. Update hw-app-btc API (refer to hw-app-btc/src/Btc.ts for new method signature)
+
+- Updated dependencies [[`658303322b`](https://github.com/LedgerHQ/ledger-live/commit/658303322b767f5ed3821def8384b5342ab03089)]:
+  - @ledgerhq/hw-app-btc@9.0.0-nightly.2
+  - @ledgerhq/live-common@27.7.0-nightly.1
+
 ## 22.4.6-nightly.0
 
 ### Patch Changes

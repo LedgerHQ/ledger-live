@@ -1,5 +1,14 @@
 # live-mobile
 
+## 3.11.0-nightly.1
+
+### Patch Changes
+
+- [#1763](https://github.com/LedgerHQ/ledger-live/pull/1763) [`4cc023d011`](https://github.com/LedgerHQ/ledger-live/commit/4cc023d0112e9b0629d883ba5e15b216a64ea3a1) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - react-native updated from version 0.68.2 to version 0.68.5 to fix android builds
+
+- Updated dependencies [[`658303322b`](https://github.com/LedgerHQ/ledger-live/commit/658303322b767f5ed3821def8384b5342ab03089)]:
+  - @ledgerhq/live-common@27.7.0-nightly.1
+
 ## 3.11.0-nightly.0
 
 ### Minor Changes
