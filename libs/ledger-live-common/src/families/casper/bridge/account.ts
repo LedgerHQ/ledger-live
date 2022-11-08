@@ -184,6 +184,7 @@ const estimateMaxSpendable = async ({
   if (!purseUref) throw new InvalidAddress();
 
   const balances = await fetchBalances(purseUref);
+
   let balance = new BigNumber(balances.balance_value);
 
   if (balance.eq(0)) return balance;
@@ -249,22 +250,16 @@ const signOperation: SignOperationFnSignature<Transaction> = ({
               type: "device-signature-granted",
             });
 
-            const ledgerPublicKey = await casper.getAddressAndPubKey(
-              getPath(derivationPath)
-            );
             // signature verification
             const deployHash = transaction.deploy.hash;
             const signature = result.signatureRS;
 
-            const pk = ledgerPublicKey.publicKey;
+            const pkBuffer = Buffer.from(address.substring(2), "hex");
             // sign deploy object
             const signedDeploy = DeployUtil.setSignature(
               transaction.deploy,
               signature,
-              new CLPublicKey(
-                pk,
-                getPubKeySignature(ledgerPublicKey.Address.toString())
-              )
+              new CLPublicKey(pkBuffer, getPubKeySignature(address))
             );
             transaction.deploy = signedDeploy;
 
