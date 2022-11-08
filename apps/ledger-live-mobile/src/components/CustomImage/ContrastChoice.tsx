@@ -6,14 +6,14 @@ type Props = {
   color: { topLeft: string; bottomRight: string };
   selected: boolean;
   loading?: boolean;
+  isFirst?: boolean;
+  isLast?: boolean;
 };
 
 const Container = styled(Box).attrs((p: { selected: boolean }) => ({
   height: 50,
   width: 50,
   borderRadius: "4px",
-  marginLeft: "2px",
-  marginRight: "2px",
   justifyContent: "center",
   alignItems: "center",
   borderWidth: p.selected ? 2 : 0,
@@ -36,8 +36,14 @@ const Triangle = styled(Box).attrs({
   borderRightColor: "transparent",
 })``;
 
-const ContrastChoice: React.FC<Props> = ({ loading, selected, color }) => (
-  <Container selected={selected}>
+const ContrastChoice: React.FC<Props> = ({
+  loading,
+  selected,
+  color,
+  isFirst,
+  isLast,
+}) => (
+  <Container ml={isFirst ? 0 : 1} mr={isLast ? 0 : 1} selected={selected}>
     {selected && loading ? (
       <InfiniteLoader size={28} />
     ) : (
