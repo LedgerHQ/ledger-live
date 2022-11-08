@@ -207,7 +207,7 @@ const Step2Preview = ({ navigation, route }: NavigationProps) => {
         {resizedImage?.imageBase64DataUri && (
           <Flex flexDirection="row" my={6}>
             <Animated.View style={leftBoxAnimatedStyle} />
-            {contrasts.map(({ val, color }, index) => (
+            {contrasts.map(({ val, color }, index, arr) => (
               <Pressable
                 disabled={loading}
                 key={val}
@@ -222,6 +222,8 @@ const Step2Preview = ({ navigation, route }: NavigationProps) => {
                   selected={selectedIndex === index}
                   loading={loading}
                   color={color}
+                  isFirst={index === 0}
+                  isLast={index === arr.length - 1}
                 />
               </Pressable>
             ))}
