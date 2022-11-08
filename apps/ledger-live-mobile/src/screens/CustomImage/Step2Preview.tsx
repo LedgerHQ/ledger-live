@@ -3,6 +3,7 @@ import { useTranslation } from "react-i18next";
 import styled from "styled-components/native";
 import { Box, Button, Flex, InfiniteLoader } from "@ledgerhq/native-ui";
 import {
+  Image,
   ImageErrorEventData,
   NativeSyntheticEvent,
   Pressable,
@@ -194,7 +195,8 @@ const Step2Preview = ({ navigation, route }: NavigationProps) => {
         justifyContent="center"
       >
         {processorPreviewImage?.imageBase64DataUri ? (
-          <FramedImage
+          <Image
+            style={{ width: 252, height: 406 }}
             onError={handlePreviewImageError}
             fadeDuration={0}
             source={{ uri: processorPreviewImage.imageBase64DataUri }}
