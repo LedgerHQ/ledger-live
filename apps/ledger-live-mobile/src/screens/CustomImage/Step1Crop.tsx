@@ -203,16 +203,18 @@ const Step1Cropping = ({ navigation, route }: NavigationProps) => {
           <Box mb={7} alignSelf="center">
             <Touchable onPress={handlePressRotateLeft}>
               <Flex
-                px={7}
                 py={4}
+                px={6}
                 borderRadius={100}
                 backgroundColor="neutral.c30"
                 flexDirection="row"
+                justifyContent="center"
+                alignItems="center"
               >
-                <Text mr={2} ml={2}>
+                <Text variant="paragraph" fontWeight="semiBold" mr={2} ml={2}>
                   {t("customImage.rotateImage")}
                 </Text>
-                <Icons.ReverseMedium size={24} />
+                <Icons.ReverseMedium size={16} />
               </Flex>
             </Touchable>
           </Box>
