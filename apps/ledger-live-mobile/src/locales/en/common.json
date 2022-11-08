@@ -3638,6 +3638,7 @@
         "description": "Manage your saved Ledgers"
       },
       "addNewCTA": "Add new",
+      "otgBanner": "If you own a Nano S or a Nano S Plus, connect your device with USB cable.",
       "connectExistingLedger": "Connect an existing Ledger",
       "connectExistingLedgerDescription": "Already have a Ledger that is set up? Pair it with bluetooth",
       "setUpNewLedger": "Set up a new Ledger",
