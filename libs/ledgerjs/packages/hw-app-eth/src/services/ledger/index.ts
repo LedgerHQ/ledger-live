@@ -39,6 +39,7 @@ const ledgerService: LedgerEthTransactionService = {
       const nftInfo = resolutionConfig.nft
         ? await getNFTInfo(address, chainIdTruncated, loadConfig)
         : null;
+
       if (nftInfo) {
         log(
           "ethereum",
@@ -49,25 +50,24 @@ const ledgerService: LedgerEthTransactionService = {
             ")"
         );
         provideNFTInformation(nftInfo.data);
-      } else {
-        const erc20SignaturesBlob = await findERC20SignaturesInfo(loadConfig);
+      }
 
-        const erc20Info = byContractAddressAndChainId(
-          address,
-          chainIdTruncated,
-          erc20SignaturesBlob
+      const erc20SignaturesBlob = await findERC20SignaturesInfo(loadConfig);
+      const erc20Info = byContractAddressAndChainId(
+        address,
+        chainIdTruncated,
+        erc20SignaturesBlob
+      );
+      if (erc20Info) {
+        log(
+          "ethereum",
+          "loaded erc20token info for " +
+            erc20Info.contractAddress +
+            " (" +
+            erc20Info.ticker +
+            ")"
         );
-        if (erc20Info) {
-          log(
-            "ethereum",
-            "loaded erc20token info for " +
-              erc20Info.contractAddress +
-              " (" +
-              erc20Info.ticker +
-              ")"
-          );
-          provideERC20TokenInformation(erc20Info.data.toString("hex"));
-        }
+        provideERC20TokenInformation(erc20Info.data.toString("hex"));
       }
     };
 
@@ -81,42 +81,50 @@ const ledgerService: LedgerEthTransactionService = {
             loadConfig
           )
         : null;
-
       if (nftPluginPayload) {
         setPlugin(nftPluginPayload);
       } else {
-        const infos = resolutionConfig.externalPlugins
-          ? await loadInfosForContractMethod(
-              decodedTx.to,
-              selector,
-              chainIdTruncated,
-              loadConfig
-            )
-          : null;
+        log(
+          "ethereum",
+          "no NFT plugin payload for selector " +
+            selector +
+            " and address " +
+            decodedTx.to
+        );
+      }
 
-        if (infos) {
-          const { plugin, payload, signature, erc20OfInterest, abi } = infos;
+      const contractMethodInfos = resolutionConfig.externalPlugins
+        ? await loadInfosForContractMethod(
+            decodedTx.to,
+            selector,
+            chainIdTruncated,
+            loadConfig
+          )
+        : null;
 
-          if (plugin) {
-            log("ethereum", "found plugin for " + selector);
-            setExternalPlugin(payload, signature);
-          }
-          if (erc20OfInterest && erc20OfInterest.length && abi) {
-            const contract = new Interface(abi);
-            const args = contract.parseTransaction(decodedTx).args;
-            for (const path of erc20OfInterest) {
-              const address = path.split(".").reduce((value, seg) => {
-                if (seg === "-1" && Array.isArray(value)) {
-                  return value[value.length - 1];
-                }
-                return value[seg];
-              }, args);
-              await provideForContract(address);
-            }
-          }
-        } else {
-          log("ethereum", "no infos for selector " + selector);
+      if (contractMethodInfos) {
+        const { plugin, payload, signature, erc20OfInterest, abi } =
+          contractMethodInfos;
+
+        if (plugin) {
+          log("ethereum", "found plugin for " + selector);
+          setExternalPlugin(payload, signature);
         }
+        if (erc20OfInterest && erc20OfInterest.length && abi) {
+          const contract = new Interface(abi);
+          const args = contract.parseTransaction(decodedTx).args;
+          for (const path of erc20OfInterest) {
+            const address = path.split(".").reduce((value, seg) => {
+              if (seg === "-1" && Array.isArray(value)) {
+                return value[value.length - 1];
+              }
+              return value[seg];
+            }, args);
+            await provideForContract(address);
+          }
+        }
+      } else {
+        log("ethereum", "no infos for selector " + selector);
       }
       await provideForContract(decodedTx.to);
     }
