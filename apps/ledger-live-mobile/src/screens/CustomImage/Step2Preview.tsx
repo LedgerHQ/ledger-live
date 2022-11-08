@@ -206,9 +206,7 @@ const Step2Preview = ({ navigation, route }: NavigationProps) => {
       <BottomButtonsContainer>
         {resizedImage?.imageBase64DataUri && (
           <Flex flexDirection="row" my={6}>
-            <Animated.View style={leftBoxAnimatedStyle}>
-              <Box width={(3 - selectedIndex) * 54} />
-            </Animated.View>
+            <Animated.View style={leftBoxAnimatedStyle} />
             {contrasts.map(({ val, color }, index) => (
               <Pressable
                 disabled={loading}
@@ -227,9 +225,7 @@ const Step2Preview = ({ navigation, route }: NavigationProps) => {
                 />
               </Pressable>
             ))}
-            <Animated.View style={rightBoxAnimatedStyle}>
-              <Box width={selectedIndex * 54} />
-            </Animated.View>
+            <Animated.View style={rightBoxAnimatedStyle} />
           </Flex>
         )}
         <Flex width="100%">
