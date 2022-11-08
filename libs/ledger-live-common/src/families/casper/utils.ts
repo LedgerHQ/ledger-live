@@ -11,7 +11,8 @@ import {
 import { log } from "@ledgerhq/logs";
 import BigNumber from "bignumber.js";
 import { LTxnHistoryData, NAccountBalance } from "./bridge/utils/types";
-import { CASPER_FEES } from "./consts";
+import { CLPublicKey } from "casper-js-sdk";
+import { encode, getPubKeySignature } from "./bridge/utils/addresses";
 
 const validHexRegExp = new RegExp(/[0-9A-Fa-f]{6}/g);
 const validBase64RegExp = new RegExp(
@@ -87,7 +88,7 @@ export const getAccountShape: GetAccountShape = async (info) => {
   const result = {
     id: accountId,
     balance: csprBalance,
-    spendableBalance: csprBalance.minus(CASPER_FEES),
+    spendableBalance: csprBalance,
     operations: flatMap(txs, mapTxToOps(accountId, accountHash ?? "")),
     blockHeight: blockHeight.last_added_block_info.height,
   };
@@ -104,4 +105,13 @@ export function motesToCSPR(motes: number | string): BigNumber {
 export function csprToMotes(cspr: number | string): BigNumber {
   if (!cspr) return new BigNumber(0);
   return new BigNumber(cspr).multipliedBy(1000000000);
+}
+
+export function casperPubKeyToAccountHash(pubKey: string): string {
+  const clPubKey = new CLPublicKey(
+    Buffer.from(pubKey.substring(2), "hex"),
+    getPubKeySignature(pubKey)
+  );
+
+  return encode(Buffer.from(clPubKey.toAccountRawHashStr(), "hex"));
 }
