@@ -4,6 +4,7 @@ import network from "../../../network";
 import { patchOperationWithHash } from "../../../operation";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { Operation } from "@ledgerhq/types-live";
+import { findCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 
 const defaultEndpoint = getEnv(
   "API_COSMOS_BLOCKCHAIN_EXPLORER_API_ENDPOINT"
@@ -11,7 +12,11 @@ const defaultEndpoint = getEnv(
 
 export class CosmosAPI {
   protected _defaultEndpoint: string = defaultEndpoint;
-  protected _namespace = "cosmos";
+
+  constructor(currencyId: string) {
+    const currency = findCryptoCurrencyById(currencyId);
+    this._defaultEndpoint = currency?.cosmosLikeInfo?.lcd ?? "";
+  }
 
   getAccountInfo = async (
     address: string,
@@ -236,9 +241,6 @@ export class CosmosAPI {
   };
 
   getTransactions = async (address: string): Promise<any> => {
-    if (this._namespace === "osmosis") {
-      return [];
-    }
     const receive = await network({
       method: "GET",
       url:
@@ -252,7 +254,6 @@ export class CosmosAPI {
         `${this._defaultEndpoint}/cosmos/tx/v1beta1/txs?events=` +
         encodeURI(`message.sender='${address}'`),
     });
-
     return [...receive.data.tx_responses, ...send.data.tx_responses];
   };
 
@@ -312,4 +313,4 @@ export class CosmosAPI {
   };
 }
 
-export const defaultCosmosAPI = new CosmosAPI();
+export const defaultCosmosAPI = new CosmosAPI("cosmos");

@@ -527,4 +527,4 @@ export class OsmosisAPI extends CosmosAPI {
   };
 }
 
-export const osmosisAPI = new OsmosisAPI();
+export const osmosisAPI = new OsmosisAPI("osmosis");

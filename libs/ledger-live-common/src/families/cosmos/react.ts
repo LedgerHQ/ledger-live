@@ -24,6 +24,7 @@ import {
 import { getAccountUnit } from "../../account";
 import useMemoOnce from "../../hooks/useMemoOnce";
 import { LEDGER_VALIDATOR_ADDRESS } from "./utils";
+import { findCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 
 // Add Cosmos-families imports below:
 import {
@@ -37,12 +38,10 @@ export function useCosmosFamilyPreloadData(
 ): CosmosPreloadData {
   let getCurrent;
   let getUpdates;
-
-  if (currencyName == "cosmos") {
+  if (findCryptoCurrencyById(currencyName)?.family === "cosmos") {
     getCurrent = getCurrentCosmosPreloadData;
     getUpdates = getCosmosPreloadDataUpdates;
-  }
-  if (currencyName == "osmosis") {
+  } else if (currencyName == "osmosis") {
     getCurrent = getCurrentOsmosisPreloadData;
     getUpdates = getOsmosisPreloadDataUpdates;
   }
