@@ -1,5 +1,4 @@
 import type { CosmosAccount, Transaction } from "./types";
-import { defaultCosmosAPI } from "./api/Cosmos";
 import { Observable } from "rxjs";
 import { withDevice } from "../../hw/deviceAccess";
 import { encodeOperationId } from "../../operation";
@@ -14,6 +13,7 @@ import type {
   OperationType,
   SignOperationEvent,
 } from "@ledgerhq/types-live";
+import { CosmosAPI } from "./api/Cosmos";
 
 const aminoTypes = new AminoTypes({ prefix: "cosmos" });
 
@@ -32,12 +32,12 @@ const signOperation = ({
 
       async function main() {
         const hwApp = new Cosmos(transport);
-
-        const { accountNumber, sequence } = await defaultCosmosAPI.getAccount(
+        const cosmosAPI = new CosmosAPI(account.currency.id);
+        const { accountNumber, sequence } = await cosmosAPI.getAccount(
           account.freshAddress
         );
 
-        const chainId = await defaultCosmosAPI.getChainId();
+        const chainId = await cosmosAPI.getChainId();
 
         o.next({ type: "device-signature-requested" });
 

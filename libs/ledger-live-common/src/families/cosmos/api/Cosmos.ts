@@ -5,6 +5,7 @@ import { patchOperationWithHash } from "../../../operation";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { Operation } from "@ledgerhq/types-live";
 import { findCryptoCurrencyById } from "@ledgerhq/cryptoassets";
+// import type { Account } from "@ledgerhq/types-live";
 
 const defaultEndpoint = getEnv(
   "API_COSMOS_BLOCKCHAIN_EXPLORER_API_ENDPOINT"

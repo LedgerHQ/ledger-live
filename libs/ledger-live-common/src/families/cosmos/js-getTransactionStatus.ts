@@ -52,6 +52,7 @@ export class CosmosTransactionStatusManager {
     a: CosmosAccount,
     t: CosmosLikeTransaction
   ): Promise<TransactionStatus> => {
+    this._api = new CosmosAPI(a.currency.id);
     if (t.mode === "send") {
       // We isolate the send transaction that it's a little bit different from the rest
       return await this.getSendTransactionStatus(a, t);

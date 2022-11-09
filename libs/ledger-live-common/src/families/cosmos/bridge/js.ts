@@ -8,12 +8,12 @@ import updateTransaction from "../js-updateTransaction";
 import type { CosmosValidatorItem, Transaction } from "../types";
 import cosmosValidatorsManager from "../validators";
 import { makeAccountBridgeReceive } from "../../../bridge/jsHelpers";
-import { defaultCosmosAPI } from "../api/Cosmos";
 import {
   asSafeCosmosPreloadData,
   setCosmosPreloadData,
 } from "../preloadedData";
 import type { AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
+import { CosmosAPI } from "../api/Cosmos";
 
 const receive = makeAccountBridgeReceive();
 
@@ -56,7 +56,11 @@ const accountBridge: AccountBridge<Transaction> = {
   sync,
   receive,
   signOperation,
-  broadcast: defaultCosmosAPI.broadcast,
+  broadcast: async ({ account, signedOperation }) => {
+    return new CosmosAPI(account.currency.id).broadcast({
+      signedOperation,
+    });
+  },
 };
 
 export default {
