@@ -13,7 +13,10 @@ function OperationDetailsExtra({ extra }: Props) {
   return (
     <>
       {extra.memo && (
-        <Section title={t("operationDetails.extra.memo")} value={extra.memo || ""} />
+        <Section
+          title={t("operationDetails.extra.memo")}
+          value={extra.memo || ""}
+        />
       )}
     </>
   );
