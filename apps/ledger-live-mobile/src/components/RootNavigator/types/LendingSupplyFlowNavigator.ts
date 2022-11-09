@@ -32,6 +32,7 @@ import { Transaction as HederaTransaction } from "@ledgerhq/live-common/families
 import { Transaction as OsmosisTransaction } from "@ledgerhq/live-common/families/osmosis/types";
 import type { Transaction as RippleTransaction } from "@ledgerhq/live-common/families/ripple/types";
 import type { Transaction as StellarTransaction } from "@ledgerhq/live-common/families/stellar/types";
+import type { Transaction as StacksTransaction } from "@ledgerhq/live-common/families/stacks/types";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { Account, Operation } from "@ledgerhq/types-live";
@@ -367,6 +368,29 @@ export type LendingSupplyFlowNavigatorParamList = {
     parentId?: string;
     account: Account;
     transaction: StellarTransaction;
+    memoType?: string;
+    currentNavigation:
+      | ScreenName.LendingWithdrawSummary
+      | ScreenName.LendingSupplySummary
+      | ScreenName.SignTransactionSummary
+      | ScreenName.LendingEnableSummary
+      | ScreenName.SignTransactionSummary
+      | ScreenName.SendSummary
+      | ScreenName.SwapForm;
+    nextNavigation:
+      | ScreenName.LendingWithdrawSelectDevice
+      | ScreenName.LendingSupplySelectDevice
+      | ScreenName.SignTransactionSelectDevice
+      | ScreenName.LendingEnableSelectDevice
+      | ScreenName.SignTransactionSelectDevice
+      | ScreenName.SendSelectDevice
+      | ScreenName.SwapForm;
+  };
+  [ScreenName.StacksEditMemo]: {
+    accountId: string;
+    parentId?: string;
+    account: Account;
+    transaction: StacksTransaction;
     memoType?: string;
     currentNavigation:
       | ScreenName.LendingWithdrawSummary
