@@ -10,11 +10,11 @@ module.exports = {
     "dapps/ethereum_ropsten",
     "dapps/ethereum_goerli",
   ],
-  output: (toJSON) => `data/eip712.js${toJSON ? "on" : ""}`,
+  output: (toJSON) => `data/eip712.${toJSON ? "json" : "ts"}`,
 
   outputTemplate: ([data], toJSON) => {
     const stringifiedData = JSON.stringify(data ? data : {});
-    return toJSON ? stringifiedData : `module.exports = ${stringifiedData};\n`;
+    return toJSON ? stringifiedData : `export default ${stringifiedData};\n`;
   },
 
   loader: async ({ signatureFolder, id }) => {

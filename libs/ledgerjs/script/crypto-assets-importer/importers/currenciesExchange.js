@@ -6,11 +6,11 @@ const idFromFolderAndFile = (folder, id) =>
 
 module.exports = {
   paths: ["coins"],
-  output: (toJSON) => `data/exchange/coins.js${toJSON ? "on" : ""}`,
+  output: (toJSON) => `data/exchange/coins.${toJSON ? "json" : "ts"}`,
   outputTemplate: (data, toJSON) =>
     toJSON
       ? JSON.stringify(data)
-      : "module.exports = [" +
+      : "export default [" +
         data.map((item) => JSON.stringify(item)).join(",\n\t") +
         "];\n",
 

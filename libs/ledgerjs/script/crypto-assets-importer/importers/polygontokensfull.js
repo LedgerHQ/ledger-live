@@ -21,7 +21,7 @@ const lenseTicker = (a) => a[9] || a[2];
 module.exports = {
   // FIXME not yet sure if it's our final path
   paths: ["tokens/polygon/erc20"],
-  output: (toJSON) => `data/polygon-erc20.js${toJSON ? "on" : ""}`,
+  output: (toJSON) => `data/polygon-erc20.${toJSON ? "json" : "ts"}`,
 
   validate: (everything, countervaluesTickers) =>
     ["polygon"].flatMap((cid) => {
@@ -85,7 +85,7 @@ module.exports = {
   outputTemplate: (data, toJSON) =>
     toJSON
       ? JSON.stringify(data)
-      : `module.exports = [
+      : `export default [
 ${data
   .map(
     (item) =>

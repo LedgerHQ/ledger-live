@@ -29,7 +29,7 @@ module.exports = {
     "tokens/ethereum_ropsten/erc20",
     "tokens/ethereum_sepolia/erc20",
   ],
-  output: (toJSON) => `data/erc20.js${toJSON ? "on" : ""}`,
+  output: (toJSON) => `data/erc20.${toJSON ? "json" : "ts"}`,
 
   validate: (everything, countervaluesTickers) =>
     [
@@ -99,7 +99,7 @@ module.exports = {
   outputTemplate: (data, toJSON) =>
     toJSON
       ? JSON.stringify(data)
-      : `module.exports = [
+      : `export default [
 ${data
   .map(
     (item) =>

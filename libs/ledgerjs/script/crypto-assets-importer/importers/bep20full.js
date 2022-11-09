@@ -21,7 +21,7 @@ const lenseTicker = (a) => a[9] || a[2];
 module.exports = {
   // FIXME not yet sure if it's our final path
   paths: ["tokens/bsc/bep20"],
-  output: (toJSON) => `data/bep20.js${toJSON ? "on" : ""}`,
+  output: (toJSON) => `data/bep20.${toJSON ? "json" : "ts"}`,
 
   validate: (everything, countervaluesTickers) =>
     ["bsc"].flatMap((cid) => {
@@ -85,7 +85,7 @@ module.exports = {
   outputTemplate: (data, toJSON) =>
     toJSON
       ? JSON.stringify(data)
-      : `module.exports = [
+      : `export default [
 ${data
   .map(
     (item) =>
