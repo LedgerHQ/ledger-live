@@ -2,6 +2,7 @@ import invariant from "invariant";
 import React from "react";
 import { StyleSheet } from "react-native";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
+import { ExtraDeviceTransactionField } from "@ledgerhq/live-common/families/stacks/deviceTransactionConfig";
 import { DeviceTransactionField } from "@ledgerhq/live-common/transaction/index";
 import LText from "../../components/LText";
 import { DataRow } from "../../components/ValidateOnDeviceDataRow";
@@ -25,7 +26,7 @@ const StacksField = ({
   return (
     <DataRow label={field.label}>
       <LText semiBold style={styles.text}>
-        {field.value}
+        {(field as ExtraDeviceTransactionField).value}
       </LText>
     </DataRow>
   );
