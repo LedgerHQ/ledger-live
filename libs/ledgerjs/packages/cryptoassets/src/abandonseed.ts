@@ -1,5 +1,5 @@
 import invariant from "invariant";
-import { CryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 
 /**
  * these are either "dead"/"burn" addresses OR "abandon" seed addresses.
@@ -7,7 +7,7 @@ import { CryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
  * We use them for tests and also for dry-run estimations
  * DO NOT USE AS RECIPIENT OR SIGN TRANSACTIONS INTO THEM
  */
-const abandonSeedAddresses: Partial<Record<CryptoCurrencyId, string>> = {
+const abandonSeedAddresses: Partial<Record<CryptoCurrency["id"], string>> = {
   algorand: "PSHLIWQKDEETIIBQEOTLGCT5IF7BTTOKCUULONOGVGF2HYDT2IHW3H4CCI",
   // https://snowtrace.io/address/0x000000000000000000000000000000000000dead/tokens
   avalanche_c_chain: "0x000000000000000000000000000000000000dEaD",
@@ -60,7 +60,7 @@ const abandonSeedAddresses: Partial<Record<CryptoCurrencyId, string>> = {
   cardano:
     "addr1qykrup76qz622wxgmqtuumr6mn3vvkqc4jgxj6ytqudchccayfawlf9hwv2fzuygt2km5v92kvf8e3s3mk7ynxw77cwq80z2rm",
   filecoin: "f1qode47ievxlxzk6z2viuovedabmn3tq6t57uqhq",
-  osmosis: "cosmos19rl4cm2hmr8afy4kldpxz3fka4jguq0auqdal4",
+  osmo: "cosmos19rl4cm2hmr8afy4kldpxz3fka4jguq0auqdal4",
   fantom: "0x0000000000000000000000000000000000000000",
   cronos: "0x0000000000000000000000000000000000000000",
   moonbeam: "0x0000000000000000000000000000000000000000",
