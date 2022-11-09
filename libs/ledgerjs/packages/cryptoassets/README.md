@@ -136,7 +136,7 @@ Returns **(CryptoCurrency | null | [undefined](https://developer.mozilla.org/doc
 
 *   `id` **any** 
 
-Returns **(CryptoCurrency | [undefined](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/undefined))** 
+Returns **(CryptoCurrency | null | [undefined](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/undefined))** 
 
 ### findCryptoCurrencyByKeyword
 
