@@ -3251,8 +3251,8 @@
       "infoTotalDesc": "Includes transaction amount and the selected network fees",
       "gasLimit": "Gas limit",
       "gasPrice": "Gas price",
-      "maxFee" : "Max fee",
-      "maxPriorityFee" : "Max priority fee",
+      "maxFee": "Max fee",
+      "maxPriorityFee": "Max priority fee",
       "nextBlock": "Next block: {{nextBaseFee}}",
       "suggestedPriorityFee": "Suggested: {{lowPriorityFee}} - {{highPriorityFee}}",
       "maxFees": "Max fees",
@@ -5440,7 +5440,7 @@
     }
   },
   "customImage": {
-    "title": "Lock screen picture",
+    "title": "Choose a picture.\nCreate a vibe.\nMake your Ledger yours.",
     "replace": "Replace",
     "drawer": {
       "title": "Choose an image",
@@ -5464,7 +5464,12 @@
       "choosePicture": "Choose a picture"
     },
     "customImage": "Custom picture",
-    "doThisLater": "Maybe later"
+    "doThisLater": "Maybe later",
+    "preview": {
+      "title": "Preview",
+      "setPicture": "Set custom picture",
+      "editPicture": "Edit picture"
+    }
   },
   "postOnboarding": {
     "hub": {

@@ -28,7 +28,7 @@ const CustomImageBottomModal: React.FC<Props> = props => {
       const importResult = await importImageFromPhoneGallery();
       if (importResult !== null) {
         navigation.navigate(NavigatorName.CustomImage, {
-          screen: ScreenName.CustomImageStep1Crop,
+          screen: ScreenName.CustomImagePreviewPreEdit,
           params: {
             ...importResult,
             isPictureFromGallery: true,

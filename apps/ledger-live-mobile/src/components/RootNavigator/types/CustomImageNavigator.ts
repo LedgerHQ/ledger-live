@@ -25,4 +25,9 @@ export type CustomImageNavigatorParamList = {
     previewData: ProcessorPreviewResult;
   };
   [ScreenName.CustomImageErrorScreen]: BaseParams & { error: Error };
+  [ScreenName.CustomImagePreviewPreEdit]: BaseParams &
+    (ImageUrl | ImageFileUri) & {
+      isPictureFromGallery?: boolean;
+    };
+  [ScreenName.CustomImagePreviewPostEdit]: BaseParams;
 };
