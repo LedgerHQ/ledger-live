@@ -21,7 +21,6 @@ import {
   setNotificationsEventTriggered,
   setNotificationsDataOfUser,
 } from "../actions/notifications";
-import { notificationsSelector } from "../reducers/settings";
 import { setRatingsModalLocked } from "../actions/ratings";
 import { track } from "../analytics";
 
@@ -77,7 +76,6 @@ const getIsNotifEnabled = async () => {
 
 const useNotifications = () => {
   const pushNotificationsFeature = useFeature("pushNotifications");
-  const notificationsSettings = useSelector(notificationsSelector);
 
   const isPushNotificationsModalOpen = useSelector(
     notificationsModalOpenSelector,
@@ -113,6 +111,8 @@ const useNotifications = () => {
       const fcm = messaging();
       const permission = await fcm.hasPermission();
 
+      console.log("----PERMISSION------", permission);
+      console.log(messaging.AuthorizationStatus);
       if (permission === messaging.AuthorizationStatus.DENIED) {
         Linking.openSettings();
       } else if (
@@ -132,14 +132,14 @@ const useNotifications = () => {
         dispatch(setRatingsModalLocked(false));
       } else if (!isPushNotificationsModalLocked) {
         getIsNotifEnabled().then(isNotifEnabled => {
-          if (!isNotifEnabled || !notificationsSettings.allowed) {
+          if (!isNotifEnabled) {
             dispatch(setNotificationsModalOpen(isModalOpen));
             dispatch(setRatingsModalLocked(true));
           }
         });
       }
     },
-    [dispatch, notificationsSettings.allowed, isPushNotificationsModalLocked],
+    [dispatch, isPushNotificationsModalLocked],
   );
 
   const areConditionsMet = useCallback(() => {
