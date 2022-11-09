@@ -32,6 +32,7 @@ import { languageSelector } from "./src/reducers/settings";
 import { store } from "./src/context/LedgerStore";
 
 if (__DEV__) {
+  // eslint-disable-next-line @typescript-eslint/no-var-requires, import/no-extraneous-dependencies
   require("react-native-performance-flipper-reporter").setupDefaultFlipperReporter();
 }
 
@@ -78,6 +79,7 @@ const excludedErrorDescription = [
   "API HTTP",
   "Unexpected ''",
   "Unexpected '<'",
+  "Service Unvailable",
   // base usage of device
   /Device .* was disconnected/,
   "Invalid channel",
@@ -96,7 +98,9 @@ const excludedErrorDescription = [
   "Transaction simulation failed",
   "530 undefined",
   "524 undefined",
+  "Missing or invalid topic field", // wallet connect issue
 ];
+
 if (Config.SENTRY_DSN && (!__DEV__ || Config.FORCE_SENTRY) && !Config.MOCK) {
   Sentry.init({
     dsn: Config.SENTRY_DSN,
@@ -111,7 +115,7 @@ if (Config.SENTRY_DSN && (!__DEV__ || Config.FORCE_SENTRY) && !Config.MOCK) {
         routingInstrumentation,
       }),
     ],
-    beforeSend(event: any) {
+    beforeSend(event) {
       if (!getEnabled()) return null;
       // If the error matches excludedErrorName or excludedErrorDescription,
       // we will not send it to Sentry.
@@ -178,7 +182,6 @@ if (Config.SENTRY_DSN && (!__DEV__ || Config.FORCE_SENTRY) && !Config.MOCK) {
 }
 
 if (Config.DISABLE_YELLOW_BOX) {
-  // $FlowFixMe
   console.disableYellowBox = true; // eslint-disable-line no-console
 }
 

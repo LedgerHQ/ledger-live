@@ -7,7 +7,7 @@ import styled from "@ledgerhq/native-ui/components/styled";
 import ReceiveNFTsModal from "../../screens/Nft/NftGallery/ReceiveNFTsModal";
 import { useReceiveNFTsModal } from "../../screens/Nft/NftGallery/ReceiveNFTsModal.hook";
 
-const StyledBox = styled(TouchableOpacity)`
+const StyledTouchableOpacity = styled(TouchableOpacity)`
   background-color: ${props => props.theme.colors.background.main};
   margin-bottom: 8;
   border-radius: 8;
@@ -15,6 +15,9 @@ const StyledBox = styled(TouchableOpacity)`
   border-width: 1;
   border-color: ${props => props.theme.colors.neutral.c60};
   border-style: dashed;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 `;
 
 export const AddNewItem = () => {
@@ -24,12 +27,7 @@ export const AddNewItem = () => {
   const { openModal, closeModal, isModalOpened } = useReceiveNFTsModal();
 
   return (
-    <StyledBox
-      flexDirection="column"
-      alignItems="center"
-      justifyContent="center"
-      onPress={openModal}
-    >
+    <StyledTouchableOpacity onPress={openModal}>
       <Flex flexDirection="column" alignItems="center" justifyContent="center">
         <Icons.PlusMedium size={24} color={colors.neutral.c100} />
         <Text
@@ -45,6 +43,6 @@ export const AddNewItem = () => {
       </Flex>
 
       <ReceiveNFTsModal isOpened={isModalOpened} onClose={closeModal} />
-    </StyledBox>
+    </StyledTouchableOpacity>
   );
 };

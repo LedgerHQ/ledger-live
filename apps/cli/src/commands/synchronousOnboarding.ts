@@ -3,6 +3,7 @@ import {
   OnboardingStatePollingResult,
 } from "@ledgerhq/live-common/hw/getOnboardingStatePolling";
 import { Observable } from "rxjs";
+
 import { deviceOpt } from "../scan";
 
 export default {

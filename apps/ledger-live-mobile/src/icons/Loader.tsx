@@ -5,7 +5,7 @@ import Svg, { Path } from "react-native-svg";
 type Props = {
   size: number;
   color?: string;
-};
+} & Partial<React.ComponentProps<typeof Svg>>;
 
 const Loader = ({ size = 16, color = "currentColor", ...props }: Props) => {
   return (

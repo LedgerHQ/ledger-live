@@ -1,7 +1,7 @@
 import React from "react";
-import { TouchableOpacityProps } from "react-native";
 import { Flex, Text } from "@ledgerhq/native-ui";
-import Touchable from "./Touchable";
+import type { BaseTextProps as TextProps } from "@ledgerhq/native-ui/components/Text";
+import Touchable, { Props as TouchableProps } from "./Touchable";
 
 const Card = ({
   title,
@@ -15,13 +15,16 @@ const Card = ({
   ...props
 }: {
   title: string;
-  titleProps?: any;
+  titleProps?: Partial<TextProps>;
   subTitle?: string;
-  subTitleProps?: any;
+  subTitleProps?: Partial<TextProps>;
   labelBadge?: string;
   Image: React.ReactNode;
-  onPress: TouchableOpacityProps["onPress"];
+  onPress: TouchableProps["onPress"];
   disabled?: boolean;
+  event?: string;
+  eventProperties?: Record<string, unknown>;
+  testID?: string;
 }) => (
   <Touchable onPress={onPress} disabled={disabled} {...props}>
     <Flex

@@ -41,6 +41,7 @@ module.exports = {
         allow: ["warn", "error"],
       },
     ],
+    "@typescript-eslint/no-explicit-any": "error",
     "lines-between-class-members": 0,
     "flowtype/space-after-type-colon": 0,
     "no-continue": 0,
@@ -98,11 +99,14 @@ module.exports = {
     "react/state-in-constructor": 0,
     "react/static-property-placement": 0,
     "react/default-props-match-prop-types": 0,
+    "jsx-a11y/anchor-is-valid": 0, // this is not valid in react native as we don't have href
+    "@typescript-eslint/no-non-null-assertion": 0,
+    "react-native/no-inline-styles": 0,
+    "react/prop-types": 0, // causes issues with typescript, reports false positives
 
     // These ones are good practice we could switch to, so warn only
     "eslint-comments/no-unlimited-disable": "warn",
     "eslint-comments/no-unused-disable": "warn",
-    "react-native/no-inline-styles": "warn",
     "react/jsx-fragments": "warn",
     "react/no-deprecated": "warn",
 
@@ -112,9 +116,23 @@ module.exports = {
       "error",
       {
         argsIgnorePattern: "^_",
+        destructuredArrayIgnorePattern: "^_",
         vars: "all",
         args: "after-used",
         ignoreRestSiblings: true,
+      },
+    ],
+
+    "no-restricted-imports": [
+      "error",
+      {
+        patterns: [
+          {
+            group: ["@ledgerhq/live-common/lib/*"],
+            message:
+              '🚨 Please when importing from live-common, remove the "/lib/" in the path 🚨',
+          },
+        ],
       },
     ],
   },

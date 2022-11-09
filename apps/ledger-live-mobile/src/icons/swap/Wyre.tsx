@@ -1,7 +1,7 @@
 import React from "react";
 import Svg, { G, Defs, Path, Rect, ClipPath } from "react-native-svg";
 
-const Wyre = ({ size }: { size: number }) => (
+export const Wyre = React.memo(({ size }: { size: number }) => (
   <Svg viewBox="0 0 32 32" height={size} width={size}>
     <G clipPath="url(#clip0)">
       <Path
@@ -31,6 +31,4 @@ const Wyre = ({ size }: { size: number }) => (
       </ClipPath>
     </Defs>
   </Svg>
-);
-
-export default Wyre;
+));

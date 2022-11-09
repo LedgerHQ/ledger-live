@@ -1,6 +1,6 @@
-import React, { useCallback, useMemo, useState, memo } from "react";
+import React, { useCallback, useMemo, useState } from "react";
 import { useSelector } from "react-redux";
-import { LayoutChangeEvent } from "react-native";
+import { LayoutChangeEvent, ListRenderItemInfo } from "react-native";
 import { useSharedValue } from "react-native-reanimated";
 import { useTranslation } from "react-i18next";
 import { useFocusEffect } from "@react-navigation/native";
@@ -22,7 +22,7 @@ import {
   counterValueCurrencySelector,
   carouselVisibilitySelector,
 } from "../../reducers/settings";
-import { usePortfolio } from "../../actions/portfolio";
+
 import GraphCardContainer from "./GraphCardContainer";
 import Carousel from "../../components/Carousel";
 import TrackScreen from "../../analytics/TrackScreen";
@@ -31,9 +31,10 @@ import { NavigatorName, ScreenName } from "../../const";
 import FirmwareUpdateBanner from "../../components/FirmwareUpdateBanner";
 import Assets from "./Assets";
 import AddAccountsModal from "../AddAccounts/AddAccountsModal";
-import { useProviders } from "../Swap/SwapEntry";
 import CheckLanguageAvailability from "../../components/CheckLanguageAvailability";
 import CheckTermOfUseUpdate from "../../components/CheckTermOfUseUpdate";
+import TabBarSafeAreaView from "../../components/TabBar/TabBarSafeAreaView";
+import { useProviders } from "../Swap/Form/index";
 import PortfolioEmptyState from "./PortfolioEmptyState";
 import SectionTitle from "../WalletCentricSections/SectionTitle";
 import SectionContainer from "../WalletCentricSections/SectionContainer";
@@ -41,17 +42,24 @@ import AllocationsSection from "../WalletCentricSections/Allocations";
 import OperationsHistorySection from "../WalletCentricSections/OperationsHistory";
 import { track } from "../../analytics";
 import PostOnboardingEntryPointCard from "../../components/PostOnboarding/PostOnboardingEntryPointCard";
+import {
+  BaseComposite,
+  BaseNavigation,
+  StackNavigatorProps,
+} from "../../components/RootNavigator/types/helpers";
 import CollapsibleHeaderFlatList from "../../components/WalletTab/CollapsibleHeaderFlatList";
+import { usePortfolio } from "../../hooks/portfolio";
+import { WalletTabNavigatorStackParamList } from "../../components/RootNavigator/types/WalletTabNavigator";
 
 export { default as PortfolioTabIcon } from "./TabIcon";
 
-type Props = {
-  navigation: any;
-};
+type NavigationProps = BaseComposite<
+  StackNavigatorProps<WalletTabNavigatorStackParamList, ScreenName.Portfolio>
+>;
 
 const maxAssetsToDisplay = 5;
 
-function PortfolioScreen({ navigation }: Props) {
+function PortfolioScreen({ navigation }: NavigationProps) {
   const hideEmptyTokenAccount = useEnv("HIDE_EMPTY_TOKEN_ACCOUNTS");
 
   const { t } = useTranslation();
@@ -224,30 +232,38 @@ function PortfolioScreen({ navigation }: Props) {
 
   return (
     <>
-      <Flex px={6} py={4}>
-        <FirmwareUpdateBanner />
-      </Flex>
-      <CheckLanguageAvailability />
-      <CheckTermOfUseUpdate />
-      <TrackScreen
-        category="Wallet"
-        accountsLength={distribution.list && distribution.list.length}
-        discreet={discreetMode}
-      />
-      <CollapsibleHeaderFlatList<React.ReactNode>
-        data={data}
-        renderItem={({ item }: { item: React.ReactNode }) => item}
-        keyExtractor={(_: any, index: number) => String(index)}
-        showsVerticalScrollIndicator={false}
-        testID={
-          distribution.list && distribution.list.length
-            ? "PortfolioAccountsList"
-            : "PortfolioEmptyAccount"
-        }
-      />
-      <MigrateAccountsBanner />
+      <TabBarSafeAreaView
+        style={{
+          flex: 1,
+          paddingTop: 48,
+        }}
+      >
+        <CheckLanguageAvailability />
+        <CheckTermOfUseUpdate />
+        <TrackScreen
+          category="Wallet"
+          accountsLength={distribution.list && distribution.list.length}
+          discreet={discreetMode}
+        />
+        <FirmwareUpdateBanner containerProps={{ mt: 9, mb: 0 }} />
+        <CollapsibleHeaderFlatList<React.ReactNode>
+          data={data}
+          renderItem={({ item }: ListRenderItemInfo<unknown>) =>
+            item as JSX.Element
+          }
+          keyExtractor={(_: unknown, index: number) => String(index)}
+          showsVerticalScrollIndicator={false}
+          testID={
+            distribution.list && distribution.list.length
+              ? "PortfolioAccountsList"
+              : "PortfolioEmptyAccount"
+          }
+        />
+        <MigrateAccountsBanner />
+      </TabBarSafeAreaView>
+
       <AddAccountsModal
-        navigation={navigation}
+        navigation={navigation as unknown as BaseNavigation}
         isOpened={isAddModalOpened}
         onClose={closeAddModal}
       />
@@ -255,4 +271,4 @@ function PortfolioScreen({ navigation }: Props) {
   );
 }
 
-export default memo<Props>(PortfolioScreen);
+export default PortfolioScreen;

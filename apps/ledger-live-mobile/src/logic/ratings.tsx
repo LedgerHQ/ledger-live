@@ -1,6 +1,5 @@
 import { useCallback, useMemo } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { useNavigation } from "@react-navigation/native";
 import { add, isBefore, parseISO } from "date-fns";
 import type { Account } from "@ledgerhq/types-live";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -23,13 +22,14 @@ import { track } from "../analytics";
 import { setNotificationsModalLocked } from "../actions/notifications";
 
 export type RatingsHappyMoment = {
+  timeout?: number;
   /** Name of the route that will trigger the rating flow */
   // eslint-disable-next-line camelcase
   route_name: string;
   /** In milliseconds, delay before triggering the rating flow */
-  timer: number;
+  timer?: number;
   /** Whether the rating flow is triggered when entering or when leaving the screen */
-  type: "on_enter" | "on_leave";
+  type?: "on_enter" | "on_leave";
 };
 
 export type RatingsDataOfUser = {
@@ -53,28 +53,17 @@ export type RatingsDataOfUser = {
 
 const ratingsDataOfUserAsyncStorageKey = "ratingsDataOfUser";
 
-const getCurrentRouteName = (
-  state: NavigationState | Required<NavigationState["routes"][0]>["state"],
-): Routes | undefined => {
-  if (state.index === undefined || state.index < 0) {
-    return undefined;
-  }
-  const nestedState = state.routes[state.index].state;
-  if (nestedState !== undefined) {
-    return getCurrentRouteName(nestedState);
-  }
-  return state.routes[state.index].name;
-};
-
 async function getRatingsDataOfUserFromStorage() {
   const ratingsDataOfUser = await AsyncStorage.getItem(
     ratingsDataOfUserAsyncStorageKey,
   );
-
+  if (!ratingsDataOfUser) return null;
   return JSON.parse(ratingsDataOfUser);
 }
 
-async function setRatingsDataOfUserInStorage(ratingsDataOfUser) {
+async function setRatingsDataOfUserInStorage(
+  ratingsDataOfUser: RatingsDataOfUser,
+) {
   await AsyncStorage.setItem(
     ratingsDataOfUserAsyncStorageKey,
     JSON.stringify(ratingsDataOfUser),
@@ -97,19 +86,18 @@ const useRatings = () => {
   );
 
   const dispatch = useDispatch();
-  const navigation = useNavigation();
 
   const setRatingsModalOpenCallback = useCallback(
     isRatingsModalOpen => {
       if (!isRatingsModalOpen) {
         dispatch(setRatingsModalOpen(isRatingsModalOpen));
         dispatch(setNotificationsModalLocked(false));
-      } else if (!isRatingsModalLocked) {
+      } else {
         dispatch(setRatingsModalOpen(isRatingsModalOpen));
         dispatch(setNotificationsModalLocked(true));
       }
     },
-    [dispatch, isRatingsModalLocked],
+    [dispatch],
   );
 
   const areRatingsConditionsMet = useCallback(() => {
@@ -143,7 +131,10 @@ const useRatings = () => {
     // minimum app start number criteria
     const minimumAppStartsNumber: number =
       ratingsFeature?.params?.conditions?.minimum_app_starts_number;
-    if (ratingsDataOfUser.numberOfAppStarts < minimumAppStartsNumber) {
+    if (
+      ratingsDataOfUser.numberOfAppStarts &&
+      ratingsDataOfUser.numberOfAppStarts < minimumAppStartsNumber
+    ) {
       return false;
     }
 
@@ -151,13 +142,16 @@ const useRatings = () => {
     const minimumDurationSinceAppFirstStart: Duration =
       ratingsFeature?.params?.conditions
         ?.minimum_duration_since_app_first_start;
-    const dateAllowedAfterAppFirstStart = add(
-      ratingsDataOfUser?.appFirstStartDate,
-      minimumDurationSinceAppFirstStart,
-    );
+
     if (
-      ratingsDataOfUser?.appFirstStartDate &&
-      isBefore(Date.now(), dateAllowedAfterAppFirstStart)
+      ratingsDataOfUser.appFirstStartDate &&
+      isBefore(
+        Date.now(),
+        add(
+          ratingsDataOfUser.appFirstStartDate,
+          minimumDurationSinceAppFirstStart,
+        ),
+      )
     ) {
       return false;
     }
@@ -167,8 +161,9 @@ const useRatings = () => {
       ratingsFeature?.params?.conditions
         ?.minimum_number_of_app_starts_since_last_crash;
     if (
+      ratingsDataOfUser.numberOfAppStartsSinceLastCrash &&
       ratingsDataOfUser.numberOfAppStartsSinceLastCrash <
-      minimumNumberOfAppStartsSinceLastCrash
+        minimumNumberOfAppStartsSinceLastCrash
     ) {
       return false;
     }
@@ -193,14 +188,14 @@ const useRatings = () => {
     [ratingsOldRoute],
   );
 
-  const onRouteChange = useCallback(
-    ratingsNewRoute => {
+  const onRatingsRouteChange = useCallback(
+    (ratingsNewRoute, isOtherModalOpened = false) => {
       if (ratingsHappyMoment?.timeout) {
         dispatch(setNotificationsModalLocked(false));
         clearTimeout(ratingsHappyMoment?.timeout);
       }
 
-      if (isRatingsModalLocked || !areRatingsConditionsMet()) return;
+      if (isOtherModalOpened || !areRatingsConditionsMet()) return false;
 
       for (const happyMoment of ratingsFeature?.params?.happy_moments) {
         if (isHappyMomentTriggered(happyMoment, ratingsNewRoute)) {
@@ -214,12 +209,14 @@ const useRatings = () => {
               timeout,
             }),
           );
+          dispatch(setRatingsCurrentRouteName(ratingsNewRoute));
+          return true;
         }
       }
       dispatch(setRatingsCurrentRouteName(ratingsNewRoute));
+      return false;
     },
     [
-      isRatingsModalLocked,
       areRatingsConditionsMet,
       ratingsHappyMoment?.timeout,
       dispatch,
@@ -237,18 +234,6 @@ const useRatings = () => {
     [dispatch],
   );
 
-  const initRatings = useCallback(() => {
-    if (!ratingsFeature?.enabled) return;
-
-    navigation.addListener("state", e => {
-      const navState = e?.data?.state;
-      if (navState && navState.routeNames) {
-        const currentRouteName = getCurrentRouteName(navState);
-        onRouteChange(currentRouteName);
-      }
-    });
-  }, [navigation, ratingsFeature?.enabled, onRouteChange]);
-
   const initRatingsData = useCallback(() => {
     getRatingsDataOfUserFromStorage().then(ratingsDataOfUser => {
       updateRatingsDataOfUserInStateAndStore({
@@ -259,11 +244,7 @@ const useRatings = () => {
           (ratingsDataOfUser?.numberOfAppStartsSinceLastCrash ?? 0) + 1,
       });
     });
-  }, []);
-
-  const cleanRatings = useCallback(() => {
-    navigation.removeListener("state");
-  }, [navigation]);
+  }, [updateRatingsDataOfUserInStateAndStore]);
 
   const ratingsInitialStep = useMemo(
     () => (ratingsDataOfUser?.alreadyClosedFromEnjoyStep ? "enjoy" : "init"),
@@ -293,7 +274,7 @@ const useRatings = () => {
   ]);
 
   const handleRatingsSetDateOfNextAllowedRequest = useCallback(
-    (delay, additionalParams) => {
+    (delay, additionalParams = {}) => {
       if (delay !== null && delay !== undefined) {
         const dateOfNextAllowedRequest: Date = add(Date.now(), delay);
         updateRatingsDataOfUserInStateAndStore({
@@ -344,9 +325,8 @@ const useRatings = () => {
   }, [ratingsDataOfUser, updateRatingsDataOfUserInStateAndStore]);
 
   return {
-    initRatings,
     initRatingsData,
-    cleanRatings,
+    onRatingsRouteChange,
     handleSettingsRateApp,
     handleRatingsSetDateOfNextAllowedRequest,
     handleEnjoyNotNow,

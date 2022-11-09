@@ -5,7 +5,7 @@ import { Trans } from "react-i18next";
 import { Action } from "@ledgerhq/live-common/apps/index";
 import { App } from "@ledgerhq/types-live";
 
-import styled, { useTheme } from "styled-components/native";
+import styled, { DefaultTheme, useTheme } from "styled-components/native";
 import { Flex, Text, Button } from "@ledgerhq/native-ui";
 import AppTree from "../../../icons/AppTree";
 import AppIcon from "../AppsList/AppIcon";
@@ -14,8 +14,8 @@ import BottomModal from "../../../components/BottomModal";
 import CollapsibleList from "../../../components/CollapsibleList";
 import ListTreeLine from "../../../icons/ListTreeLine";
 
-// eslint-disable-next-line import/no-unresolved
 import getWindowDimensions from "../../../logic/getWindowDimensions";
+import { Theme } from "../../../colors";
 
 const { height } = getWindowDimensions();
 
@@ -61,7 +61,7 @@ const UninstallDependenciesModal = ({
   dispatch,
   onClose,
 }: Props) => {
-  const { colors } = useTheme();
+  const { colors } = useTheme() as DefaultTheme & Theme;
   const { app, dependents = [] } = appUninstallWithDependencies || {};
   const { name } = app || {};
 
@@ -71,7 +71,7 @@ const UninstallDependenciesModal = ({
   }, [dispatch, onClose, name]);
 
   const renderDepLine = useCallback(
-    ({ item }: any) => (
+    ({ item }: { item: App }) => (
       <Flex
         flexDirection="row"
         position="relative"
@@ -96,12 +96,7 @@ const UninstallDependenciesModal = ({
         {app && dependents.length && (
           <View style={{ width: "100%" }}>
             <ImageContainer>
-              <AppTree
-                size={160}
-                color={colors.neutral.c40}
-                icon={app.icon}
-                app={app}
-              />
+              <AppTree color={colors.neutral.c40} icon={app.icon} app={app} />
             </ImageContainer>
             <TextContainer>
               <ModalText color="neutral.c100" fontWeight="medium" variant="h2">

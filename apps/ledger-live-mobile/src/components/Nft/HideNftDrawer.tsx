@@ -4,11 +4,12 @@ import { useNavigation } from "@react-navigation/native";
 
 import { BottomDrawer, Button, Icons } from "@ledgerhq/native-ui";
 import { useDispatch, useSelector } from "react-redux";
-import { decodeNftId } from "@ledgerhq/live-common/lib/nft/nftId";
+import { Account } from "@ledgerhq/types-live";
+import { decodeNftId } from "@ledgerhq/live-common/nft/index";
 import { track, TrackScreen } from "../../analytics";
-import { NavigatorName, ScreenName } from "../../const";
 import { hideNftCollection } from "../../actions/settings";
 import { accountSelector } from "../../reducers/accounts";
+import { State } from "../../reducers/types";
 
 type Props = {
   nftId?: string;
@@ -29,7 +30,9 @@ const HideNftDrawer = ({
   const dispatch = useDispatch();
 
   const { accountId } = decodeNftId(nftId ?? "");
-  const account = useSelector(state => accountSelector(state, { accountId }));
+  const account = useSelector<State, Account | undefined>(state =>
+    accountSelector(state, { accountId }),
+  );
 
   const onClickContinue = useCallback(() => {
     track("button_clicked", {
@@ -39,9 +42,7 @@ const HideNftDrawer = ({
 
     dispatch(hideNftCollection(`${account?.id}|${nftContract}`));
     onClose();
-    navigation.navigate(NavigatorName.WalletTab, {
-      screen: ScreenName.NftGallery,
-    });
+    navigation.goBack();
   }, [account?.id, dispatch, navigation, nftContract, onClose]);
 
   const onPressClose = useCallback(() => {
@@ -54,7 +55,6 @@ const HideNftDrawer = ({
 
   return (
     <BottomDrawer
-      testId="HideCollectionModal"
       isOpen={isOpened}
       onClose={onPressClose}
       Icon={Icons.EyeNoneMedium}

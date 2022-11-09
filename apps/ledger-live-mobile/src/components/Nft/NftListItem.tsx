@@ -6,11 +6,10 @@ import { NFTMetadata, NFTStandard, ProtoNFT } from "@ledgerhq/types-live";
 import { NFTResource } from "@ledgerhq/live-common/nft/NftMetadataProvider/types";
 import { Box, Flex, Tag, Text } from "@ledgerhq/native-ui";
 
-import { getCryptoCurrencyById } from "@ledgerhq/live-common/lib/currencies/";
-
 import { useNavigation } from "@react-navigation/native";
 import styled from "@ledgerhq/native-ui/components/styled";
 import { useTranslation } from "react-i18next";
+import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
 import CurrencyIcon from "../CurrencyIcon";
 import NftMedia from "./NftMedia";
 import Skeleton from "../Skeleton";
@@ -21,7 +20,10 @@ type Props = {
   ownedNftsInCollection?: number;
 };
 
-const StyledTouchableOpacity = styled.TouchableOpacity``;
+const StyledTouchableOpacity = styled.TouchableOpacity`
+  margin-bottom: ${p => p.theme.space[3]}px;
+  border-radius: ${p => p.theme.radii[1]}px;
+`;
 
 const displayText = (text?: string | null) => text ?? "--";
 
@@ -57,12 +59,7 @@ const NftCardView = ({
   );
 
   return (
-    <StyledTouchableOpacity
-      mb={3}
-      borderRadius={1}
-      bg="background.main"
-      onPress={navigateToNftViewer}
-    >
+    <StyledTouchableOpacity bg="background.main" onPress={navigateToNftViewer}>
       <NftMediaComponent
         status={status}
         metadata={metadata}
@@ -110,11 +107,15 @@ const NftCardMemo = memo(NftCardView);
 // this technique of splitting the usage of context and memoing the presentational component is used to prevent
 // the rerender of all NftCards whenever the NFT cache changes (whenever a new NFT is loaded)
 const NftListItem = ({ nft, ownedNftsInCollection }: Props) => {
-  const { status, metadata } = useNftMetadata(
+  const nftMetadata = useNftMetadata(
     nft?.contract,
     nft?.tokenId,
     nft?.currencyId,
   );
+  // FIXME: wtf is this metadata property and where does it come from?
+  const { status, metadata } = nftMetadata as NFTResource & {
+    metadata: NFTMetadata;
+  };
 
   return (
     <NftCardMemo

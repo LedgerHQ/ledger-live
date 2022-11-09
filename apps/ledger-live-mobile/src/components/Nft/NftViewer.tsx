@@ -27,12 +27,22 @@ import { useSelector } from "react-redux";
 import { Box, Button, Icons, Text, Flex } from "@ledgerhq/native-ui";
 import { useTranslation, Trans } from "react-i18next";
 import Clipboard from "@react-native-community/clipboard";
-import { ProtoNFT, FloorPrice } from "@ledgerhq/types-live";
+import {
+  FloorPrice,
+  Account,
+  NFTMetadataResponse,
+  NFTCollectionMetadataResponse,
+} from "@ledgerhq/types-live";
 import { FeatureToggle } from "@ledgerhq/live-common/featureFlags/index";
 import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
-import { useNavigation, useTheme } from "@react-navigation/native";
+import {
+  CompositeNavigationProp,
+  CompositeScreenProps,
+  useNavigation,
+} from "@react-navigation/native";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import styled from "styled-components/native";
+import { NFTResource } from "@ledgerhq/live-common/nft/NftMetadataProvider/types";
 import { accountSelector } from "../../reducers/accounts";
 import { ScreenName, NavigatorName } from "../../const";
 import NftLinksPanel from "./NftLinksPanel";
@@ -41,16 +51,20 @@ import NftMedia from "./NftMedia";
 import { getMetadataMediaType } from "../../logic/nft";
 import NftPropertiesList from "./NftPropertiesList";
 import CurrencyIcon from "../CurrencyIcon";
+import { State } from "../../reducers/types";
+import type { NftNavigatorParamList } from "../RootNavigator/types/NftNavigator";
+import type {
+  StackNavigatorNavigation,
+  StackNavigatorProps,
+} from "../RootNavigator/types/helpers";
+import type { BaseNavigatorStackParamList } from "../RootNavigator/types/BaseNavigator";
+import { AccountsNavigatorParamList } from "../RootNavigator/types/AccountsNavigator";
 
-type Props = {
-  route: {
-    params: RouteParams;
-  };
-};
-
-type RouteParams = {
-  nft: ProtoNFT;
-};
+type Props = CompositeScreenProps<
+  | StackNavigatorProps<NftNavigatorParamList, ScreenName.NftViewer>
+  | StackNavigatorProps<AccountsNavigatorParamList, ScreenName.NftViewer>,
+  StackNavigatorProps<BaseNavigatorStackParamList>
+>;
 
 type TimeoutReturn = ReturnType<typeof setTimeout>;
 
@@ -88,6 +102,7 @@ const Section = ({
     null,
   );
   const copy = useCallback(() => {
+    if (typeof value === "undefined") return null;
     Clipboard.setString(value);
     setCopied(true);
     setTimeoutFunction(
@@ -103,7 +118,7 @@ const Section = ({
       <Flex flexDirection="row" alignItems="center" mb={4}>
         <SectionTitle mb={0}>{title}</SectionTitle>
         {copyAvailable ? (
-          <View flexDirection="row" alignItems="center">
+          <View>
             <TouchableOpacity onPress={copy} style={{ marginLeft: 10 }}>
               <Icons.CopyMedium
                 size={16}
@@ -130,20 +145,35 @@ const NftViewer = ({ route }: Props) => {
     nft?.contract,
     nft?.tokenId,
     nft?.currencyId,
-  );
-
+  ) as {
+    status: NFTResource["status"];
+    metadata?: NFTMetadataResponse["result"] &
+      NFTCollectionMetadataResponse["result"];
+  };
   const currency = useMemo(
     () => getCryptoCurrencyById(nft.currencyId),
     [nft.currencyId],
   );
   const { status: collectionStatus, metadata: collectionMetadata } =
-    useNftCollectionMetadata(nft?.contract, nft?.currencyId);
-  const { colors } = useTheme();
+    useNftCollectionMetadata(nft?.contract, nft?.currencyId) as {
+      status: NFTResource["status"];
+      metadata?: NFTMetadataResponse["result"] &
+        NFTCollectionMetadataResponse["result"];
+    };
   const { t } = useTranslation();
-  const navigation = useNavigation();
+  const navigation =
+    useNavigation<
+      CompositeNavigationProp<
+        StackNavigatorNavigation<NftNavigatorParamList, ScreenName.NftViewer>,
+        StackNavigatorNavigation<BaseNavigatorStackParamList>
+      >
+    >();
 
   const { accountId } = decodeNftId(nft?.id);
-  const account = useSelector(state => accountSelector(state, { accountId }));
+  // FIXME: account could be undefined :/
+  const account = useSelector<State, Account | undefined>(state =>
+    accountSelector(state, { accountId }),
+  )!;
 
   const [bottomModalOpen, setBottomModalOpen] = useState(false);
   const isLoading = nftStatus === "loading" || collectionStatus === "loading";
@@ -152,7 +182,7 @@ const NftViewer = ({ route }: Props) => {
 
   const [floorPriceLoading, setFloorPriceLoading] = useState(false);
   const [ticker, setTicker] = useState("");
-  const [floorPrice, setFloorPrice] = useState(null);
+  const [floorPrice, setFloorPrice] = useState<number | null>(null);
 
   useEffect(() => {
     setFloorPriceLoading(true);
@@ -186,7 +216,9 @@ const NftViewer = ({ route }: Props) => {
       screen: ScreenName.SendSelectRecipient,
       params: {
         accountId: account.id,
-        parentId: account?.parentAccount?.id,
+        // FIXME: does the parentAccount field actually exist?
+        parentId: (account as { parentAccount?: { id: string } })?.parentAccount
+          ?.id,
         transaction,
       },
     });
@@ -225,7 +257,7 @@ const NftViewer = ({ route }: Props) => {
     }
 
     return null;
-  }, [colors, isLoading, nftMetadata]);
+  }, [isLoading, nftMetadata]);
 
   const description = useMemo(() => {
     if (isLoading && !nftMetadata?.description) {
@@ -246,7 +278,7 @@ const NftViewer = ({ route }: Props) => {
   }, [isLoading, nftMetadata]);
 
   const mediaType = useMemo(
-    () => getMetadataMediaType(nftMetadata, "big"),
+    () => nftMetadata && getMetadataMediaType(nftMetadata, "big"),
     [nftMetadata],
   );
 
@@ -309,7 +341,7 @@ const NftViewer = ({ route }: Props) => {
           </Box>
 
           <Box style={styles.imageContainer} borderRadius={2} mb={8}>
-            {nftMetadata?.media && mediaType !== "video" ? (
+            {nftMetadata?.medias && mediaType !== "video" ? (
               <TouchableOpacity
                 onPress={() =>
                   navigation.navigate(NavigatorName.NftNavigator, {
@@ -412,7 +444,7 @@ const NftViewer = ({ route }: Props) => {
         </FeatureToggle>
       </ScrollView>
       <NftLinksPanel
-        nftMetadata={nftMetadata}
+        nftMetadata={nftMetadata || undefined}
         links={nftMetadata?.links}
         isOpen={bottomModalOpen}
         onClose={closeModal}

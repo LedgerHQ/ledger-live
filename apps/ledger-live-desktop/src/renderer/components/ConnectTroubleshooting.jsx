@@ -1,6 +1,7 @@
 // @flow
 import React, { useState, useEffect } from "react";
 import { Trans } from "react-i18next";
+import { getEnv } from "@ledgerhq/live-common/env";
 import styled from "styled-components";
 import Box from "~/renderer/components/Box";
 import Text from "~/renderer/components/Text";
@@ -23,7 +24,7 @@ const Wrapper: ThemedComponent<{}> = styled(Box).attrs({
 `;
 
 const ConnectTroubleshooting = ({
-  appearsAfterDelay = process.env.PLAYWRIGHT_RUN ? 3000 : 15000,
+  appearsAfterDelay = getEnv("PLAYWRIGHT_RUN") ? 3000 : 15000,
 }: Props) => {
   const [visible, setVisible] = useState(false);
   useEffect(() => {

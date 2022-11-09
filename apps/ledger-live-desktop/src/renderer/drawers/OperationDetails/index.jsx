@@ -7,6 +7,7 @@ import { Trans, withTranslation } from "react-i18next";
 import type { TFunction } from "react-i18next";
 import styled from "styled-components";
 import uniq from "lodash/uniq";
+import { getEnv } from "@ledgerhq/live-common/env";
 import { colors } from "~/renderer/styles/theme";
 
 import {
@@ -445,7 +446,7 @@ const OperationD: React$ComponentType<Props> = (props: Props) => {
               : isConfirmed
               ? t("operationDetails.confirmed")
               : t("operationDetails.notConfirmed")}
-            {process.env.PLAYWRIGHT_RUN
+            {getEnv("PLAYWRIGHT_RUN")
               ? ""
               : hasFailed
               ? null

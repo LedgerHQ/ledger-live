@@ -8,7 +8,6 @@ import { useDispatch, useSelector } from "react-redux";
 import { NavigationContainerEventMap } from "@react-navigation/native";
 import { Box } from "@ledgerhq/native-ui";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
-import { ScreenName } from "../../const";
 import Portfolio from "../../screens/Portfolio";
 import WalletNftGallery from "../../screens/Nft/WalletNftGallery";
 import {
@@ -16,15 +15,17 @@ import {
   walletTabNavigatorLastVisitedTabSelector,
 } from "../../reducers/settings";
 import { accountsSelector } from "../../reducers/accounts";
-// eslint-disable-next-line import/no-cycle
 import ReadOnlyPortfolio from "../../screens/Portfolio/ReadOnly";
 import { setWalletTabNavigatorLastVisitedTab } from "../../actions/settings";
 import WalletTabNavigatorTabBar from "../WalletTab/WalletTabNavigatorTabBar";
 import WalletTabNavigatorScrollManager from "../WalletTab/WalletTabNavigatorScrollManager";
 import WalletTabHeader from "../WalletTab/WalletTabHeader";
 import WalletTabNavigatorTabBarDisabled from "../WalletTab/WalletTabNavigatorTabBarDisabled";
+import { WalletTabNavigatorStackParamList } from "./types/WalletTabNavigator";
+import { ScreenName } from "../../const/navigation";
 
-const WalletTab = createMaterialTopTabNavigator();
+const WalletTab =
+  createMaterialTopTabNavigator<WalletTabNavigatorStackParamList>();
 
 const tabBarOptions = (props: MaterialTopTabBarProps) => (
   <WalletTabNavigatorTabBar {...props} />
@@ -78,7 +79,9 @@ export default function WalletTabNavigator() {
                 );
                 dispatch(
                   setWalletTabNavigatorLastVisitedTab(
-                    e.data.state.routeNames[e.data.state.index],
+                    e.data.state.routeNames[
+                      e.data.state.index
+                    ] as keyof WalletTabNavigatorStackParamList,
                   ),
                 );
               }

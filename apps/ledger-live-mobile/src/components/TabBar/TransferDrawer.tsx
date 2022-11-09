@@ -7,6 +7,7 @@ import { isAccountEmpty } from "@ledgerhq/live-common/account/index";
 import { Flex, Icons, Text, Box } from "@ledgerhq/native-ui";
 import { ScrollView } from "react-native";
 import { snakeCase } from "lodash";
+import { StackNavigationProp } from "@react-navigation/stack";
 import { NavigatorName, ScreenName } from "../../const";
 import {
   accountsCountSelector,
@@ -40,8 +41,10 @@ export default function TransferDrawer({ onClose }: ModalProps) {
   );
 
   const onNavigate = useCallback(
-    (name: string, options?: { [key: string]: any }) => {
-      navigation.navigate(name, options);
+    (name: string, options?: object) => {
+      (
+        navigation as StackNavigationProp<{ [key: string]: object | undefined }>
+      ).navigate(name, options);
 
       if (onClose) {
         onClose();
@@ -64,7 +67,7 @@ export default function TransferDrawer({ onClose }: ModalProps) {
   const onSwap = useCallback(
     () =>
       onNavigate(NavigatorName.Swap, {
-        screen: ScreenName.Swap,
+        screen: ScreenName.SwapForm,
       }),
     [onNavigate],
   );
@@ -153,6 +156,7 @@ export default function TransferDrawer({ onClose }: ModalProps) {
           disabled={!accountsCount || readOnlyModeEnabled || areAccountsEmpty}
         />
       </Box>
+
       <Box mb={8}>
         <TransferButton
           eventProperties={{
@@ -171,6 +175,7 @@ export default function TransferDrawer({ onClose }: ModalProps) {
           disabled={!accountsCount || readOnlyModeEnabled || areAccountsEmpty}
         />
       </Box>
+
       {lendingEnabled ? (
         <Box mb={8}>
           <TransferButton

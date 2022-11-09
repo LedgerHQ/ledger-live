@@ -92,7 +92,7 @@ export function useDeepLinkHandler() {
           navigate("/exchange");
           break;
 
-        case "manager": {
+        case "myledger": {
           const { installApp } = query;
           if (!installApp || typeof installApp !== "string") {
             navigate("/manager");

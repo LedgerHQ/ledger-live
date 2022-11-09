@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { manipulateAsync, SaveFormat } from "expo-image-manipulator";
+import { ImageResizeError } from "@ledgerhq/live-common/customImage/errors";
 import { ImageBase64Data, ImageDimensions, ImageFileUri } from "./types";
-import { ImageResizeError } from "./errors";
 
 export type ResizeResult = ImageBase64Data & ImageDimensions;
 

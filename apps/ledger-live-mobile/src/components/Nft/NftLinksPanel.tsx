@@ -2,14 +2,7 @@ import React, { memo, useCallback, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigation } from "@react-navigation/native";
 import { NFTMediaSize, NFTMetadata } from "@ledgerhq/types-live";
-import {
-  View,
-  StyleSheet,
-  TouchableOpacity,
-  Linking,
-  StyleProp,
-  ViewStyle,
-} from "react-native";
+import { View, StyleSheet, TouchableOpacity, Linking } from "react-native";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { Box, Flex, Icons, Text } from "@ledgerhq/native-ui";
 import styled, { useTheme } from "styled-components/native";
@@ -25,7 +18,7 @@ import HideNftDrawer from "./HideNftDrawer";
 import { track, TrackScreen } from "../../analytics";
 
 type Props = {
-  links: NFTMetadata["links"] | null;
+  links?: NFTMetadata["links"] | null;
   isOpen: boolean;
   onClose: () => void;
   nftMetadata?: NFTMetadata;
@@ -48,12 +41,12 @@ const NftLink = ({
   onPress,
   primary,
 }: {
-  style?: StyleProp<ViewStyle>;
+  style?: React.ComponentProps<typeof TouchableOpacity>["style"];
   leftIcon: React.ReactNode;
   rightIcon?: React.ReactNode;
   title: string;
   subtitle?: string;
-  onPress?: () => void;
+  onPress?: React.ComponentProps<typeof TouchableOpacity>["onPress"];
   primary?: boolean;
 }) => (
   <LinkTouchable style={style} onPress={onPress}>
@@ -145,6 +138,7 @@ const NftLinksPanel = ({
       screen: ScreenName.CustomImageStep1Crop,
       params: {
         imageUrl: customImageUri,
+        device: null,
       },
     });
     onClose && onClose();
@@ -284,7 +278,6 @@ const NftLinksPanel = ({
           backgroundColor: colors.background.drawer,
         },
       ]}
-      id="NftLinksModal"
       isOpened={isOpen}
       onClose={onClose}
     >

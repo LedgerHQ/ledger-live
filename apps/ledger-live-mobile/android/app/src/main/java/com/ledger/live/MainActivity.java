@@ -19,6 +19,8 @@ import java.util.Locale;
 
 import expo.modules.ReactActivityDelegateWrapper;
 
+import com.facebook.react.modules.i18nmanager.I18nUtil;
+
 public class MainActivity extends ReactActivity {
 
     String importDataString = null;
@@ -101,6 +103,9 @@ public class MainActivity extends ReactActivity {
                 }
             });
         }
+
+        I18nUtil sharedI18nUtilInstance = I18nUtil.getInstance();
+        sharedI18nUtilInstance.allowRTL(getApplicationContext(), true);
 
     }
 

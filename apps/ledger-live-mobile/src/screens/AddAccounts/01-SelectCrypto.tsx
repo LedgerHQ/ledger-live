@@ -13,25 +13,27 @@ import {
 } from "@ledgerhq/live-common/currencies/index";
 import { useTheme } from "@react-navigation/native";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
+import useEnv from "@ledgerhq/live-common/hooks/useEnv";
 import { ScreenName } from "../../const";
 import { TrackScreen } from "../../analytics";
 import FilteredSearchBar from "../../components/FilteredSearchBar";
 import CurrencyRow from "../../components/CurrencyRow";
 import LText from "../../components/LText";
+import { AddAccountsNavigatorParamList } from "../../components/RootNavigator/types/AddAccountsNavigator";
+import { StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
 
 const SEARCH_KEYS = ["name", "ticker"];
-type Props = {
-  devMode: boolean;
-  navigation: any;
-  route: {
-    params: {
-      filterCurrencyIds?: string[];
-      currency?: string;
-    };
-  };
-};
 
-const keyExtractor = currency => currency.id;
+type NavigationProps = StackNavigatorProps<
+  AddAccountsNavigatorParamList,
+  ScreenName.AddAccountsSelectCrypto
+>;
+
+type Props = {
+  devMode?: boolean;
+} & NavigationProps;
+
+const keyExtractor = (currency: CryptoCurrency) => currency.id;
 
 const renderEmptyList = () => (
   <View style={styles.emptySearch}>
@@ -46,7 +48,9 @@ const listSupportedTokens = () =>
 
 export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
   const { colors } = useTheme();
+  const devMode = useEnv("MANAGER_DEV_MODE");
   const { filterCurrencyIds = [], currency } = route.params || {};
+
   const osmo = useFeature("currencyOsmosisMobile");
   const fantom = useFeature("currencyFantomMobile");
   const moonbeam = useFeature("currencyMoonbeamMobile");
@@ -78,8 +82,17 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
       .filter(([, feature]) => !feature?.enabled)
       .map(([name]) => name);
 
-    return currencies.filter(c => !deactivatedCurrencies.includes(c.id));
-  }, [featureFlaggedCurrencies, filterCurrencyIds]);
+    const currenciesFiltered = currencies.filter(
+      c => !deactivatedCurrencies.includes(c.id),
+    );
+
+    if (!devMode) {
+      return currenciesFiltered.filter(
+        c => c.type !== "CryptoCurrency" || !c.isTestnetFor,
+      );
+    }
+    return currenciesFiltered;
+  }, [devMode, featureFlaggedCurrencies, filterCurrencyIds]);
 
   const sortedCryptoCurrencies = useCurrenciesByMarketcap(cryptoCurrencies);
 
@@ -104,10 +117,10 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
     }
   };
 
-  const renderList = items => (
+  const renderList = (items: (CryptoCurrency | TokenCurrency)[]) => (
     <FlatList
       contentContainerStyle={styles.list}
-      data={items}
+      data={items as CryptoCurrency[]}
       renderItem={({ item }) => (
         <CurrencyRow currency={item} onPress={onPressItem} />
       )}

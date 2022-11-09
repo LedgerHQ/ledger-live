@@ -56,7 +56,6 @@ export default function ReceiveNFTsModal({ onClose, isOpened }: Props) {
 
   return (
     <BottomDrawer
-      testId="ReceiveNFTsModal"
       title={t("wallet.nftGallery.receiveModal.title")}
       isOpen={isOpened}
       onClose={onPressClose}
@@ -83,16 +82,10 @@ export default function ReceiveNFTsModal({ onClose, isOpened }: Props) {
 
 const EthPolygonIcons = () => {
   return (
-    <Svg
-      width="77"
-      height="52"
-      viewBox="0 0 77 52"
-      fill="none"
-      xmlns="https://www.w3.org/2000/svg"
-    >
+    <Svg width="77" height="52" viewBox="0 0 77 52" fill="none">
       <Mask
         id="mask0_10885_163131"
-        maskUnits="userSpaceOnUse"
+        // maskUnits="userSpaceOnUse"
         x="0"
         y="0"
         width="77"

@@ -9,7 +9,7 @@ import {
   languageIds,
 } from "@ledgerhq/types-live";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
-import { useAvailableLanguagesForDevice } from "@ledgerhq/live-common/lib/manager/hooks";
+import { useAvailableLanguagesForDevice } from "@ledgerhq/live-common/manager/hooks";
 
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { FwUpdateForegroundEvent } from "./types";

@@ -7,7 +7,7 @@ import { botTest, genericTestDestination, pickSiblings } from "../../bot/specs";
 import type { AppSpec } from "../../bot/types";
 import type { Transaction } from "./types";
 
-const testTimeout = 5 * 60 * 1000;
+const testTimeout = 6 * 60 * 1000;
 
 const transactionCheck =
   (currencyId: string) =>
@@ -68,7 +68,7 @@ const cronos: AppSpec<Transaction> = {
   appQuery: {
     model: DeviceModelId.nanoS,
     appName: "Ethereum",
-    appVersion: "1.9.20-dev", // FIXME remove this line once 1.9.20 lands on coin-apps (branch ledger-live-bot)
+    appVersion: "1.9.20",
   },
   testTimeout,
   transactionCheck: transactionCheck("cronos"),
@@ -84,7 +84,7 @@ const fantom: AppSpec<Transaction> = {
   appQuery: {
     model: DeviceModelId.nanoS,
     appName: "Ethereum",
-    appVersion: "1.9.20-dev", // FIXME remove this line once 1.9.20 lands on coin-apps (branch ledger-live-bot)
+    appVersion: "1.9.20",
   },
   testTimeout,
   transactionCheck: transactionCheck("fantom"),
@@ -100,7 +100,7 @@ const moonbeam: AppSpec<Transaction> = {
   appQuery: {
     model: DeviceModelId.nanoS,
     appName: "Ethereum",
-    appVersion: "1.9.20-dev", // FIXME remove this line once 1.9.20 lands on coin-apps (branch ledger-live-bot)
+    appVersion: "1.9.20",
   },
   testTimeout,
   transactionCheck: transactionCheck("moonbeam"),
@@ -116,7 +116,7 @@ const songbird: AppSpec<Transaction> = {
   appQuery: {
     model: DeviceModelId.nanoS,
     appName: "Ethereum",
-    appVersion: "1.9.20-dev", // FIXME remove this line once 1.9.20 lands on coin-apps (branch ledger-live-bot)
+    appVersion: "1.9.20",
   },
   testTimeout,
   transactionCheck: transactionCheck("songbird"),
@@ -132,7 +132,7 @@ const flare: AppSpec<Transaction> = {
   appQuery: {
     model: DeviceModelId.nanoS,
     appName: "Ethereum",
-    appVersion: "1.9.20-dev", // FIXME remove this line once 1.9.20 lands on coin-apps (branch ledger-live-bot)
+    appVersion: "1.9.20",
   },
   testTimeout,
   transactionCheck: transactionCheck("flare"),

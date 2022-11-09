@@ -1,6 +1,18 @@
 name: "[Release] Publish packages and apps"
 on:
   workflow_dispatch:
+    inputs:
+      app:
+        description: "which app to release (libraries are always published, chose NONE to release libs only)"
+        required: true
+        type: choice
+        default: NONE
+        options:
+          - NONE
+          - LLD
+          - LLM
+          - ALL
+
   workflow_run:
     workflows:
       - \[Release\] Prepare for releasing
@@ -45,13 +57,15 @@ jobs:
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPMJS_TOKEN }}
       - name: check if desktop versions are different
+        if: ${{ github.event_name == 'workflow_run' }}
         id: desktop-changed
         run: |
-          echo "::set-output name=status::$(git diff HEAD HEAD~1 ./apps/ledger-live-desktop/package.json | grep '"version": "' | wc -l)"
+          echo "status=$(git diff HEAD HEAD~1 ./apps/ledger-live-desktop/package.json | grep '"version": "' | wc -l)" >> $GITHUB_OUTPUT
       - name: check if mobile versions are different
+        if: ${{ github.event_name == 'workflow_run' }}
         id: mobile-changed
         run: |
-          echo "::set-output name=status::$(git diff HEAD HEAD~1 ./apps/ledger-live-mobile/package.json | grep '"version": "' | wc -l)"
+          echo "status=$(git diff HEAD HEAD~1 ./apps/ledger-live-mobile/package.json | grep '"version": "' | wc -l)" >> $GITHUB_OUTPUT
       - uses: ledgerhq/ledger-live/tools/actions/get-package-infos@develop
         id: desktop-version
         with:
@@ -61,7 +75,7 @@ jobs:
         with:
           path: ${{ github.workspace }}/apps/ledger-live-mobile
       - name: generate desktop changelog
-        if: ${{ steps.desktop-changed.outputs.status != 0 }}
+        if: ${{ steps.desktop-changed.outputs.status != 0 || github.event_name == 'workflow_dispatch' && contains(fromJson('["LLD", "ALL"]'), github.event.inputs.app) }}
         uses: ledgerhq/ledger-live/tools/actions/generate-release-message@develop
         id: desktop-changelog
         with:
@@ -70,11 +84,11 @@ jobs:
           output-path: ${{ github.workspace }}
           name: desktop-changelog
       - name: tag desktop
-        if: ${{ steps.desktop-changed.outputs.status != 0 }}
+        if: ${{ steps.desktop-changed.outputs.status != 0 || github.event_name == 'workflow_dispatch' && contains(fromJson('["LLD", "ALL"]'), github.event.inputs.app) }}
         run: |
           git tag @ledgerhq/live-desktop@${{ steps.desktop-version.outputs.version }}
       - name: generate mobile changelog
-        if: ${{ steps.mobile-changed.outputs.status != 0 }}
+        if: ${{ steps.mobile-changed.outputs.status != 0 || github.event_name == 'workflow_dispatch' && contains(fromJson('["LLM", "ALL"]'), github.event.inputs.app) }}
         uses: ledgerhq/ledger-live/tools/actions/generate-release-message@develop
         id: mobile-changelog
         with:
@@ -83,14 +97,14 @@ jobs:
           output-path: ${{ github.workspace }}
           name: mobile-changelog
       - name: tag mobile
-        if: ${{ steps.mobile-changed.outputs.status != 0 }}
+        if: ${{ steps.mobile-changed.outputs.status != 0 || github.event_name == 'workflow_dispatch' && contains(fromJson('["LLM", "ALL"]'), github.event.inputs.app) }}
         run: |
           git tag @ledgerhq/live-mobile@${{ steps.mobile-version.outputs.version }}
       - name: push changes
         run: |
           git push origin main --tags
       - name: create desktop github release
-        if: ${{ steps.desktop-changed.outputs.status != 0 }}
+        if: ${{ steps.desktop-changed.outputs.status != 0 || github.event_name == 'workflow_dispatch' && contains(fromJson('["LLD", "ALL"]'), github.event.inputs.app) }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
@@ -98,12 +112,12 @@ jobs:
       - name: create mobile github release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        if: ${{ steps.mobile-changed.outputs.status != 0 }}
+        if: ${{ steps.mobile-changed.outputs.status != 0 || github.event_name == 'workflow_dispatch' && contains(fromJson('["LLM", "ALL"]'), github.event.inputs.app) }}
         run: |
           gh release create @ledgerhq/live-mobile@${{ steps.mobile-version.outputs.version }} -F ${{ steps.mobile-changelog.outputs.path }}
       - uses: actions/github-script@v6
         name: trigger release build for desktop
-        if: ${{ steps.desktop-changed.outputs.status != 0 }}
+        if: ${{ steps.desktop-changed.outputs.status != 0 || github.event_name == 'workflow_dispatch' && contains(fromJson('["LLD", "ALL"]'), github.event.inputs.app) }}
         with:
           github-token: ${{ secrets.GH_PAT }}
           script: |
@@ -118,7 +132,7 @@ jobs:
             });
       - uses: actions/github-script@v6
         name: trigger release build for mobile
-        if: ${{ steps.mobile-changed.outputs.status != 0 }}
+        if: ${{ steps.mobile-changed.outputs.status != 0 || github.event_name == 'workflow_dispatch' && contains(fromJson('["LLM", "ALL"]'), github.event.inputs.app) }}
         with:
           github-token: ${{ secrets.GH_PAT }}
           script: |

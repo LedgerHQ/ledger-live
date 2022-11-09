@@ -11,13 +11,14 @@ import { getAccountBannerProps as getCosmosBannerProps } from "~/renderer/famili
 const getBannerProps = (account: Account, hooks) => {
   const id = account.currency.id;
   switch (id) {
-    case "cosmos":
+    case "cosmos": {
       const state = getCosmosBannerState(account);
       const props = getCosmosBannerProps(state, account, hooks);
       return props;
-
-    default:
+    }
+    default: {
       return { display: false };
+    }
   }
 };
 

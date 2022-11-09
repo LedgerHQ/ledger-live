@@ -1,9 +1,14 @@
-name: "[Bot] 'Mère Denis'"
+name: "[Bot] Testing with 'Mère Denis'"
 on:
+  workflow_dispatch:
+    inputs:
+      family:
+        description: coin family to filter with (if any)
+        required: false
   push:
     branches:
       - support/bot-mere-denis
-      - support/bot-actions-perf
+      - support/bot-mere-denis-*
 
 concurrency:
   group: bot-seed1
@@ -31,6 +36,7 @@ jobs:
     name: Stop self-hosted EC2 runner
     needs: [start-runner, run-bot]
     runs-on: [ledger-live, linux]
+    timeout-minutes: 5
     steps:
       - name: Stop EC2 Linux Runner
         uses: LedgerHQ/actions/ec2-linux-runner@main
@@ -44,10 +50,6 @@ jobs:
     runs-on: ${{ needs.start-runner.outputs.label }}
     needs: [start-runner]
     steps:
-      - name: prepare runner
-        run: |
-          sudo growpart /dev/nvme0n1 1
-          sudo resize2fs /dev/nvme0n1p1
       - uses: actions/checkout@v3
       - name: Retrieving coin apps
         uses: actions/checkout@v3
@@ -60,6 +62,9 @@ jobs:
         id: bot
         timeout-minutes: 120
         with:
+          SHOW_LEGACY_NEW_ACCOUNT: "1"
           SLACK_API_TOKEN: ${{secrets.SLACK_API_TOKEN}}
           SLACK_ICON_EMOJI: ":bot-seed1:"
           SEED: ${{ secrets.SEED1 }}
+          BOT_ENVIRONMENT: testing
+          BOT_FILTER_FAMILY: ${{github.event.inputs.family}}

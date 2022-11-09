@@ -12,7 +12,7 @@ import sendAmountByFamily from "~/renderer/generated/SendAmountFields";
 import type {
   SwapTransactionType,
   SwapSelectorStateType,
-} from "@ledgerhq/live-common/exchange/swap/hooks/index";
+} from "@ledgerhq/live-common/exchange/swap/types";
 import { rateSelector } from "~/renderer/actions/swap";
 import FormattedVal from "~/renderer/components/FormattedVal";
 import Box from "~/renderer/components/Box";

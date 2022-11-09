@@ -13,12 +13,10 @@ export interface ICrypto {
     account: number,
     index: number
   ): Promise<string>;
-
-  getDerivationMode(address: string): string;
-
   toOutputScript(address: string): Buffer;
   validateAddress(address: string): boolean;
   isTaprootAddress(address: string): boolean;
+  getDustLimit(): number;
 }
 
 export type Currency =

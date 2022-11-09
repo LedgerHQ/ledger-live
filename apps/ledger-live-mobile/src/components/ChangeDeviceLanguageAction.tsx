@@ -1,9 +1,9 @@
 import React, { useEffect, useMemo } from "react";
 
-import { Device } from "@ledgerhq/live-common/lib/hw/actions/types";
+import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { Language } from "@ledgerhq/types-live";
-import { createAction } from "@ledgerhq/live-common/lib/hw/actions/installLanguage";
-import installLanguage from "@ledgerhq/live-common/lib/hw/installLanguage";
+import { createAction } from "@ledgerhq/live-common/hw/actions/installLanguage";
+import installLanguage from "@ledgerhq/live-common/hw/installLanguage";
 import { useTranslation } from "react-i18next";
 import { Flex, Alert } from "@ledgerhq/native-ui";
 import DeviceAction from "./DeviceAction";
@@ -44,13 +44,15 @@ const ChangeDeviceLanguageAction: React.FC<Props> = ({
     if (onStart && device) {
       onStart();
     }
-  }, [device]);
+  }, [device, onStart]);
 
   return (
     <>
       <Flex flexDirection="row" mb={showAlert ? "16px" : 0}>
         <DeviceAction
           action={action}
+          // FIXME: request should be a Language in theory :/
+          request={undefined}
           device={device}
           onError={onError}
           renderOnResult={() => (

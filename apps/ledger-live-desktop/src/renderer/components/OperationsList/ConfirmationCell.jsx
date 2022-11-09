@@ -8,10 +8,7 @@ import { createStructuredSelector } from "reselect";
 import type { Account, Operation, AccountLike } from "@ledgerhq/types-live";
 import { getMainAccount, getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import { getOperationAmountNumber } from "@ledgerhq/live-common/operation";
-import {
-  confirmationsNbForCurrencySelector,
-  marketIndicatorSelector,
-} from "~/renderer/reducers/settings";
+import { marketIndicatorSelector } from "~/renderer/reducers/settings";
 import { getMarketColor } from "~/renderer/styles/helpers";
 
 import Box from "~/renderer/components/Box";
@@ -42,6 +39,7 @@ type Props = {
   ...OwnProps,
   confirmationsNb: number,
   marketIndicator: string,
+  isConfirmed: Boolean,
 };
 
 class ConfirmationCell extends PureComponent<Props> {

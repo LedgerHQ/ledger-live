@@ -26,6 +26,7 @@ const maxAccount = 9;
 
 const solana: AppSpec<Transaction> = {
   name: "Solana",
+  scanAccountsRetries: 3,
   appQuery: {
     model: DeviceModelId.nanoS,
     firmware: "2",

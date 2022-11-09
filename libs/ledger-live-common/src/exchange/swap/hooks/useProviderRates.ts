@@ -1,18 +1,15 @@
 import { useCallback, useEffect, useReducer, useState } from "react";
 import { getExchangeRates } from "..";
 import { Transaction } from "../../../generated/types";
-import type { CustomMinOrMaxError, Exchange, ExchangeRate } from "../types";
 import {
+  Exchange,
+  ExchangeRate,
   OnNoRatesCallback,
-  SetExchangeRateCallback,
   SwapSelectorStateType,
-} from "./useSwapTransaction";
-
-export type RatesReducerState = {
-  status?: string | null;
-  value?: ExchangeRate[];
-  error?: Error;
-};
+  RatesReducerState,
+  CustomMinOrMaxError,
+} from "../types";
+import { SetExchangeRateCallback } from "./useSwapTransaction";
 
 const ratesReducerInitialState: RatesReducerState = {};
 const ratesReducer = (state: RatesReducerState, action): RatesReducerState => {
@@ -39,8 +36,8 @@ export const useProviderRates = ({
 }: {
   fromState: SwapSelectorStateType;
   toState: SwapSelectorStateType;
-  transaction?: Transaction | null | undefined;
-  onNoRates?: OnNoRatesCallback | null | undefined;
+  transaction?: Transaction | null;
+  onNoRates?: OnNoRatesCallback;
   setExchangeRate?: SetExchangeRateCallback | null | undefined;
 }): {
   rates: RatesReducerState;
@@ -76,7 +73,7 @@ export const useProviderRates = ({
           !toCurrency ||
           !fromAccount
         ) {
-          setExchangeRate && setExchangeRate(null);
+          setExchangeRate && setExchangeRate();
           return dispatchRates({ type: "set", payload: [] });
         }
         dispatchRates({ type: "loading" });
@@ -155,7 +152,7 @@ export const useProviderRates = ({
 
             const getRate = () => {
               if (!(rates?.length > 0)) {
-                return null;
+                return;
               }
               const { provider, tradeMethod } = getSelectedRate as ExchangeRate;
               const rate = rates.find(

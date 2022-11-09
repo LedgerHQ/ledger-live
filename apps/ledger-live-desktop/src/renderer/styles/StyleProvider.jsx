@@ -13,6 +13,8 @@ import {
   defaultTheme as V3dDfaultTheme,
   palettes as V3Palettes,
 } from "@ledgerhq/react-ui/styles/index";
+import { useSelector } from "react-redux";
+import { themeSelector } from "../actions/general";
 
 type Props = {
   children: React$Node,
@@ -44,6 +46,19 @@ const StyleProvider = ({ children, selectedPalette }: Props) => {
       {children}
     </ThemeProvider>
   );
+};
+
+export const withV2StyleProvider = (Component: React.ComponentType) => {
+  const WrappedComponent = props => {
+    const selectedPalette = useSelector(themeSelector) || "light";
+
+    return (
+      <StyleProvider selectedPalette={selectedPalette}>
+        <Component {...props} />
+      </StyleProvider>
+    );
+  };
+  return WrappedComponent;
 };
 
 export default StyleProvider;

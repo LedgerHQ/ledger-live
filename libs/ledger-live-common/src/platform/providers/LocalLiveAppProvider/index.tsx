@@ -30,11 +30,11 @@ type LiveAppProviderProps = {
 };
 
 export function useLocalLiveAppManifest(
-  appId: string
+  appId?: string
 ): LiveAppManifest | undefined {
   const localLiveAppRegistry = useContext(liveAppContext).state;
 
-  return localLiveAppRegistry.liveAppById[appId];
+  return appId ? localLiveAppRegistry.liveAppById[appId] : undefined;
 }
 
 export function useLocalLiveAppContext(): LiveAppContextType {

@@ -73,7 +73,7 @@ Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/
 
 ##### Parameters
 
-*   `observer` **Observer\<DescriptorEvent\<any>>** 
+*   `observer` **Observer\<ListenDescriptorEvent>** 
 
 Returns **Subscription** 
 

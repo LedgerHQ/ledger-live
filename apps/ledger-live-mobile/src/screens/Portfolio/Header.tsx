@@ -28,12 +28,12 @@ function PortfolioHeader({ hidePortfolio }: { hidePortfolio: boolean }) {
     track("button_clicked", {
       button: "Notification Center",
     });
-    // @ts-expect-error navigation ts issue
-    navigation.navigate(NavigatorName.NotificationCenter);
+    navigation.navigate(NavigatorName.NotificationCenter, {
+      screen: ScreenName.NotificationCenterNews,
+    });
   }, [navigation]);
 
   const onStatusErrorButtonPress = useCallback(() => {
-    // @ts-expect-error navigation ts issue
     navigation.navigate(NavigatorName.NotificationCenter, {
       screen: ScreenName.NotificationCenterStatus,
     });

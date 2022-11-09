@@ -3,6 +3,8 @@ import { Provider } from "react-redux";
 import thunk from "redux-thunk";
 import { createStore, applyMiddleware, compose } from "redux";
 import { importPostOnboardingState } from "@ledgerhq/live-common/postOnboarding/actions";
+import { CounterValuesStateRaw } from "@ledgerhq/live-common/countervalues/types";
+import { initialState as postOnboardingState } from "@ledgerhq/live-common/postOnboarding/reducer";
 import {
   getAccounts,
   getCountervalues,
@@ -14,26 +16,51 @@ import reducers from "../reducers";
 import { importSettings } from "../actions/settings";
 import { importStore as importAccounts } from "../actions/accounts";
 import { importBle } from "../actions/ble";
-import { INITIAL_STATE, supportedCountervalues } from "../reducers/settings";
+import {
+  INITIAL_STATE as settingsState,
+  supportedCountervalues,
+} from "../reducers/settings";
+import { INITIAL_STATE as accountsState } from "../reducers/accounts";
+import { INITIAL_STATE as appstateState } from "../reducers/appstate";
+import { INITIAL_STATE as bleState } from "../reducers/ble";
+import { INITIAL_STATE as notificationsState } from "../reducers/notifications";
+import { INITIAL_STATE as swapState } from "../reducers/swap";
+import { INITIAL_STATE as ratingsState } from "../reducers/ratings";
+import { INITIAL_STATE as walletconnectState } from "../reducers/walletconnect";
+import type { State } from "../reducers/types";
+
+const INITIAL_STATE: State = {
+  accounts: accountsState,
+  appstate: appstateState,
+  ble: bleState,
+  notifications: notificationsState,
+  ratings: ratingsState,
+  settings: settingsState,
+  swap: swapState,
+  walletconnect: walletconnectState,
+  postOnboarding: postOnboardingState,
+};
 
 export const store = createStore(
   reducers,
-  undefined, // $FlowFixMe
-  compose(
-    applyMiddleware(thunk),
-    typeof __REDUX_DEVTOOLS_EXTENSION__ === "function"
-      ? __REDUX_DEVTOOLS_EXTENSION__()
-      : f => f,
-  ),
+  INITIAL_STATE,
+  compose(applyMiddleware(thunk)),
 );
+
+export type StoreType = typeof store;
+
 export default class LedgerStoreProvider extends Component<
   {
     onInitFinished: () => void;
-    children: (ready: boolean, store: any, initialCountervalues: any) => any;
+    children: (
+      ready: boolean,
+      store: StoreType,
+      initialCountervalues?: CounterValuesStateRaw,
+    ) => JSX.Element;
   },
   {
     ready: boolean;
-    initialCountervalues: any;
+    initialCountervalues?: CounterValuesStateRaw;
   }
 > {
   state = {
@@ -45,7 +72,7 @@ export default class LedgerStoreProvider extends Component<
     return this.init();
   }
 
-  componentDidCatch(e: any) {
+  componentDidCatch(e: Error) {
     console.error(e);
     throw e;
   }
@@ -62,7 +89,7 @@ export default class LedgerStoreProvider extends Component<
         ({ ticker }) => ticker === settingsData.counterValue,
       )
     ) {
-      settingsData.counterValue = INITIAL_STATE.counterValue;
+      settingsData.counterValue = settingsState.counterValue;
     }
 
     store.dispatch(importSettings(settingsData));

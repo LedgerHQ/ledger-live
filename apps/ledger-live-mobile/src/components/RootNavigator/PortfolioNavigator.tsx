@@ -2,11 +2,12 @@ import React, { useMemo } from "react";
 import { createStackNavigator } from "@react-navigation/stack";
 import { useTheme } from "styled-components/native";
 import { NavigatorName } from "../../const";
-// eslint-disable-next-line import/no-cycle
 import AccountsNavigator from "./AccountsNavigator";
 import { getStackNavigatorConfig } from "../../navigation/navigatorConfig";
-// eslint-disable-next-line import/no-cycle
 import WalletTabNavigator from "./WalletTabNavigator";
+import { PortfolioNavigatorStackParamList } from "./types/PortfolioNavigator";
+
+const Stack = createStackNavigator<PortfolioNavigatorStackParamList>();
 
 export default function PortfolioNavigator() {
   const { colors } = useTheme();
@@ -19,7 +20,6 @@ export default function PortfolioNavigator() {
     <Stack.Navigator
       screenOptions={stackNavigationConfig}
       initialRouteName={NavigatorName.WalletTab}
-      backBehavior={"initialRoute"}
     >
       <Stack.Screen
         name={NavigatorName.WalletTab}
@@ -36,5 +36,3 @@ export default function PortfolioNavigator() {
     </Stack.Navigator>
   );
 }
-
-const Stack = createStackNavigator();

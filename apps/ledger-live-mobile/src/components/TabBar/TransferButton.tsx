@@ -1,7 +1,7 @@
 import React, { useCallback } from "react";
 import { BoxedIcon, Flex, Tag, Text } from "@ledgerhq/native-ui";
-import { StyleProp, TouchableOpacity, ViewStyle } from "react-native";
-import { IconType } from "@ledgerhq/native-ui/components/Icon/type";
+import { TouchableOpacity, StyleProp, ViewStyle } from "react-native";
+import type { IconType } from "@ledgerhq/native-ui/components/Icon/type";
 import { track } from "../../analytics";
 
 type Props = {
@@ -9,10 +9,10 @@ type Props = {
   description: string;
   tag?: string;
   Icon: IconType;
-  onPress?: (() => any) | null;
+  onPress?: (() => void) | null;
   disabled?: boolean;
   event?: string;
-  eventProperties?: unknown;
+  eventProperties?: Parameters<typeof track>[1];
   style?: StyleProp<ViewStyle>;
 };
 
@@ -49,7 +49,6 @@ export default function TransferButton({
           ml="16px"
           py="1px"
           flexShrink={1}
-          flexWrap="wrap"
         >
           <Flex flexDirection="row" alignItems={"center"}>
             <Text
@@ -74,6 +73,7 @@ export default function TransferButton({
             variant="body"
             fontWeight="medium"
             color={disabled ? "neutral.c40" : "neutral.c70"}
+            numberOfLines={3}
           >
             {description}
           </Text>

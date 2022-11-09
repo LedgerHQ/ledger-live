@@ -4,7 +4,7 @@ import styled from "styled-components";
 import { ipcRenderer } from "electron";
 import { Redirect, Route, Switch, useLocation, useHistory } from "react-router-dom";
 import { useSelector } from "react-redux";
-import { FeatureToggle, useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { FeatureToggle } from "@ledgerhq/live-common/featureFlags/index";
 import TrackAppStart from "~/renderer/components/TrackAppStart";
 import { BridgeSyncProvider } from "~/renderer/bridge/BridgeSyncContext";
 import { SyncNewAccounts } from "~/renderer/bridge/SyncNewAccounts";
@@ -25,7 +25,7 @@ import PlatformApp from "~/renderer/screens/platform/App";
 import NFTGallery from "~/renderer/screens/nft/Gallery";
 import NFTCollection from "~/renderer/screens/nft/Gallery/Collection";
 import Box from "~/renderer/components/Box/Box";
-import ListenDevices from "~/renderer/components/ListenDevices";
+import { useListenToHidDevices } from "./hooks/useListenToHidDevices";
 import ExportLogsButton from "~/renderer/components/ExportLogsButton";
 import Idler from "~/renderer/components/Idler";
 import IsUnlocked from "~/renderer/components/IsUnlocked";
@@ -51,6 +51,7 @@ import DebugSkeletons from "~/renderer/components/debug/DebugSkeletons";
 import { DisableTransactionBroadcastWarning } from "~/renderer/components/debug/DisableTransactionBroadcastWarning";
 import { DebugWrapper } from "~/renderer/components/debug/shared";
 import useDeeplink from "~/renderer/hooks/useDeeplinking";
+import useStoryly from "~/renderer/hooks/useStoryly";
 import useUSBTroubleshooting from "~/renderer/hooks/useUSBTroubleshooting";
 import ModalsLayer from "./ModalsLayer";
 import { ToastOverlay } from "~/renderer/components/ToastOverlay";
@@ -58,6 +59,7 @@ import Drawer from "~/renderer/drawers/Drawer";
 import UpdateBanner from "~/renderer/components/Updater/Banner";
 import FirmwareUpdateBanner from "~/renderer/components/FirmwareUpdateBanner";
 import Onboarding from "~/renderer/components/Onboarding";
+import PostOnboardingScreen from "~/renderer/components/PostOnboardingScreen";
 
 import { hasCompletedOnboardingSelector } from "~/renderer/reducers/settings";
 
@@ -69,6 +71,8 @@ import MarketCoinScreen from "~/renderer/screens/market/MarketCoinScreen";
 import Learn from "~/renderer/screens/learn";
 
 import { useProviders } from "~/renderer/screens/exchange/Swap2/Form";
+import WelcomeScreenSettings from "~/renderer/screens/settings/WelcomeScreenSettings";
+import SyncOnboarding from "./components/SyncOnboarding";
 
 // in order to test sentry integration, we need the ability to test it out.
 const LetThisCrashForCrashTest = () => {
@@ -146,8 +150,10 @@ export default function Default() {
   const history = useHistory();
   const hasCompletedOnboarding = useSelector(hasCompletedOnboardingSelector);
 
+  useListenToHidDevices();
   useDeeplink();
   useUSBTroubleshooting();
+  useStoryly();
 
   useProviders(); // prefetch data from swap providers here
 
@@ -167,7 +173,6 @@ export default function Default() {
   return (
     <>
       <TriggerAppReady />
-      <ListenDevices />
       <ExportLogsButton hookToShortcut />
       <TrackAppStart />
       <Idler />
@@ -189,10 +194,14 @@ export default function Default() {
             ) : null}
             <Switch>
               <Route path="/onboarding" render={props => <Onboarding {...props} />} />
+              <Route path="/sync-onboarding" render={props => <SyncOnboarding {...props} />} />
+              <Route path="/post-onboarding" render={() => <PostOnboardingScreen />} />
               <Route path="/USBTroubleshooting">
                 <USBTroubleshooting onboarding={!hasCompletedOnboarding} />
               </Route>
-              {hasCompletedOnboarding && (
+              {!hasCompletedOnboarding ? (
+                <Route path="/settings" render={props => <WelcomeScreenSettings {...props} />} />
+              ) : (
                 <Route>
                   <Switch>
                     <Route exact path="/walletconnect">

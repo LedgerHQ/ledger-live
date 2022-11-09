@@ -56,7 +56,7 @@ const genericTest = ({
   transaction,
   status,
   accountBeforeTransaction,
-}) => {
+}): void => {
   invariant(
     Date.now() - operation.date < 1000000,
     "operation time to be recent"

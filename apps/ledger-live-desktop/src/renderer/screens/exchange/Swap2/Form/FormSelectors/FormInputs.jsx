@@ -11,7 +11,7 @@ import type {
   SwapSelectorStateType,
   SwapTransactionType,
   SwapDataType,
-} from "@ledgerhq/live-common/exchange/swap/hooks/index";
+} from "@ledgerhq/live-common/exchange/swap/types";
 
 type FormInputsProps = {
   fromAccount: $PropertyType<SwapSelectorStateType, "account">,

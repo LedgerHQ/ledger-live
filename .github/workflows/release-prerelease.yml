@@ -99,7 +99,7 @@ jobs:
         with:
           path: ${{ github.workspace }}/apps/ledger-live-mobile
       - name: commit (from release branch)
-        if: ${{ startsWith(github.ref_name, 'release') || startsWith(github.event.inputs.ref, 'release') }}
+        if: ${{ startsWith(github.ref_name, 'release') }}
         env:
           LLD: LLD(${{ steps.post-desktop-version.outputs.version }})
           LLM: LLM(${{ steps.post-mobile-version.outputs.version }})
@@ -108,7 +108,7 @@ jobs:
           git commit -m ":rocket: release prerelease [${{ contains(steps.PR.outputs.pr_title, 'LLD') && env.LLD || env.LLM }}]" ||
           echo ""
       - name: commit (from hotfix branch)
-        if: ${{ startsWith(github.event.inputs.ref, 'hotfix') }}
+        if: ${{ startsWith(github.ref_name, 'hotfix') }}
         env:
           LLD: LLD(${{ steps.post-desktop-version.outputs.version }})
           LLM: LLM(${{ steps.post-mobile-version.outputs.version }})
@@ -117,7 +117,7 @@ jobs:
           git commit -m ":fire: hotfix prerelease [${{ contains(steps.PR.outputs.pr_title, 'LLD') && env.LLD || env.LLM }}]" ||
           echo ""
       - name: commit (from ${{ github.event.inputs.ref }} branch) workflow dispatch
-        if: ${{ !startsWith(github.ref_name, 'release') && !startsWith(github.ref_name, 'hotfix') }}
+        if: ${{ github.event_name == 'workflow_dispatch' }}
         run: |
           git add .
           git commit -m ":rocket: ${{ github.event.inputs.ref }} prerelease [LLD(${{ steps.post-desktop-version.outputs.version }}), LLM(${{ steps.post-mobile-version.outputs.version }})]" ||

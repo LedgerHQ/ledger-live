@@ -12,8 +12,17 @@ import WalletTabBackgroundGradient from "./WalletTabBackgroundGradient";
 import { readOnlyModeEnabledSelector } from "../../reducers/settings";
 import { accountsSelector } from "../../reducers/accounts";
 
-const StyledTouchableOpacity = styled.TouchableOpacity``;
-const StyledAnimatedView = styled(Animated.View)``;
+const StyledTouchableOpacity = styled.TouchableOpacity`
+  height: 32px;
+  justify-content: center;
+  margin-right: ${p => p.theme.space[4]}px;
+`;
+const StyledAnimatedView = styled(Animated.View)`
+  position: absolute;
+  top: 0;
+  height: 100%;
+  width: 100%;
+`;
 
 function Tab({
   route,
@@ -60,29 +69,16 @@ function Tab({
   }, [isActive, navigation, route.key, route.name]);
 
   return (
-    <StyledTouchableOpacity
-      onPress={onPress}
-      height={"32px"}
-      justifyContent={"center"}
-      mr={4}
-    >
+    <StyledTouchableOpacity onPress={onPress}>
       <StyledAnimatedView
-        position={"absolute"}
-        top={0}
-        height={"100%"}
-        width={"100%"}
-        bg={rgba(colors.constant.white, 0.08)}
+        backgroundColor={rgba(colors.constant.white, 0.08)}
         borderRadius={2}
         style={{
           opacity: opacityInactive,
         }}
       />
       <StyledAnimatedView
-        position={"absolute"}
-        top={0}
-        height={"100%"}
-        width={"100%"}
-        bg={"primary.c70"}
+        backgroundColor={"primary.c70"}
         borderRadius={2}
         style={{
           opacity,

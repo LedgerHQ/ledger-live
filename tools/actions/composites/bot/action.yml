@@ -22,6 +22,9 @@ inputs:
   EXPLORER:
     description: "EXPLORER value"
     required: false
+  BOT_ENVIRONMENT:
+    description: "defines an environment to be included in the report.json"
+    required: false
 
 runs:
   using: "composite"
@@ -42,6 +45,12 @@ runs:
         pnpm i --filter="live-cli..." --filter="ledger-live" --frozen-lockfile
         pnpm build:llc
       shell: bash
+    - uses: 8BitJonny/gh-get-current-pr@2.1.1
+      id: PR
+      with:
+        github-token: ${{ github.token }}
+        sha: ${{ github.event.pull_request.head.sha }}
+        filterOutClosed: true
     - name: bot logic
       env:
         SEED: ${{ inputs.SEED }}
@@ -51,6 +60,7 @@ runs:
         GITHUB_WORKFLOW: ${{ github.workflow }}
         BOT_FILTER_FAMILY: ${{ inputs.BOT_FILTER_FAMILY }}
         SHOW_LEGACY_NEW_ACCOUNT: ${{ inputs.SHOW_LEGACY_NEW_ACCOUNT }}
+        BOT_ENVIRONMENT: ${{ inputs.BOT_ENVIRONMENT }}
         explorerinput: ${{ inputs.EXPLORER }}
       run: |
         export COINAPPS=$PWD/coin-apps
@@ -68,6 +78,7 @@ runs:
         path: libs/ledger-live-common/botreport
         githubSha: ${{github.sha}}
         githubToken: ${{github.token}}
+        githubPR: ${{steps.PR.outputs.number}}
         slackApiToken: ${{ inputs.SLACK_API_TOKEN }}
         slackChannel: ${{ inputs.SLACK_CHANNEL }}
         slackIconEmoji: ${{ inputs.SLACK_ICON_EMOJI }}

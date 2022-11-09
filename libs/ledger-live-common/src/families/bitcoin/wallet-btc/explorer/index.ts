@@ -6,7 +6,6 @@ import genericPool, { Pool } from "generic-pool";
 
 import JSONBigNumber from "@ledgerhq/json-bignumber";
 import { Address, Block, TX } from "../storage/types";
-import EventEmitter from "../utils/eventemitter";
 import { IExplorer } from "./types";
 import {
   requestInterceptor,
@@ -14,7 +13,15 @@ import {
   errorInterceptor,
 } from "../../../../network";
 
-class BitcoinLikeExplorer extends EventEmitter implements IExplorer {
+type ExplorerParams = {
+  no_token?: string;
+  noToken?: string;
+  batch_size?: number;
+  block_hash?: string;
+  blockHash?: string;
+};
+
+class BitcoinLikeExplorer implements IExplorer {
   client: Pool<{ client: AxiosInstance }>;
 
   underlyingClient: AxiosInstance;
@@ -32,8 +39,6 @@ class BitcoinLikeExplorer extends EventEmitter implements IExplorer {
     explorerVersion: "v2" | "v3";
     disableBatchSize?: boolean;
   }) {
-    super();
-
     const clientParams: AxiosRequestConfig = {
       baseURL: explorerURI,
     };
@@ -82,7 +87,7 @@ class BitcoinLikeExplorer extends EventEmitter implements IExplorer {
     client.interceptors.response.use(responseInterceptor, errorInterceptor);
   }
 
-  async broadcast(tx: string) {
+  async broadcast(tx: string): Promise<any> {
     const url = "/transactions/send";
     const client = await this.client.acquire();
     const res = await client.client.post(url, { tx });
@@ -90,31 +95,23 @@ class BitcoinLikeExplorer extends EventEmitter implements IExplorer {
     return res;
   }
 
-  async getTxHex(txId: string) {
+  async getTxHex(txId: string): Promise<string> {
     const url = `/transactions/${txId}/hex`;
-
-    this.emit("fetching-transaction-tx", { url, txId });
 
     // TODO add a test for failure (at the sync level)
     const client = await this.client.acquire();
     const res: any = (await client.client.get(url)).data;
     await this.client.release(client);
 
-    this.emit("fetched-transaction-tx", { url, tx: res[0] });
-
     return res[0].hex;
   }
 
-  async getCurrentBlock() {
+  async getCurrentBlock(): Promise<Block | null> {
     const url = `/blocks/current`;
-
-    this.emit("fetching-block", { url });
 
     const client = await this.client.acquire();
     const res: any = (await client.client.get(url)).data;
     await this.client.release(client);
-
-    this.emit("fetched-block", { url, block: res });
 
     if (!res) {
       return null;
@@ -129,16 +126,12 @@ class BitcoinLikeExplorer extends EventEmitter implements IExplorer {
     return block;
   }
 
-  async getBlockByHeight(height: number) {
+  async getBlockByHeight(height: number): Promise<Block | null> {
     const url = `/blocks/${height}`;
-
-    this.emit("fetching-block", { url, height });
 
     const client = await this.client.acquire();
     const res: any = (await client.client.get(url)).data;
     await this.client.release(client);
-
-    this.emit("fetched-block", { url, block: res[0] });
 
     if (!res[0]) {
       return null;
@@ -153,36 +146,26 @@ class BitcoinLikeExplorer extends EventEmitter implements IExplorer {
     return block;
   }
 
-  async getFees() {
+  async getFees(): Promise<any> {
     const url = `/fees`;
-
-    this.emit("fetching-fees", { url });
 
     // TODO add a test for failure (at the sync level)
     const client = await this.client.acquire();
     const fees = (await client.client.get(url)).data;
     await this.client.release(client);
 
-    this.emit("fetching-fees", { url, fees });
-
     return fees;
   }
 
-  async getRelayFee() {
+  async getRelayFee(): Promise<number> {
     const client = await this.client.acquire();
     const fees = (await client.client.get(`/network`)).data;
     await this.client.release(client);
     return parseFloat(fees["relay_fee"]);
   }
 
-  async getPendings(address: Address, nbMax?: number) {
-    const params: {
-      no_token?: string;
-      noToken?: string;
-      batch_size?: number;
-      block_hash?: string;
-      blockHash?: string;
-    } =
+  async getPendings(address: Address, nbMax?: number): Promise<TX[]> {
+    const params: ExplorerParams =
       this.explorerVersion === "v2"
         ? {
             noToken: "true",
@@ -199,11 +182,11 @@ class BitcoinLikeExplorer extends EventEmitter implements IExplorer {
     return pendingsTxs;
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  async fetchTxs(address: Address, params: any) {
+  async fetchTxs(
+    address: Address,
+    params: ExplorerParams
+  ): Promise<{ txs: TX[] }> {
     const url = `/addresses/${address.address}/transactions`;
-
-    this.emit("fetching-address-transaction", { url, params });
 
     // TODO add a test for failure (at the sync level)
     const client = await this.client.acquire();
@@ -229,12 +212,10 @@ class BitcoinLikeExplorer extends EventEmitter implements IExplorer {
     } finally {
       await this.client.release(client);
     }
-    this.emit("fetched-address-transaction", { url, params, res });
     return res;
   }
 
-  // eslint-disable-next-line class-methods-use-this,@typescript-eslint/no-explicit-any
-  hydrateTx(address: Address, tx: TX) {
+  hydrateTx(address: Address, tx: TX): void {
     // no need to keep those as they change
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
@@ -281,14 +262,8 @@ class BitcoinLikeExplorer extends EventEmitter implements IExplorer {
     batchSize: number,
     address: Address,
     lastTx: TX | undefined
-  ) {
-    const params: {
-      no_token?: string;
-      noToken?: string;
-      batch_size?: number;
-      block_hash?: string;
-      blockHash?: string;
-    } =
+  ): Promise<TX[]> {
+    const params: ExplorerParams =
       this.explorerVersion === "v2"
         ? {
             noToken: "true",

@@ -18,7 +18,7 @@ import type {
   SwapSelectorStateType,
   SwapTransactionType,
   SwapDataType,
-} from "@ledgerhq/live-common/exchange/swap/hooks/index";
+} from "@ledgerhq/live-common/exchange/swap/types";
 import { track } from "~/renderer/analytics/segment";
 import { SWAP_VERSION } from "../../utils/index";
 
