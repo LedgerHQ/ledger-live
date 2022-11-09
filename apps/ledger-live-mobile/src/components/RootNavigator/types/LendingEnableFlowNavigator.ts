@@ -18,6 +18,7 @@ import type {
 } from "@ledgerhq/live-common/families/algorand/types";
 import type { Transaction as RippleTransaction } from "@ledgerhq/live-common/families/ripple/types";
 import type { Transaction as StellarTransaction } from "@ledgerhq/live-common/families/stellar/types";
+import type { Transaction as StacksTransaction } from "@ledgerhq/live-common/families/stacks/types";
 import {
   CosmosAccount,
   Transaction as CosmosTransaction,
@@ -402,6 +403,28 @@ export type LendingEnableFlowParamsList = {
       | ScreenName.SignTransactionSelectDevice
       | ScreenName.LendingEnableSelectDevice
       | ScreenName.SignTransactionSelectDevice
+      | ScreenName.SendSelectDevice
+      | ScreenName.SwapForm;
+  };
+
+  [ScreenName.StacksEditMemo]: {
+    accountId: string;
+    parentId?: string | null;
+    account: Account;
+    transaction: StacksTransaction;
+    memoType?: string;
+    currentNavigation:
+      | ScreenName.LendingWithdrawSummary
+      | ScreenName.LendingSupplySummary
+      | ScreenName.SignTransactionSummary
+      | ScreenName.LendingEnableSummary
+      | ScreenName.SendSummary
+      | ScreenName.SwapForm;
+    nextNavigation:
+      | ScreenName.LendingWithdrawSelectDevice
+      | ScreenName.LendingSupplySelectDevice
+      | ScreenName.SignTransactionSelectDevice
+      | ScreenName.LendingEnableSelectDevice
       | ScreenName.SendSelectDevice
       | ScreenName.SwapForm;
   };
