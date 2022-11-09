@@ -130,7 +130,7 @@ const getTransactionStatus = async (
   const estimatedFees = new BigNumber(CASPER_FEES);
 
   let totalSpent;
-  if (amount.lte(MINIMUM_VALID_AMOUNT))
+  if (amount.lt(MINIMUM_VALID_AMOUNT))
     errors.amount = new InvalidAmountTransfer(
       `Minimum CSPR to transfer is ${motesToCSPR(
         MINIMUM_VALID_AMOUNT
