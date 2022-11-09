@@ -1,7 +1,7 @@
 import { MaterialTopTabBarProps } from "@react-navigation/material-top-tabs";
 import { useTheme } from "styled-components/native";
 import React, { memo, useCallback, useContext } from "react";
-import styled from "@ledgerhq/native-ui/components/styled";
+import styled, { BaseStyledProps } from "@ledgerhq/native-ui/components/styled";
 import { Box, Flex, Text } from "@ledgerhq/native-ui";
 import { Animated } from "react-native";
 import { useSelector } from "react-redux";
@@ -17,7 +17,8 @@ const StyledTouchableOpacity = styled.TouchableOpacity`
   justify-content: center;
   margin-right: ${p => p.theme.space[4]}px;
 `;
-const StyledAnimatedView = styled(Animated.View)`
+
+const StyledAnimatedView = styled(Animated.View)<BaseStyledProps>`
   position: absolute;
   top: 0;
   height: 100%;

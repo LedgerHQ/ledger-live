@@ -64,23 +64,22 @@ export default function WalletTabNavigator() {
           }
           style={{ backgroundColor: "transparent" }}
           sceneContainerStyle={{ backgroundColor: "transparent" }}
-          tabBarOptions={{ style: { backgroundColor: "transparent" } }}
           screenOptions={{
             lazy: walletNftGalleryFeature?.params?.lazyLoadScreens ?? true,
           }}
           screenListeners={{
-            state: (e: NavigationContainerEventMap["state"]) => {
+            state: e => {
+              const data =
+                e.data as NavigationContainerEventMap["state"]["data"];
               if (
-                e?.data?.state?.routeNames &&
-                (e?.data?.state?.index || e?.data?.state?.index === 0)
+                data?.state?.routeNames &&
+                (data?.state?.index || data?.state?.index === 0)
               ) {
-                setCurrentRouteName(
-                  e.data.state.routeNames[e.data.state.index],
-                );
+                setCurrentRouteName(data.state.routeNames[data.state.index]);
                 dispatch(
                   setWalletTabNavigatorLastVisitedTab(
-                    e.data.state.routeNames[
-                      e.data.state.index
+                    data.state.routeNames[
+                      data.state.index
                     ] as keyof WalletTabNavigatorStackParamList,
                   ),
                 );

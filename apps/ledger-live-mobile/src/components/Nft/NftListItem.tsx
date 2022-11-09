@@ -7,7 +7,7 @@ import { NFTResource } from "@ledgerhq/live-common/nft/NftMetadataProvider/types
 import { Box, Flex, Tag, Text } from "@ledgerhq/native-ui";
 
 import { useNavigation } from "@react-navigation/native";
-import styled from "@ledgerhq/native-ui/components/styled";
+import styled, { BaseStyledProps } from "@ledgerhq/native-ui/components/styled";
 import { useTranslation } from "react-i18next";
 import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
 import CurrencyIcon from "../CurrencyIcon";
@@ -20,9 +20,10 @@ type Props = {
   ownedNftsInCollection?: number;
 };
 
-const StyledTouchableOpacity = styled.TouchableOpacity`
+const StyledTouchableOpacity = styled.TouchableOpacity<BaseStyledProps>`
   margin-bottom: ${p => p.theme.space[3]}px;
   border-radius: ${p => p.theme.radii[1]}px;
+  background-color: ${props => props.theme.colors.background.main};
 `;
 
 const displayText = (text?: string | null) => text ?? "--";
