@@ -12,6 +12,7 @@ const signMessage: SignMessage = async (
   const blockstack = new BlockstackApp(transport);
 
   if (!message) throw new Error(`Message cannot be empty`);
+  if (typeof message !== "string") throw new Error(`Message must be string`);
 
   const r = await blockstack.sign(getPath(path), getBufferFromString(message));
   isError(r);
