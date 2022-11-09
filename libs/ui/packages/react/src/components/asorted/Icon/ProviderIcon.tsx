@@ -1,5 +1,5 @@
 import * as providers from "@ledgerhq/icons-ui/react/_ProvidersLogos/index";
-import * as favicons from "../../../assets/providersFavicons";
+import * as favicons from "./providerFaviconsIndex";
 
 import React from "react";
 import styled from "styled-components";
