@@ -5,11 +5,158 @@ import { Interface } from "@ethersproject/abi";
 import {
   LedgerEthTransactionResolution,
   LedgerEthTransactionService,
+  LoadConfig,
 } from "../types";
 import { loadInfosForContractMethod } from "./contracts";
 import { byContractAddressAndChainId, findERC20SignaturesInfo } from "./erc20";
 import { getNFTInfo, loadNftPlugin } from "./nfts";
-import { decodeTxInfo } from "../../utils";
+import { decodeTxInfo, tokenSelectors, nftSelectors } from "../../utils";
+
+type potentialResolutions = {
+  token: boolean | undefined;
+  nft: boolean | undefined;
+  externalPlugins: boolean | undefined;
+};
+
+/**
+ * Providing additionnal data for some transactions (Token or NFT related) can enable clear signing
+ * of initially impossible to decode data.
+ * This method will add necessary APDUs to the resolution paramter in order to provide this data to the nano app
+ */
+const getAdditionalDataFoContract = async (
+  resolution: LedgerEthTransactionResolution,
+  contractAddress: string,
+  chainIdTruncated: number,
+  loadConfig: LoadConfig,
+  shouldResolve: potentialResolutions
+): Promise<void> => {
+  if (shouldResolve.nft) {
+    const nftInfo = await getNFTInfo(
+      contractAddress,
+      chainIdTruncated,
+      loadConfig
+    );
+
+    if (nftInfo) {
+      log(
+        "ethereum",
+        "loaded nft info for " +
+          nftInfo.contractAddress +
+          " (" +
+          nftInfo.collectionName +
+          ")"
+      );
+      resolution.nfts.push(nftInfo.data);
+    } else {
+      log("ethereum", "couldn't load nft info for " + contractAddress);
+    }
+  }
+
+  if (shouldResolve.token) {
+    const erc20SignaturesBlob = await findERC20SignaturesInfo(loadConfig);
+    const erc20Info = byContractAddressAndChainId(
+      contractAddress,
+      chainIdTruncated,
+      erc20SignaturesBlob
+    );
+
+    if (erc20Info) {
+      log(
+        "ethereum",
+        "loaded erc20token info for " +
+          erc20Info.contractAddress +
+          " (" +
+          erc20Info.ticker +
+          ")"
+      );
+      resolution.erc20Tokens.push(erc20Info.data.toString("hex"));
+    } else {
+      log("ethereum", "couldn't load erc20token info for " + contractAddress);
+    }
+  }
+};
+
+/**
+ * Depending on the transaction, it might be necessary to load internal plugins in the nano app
+ * in order to clear sign it.
+ * This method will add necessary APDUs to the resolution parameter in order to load those internal plugins
+ */
+const loadNanoAppPlugins = async (
+  resolution: LedgerEthTransactionResolution,
+  contractAddress: string,
+  selector: string,
+  decodedTx,
+  chainIdTruncated: number,
+  loadConfig: LoadConfig,
+  shouldResolve: potentialResolutions
+): Promise<void> => {
+  if (shouldResolve.nft) {
+    const nftPluginPayload = await loadNftPlugin(
+      contractAddress,
+      selector,
+      chainIdTruncated,
+      loadConfig
+    );
+
+    if (nftPluginPayload) {
+      resolution.plugin.push(nftPluginPayload);
+    } else {
+      log(
+        "ethereum",
+        "no NFT plugin payload for selector " +
+          selector +
+          " and address " +
+          contractAddress
+      );
+    }
+  }
+
+  if (shouldResolve.externalPlugins) {
+    const contractMethodInfos = await loadInfosForContractMethod(
+      contractAddress,
+      selector,
+      chainIdTruncated,
+      loadConfig
+    );
+
+    if (contractMethodInfos) {
+      const { plugin, payload, signature, erc20OfInterest, abi } =
+        contractMethodInfos;
+
+      if (plugin) {
+        log("ethereum", "found plugin for " + selector);
+        resolution.externalPlugin.push({ payload, signature });
+      }
+
+      if (erc20OfInterest && erc20OfInterest.length && abi) {
+        const contract = new Interface(abi);
+        const args = contract.parseTransaction(decodedTx).args;
+
+        for (const path of erc20OfInterest) {
+          const erc20ContractAddress = path.split(".").reduce((value, seg) => {
+            if (seg === "-1" && Array.isArray(value)) {
+              return value[value.length - 1];
+            }
+            return value[seg];
+          }, args) as unknown as string; // impossible(?) to type correctly as the initializer is different from the returned type
+
+          await getAdditionalDataFoContract(
+            resolution,
+            erc20ContractAddress,
+            chainIdTruncated,
+            loadConfig,
+            {
+              ...shouldResolve,
+              token: true, // enforcing resolution of tokens for external plugins
+            }
+          );
+        }
+      }
+    } else {
+      log("ethereum", "no infos for selector " + selector);
+    }
+  }
+};
 
 const ledgerService: LedgerEthTransactionService = {
   resolveTransaction: async (rawTxHex, loadConfig, resolutionConfig) => {
@@ -20,113 +167,37 @@ const ledgerService: LedgerEthTransactionService = {
       plugin: [],
     };
 
-    function provideERC20TokenInformation(dataHex: string) {
-      resolution.erc20Tokens.push(dataHex);
-    }
-    function provideNFTInformation(dataHex: string) {
-      resolution.nfts.push(dataHex);
-    }
-    function setExternalPlugin(payload: string, signature: string) {
-      resolution.externalPlugin.push({ payload, signature });
-    }
-    function setPlugin(dataHex: string) {
-      resolution.plugin.push(dataHex);
-    }
-
     const rawTx = Buffer.from(rawTxHex, "hex");
     const { decodedTx, chainIdTruncated } = decodeTxInfo(rawTx);
-    const provideForContract = async (address) => {
-      const nftInfo = resolutionConfig.nft
-        ? await getNFTInfo(address, chainIdTruncated, loadConfig)
-        : null;
 
-      if (nftInfo) {
-        log(
-          "ethereum",
-          "loaded nft info for " +
-            nftInfo.contractAddress +
-            " (" +
-            nftInfo.collectionName +
-            ")"
-        );
-        provideNFTInformation(nftInfo.data);
-      }
+    const contractAddress = decodedTx.to;
+    const selector =
+      decodedTx.data.length >= 10 && decodedTx.data.substring(0, 10);
 
-      const erc20SignaturesBlob = await findERC20SignaturesInfo(loadConfig);
-      const erc20Info = byContractAddressAndChainId(
-        address,
+    if (selector) {
+      const shouldResolve: potentialResolutions = {
+        token: resolutionConfig.erc20 && tokenSelectors.includes(selector),
+        nft: resolutionConfig.nft && nftSelectors.includes(selector),
+        externalPlugins: resolutionConfig.externalPlugins,
+      };
+
+      await loadNanoAppPlugins(
+        resolution,
+        contractAddress,
+        selector,
+        decodedTx,
         chainIdTruncated,
-        erc20SignaturesBlob
+        loadConfig,
+        shouldResolve
       );
-      if (erc20Info) {
-        log(
-          "ethereum",
-          "loaded erc20token info for " +
-            erc20Info.contractAddress +
-            " (" +
-            erc20Info.ticker +
-            ")"
-        );
-        provideERC20TokenInformation(erc20Info.data.toString("hex"));
-      }
-    };
 
-    if (decodedTx.data.length >= 10) {
-      const selector = decodedTx.data.substring(0, 10);
-      const nftPluginPayload = resolutionConfig.nft
-        ? await loadNftPlugin(
-            decodedTx.to,
-            selector,
-            chainIdTruncated,
-            loadConfig
-          )
-        : null;
-      if (nftPluginPayload) {
-        setPlugin(nftPluginPayload);
-      } else {
-        log(
-          "ethereum",
-          "no NFT plugin payload for selector " +
-            selector +
-            " and address " +
-            decodedTx.to
-        );
-      }
-
-      const contractMethodInfos = resolutionConfig.externalPlugins
-        ? await loadInfosForContractMethod(
-            decodedTx.to,
-            selector,
-            chainIdTruncated,
-            loadConfig
-          )
-        : null;
-
-      if (contractMethodInfos) {
-        const { plugin, payload, signature, erc20OfInterest, abi } =
-          contractMethodInfos;
-
-        if (plugin) {
-          log("ethereum", "found plugin for " + selector);
-          setExternalPlugin(payload, signature);
-        }
-        if (erc20OfInterest && erc20OfInterest.length && abi) {
-          const contract = new Interface(abi);
-          const args = contract.parseTransaction(decodedTx).args;
-          for (const path of erc20OfInterest) {
-            const address = path.split(".").reduce((value, seg) => {
-              if (seg === "-1" && Array.isArray(value)) {
-                return value[value.length - 1];
-              }
-              return value[seg];
-            }, args);
-            await provideForContract(address);
-          }
-        }
-      } else {
-        log("ethereum", "no infos for selector " + selector);
-      }
-      await provideForContract(decodedTx.to);
+      await getAdditionalDataFoContract(
+        resolution,
+        contractAddress,
+        chainIdTruncated,
+        loadConfig,
+        shouldResolve
+      );
     }
 
     return resolution;
