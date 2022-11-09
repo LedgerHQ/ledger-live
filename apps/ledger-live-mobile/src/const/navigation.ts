@@ -423,9 +423,9 @@ export enum ScreenName {
   DiscoverScreen = "DiscoverScreen",
   Learn = "Learn",
   // cardano
-  CardanoEditMemo: "CardanoEditMemo",
+  CardanoEditMemo = "CardanoEditMemo",
   // stacks
-  StacksEditMemo: "StacksEditMemo",
+  StacksEditMemo = "StacksEditMemo",
   // hedera
   HederaEditMemo = "HederaEditMemo",
 
