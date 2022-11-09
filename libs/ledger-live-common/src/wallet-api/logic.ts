@@ -19,7 +19,7 @@ import {
   deserializeWalletAPISignedTransaction,
 } from "./serializers";
 import type { TrackingAPI } from "./tracking";
-import { AppManifest, TranslatableString } from "./types";
+import { AppManifest, TranslatableString, WalletAPITransaction } from "./types";
 import { isTokenAccount, getMainAccount, isAccount } from "../account/index";
 import { getAccountBridge } from "../bridge/index";
 import { Transaction } from "../generated/types";
@@ -80,7 +80,7 @@ export function receiveOnAccountLogic(
 export function signTransactionLogic(
   { manifest, accounts, tracking }: WalletAPIContext,
   accountId: string,
-  transaction: RawWalletAPITransaction,
+  transaction: WalletAPITransaction,
   uiNavigation: (
     account: AccountLike,
     parentAccount: Account | null,
@@ -98,7 +98,6 @@ export function signTransactionLogic(
     return Promise.reject(new Error("Transaction required"));
   }
 
-  const walletTransaction = deserializeWalletAPITransaction(transaction);
   const account = accounts.find((account) => account.id === accountId);
 
   if (!account) {
@@ -111,7 +110,7 @@ export function signTransactionLogic(
   if (
     (isTokenAccount(account)
       ? parentAccount?.currency.family
-      : account.currency.family) !== walletTransaction.family
+      : account.currency.family) !== transaction.family
   ) {
     return Promise.reject(
       new Error("Transaction family not matching account currency family")
@@ -119,7 +118,7 @@ export function signTransactionLogic(
   }
 
   const { canEditFees, liveTx, hasFeesProvided } =
-    getWalletAPITransactionSignFlowInfos(walletTransaction);
+    getWalletAPITransactionSignFlowInfos(transaction);
 
   return uiNavigation(account, parentAccount, {
     canEditFees,
@@ -267,8 +266,8 @@ export function signMessageLogic(
   uiNavigation: (
     account: AccountLike,
     message: MessageData | TypedMessageData
-  ) => Promise<string>
-): Promise<string> {
+  ) => Promise<Buffer>
+): Promise<Buffer> {
   tracking.signMessageRequested(manifest);
 
   const account = accounts.find((account) => account.id === accountId);

@@ -158,7 +158,7 @@ export const WebView = ({ manifest, inputs }: Props) => {
     {
       loadDate,
     },
-    inputs!,
+    inputs,
   );
   const listAccounts = useListPlatformAccounts(accounts);
   const listPlatformCurrencies = useListPlatformCurrencies();

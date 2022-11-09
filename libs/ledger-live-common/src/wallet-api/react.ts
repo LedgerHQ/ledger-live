@@ -30,7 +30,7 @@ import { listCurrencies } from "../currencies";
 export function useWalletAPIUrl(
   manifest: AppManifest,
   params: { background?: string; text?: string; loadDate?: Date },
-  inputs: Record<string, string>
+  inputs?: Record<string, string>
 ): URL {
   return useMemo(() => {
     const url = new URL(manifest.url.toString());
