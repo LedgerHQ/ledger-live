@@ -5304,6 +5304,12 @@
         "timeDisclaimer": "This can take up to 30 seconds"
       }
     },
+    "postOnboarding": {
+      "title": "Personalize my device",
+      "description": "By customizing the screen",
+      "actionCompletedPopupLabel": "Device personalized",
+      "actionCompletedHubTitle": "That screen is looking neat."
+    },
     "customImageSet": "Custom image set",
     "finishCTA": "Finish"
   }
