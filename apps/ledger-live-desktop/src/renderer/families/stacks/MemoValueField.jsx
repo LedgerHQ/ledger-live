@@ -6,7 +6,7 @@ import Input from "~/renderer/components/Input";
 import invariant from "invariant";
 import type { Account } from "@ledgerhq/types-live";
 import type { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
-import {useTranslation} from "react-i18next";
+import { useTranslation } from "react-i18next";
 
 const MemoValueField = ({
   onChange,
@@ -17,6 +17,7 @@ const MemoValueField = ({
   onChange: string => void,
   account: Account,
   transaction: Transaction,
+
   status: TransactionStatus,
 }) => {
   invariant(transaction.family === "stacks", "MemoField: stacks family expected");
