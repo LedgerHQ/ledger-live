@@ -1,6 +1,7 @@
 import invariant from "invariant";
 import React from "react";
 import { StyleSheet } from "react-native";
+import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import { DeviceTransactionField } from "@ledgerhq/live-common/transaction/index";
 import LText from "../../components/LText";
 import { DataRow } from "../../components/ValidateOnDeviceDataRow";
@@ -17,7 +18,7 @@ const StacksField = ({
   transaction,
   field,
 }: {
-  transaction: any;
+  transaction: Transaction;
   field: DeviceTransactionField;
 }) => {
   invariant(transaction.family === "stacks", "stacks transaction");
