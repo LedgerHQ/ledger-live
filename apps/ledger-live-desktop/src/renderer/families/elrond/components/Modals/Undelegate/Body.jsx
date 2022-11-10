@@ -97,8 +97,6 @@ const Body = (props: Props) => {
     };
   });
 
-  console.log("UNDELEGATING", transaction);
-
   const steps = useSteps();
   const error = transactionError || bridgeError;
 
