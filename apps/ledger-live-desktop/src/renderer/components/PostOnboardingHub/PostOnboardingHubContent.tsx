@@ -41,7 +41,9 @@ const PostOnboardingHubContent = () => {
     >
       {!isInsidePostOnboardingScreen && (
         <Text variant="paragraph" fontSize={48} mb={8}>
-          {actionCompletedHubTitle || t("postOnboarding.postOnboardingContent.title")}
+          {actionCompletedHubTitle
+            ? t(actionCompletedHubTitle)
+            : t("postOnboarding.postOnboardingContent.title")}
         </Text>
       )}
       <Text variant="paragraph" fontSize={14} color="neutral.c70" mb={8}>
