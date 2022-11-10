@@ -399,7 +399,7 @@ const osmosis: AppSpec<Transaction> = {
           );
           botTest("reward is no longer claimable after claim", () =>
             invariant(
-              !canClaimRewards(account as CosmosAccount, d as CosmosDelegation),
+              d?.pendingRewards.gte(d.amount.multipliedBy(0.1)),
               "reward no longer be claimable"
             )
           );

@@ -423,8 +423,8 @@ const cosmos: AppSpec<Transaction> = {
           );
           botTest("reward is no longer claimable after claim", () =>
             invariant(
-              !canClaimRewards(account as CosmosAccount, d as CosmosDelegation),
-              "reward no longer be claimable"
+              d?.pendingRewards.gte(d.amount.multipliedBy(0.1)),
+              "pending reward is not reset"
             )
           );
         });
