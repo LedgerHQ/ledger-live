@@ -5,7 +5,7 @@ import {
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { Account, SyncConfig, TokenAccount } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
-import { emptyHistoryCache } from "../../account";
+import { emptyHistoryCache, encodeTokenAccountId } from "../../account";
 import { mergeOps } from "../../bridge/jsHelpers";
 import { getAccountESDTOperations, getAccountESDTTokens } from "./api";
 
@@ -20,8 +20,7 @@ async function buildElrondESDTTokenAccount({
   token: TokenCurrency;
   balance: BigNumber;
 }) {
-  const extractedId = token.id;
-  const id = parentAccountId + "+" + extractedId;
+  const id = encodeTokenAccountId(parentAccountId, token);
   const tokenIdentifierHex = token.id.split("/")[2];
   const tokenIdentifier = Buffer.from(tokenIdentifierHex, "hex").toString();
 
