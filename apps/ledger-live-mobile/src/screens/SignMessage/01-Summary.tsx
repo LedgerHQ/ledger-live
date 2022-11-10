@@ -1,16 +1,11 @@
-import React, { useCallback, useMemo, useState, memo } from "react";
+import React, { useCallback, useState, memo, useEffect } from "react";
 import { View, StyleSheet, ScrollView } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Trans, useTranslation } from "react-i18next";
 import {
-  getAccountCurrency,
   getAccountName,
   getMainAccount,
 } from "@ledgerhq/live-common/account/index";
-import {
-  isEIP712Message,
-  getNanoDisplayedInfosFor712,
-} from "@ledgerhq/live-common/families/ethereum/hw-signMessage";
 import { useSelector } from "react-redux";
 import { useTheme } from "@react-navigation/native";
 import invariant from "invariant";
@@ -20,6 +15,10 @@ import { TrackScreen } from "../../analytics";
 import Button from "../../components/Button";
 import WalletIcon from "../../icons/Wallet";
 import LText from "../../components/LText";
+import {
+  getMessageProperties,
+  NanoDisplayedInfoFor712,
+} from "../../helpers/signMessageUtils";
 import ParentCurrencyIcon from "../../components/ParentCurrencyIcon";
 import { SignMessageNavigatorStackParamList } from "../../components/RootNavigator/types/SignMessageNavigator";
 import { StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
@@ -101,6 +100,7 @@ function SignSummary({
   invariant(account, "account not found");
 
   const mainAccount = getMainAccount(account, parentAccount);
+
   const { nextNavigation, message: messageData } = route.params;
   const navigateToNext = useCallback(() => {
     nextNavigation &&
@@ -114,36 +114,18 @@ function SignSummary({
   }, [navigateToNext]);
 
   const [showAdvanced, setShowAdvanced] = useState(false);
-  const {
-    message,
-    fields,
-  }: {
-    message?: string | null;
-    fields?: ReturnType<typeof getNanoDisplayedInfosFor712>;
-  } = useMemo(() => {
-    try {
-      if (mainAccount?.currency.family === "ethereum") {
-        const parsedMessage =
-          typeof messageData.message === "string"
-            ? JSON.parse(messageData.message)
-            : messageData.message;
+  const [messageProperties, setMessageProperties] = useState<{
+    message?: string;
+    fields?: NanoDisplayedInfoFor712;
+  }>({});
 
-        return {
-          fields: isEIP712Message(messageData.message)
-            ? getNanoDisplayedInfosFor712(parsedMessage)
-            : null,
-        };
-      }
-      throw new Error();
-    } catch (e) {
-      return {
-        message:
-          typeof messageData.message === "string"
-            ? messageData.message
-            : messageData.message.toString(),
-      };
-    }
-  }, [mainAccount?.currency.family, messageData.message]);
+  useEffect(() => {
+    getMessageProperties(mainAccount.currency, messageData).then(
+      setMessageProperties,
+    );
+  }, [mainAccount.currency, messageData, setMessageProperties]);
+
+  const { message, fields } = messageProperties;
 
   return (
     <SafeAreaView
@@ -173,15 +155,10 @@ function SignSummary({
             </LText>
             <View style={styles.headerContainer}>
               <View style={styles.headerIconContainer}>
-                {account ? (
-                  <ParentCurrencyIcon
-                    size={18}
-                    currency={getAccountCurrency(account)}
-                  />
-                ) : null}
+                <ParentCurrencyIcon size={18} currency={mainAccount.currency} />
               </View>
               <LText semiBold secondary numberOfLines={1}>
-                {mainAccount && getAccountName(mainAccount)}
+                {getAccountName(mainAccount)}
               </LText>
             </View>
           </View>

@@ -464,7 +464,13 @@ export default class Eth {
     s: string;
     r: string;
   }> {
-    return signEIP712Message(this.transport, path, jsonMessage, fullImplem);
+    return signEIP712Message(
+      this.transport,
+      path,
+      jsonMessage,
+      fullImplem,
+      this.loadConfig
+    );
   }
 
   /**

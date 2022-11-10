@@ -1,22 +1,17 @@
-// @flow
-import React, { memo, useMemo, useState } from "react";
+import React, { memo, useEffect, useState } from "react";
 import styled from "styled-components";
 import { Trans, useTranslation } from "react-i18next";
-import {
-  isEIP712Message,
-  getNanoDisplayedInfosFor712,
-} from "@ledgerhq/live-common/families/ethereum/hw-signMessage";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
-import type { StepProps } from "../types";
-import Box from "~/renderer/components/Box";
+import CryptoCurrencyIcon from "~/renderer/components/CryptoCurrencyIcon";
+import { NanoDisplayedInfoFor712, StepProps } from "../types";
 import Button from "~/renderer/components/Button";
 import { rgba } from "~/renderer/styles/helpers";
-import CryptoCurrencyIcon from "~/renderer/components/CryptoCurrencyIcon";
-import Text from "~/renderer/components/Text";
-import type { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import IconWallet from "~/renderer/icons/Wallet";
+import { getMessageProperties } from "../utils";
+import Text from "~/renderer/components/Text";
+import Box from "~/renderer/components/Box";
 
-const Circle: ThemedComponent<{}> = styled.div`
+const Circle = styled.div`
   height: 32px;
   width: 32px;
   border-radius: 32px;
@@ -60,7 +55,7 @@ const AdvancedMessageArea = styled.pre`
   padding: 10px;
 `;
 
-const MessageProperty = memo(({ label, value }: { label: string, value: string | string[] }) => {
+const MessageProperty = memo(({ label, value }: { label: string; value: string | string[] }) => {
   if (!value) return null;
 
   return (
@@ -87,7 +82,7 @@ const MessageProperty = memo(({ label, value }: { label: string, value: string |
 MessageProperty.displayName = "MessageProperty";
 
 const MessageProperties = memo(
-  (props: { properties: { label: string, value: string | string[] }[] }) => {
+  (props: { properties: { label: string; value: string | string[] }[] }) => {
     const { properties } = props;
     return (
       <Box flex="1">
@@ -104,38 +99,17 @@ export default function StepSummary({ account, message: messageData }: StepProps
   const { t } = useTranslation();
   const [showAdvanced, setShowAdvanced] = useState(false);
   const mainAccount = getMainAccount(account, null);
-  const {
-    message,
-    fields,
-  }: {
-    message: string,
-    fields?: ReturnType<typeof getNanoDisplayedInfosFor712>,
-  } = useMemo(() => {
-    try {
-      if (mainAccount.currency.family === "ethereum") {
-        const parsedMessage: Record<string, unknown> =
-          typeof messageData.message === "string"
-            ? JSON.parse(messageData.message)
-            : messageData.message;
 
-        if (!isEIP712Message(parsedMessage)) {
-          throw new Error(); // Fallback to signing as string
-        }
-        return {
-          fields: getNanoDisplayedInfosFor712(parsedMessage),
-          message: JSON.stringify(messageData.message),
-        };
-      }
-      throw new Error(); // Fallback to signing as string
-    } catch (e) {
-      return {
-        message:
-          typeof messageData.message === "string"
-            ? messageData.message
-            : JSON.stringify(messageData.message),
-      };
-    }
-  }, [mainAccount.currency.family, messageData.message]);
+  const [messageProperties, setMessageProperties] = useState<{
+    message?: string;
+    fields?: NanoDisplayedInfoFor712;
+  }>({});
+
+  useEffect(() => {
+    getMessageProperties(mainAccount.currency, messageData).then(setMessageProperties);
+  }, [mainAccount.currency, messageData, setMessageProperties]);
+
+  const { message, fields } = messageProperties;
 
   return (
     <Box flow={1}>
@@ -158,28 +132,34 @@ export default function StepSummary({ account, message: messageData }: StepProps
         </Box>
       </Box>
       <Separator />
-      <MessageContainer flex="1">
-        {fields ? (
-          <MessageProperties properties={fields} />
-        ) : (
-          <MessageProperty label={"message"} value={message || ""} />
-        )}
-      </MessageContainer>
-      {fields ? (
-        <Box flex="1">
-          <Button outline small mb={2} onClick={e => setShowAdvanced(!showAdvanced)}>
-            {showAdvanced
-              ? `- ${t("signmessage.eip712.hideFullMessage")}`
-              : `+ ${t("signmessage.eip712.showFullMessage")}`}
-          </Button>
-          {showAdvanced ? (
-            <AdvancedMessageArea>
-              {typeof messageData.message === "string"
-                ? `"${messageData.message}"`
-                : JSON.stringify(messageData.message, null, 2)}
-            </AdvancedMessageArea>
+
+      {message ? (
+        <>
+          <MessageContainer flex="1">
+            {fields ? (
+              <MessageProperties properties={fields} />
+            ) : (
+              <MessageProperty label={"message"} value={message || ""} />
+            )}
+          </MessageContainer>
+
+          {fields ? (
+            <Box flex="1">
+              <Button outline small mb={2} onClick={e => setShowAdvanced(!showAdvanced)}>
+                {showAdvanced
+                  ? `- ${t("signmessage.eip712.hideFullMessage")}`
+                  : `+ ${t("signmessage.eip712.showFullMessage")}`}
+              </Button>
+              {showAdvanced ? (
+                <AdvancedMessageArea>
+                  {typeof messageData.message === "string"
+                    ? `"${messageData.message}"`
+                    : JSON.stringify(messageData.message, null, 2)}
+                </AdvancedMessageArea>
+              ) : null}
+            </Box>
           ) : null}
-        </Box>
+        </>
       ) : null}
     </Box>
   );

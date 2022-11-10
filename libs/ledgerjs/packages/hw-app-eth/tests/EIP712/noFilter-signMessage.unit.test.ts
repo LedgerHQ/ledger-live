@@ -1,4 +1,5 @@
 import path from "path";
+import axios from "axios";
 import fs from "fs/promises";
 import {
   openTransportReplayer,
@@ -17,6 +18,9 @@ const getFilePath = (type: "apdu" | "message", filename: string): string => {
 
 // act like no message has filters
 jest.mock("@ledgerhq/cryptoassets/data/eip712", () => ({}));
+jest.mock("axios");
+// @ts-expect-error not detected as mocked with jest
+axios.get.mockRejectedValue();
 
 describe("EIP712", () => {
   describe("SignEIP712Message without filters", () => {
@@ -280,7 +284,7 @@ describe("EIP712", () => {
       });
     });
 
-    test("should sign correctly the 12.json sample message", async () => {
+    test("should sign correctly the 13.json sample message", async () => {
       const apdusBuffer = await fs.readFile(getFilePath("apdu", "13"), "utf-8");
       const message = await fs
         .readFile(getFilePath("message", "13"), "utf-8")
