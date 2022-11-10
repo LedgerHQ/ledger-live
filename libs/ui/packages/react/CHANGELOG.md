@@ -1,5 +1,11 @@
 # @ledgerhq/react-ui
 
+## 0.10.0-nightly.3
+
+### Patch Changes
+
+- [#1768](https://github.com/LedgerHQ/ledger-live/pull/1768) [`9b00b3dd53`](https://github.com/LedgerHQ/ledger-live/commit/9b00b3dd531a05b9ab1961bfb4f658de70a041d7) Thanks [@mlegall-ledger](https://github.com/mlegall-ledger)! - Updating the imports for png images to prevent issues with csj.
+
 ## 0.10.0-nightly.2
 
 ### Patch Changes

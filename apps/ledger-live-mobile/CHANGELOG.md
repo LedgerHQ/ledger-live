@@ -1,5 +1,11 @@
 # live-mobile
 
+## 3.11.0-nightly.3
+
+### Patch Changes
+
+- [#1761](https://github.com/LedgerHQ/ledger-live/pull/1761) [`7be1afc65b`](https://github.com/LedgerHQ/ledger-live/commit/7be1afc65b33081f8a4ab0eb725d5153a92271ad) Thanks [@LFBarreto](https://github.com/LFBarreto)! - Analytics - added firstConnectHasDeviceUpdated property
+
 ## 3.11.0-nightly.2
 
 ### Patch Changes
