@@ -30,6 +30,7 @@ import {
   lastSeenDeviceSelector,
   sensitiveAnalyticsSelector,
   firstConnectionHasDeviceSelector,
+  firstConnectHasDeviceUpdatedSelector,
   readOnlyModeEnabledSelector,
   hasOrderedNanoSelector,
   notificationsSelector,
@@ -80,6 +81,8 @@ const extraProperties = (store: AppStore) => {
   const notificationsBlacklisted = Object.entries(notifications)
     .filter(([key, value]) => key !== "allowed" && value === false)
     .map(([key]) => key);
+  const firstConnectHasDeviceUpdated =
+    firstConnectHasDeviceUpdatedSelector(state);
 
   return {
     appVersion,
@@ -95,6 +98,7 @@ const extraProperties = (store: AppStore) => {
     sessionId,
     devicesCount: devices.length,
     firstConnectionHasDevice,
+    firstConnectHasDeviceUpdated,
     ...(satisfaction
       ? {
           satisfaction,

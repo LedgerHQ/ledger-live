@@ -3162,6 +3162,12 @@
       }
     }
   },
+  "signMessage": {
+    "eip712": {
+      "showFullMessage": "Show full message",
+      "hideFullMessage": "Hide full message"
+    }
+  },
   "sync": {
     "error": "Sync Error",
     "loading": "Sync"
@@ -3471,7 +3477,7 @@
     }
   },
   "DeviceAction": {
-    "stayInTheAppPlz": "Stay in the Ledger Live App and keep your Nano X nearby",
+    "stayInTheAppPlz": "Stay in the Ledger Live app and keep your Ledger nearby.",
     "allowAppPermission": "Open the {{wording}} app on your device",
     "allowAppPermissionSubtitleToken": "to manage your {{token}} tokens",
     "allowManagerPermission": "Allow {{wording}} on your device",
@@ -3643,6 +3649,7 @@
         "description": "Manage your saved Ledgers"
       },
       "addNewCTA": "Add new",
+      "otgBanner": "If you own a Nano S or a Nano S Plus, connect your device with USB cable.",
       "connectExistingLedger": "Connect an existing Ledger",
       "connectExistingLedgerDescription": "Already have a Ledger that is set up? Pair it with bluetooth",
       "setUpNewLedger": "Set up a new Ledger",
@@ -5370,6 +5377,11 @@
       "viewOn": "View on",
       "viewInExplorer": "View in explorer",
       "txDetails": "Transaction details"
+    },
+    "modalDisabled": {
+      "title": "Send function not available",
+      "body": "In order to comply with Apple's recent updates on their App Store, sending NFTs is temporary unavailable. You can still use Ledger Live on Desktop to send NFTs.",
+      "contactSupport": "Please read our support article for more information."
     }
   },
   "ApplicationVersion": "v{{version}}",

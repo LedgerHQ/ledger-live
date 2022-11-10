@@ -13,7 +13,7 @@ const ContentWrapper = styled.div`
 
 const ContentScrollableContainer = styled.div`
   padding: 20px ${p => (p.noScroll ? 20 : 20 - p.theme.overflow.trackSize)}px 40px 20px;
-  ${p => (p.noScroll ? "overflow:hidden" : p.theme.overflow.xy)};
+  ${p => (p.noScroll ? "overflow:hidden" : p.theme.overflow.y)};
   position: relative;
   flex: 0 auto;
 `;
