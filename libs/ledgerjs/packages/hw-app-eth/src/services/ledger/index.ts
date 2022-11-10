@@ -19,6 +19,8 @@ type potentialResolutions = {
 };
 
 /**
+ * @ignore for external documentation
+ *
  * Providing additionnal data for some transactions (Token or NFT related) can enable clear signing
  * of initially impossible to decode data.
  * This method will add necessary APDUs to the resolution paramter in order to provide this data to the nano app
@@ -77,6 +79,8 @@ const getAdditionalDataFoContract = async (
 };
 
 /**
+ * @ignore for external documentation
+ *
  * Depending on the transaction, it might be necessary to load internal plugins in the nano app
  * in order to clear sign it.
  * This method will add necessary APDUs to the resolution parameter in order to load those internal plugins
