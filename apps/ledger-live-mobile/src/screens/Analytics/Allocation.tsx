@@ -1,6 +1,6 @@
 import React, { useCallback, memo } from "react";
 import { FlatList } from "react-native";
-import styled from "styled-components/native";
+import styled, { useTheme } from "styled-components/native";
 import { Flex, Text } from "@ledgerhq/native-ui";
 import { useTranslation } from "react-i18next";
 import RingChart from "./RingChart";
@@ -29,6 +29,7 @@ const size = normalize(150);
 
 function Allocation() {
   const distribution = useDistribution({ showEmptyAccounts: true });
+  const { colors } = useTheme();
   const { t } = useTranslation();
 
   const renderItem = useCallback(
@@ -42,7 +43,7 @@ function Allocation() {
     <Container alignItems="center">
       <Flex px={6}>
         <Flex>
-          <RingChart size={size} data={distribution.list} />
+          <RingChart size={size} data={distribution.list} colors={colors} />
         </Flex>
         <AssetWrapperContainer pointerEvents="none">
           <Text variant="h1" fontWeight="medium" color="neutral.c100">

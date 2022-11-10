@@ -167,6 +167,7 @@
     "@polkadot/util": "10.0.2",
     "@polkadot/util-crypto": "10.0.2",
     "@polkadot/wasm-crypto": "6.0.1",
+    "@polkadot/x-randomvalues": "6.0.1",
     "@solana/spl-token": "^0.2.0",
     "@solana/web3.js": "1.41.3",
     "@stricahq/bip32ed25519": "^1.0.3",

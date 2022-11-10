@@ -114,8 +114,6 @@ export default function EthereumFeesStrategy({
       accountId: account.id,
       parentId: parentAccount?.id,
       transaction: transaction as EthereumTransaction,
-      currentNavigation: ScreenName.SendSummary,
-      nextNavigation: ScreenName.SendSelectDevice,
     });
   }, [navigation, route.params, account.id, parentAccount, transaction]);
   return (
