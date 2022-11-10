@@ -22,7 +22,6 @@ import {
 import type { AppSpec } from "../../bot/types";
 import { toOperationRaw } from "../../account";
 import {
-  canClaimRewards,
   canDelegate,
   canUndelegate,
   canRedelegate,
