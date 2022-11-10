@@ -44,6 +44,7 @@ import type {
   SettingsSetLastConnectedDevicePayload,
   SettingsSetLocalePayload,
   SettingsSetMarketCounterCurrencyPayload,
+  SettingsSetCustomImageBackupPayload,
   SettingsSetMarketFilterByStarredAccountsPayload,
   SettingsSetMarketRequestParamsPayload,
   SettingsSetNotificationsPayload,
@@ -108,6 +109,7 @@ export const INITIAL_STATE: SettingsState = {
   hasAvailableUpdate: false,
   theme: "system",
   osTheme: undefined,
+  customImageBackup: undefined,
 
   carouselVisibility: Object.fromEntries(
     SLIDES.map(slide => [slide.name, true]),
@@ -467,6 +469,12 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
     ),
   }),
 
+  [SettingsActionTypes.SET_CUSTOM_IMAGE_BACKUP]: (state, action) => ({
+    ...state,
+    customImageBackup: (action as Action<SettingsSetCustomImageBackupPayload>)
+      .payload,
+  }),
+
   [SettingsActionTypes.SET_LAST_CONNECTED_DEVICE]: (state, action) => ({
     ...state,
     lastConnectedDevice: (
@@ -722,6 +730,8 @@ export const marketCounterCurrencySelector = (state: State) =>
   state.settings.marketCounterCurrency;
 export const marketFilterByStarredAccountsSelector = (state: State) =>
   state.settings.marketFilterByStarredAccounts;
+export const customImageBackupSelector = (state: State) =>
+  state.settings.customImageBackup;
 export const sensitiveAnalyticsSelector = (state: State) =>
   state.settings.sensitiveAnalytics;
 export const firstConnectionHasDeviceSelector = (state: State) =>

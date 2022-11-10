@@ -4,11 +4,14 @@ import {
   DeviceOnDashboardExpected,
   TransportError,
   TransportStatusError,
+  StatusCodes,
 } from "@ledgerhq/errors";
+
 import { ungzip } from "pako";
 
 import { withDevice } from "./deviceAccess";
 import getDeviceInfo from "./getDeviceInfo";
+import ftsFetchImageHash from "./ftsFetchImageHash";
 import getAppAndVersion from "./getAppAndVersion";
 import { isDashboardName } from "./isDashboardName";
 import attemptToQuitApp, { AttemptToQuitAppEvent } from "./attemptToQuitApp";
@@ -23,16 +26,25 @@ export type FetchImageEvent =
       progress: number;
     }
   | {
+      type: "currentImageHash";
+      imgHash: string;
+    }
+  | {
       type: "imageFetched";
-      hexImage: string;
+      imgHex: string;
+    }
+  | {
+      type: "imageAlreadyBackedUp";
     };
 
 export type FetchImageRequest = {
   deviceId: string;
+  backupHash?: string; // When provided, will skip the backup if it matches the hash.
 };
 
 export default function fetchImage({
   deviceId,
+  backupHash,
 }: FetchImageRequest): Observable<FetchImageEvent> {
   const sub = withDevice(deviceId)(
     (transport) =>
@@ -47,23 +59,36 @@ export default function fetchImage({
           .pipe(
             mergeMap(async () => {
               timeoutSub.unsubscribe();
+              // Fetch the image hash from the device
+              const imgHash = await ftsFetchImageHash(transport);
+              subscriber.next({ type: "currentImageHash", imgHash });
+              // We don't have an image to backup
+              if (imgHash === "") {
+                return subscriber.error(new ImageDoesNotExistOnDevice());
+              } else if (backupHash === imgHash) {
+                subscriber.next({ type: "imageAlreadyBackedUp" });
+                subscriber.complete();
+                return;
+              }
 
+              // If we are here, either we didn't provide a backupHash or we are
+              // not up to date with the device, in either case, continue to fetch
               const imageLengthResponse = await transport.send(
                 0xe0,
                 0x64,
                 0x00,
                 0x00
               );
-              // TODO: handle inexistent image
+
               const imageLengthStatus = imageLengthResponse.readUInt16BE(
                 imageLengthResponse.length - 2
               );
 
-              if (imageLengthStatus !== 0x9000) {
+              if (imageLengthStatus !== StatusCodes.OK) {
                 // this answer success even when no image is set, but the length of the image is 0
                 return subscriber.error(
                   new TransportError(
-                    "Unexpected device responce",
+                    "Unexpected device response",
                     imageLengthStatus.toString(16)
                   )
                 );
@@ -72,6 +97,7 @@ export default function fetchImage({
               const imageLength = imageLengthResponse.readUInt32BE(0);
 
               if (imageLength === 0) {
+                // It should never happen since we fetched the hash earlier but hey.
                 return subscriber.error(new ImageDoesNotExistOnDevice());
               }
 
@@ -105,11 +131,11 @@ export default function fetchImage({
                   imageChunk.length - 2
                 );
 
-                if (chunkStatus !== 0x9000) {
+                if (chunkStatus !== StatusCodes.OK) {
                   // TODO: map all proper errors
                   return subscriber.error(
                     new TransportError(
-                      "Unexpected device responce",
+                      "Unexpected device response",
                       chunkStatus.toString(16)
                     )
                   );
@@ -123,9 +149,9 @@ export default function fetchImage({
                 currentOffset += chunkSize;
               }
 
-              const hexImage = await parseFtsImageFormat(imageBuffer);
+              const imgHex = await parseFtsImageFormat(imageBuffer);
 
-              subscriber.next({ type: "imageFetched", hexImage });
+              subscriber.next({ type: "imageFetched", imgHex });
 
               subscriber.complete();
             }),
@@ -135,7 +161,7 @@ export default function fetchImage({
                 (e &&
                   e instanceof TransportStatusError &&
                   [0x6e00, 0x6d00, 0x6e01, 0x6d01, 0x6d02].includes(
-                    // @ts-expect-error typescript not checking agains the instanceof
+                    // @ts-expect-error typescript not checking against the instanceof
                     e.statusCode
                   ))
               ) {

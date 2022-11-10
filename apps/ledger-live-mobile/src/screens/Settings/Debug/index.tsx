@@ -23,7 +23,7 @@ import EquipmentIdRow from "./EquipmentIdRow";
 import OpenDebugStore from "./OpenDebugStore";
 import OpenDebugPlayground from "./OpenDebugPlayground";
 import OpenDebugFeatureFlags from "./OpenDebugFeatureFlags";
-import OpenDebugMultiAppInstall from "./OpenDebugMultiAppInstall";
+import OpenDebugFetchCustomImage from "./OpenDebugFetchCustomImage";
 import OpenLottie from "./OpenDebugLottie";
 import OpenDebugLogs from "./OpenDebugLogs";
 import SkipLock from "../../../components/behaviour/SkipLock";
@@ -67,11 +67,11 @@ export function DebugMocks() {
       <OpenDebugIcons />
       <OpenLottie />
       <OpenDebugCustomImage />
+      <OpenDebugFetchCustomImage />
       <OpenDebugPostOnboarding />
       <OpenStoryly />
       <OpenDebugPlayground />
       <OpenDebugBlePairingFlow />
-      <OpenDebugMultiAppInstall />
       <ReadOnlyModeRow />
       <HasOrderedNanoRow />
       <MockModeRow />

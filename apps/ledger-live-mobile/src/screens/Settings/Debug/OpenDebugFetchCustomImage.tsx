@@ -11,8 +11,9 @@ export default function OpenDebugPlayground() {
 
   return (
     <SettingsRow
-      title="Debug multi app install"
-      onPress={() => navigation.navigate(ScreenName.DebugMultiAppInstall)}
+      title="Debug Custom Image - Fetch & Backup"
+      desc="Backing up and skipping included"
+      onPress={() => navigation.navigate(ScreenName.DebugFetchCustomImage)}
     />
   );
 }

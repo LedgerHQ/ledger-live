@@ -196,7 +196,7 @@ export default function loadImage({
   return sub as Observable<LoadImageEvent>;
 }
 
-const generateFtsImageFormat: (
+export const generateFtsImageFormat: (
   imgHex: string,
   compressImage: boolean
 ) => Promise<Buffer> = async (imgHex, compressImage) => {
