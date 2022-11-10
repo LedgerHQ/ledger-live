@@ -1360,7 +1360,7 @@ Array [
   "ethereum/erc20/holotoken",
   "ethereum/erc20/etoro_euro",
   "near",
-  "avalanche",
+  "avalanche_c_chain",
   "banano",
   "celo",
   "dexon",
