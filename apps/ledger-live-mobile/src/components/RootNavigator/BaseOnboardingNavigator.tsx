@@ -96,7 +96,7 @@ export default function BaseOnboardingNavigator() {
         name={ScreenName.PairDevices}
         component={PairDevices}
         options={({ navigation, route }) => ({
-          title: undefined,
+          title: "",
           headerRight: () => (
             <ErrorHeaderInfo route={route} navigation={navigation} />
           ),
