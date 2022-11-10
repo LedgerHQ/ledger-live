@@ -36,13 +36,14 @@ interface BalanceType {
 const Summary = (props: Props) => {
   const { account } = props;
   const [delegationsResources, setDelegationResources] = useState(
-    account.elrondResources.delegations || [],
+    account.elrondResources ? account.elrondResources.delegations : [],
   );
 
   const fetchDelegations = useCallback(() => {
-    setDelegationResources(account.elrondResources.delegations || []);
+    setDelegationResources(account.elrondResources ? account.elrondResources.delegations : []);
 
-    return () => setDelegationResources(account.elrondResources.delegations || []);
+    return () =>
+      setDelegationResources(account.elrondResources ? account.elrondResources.delegations : []);
   }, [account.elrondResources.delegations]);
 
   const available = useMemo((): BigNumber => account.spendableBalance, [account.spendableBalance]);
