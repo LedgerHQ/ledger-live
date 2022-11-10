@@ -12,6 +12,7 @@ import { TypedMessageData } from "@ledgerhq/live-common/families/ethereum/types"
 import { renderVerifyUnwrapped } from "~/renderer/components/DeviceAction/rendering";
 import { getMessageProperties } from "~/renderer/modals/SignMessage/utils";
 import SignMessageConfirmField from "./SignMessageConfirmField";
+import Spinner from "~/renderer/components/BigSpinner.jsx";
 import useTheme from "~/renderer/hooks/useTheme";
 import Text from "~/renderer/components/Text";
 import Box from "~/renderer/components/Box";
@@ -71,8 +72,8 @@ const SignMessageConfirm = ({ device, account, parentAccount, signMessageRequest
   if (!device) return null;
 
   let fields = [];
-  if (Array.isArray(inferredNanoFields?.fields)) {
-    fields = inferredNanoFields!.fields.map(field => ({
+  if (inferredNanoFields?.fields && Array.isArray(inferredNanoFields.fields)) {
+    fields = inferredNanoFields.fields.map(field => ({
       ...field,
       type: "text",
       value: Array.isArray(field.value) ? field.value.join(",\n") : field.value,
@@ -118,13 +119,19 @@ const SignMessageConfirm = ({ device, account, parentAccount, signMessageRequest
 
   return (
     <Container>
-      <Box style={{ width: "100%" }} px={30} mb={20}>
-        {fields.map((field, i) => {
-          return <TextField key={i} field={field} account={account} />;
-        })}
-      </Box>
+      {!inferredNanoFields?.message ? (
+        <Spinner size={30} />
+      ) : (
+        <>
+          <Box style={{ width: "100%" }} px={30} mb={20}>
+            {fields.map((field, i) => {
+              return <TextField key={i} field={field} account={account} />;
+            })}
+          </Box>
 
-      {renderVerifyUnwrapped({ modelId: device.modelId, type })}
+          {renderVerifyUnwrapped({ modelId: device.modelId, type })}
+        </>
+      )}
     </Container>
   );
 };
