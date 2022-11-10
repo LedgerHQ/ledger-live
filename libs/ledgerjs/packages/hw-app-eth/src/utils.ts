@@ -117,6 +117,14 @@ export const decodeTxInfo = (rawTx: Buffer) => {
 export const intAsHexBytes = (int: number, bytes: number): string =>
   int.toString(16).padStart(2 * bytes, "0");
 
+/**
+ * @ignore for the README
+ *
+ * List of selectors (hexadecimal representation of the used method's signature) related to
+ * ERC20 (Tokens), ERC721/ERC1155 (NFT).
+ * You can verify and/or get more info about them on http://4byte.directory
+ */
+
 export enum ERC20_CLEAR_SIGNED_SELECTORS {
   APPROVE = "0x095ea7b3",
   TRANSFER = "0xa9059cbb",
