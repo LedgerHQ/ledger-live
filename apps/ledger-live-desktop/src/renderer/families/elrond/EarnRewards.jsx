@@ -49,12 +49,13 @@ const Delegation = (props: DelegationPropsType) => {
   const { account } = props;
 
   const [delegationResources, setDelegationResources] = useState<DelegationType[]>(
-    account.elrondResources.delegations || [],
+    account.elrondResources ? account.elrondResources.delegations : [],
   );
 
-  const validators = useMemo(() => randomizeProviders(account.elrondResources.providers), [
-    account.elrondResources.providers,
-  ]);
+  const validators = useMemo(
+    () => randomizeProviders(account.elrondResources ? account.elrondResources.providers : []),
+    [account.elrondResources],
+  );
 
   const dispatch = useDispatch();
   const delegationEnabled = useMemo(
@@ -119,10 +120,11 @@ const Delegation = (props: DelegationPropsType) => {
   );
 
   const fetchDelegations = useCallback(() => {
-    setDelegationResources(account.elrondResources.delegations || []);
+    setDelegationResources(account.elrondResources ? account.elrondResources.delegations : []);
 
-    return () => setDelegationResources(account.elrondResources.delegations || []);
-  }, [account.elrondResources.delegations]);
+    return () =>
+      setDelegationResources(account.elrondResources ? account.elrondResources.delegations : []);
+  }, [account.elrondResources]);
 
   const onEarnRewards = useCallback(() => {
     dispatch(

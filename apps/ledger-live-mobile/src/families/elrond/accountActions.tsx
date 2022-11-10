@@ -38,7 +38,7 @@ const getActions = (props: getActionsType): getActionsReturnType => {
   );
 
   const screen =
-    account.elrondResources.delegations.length === 0
+    account.elrondResources && account.elrondResources.delegations.length === 0
       ? ScreenName.ElrondDelegationStarted
       : ScreenName.ElrondDelegationValidator;
 

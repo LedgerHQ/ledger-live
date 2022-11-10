@@ -27,11 +27,15 @@ const AccountHeaderActions = (props: Props) => {
     [account.spendableBalance],
   );
 
-  const validators = useMemo(() => randomizeProviders(account.elrondResources.providers), [
-    account.elrondResources.providers,
-  ]);
+  const validators = useMemo(
+    () => randomizeProviders(account.elrondResources ? account.elrondResources.providers : []),
+    [account.elrondResources],
+  );
 
-  const hasDelegations = account.elrondResources.delegations.length > 0;
+  const hasDelegations = account.elrondResources
+    ? account.elrondResources.delegations.length > 0
+    : false;
+
   const onClick = useCallback(() => {
     if (hasDelegations) {
       dispatch(

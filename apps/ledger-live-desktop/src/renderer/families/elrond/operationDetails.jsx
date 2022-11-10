@@ -62,9 +62,9 @@ type OperationDetailsDelegationProps = {
 
 const OperationDetailsDelegation = (props: OperationDetailsDelegationProps) => {
   const { isTransactionField, account, operation } = props;
-  const formattedValidator: ValidatorType | undefined = account.elrondResources.providers.find(
-    v => v.contract === operation.contract,
-  );
+  const formattedValidator: ValidatorType | undefined = account.elrondResources
+    ? account.elrondResources.providers.find(v => v.contract === operation.contract)
+    : false;
 
   return (
     <OpDetailsSection>

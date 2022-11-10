@@ -48,15 +48,18 @@ const Body = (props: BodyPropsType) => {
   const [drawer, setDrawer] = useState<DrawerPropsType["data"] | false>();
   const [delegationResources, setDelegationResources] = useState<
     DelegationType[]
-  >(account.elrondResources.delegations);
+  >(account.elrondResources ? account.elrondResources.delegations : []);
 
   /*
    * Randomize the list of the memoized validators..
    */
 
   const validators = useMemo(
-    () => randomizeProviders(account.elrondResources.providers),
-    [account.elrondResources.providers],
+    () =>
+      randomizeProviders(
+        account.elrondResources ? account.elrondResources.providers : [],
+      ),
+    [account.elrondResources],
   );
 
   /*
@@ -83,10 +86,15 @@ const Body = (props: BodyPropsType) => {
    */
 
   const fetchDelegations = useCallback(() => {
-    setDelegationResources(account.elrondResources.delegations);
+    setDelegationResources(
+      account.elrondResources ? account.elrondResources.delegations : [],
+    );
 
-    return () => setDelegationResources(account.elrondResources.delegations);
-  }, [account.elrondResources.delegations]);
+    return () =>
+      setDelegationResources(
+        account.elrondResources ? account.elrondResources.delegations : [],
+      );
+  }, [account.elrondResources]);
 
   /*
    * Sort the delegations by amount, by transforming the given amount into a denominated value, assign the validator, and filter by rewards or stake.

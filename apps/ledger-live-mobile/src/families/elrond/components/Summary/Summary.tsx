@@ -46,10 +46,15 @@ const Summary = (props: SummaryPropsType) => {
    */
 
   const fetchDelegations = useCallback(() => {
-    setDelegationResources(account.elrondResources.delegations);
+    setDelegationResources(
+      account.elrondResources ? account.elrondResources.delegations : [],
+    );
 
-    return () => setDelegationResources(account.elrondResources.delegations);
-  }, [account.elrondResources.delegations]);
+    return () =>
+      setDelegationResources(
+        account.elrondResources ? account.elrondResources.delegations : [],
+      );
+  }, [account.elrondResources]);
 
   /*
    * Format the three data items by denominating the value and filtering out zero resources.
