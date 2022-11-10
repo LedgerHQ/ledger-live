@@ -131,7 +131,7 @@ const ethereum: AppSpec<Transaction> = {
   appQuery: {
     model: DeviceModelId.nanoS,
     appName: "Ethereum",
-    appVersion: "1.9.20",
+    appVersion: "1.10.1",
   },
   genericDeviceAction: acceptTransaction,
   testTimeout,
@@ -403,7 +403,7 @@ const ethereumGoerli: AppSpec<Transaction> = {
   appQuery: {
     model: DeviceModelId.nanoS,
     appName: "Ethereum",
-    appVersion: "1.9.20",
+    appVersion: "1.10.1",
   },
   genericDeviceAction: acceptTransaction,
   testTimeout,
