@@ -106,6 +106,10 @@ export const SyncOnboarding = ({
   const initialAppsToInstall =
     deviceInitialApps?.params?.apps || fallbackDefaultAppsToInstall;
 
+  const [companionStepKey, setCompanionStepKey] = useState<CompanionStepKey>(
+    CompanionStepKey.Paired,
+  );
+
   const getNextStepKey = useCallback(
     (step: CompanionStepKey) => {
       if (step === CompanionStepKey.Exit) {
@@ -136,109 +140,6 @@ export const SyncOnboarding = ({
       estimatedTime: estimatedTime / 60,
     });
 
-  const installSetOfAppsSteps: Step[] = useMemo(
-    () => [
-      {
-        key: CompanionStepKey.Apps,
-        title: t("syncOnboarding.appsStep.title", { productName }),
-        status: "inactive",
-        estimatedTime: 60,
-        renderBody: () => (
-          <InstallSetOfApps
-            device={device}
-            onResult={handleInstallAppsComplete}
-            dependencies={initialAppsToInstall}
-          />
-        ),
-      },
-    ],
-    [productName, t, device, handleInstallAppsComplete, initialAppsToInstall],
-  );
-
-  const defaultCompanionSteps: Step[] = useMemo(
-    () => [
-      {
-        key: CompanionStepKey.Paired,
-        title: t("syncOnboarding.pairingStep.title", { productName }),
-        status: "inactive",
-        renderBody: () => (
-          <Text variant="bodyLineHeight">
-            {t("syncOnboarding.pairingStep.description", { productName })}
-          </Text>
-        ),
-      },
-      {
-        key: CompanionStepKey.Pin,
-        title: t("syncOnboarding.pinStep.title"),
-        status: "inactive",
-        estimatedTime: 120,
-        renderBody: () => (
-          <Flex>
-            <Text variant="bodyLineHeight" mb={6}>
-              {t("syncOnboarding.pinStep.description", { productName })}
-            </Text>
-            <Text variant="bodyLineHeight">
-              {t("syncOnboarding.pinStep.warning", { productName })}
-            </Text>
-          </Flex>
-        ),
-      },
-      {
-        key: CompanionStepKey.Seed,
-        title: t("syncOnboarding.seedStep.title"),
-        status: "inactive",
-        estimatedTime: 300,
-        renderBody: () => (
-          <Flex pb={1}>
-            <Text variant="bodyLineHeight" mb={6}>
-              {t("syncOnboarding.seedStep.description", { productName })}
-            </Text>
-            <Stories
-              instanceID={StorylyInstanceID.recoverySeed}
-              vertical
-              keepOriginalOrder
-            />
-          </Flex>
-        ),
-      },
-      {
-        key: CompanionStepKey.SoftwareCheck,
-        title: t("syncOnboarding.softwareChecksSteps.title"),
-        status: "inactive",
-        renderBody: (isDisplayed?: boolean) => (
-          <SoftwareChecksStep
-            device={device}
-            isDisplayed={isDisplayed}
-            onComplete={handleSoftwareCheckComplete}
-          />
-        ),
-      },
-    ],
-    [t, productName, device, handleSoftwareCheckComplete],
-  );
-
-  const getCompanionSteps = useCallback(() => {
-    let steps = defaultCompanionSteps;
-
-    if (deviceInitialApps?.enabled) {
-      steps = steps.concat(installSetOfAppsSteps);
-    }
-
-    return steps.concat([
-      {
-        key: CompanionStepKey.Ready,
-        title: t("syncOnboarding.readyStep.title", { productName }),
-        status: "inactive",
-      },
-    ]);
-  }, [
-    t,
-    productName,
-    defaultCompanionSteps,
-    installSetOfAppsSteps,
-    deviceInitialApps?.enabled,
-  ]);
-
   const [stopPolling, setStopPolling] = useState<boolean>(false);
   const [pollingPeriodMs, setPollingPeriodMs] = useState<number>(
     normalPollingPeriodMs,
@@ -259,13 +160,6 @@ export const SyncOnboarding = ({
     useState<boolean>(false);
   const [isDesyncDrawerOpen, setDesyncDrawerOpen] = useState<boolean>(false);
   const [isHelpDrawerOpen, setHelpDrawerOpen] = useState<boolean>(false);
-
-  const [companionSteps, setCompanionSteps] = useState<Step[]>(
-    getCompanionSteps(),
-  );
-  const [companionStepKey, setCompanionStepKey] = useState<CompanionStepKey>(
-    CompanionStepKey.Paired,
-  );
 
   const goBackToPairingFlow = useCallback(() => {
     const navigateInput: NavigateInput<
@@ -458,29 +352,102 @@ export const SyncOnboarding = ({
       );
     }
 
-    setCompanionSteps(
-      getCompanionSteps().map(step => {
-        const stepStatus =
-          step.key > companionStepKey
-            ? "inactive"
-            : step.key < companionStepKey
-            ? "completed"
-            : "active";
-
-        return {
-          ...step,
-          status: stepStatus,
-        };
-      }),
-    );
-
     return () => {
       if (readyRedirectTimerRef.current) {
         clearTimeout(readyRedirectTimerRef.current);
         readyRedirectTimerRef.current = null;
       }
     };
-  }, [companionStepKey, getCompanionSteps, handleDeviceReady]);
+  }, [companionStepKey, handleDeviceReady]);
+
+  const companionSteps: Step[] = useMemo(
+    () =>
+      [
+        {
+          key: CompanionStepKey.Paired,
+          title: t("syncOnboarding.pairingStep.title", { productName }),
+          renderBody: () => (
+            <Text variant="bodyLineHeight">
+              {t("syncOnboarding.pairingStep.description", { productName })}
+            </Text>
+          ),
+        },
+        {
+          key: CompanionStepKey.Pin,
+          title: t("syncOnboarding.pinStep.title"),
+          estimatedTime: 120,
+          renderBody: () => (
+            <Flex>
+              <Text variant="bodyLineHeight" mb={6}>
+                {t("syncOnboarding.pinStep.description", { productName })}
+              </Text>
+              <Text variant="bodyLineHeight">
+                {t("syncOnboarding.pinStep.warning", { productName })}
+              </Text>
+            </Flex>
+          ),
+        },
+        {
+          key: CompanionStepKey.Seed,
+          title: t("syncOnboarding.seedStep.title"),
+          estimatedTime: 300,
+          renderBody: () => (
+            <Text variant="bodyLineHeight">
+              {t("syncOnboarding.seedStep.description", { productName })}
+            </Text>
+          ),
+        },
+        {
+          key: CompanionStepKey.SoftwareCheck,
+          title: t("syncOnboarding.softwareChecksSteps.title"),
+          renderBody: (isDisplayed?: boolean) => (
+            <SoftwareChecksStep
+              device={device}
+              isDisplayed={isDisplayed}
+              onComplete={handleSoftwareCheckComplete}
+            />
+          ),
+        },
+        ...(deviceInitialApps?.enabled
+          ? [
+              {
+                key: CompanionStepKey.Apps,
+                title: t("syncOnboarding.appsStep.title", { productName }),
+                estimatedTime: 60,
+                renderBody: () => (
+                  <InstallSetOfApps
+                    device={device}
+                    onResult={handleInstallAppsComplete}
+                    dependencies={initialAppsToInstall}
+                  />
+                ),
+              },
+            ]
+          : []),
+        {
+          key: CompanionStepKey.Ready,
+          title: t("syncOnboarding.readyStep.title", { productName }),
+        },
+      ].map(step => ({
+        ...step,
+        status:
+          step.key > companionStepKey
+            ? "inactive"
+            : step.key < companionStepKey
+            ? "completed"
+            : "active",
+      })),
+    [
+      t,
+      productName,
+      deviceInitialApps?.enabled,
+      device,
+      handleSoftwareCheckComplete,
+      handleInstallAppsComplete,
+      initialAppsToInstall,
+      companionStepKey,
+    ],
+  );
 
   return (
     <DeviceSetupView
