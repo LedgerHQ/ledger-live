@@ -30,7 +30,9 @@ export function useFeesStrategy(tx: Transaction): FeeStrategy[] {
           gasLimit
         ),
         extra: {
-          maxFeePerGas: amplifiedBaseFee.integerValue(),
+          maxFeePerGas: amplifiedBaseFee
+            .plus(networkInfo.maxPriorityFeePerGas.min)
+            .integerValue(),
           maxPriorityFeePerGas: networkInfo.maxPriorityFeePerGas.min,
         },
       },
@@ -45,7 +47,9 @@ export function useFeesStrategy(tx: Transaction): FeeStrategy[] {
           gasLimit
         ),
         extra: {
-          maxFeePerGas: amplifiedBaseFee.integerValue(),
+          maxFeePerGas: amplifiedBaseFee
+            .plus(networkInfo.maxPriorityFeePerGas.initial)
+            .integerValue(),
           maxPriorityFeePerGas: networkInfo.maxPriorityFeePerGas.initial,
         },
       },
@@ -60,7 +64,9 @@ export function useFeesStrategy(tx: Transaction): FeeStrategy[] {
           gasLimit
         ),
         extra: {
-          maxFeePerGas: amplifiedBaseFee.integerValue(),
+          maxFeePerGas: amplifiedBaseFee
+            .plus(networkInfo.maxPriorityFeePerGas.max)
+            .integerValue(),
           maxPriorityFeePerGas: networkInfo.maxPriorityFeePerGas.max,
         },
       },
