@@ -32,12 +32,12 @@ const signOperation = ({
 
       async function main() {
         const hwApp = new Cosmos(transport);
-        const cosmosAPI = new CosmosAPI(account.currency.id);
-        const { accountNumber, sequence } = await cosmosAPI.getAccount(
-          account.freshAddress
-        );
 
-        const chainId = await cosmosAPI.getChainId();
+        const { accountNumber, sequence } = await new CosmosAPI(
+          account.currency.id
+        ).getAccount(account.freshAddress);
+
+        const chainId = await new CosmosAPI(account.currency.id).getChainId();
 
         o.next({ type: "device-signature-requested" });
 
