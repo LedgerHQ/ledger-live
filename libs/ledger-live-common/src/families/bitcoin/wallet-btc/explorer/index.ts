@@ -2,7 +2,6 @@ import type { AxiosRequestConfig } from "axios";
 import axios, { AxiosInstance } from "axios";
 import axiosRetry, { isNetworkOrIdempotentRequestError } from "axios-retry";
 import genericPool, { Pool } from "generic-pool";
-
 import { Address, Block, TX } from "../storage/types";
 import { IExplorer } from "./types";
 import {
@@ -78,7 +77,7 @@ class BitcoinLikeExplorer implements IExplorer {
     client.interceptors.response.use(responseInterceptor, errorInterceptor);
   }
 
-  async broadcast(tx: string) {
+  async broadcast(tx: string): Promise<{ data: { result: string } }> {
     const url = "/tx/send";
     const client = await this.client.acquire();
     const res = await client.client.post(url, { tx });
@@ -137,7 +136,7 @@ class BitcoinLikeExplorer implements IExplorer {
     return block;
   }
 
-  async getFees(): Promise<any> {
+  async getFees(): Promise<{ [key: string]: number }> {
     const url = `/fees`;
     // TODO add a test for failure (at the sync level)
     const client = await this.client.acquire();

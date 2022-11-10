@@ -20,6 +20,7 @@ import {
   Operation,
   ProtoNFT,
 } from "@ledgerhq/types-live";
+import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import NoMoreOperationFooter from "../../../components/NoMoreOperationFooter";
 import { accountScreenSelector } from "../../../reducers/accounts";
 import LoadingFooter from "../../../components/LoadingFooter";
@@ -38,6 +39,8 @@ import {
   StackNavigatorProps,
 } from "../../../components/RootNavigator/types/helpers";
 import { AccountsNavigatorParamList } from "../../../components/RootNavigator/types/AccountsNavigator";
+import InfoModal from "../../../modals/Info";
+import { notAvailableModalInfo } from "../NftInfoNotAvailable";
 
 const MAX_NFT_FIRST_RENDER = 12;
 const NFTS_TO_ADD_ON_LIST_END_REACHED = 6;
@@ -147,6 +150,15 @@ const NftCollection = ({ route }: NavigationProps) => {
   const onOperationsEndReached = useCallback(() => {
     setOpCount(opCount + 50);
   }, [setOpCount, opCount]);
+  const [isOpen, setOpen] = useState<boolean>(false);
+  const onOpenModal = useCallback(() => {
+    setOpen(true);
+  }, []);
+  const onCloseModal = useCallback(() => {
+    setOpen(false);
+  }, []);
+  const isNFTDisabled =
+    useFeature("disableNftSend")?.enabled && Platform.OS === "ios";
 
   const data = [
     <View style={styles.buttonContainer}>
@@ -155,7 +167,7 @@ const NftCollection = ({ route }: NavigationProps) => {
         IconLeft={SendIcon}
         containerStyle={styles.button}
         title={t("account.send")}
-        onPress={sendToken}
+        onPress={isNFTDisabled ? onOpenModal : sendToken}
       />
     </View>,
     <View style={styles.nftList}>
@@ -188,19 +200,26 @@ const NftCollection = ({ route }: NavigationProps) => {
   ];
 
   return (
-    <TabBarSafeAreaView
-      style={{
-        backgroundColor: colors.background,
-      }}
-    >
-      <FlatList
-        data={data}
-        renderItem={({ item }) => item}
-        keyExtractor={(item, index) => String(index)}
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ paddingBottom: TAB_BAR_SAFE_HEIGHT }}
+    <>
+      <InfoModal
+        isOpened={isOpen}
+        onClose={onCloseModal}
+        data={notAvailableModalInfo}
       />
-    </TabBarSafeAreaView>
+      <TabBarSafeAreaView
+        style={{
+          backgroundColor: colors.background,
+        }}
+      >
+        <FlatList
+          data={data}
+          renderItem={({ item }) => item}
+          keyExtractor={(item, index) => String(index)}
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={{ paddingBottom: TAB_BAR_SAFE_HEIGHT }}
+        />
+      </TabBarSafeAreaView>
+    </>
   );
 };
 

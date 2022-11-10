@@ -287,7 +287,7 @@ class BitcoinLikeWallet {
 
     const lastOutputIndex = txInfo.outputs.length - 1;
 
-    log("hw", `createPaymentTransactionNew`, {
+    log("hw", `createPaymentTransaction`, {
       inputs,
       associatedKeysets,
       outputScriptHex,
@@ -302,7 +302,7 @@ class BitcoinLikeWallet {
       additionals: additionals || [],
     });
 
-    const tx = await btc.createPaymentTransactionNew({
+    const tx = await btc.createPaymentTransaction({
       inputs,
       associatedKeysets,
       outputScriptHex,

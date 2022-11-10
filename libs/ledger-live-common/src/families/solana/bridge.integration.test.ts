@@ -50,6 +50,7 @@ import type {
   DatasetTest,
 } from "@ledgerhq/types-live";
 import { encodeAccountId } from "../../account";
+import { LATEST_BLOCKHASH_MOCK } from "./bridge/mock-data";
 
 // do not change real properties or the test will break
 const testOnChainData = {
@@ -983,6 +984,7 @@ const baseTx = {
 } as Transaction;
 
 const baseAPI = {
+  getLatestBlockhash: () => Promise.resolve(LATEST_BLOCKHASH_MOCK),
   getFeeForMessage: (_msg: unknown) =>
     Promise.resolve(testOnChainData.fees.lamportsPerSignature),
 } as ChainAPI;
@@ -1063,6 +1065,7 @@ async function runStakeTest(stakeTestSpec: StakeTestSpec) {
 
   const account: SolanaAccount = {
     ...baseAccount,
+    freshAddress: testOnChainData.fundedSenderAddress,
     solanaResources: {
       stakes: [
         {

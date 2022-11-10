@@ -189,6 +189,7 @@ export type SettingsState = {
   marketFilterByStarredAccounts: boolean;
   sensitiveAnalytics: boolean;
   firstConnectionHasDevice: boolean | null;
+  firstConnectHasDeviceUpdated: boolean | null;
   notifications: {
     allowed: boolean;
     transactions: boolean;
