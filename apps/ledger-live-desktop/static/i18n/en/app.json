@@ -1312,6 +1312,10 @@
       "sign": {
         "title": "Device"
       }
+    },
+    "eip712": {
+      "showFullMessage": "Show full message",
+      "hideFullMessage": "Hide full message"
     }
   },
   "walletconnect": {
