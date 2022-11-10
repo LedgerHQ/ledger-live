@@ -60,16 +60,16 @@ export default function DebugFetchCustomImage() {
     fetchingImage,
     imageAlreadyBackedUp,
     imageFetched,
-    imgHex,
+    hexImage,
     imgHash,
     error,
   } = status;
 
   useEffect(() => {
-    if (imgHash && imgHex) {
-      dispatch(setCustomImageBackup({ hash: imgHash, hex: imgHex }));
+    if (imgHash && hexImage) {
+      dispatch(setCustomImageBackup({ hash: imgHash, hex: hexImage }));
     }
-  }, [dispatch, imgHash, imgHex]);
+  }, [dispatch, imgHash, hexImage]);
 
   return (
     <NavigationScrollView>

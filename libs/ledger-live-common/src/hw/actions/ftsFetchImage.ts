@@ -41,7 +41,7 @@ type State = {
   device: Device | null | undefined;
   deviceInfo: DeviceInfo | null | undefined;
   error: Error | null | undefined;
-  imgHex?: string | undefined;
+  hexImage?: string | undefined;
   imgHash?: string | undefined;
   progress?: number;
   completed?: boolean;
@@ -103,7 +103,7 @@ const reducer = (state: State, e: Event): State => {
         isLoading: false,
         fetchingImage: false,
         imageFetched: true,
-        imgHex: e.imgHex,
+        hexImage: e.hexImage,
       };
     case "currentImageHash":
       return {

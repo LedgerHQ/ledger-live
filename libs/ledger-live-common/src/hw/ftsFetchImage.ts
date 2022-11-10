@@ -31,7 +31,7 @@ export type FetchImageEvent =
     }
   | {
       type: "imageFetched";
-      imgHex: string;
+      hexImage: string;
     }
   | {
       type: "imageAlreadyBackedUp";
@@ -149,9 +149,9 @@ export default function fetchImage({
                 currentOffset += chunkSize;
               }
 
-              const imgHex = await parseFtsImageFormat(imageBuffer);
+              const hexImage = await parseFtsImageFormat(imageBuffer);
 
-              subscriber.next({ type: "imageFetched", imgHex });
+              subscriber.next({ type: "imageFetched", hexImage });
 
               subscriber.complete();
             }),

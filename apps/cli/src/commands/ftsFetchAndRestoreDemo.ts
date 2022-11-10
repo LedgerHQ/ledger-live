@@ -39,7 +39,7 @@ import crypto from "crypto";
     }
 
     console.log("Delete the current image (simulate the wipe from fw update)")
-    const result = await withDevice(deviceId)(t=>t.exchange(Buffer.from("e063000000", "hex")).toPromise()
+    const result = await withDevice(deviceId)(t=>t.exchange(Buffer.from("e063000000", "hex"))).toPromise()
 
     console.log("Restoring the image we backedup")
     await new Promise<void>((resolve) =>
