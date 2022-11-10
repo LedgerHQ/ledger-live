@@ -31,7 +31,9 @@ export type FeatureId =
   | "referralProgramDesktopBanner"
   | "disableNftSend"
   | "disableNftLedgerMarket"
-  | "disableNftRaribleOpensea";
+  | "disableNftRaribleOpensea"
+  | "receiveStakingFlowConfigDesktop"
+  | "ethStakingProviders";
 
 /**  We use objects instead of direct booleans for potential future improvements
 like feature versioning etc */
