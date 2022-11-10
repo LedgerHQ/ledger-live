@@ -650,7 +650,7 @@ export const cryptocurrenciesById: Record<string, CryptoCurrency> = {
       },
     ],
     cosmosLikeInfo: {
-      lcd: "https://cosmoshub4.coin.ledger.com/",
+      lcd: "https://cosmoshub4.coin.ledger.com",
     },
     explorerViews: [
       {
@@ -687,7 +687,7 @@ export const cryptocurrenciesById: Record<string, CryptoCurrency> = {
       },
     ],
     cosmosLikeInfo: {
-      lcd: "https://cosmoshub4.coin.ledger.com/",
+      lcd: "https://cosmoshub4.coin.ledger.com",
     },
     explorerViews: [
       {
@@ -2554,7 +2554,7 @@ export const cryptocurrenciesById: Record<string, CryptoCurrency> = {
       },
     ],
     cosmosLikeInfo: {
-      lcd: "https://lcd-juno.itastakers.com/",
+      lcd: "https://lcd-juno.itastakers.com",
     },
     explorerViews: [
       {
