@@ -1,6 +1,6 @@
 {
     "domain": {
-        "chainId": 1337,
+        "chainId": 1284,
         "name": "Ether Mail",
         "verifyingContract": "0xCcCCccccCCCCcCCCCCCcCcCccCcCCCcCcccccccC",
         "version": "1"
@@ -25,7 +25,8 @@
         "Mail": [
             { "name": "from", "type": "address" },
             { "name": "to", "type": "address[]" },
-            { "name": "contents", "type": "string" }
+            { "name": "contents", "type": "string" },
+            { "name": "id", "type": "uint256"}
         ]
     }
 }

@@ -2,7 +2,7 @@
     "domain": {
         "chainId": 5,
         "name": "Ether Mail",
-        "verifyingContract": "0xCcCCccccCCCCcCCCCCCcCcCccCcCCCcCcccccccC",
+        "verifyingContract": "0xCcCCccccCCCCcCCCCCCcCcCccCcCCCcCccccccc1",
         "version": "1"
     },
     "message": {

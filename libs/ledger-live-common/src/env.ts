@@ -297,11 +297,6 @@ const envDefinitions = {
     parser: stringParser,
     desc: "enable experimental support of currencies (comma separated)",
   },
-  EXPERIMENTAL_EIP712: {
-    def: false,
-    parser: boolParser,
-    desc: "enable experimental support for EIP712",
-  },
   EXPERIMENTAL_EXPLORERS: {
     def: false,
     parser: boolParser,
