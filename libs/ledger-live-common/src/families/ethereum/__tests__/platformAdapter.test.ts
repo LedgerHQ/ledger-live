@@ -1,8 +1,8 @@
-import eth from "./platformAdapter";
+import eth from "../platformAdapter";
 import { EthereumTransaction as PlatformTransaction } from "@ledgerhq/live-app-sdk";
 import { FAMILIES } from "@ledgerhq/live-app-sdk";
 import BigNumber from "bignumber.js";
-import { Transaction } from "./types";
+import { Transaction } from "../types";
 
 describe("getPlatformTransactionSignFlowInfos", () => {
   describe("should properly get infos for ETH platform tx", () => {

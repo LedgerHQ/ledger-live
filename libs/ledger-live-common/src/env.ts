@@ -46,6 +46,11 @@ const jsonParser = (v: unknown): JSONValue | undefined => {
   }
 };
 
+const stringArrayParser = (v: any): string[] | null | undefined => {
+  const v_array = typeof v === "string" ? v.split(",") : null;
+  if (Array.isArray(v_array) && v_array.length > 0) return v_array;
+};
+
 const envDefinitions = {
   ANALYTICS_CONSOLE: {
     def: false,
@@ -281,6 +286,21 @@ const envDefinitions = {
     def: true,
     parser: boolParser,
     desc: "disable a problematic mechanism of our API",
+  },
+  EIP1559_ENABLED_CURRENCIES: {
+    def: "ethereum,ethereum_goerli,polygon",
+    parser: stringArrayParser,
+    desc: "set the currency ids where EIP1559 is enabled",
+  },
+  EIP1559_MINIMUM_FEES_GATE: {
+    def: true,
+    parser: boolParser,
+    desc: "prevents the user from doing an EIP1559 transaction with fees too low",
+  },
+  EIP1559_PRIORITY_FEE_LOWER_GATE: {
+    def: 0.85,
+    parser: floatParser,
+    desc: "minimum priority fee percents allowed compared to network conditions allowed when EIP1559_MINIMUM_FEES_GATE is activated",
   },
   ETHEREUM_GAS_LIMIT_AMPLIFIER: {
     def: 1.2,
