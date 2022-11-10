@@ -190,13 +190,17 @@ const NftLinksPanel = ({ links, isOpen, onClose, nftMetadata }: Props) => {
       </>
     );
   }, [
-    links,
-    colors,
+    links?.opensea,
+    links?.rarible,
+    links?.explorer,
+    areRaribleOpenseaDisabled,
     t,
-    showCustomImageButton,
-    handleOpenExplorer,
+    colors.grey,
+    colors.live,
     handleOpenOpenSea,
     handleOpenRarible,
+    handleOpenExplorer,
+    showCustomImageButton,
     handlePressCustomImage,
   ]);
 
