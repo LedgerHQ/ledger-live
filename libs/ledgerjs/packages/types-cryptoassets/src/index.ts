@@ -202,6 +202,8 @@ export type ExplorerView = {
 export type CryptoCurrency = CurrencyCommon & {
   type: "CryptoCurrency";
   // unique internal id of a crypto currency
+  // LBRY | groestcoin | osmo are expectional ids
+  // because in `cryptocurrenciesById` the key of the object is different from the id
   id: CryptoCurrencyId | "LBRY" | "groestcoin" | "osmo";
   // define if a crypto is a fork from another coin. helps dealing with split/unsplit
   forkedFrom?: string;
