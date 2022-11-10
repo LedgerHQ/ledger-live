@@ -139,7 +139,7 @@ export const INITIAL_STATE: SettingsState = {
   notifications: {
     allowed: true,
     announcements: true,
-    tipsAndOffers: true,
+    recommendations: true,
   },
 };
 

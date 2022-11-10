@@ -47,6 +47,7 @@ const FeatureFlagDetails: React.FC<Props> = props => {
     overriddenByEnv,
     overridesRemote,
     enabledOverriddenForCurrentLanguage,
+    enabledOverriddenForCurrentMobileVersion,
   } = flagValue;
 
   return (
@@ -70,6 +71,11 @@ const FeatureFlagDetails: React.FC<Props> = props => {
           {enabledOverriddenForCurrentLanguage && (
             <Tag my={1} mr={2}>
               disabled for current language
+            </Tag>
+          )}
+          {enabledOverriddenForCurrentMobileVersion && (
+            <Tag my={1} mr={2}>
+              disabled for current version
             </Tag>
           )}
         </Flex>

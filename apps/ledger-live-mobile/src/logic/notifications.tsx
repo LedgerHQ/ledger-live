@@ -111,8 +111,6 @@ const useNotifications = () => {
       const fcm = messaging();
       const permission = await fcm.hasPermission();
 
-      console.log("----PERMISSION------", permission);
-      console.log(messaging.AuthorizationStatus);
       if (permission === messaging.AuthorizationStatus.DENIED) {
         Linking.openSettings();
       } else if (

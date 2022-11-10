@@ -2445,8 +2445,8 @@
         "title": "Announcements",
         "desc": "Receive important Ledger Live updates"
       },
-      "tipsAndOffers": {
-        "title": "Tips and Offers",
+      "recommendations": {
+        "title": "Recommendations",
         "desc": "Enrich your experience with personalized recommendations and special offers"
       },
       "price": {

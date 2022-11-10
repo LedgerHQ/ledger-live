@@ -182,7 +182,7 @@ function NotificationsSettings() {
               disabled={disableSubSettings}
             />
             <NotificationSettingsRow
-              notificationKey={"tipsAndOffers"}
+              notificationKey={"recommendations"}
               disabled={disableSubSettings}
             />
           </Box>
