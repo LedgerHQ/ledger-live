@@ -169,8 +169,9 @@ const loadNanoAppPlugins = async (
             chainIdTruncated,
             loadConfig,
             {
-              ...shouldResolve,
-              token: true, // enforcing resolution of tokens for external plugins
+              nft: false,
+              externalPlugins: false,
+              token: true, // enforcing resolution of tokens for external plugins that need info on assets (e.g. for a swap)
             }
           );
           resolution = mergeResolutions(resolution, externalPluginResolution);
