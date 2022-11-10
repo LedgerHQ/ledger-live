@@ -14,8 +14,9 @@ import { getEnv } from "@ledgerhq/live-common/env";
 import { formatFeatureId } from "./FirebaseRemoteConfig";
 import { languageSelector } from "../reducers/settings";
 
-const checkFeatureFlagVersion = (feature: Feature) => {
+const checkFeatureFlagVersion = (feature: Feature | undefined) => {
   if (
+    feature &&
     feature.enabled &&
     feature.mobile_version &&
     !semver.satisfies(VersionNumber.appVersion, feature.mobile_version, {
