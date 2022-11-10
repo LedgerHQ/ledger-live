@@ -1,18 +1,26 @@
 import type {
-  TokenCurrency,
   CryptoCurrency,
+  TokenCurrency,
 } from "@ledgerhq/types-cryptoassets";
 import { getCryptoCurrencyById } from "./currencies";
+import asatokens from "./data/asa";
+import bep20tokens from "./data/bep20";
+import cardanoNativeTokens from "./data/cardanoNative";
 import erc20tokens from "./data/erc20";
+import esdttokens from "./data/esdt";
+import polygonTokens from "./data/polygon-erc20";
+import stellarTokens from "./data/stellar";
 import trc10tokens from "./data/trc10";
 import trc20tokens from "./data/trc20";
-import bep20tokens from "./data/bep20";
-import polygonTokens from "./data/polygon-erc20";
-import asatokens from "./data/asa";
-import esdttokens from "./data/esdt";
-import cardanoNativeTokens from "./data/cardanoNative";
-import stellarTokens from "./data/stellar";
-import { ERC20Token } from "./types";
+import {
+  ERC20Token,
+  TronToken,
+  Bep20Token,
+  AlgorandASAToken,
+  ElronESDTToken,
+  CardanoNativeToken,
+  StellarToken,
+} from "./types";
 //import spltokens from "../data/spl";
 const emptyArray = [];
 const tokensArray: TokenCurrency[] = [];
@@ -23,15 +31,17 @@ const tokensById: Record<string, TokenCurrency> = {};
 const tokensByTicker: Record<string, TokenCurrency> = {};
 const tokensByAddress: Record<string, TokenCurrency> = {};
 const tokensByCurrencyAddress: Record<string, TokenCurrency> = {};
-addTokens(erc20tokens.map(convertERC20 as any));
-addTokens(polygonTokens.map(convertERC20 as any));
-addTokens(trc10tokens.map(convertTRONTokens("trc10") as any));
-addTokens(trc20tokens.map(convertTRONTokens("trc20") as any));
-addTokens(bep20tokens.map(convertBEP20 as any));
-addTokens(asatokens.map(convertAlgorandASATokens as any));
-addTokens(esdttokens.map(convertElrondESDTTokens as any));
-addTokens(cardanoNativeTokens.map(convertCardanoNativeTokens as any));
-addTokens(stellarTokens.map(convertStellarTokens as any));
+addTokens((erc20tokens as ERC20Token[]).map(convertERC20));
+addTokens((polygonTokens as ERC20Token[]).map(convertERC20));
+addTokens((trc10tokens as TronToken[]).map(convertTRONTokens("trc10")));
+addTokens((trc20tokens as TronToken[]).map(convertTRONTokens("trc20")));
+addTokens((bep20tokens as Bep20Token[]).map(convertBEP20));
+addTokens((asatokens as AlgorandASAToken[]).map(convertAlgorandASATokens));
+addTokens((esdttokens as ElronESDTToken[]).map(convertElrondESDTTokens));
+addTokens(
+  (cardanoNativeTokens as CardanoNativeToken[]).map(convertCardanoNativeTokens)
+);
+addTokens((stellarTokens as StellarToken[]).map(convertStellarTokens));
 //addTokens(spltokens.map(convertSplTokens));
 type TokensListOptions = {
   withDelisted: boolean;
@@ -236,7 +246,7 @@ function convertBEP20([
   disableCountervalue,
   delisted,
   countervalueTicker,
-]): TokenCurrency {
+]: Bep20Token): TokenCurrency {
   const parentCurrency = getCryptoCurrencyById(parentCurrencyId);
   return {
     type: "TokenCurrency",
@@ -267,7 +277,7 @@ function convertAlgorandASATokens([
   contractAddress,
   precision,
   enableCountervalues,
-]): TokenCurrency {
+]: AlgorandASAToken): TokenCurrency {
   return {
     type: "TokenCurrency",
     id: `algorand/asa/${id}`,
@@ -297,7 +307,7 @@ function convertTRONTokens(type: "trc10" | "trc20") {
     delisted,
     ledgerSignature,
     enableCountervalues,
-  ]): TokenCurrency => ({
+  ]: TronToken): TokenCurrency => ({
     type: "TokenCurrency",
     id: `tron/${type}/${id}`,
     contractAddress,
@@ -324,7 +334,7 @@ function convertElrondESDTTokens([
   decimals,
   signature,
   name,
-]): TokenCurrency {
+]: ElronESDTToken): TokenCurrency {
   const ELROND_ESDT_CONTRACT =
     "erd1qqqqqqqqqqqqqqqpqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqzllls8a5w6u";
 
@@ -390,7 +400,7 @@ function convertCardanoNativeTokens([
   decimals,
   delisted,
   disableCountervalue,
-]): TokenCurrency {
+]: CardanoNativeToken): TokenCurrency {
   const assetId = policyId + assetName;
   return {
     type: "TokenCurrency",
@@ -421,7 +431,7 @@ function convertStellarTokens([
   name,
   precision,
   enableCountervalues,
-]): TokenCurrency {
+]: StellarToken): TokenCurrency {
   return {
     type: "TokenCurrency",
     id: `stellar/asset/${assetCode}:${assetIssuer}`,

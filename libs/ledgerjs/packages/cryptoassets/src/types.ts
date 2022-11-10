@@ -17,3 +17,51 @@ export type ERC20Token = [
   string,
   string
 ];
+
+export type TronToken = [
+  string,
+  string,
+  string,
+  string,
+  number,
+  boolean,
+  string,
+  boolean
+];
+
+export type Bep20Token = [
+  string,
+  string,
+  string,
+  number,
+  string,
+  string,
+  string,
+  boolean,
+  boolean,
+  string
+];
+
+export type AlgorandASAToken = [
+  string,
+  string,
+  string,
+  string,
+  number,
+  boolean
+];
+
+export type ElronESDTToken = [string, string, number, string, string];
+
+export type CardanoNativeToken = [
+  string,
+  string,
+  string,
+  string,
+  string,
+  number,
+  boolean,
+  boolean
+];
+
+export type StellarToken = [string, string, string, string, number, boolean];
