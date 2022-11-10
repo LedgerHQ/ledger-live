@@ -3,10 +3,19 @@ import { Observable } from "rxjs";
 import { withDevice } from "../../hw/deviceAccess";
 import { encodeOperationId } from "../../operation";
 import Cosmos from "@ledgerhq/hw-app-cosmos";
-import { AminoTypes } from "@cosmjs/stargate";
-import { buildTransaction, postBuildTransaction } from "./js-buildTransaction";
+// import { AminoTypes } from "@cosmjs/stargate";
+import { LedgerSigner } from "@cosmjs/ledger-amino";
+import { stringToPath } from "@cosmjs/crypto";
+import {
+  buildTransaction,
+  buildTransaction2,
+  postBuildTransaction,
+  postBuildTransaction2,
+} from "./js-buildTransaction";
 import BigNumber from "bignumber.js";
 import { Secp256k1Signature } from "@cosmjs/crypto";
+import { makeSignDoc } from "@cosmjs/launchpad";
+
 import type {
   Account,
   Operation,
@@ -14,6 +23,7 @@ import type {
   SignOperationEvent,
 } from "@ledgerhq/types-live";
 import { CosmosAPI } from "./api/Cosmos";
+import { AminoTypes } from "@cosmjs/stargate";
 
 const aminoTypes = new AminoTypes({ prefix: "cosmos" });
 
@@ -32,78 +42,105 @@ const signOperation = ({
 
       async function main() {
         const hwApp = new Cosmos(transport);
-
-        const { accountNumber, sequence } = await new CosmosAPI(
-          account.currency.id
-        ).getAccount(account.freshAddress);
-
-        const chainId = await new CosmosAPI(account.currency.id).getChainId();
-
-        o.next({ type: "device-signature-requested" });
-
-        const { publicKey } = await hwApp.getAddress(
-          account.freshAddressPath,
-          "cosmos",
-          false
+        const cosmosAPI = new CosmosAPI(account.currency.id);
+        const { accountNumber, sequence } = await cosmosAPI.getAccount(
+          account.freshAddress
         );
 
-        const pubkey = {
-          typeUrl: "/cosmos.crypto.secp256k1.PubKey",
-          value: new Uint8Array([
-            ...new Uint8Array([10, 33]),
-            ...new Uint8Array(Buffer.from(publicKey, "hex")),
-          ]),
-        };
+        const chainId = await cosmosAPI.getChainId();
 
+        o.next({ type: "device-signature-requested" });
+        const { aminoMsgs, protoMsgs } = await buildTransaction2(
+          account,
+          transaction
+        );
+        /*
         const unsignedPayload = await buildTransaction(
           account as CosmosAccount,
           transaction
-        );
+        );*/
 
-        const msgs = unsignedPayload.map((msg) => aminoTypes.toAmino(msg));
+        //const msgs = unsignedPayload.map((msg) => aminoTypes.toAmino(msg));
 
+        const feeToEncode = {
+          amount: [
+            {
+              denom: account.currency.units[1].code,
+              amount: transaction.fees?.toString() as string,
+            },
+          ],
+          gas: transaction.gas?.toString() as string,
+        };
         // Note:
         // Cosmos Nano App sign data in Amino way only, not Protobuf.
         // This is a legacy outdated standard and a long-term blocking point.
 
-        const message = {
-          chain_id: chainId,
-          account_number: accountNumber.toString(),
-          sequence: sequence.toString(),
-          fee: {
-            amount: [
-              {
-                denom: account.currency.units[1].code,
-                amount: transaction.fees?.toString() as string,
-              },
-            ],
-            gas: transaction.gas?.toString() as string,
-          },
-          msgs: msgs,
-          memo: transaction.memo || "",
-        };
+        let tx_bytes: Uint8Array;
+        if (account.currency.id === "cosmos") {
+          const { publicKey } = await hwApp.getAddress(
+            account.freshAddressPath,
+            "cosmos",
+            false
+          );
+          const pubkey = {
+            typeUrl: "/cosmos.crypto.secp256k1.PubKey",
+            value: new Uint8Array([
+              ...new Uint8Array([10, 33]),
+              ...new Uint8Array(Buffer.from(publicKey, "hex")),
+            ]),
+          };
+          const unsignedPayload = await buildTransaction(
+            account as CosmosAccount,
+            transaction
+          );
+          const msgs = unsignedPayload.map((msg) => aminoTypes.toAmino(msg));
+          const message = {
+            chain_id: chainId,
+            account_number: accountNumber.toString(),
+            sequence: sequence.toString(),
+            fee: feeToEncode,
+            msgs: msgs,
+            memo: transaction.memo || "",
+          };
+          const { signature } = await hwApp.sign(
+            account.freshAddressPath,
+            JSON.stringify(sortedObject(message))
+          );
+          if (!signature) {
+            throw new Error("Cosmos: no Signature Found");
+          }
+          const secp256k1Signature = Secp256k1Signature.fromDer(
+            new Uint8Array(signature)
+          ).toFixedLength();
 
-        const { signature } = await hwApp.sign(
-          account.freshAddressPath,
-          JSON.stringify(sortedObject(message))
-        );
+          tx_bytes = await postBuildTransaction(
+            account as CosmosAccount,
+            transaction,
+            pubkey,
+            unsignedPayload,
+            secp256k1Signature
+          );
+        } else {
+          const signDoc = makeSignDoc(
+            aminoMsgs,
+            feeToEncode,
+            chainId,
+            transaction.memo || "",
+            accountNumber.toString(),
+            sequence.toString()
+          );
+          const ledgerSigner = new LedgerSigner(transport, {
+            hdPaths: [stringToPath("m/" + account.freshAddressPath)],
+            prefix: account.currency.id,
+          });
 
-        if (!signature) {
-          throw new Error("Cosmos: no Signature Found");
+          const signResponse = await ledgerSigner.signAmino(
+            account.freshAddress,
+            signDoc
+          );
+
+          tx_bytes = await postBuildTransaction2(signResponse, protoMsgs);
         }
-
-        const secp256k1Signature = Secp256k1Signature.fromDer(
-          new Uint8Array(signature)
-        ).toFixedLength();
-
-        const tx_bytes = await postBuildTransaction(
-          account as CosmosAccount,
-          transaction,
-          pubkey,
-          unsignedPayload,
-          secp256k1Signature
-        );
-
         const signed = Buffer.from(tx_bytes).toString("hex");
 
         if (cancelled) {
