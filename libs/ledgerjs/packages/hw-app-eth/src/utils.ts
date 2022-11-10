@@ -1,5 +1,6 @@
 import { encode, decode } from "@ethersproject/rlp";
 import { BigNumber } from "bignumber.js";
+import { LedgerEthTransactionResolution } from "./services/types";
 
 export function splitPath(path: string): number[] {
   const result: number[] = [];
@@ -140,3 +141,25 @@ export const nftSelectors = [
   ...Object.values(ERC721_CLEAR_SIGNED_SELECTORS),
   ...Object.values(ERC1155_CLEAR_SIGNED_SELECTORS),
 ];
+
+export const mergeResolutions = (
+  oldResolution: Partial<LedgerEthTransactionResolution>,
+  newResolution: Partial<LedgerEthTransactionResolution>
+): LedgerEthTransactionResolution => {
+  const resolutions: LedgerEthTransactionResolution = {
+    nfts: [],
+    erc20Tokens: [],
+    externalPlugin: [],
+    plugin: [],
+  };
+
+  for (const key in oldResolution) {
+    resolutions[key].push(...oldResolution[key]);
+  }
+
+  for (const key in newResolution) {
+    resolutions[key].push(...newResolution[key]);
+  }
+
+  return resolutions;
+};

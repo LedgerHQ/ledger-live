@@ -10,7 +10,12 @@ import {
 import { loadInfosForContractMethod } from "./contracts";
 import { byContractAddressAndChainId, findERC20SignaturesInfo } from "./erc20";
 import { getNFTInfo, loadNftPlugin } from "./nfts";
-import { decodeTxInfo, tokenSelectors, nftSelectors } from "../../utils";
+import {
+  decodeTxInfo,
+  tokenSelectors,
+  nftSelectors,
+  mergeResolutions,
+} from "../../utils";
 
 type potentialResolutions = {
   token: boolean | undefined;
@@ -25,13 +30,20 @@ type potentialResolutions = {
  * of initially impossible to decode data.
  * This method will add necessary APDUs to the resolution paramter in order to provide this data to the nano app
  */
-const getAdditionalDataFoContract = async (
-  resolution: LedgerEthTransactionResolution,
+const getAdditionalDataForContract = async (
   contractAddress: string,
   chainIdTruncated: number,
   loadConfig: LoadConfig,
   shouldResolve: potentialResolutions
-): Promise<void> => {
+): Promise<Pick<LedgerEthTransactionResolution, "nfts" | "erc20Tokens">> => {
+  const resolution: Pick<
+    LedgerEthTransactionResolution,
+    "nfts" | "erc20Tokens"
+  > = {
+    nfts: [],
+    erc20Tokens: [],
+  };
+
   if (shouldResolve.nft) {
     const nftInfo = await getNFTInfo(
       contractAddress,
@@ -76,6 +88,8 @@ const getAdditionalDataFoContract = async (
       log("ethereum", "couldn't load erc20token info for " + contractAddress);
     }
   }
+
+  return resolution;
 };
 
 /**
@@ -86,14 +100,20 @@ const getAdditionalDataFoContract = async (
  * This method will add necessary APDUs to the resolution parameter in order to load those internal plugins
  */
 const loadNanoAppPlugins = async (
-  resolution: LedgerEthTransactionResolution,
   contractAddress: string,
   selector: string,
   decodedTx,
   chainIdTruncated: number,
   loadConfig: LoadConfig,
   shouldResolve: potentialResolutions
-): Promise<void> => {
+): Promise<LedgerEthTransactionResolution> => {
+  let resolution: LedgerEthTransactionResolution = {
+    externalPlugin: [],
+    plugin: [],
+    nfts: [],
+    erc20Tokens: [],
+  };
+
   if (shouldResolve.nft) {
     const nftPluginPayload = await loadNftPlugin(
       contractAddress,
@@ -144,8 +164,7 @@ const loadNanoAppPlugins = async (
             return value[seg];
           }, args) as unknown as string; // impossible(?) to type correctly as the initializer is different from the returned type
 
-          await getAdditionalDataFoContract(
-            resolution,
+          const externalPluginResolution = await getAdditionalDataForContract(
             erc20ContractAddress,
             chainIdTruncated,
             loadConfig,
@@ -154,23 +173,19 @@ const loadNanoAppPlugins = async (
               token: true, // enforcing resolution of tokens for external plugins
             }
           );
+          resolution = mergeResolutions(resolution, externalPluginResolution);
         }
       }
     } else {
       log("ethereum", "no infos for selector " + selector);
     }
   }
+
+  return resolution;
 };
 
 const ledgerService: LedgerEthTransactionService = {
   resolveTransaction: async (rawTxHex, loadConfig, resolutionConfig) => {
-    const resolution: LedgerEthTransactionResolution = {
-      erc20Tokens: [],
-      nfts: [],
-      externalPlugin: [],
-      plugin: [],
-    };
-
     const rawTx = Buffer.from(rawTxHex, "hex");
     const { decodedTx, chainIdTruncated } = decodeTxInfo(rawTx);
 
@@ -178,6 +193,8 @@ const ledgerService: LedgerEthTransactionService = {
     const selector =
       decodedTx.data.length >= 10 && decodedTx.data.substring(0, 10);
 
+    let pluginsResolution: Partial<LedgerEthTransactionResolution> = {};
+    let contractResolution: Partial<LedgerEthTransactionResolution> = {};
     if (selector) {
       const shouldResolve: potentialResolutions = {
         token: resolutionConfig.erc20 && tokenSelectors.includes(selector),
@@ -185,8 +202,7 @@ const ledgerService: LedgerEthTransactionService = {
         externalPlugins: resolutionConfig.externalPlugins,
       };
 
-      await loadNanoAppPlugins(
-        resolution,
+      pluginsResolution = await loadNanoAppPlugins(
         contractAddress,
         selector,
         decodedTx,
@@ -195,8 +211,7 @@ const ledgerService: LedgerEthTransactionService = {
         shouldResolve
       );
 
-      await getAdditionalDataFoContract(
-        resolution,
+      contractResolution = await getAdditionalDataForContract(
         contractAddress,
         chainIdTruncated,
         loadConfig,
@@ -204,7 +219,7 @@ const ledgerService: LedgerEthTransactionService = {
       );
     }
 
-    return resolution;
+    return mergeResolutions(pluginsResolution, contractResolution);
   },
 };
 
