@@ -90,13 +90,6 @@ enum CompanionStepKey {
   Exit,
 }
 
-function nextStepKey(step: CompanionStepKey): CompanionStepKey {
-  if (step === CompanionStepKey.Exit) {
-    return CompanionStepKey.Exit;
-  }
-  return step + 1;
-}
-
 export const SyncOnboarding = ({
   navigation,
   route,
@@ -113,13 +106,30 @@ export const SyncOnboarding = ({
   const initialAppsToInstall =
     deviceInitialApps?.params?.apps || fallbackDefaultAppsToInstall;
 
+  const getNextStepKey = useCallback(
+    (step: CompanionStepKey) => {
+      if (step === CompanionStepKey.Exit) {
+        return CompanionStepKey.Exit;
+      }
+      let nextStep = step + 1; // by default, just increment the step
+      if (nextStep === CompanionStepKey.Apps && !deviceInitialApps?.enabled) {
+        nextStep += 1; // skip "Apps" step if flag is disabled
+      }
+      if (nextStep === CompanionStepKey.Ready) {
+        nextStep += 1; // always skip "Ready" step and go straight to "Exit" to have the "Ready" step as "completed" right away
+      }
+      return nextStep;
+    },
+    [deviceInitialApps?.enabled],
+  );
+
   const handleSoftwareCheckComplete = useCallback(() => {
-    setCompanionStepKey(nextStepKey(CompanionStepKey.SoftwareCheck));
-  }, []);
+    setCompanionStepKey(getNextStepKey(CompanionStepKey.SoftwareCheck));
+  }, [getNextStepKey]);
 
   const handleInstallAppsComplete = useCallback(() => {
-    setCompanionStepKey(nextStepKey(CompanionStepKey.Apps));
-  }, []);
+    setCompanionStepKey(getNextStepKey(CompanionStepKey.Apps));
+  }, [getNextStepKey]);
 
   const formatEstimatedTime = (estimatedTime: number) =>
     t("syncOnboarding.estimatedTimeFormat", {
@@ -441,17 +451,10 @@ export const SyncOnboarding = ({
       setStopPolling(true);
     }
 
-    if (companionStepKey === CompanionStepKey.Ready) {
-      setTimeout(
-        () => setCompanionStepKey(CompanionStepKey.Exit),
-        readyRedirectDelayMs / 2,
-      );
-    }
-
     if (companionStepKey === CompanionStepKey.Exit) {
       readyRedirectTimerRef.current = setTimeout(
         handleDeviceReady,
-        readyRedirectDelayMs / 2,
+        readyRedirectDelayMs,
       );
     }
 
