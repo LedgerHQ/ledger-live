@@ -650,6 +650,7 @@ describe("Ledger Service", () => {
 
           expect(resolution).toEqual({
             erc20Tokens: [
+              "054d415449437d1afa7b718fb893db30a3abc0cfc608aacfebb000000012000000013044022000d8fa7b6e409a0dc55723ba975179e7d1181d1fc78fccbece4e5a264814366a02203927d84a710c8892d02f7386ad20147c75fba4bdd486b0256ecd005770a7ca5b",
               "034441496b175474e89094c44da98b954eedeac495271d0f00000012000000013045022100b3aa979633284eb0f55459099333ab92cf06fdd58dc90e9c070000c8e968864c02207b10ec7d6609f51dda53d083a6e165a0abf3a77e13250e6f260772809b49aff5",
             ],
             nfts: [],
@@ -672,6 +673,53 @@ describe("Ledger Service", () => {
           expect(
             erc20Services.byContractAddressAndChainId
           ).toHaveBeenCalledTimes(2);
+          expect(nftServices.getNFTInfo).not.toHaveBeenCalled();
+          expect(nftServices.loadNftPlugin).not.toHaveBeenCalled();
+        });
+
+        it("should resolve a swap on uniswapV2 fork from Paraswap", async () => {
+          // @ts-expect-error not casted as jest mock
+          axios.get.mockImplementation(async (url: string) => {
+            if (url === "https://cdn.live.ledger.com/plugins/ethereum.json") {
+              return { data: partialPluginResponse };
+            }
+            return null;
+          });
+
+          const txHash = getTransactionHash(
+            transactionContracts.paraswap,
+            transactionData.paraswap.swapOnUniswapV2Fork
+          );
+          const resolution = await ledgerService.resolveTransaction(
+            txHash,
+            loadConfig,
+            resolutionConfig
+          );
+
+          expect(resolution).toEqual({
+            erc20Tokens: [
+              "054d415449437d1afa7b718fb893db30a3abc0cfc608aacfebb000000012000000013044022000d8fa7b6e409a0dc55723ba975179e7d1181d1fc78fccbece4e5a264814366a02203927d84a710c8892d02f7386ad20147c75fba4bdd486b0256ecd005770a7ca5b",
+            ],
+            nfts: [],
+            externalPlugin: [
+              {
+                payload:
+                  "085061726173776170def171fe48cf0115b1d80b88dc8eab59176fee570b86a4c1",
+                signature:
+                  "3045022100832052e09afece789911f4310118e40fbd04d16961257423435f29d43de7193a02203610a035156139cb63873317eba79365592de5fdb60da9b5735492a69f67bb00",
+              },
+            ],
+            plugin: [],
+          });
+          expect(
+            contractServices.loadInfosForContractMethod
+          ).toHaveBeenCalledTimes(1);
+          expect(erc20Services.findERC20SignaturesInfo).toHaveBeenCalledTimes(
+            1
+          );
+          expect(
+            erc20Services.byContractAddressAndChainId
+          ).toHaveBeenCalledTimes(1);
           expect(nftServices.getNFTInfo).not.toHaveBeenCalled();
           expect(nftServices.loadNftPlugin).not.toHaveBeenCalled();
         });
