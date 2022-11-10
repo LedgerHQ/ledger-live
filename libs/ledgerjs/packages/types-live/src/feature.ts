@@ -29,6 +29,9 @@ export type FeatureId =
   | "customImage"
   | "referralProgramDiscoverCard"
   | "referralProgramDesktopBanner"
+  | "disableNftSend"
+  | "disableNftLedgerMarket"
+  | "disableNftRaribleOpensea"
   | "walletNftGallery";
 
 /**  We use objects instead of direct booleans for potential future improvements

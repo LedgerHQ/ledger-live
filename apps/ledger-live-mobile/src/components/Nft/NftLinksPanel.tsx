@@ -2,7 +2,13 @@ import React, { memo, useCallback, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigation } from "@react-navigation/native";
 import { NFTMediaSize, NFTMetadata } from "@ledgerhq/types-live";
-import { View, StyleSheet, TouchableOpacity, Linking } from "react-native";
+import {
+  View,
+  StyleSheet,
+  TouchableOpacity,
+  Linking,
+  Platform,
+} from "react-native";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { Box, Flex, Icons, Text } from "@ledgerhq/native-ui";
 import styled, { useTheme } from "styled-components/native";
@@ -85,6 +91,9 @@ const NftLinksPanel = ({
   const customImage = useFeature("customImage");
   const [bottomHideCollectionOpen, setBottomHideCollectionOpen] =
     useState(false);
+  const areRaribleOpenseaDisabled =
+    useFeature("disableNftRaribleOpensea")?.enabled && Platform.OS === "ios";
+
   const mediaTypes = useMemo(
     () => (nftMetadata ? getMetadataMediaTypes(nftMetadata) : null),
     [nftMetadata],
@@ -146,7 +155,7 @@ const NftLinksPanel = ({
 
   const content = useMemo(() => {
     const topSection = [
-      ...(links?.opensea
+      ...(links?.opensea && !areRaribleOpenseaDisabled
         ? [
             <NftLink
               leftIcon={<OpenSeaIcon size={36} />}
@@ -158,7 +167,7 @@ const NftLinksPanel = ({
             />,
           ]
         : []),
-      ...(links?.rarible
+      ...(links?.rarible && !areRaribleOpenseaDisabled
         ? [
             <NftLink
               style={styles.sectionMargin}
@@ -255,13 +264,17 @@ const NftLinksPanel = ({
       </>
     );
   }, [
-    links,
+    links?.opensea,
+    links?.rarible,
+    links?.explorer,
+    areRaribleOpenseaDisabled,
     t,
-    colors,
+    colors.neutral.c100,
+    colors.primary.c90,
     handleOpenOpenSea,
     handleOpenRarible,
-    handleOpenExplorer,
     hide,
+    handleOpenExplorer,
     showCustomImageButton,
     handlePressCustomImage,
   ]);

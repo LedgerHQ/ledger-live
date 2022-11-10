@@ -1,12 +1,16 @@
 import React, { useMemo, useCallback, useEffect, useState } from "react";
+import { Linking } from "react-native";
 import { Trans, useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
+import { Platform } from "react-native";
 import { discoverDevices } from "@ledgerhq/live-common/hw/index";
 import { CompositeScreenProps, useNavigation } from "@react-navigation/native";
 import { Text, Flex, Icons, BottomDrawer } from "@ledgerhq/native-ui";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { useBleDevicesScanning } from "@ledgerhq/live-common/ble/hooks/useBleDevicesScanning";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 
+import { urls } from "../../config/urls";
 import TransportBLE from "../../react-native-hw-transport-ble";
 import { track } from "../../analytics";
 import { NavigatorName, ScreenName } from "../../const";
@@ -48,6 +52,7 @@ export default function SelectDevice({ onSelect }: Props) {
 
   const { t } = useTranslation();
 
+  const buyDeviceFromLive = useFeature("buyDeviceFromLive");
   const knownDevices = useSelector(knownDevicesSelector);
   const navigation = useNavigation<Navigation["navigation"]>();
   const { scannedDevices } = useBleDevicesScanning({
@@ -142,10 +147,14 @@ export default function SelectDevice({ onSelect }: Props) {
   const onAddNewPress = useCallback(() => setIsAddNewDrawerOpen(true), []);
 
   const onBuyDevicePress = useCallback(() => {
-    navigation.navigate(NavigatorName.BuyDevice, {
-      screen: ScreenName.GetDevice,
-    });
-  }, [navigation]);
+    if (buyDeviceFromLive?.enabled) {
+      navigation.navigate(NavigatorName.BuyDevice, {
+        screen: ScreenName.PurchaseDevice,
+      });
+    } else {
+      Linking.openURL(urls.buyNanoX);
+    }
+  }, [navigation, buyDeviceFromLive?.enabled]);
 
   const onPairDevices = useCallback(() => {
     const navigateInput: NavigateInput<
@@ -234,8 +243,29 @@ export default function SelectDevice({ onSelect }: Props) {
           </Touchable>
         )}
       </Flex>
-
-      <Flex alignItems="center">
+      {deviceList.length === 0 && Platform.OS === "android" && (
+        <Flex
+          p={5}
+          borderRadius={5}
+          alignItems="center"
+          flexDirection="row"
+          backgroundColor="primary.c10"
+        >
+          <Icons.InfoAltFillMedium color="primary.c80" size={20} />
+          <Text
+            color="neutral.c100"
+            variant="large"
+            fontWeight="semiBold"
+            fontSize={4}
+            ml={5}
+            mr={3}
+            lineHeight="21px"
+          >
+            <Trans i18nKey="manager.selectDevice.otgBanner" />
+          </Text>
+        </Flex>
+      )}
+      <Flex alignItems="center" mt={8}>
         <Touchable onPress={onBuyDevicePress}>
           <Text color="primary.c90">
             <Trans i18nKey="manager.selectDevice.buyDeviceCTA" />
@@ -247,33 +277,10 @@ export default function SelectDevice({ onSelect }: Props) {
         onClose={() => setIsAddNewDrawerOpen(false)}
       >
         <Flex>
-          <Touchable onPress={onPairDevices}>
-            <Flex backgroundColor="neutral.c30" px={6} py={7} borderRadius={8}>
-              <Flex flexDirection="row">
-                <Flex flexShrink={1}>
-                  <Text variant="large" fontWeight="semiBold" mb={3}>
-                    {t("manager.selectDevice.connectExistingLedger")}
-                  </Text>
-                  <Text variant="paragraph" color="neutral.c80">
-                    {t("manager.selectDevice.connectExistingLedgerDescription")}
-                  </Text>
-                </Flex>
-                <Flex justifyContent="center" alignItems="center" ml={5} mr={2}>
-                  <Flex
-                    borderRadius="9999px"
-                    backgroundColor="primary.c20"
-                    p={4}
-                  >
-                    <Icons.BluetoothMedium color="primary.c80" size={24} />
-                  </Flex>
-                </Flex>
-              </Flex>
-            </Flex>
-          </Touchable>
           <Touchable onPress={onSetUpNewDevice}>
             <Flex
               backgroundColor="neutral.c30"
-              mt={4}
+              mb={4}
               px={6}
               py={7}
               borderRadius={8}
@@ -294,6 +301,29 @@ export default function SelectDevice({ onSelect }: Props) {
                     p={4}
                   >
                     <Icons.PlusMedium color="primary.c80" size={24} />
+                  </Flex>
+                </Flex>
+              </Flex>
+            </Flex>
+          </Touchable>
+          <Touchable onPress={onPairDevices}>
+            <Flex backgroundColor="neutral.c30" px={6} py={7} borderRadius={8}>
+              <Flex flexDirection="row">
+                <Flex flexShrink={1}>
+                  <Text variant="large" fontWeight="semiBold" mb={3}>
+                    {t("manager.selectDevice.connectExistingLedger")}
+                  </Text>
+                  <Text variant="paragraph" color="neutral.c80">
+                    {t("manager.selectDevice.connectExistingLedgerDescription")}
+                  </Text>
+                </Flex>
+                <Flex justifyContent="center" alignItems="center" ml={5} mr={2}>
+                  <Flex
+                    borderRadius="9999px"
+                    backgroundColor="primary.c20"
+                    p={4}
+                  >
+                    <Icons.BluetoothMedium color="primary.c80" size={24} />
                   </Flex>
                 </Flex>
               </Flex>

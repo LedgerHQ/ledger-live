@@ -33,7 +33,10 @@ import {
   NFTMetadataResponse,
   NFTCollectionMetadataResponse,
 } from "@ledgerhq/types-live";
-import { FeatureToggle } from "@ledgerhq/live-common/featureFlags/index";
+import {
+  FeatureToggle,
+  useFeature,
+} from "@ledgerhq/live-common/featureFlags/index";
 import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
 import {
   CompositeNavigationProp,
@@ -59,6 +62,8 @@ import type {
 } from "../RootNavigator/types/helpers";
 import type { BaseNavigatorStackParamList } from "../RootNavigator/types/BaseNavigator";
 import { AccountsNavigatorParamList } from "../RootNavigator/types/AccountsNavigator";
+import InfoModal from "../../modals/Info";
+import { notAvailableModalInfo } from "../../screens/Nft/NftInfoNotAvailable";
 
 type Props = CompositeScreenProps<
   | StackNavigatorProps<NftNavigatorParamList, ScreenName.NftViewer>
@@ -295,8 +300,23 @@ const NftViewer = ({ route }: Props) => {
     [nftMetadata, nftStatus],
   );
 
+  const [isOpen, setOpen] = useState<boolean>(false);
+  const onOpenModal = useCallback(() => {
+    setOpen(true);
+  }, []);
+  const onCloseModal = useCallback(() => {
+    setOpen(false);
+  }, []);
+  const isNFTDisabled =
+    useFeature("disableNftSend")?.enabled && Platform.OS === "ios";
+
   return (
     <>
+      <InfoModal
+        isOpened={isOpen}
+        onClose={onCloseModal}
+        data={notAvailableModalInfo}
+      />
       <ScrollView contentContainerStyle={styles.scrollView}>
         <Box mx={6}>
           <Flex flexDirection={"row"} alignItems={"center"}>
@@ -377,7 +397,7 @@ const NftViewer = ({ route }: Props) => {
                 type="main"
                 Icon={Icons.ArrowFromBottomMedium}
                 iconPosition="left"
-                onPress={goToRecipientSelection}
+                onPress={isNFTDisabled ? onOpenModal : goToRecipientSelection}
               >
                 <Trans i18nKey="account.send" />
               </Button>

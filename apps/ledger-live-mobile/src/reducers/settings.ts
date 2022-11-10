@@ -38,7 +38,7 @@ import type {
   SettingsSetCountervaluePayload,
   SettingsSetDiscreetModePayload,
   SettingsSetExperimentalUsbSupportPayload,
-  SettingsSetFirstConnectionHasDevicePayload,
+  SettingsSetFirstConnectHasDeviceUpdatedPayload,
   SettingsSetHasOrderedNanoPayload,
   SettingsSetLanguagePayload,
   SettingsSetLastConnectedDevicePayload,
@@ -140,6 +140,7 @@ export const INITIAL_STATE: SettingsState = {
   marketFilterByStarredAccounts: false,
   sensitiveAnalytics: false,
   firstConnectionHasDevice: null,
+  firstConnectHasDeviceUpdated: null,
   notifications: {
     allowed: false,
     transactions: false,
@@ -512,9 +513,9 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
 
   [SettingsActionTypes.SET_FIRST_CONNECTION_HAS_DEVICE]: (state, action) => ({
     ...state,
-    firstConnectionHasDevice: (
-      action as Action<SettingsSetFirstConnectionHasDevicePayload>
-    ).payload.firstConnectionHasDevice,
+    firstConnectHasDeviceUpdated: (
+      action as Action<SettingsSetFirstConnectHasDeviceUpdatedPayload>
+    ).payload.firstConnectHasDeviceUpdated,
   }),
 
   [SettingsActionTypes.SET_NOTIFICATIONS]: (state, action) => ({
@@ -734,6 +735,8 @@ export const sensitiveAnalyticsSelector = (state: State) =>
   state.settings.sensitiveAnalytics;
 export const firstConnectionHasDeviceSelector = (state: State) =>
   state.settings.firstConnectionHasDevice;
+export const firstConnectHasDeviceUpdatedSelector = (state: State) =>
+  state.settings.firstConnectHasDeviceUpdated;
 export const notificationsSelector = (state: State) =>
   state.settings.notifications;
 export const walletTabNavigatorLastVisitedTabSelector = (state: State) =>
