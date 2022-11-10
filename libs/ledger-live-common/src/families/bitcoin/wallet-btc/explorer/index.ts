@@ -121,7 +121,6 @@ class BitcoinLikeExplorer implements IExplorer {
 
   async getBlockByHeight(height: number): Promise<Block | null> {
     const url = `/block/${height}`;
-
     const client = await this.client.acquire();
     const res: any = (await client.client.get(url)).data;
     await this.client.release(client);
@@ -135,19 +134,16 @@ class BitcoinLikeExplorer implements IExplorer {
       hash: res[0].hash,
       time: res[0].time,
     };
-
     return block;
   }
 
   async getFees(): Promise<any> {
     const url = `/fees`;
-
     // TODO add a test for failure (at the sync level)
     const client = await this.client.acquire();
     const response = await client.client.get(url);
     const fees = response.data;
     await this.client.release(client);
-
     return fees;
   }
 
@@ -168,24 +164,33 @@ class BitcoinLikeExplorer implements IExplorer {
       batch_size: !this.disableBatchSize ? nbMax || 1000 : undefined,
       block_hash: undefined,
     };
-    const txs = await this.fetchTxs(address, params);
-    const pendingsTxs = txs.filter((tx) => !tx.block);
+    const pendingsTxs = await this.fetchPendingTxs(address, params);
     pendingsTxs.forEach((tx) => this.hydrateTx(address, tx));
     return pendingsTxs;
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   async fetchTxs(address: Address, params: ExplorerParams): Promise<TX[]> {
     const url = `/address/${address.address}/txs`;
-
     // TODO add a test for failure (at the sync level)
     const client = await this.client.acquire();
     const response = await client.client.get(url, {
       params,
     });
-    const txs = response.data.data;
     await this.client.release(client);
-    return txs;
+    return response.data.data;
+  }
+
+  async fetchPendingTxs(
+    address: Address,
+    params: ExplorerParams
+  ): Promise<TX[]> {
+    const url = `/address/${address.address}/txs/pending`;
+    const client = await this.client.acquire();
+    const response = await client.client.get(url, {
+      params,
+    });
+    await this.client.release(client);
+    return response.data.data;
   }
 
   hydrateTx(address: Address, tx: TX): void {
