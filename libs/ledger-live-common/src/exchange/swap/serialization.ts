@@ -66,7 +66,7 @@ export const toExchangeRateRaw = (
     provider,
     providerURL,
     tradeMethod,
-    error: JSON.stringify(serializeError(error)) || "{}",
+    error: error ? JSON.stringify(serializeError(error)) : undefined,
   };
 };
 

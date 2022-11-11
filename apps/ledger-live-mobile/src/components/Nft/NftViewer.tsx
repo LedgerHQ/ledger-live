@@ -96,7 +96,9 @@ const Section = ({
 
   return (
     <View style={style}>
-      <View style={{ marginBottom: 10 }}>
+      <View
+        style={{ marginBottom: 10, flexDirection: "row", alignItems: "center" }}
+      >
         <LText style={styles.sectionTitle} semiBold>
           {title}
         </LText>

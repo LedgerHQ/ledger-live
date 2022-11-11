@@ -1,25 +1,17 @@
 import React, { useCallback } from "react";
-import { View, StyleSheet } from "react-native";
-import { useSelector } from "react-redux";
-import { useTranslation } from "react-i18next";
-import { useTheme } from "@react-navigation/native";
-import type { Account, AccountLike } from "@ledgerhq/types-live";
-import { toLocaleString } from "@ledgerhq/live-common/currencies/BigNumberToLocaleString";
-import type { Transaction } from "@ledgerhq/live-common/families/ethereum/types";
 import { BigNumber } from "bignumber.js";
-import LText from "../../components/LText";
-import { ScreenName } from "../../const";
+import { useSelector } from "react-redux";
+import { View, StyleSheet } from "react-native";
+import { useTranslation } from "react-i18next";
+import { Account, AccountLike } from "@ledgerhq/types-live";
+import { Transaction } from "@ledgerhq/live-common/families/ethereum/types";
+import { useNavigation, useRoute, useTheme } from "@react-navigation/native";
+import { toLocaleString } from "@ledgerhq/live-common/currencies/BigNumberToLocaleString";
+import { Navigation, RouteProps } from "./EthereumCustomFees/types";
 import SummaryRow from "../../screens/SendFunds/SummaryRow";
 import { localeSelector } from "../../reducers/settings";
-import type {
-  BaseComposite,
-  StackNavigatorProps,
-} from "../../components/RootNavigator/types/helpers";
-import type { SendFundsNavigatorStackParamList } from "../../components/RootNavigator/types/SendFundsNavigator";
-
-type Navigation = BaseComposite<
-  StackNavigatorProps<SendFundsNavigatorStackParamList, ScreenName.SendSummary>
->;
+import LText from "../../components/LText";
+import { ScreenName } from "../../const";
 
 type Props = {
   account: AccountLike;
@@ -27,17 +19,17 @@ type Props = {
   transaction: Transaction;
   gasLimit?: BigNumber | null;
   setGasLimit: (_: BigNumber) => void;
-} & Navigation;
+};
 
 export default function EthereumGasLimit({
   account,
   parentAccount,
   transaction,
-  route,
-  navigation,
   gasLimit,
   setGasLimit,
 }: Props) {
+  const route = useRoute<RouteProps>();
+  const navigation = useNavigation<Navigation>();
   const { colors } = useTheme();
   const { t } = useTranslation();
   const locale = useSelector(localeSelector);
