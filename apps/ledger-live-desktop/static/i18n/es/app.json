@@ -1827,7 +1827,7 @@
         "bandwidthDescription" : "Los puntos de Ancho de banda se utilizan para realizar transacciones sin pagar TRX por tarifas de red. Elige Ancho de banda para aumentar tus transacciones gratuitas diarias.",
         "energyDescription" : "Se requieren puntos de Energía para ejecutar contratos inteligentes. Si no tienes ningún contrato inteligente, no es necesario que elijas recompensas en Energía.",
         "amountLabel" : "Importe a inmovilizar",
-        "available" : "Disponible: {{amountAvailable}}",
+        "available" : "Disponibles: {{amountAvailable}}",
         "info" : "No es posible enviar los activos inmovilizados por un periodo de tres días."
       },
       "connectDevice" : {
