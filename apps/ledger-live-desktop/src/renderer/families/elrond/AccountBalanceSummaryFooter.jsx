@@ -1,10 +1,14 @@
 // @flow
 
 import React, { useState, useEffect, useMemo, useCallback } from "react";
+import { getAccountUnit } from "@ledgerhq/live-common/account/index";
+import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { BigNumber } from "bignumber.js";
+import { useSelector } from "react-redux";
 import { Trans } from "react-i18next";
 
-import Discreet from "~/renderer/components/Discreet";
+import { localeSelector } from "~/renderer/reducers/settings";
+import Discreet, { useDiscreetMode } from "~/renderer/components/Discreet";
 import InfoCircle from "~/renderer/icons/InfoCircle";
 import ToolTip from "~/renderer/components/Tooltip";
 
@@ -15,9 +19,6 @@ import {
   Title,
   TitleWrapper,
 } from "~/renderer/families/elrond/blocks/Summary";
-
-import { denominate } from "~/renderer/families/elrond/helpers";
-import { constants } from "~/renderer/families/elrond/constants";
 
 import type { Account } from "@ledgerhq/live-common/types/index";
 import type { UnbondingType, DelegationType } from "./types";
@@ -38,6 +39,10 @@ const Summary = (props: Props) => {
   const [delegationsResources, setDelegationResources] = useState(
     account.elrondResources ? account.elrondResources.delegations : [],
   );
+
+  const discreet = useDiscreetMode();
+  const locale = useSelector(localeSelector);
+  const unit = getAccountUnit(account);
 
   const fetchDelegations = useCallback(() => {
     setDelegationResources(account.elrondResources ? account.elrondResources.delegations : []);
@@ -107,7 +112,12 @@ const Summary = (props: Props) => {
 
           <Amount>
             <Discreet>
-              {denominate({ input: balance.amount, decimals: 4 })} {constants.egldLabel}
+              {formatCurrencyUnit(unit, balance.amount, {
+                alwaysShowSign: false,
+                showCode: true,
+                discreet,
+                locale,
+              })}
             </Discreet>
           </Amount>
         </Balance>
