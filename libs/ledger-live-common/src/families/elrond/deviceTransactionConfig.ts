@@ -22,7 +22,7 @@ function getDeviceTransactionConfig({
 
   if (isEsdtTransfer) {
     const tokenIdentifier = transaction.subAccountId?.split("+")[1];
-    const token = findTokenById(`${tokenIdentifier}`);
+    const token = findTokenById(`${tokenIdentifier?.replaceAll("%2F", "/")}`);
 
     if (token) {
       fields.push({

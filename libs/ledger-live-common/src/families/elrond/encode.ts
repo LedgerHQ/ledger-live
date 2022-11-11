@@ -3,7 +3,7 @@ import type { Transaction } from "./types";
 
 export class ElrondEncodeTransaction {
   static ESDTTransfer(t: Transaction, ta: SubAccount): string {
-    const tokenIdentifierHex = ta.id.split("/")[2];
+    const tokenIdentifierHex = ta.id.split("%2F")[2];
     let amountHex = t.useAllAmount
       ? ta.balance.toString(16)
       : t.amount.toString(16);
