@@ -135,7 +135,9 @@ const signOperation = ({
 
         if (tokenAccount) {
           const tokenIdentifier = tokenAccount.id.split("+")[1];
-          const token = findTokenById(`${tokenIdentifier}`);
+          const token = findTokenById(
+            `${tokenIdentifier.replaceAll("%2F", "/")}`
+          );
 
           if (token?.name && token.id && token.ledgerSignature) {
             const collectionIdentifierHex = token.id.split("/")[2];
