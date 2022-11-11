@@ -1,5 +1,21 @@
 # @ledgerhq/hw-app-eth
 
+## 6.30.0-nightly.1
+
+### Minor Changes
+
+- [#1211](https://github.com/LedgerHQ/ledger-live/pull/1211) [`32c8df8f47`](https://github.com/LedgerHQ/ledger-live/commit/32c8df8f47644278ee44e9db623af864d57ad61c) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Add dynamic CAL support for EIP712
+
+* [#1211](https://github.com/LedgerHQ/ledger-live/pull/1211) [`32c8df8f47`](https://github.com/LedgerHQ/ledger-live/commit/32c8df8f47644278ee44e9db623af864d57ad61c) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Add filtering to EIP712 message signing
+
+### Patch Changes
+
+- Updated dependencies [[`4ad6155953`](https://github.com/LedgerHQ/ledger-live/commit/4ad615595392f5ef806cbd21f0be1b30d3ae73c6), [`32c8df8f47`](https://github.com/LedgerHQ/ledger-live/commit/32c8df8f47644278ee44e9db623af864d57ad61c), [`4ad6155953`](https://github.com/LedgerHQ/ledger-live/commit/4ad615595392f5ef806cbd21f0be1b30d3ae73c6)]:
+  - @ledgerhq/cryptoassets@6.37.0-nightly.1
+  - @ledgerhq/errors@6.12.0-nightly.2
+  - @ledgerhq/hw-transport@6.27.7-nightly.2
+  - @ledgerhq/hw-transport-mocker@6.27.7-nightly.2
+
 ## 6.29.12-nightly.0
 
 ### Patch Changes

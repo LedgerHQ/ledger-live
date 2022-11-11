@@ -1,5 +1,37 @@
 # @ledgerhq/live-common
 
+## 27.7.0-nightly.2
+
+### Minor Changes
+
+- [#1211](https://github.com/LedgerHQ/ledger-live/pull/1211) [`32c8df8f47`](https://github.com/LedgerHQ/ledger-live/commit/32c8df8f47644278ee44e9db623af864d57ad61c) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Add dynamic CAL support for EIP712
+
+* [#1211](https://github.com/LedgerHQ/ledger-live/pull/1211) [`32c8df8f47`](https://github.com/LedgerHQ/ledger-live/commit/32c8df8f47644278ee44e9db623af864d57ad61c) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Remove EIP712 message signing from env and set as definitve feature + update tests accordingly
+
+- [#1662](https://github.com/LedgerHQ/ledger-live/pull/1662) [`4ad6155953`](https://github.com/LedgerHQ/ledger-live/commit/4ad615595392f5ef806cbd21f0be1b30d3ae73c6) Thanks [@lambertkevin](https://github.com/lambertkevin)! - EIP1559 support for Ethereum transactions
+
+### Patch Changes
+
+- [#1783](https://github.com/LedgerHQ/ledger-live/pull/1783) [`90a9fbb75b`](https://github.com/LedgerHQ/ledger-live/commit/90a9fbb75b3b3960655d601a6c7c987689ef19be) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Enforce nano app version 1.10.1 to prevent latency issues with EIP-712 signature
+
+- Updated dependencies [[`4ad6155953`](https://github.com/LedgerHQ/ledger-live/commit/4ad615595392f5ef806cbd21f0be1b30d3ae73c6), [`32c8df8f47`](https://github.com/LedgerHQ/ledger-live/commit/32c8df8f47644278ee44e9db623af864d57ad61c), [`32c8df8f47`](https://github.com/LedgerHQ/ledger-live/commit/32c8df8f47644278ee44e9db623af864d57ad61c), [`4ad6155953`](https://github.com/LedgerHQ/ledger-live/commit/4ad615595392f5ef806cbd21f0be1b30d3ae73c6), [`32c8df8f47`](https://github.com/LedgerHQ/ledger-live/commit/32c8df8f47644278ee44e9db623af864d57ad61c)]:
+  - @ledgerhq/cryptoassets@6.37.0-nightly.1
+  - @ledgerhq/hw-app-eth@6.30.0-nightly.1
+  - @ledgerhq/errors@6.12.0-nightly.2
+  - @ledgerhq/devices@7.0.4-nightly.2
+  - @ledgerhq/hw-app-algorand@6.27.7-nightly.2
+  - @ledgerhq/hw-app-cosmos@6.27.7-nightly.2
+  - @ledgerhq/hw-app-polkadot@6.27.7-nightly.2
+  - @ledgerhq/hw-app-solana@7.0.1-nightly.2
+  - @ledgerhq/hw-app-trx@6.27.7-nightly.2
+  - @ledgerhq/hw-transport@6.27.7-nightly.2
+  - @ledgerhq/hw-transport-node-speculos@6.27.7-nightly.2
+  - @ledgerhq/hw-app-btc@9.0.0-nightly.3
+  - @ledgerhq/hw-app-str@6.27.7-nightly.2
+  - @ledgerhq/hw-app-tezos@6.27.7-nightly.2
+  - @ledgerhq/hw-app-xrp@6.27.7-nightly.2
+  - @ledgerhq/hw-transport-mocker@6.27.7-nightly.2
+
 ## 27.7.0-nightly.1
 
 ### Patch Changes

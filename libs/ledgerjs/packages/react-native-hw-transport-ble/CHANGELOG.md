@@ -1,5 +1,14 @@
 # @ledgerhq/react-native-hw-transport-ble
 
+## 6.27.9-nightly.2
+
+### Patch Changes
+
+- Updated dependencies [[`4ad6155953`](https://github.com/LedgerHQ/ledger-live/commit/4ad615595392f5ef806cbd21f0be1b30d3ae73c6)]:
+  - @ledgerhq/errors@6.12.0-nightly.2
+  - @ledgerhq/devices@7.0.4-nightly.2
+  - @ledgerhq/hw-transport@6.27.7-nightly.2
+
 ## 6.27.9-nightly.1
 
 ### Patch Changes

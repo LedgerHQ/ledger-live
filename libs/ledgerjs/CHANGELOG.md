@@ -1,5 +1,11 @@
 # ledger-libs
 
+## 0.1.0-nightly.1
+
+### Minor Changes
+
+- [#1211](https://github.com/LedgerHQ/ledger-live/pull/1211) [`32c8df8f47`](https://github.com/LedgerHQ/ledger-live/commit/32c8df8f47644278ee44e9db623af864d57ad61c) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Add EIP712 CAL and CAL importer
+
 ## 0.0.5-nightly.0
 
 ### Patch Changes

@@ -1,5 +1,31 @@
 # ledger-live-desktop
 
+## 2.50.0-nightly.6
+
+### Minor Changes
+
+- [#1211](https://github.com/LedgerHQ/ledger-live/pull/1211) [`32c8df8f47`](https://github.com/LedgerHQ/ledger-live/commit/32c8df8f47644278ee44e9db623af864d57ad61c) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Add dynamic CAL support for EIP712 in signMessage flow
+
+* [#1211](https://github.com/LedgerHQ/ledger-live/pull/1211) [`32c8df8f47`](https://github.com/LedgerHQ/ledger-live/commit/32c8df8f47644278ee44e9db623af864d57ad61c) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Add dynamic CAL support for EIP712 in signMessage flow
+
+- [#1211](https://github.com/LedgerHQ/ledger-live/pull/1211) [`32c8df8f47`](https://github.com/LedgerHQ/ledger-live/commit/32c8df8f47644278ee44e9db623af864d57ad61c) Thanks [@lambertkevin](https://github.com/lambertkevin)! - New UI parsing for signMessage flow, supporting EIP712 filtering
+
+* [#1211](https://github.com/LedgerHQ/ledger-live/pull/1211) [`32c8df8f47`](https://github.com/LedgerHQ/ledger-live/commit/32c8df8f47644278ee44e9db623af864d57ad61c) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Add eip721 cryptoassets data to vite config
+
+### Patch Changes
+
+- [#1539](https://github.com/LedgerHQ/ledger-live/pull/1539) [`914c5fb377`](https://github.com/LedgerHQ/ledger-live/commit/914c5fb377b8b541f5f645fe26ab80faaa33d478) Thanks [@sarneijim](https://github.com/sarneijim)! - Add stake banner to receive flow
+
+- Updated dependencies [[`32c8df8f47`](https://github.com/LedgerHQ/ledger-live/commit/32c8df8f47644278ee44e9db623af864d57ad61c), [`9c4073e500`](https://github.com/LedgerHQ/ledger-live/commit/9c4073e5002a7d1363736cb3159565f16c953b8b), [`914c5fb377`](https://github.com/LedgerHQ/ledger-live/commit/914c5fb377b8b541f5f645fe26ab80faaa33d478), [`32c8df8f47`](https://github.com/LedgerHQ/ledger-live/commit/32c8df8f47644278ee44e9db623af864d57ad61c), [`4ad6155953`](https://github.com/LedgerHQ/ledger-live/commit/4ad615595392f5ef806cbd21f0be1b30d3ae73c6), [`4ad6155953`](https://github.com/LedgerHQ/ledger-live/commit/4ad615595392f5ef806cbd21f0be1b30d3ae73c6), [`4ad6155953`](https://github.com/LedgerHQ/ledger-live/commit/4ad615595392f5ef806cbd21f0be1b30d3ae73c6), [`90a9fbb75b`](https://github.com/LedgerHQ/ledger-live/commit/90a9fbb75b3b3960655d601a6c7c987689ef19be)]:
+  - @ledgerhq/live-common@27.7.0-nightly.2
+  - @ledgerhq/react-ui@0.10.0-nightly.4
+  - @ledgerhq/types-live@6.26.0-nightly.1
+  - @ledgerhq/errors@6.12.0-nightly.2
+  - @ledgerhq/devices@7.0.4-nightly.2
+  - @ledgerhq/hw-transport@6.27.7-nightly.2
+  - @ledgerhq/hw-transport-http@6.27.7-nightly.2
+  - @ledgerhq/hw-transport-node-hid-singleton@6.28.4-nightly.2
+
 ## 2.50.0-nightly.5
 
 ### Patch Changes

@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/hw-app-btc",
-  "version": "9.0.0-nightly.2",
+  "version": "9.0.0-nightly.3",
   "description": "Ledger Hardware Wallet Bitcoin Application API",
   "keywords": [
     "Ledger",

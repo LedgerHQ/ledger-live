@@ -1,5 +1,14 @@
 # @ledgerhq/react-ui
 
+## 0.10.0-nightly.4
+
+### Patch Changes
+
+- [#1539](https://github.com/LedgerHQ/ledger-live/pull/1539) [`9c4073e500`](https://github.com/LedgerHQ/ledger-live/commit/9c4073e5002a7d1363736cb3159565f16c953b8b) Thanks [@sarneijim](https://github.com/sarneijim)! - Fix issue on checkbox component onChange callback
+
+- Updated dependencies [[`7495373f8b`](https://github.com/LedgerHQ/ledger-live/commit/7495373f8b4690ce5b7b48410f3e4e47bf2555f4)]:
+  - @ledgerhq/icons-ui@0.3.0-nightly.1
+
 ## 0.10.0-nightly.3
 
 ### Patch Changes

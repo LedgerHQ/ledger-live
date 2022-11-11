@@ -1,5 +1,11 @@
 # @ledgerhq/icons-ui
 
+## 0.3.0-nightly.1
+
+### Minor Changes
+
+- [#1784](https://github.com/LedgerHQ/ledger-live/pull/1784) [`7495373f8b`](https://github.com/LedgerHQ/ledger-live/commit/7495373f8b4690ce5b7b48410f3e4e47bf2555f4) Thanks [@mlegall-ledger](https://github.com/mlegall-ledger)! - Adding new icons in Ui Kit (Icons-UI)
+
 ## 0.2.8-nightly.0
 
 ### Patch Changes

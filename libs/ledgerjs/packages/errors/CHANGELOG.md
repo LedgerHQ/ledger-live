@@ -1,5 +1,11 @@
 # @ledgerhq/errors
 
+## 6.12.0-nightly.2
+
+### Minor Changes
+
+- [#1662](https://github.com/LedgerHQ/ledger-live/pull/1662) [`4ad6155953`](https://github.com/LedgerHQ/ledger-live/commit/4ad615595392f5ef806cbd21f0be1b30d3ae73c6) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Add EIP1559 related errors
+
 ## 6.11.2-nightly.1
 
 ### Patch Changes

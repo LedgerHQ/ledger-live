@@ -1,5 +1,13 @@
 # @ledgerhq/cryptoassets
 
+## 6.37.0-nightly.1
+
+### Minor Changes
+
+- [#1662](https://github.com/LedgerHQ/ledger-live/pull/1662) [`4ad6155953`](https://github.com/LedgerHQ/ledger-live/commit/4ad615595392f5ef806cbd21f0be1b30d3ae73c6) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Update Ethereum currency to london fork
+
+* [#1211](https://github.com/LedgerHQ/ledger-live/pull/1211) [`32c8df8f47`](https://github.com/LedgerHQ/ledger-live/commit/32c8df8f47644278ee44e9db623af864d57ad61c) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Add EIP712 CAL and CAL importer
+
 ## 6.36.2-nightly.0
 
 ### Patch Changes

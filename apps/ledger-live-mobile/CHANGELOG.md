@@ -1,5 +1,26 @@
 # live-mobile
 
+## 3.11.0-nightly.4
+
+### Minor Changes
+
+- [#1211](https://github.com/LedgerHQ/ledger-live/pull/1211) [`32c8df8f47`](https://github.com/LedgerHQ/ledger-live/commit/32c8df8f47644278ee44e9db623af864d57ad61c) Thanks [@lambertkevin](https://github.com/lambertkevin)! - New UI parsing for signMessage flow, supporting EIP712 filtering
+
+* [#1662](https://github.com/LedgerHQ/ledger-live/pull/1662) [`4ad6155953`](https://github.com/LedgerHQ/ledger-live/commit/4ad615595392f5ef806cbd21f0be1b30d3ae73c6) Thanks [@lambertkevin](https://github.com/lambertkevin)! - EIP1559 support for Ethereum transactions
+
+### Patch Changes
+
+- Updated dependencies [[`32c8df8f47`](https://github.com/LedgerHQ/ledger-live/commit/32c8df8f47644278ee44e9db623af864d57ad61c), [`914c5fb377`](https://github.com/LedgerHQ/ledger-live/commit/914c5fb377b8b541f5f645fe26ab80faaa33d478), [`32c8df8f47`](https://github.com/LedgerHQ/ledger-live/commit/32c8df8f47644278ee44e9db623af864d57ad61c), [`4ad6155953`](https://github.com/LedgerHQ/ledger-live/commit/4ad615595392f5ef806cbd21f0be1b30d3ae73c6), [`4ad6155953`](https://github.com/LedgerHQ/ledger-live/commit/4ad615595392f5ef806cbd21f0be1b30d3ae73c6), [`4ad6155953`](https://github.com/LedgerHQ/ledger-live/commit/4ad615595392f5ef806cbd21f0be1b30d3ae73c6), [`90a9fbb75b`](https://github.com/LedgerHQ/ledger-live/commit/90a9fbb75b3b3960655d601a6c7c987689ef19be)]:
+  - @ledgerhq/live-common@27.7.0-nightly.2
+  - @ledgerhq/types-live@6.26.0-nightly.1
+  - @ledgerhq/errors@6.12.0-nightly.2
+  - @ledgerhq/native-ui@0.12.1-nightly.1
+  - @ledgerhq/devices@7.0.4-nightly.2
+  - @ledgerhq/hw-transport@6.27.7-nightly.2
+  - @ledgerhq/hw-transport-http@6.27.7-nightly.2
+  - @ledgerhq/react-native-hid@6.28.9-nightly.2
+  - @ledgerhq/react-native-hw-transport-ble@6.27.9-nightly.2
+
 ## 3.11.0-nightly.3
 
 ### Patch Changes
