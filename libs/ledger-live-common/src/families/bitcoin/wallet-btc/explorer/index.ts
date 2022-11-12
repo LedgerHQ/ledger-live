@@ -163,7 +163,8 @@ class BitcoinLikeExplorer implements IExplorer {
       batch_size: !this.disableBatchSize ? nbMax || 1000 : undefined,
       block_hash: undefined,
     };
-    const pendingsTxs = await this.fetchPendingTxs(address, params);
+    const txs = await this.fetchTxs(address, params);
+    const pendingsTxs = txs.filter((tx) => !tx.block);
     pendingsTxs.forEach((tx) => this.hydrateTx(address, tx));
     return pendingsTxs;
   }
@@ -176,7 +177,8 @@ class BitcoinLikeExplorer implements IExplorer {
       params,
     });
     await this.client.release(client);
-    return response.data.data;
+    const pendingTxs = await this.fetchPendingTxs(address, params);
+    return pendingTxs.concat(response.data.data);
   }
 
   async fetchPendingTxs(
