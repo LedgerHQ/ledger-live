@@ -159,6 +159,8 @@ describe("walletconnect", () => {
     transaction = await bridge.prepareTransaction(account, transaction);
     delete transaction.networkInfo;
     delete transaction.gasPrice;
+    delete transaction.maxPriorityFeePerGas;
+    delete transaction.maxFeePerGas;
     expect(
       await parseCallRequest(account, {
         id: "1606135657415541",
@@ -196,6 +198,8 @@ describe("walletconnect", () => {
     transaction = await bridge.prepareTransaction(account, transaction);
     delete transaction.networkInfo;
     delete transaction.gasPrice;
+    delete transaction.maxPriorityFeePerGas;
+    delete transaction.maxFeePerGas;
     expect(
       await parseCallRequest(account, {
         id: "1606135657415541",

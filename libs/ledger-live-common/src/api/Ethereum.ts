@@ -2,7 +2,7 @@ import URL from "url";
 import invariant from "invariant";
 import { BigNumber } from "bignumber.js";
 import { LedgerAPINotAvailable } from "@ledgerhq/errors";
-import type { EthereumGasLimitRequest } from "../families/ethereum/types";
+import { EIP1559ShouldBeUsed } from "../families/ethereum/transaction";
 import network from "../network";
 import { blockchainBaseURL } from "./Ledger";
 import { FeeEstimationFailed } from "../errors";
@@ -141,11 +141,16 @@ export type API = {
       value: string;
     }>
   >;
-  getDryRunGasLimit: (request: EthereumGasLimitRequest) => Promise<BigNumber>;
-  getGasTrackerBarometer: () => Promise<{
+  getDryRunGasLimit: (transaction: {
+    from: string;
+    value: string;
+    data: string;
+  }) => Promise<BigNumber>;
+  getGasTrackerBarometer: (currency: CryptoCurrency) => Promise<{
     low: BigNumber;
     medium: BigNumber;
     high: BigNumber;
+    next_base: BigNumber;
   }>;
   getBlockByHash: (blockHash: string) => Promise<BlockByHashOutput | undefined>;
 };
@@ -323,15 +328,11 @@ export const apiForCurrency = (currency: CryptoCurrency): API => {
       }
     },
 
-    async getDryRunGasLimit(request): Promise<BigNumber> {
-      const post: Record<string, any> = { ...request };
-      // backend use gas_price casing:
-      post.gas_price = request.gasPrice;
-      delete post.gasPrice;
+    async getDryRunGasLimit(transaction): Promise<BigNumber> {
       const { data } = await network({
         method: "POST",
         url: `${baseURL}/tx/estimate-gas-limit`,
-        data: post,
+        data: { ...transaction },
       });
 
       if (data.error_message) {
@@ -344,18 +345,21 @@ export const apiForCurrency = (currency: CryptoCurrency): API => {
     },
 
     getGasTrackerBarometer: makeLRUCache(
-      async () => {
+      async (currency) => {
         const { data } = await network({
           method: "GET",
-          url: `${baseURL}/gastracker/barometer`,
+          url: `${baseURL}/gastracker/barometer${
+            EIP1559ShouldBeUsed(currency) ? "?display=eip1559" : ""
+          }`,
         });
         return {
           low: new BigNumber(data.low),
           medium: new BigNumber(data.medium),
           high: new BigNumber(data.high),
+          next_base: new BigNumber(data.next_base),
         };
       },
-      () => "",
+      (currency) => currency.id,
       {
         maxAge: 30 * 1000,
       }

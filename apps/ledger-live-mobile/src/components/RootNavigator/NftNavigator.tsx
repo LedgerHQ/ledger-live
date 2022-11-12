@@ -21,7 +21,7 @@ const NftNavigator = () => {
         name={ScreenName.NftViewer}
         component={NftViewer}
         options={({ navigation }) => ({
-          title: undefined,
+          title: "",
           headerRight: undefined,
           headerLeft: () => <BackButton navigation={navigation} />,
         })}
@@ -30,7 +30,7 @@ const NftNavigator = () => {
         name={ScreenName.NftImageViewer}
         component={NftImageViewer}
         options={({ navigation }) => ({
-          title: undefined,
+          title: "",
           headerRight: undefined,
           headerLeft: () => <BackButton navigation={navigation} />,
           headerTransparent: true,

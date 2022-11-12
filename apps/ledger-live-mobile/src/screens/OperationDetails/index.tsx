@@ -64,7 +64,6 @@ export const CloseButton = ({
 };
 
 function OperationDetails({ route }: NavigatorProps) {
-  const { colors } = useTheme();
   const { account, parentAccount } = useSelector(accountScreenSelector(route));
   if (!account) return null;
   const operation = route.params?.operation;
@@ -90,14 +89,7 @@ function OperationDetails({ route }: NavigatorProps) {
       }
     ).getURLWhatIsThis(operation);
   return (
-    <SafeAreaView
-      style={[
-        styles.container,
-        {
-          backgroundColor: colors.background,
-        },
-      ]}
-    >
+    <SafeAreaView edges={["bottom"]} style={[styles.container]}>
       <TrackScreen category="OperationDetails" />
       <NavigationScrollView>
         <View style={styles.root}>

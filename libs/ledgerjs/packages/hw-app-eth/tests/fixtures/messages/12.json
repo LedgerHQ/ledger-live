@@ -1,0 +1,38 @@
+{
+    "domain": {
+      "name": "Who are You?",
+      "version": "1"
+    },
+    "message": {
+      "banner": "Please sign this message with your wallet",
+      "curDate": 1660659773,
+      "id": 38
+    },
+    "primaryType": "Auth",
+    "types": {
+        "Auth": [
+            {
+                "name": "banner",
+                "type": "string"
+            },
+            {
+                "name": "curDate",
+                "type": "uint32"
+            },
+            {
+                "name": "id",
+                "type": "uint8"
+            }
+        ],
+        "EIP712Domain": [
+            {
+            "name": "name",
+            "type": "string"
+            },
+            {
+            "name": "version",
+            "type": "string"
+            }
+        ]  
+    }
+  }

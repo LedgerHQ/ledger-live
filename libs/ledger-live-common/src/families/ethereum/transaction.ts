@@ -1,20 +1,13 @@
 import invariant from "invariant";
 import { BigNumber } from "bignumber.js";
 import { log } from "@ledgerhq/logs";
-import type {
-  Transaction,
-  TransactionRaw,
-  EthereumGasLimitRequest,
-  TransactionStatus,
-} from "./types";
+import type { Transaction, TransactionRaw } from "./types";
 import Common from "@ethereumjs/common";
-import { Transaction as EthereumTx } from "@ethereumjs/tx";
-import eip55 from "eip55";
 import {
-  InvalidAddress,
-  ETHAddressNonEIP,
-  RecipientRequired,
-} from "@ledgerhq/errors";
+  Transaction as LegacyTransaction,
+  FeeMarketEIP1559Transaction as EIP1559Transaction,
+  FeeMarketEIP1559TxData,
+} from "@ethereumjs/tx";
 import {
   formatTransactionStatusCommon as formatTransactionStatus,
   fromTransactionCommonRaw,
@@ -22,66 +15,15 @@ import {
   toTransactionCommonRaw,
   toTransactionStatusRawCommon as toTransactionStatusRaw,
 } from "../../transaction/common";
-import type { Account } from "@ledgerhq/types-live";
+import type { Account, TokenAccount } from "@ledgerhq/types-live";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { getAccountUnit } from "../../account";
 import { formatCurrencyUnit } from "../../currencies";
-import { apiForCurrency } from "../../api/Ethereum";
-import { makeLRUCache } from "../../cache";
 import { getEnv } from "../../env";
-import { modes } from "./modules";
+import { ModeModule, modes } from "./modules";
 import { fromRangeRaw, toRangeRaw } from "../../range";
-export function isRecipientValid(_currency: CryptoCurrency, recipient: string) {
-  if (!recipient.match(/^0x[0-9a-fA-F]{40}$/)) return false;
-  // To handle non-eip55 addresses we stop validation here if we detect
-  // address is either full upper or full lower.
-  // see https://github.com/LedgerHQ/ledger-live-desktop/issues/1397
-  const slice = recipient.substr(2);
-  const isFullUpper = slice === slice.toUpperCase();
-  const isFullLower = slice === slice.toLowerCase();
-  if (isFullUpper || isFullLower) return true;
+import { getDefaultFeeUnit } from "./logic";
 
-  try {
-    return eip55.verify(recipient);
-  } catch (error) {
-    return false;
-  }
-}
-// Returns a warning if we detect a non-eip address
-export function getRecipientWarning(
-  currency: CryptoCurrency,
-  recipient: string
-) {
-  if (!recipient.match(/^0x[0-9a-fA-F]{40}$/)) return null;
-  const slice = recipient.substr(2);
-  const isFullUpper = slice === slice.toUpperCase();
-  const isFullLower = slice === slice.toLowerCase();
-
-  if (isFullUpper || isFullLower) {
-    return new ETHAddressNonEIP();
-  }
-
-  return null;
-}
-export function validateRecipient(
-  currency: CryptoCurrency,
-  recipient: string,
-  { errors, warnings }: TransactionStatus
-) {
-  const recipientWarning = getRecipientWarning(currency, recipient);
-
-  if (recipientWarning) {
-    warnings.recipient = recipientWarning;
-  }
-
-  if (!recipient) {
-    errors.recipient = new RecipientRequired("");
-  } else if (!isRecipientValid(currency, recipient)) {
-    errors.recipient = new InvalidAddress("", {
-      currencyName: currency.name,
-    });
-  }
-}
 export const formatTransaction = (
   t: Transaction,
   mainAccount: Account
@@ -123,19 +65,35 @@ export const formatTransaction = (
     }
   })();
 
+  let feesMessage: string;
+  if (EIP1559ShouldBeUsed(mainAccount.currency)) {
+    feesMessage =
+      `with maxFeePerGas=${formatCurrencyUnit(
+        getDefaultFeeUnit(mainAccount.currency),
+        t.maxFeePerGas || new BigNumber(0)
+      )}\n` +
+      `with maxPriorityFeePerGas=${formatCurrencyUnit(
+        getDefaultFeeUnit(mainAccount.currency),
+        t.maxPriorityFeePerGas || new BigNumber(0)
+      )}`;
+  } else {
+    feesMessage = `with gasPrice=${formatCurrencyUnit(
+      getDefaultFeeUnit(mainAccount.currency),
+      t.gasPrice || new BigNumber(0)
+    )}`;
+  }
+
   return `
 ${header}
 TO ${t.recipient}
-with gasPrice=${formatCurrencyUnit(
-    mainAccount.currency.units[1] || mainAccount.currency.units[0],
-    t.gasPrice || new BigNumber(0)
-  )}
+${feesMessage}
 with gasLimit=${gasLimit.toString()}`;
 };
 
-const defaultGasLimit = new BigNumber(0x5208);
+const defaultGasLimit = new BigNumber(21000);
 export const getGasLimit = (t: Transaction): BigNumber =>
   t.userGasLimit || t.estimatedGasLimit || defaultGasLimit;
+
 export const fromTransactionRaw = (tr: TransactionRaw): Transaction => {
   const common = fromTransactionCommonRaw(tr);
   const { networkInfo } = tr;
@@ -146,6 +104,10 @@ export const fromTransactionRaw = (tr: TransactionRaw): Transaction => {
     data: tr.data ? Buffer.from(tr.data, "hex") : undefined,
     family: tr.family,
     gasPrice: tr.gasPrice ? new BigNumber(tr.gasPrice) : null,
+    maxFeePerGas: tr.maxFeePerGas ? new BigNumber(tr.maxFeePerGas) : null,
+    maxPriorityFeePerGas: tr.maxPriorityFeePerGas
+      ? new BigNumber(tr.maxPriorityFeePerGas)
+      : null,
     userGasLimit: tr.userGasLimit ? new BigNumber(tr.userGasLimit) : null,
     estimatedGasLimit: tr.estimatedGasLimit
       ? new BigNumber(tr.estimatedGasLimit)
@@ -154,7 +116,15 @@ export const fromTransactionRaw = (tr: TransactionRaw): Transaction => {
     // FIXME this is not good.. we're dereferencing here. we should instead store an index (to lookup in currency.units on UI)
     networkInfo: networkInfo && {
       family: networkInfo.family,
-      gasPrice: fromRangeRaw(networkInfo.gasPrice),
+      gasPrice: networkInfo.gasPrice
+        ? fromRangeRaw(networkInfo.gasPrice)
+        : undefined,
+      nextBaseFeePerGas: networkInfo.nextBaseFeePerGas
+        ? new BigNumber(networkInfo.nextBaseFeePerGas)
+        : undefined,
+      maxPriorityFeePerGas: networkInfo.maxPriorityFeePerGas
+        ? fromRangeRaw(networkInfo.maxPriorityFeePerGas)
+        : undefined,
     },
     allowZeroAmount: tr.allowZeroAmount,
     feesStrategy: tr.feesStrategy,
@@ -164,6 +134,7 @@ export const fromTransactionRaw = (tr: TransactionRaw): Transaction => {
     quantities: tr.quantities?.map((q) => new BigNumber(q)),
   };
 };
+
 export const toTransactionRaw = (t: Transaction): TransactionRaw => {
   const common = toTransactionCommonRaw(t);
   const { networkInfo } = t;
@@ -174,6 +145,10 @@ export const toTransactionRaw = (t: Transaction): TransactionRaw => {
     family: t.family,
     data: t.data ? t.data.toString("hex") : undefined,
     gasPrice: t.gasPrice ? t.gasPrice.toString() : null,
+    maxFeePerGas: t.maxFeePerGas ? t.maxFeePerGas.toString() : null,
+    maxPriorityFeePerGas: t.maxPriorityFeePerGas
+      ? t.maxPriorityFeePerGas.toString()
+      : null,
     userGasLimit: t.userGasLimit ? t.userGasLimit.toString() : null,
     estimatedGasLimit: t.estimatedGasLimit
       ? t.estimatedGasLimit.toString()
@@ -182,7 +157,15 @@ export const toTransactionRaw = (t: Transaction): TransactionRaw => {
     // FIXME drop?
     networkInfo: networkInfo && {
       family: networkInfo.family,
-      gasPrice: toRangeRaw(networkInfo.gasPrice),
+      gasPrice: networkInfo.gasPrice
+        ? toRangeRaw(networkInfo.gasPrice)
+        : undefined,
+      nextBaseFeePerGas: networkInfo.nextBaseFeePerGas
+        ? networkInfo.nextBaseFeePerGas.toString()
+        : undefined,
+      maxPriorityFeePerGas: networkInfo.maxPriorityFeePerGas
+        ? toRangeRaw(networkInfo.maxPriorityFeePerGas)
+        : undefined,
     },
     allowZeroAmount: t.allowZeroAmount,
     feesStrategy: t.feesStrategy,
@@ -203,21 +186,25 @@ function getEthereumjsTxCommon(currency) {
   if (ethereumLikeInfo.chainId === 1) {
     return new Common({
       chain: ethereumLikeInfo.baseChain || "mainnet",
-      hardfork: ethereumLikeInfo.hardfork || "petersburg",
+      hardfork: ethereumLikeInfo.hardfork || "london",
     });
   }
-  return Common.forCustomChain(
-    ethereumLikeInfo.baseChain || "mainnet",
-    {
-      name: currency.ticker,
-      chainId: ethereumLikeInfo.chainId,
-      networkId: ethereumLikeInfo.networkId || ethereumLikeInfo.chainId,
-    },
-    ethereumLikeInfo.hardfork || "petersburg"
-  );
+  return Common.custom({
+    name: ethereumLikeInfo.baseChain || "mainnet",
+    chainId: ethereumLikeInfo.chainId,
+    networkId: ethereumLikeInfo.networkId || ethereumLikeInfo.chainId,
+    defaultHardfork: ethereumLikeInfo.hardfork || "london",
+  });
 }
 
-export function inferTokenAccount(a: Account, t: Transaction) {
+export function EIP1559ShouldBeUsed(currency: CryptoCurrency): boolean {
+  return getEnv("EIP1559_ENABLED_CURRENCIES").includes(currency.id);
+}
+
+export function inferTokenAccount(
+  a: Account,
+  t: Transaction
+): TokenAccount | undefined {
   const tokenAccount = !t.subAccountId
     ? null
     : a.subAccounts && a.subAccounts.find((ta) => ta.id === t.subAccountId);
@@ -226,37 +213,75 @@ export function inferTokenAccount(a: Account, t: Transaction) {
     return tokenAccount;
   }
 }
+
 export function buildEthereumTx(
   account: Account,
   transaction: Transaction,
   nonce: number
-) {
+): {
+  tx: EIP1559Transaction | LegacyTransaction;
+  common: Common;
+  ethTxObject: {
+    nonce: number;
+    gasLimit: string;
+    gasPrice?: string;
+    maxFeePerGas?: string;
+    maxPriorityFeePerGas?: string;
+  };
+  fillTransactionDataResult: ReturnType<ModeModule["fillTransactionData"]>;
+} {
   const { currency } = account;
-  const { gasPrice } = transaction;
+  const { gasPrice, maxFeePerGas, maxPriorityFeePerGas } = transaction;
   const subAccount = inferTokenAccount(account, transaction);
   invariant(
     !subAccount || subAccount.type === "TokenAccount",
     "only token accounts expected"
   );
+
   const common = getEthereumjsTxCommon(currency);
   if (!common) {
     throw new Error(`common not found for currency ${currency.name}`);
   }
+
   const gasLimit = getGasLimit(transaction);
-  const ethTxObject: Record<string, any> = {
+  const ethTxObject: {
+    nonce: number;
+    gasLimit: string;
+    gasPrice?: string;
+    maxFeePerGas?: string;
+    maxPriorityFeePerGas?: string;
+  } = {
     nonce,
-    gasPrice: `0x${new BigNumber(gasPrice || 0).toString(16)}`,
     gasLimit: `0x${new BigNumber(gasLimit).toString(16)}`,
   };
-  const m = modes[transaction.mode];
-  invariant(m, "missing module for mode=" + transaction.mode);
-  const fillTransactionDataResult = m.fillTransactionData(
+
+  const mode = modes[transaction.mode];
+  invariant(mode, "missing module for mode=" + transaction.mode);
+
+  const fillTransactionDataResult = mode.fillTransactionData(
     account,
     transaction,
     ethTxObject
   );
-  log("ethereum", "buildEthereumTx", ethTxObject);
-  const tx = new EthereumTx(ethTxObject, { common });
+
+  let tx: EIP1559Transaction | LegacyTransaction;
+  if (EIP1559ShouldBeUsed(currency)) {
+    ethTxObject.maxFeePerGas = `0x${new BigNumber(maxFeePerGas || 0).toString(
+      16
+    )}`;
+    ethTxObject.maxPriorityFeePerGas = `0x${new BigNumber(
+      maxPriorityFeePerGas || 0
+    ).toString(16)}`;
+    log("ethereum", "buildEIP1559Transaction", ethTxObject);
+    tx = new EIP1559Transaction(ethTxObject as FeeMarketEIP1559TxData, {
+      common,
+    });
+  } else {
+    ethTxObject.gasPrice = `0x${new BigNumber(gasPrice || 0).toString(16)}`;
+    log("ethereum", "buildLegacyEthereumTransaction", ethTxObject);
+    tx = new LegacyTransaction(ethTxObject, { common });
+  }
+
   return {
     tx,
     common,
@@ -264,66 +289,6 @@ export function buildEthereumTx(
     fillTransactionDataResult,
   };
 }
-export function inferEthereumGasLimitRequest(
-  account: Account,
-  transaction: Transaction
-): EthereumGasLimitRequest {
-  const r: EthereumGasLimitRequest = {
-    from: account.freshAddress,
-    amplifier: "1",
-  };
-
-  if (transaction.gasPrice) {
-    r.gasPrice = "0x" + transaction.gasPrice.toString();
-  }
-
-  try {
-    const { data, to, value } = buildEthereumTx(account, transaction, 1).tx;
-
-    if (value) {
-      r.value = "0x" + (value.toString("hex") || "0");
-    }
-
-    if (to) {
-      r.to = to.toString();
-    }
-
-    if (data) {
-      r.data = "0x" + data.toString("hex");
-    }
-  } catch (e) {
-    log("warn", "couldn't serializeTransactionData: " + e);
-  }
-
-  return r;
-}
-export const estimateGasLimit: (
-  account: Account,
-  request: EthereumGasLimitRequest
-) => Promise<BigNumber> = makeLRUCache(
-  (account: Account, request: EthereumGasLimitRequest) => {
-    const api = apiForCurrency(account.currency);
-    return api.getDryRunGasLimit(request).then((value) =>
-      value.eq(21000) // regular ETH send should not be amplified
-        ? value
-        : value.times(getEnv("ETHEREUM_GAS_LIMIT_AMPLIFIER")).integerValue()
-    );
-  },
-  (a, r) =>
-    a.id +
-    "|" +
-    String(r.from) +
-    "+" +
-    String(r.to) +
-    "+" +
-    String(r.value) +
-    "+" +
-    String(r.data) +
-    "+" +
-    String(r.gasPrice) +
-    "+" +
-    String(r.amplifier)
-);
 
 export default {
   formatTransaction,
