@@ -145,6 +145,7 @@ export type API = {
     from: string;
     value: string;
     data: string;
+    to: string;
   }) => Promise<BigNumber>;
   getGasTrackerBarometer: (currency: CryptoCurrency) => Promise<{
     low: BigNumber;
@@ -332,7 +333,12 @@ export const apiForCurrency = (currency: CryptoCurrency): API => {
       const { data } = await network({
         method: "POST",
         url: `${baseURL}/tx/estimate-gas-limit`,
-        data: { ...transaction },
+        data: {
+          from: transaction.from,
+          to: transaction.to,
+          data: transaction.data,
+          value: transaction.value,
+        },
       });
 
       if (data.error_message) {
