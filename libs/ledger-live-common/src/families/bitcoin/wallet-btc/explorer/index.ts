@@ -191,7 +191,7 @@ class BitcoinLikeExplorer implements IExplorer {
       params,
     });
     await this.client.release(client);
-    return response.data.data;
+    return response.data;
   }
 
   hydrateTx(address: Address, tx: TX): void {

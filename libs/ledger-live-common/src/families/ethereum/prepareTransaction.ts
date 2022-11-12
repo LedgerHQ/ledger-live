@@ -50,10 +50,10 @@ export const prepareTransaction: AccountBridge<Transaction>["prepareTransaction"
     if (isEthereumAddress(tx.recipient)) {
       estimatedGasLimit = await estimateGasLimit(
         account,
-        tx.recipient,
         // Those are the only elements from a transaction necessary to estimate the gas limit
         {
           from: account.freshAddress,
+          to: tx.recipient,
           value: "0x" + (tx.amount.toString(16) || "0"),
           data: "0x" + (tx.data?.toString("hex") || "0"),
         }
