@@ -23,9 +23,6 @@ import type {
   SignOperationEvent,
 } from "@ledgerhq/types-live";
 import { CosmosAPI } from "./api/Cosmos";
-import { AminoTypes } from "@cosmjs/stargate";
-
-const aminoTypes = new AminoTypes({ prefix: "cosmos" });
 
 const signOperation = ({
   account,
@@ -54,13 +51,6 @@ const signOperation = ({
           account,
           transaction
         );
-        /*
-        const unsignedPayload = await buildTransaction(
-          account as CosmosAccount,
-          transaction
-        );*/
-
-        //const msgs = unsignedPayload.map((msg) => aminoTypes.toAmino(msg));
 
         const feeToEncode = {
           amount: [
@@ -93,13 +83,12 @@ const signOperation = ({
             account as CosmosAccount,
             transaction
           );
-          const msgs = unsignedPayload.map((msg) => aminoTypes.toAmino(msg));
           const message = {
             chain_id: chainId,
             account_number: accountNumber.toString(),
             sequence: sequence.toString(),
             fee: feeToEncode,
-            msgs: msgs,
+            msgs: aminoMsgs,
             memo: transaction.memo || "",
           };
           const { signature } = await hwApp.sign(
