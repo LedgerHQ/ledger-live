@@ -92,6 +92,16 @@ const envDefinitions = {
     parser: stringParser,
     desc: "Node API to use for cosmos_testnet (COSMOS_NODE or STARGATE_NODE are known)",
   },
+  API_NERVOS_NODE: {
+    def: "https://mainnet.ckb.dev/rpc",
+    parser: stringParser,
+    desc: "Node endpoint for nervos",
+  },
+  API_NERVOS_INDEXER: {
+    def: "https://mainnet.ckb.dev/indexer",
+    parser: stringParser,
+    desc: "Node endpoint for nervos",
+  },
   API_RIPPLE_RPC: {
     parser: stringParser,
     def: "https://xrplcluster.com/ledgerlive",
