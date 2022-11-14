@@ -135,7 +135,7 @@ function WalletTabNavigatorTabBar({
       <Animated.View
         style={{
           top: 0,
-          zIndex: 1,
+          // zIndex: 1,
           position: "absolute",
           transform: [{ translateY: y }],
           width: "100%",

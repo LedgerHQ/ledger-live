@@ -1,9 +1,9 @@
 import React, { useCallback, useMemo, useState } from "react";
 import { useSelector } from "react-redux";
-import { LayoutChangeEvent, ListRenderItemInfo } from "react-native";
+import { LayoutChangeEvent, ListRenderItemInfo, RefreshControl } from "react-native";
 import { useSharedValue } from "react-native-reanimated";
 import { useTranslation } from "react-i18next";
-import { useFocusEffect } from "@react-navigation/native";
+import { useFocusEffect, useIsFocused } from "@react-navigation/native";
 import { isAccountEmpty } from "@ledgerhq/live-common/account/index";
 
 import { Box, Flex, Button, Icons } from "@ledgerhq/native-ui";
@@ -59,6 +59,10 @@ type NavigationProps = BaseComposite<
 
 const maxAssetsToDisplay = 5;
 
+const wait = (timeout) => {
+  return new Promise(resolve => setTimeout(resolve, timeout));
+}
+
 function PortfolioScreen({ navigation }: NavigationProps) {
   const hideEmptyTokenAccount = useEnv("HIDE_EMPTY_TOKEN_ACCOUNTS");
 
@@ -68,6 +72,15 @@ function PortfolioScreen({ navigation }: NavigationProps) {
     () => Object.values(carouselVisibility).some(Boolean),
     [carouselVisibility],
   );
+
+  const [refreshing, setRefreshing] = React.useState(false);
+  const isFocused = useIsFocused();
+
+
+  const onRefresh = React.useCallback(() => {
+    setRefreshing(true);
+    wait(5000).then(() => setRefreshing(false));
+  }, []);
 
   const distribution = useDistribution({
     showEmptyAccounts: true,
@@ -131,6 +144,7 @@ function PortfolioScreen({ navigation }: NavigationProps) {
 
   const data = useMemo(
     () => [
+      <FirmwareUpdateBanner containerProps={{ mt: 0, mb: 0 }} />,
       postOnboardingVisible && (
         <Box m={6}>
           <PostOnboardingEntryPointCard />
@@ -245,7 +259,6 @@ function PortfolioScreen({ navigation }: NavigationProps) {
           accountsLength={distribution.list && distribution.list.length}
           discreet={discreetMode}
         />
-        <FirmwareUpdateBanner containerProps={{ mt: 9, mb: 0 }} />
         <CollapsibleHeaderFlatList<React.ReactNode>
           data={data}
           renderItem={({ item }: ListRenderItemInfo<unknown>) =>
@@ -257,6 +270,9 @@ function PortfolioScreen({ navigation }: NavigationProps) {
             distribution.list && distribution.list.length
               ? "PortfolioAccountsList"
               : "PortfolioEmptyAccount"
+          }
+          refreshControl={
+            <RefreshControl refreshing={refreshing && isFocused} onRefresh={onRefresh} />
           }
         />
         <MigrateAccountsBanner />

@@ -23,6 +23,7 @@ import WalletTabHeader from "../WalletTab/WalletTabHeader";
 import WalletTabNavigatorTabBarDisabled from "../WalletTab/WalletTabNavigatorTabBarDisabled";
 import { WalletTabNavigatorStackParamList } from "./types/WalletTabNavigator";
 import { ScreenName } from "../../const/navigation";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const WalletTab =
   createMaterialTopTabNavigator<WalletTabNavigatorStackParamList>();
@@ -47,6 +48,10 @@ export default function WalletTabNavigator() {
   const [currentRouteName, setCurrentRouteName] = useState<
     string | undefined
   >();
+
+  const { top } = useSafeAreaInsets();
+
+  console.log("insets", top)
 
   return (
     <WalletTabNavigatorScrollManager currentRouteName={currentRouteName}>
