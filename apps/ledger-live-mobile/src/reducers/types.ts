@@ -190,13 +190,13 @@ export type SettingsState = {
   sensitiveAnalytics: boolean;
   firstConnectionHasDevice: boolean | null;
   firstConnectHasDeviceUpdated: boolean | null;
-  notifications: {
-    allowed: boolean;
-    transactions: boolean;
-    market: boolean;
-    announcement: boolean;
-    price: boolean;
-  };
+  notifications: NotificationsSettings;
+};
+
+export type NotificationsSettings = {
+  allowed: boolean;
+  announcements: boolean;
+  recommendations: boolean;
 };
 
 // === WALLET CONNECT STATE ===

@@ -18,8 +18,28 @@ env:
   comment_header: <!-- test-desktop-report -->
 
 jobs:
+  is-affected:
+    outputs:
+      is-desktop-affected: ${{ steps.affected.outputs.is-package-affected }}
+    runs-on: [ubuntu-latest]
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          ref: develop
+          fetch-depth: 0
+      - name: checkout branch
+        run: |
+          git checkout ${{ github.event.pull_request.head.ref || github.event.push.base.ref }}
+      - uses: ./tools/actions/turbo-affected
+        id: affected
+        with:
+          package: "ledger-live-desktop"
+          head-ref: origin/${{ github.event.pull_request.base.ref || github.event.push.base.ref || 'HEAD^' }}
+
   pr-is-fork:
     name: "Check if the PR is a fork"
+    needs: is-affected
+    if: ${{ needs.is-affected.outputs.is-desktop-affected }}
     uses: ./.github/workflows/pr-is-fork.yml
     with:
       non-pr-result: false
@@ -28,6 +48,8 @@ jobs:
 
   typecheck:
     name: "Ledger Live Desktop TypeCheck"
+    needs: is-affected
+    if: ${{ needs.is-affected.outputs.is-desktop-affected }}
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
       INSTRUMENT_BUILD: true
@@ -192,7 +214,7 @@ jobs:
             fs.writeFileSync("./images.json", JSON.stringify(result, null, 2));
       - name: prepare comment with screenshots
         id: comment
-        uses: ledgerhq/ledger-live/tools/actions/prepare-comment-screenshots@develop
+        uses: ./tools/actions/prepare-comment-screenshots
         with:
           images: images.json
       - name: create/update comment
