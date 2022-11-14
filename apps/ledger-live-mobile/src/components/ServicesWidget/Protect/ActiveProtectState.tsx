@@ -1,21 +1,23 @@
 import { Tag } from "@ledgerhq/native-ui";
-import React from "react";
+import React, { useCallback } from "react";
 import { useTranslation } from "react-i18next";
+import { Linking } from "react-native";
 import Button from "../../Button";
 
-function ActiveProtectState() {
+function ActiveProtectState({ params }: { params: Record<string, string> }) {
   const { t } = useTranslation();
+
+  const { viewDetailsURI } = params || {};
+
+  const onViewDetails = useCallback(() => {
+    Linking.canOpenURL(viewDetailsURI).then(() =>
+      Linking.openURL(viewDetailsURI),
+    );
+  }, [viewDetailsURI]);
 
   return (
     <>
-      <Button
-        type="main"
-        outline={false}
-        onPress={() => {
-          /** @TODO redirect to correct live app */
-        }}
-        mt={8}
-      >
+      <Button type="main" outline={false} onPress={onViewDetails} mt={8}>
         {t(`servicesWidget.protect.status.active.actions.viewDetails`)}
       </Button>
     </>

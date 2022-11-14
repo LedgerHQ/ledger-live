@@ -1,6 +1,7 @@
 import { IconBoxList, Icons, Tag, Divider } from "@ledgerhq/native-ui";
-import React from "react";
+import React, { useCallback } from "react";
 import { useTranslation } from "react-i18next";
+import { Linking } from "react-native";
 import Button from "../../Button";
 
 const items = [
@@ -22,8 +23,19 @@ const items = [
   },
 ];
 
-function NewProtectState() {
+function NewProtectState({ params }: { params: Record<string, string> }) {
   const { t } = useTranslation();
+  const { learnMoreURI, alreadySubscribedURI } = params || {};
+
+  const onLearnMore = useCallback(() => {
+    Linking.canOpenURL(learnMoreURI).then(() => Linking.openURL(learnMoreURI));
+  }, [learnMoreURI]);
+
+  const onAlreadySubscribe = useCallback(() => {
+    Linking.canOpenURL(alreadySubscribedURI).then(() =>
+      Linking.openURL(alreadySubscribedURI),
+    );
+  }, [alreadySubscribedURI]);
 
   return (
     <>
@@ -34,23 +46,10 @@ function NewProtectState() {
           title: t(item.title),
         }))}
       />
-      <Button
-        type="main"
-        outline={false}
-        onPress={() => {
-          /** @TODO redirect to correct live app */
-        }}
-        mb={6}
-      >
+      <Button type="main" outline={false} onPress={onLearnMore} mb={6}>
         {t(`servicesWidget.protect.status.new.actions.learnMore`)}
       </Button>
-      <Button
-        type="default"
-        outline={false}
-        onPress={() => {
-          /** @TODO redirect to correct live app */
-        }}
-      >
+      <Button type="default" outline={false} onPress={onAlreadySubscribe}>
         {t(`servicesWidget.protect.status.new.actions.alreadySubscribed`)}
       </Button>
     </>

@@ -1,31 +1,34 @@
-import React from "react";
+import React, { useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { Tag } from "@ledgerhq/native-ui";
+import { Linking } from "react-native";
 import Button from "../../Button";
 
-function ActionRequiredProtectState() {
+function ActionRequiredProtectState({
+  params,
+}: {
+  params: Record<string, string>;
+}) {
   const { t } = useTranslation();
+
+  const { addNowURI, viewDetailsURI } = params || {};
+
+  const onAddNow = useCallback(() => {
+    Linking.canOpenURL(addNowURI).then(() => Linking.openURL(addNowURI));
+  }, [addNowURI]);
+
+  const onViewDetails = useCallback(() => {
+    Linking.canOpenURL(viewDetailsURI).then(() =>
+      Linking.openURL(viewDetailsURI),
+    );
+  }, [viewDetailsURI]);
 
   return (
     <>
-      <Button
-        type="main"
-        outline={false}
-        onPress={() => {
-          /** @TODO redirect to correct live app */
-        }}
-        mt={8}
-        mb={6}
-      >
+      <Button type="main" outline={false} onPress={onAddNow} mt={8} mb={6}>
         {t(`servicesWidget.protect.status.actionRequired.actions.addNow`)}
       </Button>
-      <Button
-        type="default"
-        outline={false}
-        onPress={() => {
-          /** @TODO redirect to correct live app */
-        }}
-      >
+      <Button type="default" outline={false} onPress={onViewDetails}>
         {t(`servicesWidget.protect.status.actionRequired.actions.viewDetails`)}
       </Button>
     </>
