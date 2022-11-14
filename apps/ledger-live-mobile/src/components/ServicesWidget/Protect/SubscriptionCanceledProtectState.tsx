@@ -1,19 +1,36 @@
 import { Tag } from "@ledgerhq/native-ui";
-import React from "react";
+import React, { useCallback } from "react";
 import { useTranslation } from "react-i18next";
+import { Linking } from "react-native";
 import Button from "../../Button";
 
-function SubscriptionCanceledProtectState() {
+function SubscriptionCanceledProtectState({
+  params,
+}: {
+  params: Record<string, string>;
+}) {
   const { t } = useTranslation();
+
+  const { contactLedgerSupportURI, viewDetailsURI } = params || {};
+
+  const onContactLedgerSupport = useCallback(() => {
+    Linking.canOpenURL(contactLedgerSupportURI).then(() =>
+      Linking.openURL(contactLedgerSupportURI),
+    );
+  }, [contactLedgerSupportURI]);
+
+  const onViewDetails = useCallback(() => {
+    Linking.canOpenURL(viewDetailsURI).then(() =>
+      Linking.openURL(viewDetailsURI),
+    );
+  }, [viewDetailsURI]);
 
   return (
     <>
       <Button
         type="main"
         outline={false}
-        onPress={() => {
-          /** @TODO redirect to correct live app */
-        }}
+        onPress={onContactLedgerSupport}
         mt={8}
         mb={6}
       >
@@ -21,13 +38,7 @@ function SubscriptionCanceledProtectState() {
           `servicesWidget.protect.status.subscriptionCanceled.actions.contactLedgerSupport`,
         )}
       </Button>
-      <Button
-        type="default"
-        outline={false}
-        onPress={() => {
-          /** @TODO redirect to correct live app */
-        }}
-      >
+      <Button type="default" outline={false} onPress={onViewDetails}>
         {t(
           `servicesWidget.protect.status.subscriptionCanceled.actions.viewDetails`,
         )}

@@ -1,15 +1,15 @@
-import { Divider, Flex, Tag } from "@ledgerhq/native-ui";
-import React, { memo, useCallback, useState } from "react";
+import { Flex } from "@ledgerhq/native-ui";
+import React, { memo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import Svg, { LinearGradient, Defs, Rect, Stop } from "react-native-svg";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import LText from "../LText";
-import Button from "../Button";
 import NewProtectState from "./Protect/NewProtectState";
 import ActionRequiredProtectState from "./Protect/ActionRequiredProtectState";
 import SubscriptionCanceledProtectState from "./Protect/SubscriptionCanceledProtectState";
 import PaymentRejectedProtectState from "./Protect/PaymentRejectedProtectState";
 import ActiveProtectState from "./Protect/ActiveProtectState";
+import { ProtectStateNumber, ServicesConfig } from "./types";
 
 const SvgGradient = () => (
   <Svg width="100%" height="8px">
@@ -30,9 +30,7 @@ const SvgGradient = () => (
   </Svg>
 );
 
-const protectStates = [800, 900, 1000, 1100, 1200];
-
-const statesKeys = {
+const statesKeys: Record<ProtectStateNumber, string> = {
   800: "new",
   900: "actionRequired",
   1000: "paymentRejected",
@@ -40,7 +38,12 @@ const statesKeys = {
   1200: "active",
 };
 
-const statesComponents = {
+const statesComponents: Record<
+  ProtectStateNumber,
+  React.FunctionComponent<{ params: Record<string, string> }> & {
+    StatusTag: React.FunctionComponent<Record<string, never>>;
+  }
+> = {
   800: NewProtectState,
   900: ActionRequiredProtectState,
   1000: PaymentRejectedProtectState,
@@ -50,25 +53,21 @@ const statesComponents = {
 
 function ServicesWidget() {
   const { t } = useTranslation();
-  const servicesConfig = useFeature("servicesWidget");
+  const servicesConfig: ServicesConfig | null = useFeature(
+    "protectServicesMobile",
+  );
 
-  const [protectState, setProtectState] = useState(800);
+  const { enabled, params } = servicesConfig || {};
 
-  // debug
-  const switchState = useCallback(() => {
-    const newProtectState = protectStates.indexOf(protectState) + 1;
-    setProtectState(
-      protectStates[
-        newProtectState > protectStates.length - 1 ? 0 : newProtectState
-      ],
-    );
-  }, [protectState]);
+  // @TODO sync this with an api backend
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [protectState, setProtectState] = useState<ProtectStateNumber>(800);
 
   const ProtectStateComponent = statesComponents[protectState];
 
-  return (
+  return enabled && params?.managerStatesData ? (
     <>
-      <LText mt={12} variant="body" fontSize="20px" onPress={switchState}>
+      <LText mt={12} variant="body" fontSize="20px">
         {t("servicesWidget.title")}
       </LText>
       <LText variant="paragraph" color="neutral.c80">
@@ -94,11 +93,13 @@ function ServicesWidget() {
               `servicesWidget.protect.status.${statesKeys[protectState]}.desc`,
             )}
           </LText>
-          <ProtectStateComponent />
+          <ProtectStateComponent
+            params={params?.managerStatesData?.[protectState]}
+          />
         </Flex>
       </Flex>
     </>
-  );
+  ) : null;
 }
 
 export default memo(ServicesWidget);

@@ -34,7 +34,8 @@ export type FeatureId =
   | "disableNftRaribleOpensea"
   | "receiveStakingFlowConfigDesktop"
   | "ethStakingProviders"
-  | "storyly";
+  | "storyly"
+  | "protectServicesMobile";
 
 /**  We use objects instead of direct booleans for potential future improvements
 like feature versioning etc */
