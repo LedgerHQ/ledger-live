@@ -3,7 +3,7 @@ import { Animated, FlatList, ScrollView } from "react-native";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 
 const tabBarHeight = 74;
-const headerHeight = 72;
+const headerHeight = 48;
 const headerHeightWithTabNavigatorDisabled = 88;
 
 type WalletTabNavigatorScrollContextData = {

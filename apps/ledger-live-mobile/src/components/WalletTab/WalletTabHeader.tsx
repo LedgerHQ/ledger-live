@@ -32,7 +32,7 @@ function WalletTabHeader({
   const opacity = animated
     ? 0
     : scrollY.interpolate({
-        inputRange: [0, headerHeight - 24],
+        inputRange: [0, headerHeight],
         outputRange: [1, 0],
         extrapolateRight: "clamp",
       });
@@ -54,10 +54,12 @@ function WalletTabHeader({
             height: headerHeight,
             width: "100%",
             position: "absolute",
+            //backgroundColor:'red',
             opacity,
           },
           { transform: [{ translateY: y }] },
         ]}
+        mode={'margin'}
       >
         <Box
           flex={1}

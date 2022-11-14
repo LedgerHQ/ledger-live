@@ -7,6 +7,7 @@ import {
   ScrollViewProps,
   StatusBar,
 } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { WalletTabNavigatorScrollContext } from "./WalletTabNavigatorScrollManager";
 
 const CollapsibleHeaderScrollView = ({
@@ -25,36 +26,39 @@ const CollapsibleHeaderScrollView = ({
   }, [route.name, syncScrollOffset]);
 
   return (
-    <Animated.ScrollView
-      scrollToOverflowEnabled={true}
-      ref={(ref: ScrollView) => onGetRef({ key: route.name, value: ref })}
-      scrollEventThrottle={16}
-      onScroll={
-        isFocused
-          ? Animated.event(
-              [{ nativeEvent: { contentOffset: { y: scrollY } } }],
-              {
-                useNativeDriver: true,
-              },
-            )
-          : undefined
-      }
-      onScrollEndDrag={onMomentumScrollEnd}
-      onMomentumScrollEnd={onMomentumScrollEnd}
-      contentContainerStyle={[
-        {
-          paddingTop: headerHeight + tabBarHeight,
-          minHeight: windowHeight + (StatusBar.currentHeight || 0),
-        },
-        contentContainerStyle,
-      ]}
-      showsHorizontalScrollIndicator={false}
-      showsVerticalScrollIndicator={false}
-      testID={route.name}
-      {...otherProps}
-    >
-      {children}
-    </Animated.ScrollView>
+    <SafeAreaView>
+      <Animated.ScrollView
+        scrollToOverflowEnabled={true}
+        ref={(ref: ScrollView) => onGetRef({ key: route.name, value: ref })}
+        scrollEventThrottle={16}
+        onScroll={
+          isFocused
+            ? Animated.event(
+                [{ nativeEvent: { contentOffset: { y: scrollY } } }],
+                {
+                  useNativeDriver: true,
+                },
+              )
+            : undefined
+        }
+        onScrollEndDrag={onMomentumScrollEnd}
+        onMomentumScrollEnd={onMomentumScrollEnd}
+        contentContainerStyle={[
+          {
+            paddingTop:
+              headerHeight + tabBarHeight,
+            minHeight: windowHeight + (StatusBar.currentHeight || 0),
+          },
+          contentContainerStyle,
+        ]}
+        showsHorizontalScrollIndicator={false}
+        showsVerticalScrollIndicator={false}
+        testID={route.name}
+        {...otherProps}
+      >
+        {children}
+      </Animated.ScrollView>
+    </SafeAreaView>
   );
 };
 

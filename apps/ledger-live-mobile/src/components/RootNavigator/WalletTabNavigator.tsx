@@ -55,7 +55,7 @@ export default function WalletTabNavigator() {
 
   return (
     <WalletTabNavigatorScrollManager currentRouteName={currentRouteName}>
-      <SafeAreaView style={{flex: 1}} flex={1} bg={"background.main"}>
+      <Box style={{flex: 1}} flex={1} bg={"background.main"}>
         <WalletTab.Navigator
           initialRouteName={
             walletNftGalleryFeature?.enabled
@@ -114,7 +114,7 @@ export default function WalletTabNavigator() {
           )}
         </WalletTab.Navigator>
         <WalletTabHeader hidePortfolio={false} />
-      </SafeAreaView>
+      </Box>
     </WalletTabNavigatorScrollManager>
   );
 }

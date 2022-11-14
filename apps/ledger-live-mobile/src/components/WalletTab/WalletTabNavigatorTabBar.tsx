@@ -11,6 +11,8 @@ import { WalletTabNavigatorScrollContext } from "./WalletTabNavigatorScrollManag
 import WalletTabBackgroundGradient from "./WalletTabBackgroundGradient";
 import { readOnlyModeEnabledSelector } from "../../reducers/settings";
 import { accountsSelector } from "../../reducers/accounts";
+import * as Animatable from "react-native-animatable";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 const StyledTouchableOpacity = styled.TouchableOpacity`
   height: 32px;
@@ -96,6 +98,8 @@ function Tab({
 
 const MemoTab = memo(Tab);
 
+const AnimatedSafeArea = Animatable.createAnimatableComponent(SafeAreaView);
+
 function WalletTabNavigatorTabBar({
   state,
   descriptors,
@@ -132,15 +136,17 @@ function WalletTabNavigatorTabBar({
             : undefined
         }
       />
-      <Animated.View
+      <AnimatedSafeArea
         style={{
           top: 0,
-          // zIndex: 1,
+          zIndex: 1,
           position: "absolute",
           transform: [{ translateY: y }],
           width: "100%",
           height: tabBarHeight,
+          //backgroundColor: 'blue'
         }}
+        mode={'margin'}
       >
         <Animated.View
           style={{
@@ -171,7 +177,7 @@ function WalletTabNavigatorTabBar({
             })}
           </Flex>
         </Flex>
-      </Animated.View>
+      </AnimatedSafeArea>
     </>
   );
 }
