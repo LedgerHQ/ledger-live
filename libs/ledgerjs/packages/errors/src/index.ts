@@ -11,6 +11,7 @@ export { serializeError, deserializeError, createCustomErrorClass, addCustomErro
 export const AccountNameRequiredError = createCustomErrorClass("AccountNameRequired");
 export const AccountNotSupported = createCustomErrorClass("AccountNotSupported");
 export const AmountRequired = createCustomErrorClass("AmountRequired");
+export const InvalidMinimumAmount = createCustomErrorClass("InvalidMinimumAmount");
 export const BluetoothRequired = createCustomErrorClass("BluetoothRequired");
 export const BtcUnmatchedApp = createCustomErrorClass("BtcUnmatchedApp");
 export const CantOpenDevice = createCustomErrorClass("CantOpenDevice");
