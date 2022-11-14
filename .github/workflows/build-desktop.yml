@@ -37,7 +37,7 @@ jobs:
         id: affected
         with:
           package: "ledger-live-desktop"
-          head-ref: origin/${{ github.event.pull_request.base.ref || github.event.push.base.ref || 'HEAD^' }}
+          head-ref: ${{ github.event.pull_request.base.ref || github.event.push.base.ref || 'HEAD^' }}
 
   pr-is-fork:
     name: "Check if the PR is a fork"

@@ -31,7 +31,7 @@ jobs:
         id: affected
         with:
           package: "live-mobile"
-          head-ref: origin/${{ github.event.pull_request.base.ref || github.event.push.base.ref || 'HEAD^' }}
+          head-ref: ${{ github.event.pull_request.base.ref || github.event.push.base.ref || 'HEAD^' }}
 
   codecheck:
     name: "Ledger Live Mobile CodeCheck"
