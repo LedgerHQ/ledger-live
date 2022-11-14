@@ -10,12 +10,12 @@ type FamilyType = "casper";
 
 export type Transaction = TransactionCommon & {
   family: FamilyType;
-  deploy: DeployUtil.Deploy;
+  deploy: DeployUtil.Deploy | null;
 };
 
 export type TransactionRaw = TransactionCommonRaw & {
   family: FamilyType;
-  deploy: ReturnType<typeof DeployUtil.deployToJson>;
+  deploy: ReturnType<typeof DeployUtil.deployToJson> | null;
 };
 
 export type TransactionStatus = TransactionStatusCommon;

@@ -3640,8 +3640,8 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     type: "CryptoCurrency",
     explorerViews: [
       {
-        tx: "https://casperstats.io/tx/$hash",
-        address: "https://casperstats.io/address/$address",
+        tx: "https://cspr.live/deploy/$hash",
+        address: "https://cspr.live/account/$address",
       },
     ],
     units: [
