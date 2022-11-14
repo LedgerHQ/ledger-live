@@ -47,6 +47,11 @@ function getDeviceTransactionConfig({
     value: casperPubKeyToAccountHash(transaction.recipient),
   });
   fields.push({
+    type: "text",
+    label: "Recipient (Public Key)",
+    value: transaction.recipient,
+  });
+  fields.push({
     type: "casper.method",
     label: "Method",
     value: methodToString(0),

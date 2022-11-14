@@ -1,7 +1,7 @@
 import { CHECKSUM_HEX_LEN, SMALL_BYTES_COUNT } from "../../consts";
 
 import { Account, Address } from "@ledgerhq/types-live";
-import { CLPublicKeyTag } from "casper-js-sdk";
+import { CLPublicKey, CLPublicKeyTag } from "casper-js-sdk";
 import { blake2bFinal, blake2bInit, blake2bUpdate } from "blakejs";
 
 export const getAddress = (a: Account): Address =>
@@ -100,6 +100,10 @@ function decode(inputString: string): string {
 
 export function validateAddress(address: string): { isValid: boolean } {
   try {
+    new CLPublicKey(
+      Buffer.from(address.substring(2), "hex"),
+      getPubKeySignature(address)
+    );
     decode(address.substring(2));
     return { isValid: true };
   } catch (err) {

@@ -13,6 +13,8 @@ const signMessage: SignMessage = async (
   const casper = new Casper(transport);
 
   if (!message) throw new Error(`Message cannot be empty`);
+  if (typeof message !== "string")
+    throw new Error(`Signing EIP712Message not supported`);
 
   const r = await casper.sign(getPath(path), getBufferFromString(message));
   isError(r);

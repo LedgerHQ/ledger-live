@@ -20,6 +20,9 @@ export const AccountNotSupported = createCustomErrorClass(
   "AccountNotSupported"
 );
 export const AmountRequired = createCustomErrorClass("AmountRequired");
+export const InvalidMinimumAmount = createCustomErrorClass(
+  "InvalidMinimumAmount"
+);
 export const BluetoothRequired = createCustomErrorClass("BluetoothRequired");
 export const BtcUnmatchedApp = createCustomErrorClass("BtcUnmatchedApp");
 export const CantOpenDevice = createCustomErrorClass("CantOpenDevice");
@@ -116,9 +119,6 @@ export const ManagerUninstallBTCDep = createCustomErrorClass(
 export const NetworkDown = createCustomErrorClass("NetworkDown");
 export const NoAddressesFound = createCustomErrorClass("NoAddressesFound");
 export const NotEnoughBalance = createCustomErrorClass("NotEnoughBalance");
-export const InvalidAmountTransfer = createCustomErrorClass(
-  "InvalidAmountTransfer"
-);
 export const NotEnoughBalanceToDelegate = createCustomErrorClass(
   "NotEnoughBalanceToDelegate"
 );
