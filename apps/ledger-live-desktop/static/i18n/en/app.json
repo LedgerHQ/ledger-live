@@ -180,6 +180,8 @@
   "time": {
     "minute": "Minute",
     "minute_plural": "Minutes",
+    "minute_short": "min",
+    "second_short": "sec",
     "hour": "Hour",
     "hour_plural": "Hours",
     "range": {
@@ -1312,6 +1314,10 @@
       "sign": {
         "title": "Device"
       }
+    },
+    "eip712": {
+      "showFullMessage": "Show full message",
+      "hideFullMessage": "Hide full message"
     }
   },
   "walletconnect": {
@@ -2057,6 +2063,39 @@
         "tezos": {
           "text": "The amount received on a delegated account will be added to the total staked amount. Choose another account if you want to avoid this."
         }
+      },
+      "staking": {
+        "title": "Earn {{currencyName}}",
+        "link": "Learn more",
+        "notShow": "Do not show this again",
+        "footer": {
+          "dismiss": "Not now",
+          "stake": "Stake with {{provider}}"
+        },
+        "ethereum": {
+          "title": "Grow your ETH. Stake now.",
+          "description": "Stake your Ethereum with Lido and earn rewards daily. No lock-up period. No minimum deposit.",
+          "kiln": {
+            "title": "Don’t just HODL. Grow your ETH.",
+            "description": "Got more than 32 ETH? Earn passive rewards by securely staking your ETH with Kiln."
+          }
+        },
+        "cosmos": {
+          "title": "Grow your ATOM. Stake with Ledger validator.",
+          "description": "Stake your ATOM with the trusted Ledger validator. Your coins stay yours, backed by Ledger’s uncompromising security."
+        },
+        "osmo": {
+          "title": "Grow your OSMO. Stake with Ledger by Figment.",
+          "description": "Stake your OSMO with Ledger by Figment validator. It offers the lowest commission fee and a guarantee against slashing!"
+        },
+        "solana": {
+          "title": "Grow your SOL. Stake with Ledger by Figment.",
+          "description": "Stake your SOL with Ledger by Figment validator. Your coins stay yours, backed by Ledger’s uncompromising security."
+        },
+        "celo": {
+          "title": "Grow your CELO. Stake with Ledger by Figment.",
+          "description": "Stake your CELO with Ledger by Figment validator. It guarantees complete cover against slashing, backed by Ledger’s uncompromising security."
+        }
       }
     }
   },
@@ -2072,7 +2111,7 @@
       "amount": {
         "title": "Amount",
         "banner": "Maximum spendable amount is",
-        "fees": "Fees",
+        "fees": "Max estimated fee",
         "standard": "Standard",
         "advanced": "Advanced",
         "nftQuantity": "Quantity"
@@ -2095,8 +2134,13 @@
         "useMax": "Send Max",
         "rippleTag": "Tag",
         "rippleTagPlaceholder": "Optional",
+        "edit": "Edit",
         "ethereumGasLimit": "Gas limit",
         "ethereumGasPrice": "Gas price",
+        "ethereumMaxFee": "Max Fee ({{unitName}})",
+        "ethereumPriorityFee": "Max Priority Fee ({{unitName}})",
+        "nextBlock": "Next block: {{nextBaseFee}}",
+        "suggestedPriorityFee": "Suggested: {{lowPriorityFee}} - {{highPriorityFee}} {{unitName}}",
         "unitPerByte": "{{unit}} per byte",
         "nft": "NFT",
         "nftQuantity": "Quantity"
@@ -3609,6 +3653,14 @@
         "testPostonboarding": {
           "title": "Test Post Onboarding",
           "description": "Test all post onboarding features"
+        },
+        "1559DeactivateGate" : {
+          "title": "Deactivate EIP1559 minimum priority fee gate",
+          "description": "This will allow a transaction to be sent without any minimum priority fee expected. This may result in a transaction getting stuck in the mempool forever."
+        },
+        "1559CustomPriorityLowerGate" : {
+          "title": "Custom priority fee gate",
+          "description": "Customize the percentage of our estimated minimal priority fee allowed for an advanced EIP1559 transaction"
         }
       }
     },
@@ -4951,6 +5003,18 @@
     "GasLessThanEstimate": {
       "title": "This may be too low. Please increase"
     },
+    "PriorityFeeTooLow": {
+      "title": "Priority fee is lower than the recommended value"
+    },
+    "PriorityFeeTooHigh": {
+      "title": "Priority fee is higher than necessary. You might be overpaying"
+    },
+    "MaxFeeTooLow": {
+      "title": "Max fee is lower than the recommended value"
+    },
+    "PriorityFeeHigherThanMaxFee": {
+      "title": "Max priority fee cannot be higher than max fee"
+    },
     "UnknownMCU": {
       "title": "Unknown MCU version",
       "description": "Please contact Ledger Support"
@@ -5303,6 +5367,12 @@
         "doThisLater": "Maybe later",
         "timeDisclaimer": "This can take up to 30 seconds"
       }
+    },
+    "postOnboarding": {
+      "title": "Personalize my device",
+      "description": "By customizing the screen",
+      "actionCompletedPopupLabel": "Device personalized",
+      "actionCompletedHubTitle": "That screen is looking neat."
     },
     "customImageSet": "Custom image set",
     "finishCTA": "Finish"

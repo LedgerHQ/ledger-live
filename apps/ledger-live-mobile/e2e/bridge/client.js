@@ -1,7 +1,7 @@
 // @flow
 import { Platform } from "react-native";
 import invariant from "invariant";
-import { Subject } from "rxjs/Subject";
+import { Subject } from "rxjs";
 import type { AccountRaw } from "@ledgerhq/types-live";
 import { store } from "../../src/context/LedgerStore";
 import { importSettings } from "../../src/actions/settings";

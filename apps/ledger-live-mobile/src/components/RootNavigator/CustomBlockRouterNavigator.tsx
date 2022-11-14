@@ -3,18 +3,19 @@ import { StackNavigationProp } from "@react-navigation/stack";
 import { useEffect, useState } from "react";
 import { BehaviorSubject } from "rxjs";
 
-export type BehaviorSubjectType =
-  | ((props: {
-      type: string;
-      payload?: object;
-      source?: string;
-      target?: string;
-    }) => void)
+export type BehaviorSubjectType<T = unknown> =
+  | ((..._: T[]) => void)
   | undefined;
 
 export const lockSubject = new BehaviorSubject<boolean>(false);
-export const exposedManagerNavLockCallback =
-  new BehaviorSubject<BehaviorSubjectType>(undefined);
+export const exposedManagerNavLockCallback = new BehaviorSubject<
+  BehaviorSubjectType<{
+    type: string;
+    payload?: object;
+    source?: string;
+    target?: string;
+  }>
+>(undefined);
 
 export function useManagerNavLockCallback() {
   const [callback, setCallback] = useState<BehaviorSubjectType>();

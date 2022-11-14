@@ -369,6 +369,10 @@ export type SettingsSetFirstConnectionHasDevicePayload = Pick<
   SettingsState,
   "firstConnectionHasDevice"
 >;
+export type SettingsSetFirstConnectHasDeviceUpdatedPayload = Pick<
+  SettingsState,
+  "firstConnectHasDeviceUpdated"
+>;
 export type SettingsSetNotificationsPayload = {
   notifications: Partial<SettingsState["notifications"]>;
 };
@@ -414,7 +418,7 @@ export type SettingsPayload =
   | SettingsSetMarketCounterCurrencyPayload
   | SettingsSetMarketFilterByStarredAccountsPayload
   | SettingsSetSensitiveAnalyticsPayload
-  | SettingsSetFirstConnectionHasDevicePayload
+  | SettingsSetFirstConnectHasDeviceUpdatedPayload
   | SettingsSetNotificationsPayload
   | SettingsDangerouslyOverrideStatePayload;
 

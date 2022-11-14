@@ -51,7 +51,7 @@ export const toTransactionCommonRaw = (
 };
 
 const fromErrorRaw = (raw: string): Error => {
-  return deserializeError(JSON.parse(raw));
+  return deserializeError(JSON.parse(raw)) || new Error("unknown reason");
 };
 
 const toErrorRaw = (raw: Error): string =>

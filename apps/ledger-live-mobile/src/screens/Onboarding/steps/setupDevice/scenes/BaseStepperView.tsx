@@ -127,7 +127,7 @@ export function BaseStepperView({
   onNext: () => void;
   steps: Step[];
   metadata: Metadata[];
-  deviceModelId: DeviceModelId;
+  deviceModelId?: DeviceModelId;
   params?: object;
 }) {
   const [index, setIndex] = React.useState(0);

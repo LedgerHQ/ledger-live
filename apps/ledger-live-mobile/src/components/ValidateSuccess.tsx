@@ -76,6 +76,7 @@ function ValidateSuccess({
             <Button
               event="SendSuccessViewDetails"
               type="main"
+              outline={false}
               onPress={onViewDetails}
               mt={7}
             >
@@ -87,6 +88,7 @@ function ValidateSuccess({
             <Button
               event="SendSuccessClose"
               type={undefined}
+              outline={false}
               onPress={onClose}
               mt={7}
             >

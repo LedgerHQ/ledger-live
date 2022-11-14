@@ -10,7 +10,7 @@ import {
   convertERC20,
   ERC20Token,
 } from "@ledgerhq/cryptoassets";
-import { inferTokenAccount, validateRecipient } from "../transaction";
+import { inferTokenAccount } from "../transaction";
 import {
   getAccountCurrency,
   getAccountUnit,
@@ -63,7 +63,6 @@ const erc20approve: ModeModule = {
     const subAccount = inferTokenAccount(a, t);
     const { status, enabledAmount } =
       (subAccount && getAccountCapabilities(subAccount)) || {};
-    validateRecipient(a.currency, t.recipient, result);
 
     if (!t.useAllAmount) {
       if (t.amount.eq(0)) {

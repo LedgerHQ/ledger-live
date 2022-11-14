@@ -89,6 +89,7 @@ const Allocations = () => {
               size={94}
               strokeWidth={5}
               data={distributionListFormatted}
+              colors={colors}
             />
           </Flex>
           <Flex flex={1} ml={8} flexDirection="row" mt={3}>
