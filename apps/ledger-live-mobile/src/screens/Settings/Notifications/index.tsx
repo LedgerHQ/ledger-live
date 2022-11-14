@@ -13,12 +13,12 @@ import {
 } from "@ledgerhq/native-ui";
 import SettingsNavigationScrollView from "../SettingsNavigationScrollView";
 import SettingsRow from "../../../components/SettingsRow";
-import Track from "../../../analytics/Track";
-import { track, TrackScreen } from "../../../analytics";
+import { track, TrackScreen, updateIdentify } from "../../../analytics";
 import { notificationsSelector } from "../../../reducers/settings";
 import { setNotifications } from "../../../actions/settings";
-import { State } from "../../../reducers";
+import type { State } from "../../../reducers/types";
 import useNotifications from "../../../logic/notifications";
+import { updateUserPreferences } from "../../../notifications/braze";
 
 type NotificationRowProps = {
   disabled?: boolean;
@@ -62,14 +62,6 @@ function NotificationSettingsRow({
       desc={t(`settings.notifications.${notificationKey}.desc`)}
       label={label}
     >
-      <Track
-        event={
-          notifications[notificationKey]
-            ? `Enable${capitalizedKey}Notifications`
-            : `Disable${capitalizedKey}Notifications`
-        }
-        onUpdate
-      />
       <Switch
         checked={notifications[notificationKey]}
         disabled={disabled}
@@ -82,15 +74,28 @@ function NotificationSettingsRow({
 function NotificationsSettings() {
   const { t } = useTranslation();
   const notifications = useSelector(notificationsSelector);
-  const { getIsNotifEnabled, handlePushNotificationsPermission } =
-    useNotifications();
-  const [isNotifPermissionEnabled, setIsNotifPermissionEnabled] = useState();
+  const {
+    getIsNotifEnabled,
+    handlePushNotificationsPermission,
+    pushNotificationsOldRoute,
+  } = useNotifications();
+  const [isNotifPermissionEnabled, setIsNotifPermissionEnabled] = useState<
+    boolean | undefined
+  >();
 
   const refreshNotifPermission = useCallback(() => {
     getIsNotifEnabled().then(isNotifPermissionEnabled => {
       setIsNotifPermissionEnabled(isNotifPermissionEnabled);
     });
   }, [getIsNotifEnabled, setIsNotifPermissionEnabled]);
+
+  const allowPushNotifications = useCallback(() => {
+    track("button_clicked", {
+      button: "Go to system settings",
+      screen: pushNotificationsOldRoute,
+    });
+    handlePushNotificationsPermission();
+  }, [pushNotificationsOldRoute, handlePushNotificationsPermission]);
 
   useEffect(() => {
     const interval = setInterval(refreshNotifPermission, 500);
@@ -99,6 +104,13 @@ function NotificationsSettings() {
       clearInterval(interval);
     };
   }, [refreshNotifPermission]);
+
+  // Refresh user properties and send them to Segment when notifications preferences are updated
+  // Also send user notifications preferences to Braze when updated
+  useEffect(() => {
+    updateIdentify();
+    updateUserPreferences(notifications);
+  }, [notifications]);
 
   const disableSubSettings = !notifications.allowed;
 
@@ -144,7 +156,7 @@ function NotificationsSettings() {
               <Button
                 type={"main"}
                 mt={6}
-                onPress={handlePushNotificationsPermission}
+                onPress={allowPushNotifications}
                 Icon={platformData.ctaIcon}
                 iconPosition={"left"}
               >
@@ -160,26 +172,28 @@ function NotificationsSettings() {
               disabled={!isNotifPermissionEnabled}
             />
           </Box>
-          <Box opacity={notifications.allowed ? 1 : 0.2}>
+          <Box
+            opacity={
+              isNotifPermissionEnabled && notifications.allowed ? 1 : 0.2
+            }
+          >
             <NotificationSettingsRow
-              notificationKey={"announcement"}
-              disabled={disableSubSettings}
-            />
-            {/* <NotificationSettingsRow
-              notificationKey={"transactions"}
-              label={t(`common.comingSoon`)}
-              disabled={disableSubSettings}
-            />
-            <NotificationSettingsRow
-              notificationKey={"market"}
-              label={t(`common.comingSoon`)}
+              notificationKey={"announcements"}
               disabled={disableSubSettings}
             />
             <NotificationSettingsRow
-              notificationKey={"price"}
-              label={t(`common.comingSoon`)}
+              notificationKey={"recommendations"}
               disabled={disableSubSettings}
-            /> */}
+            />
+          </Box>
+          <Box m={6}>
+            <Text
+              color={notifications.allowed ? "neutral.c40" : "neutral.c70"}
+              variant={"bodyLineHeight"}
+              textAlign="center"
+            >
+              {t("settings.notifications.disclaimer")}
+            </Text>
           </Box>
         </Box>
       )}

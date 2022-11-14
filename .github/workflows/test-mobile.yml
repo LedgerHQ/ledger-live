@@ -15,8 +15,28 @@ concurrency:
   cancel-in-progress: ${{ github.ref_name != 'develop' }}
 
 jobs:
+  is-affected:
+    outputs:
+      is-mobile-affected: ${{ steps.affected.outputs.is-package-affected }}
+    runs-on: [ubuntu-latest]
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          ref: develop
+          fetch-depth: 0
+      - name: checkout branch
+        run: |
+          git checkout ${{ github.event.pull_request.head.ref || github.event.push.base.ref }}
+      - uses: ./tools/actions/turbo-affected
+        id: affected
+        with:
+          package: "live-mobile"
+          head-ref: ${{ github.event.pull_request.base.ref || github.event.push.base.ref || 'HEAD^' }}
+
   codecheck:
     name: "Ledger Live Mobile CodeCheck"
+    needs: is-affected
+    if: ${{ needs.is-affected.outputs.is-mobile-affected == 'true' }}
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
       FORCE_COLOR: 3
@@ -35,11 +55,15 @@ jobs:
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: 2.7
-      - name: Bump npm to latest
-        run: npm i -g npm@8.12.2
+      - name: TurboRepo local caching server
+        id: turborepo-cache-server
+        uses: ./tools/actions/turborepo-gh-cache
+        with:
+          server-token: "yolo"
+          cleanup-cache-folder: "true"
       - name: Install dependencies
         run: pnpm i --filter="live-mobile..." --filter="ledger-live" --no-frozen-lockfile --unsafe-perm
       - name: Run linter
         run: pnpm lint --filter="live-mobile" --api="http://127.0.0.1:${{ steps.turborepo-cache-server.outputs.port }}" --token="yolo" --team="foo"
-      # - name: Run code checkers
-      #   run: pnpm typecheck --filter="live-mobile" --api="http://127.0.0.1:${{ steps.turborepo-cache-server.outputs.port }}" --token="yolo" --team="foo"
+      - name: Run code checkers
+        run: pnpm typecheck --filter="live-mobile" --api="http://127.0.0.1:${{ steps.turborepo-cache-server.outputs.port }}" --token="yolo" --team="foo"

@@ -1,9 +1,9 @@
 import React, { memo, useRef, useEffect, useMemo, ReactElement } from "react";
-import { Animated } from "react-native";
+import { Animated, StyleProp, ViewStyle } from "react-native";
 import { useTheme } from "@react-navigation/native";
 
 type Props = {
-  style?: any;
+  style?: StyleProp<ViewStyle>;
   loading: boolean;
   children?: ReactElement;
   animated?: boolean;
@@ -38,6 +38,7 @@ const Skeleton: React.FC<Props> = ({
         ]),
       ).start();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const animatedStyle = useMemo(

@@ -1,16 +1,16 @@
 import React, { memo } from "react";
 import { Linking } from "react-native";
 import { Trans } from "react-i18next";
-import { Account } from "@ledgerhq/types-live";
+import { AccountLike } from "@ledgerhq/types-live";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/helpers";
 import { Flex } from "@ledgerhq/native-ui";
 import ExternalLink from "../../icons/ExternalLink";
 import Button from "../../components/wrappedUi/Button";
 
 type Props = {
-  url?: string;
-  urlWhatIsThis?: string;
-  account: Account;
+  url?: string | null;
+  urlWhatIsThis?: string | null;
+  account: AccountLike;
 };
 
 function Footer({ url, urlWhatIsThis, account }: Props) {

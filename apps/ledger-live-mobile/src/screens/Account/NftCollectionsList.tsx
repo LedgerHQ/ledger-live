@@ -1,4 +1,3 @@
-/* eslint-disable jsx-a11y/anchor-is-valid */
 import React, { useCallback, useMemo, useState } from "react";
 
 import { useSelector } from "react-redux";
@@ -9,7 +8,10 @@ import useEnv from "@ledgerhq/live-common/hooks/useEnv";
 import { nftsByCollections } from "@ledgerhq/live-common/nft/index";
 import { useNavigation, useTheme } from "@react-navigation/native";
 import { Account, ProtoNFT } from "@ledgerhq/types-live";
-import { DroprightMedium, PlusMedium } from "@ledgerhq/native-ui/assets/icons";
+import {
+  ChevronRightMedium,
+  PlusMedium,
+} from "@ledgerhq/native-ui/assets/icons";
 import NftCollectionOptionsMenu from "../../components/Nft/NftCollectionOptionsMenu";
 import { hiddenNftCollectionsSelector } from "../../reducers/settings";
 import NftCollectionRow from "../../components/Nft/NftCollectionRow";
@@ -123,7 +125,7 @@ export default function NftCollectionsList({ account }: Props) {
           size={"small"}
           outline
           onPress={navigateToGallery}
-          Icon={DroprightMedium}
+          Icon={ChevronRightMedium}
           mt={3}
         >
           <Trans i18nKey="nft.account.seeAllNfts" />
@@ -163,7 +165,6 @@ export default function NftCollectionsList({ account }: Props) {
     [
       account.currency.family,
       colors.fog,
-      colors.live,
       data.length,
       navigateToGallery,
       navigateToReceiveConnectDevice,

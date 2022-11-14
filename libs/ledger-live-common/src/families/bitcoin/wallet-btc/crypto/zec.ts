@@ -16,17 +16,11 @@ class ZCash extends Base {
     this.network.usesTimestampedTransaction = false;
   }
 
-  // eslint-disable-next-line
-  baddrToTaddr(baddrStr: string) {
-    const baddr = bs58check.decode(baddrStr).slice(1);
-    const taddr = new Uint8Array(22);
-    taddr.set(baddr, 2);
-    taddr.set([0x1c, 0xb8], 0);
-    return bs58check.encode(Buffer.from(taddr));
-  }
-
-  // eslint-disable-next-line
-  async getLegacyAddress(xpub: string, account: number, index: number): Promise<string> {
+  async getLegacyAddress(
+    xpub: string,
+    account: number,
+    index: number
+  ): Promise<string> {
     const pk = bjs.crypto.hash160(await this.getPubkeyAt(xpub, account, index));
     const payload = Buffer.allocUnsafe(22);
     payload.writeUInt16BE(this.network.pubKeyHash, 0);
@@ -63,7 +57,6 @@ class ZCash extends Base {
     throw new InvalidAddress();
   }
 
-  // eslint-disable-next-line class-methods-use-this
   validateAddress(address: string): boolean {
     try {
       const version = Number(

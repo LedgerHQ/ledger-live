@@ -2,7 +2,7 @@ import React, { memo } from "react";
 import { ProgressLoader, Text } from "@ledgerhq/native-ui";
 
 type Props = {
-  progress?: number;
+  progress?: number | null;
 };
 
 function DeviceActionProgress({ progress }: Props) {

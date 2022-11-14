@@ -1,5 +1,49 @@
 # @ledgerhq/native-ui
 
+## 0.12.0
+
+### Minor Changes
+
+- [#330](https://github.com/LedgerHQ/ledger-live/pull/330) [`f7a8df09f8`](https://github.com/LedgerHQ/ledger-live/commit/f7a8df09f8115da779b7082384d5db0823317d53) Thanks [@alexandremgo](https://github.com/alexandremgo)! - Add a vertical timeline component to Native UI
+
+### Patch Changes
+
+- [#330](https://github.com/LedgerHQ/ledger-live/pull/330) [`f7a8df09f8`](https://github.com/LedgerHQ/ledger-live/commit/f7a8df09f8115da779b7082384d5db0823317d53) Thanks [@alexandremgo](https://github.com/alexandremgo)! - Feat: Sync onboarding software checks UI
+
+  - handling unlock device during genuine check
+
+## 0.12.0-next.0
+
+### Minor Changes
+
+- [#330](https://github.com/LedgerHQ/ledger-live/pull/330) [`f7a8df09f8`](https://github.com/LedgerHQ/ledger-live/commit/f7a8df09f8115da779b7082384d5db0823317d53) Thanks [@alexandremgo](https://github.com/alexandremgo)! - Add a vertical timeline component to Native UI
+
+### Patch Changes
+
+- [#330](https://github.com/LedgerHQ/ledger-live/pull/330) [`f7a8df09f8`](https://github.com/LedgerHQ/ledger-live/commit/f7a8df09f8115da779b7082384d5db0823317d53) Thanks [@alexandremgo](https://github.com/alexandremgo)! - Feat: Sync onboarding software checks UI
+
+  - handling unlock device during genuine check
+
+## 0.11.0
+
+### Minor Changes
+
+- [#1457](https://github.com/LedgerHQ/ledger-live/pull/1457) [`4ec8df33ea`](https://github.com/LedgerHQ/ledger-live/commit/4ec8df33ea223c412cb81892bf0380d456e19b54) Thanks [@thomasrogerlux](https://github.com/thomasrogerlux)! - Add a new vertical timeline component
+
+### Patch Changes
+
+- [#1480](https://github.com/LedgerHQ/ledger-live/pull/1480) [`22725d35e5`](https://github.com/LedgerHQ/ledger-live/commit/22725d35e59c79759e7cdd295ac5b7ebbb774ee2) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - VerticalTimeline: add dynamic height capability (with animation)
+
+## 0.11.0-next.0
+
+### Minor Changes
+
+- [#1457](https://github.com/LedgerHQ/ledger-live/pull/1457) [`4ec8df33ea`](https://github.com/LedgerHQ/ledger-live/commit/4ec8df33ea223c412cb81892bf0380d456e19b54) Thanks [@thomasrogerlux](https://github.com/thomasrogerlux)! - Add a new vertical timeline component
+
+### Patch Changes
+
+- [#1480](https://github.com/LedgerHQ/ledger-live/pull/1480) [`22725d35e5`](https://github.com/LedgerHQ/ledger-live/commit/22725d35e59c79759e7cdd295ac5b7ebbb774ee2) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - VerticalTimeline: add dynamic height capability (with animation)
+
 ## 0.10.0
 
 ### Minor Changes

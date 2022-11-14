@@ -2,7 +2,9 @@ import React, { Component } from "react";
 import { Trans } from "react-i18next";
 import Button from "./Button";
 
-class CancelButton extends Component<any> {
+type Props = Omit<React.ComponentProps<typeof Button>, "type" | "title">;
+
+class CancelButton extends Component<Props> {
   render() {
     return (
       <Button

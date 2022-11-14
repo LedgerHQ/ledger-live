@@ -1,4 +1,4 @@
 export const targetDimensions = {
-  width: 1080,
-  height: 1400,
+  width: 400,
+  height: 672,
 };

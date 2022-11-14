@@ -23,7 +23,7 @@ const stepValueTransformDefault = (s) => s.trim();
 export function pickSiblings(siblings: Account[], maxAccount = 5): Account {
   const withoutEmpties = siblings.filter((a) => a.used);
 
-  if (siblings.length > maxAccount) {
+  if (withoutEmpties.length >= maxAccount) {
     // we are no longer creating accounts
     const maybeAccount = sample(withoutEmpties);
     if (!maybeAccount) {

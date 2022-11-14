@@ -1,7 +1,5 @@
 import React, { useCallback } from "react";
 import { View, StyleSheet, Linking } from "react-native";
-import type { Operation } from "@ledgerhq/types-live";
-import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { Trans } from "react-i18next";
 import { useTheme } from "@react-navigation/native";
 import { TrackScreen } from "../../../analytics";
@@ -9,24 +7,26 @@ import PreventNativeBack from "../../../components/PreventNativeBack";
 import ValidateSuccess from "../../../components/ValidateSuccess";
 import UpdateIcon from "../../../icons/Update";
 import { urls } from "../../../config/urls";
+import {
+  StackNavigatorProps,
+  StackNavigatorNavigation,
+} from "../../../components/RootNavigator/types/helpers";
+import { LendingEnableFlowParamsList } from "../../../components/RootNavigator/types/LendingEnableFlowNavigator";
+import { ScreenName } from "../../../const";
+import { BaseNavigatorStackParamList } from "../../../components/RootNavigator/types/BaseNavigator";
 
-type Props = {
-  navigation: any;
-  route: {
-    params: RouteParams;
-  };
-};
-type RouteParams = {
-  accountId: string;
-  deviceId: string;
-  transaction: any;
-  result: Operation;
-  currency: TokenCurrency;
-};
+type Props = StackNavigatorProps<
+  LendingEnableFlowParamsList,
+  ScreenName.LendingEnableValidationSuccess
+>;
+
 export default function ValidationSuccess({ navigation, route }: Props) {
   const { colors } = useTheme();
   const onClose = useCallback(() => {
-    const n = navigation.getParent() || navigation;
+    const n =
+      navigation.getParent<
+        StackNavigatorNavigation<BaseNavigatorStackParamList>
+      >() || navigation;
     n.pop();
   }, [navigation]);
   const { currency } = route.params;

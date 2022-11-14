@@ -1,12 +1,5 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
-import {
-  Divider,
-  Flex,
-  Icons,
-  Log,
-  Notification,
-  Text,
-} from "@ledgerhq/native-ui";
+import React, { useCallback, useEffect, useRef } from "react";
+import { Divider, Flex, Icons, Log, Text } from "@ledgerhq/native-ui";
 import { useTranslation } from "react-i18next";
 import { ScrollView, StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -26,19 +19,20 @@ import Animated, {
   withDelay,
   withTiming,
 } from "react-native-reanimated";
-import {
-  StackNavigationEventMap,
-  StackScreenProps,
-} from "@react-navigation/stack";
+import { StackNavigationEventMap } from "@react-navigation/stack";
 import {
   useAllPostOnboardingActionsCompleted,
   usePostOnboardingHubState,
 } from "@ledgerhq/live-common/postOnboarding/hooks/index";
 import { clearPostOnboardingLastActionCompleted } from "@ledgerhq/live-common/postOnboarding/actions";
 import { useDispatch } from "react-redux";
-import { Fade } from "@ledgerhq/native-ui/components/transitions";
 import PostOnboardingActionRow from "../../components/PostOnboarding/PostOnboardingActionRow";
-import { NavigatorName } from "../../const";
+import { NavigatorName, ScreenName } from "../../const";
+import {
+  BaseComposite,
+  StackNavigatorProps,
+} from "../../components/RootNavigator/types/helpers";
+import { PostOnboardingNavigatorParamList } from "../../components/RootNavigator/types/PostOnboardingNavigator";
 
 const SafeContainer = styled(SafeAreaView).attrs({
   edges: ["left", "bottom", "right"],
@@ -48,17 +42,18 @@ const SafeContainer = styled(SafeAreaView).attrs({
 
 const AnimatedFlex = Animated.createAnimatedComponent(Flex);
 
-type Props = Record<string, never>;
+type NavigationProps = BaseComposite<
+  StackNavigatorProps<
+    PostOnboardingNavigatorParamList,
+    ScreenName.PostOnboardingHub
+  >
+>;
 
-const PostOnboardingHub: React.FC<StackScreenProps<Props>> = ({
-  navigation,
-}) => {
+const PostOnboardingHub = ({ navigation }: NavigationProps) => {
   const dispatch = useDispatch();
   const { t } = useTranslation();
   const { lastActionCompleted, actionsState } = usePostOnboardingHubState();
-  const [popupOpened, setPopupOpened] = useState(true);
-  const { actionCompletedHubTitle, actionCompletedPopupLabel } =
-    lastActionCompleted ?? {};
+  const { actionCompletedHubTitle } = lastActionCompleted || {};
 
   const clearLastActionCompleted = useCallback(() => {
     dispatch(clearPostOnboardingLastActionCompleted());
@@ -74,15 +69,6 @@ const PostOnboardingHub: React.FC<StackScreenProps<Props>> = ({
     [clearLastActionCompleted],
   );
 
-  useEffect(() => {
-    /**
-     * Necessary because this component doesn't necessarily unmount when
-     * navigating to another screen, so we need to open the popup again in case
-     * the user closed it and then completed a new action.
-     */
-    setPopupOpened(true);
-  }, [actionCompletedPopupLabel]);
-
   const allowClosingScreen = useRef<boolean>(true);
 
   const navigateToMainScreen = useCallback(() => {
@@ -91,10 +77,6 @@ const PostOnboardingHub: React.FC<StackScreenProps<Props>> = ({
       screen: NavigatorName.Main,
     });
   }, [navigation]);
-
-  const handleClosePopup = useCallback(() => {
-    setPopupOpened(false);
-  }, [setPopupOpened]);
 
   /**
    * At 0: regular screen
@@ -136,7 +118,8 @@ const PostOnboardingHub: React.FC<StackScreenProps<Props>> = ({
     navigation.getParent()?.setOptions({ gestureEnabled: false });
     allowClosingScreen.current = false;
     const beforeRemoveCallback: EventListenerCallback<
-      StackNavigationEventMap & EventMapCore<StackNavigationState<Props>>,
+      StackNavigationEventMap &
+        EventMapCore<StackNavigationState<NavigationProps>>,
       "beforeRemove"
     > = e => {
       if (!allowClosingScreen.current) e.preventDefault();
@@ -198,22 +181,6 @@ const PostOnboardingHub: React.FC<StackScreenProps<Props>> = ({
             </React.Fragment>
           ))}
         </ScrollView>
-        {!!actionCompletedPopupLabel && popupOpened && (
-          <Fade
-            key={actionCompletedPopupLabel}
-            status="exiting"
-            duration={300}
-            delay={5000}
-          >
-            <Notification
-              Icon={Icons.CircledCheckSolidMedium}
-              iconColor="success.c50"
-              variant="plain"
-              title={t(actionCompletedPopupLabel)}
-              onClose={handleClosePopup}
-            />
-          </Fade>
-        )}
         <Flex mt={8}>
           {allDone ? null : (
             <Text

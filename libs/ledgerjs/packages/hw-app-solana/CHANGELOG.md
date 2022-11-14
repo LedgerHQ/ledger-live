@@ -1,5 +1,17 @@
 # @ledgerhq/hw-app-solana
 
+## 7.0.0
+
+### Major Changes
+
+- [#1433](https://github.com/LedgerHQ/ledger-live/pull/1433) [`1b43ce613f`](https://github.com/LedgerHQ/ledger-live/commit/1b43ce613f599cef9f69e40e7e3cfa8c1033c786) Thanks [@askibin](https://github.com/askibin)! - Add signOffchainMessage
+
+## 7.0.0-next.0
+
+### Major Changes
+
+- [#1433](https://github.com/LedgerHQ/ledger-live/pull/1433) [`1b43ce613f`](https://github.com/LedgerHQ/ledger-live/commit/1b43ce613f599cef9f69e40e7e3cfa8c1033c786) Thanks [@askibin](https://github.com/askibin)! - Add signOffchainMessage
+
 ## 6.28.0
 
 ### Major Changes

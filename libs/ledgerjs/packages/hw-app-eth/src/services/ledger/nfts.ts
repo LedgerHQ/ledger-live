@@ -1,6 +1,7 @@
 import axios from "axios";
 import { getLoadConfig } from "./loadConfig";
 import type { LoadConfig } from "../types";
+import { log } from "@ledgerhq/logs";
 
 type NftInfo = {
   contractAddress: string;
@@ -11,12 +12,6 @@ type NftInfo = {
 type BackendResponse = {
   payload: string;
 };
-
-function axiosErrorHandling(e) {
-  if (!e || !e.status) throw e;
-  if (e.status === 404) return null;
-  throw e;
-}
 
 export const getNFTInfo = async (
   contractAddress: string,
@@ -29,7 +24,10 @@ export const getNFTInfo = async (
   const response = await axios
     .get<BackendResponse>(url)
     .then((r) => r.data)
-    .catch(axiosErrorHandling);
+    .catch((e) => {
+      log("error", "could not fetch from " + url + ": " + String(e));
+      return null;
+    });
   if (!response) return;
 
   // APDU response specification: https://ledgerhq.atlassian.net/wiki/spaces/WALLETCO/pages/3269984297/NFT-1+NFT+Backend+design#NFT-Metadata-BLOB
@@ -64,7 +62,10 @@ export const loadNftPlugin = async (
   const response = await axios
     .get<BackendResponse>(url)
     .then((r) => r.data)
-    .catch(axiosErrorHandling);
+    .catch((e) => {
+      log("error", "could not fetch from " + url + ": " + String(e));
+      return null;
+    });
   if (!response) return;
 
   const payload = response["payload"];

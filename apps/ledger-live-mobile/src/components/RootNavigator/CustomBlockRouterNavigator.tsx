@@ -1,11 +1,24 @@
+import { ParamListBase } from "@react-navigation/native";
+import { StackNavigationProp } from "@react-navigation/stack";
 import { useEffect, useState } from "react";
 import { BehaviorSubject } from "rxjs";
 
-export const lockSubject = new BehaviorSubject<boolean>(false);
-export const exposedManagerNavLockCallback = new BehaviorSubject();
+export type BehaviorSubjectType<T = unknown> =
+  | ((..._: T[]) => void)
+  | undefined;
 
-export function useManagerNavLockCallback(): any {
-  const [callback, setCallback] = useState(null);
+export const lockSubject = new BehaviorSubject<boolean>(false);
+export const exposedManagerNavLockCallback = new BehaviorSubject<
+  BehaviorSubjectType<{
+    type: string;
+    payload?: object;
+    source?: string;
+    target?: string;
+  }>
+>(undefined);
+
+export function useManagerNavLockCallback() {
+  const [callback, setCallback] = useState<BehaviorSubjectType>();
 
   useEffect(() => {
     const subscription = exposedManagerNavLockCallback.subscribe(cb => {
@@ -39,14 +52,20 @@ export function useIsNavLocked(): boolean {
 /** use Effect to trigger lock navigation updates and callback to retrieve catched navigation actions */
 export const useLockNavigation = (
   when: boolean,
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
-  callback: (..._: any[]) => void = () => {},
-  navigation: any,
+  callback: (action: {
+    type: string;
+    payload?: object;
+    source?: string;
+    target?: string;
+  }) => void = () => {
+    /* ignore */
+  },
+  navigation: StackNavigationProp<ParamListBase>,
 ) => {
   useEffect(() => {
     exposedManagerNavLockCallback.next(when ? callback : undefined);
     lockSubject.next(when);
-    navigation.addListener("beforeRemove", (e: any) => {
+    const listener = navigation.addListener("beforeRemove", e => {
       if (!when) {
         // If we don't have unsaved changes, then we don't need to do anything
         return;
@@ -61,7 +80,7 @@ export const useLockNavigation = (
     return () => {
       lockSubject.next(false);
       exposedManagerNavLockCallback.next(undefined);
-      navigation.removeListener("beforeRemove");
+      navigation.removeListener("beforeRemove", listener);
     };
   }, [callback, navigation, when]);
 };

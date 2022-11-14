@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { View, StyleSheet } from "react-native";
-import SafeAreaView from "react-native-safe-area-view";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { useTheme } from "@react-navigation/native";
 import type {
   CryptoCurrency,
@@ -8,31 +8,27 @@ import type {
 } from "@ledgerhq/types-cryptoassets";
 import { currenciesByMarketcap } from "@ledgerhq/live-common/currencies/index";
 import { useRampCatalog } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/index";
+import type { RampCatalogEntry } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/types";
 import extraStatusBarPadding from "../../logic/extraStatusBarPadding";
 import TrackScreen from "../../analytics/TrackScreen";
 import BigSpinner from "../../icons/BigSpinner";
 import { useRampCatalogCurrencies } from "./hooks";
 import SelectAccountCurrency from "./SelectAccountCurrency";
+import { StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
+import { ExchangeNavigatorParamList } from "../../components/RootNavigator/types/ExchangeNavigator";
+import { ScreenName } from "../../const";
 
-const forceInset = {
-  bottom: "always",
-};
-type Props = {
-  navigation: any;
-  route: {
-    params: {
-      defaultAccountId?: string;
-      defaultCurrencyId?: string;
-      defaultTicker?: string;
-    };
-  };
-};
+type Props = StackNavigatorProps<
+  ExchangeNavigatorParamList,
+  ScreenName.ExchangeSell
+>;
+
 type State = {
   sortedCurrencies: Array<TokenCurrency | CryptoCurrency>;
   isLoading: boolean;
 };
 // To avoid recreating a ref on each render and triggering hooks
-const emptyArray = [];
+const emptyArray: RampCatalogEntry[] = [];
 export default function OffRamp({ route }: Props) {
   const [currencyState, setCurrencyState] = useState<State>({
     sortedCurrencies: [],
@@ -66,7 +62,6 @@ export default function OffRamp({ route }: Props) {
           paddingTop: extraStatusBarPadding,
         },
       ]}
-      forceInset={forceInset}
     >
       <TrackScreen category="Multibuy" name="Sell" />
       {currencyState.isLoading ? (

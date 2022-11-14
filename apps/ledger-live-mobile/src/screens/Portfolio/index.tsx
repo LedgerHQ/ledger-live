@@ -1,6 +1,6 @@
 import React, { useCallback, useMemo, useState, memo } from "react";
 import { useSelector } from "react-redux";
-import { FlatList, LayoutChangeEvent } from "react-native";
+import { FlatList, LayoutChangeEvent, ListRenderItemInfo } from "react-native";
 import Animated, {
   useAnimatedScrollHandler,
   useSharedValue,
@@ -25,8 +25,9 @@ import {
   discreetModeSelector,
   counterValueCurrencySelector,
   carouselVisibilitySelector,
+  blacklistedTokenIdsSelector,
 } from "../../reducers/settings";
-import { usePortfolio } from "../../actions/portfolio";
+import { usePortfolio } from "../../hooks/portfolio";
 import globalSyncRefreshControl from "../../components/globalSyncRefreshControl";
 import BackgroundGradient from "../../components/BackgroundGradient";
 
@@ -52,6 +53,12 @@ import AllocationsSection from "../WalletCentricSections/Allocations";
 import OperationsHistorySection from "../WalletCentricSections/OperationsHistory";
 import { track } from "../../analytics";
 import PostOnboardingEntryPointCard from "../../components/PostOnboarding/PostOnboardingEntryPointCard";
+import { PortfolioNavigatorStackParamList } from "../../components/RootNavigator/types/PortfolioNavigator";
+import {
+  BaseComposite,
+  BaseNavigation,
+  StackNavigatorProps,
+} from "../../components/RootNavigator/types/helpers";
 
 export { default as PortfolioTabIcon } from "./TabIcon";
 
@@ -63,13 +70,13 @@ const AnimatedFlatListWithRefreshControl = createNativeWrapper(
   },
 );
 
-type Props = {
-  navigation: any;
-};
+type NavigationProps = BaseComposite<
+  StackNavigatorProps<PortfolioNavigatorStackParamList, ScreenName.Portfolio>
+>;
 
 const maxAssetsToDisplay = 5;
 
-function PortfolioScreen({ navigation }: Props) {
+function PortfolioScreen({ navigation }: NavigationProps) {
   const hideEmptyTokenAccount = useEnv("HIDE_EMPTY_TOKEN_ACCOUNTS");
 
   const { t } = useTranslation();
@@ -84,7 +91,7 @@ function PortfolioScreen({ navigation }: Props) {
     hideEmptyTokenAccount,
   });
   const accounts = useSelector(accountsSelector);
-
+  const blacklistedTokenIds = useSelector(blacklistedTokenIdsSelector);
   const counterValueCurrency: Currency = useSelector(
     counterValueCurrencySelector,
   );
@@ -132,12 +139,20 @@ function PortfolioScreen({ navigation }: Props) {
       ),
     [distribution],
   );
+
   const [showAssets, assetsToDisplay] = useMemo(
     () => [
       distribution.isAvailable && distribution.list.length > 0,
-      distribution.list.slice(0, maxAssetsToDisplay),
+      distribution.list
+        .filter(asset => {
+          return (
+            asset.currency.type !== "TokenCurrency" ||
+            !blacklistedTokenIds.includes(asset.currency.id)
+          );
+        })
+        .slice(0, maxAssetsToDisplay),
     ],
-    [distribution],
+    [distribution, blacklistedTokenIds],
   );
 
   const postOnboardingVisible = usePostOnboardingEntryPointVisibleOnWallet();
@@ -245,10 +260,12 @@ function PortfolioScreen({ navigation }: Props) {
 
   return (
     <>
-      <TabBarSafeAreaView>
-        <Flex px={6} py={4}>
-          <FirmwareUpdateBanner />
-        </Flex>
+      <TabBarSafeAreaView
+        style={{
+          flex: 1,
+          paddingTop: 48,
+        }}
+      >
         <CheckLanguageAvailability />
         <CheckTermOfUseUpdate />
         <TrackScreen
@@ -260,15 +277,17 @@ function PortfolioScreen({ navigation }: Props) {
           currentPositionY={currentPositionY}
           graphCardEndPosition={graphCardEndPosition}
         />
+        <FirmwareUpdateBanner containerProps={{ mt: 9, mb: 0 }} />
         <AnimatedFlatListWithRefreshControl
           data={data}
           style={{
             flex: 1,
-            paddingTop: 48,
           }}
           contentContainerStyle={{ paddingBottom: TAB_BAR_SAFE_HEIGHT }}
-          renderItem={({ item }: { item: React.ReactNode }) => item}
-          keyExtractor={(_: any, index: number) => String(index)}
+          renderItem={({ item }: ListRenderItemInfo<unknown>) =>
+            item as JSX.Element
+          }
+          keyExtractor={(_: unknown, index: number) => String(index)}
           showsVerticalScrollIndicator={false}
           onScroll={handleScroll}
           testID={
@@ -286,8 +305,9 @@ function PortfolioScreen({ navigation }: Props) {
           hidePortfolio={areAccountsEmpty}
         />
       </TabBarSafeAreaView>
+
       <AddAccountsModal
-        navigation={navigation}
+        navigation={navigation as unknown as BaseNavigation}
         isOpened={isAddModalOpened}
         onClose={closeAddModal}
       />
@@ -295,4 +315,4 @@ function PortfolioScreen({ navigation }: Props) {
   );
 }
 
-export default memo<Props>(PortfolioScreen);
+export default memo(PortfolioScreen);

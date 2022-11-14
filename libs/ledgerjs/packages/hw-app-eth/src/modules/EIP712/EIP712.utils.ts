@@ -1,5 +1,15 @@
+import axios from "axios";
+import SHA224 from "crypto-js/sha224";
 import { hexBuffer, intAsHexBytes } from "../../utils";
-import { EIP712Message, EIP712MessageTypesEntry } from "./EIP712.types";
+import {
+  EIP712Message,
+  EIP712MessageTypesEntry,
+  MessageFilters,
+} from "./EIP712.types";
+import EIP712CAL from "@ledgerhq/cryptoassets/data/eip712";
+import BigNumber from "bignumber.js";
+
+const NULL_ADDRESS = "0x0000000000000000000000000000000000000000";
 
 /**
  * @ignore for the README
@@ -61,31 +71,44 @@ export const EIP712_TYPE_PROPERTIES: Record<
  * A Map of encoders to transform a value to formatted buffer
  */
 export const EIP712_TYPE_ENCODERS = {
-  INT(value: number | string | null): Buffer {
-    const failSafeValue = value ?? 0;
+  INT(value: string | null, sizeInBits = 256): Buffer {
+    const failSafeValue = value ?? "0";
 
     if (typeof failSafeValue === "string" && failSafeValue?.startsWith("0x")) {
       return hexBuffer(failSafeValue);
     }
 
-    const valueAsInt =
-      typeof failSafeValue === "string"
-        ? parseInt(failSafeValue, 10)
-        : failSafeValue;
+    let valueAsBN = new BigNumber(failSafeValue);
+    // If negative we'll use `two's complement` method to
+    // "reversibly convert a positive binary number into a negative binary number with equivalent (but negative) value".
+    // thx wikipedia
+    if (valueAsBN.lt(0)) {
+      const sizeInBytes = sizeInBits / 8;
+      // Creates BN from a buffer serving as a mask filled by maximum value 0xff
+      const maskAsBN = new BigNumber(
+        `0x${Buffer.alloc(sizeInBytes, 0xff).toString("hex")}`
+      );
 
-    const valueAsHexString = valueAsInt.toString(16);
+      // two's complement version of value
+      valueAsBN = maskAsBN.plus(valueAsBN).plus(1);
+    }
+
     const paddedHexString =
-      valueAsHexString.length % 2 ? "0" + valueAsHexString : valueAsHexString;
+      valueAsBN.toString(16).length % 2
+        ? "0" + valueAsBN.toString(16)
+        : valueAsBN.toString(16);
 
     return Buffer.from(paddedHexString, "hex");
   },
 
-  UINT(value: number | string): Buffer {
+  UINT(value: string): Buffer {
     return this.INT(value);
   },
 
   BOOL(value: number | string | boolean | null): Buffer {
-    return this.INT(typeof value === "boolean" ? Number(value) : value);
+    return this.INT(
+      typeof value === "boolean" ? Number(value).toString() : value
+    );
   },
 
   ADDRESS(value: string | null): Buffer {
@@ -252,12 +275,71 @@ export const makeTypeEntryStructBuffer = ({
 
 // As defined in [spec](https://eips.ethereum.org/EIPS/eip-712), the properties below are all required.
 export function isEIP712Message(
-  message: Record<string, unknown>
+  message: Record<string, unknown> | string
 ): message is EIP712Message {
   return (
+    typeof message === "object" &&
     "types" in message &&
     "primaryType" in message &&
     "domain" in message &&
     "message" in message
   );
 }
+
+export const sortObjectAlphabetically = (
+  obj: Record<string, any>
+): Record<string, any> => {
+  const keys = Object.keys(obj).sort();
+
+  return keys.reduce((acc, curr) => {
+    const value = (() => {
+      if (Array.isArray(obj[curr])) {
+        return obj[curr].map((field) =>
+          sortObjectAlphabetically(field as Record<string, any>)
+        );
+      }
+      return obj[curr];
+    })();
+
+    acc[curr] = value;
+    return acc;
+  }, {});
+};
+
+export const getSchemaHashForMessage = (message: EIP712Message): string => {
+  const { types } = message;
+  const sortedTypes = sortObjectAlphabetically(types);
+
+  return SHA224(JSON.stringify(sortedTypes).replace(" ", "")).toString();
+};
+
+/**
+ * @ignore for the README
+ *
+ * Tries to find the proper filters for a given EIP712 message
+ * in the CAL
+ *
+ * @param {EIP712Message} message
+ * @returns {MessageFilters | undefined}
+ */
+export const getFiltersForMessage = async (
+  message: EIP712Message,
+  remoteCryptoAssetsListURI?: string | null
+): Promise<MessageFilters | undefined> => {
+  const schemaHash = getSchemaHashForMessage(message);
+  const messageId = `${message.domain?.chainId ?? 0}:${
+    message.domain?.verifyingContract ?? NULL_ADDRESS
+  }:${schemaHash}`;
+
+  try {
+    if (remoteCryptoAssetsListURI) {
+      const { data: dynamicCAL } = await axios.get<
+        Record<string, MessageFilters>
+      >(`${remoteCryptoAssetsListURI}/eip712.json`);
+      return dynamicCAL[messageId] || EIP712CAL[messageId];
+    }
+    throw new Error();
+  } catch (e) {
+    return EIP712CAL[messageId];
+  }
+};

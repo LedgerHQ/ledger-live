@@ -7,7 +7,6 @@ import { useRampCatalog } from "@ledgerhq/live-common/platform/providers/RampCat
 import { filterRampCatalogEntries } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/helpers";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { NavigatorName, ScreenName } from "../../../const";
-// eslint-disable-next-line import/named
 import {
   readOnlyModeEnabledSelector,
   swapSelectableCurrenciesSelector,
@@ -42,6 +41,11 @@ export default function useAssetActions({
   );
   const defaultAccount = useMemo(
     () => (accounts && accounts.length === 1 ? accounts[0] : undefined),
+    [accounts],
+  );
+
+  const hasMultipleAccounts = useMemo(
+    () => !!(accounts && accounts.length > 1),
     [accounts],
   );
 
@@ -86,7 +90,7 @@ export default function useAssetActions({
                     defaultCurrencyId: currency?.id,
                   },
                 },
-              ],
+              ] as const,
             },
           ]
         : []),
@@ -104,7 +108,7 @@ export default function useAssetActions({
                     defaultCurrencyId: currency?.id,
                   },
                 },
-              ],
+              ] as const,
               disabled: areAccountsBalanceEmpty,
               modalOnDisabledClick: !readOnlyModeEnabled
                 ? {
@@ -128,7 +132,7 @@ export default function useAssetActions({
                         screen: ScreenName.Swap,
                         params: { currencyId: currency?.id, defaultAccount },
                       },
-                    ],
+                    ] as const,
                     disabled: areAccountsBalanceEmpty,
                     modalOnDisabledClick: {
                       component: ZeroBalanceDisabledModalContent,
@@ -154,13 +158,20 @@ export default function useAssetActions({
                         currency,
                       },
                     }
+                  : hasMultipleAccounts
+                  ? {
+                      screen: ScreenName.ReceiveSelectAccount,
+                      params: {
+                        currency,
+                      },
+                    }
                   : {
                       screen: ScreenName.ReceiveSelectCrypto,
                       params: {
                         filterCurrencyIds: currency ? [currency.id] : undefined,
                       },
                     },
-              ],
+              ] as const,
             },
             {
               id: "send",
@@ -183,7 +194,7 @@ export default function useAssetActions({
                       screen: ScreenName.SendCoin,
                       params: { selectedCurrency: currency },
                     },
-              ],
+              ] as const,
               disabled: areAccountsBalanceEmpty,
               modalOnDisabledClick: {
                 component: ZeroBalanceDisabledModalContent,
@@ -207,7 +218,7 @@ export default function useAssetActions({
                             : undefined,
                         },
                       },
-                    ],
+                    ] as const,
                   },
                 ]
               : []),
@@ -221,6 +232,7 @@ export default function useAssetActions({
       currency,
       defaultAccount,
       hasAccounts,
+      hasMultipleAccounts,
       readOnlyModeEnabled,
       t,
     ],

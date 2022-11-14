@@ -1,8 +1,8 @@
 import React, { useCallback } from "react";
 import { StyleSheet, Linking, View } from "react-native";
 import { Trans } from "react-i18next";
-import SafeAreaView from "react-native-safe-area-view";
-import Icon from "react-native-vector-icons/dist/Feather";
+import { SafeAreaView } from "react-native-safe-area-context";
+import Icon from "react-native-vector-icons/Feather";
 import type { TokenAccount } from "@ledgerhq/types-live";
 import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { shortAddressPreview } from "@ledgerhq/live-common/account/helpers";
@@ -17,8 +17,6 @@ type Props = {
   token?: TokenCurrency;
   url: string;
 };
-
-const forceInset = { bottom: "always" };
 
 const TokenContractAddress = ({ account, onClose, url, token }: Props) => {
   const { colors } = useTheme();
@@ -39,7 +37,7 @@ const TokenContractAddress = ({ account, onClose, url, token }: Props) => {
     : "";
 
   return (
-    <SafeAreaView forceInset={forceInset} style={styles.root}>
+    <SafeAreaView style={styles.root}>
       <View style={[styles.iconWrapper, { backgroundColor: colors.lightLive }]}>
         <Icon name="file-text" size={24} color={colors.live} />
       </View>

@@ -3,32 +3,35 @@ import { View, StyleSheet } from "react-native";
 import { useSelector } from "react-redux";
 import { Trans } from "react-i18next";
 import invariant from "invariant";
-import type { Operation } from "@ledgerhq/types-live";
 import { useTheme } from "@react-navigation/native";
+import { StackScreenProps } from "@react-navigation/stack";
 import { accountScreenSelector } from "../../../reducers/accounts";
 import { TrackScreen } from "../../../analytics";
 import { ScreenName } from "../../../const";
 import PreventNativeBack from "../../../components/PreventNativeBack";
 import ValidateSuccess from "../../../components/ValidateSuccess";
+import {
+  BaseComposite,
+  BaseNavigation,
+} from "../../../components/RootNavigator/types/helpers";
+import { PolkadotUnbondFlowParamList } from "./type";
 
-type Props = {
-  navigation: any;
-  route: {
-    params: RouteParams;
-  };
-};
-type RouteParams = {
-  accountId: string;
-  deviceId: string;
-  transaction: any;
-  result: Operation;
-};
-export default function ValidationSuccess({ navigation, route }: Props) {
+type NavigationProps = BaseComposite<
+  StackScreenProps<
+    PolkadotUnbondFlowParamList,
+    ScreenName.PolkadotUnbondValidationSuccess
+  >
+>;
+
+export default function ValidationSuccess({
+  navigation,
+  route,
+}: NavigationProps) {
   const { colors } = useTheme();
   const { account } = useSelector(accountScreenSelector(route));
   invariant(account, "account is required");
   const onClose = useCallback(() => {
-    navigation.getParent().pop();
+    navigation.getParent<BaseNavigation>().pop();
   }, [navigation]);
   const goToOperationDetails = useCallback(() => {
     if (!account) return;

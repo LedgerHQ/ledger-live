@@ -14,21 +14,18 @@ import {
   Text,
 } from "@ledgerhq/native-ui";
 import { useOnboardingStatePolling } from "@ledgerhq/live-common/onboarding/hooks/useOnboardingStatePolling";
-import { CloseMedium } from "@ledgerhq/native-ui/assets/icons";
 import {
   OnboardingStep as DeviceOnboardingStep,
   fromSeedPhraseTypeToNbOfSeedWords,
 } from "@ledgerhq/live-common/hw/extractOnboardingState";
-import { SafeAreaView } from "react-native-safe-area-context";
 import { useTranslation } from "react-i18next";
 import { getDeviceModel } from "@ledgerhq/devices";
 import { useDispatch } from "react-redux";
-import { TouchableOpacity } from "react-native-gesture-handler";
 import { CompositeScreenProps } from "@react-navigation/native";
+import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
+
 import { addKnownDevice } from "../../actions/ble";
 import { NavigatorName, ScreenName } from "../../const";
-import type { BaseNavigatorStackParamList } from "../../components/RootNavigator/BaseNavigator";
-import type { SyncOnboardingStackParamList } from "../../components/RootNavigator/SyncOnboardingNavigator";
 import HelpDrawer from "./HelpDrawer";
 import DesyncDrawer from "./DesyncDrawer";
 import ResyncOverlay from "./ResyncOverlay";
@@ -40,6 +37,14 @@ import {
   setLastConnectedDevice,
   setReadOnlyMode,
 } from "../../actions/settings";
+import DeviceSetupView from "../../components/DeviceSetupView";
+import {
+  BaseNavigatorStackParamList,
+  NavigateInput,
+} from "../../components/RootNavigator/types/BaseNavigator";
+import { RootStackParamList } from "../../components/RootNavigator/types/RootNavigator";
+import { SyncOnboardingStackParamList } from "../../components/RootNavigator/types/SyncOnboardingNavigator";
+import InstallSetOfApps from "../../components/DeviceAction/InstallSetOfApps";
 
 type StepStatus = "completed" | "active" | "inactive";
 
@@ -52,8 +57,14 @@ type Step = {
 };
 
 export type SyncOnboardingCompanionProps = CompositeScreenProps<
-  StackScreenProps<SyncOnboardingStackParamList, "SyncOnboardingCompanion">,
-  StackScreenProps<BaseNavigatorStackParamList>
+  StackScreenProps<
+    SyncOnboardingStackParamList,
+    ScreenName.SyncOnboardingCompanion
+  >,
+  CompositeScreenProps<
+    StackScreenProps<BaseNavigatorStackParamList>,
+    StackScreenProps<RootStackParamList>
+  >
 >;
 
 const normalPollingPeriodMs = 1000;
@@ -64,12 +75,15 @@ const normalResyncOverlayDisplayDelayMs = 10000;
 const longResyncOverlayDisplayDelayMs = 60000;
 const readyRedirectDelayMs = 2500;
 
+const fallbackDefaultAppsToInstall = ["Bitcoin", "Ethereum", "Polygon"];
+
 // Because of https://github.com/typescript-eslint/typescript-eslint/issues/1197
 enum CompanionStepKey {
   Paired = 0,
   Pin,
   Seed,
   SoftwareCheck,
+  Apps,
   Ready,
   Exit,
 }
@@ -87,20 +101,47 @@ export const SyncOnboarding = ({
 }: SyncOnboardingCompanionProps) => {
   const { t } = useTranslation();
   const dispatchRedux = useDispatch();
+  const deviceInitialApps = useFeature("deviceInitialApps");
   const { device } = route.params;
 
   const productName =
     getDeviceModel(device.modelId).productName || device.modelId;
   const deviceName = device.deviceName || productName;
 
+  const initialAppsToInstall =
+    deviceInitialApps?.params?.apps || fallbackDefaultAppsToInstall;
+
   const handleSoftwareCheckComplete = useCallback(() => {
     setCompanionStepKey(nextStepKey(CompanionStepKey.SoftwareCheck));
+  }, []);
+
+  const handleInstallAppsComplete = useCallback(() => {
+    setCompanionStepKey(nextStepKey(CompanionStepKey.Apps));
   }, []);
 
   const formatEstimatedTime = (estimatedTime: number) =>
     t("syncOnboarding.estimatedTimeFormat", {
       estimatedTime: estimatedTime / 60,
     });
+
+  const installSetOfAppsSteps: Step[] = useMemo(
+    () => [
+      {
+        key: CompanionStepKey.Apps,
+        title: t("syncOnboarding.appsStep.title", { productName }),
+        status: "inactive",
+        estimatedTime: 60,
+        renderBody: () => (
+          <InstallSetOfApps
+            device={device}
+            onResult={handleInstallAppsComplete}
+            dependencies={initialAppsToInstall}
+          />
+        ),
+      },
+    ],
+    [productName, t, device, handleInstallAppsComplete, initialAppsToInstall],
+  );
 
   const defaultCompanionSteps: Step[] = useMemo(
     () => [
@@ -153,14 +194,31 @@ export const SyncOnboarding = ({
           />
         ),
       },
+    ],
+    [t, productName, device, handleSoftwareCheckComplete],
+  );
+
+  const getCompanionSteps = useCallback(() => {
+    let steps = defaultCompanionSteps;
+
+    if (deviceInitialApps?.enabled) {
+      steps = steps.concat(installSetOfAppsSteps);
+    }
+
+    return steps.concat([
       {
         key: CompanionStepKey.Ready,
         title: t("syncOnboarding.readyStep.title", { productName }),
         status: "inactive",
       },
-    ],
-    [t, productName, device, handleSoftwareCheckComplete],
-  );
+    ]);
+  }, [
+    t,
+    productName,
+    defaultCompanionSteps,
+    installSetOfAppsSteps,
+    deviceInitialApps?.enabled,
+  ]);
 
   const [stopPolling, setStopPolling] = useState<boolean>(false);
   const [pollingPeriodMs, setPollingPeriodMs] = useState<number>(
@@ -184,17 +242,34 @@ export const SyncOnboarding = ({
   const [isHelpDrawerOpen, setHelpDrawerOpen] = useState<boolean>(false);
 
   const [companionSteps, setCompanionSteps] = useState<Step[]>(
-    defaultCompanionSteps,
+    getCompanionSteps(),
   );
   const [companionStepKey, setCompanionStepKey] = useState<CompanionStepKey>(
     CompanionStepKey.Paired,
   );
 
   const goBackToPairingFlow = useCallback(() => {
+    const navigateInput: NavigateInput<
+      RootStackParamList,
+      NavigatorName.BaseOnboarding
+    > = {
+      name: NavigatorName.BaseOnboarding,
+      params: {
+        screen: NavigatorName.SyncOnboarding,
+        params: {
+          screen: ScreenName.SyncOnboardingCompanion,
+          params: {
+            // @ts-expect-error BleDevicePairingFlow will set this param
+            device: null,
+          },
+        },
+      },
+    };
+
     // On pairing success, navigate to the Sync Onboarding Companion
     // Replace to avoid going back to this screen on return from the pairing flow
-    navigation.navigate(NavigatorName.Base as "Base", {
-      screen: ScreenName.BleDevicePairingFlow as "BleDevicePairingFlow",
+    navigation.navigate(NavigatorName.Base, {
+      screen: ScreenName.BleDevicePairingFlow,
       params: {
         // TODO: For now, don't do that because nanoFTS shows up as nanoX
         // filterByDeviceModelId: device.modelId,
@@ -202,18 +277,7 @@ export const SyncOnboarding = ({
         onSuccessAddToKnownDevices: false,
         onSuccessNavigateToConfig: {
           navigationType: "navigate",
-          navigateInput: {
-            name: NavigatorName.BaseOnboarding,
-            params: {
-              screen: NavigatorName.SyncOnboarding,
-              params: {
-                screen: ScreenName.SyncOnboardingCompanion,
-                params: {
-                  device: null,
-                },
-              },
-            },
-          },
+          navigateInput,
           pathToDeviceParam: "params.params.params.device",
         },
       },
@@ -239,6 +303,7 @@ export const SyncOnboarding = ({
   }, []);
 
   const handleDesyncRetry = useCallback(() => {
+    setDesyncDrawerOpen(false);
     goBackToPairingFlow();
   }, [goBackToPairingFlow]);
 
@@ -261,9 +326,7 @@ export const SyncOnboarding = ({
       }),
     );
 
-    navigation.navigate(
-      ScreenName.SyncOnboardingCompletion as "SyncOnboardingCompletion",
-    );
+    navigation.navigate(ScreenName.SyncOnboardingCompletion, { device });
   }, [device, dispatchRedux, navigation]);
 
   useEffect(() => {
@@ -384,7 +447,7 @@ export const SyncOnboarding = ({
     }
 
     setCompanionSteps(
-      defaultCompanionSteps.map(step => {
+      getCompanionSteps().map(step => {
         const stepStatus =
           step.key > companionStepKey
             ? "inactive"
@@ -405,61 +468,49 @@ export const SyncOnboarding = ({
         readyRedirectTimerRef.current = null;
       }
     };
-  }, [companionStepKey, defaultCompanionSteps, handleDeviceReady]);
+  }, [companionStepKey, getCompanionSteps, handleDeviceReady]);
 
   return (
-    <SafeAreaView>
-      <Flex bg="background.main" height="100%" position="relative">
-        <HelpDrawer
-          isOpen={isHelpDrawerOpen}
-          onClose={() => setHelpDrawerOpen(false)}
+    <DeviceSetupView
+      onClose={handleClose}
+      renderLeft={() => (
+        <LanguageSelect device={device} productName={productName} />
+      )}
+    >
+      <HelpDrawer
+        isOpen={isHelpDrawerOpen}
+        onClose={() => setHelpDrawerOpen(false)}
+      />
+      <DesyncDrawer
+        isOpen={isDesyncDrawerOpen}
+        onClose={handleDesyncClose}
+        onRetry={handleDesyncRetry}
+        device={device}
+      />
+      <Flex position="relative" flex={1}>
+        <ResyncOverlay
+          isOpen={isDesyncOverlayOpen}
+          delay={resyncOverlayDisplayDelayMs}
+          productName={productName}
         />
-        <DesyncDrawer
-          isOpen={isDesyncDrawerOpen}
-          onClose={handleDesyncClose}
-          onRetry={handleDesyncRetry}
-          device={device}
-        />
-        <Flex
-          flexDirection="row"
-          justifyContent="space-between"
-          alignItems="center"
-          pt={7}
-          px={6}
-          pb={5}
-        >
-          <LanguageSelect device={device} productName={productName} />
-          <TouchableOpacity onPress={handleClose}>
-            <CloseMedium size={24} />
-          </TouchableOpacity>
-        </Flex>
-        <Flex flex={1}>
-          <ResyncOverlay
-            isOpen={isDesyncOverlayOpen}
-            delay={resyncOverlayDisplayDelayMs}
-            productName={productName}
-          />
-          <ScrollContainer>
-            <Flex px={7} pt={2}>
-              <Flex mb={7} flexDirection="row" alignItems="center">
-                <Text variant="h4" fontWeight="semiBold">
-                  {t("syncOnboarding.title", { deviceName })}
-                </Text>
-                {/* TODO: disabled for now but will be used in the future */}
-                {/* <Button
+        <ScrollContainer px={6}>
+          <Flex mb={8} flexDirection="row" alignItems="center">
+            <Text variant="h4" fontWeight="semiBold">
+              {t("syncOnboarding.title", { deviceName })}
+            </Text>
+            {/* TODO: disabled for now but will be used in the future */}
+            {/* <Button
                   ml={2}
                   Icon={Question}
                   onPress={() => setHelpDrawerOpen(true)}
                 /> */}
-              </Flex>
-              <VerticalTimeline
-                steps={companionSteps}
-                formatEstimatedTime={formatEstimatedTime}
-              />
-            </Flex>
-          </ScrollContainer>
-        </Flex>
+          </Flex>
+          <VerticalTimeline
+            steps={companionSteps}
+            formatEstimatedTime={formatEstimatedTime}
+          />
+        </ScrollContainer>
       </Flex>
-    </SafeAreaView>
+    </DeviceSetupView>
   );
 };

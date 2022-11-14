@@ -3,6 +3,7 @@ package com.ledger.live;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
+import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.view.View;
@@ -19,6 +20,8 @@ import java.util.Locale;
 
 import expo.modules.ReactActivityDelegateWrapper;
 
+import com.facebook.react.modules.i18nmanager.I18nUtil;
+
 public class MainActivity extends ReactActivity {
 
     String importDataString = null;
@@ -30,6 +33,12 @@ public class MainActivity extends ReactActivity {
     @Override
     protected String getMainComponentName() {
         return "ledgerlivemobile";
+    }
+
+    @Override
+    public void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        setIntent(intent);
     }
 
     /**
@@ -101,6 +110,9 @@ public class MainActivity extends ReactActivity {
                 }
             });
         }
+
+        I18nUtil sharedI18nUtilInstance = I18nUtil.getInstance();
+        sharedI18nUtilInstance.allowRTL(getApplicationContext(), true);
 
     }
 

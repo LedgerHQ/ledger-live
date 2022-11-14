@@ -15,8 +15,6 @@ const AnalyticsConsoleRow = () => {
       event="AnalyticsConsoleRow"
       title="View analytics overlay"
       desc="Toggle analytics console, making tracked events visible as an overlay"
-      onPress={null}
-      alignedTop
     >
       <Track
         event={

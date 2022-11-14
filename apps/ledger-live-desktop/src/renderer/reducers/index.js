@@ -14,6 +14,8 @@ import type { ModalsState } from "./modals";
 import type { SettingsState } from "./settings";
 import type { UIState } from "./UI";
 import type { SwapStateType } from "./swap";
+import type { PostOnboardingState } from "@ledgerhq/types-live";
+import postOnboarding from "@ledgerhq/live-common/postOnboarding/reducer";
 
 export type State = {
   accounts: AccountsState,
@@ -23,6 +25,7 @@ export type State = {
   settings: SettingsState,
   UI: UIState,
   swap: SwapStateType,
+  postOnboarding: PostOnboardingState,
 };
 
 // $FlowFixMe
@@ -33,5 +36,6 @@ export default combineReducers({
   modals,
   settings,
   UI,
+  postOnboarding,
   swap,
 });

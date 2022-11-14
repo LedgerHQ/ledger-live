@@ -11,16 +11,13 @@ import { accountScreenSelector } from "../../../reducers/accounts";
 import ValidatorHead from "../shared/ValidatorHead";
 import ValidatorRow from "../shared/ValidatorRow";
 import SelectValidatorSearchBox from "../../tron/VoteFlow/01-SelectValidator/SearchBox";
+import { StackNavigatorProps } from "../../../components/RootNavigator/types/helpers";
+import { CosmosDelegationFlowParamList } from "./types";
 
-type Props = {
-  navigation: any;
-  route: { params: RouteParams };
-};
-
-type RouteParams = {
-  accountId: string;
-  validator?: CosmosValidatorItem;
-};
+type Props = StackNavigatorProps<
+  CosmosDelegationFlowParamList,
+  ScreenName.CosmosDelegationValidatorSelect
+>;
 
 export default function SelectValidator({ navigation, route }: Props) {
   const { colors } = useTheme();

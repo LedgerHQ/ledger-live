@@ -6,7 +6,8 @@ const {
 } = require("../../../packages/cryptoassets/lib/currencies");
 
 const inferChainId = (common, folder) =>
-  getCryptoCurrencyById(path.basename(path.dirname(folder))).ethereumLikeInfo.chainId;
+  getCryptoCurrencyById(path.basename(path.dirname(folder))).ethereumLikeInfo
+    .chainId;
 
 const asUint4be = (n) => {
   const b = Buffer.alloc(4);
@@ -25,7 +26,7 @@ module.exports = {
     "tokens/polygon/erc20",
   ],
   id: "erc20",
-  output: "data/erc20-signatures.js",
+  output: (toJSON) => `data/erc20-signatures.js${toJSON ? "on" : ""}`,
 
   join: (buffers) =>
     buffers.reduce(
@@ -33,8 +34,10 @@ module.exports = {
       Buffer.alloc(0)
     ),
 
-  outputTemplate: (data) =>
-    "module.exports = " + JSON.stringify(data.toString("base64")) + ";",
+  outputTemplate: (data, toJSON) =>
+    toJSON
+      ? JSON.stringify(data.toString("base64"))
+      : "module.exports = " + JSON.stringify(data.toString("base64")) + ";",
 
   loader: ({ signatureFolder, folder, id }) =>
     Promise.all([

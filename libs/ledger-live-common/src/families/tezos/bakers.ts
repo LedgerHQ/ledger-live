@@ -62,9 +62,9 @@ const cache = makeLRUCache(
   () => ""
 );
 
-let _lastBakers;
+let _lastBakers: Baker[];
 
-export const fetchAllBakers = async () => {
+export const fetchAllBakers = async (): Promise<Baker[]> => {
   const r = await cache.force();
   _lastBakers = r;
   return r;
@@ -85,8 +85,8 @@ export const listBakers = async (
   _lastBakers = all;
   return whitelist(all, whitelistAddresses);
 };
-export function useBakers(whitelistAddresses: string[]) {
-  const [bakers, setBakers] = useState(() =>
+export function useBakers(whitelistAddresses: string[]): Baker[] {
+  const [bakers, setBakers] = useState<Baker[]>(() =>
     whitelist(_lastBakers || [], whitelistAddresses)
   );
   useEffect(() => {

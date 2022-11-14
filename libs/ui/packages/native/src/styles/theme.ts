@@ -53,7 +53,7 @@ export const radii = [0, 4, 8];
 export const zIndexes = [-1, 0, 1, 9, 10, 90, 100, 900, 1000];
 
 export type Theme = {
-  theme: string;
+  theme: "light" | "dark";
   sizes: {
     topBarHeight: number;
     sideBarWidth: number;
