@@ -1,8 +1,6 @@
-// @flow
-
-import React, { Component } from "react";
+import React, { Component, KeyboardEvent } from "react";
 import styled from "styled-components";
-import type { ThemedComponent } from "~/renderer/styles/StyleProvider";
+import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import { isGlobalTabEnabled } from "~/config/global-tab";
 import { rgba } from "~/renderer/styles/helpers";
 
@@ -17,7 +15,7 @@ export const focusedShadowStyle = `
   0 0 0 4px rgba(10, 132, 255, 0.1)
 `;
 
-const Raw: ThemedComponent<{ isFocused?: boolean, unstyled?: boolean }> = styled(Box)`
+const Raw: ThemedComponent<{ isFocused?: boolean; unstyled?: boolean }> = styled(Box)`
   &:focus {
     outline: none;
     box-shadow: ${p => (p.isFocused && !p.unstyled ? focusedShadowStyle : "none")};
@@ -25,8 +23,14 @@ const Raw: ThemedComponent<{ isFocused?: boolean, unstyled?: boolean }> = styled
 `;
 
 export default class Tabbable extends Component<
-  { disabled?: boolean, unstyled?: boolean, onClick?: any => void },
-  { isFocused: boolean },
+  {
+    disabled?: boolean;
+    unstyled?: boolean;
+    onClick?: (arg: any) => void;
+    selected?: boolean;
+    children?: JSX.Element;
+  },
+  { isFocused: boolean }
 > {
   state = {
     isFocused: false,
@@ -40,7 +44,7 @@ export default class Tabbable extends Component<
 
   handleBlur = () => this.setState({ isFocused: false });
 
-  handleKeyPress = (e: SyntheticKeyboardEvent<*>) => {
+  handleKeyPress = (e: KeyboardEvent) => {
     const { isFocused } = this.state;
     const { onClick } = this.props;
     const canPress =

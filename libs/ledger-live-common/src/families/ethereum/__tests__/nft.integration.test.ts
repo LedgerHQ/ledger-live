@@ -1,10 +1,10 @@
-import "../../__tests__/test-helpers/setup";
+import "../../../__tests__/test-helpers/setup";
 import { reduce } from "rxjs/operators";
-import { fromAccountRaw, toAccountRaw } from "../../account";
+import { fromAccountRaw, toAccountRaw } from "../../../account";
 import type { Account, AccountRaw } from "@ledgerhq/types-live";
-import { getAccountBridge } from "../../bridge";
-import { makeBridgeCacheSystem } from "../../bridge/cache";
-import { patchAccount } from "../../reconciliation";
+import { getAccountBridge } from "../../../bridge";
+import { makeBridgeCacheSystem } from "../../../bridge/cache";
+import { patchAccount } from "../../../reconciliation";
 
 jest.setTimeout(200000);
 

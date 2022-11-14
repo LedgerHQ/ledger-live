@@ -180,6 +180,8 @@
   "time": {
     "minute": "Minute",
     "minute_plural": "Minutes",
+    "minute_short": "min",
+    "second_short": "sec",
     "hour": "Hour",
     "hour_plural": "Hours",
     "range": {
@@ -2109,7 +2111,7 @@
       "amount": {
         "title": "Amount",
         "banner": "Maximum spendable amount is",
-        "fees": "Fees",
+        "fees": "Max estimated fee",
         "standard": "Standard",
         "advanced": "Advanced",
         "nftQuantity": "Quantity"
@@ -2132,8 +2134,13 @@
         "useMax": "Send Max",
         "rippleTag": "Tag",
         "rippleTagPlaceholder": "Optional",
+        "edit": "Edit",
         "ethereumGasLimit": "Gas limit",
         "ethereumGasPrice": "Gas price",
+        "ethereumMaxFee": "Max Fee ({{unitName}})",
+        "ethereumPriorityFee": "Max Priority Fee ({{unitName}})",
+        "nextBlock": "Next block: {{nextBaseFee}}",
+        "suggestedPriorityFee": "Suggested: {{lowPriorityFee}} - {{highPriorityFee}} {{unitName}}",
         "unitPerByte": "{{unit}} per byte",
         "nft": "NFT",
         "nftQuantity": "Quantity"
@@ -3646,6 +3653,14 @@
         "testPostonboarding": {
           "title": "Test Post Onboarding",
           "description": "Test all post onboarding features"
+        },
+        "1559DeactivateGate" : {
+          "title": "Deactivate EIP1559 minimum priority fee gate",
+          "description": "This will allow a transaction to be sent without any minimum priority fee expected. This may result in a transaction getting stuck in the mempool forever."
+        },
+        "1559CustomPriorityLowerGate" : {
+          "title": "Custom priority fee gate",
+          "description": "Customize the percentage of our estimated minimal priority fee allowed for an advanced EIP1559 transaction"
         }
       }
     },
@@ -4987,6 +5002,18 @@
     },
     "GasLessThanEstimate": {
       "title": "This may be too low. Please increase"
+    },
+    "PriorityFeeTooLow": {
+      "title": "Priority fee is lower than the recommended value"
+    },
+    "PriorityFeeTooHigh": {
+      "title": "Priority fee is higher than necessary. You might be overpaying"
+    },
+    "MaxFeeTooLow": {
+      "title": "Max fee is lower than the recommended value"
+    },
+    "PriorityFeeHigherThanMaxFee": {
+      "title": "Max priority fee cannot be higher than max fee"
     },
     "UnknownMCU": {
       "title": "Unknown MCU version",
