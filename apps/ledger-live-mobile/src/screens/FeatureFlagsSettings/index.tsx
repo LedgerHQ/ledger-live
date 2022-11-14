@@ -112,6 +112,7 @@ export default function DebugFeatureFlags() {
           <Alert type="hint">
             <Text>{t("settings.debug.featureFlagsTitle")}</Text>
           </Alert>
+          <Flex mt={3} />
           <SearchInput
             value={searchInput}
             placeholder="Search flag"
