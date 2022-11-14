@@ -59,7 +59,10 @@ const Delegation = (props: DelegationPropsType) => {
 
   const dispatch = useDispatch();
   const delegationEnabled = useMemo(
-    (): boolean => BigNumber(denominate({ input: account.spendableBalance })).gt(1),
+    (): boolean =>
+      BigNumber(denominate({ input: account.spendableBalance, showLastNonZeroDecimal: true })).gte(
+        1,
+      ),
     [account.spendableBalance],
   );
 

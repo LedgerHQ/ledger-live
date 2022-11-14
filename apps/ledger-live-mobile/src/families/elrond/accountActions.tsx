@@ -26,8 +26,11 @@ export type getActionsReturnType = ActionButtonEvent[] | null | undefined;
 const getActions = (props: getActionsType): getActionsReturnType => {
   const { account } = props;
 
-  const balance = denominate({ input: String(account.spendableBalance) });
-  const delegationEnabled = new BigNumber(balance).gt(1);
+  const balance = denominate({
+    input: String(account.spendableBalance),
+    showLastNonZeroDecimal: true,
+  });
+  const delegationEnabled = new BigNumber(balance).gte(1);
 
   /*
    * Get a list of all the providers, randomize, and also the screen, conditionally, based on existing amount of delegations.
