@@ -23,7 +23,7 @@ import WalletTabHeader from "../WalletTab/WalletTabHeader";
 import WalletTabNavigatorTabBarDisabled from "../WalletTab/WalletTabNavigatorTabBarDisabled";
 import { WalletTabNavigatorStackParamList } from "./types/WalletTabNavigator";
 import { ScreenName } from "../../const/navigation";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
 
 const WalletTab =
   createMaterialTopTabNavigator<WalletTabNavigatorStackParamList>();
@@ -55,7 +55,7 @@ export default function WalletTabNavigator() {
 
   return (
     <WalletTabNavigatorScrollManager currentRouteName={currentRouteName}>
-      <Box flex={1} bg={"background.main"}>
+      <SafeAreaView style={{flex: 1}} flex={1} bg={"background.main"}>
         <WalletTab.Navigator
           initialRouteName={
             walletNftGalleryFeature?.enabled
@@ -114,7 +114,7 @@ export default function WalletTabNavigator() {
           )}
         </WalletTab.Navigator>
         <WalletTabHeader hidePortfolio={false} />
-      </Box>
+      </SafeAreaView>
     </WalletTabNavigatorScrollManager>
   );
 }

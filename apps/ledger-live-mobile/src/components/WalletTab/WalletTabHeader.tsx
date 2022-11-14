@@ -2,15 +2,16 @@ import { Box } from "@ledgerhq/native-ui";
 import React, { useContext } from "react";
 import { Animated, NativeModules } from "react-native";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
-import Constants from "expo-constants";
+import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
 import { useHeaderHeight } from "@react-navigation/elements";
 import { WalletTabNavigatorScrollContext } from "./WalletTabNavigatorScrollManager";
 import Header from "../../screens/Portfolio/Header";
 import { getStatusBarHeight } from 'react-native-status-bar-height';
 import { getStatusBarHeight as getStatusBarHeightAlternative } from "react-native-safearea-height";
+import * as Animatable from "react-native-animatable";
 
 const { StatusBarManager } = NativeModules;
+const AnimatedSafeArea = Animatable.createAnimatableComponent(SafeAreaView);
 
 function WalletTabHeader({
   hidePortfolio,
@@ -40,21 +41,16 @@ function WalletTabHeader({
   const headerHeight2 = useHeaderHeight();
 
   console.log("headerHeight", headerHeight2);
-  console.log(
-    "Constants.statusBarHeight",
-    Constants.statusBarHeight,
-    Constants,
-  );
   console.log("StatusBarManager.HEIGHT", StatusBarManager.HEIGHT);
   console.log("getStatusBarHeight()", getStatusBarHeight());
   console.log("getStatusBarHeightAlternative()", getStatusBarHeightAlternative());
 
   return (
     <>
-      <Animated.View
+      <AnimatedSafeArea
         style={[
           {
-            top,
+            top: 0,
             height: headerHeight,
             width: "100%",
             position: "absolute",
@@ -71,7 +67,7 @@ function WalletTabHeader({
         >
           <Header hidePortfolio={hidePortfolio} />
         </Box>
-      </Animated.View>
+      </AnimatedSafeArea>
     </>
   );
 }
