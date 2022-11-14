@@ -1,4 +1,8 @@
-import { UnexpectedBootloader, StatusCodes } from "@ledgerhq/errors";
+import {
+  TransportStatusError,
+  UnexpectedBootloader,
+  StatusCodes,
+} from "@ledgerhq/errors";
 import Transport from "@ledgerhq/hw-transport";
 
 /**
@@ -22,5 +26,5 @@ export default async (transport: Transport): Promise<string> => {
     case StatusCodes.CUSTOM_IMAGE_BOOTLOADER:
       throw new UnexpectedBootloader();
   }
-  return "Unexpected unhandled image hash"; // For TS compliance.
+  throw new TransportStatusError(status);
 };
