@@ -39,7 +39,7 @@ jobs:
   pr-is-fork:
     name: "Check if the PR is a fork"
     needs: is-affected
-    if: ${{ needs.is-affected.outputs.is-desktop-affected }}
+    if: ${{ needs.is-affected.outputs.is-desktop-affected == 'true' }}
     uses: ./.github/workflows/pr-is-fork.yml
     with:
       non-pr-result: false
@@ -49,7 +49,7 @@ jobs:
   typecheck:
     name: "Ledger Live Desktop TypeCheck"
     needs: is-affected
-    if: ${{ needs.is-affected.outputs.is-desktop-affected }}
+    if: ${{ needs.is-affected.outputs.is-desktop-affected == 'true' }}
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
       INSTRUMENT_BUILD: true

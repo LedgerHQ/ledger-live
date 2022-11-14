@@ -39,7 +39,7 @@ jobs:
   pr-is-fork:
     name: "Check if the PR is a fork"
     needs: is-affected
-    if: ${{ needs.is-affected.outputs.is-mobile-affected }}
+    if: ${{ needs.is-affected.outputs.is-mobile-affected == 'true' }}
     uses: ./.github/workflows/pr-is-fork.yml
     with:
       non-pr-result: false
@@ -237,7 +237,7 @@ jobs:
     runs-on: macos-latest
     name: "Build Ledger Live Mobile (Mac OS X)"
     needs: is-affected
-    if: ${{ needs.is-affected.outputs.is-mobile-affected }}
+    if: ${{ needs.is-affected.outputs.is-mobile-affected == 'true' }}
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
     steps:

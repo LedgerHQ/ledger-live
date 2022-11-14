@@ -36,7 +36,7 @@ jobs:
   codecheck:
     name: "Ledger Live Mobile CodeCheck"
     needs: is-affected
-    if: ${{ needs.is-affected.outputs.is-mobile-affected }}
+    if: ${{ needs.is-affected.outputs.is-mobile-affected == 'true' }}
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
       FORCE_COLOR: 3
