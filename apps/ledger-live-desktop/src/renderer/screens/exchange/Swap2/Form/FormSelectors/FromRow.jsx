@@ -134,7 +134,7 @@ function FromRow({
       button: "max",
       page: "Page Swap Form",
       ...swapDefaultTrack,
-      value: state,
+      state,
     });
     toggleMax(state);
   };

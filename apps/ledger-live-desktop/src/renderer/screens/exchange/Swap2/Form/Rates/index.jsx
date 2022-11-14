@@ -67,34 +67,56 @@ export default function ProviderRate({
 
   const providerRef = useRef(null);
 
+  const getDefaultPartner = useCallback(
+    rate => {
+      const defaultPartner = rates?.find((rate, index) => {
+        return filter.every(item => [FILTER.centralised, rate.tradeMethod].includes(item));
+      });
+      const defaultDexPartner = DEX_PROVIDERS.find((rate, index) => {
+        return filter.every(item => [FILTER.decentralised, FILTER.float].includes(item));
+      });
+      if (defaultPartner) {
+        return defaultPartner;
+      } else if (decentralizedSwapAvailable && defaultDexPartner) {
+        return defaultDexPartner;
+      } else {
+        return {};
+      }
+    },
+    [rates, decentralizedSwapAvailable, filter],
+  );
+
   const setRate = useCallback(
     rate => {
-      track("button_clicked", {
+      track("partner_clicked", {
         button: "Partner Chosen",
         page: "Page Swap Form",
         ...swapDefaultTrack,
-        value: rate.tradeMethod,
+        swap_type: rate.tradeMethod,
+        value: rate,
+        defaultPartner: getDefaultPartner(),
       });
       setDexSelected(null);
       updateSelection(rate);
       dispatch(updateRateAction(rate));
     },
-    [updateSelection, dispatch],
+    [getDefaultPartner, updateSelection, dispatch],
   );
 
   const setDexRate = useCallback(
     provider => {
-      track("button_clicked", {
+      track("partner_clicked", {
         button: "Partner Dex Chosen",
         page: "Page Swap Form",
         ...swapDefaultTrack,
         swap_type: "float",
         value: provider,
+        defaultPartner: getDefaultPartner(),
       });
       setDexSelected(provider);
       updateSelection(provider);
     },
-    [updateSelection],
+    [getDefaultPartner, updateSelection],
   );
 
   useEffect(() => {
