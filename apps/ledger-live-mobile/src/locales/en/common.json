@@ -2456,14 +2456,19 @@
         "title": "Market",
         "desc": "Receive significant market changes updates"
       },
-      "announcement": {
+      "announcements": {
         "title": "Announcements",
         "desc": "Receive important Ledger Live updates"
+      },
+      "recommendations": {
+        "title": "Recommendations",
+        "desc": "Enrich your experience with personalized recommendations and special offers"
       },
       "price": {
         "title": "Price Alerts",
         "desc": "Set price alerts for your favorite coins so that you don't miss a market move"
-      }
+      },
+      "disclaimer": "Data privacy is paramount at Ledger. Data collected is never shared to our partners."
     },
     "help": {
       "title": "Help",
@@ -2550,7 +2555,7 @@
   "notifications": {
     "prompt": {
       "title": "Turn notifications on",
-      "desc": "Get important updates on Ledger Live, Ledger products and security. Opt out anytime.",
+      "desc": "Get the latest updates on Ledger Live, Ledger products, the market, and personalised recommendations. Opt-out anytime in the settings",
       "allow": "Allow notifications",
       "later": "Maybe later"
     }
