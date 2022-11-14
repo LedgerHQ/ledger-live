@@ -39,7 +39,12 @@ export default function FeesDrawer({
 
   return (
     <Box height="100%">
-      <TrackPage category="Swap" name="Form - Edit Fees" provider={provider} flow="swap" />
+      <TrackPage
+        category="Swap"
+        name="Form - Edit Fees"
+        provider={provider}
+        {...swapDefaultTrack}
+      />
       <DrawerTitle i18nKey="swap2.form.details.label.fees" />
       <Box mt={3} flow={4}>
         {transaction.networkInfo && (
