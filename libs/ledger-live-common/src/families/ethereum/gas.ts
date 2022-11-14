@@ -85,11 +85,21 @@ export const inferMaxFeePerGas = (
 
 export const estimateGasLimit: (
   account: Account,
-  transaction: { from: string; to: string; value: string; data: string }
+  transaction: {
+    from: string;
+    to: string;
+    value: string;
+    data: string;
+  }
 ) => Promise<BigNumber> = makeLRUCache(
   (
     account: Account,
-    transaction: { from: string; to: string; value: string; data: string }
+    transaction: {
+      from: string;
+      to: string;
+      value: string;
+      data: string;
+    }
   ) => {
     const api = apiForCurrency(account.currency);
     return api.getDryRunGasLimit(transaction).then((value) =>

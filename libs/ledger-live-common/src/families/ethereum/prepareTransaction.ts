@@ -54,8 +54,8 @@ export const prepareTransaction: AccountBridge<Transaction>["prepareTransaction"
         {
           from: account.freshAddress,
           to: tx.recipient,
-          value: "0x" + (tx.amount.toString(16) || "0"),
-          data: "0x" + (tx.data?.toString("hex") || "0"),
+          value: "0x" + (tx.amount.toString(16) || "00"),
+          data: tx.data ? `0x${tx.data.toString("hex")}` : "0x",
         }
       );
     }

@@ -333,12 +333,7 @@ export const apiForCurrency = (currency: CryptoCurrency): API => {
       const { data } = await network({
         method: "POST",
         url: `${baseURL}/tx/estimate-gas-limit`,
-        data: {
-          from: transaction.from,
-          to: transaction.to,
-          data: transaction.data,
-          value: transaction.value,
-        },
+        data: transaction,
       });
 
       if (data.error_message) {
