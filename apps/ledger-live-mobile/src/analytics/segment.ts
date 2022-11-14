@@ -30,6 +30,7 @@ import {
   lastSeenDeviceSelector,
   sensitiveAnalyticsSelector,
   firstConnectionHasDeviceSelector,
+  firstConnectHasDeviceUpdatedSelector,
   readOnlyModeEnabledSelector,
   hasOrderedNanoSelector,
 } from "../reducers/settings";
@@ -73,6 +74,8 @@ const extraProperties = (store: AppStore) => {
       }
     : {};
   const firstConnectionHasDevice = firstConnectionHasDeviceSelector(state);
+  const firstConnectHasDeviceUpdated =
+    firstConnectHasDeviceUpdatedSelector(state);
 
   return {
     appVersion,
@@ -87,6 +90,7 @@ const extraProperties = (store: AppStore) => {
     sessionId,
     devicesCount: devices.length,
     firstConnectionHasDevice,
+    firstConnectHasDeviceUpdated,
     ...(satisfaction
       ? {
           satisfaction,

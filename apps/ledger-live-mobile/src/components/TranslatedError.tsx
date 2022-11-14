@@ -27,6 +27,8 @@ export default function TranslatedError({
   const arg: Error & { returnObjects: boolean; productName?: string[] } = {
     returnObjects: true,
     ...error,
+    // message is not enumerable so we need to add it manually
+    message: error.message,
   };
 
   if (error.name) {

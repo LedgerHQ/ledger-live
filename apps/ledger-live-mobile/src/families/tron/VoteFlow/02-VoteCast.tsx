@@ -8,6 +8,7 @@ import { Trans } from "react-i18next";
 import type {
   Vote,
   TronAccount,
+  Transaction,
 } from "@ledgerhq/live-common/families/tron/types";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import {
@@ -38,12 +39,12 @@ export default function VoteCast({ route, navigation }: Props) {
   const { account } = useSelector(accountScreenSelector(route));
   invariant(account, "account is required");
   invariant(account.type === "Account", "account must be a main Account");
-  const bridge = getAccountBridge(account, undefined);
+  const bridge = getAccountBridge<Transaction>(account, undefined);
   const { tronResources } = account as TronAccount;
   invariant(tronResources, "tron resources required");
   const { tronPower } = tronResources;
   const { transaction, status, setTransaction, bridgeError, bridgePending } =
-    useBridgeTransaction(() => {
+    useBridgeTransaction<Transaction>(() => {
       const tx = route.params.transaction;
 
       if (!tx) {

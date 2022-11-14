@@ -410,6 +410,9 @@
       "title": "Sorry, this app is needed",
       "description": "Uninstall the Bitcoin or Ethereum app last."
     },
+    "MaxFeeLow": {
+      "title": "Your max fee is too low. Your transaction might stay pending for a while"
+    },
     "NetworkDown": {
       "title": "Sorry, internet seems to be down",
       "description": "Please check your internet connection."
@@ -747,6 +750,18 @@
     },
     "HederaAddAccountError": {
       "title": "Your account has not been added. Please try again."
+    },
+    "PriorityFeeTooLow": {
+      "title": "Priority fee is lower than the recommended value"
+    },
+    "PriorityFeeTooHigh": {
+      "title": "Priority fee is higher than necessary. You might be overpaying"
+    },
+    "MaxFeeTooLow": {
+      "title": "Max fee is lower than the recommended value"
+    },
+    "PriorityFeeHigherThanMaxFee": {
+      "title": "Max priority fee cannot be higher than max fee"
     }
   },
   "crash": {
@@ -3157,6 +3172,12 @@
       }
     }
   },
+  "signMessage": {
+    "eip712": {
+      "showFullMessage": "Show full message",
+      "hideFullMessage": "Hide full message"
+    }
+  },
   "sync": {
     "error": "Sync Error",
     "loading": "Sync"
@@ -3218,9 +3239,14 @@
       "infoTotalDesc": "Includes transaction amount and the selected network fees",
       "gasLimit": "Gas limit",
       "gasPrice": "Gas price",
+      "maxFee" : "Max fee",
+      "maxPriorityFee" : "Max priority fee",
+      "nextBlock": "Next block: {{nextBaseFee}}",
+      "suggestedPriorityFee": "Suggested: {{lowPriorityFee}} - {{highPriorityFee}}",
       "maxFees": "Max fees",
       "validateGasLimit": "Validate gas limit",
       "fees": "Fees",
+      "maxEstimatedFee": "Max estimated fee",
       "validateFees": "Validate Fees",
       "customizeFees": "Customize Fees",
       "memo": {
@@ -3466,7 +3492,7 @@
     }
   },
   "DeviceAction": {
-    "stayInTheAppPlz": "Stay in the Ledger Live App and keep your Nano X nearby",
+    "stayInTheAppPlz": "Stay in the Ledger Live app and keep your Ledger nearby.",
     "allowAppPermission": "Open the {{wording}} app on your device",
     "allowAppPermissionSubtitleToken": "to manage your {{token}} tokens",
     "allowManagerPermission": "Allow {{wording}} on your device",
@@ -3638,6 +3664,7 @@
         "description": "Manage your saved Ledgers"
       },
       "addNewCTA": "Add new",
+      "otgBanner": "If you own a Nano S or a Nano S Plus, connect your device with USB cable.",
       "connectExistingLedger": "Connect an existing Ledger",
       "connectExistingLedgerDescription": "Already have a Ledger that is set up? Pair it with bluetooth",
       "setUpNewLedger": "Set up a new Ledger",

@@ -191,7 +191,6 @@ export default function DelegationSummary({ navigation, route }: Props) {
       validator: chosenValidator,
       min: undefined,
       max,
-      mode: transaction.mode,
       value: transaction.amount,
       status,
       nextScreen: ScreenName.CosmosDelegationValidator,

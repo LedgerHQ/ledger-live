@@ -9,7 +9,6 @@ import { log } from "@ledgerhq/logs";
 import { OutputInfo } from "..";
 
 export class DeepFirst extends PickingStrategy {
-  // eslint-disable-next-line class-methods-use-this
   async selectUnspentUtxosToUse(
     xpub: Xpub,
     outputs: OutputInfo[],

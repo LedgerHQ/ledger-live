@@ -1,6 +1,7 @@
 import React from "react";
 import color from "color";
 import { useTheme } from "@react-navigation/native";
+import { DefaultTheme } from "styled-components/native";
 
 export const ensureContrast = (color1: string, color2: string) => {
   const colorL1 = color(color1).luminosity() + 0.05;
@@ -22,7 +23,11 @@ export const darken = (c: string, a: number) => color(c).darken(a).toString();
 export const lighten = (c: string, a: number) => color(c).lighten(a).toString();
 
 export function withTheme<P>(Component: React.ComponentType<P>) {
-  return (props: Omit<P, "colors">) => {
+  return (
+    props: Omit<P, "colors"> & {
+      colors?: Partial<Theme["colors"] | DefaultTheme["colors"]>;
+    },
+  ) => {
     const { colors } = useTheme();
     return <Component colors={colors} {...(props as P)} />;
   };

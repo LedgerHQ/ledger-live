@@ -113,7 +113,7 @@ export const deserializeError = (object: any): Error => {
       }
     }
 
-    if (!error.stack && Error.captureStackTrace) {
+    if (error && !error.stack && Error.captureStackTrace) {
       Error.captureStackTrace(error, deserializeError);
     }
     return error;
