@@ -1,6 +1,5 @@
 import React, { memo, useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { NativeModules } from "react-native";
 import styled, { useTheme } from "styled-components/native";
 import { Box, Flex, Icons, Link, Text } from "@ledgerhq/native-ui";
 import { CloseMedium } from "@ledgerhq/native-ui/assets/icons";

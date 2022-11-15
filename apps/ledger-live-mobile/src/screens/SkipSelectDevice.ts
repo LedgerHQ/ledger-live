@@ -8,6 +8,7 @@ import { AddAccountsNavigatorParamList } from "../components/RootNavigator/types
 import { StackNavigatorProps } from "../components/RootNavigator/types/helpers";
 import { ReceiveFundsStackParamList } from "../components/RootNavigator/types/ReceiveFundsNavigator";
 import { ScreenName } from "../const";
+import { usePromptBluetoothCallback } from "../logic/usePromptBluetoothCallback";
 
 type Navigation =
   | StackNavigatorProps<

@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
-import { StyleSheet, View, Platform, NativeModules } from "react-native";
+import { StyleSheet, View, Platform } from "react-native";
 import Config from "react-native-config";
 import { useSelector, useDispatch } from "react-redux";
 import { Trans } from "react-i18next";
@@ -119,11 +119,12 @@ export default function SelectDevice({
         /* ignore */
       });
   }, [
-    autoSelectOnAdd,
-    navigation,
-    handleOnSelect,
     route.name,
     promptBluetooth,
+    navigation,
+    autoSelectOnAdd,
+    handleOnSelect,
+    deviceModelIds,
   ]);
 
   const renderItem = useCallback(
