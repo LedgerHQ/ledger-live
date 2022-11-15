@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "allowJs": false,
+    "allowJs": true,
     "allowSyntheticDefaultImports": true,
     "checkJs": false,
     "skipLibCheck": true,
@@ -15,7 +15,7 @@
     "target": "esnext",
     "incremental": true
   },
-  "include": ["src/**/*", "**/*.d.ts"],
+  "include": ["e2e/**/*", "**/*.d.ts"],
   "exclude": [
     "node_modules",
     "babel.config.js",

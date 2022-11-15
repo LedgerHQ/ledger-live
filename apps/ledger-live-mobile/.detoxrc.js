@@ -3,17 +3,24 @@ const iosArch = "x86_64";
 // NOTE: Pass CI=1 if you want to build locally when you don't have a mac M1. This works better if you do export CI=1 for the whole session.
 const androidArch = process.env.CI ? "x86_64" : "arm64-v8a";
 
+/** @type {Detox.DetoxConfig} */
 module.exports = {
-  testRunner: "jest",
-  runnerConfig: "e2e/config.json",
-  specs: "e2e/specs",
-  behavior: {
-    // NOTE: https://github.com/wix/Detox/blob/master/docs/APIRef.Configuration.md#behavior-configuration
-    init: {
-      reinstallApp: true,
-      exposeGlobals: false,
+  testRunner: {
+    $0: "ts-jest",
+    args: {
+      config: "e2e/jest.config.js",
     },
-    launchApp: "auto",
+    jest: {
+      setupTimeout: 120000,
+    },
+    behavior: {
+      // NOTE: https://github.com/wix/Detox/blob/master/docs/APIRef.Configuration.md#behavior-configuration
+      init: {
+        reinstallApp: true,
+        exposeGlobals: false,
+      },
+      launchApp: "auto",
+    },
   },
   apps: {
     "ios.debug": {
@@ -21,7 +28,6 @@ module.exports = {
       build: `export ENVFILE=.env.mock && xcodebuild ARCHS=${iosArch} ONLY_ACTIVE_ARCH=no -workspace ios/ledgerlivemobile.xcworkspace -scheme ledgerlivemobile -configuration Debug -sdk iphonesimulator -derivedDataPath ios/build`,
       binaryPath:
         "ios/build/Build/Products/Debug-iphonesimulator/ledgerlivemobile.app",
-      // "launchArgs": "https://github.com/wix/Detox/blob/master/docs/APIRef.LaunchArgs.md",
     },
     "ios.staging": {
       type: "ios.app",
@@ -56,14 +62,13 @@ module.exports = {
     simulator: {
       type: "ios.simulator",
       device: {
-        type: "iPhone 11 Pro",
+        type: "iPhone 12",
       },
-      // bootArgs: "https://github.com/wix/Detox/blob/master/docs/APIRef.Configuration.md",
     },
     emulator: {
       type: "android.emulator",
       device: {
-        avdName: "Nexus_6",
+        avdName: "Pixel_3a_API_30_x86",
       },
     },
   },

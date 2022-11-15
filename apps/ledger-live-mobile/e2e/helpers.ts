@@ -11,13 +11,13 @@ export function waitAndTap(elementId, timeout) {
   return element(by.id(elementId)).tap();
 }
 
-export function waitForElement(elementId, timeout) {
+export function waitForElement(elementId: string, timeout?: number) {
   return waitFor(element(by.id(elementId)))
     .toBeVisible()
     .withTimeout(timeout || DEFAULT_TIMEOUT);
 }
 
-export function waitForElementByText(text, timeout) {
+export function waitForElementByText(text: string, timeout?: number) {
   return waitFor(element(by.text(text)))
     .toBeVisible()
     .withTimeout(timeout || DEFAULT_TIMEOUT);
@@ -27,7 +27,7 @@ export function tap(elementId) {
   return element(by.id(elementId)).tap();
 }
 
-export function tapByText(text, index) {
+export function tapByText(text: string, index?: number) {
   return element(by.text(text))
     .atIndex(index || 0)
     .tap();
@@ -55,7 +55,12 @@ export async function scrollToElementById(
   await waitFor(element(by.id(elementToScrollToId)))
     .toBeVisible()
     .whileElement(by.id(parentElementId))
-    .scroll(pixelsToScroll, direction, startPositionXAxis, startPositionYAxis);
+    .scroll(
+      pixelsToScroll,
+      direction as Detox.Direction,
+      startPositionXAxis,
+      startPositionYAxis,
+    );
 }
 
 export async function retryAction(action, timeout) {
