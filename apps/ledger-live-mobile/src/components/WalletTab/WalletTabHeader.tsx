@@ -1,9 +1,12 @@
 import { Box } from "@ledgerhq/native-ui";
 import React, { useContext } from "react";
-import { Animated } from "react-native";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
-import Header from "../../screens/Portfolio/Header";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { Animated } from "react-native";
 import { WalletTabNavigatorScrollContext } from "./WalletTabNavigatorScrollManager";
+import Header from "../../screens/Portfolio/Header";
+
+const AnimatedSafeArea = Animated.createAnimatedComponent(SafeAreaView);
 
 function WalletTabHeader({
   hidePortfolio,
@@ -24,14 +27,14 @@ function WalletTabHeader({
   const opacity = animated
     ? 0
     : scrollY.interpolate({
-        inputRange: [0, headerHeight - 24],
+        inputRange: [0, headerHeight],
         outputRange: [1, 0],
         extrapolateRight: "clamp",
       });
 
   return (
     <>
-      <Animated.View
+      <AnimatedSafeArea
         style={[
           {
             top: 0,
@@ -42,6 +45,7 @@ function WalletTabHeader({
           },
           { transform: [{ translateY: y }] },
         ]}
+        mode={"margin"}
       >
         <Box
           flex={1}
@@ -51,7 +55,7 @@ function WalletTabHeader({
         >
           <Header hidePortfolio={hidePortfolio} />
         </Box>
-      </Animated.View>
+      </AnimatedSafeArea>
     </>
   );
 }

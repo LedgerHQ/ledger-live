@@ -5,6 +5,7 @@ import styled, { BaseStyledProps } from "@ledgerhq/native-ui/components/styled";
 import { Box, Flex, Text } from "@ledgerhq/native-ui";
 import { Animated } from "react-native";
 import { useSelector } from "react-redux";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { track } from "../../analytics";
 import { rgba } from "../../colors";
 import { WalletTabNavigatorScrollContext } from "./WalletTabNavigatorScrollManager";
@@ -96,6 +97,8 @@ function Tab({
 
 const MemoTab = memo(Tab);
 
+const AnimatedSafeArea = Animated.createAnimatedComponent(SafeAreaView);
+
 function WalletTabNavigatorTabBar({
   state,
   descriptors,
@@ -132,7 +135,7 @@ function WalletTabNavigatorTabBar({
             : undefined
         }
       />
-      <Animated.View
+      <AnimatedSafeArea
         style={{
           top: 0,
           zIndex: 1,
@@ -141,6 +144,7 @@ function WalletTabNavigatorTabBar({
           width: "100%",
           height: tabBarHeight,
         }}
+        mode={"margin"}
       >
         <Animated.View
           style={{
@@ -171,7 +175,7 @@ function WalletTabNavigatorTabBar({
             })}
           </Flex>
         </Flex>
-      </Animated.View>
+      </AnimatedSafeArea>
     </>
   );
 }
