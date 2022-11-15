@@ -1,5 +1,19 @@
 # ledger-live-desktop
 
+## 2.50.0-nightly.7
+
+### Patch Changes
+
+- [#1725](https://github.com/LedgerHQ/ledger-live/pull/1725) [`4f3c4bb11f`](https://github.com/LedgerHQ/ledger-live/commit/4f3c4bb11f92daba55f97407887b06e3c43b38b7) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - The `desktop_version` feature flag option has been improved to work fine with prereleases versions numbers
+
+- Updated dependencies [[`0308e8c6ae`](https://github.com/LedgerHQ/ledger-live/commit/0308e8c6ae721a99bc50f5dc60db0d11ea8ea1ff)]:
+  - @ledgerhq/errors@6.12.0-nightly.3
+  - @ledgerhq/live-common@27.7.0-nightly.3
+  - @ledgerhq/devices@7.0.4-nightly.3
+  - @ledgerhq/hw-transport@6.27.7-nightly.3
+  - @ledgerhq/hw-transport-http@6.27.7-nightly.3
+  - @ledgerhq/hw-transport-node-hid-singleton@6.28.4-nightly.3
+
 ## 2.50.0-nightly.6
 
 ### Minor Changes

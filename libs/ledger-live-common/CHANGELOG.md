@@ -1,5 +1,27 @@
 # @ledgerhq/live-common
 
+## 27.7.0-nightly.3
+
+### Patch Changes
+
+- Updated dependencies [[`0308e8c6ae`](https://github.com/LedgerHQ/ledger-live/commit/0308e8c6ae721a99bc50f5dc60db0d11ea8ea1ff), [`00e8b9e435`](https://github.com/LedgerHQ/ledger-live/commit/00e8b9e435fc5f13c56206102619eb1f97c62546), [`bef0a76d27`](https://github.com/LedgerHQ/ledger-live/commit/bef0a76d276f6a8d322e890ceaedc266a710b06a)]:
+  - @ledgerhq/errors@6.12.0-nightly.3
+  - @ledgerhq/hw-app-eth@6.30.0-nightly.2
+  - @ledgerhq/cryptoassets@6.37.0-nightly.2
+  - @ledgerhq/devices@7.0.4-nightly.3
+  - @ledgerhq/hw-app-algorand@6.27.7-nightly.3
+  - @ledgerhq/hw-app-cosmos@6.27.7-nightly.3
+  - @ledgerhq/hw-app-polkadot@6.27.7-nightly.3
+  - @ledgerhq/hw-app-solana@7.0.1-nightly.3
+  - @ledgerhq/hw-app-trx@6.27.7-nightly.3
+  - @ledgerhq/hw-transport@6.27.7-nightly.3
+  - @ledgerhq/hw-transport-node-speculos@6.27.7-nightly.3
+  - @ledgerhq/hw-app-btc@9.0.0-nightly.4
+  - @ledgerhq/hw-app-str@6.27.7-nightly.3
+  - @ledgerhq/hw-app-tezos@6.27.7-nightly.3
+  - @ledgerhq/hw-app-xrp@6.27.7-nightly.3
+  - @ledgerhq/hw-transport-mocker@6.27.7-nightly.3
+
 ## 27.7.0-nightly.2
 
 ### Minor Changes

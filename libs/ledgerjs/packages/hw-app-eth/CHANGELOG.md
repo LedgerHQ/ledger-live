@@ -1,5 +1,17 @@
 # @ledgerhq/hw-app-eth
 
+## 6.30.0-nightly.2
+
+### Patch Changes
+
+- [#1773](https://github.com/LedgerHQ/ledger-live/pull/1773) [`00e8b9e435`](https://github.com/LedgerHQ/ledger-live/commit/00e8b9e435fc5f13c56206102619eb1f97c62546) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Fix transaction resolutions through ledger services not being all activable at the same time
+
+- Updated dependencies [[`0308e8c6ae`](https://github.com/LedgerHQ/ledger-live/commit/0308e8c6ae721a99bc50f5dc60db0d11ea8ea1ff), [`bef0a76d27`](https://github.com/LedgerHQ/ledger-live/commit/bef0a76d276f6a8d322e890ceaedc266a710b06a)]:
+  - @ledgerhq/errors@6.12.0-nightly.3
+  - @ledgerhq/cryptoassets@6.37.0-nightly.2
+  - @ledgerhq/hw-transport@6.27.7-nightly.3
+  - @ledgerhq/hw-transport-mocker@6.27.7-nightly.3
+
 ## 6.30.0-nightly.1
 
 ### Minor Changes

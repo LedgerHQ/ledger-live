@@ -1,5 +1,11 @@
 # @ledgerhq/errors
 
+## 6.12.0-nightly.3
+
+### Patch Changes
+
+- [#1766](https://github.com/LedgerHQ/ledger-live/pull/1766) [`0308e8c6ae`](https://github.com/LedgerHQ/ledger-live/commit/0308e8c6ae721a99bc50f5dc60db0d11ea8ea1ff) Thanks [@gre](https://github.com/gre)! - Fixes resiliency of deserializeError.
+
 ## 6.12.0-nightly.2
 
 ### Minor Changes

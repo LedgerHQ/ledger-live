@@ -1,5 +1,24 @@
 # live-mobile
 
+## 3.11.0-nightly.5
+
+### Minor Changes
+
+- [#1467](https://github.com/LedgerHQ/ledger-live/pull/1467) [`7556612769`](https://github.com/LedgerHQ/ledger-live/commit/7556612769ba0a41c1dd903da25e74262e883358) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - Braze Integration added to add push notifications and content cards to LLM
+
+### Patch Changes
+
+- [#1663](https://github.com/LedgerHQ/ledger-live/pull/1663) [`a141256f0f`](https://github.com/LedgerHQ/ledger-live/commit/a141256f0f4fff91fb811eaf081f7138f91ff251) Thanks [@lvndry](https://github.com/lvndry)! - When removing a token from the list of hidden tokens, it will be redisplayed in the app'
+
+- Updated dependencies [[`0308e8c6ae`](https://github.com/LedgerHQ/ledger-live/commit/0308e8c6ae721a99bc50f5dc60db0d11ea8ea1ff)]:
+  - @ledgerhq/errors@6.12.0-nightly.3
+  - @ledgerhq/live-common@27.7.0-nightly.3
+  - @ledgerhq/devices@7.0.4-nightly.3
+  - @ledgerhq/hw-transport@6.27.7-nightly.3
+  - @ledgerhq/hw-transport-http@6.27.7-nightly.3
+  - @ledgerhq/react-native-hid@6.28.9-nightly.3
+  - @ledgerhq/react-native-hw-transport-ble@6.27.9-nightly.3
+
 ## 3.11.0-nightly.4
 
 ### Minor Changes
