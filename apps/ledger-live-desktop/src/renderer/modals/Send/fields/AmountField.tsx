@@ -40,16 +40,14 @@ const AmountField = ({
 
   useEffect(() => {
     if (initValue && !initValue.eq(transaction.amount || new BigNumber(0))) {
-      onChangeTransaction(
-        bridge.updateTransaction(transaction, { amount: initValue, mode: "delegate" }),
-      );
+      onChangeTransaction(bridge.updateTransaction(transaction, { amount: initValue }));
       resetInitValue && resetInitValue();
     }
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const onChange = useCallback(
     (amount: BigNumber) => {
-      onChangeTransaction(bridge.updateTransaction(transaction, { amount, mode: "delegate" }));
+      onChangeTransaction(bridge.updateTransaction(transaction, { amount }));
     },
     [bridge, transaction, onChangeTransaction],
   );
