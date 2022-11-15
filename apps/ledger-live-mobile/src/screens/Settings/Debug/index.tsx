@@ -16,6 +16,7 @@ import OpenDebugHttpTransport from "./OpenDebugHttpTransport";
 import OpenDebugIcons from "./OpenDebugIcons";
 import ReadOnlyModeRow from "../General/ReadOnlyModeRow";
 import AnalyticsConsoleRow from "./AnalyticsConsoleRow";
+import EquipmentIdRow from "./EquipmentIdRow";
 import OpenDebugStore from "./OpenDebugStore";
 import OpenDebugPlayground from "./OpenDebugPlayground";
 import OpenDebugFeatureFlags from "./OpenDebugFeatureFlags";
@@ -69,6 +70,7 @@ export function DebugMocks() {
       <HasOrderedNanoRow />
       <MockModeRow />
       <AnalyticsConsoleRow />
+      <EquipmentIdRow />
       <AddMockAnnouncementButton title="Mock a new announcement" />
       <ToggleMockServiceStatusButton title="Toggle Service status incident" />
       <SkipLock />

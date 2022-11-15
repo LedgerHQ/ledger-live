@@ -18,8 +18,28 @@ concurrency:
   cancel-in-progress: ${{ github.ref_name != 'develop' }}
 
 jobs:
+  is-affected:
+    outputs:
+      is-mobile-affected: ${{ steps.affected.outputs.is-package-affected }}
+    runs-on: [ubuntu-latest]
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          ref: develop
+          fetch-depth: 0
+      - name: checkout branch
+        run: |
+          git checkout ${{ github.event.pull_request.head.ref || github.event.push.base.ref }}
+      - uses: ./tools/actions/turbo-affected
+        id: affected
+        with:
+          package: "live-mobile"
+          head-ref: ${{ github.event.pull_request.base.ref || github.event.push.base.ref || 'HEAD^' }}
+
   pr-is-fork:
     name: "Check if the PR is a fork"
+    needs: is-affected
+    if: ${{ needs.is-affected.outputs.is-mobile-affected == 'true' }}
     uses: ./.github/workflows/pr-is-fork.yml
     with:
       non-pr-result: false
@@ -98,12 +118,12 @@ jobs:
         uses: android-actions/setup-android@v2.0.6
       - name: install dependencies
         run: pnpm i --filter="live-mobile..." --filter="ledger-live" --no-frozen-lockfile --unsafe-perm
-      - uses: ledgerhq/ledger-live/tools/actions/get-package-infos@develop
+      - uses: ./tools/actions/get-package-infos
         id: version
         with:
           path: ${{ github.workspace }}/apps/ledger-live-mobile
       - name: set beta name
-        uses: ledgerhq/ledger-live/tools/actions/change-product-name@develop
+        uses: ./tools/actions/change-product-name
         with:
           path: ${{ github.workspace }}/apps/ledger-live-mobile
       - name: Get short SHA
@@ -127,7 +147,7 @@ jobs:
           NODE_OPTIONS: "--max-old-space-size=7168"
           ANDROID_KEYSTORE_FILE: ${{ github.workspace }}/apps/ledger-live-mobile/android/app/staging.kstr
         run: pnpm build-ci:llm:android --api="http://127.0.0.1:${{ steps.turborepo-cache-server.outputs.port }}" --token="yolo" --team="foo"
-      - uses: ledgerhq/ledger-live/tools/actions/get-package-infos@develop
+      - uses: ./tools/actions/get-package-infos
         id: post-version
         with:
           path: ${{ github.workspace }}/apps/ledger-live-mobile
@@ -173,12 +193,12 @@ jobs:
         uses: android-actions/setup-android@v2.0.6
       - name: install dependencies
         run: pnpm i --filter="live-mobile..." --filter="ledger-live" --no-frozen-lockfile --unsafe-perm
-      - uses: ledgerhq/ledger-live/tools/actions/get-package-infos@develop
+      - uses: ./tools/actions/get-package-infos
         id: version
         with:
           path: ${{ github.workspace }}/apps/ledger-live-mobile
       - name: set beta name
-        uses: ledgerhq/ledger-live/tools/actions/change-product-name@develop
+        uses: ./tools/actions/change-product-name
         with:
           path: ${{ github.workspace }}/apps/ledger-live-mobile
       - name: Get short SHA
@@ -203,7 +223,7 @@ jobs:
           NODE_OPTIONS: "--max-old-space-size=7168"
           ANDROID_KEYSTORE_FILE: ${{ github.workspace }}/apps/ledger-live-mobile/android/app/staging.kstr
         run: pnpm build:llm:android --api="http://127.0.0.1:${{ steps.turborepo-cache-server.outputs.port }}" --token="yolo" --team="foo"
-      - uses: ledgerhq/ledger-live/tools/actions/get-package-infos@develop
+      - uses: ./tools/actions/get-package-infos
         id: post-version
         with:
           path: ${{ github.workspace }}/apps/ledger-live-mobile
@@ -216,6 +236,8 @@ jobs:
   build-mobile-app-ios:
     runs-on: macos-latest
     name: "Build Ledger Live Mobile (Mac OS X)"
+    needs: is-affected
+    if: ${{ needs.is-affected.outputs.is-mobile-affected == 'true' }}
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
     steps:

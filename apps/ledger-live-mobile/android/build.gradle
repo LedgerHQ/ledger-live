@@ -70,9 +70,14 @@ allprojects {
         maven {
             url "$rootDir/../node_modules/expo-camera/android/maven"
         }
+        maven {
+            url "https://appboy.github.io/appboy-android-sdk/sdk"
+        }
     }
     configurations.all {
         resolutionStrategy {
+            force 'androidx.core:core:1.6.0'
+
             dependencySubstitution {
                 substitute module("com.redmadrobot:input-mask-android:6.0.0") using module('com.github.RedMadRobot:input-mask-android:6.0.0')
             }

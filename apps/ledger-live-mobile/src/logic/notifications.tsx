@@ -1,13 +1,10 @@
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useMemo } from "react";
 import { Linking, Platform } from "react-native";
 import { useSelector, useDispatch } from "react-redux";
-import { useNavigation } from "@react-navigation/native";
 import { add, isBefore, parseISO } from "date-fns";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import messaging from "@react-native-firebase/messaging";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
-import { useToasts } from "@ledgerhq/live-common/notifications/ToastProvider/index";
-import { ToastData } from "@ledgerhq/live-common/notifications/ToastProvider/types";
 import { accountsSelector } from "../reducers/accounts";
 import {
   notificationsModalOpenSelector,
@@ -24,8 +21,6 @@ import {
   setNotificationsEventTriggered,
   setNotificationsDataOfUser,
 } from "../actions/notifications";
-import { notificationsSelector } from "../reducers/settings";
-import { ScreenName, NavigatorName } from "../const";
 import { setRatingsModalLocked } from "../actions/ratings";
 import { track } from "../analytics";
 
@@ -76,20 +71,12 @@ async function setPushNotificationsDataOfUserInStorage(dataOfUser: DataOfUser) {
 const getIsNotifEnabled = async () => {
   const authStatus = await messaging().hasPermission();
 
-  return (
-    authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
-    authStatus === messaging.AuthorizationStatus.PROVISIONAL
-  );
+  return authStatus === messaging.AuthorizationStatus.AUTHORIZED;
 };
 
 const useNotifications = () => {
   const pushNotificationsFeature = useFeature("pushNotifications");
-  const { pushToast } = useToasts();
-  const notificationsSettings = useSelector(notificationsSelector);
 
-  const [notificationsToken, setNotificationsToken] = useState<
-    string | undefined
-  >();
   const isPushNotificationsModalOpen = useSelector(
     notificationsModalOpenSelector,
   );
@@ -116,41 +103,8 @@ const useNotifications = () => {
   );
 
   const dispatch = useDispatch();
-  const navigation = useNavigation();
-
-  const listenForNotifications = useCallback(async () => {
-    if (!notificationsToken) {
-      const fcm = messaging();
-      const token = await fcm.getToken();
-      setNotificationsToken(token);
-      fcm.onMessage(async remoteMessage => {
-        if (remoteMessage && remoteMessage.notification) {
-          pushToast({
-            id: remoteMessage.messageId && remoteMessage.messageId,
-            title: remoteMessage.notification.title,
-            text: remoteMessage.notification.body,
-            icon: "info",
-          } as ToastData);
-        }
-      });
-      // Needed to avoid a warning
-      // eslint-disable-next-line @typescript-eslint/no-empty-function
-      fcm.setBackgroundMessageHandler(async _ => {});
-    }
-  }, [notificationsToken, pushToast]);
-
-  const clearNotificationsListeners = useCallback(() => {
-    if (notificationsToken) {
-      messaging().deleteToken();
-      setNotificationsToken(undefined);
-    }
-  }, [notificationsToken]);
 
   const handlePushNotificationsPermission = useCallback(async () => {
-    track("button_clicked", {
-      button: "Go to system settings",
-      screen: pushNotificationsOldRoute,
-    });
     if (Platform.OS === "android") {
       Linking.openSettings();
     } else {
@@ -159,11 +113,14 @@ const useNotifications = () => {
 
       if (permission === messaging.AuthorizationStatus.DENIED) {
         Linking.openSettings();
-      } else if (permission === messaging.AuthorizationStatus.NOT_DETERMINED) {
+      } else if (
+        permission === messaging.AuthorizationStatus.NOT_DETERMINED ||
+        permission === messaging.AuthorizationStatus.PROVISIONAL
+      ) {
         fcm.requestPermission();
       }
     }
-  }, [pushNotificationsOldRoute]);
+  }, []);
 
   const setPushNotificationsModalOpenCallback = useCallback(
     isModalOpen => {
@@ -173,14 +130,14 @@ const useNotifications = () => {
         dispatch(setRatingsModalLocked(false));
       } else if (!isPushNotificationsModalLocked) {
         getIsNotifEnabled().then(isNotifEnabled => {
-          if (!isNotifEnabled || !notificationsSettings.allowed) {
+          if (!isNotifEnabled) {
             dispatch(setNotificationsModalOpen(isModalOpen));
             dispatch(setRatingsModalLocked(true));
           }
         });
       }
     },
-    [dispatch, notificationsSettings.allowed, isPushNotificationsModalLocked],
+    [dispatch, isPushNotificationsModalLocked],
   );
 
   const areConditionsMet = useCallback(() => {
@@ -397,9 +354,7 @@ const useNotifications = () => {
       drawer: "Notif",
     });
     setPushNotificationsModalOpenCallback(false);
-    navigation.navigate(NavigatorName.Settings, {
-      screen: ScreenName.NotificationsSettings,
-    });
+    handlePushNotificationsPermission();
     if (
       pushNotificationsFeature?.params?.conditions
         ?.default_delay_between_two_prompts
@@ -411,11 +366,11 @@ const useNotifications = () => {
     }
   }, [
     pushNotificationsOldRoute,
-    handleSetDateOfNextAllowedRequest,
-    navigation,
+    setPushNotificationsModalOpenCallback,
+    handlePushNotificationsPermission,
     pushNotificationsFeature?.params?.conditions
       ?.default_delay_between_two_prompts,
-    setPushNotificationsModalOpenCallback,
+    handleSetDateOfNextAllowedRequest,
   ]);
 
   const modalDelayLater = useCallback(() => {
@@ -461,8 +416,6 @@ const useNotifications = () => {
     handlePushNotificationsPermission,
     triggerMarketPushNotificationModal,
     triggerJustFinishedOnboardingNewDevicePushNotificationModal,
-    listenForNotifications,
-    clearNotificationsListeners,
     modalAllowNotifications,
     modalDelayLater,
   };

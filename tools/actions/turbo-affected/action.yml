@@ -1,0 +1,28 @@
+name: turbo-affected
+description: Returns a list of affected packages
+author: valpinkman
+inputs:
+  head-ref:
+    description: "name of branch or ref to compare with (defaults to 'develop'). Git syntax allowed (HEAD^1)"
+    default: develop
+    required: false
+  package:
+    description: "name of package to check if affected (name in package.json)"
+    required: false
+  command:
+    description: "turbo command to run (defaults to 'build')"
+    default: build
+    required: false
+outputs:
+  affected:
+    description: "Returns an array of affected packages (empty array if nothing has changed)"
+  is-package-affected:
+    description: "Returns true if package given from inputs is affected (false by default)"
+
+runs:
+  using: node16
+  main: build/main.js
+
+branding:
+  icon: shuffle
+  color: green
