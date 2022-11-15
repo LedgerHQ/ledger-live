@@ -243,7 +243,8 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     id: "avalanche_c_chain",
     coinType: CoinType.ETH,
     name: "Avalanche C-Chain",
-    managerAppName: "Avalanche",
+    // TODO: Do we want to use "Avalanche" instead ?
+    managerAppName: "Ethereum",
     ticker: "AVAXC",
     scheme: "avalanche_c_chain",
     color: "#E84142",
