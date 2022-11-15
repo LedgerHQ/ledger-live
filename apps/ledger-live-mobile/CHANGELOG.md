@@ -1,5 +1,15 @@
 # live-mobile
 
+## 3.11.0-next.2
+
+### Patch Changes
+
+- [#1806](https://github.com/LedgerHQ/ledger-live/pull/1806) [`1dc29a7017`](https://github.com/LedgerHQ/ledger-live/commit/1dc29a7017a5ed63429c86e1dbaf4bfb844a0efa) Thanks [@github-actions](https://github.com/apps/github-actions)! - The push notifications feature flag's key has been modified
+
+- Updated dependencies [[`1dc29a7017`](https://github.com/LedgerHQ/ledger-live/commit/1dc29a7017a5ed63429c86e1dbaf4bfb844a0efa)]:
+  - @ledgerhq/types-live@6.26.0-next.1
+  - @ledgerhq/live-common@27.7.0-next.1
+
 ## 3.11.0-next.1
 
 ### Patch Changes
