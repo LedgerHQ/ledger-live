@@ -1,4 +1,5 @@
 name: "[Bot] Testing with 'Phosphore'"
+run-name: Test with 🤖 Phosphore by @${{ github.actor }} with ${{ inputs.family || "all coins" }}
 on:
   workflow_dispatch:
     inputs:
