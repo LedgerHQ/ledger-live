@@ -4873,6 +4873,11 @@
     "cta" : "متابعة"
   },
   "families" : {
+    "casper": {
+      "transferIdPlaceholder": "اختياري",
+      "transferId": "معرف نقل",
+      "transferIdWarningText": "يجب أن يكون معرف التحويل رقمًا موجبًا أصغر من 18446744073709551615"
+    },
     "cardano" : {
       "memoPlaceholder" : "اختياري",
       "memo" : "ملاحظة (تسمية الوجهة)"
