@@ -84,29 +84,17 @@ const fetchBalanceInfo = async (
  * @returns {string}
  */
 const fetchStashAddr = async (addr: string): Promise<string | null> => {
-  try {
-    const {
-      data,
-    }: {
-      data: SidecarPalletStorageItem;
-    } = await network({
-      method: "GET",
-      url: getSidecarUrl(`/pallets/staking/storage/ledger?keys[]=${addr}`),
-    });
-    return data.value?.stash ?? null;
-  } catch (e) {
-    console.warn(e);
-    const {
-      data,
-    }: {
-      data: SidecarPalletStorageItem;
-    } = await network({
-      method: "GET",
-      url: getSidecarUrl(`/pallets/staking/storage/ledger?key1=${addr}`),
-    });
-
-    return data.value?.stash ?? null;
-  }
+  const {
+    data,
+  }: {
+    data: SidecarPalletStorageItem;
+  } = await network({
+    method: "GET",
+    url: getSidecarUrl(
+      `/pallets/staking/storage/ledger?keys[]=${addr}&key1=[]${addr}`
+    ),
+  });
+  return data.value?.stash ?? null;
 };
 
 /**
@@ -118,28 +106,17 @@ const fetchStashAddr = async (addr: string): Promise<string | null> => {
  * @returns {string}
  */
 const fetchControllerAddr = async (addr: string): Promise<string | null> => {
-  try {
-    const {
-      data,
-    }: {
-      data: SidecarPalletStorageItem;
-    } = await network({
-      method: "GET",
-      url: getSidecarUrl(`/pallets/staking/storage/bonded?keys[]=${addr}`),
-    });
-    return data.value ?? null;
-  } catch (e) {
-    console.warn(e);
-    const {
-      data,
-    }: {
-      data: SidecarPalletStorageItem;
-    } = await network({
-      method: "GET",
-      url: getSidecarUrl(`/pallets/staking/storage/bonded?key1=${addr}`),
-    });
-    return data.value ?? null;
-  }
+  const {
+    data,
+  }: {
+    data: SidecarPalletStorageItem;
+  } = await network({
+    method: "GET",
+    url: getSidecarUrl(
+      `/pallets/staking/storage/bonded?keys[]=${addr}&key1=${addr}`
+    ),
+  });
+  return data.value ?? null;
 };
 
 /**
