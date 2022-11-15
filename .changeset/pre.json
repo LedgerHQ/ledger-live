@@ -79,6 +79,7 @@
     "pnpm-utils": "1.0.0"
   },
   "changesets": [
-    "odd-lies-tap"
+    "odd-lies-tap",
+    "afraid-mugs-camp"
   ]
 }
