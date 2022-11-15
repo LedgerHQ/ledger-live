@@ -31,7 +31,7 @@ export async function loadConfig(
 
   const f = fs.readFileSync(path.resolve("e2e", "setups", `${fileName}.json`));
 
-  const { data } = JSON.parse(f);
+  const { data } = JSON.parse(f.toString());
 
   postMessage({ type: "importSettngs", payload: data.settings });
 
@@ -95,7 +95,7 @@ function acceptTerms() {
   postMessage({ type: "acceptTerms", payload: null });
 }
 
-function postMessage(message) {
+function postMessage(message: object) {
   for (const ws of wss.clients.values()) {
     ws.send(JSON.stringify(message));
   }
