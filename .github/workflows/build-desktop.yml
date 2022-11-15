@@ -37,7 +37,7 @@ jobs:
         id: affected
         with:
           package: "ledger-live-desktop"
-          head-ref: ${{ github.event_name == 'workflow_dispatch' && format('origin/{0}', github.event.pull_request.base.ref) || 'HEAD^' }}
+          head-ref: ${{ github.event_name == 'pull_request' && format('origin/{0}', github.event.pull_request.base.ref) || 'HEAD^' }}
 
   pr-is-fork:
     name: "Check if the PR is a fork"
