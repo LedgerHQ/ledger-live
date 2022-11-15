@@ -3259,7 +3259,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     ],
     keywords: ["avax", "avalanche", "c-chain"],
   },
-  // Light Integrations are at the end of the list until we figure out a way to fix the ticker/managerApp collisions
+  // FIXME: Light Integrations are at the end of the list until we figure out a way to fix the ticker/managerApp collisions
   arbitrum: {
     type: "CryptoCurrency",
     id: "arbitrum",
