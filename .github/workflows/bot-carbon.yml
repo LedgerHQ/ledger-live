@@ -1,4 +1,5 @@
 name: "[Bot] Testing with 'Carbon'"
+run-name: Test with 🤖 Carbon by @${{github.actor}} with ${{inputs.family}}
 on:
   workflow_dispatch:
     inputs:
