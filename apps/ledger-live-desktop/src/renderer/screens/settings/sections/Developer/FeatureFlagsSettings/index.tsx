@@ -55,9 +55,7 @@ export const FeatureFlagContent = withV3StyleProvider((props: { visible?: boolea
     (["customImage", "deviceInitialApps", "syncOnboarding"] as FeatureId[]).forEach(featureId =>
       overrideFeature(featureId, { ...getFeature(featureId), enabled: true }),
     );
-    window.alert(
-      "You now have the one ring. Remember, with great power comes great responsibility.",
-    );
+    window.alert("With great power comes great responsibility.");
   }, [overrideFeature, getFeature]);
 
   const onDescriptionClick = useCallback(() => {

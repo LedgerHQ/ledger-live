@@ -131,7 +131,7 @@ export default function DebugSettings({
       overrideFeature(featureId, { ...getFeature(featureId), enabled: true }),
     );
     Alert.alert(
-      "You now have the one ring. I can only show you the door, you're the one that has to walk through it.",
+      "I can only show you the door, you're the one that has to walk through it.",
     );
   }, [overrideFeature, getFeature]);
 
