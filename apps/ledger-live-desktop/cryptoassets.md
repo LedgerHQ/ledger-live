@@ -4,6 +4,7 @@
 | name | ticker | supported on Ledger Live? | ledger id |
 |--|--|--|--|
 | Algorand | ALGO | YES | algorand |
+| Avalanche C-Chain | AVAXC | YES | avalanche_c_chain |
 | Binance Smart Chain | BNB | YES | bsc |
 | Bitcoin | BTC | YES | bitcoin |
 | Bitcoin Cash | BCH | YES | bitcoin_cash |
@@ -49,7 +50,6 @@
 | Arbitrum | ETH | NO | arbitrum |
 | Ark | ARK | NO | ark |
 | Atheios | ATH | NO | atheios |
-| Avalanche (C-chain) | AVAXC | NO | avalanche_c_chain |
 | Banano | BANANO | NO | banano |
 | Bitcoin Private | BTCP | NO | bitcoin_private |
 | Callisto | CLO | NO | callisto |
