@@ -2,12 +2,12 @@
 import { Server } from "ws";
 import path from "path";
 import fs from "fs";
-import type { E2EBridgeMessage } from "./client";
+// import type { E2EBridgeMessage } from "./client";
 import { NavigatorName } from "../../src/const";
 
 let wss: Server;
 
-export function init(port?: number = 8099) {
+export function init(port = 8099) {
   wss = new Server({ port });
   log(`Start listening on localhost:${port}`);
 
@@ -23,7 +23,7 @@ export function close() {
 
 export async function loadConfig(
   fileName: string,
-  agreed?: true = true,
+  agreed: true = true,
 ): Promise<void> {
   if (agreed) {
     acceptTerms();
@@ -95,7 +95,7 @@ function acceptTerms() {
   postMessage({ type: "acceptTerms", payload: null });
 }
 
-function postMessage(message: E2EBridgeMessage) {
+function postMessage(message) {
   for (const ws of wss.clients.values()) {
     ws.send(JSON.stringify(message));
   }
