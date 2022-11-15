@@ -37,7 +37,7 @@ module.exports = {
   outputTemplate: (data, toJSON) =>
     toJSON
       ? JSON.stringify(data.toString("base64"))
-      : "export default " + JSON.stringify(data.toString("base64")) + ";",
+      : "export default " + JSON.stringify(data.toString("base64")) + ";\n",
 
   loader: ({ signatureFolder, folder, id }) =>
     Promise.all([

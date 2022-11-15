@@ -10,9 +10,14 @@ module.exports = {
   outputTemplate: (data, toJSON) =>
     toJSON
       ? JSON.stringify(data)
-      : "export default [" +
-        data.map((item) => JSON.stringify(item)).join(",\n\t") +
-        "];\n",
+      : `export type ERC20Exchange = [string, string, string];
+
+const exchanges: ERC20Exchange[] = [
+  ${data.map((item) => JSON.stringify(item)).join(",\n\t")}
+];
+
+export default exchanges;
+`,
 
   loader: ({ signatureFolder, folder, id }) =>
     Promise.all([

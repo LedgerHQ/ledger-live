@@ -1,4 +1,6 @@
-export default [
+export type StellarToken = [string, string, string, string, number, boolean];
+
+const tokens: StellarToken[] = [
   // [assetCode, assetIssuer, asset type, name, precision, enableCountervalues]
   // Note: asset type is only used in Receive asset message and always should be
   // "Stellar"
@@ -11,3 +13,5 @@ export default [
     true,
   ],
 ];
+
+export default tokens;

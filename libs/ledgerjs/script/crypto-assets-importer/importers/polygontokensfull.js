@@ -85,7 +85,21 @@ module.exports = {
   outputTemplate: (data, toJSON) =>
     toJSON
       ? JSON.stringify(data)
-      : `export default [
+      : `export type PolygonERC20Token = [
+  string,
+  string,
+  string,
+  number,
+  string,
+  string,
+  string,
+  boolean,
+  boolean,
+  string?,
+  string?
+];
+
+const tokens: PolygonERC20Token[] = [
 ${data
   .map(
     (item) =>
@@ -98,7 +112,10 @@ ${data
       "]"
   )
   .join(",\n")}
-];`,
+];
+
+export default tokens;
+`,
 
   loader: ({ signatureFolder, folder, id }) =>
     Promise.all([

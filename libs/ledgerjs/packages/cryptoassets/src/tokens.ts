@@ -3,24 +3,15 @@ import type {
   TokenCurrency,
 } from "@ledgerhq/types-cryptoassets";
 import { getCryptoCurrencyById } from "./currencies";
-import asatokens from "./data/asa";
-import bep20tokens from "./data/bep20";
-import cardanoNativeTokens from "./data/cardanoNative";
-import erc20tokens from "./data/erc20";
-import esdttokens from "./data/esdt";
-import polygonTokens from "./data/polygon-erc20";
-import stellarTokens from "./data/stellar";
-import trc10tokens from "./data/trc10";
-import trc20tokens from "./data/trc20";
-import {
-  ERC20Token,
-  TronToken,
-  Bep20Token,
-  AlgorandASAToken,
-  ElronESDTToken,
-  CardanoNativeToken,
-  StellarToken,
-} from "./types";
+import asatokens, { AlgorandASAToken } from "./data/asa";
+import bep20tokens, { BEP20Token } from "./data/bep20";
+import cardanoNativeTokens, { CardanoNativeToken } from "./data/cardanoNative";
+import erc20tokens, { ERC20Token } from "./data/erc20";
+import esdttokens, { ElronESDTToken } from "./data/esdt";
+import polygonTokens, { PolygonERC20Token } from "./data/polygon-erc20";
+import stellarTokens, { StellarToken } from "./data/stellar";
+import trc10tokens, { TRC10Token } from "./data/trc10";
+import trc20tokens, { TRC20Token } from "./data/trc20";
 //import spltokens from "../data/spl";
 const emptyArray = [];
 const tokensArray: TokenCurrency[] = [];
@@ -31,17 +22,15 @@ const tokensById: Record<string, TokenCurrency> = {};
 const tokensByTicker: Record<string, TokenCurrency> = {};
 const tokensByAddress: Record<string, TokenCurrency> = {};
 const tokensByCurrencyAddress: Record<string, TokenCurrency> = {};
-addTokens((erc20tokens as ERC20Token[]).map(convertERC20));
-addTokens((polygonTokens as ERC20Token[]).map(convertERC20));
-addTokens((trc10tokens as TronToken[]).map(convertTRONTokens("trc10")));
-addTokens((trc20tokens as TronToken[]).map(convertTRONTokens("trc20")));
-addTokens((bep20tokens as Bep20Token[]).map(convertBEP20));
-addTokens((asatokens as AlgorandASAToken[]).map(convertAlgorandASATokens));
-addTokens((esdttokens as ElronESDTToken[]).map(convertElrondESDTTokens));
-addTokens(
-  (cardanoNativeTokens as CardanoNativeToken[]).map(convertCardanoNativeTokens)
-);
-addTokens((stellarTokens as StellarToken[]).map(convertStellarTokens));
+addTokens(erc20tokens.map(convertERC20));
+addTokens(polygonTokens.map(convertERC20));
+addTokens(trc10tokens.map(convertTRONTokens("trc10")));
+addTokens(trc20tokens.map(convertTRONTokens("trc20")));
+addTokens(bep20tokens.map(convertBEP20));
+addTokens(asatokens.map(convertAlgorandASATokens));
+addTokens(esdttokens.map(convertElrondESDTTokens));
+addTokens(cardanoNativeTokens.map(convertCardanoNativeTokens));
+addTokens(stellarTokens.map(convertStellarTokens));
 //addTokens(spltokens.map(convertSplTokens));
 type TokensListOptions = {
   withDelisted: boolean;
@@ -208,7 +197,7 @@ export function convertERC20([
   delisted,
   countervalueTicker,
   compoundFor,
-]: ERC20Token): TokenCurrency {
+]: ERC20Token | PolygonERC20Token): TokenCurrency {
   const parentCurrency = getCryptoCurrencyById(parentCurrencyId);
   return {
     type: "TokenCurrency",
@@ -246,7 +235,7 @@ function convertBEP20([
   disableCountervalue,
   delisted,
   countervalueTicker,
-]: Bep20Token): TokenCurrency {
+]: BEP20Token): TokenCurrency {
   const parentCurrency = getCryptoCurrencyById(parentCurrencyId);
   return {
     type: "TokenCurrency",
@@ -307,7 +296,7 @@ function convertTRONTokens(type: "trc10" | "trc20") {
     delisted,
     ledgerSignature,
     enableCountervalues,
-  ]: TronToken): TokenCurrency => ({
+  ]: TRC10Token | TRC20Token): TokenCurrency => ({
     type: "TokenCurrency",
     id: `tron/${type}/${id}`,
     contractAddress,

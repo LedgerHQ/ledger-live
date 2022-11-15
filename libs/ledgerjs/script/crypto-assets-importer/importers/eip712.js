@@ -14,7 +14,10 @@ module.exports = {
 
   outputTemplate: ([data], toJSON) => {
     const stringifiedData = JSON.stringify(data ? data : {});
-    return toJSON ? stringifiedData : `export default ${stringifiedData};\n`;
+    return toJSON
+      ? stringifiedData
+      : `export default ${stringifiedData};
+`;
   },
 
   loader: async ({ signatureFolder, id }) => {

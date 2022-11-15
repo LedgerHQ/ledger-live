@@ -1,4 +1,17 @@
-export default [
+export type BEP20Token = [
+  string,
+  string,
+  string,
+  number,
+  string,
+  string,
+  string,
+  boolean,
+  boolean,
+  string?
+];
+
+const tokens: BEP20Token[] = [
 ["bsc","(del)","DEL",18,"(DEL)","3044022038f007514ce614688380b7b26d73cebe03238aa5cfe6fc20500e912790605d0202203fde1ce3f25acbcf0c2f397da73281a247fd5a6a2364f5e95adaf927de9b8654","0xec6432B90e7fD4d9f872cc5C781f05B617DB861E",false,false],
 ["bsc","10set_token","10SET",18,"10Set Token","304402204ca3fe2be747bf1bcd646555407e72887f6cf5fddaa94bb3fd360b17ebf04d5f022006f0379f6da6453cbea131d7ab9ed74268841625fe3143fa47a33be99c4baca5","0x1F64fdAD335ED784898EFFb5ce22D54d8f432523",false,false],
 ["bsc","10set_token_","10SET",18,"10Set Token","3045022100f9e5f2228abe90784708db5f06d5b32156db9448f49e5bb84201f07804b80e4d02201182823dedf4ae112b1329ffee6a1246c8fd13532c86da7c58ceaf29b8afbe5c","0x1AE369A6AB222aFF166325B7b87Eb9aF06C86E57",true,true],
@@ -715,3 +728,5 @@ export default [
 ["bsc","zombie_inu","ZINU",9,"Zombie Inu","30450221009fb3b099e37b3d56ce14c7960aef5b216d5f72a7fdc1ab4210cc829cc4f102cd02204c078ad1029af9affbd64afb6f847f0bc7be48e6f9fe9cf18421225f9dd0eaf9","0x21F9B5b2626603e3F40bfc13d01AfB8c431D382F",false,false],
 ["bsc","zuna","ZUNA",9,"Zuna","3045022100d798f390547d0fc243bae6428e226e567fe6fa252c3b6c5a48be21aece408b3d022005fb925e9c810516c3c9a0d1b52dadf607063bf58df747e533b49757e09e10d9","0x5D07eDAbA2151a3C6802B28636eCC23082398EdB",false,false]
 ];
+
+export default tokens;

@@ -1,5 +1,16 @@
 // [network_id, policyId, assetName, name, ticker, decimals, delisted]
-export default [
+export type CardanoNativeToken = [
+  string,
+  string,
+  string,
+  string,
+  string,
+  number,
+  boolean,
+  boolean
+];
+
+const tokens: CardanoNativeToken[] = [
   [
     "cardano_testnet",
     "581684861359b6d4d00594073a9aa4223c6fc24d24da05e1b34fb865",
@@ -1011,3 +1022,5 @@ export default [
     true,
   ],
 ];
+
+export default tokens;

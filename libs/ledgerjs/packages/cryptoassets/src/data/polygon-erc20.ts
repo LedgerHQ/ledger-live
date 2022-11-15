@@ -1,4 +1,18 @@
-export default [
+export type PolygonERC20Token = [
+  string,
+  string,
+  string,
+  number,
+  string,
+  string,
+  string,
+  boolean,
+  boolean,
+  string?,
+  string?
+];
+
+const tokens: PolygonERC20Token[] = [
 ["polygon","(del)","DEL",18,"(DEL)","3044022054dda4cba0d696d3f0b4e76200ac4682f396721036a6feb806fa8d623317760e02207a5ebde40cdd28d947dc49371bdde1beb915d776ac0b6e4ed8077d4bb7d0af21","0xec6432B90e7fD4d9f872cc5C781f05B617DB861E",false,false],
 ["polygon","(pos)_compound","COMP",18,"(PoS) Compound","3045022100bc6c39d0831aabe4207836ccfef88f0331dfc8b764bc4980f6bfe0fd2546c5cf02201636c8b88bb165998f86ff398a3da68e9557b3ad6f6d7f33e99b162ba7a7b201","0x8505b9d2254A7Ae468c0E9dd10Ccea3A837aef5c",false,false],
 ["polygon","(pos)_dai_stablecoin","DAI",18,"(PoS) Dai Stablecoin","3045022100b74ee418eb7eef1cde0876e9589a6ba217a3318ad840bb797c68adb4ecc57bd4022014fc46f93500576aca05034e243d12f4a28e56b81a3606d4c99d617ebebadaf5","0x8f3Cf7ad23Cd3CaDbD9735AFf958023239c6A063",false,false],
@@ -420,3 +434,5 @@ export default [
 ["polygon","zombie_inu","ZINU",9,"Zombie Inu","3044022051405c6caaa098f0b005c6610d7edd5c44a429a11f6e30e8abc71fc2b13c516b0220621398bab8d97ddc2cd2d0a250c491ac9b74477623cd2242bee86731cd179543","0x21F9B5b2626603e3F40bfc13d01AfB8c431D382F",false,false],
 ["polygon","zrx","ZRX",18,"ZRX","30440220214308fee0366583ad1a0b7d187d3ef60487cf052fab2961d58863aefe56f52c02206fdc734b775ed5197a1f97010370e05eee2c6486f1df04beba0adef0a2d64c39","0x5559Edb74751A0edE9DeA4DC23aeE72cCA6bE3D5",false,false]
 ];
+
+export default tokens;

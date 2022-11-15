@@ -85,7 +85,20 @@ module.exports = {
   outputTemplate: (data, toJSON) =>
     toJSON
       ? JSON.stringify(data)
-      : `export default [
+      : `export type BEP20Token = [
+  string,
+  string,
+  string,
+  number,
+  string,
+  string,
+  string,
+  boolean,
+  boolean,
+  string?
+];
+
+const tokens: BEP20Token[] = [
 ${data
   .map(
     (item) =>
@@ -98,7 +111,10 @@ ${data
       "]"
   )
   .join(",\n")}
-];`,
+];
+
+export default tokens;
+`,
 
   loader: ({ signatureFolder, folder, id }) =>
     Promise.all([

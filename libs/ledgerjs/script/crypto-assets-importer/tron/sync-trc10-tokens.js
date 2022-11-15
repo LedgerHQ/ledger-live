@@ -93,11 +93,23 @@ const outputFolder = path.join(
 fetchTrc10Tokens().then((array) => {
   fs.writeFileSync(
     path.join(outputFolder, "trc10.ts"),
-    "export default " +
-      "[\n" +
-      array.map((item) => JSON.stringify(item)).join(",\n") +
-      "\n]" +
-      ";",
+    `export type TRC10Token = [
+  number,
+  string,
+  string,
+  string,
+  number,
+  boolean,
+  string,
+  boolean?
+];
+
+const tokens: TRC10Token[] = [
+  ${array.map((item) => JSON.stringify(item)).join(",\n\t")}
+];
+
+export default tokens;
+`,
     "utf-8"
   );
   console.log(`Wrote ${array.length} tokens in trc10.ts`);

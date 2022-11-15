@@ -99,7 +99,20 @@ module.exports = {
   outputTemplate: (data, toJSON) =>
     toJSON
       ? JSON.stringify(data)
-      : `export default [
+      : `export type ERC20Token = [
+  string,
+  string,
+  string,
+  number,
+  string,
+  string,
+  string,
+  boolean,
+  boolean,
+  string?,
+  string?
+];
+const tokens: ERC20Token[] = [
 ${data
   .map(
     (item) =>
@@ -112,7 +125,10 @@ ${data
       "]"
   )
   .join(",\n")}
-];`,
+];
+
+export default tokens;
+`,
 
   loader: ({ signatureFolder, folder, id }) =>
     Promise.all([
