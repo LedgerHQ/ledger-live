@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { NativeModules } from "react-native";
 import { discoverDevices } from "@ledgerhq/live-common/hw/index";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { lastConnectedDeviceSelector } from "../reducers/settings";
@@ -34,6 +33,7 @@ export default function SkipSelectDevice({ onResult, route }: Props) {
   const [hasUSB, setHasUSB] = useState(false);
   const knownDevices = useSelector(knownDevicesSelector);
   const forceSelectDevice = route?.params?.forceSelectDevice;
+  const promptBluetooth = usePromptBluetoothCallback();
   useEffect(() => {
     const subscription = discoverDevices(() => true).subscribe(e => {
       setHasUSB(e.id.startsWith("usb|"));
@@ -49,7 +49,7 @@ export default function SkipSelectDevice({ onResult, route }: Props) {
     ) {
       // timeout so we have the time to detect usb connection
       usbTimeout = setTimeout(() => {
-        NativeModules.BluetoothHelperModule.prompt()
+        promptBluetooth()
           .then(() => onResult(lastConnectedDevice))
           .catch(() => {
             /* ignore */
@@ -64,6 +64,7 @@ export default function SkipSelectDevice({ onResult, route }: Props) {
     knownDevices?.length,
     lastConnectedDevice,
     onResult,
+    promptBluetooth,
   ]);
   return null;
 }
