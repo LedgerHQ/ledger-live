@@ -21,6 +21,7 @@ import {
   SignOperationEvent,
 } from "@ledgerhq/types-live";
 import { BinaryUtils } from "./utils/binary.utils";
+import { decodeTokenAccountId } from "../../account";
 
 function getOptimisticOperationType(
   transactionMode: ElrondTransactionMode
@@ -134,16 +135,12 @@ const signOperation = ({
         await elrond.setAddress(account.freshAddressPath);
 
         if (tokenAccount) {
-          const tokenIdentifier = tokenAccount.id.split("+")[1];
-          const token = findTokenById(
-            `${tokenIdentifier.replaceAll("%2F", "/")}`
-          );
+          const { token } = decodeTokenAccountId(tokenAccount.id);
 
           if (token?.name && token.id && token.ledgerSignature) {
-            const collectionIdentifierHex = token.id.split("/")[2];
             await elrond.provideESDTInfo(
               token.name,
-              collectionIdentifierHex,
+              token.id,
               token?.units[0].magnitude,
               CHAIN_ID,
               token.ledgerSignature

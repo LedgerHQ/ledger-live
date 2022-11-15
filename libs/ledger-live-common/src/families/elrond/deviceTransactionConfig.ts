@@ -1,9 +1,8 @@
 import type { DeviceTransactionField } from "../../transaction";
 import type { TransactionStatus, Transaction } from "./types";
-import { findTokenById } from "@ledgerhq/cryptoassets";
 import BigNumber from "bignumber.js";
 import { formatCurrencyUnit } from "../../currencies";
-import { getAccountUnit } from "../../account";
+import { decodeTokenAccountId, getAccountUnit } from "../../account";
 import { Account } from "@ledgerhq/types-live";
 
 function getDeviceTransactionConfig({
@@ -17,12 +16,11 @@ function getDeviceTransactionConfig({
 }): Array<DeviceTransactionField> {
   const fields: Array<DeviceTransactionField> = [];
 
-  const isEsdtTransfer =
-    transaction.subAccountId !== undefined && transaction.subAccountId !== null;
+  const { subAccountId } = transaction;
+  const isEsdtTransfer = subAccountId !== undefined && subAccountId !== null;
 
   if (isEsdtTransfer) {
-    const tokenIdentifier = transaction.subAccountId?.split("+")[1];
-    const token = findTokenById(`${tokenIdentifier?.replaceAll("%2F", "/")}`);
+    const { token } = decodeTokenAccountId(subAccountId);
 
     if (token) {
       fields.push({

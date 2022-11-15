@@ -1,9 +1,11 @@
 import { SubAccount } from "@ledgerhq/types-live";
+import { decodeTokenAccountId } from "../../account";
 import type { Transaction } from "./types";
 
 export class ElrondEncodeTransaction {
   static ESDTTransfer(t: Transaction, ta: SubAccount): string {
-    const tokenIdentifierHex = ta.id.split("%2F")[2];
+    const { token } = decodeTokenAccountId(ta.id);
+    const tokenIdentifierHex = token?.id;
     let amountHex = t.useAllAmount
       ? ta.balance.toString(16)
       : t.amount.toString(16);

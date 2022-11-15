@@ -330,7 +330,7 @@ function convertElrondESDTTokens([
 
   return {
     type: "TokenCurrency",
-    id: `elrond/esdt/${identifier}`,
+    id: `${identifier}`,
     contractAddress: ELROND_ESDT_CONTRACT,
     ledgerSignature: signature,
     parentCurrency: getCryptoCurrencyById("elrond"),
