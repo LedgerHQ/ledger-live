@@ -9,14 +9,7 @@ const locationPermission: Permission | undefined =
   Platform.OS === "android"
     ? Platform.Version <= 28
       ? PermissionsAndroid.PERMISSIONS.ACCESS_COARSE_LOCATION
-      : Platform.Version <= 30
-      ? PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION
-      : /**
-         * Location permission is not required to perform a bluetooth scan on devices
-         * with Android 12 (API 31) and above
-         * https://developer.android.com/guide/topics/connectivity/bluetooth/permissions#assert-never-for-location
-         * */
-        undefined
+      : PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION
     : undefined;
 
 /**
