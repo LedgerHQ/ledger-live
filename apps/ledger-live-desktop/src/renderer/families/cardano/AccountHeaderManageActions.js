@@ -21,7 +21,7 @@ const AccountHeaderActions = ({ account, parentAccount }: Props) => {
   const { cardanoResources } = mainAccount;
   invariant(cardanoResources, "cardano account expected");
   const disableStakeButton = cardanoResources.delegation.poolId || mainAccount.balance.isZero();
-  const disabledLabel = cardanoResources.delegation
+  const disabledLabel = cardanoResources.delegation.poolId
     ? "You have already delegated to a pool"
     : mainAccount.balance.isZero()
     ? "Add Funds to stake"

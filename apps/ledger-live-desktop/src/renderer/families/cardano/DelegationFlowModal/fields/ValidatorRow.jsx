@@ -42,8 +42,8 @@ function CardanoPoolRow({ pool, active, onClick, unit, currency, disabled }: Pro
       if (address === LEDGER_VALIDATOR_ADDRESS) {
         openURL(urls.ledgerValidator);
       } else {
-        const srURL = explorerView && getAddressExplorer(explorerView, address);
-
+        // const srURL = explorerView && getAddressExplorer(explorerView, address);
+        const srURL = "https://preprod.cardanoscan.io/pool/" + address;
         if (srURL) openURL(srURL);
       }
     },
@@ -64,7 +64,7 @@ function CardanoPoolRow({ pool, active, onClick, unit, currency, disabled }: Pro
       onClick={disabled ? () => {} : onClick}
       disabled={disabled}
       key={pool.poolId}
-      validator={pool}
+      validator={{ ...pool, address: pool.poolId }}
       icon={<LedgerPoolIcon validator={pool} />}
       title={`${pool.ticker} - ${pool.name}` || pool.poolId}
       onExternalLink={onExternalLink}

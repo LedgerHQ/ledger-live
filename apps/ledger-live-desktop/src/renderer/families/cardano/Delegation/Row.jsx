@@ -108,9 +108,9 @@ const Row = ({ account, parentAccount, delegation }: Props) => {
   return (
     <Wrapper>
       <Value>
-        <Text ff="Inter|SemiBold" color="palette.text.shade60" fontSize={3}>
-          {name}
-        </Text>
+        <Ellipsis fontSize={3} color="palette.text.shade60">
+          <Text ff="Inter|SemiBold">{name}</Text>
+        </Ellipsis>
       </Value>
       <Value>
         <FormattedVal

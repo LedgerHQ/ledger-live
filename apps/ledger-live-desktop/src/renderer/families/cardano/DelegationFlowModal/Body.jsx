@@ -58,7 +58,7 @@ type Props = OwnProps & StateProps;
 const steps: Array<St> = [
   {
     id: "validator",
-    label: <Trans i18nKey="cosmos.delegation.flow.steps.validator.title" />,
+    label: <Trans i18nKey="cardano.delegation.flow.steps.validator.title" />,
     component: StepDelegation,
     noScroll: true,
     footer: StepDelegationFooter,
@@ -73,13 +73,13 @@ const steps: Array<St> = [
   },
   {
     id: "connectDevice",
-    label: <Trans i18nKey="cosmos.delegation.flow.steps.connectDevice.title" />,
+    label: <Trans i18nKey="cardano.delegation.flow.steps.connectDevice.title" />,
     component: GenericStepConnectDevice,
     onBack: ({ transitionTo }: StepProps) => transitionTo("summary"),
   },
   {
     id: "confirmation",
-    label: <Trans i18nKey="cosmos.delegation.flow.steps.confirmation.title" />,
+    label: <Trans i18nKey="cardano.delegation.flow.steps.confirmation.title" />,
     component: StepConfirmation,
     footer: StepConfirmationFooter,
   },
@@ -112,7 +112,7 @@ const Body = ({
 
   const ledgerPools: Array<StakePool> = [
     {
-      poolId: "7df262feae9201d1b2e32d4c825ca91b29fbafb2b8e556f6efb7f549",
+      poolId: "1d9302a3fb4b3b1935e02b27f0339798d3f08a55fbfdcd43a449a96f",
       name: "Demo",
       ticker: "LEDGR",
       website: "https://www.ledger.com/ledger-live",
@@ -137,7 +137,7 @@ const Body = ({
 
     invariant(
       account && account.cardanoResources,
-      "cardano: account and cosmos resources required",
+      "cardano: account and cardano resources required",
     );
 
     const bridge = getAccountBridge(account, undefined);
@@ -200,7 +200,7 @@ const Body = ({
   }
 
   const stepperProps = {
-    title: t("cosmos.delegation.flow.title"),
+    title: t("cardano.delegation.flow.title"),
     device,
     account,
     parentAccount,

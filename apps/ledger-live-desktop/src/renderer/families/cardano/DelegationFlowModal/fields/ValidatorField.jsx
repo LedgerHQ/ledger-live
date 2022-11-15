@@ -29,6 +29,19 @@ type Props = {
   selectedPoolId: string,
 };
 
+const ledgerPools: Array<StakePool> = [
+  {
+    poolId: "1d9302a3fb4b3b1935e02b27f0339798d3f08a55fbfdcd43a449a96f",
+    name: "Demo",
+    ticker: "LEDGR",
+    website: "https://www.ledger.com/ledger-live",
+    margin: "5",
+    cost: "340000000",
+    pledge: "",
+    retiredEpoch: undefined,
+  },
+];
+
 const ValidatorField = ({
   account,
   status,
@@ -37,24 +50,13 @@ const ValidatorField = ({
   onChangeValidator,
   selectedPoolId,
 }: Props) => {
-  const [showAll, setShowAll] = useState(false);
+  const [showAll, setShowAll] = useState(
+    ledgerPools.length === 1 && delegation.poolId === ledgerPools[0].poolId,
+  );
   const [search, setSearch] = useState("");
   const [pageNo, setPageNo] = useState(1);
   const [totalPools, setTotalPools] = useState(0);
   const unit = getAccountUnit(account);
-
-  const ledgerPools: Array<StakePool> = [
-    {
-      poolId: "a57cbcb8ecdf24f469928da924b5bc6e4cbc3b57859577211a0daf6f",
-      name: "Demo",
-      ticker: "LEDGR",
-      website: "https://www.ledger.com/ledger-live",
-      margin: "5",
-      cost: "340000000",
-      pledge: "",
-      retiredEpoch: undefined,
-    },
-  ];
 
   useEffect(() => {
     const ledgerPoolIds = ledgerPools.map(l => l.poolId);

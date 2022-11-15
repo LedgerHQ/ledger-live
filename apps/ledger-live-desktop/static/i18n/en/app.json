@@ -2013,7 +2013,24 @@
     "delegation": {
       "cost": "Cost",
       "pool": "Pool",
-      "changeDelegation": "Change Delegation"
+      "changeDelegation": "Change Delegation",
+      "flow": {
+        "title": "Delegate",
+        "steps": {
+          "validator": {
+            "title": "Pools"
+          },
+          "summary": {
+            "title": "Delegation summary"
+          },
+          "connectDevice": {
+            "title": "Device"
+          },
+          "confirmation": {
+            "title": "Confirmation"
+          }
+        }
+      }
     }
   },
   "tron": {

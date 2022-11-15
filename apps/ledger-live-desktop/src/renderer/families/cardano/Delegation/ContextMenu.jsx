@@ -41,20 +41,20 @@ const ContextMenu = ({ account, parentAccount }: Props) => {
   const receiveShouldWarnDelegation = delegation && delegation.receiveShouldWarnDelegation;
 
   const items = [
-    {
-      key: "topUp",
-      label: <Trans i18nKey="delegation.contextMenu.topUp" />,
-      icon: <ArrowDown size={16} />,
-      onClick: () =>
-        dispatch(
-          openModal("MODAL_RECEIVE", {
-            parentAccount,
-            account,
-            eventType: "cardano",
-            startWithWarning: receiveShouldWarnDelegation,
-          }),
-        ),
-    },
+    // {
+    //   key: "topUp",
+    //   label: <Trans i18nKey="delegation.contextMenu.topUp" />,
+    //   icon: <ArrowDown size={16} />,
+    //   onClick: () =>
+    //     dispatch(
+    //       openModal("MODAL_RECEIVE", {
+    //         parentAccount,
+    //         account,
+    //         eventType: "cardano",
+    //         startWithWarning: receiveShouldWarnDelegation,
+    //       }),
+    //     ),
+    // },
     {
       key: "redelegate",
       label: <Trans i18nKey="cardano.delegation.changeDelegation" />,
