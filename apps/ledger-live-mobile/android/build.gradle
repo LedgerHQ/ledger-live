@@ -76,15 +76,11 @@ allprojects {
     }
     configurations.all {
         resolutionStrategy {
-<<<<<<< HEAD
             force 'androidx.core:core:1.6.0'
 
-||||||| parent of 0e8df74adf (updating detox to run with monorepo)
-=======
             // Needed for flipper https://github.com/facebook/flipper/issues/3397
             // In the case of a detox build
             force 'androidx.sqlite:sqlite-framework:2.1.0'
->>>>>>> 0e8df74adf (updating detox to run with monorepo)
             dependencySubstitution {
                 substitute module("com.redmadrobot:input-mask-android:6.0.0") using module('com.github.RedMadRobot:input-mask-android:6.0.0')
             }
