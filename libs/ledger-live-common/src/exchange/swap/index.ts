@@ -82,6 +82,19 @@ const swapProviders: Record<string, SwapProviderConfig> = {
     needsKYC: false,
     needsBearerToken: false,
   },
+  cic: {
+    nameAndPubkey: Buffer.from(
+      "0444a71652995d15ef0d4d6fe8de21a0c8ad48bdbfea7f789319973669785ca96abca9fd0c504c3074d9b654f0e3a76dde642a03efe4ccdee3af3ca4ba4afa202d",
+      "hex"
+    ),
+    signature: Buffer.from(
+      "3044022078a73433ab6289027b7a169a260f180d16346f7ab55b06a22109f68a756d691d0220190edd6e1214c3309dc1b0afe90d217b728377491561383f2ee543e2c90188eb",
+      "hex"
+    ),
+    curve: "secpk256k1",
+    needsKYC: false,
+    needsBearerToken: false,
+  },
   wyre: {
     nameAndPubkey: Buffer.from(
       "045779726504AD01A6241929A5EC331046868FBACB424696FD7C8A4D824FEE61268374E9F4F87FFC5301F0E0A84CEA69FFED46E14C771F9CA1EEA345F6531994291C816E8AE6",

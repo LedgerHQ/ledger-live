@@ -386,6 +386,31 @@ describe("swap/getProviders", () => {
             },
           },
         ],
+        cic: [
+          {
+            methods: ["float"],
+            pairs: {
+              "1": [2, 3, 4],
+              "2": [1, 3, 4],
+            },
+          },
+          {
+            methods: ["float", "fixed"],
+            pairs: {
+              "1": [2, 3, 4],
+              "2": [1, 3, 4],
+              "3": [1, 4],
+              "4": [1, 2],
+            },
+          },
+          {
+            methods: ["fixed"],
+            pairs: {
+              "3": [1, 4],
+              "4": [1, 2],
+            },
+          },
+        ],
         ftx: [
           {
             methods: ["float"],
@@ -410,7 +435,7 @@ describe("swap/getProviders", () => {
 
     beforeAll(() => {
       // set SWAP_API_BASE
-      setEnv("SWAP_API_BASE", "https://swap.ledger.com/v4");
+      setEnv("SWAP_API_BASE", "https://swap-pr969.aws.stg.ldg-tech.com/v4");
     });
 
     beforeEach(() => {
