@@ -3,7 +3,7 @@ import { readFileSync } from "fs";
 
 const DEFAULT_TIMEOUT = 60000;
 
-export function waitAndTap(elementId, timeout) {
+export function waitAndTap(elementId: string, timeout?: number) {
   waitFor(element(by.id(elementId)))
     .toBeVisible()
     .withTimeout(timeout || DEFAULT_TIMEOUT);
@@ -23,7 +23,7 @@ export function waitForElementByText(text: string, timeout?: number) {
     .withTimeout(timeout || DEFAULT_TIMEOUT);
 }
 
-export function tap(elementId) {
+export function tap(elementId: string) {
   return element(by.id(elementId)).tap();
 }
 
@@ -33,21 +33,21 @@ export function tapByText(text: string, index?: number) {
     .tap();
 }
 
-export async function typeText(elementId, text, focus = true) {
+export async function typeText(elementId: string, text: string, focus = true) {
   if (focus) {
     await tap(elementId);
   }
   return element(by.id(elementId)).typeText(text);
 }
 
-export function clearField(elementId) {
+export function clearField(elementId: string) {
   element(by.id(elementId)).replaceText("");
 }
 
 export async function scrollToElementById(
-  elementToScrollToId,
-  parentElementId,
-  pixelsToScroll,
+  elementToScrollToId: string,
+  parentElementId: string,
+  pixelsToScroll: number,
   direction = "down",
   startPositionXAxis = NaN,
   startPositionYAxis = 0.5,
@@ -63,7 +63,7 @@ export async function scrollToElementById(
     );
 }
 
-export async function retryAction(action, timeout) {
+export async function retryAction(action: Function, timeout?: number) {
   let shouldContinue = true;
   const startTime = Date.now();
 
@@ -85,17 +85,17 @@ export async function retryAction(action, timeout) {
   }
 }
 
-export async function verifyIsVisible(elementId) {
+export async function verifyIsVisible(elementId: string) {
   await delay(1000);
   await expect(element(by.id(elementId))).toBeVisible();
 }
 
-export async function verifyTextIsVisible(text) {
+export async function verifyTextIsVisible(text: string) {
   await delay(1000);
   await expect(element(by.text(text))).toBeVisible();
 }
 
-export function delay(ms) {
+export function delay(ms: number) {
   return new Promise(resolve => {
     setTimeout(() => {
       resolve("delay complete");
@@ -104,7 +104,10 @@ export function delay(ms) {
 }
 
 // for future use for screenshot conmparison
-export function expectBitmapsToBeEqual(imagePath, expectedImagePath) {
+export function expectBitmapsToBeEqual(
+  imagePath: string,
+  expectedImagePath: string,
+) {
   const bitmapBuffer = readFileSync(imagePath);
   const expectedBitmapBuffer = readFileSync(expectedImagePath);
   if (!bitmapBuffer.equals(expectedBitmapBuffer)) {
