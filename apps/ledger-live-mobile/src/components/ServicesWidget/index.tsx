@@ -1,9 +1,8 @@
-import { Flex } from "@ledgerhq/native-ui";
+import { Flex, Text } from "@ledgerhq/native-ui";
 import React, { memo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import Svg, { LinearGradient, Defs, Rect, Stop } from "react-native-svg";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
-import LText from "../LText";
 import NewProtectState from "./Protect/NewProtectState";
 import ActionRequiredProtectState from "./Protect/ActionRequiredProtectState";
 import SubscriptionCanceledProtectState from "./Protect/SubscriptionCanceledProtectState";
@@ -67,12 +66,12 @@ function ServicesWidget() {
 
   return enabled && params?.managerStatesData ? (
     <>
-      <LText mt={12} variant="body" fontSize="20px">
+      <Text mt={12} variant="body" fontSize="20px">
         {t("servicesWidget.title")}
-      </LText>
-      <LText variant="paragraph" color="neutral.c80">
+      </Text>
+      <Text variant="paragraph" color="neutral.c80">
         {t("servicesWidget.subTitle")}
-      </LText>
+      </Text>
       <Flex bg="neutral.c30" borderRadius={8} mt={5} mb={13} overflow="hidden">
         <SvgGradient />
         <Flex p={8}>
@@ -81,18 +80,18 @@ function ServicesWidget() {
             justifyContent="space-between"
             alignItems="center"
           >
-            <LText variant="body" fontSize="18px" mr={6}>
+            <Text variant="body" fontSize="18px" mr={6}>
               {t("servicesWidget.protect.title")}
-            </LText>
+            </Text>
             {ProtectStateComponent && ProtectStateComponent.StatusTag ? (
               <ProtectStateComponent.StatusTag />
             ) : null}
           </Flex>
-          <LText variant="paragraph" color="neutral.c80" mt={3}>
+          <Text variant="paragraph" color="neutral.c80" mt={3}>
             {t(
               `servicesWidget.protect.status.${statesKeys[protectState]}.desc`,
             )}
-          </LText>
+          </Text>
           <ProtectStateComponent
             params={params?.managerStatesData?.[protectState]}
           />
