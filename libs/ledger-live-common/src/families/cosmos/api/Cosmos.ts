@@ -1,22 +1,16 @@
-import { getEnv } from "../../../env";
 import BigNumber from "bignumber.js";
 import network from "../../../network";
 import { patchOperationWithHash } from "../../../operation";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { Operation } from "@ledgerhq/types-live";
-import { findCryptoCurrencyById } from "@ledgerhq/cryptoassets";
-// import type { Account } from "@ledgerhq/types-live";
-
-const defaultEndpoint = getEnv(
-  "API_COSMOS_BLOCKCHAIN_EXPLORER_API_ENDPOINT"
-).replace(/\/$/, "");
+import Crypto from "../crypto/crypto";
 
 export class CosmosAPI {
-  protected _defaultEndpoint: string = defaultEndpoint;
+  protected _defaultEndpoint = "";
 
   constructor(currencyId: string) {
-    const currency = findCryptoCurrencyById(currencyId);
-    this._defaultEndpoint = currency?.cosmosLikeInfo?.lcd ?? "";
+    const crypto = new Crypto(currencyId);
+    this._defaultEndpoint = crypto.lcd;
   }
 
   getAccountInfo = async (

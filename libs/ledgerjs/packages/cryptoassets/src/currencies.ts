@@ -649,9 +649,6 @@ export const cryptocurrenciesById: Record<string, CryptoCurrency> = {
         magnitude: 0,
       },
     ],
-    cosmosLikeInfo: {
-      lcd: "https://cosmoshub4.coin.ledger.com",
-    },
     explorerViews: [
       {
         tx: "https://www.mintscan.io/cosmos/txs/$hash",
@@ -686,9 +683,6 @@ export const cryptocurrenciesById: Record<string, CryptoCurrency> = {
         magnitude: 0,
       },
     ],
-    cosmosLikeInfo: {
-      lcd: "https://cosmoshub4.coin.ledger.com",
-    },
     explorerViews: [
       {
         tx: "https://testnet.mintscan.io/txs/$hash",
@@ -2520,10 +2514,6 @@ export const cryptocurrenciesById: Record<string, CryptoCurrency> = {
         magnitude: 0,
       },
     ],
-    cosmosLikeInfo: {
-      lcd: "https://osmosis.coin.ledger.com/node",
-      indexer: "https://osmosis.coin.ledger.com/indexer",
-    },
     explorerViews: [
       {
         tx: "https://www.mintscan.io/osmosis/txs/$hash",
@@ -2553,9 +2543,6 @@ export const cryptocurrenciesById: Record<string, CryptoCurrency> = {
         magnitude: 0,
       },
     ],
-    cosmosLikeInfo: {
-      lcd: "https://lcd-juno.itastakers.com",
-    },
     explorerViews: [
       {
         tx: "https://www.mintscan.io/juno/txs/$hash",

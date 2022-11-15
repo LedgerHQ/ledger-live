@@ -113,10 +113,6 @@ export type CryptoCurrency = CurrencyCommon & {
       type: "etherscan" | "blockscout";
     };
   };
-  cosmosLikeInfo?: {
-    lcd?: string;
-    indexer?: string;
-  };
   explorerViews: ExplorerView[];
   terminated?: {
     link: string;
