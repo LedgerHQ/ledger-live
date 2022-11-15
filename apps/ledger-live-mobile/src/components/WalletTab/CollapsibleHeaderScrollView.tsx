@@ -45,8 +45,7 @@ const CollapsibleHeaderScrollView = ({
         onMomentumScrollEnd={onMomentumScrollEnd}
         contentContainerStyle={[
           {
-            paddingTop:
-              headerHeight + tabBarHeight,
+            paddingTop: headerHeight + tabBarHeight,
             minHeight: windowHeight + (StatusBar.currentHeight || 0),
           },
           contentContainerStyle,

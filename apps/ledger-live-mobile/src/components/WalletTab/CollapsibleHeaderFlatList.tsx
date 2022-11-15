@@ -7,8 +7,9 @@ import {
   FlatList,
   FlatListProps,
 } from "react-native";
-import AnimatedProps = Animated.AnimatedProps;
+import { SafeAreaView } from "react-native-safe-area-context";
 import { WalletTabNavigatorScrollContext } from "./WalletTabNavigatorScrollManager";
+import AnimatedProps = Animated.AnimatedProps;
 
 function CollapsibleHeaderFlatList<T>({
   children,
@@ -26,36 +27,38 @@ function CollapsibleHeaderFlatList<T>({
   }, [route.name, syncScrollOffset]);
 
   return (
-    <Animated.FlatList<T>
-      scrollToOverflowEnabled={true}
-      ref={(ref: FlatList) => onGetRef({ key: route.name, value: ref })}
-      scrollEventThrottle={16}
-      onScroll={
-        isFocused
-          ? Animated.event(
-              [{ nativeEvent: { contentOffset: { y: scrollY } } }],
-              {
-                useNativeDriver: true,
-              },
-            )
-          : undefined
-      }
-      onScrollEndDrag={onMomentumScrollEnd}
-      onMomentumScrollEnd={onMomentumScrollEnd}
-      contentContainerStyle={[
-        {
-          paddingTop: headerHeight + tabBarHeight,
-          minHeight: windowHeight + (StatusBar.currentHeight || 0),
-          paddingBottom: tabBarHeight + (StatusBar.currentHeight || 0 / 2),
-        },
-        contentContainerStyle,
-      ]}
-      showsHorizontalScrollIndicator={false}
-      showsVerticalScrollIndicator={false}
-      {...otherProps}
-    >
-      {children}
-    </Animated.FlatList>
+    <SafeAreaView>
+      <Animated.FlatList<T>
+        scrollToOverflowEnabled={true}
+        ref={(ref: FlatList) => onGetRef({ key: route.name, value: ref })}
+        scrollEventThrottle={16}
+        onScroll={
+          isFocused
+            ? Animated.event(
+                [{ nativeEvent: { contentOffset: { y: scrollY } } }],
+                {
+                  useNativeDriver: true,
+                },
+              )
+            : undefined
+        }
+        onScrollEndDrag={onMomentumScrollEnd}
+        onMomentumScrollEnd={onMomentumScrollEnd}
+        contentContainerStyle={[
+          {
+            paddingTop: headerHeight + tabBarHeight,
+            minHeight: windowHeight + (StatusBar.currentHeight || 0),
+            paddingBottom: tabBarHeight + (StatusBar.currentHeight || 0 / 2),
+          },
+          contentContainerStyle,
+        ]}
+        showsHorizontalScrollIndicator={false}
+        showsVerticalScrollIndicator={false}
+        {...otherProps}
+      >
+        {children}
+      </Animated.FlatList>
+    </SafeAreaView>
   );
 }
 

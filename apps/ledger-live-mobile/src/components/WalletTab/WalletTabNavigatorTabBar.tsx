@@ -5,14 +5,13 @@ import styled, { BaseStyledProps } from "@ledgerhq/native-ui/components/styled";
 import { Box, Flex, Text } from "@ledgerhq/native-ui";
 import { Animated } from "react-native";
 import { useSelector } from "react-redux";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { track } from "../../analytics";
 import { rgba } from "../../colors";
 import { WalletTabNavigatorScrollContext } from "./WalletTabNavigatorScrollManager";
 import WalletTabBackgroundGradient from "./WalletTabBackgroundGradient";
 import { readOnlyModeEnabledSelector } from "../../reducers/settings";
 import { accountsSelector } from "../../reducers/accounts";
-import * as Animatable from "react-native-animatable";
-import { SafeAreaView } from "react-native-safe-area-context";
 
 const StyledTouchableOpacity = styled.TouchableOpacity`
   height: 32px;
@@ -98,7 +97,7 @@ function Tab({
 
 const MemoTab = memo(Tab);
 
-const AnimatedSafeArea = Animatable.createAnimatableComponent(SafeAreaView);
+const AnimatedSafeArea = Animated.createAnimatedComponent(SafeAreaView);
 
 function WalletTabNavigatorTabBar({
   state,
@@ -144,9 +143,8 @@ function WalletTabNavigatorTabBar({
           transform: [{ translateY: y }],
           width: "100%",
           height: tabBarHeight,
-          //backgroundColor: 'blue'
         }}
-        mode={'margin'}
+        mode={"margin"}
       >
         <Animated.View
           style={{

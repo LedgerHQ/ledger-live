@@ -31,9 +31,11 @@ const PortfolioEmptyState = ({
   }, [navigation]);
 
   return (
-    <Flex alignItems="center" justifyContent="center" mx={6}>
+    <>
       <TrackScreen category="Start CTAs" />
-      <WalletCoinsSupported moreAssetsBackgroundColor={colors.neutral.c100} />
+      <Flex alignItems="center" justifyContent="center">
+        <WalletCoinsSupported moreAssetsBackgroundColor={colors.neutral.c100} />
+      </Flex>
       <Text variant="h4" fontWeight="semiBold" textAlign="center" mt={8}>
         {t("portfolio.emptyState.title")}
       </Text>
@@ -90,7 +92,7 @@ const PortfolioEmptyState = ({
       >
         {t("account.emptyState.addAccountCta")}
       </Button>
-    </Flex>
+    </>
   );
 };
 

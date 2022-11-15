@@ -705,12 +705,10 @@ importers:
       react-native-redash: ^16.0.11
       react-native-restart: ^0.0.24
       react-native-safe-area-context: ^4.1.4
-      react-native-safearea-height: ^1.0.5
       react-native-screens: ^3.9.0
       react-native-share: ^7.9.0
       react-native-slider: ^0.11.0
       react-native-splash-screen: 3.2.0
-      react-native-status-bar-height: ^2.6.0
       react-native-svg: ^12.1.1
       react-native-tab-view: ^3.3.0
       react-native-tcp: ^4.0.0
@@ -843,12 +841,10 @@ importers:
       react-native-redash: 16.2.4_cnndwk4sacbtobw7uwrw7jmzza
       react-native-restart: 0.0.24_ondxtwf5lqq5g76dzmsmwamaca
       react-native-safe-area-context: 4.2.5_ondxtwf5lqq5g76dzmsmwamaca
-      react-native-safearea-height: 1.0.5
       react-native-screens: 3.13.1_ondxtwf5lqq5g76dzmsmwamaca
       react-native-share: 7.9.1
       react-native-slider: 0.11.0
       react-native-splash-screen: 3.2.0_react-native@0.68.5
-      react-native-status-bar-height: 2.6.0
       react-native-svg: 12.3.0_ondxtwf5lqq5g76dzmsmwamaca
       react-native-tab-view: 3.3.0_5szdmbmkxjdt3kq4ucy7nim3c4
       react-native-tcp: 4.0.0_frdjcnsdohx4blxdmaawwvdihy_react-native@0.68.5
@@ -46902,12 +46898,6 @@ packages:
       react-native: 0.68.5_qiqqwmyv63yhnuboofexv3s7x4
     dev: false
 
-  /react-native-safearea-height/1.0.5:
-    resolution: {integrity: sha512-TIRdOciInNgVJQtRg3Gb7UT0nowvWLPpVBFZ/jEMbiCnGN1BuozvNh+iZyMWZSVyoHOJvHU1nYgw68xDNzgQHA==}
-    dependencies:
-      react: 16.14.0
-    dev: false
-
   /react-native-screens/3.13.1_ondxtwf5lqq5g76dzmsmwamaca:
     resolution: {integrity: sha512-xcrnuUs0qUrGpc2gOTDY4VgHHADQwp80mwR1prU/Q0JqbZN5W3koLhuOsT6FkSRKjR5t40l+4LcjhHdpqRB2HA==}
     peerDependencies:
@@ -46936,10 +46926,6 @@ packages:
       react-native: '>=0.57.0'
     dependencies:
       react-native: 0.68.5_qiqqwmyv63yhnuboofexv3s7x4
-    dev: false
-
-  /react-native-status-bar-height/2.6.0:
-    resolution: {integrity: sha512-z3SGLF0mHT+OlJDq7B7h/jXPjWcdBT3V14Le5L2PjntjjWM3+EJzq2BcXDwV+v67KFNJic5pgA26cCmseYek6w==}
     dev: false
 
   /react-native-svg/12.3.0:
@@ -47753,6 +47739,7 @@ packages:
       loose-envify: 1.4.0
       object-assign: 4.1.1
       prop-types: 15.8.1
+    dev: true
 
   /react/17.0.2:
     resolution: {integrity: sha512-gnhPt75i/dq/z3/6q/0asP78D0u592D5L1pd7M8P+dck6Fu/jJeL6iVVK23fptSUZj8Vjf++7wXA8UNclGQcbA==}

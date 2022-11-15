@@ -1,9 +1,9 @@
 import React, { useCallback, useMemo, useState } from "react";
 import { useSelector } from "react-redux";
-import { LayoutChangeEvent, ListRenderItemInfo, RefreshControl } from "react-native";
+import { LayoutChangeEvent } from "react-native";
 import { useSharedValue } from "react-native-reanimated";
 import { useTranslation } from "react-i18next";
-import { useFocusEffect, useIsFocused } from "@react-navigation/native";
+import { useFocusEffect } from "@react-navigation/native";
 import { isAccountEmpty } from "@ledgerhq/live-common/account/index";
 
 import { Box, Flex, Button, Icons } from "@ledgerhq/native-ui";
@@ -30,10 +30,8 @@ import MigrateAccountsBanner from "../MigrateAccounts/Banner";
 import { NavigatorName, ScreenName } from "../../const";
 import FirmwareUpdateBanner from "../../components/FirmwareUpdateBanner";
 import Assets from "./Assets";
-import AddAccountsModal from "../AddAccounts/AddAccountsModal";
 import CheckLanguageAvailability from "../../components/CheckLanguageAvailability";
 import CheckTermOfUseUpdate from "../../components/CheckTermOfUseUpdate";
-import TabBarSafeAreaView from "../../components/TabBar/TabBarSafeAreaView";
 import { useProviders } from "../Swap/Form/index";
 import PortfolioEmptyState from "./PortfolioEmptyState";
 import SectionTitle from "../WalletCentricSections/SectionTitle";
@@ -47,9 +45,10 @@ import {
   BaseNavigation,
   StackNavigatorProps,
 } from "../../components/RootNavigator/types/helpers";
-import CollapsibleHeaderFlatList from "../../components/WalletTab/CollapsibleHeaderFlatList";
 import { usePortfolio } from "../../hooks/portfolio";
 import { WalletTabNavigatorStackParamList } from "../../components/RootNavigator/types/WalletTabNavigator";
+import CollapsibleHeaderScrollView from "../../components/WalletTab/CollapsibleHeaderScrollView";
+import AddAccountsModal from "../AddAccounts/AddAccountsModal";
 
 export { default as PortfolioTabIcon } from "./TabIcon";
 
@@ -59,9 +58,9 @@ type NavigationProps = BaseComposite<
 
 const maxAssetsToDisplay = 5;
 
-const wait = (timeout) => {
-  return new Promise(resolve => setTimeout(resolve, timeout));
-}
+// const wait = timeout => {
+//   return new Promise(resolve => setTimeout(resolve, timeout));
+// };
 
 function PortfolioScreen({ navigation }: NavigationProps) {
   const hideEmptyTokenAccount = useEnv("HIDE_EMPTY_TOKEN_ACCOUNTS");
@@ -73,14 +72,13 @@ function PortfolioScreen({ navigation }: NavigationProps) {
     [carouselVisibility],
   );
 
-  const [refreshing, setRefreshing] = React.useState(false);
-  const isFocused = useIsFocused();
+  // const [refreshing, setRefreshing] = React.useState(false);
+  // const isFocused = useIsFocused();
 
-
-  const onRefresh = React.useCallback(() => {
-    setRefreshing(true);
-    wait(5000).then(() => setRefreshing(false));
-  }, []);
+  // const onRefresh = React.useCallback(() => {
+  //   setRefreshing(true);
+  //   wait(5000).then(() => setRefreshing(false));
+  // }, []);
 
   const distribution = useDistribution({
     showEmptyAccounts: true,
@@ -142,142 +140,105 @@ function PortfolioScreen({ navigation }: NavigationProps) {
 
   const postOnboardingVisible = usePostOnboardingEntryPointVisibleOnWallet();
 
-  const data = useMemo(
-    () => [
-      <FirmwareUpdateBanner containerProps={{ mt: 0, mb: 0 }} />,
-      postOnboardingVisible && (
-        <Box m={6}>
-          <PostOnboardingEntryPointCard />
+  return (
+    <>
+      <CheckLanguageAvailability />
+      <CheckTermOfUseUpdate />
+      <TrackScreen
+        category="Wallet"
+        accountsLength={distribution.list && distribution.list.length}
+        discreet={discreetMode}
+      />
+      <CollapsibleHeaderScrollView
+        showsVerticalScrollIndicator={false}
+        testID={
+          distribution.list && distribution.list.length
+            ? "PortfolioAccountsList"
+            : "PortfolioEmptyAccount"
+        }
+        // refreshControl={
+        //   <RefreshControl
+        //     refreshing={refreshing && isFocused}
+        //     onRefresh={onRefresh}
+        //   />
+        // }
+      >
+        <FirmwareUpdateBanner />
+        {postOnboardingVisible && (
+          <Box m={6}>
+            <PostOnboardingEntryPointCard />
+          </Box>
+        )}
+        <Box mt={3} onLayout={onPortfolioCardLayout}>
+          <GraphCardContainer
+            counterValueCurrency={counterValueCurrency}
+            portfolio={portfolio}
+            areAccountsEmpty={areAccountsEmpty}
+            showGraphCard={showAssets}
+            currentPositionY={currentPositionY}
+            graphCardEndPosition={graphCardEndPosition}
+          />
         </Box>
-      ),
-      <Box mt={3} onLayout={onPortfolioCardLayout}>
-        <GraphCardContainer
-          counterValueCurrency={counterValueCurrency}
-          portfolio={portfolio}
-          areAccountsEmpty={areAccountsEmpty}
-          showGraphCard={showAssets}
-          currentPositionY={currentPositionY}
-          graphCardEndPosition={graphCardEndPosition}
-        />
-      </Box>,
-      ...(showAssets
-        ? [
-            <Box background={colors.background.main} px={6} mt={6}>
-              <Assets assets={assetsToDisplay} />
-              {distribution.list.length < maxAssetsToDisplay ? (
-                <Button
-                  type="shade"
-                  size="large"
-                  outline
-                  mt={6}
-                  iconPosition="left"
-                  Icon={Icons.PlusMedium}
-                  onPress={openAddModal}
-                >
-                  {t("account.emptyState.addAccountCta")}
-                </Button>
-              ) : (
-                <Button
-                  type="shade"
-                  size="large"
-                  outline
-                  mt={6}
-                  onPress={goToAssets}
-                >
-                  {t("portfolio.seelAllAssets")}
-                </Button>
-              )}
-            </Box>,
-          ]
-        : []),
-      ...(showAssets && showCarousel
-        ? [
-            <Box background={colors.background.main}>
-              <SectionContainer px={0} minHeight={240}>
-                <SectionTitle
-                  title={t("portfolio.recommended.title")}
-                  containerProps={{ mb: 7, mx: 6 }}
-                />
-                <Carousel cardsVisibility={carouselVisibility} />
-              </SectionContainer>
-            </Box>,
-          ]
-        : []),
-      ...(showAssets
-        ? [
+        {showAssets ? (
+          <Box background={colors.background.main} px={6} mt={6}>
+            <Assets assets={assetsToDisplay} />
+            {distribution.list.length < maxAssetsToDisplay ? (
+              <Button
+                type="shade"
+                size="large"
+                outline
+                mt={6}
+                iconPosition="left"
+                Icon={Icons.PlusMedium}
+                onPress={openAddModal}
+              >
+                {t("account.emptyState.addAccountCta")}
+              </Button>
+            ) : (
+              <Button
+                type="shade"
+                size="large"
+                outline
+                mt={6}
+                onPress={goToAssets}
+              >
+                {t("portfolio.seelAllAssets")}
+              </Button>
+            )}
+          </Box>
+        ) : null}
+        {showAssets && showCarousel ? (
+          <Box background={colors.background.main}>
+            <SectionContainer px={0} minHeight={240}>
+              <SectionTitle
+                title={t("portfolio.recommended.title")}
+                containerProps={{ mb: 7, mx: 6 }}
+              />
+              <Carousel cardsVisibility={carouselVisibility} />
+            </SectionContainer>
+          </Box>
+        ) : null}
+        {showAssets ? (
+          <>
             <SectionContainer px={6}>
               <SectionTitle title={t("analytics.allocation.title")} />
               <Flex minHeight={94}>
                 <AllocationsSection />
               </Flex>
-            </SectionContainer>,
+            </SectionContainer>
             <SectionContainer px={6} mb={8} isLast>
               <SectionTitle title={t("analytics.operations.title")} />
               <OperationsHistorySection accounts={accounts} />
-            </SectionContainer>,
-          ]
-        : [
-            // If the user has no accounts we display an empty state
-            <Flex flex={1} mt={12}>
-              <PortfolioEmptyState openAddAccountModal={openAddModal} />
-            </Flex>,
-          ]),
-    ],
-    [
-      onPortfolioCardLayout,
-      counterValueCurrency,
-      portfolio,
-      areAccountsEmpty,
-      showAssets,
-      currentPositionY,
-      graphCardEndPosition,
-      colors.background.main,
-      t,
-      assetsToDisplay,
-      distribution.list.length,
-      openAddModal,
-      showCarousel,
-      carouselVisibility,
-      accounts,
-      goToAssets,
-      postOnboardingVisible,
-    ],
-  );
-
-  return (
-    <>
-      <TabBarSafeAreaView
-        style={{
-          flex: 1,
-          paddingTop: 48,
-        }}
-      >
-        <CheckLanguageAvailability />
-        <CheckTermOfUseUpdate />
-        <TrackScreen
-          category="Wallet"
-          accountsLength={distribution.list && distribution.list.length}
-          discreet={discreetMode}
-        />
-        <CollapsibleHeaderFlatList<React.ReactNode>
-          data={data}
-          renderItem={({ item }: ListRenderItemInfo<unknown>) =>
-            item as JSX.Element
-          }
-          keyExtractor={(_: unknown, index: number) => String(index)}
-          showsVerticalScrollIndicator={false}
-          testID={
-            distribution.list && distribution.list.length
-              ? "PortfolioAccountsList"
-              : "PortfolioEmptyAccount"
-          }
-          refreshControl={
-            <RefreshControl refreshing={refreshing && isFocused} onRefresh={onRefresh} />
-          }
-        />
-        <MigrateAccountsBanner />
-      </TabBarSafeAreaView>
-
+            </SectionContainer>
+          </>
+        ) : (
+          // If the user has no accounts we display an empty state
+          <Box mx={6} mt={12}>
+            <PortfolioEmptyState openAddAccountModal={openAddModal} />
+          </Box>
+        )}
+      </CollapsibleHeaderScrollView>
+      <MigrateAccountsBanner />
       <AddAccountsModal
         navigation={navigation as unknown as BaseNavigation}
         isOpened={isAddModalOpened}

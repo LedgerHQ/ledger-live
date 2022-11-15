@@ -31,7 +31,7 @@ const WalletNftGallery = () => {
       {hasNFTs ? (
         <NftList data={nftsOrdered} />
       ) : (
-        <CollapsibleHeaderScrollView>
+        <CollapsibleHeaderScrollView contentContainerStyle={{ paddingTop: 0 }}>
           <NftGalleryEmptyState />
         </CollapsibleHeaderScrollView>
       )}

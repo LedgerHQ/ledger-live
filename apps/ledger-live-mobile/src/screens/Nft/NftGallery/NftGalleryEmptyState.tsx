@@ -1,6 +1,6 @@
 import React, { memo, useCallback } from "react";
 import { Linking } from "react-native";
-import { Box, Flex, Icons, Text } from "@ledgerhq/native-ui";
+import { Flex, Icons, Text } from "@ledgerhq/native-ui";
 import { useTranslation } from "react-i18next";
 import Button from "../../../components/wrappedUi/Button";
 import { urls } from "../../../config/urls";
@@ -18,17 +18,36 @@ const NftGalleryEmptyState = () => {
   );
 
   return (
-    <Flex flex={1}>
-      <Box height={'100px'} bg={'yellow'} />
-      <Box height={'100px'} bg={'red'} />
-      <Box height={'100px'} bg={'blue'} />
-      <Box height={'100px'} bg={'yellow'} />
-      <Box height={'100px'} bg={'red'} />
-      <Box height={'100px'} bg={'blue'} />
-      <Box height={'100px'} bg={'yellow'} />
-      <Box height={'100px'} bg={'red'} />
-      <Box height={'100px'} bg={'blue'} />
+    <Flex flex={1} alignItems={"center"} justifyContent={"center"}>
+      <Text
+        variant={"h1Inter"}
+        fontWeight={"semiBold"}
+        color={"neutral.c100"}
+        mb={6}
+      >
+        {t("wallet.nftGallery.empty.title")}
+      </Text>
+      <Text
+        variant={"bodyLineHeight"}
+        fontWeight={"semiBold"}
+        color={"neutral.c80"}
+        mb={8}
+      >
+        {t("wallet.nftGallery.empty.subtitle")}
+      </Text>
+      <Button onPress={openModal} size={"large"} type={"main"} mb={8}>
+        {t("wallet.nftGallery.empty.receive")}
+      </Button>
+      <Link
+        onPress={openSupportLink}
+        size={"medium"}
+        Icon={Icons.ExternalLinkMedium}
+        iconPosition="right"
+      >
+        {t("wallet.nftGallery.empty.supportLink")}
+      </Link>
 
+      <ReceiveNFTsModal isOpened={isModalOpened} onClose={closeModal} />
     </Flex>
   );
 };
