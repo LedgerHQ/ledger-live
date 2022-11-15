@@ -6,7 +6,6 @@ import { BigNumber } from "bignumber.js";
 import {
   InvalidAddressBecauseDestinationIsAlsoSource,
   NotEnoughBalance,
-  InvalidAddress,
 } from "@ledgerhq/errors";
 import type { DatasetTest, CurrenciesData } from "@ledgerhq/types-live";
 import type { Transaction } from "./types";
@@ -48,11 +47,11 @@ const elrond: CurrenciesData<Transaction> = {
         subAccounts: [
           {
             // MEX account
-            id: `js:2:elrond:${TEST_ADDRESS}:+elrond/esdt/4d45582d343535633537`,
+            id: `js:2:elrond:${TEST_ADDRESS}:+4d45582d343535633537`,
             balance: "100",
             spendableBalance: "100",
             type: "TokenAccountRaw",
-            tokenId: "elrond/esdt/4d45582d343535633537",
+            tokenId: "4d45582d343535633537",
             parentId: `js:2:elrond:${TEST_ADDRESS}:`,
             operations: [],
             pendingOperations: [],
@@ -106,7 +105,7 @@ const elrond: CurrenciesData<Transaction> = {
             mode: "send",
             fees: null,
             gasLimit: 50000000,
-            subAccountId: `js:2:elrond:${TEST_ADDRESS}:+elrond/esdt/4d45582d343535633537`,
+            subAccountId: `js:2:elrond:${TEST_ADDRESS}:+4d45582d343535633537`,
           }),
           expectedStatus: {
             errors: {
