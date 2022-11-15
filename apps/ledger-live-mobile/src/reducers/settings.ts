@@ -138,11 +138,9 @@ export const INITIAL_STATE: SettingsState = {
   firstConnectionHasDevice: null,
   firstConnectHasDeviceUpdated: null,
   notifications: {
-    allowed: false,
-    transactions: false,
-    market: false,
-    announcement: false,
-    price: false,
+    allowed: true,
+    announcements: true,
+    recommendations: true,
   },
 };
 

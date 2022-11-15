@@ -23,6 +23,7 @@ import { languages, supportedLocales } from "../../languages";
 import Illustration from "../../images/illustration/Illustration";
 import DeviceDark from "../../images/illustration/Dark/_FamilyPackX.png";
 import DeviceLight from "../../images/illustration/Light/_FamilyPackX.png";
+import { updateIdentify } from "../../analytics";
 
 type UiDrawerStatus =
   | "none"
@@ -67,6 +68,7 @@ const LanguageSelect = ({ device, productName }: Props) => {
   useEffect(() => {
     if (selectedLanguage) {
       dispatch(setLanguage(selectedLanguage));
+      updateIdentify();
     }
   }, [dispatch, selectedLanguage]);
 

@@ -48,7 +48,7 @@ jobs:
 
   is-org-member:
     name: "Check Org Member"
-    uses: ledgerhq/ledger-live/.github/workflows/is-org-member.yml@develop
+    uses: ./.github/workflows/is-org-member.yml
     with:
       username: ${{ github.event.inputs.login }}
       organisation: ledgerhq

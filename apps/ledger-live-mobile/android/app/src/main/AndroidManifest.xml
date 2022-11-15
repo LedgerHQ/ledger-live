@@ -15,7 +15,7 @@
     <uses-permission android:name="android.permission.VIBRATE"/>
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" /> <!-- react-native-share base64 sharing (swap history/logs export)-->
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" /> <!-- Needed by Flipper 🐬 -->
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" /> <!-- Needed by Adjust -->
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" /> <!-- Needed by Adjust and by Braze -->
     <uses-permission android:name="com.google.android.gms.permission.AD_ID"/> <!-- Needed by Adjust -->
     <uses-permission android:name="android.permission.RECORD_AUDIO" /> <!-- Needed by Live apps -->
     <uses-sdk
@@ -33,6 +33,12 @@
       android:networkSecurityConfig="@xml/network_security_config"
       android:supportsRtl="true">
     <service android:name=".BackgroundService" />
+    <service android:name="com.braze.push.BrazeFirebaseMessagingService"
+      android:exported="false">
+      <intent-filter>
+        <action android:name="com.google.firebase.MESSAGING_EVENT" />
+      </intent-filter>
+    </service>
       <activity
         android:name=".MainActivity"
         android:label="@string/app_name"
