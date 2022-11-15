@@ -90,7 +90,9 @@ const fetchStashAddr = async (addr: string): Promise<string | null> => {
     data: SidecarPalletStorageItem;
   } = await network({
     method: "GET",
-    url: getSidecarUrl(`/pallets/staking/storage/ledger?key1=${addr}`),
+    url: getSidecarUrl(
+      `/pallets/staking/storage/ledger?keys[]=${addr}&key1=[]${addr}`
+    ),
   });
   return data.value?.stash ?? null;
 };
@@ -110,7 +112,9 @@ const fetchControllerAddr = async (addr: string): Promise<string | null> => {
     data: SidecarPalletStorageItem;
   } = await network({
     method: "GET",
-    url: getSidecarUrl(`/pallets/staking/storage/bonded?key1=${addr}`),
+    url: getSidecarUrl(
+      `/pallets/staking/storage/bonded?keys[]=${addr}&key1=${addr}`
+    ),
   });
   return data.value ?? null;
 };
