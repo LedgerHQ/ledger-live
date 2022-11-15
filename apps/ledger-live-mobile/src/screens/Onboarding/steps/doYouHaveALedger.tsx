@@ -10,13 +10,19 @@ import StyledStatusBar from "../../../components/StyledStatusBar";
 import Button from "../../../components/wrappedUi/Button";
 import { TrackScreen, updateIdentify } from "../../../analytics";
 import { setFirstConnectionHasDevice } from "../../../actions/settings";
-// eslint-disable-next-line import/no-cycle
-import { AnalyticsContext } from "../../../components/RootNavigator";
+import { AnalyticsContext } from "../../../analytics/AnalyticsContext";
+import { StackNavigatorProps } from "../../../components/RootNavigator/types/helpers";
+import { OnboardingNavigatorParamList } from "../../../components/RootNavigator/types/OnboardingNavigator";
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const RenderVertical = require("../../../../assets/images/devices/3DRenderVertical.png");
 
-function OnboardingStepDoYouHaveALedgerDevice({ navigation }: any) {
+type NavigationProps = StackNavigatorProps<
+  OnboardingNavigatorParamList,
+  ScreenName.OnboardingDoYouHaveALedgerDevice
+>;
+
+function OnboardingStepDoYouHaveALedgerDevice({ navigation }: NavigationProps) {
   const { t } = useTranslation();
   const dispatch = useDispatch();
 
@@ -52,7 +58,7 @@ function OnboardingStepDoYouHaveALedgerDevice({ navigation }: any) {
 
   useFocusEffect(
     useCallback(() => {
-      setScreen("Has Device?");
+      setScreen && setScreen("Has Device?");
 
       return () => {
         setSource("Has Device?");
@@ -61,6 +67,7 @@ function OnboardingStepDoYouHaveALedgerDevice({ navigation }: any) {
   );
 
   return (
+    // @ts-expect-error Bindings are wrong…
     <SafeAreaView flex={1}>
       <TrackScreen category="Onboarding" name="Has Device?" />
       <Flex flex={1} bg="background.main">

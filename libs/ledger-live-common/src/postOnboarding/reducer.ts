@@ -4,6 +4,7 @@ import {
   PostOnboardingState,
 } from "@ledgerhq/types-live";
 import { handleActions } from "redux-actions";
+import type { ReducerMap } from "redux-actions";
 
 export const initialState: PostOnboardingState = {
   deviceModelId: null,
@@ -13,22 +14,25 @@ export const initialState: PostOnboardingState = {
   lastActionCompleted: null,
 };
 
-const handlers: Record<
-  string,
-  (state: PostOnboardingState, action: any) => PostOnboardingState
-> = {
-  POST_ONBOARDING_IMPORT_STATE: (
-    _,
-    action: { newState: Record<string, any> }
-  ): PostOnboardingState => action.newState as PostOnboardingState,
-  POST_ONBOARDING_INIT: (
-    _,
-    action: {
-      deviceModelId: DeviceModelId;
-      actionsIds: PostOnboardingActionId[];
-    }
-  ) => {
-    const { deviceModelId, actionsIds } = action;
+type PartialNewStatePayload = { newState: Partial<PostOnboardingState> };
+type InitPayload = {
+  deviceModelId: DeviceModelId;
+  actionsIds: PostOnboardingActionId[];
+};
+type SetActionCompletedPayload = {
+  actionId: PostOnboardingActionId;
+};
+export type Payload =
+  | undefined
+  | PartialNewStatePayload
+  | InitPayload
+  | SetActionCompletedPayload;
+
+const handlers: ReducerMap<PostOnboardingState, Payload> = {
+  POST_ONBOARDING_IMPORT_STATE: (_, { payload }): PostOnboardingState =>
+    (payload as PartialNewStatePayload).newState as PostOnboardingState,
+  POST_ONBOARDING_INIT: (_, { payload }) => {
+    const { deviceModelId, actionsIds } = payload as InitPayload;
     return {
       deviceModelId,
       walletEntryPointDismissed: false,
@@ -37,11 +41,8 @@ const handlers: Record<
       lastActionCompleted: null,
     };
   },
-  POST_ONBOARDING_SET_ACTION_COMPLETED: (
-    state,
-    action: { actionId: PostOnboardingActionId }
-  ) => {
-    const { actionId } = action;
+  POST_ONBOARDING_SET_ACTION_COMPLETED: (state, { payload }) => {
+    const { actionId } = payload as SetActionCompletedPayload;
     const actionsCompleted = { ...state.actionsCompleted, [actionId]: true };
     return {
       ...state,
@@ -59,7 +60,10 @@ const handlers: Record<
   }),
 };
 
-export default handleActions(handlers, initialState);
+export default handleActions<PostOnboardingState, Payload>(
+  handlers,
+  initialState
+);
 
 export const postOnboardingSelector = ({
   postOnboarding,

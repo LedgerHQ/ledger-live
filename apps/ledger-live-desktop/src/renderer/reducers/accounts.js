@@ -10,14 +10,13 @@ import {
   canBeMigrated,
   getAccountCurrency,
   isUpToDateAccount,
-  withoutToken,
   nestedSortAccounts,
 } from "@ledgerhq/live-common/account/index";
 import { getEnv } from "@ledgerhq/live-common/env";
+import isEqual from "lodash/isEqual";
 import logger from "./../../logger/logger";
 import accountModel from "./../../helpers/accountModel";
 import type { State } from ".";
-import isEqual from "lodash/isEqual";
 
 import useCompoundAccountEnabled from "../screens/lend/useCompoundAccountEnabled";
 
@@ -72,9 +71,6 @@ const handlers: Object = {
 
   // used to debug performance of redux updates
   DEBUG_TICK: state => state.slice(0),
-
-  BLACKLIST_TOKEN: (state: AccountsState, { payload: tokenId }: { payload: string }) =>
-    state.map(a => withoutToken(a, tokenId)),
 };
 
 // Selectors

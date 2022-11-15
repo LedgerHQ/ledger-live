@@ -9,9 +9,11 @@ import {
   UpdateYourApp,
   DisconnectedDeviceDuringOperation,
   DisconnectedDevice,
+  StatusCodes,
 } from "@ledgerhq/errors";
 import type Transport from "@ledgerhq/hw-transport";
 import type { DeviceModelId } from "@ledgerhq/devices";
+import { DeviceInfo, FirmwareUpdateContext } from "@ledgerhq/types-live";
 import type { DerivationMode } from "../derivation";
 import type { AppOp } from "../apps/types";
 import { getCryptoCurrencyById } from "../currencies";
@@ -26,8 +28,9 @@ import openApp from "./openApp";
 import quitApp from "./quitApp";
 import { LatestFirmwareVersionRequired } from "../errors";
 import { mustUpgrade } from "../apps";
+import isUpdateAvailable from "./isUpdateAvailable";
 import manager from "../manager";
-import { DeviceInfo, FirmwareUpdateContext } from "@ledgerhq/types-live";
+import { LockedDeviceEvent } from "./actions/types";
 
 export type RequiresDerivation = {
   currencyId: string;
@@ -42,6 +45,7 @@ export type Input = {
   requiresDerivation?: RequiresDerivation;
   dependencies?: string[];
   requireLatestFirmware?: boolean;
+  outdatedApp?: AppAndVersion;
 };
 export type AppAndVersion = {
   name: string;
@@ -97,6 +101,10 @@ export type ConnectAppEvent =
       appName: string;
     }
   | {
+      type: "has-outdated-app";
+      outdatedApp: AppAndVersion;
+    }
+  | {
       type: "opened";
       app?: AppAndVersion;
       derivation?: {
@@ -106,7 +114,9 @@ export type ConnectAppEvent =
   | {
       type: "display-upgrade-warning";
       displayUpgradeWarning: boolean;
-    };
+    }
+  | LockedDeviceEvent;
+
 export const openAppFromDashboard = (
   transport: Transport,
   appName: string
@@ -140,17 +150,22 @@ export const openAppFromDashboard = (
               if (e && e instanceof TransportStatusError) {
                 // @ts-expect-error TransportStatusError to be typed on ledgerjs
                 switch (e.statusCode) {
-                  case 0x6984:
-                  case 0x6807:
+                  case 0x6984: // No StatusCodes definition
+                  case 0x6807: // No StatusCodes definition
                     return streamAppInstall({
                       transport,
                       appNames: [appName],
                       onSuccessObs: () =>
                         from(openAppFromDashboard(transport, appName)),
                     }) as Observable<ConnectAppEvent>;
-                  case 0x6985:
-                  case 0x5501:
+                  case StatusCodes.CONDITIONS_OF_USE_NOT_SATISFIED:
+                  case 0x5501: // No StatusCodes definition
                     return throwError(new UserRefusedOnDevice());
+                  // openAppFromDashboard is exported, so LOCKED_DEVICE should be handled too
+                  case StatusCodes.LOCKED_DEVICE:
+                    return of({
+                      type: "lockedDevice",
+                    } as ConnectAppEvent);
                 }
               }
 
@@ -222,8 +237,8 @@ const derivationLogic = (
         const { statusCode } = e;
 
         if (
-          statusCode === 0x6982 ||
-          statusCode === 0x6700 ||
+          statusCode === StatusCodes.SECURITY_STATUS_NOT_SATISFIED ||
+          statusCode === StatusCodes.INCORRECT_LENGTH ||
           (0x6600 <= statusCode && statusCode <= 0x67ff)
         ) {
           return of<ConnectAppEvent>({
@@ -233,11 +248,17 @@ const derivationLogic = (
         }
 
         switch (statusCode) {
-          case 0x6f04: // FW-90. app was locked...
-          case 0x6faa: // FW-90. app bricked, a reboot fixes it.
-          case 0x6d00:
+          case 0x6f04: // FW-90. app was locked... | No StatusCodes definition
+          case StatusCodes.HALTED: // FW-90. app bricked, a reboot fixes it.
+          case StatusCodes.INS_NOT_SUPPORTED:
             // this is likely because it's the wrong app (LNS 1.3.1)
             return attemptToQuitApp(transport, appAndVersion);
+          // derivationLogic is also called inside the catchError of cmd below
+          // so it needs to handle LOCKED_DEVICE
+          case StatusCodes.LOCKED_DEVICE:
+            return of({
+              type: "lockedDevice",
+            } as ConnectAppEvent);
         }
       }
 
@@ -252,6 +273,7 @@ const cmd = ({
   requiresDerivation,
   dependencies,
   requireLatestFirmware,
+  outdatedApp,
 }: Input): Observable<ConnectAppEvent> =>
   withDevice(devicePath)(
     (transport) =>
@@ -273,7 +295,7 @@ const cmd = ({
 
               if (isDashboardName(appAndVersion.name)) {
                 // check if we meet minimum fw
-                if (requireLatestFirmware) {
+                if (requireLatestFirmware || outdatedApp) {
                   return from(getDeviceInfo(transport)).pipe(
                     mergeMap((deviceInfo: DeviceInfo) =>
                       from(manager.getLatestFirmwareForDevice(deviceInfo)).pipe(
@@ -281,13 +303,42 @@ const cmd = ({
                           (
                             latest: FirmwareUpdateContext | undefined | null
                           ) => {
-                            if (
+                            const isLatest =
                               !latest ||
                               semver.eq(
                                 deviceInfo.version,
                                 latest.final.version
-                              )
+                              );
+
+                            if (
+                              (!requireLatestFirmware ||
+                                (requireLatestFirmware && isLatest)) &&
+                              outdatedApp
                             ) {
+                              return from(
+                                isUpdateAvailable(deviceInfo, outdatedApp)
+                              ).pipe(
+                                mergeMap((isAvailable) =>
+                                  isAvailable
+                                    ? throwError(
+                                        new UpdateYourApp(undefined, {
+                                          managerAppName: outdatedApp.name,
+                                        })
+                                      )
+                                    : throwError(
+                                        new LatestFirmwareVersionRequired(
+                                          "LatestFirmwareVersionRequired",
+                                          {
+                                            latest: latest?.final.version,
+                                            current: deviceInfo.version,
+                                          }
+                                        )
+                                      )
+                                )
+                              );
+                            }
+
+                            if (isLatest) {
                               o.next({ type: "latest-firmware-resolved" });
                               return innerSub({ appName, dependencies }); // NB without the fw version check
                             } else {
@@ -340,25 +391,30 @@ const cmd = ({
                 return openAppFromDashboard(transport, appName);
               }
 
-              // in order to check the fw version, install deps, we need dashboard
+              const appNeedsUpgrade = mustUpgrade(
+                modelId,
+                appAndVersion.name,
+                appAndVersion.version
+              );
+              if (appNeedsUpgrade) {
+                // We need to quit the app first, then we need to get the device information to see if an
+                // app update that fulfills the minimum is available on this provider for this device version.
+                o.next({
+                  type: "has-outdated-app",
+                  outdatedApp: appAndVersion,
+                });
+              }
+
+              // in order to check the fw version, install deps, or check app update availability, we need dashboard
               if (
                 dependencies?.length ||
                 requireLatestFirmware ||
-                appAndVersion.name !== appName
+                appAndVersion.name !== appName ||
+                appNeedsUpgrade
               ) {
                 return attemptToQuitApp(
                   transport,
                   appAndVersion as AppAndVersion
-                );
-              }
-
-              if (
-                mustUpgrade(modelId, appAndVersion.name, appAndVersion.version)
-              ) {
-                return throwError(
-                  new UpdateYourApp(undefined, {
-                    managerAppName: appAndVersion.name,
-                  })
                 );
               }
 
@@ -386,24 +442,26 @@ const cmd = ({
                 });
               }
 
-              if (
-                e &&
-                e instanceof TransportStatusError &&
+              if (e && e instanceof TransportStatusError) {
                 // @ts-expect-error TransportStatusError to be typed on ledgerjs
-                (e.statusCode === 0x6e00 || // in 1.3.1 dashboard
-                  // @ts-expect-error TransportStatusError to be typed on ledgerjs
-                  e.statusCode === 0x6d00) // in 1.3.1 and bitcoin app
-              ) {
-                // fallback on "old way" because device does not support getAppAndVersion
-                if (!requiresDerivation) {
-                  // if there is no derivation, there is nothing we can do to check an app (e.g. requiring non coin app)
-                  return throwError(new FirmwareOrAppUpdateRequired());
-                }
+                switch (e.statusCode) {
+                  case StatusCodes.CLA_NOT_SUPPORTED: // in 1.3.1 dashboard
+                  case StatusCodes.INS_NOT_SUPPORTED: // in 1.3.1 and bitcoin app
+                    // fallback on "old way" because device does not support getAppAndVersion
+                    if (!requiresDerivation) {
+                      // if there is no derivation, there is nothing we can do to check an app (e.g. requiring non coin app)
+                      return throwError(new FirmwareOrAppUpdateRequired());
+                    }
 
-                return derivationLogic(transport, {
-                  requiresDerivation,
-                  appName,
-                });
+                    return derivationLogic(transport, {
+                      requiresDerivation,
+                      appName,
+                    });
+                  case StatusCodes.LOCKED_DEVICE:
+                    return of({
+                      type: "lockedDevice",
+                    } as ConnectAppEvent);
+                }
               }
 
               return throwError(e);

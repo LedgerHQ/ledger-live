@@ -4,7 +4,7 @@ import firmwarePrepare from "./firmwarePrepare";
 import firmwareMain from "./firmwareMain";
 import firmwareRepair from "./firmwareRepair";
 import flushDevice from "./flushDevice";
-import firmwareUpdating from "./firmwareUpdating";
+import waitForDeviceInfo from "./waitForDeviceInfo";
 import getLatestFirmwareForDevice from "./getLatestFirmwareForDevice";
 import getSatStackStatus from "./getSatStackStatus";
 import listenToHidDevices from "./listenToHidDevices";
@@ -27,6 +27,10 @@ import scanDescriptors from "./scanDescriptors";
 import installLanguage from "./installLanguage";
 import getAppAndVersion from "./getAppAndVersion";
 import getDeviceInfo from "./getDeviceInfo";
+import ftsLoadImage from "./ftsLoadImage";
+import getOnboardingStatePolling from "./getOnboardingStatePolling";
+import getGenuineCheckFromDeviceId from "./getGenuineCheckFromDeviceId";
+import getLatestAvailableFirmwareFromDeviceId from "./getLatestAvailableFirmwareFromDeviceId";
 import { commands as bridgeProxyCommands } from "~/renderer/bridge/proxy-commands";
 
 export const commandsById = {
@@ -37,7 +41,7 @@ export const commandsById = {
   firmwareMain,
   firmwareRepair,
   flushDevice,
-  firmwareUpdating,
+  waitForDeviceInfo,
   getLatestFirmwareForDevice,
   getSatStackStatus,
   listenToHidDevices,
@@ -59,6 +63,10 @@ export const commandsById = {
   signMessage,
   getAppAndVersion,
   getDeviceInfo,
+  ftsLoadImage,
+  getOnboardingStatePolling,
+  getGenuineCheckFromDeviceId,
+  getLatestAvailableFirmwareFromDeviceId,
 };
 
 export type Commands = typeof commandsById;

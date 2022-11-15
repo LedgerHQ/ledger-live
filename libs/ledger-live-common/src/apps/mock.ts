@@ -45,6 +45,20 @@ export const deviceInfo210lo5: DeviceInfo = {
   version: "2.1.0-lo5",
 };
 
+export const deviceInfo202 = {
+  version: "2.0.2",
+  isBootloader: false,
+  isOSU: false,
+  managerAllowed: true,
+  mcuVersion: "2.30",
+  pinValidated: true,
+  providerName: null,
+  majMin: "2.0",
+  targetId: 855638020,
+  seVersion: "2.0.2",
+  seTargetId: 855638020,
+};
+
 const firmware155: FinalFirmware = {
   id: 24,
   name: "1.5.5",
@@ -108,7 +122,8 @@ export const parseInstalled = (installedDesc: string): InstalledItem[] =>
 export function mockListAppsResult(
   appDesc: string,
   installedDesc: string,
-  deviceInfo: DeviceInfo
+  deviceInfo: DeviceInfo,
+  deviceModelId?: DeviceModelId
 ): ListAppsResult {
   const tickersByMarketCap = Object.keys(getBTCValues());
   const apps = appDesc
@@ -165,9 +180,11 @@ export function mockListAppsResult(
     appByName,
     appsListNames: apps.map((a) => a.name),
     deviceInfo,
-    deviceModelId: deviceInfo.seTargetId
-      ? identifyTargetId(deviceInfo.seTargetId)?.id ?? <DeviceModelId>"nanoS"
-      : <DeviceModelId>"nanoS",
+    deviceModelId:
+      deviceModelId ||
+      (deviceInfo.seTargetId
+        ? identifyTargetId(deviceInfo.seTargetId)?.id ?? DeviceModelId.nanoS
+        : DeviceModelId.nanoS),
     firmware: firmware155,
     installed,
     installedAvailable: true,

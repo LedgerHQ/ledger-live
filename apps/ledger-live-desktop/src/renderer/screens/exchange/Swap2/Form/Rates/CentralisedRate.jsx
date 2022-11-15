@@ -62,6 +62,7 @@ function CentralisedRate({ value = {}, selected, onSelect, fromCurrency, toCurre
               to={toCurrency}
               rate={value.magnitudeAwareRate}
               fontWeight="600"
+              color="palette.text.shade100"
             />
           </Box>
           <SecondaryText fontSize={3}>

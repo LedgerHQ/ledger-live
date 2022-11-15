@@ -1,33 +1,42 @@
 import React, { useCallback, useEffect, useRef } from "react";
 import { Flex } from "@ledgerhq/native-ui";
 import { StackScreenProps } from "@react-navigation/stack";
-import { CompositeScreenProps } from "@react-navigation/native";
 import { TouchableWithoutFeedback } from "react-native-gesture-handler";
+import { useStartPostOnboardingCallback } from "@ledgerhq/live-common/postOnboarding/hooks/useStartPostOnboardingCallback";
 
-import { NavigatorName } from "../../const";
-import type { BaseNavigatorStackParamList } from "../../components/RootNavigator/BaseNavigator";
-import type { SyncOnboardingStackParamList } from "../../components/RootNavigator/SyncOnboardingNavigator";
+import { NavigatorName, ScreenName } from "../../const";
 import Illustration from "../../images/illustration/Illustration";
 import DeviceDark from "../../images/illustration/Dark/_000_PLACEHOLDER.png";
 import DeviceLight from "../../images/illustration/Light/_000_PLACEHOLDER.png";
+import { SyncOnboardingStackParamList } from "../../components/RootNavigator/types/SyncOnboardingNavigator";
+import {
+  BaseComposite,
+  RootNavigation,
+} from "../../components/RootNavigator/types/helpers";
 
 const redirectDelay = 5000;
 
-type Props = CompositeScreenProps<
-  StackScreenProps<SyncOnboardingStackParamList, "SyncOnboardingCompletion">,
-  StackScreenProps<BaseNavigatorStackParamList>
+type Props = BaseComposite<
+  StackScreenProps<
+    SyncOnboardingStackParamList,
+    ScreenName.SyncOnboardingCompletion
+  >
 >;
 
-const CompletionScreen = ({ navigation }: Props) => {
+const CompletionScreen = ({ navigation, route }: Props) => {
   const delayRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const { device } = route.params;
+  const startPostOnboarding = useStartPostOnboardingCallback();
 
   const redirectToPostOnboarding = useCallback(() => {
     // Resets the navigation stack to avoid allowing to go back to the onboarding welcome screen
-    navigation.reset({
+    // FIXME: bindings to react-navigation seem to have issues with composites
+    (navigation as unknown as RootNavigation).reset({
       index: 0,
       routes: [
         {
-          name: NavigatorName.Base as "Base",
+          name: NavigatorName.Base,
           state: {
             routes: [
               {
@@ -38,7 +47,12 @@ const CompletionScreen = ({ navigation }: Props) => {
         },
       ],
     });
-  }, [navigation]);
+    startPostOnboarding(device.modelId, false, () =>
+      navigation.navigate(NavigatorName.Base, {
+        screen: NavigatorName.Main,
+      }),
+    );
+  }, [device.modelId, navigation, startPostOnboarding]);
 
   const skipDelay = useCallback(() => {
     if (!delayRef.current) {

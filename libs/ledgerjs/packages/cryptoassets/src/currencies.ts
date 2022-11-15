@@ -998,7 +998,7 @@ export const cryptocurrenciesById: Record<string, CryptoCurrency> = {
       baseChain: "mainnet",
       chainId: 1,
       networkId: 1,
-      hardfork: "petersburg",
+      hardfork: "london",
     },
     explorerViews: [
       {
@@ -3103,7 +3103,7 @@ export const cryptocurrenciesById: Record<string, CryptoCurrency> = {
       baseChain: "goerli",
       chainId: 5, // goerli
       networkId: 5,
-      hardfork: "petersburg",
+      hardfork: "london",
     },
     explorerViews: [
       {

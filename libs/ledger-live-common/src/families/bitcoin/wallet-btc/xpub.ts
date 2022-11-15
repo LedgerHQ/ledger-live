@@ -4,7 +4,7 @@ import { TX, Address, IStorage } from "./storage/types";
 import { IExplorer } from "./explorer/types";
 import { ICrypto } from "./crypto/types";
 import { PickingStrategy } from "./pickingstrategies/types";
-import * as utils from "./utils";
+import { computeDustAmount, maxTxSizeCeil } from "./utils";
 import { TransactionInfo, InputInfo, OutputInfo } from "./types";
 
 // names inside this class and discovery logic respect BIP32 standard
@@ -194,6 +194,7 @@ class Xpub {
       address: params.destAddress,
       isChange: false,
     };
+
     while (desiredOutputLeftToFit.value.gt(this.OUTPUT_VALUE_MAX)) {
       outputs.push({
         script: desiredOutputLeftToFit.script,
@@ -227,6 +228,7 @@ class Xpub {
         this.explorer.getTxHex(unspentUtxo.output_hash)
       )
     );
+
     const txs = await Promise.all(
       unspentUtxoSelected.map((unspentUtxo) =>
         this.storage.getTx(unspentUtxo.address, unspentUtxo.output_hash)
@@ -243,6 +245,7 @@ class Xpub {
         sequence: params.sequence,
       };
     });
+
     const associatedDerivations: [number, number][] = unspentUtxoSelected.map(
       (_utxo, index) => {
         if (txs[index] == null) {
@@ -252,14 +255,16 @@ class Xpub {
       }
     );
 
-    const txSize = utils.maxTxSizeCeil(
+    const txSize = maxTxSizeCeil(
       unspentUtxoSelected.length,
       outputs.map((o) => o.address),
       true,
       this.crypto,
       this.derivationMode
     );
-    const dustAmount = utils.computeDustAmount(this.crypto, txSize);
+
+    const dustAmount = computeDustAmount(this.crypto, txSize);
+
     // Abandon the change output if change output amount is less than dust amount
     if (
       needChangeoutput &&

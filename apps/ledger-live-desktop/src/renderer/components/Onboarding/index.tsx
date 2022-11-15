@@ -17,8 +17,8 @@ import RecoveryWarning from "~/renderer/components/Onboarding/Help/RecoveryWarni
 import { preloadAssets } from "~/renderer/components/Onboarding/preloadAssets";
 import { SideDrawer } from "../SideDrawer";
 import Box from "../Box";
-
 import { withV3StyleProvider } from "~/renderer/styles/StyleProviderV3";
+import SyncOnboarding from "../SyncOnboarding";
 
 const OnboardingContainer = styled(Flex).attrs({
   width: "100%",
@@ -103,6 +103,7 @@ export function Onboarding() {
               <Route exact path={path} render={props => <Welcome {...props} />} />
               <Route path={`${path}/welcome`} render={props => <Welcome {...props} />} />
               <Route path={`${path}/select-device`} component={SelectDevice} />
+              <Route path={`${path}/sync`} component={SyncOnboarding} />
               <Route
                 path={`${path}/select-use-case`}
                 render={props => (

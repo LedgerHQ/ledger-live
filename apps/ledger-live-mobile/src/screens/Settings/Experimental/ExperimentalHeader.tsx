@@ -20,8 +20,13 @@ function ExperimentalHeader({ isExperimental }: { isExperimental: boolean }) {
   const [openState] = useState(new Value(Config.MOCK ? 1 : 0));
   // animation opening anim node
   const openingAnim = cond(
+    // @ts-expect-error Terrible bindings, the type is correct.
+    //
+    // > If conditionNode evaluates to "truthy" value (…)
+    // See: https://docs.swmansion.com/react-native-reanimated/docs/1.x.x/nodes/cond
     !Config.MOCK,
     cond(
+      // @ts-expect-error Same thing here…
       eq(isExperimental, true),
       [
         // opening

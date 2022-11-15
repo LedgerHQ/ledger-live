@@ -94,6 +94,14 @@ export type PortfolioRangeConfig = {
  */
 export type PortfolioRange = "all" | "year" | "month" | "week" | "day";
 
+export type DistributionItem = {
+  currency: CryptoCurrency | TokenCurrency;
+  distribution: number; // % of the total (normalized in 0-1)
+  accounts: AccountLike[];
+  amount: number;
+  countervalue?: number; // countervalue of the amount that was calculated based of the rate provided
+};
+
 /**
  *
  */
@@ -101,14 +109,7 @@ export type AssetsDistribution = {
   // false if no distribution can be done (sum is zero)
   isAvailable: boolean;
   // a sorted list of assets with data
-  list: {
-    currency: CryptoCurrency | TokenCurrency;
-    accounts: AccountLike[];
-    distribution: number;
-    // % of the total (normalized in 0-1)
-    amount: number;
-    countervalue: number; // countervalue of the amount that was calculated based of the rate provided
-  }[];
+  list: DistributionItem[];
   // number of accounts to show first (before the see all)
   showFirst: number;
   // sum of all countervalues

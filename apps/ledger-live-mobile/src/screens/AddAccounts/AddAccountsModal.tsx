@@ -8,6 +8,7 @@ import { readOnlyModeEnabledSelector } from "../../reducers/settings";
 
 import { track, TrackScreen } from "../../analytics";
 import AddAccountsModalCard from "./AddAccountsModalCard";
+import { BaseNavigation } from "../../components/RootNavigator/types/helpers";
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const setupLedgerImg = require("../../images/illustration/Shared/_SetupLedger.png");
 
@@ -15,7 +16,7 @@ const setupLedgerImg = require("../../images/illustration/Shared/_SetupLedger.pn
 const syncCryptoImg = require("../../images/illustration/Shared/_SyncFromDesktop.png");
 
 type Props = {
-  navigation: any;
+  navigation: BaseNavigation;
   isOpened: boolean;
   onClose: () => void;
   currency?: CryptoCurrency | TokenCurrency | null;
@@ -66,11 +67,7 @@ export default function AddAccountsModal({
   }, [onClose]);
 
   return (
-    <BottomDrawer
-      testId="AddAccountsModal"
-      isOpen={isOpened}
-      onClose={onPressClose}
-    >
+    <BottomDrawer isOpen={isOpened} onClose={onPressClose}>
       <TrackScreen category="Add/Import accounts" type="drawer" />
       <Text variant="h4" fontWeight="semiBold" fontSize="24px" mb={2}>
         {t("addAccountsModal.title")}

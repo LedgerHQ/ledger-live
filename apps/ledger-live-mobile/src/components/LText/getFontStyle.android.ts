@@ -1,6 +1,6 @@
 import type { Opts, Res } from ".";
 
-export default ({ bold, semiBold, monospace }: Opts = {}): Res => {
+export default ({ bold, semiBold, monospace }: Opts = {} as Opts): Res => {
   const family = monospace ? "monospace" : "Inter";
   let weight;
 

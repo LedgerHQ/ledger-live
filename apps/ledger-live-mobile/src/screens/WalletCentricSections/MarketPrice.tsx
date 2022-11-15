@@ -5,6 +5,7 @@ import { useTranslation } from "react-i18next";
 import { useNavigation } from "@react-navigation/native";
 import counterValueFormatter from "@ledgerhq/live-common/market/utils/countervalueFormatter";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { SingleCoinProviderData } from "@ledgerhq/live-common/market/MarketDataProvider";
 import { withDiscreetMode } from "../../context/DiscreetModeContext";
 import { ScreenName } from "../../const";
 import { localeSelector } from "../../reducers/settings";
@@ -13,7 +14,7 @@ import Touchable from "../../components/Touchable";
 
 type Props = {
   currency: CryptoCurrency;
-  selectedCoinData: any;
+  selectedCoinData: SingleCoinProviderData["selectedCoinData"];
   counterCurrency: string | undefined;
 };
 
@@ -25,6 +26,12 @@ const MarketPrice = ({
   const { t } = useTranslation();
   const locale = useSelector(localeSelector);
   const navigation = useNavigation();
+
+  let loc = locale;
+  // TEMPORARY : quick win to transform arabic to english
+  if (locale === "ar") {
+    loc = "en";
+  }
 
   const goToMarketPage = useCallback(() => {
     navigation.navigate(ScreenName.MarketDetail, {
@@ -60,11 +67,16 @@ const MarketPrice = ({
               {counterValueFormatter({
                 value: selectedCoinData?.price || 0,
                 currency: counterCurrency,
-                locale,
+                locale: loc,
               })}
             </Text>
           </Flex>
-          <Flex flex={1} flexDirection="column" pl={7}>
+          <Flex
+            flex={1}
+            flexDirection="column"
+            pl={7}
+            alignItems={"flex-start"}
+          >
             <Text
               variant="small"
               fontWeight="medium"
@@ -78,7 +90,7 @@ const MarketPrice = ({
               value={selectedCoinData?.priceChangePercentage || 0}
             />
           </Flex>
-          <Icons.DroprightMedium size={24} />
+          <Icons.ChevronRightMedium size={24} />
         </Flex>
       </Touchable>
     </Flex>

@@ -1,0 +1,24 @@
+{
+  "name": "@actions/generate-bot-super-report",
+  "version": "1.0.1",
+  "description": "Gather many uploaded bot reports to generate a higher level bot report",
+  "license": "MIT",
+  "private": true,
+  "scripts": {
+    "build": "tsup -d build main.ts",
+    "build-cli-test": "tsup -d build-cli cli-test.ts"
+  },
+  "devDependencies": {
+    "@actions/core": "^1.10.0",
+    "@actions/github": "^5.1.1",
+    "@types/unzipper": "0.10.5",
+    "isomorphic-unfetch": "^3.1.0",
+    "lodash": "4.17.21",
+    "stream-json": "1.7.4",
+    "tsup": "^6.2.2",
+    "unzipper": "0.10.11"
+  },
+  "peerDependencies": {
+    "electron": "*"
+  }
+}

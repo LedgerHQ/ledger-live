@@ -2,6 +2,10 @@ import { isSwapOperationPending } from "@ledgerhq/live-common/exchange/swap/inde
 import { mappedSwapOperationsToCSV } from "@ledgerhq/live-common/exchange/swap/csvExport";
 import getCompleteSwapHistory from "@ledgerhq/live-common/exchange/swap/getCompleteSwapHistory";
 import updateAccountSwapStatus from "@ledgerhq/live-common/exchange/swap/updateAccountSwapStatus";
+import {
+  MappedSwapOperation,
+  SwapHistorySection,
+} from "@ledgerhq/live-common/exchange/swap/types";
 import { useTheme } from "@react-navigation/native";
 import React, {
   useCallback,
@@ -13,6 +17,7 @@ import React, {
 import { Trans, useTranslation } from "react-i18next";
 import {
   Animated,
+  ListRenderItemInfo,
   RefreshControl,
   SectionList,
   StyleSheet,
@@ -20,6 +25,7 @@ import {
 } from "react-native";
 import Share from "react-native-share";
 import { useDispatch, useSelector } from "react-redux";
+import type { Account } from "@ledgerhq/types-live";
 import { updateAccountWithUpdater } from "../../../actions/accounts";
 import { TrackScreen } from "../../../analytics";
 import Alert from "../../../components/Alert";
@@ -32,36 +38,33 @@ import { flattenAccountsSelector } from "../../../reducers/accounts";
 import EmptyState from "./EmptyState";
 import OperationRow from "./OperationRow";
 
-const AnimatedSectionList = Animated.createAnimatedComponent(SectionList);
+// const SList : SectionList<MappedSwapOperation, SwapHistorySection> = SectionList;
+const AnimatedSectionList: typeof SectionList =
+  Animated.createAnimatedComponent(
+    SectionList,
+  ) as unknown as typeof SectionList;
 
 const History = () => {
   const { colors } = useTheme();
   const { t } = useTranslation();
   const accounts = useSelector(flattenAccountsSelector);
   const dispatch = useDispatch();
-  const [sections, setSections] = useState([]);
+  const [sections, setSections] = useState<SwapHistorySection[]>([]);
   const [isRefreshing, setIsRefreshing] = useState(false);
-  const ref = useRef();
-
+  const ref = useRef(null);
   useEffect(() => {
     setSections(getCompleteSwapHistory(accounts));
   }, [accounts, setSections]);
-
-  useEffect(() => {
-    if (isRefreshing) {
-      updateSwapStatus();
-    }
-  }, [isRefreshing, updateSwapStatus]);
-
   const updateSwapStatus = useCallback(() => {
     let cancelled = false;
     async function fetchUpdatedSwapStatus() {
       const updatedAccounts = await Promise.all(
-        accounts.map(updateAccountSwapStatus),
+        accounts.map(account => updateAccountSwapStatus(account as Account)),
       );
       if (!cancelled) {
         updatedAccounts.filter(Boolean).forEach(account => {
-          dispatch(updateAccountWithUpdater(account.id, _ => account));
+          if (account)
+            dispatch(updateAccountWithUpdater(account.id, _ => account));
         });
       }
       setIsRefreshing(false);
@@ -70,7 +73,11 @@ const History = () => {
     fetchUpdatedSwapStatus();
     return () => (cancelled = true);
   }, [accounts, dispatch]);
-
+  useEffect(() => {
+    if (isRefreshing) {
+      updateSwapStatus();
+    }
+  }, [isRefreshing, updateSwapStatus]);
   const hasPendingSwapOperations = useMemo(() => {
     if (sections) {
       for (const section of sections) {
@@ -90,7 +97,7 @@ const History = () => {
     }
   }, 10000);
 
-  const renderItem = ({ item }: { item: Operation }) => (
+  const renderItem = ({ item }: ListRenderItemInfo<MappedSwapOperation>) => (
     <OperationRow item={item} />
   );
 
@@ -111,8 +118,10 @@ const History = () => {
       await Share.open(options);
     } catch (err) {
       // `failOnCancel: false` is not enough to prevent throwing on cancel apparently ¯\_(ツ)_/¯
-      if (err.error.code !== "ECANCELLED500") {
-        logger.critical(err);
+      if (
+        (err as { error?: { code?: string } })?.error?.code !== "ECANCELLED500"
+      ) {
+        logger.critical(err as Error);
       }
     }
   };
@@ -122,7 +131,7 @@ const History = () => {
       <TrackScreen category="Swap" name="Device History" />
       {sections.length ? (
         <View style={styles.alertWrapper}>
-          <Alert type="primary" horizontal>
+          <Alert type="primary">
             <Trans i18nKey="transfer.swap.history.disclaimer" />
           </Alert>
         </View>
@@ -140,7 +149,7 @@ const History = () => {
           />
         }
         ListHeaderComponent={
-          sections.length && (
+          sections.length ? (
             <Button
               type="tertiary"
               title={t("transfer.swap.history.exportButton")}
@@ -148,11 +157,17 @@ const History = () => {
               IconLeft={DownloadFileIcon}
               onPress={exportSwapHistory}
             />
-          )
+          ) : null
         }
-        keyExtractor={({ swapId, operation }) => swapId + operation?.id}
+        keyExtractor={({
+          swapId,
+          operation,
+        }: {
+          swapId: string;
+          operation?: { id: string };
+        }) => swapId + operation?.id}
         renderItem={renderItem}
-        renderSectionHeader={({ section }) => (
+        renderSectionHeader={({ section }: { section: SwapHistorySection }) => (
           <LText semiBold style={styles.section} color="grey">
             {section.day.toDateString()}
           </LText>

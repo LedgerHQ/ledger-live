@@ -18,6 +18,7 @@ import VoteSelectDevice from "../../../screens/SelectDevice";
 import VoteConnectDevice from "../../../screens/ConnectDevice";
 import VoteValidationError from "./04-ValidationError";
 import VoteValidationSuccess from "./04-ValidationSuccess";
+import { TronVoteFlowParamList } from "./types";
 
 const totalSteps = "4";
 
@@ -78,7 +79,7 @@ function VoteFlow() {
               })}
             />
           ),
-          headerLeft: null,
+          headerLeft: undefined,
         }}
       />
       <Stack.Screen
@@ -124,8 +125,8 @@ function VoteFlow() {
         options={{
           headerTitle: "",
           gestureEnabled: false,
-          headerLeft: null,
-          headerRight: null,
+          headerLeft: undefined,
+          headerRight: undefined,
         }}
       />
     </Stack.Navigator>
@@ -136,4 +137,4 @@ const options = {
   headerShown: false,
 };
 export { VoteFlow as component, options };
-const Stack = createStackNavigator();
+const Stack = createStackNavigator<TronVoteFlowParamList>();

@@ -23,7 +23,10 @@ const Illustration = ({
       {...othersProps}
       source={theme === "dark" ? darkSource : lightSource}
       resizeMode="contain"
-      style={{ width: width || size, height: height || size }}
+      style={{
+        width: width || size,
+        height: height || size,
+      }}
     />
   );
 };

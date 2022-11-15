@@ -107,10 +107,12 @@ export const urls = {
       ftx: {
         main: "https://ftx.com",
         support: "https://ftx.com/support",
+        tos: null,
       },
       ftxus: {
         main: "https://ftx.us/",
         support: "https://help.ftx.us/hc/en-us",
+        tos: null,
       },
     },
   },
@@ -192,5 +194,9 @@ export const urls = {
   hedera: {
     supportArticleLink:
       "https://launchbadge.com/blog/using-a-ledger-nano-to-create-your-hedera-account",
+  },
+  nft: {
+    supportDisableIos:
+      "https://support.ledger.com/hc/en-us/articles/7572912170653?docs=true",
   },
 };

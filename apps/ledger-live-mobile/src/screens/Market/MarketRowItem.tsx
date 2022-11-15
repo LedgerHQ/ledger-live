@@ -1,4 +1,3 @@
-/* eslint-disable import/no-unresolved */
 import React, { memo } from "react";
 import styled from "styled-components/native";
 import { Flex, Text } from "@ledgerhq/native-ui";
@@ -41,6 +40,11 @@ function MarketRowItem({ item, index, counterCurrency, locale, t }: Props) {
     ticker,
   } = item;
 
+  let loc = locale;
+  // TEMPORARY : quick win to transform arabic to english
+  if (locale === "ar") {
+    loc = "en";
+  }
   return (
     <Flex
       height={72}
@@ -98,7 +102,7 @@ function MarketRowItem({ item, index, counterCurrency, locale, t }: Props) {
                   value: marketcap,
                   shorten: true,
                   currency: counterCurrency,
-                  locale,
+                  locale: loc,
                   t,
                 })
               : "-"}
@@ -114,7 +118,7 @@ function MarketRowItem({ item, index, counterCurrency, locale, t }: Props) {
           {counterValueFormatter({
             value: price,
             currency: counterCurrency,
-            locale,
+            locale: loc,
             t,
           })}
         </Text>

@@ -73,7 +73,7 @@ function Tooltip({
 type Props = {
   price: number;
   priceChangePercentage: number;
-  chartData: Record<string, number[]>;
+  chartData: Record<string, [number, number][]>;
   chartRequestParams: any;
   refreshChart: (params: any) => void;
   color?: string;

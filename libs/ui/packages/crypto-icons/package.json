@@ -31,10 +31,10 @@
     "clean": "rimraf react native src/react src/native"
   },
   "peerDependencies": {
-    "styled-components": "*",
-    "styled-system": "*",
     "@types/react": "*",
-    "react": "*"
+    "react": "*",
+    "styled-components": "*",
+    "styled-system": "*"
   },
   "peerDependenciesMeta": {
     "@types/react": {
@@ -55,6 +55,6 @@
     "react-native-svg": "^12.1.1",
     "rimraf": "^3.0.2",
     "tiny-glob": "^0.2.9",
-    "typescript": "^4.5.2"
+    "typescript": "^4.8.3"
   }
 }

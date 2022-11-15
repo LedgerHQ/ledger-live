@@ -13,7 +13,7 @@ export const opRetentionStategy =
   (maxDaysOld: number, keepFirst: number) =>
   (op: Operation, index: number): boolean =>
     index < keepFirst ||
-    Date.now() - op.date < 1000 * 60 * 60 * 24 * maxDaysOld;
+    Date.now() - op.date.valueOf() < 1000 * 60 * 60 * 24 * maxDaysOld;
 const opRetentionFilter = opRetentionStategy(366, 500);
 const accountModel: DataModel<AccountRaw, Account> = createDataModel({
   migrations: [],

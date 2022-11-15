@@ -1,29 +1,24 @@
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
-import { Transaction } from "@ledgerhq/live-common/families/solana/types";
-import { Account } from "@ledgerhq/types-live";
 import { useTheme } from "@react-navigation/native";
+import { StackScreenProps } from "@react-navigation/stack";
 import i18next from "i18next";
 import invariant from "invariant";
 import React, { useCallback, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { ScrollView, StyleSheet, View } from "react-native";
-import SafeAreaView from "react-native-safe-area-view";
+import { SafeAreaView } from "react-native-safe-area-context";
 import Button from "../../components/Button";
 import TextInput from "../../components/FocusedTextInput";
 import KeyboardView from "../../components/KeyboardView";
+import { BaseComposite } from "../../components/RootNavigator/types/helpers";
+import { SendFundsNavigatorStackParamList } from "../../components/RootNavigator/types/SendFundsNavigator";
 import { ScreenName } from "../../const";
 
-type Props = {
-  navigation: any;
-  route: { params: RouteParams };
-};
+type NavigationProps = BaseComposite<
+  StackScreenProps<SendFundsNavigatorStackParamList, ScreenName.SolanaEditMemo>
+>;
 
-type RouteParams = {
-  account: Account;
-  transaction: Transaction;
-};
-
-function SolanaEditMemo({ navigation, route }: Props) {
+function SolanaEditMemo({ navigation, route }: NavigationProps) {
   const { colors } = useTheme();
   const { t } = useTranslation();
   const { model } = route.params.transaction;
@@ -45,6 +40,7 @@ function SolanaEditMemo({ navigation, route }: Props) {
         },
       },
     });
+    // @ts-expect-error FIXME: no current / next navigation param?
     navigation.navigate(ScreenName.SendSummary, {
       accountId: account.id,
       transaction: nextTx,
@@ -52,7 +48,7 @@ function SolanaEditMemo({ navigation, route }: Props) {
   }, [navigation, route.params, account, memo]);
 
   return (
-    <SafeAreaView style={styles.root} forceInset={{ bottom: "always" }}>
+    <SafeAreaView style={styles.root}>
       <KeyboardView
         style={[styles.body, { backgroundColor: colors.background }]}
       >
@@ -89,7 +85,7 @@ function SolanaEditMemo({ navigation, route }: Props) {
 
 const options = {
   title: i18next.t("send.summary.memo.title"),
-  headerLeft: null,
+  headerLeft: undefined,
 };
 
 export { SolanaEditMemo as component, options };
