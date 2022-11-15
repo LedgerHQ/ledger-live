@@ -75,6 +75,15 @@ export default function DebugSwap() {
         </LText>
       </Touchable>
       <Touchable
+        onPress={() => onToggleProvider("cic")}
+        style={styles.switchRow}
+      >
+        <CheckBox isChecked={currentDisabledProviders.includes("cic")} />
+        <LText semiBold style={styles.switchLabel}>
+          {"Disable Cic"}
+        </LText>
+      </Touchable>
+      <Touchable
         onPress={() => onToggleProvider("wyre")}
         style={styles.switchRow}
       >
