@@ -4,6 +4,41 @@ type APIToken = { assetName: string; policyId: string; value: string };
 
 type APIMetadata = { label: string; value: string };
 
+export enum HashType {
+  ADDRESS = "ADDRESS",
+  SCRIPT = "SCRIPT",
+}
+
+export type StakeCredential = {
+  key: string;
+  type: HashType;
+};
+
+export type StakeKeyRegistrationCertificate = {
+  stakeCredential: StakeCredential;
+};
+
+export type StakeKeyDeRegistrationCertificate = {
+  stakeCredential: StakeCredential;
+};
+
+export type StakeDelegationCertificate = {
+  stakeCredential: StakeCredential & {
+    poolKeyHash: string;
+  };
+};
+
+export type TransactionCertificate =
+  | StakeKeyRegistrationCertificate
+  | StakeKeyDeRegistrationCertificate
+  | StakeDelegationCertificate;
+
+export type TransactionCertificates = {
+  stakeRegistrations: Array<StakeKeyRegistrationCertificate>;
+  stakeDeRegistrations: Array<StakeKeyDeRegistrationCertificate>;
+  stakeDelegations: Array<StakeDelegationCertificate>;
+};
+
 export type APITransaction = {
   fees: string;
   hash: string;
@@ -17,6 +52,7 @@ export type APITransaction = {
     paymentKey: string;
     tokens: Array<APIToken>;
   }>;
+  certificate: TransactionCertificates;
   outputs: Array<{
     address: string;
     value: string;

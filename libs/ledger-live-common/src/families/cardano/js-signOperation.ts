@@ -29,6 +29,7 @@ import { MEMO_LABEL } from "./constants";
 import {
   Account,
   Operation,
+  OperationType,
   SignedOperation,
   SignOperationEvent,
 } from "@ledgerhq/types-live";
@@ -74,10 +75,15 @@ const buildOptimisticOperation = (
     );
 
   const accountChange = accountOutput.minus(accountInput);
-  const opType = getOperationType({
-    valueChange: accountChange,
-    fees: transaction.getFee(),
-  });
+  const opType: OperationType = transaction
+    .getCertificates()
+    .find((c) => c.certType === TyphonTypes.CertificateType.STAKE_DELEGATION)
+    ? "DELEGATE"
+    : getOperationType({
+        valueChange: accountChange,
+        fees: transaction.getFee(),
+      });
+
   const transactionHash = transaction.getTransactionHash().toString("hex");
   const auxiliaryData = transaction.getAuxiliaryData();
   let memo;

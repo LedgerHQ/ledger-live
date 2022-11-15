@@ -28,7 +28,11 @@ import { getNetworkInfo } from "./api/getNetworkInfo";
 import uniqBy from "lodash/uniqBy";
 import postSyncPatch from "./postSyncPatch";
 import { getTransactions } from "./api/getTransactions";
-import type { Operation, TokenAccount } from "@ledgerhq/types-live";
+import type {
+  Operation,
+  OperationType,
+  TokenAccount,
+} from "@ledgerhq/types-live";
 import { buildSubAccounts } from "./buildSubAccounts";
 import { calculateMinUtxoAmount } from "@stricahq/typhonjs/dist/utils/utils";
 import { listTokensForCryptoCurrency } from "../../currencies";
@@ -41,10 +45,13 @@ function mapTxToAccountOperation(
   subAccounts: Array<TokenAccount>
 ): Operation {
   const accountChange = getAccountChange(tx, accountCredentialsMap);
-  const mainOperationType = getOperationType({
-    valueChange: accountChange.ada,
-    fees: new BigNumber(tx.fees),
-  });
+  const mainOperationType: OperationType = tx.certificate.stakeDelegations
+    .length
+    ? "DELEGATE"
+    : getOperationType({
+        valueChange: accountChange.ada,
+        fees: new BigNumber(tx.fees),
+      });
 
   const subOperations = inferSubOperations(tx.hash, subAccounts);
   const memo = getMemoFromTx(tx);

@@ -1,5 +1,5 @@
 import network from "../../../network";
-import { APIGetPoolList, APINetworkInfo } from "./api-types";
+import { APIGetPoolList } from "./api-types";
 import { isTestnet } from "../logic";
 import {
   CARDANO_API_ENDPOINT,
@@ -12,7 +12,7 @@ export async function fetchPoolList(
   search: string,
   pageNo: number,
   limit: number
-): Promise<APINetworkInfo> {
+): Promise<APIGetPoolList> {
   const res = await network({
     method: "GET",
     url: isTestnet(currency)
