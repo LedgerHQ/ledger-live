@@ -4,8 +4,8 @@ buildscript {
     ext {
         buildToolsVersion = "30.0.3"
         minSdkVersion = 24
-        compileSdkVersion = 30
-        targetSdkVersion = 30
+        compileSdkVersion = 31
+        targetSdkVersion = 31
         kotlinVersion = "1.6.0"
         androidXCore = "1.6.0"
         if (System.properties['os.arch'] == "aarch64") {
