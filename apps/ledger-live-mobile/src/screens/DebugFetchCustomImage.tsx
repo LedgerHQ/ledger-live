@@ -1,5 +1,11 @@
-import React, { useRef, useEffect, useCallback, useState } from "react";
-import { StyleSheet, View } from "react-native";
+import React, {
+  useRef,
+  useEffect,
+  useCallback,
+  useState,
+  ComponentProps,
+} from "react";
+import { Image, StyleSheet, View } from "react-native";
 import { Text, Flex, Button } from "@ledgerhq/native-ui";
 import { useTheme } from "@react-navigation/native";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
@@ -11,6 +17,10 @@ import { setCustomImageBackup } from "../actions/settings";
 import NavigationScrollView from "../components/NavigationScrollView";
 import SelectDevice from "../components/SelectDevice";
 import CustomImageDeviceAction from "../components/CustomImageDeviceAction";
+import ResultDataTester from "../components/CustomImage/ResultDataTester";
+import { ProcessorPreviewResult } from "../components/CustomImage/ImageProcessor";
+import { targetDimensions } from "./CustomImage/shared";
+import FramedImage from "../components/CustomImage/FramedImage";
 
 const deviceAction = createAction(ftsFetchImage);
 
@@ -18,6 +28,8 @@ export default function DebugFetchCustomImage() {
   const { colors } = useTheme();
   const [device, setDevice] = useState<Device | null>(null);
   const [action, setAction] = useState<string>("");
+  const [imageSource, setImageSource] =
+    useState<ComponentProps<typeof Image>["source"]>();
 
   const { hash, hex } = useSelector(customImageBackupSelector) || {};
   const currentBackup = useRef<string>(hash || "");
@@ -54,6 +66,10 @@ export default function DebugFetchCustomImage() {
     dispatch(setCustomImageBackup({ hash: "", hex: "" }));
     currentBackup.current = "";
   }, [dispatch]);
+
+  const handleImageSourceLoaded = useCallback((res: ProcessorPreviewResult) => {
+    setImageSource({ uri: res.imageBase64DataUri });
+  }, []);
 
   const {
     progress,
@@ -124,6 +140,7 @@ export default function DebugFetchCustomImage() {
                 hexImage={hex}
                 onResult={onResult}
                 onSkip={onSkip}
+                source={imageSource}
               />
             ) : null
           ) : null}
@@ -131,6 +148,21 @@ export default function DebugFetchCustomImage() {
             {hash ? `Current backup hash '${hash}'` : "No backup available"}
           </Text>
         </Flex>
+        {hex ? (
+          <>
+            <ResultDataTester
+              hexData={hex as string}
+              {...targetDimensions}
+              onPreviewResult={handleImageSourceLoaded}
+              onError={() => console.error(error)}
+            />
+            {imageSource ? (
+              <Flex flexDirection="row" flexGrow={0}>
+                <FramedImage source={imageSource} />
+              </Flex>
+            ) : null}
+          </>
+        ) : null}
       </View>
     </NavigationScrollView>
   );
