@@ -1,9 +1,9 @@
 import { AssertionError } from "assert";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrency, CryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
 import { DEFAULT_RETRIES_RPC_METHODS, withApi } from "../api/rpc.common";
 
 const fakeCurrency: Partial<CryptoCurrency> = {
-  id: "my_new_chain",
+  id: "my_new_chain" as CryptoCurrencyId,
   ethereumLikeInfo: {
     chainId: 1,
     rpc: "my-rpc.com",
