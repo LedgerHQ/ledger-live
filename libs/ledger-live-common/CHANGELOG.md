@@ -1,5 +1,11 @@
 # @ledgerhq/live-common
 
+## 27.7.0-next.1
+
+### Minor Changes
+
+- [#1811](https://github.com/LedgerHQ/ledger-live/pull/1811) [`f521bf7ef1`](https://github.com/LedgerHQ/ledger-live/commit/f521bf7ef1afa3afe1a03cbf65bd36ebee6d0768) Thanks [@haammar-ledger](https://github.com/haammar-ledger)! - change polkadot's api call to anticipate new version
+
 ## 27.7.0-next.0
 
 ### Minor Changes
