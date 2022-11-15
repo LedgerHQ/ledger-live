@@ -52,6 +52,11 @@ function getDeviceTransactionConfig({
     value: transaction.recipient,
   });
   fields.push({
+    type: "text",
+    label: "Transfer ID",
+    value: transaction.transferId ?? "-",
+  });
+  fields.push({
     type: "casper.method",
     label: "Method",
     value: methodToString(0),
