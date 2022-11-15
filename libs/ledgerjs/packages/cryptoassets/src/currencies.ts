@@ -21,8 +21,12 @@
  * if bitcoin family, supportsSegwit defines if it supports segwit.
  */
 
-import { CryptoCurrency, CoinType, Unit } from "@ledgerhq/types-cryptoassets";
-import { CryptoCurrencyId } from "./types";
+import {
+  CryptoCurrency,
+  CoinType,
+  Unit,
+  CryptoCurrencyId,
+} from "@ledgerhq/types-cryptoassets";
 
 const makeTestnetUnit = (u) => ({ ...u, code: `𝚝${u.code}` });
 
@@ -248,10 +252,10 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     type: "CryptoCurrency",
     id: "avalanche_c_chain",
     coinType: CoinType.ETH,
-    name: "Avalanche (C-chain)",
-    managerAppName: "Avalanche (C-Chain)",
+    name: "Avalanche C-Chain",
+    managerAppName: "Avalanche",
     ticker: "AVAXC",
-    scheme: "avalanchecchain",
+    scheme: "avalanche_c_chain",
     color: "#E84142",
     family: "ethereum",
     units: [
@@ -262,7 +266,9 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
       },
     ],
     ethereumLikeInfo: {
+      baseChain: "mainnet",
       chainId: 43114,
+      networkId: 43114,
     },
     explorerViews: [
       {
@@ -272,7 +278,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
           "https://cchain.explorer.avax.network/token/$contractAddress?a=$address",
       },
     ],
-    keywords: ["avax", "avalanche"],
+    keywords: ["avax", "avalanche", "c-chain"],
   },
   banano: {
     type: "CryptoCurrency",
@@ -3675,6 +3681,7 @@ export const findCryptoCurrencyByManagerAppName = (
 export const hasCryptoCurrencyId = (id: string): boolean =>
   id in cryptocurrenciesById;
 
+// TODO: signature should be getCryptoCurrencyById(id: CryptoCurrencyId)
 /**
  *
  * @param {*} id

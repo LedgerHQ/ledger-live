@@ -16,9 +16,11 @@ import type {
 } from "./wallet-btc";
 import { BigNumber } from "bignumber.js";
 import { encodeOperationId } from "../../operation";
-import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import type {
+  CryptoCurrency,
+  CryptoCurrencyId,
+} from "@ledgerhq/types-cryptoassets";
 import type { Account, Operation, OperationType } from "@ledgerhq/types-live";
-import type { CryptoCurrencyId } from "@ledgerhq/cryptoassets";
 
 // correspond ~ to min relay fees but determined empirically for a tx to be accepted by network
 const minFees = {
