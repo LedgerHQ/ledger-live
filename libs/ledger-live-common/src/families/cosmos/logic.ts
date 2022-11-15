@@ -197,39 +197,6 @@ export function canRedelegate(
   );
 }
 
-export async function canClaimRewards(
-  account: CosmosAccount,
-  delegation: CosmosDelegation
-): Promise<boolean> {
-  const { cosmosResources } = account;
-  invariant(cosmosResources, "cosmosResources should exist");
-  const res = await calculateFees({
-    account,
-    transaction: {
-      family: "cosmos",
-      mode: "claimReward",
-      amount: new BigNumber(0),
-      fees: null,
-      gas: null,
-      recipient: "",
-      useAllAmount: false,
-      networkInfo: null,
-      memo: null,
-      sourceValidator: null,
-      validators: [
-        {
-          address: delegation.validatorAddress,
-          amount: new BigNumber(0),
-        },
-      ],
-    },
-  });
-  return (
-    res.estimatedFees.lt(account.spendableBalance) &&
-    res.estimatedFees.lt(delegation.pendingRewards)
-  );
-}
-
 export function getRedelegation(
   account: CosmosAccount,
   delegation: CosmosMappedDelegation
