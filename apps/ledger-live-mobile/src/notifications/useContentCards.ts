@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import Braze, {
   ContentCard as BrazeContentCard,
 } from "react-native-appboy-sdk";
