@@ -2,13 +2,6 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 import { Box, Flex, Icons, InfiniteLoader, Text } from "@ledgerhq/native-ui";
 import { CropView } from "react-native-image-crop-tools";
 import { useTranslation } from "react-i18next";
-import { StackNavigationEventMap } from "@react-navigation/stack";
-import {
-  EventListenerCallback,
-  EventMapCore,
-  StackNavigationState,
-  useFocusEffect,
-} from "@react-navigation/native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import ImageCropper, {
   Props as ImageCropperProps,
@@ -18,10 +11,7 @@ import {
   ImageDimensions,
   ImageFileUri,
 } from "../../components/CustomImage/types";
-import {
-  downloadImageToFile,
-  importImageFromPhoneGallery,
-} from "../../components/CustomImage/imageUtils";
+import { downloadImageToFile } from "../../components/CustomImage/imageUtils";
 import { targetDimensions } from "./shared";
 import Button from "../../components/Button";
 import { ScreenName } from "../../const";
@@ -55,7 +45,7 @@ const Step1Cropping = ({ navigation, route }: NavigationProps) => {
 
   const { params } = route;
 
-  const { isPictureFromGallery, device } = params;
+  const { device } = params;
 
   const handleError = useCallback(
     (error: Error) => {
@@ -63,42 +53,6 @@ const Step1Cropping = ({ navigation, route }: NavigationProps) => {
       navigation.navigate(ScreenName.CustomImageErrorScreen, { error, device });
     },
     [navigation, device],
-  );
-
-  useFocusEffect(
-    useCallback(() => {
-      let dead = false;
-      const listener: EventListenerCallback<
-        StackNavigationEventMap &
-          EventMapCore<StackNavigationState<CustomImageNavigatorParamList>>,
-        "beforeRemove"
-      > = e => {
-        if (!isPictureFromGallery) {
-          navigation.dispatch(e.data.action);
-          return;
-        }
-        e.preventDefault();
-        setImageToCrop(null);
-        importImageFromPhoneGallery()
-          .then(importResult => {
-            if (dead) return;
-            if (importResult !== null) {
-              setImageToCrop(importResult);
-            } else {
-              navigation.dispatch(e.data.action);
-            }
-          })
-          .catch(e => {
-            if (dead) return;
-            handleError(e);
-          });
-      };
-      navigation.addListener("beforeRemove", listener);
-      return () => {
-        dead = true;
-        navigation.removeListener("beforeRemove", listener);
-      };
-    }, [navigation, handleError, isPictureFromGallery]),
   );
 
   /** LOAD SOURCE IMAGE FROM PARAMS */
@@ -131,11 +85,11 @@ const Step1Cropping = ({ navigation, route }: NavigationProps) => {
   const handleCropResult: ImageCropperProps["onResult"] = useCallback(
     (cropResult: CropResult) => {
       navigation.navigate(ScreenName.CustomImageStep2Preview, {
+        ...params,
         cropResult,
-        device,
       });
     },
-    [navigation, device],
+    [navigation, params],
   );
 
   const handlePressNext = useCallback(() => {

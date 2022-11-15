@@ -22,7 +22,6 @@ import useResizedImage, {
 import ImageProcessor, {
   Props as ImageProcessorProps,
   ProcessorPreviewResult,
-  ProcessorRawResult,
 } from "../../components/CustomImage/ImageProcessor";
 import { targetDimensions } from "./shared";
 import BottomButtonsContainer from "../../components/CustomImage/BottomButtonsContainer";
@@ -85,7 +84,6 @@ const Step2Preview = ({ navigation, route }: NavigationProps) => {
   const animSelectedIndex = useSharedValue(initialIndex);
   const [processorPreviewImage, setProcessorPreviewImage] =
     useState<ProcessorPreviewResult | null>(null);
-  const [rawResultLoading, setRawResultLoading] = useState(false);
 
   const { t } = useTranslation();
 
@@ -128,25 +126,6 @@ const Step2Preview = ({ navigation, route }: NavigationProps) => {
       [setProcessorPreviewImage],
     );
 
-  const handleRawResult: ImageProcessorProps["onRawResult"] = useCallback(
-    (data: ProcessorRawResult) => {
-      if (!processorPreviewImage) {
-        /**
-         * this should not happen as the "request raw result" button is only
-         * visible once the preview is there
-         * */
-        throw new ImagePreviewError();
-      }
-      navigation.navigate(ScreenName.CustomImageStep3Transfer, {
-        rawData: data,
-        previewData: processorPreviewImage,
-        device,
-      });
-      setRawResultLoading(false);
-    },
-    [navigation, setRawResultLoading, processorPreviewImage, device],
-  );
-
   const handlePreviewImageError = useCallback(
     ({ nativeEvent }: NativeSyntheticEvent<ImageErrorEventData>) => {
       console.error(nativeEvent.error);
@@ -155,10 +134,13 @@ const Step2Preview = ({ navigation, route }: NavigationProps) => {
     [handleError],
   );
 
-  const requestRawResult = useCallback(() => {
-    imageProcessorRef?.current?.requestRawResult();
-    setRawResultLoading(true);
-  }, [imageProcessorRef, setRawResultLoading]);
+  const handleNavigateToPreview = useCallback(() => {
+    navigation.navigate(ScreenName.CustomImagePreviewPostEdit, {
+      ...params,
+      image: resizedImage,
+      contrast,
+    });
+  }, [contrast, navigation, resizedImage, params]);
 
   const setSelectedIndexWrapped = useCallback(
     newIndex => {
@@ -184,7 +166,7 @@ const Step2Preview = ({ navigation, route }: NavigationProps) => {
           imageBase64DataUri={resizedImage?.imageBase64DataUri}
           onPreviewResult={handlePreviewResult}
           onError={handleError}
-          onRawResult={handleRawResult}
+          onRawResult={() => undefined}
           contrast={contrasts[selectedIndex].val}
         />
       )}
@@ -241,9 +223,7 @@ const Step2Preview = ({ navigation, route }: NavigationProps) => {
             size="large"
             type="main"
             outline={false}
-            onPress={requestRawResult}
-            pending={rawResultLoading}
-            displayContentWhenPending
+            onPress={handleNavigateToPreview}
           >
             {t("common.confirm")}
           </Button>

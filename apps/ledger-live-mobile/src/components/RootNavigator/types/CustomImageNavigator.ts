@@ -1,4 +1,5 @@
 import { Device } from "@ledgerhq/types-devices";
+
 import { ScreenName } from "../../../const";
 import { CropResult } from "../../CustomImage/ImageCropper";
 import {
@@ -6,6 +7,7 @@ import {
   ProcessorRawResult,
 } from "../../CustomImage/ImageProcessor";
 import { ImageFileUri, ImageUrl } from "../../CustomImage/types";
+import { ResizeResult } from "../../CustomImage/useResizedImage";
 
 type BaseParams = {
   device: Device | null;
@@ -17,9 +19,10 @@ export type CustomImageNavigatorParamList = {
     (ImageUrl | ImageFileUri) & {
       isPictureFromGallery?: boolean;
     };
-  [ScreenName.CustomImageStep2Preview]: BaseParams & {
-    cropResult: CropResult;
-  };
+  [ScreenName.CustomImageStep2Preview]: BaseParams &
+    (ImageUrl | ImageFileUri) & {
+      cropResult: CropResult;
+    };
   [ScreenName.CustomImageStep3Transfer]: BaseParams & {
     rawData: ProcessorRawResult;
     previewData: ProcessorPreviewResult;
@@ -29,5 +32,9 @@ export type CustomImageNavigatorParamList = {
     (ImageUrl | ImageFileUri) & {
       isPictureFromGallery?: boolean;
     };
-  [ScreenName.CustomImagePreviewPostEdit]: BaseParams;
+  [ScreenName.CustomImagePreviewPostEdit]: BaseParams &
+    (ImageUrl | ImageFileUri) & {
+      image: ResizeResult | null;
+      contrast: number;
+    };
 };

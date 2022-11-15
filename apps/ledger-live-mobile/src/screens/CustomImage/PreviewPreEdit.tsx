@@ -1,15 +1,27 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { Flex, InfiniteLoader } from "@ledgerhq/native-ui";
+import { Button, Flex, InfiniteLoader } from "@ledgerhq/native-ui";
 import { ImagePreviewError } from "@ledgerhq/live-common/customImage/errors";
 import { NativeSyntheticEvent, ImageErrorEventData } from "react-native";
+import { useTranslation } from "react-i18next";
+import {
+  EventListenerCallback,
+  EventMapCore,
+  StackNavigationState,
+  useFocusEffect,
+} from "@react-navigation/native";
+import { StackNavigationEventMap } from "@react-navigation/stack";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 import {
   BaseComposite,
   StackNavigatorProps,
 } from "../../components/RootNavigator/types/helpers";
 import { CustomImageNavigatorParamList } from "../../components/RootNavigator/types/CustomImageNavigator";
-import { ScreenName } from "../../const";
-import { downloadImageToFile } from "../../components/CustomImage/imageUtils";
+import { NavigatorName, ScreenName } from "../../const";
+import {
+  downloadImageToFile,
+  importImageFromPhoneGallery,
+} from "../../components/CustomImage/imageUtils";
 import { ImageFileUri } from "../../components/CustomImage/types";
 import { targetDimensions } from "./shared";
 import FramedImage from "../../components/CustomImage/FramedImage";
@@ -23,6 +35,8 @@ import useCenteredImage, {
   CenteredResult,
 } from "../../components/CustomImage/useCenteredImage";
 
+const DEFAULT_CONTRAST = 1;
+
 type NavigationProps = BaseComposite<
   StackNavigatorProps<
     CustomImageNavigatorParamList,
@@ -31,9 +45,10 @@ type NavigationProps = BaseComposite<
 >;
 
 const PreviewPreEdit = ({ navigation, route }: NavigationProps) => {
+  const { t } = useTranslation();
   const [imageToCrop, setImageToCrop] = useState<ImageFileUri | null>(null);
   const { params } = route;
-  const { device } = params;
+  const { isPictureFromGallery, device } = params;
 
   const handleError = useCallback(
     (error: Error) => {
@@ -97,8 +112,7 @@ const PreviewPreEdit = ({ navigation, route }: NavigationProps) => {
 
   /** RESULT IMAGE HANDLING */
 
-  const [loading, setLoading] = useState<boolean>(false);
-  const [contrast, setContrast] = useState(1);
+  const [previewLoading, setPreviewLoading] = useState<boolean>(true);
   const [processorPreviewImage, setProcessorPreviewImage] =
     useState<ProcessorPreviewResult | null>(null);
   const [rawResultLoading, setRawResultLoading] = useState(false);
@@ -108,7 +122,7 @@ const PreviewPreEdit = ({ navigation, route }: NavigationProps) => {
     useCallback(
       data => {
         setProcessorPreviewImage(data);
-        setLoading(false);
+        setPreviewLoading(false);
       },
       [setProcessorPreviewImage],
     );
@@ -145,37 +159,99 @@ const PreviewPreEdit = ({ navigation, route }: NavigationProps) => {
     setRawResultLoading(true);
   }, [imageProcessorRef, setRawResultLoading]);
 
+  useFocusEffect(
+    useCallback(() => {
+      let dead = false;
+      const listener: EventListenerCallback<
+        StackNavigationEventMap &
+          EventMapCore<StackNavigationState<CustomImageNavigatorParamList>>,
+        "beforeRemove"
+      > = e => {
+        if (!isPictureFromGallery) {
+          navigation.dispatch(e.data.action);
+          return;
+        }
+        e.preventDefault();
+        setImageToCrop(null);
+        importImageFromPhoneGallery()
+          .then(importResult => {
+            if (dead) return;
+            if (importResult !== null) {
+              setImageToCrop(importResult);
+            } else {
+              navigation.dispatch(e.data.action);
+            }
+          })
+          .catch(e => {
+            if (dead) return;
+            handleError(e);
+          });
+      };
+      navigation.addListener("beforeRemove", listener);
+      return () => {
+        dead = true;
+        navigation.removeListener("beforeRemove", listener);
+      };
+    }, [navigation, handleError, isPictureFromGallery]),
+  );
+
+  const handleEditPicture = useCallback(() => {
+    navigation.navigate(NavigatorName.CustomImage, {
+      screen: ScreenName.CustomImageStep1Crop,
+      params,
+    });
+  }, [navigation, params]);
+
   if (!imageToCrop || !imageToCrop.imageFileUri) {
     return <InfiniteLoader />;
   }
 
   return (
-    <Flex height="100%" flex={1}>
+    <SafeAreaView style={{ flex: 1 }} edges={["bottom"]}>
       <Flex flex={1}>
-        {resizedImage?.imageBase64DataUri && (
-          <ImageProcessor
-            ref={imageProcessorRef}
-            imageBase64DataUri={resizedImage?.imageBase64DataUri}
-            onPreviewResult={handlePreviewResult}
-            onError={handleError}
-            onRawResult={handleRawResult}
-            contrast={contrast}
-          />
-        )}
-        <Flex
-          flex={1}
-          flexDirection="column"
-          alignItems="center"
-          justifyContent="center"
-        >
-          <FramedImage
-            onError={handlePreviewImageError}
-            fadeDuration={0}
-            source={{ uri: processorPreviewImage?.imageBase64DataUri }}
-          />
+        <Flex flex={1}>
+          {resizedImage?.imageBase64DataUri && (
+            <ImageProcessor
+              ref={imageProcessorRef}
+              imageBase64DataUri={resizedImage?.imageBase64DataUri}
+              onPreviewResult={handlePreviewResult}
+              onError={handleError}
+              onRawResult={handleRawResult}
+              contrast={DEFAULT_CONTRAST}
+            />
+          )}
+          <Flex
+            flex={1}
+            flexDirection="column"
+            alignItems="center"
+            justifyContent="center"
+          >
+            <FramedImage
+              onError={handlePreviewImageError}
+              fadeDuration={0}
+              source={{ uri: processorPreviewImage?.imageBase64DataUri }}
+            />
+          </Flex>
+        </Flex>
+        <Flex px={8}>
+          <Button
+            type="main"
+            size="large"
+            outline
+            mb={4}
+            disabled={previewLoading}
+            pending={rawResultLoading}
+            onPress={requestRawResult}
+            displayContentWhenPending
+          >
+            {t("customImage.preview.setPicture")}
+          </Button>
+          <Button size="large" mb={8} onPress={handleEditPicture}>
+            {t("customImage.preview.editPicture")}
+          </Button>
         </Flex>
       </Flex>
-    </Flex>
+    </SafeAreaView>
   );
 };
 
