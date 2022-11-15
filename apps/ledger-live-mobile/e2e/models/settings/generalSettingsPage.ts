@@ -6,7 +6,7 @@ export default class GeneralSettingsPage {
     await element(by.id("password-settings-switch")).atIndex(0).tap();
   }
 
-  static async enterNewPassword(passwordText) {
+  static async enterNewPassword(passwordText: string) {
     await element(by.id("password-text-input")).typeText(passwordText);
     await testHelpers.tapByText("Confirm");
   }
