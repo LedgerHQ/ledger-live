@@ -1,4 +1,4 @@
-import { DerivationModes } from "../";
+import { DerivationModes } from "..";
 import BitcoinLikeStorage from "../storage";
 import BitcoinLikeExplorer from "../explorer";
 import Xpub from "../xpub";
