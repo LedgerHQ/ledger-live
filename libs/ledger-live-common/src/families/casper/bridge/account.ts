@@ -10,7 +10,12 @@ import type {
 import type { Transaction, TransactionStatus } from "../types";
 import { makeAccountBridgeReceive, makeSync } from "../../../bridge/jsHelpers";
 
-import { getAccountShape, getPath, isError } from "../utils";
+import {
+  getAccountShape,
+  getPath,
+  isError,
+  validateTransferId,
+} from "../utils";
 import { CLPublicKey, DeployUtil } from "casper-js-sdk";
 import BigNumber from "bignumber.js";
 import { CASPER_FEES, MINIMUM_VALID_AMOUNT } from "../consts";
@@ -66,14 +71,15 @@ const prepareTransaction = async (
   // log("debug", "[prepareTransaction] start fn");
 
   const { address } = getAddress(a);
-  const { recipient } = t;
+  const { recipient, transferId } = t;
 
   if (recipient && address) {
     // log("debug", "[prepareTransaction] fetching estimated fees");
 
     if (
       validateAddress(recipient).isValid &&
-      validateAddress(address).isValid
+      validateAddress(address).isValid &&
+      validateTransferId(transferId).isValid
     ) {
       t.recipient = recipient;
 
@@ -103,6 +109,9 @@ const getTransactionStatus = async (
     errors.recipient = new InvalidAddress();
   else if (!validateAddress(address).isValid)
     errors.sender = new InvalidAddress();
+
+  if (t.transferId && !validateTransferId(t.transferId).isValid)
+    errors.sender = new Error("Invalid TransferID");
 
   // This is the worst case scenario (the tx won't cost more than this value)
   const estimatedFees = new BigNumber(CASPER_FEES);
