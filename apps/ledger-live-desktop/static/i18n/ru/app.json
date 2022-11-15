@@ -4873,6 +4873,11 @@
     "cta" : "Продолжить"
   },
   "families" : {
+    "casper": {
+      "transferIdPlaceholder": "По желанию",
+      "transferId": "Идентификатор передачи",
+      "transferIdWarningText": "Идентификатор перевода должен быть положительным числом меньше 18446744073709551615."
+    },
     "cardano" : {
       "memoPlaceholder" : "Необязательно",
       "memo" : "Memo"

@@ -4873,6 +4873,11 @@
     "cta" : "继续"
   },
   "families" : {
+    "casper": {
+      "transferIdPlaceholder": "可选",
+      "transferId": "转移身份证",
+      "transferIdWarningText": "转账 ID 应为小于 18446744073709551615 的正数"
+    },
     "cardano" : {
       "memoPlaceholder" : "可选",
       "memo" : "Memo"
