@@ -1,5 +1,17 @@
 # @ledgerhq/types-live
 
+## 6.26.0-next.0
+
+### Minor Changes
+
+- [#1662](https://github.com/LedgerHQ/ledger-live/pull/1662) [`4ad6155953`](https://github.com/LedgerHQ/ledger-live/commit/4ad615595392f5ef806cbd21f0be1b30d3ae73c6) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Update FeeStrategy type for EIP1559 purposes
+
+### Patch Changes
+
+- [#1539](https://github.com/LedgerHQ/ledger-live/pull/1539) [`914c5fb377`](https://github.com/LedgerHQ/ledger-live/commit/914c5fb377b8b541f5f645fe26ab80faaa33d478) Thanks [@sarneijim](https://github.com/sarneijim)! - Update feature flag type
+
+* [#1141](https://github.com/LedgerHQ/ledger-live/pull/1141) [`24ea9cd15f`](https://github.com/LedgerHQ/ledger-live/commit/24ea9cd15f92d5a2c74c4b936bacb89d5d4d36fd) Thanks [@valpinkman](https://github.com/valpinkman)! - Collateral changes due to solving all LLM typescript/eslint issues/warnings.
+
 ## 6.25.1
 
 ### Patch Changes
