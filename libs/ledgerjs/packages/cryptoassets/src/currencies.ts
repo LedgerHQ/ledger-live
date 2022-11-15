@@ -238,39 +238,6 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     ],
     explorerViews: [],
   },
-  avalanche_c_chain: {
-    type: "CryptoCurrency",
-    id: "avalanche_c_chain",
-    coinType: CoinType.ETH,
-    name: "Avalanche C-Chain",
-    // TODO: Do we want to use "Avalanche" instead ?
-    managerAppName: "Ethereum",
-    ticker: "AVAXC",
-    scheme: "avalanche_c_chain",
-    color: "#E84142",
-    family: "ethereum",
-    units: [
-      {
-        name: "AVAX",
-        code: "AVAX",
-        magnitude: 18,
-      },
-    ],
-    ethereumLikeInfo: {
-      baseChain: "mainnet",
-      chainId: 43114,
-      networkId: 43114,
-    },
-    explorerViews: [
-      {
-        tx: "https://cchain.explorer.avax.network/tx/$hash",
-        address: "https://cchain.explorer.avax.network/address/$address",
-        token:
-          "https://cchain.explorer.avax.network/token/$contractAddress?a=$address",
-      },
-    ],
-    keywords: ["avax", "avalanche", "c-chain"],
-  },
   banano: {
     type: "CryptoCurrency",
     id: "banano",
@@ -3258,6 +3225,39 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
         address: "https://filfox.info/en/address/$address",
       },
     ],
+  },
+  avalanche_c_chain: {
+    type: "CryptoCurrency",
+    id: "avalanche_c_chain",
+    coinType: CoinType.ETH,
+    name: "Avalanche C-Chain",
+    // TODO: Do we want to use "Avalanche" instead ?
+    managerAppName: "Ethereum",
+    ticker: "AVAXC",
+    scheme: "avalanche_c_chain",
+    color: "#E84142",
+    family: "ethereum",
+    units: [
+      {
+        name: "AVAX",
+        code: "AVAX",
+        magnitude: 18,
+      },
+    ],
+    ethereumLikeInfo: {
+      baseChain: "mainnet",
+      chainId: 43114,
+      networkId: 43114,
+    },
+    explorerViews: [
+      {
+        tx: "https://cchain.explorer.avax.network/tx/$hash",
+        address: "https://cchain.explorer.avax.network/address/$address",
+        token:
+          "https://cchain.explorer.avax.network/token/$contractAddress?a=$address",
+      },
+    ],
+    keywords: ["avax", "avalanche", "c-chain"],
   },
   // Light Integrations are at the end of the list until we figure out a way to fix the ticker/managerApp collisions
   arbitrum: {

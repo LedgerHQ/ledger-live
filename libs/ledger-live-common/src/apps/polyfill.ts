@@ -82,13 +82,12 @@ export const polyfillApplication = (
       }
     });
   }
-  let o = app;
 
   if (crypto && !app.currencyId) {
-    o = { ...o, currencyId: crypto.id };
+    return { ...app, currencyId: crypto.id };
   }
 
-  return o;
+  return app;
 };
 
 export const calculateDependencies = (): void => {
