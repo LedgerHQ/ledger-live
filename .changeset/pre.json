@@ -78,8 +78,5 @@
     "native-modules-tools": "1.0.2",
     "pnpm-utils": "1.0.0"
   },
-  "changesets": [
-    "odd-lies-tap",
-    "afraid-mugs-camp"
-  ]
+  "changesets": []
 }
