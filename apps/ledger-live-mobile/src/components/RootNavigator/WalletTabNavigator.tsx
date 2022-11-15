@@ -50,7 +50,7 @@ export default function WalletTabNavigator() {
 
   return (
     <WalletTabNavigatorScrollManager currentRouteName={currentRouteName}>
-      <Box flex={1} bg={"background.main"}>
+      <Box flexGrow={1} bg={"background.main"}>
         <WalletTab.Navigator
           initialRouteName={
             walletNftGalleryFeature?.enabled

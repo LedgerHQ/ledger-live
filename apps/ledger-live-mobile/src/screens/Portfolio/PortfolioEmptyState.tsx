@@ -48,7 +48,7 @@ const PortfolioEmptyState = ({
       >
         {t("portfolio.emptyState.subtitle")}
       </Text>
-      <Flex flex={1} flexDirection="row" mt={9}>
+      <Flex flexGrow={1} flexDirection="row" mt={9}>
         <Button
           type="main"
           size="large"

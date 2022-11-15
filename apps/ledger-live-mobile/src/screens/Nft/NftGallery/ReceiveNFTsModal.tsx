@@ -64,7 +64,12 @@ export default function ReceiveNFTsModal({ onClose, isOpened }: Props) {
       <TrackScreen category="Add/receive NFTs" type="drawer" />
 
       {new Array(2).fill(null).map((_e, index) => (
-        <Text variant="body" fontWeight="medium" color="neutral.c80">
+        <Text
+          variant="body"
+          fontWeight="medium"
+          color="neutral.c80"
+          key={index}
+        >
           {t(`wallet.nftGallery.receiveModal.bullets.${index}`)}
         </Text>
       ))}
