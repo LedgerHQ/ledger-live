@@ -75,7 +75,7 @@ const getIsNotifEnabled = async () => {
 };
 
 const useNotifications = () => {
-  const pushNotificationsFeature = useFeature("pushNotifications");
+  const pushNotificationsFeature = useFeature("brazePushNotifications");
 
   const isPushNotificationsModalOpen = useSelector(
     notificationsModalOpenSelector,
