@@ -22,7 +22,7 @@ export default class OnboardingSteps {
     // await testHelpers.tap("Onboarding PostWelcome - Selection|SetupLedger");
   }
 
-  static async selectYourDevice(device) {
+  static async selectYourDevice(device: string) {
     await testHelpers.tapByText(device);
     // await testHelpers.tap(`Onboarding Device - Selection|${device}`);
   }

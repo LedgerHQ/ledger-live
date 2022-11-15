@@ -21,7 +21,7 @@ afterAll(async () => {
 async function setDemoMode() {
   if (device.getPlatform() === "ios") {
     execSync(
-      'xcrun simctl status_bar "iPhone 11 Pro" override --time "12:00" --batteryState charged --batteryLevel 100 --wifiBars 3 --cellularMode active --cellularBars 4',
+      'xcrun simctl status_bar "iPhone 12" override --time "12:00" --batteryState charged --batteryLevel 100 --wifiBars 3 --cellularMode active --cellularBars 4',
     );
   } else {
     // enter demo mode
