@@ -77,7 +77,7 @@ const prepareTransaction = async (
     ) {
       t.recipient = recipient;
 
-      t.deploy = createNewDeploy(address, recipient, t.amount);
+      t.deploy = createNewDeploy(address, recipient, t.amount, t.transferId);
     }
   }
 
