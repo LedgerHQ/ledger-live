@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useMemo, useCallback, FC } from "react";
 import { View } from "react-native";
 import { BigNumber } from "bignumber.js";
+import { randomizeProviders } from "@ledgerhq/live-common/families/elrond/helpers/randomizeProviders";
+import { denominate } from "@ledgerhq/live-common/families/elrond/helpers/denominate";
 
 import type { AccountLike } from "@ledgerhq/types-live";
 import type {
@@ -10,9 +12,6 @@ import type {
 import type { BodyPropsType } from "./types";
 import type { DrawerPropsType } from "./components/Drawer/types";
 import type { DelegationType } from "../../types";
-
-import { denominate } from "../../helpers/denominate";
-import { randomizeProviders } from "../../helpers/randomizeProviders";
 
 import Delegations from "./components/Delegations";
 import Unbondings from "./components/Unbondings";

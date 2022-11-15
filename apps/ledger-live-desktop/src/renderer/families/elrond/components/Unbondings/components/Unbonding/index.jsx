@@ -2,6 +2,7 @@
 
 import React, { useState, useCallback, useMemo, useEffect } from "react";
 import { Trans } from "react-i18next";
+import { denominate } from "@ledgerhq/live-common/families/elrond/helpers/denominate";
 import { useDispatch } from "react-redux";
 import moment from "moment";
 
@@ -12,7 +13,6 @@ import FirstLetterIcon from "~/renderer/components/FirstLetterIcon";
 import LedgerLiveLogo from "~/renderer/components/LedgerLiveLogo";
 import Logo from "~/renderer/icons/Logo";
 
-import { denominate } from "~/renderer/families/elrond/helpers";
 import { constants } from "~/renderer/families/elrond/constants";
 import { openURL } from "~/renderer/linking";
 import { Ellipsis, Column, Wrapper, Withdraw } from "~/renderer/families/elrond/blocks/Delegation";

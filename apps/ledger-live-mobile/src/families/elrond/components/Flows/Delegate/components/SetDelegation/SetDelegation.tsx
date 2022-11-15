@@ -3,6 +3,8 @@ import { Image, View, Animated } from "react-native";
 import { useTheme } from "@react-navigation/native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
+import { handleTransactionStatus } from "@ledgerhq/live-common/families/elrond/helpers/handleTransactionStatus";
+import { denominate } from "@ledgerhq/live-common/families/elrond/helpers/denominate";
 import { getCurrencyColor } from "@ledgerhq/live-common/currencies/index";
 import {
   getAccountCurrency,
@@ -27,8 +29,6 @@ import { TrackScreen } from "../../../../../../../analytics";
 import { ScreenName } from "../../../../../../../const";
 
 import { rgba } from "../../../../../../../colors";
-import { denominate } from "../../../../../helpers/denominate";
-import { handleTransactionStatus } from "../../../../../helpers/handleTransactionStatus";
 import { ELROND_LEDGER_ADDRESS } from "../../../../../constants";
 
 import type { SetDelegationPropsType } from "./types";

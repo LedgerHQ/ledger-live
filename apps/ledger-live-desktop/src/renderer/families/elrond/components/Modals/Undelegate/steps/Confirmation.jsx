@@ -2,6 +2,7 @@
 
 import React, { useCallback } from "react";
 import { useTranslation, Trans } from "react-i18next";
+import { denominate } from "@ledgerhq/live-common/families/elrond/helpers/denominate";
 import { SyncOneAccountOnMount } from "@ledgerhq/live-common/bridge/react/index";
 import styled from "styled-components";
 
@@ -13,7 +14,6 @@ import ErrorDisplay from "~/renderer/components/ErrorDisplay";
 import RetryButton from "~/renderer/components/RetryButton";
 import SuccessDisplay from "~/renderer/components/SuccessDisplay";
 
-import { denominate } from "~/renderer/families/elrond/helpers";
 import { constants } from "~/renderer/families/elrond/constants";
 import { OperationDetails } from "~/renderer/drawers/OperationDetails";
 import { setDrawer } from "~/renderer/drawers/Provider";

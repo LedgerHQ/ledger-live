@@ -7,6 +7,7 @@ import {
   getAccountCurrency,
   getMainAccount,
 } from "@ledgerhq/live-common/account/index";
+import { denominate } from "@ledgerhq/live-common/families/elrond/helpers/denominate";
 
 import type { StackNavigationProp } from "@react-navigation/stack";
 import type { NavigationType } from "../../../../types";
@@ -18,7 +19,6 @@ import IlluRewards from "../../../../../../icons/images/Rewards";
 import { ScreenName, NavigatorName } from "../../../../../../const";
 
 import { urls } from "../../../../../../config/urls";
-import { denominate } from "../../../../helpers/denominate";
 
 import Delegation from "./components/Delegation";
 import Right from "./components/Right";

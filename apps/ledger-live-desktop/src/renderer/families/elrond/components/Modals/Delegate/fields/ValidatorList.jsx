@@ -2,6 +2,7 @@
 
 import React, { useState, useMemo, Fragment, useCallback } from "react";
 import { getAccountUnit } from "@ledgerhq/live-common/account/index";
+import { nominate } from "@ledgerhq/live-common/families/elrond/helpers/nominate";
 import { Trans } from "react-i18next";
 import { BigNumber } from "bignumber.js";
 import styled from "styled-components";
@@ -13,7 +14,6 @@ import IconAngleDown from "~/renderer/icons/AngleDown";
 import ValidatorSearchInput from "~/renderer/components/Delegation/ValidatorSearchInput";
 
 import { constants } from "~/renderer/families/elrond/constants";
-import { nominate } from "~/renderer/families/elrond/helpers";
 
 import ValidatorItem from "./ValidatorItem";
 

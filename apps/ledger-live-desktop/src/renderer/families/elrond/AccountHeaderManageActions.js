@@ -4,8 +4,9 @@ import { useCallback, useMemo } from "react";
 import { BigNumber } from "bignumber.js";
 import { useTranslation } from "react-i18next";
 import { useDispatch } from "react-redux";
+import { randomizeProviders } from "@ledgerhq/live-common/families/elrond/helpers/randomizeProviders";
+import { denominate } from "@ledgerhq/live-common/families/elrond/helpers/denominate";
 
-import { denominate, randomizeProviders } from "~/renderer/families/elrond/helpers";
 import { constants } from "~/renderer/families/elrond/constants";
 import { openModal } from "~/renderer/actions/modals";
 import IconCoins from "~/renderer/icons/Coins";

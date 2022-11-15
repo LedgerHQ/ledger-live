@@ -4,6 +4,7 @@ import React, { useMemo, Fragment, useCallback, ReactNode } from "react";
 import { BigNumber } from "bignumber.js";
 import { Trans } from "react-i18next";
 import { useDispatch } from "react-redux";
+import { denominate } from "@ledgerhq/live-common/families/elrond/helpers/denominate";
 
 import Box from "~/renderer/components/Box/Box";
 import CheckCircle from "~/renderer/icons/CheckCircle";
@@ -17,7 +18,6 @@ import DropDown, { DropDownItem } from "~/renderer/components/DropDownSelector";
 import { Ellipsis, Column, Wrapper, Divider } from "~/renderer/families/elrond/blocks/Delegation";
 import { openURL } from "~/renderer/linking";
 import { openModal } from "~/renderer/actions/modals";
-import { denominate } from "~/renderer/families/elrond/helpers";
 import { constants } from "~/renderer/families/elrond/constants";
 
 import type {

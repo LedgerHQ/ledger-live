@@ -7,6 +7,7 @@ import { useSelector } from "react-redux";
 import { Trans } from "react-i18next";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { getAccountUnit } from "@ledgerhq/live-common/account/index";
+import { denominate } from "@ledgerhq/live-common/families/elrond/helpers/denominate";
 
 import Box from "~/renderer/components/Box/Box";
 import Text from "~/renderer/components/Text";
@@ -23,7 +24,6 @@ import {
 
 import { useDiscreetMode } from "~/renderer/components/Discreet";
 import { localeSelector } from "~/renderer/reducers/settings";
-import { denominate } from "~/renderer/families/elrond/helpers";
 import { constants } from "~/renderer/families/elrond/constants";
 import { openURL } from "~/renderer/linking";
 import { urls } from "~/config/urls";

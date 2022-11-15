@@ -1,4 +1,4 @@
-import type { TransactionStatus } from "@ledgerhq/live-common/generated/types";
+import type { TransactionStatus } from "../types";
 
 /*
  * Declare the type for the return payload of the transaction status handler.
@@ -14,7 +14,7 @@ export interface handleTransactionStatusType {
  */
 
 export const handleTransactionStatus = (
-  status: TransactionStatus,
+  status: TransactionStatus
 ): handleTransactionStatusType => {
   const [[warning], [error]] = [
     Object.keys(status.warnings || {}),

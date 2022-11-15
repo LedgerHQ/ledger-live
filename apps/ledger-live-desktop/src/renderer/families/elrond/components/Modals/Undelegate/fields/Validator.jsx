@@ -2,6 +2,7 @@
 
 import React, { useMemo, useState, useCallback } from "react";
 import { useTranslation } from "react-i18next";
+import { denominate } from "@ledgerhq/live-common/families/elrond/helpers/denominate";
 
 import FirstLetterIcon from "~/renderer/components/FirstLetterIcon";
 import Box from "~/renderer/components/Box";
@@ -9,7 +10,6 @@ import Label from "~/renderer/components/Label";
 import Select from "~/renderer/components/Select";
 import Text from "~/renderer/components/Text";
 
-import { denominate } from "~/renderer/families/elrond/helpers";
 import { constants } from "~/renderer/families/elrond/constants";
 
 import type { DelegationType, ValidatorType } from "~/renderer/families/elrond/types";

@@ -10,6 +10,7 @@ import { Trans } from "react-i18next";
 import { BigNumber } from "bignumber.js";
 import { useSelector } from "react-redux";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
+import { denominate } from "@ledgerhq/live-common/families/elrond/helpers/denominate";
 import { getAccountUnit } from "@ledgerhq/live-common/account/index";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { useTheme } from "styled-components/native";
@@ -24,7 +25,6 @@ import Warning from "../../../../../../../icons/Warning";
 import Check from "../../../../../../../icons/Check";
 import KeyboardView from "../../../../../../../components/KeyboardView";
 
-import { denominate } from "../../../../../helpers/denominate";
 import { MIN_DELEGATION_AMOUNT } from "../../../../../constants";
 
 import type { PickAmountPropsType } from "./types";

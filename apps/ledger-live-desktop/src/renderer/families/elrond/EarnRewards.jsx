@@ -5,6 +5,8 @@ import { useDispatch } from "react-redux";
 import { Trans } from "react-i18next";
 import styled from "styled-components";
 import { BigNumber } from "bignumber.js";
+import { randomizeProviders } from "@ledgerhq/live-common/families/elrond/helpers/randomizeProviders";
+import { denominate } from "@ledgerhq/live-common/families/elrond/helpers/denominate";
 
 import Text from "~/renderer/components/Text";
 import Button from "~/renderer/components/Button";
@@ -23,7 +25,6 @@ import Delegations from "~/renderer/families/elrond/components/Delegations";
 import { urls } from "~/config/urls";
 import { openURL } from "~/renderer/linking";
 import { openModal } from "~/renderer/actions/modals";
-import { denominate, randomizeProviders } from "~/renderer/families/elrond/helpers";
 import { constants } from "~/renderer/families/elrond/constants";
 
 import type { DelegationType, UnbondingType } from "~/renderer/families/elrond/types";

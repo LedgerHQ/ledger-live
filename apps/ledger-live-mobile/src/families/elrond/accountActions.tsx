@@ -1,14 +1,15 @@
+import type { ElrondAccount } from "@ledgerhq/live-common/families/elrond/types";
+
 import React from "react";
 import { BigNumber } from "bignumber.js";
-import { ElrondAccount } from "@ledgerhq/live-common/families/elrond/types";
+import { randomizeProviders } from "@ledgerhq/live-common/families/elrond/helpers/randomizeProviders";
+import { denominate } from "@ledgerhq/live-common/families/elrond/helpers/denominate";
+
 import { Icons } from "@ledgerhq/native-ui";
 import { Trans } from "react-i18next";
 
 import { NavigatorName, ScreenName } from "../../const";
 import { ActionButtonEvent } from "../../components/FabActions";
-
-import { denominate } from "./helpers/denominate";
-import { randomizeProviders } from "./helpers/randomizeProviders";
 
 /*
  * Declare the types for the properties and return payload.
