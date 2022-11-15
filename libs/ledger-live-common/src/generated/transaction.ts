@@ -10,6 +10,7 @@ import evm from "../families/evm/transaction";
 import filecoin from "../families/filecoin/transaction";
 import hedera from "../families/hedera/transaction";
 import neo from "../families/neo/transaction";
+import nervos from "../families/nervos/transaction";
 import osmosis from "../families/osmosis/transaction";
 import polkadot from "../families/polkadot/transaction";
 import ripple from "../families/ripple/transaction";
@@ -31,6 +32,7 @@ export default {
   filecoin,
   hedera,
   neo,
+  nervos,
   osmosis,
   polkadot,
   ripple,

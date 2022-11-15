@@ -43,6 +43,12 @@ import {
   toCeloResourcesRaw,
   fromCeloResourcesRaw,
 } from "../families/celo/serialization";
+
+import {
+  toNervosResourcesRaw,
+  fromNervosResourcesRaw,
+} from "../families/nervos/serialization";
+
 import {
   getCryptoCurrencyById,
   getTokenById,
@@ -97,6 +103,7 @@ import {
 import { SolanaAccount, SolanaAccountRaw } from "../families/solana/types";
 import { TezosAccount, TezosAccountRaw } from "../families/tezos/types";
 import { CeloAccount, CeloAccountRaw } from "../families/celo/types";
+import { NervosAccount, NervosAccountRaw } from "../families/nervos/types";
 
 export { toCosmosResourcesRaw, fromCosmosResourcesRaw };
 export { toAlgorandResourcesRaw, fromAlgorandResourcesRaw };
@@ -108,6 +115,7 @@ export { toCryptoOrgResourcesRaw, fromCryptoOrgResourcesRaw };
 export { toCardanoResourceRaw, fromCardanoResourceRaw };
 export { toSolanaResourcesRaw, fromSolanaResourcesRaw };
 export { toCeloResourcesRaw, fromCeloResourcesRaw };
+export { toNervosResourcesRaw, fromNervosResourcesRaw };
 
 export function toBalanceHistoryRaw(b: BalanceHistory): BalanceHistoryRaw {
   return b.map(({ date, value }) => [date.toISOString(), value.toString()]);
@@ -869,6 +877,14 @@ export function fromAccountRaw(rawAccount: AccountRaw): Account {
           fromCeloResourcesRaw(celoResourcesRaw);
       break;
     }
+    case "nervos": {
+      const nervosResourcesRaw = (rawAccount as NervosAccountRaw)
+        .nervosResources;
+      if (nervosResourcesRaw)
+        (res as NervosAccount).nervosResources =
+          fromNervosResourcesRaw(nervosResourcesRaw);
+      break;
+    }
   }
 
   if (swapHistory) {
@@ -1053,6 +1069,14 @@ export function toAccountRaw(account: Account): AccountRaw {
       if (celoAccount.celoResources)
         (res as CeloAccountRaw).celoResources = toCeloResourcesRaw(
           celoAccount.celoResources
+        );
+      break;
+    }
+    case "nervos": {
+      const nervosAccount = account as NervosAccount;
+      if (nervosAccount.nervosResources)
+        (res as NervosAccountRaw).nervosResources = toNervosResourcesRaw(
+          nervosAccount.nervosResources
         );
       break;
     }

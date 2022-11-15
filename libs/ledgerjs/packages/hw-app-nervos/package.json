@@ -1,0 +1,51 @@
+{
+  "name": "@ledgerhq/hw-app-nervos",
+  "version": "6.27.3",
+  "description": "Ledger Hardware Wallet Nervos Application API",
+  "keywords": [
+    "Ledger",
+    "LedgerWallet",
+    "ckb",
+    "Nervos",
+    "NanoS",
+    "Blue",
+    "Hardware Wallet"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/LedgerHQ/ledger-live.git"
+  },
+  "bugs": {
+    "url": "https://github.com/LedgerHQ/ledger-live/issues"
+  },
+  "homepage": "https://github.com/LedgerHQ/ledger-live/tree/develop/libs/ledgerjs/packages/hw-app-nervos",
+  "publishConfig": {
+    "access": "public"
+  },
+  "main": "lib/Nervos.js",
+  "module": "lib-es/Nervos.js",
+  "types": "lib/Nervos.d.ts",
+  "license": "Apache-2.0",
+  "dependencies": {
+    "@ledgerhq/errors": "workspace:^",
+    "@ledgerhq/hw-transport": "workspace:^",
+    "@nervosnetwork/ckb-sdk-utils": "^0.103.1",
+    "bip32-path": "^0.4.2",
+    "bech32": "1.1.4",
+    "blake2b-wasm": "2.4.0"
+  },
+  "devDependencies": {
+    "@ledgerhq/hw-transport-mocker": "workspace:^"
+  },
+  "scripts": {
+    "clean": "rimraf lib lib-es",
+    "build": "tsc && tsc -m ES6 --outDir lib-es",
+    "prewatch": "pnpm build",
+    "watch": "tsc --watch",
+    "doc": "documentation readme src/** --section=API --pe ts --re ts --re d.ts",
+    "lint": "eslint ./src --no-error-on-unmatched-pattern --ext .ts,.tsx",
+    "lint:fix": "pnpm lint --fix",
+    "test": "jest"
+  },
+  "gitHead": "dd0dea64b58e5a9125c8a422dcffd29e5ef6abec"
+}

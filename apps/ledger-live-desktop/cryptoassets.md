@@ -28,6 +28,7 @@
 | Komodo | KMD | YES | komodo |
 | Litecoin | LTC | YES | litecoin |
 | Moonbeam | GLMR | YES | moonbeam |
+| Nervos | CKB | YES | nervos |
 | Osmosis | OSMO | YES | osmo |
 | Peercoin | PPC | YES | peercoin |
 | PivX | PIVX | YES | pivx |
@@ -87,7 +88,6 @@
 | NOS | NOS | NO | nos |
 | Nano | NANO | NO | nano |
 | Neo | NEO | NO | neo |
-| Nervos | CKB | NO | nervos |
 | Nimiq | NIM | NO | nimiq |
 | Nix | NIX | NO | nix |
 | Ontology | ONT | NO | ontology |

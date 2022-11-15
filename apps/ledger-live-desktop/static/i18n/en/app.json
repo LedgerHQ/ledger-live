@@ -5309,6 +5309,10 @@
     "ImageLoadRefusedOnDevice": {
       "title": "Image load refused on device (TODO: final wording)",
       "description": "If this image wasn't the right fit, you can try again with another image."
+    },
+    "NervosAmountTooLow": {
+      "title": "Amount Too Low",
+      "description": "Amount cannot be less than 61 CKB."
     }
   },
   "cryptoOrg": {

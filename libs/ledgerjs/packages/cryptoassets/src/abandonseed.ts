@@ -63,6 +63,8 @@ const abandonSeedAddresses: Record<string, string> = {
   moonbeam: "0x0000000000000000000000000000000000000000",
   songbird: "0x0000000000000000000000000000000000000000",
   flare: "0x0000000000000000000000000000000000000000",
+  nervos:
+    "ckb1qzda0cr08m85hc8jlnfp3zer7xulejywt49kt2rr0vthywaa50xwsqwyk5x9erg8furras980hksatlslfaktks7epf25",
 };
 
 /**

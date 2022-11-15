@@ -68,6 +68,7 @@
     "ljs:hw-app-tezos": "pnpm --filter hw-app-tezos",
     "ljs:hw-app-trx": "pnpm --filter hw-app-trx",
     "ljs:hw-app-xrp": "pnpm --filter hw-app-xrp",
+    "ljs:hw-app-nervos": "pnpm --filter hw-app-nervos",
     "ljs:hw-transport": "pnpm --filter hw-transport",
     "ljs:hw-transport-http": "pnpm --filter hw-transport-http",
     "ljs:hw-transport-mocker": "pnpm --filter hw-transport-mocker",

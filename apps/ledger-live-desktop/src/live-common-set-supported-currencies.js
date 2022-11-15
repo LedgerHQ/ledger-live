@@ -44,6 +44,7 @@ setSupportedCurrencies([
   "hedera",
   "cardano",
   "filecoin",
+  "nervos",
   "osmosis",
   "fantom",
   "cronos",
