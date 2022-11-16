@@ -155,7 +155,7 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: ${{ steps.post-version.outputs.version }}-release
-          path: ${{ github.workspace }}/apps/ledger-live-mobile/android/app/build/outputs/apk/release
+          path: ${{ github.workspace }}/apps/ledger-live-mobile/android/app/build/outputs/apk/stagingRelease
 
   build-mobile-app-android-external:
     name: "Build Ledger Live Mobile (Android)"
