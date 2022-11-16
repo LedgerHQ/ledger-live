@@ -34,7 +34,6 @@ const StepAmount = (props: StepProps) => {
     (transaction: Transaction) => onChangeTransaction({ ...transaction, mode: "delegate" }),
     [onChangeTransaction],
   );
-  console.log(686866, transaction);
 
   if (!status) return null;
 

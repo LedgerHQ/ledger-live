@@ -58,7 +58,6 @@ const AmountField = ({
         bridge.updateTransaction(transaction, {
           useAllAmount,
           amount: new BigNumber(0),
-          mode: "delegate",
         }),
       );
     },
