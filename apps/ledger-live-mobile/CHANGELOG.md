@@ -1,5 +1,11 @@
 # live-mobile
 
+## 3.11.0-next.3
+
+### Patch Changes
+
+- [#1818](https://github.com/LedgerHQ/ledger-live/pull/1818) [`9d811641ae`](https://github.com/LedgerHQ/ledger-live/commit/9d811641ae0224df7592021d22ca41107ab905e6) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Bump Android target & compile SDK to API 32
+
 ## 3.11.0-next.2
 
 ### Patch Changes
