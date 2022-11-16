@@ -32,7 +32,8 @@ Detox also has good documentation for [Android](https://wix.github.io/Detox/docs
 
 ### Additional Android setup steps
 
-We've found that it's better to install Java manually rather than with Homebrew, as they are often installed in locations on your computer that Detox and Android Studio aren't expecting. Follow [this](https://techoral.com/blog/java/install-openjdk-11-on-mac.html) guide.
+<!-- REWRITE THIS -->
+<!-- We've found that it's better to install Java manually rather than with Homebrew, as they are often installed in locations on your computer that Detox and Android Studio aren't expecting. Follow [this](https://techoral.com/blog/java/install-openjdk-11-on-mac.html) guide. -->
 
 ### Additional iOS setup steps
 
@@ -65,7 +66,7 @@ pnpm build:llm:deps
 
 ### Android
 
-Verify you have an emulator [installed](https://developer.android.com/studio/run/managing-avds) and have that match the Detox `avdName` (currently 'Nexus_6') in the `detox.config.js` file. Be sure to make the device the correct architecture and system image (currently x86_64 if you are on an Intel mac and arm64_v8a if you are on an M1).
+Verify you have an emulator [installed](https://developer.android.com/studio/run/managing-avds) and have that match the Detox `avdName` (currently 'Pixel_5_API_31') in the `detox.config.js` file. Be sure to make the device the correct architecture and system image (currently x86_64 if you are on an Intel mac and arm64_v8a if you are on an M1).
 
 - Build the apps
   - Debug: `pnpm mobile e2e:build -c android.emu.debug`
@@ -76,7 +77,7 @@ Verify you have an emulator [installed](https://developer.android.com/studio/run
 
 ### iOS
 
-Make sure you have the correct iPhone simulator that is listed in `detox.config.js` installed (currently 'iPhone 11 Pro'). You can check if you do with `applesimutils --list`. Also make sure you have an iOS version installed for simulators by going to Xcode > Preferences > Components. You can try whichever version you like, but iOS 13.0 is known to work locally.
+Make sure you have the correct iPhone simulator that is listed in `detox.config.js` installed (currently 'iPhone 13'). You can check if you do with `applesimutils --list`. Also make sure you have an iOS version installed for simulators by going to Xcode > Preferences > Components. You can try whichever version you like, but iOS 13.0 is known to work locally.
 
 - Build the apps
   - Debug: `pnpm mobile e2e:build -c ios.sim.debug`
@@ -103,19 +104,13 @@ Most files for the tests are in the `/e2e` LLM app folder.
 
 - `/specs`: The test suites themselves. We make use of the helpers and combine the snippets from the flows to build the different test scenarios. Ideally we should be able to reuse parts from flows in the specs.
 
-- `/config.json`: Configuration for Detox. Contains settings like what the setup and teardown files are, how long the timeout is, what test runner to use, etc.
+- `/jest.config.js`: Configuration for Detox. Contains settings like what the setup and teardown files are, how long the timeout is, what test runner to use, etc.
 
 - `/e2e-bridge-setup`: Used to start the websocket bridge on the client (app) side.
 
-- `/environment.js`: Boilerplate code to setup Jest for the Detox tests.
+- `/helpers.ts`: Convenience methods for use in the models/tests to make writing tests easier.
 
-- `/global-setup.js`: Run at the start of the test run to start the emulator and kick off the tests.
-
-- `/global-teardown.js`: Run at the end of the test run to teardown the test and emulator prcoesses.
-
-- `/helpers.js`: Convenience methods for use in the models/tests to make writing tests easier.
-
-- `/setup.js`: Run after the global setup. It starts the websocket bridge, sets up the emulators to be more consistent in the test run (for example sets the time to 12.00), and shuts down the websocket bridge. Any logic to be run before and after a test run would go here.
+- `/setup.ts`: Run after the global setup. It starts the websocket bridge, sets up the emulators to be more consistent in the test run (for example sets the time to 12.00), and shuts down the websocket bridge. Any logic to be run before and after a test run would go here.
 
 ### Other important files outside `/e2e`
 
