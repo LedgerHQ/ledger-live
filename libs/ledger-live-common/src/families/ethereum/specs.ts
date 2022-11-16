@@ -514,17 +514,15 @@ const polygon: AppSpec<Transaction> = {
   ]),
 };
 
-const minAmountAVAXC = parseCurrencyUnit(
-  getCryptoCurrencyById("avalanche_c_chain").units[0],
-  "0.005"
-);
+const avax_c_chain = getCryptoCurrencyById("avalanche_c_chain");
+const minAmountAVAXC = parseCurrencyUnit(avax_c_chain.units[0], "0.5");
 
 const avalanche_c_chain: AppSpec<Transaction> = {
-  name: "Avalanche C Chain",
-  currency: getCryptoCurrencyById("avalanche_c_chain"),
+  name: "Avalanche C-Chain",
+  currency: avax_c_chain,
   appQuery: {
     model: DeviceModelId.nanoS,
-    appName: "Avalanche",
+    appName: "Ethereum",
   },
   genericDeviceAction: acceptTransaction,
   dependency: "Ethereum",
@@ -533,34 +531,7 @@ const avalanche_c_chain: AppSpec<Transaction> = {
   transactionCheck: ({ maxSpendable }) => {
     invariant(maxSpendable.gt(minAmountAVAXC), "balance is too low");
   },
-  mutations: ethereumBasicMutations({ maxAccount: 8 }).concat([
-    {
-      name: "move some ERC20",
-      maxRun: 1,
-      // @ts-expect-error rxjs stuff
-      transaction: ({ account, siblings, bridge }) => {
-        const erc20Account = sample(
-          (account.subAccounts || []).filter((a) => a.balance.gt(0))
-        );
-        invariant(erc20Account, "no erc20 account");
-        const sibling = pickSiblings(siblings, 3);
-        const recipient = sibling.freshAddress;
-        return {
-          transaction: bridge.createTransaction(account),
-          updates: [
-            { recipient, subAccountId: erc20Account.id },
-            Math.random() < 0.5
-              ? { useAllAmount: true }
-              : {
-                  amount: erc20Account.balance
-                    .times(Math.random())
-                    .integerValue(),
-                },
-          ],
-        };
-      },
-    },
-  ]),
+  mutations: ethereumBasicMutations({ maxAccount: 8 }),
 };
 
 export default {
