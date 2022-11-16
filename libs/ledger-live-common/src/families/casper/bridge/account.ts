@@ -43,7 +43,10 @@ import {
 } from "./utils/network";
 import { getMainAccount } from "../../../account/helpers";
 import { createNewDeploy } from "./utils/txn";
-import { invalidMinimumAmountError } from "./utils/errors";
+import {
+  invalidMinimumAmountError,
+  invalidTransferIdError,
+} from "./utils/errors";
 
 const receive = makeAccountBridgeReceive();
 
@@ -81,8 +84,6 @@ const prepareTransaction = async (
       validateAddress(address).isValid &&
       validateTransferId(transferId).isValid
     ) {
-      t.recipient = recipient;
-
       t.deploy = createNewDeploy(address, recipient, t.amount, t.transferId);
     }
   }
@@ -109,9 +110,9 @@ const getTransactionStatus = async (
     errors.recipient = new InvalidAddress();
   else if (!validateAddress(address).isValid)
     errors.sender = new InvalidAddress();
-
-  if (t.transferId && !validateTransferId(t.transferId).isValid)
-    errors.sender = new Error("Invalid TransferID");
+  else if (!validateTransferId(t.transferId).isValid) {
+    errors.sender = invalidTransferIdError();
+  }
 
   // This is the worst case scenario (the tx won't cost more than this value)
   const estimatedFees = new BigNumber(CASPER_FEES);
