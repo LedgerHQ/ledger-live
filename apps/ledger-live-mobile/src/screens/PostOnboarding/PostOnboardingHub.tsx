@@ -117,16 +117,11 @@ const PostOnboardingHub = ({ navigation }: NavigationProps) => {
     navigation.setOptions({ gestureEnabled: false, headerRight: () => null });
     navigation.getParent()?.setOptions({ gestureEnabled: false });
     allowClosingScreen.current = false;
-    const beforeRemoveCallback: EventListenerCallback<
-      StackNavigationEventMap &
-        EventMapCore<StackNavigationState<NavigationProps>>,
-      "beforeRemove"
-    > = e => {
+    const listenerCleanup = navigation.addListener("beforeRemove", e => {
       if (!allowClosingScreen.current) e.preventDefault();
-    };
-    navigation.addListener("beforeRemove", beforeRemoveCallback);
+    });
     return () => {
-      navigation.removeListener("beforeRemove", beforeRemoveCallback);
+      listenerCleanup();
       clearAnimationTimeout();
       cancelAnimation(animDoneValue);
     };
