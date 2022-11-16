@@ -211,7 +211,15 @@ const initialExplorerConfig: FullConfig = {
       version: "v3",
     },
   },
+  avalanche_c_chain: {
+    id: "avax",
+    stable: {
+      base: "EXPLORER",
+      version: "v3",
+    },
+  },
 };
+
 let explorerConfig: FullConfig = initialExplorerConfig;
 export function getExplorerConfig(): FullConfig {
   return explorerConfig;
