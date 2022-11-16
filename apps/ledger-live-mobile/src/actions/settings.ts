@@ -176,6 +176,11 @@ export const updateCurrencySettings = (
     patch,
   });
 
+const completeCustomImageFlowAction = createAction(
+  SettingsActionTypes.SETTINGS_COMPLETE_CUSTOM_IMAGE_FLOW,
+);
+export const completeCustomImageFlow = () => completeCustomImageFlowAction();
+
 const completeOnboardingAction = createAction(
   SettingsActionTypes.SETTINGS_COMPLETE_ONBOARDING,
 );
