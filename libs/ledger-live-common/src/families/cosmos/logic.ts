@@ -15,7 +15,6 @@ import type {
   CosmosAccount,
 } from "./types";
 import type { Transaction } from "../../generated/types";
-import { calculateFees } from "./js-prepareTransaction";
 import type { Unit } from "@ledgerhq/types-cryptoassets";
 
 export const COSMOS_MAX_REDELEGATIONS = 7;
