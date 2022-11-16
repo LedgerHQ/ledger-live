@@ -17,6 +17,7 @@ enum BackgroundType {
 }
 
 type ContentCard = {
+  id: string;
   location: LocationContentCard;
   title: string;
   link: string;
@@ -37,6 +38,7 @@ export const filterByPage = (array: BrazeContentCard[], page: string) =>
 
 export const mapAsWalletContentCard = (card: BrazeContentCard) =>
   ({
+    id: card.id,
     title: card.extras.title,
     location: LocationContentCard.Wallet,
     image: card.extras.image,
@@ -49,6 +51,7 @@ export const mapAsWalletContentCard = (card: BrazeContentCard) =>
 
 export const mapAsAssetContentCard = (card: BrazeContentCard) =>
   ({
+    id: card.id,
     title: card.extras.title,
     location: LocationContentCard.Asset,
     image: card.extras.image,

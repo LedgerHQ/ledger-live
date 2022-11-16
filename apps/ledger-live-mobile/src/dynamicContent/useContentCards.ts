@@ -1,10 +1,11 @@
 import { useCallback, useEffect } from "react";
-import Braze from "react-native-appboy-sdk";
+
 import { useDispatch } from "react-redux";
 import {
   setDynamicContentAssetsCards,
   setDynamicContentWalletCards,
 } from "../actions/dynamicContent";
+import { useBrazeContentCard } from "./brazeContentCard";
 import {
   filterByPage,
   mapAsWalletContentCard,
@@ -14,6 +15,7 @@ import {
 
 const HookDynamicContentCards = () => {
   const dispatch = useDispatch();
+  const { Braze, refreshDynamicContent } = useBrazeContentCard();
 
   const fetchData = useCallback(async () => {
     // Fetch data from Braze
@@ -41,12 +43,12 @@ const HookDynamicContentCards = () => {
 
     dispatch(setDynamicContentWalletCards(walletCards));
     dispatch(setDynamicContentAssetsCards(assetCards));
-  }, [dispatch]);
+  }, [Braze, dispatch]);
 
   useEffect(() => {
-    Braze.requestContentCardsRefresh();
+    refreshDynamicContent();
     fetchData();
-  }, [fetchData]);
+  }, [fetchData, refreshDynamicContent]);
 
   return null;
 };
