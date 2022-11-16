@@ -26,6 +26,7 @@ import { Transaction } from "../generated/types";
 import { MessageData } from "../hw/signMessage/types";
 import { prepareMessageToSign } from "../hw/signMessage/index";
 import { TypedMessageData } from "../families/ethereum/types";
+import { Exchange } from "../exchange/platform/types";
 
 export function translateContent(content: any, locale = "en"): string {
   if (!content || typeof content !== "object") return content;
@@ -171,12 +172,7 @@ export type CompleteExchangeRequest = {
 };
 export type CompleteExchangeUiRequest = {
   provider: string;
-  exchange: {
-    fromAccount: AccountLike;
-    fromParentAccount: Account | null;
-    toAccount?: AccountLike;
-    toParentAccount: Account | null;
-  };
+  exchange: Exchange;
   transaction: TransactionCommon;
   binaryPayload: string;
   signature: string;
