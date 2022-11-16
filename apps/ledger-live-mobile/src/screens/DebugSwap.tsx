@@ -80,7 +80,7 @@ export default function DebugSwap() {
       >
         <CheckBox isChecked={currentDisabledProviders.includes("cic")} />
         <LText semiBold style={styles.switchLabel}>
-          {"Disable Cic"}
+          {"Disable CIC"}
         </LText>
       </Touchable>
       <Touchable

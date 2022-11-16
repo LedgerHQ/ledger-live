@@ -183,6 +183,7 @@ export const isRegistrationRequired = (provider: string): boolean => {
 
 export const getProviderName = (provider: string): string => {
   switch (provider) {
+    case "cic":
     case "ftx":
     case "ftxus":
       return provider.toUpperCase();
