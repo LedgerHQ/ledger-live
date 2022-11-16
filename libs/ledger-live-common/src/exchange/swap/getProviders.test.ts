@@ -410,7 +410,7 @@ describe("swap/getProviders", () => {
 
     beforeAll(() => {
       // set SWAP_API_BASE
-      setEnv("SWAP_API_BASE", "https://swap-pr969.aws.stg.ldg-tech.com/v4");
+      setEnv("SWAP_API_BASE", "https://swap.ledger.com/v4");
     });
 
     beforeEach(() => {
