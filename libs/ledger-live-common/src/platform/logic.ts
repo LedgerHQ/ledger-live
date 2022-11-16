@@ -238,22 +238,34 @@ export function completeExchangeLogic(
   const { liveTx: liveTransaction } =
     getPlatformTransactionSignFlowInfos(platformTransaction);
 
-  let processedTransaction = accountBridge.createTransaction(mainFromAccount);
-  processedTransaction = accountBridge.updateTransaction(
+  /**
+   * 'subAccountId' is used for ETH and it's ERC-20 tokens.
+   * This field is ignored for BTC
+   */
+  const subAccountId = fromParentAccount ? fromAccount.id : undefined;
+
+  const bridgeTx = accountBridge.createTransaction(mainFromAccount);
+  /**
+   * We append the `recipient` to the tx created from `createTransaction`
+   * to avoid having userGasLimit reset to null for ETH txs
+   * cf. libs/ledger-live-common/src/families/ethereum/updateTransaction.ts
+   */
+  const tx = accountBridge.updateTransaction(
     {
-      ...processedTransaction,
+      ...bridgeTx,
       recipient: liveTransaction.recipient,
     },
     {
       ...liveTransaction,
       feesStrategy,
+      subAccountId,
     }
   );
 
   return uiNavigation({
     provider,
     exchange,
-    transaction: processedTransaction,
+    transaction: tx,
     binaryPayload,
     signature,
     feesStrategy,
