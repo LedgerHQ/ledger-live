@@ -24,6 +24,7 @@ import type {
   State,
   WalletConnectState,
   SwapStateType,
+  DynamicContentState,
 } from "../reducers/types";
 import type { Unpacked } from "../types/helpers";
 
@@ -161,6 +162,27 @@ export type NotificationsPayload =
   | NotificationsSetCurrentRouteNamePayload
   | NotificationsSetEventTriggeredPayload
   | NotificationsSetDataOfUserPayload;
+
+// === DYNAMIC CONTENT ACTIONS ===
+
+export enum DynamicContentActionTypes {
+  DYNAMIC_CONTENT_SET_WALLET_CARDS = "DYNAMIC_CONTENT_SET_WALLET_CARDS",
+  DYNAMIC_CONTENT_SET_ASSET_CARDS = "DYNAMIC_CONTENT_SET_ASSET_CARDS",
+}
+
+export type DynamicContentSetWalletCardsPayload = Pick<
+  DynamicContentState,
+  "walletCards"
+>;
+
+export type DynamicContentSetAssetCardsPayload = Pick<
+  DynamicContentState,
+  "assetsCards"
+>;
+
+export type DynamicContentPayload =
+  | DynamicContentSetWalletCardsPayload
+  | DynamicContentSetAssetCardsPayload;
 
 // === RATINGS ACTIONS ===
 
