@@ -36,14 +36,18 @@ jobs:
         with:
           script: |
             const fs = require("fs");
-            let output = "";
+            let text = "";
 
             if (${{ github.event_name == 'pull_request' }}) {
-              output += "Translations files have changed on PR ${{ github.event.pull_request.number }}\n";
-              output += "- ${{ github.event.pull_request.title }}\n";
-              output += "- ${{ github.event.head_commit.message }}\n";
+              text += "Translations files have changed on PR ${{ github.event.pull_request.number }}\n";
+              text += "- ${{ github.event.pull_request.title }}\n";
+              text += "- ${{ github.event.head_commit.message }}\n";
             } else {
-              output += "(Manual trigger) Translations files have changed on PR ${{ github.event.inputs.prNumber }}"
+              text += "(Manual trigger) Translations files have changed on PR ${{ github.event.inputs.prNumber }}"
+            }
+
+            const output = {
+              text,
             }
 
             fs.writeFileSync("./payload-slack-content.json", JSON.stringify(output, null, 2));
