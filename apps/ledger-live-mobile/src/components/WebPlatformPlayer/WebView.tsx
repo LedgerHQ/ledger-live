@@ -13,7 +13,7 @@ import {
   TouchableOpacity,
   SafeAreaView,
 } from "react-native";
-import { WebView as WebViewComponent } from "react-native-webview";
+import { WebView as RNWebView } from "react-native-webview";
 import { useNavigation } from "@react-navigation/native";
 import { JSONRPCRequest } from "json-rpc-2.0";
 import { UserRefusedOnDevice } from "@ledgerhq/errors";
@@ -81,13 +81,6 @@ import { BaseNavigatorStackParamList } from "../RootNavigator/types/BaseNavigato
 
 const tracking = trackingWrapper(track);
 
-// Typings are missing the style prop…
-const RNWebView = WebViewComponent as {
-  new (): WebViewComponent<{
-    style: Record<string, string | number>;
-  }>;
-};
-
 type Props = {
   manifest: AppManifest;
   inputs?: Record<string, string>;
@@ -138,9 +131,7 @@ const InfoPanelButton = ({
 
 export const WebView = ({ manifest, inputs }: Props) => {
   const targetRef: {
-    current: null | WebViewComponent<{
-      style: Record<string, string | number>;
-    }>;
+    current: null | RNWebView;
   } = useRef(null);
   const accounts = flattenAccounts(useSelector(accountsSelector));
   const navigation =
@@ -390,21 +381,25 @@ export const WebView = ({ manifest, inputs }: Props) => {
         { manifest, accounts, tracking },
         accountId,
         signedTransaction,
-        async (account, parentAccount, signedOperation) =>
-          new Promise((resolve, reject) => {
-            if (!getEnv("DISABLE_TRANSACTION_BROADCAST")) {
-              broadcastSignedTx(account, parentAccount, signedOperation).then(
-                op => {
-                  tracking.platformBroadcastSuccess(manifest);
-                  resolve(op.hash);
-                },
-                error => {
-                  tracking.platformBroadcastFail(manifest);
-                  reject(error);
-                },
+        async (account, parentAccount, signedOperation) => {
+          let optimisticOperation: Operation = signedOperation.operation;
+
+          if (!getEnv("DISABLE_TRANSACTION_BROADCAST")) {
+            try {
+              optimisticOperation = await broadcastSignedTx(
+                account,
+                parentAccount,
+                signedOperation,
               );
+              tracking.platformBroadcastSuccess(manifest);
+            } catch (error) {
+              tracking.platformBroadcastFail(manifest);
+              throw error;
             }
-          }),
+          }
+
+          return optimisticOperation.hash;
+        },
       ),
     [manifest, accounts],
   );

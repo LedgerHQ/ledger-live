@@ -9,11 +9,16 @@ import {
 } from "react-native";
 import { RpcError, Transport } from "@ledgerhq/wallet-api-core";
 import { WalletAPIServer, firstValueFrom } from "@ledgerhq/wallet-api-server";
-import { ACCOUNT_NOT_FOUND } from "@ledgerhq/wallet-api-server/lib/errors";
+import { CURRENCY_NOT_FOUND } from "@ledgerhq/wallet-api-server/lib/errors";
 import { WebView as RNWebView } from "react-native-webview";
 import { useNavigation } from "@react-navigation/native";
 import { UserRefusedOnDevice } from "@ledgerhq/errors";
-import { Account, AccountLike, SignedOperation } from "@ledgerhq/types-live";
+import {
+  Account,
+  AccountLike,
+  Operation,
+  SignedOperation,
+} from "@ledgerhq/types-live";
 import { getEnv } from "@ledgerhq/live-common/env";
 import { flattenAccounts } from "@ledgerhq/live-common/account/index";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
@@ -25,12 +30,16 @@ import {
   signTransactionLogic,
   signMessageLogic,
 } from "@ledgerhq/live-common/wallet-api/logic";
-import { serializeWalletAPISignedTransaction } from "@ledgerhq/live-common/wallet-api/serializers";
+import { accountToWalletAPIAccount } from "@ledgerhq/live-common/wallet-api/converters";
 import {
   useWalletAPIAccounts,
   useWalletAPICurrencies,
   useWalletAPIUrl,
 } from "@ledgerhq/live-common/wallet-api/react";
+import {
+  findCryptoCurrencyById,
+  listSupportedCurrencies,
+} from "@ledgerhq/live-common/currencies/index";
 import trackingWrapper from "@ledgerhq/live-common/wallet-api/tracking";
 import { TypedMessageData } from "@ledgerhq/live-common/families/ethereum/types";
 import { useTheme } from "styled-components/native";
@@ -118,109 +127,7 @@ export const WebView = ({ manifest, inputs }: Props) => {
     inputs,
   );
   const walletAPIAccounts = useWalletAPIAccounts(accounts);
-  const currencies = useWalletAPICurrencies();
-
-  // const requestAccount = useCallback(
-  //   ({
-  //     currencies: currencyIds,
-  //     allowAddAccount = true,
-  //     includeTokens,
-  //   }: // TODO: use type RequestAccountParams from LedgerLiveApiSdk
-  //   // }: RequestAccountParams) =>
-  //   {
-  //     currencies?: string[];
-  //     allowAddAccount?: boolean;
-  //     includeTokens?: boolean;
-  //   }): Promise<RawWalletAPIAccount> =>
-  //     new Promise((resolve, reject) => {
-  //       tracking.requestAccountRequested(manifest);
-
-  //       const allCurrencies = listAndFilterCurrencies({
-  //         currencies: currencyIds,
-  //         includeTokens,
-  //       });
-  //       // handle no curencies selected case
-  //       const cryptoCurrencyIds =
-  //         currencyIds && currencyIds.length > 0
-  //           ? currencyIds
-  //           : allCurrencies.map(({ id }) => id);
-
-  //       const foundAccounts = cryptoCurrencyIds?.length
-  //         ? accounts.filter(a =>
-  //             cryptoCurrencyIds.includes(
-  //               isTokenAccount(a) ? a.token.id : a.currency.id,
-  //             ),
-  //           )
-  //         : accounts;
-
-  //       // @TODO replace with correct error
-  //       if (foundAccounts.length <= 0 && !allowAddAccount) {
-  //         tracking.requestAccountFail(manifest);
-  //         reject(new Error("No accounts found matching request"));
-  //         return;
-  //       }
-
-  //       // list of queried cryptoCurrencies with one or more accounts -> used in case of not allowAddAccount and multiple accounts selectable
-  //       const currenciesDiff = allowAddAccount
-  //         ? cryptoCurrencyIds
-  //         : foundAccounts
-  //             .map(a => (isTokenAccount(a) ? a.token.id : a.currency.id))
-  //             .filter(
-  //               (c, i, arr) =>
-  //                 cryptoCurrencyIds.includes(c) && i === arr.indexOf(c),
-  //             );
-
-  //       const onSuccess = (account: AccountLike, parentAccount: Account) => {
-  //         tracking.requestAccountSuccess(manifest);
-  //         resolve(
-  //           serializeWalletAPIAccount(
-  //             accountToWalletAPIAccount(account, parentAccount),
-  //           ),
-  //         );
-  //       };
-
-  //       const onError = (error: Error) => {
-  //         tracking.requestAccountFail(manifest);
-  //         reject(error);
-  //       };
-
-  //       // if single currency available redirect to select account directly
-  //       if (currenciesDiff.length === 1) {
-  //         const currency = findCryptoCurrencyById(currenciesDiff[0]);
-
-  //         if (!currency) {
-  //           tracking.requestAccountFail(manifest);
-  //           // @TODO replace with correct error
-  //           reject(new Error("Currency not found"));
-  //           return;
-  //         }
-
-  //         navigation.navigate(NavigatorName.RequestAccount, {
-  //           screen: ScreenName.RequestAccountsSelectAccount,
-  //           params: {
-  //             currencies: allCurrencies,
-  //             currency,
-  //             allowAddAccount,
-  //             includeTokens,
-  //             onSuccess,
-  //             onError,
-  //           },
-  //         });
-  //       } else {
-  //         navigation.navigate(NavigatorName.RequestAccount, {
-  //           screen: ScreenName.RequestAccountsSelectCrypto,
-  //           params: {
-  //             currencies: allCurrencies,
-  //             allowAddAccount,
-  //             includeTokens,
-  //             onSuccess,
-  //             onError,
-  //           },
-  //         });
-  //       }
-  //     }),
-  //   [manifest, accounts, navigation],
-  // );
+  const walletAPICurrencies = useWalletAPICurrencies();
 
   const serverRef = useRef<WalletAPIServer>();
   const transportRef = useRef<Transport>();
@@ -237,18 +144,69 @@ export const WebView = ({ manifest, inputs }: Props) => {
       };
       serverRef.current = new WalletAPIServer(transportRef.current);
       serverRef.current.setAccounts(walletAPIAccounts);
-      serverRef.current.setCurrencies(currencies);
+      serverRef.current.setCurrencies(walletAPICurrencies);
 
       serverRef.current.setHandler(
         "account.request",
         async ({ accounts$, currencies$ }) => {
-          const accounts = await firstValueFrom(accounts$);
+          tracking.requestAccountRequested(manifest);
           const currencies = await firstValueFrom(currencies$);
-          console.log(accounts, currencies);
-          if (!accounts[0]) {
-            throw new RpcError(ACCOUNT_NOT_FOUND);
-          }
-          return accounts[0];
+
+          return new Promise((resolve, reject) => {
+            // handle no curencies selected case
+            const cryptoCurrencyIds = currencies.map(({ id }) => id);
+
+            const onSuccess = (
+              account: AccountLike,
+              parentAccount?: Account,
+            ) => {
+              tracking.requestAccountSuccess(manifest);
+              resolve(accountToWalletAPIAccount(account, parentAccount));
+            };
+
+            const onError = (error: Error) => {
+              tracking.requestAccountFail(manifest);
+              reject(error);
+            };
+
+            // if single currency available redirect to select account directly
+            if (cryptoCurrencyIds.length === 1) {
+              const currency = findCryptoCurrencyById(cryptoCurrencyIds[0]);
+
+              if (!currency) {
+                tracking.requestAccountFail(manifest);
+                // @TODO replace with correct error
+                reject(new RpcError(CURRENCY_NOT_FOUND));
+                return;
+              }
+
+              navigation.navigate(NavigatorName.RequestAccount, {
+                screen: ScreenName.RequestAccountsSelectAccount,
+                params: {
+                  accounts$,
+                  currency,
+                  allowAddAccount: true,
+                  onSuccess,
+                  onError,
+                },
+              });
+            } else {
+              const LLCurrencies = listSupportedCurrencies().filter(({ id }) =>
+                cryptoCurrencyIds.includes(id),
+              );
+
+              navigation.navigate(NavigatorName.RequestAccount, {
+                screen: ScreenName.RequestAccountsSelectCrypto,
+                params: {
+                  accounts$,
+                  currencies: LLCurrencies,
+                  allowAddAccount: true,
+                  onSuccess,
+                  onError,
+                },
+              });
+            }
+          });
         },
       );
 
@@ -318,8 +276,8 @@ export const WebView = ({ manifest, inputs }: Props) => {
 
       serverRef.current.setHandler(
         "transaction.sign",
-        ({ account, transaction, options }) => {
-          return signTransactionLogic(
+        async ({ account, transaction, options }) => {
+          const signedOperation = await signTransactionLogic(
             { manifest, accounts, tracking },
             account.id,
             transaction,
@@ -360,9 +318,7 @@ export const WebView = ({ manifest, inputs }: Props) => {
                         reject(transactionSignError);
                       } else {
                         tracking.signTransactionSuccess(manifest);
-                        resolve(
-                          serializeWalletAPISignedTransaction(signedOperation),
-                        );
+                        resolve(signedOperation);
                         const n =
                           navigation.getParent<
                             StackNavigatorNavigation<BaseNavigatorStackParamList>
@@ -379,6 +335,8 @@ export const WebView = ({ manifest, inputs }: Props) => {
               });
             },
           );
+
+          return Buffer.from(signedOperation.signature);
         },
       );
 
@@ -386,7 +344,7 @@ export const WebView = ({ manifest, inputs }: Props) => {
         "transaction.signAndBroadcast",
         async ({ account, transaction, options }) => {
           // TODO avoid duplicated signTransactionLogic & UI code
-          const signedTransaction = await signTransactionLogic(
+          const signedOperation = await signTransactionLogic(
             { manifest, accounts, tracking },
             account.id,
             transaction,
@@ -427,9 +385,7 @@ export const WebView = ({ manifest, inputs }: Props) => {
                         reject(transactionSignError);
                       } else {
                         tracking.signTransactionSuccess(manifest);
-                        resolve(
-                          serializeWalletAPISignedTransaction(signedOperation),
-                        );
+                        resolve(signedOperation);
                         const n =
                           navigation.getParent<
                             StackNavigatorNavigation<BaseNavigatorStackParamList>
@@ -450,26 +406,26 @@ export const WebView = ({ manifest, inputs }: Props) => {
           return broadcastTransactionLogic(
             { manifest, accounts, tracking },
             account.id,
-            signedTransaction,
-            async (account, parentAccount, signedOperation) =>
-              new Promise((resolve, reject) => {
-                if (!getEnv("DISABLE_TRANSACTION_BROADCAST")) {
-                  broadcastSignedTx(
+            signedOperation,
+            async (account, parentAccount, signedOperation) => {
+              let optimisticOperation: Operation = signedOperation.operation;
+
+              if (!getEnv("DISABLE_TRANSACTION_BROADCAST")) {
+                try {
+                  optimisticOperation = await broadcastSignedTx(
                     account,
                     parentAccount,
                     signedOperation,
-                  ).then(
-                    op => {
-                      tracking.broadcastSuccess(manifest);
-                      resolve(op.hash);
-                    },
-                    error => {
-                      tracking.broadcastFail(manifest);
-                      reject(error);
-                    },
                   );
+                  tracking.broadcastSuccess(manifest);
+                } catch (error) {
+                  tracking.broadcastFail(manifest);
+                  throw error;
                 }
-              }),
+              }
+
+              return optimisticOperation.hash;
+            },
           );
         },
       );
@@ -483,8 +439,8 @@ export const WebView = ({ manifest, inputs }: Props) => {
   }, [walletAPIAccounts]);
 
   useEffect(() => {
-    serverRef.current?.setCurrencies(currencies);
-  }, [currencies]);
+    serverRef.current?.setCurrencies(walletAPICurrencies);
+  }, [walletAPICurrencies]);
 
   const handleMessage = useCallback(e => {
     if (e.nativeEvent?.data) {

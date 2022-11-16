@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import {
   View,
   StyleSheet,
@@ -14,6 +14,8 @@ import {
   CryptoCurrency,
   CryptoOrTokenCurrency,
 } from "@ledgerhq/types-cryptoassets";
+import { Observable } from "@ledgerhq/wallet-api-server";
+import { WalletAPIAccount } from "@ledgerhq/live-common/wallet-api/types";
 import { accountsByCryptoCurrencyScreenSelector } from "../../reducers/accounts";
 import { TrackScreen } from "../../analytics";
 import LText from "../../components/LText";
@@ -102,11 +104,44 @@ const List = ({
   );
 };
 
+const useGetAccountIds = (
+  accounts$: Observable<WalletAPIAccount[]> | undefined,
+) => {
+  const [accounts, setAccounts] = useState<WalletAPIAccount[]>([]);
+
+  useEffect(() => {
+    if (!accounts$) {
+      return undefined;
+    }
+
+    const subscription = accounts$.subscribe(walletAccounts => {
+      setAccounts(walletAccounts);
+    });
+
+    return () => {
+      subscription.unsubscribe();
+    };
+  }, [accounts$]);
+
+  return useMemo(() => {
+    if (!accounts$) {
+      return undefined;
+    }
+
+    return accounts.reduce((accountIds, account) => {
+      accountIds.set(account.id, true);
+      return accountIds;
+    }, new Map<string, boolean>());
+  }, [accounts, accounts$]);
+};
+
 function SelectAccount({ navigation, route }: Props) {
   const { colors } = useTheme();
-  const { currency, allowAddAccount, onSuccess, onError } = route.params;
+  const { accounts$, currency, allowAddAccount, onSuccess, onError } =
+    route.params;
+  const accountIds = useGetAccountIds(accounts$);
   const accounts = useSelector(
-    accountsByCryptoCurrencyScreenSelector(currency as CryptoCurrency),
+    accountsByCryptoCurrencyScreenSelector(currency, accountIds),
   ) as { account: AccountLike; subAccount: SubAccount | null }[];
   const onSelect = useCallback(
     (account: AccountLike, parentAccount?: Account) => {

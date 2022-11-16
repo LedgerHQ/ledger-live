@@ -1,27 +1,12 @@
-import {
-  Account,
-  AccountLike,
-  Operation,
-  SignedOperation,
-  TransactionCommon,
-} from "@ledgerhq/types-live";
+import { Account, AccountLike, SignedOperation } from "@ledgerhq/types-live";
 
 import {
   accountToWalletAPIAccount,
   getWalletAPITransactionSignFlowInfos,
 } from "./converters";
-import {
-  RawWalletAPITransaction,
-  RawWalletAPISignedTransaction,
-} from "./rawTypes";
-import {
-  deserializeWalletAPITransaction,
-  deserializeWalletAPISignedTransaction,
-} from "./serializers";
 import type { TrackingAPI } from "./tracking";
 import { AppManifest, TranslatableString, WalletAPITransaction } from "./types";
-import { isTokenAccount, getMainAccount, isAccount } from "../account/index";
-import { getAccountBridge } from "../bridge/index";
+import { isTokenAccount, isAccount } from "../account/index";
 import { Transaction } from "../generated/types";
 import { MessageData } from "../hw/signMessage/types";
 import { prepareMessageToSign } from "../hw/signMessage/index";
@@ -89,8 +74,8 @@ export function signTransactionLogic(
       hasFeesProvided: boolean;
       liveTx: Partial<Transaction>;
     }
-  ) => Promise<RawWalletAPISignedTransaction>
-): Promise<RawWalletAPISignedTransaction> {
+  ) => Promise<SignedOperation>
+): Promise<SignedOperation> {
   tracking.signTransactionRequested(manifest);
 
   if (!transaction) {
@@ -130,14 +115,14 @@ export function signTransactionLogic(
 export function broadcastTransactionLogic(
   { manifest, accounts, tracking }: WalletAPIContext,
   accountId: string,
-  signedTransaction: RawWalletAPISignedTransaction,
+  signedOperation: SignedOperation,
   uiNavigation: (
     account: AccountLike,
     parentAccount: Account | null,
     signedOperation: SignedOperation
   ) => Promise<string>
 ): Promise<string> {
-  if (!signedTransaction) {
+  if (!signedOperation) {
     tracking.broadcastFail(manifest);
     return Promise.reject(new Error("Transaction required"));
   }
@@ -150,113 +135,7 @@ export function broadcastTransactionLogic(
 
   const parentAccount = getParentAccount(account, accounts);
 
-  const signedOperation = deserializeWalletAPISignedTransaction(
-    signedTransaction,
-    accountId
-  );
-
   return uiNavigation(account, parentAccount, signedOperation);
-}
-
-export type CompleteExchangeRequest = {
-  provider: string;
-  fromAccountId: string;
-  toAccountId: string;
-  transaction: RawWalletAPITransaction;
-  binaryPayload: string;
-  signature: string;
-  feesStrategy: string;
-  exchangeType: number;
-};
-export type CompleteExchangeUiRequest = {
-  provider: string;
-  exchange: {
-    fromAccount: AccountLike;
-    fromParentAccount: Account | null;
-    toAccount?: AccountLike;
-    toParentAccount: Account | null;
-  };
-  transaction: TransactionCommon;
-  binaryPayload: string;
-  signature: string;
-  feesStrategy: string;
-  exchangeType: number;
-};
-export function completeExchangeLogic(
-  { manifest, accounts, tracking }: WalletAPIContext,
-  {
-    provider,
-    fromAccountId,
-    toAccountId,
-    transaction,
-    binaryPayload,
-    signature,
-    feesStrategy,
-    exchangeType,
-  }: CompleteExchangeRequest,
-  uiNavigation: (request: CompleteExchangeUiRequest) => Promise<Operation>
-): Promise<Operation> {
-  tracking.completeExchangeRequested(manifest);
-
-  // Nb get a hold of the actual accounts, and parent accounts
-  const fromAccount = accounts.find((a) => a.id === fromAccountId);
-
-  const toAccount = accounts.find((a) => a.id === toAccountId);
-
-  if (!fromAccount) {
-    return Promise.reject();
-  }
-
-  if (exchangeType === 0x00 && !toAccount) {
-    // if we do a swap, a destination account must be provided
-    return Promise.reject();
-  }
-
-  const fromParentAccount = getParentAccount(fromAccount, accounts);
-  const toParentAccount = toAccount
-    ? getParentAccount(toAccount, accounts)
-    : null;
-  const exchange = {
-    fromAccount,
-    fromParentAccount,
-    toAccount,
-    toParentAccount,
-  };
-
-  const accountBridge = getAccountBridge(fromAccount, fromParentAccount);
-  const mainFromAccount = getMainAccount(fromAccount, fromParentAccount);
-
-  if (transaction.family !== mainFromAccount.currency.family) {
-    return Promise.reject(
-      new Error("Account and transaction must be from the same family")
-    );
-  }
-
-  const walletTransaction = deserializeWalletAPITransaction(transaction);
-  const { liveTx: liveTransaction } =
-    getWalletAPITransactionSignFlowInfos(walletTransaction);
-
-  let processedTransaction = accountBridge.createTransaction(mainFromAccount);
-  processedTransaction = accountBridge.updateTransaction(
-    {
-      ...processedTransaction,
-      recipient: liveTransaction.recipient,
-    },
-    {
-      ...liveTransaction,
-      feesStrategy,
-    }
-  );
-
-  return uiNavigation({
-    provider,
-    exchange,
-    transaction: processedTransaction,
-    binaryPayload,
-    signature,
-    feesStrategy,
-    exchangeType,
-  });
 }
 
 export function signMessageLogic(
