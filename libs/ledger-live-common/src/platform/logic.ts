@@ -105,13 +105,16 @@ export function signTransactionLogic(
 
   const parentAccount = getParentAccount(account, accounts);
 
-  if (
-    (isTokenAccount(account)
-      ? parentAccount?.currency.family
-      : account.currency.family) !== platformTransaction.family
-  ) {
+  const accountFamily = isTokenAccount(account)
+    ? parentAccount?.currency.family
+    : account.currency.family;
+
+  if (accountFamily !== platformTransaction.family) {
     return Promise.reject(
-      new Error("Transaction family not matching account currency family")
+      new Error(`Transaction family not matching account currency family.\n
+      Account family: ${accountFamily}\n
+      Transaction family: ${platformTransaction.family}
+      `)
     );
   }
 
@@ -223,10 +226,15 @@ export function completeExchangeLogic(
 
   const accountBridge = getAccountBridge(fromAccount, fromParentAccount);
   const mainFromAccount = getMainAccount(fromAccount, fromParentAccount);
+  const mainFromAccountFamily = mainFromAccount.currency.family;
 
-  if (transaction.family !== mainFromAccount.currency.family) {
+  if (transaction.family !== mainFromAccountFamily) {
     return Promise.reject(
-      new Error("Account and transaction must be from the same family")
+      new Error(
+        `Account and transaction must be from the same family.\n
+        Account family: ${mainFromAccountFamily}\n
+        Transaction family: ${transaction.family}`
+      )
     );
   }
 
@@ -271,7 +279,9 @@ export function signMessageLogic(
   const account = accounts.find((account) => account.id === accountId);
   if (account === undefined) {
     tracking.platformSignMessageFail(manifest);
-    return Promise.reject(new Error("account not found"));
+    return Promise.reject(
+      new Error(`account with id "${accountId}" not found`)
+    );
   }
 
   let formattedMessage: MessageData | TypedMessageData;
