@@ -34,24 +34,8 @@ function expectCorrectOptimisticOperation(
 ) {
   const { operation, optimisticOperation } = input;
 
-  const opExpected: Record<string, any> = toOperationRaw({
-    ...optimisticOperation,
-  });
-  operation.extra = opExpected.extra;
-  delete opExpected.value;
-  delete opExpected.fee;
-  delete opExpected.date;
-  delete opExpected.blockHash;
-  delete opExpected.blockHeight;
-
-  if (operation.type !== "OUT") {
-    delete opExpected.senders;
-    delete opExpected.receivers;
-    delete opExpected.contract;
-  }
-
   botTest("optimistic operation matches", () =>
-    expect(toOperationRaw(operation)).toMatchObject(opExpected)
+    expect(operation).toMatchObject(optimisticOperation)
   );
 }
 
