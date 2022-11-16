@@ -2,8 +2,7 @@ name: "[Release] Check for translations"
 on:
   pull_request:
     branches:
-      - release
-      - hotfix
+      - main
     paths:
       - apps/ledger-live-desktop/static/i18n/**
       - apps/ledger-live-mobile/src/locales/**
@@ -36,7 +35,7 @@ jobs:
         with:
           script: |
             const fs = require("fs");
-            const text = "Translations files have changed on ${{ github.event.inputs.prNumber || github.event.pull_request.head.ref }}";
+            const text = "Translations files have changed on ${{ github.event.inputs.prNumber || github.event.push.head.ref }}";
             const output = {
               text,
               blocks: [
