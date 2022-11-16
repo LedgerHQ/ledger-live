@@ -24,6 +24,7 @@ import { useDispatch } from "react-redux";
 import { CompositeScreenProps } from "@react-navigation/native";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 
+import { StorylyInstanceID } from "@ledgerhq/types-live";
 import { addKnownDevice } from "../../actions/ble";
 import { NavigatorName, ScreenName } from "../../const";
 import HelpDrawer from "./HelpDrawer";
@@ -45,6 +46,7 @@ import {
 import { RootStackParamList } from "../../components/RootNavigator/types/RootNavigator";
 import { SyncOnboardingStackParamList } from "../../components/RootNavigator/types/SyncOnboardingNavigator";
 import InstallSetOfApps from "../../components/DeviceAction/InstallSetOfApps";
+import Stories from "../../components/StorylyStories";
 
 type StepStatus = "completed" | "active" | "inactive";
 
@@ -177,9 +179,16 @@ export const SyncOnboarding = ({
         status: "inactive",
         estimatedTime: 300,
         renderBody: () => (
-          <Text variant="bodyLineHeight">
-            {t("syncOnboarding.seedStep.description", { productName })}
-          </Text>
+          <Flex pb={1}>
+            <Text variant="bodyLineHeight" mb={6}>
+              {t("syncOnboarding.seedStep.description", { productName })}
+            </Text>
+            <Stories
+              instanceID={StorylyInstanceID.recoverySeed}
+              vertical
+              keepOriginalOrder
+            />
+          </Flex>
         ),
       },
       {

@@ -633,7 +633,7 @@ PODS:
   - Storyly (1.24.1)
   - storyly-react-native (1.24.1):
     - React
-    - Storyly (~> 1.24.0)
+    - Storyly (~> 1.26.0)
   - TcpSockets (4.0.0):
     - React
   - TOCropViewController (2.5.3)
@@ -966,7 +966,7 @@ EXTERNAL SOURCES:
   sovran-react-native:
     :path: "../../../node_modules/.pnpm/@segment+sovran-react-native@0.4.4_ondxtwf5lqq5g76dzmsmwamaca/node_modules/@segment/sovran-react-native"
   storyly-react-native:
-    :path: "../../../node_modules/.pnpm/storyly-react-native@1.24.1_ondxtwf5lqq5g76dzmsmwamaca/node_modules/storyly-react-native"
+    :path: "../../../node_modules/.pnpm/storyly-react-native@1.26.2_ondxtwf5lqq5g76dzmsmwamaca/node_modules/storyly-react-native"
   TcpSockets:
     :path: "../../../node_modules/.pnpm/react-native-tcp@4.0.0_frdjcnsdohx4blxdmaawwvdihy_react-native@0.68.5/node_modules/react-native-tcp"
   Yoga:
