@@ -58,4 +58,4 @@ jobs:
           channel-id: "C040D9JMVQ8"
           payload-file-path: "./payload-slack-content.json"
         env:
-          SLACK_BOT_TOKEN: ${{ secrets.SLACK_API_TOKEN }}
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_LIVE_CI_BOT_TOKEN }}
