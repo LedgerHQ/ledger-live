@@ -23,4 +23,5 @@
 | Viacoin | VIA | https://explorers.api.live.ledger.com/blockchain/v3/via | N/A |
 | Zcash | ZEC | https://explorers.api.live.ledger.com/blockchain/v3/zec | N/A |
 | Horizen | ZEN | https://explorers.api.live.ledger.com/blockchain/v3/zen | N/A |
+| Avalanche C-Chain | AVAXC | https://explorers.api.live.ledger.com/blockchain/v3/avax | N/A |
 
