@@ -1,11 +1,16 @@
 import React, { useCallback, useMemo } from "react";
-import { ListRenderItemInfo } from "react-native";
+import { FlatListProps, ListRenderItemInfo } from "react-native";
 import { ProtoNFT } from "@ledgerhq/types-live";
 import { Flex } from "@ledgerhq/native-ui";
 import { BigNumber } from "bignumber.js";
 import NftListItem from "./NftListItem";
 import { AddNewItem } from "./AddNewItemList";
 import CollapsibleHeaderFlatList from "../WalletTab/CollapsibleHeaderFlatList";
+import globalSyncRefreshControl from "../globalSyncRefreshControl";
+
+const RefreshableCollapsibleHeaderFlatList = globalSyncRefreshControl<
+  FlatListProps<ProtoNFT>
+>(CollapsibleHeaderFlatList, { progressViewOffset: 64 });
 
 type Props = {
   data: ProtoNFT[];
@@ -80,7 +85,7 @@ export function NftList({ data }: Props) {
   );
 
   return (
-    <CollapsibleHeaderFlatList
+    <RefreshableCollapsibleHeaderFlatList
       numColumns={2}
       data={dataWithAdd}
       renderItem={renderElem}
