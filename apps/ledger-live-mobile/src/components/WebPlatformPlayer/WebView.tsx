@@ -39,14 +39,12 @@ import {
   listAndFilterCurrencies,
 } from "@ledgerhq/live-common/currencies/index";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
-import type { MessageData } from "@ledgerhq/live-common/hw/signMessage/types";
 import type { AppManifest } from "@ledgerhq/live-common/platform/types";
 import {
   broadcastTransactionLogic,
   receiveOnAccountLogic,
   signTransactionLogic,
   completeExchangeLogic,
-  CompleteExchangeUiRequest,
   signMessageLogic,
 } from "@ledgerhq/live-common/platform/logic";
 import { useJSONRPCServer } from "@ledgerhq/live-common/platform/JSONRPCServer";
@@ -63,7 +61,6 @@ import {
 import trackingWrapper from "@ledgerhq/live-common/platform/tracking";
 import { useTheme } from "styled-components/native";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import { TypedMessageData } from "@ledgerhq/live-common/families/ethereum/types";
 import BigNumber from "bignumber.js";
 import { NavigatorName, ScreenName } from "../../const";
 import { broadcastSignedTx } from "../../logic/screenTransactionHooks";
@@ -259,11 +256,7 @@ export const WebView = ({ manifest, inputs }: Props) => {
       receiveOnAccountLogic(
         { manifest, accounts, tracking },
         accountId,
-        (
-          account: AccountLike,
-          parentAccount: Account | null,
-          accountAddress: string,
-        ) =>
+        (account, parentAccount, accountAddress) =>
           new Promise((resolve, reject) => {
             navigation.navigate(ScreenName.VerifyAccount, {
               account,
@@ -308,15 +301,7 @@ export const WebView = ({ manifest, inputs }: Props) => {
         { manifest, accounts, tracking },
         accountId,
         transaction,
-        (
-          account: AccountLike,
-          parentAccount: Account | null,
-          {
-            liveTx,
-          }: {
-            liveTx: Partial<Transaction>;
-          },
-        ) => {
+        (account, parentAccount, { liveTx }) => {
           const tx = prepareSignTransaction(
             account,
             parentAccount,
@@ -466,7 +451,7 @@ export const WebView = ({ manifest, inputs }: Props) => {
           signature,
           feesStrategy,
           exchangeType,
-        }: CompleteExchangeUiRequest): Promise<Operation> =>
+        }): Promise<Operation> =>
           new Promise((resolve, reject) => {
             navigation.navigate(NavigatorName.PlatformExchange, {
               screen: ScreenName.PlatformCompleteExchange,
@@ -513,10 +498,7 @@ export const WebView = ({ manifest, inputs }: Props) => {
         { manifest, accounts, tracking },
         accountId,
         message,
-        (
-          { id: accountId }: AccountLike,
-          message: MessageData | TypedMessageData,
-        ) =>
+        ({ id: accountId }, message) =>
           new Promise((resolve, reject) => {
             navigation.navigate(NavigatorName.SignMessage, {
               screen: ScreenName.SignSummary,

@@ -22,7 +22,6 @@ import {
 import { getEnv } from "@ledgerhq/live-common/env";
 import { flattenAccounts } from "@ledgerhq/live-common/account/index";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
-import type { MessageData } from "@ledgerhq/live-common/hw/signMessage/types";
 import type { AppManifest } from "@ledgerhq/live-common/wallet-api/types";
 import {
   broadcastTransactionLogic,
@@ -41,7 +40,6 @@ import {
   listSupportedCurrencies,
 } from "@ledgerhq/live-common/currencies/index";
 import trackingWrapper from "@ledgerhq/live-common/wallet-api/tracking";
-import { TypedMessageData } from "@ledgerhq/live-common/families/ethereum/types";
 import { useTheme } from "styled-components/native";
 import BigNumber from "bignumber.js";
 import { NavigatorName, ScreenName } from "../../const";
@@ -214,11 +212,7 @@ export const WebView = ({ manifest, inputs }: Props) => {
         return receiveOnAccountLogic(
           { manifest, accounts, tracking },
           account.id,
-          (
-            account: AccountLike,
-            parentAccount: Account | null,
-            accountAddress: string,
-          ) =>
+          (account, parentAccount, accountAddress) =>
             new Promise((resolve, reject) => {
               navigation.navigate(ScreenName.VerifyAccount, {
                 account,
@@ -246,10 +240,7 @@ export const WebView = ({ manifest, inputs }: Props) => {
           { manifest, accounts, tracking },
           account.id,
           message.toString("hex"),
-          (
-            { id: accountId }: AccountLike,
-            message: MessageData | TypedMessageData,
-          ) =>
+          ({ id: accountId }, message) =>
             new Promise((resolve, reject) => {
               navigation.navigate(NavigatorName.SignMessage, {
                 screen: ScreenName.SignSummary,
@@ -281,15 +272,7 @@ export const WebView = ({ manifest, inputs }: Props) => {
             { manifest, accounts, tracking },
             account.id,
             transaction,
-            (
-              account: AccountLike,
-              parentAccount: Account | null,
-              {
-                liveTx,
-              }: {
-                liveTx: Partial<Transaction>;
-              },
-            ) => {
+            (account, parentAccount, { liveTx }) => {
               const tx = prepareSignTransaction(
                 account,
                 parentAccount,
@@ -343,20 +326,12 @@ export const WebView = ({ manifest, inputs }: Props) => {
       serverRef.current.setHandler(
         "transaction.signAndBroadcast",
         async ({ account, transaction, options }) => {
-          // TODO avoid duplicated signTransactionLogic & UI code
+          // TODO try to avoid duplicated signTransactionLogic & UI code
           const signedOperation = await signTransactionLogic(
             { manifest, accounts, tracking },
             account.id,
             transaction,
-            (
-              account: AccountLike,
-              parentAccount: Account | null,
-              {
-                liveTx,
-              }: {
-                liveTx: Partial<Transaction>;
-              },
-            ) => {
+            (account, parentAccount, { liveTx }) => {
               const tx = prepareSignTransaction(
                 account,
                 parentAccount,

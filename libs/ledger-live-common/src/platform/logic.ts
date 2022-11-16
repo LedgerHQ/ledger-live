@@ -19,7 +19,7 @@ import {
   deserializePlatformSignedTransaction,
 } from "./serializers";
 import type { TrackFunction } from "./tracking";
-import { AppManifest } from "./types";
+import { AppManifest, TranslatableString } from "./types";
 import { isTokenAccount, getMainAccount, isAccount } from "../account/index";
 import { getAccountBridge } from "../bridge/index";
 import { Transaction } from "../generated/types";
@@ -27,8 +27,11 @@ import { MessageData } from "../hw/signMessage/types";
 import { prepareMessageToSign } from "../hw/signMessage/index";
 import { TypedMessageData } from "../families/ethereum/types";
 
-export function translateContent(content: any, locale = "en"): string {
-  if (!content || typeof content !== "object") return content;
+export function translateContent(
+  content: string | TranslatableString,
+  locale = "en"
+): string {
+  if (!content || typeof content === "string") return content;
   return content[locale] || content.en;
 }
 
@@ -41,10 +44,10 @@ export type WebPlatformContext = {
 function getParentAccount(
   account: AccountLike,
   fromAccounts: AccountLike[]
-): Account | null {
+): Account | undefined {
   return isTokenAccount(account)
     ? (fromAccounts.find((a) => a.id === account.parentId) as Account)
-    : null;
+    : undefined;
 }
 
 export function receiveOnAccountLogic(
@@ -52,7 +55,7 @@ export function receiveOnAccountLogic(
   accountId: string,
   uiNavigation: (
     account: AccountLike,
-    parentAccount: Account | null,
+    parentAccount: Account | undefined,
     accountAddress: string
   ) => Promise<string>
 ): Promise<string> {
@@ -68,7 +71,7 @@ export function receiveOnAccountLogic(
   const parentAccount = getParentAccount(account, accounts);
   const accountAddress = accountToPlatformAccount(
     account,
-    parentAccount ?? undefined //FIXME-STP
+    parentAccount
   ).address;
 
   return uiNavigation(account, parentAccount, accountAddress);
@@ -80,7 +83,7 @@ export function signTransactionLogic(
   transaction: RawPlatformTransaction,
   uiNavigation: (
     account: AccountLike,
-    parentAccount: Account | null,
+    parentAccount: Account | undefined,
     signFlowInfos: {
       canEditFees: boolean;
       hasFeesProvided: boolean;
@@ -131,7 +134,7 @@ export function broadcastTransactionLogic(
   signedTransaction: RawPlatformSignedTransaction,
   uiNavigation: (
     account: AccountLike,
-    parentAccount: Account | null,
+    parentAccount: Account | undefined,
     signedOperation: SignedOperation
   ) => Promise<string>
 ): Promise<string> {
@@ -170,9 +173,9 @@ export type CompleteExchangeUiRequest = {
   provider: string;
   exchange: {
     fromAccount: AccountLike;
-    fromParentAccount: Account | null;
+    fromParentAccount: Account | undefined;
     toAccount?: AccountLike;
-    toParentAccount: Account | null;
+    toParentAccount: Account | undefined;
   };
   transaction: TransactionCommon;
   binaryPayload: string;
@@ -213,7 +216,7 @@ export function completeExchangeLogic(
   const fromParentAccount = getParentAccount(fromAccount, accounts);
   const toParentAccount = toAccount
     ? getParentAccount(toAccount, accounts)
-    : null;
+    : undefined;
   const exchange = {
     fromAccount,
     fromParentAccount,

@@ -29,10 +29,10 @@ export type WalletAPIContext = {
 function getParentAccount(
   account: AccountLike,
   fromAccounts: AccountLike[]
-): Account | null {
+): Account | undefined {
   return isTokenAccount(account)
     ? (fromAccounts.find((a) => a.id === account.parentId) as Account)
-    : null;
+    : undefined;
 }
 
 export function receiveOnAccountLogic(
@@ -40,7 +40,7 @@ export function receiveOnAccountLogic(
   accountId: string,
   uiNavigation: (
     account: AccountLike,
-    parentAccount: Account | null,
+    parentAccount: Account | undefined,
     accountAddress: string
   ) => Promise<string>
 ): Promise<string> {
@@ -56,7 +56,7 @@ export function receiveOnAccountLogic(
   const parentAccount = getParentAccount(account, accounts);
   const accountAddress = accountToWalletAPIAccount(
     account,
-    parentAccount ?? undefined //FIXME-STP
+    parentAccount
   ).address;
 
   return uiNavigation(account, parentAccount, accountAddress);
@@ -68,7 +68,7 @@ export function signTransactionLogic(
   transaction: WalletAPITransaction,
   uiNavigation: (
     account: AccountLike,
-    parentAccount: Account | null,
+    parentAccount: Account | undefined,
     signFlowInfos: {
       canEditFees: boolean;
       hasFeesProvided: boolean;
@@ -118,7 +118,7 @@ export function broadcastTransactionLogic(
   signedOperation: SignedOperation,
   uiNavigation: (
     account: AccountLike,
-    parentAccount: Account | null,
+    parentAccount: Account | undefined,
     signedOperation: SignedOperation
   ) => Promise<string>
 ): Promise<string> {
