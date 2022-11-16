@@ -9,3 +9,7 @@ export const invalidMinimumAmountError = (): Error => {
     ).toNumber()} CSPR`
   );
 };
+
+export const invalidTransferIdError = (): Error => {
+  return new Error("Invalid Transfer ID");
+};
