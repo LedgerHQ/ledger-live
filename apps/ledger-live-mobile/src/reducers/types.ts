@@ -18,6 +18,10 @@ import { Transaction } from "@ledgerhq/live-common/generated/types";
 import type { EventTrigger, DataOfUser } from "../logic/notifications";
 import type { RatingsHappyMoment, RatingsDataOfUser } from "../logic/ratings";
 import { WalletTabNavigatorStackParamList } from "../components/RootNavigator/types/WalletTabNavigator";
+import {
+  WalletContentCard,
+  AssetContentCard,
+} from "../dynamicContent/useContentCards";
 
 // === ACCOUNT STATE ===
 
@@ -95,6 +99,15 @@ export type NotificationsState = {
    * If true, it means another modal is already opened or being opened
    */
   isPushNotificationsModalLocked: boolean;
+};
+
+// === DYNAMIC CONTENT STATE ===
+
+export type DynamicContentState = {
+  /** Dynamic content cards displayed in the Wallet Page */
+  walletCards: WalletContentCard[];
+  /** Dynamic content cards displayed in an Asset Page */
+  assetsCards: AssetContentCard[];
 };
 
 // === RATINGS STATE ===
@@ -227,6 +240,7 @@ export type State = {
   appstate: AppState;
   ble: BleState;
   ratings: RatingsState;
+  dynamicContent: DynamicContentState;
   notifications: NotificationsState;
   swap: SwapStateType;
   walletconnect: WalletConnectState;
