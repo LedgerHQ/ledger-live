@@ -51,11 +51,12 @@ export const FeatureFlagContent = withV3StyleProvider((props: { visible?: boolea
 
   const { getFeature, overrideFeature } = useFeatureFlags();
 
+  const [cheatActivated, setCheatActivated] = useState(false);
   const ruleThemAll = useCallback(() => {
     (["customImage", "deviceInitialApps", "syncOnboarding"] as FeatureId[]).forEach(featureId =>
       overrideFeature(featureId, { ...getFeature(featureId), enabled: true }),
     );
-    window.alert("With great power comes great responsibility.");
+    setCheatActivated(true);
   }, [overrideFeature, getFeature]);
 
   const onDescriptionClick = useCallback(() => {
@@ -91,7 +92,10 @@ export const FeatureFlagContent = withV3StyleProvider((props: { visible?: boolea
 
   return (
     <Flex flexDirection="column" pt={2} rowGap={2} alignSelf="stretch">
-      <div onClick={onDescriptionClick}>{t("settings.developer.featureFlagsDesc")}</div>
+      <div onClick={onDescriptionClick}>
+        {t("settings.developer.featureFlagsDesc")}
+        {cheatActivated ? " With great power comes great responsibility." : null}
+      </div>
       {!props.visible ? null : (
         <>
           <SearchInput
