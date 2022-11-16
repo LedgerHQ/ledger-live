@@ -109,6 +109,7 @@ import { setWallectConnectUri } from "./actions/walletconnect";
 import PostOnboardingProviderWrapped from "./logic/postOnboarding/PostOnboardingProviderWrapped";
 import { isAcceptedTerms } from "./logic/terms";
 import type { Writeable } from "./types/helpers";
+import HookDynamicContentCards from "./dynamicContent/useContentCards";
 
 const themes: {
   [key: string]: Theme;
@@ -676,6 +677,7 @@ export default class Root extends Component<{
                 <DelayedTrackingProvider />
                 <AnalyticsProvider store={store}>
                   <HookNotifications />
+                  <HookDynamicContentCards />
                   <WalletConnectProvider>
                     <RemoteLiveAppProvider
                       provider={provider}
