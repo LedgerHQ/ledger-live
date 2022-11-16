@@ -1,5 +1,11 @@
 # @ledgerhq/live-common
 
+## 27.7.0-nightly.4
+
+### Minor Changes
+
+- [#1798](https://github.com/LedgerHQ/ledger-live/pull/1798) [`e43939cfd5`](https://github.com/LedgerHQ/ledger-live/commit/e43939cfd5e3df8888cfe1f0ba95140acd061eea) Thanks [@henrily-ledger](https://github.com/henrily-ledger)! - change polkadot's api call to anticipate new version
+
 ## 27.7.0-nightly.3
 
 ### Patch Changes

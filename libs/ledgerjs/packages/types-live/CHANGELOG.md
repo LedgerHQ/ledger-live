@@ -1,5 +1,11 @@
 # @ledgerhq/types-live
 
+## 6.26.0-nightly.2
+
+### Patch Changes
+
+- [#1812](https://github.com/LedgerHQ/ledger-live/pull/1812) [`f94772354e`](https://github.com/LedgerHQ/ledger-live/commit/f94772354e18e84dfee20fbb5260f543a1b302b0) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - The push notifications feature flag's key has been modified
+
 ## 6.26.0-nightly.1
 
 ### Minor Changes
