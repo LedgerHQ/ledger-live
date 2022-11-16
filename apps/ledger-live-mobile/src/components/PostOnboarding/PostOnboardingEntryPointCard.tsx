@@ -1,7 +1,7 @@
 import React, { useCallback } from "react";
 import { Flex, Icons, Text } from "@ledgerhq/native-ui";
 import { useTranslation } from "react-i18next";
-import { getDeviceModel } from "@ledgerhq/devices/lib/index";
+import { getDeviceModel } from "@ledgerhq/devices";
 import styled from "styled-components/native";
 import { useDispatch, useSelector } from "react-redux";
 import { usePostOnboardingEntryPointVisibleOnWallet } from "@ledgerhq/live-common/postOnboarding/hooks/index";
