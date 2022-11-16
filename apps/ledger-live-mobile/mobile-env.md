@@ -17,7 +17,7 @@ In other cases, these env files will be used:
 |--|--|--|
 |release|Ledger Live|Ledger Live|
 |prerelease|Ledger Live|Ledger Live|
-|nightly|LL DEV|LL DEV|
+|nightly|LL [STAGING]|LL [STAGING]|
 |staging|LL [STAGING]|LL [STAGING]|
 # App identifier
 | target | iOS | Android |
@@ -36,7 +36,7 @@ In other cases, these env files will be used:
 # Google Service (feature flag)
 | target | iOS | Android |
 |--|--|--|
-|release|GoogleService-Info-Production|GoogleService-Info-Production|
-|prerelease|GoogleService-Info-Production|GoogleService-Info-Production|
+|release|GoogleService-Info-Production|N/A|
+|prerelease|GoogleService-Info-Production|N/A|
 |nightly|N/A|N/A|
-|staging|GoogleService-Info-Staging|GoogleService-Info-Staging|
+|staging|GoogleService-Info-Staging|N/A|
