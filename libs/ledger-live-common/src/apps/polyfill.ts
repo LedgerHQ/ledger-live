@@ -75,6 +75,7 @@ export const polyfillApplication = (
         // if it's ethereum, we have a specific case that we must only allow the Ethereum app
         app.name === "Ethereum")
   );
+
   if (app.name === "Bitcoin Legacy") {
     app.application_versions.forEach((version) => {
       if (version.providers.includes(provider)) {
@@ -82,13 +83,12 @@ export const polyfillApplication = (
       }
     });
   }
-  let o = app;
 
   if (crypto && !app.currencyId) {
-    o = { ...o, currencyId: crypto.id };
+    return { ...app, currencyId: crypto.id };
   }
 
-  return o;
+  return app;
 };
 
 export const calculateDependencies = (): void => {
