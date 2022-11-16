@@ -86,19 +86,8 @@ const elrondSpec: AppSpec<Transaction> = {
   transactionCheck: ({ maxSpendable }) => {
     invariant(maxSpendable.gt(minimalAmount), "balance is too low");
   },
-  test: ({ operation, optimisticOperation }) => {
-    const opExpected: Record<string, any> = toOperationRaw({
-      ...optimisticOperation,
-    });
-    operation.extra = opExpected.extra;
-    delete opExpected.value;
-    delete opExpected.fee;
-    delete opExpected.date;
-    delete opExpected.blockHash;
-    delete opExpected.blockHeight;
-    botTest("optimistic operation matches", () =>
-      expect(toOperationRaw(operation)).toMatchObject(opExpected)
-    );
+  test: (input) => {
+    expectCorrectOptimisticOperation(input);
   },
   mutations: [
     {
@@ -134,7 +123,6 @@ const elrondSpec: AppSpec<Transaction> = {
       },
       test: (input) => {
         expectCorrectBalanceChange(input);
-        expectCorrectOptimisticOperation(input);
       },
     },
     {
@@ -166,7 +154,6 @@ const elrondSpec: AppSpec<Transaction> = {
       },
       test: (input) => {
         expectCorrectBalanceChange(input);
-        expectCorrectOptimisticOperation(input);
       },
     },
     {
@@ -196,9 +183,6 @@ const elrondSpec: AppSpec<Transaction> = {
             },
           ],
         };
-      },
-      test: (input) => {
-        expectCorrectOptimisticOperation(input);
       },
     },
     {

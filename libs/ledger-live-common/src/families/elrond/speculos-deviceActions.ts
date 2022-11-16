@@ -2,6 +2,7 @@ import type { DeviceAction } from "../../bot/types";
 import type { Transaction } from "./types";
 import { formatCurrencyUnit } from "../../currencies";
 import { deviceActionFlow } from "../../bot/specs";
+import { decodeTokenAccountId } from "../../account";
 import BigNumber from "bignumber.js";
 
 export const acceptMoveBalanceTransaction: DeviceAction<Transaction, any> =
@@ -109,7 +110,10 @@ export const acceptEsdtTransferTransaction: DeviceAction<Transaction, any> =
       {
         title: "Token",
         button: "Rr",
-        expectedValue: () => "MEX",
+        expectedValue: ({ transaction }) =>
+          (transaction.subAccountId &&
+            decodeTokenAccountId(transaction.subAccountId).token?.id) ||
+          "",
       },
       {
         title: "Value",
