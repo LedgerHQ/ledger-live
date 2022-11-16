@@ -112,7 +112,7 @@ export const acceptEsdtTransferTransaction: DeviceAction<Transaction, any> =
         button: "Rr",
         expectedValue: ({ transaction }) =>
           (transaction.subAccountId &&
-            decodeTokenAccountId(transaction.subAccountId).token?.id) ||
+            decodeTokenAccountId(transaction.subAccountId).token?.ticker) ||
           "",
       },
       {
