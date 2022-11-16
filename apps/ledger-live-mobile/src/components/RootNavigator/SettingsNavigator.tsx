@@ -47,6 +47,7 @@ import HelpButton from "../../screens/Settings/HelpButton";
 import OnboardingStepLanguage from "../../screens/Onboarding/steps/language";
 import { GenerateMockAccountSelectScreen } from "../../screens/Settings/Debug/GenerateMockAccountsSelect";
 import HiddenNftCollections from "../../screens/Settings/Accounts/HiddenNftCollections";
+import DebugStoryly from "../../screens/DebugStoryly";
 import { useNoNanoBuyNanoWallScreenOptions } from "../../context/NoNanoBuyNanoWall";
 import PostOnboardingDebugScreen from "../../screens/PostOnboarding/PostOnboardingDebugScreen";
 import { SettingsNavigatorStackParamList } from "./types/SettingsNavigator";
@@ -307,6 +308,13 @@ export default function SettingsNavigator() {
         component={DebugMultiAppInstall}
         options={{
           title: "Debug MultiAppInstall",
+        }}
+      />
+      <Stack.Screen
+        name={ScreenName.DebugStoryly}
+        component={DebugStoryly}
+        options={{
+          title: "Debug Storyly",
         }}
       />
       <Stack.Screen

@@ -50,4 +50,5 @@ export type SettingsNavigatorStackParamList = {
   [ScreenName.OnboardingLanguage]: undefined;
   [ScreenName.PostOnboardingDebugScreen]: undefined;
   [ScreenName.DebugMultiAppInstall]: undefined;
+  [ScreenName.DebugStoryly]: undefined;
 };

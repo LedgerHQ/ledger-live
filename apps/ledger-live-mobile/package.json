@@ -190,7 +190,7 @@
     "rxjs": "^6.6.6",
     "rxjs-compat": "^6.6.6",
     "semver": "^7.3.7",
-    "storyly-react-native": "1.24.1",
+    "storyly-react-native": "1.26.2",
     "styled-components": "^5.3.3",
     "styled-system": "^5.1.5",
     "text-encoding-polyfill": "^0.6.7",
