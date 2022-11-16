@@ -49,6 +49,7 @@ import { usePortfolio } from "../../hooks/portfolio";
 import { WalletTabNavigatorStackParamList } from "../../components/RootNavigator/types/WalletTabNavigator";
 import AddAccountsModal from "../AddAccounts/AddAccountsModal";
 import CollapsibleHeaderFlatList from "../../components/WalletTab/CollapsibleHeaderFlatList";
+import globalSyncRefreshControl from "../../components/globalSyncRefreshControl";
 
 export { default as PortfolioTabIcon } from "./TabIcon";
 
@@ -58,9 +59,10 @@ type NavigationProps = BaseComposite<
 
 const maxAssetsToDisplay = 5;
 
-// const wait = timeout => {
-//   return new Promise(resolve => setTimeout(resolve, timeout));
-// };
+const RefreshableCollapsibleHeaderFlatList = globalSyncRefreshControl(
+  CollapsibleHeaderFlatList,
+  { progressViewOffset: 64 },
+);
 
 function PortfolioScreen({ navigation }: NavigationProps) {
   const hideEmptyTokenAccount = useEnv("HIDE_EMPTY_TOKEN_ACCOUNTS");
@@ -71,14 +73,6 @@ function PortfolioScreen({ navigation }: NavigationProps) {
     () => Object.values(carouselVisibility).some(Boolean),
     [carouselVisibility],
   );
-
-  // const [refreshing, setRefreshing] = React.useState(false);
-  // const isFocused = useIsFocused();
-
-  // const onRefresh = React.useCallback(() => {
-  //   setRefreshing(true);
-  //   wait(5000).then(() => setRefreshing(false));
-  // }, []);
 
   const distribution = useDistribution({
     showEmptyAccounts: true,
@@ -251,7 +245,7 @@ function PortfolioScreen({ navigation }: NavigationProps) {
         accountsLength={distribution.list && distribution.list.length}
         discreet={discreetMode}
       />
-      <CollapsibleHeaderFlatList<React.ReactNode>
+      <RefreshableCollapsibleHeaderFlatList
         data={data}
         renderItem={({ item }: ListRenderItemInfo<unknown>) => {
           return item as JSX.Element;
@@ -263,12 +257,6 @@ function PortfolioScreen({ navigation }: NavigationProps) {
             ? "PortfolioAccountsList"
             : "PortfolioEmptyAccount"
         }
-        // refreshControl={
-        //   <RefreshControl
-        //     refreshing={refreshing && isFocused}
-        //     onRefresh={onRefresh}
-        //   />
-        // }
       />
       <MigrateAccountsBanner />
       <AddAccountsModal
