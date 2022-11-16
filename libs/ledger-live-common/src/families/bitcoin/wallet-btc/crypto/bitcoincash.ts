@@ -17,7 +17,6 @@ class BitcoinCash extends Base {
     this.network.usesTimestampedTransaction = false;
   }
 
-  // eslint-disable-next-line
   async getLegacyBitcoinCashAddress(
     xpub: string,
     account: number,
@@ -46,7 +45,6 @@ class BitcoinCash extends Base {
     return toOutputScript(bchaddr.toLegacyAddress(address), this.network);
   }
 
-  // eslint-disable-next-line class-methods-use-this
   validateAddress(address: string): boolean {
     return bchaddr.isValidAddress(address);
   }

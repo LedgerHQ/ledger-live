@@ -35,6 +35,7 @@ import {
 } from "@react-navigation/native";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { NFTResource } from "@ledgerhq/live-common/nft/NftMetadataProvider/types";
+import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import { accountSelector } from "../../reducers/accounts";
 import { ScreenName, NavigatorName } from "../../const";
 import NftLinksPanel from "./NftLinksPanel";
@@ -51,6 +52,8 @@ import type {
 } from "../RootNavigator/types/helpers";
 import type { BaseNavigatorStackParamList } from "../RootNavigator/types/BaseNavigator";
 import { AccountsNavigatorParamList } from "../RootNavigator/types/AccountsNavigator";
+import InfoModal from "../../modals/Info";
+import { notAvailableModalInfo } from "../../screens/Nft/NftInfoNotAvailable";
 
 type Props = CompositeScreenProps<
   | StackNavigatorProps<NftNavigatorParamList, ScreenName.NftViewer>
@@ -93,7 +96,9 @@ const Section = ({
 
   return (
     <View style={style}>
-      <View style={{ marginBottom: 10 }}>
+      <View
+        style={{ marginBottom: 10, flexDirection: "row", alignItems: "center" }}
+      >
         <LText style={styles.sectionTitle} semiBold>
           {title}
         </LText>
@@ -291,142 +296,159 @@ const NftViewer = ({ route }: Props) => {
     [nftMetadata, nftStatus],
   );
 
+  const [isOpen, setOpen] = useState<boolean>(false);
+  const onOpenModal = useCallback(() => {
+    setOpen(true);
+  }, []);
+  const onCloseModal = useCallback(() => {
+    setOpen(false);
+  }, []);
+  const isNFTDisabled =
+    useFeature("disableNftSend")?.enabled && Platform.OS === "ios";
+
   return (
-    <View>
-      <ScrollView contentContainerStyle={styles.scrollView}>
-        <View style={styles.main}>
-          <Skeleton
-            style={[styles.tokenName, styles.tokenNameSkeleton]}
-            loading={isLoading}
-          >
-            <LText style={styles.tokenName}>
-              {collectionMetadata?.tokenName || "-"}
-            </LText>
-          </Skeleton>
+    <>
+      <InfoModal
+        isOpened={isOpen}
+        onClose={onCloseModal}
+        data={notAvailableModalInfo}
+      />
+      <View>
+        <ScrollView contentContainerStyle={styles.scrollView}>
+          <View style={styles.main}>
+            <Skeleton
+              style={[styles.tokenName, styles.tokenNameSkeleton]}
+              loading={isLoading}
+            >
+              <LText style={styles.tokenName}>
+                {collectionMetadata?.tokenName || "-"}
+              </LText>
+            </Skeleton>
 
-          <Skeleton
-            style={[styles.nftName, styles.nftNameSkeleton]}
-            loading={isLoading}
-          >
-            <LText style={styles.nftName} numberOfLines={3} semiBold>
-              {nftMetadata?.nftName || "-"}
-            </LText>
-          </Skeleton>
+            <Skeleton
+              style={[styles.nftName, styles.nftNameSkeleton]}
+              loading={isLoading}
+            >
+              <LText style={styles.nftName} numberOfLines={3} semiBold>
+                {nftMetadata?.nftName || "-"}
+              </LText>
+            </Skeleton>
 
-          <View style={styles.imageContainer}>
-            {nftMetadata?.medias && mediaType !== "video" ? (
-              <TouchableOpacity
-                onPress={() =>
-                  navigation.navigate(NavigatorName.NftNavigator, {
-                    screen: ScreenName.NftImageViewer,
-                    params: {
-                      metadata: nftMetadata,
-                      mediaFormat: "original",
-                      status: nftStatus,
-                    },
-                  })
-                }
-              >
+            <View style={styles.imageContainer}>
+              {nftMetadata?.medias && mediaType !== "video" ? (
+                <TouchableOpacity
+                  onPress={() =>
+                    navigation.navigate(NavigatorName.NftNavigator, {
+                      screen: ScreenName.NftImageViewer,
+                      params: {
+                        metadata: nftMetadata,
+                        mediaFormat: "original",
+                        status: nftStatus,
+                      },
+                    })
+                  }
+                >
+                  <NftComponent />
+                </TouchableOpacity>
+              ) : (
                 <NftComponent />
-              </TouchableOpacity>
-            ) : (
-              <NftComponent />
-            )}
-          </View>
-
-          <View style={styles.buttons}>
-            <View style={styles.sendButtonContainer}>
-              <Button
-                type="main"
-                Icon={Icons.ArrowFromBottomMedium}
-                iconPosition="left"
-                onPress={goToRecipientSelection}
-              >
-                <Trans i18nKey="account.send" />
-              </Button>
+              )}
             </View>
-            {nftMetadata?.links && (
-              <View style={styles.ellipsisButtonContainer}>
+
+            <View style={styles.buttons}>
+              <View style={styles.sendButtonContainer}>
                 <Button
                   type="main"
-                  Icon={Icons.OthersMedium}
-                  onPress={() => setBottomModalOpen(true)}
-                />
+                  Icon={Icons.ArrowFromBottomMedium}
+                  iconPosition="left"
+                  onPress={isNFTDisabled ? onOpenModal : goToRecipientSelection}
+                >
+                  <Trans i18nKey="account.send" />
+                </Button>
               </View>
-            )}
-          </View>
-        </View>
-
-        {/* This weird thing is because we want a full width scrollView withtout the paddings */}
-        {properties && (
-          <>
-            <View style={styles.propertiesContainer}>
-              <LText style={styles.sectionTitle} semiBold>
-                {t("nft.viewer.properties")}
-              </LText>
+              {nftMetadata?.links && (
+                <View style={styles.ellipsisButtonContainer}>
+                  <Button
+                    type="main"
+                    Icon={Icons.OthersMedium}
+                    onPress={() => setBottomModalOpen(true)}
+                  />
+                </View>
+              )}
             </View>
-            {properties}
+          </View>
+
+          {/* This weird thing is because we want a full width scrollView withtout the paddings */}
+          {properties && (
+            <>
+              <View style={styles.propertiesContainer}>
+                <LText style={styles.sectionTitle} semiBold>
+                  {t("nft.viewer.properties")}
+                </LText>
+              </View>
+              {properties}
+              <View style={styles.hr} />
+            </>
+          )}
+
+          <View style={styles.main}>
+            {description && (
+              <>
+                <Section title={t("nft.viewer.description")}>
+                  {description}
+                </Section>
+                <View style={styles.hr} />
+              </>
+            )}
+
+            <Section
+              title={t("nft.viewer.tokenContract")}
+              value={nft?.contract}
+              copyAvailable
+              copiedString={t("nft.viewer.tokenContractCopied")}
+            />
+
             <View style={styles.hr} />
-          </>
-        )}
 
-        <View style={styles.main}>
-          {description && (
-            <>
-              <Section title={t("nft.viewer.description")}>
-                {description}
-              </Section>
-              <View style={styles.hr} />
-            </>
-          )}
+            <Section
+              title={t("nft.viewer.tokenId")}
+              value={nft?.tokenId}
+              copyAvailable
+              copiedString={t("nft.viewer.tokenIdCopied")}
+            />
 
-          <Section
-            title={t("nft.viewer.tokenContract")}
-            value={nft?.contract}
-            copyAvailable
-            copiedString={t("nft.viewer.tokenContractCopied")}
-          />
-
-          <View style={styles.hr} />
-
-          <Section
-            title={t("nft.viewer.tokenId")}
-            value={nft?.tokenId}
-            copyAvailable
-            copiedString={t("nft.viewer.tokenIdCopied")}
-          />
-
-          {nft?.standard === "ERC1155" && (
-            <>
-              <View style={styles.hr} />
-              <TouchableOpacity onPress={closeModal}>
-                <Section
-                  title={t("nft.viewer.quantity")}
-                  value={nft?.amount?.toFixed()}
-                />
-              </TouchableOpacity>
-            </>
-          )}
-          <FeatureToggle feature="counterValue">
-            {!floorPriceLoading && floorPrice ? (
+            {nft?.standard === "ERC1155" && (
               <>
                 <View style={styles.hr} />
-                <Section
-                  title={t("nft.viewer.attributes.floorPrice")}
-                  value={`${floorPrice} ${ticker}`}
-                />
+                <TouchableOpacity onPress={closeModal}>
+                  <Section
+                    title={t("nft.viewer.quantity")}
+                    value={nft?.amount?.toFixed()}
+                  />
+                </TouchableOpacity>
               </>
-            ) : null}
-          </FeatureToggle>
-        </View>
-      </ScrollView>
-      <NftLinksPanel
-        nftMetadata={nftMetadata || undefined}
-        links={nftMetadata?.links}
-        isOpen={bottomModalOpen}
-        onClose={closeModal}
-      />
-    </View>
+            )}
+            <FeatureToggle feature="counterValue">
+              {!floorPriceLoading && floorPrice ? (
+                <>
+                  <View style={styles.hr} />
+                  <Section
+                    title={t("nft.viewer.attributes.floorPrice")}
+                    value={`${floorPrice} ${ticker}`}
+                  />
+                </>
+              ) : null}
+            </FeatureToggle>
+          </View>
+        </ScrollView>
+        <NftLinksPanel
+          nftMetadata={nftMetadata || undefined}
+          links={nftMetadata?.links}
+          isOpen={bottomModalOpen}
+          onClose={closeModal}
+        />
+      </View>
+    </>
   );
 };
 

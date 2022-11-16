@@ -48,7 +48,11 @@ export const languageLabels: { [key in Locale]: string } = {
 
 type ChangeLangArgs = { value: Locale; label: string };
 
-const LanguageSelect = () => {
+type Props = {
+  disableLanguagePrompt?: boolean;
+};
+
+const LanguageSelect: React.FC<Props> = ({ disableLanguagePrompt }) => {
   const useSystem = useSelector(useSystemLanguageSelector);
   const language = useSelector(languageSelector);
   const lastSeenDevice = useSelector(lastSeenDeviceSelector);
@@ -104,7 +108,8 @@ const LanguageSelect = () => {
         langAvailableOnDevice &&
         deviceLanguageId !== undefined &&
         idsToLanguage[deviceLanguageId] !== potentialDeviceLanguage &&
-        deviceLocalizationFeatureFlag?.enabled
+        deviceLocalizationFeatureFlag?.enabled &&
+        !disableLanguagePrompt
       ) {
         track("Page LiveLanguageChange DeviceLanguagePrompt", {
           selectedLanguage: potentialDeviceLanguage,
@@ -114,7 +119,13 @@ const LanguageSelect = () => {
 
       dispatch(setLanguage(languageKey));
     },
-    [dispatch, lastSeenDevice, availableDeviceLanguages, deviceLocalizationFeatureFlag?.enabled],
+    [
+      lastSeenDevice?.deviceInfo.languageId,
+      availableDeviceLanguages,
+      deviceLocalizationFeatureFlag?.enabled,
+      disableLanguagePrompt,
+      dispatch,
+    ],
   );
 
   const onClosePrompt = useCallback(() => {

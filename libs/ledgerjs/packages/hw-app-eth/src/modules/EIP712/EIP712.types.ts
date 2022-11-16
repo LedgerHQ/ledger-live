@@ -52,3 +52,27 @@ export type StructImplemData = Required<
       }>;
     }
 >;
+
+export type MessageFilters = {
+  contractName: {
+    label: string;
+    signature: string;
+  };
+  fields: {
+    label: string;
+    path: string;
+    signature: string;
+  }[];
+};
+
+export type FilteringInfoShowField = {
+  displayName: string;
+  sig: string;
+  filtersCount?: never;
+};
+
+export type FilteringInfoContractName = {
+  displayName: string;
+  sig: string;
+  filtersCount: number;
+};

@@ -1,5 +1,13 @@
 [
   {
+    "tag_name": "2.49.2",
+    "body": "\n### 🐛 Fixes\n\nWe have fixed a critical issue preventing macOS users from accessing their nano device.\n"
+  },
+  {
+    "tag_name": "2.49.1",
+    "body": "\nWe’ve done few small but important changes behind the curtain.\nDon’t forget to update your Ledger Live app so that you can access these new features.\n"
+  },
+  {
     "tag_name": "2.49.0",
     "body": "\nA few small but mighty improvements have been made to Ledger Live's swapping capabilities 👇\n\n### 🚀 Features\n\n- You can now filter swap quotes based on floating or fixed rates.\n\n### 🐛 Fixes\n\n- Trying to swap some assets with Changelly, such as GALA and MBOX, may have resulted in the app crashing. We've sorted this out and everything is working as it should now.\n"
   }
