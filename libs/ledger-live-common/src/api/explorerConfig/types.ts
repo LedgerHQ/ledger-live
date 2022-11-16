@@ -1,4 +1,3 @@
-import type { CryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
 import type { EnvName } from "../../env";
 
 export type EndpointConfig = {
@@ -17,7 +16,7 @@ export type Config = {
   experimental?: EndpointConfig;
 };
 
-export type FullConfig = Partial<Record<CryptoCurrencyId, Config>>;
+export type FullConfig = Record<string, Config>;
 
 export type EndpointConfigOverrides = {
   version?: string;
