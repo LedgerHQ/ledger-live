@@ -1,17 +1,20 @@
-import { by, element } from "detox";
-import * as testHelpers from "../../helpers";
+import { getElementById, getElementByText, tapByElement } from "../helpers";
 
 export default class GeneralSettingsPage {
-  static async togglePassword() {
-    await element(by.id("password-settings-switch")).atIndex(0).tap();
+  getPasswordSettingsSwitch = () => getElementById("password-settings-switch");
+  getPasswordTextInput = () => getElementById("password-text-input");
+  getPreferredCurrency = () => getElementByText("Preferred currency");
+  getConfirm = () => getElementByText("Confirm");
+
+  async togglePassword() {
+    await this.getPasswordSettingsSwitch().atIndex(0).tap();
   }
 
-  static async enterNewPassword(passwordText: string) {
-    await element(by.id("password-text-input")).typeText(passwordText);
-    await testHelpers.tapByText("Confirm");
+  async enterNewPassword(passwordText: string) {
+    await this.getPasswordTextInput().typeText(passwordText);
   }
 
-  static async isVisible() {
-    await testHelpers.verifyTextIsVisible("Preferred currency");
+  async confirm() {
+    await tapByElement(this.getConfirm());
   }
 }
