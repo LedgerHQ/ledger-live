@@ -45,7 +45,7 @@ export function mapTxToOps(accountId: string, addressHash: string) {
         recipients: [toAccount],
         date,
         extra: {
-          "Transfer ID": transferId,
+          transferId,
         },
       });
     }
@@ -64,7 +64,7 @@ export function mapTxToOps(accountId: string, addressHash: string) {
         recipients: [toAccount],
         date,
         extra: {
-          "Transfer ID": transferId,
+          transferId,
         },
       });
     }
