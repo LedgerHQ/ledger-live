@@ -83,9 +83,13 @@ describe("getOnboardingStatePolling", () => {
           pollingPeriodMs,
         }).subscribe({
           next: (value) => {
-            expect(value.onboardingState).toBeNull();
-            expect(value.allowedError).toBeInstanceOf(DisconnectedDevice);
-            done();
+            try {
+              expect(value.onboardingState).toBeNull();
+              expect(value.allowedError).toBeInstanceOf(DisconnectedDevice);
+              done();
+            } catch (expectError) {
+              done(expectError);
+            }
           },
         });
 
@@ -106,9 +110,13 @@ describe("getOnboardingStatePolling", () => {
           pollingPeriodMs,
         }).subscribe({
           next: (value) => {
-            expect(value.onboardingState).toBeNull();
-            expect(value.allowedError).toBeInstanceOf(TimeoutError);
-            done();
+            try {
+              expect(value.onboardingState).toBeNull();
+              expect(value.allowedError).toBeInstanceOf(TimeoutError);
+              done();
+            } catch (expectError) {
+              done(expectError);
+            }
           },
         });
 
@@ -129,9 +137,13 @@ describe("getOnboardingStatePolling", () => {
           fetchingTimeoutMs,
         }).subscribe({
           next: (value) => {
-            expect(value.onboardingState).toBeNull();
-            expect(value.allowedError).toBeInstanceOf(TimeoutError);
-            done();
+            try {
+              expect(value.onboardingState).toBeNull();
+              expect(value.allowedError).toBeInstanceOf(TimeoutError);
+              done();
+            } catch (expectError) {
+              done(expectError);
+            }
           },
         });
 
@@ -151,9 +163,13 @@ describe("getOnboardingStatePolling", () => {
           pollingPeriodMs,
         }).subscribe({
           error: (error) => {
-            expect(error).toBeInstanceOf(Error);
-            expect(error?.message).toBe("Unknown error");
-            done();
+            try {
+              expect(error).toBeInstanceOf(Error);
+              expect(error?.message).toBe("Unknown error");
+              done();
+            } catch (expectError) {
+              done(expectError);
+            }
           },
         });
 
@@ -178,11 +194,15 @@ describe("getOnboardingStatePolling", () => {
         pollingPeriodMs,
       }).subscribe({
         next: (value) => {
-          expect(value.onboardingState).toBeNull();
-          expect(value.allowedError).toBeInstanceOf(
-            DeviceExtractOnboardingStateError
-          );
-          done();
+          try {
+            expect(value.onboardingState).toBeNull();
+            expect(value.allowedError).toBeInstanceOf(
+              DeviceExtractOnboardingStateError
+            );
+            done();
+          } catch (expectError) {
+            done(expectError);
+          }
         },
       });
 
@@ -202,9 +222,13 @@ describe("getOnboardingStatePolling", () => {
         pollingPeriodMs,
       }).subscribe({
         next: (value) => {
-          expect(value.allowedError).toBeNull();
-          expect(value.onboardingState).toEqual(anOnboardingState);
-          done();
+          try {
+            expect(value.allowedError).toBeNull();
+            expect(value.onboardingState).toEqual(anOnboardingState);
+            done();
+          } catch (expectError) {
+            done(expectError);
+          }
         },
         error: (error) => {
           done(error);
@@ -236,8 +260,8 @@ describe("getOnboardingStatePolling", () => {
             expect(value.allowedError).toBeNull();
             expect(spiedRepeatWhen).toHaveBeenCalledTimes(1);
             done();
-          } catch (expectedError) {
-            done(expectedError);
+          } catch (expectError) {
+            done(expectError);
           }
         },
         error: (error) => {
