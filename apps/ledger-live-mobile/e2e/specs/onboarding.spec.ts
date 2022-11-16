@@ -14,7 +14,7 @@ describe("Onboarding", () => {
     await OnboardingSteps.selectPairWithBluetooth();
     await OnboardingSteps.addDeviceViaBluetooth();
     await OnboardingSteps.openLedgerLive();
-    await OnboardingSteps.declineNotifications();
+    // await OnboardingSteps.declineNotifications();
 
     await PortfolioPage.waitForPageToBeVisible();
     await PortfolioPage.emptyPortfolioIsVisible();
