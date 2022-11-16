@@ -1,8 +1,6 @@
-// @flow
 import { Server } from "ws";
 import path from "path";
 import fs from "fs";
-// import type { E2EBridgeMessage } from "./client";
 import { NavigatorName } from "../../src/const";
 
 let wss: Server;
@@ -29,7 +27,10 @@ export async function loadConfig(
     acceptTerms();
   }
 
-  const f = fs.readFileSync(path.resolve("e2e", "setups", `${fileName}.json`));
+  const f = fs.readFileSync(
+    path.resolve("e2e", "setups", `${fileName}.json`),
+    "utf8",
+  );
 
   const { data } = JSON.parse(f.toString());
 
@@ -95,7 +96,7 @@ function acceptTerms() {
   postMessage({ type: "acceptTerms", payload: null });
 }
 
-function postMessage(message: object) {
+function postMessage(message: { type: string; payload: unknown }) {
   for (const ws of wss.clients.values()) {
     ws.send(JSON.stringify(message));
   }
