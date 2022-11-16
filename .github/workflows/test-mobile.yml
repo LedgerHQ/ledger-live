@@ -17,7 +17,7 @@ on:
         default: develop
 
 # Ignore while only running every 12 hours on the develop
-# concurrency: 
+# concurrency:
 #   group: ${{ github.workflow }}-${{ github.ref }}
 #   cancel-in-progress: ${{ github.ref_name != 'develop' }}
 
@@ -56,6 +56,40 @@ jobs:
     steps:
       - id: dummy
         run: exit 0
+
+  # codecheck:
+  #   needs: is-affected
+  #   if: ${{ needs.is-affected.outputs.is-mobile-affected == 'true' }}
+  #   name: "Ledger Live Mobile CodeCheck"
+  #   env:
+  #     NODE_OPTIONS: "--max-old-space-size=7168"
+  #     FORCE_COLOR: 3
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v3
+  #     - uses: pnpm/action-setup@v2
+  #       with:
+  #         version: latest
+  #     - uses: actions/setup-node@v3
+  #       with:
+  #         node-version: 16
+  #         cache: pnpm
+  #         cache-dependency-path: "**/pnpm-lock.yaml"
+  #     - uses: ruby/setup-ruby@v1
+  #       with:
+  #         ruby-version: 2.7
+  #     - name: TurboRepo local caching server
+  #       id: turborepo-cache-server
+  #       uses: ./tools/actions/turborepo-gh-cache
+  #       with:
+  #         server-token: "yolo"
+  #         cleanup-cache-folder: "true"
+  #     - name: Install dependencies
+  #       run: pnpm i --filter="live-mobile..." --filter="ledger-live" --no-frozen-lockfile --unsafe-perm
+  #     - name: Run linter
+  #       run: pnpm lint --filter="live-mobile" --api="http://127.0.0.1:${{ steps.turborepo-cache-server.outputs.port }}" --token="yolo" --team="foo"
+  #     - name: Run code checkers
+  #       run: pnpm typecheck --filter="live-mobile" --api="http://127.0.0.1:${{ steps.turborepo-cache-server.outputs.port }}" --token="yolo" --team="foo"
 
   detox-tests-ios:
     # needs: is-affected
