@@ -1,5 +1,5 @@
-import { by, element, expect, waitFor } from "detox";
 import { readFileSync } from "fs";
+import { by, element, expect, waitFor } from "detox";
 
 const DEFAULT_TIMEOUT = 60000;
 
@@ -63,7 +63,10 @@ export async function scrollToElementById(
     );
 }
 
-export async function retryAction(action: Function, timeout?: number) {
+export async function retryAction(
+  action: () => Promise<void>,
+  timeout?: number,
+) {
   let shouldContinue = true;
   const startTime = Date.now();
 

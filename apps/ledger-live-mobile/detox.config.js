@@ -13,14 +13,14 @@ module.exports = {
     jest: {
       setupTimeout: 120000,
     },
-    behavior: {
-      // NOTE: https://github.com/wix/Detox/blob/master/docs/APIRef.Configuration.md#behavior-configuration
-      init: {
-        reinstallApp: true,
-        exposeGlobals: false,
-      },
-      launchApp: "auto",
+  },
+  behavior: {
+    // NOTE: https://github.com/wix/Detox/blob/master/docs/APIRef.Configuration.md#behavior-configuration
+    init: {
+      reinstallApp: true,
+      exposeGlobals: false,
     },
+    launchApp: "auto",
   },
   apps: {
     "ios.debug": {
@@ -62,7 +62,7 @@ module.exports = {
     simulator: {
       type: "ios.simulator",
       device: {
-        type: "iPhone 12",
+        type: "iPhone 14",
       },
     },
     emulator: {

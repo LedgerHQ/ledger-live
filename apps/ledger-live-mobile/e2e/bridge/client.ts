@@ -1,4 +1,3 @@
-// @flow
 import { Platform } from "react-native";
 import invariant from "invariant";
 import { Subject } from "rxjs";
@@ -39,6 +38,7 @@ async function onMessage(event: { data: unknown }) {
       break;
     case "setGlobals":
       Object.entries(msg.payload).forEach(([k, v]) => {
+        //  @ts-expect-error global bullshit
         global[k] = v;
       });
       break;
