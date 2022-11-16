@@ -18,10 +18,9 @@ enum BackgroundType {
 
 type ContentCard = {
   location: LocationContentCard;
-  description: string;
   title: string;
+  link: string;
   image?: string;
-  link?: string;
 };
 
 export type WalletContentCard = ContentCard & {
@@ -40,7 +39,6 @@ export const mapAsWalletContentCard = (card: BrazeContentCard) =>
   ({
     title: card.extras.title,
     location: LocationContentCard.Wallet,
-    description: card.extras.description,
     image: card.extras.image,
     link: card.extras.link,
     background:
@@ -53,7 +51,6 @@ export const mapAsAssetContentCard = (card: BrazeContentCard) =>
   ({
     title: card.extras.title,
     location: LocationContentCard.Asset,
-    description: card.extras.description,
     image: card.extras.image,
     link: card.extras.link,
     asset: card.extras.asset,
