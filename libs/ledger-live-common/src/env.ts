@@ -144,7 +144,7 @@ const envDefinitions = {
   },
   ICON_TESTNET_RPC_ENDPOINT: {
     parser: stringParser,
-    def: "https://berlin.net.solidwallet.io/api/v3",
+    def: "https://lisbon.net.solidwallet.io/api/v3",
     desc: "ICON Berlin Testnet API url",
   },
   ICON_API_ENDPOINT: {
@@ -154,7 +154,7 @@ const envDefinitions = {
   },
   ICON_TESTNET_API_ENDPOINT: {
     parser: stringParser,
-    def: "https://berlin.tracker.solidwallet.io/v3",
+    def: "https://lisbon.tracker.solidwallet.io/v3",
     desc: "ICON Berlin Testnet API url",
   },
   API_STELLAR_HORIZON: {

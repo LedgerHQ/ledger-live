@@ -2,6 +2,8 @@
 import MODAL_WEBSOCKET_BRIDGE from "./WebSocketBridge";
 import MODAL_DELEGATE from "../families/tezos/DelegateFlowModal";
 import MODAL_TRON_REWARDS_INFO from "../families/tron/EarnRewardsInfoModal";
+import MODAL_ICON_REWARDS_INFO from "../families/icon/EarnRewardsInfoModal";
+import MODAL_ICON_FREEZE from "../families/icon/Freeze";
 import MODAL_EXPORT_OPERATIONS from "./ExportOperations";
 import MODAL_CONFIRM from "./ConfirmModal";
 import MODAL_MANAGE_TRON from "./ManageTron";
@@ -179,6 +181,8 @@ const modals: { [_: string]: React$ComponentType<any> } = {
   MODAL_NEAR_REWARDS_INFO,
   MODAL_NEAR_UNSTAKE,
   MODAL_NEAR_WITHDRAW,
+  MODAL_ICON_REWARDS_INFO,
+  MODAL_ICON_FREEZE,
   MODAL_FULL_NODE,
   MODAL_LOTTIE_DEBUGGER,
   MODAL_STORYLY_DEBUGGER,

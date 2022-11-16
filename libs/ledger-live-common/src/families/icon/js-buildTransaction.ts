@@ -2,6 +2,7 @@ import type { IconAccount, Transaction } from "./types";
 import IconService from "icon-sdk-js";
 import { getNid } from "./logic";
 import BigNumber from "bignumber.js";
+import { IISS_SCORE_ADDRESS } from "./constants";
 
 const { IconBuilder, IconConverter, IconAmount, IconUtil } = IconService;
 
@@ -15,6 +16,30 @@ export const buildTransaction = async (
   t: Transaction,
   stepLimit?: BigNumber
 ) => {
+  let icxTxData;
+  switch (t.mode) {
+    case 'send':
+      icxTxData = buildSendingTransaction(a, t, stepLimit);
+      break;
+    case 'freeze':
+      icxTxData = buildStakingTransaction(a, t);
+      break;
+    default:
+      break;
+  }
+
+  return {
+    unsigned: IconUtil.generateHashKey(
+      IconConverter.toRawTransaction(icxTxData)
+    ),
+    rawTransaction: icxTxData,
+  };
+};
+
+const buildSendingTransaction = (
+  a: IconAccount,
+  t: Transaction,
+  stepLimit?: BigNumber) => {
   const address = a.freshAddress;
 
   const icxTransactionBuilder = new IconBuilder.IcxTransactionBuilder();
@@ -47,11 +72,25 @@ export const buildTransaction = async (
       .version(IconConverter.toHexNumber(3))
       .build();
   }
+  return icxTransferData;
+};
 
-  return {
-    unsigned: IconUtil.generateHashKey(
-      IconConverter.toRawTransaction(icxTransferData)
-    ),
-    rawTransaction: icxTransferData,
-  };
+const buildStakingTransaction = (
+  a: IconAccount,
+  t: Transaction) => {
+
+  const address = a.freshAddress;
+  const icxCallTxBuilder = new IconBuilder.CallBuilder();
+
+  let icxTransferData = icxCallTxBuilder
+    .from(address)
+    .to(IISS_SCORE_ADDRESS)
+    .method('setStake')
+    .params({
+      value: IconConverter.toHexNumber(
+        IconAmount.of(t.amount, IconAmount.Unit.ICX).toLoop()
+      )
+    }).build();
+
+  return icxTransferData;
 };
