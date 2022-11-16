@@ -4,12 +4,7 @@ import { useTranslation } from "react-i18next";
 import { ScrollView, StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import styled from "styled-components/native";
-import {
-  StackNavigationState,
-  EventListenerCallback,
-  EventMapCore,
-  useFocusEffect,
-} from "@react-navigation/native";
+import { useFocusEffect } from "@react-navigation/native";
 import Animated, {
   cancelAnimation,
   interpolate,
@@ -19,7 +14,6 @@ import Animated, {
   withDelay,
   withTiming,
 } from "react-native-reanimated";
-import { StackNavigationEventMap } from "@react-navigation/stack";
 import {
   useAllPostOnboardingActionsCompleted,
   usePostOnboardingHubState,
