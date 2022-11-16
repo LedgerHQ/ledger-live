@@ -8,14 +8,16 @@
     "isolatedModules": true,
     "jsx": "react-native",
     "lib": ["es2017"],
+    "types": ["jest"],
     "moduleResolution": "node",
     "resolveJsonModule": true,
     "noEmit": true,
     "strict": true,
     "target": "esnext",
-    "incremental": true
+    "incremental": true,
+    "types": ["jest"]
   },
-  "include": ["src/**/*", "**/*.d.ts"],
+  "include": ["src/**/*", "e2e/**/*", "**/*.d.ts"],
   "exclude": [
     "node_modules",
     "babel.config.js",
