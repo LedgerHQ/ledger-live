@@ -392,9 +392,16 @@ export const SyncOnboarding = ({
           title: t("syncOnboarding.seedStep.title"),
           estimatedTime: 300,
           renderBody: () => (
-            <Text variant="bodyLineHeight">
-              {t("syncOnboarding.seedStep.description", { productName })}
-            </Text>
+            <Flex pb={1}>
+              <Text variant="bodyLineHeight" mb={6}>
+                {t("syncOnboarding.seedStep.description", { productName })}
+              </Text>
+              <Stories
+                instanceID={StorylyInstanceID.recoverySeed}
+                vertical
+                keepOriginalOrder
+              />
+            </Flex>
           ),
         },
         {
