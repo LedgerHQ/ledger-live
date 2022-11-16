@@ -2501,7 +2501,7 @@ export const cryptocurrenciesById: Record<string, CryptoCurrency> = {
     ticker: "OSMO",
     scheme: "osmo",
     color: "#493c9b",
-    family: "osmosis",
+    family: "cosmos",
     units: [
       {
         name: "Osmosis",

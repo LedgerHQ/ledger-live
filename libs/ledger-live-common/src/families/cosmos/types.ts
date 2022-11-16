@@ -225,3 +225,20 @@ export type CosmosAccountRaw = AccountRaw & {
 export type TransactionStatus = TransactionStatusCommon;
 
 export type TransactionStatusRaw = TransactionStatusCommonRaw;
+
+export type CosmosTotalSupply = {
+  denom: string;
+  amount: string;
+};
+
+export type CosmosPool = {
+  not_bonded_tokens: string;
+  bonded_tokens: string;
+};
+
+export type CosmosDistributionParams = {
+  community_tax: string;
+  base_proposer_reward: string;
+  bonus_proposer_reward: string;
+  withdraw_addr_enabled: boolean;
+};
