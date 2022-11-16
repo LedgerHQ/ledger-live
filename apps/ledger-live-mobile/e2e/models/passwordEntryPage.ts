@@ -1,11 +1,19 @@
-import * as testHelpers from "../helpers";
+import {
+  getElementById,
+  getElementByText,
+  tapByElement,
+  typeTextByElement,
+} from "./helpers";
 
 export default class PasswordEntryPage {
-  static async enterPassword(password: string) {
-    await testHelpers.typeText("password-text-input", password);
+  getPasswordTextInput = () => getElementById("password-text-input");
+  getLogin = () => getElementByText("Log in");
+
+  async enterPassword(password: string) {
+    await typeTextByElement(this.getPasswordTextInput(), password);
   }
 
-  static async login() {
-    await testHelpers.tapByText("Log in");
+  async login() {
+    await tapByElement(this.getLogin());
   }
 }
