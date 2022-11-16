@@ -21,6 +21,7 @@ import {
   discreetModeSelector,
   counterValueCurrencySelector,
   carouselVisibilitySelector,
+  blacklistedTokenIdsSelector,
 } from "../../reducers/settings";
 
 import GraphCardContainer from "./GraphCardContainer";
@@ -79,7 +80,7 @@ function PortfolioScreen({ navigation }: NavigationProps) {
     hideEmptyTokenAccount,
   });
   const accounts = useSelector(accountsSelector);
-
+  const blacklistedTokenIds = useSelector(blacklistedTokenIdsSelector);
   const counterValueCurrency: Currency = useSelector(
     counterValueCurrencySelector,
   );
@@ -124,12 +125,20 @@ function PortfolioScreen({ navigation }: NavigationProps) {
       ),
     [distribution],
   );
+
   const [showAssets, assetsToDisplay] = useMemo(
     () => [
       distribution.isAvailable && distribution.list.length > 0,
-      distribution.list.slice(0, maxAssetsToDisplay),
+      distribution.list
+        .filter(asset => {
+          return (
+            asset.currency.type !== "TokenCurrency" ||
+            !blacklistedTokenIds.includes(asset.currency.id)
+          );
+        })
+        .slice(0, maxAssetsToDisplay),
     ],
-    [distribution],
+    [distribution, blacklistedTokenIds],
   );
 
   const postOnboardingVisible = usePostOnboardingEntryPointVisibleOnWallet();

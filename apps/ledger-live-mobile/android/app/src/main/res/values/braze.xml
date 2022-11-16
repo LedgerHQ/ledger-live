@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+<string name="com_braze_api_key">@string/BRAZE_ANDROID_API_KEY</string>
+<string translatable="false" name="com_braze_custom_endpoint">@string/BRAZE_CUSTOM_ENDPOINT</string>
+<bool translatable="false" name="com_braze_firebase_cloud_messaging_registration_enabled">true</bool>
+<string translatable="false" name="com_braze_firebase_cloud_messaging_sender_id">750497694072</string>
+<bool name="com_braze_handle_push_deep_links_automatically">true</bool>
+<string name="com_braze_default_notification_channel_name">Your default channel name</string>
+<string name="com_braze_default_notification_channel_description">Your default channel description</string>
+<drawable name="com_braze_push_small_notification_icon">@drawable/ic_notification_24dp</drawable>
+</resources>

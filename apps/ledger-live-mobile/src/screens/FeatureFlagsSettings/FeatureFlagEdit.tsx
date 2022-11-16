@@ -20,7 +20,13 @@ const FeatureFlagEdit: React.FC<{
    * pureValue is the value of the flag without the keys set programmatically
    * by Legder Live.
    * */
-  const { overriddenByEnv, overridesRemote, ...pureValue } = flagValue || {};
+  const {
+    overriddenByEnv,
+    overridesRemote,
+    enabledOverriddenForCurrentLanguage,
+    enabledOverriddenForCurrentMobileVersion,
+    ...pureValue
+  } = flagValue || {};
 
   const stringifiedPureValue = useMemo(
     () => (pureValue ? JSON.stringify(pureValue) : undefined),

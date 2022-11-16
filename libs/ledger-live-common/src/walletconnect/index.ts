@@ -17,6 +17,8 @@ export type WCPayloadTransaction = {
   data: string;
   gas?: string;
   gasPrice?: string;
+  maxFeePerGas?: string;
+  maxPriorityFeePerGas?: string;
   value?: string;
   nonce?: string;
 };
@@ -125,6 +127,23 @@ export const parseCallRequest: Parser = async (account, payload) => {
         transaction = bridge.updateTransaction(transaction, {
           gasPrice: new BigNumber(wcTransactionData.gasPrice, 16),
         });
+      }
+
+      if (
+        wcTransactionData.maxFeePerGas &&
+        wcTransactionData.maxPriorityFeePerGas
+      ) {
+        const maxFeePerGas = new BigNumber(wcTransactionData.maxFeePerGas, 16);
+        const maxPriorityFeePerGas = new BigNumber(
+          wcTransactionData.maxPriorityFeePerGas,
+          16
+        );
+        if (maxFeePerGas.isGreaterThanOrEqualTo(maxPriorityFeePerGas)) {
+          transaction = bridge.updateTransaction(transaction, {
+            maxFeePerGas,
+            maxPriorityFeePerGas,
+          });
+        }
       }
 
       if (wcTransactionData.nonce) {

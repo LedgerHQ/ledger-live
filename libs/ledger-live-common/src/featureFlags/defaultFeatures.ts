@@ -4,7 +4,7 @@ export const defaultFeatures: DefaultFeatures = {
   learn: {
     enabled: false,
   },
-  pushNotifications: {
+  brazePushNotifications: {
     enabled: false,
   },
   deviceLocalization: {
@@ -135,6 +135,28 @@ export const defaultFeatures: DefaultFeatures = {
   },
   mockFeature: {
     enabled: false,
+  },
+  storyly: {
+    enabled: true,
+    params: {
+      stories: {
+        recoverySeed: {
+          testingEnabled: false,
+          token:
+            "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhY2NfaWQiOjY5NDgsImFwcF9pZCI6MTE0MjIsImluc19pZCI6MTI0ODh9.gFt9c5R8rLsnYpZfoBBchKqo9nEJJs5_G3-i215mTlU",
+        },
+        testStory: {
+          testingEnabled: false,
+          token:
+            "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhY2NfaWQiOjY5NDgsImFwcF9pZCI6MTE0MjIsImluc19pZCI6MTIxOTh9.XqNitheri5VPDqebtA4JFu1VucVOHYlryki2TqCb1DQ",
+        },
+        storylyExample: {
+          testingEnabled: false,
+          token:
+            "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhY2NfaWQiOjc2MCwiYXBwX2lkIjo0MDUsImluc19pZCI6NDA0fQ.1AkqOy_lsiownTBNhVOUKc91uc9fDcAxfQZtpm3nj40",
+        },
+      },
+    },
   },
   walletNftGallery: {
     enabled: false,

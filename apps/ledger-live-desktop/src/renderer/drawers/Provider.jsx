@@ -26,9 +26,9 @@ const reducer = (state: State, update) => {
 };
 const initialState: State = { Component: null, props: null, open: false, options: {} };
 
-type ContextValue = { state: State, setDrawer: typeof setDrawer };
+export type ContextValue = { state: State, setDrawer: typeof setDrawer };
 
-export const context = React.createContext<ContextValue>({
+export const context: React.Context<ContextValue> = React.createContext<ContextValue>({
   state: initialState,
   setDrawer: () => {},
 });
