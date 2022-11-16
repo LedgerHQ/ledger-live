@@ -10,10 +10,7 @@ import { Trans } from "react-i18next";
 import type { Account, AccountLike, SubAccount } from "@ledgerhq/types-live";
 import { useSelector } from "react-redux";
 import { CompositeScreenProps, useTheme } from "@react-navigation/native";
-import {
-  CryptoCurrency,
-  CryptoOrTokenCurrency,
-} from "@ledgerhq/types-cryptoassets";
+import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { Observable } from "@ledgerhq/wallet-api-server";
 import { WalletAPIAccount } from "@ledgerhq/live-common/wallet-api/types";
 import { accountsByCryptoCurrencyScreenSelector } from "../../reducers/accounts";

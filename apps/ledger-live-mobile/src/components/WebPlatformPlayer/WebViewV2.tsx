@@ -133,14 +133,22 @@ export const WebView = ({ manifest, inputs }: Props) => {
   useEffect(() => {
     if (targetRef.current) {
       transportRef.current = {
-        onMessage: () => {
-          // empty fn will be replaced by the server
-        },
+        onMessage: undefined,
         send: message => {
           targetRef.current?.postMessage(message);
         },
       };
       serverRef.current = new WalletAPIServer(transportRef.current);
+      serverRef.current.setPermissions({
+        currencyIds: manifest.currencies === "*" ? ["*"] : manifest.currencies,
+        methodIds: [
+          "account.request",
+          "account.list",
+          "account.receive",
+          "currency.list",
+          "message.sign",
+        ],
+      });
       serverRef.current.setAccounts(walletAPIAccounts);
       serverRef.current.setCurrencies(walletAPICurrencies);
 
