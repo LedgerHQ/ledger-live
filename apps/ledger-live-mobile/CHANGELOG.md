@@ -1,5 +1,11 @@
 # live-mobile
 
+## 3.11.0-next.4
+
+### Patch Changes
+
+- [#1806](https://github.com/LedgerHQ/ledger-live/pull/1806) [`cf9fde64bc`](https://github.com/LedgerHQ/ledger-live/commit/cf9fde64bca7f3265c354a3fddfdbce7b89949cd) Thanks [@github-actions](https://github.com/apps/github-actions)! - removing duplicated permissions from merged manifest
+
 ## 3.11.0-next.3
 
 ### Patch Changes
