@@ -1481,7 +1481,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     type: "CryptoCurrency",
     id: "icon_berlin_testnet",
     coinType: 4801368,
-    name: "ICON Berlin Testnet",
+    name: "ICON Lisbon Testnet",
     managerAppName: "ICON",
     ticker: "ICX",
     scheme: "icon_berlin_testnet",
@@ -1497,8 +1497,8 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     ],
     explorerViews: [
       {
-        tx: "https://berlin.tracker.solidwallet.io/transaction/$hash",
-        address: "https://berlin.tracker.solidwallet.io/address/$address",
+        tx: "https://lisbon.tracker.solidwallet.io/transaction/$hash",
+        address: "https://lisbon.tracker.solidwallet.io/address/$address",
       },
     ],
   },

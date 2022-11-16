@@ -8,12 +8,36 @@ import {
   TransactionStatusCommonRaw,
 } from "@ledgerhq/types-live";
 
+
+export type PRep = {
+  grade: string;
+  status: string;
+  penalty: string;
+  bonded: string;
+  stake: string;
+  delegated: string;
+  power: string;
+  name: string;
+  country: string;
+  city: string;
+  details: string;
+  website: string;
+  address: string;
+  nodeAddress: string;
+  irep: string;
+  irepUpdateBlockHeight: string;
+  lastHeight: string;
+  totalBlocks: string;
+  validatedBlocks: string;
+  p2pEndpoint: string;
+};
 /**
  * Icon account resources
  */
 export type IconResources = {
   nonce: number;
   additionalBalance: BigNumber;
+  votes: PRep[];
 };
 
 /**
@@ -22,6 +46,7 @@ export type IconResources = {
 export type IconResourcesRaw = {
   nonce: number;
   additionalBalance: string;
+  votes: PRep[];
 };
 
 /**
@@ -67,7 +92,7 @@ export type IconPreloadData = {
   somePreloadedData: Record<any, any>;
 };
 
-export type IconAccount = Account & { iconResources: IconResources };
+export type IconAccount = Account & { iconResources: IconResources; };
 
 export type IconAccountRaw = AccountRaw & {
   iconResources: IconResourcesRaw;

@@ -1,6 +1,6 @@
 import { BigNumber } from "bignumber.js";
 import IconService from "icon-sdk-js";
-import type { Transaction } from "../types";
+import type { PRep, Transaction } from "../types";
 import type { Operation, OperationType } from "@ledgerhq/types-live";
 import { encodeOperationId } from "../../../operation";
 import {
@@ -10,7 +10,7 @@ import {
   getLatestBlock,
 } from "./apiCalls";
 import { getRpcUrl } from "../logic";
-import { GOVERNANCE_SCORE_ADDRESS } from "../constants";
+import { GOVERNANCE_SCORE_ADDRESS, IISS_SCORE_ADDRESS } from "../constants";
 const { HttpProvider } = IconService;
 const { IconBuilder, IconAmount } = IconService;
 
@@ -156,4 +156,26 @@ export const getStepPrice = async (account): Promise<BigNumber> => {
   return new BigNumber(
     IconAmount.fromLoop(res || 10000000000, IconAmount.Unit.ICX.toString())
   );
+};
+
+
+/**
+ * Get step price from governance contract
+ */
+export const getPreps = async (account): Promise<PRep[]> => {
+  const rpcURL = getRpcUrl(account.currency);
+  const httpProvider = new HttpProvider(rpcURL);
+  const iconService = new IconService(httpProvider);
+  const txBuilder: any = new IconBuilder.CallBuilder();
+  const prepTx = txBuilder
+    .to(IISS_SCORE_ADDRESS)
+    .method("getPreps")
+    .build();
+  let res;
+  try {
+    res = await iconService.call(prepTx).execute();
+  } catch (error) {
+    // TODO: handle show log
+  }
+  return res?.preps || [];
 };
