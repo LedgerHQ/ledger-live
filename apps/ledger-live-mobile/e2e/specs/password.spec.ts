@@ -1,28 +1,65 @@
-import { device } from "detox";
+import { device, expect } from "detox";
 import PortfolioPage from "../models/portfolioPage";
 import SettingsPage from "../models/settings/settingsPage";
 import GeneralSettingsPage from "../models/settings/generalSettingsPage";
 import PasswordEntryPage from "../models/passwordEntryPage";
-import { delay } from "../helpers";
 import { loadConfig } from "../bridge/server";
+import { delay } from "../models/helpers";
 
 const CORRECT_PASSWORD = "passWORD$123!";
 
-describe("Password Lock Screen", () => {
-  it("should be able to enter the correct password", async () => {
-    await loadConfig("1AccountBTC1AccountETH", true);
+let portfolioPage: PortfolioPage;
+let settingsPage: SettingsPage;
+let generalSettingsPage: GeneralSettingsPage;
+let passwordEntryPage: PasswordEntryPage;
 
-    await PortfolioPage.waitForPageToBeVisible();
-    await PortfolioPage.navigateToSettings();
-    await SettingsPage.navigateToGeneralSettings();
-    await GeneralSettingsPage.togglePassword();
-    await GeneralSettingsPage.enterNewPassword(CORRECT_PASSWORD);
-    await GeneralSettingsPage.enterNewPassword(CORRECT_PASSWORD); // confirm password step
+describe("Password Lock Screen", () => {
+  beforeAll(async () => {
+    await loadConfig("1AccountBTC1AccountETH", true);
+    portfolioPage = new PortfolioPage();
+    settingsPage = new SettingsPage();
+    generalSettingsPage = new GeneralSettingsPage();
+    passwordEntryPage = new PasswordEntryPage();
+  });
+
+  it("should open on Portofolio page", async () => {
+    await expect(portfolioPage.getSettingsButton()).toBeVisible();
+  });
+
+  it("should go to Settings", async () => {
+    await portfolioPage.navigateToSettings();
+  });
+
+  it("should go navigate to General settings", async () => {
+    await settingsPage.navigateToGeneralSettings();
+  });
+
+  it("should toggle Password lock", async () => {
+    await generalSettingsPage.togglePassword();
+  });
+
+  it("should enter password twice", async () => {
+    await generalSettingsPage.enterNewPassword(CORRECT_PASSWORD);
+    await generalSettingsPage.confirm();
+    await generalSettingsPage.enterNewPassword(CORRECT_PASSWORD); // confirm password step
+    await generalSettingsPage.confirm();
+  });
+
+  it("should puts app in background and wait 1 minute and 1 second", async () => {
     await device.sendToHome(); // leave LLM app and go to phone's home screen
     await delay(60001); // password takes 60 seconds of app inactivity to activate
+  });
+
+  it("should move the app to foreground", async () => {
     await device.launchApp(); // restart LLM
-    await PasswordEntryPage.enterPassword(CORRECT_PASSWORD);
-    await PasswordEntryPage.login();
-    await GeneralSettingsPage.isVisible();
+  });
+
+  it("should need to enter password to unlock app", async () => {
+    await passwordEntryPage.enterPassword(CORRECT_PASSWORD);
+    await passwordEntryPage.login();
+  });
+
+  it("should be back on General Settings page", async () => {
+    await expect(generalSettingsPage.getPreferredCurrency()).toBeVisible();
   });
 });

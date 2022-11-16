@@ -1,22 +1,68 @@
+import { expect, waitFor } from "detox";
+import { verifyTextIsVisible } from "../helpers";
 import OnboardingSteps from "../models/onboarding/onboardingSteps";
 import PortfolioPage from "../models/portfolioPage";
 
+let onboardingSteps: OnboardingSteps;
+let portfolioPage: PortfolioPage;
 describe("Onboarding", () => {
-  it("should be able to connect a Nano X", async () => {
-    await OnboardingSteps.waitForPageToBeVisible();
-    await OnboardingSteps.startOnboarding();
-    await OnboardingSteps.DoIOwnDevice(true);
-    await OnboardingSteps.chooseToSetupLedger();
-    await OnboardingSteps.selectYourDevice("Ledger\u00A0Nano\u00A0X");
-    await OnboardingSteps.chooseToConnectYourNano();
-    await OnboardingSteps.verifyContentsOfBoxAreChecked();
-    await OnboardingSteps.chooseToPairMyNano();
-    await OnboardingSteps.selectPairWithBluetooth();
-    await OnboardingSteps.addDeviceViaBluetooth();
-    await OnboardingSteps.openLedgerLive();
-    await OnboardingSteps.declineNotifications();
+  beforeAll(() => {
+    onboardingSteps = new OnboardingSteps();
+    portfolioPage = new PortfolioPage();
+  });
 
-    await PortfolioPage.waitForPageToBeVisible();
-    await PortfolioPage.emptyPortfolioIsVisible();
+  it("waits for Onboarding page to be ready", async () => {
+    await onboardingSteps.getOnboardingGetStarted();
+    await verifyTextIsVisible("Get started");
+  });
+
+  it("starts Onboarding", async () => {
+    await onboardingSteps.startOnboarding();
+  });
+
+  it("selects already owned nano", async () => {
+    await onboardingSteps.DoIOwnDevice(true);
+  });
+
+  it("goes to setup my ledger nano", async () => {
+    await onboardingSteps.chooseToSetupLedger();
+    await verifyTextIsVisible("Ledger\u00A0Nano\u00A0X");
+  });
+
+  it("choses Nano X", async () => {
+    await onboardingSteps.selectYourDevice("Ledger\u00A0Nano\u00A0X");
+  });
+
+  it("connects to Nano X", async () => {
+    await onboardingSteps.chooseToConnectYourNano();
+    await onboardingSteps.verifyContentsOfBoxAreChecked();
+  });
+
+  it("choses to Pair Nano", async () => {
+    await onboardingSteps.chooseToPairMyNano();
+  });
+
+  it("selects Pair with Bluetooth", async () => {
+    await onboardingSteps.selectPairWithBluetooth();
+  });
+
+  it("adds device via Bluetooth", async () => {
+    onboardingSteps.bridgeAddDevices();
+    await waitFor(onboardingSteps.getNanoDevice("David"))
+      .toExist()
+      .withTimeout(3000);
+    await onboardingSteps.addDeviceViaBluetooth("David");
+  });
+
+  it("opens Ledger Live", async () => {
+    await waitFor(onboardingSteps.getContinue()).toExist().withTimeout(3000);
+    await onboardingSteps.openLedgerLive();
+    // await onboardingSteps.declineNotifications();
+    await expect(portfolioPage.getSettingsButton()).toBeVisible();
+  });
+
+  it("should see an empty portfolio page", async () => {
+    const elem = portfolioPage.getEmptyPortfolio();
+    await expect(elem).toBeVisible();
   });
 });

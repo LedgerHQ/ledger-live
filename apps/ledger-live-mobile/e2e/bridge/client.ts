@@ -1,5 +1,5 @@
-// @flow
 import { Platform } from "react-native";
+import { DescriptorEventType } from "@ledgerhq/hw-transport";
 import invariant from "invariant";
 import { Subject } from "rxjs";
 import { store } from "../../src/context/LedgerStore";
@@ -39,6 +39,7 @@ async function onMessage(event: { data: unknown }) {
       break;
     case "setGlobals":
       Object.entries(msg.payload).forEach(([k, v]) => {
+        //  @ts-expect-error global bullshit
         global[k] = v;
       });
       break;
@@ -61,7 +62,14 @@ async function onMessage(event: { data: unknown }) {
   }
 }
 
-export const e2eBridgeSubject = new Subject();
+type SubjectData =
+  | {
+      type: DescriptorEventType;
+      payload: { id: string; name: string; serviceUUID: string };
+    }
+  | { type: "open" };
+
+export const e2eBridgeSubject = new Subject<SubjectData>();
 
 function log(message: string) {
   // eslint-disable-next-line no-console

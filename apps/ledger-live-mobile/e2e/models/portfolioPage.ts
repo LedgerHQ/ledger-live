@@ -1,15 +1,14 @@
-import * as testHelpers from "../helpers";
+import { getElementById, tapByElement } from "./helpers";
 
 export default class PortfolioPage {
-  static async waitForPageToBeVisible() {
-    await testHelpers.waitForElement("settings-icon");
-  }
+  getEmptyPortfolio = () => getElementById("PortfolioEmptyAccount");
+  getSettingsButton = () => {
+    // FIXME: weird that we check for settings-icon to be sure we are on portfolio page ?
+    return getElementById("settings-icon");
+  };
 
-  static async navigateToSettings() {
-    await testHelpers.tap("settings-icon");
-  }
-
-  static async emptyPortfolioIsVisible() {
-    await testHelpers.verifyIsVisible("PortfolioEmptyAccount");
+  async navigateToSettings() {
+    // FIXME: this is probably better in settings page model ?
+    await tapByElement(this.getSettingsButton());
   }
 }
