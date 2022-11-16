@@ -145,7 +145,7 @@ module.exports = {
   },
   overrides: [
     {
-      files: ["e2e/*.js"],
+      files: ["e2e/*.ts"],
       globals: {
         fetch: false,
         it: false,

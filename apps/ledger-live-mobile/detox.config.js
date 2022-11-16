@@ -13,14 +13,17 @@ module.exports = {
     jest: {
       setupTimeout: 120000,
     },
-    behavior: {
-      // NOTE: https://github.com/wix/Detox/blob/master/docs/APIRef.Configuration.md#behavior-configuration
-      init: {
-        reinstallApp: true,
-        exposeGlobals: false,
-      },
-      launchApp: "auto",
+  },
+  logger: {
+    level: process.env.DEBUG_DETOX ? "trace" : "info",
+  },
+  behavior: {
+    // NOTE: https://github.com/wix/Detox/blob/master/docs/APIRef.Configuration.md#behavior-configuration
+    init: {
+      reinstallApp: true,
+      exposeGlobals: false,
     },
+    launchApp: "auto",
   },
   apps: {
     "ios.debug": {
@@ -62,13 +65,13 @@ module.exports = {
     simulator: {
       type: "ios.simulator",
       device: {
-        type: "iPhone 12",
+        type: "iPhone 13",
       },
     },
     emulator: {
       type: "android.emulator",
       device: {
-        avdName: "Pixel_3a_API_30_x86",
+        avdName: "Pixel_5_API_31",
       },
     },
   },
