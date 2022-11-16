@@ -1,53 +1,69 @@
+import {
+  getElementByText,
+  tapByText,
+  tapByElement,
+  getElementById,
+} from "../helpers";
 import * as bridge from "../../bridge/server";
-import * as testHelpers from "../../helpers";
 
 export default class OnboardingSteps {
-  static async waitForPageToBeVisible() {
-    await testHelpers.waitForElementByText("Get started");
+  getOnboardingGetStarted = () => getElementByText("Get started");
+  getYesIDo = () => getElementByText("Yes, I do");
+  getNotYet = () => getElementByText("Not yet");
+  getSetupMyLedger = () => getElementByText("Set up my Ledger");
+  getConnectYourNano = () => getElementByText("Connect your Nano");
+  getContinue = () => getElementByText("Continue");
+
+  // Yes it's a weird character, no do not replace it as it won't find the text
+  getPairNano = () => getElementByText("Let’s pair my Nano");
+
+  getPairDeviceButton = () => getElementById("pair-device");
+  getNanoDevice = (name = "") => getElementByText(`Nano X de ${name}`);
+  getPairWithBluetooth = () => getElementByText("Pair with bluetooth");
+  getMaybeLater = () => getElementById("Maybe later");
+
+  async startOnboarding() {
+    await tapByElement(this.getOnboardingGetStarted());
   }
 
-  static async startOnboarding() {
-    await testHelpers.tapByText("Get started");
-  }
-
-  static async DoIOwnDevice(answer = true) {
+  async DoIOwnDevice(answer = true) {
     answer
-      ? await testHelpers.tapByText("Yes, I do")
-      : await testHelpers.tapByText("Not yet");
+      ? await tapByElement(this.getYesIDo())
+      : await tapByElement(this.getNotYet());
   }
 
   // change to tap by text
-  static async chooseToSetupLedger() {
-    await testHelpers.tapByText("Set up my Ledger");
-    // await testHelpers.tap("Onboarding PostWelcome - Selection|SetupLedger");
+  async chooseToSetupLedger() {
+    await tapByElement(this.getSetupMyLedger());
   }
 
-  static async selectYourDevice(device: string) {
-    await testHelpers.tapByText(device);
-    // await testHelpers.tap(`Onboarding Device - Selection|${device}`);
+  async selectYourDevice(device: string) {
+    await tapByText(device);
   }
 
-  static async chooseToConnectYourNano() {
-    await testHelpers.tapByText("Connect your Nano");
+  async chooseToConnectYourNano() {
+    await tapByElement(this.getConnectYourNano());
   }
 
-  static async verifyContentsOfBoxAreChecked() {
-    await testHelpers.tapByText("Continue");
+  async verifyContentsOfBoxAreChecked() {
+    await tapByElement(this.getContinue());
   }
 
-  static async chooseToPairMyNano() {
-    await testHelpers.tapByText("Let’s pair my Nano");
+  async chooseToPairMyNano() {
+    await tapByElement(this.getPairNano());
   }
 
-  static async selectPairWithBluetooth() {
-    // await testHelpers.tapByText("Pair with bluetooth");
-    await testHelpers.tap("pair-device");
+  async selectPairWithBluetooth() {
+    // await tapByElement(this.getPairWithBluetooth());
+    await tapByElement(this.getPairDeviceButton());
   }
 
-  static async addDeviceViaBluetooth() {
+  bridgeAddDevices() {
     bridge.addDevices();
-    await testHelpers.delay(1000); // give time for devices to appear
-    await testHelpers.tapByText("Nano X de David");
+  }
+
+  async addDeviceViaBluetooth(name = "David") {
+    await tapByElement(this.getNanoDevice(name));
 
     bridge.setInstalledApps(); // tell LLM what apps the mock device has
 
@@ -59,15 +75,13 @@ export default class OnboardingSteps {
     // ).not.toBeVisible();
     // issue here: the 'Pairing Successful' text is 'visible' before it actually is, so it's failing at the continue step as continue isn't actually visible
     // await waitFor(element(by.text("Pairing Successful"))).toBeVisible();
-
-    await testHelpers.delay(5000); // wait for flaky 'device authentication check screen'
   }
 
-  static async openLedgerLive() {
-    await testHelpers.tapByText("Continue");
+  async openLedgerLive() {
+    await tapByElement(this.getContinue());
   }
 
-  static async declineNotifications() {
-    await testHelpers.tapByText("Maybe later");
+  async declineNotifications() {
+    await tapByElement(this.getMaybeLater());
   }
 }

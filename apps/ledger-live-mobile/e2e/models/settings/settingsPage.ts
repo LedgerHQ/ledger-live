@@ -1,7 +1,9 @@
-import * as testHelpers from "../../helpers";
+import { getElementById, tapByElement } from "../helpers";
 
 export default class SettingsPage {
-  static async navigateToGeneralSettings() {
-    await testHelpers.tap("general-settings-card");
+  getGeneralSettingsButton = () => getElementById("general-settings-card");
+
+  async navigateToGeneralSettings() {
+    await tapByElement(this.getGeneralSettingsButton());
   }
 }

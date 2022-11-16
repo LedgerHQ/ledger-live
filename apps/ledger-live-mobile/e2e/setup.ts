@@ -1,6 +1,7 @@
 import { device } from "detox";
 import { execSync } from "child_process";
 import * as bridge from "./bridge/server";
+// import detoxConfig from "../detox.config";
 
 beforeAll(async () => {
   bridge.init();
@@ -19,11 +20,15 @@ afterAll(async () => {
 
 // NOTE: https://github.com/wix/Detox/blob/master/docs/APIRef.Screenshots.md
 async function setDemoMode() {
-  if (device.getPlatform() === "ios") {
-    execSync(
-      'xcrun simctl status_bar "iPhone 12" override --time "12:00" --batteryState charged --batteryLevel 100 --wifiBars 3 --cellularMode active --cellularBars 4',
-    );
-  } else {
+  // FIXME: commands does nothing (we tried locally), so we commented it out, however
+  // when we start using screenshots for testing, we will probably need to look into itx`
+  //
+  // if (device.getPlatform() === "ios") {
+  //   execSync(
+  //     `xcrun simctl status_bar booted override --time "12:00" --batteryState charged --batteryLevel 100 --wifiBars 3 --cellularMode active --cellularBars 4`,
+  //   );
+  // }
+  if (device.getPlatform() !== "ios") {
     // enter demo mode
     execSync("adb shell settings put global sysui_demo_allowed 1");
     // display time 12:00
