@@ -11,7 +11,6 @@ import { withDevice } from "../../hw/deviceAccess";
 import { encodeOperationId } from "../../operation";
 import Elrond from "./hw-app-elrond";
 import { buildTransaction } from "./js-buildTransaction";
-import { findTokenById } from "@ledgerhq/cryptoassets";
 import { CHAIN_ID } from "./constants";
 import {
   Account,
@@ -21,6 +20,7 @@ import {
   SignOperationEvent,
 } from "@ledgerhq/types-live";
 import { BinaryUtils } from "./utils/binary.utils";
+import { decodeTokenAccountId } from "../../account";
 
 function getOptimisticOperationType(
   transactionMode: ElrondTransactionMode
@@ -61,18 +61,26 @@ function getOptimisticOperationDelegationAmount(
 const buildOptimisticOperation = (
   account: Account,
   transaction: Transaction,
-  fee: BigNumber,
   unsignedTx: ElrondProtocolTransaction
 ): Operation => {
+  const senders = [account.freshAddress];
+  const recipients = [transaction.recipient];
+  const { subAccountId, fees } = transaction;
+
+  if (!fees) {
+    throw new FeeNotLoaded();
+  }
+
   const type = getOptimisticOperationType(transaction.mode);
+
   const tokenAccount =
-    (transaction.subAccountId &&
+    (subAccountId &&
       account.subAccounts &&
-      account.subAccounts.find((ta) => ta.id === transaction.subAccountId)) ||
+      account.subAccounts.find((ta) => ta.id === subAccountId)) ||
     null;
 
   let value = transaction.useAllAmount
-    ? account.spendableBalance.minus(fee)
+    ? account.spendableBalance.minus(fees)
     : transaction.amount;
 
   if (tokenAccount) {
@@ -86,11 +94,11 @@ const buildOptimisticOperation = (
     hash: "",
     type,
     value,
-    fee,
+    fee: fees,
     blockHash: null,
     blockHeight: account.blockHeight,
-    senders: [account.freshAddress],
-    recipients: [transaction.recipient].filter(Boolean),
+    senders,
+    recipients,
     accountId: account.id,
     transactionSequenceNumber: unsignedTx.nonce,
     date: new Date(),
@@ -101,6 +109,27 @@ const buildOptimisticOperation = (
       amount: delegationAmount,
     },
   };
+
+  if (tokenAccount && subAccountId) {
+    operation.subOperations = [
+      {
+        id: `${subAccountId}--OUT`,
+        hash: "",
+        type: "OUT",
+        value: transaction.useAllAmount
+          ? tokenAccount.balance
+          : transaction.amount,
+        fee: new BigNumber(0),
+        blockHash: null,
+        blockHeight: null,
+        senders,
+        recipients,
+        accountId: subAccountId,
+        date: new Date(),
+        extra: {},
+      },
+    ];
+  }
 
   return operation;
 };
@@ -134,14 +163,12 @@ const signOperation = ({
         await elrond.setAddress(account.freshAddressPath);
 
         if (tokenAccount) {
-          const tokenIdentifier = tokenAccount.id.split("+")[1];
-          const token = findTokenById(`${tokenIdentifier}`);
+          const { token } = decodeTokenAccountId(tokenAccount.id);
 
           if (token?.name && token.id && token.ledgerSignature) {
-            const collectionIdentifierHex = token.id.split("/")[2];
             await elrond.provideESDTInfo(
               token.name,
-              collectionIdentifierHex,
+              token.id,
               token?.units[0].magnitude,
               CHAIN_ID,
               token.ledgerSignature
@@ -174,9 +201,9 @@ const signOperation = ({
         const operation = buildOptimisticOperation(
           account,
           transaction,
-          transaction.fees ?? new BigNumber(0),
           parsedUnsignedTx
         );
+
         o.next({
           type: "signed",
           signedOperation: {

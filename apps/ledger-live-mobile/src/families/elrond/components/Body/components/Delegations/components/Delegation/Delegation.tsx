@@ -4,6 +4,7 @@ import { useTheme } from "@react-navigation/native";
 import { useTranslation } from "react-i18next";
 import { Text } from "@ledgerhq/native-ui";
 import { BigNumber } from "bignumber.js";
+import { denominate } from "@ledgerhq/live-common/families/elrond/helpers/denominate";
 
 import CounterValue from "../../../../../../../../components/CounterValue";
 import ArrowRight from "../../../../../../../../icons/ArrowRight";
@@ -12,7 +13,6 @@ import LedgerLogo from "../../../../../../../../icons/LiveLogo";
 import FirstLetterIcon from "../../../../../../../../components/FirstLetterIcon";
 import Circle from "../../../../../../../../components/Circle";
 
-import { denominate } from "../../../../../../helpers/denominate";
 import { ELROND_LEDGER_ADDRESS } from "../../../../../../constants";
 
 import type { DelegationPropsType } from "./types";

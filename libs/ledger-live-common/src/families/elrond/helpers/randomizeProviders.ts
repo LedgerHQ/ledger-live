@@ -1,4 +1,4 @@
-import type { ElrondProvider } from "@ledgerhq/live-common/families/elrond/types";
+import type { ElrondProvider } from "../types";
 
 /*
  * Declare the type for the extended validator object that has the sort key attached.
@@ -15,9 +15,9 @@ export interface SortedValidatorType {
 
 export const randomizeProviders = (providers: ElrondProvider[]) =>
   providers
-    .map(provider => ({ provider, sort: Math.random() }))
+    .map((provider) => ({ provider, sort: Math.random() }))
     .sort(
       (alpha: SortedValidatorType, beta: SortedValidatorType) =>
-        alpha.sort - beta.sort,
+        alpha.sort - beta.sort
     )
     .map((item: SortedValidatorType) => item.provider);

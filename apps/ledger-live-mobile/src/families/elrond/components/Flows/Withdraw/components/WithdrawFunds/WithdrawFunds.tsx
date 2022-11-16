@@ -2,6 +2,7 @@ import React, { useCallback, useMemo } from "react";
 import { View } from "react-native";
 import { Trans } from "react-i18next";
 import { useTheme } from "@react-navigation/native";
+import { handleTransactionStatus } from "@ledgerhq/live-common/families/elrond/helpers/handleTransactionStatus";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import {
   getAccountUnit,
@@ -17,8 +18,6 @@ import CounterValue from "../../../../../../../components/CounterValue";
 import FirstLetterIcon from "../../../../../../../components/FirstLetterIcon";
 import TranslatedError from "../../../../../../../components/TranslatedError";
 import { ScreenName } from "../../../../../../../const";
-
-import { handleTransactionStatus } from "../../../../../helpers/handleTransactionStatus";
 
 import type { WithdrawFundsPropsType } from "./types";
 

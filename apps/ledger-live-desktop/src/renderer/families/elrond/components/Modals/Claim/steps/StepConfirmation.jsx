@@ -2,6 +2,7 @@
 
 import React from "react";
 import { Trans } from "react-i18next";
+import { denominate } from "@ledgerhq/live-common/families/elrond/helpers/denominate";
 import { SyncOneAccountOnMount } from "@ledgerhq/live-common/bridge/react/index";
 import styled, { withTheme } from "styled-components";
 
@@ -15,7 +16,6 @@ import BroadcastErrorDisclaimer from "~/renderer/components/BroadcastErrorDiscla
 
 import { OperationDetails } from "~/renderer/drawers/OperationDetails";
 import { setDrawer } from "~/renderer/drawers/Provider";
-import { denominate } from "~/renderer/families/elrond/helpers";
 import { constants } from "~/renderer/families/elrond/constants";
 
 import type { ValidatorType } from "~/renderer/families/elrond/types";

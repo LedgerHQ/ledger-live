@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useMemo, useCallback, FC } from "react";
 import { View } from "react-native";
 import { BigNumber } from "bignumber.js";
+import { randomizeProviders } from "@ledgerhq/live-common/families/elrond/helpers/randomizeProviders";
+import { denominate } from "@ledgerhq/live-common/families/elrond/helpers/denominate";
 
 import type { AccountLike } from "@ledgerhq/types-live";
 import type {
@@ -10,9 +12,6 @@ import type {
 import type { BodyPropsType } from "./types";
 import type { DrawerPropsType } from "./components/Drawer/types";
 import type { DelegationType } from "../../types";
-
-import { denominate } from "../../helpers/denominate";
-import { randomizeProviders } from "../../helpers/randomizeProviders";
 
 import Delegations from "./components/Delegations";
 import Unbondings from "./components/Unbondings";
@@ -48,15 +47,18 @@ const Body = (props: BodyPropsType) => {
   const [drawer, setDrawer] = useState<DrawerPropsType["data"] | false>();
   const [delegationResources, setDelegationResources] = useState<
     DelegationType[]
-  >(account.elrondResources.delegations);
+  >(account.elrondResources ? account.elrondResources.delegations : []);
 
   /*
    * Randomize the list of the memoized validators..
    */
 
   const validators = useMemo(
-    () => randomizeProviders(account.elrondResources.providers),
-    [account.elrondResources.providers],
+    () =>
+      randomizeProviders(
+        account.elrondResources ? account.elrondResources.providers : [],
+      ),
+    [account.elrondResources],
   );
 
   /*
@@ -83,10 +85,15 @@ const Body = (props: BodyPropsType) => {
    */
 
   const fetchDelegations = useCallback(() => {
-    setDelegationResources(account.elrondResources.delegations);
+    setDelegationResources(
+      account.elrondResources ? account.elrondResources.delegations : [],
+    );
 
-    return () => setDelegationResources(account.elrondResources.delegations);
-  }, [account.elrondResources.delegations]);
+    return () =>
+      setDelegationResources(
+        account.elrondResources ? account.elrondResources.delegations : [],
+      );
+  }, [account.elrondResources]);
 
   /*
    * Sort the delegations by amount, by transforming the given amount into a denominated value, assign the validator, and filter by rewards or stake.
@@ -96,23 +103,10 @@ const Body = (props: BodyPropsType) => {
     const transform = (input: string) =>
       new BigNumber(denominate({ input, showLastNonZeroDecimal: true }));
 
-    const formatDelegations = (
-      delegations: DelegationType[],
-      delegation: DelegationType,
-    ) => {
-      const zeroStake = new BigNumber(delegation.userActiveStake).isZero();
-      const zeroRewards = new BigNumber(delegation.claimableRewards).isZero();
-
-      if (zeroStake && zeroRewards) {
-        return delegations;
-      }
-
-      return delegations.concat([
-        Object.assign(delegation, {
-          validator: findValidator(delegation.contract),
-        }),
-      ]);
-    };
+    const formatDelegations = (delegation: DelegationType) =>
+      Object.assign(delegation, {
+        validator: findValidator(delegation.contract),
+      });
 
     const sortDelegations = (alpha: DelegationType, beta: DelegationType) =>
       transform(alpha.userActiveStake).isGreaterThan(
@@ -121,23 +115,8 @@ const Body = (props: BodyPropsType) => {
         ? -1
         : 1;
 
-    return delegationResources
-      .sort(sortDelegations)
-      .reduce(formatDelegations, []);
+    return delegationResources.sort(sortDelegations).map(formatDelegations);
   }, [findValidator, delegationResources]);
-
-  /*
-   * Reduce all rewards into one number and see if it exceeds zero (thus, if there are any available).
-   */
-
-  const rewards = useMemo(
-    () =>
-      delegations.reduce(
-        (total, delegation) => total.plus(delegation.claimableRewards),
-        new BigNumber(0),
-      ),
-    [delegations],
-  );
 
   /*
    * Track all callback reference updates and run the effect conditionally.
@@ -159,9 +138,7 @@ const Body = (props: BodyPropsType) => {
         />
       )}
 
-      {rewards.gt(0) && (
-        <Rewards value={rewards} account={account} delegations={delegations} />
-      )}
+      <Rewards account={account} delegations={delegations} />
 
       <Delegations
         onDrawer={onDrawer}

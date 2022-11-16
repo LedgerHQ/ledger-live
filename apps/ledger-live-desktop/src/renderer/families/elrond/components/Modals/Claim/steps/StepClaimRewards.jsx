@@ -4,6 +4,7 @@ import React, { Fragment, useCallback } from "react";
 import { Trans } from "react-i18next";
 import { BigNumber } from "bignumber.js";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
+import { denominate } from "@ledgerhq/live-common/families/elrond/helpers/denominate";
 import invariant from "invariant";
 
 import TrackPage from "~/renderer/analytics/TrackPage";
@@ -11,7 +12,6 @@ import Box from "~/renderer/components/Box";
 import Button from "~/renderer/components/Button";
 import ModeSelectorField from "../fields/ModeSelectorField";
 import Text from "~/renderer/components/Text";
-import { denominate } from "~/renderer/families/elrond/helpers";
 import { constants } from "~/renderer/families/elrond/constants";
 import DelegationSelectorField from "../fields/DelegationSelectorField";
 import ErrorBanner from "~/renderer/components/ErrorBanner";

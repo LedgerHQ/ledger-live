@@ -10,8 +10,7 @@ import type { SummaryPropsType, ItemType } from "./types";
 
 import InfoModal from "../../../../modals/Info";
 import InfoItem from "../../../../components/BalanceSummaryInfoItem";
-
-import { denominate } from "../../helpers/denominate";
+import CurrencyUnitValue from "../../../../components/CurrencyUnitValue";
 
 import styles from "./styles";
 
@@ -39,17 +38,22 @@ const Summary = (props: SummaryPropsType) => {
   const [data, setData] = useState<ItemType["modal"][]>([]);
   const [delegationsResources, setDelegationResources] = useState<
     DelegationType[]
-  >(account.elrondResources.delegations);
+  >(account.elrondResources ? account.elrondResources.delegations : []);
 
   /*
    * Track delegations array updates and trigger state changes accordingly.
    */
 
   const fetchDelegations = useCallback(() => {
-    setDelegationResources(account.elrondResources.delegations);
+    setDelegationResources(
+      account.elrondResources ? account.elrondResources.delegations : [],
+    );
 
-    return () => setDelegationResources(account.elrondResources.delegations);
-  }, [account.elrondResources.delegations]);
+    return () =>
+      setDelegationResources(
+        account.elrondResources ? account.elrondResources.delegations : [],
+      );
+  }, [account.elrondResources]);
 
   /*
    * Format the three data items by denominating the value and filtering out zero resources.
@@ -59,7 +63,6 @@ const Summary = (props: SummaryPropsType) => {
     (items: ItemType[]) =>
       items.reduce((total: ItemType[], current: ItemType) => {
         const item: ItemType = Object.assign(current, {
-          value: denominate({ input: String(current.value), decimals: 4 }),
           modal: {
             description: t(current.modal.description),
             title: t(current.modal.description),
@@ -171,8 +174,10 @@ const Summary = (props: SummaryPropsType) => {
           key={item.title}
           title={t(item.title)}
           onPress={() => setData([item.modal])}
-          value={`${item.value} ${unit.code}`}
           isLast={index === items.length - 1}
+          value={
+            <CurrencyUnitValue unit={unit} value={new BigNumber(item.value)} />
+          }
         />
       ))}
     </ScrollView>

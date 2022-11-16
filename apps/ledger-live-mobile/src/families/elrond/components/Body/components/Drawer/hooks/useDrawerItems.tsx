@@ -1,5 +1,6 @@
 import React, { useMemo } from "react";
 import { useTranslation } from "react-i18next";
+import { denominate } from "@ledgerhq/live-common/families/elrond/helpers/denominate";
 import { getAccountUnit } from "@ledgerhq/live-common/account/helpers";
 import { Linking } from "react-native";
 
@@ -10,8 +11,6 @@ import type { DrawerPropsType, DrawerStatusType } from "../types";
 import DateFromNow from "../../../../../../../components/DateFromNow";
 import LText from "../../../../../../../components/LText";
 import Touchable from "../../../../../../../components/Touchable";
-
-import { denominate } from "../../../../../helpers/denominate";
 
 import styles from "../styles";
 

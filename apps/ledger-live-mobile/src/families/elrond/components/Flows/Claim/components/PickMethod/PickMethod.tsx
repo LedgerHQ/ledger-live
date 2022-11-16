@@ -4,6 +4,7 @@ import { useTheme } from "@react-navigation/native";
 import { Trans } from "react-i18next";
 import { BigNumber } from "bignumber.js";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
+import { handleTransactionStatus } from "@ledgerhq/live-common/families/elrond/helpers/handleTransactionStatus";
 import {
   getAccountUnit,
   getMainAccount,
@@ -26,7 +27,6 @@ import FirstLetterIcon from "../../../../../../../components/FirstLetterIcon";
 import TranslatedError from "../../../../../../../components/TranslatedError";
 import { ScreenName } from "../../../../../../../const";
 
-import { handleTransactionStatus } from "../../../../../helpers/handleTransactionStatus";
 import { TransactionMethodEnum } from "./enums";
 
 import styles from "./styles";

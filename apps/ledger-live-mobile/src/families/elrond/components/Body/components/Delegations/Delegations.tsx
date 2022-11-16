@@ -7,6 +7,7 @@ import {
   getAccountCurrency,
   getMainAccount,
 } from "@ledgerhq/live-common/account/index";
+import { denominate } from "@ledgerhq/live-common/families/elrond/helpers/denominate";
 
 import type { StackNavigationProp } from "@react-navigation/stack";
 import type { NavigationType } from "../../../../types";
@@ -18,7 +19,6 @@ import IlluRewards from "../../../../../../icons/images/Rewards";
 import { ScreenName, NavigatorName } from "../../../../../../const";
 
 import { urls } from "../../../../../../config/urls";
-import { denominate } from "../../../../helpers/denominate";
 
 import Delegation from "./components/Delegation";
 import Right from "./components/Right";
@@ -45,9 +45,12 @@ const Delegations = (props: DelegationsPropsType) => {
 
   const delegationEnabled = useMemo(
     () =>
-      new BigNumber(denominate({ input: String(account.spendableBalance) })).gt(
-        1,
-      ),
+      new BigNumber(
+        denominate({
+          input: String(account.spendableBalance),
+          showLastNonZeroDecimal: true,
+        }),
+      ).gte(1),
     [account.spendableBalance],
   );
 
@@ -68,10 +71,36 @@ const Delegations = (props: DelegationsPropsType) => {
   }, [navigation, account, delegations, validators]);
 
   /*
+   * Get the total amount of rewards, cumulated, from all active delegations.
+   */
+
+  const rewardsAmount = useMemo(
+    () =>
+      delegations.reduce(
+        (total, delegation) => total.plus(delegation.claimableRewards),
+        new BigNumber(0),
+      ),
+    [delegations],
+  );
+
+  /*
+   * Get the total delegated amount, from all active delegations.
+   */
+
+  const delegatedAmount = useMemo(
+    () =>
+      delegations.reduce(
+        (total, delegation) => total.plus(delegation.userActiveStake),
+        new BigNumber(0),
+      ),
+    [delegations],
+  );
+
+  /*
    * Return an introductory panel to delegations if the user hasn't previously delegated.
    */
 
-  if (delegations.length === 0) {
+  if (delegatedAmount.eq(0) && rewardsAmount.eq(0)) {
     return (
       <AccountDelegationInfo
         title={t("account.delegation.info.title")}

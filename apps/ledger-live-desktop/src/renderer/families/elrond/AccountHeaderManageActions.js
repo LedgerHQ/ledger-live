@@ -4,8 +4,9 @@ import { useCallback, useMemo } from "react";
 import { BigNumber } from "bignumber.js";
 import { useTranslation } from "react-i18next";
 import { useDispatch } from "react-redux";
+import { randomizeProviders } from "@ledgerhq/live-common/families/elrond/helpers/randomizeProviders";
+import { denominate } from "@ledgerhq/live-common/families/elrond/helpers/denominate";
 
-import { denominate, randomizeProviders } from "~/renderer/families/elrond/helpers";
 import { constants } from "~/renderer/families/elrond/constants";
 import { openModal } from "~/renderer/actions/modals";
 import IconCoins from "~/renderer/icons/Coins";
@@ -23,15 +24,22 @@ const AccountHeaderActions = (props: Props) => {
   const dispatch = useDispatch();
 
   const earnRewardEnabled = useMemo(
-    (): boolean => BigNumber(denominate({ input: account.spendableBalance })).gt(1),
+    (): boolean =>
+      BigNumber(denominate({ input: account.spendableBalance, showLastNonZeroDecimal: true })).gte(
+        1,
+      ),
     [account.spendableBalance],
   );
 
-  const validators = useMemo(() => randomizeProviders(account.elrondResources.providers), [
-    account.elrondResources.providers,
-  ]);
+  const validators = useMemo(
+    () => randomizeProviders(account.elrondResources ? account.elrondResources.providers : []),
+    [account.elrondResources],
+  );
 
-  const hasDelegations = account.elrondResources.delegations.length > 0;
+  const hasDelegations = account.elrondResources
+    ? account.elrondResources.delegations.length > 0
+    : false;
+
   const onClick = useCallback(() => {
     if (hasDelegations) {
       dispatch(

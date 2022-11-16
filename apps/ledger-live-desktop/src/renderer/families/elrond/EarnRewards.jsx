@@ -5,6 +5,8 @@ import { useDispatch } from "react-redux";
 import { Trans } from "react-i18next";
 import styled from "styled-components";
 import { BigNumber } from "bignumber.js";
+import { randomizeProviders } from "@ledgerhq/live-common/families/elrond/helpers/randomizeProviders";
+import { denominate } from "@ledgerhq/live-common/families/elrond/helpers/denominate";
 
 import Text from "~/renderer/components/Text";
 import Button from "~/renderer/components/Button";
@@ -23,7 +25,6 @@ import Delegations from "~/renderer/families/elrond/components/Delegations";
 import { urls } from "~/config/urls";
 import { openURL } from "~/renderer/linking";
 import { openModal } from "~/renderer/actions/modals";
-import { denominate, randomizeProviders } from "~/renderer/families/elrond/helpers";
 import { constants } from "~/renderer/families/elrond/constants";
 
 import type { DelegationType, UnbondingType } from "~/renderer/families/elrond/types";
@@ -49,16 +50,20 @@ const Delegation = (props: DelegationPropsType) => {
   const { account } = props;
 
   const [delegationResources, setDelegationResources] = useState<DelegationType[]>(
-    account.elrondResources.delegations || [],
+    account.elrondResources ? account.elrondResources.delegations : [],
   );
 
-  const validators = useMemo(() => randomizeProviders(account.elrondResources.providers), [
-    account.elrondResources.providers,
-  ]);
+  const validators = useMemo(
+    () => randomizeProviders(account.elrondResources ? account.elrondResources.providers : []),
+    [account.elrondResources],
+  );
 
   const dispatch = useDispatch();
   const delegationEnabled = useMemo(
-    (): boolean => BigNumber(denominate({ input: account.spendableBalance })).gt(1),
+    (): boolean =>
+      BigNumber(denominate({ input: account.spendableBalance, showLastNonZeroDecimal: true })).gte(
+        1,
+      ),
     [account.spendableBalance],
   );
 
@@ -119,10 +124,11 @@ const Delegation = (props: DelegationPropsType) => {
   );
 
   const fetchDelegations = useCallback(() => {
-    setDelegationResources(account.elrondResources.delegations || []);
+    setDelegationResources(account.elrondResources ? account.elrondResources.delegations : []);
 
-    return () => setDelegationResources(account.elrondResources.delegations || []);
-  }, [account.elrondResources.delegations]);
+    return () =>
+      setDelegationResources(account.elrondResources ? account.elrondResources.delegations : []);
+  }, [account.elrondResources]);
 
   const onEarnRewards = useCallback(() => {
     dispatch(
