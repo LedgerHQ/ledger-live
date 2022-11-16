@@ -59,7 +59,7 @@ import {
   BaseNavigation,
   StackNavigatorProps,
 } from "../../components/RootNavigator/types/helpers";
-import useDynamicContent from "../../logic/dynamicContent";
+import useDynamicContent from "../../dynamicContent/dynamicContent";
 
 export { default as PortfolioTabIcon } from "./TabIcon";
 

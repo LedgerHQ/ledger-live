@@ -10,7 +10,7 @@ import {
   mapAsWalletContentCard,
   mapAsAssetContentCard,
   LocationContentCard,
-} from "../logic/dynamicContent";
+} from "./dynamicContent";
 
 const HookDynamicContentCards = () => {
   const dispatch = useDispatch();
