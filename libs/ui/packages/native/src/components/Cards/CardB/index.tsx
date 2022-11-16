@@ -1,9 +1,12 @@
 import React from "react";
 
-type Props = {};
+type Props = {
+  test?: string;
+};
 
 const CardB = (props: Props): React.ReactElement => {
-  const {} = props;
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const { test } = props;
 
   return <></>;
 };
