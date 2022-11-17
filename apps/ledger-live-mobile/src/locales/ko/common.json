@@ -595,6 +595,9 @@
     "SourceHasMultiSign" : {
       "title" : "{{currencyName}}(을)를 보내려면 다중서명을 비활성화하세요"
     },
+    "DustLimit" : {
+      "title" : "더스트(소액) 한도보다 낮은 금액입니다."
+    },
     "StratisDown2021Warning" : {
       "description" : "Stratis 블록체인 진화로 더 이상 제대로 작동하지 않을 수 있습니다. 기존 Stratis 블록체인은 2021년 10월 16일까지 지원됩니다."
     },
@@ -2140,7 +2143,7 @@
       },
       "advanced" : {
         "title" : "고급 로그",
-        "warningDerivation" : "{{tag}} xpub 입니다. 타사 지갑으로 가져올 때 동일한 파생 모드를 선택하세요.",
+        "warningDerivation" : "{{tag}} xpub입니다. 타사 지갑으로 가져올 때 동일한 파생 모드를 선택하세요.",
         "desc" : ""
       }
     },
@@ -5387,7 +5390,8 @@
     "drawer" : {
       "title" : "이미지 선택",
       "options" : {
-        "uploadFromPhone" : "핸드폰에서 업로드"
+        "uploadFromPhone" : "핸드폰에서 업로드",
+        "selectFromNFTGallery" : "NFT 갤러리에서 선택"
       }
     },
     "cropImage" : "이미지 자르기",
@@ -5404,7 +5408,10 @@
     "subtitle" : "좋아하는 NFT 이미지나 휴대폰에 저장된 사진으로 설정해 보세요.",
     "customImage" : "커스텀 사진",
     "choosePicture" : "사진 선택",
-    "doThisLater" : "다음에 결정하기"
+    "doThisLater" : "다음에 결정하기",
+    "nftGallery" : {
+      "title" : "내 NFT"
+    }
   },
   "postOnboarding" : {
     "hub" : {
