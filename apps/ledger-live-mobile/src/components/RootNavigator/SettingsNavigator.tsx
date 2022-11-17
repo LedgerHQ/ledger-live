@@ -15,6 +15,7 @@ import DebugHttpTransport from "../../screens/DebugHttpTransport";
 import DebugFeatureFlags from "../../screens/FeatureFlagsSettings";
 import DebugIcons from "../../screens/DebugIcons";
 import DebugLottie from "../../screens/DebugLottie";
+import DebugMultiAppInstall from "../../screens/DebugMultiAppInstall";
 import DebugFetchCustomImage from "../../screens/DebugFetchCustomImage";
 import DebugLogs from "../../screens/DebugLogs";
 import DebugStore from "../../screens/DebugStore";
@@ -301,6 +302,13 @@ export default function SettingsNavigator() {
         component={DebugLottie}
         options={{
           title: "Debug Lottie",
+        }}
+      />
+      <Stack.Screen
+        name={ScreenName.DebugMultiAppInstall}
+        component={DebugMultiAppInstall}
+        options={{
+          title: "Debug MultiAppInstall",
         }}
       />
       <Stack.Screen
