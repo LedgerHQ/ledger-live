@@ -595,6 +595,9 @@
     "SourceHasMultiSign" : {
       "title" : "Bitte deaktivieren Sie Multisign um {{currencyName}} zu senden"
     },
+    "DustLimit" : {
+      "title" : "Die Menge ist niedriger als das Staub (dust) -Limit"
+    },
     "StratisDown2021Warning" : {
       "description" : "Die Stratis-Blockchain hat sich weiterentwickelt und funktioniert möglicherweise nicht mehr korrekt. Die Unterstützung für die ursprüngliche Stratis-Blockchain wird bis zum 16. Oktober 2021 aufrechterhalten."
     },
@@ -1803,6 +1806,9 @@
           "title" : "Softwareupdate fehlgeschlagen"
         }
       }
+    },
+    "appsStep" : {
+      "title" : "{{productName}} Anwendungen"
     },
     "readyStep" : {
       "title" : "{{productName}} ist bereit"
@@ -3462,7 +3468,7 @@
     }
   },
   "DeviceAction" : {
-    "stayInTheAppPlz" : "Bleiben Sie in der Ledger Live-App und halten Sie Ihren Nano X in der Nähe",
+    "stayInTheAppPlz" : "Bleiben Sie in der Ledger Live-App und halten Sie Ihren Ledger bereit.",
     "allowAppPermission" : "Öffnen Sie die {{wording}} App auf Ihrem Gerät",
     "allowAppPermissionSubtitleToken" : "zum Verwalten Ihrer {{token}}-Tokens",
     "allowManagerPermission" : "Erlauben Sie {{wording}} auf Ihrem Gerät",
@@ -3634,6 +3640,7 @@
         "description" : "Ihre gespeicherten Ledger verwalten"
       },
       "addNewCTA" : "Neu hinzufügen",
+      "otgBanner" : "Wenn Sie einen Nano S oder Nano S Plus besitzen, schließen Sie Ihr Gerät mit einem USB-Kabel an.",
       "connectExistingLedger" : "Vorhandenes Ledger verbinden",
       "connectExistingLedgerDescription" : "Haben Sie bereits ein Ledger, das eingerichtet ist? Verbinden Sie es mit Bluetooth",
       "setUpNewLedger" : "Richten Sie ein neues Ledger ein",
@@ -5353,6 +5360,11 @@
       "viewOn" : "Ansehen auf",
       "viewInExplorer" : "Im Explorer ansehen",
       "txDetails" : "Transaktionsdetails"
+    },
+    "modalDisabled" : {
+      "title" : "Sendefunktion nicht verfügbar",
+      "body" : "Angesichts der aktuellen Aktualisierungen im App Store von Apple ist der Versand von NFTs vorübergehend nicht möglich. Sie können weiterhin Ledger Live auf Ihrem Desktop verwenden, um NFTs zu senden.",
+      "contactSupport" : "Lesen Sie bitte unseren Support-Artikel für weitere Informationen."
     }
   },
   "ApplicationVersion" : "v{{version}}",
@@ -5393,17 +5405,19 @@
     "cropImage" : "Bild zuschneiden",
     "chooseConstrast" : "Kontrast auswählen",
     "uploadAnotherImage" : "Ein weiteres Bild hochladen",
-    "selectContrast" : "Wählen Sie Ihren Kontrast",
+    "rotateImage" : "Drehen",
     "allowPreview" : "Bildvorschau zulassen auf {{productName}}",
     "loadingPicture" : "Bild wird geladen auf {{productName}}",
     "pictureLoaded" : "Bild geladen",
     "timeDisclaimer" : "Dies kann bis zu 30 Sekunden dauern",
     "imageLoaded" : "Bild geladen auf {{productName}}",
     "confirmPicture" : "Bestätigen auf {{productName}}",
-    "title" : "Wählen Sie ein Bild aus.\nSchaffen Sie eine Stimmung.\nMachen Sie Ihr Ledger zu Ihrem Gerät.",
-    "subtitle" : "Verwenden Sie ein Bild Ihres Lieblings-NFTs oder ein Bild von Ihrem Handy.",
+    "landingPage" : {
+      "title" : "Wählen Sie ein Bild aus.\nSchaffen Sie eine Stimmung.\nIndividualisieren Sie Ihren Ledger.",
+      "subtitle" : "Verwenden Sie ein Bild Ihres Lieblings-NFT oder ein Bild von Ihrem Handy.",
+      "choosePicture" : "Wählen Sie ein Bild aus"
+    },
     "customImage" : "Benutzerdefiniertes Bild",
-    "choosePicture" : "Wählen Sie ein Bild aus",
     "doThisLater" : "Vielleicht später"
   },
   "postOnboarding" : {
