@@ -7,7 +7,7 @@ import asatokens, { AlgorandASAToken } from "./data/asa";
 import bep20tokens, { BEP20Token } from "./data/bep20";
 import cardanoNativeTokens, { CardanoNativeToken } from "./data/cardanoNative";
 import erc20tokens, { ERC20Token } from "./data/erc20";
-import esdttokens, { ElronESDTToken } from "./data/esdt";
+import esdttokens, { ElrondESDTToken } from "./data/esdt";
 import polygonTokens, { PolygonERC20Token } from "./data/polygon-erc20";
 import stellarTokens, { StellarToken } from "./data/stellar";
 import trc10tokens, { TRC10Token } from "./data/trc10";
@@ -323,7 +323,7 @@ function convertElrondESDTTokens([
   decimals,
   signature,
   name,
-]: ElronESDTToken): TokenCurrency {
+]: ElrondESDTToken): TokenCurrency {
   const ELROND_ESDT_CONTRACT =
     "erd1qqqqqqqqqqqqqqqpqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqzllls8a5w6u";
 
