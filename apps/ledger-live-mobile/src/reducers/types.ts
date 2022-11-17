@@ -153,6 +153,7 @@ export type SettingsState = {
   pairExchanges: Record<string, string | null | undefined>;
   selectedTimeRange: PortfolioRange;
   orderAccounts: string;
+  hasCompletedCustomImageFlow: boolean;
   hasCompletedOnboarding: boolean;
   hasInstalledAnyApp: boolean;
   readOnlyModeEnabled: boolean;
