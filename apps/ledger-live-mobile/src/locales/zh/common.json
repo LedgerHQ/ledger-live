@@ -418,6 +418,10 @@
       "title" : "抱歉，没有找到账户",
       "description" : "地址计算出错。请重试。如果问题依旧存在，请使用下面的按钮保存您的日志，并将其提供给 Ledger 客服。"
     },
+    "DecimalsLimitReached" : {
+      "title" : "已达到小数位数限制",
+      "description" : "请确保所提供的数额有 18 位小数。"
+    },
     "NotEnoughBalance" : {
       "title" : "抱歉，资金不足",
       "description" : "请确保该账户资金充足。"
@@ -3853,17 +3857,6 @@
       "pleaseConnectUsbDescription" : "要开始固件更新，请使用 USB 线将 {{deviceName}} 插入手机。"
     }
   },
-  "firmwareUpdateRequired" : {
-    "updateAvailableFromLLM" : {
-      "title" : "固件需要更新",
-      "description" : "要执行此操作，您首先需要更新 {{ deviceName }} 的固件。",
-      "cta" : "前往“我的 Ledger”"
-    },
-    "updateNotAvailableFromLLM" : {
-      "title" : "需要在电脑上更新固件",
-      "description" : "在 Ledger Live 桌面版上更新您的 {{ deviceName }}。"
-    }
-  },
   "FirmwareUpdateReleaseNotes" : {
     "introTitle" : "更新 {{deviceName}} 到版本 {{version}}",
     "recoveryPhraseBackupInstructions" : "预防起见，请确保将您的 24 词恢复短语写在所提供的恢复表中。",
@@ -4518,6 +4511,203 @@
       }
     }
   },
+  "elrond" : {
+    "info" : {
+      "available" : {
+        "title" : "可用 EGLD",
+        "description" : "此数额可以转移。"
+      },
+      "delegated" : {
+        "title" : "权益质押的资产",
+        "description" : "权益质押服务提供商间接使用权益质押的资产，通过参与共识机制运行验证者节点、处理交易和保护网络。"
+      },
+      "undelegating" : {
+        "title" : "待处理的提取",
+        "description" : "取消权益质押的资产需在 10 天解绑期结束后才能提取。"
+      },
+      "delegationUnavailable" : {
+        "title" : "委托不可用",
+        "description" : "您的账户中没有足够的可用余额来开始新的委托。"
+      }
+    },
+    "delegation" : {
+      "delegationEarn" : "权益质押您的 EGLD 资产，保护网络并领取您的奖励份额。",
+      "info" : "什么是权益质押？它是如何运作的？",
+      "claimRewards" : "申领奖励",
+      "claimAvailableRewards" : "申领 {{amount}}",
+      "header" : "我的权益质押",
+      "Amount" : "数额",
+      "noRewards" : "没有奖励可用",
+      "delegate" : "重新权益质押",
+      "undelegate" : "取消权益质押",
+      "reward" : "申领奖励",
+      "commission" : "佣金",
+      "iDelegate" : "我委托",
+      "totalStake" : "质押总额",
+      "stepperHeader" : {
+        "starter" : "赚取奖励",
+        "validator" : "委托资产",
+        "amountSubTitle" : "要权益质押的数额",
+        "summary" : "概要",
+        "verification" : "验证",
+        "selectDevice" : "选择设备",
+        "connectDevice" : "连接设备",
+        "stepRange" : "步骤 {{currentStep}} 之 {{totalSteps}}"
+      },
+      "flow" : {
+        "steps" : {
+          "starter" : {
+            "description" : "您可以通过将 EGLD 资产权益质押给权益质押服务提供商来赚取奖励。",
+            "steps" : {
+              "0" : "您仍然保持对权益质押资产的所有权。",
+              "1" : "资产将在取消权益质押 10 天后可用。",
+              "2" : "使用 Ledger 设备进行权益质押。"
+            },
+            "warning" : {
+              "description" : "明智选择权益质押服务提供商：目前您面临的唯一风险是由于各种原因无法获得奖励，因此您应该根据可靠程度、沟通和经济因素选择提供商。"
+            },
+            "cta" : "继续"
+          },
+          "validator" : {
+            "validators" : "权益质押服务提供商",
+            "myDelegations" : "我的权益质押",
+            "cta" : "继续",
+            "apr" : "年化利率：{{amount}}",
+            "totalAvailable" : "可用总额：<0>{{amount}}</0>",
+            "allAssetsUsed" : "已使用所有资产",
+            "noResultsFound" : "未找到 \"<0>{{search}}</0>\" 验证者",
+            "currentAmount" : "(+ <0>{{amount}}</0>)"
+          },
+          "amount" : {
+            "assetsRemaining" : "剩余资产：<0>{{amount}}</0>",
+            "allAssetsUsed" : "已使用所有资产",
+            "minAmount" : "最小数额：<0>{{min}}</0>",
+            "incorrectAmount" : "最大数额：<0>{{max}}</0>",
+            "insufficientDelegation" : "每个权益质押服务提供商的权益质押总额必须至少为 1 {{label}}。",
+            "wrongUndelegations" : "每个权益质押服务提供商的剩余 {{label}} 权益质押数额应为 0 或大于 1 {{label}}。",
+            "cta" : "继续"
+          },
+          "verification" : {
+            "success" : {
+              "title" : "您已成功权益质押资产",
+              "text" : "交易一经网络确认，您的账户余额就会更新。",
+              "cta" : "查看详情"
+            },
+            "pending" : {
+              "title" : "正在播送交易……"
+            },
+            "broadcastError" : "您的交易可能已失败。请稍候片刻并在重试之前查看交易记录。"
+          }
+        }
+      },
+      "drawer" : {
+        "status" : "状态",
+        "rewards" : "奖励",
+        "active" : "活跃",
+        "inactive" : "不活跃",
+        "completionDate" : "完成日期",
+        "redelegatedFrom" : "已重新委托自",
+        "completionDateHit" : "已完成"
+      }
+    },
+    "claimRewards" : {
+      "stepperHeader" : {
+        "validator" : "选择要收集的奖励",
+        "method" : "申领奖励",
+        "summary" : "概要",
+        "selectDevice" : "选择设备",
+        "connectDevice" : "连接设备",
+        "stepRange" : "步骤 {{currentStep}} 之 {{totalSteps}}"
+      },
+      "flow" : {
+        "steps" : {
+          "method" : {
+            "youEarned" : "您赚取了",
+            "byDelegationAssetsTo" : "通过将资产权益质押给",
+            "claimRewards" : "申领奖励",
+            "reDelegateRewards" : "权益质押奖励",
+            "claimRewardsInfo" : "它们现在将被申领并被添加到您的可用余额。",
+            "reDelegateRewardsInfo" : "将立即申领奖励并自动权益质押给同一个权益质押服务提供商。",
+            "compoundOrCashIn" : "权益质押奖励还是申领奖励？",
+            "claimRewardsTooltip" : "奖励将被添加至可用余额",
+            "reDelegateRewardsTooltip" : "奖励将添加至已权益质押数额。",
+            "cta" : "继续"
+          },
+          "verification" : {
+            "success" : {
+              "claimRewardsSuccess" : "您已成功申领您的奖励。已将其添加到您的可用余额。",
+              "reDelegateRewardsSuccess" : "您的奖励已权益质押给同一个权益质押服务提供商。",
+              "text" : "该交易一经网络确认，就会更新您的账户余额。",
+              "cta" : "查看详情"
+            },
+            "pending" : {
+              "title" : "正在播送交易……"
+            },
+            "broadcastError" : "您的交易可能已失败。请稍候片刻并在重试之前查看交易记录。"
+          }
+        }
+      }
+    },
+    "undelegation" : {
+      "stepperHeader" : {
+        "amountSubTitle" : "要取消权益质押的数额",
+        "summary" : "概要",
+        "selectDevice" : "选择设备",
+        "connectDevice" : "连接设备",
+        "stepRange" : "步骤 {{currentStep}} 之 {{totalSteps}}"
+      },
+      "flow" : {
+        "steps" : {
+          "amount" : {
+            "allAssetsUsed" : "所有取消权益质押的资产"
+          },
+          "verification" : {
+            "success" : {
+              "title" : "您已成功取消权益质押资产",
+              "text" : "该交易一经网络确认，就会更新您的账户余额。",
+              "cta" : "查看详情"
+            },
+            "pending" : {
+              "title" : "正在播送交易……"
+            },
+            "broadcastError" : "您的交易可能已失败。请稍候片刻并在重试之前查看交易记录。"
+          }
+        }
+      }
+    },
+    "withdraw" : {
+      "stepperHeader" : {
+        "validator" : "选择要收集的奖励",
+        "method" : "申领奖励",
+        "summary" : "概要",
+        "selectDevice" : "选择设备",
+        "connectDevice" : "连接设备",
+        "stepRange" : "步骤 {{currentStep}} 之 {{totalSteps}}"
+      },
+      "flow" : {
+        "steps" : {
+          "method" : {
+            "youEarned" : "您已取消权益质押",
+            "byDelegationAssetsTo" : "从",
+            "withdrawInfo" : "它们现在将被申领并被添加到您的可用余额。",
+            "withdrawTooltip" : "提取的数额将添加至可用余额",
+            "cta" : "继续"
+          },
+          "verification" : {
+            "success" : {
+              "title" : "您已成功申领您的奖励。已将其添加到您的可用余额。",
+              "text" : "该交易一经网络确认，就会更新您的账户余额。",
+              "cta" : "查看详情"
+            },
+            "pending" : {
+              "title" : "正在播送交易……"
+            },
+            "broadcastError" : "您的交易可能已失败。请稍候片刻并在重试之前查看交易记录。"
+          }
+        }
+      }
+    }
+  },
   "tezos" : {
     "AccountHeader" : {
       "title" : "您可以通过将您的账户委托出去，从而赚取奖励",
@@ -5014,7 +5204,8 @@
     "actions" : {
       "redelegate" : "重新委托",
       "collectRewards" : "收集奖励",
-      "undelegate" : "解除委托"
+      "undelegate" : "解除委托",
+      "withdraw" : "提取"
     }
   },
   "ValidateOnDevice" : {
