@@ -13,6 +13,7 @@ export * from "./polkadot";
 export * from "./ripple";
 export * from "./solana";
 export * from "./stacks";
+export * from "./casper";
 export * from "./stellar";
 export * from "./tezos";
 export * from "./tron";
