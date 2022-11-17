@@ -33,6 +33,16 @@ jobs:
           package: "live-mobile"
           head-ref: ${{ github.event_name == 'pull_request' && format('origin/{0}', github.event.pull_request.base.ref) || 'HEAD^' }}
 
+  # Run dummy jobs when not affected to pass the required status checks
+  dummy:
+    name: "Ledger Live Mobile CodeCheck"
+    needs: is-affected
+    if: ${{ needs.is-affected.outputs.is-desktop-affected != 'true' }}
+    runs-on: ubuntu-latest
+    steps:
+      - id: dummy
+        run: exit 0
+
   codecheck:
     name: "Ledger Live Mobile CodeCheck"
     needs: is-affected
