@@ -595,6 +595,9 @@
     "SourceHasMultiSign" : {
       "title" : "{{currencyName}} göndermek için lütfen çoklu imzayı devre dışı bırakın"
     },
+    "DustLimit" : {
+      "title" : "Miktar, dust sınırının altında"
+    },
     "StratisDown2021Warning" : {
       "description" : "Stratis blok zinciri evrimleşti ve artık düzgün çalışmayabilir. Orijinal Stratis blok zinciri desteği 16 Ekim 2021'e kadar sürdürülecektir."
     },
@@ -2140,7 +2143,7 @@
       },
       "advanced" : {
         "title" : "Kapsamlı loglar",
-        "warningDerivation" : "Bu bir {{tag}} xpub'ıdır. Bunu bir üçüncü taraf cüzdanda içe aktarırken aynı türev modunu seçin.",
+        "warningDerivation" : "Bu bir {{tag}} xpub'ıdır. Bunu bir üçüncü taraf cüzdana aktarırken aynı türev modunu seçin.",
         "desc" : ""
       }
     },
@@ -5387,7 +5390,8 @@
     "drawer" : {
       "title" : "Bir görüntü seçin",
       "options" : {
-        "uploadFromPhone" : "Telefonumdan yükle"
+        "uploadFromPhone" : "Telefonumdan yükle",
+        "selectFromNFTGallery" : "NFT galerisinden seç"
       }
     },
     "cropImage" : "Görüntüyü kırp",
@@ -5404,7 +5408,10 @@
     "subtitle" : "En sevdiğiniz NFT'nin bir resmini veya telefonunuzdaki bir resmi ayarlayın.",
     "customImage" : "Özel resim",
     "choosePicture" : "Bir resim seçin",
-    "doThisLater" : "Belki sonra"
+    "doThisLater" : "Belki sonra",
+    "nftGallery" : {
+      "title" : "NFT'lerim"
+    }
   },
   "postOnboarding" : {
     "hub" : {
