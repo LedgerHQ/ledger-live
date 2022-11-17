@@ -136,8 +136,17 @@ const AssetScreen = ({ route }: NavigationProps) => {
     }
   }, [currency, navigation]);
 
-  const { getAssetCardById } = useDynamicContent();
+  const { getAssetCardById, onClickLink, onPressDismiss, logImpressionCard } =
+    useDynamicContent();
   const dynamicContentCard = getAssetCardById(currency.ticker);
+
+  useEffect(() => {
+    if (dynamicContentCard) {
+      console.log("impression");
+      logImpressionCard(dynamicContentCard.id);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const data = useMemo(
     () => [
@@ -169,8 +178,15 @@ const AssetScreen = ({ route }: NavigationProps) => {
               tag={dynamicContentCard.tag}
               cta={dynamicContentCard.cta}
               imageUrl={dynamicContentCard.image}
-              onPress={() => console.log("PRESS")}
-              onPressDismiss={() => console.log("Dismiss")}
+              onPress={() =>
+                onClickLink(dynamicContentCard.link, dynamicContentCard.id)
+              }
+              onPressDismiss={() =>
+                onPressDismiss(
+                  () => console.log("DISMISS"),
+                  dynamicContentCard.id,
+                )
+              }
             />
           </Flex>
         )}
@@ -238,11 +254,13 @@ const AssetScreen = ({ route }: NavigationProps) => {
       t,
       cryptoAccounts,
       defaultAccount,
-      dynamicContentCard,
       isCryptoCurrency,
       selectedCoinData,
       onAddAccount,
       counterCurrency,
+      dynamicContentCard,
+      onClickLink,
+      onPressDismiss,
     ],
   );
 

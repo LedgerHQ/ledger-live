@@ -5,7 +5,17 @@ export const useBrazeContentCard = () => {
     Braze.logContentCardDismissed(cardId);
 
   const logClickCard = (cardId: string) => Braze.logContentCardClicked(cardId);
+
+  const logImpressionCard = (cardId: string) =>
+    Braze.logContentCardImpression(cardId);
+
   const refreshDynamicContent = () => Braze.requestContentCardsRefresh();
 
-  return { logClickCard, logDismissCard, refreshDynamicContent, Braze };
+  return {
+    logClickCard,
+    logDismissCard,
+    logImpressionCard,
+    refreshDynamicContent,
+    Braze,
+  };
 };
