@@ -153,7 +153,7 @@
       }
     },
     "CeloAllFundsWarning" : {
-      "title" : "Assurez-vous que votre solde disponible est suffisant pour couvrir les frais de transaction."
+      "title" : "Assurez-vous que votre solde disponible est suffisant pour couvrir vos futurs frais de transaction."
     },
     "CeloMissingWithdrawalsError" : {
       "title" : "Erreur lors du retrait des fonds"
@@ -418,6 +418,10 @@
       "title" : "Aucun compte trouvé",
       "description" : "Une erreur est survenue lors du calcul de l’adresse. Si le problème persiste, enregistrez vos logs en utilisant le bouton ci-dessous et transmettez-les à l’Assistance Ledger."
     },
+    "DecimalsLimitReached" : {
+      "title" : "Nombre maximal de décimales atteint",
+      "description" : "Veuillez vous assurer que le montant indiqué comporte 18 décimales."
+    },
     "NotEnoughBalance" : {
       "title" : "Solde insuffisant",
       "description" : "Vérifiez que ce compte a des fonds suffisants."
@@ -624,7 +628,7 @@
       "title" : "Vous n’avez aucune nomination."
     },
     "PolkadotAllFundsWarning" : {
-      "title" : "Assurez-vous que votre solde disponible est suffisant pour couvrir les frais de transaction."
+      "title" : "Assurez-vous que votre solde disponible est suffisant pour couvrir vos futurs frais de transaction."
     },
     "PolkadotDoMaxSendInstead" : {
       "title" : "Le solde ne peut pas être inférieur à {{minimumBalance}}. Pour vider : Max."
@@ -3445,7 +3449,7 @@
       "subtitle" : "Ajouter un nouveau compte",
       "native_segwit" : {
         "title" : "Native SegWit",
-        "desc" : "Le meilleur choix. Frais de transaction faibles, détection d’erreurs et prise en charge du réseau Lightning. Non pris en charge par certains wallets/plateformes d’échange."
+        "desc" : "Le meilleur choix. Frais de transaction bas, détection d’erreurs et prise en charge du réseau Lightning. Non pris en charge par certains wallets/plateformes d’échange."
       },
       "segwit" : {
         "title" : "SegWit",
@@ -3851,17 +3855,6 @@
       "description" : "Mettez à jour le micrologiciel de votre Ledger Nano en le connectant à Ledger Live pour l’ordinateur",
       "pleaseConnectUsbTitle" : "Câble USB nécessaire",
       "pleaseConnectUsbDescription" : "Connectez votre {{deviceName}} à votre téléphone avec un câble USB pour lancer la mise à jour du micrologiciel."
-    }
-  },
-  "firmwareUpdateRequired" : {
-    "updateAvailableFromLLM" : {
-      "title" : "Mise à jour du micrologiciel nécessaire",
-      "description" : "Pour effectuer cette action, vous devez d’abord mettre à jour le micrologiciel de votre {{ deviceName }}.",
-      "cta" : "Accéder à My Ledger"
-    },
-    "updateNotAvailableFromLLM" : {
-      "title" : "Mise à jour du micrologiciel nécessaire sur ordinateur",
-      "description" : "Mettez à jour votre {{ deviceName }} sur Ledger Live pour l’ordinateur."
     }
   },
   "FirmwareUpdateReleaseNotes" : {
@@ -4518,6 +4511,203 @@
       }
     }
   },
+  "elrond" : {
+    "info" : {
+      "available" : {
+        "title" : "EGLD disponibles",
+        "description" : "Ce montant peut être transféré."
+      },
+      "delegated" : {
+        "title" : "Actifs stakés",
+        "description" : "Les actifs stakés sont utilisés indirectement par le prestataire de service de staking pour faire fonctionner les nœuds de validation, traiter les transactions et sécuriser le réseau, participant ainsi au mécanisme de consensus."
+      },
+      "undelegating" : {
+        "title" : "Retraits en attente",
+        "description" : "Les actifs déstakés sont soumis à une période de fin de liaison de 10 jours, avant de pouvoir être retirés."
+      },
+      "delegationUnavailable" : {
+        "title" : "Délégation indisponible",
+        "description" : "Solde du compte insuffisant pour démarrer une nouvelle délégation."
+      }
+    },
+    "delegation" : {
+      "delegationEarn" : "Stakez vos EGLD pour sécuriser le réseau et obtenir votre part des récompenses.",
+      "info" : "Qu’est-ce que le staking et comment fonctionne-t-il ?",
+      "claimRewards" : "Demander les récompenses",
+      "claimAvailableRewards" : "Demander {{amount}}",
+      "header" : "Mes actifs stakés",
+      "Amount" : "Montant",
+      "noRewards" : "Aucune récompense disponible",
+      "delegate" : "Restaker",
+      "undelegate" : "Déstaker",
+      "reward" : "Demander les récompenses",
+      "commission" : "Commission",
+      "iDelegate" : "Je délègue",
+      "totalStake" : "Stake total",
+      "stepperHeader" : {
+        "starter" : "Gagner des récompenses",
+        "validator" : "Déléguer des actifs",
+        "amountSubTitle" : "Montant à staker",
+        "summary" : "Récapitulatif",
+        "verification" : "Vérification",
+        "selectDevice" : "Sélectionner votre appareil",
+        "connectDevice" : "Connecter votre appareil",
+        "stepRange" : "Étape {{currentStep}} sur {{totalSteps}}"
+      },
+      "flow" : {
+        "steps" : {
+          "starter" : {
+            "description" : "Vous pouvez gagner des récompenses en stakant vos EGLD à un prestataire de service de staking.",
+            "steps" : {
+              "0" : "Vous gardez la propriété de vos actifs stakés.",
+              "1" : "Les actifs seront disponibles 10 jours après avoir été déstakés.",
+              "2" : "Stakez avec votre appareil Ledger."
+            },
+            "warning" : {
+              "description" : "Choisissez judicieusement votre prestataire de service de staking : actuellement, le seul risque est de ne pas obtenir de récompenses pour diverses raisons. Choisissez un prestataire sur des critères de fiabilité, communication et économie."
+            },
+            "cta" : "Continuer"
+          },
+          "validator" : {
+            "validators" : "Prestataires de staking",
+            "myDelegations" : "Mes actifs stakés",
+            "cta" : "Continuer",
+            "apr" : "APR : {{amount}}",
+            "totalAvailable" : "Total disponible : <0>{{amount}}</0>",
+            "allAssetsUsed" : "Tous les actifs sont utilisés.",
+            "noResultsFound" : "Aucun validateur trouvé pour <0>{{search}}</0>",
+            "currentAmount" : "(+ <0>{{amount}}</0>)"
+          },
+          "amount" : {
+            "assetsRemaining" : "Actifs restants : <0>{{amount}}</0>",
+            "allAssetsUsed" : "Tous les actifs sont utilisés.",
+            "minAmount" : "Montant minimal : <0>{{min}}</0>",
+            "incorrectAmount" : "Montant maximal : <0>{{max}}</0>",
+            "insufficientDelegation" : "Le montant total de vos actifs stakés doit être d’au moins 1 {{label}} par prestataire de staking.",
+            "wrongUndelegations" : "Le montant restant de vos {{label}} stakés doit être 0 ou supérieur à 1 {{label}} par prestataire de staking.",
+            "cta" : "Continuer"
+          },
+          "verification" : {
+            "success" : {
+              "title" : "Actifs bien stakés",
+              "text" : "Le solde de votre compte sera mis à jour une fois que le réseau aura confirmé la transaction.",
+              "cta" : "Voir les détails"
+            },
+            "pending" : {
+              "title" : "Diffusion de la transaction..."
+            },
+            "broadcastError" : "Échec probable de votre transaction. Patientez un instant puis vérifiez l’historique des transactions avant de réessayer."
+          }
+        }
+      },
+      "drawer" : {
+        "status" : "Statut",
+        "rewards" : "Récompenses",
+        "active" : "Actif",
+        "inactive" : "Inactif",
+        "completionDate" : "Date de réalisation",
+        "redelegatedFrom" : "Redéléguée de",
+        "completionDateHit" : "Terminé"
+      }
+    },
+    "claimRewards" : {
+      "stepperHeader" : {
+        "validator" : "Sélectionner la récompense à toucher",
+        "method" : "Demander les récompenses",
+        "summary" : "Récapitulatif",
+        "selectDevice" : "Sélectionner votre appareil",
+        "connectDevice" : "Connecter votre appareil",
+        "stepRange" : "Étape {{currentStep}} sur {{totalSteps}}"
+      },
+      "flow" : {
+        "steps" : {
+          "method" : {
+            "youEarned" : "Vous avez gagné",
+            "byDelegationAssetsTo" : "en stakant vos actifs avec",
+            "claimRewards" : "Demander les récompenses",
+            "reDelegateRewards" : "Staker les récompenses",
+            "claimRewardsInfo" : "Elles seront demandées immédiatement et ajoutées à votre solde disponible.",
+            "reDelegateRewardsInfo" : "Elles seront demandées immédiatement et automatiquement stakées avec le même prestataire de staking.",
+            "compoundOrCashIn" : "Staker ou Demander les récompenses",
+            "claimRewardsTooltip" : "Les récompenses seront ajoutées à votre solde disponible.",
+            "reDelegateRewardsTooltip" : "Les récompenses seront ajoutées au montant staké.",
+            "cta" : "Continuer"
+          },
+          "verification" : {
+            "success" : {
+              "claimRewardsSuccess" : "Vous avez bien demandé vos récompenses. Elles ont été ajoutées à votre solde disponible.",
+              "reDelegateRewardsSuccess" : "Vos récompenses ont été stakées avec le même prestataire de staking.",
+              "text" : "Le solde de votre compte sera mis à jour une fois que le réseau aura confirmé la transaction.",
+              "cta" : "Voir les détails"
+            },
+            "pending" : {
+              "title" : "Diffusion de la transaction..."
+            },
+            "broadcastError" : "Échec probable de votre transaction. Patientez un instant puis vérifiez l’historique des transactions avant de réessayer."
+          }
+        }
+      }
+    },
+    "undelegation" : {
+      "stepperHeader" : {
+        "amountSubTitle" : "Montant à déstaker",
+        "summary" : "Récapitulatif",
+        "selectDevice" : "Sélectionner votre appareil",
+        "connectDevice" : "Connecter votre appareil",
+        "stepRange" : "Étape {{currentStep}} sur {{totalSteps}}"
+      },
+      "flow" : {
+        "steps" : {
+          "amount" : {
+            "allAssetsUsed" : "Tous les actifs déstakés"
+          },
+          "verification" : {
+            "success" : {
+              "title" : "Actifs bien déstakés",
+              "text" : "Le solde de votre compte sera mis à jour une fois que le réseau aura confirmé la transaction.",
+              "cta" : "Voir les détails"
+            },
+            "pending" : {
+              "title" : "Diffusion de la transaction..."
+            },
+            "broadcastError" : "Échec probable de votre transaction. Patientez un instant puis vérifiez l’historique des transactions avant de réessayer."
+          }
+        }
+      }
+    },
+    "withdraw" : {
+      "stepperHeader" : {
+        "validator" : "Sélectionner la récompense à toucher",
+        "method" : "Demander les récompenses",
+        "summary" : "Récapitulatif",
+        "selectDevice" : "Sélectionner votre appareil",
+        "connectDevice" : "Connecter votre appareil",
+        "stepRange" : "Étape {{currentStep}} sur {{totalSteps}}"
+      },
+      "flow" : {
+        "steps" : {
+          "method" : {
+            "youEarned" : "Actifs déstakés",
+            "byDelegationAssetsTo" : "de",
+            "withdrawInfo" : "Elles seront demandées immédiatement et ajoutées à votre solde disponible.",
+            "withdrawTooltip" : "Le montant retiré sera ajouté à votre solde disponible.",
+            "cta" : "Continuer"
+          },
+          "verification" : {
+            "success" : {
+              "title" : "Vous avez bien demandé vos récompenses. Elles ont été ajoutées à votre solde disponible.",
+              "text" : "Le solde de votre compte sera mis à jour une fois que le réseau aura confirmé la transaction.",
+              "cta" : "Voir les détails"
+            },
+            "pending" : {
+              "title" : "Diffusion de la transaction..."
+            },
+            "broadcastError" : "Échec probable de votre transaction. Patientez un instant puis vérifiez l’historique des transactions avant de réessayer."
+          }
+        }
+      }
+    }
+  },
   "tezos" : {
     "AccountHeader" : {
       "title" : "Gagner des récompenses en déléguant votre compte",
@@ -5014,7 +5204,8 @@
     "actions" : {
       "redelegate" : "Redéléguer",
       "collectRewards" : "Toucher les récompenses",
-      "undelegate" : "Interrompre la délégation"
+      "undelegate" : "Interrompre la délégation",
+      "withdraw" : "Retirer"
     }
   },
   "ValidateOnDevice" : {
