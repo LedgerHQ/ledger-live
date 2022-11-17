@@ -1,144 +1,114 @@
-import React, { Component } from "react";
-import {
-  StyleSheet,
-  View,
-  Keyboard,
-  TouchableWithoutFeedback,
-} from "react-native";
-import { connect } from "react-redux";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { compose } from "redux";
-import { CompositeScreenProps } from "@react-navigation/native";
-import { NavigatorName, ScreenName } from "../const";
+import React, { useCallback, useState } from "react";
+import { Flex } from "@ledgerhq/native-ui";
+import { StyleSheet, View } from "react-native";
+import { useDispatch } from "react-redux";
+import { useNavigation } from "@react-navigation/native";
+
+import { DeviceModelId } from "@ledgerhq/types-devices";
 import { addKnownDevice } from "../actions/ble";
-import { getFontStyle } from "../components/LText";
 import TextInput from "../components/TextInput";
-import KeyboardView from "../components/KeyboardView";
 import Button from "../components/Button";
-import { Theme, withTheme } from "../colors";
-import { SettingsNavigatorStackParamList } from "../components/RootNavigator/types/SettingsNavigator";
-import { StackNavigatorProps } from "../components/RootNavigator/types/helpers";
-import { MainNavigatorParamList } from "../components/RootNavigator/types/MainNavigator";
+import NavigationScrollView from "../components/NavigationScrollView";
+import { NavigatorName, ScreenName } from "../const";
 
-type NavigatorProps = CompositeScreenProps<
-  StackNavigatorProps<
-    SettingsNavigatorStackParamList,
-    ScreenName.DebugHttpTransport
-  >,
-  StackNavigatorProps<MainNavigatorParamList>
->;
+const DebugHttpTransport = () => {
+  const models = [
+    DeviceModelId.nanoX,
+    DeviceModelId.nanoSP,
+    DeviceModelId.nanoFTS,
+  ];
+  const { navigate } = useNavigation<Navigation["navigation"]>();
+  const dispatch = useDispatch();
+  const [address, setAddress] = useState("");
+  const [name, setName] = useState("");
+  const [model, setModelId] = useState(DeviceModelId.nanoX);
 
-type Props = {
-  addKnownDevice: (_: { id: string; name: string }) => void;
-  colors: Theme["colors"];
-} & NavigatorProps;
-
-class DebugHttpTransport extends Component<
-  Props,
-  {
-    text: string;
-  }
-> {
-  state = {
-    text: "",
-  };
-  onChangeText = (text: string) => {
-    this.setState({
-      text,
-    });
-  };
-  onAdd = () => {
-    const m = this.state.text
+  const onAdd = useCallback(() => {
+    const m = address
       .trim()
       .match(/^((?:[0-9]{1,3}\.){3}[0-9]{1,3})(:([0-9]+))?/);
     if (!m) return;
-    let [, ip, , port] = m; // eslint-disable-line prefer-const
+    // eslint-disable-next-line prefer-const
+    let [, ip, , port] = m;
 
     if (!port) port = "8435";
-    this.props.addKnownDevice({
-      id: `httpdebug|ws://${ip}:${port}`,
-      name: ip,
-    });
-    this.props.navigation.navigate(NavigatorName.Manager, {
+
+    dispatch(
+      addKnownDevice({
+        id: `httpdebug|ws://${ip}:${port}`,
+        name: name || address,
+        modelId: model,
+      }),
+    );
+
+    navigate(NavigatorName.Manager, {
       screen: ScreenName.Manager,
     });
-  };
+  }, [address, dispatch, model, name, navigate]);
 
-  render() {
-    const { text } = this.state;
-    const { colors } = this.props;
-    return (
-      <SafeAreaView
-        style={[
-          styles.root,
-          {
-            backgroundColor: colors.background,
-          },
-        ]}
+  return (
+    <NavigationScrollView>
+      <View
+        style={{
+          padding: 16,
+          flex: 1,
+        }}
       >
-        <KeyboardView style={styles.container}>
-          <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-            <View
-              style={{
-                flex: 1,
+        <View style={styles.select}>
+          {models.map(modelId => (
+            <Button
+              key={modelId}
+              type={modelId === model ? "primary" : "secondary"}
+              title={modelId}
+              onPress={() => {
+                setModelId(modelId as DeviceModelId);
               }}
-            >
-              <TextInput
-                value={text}
-                onChangeText={this.onChangeText}
-                autoFocus
-                autoCorrect
-                selectTextOnFocus
-                clearButtonMode="always"
-                placeholder="192.168.0.1"
-                returnKeyType="done"
-                style={[
-                  getFontStyle({
-                    semiBold: true,
-                  }),
-                  styles.input,
-                ]}
-              />
-              <View style={styles.buttonContainer}>
-                <Button
-                  event="DebugHttpTransportAdd"
-                  type="primary"
-                  title="Add"
-                  containerStyle={styles.continueButton}
-                  onPress={this.onAdd}
-                />
-              </View>
-            </View>
-          </TouchableWithoutFeedback>
-        </KeyboardView>
-      </SafeAreaView>
-    );
-  }
-}
+            />
+          ))}
+        </View>
+        <Flex flex={1}>
+          <TextInput
+            value={address}
+            onChangeText={setAddress}
+            autoFocus
+            autoCorrect
+            selectTextOnFocus
+            clearButtonMode="always"
+            placeholder="192.168.0.1"
+          />
+          <TextInput
+            value={name}
+            onChangeText={setName}
+            autoCorrect
+            selectTextOnFocus
+            clearButtonMode="always"
+            placeholder={"Some cool name"}
+            returnKeyType="done"
+          />
+          <View style={styles.buttonContainer}>
+            <Button
+              disabled={!address}
+              type={"primary"}
+              event="DebugHttpTransportAdd"
+              onPress={onAdd}
+              title={"Add"}
+            />
+          </View>
+        </Flex>
+      </View>
+    </NavigationScrollView>
+  );
+};
+
+export default DebugHttpTransport;
 
 const styles = StyleSheet.create({
   root: {
     flex: 1,
   },
-  buttonContainer: {
-    flex: 1,
-    padding: 16,
-    justifyContent: "flex-end",
-  },
-  continueButton: {
-    alignSelf: "stretch",
-  },
-  container: {
-    flex: 1,
-  },
-  input: {
-    fontSize: 22,
+  select: {
+    flexWrap: "wrap",
+    flexDirection: "row",
+    justifyContent: "space-between",
   },
 });
-
-export default compose<React.ComponentType<NavigatorProps>>(
-  connect(null, {
-    addKnownDevice,
-  }),
-  withTheme,
-)(DebugHttpTransport);
