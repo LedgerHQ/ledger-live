@@ -21,7 +21,7 @@ export const Base = styled(TouchableOpacity)`
 `;
 
 export const Container = styled(Flex)`
-  background: ${(p) => p.theme.colors.background.drawer};
+  background: ${(p) => p.theme.colors.neutral.c20};
   flex-direction: row;
   border-radius: 8px;
 `;
