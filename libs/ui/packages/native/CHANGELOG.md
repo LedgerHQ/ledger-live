@@ -1,5 +1,11 @@
 # @ledgerhq/native-ui
 
+## 0.12.1-nightly.2
+
+### Patch Changes
+
+- [#1759](https://github.com/LedgerHQ/ledger-live/pull/1759) [`77622be003`](https://github.com/LedgerHQ/ledger-live/commit/77622be0033cb7af6ac1284b302ac62e4825652b) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - VerticalTimeline: fix item title long text layout & remove item vertical scroll indicator
+
 ## 0.12.1-nightly.1
 
 ### Patch Changes

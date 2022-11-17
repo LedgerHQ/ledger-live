@@ -1,5 +1,12 @@
 # live-common-tools
 
+## 0.2.14-nightly.5
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/live-common@27.7.0-nightly.4
+
 ## 0.2.14-nightly.4
 
 ### Patch Changes

@@ -1,5 +1,11 @@
 # @ledgerhq/types-live
 
+## 6.26.0-nightly.3
+
+### Patch Changes
+
+- [#1759](https://github.com/LedgerHQ/ledger-live/pull/1759) [`77622be003`](https://github.com/LedgerHQ/ledger-live/commit/77622be0033cb7af6ac1284b302ac62e4825652b) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Add "storyly" feature flag
+
 ## 6.26.0-nightly.2
 
 ### Patch Changes

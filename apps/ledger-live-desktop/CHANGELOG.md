@@ -1,5 +1,15 @@
 # ledger-live-desktop
 
+## 2.50.0-nightly.9
+
+### Patch Changes
+
+- [#1759](https://github.com/LedgerHQ/ledger-live/pull/1759) [`77622be003`](https://github.com/LedgerHQ/ledger-live/commit/77622be0033cb7af6ac1284b302ac62e4825652b) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Implement remote config for Storyly + fix story localization
+
+- Updated dependencies [[`77622be003`](https://github.com/LedgerHQ/ledger-live/commit/77622be0033cb7af6ac1284b302ac62e4825652b)]:
+  - @ledgerhq/types-live@6.26.0-nightly.3
+  - @ledgerhq/live-common@27.7.0-nightly.4
+
 ## 2.50.0-nightly.8
 
 ### Patch Changes
