@@ -7,6 +7,7 @@ import {
   SectionListData,
   SectionListRenderItemInfo,
 } from "react-native";
+import BigNumber from "bignumber.js";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Trans } from "react-i18next";
 import { useSelector } from "react-redux";
@@ -124,7 +125,7 @@ function RedelegationSelectValidator({ navigation, route }: Props) {
         transaction,
         validatorSrc,
         validator,
-        max: max ?? 0,
+        max: max ?? new BigNumber(0),
         status,
         nextScreen: ScreenName.CosmosRedelegationSelectDevice,
       });
