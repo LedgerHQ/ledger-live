@@ -96,7 +96,7 @@ const buildOptimisticOperation = (
     value,
     fee: fees,
     blockHash: null,
-    blockHeight: account.blockHeight,
+    blockHeight: null,
     senders,
     recipients,
     accountId: account.id,

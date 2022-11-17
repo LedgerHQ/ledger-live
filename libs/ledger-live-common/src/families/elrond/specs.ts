@@ -34,9 +34,27 @@ function expectCorrectOptimisticOperation(
 ) {
   const { operation, optimisticOperation } = input;
 
-  botTest("optimistic operation matches", () =>
-    expect(operation).toMatchObject(optimisticOperation)
-  );
+  botTest("optimistic operation matches", () => {
+    expect(operation.id).toStrictEqual(optimisticOperation.id);
+    expect(operation.hash).toStrictEqual(optimisticOperation.hash);
+    expect(operation.accountId).toStrictEqual(optimisticOperation.accountId);
+    expect(operation.contract).toStrictEqual(optimisticOperation.contract);
+    expect(operation.fee.toFixed()).toStrictEqual(
+      optimisticOperation.fee.toFixed()
+    );
+
+    expect(operation.senders).toStrictEqual(optimisticOperation.senders);
+    expect(operation.recipients).toStrictEqual(optimisticOperation.recipients);
+    expect(operation.transactionSequenceNumber).toStrictEqual(
+      optimisticOperation.transactionSequenceNumber
+    );
+    expect(operation.type).toStrictEqual(
+      optimisticOperation.transactionSequenceNumber
+    );
+    expect(operation.value.toFixed()).toStrictEqual(
+      optimisticOperation.value.toFixed()
+    );
+  });
 }
 
 function expectCorrectSpendableBalanceChange(
