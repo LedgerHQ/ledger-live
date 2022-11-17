@@ -205,11 +205,11 @@ const PreviewPreEdit = ({ navigation, route }: NavigationProps) => {
     navigation.navigate(NavigatorName.CustomImage, {
       screen: ScreenName.CustomImageStep1Crop,
       params: {
-        device: params.device,
-        imageFile: imageToCrop,
+        device,
+        baseImageFile: imageToCrop,
       },
     });
-  }, [navigation, params.device, imageToCrop]);
+  }, [navigation, device, imageToCrop]);
 
   if (!imageToCrop || !imageToCrop.imageFileUri) {
     return <InfiniteLoader />;

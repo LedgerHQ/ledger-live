@@ -28,7 +28,7 @@ type NavigationProps = BaseComposite<
 const PreviewPostEdit = ({ navigation, route }: NavigationProps) => {
   const { t } = useTranslation();
   const { params } = route;
-  const { imageFile, image, contrast, device } = params;
+  const { baseImageFile, contrast, imagePreview, device } = params;
 
   const handleError = useCallback(
     (error: Error) => {
@@ -90,13 +90,13 @@ const PreviewPostEdit = ({ navigation, route }: NavigationProps) => {
       screen: ScreenName.CustomImageStep1Crop,
       params: {
         device,
-        imageFile,
+        baseImageFile,
         isPictureFromGallery: false,
       },
     });
-  }, [navigation, device, imageFile]);
+  }, [navigation, device, baseImageFile]);
 
-  if (!image) {
+  if (!imagePreview) {
     return <InfiniteLoader />;
   }
 
@@ -104,10 +104,10 @@ const PreviewPostEdit = ({ navigation, route }: NavigationProps) => {
     <SafeAreaView style={{ flex: 1 }} edges={["bottom"]}>
       <Flex flex={1}>
         <Flex flex={1}>
-          {image?.imageBase64DataUri && (
+          {imagePreview?.imageBase64DataUri && (
             <ImageProcessor
               ref={imageProcessorRef}
-              imageBase64DataUri={image?.imageBase64DataUri}
+              imageBase64DataUri={imagePreview?.imageBase64DataUri}
               onPreviewResult={handlePreviewResult}
               onError={handleError}
               onRawResult={handleRawResult}

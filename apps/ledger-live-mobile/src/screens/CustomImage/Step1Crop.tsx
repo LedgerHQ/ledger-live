@@ -40,7 +40,7 @@ const Step1Cropping = ({ navigation, route }: NavigationProps) => {
 
   const { params } = route;
 
-  const { device, imageFile } = params;
+  const { device, baseImageFile } = params;
 
   const handleError = useCallback(
     (error: Error) => {
@@ -94,15 +94,15 @@ const Step1Cropping = ({ navigation, route }: NavigationProps) => {
     >
       <Flex
         flex={1}
-        onLayout={imageFile ? onContainerLayout : undefined}
+        onLayout={baseImageFile ? onContainerLayout : undefined}
         width="100%"
         justifyContent="center"
         alignItems="center"
       >
-        {containerDimensions && imageFile ? (
+        {containerDimensions && baseImageFile ? (
           <ImageCropper
             ref={cropperRef}
-            imageFileUri={imageFile.imageFileUri}
+            imageFileUri={baseImageFile.imageFileUri}
             aspectRatio={targetDimensions}
             /**
              * this native component needs absolute height & width values to
@@ -121,7 +121,7 @@ const Step1Cropping = ({ navigation, route }: NavigationProps) => {
           <InfiniteLoader />
         )}
       </Flex>
-      {imageFile ? (
+      {baseImageFile ? (
         <BottomContainer>
           <Box mb={7} alignSelf="center">
             <Touchable onPress={handlePressRotateLeft}>
