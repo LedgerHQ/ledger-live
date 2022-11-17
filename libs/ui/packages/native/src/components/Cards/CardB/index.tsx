@@ -1,7 +1,7 @@
 import React from "react";
 import { ArrowRightMedium, CloseMedium } from "@ledgerhq/icons-ui/native";
 
-import { TouchableOpacityProps, TouchableOpacity } from "react-native";
+import { TouchableOpacityProps, TouchableOpacity, Image } from "react-native";
 import styled, { useTheme } from "styled-components/native";
 
 import { Text, Flex, Link, rgba } from "@ledgerhq/native-ui";
@@ -10,7 +10,7 @@ export type CardProps = TouchableOpacityProps & {
   tag?: string;
   title?: string;
   cta?: string;
-  image?: string;
+  imageUrl?: string;
   onPressDismiss?: () => void;
 };
 
@@ -28,6 +28,10 @@ export const ImageContainer = styled(Flex)`
   border-top-right-radius: 8px;
   border-bottom-right-radius: 8px;
   position: relative;
+`;
+export const ImageContent = styled(Image)`
+  border-top-right-radius: 8px;
+  border-bottom-right-radius: 8px;
 `;
 
 export const CloseContainer = styled(TouchableOpacity)`
@@ -52,50 +56,65 @@ export const CloseButton = (props: CardProps) => {
   );
 };
 
-const CardContainer = (props: CardProps): React.ReactElement => {
-  const { tag, title, cta, onPress } = props;
+const ImageComponent = (props: CardProps) => (
+  <ImageContainer width={props.imageUrl ? 115 : 0}>
+    <ImageContent
+      source={{
+        uri: props.imageUrl,
+      }}
+      style={{ width: "100%", height: "100%" }}
+    />
+    <CloseButton onPressDismiss={props.onPressDismiss} />
+  </ImageContainer>
+);
 
-  return (
-    <Container height={125} width={"100%"}>
-      <Flex justifyContent={"space-between"} alignItems={"flex-start"} p={"12px"} flexShrink={1}>
-        <Flex>
-          <Text
-            variant={"small"}
-            fontWeight={"semiBold"}
-            color="neutral.c70"
-            uppercase
-            numberOfLines={1}
-          >
-            {tag}
-          </Text>
-
-          <Text
-            variant={"large"}
-            numberOfLines={3}
-            fontWeight={"semiBold"}
-            color="neutral.c100"
-            ellipsizeMode="tail"
-            mt={"8px"}
-          >
-            {title}
-          </Text>
-        </Flex>
-        <Link
-          type={"main"}
-          size={"medium"}
-          iconPosition="right"
-          Icon={() => <ArrowRightMedium color="primary.c80" />}
-          onPress={onPress}
+const TextComponent = (props: CardProps) => (
+  <Flex justifyContent={"space-between"} alignItems={"flex-start"} p={"12px"} flex={1}>
+    <Flex>
+      <Flex flexGrow={1} maxWidth={"90%"}>
+        <Text
+          variant={"small"}
+          fontWeight={"semiBold"}
+          color="neutral.c70"
+          uppercase
+          numberOfLines={1}
         >
-          <Text variant={"paragraph"} fontWeight={"semiBold"} color="primary.c80" numberOfLines={1}>
-            {cta}
-          </Text>
-        </Link>
+          {props.tag}
+        </Text>
       </Flex>
 
-      <ImageContainer width={115} backgroundColor="red">
-        <CloseButton />
-      </ImageContainer>
+      <Text
+        variant={"large"}
+        numberOfLines={3}
+        fontWeight={"semiBold"}
+        color="neutral.c100"
+        mt={"4px"}
+      >
+        {props.title}
+      </Text>
+    </Flex>
+
+    <Link
+      type={"main"}
+      size={"medium"}
+      iconPosition="right"
+      Icon={() => <ArrowRightMedium color="primary.c80" />}
+      onPress={props.onPress}
+    >
+      <Text variant={"paragraph"} fontWeight={"semiBold"} color="primary.c80" numberOfLines={2}>
+        {props.cta}
+      </Text>
+    </Link>
+  </Flex>
+);
+
+const CardContainer = (props: CardProps): React.ReactElement => {
+  const { imageUrl, onPressDismiss } = props;
+
+  return (
+    <Container height={125}>
+      <TextComponent {...props} />
+      <ImageComponent imageUrl={imageUrl} onPressDismiss={onPressDismiss} />
     </Container>
   );
 };

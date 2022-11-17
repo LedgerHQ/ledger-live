@@ -3,38 +3,41 @@ import React from "react";
 import CardA from "../../../src/components/Cards/CardA";
 import CardB from "../../../src/components/Cards/CardB";
 import Flex from "../../../src/components/Layout/Flex";
+import { text, select, number } from "@storybook/addon-knobs";
 
 const CardAStory = () => <CardA></CardA>;
 
-const CardBStory = () => (
-  <>
-    <Flex
-      backgroundColor={"primary.c70"}
-      height={300}
-      width={500}
-      alignItems="center"
-      justifyContent={"center"}
-      p={"16px"}
-    >
-      <CardB
-        tag="ANNouncement"
-        title="This is a card title which spans multiple lines and if takes more lines the text will go out.This is a card title which spans multiple lines and if takes more lines the text will go out"
-        cta="My cta to click"
-      />
-    </Flex>
+const CardBStory = () => {
+  const width = number("Container Width", 350);
+  const tag = text("tag", "Promo");
+  const title = text(
+    "title",
+    "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam tellus risus, pretium a nulla sit amet, porta sollicitudin tortor.",
+  );
+  const cta = text("cta", "My cta action");
+  const imageUrl = select(
+    "url Image",
+    [
+      "",
+      "https://www.cointribune.com/app/uploads/2020/12/LEDGER-Nano-X.jpg?nowebp",
+      "https://cdn.shopify.com/s/files/1/2974/4858/products/01_6.png?v=1647271638",
+      "https://media.wired.com/photos/630916d9ba2a66af641b11ee/master/pass/Ledger-Nano-X-Gear.jpg",
+    ],
+    "",
+  );
 
+  return (
     <Flex
-      p={"16px"}
-      mt={18}
       backgroundColor={"primary.c70"}
       height={300}
-      width={500}
+      width={width}
       alignItems="center"
       justifyContent={"center"}
+      p={"16px"}
     >
-      <CardB tag="stack" title="This is a short message" cta="My cta to click" />
+      <CardB tag={tag} title={title} cta={cta} imageUrl={imageUrl} />
     </Flex>
-  </>
-);
+  );
+};
 
 storiesOf((story) => story("Cards", module).add("Card A", CardAStory).add("Card B", CardBStory));
