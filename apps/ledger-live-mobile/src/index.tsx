@@ -445,6 +445,16 @@ const linkingOptions = {
               [ScreenName.DeveloperSettings]: "settings/developer",
             },
           },
+
+          [NavigatorName.CustomImage]: {
+            screens: {
+              /**
+               * @params ?device: string
+               * ie: "ledgerlive://custom-image?device=nanoFTS"
+               */
+              [ScreenName.CustomImageStep0Welcome]: "custom-image",
+            },
+          },
         },
       },
     },
