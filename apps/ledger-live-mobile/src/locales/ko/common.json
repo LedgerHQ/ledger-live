@@ -595,6 +595,9 @@
     "SourceHasMultiSign" : {
       "title" : "{{currencyName}}(을)를 보내려면 다중서명을 비활성화하세요"
     },
+    "DustLimit" : {
+      "title" : "더스트(소액) 한도보다 낮은 금액입니다."
+    },
     "StratisDown2021Warning" : {
       "description" : "Stratis 블록체인 진화로 더 이상 제대로 작동하지 않을 수 있습니다. 기존 Stratis 블록체인은 2021년 10월 16일까지 지원됩니다."
     },
@@ -1804,6 +1807,9 @@
         }
       }
     },
+    "appsStep" : {
+      "title" : "{{productName}} 애플리케이션"
+    },
     "readyStep" : {
       "title" : "{{productName}} 장치가 준비되었습니다."
     },
@@ -2140,7 +2146,7 @@
       },
       "advanced" : {
         "title" : "고급 로그",
-        "warningDerivation" : "{{tag}} xpub 입니다. 타사 지갑으로 가져올 때 동일한 파생 모드를 선택하세요.",
+        "warningDerivation" : "{{tag}} xpub입니다. 타사 지갑으로 가져올 때 동일한 파생 모드를 선택하세요.",
         "desc" : ""
       }
     },
@@ -3462,7 +3468,7 @@
     }
   },
   "DeviceAction" : {
-    "stayInTheAppPlz" : "앱을 그대로 유지하고 Nano X를 가까운 곳에 위치시켜 주세요",
+    "stayInTheAppPlz" : "Ledger Live 앱을 끄지 마시고 Ledger 장치를 가까운 곳에 위치시켜 주세요.",
     "allowAppPermission" : "내 장치에서 {{wording}} 앱 열기",
     "allowAppPermissionSubtitleToken" : "나의 {{token}} 토큰 관리",
     "allowManagerPermission" : "장치에서 {{wording}} 허용",
@@ -3634,6 +3640,7 @@
         "description" : "저장된 Ledger 장치 관리"
       },
       "addNewCTA" : "새로 추가하기",
+      "otgBanner" : "Nano S 또는 Nano S Plus 사용자라면, 장치를 USB 케이블로 연결하세요.",
       "connectExistingLedger" : "기존 Ledger 연결",
       "connectExistingLedgerDescription" : "이미 설정된 Ledger가 있나요? 블루투스 페어링을 진행하세요",
       "setUpNewLedger" : "새 Ledger 설정",
@@ -5353,6 +5360,11 @@
       "viewOn" : "다음에서 보기:",
       "viewInExplorer" : "탐색기에서 보기",
       "txDetails" : "트랜잭션 세부 사항"
+    },
+    "modalDisabled" : {
+      "title" : "전송 기능을 사용할 수 없습니다",
+      "body" : "애플 앱스토어 최신 업데이트 사항 준수를 위해 NFT 전송 기능을 일시적으로 사용하실 수 없습니다. 여전히 데스크탑에서는 Ledger Live로 NFT 전송이 가능합니다.",
+      "contactSupport" : "자세한 정보는 지원 관련 기사를 확인해 주세요."
     }
   },
   "ApplicationVersion" : "v{{version}}",
@@ -5393,17 +5405,19 @@
     "cropImage" : "이미지 자르기",
     "chooseConstrast" : "대비 선택",
     "uploadAnotherImage" : "다른 이미지 업로드",
-    "selectContrast" : "컨트라스트 선택",
+    "rotateImage" : "회전",
     "allowPreview" : "{{productName}}에서 사진 미리보기 허용",
     "loadingPicture" : "{{productName}}에서 사진 로드 중",
     "pictureLoaded" : "사진 로드 완료",
     "timeDisclaimer" : "최대 30초가 소요될 수 있습니다",
     "imageLoaded" : "{{productName}}에서 로드한 이미지",
     "confirmPicture" : "{{productName}}에서 확인",
-    "title" : "사진을 선택하고,\n원하는 느낌으로,\n나만의 Ledger를 만나보세요.",
-    "subtitle" : "좋아하는 NFT 이미지나 휴대폰에 저장된 사진으로 설정해 보세요.",
+    "landingPage" : {
+      "title" : "사진을 선택하고,\n원하는 느낌으로,\n나만의 Ledger를 만나보세요.",
+      "subtitle" : "좋아하는 NFT 이미지나 휴대폰에 저장된 사진으로 설정해 보세요.",
+      "choosePicture" : "사진 선택"
+    },
     "customImage" : "커스텀 사진",
-    "choosePicture" : "사진 선택",
     "doThisLater" : "다음에 결정하기"
   },
   "postOnboarding" : {
