@@ -301,7 +301,7 @@ const prepareTransaction = async (
       // in case of http 400, log & ignore (more case to handle)
       log(
         "taquito-network-error",
-        String((e as { message: string }).message || ""),
+        String((e as unknown as { message: string }).message || ""),
         { transaction: t }
       );
       throw e;
