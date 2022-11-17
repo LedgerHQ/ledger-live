@@ -595,6 +595,9 @@
     "SourceHasMultiSign" : {
       "title" : "Desactiva la multifirma para enviar {{currencyName}}"
     },
+    "DustLimit" : {
+      "title" : "La cantidad es menor que el límite de remanente"
+    },
     "StratisDown2021Warning" : {
       "description" : "La cadena de bloques Stratis ha evolucionado y es posible que ya no funcione correctamente. La compatibilidad con la cadena de bloques Stratis original se mantendrá hasta el 16 de octubre de 2021."
     },
@@ -2140,7 +2143,7 @@
       },
       "advanced" : {
         "title" : "Registros avanzados",
-        "warningDerivation" : "Esta es una xpub {{tag}}. Cuando la importes en una billetera de terceros, selecciona el mismo modo de derivación.",
+        "warningDerivation" : "Esta es una xpub {{tag}}. Cuando la importes a una billetera de terceros, selecciona el mismo modo de derivación.",
         "desc" : ""
       }
     },
@@ -5387,7 +5390,8 @@
     "drawer" : {
       "title" : "Elige una imagen",
       "options" : {
-        "uploadFromPhone" : "Cargar desde mi teléfono"
+        "uploadFromPhone" : "Cargar desde mi teléfono",
+        "selectFromNFTGallery" : "Seleccionar de la galería de NFTs"
       }
     },
     "cropImage" : "Recortar imagen",
@@ -5404,7 +5408,10 @@
     "subtitle" : "Pon una imagen de tu NFT favorito o una de tu teléfono.",
     "customImage" : "Imagen personalizada",
     "choosePicture" : "Elige una imagen",
-    "doThisLater" : "Quizás más tarde"
+    "doThisLater" : "Quizás más tarde",
+    "nftGallery" : {
+      "title" : "Mis NFTs"
+    }
   },
   "postOnboarding" : {
     "hub" : {
