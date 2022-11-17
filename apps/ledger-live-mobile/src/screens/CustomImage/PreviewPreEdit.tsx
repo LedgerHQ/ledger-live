@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { Button, Flex, InfiniteLoader } from "@ledgerhq/native-ui";
+import { Button, Flex, InfiniteLoader, Text } from "@ledgerhq/native-ui";
 import { ImagePreviewError } from "@ledgerhq/live-common/customImage/errors";
 import { NativeSyntheticEvent, ImageErrorEventData } from "react-native";
 import { useTranslation } from "react-i18next";
@@ -212,59 +212,72 @@ const PreviewPreEdit = ({ navigation, route }: NavigationProps) => {
   }, [navigation, device, imageToCrop]);
 
   if (!imageToCrop || !imageToCrop.imageFileUri) {
-    return <InfiniteLoader />;
+    return (
+      <Flex flex={1} justifyContent="center" alignItems="center">
+        <InfiniteLoader />
+      </Flex>
+    );
   }
 
   return (
     <SafeAreaView style={{ flex: 1 }} edges={["bottom"]}>
-      <Flex flex={1}>
+      {resizedImage?.imageBase64DataUri && (
+        <ImageProcessor
+          ref={imageProcessorRef}
+          imageBase64DataUri={resizedImage?.imageBase64DataUri}
+          onPreviewResult={handlePreviewResult}
+          onError={handleError}
+          onRawResult={handleRawResult}
+          contrast={DEFAULT_CONTRAST}
+        />
+      )}
+      {previewLoading ? (
+        <Flex flex={1} justifyContent="center" alignItems="center">
+          <InfiniteLoader />
+          <Text variant="body" color="neutral.c80" mt={6}>
+            {t("customImage.preview.loading")}
+          </Text>
+        </Flex>
+      ) : (
         <Flex flex={1}>
-          {resizedImage?.imageBase64DataUri && (
-            <ImageProcessor
-              ref={imageProcessorRef}
-              imageBase64DataUri={resizedImage?.imageBase64DataUri}
-              onPreviewResult={handlePreviewResult}
-              onError={handleError}
-              onRawResult={handleRawResult}
-              contrast={DEFAULT_CONTRAST}
-            />
-          )}
-          <Flex
-            flex={1}
-            flexDirection="column"
-            alignItems="center"
-            justifyContent="center"
-          >
-            <FramedImage
-              onError={handlePreviewImageError}
-              fadeDuration={0}
-              source={{ uri: processorPreviewImage?.imageBase64DataUri }}
-            />
+          <Flex flex={1}>
+            <Flex
+              flex={1}
+              flexDirection="column"
+              alignItems="center"
+              justifyContent="center"
+            >
+              <FramedImage
+                onError={handlePreviewImageError}
+                fadeDuration={0}
+                source={{ uri: processorPreviewImage?.imageBase64DataUri }}
+              />
+            </Flex>
+          </Flex>
+          <Flex px={8}>
+            <Button
+              type="main"
+              size="large"
+              outline
+              mb={4}
+              disabled={previewLoading}
+              pending={rawResultLoading}
+              onPress={requestRawResult}
+              displayContentWhenPending
+            >
+              {t("customImage.preview.setPicture")}
+            </Button>
+            <Button
+              size="large"
+              mb={8}
+              onPress={handleEditPicture}
+              disabled={previewLoading}
+            >
+              {t("customImage.preview.editPicture")}
+            </Button>
           </Flex>
         </Flex>
-        <Flex px={8}>
-          <Button
-            type="main"
-            size="large"
-            outline
-            mb={4}
-            disabled={previewLoading}
-            pending={rawResultLoading}
-            onPress={requestRawResult}
-            displayContentWhenPending
-          >
-            {t("customImage.preview.setPicture")}
-          </Button>
-          <Button
-            size="large"
-            mb={8}
-            onPress={handleEditPicture}
-            disabled={previewLoading}
-          >
-            {t("customImage.preview.editPicture")}
-          </Button>
-        </Flex>
-      </Flex>
+      )}
     </SafeAreaView>
   );
 };

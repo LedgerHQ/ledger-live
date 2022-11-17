@@ -130,7 +130,6 @@ const PreviewPostEdit = ({ navigation, route }: NavigationProps) => {
         <Flex px={8}>
           <Button
             type="main"
-            outline
             size="large"
             mb={4}
             disabled={previewLoading}

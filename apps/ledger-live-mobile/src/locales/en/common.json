@@ -5467,6 +5467,7 @@
     "doThisLater": "Maybe later",
     "preview": {
       "title": "Preview",
+      "loading": "Loading preview",
       "setPicture": "Set custom picture",
       "editPicture": "Edit picture"
     }
