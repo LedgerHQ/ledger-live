@@ -17,6 +17,7 @@ export enum ScreenName {
   BitcoinEditCustomFees = "BitcoinEditCustomFees",
   ClaimNftWelcome = "ClaimNftWelcome",
   ClaimNftQrScan = "ClaimNftQrScan",
+  CasperEditTransferId = "CasperEditTransferId",
   ClaimRewardsConnectDevice = "ClaimRewardsConnectDevice",
   ClaimRewardsSelectDevice = "ClaimRewardsSelectDevice",
   ClaimRewardsValidationError = "ClaimRewardsValidationError",
