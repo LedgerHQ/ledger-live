@@ -1,6 +1,7 @@
 export * from "./bitcoin";
 export * from "./ethereum";
 export * from "./ripple";
+export * from "./casper";
 export * from "./stellar";
 export * from "./tezos";
 export * from "./tron";
