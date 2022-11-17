@@ -1,6 +1,6 @@
-export type ElronESDTToken = [string, string, number, string, string];
+export type ElrondESDTToken = [string, string, number, string, string];
 
-const tokens: ElronESDTToken[] = [
+const tokens: ElrondESDTToken[] = [
   [
     "USDC",
     "555344432d633736663166",
