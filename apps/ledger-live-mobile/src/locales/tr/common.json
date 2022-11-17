@@ -2129,6 +2129,7 @@
     },
     "details" : "{{ currency }} ayrıntıları",
     "extra" : {
+      "transferId": "geçiş kimliği",
       "resource" : "Kaynak",
       "frozenAmount" : "Dondurulan tutar",
       "unfreezeAmount" : "Çözülen tutar",
@@ -3377,6 +3378,8 @@
       "maxEstimatedFee" : "Maks. tahminî ücret",
       "validateFees" : "Ücretleri Onayla",
       "customizeFees" : "Ücretleri Özelleştir",
+      "transferId": "geçiş kimliği",
+      "validateTransferId": "Kimliği doğrula",
       "memo" : {
         "title" : "Memo",
         "type" : "Memo türü",

@@ -2130,6 +2130,7 @@
     "details" : "تفاصيل {{ currency }}",
     "extra" : {
       "resource" : "مورد",
+      "transferId": "معرف نقل",
       "frozenAmount" : "المبلغ المُجمد",
       "unfreezeAmount" : "إزالة تجميد المبلغ",
       "address" : "عنوان",
@@ -3360,6 +3361,8 @@
       "tag" : "علامة (اختيارية)",
       "validateTag" : "التحقق من العلامة",
       "total" : "الإجمالي",
+      "transferId": "معرف نقل",
+      "validateTransferId": "تحقق من الهوية",
       "amount" : "المبلغ",
       "from" : "من",
       "to" : "إلى",

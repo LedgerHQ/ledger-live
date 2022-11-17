@@ -2136,6 +2136,7 @@
     },
     "details": "{{ currency }} details",
     "extra": {
+      "transferId": "Transfer ID",
       "resource": "Resource",
       "frozenAmount": "Frozen amount",
       "unfreezeAmount": "Unfreeze amount",
@@ -3384,6 +3385,8 @@
       "maxEstimatedFee": "Max estimated fee",
       "validateFees": "Validate Fees",
       "customizeFees": "Customize Fees",
+      "transferId": "Transfer ID",
+      "validateTransferId": "Validate ID",
       "memo": {
         "title": "Memo",
         "type": "Memo type",
