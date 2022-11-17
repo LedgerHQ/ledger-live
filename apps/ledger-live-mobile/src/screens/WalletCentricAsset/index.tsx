@@ -42,6 +42,7 @@ import {
   BaseComposite,
   StackNavigatorProps,
 } from "../../components/RootNavigator/types/helpers";
+import useDynamicContent from "../../dynamicContent/dynamicContent";
 
 // @FIXME workarround for main tokens
 const tokenIDToMarketID = {
@@ -135,7 +136,8 @@ const AssetScreen = ({ route }: NavigationProps) => {
     }
   }, [currency, navigation]);
 
-  const hasContentCard = true;
+  const { getAssetCardById } = useDynamicContent();
+  const dynamicContentCard = getAssetCardById(currency.ticker);
 
   const data = useMemo(
     () => [
@@ -160,13 +162,13 @@ const AssetScreen = ({ route }: NavigationProps) => {
           accounts={cryptoAccounts}
           defaultAccount={defaultAccount}
         />
-        {hasContentCard && (
+        {!!dynamicContentCard && (
           <Flex my={6}>
             <CardB
-              title="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam tellus risus, pretium a nulla sit amet, porta sollicitudin tortor."
-              tag="Stack"
-              cta="Click to continue"
-              imageUrl="https://media.wired.com/photos/630916d9ba2a66af641b11ee/master/pass/Ledger-Nano-X-Gear.jpg"
+              title={dynamicContentCard.title}
+              tag={dynamicContentCard.tag}
+              cta={dynamicContentCard.cta}
+              imageUrl={dynamicContentCard.image}
               onPress={() => console.log("PRESS")}
               onPressDismiss={() => console.log("Dismiss")}
             />
@@ -236,7 +238,7 @@ const AssetScreen = ({ route }: NavigationProps) => {
       t,
       cryptoAccounts,
       defaultAccount,
-      hasContentCard,
+      dynamicContentCard,
       isCryptoCurrency,
       selectedCoinData,
       onAddAccount,

@@ -1,5 +1,6 @@
 import { useSelector } from "react-redux";
 import { ContentCard as BrazeContentCard } from "react-native-appboy-sdk";
+
 import {
   assetsCardsSelector,
   walletCardsSelector,
@@ -22,15 +23,16 @@ type ContentCard = {
   title: string;
   link: string;
   image?: string;
+  tag: string;
 };
 
 export type WalletContentCard = ContentCard & {
-  tag: string;
   background?: BackgroundType;
 };
 
 export type AssetContentCard = ContentCard & {
-  asset: string;
+  assets: string;
+  cta: string;
 };
 
 export const filterByPage = (array: BrazeContentCard[], page: string) =>
@@ -39,6 +41,7 @@ export const filterByPage = (array: BrazeContentCard[], page: string) =>
 export const mapAsWalletContentCard = (card: BrazeContentCard) =>
   ({
     id: card.id,
+    tag: card.extras.title,
     title: card.extras.title,
     location: LocationContentCard.Wallet,
     image: card.extras.image,
@@ -52,11 +55,13 @@ export const mapAsWalletContentCard = (card: BrazeContentCard) =>
 export const mapAsAssetContentCard = (card: BrazeContentCard) =>
   ({
     id: card.id,
+    tag: card.extras.title,
     title: card.extras.title,
     location: LocationContentCard.Asset,
     image: card.extras.image,
     link: card.extras.link,
-    asset: card.extras.asset,
+    cta: card.extras.cta,
+    assets: card.extras.assets,
   } as AssetContentCard);
 
 const useDynamicContent = () => {
@@ -65,7 +70,16 @@ const useDynamicContent = () => {
   const assetsCards = useSelector(assetsCardsSelector);
   const walletCards = useSelector(walletCardsSelector);
 
-  return { walletCards, assetsCards };
+  function getAssetCardById(currencyId?: string): AssetContentCard | undefined {
+    if (!currencyId) {
+      return undefined;
+    }
+    return assetsCards.find((ac: AssetContentCard) =>
+      ac.assets.includes(currencyId),
+    );
+  }
+
+  return { walletCards, assetsCards, getAssetCardById };
 };
 
 export default useDynamicContent;
