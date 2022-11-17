@@ -32,6 +32,7 @@ Detox also has good documentation for [Android](https://wix.github.io/Detox/docs
 
 ### Additional Android setup steps
 
+<!-- REWRITE THIS -->
 We've found that it's better to install Java manually rather than with Homebrew, as they are often installed in locations on your computer that Detox and Android Studio aren't expecting. Follow [this](https://techoral.com/blog/java/install-openjdk-11-on-mac.html) guide.
 
 ### Additional iOS setup steps
@@ -103,19 +104,13 @@ Most files for the tests are in the `/e2e` LLM app folder.
 
 - `/specs`: The test suites themselves. We make use of the helpers and combine the snippets from the flows to build the different test scenarios. Ideally we should be able to reuse parts from flows in the specs.
 
-- `/config.json`: Configuration for Detox. Contains settings like what the setup and teardown files are, how long the timeout is, what test runner to use, etc.
+- `/jest.config.js`: Configuration for Detox. Contains settings like what the setup and teardown files are, how long the timeout is, what test runner to use, etc.
 
 - `/e2e-bridge-setup`: Used to start the websocket bridge on the client (app) side.
 
-- `/environment.js`: Boilerplate code to setup Jest for the Detox tests.
+- `/helpers.ts`: Convenience methods for use in the models/tests to make writing tests easier.
 
-- `/global-setup.js`: Run at the start of the test run to start the emulator and kick off the tests.
-
-- `/global-teardown.js`: Run at the end of the test run to teardown the test and emulator prcoesses.
-
-- `/helpers.js`: Convenience methods for use in the models/tests to make writing tests easier.
-
-- `/setup.js`: Run after the global setup. It starts the websocket bridge, sets up the emulators to be more consistent in the test run (for example sets the time to 12.00), and shuts down the websocket bridge. Any logic to be run before and after a test run would go here.
+- `/setup.ts`: Run after the global setup. It starts the websocket bridge, sets up the emulators to be more consistent in the test run (for example sets the time to 12.00), and shuts down the websocket bridge. Any logic to be run before and after a test run would go here.
 
 ### Other important files outside `/e2e`
 

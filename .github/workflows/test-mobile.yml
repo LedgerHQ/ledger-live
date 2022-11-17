@@ -204,7 +204,7 @@ jobs:
           api-level: 30
           arch: x86_64
           target: default
-          avd-name: "Pixel 3a"
+          avd-name: "Pixel_3a"
           emulator-options: -verbose -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
           ram-size: 4096M
           script: pnpm mobile e2e:test -c android.emu.release --loglevel trace --record-logs all --record-timeline all --take-screenshots all --record-videos failing --forceExit --detectOpenHandles
