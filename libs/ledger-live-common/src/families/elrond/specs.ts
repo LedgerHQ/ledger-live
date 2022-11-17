@@ -48,9 +48,7 @@ function expectCorrectOptimisticOperation(
     expect(operation.transactionSequenceNumber).toStrictEqual(
       optimisticOperation.transactionSequenceNumber
     );
-    expect(operation.type).toStrictEqual(
-      optimisticOperation.transactionSequenceNumber
-    );
+    expect(operation.type).toStrictEqual(optimisticOperation.type);
     expect(operation.value.toFixed()).toStrictEqual(
       optimisticOperation.value.toFixed()
     );
