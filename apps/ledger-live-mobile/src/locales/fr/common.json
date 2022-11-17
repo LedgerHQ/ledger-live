@@ -153,7 +153,7 @@
       }
     },
     "CeloAllFundsWarning" : {
-      "title" : "Assurez-vous que votre solde disponible est suffisant pour couvrir les frais de transaction."
+      "title" : "Assurez-vous que votre solde disponible est suffisant pour couvrir vos futurs frais de transaction."
     },
     "CeloMissingWithdrawalsError" : {
       "title" : "Erreur lors du retrait des fonds"
@@ -595,6 +595,9 @@
     "SourceHasMultiSign" : {
       "title" : "Désactivez la multisignature pour envoyer des {{currencyName}}."
     },
+    "DustLimit" : {
+      "title" : "Montant inférieur à la limite de poussière (dust limit)"
+    },
     "StratisDown2021Warning" : {
       "description" : "La blockchain Stratis a évolué et pourrait ne plus fonctionner correctement. La blockchain Stratis d’origine continuera d’être prise en charge jusqu’au 16 octobre 2021."
     },
@@ -624,7 +627,7 @@
       "title" : "Vous n’avez aucune nomination."
     },
     "PolkadotAllFundsWarning" : {
-      "title" : "Assurez-vous que votre solde disponible est suffisant pour couvrir les frais de transaction."
+      "title" : "Assurez-vous que votre solde disponible est suffisant pour couvrir vos futurs frais de transaction."
     },
     "PolkadotDoMaxSendInstead" : {
       "title" : "Le solde ne peut pas être inférieur à {{minimumBalance}}. Pour vider : Max."
@@ -3445,7 +3448,7 @@
       "subtitle" : "Ajouter un nouveau compte",
       "native_segwit" : {
         "title" : "Native SegWit",
-        "desc" : "Le meilleur choix. Frais de transaction faibles, détection d’erreurs et prise en charge du réseau Lightning. Non pris en charge par certains wallets/plateformes d’échange."
+        "desc" : "Le meilleur choix. Frais de transaction bas, détection d’erreurs et prise en charge du réseau Lightning. Non pris en charge par certains wallets/plateformes d’échange."
       },
       "segwit" : {
         "title" : "SegWit",
@@ -5387,7 +5390,8 @@
     "drawer" : {
       "title" : "Choisissez une image",
       "options" : {
-        "uploadFromPhone" : "Télécharger à partir de mon téléphone"
+        "uploadFromPhone" : "Télécharger à partir de mon téléphone",
+        "selectFromNFTGallery" : "Sélectionner depuis la galerie de NFT"
       }
     },
     "cropImage" : "Recadrez l’image",
@@ -5404,7 +5408,10 @@
     "subtitle" : "Sélectionnez votre NFT préféré ou une image de votre téléphone.",
     "customImage" : "Image personnalisée",
     "choosePicture" : "Choisissez une image",
-    "doThisLater" : "Pas maintenant"
+    "doThisLater" : "Pas maintenant",
+    "nftGallery" : {
+      "title" : "Mes NFT"
+    }
   },
   "postOnboarding" : {
     "hub" : {
