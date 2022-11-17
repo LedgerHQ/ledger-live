@@ -595,6 +595,9 @@
     "SourceHasMultiSign" : {
       "title" : "Desative a assinatura múltipla para enviar {{currencyName}}"
     },
+    "DustLimit" : {
+      "title" : "Quantia menor do que o limite de pó"
+    },
     "StratisDown2021Warning" : {
       "description" : "A blockchain Stratis evoluiu e pode não funcionar mais corretamente. Suporte à blockchain Stratis original foi mantido até 16 de outubro de 2021."
     },
@@ -1803,6 +1806,9 @@
           "title" : "Atualização do software falhou"
         }
       }
+    },
+    "appsStep" : {
+      "title" : "Aplicativos {{productName}}"
     },
     "readyStep" : {
       "title" : "A {{productName}} está pronta"
@@ -3462,7 +3468,7 @@
     }
   },
   "DeviceAction" : {
-    "stayInTheAppPlz" : "Fique no aplicativo Ledger Live e mantenha sua Nano X próximo a você",
+    "stayInTheAppPlz" : "Fique no aplicativo Ledger Live e mantenha a Ledger perto de você.",
     "allowAppPermission" : "Abra o aplicativo {{wording}} no seu dispositivo",
     "allowAppPermissionSubtitleToken" : "para gerenciar seus tokens {{token}}",
     "allowManagerPermission" : "Permitir {{wording}} em seu dispositivo",
@@ -3634,6 +3640,7 @@
         "description" : "Gerencie suas Ledgers salvas"
       },
       "addNewCTA" : "Adicionar Novo",
+      "otgBanner" : "Se você tiver uma Nano S ou uma Nano S Plus, conecte seu dispositivo por cabo USB.",
       "connectExistingLedger" : "Conectar uma Ledger existente",
       "connectExistingLedgerDescription" : "Já tem uma Ledger configurada? Emparelhe-a com bluetooth",
       "setUpNewLedger" : "Configurar uma nova Ledger",
@@ -5353,6 +5360,11 @@
       "viewOn" : "Ver em",
       "viewInExplorer" : "Ver no explorer",
       "txDetails" : "Detalhes da transação"
+    },
+    "modalDisabled" : {
+      "title" : "Função de enviar não disponível",
+      "body" : "A fim de cumprir com as recentes atualizações da Apple em sua App Store, o envio de NFTs está temporariamente indisponível. Você ainda pode usar o Ledger Live no desktop para enviar NFTs.",
+      "contactSupport" : "Leia nosso artigo de suporte para mais informações."
     }
   },
   "ApplicationVersion" : "v{{version}}",
@@ -5393,17 +5405,19 @@
     "cropImage" : "Cortar imagem",
     "chooseConstrast" : "Escolher contraste",
     "uploadAnotherImage" : "Enviar outra imagem",
-    "selectContrast" : "Selecione o contraste",
+    "rotateImage" : "Girar",
     "allowPreview" : "Permitir a visualização da imagem em {{productName}}",
     "loadingPicture" : "Carregando imagem em {{productName}}",
     "pictureLoaded" : "Foto carregada",
     "timeDisclaimer" : "Isso pode demorar até 30 segundos",
     "imageLoaded" : "Imagem carregada em {{productName}}",
     "confirmPicture" : "Confirme na {{productName}}",
-    "title" : "Escolha uma foto.\nCrie uma clima.\nTorne a sua Ledger só sua.",
-    "subtitle" : "Coloque uma foto do seu NFT favorito ou uma foto do seu telefone.",
+    "landingPage" : {
+      "title" : "Escolha uma foto.\nCrie uma clima.\nTorne a sua Ledger só sua.",
+      "subtitle" : "Coloque uma foto do seu NFT favorito ou uma foto do seu telefone.",
+      "choosePicture" : "Escolher uma foto"
+    },
     "customImage" : "Imagem personalizada",
-    "choosePicture" : "Escolha uma foto",
     "doThisLater" : "Talvez mais tarde"
   },
   "postOnboarding" : {
