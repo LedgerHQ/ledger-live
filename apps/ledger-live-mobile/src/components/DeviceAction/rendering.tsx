@@ -9,7 +9,10 @@ import { getDeviceModel } from "@ledgerhq/devices";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { AppRequest } from "@ledgerhq/live-common/hw/actions/app";
 import firmwareUpdateRepair from "@ledgerhq/live-common/hw/firmwareUpdate-repair";
-import { getProviderName } from "@ledgerhq/live-common/exchange/swap/utils/index";
+import {
+  getProviderName,
+  getNoticeType,
+} from "@ledgerhq/live-common/exchange/swap/utils/index";
 import {
   InfiniteLoader,
   Text,
@@ -263,12 +266,16 @@ export function renderConfirmSwap({
   estimatedFees?: string | null;
 }) {
   const ProviderIcon = providerIcons[exchangeRate.provider.toLowerCase()];
-
+  const providerName = getProviderName(exchangeRate.provider);
+  const noticeType = getNoticeType(exchangeRate.provider);
+  const alertProperties = noticeType.learnMore
+    ? { learnMoreUrl: urls.swap.learnMore }
+    : {};
   return (
     <ScrollView>
       <Wrapper width="100%">
-        <Alert type="primary" learnMoreUrl={urls.swap.learnMore}>
-          {t("DeviceAction.confirmSwap.alert")}
+        <Alert type="primary" {...alertProperties}>
+          {t(`DeviceAction.confirmSwap.alert.${noticeType.message}`)}
         </Alert>
         <AnimationContainer
           marginTop="16px"
@@ -313,7 +320,7 @@ export function renderConfirmSwap({
                 <ProviderIcon size={14} />
               </Flex>
 
-              <Text>{getProviderName(exchangeRate.provider)}</Text>
+              <Text>{providerName}</Text>
             </Flex>
           </FieldItem>
 

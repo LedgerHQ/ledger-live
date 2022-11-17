@@ -191,3 +191,14 @@ export const getProviderName = (provider: string): string => {
       return provider.charAt(0).toUpperCase() + provider.slice(1);
   }
 };
+
+export const getNoticeType = (
+  provider: string
+): { message: string; learnMore: boolean } => {
+  switch (provider) {
+    case "cic":
+      return { message: "cic", learnMore: false };
+    default:
+      return { message: "default", learnMore: true };
+  }
+};
