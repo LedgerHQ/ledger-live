@@ -595,6 +595,9 @@
     "SourceHasMultiSign" : {
       "title" : "请禁用多重签名以发送 {{currencyName}}"
     },
+    "DustLimit" : {
+      "title" : "金额低于小额资产下限"
+    },
     "StratisDown2021Warning" : {
       "description" : "Stratis 区块链已经进化，可能无法正确工作。对原有 Stratis 区块链的技术支持，将会持续到 2021 年 10 月 16 日。"
     },
@@ -2140,7 +2143,7 @@
       },
       "advanced" : {
         "title" : "高级日志",
-        "warningDerivation" : "这是一个 {{tag}} xpub。将其导入第三方钱包时，请选择相同的衍生模式。",
+        "warningDerivation" : "这是一个 {{tag}} xpub 扩展公钥。将其导入第三方钱包时，请选择相同的衍生模式。",
         "desc" : ""
       }
     },
@@ -5387,7 +5390,8 @@
     "drawer" : {
       "title" : "选择一张图片",
       "options" : {
-        "uploadFromPhone" : "从我的手机上传"
+        "uploadFromPhone" : "从我的手机上传",
+        "selectFromNFTGallery" : "从 NFT 库中选择"
       }
     },
     "cropImage" : "裁剪图片",
@@ -5404,7 +5408,10 @@
     "subtitle" : "设置您喜欢的 NFT 的图片或手机中的图片。",
     "customImage" : "自定义图片",
     "choosePicture" : "选择图片",
-    "doThisLater" : "以后再说"
+    "doThisLater" : "以后再说",
+    "nftGallery" : {
+      "title" : "我的 NFT"
+    }
   },
   "postOnboarding" : {
     "hub" : {
