@@ -595,6 +595,9 @@
     "SourceHasMultiSign" : {
       "title" : "{{currencyName}}を送付するにはマルチシグを無効にしてください。"
     },
+    "DustLimit" : {
+      "title" : "金額がダスト制限を下回っています"
+    },
     "StratisDown2021Warning" : {
       "description" : "Stratisブロックチェーンのメジャーアップデートが実施されたため、正しく動作しない可能性があります。旧Stratisブロックチェーンのサポートは、2021年10月16日まで引き続き提供されます。"
     },
@@ -5387,7 +5390,8 @@
     "drawer" : {
       "title" : "画像を選択してください",
       "options" : {
-        "uploadFromPhone" : "携帯電話からアップロードする"
+        "uploadFromPhone" : "携帯電話からアップロードする",
+        "selectFromNFTGallery" : "NFTギャラリーから選択"
       }
     },
     "cropImage" : "画像をトリミング",
@@ -5404,7 +5408,10 @@
     "subtitle" : "お気に入りのNFTの写真やスマホの写真を設定します。",
     "customImage" : "画像をカスタマイズ",
     "choosePicture" : "写真を選択",
-    "doThisLater" : "後で"
+    "doThisLater" : "後で",
+    "nftGallery" : {
+      "title" : "私のNFT"
+    }
   },
   "postOnboarding" : {
     "hub" : {
