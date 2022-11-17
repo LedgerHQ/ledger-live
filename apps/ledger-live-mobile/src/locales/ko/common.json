@@ -2289,6 +2289,7 @@
     },
     "details" : "{{ currency }} 세부정보",
     "extra" : {
+      "transferId": "아이디 이전",
       "resource" : "리소스",
       "frozenAmount" : "동결 금액",
       "unfreezeAmount" : "동결 해제 금액",
@@ -3481,6 +3482,8 @@
       "maxEstimatedFee" : "최대 예상 수수료",
       "validateFees" : "수수료 검증",
       "customizeFees" : "맞춤형 수수료",
+      "transferId": "아이디 이전",
+      "validateTransferId": "신분증 확인",
       "memo" : {
         "title" : "메모",
         "type" : "메모 유형",

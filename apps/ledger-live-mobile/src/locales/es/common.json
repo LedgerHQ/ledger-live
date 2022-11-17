@@ -2290,6 +2290,7 @@
     "details" : "Detalles de {{ currency }}",
     "extra" : {
       "resource" : "Recurso",
+      "transferId": "Identificación de Transferencia",
       "frozenAmount" : "Importe inmovilizado",
       "unfreezeAmount" : "Desinmovilizar importe",
       "address" : "Dirección",
@@ -3481,6 +3482,8 @@
       "maxEstimatedFee" : "Tarifa estimada máx.",
       "validateFees" : "Validar tarifas",
       "customizeFees" : "Personalizar tarifas",
+      "transferId": "Identificación de Transferencia",
+      "validateTransferId": "Validar identificación",
       "memo" : {
         "title" : "Memo",
         "type" : "Tipo de Memo",

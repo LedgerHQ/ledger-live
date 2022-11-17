@@ -2289,6 +2289,7 @@
     },
     "details" : "Detalhes de {{ currency }}",
     "extra" : {
+      "transferId": "ID de transferência",
       "resource" : "Recurso",
       "frozenAmount" : "Quantia Congelada",
       "unfreezeAmount" : "Descongelar Quantia",
@@ -3481,6 +3482,8 @@
       "maxEstimatedFee" : "Taxa máxima estimada",
       "validateFees" : "Validar Taxas",
       "customizeFees" : "Personalizar Taxas",
+      "transferId": "ID de transferência",
+      "validateTransferId": "Validar ID",
       "memo" : {
         "title" : "Memo",
         "type" : "Tipo de memo",
