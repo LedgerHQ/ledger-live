@@ -2289,6 +2289,7 @@
     },
     "details" : "{{ currency }} 详情",
     "extra" : {
+      "transferId": "转移ID",
       "resource" : "资源",
       "frozenAmount" : "已冻结数额",
       "unfreezeAmount" : "解冻数额",
@@ -3481,6 +3482,8 @@
       "maxEstimatedFee" : "最高预估费用",
       "validateFees" : "验证费用",
       "customizeFees" : "自定义费用",
+      "transferId": "转移ID",
+      "validateTransferId": "验证身份",
       "memo" : {
         "title" : "Memo",
         "type" : "Memo 类型",
