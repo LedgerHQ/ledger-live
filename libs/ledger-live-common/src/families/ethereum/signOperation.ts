@@ -84,6 +84,7 @@ export const signOperation = ({
 
               const { ethTxObject, tx, common, fillTransactionDataResult } =
                 buildEthereumTx(account, transaction, nonce);
+
               const to = eip55.encode((tx.to || "").toString());
               const value = new BigNumber(
                 "0x" + (tx.value.toString("hex") || "0")
@@ -97,7 +98,11 @@ export const signOperation = ({
                 }
 
                 const rawData = tx.raw();
-                rawData[6] = Buffer.from([common.chainIdBN().toNumber()]);
+                rawData[6] = Buffer.from(
+                  common.chainIdBN().toString("hex"),
+                  "hex"
+                );
+
                 return Buffer.from(encode(rawData)).toString("hex");
               })();
 
