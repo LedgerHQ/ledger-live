@@ -41,9 +41,7 @@ export default function WalletTabNavigator() {
   const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector);
   const accounts = useSelector(accountsSelector);
   const lastVisitedTab = useSelector(walletTabNavigatorLastVisitedTabSelector);
-
   const { t } = useTranslation();
-
   const [currentRouteName, setCurrentRouteName] = useState<
     string | undefined
   >();
