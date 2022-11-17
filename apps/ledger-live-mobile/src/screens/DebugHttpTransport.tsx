@@ -5,6 +5,7 @@ import { useDispatch } from "react-redux";
 import { useNavigation } from "@react-navigation/native";
 
 import { DeviceModelId } from "@ledgerhq/types-devices";
+import { StackNavigationProp } from "@react-navigation/stack";
 import { addKnownDevice } from "../actions/ble";
 import TextInput from "../components/TextInput";
 import Button from "../components/Button";
@@ -17,7 +18,8 @@ const DebugHttpTransport = () => {
     DeviceModelId.nanoSP,
     DeviceModelId.nanoFTS,
   ];
-  const { navigate } = useNavigation<Navigation["navigation"]>();
+  const navigation =
+    useNavigation<StackNavigationProp<Record<string, object | undefined>>>();
   const dispatch = useDispatch();
   const [address, setAddress] = useState("");
   const [name, setName] = useState("");
@@ -41,10 +43,10 @@ const DebugHttpTransport = () => {
       }),
     );
 
-    navigate(NavigatorName.Manager, {
+    navigation.navigate(NavigatorName.Manager, {
       screen: ScreenName.Manager,
     });
-  }, [address, dispatch, model, name, navigate]);
+  }, [address, dispatch, model, name, navigation]);
 
   return (
     <NavigationScrollView>
@@ -85,7 +87,7 @@ const DebugHttpTransport = () => {
             placeholder={"Some cool name"}
             returnKeyType="done"
           />
-          <View style={styles.buttonContainer}>
+          <View>
             <Button
               disabled={!address}
               type={"primary"}
