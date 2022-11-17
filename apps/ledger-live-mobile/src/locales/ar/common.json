@@ -595,6 +595,9 @@
     "SourceHasMultiSign" : {
       "title" : "يرجى تعطيل خاصية التوقيع المتعدد لإرسال {{currencyName}}"
     },
+    "DustLimit" : {
+      "title" : "المبلغ أقل من حد الغبار"
+    },
     "StratisDown2021Warning" : {
       "description" : "سلسلة كتل Stratis تطورت ومن الوارد ألا تعمل بشكل صحيح. سيتم توفير الدعم لسلسلة كتل Stratis الأصلية حتى 16 أكتوبر 2021."
     },
@@ -5387,7 +5390,8 @@
     "drawer" : {
       "title" : "اختر صورة",
       "options" : {
-        "uploadFromPhone" : "قم بالتحميل من هاتفك"
+        "uploadFromPhone" : "قم بالتحميل من هاتفك",
+        "selectFromNFTGallery" : "اختر من معرض الرموز غير القابلة للاستبدال (NFT)"
       }
     },
     "cropImage" : "قُصّ الصورة",
@@ -5404,7 +5408,10 @@
     "subtitle" : "ضع صورة لرمزك غير القابل للاستبدال المفضل أو صورة من هاتفك.",
     "customImage" : "صورة مخصصة",
     "choosePicture" : "اختر صورة",
-    "doThisLater" : "ربّما في وقت لاحق"
+    "doThisLater" : "ربّما في وقت لاحق",
+    "nftGallery" : {
+      "title" : "رموزي غير القابلة للاستبدال"
+    }
   },
   "postOnboarding" : {
     "hub" : {
