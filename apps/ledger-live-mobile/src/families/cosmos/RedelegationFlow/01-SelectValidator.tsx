@@ -81,8 +81,7 @@ function RedelegationSelectValidator({ navigation, route }: Props) {
       ),
     [delegations, transaction.sourceValidator],
   );
-  invariant(srcDelegation, "source delegation required");
-  const max = srcDelegation.amount;
+  const max = srcDelegation?.amount;
   const sections: SectionListData<CosmosValidatorItem>[] = useMemo(
     () =>
       validators
@@ -125,7 +124,7 @@ function RedelegationSelectValidator({ navigation, route }: Props) {
         transaction,
         validatorSrc,
         validator,
-        max,
+        max: max ?? 0,
         status,
         nextScreen: ScreenName.CosmosRedelegationSelectDevice,
       });
@@ -138,6 +137,9 @@ function RedelegationSelectValidator({ navigation, route }: Props) {
     ),
     [onSelect, account],
   );
+
+  if (!srcDelegation) return null;
+
   return (
     <SafeAreaView
       style={[
