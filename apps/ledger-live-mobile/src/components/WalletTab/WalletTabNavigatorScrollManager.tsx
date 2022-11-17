@@ -4,7 +4,7 @@ import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 
 const tabBarHeight = 74;
 const headerHeight = 48;
-const headerHeightWithTabNavigatorDisabled = 88;
+const headerHeightWithTabNavigatorDisabled = 64;
 
 type WalletTabNavigatorScrollContextData = {
   scrollY: Animated.Value;
