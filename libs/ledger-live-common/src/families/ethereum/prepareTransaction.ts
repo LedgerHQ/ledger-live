@@ -1,3 +1,4 @@
+import invariant from "invariant";
 import { AccountBridge } from "@ledgerhq/types-live";
 import {
   getNetworkInfo,
@@ -7,8 +8,9 @@ import {
 } from "./gas";
 import { estimateGasLimit } from "./gas";
 import { isEthereumAddress } from "./logic";
+import { findSubAccountById } from "../../account";
 import { NetworkInfo, Transaction } from "./types";
-import { EIP1559ShouldBeUsed } from "./transaction";
+import transaction, { buildEthereumTx, EIP1559ShouldBeUsed } from "./transaction";
 import { prepareTransaction as prepareTransactionModules } from "./modules";
 
 export const prepareTransaction: AccountBridge<Transaction>["prepareTransaction"] =
@@ -48,14 +50,17 @@ export const prepareTransaction: AccountBridge<Transaction>["prepareTransaction"
 
     let estimatedGasLimit;
     if (isEthereumAddress(tx.recipient)) {
+      const {tx: transaction} = buildEthereumTx(account, tx, account.operationsCount);
+      invariant(transaction.to, "ethereum transaction has no recipient");
+
       estimatedGasLimit = await estimateGasLimit(
         account,
-        tx.recipient,
+        transaction.to!.toString(),
         // Those are the only elements from a transaction necessary to estimate the gas limit
         {
           from: account.freshAddress,
-          value: "0x" + (tx.amount.toString(16) || "0"),
-          data: "0x" + (tx.data?.toString("hex") || "0"),
+          value: "0x" + (transaction.value.toString(16) || "00"),
+          data: transaction.data ? `0x${transaction.data.toString("hex")}` : "0x",
         }
       );
     }
