@@ -30,9 +30,16 @@ jobs:
         with:
           ref: develop
           fetch-depth: 0
-      - name: checkout branch
+      - name: checkout branch (PR)
+        if: ${{ github.event_name == 'pull_request' }}
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
-          git checkout ${{ github.event.pull_request.head.ref || github.event.push.base.ref }}
+          gh pr checkout ${{ github.event.pull_request.number }}
+      - name: checkout branch (not PR)
+        if: ${{ github.event_name != 'pull_request' }}
+        run: |
+          git checkout $GITHUB_SHA
       - uses: ./tools/actions/turbo-affected
         id: affected
         with:
