@@ -34,7 +34,7 @@ export async function loadConfig(
 
   const { data } = JSON.parse(f.toString());
 
-  postMessage({ type: "importSettngs", payload: data.settings });
+  postMessage({ type: "importSettings", payload: data.settings });
 
   navigate(NavigatorName.Base);
 
