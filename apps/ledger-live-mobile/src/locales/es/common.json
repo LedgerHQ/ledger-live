@@ -595,6 +595,9 @@
     "SourceHasMultiSign" : {
       "title" : "Desactiva la multifirma para enviar {{currencyName}}"
     },
+    "DustLimit" : {
+      "title" : "La cantidad es menor que el límite de remanente"
+    },
     "StratisDown2021Warning" : {
       "description" : "La cadena de bloques Stratis ha evolucionado y es posible que ya no funcione correctamente. La compatibilidad con la cadena de bloques Stratis original se mantendrá hasta el 16 de octubre de 2021."
     },
@@ -1804,6 +1807,9 @@
         }
       }
     },
+    "appsStep" : {
+      "title" : "Aplicaciones {{productName}}"
+    },
     "readyStep" : {
       "title" : "{{productName}} está listo"
     },
@@ -2140,7 +2146,7 @@
       },
       "advanced" : {
         "title" : "Registros avanzados",
-        "warningDerivation" : "Esta es una xpub {{tag}}. Cuando la importes en una billetera de terceros, selecciona el mismo modo de derivación.",
+        "warningDerivation" : "Esta es una xpub {{tag}}. Cuando la importes a una billetera de terceros, selecciona el mismo modo de derivación.",
         "desc" : ""
       }
     },
@@ -3462,7 +3468,7 @@
     }
   },
   "DeviceAction" : {
-    "stayInTheAppPlz" : "Mantente dentro de la aplicación y con tu Nano X disponible",
+    "stayInTheAppPlz" : "Mantente dentro de la aplicación Ledger Live y con tu Ledger disponible.",
     "allowAppPermission" : "Abre la aplicación {{wording}} en tu dispositivo",
     "allowAppPermissionSubtitleToken" : "para administrar los tokens {{token}}",
     "allowManagerPermission" : "Permite {{wording}} en tu dispositivo",
@@ -3634,6 +3640,7 @@
         "description" : "Gestiona tus Ledgers guardados"
       },
       "addNewCTA" : "Agregar nueva",
+      "otgBanner" : "Si tienes un Nano S o un Nano S Plus, conecta tu dispositivo con el cable USB.",
       "connectExistingLedger" : "Conectar un Ledger existente",
       "connectExistingLedgerDescription" : "¿Ya tienes un Ledger configurado? Emparéjalo por Bluetooth.",
       "setUpNewLedger" : "Configurar un Ledger nuevo",
@@ -5353,6 +5360,11 @@
       "viewOn" : "Ver en",
       "viewInExplorer" : "Ver en el explorador",
       "txDetails" : "Detalles de las transacciones"
+    },
+    "modalDisabled" : {
+      "title" : "Función de envío no disponible",
+      "body" : "Para cumplir con actualizaciones recientes de la App Store de Apple, el envío de NFTs no está disponible temporalmente. Puedes seguir utilizando Ledger Live Desktop para enviar NFTs.",
+      "contactSupport" : "Lee nuestro artículo de soporte para obtener más información."
     }
   },
   "ApplicationVersion" : "v. {{version}}",
@@ -5393,17 +5405,19 @@
     "cropImage" : "Recortar imagen",
     "chooseConstrast" : "Elegir contraste",
     "uploadAnotherImage" : "Cargar otra imagen",
-    "selectContrast" : "Selecciona el contraste",
+    "rotateImage" : "Girar",
     "allowPreview" : "Permitir vista previa de la imagen en {{productName}}",
     "loadingPicture" : "Cargando imagen en {{productName}}",
     "pictureLoaded" : "Imagen cargada",
     "timeDisclaimer" : "Puede tardar 30 segundos",
     "imageLoaded" : "Imagen cargada en {{productName}}",
     "confirmPicture" : "Confirmar en {{productName}}",
-    "title" : "Elige una imagen.\nCrea un estilo.\nHaz tuyo tu Ledger.",
-    "subtitle" : "Pon una imagen de tu NFT favorito o una de tu teléfono.",
+    "landingPage" : {
+      "title" : "Elige una imagen.\nCrea un estilo.\nHaz tu Ledger tuyo.",
+      "subtitle" : "Pon una imagen de tu NFT favorito o una de tu teléfono.",
+      "choosePicture" : "Elige una imagen"
+    },
     "customImage" : "Imagen personalizada",
-    "choosePicture" : "Elige una imagen",
     "doThisLater" : "Quizás más tarde"
   },
   "postOnboarding" : {
