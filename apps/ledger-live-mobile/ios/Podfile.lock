@@ -630,10 +630,10 @@ PODS:
   - SocketRocket (0.6.0)
   - sovran-react-native (0.4.4):
     - React-Core
-  - Storyly (1.24.1)
-  - storyly-react-native (1.24.1):
+  - Storyly (1.26.2)
+  - storyly-react-native (1.26.2):
     - React
-    - Storyly (~> 1.24.0)
+    - Storyly (~> 1.26.0)
   - TcpSockets (4.0.0):
     - React
   - TOCropViewController (2.5.3)
@@ -755,9 +755,11 @@ DEPENDENCIES:
   - "RNShare (from `../../../node_modules/.pnpm/react-native-share@7.9.1/node_modules/react-native-share`)"
   - "RNSVG (from `../../../node_modules/.pnpm/react-native-svg@12.3.0_zqxy7fpkavjkgz5xll7ed4r6rq/node_modules/react-native-svg`)"
   - "RNVectorIcons (from `../../../node_modules/.pnpm/react-native-vector-icons@8.1.0/node_modules/react-native-vector-icons`)"
-  - "storyly-react-native (from `../../../node_modules/.pnpm/storyly-react-native@1.24.1_zqxy7fpkavjkgz5xll7ed4r6rq/node_modules/storyly-react-native`)"
-  - "TcpSockets (from `../../../node_modules/.pnpm/react-native-tcp@4.0.0_react-native@0.68.2/node_modules/react-native-tcp`)"
-  - "Yoga (from `../../../node_modules/.pnpm/react-native@0.68.2_qiqqwmyv63yhnuboofexv3s7x4/node_modules/react-native/ReactCommon/yoga`)"
+  - "segment-analytics-react-native (from `../../../node_modules/.pnpm/@segment+analytics-react-native@2.9.0_ondxtwf5lqq5g76dzmsmwamaca/node_modules/@segment/analytics-react-native`)"
+  - "sovran-react-native (from `../../../node_modules/.pnpm/@segment+sovran-react-native@0.4.4_ondxtwf5lqq5g76dzmsmwamaca/node_modules/@segment/sovran-react-native`)"
+  - "storyly-react-native (from `../../../node_modules/.pnpm/storyly-react-native@1.26.2_ondxtwf5lqq5g76dzmsmwamaca/node_modules/storyly-react-native`)"
+  - "TcpSockets (from `../../../node_modules/.pnpm/react-native-tcp@4.0.0_frdjcnsdohx4blxdmaawwvdihy_react-native@0.68.5/node_modules/react-native-tcp`)"
+  - "Yoga (from `../../../node_modules/.pnpm/react-native@0.68.5_qiqqwmyv63yhnuboofexv3s7x4/node_modules/react-native/ReactCommon/yoga`)"
 
 SPEC REPOS:
   trunk:
@@ -966,7 +968,7 @@ EXTERNAL SOURCES:
   sovran-react-native:
     :path: "../../../node_modules/.pnpm/@segment+sovran-react-native@0.4.4_ondxtwf5lqq5g76dzmsmwamaca/node_modules/@segment/sovran-react-native"
   storyly-react-native:
-    :path: "../../../node_modules/.pnpm/storyly-react-native@1.24.1_ondxtwf5lqq5g76dzmsmwamaca/node_modules/storyly-react-native"
+    :path: "../../../node_modules/.pnpm/storyly-react-native@1.26.2_ondxtwf5lqq5g76dzmsmwamaca/node_modules/storyly-react-native"
   TcpSockets:
     :path: "../../../node_modules/.pnpm/react-native-tcp@4.0.0_frdjcnsdohx4blxdmaawwvdihy_react-native@0.68.5/node_modules/react-native-tcp"
   Yoga:
@@ -1089,8 +1091,8 @@ SPEC CHECKSUMS:
   Sentry: a0d4563fa4ddacba31fdcc35daaa8573d87224d6
   SocketRocket: fccef3f9c5cedea1353a9ef6ada904fde10d6608
   sovran-react-native: 5f9715a62b50008d72c0cf904cb08c8377777b62
-  Storyly: 1ae05f53c33d2ce75e8fdcc57f2617c4304d433c
-  storyly-react-native: fb35dd20cb36da37a851a785d12969c95fe3c888
+  Storyly: 9f7694d816cbe22d1d5604b7653e75feabf1915f
+  storyly-react-native: 2e2e21c3b8d966327659948ab1bed55e1e05127c
   TcpSockets: 4ef55305239923b343ed0a378b1fac188b1373b0
   TOCropViewController: 20a14b6a7a098308bf369e7c8d700dc983a974e6
   Yoga: c4d61225a466f250c35c1ee78d2d0b3d41fe661c
