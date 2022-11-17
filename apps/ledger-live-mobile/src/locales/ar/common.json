@@ -410,6 +410,9 @@
       "title" : "عفواً، هذا التطبيق مطلوب",
       "description" : "إلغاء تثبيت تطبيق بيتكوين أو إيثيريوم في النهاية."
     },
+    "MaxFeeLow" : {
+      "title" : "الحد الأقصى للرسوم لديك منخفض جداً. معاملتك ربما تظل معلقة لمدة"
+    },
     "NetworkDown" : {
       "title" : "عفواً، يبدو أن بالإنترنت مُعطل",
       "description" : "يرجى أن تتحقق من اتصالك بالإنترنت."
@@ -595,6 +598,9 @@
     "SourceHasMultiSign" : {
       "title" : "يرجى تعطيل خاصية التوقيع المتعدد لإرسال {{currencyName}}"
     },
+    "DustLimit" : {
+      "title" : "المبلغ أقل من حد الغبار"
+    },
     "StratisDown2021Warning" : {
       "description" : "سلسلة كتل Stratis تطورت ومن الوارد ألا تعمل بشكل صحيح. سيتم توفير الدعم لسلسلة كتل Stratis الأصلية حتى 16 أكتوبر 2021."
     },
@@ -744,6 +750,23 @@
     },
     "HederaAddAccountError" : {
       "title" : "لم تتم إضافة حسابك. يرجى إعادة المحاولة."
+    },
+    "PriorityFeeTooLow" : {
+      "title" : "رسوم الأولوية أقل من القيمة الموصى بها"
+    },
+    "PriorityFeeTooHigh" : {
+      "title" : "رسوم الأولوية أكثر من المطلوب. قد تكون تدفع مبالغ زائدة"
+    },
+    "MaxFeeTooLow" : {
+      "title" : "Max fee is lower than the recommended value"
+    },
+    "PriorityFeeHigherThanMaxFee" : {
+      "title" : "Max priority fee cannot be higher than max fee"
+    },
+    "LockedDeviceError" : {
+      "title" : "جهازك مقفل",
+      "description" : "قم بإلغاء قفل جهازك وحاول مرة أخرى.",
+      "descriptionWithProductName" : "قم بإلغاء قفل {{ productName }} خاصتك وحاول مرة أخرى."
     }
   },
   "crash" : {
@@ -1803,6 +1826,9 @@
           "title" : "فشل تحديث البرنامج"
         }
       }
+    },
+    "appsStep" : {
+      "title" : "{{productName}} applications"
     },
     "readyStep" : {
       "title" : "{{productName}} مستعد"
@@ -3151,6 +3177,12 @@
       }
     }
   },
+  "signMessage" : {
+    "eip712" : {
+      "showFullMessage" : "عرض الرسالة كاملة",
+      "hideFullMessage" : "إخفاء الرسالة بالكامل"
+    }
+  },
   "sync" : {
     "error" : "خطأ في المزامنة",
     "loading" : "Sync"
@@ -3212,9 +3244,14 @@
       "infoTotalDesc" : "يشمل مبلغ المعاملة ورسوم الشبكة المحددة",
       "gasLimit" : "حد الغاز",
       "gasPrice" : "سعر الغاز",
+      "maxFee" : "الحد الأقصى للرسوم",
+      "maxPriorityFee" : "Max priority fee",
+      "nextBlock" : "الكتلة التالية: {{nextBaseFee}}",
+      "suggestedPriorityFee" : "المُقترح: {{lowPriorityFee}} - {{highPriorityFee}}",
       "maxFees" : "الحد الأقصى للرسوم",
       "validateGasLimit" : "تأكيد حد الغاز",
       "fees" : "رسوم",
+      "maxEstimatedFee" : "الحد الأقصى للرسوم المُقدرة",
       "validateFees" : "التحقق من صحة الرسوم",
       "customizeFees" : "تخصيص الرسوم",
       "memo" : {
@@ -3462,7 +3499,7 @@
     }
   },
   "DeviceAction" : {
-    "stayInTheAppPlz" : "ابق في تطبيق Ledger Live وحافظ على Nano X الخاصة بك بالقرب منك",
+    "stayInTheAppPlz" : "Stay in the Ledger Live app and keep your Ledger nearby.",
     "allowAppPermission" : "افتح تطبيق {{wording}} على جهازك",
     "allowAppPermissionSubtitleToken" : "لإدارة رموزك {{token}}",
     "allowManagerPermission" : "السماح بــ {{wording}} على جهازك",
@@ -3634,6 +3671,7 @@
         "description" : "قم بإدارة أجهزة Ledger المحفوظة خاصتك"
       },
       "addNewCTA" : "إضافة جديد",
+      "otgBanner" : "إذا كنت تمتلك Nano S أو Nano S Plus، فقم بتوصيل جهازك عن طريق كبل USB.",
       "connectExistingLedger" : "توصيل Ledger موجود بالفعل",
       "connectExistingLedgerDescription" : "لديك Ledger تم إعدادها؟ قم بإقرانها عبر البلوتوث",
       "setUpNewLedger" : "إعداد Ledger جديدة",
@@ -5353,6 +5391,11 @@
       "viewOn" : "مشاهدة على",
       "viewInExplorer" : "عرض في المتصفح",
       "txDetails" : "تفاصيل المعاملة"
+    },
+    "modalDisabled" : {
+      "title" : "Send function not available",
+      "body" : "In order to comply with Apple's recent updates on their App Store, sending NFTs is temporary unavailable. You can still use Ledger Live on Desktop to send NFTs.",
+      "contactSupport" : "Please read our support article for more information."
     }
   },
   "ApplicationVersion" : "إصدار {{version}}",
