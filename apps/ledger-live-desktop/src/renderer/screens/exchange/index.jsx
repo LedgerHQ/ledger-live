@@ -74,7 +74,7 @@ const LiveAppExchange = ({ appId }: { appId: string }) => {
               shouldDisplayName: false,
               shouldDisplayInfo: false,
               shouldDisplayClose: false,
-              shouldDisplayNavigation: true,
+              shouldDisplayNavigation: false,
             },
           }}
           manifest={manifest}

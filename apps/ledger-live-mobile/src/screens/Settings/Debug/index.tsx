@@ -1,8 +1,11 @@
-import React from "react";
+import React, { useCallback, useRef } from "react";
 import { useNavigation } from "@react-navigation/native";
 import config from "react-native-config";
 import { Box, Text } from "@ledgerhq/native-ui";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
+import { Alert, TouchableWithoutFeedback, View } from "react-native";
+import { useFeatureFlags } from "@ledgerhq/live-common/featureFlags/provider";
+import { FeatureId } from "@ledgerhq/types-live";
 import { TrackScreen } from "../../../analytics";
 import SettingsRow from "../../../components/SettingsRow";
 import SelectDevice from "../../../components/SelectDevice";
@@ -40,6 +43,7 @@ import {
   StackNavigatorProps,
 } from "../../../components/RootNavigator/types/helpers";
 import { SettingsNavigatorStackParamList } from "../../../components/RootNavigator/types/SettingsNavigator";
+import PoweredByLedger from "../PoweredByLedger";
 import OpenStoryly from "./OpenDebugStoryly";
 
 export function DebugMocks() {
@@ -115,6 +119,45 @@ export default function DebugSettings({
   SettingsNavigatorStackParamList,
   ScreenName.DebugSettings
 >) {
+  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const pressCount = useRef(0);
+
+  const { getFeature, overrideFeature } = useFeatureFlags();
+
+  const ruleThemAll = useCallback(() => {
+    (
+      [
+        "customImage",
+        "deviceInitialApps",
+        "syncOnboarding",
+        "llmNewDeviceSelection",
+      ] as FeatureId[]
+    ).forEach(featureId =>
+      overrideFeature(featureId, { ...getFeature(featureId), enabled: true }),
+    );
+    Alert.alert(
+      "I can only show you the door, you're the one that has to walk through it.",
+    );
+  }, [overrideFeature, getFeature]);
+
+  const onDebugHiddenPress = useCallback(() => {
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+    }
+    pressCount.current += 1;
+    const timeout = setTimeout(() => {
+      pressCount.current = 0;
+    }, 300);
+    if (pressCount.current > 6) {
+      ruleThemAll();
+      pressCount.current = 0;
+    }
+    timeoutRef.current = timeout;
+    return () => {
+      clearTimeout(timeout);
+    };
+  }, [ruleThemAll]);
+
   return (
     <SettingsNavigationScrollView>
       <TrackScreen category="Settings" name="Debug" />
@@ -139,6 +182,11 @@ export default function DebugSettings({
           {global.HermesInternal ? "Hermes" : "Jsc"}
         </Text>
       </SettingsRow>
+      <TouchableWithoutFeedback onPress={onDebugHiddenPress}>
+        <View>
+          <PoweredByLedger />
+        </View>
+      </TouchableWithoutFeedback>
     </SettingsNavigationScrollView>
   );
 }
