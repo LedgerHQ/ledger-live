@@ -418,6 +418,10 @@
       "title" : "Desculpe, nenhuma conta encontrada",
       "description" : "Algo deu errado com o cálculo do endereço. Tente Novamente. Se o problema persistir, salve seus registros usando o botão abaixo e os forneça ao Suporte Ledger."
     },
+    "DecimalsLimitReached" : {
+      "title" : "Limite máximo de decimais alcançado",
+      "description" : "Certifique-se de que a quantia fornecida tenha 18 decimais."
+    },
     "NotEnoughBalance" : {
       "title" : "Desculpe, fundos insuficientes",
       "description" : "Certifique-se de que a conta tenha fundos suficientes."
@@ -3853,17 +3857,6 @@
       "pleaseConnectUsbDescription" : "Para iniciar a atualização do firmware, conecte sua {{deviceName}} ao seu celular usando um cabo USB."
     }
   },
-  "firmwareUpdateRequired" : {
-    "updateAvailableFromLLM" : {
-      "title" : "Atualização de firmware necessária",
-      "description" : "Para realizar esta ação, você precisa primeiro atualizar o firmware da sua {{ deviceName }}.",
-      "cta" : "Vá a Minha Ledger"
-    },
-    "updateNotAvailableFromLLM" : {
-      "title" : "Atualização de firmware necessária no computador",
-      "description" : "Atualize sua {{ deviceName }} no Ledger Live Desktop."
-    }
-  },
   "FirmwareUpdateReleaseNotes" : {
     "introTitle" : "Atualize a {{deviceName}} para a versão {{version}}",
     "recoveryPhraseBackupInstructions" : "Certifique-se de que sua frase de recuperação de 24 palavras esteja anotada na folha de recuperação e esteja disponível, como precaução.",
@@ -4518,6 +4511,203 @@
       }
     }
   },
+  "elrond" : {
+    "info" : {
+      "available" : {
+        "title" : "EGLD disponível",
+        "description" : "Esta quantia pode ser transferida."
+      },
+      "delegated" : {
+        "title" : "Ativos aplicados",
+        "description" : "Os ativos em staking são usados indiretamente pelo provedor de staking para operar nodes validadores, processar transações e proteger a rede participando de um mecanismo de consenso."
+      },
+      "undelegating" : {
+        "title" : "Saques Pendentes",
+        "description" : "Ativos desaplicados ficam sujeitos a um período de desvinculação de 10 dias antes de poderem ser sacados."
+      },
+      "delegationUnavailable" : {
+        "title" : "Delegação Indisponível",
+        "description" : "Não há saldo disponível suficiente em sua conta para iniciar uma nova delegação."
+      }
+    },
+    "delegation" : {
+      "delegationEarn" : "Faça staking de seu EGLD para proteger a rede e obter a sua parte nas recompensas.",
+      "info" : "O que é staking e como funciona?",
+      "claimRewards" : "Resgatar Recompensas",
+      "claimAvailableRewards" : "Resgatar {{amount}}",
+      "header" : "Minha Aplicação",
+      "Amount" : "Quantia",
+      "noRewards" : "Nenhuma recompensa disponível",
+      "delegate" : "Reaplicar",
+      "undelegate" : "Desaplicar",
+      "reward" : "Resgatar Recompensas",
+      "commission" : "Comissão",
+      "iDelegate" : "Eu delego",
+      "totalStake" : "Aplicação Total",
+      "stepperHeader" : {
+        "starter" : "Receber Recompensas",
+        "validator" : "Ativos Delegados",
+        "amountSubTitle" : "Quantia a aplicar",
+        "summary" : "Resumo",
+        "verification" : "Verificação",
+        "selectDevice" : "Selecione o dispositivo",
+        "connectDevice" : "Conecte o dispositivo",
+        "stepRange" : "Etapa {{currentStep}} de {{totalSteps}}"
+      },
+      "flow" : {
+        "steps" : {
+          "starter" : {
+            "description" : "Você pode obter recompensas fazendo staking de seus ativos EGLD a um provedor de staking.",
+            "steps" : {
+              "0" : "Você mantém a propriedade dos ativos em staking.",
+              "1" : "Os ativos ficam disponíveis 10 dias após a desaplicação.",
+              "2" : "Faça staking usando seu dispositivo Ledger."
+            },
+            "warning" : {
+              "description" : "Escolha o seu provedor de staking sabiamente. Atualmente, o único risco é o de não obter recompensas por vários motivos, portanto, você deve selecionar um provedor com base em confiabilidade, comunicação e economia."
+            },
+            "cta" : "Continuar"
+          },
+          "validator" : {
+            "validators" : "Provedores de Staking",
+            "myDelegations" : "Minha Aplicação",
+            "cta" : "Continuar",
+            "apr" : "APR: {{amount}}",
+            "totalAvailable" : "Total disponível: <0>{{amount}}</0>",
+            "allAssetsUsed" : "Todos os ativos usados",
+            "noResultsFound" : "Nenhum validador encontrado para <0>{{search}}</0>",
+            "currentAmount" : "(+ <0>{{amount}}</0>)"
+          },
+          "amount" : {
+            "assetsRemaining" : "Ativos restantes: <0>{{amount}}</0>",
+            "allAssetsUsed" : "Todos os ativos usados",
+            "minAmount" : "Quantia mínima: <0>{{min}}</0>",
+            "incorrectAmount" : "Quantia máxima: <0>{{max}}</0>",
+            "insufficientDelegation" : "Sua quantia de staking total deve ser de pelo menos 1 {{label}} por provedor de staking.",
+            "wrongUndelegations" : "A quantia restante de {{label}} em staking deve ser 0 ou acima de 1 {{label}} por provedor de staking.",
+            "cta" : "Continuar"
+          },
+          "verification" : {
+            "success" : {
+              "title" : "Você fez staking de seus ativos com sucesso",
+              "text" : "O saldo de sua conta será atualizado assim que a rede confirmar a transação.",
+              "cta" : "Ver Detalhes"
+            },
+            "pending" : {
+              "title" : "Transmitindo Transação..."
+            },
+            "broadcastError" : "Sua transação pode ter falhado. Aguarde um momento e verifique seu histórico de transações antes de tentar novamente."
+          }
+        }
+      },
+      "drawer" : {
+        "status" : "Status",
+        "rewards" : "Recompensas",
+        "active" : "Ativo",
+        "inactive" : "Inativo",
+        "completionDate" : "Data de conclusão",
+        "redelegatedFrom" : "Redelegado de",
+        "completionDateHit" : "Concluído"
+      }
+    },
+    "claimRewards" : {
+      "stepperHeader" : {
+        "validator" : "Selecione a recompensa para coletar",
+        "method" : "Resgatar Recompensas",
+        "summary" : "Resumo",
+        "selectDevice" : "Selecione o dispositivo",
+        "connectDevice" : "Conecte o dispositivo",
+        "stepRange" : "Etapa {{currentStep}} de {{totalSteps}}"
+      },
+      "flow" : {
+        "steps" : {
+          "method" : {
+            "youEarned" : "Você Ganhou",
+            "byDelegationAssetsTo" : "ao fazer staking de ativos com",
+            "claimRewards" : "Resgatar Recompensas",
+            "reDelegateRewards" : "Recompensas de staking",
+            "claimRewardsInfo" : "Eles serão resgatados agora e adicionados ao seu saldo disponível.",
+            "reDelegateRewardsInfo" : "Elas serão resgatadas agora e colocadas automaticamente em staking com o mesmo provedor de staking.",
+            "compoundOrCashIn" : "Aplicar recompensas ou Resgatar recompensas?",
+            "claimRewardsTooltip" : "As recompensas serão adicionadas ao saldo disponível",
+            "reDelegateRewardsTooltip" : "As recompensas serão adicionadas à quantia aplicada",
+            "cta" : "Continuar"
+          },
+          "verification" : {
+            "success" : {
+              "claimRewardsSuccess" : "Você resgatou com sucesso suas recompensas. Elas foram adicionadas ao seu saldo disponível.",
+              "reDelegateRewardsSuccess" : "As suas recompensas foram aplicadas para o mesmo Provedor de Staking.",
+              "text" : "O saldo de sua conta será atualizado assim que a rede confirmar a transação.",
+              "cta" : "Ver Detalhes"
+            },
+            "pending" : {
+              "title" : "Transmitindo Transação..."
+            },
+            "broadcastError" : "Sua transação pode ter falhado. Aguarde um momento e verifique seu histórico de transações antes de tentar novamente."
+          }
+        }
+      }
+    },
+    "undelegation" : {
+      "stepperHeader" : {
+        "amountSubTitle" : "Quantia a desaplicar",
+        "summary" : "Resumo",
+        "selectDevice" : "Selecione o dispositivo",
+        "connectDevice" : "Conecte o dispositivo",
+        "stepRange" : "Etapa {{currentStep}} de {{totalSteps}}"
+      },
+      "flow" : {
+        "steps" : {
+          "amount" : {
+            "allAssetsUsed" : "Todos os ativos foram desaplicados"
+          },
+          "verification" : {
+            "success" : {
+              "title" : "Você desaplicou seus ativos com sucesso",
+              "text" : "O saldo de sua conta será atualizado assim que a rede confirmar a transação.",
+              "cta" : "Ver Detalhes"
+            },
+            "pending" : {
+              "title" : "Transmitindo Transação..."
+            },
+            "broadcastError" : "Sua transação pode ter falhado. Aguarde um momento e verifique seu histórico de transações antes de tentar novamente."
+          }
+        }
+      }
+    },
+    "withdraw" : {
+      "stepperHeader" : {
+        "validator" : "Selecione a recompensa para coletar",
+        "method" : "Resgatar Recompensas",
+        "summary" : "Resumo",
+        "selectDevice" : "Selecione o dispositivo",
+        "connectDevice" : "Conecte o dispositivo",
+        "stepRange" : "Etapa {{currentStep}} de {{totalSteps}}"
+      },
+      "flow" : {
+        "steps" : {
+          "method" : {
+            "youEarned" : "Você desaplicou",
+            "byDelegationAssetsTo" : "de",
+            "withdrawInfo" : "Eles serão resgatados agora e adicionados ao seu saldo disponível.",
+            "withdrawTooltip" : "Saques serão adicionados ao saldo disponível",
+            "cta" : "Continuar"
+          },
+          "verification" : {
+            "success" : {
+              "title" : "Você resgatou com sucesso suas recompensas. Elas foram adicionadas ao seu saldo disponível.",
+              "text" : "O saldo de sua conta será atualizado assim que a rede confirmar a transação.",
+              "cta" : "Ver Detalhes"
+            },
+            "pending" : {
+              "title" : "Transmitindo Transação..."
+            },
+            "broadcastError" : "Sua transação pode ter falhado. Aguarde um momento e verifique seu histórico de transações antes de tentar novamente."
+          }
+        }
+      }
+    }
+  },
   "tezos" : {
     "AccountHeader" : {
       "title" : "Você pode ganhar recompensas ao delegar sua conta",
@@ -5014,7 +5204,8 @@
     "actions" : {
       "redelegate" : "Redelegar",
       "collectRewards" : "Colher Recompensas",
-      "undelegate" : "Desdelegar"
+      "undelegate" : "Desdelegar",
+      "withdraw" : "Sacar"
     }
   },
   "ValidateOnDevice" : {
