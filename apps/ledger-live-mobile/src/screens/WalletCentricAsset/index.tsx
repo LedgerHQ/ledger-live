@@ -6,7 +6,7 @@ import Animated, {
 } from "react-native-reanimated";
 import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
-import { Box, Flex } from "@ledgerhq/native-ui";
+import { Box, Flex, CardB } from "@ledgerhq/native-ui";
 import { getCurrencyColor } from "@ledgerhq/live-common/currencies/index";
 import { isAccountEmpty } from "@ledgerhq/live-common/account/helpers";
 import { useTheme } from "styled-components/native";
@@ -135,6 +135,8 @@ const AssetScreen = ({ route }: NavigationProps) => {
     }
   }, [currency, navigation]);
 
+  const hasContentCard = true;
+
   const data = useMemo(
     () => [
       <Box mt={6} onLayout={onAssetCardLayout}>
@@ -158,6 +160,18 @@ const AssetScreen = ({ route }: NavigationProps) => {
           accounts={cryptoAccounts}
           defaultAccount={defaultAccount}
         />
+        {hasContentCard && (
+          <Flex my={6}>
+            <CardB
+              title="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam tellus risus, pretium a nulla sit amet, porta sollicitudin tortor."
+              tag="Stack"
+              cta="Click to continue"
+              imageUrl="https://media.wired.com/photos/630916d9ba2a66af641b11ee/master/pass/Ledger-Nano-X-Gear.jpg"
+              onPress={() => console.log("PRESS")}
+              onPressDismiss={() => console.log("Dismiss")}
+            />
+          </Flex>
+        )}
         {cryptoAccountsEmpty ? (
           <Flex minHeight={220}>
             <EmptyAccountCard currencyTicker={currency.ticker} />
@@ -222,6 +236,7 @@ const AssetScreen = ({ route }: NavigationProps) => {
       t,
       cryptoAccounts,
       defaultAccount,
+      hasContentCard,
       isCryptoCurrency,
       selectedCoinData,
       onAddAccount,

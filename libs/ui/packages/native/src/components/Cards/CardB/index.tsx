@@ -4,7 +4,9 @@ import { ArrowRightMedium, CloseMedium } from "@ledgerhq/icons-ui/native";
 import { TouchableOpacityProps, TouchableOpacity, Image } from "react-native";
 import styled, { useTheme } from "styled-components/native";
 
-import { Text, Flex, Link, rgba } from "@ledgerhq/native-ui";
+import Text from "../../Text";
+import Flex from "../../Layout/Flex";
+import Link from "../../cta/Link";
 
 export type CardProps = TouchableOpacityProps & {
   tag?: string;
@@ -19,7 +21,7 @@ export const Base = styled(TouchableOpacity)`
 `;
 
 export const Container = styled(Flex)`
-  background: ${(p) => rgba(p.theme.colors.neutral.c20, 0.4)};
+  background: ${(p) => p.theme.colors.background.drawer};
   flex-direction: row;
   border-radius: 8px;
 `;
@@ -32,6 +34,7 @@ export const ImageContainer = styled(Flex)`
 export const ImageContent = styled(Image)`
   border-top-right-radius: 8px;
   border-bottom-right-radius: 8px;
+  opacity: 0.6;
 `;
 
 export const CloseContainer = styled(TouchableOpacity)`
@@ -39,7 +42,7 @@ export const CloseContainer = styled(TouchableOpacity)`
   position: absolute;
   right: 8px;
   top: 8px;
-  border-radius: 50%;
+  border-radius: 50;
   height: 24px;
   width: 24px;
   display: flex;
@@ -70,29 +73,20 @@ const ImageComponent = (props: CardProps) => (
 
 const TextComponent = (props: CardProps) => (
   <Flex justifyContent={"space-between"} alignItems={"flex-start"} p={"12px"} flex={1}>
-    <Flex>
-      <Flex flexGrow={1} maxWidth={"90%"}>
-        <Text
-          variant={"small"}
-          fontWeight={"semiBold"}
-          color="neutral.c70"
-          uppercase
-          numberOfLines={1}
-        >
-          {props.tag}
-        </Text>
-      </Flex>
+    <Text
+      variant={"small"}
+      fontWeight={"semiBold"}
+      color="neutral.c70"
+      uppercase
+      numberOfLines={1}
+      maxWidth={"80%"}
+    >
+      {props.tag}
+    </Text>
 
-      <Text
-        variant={"large"}
-        numberOfLines={3}
-        fontWeight={"semiBold"}
-        color="neutral.c100"
-        mt={"4px"}
-      >
-        {props.title}
-      </Text>
-    </Flex>
+    <Text variant={"large"} numberOfLines={3} fontWeight={"semiBold"} color="neutral.c100">
+      {props.title}
+    </Text>
 
     <Link
       type={"main"}
