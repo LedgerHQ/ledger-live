@@ -595,6 +595,9 @@
     "SourceHasMultiSign" : {
       "title" : "يرجى تعطيل خاصية التوقيع المتعدد لإرسال {{currencyName}}"
     },
+    "DustLimit" : {
+      "title" : "المبلغ أقل من حد الغبار"
+    },
     "StratisDown2021Warning" : {
       "description" : "سلسلة كتل Stratis تطورت ومن الوارد ألا تعمل بشكل صحيح. سيتم توفير الدعم لسلسلة كتل Stratis الأصلية حتى 16 أكتوبر 2021."
     },
@@ -1803,6 +1806,9 @@
           "title" : "فشل تحديث البرنامج"
         }
       }
+    },
+    "appsStep" : {
+      "title" : "تطبيقات {{productName}}"
     },
     "readyStep" : {
       "title" : "{{productName}} مستعد"
@@ -3462,7 +3468,7 @@
     }
   },
   "DeviceAction" : {
-    "stayInTheAppPlz" : "ابق في تطبيق Ledger Live وحافظ على Nano X الخاصة بك بالقرب منك",
+    "stayInTheAppPlz" : "لا تُغادر تطبيق Ledger Live وابق على Ledger خاصتك بالقرب منك.",
     "allowAppPermission" : "افتح تطبيق {{wording}} على جهازك",
     "allowAppPermissionSubtitleToken" : "لإدارة رموزك {{token}}",
     "allowManagerPermission" : "السماح بــ {{wording}} على جهازك",
@@ -3634,6 +3640,7 @@
         "description" : "قم بإدارة أجهزة Ledger المحفوظة خاصتك"
       },
       "addNewCTA" : "إضافة جديد",
+      "otgBanner" : "إذا كنت تمتلك Nano S أو Nano S Plus، فقم بتوصيل جهازك عن طريق كبل USB.",
       "connectExistingLedger" : "توصيل Ledger موجود بالفعل",
       "connectExistingLedgerDescription" : "لديك Ledger تم إعدادها؟ قم بإقرانها عبر البلوتوث",
       "setUpNewLedger" : "إعداد Ledger جديدة",
@@ -5353,6 +5360,11 @@
       "viewOn" : "مشاهدة على",
       "viewInExplorer" : "عرض في المتصفح",
       "txDetails" : "تفاصيل المعاملة"
+    },
+    "modalDisabled" : {
+      "title" : "Send function not available",
+      "body" : "In order to comply with Apple's recent updates on their App Store, sending NFTs is temporary unavailable. You can still use Ledger Live on Desktop to send NFTs.",
+      "contactSupport" : "Please read our support article for more information."
     }
   },
   "ApplicationVersion" : "إصدار {{version}}",
@@ -5393,17 +5405,19 @@
     "cropImage" : "قُصّ الصورة",
     "chooseConstrast" : "اختر التباين",
     "uploadAnotherImage" : "قم بتحميل صورة أخرى",
-    "selectContrast" : "اختر مستوى التباين",
+    "rotateImage" : "تدوير",
     "allowPreview" : "السماح بعرض الصورة على {{productName}}",
     "loadingPicture" : "تحميل الصورة على {{productName}}",
     "pictureLoaded" : "تم تحميل الصورة",
     "timeDisclaimer" : "قد يستغرق هذا حتى 30 ثانية",
     "imageLoaded" : "تم تحميل الصورة على {{productName}}",
     "confirmPicture" : "قم بالتأكيد على {{productName}}",
-    "title" : "اختر صورة.\nاخلق أسلوب.\nاجعل Ledger خاصة بك.",
-    "subtitle" : "ضع صورة لرمزك غير القابل للاستبدال المفضل أو صورة من هاتفك.",
+    "landingPage" : {
+      "title" : "اختر صورة.\nاخلق أسلوب.\nاجعل Ledger خاصة بك.",
+      "subtitle" : "ضع صورة لرمزك غير القابل للاستبدال المفضل أو صورة من هاتفك.",
+      "choosePicture" : "اختر صورة"
+    },
     "customImage" : "صورة مخصصة",
-    "choosePicture" : "اختر صورة",
     "doThisLater" : "ربّما في وقت لاحق"
   },
   "postOnboarding" : {
