@@ -595,6 +595,9 @@
     "SourceHasMultiSign" : {
       "title" : "Desative a assinatura múltipla para enviar {{currencyName}}"
     },
+    "DustLimit" : {
+      "title" : "Quantia menor do que o limite de pó"
+    },
     "StratisDown2021Warning" : {
       "description" : "A blockchain Stratis evoluiu e pode não funcionar mais corretamente. Suporte à blockchain Stratis original foi mantido até 16 de outubro de 2021."
     },
@@ -5387,7 +5390,8 @@
     "drawer" : {
       "title" : "Escolha uma imagem",
       "options" : {
-        "uploadFromPhone" : "Enviar do meu telefone"
+        "uploadFromPhone" : "Enviar do meu telefone",
+        "selectFromNFTGallery" : "Selecionar da galeria de NFTs"
       }
     },
     "cropImage" : "Cortar imagem",
@@ -5404,7 +5408,10 @@
     "subtitle" : "Coloque uma foto do seu NFT favorito ou uma foto do seu telefone.",
     "customImage" : "Imagem personalizada",
     "choosePicture" : "Escolha uma foto",
-    "doThisLater" : "Talvez mais tarde"
+    "doThisLater" : "Talvez mais tarde",
+    "nftGallery" : {
+      "title" : "Meus NFTs"
+    }
   },
   "postOnboarding" : {
     "hub" : {
