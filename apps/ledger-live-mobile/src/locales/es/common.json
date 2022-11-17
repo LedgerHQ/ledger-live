@@ -418,6 +418,10 @@
       "title" : "No se encontró ninguna cuenta",
       "description" : "Algo ha salido mal en el cálculo de la dirección. Inténtalo de nuevo. Si el problema persiste, guarda los registros con el botón que se muestra a continuación y envíalos al Soporte de Ledger."
     },
+    "DecimalsLimitReached" : {
+      "title" : "Límite máximo de decimales alcanzado",
+      "description" : "Asegúrate de que el importe proporcionado tenga 18 decimales."
+    },
     "NotEnoughBalance" : {
       "title" : "Fondos insuficientes",
       "description" : "Asegúrate de que la cuenta tenga fondos suficientes."
@@ -3853,17 +3857,6 @@
       "pleaseConnectUsbDescription" : "Para iniciar la actualización del firmware, conecta tu {{deviceName}} a tu teléfono mediante un cable USB."
     }
   },
-  "firmwareUpdateRequired" : {
-    "updateAvailableFromLLM" : {
-      "title" : "Es necesaria una actualización del Firmware",
-      "description" : "Para realizar esta acción, primero deberás actualizar el Firmware de tu {{ deviceName }}",
-      "cta" : "Ir a Mi Ledger"
-    },
-    "updateNotAvailableFromLLM" : {
-      "title" : "Actualización de Firmware necesaria en la PC",
-      "description" : "Actualiza tu {{ deviceName }} desde Ledger Live Desktop"
-    }
-  },
   "FirmwareUpdateReleaseNotes" : {
     "introTitle" : "Actualiza {{deviceName}} a la versión {{version}}",
     "recoveryPhraseBackupInstructions" : "Como precaución, asegúrate de que la Frase de recuperación de 24 Palabras esté escrita en la Hoja de recuperación y de tener fácil acceso a ella.",
@@ -4518,6 +4511,203 @@
       }
     }
   },
+  "elrond" : {
+    "info" : {
+      "available" : {
+        "title" : "EGLD disponibles",
+        "description" : "Este importe se puede transferir."
+      },
+      "delegated" : {
+        "title" : "Activos puestos en participación",
+        "description" : "El proveedor de puesta en participación utiliza indirectamente activos puestos en participación para gestionar nodos validadores, procesar transacciones y proteger la red al participar del mecanismo de consenso."
+      },
+      "undelegating" : {
+        "title" : "Retiros pendientes",
+        "description" : "Tras cancelar la puesta en participación de un activo, dichos activos están sujetos a un período de desvinculación de 10 días antes de efectuar el retiro."
+      },
+      "delegationUnavailable" : {
+        "title" : "Delegación no disponible",
+        "description" : "No hay saldo suficiente disponible en la cuenta para iniciar una nueva delegación."
+      }
+    },
+    "delegation" : {
+      "delegationEarn" : "Pon en participación tus EGLD para proteger la red y obtener tu parte de las recompensas.",
+      "info" : "¿Qué es la puesta en participación y cómo funciona?",
+      "claimRewards" : "Reclamar recompensas",
+      "claimAvailableRewards" : "Reclamar {{amount}}",
+      "header" : "Mi puesta en participación",
+      "Amount" : "Importe",
+      "noRewards" : "No hay recompensas disponibles",
+      "delegate" : "Volver a poner en participación",
+      "undelegate" : "Cancelar la puesta en participación",
+      "reward" : "Reclamar recompensas",
+      "commission" : "Comisión",
+      "iDelegate" : "Delegar",
+      "totalStake" : "Participación total",
+      "stepperHeader" : {
+        "starter" : "Recibir recompensas",
+        "validator" : "Delegar activos",
+        "amountSubTitle" : "Importe a poner en participación",
+        "summary" : "Resumen",
+        "verification" : "Verificación",
+        "selectDevice" : "Seleccionar dispositivo",
+        "connectDevice" : "Conectar dispositivo",
+        "stepRange" : "Paso {{currentStep}} de {{totalSteps}}"
+      },
+      "flow" : {
+        "steps" : {
+          "starter" : {
+            "description" : "Puedes ganar recompensas poniendo en participación tus activos EGLD con un proveedor de puesta en participación.",
+            "steps" : {
+              "0" : "Conservas la propiedad de los activos puestos en participación.",
+              "1" : "Los activos estarán disponibles 10 días después de que se cancele la puesta en participación.",
+              "2" : "Pon en participación con tu dispositivo Ledger."
+            },
+            "warning" : {
+              "description" : "Escoge tu proveedor de puesta en participación con cuidado: en la actualidad, el único riesgo es no obtener recompensas por diversas razones, por lo que debes basar tu elección en factores económicos, de fiabilidad y de comunicación."
+            },
+            "cta" : "Continuar"
+          },
+          "validator" : {
+            "validators" : "Proveedores de puesta en participación",
+            "myDelegations" : "Mi puesta en participación",
+            "cta" : "Continuar",
+            "apr" : "APR: {{amount}}",
+            "totalAvailable" : "Total disponible: <0>{{amount}}</0>",
+            "allAssetsUsed" : "Todos los activos utilizados",
+            "noResultsFound" : "No se encontraron validadores para <0>{{search}}</0>",
+            "currentAmount" : "(+ <0>{{amount}}</0>)"
+          },
+          "amount" : {
+            "assetsRemaining" : "Activos restantes: <0>{{amount}}</0>",
+            "allAssetsUsed" : "Todos los activos utilizados",
+            "minAmount" : "Cantidad mínima: <0>{{min}}</0>",
+            "incorrectAmount" : "Cantidad máxima: <0>{{max}}</0>",
+            "insufficientDelegation" : "El importe de participación total debe ser de al menos 1 {{label}} por proveedor de puesta en participación.",
+            "wrongUndelegations" : "El importe restante de {{label}} puestos en participación debe ser 0 o superior a 1 {{label}} por proveedor de puesta en participación.",
+            "cta" : "Continuar"
+          },
+          "verification" : {
+            "success" : {
+              "title" : "Has puesto en participación tus activos correctamente",
+              "text" : "El saldo de la cuenta se actualizará cuando la red confirme la transacción.",
+              "cta" : "Ver detalles"
+            },
+            "pending" : {
+              "title" : "Transmitiendo transacción..."
+            },
+            "broadcastError" : "Es posible que la transacción haya fallado. Espera un momento y comprueba el historial de transacciones antes de intentarlo de nuevo."
+          }
+        }
+      },
+      "drawer" : {
+        "status" : "Estado",
+        "rewards" : "Recompensas",
+        "active" : "Activo",
+        "inactive" : "Inactivo",
+        "completionDate" : "Fecha de finalización",
+        "redelegatedFrom" : "Redelegados desde",
+        "completionDateHit" : "Completado"
+      }
+    },
+    "claimRewards" : {
+      "stepperHeader" : {
+        "validator" : "Seleccionar recompensa a recibir",
+        "method" : "Reclamar recompensas",
+        "summary" : "Resumen",
+        "selectDevice" : "Seleccionar dispositivo",
+        "connectDevice" : "Conectar dispositivo",
+        "stepRange" : "Paso {{currentStep}} de {{totalSteps}}"
+      },
+      "flow" : {
+        "steps" : {
+          "method" : {
+            "youEarned" : "Has recibido",
+            "byDelegationAssetsTo" : "poniendo en participación activos con",
+            "claimRewards" : "Reclamar recompensas",
+            "reDelegateRewards" : "Poner en participación recompensas",
+            "claimRewardsInfo" : "Se reclamarán ahora y se agregarán al saldo disponible.",
+            "reDelegateRewardsInfo" : "Se reclamarán ahora y se pondrán en participación automáticamente con el mismo proveedor de puesta en participación.",
+            "compoundOrCashIn" : "¿Poner en participación o reclamar las recompensas?",
+            "claimRewardsTooltip" : "Las recompensas se agregarán al saldo disponible",
+            "reDelegateRewardsTooltip" : "Las recompensas se agregarán al importe puesto en participación",
+            "cta" : "Continuar"
+          },
+          "verification" : {
+            "success" : {
+              "claimRewardsSuccess" : "Has reclamado correctamente tus recompensas. Se han agregado al saldo disponible.",
+              "reDelegateRewardsSuccess" : "Tus recompensas se han puesto en participación con el mismo proveedor de puesta en participación.",
+              "text" : "El saldo de la cuenta se actualizará cuando la red confirme la transacción.",
+              "cta" : "Ver detalles"
+            },
+            "pending" : {
+              "title" : "Transmitiendo transacción..."
+            },
+            "broadcastError" : "Es posible que la transacción haya fallado. Espera un momento y comprueba el historial de transacciones antes de intentarlo de nuevo."
+          }
+        }
+      }
+    },
+    "undelegation" : {
+      "stepperHeader" : {
+        "amountSubTitle" : "Importe de la cancelación de la puesta en participación",
+        "summary" : "Resumen",
+        "selectDevice" : "Seleccionar dispositivo",
+        "connectDevice" : "Conectar dispositivo",
+        "stepRange" : "Paso {{currentStep}} de {{totalSteps}}"
+      },
+      "flow" : {
+        "steps" : {
+          "amount" : {
+            "allAssetsUsed" : "Se ha cancelado la puesta en participación de todos los activos"
+          },
+          "verification" : {
+            "success" : {
+              "title" : "Has cancelado la puesta en participación de tus activos correctamente",
+              "text" : "El saldo de la cuenta se actualizará cuando la red confirme la transacción.",
+              "cta" : "Ver detalles"
+            },
+            "pending" : {
+              "title" : "Transmitiendo transacción..."
+            },
+            "broadcastError" : "Es posible que la transacción haya fallado. Espera un momento y comprueba el historial de transacciones antes de intentarlo de nuevo."
+          }
+        }
+      }
+    },
+    "withdraw" : {
+      "stepperHeader" : {
+        "validator" : "Seleccionar recompensa a recibir",
+        "method" : "Reclamar recompensas",
+        "summary" : "Resumen",
+        "selectDevice" : "Seleccionar dispositivo",
+        "connectDevice" : "Conectar dispositivo",
+        "stepRange" : "Paso {{currentStep}} de {{totalSteps}}"
+      },
+      "flow" : {
+        "steps" : {
+          "method" : {
+            "youEarned" : "Has cancelado la puesta en participación",
+            "byDelegationAssetsTo" : "desde",
+            "withdrawInfo" : "Se reclamarán ahora y se agregarán al saldo disponible.",
+            "withdrawTooltip" : "Los retiros se agregarán al saldo disponible",
+            "cta" : "Continuar"
+          },
+          "verification" : {
+            "success" : {
+              "title" : "Has reclamado correctamente tus recompensas. Se han agregado al saldo disponible.",
+              "text" : "El saldo de la cuenta se actualizará cuando la red confirme la transacción.",
+              "cta" : "Ver detalles"
+            },
+            "pending" : {
+              "title" : "Transmitiendo transacción..."
+            },
+            "broadcastError" : "Es posible que la transacción haya fallado. Espera un momento y comprueba el historial de transacciones antes de intentarlo de nuevo."
+          }
+        }
+      }
+    }
+  },
   "tezos" : {
     "AccountHeader" : {
       "title" : "Puedes recibir recompensas delegando tu cuenta",
@@ -5014,7 +5204,8 @@
     "actions" : {
       "redelegate" : "Redelegar",
       "collectRewards" : "Recibir recompensas",
-      "undelegate" : "Desdelegar"
+      "undelegate" : "Desdelegar",
+      "withdraw" : "Retirar"
     }
   },
   "ValidateOnDevice" : {
