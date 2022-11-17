@@ -595,6 +595,9 @@
     "SourceHasMultiSign" : {
       "title" : "请禁用多重签名以发送 {{currencyName}}"
     },
+    "DustLimit" : {
+      "title" : "金额低于小额资产下限"
+    },
     "StratisDown2021Warning" : {
       "description" : "Stratis 区块链已经进化，可能无法正确工作。对原有 Stratis 区块链的技术支持，将会持续到 2021 年 10 月 16 日。"
     },
@@ -1804,6 +1807,9 @@
         }
       }
     },
+    "appsStep" : {
+      "title" : "{{productName}} 应用程序"
+    },
     "readyStep" : {
       "title" : "{{productName}} 已经就绪"
     },
@@ -2140,7 +2146,7 @@
       },
       "advanced" : {
         "title" : "高级日志",
-        "warningDerivation" : "这是一个 {{tag}} xpub。将其导入第三方钱包时，请选择相同的衍生模式。",
+        "warningDerivation" : "这是一个 {{tag}} xpub 扩展公钥。将其导入第三方钱包时，请选择相同的衍生模式。",
         "desc" : ""
       }
     },
@@ -3462,7 +3468,7 @@
     }
   },
   "DeviceAction" : {
-    "stayInTheAppPlz" : "停留在 Ledger Live 应用中，并将您的 Nano X 保持在附近。",
+    "stayInTheAppPlz" : "停留在 Ledger Live 应用程序中并将 Ledger 设备一直放在附近。",
     "allowAppPermission" : "在您的设备上打开 {{wording}} 应用程序",
     "allowAppPermissionSubtitleToken" : "管理您的 {{token}} 代币",
     "allowManagerPermission" : "允许 {{wording}} 在您的设备上运行",
@@ -3634,6 +3640,7 @@
         "description" : "管理您保存的 Ledger 设备"
       },
       "addNewCTA" : "添加新的",
+      "otgBanner" : "如果您使用的是 Nano S 或 Nano S Plus，请使用 USB 数据线连接您的设备。",
       "connectExistingLedger" : "连接现有 Ledger 设备",
       "connectExistingLedgerDescription" : "已有设置过的 Ledger 设备？使用蓝牙配对",
       "setUpNewLedger" : "设置新 Ledger 设备",
@@ -5353,6 +5360,11 @@
       "viewOn" : "查看",
       "viewInExplorer" : "在浏览器中查看",
       "txDetails" : "交易详情"
+    },
+    "modalDisabled" : {
+      "title" : "发送功能不可用",
+      "body" : "为了遵守 Apple 对 App Store 的最新更新，暂时无法发送 NFT。您仍然可以在桌面设备上使用 Ledger Live 发送 NFT。",
+      "contactSupport" : "要了解更多信息，请阅读我们的支持文章。"
     }
   },
   "ApplicationVersion" : "{{version}}版本",
@@ -5393,17 +5405,19 @@
     "cropImage" : "裁剪图片",
     "chooseConstrast" : "选择对比度",
     "uploadAnotherImage" : "上传另一张图片",
-    "selectContrast" : "选择对比度",
+    "rotateImage" : "旋转",
     "allowPreview" : "允许在 {{productName}} 上预览图片",
     "loadingPicture" : "正在 {{productName}} 上加载图片",
     "pictureLoaded" : "图片已加载",
     "timeDisclaimer" : "可能最多需要 30 秒",
     "imageLoaded" : "图片已加载到 {{productName}}",
     "confirmPicture" : "在 {{productName}} 上确认",
-    "title" : "选择图片。\n创造氛围。\n打造您的专属 Ledger。",
-    "subtitle" : "设置您喜欢的 NFT 的图片或手机中的图片。",
+    "landingPage" : {
+      "title" : "选择图片。\n创造氛围。\n打造您的专属 Ledger。",
+      "subtitle" : "设置您喜欢的 NFT 的图片或手机中的图片。",
+      "choosePicture" : "选择图片"
+    },
     "customImage" : "自定义图片",
-    "choosePicture" : "选择图片",
     "doThisLater" : "以后再说"
   },
   "postOnboarding" : {
