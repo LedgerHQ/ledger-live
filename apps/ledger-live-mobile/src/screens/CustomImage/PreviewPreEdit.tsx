@@ -187,20 +187,29 @@ const PreviewPreEdit = ({ navigation, route }: NavigationProps) => {
             handleError(e);
           });
       };
-      navigation.addListener("beforeRemove", listener);
+      const removeListener = navigation.addListener("beforeRemove", listener);
       return () => {
         dead = true;
-        navigation.removeListener("beforeRemove", listener);
+        removeListener();
       };
     }, [navigation, handleError, isPictureFromGallery]),
   );
 
   const handleEditPicture = useCallback(() => {
+    if (!imageToCrop) {
+      // in theory this shouldn't happen as the button is disabled until
+      // preview is done
+      return;
+    }
+
     navigation.navigate(NavigatorName.CustomImage, {
       screen: ScreenName.CustomImageStep1Crop,
-      params,
+      params: {
+        device: params.device,
+        imageFile: imageToCrop,
+      },
     });
-  }, [navigation, params]);
+  }, [navigation, params.device, imageToCrop]);
 
   if (!imageToCrop || !imageToCrop.imageFileUri) {
     return <InfiniteLoader />;
@@ -246,7 +255,12 @@ const PreviewPreEdit = ({ navigation, route }: NavigationProps) => {
           >
             {t("customImage.preview.setPicture")}
           </Button>
-          <Button size="large" mb={8} onPress={handleEditPicture}>
+          <Button
+            size="large"
+            mb={8}
+            onPress={handleEditPicture}
+            disabled={previewLoading}
+          >
             {t("customImage.preview.editPicture")}
           </Button>
         </Flex>

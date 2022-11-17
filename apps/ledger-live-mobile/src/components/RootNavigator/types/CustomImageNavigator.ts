@@ -15,14 +15,14 @@ type BaseParams = {
 
 export type CustomImageNavigatorParamList = {
   [ScreenName.CustomImageStep0Welcome]: BaseParams;
-  [ScreenName.CustomImageStep1Crop]: BaseParams &
-    (ImageUrl | ImageFileUri) & {
-      isPictureFromGallery?: boolean;
-    };
-  [ScreenName.CustomImageStep2Preview]: BaseParams &
-    (ImageUrl | ImageFileUri) & {
-      cropResult: CropResult;
-    };
+  [ScreenName.CustomImageStep1Crop]: BaseParams & {
+    imageFile: ImageFileUri;
+    isPictureFromGallery?: boolean;
+  };
+  [ScreenName.CustomImageStep2Preview]: BaseParams & {
+    imageFile: ImageFileUri;
+    cropResult: CropResult;
+  };
   [ScreenName.CustomImageStep3Transfer]: BaseParams & {
     rawData: ProcessorRawResult;
     previewData: ProcessorPreviewResult;
@@ -32,9 +32,9 @@ export type CustomImageNavigatorParamList = {
     (ImageUrl | ImageFileUri) & {
       isPictureFromGallery?: boolean;
     };
-  [ScreenName.CustomImagePreviewPostEdit]: BaseParams &
-    (ImageUrl | ImageFileUri) & {
-      image: ResizeResult | null;
-      contrast: number;
-    };
+  [ScreenName.CustomImagePreviewPostEdit]: BaseParams & {
+    imageFile: ImageFileUri;
+    image: ResizeResult | null;
+    contrast: number;
+  };
 };

@@ -28,7 +28,7 @@ type NavigationProps = BaseComposite<
 const PreviewPostEdit = ({ navigation, route }: NavigationProps) => {
   const { t } = useTranslation();
   const { params } = route;
-  const { image, contrast, device } = params;
+  const { imageFile, image, contrast, device } = params;
 
   const handleError = useCallback(
     (error: Error) => {
@@ -89,11 +89,12 @@ const PreviewPostEdit = ({ navigation, route }: NavigationProps) => {
     navigation.navigate(NavigatorName.CustomImage, {
       screen: ScreenName.CustomImageStep1Crop,
       params: {
-        ...params,
+        device,
+        imageFile,
         isPictureFromGallery: false,
       },
     });
-  }, [navigation, params]);
+  }, [navigation, device, imageFile]);
 
   if (!image) {
     return <InfiniteLoader />;

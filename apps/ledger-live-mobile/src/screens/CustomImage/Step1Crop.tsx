@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useCallback, useRef, useState } from "react";
 import { Box, Flex, Icons, InfiniteLoader, Text } from "@ledgerhq/native-ui";
 import { CropView } from "react-native-image-crop-tools";
 import { useTranslation } from "react-i18next";
@@ -7,11 +7,7 @@ import ImageCropper, {
   Props as ImageCropperProps,
   CropResult,
 } from "../../components/CustomImage/ImageCropper";
-import {
-  ImageDimensions,
-  ImageFileUri,
-} from "../../components/CustomImage/types";
-import { downloadImageToFile } from "../../components/CustomImage/imageUtils";
+import { ImageDimensions } from "../../components/CustomImage/types";
 import { targetDimensions } from "./shared";
 import Button from "../../components/Button";
 import { ScreenName } from "../../const";
@@ -38,14 +34,13 @@ type NavigationProps = BaseComposite<
  */
 const Step1Cropping = ({ navigation, route }: NavigationProps) => {
   const cropperRef = useRef<CropView>(null);
-  const [imageToCrop, setImageToCrop] = useState<ImageFileUri | null>(null);
   const [rotated, setRotated] = useState(false);
 
   const { t } = useTranslation();
 
   const { params } = route;
 
-  const { device } = params;
+  const { device, imageFile } = params;
 
   const handleError = useCallback(
     (error: Error) => {
@@ -54,32 +49,6 @@ const Step1Cropping = ({ navigation, route }: NavigationProps) => {
     },
     [navigation, device],
   );
-
-  /** LOAD SOURCE IMAGE FROM PARAMS */
-  useEffect(() => {
-    let dead = false;
-    if ("imageFileUri" in params) {
-      setImageToCrop({
-        imageFileUri: params.imageFileUri,
-      });
-    } else {
-      const { resultPromise, cancel } = downloadImageToFile(params);
-      resultPromise
-        .then(res => {
-          if (!dead) setImageToCrop(res);
-        })
-        .catch(e => {
-          if (!dead) handleError(e);
-        });
-      return () => {
-        dead = true;
-        cancel();
-      };
-    }
-    return () => {
-      dead = true;
-    };
-  }, [params, setImageToCrop, handleError]);
 
   /** CROP IMAGE HANDLING */
   const handleCropResult: ImageCropperProps["onResult"] = useCallback(
@@ -125,15 +94,15 @@ const Step1Cropping = ({ navigation, route }: NavigationProps) => {
     >
       <Flex
         flex={1}
-        onLayout={imageToCrop ? onContainerLayout : undefined}
+        onLayout={imageFile ? onContainerLayout : undefined}
         width="100%"
         justifyContent="center"
         alignItems="center"
       >
-        {containerDimensions && imageToCrop ? (
+        {containerDimensions && imageFile ? (
           <ImageCropper
             ref={cropperRef}
-            imageFileUri={imageToCrop.imageFileUri}
+            imageFileUri={imageFile.imageFileUri}
             aspectRatio={targetDimensions}
             /**
              * this native component needs absolute height & width values to
@@ -152,7 +121,7 @@ const Step1Cropping = ({ navigation, route }: NavigationProps) => {
           <InfiniteLoader />
         )}
       </Flex>
-      {imageToCrop ? (
+      {imageFile ? (
         <BottomContainer>
           <Box mb={7} alignSelf="center">
             <Touchable onPress={handlePressRotateLeft}>
