@@ -57,6 +57,7 @@ export enum ScreenName {
   DelegationValidationSuccess = "DelegationValidationSuccess",
   DeveloperCustomManifest = "DeveloperCustomManifest",
   DeveloperSettings = "DeveloperSettings",
+  DeviceConnect = "DeviceConnect",
   DisplayResult = "DisplayResult",
   EditAccountName = "EditAccountName",
   EditAccountUnits = "EditAccountUnits",

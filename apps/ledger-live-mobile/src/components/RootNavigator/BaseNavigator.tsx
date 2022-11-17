@@ -83,6 +83,7 @@ import PostOnboardingNavigator from "./PostOnboardingNavigator";
 import { readOnlyModeEnabledSelector } from "../../reducers/settings";
 import { accountsSelector } from "../../reducers/accounts";
 import { BaseNavigatorStackParamList } from "./types/BaseNavigator";
+import DeviceConnect from "../../screens/DeviceConnect";
 
 const Stack = createStackNavigator<BaseNavigatorStackParamList>();
 
@@ -577,6 +578,20 @@ export default function BaseNavigator() {
         name={NavigatorName.PostOnboarding}
         options={{ headerShown: false }}
         component={PostOnboardingNavigator}
+      />
+      <Stack.Screen
+        name={ScreenName.DeviceConnect}
+        component={DeviceConnect}
+        listeners={({ route }) => ({
+          beforeRemove: () => {
+            const onClose =
+              route.params?.onClose ||
+              (route.params as unknown as typeof route)?.params?.onClose;
+            if (onClose && typeof onClose === "function") {
+              onClose();
+            }
+          },
+        })}
       />
     </Stack.Navigator>
   );

@@ -159,6 +159,33 @@ export default function trackingWrapper(trackCall: TrackWalletAPI) {
     signMessageUserRefused: (manifest: AppManifest) => {
       track("WalletAPI sign message user refused", getEventData(manifest));
     },
+    deviceTransportRequested: (manifest: AppManifest) => {
+      track("WalletAPI device transport requested", getEventData(manifest));
+    },
+    deviceTransportSuccess: (manifest: AppManifest) => {
+      track("WalletAPI device transport success", getEventData(manifest));
+    },
+    deviceTransportFail: (manifest: AppManifest) => {
+      track("WalletAPI device transport fail", getEventData(manifest));
+    },
+    deviceExchangeRequested: (manifest: AppManifest) => {
+      track("WalletAPI device exchange requested", getEventData(manifest));
+    },
+    deviceExchangeSuccess: (manifest: AppManifest) => {
+      track("WalletAPI device exchange success", getEventData(manifest));
+    },
+    deviceExchangeFail: (manifest: AppManifest) => {
+      track("WalletAPI device exchange fail", getEventData(manifest));
+    },
+    deviceCloseRequested: (manifest: AppManifest) => {
+      track("WalletAPI device close requested", getEventData(manifest));
+    },
+    deviceCloseSuccess: (manifest: AppManifest) => {
+      track("WalletAPI device close success", getEventData(manifest));
+    },
+    deviceCloseFail: (manifest: AppManifest) => {
+      track("WalletAPI device close fail", getEventData(manifest));
+    },
   } as const;
 }
 
