@@ -542,7 +542,29 @@ const polygon: AppSpec<Transaction> = {
   ]),
 };
 
+const avax_c_chain = getCryptoCurrencyById("avalanche_c_chain");
+const minAmountAVAXC = parseCurrencyUnit(avax_c_chain.units[0], "0.001");
+
+const avalanche_c_chain: AppSpec<Transaction> = {
+  name: "Avalanche C-Chain",
+  currency: avax_c_chain,
+  appQuery: {
+    model: DeviceModelId.nanoS,
+    // TODO: should be "Avalanche"
+    appName: "Ethereum",
+  },
+  genericDeviceAction: acceptTransaction,
+  dependency: "Ethereum",
+  testTimeout,
+  minViableAmount: minAmountAVAXC,
+  transactionCheck: ({ maxSpendable }) => {
+    invariant(maxSpendable.gt(minAmountAVAXC), "balance is too low");
+  },
+  mutations: ethereumBasicMutations({ maxAccount: 8 }),
+};
+
 export default {
+  avalanche_c_chain,
   bsc,
   polygon,
   ethereum,
