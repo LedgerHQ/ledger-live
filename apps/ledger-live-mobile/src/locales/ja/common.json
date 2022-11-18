@@ -410,6 +410,9 @@
       "title" : "このアプリは必須です。",
       "description" : "BitcoinまたはEthereumアプリを最後にアンインストールしてください。"
     },
+    "MaxFeeLow" : {
+      "title" : "最大手数料が低すぎます。トランザクションがしばらく保留状態になる場合があります"
+    },
     "NetworkDown" : {
       "title" : "インターネットがダウンしているようです。",
       "description" : "インターネット接続を確認してください。"
@@ -595,6 +598,9 @@
     "SourceHasMultiSign" : {
       "title" : "{{currencyName}}を送付するにはマルチシグを無効にしてください。"
     },
+    "DustLimit" : {
+      "title" : "金額がダスト制限を下回っています"
+    },
     "StratisDown2021Warning" : {
       "description" : "Stratisブロックチェーンのメジャーアップデートが実施されたため、正しく動作しない可能性があります。旧Stratisブロックチェーンのサポートは、2021年10月16日まで引き続き提供されます。"
     },
@@ -744,6 +750,18 @@
     },
     "HederaAddAccountError" : {
       "title" : "アカウントが追加されていません。もう一度お試しください。"
+    },
+    "PriorityFeeTooLow" : {
+      "title" : "優先手数料が推奨手数料より低額です"
+    },
+    "PriorityFeeTooHigh" : {
+      "title" : "優先手数料が必要以上に高額です。お支払い額が多すぎるかもしれません"
+    },
+    "MaxFeeTooLow" : {
+      "title" : "最大手数料が推奨手数料より低額です"
+    },
+    "PriorityFeeHigherThanMaxFee" : {
+      "title" : "最大優先料金は、最大料金より高くすることはできません"
     }
   },
   "crash" : {
@@ -1804,6 +1822,9 @@
         }
       }
     },
+    "appsStep" : {
+      "title" : "{{productName}}アプリケーション"
+    },
     "readyStep" : {
       "title" : "{{productName}} の準備ができました"
     },
@@ -2435,14 +2456,19 @@
         "title" : "Market",
         "desc" : "マーケットの重要な変化に関する最新情報を受け取る"
       },
-      "announcement" : {
+      "announcements" : {
         "title" : "お知らせ",
         "desc" : "Ledger Liveの重要なアップデートを受け取る"
+      },
+      "recommendations" : {
+        "title" : "おすすめ",
+        "desc" : "おすすめや特別なオファーで、お客様の体験をより豊かなものに"
       },
       "price" : {
         "title" : "価格アラート",
         "desc" : "お気に入りのコインの価格アラートを設定して、市場の動きを見逃さないようにしましょう"
-      }
+      },
+      "disclaimer" : "Ledgerでは、データとプライバシーを最も重視しています。収集されたデータが当社パートナーと共有されることはありません。"
     },
     "help" : {
       "title" : "ヘルプ",
@@ -2529,7 +2555,7 @@
   "notifications" : {
     "prompt" : {
       "title" : "通知をオンにする",
-      "desc" : "Ledger LiveやLedger製品、セキュリティに関する最新情報を入手しましょう。いつでも購読解除が可能です。",
+      "desc" : "Ledger Live、Ledger製品、マーケット、おすすめに関する最新情報を入手しましょう。設定でいつでも購読解除できます",
       "allow" : "通知を許可",
       "later" : "後で"
     }
@@ -3151,6 +3177,12 @@
       }
     }
   },
+  "signMessage" : {
+    "eip712" : {
+      "showFullMessage" : "メッセージ全体を表示する",
+      "hideFullMessage" : "メッセージ全体を非表示にする"
+    }
+  },
   "sync" : {
     "error" : "同期エラー",
     "loading" : "Sync"
@@ -3212,9 +3244,14 @@
       "infoTotalDesc" : "トランザクション数量と選択したネットワーク手数料を含みます。",
       "gasLimit" : "ガスリミット",
       "gasPrice" : "ガス価格",
+      "maxFee" : "最大手数料",
+      "maxPriorityFee" : "最大優先手数料",
+      "nextBlock" : "次のブロック: {{nextBaseFee}}",
+      "suggestedPriorityFee" : "推奨: {{lowPriorityFee}} - {{highPriorityFee}}",
       "maxFees" : "最大手数料",
       "validateGasLimit" : "ガスリミットの検証",
       "fees" : "手数料",
+      "maxEstimatedFee" : "最大推定手数料",
       "validateFees" : "手数料の確認",
       "customizeFees" : "手数料のカスタマイズ",
       "memo" : {
@@ -3462,7 +3499,7 @@
     }
   },
   "DeviceAction" : {
-    "stayInTheAppPlz" : "Ledger Liveアプリを開いた状態で、Nano Xを近くに置いてください。",
+    "stayInTheAppPlz" : "Ledger Liveアプリを開いた状態で、Ledgerを近くに置いてください。",
     "allowAppPermission" : "デバイスで{{wording}} アプリを開く",
     "allowAppPermissionSubtitleToken" : "{{token}} トークンを管理",
     "allowManagerPermission" : "デバイス上で{{wording}}を許可",
@@ -3634,6 +3671,7 @@
         "description" : "保存済みのLedgerを管理する"
       },
       "addNewCTA" : "新規で追加",
+      "otgBanner" : "Nano SまたはNano S Plusをお持ちの場合は、デバイスをUSBケーブルで接続します。",
       "connectExistingLedger" : "既存のLedgerを接続する",
       "connectExistingLedgerDescription" : "すでに設定されているLedgerをお持ちですか？ブルートゥースとペアリングしてください",
       "setUpNewLedger" : "新しいLedgerをセットアップ",
@@ -5353,6 +5391,11 @@
       "viewOn" : "表示",
       "viewInExplorer" : "エクスプローラーで表示",
       "txDetails" : "トランザクションの詳細"
+    },
+    "modalDisabled" : {
+      "title" : "送信機能はご利用いただけません",
+      "body" : "AppleのApp Storeによる最近のアップデートに準拠するため、NFTの送信は現在、一時的にご利用いただけなくなっています。デスクトップのLedger Liveを使用してNFTを送信することは引き続き可能です。",
+      "contactSupport" : "詳しくは、サポート記事をご覧ください。"
     }
   },
   "ApplicationVersion" : "v{{version}}",
@@ -5425,6 +5468,66 @@
         "description" : "画像を追加することで",
         "popupLabel" : "デバイスがパーソナライズされました",
         "hubTitleAfterAction" : "画面状態は良好です"
+      }
+    }
+  },
+  "servicesWidget" : {
+    "title" : "サービス",
+    "subTitle" : "Ledgerサービスを管理",
+    "protect" : {
+      "title" : "Protect",
+      "status" : {
+        "new" : {
+          "title" : "新商品",
+          "desc" : "リカバリーフレーズをバックアップ",
+          "0" : {
+            "title" : "数百万人のLedgerユーザーが信頼"
+          },
+          "1" : {
+            "title" : "リカバリーフレーズは安全に個人とリンクされます"
+          },
+          "2" : {
+            "title" : "最先端の暗号化"
+          },
+          "3" : {
+            "title" : "3つの分散型のパーツに分けてシェアされ、リカバリーフレーズの盗難を防ぎます"
+          },
+          "actions" : {
+            "learnMore" : "詳細はこちら",
+            "alreadySubscribed" : "Protectを利用しますか？"
+          }
+        },
+        "actionRequired" : {
+          "title" : "操作が必要です",
+          "desc" : "支払いの詳細を追加し、リカバリーフレーズの保護に必要な全行程を完了しましょう。",
+          "actions" : {
+            "addNow" : "今すぐ追加",
+            "viewDetails" : "詳細を表示"
+          }
+        },
+        "paymentRejected" : {
+          "title" : "支払い方法却下",
+          "desc" : "$5の支払いが不成立となりました。お支払い方法の詳細を編集してください。",
+          "actions" : {
+            "editNow" : "今すぐ編集",
+            "viewDetails" : "詳細を表示"
+          }
+        },
+        "subscriptionCanceled" : {
+          "title" : "購読キャンセル済み",
+          "desc" : "3ヶ月の未払いにより購読がキャンセルされました。",
+          "actions" : {
+            "contactLedgerSupport" : "Ledgerサポートへのお問い合わせ",
+            "viewDetails" : "詳細を表示"
+          }
+        },
+        "active" : {
+          "title" : "アクティブ",
+          "desc" : "リカバリーフレーズは保護されています。",
+          "actions" : {
+            "viewDetails" : "詳細を表示"
+          }
+        }
       }
     }
   }
