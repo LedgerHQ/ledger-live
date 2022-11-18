@@ -1,5 +1,11 @@
 # ledger-live-desktop
 
+## 2.50.0-nightly.10
+
+### Patch Changes
+
+- [#1803](https://github.com/LedgerHQ/ledger-live/pull/1803) [`5f71360167`](https://github.com/LedgerHQ/ledger-live/commit/5f71360167f820446fd5f56132e887767aca9905) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Add a way to activate multiple Feature Flags at once
+
 ## 2.50.0-nightly.9
 
 ### Patch Changes
