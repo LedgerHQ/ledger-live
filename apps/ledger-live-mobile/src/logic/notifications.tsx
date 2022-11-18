@@ -267,7 +267,7 @@ const useNotifications = () => {
   );
 
   const initPushNotificationsData = useCallback(() => {
-    if (notifications && !notifications.areNotificationsAllowed) {
+    if (notifications && notifications.areNotificationsAllowed === undefined) {
       dispatch(
         setNotifications({
           areNotificationsAllowed: true,
