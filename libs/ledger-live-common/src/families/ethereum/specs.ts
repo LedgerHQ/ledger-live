@@ -515,7 +515,7 @@ const polygon: AppSpec<Transaction> = {
 };
 
 const avax_c_chain = getCryptoCurrencyById("avalanche_c_chain");
-const minAmountAVAXC = parseCurrencyUnit(avax_c_chain.units[0], "0.01");
+const minAmountAVAXC = parseCurrencyUnit(avax_c_chain.units[0], "0.001");
 
 const avalanche_c_chain: AppSpec<Transaction> = {
   name: "Avalanche C-Chain",
