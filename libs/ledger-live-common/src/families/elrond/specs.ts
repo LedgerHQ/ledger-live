@@ -61,7 +61,7 @@ function expectCorrectEsdtBalanceChange(
 function expectCorrectOptimisticOperation(
   input: TransactionTestInput<Transaction>
 ) {
-  const { operation, optimisticOperation } = input;
+  const { operation, optimisticOperation, transaction } = input;
 
   const opExpected: Record<string, any> = toOperationRaw({
     ...optimisticOperation,
@@ -83,9 +83,13 @@ function expectCorrectOptimisticOperation(
     expect(operation.id).toStrictEqual(optimisticOperation.id);
     expect(operation.hash).toStrictEqual(optimisticOperation.hash);
     expect(operation.accountId).toStrictEqual(optimisticOperation.accountId);
-    expect(operation.fee.toFixed()).toStrictEqual(
-      optimisticOperation.fee.toFixed()
-    );
+
+    //FIXME: on ESDT transactions the fee can decrease when the transaction is executed
+    if (!transaction.subAccountId) {
+      expect(operation.fee.toFixed()).toStrictEqual(
+        optimisticOperation.fee.toFixed()
+      );
+    }
 
     expect(operation.type).toStrictEqual(optimisticOperation.type);
     if (operation.type === "OUT") {
@@ -212,7 +216,6 @@ const elrondSpec: AppSpec<Transaction> = {
         expectCorrectBalanceChange(input);
       },
     },
-
     {
       name: "move some ESDT",
       maxRun: 1,
@@ -228,15 +231,15 @@ const elrondSpec: AppSpec<Transaction> = {
         const sibling = pickSiblings(siblings, 2);
         const recipient = sibling.freshAddress;
 
+        const amount = esdtAccount?.balance.times(Math.random()).integerValue();
+
         return {
           transaction: bridge.createTransaction(account),
           updates: [
             {
               recipient,
               subAccountId: esdtAccount?.id,
-            },
-            {
-              amount: esdtAccount?.balance.times(Math.random()).integerValue(),
+              amount,
             },
           ],
         };

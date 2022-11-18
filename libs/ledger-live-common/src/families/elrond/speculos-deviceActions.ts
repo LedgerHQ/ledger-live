@@ -222,7 +222,7 @@ export const acceptEsdtTransferTransaction: DeviceAction<Transaction, any> =
           ).replace(/\s+/g, " "),
       },
       {
-        title: "Sign",
+        title: "Confirm transfer",
         button: "LRlr",
         final: true,
       },
