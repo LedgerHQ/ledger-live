@@ -57,6 +57,7 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
   const cronos = useFeature("currencyCronosMobile");
   const songbird = useFeature("currencySongbirdMobile");
   const flare = useFeature("currencyFlareMobile");
+  const avaxCChain = useFeature("currencyAvalancheCChain");
 
   const featureFlaggedCurrencies = useMemo(
     () => ({
@@ -66,8 +67,9 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
       cronos,
       songbird,
       flare,
+      avaxCChain,
     }),
-    [osmo, fantom, moonbeam, cronos, songbird, flare],
+    [osmo, fantom, moonbeam, cronos, songbird, flare, avaxCChain],
   );
 
   const cryptoCurrencies = useMemo(() => {
