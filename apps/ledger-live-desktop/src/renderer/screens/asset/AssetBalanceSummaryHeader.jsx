@@ -100,27 +100,19 @@ export default function AssetBalanceSummaryHeader({
 
   const onBuy = useCallback(() => {
     setTrackingSource("asset header actions");
-    // PTX smart routing redirect to live app or to native implementation
-    if (ptxSmartRouting?.enabled) {
-      const params = {
-        currency: currency?.id,
-        mode: "buy", // buy or sell
-      };
 
-      history.push({
-        // replace 'multibuy' in case live app id changes
-        pathname: `/platform/${ptxSmartRouting?.params?.liveAppId ?? "multibuy"}`,
-        state: params,
-      });
-    } else {
-      history.push({
-        pathname: "/exchange",
-        state: {
-          mode: "onRamp",
-          currencyId: currency.id,
-        },
-      });
-    }
+    history.push({
+      pathname: "/exchange",
+      state: ptxSmartRouting?.enabled
+        ? {
+            currency: currency?.id,
+            mode: "buy", // buy or sell
+          }
+        : {
+            mode: "onRamp",
+            currencyId: currency.id,
+          },
+    });
   }, [currency.id, history, ptxSmartRouting]);
 
   const onSwap = useCallback(() => {
