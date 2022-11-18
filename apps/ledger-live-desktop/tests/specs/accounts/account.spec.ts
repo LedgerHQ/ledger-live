@@ -9,7 +9,7 @@ test.use({ userdata: "skip-onboarding" });
 
 const currencies = ["BTC", "LTC", "ETH", "ATOM", "XTZ", "XRP"];
 
-test.describe.parallel("Accounts", () => {
+test.describe.serial("Accounts", () => {
   for (const currency of currencies) {
     test(`[${currency}] Add account`, async ({ page }) => {
       const portfolioPage = new PortfolioPage(page);
