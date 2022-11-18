@@ -1,5 +1,39 @@
+export const descriptionCardA = `
+### A simple content card A.
+
+This simple card implementation component allows to display specific content for users
+
+## Usage
+
+
+### Import  
+\`\`\`ts
+
+import { CardA } from "@ledgerhq/native-ui"
+\`\`\`
+
+
+### Props 
+\`\`\`ts
+type CardProps = TouchableOpacityProps;
+
+\`\`\`
+
+### Integration 
+
+\`\`\`ts
+
+const MyCardA = (): JSX.Element => {
+
+  return (
+    <CardA />
+  );
+};
+\`\`\`
+`;
+
 export const descriptionCardB = `
-### A simple content card.
+### A simple content card B.
 
 This simple card implementation component allows to display specific content for users
 
