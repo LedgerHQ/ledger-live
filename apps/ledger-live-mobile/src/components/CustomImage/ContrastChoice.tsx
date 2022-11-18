@@ -17,7 +17,7 @@ const Container = styled(Box).attrs((p: { selected: boolean }) => ({
   justifyContent: "center",
   alignItems: "center",
   borderWidth: p.selected ? 2 : 0,
-  borderColor: p.selected ? "#FFFFFF" : "neutral.c40",
+  borderColor: p.selected ? "constant.white" : "neutral.c40",
 }))<{ selected: boolean }>``;
 
 const ContrastOption = styled(Box).attrs({
