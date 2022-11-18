@@ -84,6 +84,7 @@ function expectCorrectOptimisticOperation(
     expect(operation.hash).toStrictEqual(optimisticOperation.hash);
     expect(operation.accountId).toStrictEqual(optimisticOperation.accountId);
 
+    //FIXME: on ESDT transactions the fee can decrease when the transaction is executed
     if (!transaction.subAccountId) {
       expect(operation.fee.toFixed()).toStrictEqual(
         optimisticOperation.fee.toFixed()

@@ -210,6 +210,16 @@ export const acceptEsdtTransferTransaction: DeviceAction<Transaction, any> =
       {
         title: "Fee",
         button: "Rr",
+        expectedValue: ({ account, transaction }) =>
+          formatCurrencyUnit(
+            account.unit,
+            transaction.fees || new BigNumber(50000),
+            {
+              showCode: true,
+              disableRounding: true,
+              joinFragmentsSeparator: " ",
+            }
+          ).replace(/\s+/g, " "),
       },
       {
         title: "Confirm transfer",
