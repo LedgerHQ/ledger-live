@@ -8,7 +8,7 @@ import { Layout } from "../../models/Layout";
 
 // test.use({ userdata: "skip-onboarding" });
 
-const currencies = ["BTC", "LTC"]; // , "ETH", "ATOM", "XTZ", "XRP"];
+const currencies = ["ETH"]; // , "ETH", "ATOM", "XTZ", "XRP"];
 
 // TODO: put back parallel
 test.describe.serial("Accounts", () => {
