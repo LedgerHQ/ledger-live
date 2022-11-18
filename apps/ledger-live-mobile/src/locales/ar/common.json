@@ -87,7 +87,7 @@
     "popular" : "شائع",
     "getSupport" : "احصل على الدعم",
     "comingSoon" : "قريباً",
-    "restart" : "Restart"
+    "restart" : "إعادة التشغيل"
   },
   "errors" : {
     "countervaluesUnavailable" : {
@@ -410,6 +410,9 @@
       "title" : "عفواً، هذا التطبيق مطلوب",
       "description" : "إلغاء تثبيت تطبيق بيتكوين أو إيثيريوم في النهاية."
     },
+    "MaxFeeLow" : {
+      "title" : "الحد الأقصى للرسوم لديك منخفض جداً. معاملتك ربما تظل معلقة لمدة"
+    },
     "NetworkDown" : {
       "title" : "عفواً، يبدو أن بالإنترنت مُعطل",
       "description" : "يرجى أن تتحقق من اتصالك بالإنترنت."
@@ -595,6 +598,9 @@
     "SourceHasMultiSign" : {
       "title" : "يرجى تعطيل خاصية التوقيع المتعدد لإرسال {{currencyName}}"
     },
+    "DustLimit" : {
+      "title" : "المبلغ أقل من حد الغبار"
+    },
     "StratisDown2021Warning" : {
       "description" : "سلسلة كتل Stratis تطورت ومن الوارد ألا تعمل بشكل صحيح. سيتم توفير الدعم لسلسلة كتل Stratis الأصلية حتى 16 أكتوبر 2021."
     },
@@ -744,6 +750,18 @@
     },
     "HederaAddAccountError" : {
       "title" : "لم تتم إضافة حسابك. يرجى إعادة المحاولة."
+    },
+    "PriorityFeeTooLow" : {
+      "title" : "رسوم الأولوية أقل من القيمة الموصى بها"
+    },
+    "PriorityFeeTooHigh" : {
+      "title" : "رسوم الأولوية أكثر من المطلوب. قد تكون تدفع مبالغ زائدة"
+    },
+    "MaxFeeTooLow" : {
+      "title" : "الحد الأقصى للرسوم أقل من القيمة الموصى بها"
+    },
+    "PriorityFeeHigherThanMaxFee" : {
+      "title" : "الحد الأقصى لرسوم الأولوية لا يمكن أن يكون أعلى من الحد الأقصى للرسوم"
     }
   },
   "crash" : {
@@ -1133,8 +1151,8 @@
         "desc" : "نحن نقوم بتقديم لغات إضافية لمساعدتك في بدء استخدام Ledger. يرجى العلم أن الجزء المتبقي من تجربة Ledger متاح حالياً باللغة الإنجليزية فقط."
       },
       "RestartModal" : {
-        "title" : "Restart required",
-        "paragraph" : "The selected language requires the application to restart. Are you sure you want to continue?"
+        "title" : "إعادة التشغيل مطلوبة",
+        "paragraph" : "اللغة المُختارة تتطلب إعادة تشغيل التطبيق. هل أنت متأكد من رغبتك في المتابعة؟"
       }
     },
     "stepSelectDevice" : {
@@ -1804,6 +1822,9 @@
         }
       }
     },
+    "appsStep" : {
+      "title" : "تطبيقات {{productName}}"
+    },
     "readyStep" : {
       "title" : "{{productName}} مستعد"
     },
@@ -2435,14 +2456,19 @@
         "title" : "السوق",
         "desc" : "تلقي تحديثات عن التغيرات البارزة في السوق"
       },
-      "announcement" : {
+      "announcements" : {
         "title" : "الإعلانات",
         "desc" : "تلقى تحديثات Ledger Live المهمة"
+      },
+      "recommendations" : {
+        "title" : "التوصيات",
+        "desc" : "أثري تجربتك مع التوصيات المخصصة والعروض الخاصة"
       },
       "price" : {
         "title" : "تنبيهات الأسعار",
         "desc" : "قم بتعيين تنبيهات السعر لعملاتك المفضلة حتى لا تفوتك حركة السوق"
-      }
+      },
+      "disclaimer" : "خصوصية البيانات أمر بالغ الأهمية في Ledger. البيانات التي تُجمع لا تُشارَك أبداً مع شركائنا."
     },
     "help" : {
       "title" : "مساعدة",
@@ -2529,7 +2555,7 @@
   "notifications" : {
     "prompt" : {
       "title" : "تفعيل الإشعارات",
-      "desc" : "احصل على أهم تحديثات Ledger Live، ومنتجات Ledger، والأمان. يمكنك إلغاء الاشتراك في أي وقت.",
+      "desc" : "احصل على آخر مستجدات Ledger Live ومنتجات Ledger والسوق وتوصيات مخصصة. يُمكنك إلغاء الاشتراك في أي وقت عن طريق الإعدادات",
       "allow" : "السماح بالإشعارات",
       "later" : "ربّما في وقت لاحق"
     }
@@ -3151,6 +3177,12 @@
       }
     }
   },
+  "signMessage" : {
+    "eip712" : {
+      "showFullMessage" : "عرض الرسالة كاملة",
+      "hideFullMessage" : "إخفاء الرسالة بالكامل"
+    }
+  },
   "sync" : {
     "error" : "خطأ في المزامنة",
     "loading" : "Sync"
@@ -3212,9 +3244,14 @@
       "infoTotalDesc" : "يشمل مبلغ المعاملة ورسوم الشبكة المحددة",
       "gasLimit" : "حد الغاز",
       "gasPrice" : "سعر الغاز",
+      "maxFee" : "الحد الأقصى للرسوم",
+      "maxPriorityFee" : "الحد الأقصى لرسوم الأولوية",
+      "nextBlock" : "الكتلة التالية: {{nextBaseFee}}",
+      "suggestedPriorityFee" : "المُقترح: {{lowPriorityFee}} - {{highPriorityFee}}",
       "maxFees" : "الحد الأقصى للرسوم",
       "validateGasLimit" : "تأكيد حد الغاز",
       "fees" : "رسوم",
+      "maxEstimatedFee" : "الحد الأقصى للرسوم المُقدرة",
       "validateFees" : "التحقق من صحة الرسوم",
       "customizeFees" : "تخصيص الرسوم",
       "memo" : {
@@ -3462,7 +3499,7 @@
     }
   },
   "DeviceAction" : {
-    "stayInTheAppPlz" : "ابق في تطبيق Ledger Live وحافظ على Nano X الخاصة بك بالقرب منك",
+    "stayInTheAppPlz" : "لا تُغادر تطبيق Ledger Live وابق على Ledger خاصتك بالقرب منك.",
     "allowAppPermission" : "افتح تطبيق {{wording}} على جهازك",
     "allowAppPermissionSubtitleToken" : "لإدارة رموزك {{token}}",
     "allowManagerPermission" : "السماح بــ {{wording}} على جهازك",
@@ -3634,6 +3671,7 @@
         "description" : "قم بإدارة أجهزة Ledger المحفوظة خاصتك"
       },
       "addNewCTA" : "إضافة جديد",
+      "otgBanner" : "إذا كنت تمتلك Nano S أو Nano S Plus، فقم بتوصيل جهازك عن طريق كبل USB.",
       "connectExistingLedger" : "توصيل Ledger موجود بالفعل",
       "connectExistingLedgerDescription" : "لديك Ledger تم إعدادها؟ قم بإقرانها عبر البلوتوث",
       "setUpNewLedger" : "إعداد Ledger جديدة",
@@ -5353,6 +5391,11 @@
       "viewOn" : "مشاهدة على",
       "viewInExplorer" : "عرض في المتصفح",
       "txDetails" : "تفاصيل المعاملة"
+    },
+    "modalDisabled" : {
+      "title" : "وظيفة الإرسال غير متاحة",
+      "body" : "من أجل الامتثال لتحديثات Apple الأخيرة على App Store، فإن إرسال الرموز غير القابلة للاستبدال (NFTs) غير متاح مؤقتاً. لا يزال بوسعك استخدام Ledger Live على سطح المكتب لإرسال الرموز غير القابلة للاستبدال.",
+      "contactSupport" : "يُرجى قراءة مقالة الدعم لدينا للمزيد من المعلومات."
     }
   },
   "ApplicationVersion" : "إصدار {{version}}",
@@ -5425,6 +5468,66 @@
         "description" : "عن طريق إضافة صورة",
         "popupLabel" : "تم تخصيص الجهاز",
         "hubTitleAfterAction" : "الشاشة تبدو أنيقة"
+      }
+    }
+  },
+  "servicesWidget" : {
+    "title" : "الخدمات",
+    "subTitle" : "إدارة خدمات Ledger لديك",
+    "protect" : {
+      "title" : "Protect",
+      "status" : {
+        "new" : {
+          "title" : "جديد",
+          "desc" : "قم بعمل نسخة احتياطية من عبارة الاسترداد الخاصة بك",
+          "0" : {
+            "title" : "يثق بها الملايين من مستخدمي Ledger"
+          },
+          "1" : {
+            "title" : "يتم ربط عبارة الاسترداد خاصتك بهويتك بأمان"
+          },
+          "2" : {
+            "title" : "أحدث تقنيات التشفير"
+          },
+          "3" : {
+            "title" : "مجزأة إلى 3 قطع لامركزية بحيث لا يمكن أبداً سرقة عبارة الاسترداد الخاصة بك"
+          },
+          "actions" : {
+            "learnMore" : "تعرّف على المزيد",
+            "alreadySubscribed" : "مشترك بالفعل في Protect؟"
+          }
+        },
+        "actionRequired" : {
+          "title" : "مطلوب إجراء",
+          "desc" : "قم بإضافة تفاصيل الدفع وإتمام كل المهام لحماية عبارة الاسترداد الخاصة بك.",
+          "actions" : {
+            "addNow" : "إضافة الآن",
+            "viewDetails" : "رؤية التفاصيل"
+          }
+        },
+        "paymentRejected" : {
+          "title" : "تم رفض عملية الدفع",
+          "desc" : "لم تنجح عمليتك لدفع 5$. برجاء تعديل تفاصيل الدفع الخاصة بك.",
+          "actions" : {
+            "editNow" : "تعديل الآن",
+            "viewDetails" : "رؤية التفاصيل"
+          }
+        },
+        "subscriptionCanceled" : {
+          "title" : "تم إلغاء الاشتراك",
+          "desc" : "اشتراكك انتهى بعد 3 أشهر من عدم الدفع.",
+          "actions" : {
+            "contactLedgerSupport" : "تواصل مع دعم Ledger",
+            "viewDetails" : "رؤية التفاصيل"
+          }
+        },
+        "active" : {
+          "title" : "نشِط",
+          "desc" : "عبارة الاسترداد الخاصة بك محمية",
+          "actions" : {
+            "viewDetails" : "رؤية التفاصيل"
+          }
+        }
       }
     }
   }
