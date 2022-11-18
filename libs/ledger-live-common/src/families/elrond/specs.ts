@@ -22,6 +22,8 @@ const minimalAmount = parseCurrencyUnit(currency.units[0], "0.001");
 const maxAccounts = 6;
 
 const ELROND_MIN_ACTIVATION_SAFE = new BigNumber(10000);
+const UNCAPPED_PROVIDER =
+  "erd1qqqqqqqqqqqqqqqpqqqqqqqqqqqqqqqqqqqqqqqqqqqqqlhllllsr0pd0j";
 
 function expectCorrectBalanceChange(input: TransactionTestInput<Transaction>) {
   const { account, operation, accountBeforeTransaction } = input;
@@ -250,15 +252,13 @@ const elrondSpec: AppSpec<Transaction> = {
           `spendable balance is less than minimum delegation amount`
         );
 
-        const provider =
-          "erd1qqqqqqqqqqqqqqqpqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqlllllskf06ky";
         const amount = MIN_DELEGATION_AMOUNT;
 
         return {
           transaction: bridge.createTransaction(account),
           updates: [
             {
-              recipient: provider,
+              recipient: UNCAPPED_PROVIDER,
               mode: "delegate",
               amount,
             },
@@ -282,15 +282,13 @@ const elrondSpec: AppSpec<Transaction> = {
           `account don't have any delegations`
         );
 
-        const provider =
-          "erd1qqqqqqqqqqqqqqqpqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqlllllskf06ky";
         const amount = MIN_DELEGATION_AMOUNT;
 
         return {
           transaction: bridge.createTransaction(account),
           updates: [
             {
-              recipient: provider,
+              recipient: UNCAPPED_PROVIDER,
               mode: "unDelegate",
               amount,
             },
