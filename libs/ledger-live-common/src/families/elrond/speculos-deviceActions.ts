@@ -90,6 +90,56 @@ export const acceptDelegateTransaction: DeviceAction<Transaction, any> =
       {
         title: "Data",
         button: "Rr",
+        expectedValue: () => "[Size:       8] delegate",
+      },
+      {
+        title: "Sign",
+        button: "LRlr",
+        final: true,
+      },
+      {
+        title: "Network",
+        button: "Rr",
+        expectedValue: () => "Mainnet",
+      },
+    ],
+  });
+
+export const acceptUndelegateTransaction: DeviceAction<Transaction, any> =
+  deviceActionFlow({
+    steps: [
+      {
+        title: "Receiver",
+        button: "Rr",
+        expectedValue: ({ transaction }) => transaction.recipient,
+      },
+      {
+        title: "Amount",
+        button: "Rr",
+        expectedValue: ({ account }) =>
+          formatCurrencyUnit(account.unit, new BigNumber(0), {
+            showCode: true,
+            disableRounding: true,
+            joinFragmentsSeparator: " ",
+          }).replace(/\s+/g, " "),
+      },
+      {
+        title: "Fee",
+        button: "Rr",
+        expectedValue: ({ account, transaction }) =>
+          formatCurrencyUnit(
+            account.unit,
+            transaction.fees || new BigNumber(50000),
+            {
+              showCode: true,
+              disableRounding: true,
+              joinFragmentsSeparator: " ",
+            }
+          ).replace(/\s+/g, " "),
+      },
+      {
+        title: "Data",
+        button: "Rr",
       },
       {
         title: "Sign",
@@ -110,20 +160,47 @@ export const acceptEsdtTransferTransaction: DeviceAction<Transaction, any> =
       {
         title: "Token",
         button: "Rr",
-        expectedValue: ({ transaction }) =>
-          (transaction.subAccountId &&
-            decodeTokenAccountId(transaction.subAccountId).token?.name) ||
-          "",
+        expectedValue: ({ account, transaction }) => {
+          const { subAccounts } = account;
+          const { subAccountId } = transaction;
+          const tokenAccount = !subAccountId
+            ? null
+            : subAccounts && subAccounts.find((ta) => ta.id === subAccountId);
+
+          if (!tokenAccount) {
+            throw new Error();
+          }
+
+          const { token } = decodeTokenAccountId(tokenAccount.id);
+
+          return token?.name ?? "";
+        },
       },
       {
         title: "Value",
         button: "Rr",
-        expectedValue: ({ account, transaction }) =>
-          formatCurrencyUnit(account.unit, transaction.amount, {
+        expectedValue: ({ account, transaction }) => {
+          const { subAccounts } = account;
+          const { subAccountId } = transaction;
+          const tokenAccount = !subAccountId
+            ? null
+            : subAccounts && subAccounts.find((ta) => ta.id === subAccountId);
+
+          if (!tokenAccount) {
+            throw new Error();
+          }
+
+          const { token } = decodeTokenAccountId(tokenAccount.id);
+          if (!token) {
+            throw new Error();
+          }
+
+          return formatCurrencyUnit(token.units[0], transaction.amount, {
             showCode: true,
             disableRounding: true,
             joinFragmentsSeparator: " ",
-          }).replace(/\s+/g, " "),
+          }).replace(/\s+/g, " ");
+        },
       },
       {
         title: "Receiver",
@@ -160,4 +237,5 @@ export default {
   acceptMoveBalanceTransaction,
   acceptEsdtTransferTransaction,
   acceptDelegateTransaction,
+  acceptUndelegateTransaction,
 };
