@@ -1,4 +1,4 @@
-import * as providers from "@ledgerhq/icons-ui/react/_ProvidersLogos/index";
+import * as providers from "@ledgerhq/icons-ui/react/Providers";
 import * as favicons from "./providerFaviconsIndex";
 
 import React from "react";
@@ -25,7 +25,8 @@ export const iconNames = Array.from(
   Object.keys(providers).reduce((set, rawKey) => {
     const key = rawKey
       .replace(/(.+)(Regular|Light|UltraLight|Thin|Medium)+$/g, "$1")
-      .replace(/(.+)(Ultra)+$/g, "$1");
+      .replace(/(.+)(Ultra)+$/g, "$1")
+      .replace(/^_/, "");
     if (!set.has(key)) set.add(key);
     return set;
   }, new Set<string>()),
@@ -42,7 +43,7 @@ export type IconGetterProps = {
 
 const getIconCaseInsensitive = ({ search, object }: IconGetterProps) => {
   const asLower = search.toLowerCase();
-  const key = Object.keys(object).find((key) => key.toLowerCase() === asLower);
+  const key = Object.keys(object).find((key) => key.toLowerCase().replace(/^_/, "") === asLower);
   return key ? object[key] : null;
 };
 
@@ -54,7 +55,9 @@ const ProviderIcon = ({ name, size = "S", boxed = false }: Props): JSX.Element |
       <Favicon
         width={sizes[size]}
         height={sizes[size]}
-        src={getIconCaseInsensitive({ search: maybeIconName, object: favicons }) as string}
+        src={
+          getIconCaseInsensitive({ search: "Icon_" + maybeIconName, object: favicons }) as string
+        }
       />
     );
   }
