@@ -11,7 +11,7 @@ import useNotifications from "../../logic/notifications";
 
 const getCurrentRouteName = (
   state: NavigationState | Required<NavigationState["routes"][0]>["state"],
-): Routes | undefined => {
+): string | undefined => {
   if (state.index === undefined || state.index < 0) {
     return undefined;
   }
@@ -25,7 +25,7 @@ const getCurrentRouteName = (
 const Modals = () => {
   const navigation = useNavigation();
 
-  const pushNotificationsFeature = useFeature("pushNotifications");
+  const pushNotificationsFeature = useFeature("brazePushNotifications");
   const { onPushNotificationsRouteChange } = useNotifications();
 
   const ratingsFeature = useFeature("ratings");
@@ -73,7 +73,7 @@ const Modals = () => {
 
   return (
     <>
-      <FeatureToggle feature="pushNotifications">
+      <FeatureToggle feature="brazePushNotifications">
         <PushNotificationsModal />
       </FeatureToggle>
       <FeatureToggle feature="ratings">

@@ -1,12 +1,15 @@
 import invariant from "invariant";
 import React, { useCallback, useState, useMemo } from "react";
 import { StyleSheet, TouchableOpacity, FlatList } from "react-native";
-import SafeAreaView from "react-native-safe-area-view";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { useSelector } from "react-redux";
 import { Trans } from "react-i18next";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
+import {
+  TronAccount,
+  Transaction as TronTransaction,
+} from "@ledgerhq/live-common/families/tron/types";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
-import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import {
   useTronSuperRepresentatives,
   useSortedSr,
@@ -24,28 +27,23 @@ import Medal from "../../../../icons/Medal";
 import Info from "../../../../icons/Info";
 import SelectValidatorSearchBox from "./SearchBox";
 import Item from "./Item";
+import { StackNavigatorProps } from "../../../../components/RootNavigator/types/helpers";
+import { TronVoteFlowParamList } from "../types";
 
-const forceInset = {
-  bottom: "always",
-};
-type RouteParams = {
-  accountId: string;
-  transaction: Transaction;
-  fromStep2?: boolean;
-};
-type Props = {
-  navigation: any;
-  route: {
-    params: RouteParams;
-  };
-};
+type Props = StackNavigatorProps<
+  TronVoteFlowParamList,
+  ScreenName.VoteSelectValidator
+>;
 export default function SelectValidator({ navigation, route }: Props) {
   const { colors } = useTheme();
   const { account } = useSelector(accountScreenSelector(route));
   invariant(account, "account and tron resources required");
   invariant(account.type === "Account", "not main account");
   const bridge = getAccountBridge(account, undefined);
-  const tronResources = useMemo(() => account.tronResources || null, [account]);
+  const tronResources = useMemo(
+    () => (account as TronAccount).tronResources || null,
+    [account],
+  );
   invariant(tronResources, "Tron resources required");
   const { tronPower } = tronResources;
   const { transaction, setTransaction } = useBridgeTransaction(() => {
@@ -69,10 +67,13 @@ export default function SelectValidator({ navigation, route }: Props) {
     };
   });
   invariant(transaction, "transaction is required");
-  invariant(transaction.votes, "transaction.votes is required");
+  invariant(
+    (transaction as TronTransaction).votes,
+    "transaction.votes is required",
+  );
   const [searchQuery, setSearchQuery] = useState("");
   const superRepresentatives = useTronSuperRepresentatives();
-  const { votes } = transaction;
+  const { votes } = transaction as TronTransaction;
   const sortedSuperRepresentatives = useSortedSr(
     searchQuery,
     superRepresentatives,
@@ -97,7 +98,7 @@ export default function SelectValidator({ navigation, route }: Props) {
     [bridge, setTransaction, transaction, votes],
   );
   const onContinue = useCallback(() => {
-    const { votes } = transaction;
+    const { votes } = transaction as TronTransaction;
     const tx =
       votes.length === 1 && votes[0].voteCount === 0
         ? bridge.updateTransaction(transaction, {
@@ -147,7 +148,6 @@ export default function SelectValidator({ navigation, route }: Props) {
             backgroundColor: colors.background,
           },
         ]}
-        forceInset={forceInset}
       >
         <SelectValidatorSearchBox
           searchQuery={searchQuery}
@@ -166,7 +166,7 @@ export default function SelectValidator({ navigation, route }: Props) {
 }
 export function SelectValidatorHeaderLeft() {
   const { colors } = useTheme();
-  const [infoModalOpen, setInfoModalOpen] = useState();
+  const [infoModalOpen, setInfoModalOpen] = useState<boolean>();
   const openInfoModal = useCallback(() => {
     setInfoModalOpen(true);
   }, [setInfoModalOpen]);

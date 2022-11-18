@@ -6,14 +6,21 @@ import {
   Platform,
   SectionList,
   FlatList,
+  SectionListData,
+  SectionListRenderItemInfo,
 } from "react-native";
 import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { useNavigation, useTheme } from "@react-navigation/native";
 import { groupAccountOperationsByDay } from "@ledgerhq/live-common/account/index";
 import Animated, { Value, event } from "react-native-reanimated";
-import { SectionBase } from "react-native/Libraries/Lists/SectionList";
-import { Operation, ProtoNFT } from "@ledgerhq/types-live";
+import {
+  Account,
+  DailyOperationsSection,
+  Operation,
+  ProtoNFT,
+} from "@ledgerhq/types-live";
+import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import NoMoreOperationFooter from "../../../components/NoMoreOperationFooter";
 import { accountScreenSelector } from "../../../reducers/accounts";
 import LoadingFooter from "../../../components/LoadingFooter";
@@ -27,30 +34,33 @@ import { withDiscreetMode } from "../../../context/DiscreetModeContext";
 import TabBarSafeAreaView, {
   TAB_BAR_SAFE_HEIGHT,
 } from "../../../components/TabBar/TabBarSafeAreaView";
+import {
+  BaseComposite,
+  StackNavigatorProps,
+} from "../../../components/RootNavigator/types/helpers";
+import { AccountsNavigatorParamList } from "../../../components/RootNavigator/types/AccountsNavigator";
+import InfoModal from "../../../modals/Info";
+import { notAvailableModalInfo } from "../NftInfoNotAvailable";
 
 const MAX_NFT_FIRST_RENDER = 12;
 const NFTS_TO_ADD_ON_LIST_END_REACHED = 6;
 
-type Props = {
-  navigation: any;
-  route: RouteParams;
-};
+type NavigationProps = BaseComposite<
+  StackNavigatorProps<AccountsNavigatorParamList, ScreenName.NftCollection>
+>;
 
-type RouteParams = {
-  params: {
-    accountId: string;
-    collection: ProtoNFT[];
-  };
-};
+const NftList = Animated.createAnimatedComponent(FlatList) as typeof FlatList;
+const OperationsList = Animated.createAnimatedComponent(
+  SectionList,
+) as typeof SectionList;
 
-const NftList = Animated.createAnimatedComponent(FlatList);
-const OperationsList = Animated.createAnimatedComponent(SectionList);
+const renderOperationSectionHeader = ({
+  section,
+}: {
+  section: SectionListData<Operation, DailyOperationsSection>;
+}) => <SectionHeader section={section} />;
 
-const renderOperationSectionHeader = ({ section }: any) => (
-  <SectionHeader section={section} />
-);
-
-const NftCollection = ({ route }: Props) => {
+const NftCollection = ({ route }: NavigationProps) => {
   const navigation = useNavigation();
   const { t } = useTranslation();
   const { colors } = useTheme();
@@ -79,13 +89,14 @@ const NftCollection = ({ route }: Props) => {
     [nftCount, collection],
   );
   const sendToken = () => {
-    navigation.navigate(NavigatorName.SendFunds, {
-      screen: ScreenName.SendNft,
-      params: {
-        account,
-        collection,
-      },
-    });
+    account &&
+      navigation.navigate(NavigatorName.SendFunds, {
+        screen: ScreenName.SendNft,
+        params: {
+          account: account as Account,
+          collection,
+        },
+      });
   };
 
   const renderNftItem = useCallback(
@@ -121,15 +132,7 @@ const NftCollection = ({ route }: Props) => {
   });
 
   const renderOperationItem = useCallback(
-    ({
-      item,
-      index,
-      section,
-    }: {
-      item: Operation;
-      index: number;
-      section: SectionBase<any>;
-    }) => {
+    ({ item, index, section }: SectionListRenderItemInfo<Operation>) => {
       if (!account) return null;
 
       return (
@@ -147,6 +150,15 @@ const NftCollection = ({ route }: Props) => {
   const onOperationsEndReached = useCallback(() => {
     setOpCount(opCount + 50);
   }, [setOpCount, opCount]);
+  const [isOpen, setOpen] = useState<boolean>(false);
+  const onOpenModal = useCallback(() => {
+    setOpen(true);
+  }, []);
+  const onCloseModal = useCallback(() => {
+    setOpen(false);
+  }, []);
+  const isNFTDisabled =
+    useFeature("disableNftSend")?.enabled && Platform.OS === "ios";
 
   const data = [
     <View style={styles.buttonContainer}>
@@ -155,7 +167,7 @@ const NftCollection = ({ route }: Props) => {
         IconLeft={SendIcon}
         containerStyle={styles.button}
         title={t("account.send")}
-        onPress={sendToken}
+        onPress={isNFTDisabled ? onOpenModal : sendToken}
       />
     </View>,
     <View style={styles.nftList}>
@@ -188,19 +200,26 @@ const NftCollection = ({ route }: Props) => {
   ];
 
   return (
-    <TabBarSafeAreaView
-      style={{
-        backgroundColor: colors.background,
-      }}
-    >
-      <FlatList
-        data={data}
-        renderItem={({ item }) => item}
-        keyExtractor={(item, index) => String(index)}
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ paddingBottom: TAB_BAR_SAFE_HEIGHT }}
+    <>
+      <InfoModal
+        isOpened={isOpen}
+        onClose={onCloseModal}
+        data={notAvailableModalInfo}
       />
-    </TabBarSafeAreaView>
+      <TabBarSafeAreaView
+        style={{
+          backgroundColor: colors.background,
+        }}
+      >
+        <FlatList
+          data={data}
+          renderItem={({ item }) => item}
+          keyExtractor={(item, index) => String(index)}
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={{ paddingBottom: TAB_BAR_SAFE_HEIGHT }}
+        />
+      </TabBarSafeAreaView>
+    </>
   );
 };
 

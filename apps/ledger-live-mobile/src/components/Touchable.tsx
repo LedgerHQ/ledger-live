@@ -1,5 +1,9 @@
 import React, { Component } from "react";
-import { TouchableOpacity } from "react-native";
+import {
+  GestureResponderEvent,
+  TouchableOpacity,
+  TouchableOpacityProps,
+} from "react-native";
 // eslint-disable-next-line import/no-cycle
 import { track } from "../analytics";
 
@@ -10,22 +14,19 @@ const defaultHitSlop = {
   right: 16,
   bottom: 16,
 };
-type Props = {
+export type Props = {
   // when on press returns a promise,
   // the button will toggle in a pending state and
   // will wait the promise to complete before enabling the button again
   // it also displays a spinner if it takes more than WAIT_TIME_BEFORE_SPINNER
-  onPress: (() => (Promise<any> | null | undefined) | void) | null | undefined;
-  onLongPress?:
-    | (() => (Promise<any> | null | undefined) | void)
-    | null
-    | undefined;
-  children: any;
+  onPress?: (() => (Promise<unknown> | null | undefined) | void) | null;
+  onLongPress?: ((event?: GestureResponderEvent) => void) | undefined;
+  children: React.ReactNode;
   event?: string;
-  eventProperties?: Record<string, any>;
-  style?: any;
+  eventProperties?: Record<string, unknown>;
+  style?: TouchableOpacityProps["style"];
   touchableTestID?: string;
-};
+} & TouchableOpacityProps;
 export default class Touchable extends Component<
   Props,
   {
@@ -52,7 +53,7 @@ export default class Touchable extends Component<
 
       const res = onPress();
 
-      if (res && res.then) {
+      if (res && res instanceof Promise) {
         // it's a promise, we will use pending/spinnerOn state
         this.setState({
           pending: true,
@@ -94,7 +95,6 @@ export default class Touchable extends Component<
       onPress,
       children,
       event,
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       eventProperties,
       touchableTestID,
       ...rest
@@ -102,7 +102,6 @@ export default class Touchable extends Component<
     const { pending } = this.state;
     const disabled = !onPress || pending;
     return (
-      // $FlowFixMe
       <TouchableOpacity
         delayPressIn={50}
         onPress={this.onPress}

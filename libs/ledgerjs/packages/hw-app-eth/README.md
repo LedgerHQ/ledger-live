@@ -78,6 +78,7 @@ For a smooth and quick integration:
 *   [byContractAddressAndChainId](#bycontractaddressandchainid)
     *   [Parameters](#parameters-19)
 *   [list](#list)
+    *   [Parameters](#parameters-20)
 *   [ResolutionConfig](#resolutionconfig)
     *   [Properties](#properties)
 
@@ -195,6 +196,7 @@ Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/
 
 Sign an EIP-721 formatted message following the specification here:
 https://github.com/LedgerHQ/app-ethereum/blob/develop/doc/ethapp.asc#sign-eth-eip-712
+⚠️ This method is not compatible with nano S (LNS). Make sure to use a try/catch to fallback on the signEIP712HashedMessage method ⚠️
 
 ##### Parameters
 
@@ -450,12 +452,17 @@ Retrieve the token information by a given contract address if any
 
 *   `contract` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** 
 *   `chainId` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)** 
+*   `erc20SignaturesBlob` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)?** 
 
 Returns **(TokenInfo | null | [undefined](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/undefined))** 
 
 ### list
 
 list all the ERC20 tokens informations
+
+#### Parameters
+
+*   `erc20SignaturesBlob` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)?** 
 
 Returns **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)\<TokenInfo>** 
 

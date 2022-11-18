@@ -4,7 +4,7 @@ export const defaultFeatures: DefaultFeatures = {
   learn: {
     enabled: false,
   },
-  pushNotifications: {
+  brazePushNotifications: {
     enabled: false,
   },
   deviceLocalization: {
@@ -58,6 +58,15 @@ export const defaultFeatures: DefaultFeatures = {
     params: {
       apps: ["Boilerplate", "Boilerplate_2", "Boilerplate_3"],
     },
+  },
+  disableNftSend: {
+    enabled: false,
+  },
+  disableNftLedgerMarket: {
+    enabled: false,
+  },
+  disableNftRaribleOpensea: {
+    enabled: false,
   },
   ratings: {
     enabled: false,
@@ -121,10 +130,10 @@ export const defaultFeatures: DefaultFeatures = {
   ptxSmartRoutingMobile: {
     enabled: false,
   },
-  mockFeature: {
+  syncOnboarding: {
     enabled: false,
   },
-  syncOnboarding: {
+  mockFeature: {
     enabled: false,
   },
 };

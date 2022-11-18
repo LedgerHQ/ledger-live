@@ -1,7 +1,9 @@
 import React, { PropsWithChildren, useCallback, useState } from "react";
 import { useSelector } from "react-redux";
 import isEqual from "lodash/isEqual";
+import semver from "semver";
 import remoteConfig from "@react-native-firebase/remote-config";
+import VersionNumber from "react-native-version-number";
 import {
   FeatureFlagsProvider,
   defaultFeatures,
@@ -10,11 +12,27 @@ import { FeatureId, Feature } from "@ledgerhq/types-live";
 import { getEnv } from "@ledgerhq/live-common/env";
 
 import { formatFeatureId } from "./FirebaseRemoteConfig";
-
 import { languageSelector } from "../reducers/settings";
 
-// eslint-disable-next-line @typescript-eslint/ban-types
-type Props = PropsWithChildren<{}>;
+const checkFeatureFlagVersion = (feature: Feature | undefined) => {
+  if (
+    feature &&
+    feature.enabled &&
+    feature.mobile_version &&
+    !semver.satisfies(VersionNumber.appVersion, feature.mobile_version, {
+      includePrerelease: true,
+    })
+  ) {
+    return {
+      enabledOverriddenForCurrentMobileVersion: true,
+      ...feature,
+      enabled: false,
+    };
+  }
+  return feature;
+};
+
+type Props = PropsWithChildren<unknown>;
 
 const getFeature = (args: {
   key: FeatureId;
@@ -26,7 +44,7 @@ const getFeature = (args: {
   try {
     // Nb prioritize local overrides
     if (allowOverride && localOverrides && localOverrides[key]) {
-      return localOverrides[key];
+      return checkFeatureFlagVersion(localOverrides[key]);
     }
 
     const envFlags = getEnv("FEATURE_FLAGS") as
@@ -60,7 +78,7 @@ const getFeature = (args: {
       };
     }
 
-    return feature;
+    return checkFeatureFlagVersion(feature);
   } catch (error) {
     console.error(`Failed to retrieve feature "${key}"`);
     return null;
@@ -72,12 +90,12 @@ const getFeature = (args: {
  */
 export const getAllDivergedFlags = (
   appLanguage: string,
-): { [key in FeatureId]: boolean } => {
-  const res: { [key in FeatureId]: boolean } = {};
-  (Object.keys(defaultFeatures) as FeatureId[]).forEach(key => {
-    const value = getFeature({ key, appLanguage });
-    if (value && value.enabled !== defaultFeatures[key].enabled) {
-      res[key] = value.enabled;
+): Partial<{ [key in FeatureId]: boolean }> => {
+  const res: Partial<{ [key in FeatureId]: boolean }> = {};
+  Object.keys(defaultFeatures).forEach(key => {
+    const value = getFeature({ key: key as FeatureId, appLanguage });
+    if (value && value.enabled !== defaultFeatures[key as FeatureId]?.enabled) {
+      res[key as FeatureId] = value.enabled;
     }
   });
   return res;

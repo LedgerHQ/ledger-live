@@ -69,7 +69,7 @@ target 'ledgerlivemobile' do
     # See: https://github.com/expo/expo/issues/15622#issuecomment-997225774
     installer.pods_project.targets.each do |target|
       target.build_configurations.each do |config|
-        if ['RNAnalytics', 'react-native-fast-crypto'].include? target.name
+        if ['react-native-fast-crypto'].include? target.name
           config.build_settings["USE_HEADERMAP"] = "NO"
         end
       end

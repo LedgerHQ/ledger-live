@@ -1,39 +1,49 @@
 import React, { useCallback, useState } from "react";
 import { useDispatch } from "react-redux";
 import { has as hasFromPath, set as setFromPath } from "lodash";
-import type { PropertyPath } from "lodash";
-import { DeviceModelId } from "@ledgerhq/types-devices";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
-import { StackScreenProps } from "@react-navigation/stack";
-import type { BaseNavigatorStackParamList } from "../../components/RootNavigator/BaseNavigator";
+import { DeviceModelId } from "@ledgerhq/types-devices";
 import RequiresBLE from "../../components/RequiresBLE";
 import { BleDevicesScanning } from "./BleDevicesScanning";
 import { BleDevicePairing } from "./BleDevicePairing";
 import { addKnownDevice } from "../../actions/ble";
+import { NavigatorName, ScreenName } from "../../const";
+import { BaseNavigatorStackParamList } from "../../components/RootNavigator/types/BaseNavigator";
+import {
+  RootComposite,
+  StackNavigatorProps,
+} from "../../components/RootNavigator/types/helpers";
 
-export type NavigateInput = {
-  name: string;
-  params: object;
-};
-
-export type PathToDeviceParam = PropertyPath;
-export type NavigationType = "navigate" | "replace" | "push";
-
-export type BleDevicePairingFlowParams = {
-  filterByDeviceModelId?: DeviceModelId;
-  areKnownDevicesDisplayed?: boolean;
-  onSuccessAddToKnownDevices?: boolean;
-  onSuccessNavigateToConfig: {
-    navigateInput: NavigateInput;
-    pathToDeviceParam: PathToDeviceParam;
-    navigationType?: NavigationType;
-  };
-};
-
-export type BleDevicePairingFlowProps = StackScreenProps<
-  BaseNavigatorStackParamList,
-  "BleDevicePairingFlow"
+export type Props = RootComposite<
+  StackNavigatorProps<
+    BaseNavigatorStackParamList,
+    ScreenName.BleDevicePairingFlow
+  >
 >;
+
+// Necessary when the pairing flow is opened from a deeplink without any params
+// Shouldn't be relied upon for other usages
+const defaultNavigationParams = {
+  filterByDeviceModelId: DeviceModelId.nanoFTS, // This needs to be removed when nanos are supported
+  areKnownDevicesDisplayed: true,
+  onSuccessAddToKnownDevices: false,
+  successNavigateToConfig: {
+    navigationType: "navigate",
+    pathToDeviceParam: "params.params.params.device",
+    navigateInput: {
+      name: NavigatorName.BaseOnboarding,
+      params: {
+        screen: NavigatorName.SyncOnboarding,
+        params: {
+          screen: ScreenName.SyncOnboardingCompanion,
+          params: {
+            device: null,
+          },
+        },
+      },
+    },
+  },
+};
 
 /**
  * Screen handling the BLE flow with a scanning step and a pairing step
@@ -61,26 +71,30 @@ export type BleDevicePairingFlowProps = StackScreenProps<
  *     From the ex of navigateInput, it would be: "params.params.pairedDevice"
  *   - navigationType: (optional, default to "navigate") when navigating after a successful pairing,
  *     choose between a "replace" or a "navigate"
+ *   The default success config will navigate to the synchronous onboarding, however it shouldn't be
+ *   relied upon and exist solely to simplify deeplinking to the sync onboarding.
  * - onSuccessAddToKnownDevices: boolean, if true the successfully paired device is added to the redux
  *   list of known devices. Not added if false (default to false).
  * @returns a JSX component
  */
-export const BleDevicePairingFlow = ({
-  navigation,
-  route,
-}: BleDevicePairingFlowProps) => {
+export const BleDevicePairingFlow = ({ navigation, route }: Props) => {
   const dispatchRedux = useDispatch();
 
+  const params = route?.params || defaultNavigationParams;
+
   const {
-    filterByDeviceModelId,
+    filterByDeviceModelId = undefined,
     areKnownDevicesDisplayed = true,
     onSuccessAddToKnownDevices = false,
-    onSuccessNavigateToConfig: {
-      navigateInput,
-      pathToDeviceParam,
-      navigationType = "navigate",
-    },
-  } = route.params;
+    onSuccessNavigateToConfig = defaultNavigationParams.successNavigateToConfig,
+  } = params;
+
+  const {
+    navigateInput,
+    pathToDeviceParam,
+    navigationType = "navigate",
+  } = onSuccessNavigateToConfig;
+
   const [deviceToPair, setDeviceToPair] = useState<Device | null>(null);
 
   const onDeviceSelect = useCallback((item: Device) => {
@@ -120,12 +134,22 @@ export const BleDevicePairingFlow = ({
       // Before navigating, to never come back a the successful pairing but to the scanning part
       setDeviceToPair(null);
 
+      const params = navigateInput.params
+        ? {
+            ...navigateInput.params,
+          }
+        : undefined;
+
       if (navigationType === "push") {
-        navigation.push(navigateInput.name, { ...navigateInput.params });
+        // @ts-expect-error this seems complicated to type properly
+        // the typings for react-navigation cannot reconciliate screens having "undefined" params and object params
+        navigation.push(navigateInput.name, params);
       } else if (navigationType === "replace") {
-        navigation.replace(navigateInput.name, { ...navigateInput.params });
+        // @ts-expect-error this seems complicated to type properly
+        navigation.replace(navigateInput.name, params);
       } else {
-        navigation.navigate(navigateInput);
+        // @ts-expect-error this seems complicated to type properly
+        navigation.navigate(navigateInput.name, params);
       }
     },
     [

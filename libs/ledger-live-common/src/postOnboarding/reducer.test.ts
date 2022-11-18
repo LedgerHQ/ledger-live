@@ -154,7 +154,7 @@ describe("postOnboarding reducer (& action creators)", () => {
   let state;
   beforeEach(() => {
     // reset state to initial state;
-    state = reducer(undefined, {});
+    state = reducer(undefined, {} as any);
   });
 
   it("should initialize the state properly", () => {

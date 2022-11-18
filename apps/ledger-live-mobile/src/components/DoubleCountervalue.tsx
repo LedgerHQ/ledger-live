@@ -7,7 +7,9 @@ import { useCalculate } from "@ledgerhq/live-common/countervalues/react";
 import { useTheme } from "@react-navigation/native";
 import { Trans } from "react-i18next";
 import { counterValueCurrencySelector } from "../reducers/settings";
-import CurrencyUnitValue from "./CurrencyUnitValue";
+import CurrencyUnitValue, {
+  Props as CurrencyUnitValueProps,
+} from "./CurrencyUnitValue";
 import LText from "./LText";
 import InfoIcon from "../icons/Info";
 import BottomModal from "./BottomModal";
@@ -25,24 +27,21 @@ type Props = {
   placeholderProps?: unknown;
   // as we can't render View inside Text, provide ability to pass
   // wrapper component from outside
-  Wrapper?: React.ComponentType<any>;
+  Wrapper?: React.ComponentType;
   subMagnitude?: number;
   tooltipDateLabel?: React.ReactNode;
   tooltipCompareDateLabel?: React.ReactNode;
-};
+} & Partial<CurrencyUnitValueProps>;
 
 function DoubleCounterValue({
   value,
   date,
   compareDate = new Date(),
   withPlaceholder,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   placeholderProps,
   Wrapper,
   currency,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   tooltipDateLabel,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   tooltipCompareDateLabel,
   ...props
 }: Props) {
@@ -97,7 +96,6 @@ function DoubleCounterValue({
         <LText style={styles.label} color="smoke">
           <CurrencyUnitValue
             {...props}
-            currency={currency}
             unit={counterValueCurrency.units[0]}
             value={BigNumber(countervalue)}
           />
@@ -118,7 +116,6 @@ function DoubleCounterValue({
           <LText semiBold style={styles.amount} color="grey">
             <CurrencyUnitValue
               {...props}
-              currency={currency}
               unit={counterValueCurrency.units[0]}
               value={BigNumber(countervalue)}
             />
@@ -145,7 +142,6 @@ function DoubleCounterValue({
             <LText semiBold style={styles.amount} color="grey">
               <CurrencyUnitValue
                 {...props}
-                currency={currency}
                 unit={counterValueCurrency.units[0]}
                 value={BigNumber(compareCountervalue)}
               />

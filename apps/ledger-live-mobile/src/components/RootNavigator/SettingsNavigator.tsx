@@ -1,14 +1,10 @@
-import React, { useMemo, useCallback } from "react";
+import React, { useMemo } from "react";
 import {
   createStackNavigator,
-  StackNavigationProp,
   TransitionPresets,
 } from "@react-navigation/stack";
 import { useTranslation } from "react-i18next";
 import { useTheme } from "styled-components/native";
-import { TouchableOpacity } from "react-native";
-import { Box, Icons } from "@ledgerhq/native-ui";
-import { useNavigation } from "@react-navigation/native";
 import { ScreenName } from "../../const";
 import BenchmarkQRStream from "../../screens/BenchmarkQRStream";
 import DebugSwap from "../../screens/DebugSwap";
@@ -38,7 +34,6 @@ import CurrencySettings from "../../screens/Settings/CryptoAssets/Currencies/Cur
 import DebugSettings, {
   DebugDevices,
   DebugMocks,
-  DebugMocksParams,
 } from "../../screens/Settings/Debug";
 import DebugExport from "../../screens/Settings/Debug/ExportAccounts";
 import ExperimentalSettings from "../../screens/Settings/Experimental";
@@ -52,21 +47,9 @@ import HelpButton from "../../screens/Settings/HelpButton";
 import OnboardingStepLanguage from "../../screens/Onboarding/steps/language";
 import { GenerateMockAccountSelectScreen } from "../../screens/Settings/Debug/GenerateMockAccountsSelect";
 import HiddenNftCollections from "../../screens/Settings/Accounts/HiddenNftCollections";
-import { track } from "../../analytics";
-// eslint-disable-next-line import/no-cycle
 import { useNoNanoBuyNanoWallScreenOptions } from "../../context/NoNanoBuyNanoWall";
 import PostOnboardingDebugScreen from "../../screens/PostOnboarding/PostOnboardingDebugScreen";
-
-// TODO: types for each screens and navigators need to be set
-export type SettingsNavigatorStackParamList = {
-  DebugMocks: DebugMocksParams;
-
-  // Hack: allows any other properties
-  [otherScreens: string]: undefined | object;
-};
-
-export type SettingsNavigatorProps =
-  StackNavigationProp<SettingsNavigatorStackParamList>;
+import { SettingsNavigatorStackParamList } from "./types/SettingsNavigator";
 
 const Stack = createStackNavigator<SettingsNavigatorStackParamList>();
 
@@ -78,15 +61,7 @@ export default function SettingsNavigator() {
     [colors],
   );
 
-  const navigation = useNavigation();
   const noNanoBuyNanoWallScreenOptions = useNoNanoBuyNanoWallScreenOptions();
-
-  const goBackFromNotifications = useCallback(() => {
-    track("button_clicked", {
-      button: "Back Arrow",
-    });
-    navigation.goBack();
-  }, [navigation]);
 
   return (
     <Stack.Navigator screenOptions={stackNavConfig}>
@@ -137,13 +112,6 @@ export default function SettingsNavigator() {
         name={ScreenName.NotificationsSettings}
         component={NotificationsSettings}
         options={{
-          headerLeft: () => (
-            <Box ml={6}>
-              <TouchableOpacity onPress={goBackFromNotifications}>
-                <Icons.ArrowLeftMedium size={24} />
-              </TouchableOpacity>
-            </Box>
-          ),
           title: t("settings.notifications.title"),
         }}
       />
@@ -173,8 +141,8 @@ export default function SettingsNavigator() {
         name={ScreenName.CurrencySettings}
         component={CurrencySettings}
         options={({ route }) => ({
-          title: route.params.headerTitle,
-          headerRight: null,
+          title: route.params?.headerTitle,
+          headerRight: undefined,
         })}
         {...noNanoBuyNanoWallScreenOptions}
       />

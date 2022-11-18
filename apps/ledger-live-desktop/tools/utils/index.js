@@ -99,6 +99,7 @@ const buildViteConfig = argv =>
         "@ledgerhq/live-common > @ledgerhq/cryptoassets/data/bep20.js",
         "@ledgerhq/live-common > @ledgerhq/cryptoassets/data/erc20-signatures.js",
         "@ledgerhq/live-common > @ledgerhq/cryptoassets/data/erc20.js",
+        "@ledgerhq/live-common > @ledgerhq/cryptoassets/data/eip712.js",
         "@ledgerhq/live-common > @ledgerhq/cryptoassets/data/esdt.js",
         "@ledgerhq/live-common > @ledgerhq/cryptoassets/data/polygon-erc20.js",
         "@ledgerhq/live-common > @ledgerhq/cryptoassets/data/spl.js",
@@ -108,6 +109,7 @@ const buildViteConfig = argv =>
         "@ledgerhq/live-common > @ledgerhq/cryptoassets/data/exchange/erc20.js",
         "@ledgerhq/cryptoassets",
         "@ledgerhq/cryptoassets/data/erc20-signatures",
+        "@ledgerhq/cryptoassets/data/eip712",
         "@ledgerhq/hw-app-eth/erc20",
       ],
       esbuildOptions: {

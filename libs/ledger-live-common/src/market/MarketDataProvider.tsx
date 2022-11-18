@@ -294,14 +294,16 @@ export const MarketDataProvider = ({
           limit: 1,
           page: 1,
         })
-        .then(
-          ([{ chartData: _, ...marketData }]) =>
+        .then(([marketData]) => {
+          if (marketData) {
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
+            const { chartData, ...rest } = marketData;
             dispatch({
               type: ACTIONS.UPDATE_SINGLE_MARKET_DATA,
-              payload: marketData,
-            }),
-          handleError
-        );
+              payload: rest,
+            });
+          }
+        }, handleError);
     }
   }, [api, chartRequestParams, handleError, loading]);
 
@@ -380,7 +382,7 @@ export function useMarketData(): MarketDataContextType {
   return useContext(MarketDataContext);
 }
 
-type SingleCoinProviderData = SingleCoinState & {
+export type SingleCoinProviderData = SingleCoinState & {
   selectCurrency: (id?: string, data?: CurrencyData, range?: string) => void;
   refreshChart: (param?: MarketCurrencyChartDataRequestParams) => void;
   setCounterCurrency: (counterCurrency: string) => void;

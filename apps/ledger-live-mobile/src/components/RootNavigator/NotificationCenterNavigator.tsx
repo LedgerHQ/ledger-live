@@ -13,8 +13,10 @@ import { ChipTab } from "@ledgerhq/native-ui/components/Tabs/Chip";
 import NotificationCenterStatus from "../../screens/NotificationCenter/Status";
 import NotificationCenterNews from "../../screens/NotificationCenter/News";
 import { ScreenName } from "../../const";
+import type { NotificationCenterNavigatorParamList } from "./types/NotificationCenterNavigator";
 
-const Tab = createMaterialTopTabNavigator();
+const Tab =
+  createMaterialTopTabNavigator<NotificationCenterNavigatorParamList>();
 
 const TabBarContainer = styled(Flex)`
   border-bottom-width: 1px;
@@ -69,10 +71,11 @@ export default function NotificationCenterNavigator() {
   const { allIds, seenIds } = useAnnouncements();
   const [notificationsCount] = useState(allIds.length - seenIds.length);
 
-  // Fixme Typescript: Update react-native-tab-view to 3.1.1 to remove Tab.navigator ts error
   return (
     <>
-      <Tab.Navigator tabBar={props => <TabBar {...props} />}>
+      <Tab.Navigator
+        tabBar={(props: MaterialTopTabBarProps) => <TabBar {...props} />}
+      >
         <Tab.Screen
           name={ScreenName.NotificationCenterNews}
           component={NotificationCenterNews}

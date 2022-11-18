@@ -4,12 +4,7 @@ import { useTranslation } from "react-i18next";
 import { ScrollView, StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import styled from "styled-components/native";
-import {
-  StackNavigationState,
-  EventListenerCallback,
-  EventMapCore,
-  useFocusEffect,
-} from "@react-navigation/native";
+import { useFocusEffect } from "@react-navigation/native";
 import Animated, {
   cancelAnimation,
   interpolate,
@@ -20,17 +15,18 @@ import Animated, {
   withTiming,
 } from "react-native-reanimated";
 import {
-  StackNavigationEventMap,
-  StackScreenProps,
-} from "@react-navigation/stack";
-import {
   useAllPostOnboardingActionsCompleted,
   usePostOnboardingHubState,
 } from "@ledgerhq/live-common/postOnboarding/hooks/index";
 import { clearPostOnboardingLastActionCompleted } from "@ledgerhq/live-common/postOnboarding/actions";
 import { useDispatch } from "react-redux";
 import PostOnboardingActionRow from "../../components/PostOnboarding/PostOnboardingActionRow";
-import { NavigatorName } from "../../const";
+import { NavigatorName, ScreenName } from "../../const";
+import {
+  BaseComposite,
+  StackNavigatorProps,
+} from "../../components/RootNavigator/types/helpers";
+import { PostOnboardingNavigatorParamList } from "../../components/RootNavigator/types/PostOnboardingNavigator";
 
 const SafeContainer = styled(SafeAreaView).attrs({
   edges: ["left", "bottom", "right"],
@@ -40,11 +36,14 @@ const SafeContainer = styled(SafeAreaView).attrs({
 
 const AnimatedFlex = Animated.createAnimatedComponent(Flex);
 
-type Props = Record<string, never>;
+type NavigationProps = BaseComposite<
+  StackNavigatorProps<
+    PostOnboardingNavigatorParamList,
+    ScreenName.PostOnboardingHub
+  >
+>;
 
-const PostOnboardingHub: React.FC<StackScreenProps<Props>> = ({
-  navigation,
-}) => {
+const PostOnboardingHub = ({ navigation }: NavigationProps) => {
   const dispatch = useDispatch();
   const { t } = useTranslation();
   const { lastActionCompleted, actionsState } = usePostOnboardingHubState();
@@ -112,15 +111,11 @@ const PostOnboardingHub: React.FC<StackScreenProps<Props>> = ({
     navigation.setOptions({ gestureEnabled: false, headerRight: () => null });
     navigation.getParent()?.setOptions({ gestureEnabled: false });
     allowClosingScreen.current = false;
-    const beforeRemoveCallback: EventListenerCallback<
-      StackNavigationEventMap & EventMapCore<StackNavigationState<Props>>,
-      "beforeRemove"
-    > = e => {
+    const listenerCleanup = navigation.addListener("beforeRemove", e => {
       if (!allowClosingScreen.current) e.preventDefault();
-    };
-    navigation.addListener("beforeRemove", beforeRemoveCallback);
+    });
     return () => {
-      navigation.removeListener("beforeRemove", beforeRemoveCallback);
+      listenerCleanup();
       clearAnimationTimeout();
       cancelAnimation(animDoneValue);
     };

@@ -124,3 +124,5 @@ export type CryptoCurrency = CurrencyCommon & {
  *
  */
 export type Currency = FiatCurrency | CryptoCurrency | TokenCurrency;
+
+export type CryptoOrTokenCurrency = CryptoCurrency | TokenCurrency;

@@ -54,7 +54,7 @@ jobs:
       - name: Get date
         id: date
         run: |
-          echo "::set-output name=date::$(date +%F)"
+          echo "date=$(date +%F)" >> $GITHUB_OUTPUT
       - name: push
         run: |
           git push origin hotfix

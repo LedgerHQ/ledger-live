@@ -2,15 +2,10 @@ import invariant from "invariant";
 import React, { memo } from "react";
 import { StyleSheet } from "react-native";
 import { useSelector } from "react-redux";
-import SafeAreaView from "react-native-safe-area-view";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
-import type {
-  Transaction,
-  TransactionStatus,
-} from "@ledgerhq/live-common/generated/types";
 import { createAction } from "@ledgerhq/live-common/hw/actions/transaction";
 import connectApp from "@ledgerhq/live-common/hw/connectApp";
-import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { useTheme } from "@react-navigation/native";
 import { accountScreenSelector } from "../../reducers/accounts";
@@ -18,26 +13,19 @@ import DeviceAction from "../../components/DeviceAction";
 import { TrackScreen } from "../../analytics";
 import { useSignedTxHandlerWithoutBroadcast } from "../../logic/screenTransactionHooks";
 import { navigateToSelectDevice } from "../ConnectDevice";
+import { SignTransactionNavigatorParamList } from "../../components/RootNavigator/types/SignTransactionNavigator";
+import { ScreenName } from "../../const";
+import { StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
 
 const action = createAction(connectApp);
-type Props = {
-  navigation: any;
-  route: {
-    params: RouteParams;
-    name: string;
-  };
-};
-type RouteParams = {
-  device: Device;
-  accountId: string;
-  transaction: Transaction;
-  status: TransactionStatus;
-  appName?: string;
-  onSuccess: (payload: any) => void;
-  onError: (_: Error) => void;
-};
 
-function ConnectDevice({ navigation, route }: Props) {
+function ConnectDevice({
+  navigation,
+  route,
+}: StackNavigatorProps<
+  SignTransactionNavigatorParamList,
+  ScreenName.SignTransactionConnectDevice
+>) {
   const { colors } = useTheme();
   const { account, parentAccount } = useSelector(accountScreenSelector(route));
   invariant(account, "account is required");
@@ -93,4 +81,4 @@ const styles = StyleSheet.create({
     padding: 16,
   },
 });
-export default memo<Props>(ConnectDevice);
+export default memo(ConnectDevice);

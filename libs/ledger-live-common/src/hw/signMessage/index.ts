@@ -15,11 +15,12 @@ import type { ConnectAppEvent, Input as ConnectAppInput } from "../connectApp";
 import { withDevice } from "../deviceAccess";
 import type { MessageData, SignMessage, Result } from "./types";
 import { DerivationMode } from "../../derivation";
+import { TypedMessageData } from "../../families/ethereum/types";
 
 export const prepareMessageToSign = (
   account: Account,
   message: string
-): MessageData => {
+): MessageData | TypedMessageData => {
   const { currency, freshAddressPath, derivationMode } = account;
 
   if (!perFamily[currency.family]) {
@@ -79,14 +80,14 @@ const signMessage: SignMessage = (transport, opts) => {
 };
 
 type BaseState = {
-  signMessageRequested: MessageData | null | undefined;
+  signMessageRequested: MessageData | TypedMessageData | null | undefined;
   signMessageError: Error | null | undefined;
   signMessageResult: string | null | undefined;
 };
 
 export type State = AppState & BaseState;
 export type Request = AppRequest & {
-  message: MessageData;
+  message: MessageData | TypedMessageData;
 };
 
 export type Input = {

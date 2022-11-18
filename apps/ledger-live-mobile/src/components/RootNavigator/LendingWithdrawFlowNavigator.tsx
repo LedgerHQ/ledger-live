@@ -11,6 +11,9 @@ import LendingWithdrawValidationSuccess from "../../screens/Lending/WithdrawFlow
 import LendingWithdrawValidationError from "../../screens/Lending/WithdrawFlow/03-ValidationError";
 import { getStackNavigatorConfig } from "../../navigation/navigatorConfig";
 import StepHeader from "../StepHeader";
+import { LendingWithdrawFlowNavigatorParamList } from "./types/LendingWithdrawFlowNavigator";
+
+const Stack = createStackNavigator<LendingWithdrawFlowNavigatorParamList>();
 
 const totalSteps = "4";
 export default function LendingWithdrawFlowNavigator() {
@@ -86,10 +89,9 @@ export default function LendingWithdrawFlowNavigator() {
         name={ScreenName.LendingWithdrawValidationSuccess}
         component={LendingWithdrawValidationSuccess}
         options={{
-          headerLeft: null,
+          headerLeft: undefined,
           headerShown: false,
-          headerRight: null,
-          gestureWithdrawd: false,
+          headerRight: undefined,
         }}
       />
       <Stack.Screen
@@ -102,4 +104,3 @@ export default function LendingWithdrawFlowNavigator() {
     </Stack.Navigator>
   );
 }
-const Stack = createStackNavigator();
