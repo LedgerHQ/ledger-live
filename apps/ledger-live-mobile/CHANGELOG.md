@@ -1,5 +1,11 @@
 # live-mobile
 
+## 3.11.0-next.10
+
+### Patch Changes
+
+- [#1867](https://github.com/LedgerHQ/ledger-live/pull/1867) [`5f2f6ead06`](https://github.com/LedgerHQ/ledger-live/commit/5f2f6ead061261daee7da73fdb7761c4e3d86ffd) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Fix crash on Android 12+ during Firmware Update
+
 ## 3.11.0-next.9
 
 ### Patch Changes
