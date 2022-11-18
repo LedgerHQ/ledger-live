@@ -77,19 +77,24 @@ function expectCorrectOptimisticOperation(
     expect(operation.id).toStrictEqual(optimisticOperation.id);
     expect(operation.hash).toStrictEqual(optimisticOperation.hash);
     expect(operation.accountId).toStrictEqual(optimisticOperation.accountId);
-    expect(operation.contract).toStrictEqual(optimisticOperation.contract);
     expect(operation.fee.toFixed()).toStrictEqual(
       optimisticOperation.fee.toFixed()
     );
 
-    expect(operation.senders).toStrictEqual(optimisticOperation.senders);
-    expect(operation.recipients).toStrictEqual(optimisticOperation.recipients);
+    expect(operation.type).toStrictEqual(optimisticOperation.type);
+    if (operation.type === "OUT") {
+      expect(operation.contract).toStrictEqual(optimisticOperation.contract);
+      expect(operation.senders).toStrictEqual(optimisticOperation.senders);
+      expect(operation.recipients).toStrictEqual(
+        optimisticOperation.recipients
+      );
+      expect(operation.value.toFixed()).toStrictEqual(
+        optimisticOperation.value.plus(optimisticOperation.fee).toFixed()
+      );
+    }
+
     expect(operation.transactionSequenceNumber).toStrictEqual(
       optimisticOperation.transactionSequenceNumber
-    );
-    expect(operation.type).toStrictEqual(optimisticOperation.type);
-    expect(operation.value.toFixed()).toStrictEqual(
-      optimisticOperation.value.toFixed()
     );
 
     expect(toOperationRaw(operation)).toMatchObject(opExpected);
