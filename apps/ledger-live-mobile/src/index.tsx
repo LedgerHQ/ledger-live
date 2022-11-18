@@ -449,7 +449,7 @@ const linkingOptions = {
           [NavigatorName.CustomImage]: {
             screens: {
               /**
-               * ie: "ledgerlive://custom-image?device=nanoFTS"
+               * ie: "ledgerlive://custom-image"
                */
               [ScreenName.CustomImageStep0Welcome]: "custom-image",
             },
