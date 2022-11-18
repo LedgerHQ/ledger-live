@@ -269,7 +269,7 @@ export const cryptocurrenciesById: Record<string, CryptoCurrency> = {
     coinType: 9000,
     name: "Avalanche (P-Chain)",
     managerAppName: "Avalanche",
-    ticker: "AVAX",
+    ticker: "AVAX (P-Chain)",
     scheme: "avalanchepchain",
     color: "#E84142",
     family: "avalanchepchain",

@@ -42,6 +42,7 @@ export default function AvalancheEarnRewardsInfoModal({ name, account, parentAcc
         t("avalanchepchain.delegation.flow.steps.starter.bullet.0"),
         t("avalanchepchain.delegation.flow.steps.starter.bullet.1"),
         t("avalanchepchain.delegation.flow.steps.starter.bullet.2"),
+        t("avalanchepchain.delegation.flow.steps.starter.bullet.3"),
       ]}
       footerLeft={<LinkWithExternalIcon label={t("delegation.howItWorks")} onClick={onLearnMore} />}
     />
