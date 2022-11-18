@@ -6,7 +6,7 @@ import { AddAccountModal } from "../../models/AddAccountModal";
 import { DeviceAction } from "../../models/DeviceAction";
 import { Layout } from "../../models/Layout";
 
-test.use({ userdata: "skip-onboarding" });
+// test.use({ userdata: "skip-onboarding" });
 
 const currencies = ["BTC", "LTC"]; // , "ETH", "ATOM", "XTZ", "XRP"];
 
