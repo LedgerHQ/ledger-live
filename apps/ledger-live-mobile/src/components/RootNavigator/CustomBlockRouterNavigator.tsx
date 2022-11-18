@@ -65,7 +65,7 @@ export const useLockNavigation = (
   useEffect(() => {
     exposedManagerNavLockCallback.next(when ? callback : undefined);
     lockSubject.next(when);
-    const listener = navigation.addListener("beforeRemove", e => {
+    const listenerCleanup = navigation.addListener("beforeRemove", e => {
       if (!when) {
         // If we don't have unsaved changes, then we don't need to do anything
         return;
@@ -80,7 +80,7 @@ export const useLockNavigation = (
     return () => {
       lockSubject.next(false);
       exposedManagerNavLockCallback.next(undefined);
-      navigation.removeListener("beforeRemove", listener);
+      listenerCleanup();
     };
   }, [callback, navigation, when]);
 };
