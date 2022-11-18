@@ -162,20 +162,87 @@ export const getStepPrice = async (account): Promise<BigNumber> => {
 /**
  * Get step price from governance contract
  */
-export const getPreps = async (account): Promise<PRep[]> => {
-  const rpcURL = getRpcUrl(account.currency);
+export const getPreps = async (currency): Promise<PRep[]> => {
+  const rpcURL = getRpcUrl(currency);
   const httpProvider = new HttpProvider(rpcURL);
   const iconService = new IconService(httpProvider);
-  const txBuilder: any = new IconBuilder.CallBuilder();
-  const prepTx = txBuilder
+  const prepTx: any = new IconBuilder.CallBuilder()
     .to(IISS_SCORE_ADDRESS)
-    .method("getPreps")
+    .method("getPReps")
     .build();
+
   let res;
   try {
     res = await iconService.call(prepTx).execute();
   } catch (error) {
     // TODO: handle show log
+    console.log(error);
   }
   return res?.preps || [];
+};
+
+export const getDelegation = async (address, currency) => {
+  const rpcURL = getRpcUrl(currency);
+  const httpProvider = new HttpProvider(rpcURL);
+  const iconService = new IconService(httpProvider);
+  const delegationTx: any = new IconBuilder.CallBuilder()
+    .to(IISS_SCORE_ADDRESS)
+    .method("getDelegation")
+    .params({
+      address
+    })
+    .build();
+
+  let res;
+  try {
+    res = await iconService.call(delegationTx).execute();
+  } catch (error) {
+    // TODO: handle show log
+    console.log(error);
+  }
+  return {
+    delegations: res?.delegations || [],
+    totalDelegated: new BigNumber(res?.totalDelegated || 0),
+    votingPower: new BigNumber(res?.votingPower || 0)
+  };
+};
+
+export const getPrep = async (prepAddress, currency): Promise<PRep> => {
+  const rpcURL = getRpcUrl(currency);
+  const httpProvider = new HttpProvider(rpcURL);
+  const iconService = new IconService(httpProvider);
+  const prepTx: any = new IconBuilder.CallBuilder()
+    .to(IISS_SCORE_ADDRESS)
+    .method("getPRep")
+    .params({ address: prepAddress })
+    .build();
+
+  let res;
+  try {
+    res = await iconService.call(prepTx).execute();
+  } catch (error) {
+    // TODO: handle show log
+    console.log(error);
+  }
+  return res;
+};
+
+export const getIScore = async (address, currency) => {
+  const rpcURL = getRpcUrl(currency);
+  const httpProvider = new HttpProvider(rpcURL);
+  const iconService = new IconService(httpProvider);
+  const prepTx: any = new IconBuilder.CallBuilder()
+    .to(IISS_SCORE_ADDRESS)
+    .method("queryIScore")
+    .params({ address })
+    .build();
+
+  let res;
+  try {
+    res = await iconService.call(prepTx).execute();
+  } catch (error) {
+    // TODO: handle show log
+    console.log(error);
+  }
+  return { ...res };
 };

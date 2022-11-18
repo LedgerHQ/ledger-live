@@ -31361,6 +31361,7 @@ packages:
       compare-versions: 3.6.0
       expo-modules-core: 0.6.5
       invariant: 2.2.4
+    dev: false
 
   /expo-modules-core/0.6.5_expo-constants@13.2.4:
     resolution: {integrity: sha512-h/9+SJ3m8XkDUV1QrPO8WeXaeRYWLBJrOqhokDyhgWUYSqe6JOuRx1ZkoGq/GmTiwjouRDbXPsXUBiU9HWLYyA==}

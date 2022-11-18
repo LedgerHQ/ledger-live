@@ -24,7 +24,7 @@ export default function IconEarnRewardsInfoModal({ name, account, parentAccount 
   const onNext = useCallback(() => {
     dispatch(closeModal(name));
     dispatch(
-      openModal("MODAL_FREEZE", {
+      openModal("MODAL_ICON_FREEZE", {
         parentAccount,
         account,
       }),
