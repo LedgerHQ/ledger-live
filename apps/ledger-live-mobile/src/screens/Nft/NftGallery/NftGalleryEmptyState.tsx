@@ -2,17 +2,19 @@ import React, { memo, useCallback } from "react";
 import { Linking } from "react-native";
 import { Flex, Icons, Text } from "@ledgerhq/native-ui";
 import { useTranslation } from "react-i18next";
+import { useSelector } from "react-redux";
 import Button from "../../../components/wrappedUi/Button";
 import { urls } from "../../../config/urls";
 import Link from "../../../components/wrappedUi/Link";
 import ReceiveNFTsModal from "./ReceiveNFTsModal";
 import { useReceiveNFTsModal } from "./ReceiveNFTsModal.hook";
 import { track, TrackScreen } from "../../../analytics";
+import { readOnlyModeEnabledSelector } from "../../../reducers/settings";
 
 const NftGalleryEmptyState = () => {
   const { t } = useTranslation();
   const { openModal, closeModal, isModalOpened } = useReceiveNFTsModal();
-
+  const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector);
   const openSupportLink = useCallback(() => {
     track("url_clicked", {
       name: "How to deposit from Metamask",
@@ -25,7 +27,11 @@ const NftGalleryEmptyState = () => {
     <Flex flex={1} alignItems={"center"} justifyContent={"center"}>
       <TrackScreen
         category="NFT Gallery"
-        name="NFT Gallery Start"
+        name={
+          readOnlyModeEnabled
+            ? "NFT Gallery Start Read-only"
+            : "NFT Gallery Start"
+        }
         source="NFT tab"
       />
       <Text
