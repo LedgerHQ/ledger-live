@@ -1,5 +1,11 @@
 # @ledgerhq/live-common
 
+## 27.7.0-next.2
+
+### Patch Changes
+
+- [#1861](https://github.com/LedgerHQ/ledger-live/pull/1861) [`9f8c9be0ae`](https://github.com/LedgerHQ/ledger-live/commit/9f8c9be0aead9eb4101aa9d14e4ee3b560d88792) Thanks [@haammar-ledger](https://github.com/haammar-ledger)! - Revert "[LIVE-4088] Remove incompatible API from ledger-live with new bitcoin app (#1493)"
+
 ## 27.7.0-next.1
 
 ### Minor Changes
