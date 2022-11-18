@@ -1,5 +1,11 @@
 # live-mobile
 
+## 3.11.0-next.9
+
+### Patch Changes
+
+- [#1870](https://github.com/LedgerHQ/ledger-live/pull/1870) [`984e4a7130`](https://github.com/LedgerHQ/ledger-live/commit/984e4a7130ccdebee2c2c3fa725e81040053ed18) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - Every notifications categories are enabled by default even when updating LL to 3.11
+
 ## 3.11.0-next.8
 
 ### Minor Changes
