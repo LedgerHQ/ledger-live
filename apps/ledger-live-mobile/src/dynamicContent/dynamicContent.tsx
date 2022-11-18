@@ -1,7 +1,5 @@
 import { useSelector } from "react-redux";
 import { ContentCard as BrazeContentCard } from "react-native-appboy-sdk";
-import { useCallback } from "react";
-import { Linking } from "react-native";
 import { useBrazeContentCard } from "./brazeContentCard";
 import {
   assetsCardsSelector,
@@ -19,7 +17,7 @@ enum BackgroundType {
   neutral = "neutral",
 }
 
-type ContentCard = {
+export type ContentCard = {
   id: string;
   location: LocationContentCard;
   title: string;
@@ -84,28 +82,12 @@ const useDynamicContent = () => {
     );
   }
 
-  const onClickLink = useCallback(
-    (link: string, cardId: string) => {
-      logClickCard(cardId);
-      Linking.openURL(link);
-    },
-    [logClickCard],
-  );
-
-  const onPressDismiss = useCallback(
-    (dismissAction: () => void, cardId: string) => {
-      logDismissCard(cardId);
-      dismissAction();
-    },
-    [logDismissCard],
-  );
-
   return {
     walletCards,
     assetsCards,
     getAssetCardById,
-    onClickLink,
-    onPressDismiss,
+    logClickCard,
+    logDismissCard,
     logImpressionCard,
   };
 };

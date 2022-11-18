@@ -1,5 +1,10 @@
 import React, { useMemo, useState, useCallback, useEffect } from "react";
-import { FlatList, LayoutChangeEvent, ListRenderItemInfo } from "react-native";
+import {
+  FlatList,
+  LayoutChangeEvent,
+  Linking,
+  ListRenderItemInfo,
+} from "react-native";
 import Animated, {
   useAnimatedScrollHandler,
   useSharedValue,
@@ -42,7 +47,9 @@ import {
   BaseComposite,
   StackNavigatorProps,
 } from "../../components/RootNavigator/types/helpers";
-import useDynamicContent from "../../dynamicContent/dynamicContent";
+import useDynamicContent, {
+  ContentCard,
+} from "../../dynamicContent/dynamicContent";
 
 // @FIXME workarround for main tokens
 const tokenIDToMarketID = {
@@ -136,9 +143,33 @@ const AssetScreen = ({ route }: NavigationProps) => {
     }
   }, [currency, navigation]);
 
-  const { getAssetCardById, onClickLink, onPressDismiss, logImpressionCard } =
+  // Dynamic Content Part -------------------
+  const { getAssetCardById, logDismissCard, logClickCard, logImpressionCard } =
     useDynamicContent();
   const dynamicContentCard = getAssetCardById(currency.ticker);
+
+  const onClickLink = useCallback(
+    (card: ContentCard) => {
+      track("contentcard_clicked", {
+        screen: card.location,
+        link: card.link,
+      });
+      logClickCard(card.id);
+      Linking.openURL(card.link);
+    },
+    [logClickCard],
+  );
+
+  const onPressDismiss = useCallback(
+    (dismissAction: () => void, card: ContentCard) => {
+      track("contentcard_dismissed", {
+        screen: card.location,
+      });
+      logDismissCard(card.id);
+      dismissAction();
+    },
+    [logDismissCard],
+  );
 
   useEffect(() => {
     if (dynamicContentCard) {
@@ -147,6 +178,8 @@ const AssetScreen = ({ route }: NavigationProps) => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  // Dynamic Content ---------------------------------
 
   const data = useMemo(
     () => [
@@ -178,14 +211,9 @@ const AssetScreen = ({ route }: NavigationProps) => {
               tag={dynamicContentCard.tag}
               cta={dynamicContentCard.cta}
               imageUrl={dynamicContentCard.image}
-              onPress={() =>
-                onClickLink(dynamicContentCard.link, dynamicContentCard.id)
-              }
+              onPress={() => onClickLink(dynamicContentCard)}
               onPressDismiss={() =>
-                onPressDismiss(
-                  () => console.log("DISMISS"),
-                  dynamicContentCard.id,
-                )
+                onPressDismiss(() => console.log("DISMISS"), dynamicContentCard)
               }
             />
           </Flex>
