@@ -32,6 +32,7 @@ export const getAccountShape: GetAccountShape = async (
 ) => {
   const { currency, initialAccount, derivationMode } = infoInput;
   let { address } = infoInput;
+
   address = eip55.encode(address);
   const accountId = encodeAccountId({
     type: "js",
