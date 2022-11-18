@@ -1,8 +1,17 @@
 import React, { memo, useCallback, useMemo } from "react";
 import { StyleSheet } from "react-native";
-import { useNftMetadata } from "@ledgerhq/live-common/nft/index";
+import {
+  useNftCollectionMetadata,
+  useNftMetadata,
+} from "@ledgerhq/live-common/nft/index";
 
-import { NFTMetadata, NFTStandard, ProtoNFT } from "@ledgerhq/types-live";
+import {
+  NFTCollectionMetadata,
+  NFTCollectionMetadataResponse,
+  NFTMetadata,
+  NFTMetadataResponse,
+  ProtoNFT,
+} from "@ledgerhq/types-live";
 import { NFTResource } from "@ledgerhq/live-common/nft/NftMetadataProvider/types";
 import { Box, Flex, Tag, Text } from "@ledgerhq/native-ui";
 
@@ -17,7 +26,6 @@ import { NavigatorName, ScreenName } from "../../const";
 
 type Props = {
   nft: ProtoNFT;
-  ownedNftsInCollection?: number;
 };
 
 const StyledTouchableOpacity = styled.TouchableOpacity<BaseStyledProps>`
@@ -26,22 +34,25 @@ const StyledTouchableOpacity = styled.TouchableOpacity<BaseStyledProps>`
   background-color: ${props => props.theme.colors.background.main};
 `;
 
-const displayText = (text?: string | null) => text ?? "--";
+const displayText = (text?: string | null) => text || "--";
 
 const NftCardView = ({
   nft,
   status,
   metadata,
-  ownedNftsInCollection,
+  collectionStatus,
+  collectionMetadata,
 }: {
   nft: ProtoNFT;
   status: NFTResource["status"];
   metadata: NFTMetadata;
-  ownedNftsInCollection?: number;
+  collectionStatus: NFTResource["status"];
+  collectionMetadata?: NFTCollectionMetadata | null;
 }) => {
   const navigation = useNavigation();
 
   const loading = status === "loading";
+  const collectionLoading = collectionStatus === "loading";
 
   const currency = useMemo(
     () => getCryptoCurrencyById(nft.currencyId),
@@ -64,12 +75,17 @@ const NftCardView = ({
       <NftMediaComponent
         status={status}
         metadata={metadata}
-        standard={nft.standard}
-        ownedNftsInCollection={ownedNftsInCollection}
+        nftAmount={nft.standard === "ERC1155" ? nft.amount : undefined}
       />
-      <Box height={36} mb={4}>
-        <Skeleton loading={loading} height={8} width={115} borderRadius={4}>
-          <Flex flexDirection="column">
+      <Box mb={7}>
+        <Flex flexDirection="column">
+          <Skeleton
+            loading={!metadata?.nftName && loading}
+            height={13}
+            width={115}
+            borderRadius={4}
+            my={2}
+          >
             <Text
               variant="body"
               fontWeight="medium"
@@ -80,10 +96,23 @@ const NftCardView = ({
             >
               {displayText(metadata?.nftName)}
             </Text>
+          </Skeleton>
 
-            <Flex flexDirection="row" alignItems="center">
-              <CurrencyIcon currency={currency} size={20} />
+          <Flex flexDirection="row" alignItems="center">
+            <CurrencyIcon currency={currency} size={20} />
 
+            <Skeleton
+              loading={
+                !collectionMetadata?.tokenName &&
+                !metadata?.tokenName &&
+                collectionLoading
+              }
+              height={13}
+              width={115}
+              borderRadius={4}
+              ml={2}
+              my={2}
+            >
               <Text
                 variant="paragraph"
                 fontWeight="medium"
@@ -94,11 +123,13 @@ const NftCardView = ({
                 flexGrow={1}
                 flexShrink={1}
               >
-                {displayText(metadata?.tokenName)}
+                {displayText(
+                  collectionMetadata?.tokenName || metadata?.tokenName,
+                )}
               </Text>
-            </Flex>
+            </Skeleton>
           </Flex>
-        </Skeleton>
+        </Flex>
       </Box>
     </StyledTouchableOpacity>
   );
@@ -107,7 +138,7 @@ const NftCardView = ({
 const NftCardMemo = memo(NftCardView);
 // this technique of splitting the usage of context and memoing the presentational component is used to prevent
 // the rerender of all NftCards whenever the NFT cache changes (whenever a new NFT is loaded)
-const NftListItem = ({ nft, ownedNftsInCollection }: Props) => {
+const NftListItem = ({ nft }: Props) => {
   const nftMetadata = useNftMetadata(
     nft?.contract,
     nft?.tokenId,
@@ -118,12 +149,20 @@ const NftListItem = ({ nft, ownedNftsInCollection }: Props) => {
     metadata: NFTMetadata;
   };
 
+  const { status: collectionStatus, metadata: collectionMetadata } =
+    useNftCollectionMetadata(nft?.contract, nft?.currencyId) as {
+      status: NFTResource["status"];
+      metadata?: NFTMetadataResponse["result"] &
+        NFTCollectionMetadataResponse["result"];
+    };
+
   return (
     <NftCardMemo
       nft={nft}
       status={status}
       metadata={metadata}
-      ownedNftsInCollection={ownedNftsInCollection}
+      collectionStatus={collectionStatus}
+      collectionMetadata={collectionMetadata}
     />
   );
 };
@@ -131,21 +170,11 @@ const NftListItem = ({ nft, ownedNftsInCollection }: Props) => {
 type NftMediaProps = {
   status: NFTResource["status"];
   metadata: NFTMetadata;
-  standard: NFTStandard;
-  ownedNftsInCollection?: number;
+  nftAmount?: ProtoNFT["amount"];
 };
-const NftMediaComponent = ({
-  standard,
-  status,
-  metadata,
-  ownedNftsInCollection,
-}: NftMediaProps) => {
+const NftMediaComponent = ({ status, metadata, nftAmount }: NftMediaProps) => {
   const { t } = useTranslation();
-  if (
-    standard === "ERC1155" &&
-    ownedNftsInCollection &&
-    ownedNftsInCollection > 1
-  ) {
+  if (nftAmount && nftAmount.gt(1)) {
     return (
       <Box position="relative">
         <NftMedia
@@ -159,9 +188,10 @@ const NftMediaComponent = ({
           top="10px"
           right="10px"
           backgroundColor="neutral.c30"
+          uppercase={false}
           borderRadius={1}
         >
-          {t("wallet.nftGallery.media.tag", { count: ownedNftsInCollection })}
+          {t("wallet.nftGallery.media.tag", { count: nftAmount.toNumber() })}
         </Tag>
       </Box>
     );
