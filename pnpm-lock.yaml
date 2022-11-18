@@ -2985,6 +2985,16 @@ importers:
       '@actions/github': 5.1.1
       '@vercel/ncc': 0.33.4
 
+  tools/actions/live-common-affected:
+    specifiers:
+      '@actions/core': ^1.10.0
+      '@actions/github': ^5.1.1
+      tsup: ^6.4.0
+    devDependencies:
+      '@actions/core': 1.10.0
+      '@actions/github': 5.1.1
+      tsup: 6.4.0
+
   tools/actions/pr-is-fork:
     specifiers:
       '@actions/core': ^1.10.0
@@ -9818,7 +9828,7 @@ packages:
       resolve-from: 5.0.0
       semver: 7.3.2
       slugify: 1.6.5
-      sucrase: 3.21.0
+      sucrase: 3.28.0
     transitivePeerDependencies:
       - supports-color
     dev: false
@@ -9836,7 +9846,7 @@ packages:
       resolve-from: 5.0.0
       semver: 7.3.2
       slugify: 1.6.5
-      sucrase: 3.21.0
+      sucrase: 3.28.0
     transitivePeerDependencies:
       - supports-color
     dev: true
@@ -9854,7 +9864,7 @@ packages:
       resolve-from: 5.0.0
       semver: 7.3.2
       slugify: 1.6.5
-      sucrase: 3.21.0
+      sucrase: 3.28.0
     transitivePeerDependencies:
       - supports-color
     dev: true
@@ -9872,7 +9882,7 @@ packages:
       resolve-from: 5.0.0
       semver: 7.3.2
       slugify: 1.6.5
-      sucrase: 3.21.0
+      sucrase: 3.28.0
     transitivePeerDependencies:
       - supports-color
     dev: true
@@ -9890,7 +9900,7 @@ packages:
       resolve-from: 5.0.0
       semver: 7.3.2
       slugify: 1.6.5
-      sucrase: 3.21.0
+      sucrase: 3.28.0
     transitivePeerDependencies:
       - supports-color
     dev: true
@@ -10056,7 +10066,7 @@ packages:
       getenv: 1.0.0
       glob: 8.0.3
       resolve-from: 5.0.0
-      sucrase: 3.21.0
+      sucrase: 3.28.0
     transitivePeerDependencies:
       - supports-color
     dev: true
@@ -10072,7 +10082,7 @@ packages:
       getenv: 1.0.0
       glob: 8.0.3
       resolve-from: 5.0.0
-      sucrase: 3.21.0
+      sucrase: 3.28.0
     transitivePeerDependencies:
       - supports-color
     dev: true
@@ -10088,7 +10098,7 @@ packages:
       getenv: 1.0.0
       glob: 8.0.3
       resolve-from: 5.0.0
-      sucrase: 3.21.0
+      sucrase: 3.28.0
     transitivePeerDependencies:
       - supports-color
     dev: true
@@ -24315,7 +24325,7 @@ packages:
       mkdirp: 0.5.6
       move-concurrently: 1.0.1
       p-map: 3.0.0
-      promise-inflight: 1.0.1_bluebird@3.7.2
+      promise-inflight: 1.0.1
       rimraf: 2.7.1
       ssri: 7.1.1
       unique-filename: 1.1.1
@@ -35839,7 +35849,7 @@ packages:
     dev: true
 
   /is-stream/1.1.0:
-    resolution: {integrity: sha1-EtSj3U5o4Lec6428hBc66A2RykQ=}
+    resolution: {integrity: sha512-uQPm8kcs47jx38atAcWTVxyltQYoPT68y9aWYdV6yWXSyW8mzSat0TL6CiWdZeCdF3KrAvpVtnHbTv4RN+rqdQ==}
     engines: {node: '>=0.10.0'}
 
   /is-stream/2.0.1:
@@ -45994,7 +46004,6 @@ packages:
     peerDependenciesMeta:
       bluebird:
         optional: true
-    dev: true
 
   /promise-inflight/1.0.1_bluebird@3.7.2:
     resolution: {integrity: sha512-6zWPyEOFaQBJYcGMHBKTKJ3u6TBsnMFOIZSa6ce1e/ZrrsOlnHRHbabMjLiBYKp+n44X9eUI6VUPaukCXHuG4g==}
@@ -47015,7 +47024,7 @@ packages:
     dependencies:
       '@babel/parser': 7.18.11
       flow-parser: 0.121.0
-      glob: 7.2.3
+      glob: 8.0.3
       invariant: 2.2.4
       jscodeshift: 0.13.1
       nullthrows: 1.1.1
@@ -47028,7 +47037,7 @@ packages:
     dependencies:
       '@babel/parser': 7.18.11
       flow-parser: 0.121.0
-      glob: 7.2.3
+      glob: 8.0.3
       invariant: 2.2.4
       jscodeshift: 0.13.1_@babel+preset-env@7.17.10
       nullthrows: 1.1.1
@@ -51349,6 +51358,7 @@ packages:
       mz: 2.7.0
       pirates: 4.0.5
       ts-interface-checker: 0.1.13
+    dev: true
 
   /sucrase/3.28.0:
     resolution: {integrity: sha512-TK9600YInjuiIhVM3729rH4ZKPOsGeyXUwY+Ugu9eilNbdTFyHr6XcAGYbRVZPDgWj6tgI7bx95aaJjHnbffag==}
@@ -51361,7 +51371,6 @@ packages:
       mz: 2.7.0
       pirates: 4.0.5
       ts-interface-checker: 0.1.13
-    dev: true
 
   /sudo-prompt/8.2.5:
     resolution: {integrity: sha512-rlBo3HU/1zAJUrkY6jNxDOC9eVYliG6nS4JA8u8KAshITd07tafMc/Br7xQwCSseXwJ2iCcHCE8SNWX3q8Z+kw==}
