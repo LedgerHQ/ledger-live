@@ -10,11 +10,12 @@ import {
   acceptDelegateTransaction,
   acceptEsdtTransferTransaction,
   acceptMoveBalanceTransaction,
+  acceptUndelegateTransaction,
 } from "./speculos-deviceActions";
-import { sample } from "lodash";
-import { SubAccount } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { MIN_DELEGATION_AMOUNT } from "./constants";
+import { SubAccount } from "@ledgerhq/types-live";
+import { sample } from "lodash";
 
 const currency = getCryptoCurrencyById("elrond");
 const minimalAmount = parseCurrencyUnit(currency.units[0], "0.001");
@@ -24,9 +25,31 @@ const ELROND_MIN_ACTIVATION_SAFE = new BigNumber(10000);
 
 function expectCorrectBalanceChange(input: TransactionTestInput<Transaction>) {
   const { account, operation, accountBeforeTransaction } = input;
+
   expect(account.balance.toNumber()).toBe(
     accountBeforeTransaction.balance.minus(operation.value).toNumber()
   );
+}
+
+function expectCorrectEsdtBalanceChange(
+  input: TransactionTestInput<Transaction>
+) {
+  const { account, operation, accountBeforeTransaction, transaction } = input;
+
+  const { subAccountId } = transaction;
+  const subAccounts = account.subAccounts ?? [];
+  const subAccountsBefore = accountBeforeTransaction.subAccounts ?? [];
+
+  const tokenAccount = subAccounts.find((ta) => ta.id === subAccountId);
+  const tokenAccountBefore = subAccountsBefore.find(
+    (ta) => ta.id === subAccountId
+  );
+
+  if (tokenAccount && tokenAccountBefore) {
+    expect(tokenAccount.balance.toNumber()).toBe(
+      tokenAccountBefore.balance.minus(operation.value).toNumber()
+    );
+  }
 }
 
 function expectCorrectOptimisticOperation(
@@ -46,7 +69,7 @@ function expectCorrectOptimisticOperation(
 
   if (operation.type !== "OUT") {
     delete opExpected.senders;
-    delete opExpected.receivers;
+    delete opExpected.recipients;
     delete opExpected.contract;
   }
 
@@ -59,8 +82,12 @@ function expectCorrectSpendableBalanceChange(
   input: TransactionTestInput<Transaction>
 ) {
   const { account, operation, accountBeforeTransaction } = input;
+  let value = operation.value;
+  if (operation.type === "DELEGATE") {
+    value = value.plus(new BigNumber(operation.extra.amount));
+  }
   expect(account.spendableBalance.toNumber()).toBe(
-    accountBeforeTransaction.spendableBalance.minus(operation.value).toNumber()
+    accountBeforeTransaction.spendableBalance.minus(value).toNumber()
   );
 }
 
@@ -86,19 +113,8 @@ const elrondSpec: AppSpec<Transaction> = {
   transactionCheck: ({ maxSpendable }) => {
     invariant(maxSpendable.gt(minimalAmount), "balance is too low");
   },
-  test: ({ operation, optimisticOperation }) => {
-    const opExpected: Record<string, any> = toOperationRaw({
-      ...optimisticOperation,
-    });
-    operation.extra = opExpected.extra;
-    delete opExpected.value;
-    delete opExpected.fee;
-    delete opExpected.date;
-    delete opExpected.blockHash;
-    delete opExpected.blockHeight;
-    botTest("optimistic operation matches", () =>
-      expect(toOperationRaw(operation)).toMatchObject(opExpected)
-    );
+  test: (input) => {
+    expectCorrectOptimisticOperation(input);
   },
   mutations: [
     {
@@ -134,7 +150,6 @@ const elrondSpec: AppSpec<Transaction> = {
       },
       test: (input) => {
         expectCorrectBalanceChange(input);
-        expectCorrectOptimisticOperation(input);
       },
     },
     {
@@ -166,9 +181,9 @@ const elrondSpec: AppSpec<Transaction> = {
       },
       test: (input) => {
         expectCorrectBalanceChange(input);
-        expectCorrectOptimisticOperation(input);
       },
     },
+
     {
       name: "move some ESDT",
       maxRun: 1,
@@ -198,7 +213,8 @@ const elrondSpec: AppSpec<Transaction> = {
         };
       },
       test: (input) => {
-        expectCorrectOptimisticOperation(input);
+        expectCorrectEsdtBalanceChange(input);
+        expectCorrectBalanceFeeChange(input);
       },
     },
     {
@@ -234,7 +250,7 @@ const elrondSpec: AppSpec<Transaction> = {
     {
       name: "unDelegate 1 EGLD",
       maxRun: 1,
-      deviceAction: acceptDelegateTransaction,
+      deviceAction: acceptUndelegateTransaction,
       transaction: ({ account, bridge }) => {
         invariant(
           account.balance
@@ -259,7 +275,8 @@ const elrondSpec: AppSpec<Transaction> = {
         };
       },
       test: (input) => {
-        expectCorrectBalanceChange(input);
+        expectCorrectSpendableBalanceChange(input);
+        expectCorrectBalanceFeeChange(input);
       },
     },
   ],
