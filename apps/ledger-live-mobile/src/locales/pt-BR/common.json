@@ -410,6 +410,9 @@
       "title" : "Desculpe, este aplicativo é necessário",
       "description" : "Desinstale o aplicativo Bitcoin ou Ethereum por último."
     },
+    "MaxFeeLow" : {
+      "title" : "A sua taxa máxima é muito baixa. Sua transação pode ficar pendente por um tempo"
+    },
     "NetworkDown" : {
       "title" : "Desculpe, a internet deve ter caído",
       "description" : "Verifique sua conexão de internet."
@@ -595,6 +598,9 @@
     "SourceHasMultiSign" : {
       "title" : "Desative a assinatura múltipla para enviar {{currencyName}}"
     },
+    "DustLimit" : {
+      "title" : "Quantia menor do que o limite de pó"
+    },
     "StratisDown2021Warning" : {
       "description" : "A blockchain Stratis evoluiu e pode não funcionar mais corretamente. Suporte à blockchain Stratis original foi mantido até 16 de outubro de 2021."
     },
@@ -744,6 +750,18 @@
     },
     "HederaAddAccountError" : {
       "title" : "Sua conta não foi adicionada. Tente Novamente."
+    },
+    "PriorityFeeTooLow" : {
+      "title" : "A taxa de prioridade é mais baixa do que a quantia recomendada"
+    },
+    "PriorityFeeTooHigh" : {
+      "title" : "A taxa de prioridade é mais alta do que o necessário. Você pode estar pagando mais que o necessário"
+    },
+    "MaxFeeTooLow" : {
+      "title" : "A taxa máxima é mais baixa do que o valor recomendado"
+    },
+    "PriorityFeeHigherThanMaxFee" : {
+      "title" : "A taxa de prioridade máxima não pode ser maior do que a taxa máxima"
     }
   },
   "crash" : {
@@ -1804,6 +1822,9 @@
         }
       }
     },
+    "appsStep" : {
+      "title" : "Aplicativos {{productName}}"
+    },
     "readyStep" : {
       "title" : "A {{productName}} está pronta"
     },
@@ -2435,14 +2456,19 @@
         "title" : "Mercado",
         "desc" : "Receber atualizações sobre mudanças significativas do mercado"
       },
-      "announcement" : {
+      "announcements" : {
         "title" : "Anúncios",
         "desc" : "Receba atualizações importantes do Ledger Live"
+      },
+      "recommendations" : {
+        "title" : "Recomendações",
+        "desc" : "Enriqueça a sua experiência com recomendações personalizadas e ofertas especiais"
       },
       "price" : {
         "title" : "Alertas de preço",
         "desc" : "Configure alertas de preços para suas moedas favoritas para que você não perca nenhuma movimentação de mercado"
-      }
+      },
+      "disclaimer" : "Privacidade de dados é fundamental na Ledger. Os dados coletados nunca são compartilhados com nossos parceiros"
     },
     "help" : {
       "title" : "Ajuda",
@@ -2529,7 +2555,7 @@
   "notifications" : {
     "prompt" : {
       "title" : "Ligar Notificações",
-      "desc" : "Receba atualizações importantes sobre o Ledger Live, os produtos Ledger e segurança. Cancele a qualquer momento.",
+      "desc" : "Receba as últimas atualizações sobre o Ledger Live, os produtos da Ledger, o mercado e as recomendações personalizadas. Cancele a qualquer momento nas configurações",
       "allow" : "Permitir Notificações",
       "later" : "Talvez mais tarde"
     }
@@ -3151,6 +3177,12 @@
       }
     }
   },
+  "signMessage" : {
+    "eip712" : {
+      "showFullMessage" : "Mostrar mensagem completa",
+      "hideFullMessage" : "Esconder mensagem completa"
+    }
+  },
   "sync" : {
     "error" : "Erro de sincronização",
     "loading" : "Sincronizar"
@@ -3212,9 +3244,14 @@
       "infoTotalDesc" : "Inclui a quantia da transação e as taxas da rede selecionadas",
       "gasLimit" : "Limite de gás",
       "gasPrice" : "Preço do gás",
+      "maxFee" : "Taxa máxima",
+      "maxPriorityFee" : "Taxa de prioridade máxima",
+      "nextBlock" : "Próximo bloco: {{nextBaseFee}}",
+      "suggestedPriorityFee" : "Sugerido {{lowPriorityFee}} - {{highPriorityFee}}",
       "maxFees" : "Taxas Máximas",
       "validateGasLimit" : "Validar limite de gás",
       "fees" : "Taxas",
+      "maxEstimatedFee" : "Taxa máxima estimada",
       "validateFees" : "Validar Taxas",
       "customizeFees" : "Personalizar Taxas",
       "memo" : {
@@ -3462,7 +3499,7 @@
     }
   },
   "DeviceAction" : {
-    "stayInTheAppPlz" : "Fique no aplicativo Ledger Live e mantenha sua Nano X próximo a você",
+    "stayInTheAppPlz" : "Fique no aplicativo Ledger Live e mantenha a Ledger perto de você.",
     "allowAppPermission" : "Abra o aplicativo {{wording}} no seu dispositivo",
     "allowAppPermissionSubtitleToken" : "para gerenciar seus tokens {{token}}",
     "allowManagerPermission" : "Permitir {{wording}} em seu dispositivo",
@@ -3634,6 +3671,7 @@
         "description" : "Gerencie suas Ledgers salvas"
       },
       "addNewCTA" : "Adicionar Novo",
+      "otgBanner" : "Se você tiver uma Nano S ou uma Nano S Plus, conecte seu dispositivo por cabo USB.",
       "connectExistingLedger" : "Conectar uma Ledger existente",
       "connectExistingLedgerDescription" : "Já tem uma Ledger configurada? Emparelhe-a com bluetooth",
       "setUpNewLedger" : "Configurar uma nova Ledger",
@@ -5353,6 +5391,11 @@
       "viewOn" : "Ver em",
       "viewInExplorer" : "Ver no explorer",
       "txDetails" : "Detalhes da transação"
+    },
+    "modalDisabled" : {
+      "title" : "Função de enviar não disponível",
+      "body" : "A fim de cumprir com as recentes atualizações da Apple em sua App Store, o envio de NFTs está temporariamente indisponível. Você ainda pode usar o Ledger Live no desktop para enviar NFTs.",
+      "contactSupport" : "Leia nosso artigo de suporte para mais informações."
     }
   },
   "ApplicationVersion" : "v{{version}}",
@@ -5425,6 +5468,66 @@
         "description" : "Ao adicionar uma imagem",
         "popupLabel" : "Dispositivo personalizado",
         "hubTitleAfterAction" : "Essa tela ficou demais"
+      }
+    }
+  },
+  "servicesWidget" : {
+    "title" : "Serviços",
+    "subTitle" : "Gerenciar seus serviços Ledger",
+    "protect" : {
+      "title" : "Proteger",
+      "status" : {
+        "new" : {
+          "title" : "Novo",
+          "desc" : "Guarde sua frase de recuperação",
+          "0" : {
+            "title" : "Confiada por milhões de usuários Ledger"
+          },
+          "1" : {
+            "title" : "Sua Frase de Recuperação está ligada à sua identidade com segurança"
+          },
+          "2" : {
+            "title" : "Encriptação de última geração"
+          },
+          "3" : {
+            "title" : "Fragmentada em 3 peças descentralizadas, para que sua frase de recuperação nunca possa ser roubada"
+          },
+          "actions" : {
+            "learnMore" : "Saiba Mais",
+            "alreadySubscribed" : "Já se inscrever no Protect?"
+          }
+        },
+        "actionRequired" : {
+          "title" : "Ação necessária",
+          "desc" : "Adicione todos os detalhes de pagamento e complete todas as tarefas para proteger sua frase de recuperação.",
+          "actions" : {
+            "addNow" : "Adicionar agora",
+            "viewDetails" : "Ver Detalhes"
+          }
+        },
+        "paymentRejected" : {
+          "title" : "Pagamento rejeitado",
+          "desc" : "Seu pagamento de $5 não foi bem-sucedido. Edite seu detalhes de pagamento.",
+          "actions" : {
+            "editNow" : "Editar agora",
+            "viewDetails" : "Ver Detalhes"
+          }
+        },
+        "subscriptionCanceled" : {
+          "title" : "Inscrição cancelada",
+          "desc" : "Sua inscrição acabou 3 meses depois do não pagamento.",
+          "actions" : {
+            "contactLedgerSupport" : "Contate o Suporte Ledger",
+            "viewDetails" : "Ver Detalhes"
+          }
+        },
+        "active" : {
+          "title" : "Ativo",
+          "desc" : "Sua frase de recuperação está protegida",
+          "actions" : {
+            "viewDetails" : "Ver Detalhes"
+          }
+        }
       }
     }
   }
