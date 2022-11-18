@@ -1,5 +1,11 @@
 # live-mobile
 
+## 3.11.0-next.5
+
+### Patch Changes
+
+- [#1806](https://github.com/LedgerHQ/ledger-live/pull/1806) [`eaa3184ef1`](https://github.com/LedgerHQ/ledger-live/commit/eaa3184ef15fd7c6249f84bf4501bcb734cbd589) Thanks [@github-actions](https://github.com/apps/github-actions)! - Fix navigation lock bug after (un)installing apps, top arrow
+
 ## 3.11.0-next.4
 
 ### Patch Changes
