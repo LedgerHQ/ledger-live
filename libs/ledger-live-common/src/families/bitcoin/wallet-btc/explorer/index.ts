@@ -3,7 +3,6 @@ import axios, { AxiosInstance } from "axios";
 import axiosRetry, { isNetworkOrIdempotentRequestError } from "axios-retry";
 import BigNumber from "bignumber.js";
 import genericPool, { Pool } from "generic-pool";
-
 import JSONBigNumber from "@ledgerhq/json-bignumber";
 import { Address, Block, TX } from "../storage/types";
 import { IExplorer } from "./types";
@@ -87,7 +86,7 @@ class BitcoinLikeExplorer implements IExplorer {
     client.interceptors.response.use(responseInterceptor, errorInterceptor);
   }
 
-  async broadcast(tx: string): Promise<any> {
+  async broadcast(tx: string): Promise<{ data: { result: string } }> {
     const url = "/transactions/send";
     const client = await this.client.acquire();
     const res = await client.client.post(url, { tx });
@@ -146,7 +145,7 @@ class BitcoinLikeExplorer implements IExplorer {
     return block;
   }
 
-  async getFees(): Promise<any> {
+  async getFees(): Promise<{ [key: string]: number }> {
     const url = `/fees`;
 
     // TODO add a test for failure (at the sync level)

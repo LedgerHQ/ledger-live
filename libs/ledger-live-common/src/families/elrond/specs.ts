@@ -73,9 +73,27 @@ function expectCorrectOptimisticOperation(
     delete opExpected.contract;
   }
 
-  botTest("optimistic operation matches", () =>
-    expect(toOperationRaw(operation)).toMatchObject(opExpected)
-  );
+  botTest("optimistic operation matches", () => {
+    expect(operation.id).toStrictEqual(optimisticOperation.id);
+    expect(operation.hash).toStrictEqual(optimisticOperation.hash);
+    expect(operation.accountId).toStrictEqual(optimisticOperation.accountId);
+    expect(operation.contract).toStrictEqual(optimisticOperation.contract);
+    expect(operation.fee.toFixed()).toStrictEqual(
+      optimisticOperation.fee.toFixed()
+    );
+
+    expect(operation.senders).toStrictEqual(optimisticOperation.senders);
+    expect(operation.recipients).toStrictEqual(optimisticOperation.recipients);
+    expect(operation.transactionSequenceNumber).toStrictEqual(
+      optimisticOperation.transactionSequenceNumber
+    );
+    expect(operation.type).toStrictEqual(optimisticOperation.type);
+    expect(operation.value.toFixed()).toStrictEqual(
+      optimisticOperation.value.toFixed()
+    );
+
+    expect(toOperationRaw(operation)).toMatchObject(opExpected);
+  });
 }
 
 function expectCorrectSpendableBalanceChange(

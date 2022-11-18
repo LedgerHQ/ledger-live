@@ -328,11 +328,12 @@ export const DeviceActionDefaultRendering = <R, H, P>({
   }
 
   if (request && signMessageRequested) {
-    const { account } = request;
+    const { account, parentAccount } = request;
     return (
       <SignMessageConfirm
         device={device}
         account={account}
+        parentAccount={parentAccount}
         signMessageRequested={signMessageRequested}
       />
     );

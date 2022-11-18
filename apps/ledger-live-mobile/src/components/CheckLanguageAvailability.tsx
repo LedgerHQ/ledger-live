@@ -13,7 +13,7 @@ import {
 import { setLanguage } from "../actions/settings";
 import { getDefaultLanguageLocale } from "../languages";
 import { useLanguageAvailableChecked } from "../context/Locale";
-import { Track } from "../analytics";
+import { Track, updateIdentify } from "../analytics";
 import Button from "./wrappedUi/Button";
 
 export default function CheckLanguageAvailability() {
@@ -36,6 +36,7 @@ export default function CheckLanguageAvailability() {
 
   const handleChangeLanguagePressed = useCallback(() => {
     dispatch(setLanguage(defaultLanguage));
+    updateIdentify();
     if (typeof answer === "function") answer();
     onRequestClose();
   }, [dispatch, defaultLanguage, answer, onRequestClose]);

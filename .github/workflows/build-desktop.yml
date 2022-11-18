@@ -21,8 +21,28 @@ concurrency:
   cancel-in-progress: ${{ github.ref_name != 'develop' }}
 
 jobs:
+  is-affected:
+    outputs:
+      is-desktop-affected: ${{ steps.affected.outputs.is-package-affected }}
+    runs-on: [ubuntu-latest]
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          ref: develop
+          fetch-depth: 0
+      - name: checkout branch
+        run: |
+          git checkout ${{ github.event.pull_request.head.ref || github.event.push.base.ref }}
+      - uses: ./tools/actions/turbo-affected
+        id: affected
+        with:
+          package: "ledger-live-desktop"
+          head-ref: ${{ github.event_name == 'pull_request' && format('origin/{0}', github.event.pull_request.base.ref) || 'HEAD^' }}
+
   pr-is-fork:
     name: "Check if the PR is a fork"
+    needs: is-affected
+    if: ${{ needs.is-affected.outputs.is-desktop-affected == 'true' }}
     uses: ./.github/workflows/pr-is-fork.yml
     with:
       non-pr-result: false
@@ -160,6 +180,8 @@ jobs:
   build-desktop-app-windows:
     name: "Build Ledger Live Desktop (Windows)"
     runs-on: [ledger-live, windows]
+    needs: is-affected
+    if: ${{ needs.is-affected.outputs.is-desktop-affected == 'true' }}
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
     steps:
@@ -202,6 +224,8 @@ jobs:
 
   build-desktop-app-macos:
     name: "Build Ledger Live Desktop (Mac OS X)"
+    needs: is-affected
+    if: ${{ needs.is-affected.outputs.is-desktop-affected == 'true' }}
     runs-on: [ledger-live, macos]
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"

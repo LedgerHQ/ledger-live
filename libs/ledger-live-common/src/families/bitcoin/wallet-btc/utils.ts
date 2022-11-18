@@ -1,76 +1,9 @@
-/* eslint-disable @typescript-eslint/explicit-module-boundary-types */
-import * as bitcoin from "bitcoinjs-lib";
-import bs58 from "bs58";
-import { padStart } from "lodash";
 import { DerivationModes } from "./types";
 import { Currency, ICrypto } from "./crypto/types";
 import cryptoFactory from "./crypto/factory";
 import { fallbackValidateAddress } from "./crypto/base";
 import { UnsupportedDerivation } from "../../../errors";
 import varuint from "varuint-bitcoin";
-
-export function parseHexString(str: any): number[] {
-  const result: Array<number> = [];
-  while (str.length >= 2) {
-    result.push(parseInt(str.substring(0, 2), 16));
-    str = str.substring(2, str.length);
-  }
-  return result;
-}
-
-export function encodeBase58Check(vchIn: any): string {
-  vchIn = parseHexString(vchIn);
-  let chksum = bitcoin.crypto.sha256(Buffer.from(vchIn));
-  chksum = bitcoin.crypto.sha256(chksum);
-  chksum = chksum.slice(0, 4);
-  const hash = vchIn.concat(Array.from(chksum));
-  return bs58.encode(hash);
-}
-
-export function toHexDigit(number: any): string {
-  const digits = "0123456789abcdef";
-  return digits.charAt(number >> 4) + digits.charAt(number & 0x0f);
-}
-
-export function toHexInt(number: any): string {
-  return (
-    toHexDigit((number >> 24) & 0xff) +
-    toHexDigit((number >> 16) & 0xff) +
-    toHexDigit((number >> 8) & 0xff) +
-    toHexDigit(number & 0xff)
-  );
-}
-
-export function compressPublicKey(publicKey: any): string {
-  let compressedKeyIndex: string;
-  if (publicKey.substring(0, 2) !== "04") {
-    throw new Error("Invalid public key format");
-  }
-  if (parseInt(publicKey.substring(128, 130), 16) % 2 !== 0) {
-    compressedKeyIndex = "03";
-  } else {
-    compressedKeyIndex = "02";
-  }
-  const result = compressedKeyIndex + publicKey.substring(2, 66);
-  return result;
-}
-
-export function createXPUB(
-  depth: any,
-  fingerprint: any,
-  childnum: any,
-  chaincode: any,
-  publicKey: any,
-  network: any
-): string {
-  let xpub = toHexInt(network);
-  xpub += padStart(depth.toString(16), 2, "0");
-  xpub += padStart(fingerprint.toString(16), 8, "0");
-  xpub += padStart(childnum.toString(16), 8, "0");
-  xpub += chaincode;
-  xpub += publicKey;
-  return xpub;
-}
 
 export function byteSize(count: number): number {
   if (count < 0xfd) {

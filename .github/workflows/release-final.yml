@@ -66,17 +66,17 @@ jobs:
         id: mobile-changed
         run: |
           echo "status=$(git diff HEAD HEAD~1 ./apps/ledger-live-mobile/package.json | grep '"version": "' | wc -l)" >> $GITHUB_OUTPUT
-      - uses: ledgerhq/ledger-live/tools/actions/get-package-infos@develop
+      - uses: ./tools/actions/get-package-infos
         id: desktop-version
         with:
           path: ${{ github.workspace }}/apps/ledger-live-desktop
-      - uses: ledgerhq/ledger-live/tools/actions/get-package-infos@develop
+      - uses: ./tools/actions/get-package-infos
         id: mobile-version
         with:
           path: ${{ github.workspace }}/apps/ledger-live-mobile
       - name: generate desktop changelog
         if: ${{ steps.desktop-changed.outputs.status != 0 || github.event_name == 'workflow_dispatch' && contains(fromJson('["LLD", "ALL"]'), github.event.inputs.app) }}
-        uses: ledgerhq/ledger-live/tools/actions/generate-release-message@develop
+        uses: ./tools/actions/generate-release-message
         id: desktop-changelog
         with:
           package-path: ${{ github.workspace }}/apps/ledger-live-desktop/package.json
@@ -89,7 +89,7 @@ jobs:
           git tag @ledgerhq/live-desktop@${{ steps.desktop-version.outputs.version }}
       - name: generate mobile changelog
         if: ${{ steps.mobile-changed.outputs.status != 0 || github.event_name == 'workflow_dispatch' && contains(fromJson('["LLM", "ALL"]'), github.event.inputs.app) }}
-        uses: ledgerhq/ledger-live/tools/actions/generate-release-message@develop
+        uses: ./tools/actions/generate-release-message
         id: mobile-changelog
         with:
           package-path: ${{ github.workspace }}/apps/ledger-live-mobile/package.json

@@ -2,6 +2,7 @@ import type { DeviceAction } from "../../bot/types";
 import type { Transaction } from "./types";
 import { formatCurrencyUnit } from "../../currencies";
 import { deviceActionFlow } from "../../bot/specs";
+import { decodeTokenAccountId } from "../../account";
 import BigNumber from "bignumber.js";
 import { decodeTokenAccountId } from "../../account";
 

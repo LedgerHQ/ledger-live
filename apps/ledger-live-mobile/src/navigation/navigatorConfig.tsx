@@ -36,6 +36,7 @@ export const getStackNavigatorConfig = (
     elevation: 0, // remove shadow on Android
     shadowOpacity: 0, // remove shadow on iOS
   },
+  headerTitleAlign: "center" as const,
   headerTitleStyle: {
     color: (c as ColorV3).neutral?.c100 || (c as ColorV2).darkBlue,
   },

@@ -140,6 +140,24 @@ export const experimentalFeatures: Feature[] = [
     description: <Trans i18nKey="settings.experimental.features.forceProvider.description" />,
     minValue: 1,
   },
+  {
+    type: "toggle",
+    name: "EIP1559_MINIMUM_FEES_GATE",
+    title: <Trans i18nKey="settings.experimental.features.1559DeactivateGate.title" />,
+    description: <Trans i18nKey="settings.experimental.features.1559DeactivateGate.description" />,
+    valueOn: false,
+    valueOff: true,
+  },
+  {
+    type: "integer",
+    name: "EIP1559_PRIORITY_FEE_LOWER_GATE",
+    title: <Trans i18nKey="settings.experimental.features.1559CustomPriorityLowerGate.title" />,
+    description: (
+      <Trans i18nKey="settings.experimental.features.1559CustomPriorityLowerGate.description" />
+    ),
+    minValue: 0,
+    maxValue: 1,
+  },
 ];
 
 const lsKey = "experimentalFlags";
