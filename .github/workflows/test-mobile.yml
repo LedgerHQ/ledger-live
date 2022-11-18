@@ -1,6 +1,7 @@
 name: "[Test] Mobile App"
 
 on:
+  pull_request:
   # push:
   #   branches:
   #     - main
