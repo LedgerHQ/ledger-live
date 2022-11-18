@@ -40,6 +40,7 @@ import { decoratePromiseErrors, remapError } from "./remapErrors";
 let connectOptions: Record<string, unknown> = {
   requestMTU: 156,
   connectionPriority: 1,
+  forceDisconnectTimeout: 4000,
 };
 const transportsCache = {};
 const bleManager = new BleManager();
@@ -537,9 +538,35 @@ export default class BluetoothTransport extends Transport {
     }
   };
 
-  async close() {
+  async close(): Promise<void> {
+    // Prevent double runs
+    let alreadyDisconnected = false;
+
+    // Actually disconnect from the device onClose
+    const triggerDisconnect = () => {
+      if (!alreadyDisconnected) {
+        BluetoothTransport.disconnect(this.id); // This triggers cache cleanup above.
+        alreadyDisconnected = true;
+      }
+    };
+
+    // For cases where an exchange doesn't resolve and we triggered a `close` we
+    // introduce a timeout to forcefully disconnect in order to unblock subsequent
+    // usages of the `withDevice` logic. It's also a good practice to disconnect
+    // from the device when not actively interacting with it.
     if (this.exchangeBusyPromise) {
-      await this.exchangeBusyPromise;
+      const forceDisconnect = new Promise<void>((resolve) =>
+        setTimeout(() => {
+          triggerDisconnect();
+          resolve();
+        }, connectOptions.forceDisconnectTimeout as number)
+      );
+
+      await Promise.race([this.exchangeBusyPromise, forceDisconnect]);
+      // At this point we've either disconnected forcefully, or completed the exchange
     }
+
+    triggerDisconnect();
+    return;
   }
 }
