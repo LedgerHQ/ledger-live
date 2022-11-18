@@ -8,6 +8,7 @@ import { accountsSelector } from "../../../reducers/accounts";
 import NftGalleryEmptyState from "../NftGallery/NftGalleryEmptyState";
 import CollapsibleHeaderScrollView from "../../../components/WalletTab/CollapsibleHeaderScrollView";
 import { hiddenNftCollectionsSelector } from "../../../reducers/settings";
+import { TrackScreen } from "../../../analytics";
 
 const WalletNftGallery = () => {
   const accounts = useSelector(accountsSelector);
@@ -26,16 +27,22 @@ const WalletNftGallery = () => {
   }, [accounts, hiddenNftCollections, nfts]);
 
   const hasNFTs = nftsOrdered.length > 0;
+
   return (
-    <Box mx={6}>
-      {hasNFTs ? (
-        <NftList data={nftsOrdered} />
-      ) : (
-        <CollapsibleHeaderScrollView contentContainerStyle={{ paddingTop: 0 }}>
-          <NftGalleryEmptyState />
-        </CollapsibleHeaderScrollView>
-      )}
-    </Box>
+    <>
+      <TrackScreen name="NFT Gallery" />
+      <Box mx={6}>
+        {hasNFTs ? (
+          <NftList data={nftsOrdered} />
+        ) : (
+          <CollapsibleHeaderScrollView
+            contentContainerStyle={{ paddingTop: 0 }}
+          >
+            <NftGalleryEmptyState />
+          </CollapsibleHeaderScrollView>
+        )}
+      </Box>
+    </>
   );
 };
 

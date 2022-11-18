@@ -64,6 +64,7 @@ import type { BaseNavigatorStackParamList } from "../RootNavigator/types/BaseNav
 import { AccountsNavigatorParamList } from "../RootNavigator/types/AccountsNavigator";
 import InfoModal from "../../modals/Info";
 import { notAvailableModalInfo } from "../../screens/Nft/NftInfoNotAvailable";
+import { track, TrackScreen } from "../../analytics";
 
 type Props = CompositeScreenProps<
   | StackNavigatorProps<NftNavigatorParamList, ScreenName.NftViewer>
@@ -108,6 +109,11 @@ const Section = ({
   );
   const copy = useCallback(() => {
     if (typeof value === "undefined") return null;
+
+    track("button_clicked", {
+      button: title,
+    });
+
     Clipboard.setString(value);
     setCopied(true);
     setTimeoutFunction(
@@ -116,7 +122,7 @@ const Section = ({
       }, 3000),
     );
     return clearTimeout(timeoutFunction as TimeoutReturn);
-  }, [value, timeoutFunction]);
+  }, [value, title, timeoutFunction]);
 
   return (
     <SectionContainer>
@@ -202,6 +208,9 @@ const NftViewer = ({ route }: Props) => {
   }, [nft, currency]);
 
   const closeModal = () => {
+    track("button_clicked", {
+      button: "Close 'x'",
+    });
     setBottomModalOpen(false);
   };
 
@@ -215,6 +224,10 @@ const NftViewer = ({ route }: Props) => {
       quantities: [nftCapabilities.hasQuantity ? null : new BigNumber(1)],
       collection: nft?.contract,
       mode: `${nft?.standard?.toLowerCase()}.transfer`,
+    });
+
+    track("button_clicked", {
+      button: "Send NFT",
     });
 
     navigation.navigate(NavigatorName.SendFunds, {
@@ -305,6 +318,9 @@ const NftViewer = ({ route }: Props) => {
     setOpen(true);
   }, []);
   const onCloseModal = useCallback(() => {
+    track("button_clicked", {
+      button: "Back",
+    });
     setOpen(false);
   }, []);
   const isNFTDisabled =
@@ -312,6 +328,7 @@ const NftViewer = ({ route }: Props) => {
 
   return (
     <>
+      <TrackScreen category="NFT" />
       <InfoModal
         isOpened={isOpen}
         onClose={onCloseModal}
@@ -363,7 +380,8 @@ const NftViewer = ({ route }: Props) => {
           <Box style={styles.imageContainer} borderRadius={2} mb={8}>
             {nftMetadata?.medias && mediaType !== "video" ? (
               <TouchableOpacity
-                onPress={() =>
+                onPress={() => {
+                  track("NFT_clicked");
                   navigation.navigate(NavigatorName.NftNavigator, {
                     screen: ScreenName.NftImageViewer,
                     params: {
@@ -371,8 +389,8 @@ const NftViewer = ({ route }: Props) => {
                       mediaFormat: "original",
                       status: nftStatus,
                     },
-                  })
-                }
+                  });
+                }}
               >
                 <NftComponent />
               </TouchableOpacity>
@@ -411,7 +429,12 @@ const NftViewer = ({ route }: Props) => {
                 <Button
                   type="main"
                   Icon={Icons.OthersMedium}
-                  onPress={() => setBottomModalOpen(true)}
+                  onPress={() => {
+                    track("button_clicked", {
+                      button: "NFT Settings",
+                    });
+                    setBottomModalOpen(true);
+                  }}
                 />
               </Box>
             )}

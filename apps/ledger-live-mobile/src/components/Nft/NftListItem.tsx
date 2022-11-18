@@ -14,6 +14,7 @@ import CurrencyIcon from "../CurrencyIcon";
 import NftMedia from "./NftMedia";
 import Skeleton from "../Skeleton";
 import { NavigatorName, ScreenName } from "../../const";
+import { track } from "../../analytics";
 
 type Props = {
   nft: ProtoNFT;
@@ -48,16 +49,19 @@ const NftCardView = ({
     [nft.currencyId],
   );
 
-  const navigateToNftViewer = useCallback(
-    () =>
-      navigation.navigate(NavigatorName.NftNavigator, {
-        screen: ScreenName.NftViewer,
-        params: {
-          nft,
-        },
-      }),
-    [navigation, nft],
-  );
+  const navigateToNftViewer = useCallback(() => {
+    track("NFT_clicked", {
+      NFT_collection: metadata?.tokenName,
+      NFT_title: metadata?.nftName,
+    });
+
+    navigation.navigate(NavigatorName.NftNavigator, {
+      screen: ScreenName.NftViewer,
+      params: {
+        nft,
+      },
+    });
+  }, [metadata, navigation, nft]);
 
   return (
     <StyledTouchableOpacity bg="background.main" onPress={navigateToNftViewer}>

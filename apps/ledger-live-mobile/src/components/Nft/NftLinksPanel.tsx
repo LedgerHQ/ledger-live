@@ -112,7 +112,7 @@ const NftLinksPanel = ({
 
   const handleOpenOpenSea = useCallback(() => {
     track("button_clicked", {
-      button: "OpenOpenSea",
+      button: "OpenSea",
       drawer: "NFT settings drawer",
       url: links?.opensea,
     });
@@ -121,7 +121,7 @@ const NftLinksPanel = ({
 
   const handleOpenRarible = useCallback(() => {
     track("button_clicked", {
-      button: "OpenRarible",
+      button: "Rarible",
       drawer: "NFT settings drawer",
       url: links?.rarible,
     });
@@ -130,7 +130,7 @@ const NftLinksPanel = ({
 
   const handleOpenExplorer = useCallback(() => {
     track("button_clicked", {
-      button: "OpenExplorer",
+      button: "View in Explorer",
       drawer: "NFT settings drawer",
       url: links?.explorer,
     });
@@ -138,6 +138,10 @@ const NftLinksPanel = ({
   }, [links?.explorer]);
 
   const hide = useCallback(() => {
+    track("button_clicked", {
+      button: "Hide NFT Collection",
+      drawer: "NFT settings drawer",
+    });
     setBottomHideCollectionOpen(true);
   }, []);
 
