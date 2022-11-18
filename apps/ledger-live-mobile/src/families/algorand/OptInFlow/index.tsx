@@ -15,6 +15,7 @@ import OptInConnectDevice from "../../../screens/ConnectDevice";
 import OptInValidation from "./03-Validation";
 import OptInValidationError from "./03-ValidationError";
 import OptInValidationSuccess from "./03-ValidationSuccess";
+import type { AlgorandOptInFlowParamList } from "./types";
 
 function OptInFlow() {
   const { t } = useTranslation();
@@ -84,7 +85,7 @@ function OptInFlow() {
         }}
       />
       <Stack.Screen
-        name={ScreenName.AlgorandOptInValidation}
+        name={ScreenName.AlgorandOptInSummary}
         component={OptInValidation}
         options={{
           headerTitle: () => (
@@ -96,8 +97,8 @@ function OptInFlow() {
               })}
             />
           ),
-          headerLeft: null,
-          headerRight: null,
+          headerLeft: undefined,
+          headerRight: undefined,
           gestureEnabled: false,
         }}
       />
@@ -125,4 +126,4 @@ const options = {
   headerShown: false,
 };
 export { OptInFlow as component, options };
-const Stack = createStackNavigator();
+const Stack = createStackNavigator<AlgorandOptInFlowParamList>();

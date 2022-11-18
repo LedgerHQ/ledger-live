@@ -7,13 +7,12 @@ import {
 } from "@ledgerhq/live-common/bridge/react/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { isNftTransaction } from "@ledgerhq/live-common/nft/index";
-import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import React, { useCallback, useRef, useEffect, useState } from "react";
 import { Trans, useTranslation } from "react-i18next";
 import { Platform, StyleSheet, View } from "react-native";
 import Clipboard from "@react-native-community/clipboard";
-import Icon from "react-native-vector-icons/dist/FontAwesome";
-import SafeAreaView from "react-native-safe-area-view";
+import Icon from "react-native-vector-icons/FontAwesome";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { useSelector } from "react-redux";
 import { useTheme } from "@react-navigation/native";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/helpers";
@@ -30,25 +29,22 @@ import CancelButton from "../../components/CancelButton";
 import GenericErrorBottomModal from "../../components/GenericErrorBottomModal";
 import NavigationScrollView from "../../components/NavigationScrollView";
 import RecipientInput from "../../components/RecipientInput";
+import {
+  BaseComposite,
+  StackNavigatorProps,
+} from "../../components/RootNavigator/types/helpers";
+import { SendFundsNavigatorStackParamList } from "../../components/RootNavigator/types/SendFundsNavigator";
 
-const withoutHiddenError = error =>
+const withoutHiddenError = (error: Error) =>
   error instanceof RecipientRequired ? null : error;
 
-const forceInset = {
-  bottom: "always",
-};
-type Props = {
-  navigation: any;
-  route: {
-    params: RouteParams;
-  };
-};
-type RouteParams = {
-  accountId: string;
-  parentId: string;
-  transaction: Transaction;
-  justScanned?: boolean;
-};
+type Props = BaseComposite<
+  StackNavigatorProps<
+    SendFundsNavigatorStackParamList,
+    ScreenName.SendSelectRecipient
+  >
+>;
+
 export default function SendSelectRecipient({ navigation, route }: Props) {
   const { colors } = useTheme();
   const { t } = useTranslation();
@@ -59,7 +55,9 @@ export default function SendSelectRecipient({ navigation, route }: Props) {
       parentAccount,
     }));
   const shouldSkipAmount =
-    transaction.family === "ethereum" && transaction.mode === "erc721.transfer";
+    transaction?.family === "ethereum" &&
+    transaction?.mode === "erc721.transfer";
+
   const isNftSend = isNftTransaction(transaction);
   // handle changes from camera qr code
   const initialTransaction = useRef(transaction);
@@ -76,7 +74,9 @@ export default function SendSelectRecipient({ navigation, route }: Props) {
     track("SendRecipientFieldFocused");
   }, []);
   const onPressScan = useCallback(() => {
-    navigation.navigate(ScreenName.ScanRecipient, {
+    if (!transaction) return null;
+    return navigation.navigate(ScreenName.ScanRecipient, {
+      ...route.params,
       accountId: route.params?.accountId,
       parentId: route.params?.parentId,
       transaction,
@@ -94,7 +94,8 @@ export default function SendSelectRecipient({ navigation, route }: Props) {
     },
     [account, parentAccount, setTransaction, transaction],
   );
-  const clear = useCallback(() => onChangeText(""), [onChangeText]);
+  // FIXME: PROP IS NOT USED. REMOVE ?
+  // const clear = useCallback(() => onChangeText(""), [onChangeText]);
   const [bridgeErr, setBridgeErr] = useState(bridgeError);
   useEffect(() => setBridgeErr(bridgeError), [bridgeError]);
   invariant(account, "account is needed ");
@@ -111,37 +112,41 @@ export default function SendSelectRecipient({ navigation, route }: Props) {
     setTransaction(bridge.updateTransaction(transaction, {}));
   }, [setTransaction, account, parentAccount, transaction]);
   const onPressContinue = useCallback(async () => {
+    if (!account || !transaction) return null;
     // ERC721 transactions are always sending 1 NFT, so amount step is unecessary
     if (shouldSkipAmount) {
       return navigation.navigate(ScreenName.SendSummary, {
+        ...route.params,
         accountId: account.id,
-        parentId: parentAccount && parentAccount.id,
+        parentId: parentAccount?.id,
         transaction,
+        currentNavigation: ScreenName.SendSummary,
+        nextNavigation: ScreenName.SendSelectDevice,
       });
     }
 
     if (isNftSend) {
       return navigation.navigate(ScreenName.SendAmountNft, {
         accountId: account.id,
-        parentId: parentAccount && parentAccount.id,
+        parentId: parentAccount?.id,
         transaction,
       });
     }
 
     return navigation.navigate(ScreenName.SendAmountCoin, {
       accountId: account.id,
-      parentId: parentAccount && parentAccount.id,
+      parentId: parentAccount?.id,
       transaction,
     });
   }, [
+    account,
+    transaction,
     shouldSkipAmount,
     isNftSend,
     navigation,
-    account,
-    parentAccount,
-    transaction,
+    parentAccount?.id,
+    route.params,
   ]);
-  const input = React.createRef();
   if (!account || !transaction) return null;
   const error = withoutHiddenError(status.errors.recipient);
   const warning = status.warnings.recipient;
@@ -154,7 +159,6 @@ export default function SendSelectRecipient({ navigation, route }: Props) {
             backgroundColor: colors.background,
           },
         ]}
-        forceInset={forceInset}
       >
         <TrackScreen
           category="SendFunds"
@@ -215,9 +219,9 @@ export default function SendSelectRecipient({ navigation, route }: Props) {
                 }}
                 onFocus={onRecipientFieldFocus}
                 onChangeText={onChangeText}
-                onInputCleared={clear}
+                // FIXME: onInputCleared PROP DOES NOT EXISTS
+                // onInputCleared={clear}
                 value={transaction.recipient}
-                ref={input}
               />
             </View>
             {(error || warning) && (
@@ -269,9 +273,13 @@ export default function SendSelectRecipient({ navigation, route }: Props) {
   );
 }
 
-const IconQRCode = ({ size, color }: { size: number; color: string }) => (
-  <Icon name="qrcode" size={size} color={color} />
-);
+const IconQRCode = ({
+  size = 16,
+  color,
+}: {
+  size?: number;
+  color?: string;
+}) => <Icon name="qrcode" size={size} color={color} />;
 
 const styles = StyleSheet.create({
   root: {

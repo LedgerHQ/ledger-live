@@ -7,8 +7,6 @@ import { withTheme } from "../colors";
 type Props = {
   children: React.ReactNode;
   value: string;
-  // String to be shared
-  colors: any;
 };
 
 class ShareLink extends PureComponent<Props> {

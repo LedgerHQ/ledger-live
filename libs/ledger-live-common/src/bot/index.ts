@@ -9,7 +9,14 @@ import invariant from "invariant";
 import flatMap from "lodash/flatMap";
 import { getEnv } from "../env";
 import allSpecs from "../generated/specs";
-import type { AppSpec, MutationReport, SpecReport } from "./types";
+import type {
+  AppSpec,
+  MutationReport,
+  MinimalSerializedMutationReport,
+  MinimalSerializedReport,
+  MinimalSerializedSpecReport,
+  SpecReport,
+} from "./types";
 import { promiseAllBatched } from "../promise";
 import {
   findCryptoCurrencyByKeyword,
@@ -28,6 +35,8 @@ import {
 import { getPortfolio } from "../portfolio/v2";
 import { Account } from "@ledgerhq/types-live";
 import { getContext } from "./bot-test-context";
+import { Transaction } from "../generated/types";
+import { sha256 } from "../crypto";
 
 type Arg = Partial<{
   currency: string;
@@ -35,6 +44,52 @@ type Arg = Partial<{
   mutation: string;
 }>;
 const usd = getFiatCurrencyByTicker("USD");
+
+function convertMutation<T extends Transaction>(
+  report: MutationReport<T>
+): MinimalSerializedMutationReport {
+  const { appCandidate, mutation, account, destination, error, operation } =
+    report;
+  return {
+    appCandidate,
+    mutationName: mutation?.name,
+    accountId: account?.id,
+    destinationId: destination?.id,
+    operationId: operation?.id,
+    error: error ? formatError(error) : undefined,
+  };
+}
+
+function convertSpecReport<T extends Transaction>(
+  result: SpecReport<T>
+): MinimalSerializedSpecReport {
+  const accounts = result.accountsAfter?.map((a) => {
+    // remove the "expensive" data fields
+    const raw = toAccountRaw(a);
+    raw.operations = [];
+    delete raw.balanceHistoryCache;
+    if (raw.subAccounts) {
+      raw.subAccounts.forEach((a) => {
+        a.operations = [];
+        delete a.balanceHistoryCache;
+      });
+    }
+    const unsafe = raw as any;
+    if (unsafe.bitcoinResources) {
+      delete unsafe.bitcoinResources.walletAccount;
+    }
+    return raw;
+  });
+  const mutations = result.mutations?.map(convertMutation);
+  return {
+    specName: result.spec.name,
+    fatalError: result.fatalError ? formatError(result.fatalError) : undefined,
+    accounts,
+    mutations,
+    existingMutationNames: result.spec.mutations.map((m) => m.name),
+    hintWarnings: result.hintWarnings,
+  };
+}
 
 function makeAppJSON(accounts: Account[]) {
   const jsondata = {
@@ -104,14 +159,17 @@ export async function bot({
         log("bot", message);
         if (process.env.CI) console.log(message);
         logs.push(message);
-      }).catch((fatalError) => ({
-        spec,
-        fatalError,
-        mutations: [],
-        accountsBefore: [],
-        accountsAfter: [],
-        hintWarnings: [],
-      }));
+      }).catch(
+        (fatalError): SpecReport<any> => ({
+          spec,
+          fatalError,
+          mutations: [],
+          accountsBefore: [],
+          accountsAfter: [],
+          hintWarnings: [],
+          skipMutationsTimeoutReached: false,
+        })
+      );
     }
   );
   const totalDuration = Date.now() - timeBefore;
@@ -340,6 +398,10 @@ export async function bot({
     slackBody += warn;
   }
 
+  appendBody(
+    "\n> What is the bot and how does it work? [Everything is documented here!](https://github.com/LedgerHQ/ledger-live/wiki/LLC:bot)\n\n"
+  );
+
   appendBody("\n\n");
 
   if (specFatals.length) {
@@ -461,8 +523,8 @@ export async function bot({
       totalUSD ? " (" + totalUSD + ")" : ""
     } – Details of the ${results.length} currencies</summary>\n\n`
   );
-  appendBody("| Spec (accounts) | Operations | Balance | funds? |\n");
-  appendBody("|-----------------|------------|---------|--------|\n");
+  appendBody("| Spec (accounts) | State | Remaining Runs (est) | funds? |\n");
+  appendBody("|-----------------|-------|----------------------|--------|\n");
   results.forEach((r) => {
     function sumAccounts(all) {
       if (!all || all.length === 0) return;
@@ -472,8 +534,9 @@ export async function bot({
       );
     }
 
-    const accountsBeforeBalance = sumAccounts(r.accountsBefore);
-    const accountsAfterBalance = sumAccounts(r.accountsAfter);
+    const { accountsBefore } = r;
+
+    const accountsBeforeBalance = sumAccounts(accountsBefore);
     let balance = !accountsBeforeBalance
       ? "🤷‍♂️"
       : "**" +
@@ -481,21 +544,31 @@ export async function bot({
           showCode: true,
         }) +
         "**";
-    let etaTxs =
-      r.mutations && r.mutations.every((m) => !m.mutation) ? "❌" : "???";
 
-    if (
-      accountsBeforeBalance &&
-      accountsAfterBalance &&
-      accountsAfterBalance.lt(accountsBeforeBalance)
-    ) {
-      const txCount = r.mutations
-        ? r.mutations.filter((m) => m.operation).length
-        : 0;
-      const d = accountsBeforeBalance.minus(accountsAfterBalance);
-      balance += " (- " + formatCurrencyUnit(r.spec.currency.units[0], d) + ")";
-      const eta = accountsAfterBalance.div(d.div(txCount)).integerValue();
-      etaTxs = eta.lt(50) ? "⚠️" : eta.lt(500) ? "👍" : "💪";
+    let eta = 0;
+    let etaEmoji = "❌";
+    const accounts = r.accountsAfter || r.accountsBefore || [];
+    const operations = flatMap(accounts, (a) => a.operations).sort((a, b) =>
+      a.fee.minus(b.fee).toNumber()
+    );
+    const avgOperationFee = operations
+      .reduce((sum, o) => sum.plus(o.fee || 0), new BigNumber(0))
+      .div(operations.length);
+    // const medianOperation = operations[Math.floor(operations.length / 2)];
+    const maxRuns = r.spec.mutations.reduce((sum, m) => sum + m.maxRun || 1, 0);
+    if (avgOperationFee.gt(0) && maxRuns > 0) {
+      const spendableBalanceSum = accounts.reduce(
+        (sum, a) =>
+          sum.plus(
+            BigNumber.max(
+              a.spendableBalance.minus(r.spec.minViableAmount || 0),
+              0
+            )
+          ),
+        new BigNumber(0)
+      );
+      eta = spendableBalanceSum.div(avgOperationFee).div(maxRuns).toNumber();
+      etaEmoji = eta < 50 ? "⚠️" : eta < 500 ? "👍" : "💪";
     }
 
     if (countervaluesState && r.accountsAfter) {
@@ -528,18 +601,17 @@ export async function bot({
 
     const beforeOps = countOps(r.accountsBefore);
     const afterOps = countOps(r.accountsAfter);
-    const accounts = r.accountsAfter || r.accountsBefore || [];
     const firstAccount = accounts[0];
-    appendBody(`| ${r.spec.name} (${accounts.filter((a) => a.used).length}) `);
+    appendBody(`| ${r.spec.name} (${accounts.length}) `);
     appendBody(
-      `| ${afterOps || beforeOps}${
+      `| ${afterOps || beforeOps} ops ${
         afterOps > beforeOps ? ` (+${afterOps - beforeOps})` : ""
-      } `
+      }, ${balance} `
     );
-    appendBody(`| ${balance} `);
     appendBody(
-      `| ${etaTxs} ${(firstAccount && firstAccount.freshAddress) || ""} `
+      `| ${etaEmoji} ${!eta ? "" : eta > 999 ? "999+" : Math.round(eta)} `
     );
+    appendBody(`| \`${(firstAccount && firstAccount.freshAddress) || ""}\` `);
     appendBody("|\n");
   });
 
@@ -666,13 +738,23 @@ export async function bot({
 
   appendBody("\n</details>\n\n");
 
-  const { BOT_REPORT_FOLDER } = process.env;
+  appendBody(
+    "\n> What is the bot and how does it work? [Everything is documented here!](https://github.com/LedgerHQ/ledger-live/wiki/LLC:bot)\n\n"
+  );
+
+  const { BOT_REPORT_FOLDER, BOT_ENVIRONMENT } = process.env;
 
   const slackCommentTemplate = `${String(
     GITHUB_WORKFLOW
   )}: ${title} (<{{url}}|details> – <${runURL}|logs>)\n${subtitle}${slackBody}`;
 
   if (BOT_REPORT_FOLDER) {
+    const serializedReport: MinimalSerializedReport = {
+      results: results.map(convertSpecReport),
+      environment: BOT_ENVIRONMENT,
+      seedHash: sha256(getEnv("SEED")),
+    };
+
     await Promise.all([
       fs.promises.writeFile(
         path.join(BOT_REPORT_FOLDER, "github-report.md"),
@@ -697,6 +779,11 @@ export async function bot({
       fs.promises.writeFile(
         path.join(BOT_REPORT_FOLDER, "coin-apps.json"),
         JSON.stringify(allAppPaths),
+        "utf-8"
+      ),
+      fs.promises.writeFile(
+        path.join(BOT_REPORT_FOLDER, "report.json"),
+        JSON.stringify(serializedReport),
         "utf-8"
       ),
     ]);

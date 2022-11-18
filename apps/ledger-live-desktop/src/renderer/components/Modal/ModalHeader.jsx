@@ -115,9 +115,7 @@ const ModalHeader = ({
       {onBack ? (
         <ModalHeaderAction onClick={onBack} data-test-id="modal-back-button">
           <IconAngleLeft size={12} />
-          {backButtonComponent ? (
-            backButtonComponent
-          ) : (
+          {backButtonComponent || (
             <Text ff="Inter|Medium" fontSize={4} color="palette.text.shade40">
               {t("common.back")}
             </Text>

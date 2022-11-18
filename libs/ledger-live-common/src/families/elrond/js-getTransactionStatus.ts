@@ -6,6 +6,7 @@ import {
   FeeNotLoaded,
   InvalidAddressBecauseDestinationIsAlsoSource,
   FeeTooHigh,
+  AmountRequired,
 } from "@ledgerhq/errors";
 import type { Account } from "@ledgerhq/types-live";
 import type { Transaction, TransactionStatus } from "./types";
@@ -34,6 +35,10 @@ const getTransactionStatus = async (
   const estimatedFees = t.fees || new BigNumber(0);
   if (estimatedFees.gt(a.balance)) {
     errors.amount = new NotEnoughBalance();
+  }
+
+  if (!errors.amount && t.amount.eq(0)) {
+    errors.amount = new AmountRequired();
   }
 
   const totalSpent = useAllAmount

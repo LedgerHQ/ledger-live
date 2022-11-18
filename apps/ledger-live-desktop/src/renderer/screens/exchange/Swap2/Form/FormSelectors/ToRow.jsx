@@ -17,7 +17,7 @@ import type {
   SwapSelectorStateType,
   SwapTransactionType,
   SwapDataType,
-} from "@ledgerhq/live-common/exchange/swap/hooks/index";
+} from "@ledgerhq/live-common/exchange/swap/types";
 import {
   Container as InputContainer,
   BaseContainer as BaseInputContainer,

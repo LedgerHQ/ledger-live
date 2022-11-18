@@ -2,12 +2,11 @@ import React, { useMemo, memo } from "react";
 import { Text } from "@ledgerhq/native-ui";
 import { BaseTextProps } from "@ledgerhq/native-ui/components/Text";
 import { FontWeightTypes } from "@ledgerhq/native-ui/components/Text/getTextStyle";
-// eslint-disable-next-line import/no-unresolved
 import getFontStyle from "./getFontStyle";
 
 export { getFontStyle };
 
-export type Opts = BaseTextProps & {
+export type Opts = Omit<BaseTextProps, "children"> & {
   bold?: boolean;
   semiBold?: boolean;
   secondary?: boolean;
@@ -50,7 +49,7 @@ const inferFontWeight = ({
 };
 
 /**
- * This component is just a proxy to the Text component defined in @ledgerhq/react-ui.
+ * This component is just a proxy to the Text component defined in @ledgerhq/native-ui.
  * It should only be used to map legacy props/logic from LLM to the new text component.
  *
  * @deprecated Please, prefer using the Text component from our design-system if possible.

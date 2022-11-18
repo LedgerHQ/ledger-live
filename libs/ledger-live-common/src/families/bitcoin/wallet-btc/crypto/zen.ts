@@ -1,6 +1,5 @@
 import bs58check from "bs58check";
 import { InvalidAddress } from "@ledgerhq/errors";
-import { DerivationModes } from "../types";
 import Base from "./base";
 import * as bjs from "bitcoinjs-lib";
 
@@ -34,18 +33,11 @@ class Zen extends Base {
     this.network.usesTimestampedTransaction = false;
   }
 
-  // eslint-disable-next-line
-  baddrToTaddr(baddrStr: string) {
-    const baddr = bs58check.decode(baddrStr).slice(1);
-    const taddr = new Uint8Array(22);
-    taddr.set(baddr, 2);
-    // refer to https://github.com/HorizenOfficial/zen/blob/61a80eefbf08ac1c5625113deeeba61ba93f6eab/src/chainparams.cpp#L118
-    taddr.set([0x20, 0x89], 0);
-    return bs58check.encode(Buffer.from(taddr));
-  }
-
-  // eslint-disable-next-line
-  async getLegacyAddress(xpub: string, account: number, index: number): Promise<string> {
+  async getLegacyAddress(
+    xpub: string,
+    account: number,
+    index: number
+  ): Promise<string> {
     const pk = bjs.crypto.hash160(await this.getPubkeyAt(xpub, account, index));
     const payload = Buffer.allocUnsafe(22);
     payload.writeUInt16BE(this.network.pubKeyHash, 0);
@@ -62,12 +54,7 @@ class Zen extends Base {
     return await this.getLegacyAddress(xpub, account, index);
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  getDerivationMode(address: string) {
-    return DerivationModes.LEGACY;
-  }
-
-  toOutputScript(address: string) {
+  toOutputScript(address: string): Buffer {
     if (!this.validateAddress(address)) {
       throw new InvalidAddress();
     }
@@ -96,7 +83,6 @@ class Zen extends Base {
     return Buffer.concat([outputScript, bip115Script]);
   }
 
-  // eslint-disable-next-line class-methods-use-this
   validateAddress(address: string): boolean {
     const res = bs58check.decodeUnsafe(address);
     if (!res) return false;

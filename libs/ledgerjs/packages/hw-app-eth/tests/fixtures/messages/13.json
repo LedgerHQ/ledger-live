@@ -1,0 +1,98 @@
+{
+  "domain": {
+    "chainId": 1,
+    "name": "Signed Ints test",
+    "verifyingContract": "0xCcCCccccCCCCcCCCCCCcCcCccCcCCCcCcccccccC",
+    "version": "1"
+  },
+  "message": {
+    "max": "115792089237316195423570985008687907853269984665640564039457584007913129639935",
+    "neg256": "-57896044618658097711785492504343953926634992332820282019728792003956564819968",
+    "pos256": "57896044618658097711785492504343953926634992332820282019728792003956564819967",
+    "neg128": "-170141183460469231731687303715884105728",
+    "pos128": "170141183460469231731687303715884105727",
+    "neg64": "-9223372036854775808",
+    "pos64": "9223372036854775807",
+    "neg32": "-2147483648",
+    "pos32": "2147483647",
+    "neg16": "-32768",
+    "pos16": "32767",
+    "neg8": "-128",
+    "pos8": "127"
+  },
+  "primaryType": "Test",
+  "types": {
+    "EIP712Domain": [
+      {
+        "name": "name",
+        "type": "string"
+      },
+      {
+        "name": "version",
+        "type": "string"
+      },
+      {
+        "name": "chainId",
+        "type": "uint256"
+      },
+      {
+        "name": "verifyingContract",
+        "type": "address"
+      }
+    ],
+    "Test": [
+      {
+        "name": "max",
+        "type": "uint256"
+      },
+      {
+        "name": "neg256",
+        "type": "int256"
+      },
+      {
+        "name": "pos256",
+        "type": "int256"
+      },
+      {
+        "name": "neg128",
+        "type": "int128"
+      },
+      {
+        "name": "pos128",
+        "type": "int128"
+      },
+      {
+        "name": "neg64",
+        "type": "int64"
+      },
+      {
+        "name": "pos64",
+        "type": "int64"
+      },
+      {
+        "name": "neg32",
+        "type": "int32"
+      },
+      {
+        "name": "pos32",
+        "type": "int32"
+      },
+      {
+        "name": "neg16",
+        "type": "int16"
+      },
+      {
+        "name": "pos16",
+        "type": "int16"
+      },
+      {
+        "name": "neg8",
+        "type": "int8"
+      },
+      {
+        "name": "pos8",
+        "type": "int8"
+      }
+    ]
+  }
+}

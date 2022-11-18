@@ -1,8 +1,11 @@
 import React, { useCallback } from "react";
 import { Trans } from "react-i18next";
 import { StyleSheet, View } from "react-native";
-import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import { useTheme } from "@react-navigation/native";
+import type {
+  CryptoCurrency,
+  CryptoOrTokenCurrency,
+} from "@ledgerhq/types-cryptoassets";
+import { CompositeScreenProps, useTheme } from "@react-navigation/native";
 import { Icons } from "@ledgerhq/native-ui";
 import { ScreenName, NavigatorName } from "../../const";
 import { rgba } from "../../colors";
@@ -10,34 +13,30 @@ import { TrackScreen } from "../../analytics";
 import LText from "../../components/LText";
 import Button from "../../components/Button";
 import IconCheck from "../../icons/Check";
-import CurrencyIcon from "../../components/CurrencyIcon";
+import ParentCurrencyIcon from "../../components/ParentCurrencyIcon";
+import type { StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
+import type { AddAccountsNavigatorParamList } from "../../components/RootNavigator/types/AddAccountsNavigator";
+import { BaseNavigatorStackParamList } from "../../components/RootNavigator/types/BaseNavigator";
 
-type Props = {
-  navigation: any;
-  route: {
-    params: RouteParams;
-  };
-};
-type RouteParams = {
-  currency: CryptoCurrency;
-  deviceId: string;
-};
+type Props = CompositeScreenProps<
+  StackNavigatorProps<
+    AddAccountsNavigatorParamList,
+    ScreenName.AddAccountsSuccess
+  >,
+  StackNavigatorProps<BaseNavigatorStackParamList>
+>;
+
 export default function AddAccountsSuccess({ navigation, route }: Props) {
   const { colors } = useTheme();
-  const currency = route.params.currency;
+  const currency = route.params?.currency;
   const primaryCTA = useCallback(() => {
-    navigation.replace(NavigatorName.Main, {
-      screen: NavigatorName.Portfolio,
-      params: {
-        screen: NavigatorName.PortfolioAccounts,
+    currency &&
+      navigation.replace(NavigatorName.Accounts, {
+        screen: ScreenName.Asset,
         params: {
-          screen: ScreenName.Accounts,
-          params: {
-            search: currency.name,
-          },
+          currency,
         },
-      },
-    });
+      });
   }, [currency, navigation]);
   const secondaryCTA = useCallback(() => {
     navigation.navigate(ScreenName.AddAccountsSelectCrypto);
@@ -54,9 +53,9 @@ export default function AddAccountsSuccess({ navigation, route }: Props) {
       <TrackScreen
         category="AddAccounts"
         name="Success"
-        currencyName={currency.name}
+        currencyName={currency?.name}
       />
-      <CurrencySuccess currency={currency} />
+      {currency ? <CurrencySuccess currency={currency} /> : null}
       <LText secondary semiBold style={styles.title}>
         <Trans i18nKey="addAccounts.imported" />
       </LText>
@@ -81,7 +80,7 @@ export default function AddAccountsSuccess({ navigation, route }: Props) {
   );
 }
 type CurrencySuccessProps = {
-  currency: CryptoCurrency;
+  currency: CryptoOrTokenCurrency;
 };
 
 function CurrencySuccess({ currency }: CurrencySuccessProps) {
@@ -91,10 +90,11 @@ function CurrencySuccess({ currency }: CurrencySuccessProps) {
       style={[
         styles.currencySuccess,
         {
-          backgroundColor: rgba(currency.color, 0.14),
+          backgroundColor: rgba((currency as CryptoCurrency).color, 0.14),
         },
       ]}
     >
+      <ParentCurrencyIcon currency={currency} size={80} />
       <View
         style={[
           styles.outer,
@@ -114,7 +114,6 @@ function CurrencySuccess({ currency }: CurrencySuccessProps) {
           <IconCheck size={16} color="white" />
         </View>
       </View>
-      <CurrencyIcon currency={currency} size={32} />
     </View>
   );
 }

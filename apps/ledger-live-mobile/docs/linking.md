@@ -7,13 +7,25 @@ They all are prefixed by **_ledgerlive://_**
 
   `ledgerlive://` _or_ `ledgerlive://portfolio`
 
+  Account page accessible via several deeplinks
+
+- **_accounts?id_** 🠒 Accounts page
+
+  `ledgerlive://accounts` will redirect to accounts page
+
+  `ledgerlive://accounts?currency=ethereum&address={{eth_account_address}}` will open a given ethereum account if found, will falback to the currency page found and if not to the list of accounts
+
+  `?currency` param can be name or ticker of the currency targeted
+  `?address` param requires currency to work, address of the account to select
+
 - **_account?currency_** 🠒 Account Page
 
   `ledgerlive://account` will redirect to accounts page
 
-  `ledgerlive://account?currency=btc` will open first bitcoin account found
+  `ledgerlive://account?currency=ethereum&address={{eth_account_address}}` will open a given ethereum account if found, will falback to the currency page found and if not to the list of accounts
 
   `?currency` param can be name or ticker of the currency targeted
+  `?address` param requires currency to work, address of the account to select
 
 - **_send?currency_** 🠒 Send Flow
 
@@ -39,15 +51,20 @@ They all are prefixed by **_ledgerlive://_**
 
   `ledgerlive://sell/bitcoin` will redirect to sell page with bitcoin accounts search prefilled
 
-- **_manager_** 🠒 Manager page
+- **_myledger_** 🠒 MyLedger page
 
-  `ledgerlive://manager` will redirect to manager page
+  `ledgerlive://myledger` will redirect to myledger page
 
-  `ledgerlive://manager?installApp=bitcoin` will redirect to manager page with "bitcoin" app search prefilled
+  `ledgerlive://myledger?installApp=bitcoin` will redirect to myledger page with "bitcoin" app search prefilled
 
 - **_swap_** 🠒 Swap Crypto Flow
 
   `ledgerlive://swap` will redirect to swap page
+
+- **_add_account?currency_** 🠒 Add Account Crypto Flow
+
+  `ledgerlive://add-account` will redirect to add account page
+  `ledgerlive://add-account?currency=ethereum` will redirect to add account page with ethereum accounts search prefilled
 
 - **_discover_** 🠒 Live discover catalog
 

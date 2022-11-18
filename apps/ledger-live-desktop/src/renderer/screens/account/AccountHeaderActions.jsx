@@ -27,7 +27,6 @@ import perFamilyAccountActions from "~/renderer/generated/accountActions";
 import perFamilyManageActions from "~/renderer/generated/AccountHeaderManageActions";
 import useTheme from "~/renderer/hooks/useTheme";
 import IconAccountSettings from "~/renderer/icons/AccountSettings";
-import IconCoins from "~/renderer/icons/ClaimReward";
 import Graph from "~/renderer/icons/Graph";
 import IconWalletConnect from "~/renderer/icons/WalletConnect";
 import { useProviders } from "~/renderer/screens/exchange/Swap2/Form";
@@ -88,12 +87,29 @@ type Props = {
 } & OwnProps;
 
 const AccountHeaderSettingsButtonComponent = ({ account, parentAccount, openModal, t }: Props) => {
+  const mainAccount = getMainAccount(account, parentAccount);
   const currency = getAccountCurrency(account);
+  const history = useHistory();
+
+  const walletConnectLiveApp = useFeature("walletConnectLiveApp");
 
   const onWalletConnect = useCallback(() => {
     setTrackingSource("account header actions");
     openModal("MODAL_WALLETCONNECT_PASTE_LINK", { account });
   }, [openModal, account]);
+
+  const onWalletConnectLiveApp = useCallback(() => {
+    setTrackingSource("account header actions");
+
+    const params = {
+      initialAccountId: mainAccount.id,
+    };
+
+    history.push({
+      pathname: "/platform/ledger-wallet-connect",
+      state: params,
+    });
+  }, [mainAccount.id, history]);
 
   return (
     <Box horizontal alignItems="center" justifyContent="flex-end" flow={2}>
@@ -107,7 +123,9 @@ const AccountHeaderSettingsButtonComponent = ({ account, parentAccount, openModa
       </Tooltip>
       {["ethereum", "bsc", "polygon"].includes(currency.id) ? (
         <Tooltip content={t("walletconnect.titleAccount")}>
-          <ButtonSettings onClick={onWalletConnect}>
+          <ButtonSettings
+            onClick={walletConnectLiveApp?.enabled ? onWalletConnectLiveApp : onWalletConnect}
+          >
             <Box justifyContent="center">
               <IconWalletConnect size={14} />
             </Box>
@@ -231,12 +249,6 @@ const AccountHeaderActions = ({ account, parentAccount, openModal }: Props) => {
     });
   }, [currency, history, account, parentAccount]);
 
-  const onPlatformStake = useCallback(() => {
-    setTrackingSource("account header actions");
-
-    history.push({ pathname: "/platform/lido", state: { accountId: account.id } });
-  }, [history, account]);
-
   const onSend = useCallback(() => {
     openModal("MODAL_SEND", { parentAccount, account });
   }, [parentAccount, account, openModal]);
@@ -285,17 +297,6 @@ const AccountHeaderActions = ({ account, parentAccount, openModal }: Props) => {
             eventProperties: { currencyName: currency.name },
             icon: Graph,
             label: <Trans i18nKey="lend.manage.cta" />,
-          },
-        ]
-      : []),
-    ...(currency.id === "ethereum"
-      ? [
-          {
-            key: "Stake",
-            onClick: onPlatformStake,
-            event: "Eth Stake Account Button",
-            icon: IconCoins,
-            label: <Trans i18nKey="account.stake" values={{ currency: currency.name }} />,
           },
         ]
       : []),

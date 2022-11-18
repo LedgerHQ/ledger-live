@@ -11,9 +11,11 @@ import { ScrollView } from "react-native";
 export function InjectedCodeDebugger({
   injectedCode,
   debug,
+  filename = "imageProcessing.ts",
 }: {
   injectedCode: string;
   debug?: boolean;
+  filename?: string;
 }) {
   const [sourceVisible, setSourceVisible] = useState(false);
   const toggleShowSource = useCallback(() => {
@@ -41,7 +43,7 @@ export function InjectedCodeDebugger({
       {warningVisible && (
         <Alert
           type="error"
-          title="Injected code not properly stringified, please save the file containing the injected code (in .../injectedCode/) to trigger a hot reload & it will work fine"
+          title={`Injected code not properly stringified.\n\nSave the injected code file to trigger a hot reload and it will work:\n\n\t(...)/injectedCode/${filename}`}
         />
       )}
     </>

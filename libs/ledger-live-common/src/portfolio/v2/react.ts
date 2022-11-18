@@ -6,6 +6,10 @@ import type {
 import type {
   Account,
   AccountLike,
+  AccountPortfolio,
+  AssetsDistribution,
+  CurrencyPortfolio,
+  Portfolio,
   PortfolioRange,
 } from "@ledgerhq/types-live";
 import { getAccountCurrency, flattenAccounts } from "../../account";
@@ -16,6 +20,7 @@ import {
   getCurrencyPortfolio,
   getAssetsDistribution,
   getPortfolioCount,
+  GetPortfolioOptionsType,
 } from "./";
 export function useBalanceHistoryWithCountervalue({
   account,
@@ -25,7 +30,7 @@ export function useBalanceHistoryWithCountervalue({
   account: AccountLike;
   range: PortfolioRange;
   to: Currency;
-}) {
+}): AccountPortfolio {
   const state = useCountervaluesState();
   const count = getPortfolioCount([account], range);
   return getBalanceHistoryWithCountervalue(account, range, count, state, to);
@@ -34,13 +39,15 @@ export function usePortfolio({
   accounts,
   range,
   to,
+  options,
 }: {
-  accounts: Account[];
+  accounts: AccountLike[];
   range: PortfolioRange;
   to: Currency;
-}) {
+  options?: GetPortfolioOptionsType;
+}): Portfolio {
   const state = useCountervaluesState();
-  return getPortfolio(accounts, range, state, to);
+  return getPortfolio(accounts, range, state, to, options);
 }
 export function useCurrencyPortfolio({
   accounts: rawAccounts,
@@ -52,7 +59,7 @@ export function useCurrencyPortfolio({
   range: PortfolioRange;
   to: Currency;
   currency: CryptoCurrency | TokenCurrency;
-}) {
+}): CurrencyPortfolio {
   const accounts = flattenAccounts(rawAccounts).filter(
     (a) => getAccountCurrency(a) === currency
   );
@@ -62,14 +69,20 @@ export function useCurrencyPortfolio({
 export function useDistribution({
   accounts,
   to,
+  showEmptyAccounts,
+  hideEmptyTokenAccount,
 }: {
   accounts: Account[];
   to: Currency;
-}) {
+  showEmptyAccounts?: boolean;
+  hideEmptyTokenAccount?: boolean;
+}): AssetsDistribution {
   const state = useCountervaluesState();
   return getAssetsDistribution(accounts, state, to, {
     minShowFirst: 6,
     maxShowFirst: 6,
     showFirstThreshold: 0.95,
+    showEmptyAccounts: !!showEmptyAccounts,
+    hideEmptyTokenAccount: !!hideEmptyTokenAccount,
   });
 }

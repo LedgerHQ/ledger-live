@@ -8,6 +8,7 @@ import {
   parseCurrencyUnit,
 } from "@ledgerhq/live-common/currencies/index";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { accountsSelector } from "~/renderer/reducers/accounts";
 import { openModal, closeAllModal } from "~/renderer/actions/modals";
 import { deepLinkUrlSelector, areSettingsLoaded } from "~/renderer/reducers/settings";
@@ -38,6 +39,7 @@ export function useDeepLinkHandler() {
   const accounts = useSelector(accountsSelector);
   const location = useLocation();
   const history = useHistory();
+  const walletConnectLiveApp = useFeature("walletConnectLiveApp");
 
   const navigate = useCallback(
     (url: string, state?: any, search?: string) => {
@@ -90,7 +92,7 @@ export function useDeepLinkHandler() {
           navigate("/exchange");
           break;
 
-        case "manager": {
+        case "myledger": {
           const { installApp } = query;
           if (!installApp || typeof installApp !== "string") {
             navigate("/manager");
@@ -225,9 +227,15 @@ export function useDeepLinkHandler() {
           break;
 
         case "wc": {
-          const { uri } = query;
           setTrackingSource("deeplink");
-          dispatch(openModal("MODAL_WALLETCONNECT_DEEPLINK", { link: uri }));
+
+          if (walletConnectLiveApp?.enabled) {
+            navigate("/platform/ledger-wallet-connect", query);
+          } else {
+            const { uri } = query;
+            dispatch(openModal("MODAL_WALLETCONNECT_DEEPLINK", { link: uri }));
+          }
+
           break;
         }
         case "portfolio":
@@ -236,7 +244,7 @@ export function useDeepLinkHandler() {
           break;
       }
     },
-    [accounts, dispatch, navigate],
+    [accounts, dispatch, navigate, walletConnectLiveApp?.enabled],
   );
 
   return {

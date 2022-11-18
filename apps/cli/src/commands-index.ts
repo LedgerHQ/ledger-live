@@ -9,6 +9,7 @@ import botPortfolio from "./commands/botPortfolio";
 import botTransfer from "./commands/botTransfer";
 import broadcast from "./commands/broadcast";
 import cleanSpeculos from "./commands/cleanSpeculos";
+import confirmOp from "./commands/confirmOp";
 import countervalues from "./commands/countervalues";
 import derivation from "./commands/derivation";
 import devDeviceAppsScenario from "./commands/devDeviceAppsScenario";
@@ -21,10 +22,13 @@ import estimateMaxSpendable from "./commands/estimateMaxSpendable";
 import exportAccounts from "./commands/exportAccounts";
 import firmwareRepair from "./commands/firmwareRepair";
 import firmwareUpdate from "./commands/firmwareUpdate";
+import ftsFetchImage from "./commands/ftsFetchImage";
+import ftsLoadImage from "./commands/ftsLoadImage";
 import generateTestScanAccounts from "./commands/generateTestScanAccounts";
 import generateTestTransaction from "./commands/generateTestTransaction";
 import genuineCheck from "./commands/genuineCheck";
 import getAddress from "./commands/getAddress";
+import getDeviceRunningMode from "./commands/getDeviceRunningMode";
 import getTransactionStatus from "./commands/getTransactionStatus";
 import i18n from "./commands/i18n";
 import liveData from "./commands/liveData";
@@ -61,6 +65,7 @@ export default {
   botTransfer,
   broadcast,
   cleanSpeculos,
+  confirmOp,
   countervalues,
   derivation,
   devDeviceAppsScenario,
@@ -73,10 +78,13 @@ export default {
   exportAccounts,
   firmwareRepair,
   firmwareUpdate,
+  ftsFetchImage,
+  ftsLoadImage,
   generateTestScanAccounts,
   generateTestTransaction,
   genuineCheck,
   getAddress,
+  getDeviceRunningMode,
   getTransactionStatus,
   i18n,
   liveData,

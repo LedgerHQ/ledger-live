@@ -5,7 +5,7 @@ import CheckAloneRegular from "@ledgerhq/icons-ui/react/CheckAloneRegular";
 import { renderToStaticMarkup } from "react-dom/server";
 
 const Icon = () =>
-  React.cloneElement(CheckAloneRegular({ size: 13, color: "white" }), {
+  React.cloneElement(CheckAloneRegular({ size: 13, color: "currentColor" }), {
     // the xmlns attribute is required to properly display the checkbox
     xmlns: "http://www.w3.org/2000/svg",
   });
@@ -33,6 +33,7 @@ const Input = styled.input`
     width: ${(p) => p.theme.space[7]}px;
     height: ${(p) => p.theme.space[7]}px;
     display: inline-block;
+    color: ${(props) => props.theme.colors.neutral.c00};
 
     background-image: url("data:image/svg+xml,${CheckMarkIcon}");
     background-position: center;
@@ -91,7 +92,7 @@ export type CheckboxProps = {
   variant?: "default" | "success" | "error";
   label?: React.ReactNode;
   name: string;
-  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onChange: (value: boolean) => void;
 };
 
 const Checkbox = ({
@@ -102,15 +103,8 @@ const Checkbox = ({
   name,
   onChange,
 }: CheckboxProps): JSX.Element => (
-  <Container data-variant={variant} data-disabled={isDisabled}>
-    <Input
-      type="checkbox"
-      name={name}
-      id={name}
-      checked={isChecked}
-      disabled={isDisabled}
-      onChange={onChange}
-    />
+  <Container data-variant={variant} data-disabled={isDisabled} onClick={() => onChange(!isChecked)}>
+    <Input type="checkbox" name={name} id={name} checked={isChecked} disabled={isDisabled} />
     {label ? (
       <Label as="label" htmlFor={name}>
         {label}

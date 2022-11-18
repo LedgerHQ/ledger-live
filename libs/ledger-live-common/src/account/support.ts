@@ -109,8 +109,9 @@ export function checkAccountSupported(
   }
 
   if (!isCurrencySupported(account.currency)) {
-    return new CurrencyNotSupported("currency not supported", {
-      currencyName: account.currency.name,
+    const currencyName = account.currency.name;
+    return new CurrencyNotSupported("currency not supported: " + currencyName, {
+      currencyName,
     });
   }
 }

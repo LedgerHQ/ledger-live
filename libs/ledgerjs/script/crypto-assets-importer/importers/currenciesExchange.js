@@ -6,11 +6,13 @@ const idFromFolderAndFile = (folder, id) =>
 
 module.exports = {
   paths: ["coins"],
-  output: "data/exchange/coins.js",
-  outputTemplate: (data) =>
-    "module.exports = [" +
-    data.map((item) => JSON.stringify(item)).join(",\n\t") +
-    "];\n",
+  output: (toJSON) => `data/exchange/coins.js${toJSON ? "on" : ""}`,
+  outputTemplate: (data, toJSON) =>
+    toJSON
+      ? JSON.stringify(data)
+      : "module.exports = [" +
+        data.map((item) => JSON.stringify(item)).join(",\n\t") +
+        "];\n",
 
   loader: ({ signatureFolder, folder, id }) =>
     Promise.all([

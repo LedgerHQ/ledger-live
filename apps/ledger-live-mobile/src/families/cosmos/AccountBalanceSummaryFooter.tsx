@@ -1,10 +1,10 @@
 import React, { useCallback, useState } from "react";
-import { ScrollView, StyleSheet } from "react-native";
+import { ScrollView } from "react-native";
 import { useTranslation } from "react-i18next";
 import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
 import { getAccountUnit } from "@ledgerhq/live-common/account/helpers";
 import { getCryptoCurrencyIcon } from "@ledgerhq/live-common/reactNative";
-import type { Account } from "@ledgerhq/types-live";
+import { CosmosAccount } from "@ledgerhq/live-common/families/cosmos/types";
 import invariant from "invariant";
 import InfoModal from "../../modals/Info";
 import type { ModalInfo } from "../../modals/Info";
@@ -12,7 +12,7 @@ import CurrencyUnitValue from "../../components/CurrencyUnitValue";
 import InfoItem from "../../components/BalanceSummaryInfoItem";
 
 type Props = {
-  account: Account;
+  account: CosmosAccount;
 };
 type InfoName = "available" | "delegated" | "undelegating";
 
@@ -30,24 +30,23 @@ function AccountBalanceSummaryFooter({ account }: Props) {
     (infoName: InfoName) => () => setInfoName(infoName),
     [],
   );
-  return (
-    (delegatedBalance.gt(0) || unbondingBalance.gt(0)) && (
+
+  return delegatedBalance.gt(0) || unbondingBalance.gt(0) ? (
+    <>
+      <InfoModal
+        isOpened={!!infoName}
+        onClose={onCloseModal}
+        data={infoName ? info[infoName] : []}
+      />
       <ScrollView
         horizontal
         showsHorizontalScrollIndicator={false}
         style={[
-          styles.root,
           {
             paddingHorizontal: 16,
           },
         ]}
       >
-        <InfoModal
-          isOpened={!!infoName}
-          onClose={onCloseModal}
-          data={infoName ? info[infoName] : []}
-        />
-
         <InfoItem
           title={t("account.availableBalance")}
           onPress={onPressInfoCreator("available")}
@@ -58,6 +57,7 @@ function AccountBalanceSummaryFooter({ account }: Props) {
               disableRounding
             />
           }
+          isLast={!delegatedBalance.gt(0) && !unbondingBalance.gt(0)}
         />
         {delegatedBalance.gt(0) && (
           <InfoItem
@@ -70,6 +70,7 @@ function AccountBalanceSummaryFooter({ account }: Props) {
                 disableRounding
               />
             }
+            isLast={!unbondingBalance.gt(0)}
           />
         )}
         {unbondingBalance.gt(0) && (
@@ -83,25 +84,18 @@ function AccountBalanceSummaryFooter({ account }: Props) {
                 disableRounding
               />
             }
+            isLast={true}
           />
         )}
       </ScrollView>
-    )
-  );
+    </>
+  ) : null;
 }
 
 export default function AccountBalanceFooter({ account }: Props) {
   if (!account.cosmosResources || account.balance.lte(0)) return null;
   return <AccountBalanceSummaryFooter account={account} />;
 }
-const styles = StyleSheet.create({
-  root: {
-    flex: 1,
-    flexDirection: "row",
-    overflow: "visible",
-    paddingTop: 16,
-  },
-});
 
 function useInfo(): Record<InfoName, ModalInfo[]> {
   const { t } = useTranslation();

@@ -3,20 +3,29 @@ import * as d3shape from "d3-shape";
 import { View } from "react-native";
 import Svg, { Path, G, Circle } from "react-native-svg";
 import { getCurrencyColor } from "@ledgerhq/live-common/currencies/index";
+import { DefaultTheme } from "styled-components/native";
 import type { DistributionItem } from "./DistributionCard";
 import { ensureContrast, withTheme } from "../../colors";
 
 type Props = {
   data: Array<DistributionItem>;
   size: number;
-  colors: any;
+  strokeWidth?: number;
+  colors: DefaultTheme["colors"];
+};
+
+type Paths = {
+  items: { pathData?: string; color: string; id: string }[];
+  angle: number;
 };
 
 class RingChart extends PureComponent<Props> {
   arcGenerator = d3shape.arc();
   offsetX = 0;
   offsetY = 0;
-  paths: any = {};
+  paths: Paths | null = null;
+  innerRadius = 0;
+  outerRadius = 30;
 
   constructor(props: Props) {
     super(props);
@@ -35,16 +44,16 @@ class RingChart extends PureComponent<Props> {
     this.generatePaths();
   }
 
-  reducer = (data: any, item: DistributionItem, index: number) => {
+  reducer = (data: Paths, item: DistributionItem, index: number): Paths => {
     const increment = item.distribution * 2 * Math.PI;
-    const innerRadius = 0;
 
-    const pathData = this.arcGenerator({
-      startAngle: data.angle,
-      endAngle: data.angle + increment,
-      innerRadius,
-      outerRadius: 30,
-    });
+    const pathData =
+      this.arcGenerator({
+        startAngle: data.angle,
+        endAngle: data.angle + increment,
+        innerRadius: this.innerRadius,
+        outerRadius: this.outerRadius,
+      }) ?? undefined;
 
     const parsedItem = {
       color: ensureContrast(
@@ -64,13 +73,13 @@ class RingChart extends PureComponent<Props> {
   };
 
   render() {
-    const { size, colors } = this.props;
+    const { size, colors, strokeWidth } = this.props;
 
     return (
       <View>
         <Svg width={size} height={size} viewBox="0 0 76 76">
           <G transform="translate(38, 38)">
-            {(this.paths.items || []).map(({ pathData, color, id }) => (
+            {(this.paths?.items || []).map(({ pathData, color, id }) => (
               <Path
                 key={id}
                 stroke={colors.background.main}
@@ -79,7 +88,12 @@ class RingChart extends PureComponent<Props> {
                 d={pathData}
               />
             ))}
-            <Circle cx={0} cy={0} r="27" fill={colors.background.main} />
+            <Circle
+              cx={0}
+              cy={0}
+              r={this.outerRadius - (strokeWidth || 3)}
+              fill={colors.background.main}
+            />
           </G>
         </Svg>
       </View>

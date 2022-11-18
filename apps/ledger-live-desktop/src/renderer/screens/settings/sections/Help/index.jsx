@@ -4,7 +4,7 @@ import React from "react";
 import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
 import { urls } from "~/config/urls";
-import { languageSelector } from "~/renderer/reducers/settings";
+import { languageSelector, swapKYCSelector } from "~/renderer/reducers/settings";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import ExportLogsBtn from "~/renderer/components/ExportLogsButton";
 import OpenUserDataDirectoryBtn from "~/renderer/components/OpenUserDataDirectoryBtn";
@@ -13,7 +13,6 @@ import { SettingsSectionBody as Body, SettingsSectionRow as Row } from "../../Se
 import CleanButton from "./CleanButton";
 import ResetButton from "./ResetButton";
 import ResetKYCButton from "./ResetKYCButton";
-import { swapKYCSelector } from "~/renderer/reducers/settings";
 import RepairDeviceButton from "./RepairDeviceButton";
 import LaunchOnboardingBtn from "./LaunchOnboardingBtn";
 

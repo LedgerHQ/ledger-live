@@ -1,8 +1,14 @@
 import React from "react";
 import Svg, { Path } from "react-native-svg";
 
-const NanoX = ({ color }: { color: string }) => (
-  <Svg width={85} height={87} fill="none">
+const NanoX = ({
+  size = 85,
+  color = "neutral.c100",
+}: {
+  size?: number;
+  color?: string;
+}) => (
+  <Svg width={size} height={size} fill="none" viewBox="0 0 85 87">
     <Path
       fillRule="evenodd"
       clipRule="evenodd"

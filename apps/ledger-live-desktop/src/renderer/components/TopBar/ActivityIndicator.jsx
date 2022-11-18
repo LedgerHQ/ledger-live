@@ -4,6 +4,7 @@ import { useSelector } from "react-redux";
 import { Trans } from "react-i18next";
 import { useBridgeSync, useGlobalSyncState } from "@ledgerhq/live-common/bridge/react/index";
 import { useCountervaluesPolling } from "@ledgerhq/live-common/countervalues/react";
+import { getEnv } from "@ledgerhq/live-common/env";
 import { track } from "~/renderer/analytics/segment";
 import { isUpToDateSelector } from "~/renderer/reducers/accounts";
 import IconLoader from "~/renderer/icons/Loader";
@@ -35,7 +36,7 @@ export default function ActivityIndicatorInner() {
     track("SyncRefreshClick");
   }, [cvPolling, bridgeSync]);
 
-  const isSpectronRun = !!process.env.PLAYWRIGHT_RUN; // we will keep 'spinning' in spectron case
+  const isSpectronRun = getEnv("PLAYWRIGHT_RUN"); // we will keep 'spinning' in spectron case
   const userClickTime = isSpectronRun ? 10000 : 1000;
   const isUserClick = Date.now() - lastClickTime < userClickTime; // time to keep display the spinning on a UI click.
   const isRotating = isPending && (!isUpToDate || isUserClick);

@@ -42,7 +42,6 @@ const aFirmwareInfo = {
 const pollingPeriodMs = 1000;
 
 const mockedGetVersion = jest.mocked(getVersion);
-
 const mockedWithDevice = jest.mocked(withDevice);
 mockedWithDevice.mockReturnValue((job) => from(job(new Transport())));
 

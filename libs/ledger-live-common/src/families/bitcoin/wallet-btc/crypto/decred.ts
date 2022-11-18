@@ -54,7 +54,6 @@ class Decred extends Base {
     throw new InvalidAddress();
   }
 
-  // eslint-disable-next-line class-methods-use-this
   validateAddress(address: string): boolean {
     if (address.length < 25 || address.length > 36) {
       return false;

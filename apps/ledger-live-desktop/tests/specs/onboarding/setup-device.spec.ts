@@ -15,8 +15,18 @@ test.describe.parallel("Onboarding", () => {
     test(`[${nano}] Onboarding flow new device`, async ({ page }) => {
       const onboardingPage = new OnboardingPage(page);
 
+      await test.step("Wait for launch", async () => {
+        await onboardingPage.waitForLaunch();
+        expect(
+          await onboardingPage.page.screenshot({
+            mask: [page.locator("video")],
+          }),
+        ).toMatchSnapshot("v3-get-started.png");
+      });
+
       await test.step("Get started", async () => {
         await onboardingPage.getStarted();
+        expect(await onboardingPage.page.screenshot()).toMatchSnapshot("v3-device-selection.png");
       });
 
       await test.step(`[${nano}] Select Device`, async () => {
@@ -24,7 +34,7 @@ test.describe.parallel("Onboarding", () => {
       });
 
       await test.step(`[${nano}]" Set up new"`, async () => {
-        // expect(await page.screenshot()).toMatchSnapshot(`v3-device-setup-${nano}.png`);
+        expect(await page.screenshot()).toMatchSnapshot(`v3-device-setup-${nano}.png`);
         await onboardingPage.newDevice();
       });
 
@@ -63,9 +73,46 @@ test.describe.parallel("Onboarding", () => {
       });
 
       await test.step("Set up new device", async () => {
-        await onboardingPage.startTutorial("v3-setup-new-device", nano);
+        expect(await onboardingPage.page.screenshot()).toMatchSnapshot([
+          "v3-setup-new-device",
+          "get-started-1.png",
+        ]);
+        await onboardingPage.continueTutorial();
+        expect
+          .soft(
+            await onboardingPage.page.screenshot({
+              mask: [onboardingPage.page.locator("[role=animation]")],
+            }),
+          )
+          .toMatchSnapshot(["v3-setup-new-device", `get-started-2-${nano}.png`]);
+        await onboardingPage.continueTutorial();
 
-        await onboardingPage.setPinCode("v3-setup-new-device", nano);
+        expect(await onboardingPage.page.screenshot()).toMatchSnapshot([
+          "v3-setup-new-device",
+          `pin-code-${nano}-1.png`,
+        ]);
+        await onboardingPage.acceptPrivatePinCode();
+
+        expect(await onboardingPage.page.screenshot()).toMatchSnapshot([
+          "v3-setup-new-device",
+          `pin-code-${nano}-2.png`,
+        ]);
+        await onboardingPage.continueTutorial();
+
+        expect
+          .soft(
+            await onboardingPage.page.screenshot({
+              mask: [onboardingPage.page.locator("[role=animation]")],
+            }),
+          )
+          .toMatchSnapshot(["v3-setup-new-device", `pin-code-${nano}-3.png`]);
+        await onboardingPage.continueTutorial();
+
+        expect(await onboardingPage.page.screenshot()).toMatchSnapshot([
+          "v3-setup-new-device",
+          `pin-code-${nano}-4.png`,
+        ]);
+        await onboardingPage.continuePinDrawer();
 
         expect(await page.screenshot()).toMatchSnapshot([
           "v3-setup-new-device",
@@ -158,15 +205,24 @@ test.describe.parallel("Onboarding", () => {
       });
 
       await test.step(`[${nano}]"Device genuine check"`, async () => {
+        expect(await onboardingPage.page.screenshot()).toMatchSnapshot("v3-genuine-check.png");
         await onboardingPage.checkDevice();
+        expect(await onboardingPage.page.screenshot()).toMatchSnapshot(
+          "v3-before-genuine-check.png",
+        );
       });
 
       await test.step("Pass genuine check", async () => {
+        expect(await onboardingPage.page.screenshot()).toMatchSnapshot("v3-genuine-checking.png");
         await onboardingPage.genuineCheck();
+        expect(await onboardingPage.page.screenshot()).toMatchSnapshot("v3-genuine-check-done.png");
       });
 
       await test.step("Reach app", async () => {
         await onboardingPage.reachApp();
+        expect(await onboardingPage.page.screenshot()).toMatchSnapshot(
+          "v3-onboarding-complete.png",
+        );
       });
     });
   }

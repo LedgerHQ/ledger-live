@@ -17,7 +17,7 @@ export type DistributionItem = {
   currency: CryptoCurrency | TokenCurrency;
   distribution: number; // % of the total (normalized in 0-1)
   amount: number;
-  countervalue: number; // countervalue of the amount that was calculated based of the rate provided
+  countervalue?: number; // countervalue of the amount that was calculated based of the rate provided
 };
 
 type Props = {
@@ -71,17 +71,13 @@ function DistributionCard({ item: { currency, amount, distribution } }: Props) {
   const percentage = Math.round(distribution * 1e4) / 1e2;
 
   const navigateToAccounts = useCallback(() => {
-    // @ts-expect-error navigation type issue
-    navigation.navigate(NavigatorName.Portfolio, {
-      screen: NavigatorName.PortfolioAccounts,
+    navigation.navigate(NavigatorName.Accounts, {
+      screen: ScreenName.Asset,
       params: {
-        screen: ScreenName.Accounts,
-        params: {
-          search: currency.name,
-        },
+        currency,
       },
     });
-  }, [currency.name, navigation]);
+  }, [currency, navigation]);
 
   return (
     <Container onPress={navigateToAccounts}>
@@ -111,30 +107,23 @@ function DistributionCard({ item: { currency, amount, distribution } }: Props) {
               {`${percentage}%`}
             </Text>
           </CurrencyRow>
-          {distribution ? (
-            <>
-              <RateRow>
-                <Text variant="body" color="neutral.c70" fontWeight="medium">
-                  <CurrencyUnitValue unit={currency.units[0]} value={amount} />
-                </Text>
-                <Text variant="body" color="neutral.c70" fontWeight="medium">
-                  <CounterValue currency={currency} value={amount} />
-                </Text>
-              </RateRow>
-            </>
-          ) : null}
+          <RateRow>
+            <Text variant="body" color="neutral.c70" fontWeight="medium">
+              <CurrencyUnitValue unit={currency.units[0]} value={amount} />
+            </Text>
+            <Text variant="body" color="neutral.c70" fontWeight="medium">
+              <CounterValue currency={currency} value={amount} />
+            </Text>
+          </RateRow>
         </CoinInfoContainer>
       </Flex>
-      {distribution ? (
-        <DistributionRow>
-          {/** @ts-expect-error flow issue */}
-          <ProgressBar
-            progress={percentage}
-            progressColor={color}
-            backgroundColor={colors.neutral.c40}
-          />
-        </DistributionRow>
-      ) : null}
+      <DistributionRow>
+        <ProgressBar
+          progress={percentage || 0}
+          progressColor={color}
+          backgroundColor={colors.neutral.c40}
+        />
+      </DistributionRow>
     </Container>
   );
 }

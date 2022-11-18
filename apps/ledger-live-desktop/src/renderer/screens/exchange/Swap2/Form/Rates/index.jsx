@@ -1,5 +1,5 @@
 // @flow
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useState, useRef, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Trans } from "react-i18next";
 import Box from "~/renderer/components/Box";
@@ -7,17 +7,19 @@ import Text from "~/renderer/components/Text";
 import DecentralisedRate from "./DecentralisedRate";
 import CentralisedRate from "./CentralisedRate";
 import Countdown from "./Countdown";
+import EmptyState from "./EmptyState";
+import Filter from "./Filter";
 import type {
   SwapSelectorStateType,
   RatesReducerState,
-} from "@ledgerhq/live-common/exchange/swap/hooks/index";
+} from "@ledgerhq/live-common/exchange/swap/types";
 import { rateSelector, updateRateAction } from "~/renderer/actions/swap";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import { SWAP_VERSION } from "../../utils/index";
 import styled from "styled-components";
 import Tooltip from "~/renderer/components/Tooltip";
 import IconInfoCircle from "~/renderer/icons/InfoCircle";
-import { DEX_PROVIDERS } from "../utils";
+import { DEX_PROVIDERS, FILTER } from "../utils";
 
 type Props = {
   fromCurrency: $PropertyType<SwapSelectorStateType, "currency">,
@@ -58,7 +60,11 @@ export default function ProviderRate({
 }: Props) {
   const dispatch = useDispatch();
   const [dexSelected, setDexSelected] = useState(null);
+  const [filter, setFilter] = useState([]);
+  const [emptyState, setEmptyState] = useState(false);
   const selectedRate = useSelector(rateSelector);
+
+  const providerRef = useRef(null);
 
   const setRate = useCallback(
     rate => {
@@ -77,6 +83,37 @@ export default function ProviderRate({
     [updateSelection],
   );
 
+  useEffect(() => {
+    if (filter.includes(FILTER.decentralised)) {
+      setDexRate(DEX_PROVIDERS[0]);
+    } else {
+      let selectedRate;
+      if (filter.includes(FILTER.float)) {
+        selectedRate = rates.find(rate => rate.tradeMethod === FILTER.float);
+      } else if (filter.includes(FILTER.fixed)) {
+        selectedRate = rates.find(rate => rate.tradeMethod === FILTER.fixed);
+      } else {
+        selectedRate = rates && rates[0];
+      }
+      setRate(selectedRate || {});
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [filter]);
+
+  useEffect(() => {
+    const hasCentralise =
+      rates &&
+      rates.some(rate => {
+        return filter.every(item => [FILTER.centralised, rate.tradeMethod].includes(item));
+      });
+    const hasDecentralise =
+      decentralizedSwapAvailable &&
+      DEX_PROVIDERS.some((rate, index) => {
+        return filter.every(item => [FILTER.decentralised, FILTER.float].includes(item));
+      });
+    setEmptyState(!hasCentralise && !hasDecentralise);
+  }, [decentralizedSwapAvailable, filter, rates]);
+
   return (
     <Box height="100%" width="100%">
       <TrackPage
@@ -86,7 +123,11 @@ export default function ProviderRate({
         swapVersion={SWAP_VERSION}
       />
       <Box horizontal justifyContent="space-between" fontSize={5}>
-        <Text variant="h5" style={{ textTransform: "uppercase", fontFamily: "Alpha" }}>
+        <Text
+          variant="h5"
+          color="neutral.c100"
+          style={{ textTransform: "uppercase", fontFamily: "Alpha" }}
+        >
           <Trans i18nKey="swap2.form.rates.title" />
         </Text>
         {countdown && (
@@ -95,8 +136,9 @@ export default function ProviderRate({
           </Box>
         )}
       </Box>
+      <Filter onClick={type => setFilter(type)} />
       <TableHeader>
-        <Box horizontal flex="1" alignItems="center" pr="38px">
+        <Box horizontal width="215px" alignItems="center" pr="38px">
           <Text alignItems="center" display="flex" mr={1}>
             <Trans i18nKey="swap2.form.rates.name.title" />
           </Text>
@@ -110,7 +152,7 @@ export default function ProviderRate({
             <IconInfoCircle size={12} />
           </Tooltip>
         </Box>
-        <Box horizontal flex="1" alignItems="center" justifyContent="center">
+        <Box horizontal flex="1" alignItems="center" justifyContent="flex-start">
           <Text alignItems="center" display="flex" mr={1}>
             <Trans i18nKey="swap2.form.rates.rate.title" />
           </Text>
@@ -128,48 +170,63 @@ export default function ProviderRate({
             <IconInfoCircle size={12} />
           </Tooltip>
         </Box>
-        <Box horizontal flex="1" alignItems="center" justifyContent="flex-end">
+        <Box horizontal flex="1" alignItems="center" justifyContent="flex-end" mr={1}>
           <Text alignItems="center" display="flex" mr={1}>
             <Trans i18nKey="swap2.form.rates.receive.title" />
           </Text>
           <Tooltip
-            placement={"top-end"}
             content={
               <Box style={{ maxWidth: 150 }}>
-                <Text style={{ textAlign: "right" }}>
+                <Text>
                   <Trans i18nKey="swap2.form.rates.receive.tooltip" />
                 </Text>
               </Box>
             }
           >
-            <Box style={{ marginRight: 5 }}>
+            <Box>
               <IconInfoCircle size={12} />
             </Box>
           </Tooltip>
         </Box>
       </TableHeader>
-      <Box mt={3}>
-        {rates?.map((rate, index) => (
-          <CentralisedRate
-            key={`${rate.provider}-${rate.tradeMethod}`}
-            value={rate}
-            selected={!dexSelected && rate === selectedRate}
-            onSelect={setRate}
-            fromCurrency={fromCurrency}
-            toCurrency={toCurrency}
-          />
-        ))}
+      <Box mt={3} ref={providerRef}>
+        {rates?.map((rate, index) => {
+          const valid = filter.every(item => [FILTER.centralised, rate.tradeMethod].includes(item));
+          if (valid) {
+            return (
+              <CentralisedRate
+                key={`${rate.provider}-${rate.tradeMethod}`}
+                value={rate}
+                selected={!dexSelected && rate === selectedRate}
+                onSelect={setRate}
+                fromCurrency={fromCurrency}
+                toCurrency={toCurrency}
+              />
+            );
+          } else {
+            return null;
+          }
+        })}
         {decentralizedSwapAvailable &&
-          DEX_PROVIDERS.map((rate, index) => (
-            <DecentralisedRate
-              key={rate.id}
-              value={rate}
-              selected={dexSelected && rate.id === dexSelected.id}
-              onSelect={setDexRate}
-              icon={rate.icon}
-            />
-          ))}
+          DEX_PROVIDERS.map((rate, index) => {
+            const valid = filter.every(item => [FILTER.decentralised, FILTER.float].includes(item));
+            if (valid) {
+              return (
+                <DecentralisedRate
+                  filter={filter}
+                  key={rate.id}
+                  value={rate}
+                  selected={dexSelected && rate.id === dexSelected.id}
+                  onSelect={setDexRate}
+                  icon={rate.icon}
+                />
+              );
+            } else {
+              return null;
+            }
+          })}
       </Box>
+      {emptyState && <EmptyState />}
     </Box>
   );
 }

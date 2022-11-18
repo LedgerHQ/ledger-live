@@ -40,6 +40,7 @@ const Box: ThemedComponent<{
   justify?: "THIS PROPERTY IS NOT VALID – SWITCH TO justifyContent",
   fontWeight?: string | number,
   ff?: string,
+  gap?: string | number,
 }> = styled.div`
   ${alignItems};
   ${alignSelf};
@@ -64,6 +65,7 @@ const Box: ThemedComponent<{
   flex-shrink: ${p => (p.noShrink === true ? "0" : p.shrink === true ? "1" : "")};
   flex-grow: ${p => (p.grow === true ? "1" : p.grow || "")};
   flex-direction: ${p => (p.horizontal ? "row" : "column")};
+  gap: ${p => p.gap || "unset"};
 
   overflow: ${p => p.overflow};
   overflow-y: ${p => (p.scroll === true ? "auto" : "")};
