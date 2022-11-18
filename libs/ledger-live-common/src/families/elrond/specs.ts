@@ -1,4 +1,8 @@
-import type { ElrondResources, Transaction } from "../../families/elrond/types";
+import type {
+  ElrondAccount,
+  ElrondResources,
+  Transaction,
+} from "../../families/elrond/types";
 import invariant from "invariant";
 import { getCryptoCurrencyById, parseCurrencyUnit } from "../../currencies";
 import { botTest, pickSiblings } from "../../bot/specs";
@@ -281,8 +285,10 @@ const elrondSpec: AppSpec<Transaction> = {
             .gt(MIN_DELEGATION_AMOUNT),
           `account don't have any delegations`
         );
-        const elrondAccount = account.elrondResources as ElrondResources;
-        const delegations = elrondAccount.delegations;
+        const elrondAccount = account as ElrondAccount;
+        const elrondResources =
+          elrondAccount.elrondResources as ElrondResources;
+        const delegations = elrondResources.delegations;
         for (const delegation of delegations) {
           invariant(
             new BigNumber(delegation.userActiveStake).gt(0),
