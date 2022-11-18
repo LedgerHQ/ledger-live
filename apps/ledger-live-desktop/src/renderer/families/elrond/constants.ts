@@ -24,7 +24,7 @@ const constants = {
   mainnet: {
     explorer: "https://explorer.elrond.com",
     providers: "https://delegation-api.elrond.com/providers",
-    figment: "erd1qqqqqqqqqqqqqqqpqqqqqqqqqqqqqqqqqqqqqqqqqqqqqlhllllsr0pd0j",
+    figment: "erd1qqqqqqqqqqqqqqqpqqqqqqqqqqqqqqqqqqqqqqqqqqqqppllllls9ftvxy",
     egldLabel: "EGLD",
     modals,
   },

@@ -13,6 +13,9 @@ const TEST_ADDRESS =
   "erd1vgfp3g7azqjx4wsmtt7067m0l62v3psmqzr24j6xvywj2tlz0gesvyzsq2";
 
 const elrond: CurrenciesData<Transaction> = {
+  FIXME_ignoreAccountFields: [
+    "elrondResources.providers", // They are always movings
+  ],
   scanAccounts: [
     {
       name: "elrond seed 1",
