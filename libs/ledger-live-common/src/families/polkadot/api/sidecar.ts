@@ -91,7 +91,7 @@ const fetchStashAddr = async (addr: string): Promise<string | null> => {
   } = await network({
     method: "GET",
     url: getSidecarUrl(
-      `/pallets/staking/storage/ledger?keys[]=${addr}&key1=[]${addr}`
+      `/pallets/staking/storage/ledger?keys[]=${addr}&key1=${addr}`
     ),
   });
   return data.value?.stash ?? null;
