@@ -4,7 +4,6 @@ import { formatCurrencyUnit } from "../../currencies";
 import { deviceActionFlow } from "../../bot/specs";
 import { decodeTokenAccountId } from "../../account";
 import BigNumber from "bignumber.js";
-import { decodeTokenAccountId } from "../../account";
 
 export const acceptMoveBalanceTransaction: DeviceAction<Transaction, any> =
   deviceActionFlow({
