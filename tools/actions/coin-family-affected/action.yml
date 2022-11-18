@@ -1,0 +1,21 @@
+name: coin-family-affected
+description: Returns a list of coin family affected by code changes
+author: gre
+inputs:
+  ref:
+    description: "name of branch or ref to compare with (defaults to 'develop'). Git syntax allowed (HEAD^1)"
+    default: develop
+    required: false
+outputs:
+  is-affected:
+    description: "boolean that tells if a family was affected or not"
+  families:
+    description: "a list of families"
+
+runs:
+  using: node16
+  main: build/main.js
+
+branding:
+  icon: shuffle
+  color: green
