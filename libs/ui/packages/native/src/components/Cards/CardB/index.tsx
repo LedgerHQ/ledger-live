@@ -1,12 +1,12 @@
 import React from "react";
 import { ArrowRightMedium, CloseMedium } from "@ledgerhq/icons-ui/native";
-
 import { TouchableOpacityProps, TouchableOpacity, Image } from "react-native";
 import styled, { useTheme } from "styled-components/native";
 
 import Text from "../../Text";
 import Flex from "../../Layout/Flex";
 import Link from "../../cta/Link";
+
 
 export type CardProps = TouchableOpacityProps & {
   tag?: string;
