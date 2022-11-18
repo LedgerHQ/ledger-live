@@ -1,4 +1,4 @@
-import * as providers from "@ledgerhq/icons-ui/react/Providers";
+import * as providers from "@ledgerhq/icons-ui/react/Providers/index";
 import * as favicons from "./providerFaviconsIndex";
 
 import React from "react";
