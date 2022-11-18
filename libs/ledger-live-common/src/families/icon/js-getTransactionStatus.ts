@@ -46,12 +46,14 @@ const getTransactionStatus = async (
     errors.amount = new NotEnoughBalance();
   }
 
-  if (!t.recipient) {
-    errors.recipient = new RecipientRequired();
-  } else if (isSelfTransaction(a, t)) {
-    errors.recipient = new InvalidAddressBecauseDestinationIsAlsoSource();
-  } else if (!isValidAddress(t.recipient)) {
-    errors.recipient = new InvalidAddress();
+  if (t.mode === 'send') {
+    if (!t.recipient) {
+      errors.recipient = new RecipientRequired();
+    } else if (isSelfTransaction(a, t)) {
+      errors.recipient = new InvalidAddressBecauseDestinationIsAlsoSource();
+    } else if (!isValidAddress(t.recipient)) {
+      errors.recipient = new InvalidAddress();
+    }
   }
 
   return Promise.resolve({

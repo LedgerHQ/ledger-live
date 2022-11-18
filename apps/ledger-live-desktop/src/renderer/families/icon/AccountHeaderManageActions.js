@@ -24,11 +24,11 @@ const AccountHeaderManageActionsComponent = ({ account, parentAccount }: Props) 
   const minAmount = 10 ** unit.magnitude;
 
   const { iconResources, spendableBalance } = mainAccount;
-  const tronPower = 0;
-  const earnRewardDisabled = false;
+  const votingPower = iconResources?.votingPower ?? 0;
+  const earnRewardDisabled = votingPower === 0 && spendableBalance.lt(minAmount);
 
   const onClick = useCallback(() => {
-    if (tronPower > 0) {
+    if (votingPower > 0) {
       dispatch(
         openModal("MODAL_MANAGE_TRON", {
           parentAccount,
@@ -37,13 +37,13 @@ const AccountHeaderManageActionsComponent = ({ account, parentAccount }: Props) 
       );
     } else {
       dispatch(
-        openModal("MODAL_TRON_REWARDS_INFO", {
+        openModal("MODAL_ICON_REWARDS_INFO", {
           parentAccount,
           account,
         }),
       );
     }
-  }, [dispatch, tronPower, account, parentAccount]);
+  }, [dispatch, votingPower, account, parentAccount]);
 
   if (parentAccount) return null;
 

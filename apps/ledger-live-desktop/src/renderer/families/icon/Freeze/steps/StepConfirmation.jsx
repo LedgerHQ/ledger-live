@@ -102,10 +102,10 @@ export function StepConfirmationFooter({
   const openVote = useCallback(() => {
     onClose();
     if (account) {
-      const { tronResources } = account;
-      const { votes } = tronResources || {};
+      const { iconResources } = account;
+      const { votes } = iconResources || {};
 
-      openModal(votes.length > 0 ? "MODAL_VOTE_TRON" : "MODAL_VOTE_TRON_INFO", {
+      openModal(votes.length > 0 ? "MODAL_VOTE_ICON" : "MODAL_VOTE_ICON_INFO", {
         account: account,
       });
     }

@@ -4,6 +4,8 @@ import MODAL_DELEGATE from "../families/tezos/DelegateFlowModal";
 import MODAL_TRON_REWARDS_INFO from "../families/tron/EarnRewardsInfoModal";
 import MODAL_ICON_REWARDS_INFO from "../families/icon/EarnRewardsInfoModal";
 import MODAL_ICON_FREEZE from "../families/icon/Freeze";
+import MODAL_VOTE_ICON from "../families/icon/VoteIcon";
+import MODAL_VOTE_ICON_INFO from "../families/icon/VoteIcon/Info";
 import MODAL_EXPORT_OPERATIONS from "./ExportOperations";
 import MODAL_CONFIRM from "./ConfirmModal";
 import MODAL_MANAGE_TRON from "./ManageTron";
@@ -43,6 +45,7 @@ import MODAL_CLAIM_REWARDS from "./ClaimRewards";
 import MODAL_FREEZE from "./Freeze";
 import MODAL_UNFREEZE from "./Unfreeze";
 import MODAL_VOTE_TRON from "./VoteTron";
+
 import MODAL_VOTE_TRON_INFO from "./VoteTron/Info";
 import MODAL_BLACKLIST_TOKEN from "./BlacklistToken";
 import MODAL_HIDE_NFT_COLLECTION from "./HideNftCollection";
@@ -183,6 +186,8 @@ const modals: { [_: string]: React$ComponentType<any> } = {
   MODAL_NEAR_WITHDRAW,
   MODAL_ICON_REWARDS_INFO,
   MODAL_ICON_FREEZE,
+  MODAL_VOTE_ICON,
+  MODAL_VOTE_ICON_INFO,
   MODAL_FULL_NODE,
   MODAL_LOTTIE_DEBUGGER,
   MODAL_STORYLY_DEBUGGER,

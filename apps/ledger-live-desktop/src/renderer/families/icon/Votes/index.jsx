@@ -7,12 +7,10 @@ import styled from "styled-components";
 import type { Account } from "@ledgerhq/types-live";
 
 import {
-  useTronSuperRepresentatives,
+  useIconPublicRepresentatives,
   getLastVotedDate,
   formatVotes,
-  getNextRewardDate,
-  MIN_TRANSACTION_AMOUNT,
-} from "@ledgerhq/live-common/families/tron/react";
+} from "@ledgerhq/live-common/families/icon/react";
 import { getAccountUnit } from "@ledgerhq/live-common/account/index";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { getDefaultExplorerView } from "@ledgerhq/live-common/explorers";
@@ -54,26 +52,21 @@ const Delegation = ({ account }: Props) => {
   const dispatch = useDispatch();
   const locale = useSelector(localeSelector);
 
-  const superRepresentatives = useTronSuperRepresentatives();
-
-  const lastVoteDate = getLastVotedDate(account);
-  const duration = useMemo(() => (lastVoteDate ? moment().diff(lastVoteDate, "days") : 0), [
-    lastVoteDate,
-  ]);
+  const superRepresentatives = useIconPublicRepresentatives(account.currency);
 
   const unit = getAccountUnit(account);
   const explorerView = getDefaultExplorerView(account.currency);
 
-  const formattedMinAmount = formatCurrencyUnit(unit, BigNumber(MIN_TRANSACTION_AMOUNT), {
+  const formattedMinAmount = formatCurrencyUnit(unit, BigNumber(1), {
     disableRounding: true,
     alwaysShowSign: false,
     showCode: true,
     locale,
   });
 
-  const { tronResources, spendableBalance } = account;
-  invariant(tronResources, "tron account expected");
-  const { votes, tronPower, unwithdrawnReward } = tronResources;
+  const { iconResources, spendableBalance } = account;
+  invariant(iconResources, "icon account expected");
+  const { votes, votingPower, unwithdrawnReward } = iconResources;
 
   const discreet = useDiscreetMode();
 
@@ -87,12 +80,12 @@ const Delegation = ({ account }: Props) => {
 
   const formattedVotes = formatVotes(votes, superRepresentatives);
 
-  const totalVotesUsed = votes.reduce((sum, { voteCount }) => sum + voteCount, 0);
+  const totalVotesUsed = votes.reduce((sum, { value }) => sum + value, 0);
 
   const onDelegate = useCallback(
     () =>
       dispatch(
-        openModal(votes.length > 0 ? "MODAL_VOTE_TRON" : "MODAL_VOTE_TRON_INFO", {
+        openModal(votes.length > 0 ? "MODAL_VOTE_ICON" : "MODAL_VOTE_ICON_INFO", {
           account,
         }),
       ),
@@ -113,15 +106,10 @@ const Delegation = ({ account }: Props) => {
 
   const hasRewards = unwithdrawnReward.gt(0);
 
-  const nextRewardDate = getNextRewardDate(account);
-  const formattedNextRewardDate = useMemo(
-    () => nextRewardDate && moment(nextRewardDate).fromNow(),
-    [nextRewardDate],
-  );
-  const canClaimRewards = hasRewards && !formattedNextRewardDate;
+  const canClaimRewards = hasRewards
 
   const earnRewardDisabled =
-    tronPower === 0 && (!spendableBalance || !spendableBalance.gte(MIN_TRANSACTION_AMOUNT));
+    votingPower === 0 && (!spendableBalance || !spendableBalance.gte(MIN_TRANSACTION_AMOUNT));
 
   return (
     <TableContainer mb={6}>
@@ -129,7 +117,7 @@ const Delegation = ({ account }: Props) => {
         title={<Trans i18nKey="tron.voting.header" />}
         titleProps={{ "data-e2e": "title_Delegation" }}
       >
-        {tronPower > 0 && formattedVotes.length > 0 ? (
+        {votingPower > 0 && formattedVotes.length > 0 ? (
           <Button small color="palette.primary.main" onClick={onDelegate} mr={2}>
             <Box horizontal flow={1} alignItems="center">
               <Vote size={12} />
@@ -186,33 +174,33 @@ const Delegation = ({ account }: Props) => {
           </ToolTip>
         ) : null}
       </TableHeader>
-      {tronPower > 0 && formattedVotes.length > 0 ? (
+      {votingPower > 0 && formattedVotes.length > 0 ? (
         <>
           <Header />
-          {formattedVotes.map(({ validator, address, voteCount, isSR }, index) => (
+          {formattedVotes.map(({ validator, address, value, isSR }, index) => (
             <Row
               key={index}
               validator={validator}
               address={address}
-              amount={voteCount}
+              amount={value}
               isSR={isSR}
-              duration={
-                duration ? (
-                  <Trans
-                    i18nKey="delegation.durationDays"
-                    count={duration}
-                    values={{ count: duration }}
-                  />
-                ) : (
-                  <Trans i18nKey="delegation.durationJustStarted" />
-                )
-              }
-              percentTP={String(Math.round(100 * Number((voteCount * 1e2) / tronPower)) / 100)}
+              // duration={
+              //   duration ? (
+              //     <Trans
+              //       i18nKey="delegation.durationDays"
+              //       count={duration}
+              //       values={{ count: duration }}
+              //     />
+              //   ) : (
+              //     <Trans i18nKey="delegation.durationJustStarted" />
+              //   )
+              // }
+              percentTP={String(Math.round(100 * Number((value * 1e2) / votingPower)) / 100)}
               currency={account.currency}
               explorerView={explorerView}
             />
           ))}
-          <Footer total={tronPower} used={totalVotesUsed} onClick={onDelegate} />
+          <Footer total={votingPower} used={totalVotesUsed} onClick={onDelegate} />
         </>
       ) : (
         <Wrapper horizontal>
@@ -220,7 +208,7 @@ const Delegation = ({ account }: Props) => {
             <Text ff="Inter|Medium|SemiBold" color="palette.text.shade60" fontSize={4}>
               <Trans
                 i18nKey={
-                  tronPower > 0
+                  votingPower > 0
                     ? "tron.voting.emptyState.votesDesc"
                     : "tron.voting.emptyState.description"
                 }
@@ -249,13 +237,13 @@ const Delegation = ({ account }: Props) => {
                 primary
                 small
                 disabled={earnRewardDisabled}
-                onClick={tronPower > 0 ? onDelegate : onEarnRewards}
+                onClick={votingPower > 0 ? onDelegate : onEarnRewards}
               >
                 <Box horizontal flow={1} alignItems="center">
                   <IconChartLine size={12} />
                   <Box>
                     <Trans
-                      i18nKey={tronPower > 0 ? "tron.voting.emptyState.vote" : "delegation.title"}
+                      i18nKey={votingPower > 0 ? "tron.voting.emptyState.vote" : "delegation.title"}
                     />
                   </Box>
                 </Box>
@@ -269,7 +257,7 @@ const Delegation = ({ account }: Props) => {
 };
 
 const Votes = ({ account }: Props) => {
-  if (!account.tronResources) return null;
+  if (!account.iconResources) return null;
 
   return <Delegation account={account} />;
 };

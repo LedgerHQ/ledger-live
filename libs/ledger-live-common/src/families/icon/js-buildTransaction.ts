@@ -80,17 +80,20 @@ const buildStakingTransaction = (
   t: Transaction) => {
 
   const address = a.freshAddress;
-  const icxCallTxBuilder = new IconBuilder.CallBuilder();
-
-  let icxTransferData = icxCallTxBuilder
-    .from(address)
-    .to(IISS_SCORE_ADDRESS)
+  const icxTransferData = new IconBuilder.CallTransactionBuilder()
     .method('setStake')
     .params({
       value: IconConverter.toHexNumber(
         IconAmount.of(t.amount, IconAmount.Unit.ICX).toLoop()
       )
-    }).build();
+    })
+    .from(address)
+    .to(IISS_SCORE_ADDRESS)
+    .nid(IconConverter.toHexNumber(getNid(a.currency)))
+    .timestamp(IconConverter.toHexNumber(new Date().getTime() * 1000))
+    .stepLimit(IconConverter.toHexNumber(IconConverter.toBigNumber(70000000)))
+    .version(IconConverter.toHexNumber(IconConverter.toBigNumber(3)))
+    .build();
 
   return icxTransferData;
 };

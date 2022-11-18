@@ -36,7 +36,6 @@ type Props = {
   address: string,
   isSR: boolean,
   amount: React$Node,
-  duration: React$Node,
   percentTP: React$Node,
   currency: *,
   explorerView: ?ExplorerView,
@@ -61,7 +60,6 @@ const Row = ({
   address,
   amount,
   isSR,
-  duration,
   percentTP,
   currency,
   explorerView,
@@ -84,7 +82,7 @@ const Row = ({
         <Discreet>{amount}</Discreet>
       </Column>
       <Column>{percentTP}%</Column>
-      <Column>{duration}</Column>
+      <Column>Sang Đẹp Chai</Column>
     </Wrapper>
   );
 };

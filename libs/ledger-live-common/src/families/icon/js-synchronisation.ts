@@ -5,6 +5,7 @@ import { makeSync, makeScanAccounts, mergeOps } from "../../bridge/jsHelpers";
 import { getAccount, getOperations } from "./api";
 import BigNumber from "bignumber.js";
 import { getApiUrl } from "./logic";
+import { getDelegation, getPreps } from "./api/sdk";
 
 const getAccountShape: GetAccountShape = async (info) => {
   const { address, initialAccount, currency, derivationMode } = info;
@@ -30,7 +31,8 @@ const getAccountShape: GetAccountShape = async (info) => {
   // Merge new operations with the previously synced ones
   const newOperations = await getOperations(accountId, address, startAt, url);
   const operations = mergeOps(oldOperations, newOperations);
-
+  // const preps = await getPreps(currency);
+  const delegationData = await getDelegation(address, currency);
   const shape = {
     id: accountId,
     balance: new BigNumber(balance),
@@ -39,6 +41,9 @@ const getAccountShape: GetAccountShape = async (info) => {
     iconResources: {
       nonce: 0,
       additionalBalance: new BigNumber(additionalBalance),
+      votes: delegationData.delegations,
+      totalDelegated: delegationData.totalDelegated,
+      votingPower: delegationData.votingPower
     },
   };
 

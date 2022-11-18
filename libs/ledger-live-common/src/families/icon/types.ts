@@ -8,28 +8,38 @@ import {
   TransactionStatusCommonRaw,
 } from "@ledgerhq/types-live";
 
+export type PublicRepresentativeData = {
+  delegations: PRep[];
+  totalDelegated: BigNumber;
+};
+
 
 export type PRep = {
-  grade: string;
-  status: string;
-  penalty: string;
-  bonded: string;
-  stake: string;
-  delegated: string;
-  power: string;
-  name: string;
-  country: string;
-  city: string;
-  details: string;
-  website: string;
-  address: string;
-  nodeAddress: string;
-  irep: string;
-  irepUpdateBlockHeight: string;
-  lastHeight: string;
-  totalBlocks: string;
-  validatedBlocks: string;
-  p2pEndpoint: string;
+  grade: string | null | undefined;
+  status: string | null | undefined;
+  penalty: string | null | undefined;
+  bonded: string | null | undefined;
+  stake: string | null | undefined;
+  delegated: string | null | undefined;
+  power: string | null | undefined;
+  name: string | null | undefined;
+  country: string | null | undefined;
+  city: string | null | undefined;
+  details: string | null | undefined;
+  website: string | null | undefined;
+  address: string | null | undefined;
+  nodeAddress: string | null | undefined;
+  irep: string | null | undefined;
+  irepUpdateBlockHeight: string | null | undefined;
+  lastHeight: string | null | undefined;
+  totalBlocks: string | null | undefined;
+  validatedBlocks: string | null | undefined;
+  p2pEndpoint: string | null | undefined;
+};
+
+export type Vote = {
+  address: string | null | undefined;
+  value: string | null | undefined;
 };
 /**
  * Icon account resources
@@ -37,7 +47,8 @@ export type PRep = {
 export type IconResources = {
   nonce: number;
   additionalBalance: BigNumber;
-  votes: PRep[];
+  votes: Vote[];
+  votingPower: BigNumber;
 };
 
 /**
@@ -46,7 +57,8 @@ export type IconResources = {
 export type IconResourcesRaw = {
   nonce: number;
   additionalBalance: string;
-  votes: PRep[];
+  votes: Vote[];
+  votingPower: BigNumber;
 };
 
 /**
