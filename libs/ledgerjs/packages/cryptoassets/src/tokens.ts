@@ -340,7 +340,7 @@ function convertElrondESDTTokens([
     units: [
       {
         name,
-        code: ticker,
+        code: name,
         magnitude: decimals,
       },
     ],
