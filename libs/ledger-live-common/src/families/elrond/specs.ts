@@ -212,7 +212,6 @@ const elrondSpec: AppSpec<Transaction> = {
         expectCorrectBalanceChange(input);
       },
     },
-
     {
       name: "move some ESDT",
       maxRun: 1,
@@ -228,15 +227,15 @@ const elrondSpec: AppSpec<Transaction> = {
         const sibling = pickSiblings(siblings, 2);
         const recipient = sibling.freshAddress;
 
+        const amount = esdtAccount?.balance.times(Math.random()).integerValue();
+
         return {
           transaction: bridge.createTransaction(account),
           updates: [
             {
               recipient,
               subAccountId: esdtAccount?.id,
-            },
-            {
-              amount: esdtAccount?.balance.times(Math.random()).integerValue(),
+              amount,
             },
           ],
         };
