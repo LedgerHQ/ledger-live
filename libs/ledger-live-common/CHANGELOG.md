@@ -1,5 +1,11 @@
 # @ledgerhq/live-common
 
+## 27.7.0-next.3
+
+### Patch Changes
+
+- [#1853](https://github.com/LedgerHQ/ledger-live/pull/1853) [`2660f2993c`](https://github.com/LedgerHQ/ledger-live/commit/2660f2993cc815f10a8e8ffea18fb761d869fc36) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Fix gas limit estimation for token transactions in the Ethereum family
+
 ## 27.7.0-next.2
 
 ### Patch Changes
