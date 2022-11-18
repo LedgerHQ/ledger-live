@@ -1,9 +1,11 @@
+/* eslint-disable no-console */
 import { storiesOf } from "../storiesOf";
 import React from "react";
 import CardA from "../../../src/components/Cards/CardA";
 import CardB from "../../../src/components/Cards/CardB";
 import Flex from "../../../src/components/Layout/Flex";
 import { text, select, number } from "@storybook/addon-knobs";
+import { descriptionCardB } from "./descriptionsCards";
 
 const CardAStory = () => <CardA></CardA>;
 
@@ -35,9 +37,27 @@ const CardBStory = () => {
       justifyContent={"center"}
       p={"16px"}
     >
-      <CardB tag={tag} title={title} cta={cta} imageUrl={imageUrl} />
+      <CardB
+        tag={tag}
+        title={title}
+        cta={cta}
+        imageUrl={imageUrl}
+        onPress={() => console.log("PRESS")}
+        onPressDismiss={() => console.log("DISMISS")}
+      />
     </Flex>
   );
 };
 
-storiesOf((story) => story("Cards", module).add("Card A", CardAStory).add("Card B", CardBStory));
+storiesOf((story) =>
+  story("Cards", module)
+    .add("Card A", CardAStory)
+    .add("Card B", CardBStory, {
+      docs: {
+        title: "Card B",
+        description: {
+          component: descriptionCardB,
+        },
+      },
+    }),
+);
