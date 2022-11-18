@@ -1,10 +1,12 @@
 import React, { useCallback, useState } from "react";
 import { ScrollView } from "react-native";
+import { useDispatch } from "react-redux";
 import { Flex } from "@ledgerhq/native-ui";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { PostOnboardingActionId } from "@ledgerhq/types-live";
+import { completeCustomImageFlow } from "../../actions/settings";
 import { ScreenName } from "../../const";
 import CustomImageDeviceAction from "../../components/CustomImageDeviceAction";
 import TestImage from "../../components/CustomImage/TestImage";
@@ -39,6 +41,7 @@ type NavigationProps = BaseComposite<
  * image.
  */
 const Step3Transfer = ({ route, navigation }: NavigationProps) => {
+  const dispatch = useDispatch();
   const { rawData, device: deviceFromRoute, previewData } = route.params;
   const [device, setDevice] = useState<Device | null>(deviceFromRoute);
 
@@ -58,8 +61,9 @@ const Step3Transfer = ({ route, navigation }: NavigationProps) => {
 
   const handleResult = useCallback(() => {
     completeAction(PostOnboardingActionId.customImage);
+    dispatch(completeCustomImageFlow());
     handleExit();
-  }, [handleExit, completeAction]);
+  }, [completeAction, dispatch, handleExit]);
 
   const insets = useSafeAreaInsets();
   const DEBUG = false;
