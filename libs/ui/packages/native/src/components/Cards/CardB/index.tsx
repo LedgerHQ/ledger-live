@@ -7,7 +7,6 @@ import Text from "../../Text";
 import Flex from "../../Layout/Flex";
 import Link from "../../cta/Link";
 
-
 export type CardProps = TouchableOpacityProps & {
   tag?: string;
   title?: string;
