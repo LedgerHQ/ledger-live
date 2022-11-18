@@ -7,6 +7,7 @@ import NftListItem from "./NftListItem";
 import { AddNewItem } from "./AddNewItemList";
 import CollapsibleHeaderFlatList from "../WalletTab/CollapsibleHeaderFlatList";
 import globalSyncRefreshControl from "../globalSyncRefreshControl";
+import { TrackScreen } from "../../analytics";
 
 const RefreshableCollapsibleHeaderFlatList = globalSyncRefreshControl<
   FlatListProps<ProtoNFT>
@@ -85,15 +86,24 @@ export function NftList({ data }: Props) {
   );
 
   return (
-    <RefreshableCollapsibleHeaderFlatList
-      numColumns={2}
-      data={dataWithAdd}
-      renderItem={renderElem}
-      keyExtractor={keyExtractor}
-      showsVerticalScrollIndicator={false}
-      initialNumToRender={6}
-      windowSize={11}
-      contentContainerStyle={{ marginTop: 16 }}
-    />
+    <>
+      <TrackScreen
+        category="NFT Gallery"
+        name="NFT Gallery"
+        source="NFT tab"
+        NFTs_owned={data.length}
+      />
+
+      <RefreshableCollapsibleHeaderFlatList
+        numColumns={2}
+        data={dataWithAdd}
+        renderItem={renderElem}
+        keyExtractor={keyExtractor}
+        showsVerticalScrollIndicator={false}
+        initialNumToRender={6}
+        windowSize={11}
+        contentContainerStyle={{ marginTop: 16 }}
+      />
+    </>
   );
 }

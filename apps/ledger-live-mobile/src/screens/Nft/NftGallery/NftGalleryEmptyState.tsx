@@ -7,18 +7,27 @@ import { urls } from "../../../config/urls";
 import Link from "../../../components/wrappedUi/Link";
 import ReceiveNFTsModal from "./ReceiveNFTsModal";
 import { useReceiveNFTsModal } from "./ReceiveNFTsModal.hook";
+import { track, TrackScreen } from "../../../analytics";
 
 const NftGalleryEmptyState = () => {
   const { t } = useTranslation();
   const { openModal, closeModal, isModalOpened } = useReceiveNFTsModal();
 
-  const openSupportLink = useCallback(
-    () => Linking.openURL(urls.nft.howToSecure),
-    [],
-  );
+  const openSupportLink = useCallback(() => {
+    track("url_clicked", {
+      name: "How to deposit from Metamask",
+      url: urls.nft.howToSecure,
+    });
+    Linking.openURL(urls.nft.howToSecure);
+  }, []);
 
   return (
     <Flex flex={1} alignItems={"center"} justifyContent={"center"}>
+      <TrackScreen
+        category="NFT Gallery"
+        name="NFT Gallery Start"
+        source="NFT tab"
+      />
       <Text
         variant={"h1Inter"}
         fontWeight={"semiBold"}
