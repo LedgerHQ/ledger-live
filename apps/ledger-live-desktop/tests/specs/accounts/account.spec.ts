@@ -15,14 +15,15 @@ test.describe.serial("Accounts", () => {
   for (const currency of currencies) {
     test(`[${currency}] Add account`, async ({ page }) => {
       const portfolioPage = new PortfolioPage(page);
-      const addAccountModal = new AddAccountModal(page);
+      // const addAccountModal = new AddAccountModal(page);
       // const deviceAction = new DeviceAction(page);
       // const layout = new Layout(page);
 
       await test.step(`[${currency}] Open modal`, async () => {
         await portfolioPage.openAddAccountModal();
-        expect(await addAccountModal.title.textContent()).toBe("Add accounts");
-        await expect.soft(addAccountModal.container).toHaveScreenshot(`open-modal.png`);
+        expect("nope").toBe("Add accounts");
+        // expect(await addAccountModal.title.textContent()).toBe("Add accounts");
+        // await expect.soft(addAccountModal.container).toHaveScreenshot(`open-modal.png`);
       });
 
       // await test.step(`[${currency}] Select currency`, async () => {
