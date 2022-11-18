@@ -14,7 +14,7 @@ import {
 } from "@solana/web3.js";
 import { getEnv } from "../../../../env";
 import { Awaited } from "../../logic";
-import { NetworkDown, LedgerAPI5xx, LedgerAPI4xx } from "@ledgerhq/errors";
+import { NetworkDown } from "@ledgerhq/errors";
 
 export type Config = {
   readonly endpoint: string;
