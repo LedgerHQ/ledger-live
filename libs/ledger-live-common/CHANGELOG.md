@@ -1,107 +1,134 @@
 # @ledgerhq/live-common
 
-## 27.7.0-nightly.4
-
-### Minor Changes
-
-- [#1798](https://github.com/LedgerHQ/ledger-live/pull/1798) [`e43939cfd5`](https://github.com/LedgerHQ/ledger-live/commit/e43939cfd5e3df8888cfe1f0ba95140acd061eea) Thanks [@henrily-ledger](https://github.com/henrily-ledger)! - change polkadot's api call to anticipate new version
-
-## 27.7.0-nightly.3
-
-### Patch Changes
-
-- Updated dependencies [[`0308e8c6ae`](https://github.com/LedgerHQ/ledger-live/commit/0308e8c6ae721a99bc50f5dc60db0d11ea8ea1ff), [`00e8b9e435`](https://github.com/LedgerHQ/ledger-live/commit/00e8b9e435fc5f13c56206102619eb1f97c62546), [`bef0a76d27`](https://github.com/LedgerHQ/ledger-live/commit/bef0a76d276f6a8d322e890ceaedc266a710b06a)]:
-  - @ledgerhq/errors@6.12.0-nightly.3
-  - @ledgerhq/hw-app-eth@6.30.0-nightly.2
-  - @ledgerhq/cryptoassets@6.37.0-nightly.2
-  - @ledgerhq/devices@7.0.4-nightly.3
-  - @ledgerhq/hw-app-algorand@6.27.7-nightly.3
-  - @ledgerhq/hw-app-cosmos@6.27.7-nightly.3
-  - @ledgerhq/hw-app-polkadot@6.27.7-nightly.3
-  - @ledgerhq/hw-app-solana@7.0.1-nightly.3
-  - @ledgerhq/hw-app-trx@6.27.7-nightly.3
-  - @ledgerhq/hw-transport@6.27.7-nightly.3
-  - @ledgerhq/hw-transport-node-speculos@6.27.7-nightly.3
-  - @ledgerhq/hw-app-btc@9.0.0-nightly.4
-  - @ledgerhq/hw-app-str@6.27.7-nightly.3
-  - @ledgerhq/hw-app-tezos@6.27.7-nightly.3
-  - @ledgerhq/hw-app-xrp@6.27.7-nightly.3
-  - @ledgerhq/hw-transport-mocker@6.27.7-nightly.3
-
-## 27.7.0-nightly.2
+## 27.7.0
 
 ### Minor Changes
 
 - [#1211](https://github.com/LedgerHQ/ledger-live/pull/1211) [`32c8df8f47`](https://github.com/LedgerHQ/ledger-live/commit/32c8df8f47644278ee44e9db623af864d57ad61c) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Add dynamic CAL support for EIP712
 
-* [#1211](https://github.com/LedgerHQ/ledger-live/pull/1211) [`32c8df8f47`](https://github.com/LedgerHQ/ledger-live/commit/32c8df8f47644278ee44e9db623af864d57ad61c) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Remove EIP712 message signing from env and set as definitve feature + update tests accordingly
+* [#1629](https://github.com/LedgerHQ/ledger-live/pull/1629) [`4aa4d42cb1`](https://github.com/LedgerHQ/ledger-live/commit/4aa4d42cb103612c130b01f36100eb6fdd87e8b1) Thanks [@adrienlacombe-ledger](https://github.com/adrienlacombe-ledger)! - add youhodler as fund provider
 
-- [#1662](https://github.com/LedgerHQ/ledger-live/pull/1662) [`4ad6155953`](https://github.com/LedgerHQ/ledger-live/commit/4ad615595392f5ef806cbd21f0be1b30d3ae73c6) Thanks [@lambertkevin](https://github.com/lambertkevin)! - EIP1559 support for Ethereum transactions
+- [#1757](https://github.com/LedgerHQ/ledger-live/pull/1757) [`aec68cca70`](https://github.com/LedgerHQ/ledger-live/commit/aec68cca70194f7890a09dca62a737046af13305) Thanks [@henrily-ledger](https://github.com/henrily-ledger)! - disable nft on ios with feature flag
 
-### Patch Changes
+* [#1628](https://github.com/LedgerHQ/ledger-live/pull/1628) [`57699a19fa`](https://github.com/LedgerHQ/ledger-live/commit/57699a19fa545ba359e457deb7ba0632b15342b5) Thanks [@adrienlacombe-ledger](https://github.com/adrienlacombe-ledger)! - add plugins
 
-- [#1783](https://github.com/LedgerHQ/ledger-live/pull/1783) [`90a9fbb75b`](https://github.com/LedgerHQ/ledger-live/commit/90a9fbb75b3b3960655d601a6c7c987689ef19be) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Enforce nano app version 1.10.1 to prevent latency issues with EIP-712 signature
+- [#1211](https://github.com/LedgerHQ/ledger-live/pull/1211) [`32c8df8f47`](https://github.com/LedgerHQ/ledger-live/commit/32c8df8f47644278ee44e9db623af864d57ad61c) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Remove EIP712 message signing from env and set as definitve feature + update tests accordingly
 
-- Updated dependencies [[`4ad6155953`](https://github.com/LedgerHQ/ledger-live/commit/4ad615595392f5ef806cbd21f0be1b30d3ae73c6), [`32c8df8f47`](https://github.com/LedgerHQ/ledger-live/commit/32c8df8f47644278ee44e9db623af864d57ad61c), [`32c8df8f47`](https://github.com/LedgerHQ/ledger-live/commit/32c8df8f47644278ee44e9db623af864d57ad61c), [`4ad6155953`](https://github.com/LedgerHQ/ledger-live/commit/4ad615595392f5ef806cbd21f0be1b30d3ae73c6), [`32c8df8f47`](https://github.com/LedgerHQ/ledger-live/commit/32c8df8f47644278ee44e9db623af864d57ad61c)]:
-  - @ledgerhq/cryptoassets@6.37.0-nightly.1
-  - @ledgerhq/hw-app-eth@6.30.0-nightly.1
-  - @ledgerhq/errors@6.12.0-nightly.2
-  - @ledgerhq/devices@7.0.4-nightly.2
-  - @ledgerhq/hw-app-algorand@6.27.7-nightly.2
-  - @ledgerhq/hw-app-cosmos@6.27.7-nightly.2
-  - @ledgerhq/hw-app-polkadot@6.27.7-nightly.2
-  - @ledgerhq/hw-app-solana@7.0.1-nightly.2
-  - @ledgerhq/hw-app-trx@6.27.7-nightly.2
-  - @ledgerhq/hw-transport@6.27.7-nightly.2
-  - @ledgerhq/hw-transport-node-speculos@6.27.7-nightly.2
-  - @ledgerhq/hw-app-btc@9.0.0-nightly.3
-  - @ledgerhq/hw-app-str@6.27.7-nightly.2
-  - @ledgerhq/hw-app-tezos@6.27.7-nightly.2
-  - @ledgerhq/hw-app-xrp@6.27.7-nightly.2
-  - @ledgerhq/hw-transport-mocker@6.27.7-nightly.2
+* [#1662](https://github.com/LedgerHQ/ledger-live/pull/1662) [`4ad6155953`](https://github.com/LedgerHQ/ledger-live/commit/4ad615595392f5ef806cbd21f0be1b30d3ae73c6) Thanks [@lambertkevin](https://github.com/lambertkevin)! - EIP1559 support for Ethereum transactions
 
-## 27.7.0-nightly.1
+- [#1811](https://github.com/LedgerHQ/ledger-live/pull/1811) [`f521bf7ef1`](https://github.com/LedgerHQ/ledger-live/commit/f521bf7ef1afa3afe1a03cbf65bd36ebee6d0768) Thanks [@haammar-ledger](https://github.com/haammar-ledger)! - change polkadot's api call to anticipate new version
 
 ### Patch Changes
 
-- [#1493](https://github.com/LedgerHQ/ledger-live/pull/1493) [`658303322b`](https://github.com/LedgerHQ/ledger-live/commit/658303322b767f5ed3821def8384b5342ab03089) Thanks [@hzheng-ledger](https://github.com/hzheng-ledger)! - Change hw-app-btc to remove any dependency to the legacy Bitcoin Nano app API. Update hw-app-btc API (refer to hw-app-btc/src/Btc.ts for new method signature)
+- [#1861](https://github.com/LedgerHQ/ledger-live/pull/1861) [`9f8c9be0ae`](https://github.com/LedgerHQ/ledger-live/commit/9f8c9be0aead9eb4101aa9d14e4ee3b560d88792) Thanks [@haammar-ledger](https://github.com/haammar-ledger)! - Revert "[LIVE-4088] Remove incompatible API from ledger-live with new bitcoin app (#1493)"
 
-- Updated dependencies [[`658303322b`](https://github.com/LedgerHQ/ledger-live/commit/658303322b767f5ed3821def8384b5342ab03089)]:
-  - @ledgerhq/hw-app-btc@9.0.0-nightly.2
+* [#1758](https://github.com/LedgerHQ/ledger-live/pull/1758) [`3f516ea41e`](https://github.com/LedgerHQ/ledger-live/commit/3f516ea41e6e1a485be452872c91bd4a315eb167) Thanks [@LFBarreto](https://github.com/LFBarreto)! - bugfix - MarketDataProvider - undefined chartData in specific cases
 
-## 27.7.0-nightly.0
+- [#1853](https://github.com/LedgerHQ/ledger-live/pull/1853) [`2660f2993c`](https://github.com/LedgerHQ/ledger-live/commit/2660f2993cc815f10a8e8ffea18fb761d869fc36) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Fix gas limit estimation for token transactions in the Ethereum family
+
+* [#1651](https://github.com/LedgerHQ/ledger-live/pull/1651) [`f7b27a97f6`](https://github.com/LedgerHQ/ledger-live/commit/f7b27a97f6cd2b2c553cbe83d008e4ce907c9ad2) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Fix hardware version checking logic in getVersion command
+
+- [#1731](https://github.com/LedgerHQ/ledger-live/pull/1731) [`ddeace7163`](https://github.com/LedgerHQ/ledger-live/commit/ddeace7163f0c9186f4f48cc4baa2b9273c5ebf3) Thanks [@pierrelouis-c](https://github.com/pierrelouis-c)! - Filter the post onboarding actions using Feature Flags
+
+* [#1622](https://github.com/LedgerHQ/ledger-live/pull/1622) [`df8cbb8dd1`](https://github.com/LedgerHQ/ledger-live/commit/df8cbb8dd166a66325eb96d8192f3f985b71df60) Thanks [@alexandremgo](https://github.com/alexandremgo)! - Fix bootloader repairing steps
+
+- [#1352](https://github.com/LedgerHQ/ledger-live/pull/1352) [`0d7e0f713a`](https://github.com/LedgerHQ/ledger-live/commit/0d7e0f713ab4fbb3d4bd7df147a96c7de73123b7) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Moved custom image errors from ledger-live-mobile to live-common
+
+* [#1685](https://github.com/LedgerHQ/ledger-live/pull/1685) [`e89044242d`](https://github.com/LedgerHQ/ledger-live/commit/e89044242d005bfc3349abbbf1921e9056686d0b) Thanks [@alexandremgo](https://github.com/alexandremgo)! - Handle 0x5515 response for allow manager and connect app device actions on LLM
+
+- [#1141](https://github.com/LedgerHQ/ledger-live/pull/1141) [`24ea9cd15f`](https://github.com/LedgerHQ/ledger-live/commit/24ea9cd15f92d5a2c74c4b936bacb89d5d4d36fd) Thanks [@valpinkman](https://github.com/valpinkman)! - Collateral changes due to solving all LLM typescript/eslint issues/warnings.
+
+* [#1783](https://github.com/LedgerHQ/ledger-live/pull/1783) [`90a9fbb75b`](https://github.com/LedgerHQ/ledger-live/commit/90a9fbb75b3b3960655d601a6c7c987689ef19be) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Enforce nano app version 1.10.1 to prevent latency issues with EIP-712 signature
+
+* Updated dependencies [[`4ad6155953`](https://github.com/LedgerHQ/ledger-live/commit/4ad615595392f5ef806cbd21f0be1b30d3ae73c6), [`32c8df8f47`](https://github.com/LedgerHQ/ledger-live/commit/32c8df8f47644278ee44e9db623af864d57ad61c), [`0308e8c6ae`](https://github.com/LedgerHQ/ledger-live/commit/0308e8c6ae721a99bc50f5dc60db0d11ea8ea1ff), [`8bf7626bbe`](https://github.com/LedgerHQ/ledger-live/commit/8bf7626bbeb4f766868ab37b7fc943bb7e84e2ca), [`f5f4db47d2`](https://github.com/LedgerHQ/ledger-live/commit/f5f4db47d214bc30390b7be91d3bab4814c5fb45), [`32c8df8f47`](https://github.com/LedgerHQ/ledger-live/commit/32c8df8f47644278ee44e9db623af864d57ad61c), [`d3c91a53e0`](https://github.com/LedgerHQ/ledger-live/commit/d3c91a53e06f9f47817e96c452f69e2d9f71d80f), [`df8cbb8dd1`](https://github.com/LedgerHQ/ledger-live/commit/df8cbb8dd166a66325eb96d8192f3f985b71df60), [`5b8315df30`](https://github.com/LedgerHQ/ledger-live/commit/5b8315df306d72e8b0191aa5136760142f9d3447), [`4ad6155953`](https://github.com/LedgerHQ/ledger-live/commit/4ad615595392f5ef806cbd21f0be1b30d3ae73c6), [`00e8b9e435`](https://github.com/LedgerHQ/ledger-live/commit/00e8b9e435fc5f13c56206102619eb1f97c62546), [`bef0a76d27`](https://github.com/LedgerHQ/ledger-live/commit/bef0a76d276f6a8d322e890ceaedc266a710b06a), [`24ea9cd15f`](https://github.com/LedgerHQ/ledger-live/commit/24ea9cd15f92d5a2c74c4b936bacb89d5d4d36fd), [`ab40db1288`](https://github.com/LedgerHQ/ledger-live/commit/ab40db1288bf4a795819a8a636821dbccf33073a), [`32c8df8f47`](https://github.com/LedgerHQ/ledger-live/commit/32c8df8f47644278ee44e9db623af864d57ad61c)]:
+  - @ledgerhq/cryptoassets@6.37.0
+  - @ledgerhq/hw-app-eth@6.30.0
+  - @ledgerhq/errors@6.12.0
+  - @ledgerhq/hw-transport@6.27.7
+  - @ledgerhq/hw-app-solana@7.0.1
+  - @ledgerhq/devices@7.0.4
+  - @ledgerhq/hw-app-algorand@6.27.7
+  - @ledgerhq/hw-app-cosmos@6.27.7
+  - @ledgerhq/hw-app-polkadot@6.27.7
+  - @ledgerhq/hw-app-trx@6.27.7
+  - @ledgerhq/hw-transport-node-speculos@6.27.7
+  - @ledgerhq/hw-app-btc@9.0.0
+  - @ledgerhq/hw-app-str@6.27.7
+  - @ledgerhq/hw-app-tezos@6.27.7
+  - @ledgerhq/hw-app-xrp@6.27.7
+  - @ledgerhq/hw-transport-mocker@6.27.7
+
+## 27.7.0-next.3
+
+### Patch Changes
+
+- [#1853](https://github.com/LedgerHQ/ledger-live/pull/1853) [`2660f2993c`](https://github.com/LedgerHQ/ledger-live/commit/2660f2993cc815f10a8e8ffea18fb761d869fc36) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Fix gas limit estimation for token transactions in the Ethereum family
+
+## 27.7.0-next.2
+
+### Patch Changes
+
+- [#1861](https://github.com/LedgerHQ/ledger-live/pull/1861) [`9f8c9be0ae`](https://github.com/LedgerHQ/ledger-live/commit/9f8c9be0aead9eb4101aa9d14e4ee3b560d88792) Thanks [@haammar-ledger](https://github.com/haammar-ledger)! - Revert "[LIVE-4088] Remove incompatible API from ledger-live with new bitcoin app (#1493)"
+
+## 27.7.0-next.1
 
 ### Minor Changes
 
+- [#1811](https://github.com/LedgerHQ/ledger-live/pull/1811) [`f521bf7ef1`](https://github.com/LedgerHQ/ledger-live/commit/f521bf7ef1afa3afe1a03cbf65bd36ebee6d0768) Thanks [@haammar-ledger](https://github.com/haammar-ledger)! - change polkadot's api call to anticipate new version
+
+## 27.7.0-next.0
+
+### Minor Changes
+
+- [#1211](https://github.com/LedgerHQ/ledger-live/pull/1211) [`32c8df8f47`](https://github.com/LedgerHQ/ledger-live/commit/32c8df8f47644278ee44e9db623af864d57ad61c) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Add dynamic CAL support for EIP712
+
+* [#1629](https://github.com/LedgerHQ/ledger-live/pull/1629) [`4aa4d42cb1`](https://github.com/LedgerHQ/ledger-live/commit/4aa4d42cb103612c130b01f36100eb6fdd87e8b1) Thanks [@adrienlacombe-ledger](https://github.com/adrienlacombe-ledger)! - add youhodler as fund provider
+
 - [#1757](https://github.com/LedgerHQ/ledger-live/pull/1757) [`aec68cca70`](https://github.com/LedgerHQ/ledger-live/commit/aec68cca70194f7890a09dca62a737046af13305) Thanks [@henrily-ledger](https://github.com/henrily-ledger)! - disable nft on ios with feature flag
+
+* [#1628](https://github.com/LedgerHQ/ledger-live/pull/1628) [`57699a19fa`](https://github.com/LedgerHQ/ledger-live/commit/57699a19fa545ba359e457deb7ba0632b15342b5) Thanks [@adrienlacombe-ledger](https://github.com/adrienlacombe-ledger)! - add plugins
+
+- [#1211](https://github.com/LedgerHQ/ledger-live/pull/1211) [`32c8df8f47`](https://github.com/LedgerHQ/ledger-live/commit/32c8df8f47644278ee44e9db623af864d57ad61c) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Remove EIP712 message signing from env and set as definitve feature + update tests accordingly
+
+* [#1662](https://github.com/LedgerHQ/ledger-live/pull/1662) [`4ad6155953`](https://github.com/LedgerHQ/ledger-live/commit/4ad615595392f5ef806cbd21f0be1b30d3ae73c6) Thanks [@lambertkevin](https://github.com/lambertkevin)! - EIP1559 support for Ethereum transactions
 
 ### Patch Changes
 
 - [#1758](https://github.com/LedgerHQ/ledger-live/pull/1758) [`3f516ea41e`](https://github.com/LedgerHQ/ledger-live/commit/3f516ea41e6e1a485be452872c91bd4a315eb167) Thanks [@LFBarreto](https://github.com/LFBarreto)! - bugfix - MarketDataProvider - undefined chartData in specific cases
 
+* [#1651](https://github.com/LedgerHQ/ledger-live/pull/1651) [`f7b27a97f6`](https://github.com/LedgerHQ/ledger-live/commit/f7b27a97f6cd2b2c553cbe83d008e4ce907c9ad2) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Fix hardware version checking logic in getVersion command
+
+- [#1493](https://github.com/LedgerHQ/ledger-live/pull/1493) [`658303322b`](https://github.com/LedgerHQ/ledger-live/commit/658303322b767f5ed3821def8384b5342ab03089) Thanks [@hzheng-ledger](https://github.com/hzheng-ledger)! - Change hw-app-btc to remove any dependency to the legacy Bitcoin Nano app API. Update hw-app-btc API (refer to hw-app-btc/src/Btc.ts for new method signature)
+
 * [#1731](https://github.com/LedgerHQ/ledger-live/pull/1731) [`ddeace7163`](https://github.com/LedgerHQ/ledger-live/commit/ddeace7163f0c9186f4f48cc4baa2b9273c5ebf3) Thanks [@pierrelouis-c](https://github.com/pierrelouis-c)! - Filter the post onboarding actions using Feature Flags
+
+- [#1622](https://github.com/LedgerHQ/ledger-live/pull/1622) [`df8cbb8dd1`](https://github.com/LedgerHQ/ledger-live/commit/df8cbb8dd166a66325eb96d8192f3f985b71df60) Thanks [@alexandremgo](https://github.com/alexandremgo)! - Fix bootloader repairing steps
+
+* [#1352](https://github.com/LedgerHQ/ledger-live/pull/1352) [`0d7e0f713a`](https://github.com/LedgerHQ/ledger-live/commit/0d7e0f713ab4fbb3d4bd7df147a96c7de73123b7) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Moved custom image errors from ledger-live-mobile to live-common
 
 - [#1685](https://github.com/LedgerHQ/ledger-live/pull/1685) [`e89044242d`](https://github.com/LedgerHQ/ledger-live/commit/e89044242d005bfc3349abbbf1921e9056686d0b) Thanks [@alexandremgo](https://github.com/alexandremgo)! - Handle 0x5515 response for allow manager and connect app device actions on LLM
 
 * [#1141](https://github.com/LedgerHQ/ledger-live/pull/1141) [`24ea9cd15f`](https://github.com/LedgerHQ/ledger-live/commit/24ea9cd15f92d5a2c74c4b936bacb89d5d4d36fd) Thanks [@valpinkman](https://github.com/valpinkman)! - Collateral changes due to solving all LLM typescript/eslint issues/warnings.
 
-* Updated dependencies [[`d3c91a53e0`](https://github.com/LedgerHQ/ledger-live/commit/d3c91a53e06f9f47817e96c452f69e2d9f71d80f), [`24ea9cd15f`](https://github.com/LedgerHQ/ledger-live/commit/24ea9cd15f92d5a2c74c4b936bacb89d5d4d36fd)]:
-  - @ledgerhq/hw-transport@6.27.7-nightly.1
-  - @ledgerhq/cryptoassets@6.36.2-nightly.0
-  - @ledgerhq/errors@6.11.2-nightly.1
-  - @ledgerhq/hw-app-eth@6.29.12-nightly.0
-  - @ledgerhq/hw-app-solana@7.0.1-nightly.1
-  - @ledgerhq/hw-app-algorand@6.27.7-nightly.1
-  - @ledgerhq/hw-app-btc@8.1.2-nightly.1
-  - @ledgerhq/hw-app-cosmos@6.27.7-nightly.1
-  - @ledgerhq/hw-app-polkadot@6.27.7-nightly.1
-  - @ledgerhq/hw-app-str@6.27.7-nightly.1
-  - @ledgerhq/hw-app-tezos@6.27.7-nightly.1
-  - @ledgerhq/hw-app-trx@6.27.7-nightly.1
-  - @ledgerhq/hw-app-xrp@6.27.7-nightly.1
-  - @ledgerhq/hw-transport-mocker@6.27.7-nightly.1
-  - @ledgerhq/hw-transport-node-speculos@6.27.7-nightly.1
-  - @ledgerhq/devices@7.0.4-nightly.1
+- [#1783](https://github.com/LedgerHQ/ledger-live/pull/1783) [`90a9fbb75b`](https://github.com/LedgerHQ/ledger-live/commit/90a9fbb75b3b3960655d601a6c7c987689ef19be) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Enforce nano app version 1.10.1 to prevent latency issues with EIP-712 signature
+
+- Updated dependencies [[`4ad6155953`](https://github.com/LedgerHQ/ledger-live/commit/4ad615595392f5ef806cbd21f0be1b30d3ae73c6), [`32c8df8f47`](https://github.com/LedgerHQ/ledger-live/commit/32c8df8f47644278ee44e9db623af864d57ad61c), [`0308e8c6ae`](https://github.com/LedgerHQ/ledger-live/commit/0308e8c6ae721a99bc50f5dc60db0d11ea8ea1ff), [`8bf7626bbe`](https://github.com/LedgerHQ/ledger-live/commit/8bf7626bbeb4f766868ab37b7fc943bb7e84e2ca), [`f5f4db47d2`](https://github.com/LedgerHQ/ledger-live/commit/f5f4db47d214bc30390b7be91d3bab4814c5fb45), [`658303322b`](https://github.com/LedgerHQ/ledger-live/commit/658303322b767f5ed3821def8384b5342ab03089), [`32c8df8f47`](https://github.com/LedgerHQ/ledger-live/commit/32c8df8f47644278ee44e9db623af864d57ad61c), [`d3c91a53e0`](https://github.com/LedgerHQ/ledger-live/commit/d3c91a53e06f9f47817e96c452f69e2d9f71d80f), [`df8cbb8dd1`](https://github.com/LedgerHQ/ledger-live/commit/df8cbb8dd166a66325eb96d8192f3f985b71df60), [`5b8315df30`](https://github.com/LedgerHQ/ledger-live/commit/5b8315df306d72e8b0191aa5136760142f9d3447), [`4ad6155953`](https://github.com/LedgerHQ/ledger-live/commit/4ad615595392f5ef806cbd21f0be1b30d3ae73c6), [`00e8b9e435`](https://github.com/LedgerHQ/ledger-live/commit/00e8b9e435fc5f13c56206102619eb1f97c62546), [`bef0a76d27`](https://github.com/LedgerHQ/ledger-live/commit/bef0a76d276f6a8d322e890ceaedc266a710b06a), [`24ea9cd15f`](https://github.com/LedgerHQ/ledger-live/commit/24ea9cd15f92d5a2c74c4b936bacb89d5d4d36fd), [`ab40db1288`](https://github.com/LedgerHQ/ledger-live/commit/ab40db1288bf4a795819a8a636821dbccf33073a), [`32c8df8f47`](https://github.com/LedgerHQ/ledger-live/commit/32c8df8f47644278ee44e9db623af864d57ad61c)]:
+  - @ledgerhq/cryptoassets@6.37.0-next.0
+  - @ledgerhq/hw-app-eth@6.30.0-next.0
+  - @ledgerhq/errors@6.12.0-next.0
+  - @ledgerhq/hw-app-btc@9.0.0-next.0
+  - @ledgerhq/hw-transport@6.27.7-next.0
+  - @ledgerhq/hw-app-solana@7.0.1-next.0
+  - @ledgerhq/devices@7.0.4-next.0
+  - @ledgerhq/hw-app-algorand@6.27.7-next.0
+  - @ledgerhq/hw-app-cosmos@6.27.7-next.0
+  - @ledgerhq/hw-app-polkadot@6.27.7-next.0
+  - @ledgerhq/hw-app-trx@6.27.7-next.0
+  - @ledgerhq/hw-transport-node-speculos@6.27.7-next.0
+  - @ledgerhq/hw-app-str@6.27.7-next.0
+  - @ledgerhq/hw-app-tezos@6.27.7-next.0
+  - @ledgerhq/hw-app-xrp@6.27.7-next.0
+  - @ledgerhq/hw-transport-mocker@6.27.7-next.0
 
 ## 27.6.0
 

@@ -23,6 +23,8 @@ import {
 } from "../actions/notifications";
 import { setRatingsModalLocked } from "../actions/ratings";
 import { track } from "../analytics";
+import { notificationsSelector } from "../reducers/settings";
+import { setNotifications } from "../actions/settings";
 
 export type EventTrigger = {
   timeout: NodeJS.Timeout;
@@ -76,6 +78,7 @@ const getIsNotifEnabled = async () => {
 
 const useNotifications = () => {
   const pushNotificationsFeature = useFeature("brazePushNotifications");
+  const notifications = useSelector(notificationsSelector);
 
   const isPushNotificationsModalOpen = useSelector(
     notificationsModalOpenSelector,
@@ -264,6 +267,15 @@ const useNotifications = () => {
   );
 
   const initPushNotificationsData = useCallback(() => {
+    if (notifications && notifications.areNotificationsAllowed === undefined) {
+      dispatch(
+        setNotifications({
+          areNotificationsAllowed: true,
+          announcementsCategory: true,
+          recommendationsCategory: true,
+        }),
+      );
+    }
     getPushNotificationsDataOfUserFromStorage().then(dataOfUser => {
       updatePushNotificationsDataOfUserInStateAndStore({
         ...dataOfUser,
@@ -271,7 +283,11 @@ const useNotifications = () => {
         numberOfAppStarts: (dataOfUser?.numberOfAppStarts ?? 0) + 1,
       });
     });
-  }, [updatePushNotificationsDataOfUserInStateAndStore]);
+  }, [
+    dispatch,
+    notifications,
+    updatePushNotificationsDataOfUserInStateAndStore,
+  ]);
 
   const triggerMarketPushNotificationModal = useCallback(() => {
     if (

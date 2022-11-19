@@ -1,38 +1,22 @@
 # @ledgerhq/hw-app-btc
 
-## 9.0.0-nightly.4
+## 9.0.0
 
 ### Patch Changes
 
-- Updated dependencies []:
-  - @ledgerhq/hw-transport@6.27.7-nightly.3
+- Updated dependencies [[`d3c91a53e0`](https://github.com/LedgerHQ/ledger-live/commit/d3c91a53e06f9f47817e96c452f69e2d9f71d80f)]:
+  - @ledgerhq/hw-transport@6.27.7
 
-## 9.0.0-nightly.3
-
-### Patch Changes
-
-- Updated dependencies []:
-  - @ledgerhq/hw-transport@6.27.7-nightly.2
-
-## 9.0.0-nightly.2
+## 9.0.0-next.0
 
 ### Major Changes
 
 - [#1493](https://github.com/LedgerHQ/ledger-live/pull/1493) [`658303322b`](https://github.com/LedgerHQ/ledger-live/commit/658303322b767f5ed3821def8384b5342ab03089) Thanks [@hzheng-ledger](https://github.com/hzheng-ledger)! - Change hw-app-btc to remove any dependency to the legacy Bitcoin Nano app API. Update hw-app-btc API (refer to hw-app-btc/src/Btc.ts for new method signature)
 
-## 8.1.2-nightly.1
-
 ### Patch Changes
 
 - Updated dependencies [[`d3c91a53e0`](https://github.com/LedgerHQ/ledger-live/commit/d3c91a53e06f9f47817e96c452f69e2d9f71d80f)]:
-  - @ledgerhq/hw-transport@6.27.7-nightly.1
-
-## 8.1.2-nightly.0
-
-### Patch Changes
-
-- Updated dependencies []:
-  - @ledgerhq/hw-transport@6.27.7-nightly.0
+  - @ledgerhq/hw-transport@6.27.7-next.0
 
 ## 8.1.1
 

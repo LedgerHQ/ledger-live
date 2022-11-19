@@ -195,9 +195,9 @@ export type SettingsState = {
 };
 
 export type NotificationsSettings = {
-  allowed: boolean;
-  announcements: boolean;
-  recommendations: boolean;
+  areNotificationsAllowed: boolean;
+  announcementsCategory: boolean;
+  recommendationsCategory: boolean;
 };
 
 // === WALLET CONNECT STATE ===
