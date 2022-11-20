@@ -100,6 +100,8 @@ const test = base.extend<TestFixtures>({
     const page = await electronApp.firstWindow();
 
     // start coverage
+    // FIXME: This might be the reason why tests are failing
+    /*
     const istanbulCLIOutput = path.join(__dirname, "../artifacts/.nyc_output");
 
     await page.addInitScript(() =>
@@ -115,6 +117,7 @@ const test = base.extend<TestFixtures>({
           coverageJSON,
         );
     });
+    */
 
     // app is loaded
     // expect(await page.title()).toBe("Ledger Live");
@@ -125,9 +128,12 @@ const test = base.extend<TestFixtures>({
     await use(page);
 
     // stop coverage
+    // FIXME: This might be the reason why tests are failing
+    /*
     await page.evaluate(() =>
       (window as any).collectIstanbulCoverage(JSON.stringify((window as any).__coverage__)),
     );
+    */
 
     // close app
     await electronApp.close();
