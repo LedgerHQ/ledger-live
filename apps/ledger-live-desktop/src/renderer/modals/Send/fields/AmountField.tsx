@@ -22,6 +22,7 @@ type Props = {
   initValue?: BigNumber;
   walletConnectProxy?: boolean;
   resetInitValue?: () => void;
+  useMaxLabel?: boolean;
 };
 
 const AmountField = ({
@@ -35,6 +36,7 @@ const AmountField = ({
   initValue,
   resetInitValue,
   walletConnectProxy,
+  useMaxLabel,
 }: Props) => {
   const bridge = getAccountBridge(account, parentAccount);
 
@@ -99,7 +101,9 @@ const AmountField = ({
                 }
               }}
             >
-              <Trans i18nKey="send.steps.details.useMax" />
+              <Trans
+                i18nKey={useMaxLabel ? "send.steps.details.useMax" : "send.steps.details.sendMax"}
+              />
             </Text>
             <Switch
               small
