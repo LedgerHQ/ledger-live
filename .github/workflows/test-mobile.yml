@@ -202,10 +202,10 @@ jobs:
         uses: reactivecircus/android-emulator-runner@v2
         timeout-minutes: 20
         with:
-          api-level: 30
+          api-level: 31
           arch: x86_64
           target: default
-          avd-name: "Pixel_3a"
+          avd-name: "Pixel_5_API_31"
           emulator-options: -verbose -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
           ram-size: 4096M
           script: pnpm mobile e2e:test -c android.emu.release --loglevel trace --record-logs all --record-timeline all --take-screenshots all --record-videos failing --forceExit --detectOpenHandles
