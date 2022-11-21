@@ -355,7 +355,7 @@ describe("swap/utils/getNoticeType", function () {
 
     const result = getNoticeType("cic");
 
-    expect(result).toBe(expectedResult);
+    expect(result).toEqual(expectedResult);
   });
 
   test("should return notice type for ftx", () => {
@@ -363,7 +363,7 @@ describe("swap/utils/getNoticeType", function () {
 
     const result = getNoticeType("ftx");
 
-    expect(result).toBe(expectedResult);
+    expect(result).toEqual(expectedResult);
   });
 
   test("should return notice type for Changelly", () => {
@@ -371,6 +371,6 @@ describe("swap/utils/getNoticeType", function () {
 
     const result = getNoticeType("changelly");
 
-    expect(result).toBe(expectedResult);
+    expect(result).toEqual(expectedResult);
   });
 });
