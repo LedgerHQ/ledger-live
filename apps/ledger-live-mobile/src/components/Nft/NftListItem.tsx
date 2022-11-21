@@ -51,14 +51,13 @@ const NftCardView = ({
   collectionMetadata?: NFTCollectionMetadata | null;
 }) => {
   const navigation = useNavigation();
-
-  const loading = status === "loading";
-  const collectionLoading = collectionStatus === "loading";
-
   const currency = useMemo(
     () => getCryptoCurrencyById(nft.currencyId),
     [nft.currencyId],
   );
+
+  const loading = status === "loading";
+  const collectionLoading = collectionStatus === "loading";
 
   const navigateToNftViewer = useCallback(() => {
     track("NFT_clicked", {
