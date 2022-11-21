@@ -19,7 +19,7 @@ export default function StepVote({
   bridgePending,
   t,
 }: StepProps) {
-  invariant(account && transaction && transaction.votes, "account and transaction required");
+  invariant(account && transaction && transaction?.votes, "account and transaction required");
   const bridge = getAccountBridge(account, parentAccount);
 
   const updateVote = useCallback(
@@ -36,7 +36,7 @@ export default function StepVote({
       <TrackPage category="Vote Flow" name="Step 1" />
       <VotesField
         account={account}
-        votes={transaction.votes}
+        votes={transaction?.votes}
         bridgePending={bridgePending}
         onChangeVotes={updateVote}
         status={status}

@@ -3,7 +3,7 @@ import type { Transaction } from "../types";
 import { makeAccountBridgeReceive } from "../../../bridge/jsHelpers";
 
 import { getPreloadStrategy, preload, hydrate } from "../preload";
-import { sync, scanAccounts } from "../js-synchronisation";
+import { sync, scanAccounts } from "../js-synchronization";
 import {
   createTransaction,
   updateTransaction,

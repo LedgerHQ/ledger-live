@@ -5,7 +5,7 @@ import { useSelector } from "react-redux";
 import React, { useCallback } from "react";
 import { Trans } from "react-i18next";
 import styled, { withTheme } from "styled-components";
-import { useTronPowerLoading } from "@ledgerhq/live-common/families/tron/react";
+import { useVotingPowerLoading } from "@ledgerhq/live-common/families/icon/react";
 import { useTimer } from "@ledgerhq/live-common/hooks/useTimer";
 import { accountSelector } from "~/renderer/reducers/accounts";
 import TrackPage from "~/renderer/analytics/TrackPage";
@@ -97,7 +97,7 @@ export function StepConfirmationFooter({
   invariant(account, "tron account still exists");
 
   const time = useTimer(20);
-  const isLoading =false
+  const isLoading = useVotingPowerLoading(account);
 
   const openVote = useCallback(() => {
     onClose();

@@ -25,7 +25,7 @@ export type State = {
   initialVotes: Record<string, BigNumber>; // initial Map of votes
 };
 
-export const SR_THRESHOLD = 23;
+export const SR_THRESHOLD = 22;
 export const SR_MAX_VOTES = 5;
 
 let __lastSeenPR: PRep[] = [];
@@ -123,19 +123,19 @@ export function useSortedSr(
   publicRepresentatives: PRep[],
   votes: Vote[]
 ): {
-  pRep: PRep;
+  pr: PRep;
   name: string | null | undefined;
   address: string;
   rank: number;
   isSR: boolean;
 }[] {
   const { current: initialVotes } = useRef(votes.map(({ address }) => address));
-  const SR = useMemo(
+  const PR = useMemo(
     () =>
       publicRepresentatives.map((pr, rank) => ({
         pr,
-        name: sr.name,
-        address: sr.address,
+        name: pr.name,
+        address: pr.address,
         rank: rank + 1,
         isSR: rank < SR_THRESHOLD,
       })),
@@ -143,15 +143,15 @@ export function useSortedSr(
   );
   const sortedVotes = useMemo(
     () =>
-      SR.filter(({ address }) => initialVotes.includes(address)).concat(
-        SR.filter(({ address }) => !initialVotes.includes(address))
+      PR.filter(({ address }) => initialVotes.includes(address)).concat(
+        PR.filter(({ address }) => !initialVotes.includes(address))
       ),
-    [SR, initialVotes]
+    [PR, initialVotes]
   );
-  const sr = useMemo(
-    () => (search ? SR.filter(searchFilter(search)) : sortedVotes),
-    [search, SR, sortedVotes]
+  const pr = useMemo(
+    () => (search ? PR.filter(searchFilter(search)) : sortedVotes),
+    [search, PR, sortedVotes]
   );
-  return sr;
+  return pr;
 }
 

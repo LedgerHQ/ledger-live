@@ -4,6 +4,7 @@ import MODAL_DELEGATE from "../families/tezos/DelegateFlowModal";
 import MODAL_TRON_REWARDS_INFO from "../families/tron/EarnRewardsInfoModal";
 import MODAL_ICON_REWARDS_INFO from "../families/icon/EarnRewardsInfoModal";
 import MODAL_ICON_FREEZE from "../families/icon/Freeze";
+import MODAL_MANAGE_ICON from "../families/icon/ManageIcon";
 import MODAL_VOTE_ICON from "../families/icon/VoteIcon";
 import MODAL_VOTE_ICON_INFO from "../families/icon/VoteIcon/Info";
 import MODAL_EXPORT_OPERATIONS from "./ExportOperations";
@@ -188,6 +189,7 @@ const modals: { [_: string]: React$ComponentType<any> } = {
   MODAL_ICON_FREEZE,
   MODAL_VOTE_ICON,
   MODAL_VOTE_ICON_INFO,
+  MODAL_MANAGE_ICON,
   MODAL_FULL_NODE,
   MODAL_LOTTIE_DEBUGGER,
   MODAL_STORYLY_DEBUGGER,

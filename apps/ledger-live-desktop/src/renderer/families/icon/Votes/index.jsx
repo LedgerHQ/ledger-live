@@ -8,7 +8,6 @@ import type { Account } from "@ledgerhq/types-live";
 
 import {
   useIconPublicRepresentatives,
-  getLastVotedDate,
   formatVotes,
 } from "@ledgerhq/live-common/families/icon/react";
 import { getAccountUnit } from "@ledgerhq/live-common/account/index";
@@ -80,12 +79,12 @@ const Delegation = ({ account }: Props) => {
 
   const formattedVotes = formatVotes(votes, superRepresentatives);
 
-  const totalVotesUsed = votes.reduce((sum, { value }) => sum + value, 0);
+  const totalVotesUsed = votes?.reduce((sum, { value }) => sum + value, 0);
 
   const onDelegate = useCallback(
     () =>
       dispatch(
-        openModal(votes.length > 0 ? "MODAL_VOTE_ICON" : "MODAL_VOTE_ICON_INFO", {
+        openModal(votes?.length > 0 ? "MODAL_VOTE_ICON" : "MODAL_VOTE_ICON_INFO", {
           account,
         }),
       ),
@@ -95,7 +94,7 @@ const Delegation = ({ account }: Props) => {
   const onEarnRewards = useCallback(
     () =>
       dispatch(
-        openModal("MODAL_TRON_REWARDS_INFO", {
+        openModal("MODAL_ICON_REWARDS_INFO", {
           account,
         }),
       ),
@@ -104,7 +103,7 @@ const Delegation = ({ account }: Props) => {
 
   const hasVotes = formattedVotes.length > 0;
 
-  const hasRewards = unwithdrawnReward.gt(0);
+  const hasRewards = unwithdrawnReward?.gt(0);
 
   const canClaimRewards = hasRewards
 

@@ -9,7 +9,7 @@ import {
   submit,
   getLatestBlock,
 } from "./apiCalls";
-import { getRpcUrl } from "../logic";
+import { formatPRepData, getRpcUrl } from "../logic";
 import { GOVERNANCE_SCORE_ADDRESS, IISS_SCORE_ADDRESS } from "../constants";
 const { HttpProvider } = IconService;
 const { IconBuilder, IconAmount } = IconService;
@@ -171,14 +171,21 @@ export const getPreps = async (currency): Promise<PRep[]> => {
     .method("getPReps")
     .build();
 
-  let res;
+
+  let preps: PRep[] = [];
   try {
-    res = await iconService.call(prepTx).execute();
+    const res = await iconService.call(prepTx).execute();
+    if (res?.preps) {
+      for (let pr of res?.preps) {
+        const prepFormatted = formatPRepData(pr);
+        preps.push(prepFormatted);
+      }
+    }
   } catch (error) {
     // TODO: handle show log
     console.log(error);
   }
-  return res?.preps || [];
+  return preps;
 };
 
 export const getDelegation = async (address, currency) => {
@@ -202,8 +209,8 @@ export const getDelegation = async (address, currency) => {
   }
   return {
     delegations: res?.delegations || [],
-    totalDelegated: new BigNumber(res?.totalDelegated || 0),
-    votingPower: new BigNumber(res?.votingPower || 0)
+    totalDelegated: new BigNumber(IconAmount.fromLoop(res?.totalDelegated || 0, IconAmount.Unit.ICX.toString())),
+    votingPower: new BigNumber(IconAmount.fromLoop(res?.votingPower || 0, IconAmount.Unit.ICX.toString()))
   };
 };
 
@@ -220,6 +227,9 @@ export const getPrep = async (prepAddress, currency): Promise<PRep> => {
   let res;
   try {
     res = await iconService.call(prepTx).execute();
+    if (res) {
+      res = formatPRepData(res);
+    }
   } catch (error) {
     // TODO: handle show log
     console.log(error);

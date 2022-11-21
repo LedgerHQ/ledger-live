@@ -97,23 +97,23 @@ const AmountField = ({ t, account, onChangeVotes, status, bridgePending, votes }
   }, []);
 
   const renderItem = useCallback(
-    ({ sr, rank, isSR }, i) => {
-      const item = votes.find(v => v.address === sr.address);
+    ({ pr, rank, isSR }, i) => {
+      const item = votes.find(v => v.address === pr.address);
       const disabled = !item && votesSelected >= SR_MAX_VOTES;
       return (
         <ValidatorRow
-          key={`SR_${sr.address}_${i}`}
-          validator={sr}
+          key={`SR_${pr.address}_${i}`}
+          validator={pr}
           icon={
             <IconContainer isSR={isSR}>
               {isSR ? <Trophy size={16} /> : <Medal size={16} />}
             </IconContainer>
           }
-          title={`${rank}. ${sr.name || sr.address}`}
+          title={`${rank}. ${pr.name || pr.address}`}
           subtitle={
             <Trans
               i18nKey="vote.steps.castVotes.totalVotes"
-              values={{ total: sr.voteCount.toLocaleString(locale) }}
+              values={{ total: pr.power.toLocaleString(locale) }}
             >
               <b></b>
             </Trans>
