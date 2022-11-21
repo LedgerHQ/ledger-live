@@ -11,6 +11,7 @@ import {
   NotEnoughBalance,
   CasperInvalidTransferId,
 } from "@ledgerhq/errors";
+import { getEstimatedFees } from "./utils";
 
 const SEED_IDENTIFIER =
   "0202ba6dc98cbe677711a45bf028a03646f9e588996eb223fad2485e8bc391b01581";
@@ -28,6 +29,8 @@ const casper: CurrenciesData<Transaction> = {
       <= 02ba6dc98cbe677711a45bf028a03646f9e588996eb223fad2485e8bc391b0158130323032624136444339386362453637373731316134356266303238413033363436463965353838393936654232323366616432343835653862633339316230313538319000
       => 11010000142c000080fa010080000000800000000002000000
       <= 022aab9b6ed404f8cffe76ce493e1995d195b5f141ee7d5b7fb20fce60f2a4969130323032324141423942364544343034663843464645373663653439334531393935643139354235463134314565374435423766623230464345363066324134393639319000
+      => 11010000142c000080fa010080010000800000000000000000
+      <= 03a5b4081bd0d6db6d4ec033bcfae8313351d89f1194e435055662fca2aa8f942930323033613542343038314244304436644236443445433033336263464145383331333335316438396631313934653433353035353636326663413261613846393432399000
       `,
     },
   ],
@@ -56,6 +59,7 @@ const casper: CurrenciesData<Transaction> = {
           transaction: fromTransactionRaw({
             family: "casper",
             recipient: "novalidaddress",
+            fees: getEstimatedFees().toString(),
             amount: "1000",
             deploy: null,
           }),
@@ -71,6 +75,7 @@ const casper: CurrenciesData<Transaction> = {
           transaction: fromTransactionRaw({
             family: "casper",
             recipient: ACCOUNT_2,
+            fees: getEstimatedFees().toString(),
             amount: (300 * 1e9).toString(),
             deploy: null,
           }),
@@ -87,6 +92,7 @@ const casper: CurrenciesData<Transaction> = {
             family: "casper",
             recipient: ACCOUNT_2,
             amount: "0",
+            fees: getEstimatedFees().toString(),
             deploy: null,
           }),
           expectedStatus: {
@@ -100,6 +106,7 @@ const casper: CurrenciesData<Transaction> = {
           name: "Minimum Amount Required",
           transaction: fromTransactionRaw({
             family: "casper",
+            fees: getEstimatedFees().toString(),
             recipient: ACCOUNT_2,
             amount: "1",
             deploy: null,
@@ -119,6 +126,7 @@ const casper: CurrenciesData<Transaction> = {
             recipient: ACCOUNT_2,
             amount: "3",
             deploy: null,
+            fees: getEstimatedFees().toString(),
           }),
           expectedStatus: {
             amount: new BigNumber("3"),
@@ -131,6 +139,7 @@ const casper: CurrenciesData<Transaction> = {
           transaction: fromTransactionRaw({
             family: "casper",
             recipient: ACCOUNT_2,
+            fees: getEstimatedFees().toString(),
             amount: "3",
             transferId: "afdsaf1",
             deploy: null,

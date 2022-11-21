@@ -1,7 +1,6 @@
 import { log } from "@ledgerhq/logs";
 import { Account, AccountLike } from "@ledgerhq/types-live";
 import type { DeviceTransactionField } from "../../transaction";
-import { CASPER_FEES } from "./consts";
 import { Transaction, TransactionStatus } from "./types";
 import { casperPubKeyToAccountHash, methodToString } from "./utils";
 
@@ -39,7 +38,7 @@ function getDeviceTransactionConfig({
   fields.push({
     type: "casper.fees",
     label: "Fees",
-    value: `${CASPER_FEES.toLocaleString()} motes`,
+    value: `${transaction.fees.toLocaleString()} motes`,
   });
   fields.push({
     type: "text",
