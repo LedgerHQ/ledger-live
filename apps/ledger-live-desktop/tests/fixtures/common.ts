@@ -22,11 +22,11 @@ type TestFixtures = {
 };
 
 const test = base.extend<TestFixtures>({
-  env: undefined,
+  env: {},
   lang: "en-US",
   theme: "dark",
-  userdata: undefined,
-  featureFlags: undefined,
+  userdata: "",
+  featureFlags: {},
   userdataDestinationPath: async ({}, use) => {
     use(path.join(__dirname, "../artifacts/userdata", generateUUID()));
   },
@@ -121,7 +121,7 @@ const test = base.extend<TestFixtures>({
 
     // app is loaded
     // expect(await page.title()).toBe("Ledger Live");
-    await page.waitForLoadState("domcontentloaded");
+    await page.waitForLoadState("domcontentloaded", { timeout: 120000 });
     await page.waitForSelector("#loader-container", { state: "hidden" });
 
     // use page in the test
