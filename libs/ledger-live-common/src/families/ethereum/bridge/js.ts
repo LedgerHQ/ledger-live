@@ -17,6 +17,7 @@ import postSyncPatch from "../postSyncPatch";
 import type { Transaction } from "../types";
 import broadcast from "../broadcast";
 
+// TRIGGERING CI
 const receive: AccountBridge<Transaction>["receive"] =
   makeAccountBridgeReceive();
 
