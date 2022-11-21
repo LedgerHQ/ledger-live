@@ -236,7 +236,7 @@ export const urls = {
       cic: {
         main: "https://criptointercambio.com/",
         tos: "https://criptointercambio.com/terms-of-use",
-        support: "mailto:support@criptointercambio.com",
+        support: "https://criptointercambio.com/en/about",
       },
       wyre: {
         main: "https://support.sendwyre.com/hc/en-us/requests/new",
