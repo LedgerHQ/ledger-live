@@ -79,7 +79,15 @@ jobs:
   #         cache-dependency-path: "**/pnpm-lock.yaml"
   #     - uses: ruby/setup-ruby@v1
   #       with:
-  #         ruby-version: 2.7
+  #         ruby-version: 3.1.2
+  #   - name: Cache LLM pods
+  #     uses: actions/cache@v3
+  #     with:
+  #       path: |
+  #         apps/ledger-live-mobile/ios/Pods
+  #         ~/Library/Caches/CocoaPods
+  #         ~/.cocoapods
+  #       key: ${{ runner.os }}-pods-${{ hashFiles('apps/ledger-live-mobile/ios/Podfile.lock') }}
   #     - name: TurboRepo local caching server
   #       id: turborepo-cache-server
   #       uses: ./tools/actions/turborepo-gh-cache
@@ -119,6 +127,14 @@ jobs:
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: 3.1.2
+      - name: Cache LLM pods
+        uses: actions/cache@v3
+        with:
+          path: |
+            apps/ledger-live-mobile/ios/Pods
+            ~/Library/Caches/CocoaPods
+            ~/.cocoapods
+          key: ${{ runner.os }}-pods-${{ hashFiles('apps/ledger-live-mobile/ios/Podfile.lock') }}
       - name: install dependencies
         run: pnpm i --filter="live-mobile..." --filter="ledger-live" --no-frozen-lockfile --unsafe-perm
       - name: Build dependencies
@@ -129,9 +145,9 @@ jobs:
       # - name: Clear and build detox cache # investigate how to properly cache this
       #   run: pnpm mobile exec detox clean-framework-cache && pnpm mobile exec detox build-framework-cache
       - name: Build iOS app for Detox test run
-        run: pnpm mobile e2e:build -C ./detox.config.js -c ios.sim.release
+        run: pnpm mobile e2e:build -C detox.config.js -c ios.sim.release
       - name: Test iOS app
-        run: pnpm mobile e2e:test -C ./detox.config.js -c ios.sim.release --loglevel verbose --record-logs all --record-timeline all --take-screenshots all --record-videos failing --record-performance all --detectOpenHandles
+        run: pnpm mobile e2e:test -C detox.config.js -c ios.sim.release --loglevel verbose --record-logs all --record-timeline all --take-screenshots all --record-videos failing --record-performance all --detectOpenHandles
       # - name: Upload test artifacts
       #   uses: actions/upload-artifact@v2
       #   if: always()
@@ -166,6 +182,14 @@ jobs:
           distribution: "zulu"
           java-version: "11"
           cache: "gradle"
+      - name: Cache LLM pods
+        uses: actions/cache@v3
+        with:
+          path: |
+            apps/ledger-live-mobile/ios/Pods
+            ~/Library/Caches/CocoaPods
+            ~/.cocoapods
+          key: ${{ runner.os }}-pods-${{ hashFiles('apps/ledger-live-mobile/ios/Podfile.lock') }}
       - name: setup Android SDK
         uses: android-actions/setup-android@v2.0.8
       - name: Install dependencies
@@ -218,7 +242,7 @@ jobs:
           script: echo "Generated AVD snapshot for caching."
 
       - name: Build Android app for Detox test run
-        run: pnpm mobile e2e:build -C ./detox.config.js -c android.emu.release
+        run: pnpm mobile e2e:build -C detox.config.js -c android.emu.release
 
       - name: Run Android tests
         uses: reactivecircus/android-emulator-runner@v2
@@ -230,7 +254,7 @@ jobs:
           avd-name: "Pixel_5_API_31"
           emulator-options: -verbose -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
           ram-size: 4096M
-          script: pnpm mobile e2e:test -C ./detox.config.js -c android.emu.release --loglevel trace --record-logs all --record-timeline all --take-screenshots all --record-videos failing --forceExit --detectOpenHandles
+          script: pnpm mobile e2e:test -C detox.config.js -c android.emu.release --loglevel trace --record-logs all --record-timeline all --take-screenshots all --record-videos failing --forceExit --detectOpenHandles
       # - name: Upload test artifacts
       #   if: always()
       #   uses: actions/upload-artifact@v2
