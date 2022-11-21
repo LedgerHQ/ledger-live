@@ -410,6 +410,9 @@
       "title" : "Üzgünüz, bu uygulama gerekli",
       "description" : "Bitcoin veya Ethereum uygulamasını en son kaldırın."
     },
+    "MaxFeeLow" : {
+      "title" : "Ücret üst limitiniz yetersiz. İşleminiz bir süreliğine beklemede kalabilir"
+    },
     "NetworkDown" : {
       "title" : "Üzgünüz, internet bağlantısı görünmüyor",
       "description" : "Lütfen internet bağlantınızı kontrol edin."
@@ -595,6 +598,9 @@
     "SourceHasMultiSign" : {
       "title" : "{{currencyName}} göndermek için lütfen çoklu imzayı devre dışı bırakın"
     },
+    "DustLimit" : {
+      "title" : "Miktar, dust sınırının altında"
+    },
     "StratisDown2021Warning" : {
       "description" : "Stratis blok zinciri evrimleşti ve artık düzgün çalışmayabilir. Orijinal Stratis blok zinciri desteği 16 Ekim 2021'e kadar sürdürülecektir."
     },
@@ -744,6 +750,23 @@
     },
     "HederaAddAccountError" : {
       "title" : "Hesabınız eklenemedi. Lütfen tekrar deneyin."
+    },
+    "PriorityFeeTooLow" : {
+      "title" : "Öncelik ücreti, önerilen değerden düşük"
+    },
+    "PriorityFeeTooHigh" : {
+      "title" : "Öncelik ücreti, gereğinden yüksek. Fazla ödeme yapıyor olabilirsiniz"
+    },
+    "MaxFeeTooLow" : {
+      "title" : "Ücret üst limiti, önerilen değerden düşük"
+    },
+    "PriorityFeeHigherThanMaxFee" : {
+      "title" : "Öncelik ücreti üst limiti, ücret üst limitinden yüksek olamaz"
+    },
+    "LockedDeviceError" : {
+      "title" : "Cihazınız kilitlendi",
+      "description" : "Cihazınızın kilidini açın ve tekrar deneyin.",
+      "descriptionWithProductName" : "{{ productName }} cihazınızın kilidini açın ve tekrar deneyin."
     }
   },
   "crash" : {
@@ -768,7 +791,8 @@
     "noInfos" : "Ledger konum bilgilerinize erişmez."
   },
   "permissions" : {
-    "open" : "Uygulama izinlerini aç"
+    "open" : "Uygulama izinlerini aç",
+    "nearbyDevicesPermissionDenied" : "Bluetooth ile eşleştirmek için Ledger Live uygulamasına yakındaki cihazları tarama yetkisi verin."
   },
   "fees" : {
     "speed" : {
@@ -1804,6 +1828,9 @@
         }
       }
     },
+    "appsStep" : {
+      "title" : "{{productName}} uygulamaları"
+    },
     "readyStep" : {
       "title" : "{{productName}} hazır"
     },
@@ -2140,7 +2167,7 @@
       },
       "advanced" : {
         "title" : "Kapsamlı loglar",
-        "warningDerivation" : "Bu bir {{tag}} xpub'ıdır. Bunu bir üçüncü taraf cüzdanda içe aktarırken aynı türev modunu seçin.",
+        "warningDerivation" : "Bu bir {{tag}} xpub'ıdır. Bunu bir üçüncü taraf cüzdana aktarırken aynı türev modunu seçin.",
         "desc" : ""
       }
     },
@@ -2435,14 +2462,19 @@
         "title" : "Piyasa",
         "desc" : "Önemli piyasa değişikliklerinden haberdar olun"
       },
-      "announcement" : {
+      "announcements" : {
         "title" : "Duyurular",
         "desc" : "Önemli Ledger Live haberlerini alın"
+      },
+      "recommendations" : {
+        "title" : "Öneriler",
+        "desc" : "Kişiselleştirilmiş öneriler ve özel teklifler ile daha zengin bir deneyim yaşayın"
       },
       "price" : {
         "title" : "Fiyat Uyarıları",
         "desc" : "En çok tercih ettiğiniz coin'ler için fiyat uyarıları belirleyerek piyasa hareketlerini kaçırmayın"
-      }
+      },
+      "disclaimer" : "Ledger'da veri gizliliği her şeyden önce gelir. Toplanan veriler iş ortaklarımızla asla paylaşılmaz."
     },
     "help" : {
       "title" : "Yardım",
@@ -2529,7 +2561,7 @@
   "notifications" : {
     "prompt" : {
       "title" : "Bildirimleri aç",
-      "desc" : "Ledger Live, Ledger ürünleri ve güvenlik ile ilgili önemli gelişmeleri öğrenin. İstediğiniz zaman devre dışı bırakabilirsiniz.",
+      "desc" : "Ledger Live, Ledger ürünleri ve piyasalar hakkındaki son haberleri ve kişiye özel öneriler alın. Ayarları değiştirerek istediğiniz zaman abonelikten çıkabilirsiniz",
       "allow" : "Bildirimlere izin ver",
       "later" : "Belki sonra"
     }
@@ -3151,6 +3183,12 @@
       }
     }
   },
+  "signMessage" : {
+    "eip712" : {
+      "showFullMessage" : "Tam mesajı göster",
+      "hideFullMessage" : "Tam mesajı gizle"
+    }
+  },
   "sync" : {
     "error" : "Senkronizasyon hatası",
     "loading" : "Senkronizasyon"
@@ -3212,9 +3250,14 @@
       "infoTotalDesc" : "İşlem miktarını ve seçilen ağın ücretlerini içerir",
       "gasLimit" : "Gas limiti",
       "gasPrice" : "Gas ücreti",
+      "maxFee" : "Ücret üst limiti",
+      "maxPriorityFee" : "Öncelik ücreti üst limiti",
+      "nextBlock" : "Sonraki blok: {{nextBaseFee}}",
+      "suggestedPriorityFee" : "Önerilen: {{lowPriorityFee}} - {{highPriorityFee}}",
       "maxFees" : "Maksimum ücret",
       "validateGasLimit" : "Gas limitini onayla",
       "fees" : "Ücretler",
+      "maxEstimatedFee" : "Maks. tahminî ücret",
       "validateFees" : "Ücretleri Onayla",
       "customizeFees" : "Ücretleri Özelleştir",
       "memo" : {
@@ -3462,7 +3505,7 @@
     }
   },
   "DeviceAction" : {
-    "stayInTheAppPlz" : "Ledger Live uygulamasında kalın ve Nano X'inizi yakınınızda tutun",
+    "stayInTheAppPlz" : "Ledger Live uygulamasında kalın ve Ledger'ınızı yakınınızda tutun.",
     "allowAppPermission" : "Cihazınızda {{wording}} uygulamasını açın",
     "allowAppPermissionSubtitleToken" : "ve {{token}} token'larınızı yönetin",
     "allowManagerPermission" : "Cihazınızda {{wording}} uygulamasına izin verin",
@@ -3634,6 +3677,7 @@
         "description" : "Kayıtlı Ledger'larınızı yönetin"
       },
       "addNewCTA" : "Yeni ekle",
+      "otgBanner" : "Elinizde bir Nano S veya Nano S Plus varsa cihazınızı USB kablosuyla bağlayın.",
       "connectExistingLedger" : "Mevcut bir Ledger'ı bağlayın",
       "connectExistingLedgerDescription" : "Kurulumu yapılmış bir Ledger'ınız zaten var mı? Bluetooth ile eşleştirin",
       "setUpNewLedger" : "Yeni bir Ledger'ın kurulumunu yapın",
@@ -5353,6 +5397,11 @@
       "viewOn" : "Burada görüntüle:",
       "viewInExplorer" : "Tarayıcıda görüntüle",
       "txDetails" : "İşlem bilgileri"
+    },
+    "modalDisabled" : {
+      "title" : "Gönderme işlevi devre dışı",
+      "body" : "Apple'ın App Store için gerçekleştirdiği son güncellemeler uyarınca, NFT gönderme işlevi geçici olarak devre dışı bırakıldı. Ledger Live Desktop sürümünü kullanarak NFT göndermeye devam edebilirsiniz.",
+      "contactSupport" : "Daha çok bilgi almak için lütfen destek makalemizi okuyun."
     }
   },
   "ApplicationVersion" : "v{{version}}",
@@ -5393,17 +5442,19 @@
     "cropImage" : "Görüntüyü kırp",
     "chooseConstrast" : "Kontrastı seç",
     "uploadAnotherImage" : "Başka bir görsel yükleyin",
-    "selectContrast" : "Kontrastınızı seçin",
+    "rotateImage" : "Döndür",
     "allowPreview" : "{{productName}} cihazında resim ön izlemesine izin ver",
     "loadingPicture" : "{{productName}} cihazında resim yükleniyor",
     "pictureLoaded" : "Resim yüklendi",
     "timeDisclaimer" : "Bu, 30 saniyeye kadar sürebilir",
     "imageLoaded" : "Görüntü {{productName}} cihazına yüklendi",
     "confirmPicture" : "{{productName}} cihazında onaylayın",
-    "title" : "Bir resim seçin.\nBir tarz oluşturun.\nLedger'ı özelleştirin.",
-    "subtitle" : "En sevdiğiniz NFT'nin bir resmini veya telefonunuzdaki bir resmi ayarlayın.",
+    "landingPage" : {
+      "title" : "Bir resim seçin.\nBir tarz oluşturun.\nLedger'ı özelleştirin.",
+      "subtitle" : "En sevdiğiniz NFT'nin bir resmini veya telefonunuzdaki bir resmi ayarlayın.",
+      "choosePicture" : "Bir resim seçin"
+    },
     "customImage" : "Özel resim",
-    "choosePicture" : "Bir resim seçin",
     "doThisLater" : "Belki sonra"
   },
   "postOnboarding" : {
@@ -5425,6 +5476,66 @@
         "description" : "Görüntü ekleyerek",
         "popupLabel" : "Cihaz kişiselleştirildi",
         "hubTitleAfterAction" : "Ekran şık görünüyor"
+      }
+    }
+  },
+  "servicesWidget" : {
+    "title" : "Hizmetler",
+    "subTitle" : "Ledger hizmetlerinizi yönetin",
+    "protect" : {
+      "title" : "Protect",
+      "status" : {
+        "new" : {
+          "title" : "Yeni",
+          "desc" : "Kurtarma ifadenizi yedekleyin",
+          "0" : {
+            "title" : "Milyonlarca Ledger kullanıcısı güveniyor"
+          },
+          "1" : {
+            "title" : "Kurtarma İfadeniz güvenli bir şekilde kimliğinizle eşleştirilir"
+          },
+          "2" : {
+            "title" : "En gelişmiş şifreleme teknolojisi"
+          },
+          "3" : {
+            "title" : "Merkeziyetsiz bir şekilde 3 farklı parçaya bölünen kurtarma ifadeniz asla çalınamaz"
+          },
+          "actions" : {
+            "learnMore" : "Daha fazla bilgi",
+            "alreadySubscribed" : "Protect'e zaten abone misiniz?"
+          }
+        },
+        "actionRequired" : {
+          "title" : "Eylem gerekiyor",
+          "desc" : "Kurtarma ifadenizi korumak için ödeme bilgilerinizi ekleyin ve tüm adımları tamamlayın.",
+          "actions" : {
+            "addNow" : "Şimdi ekle",
+            "viewDetails" : "Ayrıntıları göster"
+          }
+        },
+        "paymentRejected" : {
+          "title" : "Ödeme reddedildi",
+          "desc" : "$5 ödeme işlemi başarısız oldu. Lütfen ödeme bilgilerinizi düzenleyin.",
+          "actions" : {
+            "editNow" : "Şimdi düzenle",
+            "viewDetails" : "Ayrıntıları göster"
+          }
+        },
+        "subscriptionCanceled" : {
+          "title" : "Abonelik iptal edildi",
+          "desc" : "3 ay boyunca ödeme yapılmaması nedeniyle aboneliğiniz sonlandırıldı.",
+          "actions" : {
+            "contactLedgerSupport" : "Ledger Destek",
+            "viewDetails" : "Ayrıntıları göster"
+          }
+        },
+        "active" : {
+          "title" : "Aktif",
+          "desc" : "Kurtarma ifadeniz koruma altında",
+          "actions" : {
+            "viewDetails" : "Ayrıntıları göster"
+          }
+        }
       }
     }
   }
