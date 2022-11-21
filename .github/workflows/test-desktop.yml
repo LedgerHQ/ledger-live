@@ -52,7 +52,7 @@ jobs:
       matrix:
         names:
           - ubuntu-latest
-          - macos-latest
+          - macos-11
           - windows-latest
     runs-on: ubuntu-latest
     steps:
@@ -118,7 +118,7 @@ jobs:
       - id: set-matrix
         run: |
           if [[ "${{ needs.pr-is-fork.outputs.pr-is-fork }}" == "true" ]]; then
-            echo "matrix={\"os\": [\"ubuntu-latest\", \"windows-latest\", \"macos-latest\"]}" >> $GITHUB_OUTPUT
+            echo "matrix={\"os\": [\"ubuntu-latest\", \"windows-latest\", \"macos-11\"]}" >> $GITHUB_OUTPUT
           else
             echo "matrix={\"os\": [\"ubuntu-latest\", \"windows-latest\"]}" >> $GITHUB_OUTPUT
           fi
@@ -147,7 +147,7 @@ jobs:
           script: |
             if ("${{ matrix.os }}" === "ubuntu-latest") {
               return "linux"
-            } else if ("${{ matrix.os }}" === "macos-latest") {
+            } else if ("${{ matrix.os }}" === "macos-11") {
               return "macos"
             } else if ("${{ matrix.os }}" === "windows-latest") {
               return "windows"
@@ -174,7 +174,7 @@ jobs:
           turbo-server-port: ${{ steps.turborepo-cache-server.outputs.port }}
 
   test-desktop-app-mac-internal:
-    name: "Ledger Live Desktop Tests (macos-latest)"
+    name: "Ledger Live Desktop Tests (macos-11)"
     needs: [pr-is-fork]
     if: ${{ !fromJSON(needs.pr-is-fork.outputs.pr-is-fork) }}
     runs-on: [ledger-live, macos]
@@ -182,7 +182,7 @@ jobs:
       NODE_OPTIONS: "--max-old-space-size=7168"
       INSTRUMENT_BUILD: true
       FORCE_COLOR: 3
-      CI_OS: "macos-latest"
+      CI_OS: "macos-11"
       PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: 1
       DEBUG: "pw:browser*,pw:api"
       DEBUG_LOGS: 1
