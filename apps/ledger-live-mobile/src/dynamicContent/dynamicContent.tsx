@@ -1,5 +1,6 @@
 import { useSelector } from "react-redux";
 import { ContentCard as BrazeContentCard } from "react-native-appboy-sdk";
+import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { useBrazeContentCard } from "./brazeContentCard";
 import {
   assetsCardsSelector,
@@ -73,19 +74,23 @@ const useDynamicContent = () => {
   const assetsCards = useSelector(assetsCardsSelector);
   const walletCards = useSelector(walletCardsSelector);
 
-  function getAssetCardById(currencyId?: string): AssetContentCard | undefined {
-    if (!currencyId) {
+  function getAssetCardByIdOrTicker(
+    currency: CryptoOrTokenCurrency,
+  ): AssetContentCard | undefined {
+    if (!currency) {
       return undefined;
     }
-    return assetsCards.find((ac: AssetContentCard) =>
-      ac.assets.includes(currencyId),
+    return assetsCards.find(
+      (ac: AssetContentCard) =>
+        ac.assets.toLowerCase().includes(currency.id.toLowerCase()) ||
+        ac.assets.toUpperCase().includes(currency.ticker.toUpperCase()),
     );
   }
 
   return {
     walletCards,
     assetsCards,
-    getAssetCardById,
+    getAssetCardByIdOrTicker,
     logClickCard,
     logDismissCard,
     logImpressionCard,

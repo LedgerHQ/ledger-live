@@ -7,7 +7,6 @@ import Flex from "../../../src/components/Layout/Flex";
 import { text, select, number } from "@storybook/addon-knobs";
 import { descriptionCardA, descriptionCardB } from "./descriptionsCards";
 
-
 const CardAStory = () => <CardA></CardA>;
 
 const CardBStory = () => {

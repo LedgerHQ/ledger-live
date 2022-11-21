@@ -159,8 +159,9 @@ function PortfolioScreen({ navigation }: NavigationProps) {
   const postOnboardingVisible = usePostOnboardingEntryPointVisibleOnWallet();
 
   // TEST PURPOSE
-  const { walletCards } = useDynamicContent();
+  const { walletCards, assetsCards } = useDynamicContent();
   console.log("PORTFOLIO -- ", walletCards.length);
+  console.log("ASSETS CARD -- ", assetsCards.length);
 
   const data = useMemo(
     () => [

@@ -144,9 +144,13 @@ const AssetScreen = ({ route }: NavigationProps) => {
   }, [currency, navigation]);
 
   // Dynamic Content Part -------------------
-  const { getAssetCardById, logDismissCard, logClickCard, logImpressionCard } =
-    useDynamicContent();
-  const dynamicContentCard = getAssetCardById(currency.ticker);
+  const {
+    getAssetCardByIdOrTicker,
+    logDismissCard,
+    logClickCard,
+    logImpressionCard,
+  } = useDynamicContent();
+  const dynamicContentCard = getAssetCardByIdOrTicker(currency);
 
   const onClickLink = useCallback(
     (card: ContentCard) => {
