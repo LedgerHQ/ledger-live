@@ -12,6 +12,7 @@ import {
   getAvailableAccountsById,
   isRegistrationRequired,
   getProviderName,
+  getNoticeType,
   shouldShowKYCBanner,
   shouldShowLoginBanner,
 } from "./index";
@@ -343,6 +344,32 @@ describe("swap/utils/getProviderName", () => {
     const expectedResult = "Changelly";
 
     const result = getProviderName("changelly");
+
+    expect(result).toBe(expectedResult);
+  });
+});
+
+describe("swap/utils/getNoticeType", function () {
+  test("should return notice type for CIC", () => {
+    const expectedResult = { message: "cic", learnMore: false };
+
+    const result = getNoticeType("cic");
+
+    expect(result).toBe(expectedResult);
+  });
+
+  test("should return notice type for ftx", () => {
+    const expectedResult = { message: "default", learnMore: true };
+
+    const result = getNoticeType("ftx");
+
+    expect(result).toBe(expectedResult);
+  });
+
+  test("should return notice type for Changelly", () => {
+    const expectedResult = { message: "default", learnMore: true };
+
+    const result = getNoticeType("changelly");
 
     expect(result).toBe(expectedResult);
   });
