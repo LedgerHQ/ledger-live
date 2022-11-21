@@ -77,6 +77,7 @@ const test = base.extend<TestFixtures>({
     const electronApp: ElectronApplication = await electron.launch({
       args: [
         `${path.join(__dirname, "../../.webpack/main.bundle.js")}`,
+        "--headless",
         `--user-data-dir=${userdataDestinationPath}`,
         // `--window-size=${window.width},${window.height}`, // FIXME: Doesn't work, window size can't be forced?
         "--force-device-scale-factor=1",
