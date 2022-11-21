@@ -231,7 +231,7 @@ const folders = fs.readdirSync(additionalIconsDir);
 
 folders.forEach(folder => {
     // Create target folders
-    const folderName = `_${folder}`
+    const folderName = `${folder}`
     if (!fs.existsSync(`${reactDir}/${folderName}`)) {
         fs.mkdirSync(`${reactDir}/${folderName}`);
     }
