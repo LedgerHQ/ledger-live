@@ -279,6 +279,12 @@
       "title" : "Device disconnected",
       "description" : "Ledger Live could not connect to your device. Please try it again."
     },
+    "CasperInvalidTransferId": {
+      "title": "전송 ID는 18446744073709551615보다 작은 양수여야 합니다."
+    },
+    "InvalidMinimumAmount": {
+      "title": "최소 이체 금액은 2.5 CSPR입니다."
+    },
     "ETHAddressNonEIP" : {
       "title" : "자동 검증이 불가능합니다. 주소를 신중하게 확인해 주세요.",
       "description" : null

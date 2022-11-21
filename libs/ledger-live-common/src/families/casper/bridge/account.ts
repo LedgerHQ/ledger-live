@@ -32,7 +32,9 @@ import { encodeOperationId } from "../../../operation";
 import CasperApp from "@zondax/ledger-casper";
 import {
   AmountRequired,
+  CasperInvalidTransferId,
   InvalidAddress,
+  InvalidMinimumAmount,
   NotEnoughBalance,
   RecipientRequired,
 } from "@ledgerhq/errors";
@@ -43,10 +45,6 @@ import {
 } from "./utils/network";
 import { getMainAccount } from "../../../account/helpers";
 import { createNewDeploy } from "./utils/txn";
-import {
-  invalidMinimumAmountError,
-  invalidTransferIdError,
-} from "./utils/errors";
 
 const receive = makeAccountBridgeReceive();
 
@@ -111,7 +109,7 @@ const getTransactionStatus = async (
   else if (!validateAddress(address).isValid)
     errors.sender = new InvalidAddress();
   else if (!validateTransferId(t.transferId).isValid) {
-    errors.sender = invalidTransferIdError();
+    errors.sender = new CasperInvalidTransferId();
   }
 
   // This is the worst case scenario (the tx won't cost more than this value)
@@ -119,7 +117,7 @@ const getTransactionStatus = async (
 
   let totalSpent;
   if (amount.lt(MINIMUM_VALID_AMOUNT))
-    errors.amount = invalidMinimumAmountError();
+    errors.amount = new InvalidMinimumAmount();
 
   if (useAllAmount) {
     totalSpent = a.spendableBalance;

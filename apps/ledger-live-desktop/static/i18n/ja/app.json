@@ -5366,6 +5366,12 @@
       "title" : "接続に失敗しました。",
       "description" : "デバイスが検出されましたが接続できません。問題が解決しない場合は、再度お試しいただくか、Ledgerサポートにお問い合わせください。"
     },
+    "CasperInvalidTransferId": {
+      "title": "転送 ID は 18446744073709551615 より小さい正の数である必要があります"
+    },
+    "InvalidMinimumAmount": {
+      "title": "最低送金額は 2.5 CSPR です"
+    },
     "ETHAddressNonEIP" : {
       "title" : "自動認証が利用できません：アドレスを慎重に確認してください。",
       "description" : null

@@ -7,12 +7,10 @@ import BigNumber from "bignumber.js";
 import {
   AmountRequired,
   InvalidAddress,
+  InvalidMinimumAmount,
   NotEnoughBalance,
+  CasperInvalidTransferId,
 } from "@ledgerhq/errors";
-import {
-  invalidMinimumAmountError,
-  invalidTransferIdError,
-} from "./bridge/utils/errors";
 
 const SEED_IDENTIFIER =
   "0202ba6dc98cbe677711a45bf028a03646f9e588996eb223fad2485e8bc391b01581";
@@ -109,7 +107,7 @@ const casper: CurrenciesData<Transaction> = {
 
           expectedStatus: {
             errors: {
-              amount: invalidMinimumAmountError(),
+              amount: new InvalidMinimumAmount(),
             },
             warnings: {},
           },
@@ -140,7 +138,7 @@ const casper: CurrenciesData<Transaction> = {
           expectedStatus: {
             amount: new BigNumber("3"),
             errors: {
-              sender: invalidTransferIdError(),
+              sender: new CasperInvalidTransferId(),
             },
             warnings: {},
           },
