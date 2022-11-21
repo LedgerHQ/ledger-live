@@ -80,8 +80,9 @@ const test = base.extend<TestFixtures>({
         `--user-data-dir=${userdataDestinationPath}`,
         // `--window-size=${window.width},${window.height}`, // FIXME: Doesn't work, window size can't be forced?
         "--force-device-scale-factor=1",
+        "--disable-gpu",
         "--disable-dev-shm-usage",
-        // "--use-gl=swiftshader"
+        "--use-gl=swiftshader",
         "--no-sandbox",
         "--enable-logging",
       ],
