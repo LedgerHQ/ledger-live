@@ -83,36 +83,54 @@ function expectCorrectOptimisticOperation(
     delete opExpected.contract;
   }
 
-  botTest("optimistic operation matches", () => {
-    expect(operation.id).toStrictEqual(optimisticOperation.id);
-    expect(operation.hash).toStrictEqual(optimisticOperation.hash);
-    expect(operation.accountId).toStrictEqual(optimisticOperation.accountId);
+  botTest("optimistic operation matches id", () =>
+    expect(operation.id).toStrictEqual(optimisticOperation.id)
+  );
+  botTest("optimistic operation matches hash", () =>
+    expect(operation.hash).toStrictEqual(optimisticOperation.hash)
+  );
+  botTest("optimistic operation matches accountId", () =>
+    expect(operation.accountId).toStrictEqual(optimisticOperation.accountId)
+  );
 
-    //FIXME: on ESDT transactions the fee can decrease when the transaction is executed
-    if (!transaction.subAccountId) {
+  //FIXME: on ESDT transactions the fee can decrease when the transaction is executed
+  if (!transaction.subAccountId) {
+    botTest("optimistic operation matches fee", () =>
       expect(operation.fee.toFixed()).toStrictEqual(
         optimisticOperation.fee.toFixed()
-      );
-    }
+      )
+    );
+  }
 
-    expect(operation.type).toStrictEqual(optimisticOperation.type);
-    if (operation.type === "OUT") {
-      expect(operation.contract).toStrictEqual(optimisticOperation.contract);
-      expect(operation.senders).toStrictEqual(optimisticOperation.senders);
-      expect(operation.recipients).toStrictEqual(
-        optimisticOperation.recipients
-      );
+  botTest("optimistic operation matches type", () =>
+    expect(operation.type).toStrictEqual(optimisticOperation.type)
+  );
+  if (operation.type === "OUT") {
+    botTest("optimistic operation matches contract", () =>
+      expect(operation.contract).toStrictEqual(optimisticOperation.contract)
+    );
+    botTest("optimistic operation matches senders", () =>
+      expect(operation.senders).toStrictEqual(optimisticOperation.senders)
+    );
+    botTest("optimistic operation matches recipients", () =>
+      expect(operation.recipients).toStrictEqual(optimisticOperation.recipients)
+    );
+    botTest("optimistic operation matches value", () =>
       expect(operation.value.toFixed()).toStrictEqual(
         optimisticOperation.value.plus(optimisticOperation.fee).toFixed()
-      );
-    }
+      )
+    );
+  }
 
+  botTest("optimistic operation matches transactionSequenceNumber", () =>
     expect(operation.transactionSequenceNumber).toStrictEqual(
       optimisticOperation.transactionSequenceNumber
-    );
+    )
+  );
 
-    expect(toOperationRaw(operation)).toMatchObject(opExpected);
-  });
+  botTest("raw optimistic operation matches", () =>
+    expect(toOperationRaw(operation)).toMatchObject(opExpected)
+  );
 }
 
 function expectCorrectSpendableBalanceChange(
