@@ -47,37 +47,52 @@ export const prepareTransaction = async (
   a: ElrondAccount,
   t: Transaction
 ): Promise<Transaction> => {
-  switch (t.mode) {
-    case "reDelegateRewards":
-      t.gasLimit = GAS.DELEGATE;
-      t.data = ElrondEncodeTransaction.reDelegateRewards();
-      break;
+  const tokenAccount =
+    (t.subAccountId &&
+      a.subAccounts &&
+      a.subAccounts.find((ta) => ta.id === t.subAccountId)) ||
+    null;
 
-    case "withdraw":
-      t.gasLimit = GAS.DELEGATE;
-      t.data = ElrondEncodeTransaction.withdraw();
-      break;
+  if (tokenAccount) {
+    t.data = ElrondEncodeTransaction.ESDTTransfer(t, tokenAccount);
+    t.gasLimit = GAS.ESDT_TRANSFER; //gasLimit for and ESDT transfer
+  } else {
+    switch (t.mode) {
+      case "reDelegateRewards":
+        t.gasLimit = GAS.DELEGATE;
+        t.data = ElrondEncodeTransaction.reDelegateRewards();
+        break;
 
-    case "unDelegate":
-      t.gasLimit = GAS.DELEGATE;
-      t.data = ElrondEncodeTransaction.unDelegate(t);
-      break;
+      case "withdraw":
+        t.gasLimit = GAS.DELEGATE;
+        t.data = ElrondEncodeTransaction.withdraw();
+        break;
 
-    case "delegate":
-      t.gasLimit = GAS.DELEGATE;
-      t.data = ElrondEncodeTransaction.delegate();
-      break;
+      case "unDelegate":
+        t.gasLimit = GAS.DELEGATE;
+        t.data = ElrondEncodeTransaction.unDelegate(t);
+        break;
 
-    case "claimRewards":
-      t.gasLimit = GAS.CLAIM;
-      t.data = ElrondEncodeTransaction.claimRewards();
-      break;
+      case "delegate":
+        t.gasLimit = GAS.DELEGATE;
+        t.data = ElrondEncodeTransaction.delegate();
+        break;
 
-    default:
-      break;
+      case "claimRewards":
+        t.gasLimit = GAS.CLAIM;
+        t.data = ElrondEncodeTransaction.claimRewards();
+        break;
+
+      default:
+        break;
+    }
   }
 
   const fees = await getFees(t);
+
+  // FIXME DEBUG TBR
+  console.log("XXX - prepareTransaction - t: ", t);
+  console.log("XXX - prepareTransaction - fees: ", fees.toFixed());
 
   if (!sameFees(t.fees, fees)) {
     return { ...t, fees };
