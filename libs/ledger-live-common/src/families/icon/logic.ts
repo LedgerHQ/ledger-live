@@ -1,9 +1,10 @@
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import { BigNumber } from "bignumber.js";
+import IconService from "icon-sdk-js";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import type { Account } from "@ledgerhq/types-live";
-import type { IconAccount, Transaction } from "./types";
-
+import type { IconAccount, PRep, Transaction } from "./types";
+const { IconAmount } = IconService;
 import {
   BERLIN_TESTNET_NID,
   ICON_API_ENDPOINT,
@@ -11,6 +12,7 @@ import {
   ICON_TESTNET_API_ENDPOINT,
   ICON_TESTNET_RPC_ENDPOINT,
   MAINNET_NID,
+  PREP_TYPE,
 } from "./constants";
 
 export const MAX_AMOUNT = 5000;
@@ -98,4 +100,24 @@ export function getNid(currency: CryptoCurrency): number {
     nid = BERLIN_TESTNET_NID;
   }
   return nid;
+}
+
+export function formatPRepData(pRep: PRep): PRep {
+  const iconUnit = IconAmount.Unit.ICX.toString();
+  const prType = {
+    '0x0': PREP_TYPE.MAIN,
+    '0x1': PREP_TYPE.SUB,
+    '0x2': PREP_TYPE.CANDIDATE
+  };
+  return {
+    ...pRep,
+    grade: prType[pRep.grade || ''],
+    bonded: new BigNumber(IconAmount.fromLoop(pRep.bonded as string, iconUnit)),
+    delegated: new BigNumber(IconAmount.fromLoop(pRep.delegated as string, iconUnit)),
+    power: new BigNumber(IconAmount.fromLoop(pRep.power as string, iconUnit)),
+    lastHeight: new BigNumber(pRep.grade || 0),
+    totalBlocks: new BigNumber(pRep.grade || 0),
+    validatedBlocks: new BigNumber(pRep.grade || 0),
+    p2pEndpoint: pRep.grade,
+  };
 }

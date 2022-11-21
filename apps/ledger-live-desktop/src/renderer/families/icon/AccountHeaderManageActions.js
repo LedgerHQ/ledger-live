@@ -30,7 +30,7 @@ const AccountHeaderManageActionsComponent = ({ account, parentAccount }: Props) 
   const onClick = useCallback(() => {
     if (votingPower > 0) {
       dispatch(
-        openModal("MODAL_MANAGE_TRON", {
+        openModal("MODAL_MANAGE_ICON", {
           parentAccount,
           account,
         }),

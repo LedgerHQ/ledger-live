@@ -16,23 +16,25 @@ export const buildTransaction = async (
   t: Transaction,
   stepLimit?: BigNumber
 ) => {
-  let icxTxData;
+  let iconTxData;
   switch (t.mode) {
     case 'send':
-      icxTxData = buildSendingTransaction(a, t, stepLimit);
+      iconTxData = buildSendingTransaction(a, t, stepLimit);
       break;
     case 'freeze':
-      icxTxData = buildStakingTransaction(a, t);
+      iconTxData = buildStakingTransaction(a, t);
       break;
+    case 'vote':
+      iconTxData = buildVotingTransaction(a, t);
     default:
       break;
   }
 
   return {
     unsigned: IconUtil.generateHashKey(
-      IconConverter.toRawTransaction(icxTxData)
+      IconConverter.toRawTransaction(iconTxData)
     ),
-    rawTransaction: icxTxData,
+    rawTransaction: iconTxData,
   };
 };
 
@@ -86,6 +88,34 @@ const buildStakingTransaction = (
       value: IconConverter.toHexNumber(
         IconAmount.of(t.amount, IconAmount.Unit.ICX).toLoop()
       )
+    })
+    .from(address)
+    .to(IISS_SCORE_ADDRESS)
+    .nid(IconConverter.toHexNumber(getNid(a.currency)))
+    .timestamp(IconConverter.toHexNumber(new Date().getTime() * 1000))
+    .stepLimit(IconConverter.toHexNumber(IconConverter.toBigNumber(70000000)))
+    .version(IconConverter.toHexNumber(IconConverter.toBigNumber(3)))
+    .build();
+
+  return icxTransferData;
+};
+
+const buildVotingTransaction = (
+  a: IconAccount,
+  t: Transaction) => {
+
+  const address = a.freshAddress;
+  const votes = t?.votes || [];
+  const icxTransferData = new IconBuilder.CallTransactionBuilder()
+    .method('setDelegation')
+    .params({
+      delegations: t.votes.map(item => {
+        return {
+          ...item, value: IconConverter.toHexNumber(
+            IconAmount.of(item.value, IconAmount.Unit.ICX).toLoop()
+          )
+        };
+      })
     })
     .from(address)
     .to(IISS_SCORE_ADDRESS)

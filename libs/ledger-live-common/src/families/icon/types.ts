@@ -8,6 +8,7 @@ import {
   TransactionStatusCommonRaw,
 } from "@ledgerhq/types-live";
 
+
 export type PublicRepresentativeData = {
   delegations: PRep[];
   totalDelegated: BigNumber;
@@ -18,28 +19,27 @@ export type PRep = {
   grade: string | null | undefined;
   status: string | null | undefined;
   penalty: string | null | undefined;
-  bonded: string | null | undefined;
-  stake: string | null | undefined;
-  delegated: string | null | undefined;
-  power: string | null | undefined;
+  bonded: BigNumber | string | null | undefined;
+  delegated: BigNumber | string | null | undefined;
+  power: BigNumber | string | null | undefined;
   name: string | null | undefined;
   country: string | null | undefined;
   city: string | null | undefined;
   details: string | null | undefined;
   website: string | null | undefined;
-  address: string | null | undefined;
+  address: string;
   nodeAddress: string | null | undefined;
-  irep: string | null | undefined;
+  irep: BigNumber | string | null | undefined;
   irepUpdateBlockHeight: string | null | undefined;
-  lastHeight: string | null | undefined;
-  totalBlocks: string | null | undefined;
-  validatedBlocks: string | null | undefined;
+  lastHeight: BigNumber | string | null | undefined;
+  totalBlocks: BigNumber | string | null | undefined;
+  validatedBlocks: BigNumber | string | null | undefined;
   p2pEndpoint: string | null | undefined;
 };
 
 export type Vote = {
   address: string | null | undefined;
-  value: string | null | undefined;
+  value: BigNumber | string | null | undefined;
 };
 /**
  * Icon account resources
@@ -49,6 +49,7 @@ export type IconResources = {
   additionalBalance: BigNumber;
   votes: Vote[];
   votingPower: BigNumber;
+  totalDelegated: BigNumber;
 };
 
 /**
@@ -59,6 +60,7 @@ export type IconResourcesRaw = {
   additionalBalance: string;
   votes: Vote[];
   votingPower: BigNumber;
+  totalDelegated: BigNumber;
 };
 
 /**
@@ -82,6 +84,7 @@ export type Transaction = TransactionCommon & {
   targetContractAddr?: string | null | undefined;
   txType?: string | null | undefined;
   id?: string | null | undefined;
+  votes: Vote[];
   // add here all transaction-specific fields if you implement other modes than "send"
 };
 
@@ -92,6 +95,7 @@ export type TransactionRaw = TransactionCommonRaw & {
   family: "icon";
   mode: string;
   fees?: string | null | undefined;
+  votes: Vote[];
   // also the transaction fields as raw JSON data
 };
 
