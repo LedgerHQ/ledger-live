@@ -37,12 +37,14 @@ const RemoveDeviceMenu = ({
   const dispatch = useDispatch();
   const { colors } = useTheme();
 
-  const illustration = useMemo(() => {
-    const illustration = illustrations[device.modelId];
-    return illustration
-      ? illustration({ color: colors.neutral.c100, size: 200 })
-      : null;
-  }, [device.modelId, colors]);
+  const illustration = useMemo(
+    () =>
+      (illustrations[device.modelId] ?? NanoX)({
+        color: colors.neutral.c100,
+        size: 200,
+      }),
+    [device.modelId, colors],
+  );
 
   const onRemoveDevice = useCallback(async () => {
     dispatch(removeKnownDevice(device.deviceId));
