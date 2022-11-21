@@ -90,10 +90,6 @@ export const prepareTransaction = async (
 
   const fees = await getFees(t);
 
-  // FIXME DEBUG TBR
-  console.log("XXX - prepareTransaction - t: ", t);
-  console.log("XXX - prepareTransaction - fees: ", fees.toFixed());
-
   if (!sameFees(t.fees, fees)) {
     return { ...t, fees };
   }
