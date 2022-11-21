@@ -557,6 +557,7 @@ importers:
       '@types/react': ^17.0.20
       '@types/react-dom': ^17.0.9
       bignumber.js: ^9.1.0
+      buffer: ^6.0.3
       cross-env: ^7.0.3
       react: ^17.0.2
       react-dom: ^17.0.2
@@ -572,6 +573,7 @@ importers:
       '@types/react': 17.0.45
       '@types/react-dom': 17.0.16_@types+react@17.0.45
       bignumber.js: 9.1.0
+      buffer: 6.0.3
       react: 17.0.2
       react-dom: 17.0.2_react@17.0.2
       react-scripts: 5.0.0_5puyc4jev3j735enew7cnutksu
