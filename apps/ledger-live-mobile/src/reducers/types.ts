@@ -70,7 +70,7 @@ export type DeviceLike = {
   name: string;
   deviceInfo?: DeviceInfo;
   appsInstalled?: number;
-  modelId?: DeviceModelId;
+  modelId: DeviceModelId;
 };
 
 export type BleState = {
