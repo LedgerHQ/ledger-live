@@ -56,6 +56,7 @@ const getAccountShape: GetAccountShape = async (info) => {
     }
   }
 
+  // FIXME Is this required? We have the info from preload
   const providers = await getProviders();
 
   const delegationBalance = computeDelegationBalance(delegations);

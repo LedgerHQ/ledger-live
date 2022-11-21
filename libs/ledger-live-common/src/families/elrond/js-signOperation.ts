@@ -10,7 +10,7 @@ import type {
 import { withDevice } from "../../hw/deviceAccess";
 import { encodeOperationId } from "../../operation";
 import Elrond from "./hw-app-elrond";
-import { buildTransaction } from "./js-buildTransaction";
+import { buildTransactionToSign } from "./js-buildTransaction";
 import { CHAIN_ID } from "./constants";
 import {
   Account,
@@ -176,9 +176,8 @@ const signOperation = ({
           }
         }
 
-        const unsignedTx: string = await buildTransaction(
+        const unsignedTx: string = await buildTransactionToSign(
           account,
-          tokenAccount,
           transaction
         );
 

@@ -1,9 +1,7 @@
 import { decode, fromWords } from "bech32";
 import BigNumber from "bignumber.js";
-import type { Account, SubAccount } from "@ledgerhq/types-live";
-import type { ElrondAccount, Transaction, ElrondDelegation } from "./types";
-import { buildTransaction } from "./js-buildTransaction";
-import { getFees } from "./api";
+import type { Account } from "@ledgerhq/types-live";
+import type { Transaction, ElrondDelegation } from "./types";
 
 /**
  * The human-readable-part of the bech32 addresses.
@@ -52,40 +50,6 @@ export const isValidAddress = (address: string): boolean => {
 };
 export const isSelfTransaction = (a: Account, t: Transaction): boolean => {
   return t.recipient === a.freshAddress;
-};
-
-export const computeTransactionValue = async (
-  transaction: Transaction,
-  account: ElrondAccount,
-  tokenAccount: SubAccount | null
-): Promise<{
-  amount: BigNumber;
-  totalSpent: BigNumber;
-  estimatedFees: BigNumber;
-}> => {
-  let amount, totalSpent;
-
-  await buildTransaction(account, tokenAccount, transaction);
-
-  const estimatedFees = await getFees(transaction);
-
-  if (tokenAccount) {
-    amount = transaction.useAllAmount
-      ? tokenAccount.balance
-      : transaction.amount;
-
-    totalSpent = amount;
-  } else {
-    totalSpent = transaction.useAllAmount
-      ? account.spendableBalance
-      : new BigNumber(transaction.amount).plus(estimatedFees);
-
-    amount = transaction.useAllAmount
-      ? account.spendableBalance.minus(estimatedFees)
-      : new BigNumber(transaction.amount);
-  }
-
-  return { amount, totalSpent, estimatedFees };
 };
 
 export const computeDelegationBalance = (
