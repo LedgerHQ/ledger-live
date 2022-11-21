@@ -125,13 +125,13 @@ jobs:
         run: pnpm build:llm:deps
       - name: TEMPORARY rm .detoxrc.json
         run: |
-          rm apps/ledger-live-mobile/.detoxrc.json
+          rm apps/ledger-live-mobile/.detoxrc.json || true
       # - name: Clear and build detox cache # investigate how to properly cache this
       #   run: pnpm mobile exec detox clean-framework-cache && pnpm mobile exec detox build-framework-cache
       - name: Build iOS app for Detox test run
-        run: pnpm mobile e2e:build -c ios.sim.release
+        run: pnpm mobile e2e:build -C ./detox.config.js -c ios.sim.release
       - name: Test iOS app
-        run: pnpm mobile e2e:test -c ios.sim.release --loglevel verbose --record-logs all --record-timeline all --take-screenshots all --record-videos failing --record-performance all --detectOpenHandles
+        run: pnpm mobile e2e:test -C ./detox.config.js -c ios.sim.release --loglevel verbose --record-logs all --record-timeline all --take-screenshots all --record-videos failing --record-performance all --detectOpenHandles
       # - name: Upload test artifacts
       #   uses: actions/upload-artifact@v2
       #   if: always()
@@ -174,7 +174,7 @@ jobs:
         run: pnpm build:llm:deps
       - name: TEMPORARY rm .detoxrc.json
         run: |
-          rm apps/ledger-live-mobile/.detoxrc.json
+          rm apps/ledger-live-mobile/.detoxrc.json || true
       # May be taken care of by the `setup-java` action caching
       - name: Gradle cache
         uses: gradle/gradle-build-action@v2
@@ -218,7 +218,8 @@ jobs:
           script: echo "Generated AVD snapshot for caching."
 
       - name: Build Android app for Detox test run
-        run: pnpm mobile e2e:build -c android.emu.release
+        run: pnpm mobile e2e:build -C ./detox.config.js -c android.emu.release
+
       - name: Run Android tests
         uses: reactivecircus/android-emulator-runner@v2
         timeout-minutes: 20
@@ -229,7 +230,7 @@ jobs:
           avd-name: "Pixel_5_API_31"
           emulator-options: -verbose -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
           ram-size: 4096M
-          script: pnpm mobile e2e:test -c android.emu.release --loglevel trace --record-logs all --record-timeline all --take-screenshots all --record-videos failing --forceExit --detectOpenHandles
+          script: pnpm mobile e2e:test -C ./detox.config.js -c android.emu.release --loglevel trace --record-logs all --record-timeline all --take-screenshots all --record-videos failing --forceExit --detectOpenHandles
       # - name: Upload test artifacts
       #   if: always()
       #   uses: actions/upload-artifact@v2
