@@ -20,7 +20,12 @@ function lazyLoadTickerMap() {
     }
   });
   listCryptoCurrencies().forEach((c) => {
-    if (!c.disableCountervalue) {
+    if (
+      !c.disableCountervalue &&
+      // FIXME Avoid duplicates & override if the already set currency is a token
+      // E.g. 'Binance-Peg Ethereum Token' has an 'ETH' ticker
+      (!m.has(c.ticker) || m.get(c.ticker)?.type !== "CryptoCurrency")
+    ) {
       m.set(c.ticker, c);
     }
   });

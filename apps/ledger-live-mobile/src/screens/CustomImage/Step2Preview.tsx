@@ -1,15 +1,20 @@
-import React, { useCallback, useMemo, useRef, useState } from "react";
+import React, { useCallback, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import styled from "styled-components/native";
-import { Button, Flex, InfiniteLoader, Text } from "@ledgerhq/native-ui";
+import { Button, Flex, InfiniteLoader } from "@ledgerhq/native-ui";
 import {
-  Dimensions,
+  Image,
   ImageErrorEventData,
   NativeSyntheticEvent,
   Pressable,
 } from "react-native";
-import { StackScreenProps } from "@react-navigation/stack";
+import Animated, {
+  useAnimatedStyle,
+  useSharedValue,
+  withTiming,
+} from "react-native-reanimated";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { ImagePreviewError } from "@ledgerhq/live-common/customImage/errors";
 import useResizedImage, {
   Params as ImageResizerParams,
   ResizeResult,
@@ -20,33 +25,49 @@ import ImageProcessor, {
   ProcessorRawResult,
 } from "../../components/CustomImage/ImageProcessor";
 import { targetDimensions } from "./shared";
-import { fitImageContain } from "../../components/CustomImage/imageUtils";
 import BottomButtonsContainer from "../../components/CustomImage/BottomButtonsContainer";
 import ContrastChoice from "../../components/CustomImage/ContrastChoice";
 import { ScreenName } from "../../const";
-import { ImagePreviewError } from "../../components/CustomImage/errors";
-import { ParamList } from "./types";
+import { CustomImageNavigatorParamList } from "../../components/RootNavigator/types/CustomImageNavigator";
+import {
+  BaseComposite,
+  StackNavigatorProps,
+} from "../../components/RootNavigator/types/helpers";
+import ForceTheme from "../../components/theme/ForceTheme";
 
 export const PreviewImage = styled.Image.attrs({
   resizeMode: "contain",
 })`
   align-self: center;
-  margin: 16px;
   width: 200px;
   height: 200px;
 `;
 
-const boxToFitDimensions = {
-  height: (Dimensions.get("screen").height * 2) / 3,
-  width: (Dimensions.get("screen").width * 2) / 3,
-};
-
 const contrasts = [
-  { val: 1, color: "neutral.c70" },
-  { val: 1.5, color: "neutral.c50" },
-  { val: 2, color: "neutral.c40" },
-  { val: 3, color: "neutral.c30" },
+  {
+    val: 1,
+    color: { topLeft: "neutral.c40", bottomRight: "neutral.c30" },
+  },
+  {
+    val: 1.5,
+    color: { topLeft: "neutral.c50", bottomRight: "neutral.c30" },
+  },
+  {
+    val: 2,
+    color: { topLeft: "neutral.c60", bottomRight: "neutral.c30" },
+  },
+  {
+    val: 3,
+    color: { topLeft: "neutral.c70", bottomRight: "neutral.c30" },
+  },
 ];
+
+type NavigationProps = BaseComposite<
+  StackNavigatorProps<
+    CustomImageNavigatorParamList,
+    ScreenName.CustomImageStep2Preview
+  >
+>;
 
 /**
  * UI component that loads the input image (from the route params) &
@@ -55,12 +76,13 @@ const contrasts = [
  * Then on confirmation it navigates to the transfer step with the raw hex data
  * of the image & the preview base 64 data URI of the image as params.
  */
-const Step2Preview: React.FC<
-  StackScreenProps<ParamList, "CustomImageStep2Preview">
-> = ({ navigation, route }) => {
+const Step2Preview = ({ navigation, route }: NavigationProps) => {
   const imageProcessorRef = useRef<ImageProcessor>(null);
+  const [loading, setLoading] = useState(true);
   const [resizedImage, setResizedImage] = useState<ResizeResult | null>(null);
-  const [contrast, setContrast] = useState(1);
+  const initialIndex = 0;
+  const [selectedIndex, setSelectedIndex] = useState(initialIndex);
+  const animSelectedIndex = useSharedValue(initialIndex);
   const [processorPreviewImage, setProcessorPreviewImage] =
     useState<ProcessorPreviewResult | null>(null);
   const [rawResultLoading, setRawResultLoading] = useState(false);
@@ -69,17 +91,14 @@ const Step2Preview: React.FC<
 
   const { params } = route;
 
-  const croppedImage = params;
+  const { cropResult: croppedImage, device } = params;
 
   const handleError = useCallback(
     (error: Error) => {
       console.error(error);
-      navigation.navigate(
-        ScreenName.CustomImageErrorScreen as "CustomImageErrorScreen",
-        { error },
-      );
+      navigation.navigate(ScreenName.CustomImageErrorScreen, { error, device });
     },
-    [navigation],
+    [navigation, device],
   );
 
   /** IMAGE RESIZING */
@@ -104,6 +123,7 @@ const Step2Preview: React.FC<
     useCallback(
       data => {
         setProcessorPreviewImage(data);
+        setLoading(false);
       },
       [setProcessorPreviewImage],
     );
@@ -117,16 +137,14 @@ const Step2Preview: React.FC<
          * */
         throw new ImagePreviewError();
       }
-      navigation.navigate(
-        ScreenName.CustomImageStep3Transfer as "CustomImageStep3Transfer",
-        {
-          rawData: data,
-          previewData: processorPreviewImage,
-        },
-      );
+      navigation.navigate(ScreenName.CustomImageStep3Transfer, {
+        rawData: data,
+        previewData: processorPreviewImage,
+        device,
+      });
       setRawResultLoading(false);
     },
-    [navigation, setRawResultLoading, processorPreviewImage],
+    [navigation, setRawResultLoading, processorPreviewImage, device],
   );
 
   const handlePreviewImageError = useCallback(
@@ -142,20 +160,24 @@ const Step2Preview: React.FC<
     setRawResultLoading(true);
   }, [imageProcessorRef, setRawResultLoading]);
 
-  const previewDimensions = useMemo(
-    () =>
-      fitImageContain(
-        {
-          width: processorPreviewImage?.width ?? 200,
-          height: processorPreviewImage?.height ?? 200,
-        },
-        boxToFitDimensions,
-      ),
-    [processorPreviewImage?.height, processorPreviewImage?.width],
+  const setSelectedIndexWrapped = useCallback(
+    newIndex => {
+      setSelectedIndex(newIndex);
+      animSelectedIndex.value = withTiming(newIndex, { duration: 300 });
+    },
+    [animSelectedIndex],
   );
 
+  const leftBoxAnimatedStyle = useAnimatedStyle(() => ({
+    width: (3 - animSelectedIndex.value) * 54,
+  }));
+
+  const rightBoxAnimatedStyle = useAnimatedStyle(() => ({
+    width: animSelectedIndex.value * 54,
+  }));
+
   return (
-    <SafeAreaView edges={["bottom"]} flex={1}>
+    <SafeAreaView edges={["bottom"]} style={{ flex: 1 }}>
       {resizedImage?.imageBase64DataUri && (
         <ImageProcessor
           ref={imageProcessorRef}
@@ -163,7 +185,7 @@ const Step2Preview: React.FC<
           onPreviewResult={handlePreviewResult}
           onError={handleError}
           onRawResult={handleRawResult}
-          contrast={contrast}
+          contrast={contrasts[selectedIndex].val}
         />
       )}
       <Flex
@@ -173,44 +195,59 @@ const Step2Preview: React.FC<
         justifyContent="center"
       >
         {processorPreviewImage?.imageBase64DataUri ? (
-          <PreviewImage
+          <Image
+            style={{ width: 252, height: 406 }}
             onError={handlePreviewImageError}
             fadeDuration={0}
             source={{ uri: processorPreviewImage.imageBase64DataUri }}
-            style={{
-              height: previewDimensions?.height,
-              width: previewDimensions?.width,
-            }}
           />
         ) : (
           <InfiniteLoader />
         )}
       </Flex>
       <BottomButtonsContainer>
-        <Text fontSize="14px" lineHeight="17px">
-          {t("customImage.selectContrast")}
-        </Text>
         {resizedImage?.imageBase64DataUri && (
-          <Flex flexDirection="row" my={6} justifyContent="space-between">
-            {contrasts.map(({ val, color }) => (
-              <Pressable key={val} onPress={() => setContrast(val)}>
-                <ContrastChoice selected={contrast === val} color={color} />
-              </Pressable>
-            ))}
-          </Flex>
+          <ForceTheme selectedPalette="dark">
+            <Flex flexDirection="row" my={6}>
+              <Animated.View style={leftBoxAnimatedStyle} />
+              {contrasts.map(({ val, color }, index, arr) => (
+                <Pressable
+                  disabled={loading}
+                  key={val}
+                  onPress={() => {
+                    if (selectedIndex !== index) {
+                      setLoading(true);
+                      setSelectedIndexWrapped(index);
+                    }
+                  }}
+                >
+                  <ContrastChoice
+                    selected={selectedIndex === index}
+                    loading={loading}
+                    color={color}
+                    isFirst={index === 0}
+                    isLast={index === arr.length - 1}
+                  />
+                </Pressable>
+              ))}
+              <Animated.View style={rightBoxAnimatedStyle} />
+            </Flex>
+          </ForceTheme>
         )}
-        <Button
-          disabled={!processorPreviewImage?.imageBase64DataUri}
-          mt={6}
-          size="large"
-          type="main"
-          outline={false}
-          onPress={requestRawResult}
-          pending={rawResultLoading}
-          displayContentWhenPending
-        >
-          {t("common.confirm")}
-        </Button>
+        <Flex width="100%">
+          <Button
+            disabled={!processorPreviewImage?.imageBase64DataUri}
+            mt={6}
+            size="large"
+            type="main"
+            outline={false}
+            onPress={requestRawResult}
+            pending={rawResultLoading}
+            displayContentWhenPending
+          >
+            {t("common.confirm")}
+          </Button>
+        </Flex>
       </BottomButtonsContainer>
     </SafeAreaView>
   );

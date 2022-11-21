@@ -1,6 +1,6 @@
 // @flow
 
-import React, { useEffect } from "react";
+import React, { useCallback, useEffect } from "react";
 import styled from "styled-components";
 import Text from "~/renderer/components/Text";
 import FakeLink from "~/renderer/components/FakeLink";
@@ -80,7 +80,7 @@ export function Toast({
   duration?: number,
   onDismiss: (id: string) => void,
   dismissable?: boolean,
-  callback: any,
+  callback?: () => void,
   type?: string,
   title: string,
   cta?: string,
@@ -117,16 +117,19 @@ export function Toast({
     }
   }, [duration, id, onDismiss]);
 
-  return transitions.map(({ key, item, props }) => (
-    <Wrapper
-      key={key}
-      style={props}
-      onClick={event => {
+  const onClick = useCallback(
+    event => {
+      if (typeof callback === "function") {
         callback();
-        onDismiss(id);
-        event.stopPropagation();
-      }}
-    >
+      }
+      onDismiss(id);
+      event.stopPropagation();
+    },
+    [callback, id, onDismiss],
+  );
+
+  return transitions.map(({ key, item, props }) => (
+    <Wrapper key={key} style={props} onClick={onClick}>
       <Content>
         <IconContainer color={defaultIconColor}>
           <Icon size={19} />

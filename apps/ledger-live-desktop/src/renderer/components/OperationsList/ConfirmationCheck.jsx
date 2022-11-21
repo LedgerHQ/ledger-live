@@ -41,7 +41,7 @@ const border = p =>
     ? 0
     : `1px solid ${
         p.type === "IN" || p.type === "NFT_IN"
-          ? p.marketColor
+          ? p.theme.colors.warning
           : rgba(p.theme.colors.palette.text.shade60, 0.2)
       }`;
 
@@ -49,7 +49,7 @@ function inferColor(p) {
   switch (p.type) {
     case "IN":
     case "NFT_IN":
-      return p.marketColor;
+      return p.isConfirmed ? p.marketColor : p.theme.colors.warning;
     case "FREEZE":
       return p.theme.colors.wallet;
     case "REWARD":

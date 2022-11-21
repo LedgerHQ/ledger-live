@@ -7,6 +7,7 @@ import {
 } from "@ledgerhq/live-common/families/tezos/bakers";
 import { Icons } from "@ledgerhq/native-ui";
 import { NavigatorName, ScreenName } from "../../const";
+import { ActionButtonEvent } from "../../components/FabActions";
 
 const getExtraSendActionParams = ({ account }: { account: AccountLike }) => {
   const delegation = getAccountDelegationSync(account);
@@ -46,7 +47,7 @@ const getActions = ({
 }: {
   account: Account;
   parentAccount: Account;
-}) => {
+}): ActionButtonEvent[] | null | undefined => {
   const delegationDisabled =
     isAccountDelegating(account) || account.type !== "Account";
 

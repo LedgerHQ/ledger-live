@@ -1,5 +1,5 @@
 // @flow
-import type { NFTMetadata, NFTMediaSizes } from "@ledgerhq/types-live";
+import type { NFTMetadata, NFTMediaSize, NFTMediaSizes } from "@ledgerhq/types-live";
 
 const mimeTypesMap = {
   video: ["video/mp4", "video/webm", "video/ogg"],
@@ -13,4 +13,10 @@ export const getMetadataMediaType = (
 ): $Keys<typeof mimeTypesMap> | void => {
   const { mediaType } = metadata?.medias?.[mediaFormat] || {};
   return mimeTypesCategories.find(type => mimeTypesMap[type].includes(mediaType));
+};
+
+export const getMetadataMediaTypes = (metadata: NFTMetadata) => {
+  const sizes: Array<NFTMediaSize> = ["preview", "big", "original"];
+  const sizeToTypeMap = sizes.map(size => [size, getMetadataMediaType(metadata, size)]);
+  return Object.fromEntries(sizeToTypeMap);
 };

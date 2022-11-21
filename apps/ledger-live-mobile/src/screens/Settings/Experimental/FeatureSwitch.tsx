@@ -1,15 +1,16 @@
 import React, { useState } from "react";
 
 import { Switch } from "@ledgerhq/native-ui";
+import { EnvName } from "@ledgerhq/live-common/env";
 import Track from "../../../analytics/Track";
 
 type Props = {
-  name: string;
-  valueOn: any;
-  valueOff: any;
+  name: EnvName;
+  valueOn?: unknown;
+  valueOff?: unknown;
   checked?: boolean;
   readOnly?: boolean;
-  onChange: (name: string, val: any) => boolean;
+  onChange: (name: EnvName, val: unknown) => boolean;
 };
 
 export default function FeatureSwitch({

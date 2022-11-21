@@ -1,12 +1,12 @@
 import React, { useCallback } from "react";
 import { Flex, Icons, Text } from "@ledgerhq/native-ui";
 import { useTranslation } from "react-i18next";
-import { getDeviceModel } from "@ledgerhq/devices/lib/index";
+import { getDeviceModel } from "@ledgerhq/devices";
 import styled from "styled-components/native";
 import { useDispatch, useSelector } from "react-redux";
 import { usePostOnboardingEntryPointVisibleOnWallet } from "@ledgerhq/live-common/postOnboarding/hooks/index";
 import { hidePostOnboardingWalletEntryPoint } from "@ledgerhq/live-common/postOnboarding/actions";
-import { postOnboardingDeviceModelIdSelector } from "@ledgerhq/live-common/lib/postOnboarding/reducer";
+import { postOnboardingDeviceModelIdSelector } from "@ledgerhq/live-common/postOnboarding/reducer";
 import { useNavigateToPostOnboardingHubCallback } from "../../logic/postOnboarding/useNavigateToPostOnboardingHubCallback";
 import Touchable from "../Touchable";
 import darkPlaceholderImage from "../../images/illustration/Dark/_000_PLACEHOLDER.png";

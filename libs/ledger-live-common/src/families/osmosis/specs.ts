@@ -1,7 +1,7 @@
 import invariant from "invariant";
 import type { Transaction } from "./types";
 import { getCryptoCurrencyById, parseCurrencyUnit } from "../../currencies";
-import { botTest, pickSiblings } from "../../bot/specs";
+import { botTest, genericTestDestination, pickSiblings } from "../../bot/specs";
 import type { AppSpec } from "../../bot/types";
 import { DeviceModelId } from "@ledgerhq/devices";
 import type {
@@ -11,7 +11,7 @@ import type {
   CosmosResources,
   CosmosUnbonding,
 } from "../cosmos/types";
-import { canClaimRewards, canUndelegate, canRedelegate } from "../cosmos/logic";
+import { canUndelegate, canRedelegate } from "../cosmos/logic";
 import { canDelegate, getMaxDelegationAvailable } from "./logic";
 import { getCurrentOsmosisPreloadData } from "../osmosis/preloadedData";
 import sampleSize from "lodash/sampleSize";
@@ -50,7 +50,8 @@ const osmosis: AppSpec<Transaction> = {
     appName: "Cosmos",
   },
   genericDeviceAction: acceptTransaction,
-  testTimeout: 2 * 60 * 1000,
+  testTimeout: 8 * 60 * 1000,
+  minViableAmount: minimalAmount,
   transactionCheck: ({ maxSpendable }) => {
     invariant(maxSpendable.gt(minimalAmount), "balance is too low");
   },
@@ -89,6 +90,7 @@ const osmosis: AppSpec<Transaction> = {
     {
       name: "move 50% to another account",
       maxRun: 2,
+      testDestination: genericTestDestination,
       transaction: ({ account, siblings, bridge, maxSpendable }) => {
         invariant(maxSpendable.gt(minimalAmount), "balance is too low");
         const sibling = pickSiblings(siblings, maxAccount);
@@ -111,6 +113,7 @@ const osmosis: AppSpec<Transaction> = {
     {
       name: "send max to another account",
       maxRun: 1,
+      testDestination: genericTestDestination,
       transaction: ({ account, siblings, bridge, maxSpendable }) => {
         invariant(maxSpendable.gt(minimalAmount), "balance is too low");
         const sibling = pickSiblings(siblings, maxAccount);
@@ -396,8 +399,8 @@ const osmosis: AppSpec<Transaction> = {
           );
           botTest("reward is no longer claimable after claim", () =>
             invariant(
-              !canClaimRewards(account as CosmosAccount, d as CosmosDelegation),
-              "reward no longer be claimable"
+              d?.pendingRewards.lte(d.amount.multipliedBy(0.1)),
+              "pending reward is not reset"
             )
           );
         });

@@ -1,35 +1,24 @@
 import React, { useMemo } from "react";
 import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
 import { useTranslation } from "react-i18next";
-import { Account, AccountLike } from "@ledgerhq/types-live";
 import { useTheme } from "styled-components/native";
 import { Text } from "@ledgerhq/native-ui";
+import { SwapForm } from "../../screens/Swap";
 import { ScreenName } from "../../const";
-import Swap from "../../screens/Swap";
 import History from "../../screens/Swap/History";
 import { getLineTabNavigatorConfig } from "../../navigation/tabNavigatorConfig";
+import { SwapFormNavigatorParamList } from "./types/SwapFormNavigator";
 
 type TabLabelProps = {
   focused: boolean;
   color: string;
 };
 
-type RouteParams = {
-  defaultAccount?: AccountLike;
-  defaultParentAccount?: Account;
-  providers: any;
-  provider: string;
-};
+const Tab = createMaterialTopTabNavigator<SwapFormNavigatorParamList>();
 
-export default function SwapFormNavigator({
-  route,
-}: {
-  route: { params: RouteParams };
-}) {
+export default function SwapFormNavigator() {
   const { t } = useTranslation();
   const { colors } = useTheme();
-  const { params: routeParams } = route;
-
   const tabNavigationConfig = useMemo(
     () => getLineTabNavigatorConfig(colors),
     [colors],
@@ -39,6 +28,7 @@ export default function SwapFormNavigator({
     <Tab.Navigator {...tabNavigationConfig}>
       <Tab.Screen
         name={ScreenName.SwapForm}
+        component={SwapForm}
         options={{
           title: t("transfer.swap.form.tab"),
           tabBarLabel: (props: TabLabelProps) => (
@@ -47,9 +37,7 @@ export default function SwapFormNavigator({
             </Text>
           ),
         }}
-      >
-        {_props => <Swap {..._props} {...routeParams} />}
-      </Tab.Screen>
+      />
       <Tab.Screen
         name={ScreenName.SwapHistory}
         component={History}
@@ -65,5 +53,3 @@ export default function SwapFormNavigator({
     </Tab.Navigator>
   );
 }
-
-const Tab = createMaterialTopTabNavigator();

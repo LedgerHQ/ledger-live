@@ -1,9 +1,15 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { Flex, Icons, InfiniteLoader } from "@ledgerhq/native-ui";
+import { Box, Flex, Icons, InfiniteLoader, Text } from "@ledgerhq/native-ui";
 import { CropView } from "react-native-image-crop-tools";
 import { useTranslation } from "react-i18next";
-import { StackScreenProps } from "@react-navigation/stack";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { StackNavigationEventMap } from "@react-navigation/stack";
+import {
+  EventListenerCallback,
+  EventMapCore,
+  StackNavigationState,
+  useFocusEffect,
+} from "@react-navigation/native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import ImageCropper, {
   Props as ImageCropperProps,
   CropResult,
@@ -12,13 +18,27 @@ import {
   ImageDimensions,
   ImageFileUri,
 } from "../../components/CustomImage/types";
-import { downloadImageToFile } from "../../components/CustomImage/imageUtils";
+import {
+  downloadImageToFile,
+  importImageFromPhoneGallery,
+} from "../../components/CustomImage/imageUtils";
 import { targetDimensions } from "./shared";
 import Button from "../../components/Button";
 import { ScreenName } from "../../const";
 import BottomContainer from "../../components/CustomImage/BottomButtonsContainer";
 import Touchable from "../../components/Touchable";
-import { ParamList } from "./types";
+import {
+  BaseComposite,
+  StackNavigatorProps,
+} from "../../components/RootNavigator/types/helpers";
+import { CustomImageNavigatorParamList } from "../../components/RootNavigator/types/CustomImageNavigator";
+
+type NavigationProps = BaseComposite<
+  StackNavigatorProps<
+    CustomImageNavigatorParamList,
+    ScreenName.CustomImageStep1Crop
+  >
+>;
 
 /**
  * UI component that loads the input image (from the route params) &
@@ -26,9 +46,7 @@ import { ParamList } from "./types";
  * Then on confirmation it navigates to the preview step with the cropped image
  * file URI as a param.
  */
-const Step1Cropping: React.FC<
-  StackScreenProps<ParamList, "CustomImageStep1Crop">
-> = ({ navigation, route }) => {
+const Step1Cropping = ({ navigation, route }: NavigationProps) => {
   const cropperRef = useRef<CropView>(null);
   const [imageToCrop, setImageToCrop] = useState<ImageFileUri | null>(null);
   const [rotated, setRotated] = useState(false);
@@ -37,15 +55,50 @@ const Step1Cropping: React.FC<
 
   const { params } = route;
 
+  const { isPictureFromGallery, device } = params;
+
   const handleError = useCallback(
     (error: Error) => {
       console.error(error);
-      navigation.navigate(
-        ScreenName.CustomImageErrorScreen as "CustomImageErrorScreen",
-        { error },
-      );
+      navigation.navigate(ScreenName.CustomImageErrorScreen, { error, device });
     },
-    [navigation],
+    [navigation, device],
+  );
+
+  useFocusEffect(
+    useCallback(() => {
+      let dead = false;
+      const listener: EventListenerCallback<
+        StackNavigationEventMap &
+          EventMapCore<StackNavigationState<CustomImageNavigatorParamList>>,
+        "beforeRemove"
+      > = e => {
+        if (!isPictureFromGallery) {
+          navigation.dispatch(e.data.action);
+          return;
+        }
+        e.preventDefault();
+        setImageToCrop(null);
+        importImageFromPhoneGallery()
+          .then(importResult => {
+            if (dead) return;
+            if (importResult !== null) {
+              setImageToCrop(importResult);
+            } else {
+              navigation.dispatch(e.data.action);
+            }
+          })
+          .catch(e => {
+            if (dead) return;
+            handleError(e);
+          });
+      };
+      navigation.addListener("beforeRemove", listener);
+      return () => {
+        dead = true;
+        navigation.removeListener("beforeRemove", listener);
+      };
+    }, [navigation, handleError, isPictureFromGallery]),
   );
 
   /** LOAD SOURCE IMAGE FROM PARAMS */
@@ -76,13 +129,13 @@ const Step1Cropping: React.FC<
 
   /** CROP IMAGE HANDLING */
   const handleCropResult: ImageCropperProps["onResult"] = useCallback(
-    (res: CropResult) => {
-      navigation.navigate(
-        ScreenName.CustomImageStep2Preview as "CustomImageStep2Preview",
-        res,
-      );
+    (cropResult: CropResult) => {
+      navigation.navigate(ScreenName.CustomImageStep2Preview, {
+        cropResult,
+        device,
+      });
     },
-    [navigation],
+    [navigation, device],
   );
 
   const handlePressNext = useCallback(() => {
@@ -102,63 +155,83 @@ const Step1Cropping: React.FC<
     setContainerDimensions({ height: layout.height, width: layout.width });
   }, []);
 
+  const { bottom } = useSafeAreaInsets();
+
   return (
-    <SafeAreaView edges={["bottom"]} flex={1}>
+    <Flex
+      flex={1}
+      flexDirection="column"
+      alignItems="center"
+      /**
+       * Using this value directly rather than the SafeAreaView prevents a
+       * double initial rendering which can causes issues in the ImageCropper
+       * component
+       */
+      paddingBottom={bottom}
+    >
       <Flex
         flex={1}
-        flexDirection="column"
-        alignItems="center"
+        onLayout={imageToCrop ? onContainerLayout : undefined}
+        width="100%"
         justifyContent="center"
+        alignItems="center"
       >
-        <Flex
-          flex={1}
-          onLayout={imageToCrop ? onContainerLayout : undefined}
-          width="100%"
-          justifyContent="center"
-          alignItems="center"
-        >
-          {containerDimensions && imageToCrop ? (
-            <ImageCropper
-              ref={cropperRef}
-              imageFileUri={imageToCrop.imageFileUri}
-              aspectRatio={targetDimensions}
-              style={containerDimensions} // this native component needs absolute height & width values
-              onError={handleError}
-              onResult={handleCropResult}
-            />
-          ) : (
-            <InfiniteLoader />
-          )}
-        </Flex>
-        {imageToCrop ? (
-          <BottomContainer>
-            <Flex mb={7} alignSelf="center">
-              <Touchable onPress={handlePressRotateLeft}>
-                <Flex
-                  px={7}
-                  py={4}
-                  borderRadius={100}
-                  backgroundColor="neutral.c30"
-                >
-                  <Icons.ReverseMedium size={24} />
-                </Flex>
-              </Touchable>
-            </Flex>
-            <Flex flexDirection="row">
-              <Button
-                flex={1}
-                type="main"
-                size="large"
-                onPress={handlePressNext}
-                outline={false}
-              >
-                {t("common.next")}
-              </Button>
-            </Flex>
-          </BottomContainer>
-        ) : null}
+        {containerDimensions && imageToCrop ? (
+          <ImageCropper
+            ref={cropperRef}
+            imageFileUri={imageToCrop.imageFileUri}
+            aspectRatio={targetDimensions}
+            /**
+             * this native component needs absolute height & width values to
+             * render properly
+             * */
+            style={containerDimensions}
+            /**
+             * remount if style dimensions changes as otherwise there is a
+             * rendering issue on iOS
+             * */
+            key={`w:${containerDimensions.width};h:${containerDimensions.height}`}
+            onError={handleError}
+            onResult={handleCropResult}
+          />
+        ) : (
+          <InfiniteLoader />
+        )}
       </Flex>
-    </SafeAreaView>
+      {imageToCrop ? (
+        <BottomContainer>
+          <Box mb={7} alignSelf="center">
+            <Touchable onPress={handlePressRotateLeft}>
+              <Flex
+                py={4}
+                px={6}
+                borderRadius={100}
+                backgroundColor="neutral.c30"
+                flexDirection="row"
+                justifyContent="center"
+                alignItems="center"
+              >
+                <Text variant="paragraph" fontWeight="semiBold" mr={2} ml={2}>
+                  {t("customImage.rotateImage")}
+                </Text>
+                <Icons.ReverseMedium size={16} />
+              </Flex>
+            </Touchable>
+          </Box>
+          <Flex flexDirection="row">
+            <Button
+              flex={1}
+              type="main"
+              size="large"
+              onPress={handlePressNext}
+              outline={false}
+            >
+              {t("common.next")}
+            </Button>
+          </Flex>
+        </BottomContainer>
+      ) : null}
+    </Flex>
   );
 };
 

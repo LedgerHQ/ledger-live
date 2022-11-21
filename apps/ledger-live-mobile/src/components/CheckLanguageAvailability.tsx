@@ -13,7 +13,7 @@ import {
 import { setLanguage } from "../actions/settings";
 import { getDefaultLanguageLocale } from "../languages";
 import { useLanguageAvailableChecked } from "../context/Locale";
-import { Track } from "../analytics";
+import { Track, updateIdentify } from "../analytics";
 import Button from "./wrappedUi/Button";
 
 export default function CheckLanguageAvailability() {
@@ -36,6 +36,7 @@ export default function CheckLanguageAvailability() {
 
   const handleChangeLanguagePressed = useCallback(() => {
     dispatch(setLanguage(defaultLanguage));
+    updateIdentify();
     if (typeof answer === "function") answer();
     onRequestClose();
   }, [dispatch, defaultLanguage, answer, onRequestClose]);
@@ -58,11 +59,7 @@ export default function CheckLanguageAvailability() {
         event={`Discoverability - Prompt - ${defaultLanguage}`}
         eventProperties={{ language: defaultLanguage }}
       />
-      <BottomModal
-        id="CheckLanguageAvailabilityModal"
-        isOpened
-        onClose={onRequestClose}
-      >
+      <BottomModal isOpened onClose={onRequestClose}>
         <ModalBottomAction
           title={<Trans i18nKey="systemLanguageAvailable.title" />}
           icon={<Icons.LanguageMedium color="primary.c80" size={50} />}

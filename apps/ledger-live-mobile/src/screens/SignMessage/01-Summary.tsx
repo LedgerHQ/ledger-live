@@ -1,59 +1,132 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useState, memo, useEffect } from "react";
 import { View, StyleSheet, ScrollView } from "react-native";
-import SafeAreaView from "react-native-safe-area-view";
-import { Trans } from "react-i18next";
-import type { TypedMessageData } from "@ledgerhq/live-common/families/ethereum/types";
-import type { MessageData } from "@ledgerhq/live-common/hw/signMessage/types";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { Trans, useTranslation } from "react-i18next";
 import {
-  getAccountCurrency,
   getAccountName,
+  getMainAccount,
 } from "@ledgerhq/live-common/account/index";
 import { useSelector } from "react-redux";
 import { useTheme } from "@react-navigation/native";
+import invariant from "invariant";
 import { accountScreenSelector } from "../../reducers/accounts";
 import { ScreenName } from "../../const";
 import { TrackScreen } from "../../analytics";
 import Button from "../../components/Button";
 import WalletIcon from "../../icons/Wallet";
 import LText from "../../components/LText";
+import {
+  getMessageProperties,
+  NanoDisplayedInfoFor712,
+} from "../../helpers/signMessageUtils";
 import ParentCurrencyIcon from "../../components/ParentCurrencyIcon";
+import { SignMessageNavigatorStackParamList } from "../../components/RootNavigator/types/SignMessageNavigator";
+import { StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
 
-const forceInset = {
-  bottom: "always",
-};
-type Props = {
-  navigation: any;
-  route: {
-    params: RouteParams;
-  };
-};
-export type RouteParams = {
-  accountId: string;
-  message: MessageData | TypedMessageData;
-  onConfirmationHandler?: (_: MessageData | TypedMessageData) => void;
-  onFailHandler?: (_: Error) => void;
-  currentNavigation?: string;
-  nextNavigation?: string;
-};
-const defaultParams = {
-  currentNavigation: ScreenName.SignSummary,
-  nextNavigation: ScreenName.SignSelectDevice,
-};
+const MessageProperty = memo(
+  ({
+    label,
+    value,
+  }: {
+    label: string;
+    value: string | string[] | null | undefined;
+  }) => {
+    const { colors } = useTheme();
 
-function SignSummary({ navigation, route: initialRoute }: Props) {
+    if (!value) return null;
+
+    return (
+      <View style={styles.messageProperty}>
+        <LText style={styles.messagePropertyLabel} bold>
+          {label}
+        </LText>
+        <LText
+          style={[
+            styles.messagePropertyValue,
+            {
+              color: colors.grey,
+            },
+          ]}
+        >
+          {typeof value === "string" ? (
+            value
+          ) : (
+            <View style={styles.propertiesList}>
+              {value.map((v, i) => (
+                <LText
+                  style={[
+                    styles.messagePropertyValue,
+                    {
+                      color: colors.grey,
+                    },
+                  ]}
+                  key={i}
+                >{`${v}${i < value.length - 1 ? "," : ""}`}</LText>
+              ))}
+            </View>
+          )}
+        </LText>
+      </View>
+    );
+  },
+);
+MessageProperty.displayName = "MessageProperty";
+
+const MessageProperties = memo(
+  (props: { properties: { label: string; value: string | string[] }[] }) => {
+    const { properties } = props;
+    return (
+      <View>
+        {properties.map((p, i) => (
+          <MessageProperty key={i} {...p} />
+        ))}
+      </View>
+    );
+  },
+);
+MessageProperties.displayName = "MessageProperties";
+
+function SignSummary({
+  navigation,
+  route,
+}: StackNavigatorProps<
+  SignMessageNavigatorStackParamList,
+  ScreenName.SignSummary
+>) {
+  const { t } = useTranslation();
   const { colors } = useTheme();
-  const route = {
-    ...initialRoute,
-    params: { ...defaultParams, ...initialRoute.params },
-  };
-  const { account } = useSelector(accountScreenSelector(route));
-  const { nextNavigation, message } = route.params;
+  const { account, parentAccount } = useSelector(accountScreenSelector(route));
+
+  invariant(account, "account not found");
+
+  const mainAccount = getMainAccount(account, parentAccount);
+
+  const { nextNavigation, message: messageData } = route.params;
   const navigateToNext = useCallback(() => {
-    navigation.navigate(nextNavigation, { ...route.params });
+    nextNavigation &&
+      // @ts-expect-error impossible to type navigation hacks
+      navigation.navigate(nextNavigation, {
+        ...route.params,
+      });
   }, [navigation, nextNavigation, route.params]);
   const onContinue = useCallback(() => {
     navigateToNext();
   }, [navigateToNext]);
+
+  const [showAdvanced, setShowAdvanced] = useState(false);
+  const [messageProperties, setMessageProperties] = useState<{
+    message?: string;
+    fields?: NanoDisplayedInfoFor712;
+  }>({});
+
+  useEffect(() => {
+    getMessageProperties(mainAccount.currency, messageData).then(
+      setMessageProperties,
+    );
+  }, [mainAccount.currency, messageData, setMessageProperties]);
+
+  const { message, fields } = messageProperties;
+
   return (
     <SafeAreaView
       style={[
@@ -62,7 +135,6 @@ function SignSummary({ navigation, route: initialRoute }: Props) {
           backgroundColor: colors.background,
         },
       ]}
-      forceInset={forceInset}
     >
       <TrackScreen category="SignMessage" name="Summary" />
       <View style={styles.body}>
@@ -75,7 +147,7 @@ function SignSummary({ navigation, route: initialRoute }: Props) {
               },
             ]}
           >
-            <WalletIcon color={colors.live} size={16} />
+            <WalletIcon size={16} />
           </View>
           <View style={styles.fromInnerContainer}>
             <LText style={styles.from}>
@@ -83,13 +155,10 @@ function SignSummary({ navigation, route: initialRoute }: Props) {
             </LText>
             <View style={styles.headerContainer}>
               <View style={styles.headerIconContainer}>
-                <ParentCurrencyIcon
-                  size={18}
-                  currency={account && getAccountCurrency(account)}
-                />
+                <ParentCurrencyIcon size={18} currency={mainAccount.currency} />
               </View>
               <LText semiBold secondary numberOfLines={1}>
-                {account && getAccountName(account)}
+                {getAccountName(mainAccount)}
               </LText>
             </View>
           </View>
@@ -103,14 +172,39 @@ function SignSummary({ navigation, route: initialRoute }: Props) {
           ]}
         />
         <ScrollView style={styles.scrollContainer}>
-          <LText style={styles.message}>
-            <Trans i18nKey="walletconnect.message" />
-          </LText>
-          <LText semiBold>
-            {message.message.domain
-              ? JSON.stringify(message.message)
-              : message.message}
-          </LText>
+          <View style={styles.messageContainer}>
+            {fields ? (
+              <MessageProperties properties={fields} />
+            ) : (
+              <MessageProperty label={"message"} value={message} />
+            )}
+          </View>
+          {fields ? (
+            <View>
+              <Button
+                type="color"
+                onPress={() => setShowAdvanced(!showAdvanced)}
+              >
+                {showAdvanced
+                  ? `- ${t("signMessage.eip712.hideFullMessage")}`
+                  : `+ ${t("signMessage.eip712.showFullMessage")}`}
+              </Button>
+              {showAdvanced ? (
+                <LText
+                  style={[
+                    styles.advancedMessageArea,
+                    {
+                      backgroundColor: colors.pillActiveBackground,
+                    },
+                  ]}
+                >
+                  {typeof messageData.message === "string"
+                    ? `"${messageData.message}"`
+                    : JSON.stringify(messageData.message, null, 2)}
+                </LText>
+              ) : null}
+            </View>
+          ) : null}
         </ScrollView>
       </View>
       <View style={styles.footer}>
@@ -133,7 +227,6 @@ const styles = StyleSheet.create({
   },
   body: {
     flex: 1,
-    paddingHorizontal: 16,
   },
   fromContainer: {
     marginBottom: 30,
@@ -161,10 +254,34 @@ const styles = StyleSheet.create({
   },
   scrollContainer: {
     flex: 1,
+    paddingHorizontal: 16,
     paddingBottom: 16,
   },
   from: {
     opacity: 0.5,
+  },
+  messageContainer: {
+    flex: 1,
+    paddingVertical: 20,
+  },
+  propertiesList: {
+    marginBottom: 10,
+  },
+  messageProperty: {
+    marginBottom: 20,
+  },
+  messagePropertyLabel: {
+    fontSize: 12,
+  },
+  messagePropertyValue: {
+    marginTop: 10,
+    fontSize: 12,
+  },
+  advancedMessageArea: {
+    marginTop: 20,
+    fontSize: 9,
+    fontFamily: "Courier New",
+    padding: 20,
   },
   message: {
     opacity: 0.5,

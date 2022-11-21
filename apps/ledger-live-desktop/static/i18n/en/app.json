@@ -85,6 +85,7 @@
     "lock": "Lock",
     "showMore": "Show more",
     "back": "Back",
+    "adjustFees": "Adjust fees",
     "reset": "Reset",
     "retry": "Retry",
     "range": "Range",
@@ -123,12 +124,14 @@
     },
     "exchange": "Exchange",
     "info": "Info",
-    "connectDevice": "Connect your device"
+    "connectDevice": "Connect your device",
+    "add": "Add"
   },
   "devices": {
     "nanoS": "Nano S",
     "nanoSP": "Nano S Plus",
     "nanoX": "Nano X",
+    "nanoFTS": "Nano FTS",
     "blue": "Blue"
   },
   "operation": {
@@ -177,6 +180,8 @@
   "time": {
     "minute": "Minute",
     "minute_plural": "Minutes",
+    "minute_short": "min",
+    "second_short": "sec",
     "hour": "Hour",
     "hour_plural": "Hours",
     "range": {
@@ -235,10 +240,26 @@
     },
     "form": {
       "changeCTA": "Change",
-      "ratesDrawer": {
-        "title": "Rate",
-        "quote": "Quote",
-        "receive": "Receive"
+      "rates": {
+        "title": "Quotes",
+        "registration": "Registration required ",
+        "noRegistration": "No registration required",
+        "fixed": "Fixed",
+        "float": "Floating",
+        "update": "Rates update in",
+        "loading": "Loading...",
+        "name": {
+          "title": "Provider",
+          "tooltip": "Depending on the provider, you have to register with them by creating an account."
+        },
+        "rate": {
+          "title": "Exchange rate",
+          "tooltip": "A <0>floating rate</0> fluctuates depending on market conditions, so you might receive more or less than what you estimated.<br/><br/>A <0>fixed rate</0> matches the amount displayed at the beginning of the exchange."
+        },
+        "receive": {
+          "title": "Receive",
+          "tooltip": "The estimated amount you’ll receive after the exchange."
+        }
       },
       "details": {
         "label": {
@@ -411,7 +432,15 @@
           "approved": "KYC Approved!",
           "closed": "KYC Rejected"
         }
-      }
+      },
+      "filter": {
+        "centralised": "Centralised",
+        "decentralised": "Decentralised",
+        "float": "Floating rate",
+        "fixed": "Fixed rate"
+      },
+      "noQuote": "Quote available at the next step",
+      "noProviders": "No results found. There are no quotes available with the current preferences."
     },
     "ip": {
       "title": "Welcome to Swap",
@@ -574,6 +603,12 @@
   "lottieDebugger": {
     "buttonTitle": "Test"
   },
+  "storylyDebugger": {
+    "buttonTitle": "Test"
+  },
+  "postOnboardingDebugger": {
+    "buttonTitle": "Test"
+  },
   "fullNode": {
     "status": "Status",
     "connect": "Connect",
@@ -729,7 +764,7 @@
     "settings": {
       "title": "Edit account",
       "advancedLogs": "Advanced",
-      "advancedTips": "Your xpub is privacy-sensitive data. Use with caution, especially when disclosing to third parties.",
+      "advancedTips": "This is a {{tag}} xpub. When importing it into a third-party wallet, choose the same derivation mode.",
       "accountName": {
         "title": "Account name",
         "desc": "Description of the account"
@@ -1100,6 +1135,111 @@
     "desc": "This action will hide all <1><0>{{tokenName}}</0></1> accounts, you can show them again using <3>Settings</3>",
     "hideCTA": "Hide token"
   },
+  "syncOnboarding": {
+    "connection": {
+      "searching": {
+        "title": "Connect {{deviceModelName}} to your computer",
+        "connectionTrouble": "Having trouble connecting your device?"
+      },
+      "success": {
+        "title": "Connected to {{ deviceName }}"
+      }
+    },
+    "manual": {
+      "title": "Setup {{deviceName}}",
+      "pairedContent": {
+        "title": "{{deviceName}} is connected",
+        "description": "Continue setup on {{deviceName}}",
+        "text": "This screen will change dynamically to provide you with relevant information while you set up your {{deviceName}}"
+      },
+      "pinContent": {
+        "title": "Set your PIN",
+        "description": "Your PIN can be 4 to 8 digits long",
+        "text": "Anyone with access to your {{deviceName}} and to your PIN can also access all your crypto and NFT assets."
+      },
+      "recoveryContent": {
+        "title": "Recovery phrase",
+        "content": "Tap on the videos below to learn more about your secret recovery phrase"
+      },
+      "softwareCheckContent": {
+        "title": "Software check",
+        "genuineCheck": {
+          "active": "Checking {{deviceName}}",
+          "completed": "{{deviceName}} is authentic"
+        },
+        "firmwareUpdate": {
+          "inactive": "Software check",
+          "active": "Checking for software updates",
+          "updateAvailable": "Software update available {{firmwareVersion}}",
+          "recommendation": "We recommend downloading the update now",
+          "downloadUpdate": "Download update",
+          "skipUpdate": "Skip for now",
+          "completed": "Software is up to date"
+        }
+      },
+      "installApplications": {
+        "title": "We recommend downloading a default set of apps. You can download more later",
+        "install": "Install",
+        "skip": "I'll do that later",
+        "info": "Apps on {{deviceName}} are used to approve transactions. You can add or remove them at any time."
+      },
+      "genuineCheckModal": {
+        "title": "Authenticity Check",
+        "paragraph1": "Let's make sure your {{deviceName}} is Authentic and safe to use",
+        "paragraph2": "We will perform a check to ensure your device hasn't been tampered with. You'll need to accept this on your {{deviceName}}.",
+        "checkDeviceButton": "Check device"
+      },
+      "genuineCheckCancelModal": {
+        "title": "Authenticity Check",
+        "paragraph1": "The genuine check was cancelled",
+        "paragraph2": "This check is very important to make sure your {{deviceName}} is safe to use.",
+        "checkDeviceButton": "Run check again",
+        "cancelButton": "Maybe later"
+      },
+      "genuineCheckNotGenuineModal": {
+        "title": "Authenticity Check",
+        "paragraph1": "Your device is not genuine",
+        "paragraph2": "Authenticity check failed",
+        "checkDeviceButton": "Run check again",
+        "cancelButton": "Maybe later"
+      },
+      "genuineCheckAnimationModal": {
+        "message": "Allow manager on {{deviceName}}"
+      },
+      "helpDrawer": {
+        "title": "Need some help with your setup manual?",
+        "description": "Lorem Elsass ipsum aliquam bissame Oberschaeffolsheim geht's messti de Bischheim tellus blottkopf, dui sed libero. hopla libero, placerat leo eget Gal.",
+        "docButton": "Go to FAQ",
+        "supportButton": "Speak to a human"
+      },
+      "troubleshootingDrawer": {
+        "title": "Troubleshoot USB connection",
+        "description": "There seems to be a problem connecting to your device. Don’t worry, you can try different solutions one by one until your device connects!",
+        "fixButton": "Fix it",
+        "closeButton": "Close"
+      },
+      "desyncOverlay": {
+        "errorMessage": "It looks like connection to your {{deviceName}} was lost. We're trying to reconnect."
+      },
+      "header": {
+        "helpButton": "Need help?"
+      }
+    }
+  },
+  "postOnboarding": {
+    "postOnboardingScreen": {
+      "title": "Nice one.You're all set.",
+      "description": "Cheers for setting up your {{deviceName}}!",
+      "paragraph": "We have prepared for you some steps to start with. If you feel like exploring Ledger Live on your own, don't hesitate to skip this step, you can always come back to it.",
+      "bottomText": "Enjoy your travel into the Web3 securely with Ledger Live."
+    },
+    "postOnboardingContent": {
+      "title": "Nice one.You're all set.",
+      "description": "Here's what you can do next:",
+      "skipLink": "Skip to the app",
+      "skipLinkInDrawer": "I'll do this later"
+    }
+  },
   "hideNftCollection": {
     "title": "Hide NFT Collection",
     "desc": "This action will hide all NFTs from the <1><0>{{collectionName}}</0></1> collection, you can show them again using <3>Settings</3>",
@@ -1159,6 +1299,10 @@
     "blackfriday": {
       "title": "BLACK FRIDAY ",
       "description": "Enjoy 40% off Ledger hardware wallets with the promo code BLACKFRIDAY20"
+    },
+    "referralProgram": {
+      "title": "Refer and earn $10",
+      "description": "Successfully refer a friend and you both earn $10 worth of Bitcoin."
     }
   },
   "signmessage": {
@@ -1170,6 +1314,10 @@
       "sign": {
         "title": "Device"
       }
+    },
+    "eip712": {
+      "showFullMessage": "Show full message",
+      "hideFullMessage": "Hide full message"
     }
   },
   "walletconnect": {
@@ -1915,6 +2063,39 @@
         "tezos": {
           "text": "The amount received on a delegated account will be added to the total staked amount. Choose another account if you want to avoid this."
         }
+      },
+      "staking": {
+        "title": "Earn {{currencyName}}",
+        "link": "Learn more",
+        "notShow": "Do not show this again",
+        "footer": {
+          "dismiss": "Not now",
+          "stake": "Stake with {{provider}}"
+        },
+        "ethereum": {
+          "title": "Grow your ETH. Stake now.",
+          "description": "Stake your Ethereum with Lido and earn rewards daily. No lock-up period. No minimum deposit.",
+          "kiln": {
+            "title": "Don’t just HODL. Grow your ETH.",
+            "description": "Got more than 32 ETH? Earn passive rewards by securely staking your ETH with Kiln."
+          }
+        },
+        "cosmos": {
+          "title": "Grow your ATOM. Stake with Ledger validator.",
+          "description": "Stake your ATOM with the trusted Ledger validator. Your coins stay yours, backed by Ledger’s uncompromising security."
+        },
+        "osmo": {
+          "title": "Grow your OSMO. Stake with Ledger by Figment.",
+          "description": "Stake your OSMO with Ledger by Figment validator. It offers the lowest commission fee and a guarantee against slashing!"
+        },
+        "solana": {
+          "title": "Grow your SOL. Stake with Ledger by Figment.",
+          "description": "Stake your SOL with Ledger by Figment validator. Your coins stay yours, backed by Ledger’s uncompromising security."
+        },
+        "celo": {
+          "title": "Grow your CELO. Stake with Ledger by Figment.",
+          "description": "Stake your CELO with Ledger by Figment validator. It guarantees complete cover against slashing, backed by Ledger’s uncompromising security."
+        }
       }
     }
   },
@@ -1930,7 +2111,7 @@
       "amount": {
         "title": "Amount",
         "banner": "Maximum spendable amount is",
-        "fees": "Fees",
+        "fees": "Max estimated fee",
         "standard": "Standard",
         "advanced": "Advanced",
         "nftQuantity": "Quantity"
@@ -1953,8 +2134,13 @@
         "useMax": "Send Max",
         "rippleTag": "Tag",
         "rippleTagPlaceholder": "Optional",
+        "edit": "Edit",
         "ethereumGasLimit": "Gas limit",
         "ethereumGasPrice": "Gas price",
+        "ethereumMaxFee": "Max Fee ({{unitName}})",
+        "ethereumPriorityFee": "Max Priority Fee ({{unitName}})",
+        "nextBlock": "Next block: {{nextBaseFee}}",
+        "suggestedPriorityFee": "Suggested: {{lowPriorityFee}} - {{highPriorityFee}} {{unitName}}",
         "unitPerByte": "{{unit}} per byte",
         "nft": "NFT",
         "nftQuantity": "Quantity"
@@ -2002,6 +2188,29 @@
     },
     "switchButton": "Switch to {{language}}",
     "no": "I prefer not to"
+  },
+  "deviceLocalization": {
+    "language": "Language",
+    "deviceLanguage": "Language",
+    "changeLanguage": "Change language",
+    "changeDeviceLanguage": "Change your device language?",
+    "chooseLanguage": "Choose a language for your {{deviceName}}.",
+    "changeDeviceLanguagePrompt": {
+      "title": "{{language}} is also available for your {{deviceName}}",
+      "description": "Would you like to change its language to {{language}}?"
+    },
+    "firmwareUpdatePrompt": {
+      "title": "Set your {{deviceName}} in {{language}}?",
+      "description": "{{language}} is now available for your {{deviceName}}. You can set it now, or change your device language at any time from My Ledger."
+    },
+    "allowLanguageInstallation": "Allow language installation",
+    "languageInstalled": "Language changed to {{language}}",
+    "installingLanguage": "Installing language",
+    "languages": {
+      "english": "English",
+      "french": "French",
+      "spanish": "Spanish"
+    }
   },
   "distribution": {
     "asset": "Asset",
@@ -3416,6 +3625,7 @@
       "featureFlagsEdit": "Edit",
       "featureFlagsRestore": "Restore",
       "featureFlagsOverride": "Override",
+      "firebaseProject": "Firebase project targeted by this build:",
       "addLocalApp": "Add a local app",
       "addLocalAppDesc": "Browse local files and add a local app using a local manifest",
       "addLocalAppButton": "Browse",
@@ -3505,6 +3715,22 @@
         "testAnimations": {
           "title": "Test Lottie animations",
           "description": "Test all animations used in Ledger Live"
+        },
+        "testStories": {
+          "title": "Test Storyly stories",
+          "description": "Test all stories used in Ledger Live"
+        },
+        "testPostonboarding": {
+          "title": "Test Post Onboarding",
+          "description": "Test all post onboarding features"
+        },
+        "1559DeactivateGate" : {
+          "title": "Deactivate EIP1559 minimum priority fee gate",
+          "description": "This will allow a transaction to be sent without any minimum priority fee expected. This may result in a transaction getting stuck in the mempool forever."
+        },
+        "1559CustomPriorityLowerGate" : {
+          "title": "Custom priority fee gate",
+          "description": "Customize the percentage of our estimated minimal priority fee allowed for an advanced EIP1559 transaction"
         }
       }
     },
@@ -3635,7 +3861,11 @@
       "ru": "Russian",
       "es": "Spanish",
       "zh": "Chinese",
-      "de": "German"
+      "de": "German",
+      "tr": "Turkish",
+      "ja": "Japanese",
+      "ko": "Korean",
+      "pt": "Portuguese"
     }
   },
   "theme": {
@@ -4287,13 +4517,14 @@
       "4": {
         "deviceSelection": {
           "title": "What’s your device?",
-          "desc": "If you have a Nano S, you can try repairing your devices Firmware. For Nano X and Blue users, kindly contact Ledger support"
+          "desc": "If you’re trying to connect a Nano S, select the state displayed on your Nano. If you’re trying to connect a Nano S Plus or Nano X, <0>visit the Help Center</0>"
         },
         "notFixed": {
           "title": " USB connection problem still not fixed?",
           "desc": "If you've tried every possible solution, please reach out to Ledger Support. Otherwise, please follow the instructions of any solution you haven’t tried yet.",
           "back": "Back to portfolio",
-          "cta": "Contact Support"
+          "cta": "Contact Support",
+          "cta2": "Go Back"
         },
         "repair": {
           "title": "Repair your Nano S",
@@ -4425,6 +4656,9 @@
     "NoSuchAppOnProvider": {
       "title": "The {{appName}} app cannot be found for your specific configuration.",
       "description": "Try reinstalling the app from My Ledger"
+    },
+    "PendingOperation": {
+      "description": "You have incoming transactions pending. Please beware pending transactions can be reversed."
     },
     "countervaluesUnavailable": {
       "title": "We're not able to provide a countervalue for this asset at the moment"
@@ -4603,6 +4837,14 @@
     "HardResetFail": {
       "title": "Sorry, could not reset",
       "description": "Please try again or contact Ledger Support if the problem persists."
+    },
+    "LanguageInstallRefusedOnDevice": {
+      "title": "Language installation refused on device",
+      "description": "Please try again. If the problem persists, please save your logs using the button below and provide them to Ledger Support."
+    },
+    "LanguageNotFound": {
+      "title": "Language not found",
+      "description": "The language you are trying to install was not found. Please try installing another language."
     },
     "LatestMCUInstalledError": {
       "title": "Sorry, there's nothing to update",
@@ -4817,7 +5059,7 @@
     },
     "EthAppNftNotSupported": {
       "title": "Operation not available for this device",
-      "description": "Send NFT feature is only available for Nano X. Please visit our customer support platform to know how to send a NFT with a Nano S."
+      "description": "Send NFT feature is only available for Nano X and Nano S+. Please visit our customer support platform to know how to send a NFT with a Nano S."
     },
     "CantScanQRCode": {
       "title": "Couldn't scan this QR code: auto-verification not supported by this address"
@@ -4830,6 +5072,18 @@
     },
     "GasLessThanEstimate": {
       "title": "This may be too low. Please increase"
+    },
+    "PriorityFeeTooLow": {
+      "title": "Priority fee is lower than the recommended value"
+    },
+    "PriorityFeeTooHigh": {
+      "title": "Priority fee is higher than necessary. You might be overpaying"
+    },
+    "MaxFeeTooLow": {
+      "title": "Max fee is lower than the recommended value"
+    },
+    "PriorityFeeHigherThanMaxFee": {
+      "title": "Max priority fee cannot be higher than max fee"
     },
     "UnknownMCU": {
       "title": "Unknown MCU version",
@@ -4965,6 +5219,9 @@
     "FeeTooHigh": {
       "title": "Network fees are above 10% of the amount"
     },
+    "DustLimit": {
+      "title": "Amount is lower than dust limit"
+    },
     "SourceHasMultiSign": {
       "title": "Please disable multisign to send {{currencyName}}"
     },
@@ -5078,6 +5335,58 @@
     },
     "AvalancheInvalidDateTimeError": {
       "title": "Invalid staking end date selected"
+    },
+    "HederaAddAccountError": {
+      "title": "Your account has not been added. Please try again."
+    },
+    "ImageIncorrectFileTypeError": {
+      "title": "Image loading from file failed.",
+      "description": "Please try again with an image."
+    },
+    "ImageLoadFromFileError": {
+      "title": "Image loading from file failed",
+      "description": "Please try again with another image"
+    },
+    "ImageDownloadError": {
+      "title": "Image download failed",
+      "description": "Please try again with another image"
+    },
+    "ImageMetadataLoadingError": {
+      "title": "Image metadata loading failed",
+      "description": "Please try again with another image"
+    },
+    "ImageTooLargeError": {
+      "title": "Image too large",
+      "description": "Please try with a smaller image"
+    },
+    "ImageCropError": {
+      "title": "Cropping of the image failed",
+      "description": "Please try again with another image"
+    },
+    "ImageResizeError": {
+      "title": "Resizing of the image failed",
+      "description": "Please try again with another image"
+    },
+    "ImagePreviewError": {
+      "title": "Preview of the image failed",
+      "description": "Please try again with another image"
+    },
+    "ImageProcessingError": {
+      "title": "Processing of the image failed",
+      "description": "Please try again with another image"
+    },
+    "ImageCommitRefusedOnDevice": {
+      "title": "Image commit refused on device (TODO: final wording)",
+      "description": "If this image wasn't the right fit, you can try again with another image."
+    },
+    "ImageLoadRefusedOnDevice": {
+      "title": "Image load refused on device (TODO: final wording)",
+      "description": "If this image wasn't the right fit, you can try again with another image."
+    },
+    "LockedDeviceError": {
+      "title": "Your device is locked",
+      "description": "Unlock your device and try again.",
+      "descriptionWithProductName": "Unlock your {{ productName }} and try again."
     }
   },
   "cryptoOrg": {
@@ -5108,5 +5417,42 @@
     "selectAccount": {
       "title": "choose account"
     }
+  },
+  "customImage": {
+    "title": "Custom image",
+    "steps": {
+      "choose": {
+        "stepLabel": "Choose an image",
+        "description": "Choose an image to set as (...)",
+        "pickFromNftGallery": "Select from my NFT gallery",
+        "upload": "Upload from my computer"
+      },
+      "adjust": {
+        "stepLabel": "Adjust image",
+        "rotate": "Rotate"
+      },
+      "contrast": {
+        "stepLabel": "Choose contrast"
+      },
+      "transfer": {
+        "stepLabel": "Transfer",
+        "uploadAnotherImage": "Upload another image",
+        "allowPreview": "Allow picture preview on {{productName}}",
+        "loadingPicture": "Loading picture on {{productName}}",
+        "pictureLoaded": "Picture loaded",
+        "imageLoaded": "Image loaded on {{productName}}",
+        "confirmPicture": "Confirm on {{productName}}",
+        "doThisLater": "Maybe later",
+        "timeDisclaimer": "This can take up to 30 seconds"
+      }
+    },
+    "postOnboarding": {
+      "title": "Personalize my device",
+      "description": "By customizing the screen",
+      "actionCompletedPopupLabel": "Device personalized",
+      "actionCompletedHubTitle": "That screen is looking neat."
+    },
+    "customImageSet": "Custom image set",
+    "finishCTA": "Finish"
   }
 }

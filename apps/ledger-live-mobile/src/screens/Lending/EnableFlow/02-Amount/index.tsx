@@ -4,15 +4,13 @@ import React, { useCallback } from "react";
 import { StyleSheet, View, TouchableOpacity, SafeAreaView } from "react-native";
 import { useSelector } from "react-redux";
 import { Trans, useTranslation } from "react-i18next";
-import type { Transaction } from "@ledgerhq/live-common/generated/types";
-import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { getAccountUnit } from "@ledgerhq/live-common/account/index";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import {
   findCompoundToken,
   formatCurrencyUnit,
 } from "@ledgerhq/live-common/currencies/index";
-import { useTheme } from "@react-navigation/native";
+import { CompositeScreenProps, useTheme } from "@react-navigation/native";
 import { accountScreenSelector } from "../../../../reducers/accounts";
 import { rgba } from "../../../../colors";
 import { ScreenName, NavigatorName } from "../../../../const";
@@ -31,24 +29,23 @@ import ArrowRight from "../../../../icons/ArrowRight";
 import CurrencyUnitValue from "../../../../components/CurrencyUnitValue";
 import LendingWarnings from "../../shared/LendingWarnings";
 import { localeSelector } from "../../../../reducers/settings";
+import { LendingEnableFlowParamsList } from "../../../../components/RootNavigator/types/LendingEnableFlowNavigator";
+import { StackNavigatorProps } from "../../../../components/RootNavigator/types/helpers";
+import { BaseNavigatorStackParamList } from "../../../../components/RootNavigator/types/BaseNavigator";
 
-type Props = {
-  navigation: any;
-  route: {
-    params: RouteParams;
-  };
-};
-type RouteParams = {
-  accountId: string;
-  parentId: string;
-  currency: TokenCurrency;
-  transaction?: Transaction;
-};
-export default function SendAmount({ navigation, route }: Props) {
+type NavigationProps = CompositeScreenProps<
+  StackNavigatorProps<
+    LendingEnableFlowParamsList,
+    ScreenName.LendingEnableAmount
+  >,
+  StackNavigatorProps<BaseNavigatorStackParamList>
+>;
+
+export default function SendAmount({ navigation, route }: NavigationProps) {
   const { colors } = useTheme();
   const { t } = useTranslation();
   const locale = useSelector(localeSelector);
-  const { currency, transaction: tx } = route.params;
+  const { currency, transaction: tx } = route.params || {};
   const { account, parentAccount } = useSelector(accountScreenSelector(route));
   invariant(
     account && account.type === "TokenAccount",
@@ -58,7 +55,7 @@ export default function SendAmount({ navigation, route }: Props) {
     useBridgeTransaction(() => {
       const bridge = getAccountBridge(account, parentAccount);
       const ctoken = findCompoundToken(account.token);
-      // $FlowFixMe
+
       const t = bridge.createTransaction(account);
       const transaction =
         tx ||
@@ -93,13 +90,13 @@ export default function SendAmount({ navigation, route }: Props) {
     navigation.navigate(ScreenName.LendingEnableSummary, {
       ...route.params,
       accountId: account.id,
-      parentId: parentAccount && parentAccount.id,
+      parentId: parentAccount?.id,
       transaction,
       currentNavigation: ScreenName.LendingEnableSummary,
       nextNavigation: ScreenName.LendingEnableSelectDevice,
       overrideAmountLabel: transaction?.useAllAmount
         ? t("transfer.lending.enable.enable.noLimit", {
-            assetName: currency.name,
+            assetName: currency?.name,
           })
         : formattedAmount,
       hideTotal: true,
@@ -111,7 +108,7 @@ export default function SendAmount({ navigation, route }: Props) {
     account.id,
     parentAccount,
     t,
-    currency.name,
+    currency?.name,
     formattedAmount,
   ]);
   const onBridgeErrorCancel = useCallback(() => {
@@ -135,7 +132,7 @@ export default function SendAmount({ navigation, route }: Props) {
         category="Lend Approve"
         name="step 1"
         eventProperties={{
-          currencyName: currency.name,
+          currencyName: currency?.name,
         }}
       />
       <LendingWarnings />
@@ -151,7 +148,9 @@ export default function SendAmount({ navigation, route }: Props) {
           <LinkedIcons
             left={
               <View style={styles.currencyIconContainer}>
-                <CurrencyIcon size={62} radius={62} currency={currency} />
+                {currency && (
+                  <CurrencyIcon size={62} radius={62} currency={currency} />
+                )}
                 <LText
                   style={[
                     styles.balanceLabel,
@@ -186,7 +185,7 @@ export default function SendAmount({ navigation, route }: Props) {
                   contractName: t(
                     "transfer.lending.enable.enable.contractName",
                     {
-                      currencyName: currency.ticker,
+                      currencyName: currency?.ticker,
                     },
                   ),
                   accountName: name,
@@ -196,7 +195,7 @@ export default function SendAmount({ navigation, route }: Props) {
                           amount: formattedAmount,
                         })
                       : t("transfer.lending.enable.enable.noLimit", {
-                          assetName: currency.name,
+                          assetName: currency?.name,
                         }),
                 }}
               >

@@ -425,18 +425,27 @@ platform :android do
     end
 
     gradle(task: "clean", project_dir: 'android/')
-    gradle(
-      task: task,
-      build_type: type,
-      print_command: false,
-      properties: {
-        "android.injected.signing.store.file" => ENV["ANDROID_KEYSTORE_FILE"],
-        "android.injected.signing.store.password" => ENV["ANDROID_KEYSTORE_PASS"],
-        "android.injected.signing.key.alias" => ENV["ANDROID_KEY_ALIAS"],
-        "android.injected.signing.key.password" => ENV["ANDROID_KEY_PASS"],
-      },
-      project_dir: 'android/'
-    )
+    if (options[:local])
+      gradle(
+        task: task,
+        build_type: type,
+        print_command: false,
+        project_dir: 'android/'
+      )
+    else
+      gradle(
+        task: task,
+        build_type: type,
+        print_command: false,
+        properties: {
+          "android.injected.signing.store.file" => ENV["ANDROID_KEYSTORE_FILE"],
+          "android.injected.signing.store.password" => ENV["ANDROID_KEYSTORE_PASS"],
+          "android.injected.signing.key.alias" => ENV["ANDROID_KEY_ALIAS"],
+          "android.injected.signing.key.password" => ENV["ANDROID_KEY_PASS"],
+        },
+        project_dir: 'android/'
+      )
+    end
   end
 
   desc "upload to Play Store"
@@ -459,16 +468,25 @@ platform :android do
   # ============================= END PRIVATE =============================
   # ============================= LOCAL BUILD =============================
 
-  desc "build APK (can be uploaded to Play Store)"
-  lane :apk do
+  desc "build APK (local) (cannot be uploaded to Play Store)"
+  lane :apk_local do
     build(
-      type: "Release",
-      apk: true
+      type: "StagingRelease",
+      apk: true,
+      local: true
     )
   end
 
   # =========================== END LOCAL BUILD ===========================
   # ============================== CI BUILD ===============================
+
+  desc "build APK (cannot be uploaded to Play Store)"
+  lane :apk do
+    build(
+      type: "StagingRelease",
+      apk: true
+    )
+  end
 
   desc "build APK and send to Google Play Store"
   lane :ci_playstore do

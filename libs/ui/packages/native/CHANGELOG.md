@@ -1,5 +1,99 @@
 # @ledgerhq/native-ui
 
+## 0.12.1
+
+### Patch Changes
+
+- [#1141](https://github.com/LedgerHQ/ledger-live/pull/1141) [`24ea9cd15f`](https://github.com/LedgerHQ/ledger-live/commit/24ea9cd15f92d5a2c74c4b936bacb89d5d4d36fd) Thanks [@valpinkman](https://github.com/valpinkman)! - Collateral changes due to solving all LLM typescript/eslint issues/warnings.
+
+- Updated dependencies [[`7495373f8b`](https://github.com/LedgerHQ/ledger-live/commit/7495373f8b4690ce5b7b48410f3e4e47bf2555f4), [`f7a162c356`](https://github.com/LedgerHQ/ledger-live/commit/f7a162c356a0cd84b6eb635493ee56af06e306e5), [`24ea9cd15f`](https://github.com/LedgerHQ/ledger-live/commit/24ea9cd15f92d5a2c74c4b936bacb89d5d4d36fd)]:
+  - @ledgerhq/icons-ui@0.3.0
+  - @ledgerhq/crypto-icons-ui@0.2.1
+  - @ledgerhq/ui-shared@0.1.10
+
+## 0.12.1-next.0
+
+### Patch Changes
+
+- [#1141](https://github.com/LedgerHQ/ledger-live/pull/1141) [`24ea9cd15f`](https://github.com/LedgerHQ/ledger-live/commit/24ea9cd15f92d5a2c74c4b936bacb89d5d4d36fd) Thanks [@valpinkman](https://github.com/valpinkman)! - Collateral changes due to solving all LLM typescript/eslint issues/warnings.
+
+- Updated dependencies [[`7495373f8b`](https://github.com/LedgerHQ/ledger-live/commit/7495373f8b4690ce5b7b48410f3e4e47bf2555f4), [`f7a162c356`](https://github.com/LedgerHQ/ledger-live/commit/f7a162c356a0cd84b6eb635493ee56af06e306e5), [`24ea9cd15f`](https://github.com/LedgerHQ/ledger-live/commit/24ea9cd15f92d5a2c74c4b936bacb89d5d4d36fd)]:
+  - @ledgerhq/icons-ui@0.3.0-next.0
+  - @ledgerhq/crypto-icons-ui@0.2.1-next.0
+  - @ledgerhq/ui-shared@0.1.10-next.0
+
+## 0.12.0
+
+### Minor Changes
+
+- [#330](https://github.com/LedgerHQ/ledger-live/pull/330) [`f7a8df09f8`](https://github.com/LedgerHQ/ledger-live/commit/f7a8df09f8115da779b7082384d5db0823317d53) Thanks [@alexandremgo](https://github.com/alexandremgo)! - Add a vertical timeline component to Native UI
+
+### Patch Changes
+
+- [#330](https://github.com/LedgerHQ/ledger-live/pull/330) [`f7a8df09f8`](https://github.com/LedgerHQ/ledger-live/commit/f7a8df09f8115da779b7082384d5db0823317d53) Thanks [@alexandremgo](https://github.com/alexandremgo)! - Feat: Sync onboarding software checks UI
+
+  - handling unlock device during genuine check
+
+## 0.12.0-next.0
+
+### Minor Changes
+
+- [#330](https://github.com/LedgerHQ/ledger-live/pull/330) [`f7a8df09f8`](https://github.com/LedgerHQ/ledger-live/commit/f7a8df09f8115da779b7082384d5db0823317d53) Thanks [@alexandremgo](https://github.com/alexandremgo)! - Add a vertical timeline component to Native UI
+
+### Patch Changes
+
+- [#330](https://github.com/LedgerHQ/ledger-live/pull/330) [`f7a8df09f8`](https://github.com/LedgerHQ/ledger-live/commit/f7a8df09f8115da779b7082384d5db0823317d53) Thanks [@alexandremgo](https://github.com/alexandremgo)! - Feat: Sync onboarding software checks UI
+
+  - handling unlock device during genuine check
+
+## 0.11.0
+
+### Minor Changes
+
+- [#1457](https://github.com/LedgerHQ/ledger-live/pull/1457) [`4ec8df33ea`](https://github.com/LedgerHQ/ledger-live/commit/4ec8df33ea223c412cb81892bf0380d456e19b54) Thanks [@thomasrogerlux](https://github.com/thomasrogerlux)! - Add a new vertical timeline component
+
+### Patch Changes
+
+- [#1480](https://github.com/LedgerHQ/ledger-live/pull/1480) [`22725d35e5`](https://github.com/LedgerHQ/ledger-live/commit/22725d35e59c79759e7cdd295ac5b7ebbb774ee2) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - VerticalTimeline: add dynamic height capability (with animation)
+
+## 0.11.0-next.0
+
+### Minor Changes
+
+- [#1457](https://github.com/LedgerHQ/ledger-live/pull/1457) [`4ec8df33ea`](https://github.com/LedgerHQ/ledger-live/commit/4ec8df33ea223c412cb81892bf0380d456e19b54) Thanks [@thomasrogerlux](https://github.com/thomasrogerlux)! - Add a new vertical timeline component
+
+### Patch Changes
+
+- [#1480](https://github.com/LedgerHQ/ledger-live/pull/1480) [`22725d35e5`](https://github.com/LedgerHQ/ledger-live/commit/22725d35e59c79759e7cdd295ac5b7ebbb774ee2) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - VerticalTimeline: add dynamic height capability (with animation)
+
+## 0.10.0
+
+### Minor Changes
+
+- [#742](https://github.com/LedgerHQ/ledger-live/pull/742) [`56068b813c`](https://github.com/LedgerHQ/ledger-live/commit/56068b813ce301a37b9d08bd55273b3d934c7371) Thanks [@grsoares21](https://github.com/grsoares21)! - Add a Divider component to the UI lib
+
+### Patch Changes
+
+- [#943](https://github.com/LedgerHQ/ledger-live/pull/943) [`8465b5e317`](https://github.com/LedgerHQ/ledger-live/commit/8465b5e317baecaf8f893b9c090537d2d03ac835) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Add "delay" prop to Transitions.Fade
+
+* [#943](https://github.com/LedgerHQ/ledger-live/pull/943) [`8465b5e317`](https://github.com/LedgerHQ/ledger-live/commit/8465b5e317baecaf8f893b9c090537d2d03ac835) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Add largeLineHeight text variant
+
+- [#1293](https://github.com/LedgerHQ/ledger-live/pull/1293) [`b0a7e35a0f`](https://github.com/LedgerHQ/ledger-live/commit/b0a7e35a0f7a85732d1f7bef6ae3144fdf0b8b24) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Improvements for the crypto icons library
+
+## 0.10.0-next.0
+
+### Minor Changes
+
+- [#742](https://github.com/LedgerHQ/ledger-live/pull/742) [`56068b813c`](https://github.com/LedgerHQ/ledger-live/commit/56068b813ce301a37b9d08bd55273b3d934c7371) Thanks [@grsoares21](https://github.com/grsoares21)! - Add a Divider component to the UI lib
+
+### Patch Changes
+
+- [#943](https://github.com/LedgerHQ/ledger-live/pull/943) [`8465b5e317`](https://github.com/LedgerHQ/ledger-live/commit/8465b5e317baecaf8f893b9c090537d2d03ac835) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Add "delay" prop to Transitions.Fade
+
+* [#943](https://github.com/LedgerHQ/ledger-live/pull/943) [`8465b5e317`](https://github.com/LedgerHQ/ledger-live/commit/8465b5e317baecaf8f893b9c090537d2d03ac835) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Add largeLineHeight text variant
+
+- [#1293](https://github.com/LedgerHQ/ledger-live/pull/1293) [`b0a7e35a0f`](https://github.com/LedgerHQ/ledger-live/commit/b0a7e35a0f7a85732d1f7bef6ae3144fdf0b8b24) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Improvements for the crypto icons library
+
 ## 0.9.0
 
 ### Minor Changes

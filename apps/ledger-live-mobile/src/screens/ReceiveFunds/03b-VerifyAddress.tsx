@@ -1,27 +1,19 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { of } from "rxjs";
+import { of, Subscription } from "rxjs";
 import { delay } from "rxjs/operators";
 import { TouchableOpacity, Linking } from "react-native";
 import { useSelector } from "react-redux";
 import { useTranslation, Trans } from "react-i18next";
-import type {
-  Account,
-  TokenAccount,
-  AccountLike,
-  Currency,
-} from "@ledgerhq/live-common/lib/types";
+import type { Account, TokenAccount } from "@ledgerhq/types-live";
 import {
   getMainAccount,
   getAccountCurrency,
-} from "@ledgerhq/live-common/lib/account";
-import { getAccountBridge } from "@ledgerhq/live-common/lib/bridge";
-import type { DeviceModelId } from "@ledgerhq/devices";
-import type { Device } from "@ledgerhq/live-common/lib/hw/actions/types";
+} from "@ledgerhq/live-common/account/index";
+import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
+import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import styled, { useTheme } from "styled-components/native";
 import { Flex } from "@ledgerhq/native-ui";
-import { useRoute } from "@react-navigation/native";
 import { track, TrackScreen } from "../../analytics";
-import { usePreviousRouteName } from "../../helpers/routeHooks";
 import { accountScreenSelector } from "../../reducers/accounts";
 import PreventNativeBack from "../../components/PreventNativeBack";
 import SkipLock from "../../components/behaviour/SkipLock";
@@ -34,6 +26,8 @@ import Animation from "../../components/Animation";
 import { getDeviceAnimation } from "../../helpers/getDeviceAnimation";
 import Illustration from "../../images/illustration/Illustration";
 import { urls } from "../../config/urls";
+import { ReceiveFundsStackParamList } from "../../components/RootNavigator/types/ReceiveFundsNavigator";
+import { StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
 
 const illustrations = {
   dark: require("../../images/illustration/Dark/_080.png"),
@@ -43,23 +37,11 @@ const illustrations = {
 type Props = {
   account?: TokenAccount | Account;
   parentAccount?: Account;
-  navigation: any;
-  route: { params: RouteParams };
-  readOnlyModeEnabled: boolean;
-};
-
-type RouteParams = {
-  account?: AccountLike;
-  accountId: string;
-  parentId?: string;
-  modelId: DeviceModelId;
-  wired: boolean;
-  device?: Device;
-  currency?: Currency;
-  createTokenAccount?: boolean;
-  onSuccess?: (address?: string) => void;
-  onError?: () => void;
-};
+  readOnlyModeEnabled?: boolean;
+} & StackNavigatorProps<
+  ReceiveFundsStackParamList,
+  ScreenName.ReceiveVerifyAddress
+>;
 
 const AnimationContainer = styled(Flex).attrs({
   alignSelf: "stretch",
@@ -70,18 +52,16 @@ const AnimationContainer = styled(Flex).attrs({
 })``;
 
 export default function ReceiveVerifyAddress({ navigation, route }: Props) {
-  const { type } = useTheme();
+  const { theme: themeKind } = useTheme();
   const { account, parentAccount } = useSelector(accountScreenSelector(route));
   const { t } = useTranslation();
-  const [error, setError] = useState(null);
-  const routerRoute = useRoute();
-  const lastRoute = usePreviousRouteName();
+  const [error, setError] = useState<Error | null>(null);
 
   const onModalClose = useCallback(() => {
     setError(null);
   }, []);
 
-  const sub = useRef();
+  const sub = useRef<Subscription>();
 
   const { onSuccess, onError, device } = route.params;
 
@@ -107,7 +87,7 @@ export default function ReceiveVerifyAddress({ navigation, route }: Props) {
               createTokenAccount: false,
             });
         },
-        error: (error: any) => {
+        error: (error: Error) => {
           if (error && error.name !== "UserRefusedAddress") {
             logger.critical(error);
           }
@@ -126,33 +106,30 @@ export default function ReceiveVerifyAddress({ navigation, route }: Props) {
   const onRetry = useCallback(() => {
     track("button_clicked", {
       button: "Retry",
-      screen: routerRoute.name,
     });
     onModalClose();
     if (device) {
       verifyOnDevice(device);
     }
-  }, [device, onModalClose, routerRoute.name, verifyOnDevice]);
+  }, [device, onModalClose, verifyOnDevice]);
 
   const goBack = useCallback(() => {
     track("button_clicked", {
       button: "Cancel",
-      screen: routerRoute.name,
     });
     navigation.navigate(ScreenName.ReceiveConfirmation, {
       ...route.params,
       verified: false,
     });
-  }, [navigation, route.params, routerRoute.name]);
+  }, [navigation, route.params]);
 
   const redirectToSupport = useCallback(() => {
     track("message_clicked", {
       message: "contact us asap",
-      screen: routerRoute.name,
       url: urls.receiveVerifyAddress,
     });
     Linking.openURL(urls.receiveVerifyAddress);
-  }, [routerRoute.name]);
+  }, []);
 
   useEffect(() => {
     if (device) {
@@ -168,11 +145,7 @@ export default function ReceiveVerifyAddress({ navigation, route }: Props) {
       <SkipLock />
       {error ? (
         <>
-          <TrackScreen
-            category="Receive"
-            name="Address Verification Denied"
-            source={lastRoute}
-          />
+          <TrackScreen category="Receive" name="Address Verification Denied" />
           <Flex flex={1} alignItems="center" justifyContent="center" p={6}>
             <Illustration
               lightSource={illustrations.light}
@@ -187,7 +160,7 @@ export default function ReceiveVerifyAddress({ navigation, route }: Props) {
             </LText>
 
             <TouchableOpacity onPress={redirectToSupport}>
-              <LText variant="body" color="neutral.c70" textALign="center">
+              <LText variant="body" color="neutral.c70" textAlign="center">
                 <Trans i18nKey="transfer.receive.verifyAddress.cancel.info">
                   <LText
                     color="primary.c80"
@@ -219,11 +192,7 @@ export default function ReceiveVerifyAddress({ navigation, route }: Props) {
         </>
       ) : (
         <Flex flex={1} alignItems="center" justifyContent="center" p={6}>
-          <TrackScreen
-            category="ReceiveFunds"
-            name="Verify Address"
-            source={lastRoute}
-          />
+          <TrackScreen category="ReceiveFunds" name="Verify Address" />
           <LText variant="h4" textAlign="center" mb={6}>
             {t("transfer.receive.verifyAddress.title")}
           </LText>
@@ -241,7 +210,7 @@ export default function ReceiveVerifyAddress({ navigation, route }: Props) {
               source={getDeviceAnimation({
                 device,
                 key: "validate",
-                theme: type,
+                theme: themeKind,
               })}
             />
           </AnimationContainer>

@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo, useState } from "react";
-import { ScrollView, StyleSheet } from "react-native";
+import { ScrollView } from "react-native";
 import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
@@ -8,6 +8,7 @@ import { getAccountUnit } from "@ledgerhq/live-common/account/helpers";
 import { getCryptoCurrencyIcon } from "@ledgerhq/live-common/reactNative";
 import type { Account } from "@ledgerhq/types-live";
 import invariant from "invariant";
+import { TronAccount } from "@ledgerhq/live-common/families/tron/types";
 import InfoModal from "../../modals/Info";
 import type { ModalInfo } from "../../modals/Info";
 import FreezeIcon from "../../icons/Freeze";
@@ -31,7 +32,7 @@ function AccountBalanceSummaryFooter({ account }: Props) {
     energy: formattedEnergy,
     bandwidth,
     tronPower,
-  } = account.tronResources || {};
+  } = (account as TronAccount).tronResources || {};
   const { freeUsed, freeLimit, gainedUsed, gainedLimit } = bandwidth || {};
   const unit = getAccountUnit(account);
   const formattedBandwidth = useMemo(
@@ -46,65 +47,59 @@ function AccountBalanceSummaryFooter({ account }: Props) {
     [],
   );
   return (
-    <ScrollView
-      horizontal
-      showsHorizontalScrollIndicator={false}
-      style={[styles.root]}
-      contentContainerStyle={{
-        paddingHorizontal: 16,
-      }}
-    >
+    <>
       <InfoModal
         isOpened={!!infoName}
         onClose={onCloseModal}
         data={infoName ? infoCandidates[infoName] : []}
       />
-
-      <InfoItem
-        title={t("account.availableBalance")}
-        onPress={onPressInfoCreator("available")}
-        value={
-          <CurrencyUnitValue unit={unit} value={account.spendableBalance} />
-        }
-      />
-      <InfoItem
-        title={t("account.tronFrozen")}
-        onPress={onPressInfoCreator("frozen")}
-        value={tronPower}
-      />
-      <InfoItem
-        title={t("account.bandwidth")}
-        onPress={onPressInfoCreator("bandwidth")}
-        value={
-          formattedBandwidth.isZero()
-            ? "-"
-            : toLocaleString(formattedBandwidth, locale)
-        }
-      />
-      <InfoItem
-        title={t("account.energy")}
-        onPress={onPressInfoCreator("energy")}
-        value={
-          formattedEnergy.isZero()
-            ? "-"
-            : toLocaleString(formattedEnergy, locale)
-        }
-      />
-    </ScrollView>
+      <ScrollView
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        contentContainerStyle={{
+          paddingHorizontal: 16,
+        }}
+      >
+        <InfoItem
+          title={t("account.availableBalance")}
+          onPress={onPressInfoCreator("available")}
+          value={
+            <CurrencyUnitValue unit={unit} value={account.spendableBalance} />
+          }
+        />
+        <InfoItem
+          title={t("account.tronFrozen")}
+          onPress={onPressInfoCreator("frozen")}
+          value={tronPower}
+        />
+        <InfoItem
+          title={t("account.bandwidth")}
+          onPress={onPressInfoCreator("bandwidth")}
+          value={
+            formattedBandwidth.isZero()
+              ? "-"
+              : toLocaleString(formattedBandwidth, locale)
+          }
+        />
+        <InfoItem
+          title={t("account.energy")}
+          onPress={onPressInfoCreator("energy")}
+          value={
+            formattedEnergy.isZero()
+              ? "-"
+              : toLocaleString(formattedEnergy, locale)
+          }
+          isLast={true}
+        />
+      </ScrollView>
+    </>
   );
 }
 
 export default function AccountBalanceFooter({ account }: Props) {
-  if (!account.tronResources) return null;
+  if (!(account as TronAccount).tronResources) return null;
   return <AccountBalanceSummaryFooter account={account} />;
 }
-const styles = StyleSheet.create({
-  root: {
-    flex: 1,
-    flexDirection: "row",
-    overflow: "visible",
-  },
-});
 
 function useInfoCandidates(): Record<InfoName, ModalInfo[]> {
   const { t } = useTranslation();

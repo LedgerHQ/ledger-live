@@ -13,6 +13,6 @@ export default function LendingWarning() {
           screen: ScreenName.LendingTerms,
         }),
     );
-  }, []);
+  }, [navigation]);
   return null;
 }

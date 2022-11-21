@@ -49,7 +49,11 @@ type State = {
   progress?: number;
 };
 
-type InstallLanguageAction = Action<Language, State, boolean | undefined>;
+type InstallLanguageAction = Action<
+  Language | undefined,
+  State,
+  boolean | undefined
+>;
 
 const mapResult = ({ languageInstalled }: State) => languageInstalled;
 
@@ -137,7 +141,7 @@ const implementations = {
       const POLLING = 2000;
       const INIT_DEBOUNCE = 5000;
       const DISCONNECT_DEBOUNCE = 5000;
-      const DEVICE_POLLING_TIMEOUT = 20000;
+      const DEVICE_POLLING_TIMEOUT = 30000;
       // this pattern allows to actually support events based (like if deviceSubject emits new device changes) but inside polling paradigm
       let pollingOnDevice;
       const sub = deviceSubject.subscribe((d) => {
@@ -295,7 +299,7 @@ export const createAction = (
 
   const useHook = (
     device: Device | null | undefined,
-    language: Language
+    language: Language | undefined
   ): State => {
     const [state, setState] = useState(() => getInitialState(device));
     const deviceSubject = useReplaySubject(device);

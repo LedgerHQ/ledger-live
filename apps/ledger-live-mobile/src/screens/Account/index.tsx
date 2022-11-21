@@ -1,83 +1,68 @@
-import React, { useState, useRef, useCallback, useMemo } from "react";
-import { StyleSheet, SectionList, FlatList } from "react-native";
-import { SectionBase } from "react-native/Libraries/Lists/SectionList";
-import Animated, { Value, event } from "react-native-reanimated";
+import React, { useState, useCallback, useMemo } from "react";
+import { FlatList, LayoutChangeEvent, ListRenderItemInfo } from "react-native";
+import Animated, {
+  useAnimatedScrollHandler,
+  useSharedValue,
+} from "react-native-reanimated";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigation } from "@react-navigation/native";
-import {
-  isAccountEmpty,
-  groupAccountOperationsByDay,
-  getAccountCurrency,
-} from "@ledgerhq/live-common/account/index";
-import {
-  Account,
-  AccountLike,
-  TokenAccount,
-  Operation,
-} from "@ledgerhq/types-live";
+import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
+import { Account, AccountLike, TokenAccount } from "@ledgerhq/types-live";
+import { Flex } from "@ledgerhq/native-ui";
 import debounce from "lodash/debounce";
 import {
   getAccountCapabilities,
   makeCompoundSummaryForAccount,
 } from "@ledgerhq/live-common/compound/logic";
-import { Trans } from "react-i18next";
-import { Text } from "@ledgerhq/native-ui";
+import { useTranslation } from "react-i18next";
+import { getCurrencyColor } from "@ledgerhq/live-common/currencies/index";
+import { useTheme } from "styled-components/native";
+import { isAccountEmpty } from "@ledgerhq/live-common/account/helpers";
+import { StackNavigationProp } from "@react-navigation/stack";
 import { switchCountervalueFirst } from "../../actions/settings";
-import { useBalanceHistoryWithCountervalue } from "../../actions/portfolio";
+import { useBalanceHistoryWithCountervalue } from "../../hooks/portfolio";
 import {
   selectedTimeRangeSelector,
   counterValueCurrencySelector,
   countervalueFirstSelector,
 } from "../../reducers/settings";
 import { accountScreenSelector } from "../../reducers/accounts";
-import { TrackScreen } from "../../analytics";
+import { track, TrackScreen } from "../../analytics";
 import accountSyncRefreshControl from "../../components/accountSyncRefreshControl";
-import OperationRow from "../../components/OperationRow";
-import SectionHeader from "../../components/SectionHeader";
-import NoMoreOperationFooter from "../../components/NoMoreOperationFooter";
-import LoadingFooter from "../../components/LoadingFooter";
 import { ScreenName } from "../../const";
-import EmptyStateAccount from "./EmptyStateAccount";
-import NoOperationFooter from "../../components/NoOperationFooter";
-import { useScrollToTop } from "../../navigation/utils";
-
+import CurrencyBackgroundGradient from "../../components/CurrencyBackgroundGradient";
+import AccountHeader from "./AccountHeader";
 import { getListHeaderComponents } from "./ListHeaderComponent";
 import { withDiscreetMode } from "../../context/DiscreetModeContext";
 import TabBarSafeAreaView, {
   TAB_BAR_SAFE_HEIGHT,
 } from "../../components/TabBar/TabBarSafeAreaView";
+import SectionContainer from "../WalletCentricSections/SectionContainer";
+import SectionTitle from "../WalletCentricSections/SectionTitle";
+import OperationsHistorySection from "../WalletCentricSections/OperationsHistory";
+import EmptyAccountCard from "./EmptyAccountCard";
+import useAccountActions from "./hooks/useAccountActions";
+import type { AccountsNavigatorParamList } from "../../components/RootNavigator/types/AccountsNavigator";
+import type { BaseNavigatorStackParamList } from "../../components/RootNavigator/types/BaseNavigator";
+import type { StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
 
-type Props = {
-  navigation: any;
-  route: { params: RouteParams };
-};
-
-type RouteParams = {
-  accountId: string;
-  parentId?: string;
-};
-
-const AnimatedSectionList = Animated.createAnimatedComponent(SectionList);
-const List = accountSyncRefreshControl(AnimatedSectionList);
+type Props =
+  | StackNavigatorProps<AccountsNavigatorParamList, ScreenName.Account>
+  | StackNavigatorProps<BaseNavigatorStackParamList, ScreenName.Account>;
 
 const AnimatedFlatListWithRefreshControl = Animated.createAnimatedComponent(
   accountSyncRefreshControl(FlatList),
 );
 
-function renderSectionHeader({ section }: any) {
-  return <SectionHeader section={section} />;
-}
-
-function keyExtractor(item: Operation) {
-  return item.id;
-}
-
-const stickySectionHeight = 56;
-
 function AccountScreen({ route }: Props) {
   const { account, parentAccount } = useSelector(accountScreenSelector(route));
   if (!account) return null;
-  return <AccountScreenInner account={account} parentAccount={parentAccount} />;
+  return (
+    <AccountScreenInner
+      account={account}
+      parentAccount={parentAccount || undefined}
+    />
+  );
 }
 
 const AccountScreenInner = ({
@@ -85,237 +70,160 @@ const AccountScreenInner = ({
   parentAccount,
 }: {
   account: AccountLike;
-  parentAccount: Account | undefined;
+  parentAccount?: Account | undefined;
 }) => {
-  const navigation = useNavigation();
+  const { t } = useTranslation();
+  const { colors } = useTheme();
+  const navigation =
+    useNavigation<StackNavigationProp<AccountsNavigatorParamList>>();
   const dispatch = useDispatch();
   const range = useSelector(selectedTimeRangeSelector);
   const { countervalueAvailable, countervalueChange, cryptoChange, history } =
     useBalanceHistoryWithCountervalue({ account, range });
   const useCounterValue = useSelector(countervalueFirstSelector);
   const counterValueCurrency = useSelector(counterValueCurrencySelector);
-
-  const [opCount, setOpCount] = useState(100);
-  const ref = useRef();
-  const scrollY = useRef(new Value(0)).current;
-
-  useScrollToTop(ref);
-
-  const onEndReached = useCallback(() => {
-    setOpCount(opCount + 50);
-  }, [setOpCount, opCount]);
+  const isEmpty = isAccountEmpty(account);
 
   const onSwitchAccountCurrency = useCallback(() => {
     dispatch(switchCountervalueFirst());
-  }, [dispatch]);
+    track("button_clicked", {
+      button: "Switch Account Currency",
+      countervalue: useCounterValue,
+    });
+  }, [dispatch, useCounterValue]);
 
-  const onAccountPress = debounce((tokenAccount: TokenAccount) => {
+  const onAccountPress = debounce((tokenAccount?: TokenAccount) => {
+    if (!tokenAccount) return;
     navigation.push(ScreenName.Account, {
       parentId: account.id,
       accountId: tokenAccount.id,
     });
   }, 300);
 
-  const ListEmptyComponent = useCallback(
-    () =>
-      isAccountEmpty(account) && (
-        <EmptyStateAccount
-          account={account}
-          parentAccount={parentAccount}
-          navigation={navigation}
-        />
-      ),
-    [account, parentAccount, navigation],
-  );
-
-  const renderItem = useCallback(
-    ({
-      item,
-      index,
-      section,
-    }: {
-      item: Operation;
-      index: number;
-      section: SectionBase<any>;
-    }) => {
-      if (!account) return null;
-
-      return (
-        <OperationRow
-          operation={item}
-          account={account}
-          parentAccount={parentAccount}
-          isFirst={index === 0}
-          isLast={section.data.length - 1 === index}
-        />
-      );
-    },
-    [account, parentAccount],
-  );
-
   const currency = getAccountCurrency(account);
 
   const analytics = (
     <TrackScreen
       category="Account"
-      currency={currency.id}
+      currency={currency.name}
       operationsSize={account.operations.length}
     />
   );
 
-  const { sections, completed } = groupAccountOperationsByDay(account, {
-    count: opCount,
-  });
-
-  const compoundCapabilities: any =
-    account.type === "TokenAccount" &&
-    !!account.compoundBalance &&
-    getAccountCapabilities(account);
-
-  const compoundSummary =
-    compoundCapabilities?.status && account.type === "TokenAccount"
-      ? makeCompoundSummaryForAccount(account, parentAccount)
+  const compoundCapabilities =
+    account.type === "TokenAccount" && !!account.compoundBalance
+      ? getAccountCapabilities(account)
       : undefined;
 
-  const [isCollapsed, setIsCollapsed] = useState(true);
+  const compoundSummary =
+    (compoundCapabilities?.status &&
+      account.type === "TokenAccount" &&
+      makeCompoundSummaryForAccount(account, parentAccount)) ||
+    undefined;
+
+  const [graphCardEndPosition, setGraphCardEndPosition] = useState(100);
+  const currentPositionY = useSharedValue(0);
+  const handleScroll = useAnimatedScrollHandler(event => {
+    currentPositionY.value = event.contentOffset.y;
+  });
+
+  const onAccountCardLayout = useCallback((event: LayoutChangeEvent) => {
+    const { y, height } = event.nativeEvent.layout;
+    setGraphCardEndPosition(y + height / 10);
+  }, []);
+
+  const { secondaryActions } = useAccountActions({ account, parentAccount });
 
   const { listHeaderComponents } = useMemo(
     () =>
       getListHeaderComponents({
         account,
         parentAccount,
-        countervalueAvailable,
+        countervalueAvailable: countervalueAvailable || account.balance.eq(0),
         useCounterValue,
         range,
         history,
         countervalueChange,
         cryptoChange,
-        counterValueCurrency,
         onAccountPress,
+        counterValueCurrency,
         onSwitchAccountCurrency,
         compoundSummary,
-        isCollapsed,
-        setIsCollapsed,
+        onAccountCardLayout,
+        colors,
+        secondaryActions,
+        t,
       }),
     [
       account,
-      compoundSummary,
-      counterValueCurrency,
+      parentAccount,
       countervalueAvailable,
+      useCounterValue,
+      range,
+      history,
       countervalueChange,
       cryptoChange,
-      history,
-      isCollapsed,
       onAccountPress,
+      counterValueCurrency,
       onSwitchAccountCurrency,
-      parentAccount,
-      range,
-      useCounterValue,
+      compoundSummary,
+      onAccountCardLayout,
+      colors,
+      secondaryActions,
+      t,
     ],
   );
 
   const data = [
     ...listHeaderComponents,
-    <List
-      ref={ref}
-      sections={sections}
-      style={[styles.sectionList]}
-      contentContainerStyle={styles.contentContainer}
-      ListHeaderComponent={() => (
-        <Text variant={"h3"} mt={8}>
-          <Trans i18nKey="account.lastTransactions" />
-        </Text>
-      )}
-      ListFooterComponent={
-        !completed ? (
-          <LoadingFooter />
-        ) : sections.length === 0 ? (
-          isAccountEmpty(account) ? null : (
-            <NoOperationFooter />
-          )
-        ) : (
-          <NoMoreOperationFooter />
-        )
-      }
-      ListEmptyComponent={ListEmptyComponent}
-      keyExtractor={keyExtractor}
-      renderItem={renderItem}
-      renderSectionHeader={renderSectionHeader}
-      onEndReached={onEndReached}
-      onScroll={event(
-        [
-          {
-            nativeEvent: {
-              contentOffset: { y: scrollY },
-            },
-          },
-        ],
-        { useNativeDriver: true },
-      )}
-      showsVerticalScrollIndicator={false}
-      accountId={account.id}
-      stickySectionHeadersEnabled={false}
-    />,
+    ...(!isEmpty
+      ? [
+          <SectionContainer px={6} isLast>
+            <SectionTitle title={t("analytics.operations.title")} />
+            <OperationsHistorySection accounts={[account]} />
+          </SectionContainer>,
+        ]
+      : [
+          <Flex px={6}>
+            <EmptyAccountCard currencyTicker={currency.ticker} />
+          </Flex>,
+        ]),
   ];
 
   return (
     <TabBarSafeAreaView edges={["bottom", "left", "right"]}>
       {analytics}
+      <CurrencyBackgroundGradient
+        currentPositionY={currentPositionY}
+        graphCardEndPosition={graphCardEndPosition}
+        gradientColor={getCurrencyColor(currency) || colors.primary.c80}
+      />
       <AnimatedFlatListWithRefreshControl
         style={{ flex: 1 }}
-        contentContainerStyle={{ paddingBottom: TAB_BAR_SAFE_HEIGHT }}
+        contentContainerStyle={{
+          paddingBottom: TAB_BAR_SAFE_HEIGHT + 48,
+          marginTop: 92,
+        }}
         data={data}
-        renderItem={({ item }: any) => item}
-        keyExtractor={(_: any, index: any) => String(index)}
+        renderItem={({ item }: ListRenderItemInfo<unknown>) =>
+          item as JSX.Element
+        }
+        keyExtractor={(_: unknown, index: number) => String(index)}
         showsVerticalScrollIndicator={false}
+        onScroll={handleScroll}
+      />
+      <AccountHeader
+        currentPositionY={currentPositionY}
+        graphCardEndPosition={graphCardEndPosition}
+        account={account}
+        useCounterValue={useCounterValue}
+        counterValueCurrency={counterValueCurrency}
+        history={history}
+        countervalueAvailable={countervalueAvailable}
+        parentAccount={parentAccount}
       />
     </TabBarSafeAreaView>
   );
 };
-
-const styles = StyleSheet.create({
-  header: {
-    flexDirection: "column",
-  },
-  sectionList: {
-    flex: 1,
-    paddingHorizontal: 16,
-  },
-  balanceContainer: {
-    alignItems: "center",
-    marginBottom: 10,
-  },
-  balanceText: {
-    fontSize: 22,
-    paddingBottom: 4,
-  },
-  contentContainer: {
-    paddingBottom: 64,
-    flexGrow: 1,
-  },
-  accountFabActions: {
-    width: "100%",
-    height: 56,
-    position: "absolute",
-    bottom: 0,
-    left: 0,
-  },
-  stickyContainer: {
-    width: "100%",
-    height: stickySectionHeight,
-    paddingVertical: 8,
-    position: "absolute",
-    left: 0,
-    top: 0,
-    zIndex: -100,
-    opacity: 0,
-  },
-  stickyBg: {
-    width: "100%",
-    height: "100%",
-    position: "absolute",
-    zIndex: 0,
-  },
-});
 
 export default withDiscreetMode(AccountScreen);

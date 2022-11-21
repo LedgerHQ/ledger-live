@@ -1,10 +1,10 @@
 import React, { memo } from "react";
-import { View, StyleSheet } from "react-native";
+import { View, StyleSheet, StyleProp, ViewStyle } from "react-native";
 import Animated from "react-native-reanimated";
 import { useTheme } from "@react-navigation/native";
 
 type Props = {
-  style?: any;
+  style?: StyleProp<ViewStyle>;
   height?: number;
   progress: string | number;
   progressColor: string;

@@ -299,6 +299,13 @@ const handlers: Object = {
     lastSeenDevice: Object.assign({}, state.lastSeenDevice, payload.lastSeenDevice),
     latestFirmware: payload.latestFirmware,
   }),
+  LAST_SEEN_DEVICE: (
+    state: SettingsState,
+    { payload }: { payload: { deviceInfo: DeviceInfo } },
+  ) => ({
+    ...state,
+    lastSeenDevice: { ...state.lastSeenDevice, deviceInfo: payload.deviceInfo },
+  }),
   SET_DEEPLINK_URL: (state: SettingsState, { payload: deepLinkUrl }) => ({
     ...state,
     deepLinkUrl,
@@ -381,7 +388,7 @@ export const deepLinkUrlSelector = (state: State) => state.settings.deepLinkUrl;
 export const counterValueCurrencyLocalSelector = (state: SettingsState): Currency =>
   findCurrencyByTicker(state.counterValue) || getFiatCurrencyByTicker("USD");
 
-export const counterValueCurrencySelector: OutputSelector<State, void, Currency> = createSelector(
+export const counterValueCurrencySelector = createSelector(
   storeSelector,
   counterValueCurrencyLocalSelector,
 );
@@ -418,12 +425,12 @@ const languageAndUseSystemLangSelector = (state: State): LanguageAndUseSystemLan
 };
 
 /** Use this for translations */
-export const languageSelector: OutputSelector<State, void, string> = createSelector(
+export const languageSelector: OutputSelector<State, string, string> = createSelector(
   languageAndUseSystemLangSelector,
   o => o.language,
 );
 
-export const useSystemLanguageSelector: OutputSelector<State, void, boolean> = createSelector(
+export const useSystemLanguageSelector: OutputSelector<State, boolean, boolean> = createSelector(
   languageAndUseSystemLangSelector,
   o => o.useSystemLanguage,
 );

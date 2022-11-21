@@ -42,7 +42,6 @@ const aFirmwareInfo = {
 const pollingPeriodMs = 1000;
 
 const mockedGetVersion = jest.mocked(getVersion);
-
 const mockedWithDevice = jest.mocked(withDevice);
 mockedWithDevice.mockReturnValue((job) => from(job(new Transport())));
 
@@ -84,9 +83,13 @@ describe("getOnboardingStatePolling", () => {
           pollingPeriodMs,
         }).subscribe({
           next: (value) => {
-            expect(value.onboardingState).toBeNull();
-            expect(value.allowedError).toBeInstanceOf(DisconnectedDevice);
-            done();
+            try {
+              expect(value.onboardingState).toBeNull();
+              expect(value.allowedError).toBeInstanceOf(DisconnectedDevice);
+              done();
+            } catch (expectError) {
+              done(expectError);
+            }
           },
         });
 
@@ -107,9 +110,13 @@ describe("getOnboardingStatePolling", () => {
           pollingPeriodMs,
         }).subscribe({
           next: (value) => {
-            expect(value.onboardingState).toBeNull();
-            expect(value.allowedError).toBeInstanceOf(TimeoutError);
-            done();
+            try {
+              expect(value.onboardingState).toBeNull();
+              expect(value.allowedError).toBeInstanceOf(TimeoutError);
+              done();
+            } catch (expectError) {
+              done(expectError);
+            }
           },
         });
 
@@ -130,9 +137,13 @@ describe("getOnboardingStatePolling", () => {
           fetchingTimeoutMs,
         }).subscribe({
           next: (value) => {
-            expect(value.onboardingState).toBeNull();
-            expect(value.allowedError).toBeInstanceOf(TimeoutError);
-            done();
+            try {
+              expect(value.onboardingState).toBeNull();
+              expect(value.allowedError).toBeInstanceOf(TimeoutError);
+              done();
+            } catch (expectError) {
+              done(expectError);
+            }
           },
         });
 
@@ -152,9 +163,13 @@ describe("getOnboardingStatePolling", () => {
           pollingPeriodMs,
         }).subscribe({
           error: (error) => {
-            expect(error).toBeInstanceOf(Error);
-            expect(error?.message).toBe("Unknown error");
-            done();
+            try {
+              expect(error).toBeInstanceOf(Error);
+              expect(error?.message).toBe("Unknown error");
+              done();
+            } catch (expectError) {
+              done(expectError);
+            }
           },
         });
 
@@ -179,11 +194,15 @@ describe("getOnboardingStatePolling", () => {
         pollingPeriodMs,
       }).subscribe({
         next: (value) => {
-          expect(value.onboardingState).toBeNull();
-          expect(value.allowedError).toBeInstanceOf(
-            DeviceExtractOnboardingStateError
-          );
-          done();
+          try {
+            expect(value.onboardingState).toBeNull();
+            expect(value.allowedError).toBeInstanceOf(
+              DeviceExtractOnboardingStateError
+            );
+            done();
+          } catch (expectError) {
+            done(expectError);
+          }
         },
       });
 
@@ -203,9 +222,13 @@ describe("getOnboardingStatePolling", () => {
         pollingPeriodMs,
       }).subscribe({
         next: (value) => {
-          expect(value.allowedError).toBeNull();
-          expect(value.onboardingState).toEqual(anOnboardingState);
-          done();
+          try {
+            expect(value.allowedError).toBeNull();
+            expect(value.onboardingState).toEqual(anOnboardingState);
+            done();
+          } catch (expectError) {
+            done(expectError);
+          }
         },
         error: (error) => {
           done(error);
@@ -223,25 +246,30 @@ describe("getOnboardingStatePolling", () => {
 
       // Did not manage to test that the polling is repeated by using jest's fake timer
       // and advanceTimersByTime method or equivalent.
-      // Hacky test: spy on the repeat operator to see if it has been called.
-      const spiedRepeat = jest.spyOn(rxjsOperators, "repeat");
+      // Hacky test: spy on the repeatWhen operator to see if it has been called.
+      const spiedRepeatWhen = jest.spyOn(rxjsOperators, "repeatWhen");
 
       onboardingStatePollingSubscription = getOnboardingStatePolling({
         deviceId: device.deviceId,
         pollingPeriodMs,
+        fetchingTimeoutMs: pollingPeriodMs * 10,
       }).subscribe({
         next: (value) => {
-          expect(value.onboardingState).toEqual(anOnboardingState);
-          expect(value.allowedError).toBeNull();
-          expect(spiedRepeat).toHaveBeenCalledTimes(1);
-          done();
+          try {
+            expect(value.onboardingState).toEqual(anOnboardingState);
+            expect(value.allowedError).toBeNull();
+            expect(spiedRepeatWhen).toHaveBeenCalledTimes(1);
+            done();
+          } catch (expectError) {
+            done(expectError);
+          }
         },
         error: (error) => {
           done(error);
         },
       });
 
-      jest.runOnlyPendingTimers();
+      jest.advanceTimersByTime(1);
     });
   });
 });

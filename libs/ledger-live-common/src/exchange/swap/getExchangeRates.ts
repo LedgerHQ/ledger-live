@@ -139,8 +139,11 @@ const inferError = (
     }
 
     // For out of range errors we will have a min/max pairing
-    if (minAmountFrom) {
-      const isTooSmall = new BigNumber(apiAmount).lte(minAmountFrom);
+    const hasAmountLimit = minAmountFrom || maxAmountFrom;
+    if (hasAmountLimit) {
+      const isTooSmall = minAmountFrom
+        ? new BigNumber(apiAmount).lte(minAmountFrom)
+        : false;
 
       const MinOrMaxError = isTooSmall
         ? SwapExchangeRateAmountTooLow

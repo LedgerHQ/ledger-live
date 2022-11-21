@@ -84,7 +84,7 @@ export function TextValueField({
 }: {
   label: React.ReactNode;
   numberOfLines?: number;
-  value: string | React.ReactElement<React.ComponentProps<any>, any>;
+  value: React.ReactNode;
 }) {
   const { colors } = useTheme();
   return (

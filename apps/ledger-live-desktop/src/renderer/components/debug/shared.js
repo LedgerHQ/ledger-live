@@ -46,7 +46,7 @@ const DebugWrapper: ThemedComponent<{}> = styled.div`
   overflow: hidden;
   border: 4px solid ${p => rgba(p.theme.colors.alertRed, 0.9)};
   opacity: 0.9;
-  z-index: 999;
+  z-index: 9999;
   background: #dededeaa;
 `;
 

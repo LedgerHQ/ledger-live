@@ -101,26 +101,21 @@ function MarketRowItem({
       e.stopPropagation();
       setTrackingSource("Page Market");
       // PTX smart routing redirect to live app or to native implementation
-      if (ptxSmartRouting?.enabled && currency?.internalCurrency) {
-        const params = {
-          currency: currency.internalCurrency?.id,
-          mode: "buy", // buy or sell
-        };
 
-        history.push({
-          // replace 'multibuy' in case live app id changes
-          pathname: `/platform/${ptxSmartRouting?.params?.liveAppId ?? "multibuy"}`,
-          state: params,
-        });
-      } else {
-        history.push({
-          pathname: "/exchange",
-          state: {
-            mode: "onRamp",
-            defaultTicker: currency && currency.ticker ? currency.ticker.toUpperCase() : undefined,
-          },
-        });
-      }
+      history.push({
+        pathname: "/exchange",
+        state:
+          ptxSmartRouting?.enabled && currency?.internalCurrency
+            ? {
+                currency: currency.internalCurrency?.id,
+                mode: "buy", // buy or sell
+              }
+            : {
+                mode: "onRamp",
+                defaultTicker:
+                  currency && currency.ticker ? currency.ticker.toUpperCase() : undefined,
+              },
+      });
     },
     [currency, history, ptxSmartRouting],
   );

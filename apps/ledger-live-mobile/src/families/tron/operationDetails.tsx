@@ -33,7 +33,11 @@ function getURLWhatIsThis(op: Operation): string | null | undefined {
 }
 
 type OperationDetailsExtraProps = {
-  extra: Record<string, any>;
+  extra: {
+    votes: Array<Vote>;
+    frozenAmount: BigNumber;
+    unfreezeAmount: BigNumber;
+  };
   type: string;
   account: Account;
 };
@@ -57,7 +61,7 @@ function OperationDetailsExtra({
     case "FREEZE": {
       const value = formatCurrencyUnit(
         account.unit,
-        BigNumber(extra.frozenAmount),
+        new BigNumber(extra.frozenAmount),
         {
           showCode: true,
           discreet,
@@ -75,7 +79,7 @@ function OperationDetailsExtra({
     case "UNFREEZE": {
       const value = formatCurrencyUnit(
         account.unit,
-        BigNumber(extra.unfreezeAmount),
+        new BigNumber(extra.unfreezeAmount),
         {
           showCode: true,
           discreet,
@@ -207,7 +211,10 @@ const UnfreezeAmountCell = ({ operation, currency, unit }: Props) => {
 const VoteAmountCell = ({ operation }: Props) => {
   const amount =
     operation.extra && operation.extra.votes
-      ? operation.extra.votes.reduce((sum, { voteCount }) => sum + voteCount, 0)
+      ? (operation.extra.votes as Vote[]).reduce(
+          (sum, { voteCount }) => sum + voteCount,
+          0,
+        )
       : 0;
   return amount > 0 ? (
     <LText numberOfLines={1} semiBold style={[styles.topText, styles.voteText]}>

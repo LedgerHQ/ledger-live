@@ -29,7 +29,7 @@ const ExposeUpdaterWhenInMock = () => {
         quitAndInstall: quitAndInstall,
       };
     }
-  }, [setStatus]);
+  }, [setStatus, quitAndInstall]);
 
   return <MockedGlobalStyle />; // Still do the styles thingie
 };

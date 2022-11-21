@@ -7,6 +7,7 @@ import { isAccountEmpty } from "@ledgerhq/live-common/account/index";
 import { Flex, Icons, Text, Box } from "@ledgerhq/native-ui";
 import { ScrollView } from "react-native";
 import { snakeCase } from "lodash";
+import { StackNavigationProp } from "@react-navigation/stack";
 import { NavigatorName, ScreenName } from "../../const";
 import {
   accountsCountSelector,
@@ -40,8 +41,10 @@ export default function TransferDrawer({ onClose }: ModalProps) {
   );
 
   const onNavigate = useCallback(
-    (name: string, options?: { [key: string]: any }) => {
-      navigation.navigate(name, options);
+    (name: string, options?: object) => {
+      (
+        navigation as StackNavigationProp<{ [key: string]: object | undefined }>
+      ).navigate(name, options);
 
       if (onClose) {
         onClose();
@@ -64,7 +67,7 @@ export default function TransferDrawer({ onClose }: ModalProps) {
   const onSwap = useCallback(
     () =>
       onNavigate(NavigatorName.Swap, {
-        screen: ScreenName.Swap,
+        screen: ScreenName.SwapForm,
       }),
     [onNavigate],
   );
@@ -103,7 +106,7 @@ export default function TransferDrawer({ onClose }: ModalProps) {
               : null
           }
           Icon={Icons.ArrowTopMedium}
-          disabled={readOnlyModeEnabled}
+          disabled={!accountsCount || readOnlyModeEnabled || areAccountsEmpty}
         />
       </Box>
       <Box mb={8}>
@@ -145,10 +148,15 @@ export default function TransferDrawer({ onClose }: ModalProps) {
           title={t("transfer.sell.title")}
           description={t("transfer.sell.description")}
           Icon={Icons.MinusMedium}
-          onPress={onSell}
-          disabled={readOnlyModeEnabled}
+          onPress={
+            accountsCount > 0 && !readOnlyModeEnabled && !areAccountsEmpty
+              ? onSell
+              : null
+          }
+          disabled={!accountsCount || readOnlyModeEnabled || areAccountsEmpty}
         />
       </Box>
+
       <Box mb={8}>
         <TransferButton
           eventProperties={{
@@ -159,10 +167,15 @@ export default function TransferDrawer({ onClose }: ModalProps) {
           title={t("transfer.swap.title")}
           description={t("transfer.swap.description")}
           Icon={Icons.BuyCryptoMedium}
-          onPress={accountsCount > 0 && !readOnlyModeEnabled ? onSwap : null}
-          disabled={readOnlyModeEnabled}
+          onPress={
+            accountsCount > 0 && !readOnlyModeEnabled && !areAccountsEmpty
+              ? onSwap
+              : null
+          }
+          disabled={!accountsCount || readOnlyModeEnabled || areAccountsEmpty}
         />
       </Box>
+
       {lendingEnabled ? (
         <Box mb={8}>
           <TransferButton
@@ -176,9 +189,11 @@ export default function TransferDrawer({ onClose }: ModalProps) {
             tag={t("common.popular")}
             Icon={Icons.LendMedium}
             onPress={
-              accountsCount > 0 && !readOnlyModeEnabled ? onLending : null
+              accountsCount > 0 && !readOnlyModeEnabled && !areAccountsEmpty
+                ? onLending
+                : null
             }
-            disabled={readOnlyModeEnabled}
+            disabled={!accountsCount || readOnlyModeEnabled || areAccountsEmpty}
           />
         </Box>
       ) : null}
@@ -219,10 +234,7 @@ export default function TransferDrawer({ onClose }: ModalProps) {
 
   return (
     <Flex flexDirection="column" alignItems="flex-start" p={7} pt={9}>
-      <ScrollView
-        alwaysBounceVertical={false}
-        style={{ opacity: readOnlyModeEnabled ? 0.3 : 1, width: "100%" }}
-      >
+      <ScrollView alwaysBounceVertical={false} style={{ width: "100%" }}>
         {buttons}
       </ScrollView>
       {readOnlyModeEnabled && !hasOrderedNano && (

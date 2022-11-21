@@ -4,7 +4,7 @@ import { Theme } from "src/styles/theme";
 import styled, { useTheme } from "styled-components";
 
 import { Item, ItemStatus } from ".";
-import { Flex } from "../..";
+import { Flex, Box } from "../..";
 import { Text } from "../../..";
 import Tag from "../../../Tag";
 
@@ -42,7 +42,6 @@ const getContainerBorder = (theme: Theme, status: ItemStatus, isLastItem?: boole
 
 const Container = styled(Flex)<{ status: ItemStatus; isLastItem?: boolean }>`
   flex: 1;
-  width: 404px;
   border-radius: ${(p) => p.theme.radii[2]}px;
   background: ${(p) => getContainerBackground(p.theme, p.status, p.isLastItem)};
   border: 1px solid ${(p) => getContainerBorder(p.theme, p.status, p.isLastItem)};
@@ -89,9 +88,9 @@ export default function TimelineItem({ item, isFirstItem, isLastItem }: Props) {
           )}
         </TimelineIndicatorContentHeader>
         {item.renderBody && item.status === "active" && (
-          <Flex position="relative">
-            <Flex pt={6}>{item.renderBody(item.status === "active")}</Flex>
-          </Flex>
+          <Box position="relative" pt={6}>
+            {item.renderBody(item.status === "active")}
+          </Box>
         )}
       </Container>
     </Flex>

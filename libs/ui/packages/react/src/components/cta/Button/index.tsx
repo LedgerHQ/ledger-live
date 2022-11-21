@@ -8,7 +8,7 @@ import { rgba } from "../../../styles/helpers";
 import ChevronBottom from "@ledgerhq/icons-ui/react/ChevronBottomRegular";
 import IconComponent from "../../asorted/Icon";
 
-export type ButtonVariants = "main" | "shade" | "error" | "color";
+export type ButtonVariants = "main" | "shade" | "error" | "color" | "neutral";
 export type IconPosition = "right" | "left";
 interface BaseProps extends BaseStyledProps, BordersProps {
   ff?: string;
@@ -64,7 +64,6 @@ const getVariantColors = (p: StyledProps<BaseProps>) => ({
   shade: `
       border-color: ${p.theme.colors.neutral.c40};
       color: ${p.theme.colors.neutral.c100};
-      background-color: ${p.theme.colors.neutral.c00};
       &:focus {
         border-color: ${p.theme.colors.primary.c80};
       }
@@ -97,6 +96,13 @@ const getVariantColors = (p: StyledProps<BaseProps>) => ({
       }
     `,
   },
+  neutral: `
+    color: ${p.theme.colors.neutral.c100};
+    background-color: ${p.theme.colors.neutral.c30};
+    &:hover {
+      background-color: ${p.theme.colors.neutral.c40};
+    }
+  `,
   color: {
     outline: `
       border-color: ${p.theme.colors.primary.c80};
@@ -198,6 +204,9 @@ export const Base = baseStyled.button.attrs((p: BaseProps) => ({
       case "color":
         return p.outline ? variants.color.outline : variants.color.filled;
 
+      case "neutral":
+        return variants.neutral;
+
       case "default":
       default:
         return variants.default;
@@ -206,7 +215,7 @@ export const Base = baseStyled.button.attrs((p: BaseProps) => ({
   ${(p) =>
     p.iconButton
       ? css`
-          width: ${p.theme.space[13]}px;
+          width: ${p.theme.space[12]}px;
           padding: 0;
           ${IconContainer} {
             margin: 0;

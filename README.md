@@ -26,7 +26,7 @@ Developers looking to integrate their blockchain in Ledger Live are invited to h
 In order to interact with any package contained in this repository you will need to install the following:
 
 - [**Node.js@16.x.x**](https://nodejs.org/)
-- [**PnPm@7.x.x**](https://pnpm.io/)
+- [**PnPm@7.4.x or newer**](https://pnpm.io/)
 
 **This is only a minimal setup. You will need to perform additional installation steps depending on the package you want to work on, please refer to its nested readme file.**
 
