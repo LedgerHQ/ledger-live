@@ -168,7 +168,7 @@ importers:
       '@ledgerhq/types-live': workspace:^
       '@mapbox/node-pre-gyp': ^1.0.8
       '@octokit/rest': ^18.12.0
-      '@playwright/test': 1.22.2
+      '@playwright/test': 1.27.1
       '@polkadot/react-identicon': 0.89.2
       '@sentry/cli': ^2.5.2
       '@sentry/electron': ^4.0.0
@@ -264,7 +264,7 @@ importers:
       native-modules-tools: workspace:*
       nyc: ^15.1.0
       openpgp: ^4.10.10
-      playwright: 1.22.2
+      playwright: 1.27.1
       prando: ^5.1.2
       prebuild-install: ^7.0.0
       prettier: ^1.19.1
@@ -443,7 +443,7 @@ importers:
       '@bunchtogether/vite-plugin-flow': 1.0.2
       '@mapbox/node-pre-gyp': 1.0.9
       '@octokit/rest': 18.12.0
-      '@playwright/test': 1.22.2
+      '@playwright/test': 1.27.1
       '@sentry/cli': 2.5.2
       '@storybook/addon-actions': 6.4.22_k2mvpji5i2ojml6m4ftklg47pa
       '@storybook/addon-essentials': 6.4.22_zd64u5ffgfen6gboe44f5fohne
@@ -503,7 +503,7 @@ importers:
       listr-verbose-renderer: 0.6.0
       native-modules-tools: link:../../tools/native-modules-tools
       nyc: 15.1.0
-      playwright: 1.22.2
+      playwright: 1.27.1
       prebuild-install: 7.1.0
       prettier: 1.19.1
       react-refresh: 0.11.0
@@ -12972,13 +12972,13 @@ packages:
       - utf-8-validate
     dev: true
 
-  /@playwright/test/1.22.2:
-    resolution: {integrity: sha512-cCl96BEBGPtptFz7C2FOSN3PrTnJ3rPpENe+gYCMx4GNNDlN4tmo2D89y13feGKTMMAIVrXfSQ/UmaQKLy1XLA==}
+  /@playwright/test/1.27.1:
+    resolution: {integrity: sha512-mrL2q0an/7tVqniQQF6RBL2saskjljXzqNcCOVMUjRIgE6Y38nCNaP+Dc2FBW06bcpD3tqIws/HT9qiMHbNU0A==}
     engines: {node: '>=14'}
     hasBin: true
     dependencies:
       '@types/node': 17.0.32
-      playwright-core: 1.22.2
+      playwright-core: 1.27.1
     dev: true
 
   /@pmmmwh/react-refresh-webpack-plugin/0.5.7_a3gyllrqvxpec3fpybsrposvju:
@@ -21718,7 +21718,7 @@ packages:
     resolution: {integrity: sha512-dQYDuqm/rmy8GSCE6Xl/3ShJg6Ab4bZJMT8KaTKGzT436gl1DN4REP3FCWfXoh75qGTJ+u+WsdnnpO9Jl8nyMA==}
     engines: {node: '>=14.0.0'}
     peerDependencies:
-      dmg-builder: 23.6.0
+      dmg-builder: '*'
       lodash: '*'
     peerDependenciesMeta:
       dmg-builder:
@@ -43710,19 +43710,19 @@ packages:
       - utf-8-validate
     dev: true
 
-  /playwright-core/1.22.2:
-    resolution: {integrity: sha512-w/hc/Ld0RM4pmsNeE6aL/fPNWw8BWit2tg+TfqJ3+p59c6s3B6C8mXvXrIPmfQEobkcFDc+4KirNzOQ+uBSP1Q==}
+  /playwright-core/1.27.1:
+    resolution: {integrity: sha512-9EmeXDncC2Pmp/z+teoVYlvmPWUC6ejSSYZUln7YaP89Z6lpAaiaAnqroUt/BoLo8tn7WYShcfaCh+xofZa44Q==}
     engines: {node: '>=14'}
     hasBin: true
     dev: true
 
-  /playwright/1.22.2:
-    resolution: {integrity: sha512-hUTpg7LytIl3/O4t0AQJS1V6hWsaSY5uZ7w1oCC8r3a1AQN5d6otIdCkiB3cbzgQkcMaRxisinjMFMVqZkybdQ==}
+  /playwright/1.27.1:
+    resolution: {integrity: sha512-xXYZ7m36yTtC+oFgqH0eTgullGztKSRMb4yuwLPl8IYSmgBM88QiB+3IWb1mRIC9/NNwcgbG0RwtFlg+EAFQHQ==}
     engines: {node: '>=14'}
     hasBin: true
     requiresBuild: true
     dependencies:
-      playwright-core: 1.22.2
+      playwright-core: 1.27.1
     dev: true
 
   /please-upgrade-node/3.2.0:
