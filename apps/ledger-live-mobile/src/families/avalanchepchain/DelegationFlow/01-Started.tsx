@@ -58,6 +58,7 @@ export default function DelegationStarted({ navigation, route }: Props) {
             <Trans i18nKey="avalanchepchain.delegation.flow.steps.starter.steps.0" />,
             <Trans i18nKey="avalanchepchain.delegation.flow.steps.starter.steps.1" />,
             <Trans i18nKey="avalanchepchain.delegation.flow.steps.starter.steps.2" />,
+            <Trans i18nKey="avalanchepchain.delegation.flow.steps.starter.steps.3" />,
           ].map(wording => (
             <LText semiBold>{wording}</LText>
           ))}

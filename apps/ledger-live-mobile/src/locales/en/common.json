@@ -4375,7 +4375,8 @@
             "steps": {
               "0": "You keep ownership of delegated assets",
               "1": "Delegate using your Ledger device",
-              "2": "AVAX must be delegated for a minimum of 2 weeks"
+              "2": "Minimum 25 AVAX required to stake",
+              "3": "AVAX must be delegated for a minimum of 2 weeks"
             },
             "cta": "Continue"
           },
