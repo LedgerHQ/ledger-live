@@ -280,6 +280,12 @@
       "title" : "장치 연결 해제됨",
       "description" : "Ledger Live를 장치에 연결할 수 없습니다. 다시 시도해 주세요."
     },
+    "CasperInvalidTransferId": {
+      "title": "전송 ID는 18446744073709551615보다 작은 양수여야 합니다."
+    },
+    "InvalidMinimumAmount": {
+      "title": "최소 이체 금액은 2.5 CSPR입니다."
+    },
     "ETHAddressNonEIP" : {
       "title" : "자동 검증이 불가능합니다. 주소를 신중하게 확인해 주세요.",
       "description" : null

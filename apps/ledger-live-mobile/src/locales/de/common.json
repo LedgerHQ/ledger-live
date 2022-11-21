@@ -280,6 +280,12 @@
       "title" : "Gerät nicht verbunden",
       "description" : "Ledger Live konnte keine Verbindung zu Ihrem Gerät herstellen. Bitte versuchen Sie es noch einmal."
     },
+    "CasperInvalidTransferId": {
+      "title": "Die Übertragungs-ID sollte eine positive Zahl kleiner als 18446744073709551615 sein"
+    },
+    "InvalidMinimumAmount": {
+      "title": "Der Mindestbetrag für die Überweisung beträgt 2,5 CSPR"
+    },
     "ETHAddressNonEIP" : {
       "title" : "Automatische Verifizierung nicht verfügbar: Überprüfen Sie die Adresse sorgfältig.",
       "description" : null

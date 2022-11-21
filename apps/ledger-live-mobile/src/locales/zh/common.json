@@ -280,6 +280,12 @@
       "title" : "设备已断开",
       "description" : "Ledger Live 无法连接到您的设备。请重试。"
     },
+    "CasperInvalidTransferId": {
+      "title": "转账 ID 应为小于 18446744073709551615 的正数"
+    },
+    "InvalidMinimumAmount": {
+      "title": "最低转账金额为 2.5 CSPR"
+    },
     "ETHAddressNonEIP" : {
       "title" : "无法自动验证。请仔细核对该地址。",
       "description" : null

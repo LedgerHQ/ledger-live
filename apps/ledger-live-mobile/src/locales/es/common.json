@@ -280,6 +280,12 @@
       "title" : "Dispositivo desconectado",
       "description" : "Ledger Live no se pudo conectar a tu dispositivo. Inténtalo de nuevo."
     },
+    "CasperInvalidTransferId": {
+      "title": "El ID de la transferencia debe ser un número positivo menor que 18446744073709551615"
+    },
+    "InvalidMinimumAmount": {
+      "title": "El monto mínimo para transferir es 2.5 CSPR"
+    },
     "ETHAddressNonEIP" : {
       "title" : "Verificación automática no disponible: verifica cuidadosamente la dirección.",
       "description" : null

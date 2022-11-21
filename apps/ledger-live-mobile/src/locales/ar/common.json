@@ -280,6 +280,12 @@
       "title" : "الجهاز غير متصل",
       "description" : "Ledger Live غير قادر على الاتصال بجهازك. يُرجى إعادة المحاولة."
     },
+    "CasperInvalidTransferId": {
+      "title": "يجب أن يكون معرف التحويل رقمًا موجبًا أصغر من 18446744073709551615"
+    },
+    "InvalidMinimumAmount": {
+      "title": "الحد الأدنى للتحويل 2.5 CSPR"
+    },
     "ETHAddressNonEIP" : {
       "title" : "التحقق التلقائي غير متاح: تحقق بعناية من العنوان.",
       "description" : null
