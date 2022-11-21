@@ -1979,7 +1979,7 @@
         "recipientAddress" : "Адрес получателя",
         "amount" : "Сумма",
         "fees" : "Комиссия сети",
-        "useMax" : "Вся сумма",
+        "sendMax" : "Вся сумма",
         "rippleTag" : "Тег",
         "rippleTagPlaceholder" : "Опционально",
         "ethereumGasLimit" : "Лимит Газа",
