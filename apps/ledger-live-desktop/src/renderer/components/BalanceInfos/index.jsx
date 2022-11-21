@@ -116,22 +116,15 @@ export default function BalanceInfos({ totalBalance, valueChange, isAvailable, u
 
   const onBuy = useCallback(() => {
     setTrackingSource("Page Portfolio");
-    // PTX smart routing redirect to live app or to native implementation
-    if (ptxSmartRouting?.enabled) {
-      const params = {
-        mode: "buy", // buy or sell
-      };
 
-      history.push({
-        // replace 'multibuy' in case live app id changes
-        pathname: `/platform/${ptxSmartRouting?.params?.liveAppId ?? "multibuy"}`,
-        state: params,
-      });
-    } else {
-      history.push({
-        pathname: "/exchange",
-      });
-    }
+    history.push({
+      pathname: "/exchange",
+      state: ptxSmartRouting?.enabled
+        ? {
+            mode: "buy", // buy or sell
+          }
+        : undefined,
+    });
   }, [history, ptxSmartRouting]);
 
   const onSwap = useCallback(() => {
