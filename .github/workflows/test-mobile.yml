@@ -122,6 +122,10 @@ jobs:
         run: pnpm i --filter="live-mobile..." --filter="ledger-live" --no-frozen-lockfile --unsafe-perm
       - name: Build dependencies
         run: pnpm build:llm:deps
+      - name: echo some shits
+        run: |
+          ls apps/ledger-live-mobile/
+          git status
       # - name: Clear and build detox cache # investigate how to properly cache this
       #   run: pnpm mobile exec detox clean-framework-cache && pnpm mobile exec detox build-framework-cache
       - name: Build iOS app for Detox test run

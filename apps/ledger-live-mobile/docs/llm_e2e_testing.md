@@ -33,7 +33,7 @@ Detox also has good documentation for [Android](https://wix.github.io/Detox/docs
 ### Additional Android setup steps
 
 <!-- REWRITE THIS -->
-We've found that it's better to install Java manually rather than with Homebrew, as they are often installed in locations on your computer that Detox and Android Studio aren't expecting. Follow [this](https://techoral.com/blog/java/install-openjdk-11-on-mac.html) guide.
+<!-- We've found that it's better to install Java manually rather than with Homebrew, as they are often installed in locations on your computer that Detox and Android Studio aren't expecting. Follow [this](https://techoral.com/blog/java/install-openjdk-11-on-mac.html) guide. -->
 
 ### Additional iOS setup steps
 
@@ -66,7 +66,7 @@ pnpm build:llm:deps
 
 ### Android
 
-Verify you have an emulator [installed](https://developer.android.com/studio/run/managing-avds) and have that match the Detox `avdName` (currently 'Nexus_6') in the `detox.config.js` file. Be sure to make the device the correct architecture and system image (currently x86_64 if you are on an Intel mac and arm64_v8a if you are on an M1).
+Verify you have an emulator [installed](https://developer.android.com/studio/run/managing-avds) and have that match the Detox `avdName` (currently 'Pixel_5_API_31') in the `detox.config.js` file. Be sure to make the device the correct architecture and system image (currently x86_64 if you are on an Intel mac and arm64_v8a if you are on an M1).
 
 - Build the apps
   - Debug: `pnpm mobile e2e:build -c android.emu.debug`
@@ -77,7 +77,7 @@ Verify you have an emulator [installed](https://developer.android.com/studio/run
 
 ### iOS
 
-Make sure you have the correct iPhone simulator that is listed in `detox.config.js` installed (currently 'iPhone 11 Pro'). You can check if you do with `applesimutils --list`. Also make sure you have an iOS version installed for simulators by going to Xcode > Preferences > Components. You can try whichever version you like, but iOS 13.0 is known to work locally.
+Make sure you have the correct iPhone simulator that is listed in `detox.config.js` installed (currently 'iPhone 14'). You can check if you do with `applesimutils --list`. Also make sure you have an iOS version installed for simulators by going to Xcode > Preferences > Components. You can try whichever version you like, but iOS 13.0 is known to work locally.
 
 - Build the apps
   - Debug: `pnpm mobile e2e:build -c ios.sim.debug`
