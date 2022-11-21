@@ -1,62 +1,56 @@
-import { Box, Icons, InfiniteLoader } from "@ledgerhq/native-ui";
+import { Box, InfiniteLoader } from "@ledgerhq/native-ui";
 import React from "react";
 import styled from "styled-components/native";
 
 type Props = {
-  color: string;
+  color: { topLeft: string; bottomRight: string };
   selected: boolean;
   loading?: boolean;
+  isFirst?: boolean;
+  isLast?: boolean;
 };
 
 const Container = styled(Box).attrs((p: { selected: boolean }) => ({
-  height: 64,
-  width: 64,
+  height: 50,
+  width: 50,
+  borderRadius: "4px",
   justifyContent: "center",
   alignItems: "center",
-  borderWidth: p.selected ? 2 : 1,
-  borderColor: p.selected ? "primary.c80" : "neutral.c40",
-  borderRadius: "4px",
+  borderWidth: p.selected ? 2 : 0,
+  borderColor: p.selected ? "constant.white" : "neutral.c40",
 }))<{ selected: boolean }>``;
 
-const Round = styled(Box).attrs({
-  height: 28,
-  width: 28,
-  borderRadius: 28,
+const ContrastOption = styled(Box).attrs({
+  borderRadius: "4px",
+  height: 48,
+  width: 48,
+  overflow: "hidden",
 })``;
 
-const PillBackground = styled(Box).attrs({
-  height: "20px",
-  width: "20px",
-  backgroundColor: "background.main",
+const Triangle = styled(Box).attrs({
+  width: 0,
+  height: 0,
+  backgroundColor: "transparent",
+  borderRightWidth: 48,
+  borderTopWidth: 48,
+  borderRightColor: "transparent",
 })``;
 
-const PillForeground = styled(Icons.CircledCheckSolidMedium).attrs({
-  color: "primary.c80",
-  size: "20px",
-})``;
-
-const CheckContainer = styled(Box).attrs({
-  position: "absolute",
-  right: "-10px",
-  top: "-10px",
-})``;
-
-const CheckPill: React.FC<Record<string, never>> = () => (
-  <CheckContainer>
-    <PillBackground>
-      <PillForeground />
-    </PillBackground>
-  </CheckContainer>
-);
-
-const ContrastChoice: React.FC<Props> = ({ loading, selected, color }) => (
-  <Container selected={selected}>
+const ContrastChoice: React.FC<Props> = ({
+  loading,
+  selected,
+  color,
+  isFirst,
+  isLast,
+}) => (
+  <Container ml={isFirst ? 0 : 1} mr={isLast ? 0 : 1} selected={selected}>
     {selected && loading ? (
       <InfiniteLoader size={28} />
     ) : (
-      <Round backgroundColor={color} />
+      <ContrastOption backgroundColor={color.bottomRight}>
+        <Triangle borderTopColor={color.topLeft} />
+      </ContrastOption>
     )}
-    {selected ? <CheckPill /> : null}
   </Container>
 );
 

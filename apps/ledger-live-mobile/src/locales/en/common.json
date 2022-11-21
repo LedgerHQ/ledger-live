@@ -762,6 +762,11 @@
     },
     "PriorityFeeHigherThanMaxFee": {
       "title": "Max priority fee cannot be higher than max fee"
+    },
+    "LockedDeviceError": {
+      "title": "Your device is locked",
+      "description": "Unlock your device and try again.",
+      "descriptionWithProductName": "Unlock your {{ productName }} and try again."
     }
   },
   "crash": {
@@ -786,7 +791,8 @@
     "noInfos": "Ledger does not access your location information."
   },
   "permissions": {
-    "open": "Open app permissions"
+    "open": "Open app permissions",
+    "nearbyDevicesPermissionDenied": "To pair with Bluetooth, authorize the Ledger Live app to scan nearby devices."
   },
   "fees": {
     "speed": {
@@ -5444,17 +5450,19 @@
     "cropImage": "Crop image",
     "chooseConstrast": "Choose contrast",
     "uploadAnotherImage": "Upload another image",
-    "selectContrast": "Select your contrast",
+    "rotateImage": "Rotate",
     "allowPreview": "Allow picture preview on {{productName}}",
     "loadingPicture": "Loading picture on {{productName}}",
     "pictureLoaded": "Picture loaded",
     "timeDisclaimer": "This can take up to 30 seconds",
     "imageLoaded": "Image loaded on {{productName}}",
     "confirmPicture": "Confirm on {{productName}}",
-    "title": "Choose a picture.\nCreate a vibe.\nMake your Ledger yours.",
-    "subtitle": "Set a picture of your favourite NFT or a picture from your phone.",
+    "landingPage": {
+      "title": "Choose a picture.\nCreate a vibe.\nMake your Ledger yours.",
+      "subtitle": "Set a picture of your favourite NFT or a picture from your phone.",
+      "choosePicture": "Choose a picture"
+    },
     "customImage": "Custom picture",
-    "choosePicture": "Choose a picture",
     "doThisLater": "Maybe later"
   },
   "postOnboarding": {
