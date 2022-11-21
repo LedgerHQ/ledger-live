@@ -5,7 +5,7 @@ import type {
 } from "../../families/elrond/types";
 import invariant from "invariant";
 import { getCryptoCurrencyById, parseCurrencyUnit } from "../../currencies";
-import { botTest, pickSiblings } from "../../bot/specs";
+import { botTest, pickSiblings, genericTestDestination } from "../../bot/specs";
 import type { AppSpec, TransactionTestInput } from "../../bot/types";
 import { toOperationRaw } from "../../account";
 import { DeviceModelId } from "@ledgerhq/devices";
@@ -32,8 +32,10 @@ const UNCAPPED_PROVIDER =
 function expectCorrectBalanceChange(input: TransactionTestInput<Transaction>) {
   const { account, operation, accountBeforeTransaction } = input;
 
-  expect(account.balance.toNumber()).toBe(
-    accountBeforeTransaction.balance.minus(operation.value).toNumber()
+  botTest("EGLD balance change is correct", () =>
+    expect(account.balance.toFixed()).toStrictEqual(
+      accountBeforeTransaction.balance.minus(operation.value).toFixed()
+    )
   );
 }
 
@@ -52,8 +54,10 @@ function expectCorrectEsdtBalanceChange(
   );
 
   if (tokenAccount && tokenAccountBefore) {
-    expect(tokenAccount.balance.toNumber()).toBe(
-      tokenAccountBefore.balance.minus(operation.value).toNumber()
+    botTest("ESDT balance change is correct", () =>
+      expect(tokenAccount.balance.toFixed()).toStrictEqual(
+        tokenAccountBefore.balance.minus(operation.value).toFixed()
+      )
     );
   }
 }
@@ -119,8 +123,11 @@ function expectCorrectSpendableBalanceChange(
   if (operation.type === "DELEGATE") {
     value = value.plus(new BigNumber(operation.extra.amount));
   }
-  expect(account.spendableBalance.toNumber()).toBe(
-    accountBeforeTransaction.spendableBalance.minus(value).toNumber()
+
+  botTest("EGLD spendable balance change is correct", () =>
+    expect(account.spendableBalance.toFixed()).toStrictEqual(
+      accountBeforeTransaction.spendableBalance.minus(value).toFixed()
+    )
   );
 }
 
@@ -128,8 +135,10 @@ function expectCorrectBalanceFeeChange(
   input: TransactionTestInput<Transaction>
 ) {
   const { account, operation, accountBeforeTransaction } = input;
-  expect(account.balance.toNumber()).toBe(
-    accountBeforeTransaction.balance.minus(operation.fee).toNumber()
+  botTest("Only change on balance is fees", () =>
+    expect(account.balance.toFixed()).toStrictEqual(
+      accountBeforeTransaction.balance.minus(operation.fee).toFixed()
+    )
   );
 }
 
@@ -181,6 +190,7 @@ const elrondSpec: AppSpec<Transaction> = {
           ],
         };
       },
+      testDestination: genericTestDestination,
       test: (input) => {
         expectCorrectBalanceChange(input);
       },
@@ -212,6 +222,7 @@ const elrondSpec: AppSpec<Transaction> = {
           ],
         };
       },
+      testDestination: genericTestDestination,
       test: (input) => {
         expectCorrectBalanceChange(input);
       },
