@@ -40,6 +40,7 @@ import {
   SettingsSetLanguagePayload,
   SettingsSetLastConnectedDevicePayload,
   SettingsSetLocalePayload,
+  SettingsSetCustomImageBackupPayload,
   SettingsSetMarketCounterCurrencyPayload,
   SettingsSetMarketFilterByStarredAccountsPayload,
   SettingsSetMarketRequestParamsPayload,
@@ -377,6 +378,19 @@ const setLastConnectedDeviceAction =
 export const setLastConnectedDevice = (lastConnectedDevice: Device) =>
   setLastConnectedDeviceAction({
     lastConnectedDevice,
+  });
+
+const setCustomImageBackupAction =
+  createAction<SettingsSetCustomImageBackupPayload>(
+    SettingsActionTypes.SET_CUSTOM_IMAGE_BACKUP,
+  );
+export const setCustomImageBackup = ({
+  hash,
+  hex,
+}: SettingsSetCustomImageBackupPayload) =>
+  setCustomImageBackupAction({
+    hash,
+    hex,
   });
 
 const setHasOrderedNanoAction = createAction<SettingsSetHasOrderedNanoPayload>(

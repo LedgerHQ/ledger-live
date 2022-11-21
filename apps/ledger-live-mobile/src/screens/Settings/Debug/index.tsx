@@ -23,6 +23,7 @@ import EquipmentIdRow from "./EquipmentIdRow";
 import OpenDebugStore from "./OpenDebugStore";
 import OpenDebugPlayground from "./OpenDebugPlayground";
 import OpenDebugFeatureFlags from "./OpenDebugFeatureFlags";
+import OpenDebugFetchCustomImage from "./OpenDebugFetchCustomImage";
 import OpenDebugMultiAppInstall from "./OpenDebugMultiAppInstall";
 import OpenLottie from "./OpenDebugLottie";
 import OpenDebugLogs from "./OpenDebugLogs";
@@ -67,6 +68,7 @@ export function DebugMocks() {
       <OpenDebugIcons />
       <OpenLottie />
       <OpenDebugCustomImage />
+      <OpenDebugFetchCustomImage />
       <OpenDebugPostOnboarding />
       <OpenStoryly />
       <OpenDebugPlayground />

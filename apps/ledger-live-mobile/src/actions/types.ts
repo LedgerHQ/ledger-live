@@ -236,6 +236,7 @@ export enum SettingsActionTypes {
   ADD_STARRED_MARKET_COINS = "ADD_STARRED_MARKET_COINS",
   REMOVE_STARRED_MARKET_COINS = "REMOVE_STARRED_MARKET_COINS",
   SET_LAST_CONNECTED_DEVICE = "SET_LAST_CONNECTED_DEVICE",
+  SET_CUSTOM_IMAGE_BACKUP = "SET_CUSTOM_IMAGE_BACKUP",
   SET_HAS_ORDERED_NANO = "SET_HAS_ORDERED_NANO",
   SET_MARKET_REQUEST_PARAMS = "SET_MARKET_REQUEST_PARAMS",
   SET_MARKET_COUNTER_CURRENCY = "SET_MARKET_COUNTER_CURRENCY",
@@ -346,6 +347,10 @@ export type SettingsRemoveStarredMarketcoinsPayload = {
 };
 export type SettingsSetLastConnectedDevicePayload = {
   lastConnectedDevice: Device;
+};
+export type SettingsSetCustomImageBackupPayload = {
+  hex: string;
+  hash: string;
 };
 export type SettingsSetHasOrderedNanoPayload = Pick<
   SettingsState,
