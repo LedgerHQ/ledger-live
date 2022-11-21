@@ -139,8 +139,8 @@ const envDefinitions = {
   },
   ICON_RPC_ENDPOINT: {
     parser: stringParser,
-    def: "https://ctz.solidwallet.io/api/v3",
-    desc: "ICON API url",
+    def: "https://icon.coin.ledger.com/node/api/v3",
+    desc: "ICON RPC url",
   },
   ICON_TESTNET_RPC_ENDPOINT: {
     parser: stringParser,
@@ -149,7 +149,7 @@ const envDefinitions = {
   },
   ICON_API_ENDPOINT: {
     parser: stringParser,
-    def: "https://main.tracker.solidwallet.io/v3",
+    def: "https://icon.coin.ledger.com/indexer/v3",
     desc: "ICON API url",
   },
   ICON_TESTNET_API_ENDPOINT: {
