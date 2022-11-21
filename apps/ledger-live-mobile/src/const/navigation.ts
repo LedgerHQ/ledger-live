@@ -394,6 +394,17 @@ export const ScreenName = {
   PostOnboardingHub: "PostOnboardingHub",
   PostOnboardingDebugScreen: "PostOnboardingDebugScreen",
   PostOnboardingMockActionScreen: "PostOnboardingMockActionScreen",
+
+  // avalanche
+  AvalancheDelegationStarted: "AvalancheDelegationStarted",
+  AvalancheDelegationValidator: "AvalancheDelegationValidator",
+  AvalancheDelegationValidatorSelect: "AvalancheDelegationValidatorSelect",
+  AvalancheDelegationAmount: "AvalancheDelegationAmount",
+  AvalancheDelegationEndDate: "AvalancheDelegationEndDate",
+  AvalancheDelegationSelectDevice: "AvalancheDelegationSelectDevice",
+  AvalancheDelegationConnectDevice: "AvalancheDelegationConnectDevice",
+  AvalancheDelegationValidationError: "AvalancheDelegationValidationError",
+  AvalancheDelegationValidationSuccess: "AvalancheDelegationValidationSuccess",
 };
 export const NavigatorName = {
   // Stack
@@ -466,6 +477,8 @@ export const NavigatorName = {
   StellarAddAssetFlow: "StellarAddAssetFlow",
   NotificationCenter: "NotificationCenter",
   Market: "Market",
+  // Avalanche
+  AvalancheDelegationFlow: "AvalancheDelegationFlow",
   // Tab
   Main: "Main",
   // Root

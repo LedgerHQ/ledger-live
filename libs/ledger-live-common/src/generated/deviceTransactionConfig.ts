@@ -1,4 +1,5 @@
 import algorand from "../families/algorand/deviceTransactionConfig";
+import avalanchepchain from "../families/avalanchepchain/deviceTransactionConfig";
 import bitcoin from "../families/bitcoin/deviceTransactionConfig";
 import cardano from "../families/cardano/deviceTransactionConfig";
 import celo from "../families/celo/deviceTransactionConfig";
@@ -19,6 +20,7 @@ import tron from "../families/tron/deviceTransactionConfig";
 
 export default {
   algorand,
+  avalanchepchain,
   bitcoin,
   cardano,
   celo,
@@ -37,6 +39,7 @@ export default {
   tezos,
   tron,
 };
+import { ExtraDeviceTransactionField as ExtraDeviceTransactionField_avalanchepchain } from  "../families/avalanchepchain/deviceTransactionConfig";
 import { ExtraDeviceTransactionField as ExtraDeviceTransactionField_cosmos } from  "../families/cosmos/deviceTransactionConfig";
 import { ExtraDeviceTransactionField as ExtraDeviceTransactionField_filecoin } from  "../families/filecoin/deviceTransactionConfig";
 import { ExtraDeviceTransactionField as ExtraDeviceTransactionField_osmosis } from  "../families/osmosis/deviceTransactionConfig";
@@ -46,6 +49,7 @@ import { ExtraDeviceTransactionField as ExtraDeviceTransactionField_tezos } from
 import { ExtraDeviceTransactionField as ExtraDeviceTransactionField_tron } from  "../families/tron/deviceTransactionConfig";
 
 export type ExtraDeviceTransactionField =
+  | ExtraDeviceTransactionField_avalanchepchain
   | ExtraDeviceTransactionField_cosmos
   | ExtraDeviceTransactionField_filecoin
   | ExtraDeviceTransactionField_osmosis
