@@ -762,6 +762,11 @@
     },
     "PriorityFeeHigherThanMaxFee": {
       "title": "Max priority fee cannot be higher than max fee"
+    },
+    "LockedDeviceError": {
+      "title": "Your device is locked",
+      "description": "Unlock your device and try again.",
+      "descriptionWithProductName": "Unlock your {{ productName }} and try again."
     }
   },
   "crash": {
@@ -786,7 +791,8 @@
     "noInfos": "Ledger does not access your location information."
   },
   "permissions": {
-    "open": "Open app permissions"
+    "open": "Open app permissions",
+    "nearbyDevicesPermissionDenied": "To pair with Bluetooth, authorize the Ledger Live app to scan nearby devices."
   },
   "fees": {
     "speed": {

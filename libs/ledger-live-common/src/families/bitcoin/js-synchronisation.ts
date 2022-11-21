@@ -17,7 +17,7 @@ import {
 import { BitcoinAccount, BitcoinOutput } from "./types";
 import { perCoinLogic } from "./logic";
 import wallet from "./wallet-btc";
-import { getAddress } from "./hw-getAddress";
+import { getAddressWithBtcInstance } from "./hw-getAddress";
 import { mapTxToOperations } from "./logic";
 import { Account, Operation } from "@ledgerhq/types-live";
 import { decodeAccountId } from "../../account/accountId";
@@ -109,8 +109,8 @@ const getAccountShape: GetAccountShape = async (info) => {
       // hwapp not provided
       throw new Error("hwapp required to generate the xpub");
     }
+    const btc = new Btc(transport);
     const { bitcoinLikeInfo } = currency;
-    const btc = new Btc({ transport, currency: currency.id });
     const { XPUBVersion: xpubVersion } = bitcoinLikeInfo as {
       // FIXME It's supposed to be optional
       //XPUBVersion?: number;
@@ -260,7 +260,8 @@ const postSync = (initial: Account, synced: Account) => {
 };
 
 const getAddressFn = (transport) => {
-  return (opts) => getAddress(transport, opts);
+  const btc = new Btc(transport);
+  return (opts) => getAddressWithBtcInstance(transport, btc, opts);
 };
 
 export const scanAccounts = makeScanAccounts({

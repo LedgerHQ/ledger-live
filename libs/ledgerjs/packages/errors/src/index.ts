@@ -52,6 +52,7 @@ export const DeviceSocketFail = createCustomErrorClass("DeviceSocketFail");
 export const DeviceSocketNoBulkStatus = createCustomErrorClass(
   "DeviceSocketNoBulkStatus"
 );
+export const LockedDeviceError = createCustomErrorClass("LockedDeviceError");
 export const DisconnectedDevice = createCustomErrorClass("DisconnectedDevice");
 export const DisconnectedDeviceDuringOperation = createCustomErrorClass(
   "DisconnectedDeviceDuringOperation"
@@ -319,13 +320,20 @@ export function getAltStatusMessage(code: number): string | undefined | null {
  * the error.statusCode is one of the `StatusCodes` exported by this library.
  */
 export function TransportStatusError(statusCode: number): void {
-  this.name = "TransportStatusError";
   const statusText =
     Object.keys(StatusCodes).find((k) => StatusCodes[k] === statusCode) ||
     "UNKNOWN_ERROR";
   const smsg = getAltStatusMessage(statusCode) || statusText;
   const statusCodeStr = statusCode.toString(16);
-  this.message = `Ledger device: ${smsg} (0x${statusCodeStr})`;
+  const message = `Ledger device: ${smsg} (0x${statusCodeStr})`;
+
+  // Maps to a LockedDeviceError
+  if (statusCode === StatusCodes.LOCKED_DEVICE) {
+    throw new LockedDeviceError(message);
+  }
+
+  this.name = "TransportStatusError";
+  this.message = message;
   this.stack = new Error().stack;
   this.statusCode = statusCode;
   this.statusText = statusText;

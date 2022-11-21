@@ -1,0 +1,542 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Scenario: install an app install its dep 1`] = `
+Object {
+  "apps": Array [
+    Object {
+      "blocks": 10,
+      "bytes": 40960,
+      "currencyId": "bitcoin",
+      "name": "Bitcoin",
+    },
+    Object {
+      "blocks": 1,
+      "bytes": 4096,
+      "currencyId": "dogecoin",
+      "name": "Dogecoin",
+    },
+  ],
+  "appsSpaceBlocks": 60,
+  "appsSpaceBytes": 245760,
+  "freeSpaceBlocks": 49,
+  "freeSpaceBytes": 200704,
+  "osBlocks": 20,
+  "osBytes": 81920,
+  "shouldWarnMemory": false,
+  "totalAppsBlocks": 11,
+  "totalAppsBytes": 45056,
+  "totalBlocks": 80,
+  "totalBytes": 327680,
+}
+`;
+
+exports[`Scenario: install an app install its dep 2`] = `
+Object {
+  "apps": Array [
+    Object {
+      "blocks": 10,
+      "bytes": 40960,
+      "currencyId": "bitcoin",
+      "name": "Bitcoin",
+    },
+    Object {
+      "blocks": 1,
+      "bytes": 4096,
+      "currencyId": "dogecoin",
+      "name": "Dogecoin",
+    },
+    Object {
+      "blocks": 1,
+      "bytes": 4096,
+      "currencyId": "litecoin",
+      "name": "Litecoin",
+    },
+  ],
+  "appsSpaceBlocks": 60,
+  "appsSpaceBytes": 245760,
+  "freeSpaceBlocks": 48,
+  "freeSpaceBytes": 196608,
+  "osBlocks": 20,
+  "osBytes": 81920,
+  "shouldWarnMemory": false,
+  "totalAppsBlocks": 12,
+  "totalAppsBytes": 49152,
+  "totalBlocks": 80,
+  "totalBytes": 327680,
+}
+`;
+
+exports[`Scenario: install an app install its dep 3`] = `
+Object {
+  "apps": Array [
+    Object {
+      "blocks": 10,
+      "bytes": 40960,
+      "currencyId": "bitcoin",
+      "name": "Bitcoin",
+    },
+    Object {
+      "blocks": 1,
+      "bytes": 4096,
+      "currencyId": "dogecoin",
+      "name": "Dogecoin",
+    },
+  ],
+  "appsSpaceBlocks": 60,
+  "appsSpaceBytes": 245760,
+  "freeSpaceBlocks": 49,
+  "freeSpaceBytes": 200704,
+  "osBlocks": 20,
+  "osBytes": 81920,
+  "shouldWarnMemory": false,
+  "totalAppsBlocks": 11,
+  "totalAppsBytes": 45056,
+  "totalBlocks": 80,
+  "totalBytes": 327680,
+}
+`;
+
+exports[`Scenario: install an app install its dep 4`] = `
+Object {
+  "apps": Array [
+    Object {
+      "blocks": 10,
+      "bytes": 40960,
+      "currencyId": "bitcoin",
+      "name": "Bitcoin",
+    },
+    Object {
+      "blocks": 1,
+      "bytes": 4096,
+      "currencyId": "dogecoin",
+      "name": "Dogecoin",
+    },
+    Object {
+      "blocks": 1,
+      "bytes": 4096,
+      "currencyId": "litecoin",
+      "name": "Litecoin",
+    },
+  ],
+  "appsSpaceBlocks": 60,
+  "appsSpaceBytes": 245760,
+  "freeSpaceBlocks": 48,
+  "freeSpaceBytes": 196608,
+  "osBlocks": 20,
+  "osBytes": 81920,
+  "shouldWarnMemory": false,
+  "totalAppsBlocks": 12,
+  "totalAppsBytes": 49152,
+  "totalBlocks": 80,
+  "totalBytes": 327680,
+}
+`;
+
+exports[`Scenario: install an app with outdated dep 1`] = `
+Object {
+  "apps": Array [
+    Object {
+      "blocks": 10,
+      "bytes": 40960,
+      "currencyId": "bitcoin",
+      "name": "Bitcoin",
+    },
+    Object {
+      "blocks": 1,
+      "bytes": 4096,
+      "currencyId": "litecoin",
+      "name": "Litecoin",
+    },
+    Object {
+      "blocks": 1,
+      "bytes": 4096,
+      "currencyId": "dogecoin",
+      "name": "Dogecoin",
+    },
+  ],
+  "appsSpaceBlocks": 60,
+  "appsSpaceBytes": 245760,
+  "freeSpaceBlocks": 48,
+  "freeSpaceBytes": 196608,
+  "osBlocks": 20,
+  "osBytes": 81920,
+  "shouldWarnMemory": false,
+  "totalAppsBlocks": 12,
+  "totalAppsBytes": 49152,
+  "totalBlocks": 80,
+  "totalBytes": 327680,
+}
+`;
+
+exports[`Scenario: install an outdated app 1`] = `
+Object {
+  "apps": Array [
+    Object {
+      "blocks": 10,
+      "bytes": 40960,
+      "currencyId": "bitcoin",
+      "name": "Bitcoin",
+    },
+  ],
+  "appsSpaceBlocks": 60,
+  "appsSpaceBytes": 245760,
+  "freeSpaceBlocks": 50,
+  "freeSpaceBytes": 204800,
+  "osBlocks": 20,
+  "osBytes": 81920,
+  "shouldWarnMemory": false,
+  "totalAppsBlocks": 10,
+  "totalAppsBytes": 40960,
+  "totalBlocks": 80,
+  "totalBytes": 327680,
+}
+`;
+
+exports[`Scenario: install an outdated app dep 1`] = `
+Object {
+  "apps": Array [
+    Object {
+      "blocks": 10,
+      "bytes": 40960,
+      "currencyId": "bitcoin",
+      "name": "Bitcoin",
+    },
+    Object {
+      "blocks": 1,
+      "bytes": 4096,
+      "currencyId": "dogecoin",
+      "name": "Dogecoin",
+    },
+  ],
+  "appsSpaceBlocks": 60,
+  "appsSpaceBytes": 245760,
+  "freeSpaceBlocks": 49,
+  "freeSpaceBytes": 200704,
+  "osBlocks": 20,
+  "osBytes": 81920,
+  "shouldWarnMemory": false,
+  "totalAppsBlocks": 11,
+  "totalAppsBytes": 45056,
+  "totalBlocks": 80,
+  "totalBytes": 327680,
+}
+`;
+
+exports[`Scenario: install an outdated app with dependents 1`] = `
+Object {
+  "apps": Array [
+    Object {
+      "blocks": 10,
+      "bytes": 40960,
+      "currencyId": "bitcoin",
+      "name": "Bitcoin",
+    },
+    Object {
+      "blocks": 1,
+      "bytes": 4096,
+      "currencyId": "dogecoin",
+      "name": "Dogecoin",
+    },
+  ],
+  "appsSpaceBlocks": 60,
+  "appsSpaceBytes": 245760,
+  "freeSpaceBlocks": 49,
+  "freeSpaceBytes": 200704,
+  "osBlocks": 20,
+  "osBytes": 81920,
+  "shouldWarnMemory": false,
+  "totalAppsBlocks": 11,
+  "totalAppsBytes": 45056,
+  "totalBlocks": 80,
+  "totalBytes": 327680,
+}
+`;
+
+exports[`Scenario: install and uninstall an app 1`] = `
+Object {
+  "apps": Array [
+    Object {
+      "blocks": 10,
+      "bytes": 40960,
+      "currencyId": "ripple",
+      "name": "XRP",
+    },
+  ],
+  "appsSpaceBlocks": 60,
+  "appsSpaceBytes": 245760,
+  "freeSpaceBlocks": 50,
+  "freeSpaceBytes": 204800,
+  "osBlocks": 20,
+  "osBytes": 81920,
+  "shouldWarnMemory": false,
+  "totalAppsBlocks": 10,
+  "totalAppsBytes": 40960,
+  "totalBlocks": 80,
+  "totalBytes": 327680,
+}
+`;
+
+exports[`Scenario: install and uninstall an app 2`] = `
+Object {
+  "apps": Array [],
+  "appsSpaceBlocks": 60,
+  "appsSpaceBytes": 245760,
+  "freeSpaceBlocks": 60,
+  "freeSpaceBytes": 245760,
+  "osBlocks": 20,
+  "osBytes": 81920,
+  "shouldWarnMemory": false,
+  "totalAppsBlocks": 0,
+  "totalAppsBytes": 0,
+  "totalBlocks": 80,
+  "totalBytes": 327680,
+}
+`;
+
+exports[`Scenario: install and uninstall will undo (if top level dep) 1`] = `
+Object {
+  "apps": Array [],
+  "appsSpaceBlocks": 60,
+  "appsSpaceBytes": 245760,
+  "freeSpaceBlocks": 60,
+  "freeSpaceBytes": 245760,
+  "osBlocks": 20,
+  "osBytes": 81920,
+  "shouldWarnMemory": false,
+  "totalAppsBlocks": 0,
+  "totalAppsBytes": 0,
+  "totalBlocks": 80,
+  "totalBytes": 327680,
+}
+`;
+
+exports[`Scenario: install existing is noop 1`] = `
+Object {
+  "apps": Array [
+    Object {
+      "blocks": 1,
+      "bytes": 4096,
+      "currencyId": "bitcoin",
+      "name": "Bitcoin",
+    },
+  ],
+  "appsSpaceBlocks": 60,
+  "appsSpaceBytes": 245760,
+  "freeSpaceBlocks": 59,
+  "freeSpaceBytes": 241664,
+  "osBlocks": 20,
+  "osBytes": 81920,
+  "shouldWarnMemory": false,
+  "totalAppsBlocks": 1,
+  "totalAppsBytes": 4096,
+  "totalBlocks": 80,
+  "totalBytes": 327680,
+}
+`;
+
+exports[`Scenario: order is preserved in install action plan 1`] = `
+Object {
+  "apps": Array [
+    Object {
+      "blocks": 10,
+      "bytes": 40960,
+      "currencyId": "ripple",
+      "name": "XRP",
+    },
+    Object {
+      "blocks": 10,
+      "bytes": 40960,
+      "currencyId": "ethereum",
+      "name": "Ethereum",
+    },
+    Object {
+      "blocks": 1,
+      "bytes": 4096,
+      "currencyId": "ethereum_classic",
+      "name": "Ethereum Classic",
+    },
+    Object {
+      "blocks": 10,
+      "bytes": 40960,
+      "currencyId": "bitcoin",
+      "name": "Bitcoin",
+    },
+    Object {
+      "blocks": 1,
+      "bytes": 4096,
+      "currencyId": "dogecoin",
+      "name": "Dogecoin",
+    },
+    Object {
+      "blocks": 10,
+      "bytes": 40960,
+      "currencyId": "zcash",
+      "name": "Zcash",
+    },
+  ],
+  "appsSpaceBlocks": 60,
+  "appsSpaceBytes": 245760,
+  "freeSpaceBlocks": 18,
+  "freeSpaceBytes": 73728,
+  "osBlocks": 20,
+  "osBytes": 81920,
+  "shouldWarnMemory": false,
+  "totalAppsBlocks": 42,
+  "totalAppsBytes": 172032,
+  "totalBlocks": 80,
+  "totalBytes": 327680,
+}
+`;
+
+exports[`Scenario: order is preserved in uninstall action plan 1`] = `
+Object {
+  "apps": Array [
+    Object {
+      "blocks": 1,
+      "bytes": 4096,
+      "currencyId": "zcash",
+      "name": "Zcash",
+    },
+  ],
+  "appsSpaceBlocks": 60,
+  "appsSpaceBytes": 245760,
+  "freeSpaceBlocks": 59,
+  "freeSpaceBytes": 241664,
+  "osBlocks": 20,
+  "osBytes": 81920,
+  "shouldWarnMemory": false,
+  "totalAppsBlocks": 1,
+  "totalAppsBytes": 4096,
+  "totalBlocks": 80,
+  "totalBytes": 327680,
+}
+`;
+
+exports[`Scenario: uninstall an app that have deps 1`] = `
+Object {
+  "apps": Array [],
+  "appsSpaceBlocks": 60,
+  "appsSpaceBytes": 245760,
+  "freeSpaceBlocks": 60,
+  "freeSpaceBytes": 245760,
+  "osBlocks": 20,
+  "osBytes": 81920,
+  "shouldWarnMemory": false,
+  "totalAppsBlocks": 0,
+  "totalAppsBytes": 0,
+  "totalBlocks": 80,
+  "totalBytes": 327680,
+}
+`;
+
+exports[`Scenario: uninstall non-existing is noop 1`] = `
+Object {
+  "apps": Array [],
+  "appsSpaceBlocks": 60,
+  "appsSpaceBytes": 245760,
+  "freeSpaceBlocks": 60,
+  "freeSpaceBytes": 245760,
+  "osBlocks": 20,
+  "osBytes": 81920,
+  "shouldWarnMemory": false,
+  "totalAppsBlocks": 0,
+  "totalAppsBytes": 0,
+  "totalBlocks": 80,
+  "totalBytes": 327680,
+}
+`;
+
+exports[`Scenario: update all still works with unknown apps 1`] = `
+Object {
+  "apps": Array [
+    Object {
+      "blocks": 1,
+      "bytes": 4096,
+      "currencyId": "ethereum",
+      "name": "Ethereum",
+    },
+    Object {
+      "blocks": 1,
+      "bytes": 4096,
+      "currencyId": undefined,
+      "name": "Unknown",
+    },
+    Object {
+      "blocks": 10,
+      "bytes": 40960,
+      "currencyId": "bitcoin",
+      "name": "Bitcoin",
+    },
+    Object {
+      "blocks": 1,
+      "bytes": 4096,
+      "currencyId": "litecoin",
+      "name": "Litecoin",
+    },
+  ],
+  "appsSpaceBlocks": 60,
+  "appsSpaceBytes": 245760,
+  "freeSpaceBlocks": 47,
+  "freeSpaceBytes": 192512,
+  "osBlocks": 20,
+  "osBytes": 81920,
+  "shouldWarnMemory": false,
+  "totalAppsBlocks": 13,
+  "totalAppsBytes": 53248,
+  "totalBlocks": 80,
+  "totalBytes": 327680,
+}
+`;
+
+exports[`Scenario: update all will reinstall the outdated 1`] = `
+Object {
+  "apps": Array [
+    Object {
+      "blocks": 1,
+      "bytes": 4096,
+      "currencyId": "ethereum",
+      "name": "Ethereum",
+    },
+    Object {
+      "blocks": 10,
+      "bytes": 40960,
+      "currencyId": "bitcoin",
+      "name": "Bitcoin",
+    },
+    Object {
+      "blocks": 1,
+      "bytes": 4096,
+      "currencyId": "litecoin",
+      "name": "Litecoin",
+    },
+  ],
+  "appsSpaceBlocks": 60,
+  "appsSpaceBytes": 245760,
+  "freeSpaceBlocks": 48,
+  "freeSpaceBytes": 196608,
+  "osBlocks": 20,
+  "osBytes": 81920,
+  "shouldWarnMemory": false,
+  "totalAppsBlocks": 12,
+  "totalAppsBytes": 49152,
+  "totalBlocks": 80,
+  "totalBytes": 327680,
+}
+`;
+
+exports[`Scenario: wipe installed apps 1`] = `
+Object {
+  "apps": Array [],
+  "appsSpaceBlocks": 60,
+  "appsSpaceBytes": 245760,
+  "freeSpaceBlocks": 60,
+  "freeSpaceBytes": 245760,
+  "osBlocks": 20,
+  "osBytes": 81920,
+  "shouldWarnMemory": false,
+  "totalAppsBlocks": 0,
+  "totalAppsBytes": 0,
+  "totalBlocks": 80,
+  "totalBytes": 327680,
+}
+`;

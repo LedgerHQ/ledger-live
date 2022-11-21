@@ -446,6 +446,7 @@ export function DeviceActionDefaultRendering<R, H extends Status, P>({
       onRetry,
       colors,
       theme,
+      device: device ?? undefined,
     });
   }
 

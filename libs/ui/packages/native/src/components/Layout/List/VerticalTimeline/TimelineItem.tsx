@@ -102,6 +102,7 @@ export default function TimelineItem({
           <Flex flexDirection="row" justifyContent="space-between">
             <Text
               variant="body"
+              flexShrink={1}
               color={
                 item.status === "inactive"
                   ? "neutral.c80"
@@ -120,7 +121,7 @@ export default function TimelineItem({
               </Tag>
             )}
           </Flex>
-          <Animated.ScrollView style={animatedStyle}>
+          <Animated.ScrollView style={animatedStyle} showsVerticalScrollIndicator={false}>
             <Animated.View onLayout={handleLayout}>
               {item.renderBody && item.status === "active" ? (
                 <Flex pt={6}>{item.renderBody(true)}</Flex>

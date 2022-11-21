@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Platform, ScrollView } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import styled from "styled-components/native";
-import { WrongDeviceForAccount } from "@ledgerhq/errors";
+import { LockedDeviceError, WrongDeviceForAccount } from "@ledgerhq/errors";
 import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { Transaction } from "@ledgerhq/live-common/generated/types";
 import { getDeviceModel } from "@ledgerhq/devices";
@@ -22,6 +22,7 @@ import {
   Log,
   BoxedIcon,
 } from "@ledgerhq/native-ui";
+import { LockAltMedium } from "@ledgerhq/native-ui/assets/icons";
 import BigNumber from "bignumber.js";
 import {
   ExchangeRate,
@@ -542,6 +543,67 @@ export function renderInWrongAppForAccount({
   });
 }
 
+// Quick fix: the error LockedDeviceError should be catched
+// inside all the device actions and mapped to an event of type "lockedDevice".
+// With this fix, we can catch all the device action error that were not catched upstream.
+// If LockedDeviceError is thrown from outside a device action and renderError was not called
+// it is still handled by GenericErrorView.
+export function renderLockedDeviceError({
+  t,
+  onRetry,
+  device,
+}: RawProps & {
+  onRetry?: (() => void) | null;
+  device?: Device;
+}) {
+  const productName = device
+    ? getDeviceModel(device.modelId).productName
+    : null;
+
+  return (
+    <Wrapper>
+      <Flex flexDirection="column" alignItems="center" alignSelf="stretch">
+        <Flex mb={5}>
+          <BoxedIcon
+            size={64}
+            Icon={LockAltMedium}
+            iconSize={24}
+            iconColor="neutral.c100"
+          />
+        </Flex>
+
+        <Text
+          variant="h4"
+          fontWeight="semiBold"
+          textAlign="center"
+          numberOfLines={3}
+          mb={6}
+        >
+          {t("errors.LockedDeviceError.title")}
+        </Text>
+        <Text variant="paragraph" textAlign="center" numberOfLines={3} mb={6}>
+          {productName
+            ? t("errors.LockedDeviceError.descriptionWithProductName", {
+                productName,
+              })
+            : t("errors.LockedDeviceError.description")}
+        </Text>
+        {onRetry ? (
+          <ActionContainer marginBottom={0} marginTop={32}>
+            <StyledButton
+              event="DeviceActionErrorRetry"
+              type="main"
+              outline={false}
+              title={t("common.retry")}
+              onPress={onRetry}
+            />
+          </ActionContainer>
+        ) : null}
+      </Flex>
+    </Wrapper>
+  );
+}
+
 export function renderError({
   t,
   error,
@@ -550,6 +612,7 @@ export function renderError({
   navigation,
   Icon,
   iconColor,
+  device,
 }: RawProps & {
   navigation?: StackNavigationProp<ParamListBase>;
   error: Error;
@@ -557,6 +620,7 @@ export function renderError({
   managerAppName?: string;
   Icon?: React.ComponentProps<typeof GenericErrorView>["Icon"];
   iconColor?: string;
+  device?: Device;
 }) {
   const onPress = () => {
     if (managerAppName && navigation) {
@@ -571,6 +635,13 @@ export function renderError({
       onRetry();
     }
   };
+
+  // Redirects from renderError and not from DeviceActionDefaultRendering because renderError
+  // can be used directly by other component
+  if (error instanceof LockedDeviceError) {
+    return renderLockedDeviceError({ t, onRetry, device });
+  }
+
   return (
     <Wrapper>
       <GenericErrorView
