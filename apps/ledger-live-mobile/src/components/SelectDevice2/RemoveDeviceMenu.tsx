@@ -2,6 +2,7 @@ import React, { useCallback, useMemo } from "react";
 import { Trans } from "react-i18next";
 import { useDispatch } from "react-redux";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
+import { DeviceModelId } from "@ledgerhq/devices";
 import { disconnect } from "@ledgerhq/live-common/hw/index";
 import { useTheme } from "styled-components/native";
 import { Flex } from "@ledgerhq/native-ui";
@@ -17,11 +18,11 @@ import BottomModal from "../BottomModal";
 import { removeKnownDevice } from "../../actions/ble";
 
 const illustrations = {
-  nanoS: NanoS,
-  nanoSP: NanoS,
-  nanoX: NanoX,
-  blue: NanoS,
-  nanoFTS: NanoFTS,
+  [DeviceModelId.nanoS]: NanoS,
+  [DeviceModelId.nanoSP]: NanoS,
+  [DeviceModelId.nanoX]: NanoX,
+  [DeviceModelId.blue]: NanoS,
+  [DeviceModelId.nanoFTS]: NanoFTS,
 };
 
 const RemoveDeviceMenu = ({
@@ -36,11 +37,12 @@ const RemoveDeviceMenu = ({
   const dispatch = useDispatch();
   const { colors } = useTheme();
 
-  const illustration = useMemo(
-    () =>
-      illustrations[device.modelId]({ color: colors.neutral.c100, size: 200 }),
-    [device.modelId, colors],
-  );
+  const illustration = useMemo(() => {
+    const illustration = illustrations[device.modelId];
+    return illustration
+      ? illustration({ color: colors.neutral.c100, size: 200 })
+      : null;
+  }, [device.modelId, colors]);
 
   const onRemoveDevice = useCallback(async () => {
     dispatch(removeKnownDevice(device.deviceId));
