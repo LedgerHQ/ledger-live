@@ -74,17 +74,22 @@ const useDynamicContent = () => {
   const assetsCards = useSelector(assetsCardsSelector);
   const walletCards = useSelector(walletCardsSelector);
 
+  const hiddenCards: string[] = [];
+
   function getAssetCardByIdOrTicker(
     currency: CryptoOrTokenCurrency,
   ): AssetContentCard | undefined {
     if (!currency) {
       return undefined;
     }
-    return assetsCards.find(
-      (ac: AssetContentCard) =>
-        ac.assets.toLowerCase().includes(currency.id.toLowerCase()) ||
-        ac.assets.toUpperCase().includes(currency.ticker.toUpperCase()),
-    );
+
+    return assetsCards
+      .filter((ac: AssetContentCard) => !hiddenCards.includes(ac.id))
+      .find(
+        (ac: AssetContentCard) =>
+          ac.assets.toLowerCase().includes(currency.id.toLowerCase()) ||
+          ac.assets.toUpperCase().includes(currency.ticker.toUpperCase()),
+      );
   }
 
   return {

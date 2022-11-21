@@ -158,6 +158,7 @@ const AssetScreen = ({ route }: NavigationProps) => {
         screen: card.location,
         link: card.link,
       });
+      // Notify Braze that the card has been clicked by the user
       logClickCard(card.id);
       Linking.openURL(card.link);
     },
@@ -169,15 +170,15 @@ const AssetScreen = ({ route }: NavigationProps) => {
       track("contentcard_dismissed", {
         screen: card.location,
       });
-      logDismissCard(card.id);
+      // Braze dismiss  logDismissCard(card.id);
       dismissAction();
     },
-    [logDismissCard],
+    [],
   );
 
   useEffect(() => {
     if (dynamicContentCard) {
-      console.log("impression");
+      // Notify Braze that the card has been displayed to the user
       logImpressionCard(dynamicContentCard.id);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
