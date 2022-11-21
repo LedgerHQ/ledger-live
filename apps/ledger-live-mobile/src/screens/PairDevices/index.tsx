@@ -227,6 +227,7 @@ function PairDevicesInner({ navigation, route }: NavigationProps) {
         addKnownDevice({
           id: device.deviceId,
           name: name ?? device.deviceName ?? "",
+          modelId: device.modelId,
         }),
       );
       dispatch({
