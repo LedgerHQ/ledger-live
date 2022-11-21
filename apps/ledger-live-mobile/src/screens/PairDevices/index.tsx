@@ -187,7 +187,7 @@ function PairDevicesInner({ navigation, route }: NavigationProps) {
               name,
               deviceInfo,
               appsInstalled,
-              modelId: deviceMeta?.modelId,
+              modelId: device.modelId as DeviceModelId,
             }),
           );
           dispatchRedux(
