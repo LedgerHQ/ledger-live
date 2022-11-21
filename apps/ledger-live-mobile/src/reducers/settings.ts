@@ -92,6 +92,7 @@ export const INITIAL_STATE: SettingsState = {
   pairExchanges: {},
   selectedTimeRange: "month",
   orderAccounts: "balance|desc",
+  hasCompletedCustomImageFlow: false,
   hasCompletedOnboarding: false,
   hasInstalledAnyApp: true,
   // readOnlyModeEnabled: !Config.DISABLE_READ_ONLY,
@@ -138,9 +139,9 @@ export const INITIAL_STATE: SettingsState = {
   firstConnectionHasDevice: null,
   firstConnectHasDeviceUpdated: null,
   notifications: {
-    allowed: true,
-    announcements: true,
-    recommendations: true,
+    areNotificationsAllowed: true,
+    announcementsCategory: true,
+    recommendationsCategory: true,
   },
 };
 
@@ -249,6 +250,11 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
     ...state,
     selectedTimeRange: (action as Action<SettingsSetSelectedTimeRangePayload>)
       .payload.selectedTimeRange,
+  }),
+
+  [SettingsActionTypes.SETTINGS_COMPLETE_CUSTOM_IMAGE_FLOW]: state => ({
+    ...state,
+    hasCompletedCustomImageFlow: true,
   }),
 
   [SettingsActionTypes.SETTINGS_COMPLETE_ONBOARDING]: state => ({
@@ -630,6 +636,8 @@ export const selectedTimeRangeSelector = (state: State) =>
   state.settings.selectedTimeRange;
 export const orderAccountsSelector = (state: State) =>
   state.settings.orderAccounts;
+export const hasCompletedCustomImageFlowSelector = (state: State) =>
+  state.settings.hasCompletedCustomImageFlow;
 export const hasCompletedOnboardingSelector = (state: State) =>
   state.settings.hasCompletedOnboarding;
 export const hasInstalledAnyAppSelector = (state: State) =>

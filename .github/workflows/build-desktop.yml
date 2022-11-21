@@ -30,14 +30,37 @@ jobs:
         with:
           ref: develop
           fetch-depth: 0
-      - name: checkout branch
+      - name: checkout branch (PR)
+        if: ${{ github.event_name == 'pull_request' }}
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
-          git checkout ${{ github.event.pull_request.head.ref || github.event.push.base.ref }}
+          gh pr checkout ${{ github.event.pull_request.number }}
+      - name: checkout branch (not PR)
+        if: ${{ github.event_name != 'pull_request' }}
+        run: |
+          git checkout $GITHUB_SHA
       - uses: ./tools/actions/turbo-affected
         id: affected
         with:
           package: "ledger-live-desktop"
           head-ref: ${{ github.event_name == 'pull_request' && format('origin/{0}', github.event.pull_request.base.ref) || 'HEAD^' }}
+
+  # Run dummy jobs when not affected to pass the required status checks
+  dummy:
+    name: "Build Ledger Live Desktop"
+    needs: is-affected
+    if: ${{ needs.is-affected.outputs.is-desktop-affected != 'true' }}
+    strategy:
+      matrix:
+        names:
+          - Linux
+          - Windows
+          - Mac OS X
+    runs-on: ubuntu-latest
+    steps:
+      - id: dummy
+        run: exit 0
 
   pr-is-fork:
     name: "Check if the PR is a fork"

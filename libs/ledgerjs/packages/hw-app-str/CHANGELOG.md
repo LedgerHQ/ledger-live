@@ -1,5 +1,19 @@
 # @ledgerhq/hw-app-str
 
+## 6.27.7
+
+### Patch Changes
+
+- Updated dependencies [[`d3c91a53e0`](https://github.com/LedgerHQ/ledger-live/commit/d3c91a53e06f9f47817e96c452f69e2d9f71d80f)]:
+  - @ledgerhq/hw-transport@6.27.7
+
+## 6.27.7-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`d3c91a53e0`](https://github.com/LedgerHQ/ledger-live/commit/d3c91a53e06f9f47817e96c452f69e2d9f71d80f)]:
+  - @ledgerhq/hw-transport@6.27.7-next.0
+
 ## 6.27.6
 
 ### Patch Changes

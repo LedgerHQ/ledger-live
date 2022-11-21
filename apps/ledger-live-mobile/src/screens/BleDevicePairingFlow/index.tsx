@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback } from "react";
 import { useDispatch } from "react-redux";
 import { has as hasFromPath, set as setFromPath } from "lodash";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
@@ -8,6 +8,7 @@ import { BleDevicesScanning } from "./BleDevicesScanning";
 import { BleDevicePairing } from "./BleDevicePairing";
 import { addKnownDevice } from "../../actions/ble";
 import { NavigatorName, ScreenName } from "../../const";
+import { useResetOnNavigationFocusState } from "../../helpers/useResetOnNavigationFocusState";
 import { BaseNavigatorStackParamList } from "../../components/RootNavigator/types/BaseNavigator";
 import {
   RootComposite,
@@ -44,6 +45,10 @@ const defaultNavigationParams = {
     },
   },
 };
+
+// A "done" state to avoid having the BLE scanning on the device that we just paired
+// and to which messages are going to be exchanged via BLE
+type PairingFlowStep = "scanning" | "pairing" | "done";
 
 /**
  * Screen handling the BLE flow with a scanning step and a pairing step
@@ -95,18 +100,31 @@ export const BleDevicePairingFlow = ({ navigation, route }: Props) => {
     navigationType = "navigate",
   } = onSuccessNavigateToConfig;
 
-  const [deviceToPair, setDeviceToPair] = useState<Device | null>(null);
+  // Resets when the navigation goes back to this screen
+  const [pairingFlowStep, setPairingFlowStep] = useResetOnNavigationFocusState<
+    PairingFlowStep,
+    Props["navigation"]
+  >(navigation, "scanning");
+  // Resets when the navigation goes back to this screen
+  const [deviceToPair, setDeviceToPair] = useResetOnNavigationFocusState<
+    Device | null,
+    Props["navigation"]
+  >(navigation, null);
 
-  const onDeviceSelect = useCallback((item: Device) => {
-    const deviceToPair = {
-      deviceId: item.deviceId,
-      deviceName: item.deviceName,
-      modelId: item.modelId,
-      wired: false,
-    };
+  const onDeviceSelect = useCallback(
+    (item: Device) => {
+      const deviceToPair = {
+        deviceId: item.deviceId,
+        deviceName: item.deviceName,
+        modelId: item.modelId,
+        wired: false,
+      };
 
-    setDeviceToPair(deviceToPair);
-  }, []);
+      setDeviceToPair(deviceToPair);
+      setPairingFlowStep("pairing");
+    },
+    [setDeviceToPair, setPairingFlowStep],
+  );
 
   const onPaired = useCallback(
     (device: Device) => {
@@ -133,6 +151,7 @@ export const BleDevicePairingFlow = ({ navigation, route }: Props) => {
 
       // Before navigating, to never come back a the successful pairing but to the scanning part
       setDeviceToPair(null);
+      setPairingFlowStep("done");
 
       const params = navigateInput.params
         ? {
@@ -159,28 +178,31 @@ export const BleDevicePairingFlow = ({ navigation, route }: Props) => {
       navigationType,
       onSuccessAddToKnownDevices,
       pathToDeviceParam,
+      setDeviceToPair,
+      setPairingFlowStep,
     ],
   );
 
   const onRetryPairingFlow = useCallback(() => {
     setDeviceToPair(null);
-  }, []);
+    setPairingFlowStep("scanning");
+  }, [setDeviceToPair, setPairingFlowStep]);
 
   return (
     <RequiresBLE>
-      {deviceToPair ? (
+      {pairingFlowStep === "pairing" && deviceToPair !== null ? (
         <BleDevicePairing
           deviceToPair={deviceToPair}
           onPaired={onPaired}
           onRetry={onRetryPairingFlow}
         />
-      ) : (
+      ) : pairingFlowStep === "scanning" ? (
         <BleDevicesScanning
           filterByDeviceModelId={filterByDeviceModelId}
           areKnownDevicesDisplayed={areKnownDevicesDisplayed}
           onDeviceSelect={onDeviceSelect}
         />
-      )}
+      ) : null}
     </RequiresBLE>
   );
 };

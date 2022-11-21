@@ -77,9 +77,11 @@ const extraProperties = (store: AppStore) => {
     : {};
   const firstConnectionHasDevice = firstConnectionHasDeviceSelector(state);
   const notifications = notificationsSelector(state);
-  const notificationsAllowed = notifications.allowed;
+  const notificationsAllowed = notifications.areNotificationsAllowed;
   const notificationsBlacklisted = Object.entries(notifications)
-    .filter(([key, value]) => key !== "allowed" && value === false)
+    .filter(
+      ([key, value]) => key !== "areNotificationsAllowed" && value === false,
+    )
     .map(([key]) => key);
   const firstConnectHasDeviceUpdated =
     firstConnectHasDeviceUpdatedSelector(state);

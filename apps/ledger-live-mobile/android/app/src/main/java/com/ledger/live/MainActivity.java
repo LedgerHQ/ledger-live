@@ -12,13 +12,10 @@ import android.view.WindowManager;
 import com.facebook.react.ReactActivity;
 import com.facebook.react.ReactActivityDelegate;
 import com.facebook.react.ReactRootView;
-import com.swmansion.gesturehandler.react.RNGestureHandlerEnabledRootView;
 
 import org.devio.rn.splashscreen.SplashScreen;
 
 import java.util.Locale;
-
-import expo.modules.ReactActivityDelegateWrapper;
 
 import com.facebook.react.modules.i18nmanager.I18nUtil;
 
@@ -77,7 +74,7 @@ public class MainActivity extends ReactActivity {
             }
         }
         super.onCreate(null);
-        /**
+        /*
          * Addresses an inconvenient side-effect of using `password-visible`, that
          * allowed styled texts to be pasted (receiver's address for instance) retaining
          * the styles of the source text.
