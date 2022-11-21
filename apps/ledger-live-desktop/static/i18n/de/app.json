@@ -5366,6 +5366,12 @@
       "title" : "Entschuldigung, Verbindung fehlgeschlagen",
       "description" : "Gerät erkannt, aber Verbindung fehlgeschlagen. Bitte versuchen Sie es erneut oder wenden Sie sich an den Ledger Kundenservice, falls das Problem weiterhin besteht."
     },
+    "CasperInvalidTransferId": {
+      "title": "Die Übertragungs-ID sollte eine positive Zahl kleiner als 18446744073709551615 sein"
+    },
+    "InvalidMinimumAmount": {
+      "title": "Der Mindestbetrag für die Überweisung beträgt 2,5 CSPR"
+    },
     "ETHAddressNonEIP" : {
       "title" : "Automatische Verifizierung nicht verfügbar: Überprüfen Sie die Adresse sorgfältig",
       "description" : null
