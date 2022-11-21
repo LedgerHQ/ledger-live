@@ -59,12 +59,10 @@ type ReconnectionConfig = {
   delayAfterFirstPairing: number;
 };
 let reconnectionConfig: ReconnectionConfig | null | undefined = {
-  pairingThreshold: 1000,
+  pairingThreshold: 2000,
   delayAfterFirstPairing: 4000,
 };
-export function setReconnectionConfig(
-  config: ReconnectionConfig | null | undefined
-) {
+export function setReconnectionConfig(config: ReconnectionConfig | null): void {
   reconnectionConfig = config;
 }
 
@@ -76,6 +74,11 @@ async function open(deviceOrId: Device | string, needsReconnect: boolean) {
   if (typeof deviceOrId === "string") {
     if (transportsCache[deviceOrId]) {
       log("ble-verbose", "Transport in cache, using that.");
+      const maybeTimeout = transportsCache[deviceOrId].disconnectTimeout;
+      if (maybeTimeout) {
+        log("ble-verbose", "Clearing queued disconnect");
+        clearTimeout(transportsCache[deviceOrId].disconnectTimeout);
+      }
       return transportsCache[deviceOrId];
     }
 
@@ -409,6 +412,7 @@ export default class BluetoothTransport extends Transport {
   static disconnect = async (id: any) => {
     log("ble-verbose", `user disconnect(${id})`);
     await bleManager.cancelDeviceConnection(id);
+    await delay(1000);
   };
   id: string;
   device: Device;
@@ -418,6 +422,7 @@ export default class BluetoothTransport extends Transport {
   notifyObservable: Observable<any>;
   deviceModel: DeviceModel;
   notYetDisconnected = true;
+  disconnectTimeout: null | ReturnType<typeof setTimeout> = null;
 
   constructor(
     device: Device,
@@ -539,34 +544,30 @@ export default class BluetoothTransport extends Transport {
   };
 
   async close(): Promise<void> {
-    // Prevent double runs
-    let alreadyDisconnected = false;
-
-    // Actually disconnect from the device onClose
-    const triggerDisconnect = () => {
-      if (!alreadyDisconnected) {
-        BluetoothTransport.disconnect(this.id); // This triggers cache cleanup above.
-        alreadyDisconnected = true;
-      }
-    };
-
-    // For cases where an exchange doesn't resolve and we triggered a `close` we
-    // introduce a timeout to forcefully disconnect in order to unblock subsequent
-    // usages of the `withDevice` logic. It's also a good practice to disconnect
-    // from the device when not actively interacting with it.
-    if (this.exchangeBusyPromise) {
-      const forceDisconnect = new Promise<void>((resolve) =>
-        setTimeout(() => {
-          triggerDisconnect();
-          resolve();
-        }, connectOptions.forceDisconnectTimeout as number)
-      );
-
-      await Promise.race([this.exchangeBusyPromise, forceDisconnect]);
-      // At this point we've either disconnected forcefully, or completed the exchange
+    // Clear any potential leftover timeouts
+    if (this.disconnectTimeout) {
+      clearTimeout(this.disconnectTimeout);
     }
 
-    triggerDisconnect();
+    let resolve;
+    const disconnectPromise = new Promise<void>((res) => {
+      resolve = res;
+    });
+
+    // Queue a disconnect
+    this.disconnectTimeout = setTimeout(() => {
+      BluetoothTransport.disconnect(this.id);
+      resolve();
+    }, connectOptions.forceDisconnectTimeout as number);
+
+    // For cases where an exchange hasn't resolve and we triggered a `close` we
+    // introduce a timeout to forcefully disconnect in order to unblock subsequent
+    // usages of the `withDevice` logic.
+    await Promise.race([
+      this.exchangeBusyPromise || Promise.resolve(),
+      disconnectPromise,
+    ]);
+
     return;
   }
 }
