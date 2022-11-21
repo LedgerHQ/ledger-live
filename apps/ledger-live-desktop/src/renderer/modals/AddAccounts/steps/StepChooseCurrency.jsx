@@ -46,7 +46,7 @@ const StepChooseCurrency = ({ currency, setCurrency }: StepProps) => {
       cronos,
       songbird,
       flare,
-      avaxCChain,
+      avalanche_c_chain: avaxCChain,
     }),
     [osmo, fantom, moonbeam, cronos, songbird, flare, avaxCChain],
   );

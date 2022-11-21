@@ -67,7 +67,7 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
       cronos,
       songbird,
       flare,
-      avaxCChain,
+      avalanche_c_chain: avaxCChain,
     }),
     [osmo, fantom, moonbeam, cronos, songbird, flare, avaxCChain],
   );
