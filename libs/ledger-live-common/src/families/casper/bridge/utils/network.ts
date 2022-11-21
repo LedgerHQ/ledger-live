@@ -16,7 +16,7 @@ import {
 import network from "../../../../network";
 import { getEnv } from "../../../../env";
 import { AccessRights, CLURef, DeployUtil } from "casper-js-sdk";
-import { CASPER_FEES } from "../../consts";
+import { getEstimatedFees } from "../../utils";
 
 const getCasperLiveURL = (path: string): string => {
   const baseUrl = getEnv("API_CASPER_LIVE_ENDPOINT");
@@ -162,7 +162,7 @@ export const fetchEstimatedFees = async (): Promise<{
   unit: string;
 }> => {
   return {
-    fees: CASPER_FEES,
+    fees: getEstimatedFees().toNumber(),
     unit: "CSPR",
   }; // TODO Validate if the response fits this interface
 };

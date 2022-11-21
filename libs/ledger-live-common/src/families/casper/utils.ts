@@ -13,6 +13,8 @@ import BigNumber from "bignumber.js";
 import { LTxnHistoryData, NAccountBalance } from "./bridge/utils/types";
 import { CLPublicKey } from "casper-js-sdk";
 import { encode, getPubKeySignature } from "./bridge/utils/addresses";
+import { Account } from "@ledgerhq/types-live";
+import { CASPER_FEES } from "./consts";
 
 const validHexRegExp = new RegExp(/[0-9A-Fa-f]{6}/g);
 const validBase64RegExp = new RegExp(
@@ -85,7 +87,7 @@ export const getAccountShape: GetAccountShape = async (info) => {
   }
 
   const csprBalance = new BigNumber(balance.balance_value);
-  const result = {
+  const result: Partial<Account> = {
     id: accountId,
     balance: csprBalance,
     spendableBalance: csprBalance,
@@ -116,9 +118,23 @@ export function casperPubKeyToAccountHash(pubKey: string): string {
   return encode(Buffer.from(clPubKey.toAccountRawHashStr(), "hex"));
 }
 
+export function deployHashToString(
+  hash: Uint8Array,
+  toLowerCase?: boolean
+): string {
+  const str = encode(Buffer.from(hash));
+
+  if (toLowerCase) return str.toLowerCase();
+  return str;
+}
+
 export function validateTransferId(id?: string): { isValid: boolean } {
   if (!id || !id.length) return { isValid: true };
   if (/^\d+$/.test(id)) return { isValid: true };
 
   return { isValid: false };
+}
+
+export function getEstimatedFees(): BigNumber {
+  return new BigNumber(CASPER_FEES);
 }
