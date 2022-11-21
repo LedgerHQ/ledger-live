@@ -9,8 +9,11 @@ import {
   WindowMessageTransport,
 } from "@ledgerhq/wallet-api-client";
 import BigNumber from "bignumber.js";
+import { Buffer } from "buffer";
 import logo from "./ledger-logo.png";
 import "./App.css";
+
+global.Buffer = Buffer;
 
 const prettyJSON = (payload: any) => JSON.stringify(payload, null, 2);
 
