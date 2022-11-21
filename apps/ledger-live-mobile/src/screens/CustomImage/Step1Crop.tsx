@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { Box, Flex, Icons, InfiniteLoader } from "@ledgerhq/native-ui";
+import { Box, Flex, Icons, InfiniteLoader, Text } from "@ledgerhq/native-ui";
 import { CropView } from "react-native-image-crop-tools";
 import { useTranslation } from "react-i18next";
 import { StackNavigationEventMap } from "@react-navigation/stack";
@@ -203,12 +203,18 @@ const Step1Cropping = ({ navigation, route }: NavigationProps) => {
           <Box mb={7} alignSelf="center">
             <Touchable onPress={handlePressRotateLeft}>
               <Flex
-                px={7}
                 py={4}
+                px={6}
                 borderRadius={100}
                 backgroundColor="neutral.c30"
+                flexDirection="row"
+                justifyContent="center"
+                alignItems="center"
               >
-                <Icons.ReverseMedium size={24} />
+                <Text variant="paragraph" fontWeight="semiBold" mr={2} ml={2}>
+                  {t("customImage.rotateImage")}
+                </Text>
+                <Icons.ReverseMedium size={16} />
               </Flex>
             </Touchable>
           </Box>

@@ -5,7 +5,7 @@ import hash from "object-hash";
 
 class MockBtc extends Btc {
   constructor() {
-    super({ transport: new Transport() });
+    super(new Transport());
   }
 
   // eslint-disable-next-line class-methods-use-this
@@ -39,7 +39,7 @@ class MockBtc extends Btc {
   }
 
   // eslint-disable-next-line class-methods-use-this,@typescript-eslint/no-unused-vars
-  async createPaymentTransaction(arg: CreateTransactionArg) {
+  async createPaymentTransactionNew(arg: CreateTransactionArg) {
     return hash(arg);
   }
 }

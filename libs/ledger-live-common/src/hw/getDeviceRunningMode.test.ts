@@ -1,10 +1,11 @@
 import { from, Observable, of, timer } from "rxjs";
 import { delay } from "rxjs/operators";
-import Transport, {
-  StatusCodes,
-  TransportStatusError,
-} from "@ledgerhq/hw-transport";
-import { CantOpenDevice, DisconnectedDevice } from "@ledgerhq/errors";
+import Transport from "@ledgerhq/hw-transport";
+import {
+  CantOpenDevice,
+  DisconnectedDevice,
+  LockedDeviceError,
+} from "@ledgerhq/errors";
 import { DeviceInfo } from "@ledgerhq/types-live";
 import getDeviceInfo from "./getDeviceInfo";
 import { getDeviceRunningMode } from "./getDeviceRunningMode";
@@ -180,11 +181,9 @@ describe("getDeviceRunningMode", () => {
       });
     });
 
-    describe("And the device responds with a LOCKED_DEVICE error", () => {
+    describe("And the device responds with a locked device error", () => {
       it("pushes an event lockedDevice", (done) => {
-        mockedGetDeviceInfo.mockRejectedValue(
-          new TransportStatusError(StatusCodes.LOCKED_DEVICE)
-        );
+        mockedGetDeviceInfo.mockRejectedValue(new LockedDeviceError());
 
         getDeviceRunningMode({
           deviceId: A_DEVICE_ID,

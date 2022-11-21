@@ -69,7 +69,7 @@ export type DeviceLike = {
   name: string;
   deviceInfo?: DeviceInfo;
   appsInstalled?: number;
-  modelId?: DeviceModelId;
+  modelId: DeviceModelId;
 };
 
 export type BleState = {
@@ -153,6 +153,7 @@ export type SettingsState = {
   pairExchanges: Record<string, string | null | undefined>;
   selectedTimeRange: PortfolioRange;
   orderAccounts: string;
+  hasCompletedCustomImageFlow: boolean;
   hasCompletedOnboarding: boolean;
   hasInstalledAnyApp: boolean;
   readOnlyModeEnabled: boolean;
@@ -194,9 +195,9 @@ export type SettingsState = {
 };
 
 export type NotificationsSettings = {
-  allowed: boolean;
-  announcements: boolean;
-  recommendations: boolean;
+  areNotificationsAllowed: boolean;
+  announcementsCategory: boolean;
+  recommendationsCategory: boolean;
 };
 
 // === WALLET CONNECT STATE ===
