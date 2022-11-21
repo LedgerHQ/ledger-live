@@ -410,7 +410,7 @@ export function genAccount(
       ? Array(10)
           .fill(null)
           .map(() => createFixtureNFT(accountId, currency))
-      : [],
+      : undefined,
   };
 
   if (
