@@ -17,6 +17,7 @@ import {
 import { Transaction } from "@ledgerhq/live-common/generated/types";
 import type { EventTrigger, DataOfUser } from "../logic/notifications";
 import type { RatingsHappyMoment, RatingsDataOfUser } from "../logic/ratings";
+import { WalletTabNavigatorStackParamList } from "../components/RootNavigator/types/WalletTabNavigator";
 
 // === ACCOUNT STATE ===
 
@@ -193,6 +194,7 @@ export type SettingsState = {
   firstConnectHasDeviceUpdated: boolean | null;
   customImageBackup?: { hex: string; hash: string };
   notifications: NotificationsSettings;
+  walletTabNavigatorLastVisitedTab: keyof WalletTabNavigatorStackParamList;
 };
 
 export type NotificationsSettings = {

@@ -12,6 +12,7 @@ import SelectDevice from "../../../components/SelectDevice";
 import { ScreenName } from "../../../const";
 
 import GenerateMockAccounts from "./GenerateMockAccounts";
+import GenerateMockAccountsNft from "./GenerateMockAccountsNFTs";
 import ImportBridgeStreamData from "./ImportBridgeStreamData";
 import ConfigUSBDeviceSupport from "./ConfigUSBDeviceSupport";
 import OpenDebugCrash from "./OpenDebugCrash";
@@ -57,6 +58,10 @@ export function DebugMocks() {
       ) : null}
       <GenerateMockAccounts
         title="Generate 10 random mock Accounts"
+        count={10}
+      />
+      <GenerateMockAccountsNft
+        title="Generate 10 random mock Accounts with NFTs"
         count={10}
       />
       <GenerateMockAccount />

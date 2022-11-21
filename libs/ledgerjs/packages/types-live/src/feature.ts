@@ -32,6 +32,7 @@ export type FeatureId =
   | "disableNftSend"
   | "disableNftLedgerMarket"
   | "disableNftRaribleOpensea"
+  | "walletNftGallery"
   | "receiveStakingFlowConfigDesktop"
   | "ethStakingProviders"
   | "storyly"

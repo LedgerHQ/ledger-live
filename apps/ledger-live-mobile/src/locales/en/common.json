@@ -5386,7 +5386,8 @@
       "seeFewerNfts": "See fewer NFT"
     },
     "gallery": {
-      "allNft": "All NFT"
+      "allNft": "All NFT",
+      "addNew": "Add new"
     },
     "viewer": {
       "properties": "Properties",
@@ -5403,6 +5404,7 @@
     "viewerModal": {
       "viewOn": "View on",
       "viewInExplorer": "View in explorer",
+      "hide": "Hide NFT collection",
       "txDetails": "Transaction details"
     },
     "modalDisabled": {
@@ -5483,6 +5485,37 @@
         "description": "By adding an image",
         "popupLabel": "Device personalized",
         "hubTitleAfterAction": "That screen is looking neat"
+      }
+    }
+  },
+  "wallet": {
+    "tabs": {
+      "crypto": "Crypto",
+      "nft": "NFTs"
+    },
+    "nftGallery": {
+      "empty": {
+        "title": "No NFTs to show, yet",
+        "subtitle": "Get started by receiving your first NFT.",
+        "receive": "Receive NFTs",
+        "supportLink": "How to get NFTs from other wallets?"
+      },
+      "receiveModal": {
+        "title": "Receive an NFT the same way as any other crypto",
+        "bullets": {
+          "0": "\u2022 Select the NFT’s crypto blockchain.",
+          "1": "\u2022 Choose the account to receive the NFT"
+        },
+        "cta": "OK, got it",
+        "info": "I’d like to learn more"
+      },
+      "hideNftModal": {
+        "title": "Hide NFT collection",
+        "desc": "This action will hide all NFTs from the {{collectionName}} collection, you can unhide them from the app settings",
+        "cta": "Hide this NFT"
+      },
+      "media": {
+        "tag": "{{count}} NFTs"
       }
     }
   }

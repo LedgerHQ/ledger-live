@@ -61,7 +61,9 @@ import {
   SettingsUnhideNftCollectionPayload,
   SettingsUpdateCurrencyPayload,
   SettingsActionTypes,
+  SettingsSetWalletTabNavigatorLastVisitedTabPayload,
 } from "./types";
+import { WalletTabNavigatorStackParamList } from "../components/RootNavigator/types/WalletTabNavigator";
 
 // FIXME: NEVER USED BY ANYONE, DROP ?
 const setExchangePairsAction = createAction<SettingsSetPairsPayload>(
@@ -459,6 +461,17 @@ export const setNotifications = (
 ) =>
   setNotificationsAction({
     notifications,
+  });
+
+const setWalletTabNavigatorLastVisitedTabAction =
+  createAction<SettingsSetWalletTabNavigatorLastVisitedTabPayload>(
+    SettingsActionTypes.WALLET_TAB_NAVIGATOR_LAST_VISITED_TAB,
+  );
+export const setWalletTabNavigatorLastVisitedTab = (
+  walletTabNavigatorLastVisitedTab: keyof WalletTabNavigatorStackParamList,
+) =>
+  setWalletTabNavigatorLastVisitedTabAction({
+    walletTabNavigatorLastVisitedTab,
   });
 
 const dangerouslyOverrideStateAction =

@@ -438,6 +438,7 @@ export enum ScreenName {
   PostOnboardingHub = "PostOnboardingHub",
   PostOnboardingDebugScreen = "PostOnboardingDebugScreen",
   PostOnboardingMockActionScreen = "PostOnboardingMockActionScreen",
+  WalletNftGallery = "WalletNftGallery",
 }
 export enum NavigatorName {
   // Stack
@@ -519,6 +520,7 @@ export enum NavigatorName {
 
   // Tab
   Main = "Main",
+  WalletTab = "WalletTabNavigator",
   // Root
   RootNavigator = "RootNavigator",
   Discover = "Discover",

@@ -63,7 +63,11 @@ import type {
   SettingsUpdateCurrencyPayload,
   SettingsSetSwapSelectableCurrenciesPayload,
 } from "../actions/types";
-import { SettingsActionTypes } from "../actions/types";
+import {
+  SettingsActionTypes,
+  SettingsSetWalletTabNavigatorLastVisitedTabPayload,
+} from "../actions/types";
+import { ScreenName } from "../const";
 
 const bitcoin = getCryptoCurrencyById("bitcoin");
 const ethereum = getCryptoCurrencyById("ethereum");
@@ -145,6 +149,7 @@ export const INITIAL_STATE: SettingsState = {
     announcementsCategory: true,
     recommendationsCategory: true,
   },
+  walletTabNavigatorLastVisitedTab: ScreenName.Portfolio,
 };
 
 const pairHash = (from: { ticker: string }, to: { ticker: string }) =>
@@ -543,6 +548,16 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
       KYC: {},
     },
   }),
+
+  [SettingsActionTypes.WALLET_TAB_NAVIGATOR_LAST_VISITED_TAB]: (
+    state,
+    action,
+  ) => ({
+    ...state,
+    walletTabNavigatorLastVisitedTab: (
+      action as Action<SettingsSetWalletTabNavigatorLastVisitedTabPayload>
+    ).payload.walletTabNavigatorLastVisitedTab,
+  }),
 };
 
 export default handleActions<SettingsState, SettingsPayload>(
@@ -740,3 +755,5 @@ export const firstConnectHasDeviceUpdatedSelector = (state: State) =>
   state.settings.firstConnectHasDeviceUpdated;
 export const notificationsSelector = (state: State) =>
   state.settings.notifications;
+export const walletTabNavigatorLastVisitedTabSelector = (state: State) =>
+  state.settings.walletTabNavigatorLastVisitedTab;

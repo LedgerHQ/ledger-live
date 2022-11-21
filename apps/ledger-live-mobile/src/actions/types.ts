@@ -245,6 +245,7 @@ export enum SettingsActionTypes {
   SET_FIRST_CONNECTION_HAS_DEVICE = "SET_FIRST_CONNECTION_HAS_DEVICE",
   SET_NOTIFICATIONS = "SET_NOTIFICATIONS",
   RESET_SWAP_LOGIN_AND_KYC_DATA = "RESET_SWAP_LOGIN_AND_KYC_DATA",
+  WALLET_TAB_NAVIGATOR_LAST_VISITED_TAB = "WALLET_TAB_NAVIGATOR_LAST_VISITED_TAB",
 }
 
 export type SettingsImportPayload = Partial<SettingsState>;
@@ -382,6 +383,10 @@ export type SettingsSetFirstConnectHasDeviceUpdatedPayload = Pick<
 export type SettingsSetNotificationsPayload = {
   notifications: Partial<SettingsState["notifications"]>;
 };
+export type SettingsSetWalletTabNavigatorLastVisitedTabPayload = Pick<
+  SettingsState,
+  "walletTabNavigatorLastVisitedTab"
+>;
 export type SettingsDangerouslyOverrideStatePayload = State;
 export type SettingsPayload =
   | SettingsImportPayload
