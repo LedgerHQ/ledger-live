@@ -11,17 +11,20 @@ import type { Transaction, TransactionStatus } from "../types";
 import { makeAccountBridgeReceive, makeSync } from "../../../bridge/jsHelpers";
 
 import {
+  deployHashToString,
   getAccountShape,
+  getEstimatedFees,
   getPath,
   isError,
   validateTransferId,
 } from "../utils";
 import { CLPublicKey, DeployUtil } from "casper-js-sdk";
 import BigNumber from "bignumber.js";
-import { CASPER_FEES, MINIMUM_VALID_AMOUNT } from "../consts";
+import { MINIMUM_VALID_AMOUNT } from "../consts";
 import {
   getAddress,
   getPubKeySignature,
+  getPublicKeyFromCasperAddress,
   validateAddress,
 } from "./utils/addresses";
 import { log } from "@ledgerhq/logs";
@@ -55,7 +58,9 @@ const createTransaction = (): Transaction => {
     family: "casper",
     deploy: null,
     amount: new BigNumber(0),
+    fees: getEstimatedFees(),
     recipient: "",
+    useAllAmount: false,
   };
 };
 
@@ -82,7 +87,17 @@ const prepareTransaction = async (
       validateAddress(address).isValid &&
       validateTransferId(transferId).isValid
     ) {
-      t.deploy = createNewDeploy(address, recipient, t.amount, t.transferId);
+      const amount = t.useAllAmount
+        ? a.spendableBalance.minus(t.fees)
+        : t.amount;
+
+      t.deploy = createNewDeploy(
+        address,
+        recipient,
+        amount,
+        t.fees,
+        t.transferId
+      );
     }
   }
 
@@ -113,7 +128,7 @@ const getTransactionStatus = async (
   }
 
   // This is the worst case scenario (the tx won't cost more than this value)
-  const estimatedFees = new BigNumber(CASPER_FEES);
+  const estimatedFees = t.fees;
 
   let totalSpent;
   if (amount.lt(MINIMUM_VALID_AMOUNT))
@@ -174,7 +189,7 @@ const estimateMaxSpendable = async ({
 
   const amount = transaction?.amount;
 
-  const estimatedFees = CASPER_FEES;
+  const estimatedFees = transaction?.fees ?? getEstimatedFees();
 
   if (balance.lte(estimatedFees)) return new BigNumber(0);
 
@@ -209,7 +224,7 @@ const signOperation: SignOperationFnSignature<Transaction> = ({
               type: "device-signature-requested",
             });
 
-            const fee = CASPER_FEES;
+            const fee = transaction.fees;
             if (useAllAmount) amount = balance.minus(fee);
 
             transaction = { ...transaction, amount };
@@ -235,10 +250,16 @@ const signOperation: SignOperationFnSignature<Transaction> = ({
             });
 
             // signature verification
-            const deployHash = transaction.deploy.hash;
+            const deployHash = deployHashToString(
+              transaction.deploy.hash,
+              true
+            );
             const signature = result.signatureRS;
 
-            const pkBuffer = Buffer.from(address.substring(2), "hex");
+            const pkBuffer = Buffer.from(
+              getPublicKeyFromCasperAddress(address),
+              "hex"
+            );
             // sign deploy object
             const signedDeploy = DeployUtil.setSignature(
               transaction.deploy,
@@ -248,14 +269,14 @@ const signOperation: SignOperationFnSignature<Transaction> = ({
             transaction.deploy = signedDeploy;
 
             const operation: Operation = {
-              id: encodeOperationId(accountId, deployHash.toString(), "OUT"),
-              hash: deployHash.toString(),
+              id: encodeOperationId(accountId, deployHash, "OUT"),
+              hash: deployHash,
               type: "OUT",
               senders: [address],
               recipients: [recipient],
               accountId,
               value: amount.plus(fee),
-              fee: new BigNumber(CASPER_FEES),
+              fee,
               blockHash: null,
               blockHeight: null,
               date: new Date(),

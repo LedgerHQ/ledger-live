@@ -9,15 +9,6 @@ export const getAddress = (a: Account): Address =>
     ? a.freshAddresses[0]
     : { address: a.freshAddress, derivationPath: a.freshAddressPath };
 
-export const getPublicKey = (a: Account): string => {
-  const address =
-    a.freshAddresses.length > 0
-      ? a.freshAddresses[0]
-      : { address: a.freshAddress, derivationPath: a.freshAddressPath };
-
-  return address.address.substring(2);
-};
-
 export const getPubKeySignature = (pubKey: string): CLPublicKeyTag => {
   const signature = pubKey.substring(0, 2);
 
@@ -109,4 +100,8 @@ export function validateAddress(address: string): { isValid: boolean } {
   } catch (err) {
     return { isValid: false };
   }
+}
+
+export function getPublicKeyFromCasperAddress(address: string): string {
+  return address.substring(2);
 }

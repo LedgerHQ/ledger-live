@@ -7,15 +7,16 @@ import { getCryptoCurrencyById } from "../../currencies";
 import { genericTestDestination, pickSiblings } from "../../bot/specs";
 import type { AppSpec } from "../../bot/types";
 import { acceptTransaction } from "./speculos-deviceActions";
+import { MINIMUM_VALID_AMOUNT } from "./consts";
 
-const MIN_SAFE = new BigNumber(100000);
+const MIN_SAFE = new BigNumber(MINIMUM_VALID_AMOUNT);
 const maxAccount = 6;
 
 const casperSpecs: AppSpec<Transaction> = {
   name: "Casper",
   currency: getCryptoCurrencyById("casper"),
   appQuery: {
-    model: DeviceModelId.nanoSP,
+    model: DeviceModelId.nanoS,
     appName: "casper",
   },
   genericDeviceAction: acceptTransaction,
@@ -26,14 +27,13 @@ const casperSpecs: AppSpec<Transaction> = {
   },
   mutations: [
     {
-      name: "Send 50%~",
+      name: "Send Minimum",
       maxRun: 1,
       testDestination: genericTestDestination,
       transaction: ({ account, siblings, bridge }) => {
         const sibling = pickSiblings(siblings, maxAccount);
-        let amount = account.spendableBalance
-          .div(1.9 + 0.2 * Math.random())
-          .integerValue();
+        // let amount = account.spendableBalance.div(2).integerValue();
+        let amount = new BigNumber(MINIMUM_VALID_AMOUNT);
 
         if (!sibling.used && amount.lt(MIN_SAFE)) {
           invariant(
