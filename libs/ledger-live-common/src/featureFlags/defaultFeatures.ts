@@ -158,4 +158,12 @@ export const defaultFeatures: DefaultFeatures = {
       },
     },
   },
+  firebaseEnvironmentReadOnly: {
+    enabled: false,
+    params: {
+      project: "n/a (Firebase project could not be reached)",
+      comment:
+        "Do not modify this configuration. This is just a read-only helper to display the targeted Firebase environment in Ledger Live. The value of this flag has NO functional impact.",
+    },
+  },
 };
