@@ -35,7 +35,7 @@ export const denominate = (parameters: DenominateType) => {
     denomination = 18,
     decimals = 2,
     showLastNonZeroDecimal: boolean,
-    addCommas: boolean,
+    addCommas: boolean
   ) => {
     const showLastNonZeroDecimalCheck =
       typeof showLastNonZeroDecimal !== "undefined"
@@ -89,7 +89,7 @@ export const denominate = (parameters: DenominateType) => {
 
     const allDecimalsZero = array
       .slice(array.indexOf(".") + 1)
-      .every(digit => digit.toString() === "0");
+      .every((digit) => digit.toString() === "0");
 
     const string = array.join("");
 
@@ -105,6 +105,6 @@ export const denominate = (parameters: DenominateType) => {
     denomination,
     decimals,
     showLastNonZeroDecimal,
-    addCommas,
+    addCommas
   );
 };
