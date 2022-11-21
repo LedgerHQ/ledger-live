@@ -3,7 +3,7 @@ import { StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useTheme } from "@react-navigation/native";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
-import { createAction } from "@ledgerhq/live-common/hw/actions/app";
+import { AppResult, createAction } from "@ledgerhq/live-common/hw/actions/app";
 import connectApp from "@ledgerhq/live-common/hw/connectApp";
 import { TrackScreen } from "../../analytics";
 import SelectDevice from "../../components/SelectDevice";
@@ -39,6 +39,17 @@ export default function DeviceConnect({ navigation, route }: NavigationProps) {
     }
   }, [navigation]);
 
+  const handleSuccess = useCallback(
+    (result: AppResult) => {
+      onSuccess(result);
+      // Resets the device to avoid having
+      // the bottom modal popping up again
+      setDevice(undefined);
+      onDone();
+    },
+    [onDone, onSuccess],
+  );
+
   const handleClose = useCallback(() => {
     onClose();
     onDone();
@@ -61,20 +72,17 @@ export default function DeviceConnect({ navigation, route }: NavigationProps) {
         <SkipSelectDevice onResult={setDevice} />
         <SelectDevice onSelect={setDevice} />
       </NavigationScrollView>
-
-      {device && (
-        <DeviceActionModal
-          action={action}
-          device={device}
-          onResult={onSuccess}
-          onClose={handleClose}
-          onError={onError}
-          request={{
-            appName,
-          }}
-          analyticsPropertyFlow={"device connect"}
-        />
-      )}
+      <DeviceActionModal
+        action={action}
+        device={device}
+        onResult={handleSuccess}
+        onClose={handleClose}
+        onError={onError}
+        request={{
+          appName,
+        }}
+        analyticsPropertyFlow={"device connect"}
+      />
     </SafeAreaView>
   );
 }
