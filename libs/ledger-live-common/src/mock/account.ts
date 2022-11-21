@@ -406,11 +406,11 @@ export function genAccount(
         toAmount: new BigNumber("2000"),
       })),
     balanceHistoryCache: emptyHistoryCache,
-    nfts: withNft
-      ? Array(10)
-          .fill(null)
-          .map(() => createFixtureNFT(accountId, currency))
-      : undefined,
+    ...(withNft && {
+      nfts: Array(10)
+        .fill(null)
+        .map(() => createFixtureNFT(accountId, currency)),
+    }),
   };
 
   if (
