@@ -7,7 +7,7 @@ import styled from "styled-components";
 
 import { UserRefusedOnDevice } from "@ledgerhq/errors";
 import { Account, AccountLike, SignedOperation, Operation } from "@ledgerhq/types-live";
-import { Currency } from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { getEnv } from "@ledgerhq/live-common/env";
 import {
@@ -155,11 +155,14 @@ export function WebView({ manifest, onClose, inputs = {}, config }: Props) {
         return new Promise((resolve, reject) => {
           // handle no curencies selected case
           const cryptoCurrencyIds = currencies.map(({ id }) => id);
-          let currencyList;
 
+          let currencyList: CryptoCurrency[] = [];
           // if single currency available redirect to select account directly
           if (cryptoCurrencyIds.length === 1) {
-            currencyList = [findCryptoCurrencyById(cryptoCurrencyIds[0])];
+            const currency = findCryptoCurrencyById(cryptoCurrencyIds[0]);
+            if (currency) {
+              currencyList = [currency];
+            }
 
             if (!currencyList[0]) {
               tracking.requestAccountFail(manifest);
@@ -175,13 +178,13 @@ export function WebView({ manifest, onClose, inputs = {}, config }: Props) {
           setDrawer(
             SelectAccountAndCurrencyDrawer,
             {
-              accounts$,
-              currencies: currencyList,
+              currencies: currencyList.map(c => c.id),
               onAccountSelected: (account: Account, parentAccount: Account | undefined) => {
                 setDrawer();
                 tracking.requestAccountSuccess(manifest);
                 resolve(accountToWalletAPIAccount(account, parentAccount));
               },
+              accounts$,
             },
             {
               onRequestClose: () => {

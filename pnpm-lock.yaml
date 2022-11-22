@@ -13,24 +13,24 @@ overrides:
   remove-flow-types-loader>loader-utils: '*'
 
 patchedDependencies:
-  react-native-fast-crypto@2.2.0:
-    hash: jdmv3zyvsaug2f6l23zgrmwdli
-    path: patches/react-native-fast-crypto@2.2.0.patch
   react-native-video@5.2.0:
     hash: lojvl6twgoj4rxeqeytmq4uduq
     path: patches/react-native-video@5.2.0.patch
-  react-native-image-crop-tools@1.6.2:
-    hash: ykxjy5s7xujdxmsgrwxo5mh3y4
-    path: patches/react-native-image-crop-tools@1.6.2.patch
-  rn-fetch-blob@0.12.0:
-    hash: n5yzdsrxz654upecs5xliebtmm
-    path: patches/rn-fetch-blob@0.12.0.patch
   react-native-os@1.2.6:
     hash: 2e25ffb547hjiczrnsjhxl6geu
     path: patches/react-native-os@1.2.6.patch
+  rn-fetch-blob@0.12.0:
+    hash: n5yzdsrxz654upecs5xliebtmm
+    path: patches/rn-fetch-blob@0.12.0.patch
   react-native-tcp@4.0.0:
     hash: frdjcnsdohx4blxdmaawwvdihy
     path: patches/react-native-tcp@4.0.0.patch
+  react-native-image-crop-tools@1.6.2:
+    hash: ykxjy5s7xujdxmsgrwxo5mh3y4
+    path: patches/react-native-image-crop-tools@1.6.2.patch
+  react-native-fast-crypto@2.2.0:
+    hash: jdmv3zyvsaug2f6l23zgrmwdli
+    path: patches/react-native-fast-crypto@2.2.0.patch
 
 importers:
 
@@ -11257,10 +11257,10 @@ packages:
       node-notifier:
         optional: true
     dependencies:
-      '@jest/console': 28.1.0
-      '@jest/reporters': 28.1.0
-      '@jest/test-result': 28.1.0
-      '@jest/transform': 28.1.0
+      '@jest/console': 28.1.3
+      '@jest/reporters': 28.1.3
+      '@jest/test-result': 28.1.3
+      '@jest/transform': 28.1.3
       '@jest/types': 28.1.3
       '@types/node': 17.0.32
       ansi-escapes: 4.3.2
@@ -11277,7 +11277,7 @@ packages:
       jest-resolve-dependencies: 28.1.0
       jest-runner: 28.1.0
       jest-runtime: 28.1.0
-      jest-snapshot: 28.1.0
+      jest-snapshot: 28.1.3
       jest-util: 28.1.0
       jest-validate: 28.1.0
       jest-watcher: 28.1.0
@@ -11491,7 +11491,7 @@ packages:
     engines: {node: ^12.13.0 || ^14.15.0 || ^16.10.0 || >=17.0.0}
     dependencies:
       expect: 28.1.0
-      jest-snapshot: 28.1.0
+      jest-snapshot: 28.1.3
     transitivePeerDependencies:
       - metro
       - supports-color
@@ -11680,44 +11680,6 @@ packages:
       - supports-color
     dev: false
 
-  /@jest/reporters/28.1.0:
-    resolution: {integrity: sha512-qxbFfqap/5QlSpIizH9c/bFCDKsQlM4uAKSOvZrP+nIdrjqre3FmKzpTtYyhsaVcOSNK7TTt2kjm+4BJIjysFA==}
-    engines: {node: ^12.13.0 || ^14.15.0 || ^16.10.0 || >=17.0.0}
-    peerDependencies:
-      node-notifier: ^8.0.1 || ^9.0.0 || ^10.0.0
-    peerDependenciesMeta:
-      node-notifier:
-        optional: true
-    dependencies:
-      '@bcoe/v8-coverage': 0.2.3
-      '@jest/console': 28.1.0
-      '@jest/test-result': 28.1.0
-      '@jest/transform': 28.1.0
-      '@jest/types': 28.1.3
-      '@jridgewell/trace-mapping': 0.3.13
-      '@types/node': 17.0.32
-      chalk: 4.1.2
-      collect-v8-coverage: 1.0.1
-      exit: 0.1.2
-      glob: 7.2.3
-      graceful-fs: 4.2.10
-      istanbul-lib-coverage: 3.2.0
-      istanbul-lib-instrument: 5.2.0
-      istanbul-lib-report: 3.0.0
-      istanbul-lib-source-maps: 4.0.1
-      istanbul-reports: 3.1.4
-      jest-util: 28.1.0
-      jest-worker: 28.1.0
-      slash: 3.0.0
-      string-length: 4.0.2
-      strip-ansi: 6.0.1
-      terminal-link: 2.1.1
-      v8-to-istanbul: 9.0.0
-    transitivePeerDependencies:
-      - metro
-      - supports-color
-    dev: true
-
   /@jest/reporters/28.1.3:
     resolution: {integrity: sha512-JuAy7wkxQZVNU/V6g9xKzCGC5LVXx9FDcABKsSXp5MiKPEE2144a/vXTEDoyzjUpZKfVwp08Wqg5A4WfTMAzjg==}
     engines: {node: ^12.13.0 || ^14.15.0 || ^16.10.0 || >=17.0.0}
@@ -11794,13 +11756,6 @@ packages:
     transitivePeerDependencies:
       - metro
       - supports-color
-    dev: true
-
-  /@jest/schemas/28.0.2:
-    resolution: {integrity: sha512-YVDJZjd4izeTDkij00vHHAymNXQ6WWsdChFRK86qck6Jpr3DCL5W3Is3vslviRlP+bLuMYRLbdp98amMvqudhA==}
-    engines: {node: ^12.13.0 || ^14.15.0 || ^16.10.0 || >=17.0.0}
-    dependencies:
-      '@sinclair/typebox': 0.23.5
     dev: true
 
   /@jest/schemas/28.1.3:
@@ -12138,18 +12093,6 @@ packages:
       '@types/node': 17.0.32
       '@types/yargs': 16.0.4
       chalk: 4.1.2
-
-  /@jest/types/28.1.0:
-    resolution: {integrity: sha512-xmEggMPr317MIOjjDoZ4ejCSr9Lpbt/u34+dvc99t7DS8YirW5rwZEhzKPC2BMUFkUhI48qs6qLUSGw5FuL0GA==}
-    engines: {node: ^12.13.0 || ^14.15.0 || ^16.10.0 || >=17.0.0}
-    dependencies:
-      '@jest/schemas': 28.0.2
-      '@types/istanbul-lib-coverage': 2.0.4
-      '@types/istanbul-reports': 3.0.1
-      '@types/node': 17.0.32
-      '@types/yargs': 17.0.10
-      chalk: 4.1.2
-    dev: true
 
   /@jest/types/28.1.3:
     resolution: {integrity: sha512-RyjiyMUZrKz/c+zlMFO1pm70DcIlST8AeWTkoUdZevew44wcNZQHsEVOiCVtgVnlFFD82FPaXycys58cf2muVQ==}
@@ -15013,10 +14956,6 @@ packages:
 
   /@sideway/pinpoint/2.0.0:
     resolution: {integrity: sha512-RNiOoTPkptFtSVzQevY/yWtZwf/RxyVnPy/OcA9HBM3MlGDnBEYL5B41H0MTn0Uec8Hi+2qUtTfG2WWZBmMejQ==}
-
-  /@sinclair/typebox/0.23.5:
-    resolution: {integrity: sha512-AFBVi/iT4g20DHoujvMH1aEDn8fGJh4xsRGCP6d8RpLPMqsNPvW01Jcn0QysXTsg++/xj25NmJsGyH9xug/wKg==}
-    dev: true
 
   /@sinclair/typebox/0.24.20:
     resolution: {integrity: sha512-kVaO5aEFZb33nPMTZBxiPEkY+slxiPtqC7QX8f9B3eGOMBvEfuMfxp9DSTTCsRJPumPKjrge4yagyssO4q6qzQ==}
@@ -22758,21 +22697,11 @@ packages:
       '@types/babel__core': 7.1.19
       '@types/babel__traverse': 7.17.1
 
-  /babel-plugin-jest-hoist/28.0.2:
-    resolution: {integrity: sha512-Kizhn/ZL+68ZQHxSnHyuvJv8IchXD62KQxV77TBDV/xoBFBOfgRAk97GNs6hXdTTCiVES9nB2I6+7MXXrk5llQ==}
-    engines: {node: ^12.13.0 || ^14.15.0 || ^16.10.0 || >=17.0.0}
-    dependencies:
-      '@babel/template': 7.18.10
-      '@babel/types': 7.18.10
-      '@types/babel__core': 7.1.19
-      '@types/babel__traverse': 7.17.1
-    dev: true
-
   /babel-plugin-jest-hoist/28.1.3:
     resolution: {integrity: sha512-Ys3tUKAmfnkRUpPdpa98eYrAR0nV+sSFUZZEGuQ2EbFd1y4SOLtD5QDNHAq+bb9a+bbXvYQC4b+ID/THIMcU6Q==}
     engines: {node: ^12.13.0 || ^14.15.0 || ^16.10.0 || >=17.0.0}
     dependencies:
-      '@babel/template': 7.16.7
+      '@babel/template': 7.18.10
       '@babel/types': 7.18.10
       '@types/babel__core': 7.1.19
       '@types/babel__traverse': 7.17.1
@@ -23220,7 +23149,7 @@ packages:
       '@babel/core': ^7.0.0
     dependencies:
       '@babel/core': 7.18.10
-      babel-plugin-jest-hoist: 28.0.2
+      babel-plugin-jest-hoist: 28.1.3
       babel-preset-current-node-syntax: 1.0.1_@babel+core@7.18.10
     dev: true
 
@@ -36210,7 +36139,7 @@ packages:
       jest-matcher-utils: 28.1.0
       jest-message-util: 28.1.0
       jest-runtime: 28.1.0
-      jest-snapshot: 28.1.0
+      jest-snapshot: 28.1.3
       jest-util: 28.1.0
       pretty-format: 28.1.3
       slash: 3.0.0
@@ -36343,7 +36272,7 @@ packages:
         optional: true
     dependencies:
       '@jest/core': 28.1.0
-      '@jest/test-result': 28.1.0
+      '@jest/test-result': 28.1.3
       '@jest/types': 28.1.3
       chalk: 4.1.2
       exit: 0.1.2
@@ -37610,7 +37539,7 @@ packages:
     engines: {node: ^12.13.0 || ^14.15.0 || ^16.10.0 || >=17.0.0}
     dependencies:
       jest-regex-util: 28.0.2
-      jest-snapshot: 28.1.0
+      jest-snapshot: 28.1.3
     transitivePeerDependencies:
       - metro
       - supports-color
@@ -37956,7 +37885,7 @@ packages:
       jest-mock: 28.1.0
       jest-regex-util: 28.0.2
       jest-resolve: 28.1.0
-      jest-snapshot: 28.1.0
+      jest-snapshot: 28.1.3
       jest-util: 28.1.0
       slash: 3.0.0
       strip-bom: 4.0.0
@@ -38096,38 +38025,6 @@ packages:
       - metro
       - supports-color
     dev: false
-
-  /jest-snapshot/28.1.0:
-    resolution: {integrity: sha512-ex49M2ZrZsUyQLpLGxQtDbahvgBjlLPgklkqGM0hq/F7W/f8DyqZxVHjdy19QKBm4O93eDp+H5S23EiTbbUmHw==}
-    engines: {node: ^12.13.0 || ^14.15.0 || ^16.10.0 || >=17.0.0}
-    dependencies:
-      '@babel/core': 7.18.10
-      '@babel/generator': 7.18.12
-      '@babel/plugin-syntax-typescript': 7.17.10_@babel+core@7.18.10
-      '@babel/traverse': 7.18.11
-      '@babel/types': 7.18.10
-      '@jest/expect-utils': 28.1.0
-      '@jest/transform': 28.1.0
-      '@jest/types': 28.1.3
-      '@types/babel__traverse': 7.17.1
-      '@types/prettier': 2.6.0
-      babel-preset-current-node-syntax: 1.0.1_@babel+core@7.18.10
-      chalk: 4.1.2
-      expect: 28.1.0
-      graceful-fs: 4.2.10
-      jest-diff: 28.1.0
-      jest-get-type: 28.0.2
-      jest-haste-map: 28.1.0
-      jest-matcher-utils: 28.1.0
-      jest-message-util: 28.1.0
-      jest-util: 28.1.0
-      natural-compare: 1.4.0
-      pretty-format: 28.1.3
-      semver: 7.3.7
-    transitivePeerDependencies:
-      - metro
-      - supports-color
-    dev: true
 
   /jest-snapshot/28.1.3:
     resolution: {integrity: sha512-4lzMgtiNlc3DU/8lZfmqxN3AYD6GGLbl+72rdBpXvcV+whX7mDrREzkPdp2RnmfIiWBg1YbuFSkXduF2JcafJg==}

@@ -61,11 +61,11 @@ const HeaderContainer: ThemedComponent<any> = styled.div`
 `;
 
 type SelectAccountAndCurrencyDrawerProps = {
-  accounts$?: Observable<WalletAPIAccount[]>,
   onClose: () => void,
   currencies?: string[],
   includeTokens?: boolean,
   onAccountSelected: (account: AccountLike, parentAccount?: Account) => void,
+  accounts$?: Observable<WalletAPIAccount[]>,
 };
 
 const SearchInputContainer = styled.div`
@@ -75,7 +75,7 @@ const SearchInputContainer = styled.div`
 
 const MemoizedSelectAccountAndCurrencyDrawer = memo<SelectAccountAndCurrencyDrawerProps>(
   function SelectAccountAndCurrencyDrawer(props: SelectAccountAndCurrencyDrawerProps) {
-    const { currencies, includeTokens, onAccountSelected, onClose } = props;
+    const { currencies, includeTokens, onAccountSelected, onClose, accounts$ } = props;
 
     const { t } = useTranslation();
 
@@ -99,6 +99,7 @@ const MemoizedSelectAccountAndCurrencyDrawer = memo<SelectAccountAndCurrencyDraw
         setDrawer(
           SelectAccountDrawer,
           {
+            accounts$,
             currency,
             onAccountSelected,
             onRequestBack: () =>
@@ -111,7 +112,7 @@ const MemoizedSelectAccountAndCurrencyDrawer = memo<SelectAccountAndCurrencyDraw
           },
         );
       },
-      [onAccountSelected, props, onClose],
+      [onAccountSelected, props, onClose, accounts$],
     );
 
     if (cryptoCurrencies.length === 1) {

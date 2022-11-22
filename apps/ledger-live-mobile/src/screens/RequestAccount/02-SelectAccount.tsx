@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useCallback, useMemo } from "react";
 import {
   View,
   StyleSheet,
@@ -11,8 +11,7 @@ import type { Account, AccountLike, SubAccount } from "@ledgerhq/types-live";
 import { useSelector } from "react-redux";
 import { CompositeScreenProps, useTheme } from "@react-navigation/native";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { Observable } from "@ledgerhq/wallet-api-server";
-import { WalletAPIAccount } from "@ledgerhq/live-common/wallet-api/types";
+import { useGetAccountIds } from "@ledgerhq/live-common/wallet-api/react";
 import { accountsByCryptoCurrencyScreenSelector } from "../../reducers/accounts";
 import { TrackScreen } from "../../analytics";
 import LText from "../../components/LText";
@@ -99,37 +98,6 @@ const List = ({
       />
     </>
   );
-};
-
-const useGetAccountIds = (
-  accounts$: Observable<WalletAPIAccount[]> | undefined,
-) => {
-  const [accounts, setAccounts] = useState<WalletAPIAccount[]>([]);
-
-  useEffect(() => {
-    if (!accounts$) {
-      return undefined;
-    }
-
-    const subscription = accounts$.subscribe(walletAccounts => {
-      setAccounts(walletAccounts);
-    });
-
-    return () => {
-      subscription.unsubscribe();
-    };
-  }, [accounts$]);
-
-  return useMemo(() => {
-    if (!accounts$) {
-      return undefined;
-    }
-
-    return accounts.reduce((accountIds, account) => {
-      accountIds.set(account.id, true);
-      return accountIds;
-    }, new Map<string, boolean>());
-  }, [accounts, accounts$]);
 };
 
 function SelectAccount({ navigation, route }: Props) {
