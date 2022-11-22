@@ -153,7 +153,6 @@ export default function Default() {
   useListenToHidDevices();
   useDeeplink();
   useUSBTroubleshooting();
-  useStoryly();
 
   useProviders(); // prefetch data from swap providers here
 
