@@ -53,7 +53,7 @@ const ProviderIcon = ({ name, size = "S", boxed = false }: Props): JSX.Element |
     }) as React.ElementType;
     return (
       <FlexBox width={sizes[size]} height={sizes[size]} borderRadius={8} overflow={"hidden"}>
-        <BoxedComponent size={sizes[size]}/>
+        <BoxedComponent size={sizes[size]} />
       </FlexBox>
     );
   }
