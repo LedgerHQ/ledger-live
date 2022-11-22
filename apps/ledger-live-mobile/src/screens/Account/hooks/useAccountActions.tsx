@@ -96,6 +96,12 @@ export default function useAccountActions({
     [account, parentAccount, decorators],
   );
 
+  const canSend = useMemo(() => currency?.id !== "avalanchepchain", [currency]);
+  const canReceive = useMemo(
+    () => currency?.id !== "avalanchepchain",
+    [currency],
+  );
+
   const actionButtonSwap: ActionButtonEvent = {
     id: "swap",
     navigationParams: [
@@ -212,8 +218,8 @@ export default function useAccountActions({
     ...(availableOnSwap ? [actionButtonSwap] : []),
     ...(!readOnlyModeEnabled && canBeBought ? [actionButtonBuy] : []),
     ...(!readOnlyModeEnabled && canBeSold ? [actionButtonSell] : []),
-    ...(!readOnlyModeEnabled ? [SendAction] : []),
-    ReceiveAction,
+    ...(!readOnlyModeEnabled && canSend ? [SendAction] : []),
+    ...(canReceive ? [ReceiveAction] : []),
   ];
   const secondaryActions = [
     ...baseActions,
