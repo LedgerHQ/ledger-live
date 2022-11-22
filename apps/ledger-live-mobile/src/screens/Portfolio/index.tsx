@@ -51,7 +51,6 @@ import { WalletTabNavigatorStackParamList } from "../../components/RootNavigator
 import AddAccountsModal from "../AddAccounts/AddAccountsModal";
 import CollapsibleHeaderFlatList from "../../components/WalletTab/CollapsibleHeaderFlatList";
 import globalSyncRefreshControl from "../../components/globalSyncRefreshControl";
-import useDynamicContent from "../../dynamicContent/dynamicContent";
 
 export { default as PortfolioTabIcon } from "./TabIcon";
 
@@ -143,10 +142,6 @@ function PortfolioScreen({ navigation }: NavigationProps) {
   );
 
   const postOnboardingVisible = usePostOnboardingEntryPointVisibleOnWallet();
-
-  // TEST PURPOSE
-  const { walletCards } = useDynamicContent();
-  console.log("PORTFOLIO -- ", walletCards.length);
 
   const data = useMemo(
     () => [

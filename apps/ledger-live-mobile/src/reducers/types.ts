@@ -18,10 +18,7 @@ import { Transaction } from "@ledgerhq/live-common/generated/types";
 import type { EventTrigger, DataOfUser } from "../logic/notifications";
 import type { RatingsHappyMoment, RatingsDataOfUser } from "../logic/ratings";
 import { WalletTabNavigatorStackParamList } from "../components/RootNavigator/types/WalletTabNavigator";
-import {
-  WalletContentCard,
-  AssetContentCard,
-} from "../dynamicContent/useContentCards";
+import { WalletContentCard, AssetContentCard } from "../dynamicContent/types";
 
 // === ACCOUNT STATE ===
 
