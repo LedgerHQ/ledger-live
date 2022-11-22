@@ -1,7 +1,11 @@
 import { decode, fromWords } from "bech32";
 import BigNumber from "bignumber.js";
 import type { Account } from "@ledgerhq/types-live";
-import type { Transaction, ElrondDelegation } from "./types";
+import type {
+  Transaction,
+  ElrondTransactionMode,
+  ElrondDelegation,
+} from "./types";
 
 /**
  * The human-readable-part of the bech32 addresses.
@@ -50,6 +54,11 @@ export const isValidAddress = (address: string): boolean => {
 };
 export const isSelfTransaction = (a: Account, t: Transaction): boolean => {
   return t.recipient === a.freshAddress;
+};
+
+// For some transaction modes the amount doesn't belong to the account's balance
+export const isAmountSpentFromBalance = (mode: ElrondTransactionMode) => {
+  return ["send", "delegate"].includes(mode);
 };
 
 export const computeDelegationBalance = (
