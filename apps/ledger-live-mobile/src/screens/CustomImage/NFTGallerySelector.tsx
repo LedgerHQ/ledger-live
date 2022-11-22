@@ -6,18 +6,31 @@ import { orderByLastReceived } from "@ledgerhq/live-common/nft/helpers";
 import { useSelector } from "react-redux";
 import { ProtoNFT } from "@ledgerhq/types-live";
 import { FlatList } from "react-native";
-import { useNavigation } from "@react-navigation/native";
 
 import { accountsSelector } from "../../reducers/accounts";
 import { hiddenNftCollectionsSelector } from "../../reducers/settings";
 import NftListItem from "../../components/Nft/NftListItem";
 import NftGalleryEmptyState from "../Nft/NftGallery/NftGalleryEmptyState";
 import { NavigatorName, ScreenName } from "../../const";
+import {
+  BaseComposite,
+  StackNavigatorProps,
+} from "../../components/RootNavigator/types/helpers";
+import { CustomImageNavigatorParamList } from "../../components/RootNavigator/types/CustomImageNavigator";
 
 const NB_COLUMNS = 2;
 
-const NFTGallerySelector = () => {
-  const navigation = useNavigation();
+type NavigationProps = BaseComposite<
+  StackNavigatorProps<
+    CustomImageNavigatorParamList,
+    ScreenName.CustomImageNFTGallery
+  >
+>;
+
+const NFTGallerySelector = ({ navigation, route }: NavigationProps) => {
+  const { params } = route;
+  const { device } = params;
+
   const accounts = useSelector(accountsSelector);
   const nfts = accounts.map(a => a.nfts ?? []).flat();
 
@@ -43,11 +56,11 @@ const NFTGallerySelector = () => {
         screen: ScreenName.CustomImagePreviewPreEdit,
         params: {
           nft,
-          device: null,
+          device,
         },
       });
     },
-    [navigation],
+    [navigation, device],
   );
 
   const renderItem = ({
