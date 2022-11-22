@@ -42,7 +42,7 @@ const ValidatorRow = ({
             fontWeight="semiBold"
             style={styles.validatorName}
           >
-            {validator.nodeID}
+            {isDefaultValidatorNode(validator.nodeID) ? "Ledger by Figment" : validator.nodeID}
           </Text>
         </View>
         <Text
