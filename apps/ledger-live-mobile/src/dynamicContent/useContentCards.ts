@@ -10,8 +10,8 @@ import {
   filterByPage,
   mapAsWalletContentCard,
   mapAsAssetContentCard,
-  LocationContentCard,
 } from "./dynamicContent";
+import { LocationContentCard } from "./types";
 
 const HookDynamicContentCards = () => {
   const dispatch = useDispatch();

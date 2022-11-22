@@ -39,10 +39,12 @@ export enum ScreenName {
   DebugMocks = "DebugMocks",
   DebugMockGenerateAccounts = "DebugMockGenerateAccounts",
   DebugMultiAppInstall = "DebugMultiAppInstall",
+  DebugFetchCustomImage = "DebugFetchCustomImage",
   DebugPlayground = "DebugPlayground",
   DebugSettings = "DebugSettings",
   DebugStore = "DebugStore",
   DebugEnv = "DebugEnv",
+  DebugStoryly = "DebugStoryly",
   DelegationConnectDevice = "DelegationConnectDevice",
   DelegationSelectDevice = "DelegationSelectDevice",
   DelegationSelectValidator = "DelegationSelectValidator",
@@ -436,6 +438,7 @@ export enum ScreenName {
   PostOnboardingHub = "PostOnboardingHub",
   PostOnboardingDebugScreen = "PostOnboardingDebugScreen",
   PostOnboardingMockActionScreen = "PostOnboardingMockActionScreen",
+  WalletNftGallery = "WalletNftGallery",
 }
 export enum NavigatorName {
   // Stack
@@ -517,6 +520,7 @@ export enum NavigatorName {
 
   // Tab
   Main = "Main",
+  WalletTab = "WalletTabNavigator",
   // Root
   RootNavigator = "RootNavigator",
   Discover = "Discover",

@@ -17,10 +17,8 @@ import {
 import { Transaction } from "@ledgerhq/live-common/generated/types";
 import type { EventTrigger, DataOfUser } from "../logic/notifications";
 import type { RatingsHappyMoment, RatingsDataOfUser } from "../logic/ratings";
-import {
-  WalletContentCard,
-  AssetContentCard,
-} from "../dynamicContent/useContentCards";
+import { WalletTabNavigatorStackParamList } from "../components/RootNavigator/types/WalletTabNavigator";
+import { WalletContentCard, AssetContentCard } from "../dynamicContent/types";
 
 // === ACCOUNT STATE ===
 
@@ -73,7 +71,7 @@ export type DeviceLike = {
   name: string;
   deviceInfo?: DeviceInfo;
   appsInstalled?: number;
-  modelId?: DeviceModelId;
+  modelId: DeviceModelId;
 };
 
 export type BleState = {
@@ -166,6 +164,7 @@ export type SettingsState = {
   pairExchanges: Record<string, string | null | undefined>;
   selectedTimeRange: PortfolioRange;
   orderAccounts: string;
+  hasCompletedCustomImageFlow: boolean;
   hasCompletedOnboarding: boolean;
   hasInstalledAnyApp: boolean;
   readOnlyModeEnabled: boolean;
@@ -203,13 +202,15 @@ export type SettingsState = {
   sensitiveAnalytics: boolean;
   firstConnectionHasDevice: boolean | null;
   firstConnectHasDeviceUpdated: boolean | null;
+  customImageBackup?: { hex: string; hash: string };
   notifications: NotificationsSettings;
+  walletTabNavigatorLastVisitedTab: keyof WalletTabNavigatorStackParamList;
 };
 
 export type NotificationsSettings = {
-  allowed: boolean;
-  announcements: boolean;
-  recommendations: boolean;
+  areNotificationsAllowed: boolean;
+  announcementsCategory: boolean;
+  recommendationsCategory: boolean;
 };
 
 // === WALLET CONNECT STATE ===

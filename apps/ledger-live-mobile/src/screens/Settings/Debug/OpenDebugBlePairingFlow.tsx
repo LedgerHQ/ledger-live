@@ -1,6 +1,5 @@
 import { useNavigation, useRoute } from "@react-navigation/native";
 import React, { useCallback, useState } from "react";
-import { NativeModules } from "react-native";
 import {
   BottomDrawer,
   Text,
@@ -22,6 +21,7 @@ import {
   StackNavigatorNavigation,
   StackNavigatorRoute,
 } from "../../../components/RootNavigator/types/helpers";
+import { usePromptBluetoothCallback } from "../../../logic/usePromptBluetoothCallback";
 
 const availableDeviceModelFilter = [
   "none",
@@ -57,6 +57,8 @@ export default () => {
     >();
   const { pairedDevice } = params ?? { pairedDevice: null };
 
+  const promptBluetooth = usePromptBluetoothCallback();
+
   const goToBlePairingFlow = useCallback(() => {
     setIsDrawerOpen(false);
 
@@ -68,7 +70,7 @@ export default () => {
 
     // Prompts user to enable bluetooth before navigating to the screen.
     // Not mandatory as BleDevicePairingFlow screen handles the ble requirement, but it smooths the transition
-    NativeModules.BluetoothHelperModule.prompt()
+    promptBluetooth()
       .then(() => {
         const navigateInput: NavigateInput<
           BaseNavigatorStackParamList,
@@ -101,10 +103,11 @@ export default () => {
   }, [
     params,
     navigation,
+    promptBluetooth,
+    screenName,
     chosenDeviceModelFilter,
     areKnownDevicesDisplayed,
     onSuccessAddToKnownDevices,
-    screenName,
   ]);
 
   const onPress = useCallback(() => {

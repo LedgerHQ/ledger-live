@@ -1,7 +1,7 @@
 /**  Add others with union (e.g. "learn" | "market" | "foo") */
 export type FeatureId =
   | "learn"
-  | "pushNotifications"
+  | "brazePushNotifications"
   | "llmNewDeviceSelection"
   | "llmUsbFirmwareUpdate"
   | "ratings"
@@ -32,8 +32,11 @@ export type FeatureId =
   | "disableNftSend"
   | "disableNftLedgerMarket"
   | "disableNftRaribleOpensea"
+  | "walletNftGallery"
   | "receiveStakingFlowConfigDesktop"
-  | "ethStakingProviders";
+  | "ethStakingProviders"
+  | "storyly"
+  | "firebaseEnvironmentReadOnly";
 
 /**  We use objects instead of direct booleans for potential future improvements
 like feature versioning etc */

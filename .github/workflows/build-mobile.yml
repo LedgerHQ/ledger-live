@@ -27,14 +27,37 @@ jobs:
         with:
           ref: develop
           fetch-depth: 0
-      - name: checkout branch
+      - name: checkout branch (PR)
+        if: ${{ github.event_name == 'pull_request' }}
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
-          git checkout ${{ github.event.pull_request.head.ref || github.event.push.base.ref }}
+          gh pr checkout ${{ github.event.pull_request.number }}
+      - name: checkout branch (not PR)
+        if: ${{ github.event_name != 'pull_request' }}
+        run: |
+          git checkout $GITHUB_SHA
       - uses: ./tools/actions/turbo-affected
         id: affected
         with:
           package: "live-mobile"
-          head-ref: ${{ github.event.pull_request.base.ref || github.event.push.base.ref || 'HEAD^' }}
+          head-ref: ${{ github.event_name == 'pull_request' && format('origin/{0}', github.event.pull_request.base.ref) || 'HEAD^' }}
+
+  # Run dummy jobs when not affected to pass the required status checks
+  dummy:
+    name: "Ledger Live Desktop Tests"
+    needs: is-affected
+    if: ${{ needs.is-affected.outputs.is-desktop-affected != 'true' }}
+    strategy:
+      matrix:
+        os:
+          - ubuntu-latest
+          - macos-latest
+          - windows-latest
+    runs-on: ubuntu-latest
+    steps:
+      - id: dummy
+        run: exit 0
 
   pr-is-fork:
     name: "Check if the PR is a fork"
@@ -155,7 +178,7 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: ${{ steps.post-version.outputs.version }}-release
-          path: ${{ github.workspace }}/apps/ledger-live-mobile/android/app/build/outputs/apk/release
+          path: ${{ github.workspace }}/apps/ledger-live-mobile/android/app/build/outputs/apk/stagingRelease
 
   build-mobile-app-android-external:
     name: "Build Ledger Live Mobile (Android)"

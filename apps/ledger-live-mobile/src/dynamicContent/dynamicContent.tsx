@@ -1,37 +1,18 @@
 import { useSelector } from "react-redux";
 import { ContentCard as BrazeContentCard } from "react-native-appboy-sdk";
+import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { useCallback, useMemo } from "react";
+import { useBrazeContentCard } from "./brazeContentCard";
 import {
   assetsCardsSelector,
   walletCardsSelector,
 } from "../reducers/dynamicContent";
-
-export enum LocationContentCard {
-  Wallet = "wallet",
-  Asset = "asset",
-}
-
-enum BackgroundType {
-  purple = "purple",
-  red = "red",
-  neutral = "neutral",
-}
-
-type ContentCard = {
-  id: string;
-  location: LocationContentCard;
-  title: string;
-  link: string;
-  image?: string;
-};
-
-export type WalletContentCard = ContentCard & {
-  tag: string;
-  background?: BackgroundType;
-};
-
-export type AssetContentCard = ContentCard & {
-  asset: string;
-};
+import {
+  AssetContentCard,
+  Background,
+  LocationContentCard,
+  WalletContentCard,
+} from "./types";
 
 export const filterByPage = (array: BrazeContentCard[], page: string) =>
   array.filter(elem => elem.extras.location === page);
@@ -39,33 +20,62 @@ export const filterByPage = (array: BrazeContentCard[], page: string) =>
 export const mapAsWalletContentCard = (card: BrazeContentCard) =>
   ({
     id: card.id,
+    tag: card.extras.tag,
     title: card.extras.title,
     location: LocationContentCard.Wallet,
     image: card.extras.image,
     link: card.extras.link,
     background:
       card.extras.image ||
-      BackgroundType[card.extras.background as BackgroundType] ||
-      BackgroundType.purple,
+      Background[card.extras.background as Background] ||
+      Background.purple,
   } as WalletContentCard);
 
 export const mapAsAssetContentCard = (card: BrazeContentCard) =>
   ({
     id: card.id,
-    title: card.extras.title,
     location: LocationContentCard.Asset,
-    image: card.extras.image,
     link: card.extras.link,
-    asset: card.extras.asset,
+    cta: card.extras.cta,
+    assets: card.extras.assets,
   } as AssetContentCard);
 
 const useDynamicContent = () => {
   // const dynamicContentFeature = useFeature("dynamicContent");
 
+  const { logClickCard, logDismissCard, logImpressionCard } =
+    useBrazeContentCard();
+
   const assetsCards = useSelector(assetsCardsSelector);
   const walletCards = useSelector(walletCardsSelector);
 
-  return { walletCards, assetsCards };
+  const hiddenCards: string[] = useMemo(() => [], []);
+
+  const getAssetCardByIdOrTicker = useCallback(
+    (currency: CryptoOrTokenCurrency): AssetContentCard | undefined => {
+      if (!currency) {
+        return undefined;
+      }
+
+      return assetsCards
+        .filter((ac: AssetContentCard) => !hiddenCards.includes(ac.id))
+        .find(
+          (ac: AssetContentCard) =>
+            ac.assets.toLowerCase().includes(currency.id.toLowerCase()) ||
+            ac.assets.toUpperCase().includes(currency.ticker.toUpperCase()),
+        );
+    },
+    [assetsCards, hiddenCards],
+  );
+
+  return {
+    walletCards,
+    assetsCards,
+    getAssetCardByIdOrTicker,
+    logClickCard,
+    logDismissCard,
+    logImpressionCard,
+  };
 };
 
 export default useDynamicContent;

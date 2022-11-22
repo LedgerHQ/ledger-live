@@ -16,6 +16,7 @@ import DebugFeatureFlags from "../../screens/FeatureFlagsSettings";
 import DebugIcons from "../../screens/DebugIcons";
 import DebugLottie from "../../screens/DebugLottie";
 import DebugMultiAppInstall from "../../screens/DebugMultiAppInstall";
+import DebugFetchCustomImage from "../../screens/DebugFetchCustomImage";
 import DebugLogs from "../../screens/DebugLogs";
 import DebugStore from "../../screens/DebugStore";
 import DebugEnv from "../../screens/DebugEnv";
@@ -47,6 +48,7 @@ import HelpButton from "../../screens/Settings/HelpButton";
 import OnboardingStepLanguage from "../../screens/Onboarding/steps/language";
 import { GenerateMockAccountSelectScreen } from "../../screens/Settings/Debug/GenerateMockAccountsSelect";
 import HiddenNftCollections from "../../screens/Settings/Accounts/HiddenNftCollections";
+import DebugStoryly from "../../screens/DebugStoryly";
 import { useNoNanoBuyNanoWallScreenOptions } from "../../context/NoNanoBuyNanoWall";
 import PostOnboardingDebugScreen from "../../screens/PostOnboarding/PostOnboardingDebugScreen";
 import { SettingsNavigatorStackParamList } from "./types/SettingsNavigator";
@@ -307,6 +309,20 @@ export default function SettingsNavigator() {
         component={DebugMultiAppInstall}
         options={{
           title: "Debug MultiAppInstall",
+        }}
+      />
+      <Stack.Screen
+        name={ScreenName.DebugFetchCustomImage}
+        component={DebugFetchCustomImage}
+        options={{
+          title: "Debug FetchCustomImage",
+        }}
+      />
+      <Stack.Screen
+        name={ScreenName.DebugStoryly}
+        component={DebugStoryly}
+        options={{
+          title: "Debug Storyly",
         }}
       />
       <Stack.Screen

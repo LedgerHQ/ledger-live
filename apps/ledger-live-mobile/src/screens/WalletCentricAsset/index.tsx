@@ -1,12 +1,17 @@
 import React, { useMemo, useState, useCallback, useEffect } from "react";
-import { FlatList, LayoutChangeEvent, ListRenderItemInfo } from "react-native";
+import {
+  FlatList,
+  LayoutChangeEvent,
+  Linking,
+  ListRenderItemInfo,
+} from "react-native";
 import Animated, {
   useAnimatedScrollHandler,
   useSharedValue,
 } from "react-native-reanimated";
 import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
-import { Box, Flex } from "@ledgerhq/native-ui";
+import { Box, Flex, CardB } from "@ledgerhq/native-ui";
 import { getCurrencyColor } from "@ledgerhq/live-common/currencies/index";
 import { isAccountEmpty } from "@ledgerhq/live-common/account/helpers";
 import { useTheme } from "styled-components/native";
@@ -42,6 +47,7 @@ import {
   BaseComposite,
   StackNavigatorProps,
 } from "../../components/RootNavigator/types/helpers";
+import useDynamicContent from "../../dynamicContent/dynamicContent";
 
 // @FIXME workarround for main tokens
 const tokenIDToMarketID = {
@@ -135,6 +141,37 @@ const AssetScreen = ({ route }: NavigationProps) => {
     }
   }, [currency, navigation]);
 
+  // Dynamic Content Part -------------------
+  const { getAssetCardByIdOrTicker, logClickCard, logImpressionCard } =
+    useDynamicContent();
+  const dynamicContentCard = getAssetCardByIdOrTicker(currency);
+
+  const onClickLink = useCallback(() => {
+    if (!dynamicContentCard) return;
+    track("contentcard_clicked", {
+      screen: dynamicContentCard.location,
+      link: dynamicContentCard.link,
+    });
+    // Notify Braze that the card has been clicked by the user
+    logClickCard(dynamicContentCard.id);
+    Linking.openURL(dynamicContentCard.link);
+  }, [dynamicContentCard, logClickCard]);
+
+  const onPressDismiss = useCallback(() => {
+    track("contentcard_dismissed", {
+      screen: dynamicContentCard?.location,
+    });
+  }, [dynamicContentCard]);
+
+  useEffect(() => {
+    if (dynamicContentCard) {
+      // Notify Braze that the card has been displayed to the user
+      logImpressionCard(dynamicContentCard.id);
+    }
+  }, [dynamicContentCard, logImpressionCard]);
+
+  // Dynamic Content ---------------------------------
+
   const data = useMemo(
     () => [
       <Box mt={6} onLayout={onAssetCardLayout}>
@@ -158,6 +195,18 @@ const AssetScreen = ({ route }: NavigationProps) => {
           accounts={cryptoAccounts}
           defaultAccount={defaultAccount}
         />
+        {!!dynamicContentCard && (
+          <Flex my={6}>
+            <CardB
+              title={dynamicContentCard.title}
+              tag={dynamicContentCard.tag}
+              cta={dynamicContentCard.cta}
+              imageUrl={dynamicContentCard.image}
+              onPress={onClickLink}
+              onPressDismiss={onPressDismiss}
+            />
+          </Flex>
+        )}
         {cryptoAccountsEmpty ? (
           <Flex minHeight={220}>
             <EmptyAccountCard currencyTicker={currency.ticker} />
@@ -226,6 +275,9 @@ const AssetScreen = ({ route }: NavigationProps) => {
       selectedCoinData,
       onAddAccount,
       counterCurrency,
+      dynamicContentCard,
+      onClickLink,
+      onPressDismiss,
     ],
   );
 

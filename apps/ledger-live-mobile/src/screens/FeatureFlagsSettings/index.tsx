@@ -1,12 +1,23 @@
-import React, { useCallback, useState, useMemo } from "react";
+import React, { useCallback, useState, useMemo, useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { defaultFeatures } from "@ledgerhq/live-common/featureFlags/index";
+import {
+  defaultFeatures,
+  useFeature,
+} from "@ledgerhq/live-common/featureFlags/index";
 import type { FeatureId } from "@ledgerhq/types-live";
 
-import { BaseInput, Text, Flex, SearchInput, Icons } from "@ledgerhq/native-ui";
+import {
+  BaseInput,
+  Text,
+  Flex,
+  SearchInput,
+  Icons,
+  Tag,
+} from "@ledgerhq/native-ui";
 import { includes, lowerCase, trim } from "lodash";
 import { InputRenderLeftContainer } from "@ledgerhq/native-ui/components/Form/Input/BaseInput";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { Keyboard } from "react-native";
 import NavigationScrollView from "../../components/NavigationScrollView";
 import FeatureFlagDetails, {
   Divider,
@@ -71,13 +82,37 @@ export default function DebugFeatureFlags() {
     [filteredFlags, focusedName],
   );
 
-  const insets = useSafeAreaInsets();
+  const config = useFeature("firebaseEnvironmentReadOnly");
+  const project = config?.params?.project;
+
+  const [keyboardVisible, setKeyboardVisible] = useState(false);
+  useEffect(() => {
+    const listenerShow = Keyboard.addListener("keyboardDidShow", () =>
+      setKeyboardVisible(true),
+    );
+    const listenerHide = Keyboard.addListener("keyboardDidHide", () =>
+      setKeyboardVisible(false),
+    );
+    return () => {
+      listenerShow.remove();
+      listenerHide.remove();
+    };
+  }, []);
+
+  const additionalInfo = <Alert title={addFlagHint} type="hint" />;
 
   return (
-    <>
+    <SafeAreaView edges={["bottom"]} style={{ flex: 1 }}>
       <NavigationScrollView>
         <Flex p={16}>
-          <Text mb={6}>{t("settings.debug.featureFlagsTitle")}</Text>
+          <Text mb={3}>{t("settings.debug.firebaseProject")}</Text>
+          <Tag mb={6} uppercase={false} type="color" alignSelf={"flex-start"}>
+            {project}
+          </Tag>
+          <Alert type="hint">
+            <Text>{t("settings.debug.featureFlagsTitle")}</Text>
+          </Alert>
+          <Flex mt={3} />
           <SearchInput
             value={searchInput}
             placeholder="Search flag"
@@ -103,14 +138,19 @@ export default function DebugFeatureFlags() {
           </Flex>
           <Divider />
           {filteredFlags.length === 0 ? (
-            <Text>{`No flag matching "${searchInput}"`}</Text>
+            <>
+              <Text>{`No flag matching "${searchInput}"`}</Text>
+              {keyboardVisible ? additionalInfo : null}
+            </>
           ) : null}
           {content}
         </Flex>
       </NavigationScrollView>
-      <Flex px={16} mt={3} mb={insets.bottom}>
-        <Alert title={addFlagHint} type="hint" />
-      </Flex>
-    </>
+      {keyboardVisible ? null : (
+        <Flex px={16} mt={3}>
+          {additionalInfo}
+        </Flex>
+      )}
+    </SafeAreaView>
   );
 }
