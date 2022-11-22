@@ -2,9 +2,10 @@
 
 import React, { useCallback } from "react";
 import { useTranslation, Trans } from "react-i18next";
+import styled from "styled-components";
 import { denominate } from "@ledgerhq/live-common/families/elrond/helpers/denominate";
 import { SyncOneAccountOnMount } from "@ledgerhq/live-common/bridge/react/index";
-import styled from "styled-components";
+import { getAccountUnit } from "@ledgerhq/live-common/account/index";
 
 import TrackPage from "~/renderer/analytics/TrackPage";
 import Box from "~/renderer/components/Box";
@@ -14,7 +15,6 @@ import ErrorDisplay from "~/renderer/components/ErrorDisplay";
 import RetryButton from "~/renderer/components/RetryButton";
 import SuccessDisplay from "~/renderer/components/SuccessDisplay";
 
-import { constants } from "~/renderer/families/elrond/constants";
 import { OperationDetails } from "~/renderer/drawers/OperationDetails";
 import { setDrawer } from "~/renderer/drawers/Provider";
 
@@ -30,7 +30,7 @@ const Container = styled(Box).attrs(() => ({
 `;
 
 const StepConfirmation = (props: StepProps) => {
-  const { optimisticOperation, error, signed, transaction, validators } = props;
+  const { optimisticOperation, error, signed, account, transaction, validators } = props;
   const { t } = useTranslation();
 
   if (optimisticOperation) {
@@ -41,7 +41,7 @@ const StepConfirmation = (props: StepProps) => {
     const amount = `${denominate({
       input: String(transaction.amount),
       decimals: 4,
-    })} ${constants.egldLabel}`;
+    })} ${getAccountUnit(account).code || "EGLD"}`;
 
     return (
       <Container>

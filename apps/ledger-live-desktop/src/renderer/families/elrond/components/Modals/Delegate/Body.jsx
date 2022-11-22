@@ -22,8 +22,7 @@ import GenericStepConnectDevice from "~/renderer/modals/Send/steps/GenericStepCo
 import StepConfirmation, { StepConfirmationFooter } from "./steps/StepConfirmation";
 import Track from "~/renderer/analytics/Track";
 import logger from "~/logger/logger";
-
-import { constants } from "../../../constants";
+import { ELROND_LEDGER_VALIDATOR_ADDRESS } from "@ledgerhq/live-common/families/elrond/constants";
 
 import type { AccountBridge } from "@ledgerhq/types-live";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
@@ -103,7 +102,7 @@ const Body = (props: Props) => {
   const dispatch = useDispatch();
 
   const defaultValidator: ValidatorType | undefined = params.validators.find(
-    validator => validator.contract === constants.figment,
+    validator => validator.contract === ELROND_LEDGER_VALIDATOR_ADDRESS,
   );
 
   const {

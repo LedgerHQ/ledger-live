@@ -14,9 +14,13 @@ import Logo from "~/renderer/icons/Logo";
 import Box from "~/renderer/components/Box";
 import Text from "~/renderer/components/Text";
 
-import { constants } from "~/renderer/families/elrond/constants";
 import { openURL } from "~/renderer/linking";
 import { urls } from "~/config/urls";
+
+import {
+  ELROND_EXPLORER_URL,
+  ELROND_LEDGER_VALIDATOR_ADDRESS,
+} from "@ledgerhq/live-common/families/elrond/constants";
 
 import type { Unit } from "@ledgerhq/types-cryptoassets";
 import type { ValidatorType } from "~/renderer/families/elrond/types";
@@ -57,15 +61,15 @@ const ValidatorItem = (props: ValidatorItemType) => {
 
   const onExternalLink = useCallback((address: string) => {
     openURL(
-      address === constants.figment
+      address === ELROND_LEDGER_VALIDATOR_ADDRESS
         ? urls.ledgerValidator
-        : `${constants.explorer}/providers/${address}`,
+        : `${ELROND_EXPLORER_URL}/providers/${address}`,
     );
   }, []);
 
   const icon = useMemo(
     () =>
-      contract === constants.figment ? (
+      contract === ELROND_LEDGER_VALIDATOR_ADDRESS ? (
         <LedgerLiveLogo width={24} height={24} icon={<Logo size={15} />} />
       ) : (
         <FirstLetterIcon label={identity.name || contract} />

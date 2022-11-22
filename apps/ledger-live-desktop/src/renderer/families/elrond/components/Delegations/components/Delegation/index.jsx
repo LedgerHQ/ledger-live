@@ -5,7 +5,7 @@ import { BigNumber } from "bignumber.js";
 import { Trans } from "react-i18next";
 import { useDispatch } from "react-redux";
 import { denominate } from "@ledgerhq/live-common/families/elrond/helpers/denominate";
-
+import { getAccountUnit } from "@ledgerhq/live-common/account/index";
 import Box from "~/renderer/components/Box/Box";
 import CheckCircle from "~/renderer/icons/CheckCircle";
 import ToolTip from "~/renderer/components/Tooltip";
@@ -18,7 +18,11 @@ import DropDown, { DropDownItem } from "~/renderer/components/DropDownSelector";
 import { Ellipsis, Column, Wrapper, Divider } from "~/renderer/families/elrond/blocks/Delegation";
 import { openURL } from "~/renderer/linking";
 import { openModal } from "~/renderer/actions/modals";
-import { constants } from "~/renderer/families/elrond/constants";
+import { modals } from "~/renderer/families/elrond/modals";
+import {
+  ELROND_EXPLORER_URL,
+  ELROND_LEDGER_VALIDATOR_ADDRESS,
+} from "@ledgerhq/live-common/families/elrond/constants";
 
 import type {
   DelegationType,
@@ -60,7 +64,7 @@ type Props = DelegationType &
 
 const RenderDropdownItem = ({ item, isActive }: RenderDropdownItemType) => (
   <Fragment>
-    {item.key === constants.modals.claim && item.divider && <Divider />}
+    {item.key === modals.claim && item.divider && <Divider />}
 
     <ToolTip content={item.tooltip} containerStyle={{ width: "100%" }}>
       <DropDownItem disabled={item.disabled} isActive={isActive}>
@@ -97,7 +101,7 @@ const Delegation = (props: Props) => {
     (): Array<DropDownItemType> =>
       [
         {
-          key: constants.modals.unstake,
+          key: modals.unstake,
           label: "elrond.delegation.undelegate",
           show: BigNumber(userActiveStake).gt(0),
           parameters: {
@@ -109,7 +113,7 @@ const Delegation = (props: Props) => {
           },
         },
         {
-          key: constants.modals.claim,
+          key: modals.claim,
           label: "elrond.delegation.reward",
           divider: BigNumber(userActiveStake).gt(0),
           show: BigNumber(claimableRewards).gt(0),
@@ -148,10 +152,10 @@ const Delegation = (props: Props) => {
       <Column
         strong={true}
         clickable={true}
-        onClick={() => openURL(`${constants.explorer}/providers/${contract}`)}
+        onClick={() => openURL(`${ELROND_EXPLORER_URL}/providers/${contract}`)}
       >
         <Box mr={2}>
-          {contract === constants.figment ? (
+          {contract === ELROND_LEDGER_VALIDATOR_ADDRESS ? (
             <LedgerLiveLogo width={24} height={24} icon={<Logo size={15} />} />
           ) : (
             <FirstLetterIcon label={name} />
@@ -170,11 +174,11 @@ const Delegation = (props: Props) => {
       </Column>
 
       <Column>
-        {amount} {constants.egldLabel}
+        {amount} {getAccountUnit(account).code}
       </Column>
 
       <Column>
-        {rewards} {constants.egldLabel}
+        {rewards} {getAccountUnit(account).code}
       </Column>
 
       <Column>

@@ -7,7 +7,7 @@ import { useDispatch } from "react-redux";
 import { randomizeProviders } from "@ledgerhq/live-common/families/elrond/helpers/randomizeProviders";
 import { denominate } from "@ledgerhq/live-common/families/elrond/helpers/denominate";
 
-import { constants } from "~/renderer/families/elrond/constants";
+import { modals } from "./modals";
 import { openModal } from "~/renderer/actions/modals";
 import IconCoins from "~/renderer/icons/Coins";
 
@@ -43,14 +43,14 @@ const AccountHeaderActions = (props: Props) => {
   const onClick = useCallback(() => {
     if (hasDelegations) {
       dispatch(
-        openModal(constants.modals.stake, {
+        openModal(modals.stake, {
           account,
           validators,
         }),
       );
     } else {
       dispatch(
-        openModal(constants.modals.rewards, {
+        openModal(modals.rewards, {
           account,
           validators,
         }),

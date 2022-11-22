@@ -13,9 +13,9 @@ import ScrollLoadingList from "~/renderer/components/ScrollLoadingList";
 import IconAngleDown from "~/renderer/icons/AngleDown";
 import ValidatorSearchInput from "~/renderer/components/Delegation/ValidatorSearchInput";
 
-import { constants } from "~/renderer/families/elrond/constants";
-
 import ValidatorItem from "./ValidatorItem";
+
+import { ELROND_LEDGER_VALIDATOR_ADDRESS } from "@ledgerhq/live-common/families/elrond/constants";
 
 import type { Account } from "@ledgerhq/types-live";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
@@ -88,7 +88,8 @@ const ValidatorList = (props: Props) => {
     };
 
     // Sort the providers such that Figment by Ledger will always be first.
-    const sort = (validator: ValidatorType) => (validator.contract === constants.figment ? -1 : 1);
+    const sort = (validator: ValidatorType) =>
+      validator.contract === ELROND_LEDGER_VALIDATOR_ADDRESS ? -1 : 1;
     const items = validators.sort(sort).map(disable);
 
     return search ? items.filter(filter) : items;
@@ -99,14 +100,16 @@ const ValidatorList = (props: Props) => {
       providers.filter(provider =>
         transaction.recipient
           ? provider.contract === transaction.recipient
-          : provider.contract === constants.figment,
+          : provider.contract === ELROND_LEDGER_VALIDATOR_ADDRESS,
       ),
     [providers, transaction.recipient],
   );
 
   const isActiveValidator = useCallback(
     (contract: string) =>
-      transaction.recipient ? contract === transaction.recipient : contract === constants.figment,
+      transaction.recipient
+        ? contract === transaction.recipient
+        : contract === ELROND_LEDGER_VALIDATOR_ADDRESS,
     [transaction.recipient],
   );
 

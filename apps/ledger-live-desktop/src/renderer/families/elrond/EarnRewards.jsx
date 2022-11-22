@@ -25,7 +25,7 @@ import Delegations from "~/renderer/families/elrond/components/Delegations";
 import { urls } from "~/config/urls";
 import { openURL } from "~/renderer/linking";
 import { openModal } from "~/renderer/actions/modals";
-import { constants } from "~/renderer/families/elrond/constants";
+import { modals } from "./modals";
 
 import type { DelegationType, UnbondingType } from "~/renderer/families/elrond/types";
 import type { Account } from "@ledgerhq/types-live";
@@ -132,7 +132,7 @@ const Delegation = (props: DelegationPropsType) => {
 
   const onEarnRewards = useCallback(() => {
     dispatch(
-      openModal(constants.modals.rewards, {
+      openModal(modals.rewards, {
         account,
         validators,
         delegations,
@@ -143,7 +143,7 @@ const Delegation = (props: DelegationPropsType) => {
   const onDelegate = useCallback(() => {
     if (validators) {
       dispatch(
-        openModal(constants.modals.stake, {
+        openModal(modals.stake, {
           account,
           validators,
           delegations,
@@ -155,7 +155,7 @@ const Delegation = (props: DelegationPropsType) => {
   const onClaimRewards = useCallback(() => {
     if (validators && delegations) {
       dispatch(
-        openModal(constants.modals.claim, {
+        openModal(modals.claim, {
           account,
           validators,
           delegations,
@@ -169,6 +169,8 @@ const Delegation = (props: DelegationPropsType) => {
 
   useEffect(fetchDelegations, [fetchDelegations]);
 
+  // FIXME This component is a bit unbalanced and confusing, mixing rewards,
+  // delegations and undelegations. The three should be split in their own component.
   return (
     <Fragment>
       <TableContainer mb={6}>

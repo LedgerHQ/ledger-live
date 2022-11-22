@@ -8,6 +8,10 @@ import { Trans } from "react-i18next";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { getAccountUnit } from "@ledgerhq/live-common/account/index";
 import { denominate } from "@ledgerhq/live-common/families/elrond/helpers/denominate";
+import {
+  ELROND_EXPLORER_URL,
+  ELROND_LEDGER_VALIDATOR_ADDRESS,
+} from "@ledgerhq/live-common/families/elrond/constants";
 
 import Box from "~/renderer/components/Box/Box";
 import Text from "~/renderer/components/Text";
@@ -24,7 +28,6 @@ import {
 
 import { useDiscreetMode } from "~/renderer/components/Discreet";
 import { localeSelector } from "~/renderer/reducers/settings";
-import { constants } from "~/renderer/families/elrond/constants";
 import { openURL } from "~/renderer/linking";
 import { urls } from "~/config/urls";
 
@@ -47,9 +50,9 @@ const getURLWhatIsThis = (op: Operation): ?string => {
 
 const redirectAddress = (address: string) => () => {
   openURL(
-    address === constants.figment
+    address === ELROND_LEDGER_VALIDATOR_ADDRESS
       ? urls.ledgerValidator
-      : `${constants.explorer}/providers/${address}`,
+      : `${ELROND_EXPLORER_URL}/providers/${address}`,
   );
 };
 
@@ -81,9 +84,10 @@ const OperationDetailsDelegation = (props: OperationDetailsDelegationProps) => {
               <Trans
                 i18nKey="operationDetails.extra.votesAddress"
                 values={{
-                  votes: `${denominate({ input: operation.extra.amount, decimals: 4 })} ${
-                    constants.egldLabel
-                  }`,
+                  votes: `${denominate({
+                    input: operation.extra.amount,
+                    decimals: 4,
+                  })} ${getAccountUnit(account).code}`,
                   name: formattedValidator
                     ? formattedValidator.identity.name || operation.contract
                     : operation.contract,

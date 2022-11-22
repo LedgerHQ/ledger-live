@@ -1,7 +1,6 @@
 // @flow
 
 import React, { useMemo, useState } from "react";
-import { getAccountUnit } from "@ledgerhq/live-common/account/index";
 import { BigNumber } from "bignumber.js";
 import styled from "styled-components";
 
@@ -10,10 +9,9 @@ import InputCurrency from "~/renderer/components/InputCurrency";
 import Label from "~/renderer/components/Label";
 import TranslatedError from "~/renderer/components/TranslatedError";
 
-import { constants } from "~/renderer/families/elrond/constants";
-
 import type { Account, TransactionStatus } from "@ledgerhq/types-live";
 import type { Unit } from "@ledgerhq/types-cryptoassets";
+import { getAccountUnit } from "@ledgerhq/live-common/account/index";
 
 const InputLeft = styled(Box).attrs(() => ({
   ff: "Inter|Medium",
@@ -76,6 +74,10 @@ const ErrorContainer = styled(Box)`
 
 const ErrorDisplay = styled(Box)`
   color: ${p => p.theme.colors.pearl};
+`;
+
+const WarningDisplay = styled(Box)`
+  color: ${p => p.theme.colors.warning};
 `;
 
 interface Props {
@@ -150,7 +152,7 @@ const AmountField = (props: Props) => {
         value={amount}
         onChange={onAmountChange}
         onChangeFocus={() => setFocused(true)}
-        renderLeft={<InputLeft>{constants.egldLabel}</InputLeft>}
+        renderLeft={<InputLeft>{getAccountUnit(account).code}</InputLeft>}
         renderRight={
           <InputRight>
             {options.map(({ label, value }) => (

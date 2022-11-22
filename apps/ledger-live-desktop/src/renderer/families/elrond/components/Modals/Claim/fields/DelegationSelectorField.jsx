@@ -10,8 +10,6 @@ import Label from "~/renderer/components/Label";
 import Select from "~/renderer/components/Select";
 import Text from "~/renderer/components/Text";
 
-import { constants } from "~/renderer/families/elrond/constants";
-
 import type { TFunction } from "react-i18next";
 import type { Transaction, AccountBridge } from "@ledgerhq/types-live";
 import type { ValidatorType, DelegationType } from "~/renderer/families/elrond/types";
@@ -48,7 +46,7 @@ const renderItem = (item: Option) => {
       </Box>
 
       <Text ff="Inter|Regular">
-        {balance} {constants.egldLabel}
+        {balance} {"EGLD"} {/* FIXME Should be getAccountUnit(account).code */}
       </Text>
     </Box>
   );
