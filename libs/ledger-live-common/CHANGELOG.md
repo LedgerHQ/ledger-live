@@ -1,5 +1,11 @@
 # @ledgerhq/live-common
 
+## 27.7.1-hotfix.0
+
+### Patch Changes
+
+- [#1913](https://github.com/LedgerHQ/ledger-live/pull/1913) [`f7aa25417a`](https://github.com/LedgerHQ/ledger-live/commit/f7aa25417a953a6e4768e0b5d500cab566369a0a) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Prevent error on ERC1155 quantities being array of null
+
 ## 27.7.0
 
 ### Minor Changes
