@@ -1,5 +1,12 @@
 # live-common-tools
 
+## 0.2.15-hotfix.1
+
+### Patch Changes
+
+- Updated dependencies [[`e3a796b0a0`](https://github.com/LedgerHQ/ledger-live/commit/e3a796b0a021b19ff01061a019657cea26cc46de)]:
+  - @ledgerhq/live-common@27.7.1-hotfix.1
+
 ## 0.2.15-hotfix.0
 
 ### Patch Changes
