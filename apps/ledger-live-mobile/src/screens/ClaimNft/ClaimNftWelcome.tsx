@@ -1,6 +1,6 @@
 import React, { useCallback, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Button, Flex, Icons, Text } from "@ledgerhq/native-ui";
+import { Button, Flex, Icons, Text, Link } from "@ledgerhq/native-ui";
 import { useTranslation } from "react-i18next";
 import { useNavigation } from "@react-navigation/native";
 import { NavigatorName, ScreenName } from "../../const";
@@ -39,11 +39,11 @@ const ClaimNftWelcome = () => {
         >
           <Text>illustration placeholder NFT</Text>
         </Flex>
-        <Flex flex={1} px={7}>
+        <Flex flex={1} px={7} justifyContent="space-evenly">
           <Text variant="h4" fontWeight="semiBold" mt={7} textAlign="center">
             {t("claimNft.welcomePage.title")}
           </Text>
-          <Flex mt={6}>
+          <Flex>
             <Text color="neutral.c70" mb={6}>
               {t("claimNft.welcomePage.description.title")}
             </Text>
@@ -51,11 +51,11 @@ const ClaimNftWelcome = () => {
             <BulletItem textKey={"claimNft.welcomePage.description.2"} />
             <BulletItem textKey={"claimNft.welcomePage.description.3"} />
           </Flex>
-          <Flex>
-            <Button type="main" onPress={handleGoToQrScan}>
+          <Flex flexDirection="column" justifyContent="flex-end">
+            <Button mb={8} type="main" onPress={handleGoToQrScan}>
               {t("claimNft.welcomePage.claimButton")}
             </Button>
-            <Button>{t("claimNft.welcomePage.backButton")}</Button>
+            <Link>{t("claimNft.welcomePage.backButton")}</Link>
           </Flex>
         </Flex>
       </Flex>
