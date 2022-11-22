@@ -12,6 +12,7 @@ import SelectDevice from "../../../components/SelectDevice";
 import { ScreenName } from "../../../const";
 
 import GenerateMockAccounts from "./GenerateMockAccounts";
+import GenerateMockAccountsNft from "./GenerateMockAccountsNFTs";
 import ImportBridgeStreamData from "./ImportBridgeStreamData";
 import ConfigUSBDeviceSupport from "./ConfigUSBDeviceSupport";
 import OpenDebugCrash from "./OpenDebugCrash";
@@ -23,6 +24,7 @@ import EquipmentIdRow from "./EquipmentIdRow";
 import OpenDebugStore from "./OpenDebugStore";
 import OpenDebugPlayground from "./OpenDebugPlayground";
 import OpenDebugFeatureFlags from "./OpenDebugFeatureFlags";
+import OpenDebugFetchCustomImage from "./OpenDebugFetchCustomImage";
 import OpenDebugMultiAppInstall from "./OpenDebugMultiAppInstall";
 import OpenLottie from "./OpenDebugLottie";
 import OpenDebugLogs from "./OpenDebugLogs";
@@ -58,6 +60,10 @@ export function DebugMocks() {
         title="Generate 10 random mock Accounts"
         count={10}
       />
+      <GenerateMockAccountsNft
+        title="Generate 10 random mock Accounts with NFTs"
+        count={10}
+      />
       <GenerateMockAccount />
       <OpenDebugLogs />
       <OpenDebugCrash />
@@ -67,6 +73,7 @@ export function DebugMocks() {
       <OpenDebugIcons />
       <OpenLottie />
       <OpenDebugCustomImage />
+      <OpenDebugFetchCustomImage />
       <OpenDebugPostOnboarding />
       <OpenStoryly />
       <OpenDebugPlayground />

@@ -1,4 +1,5 @@
 name: "[Bot] Testing with 'Mooncake'"
+run-name: Test with 🤖 Mooncake by @${{github.actor}} with ${{inputs.family}}
 on:
   workflow_dispatch:
     inputs:

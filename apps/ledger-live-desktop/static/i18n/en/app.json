@@ -3556,6 +3556,7 @@
       "featureFlagsEdit": "Edit",
       "featureFlagsRestore": "Restore",
       "featureFlagsOverride": "Override",
+      "firebaseProject": "Firebase project targeted by this build:",
       "addLocalApp": "Add a local app",
       "addLocalAppDesc": "Browse local files and add a local app using a local manifest",
       "addLocalAppButton": "Browse",
@@ -5309,6 +5310,11 @@
     "ImageLoadRefusedOnDevice": {
       "title": "Image load refused on device (TODO: final wording)",
       "description": "If this image wasn't the right fit, you can try again with another image."
+    },
+    "LockedDeviceError": {
+      "title": "Your device is locked",
+      "description": "Unlock your device and try again.",
+      "descriptionWithProductName": "Unlock your {{ productName }} and try again."
     }
   },
   "cryptoOrg": {

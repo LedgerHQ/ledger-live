@@ -34,6 +34,7 @@ import {
   renderSecureTransferDeviceConfirmation,
   renderAllowLanguageInstallation,
   renderInstallingLanguage,
+  renderLockedDeviceError,
 } from "./rendering";
 
 type Props<R, H, P> = {
@@ -73,6 +74,7 @@ export const DeviceActionDefaultRendering = <R, H, P>({
     appAndVersion,
     device,
     unresponsive,
+    isLocked,
     error,
     isLoading,
     allowManagerRequestedWording,
@@ -241,6 +243,7 @@ export const DeviceActionDefaultRendering = <R, H, P>({
 
   if (inWrongDeviceForAccount) {
     return renderInWrongAppForAccount({
+      t,
       onRetry,
       accountName: inWrongDeviceForAccount.accountName,
     });
@@ -253,6 +256,7 @@ export const DeviceActionDefaultRendering = <R, H, P>({
       error instanceof UpdateYourApp
     ) {
       return renderError({
+        t,
         error,
         managerAppName: error.managerAppName,
       });
@@ -260,6 +264,7 @@ export const DeviceActionDefaultRendering = <R, H, P>({
 
     if (error instanceof LatestFirmwareVersionRequired) {
       return renderError({
+        t,
         error,
         requireFirmwareUpdate: true,
       });
@@ -272,6 +277,7 @@ export const DeviceActionDefaultRendering = <R, H, P>({
       (error instanceof TransportStatusError && error.message.includes("0x6d06"))
     ) {
       return renderError({
+        t,
         error: new DeviceNotOnboarded(),
         withOnboardingCTA: true,
         info: true,
@@ -280,6 +286,7 @@ export const DeviceActionDefaultRendering = <R, H, P>({
 
     if (error instanceof NoSuchAppOnProvider) {
       return renderError({
+        t,
         error,
         withOpenManager: true,
         withExportLogs: true,
@@ -287,10 +294,17 @@ export const DeviceActionDefaultRendering = <R, H, P>({
     }
 
     return renderError({
+      t,
       error,
       onRetry,
       withExportLogs: true,
+      device: device ?? undefined,
     });
+  }
+
+  // Renders an error as long as LLD is using the "event" implementation of device actions
+  if (isLocked) {
+    return renderLockedDeviceError({ t, device, onRetry });
   }
 
   if ((!isLoading && !device) || unresponsive) {
