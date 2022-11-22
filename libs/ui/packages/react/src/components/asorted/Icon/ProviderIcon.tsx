@@ -1,8 +1,8 @@
 import * as providers from "@ledgerhq/icons-ui/react/Providers/index";
-import * as favicons from "./providerFaviconsIndex";
+import * as providersBoxed from "@ledgerhq/icons-ui/react/ProvidersBoxed/index";
 
 import React from "react";
-import styled from "styled-components";
+import FlexBox from "../../layout/Flex";
 
 export const sizes = {
   XXS: 16,
@@ -32,10 +32,6 @@ export const iconNames = Array.from(
   }, new Set<string>()),
 );
 
-const Favicon = styled.img`
-  border-radius: 8px;
-`;
-
 export type IconGetterProps = {
   search: string;
   object: Record<string, React.ReactNode>;
@@ -51,14 +47,14 @@ const ProviderIcon = ({ name, size = "S", boxed = false }: Props): JSX.Element |
   const maybeIconName = `${name}`;
 
   if (boxed) {
+    const BoxedComponent = getIconCaseInsensitive({
+      search: maybeIconName,
+      object: providersBoxed,
+    }) as React.ElementType;
     return (
-      <Favicon
-        width={sizes[size]}
-        height={sizes[size]}
-        src={
-          getIconCaseInsensitive({ search: "Icon_" + maybeIconName, object: favicons }) as string
-        }
-      />
+      <FlexBox width={sizes[size]} height={sizes[size]} borderRadius={8} overflow={"hidden"}>
+        <BoxedComponent size={sizes[size]}/>
+      </FlexBox>
     );
   }
   const Component = getIconCaseInsensitive({
