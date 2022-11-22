@@ -19,7 +19,7 @@ import { StackNavigationEventMap } from "@react-navigation/stack";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useNftMetadata } from "@ledgerhq/live-common/nft/index";
 import { NFTResource } from "@ledgerhq/live-common/nft/NftMetadataProvider/types";
-import { NFTMediaSize, NFTMetadata, ProtoNFT } from "@ledgerhq/types-live";
+import { NFTMediaSize, NFTMetadata } from "@ledgerhq/types-live";
 
 import {
   BaseComposite,
