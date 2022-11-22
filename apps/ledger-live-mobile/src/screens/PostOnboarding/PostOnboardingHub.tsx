@@ -16,6 +16,7 @@ import {
   useAllPostOnboardingActionsCompleted,
   usePostOnboardingHubState,
 } from "@ledgerhq/live-common/postOnboarding/hooks/index";
+import { PostOnboardingActionId } from "@ledgerhq/types-live";
 import { clearPostOnboardingLastActionCompleted } from "@ledgerhq/live-common/postOnboarding/actions";
 import { useDispatch } from "react-redux";
 import { getDeviceModel } from "@ledgerhq/devices";
@@ -28,6 +29,13 @@ import {
 } from "../../components/RootNavigator/types/helpers";
 import { PostOnboardingNavigatorParamList } from "../../components/RootNavigator/types/PostOnboardingNavigator";
 import DeviceSetupView from "../../components/DeviceSetupView";
+import { useCompleteActionCallback } from "../../logic/postOnboarding/useCompleteAction";
+/*
+const SafeContainer = styled(SafeAreaView).attrs({
+  edges: ["left", "bottom", "right"],
+})`
+  flex: 1;
+`;*/
 
 const AnimatedFlex = Animated.createAnimatedComponent(Flex);
 
@@ -38,10 +46,13 @@ type NavigationProps = BaseComposite<
   >
 >;
 
-const PostOnboardingHub = ({ navigation }: NavigationProps) => {
+const PostOnboardingHub = ({ navigation, route }: NavigationProps) => {
   const dispatch = useDispatch();
   const { t } = useTranslation();
   const { actionsState, deviceModelId } = usePostOnboardingHubState();
+  // const { lastActionCompleted, actionsState } = usePostOnboardingHubState();
+  //  const { actionCompletedHubTitle } = lastActionCompleted || {};
+  const completePostOnboardingAction = useCompleteActionCallback();
 
   const clearLastActionCompleted = useCallback(() => {
     dispatch(clearPostOnboardingLastActionCompleted());
@@ -55,6 +66,19 @@ const PostOnboardingHub = ({ navigation }: NavigationProps) => {
      * */
     () => clearLastActionCompleted,
     [clearLastActionCompleted],
+  );
+
+  useEffect(
+    /**
+     * Complete claim NFT action if the route param completed is true
+     * */
+    () =>
+      route &&
+      route.params &&
+      route.params.completed &&
+      route.params.completed === "true" &&
+      completePostOnboardingAction(PostOnboardingActionId.claimNft),
+    [clearLastActionCompleted, completePostOnboardingAction, route],
   );
 
   const allowClosingScreen = useRef<boolean>(true);

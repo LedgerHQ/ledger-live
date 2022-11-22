@@ -5681,6 +5681,27 @@
       "title": "My NFTs"
     }
   },
+  "claimNft": {
+    "welcomePage": {
+      "title": "This is a placeholder to be replaced azerty azerty",
+      "description": {
+        "title": "This is the title of the items list:",
+        "1": "This is the first item on the list",
+        "2": "This is the second item on the list",
+        "3": "This is the third item on the list"
+      },
+      "claimButton": "Claim your NFT",
+      "backButton": "I've already claimed my NFT"
+    },
+    "qrScan": {
+      "title": "Scan QR code this is a test test test",
+      "description": {
+        "1": "test test test test testtest test testtest test test test test test",
+        "2": "test test test test testtest test testtest test test test test test test test test test test testtest"
+      }
+    }
+  },
+
   "postOnboarding": {
     "hub": {
       "title": "Next up, use your {{productName}} to...",
