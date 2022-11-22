@@ -8,6 +8,7 @@ import styled from "styled-components";
 import Box from "~/renderer/components/Box";
 import InputCurrency from "~/renderer/components/InputCurrency";
 import Label from "~/renderer/components/Label";
+import TranslatedError from "~/renderer/components/TranslatedError";
 
 import { constants } from "~/renderer/families/elrond/constants";
 
@@ -61,6 +62,20 @@ const AmountButton = styled.button.attrs(() => ({
   &:hover {
     filter: contrast(2);
   }
+`;
+
+const ErrorContainer = styled(Box)`
+  margin-top: 0px;
+  font-size: 12px;
+  width: 100%;
+  transition: all 0.4s ease-in-out;
+  will-change: max-height;
+  max-height: ${p => (p.hasError ? 60 : 0)}px;
+  min-height: ${p => (p.hasError ? 20 : 0)}px;
+`;
+
+const ErrorDisplay = styled(Box)`
+  color: ${p => p.theme.colors.pearl};
 `;
 
 interface Props {
@@ -123,12 +138,13 @@ const AmountField = (props: Props) => {
   ]);
 
   return (
-    <Box my={2}>
+    <Box vertical>
       <Label>{label}</Label>
       <InputCurrency
         autoFocus={false}
         error={error}
         warning={warning}
+        hideErrorMessage={true}
         containerProps={{ grow: true }}
         unit={unit}
         value={amount}
@@ -150,6 +166,17 @@ const AmountField = (props: Props) => {
           </InputRight>
         }
       />
+      <ErrorContainer hasError={error || warning}>
+        {error ? (
+          <ErrorDisplay id="input-error">
+            <TranslatedError error={error} />
+          </ErrorDisplay>
+        ) : warning ? (
+          <WarningDisplay id="input-warning">
+            <TranslatedError error={warning} />
+          </WarningDisplay>
+        ) : null}
+      </ErrorContainer>
     </Box>
   );
 };
