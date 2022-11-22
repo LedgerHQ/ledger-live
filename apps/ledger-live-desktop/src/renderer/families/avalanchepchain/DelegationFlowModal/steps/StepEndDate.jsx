@@ -58,9 +58,21 @@ function StepEndDate({
   onUpdateTransaction,
   status,
 }: StepProps) {
+  const { validators } = useAvalanchePChainPreloadData();
+
+  useEffect(() => {
+    const bridge: AccountBridge<Transaction> = getAccountBridge(account, parentAccount);
+    onUpdateTransaction(tx => {
+      return bridge.updateTransaction(tx, {
+        startTime: new BigNumber(unixStakeStartTime),
+        endTime: new BigNumber(unixDefaultEndDate),
+        maxEndTime: new BigNumber(unixMaxEndDate),
+      });
+    });
+  }, []);
+
   if (!status) return null;
 
-  const { validators } = useAvalanchePChainPreloadData();
   const selectedValidator = validators.find(v => v.nodeID === transaction.recipient);
 
   const unixStakeStartTime = moment().unix() + FIVE_MINUTES;
@@ -76,17 +88,6 @@ function StepEndDate({
     .add(1, "minutes")
     .format("MM/DD/YYYY, h:mm a");
   const maxEndDateText = moment.unix(unixMaxEndDate).format("MM/DD/YYYY, h:mm a");
-
-  useEffect(() => {
-    const bridge: AccountBridge<Transaction> = getAccountBridge(account, parentAccount);
-    onUpdateTransaction(tx => {
-      return bridge.updateTransaction(tx, {
-        startTime: new BigNumber(unixStakeStartTime),
-        endTime: new BigNumber(unixDefaultEndDate),
-        maxEndTime: new BigNumber(unixMaxEndDate),
-      });
-    });
-  }, []);
 
   const updateEndTime = endTime => {
     const bridge: AccountBridge<Transaction> = getAccountBridge(account, parentAccount);
