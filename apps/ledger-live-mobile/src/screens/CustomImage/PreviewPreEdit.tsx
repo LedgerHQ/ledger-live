@@ -46,7 +46,7 @@ type NavigationProps = BaseComposite<
 
 const PreviewPreEdit = ({ navigation, route }: NavigationProps) => {
   const { t } = useTranslation();
-  const [imageToCrop, setImageToCrop] = useState<ImageFileUri | null>(null);
+  const [loadedImage, setLoadedImage] = useState<ImageFileUri | null>(null);
   const { params } = route;
   const { isPictureFromGallery, device } = params;
 
@@ -62,14 +62,14 @@ const PreviewPreEdit = ({ navigation, route }: NavigationProps) => {
   useEffect(() => {
     let dead = false;
     if ("imageFileUri" in params) {
-      setImageToCrop({
+      setLoadedImage({
         imageFileUri: params.imageFileUri,
       });
     } else {
       const { resultPromise, cancel } = downloadImageToFile(params);
       resultPromise
         .then(res => {
-          if (!dead) setImageToCrop(res);
+          if (!dead) setLoadedImage(res);
         })
         .catch(e => {
           if (!dead) handleError(e);
@@ -82,9 +82,9 @@ const PreviewPreEdit = ({ navigation, route }: NavigationProps) => {
     return () => {
       dead = true;
     };
-  }, [params, setImageToCrop, handleError]);
+  }, [params, setLoadedImage, handleError]);
 
-  const [resizedImage, setResizedImage] = useState<CenteredResult | null>(null);
+  const [croppedImage, setCroppedImage] = useState<CenteredResult | null>(null);
 
   const handleResizeError = useCallback(
     (error: Error) => {
@@ -98,14 +98,14 @@ const PreviewPreEdit = ({ navigation, route }: NavigationProps) => {
 
   const handleResizeResult: ImageCentererParams["onResult"] = useCallback(
     (res: CenteredResult) => {
-      setResizedImage(res);
+      setCroppedImage(res);
     },
-    [setResizedImage],
+    [setCroppedImage],
   );
 
   useCenteredImage({
     targetDimensions,
-    imageFileUri: imageToCrop?.imageFileUri,
+    imageFileUri: loadedImage?.imageFileUri,
     onError: handleResizeError,
     onResult: handleResizeResult,
   });
@@ -172,12 +172,12 @@ const PreviewPreEdit = ({ navigation, route }: NavigationProps) => {
           return;
         }
         e.preventDefault();
-        setImageToCrop(null);
+        setLoadedImage(null);
         importImageFromPhoneGallery()
           .then(importResult => {
             if (dead) return;
             if (importResult !== null) {
-              setImageToCrop(importResult);
+              setLoadedImage(importResult);
             } else {
               navigation.dispatch(e.data.action);
             }
@@ -196,7 +196,7 @@ const PreviewPreEdit = ({ navigation, route }: NavigationProps) => {
   );
 
   const handleEditPicture = useCallback(() => {
-    if (!imageToCrop) {
+    if (!loadedImage) {
       // in theory this shouldn't happen as the button is disabled until
       // preview is done
       return;
@@ -206,12 +206,12 @@ const PreviewPreEdit = ({ navigation, route }: NavigationProps) => {
       screen: ScreenName.CustomImageStep1Crop,
       params: {
         device,
-        baseImageFile: imageToCrop,
+        baseImageFile: loadedImage,
       },
     });
-  }, [navigation, device, imageToCrop]);
+  }, [navigation, device, loadedImage]);
 
-  if (!imageToCrop || !imageToCrop.imageFileUri) {
+  if (!loadedImage || !loadedImage.imageFileUri) {
     return (
       <Flex flex={1} justifyContent="center" alignItems="center">
         <InfiniteLoader />
@@ -221,10 +221,10 @@ const PreviewPreEdit = ({ navigation, route }: NavigationProps) => {
 
   return (
     <SafeAreaView style={{ flex: 1 }} edges={["bottom"]}>
-      {resizedImage?.imageBase64DataUri && (
+      {croppedImage?.imageBase64DataUri && (
         <ImageProcessor
           ref={imageProcessorRef}
-          imageBase64DataUri={resizedImage?.imageBase64DataUri}
+          imageBase64DataUri={croppedImage?.imageBase64DataUri}
           onPreviewResult={handlePreviewResult}
           onError={handleError}
           onRawResult={handleRawResult}

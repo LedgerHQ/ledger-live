@@ -16,7 +16,6 @@ export type CustomImageNavigatorParamList = {
   [ScreenName.CustomImageStep0Welcome]: BaseParams;
   [ScreenName.CustomImageStep1Crop]: BaseParams & {
     baseImageFile: ImageFileUri;
-    isPictureFromGallery?: boolean;
   };
   [ScreenName.CustomImageStep2Preview]: BaseParams & {
     baseImageFile: ImageFileUri;
