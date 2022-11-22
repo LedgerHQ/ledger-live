@@ -1,49 +1,43 @@
 // renders children if BLE is available
 // otherwise render an error
-import React, { Component } from "react";
-import { Observable, Subscription } from "rxjs";
+import React, { useEffect, useState } from "react";
+import { Observable } from "rxjs";
 import TransportBLE from "../../react-native-hw-transport-ble";
 import RequiresLocationOnAndroid from "./RequiresLocationOnAndroid";
 import BluetoothDisabled from "./BluetoothDisabled";
+import { usePromptBluetoothCallback } from "../../logic/usePromptBluetoothCallback";
 
 type Props = {
   children: React.ReactNode;
 };
-type State = {
-  type: string;
-};
 
-class RequiresBLE extends Component<Props, State> {
-  state = {
-    type: "Unknown",
-  };
-  sub: Subscription | undefined;
+const RequiresBLE: React.FC<Props> = ({ children }) => {
+  const [type, setType] = useState<string>("Unknown");
 
-  componentDidMount() {
-    this.sub = Observable.create(TransportBLE.observeState).subscribe({
-      next: ({ type }: { type: string }) =>
-        this.setState({
-          type,
-        }),
+  const [bluetoothPrompted, setBluetoothPrompted] = useState(false);
+  const promptBluetoothPermissions = usePromptBluetoothCallback();
+
+  useEffect(() => {
+    promptBluetoothPermissions().finally(() => setBluetoothPrompted(true));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
+    const sub = Observable.create(TransportBLE.observeState).subscribe({
+      next: ({ type }: { type: string }) => setType(type),
     });
+    return () => sub.unsubscribe();
+  }, []);
+
+  if (!bluetoothPrompted) return null;
+  if (type === "Unknown") return null; // suspense PLZ
+
+  if (type === "PoweredOn") {
+    return <>{children}</>;
   }
 
-  componentWillUnmount() {
-    this.sub?.unsubscribe();
-  }
-
-  render() {
-    const { children } = this.props;
-    const { type } = this.state;
-    if (type === "Unknown") return null; // suspense PLZ
-
-    if (type === "PoweredOn") {
-      return children;
-    }
-
-    return <BluetoothDisabled />;
-  }
-}
+  return <BluetoothDisabled />;
+};
 
 export default function RequiresBLEWrapped({
   children,
