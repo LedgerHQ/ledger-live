@@ -9,7 +9,8 @@ import {
   FeeTooHigh,
   AmountRequired,
 } from "@ledgerhq/errors";
-import { getCryptoCurrencyById, formatCurrencyUnit } from "../../currencies";
+import { formatCurrencyUnit } from "../../currencies";
+import { getAccountUnit } from "../../account";
 import { DECIMALS_LIMIT, MIN_DELEGATION_AMOUNT } from "./constants";
 import type { ElrondAccount, Transaction, TransactionStatus } from "./types";
 import {
@@ -18,9 +19,10 @@ import {
   isAmountSpentFromBalance,
 } from "./logic";
 import {
-  DecimalsLimitReached,
-  MinDelegatedAmountError,
-  MinUndelegatedAmountError,
+  ElrondDecimalsLimitReached,
+  ElrondMinDelegatedAmountError,
+  ElrondMinUndelegatedAmountError,
+  ElrondDelegationBelowMinimumError,
 } from "./errors";
 
 const getTransactionStatus = async (
@@ -67,7 +69,7 @@ const getTransactionStatus = async (
       !errors.amount &&
       !totalSpent.decimalPlaces(DECIMALS_LIMIT).isEqualTo(totalSpent)
     ) {
-      errors.amount = new DecimalsLimitReached();
+      errors.amount = new ElrondDecimalsLimitReached();
     }
   } else {
     totalSpent = isAmountSpentFromBalance(t.mode)
@@ -78,20 +80,52 @@ const getTransactionStatus = async (
       warnings.feeTooHigh = new FeeTooHigh();
     }
 
+    // All delegate and undelegate transactions must have an amount >= 1 EGLD
     if (!errors.amount && t.amount.lt(MIN_DELEGATION_AMOUNT)) {
-      const egld = getCryptoCurrencyById("elrond").units[0];
-      const formattedAmount = formatCurrencyUnit(egld, MIN_DELEGATION_AMOUNT, {
-        showCode: true,
-      });
+      const formattedAmount = formatCurrencyUnit(
+        getAccountUnit(a),
+        MIN_DELEGATION_AMOUNT,
+        {
+          showCode: true,
+        }
+      );
       if (t.mode === "delegate") {
-        errors.amount = new MinDelegatedAmountError("", {
+        errors.amount = new ElrondMinDelegatedAmountError("", {
           formattedAmount,
         });
       } else if (t.mode === "unDelegate") {
-        errors.amount = new MinUndelegatedAmountError("", {
+        errors.amount = new ElrondMinUndelegatedAmountError("", {
           formattedAmount,
         });
       }
+    }
+
+    // All delegations must be >= 1 EGLD
+    const delegationBalance = a.elrondResources.delegations.find(
+      (d) => d.contract === t.recipient
+    )?.userActiveStake;
+
+    const delegationBalanceBelowMinimum =
+      delegationBalance &&
+      new BigNumber(delegationBalance)
+        .minus(t.amount)
+        .lt(MIN_DELEGATION_AMOUNT);
+
+    if (
+      !errors.amount &&
+      t.mode === "unDelegate" &&
+      delegationBalanceBelowMinimum
+    ) {
+      const formattedAmount = formatCurrencyUnit(
+        getAccountUnit(a),
+        MIN_DELEGATION_AMOUNT,
+        {
+          showCode: true,
+        }
+      );
+      errors.amount = new ElrondDelegationBelowMinimumError("", {
+        formattedAmount,
+      });
     }
   }
 
