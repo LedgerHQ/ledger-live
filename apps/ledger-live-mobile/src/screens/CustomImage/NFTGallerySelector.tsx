@@ -6,15 +6,18 @@ import { orderByLastReceived } from "@ledgerhq/live-common/nft/helpers";
 import { useSelector } from "react-redux";
 import { NFTMetadata, ProtoNFT } from "@ledgerhq/types-live";
 import { FlatList } from "react-native";
+import { useNavigation } from "@react-navigation/native";
 
 import { accountsSelector } from "../../reducers/accounts";
 import { hiddenNftCollectionsSelector } from "../../reducers/settings";
 import NftListItem from "../../components/Nft/NftListItem";
 import NftGalleryEmptyState from "../Nft/NftGallery/NftGalleryEmptyState";
+import { NavigatorName, ScreenName } from "../../const";
 
 const NB_COLUMNS = 2;
 
 const NFTGallerySelector = () => {
+  const navigation = useNavigation();
   const accounts = useSelector(accountsSelector);
   const nfts = accounts.map(a => a.nfts ?? []).flat();
 
@@ -34,9 +37,18 @@ const NFTGallerySelector = () => {
 
   const keyExtractor = (item: ProtoNFT) => item.id;
 
-  const handlePress = useCallback((nft: ProtoNFT, metadata?: NFTMetadata) => {
-    // navigate to PreviewPreEdit
-  }, []);
+  const handlePress = useCallback(
+    (nft: ProtoNFT) => {
+      navigation.navigate(NavigatorName.CustomImage, {
+        screen: ScreenName.CustomImagePreviewPreEdit,
+        params: {
+          nft,
+          device: null,
+        },
+      });
+    },
+    [navigation],
+  );
 
   const renderItem = ({
     item,

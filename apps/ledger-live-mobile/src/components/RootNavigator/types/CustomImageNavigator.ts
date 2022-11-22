@@ -1,4 +1,5 @@
 import { Device } from "@ledgerhq/types-devices";
+import { ProtoNFT } from "@ledgerhq/types-live";
 
 import { ScreenName } from "../../../const";
 import { CropResult } from "../../CustomImage/ImageCropper";
@@ -7,6 +8,10 @@ import {
   ProcessorRawResult,
 } from "../../CustomImage/ImageProcessor";
 import { ImageFileUri, ImageUrl } from "../../CustomImage/types";
+
+type GalleryNFT = {
+  nft: ProtoNFT;
+};
 
 type BaseParams = {
   device: Device | null;
@@ -27,7 +32,7 @@ export type CustomImageNavigatorParamList = {
   };
   [ScreenName.CustomImageErrorScreen]: BaseParams & { error: Error };
   [ScreenName.CustomImagePreviewPreEdit]: BaseParams &
-    (ImageUrl | ImageFileUri) & {
+    (ImageUrl | ImageFileUri | GalleryNFT) & {
       isPictureFromGallery?: boolean;
     };
   [ScreenName.CustomImagePreviewPostEdit]: BaseParams & {

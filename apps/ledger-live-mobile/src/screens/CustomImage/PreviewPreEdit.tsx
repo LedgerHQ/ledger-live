@@ -1,4 +1,10 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { Button, Flex, InfiniteLoader, Text } from "@ledgerhq/native-ui";
 import { ImagePreviewError } from "@ledgerhq/live-common/customImage/errors";
 import { NativeSyntheticEvent, ImageErrorEventData } from "react-native";
@@ -11,6 +17,9 @@ import {
 } from "@react-navigation/native";
 import { StackNavigationEventMap } from "@react-navigation/stack";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { useNftMetadata } from "@ledgerhq/live-common/nft/index";
+import { NFTResource } from "@ledgerhq/live-common/nft/NftMetadataProvider/types";
+import { NFTMediaSize, NFTMetadata } from "@ledgerhq/types-live";
 
 import {
   BaseComposite,
@@ -34,6 +43,7 @@ import useCenteredImage, {
   Params as ImageCentererParams,
   CenteredResult,
 } from "../../components/CustomImage/useCenteredImage";
+import { getMetadataMediaTypes } from "../../logic/nft";
 
 const DEFAULT_CONTRAST = 1;
 
@@ -48,7 +58,7 @@ const PreviewPreEdit = ({ navigation, route }: NavigationProps) => {
   const { t } = useTranslation();
   const [loadedImage, setLoadedImage] = useState<ImageFileUri | null>(null);
   const { params } = route;
-  const { isPictureFromGallery, device } = params;
+  const { isPictureFromGallery, device, nft } = params;
 
   const handleError = useCallback(
     (error: Error) => {
@@ -58,6 +68,33 @@ const PreviewPreEdit = ({ navigation, route }: NavigationProps) => {
     [navigation, device],
   );
 
+  // Handle this is async
+  const nftMetadata = useNftMetadata(
+    nft?.contract,
+    nft?.tokenId,
+    nft?.currencyId,
+  );
+  // FIXME: wtf is this metadata property and where does it come from?
+  const { status, metadata } = nftMetadata as NFTResource & {
+    metadata: NFTMetadata;
+  };
+
+  const mediaTypes = useMemo(
+    () => (metadata ? getMetadataMediaTypes(metadata) : null),
+    [metadata],
+  );
+
+  const mediaSizeForCustomImage = mediaTypes
+    ? (["big", "preview"] as NFTMediaSize[]).find(
+        size => mediaTypes[size] === "image",
+      )
+    : null;
+
+  const customImageUri =
+    (mediaSizeForCustomImage &&
+      metadata?.medias?.[mediaSizeForCustomImage]?.uri) ||
+    null;
+
   /** LOAD SOURCE IMAGE FROM PARAMS */
   useEffect(() => {
     let dead = false;
@@ -66,7 +103,8 @@ const PreviewPreEdit = ({ navigation, route }: NavigationProps) => {
         imageFileUri: params.imageFileUri,
       });
     } else {
-      const { resultPromise, cancel } = downloadImageToFile(params);
+      const url = customImageUri || params.imageUrl;
+      const { resultPromise, cancel } = downloadImageToFile({ imageUrl: url });
       resultPromise
         .then(res => {
           if (!dead) setLoadedImage(res);
@@ -82,7 +120,7 @@ const PreviewPreEdit = ({ navigation, route }: NavigationProps) => {
     return () => {
       dead = true;
     };
-  }, [params, setLoadedImage, handleError]);
+  }, [params, setLoadedImage, handleError, customImageUri]);
 
   const [croppedImage, setCroppedImage] = useState<CenteredResult | null>(null);
 
