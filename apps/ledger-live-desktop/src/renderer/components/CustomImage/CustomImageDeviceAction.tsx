@@ -96,7 +96,9 @@ const CustomImageDeviceAction: React.FC<Props> = withRemountableWrapper(props =>
       ) : isError ? (
         <Flex flexDirection="column" alignItems="center">
           {renderError({
+            t,
             error,
+            device: device ?? undefined,
             ...(isRefusedOnStaxError
               ? { Icon: Icons.CircledAlertMedium, iconColor: "warning.c100" }
               : {}),

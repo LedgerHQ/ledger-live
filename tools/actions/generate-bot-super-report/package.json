@@ -1,6 +1,6 @@
 {
   "name": "@actions/generate-bot-super-report",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Gather many uploaded bot reports to generate a higher level bot report",
   "license": "MIT",
   "private": true,

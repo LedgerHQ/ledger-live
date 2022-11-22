@@ -1,7 +1,7 @@
 import Transport, { DescriptorEventType } from "@ledgerhq/hw-transport";
 import { from, PartialObserver } from "rxjs";
 import { take, first, filter } from "rxjs/operators";
-import type { Device } from "@ledgerhq/react-native-hw-transport-ble/lib/types";
+import type { Device } from "@ledgerhq/types-devices";
 import type {
   Observer as TransportObserver,
   DescriptorEvent,
