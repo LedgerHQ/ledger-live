@@ -109,9 +109,8 @@ jobs:
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
     steps:
-      - uses: actions/checkout@v3
-        with:
-          ref: ${{ github.event.inputs.ref || 'develop' }} # For when tests are run on every push to PR: ${{ github.event.pull_request.head.sha || github.event.push.head.sha }}
+      - name: checkout
+        uses: actions/checkout@v3
       - uses: pnpm/action-setup@v2.1.0
         with:
           version: latest
@@ -145,9 +144,9 @@ jobs:
       # - name: Clear and build detox cache # investigate how to properly cache this
       #   run: pnpm mobile exec detox clean-framework-cache && pnpm mobile exec detox build-framework-cache
       - name: Build iOS app for Detox test run
-        run: pnpm mobile e2e:build -C detox.config.js -c ios.sim.release
+        run: pnpm mobile e2e:build -c ios.sim.release
       - name: Test iOS app
-        run: pnpm mobile e2e:test -C detox.config.js -c ios.sim.release --loglevel verbose --record-logs all --record-timeline all --take-screenshots all --record-videos failing --record-performance all --detectOpenHandles
+        run: pnpm mobile e2e:test -c ios.sim.release --loglevel verbose --record-logs all --record-timeline all --take-screenshots all --record-videos failing --record-performance all --detectOpenHandles
       # - name: Upload test artifacts
       #   uses: actions/upload-artifact@v2
       #   if: always()
@@ -242,7 +241,7 @@ jobs:
           script: echo "Generated AVD snapshot for caching."
 
       - name: Build Android app for Detox test run
-        run: pnpm mobile e2e:build -C detox.config.js -c android.emu.release
+        run: pnpm mobile e2e:build -c android.emu.release
 
       - name: Run Android tests
         uses: reactivecircus/android-emulator-runner@v2
@@ -254,7 +253,7 @@ jobs:
           avd-name: "Pixel_5_API_31"
           emulator-options: -verbose -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
           ram-size: 4096M
-          script: pnpm mobile e2e:test -C detox.config.js -c android.emu.release --loglevel trace --record-logs all --record-timeline all --take-screenshots all --record-videos failing --forceExit --detectOpenHandles
+          script: pnpm mobile e2e:test -c android.emu.release --loglevel trace --record-logs all --record-timeline all --take-screenshots all --record-videos failing --forceExit --detectOpenHandles
       # - name: Upload test artifacts
       #   if: always()
       #   uses: actions/upload-artifact@v2
