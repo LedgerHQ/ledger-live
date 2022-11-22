@@ -85,7 +85,7 @@ export type ChainAPI = Readonly<{
 
 // Naive mode, allow us to filter in sentry all this error comming from Sol RPC node
 const remapErrors = (e) => {
-  throw new NetworkDown(e);
+  throw new NetworkDown(e?.message);
 };
 
 export function getChainAPI(
