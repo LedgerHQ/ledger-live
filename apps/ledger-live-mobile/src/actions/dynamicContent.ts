@@ -2,7 +2,7 @@ import { createAction } from "redux-actions";
 import {
   WalletContentCard,
   AssetContentCard,
-} from "../dynamicContent/dynamicContent";
+} from "../dynamicContent/types";
 import {
   DynamicContentActionTypes,
   DynamicContentSetWalletCardsPayload,

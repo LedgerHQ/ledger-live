@@ -46,7 +46,6 @@ import {
   BaseNavigation,
   StackNavigatorProps,
 } from "../../components/RootNavigator/types/helpers";
-import useDynamicContent from "../../dynamicContent/dynamicContent";
 import { usePortfolio } from "../../hooks/portfolio";
 import { WalletTabNavigatorStackParamList } from "../../components/RootNavigator/types/WalletTabNavigator";
 import AddAccountsModal from "../AddAccounts/AddAccountsModal";
@@ -144,10 +143,6 @@ function PortfolioScreen({ navigation }: NavigationProps) {
 
   const postOnboardingVisible = usePostOnboardingEntryPointVisibleOnWallet();
 
-  // TEST PURPOSE
-  const { walletCards } = useDynamicContent();
-  console.log("PORTFOLIO -- ", walletCards.length);
-
   const data = useMemo(
     () => [
       <FirmwareUpdateBanner />,
@@ -201,7 +196,7 @@ function PortfolioScreen({ navigation }: NavigationProps) {
             <Box background={colors.background.main}>
               <SectionContainer px={0} minHeight={240}>
                 <SectionTitle
-                  title={t("portfolio.recommended.title")}
+                  title={t("portfolio.carousel.title")}
                   containerProps={{ mb: 7, mx: 6 }}
                 />
                 <Carousel cardsVisibility={carouselVisibility} />

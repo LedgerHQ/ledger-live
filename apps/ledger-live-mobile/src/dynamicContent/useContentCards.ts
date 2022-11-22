@@ -20,13 +20,7 @@ const HookDynamicContentCards = () => {
   const fetchData = useCallback(async () => {
     // Fetch data from Braze
     const contentCards = await Braze.getContentCards();
-    console.log(
-      "cards",
-      contentCards.map(c => c.extras),
-      "count",
-      contentCards.length,
-    );
-
+    
     // Filtering v0
     const walletCards = filterByPage(
       contentCards,
@@ -37,9 +31,6 @@ const HookDynamicContentCards = () => {
       contentCards,
       LocationContentCard.Asset,
     ).map(card => mapAsAssetContentCard(card));
-
-    console.log("walletCards", walletCards.length);
-    console.log("assetCards", assetCards.length);
 
     dispatch(setDynamicContentWalletCards(walletCards));
     dispatch(setDynamicContentAssetsCards(assetCards));

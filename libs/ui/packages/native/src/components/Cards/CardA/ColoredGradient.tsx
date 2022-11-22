@@ -6,6 +6,7 @@ const StyledSVG = styled(Svg)`
   position: absolute;
   bottom: 0;
   width: 100%;
+  height: 100%;
 `;
 
 export type Props = React.ComponentProps<typeof Svg> & {
@@ -30,8 +31,8 @@ export default function Gradient({ color, opacityColor, style }: Props): JSX.Ele
           <Stop key="100%" offset="100%" stopOpacity={0} stopColor={color} />
         </LinearGradient>
       </Defs>
-      <Rect x="0" y="0" width="100%" height="100%" opacity={1} fill="url(#myGradient)" />
-      <Rect x="0" y="0" width="100%" height="100%" opacity={0.6} fill={opacityColor} />
+      <Rect rx={8} x="0" y="0" width="100%" height="100%" opacity={1} fill="url(#myGradient)" />
+      <Rect rx={8} x="0" y="0" width="100%" height="100%" opacity={0.6} fill={opacityColor} />
     </StyledSVG>
   );
 }

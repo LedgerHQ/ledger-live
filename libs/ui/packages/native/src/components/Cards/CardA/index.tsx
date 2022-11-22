@@ -1,8 +1,13 @@
 import React, { useMemo } from "react";
-import { TouchableOpacity } from "react-native-gesture-handler";
-import { useTheme } from "styled-components/native";
+import { TouchableOpacity, Image } from "react-native";
+import styled, { useTheme } from "styled-components/native";
 import { Flex, Text, Icon } from "../../index";
-import BackgroundGradient from "./Gradient";
+import ColoredGradient from "./ColoredGradient";
+import ShadowGradient from "./ShadowGradient";
+
+const ImageContent = styled(Image)`
+  border-radius: 8px;
+`;
 
 function highlight(text: string) {
   const textSplitted = text
@@ -27,11 +32,14 @@ function highlight(text: string) {
 
 type Props = {
   variant?: "purple" | "red";
+  backgroundImage?: string;
   tag?: string;
   description?: string;
+  onPress?: () => void;
+  onDismiss?: () => void;
 };
 
-const CardA = ({ variant, tag, description }: Props): React.ReactElement => {
+const CardA = ({ variant, backgroundImage, tag, description, onPress, onDismiss }: Props): React.ReactElement => {
   const { colors } = useTheme();
 
   const backgroundVariants = useMemo(
@@ -49,12 +57,21 @@ const CardA = ({ variant, tag, description }: Props): React.ReactElement => {
 
   return (
     <Flex borderRadius={8}>
-      <TouchableOpacity activeOpacity={0.5}>
-        <BackgroundGradient
+      <TouchableOpacity activeOpacity={0.5} onPress={onPress}>
+        {backgroundImage ?
+        <>
+          <ImageContent
+            source={{
+              uri: backgroundImage,
+            }}
+            style={{ width: "100%", height: "100%", position: "absolute" }}
+          />
+          <ShadowGradient color={colors.neutral.c00} />
+          </> : (
+        <ColoredGradient
           color={backgroundVariantColor}
           opacityColor={colors.neutral.c20}
-          style={{ borderRadius: 8 }}
-        />
+        />)}
         <Flex p={6}>
           <Flex flexDirection="row" justifyContent="space-between" mb={3}>
             <Flex bg="neutral.c100a01" borderRadius={6} px={3} py="6px" maxWidth="80%">
@@ -62,7 +79,7 @@ const CardA = ({ variant, tag, description }: Props): React.ReactElement => {
                 {tag}
               </Text>
             </Flex>
-            <TouchableOpacity>
+            <TouchableOpacity onPress={onDismiss}>
               <Flex bg="neutral.c30" top={-8} right={-8} p="6px" borderRadius={24}>
                 <Icon name="Close" size={12} color="neutral.c100" />
               </Flex>
