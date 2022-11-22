@@ -135,6 +135,16 @@ export function WebView({ manifest, onClose, inputs = {}, config }: Props) {
         },
       };
       serverRef.current = new WalletAPIServer(transportRef.current);
+      serverRef.current.setPermissions({
+        currencyIds: manifest.currencies === "*" ? ["*"] : manifest.currencies,
+        methodIds: [
+          "account.request",
+          "account.list",
+          "account.receive",
+          "currency.list",
+          "message.sign",
+        ],
+      });
       serverRef.current.setAccounts(walletAPIAccounts);
       serverRef.current.setCurrencies(walletAPICurrencies);
 
@@ -145,14 +155,13 @@ export function WebView({ manifest, onClose, inputs = {}, config }: Props) {
         return new Promise((resolve, reject) => {
           // handle no curencies selected case
           const cryptoCurrencyIds = currencies.map(({ id }) => id);
-          // TODO: Convert to Live Currency type?
-          let currencyList = (currencies as unknown) as Currency[];
+          let currencyList;
 
           // if single currency available redirect to select account directly
           if (cryptoCurrencyIds.length === 1) {
-            const currency = findCryptoCurrencyById(cryptoCurrencyIds[0]);
+            currencyList = [findCryptoCurrencyById(cryptoCurrencyIds[0])];
 
-            if (!currency) {
+            if (!currencyList[0]) {
               tracking.requestAccountFail(manifest);
               // @TODO replace with correct error
               reject(new RpcError(CURRENCY_NOT_FOUND));
@@ -167,7 +176,7 @@ export function WebView({ manifest, onClose, inputs = {}, config }: Props) {
             SelectAccountAndCurrencyDrawer,
             {
               accounts$,
-              currencyList,
+              currencies: currencyList,
               onAccountSelected: (account: Account, parentAccount: Account | undefined) => {
                 setDrawer();
                 tracking.requestAccountSuccess(manifest);
@@ -371,7 +380,7 @@ export function WebView({ manifest, onClose, inputs = {}, config }: Props) {
 
   const handleMessage = useCallback(event => {
     if (event.channel === "webviewToParent") {
-      transportRef.current?.onMessage?.(JSON.parse(event.args[0]));
+      transportRef.current?.onMessage?.(event.args[0]);
     }
   }, []);
 

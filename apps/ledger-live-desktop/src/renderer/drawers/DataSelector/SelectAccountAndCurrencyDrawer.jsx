@@ -12,6 +12,7 @@ import Fuse from "fuse.js";
 
 import { useCurrenciesByMarketcap } from "@ledgerhq/live-common/currencies/index";
 import { useFilteredCurrencies } from "@ledgerhq/live-common/currencies/react";
+import type { WalletAPIAccount } from "@ledgerhq/live-common/wallet-api/types";
 import Text from "~/renderer/components/Text";
 import type { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import { CurrencyList } from "./CurrencyList";
@@ -60,6 +61,7 @@ const HeaderContainer: ThemedComponent<any> = styled.div`
 `;
 
 type SelectAccountAndCurrencyDrawerProps = {
+  accounts$?: Observable<WalletAPIAccount[]>,
   onClose: () => void,
   currencies?: string[],
   includeTokens?: boolean,
