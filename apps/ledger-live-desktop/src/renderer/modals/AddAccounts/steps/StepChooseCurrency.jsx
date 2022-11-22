@@ -36,7 +36,6 @@ const StepChooseCurrency = ({ currency, setCurrency }: StepProps) => {
   const cronos = useFeature("currencyCronos");
   const songbird = useFeature("currencySongbird");
   const flare = useFeature("currencyFlare");
-  const avaxCChain = useFeature("currencyAvalancheCChain");
 
   const featureFlaggedCurrencies = useMemo(
     () => ({
@@ -46,9 +45,8 @@ const StepChooseCurrency = ({ currency, setCurrency }: StepProps) => {
       cronos,
       songbird,
       flare,
-      avalanche_c_chain: avaxCChain,
     }),
-    [osmo, fantom, moonbeam, cronos, songbird, flare, avaxCChain],
+    [osmo, fantom, moonbeam, cronos, songbird, flare],
   );
 
   const currencies = useMemo(() => {
