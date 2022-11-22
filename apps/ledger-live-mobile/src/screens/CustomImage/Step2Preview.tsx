@@ -88,7 +88,7 @@ const Step2Preview = ({ navigation, route }: NavigationProps) => {
   const { t } = useTranslation();
 
   const { params } = route;
-
+  const contrastValue = contrasts[selectedIndex].val;
   const { cropResult: croppedImage, device, baseImageFile } = params;
 
   const handleError = useCallback(
@@ -142,11 +142,11 @@ const Step2Preview = ({ navigation, route }: NavigationProps) => {
 
     navigation.navigate(ScreenName.CustomImagePreviewPostEdit, {
       imagePreview: processorPreviewImage,
+      contrast: contrastValue,
       baseImageFile,
       device,
-      contrast,
     });
-  }, [navigation, processorPreviewImage, device, baseImageFile, contrast]);
+  }, [navigation, processorPreviewImage, device, baseImageFile, contrastValue]);
 
   const setSelectedIndexWrapped = useCallback(
     newIndex => {
@@ -173,7 +173,7 @@ const Step2Preview = ({ navigation, route }: NavigationProps) => {
           onPreviewResult={handlePreviewResult}
           onError={handleError}
           onRawResult={() => undefined}
-          contrast={contrasts[selectedIndex].val}
+          contrast={contrastValue}
         />
       )}
       <Flex
