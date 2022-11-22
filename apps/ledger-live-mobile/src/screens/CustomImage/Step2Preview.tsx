@@ -77,16 +77,20 @@ type NavigationProps = BaseComposite<
  * of the image & the preview base 64 data URI of the image as params.
  */
 const Step2Preview = ({ navigation, route }: NavigationProps) => {
+  const imageProcessorRef = useRef<ImageProcessor>(null);
   const [loading, setLoading] = useState(true);
   const [resizedImage, setResizedImage] = useState<ResizeResult | null>(null);
   const initialIndex = 0;
   const [selectedIndex, setSelectedIndex] = useState(initialIndex);
   const animSelectedIndex = useSharedValue(initialIndex);
+  const [processorPreviewImage, setProcessorPreviewImage] =
+    useState<ProcessorPreviewResult | null>(null);
+  const [rawResultLoading, setRawResultLoading] = useState(false);
 
   const { t } = useTranslation();
 
   const { params } = route;
-  const contrastValue = contrasts[selectedIndex].val;
+
   const { cropResult: croppedImage, device, baseImageFile } = params;
 
   const handleError = useCallback(
@@ -114,11 +118,6 @@ const Step2Preview = ({ navigation, route }: NavigationProps) => {
   });
 
   /** RESULT IMAGE HANDLING */
-
-  const [processorPreviewImage, setProcessorPreviewImage] =
-    useState<ProcessorPreviewResult | null>(null);
-  const [rawResultLoading, setRawResultLoading] = useState(false);
-  const imageProcessorRef = useRef<ImageProcessor>(null);
 
   const handlePreviewResult: ImageProcessorProps["onPreviewResult"] =
     useCallback(
@@ -193,7 +192,7 @@ const Step2Preview = ({ navigation, route }: NavigationProps) => {
           onPreviewResult={handlePreviewResult}
           onError={handleError}
           onRawResult={handleRawResult}
-          contrast={contrastValue}
+          contrast={contrasts[selectedIndex].val}
         />
       )}
       <Flex
@@ -249,9 +248,9 @@ const Step2Preview = ({ navigation, route }: NavigationProps) => {
             size="large"
             type="main"
             outline={false}
+            onPress={requestRawResult}
             pending={rawResultLoading}
             displayContentWhenPending
-            onPress={requestRawResult}
           >
             {t("common.confirm")}
           </Button>

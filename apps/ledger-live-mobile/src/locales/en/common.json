@@ -5440,7 +5440,7 @@
     }
   },
   "customImage": {
-    "title": "Choose a picture.\nCreate a vibe.\nMake your Ledger yours.",
+    "title": "Lock screen picture",
     "replace": "Replace",
     "drawer": {
       "title": "Choose an image",
