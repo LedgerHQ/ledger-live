@@ -34,7 +34,10 @@ export const mapAsWalletContentCard = (card: BrazeContentCard) =>
 export const mapAsAssetContentCard = (card: BrazeContentCard) =>
   ({
     id: card.id,
+    tag: card.extras.tag,
+    title: card.extras.title,
     location: LocationContentCard.Asset,
+    image: card.extras.image,
     link: card.extras.link,
     cta: card.extras.cta,
     assets: card.extras.assets,
