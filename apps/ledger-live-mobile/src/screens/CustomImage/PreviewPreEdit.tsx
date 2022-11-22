@@ -173,6 +173,9 @@ const PreviewPreEdit = ({ navigation, route }: NavigationProps) => {
         }
         e.preventDefault();
         setLoadedImage(null);
+        setCroppedImage(null);
+        setProcessorPreviewImage(null);
+        setPreviewLoading(true);
         importImageFromPhoneGallery()
           .then(importResult => {
             if (dead) return;
