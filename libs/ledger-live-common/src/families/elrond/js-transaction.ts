@@ -4,6 +4,7 @@ import type { ElrondAccount, Transaction } from "./types";
 import { getFees } from "./api";
 import { GAS, MIN_GAS_LIMIT } from "./constants";
 import { ElrondEncodeTransaction } from "./encode";
+import { isAmountSpentFromBalance } from "./logic";
 
 /**
  * Create an empty t
@@ -86,19 +87,22 @@ export const prepareTransaction = async (
   }
 
   if (t.useAllAmount) {
-    if (tokenAccount) {
-      preparedTx.amount = tokenAccount.balance;
-    } else {
-      preparedTx.amount = a.spendableBalance;
+    // Set the max amount
+    preparedTx.amount = tokenAccount
+      ? tokenAccount.balance
+      : a.spendableBalance;
+
+    // Compute estimated fees for that amount
+    preparedTx.fees = await getFees(preparedTx);
+
+    // Adjust max amount according to computed fees
+    if (!tokenAccount && isAmountSpentFromBalance(t.mode)) {
+      preparedTx.amount = preparedTx.amount.gt(preparedTx.fees)
+        ? preparedTx.amount.minus(preparedTx.fees)
+        : new BigNumber(0);
     }
-  }
-
-  preparedTx.fees = await getFees(preparedTx);
-
-  if (!tokenAccount) {
-    preparedTx.amount = preparedTx.amount.gt(preparedTx.fees)
-      ? preparedTx.amount.minus(preparedTx.fees)
-      : new BigNumber(0);
+  } else {
+    preparedTx.fees = await getFees(preparedTx);
   }
 
   return preparedTx;
