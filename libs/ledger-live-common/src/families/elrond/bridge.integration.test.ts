@@ -16,6 +16,9 @@ const elrond: CurrenciesData<Transaction> = {
   FIXME_ignoreAccountFields: [
     "elrondResources.providers", // They are always movings
   ],
+  FIXME_ignorePreloadFields: [
+    "validators", // Same as providers above
+  ],
   scanAccounts: [
     {
       name: "elrond seed 1",

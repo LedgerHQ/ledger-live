@@ -93,7 +93,7 @@ function expectCorrectOptimisticOperation(
     expect(operation.accountId).toStrictEqual(optimisticOperation.accountId)
   );
 
-  //FIXME: on ESDT transactions the fee can decrease when the transaction is executed
+  // On ESDT transactions the fee can decrease when the transaction is executed
   if (!transaction.subAccountId) {
     botTest("optimistic operation matches fee", () =>
       expect(operation.fee.toFixed()).toStrictEqual(
