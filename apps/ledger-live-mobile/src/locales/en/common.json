@@ -425,6 +425,12 @@
       "title": "Maximum decimals limit reached",
       "description": "Please make sure that the amount provided has 18 decimals."
     },
+    "MinDelegatedAmountError": {
+      "title": "Delegated amount should be minimum {{formattedAmount}}"
+    },
+    "MinUndelegatedAmountError": {
+      "title": "Undelegated amount should be minimum {{formattedAmount}}"
+    },
     "NotEnoughBalance": {
       "title": "Sorry, insufficient funds",
       "description": "Please make sure the account has enough funds."
@@ -3254,8 +3260,8 @@
       "infoTotalDesc": "Includes transaction amount and the selected network fees",
       "gasLimit": "Gas limit",
       "gasPrice": "Gas price",
-      "maxFee" : "Max fee",
-      "maxPriorityFee" : "Max priority fee",
+      "maxFee": "Max fee",
+      "maxPriorityFee": "Max priority fee",
       "nextBlock": "Next block: {{nextBaseFee}}",
       "suggestedPriorityFee": "Suggested: {{lowPriorityFee}} - {{highPriorityFee}}",
       "maxFees": "Max fees",
