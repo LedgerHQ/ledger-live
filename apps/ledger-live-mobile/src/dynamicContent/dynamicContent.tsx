@@ -6,35 +6,12 @@ import {
   assetsCardsSelector,
   walletCardsSelector,
 } from "../reducers/dynamicContent";
-
-export enum LocationContentCard {
-  Wallet = "wallet",
-  Asset = "asset",
-}
-
-enum BackgroundType {
-  purple = "purple",
-  red = "red",
-  neutral = "neutral",
-}
-
-export type ContentCard = {
-  id: string;
-  location: LocationContentCard;
-  title: string;
-  link: string;
-  image?: string;
-  tag: string;
-};
-
-export type WalletContentCard = ContentCard & {
-  background?: BackgroundType;
-};
-
-export type AssetContentCard = ContentCard & {
-  assets: string;
-  cta: string;
-};
+import {
+  AssetContentCard,
+  Background,
+  LocationContentCard,
+  WalletContentCard,
+} from "./types";
 
 export const filterByPage = (array: BrazeContentCard[], page: string) =>
   array.filter(elem => elem.extras.location === page);
@@ -49,8 +26,8 @@ export const mapAsWalletContentCard = (card: BrazeContentCard) =>
     link: card.extras.link,
     background:
       card.extras.image ||
-      BackgroundType[card.extras.background as BackgroundType] ||
-      BackgroundType.purple,
+      Background[card.extras.background as Background] ||
+      Background.purple,
   } as WalletContentCard);
 
 export const mapAsAssetContentCard = (card: BrazeContentCard) =>

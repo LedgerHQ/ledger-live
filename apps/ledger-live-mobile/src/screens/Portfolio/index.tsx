@@ -59,7 +59,6 @@ import {
   BaseNavigation,
   StackNavigatorProps,
 } from "../../components/RootNavigator/types/helpers";
-import useDynamicContent from "../../dynamicContent/dynamicContent";
 
 export { default as PortfolioTabIcon } from "./TabIcon";
 
@@ -157,11 +156,6 @@ function PortfolioScreen({ navigation }: NavigationProps) {
   );
 
   const postOnboardingVisible = usePostOnboardingEntryPointVisibleOnWallet();
-
-  // TEST PURPOSE
-  const { walletCards, assetsCards } = useDynamicContent();
-  console.log("PORTFOLIO -- ", walletCards.length);
-  console.log("ASSETS CARD -- ", assetsCards.length);
 
   const data = useMemo(
     () => [
