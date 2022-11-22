@@ -3,6 +3,7 @@ import ethereum from "../families/ethereum/exchange";
 import ripple from "../families/ripple/exchange";
 import stellar from "../families/stellar/exchange";
 import tezos from "../families/tezos/exchange";
+import solana from "../families/solana/exchange";
 
 export default {
   bitcoin,
@@ -10,4 +11,5 @@ export default {
   ripple,
   stellar,
   tezos,
+  solana
 };
