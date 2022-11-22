@@ -17,6 +17,9 @@ export const defaultFeatures: DefaultFeatures = {
       debug: false,
     },
   },
+  currencyAvalancheCChain: {
+    enabled: false,
+  },
   currencyOsmosis: {
     enabled: false,
   },
@@ -33,6 +36,9 @@ export const defaultFeatures: DefaultFeatures = {
     enabled: false,
   },
   currencyFlare: {
+    enabled: false,
+  },
+  currencyAvalancheCChainMobile: {
     enabled: false,
   },
   currencyOsmosisMobile: {
