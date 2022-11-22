@@ -60,7 +60,7 @@ const DEFAULT_MULTIBUY_APP_ID = "multibuy";
 // Exchange (Buy / Sell) as a live app screen
 const LiveAppExchange = ({ appId }: { appId: string }) => {
   const { state: urlParams } = useLocation();
-  const locale = useSelector(languageSelector) || "en";
+  const locale = useSelector(languageSelector);
 
   const localManifest = useLocalLiveAppManifest(appId);
   const remoteManifest = useRemoteLiveAppManifest(appId);
