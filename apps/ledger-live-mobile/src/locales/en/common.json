@@ -3254,8 +3254,8 @@
       "infoTotalDesc": "Includes transaction amount and the selected network fees",
       "gasLimit": "Gas limit",
       "gasPrice": "Gas price",
-      "maxFee" : "Max fee",
-      "maxPriorityFee" : "Max priority fee",
+      "maxFee": "Max fee",
+      "maxPriorityFee": "Max priority fee",
       "nextBlock": "Next block: {{nextBaseFee}}",
       "suggestedPriorityFee": "Suggested: {{lowPriorityFee}} - {{highPriorityFee}}",
       "maxFees": "Max fees",
@@ -3535,7 +3535,10 @@
     },
     "confirmSwap": {
       "title": "Confirm swap operation on device",
-      "alert": "Verify the Swap details on your device before sending it. The addresses are exchanged securely so you don’t have to verify them.",
+      "alert": {
+        "default": "Verify the Swap details on your device before sending it. The addresses are exchanged securely so you don’t have to verify them.",
+        "cic": "Verify the Swap details on your device before sending it. CIC may need to perform additional verification for some transactions, resulting in a delay."
+      },
       "acceptTerms": "By validating this transaction, I accept\n<0><0>{{provider}}</0>'s terms of use</0>",
       "notice": "Verify the Swap details on your device before sending it. The addresses are exchanged securely so you don’t have to verify them."
     },
@@ -5530,7 +5533,13 @@
       "choosePicture": "Choose a picture"
     },
     "customImage": "Custom picture",
-    "doThisLater": "Maybe later"
+    "doThisLater": "Maybe later",
+    "preview": {
+      "title": "Preview",
+      "loading": "Loading preview",
+      "setPicture": "Set custom picture",
+      "editPicture": "Edit picture"
+    }
   },
   "postOnboarding": {
     "hub": {

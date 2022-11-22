@@ -19,18 +19,18 @@ patchedDependencies:
   react-native-video@5.2.0:
     hash: lojvl6twgoj4rxeqeytmq4uduq
     path: patches/react-native-video@5.2.0.patch
-  react-native-image-crop-tools@1.6.2:
-    hash: ykxjy5s7xujdxmsgrwxo5mh3y4
-    path: patches/react-native-image-crop-tools@1.6.2.patch
   rn-fetch-blob@0.12.0:
     hash: n5yzdsrxz654upecs5xliebtmm
     path: patches/rn-fetch-blob@0.12.0.patch
-  react-native-os@1.2.6:
-    hash: 2e25ffb547hjiczrnsjhxl6geu
-    path: patches/react-native-os@1.2.6.patch
+  react-native-image-crop-tools@1.6.2:
+    hash: ykxjy5s7xujdxmsgrwxo5mh3y4
+    path: patches/react-native-image-crop-tools@1.6.2.patch
   react-native-tcp@4.0.0:
     hash: frdjcnsdohx4blxdmaawwvdihy
     path: patches/react-native-tcp@4.0.0.patch
+  react-native-os@1.2.6:
+    hash: 2e25ffb547hjiczrnsjhxl6geu
+    path: patches/react-native-os@1.2.6.patch
 
 importers:
 
@@ -2992,6 +2992,16 @@ importers:
       '@actions/core': 1.10.0
       '@actions/github': 5.1.1
       '@vercel/ncc': 0.33.4
+
+  tools/actions/live-common-affected:
+    specifiers:
+      '@actions/core': ^1.10.0
+      '@actions/github': ^5.1.1
+      tsup: ^6.4.0
+    devDependencies:
+      '@actions/core': 1.10.0
+      '@actions/github': 5.1.1
+      tsup: 6.5.0
 
   tools/actions/pr-is-fork:
     specifiers:
@@ -9851,7 +9861,7 @@ packages:
       resolve-from: 5.0.0
       semver: 7.3.2
       slugify: 1.6.5
-      sucrase: 3.21.0
+      sucrase: 3.28.0
     transitivePeerDependencies:
       - supports-color
     dev: false
@@ -9869,7 +9879,7 @@ packages:
       resolve-from: 5.0.0
       semver: 7.3.2
       slugify: 1.6.5
-      sucrase: 3.21.0
+      sucrase: 3.28.0
     transitivePeerDependencies:
       - supports-color
     dev: true
@@ -9887,7 +9897,7 @@ packages:
       resolve-from: 5.0.0
       semver: 7.3.2
       slugify: 1.6.5
-      sucrase: 3.21.0
+      sucrase: 3.28.0
     transitivePeerDependencies:
       - supports-color
     dev: true
@@ -9905,7 +9915,7 @@ packages:
       resolve-from: 5.0.0
       semver: 7.3.2
       slugify: 1.6.5
-      sucrase: 3.21.0
+      sucrase: 3.28.0
     transitivePeerDependencies:
       - supports-color
     dev: true
@@ -9923,7 +9933,7 @@ packages:
       resolve-from: 5.0.0
       semver: 7.3.2
       slugify: 1.6.5
-      sucrase: 3.21.0
+      sucrase: 3.28.0
     transitivePeerDependencies:
       - supports-color
     dev: true
@@ -10089,7 +10099,7 @@ packages:
       getenv: 1.0.0
       glob: 8.0.3
       resolve-from: 5.0.0
-      sucrase: 3.21.0
+      sucrase: 3.28.0
     transitivePeerDependencies:
       - supports-color
     dev: true
@@ -10105,7 +10115,7 @@ packages:
       getenv: 1.0.0
       glob: 8.0.3
       resolve-from: 5.0.0
-      sucrase: 3.21.0
+      sucrase: 3.28.0
     transitivePeerDependencies:
       - supports-color
     dev: true
@@ -10121,7 +10131,7 @@ packages:
       getenv: 1.0.0
       glob: 8.0.3
       resolve-from: 5.0.0
-      sucrase: 3.21.0
+      sucrase: 3.28.0
     transitivePeerDependencies:
       - supports-color
     dev: true
@@ -29081,7 +29091,7 @@ packages:
     dependencies:
       confusing-browser-globals: 1.0.11
       eslint: 7.32.0
-      eslint-plugin-import: 2.26.0_ffi3uiz42rv3jyhs6cr7p7qqry
+      eslint-plugin-import: 2.26.0_ymzqyjxdu7ir24gg3vejmyl6la
       object.assign: 4.1.3
       object.entries: 1.1.5
     dev: true
@@ -36946,7 +36956,7 @@ packages:
       pretty-format: 28.1.3
       slash: 3.0.0
       strip-json-comments: 3.1.1
-      ts-node: 10.7.0_33lso24kgdvwdhve7eirdtgycu
+      ts-node: 10.7.0_apjxfgsonp5vzn5ucv2l752xgq
     transitivePeerDependencies:
       - metro
       - supports-color
@@ -39017,6 +39027,7 @@ packages:
       write-file-atomic: 2.4.3
     transitivePeerDependencies:
       - supports-color
+    dev: true
 
   /jsdom/11.12.0:
     resolution: {integrity: sha512-y8Px43oyiBM13Zc1z780FrfNLJCXTL40EWlty/LXUtcjykRBNgLlCjWXpfSPBl2iv+N7koQN+dvqszHZgT/Fjw==}
@@ -41145,24 +41156,6 @@ packages:
       - supports-color
       - utf-8-validate
 
-  /metro-config/0.67.0_5rj3ktdhebdtkdjqejo5rbxriu:
-    resolution: {integrity: sha512-ThAwUmzZwTbKyyrIn2bKIcJDPDBS0LKAbqJZQioflvBGfcgA21h3fdL3IxRmvCEl6OnkEWI0Tn1Z9w2GLAjf2g==}
-    peerDependencies:
-      metro-transform-worker: '*'
-    peerDependenciesMeta:
-      metro-transform-worker:
-        optional: true
-    dependencies:
-      cosmiconfig: 5.2.1
-      jest-validate: 26.6.2
-      metro: 0.67.0
-      metro-cache: 0.67.0_metro@0.67.0
-      metro-core: 0.67.0_metro@0.67.0
-      metro-runtime: 0.67.0
-      metro-transform-worker: 0.67.0_metro-minify-uglify@0.67.0
-    transitivePeerDependencies:
-      - metro
-
   /metro-config/0.67.0_h77kaxayu5kga6qsud7rauzt6a:
     resolution: {integrity: sha512-ThAwUmzZwTbKyyrIn2bKIcJDPDBS0LKAbqJZQioflvBGfcgA21h3fdL3IxRmvCEl6OnkEWI0Tn1Z9w2GLAjf2g==}
     peerDependencies:
@@ -41476,7 +41469,7 @@ packages:
       '@babel/parser': 7.18.11
       '@babel/types': 7.18.10
       babel-preset-fbjs: 3.4.0_@babel+core@7.18.10
-      metro: 0.67.0_h77kaxayu5kga6qsud7rauzt6a
+      metro: 0.67.0
       metro-babel-transformer: 0.67.0
       metro-cache: 0.67.0_metro@0.67.0
       metro-cache-key: 0.67.0
@@ -41549,68 +41542,6 @@ packages:
     transitivePeerDependencies:
       - bufferutil
       - encoding
-      - supports-color
-      - utf-8-validate
-
-  /metro/0.67.0_h77kaxayu5kga6qsud7rauzt6a:
-    resolution: {integrity: sha512-DwuBGAFcAivoac/swz8Lp7Y5Bcge1tzT7T6K0nf1ubqJP8YzBUtyR4pkjEYVUzVu/NZf7O54kHSPVu1ibYzOBQ==}
-    hasBin: true
-    dependencies:
-      '@babel/code-frame': 7.16.7
-      '@babel/core': 7.17.10
-      '@babel/generator': 7.17.10
-      '@babel/parser': 7.17.10
-      '@babel/template': 7.16.7
-      '@babel/traverse': 7.17.10
-      '@babel/types': 7.17.10
-      absolute-path: 0.0.0
-      accepts: 1.3.8
-      async: 2.6.4
-      chalk: 4.1.2
-      ci-info: 2.0.0
-      connect: 3.7.0
-      debug: 2.6.9
-      denodeify: 1.2.1
-      error-stack-parser: 2.0.7
-      fs-extra: 1.0.0
-      graceful-fs: 4.2.10
-      hermes-parser: 0.5.0
-      image-size: 0.6.3
-      invariant: 2.2.4
-      jest-haste-map: 27.5.1_metro@0.67.0
-      jest-worker: 26.6.2_metro@0.67.0
-      lodash.throttle: 4.1.1
-      metro-babel-transformer: 0.67.0
-      metro-cache: 0.67.0_metro@0.67.0
-      metro-cache-key: 0.67.0
-      metro-config: 0.67.0_5rj3ktdhebdtkdjqejo5rbxriu
-      metro-core: 0.67.0_metro@0.67.0
-      metro-hermes-compiler: 0.67.0
-      metro-inspector-proxy: 0.67.0
-      metro-minify-uglify: 0.67.0
-      metro-react-native-babel-preset: 0.67.0_@babel+core@7.17.10
-      metro-resolver: 0.67.0
-      metro-runtime: 0.67.0
-      metro-source-map: 0.67.0
-      metro-symbolicate: 0.67.0
-      metro-transform-plugins: 0.67.0
-      metro-transform-worker: 0.67.0_metro-minify-uglify@0.67.0
-      mime-types: 2.1.35
-      mkdirp: 0.5.6
-      node-fetch: 2.6.7
-      nullthrows: 1.1.1
-      rimraf: 2.7.1
-      serialize-error: 2.1.0
-      source-map: 0.5.7
-      strip-ansi: 6.0.1
-      temp: 0.8.3
-      throat: 5.0.0
-      ws: 7.5.7
-      yargs: 15.4.1
-    transitivePeerDependencies:
-      - bufferutil
-      - encoding
-      - metro-transform-worker
       - supports-color
       - utf-8-validate
 
@@ -47064,7 +46995,7 @@ packages:
     dependencies:
       '@babel/parser': 7.18.11
       flow-parser: 0.121.0
-      glob: 7.2.3
+      glob: 8.0.3
       invariant: 2.2.4
       jscodeshift: 0.13.1
       nullthrows: 1.1.1
@@ -47077,13 +47008,14 @@ packages:
     dependencies:
       '@babel/parser': 7.18.11
       flow-parser: 0.121.0
-      glob: 7.2.3
+      glob: 8.0.3
       invariant: 2.2.4
       jscodeshift: 0.13.1_@babel+preset-env@7.17.10
       nullthrows: 1.1.1
     transitivePeerDependencies:
       - '@babel/preset-env'
       - supports-color
+    dev: true
 
   /react-native-codegen/0.0.7:
     resolution: {integrity: sha512-dwNgR8zJ3ALr480QnAmpTiqvFo+rDtq6V5oCggKhYFlRjzOmVSFn3YD41u8ltvKS5G2nQ8gCs2vReFFnRGLYng==}
@@ -47324,7 +47256,7 @@ packages:
     dependencies:
       prop-types: 15.8.1
       react: 17.0.2
-      react-native: 0.68.5_7bkeunqngmazlu32h3v2zcqrja
+      react-native: 0.68.5_qiqqwmyv63yhnuboofexv3s7x4
       react-native-animatable: 1.3.3
     dev: false
 
@@ -47400,7 +47332,7 @@ packages:
       invariant: 2.2.4
       lodash.isequal: 4.5.0
       react: 17.0.2
-      react-native: 0.68.5_7bkeunqngmazlu32h3v2zcqrja
+      react-native: 0.68.5_qiqqwmyv63yhnuboofexv3s7x4
       setimmediate: 1.0.5
       string-hash-64: 1.0.3
     transitivePeerDependencies:
@@ -47513,7 +47445,7 @@ packages:
       css-select: 4.3.0
       css-tree: 1.1.3
       react: 17.0.2
-      react-native: 0.68.5_7bkeunqngmazlu32h3v2zcqrja
+      react-native: 0.68.5_qiqqwmyv63yhnuboofexv3s7x4
 
   /react-native-swipe-gestures/1.0.5:
     resolution: {integrity: sha512-Ns7Bn9H/Tyw278+5SQx9oAblDZ7JixyzeOczcBK8dipQk2pD7Djkcfnf1nB/8RErAmMLL9iXgW0QHqiII8AhKw==}
@@ -47731,6 +47663,7 @@ packages:
       - metro-transform-worker
       - supports-color
       - utf-8-validate
+    dev: true
 
   /react-native/0.68.5_qiqqwmyv63yhnuboofexv3s7x4:
     resolution: {integrity: sha512-t3kiQ/gumFV+0r/NRSIGtYxanjY4da0utFqHgkMcRPJVwXFWC0Fr8YiOeRGYO1dp8EfrSsOjtfWic/inqVYlbQ==}
@@ -51400,6 +51333,19 @@ packages:
       mz: 2.7.0
       pirates: 4.0.5
       ts-interface-checker: 0.1.13
+    dev: true
+
+  /sucrase/3.28.0:
+    resolution: {integrity: sha512-TK9600YInjuiIhVM3729rH4ZKPOsGeyXUwY+Ugu9eilNbdTFyHr6XcAGYbRVZPDgWj6tgI7bx95aaJjHnbffag==}
+    engines: {node: '>=8'}
+    hasBin: true
+    dependencies:
+      commander: 4.1.1
+      glob: 7.1.6
+      lines-and-columns: 1.2.4
+      mz: 2.7.0
+      pirates: 4.0.5
+      ts-interface-checker: 0.1.13
 
   /sudo-prompt/8.2.5:
     resolution: {integrity: sha512-rlBo3HU/1zAJUrkY6jNxDOC9eVYliG6nS4JA8u8KAshITd07tafMc/Br7xQwCSseXwJ2iCcHCE8SNWX3q8Z+kw==}
@@ -52805,7 +52751,7 @@ packages:
       resolve-from: 5.0.0
       rollup: 3.3.0
       source-map: 0.8.0-beta.0
-      sucrase: 3.21.0
+      sucrase: 3.28.0
       tree-kill: 1.2.2
     transitivePeerDependencies:
       - supports-color
