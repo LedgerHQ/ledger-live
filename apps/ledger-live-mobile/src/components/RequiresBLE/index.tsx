@@ -2,11 +2,11 @@
 // otherwise render an error
 import React, { useCallback, useEffect, useState } from "react";
 import { Observable } from "rxjs";
+import { Platform } from "react-native";
 import TransportBLE from "../../react-native-hw-transport-ble";
 import RequiresLocationOnAndroid from "./RequiresLocationOnAndroid";
 import BluetoothDisabled from "./BluetoothDisabled";
 import { usePromptBluetoothCallback } from "../../logic/usePromptBluetoothCallback";
-import { Platform } from "react-native";
 
 type Props = {
   children: React.ReactNode;
