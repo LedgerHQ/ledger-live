@@ -5,7 +5,7 @@ import { useCallback } from "react";
 import { useBrazeContentCard } from "./brazeContentCard";
 import {
   assetsCardsSelector,
-  dismissedCardssSelector,
+  dismissedCardsSelector,
   walletCardsSelector,
 } from "../reducers/dynamicContent";
 import {
@@ -53,7 +53,7 @@ const useDynamicContent = () => {
 
   const assetsCards = useSelector(assetsCardsSelector);
   const walletCards = useSelector(walletCardsSelector);
-  const hiddenCards: string[] = useSelector(dismissedCardssSelector);
+  const hiddenCards: string[] = useSelector(dismissedCardsSelector);
 
   const getAssetCardByIdOrTicker = useCallback(
     (currency: CryptoOrTokenCurrency): AssetContentCard | undefined => {

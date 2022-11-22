@@ -49,7 +49,7 @@ const handlers: ReducerMap<DynamicContentState, DynamicContentPayload> = {
 export const assetsCardsSelector = (s: State) => s.dynamicContent.assetsCards;
 
 export const walletCardsSelector = (s: State) => s.dynamicContent.walletCards;
-export const dismissedCardssSelector = (s: State) =>
+export const dismissedCardsSelector = (s: State) =>
   s.dynamicContent.dismissedCards;
 
 export default handleActions<DynamicContentState, DynamicContentPayload>(
