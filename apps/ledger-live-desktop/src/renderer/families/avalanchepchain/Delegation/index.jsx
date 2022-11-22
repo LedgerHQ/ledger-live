@@ -82,7 +82,7 @@ const Delegation = ({ account }: Props) => {
       )}
       <TableContainer mb={6}>
         <TableHeader title={<Trans i18nKey="avalanchepchain.delegation.header" />}>
-          {(isDelegationEnabled && hasDelegations) && (
+          {isDelegationEnabled && hasDelegations && (
             <Button
               id={"account-delegate-button"}
               mr={2}

@@ -53,11 +53,7 @@ function AvalancheValidatorRow({ validator, active, onClick, unit, currency }: P
           )}
         </IconContainer>
       }
-      title={
-        isDefaultValidatorNode(validator.nodeID)
-          ? `Ledger by Figment`
-          : validator.nodeID
-      }
+      title={isDefaultValidatorNode(validator.nodeID) ? `Ledger by Figment` : validator.nodeID}
       onExternalLink={onExternalLink}
       unit={unit}
       sideInfo={

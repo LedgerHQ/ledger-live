@@ -18,7 +18,7 @@ type Props = {
 export default function AvalancheEarnRewardsInfoModal({ name, account, parentAccount }: Props) {
   const { t } = useTranslation();
   const dispatch = useDispatch();
-  
+
   const onNext = useCallback(() => {
     dispatch(closeModal(name));
     dispatch(

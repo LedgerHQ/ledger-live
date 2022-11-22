@@ -83,7 +83,7 @@ function StepEndDate({
       return bridge.updateTransaction(tx, {
         startTime: new BigNumber(unixStakeStartTime),
         endTime: new BigNumber(unixDefaultEndDate),
-        maxEndTime: new BigNumber(unixMaxEndDate)
+        maxEndTime: new BigNumber(unixMaxEndDate),
       });
     });
   }, []);
@@ -99,7 +99,7 @@ function StepEndDate({
 
   const { errors } = status;
   const hasErrors = Object.keys(errors).length > 0;
-  let { time: timeError } = errors;
+  const { time: timeError } = errors;
 
   return (
     <Container flow={4}>

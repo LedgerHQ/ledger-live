@@ -47,9 +47,7 @@ export function Row({ delegation, account, onExternalLink }: Props) {
           </IconContainer>
         </Box>
         <Ellipsis>
-          {isDefaultValidatorNode(delegation.nodeID)
-            ? `Ledger by Figment`
-            : delegation.nodeID}
+          {isDefaultValidatorNode(delegation.nodeID) ? `Ledger by Figment` : delegation.nodeID}
         </Ellipsis>
       </Column>
       <Column>{moment.unix(delegation.startTime).format("MM/DD/YYYY, h:mm:ss a")}</Column>
