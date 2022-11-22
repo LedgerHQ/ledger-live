@@ -12,11 +12,10 @@ export type Params = Partial<ImageFileUri> & {
 };
 
 /**
- * Component to resize an image.
+ * Hook to resize an image.
  *
  * It:
  *  - takes as an input an image file URI & target dimensions as an input
- *  - renders nothing
  *  - outputs the resulting image as a base64 data URI.
  *
  * */
