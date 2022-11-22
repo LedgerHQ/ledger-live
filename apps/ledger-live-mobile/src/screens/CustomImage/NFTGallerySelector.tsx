@@ -4,7 +4,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { decodeNftId } from "@ledgerhq/live-common/nft/nftId";
 import { orderByLastReceived } from "@ledgerhq/live-common/nft/helpers";
 import { useSelector } from "react-redux";
-import { NFTMetadata, ProtoNFT } from "@ledgerhq/types-live";
+import { ProtoNFT } from "@ledgerhq/types-live";
 import { FlatList } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 

@@ -1,3 +1,5 @@
+import { ProtoNFT } from "@ledgerhq/types-live";
+
 export type ImageDimensions = {
   /** pixel height of the image */
   height: number;
@@ -28,4 +30,11 @@ export type ImageUrl = {
    * e.g: "https://example.com/an_image.png"
    */
   imageUrl: string;
+};
+
+export type GalleryNFT = {
+  /**
+   * NFT object coming from the NFT gallery
+   */
+  nft: ProtoNFT;
 };
