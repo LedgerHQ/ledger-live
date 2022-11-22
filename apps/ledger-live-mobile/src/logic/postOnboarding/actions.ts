@@ -34,6 +34,12 @@ export const claimNftAction: PostOnboardingAction = {
   description: "postOnboarding.actions.claimNft.description",
   tagLabel: "postOnboarding.actions.claimNft.tagLabel",
   actionCompletedPopupLabel: "postOnboarding.actions.claimNft.popupLabel",
+  navigationParams: [
+    NavigatorName.ClaimNft,
+    {
+      screen: ScreenName.ClaimNftWelcome,
+    },
+  ],
 };
 
 export const assetsTransferAction: PostOnboardingAction = {
