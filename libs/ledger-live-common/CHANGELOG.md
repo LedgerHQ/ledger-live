@@ -1,5 +1,11 @@
 # @ledgerhq/live-common
 
+## 27.7.1-hotfix.1
+
+### Patch Changes
+
+- [#1931](https://github.com/LedgerHQ/ledger-live/pull/1931) [`e3a796b0a0`](https://github.com/LedgerHQ/ledger-live/commit/e3a796b0a021b19ff01061a019657cea26cc46de) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Fix Ethereum send max transactions using the wrong fee per gas method with EIP1559
+
 ## 27.7.1-hotfix.0
 
 ### Patch Changes
