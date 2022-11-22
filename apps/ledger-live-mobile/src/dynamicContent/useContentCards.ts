@@ -20,7 +20,7 @@ const HookDynamicContentCards = () => {
   const fetchData = useCallback(async () => {
     // Fetch data from Braze
     const contentCards = await Braze.getContentCards();
-    
+
     // Filtering v0
     const walletCards = filterByPage(
       contentCards,

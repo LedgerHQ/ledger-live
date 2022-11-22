@@ -4,7 +4,7 @@ import useDynamicContent from "../../dynamicContent/dynamicContent";
 import { width } from "../../helpers/normalizeSize";
 import CarouselCard from "./CarouselCard";
 
-const WIDTH = width * 0.85
+const WIDTH = width * 0.85;
 
 type Props = {
   cardsVisibility: { [key: string]: boolean };

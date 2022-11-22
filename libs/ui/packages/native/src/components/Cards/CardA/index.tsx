@@ -39,7 +39,14 @@ type Props = {
   onDismiss?: () => void;
 };
 
-const CardA = ({ variant, backgroundImage, tag, description, onPress, onDismiss }: Props): React.ReactElement => {
+const CardA = ({
+  variant,
+  backgroundImage,
+  tag,
+  description,
+  onPress,
+  onDismiss,
+}: Props): React.ReactElement => {
   const { colors } = useTheme();
 
   const backgroundVariants = useMemo(
@@ -58,20 +65,19 @@ const CardA = ({ variant, backgroundImage, tag, description, onPress, onDismiss 
   return (
     <Flex borderRadius={8}>
       <TouchableOpacity activeOpacity={0.5} onPress={onPress}>
-        {backgroundImage ?
-        <>
-          <ImageContent
-            source={{
-              uri: backgroundImage,
-            }}
-            style={{ width: "100%", height: "100%", position: "absolute" }}
-          />
-          <ShadowGradient color={colors.neutral.c00} />
-          </> : (
-        <ColoredGradient
-          color={backgroundVariantColor}
-          opacityColor={colors.neutral.c20}
-        />)}
+        {backgroundImage ? (
+          <>
+            <ImageContent
+              source={{
+                uri: backgroundImage,
+              }}
+              style={{ width: "100%", height: "100%", position: "absolute" }}
+            />
+            <ShadowGradient color={colors.neutral.c00} />
+          </>
+        ) : (
+          <ColoredGradient color={backgroundVariantColor} opacityColor={colors.neutral.c20} />
+        )}
         <Flex p={6}>
           <Flex flexDirection="row" justifyContent="space-between" mb={3}>
             <Flex bg="neutral.c100a01" borderRadius={6} px={3} py="6px" maxWidth="80%">
