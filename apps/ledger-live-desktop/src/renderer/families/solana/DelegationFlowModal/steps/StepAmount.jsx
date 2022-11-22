@@ -48,7 +48,7 @@ const StepAmount = ({
             onChangeTransaction={onChangeTransaction}
             bridgePending={bridgePending}
             t={t}
-            useMaxLabel={true}
+            withMaxLabel={true}
           />
         </Fragment>
       )}
