@@ -9,11 +9,12 @@ const StyledSVG = styled(Svg)`
 `;
 
 export type Props = React.ComponentProps<typeof Svg> & {
-  color?: string;
+  color: string;
+  opacityColor: string;
   style?: React.ComponentProps<typeof Svg>["style"];
 };
 
-export default function Gradient({ color = "primary.c50", style }: Props): JSX.Element {
+export default function Gradient({ color, opacityColor, style }: Props): JSX.Element {
   return (
     <StyledSVG style={style}>
       <Defs>
@@ -22,14 +23,15 @@ export default function Gradient({ color = "primary.c50", style }: Props): JSX.E
           x1="0%"
           y1="0%"
           x2="100%"
-          y2="0%"
+          y2="100%"
           gradientUnits="userSpaceOnUse"
         >
-          <Stop key="0%" offset="0" stopOpacity={1} stopColor={color} />,
-          <Stop key="100%" offset="100%" stopOpacity={0.1} stopColor={color} />,
+          <Stop key="0%" offset="0%" stopOpacity={1} stopColor={color} />
+          <Stop key="100%" offset="100%" stopOpacity={0} stopColor={color} />
         </LinearGradient>
       </Defs>
-      <Rect x="0" y="0" width="100%" height="100%" opacity={0.6} fill="url(#myGradient)" />
+      <Rect x="0" y="0" width="100%" height="100%" opacity={1} fill="url(#myGradient)" />
+      <Rect x="0" y="0" width="100%" height="100%" opacity={0.6} fill={opacityColor} />
     </StyledSVG>
   );
 }
