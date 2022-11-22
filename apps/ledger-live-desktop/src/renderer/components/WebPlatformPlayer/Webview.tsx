@@ -7,10 +7,8 @@ import { useDispatch, useSelector } from "react-redux";
 import styled from "styled-components";
 
 import { UserRefusedOnDevice } from "@ledgerhq/errors";
-import { Account, AccountLike, Operation, SignedOperation } from "@ledgerhq/types-live";
+import { Account, Operation, SignedOperation } from "@ledgerhq/types-live";
 import { flattenAccounts } from "@ledgerhq/live-common/account/index";
-import { Transaction } from "@ledgerhq/live-common/generated/types";
-import { MessageData } from "@ledgerhq/live-common/hw/signMessage/types";
 import { useToasts } from "@ledgerhq/live-common/notifications/ToastProvider/index";
 import {
   receiveOnAccountLogic,
@@ -130,7 +128,7 @@ export function WebView({ manifest, onClose, inputs = {}, config }: Props) {
       receiveOnAccountLogic(
         { manifest, accounts, tracking },
         accountId,
-        (account: AccountLike, parentAccount: Account | null, accountAddress: string) => {
+        (account, parentAccount, accountAddress) => {
           // FIXME: handle address rejection (if user reject address, we don't end up in onResult nor in onCancel 🤔)
           return new Promise((resolve, reject) =>
             dispatch(
@@ -173,19 +171,7 @@ export function WebView({ manifest, onClose, inputs = {}, config }: Props) {
         { manifest, accounts, tracking },
         accountId,
         transaction,
-        (
-          account: AccountLike,
-          parentAccount: Account | null,
-          {
-            canEditFees,
-            hasFeesProvided,
-            liveTx,
-          }: {
-            canEditFees: boolean;
-            hasFeesProvided: boolean;
-            liveTx: Partial<Transaction>;
-          },
-        ) => {
+        (account, parentAccount, { canEditFees, hasFeesProvided, liveTx }) => {
           return new Promise((resolve, reject) =>
             dispatch(
               openModal("MODAL_SIGN_TRANSACTION", {
@@ -300,7 +286,7 @@ export function WebView({ manifest, onClose, inputs = {}, config }: Props) {
         { manifest, accounts, tracking },
         accountId,
         message,
-        (account: AccountLike, message: MessageData | null) =>
+        (account, message) =>
           new Promise((resolve, reject) => {
             dispatch(
               openModal("MODAL_SIGN_MESSAGE", {

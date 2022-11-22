@@ -7,6 +7,7 @@ import styled from "styled-components";
 
 import { UserRefusedOnDevice } from "@ledgerhq/errors";
 import { Account, AccountLike, SignedOperation, Operation } from "@ledgerhq/types-live";
+import { Currency } from "@ledgerhq/types-cryptoassets";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { getEnv } from "@ledgerhq/live-common/env";
 import {
@@ -18,7 +19,6 @@ import {
   addPendingOperation,
   getMainAccount,
 } from "@ledgerhq/live-common/account/index";
-import { Transaction } from "@ledgerhq/live-common/generated/types";
 import { MessageData } from "@ledgerhq/live-common/hw/signMessage/types";
 import { useToasts } from "@ledgerhq/live-common/notifications/ToastProvider/index";
 import { TypedMessageData } from "@ledgerhq/live-common/families/ethereum/types";
@@ -49,6 +49,7 @@ import BigSpinner from "../BigSpinner";
 import Box from "../Box";
 import { setDrawer } from "~/renderer/drawers/Provider";
 import { OperationDetails } from "~/renderer/drawers/OperationDetails";
+import SelectAccountAndCurrencyDrawer from "~/renderer/drawers/DataSelector/SelectAccountAndCurrencyDrawer";
 import { track } from "~/renderer/analytics/segment";
 import TopBar from "./TopBar";
 import { TopBarConfig } from "./type";
@@ -94,7 +95,7 @@ type WebPlatformPlayerConfig = {
 type Props = {
   manifest: AppManifest;
   onClose?: () => void;
-  inputs?: Record<string, any>;
+  inputs?: Record<string, string>;
   config?: WebPlatformPlayerConfig;
 };
 
@@ -144,16 +145,8 @@ export function WebView({ manifest, onClose, inputs = {}, config }: Props) {
         return new Promise((resolve, reject) => {
           // handle no curencies selected case
           const cryptoCurrencyIds = currencies.map(({ id }) => id);
-
-          const onSuccess = (account: AccountLike, parentAccount?: Account) => {
-            tracking.requestAccountSuccess(manifest);
-            resolve(accountToWalletAPIAccount(account, parentAccount));
-          };
-
-          const onError = (error: Error) => {
-            tracking.requestAccountFail(manifest);
-            reject(error);
-          };
+          // TODO: Convert to Live Currency type?
+          let currencyList = (currencies as unknown) as Currency[];
 
           // if single currency available redirect to select account directly
           if (cryptoCurrencyIds.length === 1) {
@@ -164,33 +157,31 @@ export function WebView({ manifest, onClose, inputs = {}, config }: Props) {
               // @TODO replace with correct error
               reject(new RpcError(CURRENCY_NOT_FOUND));
             }
-
-            /* navigation.navigate(NavigatorName.RequestAccount, { */
-            /*   screen: ScreenName.RequestAccountsSelectAccount, */
-            /*   params: { */
-            /*     accounts$, */
-            /*     currency, */
-            /*     allowAddAccount: true, */
-            /*     onSuccess, */
-            /*     onError, */
-            /*   }, */
-            /* }); */
           } else {
-            const LLCurrencies = listSupportedCurrencies().filter(({ id }) =>
+            currencyList = listSupportedCurrencies().filter(({ id }) =>
               cryptoCurrencyIds.includes(id),
             );
-
-            /* navigation.navigate(NavigatorName.RequestAccount, { */
-            /*   screen: ScreenName.RequestAccountsSelectCrypto, */
-            /*   params: { */
-            /*     accounts$, */
-            /*     currencies: LLCurrencies, */
-            /*     allowAddAccount: true, */
-            /*     onSuccess, */
-            /*     onError, */
-            /*   }, */
-            /* }); */
           }
+
+          setDrawer(
+            SelectAccountAndCurrencyDrawer,
+            {
+              accounts$,
+              currencyList,
+              onAccountSelected: (account: Account, parentAccount: Account | undefined) => {
+                setDrawer();
+                tracking.requestAccountSuccess(manifest);
+                resolve(accountToWalletAPIAccount(account, parentAccount));
+              },
+            },
+            {
+              onRequestClose: () => {
+                setDrawer();
+                tracking.requestAccountFail(manifest);
+                reject(new Error("Canceled by user"));
+              },
+            },
+          );
         });
       });
 
@@ -248,45 +239,40 @@ export function WebView({ manifest, onClose, inputs = {}, config }: Props) {
         );
       });
 
-      serverRef.current.setHandler("transaction.sign", async ({ account, transaction, options }) => {
-        const signedOperation = await signTransactionLogic(
-          { manifest, accounts, tracking },
-          account.id,
-          transaction,
-          (
-            account,
-            parentAccount,
-            {
-              canEditFees,
-              hasFeesProvided,
-              liveTx,
+      serverRef.current.setHandler(
+        "transaction.sign",
+        async ({ account, transaction, options }) => {
+          const signedOperation = await signTransactionLogic(
+            { manifest, accounts, tracking },
+            account.id,
+            transaction,
+            (account, parentAccount, { canEditFees, hasFeesProvided, liveTx }) => {
+              return new Promise<SignedOperation>((resolve, reject) => {
+                dispatch(
+                  openModal("MODAL_SIGN_TRANSACTION", {
+                    canEditFees,
+                    stepId: canEditFees && !hasFeesProvided ? "amount" : "summary",
+                    transactionData: liveTx,
+                    useApp: options?.hwAppId,
+                    account,
+                    parentAccount,
+                    onResult: (signedOperation: SignedOperation) => {
+                      tracking.signTransactionSuccess(manifest);
+                      resolve(signedOperation);
+                    },
+                    onCancel: (error: Error) => {
+                      tracking.signTransactionFail(manifest);
+                      reject(error);
+                    },
+                  }),
+                );
+              });
             },
-          ) => {
-            return new Promise<SignedOperation>((resolve, reject) => {
-              dispatch(
-                openModal("MODAL_SIGN_TRANSACTION", {
-                  canEditFees,
-                  stepId: canEditFees && !hasFeesProvided ? "amount" : "summary",
-                  transactionData: liveTx,
-                  useApp: options?.hwAppId,
-                  account,
-                  parentAccount,
-                  onResult: (signedOperation: SignedOperation) => {
-                    tracking.signTransactionSuccess(manifest);
-                    resolve(signedOperation);
-                  },
-                  onCancel: (error: Error) => {
-                    tracking.signTransactionFail(manifest);
-                    reject(error);
-                  },
-                }),
-              );
-            });
-          },
-        );
-        
-        return Buffer.from(signedOperation.signature);
-      });
+          );
+
+          return Buffer.from(signedOperation.signature);
+        },
+      );
 
       serverRef.current.setHandler(
         "transaction.signAndBroadcast",
@@ -296,15 +282,7 @@ export function WebView({ manifest, onClose, inputs = {}, config }: Props) {
             { manifest, accounts, tracking },
             account.id,
             transaction,
-            (
-              account,
-              parentAccount,
-              {
-                canEditFees,
-                hasFeesProvided,
-                liveTx,
-              },
-            ) => {
+            (account, parentAccount, { canEditFees, hasFeesProvided, liveTx }) => {
               return new Promise((resolve, reject) => {
                 dispatch(
                   openModal("MODAL_SIGN_TRANSACTION", {
