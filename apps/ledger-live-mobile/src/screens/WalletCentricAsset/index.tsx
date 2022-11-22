@@ -47,9 +47,7 @@ import {
   BaseComposite,
   StackNavigatorProps,
 } from "../../components/RootNavigator/types/helpers";
-import useDynamicContent, {
-  ContentCard,
-} from "../../dynamicContent/dynamicContent";
+import useDynamicContent from "../../dynamicContent/dynamicContent";
 
 // @FIXME workarround for main tokens
 const tokenIDToMarketID = {
@@ -144,37 +142,26 @@ const AssetScreen = ({ route }: NavigationProps) => {
   }, [currency, navigation]);
 
   // Dynamic Content Part -------------------
-  const {
-    getAssetCardByIdOrTicker,
-    logDismissCard,
-    logClickCard,
-    logImpressionCard,
-  } = useDynamicContent();
+  const { getAssetCardByIdOrTicker, logClickCard, logImpressionCard } =
+    useDynamicContent();
   const dynamicContentCard = getAssetCardByIdOrTicker(currency);
 
-  const onClickLink = useCallback(
-    (card: ContentCard) => {
-      track("contentcard_clicked", {
-        screen: card.location,
-        link: card.link,
-      });
-      // Notify Braze that the card has been clicked by the user
-      logClickCard(card.id);
-      Linking.openURL(card.link);
-    },
-    [logClickCard],
-  );
+  const onClickLink = useCallback(() => {
+    if (!dynamicContentCard) return;
+    track("contentcard_clicked", {
+      screen: dynamicContentCard.location,
+      link: dynamicContentCard.link,
+    });
+    // Notify Braze that the card has been clicked by the user
+    logClickCard(dynamicContentCard.id);
+    Linking.openURL(dynamicContentCard.link);
+  }, [dynamicContentCard, logClickCard]);
 
-  const onPressDismiss = useCallback(
-    (dismissAction: () => void, card: ContentCard) => {
-      track("contentcard_dismissed", {
-        screen: card.location,
-      });
-      // Braze dismiss  logDismissCard(card.id);
-      dismissAction();
-    },
-    [],
-  );
+  const onPressDismiss = useCallback(() => {
+    track("contentcard_dismissed", {
+      screen: dynamicContentCard?.location,
+    });
+  }, [dynamicContentCard]);
 
   useEffect(() => {
     if (dynamicContentCard) {
@@ -182,7 +169,7 @@ const AssetScreen = ({ route }: NavigationProps) => {
       logImpressionCard(dynamicContentCard.id);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [dynamicContentCard]);
 
   // Dynamic Content ---------------------------------
 
@@ -216,10 +203,8 @@ const AssetScreen = ({ route }: NavigationProps) => {
               tag={dynamicContentCard.tag}
               cta={dynamicContentCard.cta}
               imageUrl={dynamicContentCard.image}
-              onPress={() => onClickLink(dynamicContentCard)}
-              onPressDismiss={() =>
-                onPressDismiss(() => console.log("DISMISS"), dynamicContentCard)
-              }
+              onPress={onClickLink}
+              onPressDismiss={onPressDismiss}
             />
           </Flex>
         )}
