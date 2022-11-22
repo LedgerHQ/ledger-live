@@ -1,5 +1,4 @@
 import { Device } from "@ledgerhq/types-devices";
-import { ProtoNFT } from "@ledgerhq/types-live";
 
 import { ScreenName } from "../../../const";
 import { CropResult } from "../../CustomImage/ImageCropper";
@@ -7,11 +6,7 @@ import {
   ProcessorPreviewResult,
   ProcessorRawResult,
 } from "../../CustomImage/ImageProcessor";
-import { ImageFileUri, ImageUrl } from "../../CustomImage/types";
-
-type GalleryNFT = {
-  nft: ProtoNFT;
-};
+import { ImageFileUri, ImageUrl, GalleryNFT } from "../../CustomImage/types";
 
 type BaseParams = {
   device: Device | null;
