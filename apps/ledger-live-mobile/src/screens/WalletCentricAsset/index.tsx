@@ -168,8 +168,7 @@ const AssetScreen = ({ route }: NavigationProps) => {
       // Notify Braze that the card has been displayed to the user
       logImpressionCard(dynamicContentCard.id);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [dynamicContentCard]);
+  }, [dynamicContentCard, logImpressionCard]);
 
   // Dynamic Content ---------------------------------
 

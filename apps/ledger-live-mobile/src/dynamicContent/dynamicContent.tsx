@@ -1,6 +1,7 @@
 import { useSelector } from "react-redux";
 import { ContentCard as BrazeContentCard } from "react-native-appboy-sdk";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { useCallback, useMemo } from "react";
 import { useBrazeContentCard } from "./brazeContentCard";
 import {
   assetsCardsSelector,
@@ -51,23 +52,24 @@ const useDynamicContent = () => {
   const assetsCards = useSelector(assetsCardsSelector);
   const walletCards = useSelector(walletCardsSelector);
 
-  const hiddenCards: string[] = [];
+  const hiddenCards: string[] = useMemo(() => [], []);
 
-  function getAssetCardByIdOrTicker(
-    currency: CryptoOrTokenCurrency,
-  ): AssetContentCard | undefined {
-    if (!currency) {
-      return undefined;
-    }
+  const getAssetCardByIdOrTicker = useCallback(
+    (currency: CryptoOrTokenCurrency): AssetContentCard | undefined => {
+      if (!currency) {
+        return undefined;
+      }
 
-    return assetsCards
-      .filter((ac: AssetContentCard) => !hiddenCards.includes(ac.id))
-      .find(
-        (ac: AssetContentCard) =>
-          ac.assets.toLowerCase().includes(currency.id.toLowerCase()) ||
-          ac.assets.toUpperCase().includes(currency.ticker.toUpperCase()),
-      );
-  }
+      return assetsCards
+        .filter((ac: AssetContentCard) => !hiddenCards.includes(ac.id))
+        .find(
+          (ac: AssetContentCard) =>
+            ac.assets.toLowerCase().includes(currency.id.toLowerCase()) ||
+            ac.assets.toUpperCase().includes(currency.ticker.toUpperCase()),
+        );
+    },
+    [assetsCards, hiddenCards],
+  );
 
   return {
     walletCards,

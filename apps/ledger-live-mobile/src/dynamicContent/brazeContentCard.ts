@@ -1,13 +1,21 @@
+import { useCallback } from "react";
 import Braze from "react-native-appboy-sdk";
 
 export const useBrazeContentCard = () => {
-  const logDismissCard = (cardId: string) =>
-    Braze.logContentCardDismissed(cardId);
+  const logDismissCard = useCallback(
+    (cardId: string) => Braze.logContentCardDismissed(cardId),
+    [],
+  );
 
-  const logClickCard = (cardId: string) => Braze.logContentCardClicked(cardId);
+  const logClickCard = useCallback(
+    (cardId: string) => Braze.logContentCardClicked(cardId),
+    [],
+  );
 
-  const logImpressionCard = (cardId: string) =>
-    Braze.logContentCardImpression(cardId);
+  const logImpressionCard = useCallback(
+    (cardId: string) => Braze.logContentCardImpression(cardId),
+    [],
+  );
 
   const refreshDynamicContent = () => Braze.requestContentCardsRefresh();
 
