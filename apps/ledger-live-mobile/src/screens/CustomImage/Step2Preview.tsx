@@ -22,6 +22,7 @@ import useResizedImage, {
 import ImageProcessor, {
   Props as ImageProcessorProps,
   ProcessorPreviewResult,
+  ProcessorRawResult,
 } from "../../components/CustomImage/ImageProcessor";
 import { targetDimensions } from "./shared";
 import BottomButtonsContainer from "../../components/CustomImage/BottomButtonsContainer";
@@ -76,14 +77,11 @@ type NavigationProps = BaseComposite<
  * of the image & the preview base 64 data URI of the image as params.
  */
 const Step2Preview = ({ navigation, route }: NavigationProps) => {
-  const imageProcessorRef = useRef<ImageProcessor>(null);
   const [loading, setLoading] = useState(true);
   const [resizedImage, setResizedImage] = useState<ResizeResult | null>(null);
   const initialIndex = 0;
   const [selectedIndex, setSelectedIndex] = useState(initialIndex);
   const animSelectedIndex = useSharedValue(initialIndex);
-  const [processorPreviewImage, setProcessorPreviewImage] =
-    useState<ProcessorPreviewResult | null>(null);
 
   const { t } = useTranslation();
 
@@ -117,6 +115,11 @@ const Step2Preview = ({ navigation, route }: NavigationProps) => {
 
   /** RESULT IMAGE HANDLING */
 
+  const [processorPreviewImage, setProcessorPreviewImage] =
+    useState<ProcessorPreviewResult | null>(null);
+  const [rawResultLoading, setRawResultLoading] = useState(false);
+  const imageProcessorRef = useRef<ImageProcessor>(null);
+
   const handlePreviewResult: ImageProcessorProps["onPreviewResult"] =
     useCallback(
       data => {
@@ -126,6 +129,32 @@ const Step2Preview = ({ navigation, route }: NavigationProps) => {
       [setProcessorPreviewImage],
     );
 
+  const handleRawResult: ImageProcessorProps["onRawResult"] = useCallback(
+    (data: ProcessorRawResult) => {
+      if (!processorPreviewImage) {
+        /**
+         * this should not happen as the "request raw result" button is only
+         * visible once the preview is there
+         * */
+        throw new ImagePreviewError();
+      }
+      navigation.navigate(ScreenName.CustomImagePreviewPostEdit, {
+        imageData: data,
+        imagePreview: processorPreviewImage,
+        baseImageFile,
+        device,
+      });
+      setRawResultLoading(false);
+    },
+    [
+      navigation,
+      setRawResultLoading,
+      processorPreviewImage,
+      device,
+      baseImageFile,
+    ],
+  );
+
   const handlePreviewImageError = useCallback(
     ({ nativeEvent }: NativeSyntheticEvent<ImageErrorEventData>) => {
       console.error(nativeEvent.error);
@@ -134,19 +163,10 @@ const Step2Preview = ({ navigation, route }: NavigationProps) => {
     [handleError],
   );
 
-  const handleNavigateToPreview = useCallback(() => {
-    if (!processorPreviewImage) {
-      // In theory shouldn't happen since the button is disabled if it's null
-      return;
-    }
-
-    navigation.navigate(ScreenName.CustomImagePreviewPostEdit, {
-      imagePreview: processorPreviewImage,
-      contrast: contrastValue,
-      baseImageFile,
-      device,
-    });
-  }, [navigation, processorPreviewImage, device, baseImageFile, contrastValue]);
+  const requestRawResult = useCallback(() => {
+    imageProcessorRef?.current?.requestRawResult();
+    setRawResultLoading(true);
+  }, [imageProcessorRef, setRawResultLoading]);
 
   const setSelectedIndexWrapped = useCallback(
     newIndex => {
@@ -172,7 +192,7 @@ const Step2Preview = ({ navigation, route }: NavigationProps) => {
           imageBase64DataUri={resizedImage?.imageBase64DataUri}
           onPreviewResult={handlePreviewResult}
           onError={handleError}
-          onRawResult={() => undefined}
+          onRawResult={handleRawResult}
           contrast={contrastValue}
         />
       )}
@@ -229,7 +249,9 @@ const Step2Preview = ({ navigation, route }: NavigationProps) => {
             size="large"
             type="main"
             outline={false}
-            onPress={handleNavigateToPreview}
+            pending={rawResultLoading}
+            displayContentWhenPending
+            onPress={requestRawResult}
           >
             {t("common.confirm")}
           </Button>

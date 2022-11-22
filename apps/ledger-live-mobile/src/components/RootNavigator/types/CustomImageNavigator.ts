@@ -32,7 +32,7 @@ export type CustomImageNavigatorParamList = {
     };
   [ScreenName.CustomImagePreviewPostEdit]: BaseParams & {
     baseImageFile: ImageFileUri;
+    imageData: ProcessorRawResult;
     imagePreview: ProcessorPreviewResult;
-    contrast: number;
   };
 };

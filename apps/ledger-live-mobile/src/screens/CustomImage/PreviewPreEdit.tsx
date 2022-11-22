@@ -200,9 +200,11 @@ const PreviewPreEdit = ({ navigation, route }: NavigationProps) => {
 
   const handleEditPicture = useCallback(() => {
     if (!loadedImage) {
-      // in theory this shouldn't happen as the button is disabled until
-      // preview is done
-      return;
+      /**
+       * this should not happen as the "request raw result" button is only
+       * visible once the preview is there
+       * */
+      throw new ImagePreviewError();
     }
 
     navigation.navigate(NavigatorName.CustomImage, {
