@@ -1,5 +1,36 @@
 # live-mobile
 
+## 3.12.0-nightly.1
+
+### Minor Changes
+
+- [#1775](https://github.com/LedgerHQ/ledger-live/pull/1775) [`d10c727430`](https://github.com/LedgerHQ/ledger-live/commit/d10c727430ffece743bbb7e703aaff61f97dacc1) Thanks [@nparigi-ledger](https://github.com/nparigi-ledger)! - Add NFT Gallery
+
+### Patch Changes
+
+- [#1904](https://github.com/LedgerHQ/ledger-live/pull/1904) [`159b3f8b05`](https://github.com/LedgerHQ/ledger-live/commit/159b3f8b054b9d2715e36db68e68c0eaec66c270) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Fix rendering crash in new device selection screen
+
+* [#1801](https://github.com/LedgerHQ/ledger-live/pull/1801) [`c2663f2f05`](https://github.com/LedgerHQ/ledger-live/commit/c2663f2f05b027f20ea5e9e80ee00111bf204ecb) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Feature flag settings: fixed an annoying UI issue when the keyboard is opened. The info box at the bottom would cover most of the screen, making it very unpractical to search/add flags.
+
+- [#1801](https://github.com/LedgerHQ/ledger-live/pull/1801) [`c2663f2f05`](https://github.com/LedgerHQ/ledger-live/commit/c2663f2f05b027f20ea5e9e80ee00111bf204ecb) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Adding a flag that allows to easily know which Firebase project/environment is targeted (for that the flag needs to be configured appropriately on the Firebase project, for now this is done for all our existing Firebase projects.). Also adding a UI element to easily visualize this in the Feature Flag settings.
+
+* [#1741](https://github.com/LedgerHQ/ledger-live/pull/1741) [`77056e3692`](https://github.com/LedgerHQ/ledger-live/commit/77056e369256112188c183823a2c3fabfea2cba8) Thanks [@alexandremgo](https://github.com/alexandremgo)! - Fix for locked device error
+
+- [#1779](https://github.com/LedgerHQ/ledger-live/pull/1779) [`856f49374e`](https://github.com/LedgerHQ/ledger-live/commit/856f49374ec9b49f005676e270acdb81b78879c8) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Introduce debug screen for custom image backup
+
+* [#1840](https://github.com/LedgerHQ/ledger-live/pull/1840) [`601c35ff2e`](https://github.com/LedgerHQ/ledger-live/commit/601c35ff2e9905c1d7869f531d85898436e2e86d) Thanks [@alexandremgo](https://github.com/alexandremgo)! - Fix: improvement on BLE scanning and polling mechanism
+
+* Updated dependencies [[`d10c727430`](https://github.com/LedgerHQ/ledger-live/commit/d10c727430ffece743bbb7e703aaff61f97dacc1), [`856f49374e`](https://github.com/LedgerHQ/ledger-live/commit/856f49374ec9b49f005676e270acdb81b78879c8), [`77056e3692`](https://github.com/LedgerHQ/ledger-live/commit/77056e369256112188c183823a2c3fabfea2cba8), [`c2663f2f05`](https://github.com/LedgerHQ/ledger-live/commit/c2663f2f05b027f20ea5e9e80ee00111bf204ecb), [`856f49374e`](https://github.com/LedgerHQ/ledger-live/commit/856f49374ec9b49f005676e270acdb81b78879c8), [`d10c727430`](https://github.com/LedgerHQ/ledger-live/commit/d10c727430ffece743bbb7e703aaff61f97dacc1), [`601c35ff2e`](https://github.com/LedgerHQ/ledger-live/commit/601c35ff2e9905c1d7869f531d85898436e2e86d)]:
+  - @ledgerhq/live-common@27.8.0-nightly.0
+  - @ledgerhq/errors@6.12.1-nightly.0
+  - @ledgerhq/types-live@6.27.0-nightly.0
+  - @ledgerhq/devices@7.0.5-nightly.0
+  - @ledgerhq/hw-transport@6.27.8-nightly.0
+  - @ledgerhq/hw-transport-http@6.27.8-nightly.0
+  - @ledgerhq/react-native-hid@6.28.10-nightly.0
+  - @ledgerhq/react-native-hw-transport-ble@6.27.10-nightly.0
+  - @ledgerhq/native-ui@0.12.2-nightly.0
+
 ## 3.11.1-nightly.0
 
 ### Patch Changes

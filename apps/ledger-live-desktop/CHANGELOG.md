@@ -1,5 +1,25 @@
 # ledger-live-desktop
 
+## 2.50.0-nightly.11
+
+### Patch Changes
+
+- [#1741](https://github.com/LedgerHQ/ledger-live/pull/1741) [`77056e3692`](https://github.com/LedgerHQ/ledger-live/commit/77056e369256112188c183823a2c3fabfea2cba8) Thanks [@alexandremgo](https://github.com/alexandremgo)! - Fix for locked device error
+
+* [#1829](https://github.com/LedgerHQ/ledger-live/pull/1829) [`2d2e6b7091`](https://github.com/LedgerHQ/ledger-live/commit/2d2e6b7091e683ba15ba57880e17162c0302ca37) Thanks [@dreis-ledger](https://github.com/dreis-ledger)! - Improve redirection to Exchange screen
+
+- [#1801](https://github.com/LedgerHQ/ledger-live/pull/1801) [`c2663f2f05`](https://github.com/LedgerHQ/ledger-live/commit/c2663f2f05b027f20ea5e9e80ee00111bf204ecb) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Adding a flag that allows to easily know which Firebase project/environment is targeted (for that the flag needs to be configured appropriately on the Firebase project, for now this is done for all our existing Firebase projects.). Also adding a UI element to easily visualize this in the Feature Flag settings.
+
+- Updated dependencies [[`d10c727430`](https://github.com/LedgerHQ/ledger-live/commit/d10c727430ffece743bbb7e703aaff61f97dacc1), [`856f49374e`](https://github.com/LedgerHQ/ledger-live/commit/856f49374ec9b49f005676e270acdb81b78879c8), [`77056e3692`](https://github.com/LedgerHQ/ledger-live/commit/77056e369256112188c183823a2c3fabfea2cba8), [`828af17431`](https://github.com/LedgerHQ/ledger-live/commit/828af1743180ccf0f21a7de143cb910ef7258407), [`c2663f2f05`](https://github.com/LedgerHQ/ledger-live/commit/c2663f2f05b027f20ea5e9e80ee00111bf204ecb), [`856f49374e`](https://github.com/LedgerHQ/ledger-live/commit/856f49374ec9b49f005676e270acdb81b78879c8), [`d10c727430`](https://github.com/LedgerHQ/ledger-live/commit/d10c727430ffece743bbb7e703aaff61f97dacc1), [`601c35ff2e`](https://github.com/LedgerHQ/ledger-live/commit/601c35ff2e9905c1d7869f531d85898436e2e86d)]:
+  - @ledgerhq/live-common@27.8.0-nightly.0
+  - @ledgerhq/errors@6.12.1-nightly.0
+  - @ledgerhq/react-ui@0.10.1-nightly.0
+  - @ledgerhq/types-live@6.27.0-nightly.0
+  - @ledgerhq/devices@7.0.5-nightly.0
+  - @ledgerhq/hw-transport@6.27.8-nightly.0
+  - @ledgerhq/hw-transport-http@6.27.8-nightly.0
+  - @ledgerhq/hw-transport-node-hid-singleton@6.28.5-nightly.0
+
 ## 2.50.0-nightly.10
 
 ### Patch Changes

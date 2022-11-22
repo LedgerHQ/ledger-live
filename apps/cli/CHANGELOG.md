@@ -1,5 +1,22 @@
 # @ledgerhq/live-cli
 
+## 22.4.7-nightly.0
+
+### Patch Changes
+
+- [#1779](https://github.com/LedgerHQ/ledger-live/pull/1779) [`856f49374e`](https://github.com/LedgerHQ/ledger-live/commit/856f49374ec9b49f005676e270acdb81b78879c8) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Introduce new command for demoing the conditional image fetch
+
+- Updated dependencies [[`d10c727430`](https://github.com/LedgerHQ/ledger-live/commit/d10c727430ffece743bbb7e703aaff61f97dacc1), [`856f49374e`](https://github.com/LedgerHQ/ledger-live/commit/856f49374ec9b49f005676e270acdb81b78879c8), [`77056e3692`](https://github.com/LedgerHQ/ledger-live/commit/77056e369256112188c183823a2c3fabfea2cba8), [`856f49374e`](https://github.com/LedgerHQ/ledger-live/commit/856f49374ec9b49f005676e270acdb81b78879c8), [`601c35ff2e`](https://github.com/LedgerHQ/ledger-live/commit/601c35ff2e9905c1d7869f531d85898436e2e86d)]:
+  - @ledgerhq/live-common@27.8.0-nightly.0
+  - @ledgerhq/errors@6.12.1-nightly.0
+  - @ledgerhq/hw-transport@6.27.8-nightly.0
+  - @ledgerhq/hw-transport-http@6.27.8-nightly.0
+  - @ledgerhq/hw-transport-node-ble@6.27.8-nightly.0
+  - @ledgerhq/hw-transport-node-hid@6.27.8-nightly.0
+  - @ledgerhq/hw-transport-node-speculos@6.27.8-nightly.0
+  - @ledgerhq/hw-app-btc@9.0.1-nightly.0
+  - @ledgerhq/hw-transport-mocker@6.27.8-nightly.0
+
 ## 22.4.6
 
 ### Patch Changes

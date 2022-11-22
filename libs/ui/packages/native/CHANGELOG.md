@@ -1,5 +1,12 @@
 # @ledgerhq/native-ui
 
+## 0.12.2-nightly.0
+
+### Patch Changes
+
+- Updated dependencies [[`828af17431`](https://github.com/LedgerHQ/ledger-live/commit/828af1743180ccf0f21a7de143cb910ef7258407)]:
+  - @ledgerhq/icons-ui@0.3.1-nightly.0
+
 ## 0.12.1
 
 ### Patch Changes
