@@ -1,7 +1,10 @@
 import React, { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { useTheme } from "styled-components/native";
-import { useNavigation } from "@react-navigation/native";
+import {
+  CompositeNavigationProp,
+  useNavigation,
+} from "@react-navigation/native";
 import { Text, ScrollListContainer, Flex } from "@ledgerhq/native-ui";
 import { getDeviceModel } from "@ledgerhq/devices/index";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
@@ -22,6 +25,8 @@ import DiscoverCard from "../../Discover/DiscoverCard";
 import DeviceSetupView from "../../../components/DeviceSetupView";
 import { RootStackParamList } from "../../../components/RootNavigator/types/RootNavigator";
 import { NavigateInput } from "../../../components/RootNavigator/types/BaseNavigator";
+import { SyncOnboardingStackParamList } from "../../../components/RootNavigator/types/SyncOnboardingNavigator";
+import { StackNavigationProp } from "@react-navigation/stack";
 
 const nanoX = {
   SvgDevice: nanoXSvg,
@@ -44,8 +49,10 @@ const nanoFTS = {
   setupTime: 300000,
 };
 
-type NavigationProp = RootNavigationComposite<
-  BaseNavigationComposite<
+// TODO: fix type
+type NavigationProp = BaseNavigationComposite<
+  CompositeNavigationProp<
+    StackNavigationProp<SyncOnboardingStackParamList>,
     StackNavigatorNavigation<
       OnboardingNavigatorParamList,
       ScreenName.OnboardingDeviceSelection
@@ -72,36 +79,15 @@ function OnboardingStepDeviceSelection() {
   const next = (deviceModelId: DeviceModelId) => {
     // Add NanoX.id, NanoSP.id etc, to the array when supported
     if ([nanoFTS.id].includes(deviceModelId)) {
-      const navigateInput: NavigateInput<RootStackParamList> = {
-        name: NavigatorName.BaseOnboarding,
-        params: {
-          screen: NavigatorName.SyncOnboarding,
-          params: {
-            screen: ScreenName.SyncOnboardingCompanion,
-            params: {
-              // @ts-expect-error BleDevicePairingFlow will set this param
-              device: null,
-            },
-          },
-        },
-      };
       // On pairing success, navigate to the Sync Onboarding Companion
       // navigation.push on stack navigation because with navigation.navigate
       // it could not go back to this screen in certain cases.
-      navigation.push(NavigatorName.Base, {
-        screen: ScreenName.BleDevicePairingFlow,
+      // TODO: fix type
+      navigation.navigate(NavigatorName.SyncOnboarding, {
+        screen: ScreenName.SyncOnboardingBleDevicePairingFlow,
         params: {
-          // TODO: for now we remove this
-          // filterByDeviceModelId: DeviceModelId.nanoFTS,
           areKnownDevicesDisplayed: true,
           onSuccessAddToKnownDevices: false,
-          onSuccessNavigateToConfig: {
-            // navigation.push on success because it could not correctly
-            // go back to the previous screens (BLE and then this screen).
-            navigationType: "push",
-            navigateInput,
-            pathToDeviceParam: "params.params.params.device",
-          },
         },
       });
     } else {

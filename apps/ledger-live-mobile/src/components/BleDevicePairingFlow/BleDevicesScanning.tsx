@@ -15,14 +15,14 @@ import { Device, DeviceModelId } from "@ledgerhq/types-devices";
 import TransportBLE from "@ledgerhq/react-native-hw-transport-ble";
 import { useNavigation } from "@react-navigation/native";
 
-import Animation from "../../components/Animation";
+import { NavigatorName, ScreenName } from "../../const";
 import { knownDevicesSelector } from "../../reducers/ble";
-import LocationRequired from "../../components/LocationRequired";
+import LocationRequired from "../LocationRequired/index";
+import { RootNavigation } from "../RootNavigator/types/helpers";
+import Animation from "../Animation";
+import DeviceSetupView from "../DeviceSetupView";
 import BleDeviceItem from "./BleDeviceItem";
 import lottie from "./assets/bluetooth.json";
-import DeviceSetupView from "../../components/DeviceSetupView";
-import { NavigatorName, ScreenName } from "../../const";
-import { RootNavigation } from "../../components/RootNavigator/types/helpers";
 
 export type FilterByDeviceModelId = null | DeviceModelId;
 
@@ -32,7 +32,7 @@ export type BleDevicesScanningProps = {
   areKnownDevicesDisplayed?: boolean;
 };
 
-export const BleDevicesScanning = ({
+const BleDevicesScanning = ({
   onDeviceSelect,
   filterByDeviceModelId = null,
   areKnownDevicesDisplayed,
@@ -213,3 +213,5 @@ export const BleDevicesScanning = ({
     </DeviceSetupView>
   );
 };
+
+export default BleDevicesScanning;

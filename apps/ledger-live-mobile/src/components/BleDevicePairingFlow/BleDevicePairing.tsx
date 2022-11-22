@@ -10,9 +10,9 @@ import {
   CircledCrossSolidMedium,
 } from "@ledgerhq/native-ui/assets/icons";
 
-import Animation from "../../components/Animation";
 import { getDeviceAnimation } from "../../helpers/getDeviceAnimation";
-import DeviceSetupView from "../../components/DeviceSetupView";
+import Animation from "../Animation";
+import DeviceSetupView from "../DeviceSetupView";
 
 const TIMEOUT_AFTER_PAIRED_MS = 2000;
 
@@ -22,7 +22,7 @@ export type BleDevicePairingProps = {
   deviceToPair: Device;
 };
 
-export const BleDevicePairing = ({
+const BleDevicePairing = ({
   deviceToPair,
   onPaired,
   onRetry,
@@ -139,3 +139,5 @@ export const BleDevicePairing = ({
     </DeviceSetupView>
   );
 };
+
+export default BleDevicePairing;

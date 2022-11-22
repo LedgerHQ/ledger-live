@@ -64,7 +64,6 @@ import VerifyAccount from "../../screens/VerifyAccount";
 import PlatformApp from "../../screens/Platform/App";
 import AccountsNavigator from "./AccountsNavigator";
 import MarketCurrencySelect from "../../screens/Market/MarketCurrencySelect";
-import { BleDevicePairingFlow } from "../../screens/BleDevicePairingFlow/index";
 import ProviderList from "../../screens/Exchange/ProviderList";
 import ProviderView from "../../screens/Exchange/ProviderView";
 import ScreenHeader from "../../screens/Exchange/ScreenHeader";
@@ -566,13 +565,6 @@ export default function BaseNavigator() {
           />
         );
       })}
-      <Stack.Screen
-        name={ScreenName.BleDevicePairingFlow}
-        component={BleDevicePairingFlow}
-        options={{
-          headerShown: false,
-        }}
-      />
       <Stack.Screen
         name={NavigatorName.PostOnboarding}
         options={{ headerShown: false }}

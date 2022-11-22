@@ -6,6 +6,7 @@ import { ScreenName } from "../../const";
 import CompletionScreen from "../../screens/SyncOnboarding/CompletionScreen";
 import { SyncOnboardingStackParamList } from "./types/SyncOnboardingNavigator";
 import { SyncOnboarding } from "../../screens/SyncOnboarding";
+import { BleDevicePairingFlowScreen } from "../../screens/SyncOnboarding/BleDevicePairingFlowScreen";
 import { getStackNavigatorConfig } from "../../navigation/navigatorConfig";
 
 const Stack = createStackNavigator<SyncOnboardingStackParamList>();
@@ -24,6 +25,10 @@ export const SyncOnboardingNavigator = () => {
         headerShown: false,
       }}
     >
+      <Stack.Screen
+        name={ScreenName.SyncOnboardingBleDevicePairingFlow}
+        component={BleDevicePairingFlowScreen}
+      />
       <Stack.Screen
         name={ScreenName.SyncOnboardingCompanion}
         component={SyncOnboarding}

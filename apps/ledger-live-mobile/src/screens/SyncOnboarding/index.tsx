@@ -58,6 +58,7 @@ type Step = {
   renderBody?: (isDisplayed?: boolean) => ReactNode;
 };
 
+// TODO: to test: replace CompositeScreenProps<..> with BaseComposite
 export type SyncOnboardingCompanionProps = CompositeScreenProps<
   StackScreenProps<
     SyncOnboardingStackParamList,
