@@ -1,6 +1,5 @@
 import { createAction } from "redux-actions";
 import { WalletContentCard, AssetContentCard } from "../dynamicContent/types";
-
 import {
   DynamicContentActionTypes,
   DynamicContentSetWalletCardsPayload,

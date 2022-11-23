@@ -6,7 +6,6 @@ enum LocationContentCard {
 enum Background {
   purple = "purple",
   red = "red",
-  neutral = "neutral",
 }
 
 type ContentCard = {

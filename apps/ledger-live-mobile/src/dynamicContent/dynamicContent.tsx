@@ -28,9 +28,7 @@ export const mapAsWalletContentCard = (card: BrazeContentCard) =>
     image: card.extras.image,
     link: card.extras.link,
     background:
-      card.extras.image ||
-      Background[card.extras.background as Background] ||
-      Background.purple,
+      Background[card.extras.background as Background] || Background.purple,
   } as WalletContentCard);
 
 export const mapAsAssetContentCard = (card: BrazeContentCard) =>

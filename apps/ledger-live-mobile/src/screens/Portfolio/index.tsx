@@ -196,7 +196,7 @@ function PortfolioScreen({ navigation }: NavigationProps) {
             <Box background={colors.background.main}>
               <SectionContainer px={0} minHeight={240}>
                 <SectionTitle
-                  title={t("portfolio.recommended.title")}
+                  title={t("portfolio.carousel.title")}
                   containerProps={{ mb: 7, mx: 6 }}
                 />
                 <Carousel cardsVisibility={carouselVisibility} />
