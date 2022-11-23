@@ -8,6 +8,7 @@ import { Camera } from "expo-camera";
 import { BarCodeScanner } from "expo-barcode-scanner";
 import { Svg, Defs, Rect, Mask, Circle } from "react-native-svg";
 import { urls } from "../../config/urls";
+import CameraScreen from "../../components/CameraScreen";
 
 const WrappedSvg = () => (
   <Svg height="100%" width="100%" viewBox="0 0 100 100">
@@ -74,7 +75,7 @@ const ClaimNftQrScan = () => {
             }}
             ratio="1:1"
           >
-            {/* TODO: Finish this component => <WrappedSvg /> */}
+            {/* TODO: Finish this component => <WrappedSvg /> ALSO TRY WITH <Scanner onResult={handleBarCodeScanned} liveQrCode /> */}
           </Camera>
         </Flex>
         <Flex flex={1} px={7} alignItems="center">
