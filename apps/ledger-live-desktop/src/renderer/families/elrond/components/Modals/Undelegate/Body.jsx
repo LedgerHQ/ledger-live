@@ -21,7 +21,7 @@ import { useSteps } from "./steps";
 
 import type { AccountBridge, Operation } from "@ledgerhq/types-live";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
-import type { ValidatorType } from "~/renderer/families/elrond/types";
+import type { ElrondProvider } from "@ledgerhq/live-common/families/elrond/types";
 
 interface OwnProps {
   account: Account;
@@ -29,7 +29,7 @@ interface OwnProps {
   onClose: () => void;
   onChangeStepId: (step: StepId) => void;
   contract: string;
-  validators: Array<ValidatorType>;
+  validators: Array<ElrondProvider>;
   name: string;
   amount: string;
 }

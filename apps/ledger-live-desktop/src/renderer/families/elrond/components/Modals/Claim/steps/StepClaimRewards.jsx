@@ -18,7 +18,7 @@ import ErrorBanner from "~/renderer/components/ErrorBanner";
 import AccountFooter from "~/renderer/modals/Send/AccountFooter";
 
 import type { Transaction, AccountBridge } from "@ledgerhq/types-live";
-import type { ValidatorType } from "~/renderer/families/elrond/types";
+import type { ElrondProvider } from "@ledgerhq/live-common/families/elrond/types";
 import type { StepProps } from "../types";
 
 const StepClaimRewards = (props: StepProps) => {
@@ -55,7 +55,7 @@ const StepClaimRewards = (props: StepProps) => {
   );
 
   const onDelegationChange = useCallback(
-    (validator: ValidatorType) => {
+    (validator: ElrondProvider) => {
       updateClaimRewards({
         ...transaction,
         recipient: validator.delegation.contract,

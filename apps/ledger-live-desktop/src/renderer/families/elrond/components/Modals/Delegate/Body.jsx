@@ -27,7 +27,7 @@ import { ELROND_LEDGER_VALIDATOR_ADDRESS } from "@ledgerhq/live-common/families/
 import type { AccountBridge } from "@ledgerhq/types-live";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import type { Account, Operation } from "@ledgerhq/live-common/types/index";
-import type { DelegationType, ValidatorType } from "~/renderer/families/elrond/types";
+import type { DelegationType, ElrondProvider } from "~/renderer/families/elrond/types";
 import type { StepProps, St } from "./types";
 
 interface OwnProps {
@@ -37,7 +37,7 @@ interface OwnProps {
   params: {
     account: Account,
     parentAccount: ?Account,
-    validators?: Array<ValidatorType>,
+    validators?: Array<ElrondProvider>,
     delegations?: Array<DelegationType>,
   };
   name: string;
@@ -101,7 +101,7 @@ const Body = (props: Props) => {
   const [signed, setSigned] = useState(false);
   const dispatch = useDispatch();
 
-  const defaultValidator: ValidatorType | undefined = params.validators.find(
+  const defaultValidator: ElrondProvider | undefined = params.validators.find(
     validator => validator.contract === ELROND_LEDGER_VALIDATOR_ADDRESS,
   );
 

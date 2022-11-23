@@ -18,7 +18,7 @@ import SuccessDisplay from "~/renderer/components/SuccessDisplay";
 import { OperationDetails } from "~/renderer/drawers/OperationDetails";
 import { setDrawer } from "~/renderer/drawers/Provider";
 
-import type { ValidatorType } from "~/renderer/families/elrond/types";
+import type { ElrondProvider } from "@ledgerhq/live-common/families/elrond/types";
 import type { StepProps } from "../types";
 
 const Container = styled(Box).attrs(() => ({
@@ -35,7 +35,7 @@ const StepConfirmation = (props: StepProps) => {
 
   if (optimisticOperation) {
     const provider: string | undefined = transaction && transaction.recipient;
-    const v: ValidatorType | undefined =
+    const v: ElrondProvider | undefined =
       provider && validators.find(validator => validator.contract === provider);
 
     const amount = `${denominate({

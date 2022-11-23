@@ -26,7 +26,7 @@ import {
 
 import type {
   DelegationType,
-  ValidatorType,
+  ElrondProvider,
   UnbondingType,
 } from "~/renderer/families/elrond/types";
 import type { Account as AccountType } from "@ledgerhq/types-live";
@@ -50,7 +50,7 @@ interface DropDownItemType {
   parameters: {
     account: AccountType,
     contract: string,
-    validators: Array<ValidatorType>,
+    validators: Array<ElrondProvider>,
     delegations: Array<DelegationType>,
     amount?: string,
   };
@@ -59,7 +59,7 @@ interface DropDownItemType {
 type Props = DelegationType &
   AccountType &
   Array<DelegationType> &
-  Array<ValidatorType> &
+  Array<ElrondProvider> &
   Array<UnbondingType>;
 
 const RenderDropdownItem = ({ item, isActive }: RenderDropdownItemType) => (

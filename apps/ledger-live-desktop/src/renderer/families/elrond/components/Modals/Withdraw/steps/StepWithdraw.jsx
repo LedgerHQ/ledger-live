@@ -18,7 +18,7 @@ import AccountFooter from "~/renderer/modals/Send/AccountFooter";
 
 import type { AccountBridge } from "@ledgerhq/types-live";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
-import type { ValidatorType } from "~/renderer/families/elrond/types";
+import type { ElrondProvider } from "@ledgerhq/live-common/families/elrond/types";
 import type { StepProps } from "../types";
 
 const StepWithdraw = (props: StepProps) => {
@@ -38,7 +38,7 @@ const StepWithdraw = (props: StepProps) => {
   const bridge: AccountBridge<Transaction> = getAccountBridge(account, parentAccount);
 
   const onDelegationChange = useCallback(
-    (validator: ValidatorType) => {
+    (validator: ElrondProvider) => {
       onUpdateTransaction((transaction: Transaction): AccountBridge<Transaction> =>
         bridge.updateTransaction(transaction, {
           ...transaction,

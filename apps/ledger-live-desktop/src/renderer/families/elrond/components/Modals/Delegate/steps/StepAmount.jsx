@@ -61,6 +61,7 @@ const StepAmount = (props: StepProps) => {
             bridgePending={bridgePending}
             parentAccount={parentAccount}
             onChangeTransaction={onUpdateTransactionCallback}
+            withUseMaxLabel={true}
           />
         </Fragment>
       )}

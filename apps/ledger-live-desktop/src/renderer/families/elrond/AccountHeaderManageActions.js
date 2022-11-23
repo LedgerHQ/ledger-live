@@ -4,8 +4,8 @@ import { useCallback, useMemo } from "react";
 import { BigNumber } from "bignumber.js";
 import { useTranslation } from "react-i18next";
 import { useDispatch } from "react-redux";
-import { randomizeProviders } from "@ledgerhq/live-common/families/elrond/helpers/randomizeProviders";
 import { denominate } from "@ledgerhq/live-common/families/elrond/helpers/denominate";
+import { useElrondRandomizedValidators } from "@ledgerhq/live-common/families/elrond/react";
 
 import { modals } from "./modals";
 import { openModal } from "~/renderer/actions/modals";
@@ -22,6 +22,7 @@ const AccountHeaderActions = (props: Props) => {
   const { account, parentAccount } = props;
   const { t } = useTranslation();
   const dispatch = useDispatch();
+  const validators = useElrondRandomizedValidators();
 
   const earnRewardEnabled = useMemo(
     (): boolean =>
@@ -29,11 +30,6 @@ const AccountHeaderActions = (props: Props) => {
         1,
       ),
     [account.spendableBalance],
-  );
-
-  const validators = useMemo(
-    () => randomizeProviders(account.elrondResources ? account.elrondResources.providers : []),
-    [account.elrondResources],
   );
 
   const hasDelegations = account.elrondResources

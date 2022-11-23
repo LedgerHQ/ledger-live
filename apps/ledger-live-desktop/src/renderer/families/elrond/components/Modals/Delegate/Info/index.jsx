@@ -14,13 +14,13 @@ import { modals } from "~/renderer/families/elrond/modals";
 import { openModal, closeModal } from "~/renderer/actions/modals";
 
 import type { Account } from "@ledgerhq/types-live";
-import type { DelegationType, ValidatorType } from "~/renderer/families/elrond/types";
+import type { DelegationType, ElrondProvider } from "~/renderer/families/elrond/types";
 
 interface Props {
   name: string;
   account: Account;
   parentAccount?: Account;
-  validators: Array<ValidatorType>;
+  validators: Array<ElrondProvider>;
   delegations: Array<DelegationType>;
 }
 

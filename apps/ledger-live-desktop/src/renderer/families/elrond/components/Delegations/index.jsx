@@ -8,11 +8,11 @@ import { TableLine } from "~/renderer/families/elrond/blocks/Delegation";
 import Delegation from "~/renderer/families/elrond/components/Delegations/components/Delegation";
 
 import type { Account as AccountType } from "@ledgerhq/types-live";
-import type { DelegationType, ValidatorType } from "~/renderer/families/elrond/types";
+import type { DelegationType, ElrondProvider } from "~/renderer/families/elrond/types";
 
 interface Props {
   delegations: Array<DelegationType>;
-  validators: Array<ValidatorType>;
+  validators: Array<ElrondProvider>;
   account: AccountType;
 }
 

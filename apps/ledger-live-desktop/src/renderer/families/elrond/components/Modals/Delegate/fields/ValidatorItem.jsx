@@ -23,12 +23,12 @@ import {
 } from "@ledgerhq/live-common/families/elrond/constants";
 
 import type { Unit } from "@ledgerhq/types-cryptoassets";
-import type { ValidatorType } from "~/renderer/families/elrond/types";
+import type { ElrondProvider } from "@ledgerhq/live-common/families/elrond/types";
 import type { ValidatorRowProps } from "~/renderer/components/Delegation/ValidatorRow";
 import type { ThemedComponent } from "~/renderer/styles/StyleProvider";
 
 export type Recipient = { address: string };
-export type ValidatorItemType = ValidatorType & {
+export type ValidatorItemType = ElrondProvider & {
   onSelectValidator: (recipient: string) => void,
   disabled: boolean,
   active: boolean,

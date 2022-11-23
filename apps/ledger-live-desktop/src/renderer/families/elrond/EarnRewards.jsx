@@ -5,7 +5,7 @@ import { useDispatch } from "react-redux";
 import { Trans } from "react-i18next";
 import styled from "styled-components";
 import { BigNumber } from "bignumber.js";
-import { randomizeProviders } from "@ledgerhq/live-common/families/elrond/helpers/randomizeProviders";
+import { useElrondRandomizedValidators } from "@ledgerhq/live-common/families/elrond/react";
 import { denominate } from "@ledgerhq/live-common/families/elrond/helpers/denominate";
 
 import Text from "~/renderer/components/Text";
@@ -48,14 +48,10 @@ const withDelegation = (Component: JSX.Element) => (props: DelegationPropsType) 
 
 const Delegation = (props: DelegationPropsType) => {
   const { account } = props;
+  const validators = useElrondRandomizedValidators();
 
   const [delegationResources, setDelegationResources] = useState<DelegationType[]>(
     account.elrondResources ? account.elrondResources.delegations : [],
-  );
-
-  const validators = useMemo(
-    () => randomizeProviders(account.elrondResources ? account.elrondResources.providers : []),
-    [account.elrondResources],
   );
 
   const dispatch = useDispatch();

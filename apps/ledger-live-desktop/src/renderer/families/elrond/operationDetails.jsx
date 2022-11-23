@@ -8,6 +8,7 @@ import { Trans } from "react-i18next";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { getAccountUnit } from "@ledgerhq/live-common/account/index";
 import { denominate } from "@ledgerhq/live-common/families/elrond/helpers/denominate";
+import { useElrondPreloadData } from "@ledgerhq/live-common/families/elrond/react";
 import {
   ELROND_EXPLORER_URL,
   ELROND_LEDGER_VALIDATOR_ADDRESS,
@@ -34,7 +35,7 @@ import { urls } from "~/config/urls";
 import type { ComponentType } from "react";
 import type { Operation, Account } from "@ledgerhq/types-live";
 import type { Currency, Unit } from "@ledgerhq/types-cryptoassets";
-import type { ValidatorType } from "~/renderer/families/elrond/types";
+import type { ElrondProvider } from "@ledgerhq/live-common/families/elrond/types";
 
 const getURLFeesInfo = (op: Operation): ?string => {
   if (op.fee.gt(200000)) {
@@ -65,9 +66,11 @@ type OperationDetailsDelegationProps = {
 
 const OperationDetailsDelegation = (props: OperationDetailsDelegationProps) => {
   const { isTransactionField, account, operation } = props;
-  const formattedValidator: ValidatorType | undefined = account.elrondResources
-    ? account.elrondResources.providers.find(v => v.contract === operation.contract)
-    : false;
+  const { validators } = useElrondPreloadData();
+
+  const formattedValidator: ElrondProvider | undefined = validators.find(
+    v => v.contract === operation.contract,
+  );
 
   return (
     <OpDetailsSection>
@@ -88,9 +91,7 @@ const OperationDetailsDelegation = (props: OperationDetailsDelegationProps) => {
                     input: operation.extra.amount,
                     decimals: 4,
                   })} ${getAccountUnit(account).code}`,
-                  name: formattedValidator
-                    ? formattedValidator.identity.name || operation.contract
-                    : operation.contract,
+                  name: formattedValidator?.identity.name || operation.contract,
                 }}
               >
                 <Text ff="Inter|SemiBold">{""}</Text>
@@ -133,17 +134,12 @@ const OperationDetailsExtra = (props: OperationDetailsExtraProps) => {
 
   switch (type) {
     case "DELEGATE": {
-      const { providers } = account.elrondResources;
-      if (!providers || providers.length <= 0) return null;
-
       return <OperationDetailsDelegation account={account} operation={operation} />;
     }
 
     case "UNDELEGATE": {
-      const { providers } = account.elrondResources;
-      if (!providers || providers.length <= 0) return null;
-
-      const formattedValidator = providers.find(v => v.contract === operation.contract);
+      const { validators } = useElrondPreloadData();
+      const formattedValidator = validators.find(v => v.contract === operation.contract);
       const formattedAmount = formatCurrencyUnit(
         unit,
         BigNumber(operation.extra.amount),
@@ -181,10 +177,8 @@ const OperationDetailsExtra = (props: OperationDetailsExtraProps) => {
     }
 
     case "WITHDRAW_UNBONDED": {
-      const { providers } = account.elrondResources;
-      if (!providers || providers.length <= 0) return null;
-
-      const formattedValidator = providers.find(v => v.contract === operation.contract);
+      const { validators } = useElrondPreloadData();
+      const formattedValidator = validators.find(v => v.contract === operation.contract);
       const formattedAmount = formatCurrencyUnit(
         unit,
         BigNumber(operation.extra.amount),
@@ -222,10 +216,8 @@ const OperationDetailsExtra = (props: OperationDetailsExtraProps) => {
     }
 
     case "REWARD": {
-      const { providers } = account.elrondResources;
-      if (!providers || providers.length <= 0) return null;
-
-      const formattedValidator = providers.find(v => v.contract === operation.contract);
+      const { validators } = useElrondPreloadData();
+      const formattedValidator = validators.find(v => v.contract === operation.contract);
 
       ret = (
         <Fragment>
