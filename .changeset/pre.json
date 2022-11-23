@@ -78,5 +78,36 @@
     "native-modules-tools": "1.0.2",
     "pnpm-utils": "1.0.1"
   },
-  "changesets": []
+  "changesets": [
+    "big-carpets-sniff",
+    "chilled-months-behave",
+    "dirty-dots-obey",
+    "gentle-tips-help",
+    "heavy-lamps-press",
+    "khaki-planes-love",
+    "khaki-shirts-occur",
+    "lazy-pets-sniff",
+    "little-fans-share",
+    "long-sloths-share",
+    "lucky-radios-beam",
+    "many-days-move",
+    "many-experts-fetch",
+    "mighty-queens-enjoy",
+    "mighty-seahorses-chew",
+    "modern-years-relate",
+    "nine-pans-breathe",
+    "old-parrots-cheer",
+    "popular-ravens-think",
+    "quiet-doors-cross",
+    "real-steaks-leave",
+    "selfish-snakes-cheer",
+    "spicy-seahorses-laugh",
+    "strong-lobsters-hide",
+    "ten-horses-check",
+    "tough-birds-fry",
+    "twenty-rice-prove",
+    "two-hats-help",
+    "weak-mirrors-tickle",
+    "wicked-peas-camp"
+  ]
 }
