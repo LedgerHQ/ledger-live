@@ -15,6 +15,7 @@ import { getAccountUnit } from "@ledgerhq/live-common/account/index";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { useTheme } from "styled-components/native";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
+import { MIN_DELEGATION_AMOUNT } from "@ledgerhq/live-common/families/elrond/constants";
 
 import { localeSelector } from "../../../../../../../reducers/settings";
 import { ScreenName } from "../../../../../../../const";
@@ -24,8 +25,6 @@ import LText from "../../../../../../../components/LText";
 import Warning from "../../../../../../../icons/Warning";
 import Check from "../../../../../../../icons/Check";
 import KeyboardView from "../../../../../../../components/KeyboardView";
-
-import { MIN_DELEGATION_AMOUNT } from "../../../../../constants";
 
 import type { PickAmountPropsType } from "./types";
 

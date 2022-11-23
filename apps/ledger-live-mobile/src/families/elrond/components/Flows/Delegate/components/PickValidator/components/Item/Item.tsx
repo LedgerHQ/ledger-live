@@ -5,14 +5,13 @@ import { useTheme } from "@react-navigation/native";
 import { Trans } from "react-i18next";
 import { View } from "react-native";
 import BigNumber from "bignumber.js";
+import { ELROND_LEDGER_VALIDATOR_ADDRESS } from "@ledgerhq/live-common/families/elrond/constants";
 
 import CurrencyUnitValue from "../../../../../../../../../components/CurrencyUnitValue";
 import FirstLetterIcon from "../../../../../../../../../components/FirstLetterIcon";
 import Touchable from "../../../../../../../../../components/Touchable";
 import Circle from "../../../../../../../../../components/Circle";
 import LedgerLogo from "../../../../../../../../../icons/LiveLogo";
-
-import { ELROND_LEDGER_ADDRESS } from "../../../../../../../constants";
 
 import type { ItemPropsType } from "./types";
 
@@ -46,7 +45,7 @@ const Item = (props: ItemPropsType) => {
     >
       <View style={styles.validator}>
         <Circle crop={true} size={32}>
-          {ELROND_LEDGER_ADDRESS === item.contract ? (
+          {ELROND_LEDGER_VALIDATOR_ADDRESS === item.contract ? (
             <LedgerLogo size={32 * 0.7} color={colors.text} />
           ) : (
             <FirstLetterIcon

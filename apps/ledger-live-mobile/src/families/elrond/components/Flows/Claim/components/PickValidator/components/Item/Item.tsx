@@ -3,6 +3,7 @@ import { View, TouchableOpacity } from "react-native";
 import { useTheme } from "@react-navigation/native";
 import { Trans } from "react-i18next";
 import BigNumber from "bignumber.js";
+import { ELROND_LEDGER_VALIDATOR_ADDRESS } from "@ledgerhq/live-common/families/elrond/constants";
 
 import LText from "../../../../../../../../../components/LText";
 import FirstLetterIcon from "../../../../../../../../../components/FirstLetterIcon";
@@ -10,8 +11,6 @@ import CurrencyUnitValue from "../../../../../../../../../components/CurrencyUni
 import ArrowRight from "../../../../../../../../../icons/ArrowRight";
 import Circle from "../../../../../../../../../components/Circle";
 import LedgerLogo from "../../../../../../../../../icons/LiveLogo";
-
-import { ELROND_LEDGER_ADDRESS } from "../../../../../../../constants";
 
 import type { ItemPropsType } from "./types";
 
@@ -38,7 +37,7 @@ const Item = (props: ItemPropsType) => {
     >
       <View style={styles.iconWrapper}>
         <Circle crop={true} size={32}>
-          {ELROND_LEDGER_ADDRESS === contract ? (
+          {ELROND_LEDGER_VALIDATOR_ADDRESS === contract ? (
             <LedgerLogo size={32 * 0.7} color={colors.text} />
           ) : (
             <FirstLetterIcon

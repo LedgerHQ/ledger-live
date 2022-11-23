@@ -5,6 +5,7 @@ import { useTranslation } from "react-i18next";
 import { Text } from "@ledgerhq/native-ui";
 import { BigNumber } from "bignumber.js";
 import { denominate } from "@ledgerhq/live-common/families/elrond/helpers/denominate";
+import { ELROND_LEDGER_VALIDATOR_ADDRESS } from "@ledgerhq/live-common/families/elrond/constants";
 
 import CounterValue from "../../../../../../../../components/CounterValue";
 import ArrowRight from "../../../../../../../../icons/ArrowRight";
@@ -12,8 +13,6 @@ import LText from "../../../../../../../../components/LText";
 import LedgerLogo from "../../../../../../../../icons/LiveLogo";
 import FirstLetterIcon from "../../../../../../../../components/FirstLetterIcon";
 import Circle from "../../../../../../../../components/Circle";
-
-import { ELROND_LEDGER_ADDRESS } from "../../../../../../constants";
 
 import type { DelegationPropsType } from "./types";
 
@@ -84,7 +83,7 @@ const Delegation = (props: DelegationPropsType) => {
         <View style={styles.icon}>
           {validator && (
             <Circle crop={true} size={42}>
-              {ELROND_LEDGER_ADDRESS === validator.contract ? (
+              {ELROND_LEDGER_VALIDATOR_ADDRESS === validator.contract ? (
                 <LedgerLogo size={42 * 0.7} color={colors.text} />
               ) : (
                 <FirstLetterIcon
