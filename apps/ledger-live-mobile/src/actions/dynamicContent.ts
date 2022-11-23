@@ -1,12 +1,11 @@
 import { createAction } from "redux-actions";
-import {
-  WalletContentCard,
-  AssetContentCard,
-} from "../dynamicContent/dynamicContent";
+import { WalletContentCard, AssetContentCard } from "../dynamicContent/types";
+
 import {
   DynamicContentActionTypes,
   DynamicContentSetWalletCardsPayload,
   DynamicContentSetAssetCardsPayload,
+  DynamicContentSetDismissCardPayload,
 } from "./types";
 
 const setDynamicContentWalletCardsAction =
@@ -30,3 +29,12 @@ export const setDynamicContentAssetsCards = (assetsCards: AssetContentCard[]) =>
   setDynamicContentAssetsCardsAction({
     assetsCards,
   });
+
+export const setDismissCard = (cardId: string) =>
+  setDismissCardAction({
+    dismissedCard: cardId,
+  });
+
+const setDismissCardAction = createAction<DynamicContentSetDismissCardPayload>(
+  DynamicContentActionTypes.DYNAMIC_CONTENT_SET_DISMISS_CARD,
+);
