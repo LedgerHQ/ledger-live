@@ -388,6 +388,7 @@ export enum ScreenName {
   OnboardingPreQuizModal = "OnboardingPreQuizModal",
   OnboardingModalSyncDesktopInformation = "OnboardingModalSyncDesktopInformation",
   OnboardingModalRecoveryPhraseWarning = "OnboardingModalRecoveryPhraseWarning",
+  OnboardingProtectFlow = "OnboardingProtectFlow",
   SyncOnboardingCompanion = "SyncOnboardingCompanion",
   SyncOnboardingCompletion = "SyncOnboardingCompletion",
   DeviceModelSelection = "DeviceModelSelection",

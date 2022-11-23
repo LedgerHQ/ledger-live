@@ -45,11 +45,14 @@ export type OnboardingNavigatorParamList = {
     next?: string;
     showSeedWarning?: boolean;
   };
+  [ScreenName.OnboardingProtectFlow]: {
+    deviceModelId: DeviceModelId;
+  };
   [ScreenName.OnboardingImportAccounts]:
-    | {
-        deviceModelId?: DeviceModelId;
-      }
-    | undefined;
+  | {
+    deviceModelId?: DeviceModelId;
+  }
+  | undefined;
   [ScreenName.OnboardingFinish]: undefined;
   [NavigatorName.PasswordAddFlow]: undefined;
   [ScreenName.OnboardingQuiz]: {
