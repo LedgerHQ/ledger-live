@@ -172,7 +172,7 @@ export const toTransactionRaw = (t: Transaction): TransactionRaw => {
     tokenIds: t.tokenIds,
     collection: t.collection,
     collectionName: t.collectionName,
-    quantities: t.quantities?.map((q) => q.toString()),
+    quantities: t.quantities?.map((q) => q?.toFixed() || "0"),
   };
 };
 

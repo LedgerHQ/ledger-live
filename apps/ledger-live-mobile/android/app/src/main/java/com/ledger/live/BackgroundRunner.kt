@@ -23,7 +23,13 @@ class BackgroundRunner(var context: ReactApplicationContext) : ReactContextBaseJ
         val intent = Intent(context, MainActivity::class.java)
         intent.addCategory(Intent.CATEGORY_LAUNCHER)
         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED
-        val pendingIntent: PendingIntent = PendingIntent.getActivity(context, 0, intent, 0)
+
+        val needsFlagMutable = android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S
+        val pendingIntent: PendingIntent = PendingIntent.getActivity(context, 0, intent, if (needsFlagMutable) {
+            PendingIntent.FLAG_IMMUTABLE
+        } else {
+            0
+        })
 
         var builder = NotificationCompat.Builder(context, if (requiresUserInput) {
             MainApplication.HI_NOTIFICATION_CHANNEL

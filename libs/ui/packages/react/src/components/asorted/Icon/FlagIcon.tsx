@@ -1,4 +1,4 @@
-import * as flags from "@ledgerhq/icons-ui/react/_Flags/index";
+import * as flags from "@ledgerhq/icons-ui/react/Flags/index";
 import React from "react";
 
 export const sizes = {

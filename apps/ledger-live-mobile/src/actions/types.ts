@@ -209,6 +209,7 @@ export enum SettingsActionTypes {
   SETTINGS_SET_PAIRS = "SETTINGS_SET_PAIRS",
   SETTINGS_SET_SELECTED_TIME_RANGE = "SETTINGS_SET_SELECTED_TIME_RANGE",
   SETTINGS_COMPLETE_ONBOARDING = "SETTINGS_COMPLETE_ONBOARDING",
+  SETTINGS_COMPLETE_CUSTOM_IMAGE_FLOW = "SETTINGS_COMPLETE_CUSTOM_IMAGE_FLOW",
   SETTINGS_INSTALL_APP_FIRST_TIME = "SETTINGS_INSTALL_APP_FIRST_TIME",
   SETTINGS_SET_READONLY_MODE = "SETTINGS_SET_READONLY_MODE",
   SETTINGS_SET_EXPERIMENTAL_USB_SUPPORT = "SETTINGS_SET_EXPERIMENTAL_USB_SUPPORT",
@@ -235,6 +236,7 @@ export enum SettingsActionTypes {
   ADD_STARRED_MARKET_COINS = "ADD_STARRED_MARKET_COINS",
   REMOVE_STARRED_MARKET_COINS = "REMOVE_STARRED_MARKET_COINS",
   SET_LAST_CONNECTED_DEVICE = "SET_LAST_CONNECTED_DEVICE",
+  SET_CUSTOM_IMAGE_BACKUP = "SET_CUSTOM_IMAGE_BACKUP",
   SET_HAS_ORDERED_NANO = "SET_HAS_ORDERED_NANO",
   SET_MARKET_REQUEST_PARAMS = "SET_MARKET_REQUEST_PARAMS",
   SET_MARKET_COUNTER_CURRENCY = "SET_MARKET_COUNTER_CURRENCY",
@@ -243,6 +245,7 @@ export enum SettingsActionTypes {
   SET_FIRST_CONNECTION_HAS_DEVICE = "SET_FIRST_CONNECTION_HAS_DEVICE",
   SET_NOTIFICATIONS = "SET_NOTIFICATIONS",
   RESET_SWAP_LOGIN_AND_KYC_DATA = "RESET_SWAP_LOGIN_AND_KYC_DATA",
+  WALLET_TAB_NAVIGATOR_LAST_VISITED_TAB = "WALLET_TAB_NAVIGATOR_LAST_VISITED_TAB",
 }
 
 export type SettingsImportPayload = Partial<SettingsState>;
@@ -346,6 +349,10 @@ export type SettingsRemoveStarredMarketcoinsPayload = {
 export type SettingsSetLastConnectedDevicePayload = {
   lastConnectedDevice: Device;
 };
+export type SettingsSetCustomImageBackupPayload = {
+  hex: string;
+  hash: string;
+};
 export type SettingsSetHasOrderedNanoPayload = Pick<
   SettingsState,
   "hasOrderedNano"
@@ -376,6 +383,10 @@ export type SettingsSetFirstConnectHasDeviceUpdatedPayload = Pick<
 export type SettingsSetNotificationsPayload = {
   notifications: Partial<SettingsState["notifications"]>;
 };
+export type SettingsSetWalletTabNavigatorLastVisitedTabPayload = Pick<
+  SettingsState,
+  "walletTabNavigatorLastVisitedTab"
+>;
 export type SettingsDangerouslyOverrideStatePayload = State;
 export type SettingsPayload =
   | SettingsImportPayload
