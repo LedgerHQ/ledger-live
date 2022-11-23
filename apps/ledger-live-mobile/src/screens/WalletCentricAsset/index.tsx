@@ -142,8 +142,12 @@ const AssetScreen = ({ route }: NavigationProps) => {
   }, [currency, navigation]);
 
   // Dynamic Content Part -------------------
-  const { getAssetCardByIdOrTicker, logClickCard, logImpressionCard } =
-    useDynamicContent();
+  const {
+    getAssetCardByIdOrTicker,
+    logClickCard,
+    logImpressionCard,
+    dismissCard,
+  } = useDynamicContent();
   const dynamicContentCard = getAssetCardByIdOrTicker(currency);
 
   const onClickLink = useCallback(() => {
@@ -158,10 +162,12 @@ const AssetScreen = ({ route }: NavigationProps) => {
   }, [dynamicContentCard, logClickCard]);
 
   const onPressDismiss = useCallback(() => {
+    if (!dynamicContentCard) return;
     track("contentcard_dismissed", {
-      screen: dynamicContentCard?.location,
+      screen: dynamicContentCard.location,
     });
-  }, [dynamicContentCard]);
+    dismissCard(dynamicContentCard.id);
+  }, [dismissCard, dynamicContentCard]);
 
   useEffect(() => {
     if (dynamicContentCard) {

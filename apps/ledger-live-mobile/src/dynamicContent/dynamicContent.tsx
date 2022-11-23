@@ -1,10 +1,11 @@
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { ContentCard as BrazeContentCard } from "react-native-appboy-sdk";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { useCallback, useMemo } from "react";
+import { useCallback } from "react";
 import { useBrazeContentCard } from "./brazeContentCard";
 import {
   assetsCardsSelector,
+  dismissedCardsSelector,
   walletCardsSelector,
 } from "../reducers/dynamicContent";
 import {
@@ -13,6 +14,7 @@ import {
   LocationContentCard,
   WalletContentCard,
 } from "./types";
+import { setDismissCard } from "../actions/dynamicContent";
 
 export const filterByPage = (array: BrazeContentCard[], page: string) =>
   array.filter(elem => elem.extras.location === page);
@@ -43,14 +45,13 @@ export const mapAsAssetContentCard = (card: BrazeContentCard) =>
 
 const useDynamicContent = () => {
   // const dynamicContentFeature = useFeature("dynamicContent");
-
+  const dispatch = useDispatch();
   const { logClickCard, logDismissCard, logImpressionCard } =
     useBrazeContentCard();
 
   const assetsCards = useSelector(assetsCardsSelector);
   const walletCards = useSelector(walletCardsSelector);
-
-  const hiddenCards: string[] = useMemo(() => [], []);
+  const hiddenCards: string[] = useSelector(dismissedCardsSelector);
 
   const getAssetCardByIdOrTicker = useCallback(
     (currency: CryptoOrTokenCurrency): AssetContentCard | undefined => {
@@ -69,6 +70,8 @@ const useDynamicContent = () => {
     [assetsCards, hiddenCards],
   );
 
+  const dismissCard = (cardId: string) => dispatch(setDismissCard(cardId));
+
   return {
     walletCards,
     assetsCards,
@@ -76,6 +79,7 @@ const useDynamicContent = () => {
     logClickCard,
     logDismissCard,
     logImpressionCard,
+    dismissCard,
   };
 };
 

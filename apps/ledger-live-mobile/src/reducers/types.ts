@@ -105,6 +105,8 @@ export type DynamicContentState = {
   walletCards: WalletContentCard[];
   /** Dynamic content cards displayed in an Asset Page */
   assetsCards: AssetContentCard[];
+  /** ids of cards that have been dismissed by the user */
+  dismissedCards: string[];
 };
 
 // === RATINGS STATE ===
