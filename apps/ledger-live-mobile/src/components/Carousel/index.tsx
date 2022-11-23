@@ -6,15 +6,11 @@ import CarouselCard from "./CarouselCard";
 
 const WIDTH = width * 0.85;
 
-type Props = {
-  cardsVisibility: { [key: string]: boolean };
-};
-
-const Carousel = ({ cardsVisibility }: Props) => {
+const Carousel = () => {
   const scrollViewRef = useRef<ScrollView>(null);
   const [currentPositionX, setCurrentPositionX] = useState(0);
 
-  const { walletCards } = useDynamicContent();
+  const { walletCardsDisplayed } = useDynamicContent();
 
   const onScrollEnd = useCallback(event => {
     setCurrentPositionX(
@@ -32,7 +28,7 @@ const Carousel = ({ cardsVisibility }: Props) => {
     [currentPositionX],
   );
 
-  if (!walletCards || !walletCards.length) {
+  if (!walletCardsDisplayed || !walletCardsDisplayed.length) {
     // No slides or dismissed, no problem
     return null;
   }
@@ -47,7 +43,7 @@ const Carousel = ({ cardsVisibility }: Props) => {
       snapToInterval={WIDTH + 16}
       decelerationRate={"fast"}
     >
-      {walletCards.map((cardProps, index) => (
+      {walletCardsDisplayed.map((cardProps, index) => (
         <CarouselCard
           key={cardProps.id + index}
           id={cardProps.id}
@@ -60,4 +56,4 @@ const Carousel = ({ cardsVisibility }: Props) => {
   );
 };
 
-export default memo<Props>(Carousel);
+export default memo(Carousel);
