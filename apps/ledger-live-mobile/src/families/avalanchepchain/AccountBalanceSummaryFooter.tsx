@@ -8,7 +8,7 @@ import { getAccountUnit } from "@ledgerhq/live-common/account/helpers";
 import { getCryptoCurrencyIcon } from "@ledgerhq/live-common/reactNative";
 import { Account } from "@ledgerhq/types-live";
 import invariant from "invariant";
-import { AvalanchePChainAccount } from "@ledgerhq/live-common/lib/families/avalanchepchain/types";
+import { AvalanchePChainAccount } from "@ledgerhq/live-common/families/avalanchepchain/types";
 import InfoModal from "../../modals/Info";
 import type { ModalInfo } from "../../modals/Info";
 import CurrencyUnitValue from "../../components/CurrencyUnitValue";

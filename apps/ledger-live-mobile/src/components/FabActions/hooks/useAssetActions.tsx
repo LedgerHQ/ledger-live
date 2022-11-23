@@ -246,6 +246,8 @@ export default function useAssetActions({
       availableOnSwap,
       canBeBought,
       canBeSold,
+      canReceive,
+      canSend,
       currency,
       defaultAccount,
       hasAccounts,

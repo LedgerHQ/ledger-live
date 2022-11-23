@@ -11,16 +11,13 @@ import { accountScreenSelector } from "../../reducers/accounts";
 import ValidatorHead from "./ValidatorHead";
 import ValidatorRow from "./ValidatorRow";
 import SelectValidatorSearchBox from "../tron/VoteFlow/01-SelectValidator/SearchBox";
+import type { StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
+import { AvalancheDelegationFlowParamList } from "./DelegationFlow/types";
 
-type Props = {
-  navigation: any;
-  route: { params: RouteParams };
-};
-
-type RouteParams = {
-  accountId: string;
-  validator?: AvalanchePChainValidator;
-};
+type Props = StackNavigatorProps<
+  AvalancheDelegationFlowParamList,
+  ScreenName.AvalancheDelegationValidatorSelect
+>;
 
 export default function SelectValidator({ navigation, route }: Props) {
   const { colors } = useTheme();

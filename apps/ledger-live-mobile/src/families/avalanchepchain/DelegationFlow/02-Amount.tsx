@@ -13,7 +13,6 @@ import { useSelector } from "react-redux";
 import { Trans } from "react-i18next";
 import invariant from "invariant";
 import { useTheme } from "@react-navigation/native";
-import type { Transaction } from "@ledgerhq/live-common/families/avalanchepchain/types";
 import { getAccountUnit } from "@ledgerhq/live-common/account/index";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { accountScreenSelector } from "../../../reducers/accounts";
@@ -26,17 +25,13 @@ import KeyboardView from "../../../components/KeyboardView";
 import CurrencyInput from "../../../components/CurrencyInput";
 import TranslatedError from "../../../components/TranslatedError";
 import { getFirstStatusError } from "../../helpers";
+import type { StackNavigatorProps } from "../../../components/RootNavigator/types/helpers";
+import { AvalancheDelegationFlowParamList } from "./types";
 
-type Props = {
-  navigation: any;
-  route: { params: RouteParams };
-};
-
-type RouteParams = {
-  accountId: string;
-  transaction: Transaction;
-  amount?: number;
-};
+type Props = StackNavigatorProps<
+  AvalancheDelegationFlowParamList,
+  ScreenName.AvalancheDelegationAmount
+>;
 
 export default function DelegationAmount({ navigation, route }: Props) {
   const { colors } = useTheme();
@@ -72,7 +67,7 @@ export default function DelegationAmount({ navigation, route }: Props) {
     return () => {
       cancelled = true;
     };
-  }, [transaction, setMaxSpendable]);
+  }, [transaction, setMaxSpendable, bridge, account]);
 
   const onChange = (amount: BigNumber) => {
     setTransaction(bridge.updateTransaction(transaction, { amount }));

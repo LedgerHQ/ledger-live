@@ -1,8 +1,10 @@
 import { BigNumber } from "bignumber.js";
-import React, { useCallback, useState, useMemo, ElementProps } from "react";
+import React, { useCallback, useState, useMemo } from "react";
+import { StackNavigationProp } from "@react-navigation/stack";
 import { View, StyleSheet, Linking } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { useTranslation } from "react-i18next";
+import { useSelector } from "react-redux";
 import {
   getAccountCurrency,
   getMainAccount,
@@ -33,22 +35,27 @@ import DelegationRow from "./Row";
 import DelegationLabelRight from "./LabelRight";
 import ValidatorImage from "../../cosmos/shared/ValidatorImage";
 import Alert from "../../../components/Alert";
+import { localeSelector } from "../../../reducers/settings";
 
 type Props = {
   account: Account;
 };
 
-type DelegationDrawerProps = ElementProps<typeof DelegationDrawer>;
+type DelegationDrawerProps = React.ComponentProps<typeof DelegationDrawer>;
 
 function Delegations({ account }: Props) {
   const { t } = useTranslation();
   const mainAccount = getMainAccount(account);
   const currency = getAccountCurrency(mainAccount);
   const navigation = useNavigation();
+  const locale = useSelector(localeSelector);
 
   const { avalanchePChainResources } = mainAccount as AvalanchePChainAccount;
-  const delegations =
-    (avalanchePChainResources && avalanchePChainResources.delegations) ?? [];
+  const delegations = useMemo(
+    () =>
+      (avalanchePChainResources && avalanchePChainResources.delegations) ?? [],
+    [avalanchePChainResources],
+  );
 
   const [delegation, setDelegation] = useState<AvalancheDelegation>();
 
@@ -58,15 +65,18 @@ function Delegations({ account }: Props) {
       screen,
       params,
     }: {
-      route: typeof NavigatorName | typeof ScreenName;
-      screen?: typeof ScreenName;
-      params?: { [key: string]: any };
+      route: string;
+      screen?: string;
+      params?: { [key: string]: unknown };
     }) => {
       setDelegation();
-      navigation.navigate(route, {
-        screen,
-        params: { ...params, accountId: account.id },
-      });
+      (navigation as StackNavigationProp<{ [key: string]: object }>).navigate(
+        route,
+        {
+          screen,
+          params: { ...params, accountId: account.id },
+        },
+      );
     },
     [navigation, account.id],
   );
@@ -144,7 +154,7 @@ function Delegations({ account }: Props) {
                 style={[styles.valueText]}
                 color="live"
               >
-                {getReadableDate(d.startTime)}
+                {getReadableDate(Number(d.startTime), locale)}
               </LText>
             ),
           },
@@ -158,13 +168,13 @@ function Delegations({ account }: Props) {
                 style={[styles.valueText]}
                 color="live"
               >
-                {getReadableDate(d.endTime)}
+                {getReadableDate(Number(d.endTime), locale)}
               </LText>
             ),
           },
         ]
       : [];
-  }, [delegation, t, account, onOpenExplorer]);
+  }, [delegation, t, account, onOpenExplorer, locale]);
 
   const delegationDisabled = delegations.length === 0 || !canDelegate(account);
 

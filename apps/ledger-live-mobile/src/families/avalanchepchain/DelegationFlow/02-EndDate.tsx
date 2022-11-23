@@ -12,7 +12,6 @@ import { useSelector } from "react-redux";
 import { Trans } from "react-i18next";
 import invariant from "invariant";
 import { useTheme } from "@react-navigation/native";
-import { Transaction } from "@ledgerhq/live-common/generated/types";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import {
@@ -21,7 +20,6 @@ import {
   YEAR,
   getReadableDate,
 } from "@ledgerhq/live-common/families/avalanchepchain/utils";
-import { AvalanchePChainValidator } from "@ledgerhq/live-common/families/avalanchepchain/types";
 import { accountScreenSelector } from "../../../reducers/accounts";
 import { ScreenName } from "../../../const";
 import { TrackScreen } from "../../../analytics";
@@ -31,18 +29,13 @@ import KeyboardView from "../../../components/KeyboardView";
 import TranslatedError from "../../../components/TranslatedError";
 import { getFirstStatusError } from "../../helpers";
 import { localeSelector } from "../../../reducers/settings";
+import type { StackNavigatorProps } from "../../../components/RootNavigator/types/helpers";
+import { AvalancheDelegationFlowParamList } from "./types";
 
-type Props = {
-  navigation: any;
-  route: { params: RouteParams };
-};
-
-type RouteParams = {
-  accountId: string;
-  transaction: Transaction;
-  amount?: number;
-  chosenValidator: AvalanchePChainValidator;
-};
+type Props = StackNavigatorProps<
+  AvalancheDelegationFlowParamList,
+  ScreenName.AvalancheDelegationEndDate
+>;
 
 export default function DelegationEndDate({ navigation, route }: Props) {
   const { colors } = useTheme();
@@ -67,7 +60,7 @@ export default function DelegationEndDate({ navigation, route }: Props) {
 
   invariant(transaction, "transaction must be defined");
 
-  const onChange = (_, selectedDate) => {
+  const onChange = (_, selectedDate: number) => {
     setTransaction(
       bridge.updateTransaction(transaction, {
         endTime: new BigNumber(selectedDate / 1000),
@@ -91,7 +84,7 @@ export default function DelegationEndDate({ navigation, route }: Props) {
   const unixMinEndDate = stakeStartTime + TWO_WEEKS;
   const unixMaxEndDate = Math.min(
     stakeStartTime + YEAR,
-    Number(route.params.chosenValidator.endTime),
+    Number(route.params.validator.endTime),
   );
 
   const readableMinEndDate = getReadableDate(unixMinEndDate, locale);

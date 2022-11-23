@@ -23,13 +23,17 @@ import React, {
   useState,
 } from "react";
 import { Trans } from "react-i18next";
-import { Animated, SafeAreaView, StyleSheet, View } from "react-native";
-import Icon from "react-native-vector-icons/dist/Feather";
-import { useSelector } from "react-redux";
 import {
-  AvalanchePChainValidator,
-  Transaction,
-} from "@ledgerhq/live-common/families/avalanchepchain/types";
+  Animated,
+  SafeAreaView,
+  StyleSheet,
+  View,
+  StyleProp,
+  TextStyle,
+} from "react-native";
+import Icon from "react-native-vector-icons/Feather";
+import { useSelector } from "react-redux";
+import { AvalanchePChainValidator } from "@ledgerhq/live-common/families/avalanchepchain/types";
 import {
   isDefaultValidatorNode,
   FIVE_MINUTES,
@@ -50,18 +54,13 @@ import DelegatingContainer from "../../tezos/DelegatingContainer";
 import { accountScreenSelector } from "../../../reducers/accounts";
 import ValidatorImage from "../ValidatorImage";
 import { localeSelector } from "../../../reducers/settings";
+import type { StackNavigatorProps } from "../../../components/RootNavigator/types/helpers";
+import { AvalancheDelegationFlowParamList } from "./types";
 
-type Props = {
-  navigation: any;
-  route: { params: RouteParams };
-};
-
-type RouteParams = {
-  validator: AvalanchePChainValidator;
-  transaction?: Transaction;
-  amount?: number;
-  endTime?: BigNumber;
-};
+type Props = StackNavigatorProps<
+  AvalancheDelegationFlowParamList,
+  ScreenName.AvalancheDelegationValidator
+>;
 
 export default function DelegationSummary({ navigation, route }: Props) {
   const { validator } = route.params;
@@ -130,6 +129,7 @@ export default function DelegationSummary({ navigation, route }: Props) {
         maxEndTime: new BigNumber(unixMaxEndDate),
       }),
     );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     route.params.amount,
     route.params.endTime,
@@ -176,9 +176,8 @@ export default function DelegationSummary({ navigation, route }: Props) {
     rotateAnim.setValue(0);
     navigation.navigate(ScreenName.AvalancheDelegationValidatorSelect, {
       ...route.params,
-      transaction,
     });
-  }, [rotateAnim, navigation, transaction, route.params]);
+  }, [rotateAnim, navigation, route.params]);
 
   const currency = getAccountCurrency(account);
   const color = getCurrencyColor(currency);
@@ -194,7 +193,7 @@ export default function DelegationSummary({ navigation, route }: Props) {
     navigation.navigate(ScreenName.AvalancheDelegationEndDate, {
       ...route.params,
       transaction,
-      chosenValidator,
+      validator: chosenValidator,
     });
   };
 
@@ -463,7 +462,7 @@ const Words = ({
 }: {
   children: ReactNode;
   highlighted?: boolean;
-  style?: any;
+  style?: StyleProp<TextStyle>;
 }) => (
   <Text
     numberOfLines={1}
