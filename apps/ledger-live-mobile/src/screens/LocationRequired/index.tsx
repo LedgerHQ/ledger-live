@@ -1,37 +1,83 @@
-import React from "react";
-import { View, StyleSheet } from "react-native";
-import { Trans } from "react-i18next";
+import React, { useCallback, useState } from "react";
+import { View, StyleSheet, PermissionsAndroid } from "react-native";
+import { Trans, useTranslation } from "react-i18next";
+import { Button } from "@ledgerhq/native-ui";
 import NoLocationImage from "../../icons/NoLocationImage";
 import LocationServicesButton from "./LocationServicesButton";
-import AppPermissionsButton from "./AppPermissionsButton";
+import OpenAppPermissionsSettingsButton from "./OpenAppPermissionsSettingsButton";
 import LText from "../../components/LText";
+import {
+  locationPermission,
+  requestLocationPermission,
+  RequestResult,
+} from "../../components/RequiresBLE/androidBlePermissions";
+
+const { RESULTS } = PermissionsAndroid;
 
 type Props = {
   onRetry: () => void;
   errorType: "disabled" | "unauthorized";
 };
 export default function LocationRequired({ errorType, onRetry }: Props) {
+  const { t } = useTranslation();
+  const [requestResult, setRequestResult] = useState<RequestResult | null>(
+    null,
+  );
+  const { status } = requestResult || {};
+  const neverAskAgain = status === RESULTS.NEVER_ASK_AGAIN;
+
+  const requestPermission = useCallback(async () => {
+    let dead = false;
+    requestLocationPermission().then(res => {
+      if (dead) return;
+      setRequestResult(res);
+      onRetry();
+    });
+    return () => {
+      dead = true;
+    };
+  }, [onRetry]);
+
+  const isDisabledErrorType = errorType === "disabled";
+  const isFineLocationRequired =
+    locationPermission === PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION;
+
+  const title = isDisabledErrorType
+    ? t("location.titleServiceRequired")
+    : isFineLocationRequired
+    ? t("location.titlePermissionRequiredPrecise")
+    : t("location.titlePermissionRequired");
+  const description = isDisabledErrorType
+    ? t("location.descriptionServiceRequired")
+    : isFineLocationRequired
+    ? t("location.descriptionPermissionRequiredPrecise")
+    : t("location.descriptionPermissionRequired");
+
   return (
     <View style={styles.container}>
       <NoLocationImage />
       <View>
         <LText bold secondary style={styles.title}>
-          <Trans i18nKey="location.required" />
+          {title}
         </LText>
       </View>
       <View>
         <LText style={styles.desc} color="grey">
-          <Trans i18nKey="location.disabled" />
+          {description}
         </LText>
         <LText semiBold style={[styles.desc, styles.descPadding]}>
           <Trans i18nKey="location.noInfos" />
         </LText>
       </View>
       <View style={styles.buttonWrapper}>
-        {errorType === "disabled" ? (
+        {isDisabledErrorType ? (
           <LocationServicesButton onRetry={onRetry} />
+        ) : neverAskAgain ? (
+          <OpenAppPermissionsSettingsButton onRetry={onRetry} />
         ) : (
-          <AppPermissionsButton onRetry={onRetry} />
+          <Button type="main" outline onPress={requestPermission}>
+            <Trans i18nKey="permissions.authorize" />
+          </Button>
         )}
       </View>
     </View>
