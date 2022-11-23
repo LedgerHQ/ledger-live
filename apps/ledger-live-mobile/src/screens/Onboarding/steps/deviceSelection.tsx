@@ -14,7 +14,6 @@ import { ScreenName, NavigatorName } from "../../../const";
 import { OnboardingNavigatorParamList } from "../../../components/RootNavigator/types/OnboardingNavigator";
 import {
   BaseNavigationComposite,
-  RootNavigationComposite,
   StackNavigatorNavigation,
 } from "../../../components/RootNavigator/types/helpers";
 
@@ -23,10 +22,7 @@ import nanoSPSvg from "../assets/nanoSP";
 import nanoXSvg from "../assets/nanoX";
 import DiscoverCard from "../../Discover/DiscoverCard";
 import DeviceSetupView from "../../../components/DeviceSetupView";
-import { RootStackParamList } from "../../../components/RootNavigator/types/RootNavigator";
-import { NavigateInput } from "../../../components/RootNavigator/types/BaseNavigator";
 import { SyncOnboardingStackParamList } from "../../../components/RootNavigator/types/SyncOnboardingNavigator";
-import { StackNavigationProp } from "@react-navigation/stack";
 
 const nanoX = {
   SvgDevice: nanoXSvg,
@@ -49,19 +45,19 @@ const nanoFTS = {
   setupTime: 300000,
 };
 
-// TODO: fix type
-type NavigationProp = BaseNavigationComposite<
+type NavigationProps = BaseNavigationComposite<
   CompositeNavigationProp<
-    StackNavigationProp<SyncOnboardingStackParamList>,
     StackNavigatorNavigation<
       OnboardingNavigatorParamList,
       ScreenName.OnboardingDeviceSelection
-    >
+    >,
+    StackNavigatorNavigation<SyncOnboardingStackParamList>
   >
 >;
 
 function OnboardingStepDeviceSelection() {
-  const navigation = useNavigation<NavigationProp>();
+  // const navigation = useNavigation<NavigatorProps["navigation"]>();
+  const navigation = useNavigation<NavigationProps>();
   const { t } = useTranslation();
   const { colors } = useTheme();
   const syncOnboarding = useFeature("syncOnboarding" as const);
@@ -82,18 +78,17 @@ function OnboardingStepDeviceSelection() {
       // On pairing success, navigate to the Sync Onboarding Companion
       // navigation.push on stack navigation because with navigation.navigate
       // it could not go back to this screen in certain cases.
-      // TODO: fix type
-      navigation.navigate(NavigatorName.SyncOnboarding, {
-        screen: ScreenName.SyncOnboardingBleDevicePairingFlow,
+      navigation.navigate(NavigatorName.BaseOnboarding, {
+        screen: NavigatorName.SyncOnboarding,
         params: {
-          areKnownDevicesDisplayed: true,
-          onSuccessAddToKnownDevices: false,
+          screen: ScreenName.SyncOnboardingBleDevicePairingFlow,
+          params: {
+            areKnownDevicesDisplayed: true,
+            onSuccessAddToKnownDevices: false,
+          },
         },
       });
     } else {
-      // TODO: FIX @react-navigation/native using Typescript
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore next-line
       navigation.navigate(ScreenName.OnboardingUseCase, {
         deviceModelId,
       });
