@@ -282,7 +282,7 @@ export async function bot({
       !s.fatalError &&
       s.mutations &&
       !specsWithoutFunds.includes(s) &&
-      s.mutations.some((r) => r.mutation && !r.operation)
+      s.mutations.some((r) => r.error || (r.mutation && !r.operation))
   );
 
   const specsWithoutOperations = results.filter(
