@@ -74,6 +74,8 @@ export type NearValidatorItem = {
 export type NearMappedStakingPosition = NearStakingPosition & {
   formattedAmount: string;
   formattedRewards: string;
+  formattedPending: string;
+  formattedAvailable: string;
   rank: number;
   validator: NearValidatorItem | null | undefined;
 };

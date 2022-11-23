@@ -427,6 +427,25 @@ export enum ScreenName {
   CardanoEditMemo = "CardanoEditMemo",
   // hedera
   HederaEditMemo = "HederaEditMemo",
+  // near
+  NearStakingValidator = "NearStakingValidator",
+  NearStakingValidatorSelect = "NearStakingValidatorSelect",
+  NearStakingAmount = "NearStakingAmount",
+  NearStakingStarted = "NearStakingStarted",
+  NearUnstakingAmount = "NearUnstakingAmount",
+  NearWithdrawingAmount = "NearWithdrawingAmount",
+  NearStakingSelectDevice = "NearStakingSelectDevice",
+  NearStakingConnectDevice = "NearStakingConnectDevice",
+  NearStakingValidationError = "NearStakingValidationError",
+  NearStakingValidationSuccess = "NearStakingValidationSuccess",
+  NearUnstakingSelectDevice = "NearUnstakingSelectDevice",
+  NearUnstakingConnectDevice = "NearUnstakingConnectDevice",
+  NearUnstakingValidationError = "NearUnstakingValidationError",
+  NearUnstakingValidationSuccess = "NearUnstakingValidationSuccess",
+  NearWithdrawingSelectDevice = "NearWithdrawingSelectDevice",
+  NearWithdrawingConnectDevice = "NearWithdrawingConnectDevice",
+  NearWithdrawingValidationError = "NearWithdrawingValidationError",
+  NearWithdrawingValidationSuccess = "NearWithdrawingValidationSuccess",
 
   CustomImageStep0Welcome = "CustomImageStep0Welcome",
   CustomImageStep1Crop = "CustomImageStep1Crop",
@@ -515,6 +534,10 @@ export enum NavigatorName {
   CeloActivateFlow = "CeloActivateFlow",
   CeloRevokeFlow = "CeloRevokeFlow",
   CeloWithdrawFlow = "CeloWithdrawFlow",
+  // NEAR
+  NearStakingFlow = "NearStakingFlow",
+  NearUnstakingFlow = "NearUnstakingFlow",
+  NearWithdrawingFlow = "NearWithdrawingFlow",
 
   // Tab
   Main = "Main",
