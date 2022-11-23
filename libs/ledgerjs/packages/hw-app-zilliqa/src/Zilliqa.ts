@@ -53,11 +53,10 @@ export default class Zilliqa {
   transport: Transport;
 
   constructor(transport: Transport, scrambleKey: string = APP_KEY) {
-    console.log("Was here?");
     this.transport = transport;
     transport.decorateAppAPIMethods(
       this,
-      ["getAddress", "sign", "getAppConfiguration"],
+      ["getAddress"], //, "sign", "getAppConfiguration"],
       scrambleKey
     );
   }
@@ -70,6 +69,14 @@ export default class Zilliqa {
     data: Buffer = Buffer.alloc(0),
     statusList: Array<number> = [SW_OK]
   ): Promise<Buffer> {
+    let input = Buffer.concat([
+      Buffer.from([cla, ins, p1, p2]),
+      Buffer.from([data.length]),
+      data,
+    ]);
+
+    console.log(`=> ${input.toString("hex")}`);
+
     const result = await this.transport.send(
       cla,
       ins,
@@ -78,13 +85,7 @@ export default class Zilliqa {
       data,
       statusList
     );
-    let input = Buffer.concat([
-      Buffer.from([cla, ins, p1, p2]),
-      Buffer.from([data.length]),
-      data,
-    ]);
 
-    console.log(`=> ${input.toString("hex")}`);
     console.log(`<= ${result.toString("hex")}`);
     return result;
   }
@@ -104,30 +105,6 @@ export default class Zilliqa {
         patch: response[2],
       };
     });
-  }
-
-  serializePath(path: Buffer): Buffer {
-    const buf = Buffer.alloc(20);
-    // HACK : without the >>>,
-    // the bitwise implicitly casts the result to be a signed int32,
-    // which fails the internal type check of Buffer in case of overload.
-    buf.writeUInt32LE((0x80000000 | path[0]) >>> 0, 0);
-    buf.writeUInt32LE((0x80000000 | path[1]) >>> 0, 4);
-    buf.writeUInt32LE((0x80000000 | path[2]) >>> 0, 8);
-    buf.writeUInt32LE(path[3], 12);
-    buf.writeUInt32LE(path[4], 16);
-    return buf;
-  }
-
-  serializeHRP(hrp: string): Buffer {
-    if (hrp == null || hrp.length < 3 || hrp.length > 83) {
-      throw new Error("Invalid HRP");
-    }
-
-    const buf = Buffer.alloc(1 + hrp.length);
-    buf.writeUInt8(hrp.length, 0);
-    buf.write(hrp, 1);
-    return buf;
   }
 
   /**
@@ -202,7 +179,6 @@ export default class Zilliqa {
       // for paths. We only accept paths of the form `44'/313'/n'/0'/0'`.
       // By forcing the correct input, we ensure that wallets will be forward
       // comaptible.
-
       if (index !== HARDEN_CONSTANT) {
         throw new Error("Path 'index' must be hardended and equal to zero");
       }
@@ -235,6 +211,7 @@ export default class Zilliqa {
     };
   }
 
+  /*a
   foreach<T, A>(
     arr: T[],
     callback: (arg0: T, arg1: number) => Promise<A>
@@ -310,4 +287,5 @@ export default class Zilliqa {
       };
     });
   }
+  */
 }
