@@ -310,6 +310,7 @@ export default class Zilliqa {
     // If we are using the full protocol, we add change and index
     // as well to the parameters. Note that this is unfortunately not backward compatible.
     if (fullProtocol) {
+      // TOOD: Untested
       params.writeUInt32LE(change, 4);
       params.writeUInt32LE(index, 8);
     }

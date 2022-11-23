@@ -22,9 +22,9 @@ const signMessage: SignMessage = async (
 
   return {
     rsv: {
-      r: r.signature_compact.slice(0, 32).toString("hex"),
-      s: r.signature_compact.slice(32, 64).toString("hex"),
-      v: parseInt(r.signature_compact.slice(64, 65).toString("hex"), 16),
+      r: "",
+      s: "",
+      v: 0,
     },
     signature: `0x${r.signature_compact.toString("hex")}`,
   };
