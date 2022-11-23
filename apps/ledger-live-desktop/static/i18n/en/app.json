@@ -3659,11 +3659,11 @@
           "title": "Test Post Onboarding",
           "description": "Test all post onboarding features"
         },
-        "1559DeactivateGate" : {
+        "1559DeactivateGate": {
           "title": "Deactivate EIP1559 minimum priority fee gate",
           "description": "This will allow a transaction to be sent without any minimum priority fee expected. This may result in a transaction getting stuck in the mempool forever."
         },
-        "1559CustomPriorityLowerGate" : {
+        "1559CustomPriorityLowerGate": {
           "title": "Custom priority fee gate",
           "description": "Customize the percentage of our estimated minimal priority fee allowed for an advanced EIP1559 transaction"
         }
@@ -4748,6 +4748,10 @@
     "DisconnectedDeviceDuringOperation": {
       "title": "Sorry, it looks like your device disconnected",
       "description": "Please reconnect and try again."
+    },
+    "EConnReset": {
+      "title": "The Ledger application store can't be reached",
+      "description": "Your internet connection may be down or using unusual configuration. Start by verifying if anything is blocking your connection (proxy or firewall). If the problem persists click below for solutions or reach out to our customer support."
     },
     "EnpointConfig": {
       "title": "Invalid endpoint",
