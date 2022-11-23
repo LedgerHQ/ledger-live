@@ -1,5 +1,17 @@
 # @ledgerhq/live-common
 
+## 27.8.0-nightly.1
+
+### Minor Changes
+
+- [#1817](https://github.com/LedgerHQ/ledger-live/pull/1817) [`57b82ad735`](https://github.com/LedgerHQ/ledger-live/commit/57b82ad7350c6368b2d6a731d7b1c52b759516b0) Thanks [@sarneijim](https://github.com/sarneijim)! - CIC swap integration
+
+### Patch Changes
+
+- [#1937](https://github.com/LedgerHQ/ledger-live/pull/1937) [`7264398cb0`](https://github.com/LedgerHQ/ledger-live/commit/7264398cb02765753b2abff3aab90d7a31b803d0) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Prevent error on ERC1155 quantities being array of null
+
+* [#1937](https://github.com/LedgerHQ/ledger-live/pull/1937) [`7264398cb0`](https://github.com/LedgerHQ/ledger-live/commit/7264398cb02765753b2abff3aab90d7a31b803d0) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Fix Ethereum send max transactions using the wrong fee per gas method with EIP1559
+
 ## 27.8.0-nightly.0
 
 ### Minor Changes

@@ -1,5 +1,19 @@
 # ledger-live-desktop
 
+## 2.50.0-nightly.12
+
+### Minor Changes
+
+- [#1817](https://github.com/LedgerHQ/ledger-live/pull/1817) [`57b82ad735`](https://github.com/LedgerHQ/ledger-live/commit/57b82ad7350c6368b2d6a731d7b1c52b759516b0) Thanks [@sarneijim](https://github.com/sarneijim)! - CIC swap integration
+
+### Patch Changes
+
+- [#1916](https://github.com/LedgerHQ/ledger-live/pull/1916) [`59bbf85ae3`](https://github.com/LedgerHQ/ledger-live/commit/59bbf85ae327bee707cab263783bfe8eb04c9394) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Disable Storyly on LLD
+
+- Updated dependencies [[`57b82ad735`](https://github.com/LedgerHQ/ledger-live/commit/57b82ad7350c6368b2d6a731d7b1c52b759516b0), [`7264398cb0`](https://github.com/LedgerHQ/ledger-live/commit/7264398cb02765753b2abff3aab90d7a31b803d0), [`7264398cb0`](https://github.com/LedgerHQ/ledger-live/commit/7264398cb02765753b2abff3aab90d7a31b803d0)]:
+  - @ledgerhq/live-common@27.8.0-nightly.1
+  - @ledgerhq/react-ui@0.10.1-nightly.1
+
 ## 2.50.0-nightly.11
 
 ### Patch Changes

@@ -1,5 +1,14 @@
 # @ledgerhq/native-ui
 
+## 0.12.2-nightly.1
+
+### Patch Changes
+
+- [#1936](https://github.com/LedgerHQ/ledger-live/pull/1936) [`7aa0e616b3`](https://github.com/LedgerHQ/ledger-live/commit/7aa0e616b3dab8e218fea8631c3aa8b894dfc8f1) Thanks [@mlegall-ledger](https://github.com/mlegall-ledger)! - Removed PNG icons for boxed ProviderIcons and replaced them with svg(r)
+
+- Updated dependencies [[`7aa0e616b3`](https://github.com/LedgerHQ/ledger-live/commit/7aa0e616b3dab8e218fea8631c3aa8b894dfc8f1)]:
+  - @ledgerhq/icons-ui@0.3.1-nightly.1
+
 ## 0.12.2-nightly.0
 
 ### Patch Changes
