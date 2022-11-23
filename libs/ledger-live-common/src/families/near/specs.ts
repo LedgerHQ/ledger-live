@@ -87,11 +87,21 @@ const near: AppSpec<Transaction> = {
         const { nearResources: beforeTransactionNearResources } =
           accountBeforeTransaction as NearAccount;
 
-        botTest("account staked balance increased with operation", () =>
-          expect(nearResources.stakedBalance).toEqual(
-            beforeTransactionNearResources.stakedBalance.plus(operation.value)
-          )
-        );
+        // Sometimes, 1 yoctoNEAR gets deducted from the staked amount, so we assert against a range.
+        botTest("account staked balance increased with operation", () => {
+          expect(
+            nearResources.stakedBalance.gte(
+              beforeTransactionNearResources.stakedBalance.plus(
+                operation.value.minus("1")
+              )
+            )
+          ).toBe(true);
+          expect(
+            nearResources.stakedBalance.lte(
+              beforeTransactionNearResources.stakedBalance.plus(operation.value)
+            )
+          ).toBe(true);
+        });
       },
     },
     {
