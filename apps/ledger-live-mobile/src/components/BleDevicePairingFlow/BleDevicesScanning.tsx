@@ -102,12 +102,15 @@ const BleDevicesScanning = ({
     [areKnownDevicesDisplayed, knownDeviceIds],
   );
 
+  const filterByDeviceModelIds = useMemo(
+    () => (filterByDeviceModelId ? [filterByDeviceModelId] : undefined),
+    [filterByDeviceModelId],
+  );
+
   const { scannedDevices, scanningBleError } = useBleDevicesScanning({
     bleTransportListen: TransportBLE.listen,
     stopBleScanning,
-    filterByDeviceModelIds: filterByDeviceModelId
-      ? [filterByDeviceModelId]
-      : undefined,
+    filterByDeviceModelIds,
     filterOutDevicesByDeviceIds,
   });
 

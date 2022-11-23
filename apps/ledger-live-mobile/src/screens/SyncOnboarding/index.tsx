@@ -26,7 +26,7 @@ import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 
 import { StorylyInstanceID } from "@ledgerhq/types-live";
 import { addKnownDevice } from "../../actions/ble";
-import { NavigatorName, ScreenName } from "../../const";
+import { ScreenName } from "../../const";
 import HelpDrawer from "./HelpDrawer";
 import DesyncDrawer from "./DesyncDrawer";
 import ResyncOverlay from "./ResyncOverlay";
@@ -39,10 +39,7 @@ import {
   setReadOnlyMode,
 } from "../../actions/settings";
 import DeviceSetupView from "../../components/DeviceSetupView";
-import {
-  BaseNavigatorStackParamList,
-  NavigateInput,
-} from "../../components/RootNavigator/types/BaseNavigator";
+import { BaseNavigatorStackParamList } from "../../components/RootNavigator/types/BaseNavigator";
 import { RootStackParamList } from "../../components/RootNavigator/types/RootNavigator";
 import { SyncOnboardingStackParamList } from "../../components/RootNavigator/types/SyncOnboardingNavigator";
 import InstallSetOfApps from "../../components/DeviceAction/InstallSetOfApps";
@@ -163,39 +160,7 @@ export const SyncOnboarding = ({
   const [isHelpDrawerOpen, setHelpDrawerOpen] = useState<boolean>(false);
 
   const goBackToPairingFlow = useCallback(() => {
-    const navigateInput: NavigateInput<
-      RootStackParamList,
-      NavigatorName.BaseOnboarding
-    > = {
-      name: NavigatorName.BaseOnboarding,
-      params: {
-        screen: NavigatorName.SyncOnboarding,
-        params: {
-          screen: ScreenName.SyncOnboardingCompanion,
-          params: {
-            // @ts-expect-error BleDevicePairingFlow will set this param
-            device: null,
-          },
-        },
-      },
-    };
-
-    // On pairing success, navigate to the Sync Onboarding Companion
-    // Replace to avoid going back to this screen on return from the pairing flow
-    navigation.navigate(NavigatorName.Base, {
-      screen: ScreenName.BleDevicePairingFlow,
-      params: {
-        // TODO: For now, don't do that because nanoFTS shows up as nanoX
-        // filterByDeviceModelId: device.modelId,
-        areKnownDevicesDisplayed: true,
-        onSuccessAddToKnownDevices: false,
-        onSuccessNavigateToConfig: {
-          navigationType: "navigate",
-          navigateInput,
-          pathToDeviceParam: "params.params.params.device",
-        },
-      },
-    });
+    navigation.goBack();
   }, [navigation]);
 
   const {
@@ -226,9 +191,9 @@ export const SyncOnboarding = ({
   }, []);
 
   const handleDesyncRetry = useCallback(() => {
+    // handleDesyncClose is then called
     setDesyncDrawerOpen(false);
-    goBackToPairingFlow();
-  }, [goBackToPairingFlow]);
+  }, []);
 
   const handleDesyncClose = useCallback(() => {
     setDesyncDrawerOpen(false);
