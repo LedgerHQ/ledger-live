@@ -56,7 +56,7 @@ export default class Zilliqa {
     this.transport = transport;
     transport.decorateAppAPIMethods(
       this,
-      ["getAddress"], //, "sign", "getAppConfiguration"],
+      ["getAddress", "getAppConfiguration", "signTransaction", "signMessage"],
       scrambleKey
     );
   }
@@ -90,12 +90,12 @@ export default class Zilliqa {
     return result;
   }
 
-  // FIXME: understand what is going on with the return type here
   getAppConfiguration(): Promise<{
     version: string;
     major: number;
     minor: number;
     patch: number;
+    fullProtocol: boolean;
   }> {
     return this.send(CLA, INS_GET_VERSION, 0, 0).then((response) => {
       return {
@@ -103,24 +103,21 @@ export default class Zilliqa {
         major: response[0],
         minor: response[1],
         patch: response[2],
+        fullProtocol: response[0] > 0 || response[1] >= 5,
       };
     });
   }
 
-  /**
-   * get Zilliqa address for a given BIP 32 path.
-   * @param path a path in BIP 32 format
-   * @param hrp usually zilliqa
-   * @return an object with a publicKey, address and (optionally) chainCode
-   * @example
-   * zilliqa.getAddress("44'/313'/0'/0/0", "zilliqa").then(o => o.address)
-   */
-  async getAddress(
+  async getPathParametersFromPath(
     path: string
   ): Promise<{
-    publicKey: string;
-    address: string;
+    account: number;
+    change: number;
+    index: number;
+    fullProtocol: boolean;
   }> {
+    // Test with: pnpm build:cli getAddress --currency zilliqa --path "44'/313'/0'/1'/0'" --derivationMode "etcM"
+    // pnpm build:cli signMessage --currency zilliqa --path "44'/313'/0'/1'/0'" --message "hello world"
     // Validating that initial part of the path is hardened and starts
     // with `44'/313'/n'`.
     const pathParts = path.split("/");
@@ -172,9 +169,10 @@ export default class Zilliqa {
 
     // Version specific requirements
     const version = await this.send(CLA, INS_GET_VERSION, 0, 0);
+    const fullProtocol = version[0] > 0 || version[1] >= 5;
 
     // If less than version 0.5 ...
-    if (version[0] === 0 && version[1] < 5) {
+    if (!fullProtocol) {
       // ... impose stricter requirements on what we can accept
       // for paths. We only accept paths of the form `44'/313'/n'/0'/0'`.
       // By forcing the correct input, we ensure that wallets will be forward
@@ -187,6 +185,32 @@ export default class Zilliqa {
         throw new Error("Path 'change' must be hardended and equal to zero");
       }
     }
+
+    return {
+      account,
+      change,
+      index,
+      fullProtocol,
+    };
+  }
+
+  /**
+   * get Zilliqa address for a given BIP 32 path.
+   * @param path a path in BIP 32 format
+   * @return an object with a publicKey, address and (optionally) chainCode
+   * @example
+   * zilliqa.getAddress("44'/313'/0'/0/0", "zilliqa").then(o => o.address)
+   */
+  async getAddress(
+    path: string
+  ): Promise<{
+    publicKey: string;
+    address: string;
+  }> {
+    // Getting path parameters
+    const { account, change, index } = await this.getPathParametersFromPath(
+      path
+    );
 
     // Preparing payload to send to the wallet app.
     const payload = Buffer.alloc(12);
@@ -211,81 +235,108 @@ export default class Zilliqa {
     };
   }
 
-  /*a
-  foreach<T, A>(
-    arr: T[],
-    callback: (arg0: T, arg1: number) => Promise<A>
-  ): Promise<A[]> {
-    function iterate(index, array, result) {
-      if (index >= array.length) {
-        return result;
-      } else
-        return callback(array[index], index).then(function (res) {
-          result.push(res);
-          return iterate(index + 1, array, result);
-        });
-    }
-
-    return Promise.resolve().then(() => iterate(0, arr, []));
-  }
-
-  async sign(
+  /**
+   * Sign a Zilliqa transaction with a given BIP 32 path
+   *
+   * @param path a path in BIP 32 format
+   * @param message a raw hex string representing a serialized transaction.
+   * @return an object with signature and returnCode
+   */
+  async signTransaction(
     path: string,
     message: string
-  ): Promise<{
-    signature: null | Buffer;
-    return_code: number | string;
-  }> {
-    const bipPath = BIPPath.fromString(path).toPathArray();
-    const serializedPath = this.serializePath(bipPath);
-    const chunks: Buffer[] = [];
-    chunks.push(serializedPath);
+  ): Promise<{ signature: null | Buffer; returnCode: number }> {
+    // Getting path parameters
+    const { account, change, index } = await this.getPathParametersFromPath(
+      path
+    );
+
+    const params = Buffer.alloc(12);
+    params.writeUInt32LE(account, 0);
+    params.writeUInt32LE(change, 4);
+    params.writeUInt32LE(index, 8);
     const buffer = Buffer.from(message);
 
-    for (let i = 0; i < buffer.length; i += CHUNK_SIZE) {
-      let end = i + CHUNK_SIZE;
+    let data = Buffer.concat([params, Buffer.from([buffer.length]), buffer]);
+    const response = await this.transport.send(
+      CLA,
+      INS_SIGN_TXN,
+      0x0,
+      0x0,
+      data,
+      [SW_OK, SW_CANCEL]
+    );
 
-      if (i > buffer.length) {
-        end = buffer.length;
-      }
+    const errorCodeData = response.slice(-2);
+    const returnCode = errorCodeData[0] * 0x100 + errorCodeData[1];
 
-      chunks.push(buffer.slice(i, end));
+    if (returnCode === SW_CANCEL) {
+      throw new UserRefusedOnDevice();
     }
 
-    let response: any = {};
-    return this.foreach(chunks, (data, j) =>
-      this.transport
-        .send(
-          CLA,
-          INS_SIGN_TXN,
-          j === 0
-            ? PAYLOAD_TYPE_INIT
-            : j + 1 === chunks.length
-            ? PAYLOAD_TYPE_LAST
-            : PAYLOAD_TYPE_ADD,
-          0,
-          data,
-          [SW_OK, SW_CANCEL]
-        )
-        .then((apduResponse) => (response = apduResponse))
-    ).then(() => {
-      const errorCodeData = response.slice(-2);
-      const returnCode = errorCodeData[0] * 256 + errorCodeData[1];
-      let signature: Buffer | null = null;
+    let signature: Buffer | null = null;
+    if (response.length > 2) {
+      signature = response.slice(0, response.length - 2);
+    }
 
-      if (response.length > 2) {
-        signature = response.slice(0, response.length - 2);
-      }
-
-      if (returnCode === 0x6986) {
-        throw new UserRefusedOnDevice();
-      }
-
-      return {
-        signature,
-        return_code: returnCode,
-      };
-    });
+    return {
+      signature,
+      returnCode,
+    };
   }
-  */
+
+  /**
+   * Signs a message with a given BIP 32 path
+   *
+   * @param path a path in BIP 32 format
+   * @param message a raw hex string representing a serialized transaction.
+   * @return an object with signature and returnCode
+   */
+  async signMessage(
+    path: string,
+    message: string
+  ): Promise<{ signature: null | Buffer; returnCode: number }> {
+    // Getting path parameters
+    const {
+      account,
+      change,
+      index,
+      fullProtocol,
+    } = await this.getPathParametersFromPath(path);
+
+    let params = Buffer.alloc(fullProtocol ? 12 : 4);
+    params.writeUInt32LE(account, 0);
+
+    // If we are using the full protocol, we add change and index
+    // as well to the parameters. Note that this is unfortunately not backward compatible.
+    if (fullProtocol) {
+      params.writeUInt32LE(change, 4);
+      params.writeUInt32LE(index, 8);
+    }
+
+    const payload = Buffer.from(message, "hex");
+    const data = Buffer.concat([params, payload]);
+
+    const response = await this.send(CLA, INS_SIGN_HASH, 0x0, 0x0, data, [
+      SW_OK,
+      SW_CANCEL,
+    ]);
+
+    const errorCodeData = response.slice(-2);
+    const returnCode = errorCodeData[0] * 0x100 + errorCodeData[1];
+
+    if (returnCode === SW_CANCEL) {
+      throw new UserRefusedOnDevice();
+    }
+
+    let signature: Buffer | null = null;
+    if (response.length > 2) {
+      signature = response.slice(0, response.length - 2);
+    }
+
+    return {
+      signature,
+      returnCode,
+    };
+  }
 }
