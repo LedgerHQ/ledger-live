@@ -227,6 +227,8 @@ export const UnsupportedDerivation = createCustomErrorClass(
   "UnsupportedDerivation"
 );
 
+export const EConnResetError = createCustomErrorClass("EConnReset");
+
 export * from "./families/polkadot/errors";
 export * from "./families/stellar/errors";
 export * from "./families/solana/errors";
