@@ -35,16 +35,16 @@ export default function IconEarnRewardsInfoModal({ name, account, parentAccount 
     <EarnRewardsInfoModal
       name={name}
       onNext={onNext}
-      description={t("tron.voting.flow.steps.starter.description")}
+      description={t("icon.voting.flow.steps.starter.description")}
       bullets={[
-        t("tron.voting.flow.steps.starter.bullet.delegate"),
-        t("tron.voting.flow.steps.starter.bullet.access"),
-        t("tron.voting.flow.steps.starter.bullet.ledger"),
+        t("icon.voting.flow.steps.starter.bullet.delegate"),
+        t("icon.voting.flow.steps.starter.bullet.access"),
+        t("icon.voting.flow.steps.starter.bullet.ledger"),
       ]}
-      additional={<WarnBox>{t("tron.voting.flow.steps.starter.termsAndPrivacy")}</WarnBox>}
+      additional={<WarnBox>{t("icon.voting.flow.steps.starter.termsAndPrivacy")}</WarnBox>}
       footerLeft={
         <LinkWithExternalIcon
-          label={<Trans i18nKey="tron.voting.flow.steps.starter.help" />}
+          label={<Trans i18nKey="icon.voting.flow.steps.starter.help" />}
           onClick={() => openURL(urls.stakingTron)}
         />
       }

@@ -2319,6 +2319,94 @@
       }
     }
   },
+  "icon": {
+    "freeze":{
+      "steps": {
+        "confirmation": {
+          "success": {
+            "title": "",
+            "textNRG": "You will start earning ISCORE once you vote for Public Representatives",
+            "text": "You will start earning ISCORE once you vote for Public Representatives",
+            "votePending": "Vote in {{time}}",
+            "vote": "Vote",
+            "later": "Vote later"
+          }
+        }
+      }
+    },
+    "voting": {
+      "emptyState": {
+        "description": "You can now earn rewards by freezing and voting.",
+        "info": "How voting works",
+        "votesDesc": "Cast your votes for one or more representatives to start earning staking rewards.",
+        "vote": "Cast votes",
+        "voteExisting": "Manage votes"
+      },
+      "manageTP": "Manage assets",
+      "warnEarnRewards": "You need at least {{amount}} to start earning rewards",
+      "claimRewards": "Claim rewards",
+      "nextRewardsDate": "Rewards can be claimed {{date}}",
+      "claimAvailableRewards": "Claim {{amount}}",
+      "header": "Votes",
+      "percentageTP": "% of votes cast",
+      "noRewards": "No rewards available",
+      "remainingVotes": {
+        "title": "You still have {{amount}} votes remaining",
+        "description": "You can cast your remaining votes to earn more rewards",
+        "button": "Vote now"
+      },
+      "flow": {
+        "steps": {
+          "starter": {
+            "description": "Freeze ICX to earn rewards and still keep full security and control of your assets.",
+            "bullet": {
+              "delegate": "Delegated assets stay yours.",
+              "access": "You can unfreeze your assets after 11 days.",
+              "ledger": "Freeze and vote securely with your Ledger device."
+            },
+            "help": "How voting works",
+            "termsAndPrivacy": "Delegating your voting rights does not guarantee any rewards from your Public representative."
+          }
+        }
+      }
+    },
+    "manage": {
+      "title": "Manage assets",
+      "freeze": {
+        "title": "Freeze",
+        "description": "Freeze ICX to earn ISCORE. You'll also be able to vote for Public representatives."
+      },
+      "unfreeze": {
+        "title": "Unfreeze",
+        "description": "Unfreeze ICX to have them back in your available balance. You will no longer earn rewards."
+      },
+      "vote": {
+        "title": "Vote",
+        "description": "Cast votes for Public representatives to earn rewards.",
+        "steps": {
+          "vote": {
+            "title": "Cast votes",
+            "description": "Vote for one or more Public representatives to start earning rewards.",
+            "footer": {
+              "doNotShowAgain": "Don't show again",
+              "next": "Cast Votes"
+            },
+            "info": {
+              "message": "P-Rep or Candidates?",
+              "superRepresentative": {
+                "title": "Public representatives (P-Rep)",
+                "description": "Public representatives play a key role in governing the ICON community by ensuring basic functions, e.g. block generation and bookkeeping."
+              },
+              "candidates": {
+                "title": "Candidates",
+                "description": "155 individuals elected through voting by the entire token holder community. Votes are updated once every 6 hours."
+              }
+            }
+          }
+        }
+      }
+    }
+  },
   "bitcoin": {
     "inputSelected": "SELECTED",
     "toSpend": "Coins to spend",

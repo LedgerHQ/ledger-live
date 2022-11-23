@@ -1,34 +1,71 @@
 // @flow
-import invariant from "invariant";
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useMemo } from "react";
 import { compose } from "redux";
 import { connect, useDispatch } from "react-redux";
 import { Trans, withTranslation } from "react-i18next";
 import { createStructuredSelector } from "reselect";
-import { SyncSkipUnderPriority } from "@ledgerhq/live-common/bridge/react/index";
-import Track from "~/renderer/analytics/Track";
+import { BigNumber } from "bignumber.js";
 
 import { UserRefusedOnDevice } from "@ledgerhq/errors";
-
+import { addPendingOperation } from "@ledgerhq/live-common/account/index";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
+import { SyncSkipUnderPriority } from "@ledgerhq/live-common/bridge/react/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 
-import type { StepId, StepProps, St } from "./types";
 import type { Account, Operation } from "@ledgerhq/types-live";
 import type { TFunction } from "react-i18next";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
+import type { StepId, StepProps, St } from "./types";
 
-import { addPendingOperation } from "@ledgerhq/live-common/account/index";
 import { updateAccountWithUpdater } from "~/renderer/actions/accounts";
 
+import Track from "~/renderer/analytics/Track";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
 import { closeModal, openModal } from "~/renderer/actions/modals";
 
 import Stepper from "~/renderer/components/Stepper";
-import StepVote, { StepVoteFooter } from "./steps/StepVote";
+import StepAmount, { StepAmountFooter } from "./steps/StepAmount";
 import GenericStepConnectDevice from "~/renderer/modals/Send/steps/GenericStepConnectDevice";
 import StepConfirmation, { StepConfirmationFooter } from "./steps/StepConfirmation";
 import logger from "~/logger/logger";
+
+export const getUnfreezeData = (
+  account: Account,
+): {
+  unfreezeBandwidth: BigNumber,
+  unfreezeEnergy: BigNumber,
+  canUnfreezeBandwidth: boolean,
+  canUnfreezeEnergy: boolean,
+  bandwidthExpiredAt: Date,
+  energyExpiredAt: Date,
+} => {
+  const { tronResources } = account;
+  const {
+    frozen: { bandwidth, energy },
+  } = tronResources || {};
+
+  /** ! expiredAt should always be set with the amount if not this will disable the field by default ! */
+  const { amount: bandwidthAmount, expiredAt: bandwidthExpiredAt } = bandwidth || {};
+  const _bandwidthExpiredAt = +new Date(bandwidthExpiredAt);
+
+  const { amount: energyAmount, expiredAt: energyExpiredAt } = energy || {};
+  const _energyExpiredAt = +new Date(energyExpiredAt);
+
+  const unfreezeBandwidth = BigNumber(bandwidthAmount || 0);
+  const canUnfreezeBandwidth = unfreezeBandwidth.gt(0) && Date.now() > _bandwidthExpiredAt;
+
+  const unfreezeEnergy = BigNumber(energyAmount || 0);
+  const canUnfreezeEnergy = unfreezeEnergy.gt(0) && Date.now() > _energyExpiredAt;
+
+  return {
+    unfreezeBandwidth,
+    unfreezeEnergy,
+    canUnfreezeBandwidth,
+    canUnfreezeEnergy,
+    bandwidthExpiredAt,
+    energyExpiredAt,
+  };
+};
 
 type OwnProps = {|
   stepId: StepId,
@@ -55,21 +92,21 @@ type Props = OwnProps & StateProps;
 
 const steps: Array<St> = [
   {
-    id: "castVotes",
-    label: <Trans i18nKey="vote.steps.castVotes.title" />,
-    component: StepVote,
+    id: "amount",
+    label: <Trans i18nKey="unfreeze.steps.amount.title" />,
+    component: StepAmount,
     noScroll: true,
-    footer: StepVoteFooter,
+    footer: StepAmountFooter,
   },
   {
     id: "connectDevice",
-    label: <Trans i18nKey="vote.steps.connectDevice.title" />,
+    label: <Trans i18nKey="unfreeze.steps.connectDevice.title" />,
     component: GenericStepConnectDevice,
-    onBack: ({ transitionTo }: StepProps) => transitionTo("castVotes"),
+    onBack: ({ transitionTo }: StepProps) => transitionTo("amount"),
   },
   {
     id: "confirmation",
-    label: <Trans i18nKey="vote.steps.confirmation.title" />,
+    label: <Trans i18nKey="unfreeze.steps.confirmation.title" />,
     component: StepConfirmation,
     footer: StepConfirmationFooter,
   },
@@ -102,29 +139,26 @@ const Body = ({
   const {
     transaction,
     setTransaction,
-    updateTransaction,
     account,
     parentAccount,
     status,
     bridgeError,
     bridgePending,
   } = useBridgeTransaction(() => {
-    const { account } = params;
+    const { account, parentAccount } = params;
 
-    invariant(account && account.iconResources, "icon: account and icon resources required");
+    const { canUnfreezeBandwidth } = getUnfreezeData(account);
 
-    const { iconResources } = account;
-
-
-    const bridge = getAccountBridge(account, undefined);
+    const bridge = getAccountBridge(account, parentAccount);
 
     const t = bridge.createTransaction(account);
 
     const transaction = bridge.updateTransaction(t, {
-      mode: "vote",
+      mode: "unfreeze",
+      resource: canUnfreezeBandwidth ? "BANDWIDTH" : "ENERGY",
     });
 
-    return { account, parentAccount: undefined, transaction };
+    return { account, parentAccount, transaction };
   });
 
   const handleCloseModal = useCallback(() => {
@@ -134,7 +168,7 @@ const Body = ({
   const handleStepChange = useCallback(e => onChangeStepId(e.id), [onChangeStepId]);
 
   const handleRetry = useCallback(() => {
-    onChangeStepId("castVotes");
+    onChangeStepId("amount");
   }, [onChangeStepId]);
 
   const handleTransactionError = useCallback((error: Error) => {
@@ -158,13 +192,16 @@ const Body = ({
     [account, dispatch],
   );
 
-  const error = transactionError || bridgeError;
+  const statusError = useMemo(() => status.errors && Object.values(status.errors)[0], [
+    status.errors,
+  ]);
 
-  const iconResources = account && account.type === "Account" && account.iconResources;
-  const votes = iconResources && iconResources.votes;
+  const error =
+    // WARNING: this is bad practice. out of scope but see context of a fix done for LL-3854
+    transactionError || bridgeError || (statusError instanceof Error ? statusError : null);
 
   const stepperProps = {
-    title: votes && votes.length > 0 ? t("vote.titleExisting") : t("vote.title"),
+    title: t("unfreeze.title"),
     device,
     account,
     parentAccount,
@@ -185,7 +222,6 @@ const Body = ({
     openModal,
     setSigned,
     onChangeTransaction: setTransaction,
-    onUpdateTransaction: updateTransaction,
     onOperationBroadcasted: handleOperationBroadcasted,
     onTransactionError: handleTransactionError,
     t,
@@ -195,7 +231,7 @@ const Body = ({
   return (
     <Stepper {...stepperProps}>
       <SyncSkipUnderPriority priority={100} />
-      <Track onUnmount event="CloseModalVote" />
+      <Track onUnmount event="CloseModalUnfreeze" />
     </Stepper>
   );
 };

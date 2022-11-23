@@ -38,15 +38,17 @@ const getTransactionStatus = async (
     ? a.balance.minus(estimatedFees)
     : new BigNumber(t.amount);
 
-  if (amount.lte(0) && !t.useAllAmount) {
-    errors.amount = new AmountRequired();
-  }
+
 
   if (totalSpent.gt(a.balance)) {
     errors.amount = new NotEnoughBalance();
   }
 
   if (t.mode === 'send') {
+    if (amount.lte(0) && !t.useAllAmount) {
+      errors.amount = new AmountRequired();
+    }
+
     if (!t.recipient) {
       errors.recipient = new RecipientRequired();
     } else if (isSelfTransaction(a, t)) {

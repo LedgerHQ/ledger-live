@@ -26,7 +26,7 @@ export type State = {
 };
 
 export const SR_THRESHOLD = 22;
-export const SR_MAX_VOTES = 5;
+export let SR_MAX_VOTES = 0;
 
 let __lastSeenPR: PRep[] = [];
 
@@ -44,6 +44,7 @@ export const useIconPublicRepresentatives = (currency): Array<PRep> => {
       unsub = true;
     };
   }, []);
+  SR_MAX_VOTES = pr.length;
   return pr;
 };
 

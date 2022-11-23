@@ -13,7 +13,7 @@ import { formatPRepData, getRpcUrl } from "../logic";
 import { GOVERNANCE_SCORE_ADDRESS, IISS_SCORE_ADDRESS } from "../constants";
 const { HttpProvider } = IconService;
 const { IconBuilder, IconAmount } = IconService;
-
+const iconUnit = IconAmount.Unit.ICX.toString();
 /**
  * Get account balances and nonce
  */
@@ -154,7 +154,7 @@ export const getStepPrice = async (account): Promise<BigNumber> => {
     // TODO: handle show log
   }
   return new BigNumber(
-    IconAmount.fromLoop(res || 10000000000, IconAmount.Unit.ICX.toString())
+    IconAmount.fromLoop(res || 10000000000, iconUnit)
   );
 };
 
@@ -201,6 +201,7 @@ export const getDelegation = async (address, currency) => {
     .build();
 
   let res;
+
   try {
     res = await iconService.call(delegationTx).execute();
   } catch (error) {
@@ -208,9 +209,9 @@ export const getDelegation = async (address, currency) => {
     console.log(error);
   }
   return {
-    delegations: res?.delegations || [],
-    totalDelegated: new BigNumber(IconAmount.fromLoop(res?.totalDelegated || 0, IconAmount.Unit.ICX.toString())),
-    votingPower: new BigNumber(IconAmount.fromLoop(res?.votingPower || 0, IconAmount.Unit.ICX.toString()))
+    delegations: res?.delegations.map(item => { return { ...item, value: new BigNumber(IconAmount.fromLoop(item.value || 0, iconUnit)) }; }) || [],
+    totalDelegated: new BigNumber(IconAmount.fromLoop(res?.totalDelegated || 0, iconUnit)),
+    votingPower: new BigNumber(IconAmount.fromLoop(res?.votingPower || 0, iconUnit))
   };
 };
 
