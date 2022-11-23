@@ -58,15 +58,28 @@ function StepEndDate({
   onUpdateTransaction,
   status,
 }: StepProps) {
-  if (!status) return null;
-
   const { validators } = useAvalanchePChainPreloadData();
+
   const selectedValidator = validators.find(v => v.nodeID === transaction.recipient);
 
   const unixStakeStartTime = moment().unix() + FIVE_MINUTES;
   const unixMinEndDate = unixStakeStartTime + TWO_WEEKS;
   const unixMaxEndDate = Math.min(unixStakeStartTime + YEAR, Number(selectedValidator.endTime));
   const unixDefaultEndDate = Math.min(unixStakeStartTime + THREE_WEEKS + MINUTE, unixMaxEndDate);
+
+  useEffect(() => {
+    const bridge: AccountBridge<Transaction> = getAccountBridge(account, parentAccount);
+    onUpdateTransaction(tx => {
+      return bridge.updateTransaction(tx, {
+        startTime: new BigNumber(unixStakeStartTime),
+        endTime: new BigNumber(unixDefaultEndDate),
+        maxEndTime: new BigNumber(unixMaxEndDate),
+      });
+    });
+    // eslint-disable-next-line
+  }, []);
+
+  if (!status) return null;
 
   const minEndDate = moment.unix(unixMinEndDate).format("YYYY-MM-DDTh:mm");
   const maxEndDate = moment.unix(unixMaxEndDate).format("YYYY-MM-DDTh:mm");
@@ -76,17 +89,6 @@ function StepEndDate({
     .add(1, "minutes")
     .format("MM/DD/YYYY, h:mm a");
   const maxEndDateText = moment.unix(unixMaxEndDate).format("MM/DD/YYYY, h:mm a");
-
-  useEffect(() => {
-    const bridge: AccountBridge<Transaction> = getAccountBridge(account, parentAccount);
-    onUpdateTransaction(tx => {
-      return bridge.updateTransaction(tx, {
-        startTime: new BigNumber(unixStakeStartTime),
-        endTime: new BigNumber(unixDefaultEndDate),
-        maxEndTime: new BigNumber(unixMaxEndDate)
-      });
-    });
-  }, []);
 
   const updateEndTime = endTime => {
     const bridge: AccountBridge<Transaction> = getAccountBridge(account, parentAccount);
@@ -99,7 +101,7 @@ function StepEndDate({
 
   const { errors } = status;
   const hasErrors = Object.keys(errors).length > 0;
-  let { time: timeError } = errors;
+  const { time: timeError } = errors;
 
   return (
     <Container flow={4}>

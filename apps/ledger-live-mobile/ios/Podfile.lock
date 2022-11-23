@@ -608,7 +608,7 @@ PODS:
   - RNScreens (3.13.1):
     - React-Core
     - React-RCTImage
-  - RNSentry (4.2.4):
+  - RNSentry (4.3.0):
     - React-Core
     - Sentry (= 7.23.0)
   - RNShare (7.9.0):

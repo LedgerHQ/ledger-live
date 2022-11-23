@@ -20,30 +20,31 @@ type OperationDetailsExtraProps = {
 
 const OperationDetailsExtra = ({ extra, operation, type, account }: OperationDetailsExtraProps) => {
   const { stakeValue, validator } = extra;
-  const { avalanchePChainResources } = account;
-  const validatorNode = validator || operation.recipients
+  const validatorNode = validator || operation.recipients;
 
   switch (type) {
     case "DELEGATE":
       return (
         <>
-          {stakeValue && <OpDetailsSection>
-            <OpDetailsTitle>
-              <Trans i18nKey={`operation.type.${type}`} />
-            </OpDetailsTitle>
-            <OpDetailsData>
-              <Box>
-                <FormattedVal
-                  val={stakeValue}
-                  unit={account.unit}
-                  showCode
-                  fontSize={4}
-                  color="palette.text.shade60"
-                  showAllDigits
-                />
-              </Box>
-            </OpDetailsData>
-          </OpDetailsSection>}
+          {stakeValue && (
+            <OpDetailsSection>
+              <OpDetailsTitle>
+                <Trans i18nKey={`operation.type.${type}`} />
+              </OpDetailsTitle>
+              <OpDetailsData>
+                <Box>
+                  <FormattedVal
+                    val={stakeValue}
+                    unit={account.unit}
+                    showCode
+                    fontSize={4}
+                    color="palette.text.shade60"
+                    showAllDigits
+                  />
+                </Box>
+              </OpDetailsData>
+            </OpDetailsSection>
+          )}
           {validatorNode && (
             <OpDetailsSection>
               <OpDetailsTitle>

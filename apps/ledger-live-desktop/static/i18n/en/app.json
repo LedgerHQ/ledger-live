@@ -3439,6 +3439,7 @@
             "bullet": [
               "You keep ownership of delegated assets",
               "Delegate using your Ledger device",
+              "Minimum 25 AVAX required to stake",
               "AVAX must be delegated for a minimum of 2 weeks"
             ]
           },

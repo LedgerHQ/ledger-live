@@ -30,6 +30,7 @@ const ValidatorField = ({ account, status, t, onChangeValidator, chosenVoteAccAd
   const [showAll, setShowAll] = useState(false);
   const unit = getAccountUnit(account);
   const validators = useAvalancheFilteredValidators(search);
+  const onSearch = useCallback(e => setSearch(e.target.value), [setSearch]);
 
   if (!status) return null;
 
@@ -45,8 +46,6 @@ const ValidatorField = ({ account, status, t, onChangeValidator, chosenVoteAccAd
       ></ValidatorRow>
     );
   };
-
-  const onSearch = useCallback(e => setSearch(e.target.value), [setSearch]);
 
   return (
     <>
