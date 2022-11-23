@@ -6,6 +6,7 @@ import styled, { useTheme } from "styled-components/native";
 import Text from "../../Text";
 import Flex from "../../Layout/Flex";
 import Link from "../../cta/Link";
+import { highlight } from "../helper";
 
 export type CardProps = TouchableOpacityProps & {
   tag?: string;
@@ -83,9 +84,11 @@ const TextComponent = (props: CardProps) => (
       {props.tag}
     </Text>
 
-    <Text variant={"large"} numberOfLines={3} fontWeight={"semiBold"} color="neutral.c100">
-      {props.title}
-    </Text>
+    {props.title && (
+      <Text variant="large" numberOfLines={3} fontWeight="semiBold" color="neutral.c100">
+        {highlight(props.title, "large")}
+      </Text>
+    )}
 
     <Link
       type={"main"}
@@ -94,7 +97,7 @@ const TextComponent = (props: CardProps) => (
       Icon={() => <ArrowRightMedium color="primary.c80" />}
       onPress={props.onPress}
     >
-      <Text variant={"paragraph"} fontWeight={"semiBold"} color="primary.c80" numberOfLines={2}>
+      <Text variant="paragraph" fontWeight="semiBold" color="primary.c80" numberOfLines={2}>
         {props.cta}
       </Text>
     </Link>

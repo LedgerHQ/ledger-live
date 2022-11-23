@@ -13,7 +13,7 @@ type CarouselCardProps = {
 const CarouselCard = ({ id, cardProps, index, width }: CarouselCardProps) => {
   const onPress = useCallback(() => {
     cardProps.link && Linking.openURL(cardProps.link);
-  }, []);
+  }, [cardProps.link]);
 
   const onHide = useCallback(() => {
     console.log("ON HIDE", id);

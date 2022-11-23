@@ -2,33 +2,13 @@ import React, { useMemo } from "react";
 import { TouchableOpacity, Image } from "react-native";
 import styled, { useTheme } from "styled-components/native";
 import { Flex, Text, Icon } from "../../index";
+import { highlight } from "../helper";
 import ColoredGradient from "./ColoredGradient";
 import ShadowGradient from "./ShadowGradient";
 
 const ImageContent = styled(Image)`
   border-radius: 8px;
 `;
-
-function highlight(text: string) {
-  const textSplitted = text
-    .replace(/&lt;/g, "<")
-    .replace(/&gt;/g, ">")
-    .split(/<bold>(.*?)<\/bold>/g);
-  const elems = [];
-  for (let i = 0; i < textSplitted.length; i += 1) {
-    if (i % 2 !== 0) {
-      const word = textSplitted[i].replace(/<bold>(.*?)<\/bold>/g, "$1");
-      elems.push(
-        <Text key={"highlighted_" + i} variant="h4" fontWeight="semiBold" color="primary.c80">
-          {word}
-        </Text>,
-      );
-    } else {
-      elems.push(textSplitted[i]);
-    }
-  }
-  return elems;
-}
 
 type Props = {
   variant?: "purple" | "red";
@@ -100,7 +80,7 @@ const CardA = ({
               height="84px"
               lineHeight="28px"
             >
-              {highlight(description)}
+              {highlight(description, "h4")}
             </Text>
           ) : null}
         </Flex>
