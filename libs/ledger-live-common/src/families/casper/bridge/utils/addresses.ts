@@ -3,6 +3,7 @@ import { CHECKSUM_HEX_LEN, SMALL_BYTES_COUNT } from "../../consts";
 import { Account, Address } from "@ledgerhq/types-live";
 import { CLPublicKey, CLPublicKeyTag } from "casper-js-sdk";
 import { blake2bFinal, blake2bInit, blake2bUpdate } from "blakejs";
+import { InvalidAddress } from "@ledgerhq/errors";
 
 export const getAddress = (a: Account): Address =>
   a.freshAddresses.length > 0
@@ -91,11 +92,9 @@ function decode(inputString: string): string {
 
 export function validateAddress(address: string): { isValid: boolean } {
   try {
-    new CLPublicKey(
-      Buffer.from(address.substring(2), "hex"),
-      getPubKeySignature(address)
-    );
-    decode(address.substring(2));
+    const pubKey = getPublicKeyFromCasperAddress(address);
+    new CLPublicKey(Buffer.from(pubKey, "hex"), getPubKeySignature(address));
+    decode(pubKey);
     return { isValid: true };
   } catch (err) {
     return { isValid: false };
@@ -103,5 +102,7 @@ export function validateAddress(address: string): { isValid: boolean } {
 }
 
 export function getPublicKeyFromCasperAddress(address: string): string {
+  if (address.length !== 68)
+    throw new InvalidAddress("Invalid address size, expected 34 bytes");
   return address.substring(2);
 }
