@@ -20,9 +20,13 @@ export const buildTransactionToSign = async (
   const networkConfig: INetworkConfig = await getNetworkConfig();
   const chainID = networkConfig.ChainID.valueOf();
 
-  const value = isAmountSpentFromBalance(transaction.mode)
-    ? transaction.amount.toFixed()
-    : "0";
+  const isTokenAccount = account.subAccounts?.some(
+    (ta) => ta.id === transaction.subAccountId
+  );
+  const value =
+    !isTokenAccount && isAmountSpentFromBalance(transaction.mode)
+      ? transaction.amount.toFixed()
+      : "0";
 
   const unsigned: ElrondProtocolTransaction = {
     nonce: nonce.valueOf(),
