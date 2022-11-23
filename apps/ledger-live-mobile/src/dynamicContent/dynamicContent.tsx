@@ -15,6 +15,7 @@ import {
   WalletContentCard,
 } from "./types";
 import { setDismissCard } from "../actions/dynamicContent";
+import { track } from "../analytics";
 
 export const filterByPage = (array: BrazeContentCard[], page: string) =>
   array.filter(elem => elem.extras.location === page);
@@ -72,6 +73,20 @@ const useDynamicContent = () => {
 
   const dismissCard = (cardId: string) => dispatch(setDismissCard(cardId));
 
+  const trackContentCardEvent = useCallback(
+    (
+      event: "contentcard_clicked" | "contentcard_dismissed",
+      params: {
+        campaign: string;
+        screen: string;
+        link: string;
+      },
+    ) => {
+      track(event, params);
+    },
+    [],
+  );
+
   return {
     walletCards,
     assetsCards,
@@ -80,6 +95,7 @@ const useDynamicContent = () => {
     logDismissCard,
     logImpressionCard,
     dismissCard,
+    trackContentCardEvent,
   };
 };
 
