@@ -24,6 +24,8 @@ export default function LocationRequired({ errorType, onRetry }: Props) {
     null,
   );
   const { status } = requestResult || {};
+
+  /** https://developer.android.com/about/versions/11/privacy/permissions#dialog-visibility */
   const neverAskAgain = status === RESULTS.NEVER_ASK_AGAIN;
 
   const requestPermission = useCallback(async () => {

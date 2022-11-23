@@ -62,6 +62,8 @@ export async function requestBluetoothPermissions(): Promise<RequestMultipleResu
     const allGranted = permissionStatuses.every(
       status => status === RESULTS.GRANTED,
     );
+
+    /** https://developer.android.com/about/versions/11/privacy/permissions#dialog-visibility */
     const someNeverAskAgain = permissionStatuses.some(
       status => status === RESULTS.NEVER_ASK_AGAIN,
     );

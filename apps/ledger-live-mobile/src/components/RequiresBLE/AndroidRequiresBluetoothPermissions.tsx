@@ -27,6 +27,8 @@ const AndroidRequiresBluetoothPermissions: React.FC<{
   const [modalOpened, setModalOpened] = useState(false);
 
   const { allGranted, generalStatus } = requestResult || {};
+
+  /** https://developer.android.com/about/versions/11/privacy/permissions#dialog-visibility */
   const neverAskAgain = generalStatus === RESULTS.NEVER_ASK_AGAIN;
 
   const requestPermission = useCallback(async () => {
