@@ -17,13 +17,11 @@ export type ElrondAccountRaw = AccountRaw & {
 export type ElrondResources = {
   nonce: number;
   delegations: ElrondDelegation[];
-  providers: ElrondProvider[];
 };
 
 export type ElrondResourcesRaw = {
   nonce: number;
   delegations: ElrondDelegation[];
-  providers: ElrondProvider[];
 };
 
 export type ElrondDelegation = {
@@ -167,9 +165,8 @@ export type NetworkInfoRaw = {
   gasPerByte: number;
 };
 
-// FIXME validators should use ElrondProvider
 export type ElrondPreloadData = {
-  validators: Record<string, any>;
+  validators: ElrondProvider[];
 };
 
 /**
