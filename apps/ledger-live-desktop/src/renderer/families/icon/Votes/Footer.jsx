@@ -54,17 +54,17 @@ const Footer = ({ total, used, onClick }: Props) => {
       <Box vertical ml={2}>
         <Text ff="Inter|SemiBold" fontSize={3} color="palette.text.shade100">
           <Trans
-            i18nKey="tron.voting.remainingVotes.title"
+            i18nKey="icon.voting.remainingVotes.title"
             values={{ amount: !discreet ? total - used : "***" }}
           />
         </Text>
         <Text ff="Inter|Medium" fontSize={3} color="palette.text.shade60">
-          <Trans i18nKey="tron.voting.remainingVotes.description" />
+          <Trans i18nKey="icon.voting.remainingVotes.description" />
         </Text>
       </Box>
       <Box flex="1" />
       <Button primary onClick={onClick}>
-        <Trans i18nKey="tron.voting.remainingVotes.button" />
+        <Trans i18nKey="icon.voting.remainingVotes.button" />
       </Button>
     </Box>
   );

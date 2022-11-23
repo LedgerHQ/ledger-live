@@ -109,7 +109,7 @@ const buildVotingTransaction = (
   const icxTransferData = new IconBuilder.CallTransactionBuilder()
     .method('setDelegation')
     .params({
-      delegations: t.votes.map(item => {
+      delegations: votes.map(item => {
         return {
           ...item, value: IconConverter.toHexNumber(
             IconAmount.of(item.value, IconAmount.Unit.ICX).toLoop()

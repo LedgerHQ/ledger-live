@@ -48,8 +48,8 @@ export type IconResources = {
   nonce: number;
   additionalBalance: BigNumber;
   votes: Vote[];
-  votingPower: BigNumber;
-  totalDelegated: BigNumber;
+  votingPower: string | BigNumber;
+  totalDelegated: string | BigNumber;
 };
 
 /**
@@ -59,8 +59,8 @@ export type IconResourcesRaw = {
   nonce: number;
   additionalBalance: string;
   votes: Vote[];
-  votingPower: BigNumber;
-  totalDelegated: BigNumber;
+  votingPower: string | BigNumber;
+  totalDelegated: string | BigNumber;
 };
 
 /**

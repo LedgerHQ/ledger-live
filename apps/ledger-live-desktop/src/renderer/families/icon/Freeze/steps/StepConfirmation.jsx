@@ -59,8 +59,8 @@ function StepConfirmation({
       <Container>
         <TrackPage category="Freeze Flow" name="Step Confirmed" />
         <SuccessDisplay
-          title={<Trans i18nKey="freeze.steps.confirmation.success.title" />}
-          description={multiline(t(`freeze.steps.confirmation.success.${key}`))}
+          title={<Trans i18nKey="icon.freeze.steps.confirmation.success.title" />}
+          description={multiline(t(`icon.freeze.steps.confirmation.success.${key}`))}
         />
       </Container>
     );
@@ -72,7 +72,7 @@ function StepConfirmation({
         <TrackPage category="Freeze Flow" name="Step Confirmation Error" />
         {signed ? (
           <BroadcastErrorDisclaimer
-            title={<Trans i18nKey="freeze.steps.confirmation.broadcastError" />}
+            title={<Trans i18nKey="icon.freeze.steps.confirmation.broadcastError" />}
           />
         ) : null}
         <ErrorDisplay error={error} withExportLogs />
@@ -92,9 +92,9 @@ export function StepConfirmationFooter({
   openModal,
   onClose,
 }: StepProps) {
-  invariant(initialAccount, "tron account required");
+  invariant(initialAccount, "icon account required");
   const account = useSelector(s => accountSelector(s, { accountId: initialAccount.id }));
-  invariant(account, "tron account still exists");
+  invariant(account, "icon account still exists");
 
   const time = useTimer(20);
   const isLoading = useVotingPowerLoading(account);
@@ -116,7 +116,7 @@ export function StepConfirmationFooter({
   ) : (
     <Box horizontal alignItems="right">
       <Button ml={2} event="Freeze Flow Step 3 View OpD Clicked" onClick={onClose} secondary>
-        <Trans i18nKey="freeze.steps.confirmation.success.later" />
+        <Trans i18nKey="icon.freeze.steps.confirmation.success.later" />
       </Button>
       {time > 0 && isLoading ? (
         <ToolTip content={<TooltipContent />}>
@@ -127,12 +127,12 @@ export function StepConfirmationFooter({
             primary
             onClick={openVote}
           >
-            <Trans i18nKey="freeze.steps.confirmation.success.votePending" values={{ time }} />
+            <Trans i18nKey="icon.freeze.steps.confirmation.success.votePending" values={{ time }} />
           </Button>
         </ToolTip>
       ) : (
         <Button ml={2} primary onClick={openVote}>
-          <Trans i18nKey="freeze.steps.confirmation.success.vote" />
+          <Trans i18nKey="icon.freeze.steps.confirmation.success.vote" />
         </Button>
       )}
     </Box>

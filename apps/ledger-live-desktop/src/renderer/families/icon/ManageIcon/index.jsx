@@ -156,7 +156,7 @@ const ManageModal = ({ name, account, parentAccount, ...rest }: Props) => {
         <ModalBody
           onClose={onClose}
           onBack={undefined}
-          title={<Trans i18nKey="tron.manage.title" />}
+          title={<Trans i18nKey="icon.manage.title" />}
           noScroll
           render={() => (
             <>
@@ -170,10 +170,10 @@ const ManageModal = ({ name, account, parentAccount, ...rest }: Props) => {
                   </IconWrapper>
                   <InfoWrapper>
                     <Title>
-                      <Trans i18nKey="tron.manage.freeze.title" />
+                      <Trans i18nKey="icon.manage.freeze.title" />
                     </Title>
                     <Description>
-                      <Trans i18nKey="tron.manage.freeze.description" />
+                      <Trans i18nKey="icon.manage.freeze.description" />
                     </Description>
                   </InfoWrapper>
                 </ManageButton>
@@ -186,10 +186,10 @@ const ManageModal = ({ name, account, parentAccount, ...rest }: Props) => {
                   </IconWrapper>
                   <InfoWrapper>
                     <Title>
-                      <Trans i18nKey="tron.manage.unfreeze.title" />
+                      <Trans i18nKey="icon.manage.unfreeze.title" />
                     </Title>
                     <Description>
-                      <Trans i18nKey="tron.manage.unfreeze.description" />
+                      <Trans i18nKey="icon.manage.unfreeze.description" />
                     </Description>
                   </InfoWrapper>
                   {!canUnfreeze && (
@@ -213,10 +213,10 @@ const ManageModal = ({ name, account, parentAccount, ...rest }: Props) => {
                   </IconWrapper>
                   <InfoWrapper>
                     <Title>
-                      <Trans i18nKey="tron.manage.vote.title" />
+                      <Trans i18nKey="icon.manage.vote.title" />
                     </Title>
                     <Description>
-                      <Trans i18nKey="tron.manage.vote.description" />
+                      <Trans i18nKey="icon.manage.vote.description" />
                     </Description>
                   </InfoWrapper>
                 </ManageButton>

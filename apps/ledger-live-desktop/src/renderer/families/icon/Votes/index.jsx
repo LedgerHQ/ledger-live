@@ -113,7 +113,7 @@ const Delegation = ({ account }: Props) => {
   return (
     <TableContainer mb={6}>
       <TableHeader
-        title={<Trans i18nKey="tron.voting.header" />}
+        title={<Trans i18nKey="icon.voting.header" />}
         titleProps={{ "data-e2e": "title_Delegation" }}
       >
         {votingPower > 0 && formattedVotes.length > 0 ? (
@@ -123,7 +123,7 @@ const Delegation = ({ account }: Props) => {
               <Box>
                 <Trans
                   i18nKey={
-                    hasVotes ? "tron.voting.emptyState.voteExisting" : "tron.voting.emptyState.vote"
+                    hasVotes ? "icon.voting.emptyState.voteExisting" : "icon.voting.emptyState.vote"
                   }
                 />
               </Box>
@@ -136,11 +136,11 @@ const Delegation = ({ account }: Props) => {
               !canClaimRewards ? (
                 hasRewards && formattedNextRewardDate ? (
                   <Trans
-                    i18nKey="tron.voting.nextRewardsDate"
+                    i18nKey="icon.voting.nextRewardsDate"
                     values={{ date: formattedNextRewardDate }}
                   />
                 ) : (
-                  <Trans i18nKey="tron.voting.noRewards" />
+                  <Trans i18nKey="icon.voting.noRewards" />
                 )
               ) : null
             }
@@ -163,7 +163,7 @@ const Delegation = ({ account }: Props) => {
                 <Box>
                   <Trans
                     i18nKey={
-                      hasRewards ? "tron.voting.claimAvailableRewards" : "tron.voting.claimRewards"
+                      hasRewards ? "icon.voting.claimAvailableRewards" : "icon.voting.claimRewards"
                     }
                     values={{ amount: formattedUnwidthDrawnReward }}
                   />
@@ -208,15 +208,15 @@ const Delegation = ({ account }: Props) => {
               <Trans
                 i18nKey={
                   votingPower > 0
-                    ? "tron.voting.emptyState.votesDesc"
-                    : "tron.voting.emptyState.description"
+                    ? "icon.voting.emptyState.votesDesc"
+                    : "icon.voting.emptyState.description"
                 }
                 values={{ name: account.currency.name }}
               />
             </Text>
             <Box mt={2}>
               <LinkWithExternalIcon
-                label={<Trans i18nKey="tron.voting.emptyState.info" />}
+                label={<Trans i18nKey="icon.voting.emptyState.info" />}
                 onClick={() => openURL(urls.stakingTron)}
               />
             </Box>
@@ -226,7 +226,7 @@ const Delegation = ({ account }: Props) => {
               content={
                 earnRewardDisabled ? (
                   <Trans
-                    i18nKey="tron.voting.warnEarnRewards"
+                    i18nKey="icon.voting.warnEarnRewards"
                     values={{ amount: formattedMinAmount }}
                   />
                 ) : null
@@ -242,7 +242,7 @@ const Delegation = ({ account }: Props) => {
                   <IconChartLine size={12} />
                   <Box>
                     <Trans
-                      i18nKey={votingPower > 0 ? "tron.voting.emptyState.vote" : "delegation.title"}
+                      i18nKey={votingPower > 0 ? "icon.voting.emptyState.vote" : "delegation.title"}
                     />
                   </Box>
                 </Box>

@@ -7,8 +7,8 @@ export function toIconResourcesRaw(r: IconResources): IconResourcesRaw {
     nonce,
     additionalBalance: additionalBalance.toString(),
     votes,
-    votingPower,
-    totalDelegated,
+    votingPower: votingPower.toString(),
+    totalDelegated: totalDelegated.toString(),
   };
 }
 
@@ -18,7 +18,7 @@ export function fromIconResourcesRaw(r: IconResourcesRaw): IconResources {
     nonce,
     additionalBalance: new BigNumber(additionalBalance),
     votes,
-    votingPower: new BigNumber(votingPower),
-    totalDelegated: new BigNumber(totalDelegated)
+    votingPower: new BigNumber(votingPower || 0),
+    totalDelegated: new BigNumber(totalDelegated || 0)
   };
 }
