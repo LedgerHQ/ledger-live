@@ -63,6 +63,7 @@
     "ljs:hw-app-algorand": "pnpm --filter hw-app-algorand",
     "ljs:hw-app-btc": "pnpm --filter hw-app-btc",
     "ljs:hw-app-cosmos": "pnpm --filter hw-app-cosmos",
+    "ljs:hw-app-zilliqa": "pnpm --filter hw-app-zilliqa",
     "ljs:hw-app-eth": "pnpm --filter hw-app-eth",
     "ljs:hw-app-helium": "pnpm --filter hw-app-helium",
     "ljs:hw-app-polkadot": "pnpm --filter hw-app-polkadot",
@@ -130,5 +131,11 @@
       "react-native-os@1.2.6": "patches/react-native-os@1.2.6.patch",
       "react-native-tcp@4.0.0": "patches/react-native-tcp@4.0.0.patch"
     }
+  },
+  "dependencies": {
+    "cross-env": "^7.0.3",
+    "node-gyp": "^9.3.0",
+    "tslib": "^2.4.1",
+    "typescript": "^4.9.3"
   }
 }
