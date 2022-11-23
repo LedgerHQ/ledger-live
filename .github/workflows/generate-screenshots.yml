@@ -46,18 +46,17 @@ jobs:
               body,
             })
 
-  is-org-member:
-    name: "Check Org Member"
-    uses: ./.github/workflows/is-org-member.yml
+  pr-is-fork:
+    name: "Check if the PR is a fork"
+    uses: ledgerhq/ledger-live/.github/workflows/pr-is-fork.yml@develop
     with:
-      username: ${{ github.event.inputs.login }}
-      organisation: ledgerhq
+      non-pr-result: false
     secrets:
       token: ${{ secrets.COMMON_READ_ORG }}
 
   generate-screenshots:
-    needs: [is-org-member]
-    if: ${{ fromJSON(needs.is-org-member.outputs.is-org-member) }}
+    needs: [pr-is-fork]
+    if: ${{ !fromJSON(needs.pr-is-fork.outputs.pr-is-fork) }}
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
       FORCE_COLOR: 3
@@ -104,8 +103,8 @@ jobs:
           turbo-server-port: ${{ steps.turborepo-cache-server.outputs.port }}
 
   generate-screenshots-mac-internal:
-    needs: [is-org-member]
-    if: ${{ fromJSON(needs.is-org-member.outputs.is-org-member) }}
+    needs: [pr-is-fork]
+    if: ${{ !fromJSON(needs.pr-is-fork.outputs.pr-is-fork) }}
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
       FORCE_COLOR: 3
