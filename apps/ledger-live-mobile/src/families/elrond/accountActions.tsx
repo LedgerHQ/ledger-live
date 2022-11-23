@@ -1,5 +1,5 @@
 import type { ElrondAccount } from "@ledgerhq/live-common/families/elrond/types";
-
+import { getCurrentElrondPreloadData } from "@ledgerhq/live-common/families/elrond/preload";
 import React from "react";
 import { BigNumber } from "bignumber.js";
 import { randomizeProviders } from "@ledgerhq/live-common/families/elrond/helpers/randomizeProviders";
@@ -31,15 +31,13 @@ const getActions = (props: getActionsType): getActionsReturnType => {
     input: String(account.spendableBalance),
     showLastNonZeroDecimal: true,
   });
-  const delegationEnabled = new BigNumber(balance).gte(1);
+  const delegationEnabled = new BigNumber(balance).gte(1); // FIXME Should use the constant defined in live-common
 
   /*
    * Get a list of all the providers, randomize, and also the screen, conditionally, based on existing amount of delegations.
    */
-
-  const validators = randomizeProviders(
-    account.elrondResources ? account.elrondResources.providers : [],
-  );
+  const preloaded = getCurrentElrondPreloadData();
+  const validators = randomizeProviders(preloaded.validators);
 
   const screen =
     account.elrondResources && account.elrondResources.delegations.length === 0

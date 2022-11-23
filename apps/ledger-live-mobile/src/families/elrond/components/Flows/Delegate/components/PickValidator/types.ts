@@ -3,10 +3,6 @@ import type { StackNavigatorProps } from "../../../../../../../components/RootNa
 import type { ElrondDelegationFlowParamList } from "../../types";
 import type { ScreenName } from "../../../../../../../const";
 
-export interface EnhancedProviderType extends ElrondProvider {
-  disabled: boolean;
-}
-
 export interface onSelectType {
   validator: ElrondProvider;
   return: void;

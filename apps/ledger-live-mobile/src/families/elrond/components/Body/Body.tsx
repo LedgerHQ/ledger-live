@@ -3,6 +3,7 @@ import { View } from "react-native";
 import { BigNumber } from "bignumber.js";
 import { randomizeProviders } from "@ledgerhq/live-common/families/elrond/helpers/randomizeProviders";
 import { denominate } from "@ledgerhq/live-common/families/elrond/helpers/denominate";
+import { useElrondRandomizedValidators } from "@ledgerhq/live-common/families/elrond/react";
 
 import type { AccountLike } from "@ledgerhq/types-live";
 import type {
@@ -53,13 +54,7 @@ const Body = (props: BodyPropsType) => {
    * Randomize the list of the memoized validators..
    */
 
-  const validators = useMemo(
-    () =>
-      randomizeProviders(
-        account.elrondResources ? account.elrondResources.providers : [],
-      ),
-    [account.elrondResources],
-  );
+  const validators = useElrondRandomizedValidators();
 
   /*
    * Call the drawer callback and populate the state with the given data, thus activating it.

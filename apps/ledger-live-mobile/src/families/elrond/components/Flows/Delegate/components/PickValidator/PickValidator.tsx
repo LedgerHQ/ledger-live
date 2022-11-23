@@ -4,21 +4,13 @@ import { useTheme } from "@react-navigation/native";
 import { Box, SearchInput, Text } from "@ledgerhq/native-ui";
 import { FlatList, View } from "react-native";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
-import BigNumber from "bignumber.js";
 
-import type { ElrondProvider } from "@ledgerhq/live-common/families/elrond/types";
-import type {
-  EnhancedProviderType,
-  onSelectType,
-  PickValidatorPropsType,
-} from "./types";
+import { useSearchValidators } from "@ledgerhq/live-common/families/elrond/react";
+
+import type { onSelectType, PickValidatorPropsType } from "./types";
 
 import { TrackScreen } from "../../../../../../../analytics";
 import { ScreenName } from "../../../../../../../const";
-import {
-  ELROND_LEDGER_ADDRESS,
-  MIN_DELEGATION_AMOUNT,
-} from "../../../../../constants";
 
 import Item from "./components/Item";
 
@@ -40,40 +32,7 @@ const PickValidator = (props: PickValidatorPropsType) => {
   /*
    * Filter out the providers, by the search query, and disabled them if not enough delegation cap available.
    */
-
-  const providers = useMemo(() => {
-    const needle = search.toLowerCase();
-
-    const filter = (validator: ElrondProvider) => {
-      const [foundByContract, foundByName] = [
-        validator.contract.toLowerCase().includes(needle),
-        validator.identity.name
-          ? validator.identity.name.toLowerCase().includes(needle)
-          : false,
-      ];
-
-      return foundByName || foundByContract;
-    };
-
-    const disable = (validator: ElrondProvider): EnhancedProviderType => {
-      const [alpha, beta] = [
-        validator.maxDelegationCap,
-        validator.totalActiveStake,
-      ];
-      const delegative = alpha !== "0" && validator.withDelegationCap;
-      const difference = new BigNumber(alpha).minus(beta);
-
-      return Object.assign(validator, {
-        disabled: delegative ? difference.lt(MIN_DELEGATION_AMOUNT) : false,
-      });
-    };
-
-    const sort = (validator: EnhancedProviderType) =>
-      validator.contract === ELROND_LEDGER_ADDRESS ? -1 : 1;
-    const items = validators.map(disable).sort(sort);
-
-    return search ? items.filter(filter) : items;
-  }, [validators, search]);
+  const providers = useSearchValidators(validators, search);
 
   /*
    * Upon selecting an item, navigate to the next panel of the stack and pass along the necessary data.
