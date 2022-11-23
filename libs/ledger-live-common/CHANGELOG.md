@@ -1,5 +1,11 @@
 # @ledgerhq/live-common
 
+## 27.7.2-hotfix.0
+
+### Patch Changes
+
+- [#1944](https://github.com/LedgerHQ/ledger-live/pull/1944) [`bdf55e0411`](https://github.com/LedgerHQ/ledger-live/commit/bdf55e0411d46c0bf68d42b7f96b75d49ba81a67) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Fixing ethereum prepareTransaction breaking before the getTransactionStatus and fixing send max on account with only dust
+
 ## 27.7.1
 
 ### Patch Changes
