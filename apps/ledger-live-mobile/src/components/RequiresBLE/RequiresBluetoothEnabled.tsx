@@ -20,7 +20,7 @@ const RequiresBluetoothEnabled: React.FC<Props> = ({ children }) => {
   }, []);
 
   useEffect(() => {
-    const sub = Observable.create(TransportBLE.observeState).subscribe({
+    const sub = new Observable(TransportBLE.observeState).subscribe({
       next: ({ type }: { type: string }) => setType(type),
     });
     return () => sub.unsubscribe();
