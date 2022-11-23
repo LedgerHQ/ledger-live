@@ -17,7 +17,7 @@ import { useNavigation } from "@react-navigation/native";
 
 import Animation from "../../components/Animation";
 import { knownDevicesSelector } from "../../reducers/ble";
-import LocationRequired from "../LocationRequired";
+import LocationRequired from "../../components/LocationRequired";
 import BleDeviceItem from "./BleDeviceItem";
 import lottie from "./assets/bluetooth.json";
 import DeviceSetupView from "../../components/DeviceSetupView";
