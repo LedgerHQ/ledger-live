@@ -19,9 +19,8 @@ on:
 
 # Ignore while only running every 12 hours on the develop
 concurrency:
-  # group: ${{ github.workflow }}-${{ github.ref }}
-  group: detox-tests
-  cancel-in-progress: ${{ github.ref_name != 'develop' }}
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.ref_name != 'develop' || github.ref_name != 'main' }}
 
 jobs:
   # is-affected:
@@ -105,7 +104,7 @@ jobs:
     # needs: is-affected
     # if: ${{ needs.is-affected.outputs.is-mobile-affected == 'true' }}
     name: "Ledger Live Mobile - iOS Detox Tests"
-    runs-on: macos-latest
+    runs-on: [ledger-live, macos]
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
     steps:
@@ -121,11 +120,12 @@ jobs:
           cache-dependency-path: "**/pnpm-lock.yaml"
       - name: Install applesimutils
         run: |
+          eval "$(rbenv init - bash)"
           brew tap wix/brew
           brew install applesimutils
-      - uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: 3.1.2
+      # - uses: ruby/setup-ruby@v1
+      #   with:
+      #     ruby-version: 3.1.2
       - name: Cache LLM pods
         uses: actions/cache@v3
         with:
@@ -135,21 +135,28 @@ jobs:
             ~/.cocoapods
           key: ${{ runner.os }}-pods-${{ hashFiles('apps/ledger-live-mobile/ios/Podfile.lock') }}
       - name: install dependencies
-        run: pnpm i --filter="live-mobile..." --filter="ledger-live" --no-frozen-lockfile --unsafe-perm
+        run: |
+          eval "$(rbenv init - bash)"
+          pnpm i --filter="live-mobile..." --filter="ledger-live" --no-frozen-lockfile --unsafe-perm
       - name: Build dependencies
-        run: pnpm build:llm:deps
+        run: |
+          eval "$(rbenv init - bash)"
+          pnpm build:llm:deps
       # - name: Clear and build detox cache # investigate how to properly cache this
       #   run: pnpm mobile exec detox clean-framework-cache && pnpm mobile exec detox build-framework-cache
       - name: Build iOS app for Detox test run
-        run: pnpm mobile e2e:build -c ios.sim.release
+        run: |
+          eval "$(rbenv init - bash)"
+          pnpm mobile e2e:build -c ios.sim.release
       - name: Test iOS app
-        run: pnpm mobile e2e:test -c ios.sim.release --loglevel verbose --record-logs all --take-screenshots all --record-videos failing --record-performance all --detectOpenHandles
-      # - name: Upload test artifacts
-      #   uses: actions/upload-artifact@v2
-      #   if: always()
-      #   with:
-      #     name: test-ios-artifacts
-      #     path: apps/ledger-live-mobile/artifacts
+        run: |
+          pnpm mobile e2e:test -c ios.sim.release --loglevel verbose --record-logs all --take-screenshots all --record-videos failing --record-performance all --detectOpenHandles
+      - name: Upload test artifacts
+        uses: actions/upload-artifact@v2
+        if: always()
+        with:
+          name: test-ios-artifacts
+          path: apps/ledger-live-mobile/artifacts
 
   detox-tests-android:
     # needs: is-affected
@@ -169,9 +176,9 @@ jobs:
           node-version: 16.x
           cache: pnpm
           cache-dependency-path: "**/pnpm-lock.yaml"
-      - uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: 3.1.2
+      # - uses: ruby/setup-ruby@v1
+      #   with:
+      #     ruby-version: 3.1.2
       - name: setup JDK 11
         uses: actions/setup-java@v3
         with:
@@ -189,38 +196,15 @@ jobs:
       - name: setup Android SDK
         uses: android-actions/setup-android@v2.0.8
       - name: Install dependencies
-        run: pnpm i --filter="live-mobile..." --filter="ledger-live" --no-frozen-lockfile --unsafe-perm
+        run: |
+          eval "$(rbenv init - bash)"
+          pnpm i --filter="live-mobile..." --filter="ledger-live" --no-frozen-lockfile --unsafe-perm
       - name: Build dependencies
-        run: pnpm build:llm:deps
-      # May be taken care of by the `setup-java` action caching
+        run: |
+          eval "$(rbenv init - bash)"
+          pnpm build:llm:deps
       - name: Gradle cache
         uses: gradle/gradle-build-action@v2
-
-      # - name: Clear and build detox cache # investigate how to properly cache this
-      #   run: pnpm mobile exec detox clean-framework-cache && pnpm mobile exec detox build-framework-cache
-
-      # - name: AVD cache
-      #   uses: actions/cache@v3
-      #   id: avd-cache
-      #   with:
-      #     path: |
-      #       ~/.android/avd/*
-      #       ~/.android/adb*
-      #     key: avd-30
-
-      # Removing this step for now as it doesn't seem to ever get triggers and it's wasting 5 mins. Requires investigation
-      # - name: create AVD and generate snapshot for caching
-      #   if: steps.avd-cache.outputs.cache-hit != 'true'
-      #   uses: reactivecircus/android-emulator-runner@v2
-      #   with:
-      #     api-level: 30
-      #     arch: x86_64
-      #     target: default
-      #     force-avd-creation: false
-      #     emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
-      #     disable-animations: false
-      #     ram-size: 4096M
-      #     script: echo "Generated AVD snapshot for caching."
 
       - name: create AVD and generate snapshot for caching
         uses: reactivecircus/android-emulator-runner@v2
@@ -235,7 +219,9 @@ jobs:
           script: echo "Generated AVD snapshot for caching."
 
       - name: Build Android app for Detox test run
-        run: pnpm mobile e2e:build -c android.emu.release
+        run: |
+          eval "$(rbenv init - bash)"
+          pnpm mobile e2e:build -c android.emu.release
 
       - name: Run Android tests
         uses: reactivecircus/android-emulator-runner@v2
@@ -248,9 +234,9 @@ jobs:
           emulator-options: -verbose -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
           ram-size: 4096M
           script: pnpm mobile e2e:test -c android.emu.release --loglevel trace --record-logs all --take-screenshots all --record-videos failing --forceExit --detectOpenHandles
-      # - name: Upload test artifacts
-      #   if: always()
-      #   uses: actions/upload-artifact@v2
-      #   with:
-      #     name: test-android-artifacts
-      #     path: apps/ledger-live-mobile/artifacts/
+      - name: Upload test artifacts
+        if: always()
+        uses: actions/upload-artifact@v2
+        with:
+          name: test-android-artifacts
+          path: apps/ledger-live-mobile/artifacts/
