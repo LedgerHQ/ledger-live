@@ -147,27 +147,35 @@ const AssetScreen = ({ route }: NavigationProps) => {
     logClickCard,
     logImpressionCard,
     dismissCard,
+    trackContentCardEvent,
   } = useDynamicContent();
   const dynamicContentCard = getAssetCardByIdOrTicker(currency);
 
   const onClickLink = useCallback(() => {
     if (!dynamicContentCard) return;
-    track("contentcard_clicked", {
+
+    trackContentCardEvent("contentcard_clicked", {
       screen: dynamicContentCard.location,
       link: dynamicContentCard.link,
+      campaign: dynamicContentCard.id,
     });
+
     // Notify Braze that the card has been clicked by the user
     logClickCard(dynamicContentCard.id);
     Linking.openURL(dynamicContentCard.link);
-  }, [dynamicContentCard, logClickCard]);
+  }, [dynamicContentCard, logClickCard, trackContentCardEvent]);
 
   const onPressDismiss = useCallback(() => {
     if (!dynamicContentCard) return;
-    track("contentcard_dismissed", {
+
+    trackContentCardEvent("contentcard_dismissed", {
       screen: dynamicContentCard.location,
+      link: dynamicContentCard.link,
+      campaign: dynamicContentCard.id,
     });
+
     dismissCard(dynamicContentCard.id);
-  }, [dismissCard, dynamicContentCard]);
+  }, [dismissCard, dynamicContentCard, trackContentCardEvent]);
 
   useEffect(() => {
     if (dynamicContentCard) {
