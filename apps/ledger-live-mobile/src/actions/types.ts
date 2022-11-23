@@ -168,7 +168,6 @@ export type NotificationsPayload =
 export enum DynamicContentActionTypes {
   DYNAMIC_CONTENT_SET_WALLET_CARDS = "DYNAMIC_CONTENT_SET_WALLET_CARDS",
   DYNAMIC_CONTENT_SET_ASSET_CARDS = "DYNAMIC_CONTENT_SET_ASSET_CARDS",
-  DYNAMIC_CONTENT_SET_DISMISS_CARD = "DYNAMIC_CONTENT_SET_DISMISS_CARD",
 }
 
 export type DynamicContentSetWalletCardsPayload = Pick<
@@ -181,14 +180,9 @@ export type DynamicContentSetAssetCardsPayload = Pick<
   "assetsCards"
 >;
 
-export type DynamicContentSetDismissCardPayload = {
-  dismissedCard: string;
-};
-
 export type DynamicContentPayload =
   | DynamicContentSetWalletCardsPayload
-  | DynamicContentSetAssetCardsPayload
-  | DynamicContentSetDismissCardPayload;
+  | DynamicContentSetAssetCardsPayload;
 
 // === RATINGS ACTIONS ===
 
@@ -253,6 +247,7 @@ export enum SettingsActionTypes {
   SETTINGS_SET_THEME = "SETTINGS_SET_THEME",
   SETTINGS_SET_OS_THEME = "SETTINGS_SET_OS_THEME",
   SETTINGS_SET_CAROUSEL_VISIBILITY = "SETTINGS_SET_CAROUSEL_VISIBILITY",
+  SETTINGS_SET_DISMISSED_DYNAMIC_CARDS = "SETTINGS_SET_DISMISSED_DYNAMIC_CARDS",
   SETTINGS_SET_DISCREET_MODE = "SETTINGS_SET_DISCREET_MODE",
   SETTINGS_SET_LANGUAGE = "SETTINGS_SET_LANGUAGE",
   SETTINGS_SET_LOCALE = "SETTINGS_SET_LOCALE",
@@ -343,6 +338,10 @@ export type SettingsSetOsThemePayload = Pick<SettingsState, "osTheme">;
 export type SettingsSetCarouselVisibilityPayload = Pick<
   SettingsState,
   "carouselVisibility"
+>;
+export type SettingsSetDismissedDynamicCardsPayload = Pick<
+  SettingsState,
+  "dismissedDynamicCards"
 >;
 export type SettingsSetDiscreetModePayload = Pick<
   SettingsState,

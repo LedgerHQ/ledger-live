@@ -105,8 +105,6 @@ export type DynamicContentState = {
   walletCards: WalletContentCard[];
   /** Dynamic content cards displayed in an Asset Page */
   assetsCards: AssetContentCard[];
-  /** ids of cards that have been dismissed by the user */
-  dismissedCards: string[];
 };
 
 // === RATINGS STATE ===
@@ -182,6 +180,7 @@ export type SettingsState = {
   theme: Theme;
   osTheme: string | null | undefined;
   carouselVisibility: number | Record<string, boolean>;
+  dismissedDynamicCards: string[],
   // number is the legacy type from LLM V2
   discreetMode: boolean;
   language: string;

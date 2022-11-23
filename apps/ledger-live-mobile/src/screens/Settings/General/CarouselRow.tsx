@@ -1,27 +1,26 @@
 import React, { useCallback } from "react";
 import { useTranslation } from "react-i18next";
-import { useSelector, useDispatch } from "react-redux";
+import { useDispatch } from "react-redux";
 import { Switch } from "@ledgerhq/native-ui";
 import SettingsRow from "../../../components/SettingsRow";
-import { carouselVisibilitySelector } from "../../../reducers/settings";
-import { setCarouselVisibility } from "../../../actions/settings";
-import { SLIDES } from "../../../components/Carousel/shared";
+import { setDismissedDynamicCards } from "../../../actions/settings";
+import useDynamicContent from "../../../dynamicContent/dynamicContent";
 
 const CarouselRow = () => {
   const { t } = useTranslation();
+  const { walletCards, assetsCards, isAtLeastOneCardDisplayed } = useDynamicContent();
 
   const dispatch = useDispatch();
-  const carouselVisibility = useSelector(carouselVisibilitySelector);
-  const onSetCarouselVisibility = useCallback(
+  const onSetDynamicCardsVisibility = useCallback(
     checked =>
       dispatch(
-        setCarouselVisibility(
+        setDismissedDynamicCards(
           checked
-            ? Object.fromEntries(SLIDES.map(slide => [slide.name, true]))
-            : Object.fromEntries(SLIDES.map(slide => [slide.name, false])),
+            ? []
+            : [...walletCards, ...assetsCards].map(card => card.id),
         ),
       ),
-    [dispatch],
+    [dispatch, walletCards, assetsCards],
   );
 
   return (
@@ -31,10 +30,8 @@ const CarouselRow = () => {
       desc={t("settings.display.carouselDesc")}
     >
       <Switch
-        checked={Object.values(carouselVisibility).some(
-          cardVisible => cardVisible,
-        )}
-        onChange={onSetCarouselVisibility}
+        checked={isAtLeastOneCardDisplayed}
+        onChange={onSetDynamicCardsVisibility}
       />
     </SettingsRow>
   );

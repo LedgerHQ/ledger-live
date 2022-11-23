@@ -1,21 +1,21 @@
 import { useDispatch, useSelector } from "react-redux";
 import { ContentCard as BrazeContentCard } from "react-native-appboy-sdk";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { useCallback } from "react";
+import { useCallback, useMemo } from "react";
 import { useBrazeContentCard } from "./brazeContentCard";
 import {
   assetsCardsSelector,
-  dismissedCardsSelector,
   walletCardsSelector,
 } from "../reducers/dynamicContent";
+import { dismissedDynamicCardsSelector } from "../reducers/settings";
 import {
   AssetContentCard,
   Background,
   LocationContentCard,
   WalletContentCard,
 } from "./types";
-import { setDismissCard } from "../actions/dynamicContent";
 import { track } from "../analytics";
+import { setDismissedDynamicCards } from "../actions/settings";
 
 export const filterByPage = (array: BrazeContentCard[], page: string) =>
   array.filter(elem => elem.extras.location === page);
@@ -52,7 +52,20 @@ const useDynamicContent = () => {
 
   const assetsCards = useSelector(assetsCardsSelector);
   const walletCards = useSelector(walletCardsSelector);
-  const hiddenCards: string[] = useSelector(dismissedCardsSelector);
+  const hiddenCards: string[] = useSelector(dismissedDynamicCardsSelector);
+
+  const walletCardsDisplayed = useMemo(() =>
+    walletCards.filter((wc: WalletContentCard) => !hiddenCards.includes(wc.id)),
+    [walletCards, hiddenCards]);
+  const assetsCardsDisplayed = useMemo(() =>
+    assetsCards.filter((ac: AssetContentCard) => !hiddenCards.includes(ac.id)),
+    [assetsCards, hiddenCards]);
+  const isAWalletCardDisplayed = useMemo(() =>
+    walletCardsDisplayed.length >= 1,
+    [walletCardsDisplayed]);
+  const isAtLeastOneCardDisplayed = useMemo(() =>
+    isAWalletCardDisplayed || assetsCardsDisplayed.length >= 1,
+    [isAWalletCardDisplayed, assetsCards]);
 
   const getAssetCardByIdOrTicker = useCallback(
     (currency: CryptoOrTokenCurrency): AssetContentCard | undefined => {
@@ -60,9 +73,7 @@ const useDynamicContent = () => {
         return undefined;
       }
 
-      return assetsCards
-        .filter((ac: AssetContentCard) => !hiddenCards.includes(ac.id))
-        .find(
+      return assetsCardsDisplayed.find(
           (ac: AssetContentCard) =>
             ac.assets.toLowerCase().includes(currency.id.toLowerCase()) ||
             ac.assets.toUpperCase().includes(currency.ticker.toUpperCase()),
@@ -71,7 +82,9 @@ const useDynamicContent = () => {
     [assetsCards, hiddenCards],
   );
 
-  const dismissCard = (cardId: string) => dispatch(setDismissCard(cardId));
+  const dismissCard = useCallback((cardId: string) => {
+    dispatch(setDismissedDynamicCards([...hiddenCards, cardId]));
+  }, [hiddenCards]);
 
   const trackContentCardEvent = useCallback(
     (
@@ -89,8 +102,11 @@ const useDynamicContent = () => {
 
   return {
     walletCards,
+    walletCardsDisplayed,
+    isAWalletCardDisplayed,
     assetsCards,
     getAssetCardByIdOrTicker,
+    isAtLeastOneCardDisplayed,
     logClickCard,
     logDismissCard,
     logImpressionCard,

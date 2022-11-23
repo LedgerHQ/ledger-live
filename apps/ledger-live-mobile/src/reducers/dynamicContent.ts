@@ -6,13 +6,11 @@ import {
   DynamicContentPayload,
   DynamicContentSetWalletCardsPayload,
   DynamicContentSetAssetCardsPayload,
-  DynamicContentSetDismissCardPayload,
 } from "../actions/types";
 
 export const INITIAL_STATE: DynamicContentState = {
   assetsCards: [],
   walletCards: [],
-  dismissedCards: [],
 };
 
 const handlers: ReducerMap<DynamicContentState, DynamicContentPayload> = {
@@ -32,25 +30,12 @@ const handlers: ReducerMap<DynamicContentState, DynamicContentPayload> = {
     assetsCards: (action as Action<DynamicContentSetAssetCardsPayload>).payload
       .assetsCards,
   }),
-  [DynamicContentActionTypes.DYNAMIC_CONTENT_SET_DISMISS_CARD]: (
-    state,
-    action,
-  ) => ({
-    ...state,
-    dismissedCards: [
-      ...state.dismissedCards,
-      (action as Action<DynamicContentSetDismissCardPayload>).payload
-        .dismissedCard,
-    ],
-  }),
 };
 
 // Selectors
 export const assetsCardsSelector = (s: State) => s.dynamicContent.assetsCards;
 
 export const walletCardsSelector = (s: State) => s.dynamicContent.walletCards;
-export const dismissedCardsSelector = (s: State) =>
-  s.dynamicContent.dismissedCards;
 
 export default handleActions<DynamicContentState, DynamicContentPayload>(
   handlers,
