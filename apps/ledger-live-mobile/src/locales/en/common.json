@@ -785,14 +785,26 @@
     }
   },
   "location": {
-    "required": "Location services required",
+    "titleServiceRequired": "Location services required",
+    "titlePermissionRequired": "Location permission required",
+    "titlePermissionRequiredPrecise": "Precise location permission required",
+    "descriptionServiceRequired": "Ledger Live requires location services to pair your device through Bluetooth.",
+    "descriptionPermissionRequired": "Ledger Live requires the location permission to pair your device through Bluetooth.",
+    "descriptionPermissionRequiredPrecise": "Ledger Live requires the precise location permission to pair your device through Bluetooth.",
     "open": "Open location settings",
-    "disabled": "Ledger Live requires location services to pair your device through Bluetooth.",
     "noInfos": "Ledger does not access your location information."
   },
   "permissions": {
     "open": "Open app permissions",
-    "nearbyDevicesPermissionDenied": "To pair with Bluetooth, authorize the Ledger Live app to scan nearby devices."
+    "authorize": "Authorize",
+    "bluetooth": {
+      "modalTitle": "Permission required to pair your Ledger over Bluetooth",
+      "modalDescriptionBase": "To pair your Ledger over Bluetooth, you must authorize Ledger Live to scan for nearby devices.",
+      "modalDescriptionSettingsVariant": "To pair your Ledger over Bluetooth, you must authorize Ledger Live to scan for nearby devices in your phone’s settings.",
+      "modalButtonLabelBase": "Authorize",
+      "modalButtonLabelSettingsVariant": "Go to settings",
+      "dontPair": "Don't pair"
+    }
   },
   "fees": {
     "speed": {
@@ -3251,8 +3263,8 @@
       "infoTotalDesc": "Includes transaction amount and the selected network fees",
       "gasLimit": "Gas limit",
       "gasPrice": "Gas price",
-      "maxFee" : "Max fee",
-      "maxPriorityFee" : "Max priority fee",
+      "maxFee": "Max fee",
+      "maxPriorityFee": "Max priority fee",
       "nextBlock": "Next block: {{nextBaseFee}}",
       "suggestedPriorityFee": "Suggested: {{lowPriorityFee}} - {{highPriorityFee}}",
       "maxFees": "Max fees",
