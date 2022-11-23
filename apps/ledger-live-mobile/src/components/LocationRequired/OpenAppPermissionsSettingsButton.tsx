@@ -2,7 +2,7 @@ import React, { PureComponent } from "react";
 import { AppState, Linking } from "react-native";
 import { Trans } from "react-i18next";
 import SettingsIcon from "../../icons/SettingsIcon";
-import Button from "../../components/Button";
+import Button from "../Button";
 
 export default class AppPermissionsButton extends PureComponent<
   {

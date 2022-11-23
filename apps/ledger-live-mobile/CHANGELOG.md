@@ -1,5 +1,40 @@
 # live-mobile
 
+## 3.11.2
+
+### Patch Changes
+
+- Updated dependencies [[`bdf55e0411`](https://github.com/LedgerHQ/ledger-live/commit/bdf55e0411d46c0bf68d42b7f96b75d49ba81a67)]:
+  - @ledgerhq/live-common@27.7.2
+
+## 3.11.2-hotfix.0
+
+### Patch Changes
+
+- Updated dependencies [[`bdf55e0411`](https://github.com/LedgerHQ/ledger-live/commit/bdf55e0411d46c0bf68d42b7f96b75d49ba81a67)]:
+  - @ledgerhq/live-common@27.7.2-hotfix.0
+
+## 3.11.1
+
+### Patch Changes
+
+- Updated dependencies [[`f7aa25417a`](https://github.com/LedgerHQ/ledger-live/commit/f7aa25417a953a6e4768e0b5d500cab566369a0a), [`e3a796b0a0`](https://github.com/LedgerHQ/ledger-live/commit/e3a796b0a021b19ff01061a019657cea26cc46de)]:
+  - @ledgerhq/live-common@27.7.1
+
+## 3.11.1-hotfix.1
+
+### Patch Changes
+
+- Updated dependencies [[`e3a796b0a0`](https://github.com/LedgerHQ/ledger-live/commit/e3a796b0a021b19ff01061a019657cea26cc46de)]:
+  - @ledgerhq/live-common@27.7.1-hotfix.1
+
+## 3.11.1-hotfix.0
+
+### Patch Changes
+
+- Updated dependencies [[`f7aa25417a`](https://github.com/LedgerHQ/ledger-live/commit/f7aa25417a953a6e4768e0b5d500cab566369a0a)]:
+  - @ledgerhq/live-common@27.7.1-hotfix.0
+
 ## 3.11.0
 
 ### Minor Changes
