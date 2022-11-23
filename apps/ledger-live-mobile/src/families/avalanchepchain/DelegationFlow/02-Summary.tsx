@@ -405,7 +405,7 @@ function SummaryWords({
           <Trans i18nKey="delegation.to" />
         </Words>
         <Touchable onPress={onChangeValidator}>
-          <Selectable name={isDefaultValidatorNode(validator?.nodeID ?? "") ? "Ledger by Figment" : validator?.nodeID ?? "-"} />
+          <Selectable name={validator?.nodeID ?? "-"} />
         </Touchable>
       </Line>
       <Line>
