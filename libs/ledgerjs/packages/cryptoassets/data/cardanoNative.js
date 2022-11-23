@@ -2,8 +2,8 @@
 module.exports = [
   [
     "cardano_testnet",
-    "581684861359b6d4d00594073a9aa4223c6fc24d24da05e1b34fb865",
-    "544553545f544f4b454e",
+    "47be64fcc8a7fe5321b976282ce4e43e4d29015f6613cfabcea28eab",
+    "54657374",
     "TEST_TOKEN",
     "tToken",
     0,
