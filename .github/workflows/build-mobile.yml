@@ -45,15 +45,14 @@ jobs:
 
   # Run dummy jobs when not affected to pass the required status checks
   dummy:
-    name: "Ledger Live Desktop Tests"
+    name: "Build Ledger Live Mobile"
     needs: is-affected
-    if: ${{ needs.is-affected.outputs.is-desktop-affected != 'true' }}
+    if: ${{ needs.is-affected.outputs.is-mobile-affected != 'true' }}
     strategy:
       matrix:
-        os:
-          - ubuntu-latest
-          - macos-latest
-          - windows-latest
+        names:
+          - Android
+          - Mac OS X
     runs-on: ubuntu-latest
     steps:
       - id: dummy
