@@ -5,12 +5,12 @@ import { Button } from "@ledgerhq/native-ui";
 import NoLocationImage from "../../icons/NoLocationImage";
 import LocationServicesButton from "./LocationServicesButton";
 import OpenAppPermissionsSettingsButton from "./OpenAppPermissionsSettingsButton";
-import LText from "../../components/LText";
+import LText from "../LText";
 import {
   locationPermission,
   requestLocationPermission,
   RequestResult,
-} from "../../components/RequiresBLE/androidBlePermissions";
+} from "../RequiresBLE/androidBlePermissions";
 
 const { RESULTS } = PermissionsAndroid;
 

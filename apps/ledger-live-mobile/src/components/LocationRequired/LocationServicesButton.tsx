@@ -2,7 +2,7 @@ import React, { PureComponent } from "react";
 import LocationServicesDialogBox from "react-native-android-location-services-dialog-box";
 import { Trans } from "react-i18next";
 import SettingsIcon from "../../icons/SettingsIcon";
-import Button from "../../components/Button";
+import Button from "../Button";
 
 export default class LocationServicesButton extends PureComponent<{
   onRetry: () => void;
