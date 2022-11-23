@@ -730,7 +730,11 @@ export function testBridge<T extends TransactionCommon>(
                         account: account as AccountLike,
                       };
 
-                  if (typeof t.mode !== "string" || t.mode === "send") {
+                  if (
+                    (typeof t.mode !== "string" || t.mode === "send") &&
+                    t.model &&
+                    t.model.kind !== "stake.createAccount"
+                  ) {
                     const estimation = await bridge.estimateMaxSpendable(obj);
                     expect(estimation.gte(0)).toBe(true);
                     expect(estimation.lte(obj.account.balance)).toBe(true);

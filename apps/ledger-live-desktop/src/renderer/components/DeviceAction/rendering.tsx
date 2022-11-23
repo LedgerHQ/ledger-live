@@ -8,8 +8,10 @@ import styled from "styled-components";
 import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
 import { ExchangeRate, Exchange } from "@ledgerhq/live-common/exchange/swap/types";
-import { getProviderName } from "@ledgerhq/live-common/exchange/swap/utils/index";
+
+import { getProviderName, getNoticeType } from "@ledgerhq/live-common/exchange/swap/utils/index";
 import { WrongDeviceForAccount, UpdateYourApp, LockedDeviceError } from "@ledgerhq/errors";
+
 import { LatestFirmwareVersionRequired } from "@ledgerhq/live-common/errors";
 import { DeviceModelId, getDeviceModel } from "@ledgerhq/devices";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
@@ -720,6 +722,9 @@ export const renderSwapDeviceConfirmation = ({
     getAccountName(exchange.toAccount),
     getAccountCurrency(exchange.toAccount),
   ];
+  const providerName = getProviderName(exchangeRate.provider);
+  const noticeType = getNoticeType(exchangeRate.provider);
+  const alertProperties = noticeType.learnMore ? { learnMoreUrl: urls.swap.learnMore } : {};
   return (
     <>
       <ConfirmWrapper>
@@ -732,8 +737,8 @@ export const renderSwapDeviceConfirmation = ({
           swapVersion={SWAP_VERSION}
         />
         <Box flex={0}>
-          <Alert type="primary" learnMoreUrl={urls.swap.learnMore} mb={7} mx={4}>
-            <Trans i18nKey="DeviceAction.swap.notice" />
+          <Alert type="primary" {...alertProperties} mb={7} mx={4}>
+            <Trans i18nKey={`DeviceAction.swap.notice.${noticeType.message}`} />
           </Alert>
         </Box>
         <Box mx={6} data-test-id="device-swap-summary">
@@ -758,7 +763,7 @@ export const renderSwapDeviceConfirmation = ({
               provider: (
                 <Box horizontal alignItems="center" style={{ gap: "6px" }}>
                   <ProviderIcon size={18} />
-                  <Text>{getProviderName(exchangeRate.provider)}</Text>
+                  <Text>{providerName}</Text>
                 </Box>
               ),
               fees: (

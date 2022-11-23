@@ -32,9 +32,11 @@ export type FeatureId =
   | "disableNftSend"
   | "disableNftLedgerMarket"
   | "disableNftRaribleOpensea"
+  | "walletNftGallery"
   | "receiveStakingFlowConfigDesktop"
   | "ethStakingProviders"
-  | "storyly";
+  | "storyly"
+  | "firebaseEnvironmentReadOnly";
 
 /**  We use objects instead of direct booleans for potential future improvements
 like feature versioning etc */

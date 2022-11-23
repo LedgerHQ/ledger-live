@@ -63,3 +63,4 @@ runs:
           apps/ledger-live-desktop/tests/artifacts/html-report
           apps/ledger-live-desktop/tests/artifacts/coverage
           apps/ledger-live-desktop/tests/artifacts/videos
+          apps/ledger-live-desktop/tests/artifacts/logs

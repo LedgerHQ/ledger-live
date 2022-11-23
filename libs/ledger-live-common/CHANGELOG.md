@@ -1,5 +1,25 @@
 # @ledgerhq/live-common
 
+## 27.7.1
+
+### Patch Changes
+
+- [#1913](https://github.com/LedgerHQ/ledger-live/pull/1913) [`f7aa25417a`](https://github.com/LedgerHQ/ledger-live/commit/f7aa25417a953a6e4768e0b5d500cab566369a0a) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Prevent error on ERC1155 quantities being array of null
+
+* [#1931](https://github.com/LedgerHQ/ledger-live/pull/1931) [`e3a796b0a0`](https://github.com/LedgerHQ/ledger-live/commit/e3a796b0a021b19ff01061a019657cea26cc46de) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Fix Ethereum send max transactions using the wrong fee per gas method with EIP1559
+
+## 27.7.1-hotfix.1
+
+### Patch Changes
+
+- [#1931](https://github.com/LedgerHQ/ledger-live/pull/1931) [`e3a796b0a0`](https://github.com/LedgerHQ/ledger-live/commit/e3a796b0a021b19ff01061a019657cea26cc46de) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Fix Ethereum send max transactions using the wrong fee per gas method with EIP1559
+
+## 27.7.1-hotfix.0
+
+### Patch Changes
+
+- [#1913](https://github.com/LedgerHQ/ledger-live/pull/1913) [`f7aa25417a`](https://github.com/LedgerHQ/ledger-live/commit/f7aa25417a953a6e4768e0b5d500cab566369a0a) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Prevent error on ERC1155 quantities being array of null
+
 ## 27.7.0
 
 ### Minor Changes

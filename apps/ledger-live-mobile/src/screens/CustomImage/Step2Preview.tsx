@@ -91,7 +91,7 @@ const Step2Preview = ({ navigation, route }: NavigationProps) => {
 
   const { params } = route;
 
-  const { cropResult: croppedImage, device } = params;
+  const { cropResult: croppedImage, device, baseImageFile } = params;
 
   const handleError = useCallback(
     (error: Error) => {
@@ -137,14 +137,21 @@ const Step2Preview = ({ navigation, route }: NavigationProps) => {
          * */
         throw new ImagePreviewError();
       }
-      navigation.navigate(ScreenName.CustomImageStep3Transfer, {
-        rawData: data,
-        previewData: processorPreviewImage,
+      navigation.navigate(ScreenName.CustomImagePreviewPostEdit, {
+        imageData: data,
+        imagePreview: processorPreviewImage,
+        baseImageFile,
         device,
       });
       setRawResultLoading(false);
     },
-    [navigation, setRawResultLoading, processorPreviewImage, device],
+    [
+      navigation,
+      setRawResultLoading,
+      processorPreviewImage,
+      device,
+      baseImageFile,
+    ],
   );
 
   const handlePreviewImageError = useCallback(

@@ -290,6 +290,8 @@ export const StatusCodes = {
   LICENSING: 0x6f42,
   HALTED: 0x6faa,
   LOCKED_DEVICE: 0x5515,
+  CUSTOM_IMAGE_EMPTY: 0x662e,
+  CUSTOM_IMAGE_BOOTLOADER: 0x662f,
 };
 
 export function getAltStatusMessage(code: number): string | undefined | null {

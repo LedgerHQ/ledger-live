@@ -196,10 +196,10 @@ export default function loadImage({
   return sub as Observable<LoadImageEvent>;
 }
 
-const generateFtsImageFormat: (
-  imgHex: string,
+export const generateFtsImageFormat: (
+  hexImage: string,
   compressImage: boolean
-) => Promise<Buffer> = async (imgHex, compressImage) => {
+) => Promise<Buffer> = async (hexImage, compressImage) => {
   const width = 400;
   const height = 672;
   const bpp = 2; // value for 4 bits per pixel
@@ -211,7 +211,7 @@ const generateFtsImageFormat: (
   header.writeUInt16LE(height, 2); // height
   header.writeUInt8((bpp << 4) | compression, 4);
 
-  const imgData = Buffer.from(imgHex, "hex");
+  const imgData = Buffer.from(hexImage, "hex");
 
   if (!compressImage) {
     const dataLength = imgData.length;
