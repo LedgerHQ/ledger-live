@@ -60,6 +60,13 @@ function StepEndDate({
 }: StepProps) {
   const { validators } = useAvalanchePChainPreloadData();
 
+  const selectedValidator = validators.find(v => v.nodeID === transaction.recipient);
+
+  const unixStakeStartTime = moment().unix() + FIVE_MINUTES;
+  const unixMinEndDate = unixStakeStartTime + TWO_WEEKS;
+  const unixMaxEndDate = Math.min(unixStakeStartTime + YEAR, Number(selectedValidator.endTime));
+  const unixDefaultEndDate = Math.min(unixStakeStartTime + THREE_WEEKS + MINUTE, unixMaxEndDate);
+
   useEffect(() => {
     const bridge: AccountBridge<Transaction> = getAccountBridge(account, parentAccount);
     onUpdateTransaction(tx => {
@@ -69,16 +76,10 @@ function StepEndDate({
         maxEndTime: new BigNumber(unixMaxEndDate),
       });
     });
+    // eslint-disable-next-line
   }, []);
 
   if (!status) return null;
-
-  const selectedValidator = validators.find(v => v.nodeID === transaction.recipient);
-
-  const unixStakeStartTime = moment().unix() + FIVE_MINUTES;
-  const unixMinEndDate = unixStakeStartTime + TWO_WEEKS;
-  const unixMaxEndDate = Math.min(unixStakeStartTime + YEAR, Number(selectedValidator.endTime));
-  const unixDefaultEndDate = Math.min(unixStakeStartTime + THREE_WEEKS + MINUTE, unixMaxEndDate);
 
   const minEndDate = moment.unix(unixMinEndDate).format("YYYY-MM-DDTh:mm");
   const maxEndDate = moment.unix(unixMaxEndDate).format("YYYY-MM-DDTh:mm");
