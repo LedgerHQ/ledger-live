@@ -1,6 +1,6 @@
 import React, { useCallback, useState } from "react";
 import { View, StyleSheet, PermissionsAndroid } from "react-native";
-import { Trans, useTranslation } from "react-i18next";
+import { useTranslation } from "react-i18next";
 import { Button } from "@ledgerhq/native-ui";
 import NoLocationImage from "../../icons/NoLocationImage";
 import LocationServicesButton from "./LocationServicesButton";
@@ -68,7 +68,7 @@ export default function LocationRequired({ errorType, onRetry }: Props) {
           {description}
         </LText>
         <LText semiBold style={[styles.desc, styles.descPadding]}>
-          <Trans i18nKey="location.noInfos" />
+          {t("location.noInfos")}
         </LText>
       </View>
       <View style={styles.buttonWrapper}>
@@ -78,7 +78,7 @@ export default function LocationRequired({ errorType, onRetry }: Props) {
           <OpenAppPermissionsSettingsButton onRetry={onRetry} />
         ) : (
           <Button type="main" outline onPress={requestPermission}>
-            <Trans i18nKey="permissions.authorize" />
+            {t("permissions.authorize")}
           </Button>
         )}
       </View>
