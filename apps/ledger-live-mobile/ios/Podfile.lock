@@ -473,10 +473,10 @@ PODS:
     - React-Core
   - react-native-version-number (0.3.6):
     - React
-  - react-native-video (5.2.0):
+  - react-native-video (5.2.1):
     - React-Core
-    - react-native-video/Video (= 5.2.0)
-  - react-native-video/Video (5.2.0):
+    - react-native-video/Video (= 5.2.1)
+  - react-native-video/Video (5.2.1):
     - React-Core
   - react-native-webview (11.18.2):
     - React-Core
@@ -721,7 +721,7 @@ DEPENDENCIES:
   - "react-native-text-input-mask (from `../../../node_modules/.pnpm/react-native-text-input-mask@3.1.4_react-native@0.68.5/node_modules/react-native-text-input-mask`)"
   - "react-native-udp (from `../../../node_modules/.pnpm/react-native-udp@4.1.5/node_modules/react-native-udp`)"
   - "react-native-version-number (from `../../../node_modules/.pnpm/react-native-version-number@0.3.6/node_modules/react-native-version-number`)"
-  - "react-native-video (from `../../../node_modules/.pnpm/react-native-video@5.2.0_lojvl6twgoj4rxeqeytmq4uduq/node_modules/react-native-video`)"
+  - "react-native-video (from `../../../node_modules/.pnpm/react-native-video@5.2.1/node_modules/react-native-video`)"
   - "react-native-webview (from `../../../node_modules/.pnpm/react-native-webview@11.18.2_ondxtwf5lqq5g76dzmsmwamaca/node_modules/react-native-webview`)"
   - "React-perflogger (from `../../../node_modules/.pnpm/react-native@0.68.5_qiqqwmyv63yhnuboofexv3s7x4/node_modules/react-native/ReactCommon/reactperflogger`)"
   - "React-RCTActionSheet (from `../../../node_modules/.pnpm/react-native@0.68.5_qiqqwmyv63yhnuboofexv3s7x4/node_modules/react-native/Libraries/ActionSheetIOS`)"
@@ -898,7 +898,7 @@ EXTERNAL SOURCES:
   react-native-version-number:
     :path: "../../../node_modules/.pnpm/react-native-version-number@0.3.6/node_modules/react-native-version-number"
   react-native-video:
-    :path: "../../../node_modules/.pnpm/react-native-video@5.2.0_lojvl6twgoj4rxeqeytmq4uduq/node_modules/react-native-video"
+    :path: "../../../node_modules/.pnpm/react-native-video@5.2.1/node_modules/react-native-video"
   react-native-webview:
     :path: "../../../node_modules/.pnpm/react-native-webview@11.18.2_ondxtwf5lqq5g76dzmsmwamaca/node_modules/react-native-webview"
   React-perflogger:
@@ -1051,7 +1051,7 @@ SPEC CHECKSUMS:
   react-native-text-input-mask: 36a546b378fadd2efe1b7484a859d34bc2c80395
   react-native-udp: 8864b1211857e9d8224ae5cbaf8580970fb99de1
   react-native-version-number: b415bbec6a13f2df62bf978e85bc0d699462f37f
-  react-native-video: a4c2635d0802f983594b7057e1bce8f442f0ad28
+  react-native-video: c26780b224543c62d5e1b2a7244a5cd1b50e8253
   react-native-webview: 8ec7ddf9eb4ddcd92b32cee7907efec19a9ec7cb
   React-perflogger: 0458a87ea9a7342079e7a31b0d32b3734fb8415f
   React-RCTActionSheet: 22538001ea2926dea001111dd2846c13a0730bc9
