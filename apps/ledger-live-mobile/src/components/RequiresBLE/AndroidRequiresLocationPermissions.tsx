@@ -1,5 +1,5 @@
 import React, { ReactNode, useCallback, useEffect, useState } from "react";
-import LocationRequired from "../../screens/LocationRequired";
+import LocationRequired from "../LocationRequired";
 import {
   checkLocationPermission,
   locationPermission,
