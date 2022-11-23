@@ -153,7 +153,7 @@
       }
     },
     "CeloAllFundsWarning" : {
-      "title" : "Assurez-vous que votre solde disponible est suffisant pour couvrir les frais de transaction."
+      "title" : "Assurez-vous que votre solde disponible est suffisant pour couvrir vos futurs frais de transaction."
     },
     "CeloMissingWithdrawalsError" : {
       "title" : "Erreur lors du retrait des fonds"
@@ -410,6 +410,9 @@
       "title" : "Cette app est nécessaire.",
       "description" : "Désinstallez les apps Bitcoin ou Ethereum en dernier."
     },
+    "MaxFeeLow" : {
+      "title" : "Frais maximaux trop bas. La transaction peut rester en attente un moment."
+    },
     "NetworkDown" : {
       "title" : "Pas de connexion Internet",
       "description" : "Vérifiez votre connexion Internet."
@@ -595,6 +598,9 @@
     "SourceHasMultiSign" : {
       "title" : "Désactivez la multisignature pour envoyer des {{currencyName}}."
     },
+    "DustLimit" : {
+      "title" : "Montant inférieur à la limite de poussière (dust limit)"
+    },
     "StratisDown2021Warning" : {
       "description" : "La blockchain Stratis a évolué et pourrait ne plus fonctionner correctement. La blockchain Stratis d’origine continuera d’être prise en charge jusqu’au 16 octobre 2021."
     },
@@ -624,7 +630,7 @@
       "title" : "Vous n’avez aucune nomination."
     },
     "PolkadotAllFundsWarning" : {
-      "title" : "Assurez-vous que votre solde disponible est suffisant pour couvrir les frais de transaction."
+      "title" : "Assurez-vous que votre solde disponible est suffisant pour couvrir vos futurs frais de transaction."
     },
     "PolkadotDoMaxSendInstead" : {
       "title" : "Le solde ne peut pas être inférieur à {{minimumBalance}}. Pour vider : Max."
@@ -744,6 +750,23 @@
     },
     "HederaAddAccountError" : {
       "title" : "Votre compte n’a pas été ajouté. Veuillez réessayer."
+    },
+    "PriorityFeeTooLow" : {
+      "title" : "Frais de priorité inférieurs au montant recommandé."
+    },
+    "PriorityFeeTooHigh" : {
+      "title" : "Frais de priorité plus élevés que nécessaire. Vous pourriez payer trop cher."
+    },
+    "MaxFeeTooLow" : {
+      "title" : "Frais max. inférieurs au montant recommandé"
+    },
+    "PriorityFeeHigherThanMaxFee" : {
+      "title" : "Les frais de priorité max. doivent être inférieurs aux frais max."
+    },
+    "LockedDeviceError" : {
+      "title" : "Appareil verrouillé",
+      "description" : "Déverrouillez votre appareil et réessayez.",
+      "descriptionWithProductName" : "Déverrouillez votre {{ productName }} et réessayez."
     }
   },
   "crash" : {
@@ -762,13 +785,26 @@
     }
   },
   "location" : {
-    "required" : "Localisation requise",
+    "titleServiceRequired" : "Location services required",
+    "titlePermissionRequired" : "Location permission required",
+    "titlePermissionRequiredPrecise" : "Precise location permission required",
+    "descriptionServiceRequired" : "Ledger Live requires location services to pair your device through Bluetooth.",
+    "descriptionPermissionRequired" : "Ledger Live requires the location permission to pair your device through Bluetooth.",
+    "descriptionPermissionRequiredPrecise" : "Ledger Live requires the precise location permission to pair your device through Bluetooth.",
     "open" : "Ouvrir les paramètres de localisation",
-    "disabled" : "Ledger Live a besoin de la localisation pour coupler votre appareil en Bluetooth.",
     "noInfos" : "Ledger n’utilise pas vos données de localisation."
   },
   "permissions" : {
-    "open" : "Ouvrir autorisa. des apps"
+    "open" : "Ouvrir autorisa. des apps",
+    "authorize" : "Authorize",
+    "bluetooth" : {
+      "modalTitle" : "Permission required to pair your Ledger over Bluetooth",
+      "modalDescriptionBase" : "To pair your Ledger over Bluetooth, you must authorize Ledger Live to scan for nearby devices.",
+      "modalDescriptionSettingsVariant" : "To pair your Ledger over Bluetooth, you must authorize Ledger Live to scan for nearby devices in your phone’s settings.",
+      "modalButtonLabelBase" : "Authorize",
+      "modalButtonLabelSettingsVariant" : "Go to settings",
+      "dontPair" : "Don't pair"
+    }
   },
   "fees" : {
     "speed" : {
@@ -1804,6 +1840,9 @@
         }
       }
     },
+    "appsStep" : {
+      "title" : "Applications {{productName}}"
+    },
     "readyStep" : {
       "title" : "Votre {{productName}} est prêt"
     },
@@ -2435,14 +2474,19 @@
         "title" : "Marché",
         "desc" : "Recevez des notifications sur les principales fluctuations du marché."
       },
-      "announcement" : {
+      "announcements" : {
         "title" : "Annonces",
         "desc" : "Recevez les dernières nouveautés sur Ledger Live."
+      },
+      "recommendations" : {
+        "title" : "Recommandations",
+        "desc" : "Enrichissez votre expérience grâce à des recommandations personnalisées et des offres spéciales."
       },
       "price" : {
         "title" : "Alertes sur les prix",
         "desc" : "Recevez des alertes pour vos cryptos préférées et ne manquez plus les mouvements du marché."
-      }
+      },
+      "disclaimer" : "Chez Ledger, votre vie privée passe avant tout. Les données collectées ne sont jamais partagées avec nos partenaires."
     },
     "help" : {
       "title" : "Aide",
@@ -2523,13 +2567,14 @@
       "featureFlagsTitle" : "Indicateurs de fonctionnalités (feature flags) définis et utilisés dans Ledger Live",
       "featureFlagsDesc" : "Les valeurs remplacées seront réinitialisées lorsque l’application sera relancée. Seules les chaînes JSON valides sont acceptées.",
       "featureFlagsEdit" : "Modifier",
-      "featureFlagsRestore" : "Restaurer"
+      "featureFlagsRestore" : "Restaurer",
+      "firebaseProject" : "Firebase project targeted by this build:"
     }
   },
   "notifications" : {
     "prompt" : {
       "title" : "Activez les notifications",
-      "desc" : "Recevez des informations clés sur Ledger Live, les produits Ledger et la sécurité. Vous pouvez vous désinscrire à tout moment.",
+      "desc" : "Ne manquez plus rien sur Ledger Live, les produits Ledger, le marché, et recevez des recommandations personnalisées. Vous pouvez vous désinscrire à tout moment dans les Paramètres.",
       "allow" : "Autoriser les notifications",
       "later" : "Pas maintenant"
     }
@@ -3151,6 +3196,12 @@
       }
     }
   },
+  "signMessage" : {
+    "eip712" : {
+      "showFullMessage" : "Afficher le message",
+      "hideFullMessage" : "Masquer le message"
+    }
+  },
   "sync" : {
     "error" : "Erreur de synchronisation",
     "loading" : "Sync"
@@ -3212,9 +3263,14 @@
       "infoTotalDesc" : "Comprend le montant de la transaction et les frais de réseau choisis",
       "gasLimit" : "Limite de gaz",
       "gasPrice" : "Prix du gaz",
+      "maxFee" : "Frais maximaux",
+      "maxPriorityFee" : "Frais de priorité maximaux",
+      "nextBlock" : "Bloc suivant : {{nextBaseFee}}",
+      "suggestedPriorityFee" : "Suggérés : {{lowPriorityFee}} - {{highPriorityFee}}",
       "maxFees" : "Frais maximaux",
       "validateGasLimit" : "Valider la limite de gaz",
       "fees" : "Frais",
+      "maxEstimatedFee" : "Frais maximaux estimés",
       "validateFees" : "Valider les frais",
       "customizeFees" : "Modifier les frais",
       "memo" : {
@@ -3445,7 +3501,7 @@
       "subtitle" : "Ajouter un nouveau compte",
       "native_segwit" : {
         "title" : "Native SegWit",
-        "desc" : "Le meilleur choix. Frais de transaction faibles, détection d’erreurs et prise en charge du réseau Lightning. Non pris en charge par certains wallets/plateformes d’échange."
+        "desc" : "Le meilleur choix. Frais de transaction bas, détection d’erreurs et prise en charge du réseau Lightning. Non pris en charge par certains wallets/plateformes d’échange."
       },
       "segwit" : {
         "title" : "SegWit",
@@ -3462,7 +3518,7 @@
     }
   },
   "DeviceAction" : {
-    "stayInTheAppPlz" : "Restez dans l’app et gardez votre Nano X en main.",
+    "stayInTheAppPlz" : "Restez dans Ledger Live et gardez votre Ledger à portée de main.",
     "allowAppPermission" : "Ouvrez l’app {{wording}} sur votre appareil",
     "allowAppPermissionSubtitleToken" : "pour gérer vos tokens {{token}}",
     "allowManagerPermission" : "Autorisez {{wording}} sur l’appareil.",
@@ -3490,7 +3546,10 @@
     },
     "confirmSwap" : {
       "title" : "Confirmer l’opération de swap sur l’appareil",
-      "alert" : "Vérifiez les détails du swap sur votre appareil avant de l’envoyer. Les adresses sont échangées de manière sécurisée afin que vous n’ayez pas à les vérifier.",
+      "alert" : {
+        "default" : "Vérifiez les détails du swap sur votre appareil avant de l’envoyer. Les adresses sont échangées de manière sécurisée afin que vous n’ayez pas à les vérifier.",
+        "cic" : "Verify the Swap details on your device before sending it. CIC may need to perform additional verification for some transactions, resulting in a delay."
+      },
       "acceptTerms" : "En validant cette transaction, j’accepte\n<0>les Conditions d’utilisation de <0>{{provider}}</0></0>.",
       "notice" : "Vérifiez les détails du swap sur votre appareil avant de l’envoyer. Les adresses sont échangées de manière sécurisée afin que vous n’ayez pas à les vérifier."
     },
@@ -3634,6 +3693,7 @@
         "description" : "Gérez vos Ledger enregistrés"
       },
       "addNewCTA" : "Ajouter",
+      "otgBanner" : "Si vous possédez un Nano S ou un Nano S Plus, connectez votre Ledger avec un câble USB.",
       "connectExistingLedger" : "Connecter un Ledger existant",
       "connectExistingLedgerDescription" : "Vous avez déjà un Ledger configuré ? Couplez-le via Bluetooth.",
       "setUpNewLedger" : "Configurer votre nouveau Ledger",
@@ -5335,7 +5395,8 @@
       "seeFewerNfts" : "Voir moins de NFT"
     },
     "gallery" : {
-      "allNft" : "Tous les NFT"
+      "allNft" : "Tous les NFT",
+      "addNew" : "Ajouter"
     },
     "viewer" : {
       "properties" : "Attributs",
@@ -5352,7 +5413,13 @@
     "viewerModal" : {
       "viewOn" : "Voir sur",
       "viewInExplorer" : "Dans l’explorateur",
+      "hide" : "Cacher la collection de NFT",
       "txDetails" : "Détails de la transaction"
+    },
+    "modalDisabled" : {
+      "title" : "Envoi indisponible",
+      "body" : "Afin de se conformer aux récentes mises à jour d’Apple sur l’App Store, l’envoi de NFT est temporairement indisponible. Vous pouvez utiliser Ledger Live pour l’ordinateur pour envoyer des NFT.",
+      "contactSupport" : "Consultez notre article d’assistance pour en savoir plus."
     }
   },
   "ApplicationVersion" : "v. {{version}}",
@@ -5393,18 +5460,26 @@
     "cropImage" : "Recadrez l’image",
     "chooseConstrast" : "Choisissez un contraste",
     "uploadAnotherImage" : "Télécharger une autre image",
-    "selectContrast" : "Sélectionnez le contraste voulu",
+    "rotateImage" : "Pivoter",
     "allowPreview" : "Autorisez l’aperçu des images sur votre {{productName}}",
     "loadingPicture" : "Chargement de l’image sur votre {{productName}}",
     "pictureLoaded" : "Image chargée",
     "timeDisclaimer" : "Cela peut prendre jusqu’à 30 secondes.",
     "imageLoaded" : "Image chargée sur votre {{productName}}",
     "confirmPicture" : "Confirmez sur votre {{productName}}",
-    "title" : "Choisissez une image.\nCréez votre style.\nPersonnalisez votre Ledger.",
-    "subtitle" : "Sélectionnez votre NFT préféré ou une image de votre téléphone.",
+    "landingPage" : {
+      "title" : "Choisissez une image.\nCréez votre style.\nPersonnalisez votre Ledger.",
+      "subtitle" : "Sélectionnez votre NFT préféré ou une image de votre téléphone.",
+      "choosePicture" : "Choisissez une image"
+    },
     "customImage" : "Image personnalisée",
-    "choosePicture" : "Choisissez une image",
-    "doThisLater" : "Pas maintenant"
+    "doThisLater" : "Pas maintenant",
+    "preview" : {
+      "title" : "Aperçu",
+      "loading" : "Loading preview",
+      "setPicture" : "Définir cette image",
+      "editPicture" : "Modifier l’image"
+    }
   },
   "postOnboarding" : {
     "hub" : {
@@ -5425,6 +5500,37 @@
         "description" : "En ajoutant une image",
         "popupLabel" : "Appareil personnalisé",
         "hubTitleAfterAction" : "Vous avez créé votre style !"
+      }
+    }
+  },
+  "wallet" : {
+    "tabs" : {
+      "crypto" : "Crypto",
+      "nft" : "NFT"
+    },
+    "nftGallery" : {
+      "empty" : {
+        "title" : "Pas (encore) de NFT",
+        "subtitle" : "Lancez-vous et recevez votre premier NFT.",
+        "receive" : "Recevoir des NFT",
+        "supportLink" : "Comment importer mes NFT d’un autre wallet ?"
+      },
+      "receiveModal" : {
+        "title" : "Recevez un NFT comme n’importe quelle autre crypto",
+        "bullets" : {
+          "0" : "• Sélectionnez la blockchain du NFT.",
+          "1" : "• Choisissez le compte qui recevra le NFT."
+        },
+        "cta" : "Compris",
+        "info" : "J’aimerais en savoir plus"
+      },
+      "hideNftModal" : {
+        "title" : "Cacher la collection de NFT",
+        "desc" : "Cela cachera tous les NFT de {{collectionName}}. Vous pouvez restaurer leur visibilité depuis les Paramètres de Ledger Live.",
+        "cta" : "Cacher ce NFT"
+      },
+      "media" : {
+        "tag" : "{{count}} NFT"
       }
     }
   }
