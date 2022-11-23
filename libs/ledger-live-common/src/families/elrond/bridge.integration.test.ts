@@ -57,7 +57,7 @@ const elrond: CurrenciesData<Transaction> = {
             balance: "100",
             spendableBalance: "100",
             type: "TokenAccountRaw",
-            tokenId: "4d45582d343535633537",
+            tokenId: "elrond/esdt/4d45582d343535633537",
             parentId: `js:2:elrond:${TEST_ADDRESS}:`,
             operations: [],
             pendingOperations: [],

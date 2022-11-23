@@ -82,3 +82,9 @@ export const computeDelegationBalance = (
 
   return totalDelegationBalance;
 };
+
+export const addPrefixToken = (tokenId: string) => `elrond/esdt/${tokenId}`;
+
+export const extractTokenId = (tokenId: string) => {
+  return tokenId.split("/")[2];
+};
