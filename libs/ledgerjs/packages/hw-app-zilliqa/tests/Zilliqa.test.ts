@@ -3,6 +3,7 @@ import {
   RecordStore,
 } from "@ledgerhq/hw-transport-mocker";
 import Zilliqa from "../src/Zilliqa";
+import { UserRefusedOnDevice } from "@ledgerhq/errors";
 
 class NoErrorThrownError extends Error {}
 const getError = async <TError>(call: () => unknown): Promise<TError> => {
@@ -35,6 +36,7 @@ test("getAppConfiguration", async () => {
     major: 0,
     minor: 4,
     patch: 4,
+    fullProtocol: false,
   });
 });
 
@@ -200,4 +202,116 @@ test("getAddressFuture", async () => {
     publicKey:
       "03853700fb316184febef12161af5b0b80323e9f546a0b2fc915d77c40408d4145",
   });
+});
+
+test("signMessage1", async () => {
+  const transport = await openTransportReplayer(
+    RecordStore.fromString(`
+=> e001000000
+<= 0004029000
+=> e008000024000000806f249e6e1aa2a859e3a0fda7c44ad64183c2ce2ac5e34a84c8c9d8a7037cdb6f
+<= 86f03ee9202704820efbb97c16d64b407393952263be88bfdbf65a58b17b9148a3139db23197f667c6d380de60a602a473b52186230bf94bdafda44a2e88456f9000
+`)
+  );
+  const zilliqa = new Zilliqa(transport);
+  const result = await zilliqa.signMessage(
+    "44'/313'/0'/0'/0'",
+    "6f249e6e1aa2a859e3a0fda7c44ad64183c2ce2ac5e34a84c8c9d8a7037cdb6f"
+  );
+  expect(result).toEqual({
+    returnCode: 36864,
+    signature: Buffer.from(
+      "86f03ee9202704820efbb97c16d64b407393952263be88bfdbf65a58b17b9148a3139db23197f667c6d380de60a602a473b52186230bf94bdafda44a2e88456f",
+      "hex"
+    ),
+  });
+});
+
+test("signMessage2", async () => {
+  const transport = await openTransportReplayer(
+    RecordStore.fromString(`
+=> e001000000
+<= 0004029000
+=> e008000024090000806f249e6e1aa2a859e3a0fda7c44ad64183c2ce2ac5e34a84c8c9d8a7037cdb6f
+<= 11b4f7374b937e8742534e46f274e62130bb2853029b29d8bcbb92468f50004c55db9d7451598ea8966c60a9c95ae9dde803556397f3224af6820383f94abd089000
+`)
+  );
+  const zilliqa = new Zilliqa(transport);
+  const result = await zilliqa.signMessage(
+    "44'/313'/9'/0'/0'",
+    "6f249e6e1aa2a859e3a0fda7c44ad64183c2ce2ac5e34a84c8c9d8a7037cdb6f"
+  );
+  expect(result).toEqual({
+    returnCode: 36864,
+    signature: Buffer.from(
+      "11b4f7374b937e8742534e46f274e62130bb2853029b29d8bcbb92468f50004c55db9d7451598ea8966c60a9c95ae9dde803556397f3224af6820383f94abd08",
+      "hex"
+    ),
+  });
+});
+
+test("signMessageRejected", async () => {
+  const transport = await openTransportReplayer(
+    RecordStore.fromString(`
+=> e001000000
+<= 0004029000
+=> e008000024000000806f249e6e1aa2a859e3a0fda7c44ad64183c2ce2ac5e34a84c8c9d8a7037cdb6f
+<= 6985
+`)
+  );
+  const zilliqa = new Zilliqa(transport);
+  const error: Error | NoErrorThrownError = await getError(
+    async () =>
+      await zilliqa.signMessage(
+        "44'/313'/0'/0'/0'",
+        "6f249e6e1aa2a859e3a0fda7c44ad64183c2ce2ac5e34a84c8c9d8a7037cdb6f"
+      )
+  );
+
+  expect(error).not.toBeInstanceOf(NoErrorThrownError);
+  expect(error).toBeInstanceOf(UserRefusedOnDevice);
+});
+
+test("signMessageChangeNotHardened", async () => {
+  const transport = await openTransportReplayer(
+    RecordStore.fromString(`
+=> e001000000
+<= 0004029000
+`)
+  );
+  const zilliqa = new Zilliqa(transport);
+  const error: Error | NoErrorThrownError = await getError(
+    async () =>
+      await zilliqa.signMessage(
+        "44'/313'/9'/0/0'",
+        "6f249e6e1aa2a859e3a0fda7c44ad64183c2ce2ac5e34a84c8c9d8a7037cdb6f"
+      )
+  );
+
+  expect(error).not.toBeInstanceOf(NoErrorThrownError);
+  expect(error.message).toBe(
+    "Path 'change' must be hardended and equal to zero"
+  );
+});
+
+test("signMessageIndexNotHardened", async () => {
+  const transport = await openTransportReplayer(
+    RecordStore.fromString(`
+=> e001000000
+<= 0004029000
+`)
+  );
+  const zilliqa = new Zilliqa(transport);
+  const error: Error | NoErrorThrownError = await getError(
+    async () =>
+      await zilliqa.signMessage(
+        "44'/313'/9'/0'/0",
+        "6f249e6e1aa2a859e3a0fda7c44ad64183c2ce2ac5e34a84c8c9d8a7037cdb6f"
+      )
+  );
+
+  expect(error).not.toBeInstanceOf(NoErrorThrownError);
+  expect(error.message).toBe(
+    "Path 'index' must be hardended and equal to zero"
+  );
 });
