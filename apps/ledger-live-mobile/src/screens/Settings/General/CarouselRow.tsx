@@ -5,6 +5,8 @@ import { Switch } from "@ledgerhq/native-ui";
 import SettingsRow from "../../../components/SettingsRow";
 import { setDismissedDynamicCards } from "../../../actions/settings";
 import useDynamicContent from "../../../dynamicContent/dynamicContent";
+import { track } from "../../../analytics";
+import { ScreenName } from "../../../const";
 
 const CarouselRow = () => {
   const { t } = useTranslation();
@@ -13,12 +15,18 @@ const CarouselRow = () => {
 
   const dispatch = useDispatch();
   const onSetDynamicCardsVisibility = useCallback(
-    checked =>
+    checked => {
       dispatch(
         setDismissedDynamicCards(
           checked ? [] : [...walletCards, ...assetsCards].map(card => card.id),
         ),
-      ),
+      );
+      track("toggle_clicked", {
+        toggle: "Content Cards",
+        enabled: checked,
+        screen: ScreenName.GeneralSettings,
+      }); // TODO
+    },
     [dispatch, walletCards, assetsCards],
   );
 

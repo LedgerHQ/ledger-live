@@ -2341,8 +2341,8 @@
     "display": {
       "title": "General",
       "desc": "Configure general Ledger Live settings.",
-      "carousel": "Carousel visibility",
-      "carouselDesc": "Enable visibility of the carousel on Portfolio",
+      "carousel": "Recommendations",
+      "carouselDesc": "We'll show you cards with personalised tips and our latest offers just for you.",
       "language": "Display language",
       "languageDesc": "Set the language displayed in Ledger Live.",
       "region": "Region",
