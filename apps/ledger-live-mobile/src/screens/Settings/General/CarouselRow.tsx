@@ -8,16 +8,15 @@ import useDynamicContent from "../../../dynamicContent/dynamicContent";
 
 const CarouselRow = () => {
   const { t } = useTranslation();
-  const { walletCards, assetsCards, isAtLeastOneCardDisplayed } = useDynamicContent();
+  const { walletCards, assetsCards, isAtLeastOneCardDisplayed } =
+    useDynamicContent();
 
   const dispatch = useDispatch();
   const onSetDynamicCardsVisibility = useCallback(
     checked =>
       dispatch(
         setDismissedDynamicCards(
-          checked
-            ? []
-            : [...walletCards, ...assetsCards].map(card => card.id),
+          checked ? [] : [...walletCards, ...assetsCards].map(card => card.id),
         ),
       ),
     [dispatch, walletCards, assetsCards],

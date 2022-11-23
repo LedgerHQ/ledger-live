@@ -54,18 +54,28 @@ const useDynamicContent = () => {
   const walletCards = useSelector(walletCardsSelector);
   const hiddenCards: string[] = useSelector(dismissedDynamicCardsSelector);
 
-  const walletCardsDisplayed = useMemo(() =>
-    walletCards.filter((wc: WalletContentCard) => !hiddenCards.includes(wc.id)),
-    [walletCards, hiddenCards]);
-  const assetsCardsDisplayed = useMemo(() =>
-    assetsCards.filter((ac: AssetContentCard) => !hiddenCards.includes(ac.id)),
-    [assetsCards, hiddenCards]);
-  const isAWalletCardDisplayed = useMemo(() =>
-    walletCardsDisplayed.length >= 1,
-    [walletCardsDisplayed]);
-  const isAtLeastOneCardDisplayed = useMemo(() =>
-    isAWalletCardDisplayed || assetsCardsDisplayed.length >= 1,
-    [isAWalletCardDisplayed, assetsCards]);
+  const walletCardsDisplayed = useMemo(
+    () =>
+      walletCards.filter(
+        (wc: WalletContentCard) => !hiddenCards.includes(wc.id),
+      ),
+    [walletCards, hiddenCards],
+  );
+  const assetsCardsDisplayed = useMemo(
+    () =>
+      assetsCards.filter(
+        (ac: AssetContentCard) => !hiddenCards.includes(ac.id),
+      ),
+    [assetsCards, hiddenCards],
+  );
+  const isAWalletCardDisplayed = useMemo(
+    () => walletCardsDisplayed.length >= 1,
+    [walletCardsDisplayed],
+  );
+  const isAtLeastOneCardDisplayed = useMemo(
+    () => isAWalletCardDisplayed || assetsCardsDisplayed.length >= 1,
+    [isAWalletCardDisplayed, assetsCards],
+  );
 
   const getAssetCardByIdOrTicker = useCallback(
     (currency: CryptoOrTokenCurrency): AssetContentCard | undefined => {
@@ -74,17 +84,20 @@ const useDynamicContent = () => {
       }
 
       return assetsCardsDisplayed.find(
-          (ac: AssetContentCard) =>
-            ac.assets.toLowerCase().includes(currency.id.toLowerCase()) ||
-            ac.assets.toUpperCase().includes(currency.ticker.toUpperCase()),
-        );
+        (ac: AssetContentCard) =>
+          ac.assets.toLowerCase().includes(currency.id.toLowerCase()) ||
+          ac.assets.toUpperCase().includes(currency.ticker.toUpperCase()),
+      );
     },
     [assetsCards, hiddenCards],
   );
 
-  const dismissCard = useCallback((cardId: string) => {
-    dispatch(setDismissedDynamicCards([...hiddenCards, cardId]));
-  }, [hiddenCards]);
+  const dismissCard = useCallback(
+    (cardId: string) => {
+      dispatch(setDismissedDynamicCards([...hiddenCards, cardId]));
+    },
+    [hiddenCards],
+  );
 
   const trackContentCardEvent = useCallback(
     (

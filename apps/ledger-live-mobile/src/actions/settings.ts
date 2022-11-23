@@ -254,7 +254,7 @@ export const dismissBanner = (bannerId: string) =>
     bannerId,
   });
 
-  const setCarouselVisibilityAction =
+const setCarouselVisibilityAction =
   createAction<SettingsSetCarouselVisibilityPayload>(
     SettingsActionTypes.SETTINGS_SET_CAROUSEL_VISIBILITY,
   );

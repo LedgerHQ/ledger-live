@@ -180,7 +180,7 @@ export type SettingsState = {
   theme: Theme;
   osTheme: string | null | undefined;
   carouselVisibility: number | Record<string, boolean>;
-  dismissedDynamicCards: string[],
+  dismissedDynamicCards: string[];
   // number is the legacy type from LLM V2
   discreetMode: boolean;
   language: string;

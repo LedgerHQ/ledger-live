@@ -389,10 +389,14 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
       .payload.carouselVisibility,
   }),
 
-  [SettingsActionTypes.SETTINGS_SET_DISMISSED_DYNAMIC_CARDS]: (state, action) => ({
+  [SettingsActionTypes.SETTINGS_SET_DISMISSED_DYNAMIC_CARDS]: (
+    state,
+    action,
+  ) => ({
     ...state,
-    dismissedDynamicCards: (action as Action<SettingsSetDismissedDynamicCardsPayload>)
-      .payload.dismissedDynamicCards,
+    dismissedDynamicCards: (
+      action as Action<SettingsSetDismissedDynamicCardsPayload>
+    ).payload.dismissedDynamicCards,
   }),
 
   [SettingsActionTypes.SETTINGS_SET_DISCREET_MODE]: (state, action) => ({
