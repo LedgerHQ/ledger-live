@@ -50,7 +50,8 @@ const getTransactionStatus = async (
     errors.amount = new AmountRequired();
   }
 
-  let totalSpent = new BigNumber(0);
+  let totalSpent = new BigNumber(0); // Will be in token amount for token transacations
+  let totalSpentEgld = new BigNumber(0); // Amount spent in main currency (EGLD)
 
   const tokenAccount =
     (t.subAccountId &&
@@ -59,7 +60,8 @@ const getTransactionStatus = async (
     null;
 
   if (tokenAccount) {
-    totalSpent = t.fees || new BigNumber(0); // totalSpent in EGLD, not token currency
+    totalSpent = t.amount;
+    totalSpentEgld = t.fees || new BigNumber(0);
 
     if (!errors.amount && t.amount.gt(tokenAccount.balance)) {
       errors.amount = new NotEnoughBalance();
@@ -67,12 +69,12 @@ const getTransactionStatus = async (
 
     if (
       !errors.amount &&
-      !totalSpent.decimalPlaces(DECIMALS_LIMIT).isEqualTo(totalSpent)
+      !totalSpentEgld.decimalPlaces(DECIMALS_LIMIT).isEqualTo(totalSpentEgld)
     ) {
       errors.amount = new ElrondDecimalsLimitReached();
     }
   } else {
-    totalSpent = isAmountSpentFromBalance(t.mode)
+    totalSpent = totalSpentEgld = isAmountSpentFromBalance(t.mode)
       ? t.fees?.plus(t.amount) || t.amount
       : t.fees || new BigNumber(0);
 
@@ -100,21 +102,23 @@ const getTransactionStatus = async (
       }
     }
 
-    // All delegations must be >= 1 EGLD
+    // When undelegating, unless undelegating all, the delegation must remain >= 1 EGLD
     const delegationBalance = a.elrondResources.delegations.find(
       (d) => d.contract === t.recipient
     )?.userActiveStake;
 
-    const delegationBalanceBelowMinimum =
-      delegationBalance &&
-      new BigNumber(delegationBalance)
-        .minus(t.amount)
-        .lt(MIN_DELEGATION_AMOUNT);
+    const delegationRemainingBalance = new BigNumber(
+      delegationBalance || 0
+    ).minus(t.amount);
+
+    const delegationBalanceForbidden =
+      delegationRemainingBalance.gt(0) &&
+      delegationRemainingBalance.lt(MIN_DELEGATION_AMOUNT);
 
     if (
       !errors.amount &&
       t.mode === "unDelegate" &&
-      delegationBalanceBelowMinimum
+      delegationBalanceForbidden
     ) {
       const formattedAmount = formatCurrencyUnit(
         getAccountUnit(a),
@@ -129,7 +133,7 @@ const getTransactionStatus = async (
     }
   }
 
-  if (!errors.amount && totalSpent.gt(a.spendableBalance)) {
+  if (!errors.amount && totalSpentEgld.gt(a.spendableBalance)) {
     errors.amount = tokenAccount
       ? new NotEnoughBalanceInParentAccount()
       : new NotEnoughBalance();
