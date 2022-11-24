@@ -12,7 +12,6 @@ import { reconciliateSubAccounts } from "./js-reconciliation";
 import { FEES_BALANCE } from "./constants";
 import { TokenAccount } from "@ledgerhq/types-live";
 import { computeDelegationBalance } from "./logic";
-import { getProviders } from "./api/sdk";
 import BigNumber from "bignumber.js";
 
 const getAccountShape: GetAccountShape = async (info, syncConfig) => {

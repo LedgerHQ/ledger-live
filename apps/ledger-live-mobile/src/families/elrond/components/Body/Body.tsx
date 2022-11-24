@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useMemo, useCallback, FC } from "react";
 import { View } from "react-native";
 import { BigNumber } from "bignumber.js";
-import { randomizeProviders } from "@ledgerhq/live-common/families/elrond/helpers/randomizeProviders";
 import { denominate } from "@ledgerhq/live-common/families/elrond/helpers/denominate";
 import { useElrondRandomizedValidators } from "@ledgerhq/live-common/families/elrond/react";
 

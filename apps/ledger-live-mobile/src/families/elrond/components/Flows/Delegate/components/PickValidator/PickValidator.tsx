@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useState } from "react";
+import React, { useCallback, useState } from "react";
 import { useTranslation, Trans } from "react-i18next";
 import { useTheme } from "@react-navigation/native";
 import { Box, SearchInput, Text } from "@ledgerhq/native-ui";

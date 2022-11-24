@@ -121,6 +121,7 @@ const OperationDetailsExtra = (props: OperationDetailsExtraProps) => {
   const unit = getAccountUnit(account);
   const discreet = useDiscreetMode();
   const locale = useSelector(localeSelector);
+  const { validators } = useElrondPreloadData();
 
   const formatConfig = {
     disableRounding: true,
@@ -138,7 +139,6 @@ const OperationDetailsExtra = (props: OperationDetailsExtraProps) => {
     }
 
     case "UNDELEGATE": {
-      const { validators } = useElrondPreloadData();
       const formattedValidator = validators.find(v => v.contract === operation.contract);
       const formattedAmount = formatCurrencyUnit(
         unit,
@@ -177,7 +177,6 @@ const OperationDetailsExtra = (props: OperationDetailsExtraProps) => {
     }
 
     case "WITHDRAW_UNBONDED": {
-      const { validators } = useElrondPreloadData();
       const formattedValidator = validators.find(v => v.contract === operation.contract);
       const formattedAmount = formatCurrencyUnit(
         unit,
@@ -216,7 +215,6 @@ const OperationDetailsExtra = (props: OperationDetailsExtraProps) => {
     }
 
     case "REWARD": {
-      const { validators } = useElrondPreloadData();
       const formattedValidator = validators.find(v => v.contract === operation.contract);
 
       ret = (
