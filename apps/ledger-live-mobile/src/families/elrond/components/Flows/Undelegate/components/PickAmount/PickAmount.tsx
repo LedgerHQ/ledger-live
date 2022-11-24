@@ -21,12 +21,7 @@ import type {
   NativeSyntheticEvent,
   TextInputFocusEventData,
 } from "react-native";
-import type {
-  PickAmountPropsType,
-  RatioType,
-  PickAmountPropsType,
-} from "./types";
-
+import type { PickAmountPropsType, RatioType } from "./types";
 import { localeSelector } from "../../../../../../../reducers/settings";
 import { ScreenName } from "../../../../../../../const";
 import Button from "../../../../../../../components/Button";

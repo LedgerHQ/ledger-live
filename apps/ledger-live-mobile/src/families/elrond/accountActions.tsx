@@ -1,7 +1,4 @@
-import type {
-  ElrondAccount,
-  ElrondAccount,
-} from "@ledgerhq/live-common/families/elrond/types";
+import type { ElrondAccount } from "@ledgerhq/live-common/families/elrond/types";
 import { getCurrentElrondPreloadData } from "@ledgerhq/live-common/families/elrond/preload";
 import React from "react";
 import { BigNumber } from "bignumber.js";
