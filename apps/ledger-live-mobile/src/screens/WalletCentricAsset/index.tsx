@@ -210,7 +210,7 @@ const AssetScreen = ({ route }: NavigationProps) => {
           defaultAccount={defaultAccount}
         />
         {!!dynamicContentCard && (
-          <Flex my={6}>
+          <Flex mt={6}>
             <CardB
               title={dynamicContentCard.title}
               tag={dynamicContentCard.tag}

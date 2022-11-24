@@ -1,4 +1,4 @@
-import React, { memo, useCallback, useRef, useState } from "react";
+import React, { memo, useMemo, useCallback, useRef, useState } from "react";
 import { ScrollView } from "react-native";
 import useDynamicContent from "../../dynamicContent/dynamicContent";
 import { width } from "../../helpers/normalizeSize";
@@ -28,6 +28,11 @@ const Carousel = () => {
     [currentPositionX],
   );
 
+  const cardsWidth = useMemo(
+    () => (walletCardsDisplayed.length === 1 ? width - 32 : WIDTH),
+    [walletCardsDisplayed],
+  );
+
   if (!walletCardsDisplayed || !walletCardsDisplayed.length) {
     // No slides or dismissed, no problem
     return null;
@@ -49,7 +54,7 @@ const Carousel = () => {
           id={cardProps.id}
           cardProps={cardProps}
           index={index}
-          width={WIDTH}
+          width={cardsWidth}
         />
       ))}
     </ScrollView>

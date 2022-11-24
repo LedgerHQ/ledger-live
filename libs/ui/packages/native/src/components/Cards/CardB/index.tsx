@@ -85,7 +85,13 @@ const TextComponent = (props: CardProps) => (
     </Text>
 
     {props.title && (
-      <Text variant="large" numberOfLines={3} fontWeight="semiBold" color="neutral.c100">
+      <Text
+        variant="large"
+        numberOfLines={3}
+        fontWeight="semiBold"
+        color="neutral.c100"
+        lineHeight="18.2px"
+      >
         {highlight(props.title, "large")}
       </Text>
     )}
@@ -96,8 +102,9 @@ const TextComponent = (props: CardProps) => (
       iconPosition="right"
       Icon={() => <ArrowRightMedium color="primary.c80" />}
       onPress={props.onPress}
+      numberOfLines={1}
     >
-      <Text variant="paragraph" fontWeight="semiBold" color="primary.c80" numberOfLines={2}>
+      <Text variant="paragraph" fontWeight="semiBold" color="primary.c80" numberOfLines={1}>
         {props.cta}
       </Text>
     </Link>
