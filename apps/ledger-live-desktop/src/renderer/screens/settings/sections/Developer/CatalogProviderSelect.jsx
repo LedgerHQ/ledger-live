@@ -1,37 +1,57 @@
 // @flow
 
-import React, { useCallback } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { setCatalogProvider } from "~/renderer/actions/settings";
-import { catalogProviderSelector } from "~/renderer/reducers/settings";
-import Select from "~/renderer/components/Select";
+import React, { useState } from "react";
 import Track from "~/renderer/analytics/Track";
-import { providers } from "@ledgerhq/live-common/platform/PlatformAppProvider/providers";
+import Input from "~/renderer/components/Input";
+import { useRemoteLiveAppContext } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
+import Switch from "~/renderer/components/Switch";
+import Box from "~/renderer/components/Box";
+import Button from "~/renderer/components/Button";
+import { useTranslation } from "react-i18next";
 
 const CatalogProviderSelect = () => {
-  const dispatch = useDispatch();
-  const provider = useSelector(catalogProviderSelector);
-
-  const handleChangeProvider = useCallback(
-    ({ value: providerKey }: { value: string }) => {
-      dispatch(setCatalogProvider(providerKey));
-    },
-    [dispatch],
+  const { setProvider, provider } = useRemoteLiveAppContext();
+  const { t } = useTranslation();
+  const [enableCustomProvider, setEnableCustomProvider] = useState<boolean>(
+    provider !== "production",
   );
+  const [inputValue, setInputValue] = useState<string>(provider === "production" ? "" : provider);
 
-  const currentProvider = providers.find(option => option.value === provider);
+  const handleOnClickApplyProvider = () => {
+    setProvider(inputValue);
+  };
+
+  const handleChangeSwitch = () => {
+    setEnableCustomProvider(!enableCustomProvider);
+    setProvider("production");
+  };
 
   return (
     <>
       <Track onUpdate event="CatalogProviderSelect" currentProvider={provider} />
-      <Select
-        small
-        minWidth={260}
-        isSearchable={false}
-        onChange={handleChangeProvider}
-        value={currentProvider}
-        options={providers}
-      />
+      <Box grow horizontal flow={2} alignItems="center">
+        {enableCustomProvider ? (
+          <>
+            <Input
+              small
+              style={{ minWidth: 200, maxWidth: 500, width: "100%" }}
+              isSearchable={false}
+              onChange={value => setInputValue(value)}
+              value={inputValue}
+            ></Input>
+            <Button
+              disabled={provider === inputValue}
+              small
+              primary
+              onClick={handleOnClickApplyProvider}
+            >
+              {t("common.apply")}
+            </Button>
+          </>
+        ) : null}
+
+        <Switch isChecked={enableCustomProvider} onChange={handleChangeSwitch} />
+      </Box>
     </>
   );
 };

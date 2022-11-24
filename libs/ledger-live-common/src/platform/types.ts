@@ -28,6 +28,12 @@ export type TranslatableString = {
   [locale: string]: string;
 };
 
+export type Loadable<T> = {
+  error: any | null;
+  isLoading: boolean;
+  value: T | null;
+};
+
 export type AppPlatform =
   | "desktop" // == windows || mac || linux
   | "mobile" // == android || ios
@@ -40,11 +46,12 @@ export type AppPermission = {
   params?: any;
 };
 
-export type AppManifest = {
+export type LiveAppManifest = {
   id: string;
   private?: boolean;
   name: string;
   url: string | URL;
+  params?: string[];
   homepageUrl: string;
   supportUrl?: string;
   icon?: string | null;
@@ -52,15 +59,17 @@ export type AppManifest = {
   apiVersion: string;
   manifestVersion: string;
   branch: AppBranch;
-  params?: string[];
+  permissions: AppPermission[];
+  domains: string[];
+};
+
+export type AppManifest = LiveAppManifest & {
   categories: string[];
   currencies: string[] | "*";
   content: {
     shortDescription: TranslatableString;
     description: TranslatableString;
   };
-  permissions: AppPermission[];
-  domains: string[];
 };
 
 export type PlatformApi = {

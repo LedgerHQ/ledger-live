@@ -4,6 +4,7 @@ import { Trans } from "react-i18next";
 import { useNavigation } from "@react-navigation/native";
 import type { AppManifest } from "@ledgerhq/live-common/platform/types";
 import { useSelector } from "react-redux";
+import { useRemoteLiveAppContext } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
 import { useBanner } from "../../components/banners/hooks";
 import TrackScreen from "../../analytics/TrackScreen";
 import { ScreenName } from "../../const";
@@ -16,7 +17,6 @@ import AnimatedHeaderView from "../../components/AnimatedHeader";
 import { TAB_BAR_SAFE_HEIGHT } from "../../components/TabBar/shared";
 import TabBarSafeAreaView from "../../components/TabBar/TabBarSafeAreaView";
 import { readOnlyModeEnabledSelector } from "../../reducers/settings";
-import { useFilteredManifests } from "./shared";
 import {
   BaseComposite,
   StackNavigatorProps,
@@ -41,7 +41,8 @@ const PlatformCatalog = ({ route }: NavigationProps) => {
   const { platform, ...routeParams } = route.params ?? {};
   const navigation = useNavigation<NavigationProps["navigation"]>();
   const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector);
-  const filteredManifests = useFilteredManifests();
+  const { state } = useRemoteLiveAppContext();
+  const manifests = state?.value?.liveAppByIndex || [];
   // Disclaimer State
   const [disclaimerOpts, setDisclaimerOpts] = useState<DisclaimerOpts>(null);
   const [disclaimerOpened, setDisclaimerOpened] = useState<boolean>(false);
@@ -85,8 +86,8 @@ const PlatformCatalog = ({ route }: NavigationProps) => {
   );
   useEffect(() => {
     // platform can be predefined when coming from a deeplink
-    if (platform && filteredManifests) {
-      const manifest = filteredManifests.find(m => m.id === platform);
+    if (platform && manifests) {
+      const manifest = manifests.find(m => m.id === platform);
 
       if (manifest) {
         navigation.navigate(ScreenName.PlatformApp, {
@@ -96,7 +97,7 @@ const PlatformCatalog = ({ route }: NavigationProps) => {
         });
       }
     }
-  }, [platform, filteredManifests, navigation, routeParams]);
+  }, [platform, manifests, navigation, routeParams]);
   return (
     <TabBarSafeAreaView edges={["bottom", "left", "right"]}>
       <AnimatedHeaderView
@@ -119,10 +120,10 @@ const PlatformCatalog = ({ route }: NavigationProps) => {
 
         <CatalogBanner />
         <CatalogTwitterBanner />
-        {filteredManifests.map(manifest => (
+        {manifests.map(manifest => (
           <AppCard
             key={`${manifest.id}.${manifest.branch}`}
-            manifest={manifest}
+            manifest={manifest as AppManifest}
             onPress={handlePressCard}
           />
         ))}
