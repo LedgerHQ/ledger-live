@@ -34,11 +34,7 @@ import {
   downloadImageToFile,
   importImageFromPhoneGallery,
 } from "../../components/CustomImage/imageUtils";
-import {
-  GalleryNFT,
-  ImageFileUri,
-  ImageUrl,
-} from "../../components/CustomImage/types";
+import { ImageFileUri } from "../../components/CustomImage/types";
 import { targetDimensions } from "./shared";
 import FramedImage from "../../components/CustomImage/FramedImage";
 import ImageProcessor, {
@@ -129,7 +125,7 @@ const PreviewPreEdit = ({ navigation, route }: NavigationProps) => {
         imageFileUri,
       });
     } else if (imageUrl) {
-      if (["loading", "queued"].includes(status)) {
+      if (isNftMetadata && ["loading", "queued"].includes(status)) {
         return () => {
           dead = true;
         };
