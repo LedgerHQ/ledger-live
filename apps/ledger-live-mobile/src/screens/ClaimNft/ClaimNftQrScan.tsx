@@ -9,17 +9,17 @@ import { BarCodeScanner } from "expo-barcode-scanner";
 import { Svg, Defs, Rect, Mask, Circle } from "react-native-svg";
 import { urls } from "../../config/urls";
 import CameraScreen from "../../components/CameraScreen";
+import Scanner from "../../components/Scanner";
 
 const WrappedSvg = () => (
-  <Svg height="100%" width="100%" viewBox="0 0 100 100">
+  <Svg height="320px" width="100%" viewBox="0 0 100 100">
     <Defs>
-      <Mask id="mask" x="0" y="0" height="100%" width="100%">
-        <Rect height="100%" width="100%" fill="#fff" />
-        <Circle r="45" cx="50" cy="50" />
+      <Mask id="mask" x="0" y="0" height="320px" width="100%">
+        <Rect height="20px" width="100%" fill="#fff" />
       </Mask>
     </Defs>
     <Rect
-      height="100%"
+      height="320px"
       width="100%"
       fill="rgba(0, 0, 0, 0.5)"
       mask="url(#mask)"
@@ -39,8 +39,10 @@ const ClaimNftQrScan = () => {
       const code = url.href.substring(url.href.lastIndexOf("/") + 1);
       const deeplink =
         hostname === "staging.claim.ledger.com"
-          ? urls.discover.linkDropStaging + "?redirectToOnboarding=true&code="
-          : urls.discover.linkDrop + "?redirectToOnboarding=true&code=";
+          ? urls.discover.linkDropStaging +
+            "?redirectToOnboarding=true&autoClaim=true&code="
+          : urls.discover.linkDrop +
+            "?redirectToOnboarding=true&autoClaim=true&code=";
       Linking.openURL(deeplink + code);
     } catch (e) {
       console.error(e);
@@ -75,6 +77,7 @@ const ClaimNftQrScan = () => {
             }}
             ratio="1:1"
           >
+            <CameraScreen width={400} height={320} liveQrCode />
             {/* TODO: Finish this component => <WrappedSvg /> ALSO TRY WITH <Scanner onResult={handleBarCodeScanned} liveQrCode /> */}
           </Camera>
         </Flex>
