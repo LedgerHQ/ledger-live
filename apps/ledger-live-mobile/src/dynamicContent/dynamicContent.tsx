@@ -74,7 +74,7 @@ const useDynamicContent = () => {
   );
   const isAtLeastOneCardDisplayed = useMemo(
     () => isAWalletCardDisplayed || assetsCardsDisplayed.length >= 1,
-    [isAWalletCardDisplayed, assetsCards],
+    [isAWalletCardDisplayed, assetsCardsDisplayed],
   );
 
   const getAssetCardByIdOrTicker = useCallback(
@@ -89,14 +89,14 @@ const useDynamicContent = () => {
           ac.assets.toUpperCase().includes(currency.ticker.toUpperCase()),
       );
     },
-    [assetsCards, hiddenCards],
+    [assetsCardsDisplayed],
   );
 
   const dismissCard = useCallback(
     (cardId: string) => {
       dispatch(setDismissedDynamicCards([...hiddenCards, cardId]));
     },
-    [hiddenCards],
+    [dispatch, hiddenCards],
   );
 
   const trackContentCardEvent = useCallback(
