@@ -38,7 +38,7 @@ function getDeviceTransactionConfig({
   fields.push({
     type: "casper.fees",
     label: "Fees",
-    value: `${transaction.fees.toLocaleString()} motes`,
+    value: `${transaction.fees.toNumber().toLocaleString()} motes`,
   });
   fields.push({
     type: "text",
