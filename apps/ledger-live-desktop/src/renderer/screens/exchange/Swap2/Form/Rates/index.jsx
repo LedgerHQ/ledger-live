@@ -62,29 +62,11 @@ export default function ProviderRate({
   const dispatch = useDispatch();
   const [dexSelected, setDexSelected] = useState(null);
   const [filter, setFilter] = useState([]);
+  const [defaultPartner, setDefaultPartner] = useState("");
   const [emptyState, setEmptyState] = useState(false);
   const selectedRate = useSelector(rateSelector);
 
   const providerRef = useRef(null);
-
-  const getDefaultPartner = useCallback(
-    rate => {
-      const defaultPartner = rates?.find((rate, index) => {
-        return filter.every(item => [FILTER.centralised, rate.tradeMethod].includes(item));
-      });
-      const defaultDexPartner = DEX_PROVIDERS.find((rate, index) => {
-        return filter.every(item => [FILTER.decentralised, FILTER.float].includes(item));
-      });
-      if (defaultPartner) {
-        return defaultPartner;
-      } else if (decentralizedSwapAvailable && defaultDexPartner) {
-        return defaultDexPartner;
-      } else {
-        return {};
-      }
-    },
-    [rates, decentralizedSwapAvailable, filter],
-  );
 
   const setRate = useCallback(
     rate => {
@@ -94,13 +76,13 @@ export default function ProviderRate({
         ...swapDefaultTrack,
         swap_type: rate.tradeMethod,
         value: rate,
-        defaultPartner: getDefaultPartner(),
+        defaultPartner,
       });
       setDexSelected(null);
       updateSelection(rate);
       dispatch(updateRateAction(rate));
     },
-    [getDefaultPartner, updateSelection, dispatch],
+    [defaultPartner, updateSelection, dispatch],
   );
 
   const setDexRate = useCallback(
@@ -111,12 +93,12 @@ export default function ProviderRate({
         ...swapDefaultTrack,
         swap_type: "float",
         value: provider,
-        defaultPartner: getDefaultPartner(),
+        defaultPartner,
       });
       setDexSelected(provider);
       updateSelection(provider);
     },
-    [getDefaultPartner, updateSelection],
+    [defaultPartner, updateSelection],
   );
 
   useEffect(() => {
@@ -128,6 +110,7 @@ export default function ProviderRate({
     });
     if (filter.includes(FILTER.decentralised)) {
       setDexRate(DEX_PROVIDERS[0]);
+      setDefaultPartner(DEX_PROVIDERS[0].name);
     } else {
       let selectedRate;
       if (filter.includes(FILTER.float)) {
@@ -138,6 +121,7 @@ export default function ProviderRate({
         selectedRate = rates && rates[0];
       }
       setRate(selectedRate || {});
+      setDefaultPartner(selectedRate?.provider);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filter]);
