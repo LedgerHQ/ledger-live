@@ -69,7 +69,7 @@ export default class Zilliqa {
     data: Buffer = Buffer.alloc(0),
     statusList: Array<number> = [SW_OK]
   ): Promise<Buffer> {
-    let input = Buffer.concat([
+    const input = Buffer.concat([
       Buffer.from([cla, ins, p1, p2]),
       Buffer.from([data.length]),
       data,
@@ -108,9 +108,7 @@ export default class Zilliqa {
     });
   }
 
-  async getPathParametersFromPath(
-    path: string
-  ): Promise<{
+  async getPathParametersFromPath(path: string): Promise<{
     account: number;
     change: number;
     index: number;
@@ -201,9 +199,7 @@ export default class Zilliqa {
    * @example
    * zilliqa.getAddress("44'/313'/0'/0/0", "zilliqa").then(o => o.address)
    */
-  async getAddress(
-    path: string
-  ): Promise<{
+  async getAddress(path: string): Promise<{
     publicKey: string;
     address: string;
   }> {
@@ -247,19 +243,17 @@ export default class Zilliqa {
     message: string
   ): Promise<{ signature: null | Buffer; returnCode: number }> {
     // Getting path parameters
-    const {
-      account,
-      change,
-      index,
-      fullProtocol,
-    } = await this.getPathParametersFromPath(path);
+    const { account, change, index, fullProtocol } =
+      await this.getPathParametersFromPath(path);
 
     // If we are using the full protocol, we add change and index
     // as well to the parameters. Note that this is unfortunately not backward compatible.
-    let params: number[] = fullProtocol ? [account, change, index] : [account];
+    const params: number[] = fullProtocol
+      ? [account, change, index]
+      : [account];
 
     const numbersToUInt32LE = (arr: number[]): Buffer => {
-      let ret = Buffer.alloc(arr.length * 4);
+      const ret = Buffer.alloc(arr.length * 4);
       for (let i = 0; i < arr.length; ++i) {
         ret.writeUInt32LE(arr[i], 4 * i);
       }
@@ -330,14 +324,10 @@ export default class Zilliqa {
     message: string
   ): Promise<{ signature: null | Buffer; returnCode: number }> {
     // Getting path parameters
-    const {
-      account,
-      change,
-      index,
-      fullProtocol,
-    } = await this.getPathParametersFromPath(path);
+    const { account, change, index, fullProtocol } =
+      await this.getPathParametersFromPath(path);
 
-    let params = Buffer.alloc(fullProtocol ? 12 : 4);
+    const params = Buffer.alloc(fullProtocol ? 12 : 4);
     params.writeUInt32LE(account, 0);
 
     // If we are using the full protocol, we add change and index
