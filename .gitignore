@@ -1,6 +1,5 @@
 node_modules
 .turbo
-.vscode
 .pnpm-*
 /temp
 .idea
