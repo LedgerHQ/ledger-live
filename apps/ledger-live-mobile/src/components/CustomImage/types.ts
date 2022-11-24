@@ -1,4 +1,4 @@
-import { ProtoNFT } from "@ledgerhq/types-live";
+import { useNftMetadata } from "@ledgerhq/live-common/nft/index";
 
 export type ImageDimensions = {
   /** pixel height of the image */
@@ -34,7 +34,7 @@ export type ImageUrl = {
 
 export type GalleryNFT = {
   /**
-   * NFT object coming from the NFT gallery
+   * NFT parameters that can be used to get its metadata using useNftMetadata
    */
-  nft: ProtoNFT;
+  nftMetadataParams: Parameters<typeof useNftMetadata>;
 };

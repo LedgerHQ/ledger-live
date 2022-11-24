@@ -55,7 +55,7 @@ const NFTGallerySelector = ({ navigation, route }: NavigationProps) => {
       navigation.navigate(NavigatorName.CustomImage, {
         screen: ScreenName.CustomImagePreviewPreEdit,
         params: {
-          nft,
+          nftMetadataParams: [nft.contract, nft.tokenId, nft.currencyId],
           device,
         },
       });

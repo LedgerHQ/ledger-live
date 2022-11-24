@@ -6,7 +6,7 @@ import {
   ProcessorPreviewResult,
   ProcessorRawResult,
 } from "../../CustomImage/ImageProcessor";
-import { ImageFileUri, ImageUrl, GalleryNFT } from "../../CustomImage/types";
+import { GalleryNFT, ImageFileUri, ImageUrl } from "../../CustomImage/types";
 
 type BaseParams = {
   device: Device | null;

@@ -63,7 +63,8 @@ const PreviewPreEdit = ({ navigation, route }: NavigationProps) => {
   const [loadedImage, setLoadedImage] = useState<ImageFileUri | null>(null);
   const { params } = route;
   const { isPictureFromGallery, device } = params;
-  const { nft } = params as GalleryNFT;
+  const nftMetadataParams =
+    "nftMetadataParams" in params ? params.nftMetadataParams : [];
 
   const handleError = useCallback(
     (error: Error) => {
@@ -73,11 +74,8 @@ const PreviewPreEdit = ({ navigation, route }: NavigationProps) => {
     [navigation, device],
   );
 
-  const nftMetadata = useNftMetadata(
-    nft?.contract,
-    nft?.tokenId,
-    nft?.currencyId,
-  );
+  const [contract, tokenId, currencyId] = nftMetadataParams;
+  const nftMetadata = useNftMetadata(contract, tokenId, currencyId);
 
   const { status, metadata } = nftMetadata as NFTResource & {
     metadata: NFTMetadata;
@@ -103,15 +101,20 @@ const PreviewPreEdit = ({ navigation, route }: NavigationProps) => {
     [nftMediaSize, metadata],
   );
 
+  const imageFileUri =
+    "imageFileUri" in params ? params.imageFileUri : undefined;
+  const imageUrl =
+    nftImageUri || ("imageUrl" in params ? params.imageUrl : undefined);
+
   /** LOAD SOURCE IMAGE FROM PARAMS */
   useEffect(() => {
     let dead = false;
-    if ("imageFileUri" in params) {
+    if (imageFileUri) {
       setLoadedImage({
-        imageFileUri: params.imageFileUri,
+        imageFileUri,
       });
-    } else {
-      if (nft && (status === "loading" || status === "queued")) {
+    } else if (imageUrl) {
+      if (status && (status === "loading" || status === "queued")) {
         return () => {
           dead = true;
         };
@@ -133,7 +136,7 @@ const PreviewPreEdit = ({ navigation, route }: NavigationProps) => {
     return () => {
       dead = true;
     };
-  }, [params, setLoadedImage, handleError, nftImageUri]);
+  }, [handleError, imageFileUri, imageUrl, status]);
 
   const [croppedImage, setCroppedImage] = useState<CenteredResult | null>(null);
 
