@@ -10,11 +10,16 @@ import { LiveAppRegistry } from "./types";
 import { LiveAppManifest, Loadable } from "../types";
 
 import api from "./api";
+import { FilterParams } from "../../filters";
 
 const initialState: Loadable<LiveAppRegistry> = {
   isLoading: false,
   value: null,
   error: null,
+};
+
+const initialParams: FilterParams = {
+  branches: ["stable", "soon"],
 };
 
 type LiveAppContextType = {
@@ -30,6 +35,7 @@ export const liveAppContext = createContext<LiveAppContextType>({
 type LiveAppProviderProps = {
   children: React.ReactNode;
   provider: string;
+  branchesParams: { allowDebugApps: boolean; allowExperimentalApps: boolean };
   updateFrequency: number;
 };
 
@@ -52,9 +58,11 @@ export function useRemoteLiveAppContext(): LiveAppContextType {
 export function RemoteLiveAppProvider({
   children,
   provider,
+  branchesParams,
   updateFrequency,
 }: LiveAppProviderProps): JSX.Element {
   const [state, setState] = useState<Loadable<LiveAppRegistry>>(initialState);
+  const { allowExperimentalApps, allowDebugApps } = branchesParams;
 
   const updateManifests = useCallback(async () => {
     setState((currentState) => ({
@@ -63,8 +71,15 @@ export function RemoteLiveAppProvider({
       error: null,
     }));
 
+    const branches = [...(initialParams.branches || [])];
+    allowExperimentalApps && branches.push("experimental");
+    allowDebugApps && branches.push("debug");
+
     try {
-      const allManifests = await api.fetchLiveAppManifests(provider);
+      const allManifests = await api.fetchLiveAppManifests(provider, {
+        branches,
+      });
+
       setState(() => ({
         isLoading: false,
         value: {
@@ -83,7 +98,7 @@ export function RemoteLiveAppProvider({
         error,
       }));
     }
-  }, [provider]);
+  }, [branchesParams, provider]);
 
   const value: LiveAppContextType = useMemo(
     () => ({

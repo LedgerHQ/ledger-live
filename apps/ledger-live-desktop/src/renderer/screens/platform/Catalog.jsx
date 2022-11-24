@@ -5,14 +5,7 @@ import { useSelector, useDispatch } from "react-redux";
 import styled from "styled-components";
 import { useHistory } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import {
-  allowDebugAppsSelector,
-  allowExperimentalAppsSelector,
-  dismissedBannersSelector,
-} from "~/renderer/reducers/settings";
-
-import { filterPlatformApps } from "@ledgerhq/live-common/platform/filters";
-import { getPlatformVersion } from "@ledgerhq/live-common/platform/version";
+import { dismissedBannersSelector } from "~/renderer/reducers/settings";
 
 import type { ThemedComponent } from "~/renderer/styles/StyleProvider";
 
@@ -61,26 +54,7 @@ const PlatformCatalog = () => {
 
   const { state } = useRemoteLiveAppContext();
   const manifests = useMemo(() => (state.value ? state.value.liveAppByIndex : []), [state.value]);
-  const allowDebugApps = useSelector(allowDebugAppsSelector);
-  const allowExperimentalApps = useSelector(allowExperimentalAppsSelector);
 
-  const filteredManifests = useMemo(() => {
-    const branches = ["stable", "soon"];
-
-    if (allowDebugApps) {
-      branches.push("debug");
-    }
-
-    if (allowExperimentalApps) {
-      branches.push("experimental");
-    }
-
-    return filterPlatformApps(Array.from(manifests.values()), {
-      version: getPlatformVersion(),
-      platform: "desktop",
-      branches,
-    });
-  }, [allowDebugApps, allowExperimentalApps, manifests]);
   const dismissedBanners = useSelector(dismissedBannersSelector);
   const isDismissed = dismissedBanners.includes(DAPP_DISCLAIMER_ID);
 
@@ -113,8 +87,8 @@ const PlatformCatalog = () => {
       </Header>
       <CatalogBanner />
       <TwitterBanner />
-      <Grid length={filteredManifests.length}>
-        {filteredManifests.map(manifest => (
+      <Grid length={manifests.length}>
+        {manifests.map(manifest => (
           <GridItem key={manifest.id}>
             <AppCard
               id={`platform-catalog-app-${manifest.id}`}

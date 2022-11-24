@@ -2,6 +2,8 @@ import network from "../../../../network";
 import { getEnv } from "../../../../env";
 import type { LiveAppManifest } from "../../types";
 import mockData from "./mock.json";
+import { FilterParams } from "../../../filters";
+import qs from "qs";
 
 type RemotePlatformAppProvider = {
   value: string;
@@ -33,7 +35,8 @@ export function getProviderURL(
 
 const api = {
   fetchLiveAppManifests: async (
-    provider: string
+    provider: string,
+    params?: FilterParams
   ): Promise<LiveAppManifest[]> => {
     if (getEnv("MOCK")) {
       if (getEnv("MOCK_REMOTE_LIVE_MANIFEST")) {
@@ -44,11 +47,11 @@ const api = {
       }
       return mockData as LiveAppManifest[];
     }
-
     const { data } = await network({
       method: "GET",
-      headers: {
-        Origin: "http://localhost:3000",
+      params,
+      paramsSerializer: (params) => {
+        return qs.stringify(params, { arrayFormat: "repeat" });
       },
       url: getProviderURL(provider),
     });
