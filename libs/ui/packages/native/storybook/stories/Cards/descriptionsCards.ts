@@ -15,7 +15,16 @@ import { CardA } from "@ledgerhq/native-ui"
 
 ### Props 
 \`\`\`ts
-type CardProps = TouchableOpacityProps;
+type Props = {
+  variant?: "purple" | "red";
+  backgroundImage?: string;
+  tag?: string;
+  description?: string;
+  onPress?: () => void;
+  onDismiss?: () => void;
+};
+
+Use the tag <bold>YourText</bold> in description if you want to highlight some text in the card
 
 \`\`\`
 
@@ -26,7 +35,11 @@ type CardProps = TouchableOpacityProps;
 const MyCardA = (): JSX.Element => {
 
   return (
-    <CardA />
+    <CardA
+      variant="purple"
+      tag="Promo"
+      description="Lorem <bold>ipsum</bold> dolor sit amet, consectetur adipiscing elit."
+    />
   );
 };
 \`\`\`
@@ -56,6 +69,8 @@ type CardProps = TouchableOpacityProps & {
   imageUrl?: string;
   onPressDismiss?: () => void;
 };
+
+Use the tag <bold>YourText</bold> in title if you want to highlight some text in the card
 
 \`\`\`
 
