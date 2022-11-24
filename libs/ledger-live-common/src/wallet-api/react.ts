@@ -1,5 +1,6 @@
-import { useCallback, useMemo } from "react";
+import { useCallback, useMemo, useState, useEffect } from "react";
 import { AccountLike } from "@ledgerhq/types-live";
+import { Observable } from "@ledgerhq/wallet-api-server";
 import {
   accountToWalletAPIAccount,
   currencyToWalletAPICurrency,
@@ -104,4 +105,35 @@ export function useListWalletAPICurrencies(): ListWalletAPICurrency {
     },
     [currencies]
   );
+}
+
+export function useGetAccountIds(
+  accounts$: Observable<WalletAPIAccount[]> | undefined
+): Map<string, boolean> | undefined {
+  const [accounts, setAccounts] = useState<WalletAPIAccount[]>([]);
+
+  useEffect(() => {
+    if (!accounts$) {
+      return undefined;
+    }
+
+    const subscription = accounts$.subscribe((walletAccounts) => {
+      setAccounts(walletAccounts);
+    });
+
+    return () => {
+      subscription.unsubscribe();
+    };
+  }, [accounts$]);
+
+  return useMemo(() => {
+    if (!accounts$) {
+      return undefined;
+    }
+
+    return accounts.reduce((accountIds, account) => {
+      accountIds.set(account.id, true);
+      return accountIds;
+    }, new Map());
+  }, [accounts, accounts$]);
 }
