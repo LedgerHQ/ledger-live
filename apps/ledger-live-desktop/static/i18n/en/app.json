@@ -4936,6 +4936,10 @@
       "title": "Sorry, it looks like your device disconnected",
       "description": "Please reconnect and try again."
     },
+    "EConnReset": {
+      "title": "The Ledger application store can't be reached",
+      "description": "Your internet connection may be down or using unusual configuration. Start by verifying if anything is blocking your connection (proxy or firewall). If the problem persists click below for solutions or reach out to our customer support."
+    },
     "EnpointConfig": {
       "title": "Invalid endpoint",
       "description": "Please provide a valid endpoint"
