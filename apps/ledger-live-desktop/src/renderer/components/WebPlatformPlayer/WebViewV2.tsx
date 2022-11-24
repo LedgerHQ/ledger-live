@@ -178,7 +178,7 @@ export function WebView({ manifest, onClose, inputs = {}, config }: Props) {
           setDrawer(
             SelectAccountAndCurrencyDrawer,
             {
-              currencies: currencyList.map(c => c.id),
+              currencies: cryptoCurrencyIds,
               onAccountSelected: (account: Account, parentAccount: Account | undefined) => {
                 setDrawer();
                 tracking.requestAccountSuccess(manifest);
