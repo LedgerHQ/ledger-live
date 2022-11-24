@@ -36,13 +36,7 @@ import { useCountervaluesExport } from "@ledgerhq/live-common/countervalues/reac
 import { pairId } from "@ledgerhq/live-common/countervalues/helpers";
 import { NftMetadataProvider } from "@ledgerhq/live-common/nft/index";
 import { ToastProvider } from "@ledgerhq/live-common/notifications/ToastProvider/index";
-import { GlobalCatalogProvider } from "@ledgerhq/live-common/platform/providers/GlobalCatalogProvider/index";
-import { RampCatalogProvider } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/index";
-import {
-  RemoteLiveAppProvider,
-  useRemoteLiveAppContext,
-} from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
-import { LocalLiveAppProvider } from "@ledgerhq/live-common/platform/providers/LocalLiveAppProvider/index";
+import { useRemoteLiveAppContext } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
 
 import { isEqual } from "lodash";
 import { postOnboardingSelector } from "@ledgerhq/live-common/postOnboarding/reducer";
@@ -104,11 +98,11 @@ import StyleProvider from "./StyleProvider";
 import MarketDataProvider from "./screens/Market/MarketDataProviderWrapper";
 import AdjustProvider from "./components/AdjustProvider";
 import DelayedTrackingProvider from "./components/DelayedTrackingProvider";
-import { useFilteredManifests } from "./screens/Platform/shared";
 import { setWallectConnectUri } from "./actions/walletconnect";
 import PostOnboardingProviderWrapped from "./logic/postOnboarding/PostOnboardingProviderWrapped";
 import { isAcceptedTerms } from "./logic/terms";
 import type { Writeable } from "./types/helpers";
+import PlatformAppProviderWrapper from "./PlatformAppProviderWrapper";
 
 const themes: {
   [key: string]: Theme;
@@ -468,11 +462,6 @@ const getOnboardingLinkingOptions = (acceptedTermsOfUse: boolean) => ({
   },
 });
 
-const platformManifestFilterParams = {
-  private: true,
-  branches: undefined, // will override & having it to undefined makes all branches valid
-};
-
 const DeepLinkingNavigator = ({ children }: { children: React.ReactNode }) => {
   const dispatch = useDispatch();
   const hasCompletedOnboarding = useSelector(hasCompletedOnboardingSelector);
@@ -480,7 +469,8 @@ const DeepLinkingNavigator = ({ children }: { children: React.ReactNode }) => {
   const { state: remoteLiveAppState } = useRemoteLiveAppContext();
   const liveAppProviderInitialized =
     !!remoteLiveAppState.value || !!remoteLiveAppState.error;
-  const filteredManifests = useFilteredManifests(platformManifestFilterParams);
+  const { state } = useRemoteLiveAppContext();
+  const manifests = state?.value?.liveAppByIndex || [];
   // Can be either true, false or null, meaning we don't know yet
   const [userAcceptedTerms, setUserAcceptedTerms] = useState<boolean | null>(
     null,
@@ -548,7 +538,7 @@ const DeepLinkingNavigator = ({ children }: { children: React.ReactNode }) => {
               return getStateFromPath(path, config);
             }
 
-            const manifest = filteredManifests.find(
+            const manifest = manifests.find(
               m => m.id.toLowerCase() === platform.toLowerCase(),
             );
             if (!manifest) return undefined;
@@ -566,7 +556,7 @@ const DeepLinkingNavigator = ({ children }: { children: React.ReactNode }) => {
       wcContext.session.session,
       dispatch,
       liveAppProviderInitialized,
-      filteredManifests,
+      manifests,
       userAcceptedTerms,
     ],
   );
@@ -638,8 +628,6 @@ const DeepLinkingNavigator = ({ children }: { children: React.ReactNode }) => {
   );
 };
 
-const AUTO_UPDATE_DEFAULT_DELAY = 1800 * 1000; // 1800 seconds
-
 export default class Root extends Component<{
   importDataString?: string;
 }> {
@@ -663,7 +651,6 @@ export default class Root extends Component<{
 
   render() {
     const importDataString = __DEV__ ? this.props.importDataString : "";
-    const provider = __DEV__ ? "staging" : "production";
     return (
       <RebootProvider onRebootStart={this.onRebootStart}>
         <LedgerStoreProvider onInitFinished={this.onInitFinished}>
@@ -676,71 +663,50 @@ export default class Root extends Component<{
                 <DelayedTrackingProvider />
                 <AnalyticsProvider store={store}>
                   <HookNotifications />
-                  <WalletConnectProvider>
-                    <RemoteLiveAppProvider
-                      provider={provider}
-                      updateFrequency={AUTO_UPDATE_DEFAULT_DELAY}
-                    >
-                      <LocalLiveAppProvider>
-                        <GlobalCatalogProvider
-                          provider={provider}
-                          updateFrequency={AUTO_UPDATE_DEFAULT_DELAY}
-                        >
-                          <RampCatalogProvider
-                            provider={provider}
-                            updateFrequency={AUTO_UPDATE_DEFAULT_DELAY}
-                          >
-                            <FirebaseRemoteConfigProvider>
-                              <FirebaseFeatureFlagsProvider>
-                                <SafeAreaProvider>
-                                  <DeepLinkingNavigator>
-                                    <StyledStatusBar />
-                                    <NavBarColorHandler />
-                                    <AuthPass>
-                                      <I18nextProvider i18n={i18n}>
-                                        <LocaleProvider>
-                                          <BridgeSyncProvider>
-                                            <CounterValuesProvider
-                                              initialState={
-                                                initialCountervalues
-                                              }
-                                            >
-                                              <ButtonUseTouchable.Provider
-                                                value={true}
-                                              >
-                                                <OnboardingContextProvider>
-                                                  <PostOnboardingProviderWrapped>
-                                                    <ToastProvider>
-                                                      <NotificationsProvider>
-                                                        <SnackbarContainer />
-                                                        <NftMetadataProvider>
-                                                          <MarketDataProvider>
-                                                            <App
-                                                              importDataString={
-                                                                importDataString
-                                                              }
-                                                            />
-                                                          </MarketDataProvider>
-                                                        </NftMetadataProvider>
-                                                      </NotificationsProvider>
-                                                    </ToastProvider>
-                                                  </PostOnboardingProviderWrapped>
-                                                </OnboardingContextProvider>
-                                              </ButtonUseTouchable.Provider>
-                                            </CounterValuesProvider>
-                                          </BridgeSyncProvider>
-                                        </LocaleProvider>
-                                      </I18nextProvider>
-                                    </AuthPass>
-                                  </DeepLinkingNavigator>
-                                </SafeAreaProvider>
-                              </FirebaseFeatureFlagsProvider>
-                            </FirebaseRemoteConfigProvider>
-                          </RampCatalogProvider>
-                        </GlobalCatalogProvider>
-                      </LocalLiveAppProvider>
-                    </RemoteLiveAppProvider>
-                  </WalletConnectProvider>
+                  <PlatformAppProviderWrapper>
+                    <FirebaseRemoteConfigProvider>
+                      <FirebaseFeatureFlagsProvider>
+                        <SafeAreaProvider>
+                          <DeepLinkingNavigator>
+                            <StyledStatusBar />
+                            <NavBarColorHandler />
+                            <AuthPass>
+                              <I18nextProvider i18n={i18n}>
+                                <LocaleProvider>
+                                  <BridgeSyncProvider>
+                                    <CounterValuesProvider
+                                      initialState={initialCountervalues}
+                                    >
+                                      <ButtonUseTouchable.Provider value={true}>
+                                        <OnboardingContextProvider>
+                                          <PostOnboardingProviderWrapped>
+                                            <ToastProvider>
+                                              <NotificationsProvider>
+                                                <SnackbarContainer />
+                                                <NftMetadataProvider>
+                                                  <MarketDataProvider>
+                                                    <App
+                                                      importDataString={
+                                                        importDataString
+                                                      }
+                                                    />
+                                                  </MarketDataProvider>
+                                                </NftMetadataProvider>
+                                              </NotificationsProvider>
+                                            </ToastProvider>
+                                          </PostOnboardingProviderWrapped>
+                                        </OnboardingContextProvider>
+                                      </ButtonUseTouchable.Provider>
+                                    </CounterValuesProvider>
+                                  </BridgeSyncProvider>
+                                </LocaleProvider>
+                              </I18nextProvider>
+                            </AuthPass>
+                          </DeepLinkingNavigator>
+                        </SafeAreaProvider>
+                      </FirebaseFeatureFlagsProvider>
+                    </FirebaseRemoteConfigProvider>
+                  </PlatformAppProviderWrapper>
                 </AnalyticsProvider>
               </>
             ) : (
