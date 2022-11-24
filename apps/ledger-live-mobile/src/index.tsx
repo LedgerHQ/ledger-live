@@ -321,6 +321,15 @@ const linkingOptions = {
             },
           },
 
+          [NavigatorName.ClaimNft]: {
+            screens: {
+              /**
+               * ie: "ledgerlive://linkdrop-nft-claim/qr-scanning" will redirect to the QR scanning page
+               */
+              [ScreenName.ClaimNftQrScan]: "linkdrop-nft-claim/qr-scanning",
+            },
+          },
+
           /**
            * @params ?platform: string
            * ie: "ledgerlive://discover/paraswap?theme=light" will open the catalog and the paraswap dapp with a light theme as parameter
