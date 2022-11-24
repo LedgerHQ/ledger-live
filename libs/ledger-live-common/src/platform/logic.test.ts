@@ -192,9 +192,9 @@ describe("completeExchangeLogic", () => {
         provider: "provider",
         exchange: {
           fromAccount,
-          fromParentAccount: null,
+          fromParentAccount: undefined,
           toAccount: undefined,
-          toParentAccount: null,
+          toParentAccount: undefined,
         },
         transaction: expectedTransaction,
         binaryPayload: "binaryPayload",
