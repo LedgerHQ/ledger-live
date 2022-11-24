@@ -100,7 +100,7 @@ export const urls = {
       },
       cic: {
         main: "https://criptointercambio.com/",
-        support: "mailto:support@criptointercambio.com",
+        support: "https://criptointercambio.com/en/about",
         tos: "https://criptointercambio.com/terms-of-use",
       },
       wyre: {
