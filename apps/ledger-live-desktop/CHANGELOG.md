@@ -1,5 +1,18 @@
 # ledger-live-desktop
 
+## 2.50.0-nightly.13
+
+### Minor Changes
+
+- [#1910](https://github.com/LedgerHQ/ledger-live/pull/1910) [`7d1458a150`](https://github.com/LedgerHQ/ledger-live/commit/7d1458a15007ca50348bba54c2f9e26b34e7560e) Thanks [@henrily-ledger](https://github.com/henrily-ledger)! - change label send max to use max for delegation flow
+
+### Patch Changes
+
+- [#1930](https://github.com/LedgerHQ/ledger-live/pull/1930) [`390c1f2765`](https://github.com/LedgerHQ/ledger-live/commit/390c1f27653e2707364c89e6cc6f0f8bfafcd9d6) Thanks [@dreis-ledger](https://github.com/dreis-ledger)! - Add lang query parameter when navigating to smart routing
+
+- Updated dependencies [[`70f00ec916`](https://github.com/LedgerHQ/ledger-live/commit/70f00ec91629c917be13c6937e14ebc7201b231f), [`f22d46a006`](https://github.com/LedgerHQ/ledger-live/commit/f22d46a006adc630ccb087808c2290e3ef65cea3)]:
+  - @ledgerhq/live-common@27.8.0-nightly.0
+
 ## 2.50.0-nightly.12
 
 ### Minor Changes
