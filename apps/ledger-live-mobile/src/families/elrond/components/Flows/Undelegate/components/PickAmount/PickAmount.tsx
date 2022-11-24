@@ -16,6 +16,12 @@ import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { useTheme } from "styled-components/native";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 
+import type {
+  NativeSyntheticEvent,
+  TextInputFocusEventData,
+} from "react-native";
+import type { PickAmountPropsType, RatioType } from "./types";
+
 import { localeSelector } from "../../../../../../../reducers/settings";
 import { ScreenName } from "../../../../../../../const";
 import Button from "../../../../../../../components/Button";
@@ -26,8 +32,6 @@ import Check from "../../../../../../../icons/Check";
 import KeyboardView from "../../../../../../../components/KeyboardView";
 
 import { MIN_DELEGATION_AMOUNT } from "../../../../../constants";
-
-import type { PickAmountPropsType } from "./types";
 
 import styles from "./styles";
 
@@ -63,7 +67,7 @@ const PickAmount = (props: PickAmountPropsType) => {
    * Created a memoized list of all the ratios and expose the calculated value based on each percentage.
    */
 
-  const ratios = useMemo(
+  const ratios = useMemo<RatioType[]>(
     () =>
       [0.25, 0.5, 0.75, 1].map(ratio => ({
         label: `${ratio * 100}%`,
@@ -125,6 +129,33 @@ const PickAmount = (props: PickAmountPropsType) => {
   ];
 
   /*
+   * Fix the input issue on focus by moving the cursor at the beginning of the long amount.
+   */
+
+  const onInputFocus = useCallback(
+    (
+      focused: boolean,
+      event: NativeSyntheticEvent<TextInputFocusEventData> | undefined,
+    ) => {
+      if (focused && event) {
+        event.currentTarget.setNativeProps({
+          selection: { start: 0, end: 0 },
+        });
+      }
+    },
+    [],
+  );
+
+  /*
+   * Handle the ration selection callback.
+   */
+
+  const onRatioPress = useCallback((ratio: RatioType) => {
+    Keyboard.dismiss();
+    updateValue(ratio.value);
+  }, []);
+
+  /*
    * Callback running when changing the screen to select the device, passing along the needed data.
    */
 
@@ -169,6 +200,7 @@ const PickAmount = (props: PickAmountPropsType) => {
                 onChange={setValue}
                 inputStyle={styles.inputStyle}
                 hasError={hasErrors}
+                onFocus={onInputFocus}
               />
 
               <View style={styles.ratioButtonContainer}>
@@ -186,10 +218,7 @@ const PickAmount = (props: PickAmountPropsType) => {
                           : colors.neutral.c60,
                       },
                     ]}
-                    onPress={() => {
-                      Keyboard.dismiss();
-                      updateValue(ratio.value);
-                    }}
+                    onPress={() => onRatioPress(ratio)}
                   >
                     <LText
                       style={styles.ratioLabel}

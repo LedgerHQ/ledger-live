@@ -1,5 +1,3 @@
-import type { ElrondAccount } from "@ledgerhq/live-common/families/elrond/types";
-
 import React from "react";
 import { BigNumber } from "bignumber.js";
 import { randomizeProviders } from "@ledgerhq/live-common/families/elrond/helpers/randomizeProviders";
@@ -8,8 +6,10 @@ import { denominate } from "@ledgerhq/live-common/families/elrond/helpers/denomi
 import { Icons } from "@ledgerhq/native-ui";
 import { Trans } from "react-i18next";
 
+import type { ElrondAccount } from "@ledgerhq/live-common/families/elrond/types";
+import type { ActionButtonEvent } from "../../components/FabActions";
+
 import { NavigatorName, ScreenName } from "../../const";
-import { ActionButtonEvent } from "../../components/FabActions";
 
 /*
  * Declare the types for the properties and return payload.
@@ -47,6 +47,14 @@ const getActions = (props: getActionsType): getActionsReturnType => {
       : ScreenName.ElrondDelegationValidator;
 
   /*
+   * Return an empty array if "elrondResources" doesn't exist.
+   */
+
+  if (!account.elrondResources) {
+    return [];
+  }
+
+  /*
    * Return the array of actions.
    */
 
@@ -64,6 +72,4 @@ const getActions = (props: getActionsType): getActionsReturnType => {
   ];
 };
 
-export default {
-  getActions,
-};
+export default { getActions };

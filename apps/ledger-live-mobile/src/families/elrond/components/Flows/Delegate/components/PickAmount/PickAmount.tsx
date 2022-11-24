@@ -17,7 +17,11 @@ import { useTheme } from "styled-components/native";
 import estimateMaxSpendable from "@ledgerhq/live-common/families/elrond/js-estimateMaxSpendable";
 
 import type { Transaction } from "@ledgerhq/live-common/families/elrond/types";
-import type { PickAmountPropsType } from "./types";
+import type {
+  NativeSyntheticEvent,
+  TextInputFocusEventData,
+} from "react-native";
+import type { PickAmountPropsType, RatioType } from "./types";
 
 import { localeSelector } from "../../../../../../../reducers/settings";
 import { ScreenName } from "../../../../../../../const";
@@ -70,10 +74,37 @@ const PickAmount = (props: PickAmountPropsType) => {
   }, [transaction, account]);
 
   /*
+   * Fix the input issue on focus by moving the cursor at the beginning of the long amount.
+   */
+
+  const onInputFocus = useCallback(
+    (
+      focused: boolean,
+      event: NativeSyntheticEvent<TextInputFocusEventData> | undefined,
+    ) => {
+      if (focused && event) {
+        event.currentTarget.setNativeProps({
+          selection: { start: 0, end: 0 },
+        });
+      }
+    },
+    [],
+  );
+
+  /*
+   * Handle the ration selection callback.
+   */
+
+  const onRatioPress = useCallback((ratio: RatioType) => {
+    Keyboard.dismiss();
+    setAmount(ratio.value);
+  }, []);
+
+  /*
    * Created a memoized list of all the ratios and expose the calculated value based on each percentage.
    */
 
-  const ratios = useMemo(
+  const ratios = useMemo<RatioType[]>(
     () =>
       [0.25, 0.5, 0.75, 1].map(ratio => ({
         label: `${ratio * 100}%`,
@@ -92,7 +123,7 @@ const PickAmount = (props: PickAmountPropsType) => {
   );
 
   /*
-   * Check if the assets chosen for delegation are below the minimum required.
+   * Check if the assets chosen for delegation are below the minimum required. If zero, return false, since no amount was selected.
    */
 
   const delegationBelowMinimum = useMemo(() => {
@@ -159,12 +190,14 @@ const PickAmount = (props: PickAmountPropsType) => {
                 onChange={setAmount}
                 inputStyle={styles.inputStyle}
                 hasError={delegationBelowMinimum || delegationAboveMaximum}
+                onFocus={onInputFocus}
               />
 
               <View style={styles.ratioButtonContainer}>
                 {ratios.map(ratio => (
                   <TouchableOpacity
                     key={ratio.label}
+                    onPress={() => onRatioPress(ratio)}
                     style={[
                       styles.ratioButton,
                       {
@@ -176,10 +209,6 @@ const PickAmount = (props: PickAmountPropsType) => {
                           : colors.neutral.c60,
                       },
                     ]}
-                    onPress={() => {
-                      Keyboard.dismiss();
-                      setAmount(ratio.value);
-                    }}
                   >
                     <LText
                       style={styles.ratioLabel}

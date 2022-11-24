@@ -97,6 +97,20 @@ const Delegations = (props: DelegationsPropsType) => {
   );
 
   /*
+   * Filter the delegations that either have available claimable rewards or have delegated stake.
+   */
+
+  const items = useMemo(
+    () =>
+      delegations.filter(
+        delegation =>
+          new BigNumber(delegation.userActiveStake).isGreaterThan(0) ||
+          new BigNumber(delegation.claimableRewards).isGreaterThan(0),
+      ),
+    [],
+  );
+
+  /*
    * Return an introductory panel to delegations if the user hasn't previously delegated.
    */
 
@@ -129,7 +143,7 @@ const Delegations = (props: DelegationsPropsType) => {
         }
       />
 
-      {delegations.map((delegation, index) => (
+      {items.map((delegation, index) => (
         <Delegation
           key={`delegation-${index}`}
           last={delegations.length === index + 1}

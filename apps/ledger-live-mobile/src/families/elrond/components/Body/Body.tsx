@@ -4,12 +4,11 @@ import { BigNumber } from "bignumber.js";
 import { randomizeProviders } from "@ledgerhq/live-common/families/elrond/helpers/randomizeProviders";
 import { denominate } from "@ledgerhq/live-common/families/elrond/helpers/denominate";
 
-import type { AccountLike } from "@ledgerhq/types-live";
 import type {
   ElrondProvider,
   ElrondAccount,
 } from "@ledgerhq/live-common/families/elrond/types";
-import type { BodyPropsType } from "./types";
+import type { BodyPropsType, WithBodyPropsType } from "./types";
 import type { DrawerPropsType } from "./components/Drawer/types";
 import type { DelegationType } from "../../types";
 
@@ -25,12 +24,22 @@ import styles from "./styles";
  */
 
 const withBody =
-  (Component: FC<BodyPropsType>) =>
-  ({ account }: { account: AccountLike }) => {
-    const elrondAccount = account as ElrondAccount;
-    return elrondAccount.elrondResources ? (
-      <Component account={elrondAccount} />
-    ) : null;
+  (Component: FC<BodyPropsType>) => (props: WithBodyPropsType) => {
+    const account = props.account as ElrondAccount;
+
+    /*
+     * Return nothing if there isn't any data for the "elrondResources" key.
+     */
+
+    if (!account.elrondResources) {
+      return null;
+    }
+
+    /*
+     * Return the rendered wrapped component and pass along the account.
+     */
+
+    return <Component account={account} />;
   };
 
 /*

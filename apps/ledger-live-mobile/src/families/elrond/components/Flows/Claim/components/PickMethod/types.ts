@@ -1,8 +1,8 @@
-import { ReactNode } from "react";
+import type { ReactNode } from "react";
 
-import { StackNavigatorProps } from "../../../../../../../components/RootNavigator/types/helpers";
-import { ElrondClaimRewardsFlowParamList } from "../../types";
-import { ScreenName } from "../../../../../../../const";
+import type { StackNavigatorProps } from "../../../../../../../components/RootNavigator/types/helpers";
+import type { ElrondClaimRewardsFlowParamList } from "../../types";
+import type { ScreenName } from "../../../../../../../const";
 
 export type PickMethodPropsType = StackNavigatorProps<
   ElrondClaimRewardsFlowParamList,
