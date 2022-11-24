@@ -6,7 +6,10 @@ import React, {
   useState,
 } from "react";
 import { Button, Flex, InfiniteLoader, Text } from "@ledgerhq/native-ui";
-import { ImagePreviewError } from "@ledgerhq/live-common/customImage/errors";
+import {
+  ImageMetadataLoadingError,
+  ImagePreviewError,
+} from "@ledgerhq/live-common/customImage/errors";
 import { NativeSyntheticEvent, ImageErrorEventData } from "react-native";
 import { useTranslation } from "react-i18next";
 import {
@@ -63,8 +66,12 @@ const PreviewPreEdit = ({ navigation, route }: NavigationProps) => {
   const [loadedImage, setLoadedImage] = useState<ImageFileUri | null>(null);
   const { params } = route;
   const { isPictureFromGallery, device } = params;
-  const nftMetadataParams =
-    "nftMetadataParams" in params ? params.nftMetadataParams : [];
+
+  const isNftMetadata = "nftMetadataParams" in params;
+  const isImageUrl = "imageUrl" in params;
+  const isImageFileUri = "imageFileUri" in params;
+
+  const nftMetadataParams = isNftMetadata ? params.nftMetadataParams : [];
 
   const handleError = useCallback(
     (error: Error) => {
@@ -101,10 +108,18 @@ const PreviewPreEdit = ({ navigation, route }: NavigationProps) => {
     [nftMediaSize, metadata],
   );
 
-  const imageFileUri =
-    "imageFileUri" in params ? params.imageFileUri : undefined;
-  const imageUrl =
-    nftImageUri || ("imageUrl" in params ? params.imageUrl : undefined);
+  const imageFileUri = isImageFileUri ? params.imageFileUri : undefined;
+  const imageUrl = nftImageUri || (isImageUrl ? params.imageUrl : undefined);
+
+  useEffect(() => {
+    if (isNftMetadata && ["nodata", "error"].includes(status)) {
+      console.error("Nft metadata loading status", status);
+      navigation.navigate(ScreenName.CustomImageErrorScreen, {
+        device,
+        error: new ImageMetadataLoadingError(status),
+      });
+    }
+  }, [device, isNftMetadata, navigation, status]);
 
   /** LOAD SOURCE IMAGE FROM PARAMS */
   useEffect(() => {
@@ -114,12 +129,11 @@ const PreviewPreEdit = ({ navigation, route }: NavigationProps) => {
         imageFileUri,
       });
     } else if (imageUrl) {
-      if (status && (status === "loading" || status === "queued")) {
+      if (["loading", "queued"].includes(status)) {
         return () => {
           dead = true;
         };
       }
-      const imageUrl = nftImageUri || (params as ImageUrl).imageUrl;
       const { resultPromise, cancel } = downloadImageToFile({ imageUrl });
       resultPromise
         .then(res => {
