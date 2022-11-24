@@ -32,6 +32,7 @@ import {
 import {
   encodeAccountIdWithTokenAccountAddress,
   MAX_MEMO_LENGTH,
+  SOLANA_DUST,
 } from "./logic";
 import createTransaction from "./js-createTransaction";
 import { compact } from "lodash/fp";
@@ -756,11 +757,12 @@ function stakingTests(): TransactionTestSpec[] {
       expectedStatus: {
         amount: testOnChainData.fundedSenderBalance
           .minus(fees(1))
-          .minus(testOnChainData.fees.stakeAccountRentExempt),
+          .minus(testOnChainData.fees.stakeAccountRentExempt)
+          .minus(SOLANA_DUST),
         estimatedFees: fees(1).plus(
           testOnChainData.fees.stakeAccountRentExempt
         ),
-        totalSpent: testOnChainData.fundedSenderBalance,
+        totalSpent: testOnChainData.fundedSenderBalance.minus(SOLANA_DUST),
         errors: {},
       },
     },

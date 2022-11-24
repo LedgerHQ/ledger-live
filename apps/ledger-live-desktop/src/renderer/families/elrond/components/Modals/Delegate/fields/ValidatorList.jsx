@@ -2,9 +2,7 @@
 
 import React, { useState, useMemo, Fragment, useCallback } from "react";
 import { getAccountUnit } from "@ledgerhq/live-common/account/index";
-import { nominate } from "@ledgerhq/live-common/families/elrond/helpers/nominate";
 import { Trans } from "react-i18next";
-import { BigNumber } from "bignumber.js";
 import styled from "styled-components";
 
 import Box from "~/renderer/components/Box";
@@ -13,13 +11,14 @@ import ScrollLoadingList from "~/renderer/components/ScrollLoadingList";
 import IconAngleDown from "~/renderer/icons/AngleDown";
 import ValidatorSearchInput from "~/renderer/components/Delegation/ValidatorSearchInput";
 
-import { constants } from "~/renderer/families/elrond/constants";
-
 import ValidatorItem from "./ValidatorItem";
+
+import { ELROND_LEDGER_VALIDATOR_ADDRESS } from "@ledgerhq/live-common/families/elrond/constants";
+import { useSearchValidators } from "@ledgerhq/live-common/families/elrond/react";
 
 import type { Account } from "@ledgerhq/types-live";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
-import type { ValidatorType } from "~/renderer/families/elrond/types";
+import type { ElrondProvider } from "@ledgerhq/live-common/families/elrond/types";
 import type { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import type { ValidatorItemType } from "./ValidatorItem";
 
@@ -47,10 +46,9 @@ const SeeAllButton: ThemedComponent<{ expanded: boolean }> = styled.div`
   }
 `;
 
-type EnhancedValidator = ValidatorType & { disabled: boolean };
 type Props = {
   account: Account,
-  validators: Array<ValidatorType>,
+  validators: Array<ElrondProvider>,
   onSelectValidator: (recipient: string) => void,
   transaction: Transaction,
 };
@@ -62,51 +60,23 @@ const ValidatorList = (props: Props) => {
   const [search, setSearch] = useState("");
 
   const unit = useMemo(() => getAccountUnit(account), [account]);
-  const providers = useMemo(() => {
-    const needle = search.toLowerCase();
-
-    // Filter the providers such that they'll match the possible search criteria.
-    const filter = (validator: ValidatorType) => {
-      const [foundByContract, foundByName]: Array<boolean> = [
-        validator.contract.toLowerCase().includes(needle),
-        validator.identity.name ? validator.identity.name.toLowerCase().includes(needle) : false,
-      ];
-
-      return foundByName || foundByContract;
-    };
-
-    // Map the providers such that they'll be assigned the "disabled" key if conditions are met.
-    const disable = (validator: ValidatorType): EnhancedValidator => {
-      const [alpha, beta] = [validator.maxDelegationCap, validator.totalActiveStake];
-      const delegative = alpha !== "0" && validator.withDelegationCap;
-      const difference = new BigNumber(alpha).minus(beta);
-      const minimum = nominate("1");
-
-      return Object.assign(validator, {
-        disabled: delegative && difference.isLessThan(minimum),
-      });
-    };
-
-    // Sort the providers such that Figment by Ledger will always be first.
-    const sort = (validator: ValidatorType) => (validator.contract === constants.figment ? -1 : 1);
-    const items = validators.sort(sort).map(disable);
-
-    return search ? items.filter(filter) : items;
-  }, [validators, search]);
+  const providers = useSearchValidators(validators, search);
 
   const defaultValidator = useMemo(
     () =>
       providers.filter(provider =>
         transaction.recipient
           ? provider.contract === transaction.recipient
-          : provider.contract === constants.figment,
+          : provider.contract === ELROND_LEDGER_VALIDATOR_ADDRESS,
       ),
     [providers, transaction.recipient],
   );
 
   const isActiveValidator = useCallback(
     (contract: string) =>
-      transaction.recipient ? contract === transaction.recipient : contract === constants.figment,
+      transaction.recipient
+        ? contract === transaction.recipient
+        : contract === ELROND_LEDGER_VALIDATOR_ADDRESS,
     [transaction.recipient],
   );
 

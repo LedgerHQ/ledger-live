@@ -10,19 +10,17 @@ import Label from "~/renderer/components/Label";
 import Select from "~/renderer/components/Select";
 import Text from "~/renderer/components/Text";
 
-import { constants } from "~/renderer/families/elrond/constants";
-
 import type { TFunction } from "react-i18next";
 import type { AccountBridge } from "@ledgerhq/types-live";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
-import type { UnbondingType, ValidatorType } from "~/renderer/families/elrond/types";
+import type { UnbondingType, ElrondProvider } from "~/renderer/families/elrond/types";
 import type { Option } from "~/renderer/components/Select";
 
 type NoOptionsMessageCallbackType = { inputValue: string };
 type EnhancedUnbonding = UnbondingType & { disabled: Boolean };
 
 interface Props {
-  onChange: (validator: ValidatorType) => void;
+  onChange: (validator: ElrondProvider) => void;
   onUpdateTransaction: (transaction: Transaction) => void;
   bridge: AccountBridge<Transaction>;
   transaction: Transaction;
@@ -47,7 +45,7 @@ const renderItem = (item: Option) => {
       </Box>
 
       <Text ff="Inter|Regular">
-        {balance} {constants.egldLabel}
+        {balance} {"EGLD"} {/* FIXME Should be getAccountUnit(account).code */}
       </Text>
     </Box>
   );
@@ -67,7 +65,7 @@ const DelegationSelectorField = (props: Props) => {
 
   const options = useMemo(
     () =>
-      unbondings.reduce(
+      unbondings?.reduce(
         (total: Array<EnhancedUnbonding>, unbonding: UnbondingType) => {
           const current = Object.assign(unbonding, {
             disabled: unbonding.seconds > 0,
@@ -79,7 +77,7 @@ const DelegationSelectorField = (props: Props) => {
         },
 
         [],
-      ),
+      ) || [],
     [unbondings, amount, contract],
   );
 

@@ -12,10 +12,9 @@ import { reconciliateSubAccounts } from "./js-reconciliation";
 import { FEES_BALANCE } from "./constants";
 import { TokenAccount } from "@ledgerhq/types-live";
 import { computeDelegationBalance } from "./logic";
-import { getProviders } from "./api/sdk";
 import BigNumber from "bignumber.js";
 
-const getAccountShape: GetAccountShape = async (info) => {
+const getAccountShape: GetAccountShape = async (info, syncConfig) => {
   const { address, initialAccount, currency, derivationMode } = info;
   const accountId = encodeAccountId({
     type: "js",
@@ -46,9 +45,7 @@ const getAccountShape: GetAccountShape = async (info) => {
       accountId: accountId,
       accountAddress: address,
       existingAccount: initialAccount,
-      syncConfig: {
-        paginationConfig: {},
-      },
+      syncConfig,
     });
 
     if (tokenAccounts) {
@@ -56,11 +53,9 @@ const getAccountShape: GetAccountShape = async (info) => {
     }
   }
 
-  const providers = await getProviders();
-
   const delegationBalance = computeDelegationBalance(delegations);
 
-  const shape = {
+  return {
     id: accountId,
     balance: balance.plus(delegationBalance),
     spendableBalance: balance.gt(FEES_BALANCE)
@@ -71,13 +66,10 @@ const getAccountShape: GetAccountShape = async (info) => {
     elrondResources: {
       nonce,
       delegations,
-      providers,
     },
     subAccounts,
     operations,
   };
-
-  return shape;
 };
 
 export const scanAccounts = makeScanAccounts({ getAccountShape });

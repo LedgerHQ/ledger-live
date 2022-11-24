@@ -3,7 +3,7 @@
 import type { TFunction } from "react-i18next";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import type { Account, Transaction, TransactionStatus, Operation } from "@ledgerhq/types-live";
-import type { DelegationType, ValidatorType } from "~/renderer/families/elrond/types";
+import type { DelegationType, ElrondProvider } from "~/renderer/families/elrond/types";
 
 import type { Step } from "~/renderer/components/Stepper";
 
@@ -29,7 +29,7 @@ export type StepProps = {
   onOperationBroadcasted: (operation: Operation) => void,
   setSigned: (assigned: boolean) => void,
   bridgePending: boolean,
-  validators: Array<ValidatorType>,
+  validators: Array<ElrondProvider>,
   delegations: Array<DelegationType>,
 };
 

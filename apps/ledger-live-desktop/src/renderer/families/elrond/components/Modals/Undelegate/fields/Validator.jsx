@@ -10,13 +10,11 @@ import Label from "~/renderer/components/Label";
 import Select from "~/renderer/components/Select";
 import Text from "~/renderer/components/Text";
 
-import { constants } from "~/renderer/families/elrond/constants";
-
-import type { DelegationType, ValidatorType } from "~/renderer/families/elrond/types";
+import type { DelegationType, ElrondProvider } from "~/renderer/families/elrond/types";
 import type { Option } from "~/renderer/components/Select";
 
 type NoOptionsMessageCallbackType = { inputValue: string };
-type OptionType = ValidatorType & {
+type OptionType = ElrondProvider & {
   delegation: DelegationType | undefined,
 };
 
@@ -45,7 +43,7 @@ const Item = (item: Option) => {
       </Box>
 
       <Text ff="Inter|Regular">
-        {amount} {constants.egldLabel}
+        {amount} {"EGLD"} {/* FIXME Should be getAccountUnit(account).code */}
       </Text>
     </Box>
   );

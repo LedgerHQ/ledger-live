@@ -2,9 +2,10 @@
 
 import React from "react";
 import { Trans } from "react-i18next";
+import styled, { withTheme } from "styled-components";
 import { denominate } from "@ledgerhq/live-common/families/elrond/helpers/denominate";
 import { SyncOneAccountOnMount } from "@ledgerhq/live-common/bridge/react/index";
-import styled, { withTheme } from "styled-components";
+import { getAccountUnit } from "@ledgerhq/live-common/account/index";
 
 import TrackPage from "~/renderer/analytics/TrackPage";
 import Box from "~/renderer/components/Box";
@@ -16,9 +17,8 @@ import BroadcastErrorDisclaimer from "~/renderer/components/BroadcastErrorDiscla
 
 import { OperationDetails } from "~/renderer/drawers/OperationDetails";
 import { setDrawer } from "~/renderer/drawers/Provider";
-import { constants } from "~/renderer/families/elrond/constants";
 
-import type { ValidatorType } from "~/renderer/families/elrond/types";
+import type { ElrondProvider } from "@ledgerhq/live-common/families/elrond/types";
 import type { StepProps } from "../types";
 
 const Container = styled(Box).attrs(() => ({
@@ -30,17 +30,17 @@ const Container = styled(Box).attrs(() => ({
 `;
 
 const StepConfirmation = (props: StepProps) => {
-  const { optimisticOperation, error, signed, transaction, validators } = props;
+  const { optimisticOperation, error, signed, account, transaction, validators } = props;
 
   if (optimisticOperation) {
     const provider: string | undefined = transaction && transaction.recipient;
-    const v: ValidatorType | undefined =
+    const v: ElrondProvider | undefined =
       provider && validators.find(validator => validator.contract === provider);
 
     const amount = `${denominate({
       input: String(transaction.amount),
       decimals: 4,
-    })} ${constants.egldLabel}`;
+    })} ${getAccountUnit(account).code || "EGLD"}`;
 
     const titleKey = transaction?.mode === "claimRewards" ? "title" : "titleCompound";
     const textKey = transaction?.mode === "claimRewards" ? "text" : "textCompound";

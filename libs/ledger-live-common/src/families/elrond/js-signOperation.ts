@@ -10,7 +10,7 @@ import type {
 import { withDevice } from "../../hw/deviceAccess";
 import { encodeOperationId } from "../../operation";
 import Elrond from "./hw-app-elrond";
-import { buildTransaction } from "./js-buildTransaction";
+import { buildTransactionToSign } from "./js-buildTransaction";
 import { CHAIN_ID } from "./constants";
 import {
   Account,
@@ -21,6 +21,7 @@ import {
 } from "@ledgerhq/types-live";
 import { BinaryUtils } from "./utils/binary.utils";
 import { decodeTokenAccountId } from "../../account";
+import { extractTokenId } from "./logic";
 
 function getOptimisticOperationType(
   transactionMode: ElrondTransactionMode
@@ -168,7 +169,7 @@ const signOperation = ({
           if (token?.name && token.id && token.ledgerSignature) {
             await elrond.provideESDTInfo(
               token.name,
-              token.id,
+              extractTokenId(token.id),
               token?.units[0].magnitude,
               CHAIN_ID,
               token.ledgerSignature
@@ -176,9 +177,8 @@ const signOperation = ({
           }
         }
 
-        const unsignedTx: string = await buildTransaction(
+        const unsignedTx: string = await buildTransactionToSign(
           account,
-          tokenAccount,
           transaction
         );
 

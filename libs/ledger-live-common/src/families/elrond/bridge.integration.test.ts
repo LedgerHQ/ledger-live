@@ -13,8 +13,8 @@ const TEST_ADDRESS =
   "erd1vgfp3g7azqjx4wsmtt7067m0l62v3psmqzr24j6xvywj2tlz0gesvyzsq2";
 
 const elrond: CurrenciesData<Transaction> = {
-  FIXME_ignoreAccountFields: [
-    "elrondResources.providers", // They are always movings
+  FIXME_ignorePreloadFields: [
+    "validators", // They are always changing
   ],
   scanAccounts: [
     {
@@ -54,7 +54,7 @@ const elrond: CurrenciesData<Transaction> = {
             balance: "100",
             spendableBalance: "100",
             type: "TokenAccountRaw",
-            tokenId: "4d45582d343535633537",
+            tokenId: "elrond/esdt/4d45582d343535633537",
             parentId: `js:2:elrond:${TEST_ADDRESS}:`,
             operations: [],
             pendingOperations: [],

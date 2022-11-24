@@ -10,24 +10,22 @@ import Label from "~/renderer/components/Label";
 import Select from "~/renderer/components/Select";
 import Text from "~/renderer/components/Text";
 
-import { constants } from "~/renderer/families/elrond/constants";
-
 import type { TFunction } from "react-i18next";
 import type { Transaction, AccountBridge } from "@ledgerhq/types-live";
-import type { ValidatorType, DelegationType } from "~/renderer/families/elrond/types";
+import type { ElrondProvider, DelegationType } from "~/renderer/families/elrond/types";
 import type { Option } from "~/renderer/components/Select";
 
 type NoOptionsMessageCallbackType = { inputValue: string };
-type OptionType = ValidatorType & {
+type OptionType = ElrondProvider & {
   delegation: DelegationType | undefined,
 };
 
 interface DelegationSelectorFieldType {
-  validators: Array<ValidatorType>;
+  validators: Array<ElrondProvider>;
   delegations: Array<DelegationType>;
   contract: string;
   transaction: Transaction;
-  onChange: (validator: ValidatorType) => void;
+  onChange: (validator: ElrondProvider) => void;
   onUpdateTransaction: (transaction: Transaction) => void;
   t: TFunction;
   bridge: AccountBridge<Transaction>;
@@ -48,7 +46,7 @@ const renderItem = (item: Option) => {
       </Box>
 
       <Text ff="Inter|Regular">
-        {balance} {constants.egldLabel}
+        {balance} {"EGLD"} {/* FIXME Should be getAccountUnit(account).code */}
       </Text>
     </Box>
   );

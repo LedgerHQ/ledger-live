@@ -187,7 +187,7 @@ export function useDeepLinkHandler() {
         case "portfolio":
         default:
           navigate(NavigatorName.Portfolio, {
-            screen: ScreenName.Portfolio,
+            screen: NavigatorName.WalletTab,
           });
           break;
       }

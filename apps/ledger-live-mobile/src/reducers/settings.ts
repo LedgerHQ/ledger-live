@@ -44,6 +44,7 @@ import type {
   SettingsSetLastConnectedDevicePayload,
   SettingsSetLocalePayload,
   SettingsSetMarketCounterCurrencyPayload,
+  SettingsSetCustomImageBackupPayload,
   SettingsSetMarketFilterByStarredAccountsPayload,
   SettingsSetMarketRequestParamsPayload,
   SettingsSetNotificationsPayload,
@@ -62,7 +63,11 @@ import type {
   SettingsUpdateCurrencyPayload,
   SettingsSetSwapSelectableCurrenciesPayload,
 } from "../actions/types";
-import { SettingsActionTypes } from "../actions/types";
+import {
+  SettingsActionTypes,
+  SettingsSetWalletTabNavigatorLastVisitedTabPayload,
+} from "../actions/types";
+import { ScreenName } from "../const";
 
 const bitcoin = getCryptoCurrencyById("bitcoin");
 const ethereum = getCryptoCurrencyById("ethereum");
@@ -108,6 +113,7 @@ export const INITIAL_STATE: SettingsState = {
   hasAvailableUpdate: false,
   theme: "system",
   osTheme: undefined,
+  customImageBackup: undefined,
 
   carouselVisibility: Object.fromEntries(
     SLIDES.map(slide => [slide.name, true]),
@@ -143,6 +149,7 @@ export const INITIAL_STATE: SettingsState = {
     announcementsCategory: true,
     recommendationsCategory: true,
   },
+  walletTabNavigatorLastVisitedTab: ScreenName.Portfolio,
 };
 
 const pairHash = (from: { ticker: string }, to: { ticker: string }) =>
@@ -467,6 +474,12 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
     ),
   }),
 
+  [SettingsActionTypes.SET_CUSTOM_IMAGE_BACKUP]: (state, action) => ({
+    ...state,
+    customImageBackup: (action as Action<SettingsSetCustomImageBackupPayload>)
+      .payload,
+  }),
+
   [SettingsActionTypes.SET_LAST_CONNECTED_DEVICE]: (state, action) => ({
     ...state,
     lastConnectedDevice: (
@@ -534,6 +547,16 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
       ...state.swap,
       KYC: {},
     },
+  }),
+
+  [SettingsActionTypes.WALLET_TAB_NAVIGATOR_LAST_VISITED_TAB]: (
+    state,
+    action,
+  ) => ({
+    ...state,
+    walletTabNavigatorLastVisitedTab: (
+      action as Action<SettingsSetWalletTabNavigatorLastVisitedTabPayload>
+    ).payload.walletTabNavigatorLastVisitedTab,
   }),
 };
 
@@ -722,6 +745,8 @@ export const marketCounterCurrencySelector = (state: State) =>
   state.settings.marketCounterCurrency;
 export const marketFilterByStarredAccountsSelector = (state: State) =>
   state.settings.marketFilterByStarredAccounts;
+export const customImageBackupSelector = (state: State) =>
+  state.settings.customImageBackup;
 export const sensitiveAnalyticsSelector = (state: State) =>
   state.settings.sensitiveAnalytics;
 export const firstConnectionHasDeviceSelector = (state: State) =>
@@ -730,3 +755,5 @@ export const firstConnectHasDeviceUpdatedSelector = (state: State) =>
   state.settings.firstConnectHasDeviceUpdated;
 export const notificationsSelector = (state: State) =>
   state.settings.notifications;
+export const walletTabNavigatorLastVisitedTabSelector = (state: State) =>
+  state.settings.walletTabNavigatorLastVisitedTab;

@@ -8,6 +8,7 @@ import BigNumber from "bignumber.js";
 import { emptyHistoryCache, encodeTokenAccountId } from "../../account";
 import { mergeOps } from "../../bridge/jsHelpers";
 import { getAccountESDTOperations, getAccountESDTTokens } from "./api";
+import { addPrefixToken, extractTokenId } from "./logic";
 
 async function buildElrondESDTTokenAccount({
   parentAccountId,
@@ -21,7 +22,7 @@ async function buildElrondESDTTokenAccount({
   balance: BigNumber;
 }) {
   const id = encodeTokenAccountId(parentAccountId, token);
-  const tokenIdentifierHex = token.id;
+  const tokenIdentifierHex = extractTokenId(token.id);
   const tokenIdentifier = Buffer.from(tokenIdentifierHex, "hex").toString();
 
   const operations = await getAccountESDTOperations(
@@ -62,7 +63,7 @@ async function syncESDTTokenAccountOperations(
     ? Math.floor(oldOperations[0].date.valueOf() / 1000)
     : 0;
 
-  const tokenIdentifierHex = tokenAccount.token.id;
+  const tokenIdentifierHex = extractTokenId(tokenAccount.token.id);
   const tokenIdentifier = Buffer.from(tokenIdentifierHex, "hex").toString();
 
   // Merge new operations with the previously synced ones
@@ -120,7 +121,7 @@ async function elrondBuildESDTTokenAccounts({
   const accountESDTs = await getAccountESDTTokens(accountAddress);
   for (const esdt of accountESDTs) {
     const esdtIdentifierHex = Buffer.from(esdt.identifier).toString("hex");
-    const token = findTokenById(esdtIdentifierHex);
+    const token = findTokenById(addPrefixToken(esdtIdentifierHex));
 
     if (token && !blacklistedTokenIds.includes(token.id)) {
       let tokenAccount = existingAccountByTicker[token.ticker];

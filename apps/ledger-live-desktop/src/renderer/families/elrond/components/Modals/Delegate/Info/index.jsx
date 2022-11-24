@@ -10,17 +10,17 @@ import LinkWithExternalIcon from "~/renderer/components/LinkWithExternalIcon";
 
 import { urls } from "~/config/urls";
 import { openURL } from "~/renderer/linking";
-import { constants } from "~/renderer/families/elrond/constants";
+import { modals } from "~/renderer/families/elrond/modals";
 import { openModal, closeModal } from "~/renderer/actions/modals";
 
 import type { Account } from "@ledgerhq/types-live";
-import type { DelegationType, ValidatorType } from "~/renderer/families/elrond/types";
+import type { DelegationType, ElrondProvider } from "~/renderer/families/elrond/types";
 
 interface Props {
   name: string;
   account: Account;
   parentAccount?: Account;
-  validators: Array<ValidatorType>;
+  validators: Array<ElrondProvider>;
   delegations: Array<DelegationType>;
 }
 
@@ -32,7 +32,7 @@ const ElrondEarnRewardsInfoModal = (props: Props) => {
   const onNext = useCallback(() => {
     dispatch(closeModal(name));
     dispatch(
-      openModal(constants.modals.stake, {
+      openModal(modals.stake, {
         parentAccount,
         account,
         validators,

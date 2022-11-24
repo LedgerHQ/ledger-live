@@ -1,18 +1,17 @@
 // @flow
 
 import React, { useMemo, useState } from "react";
-import { getAccountUnit } from "@ledgerhq/live-common/account/index";
 import { BigNumber } from "bignumber.js";
 import styled from "styled-components";
 
 import Box from "~/renderer/components/Box";
 import InputCurrency from "~/renderer/components/InputCurrency";
 import Label from "~/renderer/components/Label";
-
-import { constants } from "~/renderer/families/elrond/constants";
+import TranslatedError from "~/renderer/components/TranslatedError";
 
 import type { Account, TransactionStatus } from "@ledgerhq/types-live";
 import type { Unit } from "@ledgerhq/types-cryptoassets";
+import { getAccountUnit } from "@ledgerhq/live-common/account/index";
 
 const InputLeft = styled(Box).attrs(() => ({
   ff: "Inter|Medium",
@@ -61,6 +60,24 @@ const AmountButton = styled.button.attrs(() => ({
   &:hover {
     filter: contrast(2);
   }
+`;
+
+const ErrorContainer = styled(Box)`
+  margin-top: 0px;
+  font-size: 12px;
+  width: 100%;
+  transition: all 0.4s ease-in-out;
+  will-change: max-height;
+  max-height: ${p => (p.hasError ? 60 : 0)}px;
+  min-height: ${p => (p.hasError ? 20 : 0)}px;
+`;
+
+const ErrorDisplay = styled(Box)`
+  color: ${p => p.theme.colors.pearl};
+`;
+
+const WarningDisplay = styled(Box)`
+  color: ${p => p.theme.colors.warning};
 `;
 
 interface Props {
@@ -123,18 +140,19 @@ const AmountField = (props: Props) => {
   ]);
 
   return (
-    <Box my={2}>
+    <Box vertical>
       <Label>{label}</Label>
       <InputCurrency
         autoFocus={false}
         error={error}
         warning={warning}
+        hideErrorMessage={true}
         containerProps={{ grow: true }}
         unit={unit}
         value={amount}
         onChange={onAmountChange}
         onChangeFocus={() => setFocused(true)}
-        renderLeft={<InputLeft>{constants.egldLabel}</InputLeft>}
+        renderLeft={<InputLeft>{getAccountUnit(account).code}</InputLeft>}
         renderRight={
           <InputRight>
             {options.map(({ label, value }) => (
@@ -150,6 +168,17 @@ const AmountField = (props: Props) => {
           </InputRight>
         }
       />
+      <ErrorContainer hasError={error || warning}>
+        {error ? (
+          <ErrorDisplay id="input-error">
+            <TranslatedError error={error} />
+          </ErrorDisplay>
+        ) : warning ? (
+          <WarningDisplay id="input-warning">
+            <TranslatedError error={warning} />
+          </WarningDisplay>
+        ) : null}
+      </ErrorContainer>
     </Box>
   );
 };

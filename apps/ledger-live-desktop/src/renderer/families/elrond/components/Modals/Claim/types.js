@@ -4,7 +4,7 @@ import type { TFunction } from "react-i18next";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import type { Step } from "~/renderer/components/Stepper";
 import type { Account, Transaction, TransactionStatus, Operation } from "@ledgerhq/types-live";
-import type { DelegationType, ValidatorType } from "~/renderer/families/elrond/types";
+import type { DelegationType, ElrondProvider } from "~/renderer/families/elrond/types";
 
 export type StepId = "claimRewards" | "connectDevice" | "confirmation";
 
@@ -29,7 +29,7 @@ export type StepProps = {
   setSigned: (assigned: boolean) => void,
   bridgePending: boolean,
   contract?: string,
-  validators?: Array<ValidatorType>,
+  validators?: Array<ElrondProvider>,
   delegations?: Array<DelegationType>,
 };
 

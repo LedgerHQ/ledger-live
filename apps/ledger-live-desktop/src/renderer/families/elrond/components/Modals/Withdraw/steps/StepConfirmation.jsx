@@ -5,6 +5,7 @@ import { Trans } from "react-i18next";
 import styled, { withTheme } from "styled-components";
 import { denominate } from "@ledgerhq/live-common/families/elrond/helpers/denominate";
 import { SyncOneAccountOnMount } from "@ledgerhq/live-common/bridge/react/index";
+import { getAccountUnit } from "@ledgerhq/live-common/account/index";
 
 import TrackPage from "~/renderer/analytics/TrackPage";
 import Box from "~/renderer/components/Box";
@@ -15,8 +16,6 @@ import SuccessDisplay from "~/renderer/components/SuccessDisplay";
 import BroadcastErrorDisclaimer from "~/renderer/components/BroadcastErrorDisclaimer";
 import { OperationDetails } from "~/renderer/drawers/OperationDetails";
 import { setDrawer } from "~/renderer/drawers/Provider";
-
-import { constants } from "~/renderer/families/elrond/constants";
 
 import type { StepProps } from "../types";
 
@@ -29,13 +28,13 @@ const Container = styled(Box).attrs(() => ({
 `;
 
 const StepConfirmation = (props: StepProps) => {
-  const { optimisticOperation, error, signed, transaction } = props;
+  const { optimisticOperation, error, signed, account, transaction } = props;
 
   if (optimisticOperation) {
     const amount = `${denominate({
       input: String(transaction.amount),
       decimals: 4,
-    })} ${constants.egldLabel}`;
+    })} ${getAccountUnit(account).code || "EGLD"}`;
 
     return (
       <Container>

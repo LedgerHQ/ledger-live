@@ -1979,7 +1979,7 @@
         "recipientAddress" : "送付先アドレス",
         "amount" : "数量",
         "fees" : "ネットワーク手数料",
-        "useMax" : "最大数量を送付",
+        "sendMax" : "最大数量を送付",
         "rippleTag" : "タグ",
         "rippleTagPlaceholder" : "任意",
         "ethereumGasLimit" : "ガスリミット",

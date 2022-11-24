@@ -93,7 +93,7 @@ function expectCorrectOptimisticOperation(
     expect(operation.accountId).toStrictEqual(optimisticOperation.accountId)
   );
 
-  //FIXME: on ESDT transactions the fee can decrease when the transaction is executed
+  // On ESDT transactions the fee can decrease when the transaction is executed
   if (!transaction.subAccountId) {
     botTest("optimistic operation matches fee", () =>
       expect(operation.fee.toFixed()).toStrictEqual(
@@ -115,11 +115,14 @@ function expectCorrectOptimisticOperation(
     botTest("optimistic operation matches recipients", () =>
       expect(operation.recipients).toStrictEqual(optimisticOperation.recipients)
     );
-    botTest("optimistic operation matches value", () =>
-      expect(operation.value.toFixed()).toStrictEqual(
-        optimisticOperation.value.plus(optimisticOperation.fee).toFixed()
-      )
-    );
+    // FIXME operation is of the main account, need the token operation to compare to optimisticOperation
+    if (!transaction.subAccountId) {
+      botTest("optimistic operation matches value", () =>
+        expect(operation.value.toFixed()).toStrictEqual(
+          optimisticOperation.value.plus(optimisticOperation.fee).toFixed()
+        )
+      );
+    }
   }
 
   botTest("optimistic operation matches transactionSequenceNumber", () =>
@@ -266,8 +269,12 @@ const elrondSpec: AppSpec<Transaction> = {
           transaction: bridge.createTransaction(account),
           updates: [
             {
-              recipient,
               subAccountId: esdtAccount?.id,
+            },
+            {
+              recipient,
+            },
+            {
               amount,
             },
           ],

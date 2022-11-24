@@ -19,8 +19,11 @@ export const CHAIN_ID = "1";
 export const MIN_DELEGATION_AMOUNT: BigNumber = new BigNumber(
   1000000000000000000
 );
-export const MIN_DELEGATION_AMOUNT_DENOMINATED: BigNumber = new BigNumber(1);
 export const FEES_BALANCE: BigNumber = new BigNumber("5000000000000000"); // 0.005 EGLD for future transactions
 export const DECIMALS_LIMIT = 18;
+
+export const ELROND_EXPLORER_URL = "https://explorer.elrond.com";
 export const ELROND_STAKING_POOL =
   "erd1qqqqqqqqqqqqqqqpqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqplllst77y4l";
+export const ELROND_LEDGER_VALIDATOR_ADDRESS =
+  "erd1qqqqqqqqqqqqqqqpqqqqqqqqqqqqqqqqqqqqqqqqqqqqppllllls9ftvxy";

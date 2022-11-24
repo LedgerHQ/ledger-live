@@ -23,7 +23,7 @@ import StepConfirmation, { StepConfirmationFooter } from "./steps/StepConfirmati
 import logger from "~/logger/logger";
 
 import type { Transaction, AccountBridge, Operation } from "@ledgerhq/types-live";
-import type { DelegationType, ValidatorType } from "~/renderer/families/elrond/types";
+import type { DelegationType, ElrondProvider } from "~/renderer/families/elrond/types";
 import type { StepProps, St } from "./types";
 
 interface OwnProps {
@@ -34,7 +34,7 @@ interface OwnProps {
     account: Account,
     parentAccount: ?Account,
     delegations?: Array<DelegationType>,
-    validators?: Array<ValidatorType>,
+    validators?: Array<ElrondProvider>,
     contract?: string,
   };
   name: string;

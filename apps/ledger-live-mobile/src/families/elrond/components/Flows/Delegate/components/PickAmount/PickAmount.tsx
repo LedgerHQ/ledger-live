@@ -15,6 +15,7 @@ import { denominate } from "@ledgerhq/live-common/families/elrond/helpers/denomi
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { useTheme } from "styled-components/native";
 import estimateMaxSpendable from "@ledgerhq/live-common/families/elrond/js-estimateMaxSpendable";
+import { MIN_DELEGATION_AMOUNT } from "@ledgerhq/live-common/families/elrond/constants";
 
 import type { Transaction } from "@ledgerhq/live-common/families/elrond/types";
 import type {
@@ -31,8 +32,6 @@ import LText from "../../../../../../../components/LText";
 import Warning from "../../../../../../../icons/Warning";
 import Check from "../../../../../../../icons/Check";
 import KeyboardView from "../../../../../../../components/KeyboardView";
-
-import { MIN_DELEGATION_AMOUNT } from "../../../../../constants";
 
 import styles from "./styles";
 

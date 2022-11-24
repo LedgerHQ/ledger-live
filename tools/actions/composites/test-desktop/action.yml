@@ -15,7 +15,7 @@ runs:
       run: pnpm i --filter="ledger-live-desktop..." --filter="ledger-live" --frozen-lockfile --unsafe-perm
       shell: bash
     - name: Install playwright dependencies
-      run: npx playwright install --with-deps chromium
+      run: npx playwright@1.27.1 install --with-deps chromium
       shell: bash
     - name: Build dependencies
       env:
@@ -63,3 +63,4 @@ runs:
           apps/ledger-live-desktop/tests/artifacts/html-report
           apps/ledger-live-desktop/tests/artifacts/coverage
           apps/ledger-live-desktop/tests/artifacts/videos
+          apps/ledger-live-desktop/tests/artifacts/logs

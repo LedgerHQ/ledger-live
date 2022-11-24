@@ -3,6 +3,7 @@
 import React, { useState, useCallback, useMemo, useEffect } from "react";
 import { Trans } from "react-i18next";
 import { denominate } from "@ledgerhq/live-common/families/elrond/helpers/denominate";
+import { getAccountUnit } from "@ledgerhq/live-common/account/index";
 import { useDispatch } from "react-redux";
 import moment from "moment";
 
@@ -13,12 +14,17 @@ import FirstLetterIcon from "~/renderer/components/FirstLetterIcon";
 import LedgerLiveLogo from "~/renderer/components/LedgerLiveLogo";
 import Logo from "~/renderer/icons/Logo";
 
-import { constants } from "~/renderer/families/elrond/constants";
+import { modals } from "~/renderer/families/elrond/modals";
 import { openURL } from "~/renderer/linking";
 import { Ellipsis, Column, Wrapper, Withdraw } from "~/renderer/families/elrond/blocks/Delegation";
 import { openModal } from "~/renderer/actions/modals";
 
 import type { UnbondingType } from "~/renderer/families/elrond/types";
+
+import {
+  ELROND_EXPLORER_URL,
+  ELROND_LEDGER_VALIDATOR_ADDRESS,
+} from "@ledgerhq/live-common/families/elrond/constants";
 
 const Unbonding = (props: UnbondingType) => {
   const { account, contract, seconds, validator, amount, unbondings } = props;
@@ -72,7 +78,7 @@ const Unbonding = (props: UnbondingType) => {
 
   const onWithdraw = useCallback(() => {
     dispatch(
-      openModal(constants.modals.withdraw, {
+      openModal(modals.withdraw, {
         account,
         unbondings,
         contract,
@@ -89,10 +95,10 @@ const Unbonding = (props: UnbondingType) => {
       <Column
         strong={true}
         clickable={true}
-        onClick={() => openURL(`${constants.explorer}/providers/${contract}`)}
+        onClick={() => openURL(`${ELROND_EXPLORER_URL}/providers/${contract}`)}
       >
         <Box mr={2}>
-          {contract === constants.figment ? (
+          {contract === ELROND_LEDGER_VALIDATOR_ADDRESS ? (
             <LedgerLiveLogo width={24} height={24} icon={<Logo size={15} />} />
           ) : (
             <FirstLetterIcon label={name} />
@@ -111,7 +117,7 @@ const Unbonding = (props: UnbondingType) => {
       </Column>
 
       <Column>
-        {balance} {constants.egldLabel}
+        {balance} {getAccountUnit(account).code}
       </Column>
 
       <Column>
