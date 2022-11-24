@@ -37,6 +37,7 @@ import {
   AmountRequired,
   CasperInvalidTransferId,
   InvalidAddress,
+  InvalidAddressBecauseDestinationIsAlsoSource,
   InvalidMinimumAmount,
   NotEnoughBalance,
   RecipientRequired,
@@ -87,14 +88,14 @@ const prepareTransaction = async (
       validateAddress(address).isValid &&
       validateTransferId(transferId).isValid
     ) {
-      const amount = t.useAllAmount
-        ? a.spendableBalance.minus(t.fees)
-        : t.amount;
+      if (t.useAllAmount) {
+        t.amount = a.spendableBalance.minus(t.fees);
+      }
 
       t.deploy = createNewDeploy(
         address,
         recipient,
-        amount,
+        t.amount,
         t.fees,
         t.transferId
       );
@@ -121,8 +122,10 @@ const getTransactionStatus = async (
   if (!recipient) errors.recipient = new RecipientRequired();
   else if (!validateAddress(recipient).isValid)
     errors.recipient = new InvalidAddress();
-  else if (!validateAddress(address).isValid)
-    errors.sender = new InvalidAddress();
+  else if (recipient.toLowerCase() === address.toLowerCase())
+    errors.recipient = new InvalidAddressBecauseDestinationIsAlsoSource();
+
+  if (!validateAddress(address).isValid) errors.sender = new InvalidAddress();
   else if (!validateTransferId(t.transferId).isValid) {
     errors.sender = new CasperInvalidTransferId();
   }
