@@ -5,7 +5,7 @@ import { Trans } from "react-i18next";
 import { PairingFailed, GenuineCheckFailed } from "@ledgerhq/errors";
 import { Flex } from "@ledgerhq/native-ui";
 import { useTheme } from "@react-navigation/native";
-import LocationRequired from "../LocationRequired";
+import LocationRequired from "../../components/LocationRequired";
 import { TrackScreen } from "../../analytics";
 import Touchable from "../../components/Touchable";
 import LText from "../../components/LText";

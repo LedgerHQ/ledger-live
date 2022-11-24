@@ -233,6 +233,11 @@ export const urls = {
         tos: "https://changelly.com/terms-of-use",
         support: "https://support.changelly.com/en/support/tickets/new",
       },
+      cic: {
+        main: "https://criptointercambio.com/",
+        tos: "https://criptointercambio.com/terms-of-use",
+        support: "https://criptointercambio.com/en/about",
+      },
       wyre: {
         main: "https://support.sendwyre.com/hc/en-us/requests/new",
         tos: "https://www.sendwyre.com/user-agreement/",

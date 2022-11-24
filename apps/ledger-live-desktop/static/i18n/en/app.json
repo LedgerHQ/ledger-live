@@ -1713,7 +1713,10 @@
     "listApps": "Checking App dependencies",
     "listAppsDescription": "Please wait while we make sure you have all the required apps",
     "swap": {
-      "notice": "Verify the Swap details on your device before sending it. The addresses are exchanged securely so you don’t have to verify them.",
+      "notice": {
+        "default": "Verify the Swap details on your device before sending it. The addresses are exchanged securely so you don’t have to verify them.",
+        "cic": "Verify the Swap details on your device before sending it. CIC may need to perform additional verification for some transactions, resulting in a delay."
+      },
       "confirm": "Confirm Swap transaction",
       "amountSent": "Amount to send",
       "amountReceived": "Amount to receive",
@@ -2131,7 +2134,8 @@
         "recipientAddress": "Recipient address",
         "amount": "Amount",
         "fees": "Network fees",
-        "useMax": "Send Max",
+        "useMax": "Use Max",
+        "sendMax": "Send Max",
         "rippleTag": "Tag",
         "rippleTagPlaceholder": "Optional",
         "edit": "Edit",

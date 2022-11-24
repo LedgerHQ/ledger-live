@@ -1979,7 +1979,7 @@
         "recipientAddress" : "Adresse des Empfängers",
         "amount" : "Betrag",
         "fees" : "Netzgebühren",
-        "useMax" : "Maximum senden",
+        "sendMax" : "Maximum senden",
         "rippleTag" : "Tag",
         "rippleTagPlaceholder" : "Optional",
         "ethereumGasLimit" : "Gaslimit",

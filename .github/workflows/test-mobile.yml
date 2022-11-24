@@ -44,7 +44,7 @@ jobs:
   dummy:
     name: "Ledger Live Mobile CodeCheck"
     needs: is-affected
-    if: ${{ needs.is-affected.outputs.is-desktop-affected != 'true' }}
+    if: ${{ needs.is-affected.outputs.is-mobile-affected != 'true' }}
     runs-on: ubuntu-latest
     steps:
       - id: dummy
