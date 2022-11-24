@@ -211,7 +211,7 @@
 | Binance Smart Chain | BEM | 0x7B86b0836f3454e50C6F6a190cd692bB17da1928 | Bemil |  | bsc/bep20/bemil |
 | Binance Smart Chain | BRY | 0xf859Bf77cBe8699013d6Dbc7C2b926Aaf307F830 | Berry Tributes | countervalues disabled | bsc/bep20/berry_tributes |
 | Binance Smart Chain | BETA | 0xBe1a001FE942f96Eea22bA08783140B9Dcc09D28 | Beta Token |  | bsc/bep20/beta_token |
-| Binance Smart Chain | BICO | 0x06250a4962558F0F3E69FC07F4c67BB9c9eAc739 | Biconomy Token (Wormhole) | delisted, countervalues disabled | bsc/bep20/biconomy_token_(wormhole) |
+| Binance Smart Chain | BICO | 0x06250a4962558F0F3E69FC07F4c67BB9c9eAc739 | Biconomy Token (Wormhole) |  | bsc/bep20/biconomy_token_(wormhole) |
 | Binance Smart Chain | BHC | 0x6fd7c98458a943f469E1Cf4eA85B173f5Cd342F4 | Billion Happiness | countervalues disabled | bsc/bep20/billion_happiness |
 | Binance Smart Chain | BSR | 0xab287e6D370C61f105630e656B5468ACB4D00423 | BinStarter |  | bsc/bep20/binstarter |
 | Binance Smart Chain | BMON | 0x08ba0619b1e7A582E0BCe5BBE9843322C954C340 | Binamon |  | bsc/bep20/binamon |
@@ -339,7 +339,7 @@
 | Binance Smart Chain | DPS | 0xf275e1AC303a4C9D987a2c48b8E555A77FeC3F1C | DEEPSPACE |  | bsc/bep20/deepspace |
 | Binance Smart Chain | D100 | 0x9d8AAC497A4b8fe697dd63101d793F0C6A6EEbB6 | DEFI 100 | countervalues disabled | bsc/bep20/defi_100 |
 | Binance Smart Chain | FINA | 0x426c72701833fdDBdFc06c944737C6031645c708 | DEFINA TOKEN |  | bsc/bep20/defina_token |
-| Binance Smart Chain | DELOT | 0x3e24BBb2c9a0f2fAEcFDBDCa20BBa6F35b73C4CB | DELOT.IO | delisted, countervalues disabled | bsc/bep20/delot.io |
+| Binance Smart Chain | DELOT | 0x3e24BBb2c9a0f2fAEcFDBDCa20BBa6F35b73C4CB | DELOT.IO |  | bsc/bep20/delot.io |
 | Binance Smart Chain | DEXT | 0xe91a8D2c584Ca93C7405F15c22CdFE53C29896E3 | DEXTools |  | bsc/bep20/dextools |
 | Binance Smart Chain | DFT | 0x42712dF5009c20fee340B245b510c0395896cF6e | DFuture Token |  | bsc/bep20/dfuture_token |
 | Binance Smart Chain | DIA | 0x99956D38059cf7bEDA96Ec91Aa7BB2477E0901DD | DIAToken |  | bsc/bep20/diatoken |
@@ -564,7 +564,7 @@
 | Binance Smart Chain | MRFI | 0xaF1167b1f90E4F27d9F520A4cD3a1e452e011Cea | Morphie |  | bsc/bep20/morphie |
 | Binance Smart Chain | MND | 0x4c97c901B5147F8C1C7Ce3c5cF3eB83B44F244fE | Mound Token |  | bsc/bep20/mound_token |
 | Binance Smart Chain | MTV | 0x8aa688AB789d1848d131C65D98CEAA8875D97eF1 | MultiVAC |  | bsc/bep20/multivac |
-| Binance Smart Chain | MULTI | 0x9Fb9a33956351cf4fa040f65A13b835A3C8764E3 | Multichain | delisted, countervalues disabled | bsc/bep20/multichain |
+| Binance Smart Chain | MULTI | 0x9Fb9a33956351cf4fa040f65A13b835A3C8764E3 | Multichain |  | bsc/bep20/multichain |
 | Binance Smart Chain | BMXX | 0x4131b87F74415190425ccD873048C708F8005823 | Multiplier | countervalues disabled | bsc/bep20/multiplier |
 | Binance Smart Chain | MV | 0xebCD1CABB7B1Ff137b74303771C9076ca37583aE | MusicVerse |  | bsc/bep20/musicverse |
 | Binance Smart Chain | MINU | 0xEA5E9F39F4B4Bc2684e49A0E43127F7f6F6be3b8 | MuuInu |  | bsc/bep20/muuinu |
