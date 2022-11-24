@@ -68,27 +68,20 @@ export default function AccountContextMenu({
         Icon: IconBuy,
         callback: () => {
           setTrackingSource("account context menu");
-          if (ptxSmartRouting?.enabled) {
-            const params = {
-              currency: currency?.id,
-              account: mainAccount?.id,
-              mode: "buy", // buy or sell
-            };
 
-            history.push({
-              // replace 'multibuy' in case live app id changes
-              pathname: `/platform/${ptxSmartRouting?.params?.liveAppId ?? "multibuy"}`,
-              state: params,
-            });
-          } else {
-            history.push({
-              pathname: "/exchange",
-              state: {
-                defaultCurrency: currency,
-                defaultAccount: mainAccount,
-              },
-            });
-          }
+          history.push({
+            pathname: "/exchange",
+            state: ptxSmartRouting?.enabled
+              ? {
+                  currency: currency?.id,
+                  account: mainAccount?.id,
+                  mode: "buy", // buy or sell
+                }
+              : {
+                  defaultCurrency: currency,
+                  defaultAccount: mainAccount,
+                },
+          });
         },
       });
     }
@@ -100,27 +93,20 @@ export default function AccountContextMenu({
         Icon: IconBuy,
         callback: () => {
           setTrackingSource("account context menu");
-          if (ptxSmartRouting?.enabled) {
-            const params = {
-              currency: currency?.id,
-              account: mainAccount?.id,
-              mode: "sell", // buy or sell
-            };
 
-            history.push({
-              // replace 'multibuy' in case live app id changes
-              pathname: `/platform/${ptxSmartRouting?.params?.liveAppId ?? "multibuy"}`,
-              state: params,
-            });
-          } else {
-            history.push({
-              pathname: "/exchange",
-              state: {
-                defaultCurrency: currency,
-                defaultAccount: mainAccount,
-              },
-            });
-          }
+          history.push({
+            pathname: "/exchange",
+            state: ptxSmartRouting?.enabled
+              ? {
+                  currency: currency?.id,
+                  account: mainAccount?.id,
+                  mode: "sell", // buy or sell
+                }
+              : {
+                  defaultCurrency: currency,
+                  defaultAccount: mainAccount,
+                },
+          });
         },
       });
     }

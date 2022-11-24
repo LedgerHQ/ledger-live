@@ -17,9 +17,12 @@ const exec = async (opts: ftsFetchImageJobOpts) => {
       (event) => {
         if (event.type === "imageFetched") {
           const { hexImage } = event;
-
-          fs.writeFileSync(fileOutput, hexImage);
-          console.log(`${fileOutput} written`);
+          if (!fileOutput) {
+            console.log(hexImage)
+          } else {
+            fs.writeFileSync(fileOutput, hexImage);
+            console.log(`${fileOutput} written`);
+          }
         } else {
           console.log(event);
         }

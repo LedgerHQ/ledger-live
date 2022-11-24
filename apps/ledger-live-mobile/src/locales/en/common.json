@@ -762,6 +762,11 @@
     },
     "PriorityFeeHigherThanMaxFee": {
       "title": "Max priority fee cannot be higher than max fee"
+    },
+    "LockedDeviceError": {
+      "title": "Your device is locked",
+      "description": "Unlock your device and try again.",
+      "descriptionWithProductName": "Unlock your {{ productName }} and try again."
     }
   },
   "crash": {
@@ -786,7 +791,8 @@
     "noInfos": "Ledger does not access your location information."
   },
   "permissions": {
-    "open": "Open app permissions"
+    "open": "Open app permissions",
+    "nearbyDevicesPermissionDenied": "To pair with Bluetooth, authorize the Ledger Live app to scan nearby devices."
   },
   "fees": {
     "speed": {
@@ -2549,7 +2555,8 @@
       "featureFlagsTitle": "Defined feature flags used in Ledger Live",
       "featureFlagsDesc": "Overridden values will be reset if the app is relaunched. Only valid JSON strings will be accepted.",
       "featureFlagsEdit": "Edit",
-      "featureFlagsRestore": "Restore"
+      "featureFlagsRestore": "Restore",
+      "firebaseProject": "Firebase project targeted by this build:"
     }
   },
   "notifications": {
@@ -3244,8 +3251,8 @@
       "infoTotalDesc": "Includes transaction amount and the selected network fees",
       "gasLimit": "Gas limit",
       "gasPrice": "Gas price",
-      "maxFee" : "Max fee",
-      "maxPriorityFee" : "Max priority fee",
+      "maxFee": "Max fee",
+      "maxPriorityFee": "Max priority fee",
       "nextBlock": "Next block: {{nextBaseFee}}",
       "suggestedPriorityFee": "Suggested: {{lowPriorityFee}} - {{highPriorityFee}}",
       "maxFees": "Max fees",
@@ -3525,7 +3532,10 @@
     },
     "confirmSwap": {
       "title": "Confirm swap operation on device",
-      "alert": "Verify the Swap details on your device before sending it. The addresses are exchanged securely so you don’t have to verify them.",
+      "alert": {
+        "default": "Verify the Swap details on your device before sending it. The addresses are exchanged securely so you don’t have to verify them.",
+        "cic": "Verify the Swap details on your device before sending it. CIC may need to perform additional verification for some transactions, resulting in a delay."
+      },
       "acceptTerms": "By validating this transaction, I accept\n<0><0>{{provider}}</0>'s terms of use</0>",
       "notice": "Verify the Swap details on your device before sending it. The addresses are exchanged securely so you don’t have to verify them."
     },
@@ -5379,7 +5389,8 @@
       "seeFewerNfts": "See fewer NFT"
     },
     "gallery": {
-      "allNft": "All NFT"
+      "allNft": "All NFT",
+      "addNew": "Add new"
     },
     "viewer": {
       "properties": "Properties",
@@ -5396,6 +5407,7 @@
     "viewerModal": {
       "viewOn": "View on",
       "viewInExplorer": "View in explorer",
+      "hide": "Hide NFT collection",
       "txDetails": "Transaction details"
     },
     "modalDisabled": {
@@ -5442,18 +5454,26 @@
     "cropImage": "Crop image",
     "chooseConstrast": "Choose contrast",
     "uploadAnotherImage": "Upload another image",
-    "selectContrast": "Select your contrast",
+    "rotateImage": "Rotate",
     "allowPreview": "Allow picture preview on {{productName}}",
     "loadingPicture": "Loading picture on {{productName}}",
     "pictureLoaded": "Picture loaded",
     "timeDisclaimer": "This can take up to 30 seconds",
     "imageLoaded": "Image loaded on {{productName}}",
     "confirmPicture": "Confirm on {{productName}}",
-    "title": "Choose a picture.\nCreate a vibe.\nMake your Ledger yours.",
-    "subtitle": "Set a picture of your favourite NFT or a picture from your phone.",
+    "landingPage": {
+      "title": "Choose a picture.\nCreate a vibe.\nMake your Ledger yours.",
+      "subtitle": "Set a picture of your favourite NFT or a picture from your phone.",
+      "choosePicture": "Choose a picture"
+    },
     "customImage": "Custom picture",
-    "choosePicture": "Choose a picture",
-    "doThisLater": "Maybe later"
+    "doThisLater": "Maybe later",
+    "preview": {
+      "title": "Preview",
+      "loading": "Loading preview",
+      "setPicture": "Set custom picture",
+      "editPicture": "Edit picture"
+    }
   },
   "postOnboarding": {
     "hub": {
@@ -5474,6 +5494,37 @@
         "description": "By adding an image",
         "popupLabel": "Device personalized",
         "hubTitleAfterAction": "That screen is looking neat"
+      }
+    }
+  },
+  "wallet": {
+    "tabs": {
+      "crypto": "Crypto",
+      "nft": "NFTs"
+    },
+    "nftGallery": {
+      "empty": {
+        "title": "No NFTs to show, yet",
+        "subtitle": "Get started by receiving your first NFT.",
+        "receive": "Receive NFTs",
+        "supportLink": "How to get NFTs from other wallets?"
+      },
+      "receiveModal": {
+        "title": "Receive an NFT the same way as any other crypto",
+        "bullets": {
+          "0": "\u2022 Select the NFT’s crypto blockchain.",
+          "1": "\u2022 Choose the account to receive the NFT"
+        },
+        "cta": "OK, got it",
+        "info": "I’d like to learn more"
+      },
+      "hideNftModal": {
+        "title": "Hide NFT collection",
+        "desc": "This action will hide all NFTs from the {{collectionName}} collection, you can unhide them from the app settings",
+        "cta": "Hide this NFT"
+      },
+      "media": {
+        "tag": "{{count}} NFTs"
       }
     }
   }

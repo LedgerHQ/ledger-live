@@ -1,17 +1,13 @@
-import React, { useCallback, useMemo, useState, memo, useContext } from "react";
+import React, { useCallback, useMemo, useState, useContext } from "react";
 import { useSelector } from "react-redux";
-import { FlatList, LayoutChangeEvent, ListRenderItemInfo } from "react-native";
+import { LayoutChangeEvent, ListRenderItemInfo } from "react-native";
 import { useFocusEffect } from "@react-navigation/native";
-import Animated, {
-  useAnimatedScrollHandler,
-  useSharedValue,
-} from "react-native-reanimated";
-import { createNativeWrapper } from "react-native-gesture-handler";
+import { useSharedValue } from "react-native-reanimated";
 import { useTranslation } from "react-i18next";
 
-import { Box, Button } from "@ledgerhq/native-ui";
+import { Box, Flex, Button } from "@ledgerhq/native-ui";
 
-import styled, { useTheme } from "styled-components/native";
+import { useTheme } from "styled-components/native";
 import {
   isCurrencySupported,
   listTokens,
@@ -29,20 +25,15 @@ import {
   hasOrderedNanoSelector,
 } from "../../../reducers/settings";
 import { usePortfolio } from "../../../hooks/portfolio";
-import globalSyncRefreshControl from "../../../components/globalSyncRefreshControl";
-import BackgroundGradient from "../../../components/BackgroundGradient";
 
 import GraphCardContainer from "../GraphCardContainer";
-import Header from "../Header";
 import TrackScreen from "../../../analytics/TrackScreen";
 import { NavigatorName, ScreenName } from "../../../const";
 import { useProviders } from "../../Swap/Form/index";
 import MigrateAccountsBanner from "../../MigrateAccounts/Banner";
 import CheckLanguageAvailability from "../../../components/CheckLanguageAvailability";
 import CheckTermOfUseUpdate from "../../../components/CheckTermOfUseUpdate";
-import TabBarSafeAreaView, {
-  TAB_BAR_SAFE_HEIGHT,
-} from "../../../components/TabBar/TabBarSafeAreaView";
+import { TAB_BAR_SAFE_HEIGHT } from "../../../components/TabBar/TabBarSafeAreaView";
 import SetupDeviceBanner from "../../../components/SetupDeviceBanner";
 import BuyDeviceBanner, {
   IMAGE_PROPS_BIG_NANO,
@@ -53,24 +44,14 @@ import {
   BaseComposite,
   StackNavigatorProps,
 } from "../../../components/RootNavigator/types/helpers";
-import { PortfolioNavigatorStackParamList } from "../../../components/RootNavigator/types/PortfolioNavigator";
-
-export { default as PortfolioTabIcon } from "../TabIcon";
-
-const AnimatedFlatListWithRefreshControl = createNativeWrapper(
-  Animated.createAnimatedComponent(globalSyncRefreshControl(FlatList)),
-  {
-    disallowInterruption: true,
-    shouldCancelWhenOutside: false,
-  },
-);
-
-export const Gradient = styled(BackgroundGradient)``;
+import FirmwareUpdateBanner from "../../../components/FirmwareUpdateBanner";
+import CollapsibleHeaderFlatList from "../../../components/WalletTab/CollapsibleHeaderFlatList";
+import { WalletTabNavigatorStackParamList } from "../../../components/RootNavigator/types/WalletTabNavigator";
 
 const maxAssetsToDisplay = 5;
 
 type NavigationProps = BaseComposite<
-  StackNavigatorProps<PortfolioNavigatorStackParamList, ScreenName.Portfolio>
+  StackNavigatorProps<WalletTabNavigatorStackParamList, ScreenName.Portfolio>
 >;
 
 function ReadOnlyPortfolio({ navigation }: NavigationProps) {
@@ -88,9 +69,6 @@ function ReadOnlyPortfolio({ navigation }: NavigationProps) {
 
   const [graphCardEndPosition, setGraphCardEndPosition] = useState(0);
   const currentPositionY = useSharedValue(0);
-  const handleScroll = useAnimatedScrollHandler(event => {
-    currentPositionY.value = event.contentOffset.y;
-  });
 
   const onPortfolioCardLayout = useCallback((event: LayoutChangeEvent) => {
     const { y, height } = event.nativeEvent.layout;
@@ -203,42 +181,24 @@ function ReadOnlyPortfolio({ navigation }: NavigationProps) {
 
   return (
     <>
-      <TabBarSafeAreaView>
-        <CheckLanguageAvailability />
-        <CheckTermOfUseUpdate />
-        <TrackScreen category="Wallet" source={source} />
-        <BackgroundGradient
-          currentPositionY={currentPositionY}
-          graphCardEndPosition={graphCardEndPosition}
-          color={colors.neutral.c30}
-        />
-        <AnimatedFlatListWithRefreshControl
-          data={data}
-          style={{
-            flex: 1,
-            position: "relative",
-            paddingTop: 48,
-            marginBottom: 64,
-          }}
-          contentContainerStyle={{ paddingBottom: TAB_BAR_SAFE_HEIGHT }}
-          renderItem={({ item }: ListRenderItemInfo<unknown>) =>
-            item as JSX.Element
-          }
-          keyExtractor={(_: unknown, index: number) => String(index)}
-          showsVerticalScrollIndicator={false}
-          onScroll={handleScroll}
-        />
-        <MigrateAccountsBanner />
-        <Header
-          counterValueCurrency={counterValueCurrency}
-          portfolio={portfolio}
-          currentPositionY={currentPositionY}
-          graphCardEndPosition={graphCardEndPosition}
-          hidePortfolio={false}
-        />
-      </TabBarSafeAreaView>
+      <Flex px={6} py={4}>
+        <FirmwareUpdateBanner />
+      </Flex>
+      <CheckLanguageAvailability />
+      <CheckTermOfUseUpdate />
+      <TrackScreen category="Wallet" source={source} />
+      <CollapsibleHeaderFlatList<JSX.Element>
+        data={data}
+        contentContainerStyle={{ paddingBottom: TAB_BAR_SAFE_HEIGHT }}
+        renderItem={({ item }: ListRenderItemInfo<unknown>) =>
+          item as JSX.Element
+        }
+        keyExtractor={(_: unknown, index: number) => String(index)}
+        showsVerticalScrollIndicator={false}
+      />
+      <MigrateAccountsBanner />
     </>
   );
 }
 
-export default memo(ReadOnlyPortfolio);
+export default ReadOnlyPortfolio;
