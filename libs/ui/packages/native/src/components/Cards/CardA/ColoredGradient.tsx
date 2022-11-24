@@ -27,7 +27,7 @@ export default function Gradient({ color, opacityColor, style }: Props): JSX.Ele
           y2="100%"
           gradientUnits="userSpaceOnUse"
         >
-          <Stop key="0%" offset="0%" stopOpacity={1} stopColor={color} />
+          <Stop key="0%" offset="40%" stopOpacity={1} stopColor={color} />
           <Stop key="100%" offset="100%" stopOpacity={0} stopColor={color} />
         </LinearGradient>
       </Defs>
