@@ -1,3 +1,9 @@
+import type { Unit } from "@ledgerhq/types-cryptoassets";
+import type {
+  NativeSyntheticEvent,
+  TextInputFocusEventData,
+} from "react-native";
+
 import React, { PureComponent } from "react";
 import {
   StyleSheet,
@@ -15,7 +21,7 @@ import {
 } from "@ledgerhq/live-common/currencies/index";
 import noop from "lodash/noop";
 import clamp from "lodash/clamp";
-import type { Unit } from "@ledgerhq/types-cryptoassets";
+
 import { localeSelector } from "../reducers/settings";
 import getFontStyle from "./LText/getFontStyle";
 import { Theme, withTheme } from "../colors";
@@ -47,7 +53,10 @@ function format(
 
 type Props = {
   isActive: boolean;
-  onFocus: (_: boolean) => void;
+  onFocus: (
+    _: boolean,
+    event?: NativeSyntheticEvent<TextInputFocusEventData>,
+  ) => void;
   onChange: (_: BigNumber, keepRatio?: boolean) => void;
   unit: Unit;
   value: BigNumber | null | undefined;
@@ -144,11 +153,11 @@ class CurrencyInput extends PureComponent<Props, State> {
     });
     this.props.onFocus(false);
   };
-  handleFocus = () => {
+  handleFocus = (event: NativeSyntheticEvent<TextInputFocusEventData>) => {
     this.syncInput({
       isFocused: true,
     });
-    this.props.onFocus(true);
+    this.props.onFocus(true, event);
   };
   syncInput = ({ isFocused }: { isFocused: boolean }) => {
     if (isFocused !== this.state.isFocused) {

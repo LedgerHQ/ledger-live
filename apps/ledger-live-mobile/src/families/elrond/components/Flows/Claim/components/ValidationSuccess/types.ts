@@ -1,9 +1,9 @@
-import {
+import type {
   BaseComposite,
   StackNavigatorProps,
 } from "../../../../../../../components/RootNavigator/types/helpers";
-import { ElrondClaimRewardsFlowParamList } from "../../types";
-import { ScreenName } from "../../../../../../../const";
+import type { ElrondClaimRewardsFlowParamList } from "../../types";
+import type { ScreenName } from "../../../../../../../const";
 
 export type ValidationSuccessPropsType = BaseComposite<
   StackNavigatorProps<

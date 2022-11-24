@@ -27,8 +27,9 @@ const withSummary =
  */
 
 const Summary = (props: SummaryPropsType) => {
-  const account = props.account as ElrondAccount;
   const { t } = useTranslation();
+
+  const account = props.account as ElrondAccount;
   const unit = getAccountUnit(account);
 
   /*
@@ -49,10 +50,11 @@ const Summary = (props: SummaryPropsType) => {
       account.elrondResources ? account.elrondResources.delegations : [],
     );
 
-    return () =>
+    return () => {
       setDelegationResources(
         account.elrondResources ? account.elrondResources.delegations : [],
       );
+    };
   }, [account.elrondResources]);
 
   /*
