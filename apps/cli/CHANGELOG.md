@@ -1,28 +1,39 @@
 # @ledgerhq/live-cli
 
-## 22.4.7-nightly.1
+## 22.4.8
 
 ### Patch Changes
 
-- Updated dependencies [[`57b82ad735`](https://github.com/LedgerHQ/ledger-live/commit/57b82ad7350c6368b2d6a731d7b1c52b759516b0), [`7264398cb0`](https://github.com/LedgerHQ/ledger-live/commit/7264398cb02765753b2abff3aab90d7a31b803d0), [`7264398cb0`](https://github.com/LedgerHQ/ledger-live/commit/7264398cb02765753b2abff3aab90d7a31b803d0)]:
-  - @ledgerhq/live-common@27.8.0-nightly.1
+- Updated dependencies [[`bdf55e0411`](https://github.com/LedgerHQ/ledger-live/commit/bdf55e0411d46c0bf68d42b7f96b75d49ba81a67)]:
+  - @ledgerhq/live-common@27.7.2
 
-## 22.4.7-nightly.0
+## 22.4.8-hotfix.0
 
 ### Patch Changes
 
-- [#1779](https://github.com/LedgerHQ/ledger-live/pull/1779) [`856f49374e`](https://github.com/LedgerHQ/ledger-live/commit/856f49374ec9b49f005676e270acdb81b78879c8) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Introduce new command for demoing the conditional image fetch
+- Updated dependencies [[`bdf55e0411`](https://github.com/LedgerHQ/ledger-live/commit/bdf55e0411d46c0bf68d42b7f96b75d49ba81a67)]:
+  - @ledgerhq/live-common@27.7.2-hotfix.0
 
-- Updated dependencies [[`d10c727430`](https://github.com/LedgerHQ/ledger-live/commit/d10c727430ffece743bbb7e703aaff61f97dacc1), [`856f49374e`](https://github.com/LedgerHQ/ledger-live/commit/856f49374ec9b49f005676e270acdb81b78879c8), [`77056e3692`](https://github.com/LedgerHQ/ledger-live/commit/77056e369256112188c183823a2c3fabfea2cba8), [`856f49374e`](https://github.com/LedgerHQ/ledger-live/commit/856f49374ec9b49f005676e270acdb81b78879c8), [`601c35ff2e`](https://github.com/LedgerHQ/ledger-live/commit/601c35ff2e9905c1d7869f531d85898436e2e86d)]:
-  - @ledgerhq/live-common@27.8.0-nightly.0
-  - @ledgerhq/errors@6.12.1-nightly.0
-  - @ledgerhq/hw-transport@6.27.8-nightly.0
-  - @ledgerhq/hw-transport-http@6.27.8-nightly.0
-  - @ledgerhq/hw-transport-node-ble@6.27.8-nightly.0
-  - @ledgerhq/hw-transport-node-hid@6.27.8-nightly.0
-  - @ledgerhq/hw-transport-node-speculos@6.27.8-nightly.0
-  - @ledgerhq/hw-app-btc@9.0.1-nightly.0
-  - @ledgerhq/hw-transport-mocker@6.27.8-nightly.0
+## 22.4.7
+
+### Patch Changes
+
+- Updated dependencies [[`f7aa25417a`](https://github.com/LedgerHQ/ledger-live/commit/f7aa25417a953a6e4768e0b5d500cab566369a0a), [`e3a796b0a0`](https://github.com/LedgerHQ/ledger-live/commit/e3a796b0a021b19ff01061a019657cea26cc46de)]:
+  - @ledgerhq/live-common@27.7.1
+
+## 22.4.7-hotfix.1
+
+### Patch Changes
+
+- Updated dependencies [[`e3a796b0a0`](https://github.com/LedgerHQ/ledger-live/commit/e3a796b0a021b19ff01061a019657cea26cc46de)]:
+  - @ledgerhq/live-common@27.7.1-hotfix.1
+
+## 22.4.7-hotfix.0
+
+### Patch Changes
+
+- Updated dependencies [[`f7aa25417a`](https://github.com/LedgerHQ/ledger-live/commit/f7aa25417a953a6e4768e0b5d500cab566369a0a)]:
+  - @ledgerhq/live-common@27.7.1-hotfix.0
 
 ## 22.4.6
 

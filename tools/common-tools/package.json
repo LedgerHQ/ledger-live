@@ -1,6 +1,6 @@
 {
   "name": "live-common-tools",
-  "version": "0.2.15-nightly.1",
+  "version": "0.2.16",
   "private": true,
   "dependencies": {
     "@ledgerhq/cryptoassets": "workspace:^",

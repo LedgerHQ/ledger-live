@@ -1,47 +1,36 @@
 # @ledgerhq/live-common
 
-## 27.8.0-nightly.1
-
-### Minor Changes
-
-- [#1817](https://github.com/LedgerHQ/ledger-live/pull/1817) [`57b82ad735`](https://github.com/LedgerHQ/ledger-live/commit/57b82ad7350c6368b2d6a731d7b1c52b759516b0) Thanks [@sarneijim](https://github.com/sarneijim)! - CIC swap integration
+## 27.7.2
 
 ### Patch Changes
 
-- [#1937](https://github.com/LedgerHQ/ledger-live/pull/1937) [`7264398cb0`](https://github.com/LedgerHQ/ledger-live/commit/7264398cb02765753b2abff3aab90d7a31b803d0) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Prevent error on ERC1155 quantities being array of null
+- [#1944](https://github.com/LedgerHQ/ledger-live/pull/1944) [`bdf55e0411`](https://github.com/LedgerHQ/ledger-live/commit/bdf55e0411d46c0bf68d42b7f96b75d49ba81a67) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Fixing ethereum prepareTransaction breaking before the getTransactionStatus and fixing send max on account with only dust
 
-* [#1937](https://github.com/LedgerHQ/ledger-live/pull/1937) [`7264398cb0`](https://github.com/LedgerHQ/ledger-live/commit/7264398cb02765753b2abff3aab90d7a31b803d0) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Fix Ethereum send max transactions using the wrong fee per gas method with EIP1559
-
-## 27.8.0-nightly.0
-
-### Minor Changes
-
-- [#1775](https://github.com/LedgerHQ/ledger-live/pull/1775) [`d10c727430`](https://github.com/LedgerHQ/ledger-live/commit/d10c727430ffece743bbb7e703aaff61f97dacc1) Thanks [@nparigi-ledger](https://github.com/nparigi-ledger)! - Add new NFT helpers used for the NFT Gallery (orderByLastReceived, groupByCurrency, getNFTByTokenId), add mock NFT account
+## 27.7.2-hotfix.0
 
 ### Patch Changes
 
-- [#1741](https://github.com/LedgerHQ/ledger-live/pull/1741) [`77056e3692`](https://github.com/LedgerHQ/ledger-live/commit/77056e369256112188c183823a2c3fabfea2cba8) Thanks [@alexandremgo](https://github.com/alexandremgo)! - Fix for locked device error
+- [#1944](https://github.com/LedgerHQ/ledger-live/pull/1944) [`bdf55e0411`](https://github.com/LedgerHQ/ledger-live/commit/bdf55e0411d46c0bf68d42b7f96b75d49ba81a67) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Fixing ethereum prepareTransaction breaking before the getTransactionStatus and fixing send max on account with only dust
 
-* [#1779](https://github.com/LedgerHQ/ledger-live/pull/1779) [`856f49374e`](https://github.com/LedgerHQ/ledger-live/commit/856f49374ec9b49f005676e270acdb81b78879c8) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Adapted the fetchImage command and added new device action
+## 27.7.1
 
-- [#1840](https://github.com/LedgerHQ/ledger-live/pull/1840) [`601c35ff2e`](https://github.com/LedgerHQ/ledger-live/commit/601c35ff2e9905c1d7869f531d85898436e2e86d) Thanks [@alexandremgo](https://github.com/alexandremgo)! - Fix: improvement on BLE scanning and polling mechanism
+### Patch Changes
 
-- Updated dependencies [[`856f49374e`](https://github.com/LedgerHQ/ledger-live/commit/856f49374ec9b49f005676e270acdb81b78879c8), [`77056e3692`](https://github.com/LedgerHQ/ledger-live/commit/77056e369256112188c183823a2c3fabfea2cba8)]:
-  - @ledgerhq/errors@6.12.1-nightly.0
-  - @ledgerhq/devices@7.0.5-nightly.0
-  - @ledgerhq/hw-app-algorand@6.27.8-nightly.0
-  - @ledgerhq/hw-app-cosmos@6.27.8-nightly.0
-  - @ledgerhq/hw-app-eth@6.30.1-nightly.0
-  - @ledgerhq/hw-app-polkadot@6.27.8-nightly.0
-  - @ledgerhq/hw-app-solana@7.0.2-nightly.0
-  - @ledgerhq/hw-app-trx@6.27.8-nightly.0
-  - @ledgerhq/hw-transport@6.27.8-nightly.0
-  - @ledgerhq/hw-transport-node-speculos@6.27.8-nightly.0
-  - @ledgerhq/hw-app-btc@9.0.1-nightly.0
-  - @ledgerhq/hw-app-str@6.27.8-nightly.0
-  - @ledgerhq/hw-app-tezos@6.27.8-nightly.0
-  - @ledgerhq/hw-app-xrp@6.27.8-nightly.0
-  - @ledgerhq/hw-transport-mocker@6.27.8-nightly.0
+- [#1913](https://github.com/LedgerHQ/ledger-live/pull/1913) [`f7aa25417a`](https://github.com/LedgerHQ/ledger-live/commit/f7aa25417a953a6e4768e0b5d500cab566369a0a) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Prevent error on ERC1155 quantities being array of null
+
+* [#1931](https://github.com/LedgerHQ/ledger-live/pull/1931) [`e3a796b0a0`](https://github.com/LedgerHQ/ledger-live/commit/e3a796b0a021b19ff01061a019657cea26cc46de) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Fix Ethereum send max transactions using the wrong fee per gas method with EIP1559
+
+## 27.7.1-hotfix.1
+
+### Patch Changes
+
+- [#1931](https://github.com/LedgerHQ/ledger-live/pull/1931) [`e3a796b0a0`](https://github.com/LedgerHQ/ledger-live/commit/e3a796b0a021b19ff01061a019657cea26cc46de) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Fix Ethereum send max transactions using the wrong fee per gas method with EIP1559
+
+## 27.7.1-hotfix.0
+
+### Patch Changes
+
+- [#1913](https://github.com/LedgerHQ/ledger-live/pull/1913) [`f7aa25417a`](https://github.com/LedgerHQ/ledger-live/commit/f7aa25417a953a6e4768e0b5d500cab566369a0a) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Prevent error on ERC1155 quantities being array of null
 
 ## 27.7.0
 

@@ -1,23 +1,39 @@
 # live-common-tools
 
-## 0.2.15-nightly.1
+## 0.2.16
 
 ### Patch Changes
 
-- Updated dependencies [[`57b82ad735`](https://github.com/LedgerHQ/ledger-live/commit/57b82ad7350c6368b2d6a731d7b1c52b759516b0), [`7264398cb0`](https://github.com/LedgerHQ/ledger-live/commit/7264398cb02765753b2abff3aab90d7a31b803d0), [`7264398cb0`](https://github.com/LedgerHQ/ledger-live/commit/7264398cb02765753b2abff3aab90d7a31b803d0)]:
-  - @ledgerhq/live-common@27.8.0-nightly.1
+- Updated dependencies [[`bdf55e0411`](https://github.com/LedgerHQ/ledger-live/commit/bdf55e0411d46c0bf68d42b7f96b75d49ba81a67)]:
+  - @ledgerhq/live-common@27.7.2
 
-## 0.2.15-nightly.0
+## 0.2.16-hotfix.0
 
 ### Patch Changes
 
-- Updated dependencies [[`d10c727430`](https://github.com/LedgerHQ/ledger-live/commit/d10c727430ffece743bbb7e703aaff61f97dacc1), [`77056e3692`](https://github.com/LedgerHQ/ledger-live/commit/77056e369256112188c183823a2c3fabfea2cba8), [`856f49374e`](https://github.com/LedgerHQ/ledger-live/commit/856f49374ec9b49f005676e270acdb81b78879c8), [`601c35ff2e`](https://github.com/LedgerHQ/ledger-live/commit/601c35ff2e9905c1d7869f531d85898436e2e86d)]:
-  - @ledgerhq/live-common@27.8.0-nightly.0
-  - @ledgerhq/hw-transport@6.27.8-nightly.0
-  - @ledgerhq/hw-transport-http@6.27.8-nightly.0
-  - @ledgerhq/hw-transport-web-ble@6.27.8-nightly.0
-  - @ledgerhq/hw-transport-webhid@6.27.8-nightly.0
-  - @ledgerhq/hw-transport-webusb@6.27.8-nightly.0
+- Updated dependencies [[`bdf55e0411`](https://github.com/LedgerHQ/ledger-live/commit/bdf55e0411d46c0bf68d42b7f96b75d49ba81a67)]:
+  - @ledgerhq/live-common@27.7.2-hotfix.0
+
+## 0.2.15
+
+### Patch Changes
+
+- Updated dependencies [[`f7aa25417a`](https://github.com/LedgerHQ/ledger-live/commit/f7aa25417a953a6e4768e0b5d500cab566369a0a), [`e3a796b0a0`](https://github.com/LedgerHQ/ledger-live/commit/e3a796b0a021b19ff01061a019657cea26cc46de)]:
+  - @ledgerhq/live-common@27.7.1
+
+## 0.2.15-hotfix.1
+
+### Patch Changes
+
+- Updated dependencies [[`e3a796b0a0`](https://github.com/LedgerHQ/ledger-live/commit/e3a796b0a021b19ff01061a019657cea26cc46de)]:
+  - @ledgerhq/live-common@27.7.1-hotfix.1
+
+## 0.2.15-hotfix.0
+
+### Patch Changes
+
+- Updated dependencies [[`f7aa25417a`](https://github.com/LedgerHQ/ledger-live/commit/f7aa25417a953a6e4768e0b5d500cab566369a0a)]:
+  - @ledgerhq/live-common@27.7.1-hotfix.0
 
 ## 0.2.14
 
