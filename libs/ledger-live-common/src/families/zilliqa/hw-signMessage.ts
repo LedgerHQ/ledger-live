@@ -19,7 +19,6 @@ const signMessage: SignMessage = async (
 	if (r.signature === null) {
 		throw new Error("Failed to sign.");
 	}
-
 	return {
 		rsv: {
 			r: r.signature.slice(0, 32).toString("hex"),

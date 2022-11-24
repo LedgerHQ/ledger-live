@@ -17,7 +17,7 @@
 import type Transport from "@ledgerhq/hw-transport";
 import BIPPath from "bip32-path";
 import { UserRefusedOnDevice } from "@ledgerhq/errors";
-const CHUNK_SIZE = 250;
+const CHUNK_SIZE = 16;
 
 const CLA = 0xe0;
 const APP_KEY = "ZIL";
@@ -75,7 +75,7 @@ export default class Zilliqa {
       data,
     ]);
 
-    console.log(`=> ${input.toString("hex")}`);
+    // console.log(`=> ${input.toString("hex")}`);
 
     const result = await this.transport.send(
       cla,
@@ -86,7 +86,7 @@ export default class Zilliqa {
       statusList
     );
 
-    console.log(`<= ${result.toString("hex")}`);
+    // console.log(`<= ${result.toString("hex")}`);
     return result;
   }
 
@@ -247,25 +247,58 @@ export default class Zilliqa {
     message: string
   ): Promise<{ signature: null | Buffer; returnCode: number }> {
     // Getting path parameters
-    const { account, change, index } = await this.getPathParametersFromPath(
-      path
-    );
+    const {
+      account,
+      change,
+      index,
+      fullProtocol,
+    } = await this.getPathParametersFromPath(path);
 
-    const params = Buffer.alloc(12);
-    params.writeUInt32LE(account, 0);
-    params.writeUInt32LE(change, 4);
-    params.writeUInt32LE(index, 8);
-    const buffer = Buffer.from(message);
+    // If we are using the full protocol, we add change and index
+    // as well to the parameters. Note that this is unfortunately not backward compatible.
+    let params: number[] = fullProtocol ? [account, change, index] : [account];
 
-    let data = Buffer.concat([params, Buffer.from([buffer.length]), buffer]);
-    const response = await this.transport.send(
-      CLA,
-      INS_SIGN_TXN,
-      0x0,
-      0x0,
-      data,
-      [SW_OK, SW_CANCEL]
-    );
+    const numbersToUInt32LE = (arr: number[]): Buffer => {
+      let ret = Buffer.alloc(arr.length * 4);
+      for (let i = 0; i < arr.length; ++i) {
+        ret.writeUInt32LE(arr[i], 4 * i);
+      }
+      return ret;
+    };
+
+    // Chopping data
+    const data = Buffer.from(message, "hex");
+    const chunks: Buffer[] = [];
+    for (let i = 0; i < data.length; i += CHUNK_SIZE) {
+      let end = i + CHUNK_SIZE;
+
+      if (i > data.length) {
+        end = data.length;
+      }
+
+      chunks.push(data.slice(i, end));
+    }
+
+    // Sending transaction in chunks
+    let response: Buffer | null = null;
+    let bytesLeft = data.length;
+    for (let i = 0; i < chunks.length; ++i) {
+      const data = chunks[i];
+      bytesLeft -= data.length;
+
+      const preamble = i === 0 ? params : [];
+      preamble.push(bytesLeft, data.length);
+      const payload = Buffer.concat([numbersToUInt32LE(preamble), data]);
+
+      response = await this.send(CLA, INS_SIGN_TXN, 0x0, 0x0, payload, [
+        SW_OK,
+        SW_CANCEL,
+      ]);
+    }
+
+    if (response === null) {
+      throw new Error("No data sent.");
+    }
 
     const errorCodeData = response.slice(-2);
     const returnCode = errorCodeData[0] * 0x100 + errorCodeData[1];
@@ -315,6 +348,7 @@ export default class Zilliqa {
       params.writeUInt32LE(index, 8);
     }
 
+    // TODO: Compute hash here instead of relying on message hash as input?
     const payload = Buffer.from(message, "hex");
     const data = Buffer.concat([params, payload]);
 
