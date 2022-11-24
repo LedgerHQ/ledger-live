@@ -6,12 +6,15 @@ import RequiresBLE from "../RequiresBLE";
 import BleDevicesScanning from "./BleDevicesScanning";
 import BleDevicePairing from "./BleDevicePairing";
 import { addKnownDevice } from "../../actions/ble";
+import type { BleDevicesScanningProps } from "./BleDevicesScanning";
+import type { BleDevicePairingProps } from "./BleDevicePairing";
 
 export type BleDevicePairingFlowProps = {
-  onSuccess: (pairedDevice: Device) => void;
-  onSuccessAddToKnownDevices?: boolean;
-  filterByDeviceModelId?: DeviceModelId;
-  areKnownDevicesDisplayed?: boolean;
+  filterByDeviceModelId?: BleDevicesScanningProps["filterByDeviceModelId"];
+  areKnownDevicesDisplayed?: BleDevicesScanningProps["areKnownDevicesDisplayed"];
+  onGoBackFromScanning?: BleDevicesScanningProps["onGoBack"];
+  onPairingSuccess: BleDevicePairingProps["onPaired"];
+  onPairingSuccessAddToKnownDevices?: boolean;
 };
 
 // A "done" state to avoid having the BLE scanning on the device that we just paired
@@ -19,13 +22,21 @@ export type BleDevicePairingFlowProps = {
 type PairingFlowStep = "scanning" | "pairing" | "done";
 
 /**
- * Screen handling the BLE flow with a scanning step and a pairing step
+ * Handles and renders a full BLE pairing flow: scanning and pairing steps
+ *
+ * @param filterByDeviceModelId Scanning step: the only model of the devices that will be scanned
+ * @param areKnownDevicesDisplayed Scanning step: choose to display seen devices that are already known by LLM
+ * @param onGoBackFromScanning Scanning step: If this function is set, a back arrow is displayed that calls this function if pressed
+ * @param onPairingSuccess Pairing step: function called when the pairing is done and successful
+ * @param onPairingSuccessAddToKnownDevices Pairing step: if true, this component adds the paired device to the list of known devices by LLM
+ *  before calling onPairingSuccess
  */
 const BleDevicePairingFlow = ({
   filterByDeviceModelId = DeviceModelId.nanoFTS, // This needs to be removed when nanos are supported
   areKnownDevicesDisplayed = true,
-  onSuccessAddToKnownDevices = false,
-  onSuccess,
+  onGoBackFromScanning,
+  onPairingSuccess,
+  onPairingSuccessAddToKnownDevices = false,
 }: BleDevicePairingFlowProps) => {
   const dispatchRedux = useDispatch();
 
@@ -65,7 +76,7 @@ const BleDevicePairingFlow = ({
 
   const onPaired = useCallback(
     (device: Device) => {
-      if (onSuccessAddToKnownDevices) {
+      if (onPairingSuccessAddToKnownDevices) {
         dispatchRedux(
           addKnownDevice({
             id: device.deviceId,
@@ -79,9 +90,9 @@ const BleDevicePairingFlow = ({
       setDeviceToPair(null);
       setPairingFlowStep("done");
 
-      onSuccess(device);
+      onPairingSuccess(device);
     },
-    [dispatchRedux, onSuccess, onSuccessAddToKnownDevices],
+    [dispatchRedux, onPairingSuccess, onPairingSuccessAddToKnownDevices],
   );
 
   const onRetryPairingFlow = useCallback(() => {
@@ -108,6 +119,7 @@ const BleDevicePairingFlow = ({
           filterByDeviceModelId={filterByDeviceModelId}
           areKnownDevicesDisplayed={areKnownDevicesDisplayed}
           onDeviceSelect={onDeviceSelect}
+          onGoBack={onGoBackFromScanning}
         />
       ) : null}
     </RequiresBLE>

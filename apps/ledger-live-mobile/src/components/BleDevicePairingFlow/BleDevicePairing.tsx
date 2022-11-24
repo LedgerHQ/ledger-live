@@ -22,6 +22,16 @@ export type BleDevicePairingProps = {
   deviceToPair: Device;
 };
 
+/**
+ * Runs a BLE pairing with the given device. Displays pairing, success or error steps.
+ *
+ * A closing cross is displayed to the user during the pairing, which either calls onPaired if
+ * the device is already paired, or onRetry otherwise.
+ *
+ * @param deviceToPair Device to pair
+ * @param onPaired Function called when pairing was successful
+ * @param onRetry Function called when the user chooses to retry on unsuccessful pairing
+ */
 const BleDevicePairing = ({
   deviceToPair,
   onPaired,
@@ -41,6 +51,7 @@ const BleDevicePairing = ({
 
   useEffect(() => {
     if (isPaired) {
+      // To display the success to the user
       setTimeout(() => {
         onPaired(deviceToPair);
       }, TIMEOUT_AFTER_PAIRED_MS);

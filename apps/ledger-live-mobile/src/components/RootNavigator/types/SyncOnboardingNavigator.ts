@@ -6,7 +6,6 @@ export type SyncOnboardingStackParamList = {
   [ScreenName.SyncOnboardingBleDevicePairingFlow]: {
     filterByDeviceModelId?: DeviceModelId;
     areKnownDevicesDisplayed?: boolean;
-    onSuccessAddToKnownDevices?: boolean;
   };
   [ScreenName.SyncOnboardingCompanion]: {
     device: Device;

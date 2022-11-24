@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
-import { BackHandler, ScrollView } from "react-native";
+import { ScrollView } from "react-native";
 import {
   Flex,
   InfiniteLoader,
@@ -13,12 +13,8 @@ import { useSelector } from "react-redux";
 import { getDeviceModel } from "@ledgerhq/devices";
 import { Device, DeviceModelId } from "@ledgerhq/types-devices";
 import TransportBLE from "@ledgerhq/react-native-hw-transport-ble";
-import { useNavigation } from "@react-navigation/native";
-
-import { NavigatorName, ScreenName } from "../../const";
 import { knownDevicesSelector } from "../../reducers/ble";
 import LocationRequired from "../LocationRequired/index";
-import { RootNavigation } from "../RootNavigator/types/helpers";
 import Animation from "../Animation";
 import DeviceSetupView from "../DeviceSetupView";
 import BleDeviceItem from "./BleDeviceItem";
@@ -28,53 +24,26 @@ export type FilterByDeviceModelId = null | DeviceModelId;
 
 export type BleDevicesScanningProps = {
   onDeviceSelect: (item: Device) => void;
+  onGoBack?: () => void;
   filterByDeviceModelId?: FilterByDeviceModelId;
   areKnownDevicesDisplayed?: boolean;
 };
 
+/**
+ * Runs a BLE scan and list seen devices
+ *
+ * @param onDeviceSelect Function called when the user selects a scanned device
+ * @param filterByDeviceModelId The only model of the devices that will be scanned
+ * @param areKnownDevicesDisplayed Choose to display seen devices that are already known by LLM
+ * @param onGoBack If this function is set, a back arrow is displayed that calls this function if pressed
+ */
 const BleDevicesScanning = ({
   onDeviceSelect,
   filterByDeviceModelId = null,
   areKnownDevicesDisplayed,
+  onGoBack,
 }: BleDevicesScanningProps) => {
   const { t } = useTranslation();
-  const navigation = useNavigation<RootNavigation>();
-
-  const handleBack = useCallback(() => {
-    const routes = navigation.getState().routes;
-
-    const isNavigationFromDeeplink =
-      routes[routes.length - 1]?.params === undefined;
-
-    if (!isNavigationFromDeeplink) {
-      navigation.goBack();
-    } else {
-      navigation.reset({
-        index: 0,
-        routes: [
-          {
-            name: NavigatorName.BaseOnboarding,
-            state: {
-              routes: [
-                {
-                  name: ScreenName.OnboardingWelcome,
-                },
-              ],
-            },
-          },
-        ],
-      });
-    }
-  }, [navigation]);
-
-  useEffect(() => {
-    const listener = BackHandler.addEventListener("hardwareBackPress", () => {
-      handleBack();
-      return true;
-    });
-
-    return () => listener.remove();
-  }, [handleBack]);
 
   const productName = filterByDeviceModelId
     ? getDeviceModel(filterByDeviceModelId).productName || filterByDeviceModelId
@@ -150,7 +119,7 @@ const BleDevicesScanning = ({
   }
 
   return (
-    <DeviceSetupView onBack={handleBack}>
+    <DeviceSetupView onBack={onGoBack}>
       <ScrollListContainer display="flex" flex={1} px={4}>
         <Flex height={180} alignItems="center" justifyContent="center">
           <Animation source={lottie} />
