@@ -21,12 +21,12 @@ async function buildElrondESDTTokenAccount({
   token: TokenCurrency;
   balance: BigNumber;
 }) {
-  const id = encodeTokenAccountId(parentAccountId, token);
+  const tokenAccountId = encodeTokenAccountId(parentAccountId, token);
   const tokenIdentifierHex = extractTokenId(token.id);
   const tokenIdentifier = Buffer.from(tokenIdentifierHex, "hex").toString();
 
   const operations = await getAccountESDTOperations(
-    parentAccountId,
+    tokenAccountId,
     accountAddress,
     tokenIdentifier,
     0
@@ -34,7 +34,7 @@ async function buildElrondESDTTokenAccount({
 
   const tokenAccount: TokenAccount = {
     type: "TokenAccount",
-    id,
+    id: tokenAccountId,
     parentId: parentAccountId,
     starred: false,
     token,
