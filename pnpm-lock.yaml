@@ -3096,57 +3096,77 @@ importers:
       '@babel/plugin-proposal-class-properties': ^7.13.0
       '@babel/plugin-syntax-import-meta': ^7.10.1
       '@ledgerhq/cryptoassets': workspace:^
+      '@ledgerhq/devices': workspace:^
+      '@ledgerhq/errors': workspace:^
       '@ledgerhq/hw-transport': workspace:^
       '@ledgerhq/hw-transport-http': workspace:^
       '@ledgerhq/hw-transport-u2f': 5.36.0-deprecated
       '@ledgerhq/hw-transport-web-ble': workspace:^
+      '@ledgerhq/hw-transport-webauthn': 5.36.0-deprecated
       '@ledgerhq/hw-transport-webhid': workspace:^
       '@ledgerhq/hw-transport-webusb': workspace:^
       '@ledgerhq/live-common': workspace:^
+      '@ledgerhq/logs': workspace:^
       '@material-ui/core': ^4.11.3
       '@open-wc/webpack-import-meta-loader': ^0.4.7
+      axios: '*'
       babel-polyfill: ^6.26.0
-      bignumber.js: ^9.1.0
+      bignumber.js: '*'
       flow-bin: ^0.145.0
       invariant: ^2.2.4
+      lodash: '4'
       prop-types: ^15.8.1
       qrcode: ^1.4.2
+      re-resizable: '6'
       react: ^17.0.2
       react-app-rewired: ^2.1.8
       react-dom: ^17.0.2
+      react-dropzone: '*'
       react-inspector: ^4.0.1
+      react-redux: '*'
       react-router: ^5.2.0
       react-router-dom: ^5.2.0
       react-scripts: 3.4.3
       react-select: ^5.3.2
       react-table: ^6.11.4
+      rxjs: '*'
       semver: ^7.3.7
       styled-components: ^4.4.0
       webpack: '4.42'
     dependencies:
       '@ledgerhq/cryptoassets': link:../../libs/ledgerjs/packages/cryptoassets
+      '@ledgerhq/devices': link:../../libs/ledgerjs/packages/devices
+      '@ledgerhq/errors': link:../../libs/ledgerjs/packages/errors
       '@ledgerhq/hw-transport': link:../../libs/ledgerjs/packages/hw-transport
       '@ledgerhq/hw-transport-http': link:../../libs/ledgerjs/packages/hw-transport-http
       '@ledgerhq/hw-transport-u2f': 5.36.0-deprecated
       '@ledgerhq/hw-transport-web-ble': link:../../libs/ledgerjs/packages/hw-transport-web-ble
+      '@ledgerhq/hw-transport-webauthn': 5.36.0-deprecated
       '@ledgerhq/hw-transport-webhid': link:../../libs/ledgerjs/packages/hw-transport-webhid
       '@ledgerhq/hw-transport-webusb': link:../../libs/ledgerjs/packages/hw-transport-webusb
       '@ledgerhq/live-common': link:../../libs/ledger-live-common
+      '@ledgerhq/logs': link:../../libs/ledgerjs/packages/logs
       '@material-ui/core': 4.12.4_sfoxds7t5ydpegc3knd667wn6m
+      axios: 0.27.2
       babel-polyfill: 6.26.0
       bignumber.js: 9.1.0
       flow-bin: 0.145.0
       invariant: 2.2.4
+      lodash: 4.17.21
       prop-types: 15.8.1
       qrcode: 1.5.0
+      re-resizable: 6.9.9_sfoxds7t5ydpegc3knd667wn6m
       react: 17.0.2
       react-dom: 17.0.2_react@17.0.2
+      react-dropzone: 14.2.3_react@17.0.2
       react-inspector: 4.0.1_react@17.0.2
+      react-redux: 7.2.9_react@17.0.2
       react-router: 5.3.1_react@17.0.2
       react-router-dom: 5.3.1_react@17.0.2
       react-scripts: 3.4.3_react@17.0.2
       react-select: 5.3.2_sfoxds7t5ydpegc3knd667wn6m
       react-table: 6.11.5_oxfzelaz5ynxsop2v2nu2h2m64
+      rxjs: 7.5.5
       semver: 7.3.7
       styled-components: 4.4.1_sfoxds7t5ydpegc3knd667wn6m
       webpack: 4.42.1
@@ -12325,6 +12345,15 @@ packages:
       u2f-api: 0.2.7
     dev: false
 
+  /@ledgerhq/hw-transport-webauthn/5.36.0-deprecated:
+    resolution: {integrity: sha512-MCT59enCaevP458x+n4BGA8z9nVhuxGP5wtCtlUB7uxkWB6j12RHzPwyqlPo1z7baEby8fQe0VCI5lbGaCSBDQ==}
+    dependencies:
+      '@ledgerhq/devices': 5.51.1
+      '@ledgerhq/errors': 5.50.0
+      '@ledgerhq/hw-transport': 5.51.1
+      '@ledgerhq/logs': 5.50.0
+    dev: false
+
   /@ledgerhq/hw-transport/5.11.0:
     resolution: {integrity: sha512-z56iwv0DZZu20T5q9sNMHFQNVuRKYqzCuNFhY9woWSpmOQkyVHCRiEgOQbN5h6kVri6fkfPkDzqqcsYjJlnT9g==}
     dependencies:
@@ -18929,6 +18958,17 @@ packages:
     resolution: {integrity: sha512-qjDJRrmvBMiTx+jyLxvLfJU7UznFuokDv4f3WRuriHKERccVpFU+8XMQUAbDzoiJCsmexxRExQeMwwCdamSKDA==}
     dev: true
 
+  /@types/hoist-non-react-statics/3.3.1:
+    resolution: {integrity: sha512-iMIqiko6ooLrTh1joXodJK5X9xeEALT1kM5G3ZLhD3hszxBdIEd5C75U834D9mLcINgD4OyZf5uQXjkuYydWvA==}
+    peerDependencies:
+      '@types/react': '*'
+    peerDependenciesMeta:
+      '@types/react':
+        optional: true
+    dependencies:
+      hoist-non-react-statics: 3.3.2
+    dev: false
+
   /@types/hoist-non-react-statics/3.3.1_@types+react@17.0.45:
     resolution: {integrity: sha512-iMIqiko6ooLrTh1joXodJK5X9xeEALT1kM5G3ZLhD3hszxBdIEd5C75U834D9mLcINgD4OyZf5uQXjkuYydWvA==}
     peerDependencies:
@@ -19338,6 +19378,19 @@ packages:
     dependencies:
       '@types/react': 17.0.45
     dev: true
+
+  /@types/react-redux/7.1.24:
+    resolution: {integrity: sha512-7FkurKcS1k0FHZEtdbbgN8Oc6b+stGSfZYjQGicofJ0j4U0qIn/jaSvnP2pLwZKiai3/17xqqxkkrxTgN8UNbQ==}
+    peerDependencies:
+      '@types/react': '*'
+    peerDependenciesMeta:
+      '@types/react':
+        optional: true
+    dependencies:
+      '@types/hoist-non-react-statics': 3.3.1
+      hoist-non-react-statics: 3.3.2
+      redux: 4.2.0
+    dev: false
 
   /@types/react-redux/7.1.24_@types+react@17.0.45:
     resolution: {integrity: sha512-7FkurKcS1k0FHZEtdbbgN8Oc6b+stGSfZYjQGicofJ0j4U0qIn/jaSvnP2pLwZKiai3/17xqqxkkrxTgN8UNbQ==}
@@ -22165,6 +22218,11 @@ packages:
     engines: {node: '>=8.0.0'}
     dev: false
 
+  /attr-accept/2.2.2:
+    resolution: {integrity: sha512-7prDjvt9HmqiZ0cl5CRjtS84sEyhsHP2coDkaZKRKVfCDo9s7iw7ChVmar78Gu9pC4SoR/28wFu/G5JJhTnqEg==}
+    engines: {node: '>=4'}
+    dev: false
+
   /autoprefixer/10.4.8_postcss@7.0.39:
     resolution: {integrity: sha512-75Jr6Q/XpTqEf6D2ltS5uMewJIx5irCU1oBYJrWjFenq/m12WRRrz6g15L1EIoYvPLXTbEry7rDOwrcYNj77xw==}
     engines: {node: ^10 || ^12 || >=14}
@@ -22950,7 +23008,7 @@ packages:
       babel-plugin-syntax-jsx: 6.18.0
       lodash: 4.17.21
       picomatch: 2.3.1
-      styled-components: 5.3.5_fane7jikarojcev26y27hpbhu4
+      styled-components: 5.3.5_ovpqj5wn7dv5iunpkty63trwiy
 
   /babel-plugin-syntax-jsx/6.18.0:
     resolution: {integrity: sha1-CvMqmm4Tyno/1QaeYtew9Y0NiUY=}
@@ -32395,6 +32453,13 @@ packages:
       webpack: 5.72.1
     dev: false
 
+  /file-selector/0.6.0:
+    resolution: {integrity: sha512-QlZ5yJC0VxHxQQsQhXvBaC7VRJ2uaxTf+Tfpu4Z/OcVQJVpZO+DGU0rkoVW5ce2SccxugvpBJoMvUs59iILYdw==}
+    engines: {node: '>= 12'}
+    dependencies:
+      tslib: 2.4.0
+    dev: false
+
   /file-system-cache/1.0.5:
     resolution: {integrity: sha1-hCWbNqK7uNPW6xAh0xMv/mTP/08=}
     dependencies:
@@ -37553,7 +37618,7 @@ packages:
       jest-resolve:
         optional: true
     dependencies:
-      jest-resolve: 28.1.3
+      jest-resolve: 28.1.3_metro@0.67.0
     dev: true
 
   /jest-regex-util/24.9.0:
@@ -46359,6 +46424,16 @@ packages:
       minimist: 1.2.6
       strip-json-comments: 2.0.1
 
+  /re-resizable/6.9.9_sfoxds7t5ydpegc3knd667wn6m:
+    resolution: {integrity: sha512-l+MBlKZffv/SicxDySKEEh42hR6m5bAHfNu3Tvxks2c4Ah+ldnWjfnVRwxo/nxF27SsUsxDS0raAzFuJNKABXA==}
+    peerDependencies:
+      react: ^16.13.1 || ^17.0.0 || ^18.0.0
+      react-dom: ^16.13.1 || ^17.0.0 || ^18.0.0
+    dependencies:
+      react: 17.0.2
+      react-dom: 17.0.2_react@17.0.2
+    dev: false
+
   /react-app-polyfill/1.0.6:
     resolution: {integrity: sha512-OfBnObtnGgLGfweORmdZbyEz+3dgVePQBb3zipiaDsMHV1NpWm0rDFYIVXFV/AK+x4VIIfWHhrdMIeoTLyRr2g==}
     engines: {node: '>=6'}
@@ -46603,6 +46678,18 @@ packages:
       react: 17.0.2
       react-dom: 17.0.2_react@17.0.2
     dev: true
+
+  /react-dropzone/14.2.3_react@17.0.2:
+    resolution: {integrity: sha512-O3om8I+PkFKbxCukfIR3QAGftYXDZfOE2N1mr/7qebQJHs7U+/RSL/9xomJNpRg9kM5h9soQSdf0Gc7OHF5Fug==}
+    engines: {node: '>= 10.13'}
+    peerDependencies:
+      react: '>= 16.8 || 18.0.0'
+    dependencies:
+      attr-accept: 2.2.2
+      file-selector: 0.6.0
+      prop-types: 15.8.1
+      react: 17.0.2
+    dev: false
 
   /react-easy-crop/4.6.2_sfoxds7t5ydpegc3knd667wn6m:
     resolution: {integrity: sha512-qTGU3TWPwdAdNJsbM0OLbDx+Vjes9vWOnm1AUBiVp4GOzZacBQbUzVE9jYprFoWRrJZSn3GEwnxk0YhLAvdiYQ==}
@@ -47617,6 +47704,22 @@ packages:
       react-is: 17.0.2
     transitivePeerDependencies:
       - '@types/react'
+
+  /react-redux/7.2.9_react@17.0.2:
+    resolution: {integrity: sha512-Gx4L3uM182jEEayZfRbI/G11ZpYdNAnBs70lFVMNdHJI76XYtR+7m0MN+eAs7UHBPhWXcnFPaS+9owSCJQHNpQ==}
+    peerDependencies:
+      react: ^16.8.3 || ^17 || ^18
+    dependencies:
+      '@babel/runtime': 7.18.9
+      '@types/react-redux': 7.1.24
+      hoist-non-react-statics: 3.3.2
+      loose-envify: 1.4.0
+      prop-types: 15.8.1
+      react: 17.0.2
+      react-is: 17.0.2
+    transitivePeerDependencies:
+      - '@types/react'
+    dev: false
 
   /react-refresh/0.11.0:
     resolution: {integrity: sha512-F27qZr8uUqwhWZboondsPx8tnC3Ct3SxZA3V5WyEvujRyyNv0VYPhoBg1gZ8/MV5tubQp76Trw8lTv9hzRBa+A==}
@@ -51043,7 +51146,6 @@ packages:
       react-is: 17.0.2
       shallowequal: 1.1.0
       supports-color: 5.5.0
-    dev: false
 
   /styled-system/5.1.5:
     resolution: {integrity: sha512-7VoD0o2R3RKzOzPK0jYrVnS8iJdfkKsQJNiLRDjikOpQVqQHns/DXWaPZOH4tIKkhAT7I6wIsy9FWTWh2X3q+A==}
