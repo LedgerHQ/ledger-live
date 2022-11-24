@@ -154,16 +154,17 @@ function transactionToOperation(
   tokenIdentifier?: string
 ): Operation {
   const type = getOperationType(transaction, addr);
+  const fee = new BigNumber(transaction.fee || 0);
 
   const delegationAmount = getDelegationOperationAmount(addr, transaction);
 
   return {
     id: encodeOperationId(accountId, transaction.txHash ?? "", type),
     accountId,
-    fee: new BigNumber(transaction.fee || 0),
+    fee,
     value:
       transaction.mode == "claimRewards" && delegationAmount
-        ? delegationAmount
+        ? delegationAmount.minus(fee)
         : getOperationValue(transaction, addr, tokenIdentifier),
     type,
     hash: transaction.txHash ?? "",
