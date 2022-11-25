@@ -69,7 +69,7 @@ const AppRow = ({
     [installed, name],
   );
 
-  const developedBy = authorName ? authorName : " 3rd party";
+  const developedBy = authorName || " 3rd party";
 
   const version = (isInstalled && isInstalled.version) || appVersion;
   const availableVersion =
@@ -98,7 +98,7 @@ const AppRow = ({
           {displayName}
         </Text>
         <Text variant="tiny" fontWeight="medium" color="neutral.c70">
-          {"by"+developedBy}
+          {"by" + developedBy}
         </Text>
       </LabelContainer>
       <VersionContainer borderColor="neutral.c40" mx={3}>
@@ -116,9 +116,7 @@ const AppRow = ({
                 i18nKey="manager.appList.versionNew"
                 values={{
                   newVersion:
-                    availableVersion !== version
-                      ? ` ${availableVersion}`
-                      : "",
+                    availableVersion !== version ? ` ${availableVersion}` : "",
                 }}
               />
             </>
@@ -127,10 +125,11 @@ const AppRow = ({
       </VersionContainer>
       <VersionContainer borderColor="neutral.c40">
         <Text
-            numberOfLines={1}
-            variant="tiny"
-            color="neutral.c80"
-            fontWeight="semiBold">
+          numberOfLines={1}
+          variant="tiny"
+          color="neutral.c80"
+          fontWeight="semiBold"
+        >
           <ByteSize
             value={bytes}
             deviceModel={state.deviceModel}
