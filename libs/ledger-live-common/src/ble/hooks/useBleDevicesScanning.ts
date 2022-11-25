@@ -29,15 +29,19 @@ export type UseBleDevicesScanningOptions = {
   stopBleScanning?: boolean;
   filterByDeviceModelIds?: DeviceModelId[];
   filterOutDevicesByDeviceIds?: DeviceId[];
+  stopAndReRunIntervalMs?: number;
 };
 
 const DEFAULT_DEVICE_NAME = "Device";
+const DEFAULT_STOP_AND_RERUN_INTERVAL_MS = 2000;
 
 /**
  * Scans the BLE devices around the user
  * @param filterByDeviceModelIds An array of device model ids to filter on
  * @param filterOutDevicesByDeviceIds An array of device ids to filter out
  * @param stopBleScanning Flag to stop or continue the scanning
+ * @param stopAndReRunIntervalMs Interval of time in ms at which the scanning is stopped, cleaned and re-run.
+ *   It makes the scanning more resilient to a previously paired device with which a communication was happening.
  * @returns An object containing:
  * - scannedDevices: list of ScannedDevice found by the scanning
  * - scanningBleError: if an error occurred, a BleError, otherwise null
@@ -47,16 +51,17 @@ export const useBleDevicesScanning = ({
   stopBleScanning,
   filterByDeviceModelIds,
   filterOutDevicesByDeviceIds,
+  stopAndReRunIntervalMs = DEFAULT_STOP_AND_RERUN_INTERVAL_MS,
 }: UseBleDevicesScanningDependencies &
   UseBleDevicesScanningOptions): UseBleDevicesScanningResult => {
   const [scanningBleError, setScanningBleError] =
     useState<ScanningBleError>(null);
   const [scannedDevices, setScannedDevices] = useState<ScannedDevice[]>([]);
   // To check for duplicates. The ref will persist for the full lifetime of the component
-  // in which the hook is called.
-  // We could use the current value of scannedDevices inside setScannedDevices
-  // but the check would only be done at the end of the process when calling setScannedDevices.
+  // in which the hook is called, and does not re-trigger the hook when being updated.
   const scannedDevicesRef = useRef<ScannedDevice[]>([]);
+  // To stop, call the unsubscribe and cleaning function, and re-run
+  const [stopAndReRun, setCleanAndReRun] = useState<0 | 1>(0);
 
   useEffect(() => {
     if (stopBleScanning) {
@@ -147,12 +152,22 @@ export const useBleDevicesScanning = ({
       sub.unsubscribe();
     };
   }, [
+    stopAndReRun,
     bleTransportListen,
     stopBleScanning,
     filterByDeviceModelIds,
-    setScannedDevices,
     filterOutDevicesByDeviceIds,
   ]);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCleanAndReRun((prev) => {
+        return prev === 1 ? 0 : 1;
+      });
+    }, stopAndReRunIntervalMs);
+
+    return () => clearInterval(interval);
+  }, [stopAndReRunIntervalMs]);
 
   return {
     scannedDevices,
