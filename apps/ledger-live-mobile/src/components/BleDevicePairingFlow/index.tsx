@@ -1,7 +1,6 @@
 import React, { useCallback, useState } from "react";
 import { useDispatch } from "react-redux";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
-import { DeviceModelId } from "@ledgerhq/types-devices";
 import RequiresBLE from "../RequiresBLE";
 import BleDevicesScanning from "./BleDevicesScanning";
 import BleDevicePairing from "./BleDevicePairing";
@@ -32,7 +31,7 @@ type PairingFlowStep = "scanning" | "pairing" | "done";
  *  before calling onPairingSuccess
  */
 const BleDevicePairingFlow = ({
-  filterByDeviceModelId = DeviceModelId.nanoFTS, // This needs to be removed when nanos are supported
+  filterByDeviceModelId,
   areKnownDevicesDisplayed = true,
   onGoBackFromScanning,
   onPairingSuccess,
