@@ -1,5 +1,15 @@
 # ledger-live-desktop
 
+## 2.50.0-nightly.14
+
+### Patch Changes
+
+- [#1899](https://github.com/LedgerHQ/ledger-live/pull/1899) [`f29d3d9384`](https://github.com/LedgerHQ/ledger-live/commit/f29d3d9384f57c99c228749673d4f5d840b4bf06) Thanks [@LFBarreto](https://github.com/LFBarreto)! - LLD - Handle ECONNRESET error in manager
+
+- Updated dependencies [[`f29d3d9384`](https://github.com/LedgerHQ/ledger-live/commit/f29d3d9384f57c99c228749673d4f5d840b4bf06), [`720dc1f58a`](https://github.com/LedgerHQ/ledger-live/commit/720dc1f58a6cea9c8a933139ff94a1d9f1b98129), [`720dc1f58a`](https://github.com/LedgerHQ/ledger-live/commit/720dc1f58a6cea9c8a933139ff94a1d9f1b98129)]:
+  - @ledgerhq/live-common@27.8.0-nightly.1
+  - @ledgerhq/types-live@6.27.0-nightly.1
+
 ## 2.50.0-nightly.13
 
 ### Minor Changes
