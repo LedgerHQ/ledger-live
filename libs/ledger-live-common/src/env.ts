@@ -358,9 +358,9 @@ const envDefinitions = {
     desc: "enable an experimental swap interface",
   },
   EXPLORER: {
-    def: "https://explorers.api-01.live.ledger-stg.com",
+    def: "https://explorers.api.live.ledger.com",
     parser: stringParser,
-    desc: "Ledger generic explorer API (STAGING - CHANGE TO PRODUCTION BEFORE MERGE)",
+    desc: "Ledger generic explorer API",
   },
   EXPLORER_STAGING: {
     def: "https://explorers.api-01.live.ledger-stg.com",
