@@ -33,7 +33,7 @@ const RowContainer = styled(Flex).attrs({
 const LabelContainer = styled(Flex).attrs({
   flexGrow: 0,
   flexShrink: 1,
-  flexBasis: "40%",
+  flexBasis: "35%",
   flexDirection: "column",
   alignItems: "flex-start",
   justifyContent: "center",
@@ -45,6 +45,8 @@ const VersionContainer = styled(Flex).attrs({
   paddingHorizontal: 4,
   paddingVertical: 2,
   borderRadius: 4,
+  flexShrink: 1,
+  flexBasis: "15%",
   alignItems: "center",
   justifyContent: "center",
   marginTop: 2,
@@ -59,13 +61,15 @@ const AppRow = ({
   setStorageWarning,
   optimisticState,
 }: Props) => {
-  const { name, bytes, version: appVersion, displayName } = app;
+  const { name, bytes, version: appVersion, displayName, authorName } = app;
   const { installed, deviceInfo } = state;
 
   const isInstalled = useMemo(
     () => installed.find(i => i.name === name),
     [installed, name],
   );
+
+  const developedBy = authorName ? authorName : " 3rd party";
 
   const version = (isInstalled && isInstalled.version) || appVersion;
   const availableVersion =
@@ -93,38 +97,47 @@ const AppRow = ({
         >
           {displayName}
         </Text>
-        <VersionContainer borderColor="neutral.c40">
-          <Text
+        <Text variant="tiny" fontWeight="medium" color="neutral.c70">
+          {"by"+developedBy}
+        </Text>
+      </LabelContainer>
+      <VersionContainer borderColor="neutral.c40" mx={3}>
+        <Text
+          numberOfLines={1}
+          variant="tiny"
+          color="neutral.c80"
+          fontWeight="semiBold"
+        >
+          <Trans i18nKey="ApplicationVersion" values={{ version }} />
+          {isInstalled && !isInstalled.updated && (
+            <>
+              {" "}
+              <Trans
+                i18nKey="manager.appList.versionNew"
+                values={{
+                  newVersion:
+                    availableVersion !== version
+                      ? ` ${availableVersion}`
+                      : "",
+                }}
+              />
+            </>
+          )}
+        </Text>
+      </VersionContainer>
+      <VersionContainer borderColor="neutral.c40">
+        <Text
             numberOfLines={1}
             variant="tiny"
             color="neutral.c80"
-            fontWeight="semiBold"
-          >
-            <Trans i18nKey="ApplicationVersion" values={{ version }} />
-            {isInstalled && !isInstalled.updated && (
-              <>
-                {" "}
-                <Trans
-                  i18nKey="manager.appList.versionNew"
-                  values={{
-                    newVersion:
-                      availableVersion !== version
-                        ? ` ${availableVersion}`
-                        : "",
-                  }}
-                />
-              </>
-            )}
-          </Text>
-        </VersionContainer>
-      </LabelContainer>
-      <Text variant="body" fontWeight="medium" color="neutral.c70" my={3}>
-        <ByteSize
-          value={bytes}
-          deviceModel={state.deviceModel}
-          firmwareVersion={deviceInfo.version}
-        />
-      </Text>
+            fontWeight="semiBold">
+          <ByteSize
+            value={bytes}
+            deviceModel={state.deviceModel}
+            firmwareVersion={deviceInfo.version}
+          />
+        </Text>
+      </VersionContainer>
       <AppStateButton
         app={app}
         state={state}
