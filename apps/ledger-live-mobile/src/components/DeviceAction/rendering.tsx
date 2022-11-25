@@ -109,24 +109,12 @@ const CenteredText = styled(Text).attrs({
   textAlign: "center",
 })``;
 
-const TitleContainer = styled(Flex).attrs({
-  py: 8,
-})``;
-
-const TitleText = ({
-  children,
-  disableUppercase,
-}: {
-  children: React.ReactNode;
-  disableUppercase?: boolean;
-}) => (
-  <TitleContainer>
-    <Log
-      extraTextProps={disableUppercase ? { textTransform: "none" } : undefined}
-    >
+export const TitleText = ({ children }: { children: React.ReactNode }) => (
+  <Flex>
+    <Text textAlign="center" variant="h4" fontWeight="semiBold">
       {children}
-    </Log>
-  </TitleContainer>
+    </Text>
+  </Flex>
 );
 
 const DescriptionText = styled(CenteredText).attrs({

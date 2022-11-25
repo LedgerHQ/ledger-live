@@ -238,6 +238,7 @@ export default function ConnectDevice({ route, navigation }: Props) {
     () =>
       transaction ? (
         <SafeAreaView
+          edges={edges}
           style={[
             styles.root,
             {
@@ -270,6 +271,9 @@ export default function ConnectDevice({ route, navigation }: Props) {
     [status, transaction, tokenCurrency, route.params.device],
   );
 }
+
+const edges = ["bottom"];
+
 const styles = StyleSheet.create({
   root: {
     flex: 1,
