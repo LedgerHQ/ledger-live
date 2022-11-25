@@ -9,7 +9,13 @@ import { log } from "@ledgerhq/logs";
 import logger from "~/logger";
 import LoggerTransport from "~/logger/logger-transport-internal";
 
-import { executeCommand, unsubscribeCommand, unsubscribeAllCommands } from "./commandHandler";
+import {
+  executeCommand,
+  unsubscribeCommand,
+  unsubscribeAllCommands,
+  writeToCommand,
+  completeCommand,
+} from "./commandHandler";
 import sentry, { setTags } from "~/sentry/internal";
 
 process.on("exit", () => {
@@ -50,6 +56,16 @@ if (INITIAL_SENTRY_TAGS) {
 
 process.on("message", m => {
   switch (m.type) {
+    case "command-next":
+      // $FlowFixMe TODO
+      writeToCommand(m.command, process.send.bind(process));
+      break;
+
+    case "command-complete":
+      // $FlowFixMe TODO
+      completeCommand(m.command, process.send.bind(process));
+      break;
+
     case "command":
       // $FlowFixMe TODO
       executeCommand(m.command, process.send.bind(process));

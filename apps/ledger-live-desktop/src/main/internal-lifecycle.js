@@ -124,6 +124,16 @@ ipcMain.on("command", (event, command) => {
   internal.send({ type: "command", command });
 });
 
+ipcMain.on("command-next", (event, command) => {
+  ongoing[command.requestId] = event;
+  internal.send({ type: "command-next", command });
+});
+
+ipcMain.on("command-complete", (event, command) => {
+  ongoing[command.requestId] = event;
+  internal.send({ type: "command-complete", command });
+});
+
 ipcMain.on("command-unsubscribe", (event, { requestId }) => {
   delete ongoing[requestId];
   internal.send({ type: "command-unsubscribe", requestId });

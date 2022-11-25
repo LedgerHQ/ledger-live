@@ -4,6 +4,8 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
 import styled from "styled-components";
+import { Subject } from "rxjs";
+import { first } from "rxjs/operators";
 
 import { UserRefusedOnDevice } from "@ledgerhq/errors";
 import { Account, AccountLike, SignedOperation, Operation } from "@ledgerhq/types-live";
@@ -19,6 +21,8 @@ import {
   addPendingOperation,
   getMainAccount,
 } from "@ledgerhq/live-common/account/index";
+import { AppResult } from "@ledgerhq/live-common/hw/actions/app";
+import getTransport, { BidirectionalEvent } from "@ledgerhq/live-common/hw/getTransport";
 import { MessageData } from "@ledgerhq/live-common/hw/signMessage/types";
 import { useToasts } from "@ledgerhq/live-common/notifications/ToastProvider/index";
 import { TypedMessageData } from "@ledgerhq/live-common/families/ethereum/types";
@@ -124,13 +128,13 @@ export function WebView({ manifest, onClose, inputs = {}, config }: Props) {
 
   const serverRef = useRef<WalletAPIServer>();
   const transportRef = useRef<Transport>();
+  const transport = useRef<Subject<BidirectionalEvent>>();
 
   useEffect(() => {
     if (targetRef.current) {
       transportRef.current = {
         onMessage: undefined,
         send: message => {
-          console.log("reply:", message);
           targetRef.current.contentWindow.postMessage(message);
         },
       };
@@ -143,6 +147,9 @@ export function WebView({ manifest, onClose, inputs = {}, config }: Props) {
           "account.receive",
           "currency.list",
           "message.sign",
+          "device.close",
+          "device.exchange",
+          "device.transport",
         ],
       });
       serverRef.current.setAccounts(walletAPIAccounts);
@@ -368,6 +375,91 @@ export function WebView({ manifest, onClose, inputs = {}, config }: Props) {
           );
         },
       );
+
+      serverRef.current.setHandler("device.transport", ({ appName }) => {
+        if (transport.current) {
+          return Promise.reject(new Error("Device already opened"));
+        }
+
+        tracking.deviceTransportRequested(manifest);
+
+        return new Promise((resolve, reject) => {
+          dispatch(
+            openModal("MODAL_CONNECT_DEVICE", {
+              appName,
+              onResult: (result: AppResult) => {
+                tracking.deviceTransportSuccess(manifest);
+                if (!result.device) {
+                  reject(new Error("No device"));
+                  return;
+                }
+                const { deviceId } = result.device;
+
+                transport.current = getTransport({
+                  deviceId,
+                });
+
+                // Clean the ref on completion
+                transport.current.subscribe({
+                  complete: () => {
+                    transport.current = undefined;
+                  },
+                });
+                resolve("1");
+              },
+              onCancel: () => {
+                tracking.deviceTransportFail(manifest);
+                reject(new Error("User cancelled"));
+              },
+            }),
+          );
+        });
+      });
+
+      serverRef.current.setHandler("device.exchange", ({ apduHex }) => {
+        if (!transport.current) {
+          return Promise.reject(new Error("No device opened"));
+        }
+
+        tracking.deviceExchangeRequested(manifest);
+
+        const subject$ = transport.current;
+
+        return new Promise((resolve, reject) => {
+          subject$.pipe(first(e => e.type === "device-response" || e.type === "error")).subscribe({
+            next: e => {
+              if (e.type === "device-response") {
+                tracking.deviceExchangeSuccess(manifest);
+                resolve(e.data);
+                return;
+              }
+              if (e.type === "error") {
+                tracking.deviceExchangeFail(manifest);
+                reject(e.error || new Error("deviceExchange: unknown error"));
+              }
+            },
+            error: error => {
+              tracking.deviceExchangeFail(manifest);
+              reject(error);
+            },
+          });
+          subject$.next({ type: "input-frame", apduHex });
+        });
+      });
+
+      serverRef.current.setHandler("device.close", ({ deviceId }) => {
+        if (!transport.current) {
+          return Promise.reject(new Error("No device opened"));
+        }
+
+        tracking.deviceCloseRequested(manifest);
+
+        transport.current.complete();
+
+        tracking.deviceCloseSuccess(manifest);
+
+        return Promise.resolve(deviceId);
+      });
     }
     // Only used to init the server, no update needed
     // eslint-disable-next-line react-hooks/exhaustive-deps

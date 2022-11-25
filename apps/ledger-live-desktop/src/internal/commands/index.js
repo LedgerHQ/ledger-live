@@ -31,6 +31,7 @@ import ftsLoadImage from "./ftsLoadImage";
 import getOnboardingStatePolling from "./getOnboardingStatePolling";
 import getGenuineCheckFromDeviceId from "./getGenuineCheckFromDeviceId";
 import getLatestAvailableFirmwareFromDeviceId from "./getLatestAvailableFirmwareFromDeviceId";
+import getTransport from "./getTransport";
 import { commands as bridgeProxyCommands } from "~/renderer/bridge/proxy-commands";
 
 export const commandsById = {
@@ -67,6 +68,7 @@ export const commandsById = {
   getOnboardingStatePolling,
   getGenuineCheckFromDeviceId,
   getLatestAvailableFirmwareFromDeviceId,
+  getTransport,
 };
 
 export type Commands = typeof commandsById;

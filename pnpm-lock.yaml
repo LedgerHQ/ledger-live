@@ -166,8 +166,8 @@ importers:
       '@ledgerhq/types-cryptoassets': workspace:^
       '@ledgerhq/types-devices': workspace:^
       '@ledgerhq/types-live': workspace:^
-      '@ledgerhq/wallet-api-core': ^0.6.0
-      '@ledgerhq/wallet-api-server': ^0.6.0
+      '@ledgerhq/wallet-api-core': ^0.7.0
+      '@ledgerhq/wallet-api-server': ^0.7.1
       '@mapbox/node-pre-gyp': ^1.0.8
       '@octokit/rest': ^18.12.0
       '@playwright/test': 1.27.1
@@ -342,8 +342,8 @@ importers:
       '@ledgerhq/types-cryptoassets': link:../../libs/ledgerjs/packages/types-cryptoassets
       '@ledgerhq/types-devices': link:../../libs/ledgerjs/packages/types-devices
       '@ledgerhq/types-live': link:../../libs/ledgerjs/packages/types-live
-      '@ledgerhq/wallet-api-core': 0.6.0
-      '@ledgerhq/wallet-api-server': 0.6.0
+      '@ledgerhq/wallet-api-core': 0.7.0
+      '@ledgerhq/wallet-api-server': 0.7.1
       '@polkadot/react-identicon': 0.89.2_grbnt2wkerwtzf6thy4efz3p5i
       '@sentry/electron': 4.0.0
       '@sentry/node': 7.8.1
@@ -12239,30 +12239,12 @@ packages:
       json-rpc-2.0: 1.1.0
     dev: false
 
-  /@ledgerhq/wallet-api-core/0.6.0:
-    resolution: {integrity: sha512-NdqcZ1DqII+sj81VbZOdxirLsRJzt9Xe/19rFFo/1EuhvFoBskqf9Np13X6ntN2AXiuvXxSNCzsJ6hgDFXBurQ==}
-    dependencies:
-      bignumber.js: 9.1.0
-      uuid: 9.0.0
-      zod: 3.19.1
-    dev: false
-
   /@ledgerhq/wallet-api-core/0.7.0:
     resolution: {integrity: sha512-3Oiq6MddgUHauHNrtKwhwUhp9qWzXhwWGHVcWotmUNGSV95GSpife+TL/2L5ZBMhJkoWIN11vksVD30xaG7Nyg==}
     dependencies:
       bignumber.js: 9.1.0
       uuid: 9.0.0
       zod: 3.19.1
-    dev: false
-
-  /@ledgerhq/wallet-api-server/0.6.0:
-    resolution: {integrity: sha512-qAWWDmemdOGi1lUdFs/wNZp8b28N593d9wo2MXzDnI+mE0WXWsyUFovPNhSeG4M4KQdh4yFWyeW6dlixGJpX9w==}
-    dependencies:
-      '@ledgerhq/wallet-api-core': 0.6.0
-      bignumber.js: 9.1.0
-      json-rpc-2.0: 1.1.0
-      picomatch: 2.3.1
-      rxjs: 7.5.7
     dev: false
 
   /@ledgerhq/wallet-api-server/0.7.1:

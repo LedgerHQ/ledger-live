@@ -29,6 +29,7 @@ import MODAL_WALLETCONNECT_PASTE_LINK from "./WalletConnectPasteLink";
 import MODAL_WALLETCONNECT_DEEPLINK from "./WalletConnectDeeplink";
 import MODAL_PLATFORM_EXCHANGE_START from "./Platform/Exchange/StartExchange";
 import MODAL_PLATFORM_EXCHANGE_COMPLETE from "./Platform/Exchange/CompleteExchange";
+import MODAL_CONNECT_DEVICE from "./ConnectDevice";
 
 import MODAL_FULL_NODE from "./FullNode";
 import MODAL_LOTTIE_DEBUGGER from "./LottieDebugger";
@@ -182,6 +183,7 @@ const modals: { [_: string]: React$ComponentType<any> } = {
   // Platform
   MODAL_PLATFORM_EXCHANGE_START,
   MODAL_PLATFORM_EXCHANGE_COMPLETE,
+  MODAL_CONNECT_DEVICE,
 
   // NB We have dettached modals such as the repair modal,
   // in the meantime, we can rely on this to add the backdrop
