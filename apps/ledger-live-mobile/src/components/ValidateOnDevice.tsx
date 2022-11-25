@@ -186,12 +186,14 @@ export default function ValidateOnDevice({
   const isBigLottie = device.modelId === DeviceModelId.nanoFTS;
 
   return (
-    <RootContainer>
+    <Flex flex={1}>
       <ScrollView
-        // @ts-expect-error this property actually working and the only way to do what we want (contentContainerStyle doesn't work)
-        justifyContent="center"
+        contentContainerStyle={{
+          flexGrow: 1,
+          justifyContent: "center",
+        }}
       >
-        <InnerContainer>
+        <Flex alignItems="center">
           <Flex marginBottom={isBigLottie ? 0 : 8}>
             <Animation
               source={getDeviceAnimation({ device, key: "validate", theme })}
@@ -241,7 +243,7 @@ export default function ValidateOnDevice({
               />
             ) : null}
           </DataRowsContainer>
-        </InnerContainer>
+        </Flex>
       </ScrollView>
       {Footer ? (
         <Footer transaction={transaction} recipientWording={recipientWording} />
@@ -250,21 +252,11 @@ export default function ValidateOnDevice({
           <Alert type="help">{recipientWording}</Alert>
         </Flex>
       )}
-    </RootContainer>
+    </Flex>
   );
 }
-
-const RootContainer = styled(Flex).attrs({
-  flex: 1,
-})``;
 
 const DataRowsContainer = styled(Flex).attrs({
   my: 7,
   alignSelf: "stretch",
-})``;
-
-const InnerContainer = styled(Flex).attrs({
-  flexDirection: "column",
-  alignItems: "center",
-  flex: 1,
 })``;
