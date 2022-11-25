@@ -16,7 +16,6 @@ import { Platform, StyleSheet, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Icon from "react-native-vector-icons/FontAwesome";
 import { useSelector } from "react-redux";
-import { alignItems } from "styled-system";
 import { track, TrackScreen } from "../../analytics";
 import Alert from "../../components/Alert";
 import Button from "../../components/Button";
@@ -34,7 +33,6 @@ import {
 import { SendFundsNavigatorStackParamList } from "../../components/RootNavigator/types/SendFundsNavigator";
 import SupportLinkError from "../../components/SupportLinkError";
 import TranslatedError from "../../components/TranslatedError";
-import { urls } from "../../config/urls";
 import { ScreenName } from "../../const";
 import { accountScreenSelector } from "../../reducers/accounts";
 

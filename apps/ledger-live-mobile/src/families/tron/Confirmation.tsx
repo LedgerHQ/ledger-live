@@ -1,11 +1,11 @@
 import {
   getAccountCurrency,
-  getMainAccount
+  getMainAccount,
 } from "@ledgerhq/live-common/account/index";
 import { Button, Flex, Icons, Notification, Text } from "@ledgerhq/native-ui";
 import type {
   CryptoCurrency,
-  TokenCurrency
+  TokenCurrency,
 } from "@ledgerhq/types-cryptoassets";
 import type { Account, TokenAccount } from "@ledgerhq/types-live";
 import { useRoute } from "@react-navigation/native";
@@ -23,7 +23,7 @@ import NavigationScrollView from "../../components/NavigationScrollView";
 import PreventNativeBack from "../../components/PreventNativeBack";
 import {
   BaseComposite,
-  StackNavigatorProps
+  StackNavigatorProps,
 } from "../../components/RootNavigator/types/helpers";
 import { ReceiveFundsStackParamList } from "../../components/RootNavigator/types/ReceiveFundsNavigator";
 import { urls } from "../../config/urls";
@@ -261,9 +261,7 @@ function ReceiveConfirmationInner({
           {mainAccount.operationsCount === 0 ? (
             <Alert
               type="warning"
-              learnMoreUrl={
-                urls.errors.TronSendTrc20ToNewAccountForbidden
-              }
+              learnMoreUrl={urls.errors.TronSendTrc20ToNewAccountForbidden}
             >
               <Trans i18nKey="tron.receive.newAddressTRC20" />
             </Alert>

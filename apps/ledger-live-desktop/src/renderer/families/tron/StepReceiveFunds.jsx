@@ -243,10 +243,7 @@ const StepReceiveFunds = (props: StepProps) => {
             />
             {mainAccount.operationsCount === 0 ? (
               <AlertBoxContainer>
-                <Alert
-                  type="warning"
-                  learnMoreUrl={urls.errors.TronSendTrc20ToNewAccountForbidden}
-                >
+                <Alert type="warning" learnMoreUrl={urls.errors.TronSendTrc20ToNewAccountForbidden}>
                   <Trans i18nKey="tron.receive.newAddressTRC20" />
                 </Alert>
               </AlertBoxContainer>
@@ -272,10 +269,7 @@ const StepReceiveFunds = (props: StepProps) => {
             />
             {mainAccount.operationsCount === 0 ? (
               <AlertBoxContainer>
-                <Alert
-                  type="warning"
-                  learnMoreUrl={urls.errors.TronSendTrc20ToNewAccountForbidden}
-                >
+                <Alert type="warning" learnMoreUrl={urls.errors.TronSendTrc20ToNewAccountForbidden}>
                   <Trans i18nKey="tron.receive.newAddressTRC20" />
                 </Alert>
               </AlertBoxContainer>

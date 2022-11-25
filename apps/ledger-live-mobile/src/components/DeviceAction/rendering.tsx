@@ -22,7 +22,10 @@ import {
   Log,
   BoxedIcon,
 } from "@ledgerhq/native-ui";
-import { LockAltMedium } from "@ledgerhq/native-ui/assets/icons";
+import {
+  LockAltMedium,
+  DownloadMedium,
+} from "@ledgerhq/native-ui/assets/icons";
 import BigNumber from "bignumber.js";
 import {
   ExchangeRate,
@@ -37,7 +40,6 @@ import {
 import { TFunction } from "react-i18next";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import type { DeviceModelInfo } from "@ledgerhq/types-live";
-import { DownloadMedium } from "@ledgerhq/native-ui/assets/icons";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { ParamListBase } from "@react-navigation/native";
