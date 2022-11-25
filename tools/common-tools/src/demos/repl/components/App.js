@@ -4,22 +4,22 @@ import React, {
   useEffect,
   useReducer,
   useCallback,
-  useRef
+  useRef,
 } from "react";
 import styled from "styled-components";
 import Select from "react-select";
 import { Inspector } from "react-inspector";
 import { useDropzone } from "react-dropzone";
-import { merge, from, defer, Observable } from "rxjs";
-import { map, filter } from "rxjs/operators";
+import { from, defer, Observable } from "rxjs";
+import { filter } from "rxjs/operators";
 import { listen } from "@ledgerhq/logs";
-import { open, disconnect } from "@ledgerhq/live-common/lib/hw";
+import { open } from "@ledgerhq/live-common/lib/hw";
 import { commands } from "../commands";
 import AsciiField from "./fields/AsciiField";
 import {
   execCommand,
   getDefaultValue,
-  resolveDependencies
+  resolveDependencies,
 } from "../helpers/commands";
 import type { Command } from "../helpers/commands";
 import Theme from "./Theme";
@@ -36,15 +36,15 @@ const Container = styled.div`
   flex-direction: row;
   font-family: system-ui;
   font-size: 12px;
-  background: ${props => props.theme.background};
-  color: ${props => props.theme.text};
+  background: ${(props) => props.theme.background};
+  color: ${(props) => props.theme.text};
   height: 100vh;
 `;
 
 const LeftPanel = styled.div`
   min-width: 300px;
   flex: 1;
-  background: ${props => props.theme.darkBackground};
+  background: ${(props) => props.theme.darkBackground};
   padding: 20px;
   display: flex;
   flex-direction: column;
@@ -81,14 +81,14 @@ const FormContainer = styled.div`
   display: flex;
   flex-direction: column;
   padding-left: 20px;
-  border-left: 4px solid ${props => props.theme.formLeftBorder};
+  border-left: 4px solid ${(props) => props.theme.formLeftBorder};
   > * {
     margin: 10px 0;
   }
 `;
 
 const Separator = styled.div`
-  border-bottom: 1px solid ${props => props.theme.background};
+  border-bottom: 1px solid ${(props) => props.theme.background};
 `;
 
 const MainPanel = styled.div`
@@ -100,7 +100,7 @@ const MainPanel = styled.div`
 const HeaderFilters = styled.div`
   display: flex;
   flex-direction: row;
-  background-color: ${props => props.theme.darkBackground};
+  background-color: ${(props) => props.theme.darkBackground};
 `;
 
 const HeaderFilter = styled.div`
@@ -108,10 +108,10 @@ const HeaderFilter = styled.div`
   cursor: pointer;
   background-color: transparent;
   border-bottom: 2px solid;
-  border-bottom-color: ${props =>
+  border-bottom-color: ${(props) =>
     props.enabled ? props.theme.logTypes[props.filter] : "rgba(0, 0, 0, 0.5)"};
-  opacity: ${props => (props.enabled ? 1 : 0.2)};
-  color: ${props =>
+  opacity: ${(props) => (props.enabled ? 1 : 0.2)};
+  color: ${(props) =>
     props.enabled
       ? props.theme.logTypes[props.filter]
       : props.theme.tabDisabledText};
@@ -153,7 +153,7 @@ const transportLabels = {
   hid: "node-hid",
   u2f: "U2F",
   webauthn: "WebAuthn",
-  "proxy@ws://localhost:8435": "proxy ws://localhost:8435"
+  "proxy@ws://localhost:8435": "proxy ws://localhost:8435",
 };
 
 const isTransportScrambleable = (name: string) =>
@@ -163,8 +163,9 @@ if (typeof ledgerHidTransport === "undefined") {
   delete transportLabels.hid;
 }
 
-const eventObservable = Observable.create(o =>
-  listen(log => {
+const eventObservable = Observable.create((o) =>
+  listen((log) => {
+    // eslint-disable-next-line default-case
     switch (log.type) {
       case "apdu":
         return o.next({ type: "apdu", text: log.message });
@@ -185,21 +186,21 @@ const eventObservable = Observable.create(o =>
     }
     console.log(`(unhandled) ${log.type}: ${log.message}`);
   })
-).pipe(filter(e => e));
+).pipe(filter((e) => e));
 
 const Log = styled.pre`
   display: flex;
   flex-direction: row;
   word-break: break-all;
   white-space: pre-line;
-  color: ${props => props.theme.logTypes[props.log.type]};
+  color: ${(props) => props.theme.logTypes[props.log.type]};
   padding: 0 10px;
   margin: 0;
 `;
 
-const transportOptions = Object.keys(transportLabels).map(value => ({
+const transportOptions = Object.keys(transportLabels).map((value) => ({
   value,
-  label: transportLabels[value]
+  label: transportLabels[value],
 }));
 
 let id = 0;
@@ -210,9 +211,10 @@ const useListenTransportDisconnect = (cb, deps) => {
   const ref = useRef({ cb });
   useEffect(() => {
     ref.current = { cb };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, deps);
   return useCallback(
-    t => {
+    (t) => {
       const listener = () => {
         t.off("disconnect", listener);
         ref.current.cb(t);
@@ -257,28 +259,28 @@ export default () => {
         id: ++id,
         date: new Date(),
         type: "announcement",
-        text: announcement
-      }
+        text: announcement,
+      },
     ]
   );
 
-  const addLog = useCallback(log => dispatch({ type: "ADD", payload: log }), [
-    dispatch
+  const addLog = useCallback((log) => dispatch({ type: "ADD", payload: log }), [
+    dispatch,
   ]);
   const clearLogs = useCallback(() => dispatch({ type: "CLEAR" }), [dispatch]);
 
-  const addLogError = error =>
+  const addLogError = (error) =>
     addLog({
       type: "error",
       text:
         (error && error.name && error.name !== "Error"
           ? error.name + ": "
-          : "") + String((error && error.message) || error)
+          : "") + String((error && error.message) || error),
     });
   const [filters, toggleFilter] = useReducer(
     (filters, type) => ({
       ...filters,
-      [type]: !filters[type]
+      [type]: !filters[type],
     }),
     {
       error: true,
@@ -287,13 +289,14 @@ export default () => {
       apdu: true,
       binary: true,
       verbose: true,
-      announcement: true
+      announcement: true,
     }
   );
 
   useEffect(() => {
     const sub = eventObservable.subscribe(addLog);
     return () => sub.unsubscribe();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // TODO this is the basic minimum.. we should display the dependencies when you open a command.
@@ -309,18 +312,19 @@ export default () => {
       setSelectedCommand(selectedCommand);
       resolveDependencies(selectedCommand, transport).then(
         setDependencies,
-        error => {
+        (error) => {
           addLogError(error);
         }
       );
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [transport]
   );
 
-  const apduInputRef = useRef(null);
+  // const apduInputRef = useRef(null);
 
   const onSendApdu = useCallback(
-    async value => {
+    async (value) => {
       if (!transport) return;
       try {
         const hexValueBuffer = Buffer.from(value, "hex");
@@ -337,15 +341,16 @@ export default () => {
         return false;
       }
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [transport]
   );
 
   const listenTransportDisconnect = useListenTransportDisconnect(
-    t => {
+    (t) => {
       if (transport === t) {
         setTransport(null);
       } else {
-        setLeftTransports(leftTransports.filter(lt => lt !== t));
+        setLeftTransports(leftTransports.filter((lt) => lt !== t));
       }
     },
     [transport, leftTransports, setLeftTransports]
@@ -355,6 +360,7 @@ export default () => {
     if (!transport) return;
     setTransport(null);
     setLeftTransports(leftTransports.concat([transport]));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [transport]);
 
   const onClose = useCallback(async () => {
@@ -366,16 +372,17 @@ export default () => {
     setTransportOpening(true);
     setTransport(null);
     open(transportMode).then(
-      t => {
+      (t) => {
         setTransportOpening(false);
         setTransport(t);
         listenTransportDisconnect(t);
       },
-      error => {
+      (error) => {
         setTransportOpening(false);
         addLogError(error);
       }
     );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [transportMode, listenTransportDisconnect]);
 
   const onCommandCancel = useCallback(() => {
@@ -388,13 +395,13 @@ export default () => {
     if (!selectedCommand || !transport) return;
     addLog({
       type: "command",
-      text: "=> " + selectedCommand.id
+      text: "=> " + selectedCommand.id,
     });
-    commandValue.forEach(object =>
+    commandValue.forEach((object) =>
       addLog({
         type: "command",
         text: "+ ",
-        object
+        object,
       })
     );
     const startTime = Date.now();
@@ -404,11 +411,11 @@ export default () => {
           execCommand(selectedCommand, transport, commandValue, dependencies)
         )
       ).subscribe({
-        next: result => {
+        next: (result) => {
           addLog({
             type: "command",
             text: "<=",
-            object: result
+            object: result,
           });
         },
         complete: () => {
@@ -417,16 +424,17 @@ export default () => {
           const delta = d < 1000 ? d + "ms" : (d / 1000).toFixed(1) + "s";
           addLog({
             type: "command",
-            text: `${selectedCommand.id} completed in ${delta}.`
+            text: `${selectedCommand.id} completed in ${delta}.`,
           });
           transport.setScrambleKey(scrambleKey);
         },
-        error: error => {
+        error: (error) => {
           setCommandSub(null);
           addLogError(error);
-        }
+        },
       })
     );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [commandValue, transport, selectedCommand, dependencies]);
 
   const logsViewRef = useRef(null);
@@ -440,7 +448,7 @@ export default () => {
   // Drag-and-drop APDUs functionality
 
   const onDrop = useCallback(
-    files => {
+    (files) => {
       if (!transport) return;
 
       const reader = new FileReader();
@@ -453,14 +461,14 @@ export default () => {
 
         addLog({
           type: "verbose",
-          text: `Attempting to send ${list.length} APDUs`
+          text: `Attempting to send ${list.length} APDUs`,
         });
 
         let i = 1;
         for (let apdu of list) {
           addLog({
             type: "verbose",
-            text: `APDU - ${i} / ${list.length}`
+            text: `APDU - ${i} / ${list.length}`,
           });
 
           const result = await onSendApdu(apdu);
@@ -475,12 +483,13 @@ export default () => {
 
         addLog({
           type: "verbose",
-          text: "Successfully sent all APDUs"
+          text: "Successfully sent all APDUs",
         });
       };
 
-      files.forEach(file => reader.readAsBinaryString(file));
+      files.forEach((file) => reader.readAsBinaryString(file));
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [transport]
   );
 
@@ -502,7 +511,9 @@ export default () => {
                     title="Re-use"
                     onClick={() => {
                       setTransport(t);
-                      setLeftTransports(leftTransports.filter(lt => lt !== t));
+                      setLeftTransports(
+                        leftTransports.filter((lt) => lt !== t)
+                      );
                     }}
                   />
                   <SendButton
@@ -523,9 +534,9 @@ export default () => {
                     <Select
                       placeholder="Select a Transport"
                       value={transportOptions.find(
-                        o => o.value === transportMode
+                        (o) => o.value === transportMode
                       )}
-                      onChange={o => {
+                      onChange={(o) => {
                         localStorage.setItem(LS_PREF_TRANSPORT, o.value);
                         setTransportMode(o.value);
                       }}
@@ -553,7 +564,7 @@ export default () => {
                     <SectionRow>
                       <AsciiField
                         value={scrambleKey}
-                        onChange={value => {
+                        onChange={(value) => {
                           transport.setScrambleKey(value);
                           setScrambleKey(value);
                         }}
@@ -575,8 +586,8 @@ export default () => {
                       options={commands}
                       onChange={onSelectedCommand}
                       value={selectedCommand}
-                      getOptionLabel={c => c.id}
-                      getOptionValue={c => c.id}
+                      getOptionLabel={(c) => c.id}
+                      getOptionValue={(c) => c.id}
                     />
                   </div>
                   {selectedCommand ? (
@@ -593,7 +604,9 @@ export default () => {
                 </SectionRow>
                 <FormContainer>
                   {selectedCommand
-                    ? Object.keys(selectedCommand.dependencies || {}).map(key =>
+                    ? Object.keys(
+                        selectedCommand.dependencies || {}
+                      ).map((key) =>
                         dependencies && dependencies[key] ? (
                           <strong key={key}>
                             '{key}' dependency resolved.
@@ -617,7 +630,7 @@ export default () => {
           </Section>
           <Section>
             <AdvancedContainer>
-              <SmallButton onClick={() => setAdvanced(advanced => !advanced)}>
+              <SmallButton onClick={() => setAdvanced((advanced) => !advanced)}>
                 {advanced ? "Hide" : "Advanced"}
               </SmallButton>
               {advanced && <LiveEnvEditor />}
@@ -661,12 +674,12 @@ export default () => {
             style={{
               flex: 1,
               overflowY: "scroll",
-              padding: "20px 10px"
+              padding: "20px 10px",
             }}
           >
             {logs
-              .filter(log => filters[log.type])
-              .map(log => (
+              .filter((log) => filters[log.type])
+              .map((log) => (
                 <Log log={log} key={log.id}>
                   {log.text}
                   {log.object ? " " : ""}

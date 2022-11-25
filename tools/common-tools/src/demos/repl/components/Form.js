@@ -1,5 +1,5 @@
 // @flow
-import React, { Fragment, useState, useEffect, useCallback } from "react";
+import React from "react";
 
 import FormField from "./FormField";
 
@@ -11,7 +11,7 @@ const Form = ({ form, dependencies, value, onChange }: *) =>
         key={i}
         form={form}
         value={value[i]}
-        onChange={v => {
+        onChange={(v) => {
           const copy = value.slice(0);
           copy[i] = v;
           onChange(copy);
@@ -28,13 +28,13 @@ const Form = ({ form, dependencies, value, onChange }: *) =>
       />
     ) : (
       // $FlowFixMe
-      Object.keys(form).map(key => (
+      Object.keys(form).map((key) => (
         <Form
           dependencies={dependencies}
           key={key}
           form={form[key]}
           value={value[key]}
-          onChange={v => {
+          onChange={(v) => {
             const copy = { ...value };
             copy[key] = v;
             onChange(copy);

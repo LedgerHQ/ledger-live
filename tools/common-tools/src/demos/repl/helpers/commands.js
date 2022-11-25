@@ -1,7 +1,6 @@
 // @flow
 // TODO: move to typescript
 import type Transport from "@ledgerhq/hw-transport";
-import type { CryptoCurrency } from "@ledgerhq/live-common/lib/types";
 import type { Observable } from "rxjs";
 import type { DataType } from "../components/fields";
 
@@ -13,6 +12,11 @@ type Exec = (
 export type Deps = {
   [_: string]: (Transport<any>, ...a: any) => Promise<any>,
 };
+
+// eslint-disable-next-line no-use-before-define
+export type Form = DataType | FormObj | Form[];
+// eslint-disable-next-line no-use-before-define
+type FormObj = { [_: string]: Form };
 
 export type Command = {
   id: string,
@@ -27,9 +31,6 @@ export type Command = {
 
   dependencies?: Deps,
 };
-
-type FormObj = { [_: string]: Form };
-export type Form = DataType | FormObj | Form[];
 
 export const cmd = (id: string, exec: Exec, ...form: Form[]) => ({
   id,

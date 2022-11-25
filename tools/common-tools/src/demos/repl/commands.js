@@ -1,6 +1,4 @@
 // @flow
-import { from } from "rxjs";
-import { concatMap } from "rxjs/operators";
 import editDeviceName from "@ledgerhq/live-common/lib/hw/editDeviceName";
 import getDeviceName from "@ledgerhq/live-common/lib/hw/getDeviceName";
 import getDeviceInfo from "@ledgerhq/live-common/lib/hw/getDeviceInfo";
@@ -14,7 +12,6 @@ import quitApp from "@ledgerhq/live-common/lib/hw/quitApp";
 import installApp from "@ledgerhq/live-common/lib/hw/installApp";
 import uninstallApp from "@ledgerhq/live-common/lib/hw/uninstallApp";
 import installFinalFirmware from "@ledgerhq/live-common/lib/hw/installFinalFirmware";
-import { cmd } from "./helpers/commands";
 import { getCryptoCurrencyById } from "@ledgerhq/live-common/lib/currencies";
 import type { Command } from "./helpers/commands";
 

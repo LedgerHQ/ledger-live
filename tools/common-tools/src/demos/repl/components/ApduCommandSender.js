@@ -1,7 +1,7 @@
 // @flow
 
 import styled from "styled-components";
-import React, {useCallback, useEffect, useReducer, useState} from "react";
+import React, { useCallback, useReducer } from "react";
 import SendButton from "./SendButton";
 
 const ApduForm = styled.form`
@@ -16,15 +16,12 @@ const ApduInput = styled.input`
   border-top: 2px solid rgba(0, 0, 0, 0.5);
   border: none;
   outline: none;
-  color: ${props => props.theme.text};
-  background: ${props => props.theme.darkBackground};
+  color: ${(props) => props.theme.text};
+  background: ${(props) => props.theme.darkBackground};
 `;
 
 const apduHistoryReducer = (state, action) => {
-  const {
-    index,
-    commands,
-  } = state;
+  const { index, commands } = state;
 
   let newIndex = index;
 
@@ -35,107 +32,109 @@ const apduHistoryReducer = (state, action) => {
       }
       return {
         ...state,
-        commands: [...commands, action.payload]
+        commands: [...commands, action.payload],
       };
     case "HISTORY_UP":
       if (index > 0) {
         newIndex = index - 1;
       }
       if (index === undefined && commands.length > 0) {
-        newIndex = commands.length - 1
+        newIndex = commands.length - 1;
       }
 
       return {
         ...state,
         index: newIndex,
-        value: newIndex !== undefined ? commands[newIndex] : state.value
+        value: newIndex !== undefined ? commands[newIndex] : state.value,
       };
     case "HISTORY_DOWN":
       if (index === commands.length - 1) {
-        newIndex = undefined
+        newIndex = undefined;
       }
 
       if (index < commands.length - 1) {
-        newIndex = index + 1
+        newIndex = index + 1;
       }
 
       return {
         ...state,
         index: newIndex,
-        value: newIndex !== undefined ? commands[newIndex] : ""
+        value: newIndex !== undefined ? commands[newIndex] : "",
       };
     case "CLEAR_HISTORY":
       return {
         index: undefined,
         commands: [],
-        value: ""
+        value: "",
       };
     case "SET_VALUE":
       return {
         ...state,
-        value: action.payload
+        value: action.payload,
       };
     case "CLEAR_VALUE":
       return {
         ...state,
         index: undefined,
-        value: ""
+        value: "",
       };
     default:
       return state;
   }
-
 };
 
-function ApduCommandSender ({ onSend, disabled}) {
-  const [state, dispatch] = useReducer(apduHistoryReducer, { commands: [], value: "" });
+function ApduCommandSender({ onSend, disabled }) {
+  const [state, dispatch] = useReducer(apduHistoryReducer, {
+    commands: [],
+    value: "",
+  });
 
   const onSubmit = useCallback(
-      async e => {
-        e.preventDefault();
-        if (state.value === "") {
-          return
-        }
+    async (e) => {
+      e.preventDefault();
+      if (state.value === "") {
+        return;
+      }
 
-        const result = await onSend(state.value);
-        if (result) {
-          dispatch({ type: "ADD_TO_HISTORY", payload: state.value });
-          dispatch({ type: "CLEAR_VALUE" });
-        }
-      },
-      [state.value]
+      const result = await onSend(state.value);
+      if (result) {
+        dispatch({ type: "ADD_TO_HISTORY", payload: state.value });
+        dispatch({ type: "CLEAR_VALUE" });
+      }
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [state.value]
   );
 
-  const handleKeypress = e => {
+  const handleKeypress = (e) => {
+    // eslint-disable-next-line default-case
     switch (e.key) {
-      case 'ArrowUp':
-        dispatch({ type: 'HISTORY_UP'});
+      case "ArrowUp":
+        dispatch({ type: "HISTORY_UP" });
         e.preventDefault();
         break;
-      case 'ArrowDown':
-        dispatch({ type: 'HISTORY_DOWN'});
+      case "ArrowDown":
+        dispatch({ type: "HISTORY_DOWN" });
         e.preventDefault();
         break;
     }
   };
 
   return (
-      <ApduForm onSubmit={onSubmit}>
-        <ApduInput
-            onKeyDown={handleKeypress}
-            disabled={disabled}
-            type="text"
-            value={state.value}
-            onChange={e => dispatch({ type: "SET_VALUE", payload: e.target.value })}
-            placeholder="send an arbitrary apdu here (hexadecimal)"
-        />
-        <SendButton
-            title="Send"
-            disabled={disabled}
-            type="submit"
-        />
-      </ApduForm>
-  )
+    <ApduForm onSubmit={onSubmit}>
+      <ApduInput
+        onKeyDown={handleKeypress}
+        disabled={disabled}
+        type="text"
+        value={state.value}
+        onChange={(e) =>
+          dispatch({ type: "SET_VALUE", payload: e.target.value })
+        }
+        placeholder="send an arbitrary apdu here (hexadecimal)"
+      />
+      <SendButton title="Send" disabled={disabled} type="submit" />
+    </ApduForm>
+  );
 }
 
 export default ApduCommandSender;

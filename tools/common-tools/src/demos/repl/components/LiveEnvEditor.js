@@ -1,34 +1,36 @@
 // @flow
 
 import styled from "styled-components";
-import React, {useCallback, useEffect, useState} from "react";
-import {changes, setEnvUnsafe} from "@ledgerhq/live-common/lib/env";
-import {setDefaultEnv, updateEnv, getEnv} from "../helpers/env";
-import {Resizable} from "re-resizable";
-import {map, get, pick} from "lodash";
+import React, { useCallback, useEffect, useState } from "react";
+import { changes, setEnvUnsafe } from "@ledgerhq/live-common/lib/env";
+import { setDefaultEnv, updateEnv, getEnv } from "../helpers/env";
+import { Resizable } from "re-resizable";
+import { map, get } from "lodash";
 import ReactTable from "react-table";
-import {SmallButton} from "./Smallbutton";
+import { SmallButton } from "./Smallbutton";
 
 import "react-table/react-table.css";
 
-const convertEnvData = envData => map(envData, (value, key) => {
-  return ({
-    name: key,
-    type: typeof value,
-    value: JSON.stringify(value)
-  })
-});
+const convertEnvData = (envData) =>
+  map(envData, (value, key) => {
+    return {
+      name: key,
+      type: typeof value,
+      value: JSON.stringify(value),
+    };
+  });
 
 const typeColor = {
   number: "Blue",
   boolean: "DarkYellow",
-  string: "Green"
+  string: "Green",
 };
 
 const EditableCell = styled.div`
   text-align: center;
   cursor: pointer;
-  ${({theme, type}) => typeColor[type] && `color: ${get(theme.palette, typeColor[type])}`}
+  ${({ theme, type }) =>
+    typeColor[type] && `color: ${get(theme.palette, typeColor[type])}`}
 `;
 
 const EditorContainer = styled.div`
@@ -42,7 +44,7 @@ const saveObjectToStorage = (key, data) => {
   localStorage.setItem(key, JSON.stringify(data));
 };
 
-const loadObjectFromStorage = key => JSON.parse(localStorage.getItem(key));
+const loadObjectFromStorage = (key) => JSON.parse(localStorage.getItem(key));
 
 const loadEnv = () => {
   const savedData = loadObjectFromStorage("env_settings");
@@ -54,54 +56,61 @@ function LiveEnvEditor() {
   const [state, setState] = useState(loadEnv);
 
   useEffect(() => {
-    const sub = changes.subscribe(({name, value}) => {
-      setState(prevState => ({...prevState, [name]: value}))
+    const sub = changes.subscribe(({ name, value }) => {
+      setState((prevState) => ({ ...prevState, [name]: value }));
     });
     return () => sub.unsubscribe();
   }, [state]);
 
-  const renderEditableCell = useCallback(cellInfo => {
-    return (
-      <EditableCell
-        contentEditable
-        suppressContentEditableWarning
-        type={cellInfo.original.type}
-        onBlur={e => {
-          try {
-            const value = JSON.parse(e.target.innerText);
+  const renderEditableCell = useCallback(
+    (cellInfo) => {
+      return (
+        <EditableCell
+          contentEditable
+          suppressContentEditableWarning
+          type={cellInfo.original.type}
+          onBlur={(e) => {
+            try {
+              const value = JSON.parse(e.target.innerText);
 
-            const added = setEnvUnsafe(cellInfo.original.name, value);
-            const updatedEnv = getEnv();
-            setState(updatedEnv);
-            saveObjectToStorage("env_settings", updatedEnv);
+              const added = setEnvUnsafe(cellInfo.original.name, value);
+              const updatedEnv = getEnv();
+              setState(updatedEnv);
+              saveObjectToStorage("env_settings", updatedEnv);
 
-            if (!added) {
-              e.target.innerText = cellInfo.value
+              if (!added) {
+                e.target.innerText = cellInfo.value;
+              }
+            } catch (err) {
+              if (err instanceof SyntaxError) {
+                e.target.innerText = cellInfo.value;
+              }
             }
-          } catch (err) {
-            if (err instanceof SyntaxError) {
-              e.target.innerText = cellInfo.value
-            }
-          }
-        }}
-      >
-        {cellInfo.value}
-      </EditableCell>
-    );
-  }, [state]);
+          }}
+        >
+          {cellInfo.value}
+        </EditableCell>
+      );
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [state]
+  );
 
-  const columns = [{
-    Header: 'Name',
-    accessor: 'name',
-    style: {
-      fontSize: '0.9em',
-      textAlign: 'left'
-    }
-  }, {
-    Header: 'Value',
-    accessor: 'value',
-    Cell: renderEditableCell
-  }];
+  const columns = [
+    {
+      Header: "Name",
+      accessor: "name",
+      style: {
+        fontSize: "0.9em",
+        textAlign: "left",
+      },
+    },
+    {
+      Header: "Value",
+      accessor: "value",
+      Cell: renderEditableCell,
+    },
+  ];
 
   return (
     <EditorContainer>
@@ -114,14 +123,14 @@ function LiveEnvEditor() {
           topRight: false,
           bottomRight: false,
           bottomLeft: false,
-          topLeft: false
+          topLeft: false,
         }}
-        defaultSize={{width: "100%", height: 250}}
+        defaultSize={{ width: "100%", height: 250 }}
         maxHeight={150}
         minHeight={100}
       >
         <ReactTable
-          style={{width: "100%", height: "100%"}}
+          style={{ width: "100%", height: "100%" }}
           data={state}
           columns={columns}
           minRows={1}
@@ -141,7 +150,7 @@ function LiveEnvEditor() {
         {"Reset to defaults"}
       </SmallButton>
     </EditorContainer>
-  )
+  );
 }
 
-export default LiveEnvEditor
+export default LiveEnvEditor;

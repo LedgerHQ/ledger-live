@@ -5,25 +5,25 @@ import manager, { getProviderId } from "@ledgerhq/live-common/lib/manager";
 import ManagerAPI from "@ledgerhq/live-common/lib/api/Manager";
 import type {
   ApplicationVersion,
-  DeviceInfo
+  DeviceInfo,
 } from "@ledgerhq/live-common/lib/types/manager";
 
 export type DataTypeApplication = {
-  type: "application"
+  type: "application",
 };
 
 type Props = {
   value: ?ApplicationVersion,
   onChange: (?ApplicationVersion) => void,
   dependencies: {
-    deviceInfo: DeviceInfo
-  }
+    deviceInfo: DeviceInfo,
+  },
 };
 
 const ApplicationField = ({
   value,
   onChange,
-  dependencies: { deviceInfo }
+  dependencies: { deviceInfo },
 }: Props) => {
   const [applications, setApplications] = useState([]);
 
@@ -43,16 +43,16 @@ const ApplicationField = ({
       })
     );
 
-    const latestFirmwareForDeviceP =
-      manager.getLatestFirmwareForDevice(deviceInfo);
+    const latestFirmwareForDeviceP = manager.getLatestFirmwareForDevice(
+      deviceInfo
+    );
 
-    const firmwareP = Promise.all([
-      firmwareDataP,
-      latestFirmwareForDeviceP,
-    ]).then(([firmwareData, updateAvailable]) => ({
-      ...firmwareData,
-      updateAvailable,
-    }));
+    Promise.all([firmwareDataP, latestFirmwareForDeviceP]).then(
+      ([firmwareData, updateAvailable]) => ({
+        ...firmwareData,
+        updateAvailable,
+      })
+    );
 
     const applicationsByDeviceP = Promise.all([
       deviceVersionP,
@@ -74,8 +74,8 @@ const ApplicationField = ({
       options={applications}
       onChange={onChange}
       placeholder={applications.length ? "Select an app" : "Loading..."}
-      getOptionLabel={app => `${app.name} (${app.version})`}
-      getOptionValue={app => app.id}
+      getOptionLabel={(app) => `${app.name} (${app.version})`}
+      getOptionValue={(app) => app.id}
     />
   );
 };
