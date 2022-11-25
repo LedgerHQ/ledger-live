@@ -476,10 +476,8 @@ const DeepLinkingNavigator = ({ children }: { children: React.ReactNode }) => {
   const dispatch = useDispatch();
   const hasCompletedOnboarding = useSelector(hasCompletedOnboardingSelector);
   const wcContext = useContext(_wcContext);
-  const { state: remoteLiveAppState } = useRemoteLiveAppContext();
-  const liveAppProviderInitialized =
-    !!remoteLiveAppState.value || !!remoteLiveAppState.error;
   const { state } = useRemoteLiveAppContext();
+  const liveAppProviderInitialized = !!state.value || !!state.error;
   const manifests = state?.value?.liveAppByIndex || [];
   // Can be either true, false or null, meaning we don't know yet
   const [userAcceptedTerms, setUserAcceptedTerms] = useState<boolean | null>(
