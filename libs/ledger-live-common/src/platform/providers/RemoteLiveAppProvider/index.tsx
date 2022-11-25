@@ -32,10 +32,13 @@ export const liveAppContext = createContext<LiveAppContextType>({
   updateManifests: () => Promise.resolve(),
 });
 
-type FetchLiveAppCatalogPrams = Required<Omit<FilterParams, "branches">> & {
-  allowDebugApps: boolean;
-  allowExperimentalApps: boolean;
-};
+type FetchLiveAppCatalogPrams = Required<
+  Omit<FilterParams, "branches" | "private">
+> &
+  Pick<FilterParams, "private"> & {
+    allowDebugApps: boolean;
+    allowExperimentalApps: boolean;
+  };
 
 type LiveAppProviderProps = {
   children: React.ReactNode;
