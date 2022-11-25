@@ -1,5 +1,7 @@
 import { Flex, Text } from "@ledgerhq/native-ui";
-import React, { memo, useState } from "react";
+import { protectContext } from "@ledgerhq/live-common/platform/providers/ProtectProvider/index";
+import { ProtectStateNumber } from "@ledgerhq/live-common/platform/providers/ProtectProvider/types";
+import React, { memo, useContext } from "react";
 import { useTranslation } from "react-i18next";
 import Svg, { LinearGradient, Defs, Rect, Stop } from "react-native-svg";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
@@ -8,7 +10,7 @@ import ActionRequiredProtectState from "./Protect/ActionRequiredProtectState";
 import SubscriptionCanceledProtectState from "./Protect/SubscriptionCanceledProtectState";
 import PaymentRejectedProtectState from "./Protect/PaymentRejectedProtectState";
 import ActiveProtectState from "./Protect/ActiveProtectState";
-import { ProtectStateNumber, ServicesConfig } from "./types";
+import { ServicesConfig } from "./types";
 
 const SvgGradient = () => (
   <Svg width="100%" height="8px">
@@ -58,9 +60,9 @@ function ServicesWidget() {
 
   const { enabled, params } = servicesConfig || {};
 
-  // @TODO sync this with an api backend
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [protectState, setProtectState] = useState<ProtectStateNumber>(800);
+  const {
+    state: { protectState },
+  } = useContext(protectContext);
 
   const ProtectStateComponent = statesComponents[protectState];
 

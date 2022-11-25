@@ -43,6 +43,7 @@ import {
   useRemoteLiveAppContext,
 } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
 import { LocalLiveAppProvider } from "@ledgerhq/live-common/platform/providers/LocalLiveAppProvider/index";
+import { ProtectProvider } from "@ledgerhq/live-common/platform/providers/ProtectProvider/index";
 
 import { isEqual } from "lodash";
 import { postOnboardingSelector } from "@ledgerhq/live-common/postOnboarding/reducer";
@@ -726,11 +727,13 @@ export default class Root extends Component<{
                                                         <SnackbarContainer />
                                                         <NftMetadataProvider>
                                                           <MarketDataProvider>
-                                                            <App
-                                                              importDataString={
-                                                                importDataString
-                                                              }
-                                                            />
+                                                            <ProtectProvider>
+                                                              <App
+                                                                importDataString={
+                                                                  importDataString
+                                                                }
+                                                              />
+                                                            </ProtectProvider>
                                                           </MarketDataProvider>
                                                         </NftMetadataProvider>
                                                       </NotificationsProvider>
