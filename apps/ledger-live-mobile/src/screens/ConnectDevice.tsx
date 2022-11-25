@@ -2,7 +2,7 @@ import invariant from "invariant";
 import React, { useCallback, useMemo } from "react";
 import { StyleSheet } from "react-native";
 import { useSelector } from "react-redux";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { Edge, SafeAreaView } from "react-native-safe-area-context";
 import { useTranslation } from "react-i18next";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import { createAction } from "@ledgerhq/live-common/hw/actions/transaction";
@@ -272,7 +272,7 @@ export default function ConnectDevice({ route, navigation }: Props) {
   );
 }
 
-const edges = ["bottom"];
+const edges = ["bottom"] as Edge[];
 
 const styles = StyleSheet.create({
   root: {
