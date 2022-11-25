@@ -48,20 +48,21 @@ class TranslatedError extends PureComponent<Props> {
           );
         }
 
-        const learnMoreClickable = urls.errors[error.name] ? (
-          <Text ff="Inter|SemiBold">
-            <ExternalLink
-              label={t("common.learnMore")}
-              onClick={() => openURL(urls.errors[error.name])}
-            />
-          </Text>
-        ) : null;
+        if (urls.errors[error.name]) {
+          return (
+            <Text>
+              {translation}{" "}
+              <Text ff="Inter|SemiBold">
+                <ExternalLink
+                  label={t("common.learnMore")}
+                  onClick={() => openURL(urls.errors[error.name])}
+                />
+              </Text>
+            </Text>
+          );
+        }
 
-        return (
-          <Text>
-            {translation} {learnMoreClickable}
-          </Text>
-        );
+        return translation;
       }
     }
 
