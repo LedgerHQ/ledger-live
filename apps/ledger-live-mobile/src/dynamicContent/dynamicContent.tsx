@@ -42,6 +42,7 @@ export const mapAsAssetContentCard = (card: BrazeContentCard) =>
     link: card.extras.link,
     cta: card.extras.cta,
     assets: card.extras.assets,
+    displayOnEveryAssets: Boolean(card.extras.displayOnEveryAssets) ?? false,
   } as AssetContentCard);
 
 const useDynamicContent = () => {
@@ -86,7 +87,8 @@ const useDynamicContent = () => {
       return assetsCardsDisplayed.find(
         (ac: AssetContentCard) =>
           ac.assets.toLowerCase().includes(currency.id.toLowerCase()) ||
-          ac.assets.toUpperCase().includes(currency.ticker.toUpperCase()),
+          ac.assets.toUpperCase().includes(currency.ticker.toUpperCase()) ||
+          ac.displayOnEveryAssets,
       );
     },
     [assetsCardsDisplayed],

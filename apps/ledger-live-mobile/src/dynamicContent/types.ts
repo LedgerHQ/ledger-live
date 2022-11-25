@@ -24,6 +24,7 @@ type WalletContentCard = ContentCard & {
 type AssetContentCard = ContentCard & {
   assets: string;
   cta: string;
+  displayOnEveryAssets?: boolean;
 };
 
 export type { AssetContentCard, WalletContentCard, ContentCard };
