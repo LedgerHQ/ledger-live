@@ -1,9 +1,20 @@
 // [network_id, policyId, assetName, name, ticker, decimals, delisted]
-module.exports = [
+export type CardanoNativeToken = [
+  string,
+  string,
+  string,
+  string,
+  string,
+  number,
+  boolean,
+  boolean
+];
+
+const tokens: CardanoNativeToken[] = [
   [
     "cardano_testnet",
-    "47be64fcc8a7fe5321b976282ce4e43e4d29015f6613cfabcea28eab",
-    "54657374",
+    "581684861359b6d4d00594073a9aa4223c6fc24d24da05e1b34fb865",
+    "544553545f544f4b454e",
     "TEST_TOKEN",
     "tToken",
     0,
@@ -1011,3 +1022,5 @@ module.exports = [
     true,
   ],
 ];
+
+export default tokens;

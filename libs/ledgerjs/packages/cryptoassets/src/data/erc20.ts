@@ -1,4 +1,17 @@
-module.exports = [
+export type ERC20Token = [
+  string,
+  string,
+  string,
+  number,
+  string,
+  string,
+  string,
+  boolean,
+  boolean,
+  string?,
+  string?
+];
+const tokens: ERC20Token[] = [
 ["ethereum","$aapl","$AAPL",18,"$AAPL","3045022100a1e0859e2ad886121b0c5bb374622dcee83b6b0b26a5552559b56a328e4d50ad02202efc09d46a0770a40c6a650a9eec00ba9d8a6727a369398a5f8e3f1d698ccc71","0x41eFc0253ee7Ea44400abB5F907FDbfdEbc82bec",true,false],
 ["ethereum","$based","$BASED",18,"$BASED","304402207e5be628591465b9ee45b62d5d067beb99ead27485874371b213037137b60a9702205339b3d713d990b5c614a98c20b113978ae36ff72324183d35673a40b71493fc","0x68A118Ef45063051Eac49c7e647CE5Ace48a68a5",false,false],
 ["ethereum","$die","$DIE",18,"$DIE","3045022100c46f9777ba0b47cd415316d6601528a908e42f31fdd539b638a8fffca969263e02201cc29375ef59ab65598968ac83a1682e0ffc7b200f1b7c89cb1275f15f934d2b","0x15F5f5F29a819BF7B4B80BF55352E1e42707c94e",false,false],
@@ -6540,3 +6553,5 @@ module.exports = [
 ["ethereum_ropsten","usdc","USDC",6,"USDC","3045022100b3f174b2af6f6b6372409b2587361b793e3f0a21b5d59e095fe0cf2c6d2ae05b022066b993eae0d1aab76752af76a3ecf47360ff784e1fcee7f6ccca753e07ef39b0","0x07865c6E87B9F70255377e024ace6630C1Eaa37F",true,true],
 ["ethereum_ropsten","vault_coin","VLC",18,"Vault Coin","3045022100ae86a896b2d4c3e6a2002eb12e8a57c849a937f1a85cdda78cb3bb94bd3b96ad022060e3abb53eeb0262e87fa36ed0f5f91f18a9805e23f26d0e78bedc3459ce0f77","0xF62ef17b7c919b84A9D9f33609bb2cf4405a5682",false,false]
 ];
+
+export default tokens;
