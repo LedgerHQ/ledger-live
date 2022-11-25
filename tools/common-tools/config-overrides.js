@@ -25,6 +25,8 @@ module.exports = function override(webpackConfig) {
   webpackConfig.resolve.alias["@polkadot/x-textdecoder$"] =
     "@polkadot/x-textdecoder/browser.js";
   webpackConfig.resolve.alias["@ledgerhq/devices"] = "@ledgerhq/devices/lib-es";
+  webpackConfig.resolve.alias["@ledgerhq/cryptoassets"] =
+    "@ledgerhq/cryptoassets/lib-es";
 
   return webpackConfig;
 };
