@@ -1979,7 +1979,7 @@
         "recipientAddress" : "Dirección de recepción",
         "amount" : "Importe",
         "fees" : "Tarifas de red",
-        "sendMax" : "Enviar máximo",
+        "useMax" : "Enviar máximo",
         "rippleTag" : "Etiqueta",
         "rippleTagPlaceholder" : "Opcional",
         "ethereumGasLimit" : "Límite de gas",

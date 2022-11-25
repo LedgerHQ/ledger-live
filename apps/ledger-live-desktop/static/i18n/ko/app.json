@@ -1979,7 +1979,7 @@
         "recipientAddress" : "수령인 주소",
         "amount" : "금액",
         "fees" : "네트워크 수수료",
-        "sendMax" : "최대치 송신",
+        "useMax" : "최대치 송신",
         "rippleTag" : "태그",
         "rippleTagPlaceholder" : "선택 사항",
         "ethereumGasLimit" : "가스 한도(Gas limit)",

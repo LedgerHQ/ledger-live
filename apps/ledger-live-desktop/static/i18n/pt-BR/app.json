@@ -1979,7 +1979,7 @@
         "recipientAddress" : "Endereço do destinatário",
         "amount" : "Quantia",
         "fees" : "Taxas de rede",
-        "sendMax" : "Enviar Máximo",
+        "useMax" : "Enviar Máximo",
         "rippleTag" : "Etiqueta",
         "rippleTagPlaceholder" : "Opcional",
         "ethereumGasLimit" : "Limite de gas",

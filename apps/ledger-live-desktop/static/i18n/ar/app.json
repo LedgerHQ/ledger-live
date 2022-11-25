@@ -1979,7 +1979,7 @@
         "recipientAddress" : "عنوان المستلم",
         "amount" : "المبلغ",
         "fees" : "رسوم الشبكة",
-        "sendMax" : "إرسال الحد الأقصى",
+        "useMax" : "إرسال الحد الأقصى",
         "rippleTag" : "علامة",
         "rippleTagPlaceholder" : "اختياري",
         "ethereumGasLimit" : "حد الغاز",

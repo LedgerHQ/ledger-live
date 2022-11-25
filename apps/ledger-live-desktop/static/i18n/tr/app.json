@@ -1979,7 +1979,7 @@
         "recipientAddress" : "Alıcı adresi",
         "amount" : "Tutar",
         "fees" : "Ağ ücretleri",
-        "sendMax" : "Tamamını Gönder",
+        "useMax" : "Tamamını Gönder",
         "rippleTag" : "Etiket",
         "rippleTagPlaceholder" : "Opsiyonel",
         "ethereumGasLimit" : "Gas limiti",

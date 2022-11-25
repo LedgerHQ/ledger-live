@@ -1892,7 +1892,7 @@
         "recipientAddress": "Fogadó címe",
         "amount": "Mennyiség",
         "fees": "Hálózati díjak",
-        "sendMax": "Összes küldése",
+        "useMax": "Összes küldése",
         "rippleTag": "Címke",
         "rippleTagPlaceholder": "Opcionális",
         "ethereumGasLimit": "Gas határ",

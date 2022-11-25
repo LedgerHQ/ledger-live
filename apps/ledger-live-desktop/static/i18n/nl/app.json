@@ -1892,7 +1892,7 @@
         "recipientAddress": "Recipient address",
         "amount": "Amount",
         "fees": "Network fees",
-        "sendMax": "Send Max",
+        "useMax": "Send Max",
         "rippleTag": "Tag",
         "rippleTagPlaceholder": "Optional",
         "ethereumGasLimit": "Gas limit",
