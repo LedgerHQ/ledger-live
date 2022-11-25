@@ -104,7 +104,7 @@ const dataset: DatasetTest<AlgorandTransaction> = {
               },
             },
             {
-              name: "send",
+              name: "Send",
               transaction: (t) => ({
                 ...t,
                 amount: new BigNumber("1000"),
@@ -117,7 +117,7 @@ const dataset: DatasetTest<AlgorandTransaction> = {
               },
             },
             {
-              name: "send amount more than fees + base reserve",
+              name: "Send amount more than fees + base reserve",
               transaction: (t, account) => ({
                 ...t,
                 amount: account.balance,
@@ -132,7 +132,7 @@ const dataset: DatasetTest<AlgorandTransaction> = {
               },
             },
             {
-              name: "send more than base reserve",
+              name: "Send more than base reserve",
               transaction: (t, account) => ({
                 ...t,
                 amount: account.balance.minus("100"),
@@ -180,7 +180,7 @@ const dataset: DatasetTest<AlgorandTransaction> = {
               },
             },
             {
-              name: "send Token",
+              name: "Send Token",
               transaction: (t) => ({
                 ...t,
                 subAccountId:
@@ -196,7 +196,7 @@ const dataset: DatasetTest<AlgorandTransaction> = {
               },
             },
             {
-              name: "send Token - more than available",
+              name: "Send Token - more than available",
               transaction: (t) => ({
                 ...t,
                 subAccountId:
@@ -211,6 +211,15 @@ const dataset: DatasetTest<AlgorandTransaction> = {
                 },
                 warnings: {},
               },
+            },
+            {
+              name: "Send max",
+              transaction: (t) => ({
+                ...t,
+                recipient:
+                  "MECOWMKPKH2NWVZTS5V5RQDGFFYBT25KNLOPHG2KUMMNKU6FOHGJT24WBI",
+                useAllAmount: true,
+              }),
             },
           ],
         },
