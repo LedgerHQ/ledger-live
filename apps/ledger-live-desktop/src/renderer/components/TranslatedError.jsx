@@ -39,7 +39,6 @@ class TranslatedError extends PureComponent<Props> {
     const arg: Object = Object.assign({ message: error.message, returnObjects: true }, error);
     if (error.name) {
       const translation = t(`errors.${error.name}.${field}`, arg);
-      let learnMoreClickable = "";
       if (translation !== `errors.${error.name}.${field}`) {
         // It is translated
         if (translation && typeof translation === "object") {
@@ -49,16 +48,14 @@ class TranslatedError extends PureComponent<Props> {
           );
         }
 
-        if (urls.errors[error.name]) {
-          learnMoreClickable = (
-            <Text ff="Inter|SemiBold">
-              <ExternalLink
-                label={t("common.learnMore")}
-                onClick={() => openURL(urls.errors[error.name])}
-              />
-            </Text>
-          );
-        }
+        const learnMoreClickable = urls.errors[error.name] ? (
+          <Text ff="Inter|SemiBold">
+            <ExternalLink
+              label={t("common.learnMore")}
+              onClick={() => openURL(urls.errors[error.name])}
+            />
+          </Text>
+        ) : null;
 
         return (
           <Text>
