@@ -27,6 +27,8 @@ type NavigationProps = BaseComposite<
   >
 >;
 
+const keyExtractor = (item: ProtoNFT) => item.id;
+
 const NFTGallerySelector = ({ navigation, route }: NavigationProps) => {
   const { params } = route;
   const { device } = params;
@@ -36,7 +38,7 @@ const NFTGallerySelector = ({ navigation, route }: NavigationProps) => {
 
   const hiddenNftCollections = useSelector(hiddenNftCollectionsSelector);
 
-  const nftsOrdered: ProtoNFT[] = useMemo(() => {
+  const nftsOrdered = useMemo(() => {
     const visibleNfts = nfts.filter(
       nft =>
         !hiddenNftCollections.includes(
@@ -47,8 +49,6 @@ const NFTGallerySelector = ({ navigation, route }: NavigationProps) => {
   }, [accounts, hiddenNftCollections, nfts]);
 
   const hasNFTs = nftsOrdered.length > 0;
-
-  const keyExtractor = (item: ProtoNFT) => item.id;
 
   const handlePress = useCallback(
     (nft: ProtoNFT) => {
@@ -63,27 +63,34 @@ const NFTGallerySelector = ({ navigation, route }: NavigationProps) => {
     [navigation, device],
   );
 
-  const renderItem = ({
-    item,
-    index,
-  }: {
-    item: ProtoNFT;
-    index: number;
-    count?: number;
-  }) => (
-    <Flex flex={1} mr={index % NB_COLUMNS > 0 ? 0 : 6}>
-      <NftListItem nft={item} onPress={handlePress} />
-    </Flex>
+  const renderItem = useCallback(
+    ({ item, index }: { item: ProtoNFT; index: number }) => {
+      const count = nftsOrdered.length;
+      const incompleteLastRowFirstIndex = count - (count % NB_COLUMNS) - 1;
+      const isOnIncompleteLastRow = index > incompleteLastRowFirstIndex;
+      return (
+        <Flex
+          flex={isOnIncompleteLastRow ? 1 / NB_COLUMNS : 1}
+          mr={index % NB_COLUMNS === NB_COLUMNS - 1 ? 0 : 6}
+        >
+          <NftListItem nft={item} onPress={handlePress} />
+        </Flex>
+      );
+    },
+    [handlePress, nftsOrdered.length],
   );
   return (
     <SafeAreaView style={{ flex: 1 }} edges={["bottom"]}>
       <Flex flex={1} px={6}>
         {hasNFTs ? (
           <FlatList
+            key={NB_COLUMNS}
             numColumns={NB_COLUMNS}
-            data={nfts}
+            data={nftsOrdered}
             renderItem={renderItem}
             keyExtractor={keyExtractor}
+            initialNumToRender={6}
+            windowSize={11}
           />
         ) : (
           <NftGalleryEmptyState />
