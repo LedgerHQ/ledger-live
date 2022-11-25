@@ -34,22 +34,23 @@ type bleTransportListenObserver = TransportObserver<
   DescriptorEvent<TransportBleDevice | null>
 >;
 
+const mockBleTransportListenUnsubscribe = jest.fn();
+
 // HOF creating a mocked Transport listen method to be given to useBleDevicesScanning
 const setupMockBleTransportListen =
   (mockEmitValuesByObserver: (observer: bleTransportListenObserver) => void) =>
   (observer: bleTransportListenObserver): TransportSubscription => {
     mockEmitValuesByObserver(observer);
 
-    const unsubscribe = () => {};
-
     return {
-      unsubscribe,
+      unsubscribe: mockBleTransportListenUnsubscribe,
     };
   };
 
 describe("useBleDevicesScanning", () => {
   afterEach(() => {
     jest.clearAllTimers();
+    mockBleTransportListenUnsubscribe.mockClear();
   });
 
   describe("When several unique devices are found by the scanner", () => {
@@ -273,6 +274,75 @@ describe("useBleDevicesScanning", () => {
       });
 
       // The third time it gets a new device
+      expect(result.current.scannedDevices).toHaveLength(2);
+      expect(result.current.scannedDevices[1].deviceId).toBe(deviceIdB);
+      expect(result.current.scannedDevices[1].deviceModel.id).toBe(
+        DeviceModelId.nanoX
+      );
+    });
+  });
+
+  describe("When a device is only seen after a stopped and cleaned scanning", () => {
+    const deviceIdA = "ID_A";
+    const deviceIdB = "ID_B";
+    const emitTimeOfDeviceB = 3000;
+
+    const mockEmitValuesByObserver = (observer: bleTransportListenObserver) => {
+      observer.next({
+        type: "add",
+        descriptor: aTransportBleDevice({ id: deviceIdA }),
+      });
+
+      setTimeout(() => {
+        observer.next({
+          type: "add",
+          descriptor: aTransportBleDevice({ id: deviceIdB }),
+        });
+      }, emitTimeOfDeviceB);
+    };
+
+    it("should stop and re-run the scanning at a defined interval of time and update the list of scanned devices", async () => {
+      const stopAndReRunIntervalMs = emitTimeOfDeviceB;
+
+      // To avoid re-rendering the hook when mockEmitValuesByObserver
+      // emits a new value with the setTimeout
+      const bleTransportListen = setupMockBleTransportListen(
+        mockEmitValuesByObserver
+      );
+
+      const { result } = renderHook(() =>
+        useBleDevicesScanning({
+          bleTransportListen,
+          stopAndReRunIntervalMs,
+        })
+      );
+
+      // The first time it gets the device from the scanning
+      expect(result.current.scannedDevices).toHaveLength(1);
+      expect(result.current.scannedDevices[0].deviceId).toBe(deviceIdA);
+      expect(result.current.scannedDevices[0].deviceModel.id).toBe(
+        DeviceModelId.nanoX
+      );
+      const nbUnsubscribesHappeningBecauseOfRenderHook =
+        mockBleTransportListenUnsubscribe.mock.calls.length;
+
+      // Advances by less than the interval
+      await act(async () => {
+        jest.advanceTimersByTime(stopAndReRunIntervalMs - 1000);
+      });
+
+      expect(mockBleTransportListenUnsubscribe).toBeCalledTimes(
+        nbUnsubscribesHappeningBecauseOfRenderHook
+      );
+
+      // Advances by the time of the interval
+      await act(async () => {
+        jest.advanceTimersByTime(1000);
+      });
+
+      expect(mockBleTransportListenUnsubscribe).toBeCalledTimes(
+        nbUnsubscribesHappeningBecauseOfRenderHook + 1
+      );
       expect(result.current.scannedDevices).toHaveLength(2);
       expect(result.current.scannedDevices[1].deviceId).toBe(deviceIdB);
       expect(result.current.scannedDevices[1].deviceModel.id).toBe(
