@@ -83,6 +83,30 @@ jobs:
         with:
           name: test-ios-artifacts
           path: apps/ledger-live-mobile/artifacts
+      - name: Upload Allure report
+        uses: actions/upload-artifact@v2
+        if: always()
+        with:
+          name: "allure-ios-reports"
+          path: apps/ledger-live-mobile/allure-results
+
+  allure-report-ios:
+    name: "Allure Reports Export on Server"
+    runs-on: [ledger-live, linux]
+    if: always()
+    needs: [detox-tests-ios]
+    steps:
+      - name: checkout
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ github.event.inputs.ref || 'develop' }}
+      - uses: ./tools/actions/composites/upload-allure-report
+        with:
+          platform: ios
+          login: ${{ secrets.ALLURE_LOGIN }}
+          password: ${{ secrets.ALLURE_PASSWORD }}
+          path: allure-ios-reports
+
 
   detox-tests-android:
     name: "Ledger Live Mobile - Android Detox Tests"
@@ -168,3 +192,26 @@ jobs:
         with:
           name: test-android-artifacts
           path: apps/ledger-live-mobile/artifacts/
+      - name: Upload Allure Report
+        uses: actions/upload-artifact@v2
+        if: always()
+        with:
+          name: "allure-android-reports"
+          path: apps/ledger-live-mobile/allure-results
+  
+  allure-report-android:
+    name: "Allure Reports Export on Server"
+    runs-on: [ledger-live, linux]
+    if: always()
+    needs: [detox-tests-android]
+    steps:
+      - name: checkout
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ github.event.inputs.ref || 'develop' }}
+      - uses: ./tools/actions/composites/upload-allure-report
+        with:
+          platform: android
+          login: ${{ secrets.ALLURE_LOGIN }}
+          password: ${{ secrets.ALLURE_PASSWORD }}
+          path: allure-android-reports
