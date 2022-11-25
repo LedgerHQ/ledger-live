@@ -26,7 +26,7 @@ module.exports = {
     "tokens/polygon/erc20",
   ],
   id: "erc20",
-  output: (toJSON) => `data/erc20-signatures.js${toJSON ? "on" : ""}`,
+  output: (toJSON) => `data/erc20-signatures.${toJSON ? "json" : "ts"}`,
 
   join: (buffers) =>
     buffers.reduce(
@@ -37,7 +37,7 @@ module.exports = {
   outputTemplate: (data, toJSON) =>
     toJSON
       ? JSON.stringify(data.toString("base64"))
-      : "module.exports = " + JSON.stringify(data.toString("base64")) + ";",
+      : "export default " + JSON.stringify(data.toString("base64")) + ";\n",
 
   loader: ({ signatureFolder, folder, id }) =>
     Promise.all([
