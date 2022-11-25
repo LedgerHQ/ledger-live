@@ -1,4 +1,4 @@
-module.exports = [
+export default [
 [101,"USD Coin","USDC","EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",6,true],
 [101,"USDT","USDT","Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB",6,true],
 [101,"Alexey Kulikov Token","AKT","AYb1hhPDFxGADUGKbCfe7qUvyHct3ucqvkmCS65y2HtA",9],
