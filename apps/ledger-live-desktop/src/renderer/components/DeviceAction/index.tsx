@@ -7,6 +7,7 @@ import {
   LatestFirmwareVersionRequired,
   DeviceNotOnboarded,
   NoSuchAppOnProvider,
+  EConnResetError,
 } from "@ledgerhq/live-common/errors";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
 import { setPreferredDeviceModel, setLastSeenDeviceInfo } from "~/renderer/actions/settings";
@@ -289,6 +290,15 @@ export const DeviceActionDefaultRendering = <R, H, P>({
         t,
         error,
         withOpenManager: true,
+        withExportLogs: true,
+      });
+    }
+
+    // workarround to catch ECONNRESET error and show better message
+    if (error?.message?.includes("ECONNRESET")) {
+      return renderError({
+        error: new EConnResetError(),
+        onRetry,
         withExportLogs: true,
       });
     }
