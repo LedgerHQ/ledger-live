@@ -1,0 +1,21 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      // Start LLD with:
+      //ELECTRON_ARGS=--remote-debugging-port=8315 pnpm dev:lld
+      "name": "Attach Electron Renderer",
+      "type": "chrome",
+      "request": "attach",
+      "port": 8315
+    },
+    {
+      // Start LLD with:
+      //LEDGER_INTERNAL_ARGS=--inspect pnpm dev:lld
+      "name": "Attach Electron Main",
+      "type": "node",
+      "request": "attach",
+      "skipFiles": ["<node_internals>/**"]
+    }
+  ]
+}
