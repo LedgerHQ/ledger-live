@@ -102,6 +102,7 @@ export const runAllWithProgress = (
   ).pipe(
     map(
       (event) =>
+        // TODO: make the CI pnpm common ci-test-integration fail
         <Action>{
           type: "onRunnerEvent",
           event,
