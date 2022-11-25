@@ -86,7 +86,8 @@ const BleDevicePairingFlow = ({
         );
       }
 
-      // TODO: Before navigating, to never come back a the successful pairing but to the scanning part
+      // Cannot reset the states so it ends up in the scanning step because this would display the scanning component
+      // before calling onPairingSuccess
       setDeviceToPair(null);
       setPairingFlowStep("done");
 
