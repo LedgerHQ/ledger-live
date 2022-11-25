@@ -41,7 +41,7 @@ export const mapAsAssetContentCard = (card: BrazeContentCard) =>
     image: card.extras.image,
     link: card.extras.link,
     cta: card.extras.cta,
-    assets: card.extras.assets,
+    assets: card.extras.assets ?? "",
     displayOnEveryAssets: Boolean(card.extras.displayOnEveryAssets) ?? false,
   } as AssetContentCard);
 
