@@ -412,7 +412,7 @@ export default class BluetoothTransport extends Transport {
   static disconnect = async (id: any) => {
     log("ble-verbose", `user disconnect(${id})`);
     await bleManager.cancelDeviceConnection(id);
-    await delay(1000);
+    await delay(1000); // Nb Test to improve stability of re-connections.
   };
   id: string;
   device: Device;
