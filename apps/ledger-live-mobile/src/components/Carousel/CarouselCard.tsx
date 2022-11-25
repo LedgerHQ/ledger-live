@@ -1,8 +1,10 @@
 import React, { memo, useCallback, useEffect } from "react";
 import { Linking } from "react-native";
 import { Flex, CardA } from "@ledgerhq/native-ui";
+import { useTheme } from "styled-components/native";
 import { WalletContentCard } from "../../dynamicContent/types";
 import useDynamicContent from "../../dynamicContent/dynamicContent";
+import ForceTheme from "../theme/ForceTheme";
 
 type CarouselCardProps = {
   id: string;
@@ -12,6 +14,7 @@ type CarouselCardProps = {
 };
 
 const CarouselCard = ({ id, cardProps, index, width }: CarouselCardProps) => {
+  const { theme } = useTheme();
   const {
     logClickCard,
     logImpressionCard,
@@ -53,14 +56,16 @@ const CarouselCard = ({ id, cardProps, index, width }: CarouselCardProps) => {
 
   return (
     <Flex key={`container_${id}`} mr={6} ml={index === 0 ? 6 : 0} width={width}>
-      <CardA
-        variant={cardProps.background}
-        backgroundImage={cardProps.image}
-        tag={cardProps.tag}
-        description={cardProps.title}
-        onPress={onPress}
-        onDismiss={onHide}
-      />
+      <ForceTheme selectedPalette={cardProps.image ? "dark" : theme}>
+        <CardA
+          variant={cardProps.background}
+          backgroundImage={cardProps.image}
+          tag={cardProps.tag}
+          description={cardProps.title}
+          onPress={onPress}
+          onDismiss={onHide}
+        />
+      </ForceTheme>
     </Flex>
   );
 };
