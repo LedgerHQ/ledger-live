@@ -1,11 +1,10 @@
 import { makeRe } from "minimatch";
-import { PlatformAccount, PlatformCurrency, AppManifest } from "./types";
+import { AppPlatform, PlatformAccount, PlatformCurrency } from "./types";
 import { isPlatformTokenCurrency } from "./helpers";
-import semver from "semver";
 
 export type FilterParams = {
   branches?: string[];
-  platform?: string;
+  platform?: AppPlatform;
   private?: boolean;
   version?: string;
 };

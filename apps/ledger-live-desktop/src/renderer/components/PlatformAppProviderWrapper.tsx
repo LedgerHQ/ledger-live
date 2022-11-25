@@ -1,5 +1,5 @@
 // @flow
-import React from "react";
+import React, { ReactNode } from "react";
 import {
   allowDebugAppsSelector,
   catalogProviderSelector,
@@ -10,9 +10,10 @@ import { RemoteLiveAppProvider } from "@ledgerhq/live-common/platform/providers/
 import { LocalLiveAppProvider } from "@ledgerhq/live-common/platform/providers/LocalLiveAppProvider/index";
 import { GlobalCatalogProvider } from "@ledgerhq/live-common/platform/providers/GlobalCatalogProvider/index";
 import { RampCatalogProvider } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/index";
+import { getPlatformVersion } from "@ledgerhq/live-common/platform/version";
 
 type PlatformAppProviderWrapperProps = {
-  children: React$Node,
+  children: ReactNode;
 };
 
 const AUTO_UPDATE_DEFAULT_DELAY = 1800 * 1000; // 1800 seconds
@@ -25,7 +26,12 @@ export function PlatformAppProviderWrapper({ children }: PlatformAppProviderWrap
   return (
     <RemoteLiveAppProvider
       provider={provider}
-      branchesParams={{ allowDebugApps, allowExperimentalApps }}
+      parameters={{
+        version: getPlatformVersion(),
+        platform: "desktop",
+        allowDebugApps,
+        allowExperimentalApps,
+      }}
       updateFrequency={AUTO_UPDATE_DEFAULT_DELAY}
     >
       <LocalLiveAppProvider>

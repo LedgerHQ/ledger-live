@@ -32,10 +32,15 @@ export const liveAppContext = createContext<LiveAppContextType>({
   updateManifests: () => Promise.resolve(),
 });
 
+type FetchLiveAppCatalogPrams = Required<Omit<FilterParams, "branches">> & {
+  allowDebugApps: boolean;
+  allowExperimentalApps: boolean;
+};
+
 type LiveAppProviderProps = {
   children: React.ReactNode;
   provider: string;
-  branchesParams: { allowDebugApps: boolean; allowExperimentalApps: boolean };
+  parameters: FetchLiveAppCatalogPrams;
   updateFrequency: number;
 };
 
@@ -58,11 +63,13 @@ export function useRemoteLiveAppContext(): LiveAppContextType {
 export function RemoteLiveAppProvider({
   children,
   provider,
-  branchesParams,
+  parameters,
   updateFrequency,
 }: LiveAppProviderProps): JSX.Element {
   const [state, setState] = useState<Loadable<LiveAppRegistry>>(initialState);
-  const { allowExperimentalApps, allowDebugApps } = branchesParams;
+  const { allowExperimentalApps, allowDebugApps, ...params } = parameters;
+
+  console.warn("ramy 123", { parameters, params });
 
   const updateManifests = useCallback(async () => {
     setState((currentState) => ({
@@ -77,6 +84,7 @@ export function RemoteLiveAppProvider({
 
     try {
       const allManifests = await api.fetchLiveAppManifests(provider, {
+        ...params,
         branches,
       });
 
@@ -98,7 +106,7 @@ export function RemoteLiveAppProvider({
         error,
       }));
     }
-  }, [branchesParams, provider]);
+  }, [allowDebugApps, allowExperimentalApps, provider]);
 
   const value: LiveAppContextType = useMemo(
     () => ({

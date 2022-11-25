@@ -4,6 +4,7 @@ import { LocalLiveAppProvider } from "@ledgerhq/live-common/platform/providers/L
 import { GlobalCatalogProvider } from "@ledgerhq/live-common/platform/providers/GlobalCatalogProvider/index";
 import { RampCatalogProvider } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/index";
 import useEnv from "@ledgerhq/live-common/hooks/useEnv";
+import { getPlatformVersion } from "@ledgerhq/live-common/platform/version";
 
 type PlatformAppProviderWrapperProps = {
   children: ReactNode;
@@ -23,7 +24,9 @@ export default function PlatformAppProviderWrapper({
     <RemoteLiveAppProvider
       provider={provider}
       updateFrequency={AUTO_UPDATE_DEFAULT_DELAY}
-      branchesParams={{
+      parameters={{
+        version: getPlatformVersion(),
+        platform: "mobile",
         allowDebugApps: false,
         allowExperimentalApps: isExperimentalAppEnabled,
       }}
