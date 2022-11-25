@@ -4,7 +4,7 @@ import { Trans } from "react-i18next";
 import { useNavigation } from "@react-navigation/native";
 import type { AppManifest } from "@ledgerhq/live-common/platform/types";
 import { useSelector } from "react-redux";
-import { useRemoteLiveAppContext } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/";
+import { useRemoteLiveAppContext } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
 import { useBanner } from "../../components/banners/hooks";
 import TrackScreen from "../../analytics/TrackScreen";
 import { ScreenName } from "../../const";
@@ -123,7 +123,7 @@ const PlatformCatalog = ({ route }: NavigationProps) => {
         {manifests.map(manifest => (
           <AppCard
             key={`${manifest.id}.${manifest.branch}`}
-            manifest={manifest}
+            manifest={manifest as AppManifest}
             onPress={handlePressCard}
           />
         ))}
