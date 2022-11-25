@@ -518,7 +518,7 @@
       "title": "Amount to freeze cannot be smaller than 1"
     },
     "TronSendTrc20ToNewAccountForbidden": {
-      "title": "Sending TRC20 to the new account will not activate it",
+      "title": "You first need to send at least 0.1 TRX to this address to enable TRC20 token reception.",
       "description": "To activate it, first send either TRX or TRC10 to the account. Then it can receive TRC20."
     },
     "TronUnexpectedFees": {
@@ -4688,6 +4688,9 @@
         "title": "Candidates",
         "description": "127 individuals elected through voting by the entire token-holder community. Votes are sampled every 6 hours."
       }
+    },
+    "receive": {
+      "newAddressTRC20": "You need to activate your Tron account before depositing TRC20 tokens."
     }
   },
   "stellar": {

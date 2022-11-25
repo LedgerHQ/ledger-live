@@ -8,6 +8,10 @@ import React, { PureComponent } from "react";
 import { withTranslation } from "react-i18next";
 import type { TFunction } from "react-i18next";
 import logger from "~/logger";
+import Text from "./Text";
+import ExternalLink from "./ExternalLink";
+import { openURL } from "~/renderer/linking";
+import { urls } from "~/config/urls";
 
 type Props = {
   error: ?Error,
@@ -35,6 +39,7 @@ class TranslatedError extends PureComponent<Props> {
     const arg: Object = Object.assign({ message: error.message, returnObjects: true }, error);
     if (error.name) {
       const translation = t(`errors.${error.name}.${field}`, arg);
+      let learnMoreClickable = "";
       if (translation !== `errors.${error.name}.${field}`) {
         // It is translated
         if (translation && typeof translation === "object") {
@@ -43,7 +48,23 @@ class TranslatedError extends PureComponent<Props> {
             typeof str === "string" ? <li key={key}>{str}</li> : null,
           );
         }
-        return translation;
+
+        if (urls.errors[error.name]) {
+          learnMoreClickable = (
+            <Text ff="Inter|SemiBold">
+              <ExternalLink
+                label={t("common.learnMore")}
+                onClick={() => openURL(urls.errors[error.name])}
+              />
+            </Text>
+          );
+        }
+
+        return (
+          <Text>
+            {translation} {learnMoreClickable}
+          </Text>
+        );
       }
     }
 
