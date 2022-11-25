@@ -46,7 +46,7 @@ export function executeCommand(command: *, send: *) {
   logger.onCmd("cmd.START", id, 0, data);
   try {
     subscriptions[requestId] = cmd(data); // Store the subject returned instead of the subscription
-    subscriptions[requestId] = cmd(data).subscribe({
+    subscriptions[requestId].subscribe({
       next: data => {
         if (data?.type === "input-frame") return; // TODO Input can't be treated as output too
         logger.onCmd("cmd.NEXT", id, Date.now() - startTime, data);
