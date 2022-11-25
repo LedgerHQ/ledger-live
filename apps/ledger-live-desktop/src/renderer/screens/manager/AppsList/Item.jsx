@@ -70,7 +70,7 @@ const Item: React$ComponentType<Props> = ({
   setAppUninstallDep,
   addAccount,
 }: Props) => {
-  const { name, type } = app;
+  const { name, type, authorName } = app;
   const { deviceModel, deviceInfo } = state;
 
   const notEnoughMemoryToInstall = useNotEnoughMemoryToInstall(optimisticState, name);
@@ -81,6 +81,8 @@ const Item: React$ComponentType<Props> = ({
 
   const currencySupported = !!currency && isCurrencySupported(currency);
   const isLiveSupported = currencySupported || ["swap", "plugin"].includes(type);
+  
+  const developedBy = authorName ? authorName : " 3rd party";
 
   const onAddAccount = useCallback(() => {
     if (addAccount) addAccount(currency);
@@ -148,6 +150,14 @@ const Item: React$ComponentType<Props> = ({
             </Ellipsis>
           </>
         ) : null}
+      </Box>
+      <Box flex="0.7" horizontal alignContent="center" justifyContent="flex-start" ml={5}>
+          <>
+            <Ellipsis ml={2} ff="Inter|Regular" color="palette.text.shade60" fontSize={3}>
+              <Trans i18nKey="manager.applist.item.developedBy" />
+              <Text ff="Inter|Bold" color="palette.text.shade100" fontSize={3}>{developedBy}</Text>
+            </Ellipsis>
+          </>
       </Box>
       <AppActions
         state={state}

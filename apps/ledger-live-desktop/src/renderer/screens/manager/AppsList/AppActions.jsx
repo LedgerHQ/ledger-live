@@ -86,7 +86,7 @@ const AppActions: React$ComponentType<Props> = React.memo(
     isLiveSupported,
     addAccount,
   }: Props) => {
-    const { name, type } = app;
+    const { name, type, supportURL } = app;
     const history = useHistory();
     const { installedAvailable, installQueue, uninstallQueue, updateAllQueue } = state;
 
@@ -117,7 +117,7 @@ const AppActions: React$ComponentType<Props> = React.memo(
           history.push("/platform");
           break;
         case "app":
-          openURL(urls.appSupport[name] || urls.appSupport.default);
+          supportURL ? openURL(supportURL) : openURL(urls.appSupport[name] || urls.appSupport.default);
           break;
         case "tool":
           openURL(urls.managerAppLearnMore);
