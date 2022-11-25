@@ -81,6 +81,9 @@ const ethereumUnits = (name, code) => [
   },
 ];
 
+// FIXME: We must be aware that we don't handle correcly currencies that use the same `managerApp`
+// to fix that we should always have the 'main' currency of the managerapp first in this list
+// e.g for Ethereum manager Ethereum is first in the list and other coin are in the bottom of the list
 export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
   near: {
     type: "CryptoCurrency",
@@ -3297,6 +3300,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
       },
     ],
   },
+  // ethereum nanoapp currencies
   avalanche_c_chain: {
     type: "CryptoCurrency",
     id: "avalanche_c_chain",
@@ -3330,7 +3334,6 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     ],
     keywords: ["avax", "avalanche", "c-chain"],
   },
-  // FIXME: Light Integrations are at the end of the list until we figure out a way to fix the ticker/managerApp collisions
   arbitrum: {
     type: "CryptoCurrency",
     id: "arbitrum",
