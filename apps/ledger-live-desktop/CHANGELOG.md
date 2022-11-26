@@ -1,5 +1,17 @@
 # ledger-live-desktop
 
+## 2.50.0-nightly.15
+
+### Minor Changes
+
+- [#1642](https://github.com/LedgerHQ/ledger-live/pull/1642) [`62f17e6c9b`](https://github.com/LedgerHQ/ledger-live/commit/62f17e6c9b7960783987441c1f213d9223eefd09) Thanks [@sarneijim](https://github.com/sarneijim)! - Add swap data track
+
+### Patch Changes
+
+- Updated dependencies [[`eef8038f61`](https://github.com/LedgerHQ/ledger-live/commit/eef8038f611820efffd3b4834e124be0c29acd39)]:
+  - @ledgerhq/live-common@27.8.0-nightly.2
+  - @ledgerhq/react-ui@0.10.1-nightly.2
+
 ## 2.50.0-nightly.14
 
 ### Patch Changes

@@ -1,5 +1,11 @@
 # @ledgerhq/cryptoassets
 
+## 7.0.0-nightly.1
+
+### Major Changes
+
+- [#1778](https://github.com/LedgerHQ/ledger-live/pull/1778) [`9100363270`](https://github.com/LedgerHQ/ledger-live/commit/91003632704d11fc327517a582ac6d7009c05bd3) Thanks [@valpinkman](https://github.com/valpinkman)! - Breaking: Moved `data` folder in `src` so it can be compiled by TS (also changed files to Typescript)
+
 ## 6.38.0-nightly.0
 
 ### Minor Changes

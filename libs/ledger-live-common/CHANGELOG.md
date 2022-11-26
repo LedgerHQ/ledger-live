@@ -1,5 +1,17 @@
 # @ledgerhq/live-common
 
+## 27.8.0-nightly.2
+
+### Minor Changes
+
+- [#1874](https://github.com/LedgerHQ/ledger-live/pull/1874) [`eef8038f61`](https://github.com/LedgerHQ/ledger-live/commit/eef8038f611820efffd3b4834e124be0c29acd39) Thanks [@henrily-ledger](https://github.com/henrily-ledger)! - Help to filter Solana network error
+
+### Patch Changes
+
+- Updated dependencies [[`9100363270`](https://github.com/LedgerHQ/ledger-live/commit/91003632704d11fc327517a582ac6d7009c05bd3)]:
+  - @ledgerhq/cryptoassets@7.0.0-nightly.1
+  - @ledgerhq/hw-app-eth@6.30.1-nightly.2
+
 ## 27.8.0-nightly.1
 
 ### Patch Changes

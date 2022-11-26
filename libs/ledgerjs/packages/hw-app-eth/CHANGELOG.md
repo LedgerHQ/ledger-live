@@ -1,5 +1,12 @@
 # @ledgerhq/hw-app-eth
 
+## 6.30.1-nightly.2
+
+### Patch Changes
+
+- Updated dependencies [[`9100363270`](https://github.com/LedgerHQ/ledger-live/commit/91003632704d11fc327517a582ac6d7009c05bd3)]:
+  - @ledgerhq/cryptoassets@7.0.0-nightly.1
+
 ## 6.30.1-nightly.1
 
 ### Patch Changes
