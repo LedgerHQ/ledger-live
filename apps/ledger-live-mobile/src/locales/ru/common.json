@@ -410,6 +410,9 @@
       "title" : "Это приложение является обязательным",
       "description" : "Удаляйте приложения Биткойна и Эфириума в последнюю очередь."
     },
+    "MaxFeeLow" : {
+      "title" : "Указанная макс. комиссия слишком мала. Подписание операции может занять длительное время"
+    },
     "NetworkDown" : {
       "title" : "Похоже, не работает Интернет",
       "description" : "Пожалуйста, проверьте подключение к Интернету."
@@ -417,6 +420,19 @@
     "NoAddressesFound" : {
       "title" : "К сожалению, счетов не обнаружено",
       "description" : "Что-то пошло не так при вычислении адреса. Пожалуйста, попробуйте ещё раз. Если проблема не уходит, сохраните логи и отправьте их в Поддержку Ledger."
+    },
+    "ElrondDecimalsLimitReached" : {
+      "title" : "Достигнут лимит десятичных знаков",
+      "description" : "Убедитесь, что у указанной суммы 18 десятичных знаков."
+    },
+    "ElrondMinDelegatedAmountError" : {
+      "title" : "Делегированная сумма должна быть не менее {{formattedAmount}}"
+    },
+    "ElrondMinUndelegatedAmountError" : {
+      "title" : "Неделегированных средств должно быть как минимум {{formattedAmount}}"
+    },
+    "ElrondDelegationBelowMinimumError" : {
+      "title" : "Остаток делегированных средств должен быть не менее {{formattedAmount}}"
     },
     "NotEnoughBalance" : {
       "title" : "Кажется, у вас недостаточно средств",
@@ -595,6 +611,9 @@
     "SourceHasMultiSign" : {
       "title" : "Пожалуйста, отключите мультиподписи, чтобы отправить {{currencyName}}"
     },
+    "DustLimit" : {
+      "title" : "Сумма ниже лимита пыли"
+    },
     "StratisDown2021Warning" : {
       "description" : "Блокчейн Stratis претерпел изменения и может работать некорректно. Исходный блокчейн Stratis поддерживался поддерживаться до 16 октября 2021 г."
     },
@@ -744,6 +763,23 @@
     },
     "HederaAddAccountError" : {
       "title" : "Не удалось добавить счёт. Пожалуйста, попробуйте ещё раз."
+    },
+    "PriorityFeeTooLow" : {
+      "title" : "Комиссия за приоритет ниже рекомендованной"
+    },
+    "PriorityFeeTooHigh" : {
+      "title" : "Комиссия за приоритет выше необходимой. Вы можете переплатить"
+    },
+    "MaxFeeTooLow" : {
+      "title" : "Максимальная комиссия ниже рекомендованной"
+    },
+    "PriorityFeeHigherThanMaxFee" : {
+      "title" : "Максимальная комиссия за приоритет не может быть больше максимальной комиссии"
+    },
+    "LockedDeviceError" : {
+      "title" : "Устройство заблокировано",
+      "description" : "Разблокируйте устройство и повторите попытку.",
+      "descriptionWithProductName" : "Разблокируйте {{ productName }} и повторите попытку."
     }
   },
   "crash" : {
@@ -762,13 +798,26 @@
     }
   },
   "location" : {
-    "required" : "Требуется функция геолокации",
+    "titleServiceRequired" : "Location services required",
+    "titlePermissionRequired" : "Location permission required",
+    "titlePermissionRequiredPrecise" : "Precise location permission required",
+    "descriptionServiceRequired" : "Ledger Live requires location services to pair your device through Bluetooth.",
+    "descriptionPermissionRequired" : "Ledger Live requires the location permission to pair your device through Bluetooth.",
+    "descriptionPermissionRequiredPrecise" : "Ledger Live requires the precise location permission to pair your device through Bluetooth.",
     "open" : "Открыть настройки геолокации",
-    "disabled" : "Для подключения устройства через Bluetooth Ledger Live требуется функция геолокации.",
     "noInfos" : "Ledger не имеет доступа к информации о вашем местоположении."
   },
   "permissions" : {
-    "open" : "Открыть разрешения приложения"
+    "open" : "Открыть разрешения приложения",
+    "authorize" : "Authorize",
+    "bluetooth" : {
+      "modalTitle" : "Permission required to pair your Ledger over Bluetooth",
+      "modalDescriptionBase" : "To pair your Ledger over Bluetooth, you must authorize Ledger Live to scan for nearby devices.",
+      "modalDescriptionSettingsVariant" : "To pair your Ledger over Bluetooth, you must authorize Ledger Live to scan for nearby devices in your phone’s settings.",
+      "modalButtonLabelBase" : "Authorize",
+      "modalButtonLabelSettingsVariant" : "Go to settings",
+      "dontPair" : "Don't pair"
+    }
   },
   "fees" : {
     "speed" : {
@@ -870,7 +919,7 @@
         "cta" : "Купить"
       },
       "familyPackX" : {
-        "title" : "Семейный набор Ledger Nano X",
+        "title" : "Семейный набор Nano X",
         "description" : "Набор из 3 Nano X по скидке. Идеально для подарка или резервной копии кошелька",
         "cta" : "Сэкономьте"
       },
@@ -1804,6 +1853,9 @@
         }
       }
     },
+    "appsStep" : {
+      "title" : "Приложения {{productName}}"
+    },
     "readyStep" : {
       "title" : "Устройство {{productName}} готово"
     },
@@ -2140,7 +2192,7 @@
       },
       "advanced" : {
         "title" : "Расширенные логи",
-        "warningDerivation" : "Это xpub-ключ {{tag}}. При его импорте в сторонний кошелёк выберите тот же режим вывода.",
+        "warningDerivation" : "Это xpub-ключ {{tag}}. Выберите тот же режим вывода при его импорте в сторонний кошелёк.",
         "desc" : ""
       }
     },
@@ -2435,14 +2487,19 @@
         "title" : "Рынок",
         "desc" : "Узнавайте о важных изменениях на крипторынке"
       },
-      "announcement" : {
+      "announcements" : {
         "title" : "Новости",
-        "desc" : "Не пропускайте детали важных обновлений Ledger Live"
+        "desc" : "Не пропускайте важные обновления Ledger Live"
+      },
+      "recommendations" : {
+        "title" : "Рекомендации",
+        "desc" : "Оцените рекомендации и специальные предложения именно для вас. Они сделают криптопутешествие ещё ярче"
       },
       "price" : {
         "title" : "Уведомления о курсах",
         "desc" : "Настраивайте оповещения о курсах любимых криптовалют, чтобы не пропустить движения рынка"
-      }
+      },
+      "disclaimer" : "Конфиденциальность данных — основной приоритет Ledger. Поэтому собранная информация никогда не передаётся нашим партнёрам."
     },
     "help" : {
       "title" : "Помощь",
@@ -2523,13 +2580,14 @@
       "featureFlagsTitle" : "Определённые фича-флаги (feature flags), используемые в Ledger Live",
       "featureFlagsDesc" : "Переписанные значения будут сброшены в случае перезапуска приложения. Принимаются лишь валидные строки JSON.",
       "featureFlagsEdit" : "Редактировать",
-      "featureFlagsRestore" : "Восстановить"
+      "featureFlagsRestore" : "Восстановить",
+      "firebaseProject" : "Firebase project targeted by this build:"
     }
   },
   "notifications" : {
     "prompt" : {
       "title" : "Активация уведомлений",
-      "desc" : "Получайте важные новости о Ledger Live, продуктах Ledger и безопасности. Отписаться можно в любое время.",
+      "desc" : "Будьте в курсе последних новостей о Ledger Live, устройствах Ledger и рынке криптовалют, а также получайте подходящие рекомендации. Отписаться можно в любой момент в настройках.",
       "allow" : "Разрешить уведомления",
       "later" : "Не сейчас"
     }
@@ -3151,6 +3209,12 @@
       }
     }
   },
+  "signMessage" : {
+    "eip712" : {
+      "showFullMessage" : "Показать полное сообщение",
+      "hideFullMessage" : "Скрыть полное сообщение"
+    }
+  },
   "sync" : {
     "error" : "Ошибка синхронизации",
     "loading" : "Синхронизируем..."
@@ -3212,9 +3276,14 @@
       "infoTotalDesc" : "Включает сумму транзакции и комиссию выбранной сети",
       "gasLimit" : "Лимит Газа",
       "gasPrice" : "Цена Газа",
+      "maxFee" : "Макс. комиссия",
+      "maxPriorityFee" : "Максимальная комиссия за приоритет",
+      "nextBlock" : "Следующий блок: {{nextBaseFee}}",
+      "suggestedPriorityFee" : "Рекомендовано: {{lowPriorityFee}} - {{highPriorityFee}}",
       "maxFees" : "Макс. комиссия",
       "validateGasLimit" : "Подтвердить лимит Газа",
       "fees" : "Комиссия",
+      "maxEstimatedFee" : "Макс. ориентировочная комиссия",
       "validateFees" : "Подтвердить комиссию",
       "customizeFees" : "Указать комиссию",
       "memo" : {
@@ -3462,7 +3531,7 @@
     }
   },
   "DeviceAction" : {
-    "stayInTheAppPlz" : "Оставайтесь в приложении и держите при себе Nano X",
+    "stayInTheAppPlz" : "Оставайтесь в приложении и держите устройство Ledger при себе.",
     "allowAppPermission" : "Откройте приложение {{wording}} на устройстве",
     "allowAppPermissionSubtitleToken" : "для управления {{token}}",
     "allowManagerPermission" : "Разрешите использование {{wording}} на устройстве",
@@ -3490,7 +3559,10 @@
     },
     "confirmSwap" : {
       "title" : "Подтвердите обмен на устройстве",
-      "alert" : "Перед отправкой проверьте сведения об обмене на устройстве. Обмен адресами осуществляется безопасно и не требует проверки.",
+      "alert" : {
+        "default" : "Перед отправкой проверьте сведения об обмене на устройстве. Обмен адресами осуществляется безопасно и не требует проверки.",
+        "cic" : "Перед отправкой проверьте детали обмена на устройстве. CIC может дополнительно проверять некоторые транзакции, что приведёт к задержкам."
+      },
       "acceptTerms" : "Подтверждая эту транзакцию, я принимаю\n<0>условия использования <0>{{provider}}</0></0>",
       "notice" : "Перед отправкой проверьте сведения об обмене на устройстве. Обмен адресами осуществляется безопасно и не требует проверки."
     },
@@ -3634,6 +3706,7 @@
         "description" : "Управляйте сохранёнными устройствами Ledger"
       },
       "addNewCTA" : "Добавить новое",
+      "otgBanner" : "Если вы используете Ledger Nano S или Nano S Plus, подключите устройство с помощью USB-кабеля.",
       "connectExistingLedger" : "Подключить уже настроенный Ledger",
       "connectExistingLedgerDescription" : "У вас уже есть настроенный Ledger? Подключите его через Bluetooth",
       "setUpNewLedger" : "Настроить новый Ledger",
@@ -4028,7 +4101,7 @@
         "description" : "Баланс заблокированных активов, доступных для голосования"
       },
       "withdrawableBalance" : {
-        "title" : "Баланс для вывода",
+        "title" : "Можно вывести",
         "description" : "Разблокированные CELO, которые можно вывести на баланс"
       }
     },
@@ -4144,7 +4217,7 @@
           "verification" : {
             "success" : {
               "title" : "Активация выполнена",
-              "text" : "Ваши голоса активированы."
+              "text" : "Ваши голоса активированы"
             }
           }
         }
@@ -4287,7 +4360,7 @@
     },
     "alerts" : {
       "withdrawableAssets" : "У вас есть баланс для вывода.",
-      "activatableVotes" : "У вас есть голоса, которые можно активировать"
+      "activatableVotes" : "У вас есть голоса, которые можно использовать"
     }
   },
   "osmosis" : {
@@ -4508,6 +4581,207 @@
               "titleCompound" : "Вознаграждения делегированы тому же валидатору.",
               "text" : "Баланс обновится после подтверждения транзакции в сети.",
               "cta" : "Подробнее..."
+            },
+            "pending" : {
+              "title" : "Транслируем транзакцию..."
+            },
+            "broadcastError" : "Возможно, ваша транзакция не прошла. Пожалуйста, подождите немного, а затем проверьте историю транзакций, прежде чем повторить попытку."
+          }
+        }
+      }
+    }
+  },
+  "elrond" : {
+    "info" : {
+      "available" : {
+        "title" : "Доступно EGLD",
+        "description" : "Эту сумму можно отправить."
+      },
+      "delegated" : {
+        "title" : "Активы в стейкинге",
+        "description" : "Застейканные активы косвенно используются валидаторами. Они нужны в обеспечении работы нод сети, обработке транзакций и защите блокчейна посредством участия в механизме консенсуса."
+      },
+      "undelegating" : {
+        "title" : "Ожидает вывода",
+        "description" : "Отозванные активы подлежат 10-дневной заморозке, прежде чем их можно будет вывести."
+      },
+      "delegationUnavailable" : {
+        "title" : "Делегирование недоступно",
+        "description" : "Доступных средств на счету недостаточно для нового делегирования."
+      }
+    },
+    "delegation" : {
+      "delegationEarn" : "Стейкайте EGLD, чтобы гарантировать безопасность блокчейн-сети Elrond и получать вознаграждения.",
+      "info" : "Что такое стейкинг и как он работает?",
+      "claimRewards" : "Получить вознаграждения",
+      "claimAvailableRewards" : "Получить {{amount}}",
+      "header" : "Мой стейк",
+      "Amount" : "Сумма",
+      "noRewards" : "Вознаграждений нет",
+      "delegate" : "Застейкать повторно",
+      "undelegate" : "Вывести из стейкинга",
+      "reward" : "Получить вознаграждения",
+      "commission" : "Комиссия",
+      "iDelegate" : "Я делегирую",
+      "totalStake" : "Общий пул",
+      "stepperHeader" : {
+        "starter" : "Получить вознаграждения",
+        "validator" : "Делегирование активов",
+        "amountSubTitle" : "Сумма для стейкинга",
+        "summary" : "Сводка",
+        "verification" : "Проверка",
+        "selectDevice" : "Выбор устройства",
+        "connectDevice" : "Добавление устройства",
+        "stepRange" : "Шаг {{currentStep}} из {{totalSteps}}"
+      },
+      "flow" : {
+        "steps" : {
+          "starter" : {
+            "description" : "Вы можете получать вознаграждения, стейкая EGLD с помощью валидаторов.",
+            "steps" : {
+              "0" : "Застейканные активы остаются в вашей собственности.",
+              "1" : "Активы станут доступны через 10 дней после отмены стейкинга.",
+              "2" : "Застейкайте активы с помощью устройства Ledger."
+            },
+            "warning" : {
+              "description" : "Подойдите к выбору валидаторов для стейкинга ответственно. Единственный риск сейчас — не получить вознаграждение по разным причинам, поэтому валидатора следует выбирать с учётом его надёжности, отзывчивости и комиссии."
+            },
+            "cta" : "Продолжить"
+          },
+          "validator" : {
+            "validators" : "Валидаторы",
+            "myDelegations" : "Мой стейк",
+            "cta" : "Продолжить",
+            "apr" : "Годовая доходность: {{amount}}",
+            "totalAvailable" : "Всего голосов: <0>{{amount}}</0>",
+            "allAssetsUsed" : "Использованы все активы",
+            "noResultsFound" : "Валидатор по запросу <0>«{{search}}»</0> не найден",
+            "currentAmount" : "(+<0>{{amount}}</0>)"
+          },
+          "amount" : {
+            "assetsRemaining" : "Осталось активов: <0>{{amount}}</0>",
+            "allAssetsUsed" : "Использованы все активы",
+            "minAmount" : "Мин. сумма: <0>{{min}}</0>",
+            "incorrectAmount" : "Макс. сумма: <0>{{max}}</0>",
+            "insufficientDelegation" : "Общая сумма для стейкинга должна превышать 1 {{label}} для каждого валидатора.",
+            "wrongUndelegations" : "Оставшаяся сумма застейканных {{label}} должна быть равна 0, либо быть больше 1 {{label}} для каждого валидатора.",
+            "cta" : "Продолжить"
+          },
+          "verification" : {
+            "success" : {
+              "title" : "Вы успешно застейкали активы",
+              "text" : "Баланс обновится после подтверждения транзакции в сети.",
+              "cta" : "Подробнее"
+            },
+            "pending" : {
+              "title" : "Транслируем транзакцию..."
+            },
+            "broadcastError" : "Возможно, ваша транзакция не прошла. Пожалуйста, подождите немного, а затем проверьте историю транзакций, прежде чем повторить попытку."
+          }
+        }
+      },
+      "drawer" : {
+        "status" : "Статус",
+        "rewards" : "Вознаграждение",
+        "active" : "Активно",
+        "inactive" : "Неактивно",
+        "completionDate" : "Дата завершения",
+        "redelegatedFrom" : "Повторно делегировано из",
+        "completionDateHit" : "Выполнено"
+      }
+    },
+    "claimRewards" : {
+      "stepperHeader" : {
+        "validator" : "Укажите вознаграждение для получения",
+        "method" : "Получить вознаграждения",
+        "summary" : "Сводка",
+        "selectDevice" : "Выбор устройства",
+        "connectDevice" : "Добавление устройства",
+        "stepRange" : "Шаг {{currentStep}} из {{totalSteps}}"
+      },
+      "flow" : {
+        "steps" : {
+          "method" : {
+            "youEarned" : "Вы получили",
+            "byDelegationAssetsTo" : "за стейкинг активов",
+            "claimRewards" : "Получить вознаграждение",
+            "reDelegateRewards" : "Стейкинг вознаграждений",
+            "claimRewardsInfo" : "Они будут получены прямо сейчас и зачислены на баланс.",
+            "reDelegateRewardsInfo" : "Они будут запрошены и автоматически добавлены в стейкинг тому же валидатору.",
+            "compoundOrCashIn" : "Застейкать вознаграждения или получить их?",
+            "claimRewardsTooltip" : "Вознаграждения будут зачислены на баланс",
+            "reDelegateRewardsTooltip" : "Вознаграждения будут добавлены к стейкингу",
+            "cta" : "Продолжить"
+          },
+          "verification" : {
+            "success" : {
+              "claimRewardsSuccess" : "Вознаграждения получены и добавлены к доступному балансу.",
+              "reDelegateRewardsSuccess" : "Вознаграждения были добавлены в стейкинг тому же валидатору.",
+              "text" : "Баланс обновится после подтверждения транзакции в сети.",
+              "cta" : "Подробнее"
+            },
+            "pending" : {
+              "title" : "Транслируем транзакцию..."
+            },
+            "broadcastError" : "Возможно, ваша транзакция не прошла. Пожалуйста, подождите немного, а затем проверьте историю транзакций, прежде чем повторить попытку."
+          }
+        }
+      }
+    },
+    "undelegation" : {
+      "stepperHeader" : {
+        "amountSubTitle" : "Сумма вывода из стейкинга",
+        "summary" : "Сводка",
+        "selectDevice" : "Выбор устройства",
+        "connectDevice" : "Добавление устройства",
+        "stepRange" : "Шаг {{currentStep}} из {{totalSteps}}"
+      },
+      "flow" : {
+        "steps" : {
+          "amount" : {
+            "allAssetsUsed" : "Выбраны все активы",
+            "assetsRemaining" : "Остаток в делегировании: <0>{{amount}}</0>",
+            "minAmount" : "Мин. сумма: <0>{{min}}</0>",
+            "incorrectAmount" : "Макс. сумма: <0>{{max}}</0>",
+            "minRemaining" : "Минимальное требование: <0>{{min}}</0>"
+          },
+          "verification" : {
+            "success" : {
+              "title" : "Вы успешно вывели активы из стейкинга",
+              "text" : "Баланс обновится после подтверждения транзакции в сети.",
+              "cta" : "Подробнее"
+            },
+            "pending" : {
+              "title" : "Транслируем транзакцию..."
+            },
+            "broadcastError" : "Возможно, ваша транзакция не прошла. Пожалуйста, подождите немного, а затем проверьте историю транзакций, прежде чем повторить попытку."
+          }
+        }
+      }
+    },
+    "withdraw" : {
+      "stepperHeader" : {
+        "validator" : "Укажите вознаграждение для получения",
+        "method" : "Получить вознаграждение",
+        "summary" : "Сводка",
+        "selectDevice" : "Выбор устройства",
+        "connectDevice" : "Добавление устройства",
+        "stepRange" : "Шаг {{currentStep}} из {{totalSteps}}"
+      },
+      "flow" : {
+        "steps" : {
+          "method" : {
+            "youEarned" : "Вы вывели",
+            "byDelegationAssetsTo" : "из стейка",
+            "withdrawInfo" : "Они будут получены прямо сейчас и зачислены на баланс.",
+            "withdrawTooltip" : "Выведенные активы будут зачислены на баланс",
+            "cta" : "Продолжить"
+          },
+          "verification" : {
+            "success" : {
+              "title" : "Вознаграждения получены и добавлены к доступному балансу.",
+              "text" : "Баланс обновится после подтверждения транзакции в сети.",
+              "cta" : "Подробнее"
             },
             "pending" : {
               "title" : "Транслируем транзакцию..."
@@ -5014,7 +5288,8 @@
     "actions" : {
       "redelegate" : "Переделегировать",
       "collectRewards" : "Получить вознаграждения",
-      "undelegate" : "Отозвать"
+      "undelegate" : "Отозвать",
+      "withdraw" : "Вывод средств"
     }
   },
   "ValidateOnDevice" : {
@@ -5243,7 +5518,7 @@
     },
     "disclaimer" : {
       "title" : "Стороннее приложение",
-      "description" : "Вы будете перенаправлены на приложение, которое не принадлежит компании Ledger.",
+      "description" : "Вы будете перенаправлены к приложению, которое не принадлежит компании Ledger.",
       "legalAdvice" : "Данное приложение не принадлежит компании Ledger. Компания не несёт ответственности за потерю средств или качество обслуживания данного приложения.\n\nВсегда тщательно проверяйте информацию на экране устройства.",
       "legalAdviceShort" : "Ledger не несёт ответственности за любые потери средств. Всегда тщательно проверяйте информацию на экране устройства.",
       "checkbox" : "Больше не напоминать",
@@ -5335,7 +5610,8 @@
       "seeFewerNfts" : "Скрыть"
     },
     "gallery" : {
-      "allNft" : "Все NFT"
+      "allNft" : "Все NFT",
+      "addNew" : "Добавить"
     },
     "viewer" : {
       "properties" : "Свойства",
@@ -5352,7 +5628,13 @@
     "viewerModal" : {
       "viewOn" : "Посмотреть в",
       "viewInExplorer" : "Посмотреть в Обозревателе",
+      "hide" : "Скрыть коллекцию NFT",
       "txDetails" : "Детали транзакции"
+    },
+    "modalDisabled" : {
+      "title" : "Функция отправки недоступна",
+      "body" : "В связи с последними требованиями App Store отправка NFT временно недоступна. Вы по-прежнему можете использовать настольную версию Ledger Live для отправки NFT.",
+      "contactSupport" : "Дополнительная информация доступна в статье нашей Поддержки."
     }
   },
   "ApplicationVersion" : "v {{version}}",
@@ -5393,18 +5675,26 @@
     "cropImage" : "Обрезать изображение",
     "chooseConstrast" : "Указать контраст",
     "uploadAnotherImage" : "Загрузить другое изображение",
-    "selectContrast" : "Выберите контрастность",
+    "rotateImage" : "Повернуть",
     "allowPreview" : "Разрешить превью изображений в {{productName}}",
     "loadingPicture" : "Загружаем изображение в {{productName}}",
     "pictureLoaded" : "Изображение загружено",
     "timeDisclaimer" : "Это займёт не более 30 секунд",
     "imageLoaded" : "Изображение загружено в {{productName}}",
     "confirmPicture" : "Подтвердите на {{productName}}",
-    "title" : "Выберите изображение.\nСоздайте атмосферу.\nНастройте Ledger под себя.",
-    "subtitle" : "Установите ваш любимый NFT или другую фотографию с телефона.",
+    "landingPage" : {
+      "title" : "Выберите изображение.\nСоздайте атмосферу.\nНастройте Ledger под себя.",
+      "subtitle" : "Установите ваш любимый NFT или другую фотографию с телефона.",
+      "choosePicture" : "Выбрать изображение"
+    },
     "customImage" : "Пользовательское изображение",
-    "choosePicture" : "Выбрать изображение",
-    "doThisLater" : "Не сейчас"
+    "doThisLater" : "Не сейчас",
+    "preview" : {
+      "title" : "Предпросмотр",
+      "loading" : "Loading preview",
+      "setPicture" : "Установить пользовательское изображение",
+      "editPicture" : "Изменить изображение"
+    }
   },
   "postOnboarding" : {
     "hub" : {
@@ -5425,6 +5715,37 @@
         "description" : "При помощи картинки",
         "popupLabel" : "Устройство персонализировано",
         "hubTitleAfterAction" : "Выглядит круто!"
+      }
+    }
+  },
+  "wallet" : {
+    "tabs" : {
+      "crypto" : "Криптовалюты",
+      "nft" : "NFT"
+    },
+    "nftGallery" : {
+      "empty" : {
+        "title" : "Пока тут ничего нет",
+        "subtitle" : "Попробуйте получить свой первый NFT.",
+        "receive" : "Получить NFT",
+        "supportLink" : "Как получить NFT с других кошельков?"
+      },
+      "receiveModal" : {
+        "title" : "Получить NFT можно так же, как и другие криптоактивы",
+        "bullets" : {
+          "0" : "• Выберите блокчейн NFT",
+          "1" : "• Выберите счёт для получения NFT"
+        },
+        "cta" : "Понятно",
+        "info" : "Хочу узнать больше"
+      },
+      "hideNftModal" : {
+        "title" : "Скрыть коллекцию NFT",
+        "desc" : "Это действие скроет все NFT из коллекции {{collectionName}}. Показать их вновь можно в настройках приложения",
+        "cta" : "Скрыть этот NFT"
+      },
+      "media" : {
+        "tag" : "{{count}} NFT"
       }
     }
   }
