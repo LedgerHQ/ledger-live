@@ -4,11 +4,6 @@ import { patchOperationWithHash } from "../../../operation";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { Operation } from "@ledgerhq/types-live";
 import Crypto from "../crypto/crypto";
-import {
-  CosmosDistributionParams,
-  CosmosPool,
-  CosmosTotalSupply,
-} from "../types";
 
 export class CosmosAPI {
   protected _defaultEndpoint = "";
@@ -286,35 +281,6 @@ export class CosmosAPI {
     } catch (e) {
       return new BigNumber(0);
     }
-  };
-
-  queryTotalSupply = async (
-    minDenomUnit: string
-  ): Promise<CosmosTotalSupply> => {
-    const { data } = await network({
-      method: "GET",
-      url: `${this._defaultEndpoint}/cosmos/bank/${this._version}/supply/${minDenomUnit}`,
-    });
-    const { amount } = data;
-    return { ...amount };
-  };
-
-  queryPool = async (): Promise<CosmosPool> => {
-    const { data } = await network({
-      method: "GET",
-      url: `${this._defaultEndpoint}/cosmos/staking/${this._version}/pool`,
-    });
-    const { pool } = data;
-    return { ...pool };
-  };
-
-  queryDistributionParams = async (): Promise<CosmosDistributionParams> => {
-    const { data } = await network({
-      method: "GET",
-      url: `${this._defaultEndpoint}/cosmos/distribution/${this._version}/params`,
-    });
-    const { params } = data;
-    return { ...params };
   };
 
   broadcast = async ({

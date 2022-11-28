@@ -1,10 +1,15 @@
 import { makeLRUCache } from "../../../cache";
-import { CosmosOperationMode, CosmosRewardsState } from "../types";
+import {
+  CosmosDistributionParams,
+  CosmosOperationMode,
+  CosmosPool,
+  CosmosRewardsState,
+  CosmosTotalSupply,
+} from "../types";
 import network from "../../../network";
 import { getCryptoCurrencyById } from "../../../currencies";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { parseUatomStrAsAtomNumber } from "../logic";
-//import { CosmosAPI } from "../api/Cosmos";
 
 class Crypto {
   currency: CryptoCurrency;
@@ -243,23 +248,47 @@ class Crypto {
     () => this.currencyId
   );
 
+  private queryTotalSupply = async (
+    minDenomUnit: string
+  ): Promise<CosmosTotalSupply> => {
+    const { data } = await network({
+      method: "GET",
+      url: `${this.lcd}/cosmos/bank/${this.version}/supply/${minDenomUnit}`,
+    });
+    const { amount } = data;
+    return { ...amount };
+  };
+
+  private queryPool = async (): Promise<CosmosPool> => {
+    const { data } = await network({
+      method: "GET",
+      url: `${this.lcd}/cosmos/staking/${this.version}/pool`,
+    });
+    const { pool } = data;
+    return { ...pool };
+  };
+
+  private queryDistributionParams =
+    async (): Promise<CosmosDistributionParams> => {
+      const { data } = await network({
+        method: "GET",
+        url: `${this.lcd}/cosmos/distribution/${this.version}/params`,
+      });
+      const { params } = data;
+      return { ...params };
+    };
+
   private getOsmosisRewardsState = makeLRUCache(
     async () => {
-      // TODO fix it
-      /*
-      const supply = await cosmosAPI.queryTotalSupply(
-        this.currency.units[1].code
-      );
+      const distributionParams = await this.queryDistributionParams();
+      const supply = await this.queryTotalSupply(this.currency.units[1].code);
       const totalSupply = parseUatomStrAsAtomNumber(supply.amount);
-      const pool = await cosmosAPI.queryPool();
+      const pool = await this.queryPool();
 
       const actualBondedRatio =
         parseUatomStrAsAtomNumber(pool.bonded_tokens) / totalSupply;
-        */
-      const totalSupply = 10000000;
-      const actualBondedRatio = 0;
       const communityPoolCommission = parseFloat(
-        "0" //community_tax
+        distributionParams.community_tax
       );
 
       // Hardcoded mock values
