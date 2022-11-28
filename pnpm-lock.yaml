@@ -523,32 +523,22 @@ importers:
 
   apps/ledger-live-desktop/tests/utils/dummy-live-app:
     specifiers:
-      '@ledgerhq/hw-app-eth': ^6.29.11
-      '@ledgerhq/hw-transport': ^6.27.6
-      '@ledgerhq/live-common': workspace:*
-      '@ledgerhq/wallet-api-client': ^0.7.1
+      '@ledgerhq/live-app-sdk': ^0.5.0
       '@types/jest': ^27.0.1
       '@types/node': ^16.7.13
       '@types/react': ^17.0.20
       '@types/react-dom': ^17.0.9
-      bignumber.js: ^9.1.0
-      buffer: ^6.0.3
       cross-env: ^7.0.3
       react: ^17.0.2
       react-dom: ^17.0.2
       react-scripts: 5.0.0
       typescript: ^4.8.3
     dependencies:
-      '@ledgerhq/hw-app-eth': link:../../../../../libs/ledgerjs/packages/hw-app-eth
-      '@ledgerhq/hw-transport': link:../../../../../libs/ledgerjs/packages/hw-transport
-      '@ledgerhq/live-common': link:../../../../../libs/ledger-live-common
-      '@ledgerhq/wallet-api-client': 0.7.1
+      '@ledgerhq/live-app-sdk': 0.5.1
       '@types/jest': 27.5.1
       '@types/node': 16.11.12
       '@types/react': 17.0.45
       '@types/react-dom': 17.0.16_@types+react@17.0.45
-      bignumber.js: 9.1.0
-      buffer: 6.0.3
       react: 17.0.2
       react-dom: 17.0.2_react@17.0.2
       react-scripts: 5.0.0_5puyc4jev3j735enew7cnutksu
@@ -12423,6 +12413,13 @@ packages:
     resolution: {integrity: sha512-FxWFC3UrYF077OV8eXLZ+2ymnr0IEVICdBk5SgplcIM1T4aZWMAJ+KvCVIxUB+DirygBaCYeUwWBrs5twxHUXA==}
     dependencies:
       bignumber.js: 9.1.0
+    dev: false
+
+  /@ledgerhq/live-app-sdk/0.5.1:
+    resolution: {integrity: sha512-kWERpf8rVgxVGoksoU18SuYF2dc2WIC0t2zXgA5HI9toVK/gfmQz8x+ElXytImLbtQ+RhFUf73C03K2f9ZH5SQ==}
+    dependencies:
+      bignumber.js: 9.1.0
+      json-rpc-2.0: 0.2.19
     dev: false
 
   /@ledgerhq/live-app-sdk/0.8.1:
