@@ -64,7 +64,7 @@ const getFeature = (args: {
     const config = remoteConfig();
 
     if (__DEV__) {
-      config.settings.minimumFetchIntervalMillis = 0;
+      config.setConfigSettings({ minimumFetchIntervalMillis: 0 });
     }
 
     const value = config.getValue(formatFeatureId(key));
@@ -104,6 +104,7 @@ export const getAllDivergedFlags = (
       res[key as FeatureId] = value.enabled;
     }
   });
+
   return res;
 };
 
