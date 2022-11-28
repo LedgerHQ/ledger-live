@@ -31,7 +31,7 @@ const dataset: DatasetTest<Transaction> = {
           implementations: ["js"],
           transactions: [
             {
-              name: "success1",
+              name: "Send",
               transaction: fromTransactionRaw({
                 family: "ethereum",
                 mode: "send",
@@ -51,6 +51,26 @@ const dataset: DatasetTest<Transaction> = {
                 warnings: {
                   feeTooHigh: new FeeTooHigh(),
                 },
+              },
+            },
+            {
+              name: "Send max",
+              transaction: (t, account) => ({
+                ...t,
+                recipient: "0x17733CAb76d9A2112576443F21735789733B1ca3",
+                useAllAmount: true,
+                amount: new BigNumber("0"),
+                feesStrategy: null,
+              }),
+              expectedStatus: (account) => {
+                invariant(
+                  account.balance.toNumber() === 0,
+                  "Account balanche should be empty"
+                );
+                return {
+                  errors: {},
+                  warnings: {},
+                };
               },
             },
             {

@@ -1,4 +1,5 @@
 import "../../__tests__/test-helpers/setup";
+import invariant from "invariant";
 import { testBridge } from "../../__tests__/test-helpers/bridge";
 import { getAccountBridge } from "../../bridge";
 import {
@@ -147,6 +148,28 @@ const filecoin: CurrenciesData<Transaction> = {
             amount: new BigNumber("1"),
             errors: {},
             warnings: {},
+          },
+        },
+        {
+          name: "Send max",
+          transaction: fromTransactionRaw({
+            family: "filecoin",
+            method: 1,
+            version: 1,
+            nonce: 100,
+            gasFeeCap: "1000",
+            gasLimit: 10,
+            gasPremium: "10000",
+            recipient: ACCOUNT_1,
+            amount: "1",
+            useAllAmount: true,
+          }),
+          expectedStatus: (account) => {
+            invariant(
+              account.balance.toNumber() === 0,
+              "Account balance should be empty"
+            );
+            return {};
           },
         },
       ],

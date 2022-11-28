@@ -1,3 +1,4 @@
+import invariant from "invariant";
 import { BigNumber } from "bignumber.js";
 import type { CurrenciesData } from "@ledgerhq/types-live";
 import type { BitcoinAccountRaw, NetworkInfoRaw, Transaction } from "../types";
@@ -194,6 +195,7 @@ const dataset: CurrenciesData<Transaction> = {
           transaction: fromTransactionRaw({
             family: "bitcoin",
             recipient: "BC1QQMXQDRKXGX6SWRVJL9L2E6SZVVKG45ALL5U4FL",
+            // FIXME: ignored by test suite
             useAllAmount: true,
             amount: "0",
             feePerByte: "1",
@@ -204,9 +206,17 @@ const dataset: CurrenciesData<Transaction> = {
               excludeUTXOs: [],
             },
           }),
-          expectedStatus: {
-            errors: {},
-            warnings: {},
+          expectedStatus: (account, transaction) => {
+            console.log(
+              account.balance.toNumber(),
+              transaction.amount.toNumber()
+            );
+
+            invariant(
+              account.balance.toNumber() === 0,
+              "Account balance should be empty"
+            );
+            return {};
           },
         },
       ],

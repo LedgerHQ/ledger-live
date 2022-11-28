@@ -9,6 +9,7 @@ import type { DatasetTest } from "@ledgerhq/types-live";
 import type { Transaction } from "./types";
 
 import tezosScanAccounts1 from "./datasets/tezos.scanAccounts.1";
+import { TxAuxiliaryDataSupplementType } from "@cardano-foundation/ledgerjs-hw-app-cardano";
 
 export const accountTZrevealedDelegating = makeAccount(
   "TZrevealedDelegating",
@@ -70,6 +71,21 @@ const dataset: DatasetTest<Transaction> = {
               transaction: (t, account) => ({
                 ...t,
                 amount: account.balance.minus("100"),
+                recipient: "tz1VSichevvJSNkSSntgwKDKikWNB6iqNJii",
+              }),
+              expectedStatus: {
+                errors: {
+                  amount: new NotEnoughBalance(),
+                },
+                warnings: {},
+              },
+            },
+            {
+              name: "Send max",
+              transaction: (t, account) => ({
+                ...t,
+                amount: account.balance,
+                useAllAmount: true,
                 recipient: "tz1VSichevvJSNkSSntgwKDKikWNB6iqNJii",
               }),
               expectedStatus: {

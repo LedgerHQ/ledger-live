@@ -1,5 +1,6 @@
 import "../../__tests__/test-helpers/setup";
 
+import invariant from "invariant";
 import { BigNumber } from "bignumber.js";
 import type { AccountRaw, DatasetTest } from "@ledgerhq/types-live";
 import { FeeTooHigh } from "@ledgerhq/errors";
@@ -20,7 +21,7 @@ const dataset: DatasetTest<Transaction> = {
           raw: ethereum1 as AccountRaw,
           transactions: [
             {
-              name: "success1",
+              name: "Send",
               transaction: fromTransactionRaw({
                 family: "evm",
                 mode: "send",
@@ -39,6 +40,30 @@ const dataset: DatasetTest<Transaction> = {
                 warnings: {
                   feeTooHigh: new FeeTooHigh(),
                 },
+              },
+            },
+            {
+              name: "Send max",
+              transaction: fromTransactionRaw({
+                family: "evm",
+                mode: "send",
+                recipient: "0x17733CAb76d9A2112576443F21735789733B1ca3",
+                amount: "10000000000000",
+                gasPrice: "100000000",
+                gasLimit: "21000",
+                chainId: 1,
+                nonce: 0,
+                useAllAmount: true,
+              }),
+              expectedStatus: (account) => {
+                invariant(
+                  account.balance.toNumber() === 0,
+                  "Account balanche should be empty"
+                );
+                return {
+                  errors: {},
+                  warnings: {},
+                };
               },
             },
           ],

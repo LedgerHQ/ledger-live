@@ -1,4 +1,5 @@
 import "../../__tests__/test-helpers/setup";
+import invariant from "invariant";
 import { testBridge } from "../../__tests__/test-helpers/bridge";
 
 // import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
@@ -119,6 +120,27 @@ const dataset: DatasetTest<Transaction> = {
                 },
                 warnings: {},
                 totalSpent: new BigNumber("10000001"),
+              },
+            },
+            {
+              name: "Send max",
+              transaction: fromTransactionRaw({
+                family: "ripple",
+                recipient: "rageXHB6Q4VbvvWdTzKANwjeCT4HXFCKX7",
+                amount: "0",
+                tag: null,
+                fee: "1",
+                feeCustomUnit: null,
+                networkInfo: null,
+                // FIXME: useAllAmount ignored by test suite
+                useAllAmount: true,
+              }),
+              expectedStatus: (account, transaction) => {
+                invariant(
+                  account.balance.toNumber() === 0,
+                  "Account balance should be empty"
+                );
+                return {};
               },
             },
             {

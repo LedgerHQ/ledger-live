@@ -1,4 +1,5 @@
 import "../../__tests__/test-helpers/setup";
+import invariant from "invariant";
 import { testBridge } from "../../__tests__/test-helpers/bridge";
 import type { CurrenciesData, DatasetTest } from "@ledgerhq/types-live";
 import type { Transaction } from "./types";
@@ -80,6 +81,23 @@ const hedera: CurrenciesData<Transaction> = {
               amount: new NotEnoughBalance(),
             },
             warnings: {},
+          },
+        },
+        {
+          name: "Send max",
+          transaction: fromTransactionRaw({
+            family: "hedera",
+            recipient: "0.0.751515",
+            amount: "1000000000000000",
+            useAllAmount: true,
+          }),
+          expectedStatus: (account) => {
+            invariant(
+              account.balance.toNumber() === 0,
+              "Account balance should be empty"
+            );
+
+            return {};
           },
         },
       ],

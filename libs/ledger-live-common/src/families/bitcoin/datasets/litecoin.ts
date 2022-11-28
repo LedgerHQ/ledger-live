@@ -1,4 +1,5 @@
 import { BigNumber } from "bignumber.js";
+import invariant from "invariant";
 import type { CurrenciesData } from "@ledgerhq/types-live";
 import type { NetworkInfoRaw, Transaction, BitcoinAccountRaw } from "../types";
 import { fromTransactionRaw } from "../transaction";
@@ -114,9 +115,12 @@ const dataset: CurrenciesData<Transaction> = {
               excludeUTXOs: [],
             },
           }),
-          expectedStatus: {
-            errors: {},
-            warnings: {},
+          expectedStatus: (account) => {
+            invariant(
+              account.balance.toNumber() === 0,
+              "Account balance should be empty"
+            );
+            return {};
           },
         },
       ],
