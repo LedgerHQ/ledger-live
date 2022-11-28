@@ -97,6 +97,22 @@ const elrond: CurrenciesData<Transaction> = {
             warnings: {},
           },
         },
+        {
+          name: "Send max",
+          transaction: fromTransactionRaw({
+            family: "elrond",
+            recipient:
+              "erd1frj909pfums4m8aza596595l9pl56crwdj077vs2aqcw6ynl28wsfkw9rd",
+            useAllAmount: true,
+            amount: "0",
+            mode: "send",
+            fees: null,
+          }),
+          expectedStatus: {
+            errors: {},
+            warnings: {},
+          },
+        },
       ],
     },
   ],
