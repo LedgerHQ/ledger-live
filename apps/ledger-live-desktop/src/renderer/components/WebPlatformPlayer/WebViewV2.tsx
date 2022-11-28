@@ -1,4 +1,5 @@
 import { shell, WebviewTag } from "electron";
+import semver from "semver";
 import * as remote from "@electron/remote";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -339,7 +340,7 @@ export function WebView({ manifest, onClose, inputs = {}, config }: Props) {
         },
       );
 
-      serverRef.current.setHandler("device.transport", ({ appName }) => {
+      serverRef.current.setHandler("device.transport", ({ appName, appVersionRange, devices }) => {
         if (transport.current) {
           return Promise.reject(new Error("Device already opened"));
         }
@@ -350,13 +351,30 @@ export function WebView({ manifest, onClose, inputs = {}, config }: Props) {
           dispatch(
             openModal("MODAL_CONNECT_DEVICE", {
               appName,
-              onResult: (result: AppResult) => {
+              onResult: ({ device, appAndVersion }: AppResult) => {
                 tracking.deviceTransportSuccess(manifest);
-                if (!result.device) {
+                if (!device) {
                   reject(new Error("No device"));
                   return;
                 }
-                const { deviceId } = result.device;
+
+                if (devices && !devices.includes(device.modelId)) {
+                  reject(new Error("Device not in the devices list"));
+                  return;
+                }
+
+                if (
+                  appVersionRange &&
+                  appAndVersion &&
+                  semver.satisfies(appAndVersion.version, appVersionRange)
+                ) {
+                  reject(new Error("App version doesn't satisfies the range"));
+                  return;
+                }
+
+                // TODO handle appFirmwareRange & seeded params
+
+                const { deviceId } = device;
 
                 // @ts-expect-error: command is using flow typings
                 transport.current = command("getTransport")({
@@ -411,7 +429,7 @@ export function WebView({ manifest, onClose, inputs = {}, config }: Props) {
         });
       });
 
-      serverRef.current.setHandler("device.close", ({ deviceId }) => {
+      serverRef.current.setHandler("device.close", ({ transportId }) => {
         if (!transport.current) {
           return Promise.reject(new Error("No device opened"));
         }
@@ -422,7 +440,7 @@ export function WebView({ manifest, onClose, inputs = {}, config }: Props) {
 
         tracking.deviceCloseSuccess(manifest);
 
-        return Promise.resolve(deviceId);
+        return Promise.resolve(transportId);
       });
     }
     // Only used to init the server, no update needed
