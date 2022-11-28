@@ -3,7 +3,7 @@ import {
   getElementByText,
   tapByElement,
   typeTextByElement,
-} from "./helpers";
+} from "../helpers";
 
 export default class PasswordEntryPage {
   getPasswordTextInput = () => getElementById("password-text-input");

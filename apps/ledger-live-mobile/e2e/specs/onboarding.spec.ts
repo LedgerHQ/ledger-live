@@ -1,10 +1,11 @@
 import { expect, waitFor } from "detox";
-import { verifyTextIsVisible } from "../helpers";
+import { waitForElementByText } from "../helpers";
 import OnboardingSteps from "../models/onboarding/onboardingSteps";
 import PortfolioPage from "../models/portfolioPage";
 
 let onboardingSteps: OnboardingSteps;
 let portfolioPage: PortfolioPage;
+
 describe("Onboarding", () => {
   beforeAll(() => {
     onboardingSteps = new OnboardingSteps();
@@ -13,7 +14,7 @@ describe("Onboarding", () => {
 
   it("waits for Onboarding page to be ready", async () => {
     await onboardingSteps.getOnboardingGetStarted();
-    await verifyTextIsVisible("Get started");
+    await waitForElementByText("Get started");
   });
 
   it("starts Onboarding", async () => {
@@ -26,7 +27,7 @@ describe("Onboarding", () => {
 
   it("goes to setup my ledger nano", async () => {
     await onboardingSteps.chooseToSetupLedger();
-    await verifyTextIsVisible("Ledger\u00A0Nano\u00A0X");
+    await waitForElementByText("Ledger\u00A0Nano\u00A0X");
   });
 
   it("choses Nano X", async () => {
