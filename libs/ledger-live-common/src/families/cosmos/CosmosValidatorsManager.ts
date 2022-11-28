@@ -16,7 +16,6 @@ const isStargate = (currency: CryptoCurrency) => {
 };
 
 export class CosmosValidatorsManager {
-  protected _namespace = "cosmos";
   protected _version: string;
   protected _currency!: CryptoCurrency;
   protected _minDenom!: string;
@@ -38,9 +37,6 @@ export class CosmosValidatorsManager {
     this._version = this._crypto.version;
     this._minDenom = currency.units[1].code;
 
-    if (options?.namespace) {
-      this._namespace = options.namespace;
-    }
     if (options?.endPoint) {
       this._endPoint = options.endPoint;
       this._minDenom = currency.units[1].code;
@@ -114,7 +110,6 @@ export class CosmosValidatorsManager {
   getValidators = async (): Promise<CosmosValidatorItem[]> => {
     if (isStargate(this._currency)) {
       const rewardsState = await this._crypto.getRewardsState();
-
       // validators need the rewardsState ONLY to compute voting power as
       // percentage instead of raw uatoms amounts
       return await this.cacheValidators(rewardsState);
@@ -222,7 +217,7 @@ export class CosmosValidatorsManager {
 
   hydrateValidators = (validators: CosmosValidatorItem[]): void => {
     log(
-      `${this._namespace}/validators`,
+      `${this._currency.id}/validators`,
       "hydrate " + validators.length + " validators"
     );
     this.cacheValidators.hydrate("", validators);

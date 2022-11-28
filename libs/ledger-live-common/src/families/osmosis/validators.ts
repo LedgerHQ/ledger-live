@@ -9,7 +9,7 @@ import {
 } from "./OsmosisSupplyTypes";
 import { OsmosisRewardsState } from "./types";
 
-const osmosisCryptoCurrency = getCryptoCurrencyById("osmo");
+const osmosisCryptoCurrency = getCryptoCurrencyById("osmosis");
 
 // TODO Refactor this to be a class so that we don't have to query the API multiple times
 const getRewardsState = async (): Promise<OsmosisRewardsState> => {
