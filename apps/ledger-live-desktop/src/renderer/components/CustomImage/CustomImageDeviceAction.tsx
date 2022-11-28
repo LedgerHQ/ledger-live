@@ -1,4 +1,6 @@
 import React, { useEffect, useCallback } from "react";
+import { useDispatch } from "react-redux";
+import { setLastSeenCustomImage } from "~/renderer/actions/settings";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { createAction } from "@ledgerhq/live-common/hw/actions/ftsLoadImage";
 import { ImageLoadRefusedOnDevice, ImageCommitRefusedOnDevice } from "@ledgerhq/live-common/errors";
@@ -52,6 +54,7 @@ const CustomImageDeviceAction: React.FC<Props> = withRemountableWrapper(props =>
   const commandRequest = hexImage;
 
   const { t } = useTranslation();
+  const dispatch = useDispatch();
 
   const validDevice = device?.modelId === DeviceModelId.nanoFTS ? device : null;
 
@@ -65,11 +68,15 @@ const CustomImageDeviceAction: React.FC<Props> = withRemountableWrapper(props =>
     }
   }, [onStart, validDevice]);
 
-  const handleResult = useCallback(() => {
-    if (onResult && validDevice) {
-      onResult();
-    }
-  }, [onResult, validDevice]);
+  const handleResult = useCallback(
+    lastSeenCustomImage => {
+      if (onResult && validDevice) {
+        dispatch(setLastSeenCustomImage(lastSeenCustomImage));
+        onResult();
+      }
+    },
+    [dispatch, onResult, validDevice],
+  );
 
   const { error, imageLoadRequested, loadingImage, imageCommitRequested, progress } = status;
   const isError = !!error;
