@@ -212,16 +212,12 @@ const StepReceiveFunds = (props: StepProps) => {
       });
 
       transitionTo("stakingFlow");
-      history.push({
-        pathname: `/account/${account.id}`,
-      });
     } else {
       onClose();
     }
   }, [
     account,
     currencyName,
-    history,
     onClose,
     receiveStakingFlowConfig?.enabled,
     receiveStakingFlowConfig?.params,
