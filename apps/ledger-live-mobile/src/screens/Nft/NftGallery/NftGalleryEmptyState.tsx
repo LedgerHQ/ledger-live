@@ -34,7 +34,6 @@ const NftGalleryEmptyState = () => {
             ? "NFT Gallery Start Read-only"
             : "NFT Gallery Start"
         }
-        source="NFT tab"
       />
       <Text
         variant={"h1Inter"}

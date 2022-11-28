@@ -44,6 +44,7 @@ export default function ReceiveNFTsModal({ onClose, isOpened }: Props) {
     track("url_clicked", {
       name: "i'd like to learn more",
       url: urls.nft.howToSecure,
+      drawer: "Confirm Receive NFT",
     });
     Linking.openURL(urls.nft.howToSecure);
   }, []);
