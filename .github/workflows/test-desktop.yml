@@ -7,80 +7,76 @@ on:
       - develop
       - release
       - hotfix
-  pull_request:
   workflow_dispatch:
+    inputs:
+      check_run_id:
+        description: id to update the check run on PR
+        required: false
+      sha:
+        description: the head sha to target the correct check run
+        required: false
+      ref:
+        description: the branch which triggered this workflow
+        required: true
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: ${{ github.ref_name != 'develop' }}
+  group: ${{ github.workflow }}-${{ github.event.inputs.ref || github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'workflow_dispatch' && github.events.inputs.ref != 'develop' || github.ref_name != 'develop' }}
 
 env:
   comment_header: <!-- test-desktop-report -->
 
 jobs:
-  is-affected:
-    outputs:
-      is-desktop-affected: ${{ steps.affected.outputs.is-package-affected }}
-    runs-on: [ubuntu-latest]
-    steps:
-      - uses: actions/checkout@v3
-        with:
-          ref: develop
-          fetch-depth: 0
-      - name: checkout branch (PR)
-        if: ${{ github.event_name == 'pull_request' }}
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          gh pr checkout ${{ github.event.pull_request.number }}
-      - name: checkout branch (not PR)
-        if: ${{ github.event_name != 'pull_request' }}
-        run: |
-          git checkout $GITHUB_SHA
-      - uses: ./tools/actions/turbo-affected
-        id: affected
-        with:
-          package: "ledger-live-desktop"
-          head-ref: ${{ github.event_name == 'pull_request' && format('origin/{0}', github.event.pull_request.base.ref) || 'HEAD^' }}
+  # pr-is-fork:
+  #   name: "Check if the PR is a fork"
+  #   needs: is-affected
+  #   if: ${{ needs.is-affected.outputs.is-desktop-affected == 'true' }}
+  #   uses: ./.github/workflows/pr-is-fork.yml
+  #   with:
+  #     non-pr-result: false
+  #   secrets:
+  #     token: ${{ secrets.COMMON_READ_ORG }}
 
-  # Run dummy jobs when not affected to pass the required status checks
-  dummy_tests:
-    name: "Ledger Live Desktop Tests"
-    needs: is-affected
-    if: ${{ needs.is-affected.outputs.is-desktop-affected != 'true' }}
-    strategy:
-      matrix:
-        names:
-          - ubuntu-latest
-          - macos-latest
-          - windows-latest
+  update-check:
+    name: "Update Checks on PR"
+    if: github.event_name == 'workflow_dispatch' && github.event.inputs.check_run_id != '' && github.event.inputs.sha != ''
     runs-on: ubuntu-latest
     steps:
-      - id: dummy
-        run: exit 0
-  dummy_typecheck:
-    name: "Ledger Live Desktop TypeCheck"
-    needs: is-affected
-    if: ${{ needs.is-affected.outputs.is-desktop-affected != 'true' }}
-    runs-on: ubuntu-latest
-    steps:
-      - id: dummy
-        run: exit 0
-
-  pr-is-fork:
-    name: "Check if the PR is a fork"
-    needs: is-affected
-    if: ${{ needs.is-affected.outputs.is-desktop-affected == 'true' }}
-    uses: ./.github/workflows/pr-is-fork.yml
-    with:
-      non-pr-result: false
-    secrets:
-      token: ${{ secrets.COMMON_READ_ORG }}
+      - name: Generate token
+        id: generate-token
+        uses: tibdex/github-app-token@v1
+        with:
+          app_id: ${{ secrets.GH_BOT_APP_ID }}
+          private_key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
+      - uses: actions/github-script@v6
+        with:
+          github-token: ${{ steps.generate-token.outputs.token }}
+          script: |
+            const previous = await github.rest.checks.update({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              head_sha: "${{ github.event.inputs.sha }}",
+              check_run_id: "${{ github.event.inputs.check_run_id }}",
+            });
+            await github.rest.checks.update({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              name: previous.data.name,
+              head_sha: "${{ github.event.inputs.sha }}",
+              check_run_id: "${{ github.event.inputs.check_run_id }}",
+              details_url: `https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${{ github.run_id }}`,
+              status: "in_progress",
+              started_at: new Date().toISOString(),
+              output: {
+                title: "⚙️ Testing",
+                summary: `You can follow the progress of the tests [here](https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${{ github.run_id }})`
+              }
+            });
 
   typecheck:
     name: "Ledger Live Desktop TypeCheck"
-    needs: is-affected
-    if: ${{ needs.is-affected.outputs.is-desktop-affected == 'true' }}
+    # needs: is-affected
+    # if: ${{ needs.is-affected.outputs.is-desktop-affected == 'true' }}
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
       INSTRUMENT_BUILD: true
@@ -93,7 +89,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
         with:
-          ref: ${{ github.event.inputs.ref || github.ref }}
+          ref: ${{ github.event.inputs.sha || github.event.inputs.ref || github.ref }}
       - uses: ./tools/actions/composites/setup-test-desktop
         id: setup-test-desktop
       - name: TurboRepo local caching server
@@ -109,35 +105,72 @@ jobs:
       - name: Run code checkers
         run: pnpm desktop test:codecheck
 
-  matrix_prep:
-    needs: [pr-is-fork]
-    runs-on: ubuntu-latest
-    outputs:
-      matrix: ${{ steps.set-matrix.outputs.matrix }}
-    steps:
-      - id: set-matrix
-        run: |
-          if [[ "${{ needs.pr-is-fork.outputs.pr-is-fork }}" == "true" ]]; then
-            echo "matrix={\"os\": [\"ubuntu-latest\", \"windows-latest\", \"macos-latest\"]}" >> $GITHUB_OUTPUT
-          else
-            echo "matrix={\"os\": [\"ubuntu-latest\", \"windows-latest\"]}" >> $GITHUB_OUTPUT
-          fi
+  # matrix_prep:
+  #   needs: [pr-is-fork]
+  #   runs-on: ubuntu-latest
+  #   outputs:
+  #     matrix: ${{ steps.set-matrix.outputs.matrix }}
+  #   steps:
+  #     - id: set-matrix
+  #       run: |
+  #         if [[ "${{ needs.pr-is-fork.outputs.pr-is-fork }}" == "true" ]]; then
+  #           echo "matrix={\"os\": [\"ubuntu-latest\", \"windows-latest\", \"macos-latest\"]}" >> $GITHUB_OUTPUT
+  #         else
+  #           echo "matrix={\"os\": [\"ubuntu-latest\", \"windows-latest\"]}" >> $GITHUB_OUTPUT
+  #         fi
 
-  test-desktop-app:
-    name: "Ledger Live Desktop Tests"
-    needs: [matrix_prep]
+  start-runner:
+    name: Start self-hosted EC2 runner
+    runs-on: [ledger-live, linux]
+    # needs: [pr-is-fork]
+    # if: ${{ !fromJSON(needs.pr-is-fork.outputs.pr-is-fork) }}
+    outputs:
+      label: ${{ steps.start-ec2-linux-runner.outputs.label }}
+      ec2-instance-id: ${{ steps.start-ec2-linux-runner.outputs.ec2-instance-id }}
+    steps:
+      - name: Start EC2 Linux Runner
+        id: start-ec2-linux-runner
+        uses: LedgerHQ/actions/ec2-linux-runner@main
+        with:
+          mode: start
+          github-token: ${{ secrets.CI_BOT_TOKEN }}
+          project: 2049
+          aws-nfs-logging: true
+          ami-name-filter: ledger-live-runner
+          instance-volume-size: 30
+          instance-type: c5.4xlarge
+
+  stop-runner:
+    name: Stop self-hosted EC2 runner
+    if: ${{ always() && needs.start-runner.result == 'success' }}
+    # if: ${{ always() && needs.start-runner.result == 'success' && !fromJSON(needs.pr-is-fork.outputs.pr-is-fork) }}
+    # needs: [start-runner, pr-is-fork, build-desktop-app-linux]
+    needs: [start-runner, test-desktop-app-linux]
+    runs-on: [ledger-live, linux]
+    steps:
+      - name: Stop EC2 Linux Runner
+        uses: LedgerHQ/actions/ec2-linux-runner@main
+        with:
+          mode: stop
+          github-token: ${{ secrets.CI_BOT_TOKEN }}
+          label: ${{ needs.start-runner.outputs.label }}
+          ec2-instance-id: ${{ needs.start-runner.outputs.ec2-instance-id }}
+
+  test-desktop-app-windows:
+    name: "Windows Live Desktop Tests"
+    # needs: [matrix_prep]
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
       INSTRUMENT_BUILD: true
       FORCE_COLOR: 3
-      CI_OS: ${{ matrix.os }}
+      CI_OS: "windows-latest"
       PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: 1
       # DEBUG: "pw:browser*"
       # DEBUG_LOGS: 1
-    strategy:
-      fail-fast: false
-      matrix: ${{fromJson(needs.matrix_prep.outputs.matrix)}}
-    runs-on: ${{ matrix.os }}
+    # strategy:
+    #   fail-fast: false
+    #   matrix: ${{fromJson(needs.matrix_prep.outputs.matrix)}}
+    runs-on: windows-latest
     steps:
       - name: format os name
         id: os
@@ -145,20 +178,15 @@ jobs:
         with:
           result-encoding: string
           script: |
-            if ("${{ matrix.os }}" === "ubuntu-latest") {
-              return "linux"
-            } else if ("${{ matrix.os }}" === "macos-latest") {
-              return "macos"
-            } else if ("${{ matrix.os }}" === "windows-latest") {
-              return "windows"
-            }
+            return "windows"
       - uses: actions/checkout@v3
         with:
-          ref: ${{ github.event.inputs.ref || github.ref }}
+          ref: ${{ github.event.inputs.sha || github.event.inputs.ref || github.ref }}
       - uses: ./tools/actions/composites/setup-test-desktop
         id: setup-test-desktop
+        with:
+          skip_ruby: true
       - name: Install node-gyp globally
-        if: ${{ matrix.os == 'windows-latest' }}
         run: |
           pnpm add -g node-gyp
       - name: TurboRepo local caching server
@@ -173,11 +201,97 @@ jobs:
           os: ${{ steps.os.outputs.result }}
           turbo-server-port: ${{ steps.turborepo-cache-server.outputs.port }}
 
-  test-desktop-app-mac-internal:
-    name: "Ledger Live Desktop Tests (macos-latest)"
-    needs: [pr-is-fork]
-    if: ${{ !fromJSON(needs.pr-is-fork.outputs.pr-is-fork) }}
-    runs-on: [m1, ARM64]
+  test-desktop-app-linux:
+    name: "Linux Live Desktop Tests"
+    # needs: [matrix_prep]
+    env:
+      NODE_OPTIONS: "--max-old-space-size=7168"
+      INSTRUMENT_BUILD: true
+      FORCE_COLOR: 3
+      CI_OS: "ubuntu-latest"
+      PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: 1
+      # DEBUG: "pw:browser*"
+      # DEBUG_LOGS: 1
+    # strategy:
+    #   fail-fast: false
+    #   matrix: ${{fromJson(needs.matrix_prep.outputs.matrix)}}
+    needs: [start-runner]
+    runs-on: ${{ needs.start-runner.outputs.label }}
+    steps:
+      - name: format os name
+        id: os
+        uses: actions/github-script@v6
+        with:
+          result-encoding: string
+          script: |
+            return "linux"
+      - uses: actions/checkout@v3
+        with:
+          ref: ${{ github.event.inputs.sha || github.event.inputs.ref || github.ref }}
+      - uses: ./tools/actions/composites/setup-test-desktop
+        id: setup-test-desktop
+        with:
+          skip_python: true
+          skip_ruby: true
+      - name: TurboRepo local caching server
+        id: turborepo-cache-server
+        uses: ./tools/actions/turborepo-gh-cache
+        with:
+          server-token: "yolo"
+          cleanup-cache-folder: "true"
+      # Composite
+      - name: Install dependencies
+        run: pnpm i --filter="ledger-live-desktop..." --filter="ledger-live" --frozen-lockfile --unsafe-perm
+      - name: Install playwright dependencies
+        run: npx playwright@1.27.1 install --with-deps chromium
+      - name: Build dependencies
+        env:
+          GOGC: 75
+        run: |
+          pnpm build:lld:deps --api="http://127.0.0.1:${{ steps.turborepo-cache-server.outputs.port }}" --token="yolo" --team="foo"
+          pnpm desktop build:testing
+      - name: Build Dummy SDK app for testing
+        run: pnpm --filter="dummy-live-app" i && pnpm --filter="dummy-live-app" build
+      - name: Run unit tests
+        run: pnpm desktop test:jest
+      - name: Run playwright tests
+        run: xvfb-run --auto-servernum --server-args="-screen 0 1280x960x24" -- pnpm desktop test:playwright
+      - name: upload diffs to imgur
+        if: always() && !cancelled()
+        uses: ledgerhq/ledger-live/tools/actions/upload-images@develop
+        id: imgur
+        with:
+          path: apps/ledger-live-desktop/tests/artifacts/test-results
+          workspace: ${{ github.workspace }}
+          os: ${{ steps.os.outputs.result }}
+      - name: upload ci suggested screenshots
+        if: always() && !cancelled()
+        uses: actions/upload-artifact@v3
+        with:
+          name: images
+          path: images-${{ steps.os.outputs.result }}.json
+      - name: Upload playwright test results [On Failure]
+        uses: actions/upload-artifact@v3
+        if: failure() && !cancelled()
+        with:
+          name: ${{ format('playwright-results-{0}', steps.os.outputs.result) }}
+          path: |
+            apps/ledger-live-desktop/tests/artifacts/test-results
+            apps/ledger-live-desktop/tests/artifacts/html-report
+            apps/ledger-live-desktop/tests/artifacts/coverage
+            apps/ledger-live-desktop/tests/artifacts/videos
+            apps/ledger-live-desktop/tests/artifacts/logs
+      # - uses: ./tools/actions/composites/test-desktop
+      #   id: test-desktop
+      #   with:
+      #     os: ${{ steps.os.outputs.result }}
+      #     turbo-server-port: ${{ steps.turborepo-cache-server.outputs.port }}
+
+  test-desktop-app-mac:
+    name: "macOS Live Desktop Tests"
+    # needs: [pr-is-fork]
+    # if: ${{ !fromJSON(needs.pr-is-fork.outputs.pr-is-fork) }}
+    runs-on: [ledger-live, macos]
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
       INSTRUMENT_BUILD: true
@@ -195,7 +309,7 @@ jobs:
           script: return "macos"
       - uses: actions/checkout@v3
         with:
-          ref: ${{ github.event.inputs.ref || github.ref }}
+          ref: ${{ github.event.inputs.sha || github.event.inputs.ref || github.ref }}
       - uses: ./tools/actions/composites/setup-test-desktop
         id: setup-test-desktop
         with:
@@ -207,19 +321,76 @@ jobs:
         with:
           server-token: "yolo"
           cleanup-cache-folder: "true"
-      - uses: ./tools/actions/composites/test-desktop
-        id: test-desktop
+      # Composite
+      - name: Install dependencies
+        run: pnpm i --filter="ledger-live-desktop..." --filter="ledger-live" --frozen-lockfile --unsafe-perm
+      - name: Install playwright dependencies
+        run: npx playwright@1.27.1 install --with-deps chromium
+      - name: Build dependencies
+        env:
+          GOGC: 75
+        run: |
+          pnpm build:lld:deps --api="http://127.0.0.1:${{ steps.turborepo-cache-server.outputs.port }}" --token="yolo" --team="foo"
+          pnpm desktop build:testing
+      - name: Build Dummy SDK app for testing
+        run: pnpm --filter="dummy-live-app" i && pnpm --filter="dummy-live-app" build
+      - name: Run unit tests
+        run: pnpm desktop test:jest
+      - name: Run playwright tests
+        run: pnpm desktop test:playwright
+      - name: upload diffs to imgur
+        if: always() && !cancelled()
+        uses: ledgerhq/ledger-live/tools/actions/upload-images@develop
+        id: imgur
         with:
+          path: apps/ledger-live-desktop/tests/artifacts/test-results
+          workspace: ${{ github.workspace }}
           os: ${{ steps.os.outputs.result }}
-          turbo-server-port: ${{ steps.turborepo-cache-server.outputs.port }}
+      - name: upload ci suggested screenshots
+        if: always() && !cancelled()
+        uses: actions/upload-artifact@v3
+        with:
+          name: images
+          path: images-${{ steps.os.outputs.result }}.json
+      - name: Upload playwright test results [On Failure]
+        uses: actions/upload-artifact@v3
+        if: failure() && !cancelled()
+        with:
+          name: ${{ format('playwright-results-{0}', steps.os.outputs.result) }}
+          path: |
+            apps/ledger-live-desktop/tests/artifacts/test-results
+            apps/ledger-live-desktop/tests/artifacts/html-report
+            apps/ledger-live-desktop/tests/artifacts/coverage
+            apps/ledger-live-desktop/tests/artifacts/videos
+            apps/ledger-live-desktop/tests/artifacts/logs
+      # - uses: ./tools/actions/composites/test-desktop
+      #   id: test-desktop
+      #   with:
+      #     os: ${{ steps.os.outputs.result }}
+      #     turbo-server-port: ${{ steps.turborepo-cache-server.outputs.port }}
 
   report:
     needs:
-      [is-affected, pr-is-fork, test-desktop-app, test-desktop-app-mac-internal]
+      [
+        typecheck,
+        test-desktop-app-linux,
+        test-desktop-app-windows,
+        test-desktop-app-mac,
+      ]
+      # [is-affected, pr-is-fork, test-desktop-app, test-desktop-app-mac-internal]
     runs-on: ubuntu-latest
-    if: ${{ always() && !cancelled() && needs.is-affected.outputs.is-desktop-affected == 'true' && github.event.pull_request != '' && !fromJSON(needs.pr-is-fork.outputs.pr-is-fork) }}
+    # if: ${{ always() && !cancelled() && needs.is-affected.outputs.is-desktop-affected == 'true' && github.event.pull_request != '' && !fromJSON(needs.pr-is-fork.outputs.pr-is-fork) }}
+    if: always() && github.event_name == 'workflow_dispatch' && github.event.inputs.check_run_id != '' && github.event.inputs.sha != ''
     steps:
       - uses: actions/checkout@v3
+        with:
+          ref: ${{ github.event.inputs.sha || github.event.inputs.ref || github.ref }}
+      - name: generate token
+        id: generate-token
+        uses: tibdex/github-app-token@v1
+        with:
+          app_id: ${{ secrets.GH_BOT_APP_ID }}
+          private_key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
       - name: download images artifacts
         uses: actions/download-artifact@v3
         with:
@@ -249,45 +420,160 @@ jobs:
         uses: ./tools/actions/prepare-comment-screenshots
         with:
           images: images.json
-      - name: create/update comment
-        uses: actions/github-script@v6
+          no-actor: true
+      - uses: actions/github-script@v6
+        name: prepare status
+        id: status
         with:
           script: |
-            const body = `${{ env.comment_header }}\n${{ steps.comment.outputs.body }}`;
-            const existingComment = await github.paginate(
-              github.rest.issues.listComments,
-              {
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                issue_number: context.issue.number,
+            const statuses = [
+              "${{ needs.typecheck.result }}",
+              "${{ needs.test-desktop-app-mac.result }}",
+              "${{ needs.test-desktop-app-linux.result }}",
+              "${{ needs.test-desktop-app-windows.result }}",
+            ];
+
+            const keys = {
+              mac: {
+                symbol: "🍏",
+                name: "macOS"
               },
-              (response, done) => {
-                const comments = response.data
-                const existingComment = comments
-                  .find(comment =>
-                    comment.user.login === 'github-actions[bot]' &&
-                    comment.body.startsWith(`${{ env.comment_header }}`));
-                if (existingComment) {
-                  done()
-                  return existingComment;
+              windows: {
+                symbol: "🪟",
+                name: "Windows"
+              },
+              linux: {
+                symbol: "🐧",
+                name: "Linux"
+              },
+            };
+
+            const typecheck = {
+              pass: ${{ needs.typecheck.result == 'success' }},
+              status: "${{ needs.typecheck.result }}",
+            };
+
+            const report = {
+              mac: {
+                pass: ${{ needs.test-desktop-app-mac.result == 'success' }},
+                status: "${{ needs.test-desktop-app-mac.result }}",
+              },
+              linux: {
+                pass: ${{ needs.test-desktop-app-linux.result == 'success' }},
+                status: "${{ needs.test-desktop-app-linux.result }}",
+              },
+              windows: {
+                pass: ${{ needs.test-desktop-app-windows.result == 'success' }},
+                status: "${{ needs.test-desktop-app-windows.result }}",
+              },
+            };
+
+            const isFailed = statuses.some(e => e === "failure") || typecheck.status === "failure";
+            const isCancelled = statuses.some(e => e === "cancelled") || typecheck.status === "cancelled";
+
+            let summary = `### TypeCheck
+            ${typecheck.pass ? "💚 Everything is fine" : "❌ Unfortunately type checks did not pass"}
+            **Type checks** ended with status => ${typecheck.status}
+
+            ### Screenshot Tests (Playwright)
+
+            `
+
+            Object.entries(report).forEach(([os, values]) => {
+              summary +=`
+              - ${values.pass
+                  ? `💚 Everything went good on ${keys[os].name} Live Desktop Tests`
+                  : `❌ Something went wrong on ${keys[os].name} Live Desktop Tests`
                 }
-              }
-            ).then(resPerPage => resPerPage.find(res => !!res));
-            if (existingComment) {
-              await github.rest.issues.updateComment({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                comment_id: existingComment?.id,
-                body,
-              });
-            } else {
-              await github.rest.issues.createComment({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                issue_number: context.issue.number,
-                body,
-              })
+                - final status => **${values.status}**`
+            });
+
+            summary += `
+
+            ${{ steps.comment.outputs.body }}
+            `
+            return {
+              isFailed,
+              isCancelled,
+              summary,
             }
+      - uses: actions/github-script@v6
+        name: update checks
+        with:
+          github-token: ${{ steps.generate-token.outputs.token }}
+          script: |
+            const status = ${{ steps.status.outputs.result }};
+            const title = status.isFailed ? "🔴 Failed" : status.isCancelled ? "♾ Cancelled" : "💚 Success";
+
+            const actions = status.isFailed ? [{
+              label: "regen screenshots",
+              identifier: "regen_screenshots",
+              description: "Regenerate screenshot for Live Desktop"
+            }] : [];
+
+            const previous = await github.rest.checks.update({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              head_sha: "${{ github.event.inputs.sha }}",
+              check_run_id: "${{ github.event.inputs.check_run_id }}",
+            });
+            await github.rest.checks.update({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              name: previous.data.name,
+              details_url: `https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${{ github.run_id }}`,
+              head_sha: "${{ github.event.inputs.sha }}",
+              check_run_id: "${{ github.event.inputs.check_run_id }}",
+              conclusion: status.isFailed ? 'failure' : status.isCancelled ? 'cancelled' : 'success',
+              completed_at: new Date().toISOString(),
+              output: {
+                title,
+                summary: `${status.summary}
+
+              ---
+              [⚙️ Summary](https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${{ github.run_id }})`
+              },
+              actions
+            });
+      # - name: create/update comment
+      #   uses: actions/github-script@v6
+      #   with:
+      #     script: |
+      #       const body = `${{ env.comment_header }}\n${{ steps.comment.outputs.body }}`;
+      #       const existingComment = await github.paginate(
+      #         github.rest.issues.listComments,
+      #         {
+      #           owner: context.repo.owner,
+      #           repo: context.repo.repo,
+      #           issue_number: context.issue.number,
+      #         },
+      #         (response, done) => {
+      #           const comments = response.data
+      #           const existingComment = comments
+      #             .find(comment =>
+      #               comment.user.login === 'github-actions[bot]' &&
+      #               comment.body.startsWith(`${{ env.comment_header }}`));
+      #           if (existingComment) {
+      #             done()
+      #             return existingComment;
+      #           }
+      #         }
+      #       ).then(resPerPage => resPerPage.find(res => !!res));
+      #       if (existingComment) {
+      #         await github.rest.issues.updateComment({
+      #           owner: context.repo.owner,
+      #           repo: context.repo.repo,
+      #           comment_id: existingComment?.id,
+      #           body,
+      #         });
+      #       } else {
+      #         await github.rest.issues.createComment({
+      #           owner: context.repo.owner,
+      #           repo: context.repo.repo,
+      #           issue_number: context.issue.number,
+      #           body,
+      #         })
+      #       }
 
   allure-report:
     name: "Allure Reports Export on Server"
