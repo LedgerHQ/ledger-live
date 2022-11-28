@@ -62,7 +62,10 @@ const getFeature = (args: {
     }
 
     const config = remoteConfig();
-    config.settings.minimumFetchIntervalMillis = 0;
+
+    if (__DEV__) {
+      config.settings.minimumFetchIntervalMillis = 0;
+    }
 
     const value = config.getValue(formatFeatureId(key));
     const feature = JSON.parse(value.asString());

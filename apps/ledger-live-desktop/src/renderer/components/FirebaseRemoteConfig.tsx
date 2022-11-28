@@ -44,7 +44,10 @@ export const FirebaseRemoteConfigProvider = ({ children }: Props): JSX.Element |
     const fetchConfig = async () => {
       try {
         const remoteConfig = getRemoteConfig();
-        remoteConfig.settings.minimumFetchIntervalMillis = 0;
+
+        if (__DEV__) {
+          remoteConfig.settings.minimumFetchIntervalMillis = 0;
+        }
 
         remoteConfig.defaultConfig = {
           ...formatDefaultFeatures(defaultFeatures),
