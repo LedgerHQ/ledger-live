@@ -87,7 +87,7 @@
     "popular" : "شائع",
     "getSupport" : "احصل على الدعم",
     "comingSoon" : "قريباً",
-    "restart" : "Restart"
+    "restart" : "إعادة التشغيل"
   },
   "errors" : {
     "countervaluesUnavailable" : {
@@ -410,6 +410,9 @@
       "title" : "عفواً، هذا التطبيق مطلوب",
       "description" : "إلغاء تثبيت تطبيق بيتكوين أو إيثيريوم في النهاية."
     },
+    "MaxFeeLow" : {
+      "title" : "الحد الأقصى للرسوم لديك منخفض جداً. معاملتك ربما تظل معلقة لمدة"
+    },
     "NetworkDown" : {
       "title" : "عفواً، يبدو أن بالإنترنت مُعطل",
       "description" : "يرجى أن تتحقق من اتصالك بالإنترنت."
@@ -595,6 +598,9 @@
     "SourceHasMultiSign" : {
       "title" : "يرجى تعطيل خاصية التوقيع المتعدد لإرسال {{currencyName}}"
     },
+    "DustLimit" : {
+      "title" : "المبلغ أقل من حد الغبار"
+    },
     "StratisDown2021Warning" : {
       "description" : "سلسلة كتل Stratis تطورت ومن الوارد ألا تعمل بشكل صحيح. سيتم توفير الدعم لسلسلة كتل Stratis الأصلية حتى 16 أكتوبر 2021."
     },
@@ -744,6 +750,42 @@
     },
     "HederaAddAccountError" : {
       "title" : "لم تتم إضافة حسابك. يرجى إعادة المحاولة."
+    },
+    "NearNewAccountWarning" : {
+      "title" : "حساب المُستلِم لم يتم إنشاؤه بعد. البروتوكول يتطلب تحويل {{formattedNewAccountStorageCost}} لإنشائه."
+    },
+    "NearNewNamedAccountError" : {
+      "title" : "حساب المُستلِم لم يتم إنشاؤه بعد. يجب أن يتم إنشاؤه في محفظة NEAR."
+    },
+    "NearActivationFeeNotCovered" : {
+      "title" : "هذا المبلغ لا يغطي تكلفة الحفظ {{formattedNewAccountStorageCost}}."
+    },
+    "NearUseAllAmountStakeWarning" : {
+      "title" : "تأكد أن لديك رصيد كافي متبقي لرسوم المعاملات المستقبلية"
+    },
+    "NearNotEnoughStaked" : {
+      "title" : "الرصيد المُكدَّس غير كافٍ"
+    },
+    "NearNotEnoughAvailable" : {
+      "title" : "الرصيد القابل للسحب غير كافٍ"
+    },
+    "NearRecommendUnstake" : {
+      "title" : "يُرجى إلغاء التكديس وسحب الأموال قبل تفريغ الحساب"
+    },
+    "NearStakingThresholdNotMet" : {
+      "title" : "يجب أن يكون المبلغ على الأقل {{threshold}}"
+    },
+    "PriorityFeeTooLow" : {
+      "title" : "رسوم الأولوية أقل من القيمة الموصى بها"
+    },
+    "PriorityFeeTooHigh" : {
+      "title" : "رسوم الأولوية أكثر من المطلوب. قد تكون تدفع مبالغ زائدة"
+    },
+    "MaxFeeTooLow" : {
+      "title" : "الحد الأقصى للرسوم أقل من القيمة الموصى بها"
+    },
+    "PriorityFeeHigherThanMaxFee" : {
+      "title" : "الحد الأقصى لرسوم الأولوية لا يمكن أن يكون أعلى من الحد الأقصى للرسوم"
     }
   },
   "crash" : {
@@ -1133,8 +1175,8 @@
         "desc" : "نحن نقوم بتقديم لغات إضافية لمساعدتك في بدء استخدام Ledger. يرجى العلم أن الجزء المتبقي من تجربة Ledger متاح حالياً باللغة الإنجليزية فقط."
       },
       "RestartModal" : {
-        "title" : "Restart required",
-        "paragraph" : "The selected language requires the application to restart. Are you sure you want to continue?"
+        "title" : "إعادة التشغيل مطلوبة",
+        "paragraph" : "اللغة المُختارة تتطلب إعادة تشغيل التطبيق. هل أنت متأكد من رغبتك في المتابعة؟"
       }
     },
     "stepSelectDevice" : {
@@ -1804,6 +1846,9 @@
         }
       }
     },
+    "appsStep" : {
+      "title" : "تطبيقات {{productName}}"
+    },
     "readyStep" : {
       "title" : "{{productName}} مستعد"
     },
@@ -1962,7 +2007,10 @@
       "UNLOCK" : "غير مُقفل",
       "REVOKE" : "مُبطل",
       "REGISTER" : "مُسجّل",
-      "WITHDRAW" : "مسحوب"
+      "WITHDRAW" : "مسحوب",
+      "STAKE" : "مُكدَّس",
+      "UNSTAKE" : "غير مُكدَّس",
+      "WITHDRAW_UNSTAKED" : "مسحوب"
     }
   },
   "operationDetails" : {
@@ -2023,7 +2071,8 @@
       "storageLimit" : "حدّ مساحة التخزين",
       "gasLimit" : "حد الغاز",
       "id" : "المُعرّف",
-      "autoClaimedRewards" : "المكافآت المطالب بها تلقائياً"
+      "autoClaimedRewards" : "المكافآت المطالب بها تلقائياً",
+      "stakedAmount" : "المبلغ المُكدَّس"
     },
     "multipleAddresses" : "لماذا عناوين متعددة؟",
     "tokenName" : "اسم رمز التوكن",
@@ -2435,14 +2484,19 @@
         "title" : "السوق",
         "desc" : "تلقي تحديثات عن التغيرات البارزة في السوق"
       },
-      "announcement" : {
+      "announcements" : {
         "title" : "الإعلانات",
         "desc" : "تلقى تحديثات Ledger Live المهمة"
+      },
+      "recommendations" : {
+        "title" : "التوصيات",
+        "desc" : "أثري تجربتك مع التوصيات المخصصة والعروض الخاصة"
       },
       "price" : {
         "title" : "تنبيهات الأسعار",
         "desc" : "قم بتعيين تنبيهات السعر لعملاتك المفضلة حتى لا تفوتك حركة السوق"
-      }
+      },
+      "disclaimer" : "خصوصية البيانات أمر بالغ الأهمية في Ledger. البيانات التي تُجمع لا تُشارَك أبداً مع شركائنا."
     },
     "help" : {
       "title" : "مساعدة",
@@ -2529,7 +2583,7 @@
   "notifications" : {
     "prompt" : {
       "title" : "تفعيل الإشعارات",
-      "desc" : "احصل على أهم تحديثات Ledger Live، ومنتجات Ledger، والأمان. يمكنك إلغاء الاشتراك في أي وقت.",
+      "desc" : "احصل على آخر مستجدات Ledger Live ومنتجات Ledger والسوق وتوصيات مخصصة. يُمكنك إلغاء الاشتراك في أي وقت عن طريق الإعدادات",
       "allow" : "السماح بالإشعارات",
       "later" : "ربّما في وقت لاحق"
     }
@@ -3151,6 +3205,12 @@
       }
     }
   },
+  "signMessage" : {
+    "eip712" : {
+      "showFullMessage" : "عرض الرسالة كاملة",
+      "hideFullMessage" : "إخفاء الرسالة بالكامل"
+    }
+  },
   "sync" : {
     "error" : "خطأ في المزامنة",
     "loading" : "Sync"
@@ -3212,9 +3272,14 @@
       "infoTotalDesc" : "يشمل مبلغ المعاملة ورسوم الشبكة المحددة",
       "gasLimit" : "حد الغاز",
       "gasPrice" : "سعر الغاز",
+      "maxFee" : "الحد الأقصى للرسوم",
+      "maxPriorityFee" : "الحد الأقصى لرسوم الأولوية",
+      "nextBlock" : "الكتلة التالية: {{nextBaseFee}}",
+      "suggestedPriorityFee" : "المُقترح: {{lowPriorityFee}} - {{highPriorityFee}}",
       "maxFees" : "الحد الأقصى للرسوم",
       "validateGasLimit" : "تأكيد حد الغاز",
       "fees" : "رسوم",
+      "maxEstimatedFee" : "الحد الأقصى للرسوم المُقدرة",
       "validateFees" : "التحقق من صحة الرسوم",
       "customizeFees" : "تخصيص الرسوم",
       "memo" : {
@@ -3462,7 +3527,7 @@
     }
   },
   "DeviceAction" : {
-    "stayInTheAppPlz" : "ابق في تطبيق Ledger Live وحافظ على Nano X الخاصة بك بالقرب منك",
+    "stayInTheAppPlz" : "لا تُغادر تطبيق Ledger Live وابق على Ledger خاصتك بالقرب منك.",
     "allowAppPermission" : "افتح تطبيق {{wording}} على جهازك",
     "allowAppPermissionSubtitleToken" : "لإدارة رموزك {{token}}",
     "allowManagerPermission" : "السماح بــ {{wording}} على جهازك",
@@ -3634,6 +3699,7 @@
         "description" : "قم بإدارة أجهزة Ledger المحفوظة خاصتك"
       },
       "addNewCTA" : "إضافة جديد",
+      "otgBanner" : "إذا كنت تمتلك Nano S أو Nano S Plus، فقم بتوصيل جهازك عن طريق كبل USB.",
       "connectExistingLedger" : "توصيل Ledger موجود بالفعل",
       "connectExistingLedgerDescription" : "لديك Ledger تم إعدادها؟ قم بإقرانها عبر البلوتوث",
       "setUpNewLedger" : "إعداد Ledger جديدة",
@@ -3889,7 +3955,7 @@
       "de" : "Deutsch",
       "tr" : "Türk",
       "ja" : "日本",
-      "ko" : "한국인",
+      "ko" : "한국어",
       "pt" : "Português"
     }
   },
@@ -4309,6 +4375,118 @@
             "description" : "قم بتفويض OSMO الخاصة بك لكسب المكافآت بشكل آمن، مع الاحتفاظ بالسيطرة على أصولك.",
             "steps" : {
               "1" : "يجب عليك الانتظار 14 يوماً حتى يكتمل إلغاء التفويض."
+            }
+          }
+        }
+      }
+    }
+  },
+  "near" : {
+    "info" : {
+      "available" : {
+        "title" : "NEAR متاحة",
+        "description" : "هذا المبلغ يمكن التخلص منه."
+      },
+      "storageUsage" : {
+        "title" : "الحد الأدنى للرصيد",
+        "description" : "هذا المبلغ محجوز للحفظ والمعاملات، وهو الحد الأدنى للرصيد الذي يجب أن يكون في حسابك لكي يظل نشطاً."
+      },
+      "staked" : {
+        "title" : "الرصيد المُكدَّس",
+        "description" : "هذا المبلع مُكدَّس حالياً مع مدققين."
+      },
+      "pending" : {
+        "title" : "الرصيد المُعلَّق",
+        "description" : "هذا المبلغ تمّ إلغاء تكديسه وحالياً بانتظار الإتاحة."
+      },
+      "withdrawable" : {
+        "title" : "الرصيد القابل للسحب",
+        "description" : "هذا المبلغ تم إلغاء تكديسه وحالياً قابل للسحب."
+      },
+      "stakingUnavailable" : {
+        "title" : "التكديس غير متاح",
+        "description" : "ليس هناك رصيد متاح كافٍ في حسابك للتكديس وإلغاء التكديس والسحب."
+      }
+    },
+    "unstaking" : {
+      "stepperHeader" : {
+        "amountSubTitle" : "المبلغ المطلوب إلغاء تكديسه"
+      },
+      "flow" : {
+        "steps" : {
+          "verification" : {
+            "success" : {
+              "title" : "لقد قمت بإلغاء تكديس أصولك بنجاح"
+            }
+          }
+        }
+      }
+    },
+    "withdrawing" : {
+      "stepperHeader" : {
+        "amountSubTitle" : "المبلغ المراد سحبه"
+      },
+      "flow" : {
+        "steps" : {
+          "verification" : {
+            "success" : {
+              "title" : "لقد قمت بسحب أصولك بنجاح"
+            }
+          }
+        }
+      }
+    },
+    "staking" : {
+      "sectionLabel" : "موضع (أو مواضع) التكديس",
+      "info" : "كيف يعمل التكديس",
+      "add" : "إضافة",
+      "stakingEarn" : "يمكنك كسب مكافآت NEAR عن طريق تكديس أصولك.",
+      "totalStake" : "إجمالي التكديس",
+      "commission" : "العمولة",
+      "iStake" : "أنا أقوم بتكديس",
+      "actions" : {
+        "unstake" : "إلغاء التكديس",
+        "withdraw" : "سحب"
+      },
+      "drawer" : {
+        "status" : "الحالة",
+        "active" : "نشِط",
+        "inactive" : "غير نشِط",
+        "rewards" : "المكافآت",
+        "pending" : "مُعلقّة",
+        "available" : "قابل للسحب"
+      },
+      "stepperHeader" : {
+        "amountSubTitle" : "المبلغ المطلوب تكديسه",
+        "selectDevice" : "اختر جهاز",
+        "connectDevice" : "توصيل الجهاز",
+        "stepRange" : "خطوة {{currentStep}} من {{totalSteps}}"
+      },
+      "flow" : {
+        "steps" : {
+          "starter" : {
+            "description" : "قم بتكديس NEAR خاصتك لكسب المكافآت بأمان، مع الاحتفاظ بالسيطرة على أصولك.",
+            "steps" : {
+              "0" : "الأصول المُكدَّسة تظل ملكك.",
+              "1" : "يجب عليك الانتظار من 52 إلى 65 ساعة حتى يكتمل إلغاء التكديس.",
+              "2" : "قم بالتكديس بشكل آمن مع جهازك Ledger."
+            },
+            "warning" : {
+              "description" : "اختر المدقق بحكمة: فقد يتم فقدان جزء من أصولك المُكدسة بشكل لا رجعة فيه إذا لم يتصرف المدقق بشكل لائق."
+            },
+            "cta" : "متابعة"
+          },
+          "amount" : {
+            "assetsRemaining" : "الأصول المتبقية : <0>{{amount}}</0>",
+            "allAssetsUsed" : "جميع الأصول مستخدمة",
+            "minAmount" : "الحد الأدنى للمبلغ : <0>{{min}}</0>",
+            "incorrectAmount" : "الحد الأقصى للمبلغ : <0>{{max}}</0>",
+            "cta" : "متابعة"
+          },
+          "verification" : {
+            "success" : {
+              "title" : "لقد قمت بتكديس أصولك بنجاح",
+              "text" : "سيتم تحديث رصيد حسابك بمجرد أن تؤكد الشبكة المعاملة."
             }
           }
         }
@@ -5353,6 +5531,11 @@
       "viewOn" : "مشاهدة على",
       "viewInExplorer" : "عرض في المتصفح",
       "txDetails" : "تفاصيل المعاملة"
+    },
+    "modalDisabled" : {
+      "title" : "وظيفة الإرسال غير متاحة",
+      "body" : "من أجل الامتثال لتحديثات Apple الأخيرة على App Store، فإن إرسال الرموز غير القابلة للاستبدال (NFTs) غير متاح مؤقتاً. لا يزال بوسعك استخدام Ledger Live على سطح المكتب لإرسال الرموز غير القابلة للاستبدال.",
+      "contactSupport" : "يُرجى قراءة مقالة الدعم لدينا للمزيد من المعلومات."
     }
   },
   "ApplicationVersion" : "إصدار {{version}}",
