@@ -1,12 +1,13 @@
 import { Flex, Text } from "@ledgerhq/native-ui";
 import { protectContext } from "@ledgerhq/live-common/platform/providers/ProtectProvider/index";
-import { ProtectStateNumber } from "@ledgerhq/live-common/platform/providers/ProtectProvider/types";
+import { ProtectStateNumberEnum } from "@ledgerhq/live-common/platform/providers/ProtectProvider/types";
 import React, { memo, useContext } from "react";
 import { useTranslation } from "react-i18next";
 import Svg, { LinearGradient, Defs, Rect, Stop } from "react-native-svg";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import NewProtectState from "./Protect/NewProtectState";
-import ActionRequiredProtectState from "./Protect/ActionRequiredProtectState";
+import ConfirmIdentityProtectState from "./Protect/ConfirmIdentityProtectState";
+import AddPaymentProtectState from "./Protect/AddPaymentProtectState";
 import SubscriptionCanceledProtectState from "./Protect/SubscriptionCanceledProtectState";
 import PaymentRejectedProtectState from "./Protect/PaymentRejectedProtectState";
 import ActiveProtectState from "./Protect/ActiveProtectState";
@@ -31,25 +32,28 @@ const SvgGradient = () => (
   </Svg>
 );
 
-const statesKeys: Record<ProtectStateNumber, string> = {
-  800: "new",
-  900: "actionRequired",
-  1000: "paymentRejected",
-  1100: "subscriptionCanceled",
-  1200: "active",
+const statesKeys: Record<ProtectStateNumberEnum, string> = {
+  [ProtectStateNumberEnum.NEW]: "new",
+  [ProtectStateNumberEnum.CONFIRM_IDENTITY]: "confirmIdentity",
+  [ProtectStateNumberEnum.ADD_PAYMENT]: "addPayment",
+  [ProtectStateNumberEnum.PAYMENT_REJECTED]: "paymentRejected",
+  [ProtectStateNumberEnum.SUBSCRIPTION_CANCELED]: "subscriptionCanceled",
+  [ProtectStateNumberEnum.ACTIVE]: "active",
 };
 
 const statesComponents: Record<
-  ProtectStateNumber,
+  ProtectStateNumberEnum,
   React.FunctionComponent<{ params: Record<string, string> }> & {
     StatusTag: React.FunctionComponent<Record<string, never>>;
   }
 > = {
-  800: NewProtectState,
-  900: ActionRequiredProtectState,
-  1000: PaymentRejectedProtectState,
-  1100: SubscriptionCanceledProtectState,
-  1200: ActiveProtectState,
+  [ProtectStateNumberEnum.NEW]: NewProtectState,
+  [ProtectStateNumberEnum.CONFIRM_IDENTITY]: ConfirmIdentityProtectState,
+  [ProtectStateNumberEnum.ADD_PAYMENT]: AddPaymentProtectState,
+  [ProtectStateNumberEnum.PAYMENT_REJECTED]: PaymentRejectedProtectState,
+  [ProtectStateNumberEnum.SUBSCRIPTION_CANCELED]:
+    SubscriptionCanceledProtectState,
+  [ProtectStateNumberEnum.ACTIVE]: ActiveProtectState,
 };
 
 function ServicesWidget() {

@@ -5614,7 +5614,15 @@
             "alreadySubscribed": "Already subscribed to Protect?"
           }
         },
-        "actionRequired": {
+        "confirmIdentity": {
+          "title": "Action required",
+          "desc": "Confirm your identity and complete all tasks to protect your recovery phrase.",
+          "actions": {
+            "confirmNow": "Confirm now",
+            "viewDetails": "View details"
+          }
+        },
+        "addPayment": {
           "title": "Action required",
           "desc": "Add a payment details and complete all tasks to protect your recovery phrase.",
           "actions": {

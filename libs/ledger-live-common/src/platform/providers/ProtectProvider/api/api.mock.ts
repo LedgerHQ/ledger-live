@@ -5,7 +5,7 @@ export async function refreshToken(): Promise<ProtectData> {
     services: {
       protect: {
         available: true,
-        active: true,
+        active: false,
         payment_due: false,
         subscribed_at: 0,
         last_payment_date: 0,

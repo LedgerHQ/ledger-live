@@ -4,7 +4,7 @@ import { Tag } from "@ledgerhq/native-ui";
 import { Linking } from "react-native";
 import Button from "../../Button";
 
-function ActionRequiredProtectState({
+function ConfirmIdentityProtectState({
   params,
 }: {
   params: Record<string, string>;
@@ -26,10 +26,10 @@ function ActionRequiredProtectState({
   return (
     <>
       <Button type="main" outline={false} onPress={onAddNow} mt={8} mb={6}>
-        {t(`servicesWidget.protect.status.actionRequired.actions.addNow`)}
+        {t(`servicesWidget.protect.status.confirmIdentity.actions.confirmNow`)}
       </Button>
       <Button type="default" outline={false} onPress={onViewDetails}>
-        {t(`servicesWidget.protect.status.actionRequired.actions.viewDetails`)}
+        {t(`servicesWidget.protect.status.confirmIdentity.actions.viewDetails`)}
       </Button>
     </>
   );
@@ -45,11 +45,11 @@ const StateTag = () => {
       ellipsizeMode="tail"
       size="medium"
     >
-      {t(`servicesWidget.protect.status.actionRequired.title`)}
+      {t(`servicesWidget.protect.status.confirmIdentity.title`)}
     </Tag>
   );
 };
 
-ActionRequiredProtectState.StatusTag = StateTag;
+ConfirmIdentityProtectState.StatusTag = StateTag;
 
-export default ActionRequiredProtectState;
+export default ConfirmIdentityProtectState;
