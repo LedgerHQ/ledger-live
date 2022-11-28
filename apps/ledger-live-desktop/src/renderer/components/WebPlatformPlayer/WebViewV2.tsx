@@ -22,7 +22,7 @@ import {
   getMainAccount,
 } from "@ledgerhq/live-common/account/index";
 import { AppResult } from "@ledgerhq/live-common/hw/actions/app";
-import { BidirectionalEvent } from "@ledgerhq/live-common/hw/getTransport";
+import { BidirectionalEvent } from "@ledgerhq/live-common/hw/openTransportAsSubject";
 import { MessageData } from "@ledgerhq/live-common/hw/signMessage/types";
 import { useToasts } from "@ledgerhq/live-common/notifications/ToastProvider/index";
 import { TypedMessageData } from "@ledgerhq/live-common/families/ethereum/types";
@@ -377,7 +377,7 @@ export function WebView({ manifest, onClose, inputs = {}, config }: Props) {
                 const { deviceId } = device;
 
                 // @ts-expect-error: command is using flow typings
-                transport.current = command("getTransport")({
+                transport.current = command("openTransportAsSubject")({
                   deviceId,
                 }) as Subject<BidirectionalEvent>;
 
