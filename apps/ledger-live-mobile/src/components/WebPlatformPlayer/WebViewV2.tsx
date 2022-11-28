@@ -1,4 +1,5 @@
 import React, { useState, useCallback, useEffect, useRef } from "react";
+import semver from "semver";
 import { useSelector } from "react-redux";
 import {
   ActivityIndicator,
@@ -40,9 +41,9 @@ import {
   listSupportedCurrencies,
 } from "@ledgerhq/live-common/currencies/index";
 import trackingWrapper from "@ledgerhq/live-common/wallet-api/tracking";
-import getTransport, {
+import openTransportAsSubject, {
   BidirectionalEvent,
-} from "@ledgerhq/live-common/hw/getTransport";
+} from "@ledgerhq/live-common/hw/openTransportAsSubject";
 import { Subject } from "rxjs";
 import { useTheme } from "styled-components/native";
 import BigNumber from "bignumber.js";
@@ -450,7 +451,7 @@ export const WebView = ({ manifest, inputs }: Props) => {
 
                 const { deviceId } = device;
 
-                transport.current = getTransport({
+                transport.current = openTransportAsSubject({
                   deviceId,
                 });
 
