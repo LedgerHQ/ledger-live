@@ -1,4 +1,5 @@
 import "../../__tests__/test-helpers/setup";
+import invariant from "invariant";
 import { testBridge } from "../../__tests__/test-helpers/bridge";
 
 import { fromTransactionRaw } from "../elrond/transaction";
@@ -103,14 +104,19 @@ const elrond: CurrenciesData<Transaction> = {
             family: "elrond",
             recipient:
               "erd1frj909pfums4m8aza596595l9pl56crwdj077vs2aqcw6ynl28wsfkw9rd",
+            // FIXME: ignored by test suite
             useAllAmount: true,
             amount: "0",
             mode: "send",
             fees: null,
           }),
-          expectedStatus: {
-            errors: {},
-            warnings: {},
+          expectedStatus: (account) => {
+            invariant(
+              account.balance.toNumber() === 0,
+              "Account balance should be empty"
+            );
+
+            return {};
           },
         },
       ],

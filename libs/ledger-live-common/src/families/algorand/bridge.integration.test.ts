@@ -1,4 +1,5 @@
 import { BigNumber } from "bignumber.js";
+import invariant from "invariant";
 import "../../__tests__/test-helpers/setup";
 import { testBridge } from "../../__tests__/test-helpers/bridge";
 import {
@@ -218,8 +219,17 @@ const dataset: DatasetTest<AlgorandTransaction> = {
                 ...t,
                 recipient:
                   "MECOWMKPKH2NWVZTS5V5RQDGFFYBT25KNLOPHG2KUMMNKU6FOHGJT24WBI",
+                // FIXME: ignored by test suite
                 useAllAmount: true,
               }),
+              expectedStatus: (account) => {
+                invariant(
+                  account.balance.toNumber() === 0,
+                  "Account balance should be empty"
+                );
+
+                return {};
+              },
             },
           ],
         },
