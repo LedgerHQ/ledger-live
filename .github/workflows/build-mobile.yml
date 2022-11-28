@@ -9,9 +9,9 @@ on:
       - hotfix
     # paths:
     #   - apps/ledger-live-mobile/**
-  pull_request:
-    # paths:
-    #   - apps/ledger-live-mobile/**
+  # pull_request:
+  # paths:
+  #   - apps/ledger-live-mobile/**
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}

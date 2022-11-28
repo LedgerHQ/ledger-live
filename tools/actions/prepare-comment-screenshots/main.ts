@@ -4,6 +4,7 @@ import { promises as fs } from "fs";
 const main = async () => {
   const imagesObject = await fs.readFile(core.getInput("images"), "utf8");
   const actor = core.getInput("actor");
+  const noActor = core.getBooleanInput("no-actor");
 
   const parsed = JSON.parse(imagesObject);
   let str = "";
@@ -30,8 +31,12 @@ const main = async () => {
   const imgDiffFailed = !!hasFailed;
 
   str = `
-@${actor}
-<details>
+  ${
+    noActor
+      ? ""
+      : `@${actor}
+  `
+  }<details>
 <summary><b>Screenshots: ${imgDiffFailed ? "❌" : " ✅"}</b></summary>
 <p>
 
@@ -52,6 +57,7 @@ ${str}`
 `;
 
   core.setOutput("body", str);
+  core.setOutput("failed", hasFailed);
 };
 
 main().catch((err) => core.setFailed(err));
