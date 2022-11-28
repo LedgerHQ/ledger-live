@@ -19,13 +19,13 @@ export type BidirectionalEvent =
       error: unknown;
     };
 
-export type GetTransportRequest = {
+export type OpenTransportAsSubjectRequest = {
   deviceId: string;
 };
 
-export default function getTransport({
+export default function openTransportAsSubject({
   deviceId,
-}: GetTransportRequest): Subject<BidirectionalEvent> {
+}: OpenTransportAsSubjectRequest): Subject<BidirectionalEvent> {
   const subject = new Subject<BidirectionalEvent>();
 
   withDevice(deviceId)((transport) => {
@@ -54,7 +54,7 @@ export default function getTransport({
     });
 
     return subject;
-  }).toPromise();
+  }).subscribe();
 
   return subject;
 }
