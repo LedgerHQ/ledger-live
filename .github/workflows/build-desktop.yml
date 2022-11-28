@@ -7,76 +7,36 @@ on:
       - develop
       - release
       - hotfix
-    # paths:
-    #   - apps/ledger-live-desktop/**
-  pull_request:
-    # branches:
-    #   - main
-    #   - develop
-    # paths:
-    #   - apps/ledger-live-desktop/**
+  workflow_dispatch:
+    inputs:
+      check_run_id:
+        description: id to update the check run on PR
+        required: false
+      sha:
+        description: the head sha to target the correct check run
+        required: false
+      ref:
+        description: the branch which triggered this workflow
+        required: true
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: ${{ github.ref_name != 'develop' }}
+  group: ${{ github.workflow }}-${{ github.event.inputs.ref || github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'workflow_dispatch' && github.events.inputs.ref != 'develop' || github.ref_name != 'develop' }}
 
 jobs:
-  is-affected:
-    outputs:
-      is-desktop-affected: ${{ steps.affected.outputs.is-package-affected }}
-    runs-on: [ubuntu-latest]
-    steps:
-      - uses: actions/checkout@v3
-        with:
-          ref: develop
-          fetch-depth: 0
-      - name: checkout branch (PR)
-        if: ${{ github.event_name == 'pull_request' }}
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          gh pr checkout ${{ github.event.pull_request.number }}
-      - name: checkout branch (not PR)
-        if: ${{ github.event_name != 'pull_request' }}
-        run: |
-          git checkout $GITHUB_SHA
-      - uses: ./tools/actions/turbo-affected
-        id: affected
-        with:
-          package: "ledger-live-desktop"
-          head-ref: ${{ github.event_name == 'pull_request' && format('origin/{0}', github.event.pull_request.base.ref) || 'HEAD^' }}
-
-  # Run dummy jobs when not affected to pass the required status checks
-  dummy:
-    name: "Build Ledger Live Desktop"
-    needs: is-affected
-    if: ${{ needs.is-affected.outputs.is-desktop-affected != 'true' }}
-    strategy:
-      matrix:
-        names:
-          - Linux
-          - Windows
-          - Mac OS X
-    runs-on: ubuntu-latest
-    steps:
-      - id: dummy
-        run: exit 0
-
-  pr-is-fork:
-    name: "Check if the PR is a fork"
-    needs: is-affected
-    if: ${{ needs.is-affected.outputs.is-desktop-affected == 'true' }}
-    uses: ./.github/workflows/pr-is-fork.yml
-    with:
-      non-pr-result: false
-    secrets:
-      token: ${{ secrets.COMMON_READ_ORG }}
+  # pr-is-fork:
+  #   name: "Check if the PR is a fork"
+  #   uses: ./.github/workflows/pr-is-fork.yml
+  #   with:
+  #     non-pr-result: false
+  #   secrets:
+  #     token: ${{ secrets.COMMON_READ_ORG }}
 
   start-runner:
     name: Start self-hosted EC2 runner
     runs-on: [ledger-live, linux]
-    needs: [pr-is-fork]
-    if: ${{ !fromJSON(needs.pr-is-fork.outputs.pr-is-fork) }}
+    # needs: [pr-is-fork]
+    # if: ${{ !fromJSON(needs.pr-is-fork.outputs.pr-is-fork) }}
     outputs:
       label: ${{ steps.start-ec2-linux-runner.outputs.label }}
       ec2-instance-id: ${{ steps.start-ec2-linux-runner.outputs.ec2-instance-id }}
@@ -95,8 +55,10 @@ jobs:
 
   stop-runner:
     name: Stop self-hosted EC2 runner
-    if: ${{ always() && needs.start-runner.result == 'success' && !fromJSON(needs.pr-is-fork.outputs.pr-is-fork) }}
-    needs: [start-runner, pr-is-fork, build-desktop-app-linux]
+    if: ${{ always() && needs.start-runner.result == 'success' }}
+    # if: ${{ always() && needs.start-runner.result == 'success' && !fromJSON(needs.pr-is-fork.outputs.pr-is-fork) }}
+    # needs: [start-runner, pr-is-fork, build-desktop-app-linux]
+    needs: [start-runner, build-desktop-app-linux]
     runs-on: [ledger-live, linux]
     steps:
       - name: Stop EC2 Linux Runner
@@ -108,18 +70,54 @@ jobs:
           label: ${{ needs.start-runner.outputs.label }}
           ec2-instance-id: ${{ needs.start-runner.outputs.ec2-instance-id }}
 
+  update-check:
+    name: "Update Checks on PR"
+    if: github.event_name == 'workflow_dispatch' && github.event.inputs.check_run_id != '' && github.event.inputs.sha != ''
+    runs-on: ubuntu-latest
+    steps:
+      - name: Generate token
+        id: generate-token
+        uses: tibdex/github-app-token@v1
+        with:
+          app_id: ${{ secrets.GH_BOT_APP_ID }}
+          private_key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
+      - uses: actions/github-script@v6
+        with:
+          github-token: ${{ steps.generate-token.outputs.token }}
+          script: |
+            const previous = await github.rest.checks.update({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              head_sha: "${{ github.event.inputs.sha }}",
+              check_run_id: "${{ github.event.inputs.check_run_id }}",
+            });
+            await github.rest.checks.update({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              name: previous.data.name,
+              head_sha: "${{ github.event.inputs.sha }}",
+              check_run_id: "${{ github.event.inputs.check_run_id }}",
+              details_url: `https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${{ github.run_id }}`,
+              started_at: new Date().toISOString(),
+              status: "in_progress",
+              output: {
+                title: "⚙️ Building",
+                summary: `You can follow the progress of the builds [here](https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${{ github.run_id }})`
+              }
+            });
+
   build-desktop-app-linux:
     name: "Build Ledger Live Desktop (Linux)"
-    if: ${{ !fromJSON(needs.pr-is-fork.outputs.pr-is-fork) }}
-    needs: [pr-is-fork, start-runner]
+    # if: ${{ !fromJSON(needs.pr-is-fork.outputs.pr-is-fork) }}
+    # needs: [pr-is-fork, start-runner]
+    needs: [start-runner]
     runs-on: ${{ needs.start-runner.outputs.label }}
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
     steps:
       - uses: actions/checkout@v3
         with:
-          ref: ${{ github.event.pull_request.head.sha || github.event.push.head.sha }}
-          persist-credentials: false
+          ref: ${{ github.event.inputs.sha || github.event.inputs.ref || github.event.push.head.sha }}
       - name: set git user
         run: |
           git config user.email "team-live@ledger.fr"
@@ -151,66 +149,66 @@ jobs:
           name: ${{ steps.build-desktop.outputs.version }}-linux-x86_64.AppImage
           path: ${{ github.workspace }}/apps/ledger-live-desktop/dist/${{ steps.build-desktop.outputs.name }}-${{ steps.build-desktop.outputs.version }}-linux-x86_64.AppImage
 
-  build-desktop-app-linux-external:
-    name: "Build Ledger Live Desktop (Linux)"
-    if: ${{ fromJSON(needs.pr-is-fork.outputs.pr-is-fork) }}
-    needs: [pr-is-fork]
-    runs-on: ubuntu-latest
-    env:
-      NODE_OPTIONS: "--max-old-space-size=7168"
-    steps:
-      - uses: actions/checkout@v3
-        with:
-          ref: ${{ github.event.pull_request.head.sha || github.event.push.head.sha }}
-          persist-credentials: false
-      - name: set git user
-        run: |
-          git config user.email "team-live@ledger.fr"
-          git config user.name "Team Live"
-      - uses: actions/setup-python@v2
-        with:
-          python-version: "3.x"
-      # - uses: ruby/setup-ruby@v1
-      #   with:
-      #     ruby-version: 3.1.2
-      - uses: pnpm/action-setup@v2
-        with:
-          version: latest
-          dest: ${{ runner.temp }}/setup-pnpm
-      - uses: actions/setup-node@v3
-        with:
-          node-version: 16.x
-          cache: pnpm
-          cache-dependency-path: "**/pnpm-lock.yaml"
-      - name: TurboRepo local caching server
-        id: turborepo-cache-server
-        uses: ./tools/actions/turborepo-gh-cache
-        with:
-          server-token: "yolo"
-          cleanup-cache-folder: "true"
-      - uses: ./tools/actions/composites/build-desktop
-        id: build-desktop
-        with:
-          os: linux
-      - name: build the app
-        run: pnpm build:lld --api="http://127.0.0.1:${{ steps.turborepo-cache-server.outputs.port }}" --token="yolo" --team="foo"
-      - name: upload linux app
-        uses: actions/upload-artifact@v3
-        with:
-          name: ${{ steps.build-desktop.outputs.version }}-linux-x86_64.AppImage
-          path: ${{ github.workspace }}/apps/ledger-live-desktop/dist/${{ steps.build-desktop.outputs.name }}-${{ steps.build-desktop.outputs.version }}-linux-x86_64.AppImage
+  # build-desktop-app-linux-external:
+  #   name: "Build Ledger Live Desktop (Linux)"
+  #   if: ${{ fromJSON(needs.pr-is-fork.outputs.pr-is-fork) }}
+  #   needs: [pr-is-fork]
+  #   runs-on: ubuntu-latest
+  #   env:
+  #     NODE_OPTIONS: "--max-old-space-size=7168"
+  #   steps:
+  #     - uses: actions/checkout@v3
+  #       with:
+  #         ref: ${{ github.event.pull_request.head.sha || github.event.push.head.sha }}
+  #     - name: set git user
+  #       run: |
+  #         git config user.email "team-live@ledger.fr"
+  #         git config user.name "Team Live"
+  #     - uses: actions/setup-python@v2
+  #       with:
+  #         python-version: "3.x"
+  #     - uses: ruby/setup-ruby@v1
+  #       with:
+  #         ruby-version: 2.7
+  #         bundler-cache: true
+  #     - uses: pnpm/action-setup@v2
+  #       with:
+  #         version: latest
+  #         dest: ${{ runner.temp }}/setup-pnpm
+  #     - uses: actions/setup-node@v3
+  #       with:
+  #         node-version: 16.x
+  #         cache: pnpm
+  #         cache-dependency-path: "**/pnpm-lock.yaml"
+  #     - name: TurboRepo local caching server
+  #       id: turborepo-cache-server
+  #       uses: ./tools/actions/turborepo-gh-cache
+  #       with:
+  #         server-token: "yolo"
+  #         cleanup-cache-folder: "true"
+  #     - uses: ./tools/actions/composites/build-desktop
+  #       id: build-desktop
+  #       with:
+  #         os: linux
+  #     - name: build the app
+  #       run: pnpm build:lld --api="http://127.0.0.1:${{ steps.turborepo-cache-server.outputs.port }}" --token="yolo" --team="foo"
+  #     - name: upload linux app
+  #       uses: actions/upload-artifact@v3
+  #       with:
+  #         name: ${{ steps.build-desktop.outputs.version }}-linux-x86_64.AppImage
+  #         path: ${{ github.workspace }}/apps/ledger-live-desktop/dist/${{ steps.build-desktop.outputs.name }}-${{ steps.build-desktop.outputs.version }}-linux-x86_64.AppImage
 
   build-desktop-app-windows:
     name: "Build Ledger Live Desktop (Windows)"
     runs-on: [ledger-live, windows]
-    needs: is-affected
-    if: ${{ needs.is-affected.outputs.is-desktop-affected == 'true' }}
+    # needs: [pr-is-fork]
+    # if: switch for external windows missing
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
     steps:
       - uses: actions/checkout@v3
         with:
-          ref: ${{ github.event.pull_request.head.sha || github.event.push.head.sha }}
+          ref: ${{ github.event.inputs.sha || github.event.inputs.ref  || github.event.push.head.sha }}
       - name: update path
         run: |
           echo "C:\Program Files\Git\bin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
@@ -247,15 +245,15 @@ jobs:
 
   build-desktop-app-macos:
     name: "Build Ledger Live Desktop (Mac OS X)"
-    needs: is-affected
-    if: ${{ needs.is-affected.outputs.is-desktop-affected == 'true' }}
-    runs-on: [m1, ARM64]
+    # needs: [pr-is-fork]
+    # if: switch for external macos missing
+    runs-on: [ledger-live, macos]
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
     steps:
       - uses: actions/checkout@v3
         with:
-          ref: ${{ github.event.pull_request.head.sha || github.event.push.head.sha }}
+          ref: ${{ github.event.inputs.sha || github.event.inputs.ref  || github.event.push.head.sha }}
           persist-credentials: false
       - name: set git user
         run: |
@@ -288,3 +286,118 @@ jobs:
         with:
           name: ${{ steps.build-desktop.outputs.version }}-mac.dmg
           path: ${{ github.workspace }}/apps/ledger-live-desktop/dist/${{ steps.build-desktop.outputs.name }}-${{ steps.build-desktop.outputs.version }}-mac.dmg
+
+  report:
+    needs:
+      [
+        build-desktop-app-linux,
+        build-desktop-app-macos,
+        build-desktop-app-windows,
+      ]
+    runs-on: ubuntu-latest
+    if: always() && github.event_name == 'workflow_dispatch' && github.event.inputs.check_run_id != '' && github.event.inputs.sha != ''
+    steps:
+      - name: generate token
+        id: generate-token
+        uses: tibdex/github-app-token@v1
+        with:
+          app_id: ${{ secrets.GH_BOT_APP_ID }}
+          private_key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
+      - uses: actions/github-script@v6
+        name: get statuses of runs
+        id: status
+        with:
+          script: |
+            const statuses = [
+              "${{ needs.build-desktop-app-macos.result }}",
+              "${{ needs.build-desktop-app-linux.result }}",
+              "${{ needs.build-desktop-app-windows.result }}",
+            ];
+
+            const keys = {
+              mac: {
+                symbol: "🍏",
+                name: "macOS"
+              },
+              windows: {
+                symbol: "🪟",
+                name: "Windows"
+              },
+              linux: {
+                symbol: "🐧",
+                name: "Linux"
+              },
+            };
+
+            const report = {
+              mac: {
+                pass: ${{ needs.build-desktop-app-macos.result == 'success' }},
+                status: "${{ needs.build-desktop-app-macos.result }}",
+              },
+              linux: {
+                pass: ${{ needs.build-desktop-app-linux.result == 'success' }},
+                status: "${{ needs.build-desktop-app-linux.result }}",
+              },
+              windows: {
+                pass: ${{ needs.build-desktop-app-windows.result == 'success' }},
+                status: "${{ needs.build-desktop-app-windows.result }}",
+              },
+            };
+
+            const isFailed = statuses.some(e => e === "failure");
+            const isCancelled = statuses.some(e => e === "cancelled");
+
+            let summary = ``
+
+            Object.entries(report).map(([os, values]) => {
+              summary += `### ${keys[os].symbol} ${keys[os].name}
+
+            The build for ${keys[os].name} ${values.pass ? 'did' : 'did not'} completely successfully.
+            The run ended with conclusion => **${values.status}**
+
+            `
+            });
+
+            return {
+              isFailed,
+              isCancelled,
+              summary,
+            }
+
+      - uses: actions/github-script@v6
+        with:
+          github-token: ${{ steps.generate-token.outputs.token }}
+          script: |
+            const status = ${{ steps.status.outputs.result }};
+            const title = status.isFailed ? "🔴 Failed" : status.isCancelled ? "♾ Cancelled" : "💚 Success";
+
+            const actions = status.isFailed ? [{
+              label: "Rerun job",
+              identifier: "rerun_job",
+              description: "relaunch failed jobs"
+            }] : [];
+
+            const previous = await github.rest.checks.update({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              head_sha: "${{ github.event.inputs.sha }}",
+              check_run_id: "${{ github.event.inputs.check_run_id }}",
+            });
+            await github.rest.checks.update({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              name: previous.data.name,
+              details_url: `https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${{ github.run_id }}`,
+              head_sha: "${{ github.event.inputs.sha }}",
+              check_run_id: "${{ github.event.inputs.check_run_id }}",
+              completed_at: new Date().toISOString(),
+              conclusion: status.isFailed ? 'failure' : status.isCancelled ? 'cancelled' : 'success',
+              output: {
+                title,
+                summary: status.summary
+
+              ---
+              [⚙️ Summary](https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${{ github.run_id }})`
+              },
+              actions
+            });
