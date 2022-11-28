@@ -413,47 +413,67 @@ export const WebView = ({ manifest, inputs }: Props) => {
         },
       );
 
-      serverRef.current.setHandler("device.transport", ({ appName }) => {
-        if (transport.current) {
-          return Promise.reject(new Error("Device already opened"));
-        }
+      serverRef.current.setHandler(
+        "device.transport",
+        ({ appName, appVersionRange, devices }) => {
+          if (transport.current) {
+            return Promise.reject(new Error("Device already opened"));
+          }
 
-        tracking.deviceTransportRequested(manifest);
+          tracking.deviceTransportRequested(manifest);
 
-        return new Promise((resolve, reject) => {
-          navigation.navigate(ScreenName.DeviceConnect, {
-            appName,
-            onSuccess: result => {
-              tracking.deviceTransportSuccess(manifest);
-              if (!result.device) {
-                reject(new Error("No device"));
-                return;
-              }
-              const { deviceId } = result.device;
+          return new Promise((resolve, reject) => {
+            navigation.navigate(ScreenName.DeviceConnect, {
+              appName,
+              onSuccess: ({ device, appAndVersion }) => {
+                tracking.deviceTransportSuccess(manifest);
+                if (!device) {
+                  reject(new Error("No device"));
+                  return;
+                }
 
-              transport.current = getTransport({
-                deviceId,
-              });
+                if (devices && !devices.includes(device.modelId)) {
+                  reject(new Error("Device not in the devices list"));
+                  return;
+                }
 
-              // Clean the ref on completion
-              transport.current.subscribe({
-                complete: () => {
-                  transport.current = undefined;
-                },
-              });
-              resolve("1");
-            },
-            onError: error => {
-              tracking.deviceTransportFail(manifest);
-              reject(error);
-            },
-            onClose: () => {
-              tracking.deviceTransportFail(manifest);
-              reject(new Error("User cancelled"));
-            },
+                if (
+                  appVersionRange &&
+                  appAndVersion &&
+                  semver.satisfies(appAndVersion.version, appVersionRange)
+                ) {
+                  reject(new Error("App version doesn't satisfies the range"));
+                  return;
+                }
+
+                // TODO handle appFirmwareRange & seeded params
+
+                const { deviceId } = device;
+
+                transport.current = getTransport({
+                  deviceId,
+                });
+
+                // Clean the ref on completion
+                transport.current.subscribe({
+                  complete: () => {
+                    transport.current = undefined;
+                  },
+                });
+                resolve("1");
+              },
+              onError: error => {
+                tracking.deviceTransportFail(manifest);
+                reject(error);
+              },
+              onClose: () => {
+                tracking.deviceTransportFail(manifest);
+                reject(new Error("User cancelled"));
+              },
+            });
           });
-        });
-      });
+        },
+      );
 
       serverRef.current.setHandler("device.exchange", ({ apduHex }) => {
         if (!transport.current) {
@@ -490,7 +510,7 @@ export const WebView = ({ manifest, inputs }: Props) => {
         });
       });
 
-      serverRef.current.setHandler("device.close", ({ deviceId }) => {
+      serverRef.current.setHandler("device.close", ({ transportId }) => {
         if (!transport.current) {
           return Promise.reject(new Error("No device opened"));
         }
@@ -501,7 +521,7 @@ export const WebView = ({ manifest, inputs }: Props) => {
 
         tracking.deviceCloseSuccess(manifest);
 
-        return Promise.resolve(deviceId);
+        return Promise.resolve(transportId);
       });
     }
     // Only used to init the server, no update needed
