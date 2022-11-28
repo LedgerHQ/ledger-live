@@ -2,6 +2,7 @@ import {
   ExchangeRate,
   MappedSwapOperation,
   SwapDataType,
+  ExchangeRateRaw,
 } from "@ledgerhq/live-common/exchange/swap/types";
 import {
   CryptoCurrency,
@@ -66,7 +67,7 @@ export type SwapNavigatorParamList = {
   [ScreenName.SwapSelectProvider]: {
     provider?: string;
     swap: SwapDataType;
-    selectedId?: string;
+    selectedRate: ExchangeRateRaw;
   };
   [ScreenName.SwapSelectFees]: {
     accountId?: string;
