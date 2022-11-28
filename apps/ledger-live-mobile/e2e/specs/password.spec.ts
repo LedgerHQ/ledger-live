@@ -4,7 +4,7 @@ import SettingsPage from "../models/settings/settingsPage";
 import GeneralSettingsPage from "../models/settings/generalSettingsPage";
 import PasswordEntryPage from "../models/passwordEntryPage";
 import { loadConfig } from "../bridge/server";
-import { delay } from "../models/helpers";
+import { delay } from "../helpers";
 
 const CORRECT_PASSWORD = "passWORD$123!";
 

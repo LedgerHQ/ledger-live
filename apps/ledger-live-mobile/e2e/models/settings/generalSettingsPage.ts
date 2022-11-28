@@ -1,4 +1,4 @@
-import { getElementById, getElementByText, tapByElement } from "../helpers";
+import { getElementById, getElementByText, tapByElement } from "../../helpers";
 
 export default class GeneralSettingsPage {
   getPasswordSettingsSwitch = () => getElementById("password-settings-switch");

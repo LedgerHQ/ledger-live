@@ -3,7 +3,7 @@ import {
   tapByText,
   tapByElement,
   getElementById,
-} from "../helpers";
+} from "../../helpers";
 import * as bridge from "../../bridge/server";
 
 export default class OnboardingSteps {
