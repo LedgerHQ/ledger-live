@@ -182,7 +182,7 @@ You can sign a message according to the Bitcoin Signature format and retrieve v,
 ##### Examples
 
 ```javascript
-btc.signMessageNew_async("44'/60'/0'/0'/0", Buffer.from("test").toString("hex")).then(function(result) {
+btc.signMessageNew("44'/60'/0'/0'/0", Buffer.from("test").toString("hex")).then(function(result) {
 var v = result['v'] + 27 + 4;
 var signature = Buffer.from(v.toString(16) + result['r'] + result['s'], 'hex').toString('base64');
 console.log("Signature : " + signature);
@@ -232,7 +232,7 @@ Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/
 
 #### signP2SHTransaction
 
-To obtain the signature of multisignature (P2SH) inputs, call signP2SHTransaction_async with the folowing parameters
+To obtain the signature of multisignature (P2SH) inputs, call signP2SHTransaction with the folowing parameters
 
 ##### Parameters
 
