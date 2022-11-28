@@ -14,24 +14,15 @@ import DisappointedDone from "./DisappointedDone";
 
 const RatingsModal = () => {
   const {
-    initRatings,
     initRatingsData,
-    cleanRatings,
     ratingsInitialStep,
     isRatingsModalOpen,
     setRatingsModalOpen,
   } = useRatings();
 
   useEffect(() => {
-    initRatings();
-
-    return () => {
-      cleanRatings();
-    };
-  }, [initRatings, cleanRatings]);
-
-  useEffect(() => {
     initRatingsData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const [step, setStep] = useState(ratingsInitialStep);
@@ -44,9 +35,12 @@ const RatingsModal = () => {
    * height is stuck at 0.
    */
   const sharedHeight = useSharedValue<number | null>(null);
-  const onLayout = useCallback(({ nativeEvent: { layout } }) => {
-    sharedHeight.value = withTiming(layout.height, { duration: 200 });
-  }, []);
+  const onLayout = useCallback(
+    ({ nativeEvent: { layout } }) => {
+      sharedHeight.value = withTiming(layout.height, { duration: 200 });
+    },
+    [sharedHeight],
+  );
 
   const animatedStyle = useAnimatedStyle(
     () => ({
@@ -74,7 +68,7 @@ const RatingsModal = () => {
       disappointedDone: <DisappointedDone closeModal={closeModal} />,
     };
 
-    return components[step];
+    return components[step as keyof typeof components];
   }, [closeModal, setStep, step]);
 
   return (

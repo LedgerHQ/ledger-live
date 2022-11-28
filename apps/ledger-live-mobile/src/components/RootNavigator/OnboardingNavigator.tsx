@@ -4,7 +4,6 @@ import {
   CardStyleInterpolators,
   TransitionPresets,
   StackNavigationOptions,
-  StackScreenProps,
 } from "@react-navigation/stack";
 import { Flex } from "@ledgerhq/native-ui";
 import { useTranslation } from "react-i18next";
@@ -40,12 +39,25 @@ import OnboardingRecoveryPhraseWarning from "../../screens/Onboarding/steps/setu
 import PostWelcomeSelection from "../../screens/Onboarding/steps/postWelcomeSelection";
 import GetDeviceScreen from "../../screens/GetDeviceScreen";
 import OnboardingStepDoYouHaveALedgerDevice from "../../screens/Onboarding/steps/doYouHaveALedger";
+import {
+  OnboardingCarefulWarningParamList,
+  OnboardingNavigatorParamList,
+  OnboardingPreQuizModalNavigatorParamList,
+} from "./types/OnboardingNavigator";
+import { StackNavigatorProps } from "./types/helpers";
 
-const Stack = createStackNavigator();
-const OnboardingCarefulWarningStack = createStackNavigator();
-const OnboardingPreQuizModalStack = createStackNavigator();
+const Stack = createStackNavigator<OnboardingNavigatorParamList>();
+const OnboardingCarefulWarningStack =
+  createStackNavigator<OnboardingCarefulWarningParamList>();
+const OnboardingPreQuizModalStack =
+  createStackNavigator<OnboardingPreQuizModalNavigatorParamList>();
 
-function OnboardingCarefulWarning(props: StackScreenProps<{}>) {
+function OnboardingCarefulWarning(
+  props: StackNavigatorProps<
+    OnboardingNavigatorParamList,
+    NavigatorName.OnboardingCarefulWarning
+  >,
+) {
   const options: Partial<StackNavigationOptions> = {
     header: props => (
       // TODO: Replace this value with constant.purple as soon as the value is fixed in the theme
@@ -75,25 +87,31 @@ function OnboardingCarefulWarning(props: StackScreenProps<{}>) {
           name={ScreenName.OnboardingModalWarning}
           component={OnboardingWarning}
           options={{ title: "", ...options }}
-          initialParams={props.route.params}
+          // initialParams={props.route.params}
         />
         <OnboardingCarefulWarningStack.Screen
           name={ScreenName.OnboardingModalSyncDesktopInformation}
           component={OnboardingSyncDesktopInformation}
           options={{ title: "", ...options }}
-          initialParams={props.route.params}
+          // initialParams={props.route.params}
         />
         <OnboardingCarefulWarningStack.Screen
           name={ScreenName.OnboardingModalRecoveryPhraseWarning}
           component={OnboardingRecoveryPhraseWarning}
           options={{ title: "", ...options }}
-          initialParams={props.route.params}
+          // initialParams={props.route.params}
         />
       </OnboardingCarefulWarningStack.Navigator>
     </NavigationModalContainer>
   );
 }
-function OnboardingPreQuizModalNavigator(props: StackScreenProps<{}>) {
+
+function OnboardingPreQuizModalNavigator(
+  props: StackNavigatorProps<
+    OnboardingNavigatorParamList,
+    NavigatorName.OnboardingPreQuiz
+  >,
+) {
   const options: Partial<StackNavigationOptions> = {
     header: props => (
       // TODO: Replace this value with constant.purple as soon as the value is fixed in the theme
@@ -121,7 +139,7 @@ function OnboardingPreQuizModalNavigator(props: StackScreenProps<{}>) {
           name={ScreenName.OnboardingPreQuizModal}
           component={OnboardingPreQuizModal}
           options={{ title: "", ...options }}
-          initialParams={props.route.params}
+          // initialParams={props.route.params}
         />
       </OnboardingPreQuizModalStack.Navigator>
     </NavigationModalContainer>
@@ -185,12 +203,12 @@ export default function OnboardingNavigator() {
         component={OnboardingUseCase}
       />
       <Stack.Screen
-        name={ScreenName.OnboardingModalWarning}
+        name={NavigatorName.OnboardingCarefulWarning}
         component={OnboardingCarefulWarning}
         options={modalOptions}
       />
       <Stack.Screen
-        name={ScreenName.OnboardingPreQuizModal}
+        name={NavigatorName.OnboardingPreQuiz}
         component={OnboardingPreQuizModalNavigator}
         options={modalOptions}
       />

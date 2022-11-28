@@ -1,7 +1,7 @@
 import React from "react";
 import { FlatList } from "react-native";
 import { useTheme } from "styled-components/native";
-import { AccountLike } from "@ledgerhq/live-common/types/index";
+import { AccountLike } from "@ledgerhq/types-live";
 import { Flex, Link } from "@ledgerhq/native-ui";
 import { PlusMedium } from "@ledgerhq/native-ui/assets/icons";
 import { Trans } from "react-i18next";
@@ -12,7 +12,7 @@ import AccountCard from "./AccountCard";
 type Props = {
   list: SearchResult[];
   showAddAccount?: boolean;
-  onPress: (account: AccountLike) => void;
+  onPress: (_: AccountLike) => void;
   onAddAccount?: () => void;
 };
 
@@ -39,7 +39,7 @@ const AccountList = ({
           }
         />
         <AccountCard
-          account={account as any}
+          account={account}
           disabled={!result.match}
           onPress={() => onPress(account)}
           py={2}

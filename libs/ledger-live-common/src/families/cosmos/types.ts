@@ -102,14 +102,25 @@ export type CosmosOperationMode =
   | "redelegate"
   | "claimReward"
   | "claimRewardCompound";
-export type NetworkInfo = {
-  family: "cosmos";
+
+export type CosmosLikeNetworkInfo = {
+  family: string;
   fees: BigNumber;
 };
-export type NetworkInfoRaw = {
-  family: "cosmos";
+
+export type CosmosLikeNetworkInfoRaw = {
+  family: string;
   fees: string;
 };
+
+export type NetworkInfo = CosmosLikeNetworkInfo & {
+  family: "cosmos";
+};
+
+export type NetworkInfoRaw = CosmosLikeNetworkInfoRaw & {
+  family: "cosmos";
+};
+
 export type CosmosOperation = Operation & {
   extra: CosmosExtraTxInfo;
 };
@@ -118,38 +129,55 @@ export type CosmosOperationRaw = OperationRaw & {
 };
 export type CosmosExtraTxInfo = {
   validators?: CosmosDelegationInfo[];
-  cosmosSourceValidator?: string | null | undefined;
+  sourceValidator?: string | null | undefined;
   validator?: CosmosDelegationInfo;
+  autoClaimedRewards?: string | null | undefined; // this is experimental to better represent auto claimed rewards
 };
 
 export type CosmosDelegationInfo = {
   address: string;
   amount: BigNumber;
 };
+
 export type CosmosDelegationInfoRaw = {
   address: string;
   amount: string;
 };
 
-export type Transaction = TransactionCommon & {
-  family: "cosmos";
+export type CosmosClaimedRewardInfo = {
+  amount: BigNumber;
+};
+
+export type CosmosLikeTransaction = TransactionCommon & {
+  family: string;
   mode: CosmosOperationMode;
-  networkInfo: NetworkInfo | null | undefined;
+  networkInfo: CosmosLikeNetworkInfo | null | undefined;
   fees: BigNumber | null | undefined;
   gas: BigNumber | null | undefined;
   memo: string | null | undefined;
   validators: CosmosDelegationInfo[];
-  cosmosSourceValidator: string | null | undefined;
+  sourceValidator: string | null | undefined;
 };
-export type TransactionRaw = TransactionCommonRaw & {
-  family: "cosmos";
+
+export type Transaction = CosmosLikeTransaction & {
+  family: "cosmos" | "osmosis";
+  networkInfo: NetworkInfo | null | undefined;
+};
+
+export type CosmosLikeTransactionRaw = TransactionCommonRaw & {
+  family: string;
   mode: CosmosOperationMode;
-  networkInfo: NetworkInfoRaw | null | undefined;
+  networkInfo: CosmosLikeNetworkInfoRaw | null | undefined;
   fees: string | null | undefined;
   gas: string | null | undefined;
   memo: string | null | undefined;
   validators: CosmosDelegationInfoRaw[];
-  cosmosSourceValidator: string | null | undefined;
+  sourceValidator: string | null | undefined;
+};
+
+export type TransactionRaw = CosmosLikeTransactionRaw & {
+  family: "cosmos" | "osmosis";
+  networkInfo: NetworkInfoRaw | null | undefined;
 };
 
 export type StatusErrorMap = {

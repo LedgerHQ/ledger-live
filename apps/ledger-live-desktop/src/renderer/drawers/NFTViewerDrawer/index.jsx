@@ -172,6 +172,8 @@ const NFTViewerDrawer = ({ account, nftId, height }: NFTViewerDrawerProps) => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
 
+  // FIXME Need some memoized selector here
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const protoNft = useSelector(state => getNFTById(state, { nftId })) || {};
   const { status: collectionStatus, metadata: collectionMetadata } = useNftCollectionMetadata(
     protoNft.contract,

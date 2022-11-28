@@ -1,6 +1,6 @@
 import React, { ReactNode } from "react";
 import { StyleProp, TextStyle, ViewStyle } from "react-native";
-import { Box, Checkbox, Flex, Text } from "@ledgerhq/native-ui";
+import { Box, Checkbox, Flex, Text, Tag } from "@ledgerhq/native-ui";
 import {
   ChevronRightMedium,
   InfoMedium,
@@ -35,6 +35,7 @@ export default function SettingsRow({
   event,
   eventProperties,
   compact,
+  label,
 }: {
   onPress?: () => void;
   onHelpPress?: () => void;
@@ -46,13 +47,14 @@ export default function SettingsRow({
   desc?: ReactNode;
   selected?: boolean;
   arrowRight?: boolean;
-  iconLeft?: any;
+  iconLeft?: React.ReactNode;
   centeredIcon?: boolean;
   children?: ReactNode;
   noTextDesc?: boolean;
   event?: string;
-  eventProperties?: Object;
+  eventProperties?: Record<string, unknown>;
   compact?: boolean;
+  label?: string;
 }) {
   let title$ = (
     <Flex
@@ -60,14 +62,17 @@ export default function SettingsRow({
       alignItems={"center"}
       style={titleContainerStyle}
     >
-      <Text
-        variant={"large"}
-        fontWeight={"semiBold"}
-        color={"neutral.c100"}
-        style={[titleStyle]}
-      >
-        {title}
-      </Text>
+      <Flex flexDirection={"row"} alignItems={"center"}>
+        <Text
+          variant={"large"}
+          fontWeight={"semiBold"}
+          color={"neutral.c100"}
+          style={[titleStyle]}
+        >
+          {title}
+        </Text>
+        {label ? <Tag ml={3}>{label}</Tag> : null}
+      </Flex>
       {subtitle && (
         <Text
           variant={"body"}
@@ -99,9 +104,12 @@ export default function SettingsRow({
       compact={compact}
     >
       {iconLeft && (
-        <Box paddingRight={6} justifyContent={centeredIcon && "center"}>
+        <Flex
+          paddingRight={6}
+          justifyContent={centeredIcon ? "center" : undefined}
+        >
           {iconLeft}
-        </Box>
+        </Flex>
       )}
       <Box flexShrink={1} paddingRight={6} marginRight={"auto"}>
         {title$}

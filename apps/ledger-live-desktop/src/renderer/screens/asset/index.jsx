@@ -63,7 +63,7 @@ export default function AssetPage({ match }: Props) {
 
   return (
     <Box>
-      <TrackPage category="Potfolio" name="Asset allocation" currencyName={currency.name} />
+      <TrackPage category="Portfolio" name="Asset allocation" currencyName={currency.name} />
       <Box mb={24}>
         <AssetHeader account={accounts[0]} parentAccount={parentAccount} />
       </Box>

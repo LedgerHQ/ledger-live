@@ -1,0 +1,13 @@
+diff --git a/ios/RNFastCrypto.h b/ios/RNFastCrypto.h
+index 0a8f93d97e9d873b919d14060575bbd6b3cfb35c..884ca905cc412ba366a852805d25b0ee11e57311 100644
+--- a/ios/RNFastCrypto.h
++++ b/ios/RNFastCrypto.h
+@@ -2,7 +2,7 @@
+ #if __has_include("RCTBridgeModule.h")
+ #import "RCTBridgeModule.h"
+ #else
+-#import <RCTBridgeModule.h>
++#import <React/RCTBridgeModule.h>
+ #endif
+ 
+ @interface RNFastCrypto : NSObject <RCTBridgeModule>

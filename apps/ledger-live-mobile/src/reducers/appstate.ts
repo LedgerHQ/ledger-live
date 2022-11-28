@@ -1,72 +1,65 @@
 import { handleActions } from "redux-actions";
+import type { Action, ReducerMap } from "redux-actions";
 import { createSelector } from "reselect";
 import { NetworkDown } from "@ledgerhq/errors";
-import type { State } from ".";
+import type { AppState, State } from "./types";
+
+import type {
+  AppStateAddBackgroundEventPayload,
+  AppStateIsConnectedPayload,
+  AppStatePayload,
+  AppStateSetHasConnectedDevicePayload,
+  AppStateSetModalLockPayload,
+} from "../actions/types";
+import { AppStateActionTypes } from "../actions/types";
 
 export type AsyncState = {
-  isConnected: boolean | null,
+  isConnected: boolean | null;
 };
 
-export type BackgroundEvent = {
-  type: "confirmPin"
-} | {
-  type: "downloadingUpdate",
-  progress?: number
-} | {
-  type: "confirmUpdate"
-} | {
-  type: "flashingMcu",
-  progress?: number,
-  installing?: string | null,
-} | {
-  type: "firmwareUpdated"
-} | {
-  type: "error",
-  error: any
-};
-
-export type AppState = {
-  isConnected: boolean | null,
-  hasConnectedDevice: boolean,
-  modalLock: boolean,
-  backgroundEvents: Array<BackgroundEvent>,
-};
-
-const initialState: AppState = {
+export const INITIAL_STATE: AppState = {
   isConnected: true,
   hasConnectedDevice: false, // NB for this current session, have we done a device action with a device.
   modalLock: false,
   backgroundEvents: [],
 };
 
-const handlers: Object = {
-  SYNC_IS_CONNECTED: (
-    state: AppState,
-    { isConnected }: { isConnected: boolean | null },
-  ) => ({
+const handlers: ReducerMap<AppState, AppStatePayload> = {
+  [AppStateActionTypes.SYNC_IS_CONNECTED]: (state, action) => ({
     ...state,
-    isConnected,
+    isConnected: (action as Action<AppStateIsConnectedPayload>).payload
+      .isConnected,
   }),
-  HAS_CONNECTED_DEVICE: (
-    state: AppState,
-    { hasConnectedDevice }: { hasConnectedDevice: boolean },
-  ) => ({ ...state, hasConnectedDevice }),
-  SET_MODAL_LOCK: (state: AppState, { modalLock }: { modalLock: boolean }) => ({
+
+  [AppStateActionTypes.HAS_CONNECTED_DEVICE]: (state, action) => ({
     ...state,
-    modalLock,
+    hasConnectedDevice: (action as Action<AppStateSetHasConnectedDevicePayload>)
+      .payload.hasConnectedDevice,
   }),
-  QUEUE_BACKGROUND_EVENT: (state: AppState, { event }: any) => ({
+
+  [AppStateActionTypes.SET_MODAL_LOCK]: (state, action) => ({
     ...state,
-    backgroundEvents: [...state.backgroundEvents, event],
+    modalLock: (action as Action<AppStateSetModalLockPayload>).payload
+      .modalLock,
   }),
-  DEQUEUE_BACKGROUND_EVENT: (state: AppState) => {
+
+  [AppStateActionTypes.QUEUE_BACKGROUND_EVENT]: (state, action) => ({
+    ...state,
+    backgroundEvents: [
+      ...state.backgroundEvents,
+      (action as Action<AppStateAddBackgroundEventPayload>).payload.event,
+    ],
+  }),
+
+  [AppStateActionTypes.DEQUEUE_BACKGROUND_EVENT]: (state: AppState) => {
     const [_, ...tail] = state.backgroundEvents;
-    return ({
+    return {
       ...state,
       backgroundEvents: tail,
-    });
+    };
   },
-  CLEAR_BACKGROUND_EVENTS: (state: AppState) => ({
+
+  [AppStateActionTypes.CLEAR_BACKGROUND_EVENTS]: (state: AppState) => ({
     ...state,
     backgroundEvents: [],
   }),
@@ -79,18 +72,20 @@ export const isModalLockedSelector = (state: State) => state.appstate.modalLock;
 export const hasConnectedDeviceSelector = (state: State) =>
   state.appstate.hasConnectedDevice;
 
-  export const backgroundEventsSelector = (state: State) =>
+export const backgroundEventsSelector = (state: State) =>
   state.appstate.backgroundEvents;
 
-  export const nextBackgroundEventSelector = (state: State) =>
+export const nextBackgroundEventSelector = (state: State) =>
   state.appstate.backgroundEvents[0];
 
 const globalNetworkDown = new NetworkDown();
 
-// $FlowFixMe
 export const networkErrorSelector = createSelector(
   isConnectedSelector,
-  (isConnected: boolean) => (!isConnected ? globalNetworkDown : null),
+  (isConnected: boolean | null) => (!isConnected ? globalNetworkDown : null),
 );
 
-export default handleActions(handlers, initialState);
+export default handleActions<AppState, AppStatePayload>(
+  handlers,
+  INITIAL_STATE,
+);

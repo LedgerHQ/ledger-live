@@ -3,11 +3,13 @@ import { initialState, loadCountervalues, calculate } from "./logic";
 import {
   getFiatCurrencyByTicker,
   getCryptoCurrencyById,
+  getTokenById,
   findCurrencyByTicker,
 } from "../currencies";
 import { getBTCValues } from "../countervalues/mock";
 import { Currency } from "@ledgerhq/types-cryptoassets";
 
+const ethereum = getCryptoCurrencyById("ethereum");
 const bitcoin = getCryptoCurrencyById("bitcoin");
 const usd = getFiatCurrencyByTicker("USD");
 const now = Date.now();
@@ -128,5 +130,53 @@ describe("extreme cases", () => {
       .filter((v) => v && v > 0);
 
     expect(currenciesWithCVs.length).toBeGreaterThan(0);
+  });
+});
+
+describe("WETH rules", () => {
+  test("ethereum WETH have countervalues", async () => {
+    const weth = getTokenById("ethereum/erc20/weth");
+    const state = await loadCountervalues(initialState, {
+      // NB: inferTrackingPairForAccounts would infer eth->usd with the WETH module
+      // we set this explicitly just to confirm that asking weth->usd will make it work
+      trackingPairs: [
+        {
+          from: ethereum,
+          to: usd,
+          startDate: new Date(now - 10 * 24 * 60 * 60 * 1000),
+        },
+      ],
+      autofillGaps: true,
+      disableAutoRecoverErrors: true,
+    });
+    const value = calculate(state, {
+      disableRounding: true,
+      from: weth,
+      to: usd,
+      value: 1000000,
+    });
+    expect(value).toBeGreaterThan(0);
+  });
+
+  test("ethereum goerli WETH doesn't countervalues", async () => {
+    const weth = getTokenById("ethereum_goerli/erc20/wrapped_ether");
+    const state = await loadCountervalues(initialState, {
+      trackingPairs: [
+        {
+          from: ethereum,
+          to: usd,
+          startDate: new Date(now - 1 * 24 * 60 * 60 * 1000),
+        },
+      ],
+      autofillGaps: true,
+      disableAutoRecoverErrors: true,
+    });
+    const value = calculate(state, {
+      disableRounding: true,
+      from: weth,
+      to: usd,
+      value: 1000000,
+    });
+    expect(value).toBe(undefined);
   });
 });

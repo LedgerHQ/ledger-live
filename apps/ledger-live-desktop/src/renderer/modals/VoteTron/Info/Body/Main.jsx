@@ -16,7 +16,13 @@ export default function VoteTronInfoModalBodyMain() {
   return (
     <Box flow={4} mx={4}>
       <TrackPage category="Voting Flow" name="Step Vote" />
-      {account ? <SyncOneAccountOnMount priority={10} accountId={account.id} /> : null}
+      {account ? (
+        <SyncOneAccountOnMount
+          reason="transaction-flow-confirmation"
+          priority={10}
+          accountId={account.id}
+        />
+      ) : null}
 
       <Box flow={1} alignItems="center">
         <Box mb={4}>

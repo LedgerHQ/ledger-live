@@ -1,10 +1,9 @@
-import { useLedgerFirstShuffledValidatorsCosmos } from "@ledgerhq/live-common/families/cosmos/react";
+import { useLedgerFirstShuffledValidatorsCosmosFamily } from "@ledgerhq/live-common/families/cosmos/react";
 import { CosmosValidatorItem } from "@ledgerhq/live-common/families/cosmos/types";
 import { useTheme } from "@react-navigation/native";
 import invariant from "invariant";
 import React, { useCallback, useState } from "react";
-import { FlatList, StyleSheet, View } from "react-native";
-import { SafeAreaView } from "react-native";
+import { FlatList, StyleSheet, View, SafeAreaView } from "react-native";
 import { useSelector } from "react-redux";
 import { TrackScreen } from "../../../analytics";
 import { ScreenName } from "../../../const";
@@ -12,16 +11,13 @@ import { accountScreenSelector } from "../../../reducers/accounts";
 import ValidatorHead from "../shared/ValidatorHead";
 import ValidatorRow from "../shared/ValidatorRow";
 import SelectValidatorSearchBox from "../../tron/VoteFlow/01-SelectValidator/SearchBox";
+import { StackNavigatorProps } from "../../../components/RootNavigator/types/helpers";
+import { CosmosDelegationFlowParamList } from "./types";
 
-type Props = {
-  navigation: any;
-  route: { params: RouteParams };
-};
-
-type RouteParams = {
-  accountId: string;
-  validator?: CosmosValidatorItem;
-};
+type Props = StackNavigatorProps<
+  CosmosDelegationFlowParamList,
+  ScreenName.CosmosDelegationValidatorSelect
+>;
 
 export default function SelectValidator({ navigation, route }: Props) {
   const { colors } = useTheme();
@@ -32,7 +28,10 @@ export default function SelectValidator({ navigation, route }: Props) {
 
   const [searchQuery, setSearchQuery] = useState("");
 
-  const validators = useLedgerFirstShuffledValidatorsCosmos(searchQuery);
+  const validators = useLedgerFirstShuffledValidatorsCosmosFamily(
+    "cosmos",
+    searchQuery,
+  );
 
   const onItemPress = useCallback(
     (validator: CosmosValidatorItem) => {

@@ -30,7 +30,7 @@ export async function loadConfig(
   }
 
   const f = fs.readFileSync(path.resolve("e2e", "setups", `${fileName}.json`));
-  // $FlowFixMe
+
   const { data } = JSON.parse(f);
 
   postMessage({ type: "importSettngs", payload: data.settings });

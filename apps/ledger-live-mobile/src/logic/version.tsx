@@ -28,8 +28,9 @@ export const getAndroidVersionCode = (buildVersionArg = buildVersion) => {
 
 export const cleanBuildVersion = (buildVersionArg = buildVersion) => {
   if (Platform.OS === "android" && buildVersionArg) {
-    return `${getAndroidArchitecture(buildVersionArg) ||
-      ""} ${getAndroidVersionCode(buildVersionArg) || ""}`;
+    return `${getAndroidArchitecture(buildVersionArg) || ""} ${
+      getAndroidVersionCode(buildVersionArg) || ""
+    }`;
   }
   return buildVersionArg;
 };
@@ -39,7 +40,7 @@ export default function getFullAppVersion(
   buildVersionArg = buildVersion,
   separator = " ",
 ) {
-  return `${appVersionArg || ""}${separator}(${cleanBuildVersion(
-    buildVersionArg,
-  ) || ""})`;
+  return `${appVersionArg || ""}${separator}(${
+    cleanBuildVersion(buildVersionArg) || ""
+  })`;
 }

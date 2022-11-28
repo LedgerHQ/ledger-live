@@ -1,10 +1,8 @@
 import React, { useCallback, useMemo, memo } from "react";
-import { useNavigation, useRoute, RouteProp } from "@react-navigation/native";
+import { useNavigation, useRoute } from "@react-navigation/native";
 
-import { DeviceModelId } from "@ledgerhq/devices";
 import { useTheme } from "styled-components/native";
-import { ScreenName } from "../../../../const";
-import { DeviceNames } from "../../types";
+import { NavigatorName, ScreenName } from "../../../../const";
 import Illustration from "../../../../images/illustration/Illustration";
 import BaseStepperView, {
   Intro,
@@ -18,6 +16,9 @@ import BaseStepperView, {
 } from "./scenes";
 import { TrackScreen } from "../../../../analytics";
 import StepLottieAnimation from "./scenes/StepLottieAnimation";
+import { StackNavigatorProps } from "../../../../components/RootNavigator/types/helpers";
+import { OnboardingNavigatorParamList } from "../../../../components/RootNavigator/types/OnboardingNavigator";
+import { Step } from "./scenes/BaseStepperView";
 
 // @TODO Replace
 const images = {
@@ -58,14 +59,17 @@ const scenes = [
   RecoveryPhraseInstructions,
   RecoveryPhraseSetup,
   HideRecoveryPhrase,
-];
+] as Step[];
+
+type NavigationProps = StackNavigatorProps<
+  OnboardingNavigatorParamList,
+  ScreenName.OnboardingSetNewDevice
+>;
 
 function OnboardingStepNewDevice() {
-  const navigation = useNavigation();
+  const navigation = useNavigation<NavigationProps["navigation"]>();
   const { theme } = useTheme();
-  const route = useRoute<
-    RouteProp<{ params: { deviceModelId: DeviceNames } }, "params">
-  >();
+  const route = useRoute<NavigationProps["route"]>();
 
   const { deviceModelId } = route.params;
 
@@ -180,11 +184,14 @@ function OnboardingStepNewDevice() {
   );
 
   const nextPage = useCallback(() => {
-    // TODO: FIX @react-navigation/native using Typescript
-    // @ts-ignore next-line
-    navigation.navigate(ScreenName.OnboardingPreQuizModal, {
-      onNext: () =>
-        navigation.navigate(ScreenName.OnboardingQuiz, { ...route.params }),
+    navigation.navigate(NavigatorName.OnboardingPreQuiz, {
+      screen: ScreenName.OnboardingPreQuizModal,
+      params: {
+        onNext: () =>
+          navigation.navigate(ScreenName.OnboardingQuiz, {
+            deviceModelId: route.params.deviceModelId,
+          }),
+      },
     });
   }, [navigation, route.params]);
 

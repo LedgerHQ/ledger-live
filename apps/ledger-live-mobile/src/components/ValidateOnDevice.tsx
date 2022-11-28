@@ -2,12 +2,11 @@ import React from "react";
 import invariant from "invariant";
 import { ScrollView } from "react-native";
 import { useTranslation } from "react-i18next";
+import { Account, AccountLike } from "@ledgerhq/types-live";
 import {
-  Account,
-  AccountLike,
   Transaction,
   TransactionStatus,
-} from "@ledgerhq/live-common/types/index";
+} from "@ledgerhq/live-common/generated/types";
 import {
   getMainAccount,
   getAccountUnit,
@@ -27,7 +26,7 @@ import Alert from "./Alert";
 import perFamilyTransactionConfirmFields from "../generated/TransactionConfirmFields";
 import { DataRowUnitValue, TextValueField } from "./ValidateOnDeviceDataRow";
 import Animation from "./Animation";
-import getDeviceAnimation from "./DeviceAction/getDeviceAnimation";
+import { getDeviceAnimation } from "../helpers/getDeviceAnimation";
 
 export type FieldComponentProps = {
   account: AccountLike;
@@ -87,7 +86,7 @@ function TextField({ field }: FieldComponentProps) {
   return <TextValueField label={field.label} value={field.value} />;
 }
 
-const commonFieldComponents: { [key: any]: FieldComponent } = {
+const commonFieldComponents: Record<string, FieldComponent> = {
   amount: AmountField,
   fees: FeesField,
   address: AddressField,
@@ -97,9 +96,16 @@ const commonFieldComponents: { [key: any]: FieldComponent } = {
 type Props = {
   device: Device;
   status: TransactionStatus;
-  transaction: Transaction;
+  transaction: Transaction & { mode?: string };
   account: AccountLike;
   parentAccount: Account | null | undefined;
+};
+
+type SubComponentCommonProps = {
+  account: AccountLike;
+  parentAccount?: Account | null | undefined;
+  transaction: Transaction;
+  status: TransactionStatus;
 };
 
 export default function ValidateOnDevice({
@@ -113,15 +119,42 @@ export default function ValidateOnDevice({
   const theme = dark ? "dark" : "light";
   const { t } = useTranslation();
   const mainAccount = getMainAccount(account, parentAccount);
-  const r = perFamilyTransactionConfirmFields[mainAccount.currency.family];
+  const r =
+    perFamilyTransactionConfirmFields[
+      mainAccount.currency
+        .family as keyof typeof perFamilyTransactionConfirmFields
+    ];
 
   const fieldComponents = {
     ...commonFieldComponents,
     ...(r && r.fieldComponents),
   };
-  const Warning = r && r.warning;
-  const Title = r && r.title;
-  const Footer = r && r.footer;
+  const Warning =
+    r &&
+    (
+      r as {
+        warning?: React.ComponentType<
+          SubComponentCommonProps & { recipientWording: string }
+        >;
+      }
+    ).warning;
+  const Title =
+    r &&
+    (
+      r as {
+        title?: React.ComponentType<SubComponentCommonProps>;
+      }
+    ).title;
+  const Footer =
+    r &&
+    (
+      r as {
+        footer?: React.ComponentType<{
+          transaction: Transaction;
+          recipientWording: string;
+        }>;
+      }
+    ).footer;
 
   const fields = getDeviceTransactionConfig({
     account,
@@ -170,7 +203,9 @@ export default function ValidateOnDevice({
 
           <DataRowsContainer>
             {fields.map((field, i) => {
-              const MaybeComponent = fieldComponents[field.type];
+              const MaybeComponent = fieldComponents[
+                field.type as keyof typeof fieldComponents
+              ] as React.ComponentType<FieldComponentProps> | undefined;
               if (!MaybeComponent) {
                 console.warn(
                   `TransactionConfirm field ${field.type} is not implemented! add a generic implementation in components/TransactionConfirm.js or inside families/*/TransactionConfirmFields.js`,

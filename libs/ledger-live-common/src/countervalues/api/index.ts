@@ -5,13 +5,15 @@ import mockAPI from "./api.mock";
 
 const api: CounterValuesAPI = {
   fetchHistorical: (granularity, pair) =>
-    getEnv("MOCK")
+    getEnv("MOCK_COUNTERVALUES")
       ? mockAPI.fetchHistorical(granularity, pair)
       : prodAPI.fetchHistorical(granularity, pair),
   fetchLatest: (pairs) =>
-    getEnv("MOCK") ? mockAPI.fetchLatest(pairs) : prodAPI.fetchLatest(pairs),
+    getEnv("MOCK_COUNTERVALUES")
+      ? mockAPI.fetchLatest(pairs)
+      : prodAPI.fetchLatest(pairs),
   fetchMarketcapTickers: () =>
-    getEnv("MOCK")
+    getEnv("MOCK_COUNTERVALUES")
       ? mockAPI.fetchMarketcapTickers()
       : prodAPI.fetchMarketcapTickers(),
 };

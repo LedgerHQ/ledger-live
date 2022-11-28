@@ -2,10 +2,12 @@
 
 import React from "react";
 import Transport from "@ledgerhq/hw-transport";
+import { getEnv } from "@ledgerhq/live-common/env";
 import { NotEnoughBalance } from "@ledgerhq/errors";
 import { implicitMigration } from "@ledgerhq/live-common/migrations/accounts";
 import { log } from "@ledgerhq/logs";
 import { checkLibs } from "@ledgerhq/live-common/sanityChecks";
+import { importPostOnboardingState } from "@ledgerhq/live-common/postOnboarding/actions";
 import i18n from "i18next";
 import { webFrame, ipcRenderer } from "electron";
 import * as remote from "@electron/remote";
@@ -19,6 +21,8 @@ import "~/renderer/styles/global";
 import "~/renderer/live-common-setup";
 import { getLocalStorageEnvs } from "~/renderer/experimental";
 import "~/renderer/i18n/init";
+import { prepareCurrency } from "~/renderer/bridge/cache";
+import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
 
 import logger, { enableDebugLogger } from "~/logger";
 import LoggerTransport from "~/logger/logger-transport-renderer";
@@ -60,7 +64,7 @@ async function init() {
     Transport,
   });
 
-  if (process.env.PLAYWRIGHT_RUN) {
+  if (getEnv("PLAYWRIGHT_RUN")) {
     const spectronData = await getKey("app", "PLAYWRIGHT_RUN", {});
     each(spectronData.localStorage, (value, key) => {
       global.localStorage.setItem(key, value);
@@ -129,12 +133,22 @@ async function init() {
   if (accounts) {
     accounts = implicitMigration(accounts);
     await store.dispatch(setAccounts(accounts));
+
+    // preload currency that's not in accounts list
+    if (accounts.some(a => a.currency.id !== "ethereum")) {
+      prepareCurrency(getCryptoCurrencyById("ethereum"));
+    }
   } else {
     store.dispatch(lock());
   }
   const initialCountervalues = await getKey("app", "countervalues");
 
   r(<ReactRoot store={store} language={language} initialCountervalues={initialCountervalues} />);
+
+  const postOnboardingState = await getKey("app", "postOnboarding");
+  if (postOnboardingState) {
+    store.dispatch(importPostOnboardingState({ newState: postOnboardingState }));
+  }
 
   if (isMainWindow) {
     webFrame.setVisualZoomLevelLimits(1, 1);

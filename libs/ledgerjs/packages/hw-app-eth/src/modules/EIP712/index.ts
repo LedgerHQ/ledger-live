@@ -3,15 +3,22 @@ import {
   EIP712Message,
   EIP712MessageTypes,
   EIP712MessageTypesEntry,
+  FilteringInfoContractName,
+  FilteringInfoShowField,
+  MessageFilters,
   StructDefData,
   StructImplemData,
 } from "./EIP712.types";
 import { hexBuffer, intAsHexBytes, splitPath } from "../../utils";
+import { getLoadConfig } from "../../services/ledger/loadConfig";
+import { LoadConfig } from "../../services/types";
 import {
   destructTypeFromString,
   EIP712_TYPE_ENCODERS,
   EIP712_TYPE_PROPERTIES,
+  getFiltersForMessage,
   makeTypeEntryStructBuffer,
+  sortObjectAlphabetically,
 } from "./EIP712.utils";
 
 /**
@@ -20,17 +27,19 @@ import {
  * Factory to create the recursive function that will pass on each
  * field level and APDUs to describe its structure implementation
  *
- * @param {Eth["EIP712SendStructImplem"]} EIP712SendStructImplem
+ * @param {Eth["sendStructImplem"]} sendStructImplem
  * @param {EIP712MessageTypes} types
  * @returns {void}
  */
 const makeRecursiveFieldStructImplem = (
   transport: Transport,
-  types: EIP712MessageTypes
+  types: EIP712MessageTypes,
+  filters?: MessageFilters
 ): ((
   destructedType: ReturnType<typeof destructTypeFromString>,
-  data: unknown
-) => void) => {
+  data: unknown,
+  path?: string
+) => Promise<void>) => {
   const typesMap = {} as Record<string, Record<string, string>>;
   for (const type in types) {
     typesMap[type] = types[type]?.reduce(
@@ -43,7 +52,8 @@ const makeRecursiveFieldStructImplem = (
   // in order to send APDUs for each of them
   const recursiveFieldStructImplem = async (
     destructedType: ReturnType<typeof destructTypeFromString>,
-    data
+    data,
+    path = ""
   ) => {
     const [typeDescription, arrSizes] = destructedType;
     const [currSize, ...restSizes] = arrSizes;
@@ -51,28 +61,42 @@ const makeRecursiveFieldStructImplem = (
       !EIP712_TYPE_PROPERTIES[typeDescription?.name?.toUpperCase() || ""];
 
     if (Array.isArray(data) && typeof currSize !== "undefined") {
-      await EIP712SendStructImplem(transport, {
+      await sendStructImplem(transport, {
         structType: "array",
         value: data.length,
       });
       for (const entry of data) {
-        await recursiveFieldStructImplem([typeDescription, restSizes], entry);
+        await recursiveFieldStructImplem(
+          [typeDescription, restSizes],
+          entry,
+          `${path}.[]`
+        );
       }
     } else if (isCustomType) {
       for (const [fieldName, fieldValue] of Object.entries(
         data as EIP712Message["message"]
       )) {
-        const fieldType = typesMap?.[typeDescription?.name || ""][fieldName];
+        const fieldType = typesMap[typeDescription?.name || ""]?.[fieldName];
 
         if (fieldType) {
           await recursiveFieldStructImplem(
             destructTypeFromString(fieldType),
-            fieldValue
+            fieldValue,
+            `${path}.${fieldName}`
           );
         }
       }
     } else {
-      await EIP712SendStructImplem(transport, {
+      const filter = filters?.fields.find((f) => path === f.path);
+
+      if (filter) {
+        await sendFilteringInfo(transport, "showField", {
+          displayName: filter.label,
+          sig: filter.signature,
+        });
+      }
+
+      await sendStructImplem(transport, {
         structType: "field",
         value: {
           data,
@@ -90,13 +114,13 @@ const makeRecursiveFieldStructImplem = (
  * @ignore for the README
  *
  * This method is used to send the message definition with all its types.
- * This method should be used before the EIP712SendStructImplem one
+ * This method should be used before the sendStructImplem one
  *
  * @param {String} structType
  * @param {String|Buffer} value
  * @returns {Promise<void>}
  */
-const EIP712SendStructDef = (
+const sendStructDef = (
   transport: Transport,
   structDef: StructDefData
 ): Promise<Buffer> => {
@@ -128,7 +152,7 @@ const EIP712SendStructDef = (
  * @ignore for the README
  *
  * This method provides a trusted new display name to use for the upcoming field.
- * This method should be used after the EIP712SendStructDef one.
+ * This method should be used after the sendStructDef one.
  *
  * If the method describes an empty name (length of 0), the upcoming field will be taken
  * into account but won’t be shown on the device.
@@ -143,7 +167,7 @@ const EIP712SendStructDef = (
  * @param {string | number | StructFieldData} value
  * @returns {Promise<Buffer | void>}
  */
-const EIP712SendStructImplem = async (
+const sendStructImplem = async (
   transport: Transport,
   structImplem: StructImplemData
 ): Promise<Buffer | void> => {
@@ -218,6 +242,109 @@ const EIP712SendStructImplem = async (
   return Promise.resolve();
 };
 
+async function sendFilteringInfo(
+  transport: Transport,
+  type: "activate"
+): Promise<Buffer>;
+async function sendFilteringInfo(
+  transport: Transport,
+  type: "contractName",
+  data: FilteringInfoContractName
+): Promise<Buffer>;
+async function sendFilteringInfo(
+  transport: Transport,
+  type: "showField",
+  data: FilteringInfoShowField
+): Promise<Buffer>;
+async function sendFilteringInfo(
+  transport: Transport,
+  type: "activate" | "contractName" | "showField",
+  data?: FilteringInfoContractName | FilteringInfoShowField
+): Promise<Buffer | void> {
+  enum APDU_FIELDS {
+    CLA = 0xe0,
+    INS = 0x1e,
+    P1 = 0x00,
+    P2_activate = 0x00,
+    P2_contract_name = 0x0f, // officially named "message info"
+    P2_show_field = 0xff,
+  }
+
+  switch (type) {
+    case "activate":
+      return transport.send(
+        APDU_FIELDS.CLA,
+        APDU_FIELDS.INS,
+        APDU_FIELDS.P1,
+        APDU_FIELDS.P2_activate
+      );
+
+    case "contractName": {
+      const { displayName, filtersCount, sig } =
+        data as FilteringInfoContractName;
+      const displayNameLengthBuffer = Buffer.from(
+        intAsHexBytes(displayName.length, 1),
+        "hex"
+      );
+      const displayNameBuffer = Buffer.from(displayName);
+      const filtersCountBuffer = Buffer.from(
+        intAsHexBytes(filtersCount, 1),
+        "hex"
+      );
+      const sigLengthBuffer = Buffer.from(
+        intAsHexBytes(sig.length / 2, 1),
+        "hex"
+      );
+      const sigBuffer = Buffer.from(sig, "hex");
+
+      const callData = Buffer.concat([
+        displayNameLengthBuffer,
+        displayNameBuffer,
+        filtersCountBuffer,
+        sigLengthBuffer,
+        sigBuffer,
+      ]);
+
+      return transport.send(
+        APDU_FIELDS.CLA,
+        APDU_FIELDS.INS,
+        APDU_FIELDS.P1,
+        APDU_FIELDS.P2_contract_name,
+        callData
+      );
+    }
+
+    case "showField": {
+      const { displayName, sig } = data as FilteringInfoShowField;
+      const displayNameLengthBuffer = Buffer.from(
+        intAsHexBytes(displayName.length, 1),
+        "hex"
+      );
+      const displayNameBuffer = Buffer.from(displayName);
+      const sigLengthBuffer = Buffer.from(
+        intAsHexBytes(sig.length / 2, 1),
+        "hex"
+      );
+      const sigBuffer = Buffer.from(sig, "hex");
+
+      const callData = Buffer.concat([
+        displayNameLengthBuffer,
+        displayNameBuffer,
+        sigLengthBuffer,
+        sigBuffer,
+      ]);
+
+      return transport.send(
+        APDU_FIELDS.CLA,
+        APDU_FIELDS.INS,
+        APDU_FIELDS.P1,
+        APDU_FIELDS.P2_show_field,
+        callData
+      );
+    }
+  }
+}
+
 /**
  * @ignore for the README
  *
@@ -245,7 +372,7 @@ const EIP712SendStructImplem = async (
     primaryType: "Test",
     message: {contents: "Hello, Bob!"},
   })
- * 
+ *
  * @param {String} path derivationPath
  * @param {Object} jsonMessage message to sign
  * @param {Boolean} fullImplem use the legacy implementation
@@ -255,7 +382,8 @@ export const signEIP712Message = async (
   transport: Transport,
   path: string,
   jsonMessage: EIP712Message,
-  fullImplem = false
+  fullImplem = false,
+  loadConfig: LoadConfig
 ): Promise<{
   v: number;
   s: string;
@@ -268,7 +396,11 @@ export const signEIP712Message = async (
     P2_v0 = 0x00,
     P2_full = 0x01,
   }
-  const { primaryType, types, domain, message } = jsonMessage;
+  const { primaryType, types: unsortedTypes, domain, message } = jsonMessage;
+  const { cryptoassetsBaseURL } = getLoadConfig(loadConfig);
+  // Types are sorted by alphabetical order in order to get the same schema hash no matter the JSON format
+  const types = sortObjectAlphabetically(unsortedTypes) as EIP712MessageTypes;
+  const filters = await getFiltersForMessage(jsonMessage, cryptoassetsBaseURL);
 
   const typeEntries = Object.entries(types) as [
     keyof EIP712MessageTypes,
@@ -276,31 +408,35 @@ export const signEIP712Message = async (
   ][];
   // Looping on all types entries and fields to send structures' definitions
   for (const [typeName, entries] of typeEntries) {
-    await EIP712SendStructDef(transport, {
+    await sendStructDef(transport, {
       structType: "name",
       value: typeName as string,
     });
 
     for (const { name, type } of entries) {
       const typeEntryBuffer = makeTypeEntryStructBuffer({ name, type });
-      await EIP712SendStructDef(transport, {
+      await sendStructDef(transport, {
         structType: "field",
         value: typeEntryBuffer,
       });
     }
   }
 
+  if (filters) {
+    await sendFilteringInfo(transport, "activate");
+  }
   // Create the recursion that should pass on each entry
   // of the domain fields and primaryType fields
   const recursiveFieldStructImplem = makeRecursiveFieldStructImplem(
     transport,
-    types
+    types,
+    filters
   );
 
-  // Looping on all domain type entries and fields to send
+  // Looping on all domain type's entries and fields to send
   // structures' implementations
   const domainName = "EIP712Domain";
-  await EIP712SendStructImplem(transport, {
+  await sendStructImplem(transport, {
     structType: "root",
     value: domainName,
   });
@@ -313,9 +449,19 @@ export const signEIP712Message = async (
     );
   }
 
-  // Looping on all primaryType type entries and fields to send
+  if (filters) {
+    const { contractName, fields } = filters;
+    const contractNameInfos = {
+      displayName: contractName.label,
+      filtersCount: fields.length,
+      sig: contractName.signature,
+    };
+    await sendFilteringInfo(transport, "contractName", contractNameInfos);
+  }
+
+  // Looping on all primaryType type's entries and fields to send
   // structures' implementations
-  await EIP712SendStructImplem(transport, {
+  await sendStructImplem(transport, {
     structType: "root",
     value: primaryType,
   });
@@ -324,7 +470,8 @@ export const signEIP712Message = async (
     const primaryTypeValue = message[name];
     await recursiveFieldStructImplem(
       destructTypeFromString(type as string),
-      primaryTypeValue
+      primaryTypeValue,
+      name
     );
   }
 
@@ -406,4 +553,5 @@ export const signEIP712HashedMessage = (
   });
 };
 
-export { EIP712Message } from "./EIP712.types";
+export type { EIP712Message } from "./EIP712.types";
+export { isEIP712Message, getFiltersForMessage } from "./EIP712.utils";

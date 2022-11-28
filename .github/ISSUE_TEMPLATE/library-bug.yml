@@ -1,0 +1,44 @@
+name: Library Bug Report (developers)
+description: File a bug report on one of our NPM libraries
+title: "[Bug]: "
+labels: ["bug", "libraries", "triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to fill out this bug report!
+  - type: input
+    id: library
+    attributes:
+      label: Impacted Library name
+      description: What is the name of the NPM library you used?
+      placeholder: ex. @ledgerhq/hw-app-eth
+    validations:
+      required: false
+  - type: input
+    id: libraryversion
+    attributes:
+      label: Impacted Library version
+      description: What is the version of the NPM library you used?
+      placeholder: ex. 12.0.0
+    validations:
+      required: false
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: Describe the bug
+      description: Please describe the bug and how to reproduce it (if possible with an example).
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+      description: A clear and concise description of what you expected to happen.
+    validations:
+      required: true
+  - type: textarea
+    id: other
+    attributes:
+      label: Additional context
+      description: Add any other context about the problem here.

@@ -7,7 +7,7 @@ import {
   PolkadotNomination,
   PolkadotValidator,
 } from "@ledgerhq/live-common/families/polkadot/types";
-import { Account } from "@ledgerhq/live-common/types/index";
+import { Account } from "@ledgerhq/types-live";
 import {
   getAccountCurrency,
   getAccountUnit,
@@ -49,7 +49,9 @@ export default function NominationRow({
     <TouchableOpacity onPress={() => onPress(nomination)}>
       <Flex flexDirection={"row"} alignItems={"center"} py={5}>
         <View style={styles.icon}>
-          <PolkadotIdenticon address={address} size={32} />
+          {/* FIXME: I HAD TO ADD publicKey IN HERE. I LOOKED INTO THE LIB AND IT
+            SEEMS THAT THE DEFAULT VALUE FOR publicKey IS "0x" */}
+          <PolkadotIdenticon publicKey="0x" address={address} size={32} />
         </View>
 
         <View style={styles.nameWrapper}>

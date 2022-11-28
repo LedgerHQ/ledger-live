@@ -3,6 +3,7 @@ import os from "os";
 import pname from "~/logger/pname";
 import anonymizer from "~/logger/anonymizer";
 import "../env";
+import { getOperatingSystemSupportStatus } from "~/support/os";
 
 /* eslint-disable no-continue */
 
@@ -10,7 +11,7 @@ import "../env";
 // initially we will send errors (anonymized as we don't initially know "userId" neither)
 let shouldSendCallback = () => true;
 
-let productionBuildSampleRate = 0.5;
+let productionBuildSampleRate = 1;
 let tracesSampleRate = 0.005;
 
 if (process.env.SENTRY_SAMPLE_RATE) {
@@ -23,27 +24,47 @@ const ignoreErrors = [
   // networking conditions
   "API HTTP",
   "DisconnectedError",
+  "EACCES",
+  "ECONNABORTED",
   "ECONNREFUSED",
   "ECONNRESET",
   "EHOSTUNREACH",
+  "ENETDOWN",
   "ENETUNREACH",
+  "ENOSPC",
   "ENOTFOUND",
-  "ETIMEDOUT",
+  "EPERM",
   "ERR_CONNECTION_RESET",
+  "ERR_PROXY_CONNECTION_FAILED",
+  "ERR_NAME_NOT_RESOLVED",
+  "ERR_INTERNET_DISCONNECTED",
+  "ERR_NETWORK_CHANGED",
+  "ETIMEDOUT",
   "getaddrinfo",
   "HttpError",
   "Network Error",
   "NetworkDown",
-  "NetworkDown",
+  "NetworkError",
   "NotConnectedError",
   "socket disconnected",
   "socket hang up",
+  "ERR_SSL_PROTOCOL_ERROR",
   "status code 404",
+  "unable to get local issuer certificate",
+  // API issues
+  "LedgerAPI4xx",
+  "LedgerAPI5xx",
+  "<!DOCTYPE html",
+  "Unexpected ''",
+  "Unexpected '<'",
+  "Service Unvailable",
   // timeouts
   "ERR_CONNECTION_TIMED_OUT",
   "request timed out",
   "SolanaTxConfirmationTimeout",
+  "timeout",
   "TimeoutError",
+  "Time-out", // e.g.  504 Gateway Time-out
   "TronTransactionExpired", // user waits too long on device, possibly network slowness too
   "WebsocketConnectionError",
   // bad usage of device
@@ -61,6 +82,7 @@ const ignoreErrors = [
   "Ledger Device is busy",
   "ManagerDeviceLocked",
   "PairingFailed",
+  "Ledger device: UNKNOWN_ERROR",
   // other
   "AccountAwaitingSendPendingOperations",
   "AccountNeedResync",
@@ -70,9 +92,18 @@ const ignoreErrors = [
   "Received an invalid JSON-RPC message",
   "SwapNoAvailableProviders",
   "TransactionRefusedOnDevice",
+  "Please reimport your Tezos accounts",
+  "Transaction simulation failed", // LIVE-3506
+  // LIVE-3506 workaround, solana throws tons of cryptic errors
+  "failed to find a healthy working node",
+  "was reached for request with last error",
+  "530 undefined",
+  "524 undefined",
+  "Missing or invalid topic field", // wallet connect issue
 ];
 
 export function init(Sentry: any, opts: any) {
+  if (!getOperatingSystemSupportStatus().supported) return false;
   if (!__SENTRY_URL__) return false;
   Sentry.init({
     dsn: __SENTRY_URL__,

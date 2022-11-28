@@ -7,6 +7,7 @@ import { ScreenName } from "../../const";
 import Sell from "../../screens/Exchange/Sell";
 import Buy from "../../screens/Exchange/Buy";
 import { getLineTabNavigatorConfig } from "../../navigation/tabNavigatorConfig";
+import type { ExchangeNavigatorParamList } from "./types/ExchangeNavigator";
 
 type TabLabelProps = {
   focused: boolean;
@@ -17,9 +18,10 @@ export default function ExchangeNavigator() {
   const { t } = useTranslation();
   const { colors } = useTheme();
 
-  const tabNavigationConfig = useMemo(() => getLineTabNavigatorConfig(colors), [
-    colors,
-  ]);
+  const tabNavigationConfig = useMemo(
+    () => getLineTabNavigatorConfig(colors),
+    [colors],
+  );
   return (
     <Tab.Navigator {...tabNavigationConfig}>
       <Tab.Screen
@@ -50,4 +52,4 @@ export default function ExchangeNavigator() {
   );
 }
 
-const Tab = createMaterialTopTabNavigator();
+const Tab = createMaterialTopTabNavigator<ExchangeNavigatorParamList>();

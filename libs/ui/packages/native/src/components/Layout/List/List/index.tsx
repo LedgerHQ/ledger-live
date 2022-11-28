@@ -1,19 +1,20 @@
 import React, { useCallback } from "react";
 import Text from "../../../Text";
 import { Box, Flex } from "../../index";
+import type { FlexBoxProps } from "../../Flex";
 import { BaseStyledProps } from "../../../styled";
 import { FlatList } from "react-native";
 
 export type BaseListItemProps = {
-  title?: string;
-  description?: string;
+  title?: React.ReactNode;
+  description?: React.ReactNode;
   bullet?: React.ReactNode;
 };
 
 export type BaseListProps = {
   items: BaseListItemProps[];
   itemContainerProps?: BaseStyledProps;
-};
+} & Partial<FlexBoxProps>;
 
 export const ListItem = ({
   title,

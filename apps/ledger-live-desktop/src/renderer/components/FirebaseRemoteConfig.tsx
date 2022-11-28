@@ -2,7 +2,7 @@ import React, { ReactNode, useContext, useEffect, useState } from "react";
 import { initializeApp } from "firebase/app";
 import { getRemoteConfig, fetchAndActivate, RemoteConfig } from "firebase/remote-config";
 import { defaultFeatures } from "@ledgerhq/live-common/featureFlags/index";
-import { DefaultFeatures } from "@ledgerhq/live-common/types/index";
+import { DefaultFeatures } from "@ledgerhq/types-live";
 import { reduce, snakeCase } from "lodash";
 
 import { getFirebaseConfig } from "~/firebase-setup";

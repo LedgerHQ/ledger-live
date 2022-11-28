@@ -1,10 +1,11 @@
-import React, { useCallback, useEffect, useState } from "react";
-import { StyleSheet, View, Platform, NativeModules } from "react-native";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
+import { StyleSheet, View, Platform } from "react-native";
 import Config from "react-native-config";
 import { useSelector, useDispatch } from "react-redux";
 import { Trans } from "react-i18next";
 import {
   useNavigation,
+  useRoute,
   useTheme as useNavTheme,
 } from "@react-navigation/native";
 import {
@@ -12,7 +13,8 @@ import {
   TransportModule,
 } from "@ledgerhq/live-common/hw/index";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
-import { Button } from "@ledgerhq/native-ui";
+import { DeviceModelId } from "@ledgerhq/types-devices";
+import { Flex } from "@ledgerhq/native-ui";
 import { useTheme } from "styled-components/native";
 import { ScreenName } from "../../const";
 import { knownDevicesSelector } from "../../reducers/ble";
@@ -27,19 +29,24 @@ import {
   setLastConnectedDevice,
   setReadOnlyMode,
 } from "../../actions/settings";
+import Button from "../wrappedUi/Button";
 
 import PairLight from "../../screens/Onboarding/assets/nanoX/pairDevice/light.json";
 import PairDark from "../../screens/Onboarding/assets/nanoX/pairDevice/dark.json";
+import { DeviceLike } from "../../reducers/types";
+import { usePromptBluetoothCallback } from "../../logic/usePromptBluetoothCallback";
 
 type Props = {
-  onBluetoothDeviceAction?: (device: Device) => void;
-  onSelect: (device: Device) => void;
+  onBluetoothDeviceAction?: (_: Device) => void;
+  onSelect: (_: Device) => void;
   onWithoutDevice?: () => void;
   withArrows?: boolean;
   usbOnly?: boolean;
-  filter?: (transportModule: TransportModule) => boolean;
+  filter?: (_: TransportModule) => boolean;
   autoSelectOnAdd?: boolean;
   hideAnimation?: boolean;
+  /** If defined, only show devices that have a device model id in this array */
+  deviceModelIds?: DeviceModelId[];
 };
 
 export default function SelectDevice({
@@ -51,17 +58,20 @@ export default function SelectDevice({
   onBluetoothDeviceAction,
   autoSelectOnAdd,
   hideAnimation,
+  deviceModelIds,
 }: Props) {
   const { colors } = useTheme();
   const navigation = useNavigation();
   const knownDevices = useSelector(knownDevicesSelector);
   const dispatch = useDispatch();
+  const route = useRoute();
+  const promptBluetooth = usePromptBluetoothCallback();
 
   const handleOnSelect = useCallback(
     deviceInfo => {
       const { modelId, wired } = deviceInfo;
 
-      dispatch(setLastConnectedDevice(deviceInfo));  
+      dispatch(setLastConnectedDevice(deviceInfo));
       if (wired) {
         track("Device selection", {
           modelId,
@@ -72,7 +82,7 @@ export default function SelectDevice({
         onSelect(deviceInfo);
         dispatch(setReadOnlyMode(false));
       } else {
-        NativeModules.BluetoothHelperModule.prompt()
+        promptBluetooth()
           .then(() => {
             track("Device selection", {
               modelId,
@@ -88,23 +98,34 @@ export default function SelectDevice({
           });
       }
     },
-    [dispatch, onSelect],
+    [dispatch, onSelect, promptBluetooth],
   );
 
-  const [devices, setDevices] = useState([]);
+  const [devices, setDevices] = useState<Device[]>([]);
 
   const onPairNewDevice = useCallback(() => {
-    NativeModules.BluetoothHelperModule.prompt()
+    track("button_clicked", {
+      button: "Pair with bluetooth",
+      screen: route.name,
+    });
+    promptBluetooth()
       .then(() =>
-        // @ts-expect-error navigation issue
         navigation.navigate(ScreenName.PairDevices, {
           onDone: autoSelectOnAdd ? handleOnSelect : null,
+          deviceModelIds,
         }),
       )
       .catch(() => {
         /* ignore */
       });
-  }, [autoSelectOnAdd, navigation, handleOnSelect]);
+  }, [
+    route.name,
+    promptBluetooth,
+    navigation,
+    autoSelectOnAdd,
+    handleOnSelect,
+    deviceModelIds,
+  ]);
 
   const renderItem = useCallback(
     (item: Device) => (
@@ -119,9 +140,14 @@ export default function SelectDevice({
     [withArrows, onBluetoothDeviceAction, handleOnSelect],
   );
 
-  const all: Device[] = getAll({ knownDevices }, { devices });
+  const all: Device[] = useMemo(() => {
+    return getAll({ knownDevices }, { devices }).filter(device => {
+      if (!deviceModelIds) return true;
+      return deviceModelIds.includes(device.modelId);
+    });
+  }, [knownDevices, devices, deviceModelIds]);
 
-  const [ble, other] = all.reduce(
+  const [ble, other] = all.reduce<[Array<Device>, Array<Device>]>(
     ([ble, other], device) =>
       device.wired ? [ble, [...other, device]] : [[...ble, device], other],
     [[], []],
@@ -143,8 +169,8 @@ export default function SelectDevice({
               deviceId: e.id,
               deviceName: e.name || "",
               modelId:
-                (e.deviceModel && e.deviceModel.id) ||
-                Config?.FALLBACK_DEVICE_MODEL_ID ||
+                (e.deviceModel && (e.deviceModel.id as DeviceModelId)) ||
+                (Config?.FALLBACK_DEVICE_MODEL_ID as DeviceModelId) ||
                 "nanoX",
               wired: e.id.startsWith("httpdebug|")
                 ? Config?.FALLBACK_DEVICE_WIRED === "YES"
@@ -157,10 +183,10 @@ export default function SelectDevice({
       });
     });
     return () => subscription.unsubscribe();
-  }, [knownDevices, filter]);
+  }, [knownDevices, filter, deviceModelIds]);
 
   return (
-    <>
+    <Flex flexDirection={"column"} alignSelf="stretch">
       {usbOnly && withArrows && !hideAnimation ? (
         <UsbPlaceholder />
       ) : usbOnly ? null : ble.length === 0 ? (
@@ -192,7 +218,7 @@ export default function SelectDevice({
         ) : (
           <USBHeader />
         ))}
-      {other.length === 0 ? (
+      {!hasUSBSection ? null : other.length === 0 ? (
         <USBEmpty usbOnly={usbOnly} />
       ) : (
         other.map(renderItem)
@@ -211,7 +237,7 @@ export default function SelectDevice({
           </Button>
         </View>
       )}
-    </>
+    </Flex>
   );
 }
 
@@ -247,14 +273,17 @@ const UsbPlaceholder = () => {
   );
 };
 
-function getAll({ knownDevices }, { devices }): Device[] {
+function getAll(
+  { knownDevices }: { knownDevices: DeviceLike[] },
+  { devices }: { devices: Device[] },
+): Device[] {
   return [
     ...devices,
     ...knownDevices.map(d => ({
       deviceId: d.id,
       deviceName: d.name || "",
       wired: false,
-      modelId: "nanoX",
+      modelId: d.modelId || DeviceModelId.nanoX,
     })),
   ];
 }
@@ -264,6 +293,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "flex-start",
+    alignSelf: "stretch",
   },
   headerText: {
     fontSize: 14,

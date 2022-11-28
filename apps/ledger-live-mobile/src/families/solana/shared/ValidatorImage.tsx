@@ -9,17 +9,15 @@ type Props = {
   name?: string;
 };
 
-const ValidatorImage = ({ imgUrl, size = 64, name }: Props) => {
-  return (
-    <Circle crop size={size}>
-      {imgUrl && (
-        <Image style={{ width: size, height: size }} source={{ uri: imgUrl }} />
-      )}
-      {!imgUrl && (
-        <FirstLetterIcon label={name ?? "-"} round size={size} fontSize={24} />
-      )}
-    </Circle>
-  );
-};
+const ValidatorImage = ({ imgUrl, size = 64, name }: Props) => (
+  <Circle crop size={size}>
+    {imgUrl && (
+      <Image style={{ width: size, height: size }} source={{ uri: imgUrl }} />
+    )}
+    {!imgUrl && (
+      <FirstLetterIcon label={name ?? "-"} round size={size} fontSize={24} />
+    )}
+  </Circle>
+);
 
 export default ValidatorImage;

@@ -5,8 +5,6 @@ const fs = require("fs");
 const child_process = require("child_process");
 const path = require("path");
 
-console.log("running");
-
 const rebuildDeps = async (folder, file) => {
   await execa("npm", ["run", "install-deps"], {
     // env: { DEBUG: "electron-builder" },
@@ -52,7 +50,7 @@ async function main() {
 
   // when running inside the test electron container, there is no src.
   if (fs.existsSync("src")) {
-    child_process.exec("bash ./scripts/sync-families-dispatch.sh");
+    child_process.exec("zx ./scripts/sync-families-dispatch.mjs");
   }
 }
 

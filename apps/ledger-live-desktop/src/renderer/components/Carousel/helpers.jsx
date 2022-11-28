@@ -2,8 +2,10 @@
 import React, { useMemo } from "react";
 import map from "lodash/map";
 import { Trans } from "react-i18next";
+import { getEnv } from "@ledgerhq/live-common/env";
 import Slide from "./Slide";
 import { urls } from "~/config/urls";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 
 import LedgerAcademyBgImage from "./banners/LedgerAcademy/images/bg.png";
 import LedgerAcademyCardImage from "./banners/LedgerAcademy/images/card.png";
@@ -24,6 +26,9 @@ import SwapSmallCoin2Image from "./banners/Swap/images/smallcoin2.png";
 import SwapSmallCoin3Image from "./banners/Swap/images/smallcoin3.png";
 import BackupPackBgImage from "./banners/BackupPack/images/bg.png";
 import BackupPackNanosImage from "./banners/BackupPack/images/nanos.png";
+
+import ReferralProgramBgImage from "./banners/ReferralProgram/images/bg.png";
+import ReferralProgramCoinImage from "./banners/ReferralProgram/images/coin.png";
 
 export const getTransitions = (transition: "slide" | "flip", reverse: boolean = false) => {
   const mult = reverse ? -1 : 1;
@@ -60,6 +65,30 @@ export const getTransitions = (transition: "slide" | "flip", reverse: boolean = 
       initial: null,
     },
   }[transition];
+};
+
+const referralProgramSlide = {
+  name: "referralProgram",
+  title: <Trans i18nKey={`banners.referralProgram.title`} />,
+  description: <Trans i18nKey={`banners.referralProgram.description`} />,
+  imgs: [
+    {
+      source: ReferralProgramBgImage,
+      transform: [0, -30, -40, 30],
+      size: {
+        width: 154,
+        height: 200,
+      },
+    },
+    {
+      source: ReferralProgramCoinImage,
+      transform: [0, -50, -50, 50],
+      size: {
+        width: 134,
+        height: 200,
+      },
+    },
+  ],
 };
 
 const SLIDES = [
@@ -266,16 +295,26 @@ const SLIDES = [
 ];
 
 export const useDefaultSlides = () => {
+  const referralProgramConfig = useFeature("referralProgramDesktopBanner");
+
+  const slides = useMemo(() => {
+    if (referralProgramConfig?.enabled && referralProgramConfig?.params?.path) {
+      return [{ ...referralProgramSlide, path: referralProgramConfig?.params?.path }, ...SLIDES];
+    } else {
+      return SLIDES;
+    }
+  }, [referralProgramConfig]);
+
   return useMemo(
     () =>
       // $FlowFixMe
-      map(process.env.PLAYWRIGHT_RUN ? [SLIDES[2], SLIDES[1]] : SLIDES, (slide: Props) => ({
+      map(getEnv("PLAYWRIGHT_RUN") ? [SLIDES[2], SLIDES[1]] : slides, (slide: Props) => ({
         id: slide.name,
         // eslint-disable-next-line react/display-name
         Component: () => <Slide {...slide} />,
         start: slide.start,
         end: slide.end,
       })),
-    [],
+    [slides],
   );
 };

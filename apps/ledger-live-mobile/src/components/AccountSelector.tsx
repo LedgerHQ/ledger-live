@@ -1,6 +1,6 @@
 import React, { useCallback } from "react";
 import { useSelector } from "react-redux";
-import { AccountLike } from "@ledgerhq/live-common/types/index";
+import { AccountLike } from "@ledgerhq/types-live";
 import { Flex, Text } from "@ledgerhq/native-ui";
 import { useTranslation } from "react-i18next";
 import NoResultsFound from "../icons/NoResultsFound";
@@ -13,7 +13,7 @@ const SEARCH_KEYS = ["name", "unit.code", "token.name", "token.ticker"];
 
 type Props = {
   list: AccountLike[];
-  onSelectAccount: (account: AccountLike) => void;
+  onSelectAccount: (_: AccountLike) => void;
   showAddAccount?: boolean;
   onAddAccount?: () => void;
   initialCurrencySelected?: string;

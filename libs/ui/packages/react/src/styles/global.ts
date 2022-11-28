@@ -15,7 +15,7 @@ export const GlobalStyle = createGlobalStyle<GlobalStyleProps>`
   }
 
   body {
-    font-family: Inter;
+    font-family: Inter, sans-serif;
     font-size: 100%;
   }
 
@@ -38,4 +38,26 @@ export const GlobalStyle = createGlobalStyle<GlobalStyleProps>`
   ${(props) => (typeof props.fontsPath === "string" ? fontStyles : "")}
 
   ${tippyStyles}
+
+  ::-webkit-scrollbar              {
+    width: 12px;
+    height: 12px;
+    background-color: rgba(0,0,0,0);
+  }
+  ::-webkit-scrollbar-button       {
+    opacity: 0;
+    height: 0;
+    width: 0;
+  }
+  ::-webkit-scrollbar-track        {
+    background-color: rgba(0,0,0,0);
+  }
+  ::-webkit-scrollbar-thumb        {
+    box-shadow: inset 0 0 0 12px var(--track-color);
+    border: 2px solid rgba(0,0,0,0);
+    border-radius: 12px;
+  }
+  ::-webkit-scrollbar-corner {
+    opacity: 0;
+  }
 `;

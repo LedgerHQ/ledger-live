@@ -1,16 +1,12 @@
 import { useEffect, useState } from "react";
-import {
-  DeviceInfo,
-  FirmwareUpdateContext,
-} from "@ledgerhq/live-common/types/manager";
+import { DeviceInfo, FirmwareUpdateContext } from "@ledgerhq/types-live";
 import manager from "@ledgerhq/live-common/manager/index";
 
 const useLatestFirmware: (
-  deviceInfo?: DeviceInfo,
-) => FirmwareUpdateContext | null | undefined = deviceInfo => {
-  const [latestFirmware, setLatestFirmware] = useState<
-    FirmwareUpdateContext | null | undefined
-  >(null);
+  _?: DeviceInfo,
+) => FirmwareUpdateContext | null = deviceInfo => {
+  const [latestFirmware, setLatestFirmware] =
+    useState<FirmwareUpdateContext | null>(null);
 
   useEffect(() => {
     const getLatestFirmwareForDevice = async () => {

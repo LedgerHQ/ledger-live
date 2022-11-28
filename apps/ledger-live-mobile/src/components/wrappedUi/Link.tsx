@@ -5,7 +5,7 @@ import { track } from "../../analytics";
 
 export type WrappedLinkProps = LinkProps & {
   event?: string;
-  eventProperties?: Object;
+  eventProperties?: Record<string, unknown>;
 };
 
 export default function Link({

@@ -1,33 +1,45 @@
-import React, { useCallback, useMemo } from "react";
+import React, { useCallback } from "react";
 import useEnv from "@ledgerhq/live-common/hooks/useEnv";
 import {
   getAccountCurrency,
   getAccountName,
   getAccountUnit,
 } from "@ledgerhq/live-common/account/index";
+import { TokenAccount, AccountLike, ChildAccount } from "@ledgerhq/types-live";
+import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import {
-  Account,
-  Currency,
-  TokenAccount,
-  CryptoCurrency,
-} from "@ledgerhq/live-common/types/index";
-import { getTagDerivationMode } from "@ledgerhq/live-common/derivation";
+  DerivationMode,
+  getTagDerivationMode,
+} from "@ledgerhq/live-common/derivation";
 import { useSelector } from "react-redux";
-import { useCalculate } from "@ledgerhq/live-common/countervalues/react";
-import { BigNumber } from "bignumber.js";
 import { NavigatorName, ScreenName } from "../../const";
-import { useBalanceHistoryWithCountervalue } from "../../actions/portfolio";
-import { counterValueCurrencySelector } from "../../reducers/settings";
+import { useBalanceHistoryWithCountervalue } from "../../hooks/portfolio";
 import AccountRowLayout from "../../components/AccountRowLayout";
+import { parentAccountSelector } from "../../reducers/accounts";
+import { track } from "../../analytics";
+import { State } from "../../reducers/types";
+import { AccountsNavigatorParamList } from "../../components/RootNavigator/types/AccountsNavigator";
+import {
+  BaseComposite,
+  StackNavigatorProps,
+} from "../../components/RootNavigator/types/helpers";
+import { MarketNavigatorStackParamList } from "../../components/RootNavigator/types/MarketNavigator";
+
+type Navigation = BaseComposite<
+  | StackNavigatorProps<
+      AccountsNavigatorParamList,
+      ScreenName.Asset | ScreenName.Accounts
+    >
+  | StackNavigatorProps<MarketNavigatorStackParamList, ScreenName.MarketDetail>
+>;
 
 type Props = {
-  account: Account | TokenAccount;
+  account: AccountLike;
   accountId: string;
-  navigation: any;
-  isLast: boolean;
-  onSetAccount: (arg: TokenAccount) => void;
-  portfolioValue: number;
-  navigationParams?: any[];
+  navigation: Navigation["navigation"];
+  isLast?: boolean;
+  onSetAccount?: (arg: TokenAccount) => void;
+  navigationParams?: [ScreenName, object];
   hideDelta?: boolean;
   topLink?: boolean;
   bottomLink?: boolean;
@@ -37,41 +49,32 @@ const AccountRow = ({
   navigation,
   account,
   accountId,
-  portfolioValue,
   navigationParams,
   hideDelta,
   topLink,
   bottomLink,
+  isLast,
 }: Props) => {
   // makes it refresh if this changes
   useEnv("HIDE_EMPTY_TOKEN_ACCOUNTS");
   const currency = getAccountCurrency(account);
+  const parentAccount = useSelector((state: State) =>
+    parentAccountSelector(state, { account: account as ChildAccount }),
+  );
+
   const name = getAccountName(account);
   const unit = getAccountUnit(account);
 
   const tag =
-    account.derivationMode !== undefined &&
-    account.derivationMode !== null &&
-    getTagDerivationMode(currency as CryptoCurrency, account.derivationMode);
+    account.type === "Account" &&
+    account?.derivationMode !== undefined &&
+    account?.derivationMode !== null &&
+    getTagDerivationMode(
+      currency as CryptoCurrency,
+      account.derivationMode as DerivationMode,
+    );
 
-  const counterValueCurrency: Currency = useSelector(
-    counterValueCurrencySelector,
-  );
-
-  const countervalue = useCalculate({
-    from: currency,
-    to: counterValueCurrency,
-    value:
-      account.balance instanceof BigNumber
-        ? account.balance.toNumber()
-        : account.balance,
-    disableRounding: true,
-  });
-
-  const portfolioPercentage = useMemo(
-    () => (countervalue ? countervalue / Math.max(1, portfolioValue) : 0), // never divide by potential zero, we dont want to go towards infinity
-    [countervalue, portfolioValue],
-  );
+  const parentId = (account as TokenAccount)?.parentId;
 
   const { countervalueChange } = useBalanceHistoryWithCountervalue({
     account,
@@ -79,32 +82,36 @@ const AccountRow = ({
   });
 
   const onAccountPress = useCallback(() => {
+    track("account_clicked", {
+      currency: currency.name,
+    });
     if (navigationParams) {
+      // @ts-expect-error navigagtion spread, ask your mom about it
       navigation.navigate(...navigationParams);
     } else if (account.type === "Account") {
-      navigation.navigate(NavigatorName.Portfolio, {
-        screen: NavigatorName.PortfolioAccounts,
-        params: {
-          screen: ScreenName.Account,
-          params: {
-            accountId,
-            isForwardedFromAccounts: true,
-          },
-        },
+      navigation.navigate(ScreenName.Account, {
+        accountId,
       });
     } else if (account.type === "TokenAccount") {
-      navigation.navigate(NavigatorName.Portfolio, {
-        screen: NavigatorName.PortfolioAccounts,
+      navigation.navigate(NavigatorName.Accounts, {
+        screen: ScreenName.Account,
         params: {
-          screen: ScreenName.Account,
-          params: {
-            parentId: account?.parentId,
-            accountId: account.id,
-          },
+          currencyId: currency.id,
+          parentId,
+          accountId: account.id,
         },
       });
     }
-  }, [account, accountId, navigation, navigationParams]);
+  }, [
+    account.id,
+    account.type,
+    accountId,
+    currency.id,
+    currency.name,
+    navigation,
+    navigationParams,
+    parentId,
+  ]);
 
   return (
     <AccountRowLayout
@@ -115,10 +122,11 @@ const AccountRow = ({
       name={name}
       countervalueChange={countervalueChange}
       tag={tag}
-      progress={portfolioPercentage}
       topLink={topLink}
       bottomLink={bottomLink}
       hideDelta={hideDelta}
+      parentAccountName={parentAccount && getAccountName(parentAccount)}
+      isLast={isLast}
     />
   );
 };

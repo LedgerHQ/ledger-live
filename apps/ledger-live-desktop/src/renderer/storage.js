@@ -1,6 +1,7 @@
 // @flow
 
 import { ipcRenderer } from "electron";
+import { getEnv } from "@ledgerhq/live-common/env";
 import accountModel from "~/helpers/accountModel";
 import memoize from "lodash/memoize";
 import debounce from "lodash/debounce";
@@ -39,7 +40,7 @@ export const getKey = async (ns: string, keyPath: string, defaultValue: any) => 
 };
 
 let debounceToUse = debounce;
-if (process.env.PLAYWRIGHT_RUN) {
+if (getEnv("PLAYWRIGHT_RUN")) {
   // $FlowFixMe
   debounceToUse = fn => (...args) => setTimeout(() => fn(...args));
 }

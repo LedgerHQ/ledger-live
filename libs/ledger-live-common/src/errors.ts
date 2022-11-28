@@ -23,6 +23,27 @@ export const LowerThanMinimumRelayFee = createCustomErrorClass(
 export const TransactionRefusedOnDevice = createCustomErrorClass(
   "TransactionRefusedOnDevice"
 );
+
+export const LanguageInstallRefusedOnDevice = createCustomErrorClass(
+  "LanguageInstallRefusedOnDevice"
+);
+
+export const ImageLoadRefusedOnDevice = createCustomErrorClass(
+  "ImageLoadRefusedOnDevice"
+);
+
+export const ImageDoesNotExistOnDevice = createCustomErrorClass(
+  "ImageDoesNotExistOnDevice"
+);
+
+export const ImageCommitRefusedOnDevice = createCustomErrorClass(
+  "ImageCommitRefusedOnDevice"
+);
+
+export const LanguageInstallTimeout = createCustomErrorClass(
+  "LanguageInstallTimeout"
+);
+
 export const DeviceNotOnboarded = createCustomErrorClass("DeviceNotOnboarded");
 export const InvalidAddressBecauseAlreadyDelegated = createCustomErrorClass(
   "InvalidAddressBecauseAlreadyDelegated"
@@ -205,6 +226,8 @@ export const BluetoothNotSupportedError = createCustomErrorClass(
 export const UnsupportedDerivation = createCustomErrorClass(
   "UnsupportedDerivation"
 );
+
+export const EConnResetError = createCustomErrorClass("EConnReset");
 
 export * from "./families/polkadot/errors";
 export * from "./families/stellar/errors";

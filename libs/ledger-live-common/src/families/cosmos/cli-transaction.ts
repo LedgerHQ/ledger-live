@@ -4,12 +4,11 @@ import invariant from "invariant";
 import flatMap from "lodash/flatMap";
 import zipWith from "lodash/zipWith";
 import { BigNumber } from "bignumber.js";
-import { getValidators } from "./validators";
-import type { Transaction } from "../../generated/types";
 import { Transaction as CosmosTransaction } from "./types";
 import type { CosmosDelegationInfo } from "./types";
-import { getCryptoCurrencyById } from "../../currencies";
+import cosmosValidatorsManager from "./validators";
 import { AccountLike } from "@ledgerhq/types-live";
+
 const options = [
   {
     name: "mode",
@@ -32,7 +31,7 @@ const options = [
     desc: "add a memo to a transaction",
   },
   {
-    name: "cosmosSourceValidator",
+    name: "sourceValidator",
     type: String,
     desc: "for redelegate, add a source validator",
   },
@@ -53,11 +52,11 @@ const options = [
 function inferTransactions(
   transactions: Array<{
     account: AccountLike;
-    transaction: Transaction;
+    transaction: CosmosTransaction;
   }>,
   opts: Record<string, any>,
   { inferAmount }: any
-): Transaction[] {
+): CosmosTransaction[] {
   return flatMap(transactions, ({ transaction, account }) => {
     invariant(transaction.family === "cosmos", "cosmos family");
     const validatorsAddresses: string[] = opts["cosmosValidator"] || [];
@@ -82,7 +81,7 @@ function inferTransactions(
       fees: opts.fees ? inferAmount(account, opts.fees) : null,
       gas: opts.gasLimit ? new BigNumber(opts.gasLimit) : null,
       validators: validators,
-      cosmosSourceValidator: opts.cosmosSourceValidator,
+      sourceValidator: opts.sourceValidator,
     } as CosmosTransaction;
   });
 }
@@ -110,7 +109,7 @@ const cosmosValidators = {
   }: Partial<{
     format: string;
   }>): Observable<string> =>
-    from(getValidators(getCryptoCurrencyById("cosmos"))).pipe(
+    from(cosmosValidatorsManager.getValidators()).pipe(
       map((validators) => {
         const f =
           (format && cosmosValidatorsFormatters[format]) ||

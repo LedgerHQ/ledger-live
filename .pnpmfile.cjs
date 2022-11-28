@@ -67,6 +67,13 @@ function readPackage(pkg, context) {
         So we are going to patch these until the maintainers fix their own stuff…
         Feel free to make PRs if you feel like it :).
       */
+      /*
+        Remove react-native/react-dom from react-redux optional peer dependencies.
+        Without this, using react-redux code in LLM from LLC will fail because the package will get duplicated.
+      */
+      removeDependencies("react-redux", ["react-native", "react-dom"], {
+        kind: "peerDependencies",
+      }),
       /* Storybook packages */
       addDependencies("@storybook/webpack-config", { "resolve-from": "*" }),
       addDependencies("@storybook/addon-knobs", {
@@ -123,7 +130,7 @@ function readPackage(pkg, context) {
       addPeerDependencies("metro-transform-worker", {
         "metro-minify-uglify": "*",
       }),
-      /* @expo/* packages */
+      /* Expo packages… */
       addDependencies("@expo/webpack-config", {
         "resolve-from": "*",
         "fs-extra": "*",
@@ -135,6 +142,16 @@ function readPackage(pkg, context) {
         "@expo/config": "*",
         "@expo/spawn-async": "*",
         glob: "*",
+      }),
+      addPeerDependencies(/^expo-/, {
+        "expo-modules-core": "*",
+        "expo-constants": "*",
+      }),
+      addPeerDependencies("expo-asset", {
+        "expo-file-system": "*",
+      }),
+      addPeerDependencies("expo-font", {
+        "expo-asset": "*",
       }),
       /* Other packages */
       addPeerDependencies("@svgr/core", { "@svgr/plugin-svgo": "*" }),
@@ -148,12 +165,18 @@ function readPackage(pkg, context) {
       addDependencies("react-native-locale", {
         fbjs: "*",
       }),
+      addDependencies("react-native-tcp", {
+        "stream-browserify": "*",
+      }),
       addDependencies("postcss-loader", {
         "postcss-flexbugs-fixes": "*",
         "postcss-preset-env": "*",
         "postcss-normalize": "*",
       }),
       addPeerDependencies("any-observable", {
+        rxjs: "*",
+      }),
+      addPeerDependencies("rxjs-compat", {
         rxjs: "*",
       }),
       addPeerDependencies("@cspotcode/source-map-support", {
@@ -168,6 +191,8 @@ function readPackage(pkg, context) {
       addPeerDependencies("react-lottie", {
         "prop-types": "*",
       }),
+      addDependencies("@actions/cache", { "@azure/abort-controller": "*" }),
+      addDependencies("rn-fetch-blob", { lodash: "*" }),
       // "dmg-builder" is required to build .dmg electron apps on macs,
       // but is not declared as such by app-builder-lib.
       // I'm not adding it as a dependency because if I did,
@@ -180,10 +205,6 @@ function readPackage(pkg, context) {
       // Try to prevent pnpm-lock.yaml flakiness
       removeDependencies("follow-redirects", ["debug"], {
         kind: "peerDependencies",
-      }),
-      /* Packages that are missing @types/* dependencies */
-      addPeerDependencies("react-native-gesture-handler", {
-        "@types/react": "*",
       }),
     ],
     pkg,

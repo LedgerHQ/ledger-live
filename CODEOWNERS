@@ -1,0 +1,43 @@
+# Live DX Team
+
+.github/              @ledgerhq/live-devx
+scripts/              @ledgerhq/live-devx
+tools/                @ledgerhq/live-devx
+fastlane/             @ledgerhq/live-devx
+
+# Live Blockchain Support Team
+
+apps/**/families/                                               @ledgerhq/live-blockchain-support
+ledger-live-desktop/src/live-common-set-supported-currencies.*  @ledgerhq/live-blockchain-support
+ledger-live-mobile/src/live-common-setup.*                      @ledgerhq/live-blockchain-support
+ledger-live-common/src/families                                 @ledgerhq/live-blockchain-support
+ledgerjs/packages/cryptoassets                                  @ledgerhq/live-blockchain-support
+ledgerjs/packages/types-cryptoassets                            @ledgerhq/live-blockchain-support
+ledgerjs/packages/hw-app-*                                      @ledgerhq/live-blockchain-support
+
+# Live Platform and Services Team
+
+ledger-live-desktop/src/renderer/screens/exchange/  @ledgerhq/live-platform-and-services
+ledger-live-mobile/src/screens/Exchange/            @ledgerhq/live-platform-and-services
+ledger-live-common/src/exchange/                    @ledgerhq/live-platform-and-services
+ledger-live-common/src/platform/                    @ledgerhq/live-platform-and-services
+
+# Live Devices Team
+
+apps/**/components/DeviceAction/        @ledgerhq/live-devices
+ledger-live-mobile/src/screens/Manager/ @ledgerhq/live-devices
+ledger-live-common/src/hw/              @ledgerhq/live-devices
+ledger-live-common/src/apps/            @ledgerhq/live-devices
+ledger-live-common/src/manager/         @ledgerhq/live-devices
+ledgerjs/packages/types-devices/        @ledgerhq/live-devices
+ledgerjs/packages/devices/              @ledgerhq/live-devices
+ledgerjs/packages/hw-transport-*        @ledgerhq/live-devices
+ledgerjs/packages/react-native-*        @ledgerhq/live-devices
+
+
+# Live QA Team
+ledger-live-desktop/tests/**/*-snapshots/ @ledgerhq/live-qa
+
+# Cross-teams
+.github/**/bot-*.yml                 @gre @ledgerhq/live-blockchain-support @ledgerhq/live-qa
+ledgerjs/packages/types-live/        @gre @ledgerhq/live-blockchain-support @ledgerhq/live-platform-and-services @ledgerhq/live-devices

@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useState, useMemo, useContext } from "react";
 import { useTranslation } from "react-i18next";
 import {
   Flex,
@@ -8,7 +8,11 @@ import {
   StoriesIndicator,
   Box,
 } from "@ledgerhq/native-ui";
-import { useNavigation } from "@react-navigation/native";
+import {
+  useNavigation,
+  useFocusEffect,
+  CompositeNavigationProp,
+} from "@react-navigation/native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import styled, { useTheme } from "styled-components/native";
 import { useDispatch } from "react-redux";
@@ -18,10 +22,14 @@ import { completeOnboarding, setReadOnlyMode } from "../../../actions/settings";
 
 import { NavigatorName, ScreenName } from "../../../const";
 import { screen, track } from "../../../analytics";
+
+import { AnalyticsContext } from "../../../analytics/AnalyticsContext";
 import {
-  useCurrentRouteName,
-  usePreviousRouteName,
-} from "../../../helpers/routeHooks";
+  RootNavigationComposite,
+  StackNavigatorNavigation,
+} from "../../../components/RootNavigator/types/helpers";
+import { OnboardingNavigatorParamList } from "../../../components/RootNavigator/types/OnboardingNavigator";
+import { BaseOnboardingNavigatorParamList } from "../../../components/RootNavigator/types/BaseOnboardingNavigator";
 
 const slidesImages = [
   require("../../../../assets/images/onboarding/stories/slide1.png"),
@@ -35,6 +43,16 @@ const StyledSafeAreaView = styled(SafeAreaView)`
   background-color: ${p => p.theme.colors.background.main};
 `;
 
+type NavigationProp = CompositeNavigationProp<
+  StackNavigatorNavigation<
+    OnboardingNavigatorParamList,
+    ScreenName.OnboardingLanguage
+  >,
+  RootNavigationComposite<
+    StackNavigatorNavigation<BaseOnboardingNavigatorParamList>
+  >
+>;
+
 const Item = ({
   title,
   imageProps,
@@ -44,27 +62,33 @@ const Item = ({
   title: string;
   imageProps: ImageProps;
   displayNavigationButtons?: boolean;
+  currentIndex?: number;
 }) => {
   const dispatch = useDispatch();
-  const navigation = useNavigation();
+  const navigation = useNavigation<NavigationProp>();
   const { colors } = useTheme();
   const { t } = useTranslation();
+
+  const screenName = useMemo(
+    () => `Reborn Story Step ${currentIndex}`,
+    [currentIndex],
+  );
 
   const onClick = useCallback(
     (value: string) => {
       track("button_clicked", {
         button: value,
-        screen: `Reborn Story Step ${currentIndex}`,
+        screen: screenName,
       });
     },
-    [currentIndex],
+    [screenName],
   );
 
   const buyLedger = useCallback(() => {
     onClick("Buy a Ledger");
-    // TODO: FIX @react-navigation/native using Typescript
-    // @ts-ignore next-line
-    navigation.navigate(NavigatorName.BuyDevice);
+    navigation.navigate(NavigatorName.BuyDevice, {
+      screen: undefined,
+    } as never);
   }, [navigation, onClick]);
 
   const exploreLedger = useCallback(() => {
@@ -72,11 +96,9 @@ const Item = ({
     dispatch(setReadOnlyMode(true));
     onClick("Explore without a device");
 
-    // Fixme: Navigate to read only page ?
-    // TODO: FIX @react-navigation/native using Typescript
-    // @ts-ignore next-line
-    navigation.navigate(NavigatorName.Base, {
-      screen: NavigatorName.Main,
+    navigation.reset({
+      index: 0,
+      routes: [{ name: NavigatorName.Base } as never],
     });
   }, [dispatch, navigation, onClick]);
 
@@ -114,7 +136,7 @@ const Item = ({
       </Svg>
       <Text
         variant="h4"
-        style={{ fontSize: 40, lineHeight: 40 }}
+        style={{ fontSize: 40, lineHeight: 45 }}
         mx={7}
         mt={3}
         mb={10}
@@ -150,8 +172,17 @@ const Item = ({
 function DiscoverLiveInfo() {
   const { t } = useTranslation();
   const [currentIndex, setCurrentIndex] = useState(1);
+  const { source, setSource, setScreen } = useContext(AnalyticsContext);
 
-  const previousRoute = usePreviousRouteName();
+  useFocusEffect(
+    useCallback(() => {
+      setScreen && setScreen(`Reborn Story Step ${currentIndex}`);
+
+      return () => {
+        setSource(`Reborn Story Step ${currentIndex}`);
+      };
+    }, [setScreen, currentIndex, setSource]),
+  );
 
   const onChange = useCallback(
     (index: number, skipped: boolean) => {
@@ -159,18 +190,20 @@ function DiscoverLiveInfo() {
       screen("Onboarding", `Reborn Story Step ${index + 1}`, {
         skipped,
         flow: "Onboarding No Device",
-        source: previousRoute,
+        source,
       });
     },
-    [previousRoute],
+    [source],
   );
 
-  const autoChange = useCallback((index: number) => onChange(index, false), [
-    onChange,
-  ]);
-  const manualChange = useCallback((index: number) => onChange(index, true), [
-    onChange,
-  ]);
+  const autoChange = useCallback(
+    (index: number) => onChange(index, false),
+    [onChange],
+  );
+  const manualChange = useCallback(
+    (index: number) => onChange(index, true),
+    [onChange],
+  );
 
   return (
     <StyledSafeAreaView>

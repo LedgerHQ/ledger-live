@@ -3,6 +3,7 @@ import { Platform, ScrollView, ViewProps, NativeScrollEvent } from "react-native
 import styled from "styled-components/native";
 import { Flex, SlideIndicator } from "../index";
 import type { Props as FlexboxProps } from "../Layout/Flex";
+import { I18nManager } from "react-native";
 
 const HorizontalScrollView = styled.ScrollView.attrs({ horizontal: true })`
   flex: 1;
@@ -80,6 +81,11 @@ export type Props = React.PropsWithChildren<{
   onManualChange?: (index: number) => void;
 }>;
 
+/*
+In RTL activated, this carousel is making a jump to the last item at start. It's patched by scrolling back to the activeIndex item, but i don't know how to patch this definitely.
+It's seems like a behavior that react-native is doing to start from the end of list, except we don't want this kind of RTL behavior as this list is "time based" and need to always stay LTR.
+Except a visual jump on RTL layout.
+*/
 function Carousel({
   activeIndex = 0,
   autoDelay,
@@ -124,18 +130,16 @@ function Carousel({
 
   useEffect(() => {
     // On init scroll to the active index prop location - if specified.
-    if (init && activeIndex) {
+    if (init && typeof activeIndex === "number") {
       scrollToIndex(activeIndex, false);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [init]);
+  }, [activeIndex, init, scrollToIndex]);
 
   useEffect(() => {
     if (scrollToIndex && typeof activeIndex === "number") {
-      scrollToIndex(activeIndex);
+      scrollToIndex(activeIndex, false);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [activeIndex]);
+  }, [activeIndex, scrollToIndex]);
 
   const onContentSizeChange = (contentWidth: number, contentHeight: number) => {
     dimensions.current = { contentWidth, contentHeight };
@@ -234,7 +238,10 @@ function Carousel({
         pagingEnabled={Platform.OS !== "web"}
         showsHorizontalScrollIndicator={false}
         scrollEventThrottle={200}
-        contentContainerStyle={{ width: `${fullWidth}%` }}
+        contentContainerStyle={{
+          width: `${fullWidth}%`,
+          flexDirection: I18nManager.isRTL && Platform.OS !== "ios" ? "row-reverse" : "row",
+        }}
         decelerationRate="fast"
         onTouchStart={scrollOnSidePress ? onStartTap : undefined}
         onTouchEnd={scrollOnSidePress ? onEndTap : undefined}

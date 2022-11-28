@@ -28,7 +28,6 @@ export const InvertTheme = ({
 
 export const InvertThemeV3 = ({ children }: any): React.ReactElement => {
   const theme = useTheme();
-
   const v3RevertTheme = theme.theme === "light" ? "dark" : "light";
   const newTheme: Theme = useMemo(
     () => ({

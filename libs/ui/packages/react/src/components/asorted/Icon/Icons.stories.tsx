@@ -16,7 +16,7 @@ const Container = styled(Flex).attrs({
   p: 4,
 })`
   overflow: hidden;
-  height: calc(100vh - 2em);
+  height: calc(100vh - 4em);
 `;
 
 const IconContainer = styled(Flex).attrs<{ active?: boolean }>({

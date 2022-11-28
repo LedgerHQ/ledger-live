@@ -4,7 +4,7 @@ import { Trans } from "react-i18next";
 
 import { DeviceModel } from "@ledgerhq/devices";
 import { AppsDistribution } from "@ledgerhq/live-common/apps/index";
-import { DeviceInfo } from "@ledgerhq/live-common/types/manager";
+import { DeviceInfo } from "@ledgerhq/types-live";
 import { Box, Flex, Text } from "@ledgerhq/native-ui";
 import { WarningMedium } from "@ledgerhq/native-ui/assets/icons";
 
@@ -31,7 +31,13 @@ const StorageRepartition = styled(Box)`
 const DeviceAppStorage = ({
   deviceModel,
   deviceInfo,
-  distribution: { freeSpaceBytes, appsSpaceBytes, shouldWarnMemory, apps },
+  distribution: {
+    totalAppsBytes,
+    freeSpaceBytes,
+    appsSpaceBytes,
+    shouldWarnMemory,
+    apps,
+  },
 }: Props) => {
   const appSizes = useMemo(
     () =>
@@ -42,6 +48,8 @@ const DeviceAppStorage = ({
       })),
     [apps, appsSpaceBytes],
   );
+
+  const isDeviceFull = !freeSpaceBytes;
 
   return (
     /* Fixme: Storage info line might be too tight with some translation, consider putting it on multiple lines */
@@ -68,7 +76,7 @@ const DeviceAppStorage = ({
               <Trans i18nKey="manager.storage.used" />
             </Text>{" "}
             <ByteSize
-              value={appsSpaceBytes}
+              value={totalAppsBytes}
               deviceModel={deviceModel}
               firmwareVersion={deviceInfo.version}
             />
@@ -100,32 +108,38 @@ const DeviceAppStorage = ({
             </Trans>
           </Text>
         </Flex>
+
         <Flex flexDirection={"row"} alignItems={"center"}>
           {shouldWarnMemory && (
             <Box mr={2}>
               <WarningMedium color={"palette.warning.c60"} size={14} />
             </Box>
           )}
-          <Text
-            variant={"small"}
-            fontWeight={"medium"}
-            color={"palette.neutral.c80"}
-          >
-            <ByteSize
-              value={freeSpaceBytes}
-              deviceModel={deviceModel}
-              firmwareVersion={deviceInfo.version}
-            />{" "}
-            <Trans i18nKey="manager.storage.storageAvailable" />
-          </Text>
+          {isDeviceFull ? (
+            <Text
+              variant={"small"}
+              fontWeight={"medium"}
+              color={"palette.warning.c60"}
+            >
+              <Trans i18nKey="manager.storage.noFreeSpace" />
+            </Text>
+          ) : (
+            <Text
+              variant={"small"}
+              fontWeight={"medium"}
+              color={"palette.neutral.c80"}
+            >
+              <ByteSize
+                value={freeSpaceBytes}
+                deviceModel={deviceModel}
+                firmwareVersion={deviceInfo.version}
+              />{" "}
+              <Trans i18nKey="manager.storage.storageAvailable" />
+            </Text>
+          )}
         </Flex>
       </Flex>
-      <StorageRepartition
-        activeOpacity={1}
-        bg="neutral.c40"
-        style={{ flex: 1 }}
-        event="ManagerAppDeviceGraphClick"
-      >
+      <StorageRepartition bg="neutral.c40" style={{ flex: 1 }}>
         {appSizes.map(({ ratio, color, name }, i) => (
           <Box
             key={`${i}${name}`}

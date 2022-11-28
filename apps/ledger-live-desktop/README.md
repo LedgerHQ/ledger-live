@@ -15,11 +15,7 @@
 
 ## Architecture
 
-Ledger Live is an hybrid desktop application built with Electron, React, Redux, RxJS,.. and highly optimized with [ledger-core](https://github.com/LedgerHQ/lib-ledger-core) C++ library to deal with blockchains (sync, broadcast,..) via [ledger-core-node-bindings](https://github.com/LedgerHQ/lib-ledger-core-node-bindings). It communicates to Ledger hardware wallet devices (Nano X / Nano S / Blue) to verify address and sign transactions with [ledgerjs](https://github.com/LedgerHQ/ledger-live/tree/develop/libs/ledgerjs). Some logic is shared with [live-common](https://github.com/LedgerHQ/ledger-live/tree/develop/libs/ledger-live-common).
-
-<p align="center">
- <img src="./docs/architecture.png" width="550"/>
-</p>
+Ledger Live desktop is an hybrid application built using Electron, React, Redux, RxJS. It is compatible with macOS 10.10+, Windows 8+ (x64) and Linux (x64). It communicates to Ledger hardware wallet devices (Nano X / Nano S / Blue) to verify address and sign transactions with [ledgerjs](https://github.com/LedgerHQ/ledger-live/tree/develop/libs/ledgerjs). Some logic is shared with [live-common](https://github.com/LedgerHQ/ledger-live/tree/develop/libs/ledger-live-common).
 
 ## Download
 
@@ -43,7 +39,7 @@ Ledger Live releases are signed. The automatic update mechanism makes use of the
 
 ### Requirements
 
-- [NodeJS](https://nodejs.org) `lts/gallium` (v16.x)
+- [NodeJS](https://nodejs.org) `lts/gallium` (v16.x) + [npm](https://www.npmjs.com/)
 - [PnPm](https://pnpm.io) (v7.x)
 - [Python](https://www.python.org/) (v3.5+)
 - A C/C++ toolchain (see [node-gyp documentation](https://github.com/nodejs/node-gyp#on-unix))
@@ -83,45 +79,50 @@ pnpm build:lld
 
 ## Debug
 
-If you are using [Visual Studio Code](https://code.visualstudio.com/) IDE, here is a [Launch Configuration](https://code.visualstudio.com/docs/nodejs/nodejs-debugging#_launch-configuration) that should allow you to run and debug the main process as well as the render process of the application.
-
-As stated in the [debugging documentation](https://code.visualstudio.com/docs/editor/debugging), this file should be named `launch.json` and located under the `.vscode` folder at the root of the monorepository.
+If you are using [Visual Studio Code](https://code.visualstudio.com/) IDE, we provide a [default debug configuration](https://github.com/LedgerHQ/ledger-live/tree/develop/.vscode/launch.json) that you can use to debug the main and renderer processes of the application.
 
 ```json
 {
   "version": "0.2.0",
-  "compounds": [
-    {
-      "name": "Run and Debug LLD",
-      "configurations": ["Debug Main Process", "Debug Renderer Process"],
-      "stopAll": true
-    }
-  ],
   "configurations": [
     {
-      "name": "Debug Main Process",
-      "type": "node",
-      "request": "launch",
-      "cwd": "${workspaceFolder}",
-      "runtimeExecutable": "pnpm",
-      "args": ["dev:lld"],
-      "outputCapture": "std",
-      "resolveSourceMapLocations": null,
-      "env": {
-        "ELECTRON_ARGS": "--remote-debugging-port=8315"
-      }
-    },
-    {
-      "name": "Debug Renderer Process",
+      // Start live desktop with:
+      //ELECTRON_ARGS=--remote-debugging-port=8315 pnpm dev:lld
+      "name": "Attach Electron Renderer",
       "type": "chrome",
       "request": "attach",
-      "address": "localhost",
-      "port": 8315,
-      "timeout": 60000
+      "port": 8315
+    },
+    {
+      // Start live desktop with:
+      //LEDGER_INTERNAL_ARGS=--inspect pnpm dev:lld
+      "name": "Attach Electron Main",
+      "type": "node",
+      "request": "attach",
+      "skipFiles": ["<node_internals>/**"]
     }
   ]
 }
 ```
+
+### Tips
+
+- #### **Can't find Node.js binary "pnpm": path does not exist. Make sure Node.js is installed and in your PATH, or set the "runtimeExecutable" in your launch.json\***
+
+  Add your terminal PATH as enviroment variable.
+
+  ```json
+    "env": {
+      "ELECTRON_ARGS": "--remote-debugging-port=8315",
+      "PATH": "...",
+    }
+  ```
+
+  To get the PATH run in your terminal
+
+  ```bash
+  echo $PATH
+  ```
 
 ---
 
@@ -209,6 +210,6 @@ This part of the repository is where you will add the support of your blockchain
 For a smooth and quick integration:
 
 - See the developers’ documentation on the [Developer Portal](https://developers.ledger.com/docs/coin/general-process/) and
-- Go on Discord to chat with developer support and the developer community. See you there! If you are new to Ledger OP3N Discord server [click here](https://discord.gg/Ledger), otherwise directly join [the Blockchain channel](https://discord.com/channels/885256081289379850/907623688759803935).
+- Go on [Discord](https://developers.ledger.com/discord-pro/) to chat with developer support and the developer community.
 
 ---

@@ -26,7 +26,7 @@ const mainOptions = commandLineArgs(
 );
 
 if (mainOptions.help || !mainOptions.command) {
-  console.log("Ledger Live @ https://github.com/LedgerHQ/ledger-live-common");
+  console.log("Ledger Live @ https://github.com/LedgerHQ/ledger-live");
   console.log("");
   console.log("Usage: ledger-live <command> ...");
   console.log("");
@@ -88,7 +88,7 @@ from(cmd.job(options)).subscribe({
   error: (error) => {
     const e = error instanceof Error ? error : deserializeError(error);
     if (process.env.VERBOSE || process.env.VERBOSE_FILE) console.error(e);
-    else console.error(String(e.message || e));
+    else console.error(String((e && e.message) || e));
     process.exit(1);
   },
   complete: () => {

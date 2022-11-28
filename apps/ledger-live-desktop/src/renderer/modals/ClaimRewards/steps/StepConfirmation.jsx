@@ -41,7 +41,11 @@ function StepConfirmation({
     return (
       <Container>
         <TrackPage category="Claim reward Flow" name="Step Confirmed" />
-        <SyncOneAccountOnMount priority={10} accountId={optimisticOperation.accountId} />
+        <SyncOneAccountOnMount
+          reason="transaction-flow-confirmation"
+          priority={10}
+          accountId={optimisticOperation.accountId}
+        />
         <SuccessDisplay
           title={<Trans i18nKey="claimReward.steps.confirmation.success.title" />}
           description={multiline(t("claimReward.steps.confirmation.success.text"))}

@@ -1,8 +1,8 @@
 import React, { memo, useCallback } from "react";
 import { FlatList } from "react-native";
 import { Trans } from "react-i18next";
-import { InstalledItem } from "@ledgerhq/live-common/apps/index";
-import { State, App } from "@ledgerhq/live-common/types/manager";
+import { InstalledItem, State } from "@ledgerhq/live-common/apps/index";
+import { App } from "@ledgerhq/types-live";
 import styled from "styled-components/native";
 import { Flex, Icons, Text, Button } from "@ledgerhq/native-ui";
 
@@ -14,7 +14,7 @@ import ByteSize from "../../../components/ByteSize";
 const keyExtractor = (item: App, index: number) => String(item.id) + index;
 
 type Props = {
-  isOpened: boolean;
+  isOpened?: boolean;
   apps: App[];
   installed: InstalledItem[];
   onClose: () => void;
@@ -74,7 +74,7 @@ const FlatListContainer = styled(FlatList).attrs({
   width: "100%",
   maxHeight: 250,
   marginBottom: 20,
-})``;
+})`` as unknown as typeof FlatList;
 
 const UpdateAllModal = ({
   isOpened,

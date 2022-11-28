@@ -79,6 +79,7 @@ export function usePolkadotBondLoading(account: PolkadotAccount) {
         type: "SYNC_ONE_ACCOUNT",
         priority: 10,
         accountId: initialAccount.current.id,
+        reason: "polkadot-bond-loading",
       });
     }, SYNC_REFRESH_RATE);
     return () => clearInterval(interval);

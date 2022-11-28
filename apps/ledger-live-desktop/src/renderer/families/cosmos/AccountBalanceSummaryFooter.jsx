@@ -103,7 +103,7 @@ const AccountBalanceSummaryFooter = ({ account, countervalue }: Props) => {
         </AmountValue>
       </BalanceDetail>
       <BalanceDetail>
-        <ToolTip content={<Trans i18nKey="account.delegatedAssetsTooltip" />}>
+        <ToolTip content={<Trans i18nKey="account.delegatedTooltip" />}>
           <TitleWrapper>
             <Title>
               <Trans i18nKey="account.delegatedAssets" />
@@ -117,7 +117,11 @@ const AccountBalanceSummaryFooter = ({ account, countervalue }: Props) => {
       </BalanceDetail>
       {_unbondingBalance.gt(0) && (
         <BalanceDetail>
-          <ToolTip content={<Trans i18nKey="account.undelegatingTooltip" />}>
+          <ToolTip
+            content={
+              <Trans i18nKey="account.undelegatingTooltip" values={{ timelockInDays: 21 }} />
+            }
+          >
             <TitleWrapper>
               <Title>
                 <Trans i18nKey="account.undelegating" />

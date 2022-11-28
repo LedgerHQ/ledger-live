@@ -24,12 +24,21 @@ const lenseTicker = (a) => a[9] || a[2];
 module.exports = {
   paths: [
     "tokens/ethereum/erc20",
+    "tokens/ethereum_goerli/erc20",
+    "tokens/ethereum_rinkeby/erc20",
     "tokens/ethereum_ropsten/erc20",
+    "tokens/ethereum_sepolia/erc20",
   ],
-  output: "data/erc20.js",
+  output: (toJSON) => `data/erc20.${toJSON ? "json" : "ts"}`,
 
   validate: (everything, countervaluesTickers) =>
-    ["ethereum", "ethereum_ropsten", "ethereum_goerli"].flatMap((cid) => {
+    [
+      "ethereum",
+      "ethereum_goerli",
+      "ethereum_rinkeby",
+      "ethereum_ropsten",
+      "ethereum_sepolia",
+    ].flatMap((cid) => {
       const all = everything.filter((a) => a[0] === cid);
       const fiatCollisions = all.filter(
         (a) =>
@@ -87,8 +96,23 @@ module.exports = {
 
       return all.filter((a) => !contractGroup[a[6]]);
     }),
-  outputTemplate: (data) =>
-    `module.exports = [
+  outputTemplate: (data, toJSON) =>
+    toJSON
+      ? JSON.stringify(data)
+      : `export type ERC20Token = [
+  string,
+  string,
+  string,
+  number,
+  string,
+  string,
+  string,
+  boolean,
+  boolean,
+  string?,
+  string?
+];
+const tokens: ERC20Token[] = [
 ${data
   .map(
     (item) =>
@@ -101,7 +125,10 @@ ${data
       "]"
   )
   .join(",\n")}
-];`,
+];
+
+export default tokens;
+`,
 
   loader: ({ signatureFolder, folder, id }) =>
     Promise.all([

@@ -56,11 +56,11 @@ const StyledCircle = styled.circle.attrs({
 `;
 
 const StyledCircleBackground = styled(StyledCircle).attrs((props) => ({
-  stroke: props.stroke || props.theme.colors.primary.c20,
+  stroke: props.stroke || props.theme.colors.primary.c30,
 }))``;
 
 const StyledCircleFront = styled(StyledCircle).attrs((props) => ({
-  stroke: props.stroke || props.theme.colors.primary.c60,
+  stroke: props.stroke || props.theme.colors.primary.c80,
 }))``;
 
 const StyledCenteredText = styled(Text)`

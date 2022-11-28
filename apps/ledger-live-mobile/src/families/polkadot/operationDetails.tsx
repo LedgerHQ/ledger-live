@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo } from "react";
-import { StyleSheet, Linking } from "react-native";
+import { Linking } from "react-native";
 import { Trans, useTranslation } from "react-i18next";
 import startCase from "lodash/startCase";
 import { BigNumber } from "bignumber.js";
@@ -10,16 +10,11 @@ import {
   getAddressExplorer,
 } from "@ledgerhq/live-common/explorers";
 import { usePolkadotPreloadData } from "@ledgerhq/live-common/families/polkadot/react";
-import {
-  Account,
-  Operation,
-  Currency,
-  Unit,
-  OperationType,
-} from "@ledgerhq/live-common/types/index";
-
+import { Account, Operation, OperationType } from "@ledgerhq/types-live";
+import { Currency, Unit } from "@ledgerhq/types-cryptoassets";
 import { useSelector } from "react-redux";
 import { Text } from "@ledgerhq/native-ui";
+import { PolkadotValidator } from "@ledgerhq/live-common/families/polkadot/types";
 import CurrencyUnitValue from "../../components/CurrencyUnitValue";
 import CounterValue from "../../components/CounterValue";
 import Section from "../../screens/OperationDetails/Section";
@@ -48,14 +43,19 @@ function getURLWhatIsThis(op: Operation): string | undefined {
 function formatPalletMethod(palletMethod?: string): string {
   if (!palletMethod) return "";
 
-  return palletMethod
-    .split(".")
-    .map(startCase)
-    .join(" - ");
+  return palletMethod.split(".").map(startCase).join(" - ");
 }
 
 type OperationDetailsExtraProps = {
-  extra: { [key: string]: any };
+  extra: {
+    palletMethod: string;
+    validators: string[];
+    transferAmount: BigNumber;
+    bondedAmount: BigNumber;
+    unbondedAmount: BigNumber;
+    withdrawUnbondedAmount: BigNumber;
+    validatorStash: string;
+  };
   type: string;
   account: Account;
 };
@@ -259,7 +259,12 @@ export function OperationDetailsValidators({
   const mappedValidators = useMemo(
     () =>
       (validators || [])
-        .map(address => polkadotValidators.find(v => v.address === address))
+        .map<PolkadotValidator>(
+          address =>
+            polkadotValidators.find(
+              v => v.address === address,
+            ) as PolkadotValidator,
+        )
         .filter(Boolean),
     [validators, polkadotValidators],
   );
@@ -393,38 +398,28 @@ const NominateAmountCell = ({ operation }: Props) => {
   ) : null;
 };
 
-const createOperationIcon = Icon => ({
-  confirmed,
-  failed,
-  size = 24,
-  type,
-}: {
-  confirmed?: boolean;
-  failed?: boolean;
-  size?: number;
-  type: OperationType;
-}) => (
-  <OperationStatusWrapper
-    size={size}
-    Icon={Icon}
-    confirmed={confirmed}
-    failed={failed}
-    type={type}
-  />
-);
-
-const styles = StyleSheet.create({
-  amountText: {
-    fontSize: 14,
-    flex: 1,
-  },
-  topText: {
-    fontSize: 14,
-    flex: 1,
-    marginBottom: 3,
-  },
-  nominateText: { lineHeight: 40 },
-});
+const createOperationIcon =
+  (Icon: React.ComponentType<{ size?: number; color?: string }>) =>
+  ({
+    confirmed,
+    failed,
+    size = 24,
+    type,
+  }: {
+    confirmed?: boolean;
+    failed?: boolean;
+    size?: number;
+    type: OperationType;
+  }) =>
+    (
+      <OperationStatusWrapper
+        size={size}
+        Icon={Icon}
+        confirmed={confirmed}
+        failed={failed}
+        type={type}
+      />
+    );
 
 const amountCell = {
   BOND: BondAmountCell,

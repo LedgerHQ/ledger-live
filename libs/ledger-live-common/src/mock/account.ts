@@ -30,6 +30,7 @@ import { BitcoinAccount } from "../families/bitcoin/types";
 import { AlgorandAccount } from "../families/algorand/types";
 import { PolkadotAccount } from "../families/polkadot/types";
 import { TezosAccount } from "../families/tezos/types";
+import { createFixtureNFT, genNFTOperation } from "./fixtures/nfts";
 
 function ensureNoNegative(operations) {
   let total = new BigNumber(0);
@@ -183,22 +184,22 @@ const hardcodedMarketcap = [
   "algorand/asa/163650",
 ];
 // for the mock generation we need to adjust to the actual market price of things, we want to avoid having things < 0.01 EUR
-const tickerApproxMarketPrice = {
-  BTC: 0.0073059,
-  ETH: 5.7033e-14,
-  ETC: 1.4857e-15,
-  BCH: 0.0011739,
-  BTG: 0.00005004,
-  LTC: 0.00011728,
-  XRP: 0.000057633,
-  DOGE: 4.9e-9,
-  DASH: 0.0003367,
-  PPC: 0.000226,
-  ZEC: 0.000205798,
+const currencyIdApproxMarketPrice = {
+  bitcoin: 0.0073059,
+  ethereum: 5.7033e-14,
+  ethereum_classic: 1.4857e-15,
+  bitcoin_cash: 0.0011739,
+  bitcoin_gold: 0.00005004,
+  litecoin: 0.00011728,
+  ripple: 0.000057633,
+  dogecoin: 4.9e-9,
+  dash: 0.0003367,
+  peercoin: 0.000226,
+  zcash: 0.000205798,
 };
 // mock only use subset of cryptocurrencies to not affect tests when adding coins
 const currencies = listCryptoCurrencies().filter(
-  (c) => tickerApproxMarketPrice[c.ticker]
+  (c) => currencyIdApproxMarketPrice[c.id]
 );
 // TODO fix the mock to never generate negative balance...
 
@@ -222,11 +223,12 @@ export function genOperation(
   );
   const address = genAddress(superAccount.currency, rng);
   const type = rng.next() < 0.3 ? "OUT" : "IN";
+  const divider =
+    (account.type === "Account" &&
+      currencyIdApproxMarketPrice[account.currency.id]) ||
+    currencyIdApproxMarketPrice.bitcoin;
   const value = new BigNumber(
-    Math.floor(
-      rng.nextInt(0, 100000 * rng.next() * rng.next()) /
-        (tickerApproxMarketPrice[ticker] || tickerApproxMarketPrice.BTC)
-    )
+    Math.floor(rng.nextInt(0, 100000 * rng.next() * rng.next()) / divider)
   );
 
   if (Number.isNaN(value)) {
@@ -298,6 +300,7 @@ type GenAccountOptions = {
   currency?: CryptoCurrency;
   subAccountsCount?: number;
   swapHistorySize?: number;
+  withNft?: boolean;
 };
 
 export function genTokenAccount(
@@ -349,6 +352,7 @@ export function genAccount(
   const currency = opts.currency || rng.nextArrayItem(currencies);
   const operationsSize = opts.operationsSize ?? rng.nextInt(1, 200);
   const swapHistorySize = opts.swapHistorySize || 0;
+  const withNft = opts.withNft ?? false;
   const address = genAddress(currency, rng);
   const derivationPath = runDerivationScheme(
     getDerivationScheme({
@@ -365,9 +369,10 @@ export function genAccount(
   const outdated =
     ["ethereum_classic", "dogecoin"].includes(currency.id) &&
     `${id}`.endsWith("_2");
+  const accountId = `mock:${outdated ? 0 : 1}:${currency.id}:${id}:`;
   const account: Account = {
     type: "Account",
-    id: `mock:${outdated ? 0 : 1}:${currency.id}:${id}:`,
+    id: accountId,
     seedIdentifier: "mock",
     derivationMode: "",
     xpub: genHex(64, rng),
@@ -401,6 +406,11 @@ export function genAccount(
         toAmount: new BigNumber("2000"),
       })),
     balanceHistoryCache: emptyHistoryCache,
+    ...(withNft && {
+      nfts: Array(10)
+        .fill(null)
+        .map(() => createFixtureNFT(accountId, currency)),
+    }),
   };
 
   if (
@@ -489,6 +499,31 @@ export function genAccount(
       const op = genOperation(account, account, ops, rng);
       return ops.concat(op);
     }, []);
+
+  if (withNft) {
+    const nftOperations = Array(5)
+      .fill(null)
+      .reduce((ops: Operation[]) => {
+        const index = Math.floor(Math.random() * (5 - 0 + 1) + 0);
+
+        if (account.nfts && account.nfts[index]) {
+          const { tokenId, contract, standard } = account.nfts[index];
+          const op = genNFTOperation(
+            account,
+            account,
+            ops,
+            rng,
+            contract,
+            standard,
+            tokenId
+          );
+          return ops.concat(op);
+        }
+      }, []);
+
+    account.operations = account.operations.concat(nftOperations);
+  }
+
   account.creationDate =
     account.operations.length > 0
       ? account.operations[account.operations.length - 1].date

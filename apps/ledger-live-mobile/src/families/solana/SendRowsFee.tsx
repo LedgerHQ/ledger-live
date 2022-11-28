@@ -2,13 +2,14 @@ import {
   getAccountCurrency,
   getAccountUnit,
 } from "@ledgerhq/live-common/account/index";
-import { Transaction } from "@ledgerhq/live-common/families/solana/types";
 import {
-  AccountLike,
+  Transaction,
   TransactionStatus,
-} from "@ledgerhq/live-common/types/index";
+} from "@ledgerhq/live-common/generated/types";
+import { TransactionStatus as SolanaTransactionStatus } from "@ledgerhq/live-common/families/solana/types";
+import { Account, AccountLike } from "@ledgerhq/types-live";
 import { Text } from "@ledgerhq/native-ui";
-import { useTheme } from "@react-navigation/native";
+import { CompositeScreenProps, useTheme } from "@react-navigation/native";
 import React, { useCallback } from "react";
 import { Trans } from "react-i18next";
 import { Linking, StyleSheet, View } from "react-native";
@@ -17,20 +18,53 @@ import CurrencyUnitValue from "../../components/CurrencyUnitValue";
 import { urls } from "../../config/urls";
 import ExternalLink from "../../icons/ExternalLink";
 import SummaryRow from "../../screens/SendFunds/SummaryRow";
+import type { BaseNavigatorStackParamList } from "../../components/RootNavigator/types/BaseNavigator";
+import type { StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
+import type { SendFundsNavigatorStackParamList } from "../../components/RootNavigator/types/SendFundsNavigator";
+import { ScreenName } from "../../const";
+import { LendingEnableFlowParamsList } from "../../components/RootNavigator/types/LendingEnableFlowNavigator";
+import { LendingSupplyFlowNavigatorParamList } from "../../components/RootNavigator/types/LendingSupplyFlowNavigator";
+import { LendingWithdrawFlowNavigatorParamList } from "../../components/RootNavigator/types/LendingWithdrawFlowNavigator";
+import { SignTransactionNavigatorParamList } from "../../components/RootNavigator/types/SignTransactionNavigator";
+import { SwapNavigatorParamList } from "../../components/RootNavigator/types/SwapNavigator";
 
 type Props = {
   account: AccountLike;
+  parentAccount?: Account | null;
   transaction: Transaction;
-  status: TransactionStatus;
-};
+  status?: TransactionStatus;
+} & CompositeScreenProps<
+  | StackNavigatorProps<
+      SendFundsNavigatorStackParamList,
+      ScreenName.SendSummary
+    >
+  | StackNavigatorProps<
+      SignTransactionNavigatorParamList,
+      ScreenName.SignTransactionSummary
+    >
+  | StackNavigatorProps<
+      LendingEnableFlowParamsList,
+      ScreenName.LendingEnableSummary
+    >
+  | StackNavigatorProps<
+      LendingSupplyFlowNavigatorParamList,
+      ScreenName.LendingSupplySummary
+    >
+  | StackNavigatorProps<
+      LendingWithdrawFlowNavigatorParamList,
+      ScreenName.LendingWithdrawSummary
+    >
+  | StackNavigatorProps<SwapNavigatorParamList, ScreenName.SwapSelectFees>,
+  StackNavigatorProps<BaseNavigatorStackParamList>
+>;
 
-export default function SolanaFeeRow({ account, transaction, status }: Props) {
+export default function SolanaFeeRow({ account, status }: Props) {
   const { colors } = useTheme();
   const extraInfoFees = useCallback(() => {
     Linking.openURL(urls.solana.supportPage);
   }, []);
 
-  const fees = status.estimatedFees;
+  const fees = (status as SolanaTransactionStatus).estimatedFees;
 
   const unit = getAccountUnit(account);
   const currency = getAccountCurrency(account);

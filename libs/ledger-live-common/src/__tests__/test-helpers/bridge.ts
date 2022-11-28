@@ -95,6 +95,7 @@ export function testBridge<T extends TransactionCommon>(
       currencyData,
       currency,
     });
+
     const accounts = currencyData.accounts || [];
     accounts.forEach((accountData) =>
       implementations.forEach((impl) => {
@@ -358,6 +359,7 @@ export function testBridge<T extends TransactionCommon>(
       }
     }
   });
+
   accountsRelated
     .map(({ account, ...rest }) => {
       const bridge = getAccountBridge(account, null);
@@ -580,6 +582,7 @@ export function testBridge<T extends TransactionCommon>(
             }
           );
         });
+
         describe("getTransactionStatus", () => {
           makeTest("can be called on an empty transaction", async () => {
             const account = await getSynced();
@@ -627,7 +630,9 @@ export function testBridge<T extends TransactionCommon>(
           });
           makeTest("Default empty amount has an amount error", async () => {
             const account = await getSynced();
-            const t = { ...bridge.createTransaction(account) };
+            const t = await bridge.prepareTransaction(account, {
+              ...bridge.createTransaction(account),
+            });
             const status = await bridge.getTransactionStatus(account, t);
             expect(status.errors.amount).toBeInstanceOf(AmountRequired);
           });
@@ -668,6 +673,7 @@ export function testBridge<T extends TransactionCommon>(
                       ? expectedStatus(account, t, s)
                       : expectedStatus;
                   const { errors, warnings } = es;
+
                   // we match errors and warnings
                   errors && expect(s.errors).toMatchObject(errors);
                   warnings && expect(s.warnings).toMatchObject(warnings);
@@ -724,7 +730,11 @@ export function testBridge<T extends TransactionCommon>(
                         account: account as AccountLike,
                       };
 
-                  if (typeof t.mode !== "string" || t.mode === "send") {
+                  if (
+                    (typeof t.mode !== "string" || t.mode === "send") &&
+                    t.model &&
+                    t.model.kind !== "stake.createAccount"
+                  ) {
                     const estimation = await bridge.estimateMaxSpendable(obj);
                     expect(estimation.gte(0)).toBe(true);
                     expect(estimation.lte(obj.account.balance)).toBe(true);

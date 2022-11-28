@@ -2,28 +2,34 @@ import React, { memo, useMemo } from "react";
 import { Flex } from "@ledgerhq/native-ui";
 import { getCurrencyColor } from "@ledgerhq/live-common/currencies/index";
 import { useTheme } from "styled-components/native";
+import { Currency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { ensureContrast } from "../colors";
 import CurrencyIcon from "./CurrencyIcon";
 
 type Props = {
-  currency: any;
+  currency: Currency;
   size: number;
   hideParentIcon?: boolean;
   borderColor?: string;
 };
 
-const ParentCurrencyIcon = ({ currency, size, hideParentIcon = false, borderColor = "background.main" }: Props) => {
+const ParentCurrencyIcon = ({
+  currency,
+  size,
+  hideParentIcon = false,
+  borderColor = "background.main",
+}: Props) => {
   const { colors } = useTheme();
   const color = useMemo(
     () => ensureContrast(getCurrencyColor(currency), colors.constant.white),
     [colors, currency],
   );
   const parentColor = useMemo(() => {
-    if (!currency.parentCurrency) {
+    if (!(currency as TokenCurrency).parentCurrency) {
       return null;
     }
     return ensureContrast(
-      getCurrencyColor(currency.parentCurrency),
+      getCurrencyColor((currency as TokenCurrency).parentCurrency),
       colors.constant.white,
     );
   }, [colors, currency]);
@@ -40,7 +46,7 @@ const ParentCurrencyIcon = ({ currency, size, hideParentIcon = false, borderColo
       height={size}
       alignItems={"center"}
       justifyContent={"center"}
-      borderRadius={32}
+      borderRadius={size}
     >
       <CurrencyIcon
         size={iconSize}
@@ -58,7 +64,7 @@ const ParentCurrencyIcon = ({ currency, size, hideParentIcon = false, borderColo
           height={parentIconCircleSize}
           alignItems={"center"}
           justifyContent={"center"}
-          borderRadius={32}
+          borderRadius={size}
           borderWidth={parentIconBorderWidth}
           borderColor={borderColor}
         >

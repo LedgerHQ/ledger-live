@@ -62,7 +62,11 @@ const uploadImage = async () => {
     let results = [];
     const dirents = fs.readdirSync(currentPath, { withFileTypes: true });
     dirents.forEach((dirent) => {
-      if (dirent.name.toLocaleLowerCase().includes("retry")) return;
+      if (
+        dirent.name.toLocaleLowerCase().includes("retry") ||
+        dirent.name.endsWith(".zip")
+      )
+        return;
       const newPath = path.resolve(currentPath, dirent.name);
       const stat = fs.statSync(newPath);
       if (stat && stat.isDirectory()) {

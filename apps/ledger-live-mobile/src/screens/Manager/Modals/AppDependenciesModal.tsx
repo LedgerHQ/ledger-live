@@ -4,7 +4,7 @@ import { TouchableOpacity } from "react-native";
 import { Trans } from "react-i18next";
 
 import { Action } from "@ledgerhq/live-common/apps/index";
-import { App } from "@ledgerhq/live-common/types/manager";
+import { App } from "@ledgerhq/types-live";
 
 import styled from "styled-components/native";
 import { Flex, Icons, Text, Button } from "@ledgerhq/native-ui";
@@ -15,7 +15,7 @@ import BottomModal from "../../../components/BottomModal";
 
 type Props = {
   appInstallWithDependencies: { app: App; dependencies: App[] };
-  dispatch: (action: Action) => void;
+  dispatch: (_: Action) => void;
   onClose: () => void;
 };
 
@@ -79,7 +79,7 @@ function AppDependenciesModal({
   }, [dispatch, dispatchProps, onClose, name, hasInstalledAnyApp]);
 
   return (
-    <BottomModal isOpened={!!app} onClose={onClose} actions={[]}>
+    <BottomModal isOpened={!!app} onClose={onClose}>
       <Flex alignItems="center">
         {!!dependencies.length && (
           <>

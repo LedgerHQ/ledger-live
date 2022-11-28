@@ -47,7 +47,11 @@ function StepConfirmation({
           currencyName={currencyName}
           isNFTSend={isNFTSend}
         />
-        <SyncOneAccountOnMount priority={10} accountId={optimisticOperation.accountId} />
+        <SyncOneAccountOnMount
+          reason="transaction-flow-confirmation"
+          priority={10}
+          accountId={optimisticOperation.accountId}
+        />
         <SuccessDisplay
           title={<Trans i18nKey="send.steps.confirmation.success.title" />}
           description={multiline(t("send.steps.confirmation.success.text"))}

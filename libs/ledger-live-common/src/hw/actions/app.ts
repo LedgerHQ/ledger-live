@@ -37,6 +37,7 @@ import { useReplaySubject } from "../../observable";
 import { getAccountName } from "../../account";
 import type { Device, Action } from "./types";
 import { shouldUpgrade } from "../../apps";
+import { AppOp } from "../../apps/types";
 import { ConnectAppTimeout } from "../../errors";
 import perFamilyAccount from "../../generated/account";
 import type {
@@ -49,7 +50,7 @@ import type {
   TokenCurrency,
 } from "@ledgerhq/types-cryptoassets";
 
-type State = {
+export type State = {
   isLoading: boolean;
   requestQuitApp: boolean;
   requestOpenApp: string | null | undefined;
@@ -81,6 +82,12 @@ type State = {
   installingApp?: boolean;
   progress?: number;
   listingApps?: boolean;
+
+  request: AppRequest | undefined;
+  installQueue?: string[];
+  currentAppOp?: AppOp;
+  itemProgress?: number;
+  isLocked: boolean;
 };
 
 export type AppState = State & {
@@ -96,10 +103,11 @@ export type AppState = State & {
 
 export type AppRequest = {
   appName?: string;
-  currency?: CryptoCurrency;
+  currency?: CryptoCurrency | null;
   account?: Account;
   tokenCurrency?: TokenCurrency;
   dependencies?: AppRequest[];
+  withInlineInstallProgress?: boolean;
   requireLatestFirmware?: boolean;
 };
 
@@ -111,6 +119,7 @@ export type AppResult = {
   account?: Account;
   tokenCurrency?: TokenCurrency;
   dependencies?: AppRequest[];
+  withInlineInstallProgress?: boolean;
   requireLatestFirmware?: boolean;
 };
 
@@ -145,11 +154,15 @@ const mapResult = ({
       }
     : null;
 
-const getInitialState = (device?: Device | null | undefined): State => ({
+const getInitialState = (
+  device?: Device | null | undefined,
+  request?: AppRequest
+): State => ({
   isLoading: !!device,
   requestQuitApp: false,
   requestOpenApp: null,
   unresponsive: false,
+  isLocked: false,
   requiresAppInstallation: null,
   allowOpeningRequestedWording: null,
   allowOpeningGranted: false,
@@ -165,6 +178,11 @@ const getInitialState = (device?: Device | null | undefined): State => ({
   displayUpgradeWarning: false,
   installingApp: false,
   listingApps: false,
+
+  request,
+  currentAppOp: undefined,
+  installQueue: [],
+  itemProgress: 0,
 });
 
 const reducer = (state: State, e: Event): State => {
@@ -172,6 +190,11 @@ const reducer = (state: State, e: Event): State => {
     case "unresponsiveDevice":
       return { ...state, unresponsive: true };
 
+    case "lockedDevice":
+      return { ...state, isLocked: true };
+
+    // This event does not set isLocked and unresponsive properties, as
+    // by itself it does not request anything from the device
     case "device-update-last-seen":
       return {
         ...state,
@@ -180,10 +203,13 @@ const reducer = (state: State, e: Event): State => {
       };
 
     case "disconnected":
-      return { ...getInitialState(), isLoading: !!e.expected };
+      return {
+        ...getInitialState(null, state.request),
+        isLoading: !!e.expected,
+      };
 
     case "deviceChange":
-      return { ...getInitialState(e.device), device: e.device };
+      return { ...getInitialState(e.device, state.request), device: e.device };
 
     case "stream-install":
       return {
@@ -201,22 +227,34 @@ const reducer = (state: State, e: Event): State => {
         derivation: null,
         displayUpgradeWarning: false,
         unresponsive: false,
+        isLocked: false,
         installingApp: true,
         progress: e.progress || 0,
         requestOpenApp: null,
         listingApps: false,
+
+        request: state.request,
+        currentAppOp: e.currentAppOp,
+        itemProgress: e.itemProgress || 0,
+        installQueue: e.installQueue || [],
       };
 
     case "listing-apps":
-      return { ...state, listingApps: true };
+      return {
+        ...state,
+        listingApps: true,
+        unresponsive: false,
+        isLocked: false,
+      };
 
     case "error":
       return {
-        ...getInitialState(e.device),
+        ...getInitialState(e.device, state.request),
         device: e.device || null,
         error: e.error,
         isLoading: false,
         listingApps: false,
+        request: state.request,
       };
 
     case "ask-open-app":
@@ -235,7 +273,9 @@ const reducer = (state: State, e: Event): State => {
         derivation: null,
         displayUpgradeWarning: false,
         unresponsive: false,
+        isLocked: false,
         requestOpenApp: e.appName,
+        request: state.request,
       };
 
     case "ask-quit-app":
@@ -254,7 +294,9 @@ const reducer = (state: State, e: Event): State => {
         derivation: null,
         displayUpgradeWarning: false,
         unresponsive: false,
+        isLocked: false,
         requestQuitApp: true,
+        request: state.request,
       };
 
     case "device-permission-requested":
@@ -270,10 +312,12 @@ const reducer = (state: State, e: Event): State => {
         derivation: null,
         displayUpgradeWarning: false,
         unresponsive: false,
+        isLocked: false,
         allowOpeningGranted: false,
         allowOpeningRequestedWording: null,
         allowManagerGranted: false,
         allowManagerRequestedWording: e.wording,
+        request: state.request,
       };
 
     case "device-permission-granted":
@@ -289,10 +333,12 @@ const reducer = (state: State, e: Event): State => {
         derivation: null,
         displayUpgradeWarning: false,
         unresponsive: false,
+        isLocked: false,
         allowOpeningGranted: true,
         allowOpeningRequestedWording: null,
         allowManagerGranted: true,
         allowManagerRequestedWording: null,
+        request: state.request,
       };
 
     case "app-not-installed":
@@ -307,6 +353,7 @@ const reducer = (state: State, e: Event): State => {
         displayUpgradeWarning: false,
         isLoading: false,
         unresponsive: false,
+        isLocked: false,
         allowOpeningGranted: false,
         allowOpeningRequestedWording: null,
         allowManagerGranted: false,
@@ -315,6 +362,7 @@ const reducer = (state: State, e: Event): State => {
           appNames: e.appNames,
           appName: e.appName,
         },
+        request: state.request,
       };
 
     case "opened":
@@ -330,9 +378,11 @@ const reducer = (state: State, e: Event): State => {
         error: null,
         isLoading: false,
         unresponsive: false,
+        isLocked: false,
         opened: true,
         appAndVersion: e.app,
         derivation: e.derivation,
+        request: state.request,
         displayUpgradeWarning:
           state.device && e.app
             ? shouldUpgrade(state.device.modelId, e.app.name, e.app.version)
@@ -532,7 +582,7 @@ const implementations = {
 
 export let currentMode: keyof typeof implementations = "event";
 
-export function setDeviceMode(mode: keyof typeof implementations) {
+export function setDeviceMode(mode: keyof typeof implementations): void {
   currentMode = mode;
 }
 
@@ -545,6 +595,7 @@ export const createAction = (
   ): AppState => {
     const dependenciesResolvedRef = useRef(false);
     const latestFirmwareResolvedRef = useRef(false);
+    const outdatedAppRef = useRef<AppAndVersion>();
 
     const connectApp = useCallback(
       (device, params) =>
@@ -560,12 +611,15 @@ export const createAction = (
               requireLatestFirmware: latestFirmwareResolvedRef.current
                 ? undefined
                 : params.requireLatestFirmware,
+              outdatedApp: outdatedAppRef.current,
             }).pipe(
               tap((e) => {
                 if (e.type === "dependencies-resolved") {
                   dependenciesResolvedRef.current = true;
                 } else if (e.type === "latest-firmware-resolved") {
                   latestFirmwareResolvedRef.current = true;
+                } else if (e.type === "has-outdated-app") {
+                  outdatedAppRef.current = e.outdatedApp as AppAndVersion;
                 }
               }),
               catchError((error: Error) =>

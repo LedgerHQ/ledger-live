@@ -1,6 +1,6 @@
 import React, { memo } from "react";
 import { Trans, useTranslation } from "react-i18next";
-import { Account } from "@ledgerhq/live-common/types/index";
+import { Account } from "@ledgerhq/types-live";
 import { BottomDrawer, Flex, Text } from "@ledgerhq/native-ui";
 import { InfoMedium } from "@ledgerhq/native-ui/assets/icons";
 import Button from "../../components/wrappedUi/Button";
@@ -17,7 +17,6 @@ function DeleteAccountModal({ isOpen, onRequestClose, deleteAccount }: Props) {
 
   return (
     <BottomDrawer
-      id="DeleteAccountModal"
       isOpen={isOpen}
       onClose={onRequestClose}
       Icon={InfoMedium}

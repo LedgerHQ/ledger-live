@@ -18,6 +18,7 @@ import type { SyncAction, SyncState, BridgeSyncState } from "./types";
 import { BridgeSyncContext, BridgeSyncStateContext } from "./context";
 import type { Account, SubAccount } from "@ledgerhq/types-live";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+
 export type Props = {
   // this is a wrapping component that you need to put in your tree
   children: React.ReactNode;
@@ -30,11 +31,12 @@ export type Props = {
   ) => void;
   // handles an error / log / do action with it
   // if the function returns falsy, the sync will ignore error, otherwise it's treated as error with the error you return (likely the same)
-  recoverError: (arg0: Error) => Error | null | undefined;
+  recoverError: (arg0: Error) => Error | null | undefined | void;
   // track sync lifecycle for analytics
   trackAnalytics: (
     arg0: string,
-    arg1: Record<string, any> | null | undefined
+    arg1?: Record<string, any> | null,
+    mandatory?: boolean
   ) => void;
   // load all data needed for a currency (it's calling currencyBridge prepare mechanism)
   prepareCurrency: (currency: CryptoCurrency) => Promise<any>;
@@ -43,6 +45,12 @@ export type Props = {
   // an array of token ids to blacklist from the account sync
   blacklistedTokenIds?: string[];
 };
+
+type SyncJob = {
+  accountId: string;
+  reason: string;
+};
+
 export const BridgeSync = ({
   children,
   accounts,
@@ -52,7 +60,7 @@ export const BridgeSync = ({
   prepareCurrency,
   hydrateCurrency,
   blacklistedTokenIds,
-}: Props) => {
+}: Props): JSX.Element => {
   useHydrate({
     accounts,
     hydrateCurrency,
@@ -125,7 +133,7 @@ function useSyncQueue({
     setBridgeSyncState((state) => ({ ...state, [accountId]: s }));
   }, []);
   const synchronize = useCallback(
-    (accountId: string, next: () => void) => {
+    ({ accountId, reason }: SyncJob, next: () => void) => {
       const state = bridgeSyncState[accountId] || nothingState;
 
       if (state.pending) {
@@ -182,6 +190,7 @@ function useSyncQueue({
             ).length,
             tokensLength: subAccounts.length,
             votesCount: getVotesCount(account),
+            reason,
           });
 
           if (event === "SyncSuccess") {
@@ -197,6 +206,7 @@ function useSyncQueue({
                 parentCurrencyName: account.currency.name,
                 parentDerivationMode: account.derivationMode,
                 votesCount: getVotesCount(a, account),
+                reason,
               });
             });
           }
@@ -270,8 +280,7 @@ function useSyncQueue({
   }, [synchronize]);
   const [syncQueue] = useState(() =>
     priorityQueue(
-      (accountId: string, next: () => void) =>
-        synchronizeRef.current(accountId, next),
+      (job: SyncJob, next: () => void) => synchronizeRef.current(job, next),
       getEnv("SYNC_MAX_CONCURRENT")
     )
   );
@@ -282,22 +291,28 @@ function useSyncQueue({
 function useSync({ syncQueue, accounts }) {
   const skipUnderPriority = useRef(-1);
   const sync = useMemo(() => {
-    const schedule = (ids: string[], priority: number) => {
+    const schedule = (ids: string[], priority: number, reason: string) => {
       if (priority < skipUnderPriority.current) return;
       // by convention we remove concurrent tasks with same priority
       // FIXME this is somehow a hack. ideally we should just dedup the account ids in the pending queue...
       syncQueue.remove((o) => priority === o.priority);
       log("bridge", "schedule " + ids.join(", "));
-      syncQueue.push(ids, -priority);
+      syncQueue.push(
+        ids.map((accountId) => ({
+          accountId,
+          reason,
+        })),
+        -priority
+      );
     };
 
     // don't always sync in the same order to avoid potential "account never reached"
     const shuffledAccountIds = () => shuffle(accounts.map((a) => a.id));
 
     const handlers = {
-      BACKGROUND_TICK: () => {
+      BACKGROUND_TICK: ({ reason }: { reason: string }) => {
         if (syncQueue.idle()) {
-          schedule(shuffledAccountIds(), -1);
+          schedule(shuffledAccountIds(), -1, reason);
         }
       },
       SET_SKIP_UNDER_PRIORITY: ({ priority }: { priority: number }) => {
@@ -307,29 +322,39 @@ function useSync({ syncQueue, accounts }) {
 
         if (priority === -1 && !accounts.every(isUpToDateAccount)) {
           // going back to -1 priority => retriggering a background sync if it is "Paused"
-          schedule(shuffledAccountIds(), -1);
+          schedule(shuffledAccountIds(), -1, "outdated");
         }
       },
-      SYNC_ALL_ACCOUNTS: ({ priority }: { priority: number }) => {
-        schedule(shuffledAccountIds(), priority);
+      SYNC_ALL_ACCOUNTS: ({
+        priority,
+        reason,
+      }: {
+        priority: number;
+        reason: string;
+      }) => {
+        schedule(shuffledAccountIds(), priority, reason);
       },
       SYNC_ONE_ACCOUNT: ({
         accountId,
         priority,
+        reason,
       }: {
         accountId: string;
         priority: number;
+        reason: string;
       }) => {
-        schedule([accountId], priority);
+        schedule([accountId], priority, reason);
       },
       SYNC_SOME_ACCOUNTS: ({
         accountIds,
         priority,
+        reason,
       }: {
         accountIds: string[];
         priority: number;
+        reason: string;
       }) => {
-        schedule(accountIds, priority);
+        schedule(accountIds, priority, reason);
       },
     };
     return (action: SyncAction) => {
@@ -362,14 +387,19 @@ function useSyncBackground({ sync }) {
   useEffect(() => {
     let syncTimeout;
 
-    const syncLoop = async () => {
+    const syncLoop = async (reason: string) => {
       sync({
         type: "BACKGROUND_TICK",
+        reason,
       });
-      syncTimeout = setTimeout(syncLoop, getEnv("SYNC_ALL_INTERVAL"));
+      syncTimeout = setTimeout(
+        syncLoop,
+        getEnv("SYNC_ALL_INTERVAL"),
+        "background"
+      );
     };
 
-    syncTimeout = setTimeout(syncLoop, getEnv("SYNC_BOOT_DELAY"));
+    syncTimeout = setTimeout(syncLoop, getEnv("SYNC_BOOT_DELAY"), "initial");
     return () => clearTimeout(syncTimeout);
   }, [sync]);
 }
@@ -393,6 +423,7 @@ function useSyncContinouslyPendingOperations({ sync, accounts }) {
         type: "SYNC_SOME_ACCOUNTS",
         accountIds: refIds.current,
         priority: 20,
+        reason: "pending-operations",
       });
       timeout = setTimeout(update, getEnv("SYNC_PENDING_INTERVAL"));
     };

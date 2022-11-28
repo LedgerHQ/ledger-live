@@ -715,7 +715,7 @@ describe("canUnbond", () => {
         nominations: [],
         unlockings: [
           ...Array(MAX_UNLOCKINGS - 1).map(() => ({
-            amount: new BigNumber(Math.random()),
+            amount: new BigNumber(100000),
             completionDate: new Date(),
           })),
         ],
@@ -736,7 +736,7 @@ describe("canUnbond", () => {
         nominations: [],
         unlockings: [
           ...Array(MAX_UNLOCKINGS).map(() => ({
-            amount: new BigNumber(Math.random()),
+            amount: new BigNumber(100000),
             completionDate: new Date(),
           })),
         ],
@@ -757,7 +757,7 @@ describe("canUnbond", () => {
         nominations: [],
         unlockings: [
           ...Array(MAX_UNLOCKINGS).map(() => ({
-            amount: new BigNumber(Math.random()),
+            amount: new BigNumber(100000),
             completionDate: new Date(),
           })),
         ],

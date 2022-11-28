@@ -1,28 +1,38 @@
-import invariant from "invariant";
-import { Observable, from, of } from "rxjs";
-import { mergeMap } from "rxjs/operators";
+import {
+  FeeMarketEIP1559Transaction,
+  FeeMarketEIP1559TxData,
+  Transaction as LegacyEthereumTx,
+} from "@ethereumjs/tx";
 import eip55 from "eip55";
 import { encode } from "rlp";
-import { BigNumber } from "bignumber.js";
-import { log } from "@ledgerhq/logs";
-import { FeeNotLoaded } from "@ledgerhq/errors";
-import Eth from "@ledgerhq/hw-app-eth";
-import { byContractAddressAndChainId } from "@ledgerhq/hw-app-eth/erc20";
-import { ledgerService as ethLedgerServices } from "@ledgerhq/hw-app-eth";
-import type { Transaction } from "./types";
 import type {
   Operation,
   Account,
   SignOperationEvent,
 } from "@ledgerhq/types-live";
-import { getGasLimit, buildEthereumTx } from "./transaction";
+import invariant from "invariant";
+import { log } from "@ledgerhq/logs";
+import Eth from "@ledgerhq/hw-app-eth";
+import { BigNumber } from "bignumber.js";
+import { mergeMap } from "rxjs/operators";
+import { Observable, from, of } from "rxjs";
+import { FeeNotLoaded } from "@ledgerhq/errors";
+import { LoadConfig } from "@ledgerhq/hw-app-eth/lib/services/types";
+import { byContractAddressAndChainId } from "@ledgerhq/hw-app-eth/erc20";
+import { ledgerService as ethLedgerServices } from "@ledgerhq/hw-app-eth";
+import { erc20SignatureInfo } from "./modules/erc20";
 import { apiForCurrency } from "../../api/Ethereum";
 import { withDevice } from "../../hw/deviceAccess";
-import { modes } from "./modules";
 import { isNFTActive } from "../../nft";
 import { getEnv } from "../../env";
-import type { LoadConfig } from "@ledgerhq/hw-app-eth/lib/services/types";
-import { Transaction as EthereumTx } from "@ethereumjs/tx";
+import { modes } from "./modules";
+import type { Transaction } from "./types";
+import {
+  getGasLimit,
+  buildEthereumTx,
+  EIP1559ShouldBeUsed,
+} from "./transaction";
+
 export const signOperation = ({
   account,
   deviceId,
@@ -46,16 +56,28 @@ export const signOperation = ({
             async function main() {
               // First, we need to create a partial tx and send to the device
               const { freshAddressPath, freshAddress } = account;
-              const { gasPrice } = transaction;
+              const { gasPrice, maxFeePerGas, maxPriorityFeePerGas } =
+                transaction;
               const gasLimit = getGasLimit(transaction);
 
-              if (!gasPrice || !new BigNumber(gasLimit).gt(0)) {
+              let dataMissing = !new BigNumber(gasLimit).gt(0);
+              let missingDataString = "";
+              if (EIP1559ShouldBeUsed(account.currency)) {
+                missingDataString = ` maxFeePerGas=${String(
+                  maxFeePerGas
+                )} maxPriorityFeePerGas=${String(maxPriorityFeePerGas)}`;
+                dataMissing =
+                  dataMissing && (!maxFeePerGas || !maxPriorityFeePerGas);
+              } else {
+                missingDataString = ` gasPrice=${String(gasPrice)}`;
+                dataMissing = dataMissing && !gasPrice;
+              }
+              if (dataMissing) {
                 log(
                   "ethereum-error",
-                  "buildTransaction missingData: gasPrice=" +
-                    String(gasPrice) +
-                    " gasLimit=" +
-                    String(gasLimit)
+                  `buildTransaction missingData: ${missingDataString} gasLimit=${String(
+                    gasLimit
+                  )}`
                 );
                 throw new FeeNotLoaded();
               }
@@ -66,11 +88,22 @@ export const signOperation = ({
               const value = new BigNumber(
                 "0x" + (tx.value.toString("hex") || "0")
               );
+
               // rawData Format: `rlp([nonce, gasPrice, gasLimit, to, value, data, v, r, s])`
-              const rawData = tx.raw();
-              rawData[6] = Buffer.from([common.chainIdBN().toNumber()]);
-              const txHex = Buffer.from(encode(rawData)).toString("hex");
-              const loadConfig: LoadConfig = {};
+              // EIP1559 Format: type 2 || rlp([chainId, nonce, maxPriorityFeePerGas, maxFeePerGas, gasLimit, destination, amount, data, access_list, v, r, s])
+              const txHex = (() => {
+                if (EIP1559ShouldBeUsed(account.currency)) {
+                  return tx.getMessageToSign(false).toString("hex");
+                }
+
+                const rawData = tx.raw();
+                rawData[6] = Buffer.from([common.chainIdBN().toNumber()]);
+                return Buffer.from(encode(rawData)).toString("hex");
+              })();
+
+              const loadConfig: LoadConfig = {
+                cryptoassetsBaseURL: getEnv("DYNAMIC_CAL_BASE_URL"),
+              };
               if (isNFTActive(account.currency)) {
                 loadConfig.nftExplorerBaseURL =
                   getEnv("NFT_ETH_METADATA_SERVICE") + "/v1/ethereum";
@@ -98,10 +131,13 @@ export const signOperation = ({
                   fillTransactionDataResult.erc20contracts) ||
                 [];
 
+              const erc20SignatureBlob = await erc20SignatureInfo(loadConfig);
+
               for (const addr of addrs) {
                 const tokenInfo = byContractAddressAndChainId(
                   addr,
-                  account.currency.ethereumLikeInfo?.chainId || 0
+                  account.currency.ethereumLikeInfo?.chainId || 0,
+                  erc20SignatureBlob
                 );
 
                 if (tokenInfo) {
@@ -123,11 +159,19 @@ export const signOperation = ({
               const r = `0x${result.r}`;
               const s = `0x${result.s}`;
 
-              const signedTx = new EthereumTx(
-                { ...ethTxObject, v, r, s },
-                { common }
-              );
+              const signedTx = (() => {
+                if (EIP1559ShouldBeUsed(account.currency)) {
+                  return new FeeMarketEIP1559Transaction(
+                    { ...ethTxObject, v, r, s } as FeeMarketEIP1559TxData,
+                    { common }
+                  );
+                }
 
+                return new LegacyEthereumTx(
+                  { ...ethTxObject, v, r, s },
+                  { common }
+                );
+              })();
               // Generate the signature ready to be broadcasted
               const signature = `0x${signedTx.serialize().toString("hex")}`;
 
@@ -136,7 +180,16 @@ export const signOperation = ({
 
               const senders = [freshAddress];
               const recipients = [to];
-              const fee = gasPrice.times(gasLimit);
+
+              const fee = (() => {
+                if (EIP1559ShouldBeUsed(account.currency)) {
+                  return maxFeePerGas!
+                    .plus(maxPriorityFeePerGas!)
+                    .times(gasLimit);
+                }
+                return gasPrice!.times(gasLimit);
+              })();
+
               const transactionSequenceNumber = nonce;
               const accountId = account.id;
               // currently, all mode are always at least one OUT tx on ETH parent

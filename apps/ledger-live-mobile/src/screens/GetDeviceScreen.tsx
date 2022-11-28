@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useContext } from "react";
 import {
   Flex,
   Icons,
@@ -23,10 +23,17 @@ import { NavigatorName, ScreenName } from "../const";
 import useIsAppInBackground from "../components/useIsAppInBackground";
 import {
   hasCompletedOnboardingSelector,
-  discreetModeSelector,
+  readOnlyModeEnabledSelector,
 } from "../reducers/settings";
 import { track, TrackScreen } from "../analytics";
-import { useCurrentRouteName } from "../helpers/routeHooks";
+import { AnalyticsContext } from "../analytics/AnalyticsContext";
+import type { Context } from "../analytics/AnalyticsContext";
+import {
+  BaseNavigationComposite,
+  StackNavigatorNavigation,
+} from "../components/RootNavigator/types/helpers";
+import { BuyDeviceNavigatorParamList } from "../components/RootNavigator/types/BuyDeviceNavigator";
+import { OnboardingNavigatorParamList } from "../components/RootNavigator/types/OnboardingNavigator";
 
 const hitSlop = {
   bottom: 10,
@@ -37,10 +44,12 @@ const hitSlop = {
 
 const StyledSafeAreaView = styled(SafeAreaView)`
   flex: 1;
-  background-color: ${({ theme }) => theme.colors.background.main};
+  background-color: ${p => p.theme.colors.background.main};
 `;
 
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const sourceDark = require("../../assets/videos/NanoX_LL_Black.mp4");
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const sourceLight = require("../../assets/videos/NanoX_LL_White.mp4");
 
 const items = [
@@ -76,25 +85,29 @@ const videoStyle = {
   right: 0,
 };
 
+type NavigationProp = BaseNavigationComposite<
+  | StackNavigatorNavigation<BuyDeviceNavigatorParamList, ScreenName.GetDevice>
+  | StackNavigatorNavigation<OnboardingNavigatorParamList, ScreenName.GetDevice>
+>;
+
 export default function GetDeviceScreen() {
   const { t } = useTranslation();
-  const navigation = useNavigation();
+  const navigation = useNavigation<NavigationProp>();
   const { theme, colors } = useTheme();
   const { setShowWelcome, setFirstTimeOnboarding } = useNavigationInterceptor();
   const buyDeviceFromLive = useFeature("buyDeviceFromLive");
   const hasCompletedOnboarding = useSelector(hasCompletedOnboardingSelector);
-  const discreetMode = useSelector(discreetModeSelector);
-  const currentRoute = useCurrentRouteName();
+  const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector);
 
   const handleBack = useCallback(() => {
     navigation.goBack();
-    if (discreetMode) {
+    if (readOnlyModeEnabled) {
       track("button_clicked", {
         button: "close",
-        screen: currentRoute,
+        screen: "Upsell Nano",
       });
     }
-  }, [currentRoute, discreetMode, navigation]);
+  }, [readOnlyModeEnabled, navigation]);
 
   const setupDevice = useCallback(() => {
     setShowWelcome(false);
@@ -105,38 +118,33 @@ export default function GetDeviceScreen() {
         screen: ScreenName.OnboardingDeviceSelection,
       },
     });
-    if (discreetMode) {
+    if (readOnlyModeEnabled) {
       track("message_clicked", {
         message: "I already have a device, set it up now",
-        screen: currentRoute,
+        screen: "Upsell Nano",
       });
     }
-  }, [
-    currentRoute,
-    discreetMode,
-    navigation,
-    setFirstTimeOnboarding,
-    setShowWelcome,
-  ]);
+  }, [readOnlyModeEnabled, navigation, setFirstTimeOnboarding, setShowWelcome]);
 
   const buyLedger = useCallback(() => {
     if (buyDeviceFromLive?.enabled) {
+      // FIXME: ScreenName.PurchaseDevice does not exist when coming from the Onboarding navigator
+      // @ts-expect-error This seem very impossible to type because ts is right…
       navigation.navigate(ScreenName.PurchaseDevice);
     } else {
       Linking.openURL(urls.buyNanoX);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [buyDeviceFromLive?.enabled]);
 
   const videoMounted = !useIsAppInBackground();
 
+  const { source } = useContext<Context>(AnalyticsContext);
+
   return (
     <StyledSafeAreaView>
-      {discreetMode ? (
-        <TrackScreen
-          category="ReadOnly"
-          name="Upsell Nano"
-          source={currentRoute}
-        />
+      {readOnlyModeEnabled ? (
+        <TrackScreen category="ReadOnly" name="Upsell Nano" source={source} />
       ) : null}
       <Flex
         flexDirection="row"
@@ -154,7 +162,7 @@ export default function GetDeviceScreen() {
             <Icons.ArrowLeftMedium size="24px" />
           </TouchableOpacity>
         )}
-        <Text variant="h3" lineHeight="18" uppercase>
+        <Text variant="h3" lineHeight="20" uppercase>
           {t("buyDevice.title")}
         </Text>
         {hasCompletedOnboarding ? (
@@ -178,9 +186,9 @@ export default function GetDeviceScreen() {
               disableFocus
               source={theme === "light" ? sourceLight : sourceDark}
               style={{
-                ...videoStyle,
                 backgroundColor: colors.background.main,
                 transform: [{ scale: 1.4 }],
+                ...(videoStyle as object),
               }}
               muted
               resizeMode={"cover"}
@@ -188,8 +196,8 @@ export default function GetDeviceScreen() {
           )}
           <Flex
             style={{
-              ...videoStyle,
               opacity: 0.1,
+              ...(videoStyle as object),
             }}
             bg="background.main"
           />
@@ -217,7 +225,11 @@ export default function GetDeviceScreen() {
           my={6}
           type="main"
           outline={false}
-          event="BuyDeviceScreen - Buy Ledger"
+          event="button_clicked"
+          eventProperties={{
+            button: "Buy your Ledger now",
+            screen: ScreenName.GetDevice,
+          }}
           onPress={buyLedger}
           size="large"
         >

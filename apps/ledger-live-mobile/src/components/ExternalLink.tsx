@@ -6,7 +6,7 @@ import { track } from "../analytics";
 type Props = {
   disabled?: boolean;
   event?: string;
-  eventProperties?: Object;
+  eventProperties?: Record<string, unknown>;
   Icon?: React.ComponentType<{ color: string; size: number }>;
   /** deprecated, use `iconPosition` instead */
   iconFirst?: boolean;

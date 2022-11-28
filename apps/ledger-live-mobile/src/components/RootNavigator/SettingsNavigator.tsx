@@ -12,9 +12,12 @@ import DebugBLE from "../../screens/DebugBLE";
 import DebugBLEBenchmark from "../../screens/DebugBLEBenchmark";
 import DebugCrash from "../../screens/DebugCrash";
 import DebugHttpTransport from "../../screens/DebugHttpTransport";
+import DebugFeatureFlags from "../../screens/FeatureFlagsSettings";
 import DebugIcons from "../../screens/DebugIcons";
-import DebugLottie from "../../screens/DebugLottie.js";
-import DebugLogs from "../../screens/DebugLogs.js";
+import DebugLottie from "../../screens/DebugLottie";
+import DebugMultiAppInstall from "../../screens/DebugMultiAppInstall";
+import DebugFetchCustomImage from "../../screens/DebugFetchCustomImage";
+import DebugLogs from "../../screens/DebugLogs";
 import DebugStore from "../../screens/DebugStore";
 import DebugEnv from "../../screens/DebugEnv";
 import DebugPlayground from "../../screens/DebugPlayground";
@@ -24,6 +27,7 @@ import AboutSettings from "../../screens/Settings/About";
 import Resources from "../../screens/Settings/Resources";
 import GeneralSettings from "../../screens/Settings/General";
 import CountervalueSettings from "../../screens/Settings/General/CountervalueSettings";
+import NotificationsSettings from "../../screens/Settings/Notifications";
 import HelpSettings from "../../screens/Settings/Help";
 import RegionSettings from "../../screens/Settings/General/Region";
 import CurrenciesList from "../../screens/Settings/CryptoAssets/Currencies/CurrenciesList";
@@ -45,13 +49,22 @@ import OnboardingStepLanguage from "../../screens/Onboarding/steps/language";
 import { GenerateMockAccountSelectScreen } from "../../screens/Settings/Debug/GenerateMockAccountsSelect";
 import HiddenNftCollections from "../../screens/Settings/Accounts/HiddenNftCollections";
 import DebugStoryly from "../../screens/DebugStoryly";
+import { useNoNanoBuyNanoWallScreenOptions } from "../../context/NoNanoBuyNanoWall";
+import PostOnboardingDebugScreen from "../../screens/PostOnboarding/PostOnboardingDebugScreen";
+import { SettingsNavigatorStackParamList } from "./types/SettingsNavigator";
+
+const Stack = createStackNavigator<SettingsNavigatorStackParamList>();
 
 export default function SettingsNavigator() {
   const { t } = useTranslation();
   const { colors } = useTheme();
-  const stackNavConfig = useMemo(() => getStackNavigatorConfig(colors), [
-    colors,
-  ]);
+  const stackNavConfig = useMemo(
+    () => getStackNavigatorConfig(colors),
+    [colors],
+  );
+
+  const noNanoBuyNanoWallScreenOptions = useNoNanoBuyNanoWallScreenOptions();
+
   return (
     <Stack.Navigator screenOptions={stackNavConfig}>
       <Stack.Screen
@@ -98,6 +111,13 @@ export default function SettingsNavigator() {
         }}
       />
       <Stack.Screen
+        name={ScreenName.NotificationsSettings}
+        component={NotificationsSettings}
+        options={{
+          title: t("settings.notifications.title"),
+        }}
+      />
+      <Stack.Screen
         name={ScreenName.HelpSettings}
         component={HelpSettings}
         options={{
@@ -123,9 +143,10 @@ export default function SettingsNavigator() {
         name={ScreenName.CurrencySettings}
         component={CurrencySettings}
         options={({ route }) => ({
-          title: route.params.headerTitle,
-          headerRight: null,
+          title: route.params?.headerTitle,
+          headerRight: undefined,
         })}
+        {...noNanoBuyNanoWallScreenOptions}
       />
       <Stack.Screen
         name={ScreenName.RepairDevice}
@@ -153,6 +174,9 @@ export default function SettingsNavigator() {
         component={DeveloperCustomManifest}
         options={{
           title: t("settings.developer.customManifest.title"),
+          headerTitleStyle: {
+            width: "80%",
+          },
         }}
       />
       <Stack.Screen
@@ -167,6 +191,13 @@ export default function SettingsNavigator() {
         component={DebugDevices}
         options={{
           title: "Debug Devices",
+        }}
+      />
+      <Stack.Screen
+        name={ScreenName.DebugFeatureFlags}
+        component={DebugFeatureFlags}
+        options={{
+          title: "Debug Feature Flags",
         }}
       />
       <Stack.Screen
@@ -274,6 +305,20 @@ export default function SettingsNavigator() {
         }}
       />
       <Stack.Screen
+        name={ScreenName.DebugMultiAppInstall}
+        component={DebugMultiAppInstall}
+        options={{
+          title: "Debug MultiAppInstall",
+        }}
+      />
+      <Stack.Screen
+        name={ScreenName.DebugFetchCustomImage}
+        component={DebugFetchCustomImage}
+        options={{
+          title: "Debug FetchCustomImage",
+        }}
+      />
+      <Stack.Screen
         name={ScreenName.DebugStoryly}
         component={DebugStoryly}
         options={{
@@ -303,8 +348,10 @@ export default function SettingsNavigator() {
           headerTitle: t("onboarding.stepLanguage.title"),
         }}
       />
+      <Stack.Screen
+        name={ScreenName.PostOnboardingDebugScreen}
+        component={PostOnboardingDebugScreen}
+      />
     </Stack.Navigator>
   );
 }
-
-const Stack = createStackNavigator();

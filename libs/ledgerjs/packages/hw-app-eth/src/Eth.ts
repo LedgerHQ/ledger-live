@@ -29,9 +29,11 @@ import {
   signEIP712HashedMessage,
   signEIP712Message,
   EIP712Message,
+  isEIP712Message,
+  getFiltersForMessage,
 } from "./modules/EIP712";
 
-export { ledgerService };
+export { ledgerService, isEIP712Message, getFiltersForMessage };
 
 export type StarkQuantizationType =
   | "eth"
@@ -424,6 +426,7 @@ export default class Eth {
   /**
    * Sign an EIP-721 formatted message following the specification here:
    * https://github.com/LedgerHQ/app-ethereum/blob/develop/doc/ethapp.asc#sign-eth-eip-712
+   * ⚠️ This method is not compatible with nano S (LNS). Make sure to use a try/catch to fallback on the signEIP712HashedMessage method ⚠️ 
    @example
    eth.signEIP721Message("44'/60'/0'/0/0", {
       domain: {
@@ -461,7 +464,13 @@ export default class Eth {
     s: string;
     r: string;
   }> {
-    return signEIP712Message(this.transport, path, jsonMessage, fullImplem);
+    return signEIP712Message(
+      this.transport,
+      path,
+      jsonMessage,
+      fullImplem,
+      this.loadConfig
+    );
   }
 
   /**
@@ -1205,9 +1214,6 @@ export default class Eth {
   }
 
   provideERC20TokenInformation({ data }: { data: Buffer }): Promise<boolean> {
-    console.warn(
-      "hw-app-eth: eth.provideERC20TokenInformation is deprecated. signTransaction solves this for you when providing it in `resolution`."
-    );
     return provideERC20TokenInformation(this.transport, data);
   }
 

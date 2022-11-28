@@ -1,4 +1,4 @@
-import { AmountRequired } from "./index";
+import { AmountRequired, CurrencyNotSupported } from "./index";
 
 function functionA() {
   throw new AmountRequired();
@@ -35,9 +35,12 @@ describe("custom errors", () => {
 
   test("error with custom fields", () => {
     try {
-      throw new AmountRequired("YO", { foo: 42 });
+      throw new CurrencyNotSupported("YO", { currencyName: "foo" });
     } catch (e: any) {
-      expect(e.foo).toEqual(42);
+      expect(
+        // FIXME it's not yet the good type here
+        e instanceof CurrencyNotSupported && (e as any).currencyName
+      ).toEqual("foo");
     }
   });
 
@@ -65,5 +68,10 @@ describe("custom errors", () => {
     expect(Promise.reject(new AmountRequired())).rejects.toBeInstanceOf(
       AmountRequired
     );
+  });
+
+  test("error is instance of Error", () => {
+    const error: Error = new AmountRequired();
+    expect(error instanceof Error).toBeTruthy();
   });
 });

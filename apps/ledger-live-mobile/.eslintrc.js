@@ -3,17 +3,37 @@ module.exports = {
   extends: [
     "@react-native-community",
     "airbnb",
-    "prettier",
     "plugin:json/recommended",
+    "plugin:@typescript-eslint/recommended",
+    "plugin:prettier/recommended",
+    "plugin:import/recommended",
+    "plugin:import/typescript",
   ],
   settings: {
+    "import/parsers": {
+      "@typescript-eslint/parser": [".ts", ".tsx"],
+    },
     "import/resolver": {
-      node: {
-        extensions: [".js", ".android.js", ".ios.js", ".ts", ".tsx"],
+      typescript: {
+        alwaysTryTypes: true,
+        extensions: [
+          ".android.ts",
+          ".android.js",
+          ".ios.ts",
+          ".ios.js",
+          ".ts",
+          ".tsx",
+          ".d.ts",
+          ".js",
+          ".jsx",
+          ".json",
+          ".node",
+          ".png",
+        ],
       },
     },
   },
-  plugins: ["prettier", "detox"],
+  plugins: ["detox"],
   rules: {
     "no-console": [
       "error",
@@ -21,15 +41,7 @@ module.exports = {
         allow: ["warn", "error"],
       },
     ],
-    "no-unused-vars": [
-      "error",
-      {
-        argsIgnorePattern: "^_",
-        vars: "all",
-        args: "after-used",
-        ignoreRestSiblings: true,
-      },
-    ],
+    "@typescript-eslint/no-explicit-any": "error",
     "lines-between-class-members": 0,
     "flowtype/space-after-type-colon": 0,
     "no-continue": 0,
@@ -46,6 +58,7 @@ module.exports = {
     "import/extensions": 0,
     "import/no-mutable-exports": 0,
     "import/prefer-default-export": 0,
+    "import/namespace": ["error", { allowComputed: true }],
     "no-use-before-define": 0,
     "react/sort-comp": 0,
     "react/jsx-boolean-value": 0,
@@ -68,6 +81,13 @@ module.exports = {
       "error",
       { devDependencies: ["e2e/**"] },
     ],
+    // For Link component from native-ui, that is interpreted like a html link, and thus this rule tried to impose a href prop on it
+    "jsx-a11y/anchor-is-valid": [
+      "error",
+      {
+        components: [],
+      },
+    ],
 
     // New rules from default RN 0.61 ruleset
     // that were triggered in our codebase
@@ -79,20 +99,41 @@ module.exports = {
     "react/state-in-constructor": 0,
     "react/static-property-placement": 0,
     "react/default-props-match-prop-types": 0,
+    "jsx-a11y/anchor-is-valid": 0, // this is not valid in react native as we don't have href
+    "@typescript-eslint/no-non-null-assertion": 0,
+    "react-native/no-inline-styles": 0,
+    "react/prop-types": 0, // causes issues with typescript, reports false positives
 
     // These ones are good practice we could switch to, so warn only
     "eslint-comments/no-unlimited-disable": "warn",
     "eslint-comments/no-unused-disable": "warn",
-    "react-native/no-inline-styles": "warn",
     "react/jsx-fragments": "warn",
     "react/no-deprecated": "warn",
-    "prettier/prettier": "error",
 
-    // Ignore live-common for the moment because this rule does not work with subpath exports
-    // See: https://github.com/import-js/eslint-plugin-import/issues/1810
-    "import/no-unresolved": [
+    // Enables no-unused-vars only from TypeScript
+    "no-unused-vars": "off",
+    "@typescript-eslint/no-unused-vars": [
       "error",
-      { ignore: ["^@ledgerhq/live-common/.*"] },
+      {
+        argsIgnorePattern: "^_",
+        destructuredArrayIgnorePattern: "^_",
+        vars: "all",
+        args: "after-used",
+        ignoreRestSiblings: true,
+      },
+    ],
+
+    "no-restricted-imports": [
+      "error",
+      {
+        patterns: [
+          {
+            group: ["@ledgerhq/live-common/lib/*"],
+            message:
+              '🚨 Please when importing from live-common, remove the "/lib/" in the path 🚨',
+          },
+        ],
+      },
     ],
   },
   globals: {

@@ -75,7 +75,8 @@ export function listSupportedFiats(): FiatCurrency[] {
   return userSupportedFiats;
 }
 export function setSupportedCurrencies(ids: CryptoCurrencyIds[]) {
-  userSupportedCurrencies = ids.map((id) => getCryptoCurrencyById(id));
+  userSupportedCurrencies = Array.from(new Set(ids)) // Make sure to remove duplicates
+    .map((id) => getCryptoCurrencyById(id));
 }
 
 function getExperimentalSupports() {

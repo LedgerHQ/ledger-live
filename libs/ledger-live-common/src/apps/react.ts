@@ -151,7 +151,7 @@ export function useAppInstallProgress(state: State, name: string): number {
     return progress;
   }
 
-  return 1;
+  return 0;
 }
 
 // if the app needs deps to be installed, we want to display a modal

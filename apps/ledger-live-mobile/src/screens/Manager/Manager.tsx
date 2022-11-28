@@ -1,10 +1,12 @@
 import React, { useState, useCallback, useEffect, memo, useMemo } from "react";
 import { useDispatch } from "react-redux";
-import type { DeviceInfo } from "@ledgerhq/live-common/types/manager";
-import type { Device } from "@ledgerhq/live-common/hw/actions/types";
-import type { ListAppsResult } from "@ledgerhq/live-common/apps/types";
+import { from } from "rxjs";
+import type { App } from "@ledgerhq/types-live";
 import { predictOptimisticState } from "@ledgerhq/live-common/apps/index";
 import { SyncSkipUnderPriority } from "@ledgerhq/live-common/bridge/react/index";
+import { CommonActions } from "@react-navigation/native";
+import getDeviceInfo from "@ledgerhq/live-common/hw/getDeviceInfo";
+import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";
 import { useApps } from "./shared";
 import AppsScreen from "./AppsScreen";
 import GenericErrorBottomModal from "../../components/GenericErrorBottomModal";
@@ -17,80 +19,76 @@ import { useLockNavigation } from "../../components/RootNavigator/CustomBlockRou
 import { setLastSeenDeviceInfo } from "../../actions/settings";
 import { ScreenName } from "../../const";
 import FirmwareUpdateScreen from "../../components/FirmwareUpdate";
-import { CommonActions } from "@react-navigation/native";
-import { StackNavigationProp } from "@react-navigation/stack";
 import useLatestFirmware from "../../hooks/useLatestFirmware";
 import { isFirmwareUpdateVersionSupported } from "../../logic/firmwareUpdate";
+import { ManagerNavigatorStackParamList } from "../../components/RootNavigator/types/ManagerNavigator";
+import {
+  BaseComposite,
+  StackNavigatorProps,
+} from "../../components/RootNavigator/types/helpers";
 
-export const MANAGER_TABS = {
-  CATALOG: "CATALOG",
-  INSTALLED_APPS: "INSTALLED_APPS",
-};
+type NavigationProps = BaseComposite<
+  StackNavigatorProps<ManagerNavigatorStackParamList, ScreenName.ManagerMain>
+>;
 
-export type ManagerTab = keyof typeof MANAGER_TABS;
-
-type Props = {
-  navigation: StackNavigationProp<any>,
-  route: {
-    params: {
-      device: Device,
-      deviceInfo: DeviceInfo,
-      result: ListAppsResult,
-      searchQuery?: string,
-      firmwareUpdate?: boolean,
-      appsToRestore?: string[],
-      updateModalOpened?: boolean,
-      tab: ManagerTab,
-    },
-  },
-};
-
-const Manager = ({
-  navigation,
-  route,
-}: Props) => {
+const Manager = ({ navigation, route }: NavigationProps) => {
   const {
-      device,
-      deviceInfo,
-      result,
-      searchQuery,
-      firmwareUpdate,
-      appsToRestore,
-      updateModalOpened,
-      tab = "CATALOG",
-    } = route.params;
+    device,
+    deviceInfo,
+    result,
+    searchQuery,
+    firmwareUpdate,
+    appsToRestore,
+    updateModalOpened,
+    tab = "CATALOG",
+  } = route.params;
 
   const { deviceId, deviceName, modelId } = device;
   const [state, dispatch] = useApps(result, deviceId, appsToRestore);
   const reduxDispatch = useDispatch();
 
-  const { apps, currentError, installQueue, uninstallQueue } = state;
-  const blockNavigation = installQueue.length + uninstallQueue.length > 0;
+  const refreshDeviceInfo = useCallback(() => {
+    withDevice(deviceId)(transport => from(getDeviceInfo(transport)))
+      .toPromise()
+      .then(deviceInfo => {
+        navigation.setParams({ deviceInfo });
+      });
+  }, [deviceId, navigation]);
+
+  const { currentError, installQueue, uninstallQueue } = state;
+  const pendingInstalls = installQueue.length + uninstallQueue.length > 0;
 
   const optimisticState = useMemo(() => predictOptimisticState(state), [state]);
   const latestFirmware = useLatestFirmware(deviceInfo);
-
-  const [quitManagerAction, setQuitManagerAction] = useState<any>(null);
+  const [quitManagerAction, setQuitManagerAction] = useState<{
+    type: string;
+    payload?: object;
+    source?: string;
+    target?: string;
+  } | null>(null);
 
   const [isFirmwareUpdateOpen, setIsFirmwareUpdateOpen] = useState(false);
   useEffect(() => {
-    if(latestFirmware && firmwareUpdate && isFirmwareUpdateVersionSupported(deviceInfo, device.modelId)) {
+    if (
+      latestFirmware &&
+      firmwareUpdate &&
+      isFirmwareUpdateVersionSupported(deviceInfo, device.modelId)
+    ) {
       setIsFirmwareUpdateOpen(true);
     }
-  }, [firmwareUpdate, latestFirmware]);
+  }, [device.modelId, deviceInfo, firmwareUpdate, latestFirmware]);
   /** general error state */
   const [error, setError] = useState<Error | null>(null);
   /** storage warning modal state */
-  const [storageWarning, setStorageWarning] = useState(null);
+  const [storageWarning, setStorageWarning] = useState<string | null>(null);
   /** install app with dependencies modal state */
-  const [appInstallWithDependencies, setAppInstallWithDependencies] = useState(
-    null,
-  );
+  const [appInstallWithDependencies, setAppInstallWithDependencies] = useState<{
+    app: App;
+    dependencies: App[];
+  } | null>(null);
   /** uninstall app with dependencies modal state */
-  const [
-    appUninstallWithDependencies,
-    setAppUninstallWithDependencies,
-  ] = useState(null);
+  const [appUninstallWithDependencies, setAppUninstallWithDependencies] =
+    useState<{ dependents: App[]; app: App } | null>(null);
 
   /** open error modal each time a new error appears in state.currentError */
   useEffect(() => {
@@ -100,7 +98,7 @@ const Manager = ({
   }, [setError, currentError]);
 
   // send informations to main router in order to lock navigation
-  useLockNavigation(blockNavigation, setQuitManagerAction, navigation);
+  useLockNavigation(pendingInstalls, setQuitManagerAction, navigation);
 
   // Save last seen device
   useEffect(() => {
@@ -115,15 +113,20 @@ const Manager = ({
     reduxDispatch(setLastSeenDeviceInfo(dmi));
   }, [device, state.installed, deviceInfo, reduxDispatch]);
 
-  const installedApps = useMemo(() => state.installed.map(({ name }) => name), [state.installed]);
+  const installedApps = useMemo(
+    () => state.installed.map(({ name }) => name),
+    [state.installed],
+  );
 
   /**
    * Resets the navigation params in order to unlock navigation
    * then trigger caught navigation action
    */
   const quitManager = useCallback(() => {
-    navigation.dispatch(quitManagerAction);
-    setQuitManagerAction(null);
+    if (quitManagerAction) {
+      navigation.dispatch(quitManagerAction);
+      setQuitManagerAction(null);
+    }
   }, [quitManagerAction, setQuitManagerAction, navigation]);
 
   const closeErrorModal = useCallback(() => setError(null), [setError]);
@@ -136,32 +139,41 @@ const Manager = ({
     setAppUninstallWithDependencies(null);
   }, [setAppUninstallWithDependencies]);
 
-  const closeQuitManagerModal = useCallback(() => setQuitManagerAction(null), [
-    setQuitManagerAction,
-  ]);
+  const closeQuitManagerModal = useCallback(
+    () => setQuitManagerAction(null),
+    [setQuitManagerAction],
+  );
 
-  const resetStorageWarning = useCallback(() => setStorageWarning(null), [
-    setStorageWarning,
-  ]);
+  const resetStorageWarning = useCallback(
+    () => setStorageWarning(null),
+    [setStorageWarning],
+  );
 
-  const onCloseFirmwareUpdate = useCallback((restoreApps?: boolean) => {
+  const onCloseFirmwareUpdate = useCallback(
+    (restoreApps?: boolean) => {
       setIsFirmwareUpdateOpen(false);
+      refreshDeviceInfo();
 
       // removes the firmwareUpdate param from the stack navigation so we don't open the modal again
       // if the user comes back to this page within the stack
       navigation.dispatch(state => {
-        const routes = state.routes.map(route => ({ ...route, params: { ...route.params, firmwareUpdate: false }}));
+        const routes = state.routes.map(route => ({
+          ...route,
+          params: { ...route.params, firmwareUpdate: false },
+        }));
         return CommonActions.reset({ ...state, routes });
       });
-      if(restoreApps) {
+      if (restoreApps) {
         // we renavigate to the manager to force redetection of the apps and restore apps if needed
         navigation.replace(ScreenName.Manager, {
           device,
           appsToRestore: installedApps,
-          firmwareUpdate: false
+          firmwareUpdate: false,
         });
       }
-  }, [installedApps, navigation]);
+    },
+    [device, installedApps, navigation, refreshDeviceInfo],
+  );
 
   return (
     <>
@@ -176,24 +188,25 @@ const Manager = ({
       <AppsScreen
         state={state}
         dispatch={dispatch}
+        device={device}
         navigation={navigation}
         setAppInstallWithDependencies={setAppInstallWithDependencies}
         setAppUninstallWithDependencies={setAppUninstallWithDependencies}
         setStorageWarning={setStorageWarning}
-        managerTabs={MANAGER_TABS}
         deviceId={deviceId}
         initialDeviceName={deviceName}
-        blockNavigation={blockNavigation}
+        pendingInstalls={pendingInstalls}
         deviceInfo={deviceInfo}
         searchQuery={searchQuery}
         updateModalOpened={updateModalOpened}
         optimisticState={optimisticState}
         tab={tab}
         result={result}
+        onLanguageChange={refreshDeviceInfo}
       />
       <GenericErrorBottomModal error={error} onClose={closeErrorModal} />
       <QuitManagerModal
-        isOpened={quitManagerAction}
+        isOpened={!!quitManagerAction}
         onConfirm={quitManager}
         onClose={closeQuitManagerModal}
         installQueue={installQueue}
@@ -204,13 +217,12 @@ const Manager = ({
         onClose={resetStorageWarning}
       />
       <AppDependenciesModal
-        appInstallWithDependencies={appInstallWithDependencies}
+        appInstallWithDependencies={appInstallWithDependencies!}
         onClose={resetAppInstallWithDependencies}
-        appList={apps}
         dispatch={dispatch}
       />
       <UninstallDependenciesModal
-        appUninstallWithDependencies={appUninstallWithDependencies}
+        appUninstallWithDependencies={appUninstallWithDependencies!}
         onClose={resetAppUninstallWithDependencies}
         dispatch={dispatch}
       />
@@ -225,4 +237,4 @@ const Manager = ({
   );
 };
 
-export default memo(Manager);
+export default memo<NavigationProps>(Manager);

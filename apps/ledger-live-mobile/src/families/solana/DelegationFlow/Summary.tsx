@@ -9,14 +9,12 @@ import {
 } from "@ledgerhq/live-common/currencies/index";
 import { useValidators } from "@ledgerhq/live-common/families/solana/react";
 import {
-  SolanaStakeWithMeta,
-  StakeAction,
-  Transaction,
+  Transaction as SolanaTransaction,
   TransactionModel,
 } from "@ledgerhq/live-common/families/solana/types";
 import { assertUnreachable } from "@ledgerhq/live-common/families/solana/utils";
 import { ValidatorsAppValidator } from "@ledgerhq/live-common/families/solana/validator-app/index";
-import { AccountLike } from "@ledgerhq/live-common/types/index";
+import { AccountLike } from "@ledgerhq/types-live";
 import { Text } from "@ledgerhq/native-ui";
 import { useTheme } from "@react-navigation/native";
 import { BigNumber } from "bignumber.js";
@@ -30,8 +28,8 @@ import React, {
   useState,
 } from "react";
 import { Trans } from "react-i18next";
-import { Animated, StyleSheet, View } from "react-native";
-import SafeAreaView from "react-native-safe-area-view";
+import { Animated, StyleSheet, View, TextStyle, StyleProp } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import Icon from "react-native-vector-icons/Feather";
 import { useSelector } from "react-redux";
 import { TrackScreen } from "../../../analytics";
@@ -45,29 +43,13 @@ import { ScreenName } from "../../../const";
 import { accountScreenSelector } from "../../../reducers/accounts";
 import DelegatingContainer from "../../tezos/DelegatingContainer";
 import ValidatorImage from "../shared/ValidatorImage";
+import { StackNavigatorProps } from "../../../components/RootNavigator/types/helpers";
+import { DelegationAction, SolanaDelegationFlowParamList } from "./types";
 
-type Props = {
-  navigation: any;
-  route: { params: RouteParams };
-};
-
-type RouteParams = {
-  accountId: string;
-  parentId?: string;
-  delegationAction?: DelegationAction;
-  amount?: number;
-  validator?: ValidatorsAppValidator;
-};
-
-type DelegationAction =
-  | {
-      kind: "new";
-    }
-  | {
-      kind: "change";
-      stakeWithMeta: SolanaStakeWithMeta;
-      stakeAction: StakeAction;
-    };
+type Props = StackNavigatorProps<
+  SolanaDelegationFlowParamList,
+  ScreenName.DelegationSummary
+>;
 
 export default function DelegationSummary({ navigation, route }: Props) {
   const { delegationAction, validator } = route.params;
@@ -100,14 +82,8 @@ export default function DelegationSummary({ navigation, route }: Props) {
     );
   }, [validators, validator, delegationAction]);
 
-  const {
-    transaction,
-    setTransaction,
-    status,
-    bridgePending,
-    bridgeError,
-  } = useBridgeTransaction(() => {
-    return {
+  const { transaction, setTransaction, status, bridgePending, bridgeError } =
+    useBridgeTransaction(() => ({
       account,
       parentAccount,
       transaction: tx({
@@ -116,8 +92,7 @@ export default function DelegationSummary({ navigation, route }: Props) {
         amount: route.params.amount,
         chosenValidator,
       }),
-    };
-  });
+    }));
 
   useEffect(() => {
     setTransaction(
@@ -169,7 +144,7 @@ export default function DelegationSummary({ navigation, route }: Props) {
 
   const rotate = rotateAnim.interpolate({
     inputRange: [0, 1],
-    // $FlowFixMe
+
     outputRange: ["0deg", "30deg"],
   });
 
@@ -188,19 +163,16 @@ export default function DelegationSummary({ navigation, route }: Props) {
   const onContinue = useCallback(async () => {
     navigation.navigate(ScreenName.DelegationSelectDevice, {
       accountId: account.id,
-      parentId: parentAccount && parentAccount.id,
-      transaction,
+      parentId: parentAccount?.id,
+      transaction: transaction as SolanaTransaction,
       status,
     });
-  }, [status, account, parentAccount, navigation, transaction]);
+  }, [navigation, account.id, parentAccount?.id, transaction, status]);
 
   const hasErrors = Object.keys(status.errors).length > 0;
 
   return (
-    <SafeAreaView
-      style={[styles.root, { backgroundColor: colors.background }]}
-      forceInset={{ bottom: "always" }}
-    >
+    <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]}>
       <TrackScreen category="DelegationFlow" name="Summary" />
 
       <View style={styles.body}>
@@ -291,7 +263,7 @@ function tx({
   defaultValidator: ValidatorsAppValidator;
   amount?: number;
   chosenValidator?: ValidatorsAppValidator;
-}): Transaction {
+}): SolanaTransaction {
   return {
     family: "solana",
     amount: new BigNumber(
@@ -403,6 +375,7 @@ const styles = StyleSheet.create({
   },
 });
 
+// eslint-disable-next-line consistent-return
 function txModelByDelegationAction(
   delegationAction: DelegationAction,
   defaultValidator: ValidatorsAppValidator,
@@ -578,7 +551,7 @@ const Words = ({
 }: {
   children: ReactNode;
   highlighted?: boolean;
-  style?: any;
+  style?: StyleProp<TextStyle>;
 }) => (
   <Text
     numberOfLines={1}

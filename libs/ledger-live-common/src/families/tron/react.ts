@@ -82,7 +82,7 @@ export const formatVotes = (
   superRepresentatives: Array<SuperRepresentative> | null | undefined
 ): Array<
   Vote & {
-    validator: SuperRepresentative | null | undefined;
+    validator?: SuperRepresentative | null;
     isSR: boolean;
     rank: number;
   }
@@ -126,6 +126,7 @@ export function useTronPowerLoading(account: TronAccount): boolean {
         type: "SYNC_ONE_ACCOUNT",
         priority: 10,
         accountId: initialAccount.current.id,
+        reason: "tron-power-load",
       });
     }, 5000);
     return () => clearInterval(interval);

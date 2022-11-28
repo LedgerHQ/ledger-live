@@ -5,10 +5,10 @@ import { track } from "../../analytics";
 
 export type WrappedButtonProps = ButtonProps & {
   event?: string;
-  eventProperties?: Object;
+  eventProperties?: unknown;
 };
 
-export function Button({
+function Button({
   onPress,
   event,
   eventProperties,
@@ -18,7 +18,7 @@ export function Button({
     async pressEvent => {
       if (!onPress) return;
       if (event) {
-        track(event, eventProperties);
+        track(event, eventProperties as Record<string, unknown>);
       }
       onPress(pressEvent);
     },

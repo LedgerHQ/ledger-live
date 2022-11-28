@@ -1,12 +1,20 @@
 import React, { useCallback } from "react";
-import { Linking, Image } from "react-native";
+import {
+  Linking,
+  Image,
+  ImageSourcePropType,
+  StyleProp,
+  ImageStyle,
+} from "react-native";
 import { Flex, Text, Link as TextLink, Icons } from "@ledgerhq/native-ui";
 import { useTranslation } from "react-i18next";
 import styled from "styled-components/native";
-import { useNavigation } from "@react-navigation/native";
+import { NavigationProp, useNavigation } from "@react-navigation/native";
+
+// eslint-disable-next-line import/no-cycle
 import Touchable from "../Touchable";
+// eslint-disable-next-line import/no-cycle
 import { track } from "../../analytics";
-import { SlideProps } from "./shared";
 
 const StyledTouchable = styled(Touchable)`
   flex: 1;
@@ -14,15 +22,17 @@ const StyledTouchable = styled(Touchable)`
 
 export type SlideProps = {
   url: string;
-  onPress?: (navigate: (...args: any) => void) => void;
+  onPress?: (
+    _: NavigationProp<Record<string, object | undefined>>["navigate"],
+  ) => void;
   name: string;
   title: string;
-  description: any;
-  cta: any;
-  image?: any;
+  description: string;
+  cta?: string;
+  image?: ImageSourcePropType;
   width?: number;
-  icon?: any;
-  position?: any;
+  icon?: React.ReactNode;
+  position?: StyleProp<ImageStyle>;
 };
 
 const Slide = ({
@@ -40,7 +50,8 @@ const Slide = ({
   const { t } = useTranslation();
   const { navigate } = useNavigation();
   const onClick = useCallback(() => {
-    track("Portfolio Recommended OpenUrl", {
+    track("banner_clicked", {
+      banner: name,
       url,
     });
     if (onPress) {
@@ -48,7 +59,7 @@ const Slide = ({
     } else {
       Linking.openURL(url);
     }
-  }, [onPress, navigate, url]);
+  }, [name, url, onPress, navigate]);
   return (
     <StyledTouchable event={`${name} Carousel`} onPress={onClick}>
       <Flex

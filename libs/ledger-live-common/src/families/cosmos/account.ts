@@ -3,9 +3,15 @@ import { BigNumber } from "bignumber.js";
 import { getCurrentCosmosPreloadData } from "./preloadedData";
 import { getAccountUnit } from "../../account";
 import { formatCurrencyUnit } from "../../currencies";
-import { CosmosOperation, CosmosExtraTxInfo, CosmosAccount } from "./types";
+import {
+  CosmosOperation,
+  CosmosExtraTxInfo,
+  CosmosPreloadData,
+  CosmosAccount,
+} from "./types";
 import { mapDelegations, mapUnbondings, mapRedelegations } from "./logic";
-import { Unit } from "@ledgerhq/types-cryptoassets";
+import { getCurrentOsmosisPreloadData } from "../osmosis/preloadedData";
+import type { Unit } from "@ledgerhq/types-cryptoassets";
 
 function formatOperationSpecifics(
   op: CosmosOperation,
@@ -27,10 +33,22 @@ function formatOperationSpecifics(
     .join("");
 }
 
-function formatAccountSpecifics(account: CosmosAccount): string {
+function getCurrentCosmosFamilyPreloadData(
+  currencyName: string
+): CosmosPreloadData {
+  if (currencyName === "osmosis") {
+    return getCurrentOsmosisPreloadData();
+  } else {
+    return getCurrentCosmosPreloadData();
+  }
+}
+
+export function formatAccountSpecifics(account: CosmosAccount): string {
   const { cosmosResources } = account;
   invariant(cosmosResources, "cosmos account expected");
-  const { validators } = getCurrentCosmosPreloadData();
+  const currencyName = account.currency.name.toLowerCase();
+  const { validators } = getCurrentCosmosFamilyPreloadData(currencyName);
+
   const unit = getAccountUnit(account);
   const formatConfig = {
     disableRounding: true,
@@ -127,8 +145,9 @@ function formatAccountSpecifics(account: CosmosAccount): string {
 export function fromOperationExtraRaw(
   extra: Record<string, any> | null | undefined
 ): CosmosExtraTxInfo | Record<string, any> | null | undefined {
+  let e = {};
   if (extra && extra.validators) {
-    return {
+    e = {
       ...extra,
       validators: extra.validators.map((o) => ({
         ...o,
@@ -136,14 +155,15 @@ export function fromOperationExtraRaw(
       })),
     };
   }
-
-  return extra;
+  return e;
 }
 export function toOperationExtraRaw(
   extra: Record<string, any> | null | undefined
 ): CosmosExtraTxInfo | Record<string, any> | null | undefined {
+  let e = {};
+
   if (extra && extra.validators) {
-    return {
+    e = {
       ...extra,
       validators: extra.validators.map((o) => ({
         ...o,
@@ -151,8 +171,7 @@ export function toOperationExtraRaw(
       })),
     };
   }
-
-  return extra;
+  return e;
 }
 export default {
   formatAccountSpecifics,

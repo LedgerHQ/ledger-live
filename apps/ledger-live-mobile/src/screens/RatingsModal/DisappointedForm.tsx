@@ -46,7 +46,7 @@ const StyledWebview = styled(WebView)`
 `;
 
 type Props = {
-  setStep: Function;
+  setStep: (t: string) => void;
 };
 
 const DisappointedForm = ({ setStep }: Props) => {
@@ -93,7 +93,6 @@ const DisappointedForm = ({ setStep }: Props) => {
         <StyledWebview
           source={{ uri: ratingsFeatureParams?.typeform_url }}
           originWhitelist={["*"]}
-          javaScriptEnabledAndroid={true}
           injectedJavaScript={injectedJavascript}
           onLoadEnd={onLoadEnd}
           onMessage={onMessage}

@@ -26,7 +26,7 @@ const RightAction = ({
   dragX,
   onRemove,
 }: {
-  dragX: any;
+  dragX: Animated.AnimatedInterpolation;
   onRemove: () => void;
 }) => {
   const { colors } = useTheme();
@@ -58,7 +58,7 @@ type VoteRowProps = {
   vote: Vote & {
     isSR: boolean;
     rank: number;
-    validator?: SuperRepresentative;
+    validator?: SuperRepresentative | null;
   };
   onEdit: (vote: Vote, name: string) => void;
   onRemove: (vote: Vote) => void;
@@ -76,8 +76,8 @@ const VoteRow = ({
   openIndex,
 }: VoteRowProps) => {
   const { colors } = useTheme();
-  const rowRef = useRef();
-  const swipeRef = useRef();
+  const rowRef = useRef<Animatable.View & View>(null);
+  const swipeRef = useRef<Swipeable>(null);
   const { address, voteCount, isSR, rank, validator } = vote;
   const { name } = validator || {};
 
@@ -96,11 +96,10 @@ const VoteRow = ({
     }
   }, [index, swipeRef]);
 
-  const removeVote = useCallback(() => onRemove({ address, voteCount }), [
-    address,
-    voteCount,
-    onRemove,
-  ]);
+  const removeVote = useCallback(
+    () => onRemove({ address, voteCount }),
+    [address, voteCount, onRemove],
+  );
 
   useEffect(() => {
     if (openIndex !== index && swipeRef.current && swipeRef.current.close)
@@ -127,7 +126,7 @@ const VoteRow = ({
         friction={2}
         rightThreshold={27}
         overshootRight={false}
-        renderRightActions={(progress, dragX) => (
+        renderRightActions={(_progress, dragX) => (
           <RightAction dragX={dragX} onRemove={removeVoteAnimStart} />
         )}
         onSwipeableRightWillOpen={() => onOpen(index)}

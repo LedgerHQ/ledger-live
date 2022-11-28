@@ -1,14 +1,19 @@
 import React, { useCallback } from "react";
-import { CryptoCurrency } from "@ledgerhq/live-common/types/index";
-import { NavigatorName, ScreenName } from "../../../const";
-import AccountRowLayout from "../../../components/AccountRowLayout";
+import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { BigNumber } from "bignumber.js";
+import { ScreenName } from "../../../const";
+import AccountRowLayout from "../../../components/AccountRowLayout";
 import { track } from "../../../analytics";
+import { StackNavigatorNavigation } from "../../../components/RootNavigator/types/helpers";
+import { AccountsNavigatorParamList } from "../../../components/RootNavigator/types/AccountsNavigator";
 
 type Props = {
-  currency: CryptoCurrency;
-  navigation: any;
+  currency: CryptoCurrency | TokenCurrency;
   screen: "Wallet" | "Assets";
+  navigation: StackNavigatorNavigation<
+    AccountsNavigatorParamList,
+    ScreenName.Accounts
+  >;
 };
 
 const ReadOnlyAccountRow = ({ navigation, currency, screen }: Props) => {
@@ -16,15 +21,9 @@ const ReadOnlyAccountRow = ({ navigation, currency, screen }: Props) => {
 
   const onAccountPress = useCallback(() => {
     track("account_clicked", { currency: name, screen });
-    navigation.navigate(NavigatorName.Portfolio, {
-      screen: NavigatorName.PortfolioAccounts,
-      params: {
-        screen: ScreenName.Account,
-        params: {
-          currencyId: id,
-          currencyType: type,
-        },
-      },
+    navigation.navigate(ScreenName.Account, {
+      currencyId: id,
+      currencyType: type,
     });
   }, [name, screen, navigation, id, type]);
 
@@ -40,4 +39,4 @@ const ReadOnlyAccountRow = ({ navigation, currency, screen }: Props) => {
   );
 };
 
-export default React.memo<Props>(ReadOnlyAccountRow);
+export default React.memo(ReadOnlyAccountRow);

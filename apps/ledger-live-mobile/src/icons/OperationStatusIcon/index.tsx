@@ -1,5 +1,5 @@
 import React from "react";
-import { OperationType } from "@ledgerhq/live-common/types/index";
+import { OperationType } from "@ledgerhq/types-live";
 import { Icons, BoxedIcon } from "@ledgerhq/native-ui";
 import {
   DEFAULT_BOX_SIZE,
@@ -37,9 +37,14 @@ const iconsComponent = {
   SET_CONTROLLER: Icons.ArrowFromBottomMedium,
   NFT_IN: Icons.ArrowBottomMedium,
   NFT_OUT: Icons.ArrowTopMedium,
+  ACTIVATE: Icons.ShieldCheckMedium,
+  LOCK: Icons.LockMedium,
+  UNLOCK: Icons.UnlockMedium,
+  REVOKE: Icons.VoteNoneMedium,
+  REGISTER: Icons.PlusMedium,
 };
 
-export const OperationStatusIcon = ({
+const OperationStatusIcon = ({
   type,
   confirmed,
   failed,
@@ -49,10 +54,11 @@ export const OperationStatusIcon = ({
   size?: number;
   type: OperationType;
   confirmed?: boolean;
-  Badge?: React.ComponentType<{ size: number }>;
+  Badge?: React.ComponentType<{ size?: number; color?: string }>;
   failed?: boolean;
 }) => {
-  const Icon = iconsComponent[type] || iconsComponent.NONE;
+  const Icon =
+    iconsComponent[type as keyof typeof iconsComponent] || iconsComponent.NONE;
   const BadgeIcon =
     Badge ||
     (failed

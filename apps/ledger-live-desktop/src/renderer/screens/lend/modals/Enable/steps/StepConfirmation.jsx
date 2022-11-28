@@ -81,7 +81,11 @@ function StepConfirmation({
           name="Approve Step 3 Success"
           eventProperties={{ currencyName: currency.name }}
         />
-        <SyncOneAccountOnMount priority={10} accountId={optimisticOperation.accountId} />
+        <SyncOneAccountOnMount
+          reason="transaction-flow-confirmation"
+          priority={10}
+          accountId={optimisticOperation.accountId}
+        />
         <IconContainer>
           <Update size={24} />
         </IconContainer>

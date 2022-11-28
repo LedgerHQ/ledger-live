@@ -34,6 +34,6 @@ function MockModeRow({ reboot }: Props) {
   );
 }
 
-const m: React.ComponentType<{}> = withReboot(MockModeRow);
+const m = withReboot(MockModeRow);
 
-export default memo<Props>(m);
+export default memo(m);
