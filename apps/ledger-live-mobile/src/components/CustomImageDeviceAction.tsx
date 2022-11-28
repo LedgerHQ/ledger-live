@@ -21,7 +21,13 @@ type Props = {
   hexImage: string;
   source?: ComponentProps<typeof Image>["source"];
   onStart?: () => void;
-  onResult?: () => void;
+  onResult?: ({
+    imageHash,
+    imageSize,
+  }: {
+    imageHash: string;
+    imageSize: number;
+  }) => void;
   onSkip?: () => void;
 };
 

@@ -4,7 +4,7 @@ import {
   getDeviceModel,
   identifyTargetId,
 } from "@ledgerhq/devices";
-import { UnexpectedBootloader, StatusCodes } from "@ledgerhq/errors";
+import { UnexpectedBootloader } from "@ledgerhq/errors";
 import { concat, of, EMPTY, from, Observable, throwError, defer } from "rxjs";
 import { mergeMap, map } from "rxjs/operators";
 import type { Exec, AppOp, ListAppsEvent, ListAppsResult } from "./types";
@@ -189,10 +189,7 @@ export const listApps = (
         )
           .then((apps) =>
             apps
-              .filter(({ hash_code_data }) => {
-                console.log("wadus", { hash_code_data }); 
-                return hash_code_data !== emptyHashData;
-              })
+              .filter(({ hash_code_data }) => hash_code_data !== emptyHashData)
               .map(({ name, hash }) => ({
                 name,
                 hash,

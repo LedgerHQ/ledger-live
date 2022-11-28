@@ -10,6 +10,7 @@ import {
   completeCustomImageFlow,
   setLastConnectedDevice,
   setReadOnlyMode,
+  setLastSeenCustomImage,
 } from "../../actions/settings";
 import { ScreenName } from "../../const";
 import CustomImageDeviceAction from "../../components/CustomImageDeviceAction";
@@ -89,11 +90,15 @@ const Step3Transfer = ({ route, navigation }: NavigationProps) => {
     navigation.getParent()?.goBack();
   }, [navigation]);
 
-  const handleResult = useCallback(() => {
-    completeAction(PostOnboardingActionId.customImage);
-    dispatch(completeCustomImageFlow());
-    handleExit();
-  }, [completeAction, dispatch, handleExit]);
+  const handleResult = useCallback(
+    payload => {
+      completeAction(PostOnboardingActionId.customImage);
+      dispatch(completeCustomImageFlow());
+      dispatch(setLastSeenCustomImage(payload));
+      handleExit();
+    },
+    [completeAction, dispatch, handleExit],
+  );
 
   const insets = useSafeAreaInsets();
   const DEBUG = false;
