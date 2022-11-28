@@ -410,6 +410,9 @@
       "title" : "죄송하지만 필요한 앱입니다",
       "description" : "마지막으로 비트코인 앱이나 이더리움 앱을 삭제하세요."
     },
+    "MaxFeeLow" : {
+      "title" : "최대 비용이 너무 낮습니다. 트랜잭션이 당분간 보류 상태일 수 있습니다."
+    },
     "NetworkDown" : {
       "title" : "죄송하지만 인터넷이 끊긴 것 같습니다",
       "description" : "인터넷 연결을 확인하세요."
@@ -595,6 +598,9 @@
     "SourceHasMultiSign" : {
       "title" : "{{currencyName}}(을)를 보내려면 다중서명을 비활성화하세요"
     },
+    "DustLimit" : {
+      "title" : "더스트(소액) 한도보다 낮은 금액입니다."
+    },
     "StratisDown2021Warning" : {
       "description" : "Stratis 블록체인 진화로 더 이상 제대로 작동하지 않을 수 있습니다. 기존 Stratis 블록체인은 2021년 10월 16일까지 지원됩니다."
     },
@@ -744,6 +750,42 @@
     },
     "HederaAddAccountError" : {
       "title" : "귀하의 계정이 추가되지 않았습니다. 다시 시도해 주세요."
+    },
+    "NearNewAccountWarning" : {
+      "title" : "수령인 계정이 아직 생성되지 않았습니다. 프로토콜을 생성하려면 {{formattedNewAccountStorageCost}} 전송이 필요합니다."
+    },
+    "NearNewNamedAccountError" : {
+      "title" : "수령인 계정이 아직 생성되지 않았습니다. 니어 지갑에서 생성해야 합니다."
+    },
+    "NearActivationFeeNotCovered" : {
+      "title" : "이 금액은 {{formattedNewAccountStorageCost}} 스토리지 비용을 포함하지 않습니다."
+    },
+    "NearUseAllAmountStakeWarning" : {
+      "title" : "향후 트랜잭션 수수료 지불에 필요한 잔액을 충분히 남겨 두세요"
+    },
+    "NearNotEnoughStaked" : {
+      "title" : "스테이킹 잔액 부족"
+    },
+    "NearNotEnoughAvailable" : {
+      "title" : "출금 가능 잔액 부족"
+    },
+    "NearRecommendUnstake" : {
+      "title" : "계정을 비우기 전에 자금을 언스테이킹하고 출금하세요."
+    },
+    "NearStakingThresholdNotMet" : {
+      "title" : "금액은 {{threshold}} 이상이어야 합니다."
+    },
+    "PriorityFeeTooLow" : {
+      "title" : "우선 수수료가 권장 값 보다 낮습니다."
+    },
+    "PriorityFeeTooHigh" : {
+      "title" : "우선 수수료가 필요 이상으로 높습니다. 초과 금액을 지불할 수 있습니다."
+    },
+    "MaxFeeTooLow" : {
+      "title" : "최대 수수료가 권장 값보다 낮습니다."
+    },
+    "PriorityFeeHigherThanMaxFee" : {
+      "title" : "최대 우선 수수료가 최대 수수료보다 높아서는 안됩니다."
     }
   },
   "crash" : {
@@ -1804,6 +1846,9 @@
         }
       }
     },
+    "appsStep" : {
+      "title" : "{{productName}} 애플리케이션"
+    },
     "readyStep" : {
       "title" : "{{productName}} 장치가 준비되었습니다."
     },
@@ -1962,7 +2007,10 @@
       "UNLOCK" : "잠금 해제",
       "REVOKE" : "취소",
       "REGISTER" : "등록 완료",
-      "WITHDRAW" : "출금됨"
+      "WITHDRAW" : "출금됨",
+      "STAKE" : "스테이킹 완료",
+      "UNSTAKE" : "언스테이킹 완료",
+      "WITHDRAW_UNSTAKED" : "출금됨"
     }
   },
   "operationDetails" : {
@@ -2023,7 +2071,8 @@
       "storageLimit" : "저장공간 한계",
       "gasLimit" : "가스 한도",
       "id" : "Id",
-      "autoClaimedRewards" : "자동으로 청구된 보상"
+      "autoClaimedRewards" : "자동으로 청구된 보상",
+      "stakedAmount" : "스테이킹 금액"
     },
     "multipleAddresses" : "왜 주소가 여러 개인가요?",
     "tokenName" : "토큰명",
@@ -2140,7 +2189,7 @@
       },
       "advanced" : {
         "title" : "고급 로그",
-        "warningDerivation" : "{{tag}} xpub 입니다. 타사 지갑으로 가져올 때 동일한 파생 모드를 선택하세요.",
+        "warningDerivation" : "{{tag}} xpub입니다. 타사 지갑으로 가져올 때 동일한 파생 모드를 선택하세요.",
         "desc" : ""
       }
     },
@@ -2435,14 +2484,19 @@
         "title" : "마켓",
         "desc" : "중요한 시장 변화에 대한 업데이트 받아 보기"
       },
-      "announcement" : {
+      "announcements" : {
         "title" : "발표",
         "desc" : "중요한 Ledger Live 업데이트 받아 보기"
+      },
+      "recommendations" : {
+        "title" : "추천",
+        "desc" : "개인 맞춤 추천과 특별 오퍼로 더욱 풍성해진 사용자 경험을 누려보세요."
       },
       "price" : {
         "title" : "가격 알림",
         "desc" : "시장 흐름을 놓치지 않도록 선호하는 코인의 가격 알림을 설정해 보세요"
-      }
+      },
+      "disclaimer" : "Ledger는 데이터 프라이버시를 무엇보다 중요하게 생각합니다. 수집된 데이터를 파트너와 공유하는 일은 절대 없습니다."
     },
     "help" : {
       "title" : "도움말",
@@ -2529,7 +2583,7 @@
   "notifications" : {
     "prompt" : {
       "title" : "알림 켜기",
-      "desc" : "Ledger Live, Ledger 제품 및 보안 관련 중요 업데이트를 받아보세요. 해제는 언제든지 가능합니다.",
+      "desc" : "Ledger Live, Ledger 제품, 맞춤형 제안 및 시장에 대한 최신 업데이트를 받아보세요. 해제는 언제든지 가능합니다.",
       "allow" : "알림 허용",
       "later" : "다음에 결정하기"
     }
@@ -3151,6 +3205,12 @@
       }
     }
   },
+  "signMessage" : {
+    "eip712" : {
+      "showFullMessage" : "전체 메시지 보기",
+      "hideFullMessage" : "전체 메시지 숨기기"
+    }
+  },
   "sync" : {
     "error" : "동기화 오류",
     "loading" : "동기화"
@@ -3212,9 +3272,14 @@
       "infoTotalDesc" : "트랜잭션 금액과 선택된 네트워크 수수료가 포함됩니다",
       "gasLimit" : "가스 한도(Gas limit)",
       "gasPrice" : "가스 가격(Gas price)",
+      "maxFee" : "최대 비용",
+      "maxPriorityFee" : "최대 우선 수수료",
+      "nextBlock" : "다음 블록: {{nextBaseFee}}",
+      "suggestedPriorityFee" : "권장: {{lowPriorityFee}} - {{highPriorityFee}}",
       "maxFees" : "최대 수수료",
       "validateGasLimit" : "가스 제한 검증",
       "fees" : "수수료",
+      "maxEstimatedFee" : "최대 예상 수수료",
       "validateFees" : "수수료 검증",
       "customizeFees" : "맞춤형 수수료",
       "memo" : {
@@ -3462,7 +3527,7 @@
     }
   },
   "DeviceAction" : {
-    "stayInTheAppPlz" : "앱을 그대로 유지하고 Nano X를 가까운 곳에 위치시켜 주세요",
+    "stayInTheAppPlz" : "Ledger Live 앱을 끄지 마시고 Ledger 장치를 가까운 곳에 위치시켜 주세요.",
     "allowAppPermission" : "내 장치에서 {{wording}} 앱 열기",
     "allowAppPermissionSubtitleToken" : "나의 {{token}} 토큰 관리",
     "allowManagerPermission" : "장치에서 {{wording}} 허용",
@@ -3634,6 +3699,7 @@
         "description" : "저장된 Ledger 장치 관리"
       },
       "addNewCTA" : "새로 추가하기",
+      "otgBanner" : "Nano S 또는 Nano S Plus 사용자라면, 장치를 USB 케이블로 연결하세요.",
       "connectExistingLedger" : "기존 Ledger 연결",
       "connectExistingLedgerDescription" : "이미 설정된 Ledger가 있나요? 블루투스 페어링을 진행하세요",
       "setUpNewLedger" : "새 Ledger 설정",
@@ -3889,7 +3955,7 @@
       "de" : "Deutsch",
       "tr" : "Türk",
       "ja" : "日本",
-      "ko" : "한국인",
+      "ko" : "한국어",
       "pt" : "Português"
     }
   },
@@ -4309,6 +4375,118 @@
             "description" : "OSMO를 위임하여 안전하게 보상을 받으면서, 자산에 대한 통제 권한도 유지하세요.",
             "steps" : {
               "1" : "위임 해제가 완료되려면 14일을 기다려야 합니다."
+            }
+          }
+        }
+      }
+    }
+  },
+  "near" : {
+    "info" : {
+      "available" : {
+        "title" : "니어 가용 금액",
+        "description" : "가처분 금액입니다."
+      },
+      "storageUsage" : {
+        "title" : "최소 잔액",
+        "description" : "이 금액은 저장 및 트랜잭션용으로 예약된 금액이며 계정이 활성 상태를 유지하기 위해 필요한 최소 잔액입니다."
+      },
+      "staked" : {
+        "title" : "스테이킹 잔액",
+        "description" : "이 금액은 현재 검증인에게 스테이킹되어 있습니다."
+      },
+      "pending" : {
+        "title" : "승인 대기 잔액",
+        "description" : "이 금액은 언스테이킹되어 현재 가용성 여부가 보류 상태입니다."
+      },
+      "withdrawable" : {
+        "title" : "출금 가능 잔액",
+        "description" : "이 금액은 언스테이킹되어 현재 출금이 가능합니다."
+      },
+      "stakingUnavailable" : {
+        "title" : "스테이킹 불가",
+        "description" : "계정에 스테이킹, 언스테이킹 및 인출에 필요한 가용 잔액이 충분하지 않습니다."
+      }
+    },
+    "unstaking" : {
+      "stepperHeader" : {
+        "amountSubTitle" : "언스테이킹할 금액"
+      },
+      "flow" : {
+        "steps" : {
+          "verification" : {
+            "success" : {
+              "title" : "자산을 성공적으로 언스테이킹했습니다."
+            }
+          }
+        }
+      }
+    },
+    "withdrawing" : {
+      "stepperHeader" : {
+        "amountSubTitle" : "출금 금액"
+      },
+      "flow" : {
+        "steps" : {
+          "verification" : {
+            "success" : {
+              "title" : "자산을 성공적으로 출금했습니다."
+            }
+          }
+        }
+      }
+    },
+    "staking" : {
+      "sectionLabel" : "스테이킹 포지션",
+      "info" : "스테이킹 작동 방식",
+      "add" : "추가",
+      "stakingEarn" : "자산을 스테이킹하여 니어 보상을 받을 수 있습니다.",
+      "totalStake" : "총 스테이킹",
+      "commission" : "커미션",
+      "iStake" : "스테이킹하기",
+      "actions" : {
+        "unstake" : "언스테이킹",
+        "withdraw" : "출금"
+      },
+      "drawer" : {
+        "status" : "상태",
+        "active" : "활성",
+        "inactive" : "비활성",
+        "rewards" : "보상",
+        "pending" : "대기 중",
+        "available" : "출금 가능"
+      },
+      "stepperHeader" : {
+        "amountSubTitle" : "스테이킹할 금액",
+        "selectDevice" : "장치 선택",
+        "connectDevice" : "장치 연결",
+        "stepRange" : "{{totalSteps}} 중 {{currentStep}} 단계"
+      },
+      "flow" : {
+        "steps" : {
+          "starter" : {
+            "description" : "니어를 스테이킹하여 안전하게 보상을 받으면서, 자산에 대한 통제 권한도 유지하세요.",
+            "steps" : {
+              "0" : "스테이킹된 자산은 귀하의 소유입니다.",
+              "1" : "언스테이킹이 완료되려면 52 - 65시간을 기다려야 합니다.",
+              "2" : "Ledger 장치로 안전하게 스테이킹하세요."
+            },
+            "warning" : {
+              "description" : "검증인을 현명하게 선택하세요. 검증인이 부적절하게 행동하는 경우 일부 스테이킹된 자산이 영구 손실될 수 있습니다."
+            },
+            "cta" : "계속"
+          },
+          "amount" : {
+            "assetsRemaining" : "나머지 자산: <0>{{amount}}</0>",
+            "allAssetsUsed" : "사용된 모든 자산",
+            "minAmount" : "최소 금액: <0>{{min}}</0>",
+            "incorrectAmount" : "최대 금액: <0>{{max}}</0>",
+            "cta" : "계속"
+          },
+          "verification" : {
+            "success" : {
+              "title" : "자산을 성공적으로 스테이킹했습니다.",
+              "text" : "네트워크가 트랜잭션을 검증 완료하면 계정 잔액이 업데이트됩니다."
             }
           }
         }
@@ -5353,6 +5531,11 @@
       "viewOn" : "다음에서 보기:",
       "viewInExplorer" : "탐색기에서 보기",
       "txDetails" : "트랜잭션 세부 사항"
+    },
+    "modalDisabled" : {
+      "title" : "전송 기능을 사용할 수 없습니다",
+      "body" : "애플 앱스토어 최신 업데이트 사항 준수를 위해 NFT 전송 기능을 일시적으로 사용하실 수 없습니다. 여전히 데스크탑에서는 Ledger Live로 NFT 전송이 가능합니다.",
+      "contactSupport" : "자세한 정보는 지원 관련 기사를 확인해 주세요."
     }
   },
   "ApplicationVersion" : "v{{version}}",
