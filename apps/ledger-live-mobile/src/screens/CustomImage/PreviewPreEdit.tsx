@@ -1,10 +1,4 @@
-import React, {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { Button, Flex, InfiniteLoader, Text } from "@ledgerhq/native-ui";
 import {
   ImageMetadataLoadingError,
@@ -22,7 +16,7 @@ import { StackNavigationEventMap } from "@react-navigation/stack";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useNftMetadata } from "@ledgerhq/live-common/nft/index";
 import { NFTResource } from "@ledgerhq/live-common/nft/NftMetadataProvider/types";
-import { NFTMediaSize, NFTMetadata } from "@ledgerhq/types-live";
+import { NFTMetadata } from "@ledgerhq/types-live";
 
 import {
   BaseComposite,
@@ -32,6 +26,7 @@ import { CustomImageNavigatorParamList } from "../../components/RootNavigator/ty
 import { NavigatorName, ScreenName } from "../../const";
 import {
   downloadImageToFile,
+  extractImageUrlFromNftMetadata,
   importImageFromPhoneGallery,
 } from "../../components/CustomImage/imageUtils";
 import { ImageFileUri } from "../../components/CustomImage/types";
@@ -46,7 +41,6 @@ import useCenteredImage, {
   Params as ImageCentererParams,
   CenteredResult,
 } from "../../components/CustomImage/useCenteredImage";
-import { getMetadataMediaTypes } from "../../logic/nft";
 
 const DEFAULT_CONTRAST = 1;
 
@@ -84,25 +78,7 @@ const PreviewPreEdit = ({ navigation, route }: NavigationProps) => {
     metadata: NFTMetadata;
   };
 
-  const nftMediaTypes = useMemo(
-    () => (metadata ? getMetadataMediaTypes(metadata) : null),
-    [metadata],
-  );
-
-  const nftMediaSize = useMemo(
-    () =>
-      nftMediaTypes
-        ? (["big", "preview"] as NFTMediaSize[]).find(
-            size => nftMediaTypes[size] === "image",
-          )
-        : null,
-    [nftMediaTypes],
-  );
-
-  const nftImageUri = useMemo(
-    () => (nftMediaSize && metadata?.medias?.[nftMediaSize]?.uri) || null,
-    [nftMediaSize, metadata],
-  );
+  const nftImageUri = extractImageUrlFromNftMetadata(metadata);
 
   const imageFileUri = isImageFileUri ? params.imageFileUri : undefined;
   const imageUrl = nftImageUri || (isImageUrl ? params.imageUrl : undefined);
@@ -146,7 +122,7 @@ const PreviewPreEdit = ({ navigation, route }: NavigationProps) => {
     return () => {
       dead = true;
     };
-  }, [handleError, imageFileUri, imageUrl, status]);
+  }, [handleError, imageFileUri, imageUrl, status, isNftMetadata]);
 
   const [croppedImage, setCroppedImage] = useState<CenteredResult | null>(null);
 

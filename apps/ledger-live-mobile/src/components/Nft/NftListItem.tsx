@@ -24,7 +24,7 @@ import Skeleton from "../Skeleton";
 
 type Props = {
   nft: ProtoNFT;
-  onPress?: (nft: ProtoNFT, metadata?: NFTMetadata) => void;
+  onPress?: (nft: ProtoNFT, nftMetadata?: NFTMetadata) => void;
 };
 
 const StyledTouchableOpacity = styled.TouchableOpacity<BaseStyledProps>`

@@ -5460,8 +5460,8 @@
     "drawer": {
       "title": "Choose an image",
       "options": {
-        "uploadFromPhone": "Upload from my phone",
-        "selectFromNFTGallery": "Select from NFT gallery"
+        "uploadFromPhone": "Choose from my picture gallery",
+        "selectFromNFTGallery": "Choose from NFT gallery"
       }
     },
     "cropImage": "Crop image",
