@@ -410,6 +410,9 @@
       "title" : "Entschuldigung, diese App wird benötigt",
       "description" : "Deinstallieren Sie die Bitcoin- oder Ethereum-App zuletzt."
     },
+    "MaxFeeLow" : {
+      "title" : "Ihre maximale Gebühr ist zu niedrig. Ihre Transaktion kann eine Weile ausstehend bleiben"
+    },
     "NetworkDown" : {
       "title" : "Entschuldigung, das Internet scheint ausgefallen zu sein",
       "description" : "Bitte überprüfen Sie Ihre Internetverbindung."
@@ -595,6 +598,9 @@
     "SourceHasMultiSign" : {
       "title" : "Bitte deaktivieren Sie Multisign um {{currencyName}} zu senden"
     },
+    "DustLimit" : {
+      "title" : "Die Menge ist niedriger als das Staub (dust) -Limit"
+    },
     "StratisDown2021Warning" : {
       "description" : "Die Stratis-Blockchain hat sich weiterentwickelt und funktioniert möglicherweise nicht mehr korrekt. Die Unterstützung für die ursprüngliche Stratis-Blockchain wird bis zum 16. Oktober 2021 aufrechterhalten."
     },
@@ -744,6 +750,42 @@
     },
     "HederaAddAccountError" : {
       "title" : "Ihr Konto wurde nicht hinzugefügt. Bitte versuchen Sie es erneut."
+    },
+    "NearNewAccountWarning" : {
+      "title" : "Das Empfängerkonto wurde noch nicht erstellt. Das Protokoll erfordert einen Transfer von {{formattedNewAccountStorageCost}}, um es zu erstellen."
+    },
+    "NearNewNamedAccountError" : {
+      "title" : "Das Empfängerkonto wurde noch nicht erstellt. Es muss in der NEAR-Wallet erstellt werden."
+    },
+    "NearActivationFeeNotCovered" : {
+      "title" : "Dieser Betrag deckt nicht die Speicherkosten über {{formattedNewAccountStorageCost}} ab."
+    },
+    "NearUseAllAmountStakeWarning" : {
+      "title" : "Stellen Sie sicher, dass Sie genug Guthaben für zukünftige Transaktionsgebühren übrig haben"
+    },
+    "NearNotEnoughStaked" : {
+      "title" : "Unzureichendes Guthaben, welches gestaked wurde"
+    },
+    "NearNotEnoughAvailable" : {
+      "title" : "Unzureichendes abhebbares Guthaben"
+    },
+    "NearRecommendUnstake" : {
+      "title" : "Bitte heben Sie den Staking-Prozess auf und heben Sie Ihre Vermögenswerte ab, bevor Sie das Konto leeren"
+    },
+    "NearStakingThresholdNotMet" : {
+      "title" : "Der Betrag muss mindestens {{threshold}} betragen"
+    },
+    "PriorityFeeTooLow" : {
+      "title" : "Die Prioritätsgebühr ist niedriger als der empfohlene Wert"
+    },
+    "PriorityFeeTooHigh" : {
+      "title" : "Die Prioritätsgebühr ist höher als nötig. Möglicherweise zahlen Sie zu viel"
+    },
+    "MaxFeeTooLow" : {
+      "title" : "Die maximale Gebühr ist niedriger als der empfohlene Wert"
+    },
+    "PriorityFeeHigherThanMaxFee" : {
+      "title" : "Die maximale Prioritätsgebühr kann nicht höher sein als die maximale Gebühr"
     }
   },
   "crash" : {
@@ -1804,6 +1846,9 @@
         }
       }
     },
+    "appsStep" : {
+      "title" : "{{productName}} Anwendungen"
+    },
     "readyStep" : {
       "title" : "{{productName}} ist bereit"
     },
@@ -1962,7 +2007,10 @@
       "UNLOCK" : "Entsperrt",
       "REVOKE" : "Widerrufen",
       "REGISTER" : "Registriert",
-      "WITHDRAW" : "Ausgezahlt"
+      "WITHDRAW" : "Ausgezahlt",
+      "STAKE" : "Gestaked",
+      "UNSTAKE" : "Nicht mehr gestaked",
+      "WITHDRAW_UNSTAKED" : "Ausgezahlt"
     }
   },
   "operationDetails" : {
@@ -2023,7 +2071,8 @@
       "storageLimit" : "Speicherlimit",
       "gasLimit" : "Gaslimit",
       "id" : "ID",
-      "autoClaimedRewards" : "Automatisch beanspruchte Prämien"
+      "autoClaimedRewards" : "Automatisch beanspruchte Prämien",
+      "stakedAmount" : "Betrag gestaked"
     },
     "multipleAddresses" : "Warum mehrere Adressen?",
     "tokenName" : "Token-Name",
@@ -2435,14 +2484,19 @@
         "title" : "Markt",
         "desc" : "Erhalten Sie wichtige Updates zu Marktveränderungen"
       },
-      "announcement" : {
+      "announcements" : {
         "title" : "Ankündigung",
         "desc" : "Wichtige Updates zu Ledger Live erhalten"
+      },
+      "recommendations" : {
+        "title" : "Empfehlungen",
+        "desc" : "Bereichern Sie Ihr Erlebnis mit personalisierten Empfehlungen und speziellen Angeboten"
       },
       "price" : {
         "title" : "Preisalarme",
         "desc" : "Legen Sie Preisalarme für Ihre Lieblingscoins fest, damit Sie keine Marktbewegung verpassen"
-      }
+      },
+      "disclaimer" : "Der Datenschutz hat bei Ledger oberste Priorität. Die gesammelten Daten werden niemals an unsere Partner weitergegeben"
     },
     "help" : {
       "title" : "Hilfe",
@@ -2529,7 +2583,7 @@
   "notifications" : {
     "prompt" : {
       "title" : "Benachrichtigungen aktivieren",
-      "desc" : "Erhalten Sie wichtige Updates zu Ledger Live, Ledger Produkten und Sicherheit. Abmeldung jederzeit möglich.",
+      "desc" : "Erhalten Sie die neuesten Updates zu Ledger Live, Ledger-Produkten, dem Markt und personalisierte Empfehlungen. Sie können sich jederzeit in den Einstellungen wieder abmelden",
       "allow" : "Benachrichtigungen zulassen",
       "later" : "Vielleicht später"
     }
@@ -3151,6 +3205,12 @@
       }
     }
   },
+  "signMessage" : {
+    "eip712" : {
+      "showFullMessage" : "Vollständige Nachricht anzeigen",
+      "hideFullMessage" : "Vollständige Nachricht ausblenden"
+    }
+  },
   "sync" : {
     "error" : "Fehler beim Synchronisieren",
     "loading" : "Sync"
@@ -3212,9 +3272,14 @@
       "infoTotalDesc" : "Enthält den Transaktionsbetrag und die gewählten Netzwerkgebühren",
       "gasLimit" : "Gaslimit",
       "gasPrice" : "Gaspreis",
+      "maxFee" : "Max. Gebühr",
+      "maxPriorityFee" : "Maximale Prioritätsgebühr",
+      "nextBlock" : "Nächster Block: {{nextBaseFee}}",
+      "suggestedPriorityFee" : "Vorgeschlagen: {{lowPriorityFee}} - {{highPriorityFee}}",
       "maxFees" : "Max. Gebühren",
       "validateGasLimit" : "Gas-Limit validieren",
       "fees" : "Gebühren",
+      "maxEstimatedFee" : "Geschätzte max. Gebühr",
       "validateFees" : "Gebühren validieren",
       "customizeFees" : "Gebühren anpassen",
       "memo" : {
@@ -3462,7 +3527,7 @@
     }
   },
   "DeviceAction" : {
-    "stayInTheAppPlz" : "Bleiben Sie in der Ledger Live-App und halten Sie Ihren Nano X in der Nähe",
+    "stayInTheAppPlz" : "Bleiben Sie in der Ledger Live-App und halten Sie Ihren Ledger bereit.",
     "allowAppPermission" : "Öffnen Sie die {{wording}} App auf Ihrem Gerät",
     "allowAppPermissionSubtitleToken" : "zum Verwalten Ihrer {{token}}-Tokens",
     "allowManagerPermission" : "Erlauben Sie {{wording}} auf Ihrem Gerät",
@@ -3634,6 +3699,7 @@
         "description" : "Ihre gespeicherten Ledger verwalten"
       },
       "addNewCTA" : "Neu hinzufügen",
+      "otgBanner" : "Wenn Sie einen Nano S oder Nano S Plus besitzen, schließen Sie Ihr Gerät mit einem USB-Kabel an.",
       "connectExistingLedger" : "Vorhandenes Ledger verbinden",
       "connectExistingLedgerDescription" : "Haben Sie bereits ein Ledger, das eingerichtet ist? Verbinden Sie es mit Bluetooth",
       "setUpNewLedger" : "Richten Sie ein neues Ledger ein",
@@ -4309,6 +4375,118 @@
             "description" : "Delegieren Sie Ihr OSMO, um sicher Prämien zu verdienen und behalten Sie die Kontrolle über Ihr Vermögen.",
             "steps" : {
               "1" : "Sie müssen 14 Tage warten, bis die Delegierung vollständig beendet ist."
+            }
+          }
+        }
+      }
+    }
+  },
+  "near" : {
+    "info" : {
+      "available" : {
+        "title" : "NEAR verfügbar",
+        "description" : "Dieser Betrag ist verfügbar."
+      },
+      "storageUsage" : {
+        "title" : "Minimales Guthaben",
+        "description" : "Dieser Betrag ist für Speicherungen und Transaktionen reserviert und ist das Mindestguthaben, das auf Ihrem Konto verfügbar sein muss, um aktiv zu bleiben."
+      },
+      "staked" : {
+        "title" : "Kontostand gestaked",
+        "description" : "Dieser Betrag ist derzeit mit Validatoren gestaked."
+      },
+      "pending" : {
+        "title" : "Ausstehender Saldo",
+        "description" : "Dieser Betrag wird nicht mehr gestaked, steht aber derzeit noch nicht zur Verfügung."
+      },
+      "withdrawable" : {
+        "title" : "Auszahlbares Guthaben",
+        "description" : "Dieser Betrag wird nicht mehr gestaked und kann derzeit abgehoben werden."
+      },
+      "stakingUnavailable" : {
+        "title" : "Staking nicht verfügbar",
+        "description" : "Nicht genügend verfügbares Guthaben auf Ihrem Konto, um es zu staken, das Staking aufzuheben oder abzubuchen.."
+      }
+    },
+    "unstaking" : {
+      "stepperHeader" : {
+        "amountSubTitle" : "Aufzuhebender Staking-Betrag"
+      },
+      "flow" : {
+        "steps" : {
+          "verification" : {
+            "success" : {
+              "title" : "Sie haben erfolgreich das Staking Ihrer Vermögenswerte aufgehoben"
+            }
+          }
+        }
+      }
+    },
+    "withdrawing" : {
+      "stepperHeader" : {
+        "amountSubTitle" : "Abzuhebender Betrag"
+      },
+      "flow" : {
+        "steps" : {
+          "verification" : {
+            "success" : {
+              "title" : "Sie haben Ihre Vermögenswerte erfolgreich zurückgezogen."
+            }
+          }
+        }
+      }
+    },
+    "staking" : {
+      "sectionLabel" : "Position(en) gestaked",
+      "info" : "So funktioniert Staking",
+      "add" : "Hinzufügen",
+      "stakingEarn" : "Sie können NEAR-Belohnungen verdienen, indem Sie Ihre Vermögenswerte staken.",
+      "totalStake" : "Staking-Gesamtbetrag",
+      "commission" : "Provision",
+      "iStake" : "Ich stake",
+      "actions" : {
+        "unstake" : "Unstake",
+        "withdraw" : "Abheben"
+      },
+      "drawer" : {
+        "status" : "Status",
+        "active" : "Aktiv",
+        "inactive" : "Inaktiv",
+        "rewards" : "Prämien",
+        "pending" : "Ausstehend",
+        "available" : "Auszahlbar"
+      },
+      "stepperHeader" : {
+        "amountSubTitle" : "Staking-Betrag",
+        "selectDevice" : "Gerät wählen",
+        "connectDevice" : "Verbundenes Gerät",
+        "stepRange" : "Schritt {{currentStep}} von {{totalSteps}}"
+      },
+      "flow" : {
+        "steps" : {
+          "starter" : {
+            "description" : "Staken Sie Ihre NEAR, um sicher Belohnungen zu verdienen und behalten Sie die Kontrolle über Ihr Vermögen.",
+            "steps" : {
+              "0" : "Vermögenswerte die gestaked wurden, bleiben in Ihrem Besitz.",
+              "1" : "Sie müssen 52 — 65 Stunden warten, bis der Staking-Prozess aufgehoben wurde.",
+              "2" : "Staken Sie sicher mit Ihrem Ledger-Gerät."
+            },
+            "warning" : {
+              "description" : "Wählen Sie Ihren Validator mit Bedacht: Ein Teil Ihrer Vermögenswerte, die gestaked sind, kann unwiderruflich verloren gehen, wenn sich der Validator nicht angemessen verhält."
+            },
+            "cta" : "Weiter"
+          },
+          "amount" : {
+            "assetsRemaining" : "Verbleibende Vermögenswerte: <0>{{amount}}</0>",
+            "allAssetsUsed" : "Alle verwendeten Vermögenswerte",
+            "minAmount" : "Mindestbetrag: <0>{{min}}</0>",
+            "incorrectAmount" : "Maximaler Betrag: <0>{{max}}</0>",
+            "cta" : "Weiter"
+          },
+          "verification" : {
+            "success" : {
+              "title" : "Sie haben Ihre Vermögenswerte erfolgreich im Staking eingesetzt",
+              "text" : "Ihr Kontostand wird aktualisiert, sobald das Netzwerk die Transaktion bestätigt."
             }
           }
         }
@@ -5353,6 +5531,11 @@
       "viewOn" : "Ansehen auf",
       "viewInExplorer" : "Im Explorer ansehen",
       "txDetails" : "Transaktionsdetails"
+    },
+    "modalDisabled" : {
+      "title" : "Sendefunktion nicht verfügbar",
+      "body" : "Angesichts der aktuellen Aktualisierungen im App Store von Apple ist der Versand von NFTs vorübergehend nicht möglich. Sie können weiterhin Ledger Live auf Ihrem Desktop verwenden, um NFTs zu senden.",
+      "contactSupport" : "Lesen Sie bitte unseren Support-Artikel für weitere Informationen."
     }
   },
   "ApplicationVersion" : "v{{version}}",
