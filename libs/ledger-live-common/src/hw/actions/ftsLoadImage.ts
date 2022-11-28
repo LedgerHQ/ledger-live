@@ -40,16 +40,24 @@ type State = {
   loadingImage?: boolean;
   imageLoaded?: boolean;
   imageCommitRequested?: boolean;
-  imageHash?: string;
+  imageHash: string;
+  imageSize: number;
   device: Device | null | undefined;
   deviceInfo: DeviceInfo | null | undefined;
   error: Error | null | undefined;
   progress?: number;
 };
 
-type LoadImageAction = Action<string, State, { imageHash?: string }>;
+type LoadImageAction = Action<
+  string,
+  State,
+  { imageHash: string; imageSize: number }
+>;
 
-const mapResult = ({ imageHash }: State) => ({ imageHash });
+const mapResult = ({ imageHash, imageSize }: State) => ({
+  imageHash,
+  imageSize,
+});
 
 type Event =
   | LoadImageEvent
@@ -69,6 +77,8 @@ const getInitialState = (device?: Device | null | undefined): State => ({
   device,
   deviceInfo: null,
   error: null,
+  imageSize: 0,
+  imageHash: "",
 });
 
 const reducer = (state: State, e: Event): State => {
@@ -116,6 +126,8 @@ const reducer = (state: State, e: Event): State => {
         isLoading: false,
         loadingImage: false,
         imageLoaded: true,
+        imageSize: e.imageSize,
+        imageHash: e.imageHash,
       };
     case "progress":
       return {
