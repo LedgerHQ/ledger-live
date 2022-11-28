@@ -53,8 +53,7 @@ const dataset: CurrenciesData<Transaction> = {
           expectedStatus: {
             errors: {},
             warnings: {},
-            //  estimatedFees: new BigNumber("5694"),
-            amount: new BigNumber("200000"), //  totalSpent: new BigNumber("205694")
+            amount: new BigNumber("200000"),
           },
         },
         {
@@ -97,8 +96,27 @@ const dataset: CurrenciesData<Transaction> = {
           expectedStatus: {
             errors: {},
             warnings: {},
-            //  estimatedFees: new BigNumber("5694"),
-            amount: new BigNumber("205273"), //  totalSpent: new BigNumber("210967")
+            amount: new BigNumber("205273"),
+          },
+        },
+        {
+          name: "Send max",
+          transaction: fromTransactionRaw({
+            amount: "0",
+            recipient: "ltc1qd2x2x0wf3wgkka87qlm8772tuw6yx6fl9j07ag",
+            useAllAmount: true,
+            family: "bitcoin",
+            feePerByte: "39",
+            networkInfo,
+            rbf: false,
+            utxoStrategy: {
+              strategy: 0,
+              excludeUTXOs: [],
+            },
+          }),
+          expectedStatus: {
+            errors: {},
+            warnings: {},
           },
         },
       ],

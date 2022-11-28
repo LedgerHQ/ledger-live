@@ -189,6 +189,26 @@ const dataset: CurrenciesData<Transaction> = {
             warnings: {},
           },
         },
+        {
+          name: "Send Max",
+          transaction: fromTransactionRaw({
+            family: "bitcoin",
+            recipient: "BC1QQMXQDRKXGX6SWRVJL9L2E6SZVVKG45ALL5U4FL",
+            useAllAmount: true,
+            amount: "0",
+            feePerByte: "1",
+            networkInfo,
+            rbf: false,
+            utxoStrategy: {
+              strategy: 0,
+              excludeUTXOs: [],
+            },
+          }),
+          expectedStatus: {
+            errors: {},
+            warnings: {},
+          },
+        },
       ],
       raw: bitcoin1,
     },
