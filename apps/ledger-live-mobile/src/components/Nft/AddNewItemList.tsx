@@ -24,7 +24,9 @@ export const AddNewItem = () => {
   const { colors } = useTheme();
   const { t } = useTranslation();
 
-  const { openModal, closeModal, isModalOpened } = useReceiveNFTsModal();
+  const { openModal, closeModal, isModalOpened } = useReceiveNFTsModal({
+    hasNFTS: true,
+  });
 
   return (
     <StyledTouchableOpacity onPress={openModal}>

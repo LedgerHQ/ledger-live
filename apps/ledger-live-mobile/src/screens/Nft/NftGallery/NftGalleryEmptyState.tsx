@@ -13,7 +13,10 @@ import { readOnlyModeEnabledSelector } from "../../../reducers/settings";
 
 const NftGalleryEmptyState = () => {
   const { t } = useTranslation();
-  const { openModal, closeModal, isModalOpened } = useReceiveNFTsModal();
+  const { openModal, closeModal, isModalOpened } = useReceiveNFTsModal({
+    hasNFTS: false,
+  });
+
   const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector);
   const openSupportLink = useCallback(() => {
     track("url_clicked", {
@@ -26,12 +29,12 @@ const NftGalleryEmptyState = () => {
   return (
     <Flex flex={1} alignItems={"center"} justifyContent={"center"}>
       <TrackScreen
-        category="NFT Gallery"
         name={
           readOnlyModeEnabled
             ? "NFT Gallery Start Read-only"
             : "NFT Gallery Start"
         }
+        category=""
         source="NFT tab"
       />
       <Text
