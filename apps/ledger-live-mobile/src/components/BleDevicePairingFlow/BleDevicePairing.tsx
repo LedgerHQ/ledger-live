@@ -9,7 +9,7 @@ import {
   CircledCheckSolidMedium,
   CircledCrossSolidMedium,
 } from "@ledgerhq/native-ui/assets/icons";
-
+import { LockedDeviceError } from "@ledgerhq/errors";
 import { getDeviceAnimation } from "../../helpers/getDeviceAnimation";
 import Animation from "../Animation";
 import DeviceSetupView from "../DeviceSetupView";
@@ -101,6 +101,20 @@ const BleDevicePairing = ({
       </>
     );
   } else if (pairingError) {
+    let title;
+    let subtitle;
+
+    if (pairingError instanceof LockedDeviceError) {
+      title = t("blePairingFlow.pairing.error.lockedDevice.title");
+      subtitle = t("blePairingFlow.pairing.error.lockedDevice.subtitle", {
+        productName,
+      });
+    } else {
+      title = t("blePairingFlow.pairing.error.generic.title");
+      subtitle = t("blePairingFlow.pairing.error.generic.subtitle", {
+        productName,
+      });
+    }
     content = (
       <Flex>
         <Flex flex={1} alignItems="center" justifyContent="center">
@@ -108,10 +122,10 @@ const BleDevicePairing = ({
             <CircledCrossSolidMedium color={colors.error.c80} size={56} />
           </Flex>
           <Text mb={4} textAlign="center" variant="h4" fontWeight="semiBold">
-            {t("blePairingFlow.pairing.error.title")}
+            {title}
           </Text>
           <Text variant="body" mb={8} color="neutral.c80" textAlign="center">
-            {t("blePairingFlow.pairing.error.subtitle", { productName })}
+            {subtitle}
           </Text>
         </Flex>
         <Button type="main" onPress={onRetry} mb={8}>

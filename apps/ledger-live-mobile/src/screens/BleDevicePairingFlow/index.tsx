@@ -93,6 +93,7 @@ export const BleDevicePairingFlow = ({ navigation, route }: Props) => {
     navigationType = "navigate",
   } = onSuccessNavigateToConfig;
 
+  // Makes sure the pairing components are reset when navigating back to this screen
   const keyToReset =
     useIncrementOnNavigationFocusState<Props["navigation"]>(navigation);
 
@@ -168,8 +169,6 @@ export const BleDevicePairingFlow = ({ navigation, route }: Props) => {
 
     return () => listener.remove();
   }, [handleGoBackFromScanning]);
-
-  console.log(`🕵️ BleDevicePairingFlowScreen: keyToReset: ${keyToReset}`);
 
   return (
     <BleDevicePairingFlowComponent
