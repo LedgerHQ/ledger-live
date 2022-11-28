@@ -1,7 +1,6 @@
 import React, { ReactNode } from "react";
 import { RemoteLiveAppProvider } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
 import { LocalLiveAppProvider } from "@ledgerhq/live-common/platform/providers/LocalLiveAppProvider/index";
-import { GlobalCatalogProvider } from "@ledgerhq/live-common/platform/providers/GlobalCatalogProvider/index";
 import { RampCatalogProvider } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/index";
 import useEnv from "@ledgerhq/live-common/hooks/useEnv";
 import { getPlatformVersion } from "@ledgerhq/live-common/platform/version";
@@ -32,17 +31,12 @@ export default function PlatformAppProviderWrapper({
       }}
     >
       <LocalLiveAppProvider>
-        <GlobalCatalogProvider
-          provider={provider}
-          updateFrequency={AUTO_UPDATE_DEFAULT_DELAY}
-        >
           <RampCatalogProvider
             provider={provider}
             updateFrequency={AUTO_UPDATE_DEFAULT_DELAY}
           >
             {children}
           </RampCatalogProvider>
-        </GlobalCatalogProvider>
       </LocalLiveAppProvider>
     </RemoteLiveAppProvider>
   );
