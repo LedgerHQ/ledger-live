@@ -64,7 +64,11 @@ export default function ReceiveNFTsModal({ onClose, isOpened }: Props) {
       onClose={onPressClose}
       Icon={<EthPolygonIcons />}
     >
-      <TrackScreen name="Confirm Receive NFT" category="" type="drawer" />
+      <TrackScreen
+        category="Confirm Receive NFT"
+        type="drawer"
+        refreshSource={false}
+      />
 
       {new Array(2).fill(null).map((_e, index) => (
         <Text

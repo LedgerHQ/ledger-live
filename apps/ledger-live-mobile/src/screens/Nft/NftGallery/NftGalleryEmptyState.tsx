@@ -29,12 +29,11 @@ const NftGalleryEmptyState = () => {
   return (
     <Flex flex={1} alignItems={"center"} justifyContent={"center"}>
       <TrackScreen
-        name={
+        category={
           readOnlyModeEnabled
             ? "NFT Gallery Start Read-only"
             : "NFT Gallery Start"
         }
-        category=""
         source="NFT tab"
       />
       <Text
