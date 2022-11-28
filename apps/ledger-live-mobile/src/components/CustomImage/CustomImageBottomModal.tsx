@@ -54,7 +54,7 @@ const CustomImageBottomModal: React.FC<Props> = props => {
       params: { device },
     });
     onClose && onClose();
-  }, []);
+  }, [navigation, device, onClose]);
 
   return (
     <BottomModal isOpened={isOpened} onClose={onClose}>
@@ -70,13 +70,13 @@ const CustomImageBottomModal: React.FC<Props> = props => {
           <ModalChoice
             onPress={handleUploadFromPhone}
             title={t("customImage.drawer.options.uploadFromPhone")}
-            iconName={"Brackets"}
+            iconName={"ArrowFromBottom"}
             event=""
           />
           <ModalChoice
             onPress={handleSelectFromNFTGallery}
             title={t("customImage.drawer.options.selectFromNFTGallery")}
-            iconName={"ArrowFromBottom"}
+            iconName={"Brackets"}
             event=""
           />
         </>
