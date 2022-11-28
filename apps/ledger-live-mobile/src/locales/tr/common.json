@@ -410,6 +410,9 @@
       "title" : "Üzgünüz, bu uygulama gerekli",
       "description" : "Bitcoin veya Ethereum uygulamasını en son kaldırın."
     },
+    "MaxFeeLow" : {
+      "title" : "Ücret üst limitiniz yetersiz. İşleminiz bir süreliğine beklemede kalabilir"
+    },
     "NetworkDown" : {
       "title" : "Üzgünüz, internet bağlantısı görünmüyor",
       "description" : "Lütfen internet bağlantınızı kontrol edin."
@@ -595,6 +598,9 @@
     "SourceHasMultiSign" : {
       "title" : "{{currencyName}} göndermek için lütfen çoklu imzayı devre dışı bırakın"
     },
+    "DustLimit" : {
+      "title" : "Miktar, dust sınırının altında"
+    },
     "StratisDown2021Warning" : {
       "description" : "Stratis blok zinciri evrimleşti ve artık düzgün çalışmayabilir. Orijinal Stratis blok zinciri desteği 16 Ekim 2021'e kadar sürdürülecektir."
     },
@@ -744,6 +750,42 @@
     },
     "HederaAddAccountError" : {
       "title" : "Hesabınız eklenemedi. Lütfen tekrar deneyin."
+    },
+    "NearNewAccountWarning" : {
+      "title" : "Alıcı hesabı henüz oluşturulmadı. Bu protokol, alıcı hesabı oluşturmak için {{formattedNewAccountStorageCost}} tutarında bir aktarım yapılmasını gerektiriyor."
+    },
+    "NearNewNamedAccountError" : {
+      "title" : "Alıcı hesabı henüz oluşturulmadı. NEAR cüzdanında oluşturulması gerekiyor."
+    },
+    "NearActivationFeeNotCovered" : {
+      "title" : "Bu miktar, {{formattedNewAccountStorageCost}} depolama ücretini karşılamak için yeterli değil."
+    },
+    "NearUseAllAmountStakeWarning" : {
+      "title" : "Gelecekteki işlem ücretleri için yeterli bakiyenizin kaldığından emin olun"
+    },
+    "NearNotEnoughStaked" : {
+      "title" : "Stake bakiyesi yetersiz"
+    },
+    "NearNotEnoughAvailable" : {
+      "title" : "Çekilebilir bakiye yetersiz"
+    },
+    "NearRecommendUnstake" : {
+      "title" : "Lütfen hesabı boşaltmadan önce stake iptali yapın ve fonları çekin"
+    },
+    "NearStakingThresholdNotMet" : {
+      "title" : "Tutarın en az {{threshold}} olması gerekiyor"
+    },
+    "PriorityFeeTooLow" : {
+      "title" : "Öncelik ücreti, önerilen değerden düşük"
+    },
+    "PriorityFeeTooHigh" : {
+      "title" : "Öncelik ücreti, gereğinden yüksek. Fazla ödeme yapıyor olabilirsiniz"
+    },
+    "MaxFeeTooLow" : {
+      "title" : "Ücret üst limiti, önerilen değerden düşük"
+    },
+    "PriorityFeeHigherThanMaxFee" : {
+      "title" : "Öncelik ücreti üst limiti, ücret üst limitinden yüksek olamaz"
     }
   },
   "crash" : {
@@ -1804,6 +1846,9 @@
         }
       }
     },
+    "appsStep" : {
+      "title" : "{{productName}} uygulamaları"
+    },
     "readyStep" : {
       "title" : "{{productName}} hazır"
     },
@@ -1962,7 +2007,10 @@
       "UNLOCK" : "Kilidi Açık",
       "REVOKE" : "İptal Edilmiş",
       "REGISTER" : "Kaydedilmiş",
-      "WITHDRAW" : "Çekildi"
+      "WITHDRAW" : "Çekildi",
+      "STAKE" : "Stake edildi",
+      "UNSTAKE" : "Stake iptali",
+      "WITHDRAW_UNSTAKED" : "Çekildi"
     }
   },
   "operationDetails" : {
@@ -2023,7 +2071,8 @@
       "storageLimit" : "Depolama Limiti",
       "gasLimit" : "Gas limiti",
       "id" : "Kimlik (ID)",
-      "autoClaimedRewards" : "Otomatik Alınan Ödüller"
+      "autoClaimedRewards" : "Otomatik Alınan Ödüller",
+      "stakedAmount" : "Stake edilen miktar"
     },
     "multipleAddresses" : "Neden birden fazla adres var?",
     "tokenName" : "Token Adı",
@@ -2140,7 +2189,7 @@
       },
       "advanced" : {
         "title" : "Kapsamlı loglar",
-        "warningDerivation" : "Bu bir {{tag}} xpub'ıdır. Bunu bir üçüncü taraf cüzdanda içe aktarırken aynı türev modunu seçin.",
+        "warningDerivation" : "Bu bir {{tag}} xpub'ıdır. Bunu bir üçüncü taraf cüzdana aktarırken aynı türev modunu seçin.",
         "desc" : ""
       }
     },
@@ -2435,14 +2484,19 @@
         "title" : "Piyasa",
         "desc" : "Önemli piyasa değişikliklerinden haberdar olun"
       },
-      "announcement" : {
+      "announcements" : {
         "title" : "Duyurular",
         "desc" : "Önemli Ledger Live haberlerini alın"
+      },
+      "recommendations" : {
+        "title" : "Öneriler",
+        "desc" : "Kişiselleştirilmiş öneriler ve özel teklifler ile daha zengin bir deneyim yaşayın"
       },
       "price" : {
         "title" : "Fiyat Uyarıları",
         "desc" : "En çok tercih ettiğiniz coin'ler için fiyat uyarıları belirleyerek piyasa hareketlerini kaçırmayın"
-      }
+      },
+      "disclaimer" : "Ledger'da veri gizliliği her şeyden önce gelir. Toplanan veriler iş ortaklarımızla asla paylaşılmaz."
     },
     "help" : {
       "title" : "Yardım",
@@ -2529,7 +2583,7 @@
   "notifications" : {
     "prompt" : {
       "title" : "Bildirimleri aç",
-      "desc" : "Ledger Live, Ledger ürünleri ve güvenlik ile ilgili önemli gelişmeleri öğrenin. İstediğiniz zaman devre dışı bırakabilirsiniz.",
+      "desc" : "Ledger Live, Ledger ürünleri ve piyasalar hakkındaki son haberleri ve kişiye özel öneriler alın. Ayarları değiştirerek istediğiniz zaman abonelikten çıkabilirsiniz",
       "allow" : "Bildirimlere izin ver",
       "later" : "Belki sonra"
     }
@@ -3151,6 +3205,12 @@
       }
     }
   },
+  "signMessage" : {
+    "eip712" : {
+      "showFullMessage" : "Tam mesajı göster",
+      "hideFullMessage" : "Tam mesajı gizle"
+    }
+  },
   "sync" : {
     "error" : "Senkronizasyon hatası",
     "loading" : "Senkronizasyon"
@@ -3212,9 +3272,14 @@
       "infoTotalDesc" : "İşlem miktarını ve seçilen ağın ücretlerini içerir",
       "gasLimit" : "Gas limiti",
       "gasPrice" : "Gas ücreti",
+      "maxFee" : "Ücret üst limiti",
+      "maxPriorityFee" : "Öncelik ücreti üst limiti",
+      "nextBlock" : "Sonraki blok: {{nextBaseFee}}",
+      "suggestedPriorityFee" : "Önerilen: {{lowPriorityFee}} - {{highPriorityFee}}",
       "maxFees" : "Maksimum ücret",
       "validateGasLimit" : "Gas limitini onayla",
       "fees" : "Ücretler",
+      "maxEstimatedFee" : "Maks. tahminî ücret",
       "validateFees" : "Ücretleri Onayla",
       "customizeFees" : "Ücretleri Özelleştir",
       "memo" : {
@@ -3462,7 +3527,7 @@
     }
   },
   "DeviceAction" : {
-    "stayInTheAppPlz" : "Ledger Live uygulamasında kalın ve Nano X'inizi yakınınızda tutun",
+    "stayInTheAppPlz" : "Ledger Live uygulamasında kalın ve Ledger'ınızı yakınınızda tutun.",
     "allowAppPermission" : "Cihazınızda {{wording}} uygulamasını açın",
     "allowAppPermissionSubtitleToken" : "ve {{token}} token'larınızı yönetin",
     "allowManagerPermission" : "Cihazınızda {{wording}} uygulamasına izin verin",
@@ -3634,6 +3699,7 @@
         "description" : "Kayıtlı Ledger'larınızı yönetin"
       },
       "addNewCTA" : "Yeni ekle",
+      "otgBanner" : "Elinizde bir Nano S veya Nano S Plus varsa cihazınızı USB kablosuyla bağlayın.",
       "connectExistingLedger" : "Mevcut bir Ledger'ı bağlayın",
       "connectExistingLedgerDescription" : "Kurulumu yapılmış bir Ledger'ınız zaten var mı? Bluetooth ile eşleştirin",
       "setUpNewLedger" : "Yeni bir Ledger'ın kurulumunu yapın",
@@ -4309,6 +4375,118 @@
             "description" : "OSMO'larınızla yetki devri yaparak hem güvenle ödül kazanın hem de varlıklarınızın kontrolünü muhafaza edin edin.",
             "steps" : {
               "1" : "Yetki iptallerinin tamamlanması için 14 gün beklemeniz gerekir."
+            }
+          }
+        }
+      }
+    }
+  },
+  "near" : {
+    "info" : {
+      "available" : {
+        "title" : "Kullanılabilir NEAR miktarı",
+        "description" : "Bu tutar, kullanabileceğiniz fondur."
+      },
+      "storageUsage" : {
+        "title" : "Minimum bakiye",
+        "description" : "Saklama ve işlemler için rezerv edilen miktar; hesabınızın aktif kalması için hesabınızda bulunması gereken minimum bakiye."
+      },
+      "staked" : {
+        "title" : "Stake bakiyesi",
+        "description" : "Doğrulayıcılarla stake edilmiş olan güncel miktar."
+      },
+      "pending" : {
+        "title" : "Bekleyen bakiye",
+        "description" : "Stake’i iptal edilmiş ve müsait olması beklenen güncel miktar."
+      },
+      "withdrawable" : {
+        "title" : "Çekilebilir bakiye",
+        "description" : "Stake’i iptal edilmiş ve çekilebilecek olan güncel miktar."
+      },
+      "stakingUnavailable" : {
+        "title" : "Stake yapılamıyor",
+        "description" : "Hesabınızın bakiyesi stake etmek, stake iptal etmek ve çekim yapmak için yeterli değil."
+      }
+    },
+    "unstaking" : {
+      "stepperHeader" : {
+        "amountSubTitle" : "Staking'i iptal edilecek miktar"
+      },
+      "flow" : {
+        "steps" : {
+          "verification" : {
+            "success" : {
+              "title" : "Varlıklarınızın staking'ini başarıyla iptal ettiniz"
+            }
+          }
+        }
+      }
+    },
+    "withdrawing" : {
+      "stepperHeader" : {
+        "amountSubTitle" : "Çekilecek tutar"
+      },
+      "flow" : {
+        "steps" : {
+          "verification" : {
+            "success" : {
+              "title" : "Varlıklarınızı başarıyla çektiniz"
+            }
+          }
+        }
+      }
+    },
+    "staking" : {
+      "sectionLabel" : "Staking Pozisyonları",
+      "info" : "Staking Nasıl Çalışır?",
+      "add" : "Ekle",
+      "stakingEarn" : "NEAR varlıklarınızı stake ederek NEAR ödülleri kazanabilirsiniz.",
+      "totalStake" : "Toplam Stake",
+      "commission" : "Komisyon",
+      "iStake" : "Stake et:",
+      "actions" : {
+        "unstake" : "Staking'i iptal et",
+        "withdraw" : "Çek"
+      },
+      "drawer" : {
+        "status" : "Durum",
+        "active" : "Aktif",
+        "inactive" : "Devre Dışı",
+        "rewards" : "Ödüller",
+        "pending" : "Beklemede",
+        "available" : "Çekilebilir bakiye"
+      },
+      "stepperHeader" : {
+        "amountSubTitle" : "Stake edilecek miktar",
+        "selectDevice" : "Cihaz seçin",
+        "connectDevice" : "Cihazı bağlayın",
+        "stepRange" : "Adım {{currentStep}} / {{totalSteps}}"
+      },
+      "flow" : {
+        "steps" : {
+          "starter" : {
+            "description" : "NEAR varlıklarınızı stake edin ve varlıklarınızın kontrolünü bırakmadan, güvenle ödüller kazanın.",
+            "steps" : {
+              "0" : "Stake ettiğiniz varlıklar sizin mülkiyetinizde kalmaya devam eder.",
+              "1" : "Stake iptali işleminin tamamlanması için 52 ila 65 saat beklemeniz gerekebilir.",
+              "2" : "Ledger cihazınızı kullanarak güvenle stake edin."
+            },
+            "warning" : {
+              "description" : "Doğrulayıcınızı dikkatli seçin! Doğrulayıcının yanlış kararlar vermesi hâlinde stake ettiğiniz varlıkların bir kısmını kalıcı olarak kaybedebilirsiniz."
+            },
+            "cta" : "Devam"
+          },
+          "amount" : {
+            "assetsRemaining" : "Kalan varlıklar: <0>{{amount}}</0>",
+            "allAssetsUsed" : "Tüm varlıklar kullanıldı",
+            "minAmount" : "Minimum tutar: <0>{{min}}</0>",
+            "incorrectAmount" : "Maksimum tutar: <0>{{max}}</0>",
+            "cta" : "Devam"
+          },
+          "verification" : {
+            "success" : {
+              "title" : "Varlıklarınızı başarıyla stake ettiniz",
+              "text" : "İşlem, ağ tarafından onaylanınca hesap bakiyeniz güncellenecek."
             }
           }
         }
@@ -5353,6 +5531,11 @@
       "viewOn" : "Burada görüntüle:",
       "viewInExplorer" : "Tarayıcıda görüntüle",
       "txDetails" : "İşlem bilgileri"
+    },
+    "modalDisabled" : {
+      "title" : "Gönderme işlevi devre dışı",
+      "body" : "Apple'ın App Store için gerçekleştirdiği son güncellemeler uyarınca, NFT gönderme işlevi geçici olarak devre dışı bırakıldı. Ledger Live Desktop sürümünü kullanarak NFT göndermeye devam edebilirsiniz.",
+      "contactSupport" : "Daha çok bilgi almak için lütfen destek makalemizi okuyun."
     }
   },
   "ApplicationVersion" : "v{{version}}",
