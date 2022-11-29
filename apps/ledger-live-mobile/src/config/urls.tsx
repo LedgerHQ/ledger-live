@@ -98,6 +98,11 @@ export const urls = {
         main: "https://changelly.com/",
         tos: "https://changelly.com/terms-of-use",
       },
+      cic: {
+        main: "https://criptointercambio.com/",
+        support: "https://criptointercambio.com/en/about",
+        tos: "https://criptointercambio.com/terms-of-use",
+      },
       wyre: {
         main: "https://support.sendwyre.com/hc/en-us/requests/new",
         tos: "https://www.sendwyre.com/user-agreement/",
@@ -196,5 +201,6 @@ export const urls = {
   nft: {
     supportDisableIos:
       "https://support.ledger.com/hc/en-us/articles/7572912170653?docs=true",
+    howToSecure: "https://www.ledger.com/academy/how-to-secure-your-nfts",
   },
 };

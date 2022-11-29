@@ -11,7 +11,7 @@ import type {
   CosmosResources,
   CosmosUnbonding,
 } from "../cosmos/types";
-import { canClaimRewards, canUndelegate, canRedelegate } from "../cosmos/logic";
+import { canUndelegate, canRedelegate } from "../cosmos/logic";
 import { canDelegate, getMaxDelegationAvailable } from "./logic";
 import { getCurrentOsmosisPreloadData } from "../osmosis/preloadedData";
 import sampleSize from "lodash/sampleSize";
@@ -399,8 +399,8 @@ const osmosis: AppSpec<Transaction> = {
           );
           botTest("reward is no longer claimable after claim", () =>
             invariant(
-              !canClaimRewards(account as CosmosAccount, d as CosmosDelegation),
-              "reward no longer be claimable"
+              d?.pendingRewards.lte(d.amount.multipliedBy(0.1)),
+              "pending reward is not reset"
             )
           );
         });

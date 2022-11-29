@@ -1713,7 +1713,10 @@
     "listApps": "Checking App dependencies",
     "listAppsDescription": "Please wait while we make sure you have all the required apps",
     "swap": {
-      "notice": "Verify the Swap details on your device before sending it. The addresses are exchanged securely so you don’t have to verify them.",
+      "notice": {
+        "default": "Verify the Swap details on your device before sending it. The addresses are exchanged securely so you don’t have to verify them.",
+        "cic": "Verify the Swap details on your device before sending it. CIC may need to perform additional verification for some transactions, resulting in a delay."
+      },
       "confirm": "Confirm Swap transaction",
       "amountSent": "Amount to send",
       "amountReceived": "Amount to receive",
@@ -2131,7 +2134,8 @@
         "recipientAddress": "Recipient address",
         "amount": "Amount",
         "fees": "Network fees",
-        "useMax": "Send Max",
+        "useMax": "Use Max",
+        "sendMax": "Send Max",
         "rippleTag": "Tag",
         "rippleTagPlaceholder": "Optional",
         "edit": "Edit",
@@ -2179,6 +2183,9 @@
   "releaseNotes": {
     "title": "Release notes",
     "version": "Ledger Live {{versionNb}}"
+  },
+  "troubleshootNetwork": {
+    "title": "Troubleshoot networking"
   },
   "systemLanguageAvailable": {
     "title": "Change your app's language?",
@@ -3556,6 +3563,7 @@
       "featureFlagsEdit": "Edit",
       "featureFlagsRestore": "Restore",
       "featureFlagsOverride": "Override",
+      "firebaseProject": "Firebase project targeted by this build:",
       "addLocalApp": "Add a local app",
       "addLocalAppDesc": "Browse local files and add a local app using a local manifest",
       "addLocalAppButton": "Browse",
@@ -3654,11 +3662,11 @@
           "title": "Test Post Onboarding",
           "description": "Test all post onboarding features"
         },
-        "1559DeactivateGate" : {
+        "1559DeactivateGate": {
           "title": "Deactivate EIP1559 minimum priority fee gate",
           "description": "This will allow a transaction to be sent without any minimum priority fee expected. This may result in a transaction getting stuck in the mempool forever."
         },
-        "1559CustomPriorityLowerGate" : {
+        "1559CustomPriorityLowerGate": {
           "title": "Custom priority fee gate",
           "description": "Customize the percentage of our estimated minimal priority fee allowed for an advanced EIP1559 transaction"
         }
@@ -3702,6 +3710,11 @@
       "title": "Save logs",
       "desc": "Saving Ledger Live logs may be needed for troubleshooting purposes.",
       "btn": "Save"
+    },
+    "troubleshootNetwork": {
+      "title": "Troubleshoot networking",
+      "desc": "Run a checklist to assess networking conditions for troubleshooting purposes.",
+      "btn": "Troubleshoot"
     },
     "accounts": {
       "hideEmptyTokens": {
@@ -4744,6 +4757,10 @@
       "title": "Sorry, it looks like your device disconnected",
       "description": "Please reconnect and try again."
     },
+    "EConnReset": {
+      "title": "The Ledger application store can't be reached",
+      "description": "Your internet connection may be down or using unusual configuration. Start by verifying if anything is blocking your connection (proxy or firewall). If the problem persists click below for solutions or reach out to our customer support."
+    },
     "EnpointConfig": {
       "title": "Invalid endpoint",
       "description": "Please provide a valid endpoint"
@@ -5309,6 +5326,11 @@
     "ImageLoadRefusedOnDevice": {
       "title": "Image load refused on device (TODO: final wording)",
       "description": "If this image wasn't the right fit, you can try again with another image."
+    },
+    "LockedDeviceError": {
+      "title": "Your device is locked",
+      "description": "Unlock your device and try again.",
+      "descriptionWithProductName": "Unlock your {{ productName }} and try again."
     }
   },
   "cryptoOrg": {

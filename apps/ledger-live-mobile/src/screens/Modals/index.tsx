@@ -25,7 +25,7 @@ const getCurrentRouteName = (
 const Modals = () => {
   const navigation = useNavigation();
 
-  const pushNotificationsFeature = useFeature("pushNotifications");
+  const pushNotificationsFeature = useFeature("brazePushNotifications");
   const { onPushNotificationsRouteChange } = useNotifications();
 
   const ratingsFeature = useFeature("ratings");
@@ -73,7 +73,7 @@ const Modals = () => {
 
   return (
     <>
-      <FeatureToggle feature="pushNotifications">
+      <FeatureToggle feature="brazePushNotifications">
         <PushNotificationsModal />
       </FeatureToggle>
       <FeatureToggle feature="ratings">

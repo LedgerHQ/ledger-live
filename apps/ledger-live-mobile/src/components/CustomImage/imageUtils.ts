@@ -36,7 +36,8 @@ export async function importImageFromPhoneGallery(): Promise<ImageFileUri | null
                 `ImagePicker.launchImageLibrary Error (error code: ${res.errorCode}): ${res.errorMessage}`,
               );
             const assets = res?.assets || [];
-            if (assets.length === 0) throw new Error("Assets length is 0");
+            if (assets.length === 0 && !res.didCancel)
+              throw new Error("Assets length is 0");
             return {
               cancelled: res.didCancel,
               uri: assets[0]?.uri,

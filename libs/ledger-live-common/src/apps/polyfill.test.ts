@@ -19,6 +19,6 @@ test("polyfillApplication set ethereum currency for ethereum app", () => {
     sourceURL: undefined,
     compatibleWalletsJSON: undefined,
   };
-  const polyfilled = polyfillApplication(app, 1);
+  const polyfilled = polyfillApplication(app);
   expect(polyfilled.currencyId).toEqual("ethereum");
 });

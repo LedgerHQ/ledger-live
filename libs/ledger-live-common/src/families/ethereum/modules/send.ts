@@ -10,7 +10,11 @@ import {
   NotEnoughBalanceInParentAccount,
   AmountRequired,
 } from "@ledgerhq/errors";
-import { inferTokenAccount, getGasLimit } from "../transaction";
+import {
+  inferTokenAccount,
+  getGasLimit,
+  EIP1559ShouldBeUsed,
+} from "../transaction";
 export type Modes = "send";
 const send: ModeModule = {
   fillTransactionStatus(a, t, result) {
@@ -80,7 +84,14 @@ const send: ModeModule = {
 
       if (t.useAllAmount) {
         const gasLimit = getGasLimit(t);
-        amount = a.spendableBalance.minus(gasLimit.times(t.gasPrice || 0));
+        const feePerGas = EIP1559ShouldBeUsed(a.currency)
+          ? t.maxFeePerGas
+          : t.gasPrice;
+        // Prevents a send max with a negative amount
+        amount = BigNumber.maximum(
+          a.spendableBalance.minus(gasLimit.times(feePerGas || 0)),
+          0
+        );
       } else {
         invariant(t.amount, "amount is missing");
         amount = t.amount;

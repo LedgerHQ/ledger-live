@@ -4,7 +4,7 @@
   },
   "name": "@ledgerhq/live-common",
   "description": "Common ground for the Ledger Live apps",
-  "version": "27.6.0",
+  "version": "27.7.2",
   "repository": {
     "type": "git",
     "url": "https://github.com/LedgerHQ/ledger-live.git"
@@ -79,7 +79,7 @@
     "ci-lint": "pnpm lint",
     "test": "pnpm ci-test-unit",
     "ci-test-unit": "env-cmd -f .ci.unit.env pnpm jest --ci --updateSnapshot && git diff --exit-code src",
-    "ci-test-integration": "env-cmd -f .ci.integration.env pnpm jest --ci --updateSnapshot"
+    "ci-test-integration": "env-cmd -f .ci.integration.env pnpm jest --ci --updateSnapshot --passWithNoTests"
   },
   "files": [
     "lib",
@@ -162,12 +162,10 @@
     "@ledgerhq/json-bignumber": "^1.1.0",
     "@ledgerhq/live-app-sdk": "^0.8.1",
     "@ledgerhq/logs": "workspace:^",
-    "@polkadot/types": "8.12.2",
-    "@polkadot/types-known": "8.12.2",
-    "@polkadot/util": "10.0.2",
-    "@polkadot/util-crypto": "10.0.2",
-    "@polkadot/wasm-crypto": "6.0.1",
-    "@polkadot/x-randomvalues": "6.0.1",
+    "@polkadot/types": "9.8.1",
+    "@polkadot/types-known": "9.8.1",
+    "@polkadot/util": "10.1.12",
+    "@polkadot/util-crypto": "10.1.12",
     "@solana/spl-token": "^0.2.0",
     "@solana/web3.js": "1.41.3",
     "@stricahq/bip32ed25519": "^1.0.3",
