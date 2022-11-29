@@ -5267,8 +5267,8 @@
       "cta": "See details"
     },
     "news": {
-      "title": "News",
-      "titleCount": "News ({{count}})",
+      "title": "Notifications",
+      "titleCount": "Notifications ({{count}})",
       "emptyState": {
         "title": "No news for the moment",
         "desc": "You will find here all the news related to Ledger and Ledger Live"

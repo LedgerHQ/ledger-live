@@ -22,7 +22,7 @@ enum TypeOfTime {
   month = "month",
   year = "year",
 }
-function getTime(timestampNew: number): Array<number, TypeOfTime> {
+function getTime(timestampNew: number): [number, TypeOfTime] {
   const today = new Date().getTime();
   const fixedTimeStamp = new Date(timestampNew * 1000).getTime();
   const diff = Math.abs(today - fixedTimeStamp);
@@ -33,17 +33,6 @@ function getTime(timestampNew: number): Array<number, TypeOfTime> {
   const days = Math.floor(hours / 24);
   const weeks = Math.floor(days / 7);
   const months = Math.floor(weeks / 12);
-
-  console.log(
-    secs,
-    mins,
-    hours,
-    days,
-    weeks,
-    months,
-    new Date(timestampNew * 1000).getSeconds(),
-    timestampNew,
-  );
 
   if (secs < 60) {
     return [secs, TypeOfTime.second];
