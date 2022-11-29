@@ -38,9 +38,6 @@ export const defaultFeatures: DefaultFeatures = {
   currencyFlare: {
     enabled: false,
   },
-  currencyAvalancheCChainMobile: {
-    enabled: false,
-  },
   currencyOsmosisMobile: {
     enabled: false,
   },

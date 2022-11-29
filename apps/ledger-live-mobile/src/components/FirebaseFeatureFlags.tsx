@@ -60,8 +60,13 @@ const getFeature = (args: {
           overriddenByEnv: true,
         };
     }
+    const config = remoteConfig();
 
-    const value = remoteConfig().getValue(formatFeatureId(key));
+    if (__DEV__) {
+      config.setConfigSettings({ minimumFetchIntervalMillis: 0 });
+    }
+
+    const value = config.getValue(formatFeatureId(key));
     const feature = JSON.parse(value.asString());
 
     if (
