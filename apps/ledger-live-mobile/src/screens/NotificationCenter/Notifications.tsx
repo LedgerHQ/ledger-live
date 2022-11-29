@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useCallback } from "react";
 import { FlatList } from "react-native";
 
 import { CardC, Box, Flex, Text } from "@ledgerhq/native-ui";
@@ -9,6 +9,7 @@ import useDynamicContent from "../../dynamicContent/dynamicContent";
 import SettingsNavigationScrollView from "../Settings/SettingsNavigationScrollView";
 import { NotificationContentCard } from "../../dynamicContent/types";
 import { getTime } from "./helper";
+import { useDynamicContentLogic } from "../../dynamicContent/useDynamicContentLogic";
 
 const Container = styled(SettingsNavigationScrollView)`
   padding: 16px;
@@ -16,8 +17,16 @@ const Container = styled(SettingsNavigationScrollView)`
 
 export default function NotificationCenter() {
   const { t } = useTranslation();
-  const { notificationCards } = useDynamicContent();
-
+  const { notificationCards, logImpressionCard } = useDynamicContent();
+  const { fetchData, refreshDynamicContent } = useDynamicContentLogic();
+  const onClickCard = useCallback(
+    (id: string) => {
+      logImpressionCard(id);
+      refreshDynamicContent();
+      fetchData();
+    },
+    [fetchData, logImpressionCard, refreshDynamicContent],
+  );
   return (
     <>
       {notificationCards.length > 0 ? (
@@ -29,6 +38,7 @@ export default function NotificationCenter() {
               const time = getTime(item.createdAt);
               return (
                 <CardC
+                  onClickCard={() => onClickCard(item.id)}
                   time={t(`notificationCenter.news.time.${time[1]}`, {
                     count: time[0],
                   })}

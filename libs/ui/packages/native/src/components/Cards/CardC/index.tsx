@@ -5,14 +5,15 @@ import Flex from "../../Layout/Flex";
 import Box from "../../Layout/Box";
 import Link from "../../cta/Link";
 import styled from "styled-components/native";
+import { TouchableOpacityProps, TouchableOpacity } from "react-native";
 
-export type CardProps = {
+export type CardProps = TouchableOpacityProps & {
   tag?: string;
   description?: string;
   cta?: string;
   time?: string;
   title?: string;
-  onPressDismiss?: () => void;
+  onClickCard?: () => void;
   onPress?: () => void;
   viewed: boolean;
 };
@@ -42,53 +43,57 @@ const Timer = ({ time, viewed }: { time: string; viewed: boolean }) => (
 );
 
 const CardC = (props: CardProps): React.ReactElement => {
-  const { tag = "", time = "", title, description, cta, onPress, viewed } = props;
+  const { tag = "", time = "", title, description, cta, onPress, viewed, onClickCard } = props;
   return (
-    <Flex width="100%" flexDirection="column">
-      <Flex flexDirection="row" justifyContent="space-between">
-        <Tag tag={tag} />
-        <Timer time={time} viewed={viewed} />
-      </Flex>
+    <Base onPress={onClickCard} activeOpacity={0.5}>
+      <Flex width="100%" flexDirection="column">
+        <Flex flexDirection="row" justifyContent="space-between">
+          <Tag tag={tag} />
+          <Timer time={time} viewed={viewed} />
+        </Flex>
 
-      <Text variant="large" fontWeight="semiBold" color="neutral.c100" numberOfLines={1} mt={4}>
-        {title}
-      </Text>
+        <Text variant="large" fontWeight="semiBold" color="neutral.c100" numberOfLines={1} mt={4}>
+          {title}
+        </Text>
 
-      <Text
-        variant="bodyLineHeight"
-        fontWeight="medium"
-        color="neutral.c70"
-        numberOfLines={3}
-        mt={2}
-        mb={onPress ? 4 : 0}
-      >
-        {description}
-      </Text>
+        <Text
+          variant="bodyLineHeight"
+          fontWeight="medium"
+          color="neutral.c70"
+          numberOfLines={3}
+          mt={2}
+          mb={onPress ? 4 : 0}
+        >
+          {description}
+        </Text>
 
-      {onPress && (
-        <Flex alignItems="flex-start">
-          <Link
-            type="main"
-            size="medium"
-            iconPosition="right"
-            Icon={() => <ExternalLinkMedium color="neutral.c100" />}
-            onPress={onPress}
-            numberOfLines={1}
-          >
-            <StyledText
-              variant="bodyLineHeight"
-              fontWeight="semiBold"
-              color="neutral.c100"
+        {onPress && (
+          <Flex alignItems="flex-start">
+            <Link
+              type="main"
+              size="medium"
+              iconPosition="right"
+              Icon={() => <ExternalLinkMedium color="neutral.c100" />}
+              onPress={onPress}
               numberOfLines={1}
             >
-              {cta}
-            </StyledText>
-          </Link>
-        </Flex>
-      )}
-    </Flex>
+              <StyledText
+                variant="bodyLineHeight"
+                fontWeight="semiBold"
+                color="neutral.c100"
+                numberOfLines={1}
+              >
+                {cta}
+              </StyledText>
+            </Link>
+          </Flex>
+        )}
+      </Flex>
+    </Base>
   );
 };
+
+export const Base = styled(TouchableOpacity)``;
 const StyledText = styled(Text)`
   text-decoration: underline;
   text-decoration-color: ${(p) => p.theme.colors.neutral.c100};

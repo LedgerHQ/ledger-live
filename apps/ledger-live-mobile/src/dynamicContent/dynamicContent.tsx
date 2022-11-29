@@ -62,8 +62,12 @@ export const mapAsNotificationContentCard = (card: BrazeContentCard) =>
 
 const useDynamicContent = () => {
   const dispatch = useDispatch();
-  const { logClickCard, logDismissCard, logImpressionCard } =
-    useBrazeContentCard();
+  const {
+    logClickCard,
+    logDismissCard,
+    logImpressionCard,
+    refreshDynamicContent,
+  } = useBrazeContentCard();
   const notificationCards = useSelector(notificationsCardsSelector);
   const assetsCards = useSelector(assetsCardsSelector);
   const walletCards = useSelector(walletCardsSelector);
@@ -142,6 +146,7 @@ const useDynamicContent = () => {
     dismissCard,
     trackContentCardEvent,
     notificationCards,
+    refreshDynamicContent,
   };
 };
 

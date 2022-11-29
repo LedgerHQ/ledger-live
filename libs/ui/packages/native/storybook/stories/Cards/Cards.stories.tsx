@@ -106,7 +106,7 @@ const CardCStory = () => {
         time={time}
         title={title}
         onPress={hasLink ? () => {} : undefined}
-        onPressDismiss={() => {}}
+        onClickCard={() => {}}
         viewed={viewed}
       />
     </Flex>
