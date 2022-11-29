@@ -80,14 +80,16 @@ const CardBStory = () => {
 
 const CardCStory = () => {
   const tag = text("tag", "Promo");
+  const viewed = boolean("Notif has been viewed?", false);
   const title = text("title", "Free shipping worldwide for 1 week only");
   const description = text(
     "description",
-    "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam tellus risus, pretium a nulla sit amet, porta sollicitudin tortor.",
+    "Free shipping for all Ledger Nano products is available until 17th of October. Act fast and get your Nano now.",
   );
   const cta = text("cta", "Link");
   const time = text("timer", "2 minutes ago");
   const hasLink = boolean("show link", true);
+
   return (
     <Flex
       width="500px"
@@ -105,6 +107,7 @@ const CardCStory = () => {
         title={title}
         onPress={hasLink ? () => {} : undefined}
         onPressDismiss={() => {}}
+        viewed={viewed}
       />
     </Flex>
   );
@@ -131,9 +134,6 @@ storiesOf((story) =>
     .add("Card C", CardCStory, {
       docs: {
         title: "Card C",
-        description: {
-          component: descriptionCardB,
-        },
       },
     }),
 );

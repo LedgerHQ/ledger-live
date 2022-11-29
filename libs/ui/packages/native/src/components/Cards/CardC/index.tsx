@@ -1,5 +1,4 @@
 import React from "react";
-import { TouchableOpacityProps } from "react-native";
 import { ExternalLinkMedium } from "@ledgerhq/icons-ui/native";
 import Text from "../../Text";
 import Flex from "../../Layout/Flex";
@@ -7,13 +6,15 @@ import Box from "../../Layout/Box";
 import Link from "../../cta/Link";
 import styled from "styled-components/native";
 
-export type CardProps = TouchableOpacityProps & {
+export type CardProps = {
   tag?: string;
   description?: string;
   cta?: string;
   time?: string;
   title?: string;
   onPressDismiss?: () => void;
+  onPress?: () => void;
+  viewed: boolean;
 };
 
 const Tag = ({ tag }: { tag: string }) => (
@@ -24,22 +25,24 @@ const Tag = ({ tag }: { tag: string }) => (
   </Flex>
 );
 
-const Timer = ({ time }: { time: string }) => (
+const Timer = ({ time, viewed }: { time: string; viewed: boolean }) => (
   <Flex flexDirection="row" justifyContent="space-between" alignItems="center" ml={2}>
     <Text variant="small" fontWeight="semiBold" color="neutral.c90" numberOfLines={1}>
       {time}
     </Text>
-    <Box ml={3} backgroundColor="error.c50" height="8px" width="8px" borderRadius={24} />
+    {!viewed && (
+      <Box ml={3} backgroundColor="error.c50" height="8px" width="8px" borderRadius={24} />
+    )}
   </Flex>
 );
 
-const CardB = (props: CardProps): React.ReactElement => {
-  const { tag = "", time = "", title, description, cta, onPress } = props;
+const CardC = (props: CardProps): React.ReactElement => {
+  const { tag = "", time = "", title, description, cta, onPress, viewed } = props;
   return (
     <Flex width="100%" flexDirection="column">
       <Flex flexDirection="row" justifyContent="space-between">
         <Tag tag={tag} />
-        <Timer time={time} />
+        <Timer time={time} viewed={viewed} />
       </Flex>
 
       <Text variant="large" fontWeight="semiBold" color="neutral.c100" numberOfLines={1} mt={4}>
@@ -83,6 +86,7 @@ const CardB = (props: CardProps): React.ReactElement => {
 };
 const StyledText = styled(Text)`
   text-decoration: underline;
+  text-decoration-color: ${(p) => p.theme.colors.neutral.c100};
 `;
 
-export default CardB;
+export default CardC;
