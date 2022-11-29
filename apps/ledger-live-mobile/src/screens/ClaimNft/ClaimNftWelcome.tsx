@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Button, Flex, Icons, Text, Link } from "@ledgerhq/native-ui";
 import { useTranslation } from "react-i18next";
@@ -8,7 +8,7 @@ import { NavigatorName, ScreenName } from "../../const";
 const BulletItem = ({ textKey }: { textKey: string }) => {
   const { t } = useTranslation();
   return (
-    <Flex flexDirection="row" mb={6}>
+    <Flex flexDirection="row" mb={6} alignItems="center">
       <Icons.CircledCheckSolidRegular color="primary.c80" />
       <Text ml={4}>{t(textKey)}</Text>
     </Flex>
@@ -34,7 +34,7 @@ const ClaimNftWelcome = () => {
           backgroundColor="neutral.c40"
           alignItems="center"
           justifyContent="center"
-          height={250}
+          height={200}
           width="100%"
         >
           <Text>illustration placeholder NFT</Text>

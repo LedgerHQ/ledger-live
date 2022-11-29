@@ -1,36 +1,86 @@
-import React, { useCallback, useState, useEffect } from "react";
-import { Linking } from "react-native";
+import React, { useCallback, useEffect, useRef, useState } from "react";
+import { Dimensions, Linking, Platform, StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Button, Flex, Icons, Text, Box } from "@ledgerhq/native-ui";
+import { Flex, InfiniteLoader, Text } from "@ledgerhq/native-ui";
 import { useTranslation } from "react-i18next";
 import { CameraType } from "expo-camera/build/Camera.types";
 import { Camera } from "expo-camera";
 import { BarCodeScanner } from "expo-barcode-scanner";
-import { Svg, Defs, Rect, Mask, Circle } from "react-native-svg";
+import { Svg, Defs, Rect, Mask } from "react-native-svg";
+import { useIsFocused } from "@react-navigation/native";
 import { urls } from "../../config/urls";
-import CameraScreen from "../../components/CameraScreen";
-import Scanner from "../../components/Scanner";
+
+const cameraBoxDimensions = {
+  width: Dimensions.get("screen").width,
+  height: 320,
+};
+
+const viewBox = `0 0 ${cameraBoxDimensions.width} ${cameraBoxDimensions.height}`;
 
 const WrappedSvg = () => (
-  <Svg height="320px" width="100%" viewBox="0 0 100 100">
-    <Defs>
-      <Mask id="mask" x="0" y="0" height="320px" width="100%">
-        <Rect height="20px" width="100%" fill="#fff" />
-      </Mask>
-    </Defs>
-    <Rect
-      height="320px"
-      width="100%"
-      fill="rgba(0, 0, 0, 0.5)"
-      mask="url(#mask)"
-      fill-opacity="0"
-    />
-  </Svg>
+  <Flex
+    {...StyleSheet.absoluteFillObject}
+    alignItems="center"
+    justifyContent="center"
+  >
+    <Svg {...cameraBoxDimensions} viewBox={viewBox}>
+      <Defs>
+        <Mask id="qrmask">
+          <Rect height="100%" width="100%" fill="#fff" />
+          <Rect
+            x="50%"
+            y="50%"
+            height="196"
+            width="196"
+            transform="translate(-98,-98)"
+            fill="#000"
+            rx={8}
+            ry={8}
+          />
+        </Mask>
+      </Defs>
+      <Rect
+        x="0%"
+        y="0%"
+        {...cameraBoxDimensions}
+        fill="rgba(54, 54, 54, 0.49)"
+        mask="url(#qrmask)"
+      />
+    </Svg>
+  </Flex>
 );
 
 const ClaimNftQrScan = () => {
   const { t } = useTranslation();
   const [permission, requestPermission] = Camera.useCameraPermissions();
+  const isInFocus = useIsFocused();
+  const cameraRef = useRef<Camera>(null);
+  const [cameraDimensions, setCameraDimensions] = useState<
+    | {
+        height: number;
+        width: number;
+      }
+    | undefined
+  >(Platform.OS === "ios" ? cameraBoxDimensions : undefined);
+  const [ratio, setRatio] = useState("1:1");
+  useEffect(() => {
+    if (Platform.OS === "ios") return;
+    cameraRef?.current?.getSupportedRatiosAsync().then(res => {
+      const ratio = res[0];
+      try {
+        const [rh = "1", rw = "1"] = ratio.split(":");
+        setCameraDimensions({
+          height:
+            (cameraBoxDimensions.width * Number.parseInt(rh, 10)) /
+            Number.parseInt(rw, 10),
+          width: cameraBoxDimensions.width,
+        });
+        setRatio(ratio);
+      } catch (e) {
+        setCameraDimensions(cameraBoxDimensions);
+      }
+    });
+  });
 
   const handleBarCodeScanned = useCallback(({ data }) => {
     try {
@@ -60,26 +110,35 @@ const ClaimNftQrScan = () => {
           backgroundColor="neutral.c40"
           alignItems="center"
           justifyContent="center"
-          height={320}
-          width="100%"
-          //          overflow="hidden"
+          overflow="hidden"
+          {...cameraBoxDimensions}
         >
-          <Camera
-            type={CameraType.back}
-            style={{
-              height: "100%",
-              width: "100%",
-              alignSelf: "center",
-            }}
-            onBarCodeScanned={handleBarCodeScanned}
-            barCodeScannerSettings={{
-              barCodeTypes: [BarCodeScanner.Constants.BarCodeType.qr],
-            }}
-            ratio="1:1"
-          >
-            <CameraScreen width={400} height={320} liveQrCode />
-            {/* TODO: Finish this component => <WrappedSvg /> ALSO TRY WITH <Scanner onResult={handleBarCodeScanned} liveQrCode /> */}
-          </Camera>
+          {isInFocus ? (
+            <Camera
+              ref={cameraRef}
+              type={CameraType.back}
+              style={{
+                ...cameraDimensions,
+                alignSelf: "center",
+              }}
+              onBarCodeScanned={handleBarCodeScanned}
+              barCodeScannerSettings={{
+                barCodeTypes: [BarCodeScanner.Constants.BarCodeType.qr],
+              }}
+              ratio={ratio}
+            />
+          ) : null}
+          {cameraDimensions ? (
+            <WrappedSvg />
+          ) : (
+            <Flex
+              {...StyleSheet.absoluteFillObject}
+              justifyContent="center"
+              bg="constant.black"
+            >
+              <InfiniteLoader />
+            </Flex>
+          )}
         </Flex>
         <Flex flex={1} px={7} alignItems="center">
           <Text
@@ -91,11 +150,8 @@ const ClaimNftQrScan = () => {
           >
             {t("claimNft.qrScan.title")}
           </Text>
-          <Text color="neutral.c70" mb={6} textAlign="center">
+          <Text color="neutral.c70" textAlign="center">
             {t("claimNft.qrScan.description.1")}
-          </Text>
-          <Text color="neutral.c70" mb={6} textAlign="center">
-            {t("claimNft.qrScan.description.2")}
           </Text>
         </Flex>
       </Flex>
