@@ -110,7 +110,7 @@ const extraProperties = async (store: AppStore) => {
     ...deviceInfo,
     notificationsAllowed,
     notificationsBlacklisted,
-    // userId: user.id,
+    userId: user?.id,
   };
 };
 
