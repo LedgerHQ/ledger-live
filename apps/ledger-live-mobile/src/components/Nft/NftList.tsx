@@ -56,12 +56,7 @@ export function NftList({ data }: Props) {
 
   return (
     <>
-      <TrackScreen
-        name="NFT Gallery"
-        category=""
-        source="NFT tab"
-        NFTs_owned={data.length}
-      />
+      <TrackScreen category="NFT Gallery" NFTs_owned={data.length} />
 
       <RefreshableCollapsibleHeaderFlatList
         numColumns={2}
