@@ -43,7 +43,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-pnpm-store-
       - name: install and build
-        continue-on-error: true
+        continue-on-error: false
         run: |
           pnpm i --filter="live-cli..." --filter="ledger-libs" --frozen-lockfile
           pnpm build:ljs
