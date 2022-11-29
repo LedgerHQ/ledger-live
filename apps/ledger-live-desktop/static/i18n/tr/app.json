@@ -253,7 +253,7 @@
           "tooltip" : "<0>Dalgalı kur</0>, piyasa koşullarına bağlı olarak değişimler yaşar; dolayısıyla, tahmininizden daha yüksek ya da daha düşük tutarlar elde edebilirsiniz.<br/><br/><0>Sabit kur</0>, takas işleminin başında gösterilen tutarla eşleşir."
         },
         "receive" : {
-          "title" : "Al",
+          "title" : "Alınacak tutar",
           "tooltip" : "Takas sonrasında elde edeceğiniz tahmini tutar."
         }
       },
@@ -3501,7 +3501,7 @@
         "count_plural" : "{{count}} token"
       },
       "hiddenNftCollections" : {
-        "title" : "NFT Koleksiyonunu Gizleyin",
+        "title" : "Gizli NFT Koleksiyonları",
         "desc" : "Koleksiyon adına sağ tıklayıp 'NFT Koleksiyonunu Gizle'yi seçerek NFT Koleksiyonlarını gizleyebilirsiniz.",
         "count" : "{{count}} koleksiyonu",
         "count_plural" : "{{count}} koleksiyonları"
