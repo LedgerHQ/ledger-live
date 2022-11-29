@@ -2,6 +2,7 @@ import { storiesOf } from "../storiesOf";
 import React from "react";
 import CardA from "../../../src/components/Cards/CardA";
 import CardB from "../../../src/components/Cards/CardB";
+import CardC from "../../../src/components/Cards/CardC";
 import Flex from "../../../src/components/Layout/Flex";
 import { text, select, number } from "@storybook/addon-knobs";
 import { descriptionCardA, descriptionCardB } from "./descriptionsCards";
@@ -77,6 +78,37 @@ const CardBStory = () => {
   );
 };
 
+const CardCStory = () => {
+  const tag = text("tag", "Promo");
+  const title = text("title", "Free shipping worldwide for 1 week only");
+  const description = text(
+    "description",
+    "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam tellus risus, pretium a nulla sit amet, porta sollicitudin tortor.",
+  );
+  const cta = text("cta", "My cta action");
+  const time = text("timer", "2 minutes ago");
+  return (
+    <Flex
+      width="500px"
+      height="300px"
+      backgroundColor="neutral.c20"
+      alignItems="center"
+      justifyContent="center"
+      p={"16px"}
+    >
+      <CardC
+        tag={tag}
+        description={description}
+        cta={cta}
+        time={time}
+        title={title}
+        onPress={() => {}}
+        onPressDismiss={() => {}}
+      />
+    </Flex>
+  );
+};
+
 storiesOf((story) =>
   story("Cards", module)
     .add("Card A", CardAStory, {
@@ -90,6 +122,14 @@ storiesOf((story) =>
     .add("Card B", CardBStory, {
       docs: {
         title: "Card B",
+        description: {
+          component: descriptionCardB,
+        },
+      },
+    })
+    .add("Card C", CardCStory, {
+      docs: {
+        title: "Card C",
         description: {
           component: descriptionCardB,
         },
