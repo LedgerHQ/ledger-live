@@ -12,8 +12,9 @@ module.exports = {
   ],
   output: (toJSON) => `data/eip712.${toJSON ? "json" : "ts"}`,
 
-  outputTemplate: ([data], toJSON) => {
-    const stringifiedData = JSON.stringify(data ? data : {});
+  outputTemplate: (data, toJSON) => {
+    const unifiedData = Object.assign({}, ...(data || []));
+    const stringifiedData = JSON.stringify(unifiedData);
     return toJSON
       ? stringifiedData
       : `export default ${stringifiedData};

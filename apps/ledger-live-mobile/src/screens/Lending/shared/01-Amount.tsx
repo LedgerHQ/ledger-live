@@ -208,7 +208,7 @@ export default function AmountScreen({
                       </View>
                       <View style={styles.availableRight}>
                         <LText style={styles.maxLabel}>
-                          <Trans i18nKey="send.amount.sendMax" />
+                          <Trans i18nKey="send.amount.useMax" />
                         </LText>
                         <Switch
                           value={useAllAmount || false}

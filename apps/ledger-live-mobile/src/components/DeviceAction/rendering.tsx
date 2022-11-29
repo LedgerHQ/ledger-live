@@ -19,10 +19,13 @@ import {
   Flex,
   Tag,
   Icons,
-  Log,
   BoxedIcon,
+  Log,
 } from "@ledgerhq/native-ui";
-import { LockAltMedium } from "@ledgerhq/native-ui/assets/icons";
+import {
+  LockAltMedium,
+  DownloadMedium,
+} from "@ledgerhq/native-ui/assets/icons";
 import BigNumber from "bignumber.js";
 import {
   ExchangeRate,
@@ -37,7 +40,6 @@ import {
 import { TFunction } from "react-i18next";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import type { DeviceModelInfo } from "@ledgerhq/types-live";
-import { DownloadMedium } from "@ledgerhq/native-ui/assets/icons";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { ParamListBase } from "@react-navigation/native";
@@ -109,24 +111,12 @@ const CenteredText = styled(Text).attrs({
   textAlign: "center",
 })``;
 
-const TitleContainer = styled(Flex).attrs({
-  py: 8,
-})``;
-
-const TitleText = ({
-  children,
-  disableUppercase,
-}: {
-  children: React.ReactNode;
-  disableUppercase?: boolean;
-}) => (
-  <TitleContainer>
-    <Log
-      extraTextProps={disableUppercase ? { textTransform: "none" } : undefined}
-    >
+export const TitleText = ({ children }: { children: React.ReactNode }) => (
+  <Flex>
+    <Text textAlign="center" variant="h4" fontWeight="semiBold">
       {children}
-    </Log>
-  </TitleContainer>
+    </Text>
+  </Flex>
 );
 
 const DescriptionText = styled(CenteredText).attrs({
@@ -243,7 +233,11 @@ export function renderVerifyAddress({
             onPress={onPress}
           />
         )}
-        {address && <TitleText disableUppercase>{address}</TitleText>}
+        {address && (
+          <Flex py={8}>
+            <Log extraTextProps={{ textTransform: "none" }}>{address}</Log>
+          </Flex>
+        )}
       </ActionContainer>
     </Wrapper>
   );

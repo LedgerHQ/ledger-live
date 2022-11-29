@@ -57,8 +57,8 @@ export function NftList({ data }: Props) {
   return (
     <>
       <TrackScreen
-        category="NFT Gallery"
         name="NFT Gallery"
+        category=""
         source="NFT tab"
         NFTs_owned={data.length}
       />
