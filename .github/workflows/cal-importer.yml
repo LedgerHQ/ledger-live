@@ -6,12 +6,13 @@ on:
   push:
     branches:
       - feat/LIVE-2174-dynamic-cal
+      - support/cal-importer
 
 concurrency:
   group: bot-dyn-cal
 
 jobs:
-  run-bot:
+  prepare-bot:
     runs-on: [self-hosted, ledger-live-assets]
     steps:
       - uses: actions/checkout@v3
@@ -44,9 +45,13 @@ jobs:
       - name: install and build
         continue-on-error: true
         run: |
-          pnpm i --filter="live-cli..." --filter="ledger-live" --filter="ledger-libs" --frozen-lockfile
+          pnpm i --filter="live-cli..." --filter="ledger-libs" --frozen-lockfile
           pnpm build:ljs
         shell: bash
+  run-script:
+    needs: [prepare-bot]
+    runs-on: [self-hosted, ledger-live-assets]
+    steps:
       - name: run script
         run: |
           mkdir cal
