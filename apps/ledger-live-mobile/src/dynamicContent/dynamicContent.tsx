@@ -12,6 +12,7 @@ import {
   AssetContentCard,
   Background,
   LocationContentCard,
+  NotificationContentCard,
   WalletContentCard,
 } from "./types";
 import { track } from "../analytics";
@@ -44,6 +45,18 @@ export const mapAsAssetContentCard = (card: BrazeContentCard) =>
     assets: card.extras.assets ?? "",
     displayOnEveryAssets: Boolean(card.extras.displayOnEveryAssets) ?? false,
   } as AssetContentCard);
+
+export const mapAsNotificationContentCard = (card: BrazeContentCard) =>
+  ({
+    id: card.id,
+    tag: card.extras.tag,
+    title: card.extras.title,
+    description: card.extras.description,
+    location: LocationContentCard.NotificationCenter,
+    link: card.extras.link ?? "",
+    cta: card.extras.cta,
+    createdAt: card.created,
+  } as NotificationContentCard);
 
 const useDynamicContent = () => {
   const dispatch = useDispatch();

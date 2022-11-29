@@ -5,6 +5,7 @@ import Text from "../../Text";
 import Flex from "../../Layout/Flex";
 import Box from "../../Layout/Box";
 import Link from "../../cta/Link";
+import styled from "styled-components/native";
 
 export type CardProps = TouchableOpacityProps & {
   tag?: string;
@@ -33,7 +34,7 @@ const Timer = ({ time }: { time: string }) => (
 );
 
 const CardB = (props: CardProps): React.ReactElement => {
-  const { tag = "", time = "", title, description, cta } = props;
+  const { tag = "", time = "", title, description, cta, onPress } = props;
   return (
     <Flex width="100%" flexDirection="column">
       <Flex flexDirection="row" justifyContent="space-between">
@@ -56,27 +57,32 @@ const CardB = (props: CardProps): React.ReactElement => {
         {description}
       </Text>
 
-      <Flex alignItems="flex-start">
-        <Link
-          type="main"
-          size="medium"
-          iconPosition="right"
-          Icon={() => <ExternalLinkMedium color="neutral.c100" />}
-          onPress={props.onPress}
-          numberOfLines={1}
-        >
-          <Text
-            variant="bodyLineHeight"
-            fontWeight="semiBold"
-            color="neutral.c100"
+      {onPress && (
+        <Flex alignItems="flex-start">
+          <Link
+            type="main"
+            size="medium"
+            iconPosition="right"
+            Icon={() => <ExternalLinkMedium color="neutral.c100" />}
+            onPress={onPress}
             numberOfLines={1}
           >
-            {cta}
-          </Text>
-        </Link>
-      </Flex>
+            <StyledText
+              variant="bodyLineHeight"
+              fontWeight="semiBold"
+              color="neutral.c100"
+              numberOfLines={1}
+            >
+              {cta}
+            </StyledText>
+          </Link>
+        </Flex>
+      )}
     </Flex>
   );
 };
+const StyledText = styled(Text)`
+  text-decoration: underline;
+`;
 
 export default CardB;

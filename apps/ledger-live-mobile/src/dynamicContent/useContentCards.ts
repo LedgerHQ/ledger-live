@@ -4,12 +4,14 @@ import { useDispatch } from "react-redux";
 import {
   setDynamicContentAssetsCards,
   setDynamicContentWalletCards,
+  setDynamicContentNotificationCards,
 } from "../actions/dynamicContent";
 import { useBrazeContentCard } from "./brazeContentCard";
 import {
   filterByPage,
   mapAsWalletContentCard,
   mapAsAssetContentCard,
+  mapAsNotificationContentCard,
 } from "./dynamicContent";
 import { LocationContentCard } from "./types";
 
@@ -32,8 +34,14 @@ const HookDynamicContentCards = () => {
       LocationContentCard.Asset,
     ).map(card => mapAsAssetContentCard(card));
 
+    const notificationCards = filterByPage(
+      contentCards,
+      LocationContentCard.NotificationCenter,
+    ).map(card => mapAsNotificationContentCard(card));
+
     dispatch(setDynamicContentWalletCards(walletCards));
     dispatch(setDynamicContentAssetsCards(assetCards));
+    dispatch(setDynamicContentNotificationCards(notificationCards));
   }, [Braze, dispatch]);
 
   useEffect(() => {

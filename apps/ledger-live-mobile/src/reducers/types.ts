@@ -21,7 +21,7 @@ import { WalletTabNavigatorStackParamList } from "../components/RootNavigator/ty
 import {
   WalletContentCard,
   AssetContentCard,
-  ContentCard,
+  NotificationContentCard,
 } from "../dynamicContent/types";
 
 // === ACCOUNT STATE ===
@@ -110,7 +110,7 @@ export type DynamicContentState = {
   /** Dynamic content cards displayed in an Asset Page */
   assetsCards: AssetContentCard[];
   /** Dynamic content cards displayed in Notification Center */
-  notificationCards: ContentCard[];
+  notificationCards: NotificationContentCard[];
 };
 
 // === RATINGS STATE ===

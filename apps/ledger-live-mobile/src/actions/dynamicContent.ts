@@ -2,7 +2,7 @@ import { createAction } from "redux-actions";
 import {
   WalletContentCard,
   AssetContentCard,
-  ContentCard,
+  NotificationContentCard,
 } from "../dynamicContent/types";
 import {
   DynamicContentActionTypes,
@@ -39,7 +39,7 @@ const setDynamicContentNotificationCardsAction =
   );
 
 export const setDynamicContentNotificationCards = (
-  notificationCards: ContentCard[],
+  notificationCards: NotificationContentCard[],
 ) =>
   setDynamicContentNotificationCardsAction({
     notificationCards,

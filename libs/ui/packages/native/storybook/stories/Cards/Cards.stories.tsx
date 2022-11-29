@@ -4,7 +4,7 @@ import CardA from "../../../src/components/Cards/CardA";
 import CardB from "../../../src/components/Cards/CardB";
 import CardC from "../../../src/components/Cards/CardC";
 import Flex from "../../../src/components/Layout/Flex";
-import { text, select, number } from "@storybook/addon-knobs";
+import { text, select, number, boolean } from "@storybook/addon-knobs";
 import { descriptionCardA, descriptionCardB } from "./descriptionsCards";
 
 const CardAStory = () => {
@@ -85,8 +85,9 @@ const CardCStory = () => {
     "description",
     "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam tellus risus, pretium a nulla sit amet, porta sollicitudin tortor.",
   );
-  const cta = text("cta", "My cta action");
+  const cta = text("cta", "Link");
   const time = text("timer", "2 minutes ago");
+  const hasLink = boolean("show link", true);
   return (
     <Flex
       width="500px"
@@ -102,7 +103,7 @@ const CardCStory = () => {
         cta={cta}
         time={time}
         title={title}
-        onPress={() => {}}
+        onPress={hasLink ? () => {} : undefined}
         onPressDismiss={() => {}}
       />
     </Flex>
