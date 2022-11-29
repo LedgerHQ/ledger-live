@@ -11,6 +11,7 @@ export function useReceiveNFTsModal(props: Props) {
   const openModal = useCallback(() => {
     track("button_clicked", {
       button: props.hasNFTS ? "Add new" : "Receive NFTs",
+      drawer: "Confirm Receive NFT",
     });
     setModalOpened(true);
   }, [props.hasNFTS]);
