@@ -13,7 +13,6 @@ export type FeatureId =
   | "ptxSmartRouting"
   | "currencyAvalancheCChain"
   | "currencyOsmosis"
-  | "currencyAvalancheCChainMobile"
   | "currencyOsmosisMobile"
   | "currencyFantom"
   | "currencyMoonbeam"

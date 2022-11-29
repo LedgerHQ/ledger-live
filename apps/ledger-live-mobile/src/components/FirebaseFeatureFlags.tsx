@@ -16,10 +16,7 @@ import {
   languageSelector,
   overriddenFeatureFlagsSelector,
 } from "../reducers/settings";
-import {
-  setOverriddenFeatureFlag,
-  setOverriddenFeatureFlags,
-} from "../actions/settings";
+import { setOverriddenFeatureFlag } from "../actions/settings";
 
 const checkFeatureFlagVersion = (feature: Feature | undefined) => {
   if (
@@ -40,21 +37,6 @@ const checkFeatureFlagVersion = (feature: Feature | undefined) => {
 };
 
 type Props = PropsWithChildren<unknown>;
-
-const isFeature = (key: string): boolean => {
-  try {
-    const value = remoteConfig().getValue(formatToFirebaseFeatureId(key));
-
-    if (!value || !value.asString()) {
-      return false;
-    }
-
-    return true;
-  } catch (error) {
-    console.error(`Failed to check if feature "${key}" exists`);
-    return false;
-  }
-};
 
 const getFeature = (args: {
   key: FeatureId;
@@ -81,6 +63,11 @@ const getFeature = (args: {
           overridesRemote: true,
           overriddenByEnv: true,
         };
+    }
+    const config = remoteConfig();
+
+    if (__DEV__) {
+      config.setConfigSettings({ minimumFetchIntervalMillis: 0 });
     }
 
     const value = remoteConfig().getValue(formatToFirebaseFeatureId(key));
@@ -151,10 +138,6 @@ export const FirebaseFeatureFlagsProvider: React.FC<Props> = ({ children }) => {
     dispatch(setOverriddenFeatureFlag(key, undefined));
   };
 
-  const resetFeatures = (): void => {
-    dispatch(setOverriddenFeatureFlags({}));
-  };
-
   // Nb wrapped because the method is also called from outside.
   const wrappedGetFeature = useCallback(
     (key: FeatureId): Feature =>
@@ -164,11 +147,9 @@ export const FirebaseFeatureFlagsProvider: React.FC<Props> = ({ children }) => {
 
   return (
     <FeatureFlagsProvider
-      isFeature={isFeature}
       getFeature={wrappedGetFeature}
       overrideFeature={overrideFeature}
       resetFeature={resetFeature}
-      resetFeatures={resetFeatures}
     >
       {children}
     </FeatureFlagsProvider>

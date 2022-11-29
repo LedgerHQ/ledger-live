@@ -59,7 +59,7 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
   const songbird = useFeature("currencySongbirdMobile");
   const flare = useFeature("currencyFlareMobile");
   const near = useFeature("currencyNear");
-  const avaxCChain = useFeature("currencyAvalancheCChainMobile");
+  const avaxCChain = useFeature("currencyAvalancheCChain");
 
   const featureFlaggedCurrencies = useMemo(
     () => ({
