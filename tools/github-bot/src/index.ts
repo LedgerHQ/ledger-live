@@ -140,12 +140,31 @@ export default (app: Probot) => {
           comparison.data.status
         );
 
+        const output = isUpToDate
+          ? {
+              title: "💚 Success",
+              summary:
+                `Branch \`${prHead.ref}\` is identical or ahead of \`${prBase.ref}\`.\n` +
+                "\n" +
+                "**All good! 👍**",
+            }
+          : {
+              title: "🔴 Failure",
+              summary:
+                `Branch \`${prHead.ref}\` is one or more commits behind \`${prBase.ref}\`.\n` +
+                `\n` +
+                `**Please rebase your branch on top of \`${prBase.ref}\`.**\n` +
+                `\n` +
+                `_If you are not comfortable with git and rebasing, here is a [nice guide](https://www.atlassian.com/git/tutorials/rewriting-history/git-rebase)._`,
+            };
+
         await octokit.checks.update({
           owner,
           repo,
           check_run_id: runId,
           status: "completed",
           conclusion: isUpToDate ? "success" : "failure",
+          output,
         });
       } catch (error) {
         console.error(error);
