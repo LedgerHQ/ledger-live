@@ -94,3 +94,52 @@ const onPressDismiss = ()=> console.log("DISMISS")
 };
 \`\`\`
 `;
+
+export const descriptionCardC = `
+### A simple content card C.
+
+This simple card implementation component allows to display specific content for users
+
+## Usage
+
+
+### Import  
+\`\`\`ts
+
+import { CardC } from "@ledgerhq/native-ui"
+\`\`\`
+
+
+### Props 
+\`\`\`ts
+type CardProps = {
+  tag?: string;
+  description?: string;
+  cta?: string;
+  time?: string;
+  title?: string; // Timestamp
+  onPressDismiss?: () => void;
+  onPress?: () => void;
+  viewed: boolean;
+};
+\`\`\`
+
+### Integration 
+
+\`\`\`ts
+
+const MyCard = (): JSX.Element => {
+const onPress = ()=> console.log("PRESS")
+const onPressDismiss = ()=> console.log("DISMISS")
+  return (
+    <CardC
+      tag="Promo" 
+      title="Announcement" 
+      description="Announcement for promotion" 
+      time={1669736575}
+      viewed={false}
+    />
+  );
+};
+\`\`\`
+`;

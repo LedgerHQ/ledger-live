@@ -5,7 +5,7 @@ import CardB from "../../../src/components/Cards/CardB";
 import CardC from "../../../src/components/Cards/CardC";
 import Flex from "../../../src/components/Layout/Flex";
 import { text, select, number, boolean } from "@storybook/addon-knobs";
-import { descriptionCardA, descriptionCardB } from "./descriptionsCards";
+import { descriptionCardA, descriptionCardB, descriptionCardC } from "./descriptionsCards";
 
 const CardAStory = () => {
   const variant = select("variant", ["purple", "red"], undefined);
@@ -59,12 +59,12 @@ const CardBStory = () => {
 
   return (
     <Flex
-      backgroundColor={"primary.c70"}
+      backgroundColor="primary.c70"
       height={300}
       width={width}
       alignItems="center"
-      justifyContent={"center"}
-      p={"16px"}
+      justifyContent="center"
+      p="16px"
     >
       <CardB
         tag={tag}
@@ -97,7 +97,7 @@ const CardCStory = () => {
       backgroundColor="neutral.c20"
       alignItems="center"
       justifyContent="center"
-      p={"16px"}
+      p="16px"
     >
       <CardC
         tag={tag}
@@ -134,6 +134,9 @@ storiesOf((story) =>
     .add("Card C", CardCStory, {
       docs: {
         title: "Card C",
+        description: {
+          component: descriptionCardC,
+        },
       },
     }),
 );
