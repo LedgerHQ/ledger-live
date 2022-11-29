@@ -142,8 +142,8 @@ export const start = async (
 
     if (created) {
       segmentClient.reset();
-      segmentClient.identify(user.id, userExtraProperties);
     }
+    segmentClient.identify(user.id, userExtraProperties);
   }
 
   track("Start", userExtraProperties, true);
