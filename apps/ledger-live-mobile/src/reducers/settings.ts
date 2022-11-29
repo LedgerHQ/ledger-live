@@ -62,6 +62,7 @@ import type {
   SettingsUnhideNftCollectionPayload,
   SettingsUpdateCurrencyPayload,
   SettingsSetSwapSelectableCurrenciesPayload,
+  SettingsSetDismissedDynamicCardsPayload,
 } from "../actions/types";
 import {
   SettingsActionTypes,
@@ -118,6 +119,7 @@ export const INITIAL_STATE: SettingsState = {
   carouselVisibility: Object.fromEntries(
     SLIDES.map(slide => [slide.name, true]),
   ),
+  dismissedDynamicCards: [],
   discreetMode: false,
   language: getDefaultLanguageLocale(),
   languageIsSetByUser: false,
@@ -385,6 +387,16 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
     ...state,
     carouselVisibility: (action as Action<SettingsSetCarouselVisibilityPayload>)
       .payload.carouselVisibility,
+  }),
+
+  [SettingsActionTypes.SETTINGS_SET_DISMISSED_DYNAMIC_CARDS]: (
+    state,
+    action,
+  ) => ({
+    ...state,
+    dismissedDynamicCards: (
+      action as Action<SettingsSetDismissedDynamicCardsPayload>
+    ).payload.dismissedDynamicCards,
   }),
 
   [SettingsActionTypes.SETTINGS_SET_DISCREET_MODE]: (state, action) => ({
@@ -710,6 +722,8 @@ export const carouselVisibilitySelector = (state: State) => {
 
   return settingValue;
 };
+export const dismissedDynamicCardsSelector = (state: State) =>
+  state.settings.dismissedDynamicCards;
 export const discreetModeSelector = (state: State): boolean =>
   state.settings.discreetMode === true;
 

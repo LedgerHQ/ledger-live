@@ -1902,6 +1902,9 @@
       "title": "No operations yet?",
       "desc": "Simply send crypto assets to your receiving address and wait for the app to sync."
     },
+    "carousel": {
+      "title": "For you"
+    },
     "recommended": {
       "title": "Recommended"
     },
@@ -2350,8 +2353,8 @@
     "display": {
       "title": "General",
       "desc": "Configure general Ledger Live settings.",
-      "carousel": "Carousel visibility",
-      "carouselDesc": "Enable visibility of the carousel on Portfolio",
+      "carousel": "Recommendations",
+      "carouselDesc": "We'll show you cards with personalised tips and our latest offers just for you.",
       "language": "Display language",
       "languageDesc": "Set the language displayed in Ledger Live.",
       "region": "Region",
@@ -2464,7 +2467,7 @@
       },
       "allowed": {
         "title": "Allow notifications",
-        "desc": "Receive notifications about your crypto, market tendencies and more"
+        "desc": "Receive notifications about your crypto assets, market trends and more"
       },
       "transactions": {
         "title": "Transactions",
@@ -2486,7 +2489,7 @@
         "title": "Price Alerts",
         "desc": "Set price alerts for your favorite coins so that you don't miss a market move"
       },
-      "disclaimer": "Data privacy is paramount at Ledger. Data collected is never shared to our partners."
+      "disclaimer": "Your data and privacy is important to us at Ledger. Data collected is never shared with our partners."
     },
     "help": {
       "title": "Help",
