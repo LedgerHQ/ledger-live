@@ -191,7 +191,7 @@ export default function SendAmountCoin({ navigation, route }: Props) {
                   {typeof useAllAmount === "boolean" ? (
                     <View style={styles.availableRight}>
                       <LText style={styles.maxLabel} color="grey">
-                        <Trans i18nKey="send.amount.sendMax" />
+                        <Trans i18nKey="send.amount.useMax" />
                       </LText>
                       <Switch
                         style={styles.switch}

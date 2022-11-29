@@ -27,6 +27,7 @@ import { INITIAL_STATE as notificationsState } from "../reducers/notifications";
 import { INITIAL_STATE as swapState } from "../reducers/swap";
 import { INITIAL_STATE as ratingsState } from "../reducers/ratings";
 import { INITIAL_STATE as walletconnectState } from "../reducers/walletconnect";
+import { INITIAL_STATE as dynamicContentState } from "../reducers/dynamicContent";
 import type { State } from "../reducers/types";
 
 const INITIAL_STATE: State = {
@@ -39,6 +40,7 @@ const INITIAL_STATE: State = {
   swap: swapState,
   walletconnect: walletconnectState,
   postOnboarding: postOnboardingState,
+  dynamicContent: dynamicContentState,
 };
 
 export const store = createStore(

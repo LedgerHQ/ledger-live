@@ -1,15 +1,21 @@
 import { useState, useCallback } from "react";
 import { track } from "../../../analytics";
 
-export function useReceiveNFTsModal() {
+type Props = {
+  hasNFTS: boolean;
+};
+
+export function useReceiveNFTsModal(props: Props) {
   const [isModalOpened, setModalOpened] = useState<boolean>(false);
 
   const openModal = useCallback(() => {
     track("button_clicked", {
-      button: "Add my NFTs",
+      button: props.hasNFTS ? "Add new" : "Receive NFTs",
+      drawer: "Confirm Receive NFT",
     });
     setModalOpened(true);
-  }, [setModalOpened]);
+  }, [props.hasNFTS]);
+
   const closeModal = useCallback(() => setModalOpened(false), [setModalOpened]);
 
   return {
