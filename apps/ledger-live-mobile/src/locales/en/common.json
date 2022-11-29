@@ -5466,7 +5466,8 @@
     "drawer": {
       "title": "Choose an image",
       "options": {
-        "uploadFromPhone": "Upload from my phone"
+        "uploadFromPhone": "Choose from my picture gallery",
+        "selectFromNFTGallery": "Choose from NFT gallery"
       }
     },
     "cropImage": "Crop image",
@@ -5491,6 +5492,9 @@
       "loading": "Loading preview",
       "setPicture": "Set custom picture",
       "editPicture": "Edit picture"
+    },
+    "nftGallery": {
+      "title": "My NFTs"
     }
   },
   "postOnboarding": {

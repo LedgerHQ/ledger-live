@@ -1,7 +1,7 @@
 import React, { memo, useCallback, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigation } from "@react-navigation/native";
-import { NFTMediaSize, NFTMetadata } from "@ledgerhq/types-live";
+import { NFTMetadata } from "@ledgerhq/types-live";
 import {
   View,
   StyleSheet,
@@ -12,7 +12,6 @@ import {
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { Box, Flex, Icons, Text } from "@ledgerhq/native-ui";
 import styled, { useTheme } from "styled-components/native";
-import { getMetadataMediaTypes } from "../../logic/nft";
 import { NavigatorName, ScreenName } from "../../const";
 import ExternalLinkIcon from "../../icons/ExternalLink";
 import OpenSeaIcon from "../../icons/OpenSea";
@@ -22,6 +21,7 @@ import BottomModal from "../BottomModal";
 import { rgba } from "../../colors";
 import HideNftDrawer from "./HideNftDrawer";
 import { track, TrackScreen } from "../../analytics";
+import { extractImageUrlFromNftMetadata } from "../CustomImage/imageUtils";
 
 type Props = {
   links?: NFTMetadata["links"] | null;
@@ -94,19 +94,7 @@ const NftLinksPanel = ({
   const areRaribleOpenseaDisabled =
     useFeature("disableNftRaribleOpensea")?.enabled && Platform.OS === "ios";
 
-  const mediaTypes = useMemo(
-    () => (nftMetadata ? getMetadataMediaTypes(nftMetadata) : null),
-    [nftMetadata],
-  );
-  const mediaSizeForCustomImage = mediaTypes
-    ? (["big", "preview"] as NFTMediaSize[]).find(
-        size => mediaTypes[size] === "image",
-      )
-    : null;
-  const customImageUri =
-    (mediaSizeForCustomImage &&
-      nftMetadata?.medias?.[mediaSizeForCustomImage]?.uri) ||
-    null;
+  const customImageUri = extractImageUrlFromNftMetadata(nftMetadata);
 
   const showCustomImageButton = customImage?.enabled && !!customImageUri;
 
