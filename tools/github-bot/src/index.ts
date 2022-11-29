@@ -115,8 +115,10 @@ export default (app: Probot) => {
       let runId = null;
 
       try {
+        const isFork = payload.pull_request.head.repo.fork;
         const prBase = payload.pull_request.base;
         const prHead = payload.pull_request.head;
+        const ownerPrefix = isFork ? `${prHead.repo.owner}:` : "";
 
         const checkRun = await octokit.checks.create({
           owner,
@@ -130,7 +132,7 @@ export default (app: Probot) => {
         const comparison = await octokit.repos.compareCommitsWithBasehead({
           owner,
           repo,
-          basehead: `${prBase.ref}...${prHead.user}:${prHead.ref}`,
+          basehead: `${prBase.ref}...${ownerPrefix}${prHead.ref}`,
           per_page: 1,
         });
 
@@ -138,12 +140,31 @@ export default (app: Probot) => {
           comparison.data.status
         );
 
+        const output = isUpToDate
+          ? {
+              title: "💚 Success",
+              summary:
+                `Branch \`${prHead.ref}\` is identical or ahead of \`${prBase.ref}\`.\n` +
+                "\n" +
+                "**All good! 👍**",
+            }
+          : {
+              title: "🔴 Failure",
+              summary:
+                `Branch \`${prHead.ref}\` is one or more commits behind \`${prBase.ref}\`.\n` +
+                `\n` +
+                `**Please rebase your branch on top of \`${prBase.ref}\`.**\n` +
+                `\n` +
+                `_If you are not comfortable with git and rebasing, here is a [nice guide](https://www.atlassian.com/git/tutorials/rewriting-history/git-rebase)._`,
+            };
+
         await octokit.checks.update({
           owner,
           repo,
           check_run_id: runId,
           status: "completed",
           conclusion: isUpToDate ? "success" : "failure",
+          output,
         });
       } catch (error) {
         console.error(error);
