@@ -115,8 +115,10 @@ export default (app: Probot) => {
       let runId = null;
 
       try {
+        const isFork = payload.pull_request.head.repo.fork;
         const prBase = payload.pull_request.base;
         const prHead = payload.pull_request.head;
+        const ownerPrefix = isFork ? `${prHead.repo.owner}:` : "";
 
         const checkRun = await octokit.checks.create({
           owner,
@@ -130,7 +132,7 @@ export default (app: Probot) => {
         const comparison = await octokit.repos.compareCommitsWithBasehead({
           owner,
           repo,
-          basehead: `${prBase.ref}...${prHead.user}:${prHead.ref}`,
+          basehead: `${prBase.ref}...${ownerPrefix}${prHead.ref}`,
           per_page: 1,
         });
 
