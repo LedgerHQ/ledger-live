@@ -5268,10 +5268,9 @@
     },
     "news": {
       "title": "Notifications",
-      "titleCount": "Notifications ({{count}})",
       "emptyState": {
-        "title": "No news for the moment",
-        "desc": "You will find here all the news related to Ledger and Ledger Live"
+        "title": "It’s just peace and quiet for now 💤",
+        "desc": "We’ll let you know if anything comes up."
       },
       "time": {
         "second": "1 second ago",
