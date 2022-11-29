@@ -11,7 +11,7 @@ type TrackPlatform = (
   mandatory: boolean | null
 ) => void;
 
-type TrackFunction = (manifest: AppManifest) => void;
+export type TrackFunction = (manifest: AppManifest) => void;
 
 /**
  * Obtain Event data from Platform App manifest

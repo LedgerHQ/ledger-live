@@ -4,6 +4,8 @@ import {
   RecipientRequired,
   InvalidAddress,
   FeeTooHigh,
+  AmountRequired,
+  DustLimit,
 } from "@ledgerhq/errors";
 import type { Transaction } from "../types";
 import { getFeeItems } from "../../../api/FeesBitcoin";
@@ -17,6 +19,10 @@ import {
 import { getMainAccount } from "../../../account";
 import { makeAccountBridgeReceive } from "../../../bridge/mockHelpers";
 import type { AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
+import cryptoFactory from "../wallet-btc/crypto/factory";
+import { Currency } from "../wallet-btc";
+import { computeDustAmount } from "../wallet-btc/utils";
+
 const receive = makeAccountBridgeReceive();
 
 const defaultGetFees = (a, t: any) =>
@@ -36,9 +42,13 @@ const createTransaction = (): Transaction => ({
   },
 });
 
-const updateTransaction = (t, patch) => ({ ...t, ...patch });
+const updateTransaction = (t, patch): any => ({ ...t, ...patch });
 
-const estimateMaxSpendable = ({ account, parentAccount, transaction }) => {
+const estimateMaxSpendable = ({
+  account,
+  parentAccount,
+  transaction,
+}): Promise<BigNumber> => {
   const mainAccount = getMainAccount(account, parentAccount);
   const estimatedFees = transaction
     ? defaultGetFees(mainAccount, transaction)
@@ -60,13 +70,26 @@ const getTransactionStatus = (account, t) => {
     ? account.balance.minus(estimatedFees)
     : new BigNumber(t.amount);
 
+  if (!errors.amount && !amount.gt(0)) {
+    errors.amount = useAllAmount
+      ? new NotEnoughBalance()
+      : new AmountRequired();
+  }
+
   if (amount.gt(0) && estimatedFees.times(10).gt(amount)) {
     warnings.feeTooHigh = new FeeTooHigh();
   }
 
   // Fill up transaction errors...
-  if (totalSpent.gt(account.balance)) {
+  if (!errors.amount && totalSpent.gt(account.balance)) {
     errors.amount = new NotEnoughBalance();
+  }
+
+  const txSize = Math.ceil(estimatedFees.toNumber() / t.feePerByte!.toNumber());
+  const crypto = cryptoFactory(account.currency.id as Currency);
+
+  if (amount.gt(0) && amount.lt(computeDustAmount(crypto, txSize))) {
+    errors.dustLimit = new DustLimit();
   }
 
   // Fill up recipient errors...

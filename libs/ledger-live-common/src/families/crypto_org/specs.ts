@@ -4,6 +4,15 @@ import { getCryptoCurrencyById, parseCurrencyUnit } from "../../currencies";
 import { pickSiblings } from "../../bot/specs";
 import type { AppSpec } from "../../bot/types";
 import { DeviceModelId } from "@ledgerhq/devices";
+import { acceptTransaction } from "./speculos-deviceActions";
+
+const minAmount = parseCurrencyUnit(
+  getCryptoCurrencyById("crypto_org").units[0],
+  "0.01"
+);
+const transactionCheck = ({ maxSpendable }) => {
+  invariant(maxSpendable.gt(minAmount), "balance is too low");
+};
 
 const sharedMutations = ({ maxAccount }) => [
   {
@@ -22,43 +31,31 @@ const sharedMutations = ({ maxAccount }) => [
 ];
 
 const crypto_org_croeseid: AppSpec<Transaction> = {
-  name: "Crypto.org Testnet",
+  disabled: true, // explorers are not correctly working. we will focus on crypto_org spec for now
+  name: "Crypto org Testnet",
   currency: getCryptoCurrencyById("crypto_org_croeseid"),
   appQuery: {
     model: DeviceModelId.nanoS,
     appName: "Crypto.orgChain",
   },
+  genericDeviceAction: acceptTransaction,
   testTimeout: 4 * 60 * 1000,
-  transactionCheck: ({ maxSpendable }) => {
-    invariant(
-      maxSpendable.gt(
-        parseCurrencyUnit(
-          getCryptoCurrencyById("crypto_org_croeseid").units[0],
-          "0.01"
-        )
-      ),
-      "balance is too low"
-    );
-  },
+  minViableAmount: minAmount,
+  transactionCheck,
   mutations: sharedMutations({ maxAccount: 5 }),
 };
 
 const crypto_org: AppSpec<Transaction> = {
-  name: "Crypto.org",
+  name: "Crypto org",
   currency: getCryptoCurrencyById("crypto_org"),
   appQuery: {
     model: DeviceModelId.nanoS,
     appName: "Crypto.orgChain",
   },
+  genericDeviceAction: acceptTransaction,
   testTimeout: 4 * 60 * 1000,
-  transactionCheck: ({ maxSpendable }) => {
-    invariant(
-      maxSpendable.gt(
-        parseCurrencyUnit(getCryptoCurrencyById("crypto_org").units[0], "0.01")
-      ),
-      "balance is too low"
-    );
-  },
+  minViableAmount: minAmount,
+  transactionCheck,
   mutations: sharedMutations({ maxAccount: 5 }),
 };
 

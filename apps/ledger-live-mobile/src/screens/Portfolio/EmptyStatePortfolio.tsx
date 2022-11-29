@@ -1,45 +1,50 @@
-/* eslint-disable import/named */
-/* @flow */
 import React, { memo, useState, useCallback } from "react";
 import { useSelector } from "react-redux";
 import { Trans } from "react-i18next";
 import { Box, Flex, Text } from "@ledgerhq/native-ui";
 import { useNavigation } from "@react-navigation/native";
+import { StackNavigationProp } from "@react-navigation/stack";
 import { hasInstalledAnyAppSelector } from "../../reducers/settings";
 import { NavigatorName } from "../../const";
 import Button from "../../components/Button";
 import AddAccountsModal from "../AddAccounts/AddAccountsModal";
-// @ts-ignore issue with flow
 import noAccountsImgDark from "../../images/illustration/Dark/_048.png";
-// @ts-ignore issue with flow
 import noAccountsImgLight from "../../images/illustration/Light/_048.png";
-// @ts-ignore issue with flow
 import noAppsImgDark from "../../images/illustration/Dark/_056.png";
-// @ts-ignore issue with flow
 import noAppsImgLight from "../../images/illustration/Light/_056.png";
 import HelpLink from "../../components/HelpLink";
 import { urls } from "../../config/urls";
 import Illustration from "../../images/illustration/Illustration";
+import {
+  BaseNavigation,
+  BaseNavigationComposite,
+} from "../../components/RootNavigator/types/helpers";
+import { MainNavigatorParamList } from "../../components/RootNavigator/types/MainNavigator";
 
 type Props = {
   showHelp?: boolean;
 };
 
+type NavigationProp = BaseNavigationComposite<
+  StackNavigationProp<MainNavigatorParamList>
+>;
+
 function EmptyStatePortfolio({ showHelp = true }: Props) {
-  const navigation = useNavigation();
+  const navigation = useNavigation<NavigationProp>();
   const hasInstalledAnyApp = useSelector(hasInstalledAnyAppSelector);
   const [isAddModalOpened, setAddModalOpened] = useState(false);
 
-  const openAddModal = useCallback(() => setAddModalOpened(true), [
-    setAddModalOpened,
-  ]);
+  const openAddModal = useCallback(
+    () => setAddModalOpened(true),
+    [setAddModalOpened],
+  );
 
-  const closeAddModal = useCallback(() => setAddModalOpened(false), [
-    setAddModalOpened,
-  ]);
+  const closeAddModal = useCallback(
+    () => setAddModalOpened(false),
+    [setAddModalOpened],
+  );
 
   const navigateToManager = useCallback(() => {
-    // @ts-expect-error navigation ts issue
     navigation.navigate(NavigatorName.Manager);
   }, [navigation]);
 
@@ -51,14 +56,18 @@ function EmptyStatePortfolio({ showHelp = true }: Props) {
     <>
       {showHelp ? (
         <Flex alignSelf="flex-end" mx={6}>
-          {/* @ts-expect-error */}
           <HelpLink
             url={hasInstalledAnyApp ? urls.addAccount : urls.goToManager}
             color="grey"
           />
         </Flex>
       ) : null}
-      <Flex flex={1} flexDirection="column" justifyContent="center">
+      <Flex
+        flex={1}
+        flexDirection="column"
+        justifyContent="center"
+        bg="background.main"
+      >
         <Box alignItems="center" mt={8}>
           <Illustration
             size={150}
@@ -112,7 +121,7 @@ function EmptyStatePortfolio({ showHelp = true }: Props) {
             )}
           </Flex>
           <AddAccountsModal
-            navigation={navigation}
+            navigation={navigation as unknown as BaseNavigation}
             isOpened={isAddModalOpened}
             onClose={closeAddModal}
           />

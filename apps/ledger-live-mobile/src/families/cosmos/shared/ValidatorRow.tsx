@@ -1,7 +1,7 @@
 import { getAccountUnit } from "@ledgerhq/live-common/account/index";
 import { CosmosValidatorItem } from "@ledgerhq/live-common/families/cosmos/types";
 import { LEDGER_VALIDATOR_ADDRESS } from "@ledgerhq/live-common/families/cosmos/utils";
-import { AccountLike } from "@ledgerhq/live-common/types/index";
+import { AccountLike } from "@ledgerhq/types-live";
 import { Text } from "@ledgerhq/native-ui";
 import React, { useCallback } from "react";
 import { Trans } from "react-i18next";
@@ -15,7 +15,7 @@ const ValidatorRow = ({
   validator,
   account,
 }: {
-  onPress: (v: CosmosValidatorItem) => void;
+  onPress: (_: CosmosValidatorItem) => void;
   validator: CosmosValidatorItem;
   account: AccountLike;
 }) => {
@@ -45,16 +45,14 @@ const ValidatorRow = ({
           >
             {validator.name || validator.validatorAddress}
           </Text>
-          {true ? (
-            <Text
-              fontWeight="semiBold"
-              numberOfLines={1}
-              style={styles.overdelegated}
-            >
-              <Trans i18nKey="cosmos.delegation.commission" />{" "}
-              {validator.commission * 100} %
-            </Text>
-          ) : null}
+          <Text
+            fontWeight="semiBold"
+            numberOfLines={1}
+            style={styles.overdelegated}
+          >
+            <Trans i18nKey="cosmos.delegation.commission" />{" "}
+            {validator.commission * 100} %
+          </Text>
         </View>
         <Text
           fontWeight="semiBold"

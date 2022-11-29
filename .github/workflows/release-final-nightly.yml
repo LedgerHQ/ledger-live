@@ -25,7 +25,7 @@ jobs:
       - name: merge develop
         run: |
           git merge origin/develop -X theirs
-      - uses: pnpm/action-setup@v2.1.0
+      - uses: pnpm/action-setup@v2
         with:
           version: latest
       - uses: actions/setup-node@v3
@@ -38,11 +38,11 @@ jobs:
         with:
           ruby-version: 2.7 # Not needed with a .ruby-version file
           bundler-cache: true # runs 'bundle install' and caches installed gems automatically
-      - uses: ledgerhq/ledger-live/tools/actions/get-package-infos@develop
+      - uses: ./tools/actions/get-package-infos
         id: desktop-version
         with:
           path: ${{ github.workspace }}/apps/ledger-live-desktop
-      - uses: ledgerhq/ledger-live/tools/actions/get-package-infos@develop
+      - uses: ./tools/actions/get-package-infos
         id: mobile-version
         with:
           path: ${{ github.workspace }}/apps/ledger-live-mobile
@@ -62,11 +62,11 @@ jobs:
         run: pnpm changeset publish
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPMJS_TOKEN }}
-      - uses: ledgerhq/ledger-live/tools/actions/get-package-infos@develop
+      - uses: ./tools/actions/get-package-infos
         id: post-desktop-version
         with:
           path: ${{ github.workspace }}/apps/ledger-live-desktop
-      - uses: ledgerhq/ledger-live/tools/actions/get-package-infos@develop
+      - uses: ./tools/actions/get-package-infos
         id: post-mobile-version
         with:
           path: ${{ github.workspace }}/apps/ledger-live-mobile

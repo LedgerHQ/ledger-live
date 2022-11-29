@@ -3,19 +3,21 @@ import React, { memo } from "react";
 import {
   Account,
   AccountLike,
+  NFTMetadata,
   Operation,
-} from "@ledgerhq/live-common/types/index";
+} from "@ledgerhq/types-live";
 import {
   getMainAccount,
   getAccountCurrency,
 } from "@ledgerhq/live-common/account/index";
 import { useNftMetadata } from "@ledgerhq/live-common/nft/index";
-import { View, StyleSheet } from "react-native";
+import { View, StyleSheet, ViewStyle, StyleProp } from "react-native";
 import { Text } from "@ledgerhq/native-ui";
+import { NFTResource } from "@ledgerhq/live-common/nft/NftMetadataProvider/types";
 import Skeleton from "./Skeleton";
 
 type Props = {
-  style?: Object;
+  style?: StyleProp<ViewStyle>;
   operation: Operation;
   account: AccountLike;
   parentAccount?: Account | null;
@@ -33,7 +35,7 @@ const OperationRowNftName = ({
     operation.contract,
     operation.tokenId,
     currency.id,
-  );
+  ) as NFTResource & { metadata: NFTMetadata };
 
   return (
     <View style={style}>

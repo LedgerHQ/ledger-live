@@ -10,13 +10,13 @@ import {
   getCurrencyColor,
 } from "@ledgerhq/live-common/currencies/index";
 import { getMaxDelegationAvailable } from "@ledgerhq/live-common/families/cosmos/logic";
-import { useLedgerFirstShuffledValidatorsCosmos } from "@ledgerhq/live-common/families/cosmos/react";
+import { useLedgerFirstShuffledValidatorsCosmosFamily } from "@ledgerhq/live-common/families/cosmos/react";
 import {
+  CosmosAccount,
   CosmosValidatorItem,
-  Transaction,
 } from "@ledgerhq/live-common/families/cosmos/types";
 import { LEDGER_VALIDATOR_ADDRESS } from "@ledgerhq/live-common/families/cosmos/utils";
-import { AccountLike } from "@ledgerhq/live-common/types/index";
+import { AccountLike } from "@ledgerhq/types-live";
 import { Text } from "@ledgerhq/native-ui";
 import { useTheme } from "@react-navigation/native";
 import { BigNumber } from "bignumber.js";
@@ -29,8 +29,15 @@ import React, {
   useState,
 } from "react";
 import { Trans } from "react-i18next";
-import { Animated, SafeAreaView, StyleSheet, View } from "react-native";
-import Icon from "react-native-vector-icons/dist/Feather";
+import {
+  Animated,
+  SafeAreaView,
+  StyleSheet,
+  View,
+  TextStyle,
+  StyleProp,
+} from "react-native";
+import Icon from "react-native-vector-icons/Feather";
 import { useSelector } from "react-redux";
 import { TrackScreen } from "../../../analytics";
 import { rgba } from "../../../colors";
@@ -43,17 +50,13 @@ import { ScreenName } from "../../../const";
 import DelegatingContainer from "../../tezos/DelegatingContainer";
 import { accountScreenSelector } from "../../../reducers/accounts";
 import ValidatorImage from "../shared/ValidatorImage";
+import { StackNavigatorProps } from "../../../components/RootNavigator/types/helpers";
+import { CosmosDelegationFlowParamList } from "./types";
 
-type Props = {
-  navigation: any;
-  route: { params: RouteParams };
-};
-
-type RouteParams = {
-  validator: CosmosValidatorItem;
-  transaction?: Transaction;
-  fromSelectAmount: boolean;
-};
+type Props = StackNavigatorProps<
+  CosmosDelegationFlowParamList,
+  ScreenName.CosmosDelegationValidator
+>;
 
 export default function DelegationSummary({ navigation, route }: Props) {
   const { validator } = route.params;
@@ -62,7 +65,7 @@ export default function DelegationSummary({ navigation, route }: Props) {
 
   invariant(account, "account must be defined");
 
-  const validators = useLedgerFirstShuffledValidatorsCosmos();
+  const validators = useLedgerFirstShuffledValidatorsCosmosFamily("cosmos");
   const mainAccount = getMainAccount(account, parentAccount);
   const bridge = getAccountBridge(account, undefined);
 
@@ -92,8 +95,6 @@ export default function DelegationSummary({ navigation, route }: Props) {
         transaction: bridge.updateTransaction(t, {
           mode: "delegate",
           validators: [],
-          /** @TODO remove this once the bridge handles it */
-          recipient: mainAccount.freshAddress,
         }),
       };
     }
@@ -128,6 +129,7 @@ export default function DelegationSummary({ navigation, route }: Props) {
         }),
       );
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     route.params,
     updateTransaction,
@@ -165,7 +167,7 @@ export default function DelegationSummary({ navigation, route }: Props) {
 
   const rotate = rotateAnim.interpolate({
     inputRange: [0, 1],
-    // $FlowFixMe
+
     outputRange: ["0deg", "30deg"],
   });
 
@@ -180,30 +182,30 @@ export default function DelegationSummary({ navigation, route }: Props) {
   const currency = getAccountCurrency(account);
   const color = getCurrencyColor(currency);
 
-  const max = getMaxDelegationAvailable(mainAccount, 0);
+  const max = getMaxDelegationAvailable(mainAccount as CosmosAccount, 0);
 
   const onChangeAmount = () => {
     navigation.navigate(ScreenName.CosmosDelegationAmount, {
       ...route.params,
       transaction,
       validator: chosenValidator,
-      min: null,
+      min: undefined,
       max,
       value: transaction.amount,
       status,
       nextScreen: ScreenName.CosmosDelegationValidator,
-      redelegatedBalance: null,
+      redelegatedBalance: undefined,
     });
   };
 
   const onContinue = useCallback(async () => {
     navigation.navigate(ScreenName.CosmosDelegationSelectDevice, {
       accountId: account.id,
-      parentId: parentAccount && parentAccount.id,
+      parentId: parentAccount?.id,
       transaction,
       status,
     });
-  }, [status, account, parentAccount, navigation, transaction]);
+  }, [navigation, account.id, parentAccount?.id, transaction, status]);
 
   const hasErrors = Object.keys(status.errors).length > 0;
 
@@ -446,7 +448,7 @@ const Words = ({
 }: {
   children: ReactNode;
   highlighted?: boolean;
-  style?: any;
+  style?: StyleProp<TextStyle>;
 }) => (
   <Text
     numberOfLines={1}
@@ -458,13 +460,7 @@ const Words = ({
   </Text>
 );
 
-const Selectable = ({
-  name,
-  readOnly,
-}: {
-  name: string;
-  readOnly?: boolean;
-}) => {
+const Selectable = ({ name }: { name: string; readOnly?: boolean }) => {
   const { colors } = useTheme();
   return (
     <View

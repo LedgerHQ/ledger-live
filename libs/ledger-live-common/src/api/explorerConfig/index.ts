@@ -192,7 +192,7 @@ const initialExplorerConfig: FullConfig = {
   ethereum_goerli: {
     id: "eth_goerli",
     stable: {
-      base: "EXPLORER_STAGING",
+      base: "EXPLORER",
       version: "v3",
     },
   },

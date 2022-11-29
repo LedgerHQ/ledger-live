@@ -1,6 +1,7 @@
-import React, { Component } from "react";
+import React, { Component, useCallback } from "react";
 import { FlatList, StyleSheet } from "react-native";
 import { Box } from "@ledgerhq/native-ui";
+import { StackNavigationProp } from "@react-navigation/stack";
 import { track } from "../analytics";
 import SettingsRow from "../components/SettingsRow";
 
@@ -9,16 +10,15 @@ type EntryProps<Item> = {
   onPress: (value: Item) => void;
   selected: boolean;
 };
-type EntryComponent<Item> = React.Component<EntryProps<Item>>;
+type EntryComponent<Item> = React.ComponentType<EntryProps<Item>>;
 
 type Opts<Item> = {
   id: string;
-  itemEventProperties: (value: Item) => Object;
-  keyExtractor: (value: Item) => string;
-  formatItem?: (value: Item) => React.ReactElement;
+  itemEventProperties: (_: Item) => Record<string, unknown>;
+  keyExtractor: (_: Item) => string;
+  formatItem?: (_: Item) => React.ReactNode;
   Entry?: EntryComponent<Item>;
-  navigationOptions?: Object;
-  ListHeaderComponent?: any;
+  ListHeaderComponent?: React.ComponentType;
   // TODO in future: searchable: boolean
 };
 
@@ -28,21 +28,23 @@ function getEntryFromOptions<Item>(opts: Opts<Item>): EntryComponent<Item> {
   if (!formatItem) {
     throw new Error("formatItem is required if Entry is not provided");
   }
-  return class DefaultEntry extends Component<EntryProps<Item>> {
-    onPress = () => this.props.onPress(this.props.item);
 
-    render() {
-      const { item, selected } = this.props;
-      return (
-        <SettingsRow
-          title={formatItem(item)}
-          onPress={this.onPress}
-          selected={!!selected}
-          compact
-        />
-      );
-    }
+  const DefaultEntry = ({ onPress, item, selected }: EntryProps<Item>) => {
+    const onPressAction = useCallback(() => {
+      onPress(item);
+    }, [onPress, item]);
+
+    return (
+      <SettingsRow
+        title={formatItem(item)}
+        onPress={onPressAction}
+        selected={!!selected}
+        compact
+      />
+    );
   };
+
+  return DefaultEntry;
 }
 
 const styles = StyleSheet.create({
@@ -52,17 +54,21 @@ const styles = StyleSheet.create({
   },
 });
 
-export default function makeGenericSelectScreen<Item>(opts: Opts<Item>) {
+type GenericScreenProps<Item> = {
+  selectedKey?: string;
+  items: Item[];
+  onValueChange: (items: Item, props: GenericScreenProps<Item>) => void;
+  navigation: StackNavigationProp<{ [key: string]: object }>;
+  cancelNavigateBack?: boolean;
+};
+
+export default function makeGenericSelectScreen<
+  Item extends { value: string; label: string },
+>(opts: Opts<Item>) {
   const { id, itemEventProperties, keyExtractor } = opts;
   const Entry: EntryComponent<Item> = getEntryFromOptions(opts);
 
-  return class GenericSelectScreen extends Component<{
-    selectedKey?: string;
-    items: Item[];
-    onValueChange: (items: Item, props: any) => void;
-    navigation: any;
-    cancelNavigateBack?: boolean;
-  }> {
+  return class GenericSelectScreen extends Component<GenericScreenProps<Item>> {
     onPress = (item: Item) => {
       const { navigation, onValueChange, cancelNavigateBack } = this.props;
       onValueChange(item, this.props);

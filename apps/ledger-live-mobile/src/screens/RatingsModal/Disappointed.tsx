@@ -15,8 +15,8 @@ const NotNowButton = styled(TouchableOpacity)`
 `;
 
 type Props = {
-  closeModal: Function;
-  setStep: Function;
+  closeModal: () => void;
+  setStep: (name: string) => void;
 };
 
 const Disappointed = ({ closeModal, setStep }: Props) => {

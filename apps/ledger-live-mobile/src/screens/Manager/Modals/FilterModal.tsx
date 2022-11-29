@@ -1,11 +1,12 @@
+import { Flex, Icons, Text } from "@ledgerhq/native-ui";
 import React, { memo, useCallback, useEffect, useReducer } from "react";
-import { StyleSheet, SectionList } from "react-native";
 import { Trans } from "react-i18next";
-import { useTheme } from "@react-navigation/native";
+import { SectionList, SectionListData } from "react-native";
 import styled from "styled-components/native";
-import { Icons, Box, Flex, Text } from "@ledgerhq/native-ui";
 import Touchable from "../../../components/Touchable";
+import { Unpacked } from "../../../types/helpers";
 
+import { BaseButtonProps } from "../../../components/Button";
 import ActionModal from "./ActionModal";
 
 const filterSections = [
@@ -58,6 +59,8 @@ const filterSections = [
     ],
   },
 ];
+type FilterSection = Unpacked<typeof filterSections>;
+type FilterSectionData = FilterSection["data"][0];
 
 const FilterLine = styled(Touchable)`
   flex-direction: row;
@@ -82,9 +85,13 @@ const SeparatorContainer = styled(Flex).attrs({
   marginVertical: 32,
 })``;
 
-const keyExtractor = (item, index) => item + index;
+const keyExtractor = (_item: FilterSectionData, index: number) => "" + index;
 
-const SectionHeader = ({ section: { title } }: any) => (
+const SectionHeader = ({
+  section: { title },
+}: {
+  section: SectionListData<FilterSectionData>;
+}) => (
   <Flex alignItems="center" mb={4}>
     <Text variant="h2" fontWeight="medium" color="neutral.c100">
       <Trans i18nKey={title} />
@@ -92,38 +99,50 @@ const SectionHeader = ({ section: { title } }: any) => (
   </Flex>
 );
 
-const Separator = ({ section: { footerSeparator } }: any) =>
+const Separator = ({
+  section: { footerSeparator },
+}: {
+  section: SectionListData<FilterSectionData>;
+}) =>
   footerSeparator ? <SeparatorContainer backgroundColor="neutral.c40" /> : null;
 
-const initialFilterState = {
-  filters: null,
+type State = {
+  filter: string | null;
+  sort: string | null;
+  order: string | null;
+};
+
+const initialFilterState: State = {
+  filter: null,
   sort: null,
   order: null,
 };
 
-const filterReducer = (state, { type, payload }) => {
+type Action = { type: string; payload: string | Partial<State> | null };
+
+const filterReducer = (state: State, { type, payload }: Action): State => {
   switch (type) {
     case "setFilter":
-      return { ...state, filter: payload };
+      return { ...state, filter: payload as string };
     case "setSort":
-      return { ...state, sort: payload };
+      return { ...state, sort: payload as string };
     case "setOrder":
-      return { ...state, order: payload };
+      return { ...state, order: payload as string };
     case "setState":
-      return { ...state, ...payload };
+      return { ...state, ...(payload as Partial<State>) };
     default:
       return state;
   }
 };
 
 type Props = {
-  filter: string;
-  setFilter: (filter: string | null | undefined) => void;
-  sort: string;
-  setSort: () => void;
-  order: string;
-  setOrder: () => void;
-  isOpened: Boolean;
+  filter: string | null | undefined;
+  setFilter: (_: string | null | undefined) => void;
+  sort: string | null | undefined;
+  setSort: (_: string | null | undefined) => void;
+  order: string | null | undefined;
+  setOrder: (_: string | null | undefined) => void;
+  isOpened: boolean;
   onClose: () => void;
 };
 
@@ -137,8 +156,10 @@ const FilterModalComponent = ({
   isOpened,
   onClose,
 }: Props) => {
-  const [state, dispatch] = useReducer(filterReducer, initialFilterState);
-  const { colors } = useTheme();
+  const [state, dispatch] = useReducer<React.Reducer<State, Action>>(
+    filterReducer,
+    initialFilterState,
+  );
 
   useEffect(() => {
     dispatch({
@@ -231,7 +252,7 @@ const FilterModalComponent = ({
     [state],
   );
 
-  const onFilterActions = [
+  const onFilterActions: Partial<BaseButtonProps>[] = [
     // {
     //   title: <Trans i18nKey="AppAction.filter.apply" />,
     //   onPress: onFilter,

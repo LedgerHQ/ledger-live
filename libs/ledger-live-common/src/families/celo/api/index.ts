@@ -1,1 +1,1 @@
-export { getAccountDetails } from "./hubble";
+export { getAccountDetails, getValidatorGroups } from "./hubble";

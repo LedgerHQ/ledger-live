@@ -1,9 +1,10 @@
 import React, { useCallback, useMemo, memo } from "react";
-import { useNavigation, useRoute, RouteProp } from "@react-navigation/native";
+import { useNavigation, useRoute } from "@react-navigation/native";
 import { useTheme } from "styled-components/native";
 import { useDispatch } from "react-redux";
+import { DeviceModelId } from "@ledgerhq/devices";
+import { useStartPostOnboardingCallback } from "@ledgerhq/live-common/postOnboarding/hooks/index";
 import { NavigatorName, ScreenName } from "../../../const";
-import { DeviceNames } from "../types";
 import BaseStepperView, { PairNew, ConnectNano } from "./setupDevice/scenes";
 import { TrackScreen } from "../../../analytics";
 import SeedWarning from "../shared/SeedWarning";
@@ -12,6 +13,15 @@ import Illustration from "../../../images/illustration/Illustration";
 import StepLottieAnimation from "./setupDevice/scenes/StepLottieAnimation";
 import { completeOnboarding } from "../../../actions/settings";
 import { useNavigationInterceptor } from "../onboardingContext";
+import useNotifications from "../../../logic/notifications";
+import {
+  RootComposite,
+  StackNavigatorNavigation,
+  StackNavigatorProps,
+} from "../../../components/RootNavigator/types/helpers";
+import { OnboardingNavigatorParamList } from "../../../components/RootNavigator/types/OnboardingNavigator";
+import { BaseOnboardingNavigatorParamList } from "../../../components/RootNavigator/types/BaseOnboardingNavigator";
+import { Step } from "./setupDevice/scenes/BaseStepperView";
 
 const images = {
   light: {
@@ -28,25 +38,23 @@ type Metadata = {
   drawer: null | { route: string; screen: string };
 };
 
-const scenes = [PairNew, ConnectNano];
+type NavigationProps = RootComposite<
+  StackNavigatorProps<
+    OnboardingNavigatorParamList,
+    ScreenName.OnboardingPairNew
+  >
+>;
+
+const scenes = [PairNew, ConnectNano] as Step[];
 
 function OnboardingStepPairNew() {
-  const navigation = useNavigation();
+  const navigation = useNavigation<NavigationProps["navigation"]>();
   const { theme } = useTheme();
-  const route = useRoute<
-    RouteProp<
-      {
-        params: {
-          deviceModelId: DeviceNames;
-          next: any;
-          showSeedWarning: boolean;
-        };
-      },
-      "params"
-    >
-  >();
+  const route = useRoute<NavigationProps["route"]>();
 
   const dispatch = useDispatch();
+  const { triggerJustFinishedOnboardingNewDevicePushNotificationModal } =
+    useNotifications();
   const { resetCurrentStep } = useNavigationInterceptor();
 
   const { deviceModelId, showSeedWarning } = route.params;
@@ -85,11 +93,19 @@ function OnboardingStepPairNew() {
     [deviceModelId, theme],
   );
 
+  const startPostOnboarding = useStartPostOnboardingCallback();
+
   const onFinish = useCallback(() => {
     dispatch(completeOnboarding());
     resetCurrentStep();
 
-    const parentNav = navigation.getParent();
+    const parentNav =
+      navigation.getParent<
+        StackNavigatorNavigation<
+          BaseOnboardingNavigatorParamList,
+          NavigatorName.Onboarding
+        >
+      >();
     if (parentNav) {
       parentNav.popToTop();
     }
@@ -97,15 +113,25 @@ function OnboardingStepPairNew() {
     navigation.replace(NavigatorName.Base, {
       screen: NavigatorName.Main,
     });
-  }, [dispatch, navigation, resetCurrentStep]);
+
+    startPostOnboarding(deviceModelId as DeviceModelId, false, () =>
+      navigation.navigate(NavigatorName.Base, {
+        screen: NavigatorName.Main,
+      }),
+    );
+
+    triggerJustFinishedOnboardingNewDevicePushNotificationModal();
+  }, [
+    dispatch,
+    resetCurrentStep,
+    navigation,
+    startPostOnboarding,
+    deviceModelId,
+    triggerJustFinishedOnboardingNewDevicePushNotificationModal,
+  ]);
 
   const nextPage = useCallback(() => {
     onFinish();
-    // TODO: FIX @react-navigation/native using Typescript
-    // @ts-ignore next-line
-    // navigation.navigate(ScreenName.OnboardingFinish, {
-    //  ...route.params,
-    // });
   }, [onFinish]);
 
   return (

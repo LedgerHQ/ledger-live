@@ -1,47 +1,31 @@
 import React from "react";
 import { View, StyleSheet } from "react-native";
-import { NFTMediaSizes, NFTMetadata } from "@ledgerhq/live-common/types/index";
-import { NFTResource } from "@ledgerhq/live-common/nft/NftMetadataProvider/types";
 import NftMedia from "./NftMedia";
+import { ScreenName } from "../../const";
+import type { NftNavigatorParamList } from "../RootNavigator/types/NftNavigator";
+import type { StackNavigatorProps } from "../RootNavigator/types/helpers";
 
-// import PanAndZoomView from "../PanAndZoomView";
+type Props = StackNavigatorProps<
+  NftNavigatorParamList,
+  ScreenName.NftImageViewer
+>;
 
-type Props = {
-  route: {
-    params: RouteParams;
-  };
+const NftImageViewer = ({ route }: Props) => {
+  const { params } = route;
+
+  return (
+    <View style={styles.imageContainer}>
+      <NftMedia
+        style={styles.image}
+        metadata={params.metadata}
+        mediaFormat={params.mediaFormat}
+        status={params?.status}
+        resizeMode="contain"
+        transaprency={true}
+      />
+    </View>
+  );
 };
-
-type RouteParams = {
-  metadata: NFTMetadata;
-  mediaFormat: NFTMediaSizes;
-  status: NFTResource["status"];
-};
-
-class NftImageViewer extends React.PureComponent<Props> {
-  static defaultProps = {
-    mediaFormat: "big",
-    status: "loaded",
-  };
-
-  render() {
-    const { route } = this.props;
-    const { params } = route;
-
-    return (
-      <View style={styles.imageContainer}>
-        <NftMedia
-          style={styles.image}
-          metadata={params.metadata}
-          mediaFormat={params.mediaFormat}
-          status={params?.status}
-          resizeMode="contain"
-          transaprency={true}
-        />
-      </View>
-    );
-  }
-}
 
 const styles = StyleSheet.create({
   imageContainer: {

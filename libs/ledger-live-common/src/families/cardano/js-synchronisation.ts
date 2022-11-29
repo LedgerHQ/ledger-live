@@ -240,7 +240,7 @@ export const getAccountShape: GetAccountShape = async (
     newTransactions,
     tokens: tokenBalance,
     accountCredentialsMap,
-  });
+  }).filter((a) => !blacklistedTokenIds?.includes(a.token.id));
 
   const newOperations = newTransactions.map((t) =>
     mapTxToAccountOperation(t, accountId, accountCredentialsMap, subAccounts)

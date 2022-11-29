@@ -16,7 +16,8 @@ import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import type {
   SwapSelectorStateType,
   SwapTransactionType,
-} from "@ledgerhq/live-common/exchange/swap/hooks/index";
+  SwapDataType,
+} from "@ledgerhq/live-common/exchange/swap/types";
 import {
   Container as InputContainer,
   BaseContainer as BaseInputContainer,
@@ -24,7 +25,7 @@ import {
 import styled from "styled-components";
 import CounterValue from "~/renderer/components/CounterValue";
 import { track } from "~/renderer/analytics/segment";
-import { SWAP_VERSION } from "../../utils/index";
+import { swapDefaultTrack } from "../../utils/index";
 
 type Props = {
   fromAccount: $PropertyType<SwapSelectorStateType, "account">,
@@ -35,6 +36,7 @@ type Props = {
   toAmount: $PropertyType<SwapSelectorStateType, "amount">,
   provider: ?string,
   loadingRates: boolean,
+  updateSelectedRate: $PropertyType<SwapDataType, "updateSelectedRate">,
 };
 
 const InputCurrencyContainer = styled(Box)`
@@ -60,6 +62,7 @@ function ToRow({
   provider,
   toAccount,
   loadingRates,
+  updateSelectedRate,
 }: Props) {
   const fromCurrencyId = fromAccount ? getAccountCurrency(fromAccount).id : null;
   const allCurrencies = useSelector(toSelector)(fromCurrencyId);
@@ -69,14 +72,18 @@ function ToRow({
   usePickDefaultCurrency(currencies, toCurrency, setToCurrency);
 
   const trackEditCurrency = () =>
-    track("Page Swap Form - Edit Target Currency", {
-      provider,
-      swapVersion: SWAP_VERSION,
+    track("button_clicked", {
+      button: "Edit target currency",
+      page: "Page Swap Form",
+      ...swapDefaultTrack,
     });
   const setCurrencyAndTrack = currency => {
-    track("Page Swap Form - New Target Currency", {
-      provider,
-      swapVersion: SWAP_VERSION,
+    updateSelectedRate();
+    track("button_clicked", {
+      button: "New target currency",
+      page: "Page Swap Form",
+      ...swapDefaultTrack,
+      currency,
     });
     setToCurrency(currency);
   };

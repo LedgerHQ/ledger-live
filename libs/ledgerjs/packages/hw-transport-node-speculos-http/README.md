@@ -1,16 +1,17 @@
-<img src="https://user-images.githubusercontent.com/211411/34776833-6f1ef4da-f618-11e7-8b13-f0697901d6a8.png" height="100" />
+<img src="https://user-images.githubusercontent.com/4631227/191834116-59cf590e-25cc-4956-ae5c-812ea464f324.png" height="100" />
 
 ## @ledgerhq/hw-transport-node-speculos-http
 
-A transport for <https://github.com/LedgerHQ/speculos> Nano simulator using it's http api.
+A transport for <https://github.com/LedgerHQ/speculos> Nano simulator using its HTTP API.
 
-[Github](https://github.com/LedgerHQ/ledgerjs/),
-[Ledger Devs Slack](https://ledger-dev.slack.com/)
+[GitHub](https://github.com/LedgerHQ/ledger-live/),
+[Ledger Devs Discord](https://developers.ledger.com/discord-pro),
+[Developer Portal](https://developers.ledger.com/)
 
 ### Getting started
 
 *   Install <https://github.com/LedgerHQ/speculos>
-*   Make sure to have a speculos running with an api port (default port is 5000).
+*   Make sure to have a speculos running with an API port (default port is 5000).
 
 ```js
 import SpeculosTransport from "@ledgerhq/hw-transport-node-speculos-http";

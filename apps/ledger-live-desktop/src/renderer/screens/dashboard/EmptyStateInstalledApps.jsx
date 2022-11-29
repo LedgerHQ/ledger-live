@@ -3,6 +3,8 @@
 import React, { useCallback } from "react";
 import { Trans, useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom";
+import { useSelector } from "react-redux";
+import { languageSelector } from "~/renderer/reducers/settings";
 import Box from "~/renderer/components/Box";
 import Button from "~/renderer/components/Button";
 import Image from "~/renderer/components/Image";
@@ -16,6 +18,7 @@ import { urls } from "~/config/urls";
 const EmptyStateInstalledApps = ({ theme }: { theme: any }) => {
   const { push } = useHistory();
   const { t } = useTranslation();
+  const locale = useSelector(languageSelector) || "en";
 
   const handleInstallApp = useCallback(() => {
     push("/manager");
@@ -49,7 +52,7 @@ const EmptyStateInstalledApps = ({ theme }: { theme: any }) => {
             style={{ color: theme.colors.palette.text.shade60 }}
             iconSize={14}
             label={<Trans i18nKey="emptyState.dashboard.buttons.help" />}
-            onClick={() => openURL(urls.faq)}
+            onClick={() => openURL(urls.faq[locale in urls.faq ? locale : "en"])}
           />
         </Box>
       </Box>

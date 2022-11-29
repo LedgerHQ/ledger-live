@@ -1,14 +1,14 @@
 // @flow
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { useCosmosDelegationsQuerySelector } from "@ledgerhq/live-common/families/cosmos/react";
+import { useCosmosFamilyDelegationsQuerySelector } from "@ledgerhq/live-common/families/cosmos/react";
 import type {
   CosmosMappedDelegation,
   Transaction,
 } from "@ledgerhq/live-common/families/cosmos/types";
 import type { Account } from "@ledgerhq/types-live";
 import Box from "~/renderer/components/Box";
-import CosmosLedgerValidatorIcon from "~/renderer/families/cosmos/shared/components/CosmosLedgerValidatorIcon";
+import CosmosFamilyLedgerValidatorIcon from "~/renderer/families/cosmos/shared/components/CosmosFamilyLedgerValidatorIcon";
 import Label from "~/renderer/components/Label";
 import Select from "~/renderer/components/Select";
 import Text from "~/renderer/components/Text";
@@ -22,7 +22,7 @@ const renderItem = ({
   return (
     <Box key={validatorAddress} horizontal alignItems="center" justifyContent="space-between">
       <Box horizontal alignItems="center">
-        <CosmosLedgerValidatorIcon validator={validator} />
+        <CosmosFamilyLedgerValidatorIcon validator={validator} />
         <Text ml={2} ff="Inter|Medium">
           {name}
         </Text>
@@ -44,7 +44,7 @@ export default function RedelegationSelectorField({
   onChange,
 }: RedelegationSelectorFieldProps) {
   const { t } = useTranslation();
-  const { query, setQuery, options, value } = useCosmosDelegationsQuerySelector(
+  const { query, setQuery, options, value } = useCosmosFamilyDelegationsQuerySelector(
     account,
     transaction,
   );

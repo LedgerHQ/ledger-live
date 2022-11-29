@@ -3,6 +3,7 @@ import { Action, State } from "@ledgerhq/live-common/apps/index";
 import { Trans } from "react-i18next";
 
 import { Flex, Text } from "@ledgerhq/native-ui";
+import { App } from "@ledgerhq/types-live";
 import UpdateAllModal from "../Modals/UpdateAllModal";
 import AppUpdateStepper from "./AppUpdateStepper";
 
@@ -11,7 +12,7 @@ import Button from "../../../components/Button";
 type Props = {
   state: State;
   appsToUpdate: App[];
-  dispatch: (a: Action) => void;
+  dispatch: (_: Action) => void;
   isModalOpened?: boolean;
 };
 
@@ -75,7 +76,7 @@ const AppUpdateAll = ({
             </Button>
           </Flex>
           <UpdateAllModal
-            isOpened={modalOpen}
+            isOpened={!!modalOpen}
             installed={state.installed}
             apps={appsToUpdate}
             onClose={closeModal}

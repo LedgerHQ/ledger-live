@@ -1,13 +1,15 @@
-import React, { useCallback, useMemo } from "react";
+import React, { useMemo } from "react";
 import { Platform, SectionList } from "react-native";
 import { useTranslation } from "react-i18next";
-import { useNavigation, useRoute, RouteProp } from "@react-navigation/native";
+import { useNavigation, useRoute } from "@react-navigation/native";
 import { Flex, Text } from "@ledgerhq/native-ui";
 import Illustration from "../../../images/illustration/Illustration";
 import { TrackScreen } from "../../../analytics";
 import { ScreenName } from "../../../const";
 import OnboardingView from "../OnboardingView";
 import DiscoverCard from "../../Discover/DiscoverCard";
+import { StackNavigatorProps } from "../../../components/RootNavigator/types/helpers";
+import { OnboardingNavigatorParamList } from "../../../components/RootNavigator/types/OnboardingNavigator";
 
 // @TODO Replace
 const images = {
@@ -25,28 +27,17 @@ const images = {
   },
 };
 
-type CurrentRouteType = RouteProp<
-  { params: { deviceModelId: string } },
-  "params"
+type NavigationProps = StackNavigatorProps<
+  OnboardingNavigatorParamList,
+  ScreenName.OnboardingUseCase
 >;
 
 const OnboardingStepUseCaseSelection = () => {
   const { t } = useTranslation();
-  const route = useRoute<CurrentRouteType>();
-  const navigation = useNavigation();
+  const route = useRoute<NavigationProps["route"]>();
+  const navigation = useNavigation<NavigationProps["navigation"]>();
 
   const deviceModelId = route?.params?.deviceModelId;
-
-  const navigateTo = useCallback(
-    (screen: string, params?: any) => {
-      // @ts-expect-error issue in navigation types
-      navigation.navigate(screen, {
-        ...route.params,
-        ...params,
-      });
-    },
-    [navigation, route.params],
-  );
 
   const useCases = useMemo(
     () =>
@@ -57,8 +48,8 @@ const OnboardingStepUseCaseSelection = () => {
               data: [
                 {
                   onPress: () =>
-                    navigateTo(ScreenName.OnboardingImportAccounts, {
-                      showRecoveryWarning: true,
+                    navigation.navigate(ScreenName.OnboardingImportAccounts, {
+                      deviceModelId: route.params.deviceModelId,
                     }),
                   Image: (
                     <Illustration
@@ -80,7 +71,10 @@ const OnboardingStepUseCaseSelection = () => {
               data: [
                 {
                   onPress: () =>
-                    navigateTo(ScreenName.OnboardingModalSetupNewDevice),
+                    navigation.navigate(
+                      ScreenName.OnboardingModalSetupNewDevice,
+                      { deviceModelId: route.params.deviceModelId },
+                    ),
                   Image: (
                     <Illustration
                       size={130}
@@ -99,7 +93,8 @@ const OnboardingStepUseCaseSelection = () => {
               data: [
                 {
                   onPress: () =>
-                    navigateTo(ScreenName.OnboardingPairNew, {
+                    navigation.navigate(ScreenName.OnboardingPairNew, {
+                      deviceModelId: route.params.deviceModelId,
                       showSeedWarning: true,
                     }),
                   Image: (
@@ -114,7 +109,8 @@ const OnboardingStepUseCaseSelection = () => {
                 },
                 {
                   onPress: () =>
-                    navigateTo(ScreenName.OnboardingRecoveryPhrase, {
+                    navigation.navigate(ScreenName.OnboardingRecoveryPhrase, {
+                      deviceModelId: route.params.deviceModelId,
                       showSeedWarning: true,
                     }),
                   Image: (
@@ -128,23 +124,10 @@ const OnboardingStepUseCaseSelection = () => {
                   title: t("onboarding.stepUseCase.restoreDevice.subTitle"),
                   event: "Onboarding - Restore",
                 },
-                {
-                  onPress: () =>
-                    navigateTo(ScreenName.OnboardingImportAccounts),
-                  Image: (
-                    <Illustration
-                      size={130}
-                      darkSource={images.dark.syncCrypto}
-                      lightSource={images.light.syncCrypto}
-                    />
-                  ),
-                  title: t("onboarding.stepUseCase.desktopSync.subTitle"),
-                  event: "Onboarding - Setup Import Accounts",
-                },
               ],
             },
           ],
-    [deviceModelId, navigateTo, t],
+    [deviceModelId, navigation, route.params, t],
   );
 
   return (

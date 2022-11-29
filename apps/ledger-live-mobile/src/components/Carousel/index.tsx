@@ -28,7 +28,7 @@ const hitSlop = {
 type CarouselCardProps = {
   id: string;
   children: React.ReactNode;
-  onHide: (cardId: string) => void;
+  onHide: (_: string) => void;
   index?: number;
 };
 
@@ -54,7 +54,7 @@ const CarouselCardContainer = ({
 );
 
 type Props = {
-  cardsVisibility: boolean[];
+  cardsVisibility: { [key: string]: boolean };
 };
 
 const Carousel = ({ cardsVisibility }: Props) => {
@@ -64,18 +64,11 @@ const Carousel = ({ cardsVisibility }: Props) => {
 
   const slides = useMemo(
     () =>
-      getDefaultSlides().filter((slide: any) => {
-        if (!cardsVisibility[slide.id]) {
-          return false;
-        }
-        if (slide.start && slide.start > new Date()) {
-          return false;
-        }
-        if (slide.end && slide.end < new Date()) {
-          return false;
-        }
-        return true;
-      }),
+      getDefaultSlides().filter(
+        (slide: { id: string; Component: () => JSX.Element }) => {
+          return cardsVisibility[slide.id];
+        },
+      ),
     [cardsVisibility],
   );
 
@@ -83,7 +76,8 @@ const Carousel = ({ cardsVisibility }: Props) => {
     cardId => {
       const slide = SLIDES.find(slide => slide.name === cardId);
       if (slide) {
-        track("Portfolio Recommended CloseUrl", {
+        track("button_clicked", {
+          button: "Close Card",
           url: slide.url,
         });
       }
@@ -122,7 +116,7 @@ const Carousel = ({ cardsVisibility }: Props) => {
       onContentSizeChange={onScrollViewContentChange}
       showsHorizontalScrollIndicator={false}
       snapToInterval={WIDTH + 16}
-      decelerationRate={'fast'}
+      decelerationRate={"fast"}
     >
       {slides.map(({ id, Component }, index) => (
         <CarouselCardContainer

@@ -1,8 +1,9 @@
 import React from "react";
-import { Flex } from "@ledgerhq/native-ui";
+import { ColorPalette, Flex } from "@ledgerhq/native-ui";
 import { Dimensions, StyleSheet, TouchableOpacity } from "react-native";
 import styled from "styled-components/native";
 import Svg, { Path, Stop } from "react-native-svg";
+import { BottomTabBarProps } from "@react-navigation/bottom-tabs";
 import { TAB_BAR_HEIGHT, GRADIENT_HEIGHT } from "./shared";
 import BackgroundGradient from "./BackgroundGradient";
 
@@ -10,7 +11,7 @@ type SvgProps = {
   color: string;
 };
 
-const getBgColor = (colors: any) =>
+const getBgColor = (colors: ColorPalette) =>
   colors.type === "light" ? colors.neutral.c00 : colors.neutral.c20;
 
 function TabBarShape({ color }: SvgProps) {
@@ -63,16 +64,16 @@ const darkGradients = [
     height: GRADIENT_HEIGHT,
     opacity: 0.8,
     stops: [
-      <Stop offset="0%" stopOpacity={0} stopColor="#131214" />,
-      <Stop offset="100%" stopOpacity={1} stopColor="#131214" />,
+      <Stop key="0%" offset="0%" stopOpacity={0} stopColor="#131214" />,
+      <Stop key="100%" offset="100%" stopOpacity={1} stopColor="#131214" />,
     ],
   },
   {
     height: 85,
     opacity: 0.8,
     stops: [
-      <Stop offset="0%" stopOpacity={0} stopColor="#131214" />,
-      <Stop offset="100%" stopOpacity={1} stopColor="#131214" />,
+      <Stop key="0%" offset="0%" stopOpacity={0} stopColor="#131214" />,
+      <Stop key="100%" offset="100%" stopOpacity={1} stopColor="#131214" />,
     ],
   },
 ];
@@ -91,11 +92,15 @@ const lightGradients = [
     opacity: 0.8,
     stops: [
       <Stop key="0%" offset="0" stopOpacity={0} stopColor="#ffffff" />,
-      <Stop offset="57%" stopOpacity={0.15} stopColor="#000000" />,
+      <Stop key="57%" offset="57%" stopOpacity={0.15} stopColor="#000000" />,
       <Stop key="100%" offset="100%" stopOpacity={0.15} stopColor="#000000" />,
     ],
   },
 ];
+
+export type Props = {
+  colors: ColorPalette;
+} & BottomTabBarProps;
 
 export default function CustomTabBar({
   state,
@@ -103,7 +108,7 @@ export default function CustomTabBar({
   navigation,
   colors,
   insets,
-}: any): JSX.Element {
+}: Props): JSX.Element {
   const bgColor = getBgColor(colors);
   const gradients = colors.type === "light" ? lightGradients : darkGradients;
   const { bottom: bottomInset } = insets;
@@ -118,7 +123,10 @@ export default function CustomTabBar({
     >
       <BackgroundGradient {...gradients[0]} />
       <BackgroundGradient {...gradients[1]} />
-      <BottomFiller bottom={-bottomInset} height={bottomInset} />
+      <BottomFiller
+        bottom={bottomInset ? -bottomInset : bottomInset}
+        height={bottomInset}
+      />
       <BackgroundFiller left={0} />
       <BackgroundFiller right={0} />
       <Flex
@@ -131,64 +139,78 @@ export default function CustomTabBar({
       >
         <TabBarShape color={bgColor} />
       </Flex>
-      {state.routes.map((route, index) => {
-        const { options } = descriptors[route.key];
-        const Icon = options.tabBarIcon;
+      {state.routes.map(
+        (
+          route: { key: keyof typeof descriptors; name: string },
+          index: number,
+        ) => {
+          const { options } = descriptors[route.key];
+          const Icon = options.tabBarIcon as React.ElementType<{
+            color: string;
+          }>;
 
-        const isFocused = state.index === index;
+          const isFocused = state.index === index;
 
-        const onPress = () => {
-          const event = navigation.emit({
-            type: "tabPress",
-            target: route.key,
-            canPreventDefault: true,
-          });
+          const onPress = () => {
+            const event = navigation.emit({
+              type: "tabPress",
+              target: route.key,
+              canPreventDefault: true,
+            });
 
-          if (!isFocused && !event.defaultPrevented) {
-            // The `merge: true` option makes sure that the params inside the tab screen are preserved
-            navigation.navigate({ name: route.name, merge: true });
+            if (!isFocused && !event.defaultPrevented) {
+              // The `merge: true` option makes sure that the params inside the tab screen are preserved
+              navigation.navigate({
+                name: route.name,
+                merge: true,
+                params: undefined,
+              });
+            }
+          };
+
+          const onLongPress = () => {
+            navigation.emit({
+              type: "tabLongPress",
+              target: route.key,
+            });
+          };
+
+          if (index === 2) {
+            return (
+              <React.Fragment key={index}>
+                <Flex flex={1} />
+                <MiddleIconContainer
+                  pointerEvents="box-none"
+                  style={{
+                    height: Dimensions.get("screen").height,
+                    bottom: bottomInset ? -bottomInset : bottomInset,
+                  }}
+                >
+                  <Icon
+                    color={isFocused ? colors.primary.c80 : colors.neutral.c80}
+                  />
+                </MiddleIconContainer>
+              </React.Fragment>
+            );
           }
-        };
 
-        const onLongPress = () => {
-          navigation.emit({
-            type: "tabLongPress",
-            target: route.key,
-          });
-        };
-
-        if (index === 2) {
           return (
-            <>
-              <Flex flex={1} />
-              <MiddleIconContainer
-                pointerEvents="box-none"
-                style={{
-                  height: Dimensions.get("screen").height,
-                  bottom: -bottomInset,
-                }}
-              >
-                <Icon
-                  color={isFocused ? colors.primary.c80 : colors.neutral.c80}
-                />
-              </MiddleIconContainer>
-            </>
+            <Touchable
+              key={index}
+              accessibilityRole="button"
+              accessibilityState={isFocused ? { selected: true } : {}}
+              accessibilityLabel={options.tabBarAccessibilityLabel}
+              testID={options.tabBarTestID}
+              onPress={onPress}
+              onLongPress={onLongPress}
+            >
+              <Icon
+                color={isFocused ? colors.primary.c80 : colors.neutral.c80}
+              />
+            </Touchable>
           );
-        }
-
-        return (
-          <Touchable
-            accessibilityRole="button"
-            accessibilityState={isFocused ? { selected: true } : {}}
-            accessibilityLabel={options.tabBarAccessibilityLabel}
-            testID={options.tabBarTestID}
-            onPress={onPress}
-            onLongPress={onLongPress}
-          >
-            <Icon color={isFocused ? colors.primary.c80 : colors.neutral.c80} />
-          </Touchable>
-        );
-      })}
+        },
+      )}
     </Flex>
   );
 }

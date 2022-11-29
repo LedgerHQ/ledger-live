@@ -22,7 +22,8 @@ The public key is the account main identifier, expressed as uncompress hex: `02e
 
 This public key is needed for making transaction and also is used to hash the account address. (`tz1PTxfn1fge2tJwGGpW9zNuYf6BseM3GJXt` in this case)
 
-The Account type as defined in https://github.com/LedgerHQ/ledger-live-common/blob/develop/docs/account.md will be used with:
+The Account type as defined in https://github.com/LedgerHQ/ledger-live/wiki/LLC:account will be used with:
+
 - `.id` to be the id explained as above
 - `.xpub` to be the public key
 - `.freshAddress` to be the tezos account address

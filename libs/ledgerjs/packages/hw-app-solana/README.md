@@ -1,11 +1,25 @@
-<img src="https://user-images.githubusercontent.com/211411/34776833-6f1ef4da-f618-11e7-8b13-f0697901d6a8.png" height="100" />
+<img src="https://user-images.githubusercontent.com/4631227/191834116-59cf590e-25cc-4956-ae5c-812ea464f324.png" height="100" />
 
-[Github](https://github.com/LedgerHQ/ledgerjs/),
-[Ledger Devs Slack](https://ledger-dev.slack.com/)
+[GitHub](https://github.com/LedgerHQ/ledger-live/),
+[Ledger Devs Discord](https://developers.ledger.com/discord-pro),
+[Developer Portal](https://developers.ledger.com/)
 
 ## @ledgerhq/hw-app-solana
 
 Ledger Hardware Wallet Solana JavaScript bindings.
+
+***
+
+## Are you adding Ledger support to your software wallet?
+
+You may be using this package to communicate with the Solana Nano App.
+
+For a smooth and quick integration:
+
+*   See the developers’ documentation on the [Developer Portal](https://developers.ledger.com/docs/transport/overview/) and
+*   Go on [Discord](https://developers.ledger.com/discord-pro/) to chat with developer support and the developer community.
+
+***
 
 ## Notes
 
@@ -34,8 +48,11 @@ If ledger returns error `6808` - enable blind signature in settings (not needed 
     *   [signTransaction](#signtransaction)
         *   [Parameters](#parameters-2)
         *   [Examples](#examples-2)
-    *   [getAppConfiguration](#getappconfiguration)
+    *   [signOffchainMessage](#signoffchainmessage)
+        *   [Parameters](#parameters-3)
         *   [Examples](#examples-3)
+    *   [getAppConfiguration](#getappconfiguration)
+        *   [Examples](#examples-4)
 
 ### Solana
 
@@ -86,6 +103,23 @@ Sign a Solana transaction.
 
 ```javascript
 solana.signTransaction("44'/501'/0'", txBuffer).then(r => r.signature)
+```
+
+Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)<{signature: [Buffer](https://nodejs.org/api/buffer.html)}>** an object with the signature field
+
+#### signOffchainMessage
+
+Sign a Solana off-chain message.
+
+##### Parameters
+
+*   `path` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** a BIP32 path
+*   `msgBuffer` **[Buffer](https://nodejs.org/api/buffer.html)** serialized off-chain message
+
+##### Examples
+
+```javascript
+solana.signOffchainMessage("44'/501'/0'", msgBuffer).then(r => r.signature)
 ```
 
 Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)<{signature: [Buffer](https://nodejs.org/api/buffer.html)}>** an object with the signature field

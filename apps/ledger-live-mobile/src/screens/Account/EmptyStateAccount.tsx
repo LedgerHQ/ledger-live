@@ -1,8 +1,7 @@
-/* @flow */
 import React, { useCallback, useMemo } from "react";
 import { Trans } from "react-i18next";
 import { View, StyleSheet } from "react-native";
-import type { Account, AccountLike } from "@ledgerhq/live-common/types/index";
+import type { Account, AccountLike } from "@ledgerhq/types-live";
 import {
   getAccountCurrency,
   getMainAccount,
@@ -18,13 +17,14 @@ import Receive from "../../icons/Receive";
 import Exchange from "../../icons/Exchange";
 import EmptyStateAccountIllu from "../../images/EmptyStateAccount";
 
-import { withTheme } from "../../colors";
+import { Theme, withTheme } from "../../colors";
+import { BaseNavigation } from "../../components/RootNavigator/types/helpers";
 
 type Props = {
-  account: AccountLike,
-  parentAccount?: Account,
-  navigation: any,
-  colors: any,
+  account: AccountLike;
+  parentAccount?: Account;
+  navigation: BaseNavigation;
+  colors: Theme["colors"];
 };
 
 function EmptyStateAccount({
@@ -54,7 +54,7 @@ function EmptyStateAccount({
 
   const goToReceiveFunds = useCallback(() => {
     navigation.navigate(NavigatorName.ReceiveFunds, {
-      screen: ScreenName.ReceiveConnectDevice,
+      screen: ScreenName.ReceiveConfirmation,
       params: {
         accountId: account.id,
         parentId: parentAccount && parentAccount.id,
@@ -97,7 +97,7 @@ function EmptyStateAccount({
               {"and"}
               <LText semiBold color="darkBlue">
                 {account &&
-                  account.currency &&
+                  (account as Account).currency &&
                   listTokenTypesForCryptoCurrency(mainAccount.currency).join(
                     ", ",
                   )}

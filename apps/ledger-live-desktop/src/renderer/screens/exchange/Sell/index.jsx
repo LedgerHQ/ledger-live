@@ -1,7 +1,7 @@
 // @flow
 
 import React, { useState, useCallback, useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import styled from "styled-components";
 
 import { getAccountCurrency, isAccountEmpty } from "@ledgerhq/live-common/account/helpers";
@@ -38,22 +38,26 @@ const OffRamp = ({ defaultCurrencyId, defaultAccountId, defaultTicker, rampCatal
 
   const allCurrencies = useRampCatalogCurrencies(rampCatalog.value.offRamp);
 
-  useEffect(() => {
-    const filteredCurrencies = defaultTicker
-      ? allCurrencies.filter(currency => currency.ticker === defaultTicker)
-      : allCurrencies;
-    setCurrencyState(oldState => ({
-      ...oldState,
-      isLoading: true,
-    }));
+  useEffect(
+    () => {
+      const filteredCurrencies = defaultTicker
+        ? allCurrencies.filter(currency => currency.ticker === defaultTicker)
+        : allCurrencies;
+      setCurrencyState(oldState => ({
+        ...oldState,
+        isLoading: true,
+      }));
 
-    currenciesByMarketcap(filteredCurrencies).then(sortedCurrencies => {
-      setCurrencyState({
-        sortedCurrencies,
-        isLoading: false,
+      currenciesByMarketcap(filteredCurrencies).then(sortedCurrencies => {
+        setCurrencyState({
+          sortedCurrencies,
+          isLoading: false,
+        });
       });
-    });
-  }, []);
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [],
+  );
 
   const fiatCurrency = useSelector(counterValueCurrencySelector);
 
@@ -61,8 +65,6 @@ const OffRamp = ({ defaultCurrencyId, defaultAccountId, defaultTicker, rampCatal
     account: undefined,
     parentAccount: undefined,
   });
-
-  const dispatch = useDispatch();
 
   const { account, parentAccount } = state;
 
@@ -74,16 +76,13 @@ const OffRamp = ({ defaultCurrencyId, defaultAccountId, defaultTicker, rampCatal
     });
   }, []);
 
-  const selectAccount = useCallback(
-    (account, parentAccount) => {
-      setState(oldState => ({
-        ...oldState,
-        account: account,
-        parentAccount: parentAccount,
-      }));
-    },
-    [dispatch],
-  );
+  const selectAccount = useCallback((account, parentAccount) => {
+    setState(oldState => ({
+      ...oldState,
+      account: account,
+      parentAccount: parentAccount,
+    }));
+  }, []);
 
   const confirmButtonTracking = useCallback(account => {
     track("Sell Crypto Continue Button", {

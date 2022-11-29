@@ -32,6 +32,7 @@ import {
 import {
   encodeAccountIdWithTokenAccountAddress,
   MAX_MEMO_LENGTH,
+  SOLANA_DUST,
 } from "./logic";
 import createTransaction from "./js-createTransaction";
 import { compact } from "lodash/fp";
@@ -50,6 +51,7 @@ import type {
   DatasetTest,
 } from "@ledgerhq/types-live";
 import { encodeAccountId } from "../../account";
+import { LATEST_BLOCKHASH_MOCK } from "./bridge/mock-data";
 
 // do not change real properties or the test will break
 const testOnChainData = {
@@ -755,11 +757,12 @@ function stakingTests(): TransactionTestSpec[] {
       expectedStatus: {
         amount: testOnChainData.fundedSenderBalance
           .minus(fees(1))
-          .minus(testOnChainData.fees.stakeAccountRentExempt),
+          .minus(testOnChainData.fees.stakeAccountRentExempt)
+          .minus(SOLANA_DUST),
         estimatedFees: fees(1).plus(
           testOnChainData.fees.stakeAccountRentExempt
         ),
-        totalSpent: testOnChainData.fundedSenderBalance,
+        totalSpent: testOnChainData.fundedSenderBalance.minus(SOLANA_DUST),
         errors: {},
       },
     },
@@ -983,6 +986,7 @@ const baseTx = {
 } as Transaction;
 
 const baseAPI = {
+  getLatestBlockhash: () => Promise.resolve(LATEST_BLOCKHASH_MOCK),
   getFeeForMessage: (_msg: unknown) =>
     Promise.resolve(testOnChainData.fees.lamportsPerSignature),
 } as ChainAPI;
@@ -1063,6 +1067,7 @@ async function runStakeTest(stakeTestSpec: StakeTestSpec) {
 
   const account: SolanaAccount = {
     ...baseAccount,
+    freshAddress: testOnChainData.fundedSenderAddress,
     solanaResources: {
       stakes: [
         {

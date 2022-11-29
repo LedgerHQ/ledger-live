@@ -6,7 +6,7 @@ import useRatings from "../../logic/ratings";
 import { track, TrackScreen } from "../../analytics";
 
 type Props = {
-  closeModal: Function;
+  closeModal: () => void;
 };
 
 const DisappointedDone = ({ closeModal }: Props) => {

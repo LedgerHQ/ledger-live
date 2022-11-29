@@ -11,10 +11,14 @@ inputs:
   githubSha:
     description: github sha in context of the run
     required: true
+  githubPR:
+    description: inferred github PR (if any)
   slackApiToken:
     description: slack API token (if wanting to post to slack)
   slackChannel:
     description: slack channel to post on (optional)
+  slackIconEmoji:
+    description: slack icon emoji to post with (optional)
 runs:
   using: node16
   main: build/index.js

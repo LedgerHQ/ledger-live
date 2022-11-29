@@ -10,27 +10,25 @@ import {
   getAccountName,
   getAccountUnit,
 } from "@ledgerhq/live-common/account/index";
-
-import {
-  Account,
-  Operation,
-  AccountLike,
-} from "@ledgerhq/live-common/types/index";
-
+import { Account, Operation, AccountLike } from "@ledgerhq/types-live";
 import { Box, Flex, InfiniteLoader, Text } from "@ledgerhq/native-ui";
-
 import debounce from "lodash/debounce";
 import CurrencyUnitValue from "./CurrencyUnitValue";
 import CounterValue from "./CounterValue";
-
 import OperationIcon from "./OperationIcon";
 import { ScreenName } from "../const";
 import OperationRowDate from "./OperationRowDate";
 import OperationRowNftName from "./OperationRowNftName";
-
 import perFamilyOperationDetails from "../generated/operationDetails";
+import { track } from "../analytics";
+import { UnionToIntersection } from "../types/helpers";
+import { BaseNavigation } from "./RootNavigator/types/helpers";
 
-const ContainerTouchable = styled(Flex).attrs(p => ({
+type FamilyOperationDetailsIntersection = UnionToIntersection<
+  typeof perFamilyOperationDetails[keyof typeof perFamilyOperationDetails]
+>;
+
+const ContainerTouchable = styled(Flex).attrs(_ => ({
   height: "64px",
   flexDirection: "row",
   alignItems: "center",
@@ -38,7 +36,7 @@ const ContainerTouchable = styled(Flex).attrs(p => ({
   py: 6,
 }))<{ isLast?: boolean }>``;
 
-const Wrapper = styled(Flex).attrs(p => ({
+const Wrapper = styled(Flex).attrs<{ isOptimistic?: boolean }>(p => ({
   flex: 1,
   flexDirection: "row",
   alignItems: "center",
@@ -61,13 +59,13 @@ const BodyLeftContainer = styled(Flex).attrs({
   flex: 1,
 })``;
 
-const BodyRightContainer = styled(Flex).attrs(p => ({
+const BodyRightContainer = styled(Flex).attrs<{ flexShrink?: number }>(p => ({
   flexDirection: "column",
   justifyContent: "flex-start",
   alignItems: "flex-end",
   flexShrink: p.flexShrink ?? 0,
   pl: 4,
-}))``;
+}))<{ flexShrink?: number }>``;
 
 type Props = {
   operation: Operation;
@@ -91,9 +89,12 @@ export default function OperationRow({
   multipleAccounts,
   isLast,
 }: Props) {
-  const navigation = useNavigation();
+  const navigation = useNavigation<BaseNavigation>();
 
   const goToOperationDetails = debounce(() => {
+    track("transaction_clicked", {
+      transaction: operation.type,
+    });
     const params = [
       ScreenName.OperationDetails,
       {
@@ -103,7 +104,7 @@ export default function OperationRow({
         isSubOperation,
         key: operation.id,
       },
-    ];
+    ] as const;
 
     /** if suboperation push to stack navigation else we simply navigate */
     if (isSubOperation) navigation.push(...params);
@@ -119,13 +120,17 @@ export default function OperationRow({
     const mainAccount = getMainAccount(account, parentAccount);
     const currency = getAccountCurrency(account);
     const unit = getAccountUnit(account);
-    const specific = mainAccount.currency.family
-      ? perFamilyOperationDetails[mainAccount.currency.family]
+    const specific = mainAccount?.currency?.family
+      ? (perFamilyOperationDetails[
+          mainAccount.currency.family as keyof typeof perFamilyOperationDetails
+        ] as FamilyOperationDetailsIntersection)
       : null;
 
     const SpecificAmountCell =
       specific && specific.amountCell
-        ? specific.amountCell[operation.type]
+        ? specific.amountCell[
+            operation.type as keyof typeof specific.amountCell
+          ]
         : null;
 
     return SpecificAmountCell ? (

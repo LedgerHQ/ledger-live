@@ -1,4 +1,5 @@
 import {
+  Divider,
   Flex,
   Text,
   Link,
@@ -30,10 +31,8 @@ const ConfirmRecoveryStep = ({
   device,
 }: Props) => {
   const { t } = useTranslation();
-  const [
-    confirmRecoveryPhraseBackup,
-    setConfirmRecoveryPhraseBackup,
-  ] = useState(false);
+  const [confirmRecoveryPhraseBackup, setConfirmRecoveryPhraseBackup] =
+    useState(false);
 
   const toggleConfirmRecoveryPhraseBackup = useCallback(() => {
     track("FirmwareUpdateSeedDisclaimerChecked");
@@ -48,7 +47,7 @@ const ConfirmRecoveryStep = ({
     // Opening the link with some app, if the URL scheme is "http" the web link should be opened
     // by some browser in the mobile
     await Linking.openURL(urls.recoveryPhraseInfo);
-  }, [urls.recoveryPhraseInfo]);
+  }, []);
 
   return (
     <Flex height="100%">
@@ -80,12 +79,10 @@ const ConfirmRecoveryStep = ({
               )}
             </Link>
           </Flex>
-          <SafeMarkdown markdown={firmwareNotes} />
+          {firmwareNotes ? <SafeMarkdown markdown={firmwareNotes} /> : null}
         </Flex>
       </ScrollView>
-
-      <Flex height={1} backgroundColor="neutral.c40" />
-      {/** TODO: replace by divider component when we have one */}
+      <Divider />
       <Flex backgroundColor="neutral.c30" p={5} mt={5} borderRadius={5}>
         <Checkbox
           checked={confirmRecoveryPhraseBackup}

@@ -2,7 +2,7 @@ import React, { ReactNode, useEffect, useState } from "react";
 import remoteConfig from "@react-native-firebase/remote-config";
 import { defaultFeatures } from "@ledgerhq/live-common/featureFlags/index";
 import { reduce, snakeCase } from "lodash";
-import { FeatureId, DefaultFeatures } from "@ledgerhq/live-common/types/index";
+import { FeatureId, DefaultFeatures } from "@ledgerhq/types-live";
 
 export const formatFeatureId = (id: FeatureId) => `feature_${snakeCase(id)}`;
 
@@ -26,21 +26,22 @@ export const FirebaseRemoteConfigProvider = ({
 }: Props): JSX.Element | null => {
   const [loaded, setLoaded] = useState<boolean>(false);
 
+  const loadRemoteConfig = async () => {
+    try {
+      await remoteConfig().setDefaults({
+        ...formatDefaultFeatures(defaultFeatures),
+      });
+      await remoteConfig().fetchAndActivate();
+    } catch (error) {
+      console.error(
+        `Failed to fetch Firebase remote config with error: ${error}`,
+      );
+    }
+    setLoaded(true);
+  };
+
   useEffect(() => {
-    const fetchConfig = async () => {
-      try {
-        await remoteConfig().setDefaults({
-          ...formatDefaultFeatures(defaultFeatures),
-        });
-        await remoteConfig().fetchAndActivate();
-      } catch (error) {
-        console.error(
-          `Failed to fetch Firebase remote config with error: ${error}`,
-        );
-      }
-      setLoaded(true);
-    };
-    fetchConfig();
+    loadRemoteConfig();
   }, []);
 
   if (!loaded) {

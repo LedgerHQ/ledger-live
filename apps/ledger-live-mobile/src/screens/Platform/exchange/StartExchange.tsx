@@ -6,28 +6,20 @@ import React, { useCallback, useState } from "react";
 import { StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import DeviceActionModal from "../../../components/DeviceActionModal";
+import type { StackNavigatorProps } from "../../../components/RootNavigator/types/helpers";
+import {
+  PlatformExchangeNavigatorParamList,
+  ResultStart,
+} from "../../../components/RootNavigator/types/PlatformExchangeNavigator";
 import SelectDevice from "../../../components/SelectDevice";
+import { ScreenName } from "../../../const";
 
-type Result = {
-  startExchangeResult?: number,
-  startExchangeError?: Error,
-  device: Device,
-};
+type Props = StackNavigatorProps<
+  PlatformExchangeNavigatorParamList,
+  ScreenName.PlatformStartExchange
+>;
 
-type Props = {
-  navigation: any,
-  route: {
-    params: {
-      request: { exchangeType: number },
-      onResult: (result: Result) => void,
-    },
-  },
-};
-
-const PlatformStartExchange: React.FC<Props> = ({
-  navigation,
-  route,
-}) => {
+const PlatformStartExchange: React.FC<Props> = ({ navigation, route }) => {
   const [device, setDevice] = useState<Device>();
 
   const onClose = useCallback(() => {
@@ -35,7 +27,7 @@ const PlatformStartExchange: React.FC<Props> = ({
   }, [navigation]);
 
   const onResult = useCallback(
-    result => {
+    (result: ResultStart) => {
       route.params.onResult({ ...result, device });
     },
     [device, route.params],
@@ -53,7 +45,7 @@ const PlatformStartExchange: React.FC<Props> = ({
       />
     </SafeAreaView>
   );
-}
+};
 
 const action = createAction(connectApp, startExchange);
 

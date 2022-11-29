@@ -76,7 +76,7 @@ const identifyTransport = (t) => (typeof t.id === "string" ? t.id : "");
 const needsCleanup = {};
 // when a series of APDUs are interrupted, this is called
 // so we don't forget to cleanup on the next withDevice
-export const cancelDeviceAction = (transport: Transport) => {
+export const cancelDeviceAction = (transport: Transport): void => {
   needsCleanup[identifyTransport(transport)] = true;
 };
 const deviceQueues = {};
@@ -158,7 +158,7 @@ export const withDevice =
         if (sub) sub.unsubscribe();
       };
     });
-export const genericCanRetryOnError = (err: Error | null | undefined) => {
+export const genericCanRetryOnError = (err: unknown): boolean => {
   if (err instanceof WrongAppForCurrency) return false;
   if (err instanceof WrongDeviceForAccount) return false;
   if (err instanceof CantOpenDevice) return false;

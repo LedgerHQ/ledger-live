@@ -1,5 +1,129 @@
 # @ledgerhq/react-ui
 
+## 0.10.0
+
+### Minor Changes
+
+- [#1808](https://github.com/LedgerHQ/ledger-live/pull/1808) [`ec266145d9`](https://github.com/LedgerHQ/ledger-live/commit/ec266145d95e25e5305e49e2a97736d00eac8873) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - Add a new help drawer in the new synchronous onboarding screen. Also update the drawer component from UI library to comply with recent designs.
+
+### Patch Changes
+
+- [#1352](https://github.com/LedgerHQ/ledger-live/pull/1352) [`0d7e0f713a`](https://github.com/LedgerHQ/ledger-live/commit/0d7e0f713ab4fbb3d4bd7df147a96c7de73123b7) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Remove background color in Button "shade" variant (following design)
+
+* [#1352](https://github.com/LedgerHQ/ledger-live/pull/1352) [`0d7e0f713a`](https://github.com/LedgerHQ/ledger-live/commit/0d7e0f713ab4fbb3d4bd7df147a96c7de73123b7) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Add h4Inter text variant
+
+- [#1539](https://github.com/LedgerHQ/ledger-live/pull/1539) [`9c4073e500`](https://github.com/LedgerHQ/ledger-live/commit/9c4073e5002a7d1363736cb3159565f16c953b8b) Thanks [@sarneijim](https://github.com/sarneijim)! - Fix issue on checkbox component onChange callback
+
+* [#1768](https://github.com/LedgerHQ/ledger-live/pull/1768) [`9b00b3dd53`](https://github.com/LedgerHQ/ledger-live/commit/9b00b3dd531a05b9ab1961bfb4f658de70a041d7) Thanks [@mlegall-ledger](https://github.com/mlegall-ledger)! - Updating the imports for png images to prevent issues with csj.
+
+- [#1748](https://github.com/LedgerHQ/ledger-live/pull/1748) [`ce040b4020`](https://github.com/LedgerHQ/ledger-live/commit/ce040b4020ffc9b19fa46ac5edf2122cd38fde62) Thanks [@mlegall-ledger](https://github.com/mlegall-ledger)! - Adding new icons to indexes
+
+* [#1141](https://github.com/LedgerHQ/ledger-live/pull/1141) [`24ea9cd15f`](https://github.com/LedgerHQ/ledger-live/commit/24ea9cd15f92d5a2c74c4b936bacb89d5d4d36fd) Thanks [@valpinkman](https://github.com/valpinkman)! - Collateral changes due to solving all LLM typescript/eslint issues/warnings.
+
+* Updated dependencies [[`7495373f8b`](https://github.com/LedgerHQ/ledger-live/commit/7495373f8b4690ce5b7b48410f3e4e47bf2555f4), [`f7a162c356`](https://github.com/LedgerHQ/ledger-live/commit/f7a162c356a0cd84b6eb635493ee56af06e306e5), [`24ea9cd15f`](https://github.com/LedgerHQ/ledger-live/commit/24ea9cd15f92d5a2c74c4b936bacb89d5d4d36fd)]:
+  - @ledgerhq/icons-ui@0.3.0
+  - @ledgerhq/crypto-icons-ui@0.2.1
+  - @ledgerhq/ui-shared@0.1.10
+
+## 0.10.0-next.0
+
+### Minor Changes
+
+- [#1808](https://github.com/LedgerHQ/ledger-live/pull/1808) [`ec266145d9`](https://github.com/LedgerHQ/ledger-live/commit/ec266145d95e25e5305e49e2a97736d00eac8873) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - Add a new help drawer in the new synchronous onboarding screen. Also update the drawer component from UI library to comply with recent designs.
+
+### Patch Changes
+
+- [#1352](https://github.com/LedgerHQ/ledger-live/pull/1352) [`0d7e0f713a`](https://github.com/LedgerHQ/ledger-live/commit/0d7e0f713ab4fbb3d4bd7df147a96c7de73123b7) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Remove background color in Button "shade" variant (following design)
+
+* [#1352](https://github.com/LedgerHQ/ledger-live/pull/1352) [`0d7e0f713a`](https://github.com/LedgerHQ/ledger-live/commit/0d7e0f713ab4fbb3d4bd7df147a96c7de73123b7) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Add h4Inter text variant
+
+- [#1539](https://github.com/LedgerHQ/ledger-live/pull/1539) [`9c4073e500`](https://github.com/LedgerHQ/ledger-live/commit/9c4073e5002a7d1363736cb3159565f16c953b8b) Thanks [@sarneijim](https://github.com/sarneijim)! - Fix issue on checkbox component onChange callback
+
+* [#1768](https://github.com/LedgerHQ/ledger-live/pull/1768) [`9b00b3dd53`](https://github.com/LedgerHQ/ledger-live/commit/9b00b3dd531a05b9ab1961bfb4f658de70a041d7) Thanks [@mlegall-ledger](https://github.com/mlegall-ledger)! - Updating the imports for png images to prevent issues with csj.
+
+- [#1748](https://github.com/LedgerHQ/ledger-live/pull/1748) [`ce040b4020`](https://github.com/LedgerHQ/ledger-live/commit/ce040b4020ffc9b19fa46ac5edf2122cd38fde62) Thanks [@mlegall-ledger](https://github.com/mlegall-ledger)! - Adding new icons to indexes
+
+* [#1141](https://github.com/LedgerHQ/ledger-live/pull/1141) [`24ea9cd15f`](https://github.com/LedgerHQ/ledger-live/commit/24ea9cd15f92d5a2c74c4b936bacb89d5d4d36fd) Thanks [@valpinkman](https://github.com/valpinkman)! - Collateral changes due to solving all LLM typescript/eslint issues/warnings.
+
+* Updated dependencies [[`7495373f8b`](https://github.com/LedgerHQ/ledger-live/commit/7495373f8b4690ce5b7b48410f3e4e47bf2555f4), [`f7a162c356`](https://github.com/LedgerHQ/ledger-live/commit/f7a162c356a0cd84b6eb635493ee56af06e306e5), [`24ea9cd15f`](https://github.com/LedgerHQ/ledger-live/commit/24ea9cd15f92d5a2c74c4b936bacb89d5d4d36fd)]:
+  - @ledgerhq/icons-ui@0.3.0-next.0
+  - @ledgerhq/crypto-icons-ui@0.2.1-next.0
+  - @ledgerhq/ui-shared@0.1.10-next.0
+
+## 0.9.2
+
+### Patch Changes
+
+- [#693](https://github.com/LedgerHQ/ledger-live/pull/693) [`c784c33547`](https://github.com/LedgerHQ/ledger-live/commit/c784c33547f233f246bb14fef29643afe46d397e) Thanks [@grsoares21](https://github.com/grsoares21)! - Fix ProgressLoader color on React UI lib
+
+## 0.9.2-next.0
+
+### Patch Changes
+
+- [#693](https://github.com/LedgerHQ/ledger-live/pull/693) [`c784c33547`](https://github.com/LedgerHQ/ledger-live/commit/c784c33547f233f246bb14fef29643afe46d397e) Thanks [@grsoares21](https://github.com/grsoares21)! - Fix ProgressLoader color on React UI lib
+
+## 0.9.1
+
+### Patch Changes
+
+- [#1293](https://github.com/LedgerHQ/ledger-live/pull/1293) [`b0a7e35a0f`](https://github.com/LedgerHQ/ledger-live/commit/b0a7e35a0f7a85732d1f7bef6ae3144fdf0b8b24) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Improvements for the crypto icons library
+
+## 0.9.1-next.0
+
+### Patch Changes
+
+- [#1293](https://github.com/LedgerHQ/ledger-live/pull/1293) [`b0a7e35a0f`](https://github.com/LedgerHQ/ledger-live/commit/b0a7e35a0f7a85732d1f7bef6ae3144fdf0b8b24) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Improvements for the crypto icons library
+
+## 0.9.0
+
+### Minor Changes
+
+- [#935](https://github.com/LedgerHQ/ledger-live/pull/935) [`432cfa8994`](https://github.com/LedgerHQ/ledger-live/commit/432cfa8994e21c2e67d72bd0e6e94a64d7cc2dfb) Thanks [@LFBarreto](https://github.com/LFBarreto)! - UI - Crypto icons added as a standalone package + added helper components to integrate them and ensure color contrast
+
+### Patch Changes
+
+- Updated dependencies [[`432cfa8994`](https://github.com/LedgerHQ/ledger-live/commit/432cfa8994e21c2e67d72bd0e6e94a64d7cc2dfb)]:
+  - @ledgerhq/crypto-icons-ui@0.2.0
+
+## 0.9.0-next.0
+
+### Minor Changes
+
+- [#935](https://github.com/LedgerHQ/ledger-live/pull/935) [`432cfa899`](https://github.com/LedgerHQ/ledger-live/commit/432cfa8994e21c2e67d72bd0e6e94a64d7cc2dfb) Thanks [@LFBarreto](https://github.com/LFBarreto)! - UI - Crypto icons added as a standalone package + added helper components to integrate them and ensure color contrast
+
+### Patch Changes
+
+- Updated dependencies [[`432cfa899`](https://github.com/LedgerHQ/ledger-live/commit/432cfa8994e21c2e67d72bd0e6e94a64d7cc2dfb)]:
+  - @ledgerhq/crypto-icons-ui@0.2.0-next.0
+
+## 0.8.3
+
+### Patch Changes
+
+- [#772](https://github.com/LedgerHQ/ledger-live/pull/772) [`9f5d214c72`](https://github.com/LedgerHQ/ledger-live/commit/9f5d214c72849221ac52b40a175c10caacb6405a) Thanks [@pierrelouis-c](https://github.com/pierrelouis-c)! - fix button size
+
+* [#762](https://github.com/LedgerHQ/ledger-live/pull/762) [`eb74f06064`](https://github.com/LedgerHQ/ledger-live/commit/eb74f06064404051b182e0f6b0e9f2a3e2f2dc9f) Thanks [@pierrelouis-c](https://github.com/pierrelouis-c)! - Add optional size prop to button
+
+## 0.8.3-next.0
+
+### Patch Changes
+
+- [#772](https://github.com/LedgerHQ/ledger-live/pull/772) [`9f5d214c7`](https://github.com/LedgerHQ/ledger-live/commit/9f5d214c72849221ac52b40a175c10caacb6405a) Thanks [@pierrelouis-c](https://github.com/pierrelouis-c)! - fix button size
+
+* [#762](https://github.com/LedgerHQ/ledger-live/pull/762) [`eb74f0606`](https://github.com/LedgerHQ/ledger-live/commit/eb74f06064404051b182e0f6b0e9f2a3e2f2dc9f) Thanks [@pierrelouis-c](https://github.com/pierrelouis-c)! - Add optional size prop to button
+
+## 0.8.2
+
+### Patch Changes
+
+- [#680](https://github.com/LedgerHQ/ledger-live/pull/680) [`a9da2596e`](https://github.com/LedgerHQ/ledger-live/commit/a9da2596ee15bb55449c4a12acfc2dd5432857e5) Thanks [@pierrelouis-c](https://github.com/pierrelouis-c)! - Migrate Vertical timeline component from native to UI
+
+## 0.8.2-next.0
+
+### Patch Changes
+
+- [#680](https://github.com/LedgerHQ/ledger-live/pull/680) [`a9da2596e`](https://github.com/LedgerHQ/ledger-live/commit/a9da2596ee15bb55449c4a12acfc2dd5432857e5) Thanks [@pierrelouis-c](https://github.com/pierrelouis-c)! - Migrate Vertical timeline component from native to UI
+
 ## 0.8.1
 
 ### Patch Changes

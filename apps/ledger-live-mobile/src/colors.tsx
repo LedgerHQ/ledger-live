@@ -1,6 +1,7 @@
 import React from "react";
 import color from "color";
 import { useTheme } from "@react-navigation/native";
+import { DefaultTheme } from "styled-components/native";
 
 export const ensureContrast = (color1: string, color2: string) => {
   const colorL1 = color(color1).luminosity() + 0.05;
@@ -9,34 +10,26 @@ export const ensureContrast = (color1: string, color2: string) => {
   const lRatio = colorL1 > colorL2 ? colorL1 / colorL2 : colorL2 / colorL1;
 
   if (lRatio < 1.5) {
-    return color(color1)
-      .rotate(180)
-      .negate()
-      .string();
+    return color(color1).rotate(180).negate().string();
   }
   return color1;
 };
 
 export const rgba = (c: string, a: number) =>
-  color(c)
-    .alpha(a)
-    .rgb()
-    .toString();
+  color(c).alpha(a).rgb().toString();
 
-export const darken = (c: string, a: number) =>
-  color(c)
-    .darken(a)
-    .toString();
+export const darken = (c: string, a: number) => color(c).darken(a).toString();
 
-export const lighten = (c: string, a: number) =>
-  color(c)
-    .lighten(a)
-    .toString();
+export const lighten = (c: string, a: number) => color(c).lighten(a).toString();
 
-export function withTheme(Component: React.ElementType) {
-  return (props: any) => {
+export function withTheme<P>(Component: React.ComponentType<P>) {
+  return (
+    props: Omit<P, "colors"> & {
+      colors?: Partial<Theme["colors"] | DefaultTheme["colors"]>;
+    },
+  ) => {
     const { colors } = useTheme();
-    return <Component colors={colors} {...props} />;
+    return <Component colors={colors} {...(props as P)} />;
   };
 }
 
@@ -151,3 +144,10 @@ export const darkTheme = {
     skeletonBg: "#2a2d33",
   },
 };
+
+export type Theme = typeof lightTheme;
+
+declare module "@react-navigation/native" {
+  export type T = typeof lightTheme;
+  export function useTheme(): T;
+}

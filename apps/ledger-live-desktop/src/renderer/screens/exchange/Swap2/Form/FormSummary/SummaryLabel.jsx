@@ -41,7 +41,7 @@ const Details = ({ details }: DetailsProps) => {
 const SummaryLabel = ({ label, details }: { label: string, details?: string }) => {
   return (
     <Container>
-      <Label>{label}</Label>
+      <Label>{label.toUpperCase()}</Label>
       {details ? <Details details={details} /> : null}
     </Container>
   );

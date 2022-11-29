@@ -116,6 +116,8 @@ export const BaseInput = styled.input.attrs<
     color: ${(p) => (p.disabled ? p.theme.colors.neutral.c50 : p.theme.colors.neutral.c70)};
   }
 
+  /* stylelint-disable property-no-vendor-prefix */
+
   /* Hide type=number arrow for Chrome, Safari, Edge, Opera */
   &::-webkit-outer-spin-button,
   ::-webkit-inner-spin-button {
@@ -127,6 +129,7 @@ export const BaseInput = styled.input.attrs<
   &[type="number"] {
     -moz-appearance: textfield;
   }
+  /* stylelint-enable property-no-vendor-prefix */
 
   ${typography}
 `;

@@ -1,15 +1,13 @@
 import React, { memo, useCallback, useState, useMemo, useRef } from "react";
-import { View, StyleSheet, TextInput, SafeAreaView } from "react-native";
+import { View, StyleSheet, TextInput } from "react-native";
 import { Trans, useTranslation } from "react-i18next";
 import { Vote } from "@ledgerhq/live-common/families/tron/types";
-
 import { useTheme } from "@react-navigation/native";
 import { BottomDrawer, Flex, Link } from "@ledgerhq/native-ui";
 import { TrashMedium } from "@ledgerhq/native-ui/assets/icons";
 import Switch from "../../../components/Switch";
 import LText from "../../../components/LText";
 import Check from "../../../icons/Check";
-
 import getFontStyle from "../../../components/LText/getFontStyle";
 import KeyboardView from "../../../components/KeyboardView";
 
@@ -42,7 +40,7 @@ const VoteModal = ({
 
   const [useAllAmount, setUseAllAmount] = useState(false);
 
-  const inputRef = useRef();
+  const inputRef = useRef<TextInput>(null);
 
   const { current: votesAvailable } = useRef(
     tronPower -
@@ -75,10 +73,10 @@ const VoteModal = ({
 
   const remove = useCallback(() => onRemove(vote), [onRemove, vote]);
 
-  const votesRemaining = useMemo(() => Math.max(0, votesAvailable - value), [
-    value,
-    votesAvailable,
-  ]);
+  const votesRemaining = useMemo(
+    () => Math.max(0, votesAvailable - value),
+    [value, votesAvailable],
+  );
 
   const error = value <= 0 || value > votesAvailable;
 
@@ -86,7 +84,6 @@ const VoteModal = ({
     <BottomDrawer
       isOpen={!!vote}
       onClose={onClose}
-      coverScreen
       onModalShow={focusInput}
       title={name || address}
       subtitle={t("vote.castVotes.voteFor")}

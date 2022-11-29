@@ -1,4 +1,4 @@
-import { Transaction } from "./types";
+import { CeloAccount, Transaction } from "./types";
 import { BigNumber } from "bignumber.js";
 import { getMainAccount } from "../../account";
 import getTransactionStatus from "./js-getTransactionStatus";
@@ -15,7 +15,7 @@ const estimateMaxSpendable = async ({
   parentAccount: Account;
   transaction: Transaction;
 }): Promise<BigNumber> => {
-  const mainAccount = getMainAccount(account, parentAccount);
+  const mainAccount = getMainAccount(account, parentAccount) as CeloAccount;
   const t = await prepareTransaction(mainAccount, {
     ...createTransaction(),
     ...transaction,

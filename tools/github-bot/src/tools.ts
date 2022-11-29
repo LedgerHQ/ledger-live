@@ -2,10 +2,16 @@ import { Probot } from "probot";
 
 export const isValidBranchName = (branch: string): boolean =>
   /^(feat|support|bugfix|releases)\/.+/.test(branch) ||
+  /^revert-[0-9]+-(feat|support|bugfix|releases)\/.+/.test(branch) ||
   ["release", "hotfix"].includes(branch);
 
 export const isValidUser = (user: string): boolean =>
-  !["ledgerlive", "live-github-bot[bot]", "github-actions[bot]"].includes(user);
+  ![
+    "ledgerlive",
+    "live-github-bot[bot]",
+    "github-actions[bot]",
+    "dependabot[bot]",
+  ].includes(user);
 
 export const isValidBody = (body: string | null): boolean => {
   if (!body) return false;

@@ -41,6 +41,7 @@ type OwnProps = {|
     account: Account,
     parentAccount: ?Account,
     validatorAddress: ?string,
+    validatorDstAddress: ?string,
   },
   name: string,
 |};
@@ -128,7 +129,7 @@ const Body = ({
     bridgeError,
     bridgePending,
   } = useBridgeTransaction(() => {
-    const { account, validatorAddress } = params;
+    const { account, validatorAddress, validatorDstAddress = "" } = params;
 
     invariant(account && account.cosmosResources, "cosmos: account and cosmos resources required");
 
@@ -142,8 +143,8 @@ const Body = ({
 
     const transaction = bridge.updateTransaction(t, {
       mode: "redelegate",
-      validators: [{ address: "", amount: source?.amount ?? BigNumber(0) }],
-      cosmosSourceValidator: validatorAddress,
+      validators: [{ address: validatorDstAddress, amount: source?.amount ?? BigNumber(0) }],
+      sourceValidator: validatorAddress,
     });
 
     return { account, parentAccount: undefined, transaction };

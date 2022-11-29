@@ -7,6 +7,8 @@ const createTransaction = (): Transaction => ({
   recipient: "",
   useAllAmount: false,
   fees: null,
+  mode: "send",
+  index: null,
 });
 
 export default createTransaction;

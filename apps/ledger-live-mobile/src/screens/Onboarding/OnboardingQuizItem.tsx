@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Flex, Text } from "@ledgerhq/native-ui";
 import { Base as BaseButton } from "@ledgerhq/native-ui/components/cta/Button";
-import { Image } from "react-native";
+import { Image, ImageSourcePropType } from "react-native";
 import Button from "../../components/PreventDoubleClickButton";
 
 import successImage from "../../images/illustration/Light/_053.png";
@@ -17,11 +17,11 @@ type Answer = {
 type Props = {
   data: {
     question: string;
-    image: any;
+    image: ImageSourcePropType;
     answers: Answer[];
   };
   onNext: (correct: boolean) => void;
-  setBg: (bg: string) => void;
+  setBg: (_: string) => void;
   cta: string;
 };
 
@@ -56,6 +56,7 @@ export default function OnboardingQuizItem({
                 mb={7}
                 textAlign="center"
                 color="constant.black"
+                lineHeight="34.8px"
               >
                 {selectedAnswer.title}
               </Text>
@@ -64,7 +65,13 @@ export default function OnboardingQuizItem({
               </Text>
             </>
           ) : (
-            <Text variant="h2" mt={8} textAlign="center" color="constant.black">
+            <Text
+              variant="h2"
+              mt={8}
+              textAlign="center"
+              color="constant.black"
+              lineHeight="34.8px"
+            >
               {question}
             </Text>
           )}

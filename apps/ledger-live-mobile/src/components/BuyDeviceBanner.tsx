@@ -1,27 +1,30 @@
 import React, { useCallback } from "react";
-import { Image } from "react-native";
+import { Image, ImageStyle, StyleProp, ViewStyle } from "react-native";
 import { Flex, Text, Icons, Link } from "@ledgerhq/native-ui";
 import styled from "styled-components/native";
 import { useNavigation } from "@react-navigation/native";
 import { useTranslation } from "react-i18next";
-import Button from "./wrappedUi/Button";
+import Button, { WrappedButtonProps } from "./wrappedUi/Button";
 import { NavigatorName, ScreenName } from "../const";
 import ForceTheme from "./theme/ForceTheme";
 
 import buyImgSource from "../images/illustration/Shared/_NanoXTop.png";
 import setupImgSource from "../images/illustration/Shared/_NanoXBoxTop.png";
-import { useCurrentRouteName } from "../helpers/routeHooks";
 import { track } from "../analytics";
+import {
+  RootNavigationComposite,
+  StackNavigatorNavigation,
+} from "./RootNavigator/types/helpers";
+import { BaseNavigatorStackParamList } from "./RootNavigator/types/BaseNavigator";
 
 type Props = {
   topLeft?: JSX.Element | null;
   buttonLabel?: string;
-  buttonSize?: ButtonProps["size"];
+  buttonSize?: WrappedButtonProps["size"];
   event?: string;
-  eventProperties?: Record<string, any>;
+  eventProperties?: Record<string, unknown>;
   style?: StyleProp<ViewStyle>;
   imageScale?: number;
-  imageContainerStyle?: StyleProp<ViewStyle>;
   imageStyle?: StyleProp<ImageStyle>;
   variant?: "buy" | "setup";
   screen: string;
@@ -70,13 +73,17 @@ export default function BuyDeviceBanner({
   event,
   eventProperties,
   style,
-  imageContainerStyle,
   imageStyle,
   variant,
   screen,
 }: Props) {
   const { t } = useTranslation();
-  const { navigate } = useNavigation();
+  const { navigate } =
+    useNavigation<
+      RootNavigationComposite<
+        StackNavigatorNavigation<BaseNavigatorStackParamList>
+      >
+    >();
 
   const handleOnPress = useCallback(() => {
     navigate(NavigatorName.BuyDevice);
@@ -98,10 +105,10 @@ export default function BuyDeviceBanner({
       handleOnPress();
       track("button_clicked", {
         button: "Discover the Nano",
-        screen: "Wallet",
+        screen,
       });
     }
-  }, [handleOnPress, handleSetupCtaOnPress, variant]);
+  }, [handleOnPress, handleSetupCtaOnPress, screen, variant]);
 
   const pressMessage = useCallback(() => {
     track("message_clicked", {
@@ -110,7 +117,7 @@ export default function BuyDeviceBanner({
       currency: eventProperties?.currency,
     });
     handleSetupCtaOnPress();
-  }, [handleSetupCtaOnPress, eventProperties]);
+  }, [screen, eventProperties?.currency, handleSetupCtaOnPress]);
 
   return (
     <>
@@ -158,7 +165,6 @@ export default function BuyDeviceBanner({
           bottom={0}
           borderRadius={2}
           overflow="hidden"
-          imageContainerStyle={imageContainerStyle}
           pointerEvents="none"
         >
           <Image

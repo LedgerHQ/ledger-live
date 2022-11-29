@@ -1,10 +1,10 @@
 import Fil from "@zondax/ledger-filecoin";
 import { log } from "@ledgerhq/logs";
 
-import type { Resolver, Result } from "../../hw/signMessage/types";
+import type { SignMessage, Result } from "../../hw/signMessage/types";
 import { getBufferFromString, getPath, isError } from "./utils";
 
-const resolver: Resolver = async (
+const signMessage: SignMessage = async (
   transport,
   { path, message }
 ): Promise<Result> => {
@@ -14,7 +14,10 @@ const resolver: Resolver = async (
 
   if (!message) throw new Error(`Message cannot be empty`);
 
-  const r = await fil.sign(getPath(path), getBufferFromString(message));
+  const r = await fil.sign(
+    getPath(path),
+    getBufferFromString(message as string)
+  );
   isError(r);
 
   return {
@@ -27,4 +30,4 @@ const resolver: Resolver = async (
   };
 };
 
-export default resolver;
+export default { signMessage };

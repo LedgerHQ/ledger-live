@@ -6,7 +6,7 @@ import { registerTransportModule } from "@ledgerhq/live-common/hw/index";
 import { addAccessHook, setErrorRemapping } from "@ledgerhq/live-common/hw/deviceAccess";
 import { setEnvUnsafe, getEnv } from "@ledgerhq/live-common/env";
 import { retry } from "@ledgerhq/live-common/promise";
-import TransportNodeHidSingleton, { usbDetect } from "@ledgerhq/hw-transport-node-hid-singleton";
+import TransportNodeHidSingleton from "@ledgerhq/hw-transport-node-hid-singleton";
 import TransportHttp from "@ledgerhq/hw-transport-http";
 import { DisconnectedDevice } from "@ledgerhq/errors";
 
@@ -65,6 +65,4 @@ if (getEnv("DEVICE_PROXY_URL")) {
 
 export function unsubscribeSetup() {
   TransportNodeHidSingleton.disconnect();
-  // TODO to be done on the transport side as part of listen() unsubscribe
-  usbDetect.stopMonitoring();
 }

@@ -178,6 +178,7 @@ export function getOperationAmountNumber(op: Operation): BigNumber {
     case "REWARD":
     case "REWARD_PAYOUT":
     case "SUPPLY":
+    case "WITHDRAW":
       return op.value;
 
     case "OUT":
@@ -191,6 +192,7 @@ export function getOperationAmountNumber(op: Operation): BigNumber {
     case "OPT_OUT":
     case "REDEEM":
     case "SLASH":
+    case "LOCK":
       return op.value.negated();
 
     case "FREEZE":
@@ -202,6 +204,10 @@ export function getOperationAmountNumber(op: Operation): BigNumber {
     case "SET_CONTROLLER":
     case "NOMINATE":
     case "CHILL":
+    case "REVOKE":
+    case "APPROVE":
+    case "ACTIVATE":
+    case "UNLOCK":
       return op.fee.negated();
 
     default:

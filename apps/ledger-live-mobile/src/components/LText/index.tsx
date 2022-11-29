@@ -1,18 +1,22 @@
 import React, { useMemo, memo } from "react";
 import { Text } from "@ledgerhq/native-ui";
+import { BaseTextProps } from "@ledgerhq/native-ui/components/Text";
 import { FontWeightTypes } from "@ledgerhq/native-ui/components/Text/getTextStyle";
 import getFontStyle from "./getFontStyle";
 
 export { getFontStyle };
 
-export type Opts = {
+export type Opts = Omit<BaseTextProps, "children"> & {
   bold?: boolean;
   semiBold?: boolean;
   secondary?: boolean;
   monospace?: boolean;
   color?: string;
   bg?: string;
+  fontSize?: string;
   children?: React.ReactNode;
+  variant?: string;
+  fontFamily?: string;
 };
 
 export type Res = {
@@ -31,7 +35,10 @@ export type Res = {
     | "900";
 };
 
-const inferFontWeight = ({ semiBold, bold }: Opts): FontWeightTypes => {
+const inferFontWeight = ({
+  semiBold,
+  bold,
+}: Partial<Opts>): FontWeightTypes => {
   if (bold) {
     return "bold";
   }
@@ -42,16 +49,16 @@ const inferFontWeight = ({ semiBold, bold }: Opts): FontWeightTypes => {
 };
 
 /**
- * This component is just a proxy to the Text component defined in @ledgerhq/react-ui.
+ * This component is just a proxy to the Text component defined in @ledgerhq/native-ui.
  * It should only be used to map legacy props/logic from LLM to the new text component.
  *
  * @deprecated Please, prefer using the Text component from our design-system if possible.
  */
 function LText({ color, children, semiBold, bold, ...props }: Opts) {
-  const fontWeight = useMemo(() => inferFontWeight({ semiBold, bold }), [
-    semiBold,
-    bold,
-  ]);
+  const fontWeight = useMemo(
+    () => inferFontWeight({ semiBold, bold }),
+    [semiBold, bold],
+  );
   return (
     <Text {...props} fontWeight={fontWeight} color={color}>
       {children}

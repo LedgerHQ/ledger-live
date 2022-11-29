@@ -10,7 +10,7 @@ type Props = {
   title: string;
   desc: string;
   Icon: IconType;
-  onClick: Function;
+  onClick: () => void;
   arrowRight?: boolean;
   settingsCardTestId?: string;
 };

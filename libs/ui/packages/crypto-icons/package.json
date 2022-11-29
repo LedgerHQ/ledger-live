@@ -1,0 +1,60 @@
+{
+  "name": "@ledgerhq/crypto-icons-ui",
+  "description": "Crypto icons used by Ledger Live.",
+  "version": "0.2.1",
+  "license": "MIT",
+  "files": [
+    "react",
+    "native",
+    "index.js"
+  ],
+  "exports": {
+    "./react/": {
+      "require": "./react/cjs/",
+      "default": "./react/"
+    },
+    "./react/*": {
+      "require": "./react/cjs/*.js",
+      "default": "./react/*.js"
+    },
+    "./react": {
+      "require": "./react/cjs/index.js",
+      "default": "./react/index.js"
+    },
+    "./native/": "./native/",
+    "./native/*": "./native/*.js",
+    "./package.json": "./package.json"
+  },
+  "scripts": {
+    "build": "pnpm run clean && node scripts/buildReactIcons && tsc --noEmit false && node scripts/transpile",
+    "prepublishOnly": "pnpm run build",
+    "clean": "rimraf react native src/react src/native"
+  },
+  "peerDependencies": {
+    "@types/react": "*",
+    "react": "*",
+    "styled-components": "*",
+    "styled-system": "*"
+  },
+  "peerDependenciesMeta": {
+    "@types/react": {
+      "optional": true
+    }
+  },
+  "devDependencies": {
+    "@svgr/core": "^5.5.0",
+    "@svgr/plugin-svgo": "^5.5.0",
+    "@types/react": "^17.0.37",
+    "@types/react-dom": "^17.0.11",
+    "@types/styled-components": "^5.1.14",
+    "@types/styled-components-react-native": "^5.1.3",
+    "@types/styled-system": "^5.1.13",
+    "camelcase": "^6.2.1",
+    "esbuild": "^0.13.15",
+    "glob": "^7.2.0",
+    "react-native-svg": "^12.1.1",
+    "rimraf": "^3.0.2",
+    "tiny-glob": "^0.2.9",
+    "typescript": "^4.8.3"
+  }
+}

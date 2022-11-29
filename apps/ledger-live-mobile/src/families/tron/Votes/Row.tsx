@@ -3,15 +3,16 @@ import { Linking, TouchableOpacity } from "react-native";
 
 import { getAddressExplorer } from "@ledgerhq/live-common/explorers";
 
-import { ExplorerView } from "@ledgerhq/live-common/types/index";
+import { ExplorerView } from "@ledgerhq/types-cryptoassets";
 
 import { Box, BoxedIcon, Flex, Text } from "@ledgerhq/native-ui";
 import { useTheme } from "styled-components/native";
 import { MedalMedium, TrophyMedium } from "@ledgerhq/native-ui/assets/icons";
+import { SuperRepresentative } from "@ledgerhq/live-common/families/tron/types";
 import Clock from "../../../icons/Clock";
 
 type Props = {
-  validator: any;
+  validator?: SuperRepresentative | null;
   address: string;
   amount: number;
   duration?: React.ReactNode;

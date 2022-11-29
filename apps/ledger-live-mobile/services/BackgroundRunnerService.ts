@@ -5,13 +5,12 @@ import { from } from "rxjs";
 import { timeout } from "rxjs/operators";
 import { NativeModules } from "react-native";
 import { hasFinalFirmware } from "@ledgerhq/live-common/hw/hasFinalFirmware";
-import { FirmwareUpdateContext } from "@ledgerhq/live-common/types/manager";
+import { FirmwareUpdateContext } from "@ledgerhq/types-live";
 import prepareFirmwareUpdate from "@ledgerhq/live-common/hw/firmwareUpdate-prepare";
 import mainFirmwareUpdate from "@ledgerhq/live-common/hw/firmwareUpdate-main";
-
-import { addBackgroundEvent } from "../src/actions/appstate";
 import { store } from "../src/context/LedgerStore";
-import { BackgroundEvent } from "../src/reducers/appstate";
+import type { FwUpdateBackgroundEvent } from "../src/reducers/types";
+import { addBackgroundEvent } from "../src/actions/appstate";
 
 const FIVE_MINUTES_IN_MS = 5 * 60 * 1000;
 
@@ -29,7 +28,7 @@ const BackgroundRunnerService = async ({
   deviceId: string;
   firmwareSerializedJson: string;
 }) => {
-  const emitEvent = (e: BackgroundEvent) =>
+  const emitEvent = (e: FwUpdateBackgroundEvent) =>
     store.dispatch(addBackgroundEvent(e));
   const latestFirmware = JSON.parse(firmwareSerializedJson) as
     | FirmwareUpdateContext
@@ -41,22 +40,20 @@ const BackgroundRunnerService = async ({
     return 0;
   }
 
-  const onError = (error: any) => {
+  const onError = (error: Error) => {
     emitEvent({ type: "error", error });
     NativeModules.BackgroundRunner.stop();
   };
 
   const onFirmwareUpdated = () => {
-    emitEvent({ type: "firmwareUpdated" });
     NativeModules.BackgroundRunner.stop();
   };
 
-  const waitForOnlineDevice = (maxWait: number) => {
-    return withDevicePolling(deviceId)(
+  const waitForOnlineDevice = (maxWait: number) =>
+    withDevicePolling(deviceId)(
       transport => from(getDeviceInfo(transport)),
       () => true,
     ).pipe(timeout(maxWait));
-  };
 
   prepareFirmwareUpdate(deviceId, latestFirmware).subscribe({
     next: ({ progress, displayedOnDevice }) => {
@@ -91,6 +88,8 @@ const BackgroundRunnerService = async ({
             emitEvent({ type: "confirmPin" });
             waitForOnlineDevice(5 * 60 * 1000).subscribe({
               error: onError,
+              next: updatedDeviceInfo =>
+                emitEvent({ type: "firmwareUpdated", updatedDeviceInfo }),
               complete: onFirmwareUpdated,
             });
           },
@@ -100,6 +99,8 @@ const BackgroundRunnerService = async ({
         // We're waiting forever condition that make getDeviceInfo work
         waitForOnlineDevice(FIVE_MINUTES_IN_MS).subscribe({
           error: onError,
+          next: updatedDeviceInfo =>
+            emitEvent({ type: "firmwareUpdated", updatedDeviceInfo }),
           complete: onFirmwareUpdated,
         });
       }

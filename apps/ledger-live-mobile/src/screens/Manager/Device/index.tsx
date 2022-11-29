@@ -1,32 +1,39 @@
-import React, { memo, useCallback, useState } from "react";
-import { View } from "react-native";
+import React, { memo, useCallback, useMemo, useState } from "react";
 import { Trans } from "react-i18next";
 
-import { State, AppsDistribution } from "@ledgerhq/live-common/apps/index";
-import { App } from "@ledgerhq/live-common/types/manager";
+import {
+  State,
+  AppsDistribution,
+  Action,
+} from "@ledgerhq/live-common/apps/index";
+import { App, DeviceInfo, idsToLanguage } from "@ledgerhq/types-live";
 
-import { Flex, Text, Button } from "@ledgerhq/native-ui";
+import { Flex, Text, Button, Divider } from "@ledgerhq/native-ui";
 import { CircledCheckMedium } from "@ledgerhq/native-ui/assets/icons";
 import styled, { useTheme } from "styled-components/native";
 import { ListAppsResult } from "@ledgerhq/live-common/apps/types";
+import { isDeviceLocalizationSupported } from "@ledgerhq/live-common/manager/localization";
+import { Device } from "@ledgerhq/live-common/hw/actions/types";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { DeviceModelId } from "@ledgerhq/types-devices";
 import DeviceAppStorage from "./DeviceAppStorage";
 
 import NanoS from "../../../images/devices/NanoS";
+import NanoFTS from "../../../images/devices/NanoFTS";
 import NanoX from "../../../images/devices/NanoX";
 
 import DeviceName from "./DeviceName";
 import InstalledAppsModal from "../Modals/InstalledAppsModal";
+
+import DeviceLanguage from "./DeviceLanguage";
+import CustomLockScreen from "./CustomLockScreen";
 
 const illustrations = {
   nanoS: NanoS,
   nanoSP: NanoS,
   nanoX: NanoX,
   blue: NanoS,
-  nanoFTS: p => (
-    <View style={{ borderWidth: 1, borderColor: "red" }}>
-      <NanoS {...p} />
-    </View>
-  ),
+  nanoFTS: NanoFTS,
 };
 
 type Props = {
@@ -34,15 +41,17 @@ type Props = {
   state: State;
   result: ListAppsResult;
   deviceId: string;
-  initialDeviceName: string;
-  blockNavigation: boolean;
-  deviceInfo: any;
+  initialDeviceName?: string | null;
+  pendingInstalls: boolean;
+  deviceInfo: DeviceInfo;
+  device: Device;
   setAppUninstallWithDependencies: (params: {
     dependents: App[];
     app: App;
   }) => void;
-  dispatch: (action: any) => void;
+  dispatch: (action: Action) => void;
   appList: App[];
+  onLanguageChange: () => void;
 };
 
 const BorderCard = styled.View`
@@ -61,12 +70,14 @@ const DeviceCard = ({
   distribution,
   state,
   deviceId,
+  device,
   initialDeviceName,
-  blockNavigation,
+  pendingInstalls,
   deviceInfo,
   setAppUninstallWithDependencies,
   dispatch,
   appList,
+  onLanguageChange,
 }: Props) => {
   const { colors } = useTheme();
   const { deviceModel } = state;
@@ -76,6 +87,8 @@ const DeviceCard = ({
     illustrations[deviceModel.id]({ color: colors.neutral.c100 }),
   );
 
+  const deviceLocalizationFeatureFlag = useFeature("deviceLocalization");
+
   const openAppsModal = useCallback(() => {
     setAppsModalOpen(true);
   }, [setAppsModalOpen]);
@@ -83,6 +96,23 @@ const DeviceCard = ({
   const closeAppsModal = useCallback(() => {
     setAppsModalOpen(false);
   }, [setAppsModalOpen]);
+
+  const isLocalizationSupported = useMemo<boolean>(
+    () =>
+      deviceInfo.seVersion
+        ? isDeviceLocalizationSupported(deviceInfo.seVersion, deviceModel.id)
+        : false,
+    [deviceInfo.seVersion, deviceModel.id],
+  );
+
+  const showDeviceLanguage =
+    deviceLocalizationFeatureFlag?.enabled &&
+    isLocalizationSupported &&
+    deviceInfo.languageId !== undefined;
+
+  const hasCustomImage =
+    useFeature("customImage")?.enabled &&
+    deviceModel.id === DeviceModelId.nanoFTS;
 
   return (
     <BorderCard>
@@ -98,7 +128,7 @@ const DeviceCard = ({
             deviceId={deviceId}
             deviceModel={deviceModel}
             initialDeviceName={initialDeviceName}
-            disabled={blockNavigation}
+            disabled={pendingInstalls}
           />
           <Flex flexDirection={"row"} alignItems={"center"} mt={2} mb={3}>
             <Text
@@ -126,7 +156,31 @@ const DeviceCard = ({
           </VersionContainer>
         </Flex>
       </Flex>
-
+      {hasCustomImage || showDeviceLanguage ? (
+        <>
+          <Flex px={6}>
+            {hasCustomImage && <CustomLockScreen device={device} />}
+            {showDeviceLanguage && (
+              <Flex mt={hasCustomImage ? 6 : 0}>
+                <DeviceLanguage
+                  pendingInstalls={pendingInstalls}
+                  currentDeviceLanguage={
+                    idsToLanguage[
+                      deviceInfo.languageId as keyof typeof idsToLanguage
+                    ]
+                  }
+                  deviceInfo={deviceInfo}
+                  device={device}
+                  onLanguageChange={onLanguageChange}
+                />
+              </Flex>
+            )}
+          </Flex>
+          <Flex p={6}>
+            <Divider />
+          </Flex>
+        </>
+      ) : null}
       <DeviceAppStorage
         distribution={distribution}
         deviceModel={deviceModel}
