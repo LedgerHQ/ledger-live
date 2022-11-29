@@ -5272,6 +5272,22 @@
       "emptyState": {
         "title": "No news for the moment",
         "desc": "You will find here all the news related to Ledger and Ledger Live"
+      },
+      "time": {
+        "second": "1 second ago",
+        "second_plural": "{{count}} seconds ago",
+        "minute": "1 minute ago",
+        "minute_plural": "{{count}} minutes ago",
+        "hour": "1 hour ago",
+        "hour_plural": "{{count}} hours ago",
+        "day": "1 day ago",
+        "day_plural": "{{count}} days ago",
+        "week": "1 week ago",
+        "week_plural": "{{count}} weeks ago",
+        "month": "1 month ago",
+        "month_plural": "{{count}} months ago",
+        "year": "1 year ago",
+        "year_plural": "{{count}} years ago"
       }
     },
     "status": {

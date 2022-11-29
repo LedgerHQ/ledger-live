@@ -1,145 +1,102 @@
-import React, { useCallback } from "react";
-import {
-  StyleSheet,
-  SectionList,
-  RefreshControl,
-  View,
-  ViewToken,
-} from "react-native";
-import { useAnnouncements } from "@ledgerhq/live-common/notifications/AnnouncementProvider/index";
-import { groupAnnouncements } from "@ledgerhq/live-common/notifications/AnnouncementProvider/helpers";
+import React from "react";
+import { FlatList } from "react-native";
 
-import { Trans } from "react-i18next";
-import { Flex, Text } from "@ledgerhq/native-ui";
+import { CardC, Box } from "@ledgerhq/native-ui";
 
-import styled, { useTheme } from "styled-components/native";
-import FormatDate from "../../components/FormatDate";
-import NewsRow from "./NewsRow";
+import styled from "styled-components/native";
+import { useTranslation } from "react-i18next";
+import useDynamicContent from "../../dynamicContent/dynamicContent";
+import SettingsNavigationScrollView from "../Settings/SettingsNavigationScrollView";
+import { NotificationContentCard } from "../../dynamicContent/types";
 
-const viewabilityConfig = {
-  viewAreaCoveragePercentThreshold: 95,
-};
-
-const SectionHeader = styled.View`
-  background-color: ${p => p.theme.colors.neutral.c30};
-  padding: 12px;
-  border-radius: 4px;
+const Container = styled(SettingsNavigationScrollView)`
+  padding: 16px;
 `;
 
-export default function NotificationCenter() {
-  const { colors } = useTheme();
-  const { cache, setAsSeen, updateCache, allIds, seenIds } = useAnnouncements();
+enum TypeOfTime {
+  second = "second",
+  minute = "minute",
+  hour = "hour",
+  day = "day",
+  week = "week",
+  month = "month",
+  year = "year",
+}
+function getTime(timestampNew: number): Array<number, TypeOfTime> {
+  const today = new Date().getTime();
+  const fixedTimeStamp = new Date(timestampNew * 1000).getTime();
+  const diff = Math.abs(today - fixedTimeStamp);
 
-  const onViewableItemsChanged = useCallback(
-    ({ viewableItems }: { viewableItems: ViewToken[] }) => {
-      viewableItems
-        .reduce(
-          (s, a) =>
-            s.concat(
-              a.item ? a.item : (a as unknown as { data: unknown }).data,
-            ),
-          [],
-        )
-        .map(({ uuid }) => uuid)
-        .filter(Boolean)
-        .forEach(setAsSeen);
-    },
-    [setAsSeen],
+  const secs = Math.floor(Math.abs(diff) / 1000);
+  const mins = Math.floor(secs / 60);
+  const hours = Math.floor(mins / 60);
+  const days = Math.floor(hours / 24);
+  const weeks = Math.floor(days / 7);
+  const months = Math.floor(weeks / 12);
+
+  console.log(
+    secs,
+    mins,
+    hours,
+    days,
+    weeks,
+    months,
+    new Date(timestampNew * 1000).getSeconds(),
+    timestampNew,
   );
 
-  const sections = groupAnnouncements(allIds.map(uuid => cache[uuid])).map(
-    d => ({
-      ...d,
-      title: d.day,
-    }),
-  );
+  if (secs < 60) {
+    return [secs, TypeOfTime.second];
+  }
 
-  return (
-    <>
-      <SectionList
-        style={[
-          styles.sectionList,
-          { backgroundColor: colors.background.main },
-        ]}
-        contentContainerStyle={styles.root}
-        sections={sections}
-        stickySectionHeadersEnabled
-        renderItem={({ item, index, section }) => (
-          <NewsRow
-            item={item}
-            index={index}
-            isLastElement={index >= section.data.length - 1}
-            isUnread={!seenIds.includes(item.uuid)}
-          />
-        )}
-        renderSectionHeader={({ section: { title } }) =>
-          title && title instanceof Date ? (
-            <SectionHeader>
-              <Text
-                variant={"small"}
-                fontWeight={"semiBold"}
-                color="palette.neutral.c80"
-                style={{ textTransform: "uppercase" }}
-              >
-                <FormatDate date={title} />
-              </Text>
-            </SectionHeader>
-          ) : null
-        }
-        keyExtractor={(item, index) => item.uuid + index}
-        ItemSeparatorComponent={() => (
-          <View
-            style={[
-              styles.separator,
-              { backgroundColor: colors.palette.neutral.c40 },
-            ]}
-          />
-        )}
-        refreshControl={
-          <RefreshControl
-            progressBackgroundColor={colors.palette.neutral.c00}
-            colors={[colors.palette.primary.c100]}
-            tintColor={colors.palette.primary.c100}
-            refreshing={false}
-            onRefresh={updateCache}
-          />
-        }
-        viewabilityConfig={viewabilityConfig}
-        onViewableItemsChanged={onViewableItemsChanged}
-        ListEmptyComponent={
-          <Flex alignItems={"center"} justifyContent={"center"} flex={1}>
-            <Text
-              variant={"h3"}
-              textAlign={"center"}
-              color={"palette.neutral.c100"}
-            >
-              <Trans i18nKey="notificationCenter.news.emptyState.title" />
-            </Text>
-            <Text
-              variant={"paragraph"}
-              fontWeight={"medium"}
-              color={"palette.neutral.c80"}
-              textAlign={"center"}
-            >
-              <Trans i18nKey="notificationCenter.news.emptyState.desc" />
-            </Text>
-          </Flex>
-        }
-      />
-    </>
-  );
+  if (mins < 60) {
+    return [mins, TypeOfTime.minute];
+  }
+
+  if (hours < 24) {
+    return [hours, TypeOfTime.hour];
+  }
+  if (days < 24) {
+    return [days, TypeOfTime.day];
+  }
+  if (weeks < 4) {
+    return [weeks, TypeOfTime.week];
+  }
+
+  if (months < 12) {
+    return [weeks, TypeOfTime.week];
+  }
+
+  return [
+    Math.abs(new Date(timestampNew).getFullYear() - new Date().getFullYear()),
+    TypeOfTime.year,
+  ];
 }
 
-const styles = StyleSheet.create({
-  root: { paddingVertical: 16, height: "100%" },
-  sectionList: {
-    flex: 1,
-    paddingHorizontal: 16,
-    height: "100%",
-  },
-  separator: {
-    width: "100%",
-    height: 1,
-    marginBottom: 8,
-  },
-});
+export default function NotificationCenter() {
+  const { t } = useTranslation();
+  const { notificationCards } = useDynamicContent();
+
+  return (
+    <Container>
+      <FlatList<NotificationContentCard>
+        data={notificationCards}
+        keyExtractor={(card: NotificationContentCard) => card.id}
+        renderItem={({ item }) => {
+          const time = getTime(item.createdAt);
+          return (
+            <CardC
+              time={t(`notificationCenter.news.time.${time[1]}`, {
+                count: time[0],
+              })}
+              {...item}
+            />
+          );
+        }}
+        ItemSeparatorComponent={() => (
+          <Box height={1} width="100%" backgroundColor="neutral.c30" my={7} />
+        )}
+      />
+    </Container>
+  );
+}

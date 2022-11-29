@@ -5,6 +5,7 @@ import { useCallback, useMemo } from "react";
 import { useBrazeContentCard } from "./brazeContentCard";
 import {
   assetsCardsSelector,
+  notificationsCardsSelector,
   walletCardsSelector,
 } from "../reducers/dynamicContent";
 import { dismissedDynamicCardsSelector } from "../reducers/settings";
@@ -63,7 +64,7 @@ const useDynamicContent = () => {
   const dispatch = useDispatch();
   const { logClickCard, logDismissCard, logImpressionCard } =
     useBrazeContentCard();
-
+  const notificationCards = useSelector(notificationsCardsSelector);
   const assetsCards = useSelector(assetsCardsSelector);
   const walletCards = useSelector(walletCardsSelector);
   const hiddenCards: string[] = useSelector(dismissedDynamicCardsSelector);
@@ -140,6 +141,7 @@ const useDynamicContent = () => {
     logImpressionCard,
     dismissCard,
     trackContentCardEvent,
+    notificationCards,
   };
 };
 

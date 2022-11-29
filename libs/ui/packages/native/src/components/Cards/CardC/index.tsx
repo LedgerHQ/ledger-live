@@ -60,7 +60,7 @@ const CardC = (props: CardProps): React.ReactElement => {
         color="neutral.c70"
         numberOfLines={3}
         mt={2}
-        mb={4}
+        mb={onPress ? 4 : 0}
       >
         {description}
       </Text>
