@@ -43,6 +43,7 @@ import MODAL_BLACKLIST_TOKEN from "./BlacklistToken";
 import MODAL_HIDE_NFT_COLLECTION from "./HideNftCollection";
 
 import MODAL_CARDANO_DELEGATE from "../families/cardano/DelegationFlowModal";
+import MODAL_CARDANO_REWARDS_INFO from "../families/cardano/DelegationFlowModal/Info";
 
 import MODAL_COSMOS_DELEGATE from "../families/cosmos/DelegationFlowModal";
 import MODAL_COSMOS_REWARDS_INFO from "../families/cosmos/DelegationFlowModal/Info";
@@ -114,6 +115,7 @@ const modals: { [_: string]: React$ComponentType<any> } = {
   MODAL_BLACKLIST_TOKEN,
   MODAL_HIDE_NFT_COLLECTION,
   MODAL_CARDANO_DELEGATE,
+  MODAL_CARDANO_REWARDS_INFO,
   MODAL_COSMOS_DELEGATE,
   MODAL_COSMOS_REWARDS_INFO,
   MODAL_COSMOS_CLAIM_REWARDS,

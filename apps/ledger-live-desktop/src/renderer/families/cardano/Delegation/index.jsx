@@ -64,7 +64,7 @@ const Delegation = ({ account, parentAccount }: Props) => {
               id={"account-delegate-button"}
               onClick={() => {
                 dispatch(
-                  openModal("MODAL_CARDANO_DELEGATE", {
+                  openModal("MODAL_CARDANO_REWARDS_INFO", {
                     parentAccount,
                     account,
                   }),

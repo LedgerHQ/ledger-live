@@ -18,6 +18,7 @@ import type { Account, Operation } from "@ledgerhq/types-live";
 import type { TFunction } from "react-i18next";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import type { StakePool } from "@ledgerhq/live-common/families/cardano/api/api-types";
+import { LEDGER_POOL_ADDRESSES } from "@ledgerhq/live-common/families/cardano/utils";
 
 import { addPendingOperation } from "@ledgerhq/live-common/account/index";
 import { updateAccountWithUpdater } from "~/renderer/actions/accounts";
@@ -65,7 +66,7 @@ const steps: Array<St> = [
   },
   {
     id: "summary",
-    label: "Delegation summary",
+    label: <Trans i18nKey="cardano.delegation.flow.steps.summary.title" />,
     component: StepSummary,
     noScroll: true,
     footer: StepSummaryFooter,
@@ -110,19 +111,6 @@ const Body = ({
   const [selectedPool, setSelectedPool] = useState(null);
   const dispatch = useDispatch();
 
-  const ledgerPools: Array<StakePool> = [
-    {
-      poolId: "1d9302a3fb4b3b1935e02b27f0339798d3f08a55fbfdcd43a449a96f",
-      name: "Demo",
-      ticker: "LEDGR",
-      website: "https://www.ledger.com/ledger-live",
-      margin: "5",
-      cost: "340000000",
-      pledge: "",
-      retiredEpoch: undefined,
-    },
-  ];
-
   const {
     transaction,
     setTransaction,
@@ -140,16 +128,23 @@ const Body = ({
       "cardano: account and cardano resources required",
     );
 
+    const currentDelegation = account.cardanoResources.delegation;
+
     const bridge = getAccountBridge(account, undefined);
 
     const transaction = bridge.createTransaction(account);
 
-    setSelectedPool(ledgerPools[0]);
-    const updatedTransaction = bridge.updateTransaction(transaction, {
-      mode: "delegate",
-      poolId: ledgerPools[0].poolId,
-    });
-
+    let updatedTransaction = transaction;
+    if (
+      LEDGER_POOL_ADDRESSES.length &&
+      (!currentDelegation || currentDelegation?.poolId !== LEDGER_POOL_ADDRESSES[0])
+    ) {
+      setSelectedPool({ poolId: LEDGER_POOL_ADDRESSES[0] });
+      updatedTransaction = bridge.updateTransaction(transaction, {
+        mode: "delegate",
+        poolId: LEDGER_POOL_ADDRESSES[0],
+      });
+    }
     return {
       account,
       parentAccount: undefined,

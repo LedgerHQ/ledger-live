@@ -1,8 +1,6 @@
 // @flow
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { getDefaultExplorerView, getAddressExplorer } from "@ledgerhq/live-common/explorers";
-import { LEDGER_VALIDATOR_ADDRESS } from "@ledgerhq/live-common/families/cosmos/utils";
-import type { CosmosValidatorItem } from "@ledgerhq/live-common/families/cosmos/types";
 import type { CryptoCurrency, Unit } from "@ledgerhq/types-cryptoassets";
 import { useSelector } from "react-redux";
 
@@ -37,15 +35,12 @@ function CardanoPoolRow({ pool, active, onClick, unit, currency, disabled }: Pro
   const locale = useSelector(localeSelector);
 
   const explorerView = getDefaultExplorerView(currency);
+  // TODO: remove hard coded explorer view
   const onExternalLink = useCallback(
     (address: string) => {
-      if (address === LEDGER_VALIDATOR_ADDRESS) {
-        openURL(urls.ledgerValidator);
-      } else {
-        // const srURL = explorerView && getAddressExplorer(explorerView, address);
-        const srURL = "https://preprod.cardanoscan.io/pool/" + address;
-        if (srURL) openURL(srURL);
-      }
+      // const srURL = explorerView && getAddressExplorer(explorerView, address);
+      const srURL = "https://preprod.cardanoscan.io/pool/" + address;
+      if (srURL) openURL(srURL);
     },
     [explorerView],
   );
@@ -73,9 +68,12 @@ function CardanoPoolRow({ pool, active, onClick, unit, currency, disabled }: Pro
         <Box style={{ flexDirection: "row" }}>
           <Box style={{ flexDirection: "column" }}>
             <Text ff="Inter|SemiBold" color="palette.text.shade100" fontSize={4}>
-              {formatCurrencyUnit(unit, new BigNumber(pool.tokens), {
+              {formatCurrencyUnit(unit, new BigNumber(pool.liveStake), {
                 showCode: true,
               })}
+            </Text>
+            <Text fontSize={2} textAlign="right">
+              <Trans color="palette.text.shade50" i18nKey="cardano.delegation.totalStake" />
             </Text>
           </Box>
           <Box ml={2} justifyContent="center" alignContent="center">
@@ -86,7 +84,7 @@ function CardanoPoolRow({ pool, active, onClick, unit, currency, disabled }: Pro
       subtitle={
         <Box style={{ flexDirection: "row" }}>
           <Text ff="Inter|Medium" fontSize={2} color="palette.text.shade50">
-            <Trans i18nKey="cosmos.delegation.commission" /> {`${pool.margin} %`}
+            <Trans i18nKey="cardano.delegation.commission" /> {`${pool.margin} %`}
           </Text>
           <Text ff="Inter|Medium" ml={2} fontSize={2} color="palette.text.shade50">
             <Trans i18nKey="cardano.delegation.cost" mr={2} /> {poolCost}

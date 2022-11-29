@@ -22,14 +22,14 @@ const AccountHeaderActions = ({ account, parentAccount }: Props) => {
   invariant(cardanoResources, "cardano account expected");
   const disableStakeButton = cardanoResources.delegation.poolId || mainAccount.balance.isZero();
   const disabledLabel = cardanoResources.delegation.poolId
-    ? "You have already delegated to a pool"
+    ? t("cardano.delegation.assetsAlreadyStaked")
     : mainAccount.balance.isZero()
-    ? "Add Funds to stake"
+    ? t("cardano.delegation.addFundsToStake")
     : "";
 
   const onClick = useCallback(() => {
     dispatch(
-      openModal("MODAL_CARDANO_DELEGATE", {
+      openModal("MODAL_CARDANO_REWARDS_INFO", {
         account,
       }),
     );

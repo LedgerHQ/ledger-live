@@ -93,6 +93,7 @@ export type StakePool = {
   cost: string;
   pledge: string;
   retiredEpoch: number | undefined;
+  liveStake: string;
 };
 
 export type APIGetPoolList = {

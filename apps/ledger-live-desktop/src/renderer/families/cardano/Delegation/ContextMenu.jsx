@@ -4,13 +4,11 @@ import styled from "styled-components";
 import { Trans } from "react-i18next";
 import { useDispatch } from "react-redux";
 import type { AccountLike, Account } from "@ledgerhq/types-live";
-import { useDelegation } from "@ledgerhq/live-common/families/tezos/bakers";
 import { openModal } from "~/renderer/actions/modals";
 import Box from "~/renderer/components/Box";
 import Text from "~/renderer/components/Text";
 import DropDownSelector, { DropDownItem } from "~/renderer/components/DropDownSelector";
 import UserEdit from "~/renderer/icons/UserEdit";
-import ArrowDown from "~/renderer/icons/ArrowDown";
 import StopCircle from "~/renderer/icons/StopCircle";
 import IconDots from "~/renderer/icons/Dots";
 
@@ -37,24 +35,8 @@ type Props = {
 
 const ContextMenu = ({ account, parentAccount }: Props) => {
   const dispatch = useDispatch();
-  const delegation = useDelegation(account);
-  const receiveShouldWarnDelegation = delegation && delegation.receiveShouldWarnDelegation;
 
   const items = [
-    // {
-    //   key: "topUp",
-    //   label: <Trans i18nKey="delegation.contextMenu.topUp" />,
-    //   icon: <ArrowDown size={16} />,
-    //   onClick: () =>
-    //     dispatch(
-    //       openModal("MODAL_RECEIVE", {
-    //         parentAccount,
-    //         account,
-    //         eventType: "cardano",
-    //         startWithWarning: receiveShouldWarnDelegation,
-    //       }),
-    //     ),
-    // },
     {
       key: "redelegate",
       label: <Trans i18nKey="cardano.delegation.changeDelegation" />,
@@ -75,7 +57,7 @@ const ContextMenu = ({ account, parentAccount }: Props) => {
       icon: <StopCircle size={16} />,
       onClick: () =>
         dispatch(
-          openModal("MODAL_DELEGATE", {
+          openModal("MODAL_CARDANO_DELEGATE", {
             parentAccount,
             account,
             eventType: "undelegate",

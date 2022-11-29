@@ -18,7 +18,7 @@ type Props = {
   parentAccount: ?Account,
 };
 
-export default function CosmosEarnRewardsInfoModal({ name, account, parentAccount }: Props) {
+export default function CardanoEarnRewardsInfoModal({ name, account, parentAccount }: Props) {
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const onNext = useCallback(() => {
@@ -39,15 +39,15 @@ export default function CosmosEarnRewardsInfoModal({ name, account, parentAccoun
     <EarnRewardsInfoModal
       name={name}
       onNext={onNext}
-      description={t("cosmos.delegation.flow.steps.starter.description")}
+      description={t("cardano.delegation.flow.steps.starter.description")}
       bullets={[
-        t("cosmos.delegation.flow.steps.starter.bullet.0"),
-        t("cosmos.delegation.flow.steps.starter.bullet.1"),
-        t("cosmos.delegation.flow.steps.starter.bullet.2"),
+        t("cardano.delegation.flow.steps.starter.bullet.0"),
+        t("cardano.delegation.flow.steps.starter.bullet.1"),
+        t("cardano.delegation.flow.steps.starter.bullet.2"),
       ]}
-      additional={
-        <WarnBox>{t("cosmos.delegation.flow.steps.starter.warning.description")}</WarnBox>
-      }
+      // additional={
+      //   <WarnBox>{t("cardano.delegation.flow.steps.starter.warning.description")}</WarnBox>
+      // }
       footerLeft={<LinkWithExternalIcon label={t("delegation.howItWorks")} onClick={onLearnMore} />}
     />
   );

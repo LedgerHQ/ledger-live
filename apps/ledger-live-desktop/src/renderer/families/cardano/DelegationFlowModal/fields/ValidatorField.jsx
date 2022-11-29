@@ -3,7 +3,6 @@ import React, { useState, useCallback, useMemo, useEffect } from "react";
 import type { TFunction } from "react-i18next";
 
 import { getAccountUnit } from "@ledgerhq/live-common/account/index";
-import { useLedgerFirstShuffledValidatorsCosmos } from "@ledgerhq/live-common/families/cosmos/react";
 
 import styled from "styled-components";
 import Box from "~/renderer/components/Box";
@@ -19,6 +18,7 @@ import type { StakePool } from "@ledgerhq/live-common/families/cardano/api/api-t
 import { fetchPoolList } from "@ledgerhq/live-common/families/cardano/api/getPools";
 
 import ValidatorSearchInput from "~/renderer/components/Delegation/ValidatorSearchInput";
+import { LEDGER_POOL_ADDRESSES } from "@ledgerhq/live-common/families/cardano/utils";
 
 type Props = {
   t: TFunction,
@@ -29,19 +29,6 @@ type Props = {
   selectedPoolId: string,
 };
 
-const ledgerPools: Array<StakePool> = [
-  {
-    poolId: "1d9302a3fb4b3b1935e02b27f0339798d3f08a55fbfdcd43a449a96f",
-    name: "Demo",
-    ticker: "LEDGR",
-    website: "https://www.ledger.com/ledger-live",
-    margin: "5",
-    cost: "340000000",
-    pledge: "",
-    retiredEpoch: undefined,
-  },
-];
-
 const ValidatorField = ({
   account,
   status,
@@ -50,33 +37,34 @@ const ValidatorField = ({
   onChangeValidator,
   selectedPoolId,
 }: Props) => {
-  const [showAll, setShowAll] = useState(
-    ledgerPools.length === 1 && delegation.poolId === ledgerPools[0].poolId,
-  );
   const [search, setSearch] = useState("");
   const [pageNo, setPageNo] = useState(1);
   const [totalPools, setTotalPools] = useState(0);
+  const [ledgerPools, setLedgerPools] = useState([]); // TODO: fetch ledger pools and set it here
   const unit = getAccountUnit(account);
+  const [showAll, setShowAll] = useState(
+    LEDGER_POOL_ADDRESSES.length === 0 ||
+      (LEDGER_POOL_ADDRESSES.length === 1 && delegation.poolId === LEDGER_POOL_ADDRESSES[0]),
+  );
 
+  const poolIdsToFilterFromAllPools = [...LEDGER_POOL_ADDRESSES];
+  if (delegation.poolId) {
+    poolIdsToFilterFromAllPools.push(delegation.poolId);
+  }
   useEffect(() => {
-    const ledgerPoolIds = ledgerPools.map(l => l.poolId);
     fetchPoolList(account.currency, search, pageNo, 50).then(apiRes => {
       setTotalPools(apiRes.count);
       setValidators([
         ...validators,
-        ...apiRes.pools.filter(p => !!p.name).filter(p => !ledgerPoolIds.includes(p.poolId)),
+        ...apiRes.pools.filter(p => !poolIdsToFilterFromAllPools.includes(p.poolId)),
       ]);
     });
   }, [pageNo]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
-    const ledgerPoolIds = ledgerPools.map(l => l.poolId);
-
     fetchPoolList(account.currency, search, pageNo, 50).then(apiRes => {
       setTotalPools(apiRes.count);
-      setValidators([
-        ...apiRes.pools.filter(p => !!p.name).filter(p => !ledgerPoolIds.includes(p.poolId)),
-      ]);
+      setValidators([...apiRes.pools.filter(p => !poolIdsToFilterFromAllPools.includes(p.poolId))]);
     });
   }, [search]); // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -93,11 +81,9 @@ const ValidatorField = ({
         unit={unit}
         active={selectedPoolId === validator.poolId || validator.poolId === delegation.poolId}
         onClick={onChangeValidator}
-        disabled={validator.poolId === delegation.poolId}
       ></ValidatorRow>
     );
   };
-
   return (
     <>
       {showAll && <ValidatorSearchInput noMargin={true} search={search} onSearch={onSearch} />}
@@ -113,12 +99,14 @@ const ValidatorField = ({
             totalPools={totalPools}
           />
         </Box>
-        <SeeAllButton expanded={showAll} onClick={() => setShowAll(shown => !shown)}>
-          <Text color="wallet" ff="Inter|SemiBold" fontSize={4}>
-            <Trans i18nKey={showAll ? "distribution.showLess" : "distribution.showAll"} />
-          </Text>
-          <IconAngleDown size={16} />
-        </SeeAllButton>
+        {LEDGER_POOL_ADDRESSES.length ? (
+          <SeeAllButton expanded={showAll} onClick={() => setShowAll(shown => !shown)}>
+            <Text color="wallet" ff="Inter|SemiBold" fontSize={4}>
+              <Trans i18nKey={showAll ? "distribution.showLess" : "distribution.showAll"} />
+            </Text>
+            <IconAngleDown size={16} />
+          </SeeAllButton>
+        ) : null}
       </ValidatorsFieldContainer>
     </>
   );
