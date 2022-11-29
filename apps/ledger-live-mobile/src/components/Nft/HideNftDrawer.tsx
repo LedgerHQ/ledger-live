@@ -37,6 +37,7 @@ const HideNftDrawer = ({
   const onClickContinue = useCallback(() => {
     track("button_clicked", {
       button: "Hide NFT Collection",
+      drawer: "Hide NFT Confirmation",
     });
 
     dispatch(hideNftCollection(`${account?.id}|${nftContract}`));
@@ -47,6 +48,7 @@ const HideNftDrawer = ({
   const onPressClose = useCallback(() => {
     track("button_clicked", {
       button: "Close 'x'",
+      drawer: "Hide NFT Confirmation",
     });
     onClose();
   }, [onClose]);
@@ -54,6 +56,7 @@ const HideNftDrawer = ({
   const onPressCancel = useCallback(() => {
     track("button_clicked", {
       button: "Cancel",
+      drawer: "Hide NFT Confirmation",
     });
     onClose();
   }, [onClose]);
@@ -67,7 +70,11 @@ const HideNftDrawer = ({
         collectionName: collection,
       })}
     >
-      <TrackScreen name="Hide NFT Confirmation" type="drawer" />
+      <TrackScreen
+        category="Hide NFT Confirmation"
+        type="drawer"
+        refreshSource={false}
+      />
 
       <Button
         type="main"
