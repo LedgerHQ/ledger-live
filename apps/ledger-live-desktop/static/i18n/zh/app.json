@@ -1979,7 +1979,7 @@
         "recipientAddress" : "接收方地址",
         "amount" : "数额",
         "fees" : "网络费用",
-        "useMax" : "发送最大值",
+        "sendMax" : "发送最大值",
         "rippleTag" : "标签",
         "rippleTagPlaceholder" : "可选",
         "ethereumGasLimit" : "Gas 限值",

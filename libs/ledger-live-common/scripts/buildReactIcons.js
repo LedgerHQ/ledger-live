@@ -88,7 +88,6 @@ glob(`${rootDir}/svg/*.svg`, (err, icons) => {
       expandProps: false,
       componentName: name,
       svgProps: {
-        viewBox: "0 0 24 24",
         height: "{size}",
         width: "{size}",
       },
