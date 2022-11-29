@@ -31,6 +31,7 @@ type AssetContentCard = ContentCard & {
 type NotificationContentCard = ContentCard & {
   cta: string;
   createdAt: number;
+  viewed: boolean;
 };
 
 export type {

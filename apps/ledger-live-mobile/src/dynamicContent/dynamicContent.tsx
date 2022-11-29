@@ -54,8 +54,9 @@ export const mapAsNotificationContentCard = (card: BrazeContentCard) =>
     description: card.extras.description,
     location: LocationContentCard.NotificationCenter,
     link: card.extras.link ?? "",
-    cta: card.extras.cta,
+    cta: card.extras.cta ?? "",
     createdAt: card.created,
+    viewed: card.viewed,
   } as NotificationContentCard);
 
 const useDynamicContent = () => {

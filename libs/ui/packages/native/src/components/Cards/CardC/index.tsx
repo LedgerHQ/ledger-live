@@ -30,9 +30,14 @@ const Timer = ({ time, viewed }: { time: string; viewed: boolean }) => (
     <Text variant="small" fontWeight="semiBold" color="neutral.c90" numberOfLines={1}>
       {time}
     </Text>
-    {!viewed && (
-      <Box ml={3} backgroundColor="error.c50" height="8px" width="8px" borderRadius={24} />
-    )}
+
+    <Box
+      ml={3}
+      backgroundColor={viewed ? "transparent" : "error.c50"}
+      height="8px"
+      width="8px"
+      borderRadius={24}
+    />
   </Flex>
 );
 
