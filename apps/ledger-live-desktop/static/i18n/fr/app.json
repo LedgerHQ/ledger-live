@@ -316,7 +316,7 @@
     "history" : {
       "disclaimer" : "Vos échanges sur Ledger Live pour l’ordinateur ne sont pas synchronisés avec votre application Ledger Live pour le mobile.",
       "empty" : {
-        "title" : "Vos swaps réalisés apparaîtront ici.",
+        "title" : "Les échanges que vous avez réalisés apparaîtront ici.",
         "description" : "Vous n’avez pas encore effectué d’échanges, ou Ledger Live a été réinitialisé depuis votre dernier échange."
       },
       "export" : "Exporter les opérations",
@@ -375,7 +375,7 @@
       "completed" : {
         "title" : "Transaction bien émise",
         "description" : "Votre opération de swap a été envoyée au réseau pour confirmation. Veuillez attendre que votre transaction soit confirmée, puis que le prestataire traite et vous envoie vos {{targetCurrency}}.",
-        "disclaimer" : "Notez bien l’identifiant de votre swap au cas où vous auriez besoin de contacter <0>l’assistance de <0>{{provider}}</0></0>.",
+        "disclaimer" : "Notez bien l’identifiant de votre échange au cas où vous auriez besoin de contacter <0>l’assistance de <0>{{provider}}</0></0>.",
         "seeDetails" : "Voir les détails"
       }
     }
@@ -396,7 +396,7 @@
     "history" : {
       "disclaimer" : "Vos échanges sur Ledger Live pour l’ordinateur ne sont pas synchronisés avec votre application Ledger Live pour le mobile.",
       "empty" : {
-        "title" : "Vos swaps réalisés apparaîtront ici.",
+        "title" : "Les échanges que vous avez réalisés apparaîtront ici.",
         "description" : "Vous n’avez pas encore effectué d’échanges, ou Ledger Live a été réinitialisé depuis votre dernier échange."
       }
     },
@@ -564,11 +564,11 @@
         },
         "finished" : {
           "title" : "En attente",
-          "subtitle" : "Swap bien diffusé ",
+          "subtitle" : "Échange bien diffusé ",
           "swap" : "Identifiant de votre swap :",
           "seeDetails" : "Voir les détails",
-          "disclaimer" : "Notez bien l’identifiant de votre swap au cas où vous auriez besoin de contacter <0>l’assistance de <0>{{provider}}</0></0>.",
-          "description" : "Votre opération de swap a été envoyée au réseau pour confirmation. Cela peut prendre jusqu’à une heure avant que vous ne receviez vos {{targetCurrency}}."
+          "disclaimer" : "Notez bien l’identifiant de votre échange au cas où vous auriez besoin de contacter <0>l’assistance de <0>{{provider}}</0></0>.",
+          "description" : "Votre échange a été envoyé au réseau pour confirmation. Cela peut prendre jusqu’à une heure avant que vous ne receviez vos {{targetCurrency}}."
         }
       }
     },
@@ -578,11 +578,11 @@
       "txid" : "Identifiant du swap",
       "status" : "Statut",
       "statusTooltips" : {
-        "expired" : "Pour plus d’informations, contactez le prestataire du service Swap avec l’identifiant de votre swap.",
-        "refunded" : "Pour plus d’informations, contactez le prestataire du service Swap avec l’identifiant de votre swap.",
+        "expired" : "Pour plus d’informations, contactez le prestataire du service Swap avec l’identifiant de votre échange.",
+        "refunded" : "Pour plus d’informations, contactez le prestataire du service Swap avec l’identifiant de votre échange.",
         "pending" : "Merci de patienter pendant que le prestataire du service Swap traite votre transaction.",
-        "onhold" : "Pour résoudre votre problème, contactez le prestataire du service Swap avec l’identifiant de votre swap.",
-        "finished" : "Votre swap a bien été réalisé."
+        "onhold" : "Pour résoudre votre problème, contactez le prestataire du service Swap avec l’identifiant de votre échange.",
+        "finished" : "Votre échange a bien été réalisé."
       },
       "date" : "Date",
       "from" : "De",
@@ -1589,7 +1589,7 @@
     "listAppsDescription" : "Merci de patienter pendant que nous nous assurons que vous avez toutes les applications requises.",
     "swap" : {
       "notice" : "Vérifiez les détails de l’échange sur votre appareil avant de l’envoyer. Les adresses sont échangées de manière sécurisée afin que vous n’ayez pas à les vérifier.",
-      "confirm" : "Confirmer la transaction de swap",
+      "confirm" : "Confirmer l’échange",
       "amountSent" : "Montant à envoyer",
       "amountReceived" : "Montant à recevoir",
       "amountReceivedFloat" : "Montant à recevoir sans les frais de service",
@@ -3453,7 +3453,7 @@
     "hardResetModal" : {
       "title" : "Réinitialiser Ledger Live",
       "desc" : "Réinitialisez Ledger Live pour effacer tous vos paramètres et comptes de votre ordinateur. Vous pouvez ensuite choisir votre mot de passe et rajouter vos comptes avec votre appareil Ledger. Les clés privées donnant accès à vos crypto-actifs restent protégées sur votre appareil Ledger. Elles sont également sauvegardées grâce à votre phrase de récupération.",
-      "warning" : "La réinitialisation de Ledger Live effacera l’historique des transactions de swap de tous vos comptes."
+      "warning" : "La réinitialisation de Ledger Live effacera l’historique des transactions d’échange de tous vos comptes."
     },
     "softResetModal" : {
       "title" : "Vider le cache",
@@ -3471,7 +3471,7 @@
       "title" : "Supprimer le compte",
       "desc" : "Cela n’a pas d’effet sur vos crypto-actifs. Vous pourrez de nouveau ajouter vos comptes existants.",
       "delete" : "Retirer du Portefeuille",
-      "warning" : "L’historique de vos transactions de swap en lien avec ce compte sera effacé."
+      "warning" : "L’historique de vos transactions d’échange en lien avec ce compte sera effacé."
     },
     "openUserDataDirectory" : {
       "title" : "Voir les données utilisateur",
@@ -4671,7 +4671,7 @@
     },
     "SwapGenericAPIError" : {
       "title" : "Une erreur est survenue.",
-      "description" : "Le swap n’a pas été effectué. Veuillez réessayer ou contacter l’Assistance."
+      "description" : "L’échange n’a pas été effectué. Veuillez réessayer ou contacter l’Assistance."
     },
     "TimeoutError" : {
       "title" : "Le serveur a mis trop longtemps à répondre.",
