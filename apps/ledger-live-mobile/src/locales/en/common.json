@@ -4690,7 +4690,7 @@
       }
     },
     "receive": {
-      "newAddressTRC20": "You need to activate your Tron account before depositing TRC20 tokens."
+      "newAddressTRC20": "You first need to send at least 0.1 TRX to this address to activate it."
     }
   },
   "stellar": {
