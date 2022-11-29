@@ -21,7 +21,7 @@ export default function ReceiveNFTsModal({ onClose, isOpened }: Props) {
   const onClickContinue = useCallback(() => {
     track("button_clicked", {
       button: "Continue",
-      drawer: "ReceiveNFTsModal",
+      drawer: "Confirm Receive NFT",
     });
     navigation.navigate(NavigatorName.ReceiveFunds, {
       screen: ScreenName.ReceiveSelectCrypto,
@@ -64,11 +64,7 @@ export default function ReceiveNFTsModal({ onClose, isOpened }: Props) {
       onClose={onPressClose}
       Icon={<EthPolygonIcons />}
     >
-      <TrackScreen
-        category="ReceiveFlowNFT"
-        name="Confirm Receive NFT"
-        type="drawer"
-      />
+      <TrackScreen name="Confirm Receive NFT" category="" type="drawer" />
 
       {new Array(2).fill(null).map((_e, index) => (
         <Text
