@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 import { storiesOf } from "../storiesOf";
 import React from "react";
 import CardA from "../../../src/components/Cards/CardA";
@@ -71,8 +70,8 @@ const CardBStory = () => {
         title={title}
         cta={cta}
         imageUrl={imageUrl}
-        onPress={() => console.log("PRESS")}
-        onPressDismiss={() => console.log("DISMISS")}
+        onPress={() => {}}
+        onPressDismiss={() => {}}
       />
     </Flex>
   );

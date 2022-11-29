@@ -46,7 +46,6 @@ export const mapAsAssetContentCard = (card: BrazeContentCard) =>
   } as AssetContentCard);
 
 const useDynamicContent = () => {
-  // const dynamicContentFeature = useFeature("dynamicContent");
   const dispatch = useDispatch();
   const { logClickCard, logDismissCard, logImpressionCard } =
     useBrazeContentCard();

@@ -9,7 +9,7 @@ const StyledSVG = styled(Svg)`
   height: 100%;
 `;
 
-export type Props = React.ComponentProps<typeof Svg> & {
+export type Props = {
   color: string;
   opacityColor: string;
   style?: React.ComponentProps<typeof Svg>["style"];

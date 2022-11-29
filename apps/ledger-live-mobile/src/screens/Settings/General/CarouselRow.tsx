@@ -25,7 +25,7 @@ const CarouselRow = () => {
         toggle: "Content Cards",
         enabled: checked,
         screen: ScreenName.GeneralSettings,
-      }); // TODO
+      }); // TODO Handle Analytics correclty
     },
     [dispatch, walletCards, assetsCards],
   );
