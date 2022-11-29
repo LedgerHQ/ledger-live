@@ -7,7 +7,7 @@ import { Account, SyncConfig, TokenAccount } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { emptyHistoryCache, encodeTokenAccountId } from "../../account";
 import { mergeOps } from "../../bridge/jsHelpers";
-import { getAccountESDTOperations, getAccountESDTTokens } from "./api";
+import { getESDTOperations, getAccountESDTTokens } from "./api";
 import { addPrefixToken, extractTokenId } from "./logic";
 
 async function buildElrondESDTTokenAccount({
@@ -25,7 +25,7 @@ async function buildElrondESDTTokenAccount({
   const tokenIdentifierHex = extractTokenId(token.id);
   const tokenIdentifier = Buffer.from(tokenIdentifierHex, "hex").toString();
 
-  const operations = await getAccountESDTOperations(
+  const operations = await getESDTOperations(
     tokenAccountId,
     accountAddress,
     tokenIdentifier,
@@ -67,8 +67,8 @@ async function syncESDTTokenAccountOperations(
   const tokenIdentifier = Buffer.from(tokenIdentifierHex, "hex").toString();
 
   // Merge new operations with the previously synced ones
-  const newOperations = await getAccountESDTOperations(
-    tokenAccount.parentId,
+  const newOperations = await getESDTOperations(
+    tokenAccount.id,
     address,
     tokenIdentifier,
     startAt

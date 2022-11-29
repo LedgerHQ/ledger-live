@@ -4,7 +4,7 @@ import { makeSync, makeScanAccounts, mergeOps } from "../../bridge/jsHelpers";
 import {
   getAccount,
   getAccountDelegations,
-  getOperations,
+  getEGLDOperations,
   hasESDTTokens,
 } from "./api";
 import elrondBuildESDTTokenAccounts from "./js-buildSubAccounts";
@@ -33,10 +33,6 @@ const getAccountShape: GetAccountShape = async (info, syncConfig) => {
 
   const delegations = await getAccountDelegations(address);
 
-  // Merge new operations with the previously synced ones
-  const newOperations = await getOperations(accountId, address, startAt);
-  const operations = mergeOps(oldOperations, newOperations);
-
   let subAccounts: TokenAccount[] | undefined = [];
   const hasTokens = await hasESDTTokens(address);
   if (hasTokens) {
@@ -54,6 +50,15 @@ const getAccountShape: GetAccountShape = async (info, syncConfig) => {
   }
 
   const delegationBalance = computeDelegationBalance(delegations);
+
+  // Merge new operations with the previously synced ones
+  const newOperations = await getEGLDOperations(
+    accountId,
+    address,
+    startAt,
+    subAccounts
+  );
+  const operations = mergeOps(oldOperations, newOperations);
 
   return {
     id: accountId,

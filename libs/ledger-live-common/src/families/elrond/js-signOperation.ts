@@ -111,7 +111,7 @@ const buildOptimisticOperation = (
   if (tokenAccount && subAccountId) {
     operation.subOperations = [
       {
-        id: `${subAccountId}--OUT`,
+        id: encodeOperationId(subAccountId, "", "OUT"),
         hash: "",
         type: "OUT",
         value: transaction.amount,
