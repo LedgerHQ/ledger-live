@@ -1,5 +1,11 @@
 # @ledgerhq/live-common
 
+## 27.8.0-nightly.3
+
+### Minor Changes
+
+- [#1918](https://github.com/LedgerHQ/ledger-live/pull/1918) [`a00544e8de`](https://github.com/LedgerHQ/ledger-live/commit/a00544e8de135285609e9aabc2d4ca354f8ebc2a) Thanks [@chabroA](https://github.com/chabroA)! - Add ERC-20 funding
+
 ## 27.8.0-nightly.2
 
 ### Minor Changes
