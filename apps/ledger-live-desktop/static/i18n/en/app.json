@@ -2184,6 +2184,9 @@
     "title": "Release notes",
     "version": "Ledger Live {{versionNb}}"
   },
+  "troubleshootNetwork": {
+    "title": "Troubleshoot networking"
+  },
   "systemLanguageAvailable": {
     "title": "Change your app's language?",
     "description": {
@@ -3707,6 +3710,11 @@
       "title": "Save logs",
       "desc": "Saving Ledger Live logs may be needed for troubleshooting purposes.",
       "btn": "Save"
+    },
+    "troubleshootNetwork": {
+      "title": "Troubleshoot networking",
+      "desc": "Run a checklist to assess networking conditions for troubleshooting purposes.",
+      "btn": "Troubleshoot"
     },
     "accounts": {
       "hideEmptyTokens": {
