@@ -124,12 +124,14 @@
     },
     "exchange" : "Cambia",
     "info" : "Info",
-    "connectDevice" : "Conecta tu dispositivo"
+    "connectDevice" : "Conecta tu dispositivo",
+    "add" : "Agregar"
   },
   "devices" : {
     "nanoS" : "Nano S",
     "nanoSP" : "Nano S Plus",
     "nanoX" : "Nano X",
+    "nanoFTS" : "Nano FTS",
     "blue" : "Blue"
   },
   "operation" : {
@@ -178,6 +180,8 @@
   "time" : {
     "minute" : "Minuto",
     "minute_plural" : "Minutos",
+    "minute_short" : "min",
+    "second_short" : "s",
     "hour" : "Hora",
     "hour_plural" : "Horas",
     "range" : {
@@ -597,6 +601,12 @@
     }
   },
   "lottieDebugger" : {
+    "buttonTitle" : "Prueba"
+  },
+  "storylyDebugger" : {
+    "buttonTitle" : "Prueba"
+  },
+  "postOnboardingDebugger" : {
     "buttonTitle" : "Prueba"
   },
   "fullNode" : {
@@ -1125,6 +1135,111 @@
     "desc" : "Esta acción ocultará todas las cuentas de <1><0>{{tokenName}}</0></1>, pero puedes visualizarlas de nuevo ingresando a <3>Ajustes</3>.",
     "hideCTA" : "Ocultar token"
   },
+  "syncOnboarding" : {
+    "connection" : {
+      "searching" : {
+        "title" : "Conectar {{deviceModelName}} a tu PC",
+        "connectionTrouble" : "¿Tienes problemas para conectar tu dispositivo?"
+      },
+      "success" : {
+        "title" : "Conectado a tu {{ deviceName }}"
+      }
+    },
+    "manual" : {
+      "title" : "Configurar {{deviceName}}",
+      "pairedContent" : {
+        "title" : "Tu {{deviceName}} está conectado",
+        "description" : "Continúa con la configuración en tu {{deviceName}}",
+        "text" : "Esta pantalla cambiará de forma dinámica para proporcionarte información pertinente mientras configuras tu {{deviceName}}."
+      },
+      "pinContent" : {
+        "title" : "Define tu PIN",
+        "description" : "El PIN puede tener entre 4 y 8 dígitos",
+        "text" : "Cualquier persona que tenga acceso a tu {{deviceName}} y a tu PIN también podrá acceder a todos tus activos cripto y NFT."
+      },
+      "recoveryContent" : {
+        "title" : "Frase de recuperación",
+        "content" : "Consulta los siguientes videos para obtener más información sobre tu Frase de recuperación"
+      },
+      "softwareCheckContent" : {
+        "title" : "Comprobación de software",
+        "genuineCheck" : {
+          "active" : "Comprobando {{deviceName}}",
+          "completed" : "Tu {{deviceName}} es auténtico"
+        },
+        "firmwareUpdate" : {
+          "inactive" : "Comprobación de software",
+          "active" : "Buscando actualizaciones de software",
+          "updateAvailable" : "Actualización de software disponible {{firmwareVersion}}",
+          "recommendation" : "Te recomendamos descargar ahora la actualización",
+          "downloadUpdate" : "Descargar actualización",
+          "skipUpdate" : "Omitir por el momento",
+          "completed" : "El software está actualizado"
+        }
+      },
+      "installApplications" : {
+        "title" : "Te recomendamos descargar un conjunto de aplicaciones por defecto. Puedes descargar otras más adelante",
+        "install" : "Instalar",
+        "skip" : "Recordar más adelante",
+        "info" : "Las aplicaciones el {{deviceName}} se usan para aprobar transacciones. Puedes añadirlas o eliminarlas cuando quieras."
+      },
+      "genuineCheckModal" : {
+        "title" : "Comprobación de autenticidad",
+        "paragraph1" : "Vamos a asegurarnos de que tu {{deviceName}} sea auténtico y seguro de usar",
+        "paragraph2" : "Realizaremos una comprobación para asegurarnos de que el dispositivo no ha sido manipulado. Tendrás que aceptar la operación en tu {{deviceName}}.",
+        "checkDeviceButton" : "Comprobar dispositivo"
+      },
+      "genuineCheckCancelModal" : {
+        "title" : "Comprobación de autenticidad",
+        "paragraph1" : "La verificación de autenticidad se ha cancelado",
+        "paragraph2" : "Es importante que hagas esta comprobación para asegurarte de que es seguro usar tu {{deviceName}}.",
+        "checkDeviceButton" : "Volver a ejecutar la verificación de autenticidad",
+        "cancelButton" : "Quizás más tarde"
+      },
+      "genuineCheckNotGenuineModal" : {
+        "title" : "Comprobación de autenticidad",
+        "paragraph1" : "Tu dispositivo no es original",
+        "paragraph2" : "La comprobación de autenticidad ha fallado",
+        "checkDeviceButton" : "Volver a ejecutar la verificación de autenticidad",
+        "cancelButton" : "Quizás más tarde"
+      },
+      "genuineCheckAnimationModal" : {
+        "message" : "Permitir manager en {{deviceName}}"
+      },
+      "helpDrawer" : {
+        "title" : "¿Necesitas ayuda con el manual de configuración?",
+        "description" : "Lorem Elsass ipsum aliquam bissame Oberschaeffolsheim geht's messti de Bischheim tellus blottkopf, dui sed libero. hopla libero, placerat leo eget Gal.",
+        "docButton" : "Ir a Preguntas más frecuentes",
+        "supportButton" : "Hablar con una persona"
+      },
+      "troubleshootingDrawer" : {
+        "title" : "Solucionar problemas de la conexión USB",
+        "description" : "Parece que hay un problema al conectar tu dispositivo. No te preocupes, puedes probar con distintas soluciones, una por vez, hasta que se conecte tu dispositivo.",
+        "fixButton" : "Corregir",
+        "closeButton" : "Cerrar"
+      },
+      "desyncOverlay" : {
+        "errorMessage" : "Parece que se ha perdido la conexión con tu {{deviceName}}. Estamos intentando volver a conectar."
+      },
+      "header" : {
+        "helpButton" : "¿Necesitas ayuda?"
+      }
+    }
+  },
+  "postOnboarding" : {
+    "postOnboardingScreen" : {
+      "title" : "Muy bien. Todo listo.",
+      "description" : "¡Enhorabuena por configurar tu {{deviceName}}!",
+      "paragraph" : "Te hemos preparado algunos pasos con los que puedes empezar. Si prefieres explorar Ledger Live por tu cuenta, omite este paso; siempre puedes volver aquí más tarde.",
+      "bottomText" : "Disfruta de tu viaje por la Web3 de forma segura con Ledger Live."
+    },
+    "postOnboardingContent" : {
+      "title" : "Muy bien. Todo listo.",
+      "description" : "Esto es lo que puedes hacer a continuación:",
+      "skipLink" : "Ir a la aplicación",
+      "skipLinkInDrawer" : "Lo haré más tarde"
+    }
+  },
   "hideNftCollection" : {
     "title" : "Ocultar colección de NFTs",
     "desc" : "Esta acción ocultará todos los NFTs de la colección <1><0>{{collectionName}}</0></1> , pero puedes visualizarlos de nuevo ingresando a <3>Ajustes</3>.",
@@ -1199,6 +1314,10 @@
       "sign" : {
         "title" : "Dispositivo"
       }
+    },
+    "eip712" : {
+      "showFullMessage" : "Mostrar el mensaje completo",
+      "hideFullMessage" : "Ocultar el mensaje completo"
     }
   },
   "walletconnect" : {
@@ -1594,7 +1713,10 @@
     "listApps" : "Comprobando dependencias de la aplicación",
     "listAppsDescription" : "Espera hasta que verifiquemos que tienes todas las aplicaciones necesarias",
     "swap" : {
-      "notice" : "Verifica los detalles de la permuta en tu dispositivo antes de enviarla. Las direcciones se intercambian de forma segura por lo que no es necesario verificarlas.",
+      "notice" : {
+        "default" : "Verifica los detalles de la permuta en tu dispositivo antes de enviarla. Las direcciones se intercambian de forma segura por lo que no es necesario verificarlas.",
+        "cic" : "Verifica la información de permuta en tu dispositivo antes de enviarlo. CIC tal vez requiera una verificación adicional para algunas transacciones, lo que puede provocar retrasos."
+      },
       "confirm" : "Confirmar transacción de permuta",
       "amountSent" : "Importe a enviar",
       "amountReceived" : "Importe a recibir",
@@ -1833,7 +1955,7 @@
         "bandwidthDescription" : "Los puntos de Ancho de banda se utilizan para realizar transacciones sin pagar TRX por tarifas de red. Elige Ancho de banda para aumentar tus transacciones gratuitas diarias.",
         "energyDescription" : "Se requieren puntos de Energía para ejecutar contratos inteligentes. Si no tienes ningún contrato inteligente, no es necesario que elijas recompensas en Energía.",
         "amountLabel" : "Importe a inmovilizar",
-        "available" : "Disponible: {{amountAvailable}}",
+        "available" : "Disponibles: {{amountAvailable}}",
         "info" : "No es posible enviar los activos inmovilizados por un periodo de tres días."
       },
       "connectDevice" : {
@@ -1944,6 +2066,39 @@
         "tezos" : {
           "text" : "El importe recibido en una cuenta delegada se añadirá al importe participado total. Elige otra cuenta si quieres evitar esto."
         }
+      },
+      "staking" : {
+        "title" : "Gana {{currencyName}}",
+        "link" : "Más información",
+        "notShow" : "No mostrar esto de nuevo",
+        "footer" : {
+          "dismiss" : "Ahora no",
+          "stake" : "Pon en participación con {{provider}}"
+        },
+        "ethereum" : {
+          "title" : "Haz crecer tus ETH. Ponlos en participación ahora.",
+          "description" : "Pon tus Ethereum en participación con Lido y gana recompensas diarias. Sin periodo de inmovilización. Sin depósito mínimo.",
+          "kiln" : {
+            "title" : "No hagas HODL. Haz crecer tus ETH.",
+            "description" : "¿Tienes más de 32 ETH? Consigue recompensas pasivas poniendo tu ETH de forma segura en participación con Kiln."
+          }
+        },
+        "cosmos" : {
+          "title" : "Haz crecer tus ATOM. Ponlos en participación con un validador de Ledger.",
+          "description" : "Pon tus ATOM en participación con el validador de confianza de Ledger. Tus monedas seguirán siendo tuyas y estarán respaldadas por la seguridad sin concesiones de Ledger."
+        },
+        "osmo" : {
+          "title" : "Haz crecer tus OSMO. Ponlos en participación con Ledger by Figment.",
+          "description" : "Pon tus OSMO en participación con el validador Ledger by Figment. Ofrece las comisiones más bajas y garantía contra penalizaciones."
+        },
+        "solana" : {
+          "title" : "Haz crecer tus SOL. Ponlos en participación con Ledger by Figment.",
+          "description" : "Pon tus SOL en participación con el validador Ledger by Figment. Tus monedas seguirán siendo tuyas y estarán respaldadas por la seguridad sin concesiones de Ledger."
+        },
+        "celo" : {
+          "title" : "Haz crecer tus CELO. Ponlos en participación con Ledger by Figment.",
+          "description" : "Pon tus CELO en participación con el validador Ledger by Figment. Garantiza cobertura completa contra penalizaciones y está respaldado por la seguridad sin concesiones de Ledger."
+        }
       }
     }
   },
@@ -1959,7 +2114,7 @@
       "amount" : {
         "title" : "Importe",
         "banner" : "El importe máximo que puede gastarse es",
-        "fees" : "Tarifas",
+        "fees" : "Tarifa estimada máx.",
         "standard" : "Estándar",
         "advanced" : "Avanzado",
         "nftQuantity" : "Cantidad"
@@ -1979,11 +2134,17 @@
         "recipientAddress" : "Dirección de recepción",
         "amount" : "Importe",
         "fees" : "Tarifas de red",
-        "sendMax" : "Enviar máximo",
+        "useMax" : "Utilizar máx",
+        "sendMax" : "Enviar máx",
         "rippleTag" : "Etiqueta",
         "rippleTagPlaceholder" : "Opcional",
+        "edit" : "Editar",
         "ethereumGasLimit" : "Límite de gas",
         "ethereumGasPrice" : "Precio de gas",
+        "ethereumMaxFee" : "Tarifa máxima ({{unitName}})",
+        "ethereumPriorityFee" : "Tarifa de prioridad máxima ({{unitName}})",
+        "nextBlock" : "Siguiente bloque: {{nextBaseFee}}",
+        "suggestedPriorityFee" : "Sugerencia: {{lowPriorityFee}} - {{highPriorityFee}} {{unitName}}",
         "unitPerByte" : "{{unit}} por byte",
         "nft" : "NFT",
         "nftQuantity" : "Cantidad"
@@ -3387,6 +3548,7 @@
       "featureFlagsEdit" : "Editar",
       "featureFlagsRestore" : "Restaurar",
       "featureFlagsOverride" : "Anular",
+      "firebaseProject" : "Proyecto de Firebase al que se refiere esta compilación:",
       "addLocalApp" : "Añadir una aplicación local",
       "addLocalAppDesc" : "Explorar archivos locales y añadir una aplicación local usando un manifiesto local",
       "addLocalAppButton" : "Navegar",
@@ -3476,6 +3638,22 @@
         "testAnimations" : {
           "title" : "Probar animaciones Lottie",
           "description" : "Probar todas las animaciones utilizadas en Ledger Live"
+        },
+        "testStories" : {
+          "title" : "Probar las historias de Storyly",
+          "description" : "Probar todas las historias usadas en Ledger Live"
+        },
+        "testPostonboarding" : {
+          "title" : "Probar el Post Onboarding",
+          "description" : "Probar todas las funciones de Post Onboarding"
+        },
+        "1559DeactivateGate" : {
+          "title" : "Desactivar umbral de tarifa de prioridad mínima EIP1559",
+          "description" : "Esto permite enviar una transacción sin ninguna expectativa de tarifa de prioridad mínima. Optar por ello puede provocar que una transacción quede bloqueada en el pool de memoria para siempre."
+        },
+        "1559CustomPriorityLowerGate" : {
+          "title" : "Umbral de tarifa de prioridad personalizada",
+          "description" : "Personaliza el porcentaje de nuestra tarifa de prioridad mínima estimada permitida para una transacción EIP1559 avanzada."
         }
       }
     },
@@ -4815,6 +4993,18 @@
     "GasLessThanEstimate" : {
       "title" : "Puede que sea demasiado bajo. Auméntalo"
     },
+    "PriorityFeeTooLow" : {
+      "title" : "La tarifa de prioridad es inferior al valor recomendado."
+    },
+    "PriorityFeeTooHigh" : {
+      "title" : "La tarifa de prioridad es más elevada de lo necesario. Es posible que pagues de más."
+    },
+    "MaxFeeTooLow" : {
+      "title" : "La tarifa máxima es inferior al valor recomendado."
+    },
+    "PriorityFeeHigherThanMaxFee" : {
+      "title" : "La tarifa de prioridad máxima no puede ser superior a la tarifa máxima."
+    },
     "UnknownMCU" : {
       "title" : "Versión de MCU desconocida",
       "description" : "Ponte en contacto con el Soporte de Ledger"
@@ -4949,6 +5139,9 @@
     "FeeTooHigh" : {
       "title" : "Las tarifas de red superan el 10% del importe"
     },
+    "DustLimit" : {
+      "title" : "La cantidad es menor que el límite de remanente"
+    },
     "SourceHasMultiSign" : {
       "title" : "Desactiva la multifirma para enviar {{currencyName}}"
     },
@@ -5062,6 +5255,55 @@
     },
     "HederaAddAccountError" : {
       "title" : "Tu cuenta no ha sido agregada. Inténtalo de nuevo."
+    },
+    "ImageIncorrectFileTypeError" : {
+      "title" : "Error al cargar la imagen desde el archivo.",
+      "description" : "Vuelve a intentarlo con una imagen."
+    },
+    "ImageLoadFromFileError" : {
+      "title" : "Error al cargar la imagen desde el archivo.",
+      "description" : "Vuelve a intentarlo con otra imagen"
+    },
+    "ImageDownloadError" : {
+      "title" : "Error al descargar la imagen",
+      "description" : "Vuelve a intentarlo con otra imagen"
+    },
+    "ImageMetadataLoadingError" : {
+      "title" : "Error al cargar los metadatos de la imagen",
+      "description" : "Vuelve a intentarlo con otra imagen"
+    },
+    "ImageTooLargeError" : {
+      "title" : "Imagen demasiado grande",
+      "description" : "Vuelve a intentarlo con una imagen más pequeña"
+    },
+    "ImageCropError" : {
+      "title" : "Error al recortar la imagen",
+      "description" : "Vuelve a intentarlo con otra imagen"
+    },
+    "ImageResizeError" : {
+      "title" : "Error al cambiar el tamaño de la imagen",
+      "description" : "Vuelve a intentarlo con otra imagen"
+    },
+    "ImagePreviewError" : {
+      "title" : "Error al previsualizar la imagen",
+      "description" : "Vuelve a intentarlo con otra imagen"
+    },
+    "ImageProcessingError" : {
+      "title" : "Error al procesar la imagen",
+      "description" : "Vuelve a intentarlo con otra imagen"
+    },
+    "ImageCommitRefusedOnDevice" : {
+      "title" : "Commit de imagen rechazado en el dispositivo (TODO: final wording)",
+      "description" : "Si la imagen no era la adecuada, puedes intentarlo de nuevo con una diferente."
+    },
+    "ImageLoadRefusedOnDevice" : {
+      "title" : "Carga de imagen rechazada en el dispositivo (TODO: final wording)",
+      "description" : "Si la imagen no era la adecuada, puedes intentarlo de nuevo con una diferente."
+    },
+    "LockedDeviceError" : {
+      "title" : "Tu dispositivo está bloqueado",
+      "description" : "Desbloquea tu dispositivo e inténtalo de nuevo.",
+      "descriptionWithProductName" : "Desbloquea tu {{ productName }} e inténtalo de nuevo."
     }
   },
   "cryptoOrg" : {
@@ -5092,5 +5334,42 @@
     "selectAccount" : {
       "title" : "elige una cuenta"
     }
+  },
+  "customImage" : {
+    "title" : "Imagen personalizada",
+    "steps" : {
+      "choose" : {
+        "stepLabel" : "Elige una imagen",
+        "description" : "Elige una imagen para establecerla como (...)",
+        "pickFromNftGallery" : "Seleccionar de mi galería de NFT",
+        "upload" : "Cargar desde mi PC"
+      },
+      "adjust" : {
+        "stepLabel" : "Ajustar imagen",
+        "rotate" : "Girar"
+      },
+      "contrast" : {
+        "stepLabel" : "Elegir contraste"
+      },
+      "transfer" : {
+        "stepLabel" : "Transferir",
+        "uploadAnotherImage" : "Cargar otra imagen",
+        "allowPreview" : "Permitir vista previa de la imagen en {{productName}}",
+        "loadingPicture" : "Cargando imagen en {{productName}}",
+        "pictureLoaded" : "Imagen cargada",
+        "imageLoaded" : "Imagen cargada en {{productName}}",
+        "confirmPicture" : "Confirmar en {{productName}}",
+        "doThisLater" : "Quizás más tarde",
+        "timeDisclaimer" : "Puede tardar hasta 30 segundos"
+      }
+    },
+    "postOnboarding" : {
+      "title" : "Personalizar mi dispositivo",
+      "description" : "adaptando la pantalla a mis necesidades",
+      "actionCompletedPopupLabel" : "Dispositivo personalizado",
+      "actionCompletedHubTitle" : "Esa pantalla tiene muy buen aspecto."
+    },
+    "customImageSet" : "Imagen personalizada establecida",
+    "finishCTA" : "Finalizar"
   }
 }
