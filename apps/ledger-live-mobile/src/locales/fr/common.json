@@ -2478,7 +2478,7 @@
       "title" : "Swap",
       "description" : "Échangez une crypto contre une autre",
       "selectDevice" : "Sélectionnez votre appareil.",
-      "broadcasting" : "Swap en cours",
+      "broadcasting" : "Échange en cours",
       "loadingFees" : "Chargement des frais de réseau…",
       "landing" : {
         "header" : "Swap",
@@ -2556,10 +2556,10 @@
         "cta" : "Fermer"
       },
       "pendingOperation" : {
-        "description" : "Votre opération de swap a été envoyée au réseau pour confirmation. Cela peut prendre jusqu’à une heure avant que vous ne receviez vos {{targetCurrency}}.",
+        "description" : "Votre échange a été envoyé au réseau pour confirmation. Cela peut prendre jusqu’à une heure avant que vous ne receviez vos {{targetCurrency}}.",
         "label" : "Identifiant de votre swap :",
-        "title" : "Swap bien diffusé ",
-        "disclaimer" : "Notez bien l’identifiant de votre swap au cas où vous auriez besoin de contacter l’assistance de {{provider}}.",
+        "title" : "Échange bien diffusé ",
+        "disclaimer" : "Notez bien l’identifiant de votre échange au cas où vous auriez besoin de contacter l’assistance de {{provider}}.",
         "cta" : "Voir les détails"
       },
       "tradeMethod" : {
@@ -2573,7 +2573,7 @@
         "modalTitle" : "Taux fixe ou variable ?"
       },
       "form" : {
-        "validate" : "Confirmer la transaction de swap",
+        "validate" : "Confirmer l’échange",
         "tab" : "Échanger",
         "button" : "Continuer",
         "from" : "De",
@@ -2642,11 +2642,11 @@
         "to" : "À",
         "toAmount" : "Montant à recevoir",
         "statusTooltips" : {
-          "expired" : "Pour plus d’informations, contactez le prestataire du service Swap avec l’identifiant de votre swap.",
-          "refunded" : "Pour plus d’informations, contactez le prestataire du service Swap avec l’identifiant de votre swap.",
+          "expired" : "Pour plus d’informations, contactez le prestataire du service Swap avec l’identifiant de votre échange.",
+          "refunded" : "Pour plus d’informations, contactez le prestataire du service Swap avec l’identifiant de votre échange.",
           "pending" : "Merci de patienter pendant que le prestataire du service Swap traite votre transaction.",
-          "onhold" : "Pour résoudre votre problème, contactez le prestataire du service Swap avec l’identifiant de votre swap.",
-          "finished" : "Votre swap a bien été réalisé."
+          "onhold" : "Pour résoudre votre problème, contactez le prestataire du service Swap avec l’identifiant de votre échange.",
+          "finished" : "Votre échange a bien été réalisé."
         }
       },
       "missingApp" : {
@@ -2666,11 +2666,11 @@
       },
       "history" : {
         "tab" : "Historique",
-        "disclaimer" : "Vos transactions swap sur Ledger Live pour le mobile ne sont pas synchronisées avec Ledger Live pour l’ordinateur.",
+        "disclaimer" : "Vos transactions Swap sur Ledger Live pour le mobile ne sont pas synchronisées avec Ledger Live pour l’ordinateur.",
         "exportButton" : "Exporter les opérations",
         "exportFilename" : "Opérations de swap",
         "empty" : {
-          "title" : "Vos swaps réalisés apparaîtront ici.",
+          "title" : "Les échanges que vous avez réalisés apparaîtront ici.",
           "desc" : "Vous n’avez pas encore effectué d’échanges, ou Ledger Live a été réinitialisé depuis votre dernier échange."
         }
       }
