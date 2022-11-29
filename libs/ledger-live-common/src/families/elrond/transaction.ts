@@ -11,20 +11,26 @@ import type { Account } from "@ledgerhq/types-live";
 import { getAccountUnit } from "../../account";
 import { formatCurrencyUnit } from "../../currencies";
 export const formatTransaction = (
-  { mode, amount, recipient, useAllAmount }: Transaction,
-  account: Account
-): string => `
+  { mode, amount, recipient, useAllAmount, subAccountId }: Transaction,
+  mainAccount: Account
+): string => {
+  const account =
+    (subAccountId &&
+      (mainAccount.subAccounts || []).find((a) => a.id === subAccountId)) ||
+    mainAccount;
+  return `
 ${mode.toUpperCase()} ${
-  useAllAmount
-    ? "MAX"
-    : amount.isZero()
-    ? ""
-    : " " +
-      formatCurrencyUnit(getAccountUnit(account), amount, {
-        showCode: true,
-        disableRounding: true,
-      })
-}${recipient ? `\nTO ${recipient}` : ""}`;
+    useAllAmount
+      ? "MAX"
+      : amount.isZero()
+      ? ""
+      : " " +
+        formatCurrencyUnit(getAccountUnit(account), amount, {
+          showCode: true,
+          disableRounding: true,
+        })
+  }${recipient ? `\nTO ${recipient}` : ""}`;
+};
 export const fromTransactionRaw = (tr: TransactionRaw): Transaction => {
   const common = fromTransactionCommonRaw(tr);
   return {
