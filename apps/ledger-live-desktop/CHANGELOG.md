@@ -1,5 +1,20 @@
 # ledger-live-desktop
 
+## 2.50.0-nightly.17
+
+### Minor Changes
+
+- [#1962](https://github.com/LedgerHQ/ledger-live/pull/1962) [`d96bcf101d`](https://github.com/LedgerHQ/ledger-live/commit/d96bcf101d5f023fd75e8ee6e0bcaebc83cad07d) Thanks [@henrily-ledger](https://github.com/henrily-ledger)! - Add more explicit error on tron trc20
+
+### Patch Changes
+
+- [#1986](https://github.com/LedgerHQ/ledger-live/pull/1986) [`1ad947ba07`](https://github.com/LedgerHQ/ledger-live/commit/1ad947ba07c0c0d9f3469746a6a23ae50dd5a0f2) Thanks [@sarneijim](https://github.com/sarneijim)! - Remove redirection to account details from receive banner
+
+* [#1956](https://github.com/LedgerHQ/ledger-live/pull/1956) [`7f95a94ef2`](https://github.com/LedgerHQ/ledger-live/commit/7f95a94ef265afa4b5c3df878ae20b7ae62f8185) Thanks [@sarneijim](https://github.com/sarneijim)! - Improve cic logo
+
+* Updated dependencies [[`1269f149ae`](https://github.com/LedgerHQ/ledger-live/commit/1269f149aef5d842eddd83beb64ae65240c3dc0f)]:
+  - @ledgerhq/react-ui@0.10.1-nightly.3
+
 ## 2.50.0-nightly.16
 
 ### Patch Changes

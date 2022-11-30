@@ -1,5 +1,16 @@
 # @ledgerhq/native-ui
 
+## 0.13.0-nightly.3
+
+### Minor Changes
+
+- [#1831](https://github.com/LedgerHQ/ledger-live/pull/1831) [`8ac70e5cca`](https://github.com/LedgerHQ/ledger-live/commit/8ac70e5ccab58159c646f23694c1da13ebc00248) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - Two Cards components (CardA and CardB) added to the native-ui lib
+
+### Patch Changes
+
+- Updated dependencies [[`1269f149ae`](https://github.com/LedgerHQ/ledger-live/commit/1269f149aef5d842eddd83beb64ae65240c3dc0f)]:
+  - @ledgerhq/icons-ui@0.3.1-nightly.3
+
 ## 0.12.2-nightly.2
 
 ### Patch Changes
