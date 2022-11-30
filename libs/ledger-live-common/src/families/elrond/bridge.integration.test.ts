@@ -104,19 +104,17 @@ const elrond: CurrenciesData<Transaction> = {
             family: "elrond",
             recipient:
               "erd1frj909pfums4m8aza596595l9pl56crwdj077vs2aqcw6ynl28wsfkw9rd",
-            // FIXME: ignored by test suite
             useAllAmount: true,
             amount: "0",
             mode: "send",
             fees: null,
           }),
-          expectedStatus: (account) => {
-            invariant(
-              account.balance.toNumber() === 0,
-              "Account balance should be empty"
-            );
-
-            return {};
+          expectedStatus: (account, _, status) => {
+            return {
+              amount: account.balance.minus(status.estimatedFees),
+              warnings: {},
+              errors: {},
+            };
           },
         },
       ],
