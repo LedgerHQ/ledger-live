@@ -18,6 +18,7 @@ import { FeesField } from "./FeesField";
 import useBitcoinPickingStrategy from "./useBitcoinPickingStrategy";
 import { useFeesStrategy } from "@ledgerhq/live-common/families/bitcoin/react";
 import SendFeeMode from "~/renderer/components/SendFeeMode";
+import { track } from "~/renderer/analytics/segment";
 
 type Props = {
   account: Account,
@@ -28,6 +29,7 @@ type Props = {
   bridgePending: boolean,
   updateTransaction: (updater: any) => void,
   mapStrategies?: FeeStrategy => FeeStrategy & { [string]: * },
+  trackProperties?: object,
 };
 
 const Separator = styled.div`
@@ -45,6 +47,7 @@ const Fields = ({
   status,
   updateTransaction,
   mapStrategies,
+  trackProperties = {},
 }: Props) => {
   invariant(transaction.family === "bitcoin", "FeeField: bitcoin family expected");
 
@@ -68,6 +71,11 @@ const Fields = ({
 
   const onFeeStrategyClick = useCallback(
     ({ amount, feesStrategy }) => {
+      track("button_clicked", {
+        ...trackProperties,
+        button: feesStrategy,
+        feePerByte: amount,
+      });
       updateTransaction(transaction =>
         bridge.updateTransaction(transaction, { feePerByte: amount, feesStrategy }),
       );
@@ -77,15 +85,38 @@ const Fields = ({
     [updateTransaction, bridge],
   );
 
+  const setAdvanceModeAndTrack = useCallback(
+    state => {
+      track("button_clicked", {
+        ...trackProperties,
+        button: state ? "advanced" : "standard",
+      });
+      setAdvanceMode(state);
+    },
+    [trackProperties],
+  );
+
+  const onChangeAndTrack = useCallback(
+    params => {
+      track("button_clicked", {
+        ...trackProperties,
+        button: "fees",
+        value: params,
+      });
+      onChange(params);
+    },
+    [onChange, trackProperties],
+  );
+
   return (
     <>
-      <SendFeeMode isAdvanceMode={isAdvanceMode} setAdvanceMode={setAdvanceMode} />
+      <SendFeeMode isAdvanceMode={isAdvanceMode} setAdvanceMode={setAdvanceModeAndTrack} />
       {isAdvanceMode ? (
         <Box>
           <FeesField
             transaction={transaction}
             account={account}
-            onChange={onChange}
+            onChange={onChangeAndTrack}
             status={status}
           />
           <Separator />
@@ -118,7 +149,7 @@ const Fields = ({
             <CoinControlModal
               transaction={transaction}
               account={account}
-              onChange={onChange}
+              onChange={onChangeAndTrack}
               status={status}
               isOpened={coinControlOpened}
               onClose={onCoinControlClose}

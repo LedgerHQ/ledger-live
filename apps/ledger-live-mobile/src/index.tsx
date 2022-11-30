@@ -103,6 +103,7 @@ import PostOnboardingProviderWrapped from "./logic/postOnboarding/PostOnboarding
 import { isAcceptedTerms } from "./logic/terms";
 import type { Writeable } from "./types/helpers";
 import PlatformAppProviderWrapper from "./PlatformAppProviderWrapper";
+import HookDynamicContentCards from "./dynamicContent/useContentCards";
 
 const themes: {
   [key: string]: Theme;
@@ -661,6 +662,7 @@ export default class Root extends Component<{
                 <DelayedTrackingProvider />
                 <AnalyticsProvider store={store}>
                   <HookNotifications />
+                  <HookDynamicContentCards />
                   <WalletConnectProvider>
                     <PlatformAppProviderWrapper>
                       <FirebaseRemoteConfigProvider>

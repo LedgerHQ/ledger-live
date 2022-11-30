@@ -410,6 +410,9 @@
       "title" : "죄송하지만 필요한 앱입니다",
       "description" : "마지막으로 비트코인 앱이나 이더리움 앱을 삭제하세요."
     },
+    "MaxFeeLow" : {
+      "title" : "최대 비용이 너무 낮습니다. 트랜잭션이 당분간 보류 상태일 수 있습니다."
+    },
     "NetworkDown" : {
       "title" : "죄송하지만 인터넷이 끊긴 것 같습니다",
       "description" : "인터넷 연결을 확인하세요."
@@ -595,6 +598,9 @@
     "SourceHasMultiSign" : {
       "title" : "{{currencyName}}(을)를 보내려면 다중서명을 비활성화하세요"
     },
+    "DustLimit" : {
+      "title" : "더스트(소액) 한도보다 낮은 금액입니다."
+    },
     "StratisDown2021Warning" : {
       "description" : "Stratis 블록체인 진화로 더 이상 제대로 작동하지 않을 수 있습니다. 기존 Stratis 블록체인은 2021년 10월 16일까지 지원됩니다."
     },
@@ -744,6 +750,23 @@
     },
     "HederaAddAccountError" : {
       "title" : "귀하의 계정이 추가되지 않았습니다. 다시 시도해 주세요."
+    },
+    "PriorityFeeTooLow" : {
+      "title" : "우선 수수료가 권장 값 보다 낮습니다."
+    },
+    "PriorityFeeTooHigh" : {
+      "title" : "우선 수수료가 필요 이상으로 높습니다. 초과 금액을 지불할 수 있습니다."
+    },
+    "MaxFeeTooLow" : {
+      "title" : "최대 수수료가 권장 값보다 낮습니다."
+    },
+    "PriorityFeeHigherThanMaxFee" : {
+      "title" : "최대 우선 수수료가 최대 수수료보다 높아서는 안됩니다."
+    },
+    "LockedDeviceError" : {
+      "title" : "장치가 잠금 상태입니다",
+      "description" : "장치의 잠금을 해제하고 다시 시도하세요.",
+      "descriptionWithProductName" : "{{ productName }}의 잠금을 해제하고 다시 시도하세요."
     }
   },
   "crash" : {
@@ -762,13 +785,26 @@
     }
   },
   "location" : {
-    "required" : "위치 서비스가 필요합니다",
+    "titleServiceRequired" : "Location services required",
+    "titlePermissionRequired" : "Location permission required",
+    "titlePermissionRequiredPrecise" : "Precise location permission required",
+    "descriptionServiceRequired" : "Ledger Live requires location services to pair your device through Bluetooth.",
+    "descriptionPermissionRequired" : "Ledger Live requires the location permission to pair your device through Bluetooth.",
+    "descriptionPermissionRequiredPrecise" : "Ledger Live requires the precise location permission to pair your device through Bluetooth.",
     "open" : "위치 설정 열기",
-    "disabled" : "블루투스로 귀하의 장치를 Ledger Live와 페어링 하려면 위치 서비스가 필요합니다.",
     "noInfos" : "Ledger는 사용자의 위치 정보를 사용하지 않습니다."
   },
   "permissions" : {
-    "open" : "앱 사용 권한 열기"
+    "open" : "앱 사용 권한 열기",
+    "authorize" : "Authorize",
+    "bluetooth" : {
+      "modalTitle" : "Permission required to pair your Ledger over Bluetooth",
+      "modalDescriptionBase" : "To pair your Ledger over Bluetooth, you must authorize Ledger Live to scan for nearby devices.",
+      "modalDescriptionSettingsVariant" : "To pair your Ledger over Bluetooth, you must authorize Ledger Live to scan for nearby devices in your phone’s settings.",
+      "modalButtonLabelBase" : "Authorize",
+      "modalButtonLabelSettingsVariant" : "Go to settings",
+      "dontPair" : "Don't pair"
+    }
   },
   "fees" : {
     "speed" : {
@@ -1804,6 +1840,9 @@
         }
       }
     },
+    "appsStep" : {
+      "title" : "{{productName}} 애플리케이션"
+    },
     "readyStep" : {
       "title" : "{{productName}} 장치가 준비되었습니다."
     },
@@ -2140,7 +2179,7 @@
       },
       "advanced" : {
         "title" : "고급 로그",
-        "warningDerivation" : "{{tag}} xpub 입니다. 타사 지갑으로 가져올 때 동일한 파생 모드를 선택하세요.",
+        "warningDerivation" : "{{tag}} xpub입니다. 타사 지갑으로 가져올 때 동일한 파생 모드를 선택하세요.",
         "desc" : ""
       }
     },
@@ -2435,14 +2474,19 @@
         "title" : "마켓",
         "desc" : "중요한 시장 변화에 대한 업데이트 받아 보기"
       },
-      "announcement" : {
+      "announcements" : {
         "title" : "발표",
         "desc" : "중요한 Ledger Live 업데이트 받아 보기"
+      },
+      "recommendations" : {
+        "title" : "추천",
+        "desc" : "개인 맞춤 추천과 특별 오퍼로 더욱 풍성해진 사용자 경험을 누려보세요."
       },
       "price" : {
         "title" : "가격 알림",
         "desc" : "시장 흐름을 놓치지 않도록 선호하는 코인의 가격 알림을 설정해 보세요"
-      }
+      },
+      "disclaimer" : "Ledger는 데이터 프라이버시를 무엇보다 중요하게 생각합니다. 수집된 데이터를 파트너와 공유하는 일은 절대 없습니다."
     },
     "help" : {
       "title" : "도움말",
@@ -2523,13 +2567,14 @@
       "featureFlagsTitle" : "Ledger Live에서 사용되는 정의된 기능 플래그",
       "featureFlagsDesc" : "앱을 다시 실행하면 재정의된 값이 다시 설정됩니다. 유효한 JSON 문자열만 허용됩니다.",
       "featureFlagsEdit" : "편집",
-      "featureFlagsRestore" : "복구"
+      "featureFlagsRestore" : "복구",
+      "firebaseProject" : "Firebase project targeted by this build:"
     }
   },
   "notifications" : {
     "prompt" : {
       "title" : "알림 켜기",
-      "desc" : "Ledger Live, Ledger 제품 및 보안 관련 중요 업데이트를 받아보세요. 해제는 언제든지 가능합니다.",
+      "desc" : "Ledger Live, Ledger 제품, 맞춤형 제안 및 시장에 대한 최신 업데이트를 받아보세요. 해제는 언제든지 가능합니다.",
       "allow" : "알림 허용",
       "later" : "다음에 결정하기"
     }
@@ -3151,6 +3196,12 @@
       }
     }
   },
+  "signMessage" : {
+    "eip712" : {
+      "showFullMessage" : "전체 메시지 보기",
+      "hideFullMessage" : "전체 메시지 숨기기"
+    }
+  },
   "sync" : {
     "error" : "동기화 오류",
     "loading" : "동기화"
@@ -3212,9 +3263,14 @@
       "infoTotalDesc" : "트랜잭션 금액과 선택된 네트워크 수수료가 포함됩니다",
       "gasLimit" : "가스 한도(Gas limit)",
       "gasPrice" : "가스 가격(Gas price)",
+      "maxFee" : "최대 비용",
+      "maxPriorityFee" : "최대 우선 수수료",
+      "nextBlock" : "다음 블록: {{nextBaseFee}}",
+      "suggestedPriorityFee" : "권장: {{lowPriorityFee}} - {{highPriorityFee}}",
       "maxFees" : "최대 수수료",
       "validateGasLimit" : "가스 제한 검증",
       "fees" : "수수료",
+      "maxEstimatedFee" : "최대 예상 수수료",
       "validateFees" : "수수료 검증",
       "customizeFees" : "맞춤형 수수료",
       "memo" : {
@@ -3462,7 +3518,7 @@
     }
   },
   "DeviceAction" : {
-    "stayInTheAppPlz" : "앱을 그대로 유지하고 Nano X를 가까운 곳에 위치시켜 주세요",
+    "stayInTheAppPlz" : "Ledger Live 앱을 끄지 마시고 Ledger 장치를 가까운 곳에 위치시켜 주세요.",
     "allowAppPermission" : "내 장치에서 {{wording}} 앱 열기",
     "allowAppPermissionSubtitleToken" : "나의 {{token}} 토큰 관리",
     "allowManagerPermission" : "장치에서 {{wording}} 허용",
@@ -3490,7 +3546,10 @@
     },
     "confirmSwap" : {
       "title" : "장치에서 스왑 거래를 확인하세요",
-      "alert" : "장치에서 스왑 세부사항을 확인한 후 전송하세요. 주소가 안전하게 교환되어 주소를 따로 인증할 필요 없습니다.",
+      "alert" : {
+        "default" : "장치에서 스왑 세부사항을 확인한 후 전송하세요. 주소가 안전하게 교환되어 주소를 따로 인증할 필요 없습니다.",
+        "cic" : "장치에서 자금 세부사항을 확인한 후 전송하세요. CIC는 일부 트랜잭션에 대해 추가 확인을 수행해야 하므로 지연이 발생할 수 있습니다."
+      },
       "acceptTerms" : "본인은 이 트랜잭션을 확인함으로써 \n<0><0>{{provider}}</0>의 이용약관</0>을 수락합니다.",
       "notice" : "장치에서 스왑 세부사항을 확인한 후 전송하세요. 주소가 안전하게 교환되어 주소를 따로 인증할 필요 없습니다."
     },
@@ -3634,6 +3693,7 @@
         "description" : "저장된 Ledger 장치 관리"
       },
       "addNewCTA" : "새로 추가하기",
+      "otgBanner" : "Nano S 또는 Nano S Plus 사용자라면, 장치를 USB 케이블로 연결하세요.",
       "connectExistingLedger" : "기존 Ledger 연결",
       "connectExistingLedgerDescription" : "이미 설정된 Ledger가 있나요? 블루투스 페어링을 진행하세요",
       "setUpNewLedger" : "새 Ledger 설정",
@@ -3889,7 +3949,7 @@
       "de" : "Deutsch",
       "tr" : "Türk",
       "ja" : "日本",
-      "ko" : "한국인",
+      "ko" : "한국어",
       "pt" : "Português"
     }
   },
@@ -5335,7 +5395,8 @@
       "seeFewerNfts" : "적은 NFT 보기"
     },
     "gallery" : {
-      "allNft" : "모든 NFT"
+      "allNft" : "모든 NFT",
+      "addNew" : "새로 추가"
     },
     "viewer" : {
       "properties" : "속성",
@@ -5352,7 +5413,13 @@
     "viewerModal" : {
       "viewOn" : "다음에서 보기:",
       "viewInExplorer" : "탐색기에서 보기",
+      "hide" : "NFT 컬렉션 숨기기",
       "txDetails" : "트랜잭션 세부 사항"
+    },
+    "modalDisabled" : {
+      "title" : "전송 기능을 사용할 수 없습니다",
+      "body" : "애플 앱스토어 최신 업데이트 사항 준수를 위해 NFT 전송 기능을 일시적으로 사용하실 수 없습니다. 여전히 데스크탑에서는 Ledger Live로 NFT 전송이 가능합니다.",
+      "contactSupport" : "자세한 정보는 지원 관련 기사를 확인해 주세요."
     }
   },
   "ApplicationVersion" : "v{{version}}",
@@ -5393,18 +5460,26 @@
     "cropImage" : "이미지 자르기",
     "chooseConstrast" : "대비 선택",
     "uploadAnotherImage" : "다른 이미지 업로드",
-    "selectContrast" : "컨트라스트 선택",
+    "rotateImage" : "회전",
     "allowPreview" : "{{productName}}에서 사진 미리보기 허용",
     "loadingPicture" : "{{productName}}에서 사진 로드 중",
     "pictureLoaded" : "사진 로드 완료",
     "timeDisclaimer" : "최대 30초가 소요될 수 있습니다",
     "imageLoaded" : "{{productName}}에서 로드한 이미지",
     "confirmPicture" : "{{productName}}에서 확인",
-    "title" : "사진을 선택하고,\n원하는 느낌으로,\n나만의 Ledger를 만나보세요.",
-    "subtitle" : "좋아하는 NFT 이미지나 휴대폰에 저장된 사진으로 설정해 보세요.",
+    "landingPage" : {
+      "title" : "사진을 선택하고,\n원하는 느낌으로,\n나만의 Ledger를 만나보세요.",
+      "subtitle" : "좋아하는 NFT 이미지나 휴대폰에 저장된 사진으로 설정해 보세요.",
+      "choosePicture" : "사진 선택"
+    },
     "customImage" : "커스텀 사진",
-    "choosePicture" : "사진 선택",
-    "doThisLater" : "다음에 결정하기"
+    "doThisLater" : "다음에 결정하기",
+    "preview" : {
+      "title" : "Preview",
+      "loading" : "Loading preview",
+      "setPicture" : "Set custom picture",
+      "editPicture" : "Edit picture"
+    }
   },
   "postOnboarding" : {
     "hub" : {
@@ -5425,6 +5500,37 @@
         "description" : "원하는 이미지 추가",
         "popupLabel" : "장치 커스텀 완료",
         "hubTitleAfterAction" : "깔끔하고 멋진 화면이네요"
+      }
+    }
+  },
+  "wallet" : {
+    "tabs" : {
+      "crypto" : "암호화폐",
+      "nft" : "NFT"
+    },
+    "nftGallery" : {
+      "empty" : {
+        "title" : "아직 표시할 NFT가 없습니다",
+        "subtitle" : "첫 NFT를 받고 시작해 보세요.",
+        "receive" : "NFT 수령",
+        "supportLink" : "다른 지갑에서 NFT를 받는 방법은 무엇인가요?"
+      },
+      "receiveModal" : {
+        "title" : "다른 암호화폐와 동일한 방법으로 NFT를 수령하세요",
+        "bullets" : {
+          "0" : "• 해당 NFT의 암호화 블록체인을 선택합니다.",
+          "1" : "• 해당 NFT를 수령할 계정을 선택합니다"
+        },
+        "cta" : "알겠습니다",
+        "info" : "조금 더 자세히 알고 싶습니다"
+      },
+      "hideNftModal" : {
+        "title" : "NFT 컬렉션 숨기기",
+        "desc" : "이 작업은 {{collectionName}}에서 모든 NFT를 숨김 처리합니다. 앱 설정에서 숨김 해제하여 다시 표시할 수 있습니다",
+        "cta" : "이 NFT 숨기기"
+      },
+      "media" : {
+        "tag" : "{{count}}개의 NFT"
       }
     }
   }

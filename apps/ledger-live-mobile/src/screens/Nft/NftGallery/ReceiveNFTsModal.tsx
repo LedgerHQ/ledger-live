@@ -21,7 +21,7 @@ export default function ReceiveNFTsModal({ onClose, isOpened }: Props) {
   const onClickContinue = useCallback(() => {
     track("button_clicked", {
       button: "Continue",
-      drawer: "ReceiveNFTsModal",
+      drawer: "Confirm Receive NFT",
     });
     navigation.navigate(NavigatorName.ReceiveFunds, {
       screen: ScreenName.ReceiveSelectCrypto,
@@ -44,6 +44,7 @@ export default function ReceiveNFTsModal({ onClose, isOpened }: Props) {
     track("url_clicked", {
       name: "i'd like to learn more",
       url: urls.nft.howToSecure,
+      drawer: "Confirm Receive NFT",
     });
     Linking.openURL(urls.nft.howToSecure);
   }, []);
@@ -65,9 +66,9 @@ export default function ReceiveNFTsModal({ onClose, isOpened }: Props) {
       Icon={<EthPolygonIcons />}
     >
       <TrackScreen
-        category="ReceiveFlowNFT"
-        name="Confirm Receive NFT"
+        category="Confirm Receive NFT"
         type="drawer"
+        refreshSource={false}
       />
 
       {new Array(2).fill(null).map((_e, index) => (

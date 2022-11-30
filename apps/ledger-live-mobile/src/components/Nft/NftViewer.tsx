@@ -210,6 +210,7 @@ const NftViewer = ({ route }: Props) => {
   const closeModal = () => {
     track("button_clicked", {
       button: "Close 'x'",
+      drawer: "NFT settings",
     });
     setBottomModalOpen(false);
   };

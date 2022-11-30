@@ -1,5 +1,23 @@
 # @ledgerhq/react-ui
 
+## 0.10.1
+
+### Patch Changes
+
+- [#1882](https://github.com/LedgerHQ/ledger-live/pull/1882) [`828af17431`](https://github.com/LedgerHQ/ledger-live/commit/828af1743180ccf0f21a7de143cb910ef7258407) Thanks [@mlegall-ledger](https://github.com/mlegall-ledger)! - Fixed naming issues causing error in CSJ. New prefixing system to prevent issues with icon names starting with a number
+
+- Updated dependencies [[`7aa0e616b3`](https://github.com/LedgerHQ/ledger-live/commit/7aa0e616b3dab8e218fea8631c3aa8b894dfc8f1), [`828af17431`](https://github.com/LedgerHQ/ledger-live/commit/828af1743180ccf0f21a7de143cb910ef7258407)]:
+  - @ledgerhq/icons-ui@0.3.1
+
+## 0.10.1-next.0
+
+### Patch Changes
+
+- [#1882](https://github.com/LedgerHQ/ledger-live/pull/1882) [`828af17431`](https://github.com/LedgerHQ/ledger-live/commit/828af1743180ccf0f21a7de143cb910ef7258407) Thanks [@mlegall-ledger](https://github.com/mlegall-ledger)! - Fixed naming issues causing error in CSJ. New prefixing system to prevent issues with icon names starting with a number
+
+- Updated dependencies [[`7aa0e616b3`](https://github.com/LedgerHQ/ledger-live/commit/7aa0e616b3dab8e218fea8631c3aa8b894dfc8f1), [`828af17431`](https://github.com/LedgerHQ/ledger-live/commit/828af1743180ccf0f21a7de143cb910ef7258407)]:
+  - @ledgerhq/icons-ui@0.3.1-next.0
+
 ## 0.10.0
 
 ### Minor Changes

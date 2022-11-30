@@ -1,5 +1,83 @@
 # @ledgerhq/live-common
 
+## 27.8.0
+
+### Minor Changes
+
+- [#1775](https://github.com/LedgerHQ/ledger-live/pull/1775) [`d10c727430`](https://github.com/LedgerHQ/ledger-live/commit/d10c727430ffece743bbb7e703aaff61f97dacc1) Thanks [@nparigi-ledger](https://github.com/nparigi-ledger)! - Add new NFT helpers used for the NFT Gallery (orderByLastReceived, groupByCurrency, getNFTByTokenId), add mock NFT account
+
+* [#1817](https://github.com/LedgerHQ/ledger-live/pull/1817) [`57b82ad735`](https://github.com/LedgerHQ/ledger-live/commit/57b82ad7350c6368b2d6a731d7b1c52b759516b0) Thanks [@sarneijim](https://github.com/sarneijim)! - CIC swap integration
+
+- [#1798](https://github.com/LedgerHQ/ledger-live/pull/1798) [`e43939cfd5`](https://github.com/LedgerHQ/ledger-live/commit/e43939cfd5e3df8888cfe1f0ba95140acd061eea) Thanks [@henrily-ledger](https://github.com/henrily-ledger)! - change polkadot's api call to anticipate new version
+
+* [#1908](https://github.com/LedgerHQ/ledger-live/pull/1908) [`f22d46a006`](https://github.com/LedgerHQ/ledger-live/commit/f22d46a006adc630ccb087808c2290e3ef65cea3) Thanks [@henrily-ledger](https://github.com/henrily-ledger)! - add solana dust to staking to prevent user to be unable to do anything
+
+### Patch Changes
+
+- [#1741](https://github.com/LedgerHQ/ledger-live/pull/1741) [`77056e3692`](https://github.com/LedgerHQ/ledger-live/commit/77056e369256112188c183823a2c3fabfea2cba8) Thanks [@alexandremgo](https://github.com/alexandremgo)! - Fix for locked device error
+
+* [#1835](https://github.com/LedgerHQ/ledger-live/pull/1835) [`70f00ec916`](https://github.com/LedgerHQ/ledger-live/commit/70f00ec91629c917be13c6937e14ebc7201b231f) Thanks [@LFBarreto](https://github.com/LFBarreto)! - fix crypto icons viewport issues
+
+- [#1779](https://github.com/LedgerHQ/ledger-live/pull/1779) [`856f49374e`](https://github.com/LedgerHQ/ledger-live/commit/856f49374ec9b49f005676e270acdb81b78879c8) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Adapted the fetchImage command and added new device action
+
+* [#1957](https://github.com/LedgerHQ/ledger-live/pull/1957) [`3119c17ec3`](https://github.com/LedgerHQ/ledger-live/commit/3119c17ec3966f7dc1780734c016878bab9db722) Thanks [@github-actions](https://github.com/apps/github-actions)! - Fix: improvement on BLE scanning and polling mechanism
+
+* Updated dependencies [[`856f49374e`](https://github.com/LedgerHQ/ledger-live/commit/856f49374ec9b49f005676e270acdb81b78879c8), [`77056e3692`](https://github.com/LedgerHQ/ledger-live/commit/77056e369256112188c183823a2c3fabfea2cba8)]:
+  - @ledgerhq/errors@6.12.1
+  - @ledgerhq/devices@7.0.5
+  - @ledgerhq/hw-app-algorand@6.27.8
+  - @ledgerhq/hw-app-cosmos@6.27.8
+  - @ledgerhq/hw-app-eth@6.30.1
+  - @ledgerhq/hw-app-polkadot@6.27.8
+  - @ledgerhq/hw-app-solana@7.0.2
+  - @ledgerhq/hw-app-trx@6.27.8
+  - @ledgerhq/hw-transport@6.27.8
+  - @ledgerhq/hw-transport-node-speculos@6.27.8
+  - @ledgerhq/hw-app-btc@9.0.1
+  - @ledgerhq/hw-app-str@6.27.8
+  - @ledgerhq/hw-app-tezos@6.27.8
+  - @ledgerhq/hw-app-xrp@6.27.8
+  - @ledgerhq/hw-transport-mocker@6.27.8
+
+## 27.8.0-next.0
+
+### Minor Changes
+
+- [#1775](https://github.com/LedgerHQ/ledger-live/pull/1775) [`d10c727430`](https://github.com/LedgerHQ/ledger-live/commit/d10c727430ffece743bbb7e703aaff61f97dacc1) Thanks [@nparigi-ledger](https://github.com/nparigi-ledger)! - Add new NFT helpers used for the NFT Gallery (orderByLastReceived, groupByCurrency, getNFTByTokenId), add mock NFT account
+
+* [#1817](https://github.com/LedgerHQ/ledger-live/pull/1817) [`57b82ad735`](https://github.com/LedgerHQ/ledger-live/commit/57b82ad7350c6368b2d6a731d7b1c52b759516b0) Thanks [@sarneijim](https://github.com/sarneijim)! - CIC swap integration
+
+- [#1798](https://github.com/LedgerHQ/ledger-live/pull/1798) [`e43939cfd5`](https://github.com/LedgerHQ/ledger-live/commit/e43939cfd5e3df8888cfe1f0ba95140acd061eea) Thanks [@henrily-ledger](https://github.com/henrily-ledger)! - change polkadot's api call to anticipate new version
+
+* [#1908](https://github.com/LedgerHQ/ledger-live/pull/1908) [`f22d46a006`](https://github.com/LedgerHQ/ledger-live/commit/f22d46a006adc630ccb087808c2290e3ef65cea3) Thanks [@henrily-ledger](https://github.com/henrily-ledger)! - add solana dust to staking to prevent user to be unable to do anything
+
+### Patch Changes
+
+- [#1741](https://github.com/LedgerHQ/ledger-live/pull/1741) [`77056e3692`](https://github.com/LedgerHQ/ledger-live/commit/77056e369256112188c183823a2c3fabfea2cba8) Thanks [@alexandremgo](https://github.com/alexandremgo)! - Fix for locked device error
+
+* [#1835](https://github.com/LedgerHQ/ledger-live/pull/1835) [`70f00ec916`](https://github.com/LedgerHQ/ledger-live/commit/70f00ec91629c917be13c6937e14ebc7201b231f) Thanks [@LFBarreto](https://github.com/LFBarreto)! - fix crypto icons viewport issues
+
+- [#1779](https://github.com/LedgerHQ/ledger-live/pull/1779) [`856f49374e`](https://github.com/LedgerHQ/ledger-live/commit/856f49374ec9b49f005676e270acdb81b78879c8) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Adapted the fetchImage command and added new device action
+
+* [#1957](https://github.com/LedgerHQ/ledger-live/pull/1957) [`3119c17ec3`](https://github.com/LedgerHQ/ledger-live/commit/3119c17ec3966f7dc1780734c016878bab9db722) Thanks [@github-actions](https://github.com/apps/github-actions)! - Fix: improvement on BLE scanning and polling mechanism
+
+* Updated dependencies [[`856f49374e`](https://github.com/LedgerHQ/ledger-live/commit/856f49374ec9b49f005676e270acdb81b78879c8), [`77056e3692`](https://github.com/LedgerHQ/ledger-live/commit/77056e369256112188c183823a2c3fabfea2cba8)]:
+  - @ledgerhq/errors@6.12.1-next.0
+  - @ledgerhq/devices@7.0.5-next.0
+  - @ledgerhq/hw-app-algorand@6.27.8-next.0
+  - @ledgerhq/hw-app-cosmos@6.27.8-next.0
+  - @ledgerhq/hw-app-eth@6.30.1-next.0
+  - @ledgerhq/hw-app-polkadot@6.27.8-next.0
+  - @ledgerhq/hw-app-solana@7.0.2-next.0
+  - @ledgerhq/hw-app-trx@6.27.8-next.0
+  - @ledgerhq/hw-transport@6.27.8-next.0
+  - @ledgerhq/hw-transport-node-speculos@6.27.8-next.0
+  - @ledgerhq/hw-app-btc@9.0.1-next.0
+  - @ledgerhq/hw-app-str@6.27.8-next.0
+  - @ledgerhq/hw-app-tezos@6.27.8-next.0
+  - @ledgerhq/hw-app-xrp@6.27.8-next.0
+  - @ledgerhq/hw-transport-mocker@6.27.8-next.0
+
 ## 27.7.2
 
 ### Patch Changes
