@@ -446,6 +446,15 @@ const linkingOptions = {
               [ScreenName.DeveloperSettings]: "settings/developer",
             },
           },
+
+          [NavigatorName.CustomImage]: {
+            screens: {
+              /**
+               * ie: "ledgerlive://custom-image"
+               */
+              [ScreenName.CustomImageStep0Welcome]: "custom-image",
+            },
+          },
         },
       },
     },
