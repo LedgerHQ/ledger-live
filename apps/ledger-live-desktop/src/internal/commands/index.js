@@ -13,6 +13,7 @@ import signMessage from "./signMessage";
 import ping from "./ping";
 import connectApp from "./connectApp";
 import connectManager from "./connectManager";
+import networkTroubleshoot from "./networkTroubleshoot";
 import testApdu from "./testApdu";
 import testCrash from "./testCrash";
 import testInterval from "./testInterval";
@@ -49,6 +50,7 @@ export const commandsById = {
   connectManager,
   listApps,
   ping,
+  networkTroubleshoot,
   testApdu,
   initSwap,
   startExchange,

@@ -62,6 +62,7 @@ import {
   SettingsUpdateCurrencyPayload,
   SettingsActionTypes,
   SettingsSetWalletTabNavigatorLastVisitedTabPayload,
+  SettingsSetDismissedDynamicCardsPayload,
 } from "./types";
 import { WalletTabNavigatorStackParamList } from "../components/RootNavigator/types/WalletTabNavigator";
 
@@ -260,6 +261,13 @@ const setCarouselVisibilityAction =
 export const setCarouselVisibility = (carouselVisibility: {
   [key: string]: boolean;
 }) => setCarouselVisibilityAction({ carouselVisibility });
+
+const setDismissedDynamicCardsAction =
+  createAction<SettingsSetDismissedDynamicCardsPayload>(
+    SettingsActionTypes.SETTINGS_SET_DISMISSED_DYNAMIC_CARDS,
+  );
+export const setDismissedDynamicCards = (dismissedDynamicCards: string[]) =>
+  setDismissedDynamicCardsAction({ dismissedDynamicCards });
 
 const setAvailableUpdateAction =
   createAction<SettingsSetAvailableUpdatePayload>(

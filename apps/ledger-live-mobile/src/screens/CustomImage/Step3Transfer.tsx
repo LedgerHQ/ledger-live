@@ -1,6 +1,6 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { ScrollView } from "react-native";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Flex } from "@ledgerhq/native-ui";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
@@ -48,7 +48,15 @@ type NavigationProps = BaseComposite<
 const Step3Transfer = ({ route, navigation }: NavigationProps) => {
   const dispatch = useDispatch();
   const { rawData, device: deviceFromRoute, previewData } = route.params;
+
   const [device, setDevice] = useState<Device | null>(deviceFromRoute);
+  const lastConnectedDevice = useSelector(lastConnectedDeviceSelector);
+
+  useEffect(() => {
+    if (!device && lastConnectedDevice?.modelId === DeviceModelId.nanoFTS) {
+      setDevice(lastConnectedDevice);
+    }
+  }, [lastConnectedDevice, device]);
 
   const handleError = useCallback(
     (error: Error) => {

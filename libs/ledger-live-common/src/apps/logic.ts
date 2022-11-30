@@ -475,7 +475,7 @@ export const isOutOfMemoryState = (state: State): boolean => {
   return totalAppsBlocks > appsSpaceBlocks;
 };
 export const isLiveSupportedApp = (app: App): boolean => {
-  const currency = app.currencyId
+  const currency = app?.currencyId
     ? findCryptoCurrencyById(app.currencyId)
     : null;
   return currency ? isCurrencySupported(currency) : false;

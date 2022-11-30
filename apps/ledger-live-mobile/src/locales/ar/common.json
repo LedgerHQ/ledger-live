@@ -87,7 +87,7 @@
     "popular" : "شائع",
     "getSupport" : "احصل على الدعم",
     "comingSoon" : "قريباً",
-    "restart" : "Restart"
+    "restart" : "إعادة التشغيل"
   },
   "errors" : {
     "countervaluesUnavailable" : {
@@ -410,6 +410,9 @@
       "title" : "عفواً، هذا التطبيق مطلوب",
       "description" : "إلغاء تثبيت تطبيق بيتكوين أو إيثيريوم في النهاية."
     },
+    "MaxFeeLow" : {
+      "title" : "الحد الأقصى للرسوم لديك منخفض جداً. معاملتك ربما تظل معلقة لمدة"
+    },
     "NetworkDown" : {
       "title" : "عفواً، يبدو أن بالإنترنت مُعطل",
       "description" : "يرجى أن تتحقق من اتصالك بالإنترنت."
@@ -595,6 +598,9 @@
     "SourceHasMultiSign" : {
       "title" : "يرجى تعطيل خاصية التوقيع المتعدد لإرسال {{currencyName}}"
     },
+    "DustLimit" : {
+      "title" : "المبلغ أقل من حد الغبار"
+    },
     "StratisDown2021Warning" : {
       "description" : "سلسلة كتل Stratis تطورت ومن الوارد ألا تعمل بشكل صحيح. سيتم توفير الدعم لسلسلة كتل Stratis الأصلية حتى 16 أكتوبر 2021."
     },
@@ -744,6 +750,23 @@
     },
     "HederaAddAccountError" : {
       "title" : "لم تتم إضافة حسابك. يرجى إعادة المحاولة."
+    },
+    "PriorityFeeTooLow" : {
+      "title" : "رسوم الأولوية أقل من القيمة الموصى بها"
+    },
+    "PriorityFeeTooHigh" : {
+      "title" : "رسوم الأولوية أكثر من المطلوب. قد تكون تدفع مبالغ زائدة"
+    },
+    "MaxFeeTooLow" : {
+      "title" : "الحد الأقصى للرسوم أقل من القيمة الموصى بها"
+    },
+    "PriorityFeeHigherThanMaxFee" : {
+      "title" : "الحد الأقصى لرسوم الأولوية لا يمكن أن يكون أعلى من الحد الأقصى للرسوم"
+    },
+    "LockedDeviceError" : {
+      "title" : "جهازك مقفل",
+      "description" : "قم بإلغاء قفل جهازك وحاول مرة أخرى.",
+      "descriptionWithProductName" : "قم بإلغاء قفل {{ productName }} خاصتك وحاول مرة أخرى."
     }
   },
   "crash" : {
@@ -762,13 +785,26 @@
     }
   },
   "location" : {
-    "required" : "خدمات الموقع مطلوبة",
+    "titleServiceRequired" : "خدمات الموقع مطلوبة",
+    "titlePermissionRequired" : "Location permission required",
+    "titlePermissionRequiredPrecise" : "Precise location permission required",
+    "descriptionServiceRequired" : "Ledger Live يتطلب خدمات الموقع لإقران جهازك عبر خاصية البلوتوث.",
+    "descriptionPermissionRequired" : "Ledger Live requires the location permission to pair your device through Bluetooth.",
+    "descriptionPermissionRequiredPrecise" : "Ledger Live requires the precise location permission to pair your device through Bluetooth.",
     "open" : "فتح إعدادات الموقع",
-    "disabled" : "Ledger Live يتطلب خدمات الموقع لإقران جهازك عبر خاصية البلوتوث.",
     "noInfos" : "Ledger لا تقوم بالوصول إلى معلومات موقعك."
   },
   "permissions" : {
-    "open" : "فتح تصريحات التطبيق"
+    "open" : "فتح تصريحات التطبيق",
+    "authorize" : "Authorize",
+    "bluetooth" : {
+      "modalTitle" : "Permission required to pair your Ledger over Bluetooth",
+      "modalDescriptionBase" : "To pair your Ledger over Bluetooth, you must authorize Ledger Live to scan for nearby devices.",
+      "modalDescriptionSettingsVariant" : "To pair your Ledger over Bluetooth, you must authorize Ledger Live to scan for nearby devices in your phone’s settings.",
+      "modalButtonLabelBase" : "Authorize",
+      "modalButtonLabelSettingsVariant" : "انتقل إلى الإعدادات",
+      "dontPair" : "Don't pair"
+    }
   },
   "fees" : {
     "speed" : {
@@ -1133,8 +1169,8 @@
         "desc" : "نحن نقوم بتقديم لغات إضافية لمساعدتك في بدء استخدام Ledger. يرجى العلم أن الجزء المتبقي من تجربة Ledger متاح حالياً باللغة الإنجليزية فقط."
       },
       "RestartModal" : {
-        "title" : "Restart required",
-        "paragraph" : "The selected language requires the application to restart. Are you sure you want to continue?"
+        "title" : "إعادة التشغيل مطلوبة",
+        "paragraph" : "اللغة المُختارة تتطلب إعادة تشغيل التطبيق. هل أنت متأكد من رغبتك في المتابعة؟"
       }
     },
     "stepSelectDevice" : {
@@ -1804,6 +1840,9 @@
         }
       }
     },
+    "appsStep" : {
+      "title" : "تطبيقات {{productName}}"
+    },
     "readyStep" : {
       "title" : "{{productName}} مستعد"
     },
@@ -2435,14 +2474,19 @@
         "title" : "السوق",
         "desc" : "تلقي تحديثات عن التغيرات البارزة في السوق"
       },
-      "announcement" : {
+      "announcements" : {
         "title" : "الإعلانات",
         "desc" : "تلقى تحديثات Ledger Live المهمة"
+      },
+      "recommendations" : {
+        "title" : "التوصيات",
+        "desc" : "أثري تجربتك مع التوصيات المخصصة والعروض الخاصة"
       },
       "price" : {
         "title" : "تنبيهات الأسعار",
         "desc" : "قم بتعيين تنبيهات السعر لعملاتك المفضلة حتى لا تفوتك حركة السوق"
-      }
+      },
+      "disclaimer" : "خصوصية البيانات أمر بالغ الأهمية في Ledger. البيانات التي تُجمع لا تُشارَك أبداً مع شركائنا."
     },
     "help" : {
       "title" : "مساعدة",
@@ -2523,13 +2567,14 @@
       "featureFlagsTitle" : "علامات الميزة المحددة المستخدمة في Ledger Live",
       "featureFlagsDesc" : "القيم المُتجاوزَة سيتم إعادة تعيينها إذا أُعيد إطلاق التطبيق. سيتم قبول خيوط JSON الصالحة فقط.",
       "featureFlagsEdit" : "تعديل",
-      "featureFlagsRestore" : "استعادة"
+      "featureFlagsRestore" : "استعادة",
+      "firebaseProject" : "Firebase project targeted by this build:"
     }
   },
   "notifications" : {
     "prompt" : {
       "title" : "تفعيل الإشعارات",
-      "desc" : "احصل على أهم تحديثات Ledger Live، ومنتجات Ledger، والأمان. يمكنك إلغاء الاشتراك في أي وقت.",
+      "desc" : "احصل على آخر مستجدات Ledger Live ومنتجات Ledger والسوق وتوصيات مخصصة. يُمكنك إلغاء الاشتراك في أي وقت عن طريق الإعدادات",
       "allow" : "السماح بالإشعارات",
       "later" : "ربّما في وقت لاحق"
     }
@@ -3151,6 +3196,12 @@
       }
     }
   },
+  "signMessage" : {
+    "eip712" : {
+      "showFullMessage" : "عرض الرسالة كاملة",
+      "hideFullMessage" : "إخفاء الرسالة بالكامل"
+    }
+  },
   "sync" : {
     "error" : "خطأ في المزامنة",
     "loading" : "Sync"
@@ -3212,9 +3263,14 @@
       "infoTotalDesc" : "يشمل مبلغ المعاملة ورسوم الشبكة المحددة",
       "gasLimit" : "حد الغاز",
       "gasPrice" : "سعر الغاز",
+      "maxFee" : "الحد الأقصى للرسوم",
+      "maxPriorityFee" : "الحد الأقصى لرسوم الأولوية",
+      "nextBlock" : "الكتلة التالية: {{nextBaseFee}}",
+      "suggestedPriorityFee" : "المُقترح: {{lowPriorityFee}} - {{highPriorityFee}}",
       "maxFees" : "الحد الأقصى للرسوم",
       "validateGasLimit" : "تأكيد حد الغاز",
       "fees" : "رسوم",
+      "maxEstimatedFee" : "الحد الأقصى للرسوم المُقدرة",
       "validateFees" : "التحقق من صحة الرسوم",
       "customizeFees" : "تخصيص الرسوم",
       "memo" : {
@@ -3462,7 +3518,7 @@
     }
   },
   "DeviceAction" : {
-    "stayInTheAppPlz" : "ابق في تطبيق Ledger Live وحافظ على Nano X الخاصة بك بالقرب منك",
+    "stayInTheAppPlz" : "لا تُغادر تطبيق Ledger Live وابق على Ledger خاصتك بالقرب منك.",
     "allowAppPermission" : "افتح تطبيق {{wording}} على جهازك",
     "allowAppPermissionSubtitleToken" : "لإدارة رموزك {{token}}",
     "allowManagerPermission" : "السماح بــ {{wording}} على جهازك",
@@ -3490,7 +3546,10 @@
     },
     "confirmSwap" : {
       "title" : "تأكيد عملية المبادلة على الجهاز",
-      "alert" : "تحقق من تفاصيل المبادلة على جهازك قبل إرسالها. يتم تبادل العناوين بشكل آمن حتى لا تضطر إلى التحقق منهم.",
+      "alert" : {
+        "default" : "تحقق من تفاصيل المبادلة على جهازك قبل إرسالها. يتم تبادل العناوين بشكل آمن حتى لا تضطر إلى التحقق منهم.",
+        "cic" : "تحقق من تفاصيل المبادلة على جهازك قبل إرسالها. CIC قد تحتاج إلى إجراء تحقق إضافي لبعض المعاملات، مما يؤدي إلى تأخير."
+      },
       "acceptTerms" : "بتأكيد صحة هذه المعاملة، أنا أقبل\n<0><0>شروط استخدام</0> {{provider}}</0>",
       "notice" : "تحقق من تفاصيل المبادلة على جهازك قبل إرسالها. يتم تبادل العناوين بشكل آمن حتى لا تضطر إلى التحقق منهم."
     },
@@ -3634,6 +3693,7 @@
         "description" : "قم بإدارة أجهزة Ledger المحفوظة خاصتك"
       },
       "addNewCTA" : "إضافة جديد",
+      "otgBanner" : "إذا كنت تمتلك Nano S أو Nano S Plus، فقم بتوصيل جهازك عن طريق كبل USB.",
       "connectExistingLedger" : "توصيل Ledger موجود بالفعل",
       "connectExistingLedgerDescription" : "لديك Ledger تم إعدادها؟ قم بإقرانها عبر البلوتوث",
       "setUpNewLedger" : "إعداد Ledger جديدة",
@@ -3889,7 +3949,7 @@
       "de" : "Deutsch",
       "tr" : "Türk",
       "ja" : "日本",
-      "ko" : "한국인",
+      "ko" : "한국어",
       "pt" : "Português"
     }
   },
@@ -5335,7 +5395,8 @@
       "seeFewerNfts" : "رؤية NFT أقل"
     },
     "gallery" : {
-      "allNft" : "جميع NFT"
+      "allNft" : "جميع NFT",
+      "addNew" : "اضف جديد"
     },
     "viewer" : {
       "properties" : "الخصائص",
@@ -5352,7 +5413,13 @@
     "viewerModal" : {
       "viewOn" : "مشاهدة على",
       "viewInExplorer" : "عرض في المتصفح",
+      "hide" : "إخفاء مجموعة NFT",
       "txDetails" : "تفاصيل المعاملة"
+    },
+    "modalDisabled" : {
+      "title" : "وظيفة الإرسال غير متاحة",
+      "body" : "من أجل الامتثال لتحديثات Apple الأخيرة على App Store، فإن إرسال الرموز غير القابلة للاستبدال (NFTs) غير متاح مؤقتاً. لا يزال بوسعك استخدام Ledger Live على سطح المكتب لإرسال الرموز غير القابلة للاستبدال.",
+      "contactSupport" : "يُرجى قراءة مقالة الدعم لدينا للمزيد من المعلومات."
     }
   },
   "ApplicationVersion" : "إصدار {{version}}",
@@ -5393,18 +5460,26 @@
     "cropImage" : "قُصّ الصورة",
     "chooseConstrast" : "اختر التباين",
     "uploadAnotherImage" : "قم بتحميل صورة أخرى",
-    "selectContrast" : "اختر مستوى التباين",
+    "rotateImage" : "تدوير",
     "allowPreview" : "السماح بعرض الصورة على {{productName}}",
     "loadingPicture" : "تحميل الصورة على {{productName}}",
     "pictureLoaded" : "تم تحميل الصورة",
     "timeDisclaimer" : "قد يستغرق هذا حتى 30 ثانية",
     "imageLoaded" : "تم تحميل الصورة على {{productName}}",
     "confirmPicture" : "قم بالتأكيد على {{productName}}",
-    "title" : "اختر صورة.\nاخلق أسلوب.\nاجعل Ledger خاصة بك.",
-    "subtitle" : "ضع صورة لرمزك غير القابل للاستبدال المفضل أو صورة من هاتفك.",
+    "landingPage" : {
+      "title" : "اختر صورة.\nاخلق أسلوب.\nاجعل Ledger خاصة بك.",
+      "subtitle" : "ضع صورة لرمزك غير القابل للاستبدال المفضل أو صورة من هاتفك.",
+      "choosePicture" : "اختر صورة"
+    },
     "customImage" : "صورة مخصصة",
-    "choosePicture" : "اختر صورة",
-    "doThisLater" : "ربّما في وقت لاحق"
+    "doThisLater" : "ربّما في وقت لاحق",
+    "preview" : {
+      "title" : "معاينة",
+      "loading" : "جاري تحميل المعاينة",
+      "setPicture" : "تعيين صورة مخصصة",
+      "editPicture" : "تعديل الصورة"
+    }
   },
   "postOnboarding" : {
     "hub" : {
@@ -5425,6 +5500,37 @@
         "description" : "عن طريق إضافة صورة",
         "popupLabel" : "تم تخصيص الجهاز",
         "hubTitleAfterAction" : "الشاشة تبدو أنيقة"
+      }
+    }
+  },
+  "wallet" : {
+    "tabs" : {
+      "crypto" : "الأصول المشفرة",
+      "nft" : "الرموز غير القابلة للاستبدال (NFTs)"
+    },
+    "nftGallery" : {
+      "empty" : {
+        "title" : "لا توجد رموز غير قابلة للاستبدال لعرضها، ومع ذلك",
+        "subtitle" : "ابدأ تلقي أول رمز غير قابل للاستبدال.",
+        "receive" : "تلقي الرموز غير القابلة للاستبدال",
+        "supportLink" : "كيف تحصل على رموز غير قابلة للاستبدال من محافظ أخرى؟"
+      },
+      "receiveModal" : {
+        "title" : "تلقى رمز غير قابل للاستبدال بنفس الطريقة مثل أصل مشفر آخر",
+        "bullets" : {
+          "0" : "• اختر سلسلة كتل الأصول المشفرة للرمز غير القابل للاستبدال.",
+          "1" : "• اختر حساب ليتم تلقي الرمز غير القابل للاستبدال عليه"
+        },
+        "cta" : "حسناً، فهمت.",
+        "info" : "أرغب في تعلم المزيد"
+      },
+      "hideNftModal" : {
+        "title" : "إخفاء مجموعة NFT",
+        "desc" : "هذا الإجراء سيُخفي جميع الرموز غير القابلة للاستبدال من مجموعة {{collectionName}}، يمكنك إلغاء الإخفاء من إعدادات التطبيق",
+        "cta" : "إخفاء هذا الرمز غير القابل للاستبدال"
+      },
+      "media" : {
+        "tag" : "{{count}} رمز غير قابل للاستبدال"
       }
     }
   }

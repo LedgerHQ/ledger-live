@@ -410,6 +410,9 @@
       "title" : "Entschuldigung, diese App wird benötigt",
       "description" : "Deinstallieren Sie die Bitcoin- oder Ethereum-App zuletzt."
     },
+    "MaxFeeLow" : {
+      "title" : "Ihre maximale Gebühr ist zu niedrig. Ihre Transaktion kann eine Weile ausstehend bleiben"
+    },
     "NetworkDown" : {
       "title" : "Entschuldigung, das Internet scheint ausgefallen zu sein",
       "description" : "Bitte überprüfen Sie Ihre Internetverbindung."
@@ -595,6 +598,9 @@
     "SourceHasMultiSign" : {
       "title" : "Bitte deaktivieren Sie Multisign um {{currencyName}} zu senden"
     },
+    "DustLimit" : {
+      "title" : "Die Menge ist niedriger als das Staub (dust) -Limit"
+    },
     "StratisDown2021Warning" : {
       "description" : "Die Stratis-Blockchain hat sich weiterentwickelt und funktioniert möglicherweise nicht mehr korrekt. Die Unterstützung für die ursprüngliche Stratis-Blockchain wird bis zum 16. Oktober 2021 aufrechterhalten."
     },
@@ -744,6 +750,23 @@
     },
     "HederaAddAccountError" : {
       "title" : "Ihr Konto wurde nicht hinzugefügt. Bitte versuchen Sie es erneut."
+    },
+    "PriorityFeeTooLow" : {
+      "title" : "Die Prioritätsgebühr ist niedriger als der empfohlene Wert"
+    },
+    "PriorityFeeTooHigh" : {
+      "title" : "Die Prioritätsgebühr ist höher als nötig. Möglicherweise zahlen Sie zu viel"
+    },
+    "MaxFeeTooLow" : {
+      "title" : "Die maximale Gebühr ist niedriger als der empfohlene Wert"
+    },
+    "PriorityFeeHigherThanMaxFee" : {
+      "title" : "Die maximale Prioritätsgebühr kann nicht höher sein als die maximale Gebühr"
+    },
+    "LockedDeviceError" : {
+      "title" : "Ihr Gerät ist gesperrt",
+      "description" : "Entsperren Sie Ihr Gerät und versuchen Sie es erneut.",
+      "descriptionWithProductName" : "Entsperren Sie Ihr {{ productName }} und versuchen Sie es erneut."
     }
   },
   "crash" : {
@@ -762,13 +785,26 @@
     }
   },
   "location" : {
-    "required" : "Standortdienste erforderlich",
+    "titleServiceRequired" : "Standortdienste erforderlich",
+    "titlePermissionRequired" : "Standortfreigabe erforderlich",
+    "titlePermissionRequiredPrecise" : "Präzise Standortfreigabe erforderlich",
+    "descriptionServiceRequired" : "Ledger Live erfordert Standortdienste, um Ihr Gerät über Bluetooth zu koppeln.",
+    "descriptionPermissionRequired" : "Ledger Live benötigt die Standortfreigabe, um Ihr Gerät über Bluetooth zu koppeln.",
+    "descriptionPermissionRequiredPrecise" : "Ledger Live benötigt die präzise Standortfreigabe, um Ihr Gerät über Bluetooth zu verbinden.",
     "open" : "Standort-Einstellungen öffnen",
-    "disabled" : "Ledger Live erfordert Standortdienste, um Ihr Gerät über Bluetooth zu koppeln.",
     "noInfos" : "Ledger greift nicht auf Ihre Standortinformationen zu."
   },
   "permissions" : {
-    "open" : "App-Berechtigungen öffnen"
+    "open" : "App-Berechtigungen öffnen",
+    "authorize" : "Autorisieren",
+    "bluetooth" : {
+      "modalTitle" : "Für die Verbindung Ihres Ledgers über Bluetooth ist eine Genehmigung erforderlich",
+      "modalDescriptionBase" : "Um Ihren Ledger über Bluetooth zu verbinden, müssen Sie Ledger Live autorisieren, nach Geräten in der Nähe zu suchen.",
+      "modalDescriptionSettingsVariant" : "Um Ihren Ledger über Bluetooth zu verbinden, müssen Sie Ledger Live in den Einstellungen Ihres Telefons autorisieren, nach Geräten in der Nähe zu suchen.",
+      "modalButtonLabelBase" : "Autorisieren",
+      "modalButtonLabelSettingsVariant" : "Gehen Sie zu Einstellungen",
+      "dontPair" : "Nicht verbinden"
+    }
   },
   "fees" : {
     "speed" : {
@@ -1804,6 +1840,9 @@
         }
       }
     },
+    "appsStep" : {
+      "title" : "{{productName}} Anwendungen"
+    },
     "readyStep" : {
       "title" : "{{productName}} ist bereit"
     },
@@ -2435,14 +2474,19 @@
         "title" : "Markt",
         "desc" : "Erhalten Sie wichtige Updates zu Marktveränderungen"
       },
-      "announcement" : {
+      "announcements" : {
         "title" : "Ankündigung",
         "desc" : "Wichtige Updates zu Ledger Live erhalten"
+      },
+      "recommendations" : {
+        "title" : "Empfehlungen",
+        "desc" : "Bereichern Sie Ihr Erlebnis mit personalisierten Empfehlungen und speziellen Angeboten"
       },
       "price" : {
         "title" : "Preisalarme",
         "desc" : "Legen Sie Preisalarme für Ihre Lieblingscoins fest, damit Sie keine Marktbewegung verpassen"
-      }
+      },
+      "disclaimer" : "Der Datenschutz hat bei Ledger oberste Priorität. Die gesammelten Daten werden niemals an unsere Partner weitergegeben"
     },
     "help" : {
       "title" : "Hilfe",
@@ -2523,13 +2567,14 @@
       "featureFlagsTitle" : "In Ledger Live verwendete definierte Feature-Flags",
       "featureFlagsDesc" : "Überschriebene Werte werden zurückgesetzt, wenn die App neu gestartet wird. Es werden nur gültige JSON-Zeichenfolgen akzeptiert.",
       "featureFlagsEdit" : "Bearbeiten",
-      "featureFlagsRestore" : "Wiederherstellen"
+      "featureFlagsRestore" : "Wiederherstellen",
+      "firebaseProject" : "Firebase-Projekt, auf das diese Entwicklung abzielt"
     }
   },
   "notifications" : {
     "prompt" : {
       "title" : "Benachrichtigungen aktivieren",
-      "desc" : "Erhalten Sie wichtige Updates zu Ledger Live, Ledger Produkten und Sicherheit. Abmeldung jederzeit möglich.",
+      "desc" : "Erhalten Sie die neuesten Updates zu Ledger Live, Ledger-Produkten, dem Markt und personalisierte Empfehlungen. Sie können sich jederzeit in den Einstellungen wieder abmelden",
       "allow" : "Benachrichtigungen zulassen",
       "later" : "Vielleicht später"
     }
@@ -3151,6 +3196,12 @@
       }
     }
   },
+  "signMessage" : {
+    "eip712" : {
+      "showFullMessage" : "Vollständige Nachricht anzeigen",
+      "hideFullMessage" : "Vollständige Nachricht ausblenden"
+    }
+  },
   "sync" : {
     "error" : "Fehler beim Synchronisieren",
     "loading" : "Sync"
@@ -3212,9 +3263,14 @@
       "infoTotalDesc" : "Enthält den Transaktionsbetrag und die gewählten Netzwerkgebühren",
       "gasLimit" : "Gaslimit",
       "gasPrice" : "Gaspreis",
+      "maxFee" : "Max. Gebühr",
+      "maxPriorityFee" : "Maximale Prioritätsgebühr",
+      "nextBlock" : "Nächster Block: {{nextBaseFee}}",
+      "suggestedPriorityFee" : "Vorgeschlagen: {{lowPriorityFee}} - {{highPriorityFee}}",
       "maxFees" : "Max. Gebühren",
       "validateGasLimit" : "Gas-Limit validieren",
       "fees" : "Gebühren",
+      "maxEstimatedFee" : "Geschätzte max. Gebühr",
       "validateFees" : "Gebühren validieren",
       "customizeFees" : "Gebühren anpassen",
       "memo" : {
@@ -3462,7 +3518,7 @@
     }
   },
   "DeviceAction" : {
-    "stayInTheAppPlz" : "Bleiben Sie in der Ledger Live-App und halten Sie Ihren Nano X in der Nähe",
+    "stayInTheAppPlz" : "Bleiben Sie in der Ledger Live-App und halten Sie Ihren Ledger bereit.",
     "allowAppPermission" : "Öffnen Sie die {{wording}} App auf Ihrem Gerät",
     "allowAppPermissionSubtitleToken" : "zum Verwalten Ihrer {{token}}-Tokens",
     "allowManagerPermission" : "Erlauben Sie {{wording}} auf Ihrem Gerät",
@@ -3490,7 +3546,10 @@
     },
     "confirmSwap" : {
       "title" : "Swap-Vorgang auf dem Gerät bestätigen",
-      "alert" : "Vor dem Senden der Fondsdetails müssen Sie diese auf Ihrem Gerät verifizieren. Die Adressen müssen Sie nicht verifizieren, da diese sicher ausgetauscht werden.",
+      "alert" : {
+        "default" : "Überprüfen Sie die Details des Tauschs auf Ihrem Gerät, bevor Sie sie senden. Die Adressen werden sicher ausgetauscht, sodass Sie diese nicht verifizieren müssen.",
+        "cic" : "Verifizieren Sie die Swap-Details auf Ihrem Gerät, bevor Sie diese senden. CIC muss möglicherweise eine zusätzliche Überprüfung für einige Transaktionen durchführen, was zu einer Verzögerung führen kann."
+      },
       "acceptTerms" : "Durch Validieren dieser Transaktion stimme ich den\n<0>Nutzungsbedingungen von <0>{{provider}}</0> zu</0>",
       "notice" : "Überprüfen Sie die Details des Tauschs auf Ihrem Gerät, bevor Sie sie senden. Die Adressen werden sicher ausgetauscht, sodass Sie diese nicht verifizieren müssen."
     },
@@ -3634,6 +3693,7 @@
         "description" : "Ihre gespeicherten Ledger verwalten"
       },
       "addNewCTA" : "Neu hinzufügen",
+      "otgBanner" : "Wenn Sie einen Nano S oder Nano S Plus besitzen, schließen Sie Ihr Gerät mit einem USB-Kabel an.",
       "connectExistingLedger" : "Vorhandenes Ledger verbinden",
       "connectExistingLedgerDescription" : "Haben Sie bereits ein Ledger, das eingerichtet ist? Verbinden Sie es mit Bluetooth",
       "setUpNewLedger" : "Richten Sie ein neues Ledger ein",
@@ -5335,7 +5395,8 @@
       "seeFewerNfts" : "Weniger NFT anzeigen"
     },
     "gallery" : {
-      "allNft" : "Alle NFT"
+      "allNft" : "Alle NFT",
+      "addNew" : "Neu hinzufügen"
     },
     "viewer" : {
       "properties" : "Eigenschaften",
@@ -5352,7 +5413,13 @@
     "viewerModal" : {
       "viewOn" : "Ansehen auf",
       "viewInExplorer" : "Im Explorer ansehen",
+      "hide" : "NFT-Sammlung ausblenden",
       "txDetails" : "Transaktionsdetails"
+    },
+    "modalDisabled" : {
+      "title" : "Sendefunktion nicht verfügbar",
+      "body" : "Angesichts der aktuellen Aktualisierungen im App Store von Apple ist der Versand von NFTs vorübergehend nicht möglich. Sie können weiterhin Ledger Live auf Ihrem Desktop verwenden, um NFTs zu senden.",
+      "contactSupport" : "Lesen Sie bitte unseren Support-Artikel für weitere Informationen."
     }
   },
   "ApplicationVersion" : "v{{version}}",
@@ -5393,18 +5460,26 @@
     "cropImage" : "Bild zuschneiden",
     "chooseConstrast" : "Kontrast auswählen",
     "uploadAnotherImage" : "Ein weiteres Bild hochladen",
-    "selectContrast" : "Wählen Sie Ihren Kontrast",
+    "rotateImage" : "Drehen",
     "allowPreview" : "Bildvorschau zulassen auf {{productName}}",
     "loadingPicture" : "Bild wird geladen auf {{productName}}",
     "pictureLoaded" : "Bild geladen",
     "timeDisclaimer" : "Dies kann bis zu 30 Sekunden dauern",
     "imageLoaded" : "Bild geladen auf {{productName}}",
     "confirmPicture" : "Bestätigen auf {{productName}}",
-    "title" : "Wählen Sie ein Bild aus.\nSchaffen Sie eine Stimmung.\nMachen Sie Ihr Ledger zu Ihrem Gerät.",
-    "subtitle" : "Verwenden Sie ein Bild Ihres Lieblings-NFTs oder ein Bild von Ihrem Handy.",
+    "landingPage" : {
+      "title" : "Wählen Sie ein Bild aus.\nSchaffen Sie eine Stimmung.\nIndividualisieren Sie Ihren Ledger.",
+      "subtitle" : "Verwenden Sie ein Bild Ihres Lieblings-NFT oder ein Bild von Ihrem Handy.",
+      "choosePicture" : "Wählen Sie ein Bild aus"
+    },
     "customImage" : "Benutzerdefiniertes Bild",
-    "choosePicture" : "Wählen Sie ein Bild aus",
-    "doThisLater" : "Vielleicht später"
+    "doThisLater" : "Vielleicht später",
+    "preview" : {
+      "title" : "Vorschau",
+      "loading" : "Vorschau wird geladen",
+      "setPicture" : "Benutzerdefiniertes Bild einstellen",
+      "editPicture" : "Bild bearbeiten"
+    }
   },
   "postOnboarding" : {
     "hub" : {
@@ -5425,6 +5500,37 @@
         "description" : "Durch Hinzufügen eines Bildes",
         "popupLabel" : "Gerät personalisiert",
         "hubTitleAfterAction" : "Dieser Bildschirm sieht gut aus"
+      }
+    }
+  },
+  "wallet" : {
+    "tabs" : {
+      "crypto" : "Krypto",
+      "nft" : "NFTs"
+    },
+    "nftGallery" : {
+      "empty" : {
+        "title" : "Noch keine NFTs zu zeigen",
+        "subtitle" : "Fangen Sie an, indem Sie Ihr erstes NFT erhalten.",
+        "receive" : "NFT erhalten",
+        "supportLink" : "Wie erhalten Sie NFTs von anderen Wallets?"
+      },
+      "receiveModal" : {
+        "title" : "Sie erhalten ein NFT auf die gleiche Weise wie jede andere Kryptowährung",
+        "bullets" : {
+          "0" : "• Wählen Sie die NFT Krypto-Blockchain.",
+          "1" : "• Wählen Sie das für das NFT vorgesehene Konto"
+        },
+        "cta" : "Ok, verstanden",
+        "info" : "Ich würde gerne mehr erfahren"
+      },
+      "hideNftModal" : {
+        "title" : "NFT-Sammlung ausblenden",
+        "desc" : "Mit dieser Aktion werden alle NFTs aus der {{collectionName}} Sammlung ausgeblendet. Sie können die Ausblendung in den App-Einstellungen aufheben",
+        "cta" : "Dieses NFT ausblenden"
+      },
+      "media" : {
+        "tag" : "{{count}} NFTs"
       }
     }
   }
