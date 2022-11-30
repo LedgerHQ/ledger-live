@@ -17,7 +17,8 @@ function getTime(timestampNew: number): [number, TypeOfTime] {
   const hours = Math.floor(mins / 60);
   const days = Math.floor(hours / 24);
   const weeks = Math.floor(days / 7);
-  const months = Math.floor(weeks / 12);
+  const months = Math.floor(weeks / 4);
+  const years = Math.floor(months / 12);
 
   if (secs < 60) {
     return [secs, TypeOfTime.second];
@@ -31,7 +32,7 @@ function getTime(timestampNew: number): [number, TypeOfTime] {
     return [hours, TypeOfTime.hour];
   }
 
-  if (days < 24) {
+  if (days < 7) {
     return [days, TypeOfTime.day];
   }
 
@@ -43,10 +44,7 @@ function getTime(timestampNew: number): [number, TypeOfTime] {
     return [months, TypeOfTime.month];
   }
 
-  return [
-    Math.abs(new Date(timestampNew).getFullYear() - new Date().getFullYear()),
-    TypeOfTime.year,
-  ];
+  return [years, TypeOfTime.year];
 }
 
 export { getTime, TypeOfTime };

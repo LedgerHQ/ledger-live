@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next";
 import { createStackNavigator } from "@react-navigation/stack";
 import { useTheme } from "styled-components/native";
 import NotificationCenterStatus from "../../screens/NotificationCenter/Status";
-import NotificationCenterNews from "../../screens/NotificationCenter/Notifications";
+import NotificationCenter from "../../screens/NotificationCenter/Notifications";
 import { ScreenName } from "../../const";
 import type { NotificationCenterNavigatorParamList } from "./types/NotificationCenterNavigator";
 import { getStackNavigatorConfig } from "../../navigation/navigatorConfig";
@@ -23,8 +23,8 @@ export default function NotificationCenterNavigator() {
   return (
     <Stack.Navigator screenOptions={stackNavConfig}>
       <Stack.Screen
-        name={ScreenName.NotificationCenterNews}
-        component={NotificationCenterNews}
+        name={ScreenName.NotificationCenter}
+        component={NotificationCenter}
         options={{
           title: t("notificationCenter.news.title"),
         }}

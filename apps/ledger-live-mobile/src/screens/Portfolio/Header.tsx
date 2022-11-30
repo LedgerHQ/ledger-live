@@ -29,7 +29,7 @@ function PortfolioHeader({ hidePortfolio }: { hidePortfolio: boolean }) {
       button: "Notification Center",
     });
     navigation.navigate(NavigatorName.NotificationCenter, {
-      screen: ScreenName.NotificationCenterNews,
+      screen: ScreenName.NotificationCenter,
     });
   }, [navigation]);
 
