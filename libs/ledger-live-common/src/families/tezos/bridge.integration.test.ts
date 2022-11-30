@@ -1,5 +1,4 @@
 import "../../__tests__/test-helpers/setup";
-import invariant from "invariant";
 import { testBridge } from "../../__tests__/test-helpers/bridge";
 import { fromAccountRaw } from "../../account";
 import { loadAccountDelegation, listBakers } from "./bakers";
@@ -10,7 +9,6 @@ import type { DatasetTest } from "@ledgerhq/types-live";
 import type { Transaction } from "./types";
 
 import tezosScanAccounts1 from "./datasets/tezos.scanAccounts.1";
-import { TxAuxiliaryDataSupplementType } from "@cardano-foundation/ledgerjs-hw-app-cardano";
 
 export const accountTZrevealedDelegating = makeAccount(
   "TZrevealedDelegating",
@@ -86,17 +84,13 @@ const dataset: DatasetTest<Transaction> = {
               transaction: (t, account) => ({
                 ...t,
                 amount: account.balance,
-                // FIXME: ignored
                 useAllAmount: true,
                 recipient: "tz1VSichevvJSNkSSntgwKDKikWNB6iqNJii",
               }),
               expectedStatus: (account) => {
-                invariant(
-                  account.balance.toNumber() === 0,
-                  "Account balance should be empty"
-                );
-
-                return {};
+                return {
+                  amount: account.balance,
+                };
               },
             },
             {
