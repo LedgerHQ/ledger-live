@@ -67,6 +67,7 @@ jobs:
               check_run_id: "${{ github.event.inputs.check_run_id }}",
               details_url: `https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${{ github.run_id }}`,
               status: "in_progress",
+              started_at: new Date().toISOString(),
               output: {
                 title: "⚙️ Testing",
                 summary: `You can follow the progress of the tests [here](https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${{ github.run_id }})`
@@ -196,11 +197,57 @@ jobs:
         with:
           server-token: "yolo"
           cleanup-cache-folder: "true"
-      - uses: ./tools/actions/composites/test-desktop
-        id: test-desktop
+
+      # Composite
+      - name: Install dependencies
+        run: pnpm i --filter="ledger-live-desktop..." --filter="ledger-live" --frozen-lockfile --unsafe-perm
+      - name: Install playwright dependencies
+        run: npx playwright@1.27.1 install --with-deps chromium
+      - name: Build dependencies
+        env:
+          GOGC: 75
+        run: |
+          pnpm build:lld:deps --api="http://127.0.0.1:${{ steps.turborepo-cache-server.outputs.port }}" --token="yolo" --team="foo"
+          pnpm desktop build:testing
+      - name: Build Dummy SDK app for testing
+        run: pnpm --filter="dummy-live-app" i && pnpm --filter="dummy-live-app" build
+      - name: Run unit tests
+        run: pnpm desktop test:jest
+        # - name: Run playwright tests [Linux => xvfb-run]
+        #   run: xvfb-run --auto-servernum --server-args="-screen 0 1280x960x24" -- pnpm desktop test:playwright
+      - name: Run playwright tests
+        run: pnpm desktop test:playwright
+      - name: upload diffs to imgur
+        if: always() && !cancelled()
+        uses: ledgerhq/ledger-live/tools/actions/upload-images@develop
+        id: imgur
         with:
+          path: apps/ledger-live-desktop/tests/artifacts/test-results
+          workspace: ${{ github.workspace }}
           os: ${{ steps.os.outputs.result }}
-          turbo-server-port: ${{ steps.turborepo-cache-server.outputs.port }}
+      - name: upload ci suggested screenshots
+        if: always() && !cancelled()
+        uses: actions/upload-artifact@v3
+        with:
+          name: images
+          path: images-${{ steps.os.outputs.result }}.json
+      - name: Upload playwright test results [On Failure]
+        uses: actions/upload-artifact@v3
+        if: failure() && !cancelled()
+        with:
+          name: ${{ format('playwright-results-{0}', steps.os.outputs.result) }}
+          path: |
+            apps/ledger-live-desktop/tests/artifacts/test-results
+            apps/ledger-live-desktop/tests/artifacts/html-report
+            apps/ledger-live-desktop/tests/artifacts/coverage
+            apps/ledger-live-desktop/tests/artifacts/videos
+            apps/ledger-live-desktop/tests/artifacts/logs
+
+      # - uses: ./tools/actions/composites/test-desktop
+      #   id: test-desktop
+      #   with:
+      #     os: ${{ steps.os.outputs.result }}
+      #     turbo-server-port: ${{ steps.turborepo-cache-server.outputs.port }}
 
   test-desktop-app-linux:
     name: "Linux Live Desktop Tests"
@@ -240,11 +287,54 @@ jobs:
         with:
           server-token: "yolo"
           cleanup-cache-folder: "true"
-      - uses: ./tools/actions/composites/test-desktop
-        id: test-desktop
+      # Composite
+      - name: Install dependencies
+        run: pnpm i --filter="ledger-live-desktop..." --filter="ledger-live" --frozen-lockfile --unsafe-perm
+      - name: Install playwright dependencies
+        run: npx playwright@1.27.1 install --with-deps chromium
+      - name: Build dependencies
+        env:
+          GOGC: 75
+        run: |
+          pnpm build:lld:deps --api="http://127.0.0.1:${{ steps.turborepo-cache-server.outputs.port }}" --token="yolo" --team="foo"
+          pnpm desktop build:testing
+      - name: Build Dummy SDK app for testing
+        run: pnpm --filter="dummy-live-app" i && pnpm --filter="dummy-live-app" build
+      - name: Run unit tests
+        run: pnpm desktop test:jest
+      - name: Run playwright tests
+        run: xvfb-run --auto-servernum --server-args="-screen 0 1280x960x24" -- pnpm desktop test:playwright
+      - name: upload diffs to imgur
+        if: always() && !cancelled()
+        uses: ledgerhq/ledger-live/tools/actions/upload-images@develop
+        id: imgur
         with:
+          path: apps/ledger-live-desktop/tests/artifacts/test-results
+          workspace: ${{ github.workspace }}
           os: ${{ steps.os.outputs.result }}
-          turbo-server-port: ${{ steps.turborepo-cache-server.outputs.port }}
+      - name: upload ci suggested screenshots
+        if: always() && !cancelled()
+        uses: actions/upload-artifact@v3
+        with:
+          name: images
+          path: images-${{ steps.os.outputs.result }}.json
+      - name: Upload playwright test results [On Failure]
+        uses: actions/upload-artifact@v3
+        if: failure() && !cancelled()
+        with:
+          name: ${{ format('playwright-results-{0}', steps.os.outputs.result) }}
+          path: |
+            apps/ledger-live-desktop/tests/artifacts/test-results
+            apps/ledger-live-desktop/tests/artifacts/html-report
+            apps/ledger-live-desktop/tests/artifacts/coverage
+            apps/ledger-live-desktop/tests/artifacts/videos
+            apps/ledger-live-desktop/tests/artifacts/logs
+
+      # - uses: ./tools/actions/composites/test-desktop
+      #   id: test-desktop
+      #   with:
+      #     os: ${{ steps.os.outputs.result }}
+      #     turbo-server-port: ${{ steps.turborepo-cache-server.outputs.port }}
 
   test-desktop-app-mac:
     name: "macOS Live Desktop Tests"
@@ -280,11 +370,54 @@ jobs:
         with:
           server-token: "yolo"
           cleanup-cache-folder: "true"
-      - uses: ./tools/actions/composites/test-desktop
-        id: test-desktop
+      # Composite
+      - name: Install dependencies
+        run: pnpm i --filter="ledger-live-desktop..." --filter="ledger-live" --frozen-lockfile --unsafe-perm
+      - name: Install playwright dependencies
+        run: npx playwright@1.27.1 install --with-deps chromium
+      - name: Build dependencies
+        env:
+          GOGC: 75
+        run: |
+          pnpm build:lld:deps --api="http://127.0.0.1:${{ steps.turborepo-cache-server.outputs.port }}" --token="yolo" --team="foo"
+          pnpm desktop build:testing
+      - name: Build Dummy SDK app for testing
+        run: pnpm --filter="dummy-live-app" i && pnpm --filter="dummy-live-app" build
+      - name: Run unit tests
+        run: pnpm desktop test:jest
+      - name: Run playwright tests
+        run: pnpm desktop test:playwright
+      - name: upload diffs to imgur
+        if: always() && !cancelled()
+        uses: ledgerhq/ledger-live/tools/actions/upload-images@develop
+        id: imgur
         with:
+          path: apps/ledger-live-desktop/tests/artifacts/test-results
+          workspace: ${{ github.workspace }}
           os: ${{ steps.os.outputs.result }}
-          turbo-server-port: ${{ steps.turborepo-cache-server.outputs.port }}
+      - name: upload ci suggested screenshots
+        if: always() && !cancelled()
+        uses: actions/upload-artifact@v3
+        with:
+          name: images
+          path: images-${{ steps.os.outputs.result }}.json
+      - name: Upload playwright test results [On Failure]
+        uses: actions/upload-artifact@v3
+        if: failure() && !cancelled()
+        with:
+          name: ${{ format('playwright-results-{0}', steps.os.outputs.result) }}
+          path: |
+            apps/ledger-live-desktop/tests/artifacts/test-results
+            apps/ledger-live-desktop/tests/artifacts/html-report
+            apps/ledger-live-desktop/tests/artifacts/coverage
+            apps/ledger-live-desktop/tests/artifacts/videos
+            apps/ledger-live-desktop/tests/artifacts/logs
+
+      # - uses: ./tools/actions/composites/test-desktop
+      #   id: test-desktop
+      #   with:
+      #     os: ${{ steps.os.outputs.result }}
+      #     turbo-server-port: ${{ steps.turborepo-cache-server.outputs.port }}
 
   report:
     needs:
@@ -399,8 +532,8 @@ jobs:
             Object.entries(report).forEach(([os, values]) => {
               summary +=`
               - ${values.pass
-                  ? `💚 Everything went good on ${key[os].name} Live Desktop Tests`
-                  : `❌ Something went wrong on ${key[os].name} Live Desktop Tests`
+                  ? `💚 Everything went good on ${keys[os].name} Live Desktop Tests`
+                  : `❌ Something went wrong on ${keys[os].name} Live Desktop Tests`
                 }
                 - final status => **${values.status}**`
             });
@@ -442,9 +575,10 @@ jobs:
               head_sha: "${{ github.event.inputs.sha }}",
               check_run_id: "${{ github.event.inputs.check_run_id }}",
               conclusion: status.isFailed ? 'failure' : status.isCancelled ? 'cancelled' : 'success',
+              completed_at: new Date().toISOString(),
               output: {
                 title,
-                summary: status.summary
+                summary: `${status.summary}
 
               ---
               [⚙️ Summary](https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${{ github.run_id }})`

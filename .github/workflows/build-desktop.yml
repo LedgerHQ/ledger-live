@@ -99,6 +99,7 @@ jobs:
               head_sha: "${{ github.event.inputs.sha }}",
               check_run_id: "${{ github.event.inputs.check_run_id }}",
               details_url: `https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${{ github.run_id }}`,
+              started_at: new Date().toISOString(),
               status: "in_progress",
               output: {
                 title: "⚙️ Building",
@@ -391,6 +392,7 @@ jobs:
               details_url: `https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${{ github.run_id }}`,
               head_sha: "${{ github.event.inputs.sha }}",
               check_run_id: "${{ github.event.inputs.check_run_id }}",
+              completed_at: new Date().toISOString(),
               conclusion: status.isFailed ? 'failure' : status.isCancelled ? 'cancelled' : 'success',
               output: {
                 title,
