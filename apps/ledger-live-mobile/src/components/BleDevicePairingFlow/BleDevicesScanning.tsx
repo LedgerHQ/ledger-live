@@ -12,7 +12,7 @@ import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
 import { getDeviceModel } from "@ledgerhq/devices";
 import { Device, DeviceModelId } from "@ledgerhq/types-devices";
-import TransportBLE from "@ledgerhq/react-native-hw-transport-ble";
+import TransportBLE from "../../react-native-hw-transport-ble";
 import { knownDevicesSelector } from "../../reducers/ble";
 import LocationRequired from "../LocationRequired/index";
 import Animation from "../Animation";
