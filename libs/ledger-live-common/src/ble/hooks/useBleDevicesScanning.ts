@@ -29,19 +29,23 @@ export type UseBleDevicesScanningOptions = {
   stopBleScanning?: boolean;
   filterByDeviceModelIds?: DeviceModelId[];
   filterOutDevicesByDeviceIds?: DeviceId[];
-  stopAndReRunIntervalMs?: number;
+  restartScanningTimeoutMs?: number;
 };
 
 const DEFAULT_DEVICE_NAME = "Device";
-const DEFAULT_STOP_AND_RERUN_INTERVAL_MS = 2000;
+const DEFAULT_RESTART_SCANNING_TIMEOUT_MS = 4000;
 
 /**
  * Scans the BLE devices around the user
+ *
+ * Note: if a communication is started with a device, the scanning should be stopped
+ *
  * @param filterByDeviceModelIds An array of device model ids to filter on
  * @param filterOutDevicesByDeviceIds An array of device ids to filter out
  * @param stopBleScanning Flag to stop or continue the scanning
- * @param stopAndReRunIntervalMs Interval of time in ms at which the scanning is stopped, cleaned and re-run.
- *   It makes the scanning more resilient to a previously paired device with which a communication was happening.
+ * @param restartScanningTimeoutMs When a restart is needed (on some specific errors, or for the first restart
+ * that makes the scanning more resilient to a previously paired device with which a communication was happening),
+ * time in ms after which the restart is actually happening
  * @returns An object containing:
  * - scannedDevices: list of ScannedDevice found by the scanning
  * - scanningBleError: if an error occurred, a BleError, otherwise null
@@ -51,7 +55,7 @@ export const useBleDevicesScanning = ({
   stopBleScanning,
   filterByDeviceModelIds,
   filterOutDevicesByDeviceIds,
-  stopAndReRunIntervalMs = DEFAULT_STOP_AND_RERUN_INTERVAL_MS,
+  restartScanningTimeoutMs = DEFAULT_RESTART_SCANNING_TIMEOUT_MS,
 }: UseBleDevicesScanningDependencies &
   UseBleDevicesScanningOptions): UseBleDevicesScanningResult => {
   const [scanningBleError, setScanningBleError] =
@@ -60,8 +64,10 @@ export const useBleDevicesScanning = ({
   // To check for duplicates. The ref will persist for the full lifetime of the component
   // in which the hook is called, and does not re-trigger the hook when being updated.
   const scannedDevicesRef = useRef<ScannedDevice[]>([]);
-  // To stop, call the unsubscribe and cleaning function, and re-run
-  const [stopAndReRun, setCleanAndReRun] = useState<0 | 1>(0);
+  // To stop, call the unsubscribe and cleaning function, and re-run the scanning
+  const [restartScanningNonce, setRestartScanningNonce] = useState<number>(0);
+  // To request a restart of the scanning
+  const [isRestartNeeded, setIsRestartNeeded] = useState<boolean>(true);
 
   useEffect(() => {
     if (stopBleScanning) {
@@ -141,8 +147,13 @@ export const useBleDevicesScanning = ({
           }
         },
         error: (error: BleError) => {
-          // TODO: we should be sure to have a BleError
           if (error.errorCode) {
+            // Currently using the error code values from react-native-ble-plx
+            if (error.errorCode === 600) {
+              setIsRestartNeeded(true);
+              return;
+            }
+
             setScanningBleError(error);
           }
         },
@@ -152,22 +163,27 @@ export const useBleDevicesScanning = ({
       sub.unsubscribe();
     };
   }, [
-    stopAndReRun,
+    restartScanningNonce,
     bleTransportListen,
     stopBleScanning,
     filterByDeviceModelIds,
     filterOutDevicesByDeviceIds,
   ]);
 
+  // Triggers after a defined time a restart of the scanning if needed
   useEffect(() => {
-    const interval = setInterval(() => {
-      setCleanAndReRun((prev) => {
-        return prev === 1 ? 0 : 1;
-      });
-    }, stopAndReRunIntervalMs);
+    let timer;
+    if (isRestartNeeded && !stopBleScanning) {
+      timer = setTimeout(() => {
+        setRestartScanningNonce((prev) => prev + 1);
+        setIsRestartNeeded(false);
+      }, restartScanningTimeoutMs);
+    }
 
-    return () => clearInterval(interval);
-  }, [stopAndReRunIntervalMs]);
+    return () => {
+      if (timer) clearTimeout(timer);
+    };
+  }, [isRestartNeeded, restartScanningTimeoutMs, stopBleScanning]);
 
   return {
     scannedDevices,

@@ -282,7 +282,7 @@ describe("useBleDevicesScanning", () => {
     });
   });
 
-  describe("When a device is only seen after a stopped and cleaned scanning", () => {
+  describe("When a device is only seen after a cleaned scanning", () => {
     const deviceIdA = "ID_A";
     const deviceIdB = "ID_B";
     const emitTimeOfDeviceB = 3000;
@@ -301,8 +301,8 @@ describe("useBleDevicesScanning", () => {
       }, emitTimeOfDeviceB);
     };
 
-    it("should stop and re-run the scanning at a defined interval of time and update the list of scanned devices", async () => {
-      const stopAndReRunIntervalMs = emitTimeOfDeviceB;
+    it("should restart the scanning after a defined time and update the list of scanned devices", async () => {
+      const restartScanningTimeoutMs = emitTimeOfDeviceB;
 
       // To avoid re-rendering the hook when mockEmitValuesByObserver
       // emits a new value with the setTimeout
@@ -313,7 +313,7 @@ describe("useBleDevicesScanning", () => {
       const { result } = renderHook(() =>
         useBleDevicesScanning({
           bleTransportListen,
-          stopAndReRunIntervalMs,
+          restartScanningTimeoutMs,
         })
       );
 
@@ -326,16 +326,16 @@ describe("useBleDevicesScanning", () => {
       const nbUnsubscribesHappeningBecauseOfRenderHook =
         mockBleTransportListenUnsubscribe.mock.calls.length;
 
-      // Advances by less than the interval
+      // Advances by less than the first restart timeout
       await act(async () => {
-        jest.advanceTimersByTime(stopAndReRunIntervalMs - 1000);
+        jest.advanceTimersByTime(restartScanningTimeoutMs - 1000);
       });
 
       expect(mockBleTransportListenUnsubscribe).toBeCalledTimes(
         nbUnsubscribesHappeningBecauseOfRenderHook
       );
 
-      // Advances by the time of the interval
+      // Advances by the total time of the restart timeout
       await act(async () => {
         jest.advanceTimersByTime(1000);
       });
