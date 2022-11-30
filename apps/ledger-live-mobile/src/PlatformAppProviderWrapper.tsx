@@ -31,12 +31,12 @@ export default function PlatformAppProviderWrapper({
       }}
     >
       <LocalLiveAppProvider>
-          <RampCatalogProvider
-            provider={provider}
-            updateFrequency={AUTO_UPDATE_DEFAULT_DELAY}
-          >
-            {children}
-          </RampCatalogProvider>
+        <RampCatalogProvider
+          provider={provider}
+          updateFrequency={AUTO_UPDATE_DEFAULT_DELAY}
+        >
+          {children}
+        </RampCatalogProvider>
       </LocalLiveAppProvider>
     </RemoteLiveAppProvider>
   );

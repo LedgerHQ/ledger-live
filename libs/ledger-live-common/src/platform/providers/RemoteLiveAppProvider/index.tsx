@@ -72,8 +72,6 @@ export function RemoteLiveAppProvider({
   const [state, setState] = useState<Loadable<LiveAppRegistry>>(initialState);
   const { allowExperimentalApps, allowDebugApps, ...params } = parameters;
 
-  console.warn("ramy 123", { parameters, params });
-
   const updateManifests = useCallback(async () => {
     setState((currentState) => ({
       ...currentState,

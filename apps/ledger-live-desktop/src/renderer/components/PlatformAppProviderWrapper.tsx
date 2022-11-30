@@ -34,9 +34,9 @@ export function PlatformAppProviderWrapper({ children }: PlatformAppProviderWrap
       updateFrequency={AUTO_UPDATE_DEFAULT_DELAY}
     >
       <LocalLiveAppProvider>
-          <RampCatalogProvider provider={provider} updateFrequency={AUTO_UPDATE_DEFAULT_DELAY}>
-            {children}
-          </RampCatalogProvider>
+        <RampCatalogProvider provider={provider} updateFrequency={AUTO_UPDATE_DEFAULT_DELAY}>
+          {children}
+        </RampCatalogProvider>
       </LocalLiveAppProvider>
     </RemoteLiveAppProvider>
   );
