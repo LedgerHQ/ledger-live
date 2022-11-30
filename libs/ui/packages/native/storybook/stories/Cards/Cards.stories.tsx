@@ -2,9 +2,10 @@ import { storiesOf } from "../storiesOf";
 import React from "react";
 import CardA from "../../../src/components/Cards/CardA";
 import CardB from "../../../src/components/Cards/CardB";
+import CardC from "../../../src/components/Cards/CardC";
 import Flex from "../../../src/components/Layout/Flex";
-import { text, select, number } from "@storybook/addon-knobs";
-import { descriptionCardA, descriptionCardB } from "./descriptionsCards";
+import { text, select, number, boolean } from "@storybook/addon-knobs";
+import { descriptionCardA, descriptionCardB, descriptionCardC } from "./descriptionsCards";
 
 const CardAStory = () => {
   const variant = select("variant", ["purple", "red"], undefined);
@@ -58,12 +59,12 @@ const CardBStory = () => {
 
   return (
     <Flex
-      backgroundColor={"primary.c70"}
+      backgroundColor="primary.c70"
       height={300}
       width={width}
       alignItems="center"
-      justifyContent={"center"}
-      p={"16px"}
+      justifyContent="center"
+      p="16px"
     >
       <CardB
         tag={tag}
@@ -72,6 +73,41 @@ const CardBStory = () => {
         imageUrl={imageUrl}
         onPress={() => {}}
         onPressDismiss={() => {}}
+      />
+    </Flex>
+  );
+};
+
+const CardCStory = () => {
+  const tag = text("tag", "Promo");
+  const viewed = boolean("Notif has been viewed?", false);
+  const title = text("title", "Free shipping worldwide for 1 week only");
+  const description = text(
+    "description",
+    "Free shipping for all Ledger Nano products is available until 17th of October. Act fast and get your Nano now.",
+  );
+  const cta = text("cta", "Link");
+  const time = text("timer", "2 minutes ago");
+  const hasLink = boolean("show link", true);
+
+  return (
+    <Flex
+      width="500px"
+      height="300px"
+      backgroundColor="neutral.c20"
+      alignItems="center"
+      justifyContent="center"
+      p="16px"
+    >
+      <CardC
+        tag={tag}
+        description={description}
+        cta={cta}
+        time={time}
+        title={title}
+        onPress={hasLink ? () => {} : undefined}
+        onClickCard={() => {}}
+        viewed={viewed}
       />
     </Flex>
   );
@@ -92,6 +128,14 @@ storiesOf((story) =>
         title: "Card B",
         description: {
           component: descriptionCardB,
+        },
+      },
+    })
+    .add("Card C", CardCStory, {
+      docs: {
+        title: "Card C",
+        description: {
+          component: descriptionCardC,
         },
       },
     }),

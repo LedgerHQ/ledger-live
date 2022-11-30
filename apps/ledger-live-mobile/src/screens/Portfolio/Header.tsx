@@ -1,6 +1,5 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useMemo } from "react";
 import { useNavigation } from "@react-navigation/native";
-import { useAnnouncements } from "@ledgerhq/live-common/notifications/AnnouncementProvider/index";
 import { useFilteredServiceStatus } from "@ledgerhq/live-common/notifications/ServiceStatusProvider/index";
 import { Flex, Text } from "@ledgerhq/native-ui";
 import {
@@ -16,11 +15,12 @@ import { NavigatorName, ScreenName } from "../../const";
 import { withDiscreetMode } from "../../context/DiscreetModeContext";
 import DiscreetModeButton from "../../components/DiscreetModeButton";
 import { track } from "../../analytics";
+import useDynamicContent from "../../dynamicContent/dynamicContent";
 
 function PortfolioHeader({ hidePortfolio }: { hidePortfolio: boolean }) {
   const navigation = useNavigation();
 
-  const { allIds, seenIds } = useAnnouncements();
+  const { notificationCards } = useDynamicContent();
   const { incidents } = useFilteredServiceStatus();
   const { t } = useTranslation();
 
@@ -29,7 +29,7 @@ function PortfolioHeader({ hidePortfolio }: { hidePortfolio: boolean }) {
       button: "Notification Center",
     });
     navigation.navigate(NavigatorName.NotificationCenter, {
-      screen: ScreenName.NotificationCenterNews,
+      screen: ScreenName.NotificationCenter,
     });
   }, [navigation]);
 
@@ -53,7 +53,11 @@ function PortfolioHeader({ hidePortfolio }: { hidePortfolio: boolean }) {
     });
   }, [navigation]);
 
-  const notificationsCount = allIds.length - seenIds.length;
+  const notificationsCount = useMemo(
+    () =>
+      notificationCards.length - notificationCards.filter(n => n.viewed).length,
+    [notificationCards],
+  );
 
   return (
     <Flex
@@ -90,15 +94,6 @@ function PortfolioHeader({ hidePortfolio }: { hidePortfolio: boolean }) {
       </Flex>
       <Flex flexDirection="row">
         <Flex mr={7}>
-          <Touchable onPress={onNotificationButtonPress}>
-            {notificationsCount > 0 ? (
-              <NotificationsOnMedium size={24} color={"neutral.c100"} />
-            ) : (
-              <NotificationsMedium size={24} color={"neutral.c100"} />
-            )}
-          </Touchable>
-        </Flex>
-        <Flex mr={7}>
           <Touchable
             onPress={onCardButtonPress}
             event="button_clicked"
@@ -108,6 +103,15 @@ function PortfolioHeader({ hidePortfolio }: { hidePortfolio: boolean }) {
             }}
           >
             <CardMedium size={24} color={"neutral.c100"} />
+          </Touchable>
+        </Flex>
+        <Flex mr={7}>
+          <Touchable onPress={onNotificationButtonPress}>
+            {notificationsCount > 0 ? (
+              <NotificationsOnMedium size={24} color={"neutral.c100"} />
+            ) : (
+              <NotificationsMedium size={24} color={"neutral.c100"} />
+            )}
           </Touchable>
         </Flex>
         <Touchable onPress={onSettingsButtonPress} testID="settings-icon">
