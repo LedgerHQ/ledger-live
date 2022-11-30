@@ -1,4 +1,3 @@
-// @flow
 import React, { ReactNode } from "react";
 import {
   allowDebugAppsSelector,
