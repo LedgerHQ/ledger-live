@@ -53,10 +53,14 @@ function expectCorrectEsdtBalanceChange(
     (ta) => ta.id === subAccountId
   );
 
-  if (tokenAccount && tokenAccountBefore) {
+  const subOperation = operation.subOperations?.find(
+    (sa) => sa.id === operation.id
+  );
+
+  if (tokenAccount && tokenAccountBefore && subOperation) {
     botTest("ESDT balance change is correct", () =>
       expect(tokenAccount.balance.toFixed()).toStrictEqual(
-        tokenAccountBefore.balance.minus(operation.value).toFixed()
+        tokenAccountBefore.balance.minus(subOperation.value).toFixed()
       )
     );
   }
@@ -115,11 +119,10 @@ function expectCorrectOptimisticOperation(
     botTest("optimistic operation matches recipients", () =>
       expect(operation.recipients).toStrictEqual(optimisticOperation.recipients)
     );
-    // FIXME operation is of the main account, need the token operation to compare to optimisticOperation
     if (!transaction.subAccountId) {
       botTest("optimistic operation matches value", () =>
         expect(operation.value.toFixed()).toStrictEqual(
-          optimisticOperation.value.plus(optimisticOperation.fee).toFixed()
+          optimisticOperation.value.toFixed()
         )
       );
     }
