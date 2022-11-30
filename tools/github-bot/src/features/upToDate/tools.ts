@@ -61,49 +61,90 @@ export const batch = <T>(
   });
 };
 
+export type CheckRun = Awaited<ReturnType<Octokit["checks"]["get"]>>["data"];
 export async function updateCheckRun({
   octokit,
   owner,
   repo,
-  checkRunId,
-  isFork,
-  prBase,
-  prHead,
+  checkRun,
 }: {
   octokit: Octokit;
   owner: string;
   repo: string;
-  checkRunId: number;
-  isFork: boolean;
-  prBase: any;
-  prHead: any;
+  checkRun: {
+    id: CheckRun["id"];
+    pull_requests: CheckRun["pull_requests"];
+  };
 }) {
+  const outcome = [];
   try {
-    const ownerPrefix = isFork ? `${prHead.repo.owner}:` : "";
+    for await (const pr of checkRun.pull_requests) {
+      const { data } = await octokit.pulls.get({
+        owner,
+        repo,
+        pull_number: pr.number,
+      });
 
-    const comparison = await octokit.repos.compareCommitsWithBasehead({
-      owner,
-      repo,
-      basehead: `${prBase.ref}...${ownerPrefix}${prHead.ref}`,
-      per_page: 1,
-    });
+      if (!data) continue;
 
-    const isUpToDate = ["ahead", "identical"].includes(comparison.data.status);
+      const isFork = data.head.repo?.fork;
+      const prBase = pr.base;
+      const prHead = pr.head;
+      const ownerPrefix = isFork ? `${data.head.repo?.owner}:` : "";
 
-    const output = isUpToDate
+      const comparison = await octokit.repos.compareCommitsWithBasehead({
+        owner,
+        repo,
+        basehead: `${prBase.ref}...${ownerPrefix}${prHead.ref}`,
+        per_page: 1,
+      });
+
+      const isUpToDate = ["ahead", "identical"].includes(
+        comparison.data.status
+      );
+
+      outcome.push({
+        isUpToDate,
+        baseRef: prBase.ref,
+        headRef: prHead.ref,
+        comparison: comparison.data,
+      });
+    }
+
+    const { valid, branchList } = outcome.reduce<{
+      valid: boolean;
+      branchList: string[];
+    }>(
+      (acc, { isUpToDate, baseRef, headRef, comparison }) => {
+        return {
+          valid: acc.valid && isUpToDate,
+          branchList: [
+            ...acc.branchList,
+            isUpToDate
+              ? `- Branch \`${headRef}\` is identical or ahead of \`${baseRef}\``
+              : `- Branch \`${headRef}\` is ${comparison.behind_by} commit(s) behind \`${baseRef}\`.`,
+          ],
+        };
+      },
+      { valid: true, branchList: [] }
+    );
+
+    const output = valid
       ? {
           title: "💚 Success",
           summary:
-            `Branch \`${prHead.ref}\` is identical or ahead of \`${prBase.ref}\`.\n` +
+            `All pull requests referencing the commit are identical or ahead of their target:\n` +
+            `${branchList.join("\n")}\n` +
             "\n" +
             "**All good! 👍**",
         }
       : {
           title: "🔴 Failure",
           summary:
-            `Branch \`${prHead.ref}\` is ${comparison.data.behind_by} commit(s) behind \`${prBase.ref}\`.\n` +
+            `Some pull requests referencing the commit are behind their target:\n` +
+            `${branchList.join("\n")}\n` +
             `\n` +
-            `**Please rebase your branch on top of \`${prBase.ref}\`.**\n` +
+            `**❌ Please rebase out-of-date branches to make this check pass.**\n` +
             `\n` +
             `_If you are not comfortable with git and rebasing, here is a [nice guide](https://www.atlassian.com/git/tutorials/rewriting-history/git-rebase)._`,
         };
@@ -111,9 +152,9 @@ export async function updateCheckRun({
     await octokit.checks.update({
       owner,
       repo,
-      check_run_id: checkRunId,
+      check_run_id: checkRun.id,
       status: "completed",
-      conclusion: isUpToDate ? "success" : "failure",
+      conclusion: valid ? "success" : "failure",
       output,
     });
   } catch (error) {
@@ -121,7 +162,7 @@ export async function updateCheckRun({
     await octokit.checks.update({
       owner,
       repo,
-      check_run_id: checkRunId,
+      check_run_id: checkRun.id,
       status: "completed",
       conclusion: "failure",
       output: {

@@ -1,36 +1,60 @@
 import { Probot } from "probot";
-import { batch, updateCheckRun } from "./tools";
+import { batch, CheckRun, getCheckRunByName, updateCheckRun } from "./tools";
 
 const CHECK_NAME = "PR is up-to-date";
 
-// Check if the PRs are up to date with the base branch.
+/**
+ * Checks if every pull requests referencing a commit are up-to-date.
+ *
+ * @param app The Probot application.
+ */
 export function upToDate(app: Probot) {
   app.on(
     ["pull_request.synchronize", "pull_request.ready_for_review"],
     async (context) => {
       const { payload, octokit } = context;
       const { owner, repo } = context.repo();
-
-      const isFork = payload.pull_request.head.repo.fork;
-      const prBase = payload.pull_request.base;
       const prHead = payload.pull_request.head;
 
-      const checkRun = await octokit.checks.create({
-        owner,
-        repo,
-        name: CHECK_NAME,
-        head_sha: prHead.sha,
-        status: "in_progress",
-      });
+      let checkRun: CheckRun | null = null;
 
+      // Check if the check run already exists.
+      try {
+        const response = await getCheckRunByName({
+          octokit,
+          owner,
+          repo,
+          ref: prHead.sha,
+          check_name: CHECK_NAME,
+        });
+        if (response.status === 200) {
+          if (response.data.total_count > 0) {
+            checkRun = response.data.check_runs[0];
+          }
+        }
+      } catch (e) {
+        // ignore
+      }
+
+      // If not, create it.
+      if (!checkRun) {
+        checkRun = (
+          await octokit.checks.create({
+            owner,
+            repo,
+            name: CHECK_NAME,
+            head_sha: prHead.sha,
+            status: "in_progress",
+          })
+        ).data;
+      }
+
+      // Then update its status based on all prs referencing it.
       await updateCheckRun({
         octokit,
         owner,
         repo,
-        checkRunId: checkRun.data.id,
-        isFork,
-        prBase,
-        prHead,
+        checkRun: checkRun,
       });
     }
   );
@@ -62,23 +86,32 @@ export function upToDate(app: Probot) {
       // If the check run exists, update it.
       if (checkRunResponse.data.total_count === 1) {
         const checkRun = checkRunResponse.data.check_runs[0];
-        const isFork = pr.head.repo.fork;
-        const prBase = pr.base;
-        const prHead = pr.head;
 
         await updateCheckRun({
           octokit,
           owner,
           repo,
-          checkRunId: checkRun.id,
-          isFork,
-          prBase,
-          prHead,
+          checkRun,
         });
       }
     });
 
     // Speeds up the api calls by running 10 concurrent tasks.
     await batch(tasks, 10);
+  });
+
+  // Allow to re-request the check run.
+  app.on("check_run.rerequested", async (context) => {
+    const { payload, octokit } = context;
+    const { owner, repo } = context.repo();
+
+    if (payload.check_run.name !== CHECK_NAME) return;
+
+    updateCheckRun({
+      octokit,
+      owner,
+      repo,
+      checkRun: payload.check_run,
+    });
   });
 }
