@@ -31,6 +31,7 @@ const CarouselCard = ({ id, cardProps, index, width }: CarouselCardProps) => {
 
   const onPress = useCallback(() => {
     if (!cardProps) return;
+    if (!cardProps.link) return;
 
     trackContentCardEvent("contentcard_clicked", {
       screen: cardProps.location,
@@ -48,7 +49,7 @@ const CarouselCard = ({ id, cardProps, index, width }: CarouselCardProps) => {
 
     trackContentCardEvent("contentcard_dismissed", {
       screen: cardProps.location,
-      link: cardProps.link,
+      link: cardProps.link || "",
       campaign: cardProps.id,
     });
     dismissCard(cardProps.id);
