@@ -85,11 +85,11 @@ class Crypto {
 
   getRewardsState(): any {
     if (this.currencyId === "cosmos") {
-      return this.getStargateRewardsState;
+      return this.getStargateRewardsState();
     } else if (this.currencyId === "osmo") {
-      return this.getOsmosisRewardsState;
+      return this.getOsmosisRewardsState();
     } else if (this.currencyId === "juno") {
-      return this.getOsmosisRewardsState;
+      return this.getOsmosisRewardsState();
     } else {
       throw new Error(`${this.currencyId} is not supported`);
     }
@@ -139,22 +139,6 @@ class Crypto {
 
   private getStargateRewardsState = makeLRUCache(
     async () => {
-      /*
-      return {
-        targetBondedRatio: 0.01,
-        communityPoolCommission: 0.0,
-        assumedTimePerBlock: 7,
-        inflationRateChange: 0.01,
-        inflationMaxRate: 0.01,
-        inflationMinRate: 0.01,
-        actualBondedRatio: 0.01,
-        averageTimePerBlock: 7,
-        totalSupply: 0,
-        averageDailyFees: 0,
-        currentValueInflation: 0.01,
-      };
-      */
-
       // All obtained values are strings ; so sometimes we will need to parse them as numbers
       const inflationUrl = `${this.lcd}/cosmos/mint/${this.version}/inflation`;
 

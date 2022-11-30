@@ -23,28 +23,16 @@ import {
 } from "./logic";
 import { getAccountUnit } from "../../account";
 import useMemoOnce from "../../hooks/useMemoOnce";
-import { LEDGER_VALIDATOR_ADDRESS } from "./utils";
-import { findCryptoCurrencyById } from "@ledgerhq/cryptoassets";
-
-// Add Cosmos-families imports below:
 import {
-  getCurrentOsmosisPreloadData,
-  getOsmosisPreloadDataUpdates,
-} from "../osmosis/preloadedData";
-import { LEDGER_OSMOSIS_VALIDATOR_ADDRESS } from "../osmosis/utils";
+  LEDGER_OSMOSIS_VALIDATOR_ADDRESS,
+  LEDGER_VALIDATOR_ADDRESS,
+} from "./utils";
 
 export function useCosmosFamilyPreloadData(
-  currencyName: string
+  _currencyName: string
 ): CosmosPreloadData {
-  let getCurrent;
-  let getUpdates;
-  if (findCryptoCurrencyById(currencyName)?.family === "cosmos") {
-    getCurrent = getCurrentCosmosPreloadData;
-    getUpdates = getCosmosPreloadDataUpdates;
-  } else if (currencyName == "osmosis") {
-    getCurrent = getCurrentOsmosisPreloadData;
-    getUpdates = getOsmosisPreloadDataUpdates;
-  }
+  const getCurrent = getCurrentCosmosPreloadData;
+  const getUpdates = getCosmosPreloadDataUpdates;
 
   const [state, setState] = useState(getCurrent);
   useEffect(() => {
@@ -206,13 +194,11 @@ export function useLedgerFirstShuffledValidatorsCosmosFamily(
   currencyName: string,
   searchInput?: string
 ): CosmosValidatorItem[] {
-  let data;
   let ledgerValidatorAddress;
+  const data = getCurrentCosmosPreloadData();
   if (currencyName == "osmosis") {
-    data = getCurrentOsmosisPreloadData();
     ledgerValidatorAddress = LEDGER_OSMOSIS_VALIDATOR_ADDRESS;
   } else {
-    data = getCurrentCosmosPreloadData();
     ledgerValidatorAddress = LEDGER_VALIDATOR_ADDRESS;
   }
 
