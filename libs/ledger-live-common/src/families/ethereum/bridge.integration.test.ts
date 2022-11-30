@@ -55,32 +55,23 @@ const dataset: DatasetTest<Transaction> = {
             },
             {
               name: "Send max",
-              transaction: (t, account) => {
-                console.log({
-                  tx_account_balance: account.spendableBalance.toNumber(),
-                });
-
+              transaction: (t) => {
                 return {
                   ...t,
                   mode: "send",
-                  userGasLimit: "21000",
+                  gasPrice: new BigNumber(100),
                   recipient: "0x17733CAb76d9A2112576443F21735789733B1ca3",
-                  useAllAmount: false,
-                  amount: new BigNumber(1000),
+                  useAllAmount: true,
+                  amount: new BigNumber(5000),
                   feesStrategy: null,
                 };
               },
-              expectedStatus: (account, transaction) => {
-                console.log({
-                  account_balance: account.balance.toNumber(),
-                  transaction_amount: transaction.amount,
-                });
-
-                invariant(
-                  account.balance.toNumber() === 0,
-                  "Account balanche should be empty"
-                );
+              expectedStatus: (account, tx, status) => {
                 return {
+                  amount: BigNumber.max(
+                    tx.amount.minus(status.estimatedFees),
+                    0
+                  ),
                   errors: {},
                   warnings: {},
                 };
