@@ -1,14 +1,16 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useEffect } from "react";
 import { FlatList } from "react-native";
 
 import { CardC, Box, Flex, Text } from "@ledgerhq/native-ui";
 
 import styled from "styled-components/native";
 import { useTranslation } from "react-i18next";
+import { useDispatch } from "react-redux";
 import useDynamicContent from "../../dynamicContent/dynamicContent";
 import SettingsNavigationScrollView from "../Settings/SettingsNavigationScrollView";
 import { NotificationContentCard } from "../../dynamicContent/types";
 import { getTime } from "./helper";
+import { setDynamicContentNotificationCards } from "../../actions/dynamicContent";
 import { useDynamicContentLogic } from "../../dynamicContent/useDynamicContentLogic";
 
 const Container = styled(SettingsNavigationScrollView)`
@@ -17,16 +19,35 @@ const Container = styled(SettingsNavigationScrollView)`
 
 export default function NotificationCenter() {
   const { t } = useTranslation();
+  const dispatch = useDispatch();
   const { notificationCards, logImpressionCard } = useDynamicContent();
   const { fetchData, refreshDynamicContent } = useDynamicContentLogic();
+
   const onClickCard = useCallback(
     (id: string) => {
       logImpressionCard(id);
-      refreshDynamicContent();
-      fetchData();
+
+      const cards = notificationCards.map(n =>
+        n.id === id
+          ? {
+              ...n,
+              viewed: true,
+            }
+          : n,
+      );
+
+      dispatch(setDynamicContentNotificationCards(cards));
     },
-    [fetchData, logImpressionCard, refreshDynamicContent],
+    [dispatch, logImpressionCard, notificationCards],
   );
+
+  useEffect(() => {
+    refreshDynamicContent();
+    fetchData();
+    // Need to refresh just one time when coming in the Page
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   return (
     <>
       {notificationCards.length > 0 ? (
