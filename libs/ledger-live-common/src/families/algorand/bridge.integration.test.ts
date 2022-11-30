@@ -102,7 +102,7 @@ const dataset: DatasetTest<AlgorandTransaction> = {
               },
             },
             {
-              name: "Send",
+              name: "send",
               transaction: (t) => ({
                 ...t,
                 amount: new BigNumber("1000"),
@@ -115,7 +115,7 @@ const dataset: DatasetTest<AlgorandTransaction> = {
               },
             },
             {
-              name: "Send amount more than fees + base reserve",
+              name: "send amount more than fees + base reserve",
               transaction: (t, account) => ({
                 ...t,
                 amount: account.balance,
@@ -130,7 +130,7 @@ const dataset: DatasetTest<AlgorandTransaction> = {
               },
             },
             {
-              name: "Send more than base reserve",
+              name: "send more than base reserve",
               transaction: (t, account) => ({
                 ...t,
                 amount: account.balance.minus("100"),
@@ -178,7 +178,7 @@ const dataset: DatasetTest<AlgorandTransaction> = {
               },
             },
             {
-              name: "Send Token",
+              name: "send Token",
               transaction: (t) => ({
                 ...t,
                 subAccountId:
@@ -194,7 +194,7 @@ const dataset: DatasetTest<AlgorandTransaction> = {
               },
             },
             {
-              name: "Send Token - more than available",
+              name: "send Token - more than available",
               transaction: (t) => ({
                 ...t,
                 subAccountId:
@@ -211,7 +211,7 @@ const dataset: DatasetTest<AlgorandTransaction> = {
               },
             },
             {
-              name: "Send max",
+              name: "send max",
               transaction: (t) => ({
                 ...t,
                 recipient:
