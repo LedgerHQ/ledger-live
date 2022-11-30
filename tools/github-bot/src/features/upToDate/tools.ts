@@ -30,20 +30,27 @@ export const batch = <T>(
   const tasksLength = tasks.length;
 
   return new Promise<T[]>((resolve, reject) => {
+    let aborted = false;
+
     const shiftAndRun = (): void => {
       try {
+        if (aborted) return;
         const task = tasks.shift();
         if (task) {
           Promise.resolve(task())
             .then((result) => results.push(result))
             .then(shiftAndRun)
-            .catch(reject);
+            .catch((error) => {
+              aborted = true;
+              reject(error);
+            });
         } else {
           if (results.length === tasksLength) {
             resolve(results);
           }
         }
       } catch (error) {
+        aborted = true;
         reject(error);
       }
     };
