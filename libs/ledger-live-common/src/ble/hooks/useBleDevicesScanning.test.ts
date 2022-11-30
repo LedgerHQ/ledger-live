@@ -5,6 +5,7 @@ import type {
   DescriptorEvent,
 } from "@ledgerhq/hw-transport";
 import { DeviceModelId, getDeviceModel } from "@ledgerhq/devices";
+import { HwTransportError } from "@ledgerhq/errors";
 import { useBleDevicesScanning } from "./useBleDevicesScanning";
 import type { TransportBleDevice } from "../types";
 
@@ -31,7 +32,8 @@ const aTransportBleDevice = (overrideProps?: Partial<TransportBleDevice>) => {
 };
 
 type bleTransportListenObserver = TransportObserver<
-  DescriptorEvent<TransportBleDevice | null>
+  DescriptorEvent<TransportBleDevice | null>,
+  HwTransportError
 >;
 
 const mockBleTransportListenUnsubscribe = jest.fn();

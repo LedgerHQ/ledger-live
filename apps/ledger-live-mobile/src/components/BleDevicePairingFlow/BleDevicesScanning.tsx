@@ -6,8 +6,8 @@ import {
   ScrollListContainer,
   Text,
 } from "@ledgerhq/native-ui";
-import { BleErrorCode } from "react-native-ble-plx";
 import { useBleDevicesScanning } from "@ledgerhq/live-common/ble/hooks/useBleDevicesScanning";
+import { HwTransportErrorType } from "@ledgerhq/errors";
 import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
 import { getDeviceModel } from "@ledgerhq/devices";
@@ -86,16 +86,17 @@ const BleDevicesScanning = ({
   // Handles scanning error
   useEffect(() => {
     if (scanningBleError) {
-      // Currently using the error code values from react-native-ble-plx
-      // It should be defined indenpendently, in live-common
       if (
-        scanningBleError?.errorCode === BleErrorCode.LocationServicesDisabled
+        scanningBleError.type ===
+        HwTransportErrorType.BleLocationServicesDisabled
       ) {
         setStopBleScanning(true);
         setLocationDisabledError(true);
       }
 
-      if (scanningBleError?.errorCode === BleErrorCode.BluetoothUnauthorized) {
+      if (
+        scanningBleError.type === HwTransportErrorType.BleBluetoothUnauthorized
+      ) {
         setStopBleScanning(true);
         setLocationUnauthorizedError(true);
       }

@@ -10,9 +10,10 @@ import type {
   DescriptorEventType,
 } from "@ledgerhq/hw-transport";
 import { DeviceId } from "@ledgerhq/types-live";
-import { TransportBleDevice, ScannedDevice, BleError } from "../types";
+import { HwTransportError, HwTransportErrorType } from "@ledgerhq/errors";
+import { TransportBleDevice, ScannedDevice } from "../types";
 
-export type ScanningBleError = BleError | null;
+export type ScanningBleError = HwTransportError | null;
 
 export type UseBleDevicesScanningResult = {
   scannedDevices: ScannedDevice[];
@@ -21,7 +22,10 @@ export type UseBleDevicesScanningResult = {
 
 export type UseBleDevicesScanningDependencies = {
   bleTransportListen: (
-    observer: TransportObserver<DescriptorEvent<TransportBleDevice | null>>
+    observer: TransportObserver<
+      DescriptorEvent<TransportBleDevice | null>,
+      HwTransportError
+    >
   ) => TransportSubscription;
 };
 
@@ -146,16 +150,15 @@ export const useBleDevicesScanning = ({
             }
           }
         },
-        error: (error: BleError) => {
-          if (error.errorCode) {
-            // Currently using the error code values from react-native-ble-plx
-            if (error.errorCode === 600) {
-              setIsRestartNeeded(true);
-              return;
-            }
-
-            setScanningBleError(error);
+        error: (error: HwTransportError) => {
+          if (
+            error instanceof HwTransportError &&
+            error.type === HwTransportErrorType.BleScanStartFailed
+          ) {
+            setIsRestartNeeded(true);
           }
+
+          setScanningBleError(error);
         },
       });
 
