@@ -48,19 +48,19 @@ const dataset: DatasetTest<Transaction> = {
                 family: "evm",
                 mode: "send",
                 recipient: "0x17733CAb76d9A2112576443F21735789733B1ca3",
-                amount: "10000000000000",
+                amount: "1",
                 gasPrice: "100000000",
                 gasLimit: "21000",
                 chainId: 1,
                 nonce: 0,
                 useAllAmount: true,
               }),
-              expectedStatus: (account) => {
-                invariant(
-                  account.balance.toNumber() === 0,
-                  "Account balanche should be empty"
-                );
+              expectedStatus: (account, _, status) => {
                 return {
+                  amount: BigNumber.max(
+                    account.balance.minus(status.estimatedFees),
+                    0
+                  ),
                   errors: {},
                   warnings: {},
                 };
