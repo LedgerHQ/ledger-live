@@ -39,9 +39,12 @@ type Navigation = BaseComposite<
 
 type Props = {
   onSelect: (_: Device) => void;
+  // Needed to know if a device has been selected and with which we are communicating with.
+  // The scanning can only occur when we are not communicating with a device.
+  isDeviceSelected: boolean;
 };
 
-export default function SelectDevice({ onSelect }: Props) {
+export default function SelectDevice({ onSelect, isDeviceSelected }: Props) {
   const [USBDevice, setUSBDevice] = useState<Device | undefined>();
   const [ProxyDevice, setProxyDevice] = useState<Device | undefined>();
 
@@ -56,6 +59,7 @@ export default function SelectDevice({ onSelect }: Props) {
   const navigation = useNavigation<Navigation["navigation"]>();
   const { scannedDevices } = useBleDevicesScanning({
     bleTransportListen: TransportBLE.listen,
+    stopBleScanning: isDeviceSelected,
   });
 
   const handleOnSelect = useCallback(
