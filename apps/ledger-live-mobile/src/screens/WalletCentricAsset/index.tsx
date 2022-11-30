@@ -153,6 +153,7 @@ const AssetScreen = ({ route }: NavigationProps) => {
 
   const onClickLink = useCallback(() => {
     if (!dynamicContentCard) return;
+    if (!dynamicContentCard.link) return;
 
     trackContentCardEvent("contentcard_clicked", {
       screen: dynamicContentCard.location,
@@ -167,6 +168,7 @@ const AssetScreen = ({ route }: NavigationProps) => {
 
   const onPressDismiss = useCallback(() => {
     if (!dynamicContentCard) return;
+    if (!dynamicContentCard.link) return;
 
     trackContentCardEvent("contentcard_dismissed", {
       screen: dynamicContentCard.location,
