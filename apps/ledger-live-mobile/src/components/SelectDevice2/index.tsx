@@ -8,9 +8,9 @@ import { Text, Flex, Icons, BottomDrawer } from "@ledgerhq/native-ui";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { useBleDevicesScanning } from "@ledgerhq/live-common/ble/hooks/useBleDevicesScanning";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import TransportBLE from "@ledgerhq/react-native-hw-transport-ble";
 
 import { urls } from "../../config/urls";
-import TransportBLE from "../../react-native-hw-transport-ble";
 import { track } from "../../analytics";
 import { NavigatorName, ScreenName } from "../../const";
 import { knownDevicesSelector } from "../../reducers/ble";
