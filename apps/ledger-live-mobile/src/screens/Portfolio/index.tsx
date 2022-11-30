@@ -20,7 +20,6 @@ import { accountsSelector } from "../../reducers/accounts";
 import {
   discreetModeSelector,
   counterValueCurrencySelector,
-  carouselVisibilitySelector,
   blacklistedTokenIdsSelector,
 } from "../../reducers/settings";
 
@@ -51,6 +50,7 @@ import { WalletTabNavigatorStackParamList } from "../../components/RootNavigator
 import AddAccountsModal from "../AddAccounts/AddAccountsModal";
 import CollapsibleHeaderFlatList from "../../components/WalletTab/CollapsibleHeaderFlatList";
 import globalSyncRefreshControl from "../../components/globalSyncRefreshControl";
+import useDynamicContent from "../../dynamicContent/dynamicContent";
 
 export { default as PortfolioTabIcon } from "./TabIcon";
 
@@ -67,14 +67,7 @@ const RefreshableCollapsibleHeaderFlatList = globalSyncRefreshControl(
 
 function PortfolioScreen({ navigation }: NavigationProps) {
   const hideEmptyTokenAccount = useEnv("HIDE_EMPTY_TOKEN_ACCOUNTS");
-
   const { t } = useTranslation();
-  const carouselVisibility = useSelector(carouselVisibilitySelector);
-  const showCarousel = useMemo(
-    () => Object.values(carouselVisibility).some(Boolean),
-    [carouselVisibility],
-  );
-
   const distribution = useDistribution({
     showEmptyAccounts: true,
     hideEmptyTokenAccount,
@@ -88,6 +81,8 @@ function PortfolioScreen({ navigation }: NavigationProps) {
   const discreetMode = useSelector(discreetModeSelector);
   const [isAddModalOpened, setAddModalOpened] = useState(false);
   const { colors } = useTheme();
+  const { isAWalletCardDisplayed } = useDynamicContent();
+
   const openAddModal = useCallback(() => {
     track("button_clicked", {
       button: "Add Account",
@@ -191,15 +186,15 @@ function PortfolioScreen({ navigation }: NavigationProps) {
             </Box>,
           ]
         : []),
-      ...(showAssets && showCarousel
+      ...(showAssets && isAWalletCardDisplayed
         ? [
             <Box background={colors.background.main}>
               <SectionContainer px={0} minHeight={240}>
                 <SectionTitle
-                  title={t("portfolio.recommended.title")}
+                  title={t("portfolio.carousel.title")}
                   containerProps={{ mb: 7, mx: 6 }}
                 />
-                <Carousel cardsVisibility={carouselVisibility} />
+                <Carousel />
               </SectionContainer>
             </Box>,
           ]
@@ -237,8 +232,7 @@ function PortfolioScreen({ navigation }: NavigationProps) {
       assetsToDisplay,
       distribution.list.length,
       openAddModal,
-      showCarousel,
-      carouselVisibility,
+      isAWalletCardDisplayed,
       accounts,
       goToAssets,
       postOnboardingVisible,

@@ -8,6 +8,10 @@ import React, { PureComponent } from "react";
 import { withTranslation } from "react-i18next";
 import type { TFunction } from "react-i18next";
 import logger from "~/logger";
+import Text from "./Text";
+import ExternalLink from "./ExternalLink";
+import { openURL } from "~/renderer/linking";
+import { urls } from "~/config/urls";
 
 type Props = {
   error: ?Error,
@@ -43,6 +47,21 @@ class TranslatedError extends PureComponent<Props> {
             typeof str === "string" ? <li key={key}>{str}</li> : null,
           );
         }
+
+        if (urls.errors[error.name]) {
+          return (
+            <Text>
+              {translation}{" "}
+              <Text ff="Inter|SemiBold">
+                <ExternalLink
+                  label={t("common.learnMore")}
+                  onClick={() => openURL(urls.errors[error.name])}
+                />
+              </Text>
+            </Text>
+          );
+        }
+
         return translation;
       }
     }
