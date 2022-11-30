@@ -164,12 +164,12 @@ const filecoin: CurrenciesData<Transaction> = {
             amount: "1",
             useAllAmount: true,
           }),
-          expectedStatus: (account) => {
-            invariant(
-              account.balance.toNumber() === 0,
-              "Account balance should be empty"
-            );
-            return {};
+          expectedStatus: (account, tx, status) => {
+            return {
+              amount: account.spendableBalance.minus(status.estimatedFees),
+              errors: {},
+              warnings: {},
+            };
           },
         },
       ],
