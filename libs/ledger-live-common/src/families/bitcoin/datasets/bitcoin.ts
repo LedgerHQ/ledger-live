@@ -192,31 +192,50 @@ const dataset: CurrenciesData<Transaction> = {
         },
         {
           name: "Send Max",
-          transaction: fromTransactionRaw({
-            family: "bitcoin",
-            recipient: "BC1QQMXQDRKXGX6SWRVJL9L2E6SZVVKG45ALL5U4FL",
-            // FIXME: ignored by test suite
-            useAllAmount: true,
-            amount: "0",
-            feePerByte: "1",
-            networkInfo,
-            rbf: false,
-            utxoStrategy: {
-              strategy: 0,
-              excludeUTXOs: [],
-            },
-          }),
-          expectedStatus: (account, transaction) => {
-            console.log(
-              account.balance.toNumber(),
-              transaction.amount.toNumber()
-            );
-
-            invariant(
-              account.balance.toNumber() === 0,
-              "Account balance should be empty"
-            );
-            return {};
+          transaction: (t): Transaction => {
+            return {
+              ...t,
+              family: "bitcoin",
+              recipient: "BC1QQMXQDRKXGX6SWRVJL9L2E6SZVVKG45ALL5U4FL",
+              amount: new BigNumber(1),
+              useAllAmount: true,
+              feePerByte: new BigNumber(1),
+              networkInfo: {
+                family: "bitcoin",
+                feeItems: {
+                  items: [
+                    {
+                      key: "0",
+                      speed: "high",
+                      feePerByte: new BigNumber(3),
+                    },
+                    {
+                      key: "1",
+                      speed: "standard",
+                      feePerByte: new BigNumber(2),
+                    },
+                    {
+                      key: "2",
+                      speed: "low",
+                      feePerByte: new BigNumber(1),
+                    },
+                  ],
+                  defaultFeePerByte: new BigNumber(1),
+                },
+              },
+              rbf: false,
+              utxoStrategy: {
+                strategy: 0,
+                excludeUTXOs: [],
+              },
+            };
+          },
+          expectedStatus: (account, _, status) => {
+            return {
+              amount: account.spendableBalance.minus(status.estimatedFees),
+              errors: {},
+              warnings: {},
+            };
           },
         },
       ],
@@ -224,6 +243,7 @@ const dataset: CurrenciesData<Transaction> = {
     },
     {
       raw: bitcoin2,
+      transactions: [],
     },
   ],
 };

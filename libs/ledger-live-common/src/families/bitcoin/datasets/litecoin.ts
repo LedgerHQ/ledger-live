@@ -1,9 +1,9 @@
 import { BigNumber } from "bignumber.js";
-import invariant from "invariant";
 import type { CurrenciesData } from "@ledgerhq/types-live";
 import type { NetworkInfoRaw, Transaction, BitcoinAccountRaw } from "../types";
 import { fromTransactionRaw } from "../transaction";
 import scanAccounts1 from "./litecoin.scanAccounts.1";
+
 const networkInfo: NetworkInfoRaw = {
   family: "bitcoin",
   feeItems: {
@@ -115,12 +115,12 @@ const dataset: CurrenciesData<Transaction> = {
               excludeUTXOs: [],
             },
           }),
-          expectedStatus: (account) => {
-            invariant(
-              account.balance.toNumber() === 0,
-              "Account balance should be empty"
-            );
-            return {};
+          expectedStatus: (account, tx, status) => {
+            return {
+              amount: account.spendableBalance.minus(status.estimatedFees),
+              warnings: {},
+              errors: {},
+            };
           },
         },
       ],

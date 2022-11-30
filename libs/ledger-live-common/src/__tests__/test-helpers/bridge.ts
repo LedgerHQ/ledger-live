@@ -509,6 +509,7 @@ export function testBridge<T extends TransactionCommon>(
             });
           });
         });
+
         describe("createTransaction", () => {
           makeTest(
             "empty transaction is an object with empty recipient and zero amount",
@@ -541,6 +542,7 @@ export function testBridge<T extends TransactionCommon>(
             }
           );
         });
+
         describe("prepareTransaction", () => {
           // stability: function called twice will return the same object reference (=== convergence so we can stop looping, typically because transaction will be a hook effect dependency of prepareTransaction)
           async function expectStability(account, t) {
@@ -674,13 +676,10 @@ export function testBridge<T extends TransactionCommon>(
                       )
                     : transaction;
                 t = await bridge.prepareTransaction(account, {
-                  ...t,
                   feePerByte: new BigNumber(0.0001),
-                });
-                const s = await bridge.getTransactionStatus(account, {
                   ...t,
-                  feePerByte: new BigNumber(0.0001),
                 });
+                const s = await bridge.getTransactionStatus(account, t);
 
                 if (expectedStatus) {
                   const es =
