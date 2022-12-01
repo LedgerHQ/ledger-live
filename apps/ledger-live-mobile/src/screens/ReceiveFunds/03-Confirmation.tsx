@@ -5,7 +5,6 @@ import QRCode from "react-native-qrcode-svg";
 import { useTranslation, Trans } from "react-i18next";
 import type { Account, TokenAccount, AccountLike } from "@ledgerhq/types-live";
 import type {
-  CryptoCurrency,
   CryptoOrTokenCurrency,
   TokenCurrency,
 } from "@ledgerhq/types-cryptoassets";
@@ -15,6 +14,7 @@ import {
   getAccountCurrency,
   getAccountName,
 } from "@ledgerhq/live-common/account/index";
+import { getCurrencyColor } from "@ledgerhq/live-common/currencies/color";
 import { useTheme } from "styled-components/native";
 import { Flex, Text, Icons, Button, Notification } from "@ledgerhq/native-ui";
 import { useRoute } from "@react-navigation/native";
@@ -185,9 +185,14 @@ function ReceiveConfirmationInner({
   if (!account || !currency || !mainAccount) return null;
 
   // check for coin specific UI
-  if (Object.keys(byFamily).includes((currency as CryptoCurrency).family)) {
+  if (
+    currency.type === "CryptoCurrency" &&
+    Object.keys(byFamily).includes(currency.family)
+  ) {
     const CustomConfirmation =
-      byFamily[(currency as CryptoCurrency).family as keyof typeof byFamily];
+      currency.type === "CryptoCurrency"
+        ? byFamily[currency.family as keyof typeof byFamily]
+        : null;
     if (CustomConfirmation) {
       return (
         <CustomConfirmation
@@ -287,11 +292,7 @@ function ReceiveConfirmationInner({
               <CurrencyIcon
                 currency={currency}
                 color={colors.constant.white}
-                bg={
-                  (currency as CryptoCurrency)?.color ||
-                  (currency as TokenCurrency).parentCurrency?.color ||
-                  colors.constant.black
-                }
+                bg={getCurrencyColor(currency) || colors.constant.black}
                 size={48}
                 circle
               />
