@@ -5,7 +5,6 @@ import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { createAction } from "@ledgerhq/live-common/hw/actions/app";
 import connectApp from "@ledgerhq/live-common/hw/connectApp";
 import { useTheme } from "@react-navigation/native";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { isTokenCurrency } from "@ledgerhq/live-common/currencies/index";
 import { prepareCurrency } from "../../bridge/cache";
 import { ScreenName } from "../../const";
@@ -94,10 +93,9 @@ export default function AddAccountsSelectDevice({
         onResult={onResult}
         onClose={onClose}
         request={{
-          currency:
-            currency.type === "TokenCurrency"
-              ? currency.parentCurrency
-              : currency,
+          currency: isTokenCurrency(currency)
+            ? currency.parentCurrency
+            : currency,
         }}
         onSelectDeviceLink={() => setDevice(null)}
         analyticsPropertyFlow={analyticsPropertyFlow || "add account"}
