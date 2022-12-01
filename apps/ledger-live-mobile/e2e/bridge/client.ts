@@ -1,8 +1,7 @@
-// @flow
 import { Platform } from "react-native";
+import { DescriptorEventType } from "@ledgerhq/hw-transport";
 import invariant from "invariant";
 import { Subject } from "rxjs";
-import type { AccountRaw } from "@ledgerhq/types-live";
 import { store } from "../../src/context/LedgerStore";
 import { importSettings } from "../../src/actions/settings";
 import { setAccounts } from "../../src/actions/accounts";
@@ -12,7 +11,7 @@ import { navigate } from "../../src/rootnavigation";
 
 let ws: WebSocket;
 
-export function init(port: number = 8099) {
+export function init(port = 8099) {
   const ipAddress = Platform.OS === "ios" ? "localhost" : "10.0.2.2";
   const path = `${ipAddress}:${port}`;
   ws = new WebSocket(`ws://${path}`);
@@ -23,12 +22,12 @@ export function init(port: number = 8099) {
   ws.onmessage = onMessage;
 }
 
-async function onMessage(event: { data: mixed }) {
+async function onMessage(event: { data: unknown }) {
   invariant(
     typeof event.data === "string",
     "[E2E Bridge Client]: Message data must be string",
   );
-  const msg: E2EBridgeMessage = JSON.parse(event.data);
+  const msg = JSON.parse(event.data);
   invariant(msg.type, "[E2E Bridge Client]: type is missing");
 
   log(`Message\n${JSON.stringify(msg, null, 2)}`);
@@ -40,6 +39,7 @@ async function onMessage(event: { data: mixed }) {
       break;
     case "setGlobals":
       Object.entries(msg.payload).forEach(([k, v]) => {
+        //  @ts-expect-error global bullshit
         global[k] = v;
       });
       break;
@@ -50,19 +50,26 @@ async function onMessage(event: { data: mixed }) {
       store.dispatch(setAccounts(msg.payload.map(accountModel.decode)));
       break;
     }
-    case "importSettngs": {
+    case "importSettings": {
       store.dispatch(importSettings(msg.payload));
       break;
     }
     case "navigate":
-      navigate(msg.payload);
+      navigate(msg.payload, {});
       break;
     default:
       break;
   }
 }
 
-export const e2eBridgeSubject = new Subject();
+type SubjectData =
+  | {
+      type: DescriptorEventType;
+      payload: { id: string; name: string; serviceUUID: string };
+    }
+  | { type: "open" };
+
+export const e2eBridgeSubject = new Subject<SubjectData>();
 
 function log(message: string) {
   // eslint-disable-next-line no-console
