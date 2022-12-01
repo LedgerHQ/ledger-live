@@ -78,17 +78,23 @@ export default function NotificationCenter() {
           />
         </Container>
       ) : (
-        <Flex alignItems="center" flex={1}>
+        <Flex alignItems="center" flex={1} px={6}>
           <Text
             variant="large"
             fontWeight="semiBold"
             color="neutral.c100"
             mb={3}
             mt={14}
+            textAlign="center"
           >
-            {t("notificationCenter.news.emptyState.title")}
+            {t("notificationCenter.news.emptyState.title")} 💤
           </Text>
-          <Text variant="paragraph" fontWeight="medium" color="neutral.c70">
+          <Text
+            variant="paragraph"
+            fontWeight="medium"
+            color="neutral.c70"
+            textAlign="center"
+          >
             {t("notificationCenter.news.emptyState.desc")}
           </Text>
         </Flex>
