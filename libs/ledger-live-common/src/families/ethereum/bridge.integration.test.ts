@@ -69,7 +69,7 @@ const dataset: DatasetTest<Transaction> = {
               expectedStatus: (account, tx, status) => {
                 return {
                   amount: BigNumber.max(
-                    tx.amount.minus(status.estimatedFees),
+                    account.spendableBalance.minus(status.estimatedFees),
                     0
                   ),
                   errors: {},
