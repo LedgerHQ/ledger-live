@@ -1,8 +1,16 @@
 import React from "react";
 import { StyleSheet } from "react-native";
-import { BleErrorCode } from "react-native-ble-plx";
+import {
+  BleError as DeprecatedError,
+  BleErrorCode,
+} from "react-native-ble-plx";
 import { Trans } from "react-i18next";
-import { PairingFailed, GenuineCheckFailed } from "@ledgerhq/errors";
+import {
+  PairingFailed,
+  GenuineCheckFailed,
+  HwTransportError,
+  HwTransportErrorType,
+} from "@ledgerhq/errors";
 import { Flex } from "@ledgerhq/native-ui";
 import { useTheme } from "@react-navigation/native";
 import LocationRequired from "../../components/LocationRequired";
@@ -16,7 +24,7 @@ import { urls } from "../../config/urls";
 import Button from "../../components/Button";
 
 type Props = {
-  error: Error & { errorCode?: BleErrorCode };
+  error: HwTransportError | DeprecatedError | Error;
   status: string;
   onRetry: () => void;
   onBypassGenuine: () => void;
@@ -32,11 +40,21 @@ const hitSlop = {
 function RenderError({ error, status, onBypassGenuine, onRetry }: Props) {
   const { colors } = useTheme();
 
-  if (error.errorCode === BleErrorCode.LocationServicesDisabled) {
+  if (
+    (isDeprecatedError(error) &&
+      error.errorCode === BleErrorCode.LocationServicesDisabled) ||
+    (isHwTransportError(error) &&
+      error.type === HwTransportErrorType.BleLocationServicesDisabled)
+  ) {
     return <LocationRequired onRetry={onRetry} errorType="disabled" />;
   }
 
-  if (error.errorCode === BleErrorCode.BluetoothUnauthorized) {
+  if (
+    (isDeprecatedError(error) &&
+      error.errorCode === BleErrorCode.BluetoothUnauthorized) ||
+    (isHwTransportError(error) &&
+      error.type === HwTransportErrorType.BleBluetoothUnauthorized)
+  ) {
     return <LocationRequired onRetry={onRetry} errorType="unauthorized" />;
   }
 
@@ -96,6 +114,16 @@ function RenderError({ error, status, onBypassGenuine, onRetry }: Props) {
 }
 
 export default RenderError;
+
+// Duck typing HwTransportError as it seems that all errors given to this RenderError
+// are transformed into Error
+function isHwTransportError(error: Error): error is HwTransportError {
+  return error instanceof HwTransportError || !!(error && "type" in error);
+}
+// Duck typing react-native-ble-plx's BleError
+function isDeprecatedError(error: Error): error is DeprecatedError {
+  return error instanceof DeprecatedError || !!(error && "errorCode" in error);
+}
 
 const styles = StyleSheet.create({
   linkContainer: {

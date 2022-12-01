@@ -591,7 +591,7 @@ const bleErrorToHwTransportError = new Map([
 const mapBleErrorToHwTransportError = (
   bleError: BleError
 ): HwTransportError => {
-  const message = `origin ${bleError.errorCode}: ${bleError.message}`;
+  const message = `${bleError.message}. Origin: ${bleError.errorCode}`;
 
   const inferedType = bleErrorToHwTransportError.get(bleError.errorCode);
   const type = !inferedType ? HwTransportErrorType.Unknown : inferedType;
