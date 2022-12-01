@@ -421,6 +421,19 @@
       "title" : "عفوًا، لم يتم العثور على أي حساب",
       "description" : "حدث خطأ ما في حساب العنوان. يرجى إعادة المحاولة مرة أخرى. إذا استمرت المشكلة، يرجى حفظ سجلاتك باستخدام الزر أدناه وتقديمها إلى فريق دعم Ledger."
     },
+    "ElrondDecimalsLimitReached" : {
+      "title" : "تم الوصول إلى الحد الأقصى من الكسور العشرية",
+      "description" : "يُرجى التأكد من أن المبلغ المُقدَّم به 18 كسراً عشرياً."
+    },
+    "ElrondMinDelegatedAmountError" : {
+      "title" : "يجب أن يكون المبلغ المفوض على الأقل {{formattedAmount}}"
+    },
+    "ElrondMinUndelegatedAmountError" : {
+      "title" : "يجب أن يكون المبلغ غير المفوض على الأقل {{formattedAmount}}"
+    },
+    "ElrondDelegationBelowMinimumError" : {
+      "title" : "لا يمكن أن يكون التفويض المتبقي أقل من {{formattedAmount}}"
+    },
     "NotEnoughBalance" : {
       "title" : "عفواً، الأموال المتوفرة غير كافية",
       "description" : "يرجى التأكد من وجود أموال كافية في الحساب."
@@ -518,7 +531,7 @@
       "title" : "مبلغ التجميد لا يمكن أن يكون أصغر من 1"
     },
     "TronSendTrc20ToNewAccountForbidden" : {
-      "title" : "إرسال TRC20 إلى الحساب الجديد لن يؤدي إلى تفعيله",
+      "title" : "تحتاج أولاً إلى إرسال على الأقل 0.1 TRX إلى هذا العنوان لتمكين تلقي رمز TRC20.",
       "description" : "لتفعيله، قم بإرسال إما TRX أو TRC10 إلى الحساب أولاً. ثم يمكن بعدها أن يتلقى TRC20."
     },
     "TronUnexpectedFees" : {
@@ -639,7 +652,7 @@
       "title" : "يجب عليك تقييد على الأقل {{minimumBondAmount}}."
     },
     "PolkadotBondMinimumAmountWarning" : {
-      "title" : "ينبغي ألا يقل رصيدك المُقيّد عن {{minimumBondBalance}}."
+      "title" : "يجب ألا يقل رصيدك المُقيّد عن {{minimumBondBalance}}."
     },
     "PolkadotMaxUnbonding" : {
       "title" : "لقد تجاوزت الحد المسموح به لإلغاء التقيد"
@@ -1717,8 +1730,14 @@
         "subtitle" : "قم بتأكيد الكود على {{productName}} خاصتك"
       },
       "error" : {
-        "title" : "الإقران لم ينجح",
-        "subtitle" : "يبدو أنه قد حدث خطأ ما!تأكد من تشغيل البلوتوث لديك وأن {{productName}} خاصتك قريبة.",
+        "generic" : {
+          "title" : "Pairing unsuccessful",
+          "subtitle" : "Looks like something went wrong!\nCheck that your Bluetooth is switched on and your {{productName}} is nearby."
+        },
+        "lockedDevice" : {
+          "title" : "Your device is locked",
+          "subtitle" : "Unlock your {{ productName }} and try again."
+        },
         "retryCta" : "أعد المحاولة"
       }
     }
@@ -1901,6 +1920,9 @@
     "noOpState" : {
       "title" : "لا توجد أي عمليات بعد؟",
       "desc" : "ببساطة قم بإرسال الأصول المشفرة إلى عنوان التلقي الخاص بك وانتظر حتى يقوم التطبيق بالمزامنة."
+    },
+    "carousel" : {
+      "title" : "For you"
     },
     "recommended" : {
       "title" : "موصى به"
@@ -2350,8 +2372,8 @@
     "display" : {
       "title" : "عامة",
       "desc" : "تكوين إعدادات Ledger Live العامة.",
-      "carousel" : "رؤية كشريط دوّار",
-      "carouselDesc" : "تمكين الرؤية كشريط دوّار في المحفظة الاستثمارية",
+      "carousel" : "التوصيات",
+      "carouselDesc" : "We'll show you cards with personalised tips and our latest offers just for you.",
       "language" : "لغة العرض",
       "languageDesc" : "قم بتعيين اللغة المعروضة في Ledger Live.",
       "region" : "المنطقة",
@@ -2464,7 +2486,7 @@
       },
       "allowed" : {
         "title" : "السماح بالإشعارات",
-        "desc" : "تلقى إشعارات حول أصولك المشفرة واتجاهات السوق وغير ذلك الكثير"
+        "desc" : "Receive notifications about your crypto assets, market trends and more"
       },
       "transactions" : {
         "title" : "المعاملات",
@@ -2486,7 +2508,7 @@
         "title" : "تنبيهات الأسعار",
         "desc" : "قم بتعيين تنبيهات السعر لعملاتك المفضلة حتى لا تفوتك حركة السوق"
       },
-      "disclaimer" : "خصوصية البيانات أمر بالغ الأهمية في Ledger. البيانات التي تُجمع لا تُشارَك أبداً مع شركائنا."
+      "disclaimer" : "Your data and privacy is important to us at Ledger. Data collected is never shared with our partners."
     },
     "help" : {
       "title" : "مساعدة",
@@ -4578,6 +4600,207 @@
       }
     }
   },
+  "elrond" : {
+    "info" : {
+      "available" : {
+        "title" : "EGLD مُتاحة",
+        "description" : "هذا المبلغ يُمكن تحويله."
+      },
+      "delegated" : {
+        "title" : "الأصول المُكدَّسة",
+        "description" : "الأصول المُكدَّسة تُستخدم بشكل غير مباشر من قِبل مزود التكديس لتشغيل عُقد المدقق ومعالجة المعاملات وتأمين الشبكة من خلال المشاركة في آلية الإجماع."
+      },
+      "undelegating" : {
+        "title" : "عمليات السحب المُعلَّقة",
+        "description" : "الأصول المُلغى تكديسها تخضع لفترة إلغاء تقييد مدتها 10 أيام قبل التمكّن من سحبها."
+      },
+      "delegationUnavailable" : {
+        "title" : "التفويض غير متوفر",
+        "description" : "لا يتوفر رصيد كافٍ في حسابك لبدء تفويض جديد."
+      }
+    },
+    "delegation" : {
+      "delegationEarn" : "قم بتكديس EGLD خاصتك لتأمين الشبكة واقتنص حصتك من المكافآت.",
+      "info" : "ما هو التكديس وكيف يعمل؟",
+      "claimRewards" : "المطالبة بالمكافآت",
+      "claimAvailableRewards" : "المطالبة بـ {{amount}}",
+      "header" : "تكديسي",
+      "Amount" : "المبلغ",
+      "noRewards" : "لا توجد مكافآت متاحة",
+      "delegate" : "إعادة التكديس",
+      "undelegate" : "إلغاء التكديس",
+      "reward" : "المطالبة بالمكافآت",
+      "commission" : "العمولة",
+      "iDelegate" : "أنا أفوّض",
+      "totalStake" : "إجمالي التكديس",
+      "stepperHeader" : {
+        "starter" : "اكسب المكافآت",
+        "validator" : "تفويض الأصول",
+        "amountSubTitle" : "المبلغ المطلوب تكديسه",
+        "summary" : "الملخص",
+        "verification" : "التحقق",
+        "selectDevice" : "اختر جهاز",
+        "connectDevice" : "توصيل الجهاز",
+        "stepRange" : "خطوة {{currentStep}} من {{totalSteps}}"
+      },
+      "flow" : {
+        "steps" : {
+          "starter" : {
+            "description" : "يمكنك كسب مكافآت عن طريق تكديس أصولك EGLD إلى مزود تكديس.",
+            "steps" : {
+              "0" : "أنت تحتفظ بملكية الأصول المُكدَّسة.",
+              "1" : "الأصول ستكون متاحة بعد 10 أيام من إلغاء التكديس.",
+              "2" : "قم بالتكديس باستخدام جهازك Ledger."
+            },
+            "warning" : {
+              "description" : "اختر مزود التكديس بحكمة: حالياً، الخطر الوحيد هو عدم الحصول على المكافآت لأسباب متعددة، لذا يجب عليك اختيار المزود بناءً على الموثوقية والتواصل والاقتصاد."
+            },
+            "cta" : "متابعة"
+          },
+          "validator" : {
+            "validators" : "مزودي التكديس",
+            "myDelegations" : "تكديسي",
+            "cta" : "متابعة",
+            "apr" : "معدل النسبة السنوي (APR): {{amount}}",
+            "totalAvailable" : "إجمالي المتاح : <0>{{amount}}</0>",
+            "allAssetsUsed" : "جميع الأصول المستخدمة",
+            "noResultsFound" : "لم يتم العثور على مدقق لـ <0>{{search}}</0>",
+            "currentAmount" : "(<0>{{amount}}</0> +)"
+          },
+          "amount" : {
+            "assetsRemaining" : "الأصول المتبقية : <0>{{amount}}</0>",
+            "allAssetsUsed" : "جميع الأصول المستخدمة",
+            "minAmount" : "الحد الأدنى للمبلغ : <0>{{min}}</0>",
+            "incorrectAmount" : "الحد الأقصى للمبلغ : <0>{{max}}</0>",
+            "insufficientDelegation" : "إجمالي مبلغ التكديس خاصتك يجب أن يكون على الأقل 1 {{label}} لكل مزود تكديس.",
+            "wrongUndelegations" : "المبلغ المتبقي من {{label}} المُكدَّس يجب أن يكون إما 0 أو أكثر من 1 {{label}} لكل مزود تكديس.",
+            "cta" : "متابعة"
+          },
+          "verification" : {
+            "success" : {
+              "title" : "لقد قمت بتكديس أصولك بنجاح",
+              "text" : "سيتم تحديث رصيد حسابك بمجرد أن تؤكد الشبكة المعاملة.",
+              "cta" : "رؤية التفاصيل"
+            },
+            "pending" : {
+              "title" : "جاري بث المعاملة..."
+            },
+            "broadcastError" : "ربما تكون معاملتك قد فشلت. يُرجى الانتظار لحظة ثم تحقق من سجل المعاملات قبل المحاولة مرة أخرى."
+          }
+        }
+      },
+      "drawer" : {
+        "status" : "الحالة",
+        "rewards" : "المكافآت",
+        "active" : "نشِط",
+        "inactive" : "غير نشِط",
+        "completionDate" : "تاريخ الإكمال",
+        "redelegatedFrom" : "تمت إعادة التفويض من",
+        "completionDateHit" : "اكتمل"
+      }
+    },
+    "claimRewards" : {
+      "stepperHeader" : {
+        "validator" : "اختر المكافأة التي تريد تحصيلها",
+        "method" : "المطالبة بالمكافآت",
+        "summary" : "الملخص",
+        "selectDevice" : "اختر جهاز",
+        "connectDevice" : "توصيل الجهاز",
+        "stepRange" : "خطوة {{currentStep}} من {{totalSteps}}"
+      },
+      "flow" : {
+        "steps" : {
+          "method" : {
+            "youEarned" : "لقد كسبت",
+            "byDelegationAssetsTo" : "عن طريق تكديس الأصول إلى",
+            "claimRewards" : "المطالبة بالمكافآت",
+            "reDelegateRewards" : "تكديس المكافآت",
+            "claimRewardsInfo" : "ستتم المطالبة بهم الآن وإضافتهم إلى رصيدك المتاح.",
+            "reDelegateRewardsInfo" : "ستتم المطالبة بهم الآن وتفويضها تلقائياً إلى نفس مزود التكديس.",
+            "compoundOrCashIn" : "تكديس المكافآت أو المطالبة بالمكافآت؟",
+            "claimRewardsTooltip" : "ستتم إضافة المكافآت إلى الرصيد المتاح",
+            "reDelegateRewardsTooltip" : "المكافآت ستُضاف إلى المبلغ المُكدَّس",
+            "cta" : "متابعة"
+          },
+          "verification" : {
+            "success" : {
+              "claimRewardsSuccess" : "لقد قمت بالمطالبة بمكافآتك بنجاح. تمت إضافتهم إلى رصيدك المتاح.",
+              "reDelegateRewardsSuccess" : "مكافآتك تم تكديسها إلى نفس مزود التكديس.",
+              "text" : "سيتم تحديث رصيد حسابك عندما تؤكد الشبكة المعاملة.",
+              "cta" : "رؤية التفاصيل"
+            },
+            "pending" : {
+              "title" : "جاري بث المعاملة..."
+            },
+            "broadcastError" : "ربما تكون معاملتك قد فشلت. يُرجى الانتظار لحظة ثم تحقق من سجل المعاملات قبل المحاولة مرة أخرى."
+          }
+        }
+      }
+    },
+    "undelegation" : {
+      "stepperHeader" : {
+        "amountSubTitle" : "المبلغ المطلوب إلغاء تكديسه",
+        "summary" : "الملخص",
+        "selectDevice" : "اختر جهاز",
+        "connectDevice" : "توصيل الجهاز",
+        "stepRange" : "خطوة {{currentStep}} من {{totalSteps}}"
+      },
+      "flow" : {
+        "steps" : {
+          "amount" : {
+            "allAssetsUsed" : "جميع الأصول المختارة",
+            "assetsRemaining" : "الأصول المفوضة المتبقية : <0>{{amount}}</0>",
+            "minAmount" : "الحد الأدنى للمبلغ : <0>{{min}}</0>",
+            "incorrectAmount" : "الحد الأقصى للمبلغ : <0>{{max}}</0>",
+            "minRemaining" : "الحد الأدنى المتبقي : <0>{{min}}</0>"
+          },
+          "verification" : {
+            "success" : {
+              "title" : "لقد ألغيت تكديس أصولك بنجاح",
+              "text" : "سيتم تحديث رصيد حسابك عندما تؤكد الشبكة المعاملة.",
+              "cta" : "رؤية التفاصيل"
+            },
+            "pending" : {
+              "title" : "جاري بث المعاملة..."
+            },
+            "broadcastError" : "ربما تكون معاملتك قد فشلت. يُرجى الانتظار لحظة ثم تحقق من سجل المعاملات قبل المحاولة مرة أخرى."
+          }
+        }
+      }
+    },
+    "withdraw" : {
+      "stepperHeader" : {
+        "validator" : "اختر المكافأة التي تريد تحصيلها",
+        "method" : "المطالبة بالمكافآت",
+        "summary" : "الملخص",
+        "selectDevice" : "اختر جهاز",
+        "connectDevice" : "توصيل الجهاز",
+        "stepRange" : "خطوة {{currentStep}} من {{totalSteps}}"
+      },
+      "flow" : {
+        "steps" : {
+          "method" : {
+            "youEarned" : "لقد ألغيت التكديس",
+            "byDelegationAssetsTo" : "من",
+            "withdrawInfo" : "ستتم المطالبة بهم الآن وإضافتهم إلى رصيدك المتاح.",
+            "withdrawTooltip" : "ستتم إضافة المسحوبات إلى الرصيد المتاح",
+            "cta" : "متابعة"
+          },
+          "verification" : {
+            "success" : {
+              "title" : "لقد قمت بالمطالبة بمكافآتك بنجاح. تمت إضافتهم إلى رصيدك المتاح.",
+              "text" : "سيتم تحديث رصيد حسابك عندما تؤكد الشبكة المعاملة.",
+              "cta" : "رؤية التفاصيل"
+            },
+            "pending" : {
+              "title" : "جاري بث المعاملة..."
+            },
+            "broadcastError" : "ربما تكون معاملتك قد فشلت. يُرجى الانتظار لحظة ثم تحقق من سجل المعاملات قبل المحاولة مرة أخرى."
+          }
+        }
+      }
+    }
+  },
   "tezos" : {
     "AccountHeader" : {
       "title" : "يمكنك أن تكسب مكافآت عن طريق تفويض حسابك",
@@ -4690,6 +4913,9 @@
         "title" : "المرشحون",
         "description" : "تم انتخاب 127 فردًا من خلال التصويت من قِبل مجتمع حاملي رموز التوكن بأكمله. يتم أخذ عينات من الأصوات كل 6 ساعات."
       }
+    },
+    "receive" : {
+      "newAddressTRC20" : "تحتاج أولاً إلى إرسال على الأقل 0.1 TRX إلى هذا العنوان لتنشيطه."
     }
   },
   "stellar" : {
@@ -5074,7 +5300,8 @@
     "actions" : {
       "redelegate" : "إعادة التفويض",
       "collectRewards" : "تحصيل المكافآت",
-      "undelegate" : "إلغاء التفويض"
+      "undelegate" : "إلغاء التفويض",
+      "withdraw" : "سحب"
     }
   },
   "ValidateOnDevice" : {
@@ -5454,7 +5681,8 @@
     "drawer" : {
       "title" : "اختر صورة",
       "options" : {
-        "uploadFromPhone" : "قم بالتحميل من هاتفك"
+        "uploadFromPhone" : "Choose from my picture gallery",
+        "selectFromNFTGallery" : "Choose from NFT gallery"
       }
     },
     "cropImage" : "قُصّ الصورة",
@@ -5479,6 +5707,9 @@
       "loading" : "جاري تحميل المعاينة",
       "setPicture" : "تعيين صورة مخصصة",
       "editPicture" : "تعديل الصورة"
+    },
+    "nftGallery" : {
+      "title" : "رموزي غير القابلة للاستبدال"
     }
   },
   "postOnboarding" : {
