@@ -123,7 +123,7 @@ function FromRow({
       button: "Amount input",
       page: "Page Swap Form",
       ...swapDefaultTrack,
-      amount: fromAmount,
+      amount: null,
     });
     updateSelectedRate();
     setFromAmount(fromAmount);
