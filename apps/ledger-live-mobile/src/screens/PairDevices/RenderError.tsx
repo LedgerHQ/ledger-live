@@ -1,6 +1,7 @@
 import React from "react";
 import { StyleSheet } from "react-native";
 import {
+  BleError,
   BleError as DeprecatedError,
   BleErrorCode,
 } from "react-native-ble-plx";
@@ -41,18 +42,18 @@ function RenderError({ error, status, onBypassGenuine, onRetry }: Props) {
   const { colors } = useTheme();
 
   if (
-    (isDeprecatedError(error) &&
+    (error instanceof BleError &&
       error.errorCode === BleErrorCode.LocationServicesDisabled) ||
-    (isHwTransportError(error) &&
+    (error instanceof HwTransportError &&
       error.type === HwTransportErrorType.BleLocationServicesDisabled)
   ) {
     return <LocationRequired onRetry={onRetry} errorType="disabled" />;
   }
 
   if (
-    (isDeprecatedError(error) &&
+    (error instanceof BleError &&
       error.errorCode === BleErrorCode.BluetoothUnauthorized) ||
-    (isHwTransportError(error) &&
+    (error instanceof HwTransportError &&
       error.type === HwTransportErrorType.BleBluetoothUnauthorized)
   ) {
     return <LocationRequired onRetry={onRetry} errorType="unauthorized" />;
@@ -114,16 +115,6 @@ function RenderError({ error, status, onBypassGenuine, onRetry }: Props) {
 }
 
 export default RenderError;
-
-// Duck typing HwTransportError as it seems that all errors given to this RenderError
-// are transformed into Error
-function isHwTransportError(error: Error): error is HwTransportError {
-  return error instanceof HwTransportError || !!(error && "type" in error);
-}
-// Duck typing react-native-ble-plx's BleError
-function isDeprecatedError(error: Error): error is DeprecatedError {
-  return error instanceof DeprecatedError || !!(error && "errorCode" in error);
-}
 
 const styles = StyleSheet.create({
   linkContainer: {

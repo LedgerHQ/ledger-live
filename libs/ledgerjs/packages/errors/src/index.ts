@@ -260,6 +260,9 @@ export class HwTransportError extends Error {
     super(message);
     this.name = "HwTransportError";
     this.type = type;
+
+    // Needed as long as we target < ES6
+    Object.setPrototypeOf(this, HwTransportError.prototype);
   }
 }
 
