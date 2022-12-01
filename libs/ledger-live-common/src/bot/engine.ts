@@ -684,7 +684,9 @@ export async function runOnAccount<T extends Transaction>({
             throw e;
           }
 
-          log("bot", "failed confirm test. trying again. " + String(e));
+          log("bot", "failed confirm test. trying again. " + String(e), {
+            stack: String((e as Error)?.stack),
+          });
           // We will try again
           return;
         }
@@ -752,7 +754,8 @@ export async function runOnAccount<T extends Transaction>({
           }
           log(
             "bot",
-            "failed destination confirm test. trying again. " + String(e)
+            "failed destination confirm test. trying again. " + String(e),
+            { stack: String((e as Error)?.stack) }
           );
           // We will try again
           return;
