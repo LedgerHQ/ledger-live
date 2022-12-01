@@ -100,10 +100,7 @@ const ChooseDevice: React.FC<ChooseDeviceProps> = ({ isFocused }) => {
           <Trans i18nKey="manager.title" />
         </Text>
         {newDeviceSelectionFeatureFlag?.enabled ? (
-          <SelectDevice2
-            onSelect={onSelectDevice}
-            isDeviceSelected={!!device}
-          />
+          <SelectDevice2 onSelect={onSelectDevice} stopBleScanning={!!device} />
         ) : (
           <>
             <SelectDevice
