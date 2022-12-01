@@ -11,6 +11,7 @@ import type {
 } from "@ledgerhq/hw-transport";
 import { DeviceId } from "@ledgerhq/types-live";
 import { HwTransportError, HwTransportErrorType } from "@ledgerhq/errors";
+import { log } from "@ledgerhq/logs";
 import { TransportBleDevice, ScannedDevice } from "../types";
 
 export type ScanningBleError = HwTransportError | null;
@@ -151,6 +152,8 @@ export const useBleDevicesScanning = ({
           }
         },
         error: (error: HwTransportError) => {
+          log("useBleDevicesScanning:error", `${error.type}: ${error.message}`);
+
           if (
             error instanceof HwTransportError &&
             error.type === HwTransportErrorType.BleScanStartFailed
