@@ -72,7 +72,7 @@ export function upToDate(app: Probot) {
       return;
     }
 
-    // List all pull requests targetting the branch that was just pushed to.
+    // List all pull requests targeting the branch that was just pushed to.
     const matchingPullRequests = await octokit.paginate(octokit.pulls.list, {
       owner,
       repo,
