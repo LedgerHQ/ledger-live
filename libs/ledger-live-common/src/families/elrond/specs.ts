@@ -321,12 +321,7 @@ const elrondSpec: AppSpec<Transaction> = {
       maxRun: 1,
       deviceAction: acceptUndelegateTransaction,
       transaction: ({ account, bridge }) => {
-        invariant(
-          account.balance
-            .minus(account.spendableBalance)
-            .gt(MIN_DELEGATION_AMOUNT),
-          `account don't have any delegations`
-        );
+        //invariant( account.balance.minus(account.spendableBalance).gt(MIN_DELEGATION_AMOUNT), `account don't have any delegations`);
         const elrondAccount = account as ElrondAccount;
         const elrondResources =
           elrondAccount.elrondResources as ElrondResources;
