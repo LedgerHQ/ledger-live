@@ -1,5 +1,11 @@
 # live-mobile
 
+## 3.12.0-next.2
+
+### Patch Changes
+
+- [#2009](https://github.com/LedgerHQ/ledger-live/pull/2009) [`ef13f615d6`](https://github.com/LedgerHQ/ledger-live/commit/ef13f615d663a7d2e37ad70e46ebe5d826d99c09) Thanks [@gre](https://github.com/gre)! - Solve crash when entering token receive flow
+
 ## 3.12.0-next.1
 
 ### Patch Changes
