@@ -10,7 +10,6 @@ import {
   completeCustomImageFlow,
   setLastConnectedDevice,
   setReadOnlyMode,
-  setLastSeenCustomImage,
 } from "../../actions/settings";
 import { ScreenName } from "../../const";
 import CustomImageDeviceAction from "../../components/CustomImageDeviceAction";
@@ -40,7 +39,7 @@ type NavigationProps = BaseComposite<
  * route param.
  *
  * This is meant as a data validation. We want to validate that the raw data
- * (that is eventually what will be transfered) allows to reconstruct exactly
+ * (that is eventually what will be transferred) allows to reconstruct exactly
  * the image previewed on the previous screen.
  *
  * We take this raw data and use it to rebuild the image from scratch, then
@@ -90,15 +89,11 @@ const Step3Transfer = ({ route, navigation }: NavigationProps) => {
     navigation.getParent()?.goBack();
   }, [navigation]);
 
-  const handleResult = useCallback(
-    payload => {
-      completeAction(PostOnboardingActionId.customImage);
-      dispatch(completeCustomImageFlow());
-      dispatch(setLastSeenCustomImage(payload));
-      handleExit();
-    },
-    [completeAction, dispatch, handleExit],
-  );
+  const handleResult = useCallback(() => {
+    completeAction(PostOnboardingActionId.customImage);
+    dispatch(completeCustomImageFlow());
+    handleExit();
+  }, [completeAction, dispatch, handleExit]);
 
   const insets = useSafeAreaInsets();
   const DEBUG = false;

@@ -1,6 +1,6 @@
 import React, { useEffect, useCallback } from "react";
 import { useDispatch } from "react-redux";
-import { setLastSeenCustomImage } from "~/renderer/actions/settings";
+import { setLastSeenCustomImage, clearLastSeenCustomImage } from "~/renderer/actions/settings";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { createAction } from "@ledgerhq/live-common/hw/actions/ftsLoadImage";
 import { ImageLoadRefusedOnDevice, ImageCommitRefusedOnDevice } from "@ledgerhq/live-common/errors";
@@ -31,10 +31,6 @@ type Props = {
   blockNavigation?: (blocked: boolean) => void;
 };
 
-const errorNamesRetryAnotherImage = [
-  ImageLoadRefusedOnDevice().name,
-  ImageCommitRefusedOnDevice().name,
-];
 const ftsLoadImageExec = command("ftsLoadImage");
 const action = createAction(getEnv("MOCK") ? mockedEventEmitter : ftsLoadImageExec);
 const mockedDevice = { deviceId: "", modelId: DeviceModelId.nanoFTS, wired: true };
@@ -57,9 +53,7 @@ const CustomImageDeviceAction: React.FC<Props> = withRemountableWrapper(props =>
   const dispatch = useDispatch();
 
   const validDevice = device?.modelId === DeviceModelId.nanoFTS ? device : null;
-
   const status = action?.useHook(validDevice, commandRequest);
-
   const payload = action?.mapResult(status);
 
   useEffect(() => {
@@ -80,7 +74,15 @@ const CustomImageDeviceAction: React.FC<Props> = withRemountableWrapper(props =>
 
   const { error, imageLoadRequested, loadingImage, imageCommitRequested, progress } = status;
   const isError = !!error;
-  const isRefusedOnStaxError = error?.name && errorNamesRetryAnotherImage.includes(error?.name);
+  const isRefusedOnStaxError =
+    error instanceof ImageLoadRefusedOnDevice || error instanceof ImageCommitRefusedOnDevice;
+
+  useEffect(() => {
+    // Once transferred the old image is wiped, we need to clear it from the data.
+    if (error instanceof ImageCommitRefusedOnDevice) {
+      dispatch(clearLastSeenCustomImage());
+    }
+  }, [dispatch, error]);
 
   const shouldNavBeBlocked = !!validDevice && !isError;
   useEffect(() => {

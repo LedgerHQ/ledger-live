@@ -129,6 +129,13 @@ export const setLastSeenCustomImage = (lastSeenCustomImage: {
     imageHash: lastSeenCustomImage.imageHash,
   },
 });
+export const clearLastSeenCustomImage = () => ({
+  type: "SET_LAST_SEEN_CUSTOM_IMAGE",
+  payload: {
+    imageSize: 0,
+    imageHash: "",
+  },
+});
 
 export const swapAcceptProvider = (providerId: string) => ({
   type: "ACCEPT_SWAP_PROVIDER",

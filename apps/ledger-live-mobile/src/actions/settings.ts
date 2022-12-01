@@ -195,6 +195,8 @@ export const setLastSeenCustomImage = ({
   imageHash,
 }: SettingsSetLastSeenCustomImagePayload) =>
   setLastSeenCustomImageAction({ imageSize, imageHash });
+export const clearLastSeenCustomImage = () =>
+  setLastSeenCustomImageAction({ imageSize: 0, imageHash: "" });
 
 const completeOnboardingAction = createAction(
   SettingsActionTypes.SETTINGS_COMPLETE_ONBOARDING,
