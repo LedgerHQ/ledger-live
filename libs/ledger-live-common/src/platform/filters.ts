@@ -62,7 +62,7 @@ export function filterPlatformCurrencies(
   });
 }
 
-export function matchVersion(
+function matchVersion(
   filterParams: FilterParams,
   manifest: AppManifest
 ): boolean {
