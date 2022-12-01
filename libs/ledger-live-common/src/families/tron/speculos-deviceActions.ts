@@ -38,18 +38,33 @@ export const acceptTransaction: DeviceAction<Transaction, any> =
       {
         title: "Amount",
         button: "Rr",
-        expectedValue: ({ account, status }) =>
-          formatDeviceAmount(account.currency, status.amount, {
-            hideCode: true,
-          }),
+        expectedValue: ({ account, status, transaction }) =>
+          formatDeviceAmount(
+            transaction.subAccountId
+              ? subAccount(transaction.subAccountId, account).token
+              : account.currency,
+            status.amount,
+            {
+              hideCode: true,
+            }
+          ),
       },
       {
         title: "Token",
         button: "Rr",
-        expectedValue: ({ account, transaction }) =>
-          transaction.subAccountId
-            ? subAccount(transaction.subAccountId, account).token.ticker
-            : "TRX",
+        expectedValue: ({ account, transaction }) => {
+          const isTokenTransaction = Boolean(transaction.subAccountId);
+          if (isTokenTransaction) {
+            const token = subAccount(transaction.subAccountId, account).token;
+            const [, tokenType, tokenId] = token.id.split("/");
+            if (tokenType === "trc10") {
+              return `${token.name.split(" ")[0]}[${tokenId}]`;
+            } else {
+              return token.ticker;
+            }
+          }
+          return "TRX";
+        },
       },
       {
         title: "From Address",
