@@ -121,8 +121,8 @@ export async function updateCheckRun({
           branchList: [
             ...acc.branchList,
             isUpToDate
-              ? `- **#${pr.number}:** branch \`${pr.head.ref}\` is identical or ahead of \`${pr.base.ref}\``
-              : `- **#${pr.number}:** branch \`${pr.head.ref}\` is ${comparison.behind_by} commit(s) behind \`${pr.base.ref}\``,
+              ? `- ✅ **#${pr.number}:** branch \`${pr.head.ref}\` is identical or ahead of \`${pr.base.ref}\``
+              : `- 💥 **#${pr.number}:** branch \`${pr.head.ref}\` is ${comparison.behind_by} commit(s) behind \`${pr.base.ref}\``,
           ],
         };
       },
