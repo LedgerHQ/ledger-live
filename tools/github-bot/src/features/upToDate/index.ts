@@ -62,7 +62,7 @@ export function upToDate(app: Probot) {
         octokit,
         owner,
         repo,
-        checkRun: checkRun,
+        checkRun,
       });
     }
   );
