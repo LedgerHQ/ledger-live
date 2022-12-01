@@ -421,6 +421,19 @@
       "title" : "Üzgünüz, hesap bulunamadı",
       "description" : "Adres hesaplamasında bir hata oluştu. Lütfen tekrar deneyin. Sorun devam ederse, lütfen aşağıdaki butonu kullanarak loglarınızı kaydedin ve Ledger Destek'e gönderin."
     },
+    "ElrondDecimalsLimitReached" : {
+      "title" : "Maksimum ondalık basamağı sınırına ulaşıldı",
+      "description" : "Lütfen belirtilen tutarın 18 ondalık basamağının olduğundan emin olun."
+    },
+    "ElrondMinDelegatedAmountError" : {
+      "title" : "Yetkisi devredilen miktar en az {{formattedAmount}} olmalıdır"
+    },
+    "ElrondMinUndelegatedAmountError" : {
+      "title" : "Yetki devri iptal edilen miktar en az {{formattedAmount}} olmalıdır"
+    },
+    "ElrondDelegationBelowMinimumError" : {
+      "title" : "Kalan yetki devri miktarı en az {{formattedAmount}} olmalıdır"
+    },
     "NotEnoughBalance" : {
       "title" : "Üzgünüz, fon miktarı yetersiz",
       "description" : "Hesabınızdaki fon miktarının yeterli olduğundan lütfen emin olun."
@@ -518,7 +531,7 @@
       "title" : "Dondurulacak tutar 1'den küçük olamaz"
     },
     "TronSendTrc20ToNewAccountForbidden" : {
-      "title" : "TRC20'yi yeni hesaba göndermek hesabı etkinleştirmez",
+      "title" : "TRC20 token alımını etkinleştirmek için önce bu hesaba en az 0,1 TRX göndermeniz gerekir.",
       "description" : "Hesabı etkinleştirmek için hesaba önce TRX veya TRC10 gönderin. Ardından TRC20 alabilirsiniz."
     },
     "TronUnexpectedFees" : {
@@ -785,25 +798,25 @@
     }
   },
   "location" : {
-    "titleServiceRequired" : "Location services required",
-    "titlePermissionRequired" : "Location permission required",
-    "titlePermissionRequiredPrecise" : "Precise location permission required",
-    "descriptionServiceRequired" : "Ledger Live requires location services to pair your device through Bluetooth.",
-    "descriptionPermissionRequired" : "Ledger Live requires the location permission to pair your device through Bluetooth.",
-    "descriptionPermissionRequiredPrecise" : "Ledger Live requires the precise location permission to pair your device through Bluetooth.",
+    "titleServiceRequired" : "Konum hizmetleri gerekli",
+    "titlePermissionRequired" : "Konum izni gerekiyor",
+    "titlePermissionRequiredPrecise" : "Tam konum izni gerekiyor",
+    "descriptionServiceRequired" : "Ledger Live, cihazınızı Bluetooth üzerinden eşleştirmek için konum hizmetleri gerektirir.",
+    "descriptionPermissionRequired" : "Ledger Live'ın cihazınızı Bluetooth üzerinden eşleştirmesi için konum izni gerekiyor.",
+    "descriptionPermissionRequiredPrecise" : "Ledger Live'ın cihazınızı Bluetooth üzerinden eşleştirmesi için tam konum izni gerekiyor.",
     "open" : "Konum ayarlarını aç",
     "noInfos" : "Ledger konum bilgilerinize erişmez."
   },
   "permissions" : {
     "open" : "Uygulama izinlerini aç",
-    "authorize" : "Authorize",
+    "authorize" : "İzin ver",
     "bluetooth" : {
-      "modalTitle" : "Permission required to pair your Ledger over Bluetooth",
-      "modalDescriptionBase" : "To pair your Ledger over Bluetooth, you must authorize Ledger Live to scan for nearby devices.",
-      "modalDescriptionSettingsVariant" : "To pair your Ledger over Bluetooth, you must authorize Ledger Live to scan for nearby devices in your phone’s settings.",
-      "modalButtonLabelBase" : "Authorize",
-      "modalButtonLabelSettingsVariant" : "Go to settings",
-      "dontPair" : "Don't pair"
+      "modalTitle" : "Ledger'ınızı Bluetooth üzerinden eşleştirmek için izin gerekiyor",
+      "modalDescriptionBase" : "Ledger'ınızı Bluetooth üzerinden eşleştirmek için, Ledger Live'ın yakındaki cihazları taramasına izin vermeniz gerekiyor.",
+      "modalDescriptionSettingsVariant" : "Ledger'ınızı Bluetooth üzerinden eşleştirmek için, telefonunuzun ayarlarından Ledger Live'ın yakındaki cihazları taramasına izin vermeniz gerekiyor.",
+      "modalButtonLabelBase" : "İzin ver",
+      "modalButtonLabelSettingsVariant" : "Ayarlara git",
+      "dontPair" : "Eşleştirme"
     }
   },
   "fees" : {
@@ -1717,8 +1730,14 @@
         "subtitle" : "{{productName}} cihazınızdaki kodu onaylayın"
       },
       "error" : {
-        "title" : "Eşleştirme başarısız",
-        "subtitle" : "Bir sorun oluştu!\nBluetooth'unuzun açık ve {{productName}} cihazınızın yakında olduğundan emin olun.",
+        "generic" : {
+          "title" : "Eşleştirme başarısız",
+          "subtitle" : "Bir sorun oluştu!\nBluetooth'unuzun açık ve {{productName}} cihazınızın yakında olduğundan emin olun."
+        },
+        "lockedDevice" : {
+          "title" : "Cihazınız kilitlendi",
+          "subtitle" : "{{ productName }} cihazınızın kilidini açın ve tekrar deneyin."
+        },
         "retryCta" : "Tekrar deneyin"
       }
     }
@@ -1901,6 +1920,9 @@
     "noOpState" : {
       "title" : "Henüz işlem yok mu?",
       "desc" : "Kripto varlıklarını alıcı adresinize gönderin ve uygulamanın senkronize olmasını bekleyin."
+    },
+    "carousel" : {
+      "title" : "Sizin için"
     },
     "recommended" : {
       "title" : "Önerilen"
@@ -2350,8 +2372,8 @@
     "display" : {
       "title" : "Genel",
       "desc" : "Ledger Live'ın genel ayarlarını yapılandırın.",
-      "carousel" : "Galeri görünürlüğü",
-      "carouselDesc" : "Portföy sayfasındaki afişin görünürlüğünü etkinleştirin",
+      "carousel" : "Öneriler",
+      "carouselDesc" : "Sadece size özel tekliflerimizi ve kişiselleştirilmiş ipuçlarımızı içeren kartlar göstereceğiz.",
       "language" : "Görüntüleme dili",
       "languageDesc" : "Ledger Live'ın görüntüleneceği dili ayarlayın.",
       "region" : "Bölge",
@@ -2464,7 +2486,7 @@
       },
       "allowed" : {
         "title" : "Bildirimlere izin ver",
-        "desc" : "Kriptolarınız, piyasa eğilimleri ve diğer şeylerle ilgili bildirim alın"
+        "desc" : "Kripto varlıklarınız, piyasa trendleri ve daha pek çok konuda bildirimler alın"
       },
       "transactions" : {
         "title" : "İşlemler",
@@ -2486,7 +2508,7 @@
         "title" : "Fiyat Uyarıları",
         "desc" : "En çok tercih ettiğiniz coin'ler için fiyat uyarıları belirleyerek piyasa hareketlerini kaçırmayın"
       },
-      "disclaimer" : "Ledger'da veri gizliliği her şeyden önce gelir. Toplanan veriler iş ortaklarımızla asla paylaşılmaz."
+      "disclaimer" : "Verilerinizin gizliliği, Ledger'da her şeyden önce gelir. Toplanan veriler iş ortaklarımızla asla paylaşılmaz."
     },
     "help" : {
       "title" : "Yardım",
@@ -2568,7 +2590,7 @@
       "featureFlagsDesc" : "Uygulama yeniden başlatılırsa geçersiz bırakılan değerler sıfırlanacaktır. Sadece geçerli JSON dizeleri kabul edilecektir.",
       "featureFlagsEdit" : "Düzenle",
       "featureFlagsRestore" : "Geri yükle",
-      "firebaseProject" : "Firebase project targeted by this build:"
+      "firebaseProject" : "Bu sürüm tarafından hedeflenen Firebase projesi:"
     }
   },
   "notifications" : {
@@ -4578,6 +4600,207 @@
       }
     }
   },
+  "elrond" : {
+    "info" : {
+      "available" : {
+        "title" : "Mevcut EGLD",
+        "description" : "Bu miktar aktarılabilir."
+      },
+      "delegated" : {
+        "title" : "Stake edilen varlıklar",
+        "description" : "Stake edilen varlıklar, staking sağlayıcısı tarafından doğrulayıcı node'ları çalıştırmak, işlemleri gerçekleştirmek ve konsensüs mekanizmasına katılarak ağı güvence altına almak amacıyla dolaylı olarak kullanılır."
+      },
+      "undelegating" : {
+        "title" : "Bekleyen Çekim İşlemleri",
+        "description" : "Staking'i iptal edilen varlıklar, 10 günlük bir çözülme dönemine tabidir ve sadece bu süre sona erdikten sonra çekilebilir."
+      },
+      "delegationUnavailable" : {
+        "title" : "Yetki devri yapılamıyor",
+        "description" : "Yeni bir yetkili seçmek için hesabınızda yeterli bakiye yok."
+      }
+    },
+    "delegation" : {
+      "delegationEarn" : "Ağın güvenliğini sağlamak ve ödüllerden payınıza düşeni almak için EGLD'nizi stake edin.",
+      "info" : "Staking nedir ve nasıl çalışır?",
+      "claimRewards" : "Ödüllerinizi alın",
+      "claimAvailableRewards" : "{{amount}} topla",
+      "header" : "Staking İşlemlerim",
+      "Amount" : "Tutar",
+      "noRewards" : "Ödül yok",
+      "delegate" : "Yeniden Stake Et",
+      "undelegate" : "Staking'i İptal Et",
+      "reward" : "Ödüllerinizi alın",
+      "commission" : "Komisyon",
+      "iDelegate" : "Yetkisi devredilecek:",
+      "totalStake" : "Toplam stake",
+      "stepperHeader" : {
+        "starter" : "Ödüller kazanın",
+        "validator" : "Varlıklarınızla yetki devredin",
+        "amountSubTitle" : "Stake edilecek miktar",
+        "summary" : "Özet",
+        "verification" : "Doğrulama",
+        "selectDevice" : "Cihaz seçin",
+        "connectDevice" : "Cihazı bağlayın",
+        "stepRange" : "Adım {{currentStep}} / {{totalSteps}}"
+      },
+      "flow" : {
+        "steps" : {
+          "starter" : {
+            "description" : "EGLD varlıklarınızı bir Staking Sağlayıcısına stake ederek ödüller kazanabilirsiniz.",
+            "steps" : {
+              "0" : "Stake edilen varlıklar size ait olmaya devam eder.",
+              "1" : "Staking'i iptal edilen varlıklar 10 gün sonra yeniden kullanılabilir.",
+              "2" : "Ledger cihazınızı kullanarak stake edin."
+            },
+            "warning" : {
+              "description" : "Staking Sağlayıcınızı akıllıca seçin! Şu anda tek risk, çeşitli nedenlerden ötürü ödül alamamaktır. Dolayısıyla bir sağlayıcıyı Güvenilirlik, İletişim ve Ekonomi kriterlerine göre seçmelisiniz."
+            },
+            "cta" : "Devam"
+          },
+          "validator" : {
+            "validators" : "Staking Sağlayıcıları",
+            "myDelegations" : "Staking İşlemlerim",
+            "cta" : "Devam",
+            "apr" : "APR: {{amount}}",
+            "totalAvailable" : "Toplam mevcut: <0>{{amount}}</0>",
+            "allAssetsUsed" : "Tüm varlıklar kullanıldı",
+            "noResultsFound" : "<0>{{search}}</0> için doğrulayıcı bulunamadı",
+            "currentAmount" : "(+ <0>{{amount}}</0>)"
+          },
+          "amount" : {
+            "assetsRemaining" : "Kalan varlıklar: <0>{{amount}}</0>",
+            "allAssetsUsed" : "Tüm varlıklar kullanıldı",
+            "minAmount" : "Minimum tutar: <0>{{min}}</0>",
+            "incorrectAmount" : "Maksimum tutar: <0>{{max}}</0>",
+            "insufficientDelegation" : "Toplam staking tutarınız, Staking Sağlayıcısı başına en az {{label}} olmalıdır.",
+            "wrongUndelegations" : "Kalan stake edilen {{label}} miktarı 0 veya Staking Sağlayıcısı başına en az 1 {{label}} olmalıdır.",
+            "cta" : "Devam"
+          },
+          "verification" : {
+            "success" : {
+              "title" : "Varlıklarınızı başarıyla stake ettiniz",
+              "text" : "İşlem, ağ tarafından onaylanınca hesap bakiyeniz güncellenecek.",
+              "cta" : "Ayrıntıları göster"
+            },
+            "pending" : {
+              "title" : "İşlem yayınlanıyor..."
+            },
+            "broadcastError" : "İşleminiz başarısız olmuş olabilir. Lütfen biraz bekleyin ve tekrar denemeden önce işlem geçmişini kontrol edin."
+          }
+        }
+      },
+      "drawer" : {
+        "status" : "Durum",
+        "rewards" : "Ödüller",
+        "active" : "Aktif",
+        "inactive" : "Devre Dışı",
+        "completionDate" : "Tamamlanma tarihi",
+        "redelegatedFrom" : "Yetkiyi bırakan taraf",
+        "completionDateHit" : "Tamamlandı"
+      }
+    },
+    "claimRewards" : {
+      "stepperHeader" : {
+        "validator" : "Alınacak ödülü seçin",
+        "method" : "Ödüllerinizi alın",
+        "summary" : "Özet",
+        "selectDevice" : "Cihaz seçin",
+        "connectDevice" : "Cihazı bağlayın",
+        "stepRange" : "Adım {{currentStep}} / {{totalSteps}}"
+      },
+      "flow" : {
+        "steps" : {
+          "method" : {
+            "youEarned" : "Varlıklarınızı bu doğrulayıcıya stake ederek",
+            "byDelegationAssetsTo" : "kazandınız:",
+            "claimRewards" : "Ödüllerinizi alın",
+            "reDelegateRewards" : "Stake Ödülleri",
+            "claimRewardsInfo" : "Bu ödüller şimdi alınacak ve mevcut bakiyenize eklenecektir.",
+            "reDelegateRewardsInfo" : "Bunlar şimdi alınacak ve otomatik olarak aynı Staking Sağlayıcısına stake edilecek.",
+            "compoundOrCashIn" : "Ödüller stake mi edilsin, yoksa hesaba mı alınsın?",
+            "claimRewardsTooltip" : "Ödüller mevcut bakiyeye eklenecek",
+            "reDelegateRewardsTooltip" : "Ödüller, stake edilen miktara eklenecek",
+            "cta" : "Devam"
+          },
+          "verification" : {
+            "success" : {
+              "claimRewardsSuccess" : "Ödüllerinizi başarıyla aldınız. Ödül tutarı mevcut bakiyenize eklendi.",
+              "reDelegateRewardsSuccess" : "Ödülleriniz aynı Staking Sağlayıcısına stake edildi.",
+              "text" : "İşlem, ağ tarafından onaylandığında hesap bakiyeniz güncellenecek.",
+              "cta" : "Ayrıntıları göster"
+            },
+            "pending" : {
+              "title" : "İşlem yayınlanıyor..."
+            },
+            "broadcastError" : "İşleminiz başarısız olmuş olabilir. Lütfen biraz bekleyin ve tekrar denemeden önce işlem geçmişini kontrol edin."
+          }
+        }
+      }
+    },
+    "undelegation" : {
+      "stepperHeader" : {
+        "amountSubTitle" : "Staking'i iptal edilecek miktar",
+        "summary" : "Özet",
+        "selectDevice" : "Cihaz seçin",
+        "connectDevice" : "Cihazı bağlayın",
+        "stepRange" : "Adım {{currentStep}} / {{totalSteps}}"
+      },
+      "flow" : {
+        "steps" : {
+          "amount" : {
+            "allAssetsUsed" : "Tüm varlıklar seçildi",
+            "assetsRemaining" : "Kalan varlıklarla yetki devredildi: <0>{{amount}}</0>",
+            "minAmount" : "Minimum tutar: <0>{{min}}</0>",
+            "incorrectAmount" : "Maksimum tutar: <0>{{max}}</0>",
+            "minRemaining" : "Minimum kalan: <0>{{min}}</0>"
+          },
+          "verification" : {
+            "success" : {
+              "title" : "Varlıklarınızın staking'ini başarıyla iptal ettiniz",
+              "text" : "İşlem, ağ tarafından onaylandığında hesap bakiyeniz güncellenecek.",
+              "cta" : "Ayrıntıları göster"
+            },
+            "pending" : {
+              "title" : "İşlem yayınlanıyor..."
+            },
+            "broadcastError" : "İşleminiz başarısız olmuş olabilir. Lütfen biraz bekleyin ve tekrar denemeden önce işlem geçmişini kontrol edin."
+          }
+        }
+      }
+    },
+    "withdraw" : {
+      "stepperHeader" : {
+        "validator" : "Alınacak ödülü seçin",
+        "method" : "Ödüllerinizi alın",
+        "summary" : "Özet",
+        "selectDevice" : "Cihaz seçin",
+        "connectDevice" : "Cihazı bağlayın",
+        "stepRange" : "Adım {{currentStep}} / {{totalSteps}}"
+      },
+      "flow" : {
+        "steps" : {
+          "method" : {
+            "youEarned" : "Staking'i iptal ettiniz",
+            "byDelegationAssetsTo" : "gönderici",
+            "withdrawInfo" : "Bu ödüller şimdi alınacak ve mevcut bakiyenize eklenecektir.",
+            "withdrawTooltip" : "Çekilen miktar mevcut bakiyeye eklenecek",
+            "cta" : "Devam"
+          },
+          "verification" : {
+            "success" : {
+              "title" : "Ödüllerinizi başarıyla aldınız. Ödül tutarı mevcut bakiyenize eklendi.",
+              "text" : "İşlem, ağ tarafından onaylandığında hesap bakiyeniz güncellenecek.",
+              "cta" : "Ayrıntıları göster"
+            },
+            "pending" : {
+              "title" : "İşlem yayınlanıyor..."
+            },
+            "broadcastError" : "İşleminiz başarısız olmuş olabilir. Lütfen biraz bekleyin ve tekrar denemeden önce işlem geçmişini kontrol edin."
+          }
+        }
+      }
+    }
+  },
   "tezos" : {
     "AccountHeader" : {
       "title" : "Hesabınızı yetki devretmek için kullanarak ödüller kazanabilirsiniz",
@@ -4690,6 +4913,9 @@
         "title" : "Adaylar",
         "description" : "Token sahibi topluluğun tamamı tarafından yapılan oylama sonucunda 127 kişi seçilir. Oylar her 6 saatte bir sayılır."
       }
+    },
+    "receive" : {
+      "newAddressTRC20" : "Önce bu hesaba en az 0,1 TRX göndererek hesabı etkinleştirmelisiniz."
     }
   },
   "stellar" : {
@@ -5074,7 +5300,8 @@
     "actions" : {
       "redelegate" : "Yetkiyi yeniden devret",
       "collectRewards" : "Ödülleri topla",
-      "undelegate" : "Yetkiyi iptal et"
+      "undelegate" : "Yetkiyi iptal et",
+      "withdraw" : "Çekim"
     }
   },
   "ValidateOnDevice" : {
@@ -5454,7 +5681,8 @@
     "drawer" : {
       "title" : "Bir görüntü seçin",
       "options" : {
-        "uploadFromPhone" : "Telefonumdan yükle"
+        "uploadFromPhone" : "Resim galerimden seç",
+        "selectFromNFTGallery" : "NFT galerisinden seç"
       }
     },
     "cropImage" : "Görüntüyü kırp",
@@ -5476,9 +5704,12 @@
     "doThisLater" : "Belki sonra",
     "preview" : {
       "title" : "Ön izleme",
-      "loading" : "Loading preview",
+      "loading" : "Ön izleme yükleniyor",
       "setPicture" : "Özel resmi ayarla",
       "editPicture" : "Resmi düzenle"
+    },
+    "nftGallery" : {
+      "title" : "NFT'lerim"
     }
   },
   "postOnboarding" : {
