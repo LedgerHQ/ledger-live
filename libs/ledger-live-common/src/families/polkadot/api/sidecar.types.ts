@@ -95,6 +95,7 @@ export interface SidecarPallet {
 }
 export interface SidecarPalletStorageItem extends IPallet {
   storageItem: string;
+  keys?: string[];
   key1?: string;
   key2?: string;
   value?: any;

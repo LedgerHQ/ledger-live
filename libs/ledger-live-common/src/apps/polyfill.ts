@@ -100,8 +100,7 @@ export const calculateDependencies = (): void => {
 
     if (dep.managerAppName === a.managerAppName) return; // same app
     if (a.family === "bitcoin" && newBitcoinApp) {
-      // all altcoin in bitcoin family currencies depend on bitcoin legacy app since nano app 2.1.0
-      declareDep(a.managerAppName, "Bitcoin Legacy");
+      // all currencies in bitcoin family are standalone since 2.1.0
       return;
     }
     declareDep(a.managerAppName, dep.managerAppName);

@@ -170,6 +170,7 @@ export default function BaseNavigator() {
         name={NavigatorName.ReceiveFunds}
         component={ReceiveFundsNavigator}
         options={{ headerShown: false }}
+        {...noNanoBuyNanoWallScreenOptions}
       />
       <Stack.Screen
         name={NavigatorName.SendFunds}

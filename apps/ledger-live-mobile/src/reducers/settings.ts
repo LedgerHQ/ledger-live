@@ -44,6 +44,7 @@ import type {
   SettingsSetLastConnectedDevicePayload,
   SettingsSetLocalePayload,
   SettingsSetMarketCounterCurrencyPayload,
+  SettingsSetCustomImageBackupPayload,
   SettingsSetMarketFilterByStarredAccountsPayload,
   SettingsSetMarketRequestParamsPayload,
   SettingsSetNotificationsPayload,
@@ -61,8 +62,13 @@ import type {
   SettingsUnhideNftCollectionPayload,
   SettingsUpdateCurrencyPayload,
   SettingsSetSwapSelectableCurrenciesPayload,
+  SettingsSetDismissedDynamicCardsPayload,
 } from "../actions/types";
-import { SettingsActionTypes } from "../actions/types";
+import {
+  SettingsActionTypes,
+  SettingsSetWalletTabNavigatorLastVisitedTabPayload,
+} from "../actions/types";
+import { ScreenName } from "../const";
 
 const bitcoin = getCryptoCurrencyById("bitcoin");
 const ethereum = getCryptoCurrencyById("ethereum");
@@ -92,6 +98,7 @@ export const INITIAL_STATE: SettingsState = {
   pairExchanges: {},
   selectedTimeRange: "month",
   orderAccounts: "balance|desc",
+  hasCompletedCustomImageFlow: false,
   hasCompletedOnboarding: false,
   hasInstalledAnyApp: true,
   // readOnlyModeEnabled: !Config.DISABLE_READ_ONLY,
@@ -107,10 +114,12 @@ export const INITIAL_STATE: SettingsState = {
   hasAvailableUpdate: false,
   theme: "system",
   osTheme: undefined,
+  customImageBackup: undefined,
 
   carouselVisibility: Object.fromEntries(
     SLIDES.map(slide => [slide.name, true]),
   ),
+  dismissedDynamicCards: [],
   discreetMode: false,
   language: getDefaultLanguageLocale(),
   languageIsSetByUser: false,
@@ -138,12 +147,11 @@ export const INITIAL_STATE: SettingsState = {
   firstConnectionHasDevice: null,
   firstConnectHasDeviceUpdated: null,
   notifications: {
-    allowed: false,
-    transactions: false,
-    market: false,
-    announcement: false,
-    price: false,
+    areNotificationsAllowed: true,
+    announcementsCategory: true,
+    recommendationsCategory: true,
   },
+  walletTabNavigatorLastVisitedTab: ScreenName.Portfolio,
 };
 
 const pairHash = (from: { ticker: string }, to: { ticker: string }) =>
@@ -251,6 +259,11 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
     ...state,
     selectedTimeRange: (action as Action<SettingsSetSelectedTimeRangePayload>)
       .payload.selectedTimeRange,
+  }),
+
+  [SettingsActionTypes.SETTINGS_COMPLETE_CUSTOM_IMAGE_FLOW]: state => ({
+    ...state,
+    hasCompletedCustomImageFlow: true,
   }),
 
   [SettingsActionTypes.SETTINGS_COMPLETE_ONBOARDING]: state => ({
@@ -376,6 +389,16 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
       .payload.carouselVisibility,
   }),
 
+  [SettingsActionTypes.SETTINGS_SET_DISMISSED_DYNAMIC_CARDS]: (
+    state,
+    action,
+  ) => ({
+    ...state,
+    dismissedDynamicCards: (
+      action as Action<SettingsSetDismissedDynamicCardsPayload>
+    ).payload.dismissedDynamicCards,
+  }),
+
   [SettingsActionTypes.SETTINGS_SET_DISCREET_MODE]: (state, action) => ({
     ...state,
     discreetMode: (action as Action<SettingsSetDiscreetModePayload>).payload
@@ -463,6 +486,12 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
     ),
   }),
 
+  [SettingsActionTypes.SET_CUSTOM_IMAGE_BACKUP]: (state, action) => ({
+    ...state,
+    customImageBackup: (action as Action<SettingsSetCustomImageBackupPayload>)
+      .payload,
+  }),
+
   [SettingsActionTypes.SET_LAST_CONNECTED_DEVICE]: (state, action) => ({
     ...state,
     lastConnectedDevice: (
@@ -530,6 +559,16 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
       ...state.swap,
       KYC: {},
     },
+  }),
+
+  [SettingsActionTypes.WALLET_TAB_NAVIGATOR_LAST_VISITED_TAB]: (
+    state,
+    action,
+  ) => ({
+    ...state,
+    walletTabNavigatorLastVisitedTab: (
+      action as Action<SettingsSetWalletTabNavigatorLastVisitedTabPayload>
+    ).payload.walletTabNavigatorLastVisitedTab,
   }),
 };
 
@@ -632,6 +671,8 @@ export const selectedTimeRangeSelector = (state: State) =>
   state.settings.selectedTimeRange;
 export const orderAccountsSelector = (state: State) =>
   state.settings.orderAccounts;
+export const hasCompletedCustomImageFlowSelector = (state: State) =>
+  state.settings.hasCompletedCustomImageFlow;
 export const hasCompletedOnboardingSelector = (state: State) =>
   state.settings.hasCompletedOnboarding;
 export const hasInstalledAnyAppSelector = (state: State) =>
@@ -681,6 +722,8 @@ export const carouselVisibilitySelector = (state: State) => {
 
   return settingValue;
 };
+export const dismissedDynamicCardsSelector = (state: State) =>
+  state.settings.dismissedDynamicCards;
 export const discreetModeSelector = (state: State): boolean =>
   state.settings.discreetMode === true;
 
@@ -716,6 +759,8 @@ export const marketCounterCurrencySelector = (state: State) =>
   state.settings.marketCounterCurrency;
 export const marketFilterByStarredAccountsSelector = (state: State) =>
   state.settings.marketFilterByStarredAccounts;
+export const customImageBackupSelector = (state: State) =>
+  state.settings.customImageBackup;
 export const sensitiveAnalyticsSelector = (state: State) =>
   state.settings.sensitiveAnalytics;
 export const firstConnectionHasDeviceSelector = (state: State) =>
@@ -724,3 +769,5 @@ export const firstConnectHasDeviceUpdatedSelector = (state: State) =>
   state.settings.firstConnectHasDeviceUpdated;
 export const notificationsSelector = (state: State) =>
   state.settings.notifications;
+export const walletTabNavigatorLastVisitedTabSelector = (state: State) =>
+  state.settings.walletTabNavigatorLastVisitedTab;

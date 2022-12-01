@@ -56,6 +56,10 @@ function Discover() {
       banner: `Dapp_${bannerName}`,
       screen: "Discover",
     });
+    track("Discover Banner Clicked", {
+      banner: `Dapp_${bannerName}`,
+      screen: "Discover",
+    });
   }, []);
 
   const featuresList: {

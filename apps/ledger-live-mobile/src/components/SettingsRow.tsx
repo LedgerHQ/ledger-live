@@ -1,13 +1,12 @@
 import React, { ReactNode } from "react";
 import { StyleProp, TextStyle, ViewStyle } from "react-native";
-import { Box, Checkbox, Flex, Text } from "@ledgerhq/native-ui";
+import { Box, Checkbox, Flex, Text, Tag } from "@ledgerhq/native-ui";
 import {
   ChevronRightMedium,
   InfoMedium,
 } from "@ledgerhq/native-ui/assets/icons";
 import styled from "styled-components/native";
 import Touchable from "./Touchable";
-import { Tag } from "../../../../libs/ui/packages/native/lib";
 
 const StyledTouchableRow = styled(Touchable)<{ compact?: boolean }>`
   background-color: ${p => p.theme.colors.palette.background.main};

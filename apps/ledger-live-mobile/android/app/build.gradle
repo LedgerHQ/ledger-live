@@ -163,7 +163,7 @@ android {
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 36176158
-        versionName "3.7.0"
+        versionName "3.10.0"
         resValue "string", "build_config_package", "com.ledger.live"
         testBuildType System.getProperty('testBuildType', 'debug')
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
@@ -199,9 +199,14 @@ android {
         }
     }
 
-    // Needed for flipper https://github.com/facebook/flipper/issues/3397
     configurations.all {
-        resolutionStrategy { force 'androidx.sqlite:sqlite-framework:2.1.0' }
+        resolutionStrategy {
+            // Needed for flipper https://github.com/facebook/flipper/issues/3397
+            force 'androidx.sqlite:sqlite-framework:2.1.0'
+            // Needed for Braze
+            force 'androidx.fragment:fragment:1.3.6'
+            force 'androidx.core:core:1.6.0'
+        }
     }
 
     if (isNewArchitectureEnabled()) {
@@ -355,4 +360,10 @@ def isNewArchitectureEnabled() {
     // - Invoke gradle with `-newArchEnabled=true`
     // - Set an environment variable `ORG_GRADLE_PROJECT_newArchEnabled=true`
     return project.hasProperty("newArchEnabled") && project.newArchEnabled == "true"
+}
+
+android {
+    buildFeatures {
+        buildConfig = true
+    }
 }

@@ -4,12 +4,7 @@ import { useTranslation } from "react-i18next";
 import { ScrollView, StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import styled from "styled-components/native";
-import {
-  StackNavigationState,
-  EventListenerCallback,
-  EventMapCore,
-  useFocusEffect,
-} from "@react-navigation/native";
+import { useFocusEffect } from "@react-navigation/native";
 import Animated, {
   cancelAnimation,
   interpolate,
@@ -19,7 +14,6 @@ import Animated, {
   withDelay,
   withTiming,
 } from "react-native-reanimated";
-import { StackNavigationEventMap } from "@react-navigation/stack";
 import {
   useAllPostOnboardingActionsCompleted,
   usePostOnboardingHubState,
@@ -117,16 +111,11 @@ const PostOnboardingHub = ({ navigation }: NavigationProps) => {
     navigation.setOptions({ gestureEnabled: false, headerRight: () => null });
     navigation.getParent()?.setOptions({ gestureEnabled: false });
     allowClosingScreen.current = false;
-    const beforeRemoveCallback: EventListenerCallback<
-      StackNavigationEventMap &
-        EventMapCore<StackNavigationState<NavigationProps>>,
-      "beforeRemove"
-    > = e => {
+    const listenerCleanup = navigation.addListener("beforeRemove", e => {
       if (!allowClosingScreen.current) e.preventDefault();
-    };
-    navigation.addListener("beforeRemove", beforeRemoveCallback);
+    });
     return () => {
-      navigation.removeListener("beforeRemove", beforeRemoveCallback);
+      listenerCleanup();
       clearAnimationTimeout();
       cancelAnimation(animDoneValue);
     };

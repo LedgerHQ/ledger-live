@@ -53,6 +53,8 @@ export const urls = {
       "https://status.ledger.com?utm_source=ledger_live_mobile&utm_medium=self_referral&utm_content=error_apierrorwithmessage",
     StratisDown2021Warning:
       "https://support.ledger.com/hc/en-us/articles/115005175329",
+    TronSendTrc20ToNewAccountForbidden:
+      "https://support.ledger.com/hc/en-us/articles/6516823445533--Sending-TRC20-to-a-new-account-won-t-activate-it-message-in-Ledger-Live?support=true",
   },
   multipleAddresses:
     "https://support.ledger.com/hc/en-us/articles/360033802154?utm_source=ledger_live_mobile&utm_medium=self_referral&utm_content=ops_details_change",
@@ -97,6 +99,11 @@ export const urls = {
       changelly: {
         main: "https://changelly.com/",
         tos: "https://changelly.com/terms-of-use",
+      },
+      cic: {
+        main: "https://criptointercambio.com/",
+        support: "https://criptointercambio.com/en/about",
+        tos: "https://criptointercambio.com/terms-of-use",
       },
       wyre: {
         main: "https://support.sendwyre.com/hc/en-us/requests/new",
@@ -196,5 +203,6 @@ export const urls = {
   nft: {
     supportDisableIos:
       "https://support.ledger.com/hc/en-us/articles/7572912170653?docs=true",
+    howToSecure: "https://www.ledger.com/academy/how-to-secure-your-nfts",
   },
 };

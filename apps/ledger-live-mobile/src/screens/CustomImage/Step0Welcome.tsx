@@ -43,7 +43,7 @@ const Step0Welcome: React.FC<
         </Flex>
         <Flex flex={1} px={7}>
           <Text variant="h4" fontWeight="semiBold" mt={7} textAlign="center">
-            {t("customImage.title")}
+            {t("customImage.landingPage.title")}
           </Text>
           <Text
             variant="bodyLineHeight"
@@ -51,12 +51,12 @@ const Step0Welcome: React.FC<
             textAlign="center"
             mt={6}
           >
-            {t("customImage.subtitle")}
+            {t("customImage.landingPage.subtitle")}
           </Text>
         </Flex>
         <BottomButtonsContainer>
           <Button size="large" type="main" onPress={openModal}>
-            {t("customImage.choosePicture")}
+            {t("customImage.landingPage.choosePicture")}
           </Button>
         </BottomButtonsContainer>
       </Flex>
