@@ -36,20 +36,13 @@ const currencies = [
   getCryptoCurrencyById("avalanche_c_chain"),
 ];
 
-const decodeSomething = (rawTx) => {
+const decodeSomething = (rawTx: Buffer) => {
   const VALID_TYPES = [1, 2];
   const txType = VALID_TYPES.includes(rawTx[0]) ? rawTx[0] : null;
   const rlpData = txType === null ? rawTx : rawTx.slice(1);
-  /*   const rlpTx = (decode(rlpData) as any[]).map((_hex) => {
-    const hex = _hex as string;
-    return Buffer.from(hex, "hex");
-  }); */
-
-  const rlpTx: Buffer[] = [];
-  /* 
-  for (const [, hex] of (decode(rlpData) as Uint8Array).entries()) {
-    rlpTx.push(Buffer.from(hex.toString(), "hex"));
-  } */
+  const rlpTx = decode(rlpData).map((buff: string) => {
+    return Buffer.from(buff, "hex");
+  });
 
   return rlpTx;
 };
@@ -74,7 +67,9 @@ describe("signOperation", () => {
           .toPromise()
           .catch(() => {});
 
-        const txHashProvidedToAppBindings = signTransaction.mock.calls[0][1];
+        const txHashProvidedToAppBindings = (
+          signTransaction.mock.calls[0] as string[]
+        )[1];
         console.log(decode(txHashProvidedToAppBindings));
         expect(signTransaction).toBeCalledWith("44'/60'/0'/0/0");
       });
