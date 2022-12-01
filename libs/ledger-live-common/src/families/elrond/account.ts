@@ -4,6 +4,7 @@ import { getAccountUnit } from "../../account";
 import { formatCurrencyUnit } from "../../currencies";
 import type { Unit } from "@ledgerhq/types-cryptoassets";
 import type { ElrondAccount } from "./types";
+import BigNumber from "bignumber.js";
 
 function formatAccountSpecifics(account: ElrondAccount): string {
   const { elrondResources } = account;
@@ -25,7 +26,38 @@ function formatAccountSpecifics(account: ElrondAccount): string {
   }
 
   if (elrondResources && elrondResources.nonce) {
-    str += "\n nonce : " + elrondResources.nonce;
+    str += "\n  nonce : " + elrondResources.nonce;
+  }
+
+  if (elrondResources && elrondResources.delegations) {
+    let delegated = new BigNumber(0);
+    let undelegating = new BigNumber(0);
+    let rewards = new BigNumber(0);
+    for (const delegation of elrondResources.delegations) {
+      delegated = delegated.plus(delegation.userActiveStake);
+      undelegating = delegation.userUndelegatedList.reduce(
+        (sum, undelegation) => sum.plus(undelegation.amount),
+        undelegating
+      );
+      rewards = rewards.plus(delegation.claimableRewards);
+    }
+
+    str +=
+      delegated && delegated.gt(0)
+        ? `\n  delegated: ${
+            unit ? formatCurrencyUnit(unit, delegated, formatConfig) : delegated
+          }`
+        : undelegating && undelegating.gt(0)
+        ? `\n  undelegating: ${
+            unit
+              ? formatCurrencyUnit(unit, undelegating, formatConfig)
+              : undelegating
+          }`
+        : rewards && rewards.gt(0)
+        ? `\n  rewards: ${
+            unit ? formatCurrencyUnit(unit, rewards, formatConfig) : rewards
+          }`
+        : "";
   }
 
   return str;
