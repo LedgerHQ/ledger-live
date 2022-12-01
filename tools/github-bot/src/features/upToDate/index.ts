@@ -46,21 +46,12 @@ export function upToDate(app: Probot) {
 
       if (!checkRun) {
         // If not, create it.
-        checkRun = (
-          await octokit.checks.create({
-            owner,
-            repo,
-            name: CHECK_NAME,
-            head_sha: prHead.sha,
-            status: "in_progress",
-          })
-        ).data;
-        // Then update its status based on all prs referencing it.
-        await updateCheckRun({
-          octokit,
+        await octokit.checks.create({
           owner,
           repo,
-          checkRun,
+          name: CHECK_NAME,
+          head_sha: prHead.sha,
+          status: "in_progress",
         });
       } else {
         // Else, retrigger the check run.
@@ -113,8 +104,8 @@ export function upToDate(app: Probot) {
     await batch(tasks, 10);
   });
 
-  // Allow to re-request the check run.
-  app.on("check_run.rerequested", async (context) => {
+  // Perform the actual check when created or retriggered.
+  app.on(["check_run.rerequested", "check_run.created"], async (context) => {
     const { payload, octokit } = context;
     const { owner, repo } = context.repo();
 
