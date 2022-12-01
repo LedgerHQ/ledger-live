@@ -81,6 +81,7 @@ export async function updateCheckRun({
     repo,
     check_run_id: checkRun.id,
     status: "in_progress",
+    started_at: new Date().toISOString(),
   });
 
   const outcome = [];

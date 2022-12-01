@@ -44,8 +44,8 @@ export function upToDate(app: Probot) {
         // ignore
       }
 
-      // If not, create it.
       if (!checkRun) {
+        // If not, create it.
         checkRun = (
           await octokit.checks.create({
             owner,
@@ -55,15 +55,21 @@ export function upToDate(app: Probot) {
             status: "in_progress",
           })
         ).data;
+        // Then update its status based on all prs referencing it.
+        await updateCheckRun({
+          octokit,
+          owner,
+          repo,
+          checkRun,
+        });
+      } else {
+        // Else, retrigger the check run.
+        await octokit.checks.rerequestRun({
+          owner,
+          repo,
+          check_run_id: checkRun.id,
+        });
       }
-
-      // Then update its status based on all prs referencing it.
-      await updateCheckRun({
-        octokit,
-        owner,
-        repo,
-        checkRun,
-      });
     }
   );
 
@@ -95,11 +101,10 @@ export function upToDate(app: Probot) {
       if (checkRunResponse.data.total_count === 1) {
         const checkRun = checkRunResponse.data.check_runs[0];
 
-        await updateCheckRun({
-          octokit,
+        await octokit.checks.rerequestRun({
           owner,
           repo,
-          checkRun,
+          check_run_id: checkRun.id,
         });
       }
     });
@@ -117,7 +122,7 @@ export function upToDate(app: Probot) {
 
     if (payload.check_run.name !== CHECK_NAME) return;
 
-    updateCheckRun({
+    await updateCheckRun({
       octokit,
       owner,
       repo,
