@@ -163,6 +163,7 @@ export async function updateCheckRun({
       status: "completed",
       conclusion: valid ? "success" : "failure",
       output,
+      completed_at: new Date().toISOString(),
     });
   } catch (error) {
     console.error(error);
@@ -176,6 +177,7 @@ export async function updateCheckRun({
         title: "Error",
         summary: (error as Error).message,
       },
+      completed_at: new Date().toISOString(),
     });
   }
 }
