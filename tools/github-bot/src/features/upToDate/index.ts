@@ -15,6 +15,9 @@ export function upToDate(app: Probot) {
       "pull_request.reopened",
       "pull_request.synchronize",
       "pull_request.ready_for_review",
+      // This event is triggered when updating the base branch from the UI…
+      // …even though the docs say that it's supposed to be .synchronize, it's not.
+      "pull_request.edited",
     ],
     async (context) => {
       const { payload, octokit } = context;
@@ -59,7 +62,7 @@ export function upToDate(app: Probot) {
         octokit,
         owner,
         repo,
-        checkRun: checkRun,
+        checkRun,
       });
     }
   );
