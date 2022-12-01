@@ -78,14 +78,14 @@ export async function updateCheckRun({
 }) {
   const outcome = [];
   try {
-    const associatedPRs = await octokit.paginate(
-      octokit.repos.listPullRequestsAssociatedWithCommit,
-      {
+    // Inefficient, but other api calls (repos.listPullRequestsAssociatedWithCommit)
+    // do not list prs coming from forked repos unfortunately…
+    const associatedPRs = (
+      await octokit.paginate(octokit.pulls.list, {
         owner,
         repo,
-        commit_sha: checkRun.head_sha,
-      }
-    );
+      })
+    ).filter((pr) => pr.head.sha === checkRun.head_sha);
 
     for await (const pr of associatedPRs) {
       const isFork = pr.head.repo?.fork;
