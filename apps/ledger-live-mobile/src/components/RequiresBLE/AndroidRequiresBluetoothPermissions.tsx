@@ -2,6 +2,7 @@ import { Button, Flex, Link, Text } from "@ledgerhq/native-ui";
 import React, { ReactNode, useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { AppState, Linking, PermissionsAndroid } from "react-native";
+import { useIsMounted } from "../../helpers/useIsMounted";
 import BottomModal from "../BottomModal";
 import {
   bluetoothPermissions,
@@ -21,6 +22,7 @@ const AndroidRequiresBluetoothPermissions: React.FC<{
   children?: ReactNode | undefined;
 }> = ({ children }) => {
   const { t } = useTranslation();
+  const isMounted = useIsMounted();
   const [requestResult, setRequestResult] =
     useState<RequestMultipleResult | null>(null);
   const [checkResult, setCheckResult] = useState<boolean | null>(null);
@@ -31,37 +33,31 @@ const AndroidRequiresBluetoothPermissions: React.FC<{
   /** https://developer.android.com/about/versions/11/privacy/permissions#dialog-visibility */
   const neverAskAgain = generalStatus === RESULTS.NEVER_ASK_AGAIN;
 
-  const requestPermission = useCallback(async () => {
-    let dead = false;
+  const requestPermission = useCallback(() => {
     requestBluetoothPermissions().then(res => {
-      if (dead) return;
+      if (!isMounted()) return;
       setRequestResult(res);
       if (!res.allGranted) setModalOpened(true);
     });
-    return () => {
-      dead = true;
-    };
-  }, []);
+  }, [isMounted]);
 
   useEffect(() => {
     requestPermission();
   }, [requestPermission]);
 
   useEffect(() => {
-    let dead = false;
     const subscription = AppState.addEventListener("change", state => {
       if (state === "active") {
         checkBluetoothPermissions().then(res => {
-          if (dead) return;
+          if (!isMounted()) return;
           setCheckResult(res);
         });
       }
     });
     return () => {
-      dead = true;
       subscription.remove();
     };
-  }, []);
+  }, [isMounted]);
 
   const closeModal = useCallback(() => {
     setModalOpened(false);

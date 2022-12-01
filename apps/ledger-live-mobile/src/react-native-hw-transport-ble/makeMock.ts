@@ -6,6 +6,7 @@ import type {
   Observer as TransportObserver,
   DescriptorEvent,
 } from "@ledgerhq/hw-transport";
+import { HwTransportError } from "@ledgerhq/errors";
 import type { ApduMock } from "../logic/createAPDUMock";
 import { hookRejections } from "../logic/debugReject";
 import { e2eBridgeSubject } from "../../e2e/bridge/client";
@@ -45,7 +46,9 @@ export default (opts: Opts) => {
     // eslint-disable-next-line @typescript-eslint/no-empty-function
     static setLogLevel = (_param: string) => {};
 
-    static listen(observer: TransportObserver<DescriptorEvent<Device>>) {
+    static listen(
+      observer: TransportObserver<DescriptorEvent<Device>, HwTransportError>,
+    ) {
       return e2eBridgeSubject
         .pipe(
           filter(msg => msg.type === "add"),
