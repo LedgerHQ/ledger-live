@@ -73,24 +73,25 @@ export async function updateCheckRun({
   repo: string;
   checkRun: {
     id: CheckRun["id"];
-    pull_requests: CheckRun["pull_requests"];
+    head_sha: CheckRun["head_sha"];
   };
 }) {
   const outcome = [];
   try {
-    for await (const pr of checkRun.pull_requests) {
-      const { data } = await octokit.pulls.get({
+    const associatedPRs = await octokit.paginate(
+      octokit.repos.listPullRequestsAssociatedWithCommit,
+      {
         owner,
         repo,
-        pull_number: pr.number,
-      });
+        commit_sha: checkRun.head_sha,
+      }
+    );
 
-      if (!data) continue;
-
-      const isFork = data.head.repo?.fork;
+    for await (const pr of associatedPRs) {
+      const isFork = pr.head.repo?.fork;
       const prBase = pr.base;
       const prHead = pr.head;
-      const ownerPrefix = isFork ? `${data.head.repo?.owner}:` : "";
+      const ownerPrefix = isFork ? `${pr.head.repo?.owner}:` : "";
 
       const comparison = await octokit.repos.compareCommitsWithBasehead({
         owner,
@@ -105,8 +106,7 @@ export async function updateCheckRun({
 
       outcome.push({
         isUpToDate,
-        baseRef: prBase.ref,
-        headRef: prHead.ref,
+        pr,
         comparison: comparison.data,
       });
     }
@@ -115,14 +115,14 @@ export async function updateCheckRun({
       valid: boolean;
       branchList: string[];
     }>(
-      (acc, { isUpToDate, baseRef, headRef, comparison }) => {
+      (acc, { isUpToDate, pr, comparison }) => {
         return {
           valid: acc.valid && isUpToDate,
           branchList: [
             ...acc.branchList,
             isUpToDate
-              ? `- Branch \`${headRef}\` is identical or ahead of \`${baseRef}\``
-              : `- Branch \`${headRef}\` is ${comparison.behind_by} commit(s) behind \`${baseRef}\`.`,
+              ? `- **#${pr.number}:** branch \`${pr.head.ref}\` is identical or ahead of \`${pr.base.ref}\``
+              : `- **#${pr.number}:** branch \`${pr.head.ref}\` is ${comparison.behind_by} commit(s) behind \`${pr.base.ref}\``,
           ],
         };
       },
