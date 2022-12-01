@@ -53,6 +53,8 @@ export const urls = {
       "https://status.ledger.com?utm_source=ledger_live_mobile&utm_medium=self_referral&utm_content=error_apierrorwithmessage",
     StratisDown2021Warning:
       "https://support.ledger.com/hc/en-us/articles/115005175329",
+    TronSendTrc20ToNewAccountForbidden:
+      "https://support.ledger.com/hc/en-us/articles/6516823445533--Sending-TRC20-to-a-new-account-won-t-activate-it-message-in-Ledger-Live?support=true",
   },
   multipleAddresses:
     "https://support.ledger.com/hc/en-us/articles/360033802154?utm_source=ledger_live_mobile&utm_medium=self_referral&utm_content=ops_details_change",
@@ -100,7 +102,7 @@ export const urls = {
       },
       cic: {
         main: "https://criptointercambio.com/",
-        support: "mailto:support@criptointercambio.com",
+        support: "https://criptointercambio.com/en/about",
         tos: "https://criptointercambio.com/terms-of-use",
       },
       wyre: {

@@ -436,6 +436,7 @@ export enum ScreenName {
   CustomImageErrorScreen = "CustomImageErrorScreen",
   CustomImagePreviewPreEdit = "CustomImagePreviewPreEdit",
   CustomImagePreviewPostEdit = "CustomImagePreviewPostEdit",
+  CustomImageNFTGallery = "CustomImageNFTGallery",
 
   PostOnboardingHub = "PostOnboardingHub",
   PostOnboardingDebugScreen = "PostOnboardingDebugScreen",

@@ -15,8 +15,8 @@ import {
   getInfosForServiceUuid,
 } from "@ledgerhq/devices";
 import type { DeviceModel } from "@ledgerhq/devices";
-import { sendAPDU } from "@ledgerhq/devices/lib/ble/sendAPDU";
-import { receiveAPDU } from "@ledgerhq/devices/lib/ble/receiveAPDU";
+import { sendAPDU } from "@ledgerhq/devices/ble/sendAPDU";
+import { receiveAPDU } from "@ledgerhq/devices/ble/receiveAPDU";
 import { log } from "@ledgerhq/logs";
 import { Observable, defer, merge, from, of, throwError } from "rxjs";
 import {
@@ -40,6 +40,7 @@ import { decoratePromiseErrors, remapError } from "./remapErrors";
 let connectOptions: Record<string, unknown> = {
   requestMTU: 156,
   connectionPriority: 1,
+  forceDisconnectTimeout: 4000,
 };
 const transportsCache = {};
 let bleManager;
@@ -66,12 +67,10 @@ type ReconnectionConfig = {
   delayAfterFirstPairing: number;
 };
 let reconnectionConfig: ReconnectionConfig | null | undefined = {
-  pairingThreshold: 1000,
+  pairingThreshold: 2000,
   delayAfterFirstPairing: 4000,
 };
-export function setReconnectionConfig(
-  config: ReconnectionConfig | null | undefined
-) {
+export function setReconnectionConfig(config: ReconnectionConfig | null): void {
   reconnectionConfig = config;
 }
 
@@ -83,6 +82,11 @@ async function open(deviceOrId: Device | string, needsReconnect: boolean) {
   if (typeof deviceOrId === "string") {
     if (transportsCache[deviceOrId]) {
       log("ble-verbose", "Transport in cache, using that.");
+      const maybeTimeout = transportsCache[deviceOrId].disconnectTimeout;
+      if (maybeTimeout) {
+        log("ble-verbose", "Clearing queued disconnect");
+        clearTimeout(transportsCache[deviceOrId].disconnectTimeout);
+      }
       return transportsCache[deviceOrId];
     }
 
@@ -419,6 +423,8 @@ export default class BluetoothTransport extends Transport {
   static disconnect = async (id: any) => {
     log("ble-verbose", `user disconnect(${id})`);
     await bleManagerInstance().cancelDeviceConnection(id);
+    await bleManagerInstance().cancelDeviceConnection(id);
+    await delay(1000); // Nb Test to improve stability of re-connections.
   };
   id: string;
   device: Device;
@@ -428,6 +434,7 @@ export default class BluetoothTransport extends Transport {
   notifyObservable: Observable<any>;
   deviceModel: DeviceModel;
   notYetDisconnected = true;
+  disconnectTimeout: null | ReturnType<typeof setTimeout> = null;
 
   constructor(
     device: Device,
@@ -552,9 +559,31 @@ export default class BluetoothTransport extends Transport {
     }
   };
 
-  async close() {
-    if (this.exchangeBusyPromise) {
-      await this.exchangeBusyPromise;
+  async close(): Promise<void> {
+    // Clear any potential leftover timeouts
+    if (this.disconnectTimeout) {
+      clearTimeout(this.disconnectTimeout);
     }
+
+    let resolve;
+    const disconnectPromise = new Promise<void>((res) => {
+      resolve = res;
+    });
+
+    // Queue a disconnect
+    this.disconnectTimeout = setTimeout(() => {
+      BluetoothTransport.disconnect(this.id);
+      resolve();
+    }, connectOptions.forceDisconnectTimeout as number);
+
+    // For cases where an exchange hasn't resolve and we triggered a `close` we
+    // introduce a timeout to forcefully disconnect in order to unblock subsequent
+    // usages of the `withDevice` logic.
+    await Promise.race([
+      this.exchangeBusyPromise || Promise.resolve(),
+      disconnectPromise,
+    ]);
+
+    return;
   }
 }

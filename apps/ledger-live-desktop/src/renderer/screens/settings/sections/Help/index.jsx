@@ -7,6 +7,7 @@ import { urls } from "~/config/urls";
 import { languageSelector, swapKYCSelector } from "~/renderer/reducers/settings";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import ExportLogsBtn from "~/renderer/components/ExportLogsButton";
+import TroubleshootNetworkBtn from "~/renderer/components/TroubleshootNetworkButton";
 import OpenUserDataDirectoryBtn from "~/renderer/components/OpenUserDataDirectoryBtn";
 import RowItem from "../../RowItem";
 import { SettingsSectionBody as Body, SettingsSectionRow as Row } from "../../SettingsSection";
@@ -40,6 +41,12 @@ const SectionHelp = () => {
         </Row>
         <Row title={t("settings.exportLogs.title")} desc={t("settings.exportLogs.desc")}>
           <ExportLogsBtn />
+        </Row>
+        <Row
+          title={t("settings.troubleshootNetwork.title")}
+          desc={t("settings.troubleshootNetwork.desc")}
+        >
+          <TroubleshootNetworkBtn />
         </Row>
         <Row
           title={t("settings.profile.launchOnboarding")}

@@ -226,7 +226,7 @@ export function SwapForm({
     if (
       !provider ||
       !providerKYC?.id ||
-      !exchangeRate.rateId ||
+      exchangeRate.tradeMethod === "float" ||
       currentFlow === "KYC" ||
       currentFlow === "MFA"
     ) {
