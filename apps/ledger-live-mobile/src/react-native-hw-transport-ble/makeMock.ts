@@ -1,4 +1,4 @@
-import Transport, { DescriptorEventType } from "@ledgerhq/hw-transport";
+import Transport from "@ledgerhq/hw-transport";
 import { from, PartialObserver } from "rxjs";
 import { take, first, filter } from "rxjs/operators";
 import type { Device } from "@ledgerhq/types-devices";
@@ -8,7 +8,6 @@ import type {
 } from "@ledgerhq/hw-transport";
 import type { ApduMock } from "../logic/createAPDUMock";
 import { hookRejections } from "../logic/debugReject";
-// @ts-expect-error FIXME: port e2e files to typescript
 import { e2eBridgeSubject } from "../../e2e/bridge/client";
 
 export type DeviceMock = {
@@ -17,7 +16,11 @@ export type DeviceMock = {
   apduMock: ApduMock;
 };
 type Opts = {
-  createTransportDeviceMock: (id: string, name: string) => DeviceMock;
+  createTransportDeviceMock: (
+    id: string,
+    name: string,
+    serviceUUID: string,
+  ) => DeviceMock;
 };
 const defaultOpts = {
   observeState: from([
@@ -45,35 +48,33 @@ export default (opts: Opts) => {
     static listen(observer: TransportObserver<DescriptorEvent<Device>>) {
       return e2eBridgeSubject
         .pipe(
-          filter((msg: { type: string }) => msg.type === "add"),
+          filter(msg => msg.type === "add"),
           take(3),
         )
-        .subscribe(
-          (msg: {
-            type: DescriptorEventType;
-            payload: { id: string; name: string };
-          }) => {
+        .subscribe(msg => {
+          if (msg.type === "add") {
             observer.next({
               type: msg.type,
               descriptor: createTransportDeviceMock(
                 msg.payload.id,
                 msg.payload.name,
+                msg.payload.serviceUUID,
               ),
             });
-          },
-        );
+          }
+        });
     }
 
     static async open(device: string | Device) {
       await e2eBridgeSubject
         .pipe(
-          filter((msg: { type: string }) => msg.type === "open"),
+          filter(msg => msg.type === "open"),
           first(),
         )
         .toPromise();
       return new BluetoothTransportMock(
         typeof device === "string"
-          ? createTransportDeviceMock(device, "")
+          ? createTransportDeviceMock(device, "", "")
           : device,
       );
     }

@@ -15,10 +15,10 @@ export class PasswordlockModal extends Modal {
     this.page = page;
     this.switchButton = page.locator("data-test-id=settings-password-lock-switch");
     this.changeButton = page.locator("data-test-id=settings-password-change-button");
-    this.newPasswordInput = page.locator('data-test-id=new-password-input');
-    this.confirmPasswordInput = page.locator('data-test-id=confirm-password-input');
-    this.currentPasswordInput = page.locator('data-test-id=current-password-input');
-    this.disablePasswordInput = page.locator('data-test-id=disable-password-input');
+    this.newPasswordInput = page.locator("data-test-id=new-password-input");
+    this.confirmPasswordInput = page.locator("data-test-id=confirm-password-input");
+    this.currentPasswordInput = page.locator("data-test-id=current-password-input");
+    this.disablePasswordInput = page.locator("data-test-id=disable-password-input");
   }
 
   async toggle() {
