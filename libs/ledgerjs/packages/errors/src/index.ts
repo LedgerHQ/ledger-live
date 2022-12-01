@@ -237,6 +237,36 @@ export const DBWrongPassword = createCustomErrorClass("DBWrongPassword");
 export const DBNotReset = createCustomErrorClass("DBNotReset");
 
 /**
+ * Type of a Transport error used to represent all equivalent errors coming from all possible implementation of Transport
+ */
+export enum HwTransportErrorType {
+  Unknown = 0,
+  BleLocationServicesDisabled = 1,
+  BleBluetoothUnauthorized = 2,
+  BleScanStartFailed = 3,
+}
+
+/**
+ * Represents an error coming from any Transport implementation.
+ *
+ * Needed to map a specific implementation error into an error that
+ * can be managed by any code unaware of the specific Transport implementation
+ * that was used.
+ */
+export class HwTransportError extends Error {
+  type: HwTransportErrorType;
+
+  constructor(type: HwTransportErrorType, message: string) {
+    super(message);
+    this.name = "HwTransportError";
+    this.type = type;
+
+    // Needed as long as we target < ES6
+    Object.setPrototypeOf(this, HwTransportError.prototype);
+  }
+}
+
+/**
  * TransportError is used for any generic transport errors.
  * e.g. Error thrown when data received by exchanges are incorrect or if exchanged failed to communicate with the device for various reason.
  */
