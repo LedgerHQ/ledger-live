@@ -7,9 +7,7 @@ import { useCalculate } from "@ledgerhq/live-common/countervalues/react";
 import { useTheme } from "@react-navigation/native";
 import { Trans } from "react-i18next";
 import { counterValueCurrencySelector } from "../reducers/settings";
-import CurrencyUnitValue, {
-  Props as CurrencyUnitValueProps,
-} from "./CurrencyUnitValue";
+import CurrencyUnitValue, { CurrencyUnitValueProps } from "./CurrencyUnitValue";
 import LText from "./LText";
 import InfoIcon from "../icons/Info";
 import BottomModal from "./BottomModal";
