@@ -1,0 +1,41 @@
+name: "Upload Allure Report"
+description: "Uploading allure report to Allure Server"
+inputs:
+  login:
+    required: true
+    description: "Allure Server Login"
+  password:
+    required: true
+    description: "Allure Server Password"
+  platform:
+    required: true
+    description: "Tested Platform"
+  path:
+    required: true
+    description: "Report Path"
+outputs:
+  report-url:
+    description: "Allure report URL"
+    value: ${{ steps.publish-report.outputs.report-url }}
+
+runs:
+  using: composite
+
+  steps:
+    - id: branch-name
+      uses: tj-actions/branch-names@v6
+    - name: Download Allure Report
+      uses: actions/download-artifact@v2
+      with:
+        name: ${{ inputs.path }}
+        path: ${{ inputs.path }}
+    - name: Publish report on Allure Server
+      uses: LedgerHQ/send-to-allure-server-action@2.0.0
+      with:
+        allure-server-url: "https://ledger-live.ars.green.ledgerlabs.net"
+        build-name: ${{ github.workflow }}-${{ inputs.platform }}
+        build-url: https://github.com/LedgerHQ/ledger-live/actions/runs/${{ github.run_id }}
+        username: ${{ inputs.login }}
+        password: ${{ inputs.password }}
+        path: "${{ steps.branch-name.outputs.current_branch }}-${{ inputs.platform }}"
+        allure-results: ${{ inputs.path }}

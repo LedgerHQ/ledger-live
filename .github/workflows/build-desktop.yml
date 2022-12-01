@@ -169,10 +169,9 @@ jobs:
       - uses: actions/setup-python@v2
         with:
           python-version: "3.x"
-      - uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: 2.7
-          bundler-cache: true
+      # - uses: ruby/setup-ruby@v1
+      #   with:
+      #     ruby-version: 3.1.2
       - uses: pnpm/action-setup@v2
         with:
           version: latest
