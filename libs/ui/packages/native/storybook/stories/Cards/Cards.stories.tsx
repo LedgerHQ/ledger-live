@@ -105,7 +105,7 @@ const CardCStory = () => {
         cta={cta}
         time={time}
         title={title}
-        onPress={hasLink ? () => {} : undefined}
+        onPressLink={hasLink ? () => {} : undefined}
         onClickCard={() => {}}
         viewed={viewed}
       />

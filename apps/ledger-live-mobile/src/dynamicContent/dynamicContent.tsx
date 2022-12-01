@@ -54,8 +54,8 @@ export const mapAsNotificationContentCard = (card: BrazeContentCard) =>
     title: card.extras.title,
     description: card.extras.description,
     location: LocationContentCard.NotificationCenter,
-    link: card.extras.link ?? "",
-    cta: card.extras.cta ?? "",
+    link: card.extras.link,
+    cta: card.extras.cta,
     createdAt: card.created,
     viewed: card.viewed,
   } as NotificationContentCard);
