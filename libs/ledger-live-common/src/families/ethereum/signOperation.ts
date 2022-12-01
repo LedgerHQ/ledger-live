@@ -90,7 +90,7 @@ export const signOperation = ({
                 "0x" + (tx.value.toString("hex") || "0")
               );
 
-              // rawData Format: `rlp([nonce, gasPrice, gasLimit, to, value, data, v, r, s])`
+              // rawData Format: type 0 `rlp([nonce, gasPrice, gasLimit, to, value, data, v, r, s])`
               // EIP1559 Format: type 2 || rlp([chainId, nonce, maxPriorityFeePerGas, maxFeePerGas, gasLimit, destination, amount, data, access_list, v, r, s])
               const txHex = (() => {
                 if (EIP1559ShouldBeUsed(account.currency)) {
