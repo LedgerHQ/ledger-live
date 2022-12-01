@@ -38,7 +38,7 @@ export default function NotificationCenter() {
   const dispatch = useDispatch();
   const { colors } = useTheme();
   const {
-    notificationCards,
+    orderedNotificationsCards,
     logImpressionCard,
     logDismissCard,
     logClickCard,
@@ -53,7 +53,7 @@ export default function NotificationCenter() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Utils
+  // ----- Utils Functions ----------
   const onPress = useCallback(
     (item: NotificationContentCard) => {
       if (!item) return;
@@ -71,22 +71,25 @@ export default function NotificationCenter() {
     },
     [logClickCard, trackContentCardEvent],
   );
+
   const deleteNotification = useCallback(
     (itemId: string) => {
       logDismissCard(itemId);
       dispatch(
         setDynamicContentNotificationCards(
-          notificationCards.filter(n => n.id !== itemId),
+          orderedNotificationsCards.filter(n => n.id !== itemId),
         ),
       );
     },
-    [dispatch, logDismissCard, notificationCards],
+    [dispatch, logDismissCard, orderedNotificationsCards],
   );
+
   const onClickCard = useCallback(
     (id: string) => {
+      // TODO: REWORK like in the Carousel maybe? For Log impression only when it's clearly visible
       logImpressionCard(id);
 
-      const cards = notificationCards.map(n =>
+      const cards = orderedNotificationsCards.map(n =>
         n.id === id
           ? {
               ...n,
@@ -97,12 +100,12 @@ export default function NotificationCenter() {
 
       dispatch(setDynamicContentNotificationCards(cards));
     },
-    [dispatch, logImpressionCard, notificationCards],
+    [dispatch, logImpressionCard, orderedNotificationsCards],
   );
 
   // ---------------
 
-  // Render functions
+  // ----- Render functions --------
   const renderRightActions = (
     _progress: Animated.AnimatedInterpolation,
     dragX: Animated.AnimatedInterpolation,
@@ -148,13 +151,14 @@ export default function NotificationCenter() {
       </Swipeable>
     );
   };
-  //-------------------
+  // -------------------------------
+
   return (
     <>
-      {notificationCards.length > 0 ? (
+      {orderedNotificationsCards.length > 0 ? (
         <Container>
           <FlatList<NotificationContentCard>
-            data={notificationCards}
+            data={orderedNotificationsCards}
             keyExtractor={(card: NotificationContentCard) => card.id}
             renderItem={elem => ListItem(elem.item)}
             ItemSeparatorComponent={() => (
@@ -163,7 +167,7 @@ export default function NotificationCenter() {
           />
         </Container>
       ) : (
-        <Flex alignItems="center" flex={1}>
+        <Flex alignItems="center" flex={1} px={3}>
           <Text
             variant="large"
             fontWeight="semiBold"
