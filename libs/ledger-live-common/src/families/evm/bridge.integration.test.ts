@@ -1,6 +1,5 @@
 import "../../__tests__/test-helpers/setup";
 
-import invariant from "invariant";
 import { BigNumber } from "bignumber.js";
 import type { AccountRaw, DatasetTest } from "@ledgerhq/types-live";
 import { FeeTooHigh } from "@ledgerhq/errors";

@@ -1,5 +1,4 @@
 import "../../__tests__/test-helpers/setup";
-import invariant from "invariant";
 import { testBridge } from "../../__tests__/test-helpers/bridge";
 import { getAccountBridge } from "../../bridge";
 import {

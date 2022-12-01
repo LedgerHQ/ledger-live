@@ -1,10 +1,10 @@
-import invariant from "invariant";
 import { BigNumber } from "bignumber.js";
 import type { CurrenciesData } from "@ledgerhq/types-live";
+import { DustLimit } from "@ledgerhq/errors";
+
 import type { BitcoinAccountRaw, NetworkInfoRaw, Transaction } from "../types";
 import { fromTransactionRaw } from "../transaction";
 import scanAccounts1 from "./bitcoin.scanAccounts.1";
-import { DustLimit } from "@ledgerhq/errors";
 
 const networkInfo: NetworkInfoRaw = {
   family: "bitcoin",
