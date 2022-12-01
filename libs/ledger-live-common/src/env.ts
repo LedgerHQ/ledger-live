@@ -378,7 +378,7 @@ const envDefinitions = {
     desc: "Ledger satstack Bitcoin explorer API",
   },
   EXPORT_EXCLUDED_LOG_TYPES: {
-    def: "ble-verbose",
+    def: "ble-frame",
     parser: stringParser,
     desc: "comma-separated list of excluded log types for exported logs",
   },
