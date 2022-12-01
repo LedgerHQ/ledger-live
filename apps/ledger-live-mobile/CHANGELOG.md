@@ -1,5 +1,21 @@
 # live-mobile
 
+## 3.12.0-nightly.5
+
+### Minor Changes
+
+- [#1911](https://github.com/LedgerHQ/ledger-live/pull/1911) [`5000d826fb`](https://github.com/LedgerHQ/ledger-live/commit/5000d826fb8bd38e729489ece2c36240a6a69091) Thanks [@grsoares21](https://github.com/grsoares21)! - Auto-select the last connected device for CLS if it is a Nano FTS
+
+### Patch Changes
+
+- [#1852](https://github.com/LedgerHQ/ledger-live/pull/1852) [`01c3025d3b`](https://github.com/LedgerHQ/ledger-live/commit/01c3025d3b742447388f92be66c7b17438168102) Thanks [@pierrelouis-c](https://github.com/pierrelouis-c)! - Add custom image deeplink
+
+* [#1871](https://github.com/LedgerHQ/ledger-live/pull/1871) [`ff5cb2cb11`](https://github.com/LedgerHQ/ledger-live/commit/ff5cb2cb11a2dcac0f2a65bf3ae4efac512cfe71) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Enabled BLE background capabilities again
+
+* Updated dependencies [[`ff5cb2cb11`](https://github.com/LedgerHQ/ledger-live/commit/ff5cb2cb11a2dcac0f2a65bf3ae4efac512cfe71), [`ff5cb2cb11`](https://github.com/LedgerHQ/ledger-live/commit/ff5cb2cb11a2dcac0f2a65bf3ae4efac512cfe71), [`2aa8cc9c33`](https://github.com/LedgerHQ/ledger-live/commit/2aa8cc9c339ce8c9677b24e70218cc45847d799b)]:
+  - @ledgerhq/live-common@27.9.0-nightly.0
+  - @ledgerhq/react-native-hw-transport-ble@6.27.11-nightly.0
+
 ## 3.12.0-nightly.4
 
 ### Minor Changes
