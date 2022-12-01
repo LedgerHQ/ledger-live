@@ -6,6 +6,7 @@ import { createAction } from "@ledgerhq/live-common/hw/actions/app";
 import connectApp from "@ledgerhq/live-common/hw/connectApp";
 import { useTheme } from "@react-navigation/native";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { isTokenCurrency } from "@ledgerhq/live-common/currencies/index";
 import { prepareCurrency } from "../../bridge/cache";
 import { ScreenName } from "../../const";
 import { TrackScreen } from "../../analytics";
@@ -58,7 +59,10 @@ export default function AddAccountsSelectDevice({
 
   useEffect(() => {
     // load ahead of time
-    prepareCurrency(route.params.currency as CryptoCurrency);
+    const currency = route.params.currency;
+    prepareCurrency(
+      isTokenCurrency(currency) ? currency.parentCurrency : currency,
+    );
   }, [route.params.currency]);
 
   const currency = route.params.currency;
@@ -90,11 +94,10 @@ export default function AddAccountsSelectDevice({
         onResult={onResult}
         onClose={onClose}
         request={{
-          currency: currency as CryptoCurrency,
-          // FIXME: IT SEEMS TokenCurrency WILL NEVER HAPPEN
-          // currency.type === "TokenCurrency"
-          //   ? currency.parentCurrency
-          //   : currency,
+          currency:
+            currency.type === "TokenCurrency"
+              ? currency.parentCurrency
+              : currency,
         }}
         onSelectDeviceLink={() => setDevice(null)}
         analyticsPropertyFlow={analyticsPropertyFlow || "add account"}
