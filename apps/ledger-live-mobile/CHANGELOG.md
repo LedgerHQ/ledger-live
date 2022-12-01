@@ -1,5 +1,12 @@
 # live-mobile
 
+## 3.12.0-next.1
+
+### Patch Changes
+
+- Updated dependencies [[`627b46b58e`](https://github.com/LedgerHQ/ledger-live/commit/627b46b58ed83970c69d621303af7a3a7e51850b)]:
+  - @ledgerhq/react-native-hw-transport-ble@6.27.11-next.1
+
 ## 3.12.0-next.0
 
 ### Minor Changes
