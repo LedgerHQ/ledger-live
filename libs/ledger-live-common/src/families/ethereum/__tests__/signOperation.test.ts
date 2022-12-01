@@ -45,7 +45,8 @@ const decodeSomething = (rawTx) => {
     return Buffer.from(hex, "hex");
   }); */
 
-  /*   const rlpTx: Buffer[] = [];
+  const rlpTx: Buffer[] = [];
+  /* 
   for (const [, hex] of (decode(rlpData) as Uint8Array).entries()) {
     rlpTx.push(Buffer.from(hex.toString(), "hex"));
   } */
@@ -73,7 +74,6 @@ describe("signOperation", () => {
           .toPromise()
           .catch(() => {});
 
-        // @ts-expect-error wtf tuples
         const txHashProvidedToAppBindings = signTransaction.mock.calls[0][1];
         console.log(decode(txHashProvidedToAppBindings));
         expect(signTransaction).toBeCalledWith("44'/60'/0'/0/0");
