@@ -15,18 +15,16 @@ import {
 import { NFTResource } from "@ledgerhq/live-common/nft/NftMetadataProvider/types";
 import { Box, Flex, Tag, Text } from "@ledgerhq/native-ui";
 
-import { useNavigation } from "@react-navigation/native";
 import styled, { BaseStyledProps } from "@ledgerhq/native-ui/components/styled";
 import { useTranslation } from "react-i18next";
 import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
 import CurrencyIcon from "../CurrencyIcon";
 import NftMedia from "./NftMedia";
 import Skeleton from "../Skeleton";
-import { NavigatorName, ScreenName } from "../../const";
-import { track } from "../../analytics";
 
 type Props = {
   nft: ProtoNFT;
+  onPress?: (nft: ProtoNFT, nftMetadata?: NFTMetadata) => void;
 };
 
 const StyledTouchableOpacity = styled.TouchableOpacity<BaseStyledProps>`
@@ -43,14 +41,15 @@ const NftCardView = ({
   metadata,
   collectionStatus,
   collectionMetadata,
+  onPress,
 }: {
   nft: ProtoNFT;
   status: NFTResource["status"];
   metadata: NFTMetadata;
   collectionStatus: NFTResource["status"];
   collectionMetadata?: NFTCollectionMetadata | null;
+  onPress?: () => void;
 }) => {
-  const navigation = useNavigation();
   const currency = useMemo(
     () => getCryptoCurrencyById(nft.currencyId),
     [nft.currencyId],
@@ -59,22 +58,8 @@ const NftCardView = ({
   const loading = status === "loading";
   const collectionLoading = collectionStatus === "loading";
 
-  const navigateToNftViewer = useCallback(() => {
-    track("NFT_clicked", {
-      NFT_collection: metadata?.tokenName,
-      NFT_title: metadata?.nftName,
-    });
-
-    navigation.navigate(NavigatorName.NftNavigator, {
-      screen: ScreenName.NftViewer,
-      params: {
-        nft,
-      },
-    });
-  }, [metadata, navigation, nft]);
-
   return (
-    <StyledTouchableOpacity bg="background.main" onPress={navigateToNftViewer}>
+    <StyledTouchableOpacity bg="background.main" onPress={onPress}>
       <NftMediaComponent
         status={status}
         metadata={metadata}
@@ -141,7 +126,7 @@ const NftCardView = ({
 const NftCardMemo = memo(NftCardView);
 // this technique of splitting the usage of context and memoing the presentational component is used to prevent
 // the rerender of all NftCards whenever the NFT cache changes (whenever a new NFT is loaded)
-const NftListItem = ({ nft }: Props) => {
+const NftListItem = ({ nft, onPress }: Props) => {
   const nftMetadata = useNftMetadata(
     nft?.contract,
     nft?.tokenId,
@@ -159,6 +144,12 @@ const NftListItem = ({ nft }: Props) => {
         NFTCollectionMetadataResponse["result"];
     };
 
+  const handlePress = useCallback(() => {
+    if (onPress) {
+      onPress(nft, metadata);
+    }
+  }, [onPress, metadata, nft]);
+
   return (
     <NftCardMemo
       nft={nft}
@@ -166,6 +157,7 @@ const NftListItem = ({ nft }: Props) => {
       metadata={metadata}
       collectionStatus={collectionStatus}
       collectionMetadata={collectionMetadata}
+      onPress={handlePress}
     />
   );
 };

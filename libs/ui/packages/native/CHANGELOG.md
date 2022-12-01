@@ -1,5 +1,27 @@
 # @ledgerhq/native-ui
 
+## 0.12.2
+
+### Patch Changes
+
+- [#1936](https://github.com/LedgerHQ/ledger-live/pull/1936) [`7aa0e616b3`](https://github.com/LedgerHQ/ledger-live/commit/7aa0e616b3dab8e218fea8631c3aa8b894dfc8f1) Thanks [@mlegall-ledger](https://github.com/mlegall-ledger)! - Removed PNG icons for boxed ProviderIcons and replaced them with svg(r)
+
+* [#1759](https://github.com/LedgerHQ/ledger-live/pull/1759) [`77622be003`](https://github.com/LedgerHQ/ledger-live/commit/77622be0033cb7af6ac1284b302ac62e4825652b) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - VerticalTimeline: fix item title long text layout & remove item vertical scroll indicator
+
+* Updated dependencies [[`7aa0e616b3`](https://github.com/LedgerHQ/ledger-live/commit/7aa0e616b3dab8e218fea8631c3aa8b894dfc8f1), [`828af17431`](https://github.com/LedgerHQ/ledger-live/commit/828af1743180ccf0f21a7de143cb910ef7258407)]:
+  - @ledgerhq/icons-ui@0.3.1
+
+## 0.12.2-next.0
+
+### Patch Changes
+
+- [#1936](https://github.com/LedgerHQ/ledger-live/pull/1936) [`7aa0e616b3`](https://github.com/LedgerHQ/ledger-live/commit/7aa0e616b3dab8e218fea8631c3aa8b894dfc8f1) Thanks [@mlegall-ledger](https://github.com/mlegall-ledger)! - Removed PNG icons for boxed ProviderIcons and replaced them with svg(r)
+
+* [#1759](https://github.com/LedgerHQ/ledger-live/pull/1759) [`77622be003`](https://github.com/LedgerHQ/ledger-live/commit/77622be0033cb7af6ac1284b302ac62e4825652b) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - VerticalTimeline: fix item title long text layout & remove item vertical scroll indicator
+
+* Updated dependencies [[`7aa0e616b3`](https://github.com/LedgerHQ/ledger-live/commit/7aa0e616b3dab8e218fea8631c3aa8b894dfc8f1), [`828af17431`](https://github.com/LedgerHQ/ledger-live/commit/828af1743180ccf0f21a7de143cb910ef7258407)]:
+  - @ledgerhq/icons-ui@0.3.1-next.0
+
 ## 0.12.1
 
 ### Patch Changes
