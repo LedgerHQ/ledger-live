@@ -22,6 +22,7 @@
     "preios:ci:testflight": "bundle install",
     "ios:ci:testflight": "bundle exec fastlane ios ci_testflight --env ios.release",
     "ios:ci:pre": "bundle exec fastlane ios ci_testflight --env ios.prerelease",
+    "ios:ci:fts": "bundle exec fastlane ios ci_fts --env ios.staging",
     "preios:ci:adhoc": "bundle install",
     "ios:ci:adhoc": "bundle exec fastlane ios ci_adhoc --env ios.staging",
     "preios:ci:nightly": "bundle install",

@@ -301,6 +301,25 @@ platform :ios do
 
         UI.important("Another build is already in external beta review. Skipping external beta review submission")
       end
+
+    elsif (options[:fts])
+      begin
+        pilot(
+          skip_submission: false,
+          distribute_external: true,
+          app_identifier: "com.ledger.live",
+          skip_waiting_for_build_processing: false,
+          # wait_processing_timeout_duration: 1800, # 30mn
+          notify_external_testers: true,
+          groups: ["FTS whitelist"],
+          ipa: IPA_DIRECTORY,
+          changelog: "FTS Build v#{package['version']} (#{build_number})",
+          beta_app_review_info: {
+            contact_email: "team-live@ledger.fr",
+            contact_first_name: "Ledger Live",
+            notes: "FTS build"
+          }
+        )
     else
       pilot(
         skip_submission: true,
@@ -348,6 +367,17 @@ platform :ios do
       ci: true
     )
   end
+
+  desc "ci: create version for fts"
+  lane :ci_fts do |options|
+    setup_ios_ci
+    build(ci: true)
+    upload(
+      fts: true,
+      ci: true
+    )
+  end
+    
 
   desc "ci: add a device to apple profiles"
   lane :add_ios_device do
