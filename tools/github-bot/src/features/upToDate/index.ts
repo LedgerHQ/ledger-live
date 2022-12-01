@@ -10,7 +10,12 @@ const CHECK_NAME = "PR is up-to-date";
  */
 export function upToDate(app: Probot) {
   app.on(
-    ["pull_request.synchronize", "pull_request.ready_for_review"],
+    [
+      "pull_request.opened",
+      "pull_request.reopened",
+      "pull_request.synchronize",
+      "pull_request.ready_for_review",
+    ],
     async (context) => {
       const { payload, octokit } = context;
       const { owner, repo } = context.repo();
