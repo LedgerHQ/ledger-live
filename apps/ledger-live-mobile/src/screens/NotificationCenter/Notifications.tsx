@@ -215,7 +215,7 @@ export default function NotificationCenter() {
           />
         </Container>
       ) : (
-        <Flex alignItems="center" flex={1} px={3}>
+        <Flex alignItems="center" flex={1} px={6}>
           <Text
             variant="large"
             fontWeight="semiBold"
