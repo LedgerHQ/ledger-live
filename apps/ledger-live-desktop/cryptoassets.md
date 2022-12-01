@@ -113,7 +113,7 @@
 | lisk | LSK | NO | lisk |
 | æternity | AE | NO | aeternity |
 
-## Tokens (10677)
+## Tokens (10676)
 | parent currency | ticker | contract | name | status | ledger id |
 |--|--|--|--|--|--|
 | Algorand | ARCC | MESEJMPXKL7YUWEQGNRCKSLMQDKHOHWIZ3RBWP7BV4JDMUJXFUVQZWUBJM | Asia Reserve Currency Coin | countervalues disabled | algorand/asa/163650 |
@@ -9723,7 +9723,6 @@
 | Tron | SEED | TEUBykq4STvu27fsGEQGrPwpdaWuDgmkSL | SEED | delisted, countervalues disabled | tron/trc10/1001877 |
 | Tron | TRX | TFE3TW7P5Y1nWdMf2bMk14M8eS4kTjr8eH | SEED | delisted, countervalues disabled | tron/trc10/1001873 |
 | Tron | SEED | TGzz8gjYiYRqpfmDwnLxfgPuLVNmpCswVp | SEED | delisted, countervalues disabled | tron/trc10/1000001 |
-| Tron | SEED | TBwoSTyywvLrgjSgaatxrBhxt3DGpVuENh | SEED | countervalues disabled | tron/trc20/TBwoSTyywvLrgjSgaatxrBhxt3DGpVuENh |
 | Tron | SEGG | TJEDEi1hQTGVGzrqyvBssV46tbSv23cP2W | SEEDEGG | delisted, countervalues disabled | tron/trc10/1001284 |
 | Tron | SEED | TZ6dgQ8UU2Pw1RXKcduwCRi5otVQwG1XCQ | SEEDGerminator | delisted, countervalues disabled | tron/trc10/1001465 |
 | Tron | SEEDR | TDcF4aR8Jp1UvSvXti9gcmRvuE7pGe72r5 | SEEDR | delisted, countervalues disabled | tron/trc10/1001599 |
