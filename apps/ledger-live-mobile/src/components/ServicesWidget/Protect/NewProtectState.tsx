@@ -2,7 +2,9 @@ import { IconBoxList, Icons, Tag, Divider } from "@ledgerhq/native-ui";
 import React, { useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { Linking } from "react-native";
+import { useNavigation } from "@react-navigation/native";
 import Button from "../../Button";
+import { ScreenName } from "../../../const/navigation";
 
 const items = [
   {
@@ -25,17 +27,16 @@ const items = [
 
 function NewProtectState({ params }: { params: Record<string, string> }) {
   const { t } = useTranslation();
-  const { learnMoreURI, alreadySubscribedURI } = params || {};
+  const navigation = useNavigation();
+  const { learnMoreURI } = params || {};
 
   const onLearnMore = useCallback(() => {
     Linking.canOpenURL(learnMoreURI).then(() => Linking.openURL(learnMoreURI));
   }, [learnMoreURI]);
 
   const onAlreadySubscribe = useCallback(() => {
-    Linking.canOpenURL(alreadySubscribedURI).then(() =>
-      Linking.openURL(alreadySubscribedURI),
-    );
-  }, [alreadySubscribedURI]);
+    navigation.navigate(ScreenName.ProtectLogin);
+  }, [navigation]);
 
   return (
     <>

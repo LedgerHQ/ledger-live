@@ -1,7 +1,8 @@
 import { Flex, Text } from "@ledgerhq/native-ui";
-import { protectContext } from "@ledgerhq/live-common/platform/providers/ProtectProvider/index";
 import { ProtectStateNumberEnum } from "@ledgerhq/live-common/platform/providers/ProtectProvider/types";
-import React, { memo, useContext } from "react";
+import { refreshToken as refreshTokenMock } from "@ledgerhq/live-common/platform/providers/ProtectProvider/api/api.mock";
+import React, { memo, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 import Svg, { LinearGradient, Defs, Rect, Stop } from "react-native-svg";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
@@ -12,6 +13,10 @@ import SubscriptionCanceledProtectState from "./Protect/SubscriptionCanceledProt
 import PaymentRejectedProtectState from "./Protect/PaymentRejectedProtectState";
 import ActiveProtectState from "./Protect/ActiveProtectState";
 import { ServicesConfig } from "./types";
+import { protectSelector } from "../../reducers/protect";
+import { updateProtectData, updateProtectStatus } from "../../actions/protect";
+import { formatData, getProtectStatus } from "../../logic/protect";
+import { saveProtect } from "../../db";
 
 const SvgGradient = () => (
   <Svg width="100%" height="8px">
@@ -57,6 +62,7 @@ const statesComponents: Record<
 };
 
 function ServicesWidget() {
+  const dispatch = useDispatch();
   const { t } = useTranslation();
   const servicesConfig: ServicesConfig | null = useFeature(
     "protectServicesMobile",
@@ -64,11 +70,27 @@ function ServicesWidget() {
 
   const { enabled, params } = servicesConfig || {};
 
-  const {
-    state: { protectState },
-  } = useContext(protectContext);
+  const { protectStatus, data } = useSelector(protectSelector);
 
-  const ProtectStateComponent = statesComponents[protectState];
+  const ProtectStateComponent = statesComponents[protectStatus];
+
+  useEffect(() => {
+    const refreshSession = async () => {
+      if (!data.refreshToken) return;
+
+      const res = await refreshTokenMock(data.refreshToken);
+      const newData = formatData(res);
+
+      dispatch(updateProtectData(newData));
+      dispatch(updateProtectStatus(getProtectStatus(newData)));
+    };
+
+    refreshSession();
+  }, [data.refreshToken, dispatch]);
+
+  useEffect(() => {
+    saveProtect({ data, protectStatus });
+  }, [data, protectStatus]);
 
   return enabled && params?.managerStatesData ? (
     <>
@@ -95,11 +117,11 @@ function ServicesWidget() {
           </Flex>
           <Text variant="paragraph" color="neutral.c80" mt={3}>
             {t(
-              `servicesWidget.protect.status.${statesKeys[protectState]}.desc`,
+              `servicesWidget.protect.status.${statesKeys[protectStatus]}.desc`,
             )}
           </Text>
           <ProtectStateComponent
-            params={params?.managerStatesData?.[protectState]}
+            params={params?.managerStatesData?.[protectStatus]}
           />
         </Flex>
       </Flex>

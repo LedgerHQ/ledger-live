@@ -5655,5 +5655,19 @@
         }
       }
     }
+  },
+  "protect": {
+    "login": {
+      "title": "Log In",
+      "desc": "Log in with your Ledger account to manage your Protect subscription.",
+      "email": "Email",
+      "password": "Password",
+      "cta": "Login",
+      "forgotPassword": "Forgot password?",
+      "errors": {
+        "emptyEmail": "Email cannot be empty",
+        "emptyPassword": "Password cannot be empty"
+      }
+    }
   }
 }

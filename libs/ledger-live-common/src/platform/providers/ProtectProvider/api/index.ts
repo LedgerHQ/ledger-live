@@ -1,13 +1,18 @@
 import network from "../../../../network";
 import { ProtectData } from "../types";
 
-export async function login(): Promise<ProtectData> {
+const ACCOUNT_API_URL = "https://protect-account-simu-stg.aws.stg.ldg-tech.com";
+
+export async function login(
+  email: string,
+  password: string
+): Promise<ProtectData> {
   const { data } = await network({
     method: "POST",
-    url: "https://stargate-url/account/sign-in",
+    url: `${ACCOUNT_API_URL}/account/sign-in`,
     data: {
-      email: "email",
-      password: "password",
+      email,
+      password,
     },
   });
 
@@ -17,7 +22,7 @@ export async function login(): Promise<ProtectData> {
 export async function refreshToken(refreshToken: string): Promise<ProtectData> {
   const { data } = await network({
     method: "POST",
-    url: "https://stargate-url/account/refresh-token",
+    url: `${ACCOUNT_API_URL}/account/refresh-token`,
     data: {
       refreshToken: refreshToken,
     },

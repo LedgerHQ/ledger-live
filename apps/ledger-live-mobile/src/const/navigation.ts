@@ -100,6 +100,7 @@ export enum ScreenName {
   PasswordRemove = "PasswordRemove",
   Portfolio = "Wallet",
   PortfolioOperationHistory = "PortfolioOperationHistory",
+  ProtectLogin = "ProtectLogin",
   ProviderList = "ProviderList",
   ProviderView = "ProviderView",
   PurchaseDevice = "PurchaseDevice",
