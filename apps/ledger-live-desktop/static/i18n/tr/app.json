@@ -2184,6 +2184,9 @@
     "title" : "Sürüm notları",
     "version" : "Ledger Live {{versionNb}}"
   },
+  "troubleshootNetwork" : {
+    "title" : "Ağ sorunlarını giderin"
+  },
   "systemLanguageAvailable" : {
     "title" : "Uygulama dili değiştirilsin mi?",
     "description" : {
@@ -2241,6 +2244,9 @@
     }
   },
   "tron" : {
+    "receive" : {
+      "newAddressTRC20" : "Önce bu hesaba en az 0,1 TRX göndererek hesabı etkinleştirmelisiniz."
+    },
     "voting" : {
       "emptyState" : {
         "description" : "Artık varlık dondurarak ve oylama yaparak ödüller kazanabilirsiniz.",
@@ -3548,7 +3554,7 @@
       "featureFlagsEdit" : "Düzenle",
       "featureFlagsRestore" : "Geri yükle",
       "featureFlagsOverride" : "Geçersiz bırak",
-      "firebaseProject" : "Firebase project targeted by this build:",
+      "firebaseProject" : "Bu sürüm tarafından hedeflenen Firebase projesi:",
       "addLocalApp" : "Yerel uygulama ekleyin",
       "addLocalAppDesc" : "Yerel dizini kullanarak yerel dosyalara göz atın ve yerel bir uygulama ekleyin",
       "addLocalAppButton" : "Göz Atın",
@@ -3695,6 +3701,11 @@
       "title" : "Logları kaydedin",
       "desc" : "Ledger Live loglarını kaydetmek sorun giderme amacıyla gerekli olabilir.",
       "btn" : "Kaydet"
+    },
+    "troubleshootNetwork" : {
+      "title" : "Ağ sorunlarını giderin",
+      "desc" : "Sorun giderme amacıyla ağ koşullarını değerlendirmek için bir kontrol listesi kullanın.",
+      "btn" : "Sorun Gider"
     },
     "accounts" : {
       "hideEmptyTokens" : {
@@ -4734,6 +4745,10 @@
       "title" : "Üzgünüz, cihazınızın bağlantısı kesilmiş görünüyor",
       "description" : "Lütfen yeniden bağlanın ve tekrar deneyin."
     },
+    "EConnReset" : {
+      "title" : "Ledger uygulama mağazasına ulaşılamıyor",
+      "description" : "İnternet bağlantınız kapalı olabilir veya olağan dışı bir yapılandırma kullanıyor olabilir. İlk olarak proxy veya güvenlik duvarı gibi bağlantınızı engelleyen bir unsurun olup olmadığını kontrol edin. Sorun devam ederse çözümleri görmek için aşağıdaki düğmeye tıklayın veya müşteri destek ekibimizle iletişime geçin."
+    },
     "EnpointConfig" : {
       "title" : "Geçersiz bitiş noktası",
       "description" : "Lütfen geçerli bir bitiş noktası sağlayın"
@@ -5088,7 +5103,7 @@
       "title" : "Dondurulacak tutar 1'den az olamaz"
     },
     "TronSendTrc20ToNewAccountForbidden" : {
-      "title" : "TRC20'yi yeni bir hesaba göndermek onu etkinleştirmez",
+      "title" : "TRC20 token alımını etkinleştirmek için önce bu hesaba en az 0,1 TRX göndermeniz gerekir.",
       "description" : "Alıcı hesabının TRC20 gönderilmeden önce etkinleştirilmesi gerekir. Etkinleştirmek için TRX veya TRC10'u bir hesaba gönderin."
     },
     "TronUnexpectedFees" : {
