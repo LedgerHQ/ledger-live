@@ -2184,6 +2184,9 @@
     "title" : "Informationen zur Version",
     "version" : "Ledger Live {{versionNb}}"
   },
+  "troubleshootNetwork" : {
+    "title" : "Fehlersuche im Netzwerk"
+  },
   "systemLanguageAvailable" : {
     "title" : "App-Sprache ändern?",
     "description" : {
@@ -2241,6 +2244,9 @@
     }
   },
   "tron" : {
+    "receive" : {
+      "newAddressTRC20" : "Sie müssen zuerst mindestens 0,1 TRX an diese Adresse senden, um sie zu aktivieren."
+    },
     "voting" : {
       "emptyState" : {
         "description" : "Sie können jetzt durch Sperren und Abstimmen Prämien verdienen.",
@@ -3696,6 +3702,11 @@
       "desc" : "Das Speichern von Ledger Live-Logs kann für die Fehlerbehebung erforderlich sein.",
       "btn" : "Speichern"
     },
+    "troubleshootNetwork" : {
+      "title" : "Fehlersuche im Netzwerk",
+      "desc" : "Führen Sie eine Checkliste aus, um die Netzwerkbedingungen für die Fehlersuche zu bewerten.",
+      "btn" : "Fehlersuche"
+    },
     "accounts" : {
       "hideEmptyTokens" : {
         "title" : "Leere Token-Konten ausblenden",
@@ -4734,6 +4745,10 @@
       "title" : "Entschuldigung, es scheint Ihr Gerät ist nicht verbunden",
       "description" : "Bitte neu verbinden und erneut versuchen."
     },
+    "EConnReset" : {
+      "title" : "Der Ledger Application Store kann nicht erreicht werden",
+      "description" : "Ihre Internetverbindung ist möglicherweise ausgefallen oder Sie verwenden eine ungewöhnliche Konfiguration. Überprüfen Sie zunächst, ob Ihre Verbindung blockiert wird (Proxy oder Firewall). Wenn das Problem weiterhin besteht, klicken Sie unten, um Lösungen zu erhalten, oder wenden Sie sich an unseren Kundensupport."
+    },
     "EnpointConfig" : {
       "title" : "Ungültiger Endpunkt",
       "description" : "Bitte geben Sie einen gültigen Endpunkt an"
@@ -5088,7 +5103,7 @@
       "title" : "Der zu sperrende Betrag kann nicht kleiner als 1 sein"
     },
     "TronSendTrc20ToNewAccountForbidden" : {
-      "title" : "Das Senden von TRC20 an ein neues Konto führt nicht zur Aktivierung",
+      "title" : "Sie müssen zuerst mindestens 0,1 TRX an diese Adresse senden, um den Empfang von TRC20-Token zu aktivieren.",
       "description" : "Das Empfängerkonto muss aktiviert werden, bevor Sie TRC20 an dieses senden. Senden Sie entweder TRX oder TRC10 an ein Konto, um es zu aktivieren."
     },
     "TronUnexpectedFees" : {
