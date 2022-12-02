@@ -13,3 +13,7 @@ export const CardanoMinAmountError = createCustomErrorClass(
 export const CardanoNotEnoughFunds = createCustomErrorClass(
   "CardanoNotEnoughFunds"
 );
+
+export const CardanoInvalidPoolId = createCustomErrorClass(
+  "CardanoInvalidPoolId"
+);

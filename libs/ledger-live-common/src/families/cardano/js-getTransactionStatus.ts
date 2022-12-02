@@ -15,7 +15,11 @@ import type {
 } from "./types";
 import { isHexString, isValidAddress } from "./logic";
 import { utils as TyphonUtils } from "@stricahq/typhonjs";
-import { CardanoMinAmountError, CardanoNotEnoughFunds } from "./errors";
+import {
+  CardanoInvalidPoolId,
+  CardanoMinAmountError,
+  CardanoNotEnoughFunds,
+} from "./errors";
 import { AccountAwaitingSendPendingOperations } from "../../errors";
 import { getNetworkParameters } from "./networks";
 import { decodeTokenAssetId, decodeTokenCurrencyId } from "./buildSubAccounts";
@@ -134,7 +138,7 @@ async function getDelegateTransactionStatus(
   }
 
   if (!t.poolId || !isHexString(t.poolId) || t.poolId.length !== 56) {
-    throw new Error("Invalid poolId");
+    errors.poolId = new CardanoInvalidPoolId();
   }
 
   const estimatedFees = t.fees || new BigNumber(0);

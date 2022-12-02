@@ -4,7 +4,7 @@ import { testBridge } from "../../__tests__/test-helpers/bridge";
 import BigNumber from "bignumber.js";
 import { cardanoRawAccount1 } from "./datasets/rawAccount.1";
 import { cardanoScanAccounts } from "./datasets/scanAccounts";
-import { CardanoMinAmountError } from "./errors";
+import { CardanoInvalidPoolId, CardanoMinAmountError } from "./errors";
 import { fromTransactionRaw } from "./transaction";
 import type { Transaction } from "./types";
 import type { DatasetTest } from "@ledgerhq/types-live";
@@ -73,6 +73,33 @@ const dataset: DatasetTest<Transaction> = {
                 errors: {},
                 warnings: {},
               },
+            },
+            {
+              name: "delegate to invalid poolId",
+              transaction: fromTransactionRaw({
+                family: "cardano",
+                recipient: "",
+                amount: "0",
+                mode: "delegate",
+                poolId: "efae72c07a26e4542ba55ef59d35ad45ffaaac312865e3a758ede",
+              }),
+              expectedStatus: {
+                errors: {
+                  poolId: new CardanoInvalidPoolId(),
+                },
+              },
+            },
+            {
+              name: "delegate valid poolId",
+              transaction: fromTransactionRaw({
+                family: "cardano",
+                recipient: "",
+                amount: "0",
+                mode: "delegate",
+                poolId:
+                  "efae72c07a26e4542ba55ef59d35ad45ffaaac312865e3a758ede997",
+              }),
+              expectedStatus: {},
             },
           ],
         },
