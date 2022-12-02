@@ -2184,6 +2184,9 @@
     "title" : "版本说明",
     "version" : "Ledger Live {{versionNb}}"
   },
+  "troubleshootNetwork" : {
+    "title" : "排除网络故障"
+  },
   "systemLanguageAvailable" : {
     "title" : "更改您应用的语言？",
     "description" : {
@@ -2241,6 +2244,9 @@
     }
   },
   "tron" : {
+    "receive" : {
+      "newAddressTRC20" : "您首先需要向该地址发送至少 0.1 TRX 才能将其激活。"
+    },
     "voting" : {
       "emptyState" : {
         "description" : "您现在可以通过冻结资产和投票来赚取奖励。",
@@ -3696,6 +3702,11 @@
       "desc" : "出于排除故障目的所需，可能需要保存 Ledger Live 日志。",
       "btn" : "保存"
     },
+    "troubleshootNetwork" : {
+      "title" : "排除网络故障",
+      "desc" : "运行检查清单来评估网络状况，以便排除故障。",
+      "btn" : "排除故障"
+    },
     "accounts" : {
       "hideEmptyTokens" : {
         "title" : "隐藏空的代币账户",
@@ -4734,6 +4745,10 @@
       "title" : "抱歉，您的设备似乎已断开连接",
       "description" : "请重新连接并重试。"
     },
+    "EConnReset" : {
+      "title" : "无法访问 Ledger 应用程序商店",
+      "description" : "您的互联网连接可能已断开或使用的配置异常。请先验证是否有任何因素（代理或防火墙）正在阻止您的连接。如果仍存在问题，请联系 Ledger 客服。"
+    },
     "EnpointConfig" : {
       "title" : "端点无效",
       "description" : "请提供有效端点"
@@ -5088,7 +5103,7 @@
       "title" : "要冻结的数额不可小于 1"
     },
     "TronSendTrc20ToNewAccountForbidden" : {
-      "title" : "发送 TRC20 到新账户并不会将其激活",
+      "title" : "您首先需要向该地址发送至少 0.1 TRX 才能启用 TRC20 代币接收。",
       "description" : "在向其发送 TRC20 之前，必须首先激活接收方账户。无论发送 TRX 还是 TRC10 都可激活该账户。"
     },
     "TronUnexpectedFees" : {
