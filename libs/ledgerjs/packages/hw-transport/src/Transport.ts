@@ -39,10 +39,11 @@ export interface DescriptorEvent<Descriptor> {
 }
 
 /**
+ * Observer generic type, following the Observer pattern
  */
-export type Observer<Ev> = Readonly<{
-  next: (event: Ev) => unknown;
-  error: (e: any) => unknown;
+export type Observer<EventType, EventError = unknown> = Readonly<{
+  next: (event: EventType) => unknown;
+  error: (e: EventError) => unknown;
   complete: () => unknown;
 }>;
 /**

@@ -1717,8 +1717,14 @@
         "subtitle": "Confirm the code on your {{productName}}"
       },
       "error": {
-        "title": "Pairing unsuccessful",
-        "subtitle": "Looks like something went wrong!\nCheck that your Bluetooth is switched on and your {{productName}} is nearby.",
+        "generic": {
+          "title": "Pairing unsuccessful",
+          "subtitle": "Looks like something went wrong!\nCheck that your Bluetooth is switched on and your {{productName}} is nearby."
+        },
+        "lockedDevice": {
+          "title": "Your device is locked",
+          "subtitle": "Unlock your {{ productName }} and try again."
+        },
         "retryCta": "Try again"
       }
     }
