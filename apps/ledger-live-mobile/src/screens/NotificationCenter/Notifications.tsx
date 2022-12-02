@@ -34,6 +34,7 @@ const RemoveContainer = styled(TouchableHighlight)`
 `;
 
 export default function NotificationCenter() {
+  const rowRefs = new Map();
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const { colors } = useTheme();
@@ -134,9 +135,21 @@ export default function NotificationCenter() {
 
     return (
       <Swipeable
+        key={item.id}
         renderRightActions={(_progress, dragX) =>
           renderRightActions(_progress, dragX, item.id)
         }
+        ref={ref => {
+          if (ref && !rowRefs.get(item.id)) {
+            rowRefs.set(item.id, ref);
+          }
+        }}
+        onBegan={() => {
+          // Close row when starting swipe another
+          [...rowRefs.entries()].forEach(([id, ref]) => {
+            if (id !== item.id && ref) ref.close();
+          });
+        }}
       >
         <Box py={7} px={6} zIndex={4} bg="background.main">
           <CardC
