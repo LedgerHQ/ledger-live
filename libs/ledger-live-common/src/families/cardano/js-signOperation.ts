@@ -75,10 +75,15 @@ const buildOptimisticOperation = (
     );
 
   const accountChange = accountOutput.minus(accountInput);
-  const opType: OperationType = transaction
-    .getCertificates()
-    .find((c) => c.certType === TyphonTypes.CertificateType.STAKE_DELEGATION)
+  const txCertificates = transaction.getCertificates();
+  const opType: OperationType = txCertificates.find(
+    (c) => c.certType === TyphonTypes.CertificateType.STAKE_DELEGATION
+  )
     ? "DELEGATE"
+    : txCertificates.find(
+        (c) => c.certType === TyphonTypes.CertificateType.STAKE_DE_REGISTRATION
+      )
+    ? "UNDELEGATE"
     : getOperationType({
         valueChange: accountChange,
         fees: transaction.getFee(),

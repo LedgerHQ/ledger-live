@@ -48,6 +48,8 @@ function mapTxToAccountOperation(
   const mainOperationType: OperationType = tx.certificate.stakeDelegations
     .length
     ? "DELEGATE"
+    : tx.certificate.stakeDeRegistrations.length
+    ? "UNDELEGATE"
     : getOperationType({
         valueChange: accountChange.ada,
         fees: new BigNumber(tx.fees),
