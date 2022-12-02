@@ -2184,6 +2184,9 @@
     "title" : "릴리즈 노트",
     "version" : "Ledger Live {{versionNb}}"
   },
+  "troubleshootNetwork" : {
+    "title" : "Troubleshoot networking"
+  },
   "systemLanguageAvailable" : {
     "title" : "앱의 언어를 변경하시겠습니까?",
     "description" : {
@@ -2241,6 +2244,9 @@
     }
   },
   "tron" : {
+    "receive" : {
+      "newAddressTRC20" : "활성화하려면 먼저 이 주소로 최소 0.1 TRX를 보내야 합니다."
+    },
     "voting" : {
       "emptyState" : {
         "description" : "이제 동결 및 투표를 통해 보상을 획득할 수 있습니다.",
@@ -3696,6 +3702,11 @@
       "desc" : "문제 해결을 위해 Ledger Live 로그가 필요할 수 있습니다.",
       "btn" : "Ledger Nano S를"
     },
+    "troubleshootNetwork" : {
+      "title" : "Troubleshoot networking",
+      "desc" : "Run a checklist to assess networking conditions for troubleshooting purposes.",
+      "btn" : "Troubleshoot"
+    },
     "accounts" : {
       "hideEmptyTokens" : {
         "title" : "빈 토큰 계정 숨기기",
@@ -4734,6 +4745,10 @@
       "title" : "죄송하지만 장치 연결이 해제된 것 같습니다",
       "description" : "다시 연결하여 재시도해주세요."
     },
+    "EConnReset" : {
+      "title" : "The Ledger application store can't be reached",
+      "description" : "Your internet connection may be down or using unusual configuration. Start by verifying if anything is blocking your connection (proxy or firewall). If the problem persists click below for solutions or reach out to our customer support."
+    },
     "EnpointConfig" : {
       "title" : "잘못된 엔드포인트",
       "description" : "유효한 엔드포인트를 입력하세요"
@@ -5088,7 +5103,7 @@
       "title" : "동결 금액은 1보다 낮을 수 없습니다"
     },
     "TronSendTrc20ToNewAccountForbidden" : {
-      "title" : "새 계정에 TRC20을 보내도 계정이 활성화되지 않습니다",
+      "title" : "TRC20 토큰 수령을 활성화하려면 먼저 최소 0.1 TRX를 이 주소로 보내야 합니다.",
       "description" : "TRC20을 보내기 전에 수령인 계정이 활성화되어야 합니다. TRX 또는 TRC10을 계정에 보내 활성화하세요."
     },
     "TronUnexpectedFees" : {
