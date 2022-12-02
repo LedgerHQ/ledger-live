@@ -109,7 +109,7 @@ const LinkTouchable = styled(TouchableOpacity).attrs({
   justify-content: center;
 `;
 
-const LearnMoreLink = ({
+export const LearnMoreLink = ({
   onPress,
   learnMoreIsInternal,
   learnMoreKey,
