@@ -68,11 +68,14 @@ export function upToDate(app: Probot) {
     const { payload, octokit } = context;
     const { owner, repo } = context.repo();
 
+    // Remove tags
+    if (!payload.ref.startsWith("refs/heads/")) return;
+
     // List all pull requests targeting the branch that was just pushed to.
     const matchingPullRequests = await octokit.paginate(octokit.pulls.list, {
       owner,
       repo,
-      base: payload.after,
+      base: payload.ref.split("/").pop(),
     });
 
     const tasks = matchingPullRequests.map((pr) => async () => {
