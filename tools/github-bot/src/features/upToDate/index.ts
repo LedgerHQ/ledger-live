@@ -81,9 +81,9 @@ export function upToDate(app: Probot) {
     const tasks = matchingPullRequests.map((pr) => async () => {
       // Retrieve the check run by name.
       const checkRunResponse = await octokit.checks.listForRef({
-        owner: pr.head.repo.owner.login,
-        repo: pr.head.repo.name,
-        ref: pr.head.ref,
+        owner: pr.base.repo.owner.login,
+        repo: pr.base.repo.name,
+        ref: pr.head.sha,
         check_name: CHECK_NAME,
       });
 
