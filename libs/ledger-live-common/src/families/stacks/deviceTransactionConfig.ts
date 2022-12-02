@@ -1,12 +1,20 @@
-import type { DeviceTransactionField } from "../../transaction";
+import { BigNumber } from "bignumber.js";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
+import type { DeviceTransactionField } from "../../transaction";
 import type { Transaction, TransactionStatus } from "./types";
 
-export type ExtraDeviceTransactionField = {
-  type: "stacks.memo";
+export type ExtraDeviceTransactionField =
+    {
+    type: "stacks.memo";
+    label: string;
+    value: string;
+  }
+    | {
+  type: "stacks.extendedAmount";
   label: string;
-  value: string;
+  value: BigNumber;
 };
+
 
 function getDeviceTransactionConfig(input: {
   account: AccountLike;
@@ -17,12 +25,24 @@ function getDeviceTransactionConfig(input: {
   const fields: Array<DeviceTransactionField> = [];
 
   fields.push({
-    type: "amount",
-    label: "Value",
+    type: "stacks.extendedAmount",
+    label: "Amount",
+    value: input.transaction.amount,
   });
   fields.push({
-    type: "fees",
+    type: "stacks.extendedAmount",
     label: "Fees",
+    value: input.transaction.fee,
+  });
+  fields.push({
+    type: "address",
+    label: "Recipient",
+    address: input.transaction.recipient,
+  });
+  fields.push({
+    type: "text",
+    label: "Nonce",
+    value: input.transaction.nonce.toFixed(),
   });
   fields.push({
     type: "stacks.memo",
