@@ -58,13 +58,14 @@ export default function NotificationCenter() {
   const onPress = useCallback(
     (item: NotificationContentCard) => {
       if (!item) return;
-      if (!item.link) return;
 
       trackContentCardEvent("contentcard_clicked", {
         screen: item.location,
-        link: item.link,
+        link: item.link || "",
         campaign: item.id,
       });
+
+      if (!item.link) return;
 
       // Notify Braze that the card has been clicked by the user
       logClickCard(item.id);
@@ -86,12 +87,12 @@ export default function NotificationCenter() {
   );
 
   const onClickCard = useCallback(
-    (id: string) => {
+    (item: NotificationContentCard) => {
       // TODO: REWORK like in the Carousel maybe? For Log impression only when it's clearly visible
-      logImpressionCard(id);
+      logImpressionCard(item.id);
 
       const cards = orderedNotificationsCards.map(n =>
-        n.id === id
+        n.id === item.id
           ? {
               ...n,
               viewed: true,
@@ -100,8 +101,9 @@ export default function NotificationCenter() {
       );
 
       dispatch(setDynamicContentNotificationCards(cards));
+      onPress(item);
     },
-    [dispatch, logImpressionCard, orderedNotificationsCards],
+    [dispatch, logImpressionCard, onPress, orderedNotificationsCards],
   );
 
   // ---------------
@@ -153,11 +155,11 @@ export default function NotificationCenter() {
       >
         <Box py={7} px={6} zIndex={4} bg="background.main">
           <CardC
-            onClickCard={() => onClickCard(item.id)}
+            onClickCard={() => onClickCard(item)}
             time={t(`notificationCenter.news.time.${time[1]}`, {
               count: time[0],
             })}
-            onPressLink={hasLink ? () => onPress(item) : undefined}
+            showLinkCta={hasLink}
             {...item}
           />
         </Box>
