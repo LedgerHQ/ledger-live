@@ -76,6 +76,14 @@ export async function updateCheckRun({
     head_sha: CheckRun["head_sha"];
   };
 }) {
+  await octokit.checks.update({
+    owner,
+    repo,
+    check_run_id: checkRun.id,
+    status: "in_progress",
+    started_at: new Date().toISOString(),
+  });
+
   const outcome = [];
   try {
     // Inefficient, but other api calls (repos.listPullRequestsAssociatedWithCommit)
@@ -91,7 +99,7 @@ export async function updateCheckRun({
       const isFork = pr.head.repo?.fork;
       const prBase = pr.base;
       const prHead = pr.head;
-      const ownerPrefix = isFork ? `${pr.head.repo?.owner}:` : "";
+      const ownerPrefix = isFork ? `${pr.head.repo?.owner.login}:` : "";
 
       const comparison = await octokit.repos.compareCommitsWithBasehead({
         owner,
@@ -122,7 +130,7 @@ export async function updateCheckRun({
             ...acc.branchList,
             isUpToDate
               ? `- ✅ **#${pr.number}:** branch \`${pr.head.ref}\` is identical or ahead of \`${pr.base.ref}\``
-              : `- 💥 **#${pr.number}:** branch \`${pr.head.ref}\` is ${comparison.behind_by} commit(s) behind \`${pr.base.ref}\``,
+              : `- ❌ **#${pr.number}:** branch \`${pr.head.ref}\` is ${comparison.behind_by} commit(s) behind \`${pr.base.ref}\``,
           ],
         };
       },
@@ -144,7 +152,7 @@ export async function updateCheckRun({
             `Some pull requests referencing the commit are behind their target:\n` +
             `${branchList.join("\n")}\n` +
             `\n` +
-            `**❌ Please rebase out-of-date branches to make this check pass.**\n` +
+            `**Please rebase out-of-date branches to make this check pass. 🙏**\n` +
             `\n` +
             `_If you are not comfortable with git and rebasing, here is a [nice guide](https://www.atlassian.com/git/tutorials/rewriting-history/git-rebase)._`,
         };
@@ -156,6 +164,7 @@ export async function updateCheckRun({
       status: "completed",
       conclusion: valid ? "success" : "failure",
       output,
+      completed_at: new Date().toISOString(),
     });
   } catch (error) {
     console.error(error);
@@ -169,6 +178,7 @@ export async function updateCheckRun({
         title: "Error",
         summary: (error as Error).message,
       },
+      completed_at: new Date().toISOString(),
     });
   }
 }

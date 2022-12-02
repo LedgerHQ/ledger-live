@@ -9,10 +9,10 @@ import {
   CircledCheckSolidMedium,
   CircledCrossSolidMedium,
 } from "@ledgerhq/native-ui/assets/icons";
-
-import Animation from "../../components/Animation";
+import { LockedDeviceError } from "@ledgerhq/errors";
 import { getDeviceAnimation } from "../../helpers/getDeviceAnimation";
-import DeviceSetupView from "../../components/DeviceSetupView";
+import Animation from "../Animation";
+import DeviceSetupView from "../DeviceSetupView";
 
 const TIMEOUT_AFTER_PAIRED_MS = 2000;
 
@@ -22,7 +22,17 @@ export type BleDevicePairingProps = {
   deviceToPair: Device;
 };
 
-export const BleDevicePairing = ({
+/**
+ * Runs a BLE pairing with the given device. Displays pairing, success or error steps.
+ *
+ * A closing cross is displayed to the user during the pairing, which either calls onPaired if
+ * the device is already paired, or onRetry otherwise.
+ *
+ * @param deviceToPair Device to pair
+ * @param onPaired Function called when pairing was successful
+ * @param onRetry Function called when the user chooses to retry on unsuccessful pairing
+ */
+const BleDevicePairing = ({
   deviceToPair,
   onPaired,
   onRetry,
@@ -41,6 +51,7 @@ export const BleDevicePairing = ({
 
   useEffect(() => {
     if (isPaired) {
+      // To display the success to the user
       setTimeout(() => {
         onPaired(deviceToPair);
       }, TIMEOUT_AFTER_PAIRED_MS);
@@ -90,6 +101,20 @@ export const BleDevicePairing = ({
       </>
     );
   } else if (pairingError) {
+    let title;
+    let subtitle;
+
+    if (pairingError instanceof LockedDeviceError) {
+      title = t("blePairingFlow.pairing.error.lockedDevice.title");
+      subtitle = t("blePairingFlow.pairing.error.lockedDevice.subtitle", {
+        productName,
+      });
+    } else {
+      title = t("blePairingFlow.pairing.error.generic.title");
+      subtitle = t("blePairingFlow.pairing.error.generic.subtitle", {
+        productName,
+      });
+    }
     content = (
       <Flex>
         <Flex flex={1} alignItems="center" justifyContent="center">
@@ -97,10 +122,10 @@ export const BleDevicePairing = ({
             <CircledCrossSolidMedium color={colors.error.c80} size={56} />
           </Flex>
           <Text mb={4} textAlign="center" variant="h4" fontWeight="semiBold">
-            {t("blePairingFlow.pairing.error.title")}
+            {title}
           </Text>
           <Text variant="body" mb={8} color="neutral.c80" textAlign="center">
-            {t("blePairingFlow.pairing.error.subtitle", { productName })}
+            {subtitle}
           </Text>
         </Flex>
         <Button type="main" onPress={onRetry} mb={8}>
@@ -139,3 +164,5 @@ export const BleDevicePairing = ({
     </DeviceSetupView>
   );
 };
+
+export default BleDevicePairing;

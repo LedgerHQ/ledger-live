@@ -44,26 +44,23 @@ export function upToDate(app: Probot) {
         // ignore
       }
 
-      // If not, create it.
       if (!checkRun) {
-        checkRun = (
-          await octokit.checks.create({
-            owner,
-            repo,
-            name: CHECK_NAME,
-            head_sha: prHead.sha,
-            status: "in_progress",
-          })
-        ).data;
+        // If not, create it.
+        await octokit.checks.create({
+          owner,
+          repo,
+          name: CHECK_NAME,
+          head_sha: prHead.sha,
+          status: "in_progress",
+        });
+      } else {
+        // Else, retrigger the check run.
+        await octokit.checks.rerequestRun({
+          owner,
+          repo,
+          check_run_id: checkRun.id,
+        });
       }
-
-      // Then update its status based on all prs referencing it.
-      await updateCheckRun({
-        octokit,
-        owner,
-        repo,
-        checkRun,
-      });
     }
   );
 
@@ -71,15 +68,14 @@ export function upToDate(app: Probot) {
     const { payload, octokit } = context;
     const { owner, repo } = context.repo();
 
-    if (!payload.base_ref) {
-      return;
-    }
+    // Remove tags
+    if (!payload.ref.startsWith("refs/heads/")) return;
 
     // List all pull requests targeting the branch that was just pushed to.
     const matchingPullRequests = await octokit.paginate(octokit.pulls.list, {
       owner,
       repo,
-      base: payload.base_ref,
+      base: payload.ref.split("/").pop(),
     });
 
     const tasks = matchingPullRequests.map((pr) => async () => {
@@ -95,11 +91,10 @@ export function upToDate(app: Probot) {
       if (checkRunResponse.data.total_count === 1) {
         const checkRun = checkRunResponse.data.check_runs[0];
 
-        await updateCheckRun({
-          octokit,
+        await octokit.checks.rerequestRun({
           owner,
           repo,
-          checkRun,
+          check_run_id: checkRun.id,
         });
       }
     });
@@ -108,14 +103,16 @@ export function upToDate(app: Probot) {
     await batch(tasks, 10);
   });
 
-  // Allow to re-request the check run.
-  app.on("check_run.rerequested", async (context) => {
+  // Perform the actual check when created or retriggered.
+  app.on(["check_run.rerequested", "check_run.created"], async (context) => {
     const { payload, octokit } = context;
     const { owner, repo } = context.repo();
 
+    app.log.info(payload, "Check run re-requested");
+
     if (payload.check_run.name !== CHECK_NAME) return;
 
-    updateCheckRun({
+    await updateCheckRun({
       octokit,
       owner,
       repo,
