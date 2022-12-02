@@ -11,27 +11,22 @@ inputs:
 runs:
   using: "composite"
   steps:
-    - uses: actions/github-script@v6
-      id: shell
-      with:
-        script: |
-          return ${{ inputs.os == 'windows' }} ? 'powershell' : 'bash';
     - name: Install dependencies
       run: pnpm i --filter="ledger-live-desktop..." --filter="ledger-live" --frozen-lockfile --unsafe-perm
-      shell: ${{ steps.shell.outputs.result }}
+      shell: bash
     - name: Install playwright dependencies
       run: npx playwright@1.27.1 install --with-deps chromium
-      shell: ${{ steps.shell.outputs.result }}
+      shell: bash
     - name: Build dependencies
       env:
         GOGC: 75
       run: |
         pnpm build:lld:deps --api="http://127.0.0.1:${{ inputs.turbo-server-port }}" --token="yolo" --team="foo"
         pnpm desktop build:testing
-      shell: ${{ steps.shell.outputs.result }}
+      shell: bash
     - name: Build Dummy SDK app for testing
       run: pnpm --filter="dummy-live-app" i && pnpm --filter="dummy-live-app" build
-      shell: ${{ steps.shell.outputs.result }}
+      shell: bash
     - name: Run unit tests [Linux]
       if: inputs.os == 'linux'
       run: pnpm desktop test:jest
@@ -43,7 +38,7 @@ runs:
     - name: Run playwright tests
       if: inputs.os != 'linux'
       run: pnpm desktop test:playwright
-      shell: ${{ steps.shell.outputs.result }}
+      shell: bash
     - name: upload diffs to imgur
       if: always() && !cancelled()
       uses: ledgerhq/ledger-live/tools/actions/upload-images@develop
