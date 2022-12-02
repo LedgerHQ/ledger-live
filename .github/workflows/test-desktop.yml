@@ -518,8 +518,8 @@ jobs:
               },
             };
 
-            const isFailed = statuses.some(e => e === "failure");
-            const isCancelled = statuses.some(e => e === "cancelled");
+            const isFailed = statuses.some(e => e === "failure") || typecheck.status === "failure";
+            const isCancelled = statuses.some(e => e === "cancelled") || typecheck.status === "cancelled";
 
             let summary = `### TypeCheck
             ${typecheck.pass ? "💚 Everything is fine" : "❌ Unfortunately type checks did not pass"}
@@ -556,7 +556,7 @@ jobs:
             const title = status.isFailed ? "🔴 Failed" : status.isCancelled ? "♾ Cancelled" : "💚 Success";
 
             const actions = status.isFailed ? [{
-              label: "Regenerate Screenshots",
+              label: "regen screenshots",
               identifier: "regen_screenshots",
               description: "Regenerate screenshot for Live Desktop"
             }] : [];
