@@ -171,7 +171,7 @@ jobs:
     # strategy:
     #   fail-fast: false
     #   matrix: ${{fromJson(needs.matrix_prep.outputs.matrix)}}
-    runs-on: [ledger-live, windows]
+    runs-on: windows-latest
     steps:
       - name: format os name
         id: os
@@ -186,7 +186,6 @@ jobs:
       - uses: ./tools/actions/composites/setup-test-desktop
         id: setup-test-desktop
         with:
-          skip_python: true
           skip_ruby: true
       - name: Install node-gyp globally
         run: |
@@ -197,57 +196,11 @@ jobs:
         with:
           server-token: "yolo"
           cleanup-cache-folder: "true"
-
-      # Composite
-      - name: Install dependencies
-        run: pnpm i --filter="ledger-live-desktop..." --filter="ledger-live" --frozen-lockfile --unsafe-perm
-      - name: Install playwright dependencies
-        run: npx playwright@1.27.1 install --with-deps chromium
-      - name: Build dependencies
-        env:
-          GOGC: 75
-        run: |
-          pnpm build:lld:deps --api="http://127.0.0.1:${{ steps.turborepo-cache-server.outputs.port }}" --token="yolo" --team="foo"
-          pnpm desktop build:testing
-      - name: Build Dummy SDK app for testing
-        run: pnpm --filter="dummy-live-app" i && pnpm --filter="dummy-live-app" build
-      - name: Run unit tests
-        run: pnpm desktop test:jest
-        # - name: Run playwright tests [Linux => xvfb-run]
-        #   run: xvfb-run --auto-servernum --server-args="-screen 0 1280x960x24" -- pnpm desktop test:playwright
-      - name: Run playwright tests
-        run: pnpm desktop test:playwright
-      - name: upload diffs to imgur
-        if: always() && !cancelled()
-        uses: ledgerhq/ledger-live/tools/actions/upload-images@develop
-        id: imgur
+      - uses: ./tools/actions/composites/test-desktop
+        id: test-desktop
         with:
-          path: apps/ledger-live-desktop/tests/artifacts/test-results
-          workspace: ${{ github.workspace }}
           os: ${{ steps.os.outputs.result }}
-      - name: upload ci suggested screenshots
-        if: always() && !cancelled()
-        uses: actions/upload-artifact@v3
-        with:
-          name: images
-          path: images-${{ steps.os.outputs.result }}.json
-      - name: Upload playwright test results [On Failure]
-        uses: actions/upload-artifact@v3
-        if: failure() && !cancelled()
-        with:
-          name: ${{ format('playwright-results-{0}', steps.os.outputs.result) }}
-          path: |
-            apps/ledger-live-desktop/tests/artifacts/test-results
-            apps/ledger-live-desktop/tests/artifacts/html-report
-            apps/ledger-live-desktop/tests/artifacts/coverage
-            apps/ledger-live-desktop/tests/artifacts/videos
-            apps/ledger-live-desktop/tests/artifacts/logs
-
-      # - uses: ./tools/actions/composites/test-desktop
-      #   id: test-desktop
-      #   with:
-      #     os: ${{ steps.os.outputs.result }}
-      #     turbo-server-port: ${{ steps.turborepo-cache-server.outputs.port }}
+          turbo-server-port: ${{ steps.turborepo-cache-server.outputs.port }}
 
   test-desktop-app-linux:
     name: "Linux Live Desktop Tests"
@@ -432,6 +385,9 @@ jobs:
     # if: ${{ always() && !cancelled() && needs.is-affected.outputs.is-desktop-affected == 'true' && github.event.pull_request != '' && !fromJSON(needs.pr-is-fork.outputs.pr-is-fork) }}
     if: always() && github.event_name == 'workflow_dispatch' && github.event.inputs.check_run_id != '' && github.event.inputs.sha != ''
     steps:
+      - name: echo
+        run: |
+          echo ${{ fromJSON(job) }}
       - uses: actions/checkout@v3
         with:
           ref: ${{ github.event.inputs.sha || github.event.inputs.ref || github.ref }}
@@ -523,7 +479,7 @@ jobs:
 
             let summary = `### TypeCheck
             ${typecheck.pass ? "💚 Everything is fine" : "❌ Unfortunately type checks did not pass"}
-            **Type checks ended with status => ${typecheck.status}
+            **Type checks** ended with status => ${typecheck.status}
 
             ### Screenshot Tests (Playwright)
 
