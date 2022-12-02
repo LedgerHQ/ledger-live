@@ -18,8 +18,8 @@ const Root = (props: *) => {
           </LabelInfoTooltip>
         </Label>
       </Box>
-      <Box mb={15} horizontal grow alignItems="center" justifyContent="space-between">
-        <Box ml={20} grow={1}>
+      <Box mb={10} horizontal grow alignItems="center" justifyContent="space-between">
+        <Box ml={0} grow={1}>
           <MemoValueField {...props} />
         </Box>
       </Box>
