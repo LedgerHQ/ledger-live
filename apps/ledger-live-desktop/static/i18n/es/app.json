@@ -2184,6 +2184,9 @@
     "title" : "Notas de versión",
     "version" : "Ledger Live {{versionNb}}"
   },
+  "troubleshootNetwork" : {
+    "title" : "Diagnosticar problemas de red"
+  },
   "systemLanguageAvailable" : {
     "title" : "¿Deseas cambiar el idioma de tu app?",
     "description" : {
@@ -2241,6 +2244,9 @@
     }
   },
   "tron" : {
+    "receive" : {
+      "newAddressTRC20" : "Primero debes enviar al menos 0,1 TRX a esta dirección para activarla."
+    },
     "voting" : {
       "emptyState" : {
         "description" : "Puedes recibir recompensas mediante el inmovilización y la votación.",
@@ -3696,6 +3702,11 @@
       "desc" : "Puede ser necesario guardar los registros de Ledger Live para solucionar problemas.",
       "btn" : "Guardar"
     },
+    "troubleshootNetwork" : {
+      "title" : "Diagnosticar problemas de red",
+      "desc" : "Sigue una lista de comprobación para evaluar el estado de la red con fines de diagnóstico de problemas.",
+      "btn" : "Diagnosticar problemas"
+    },
     "accounts" : {
       "hideEmptyTokens" : {
         "title" : "Ocultar cuentas de tokens sin saldo",
@@ -4734,6 +4745,10 @@
       "title" : "Parece que tu dispositivo se ha desconectado",
       "description" : "Conéctalo e inténtalo de nuevo."
     },
+    "EConnReset" : {
+      "title" : "No se puede establecer contacto con la tienda de aplicaciones de Ledger",
+      "description" : "Puede que tu conexión a Internet no funcione o que estés usando una configuración inusual. Para comenzar, comprueba si hay algo que esté bloqueando tu conexión (proxy o cortafuegos). Si el problema persiste, haz clic a continuación para ver soluciones o ponte en contacto con nuestro servicio de soporte al cliente."
+    },
     "EnpointConfig" : {
       "title" : "Endpoint inválido.",
       "description" : "Ingresa un endpoint válido."
@@ -5088,7 +5103,7 @@
       "title" : "El importe a inmovilizar no puede ser inferior a 1"
     },
     "TronSendTrc20ToNewAccountForbidden" : {
-      "title" : "Enviar TRC20 a una nueva cuenta no la activará",
+      "title" : "Primero debes enviar al menos 0,1 TRX a esta dirección para activar la recepción de tokens TRC20.",
       "description" : "La cuenta del destinatario debe estar activa antes de enviarle TRC20. Envía TRX o TRC10 a una cuenta para activarla."
     },
     "TronUnexpectedFees" : {
