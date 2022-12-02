@@ -208,6 +208,10 @@ const buildSendAdaTransaction = async ({
       });
     }
 
+    const rewardsWithdrawalCertificate = getRewardWithdrawalCertificate(a);
+    if (rewardsWithdrawalCertificate)
+      typhonTx.addWithdrawal(rewardsWithdrawalCertificate);
+
     return typhonTx.prepareTransaction({
       inputs: [],
       changeAddress: receiverAddress,
