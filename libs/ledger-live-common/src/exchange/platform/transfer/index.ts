@@ -82,7 +82,7 @@ const fundProviders: Record<
      * - a buffer created from the hexadecimal version of the partner public key
      */
     nameAndPubkey: Buffer.concat([
-      Buffer.from([9]),
+      Buffer.from([5]),
       Buffer.from("Uquid", "ascii"),
       Buffer.from(
         "02f96aa3d99d5ec6ce060808fd99c958c17f23e6cb9c1cf81d6419e11677410d04",
