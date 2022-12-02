@@ -54,7 +54,7 @@ jobs:
           repository: LedgerHQ/coin-apps
           token: ${{ secrets.GH_PAT }}
           path: coin-apps
-      - uses: pnpm/action-setup@v2.0.1
+      - uses: pnpm/action-setup@v2
         with:
           version: latest
       - uses: actions/setup-node@v3

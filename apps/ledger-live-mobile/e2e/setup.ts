@@ -1,24 +1,34 @@
+import { device } from "detox";
 import { execSync } from "child_process";
 import * as bridge from "./bridge/server";
+// import detoxConfig from "../detox.config";
 
-beforeAll(() => {
+beforeAll(async () => {
   bridge.init();
-  setupDemoModeForScreenshots();
-});
+  setDemoMode();
+  await device.launchApp({
+    languageAndLocale: {
+      language: "en-US",
+      locale: "en-US",
+    },
+  });
+}, 350000);
 
-afterAll(() => {
+afterAll(async () => {
   bridge.close();
 });
 
-function setupDemoModeForScreenshots() {
-  // set app to demo mode for screenshots
-  if (device.getPlatform() === "ios") {
-    execSync(
-      'xcrun simctl status_bar "iPhone 11 Pro" override --time "12:00" --batteryState charged --batteryLevel 100 --wifiBars 3 --cellularMode active --cellularBars 4',
-    );
-  }
-
-  if (device.getPlatform() === "android") {
+// NOTE: https://github.com/wix/Detox/blob/master/docs/APIRef.Screenshots.md
+async function setDemoMode() {
+  // FIXME: commands does nothing (we tried locally), so we commented it out, however
+  // when we start using screenshots for testing, we will probably need to look into itx`
+  //
+  // if (device.getPlatform() === "ios") {
+  //   execSync(
+  //     `xcrun simctl status_bar booted override --time "12:00" --batteryState charged --batteryLevel 100 --wifiBars 3 --cellularMode active --cellularBars 4`,
+  //   );
+  // }
+  if (device.getPlatform() !== "ios") {
     // enter demo mode
     execSync("adb shell settings put global sysui_demo_allowed 1");
     // display time 12:00

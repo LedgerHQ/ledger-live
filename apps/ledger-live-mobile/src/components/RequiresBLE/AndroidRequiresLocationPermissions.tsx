@@ -1,4 +1,5 @@
 import React, { ReactNode, useCallback, useEffect, useState } from "react";
+import { useIsMounted } from "../../helpers/useIsMounted";
 import LocationRequired from "../LocationRequired";
 import {
   checkLocationPermission,
@@ -14,6 +15,7 @@ import {
 const AndroidRequiresLocationPermissions: React.FC<{
   children?: ReactNode | undefined;
 }> = ({ children }) => {
+  const isMounted = useIsMounted();
   const [requestResult, setRequestResult] = useState<RequestResult | null>(
     null,
   );
@@ -21,27 +23,19 @@ const AndroidRequiresLocationPermissions: React.FC<{
 
   const { granted } = requestResult || {};
 
-  const requestPermission = useCallback(async () => {
-    let dead = false;
+  const requestPermission = useCallback(() => {
     requestLocationPermission().then(res => {
-      if (dead) return;
+      if (!isMounted()) return;
       setRequestResult(res);
     });
-    return () => {
-      dead = true;
-    };
-  }, []);
+  }, [isMounted]);
 
   const checkPermission = useCallback(async () => {
-    let dead = false;
     checkLocationPermission().then(res => {
-      if (dead) return;
+      if (!isMounted()) return;
       setCheckResult(res);
     });
-    return () => {
-      dead = true;
-    };
-  }, []);
+  }, [isMounted]);
 
   useEffect(() => {
     requestPermission();

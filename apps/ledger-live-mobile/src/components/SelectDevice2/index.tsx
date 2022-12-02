@@ -39,9 +39,14 @@ type Navigation = BaseComposite<
 
 type Props = {
   onSelect: (_: Device) => void;
+  // This component has side-effects because it uses a BLE scanning hook.
+  // And the scanning can only occur when LLM is not communicating with a device.
+  // Other component using this component needs to stop the BLE scanning before starting
+  // to communicate to a device via BLE.
+  stopBleScanning: boolean;
 };
 
-export default function SelectDevice({ onSelect }: Props) {
+export default function SelectDevice({ onSelect, stopBleScanning }: Props) {
   const [USBDevice, setUSBDevice] = useState<Device | undefined>();
   const [ProxyDevice, setProxyDevice] = useState<Device | undefined>();
 
@@ -56,6 +61,7 @@ export default function SelectDevice({ onSelect }: Props) {
   const navigation = useNavigation<Navigation["navigation"]>();
   const { scannedDevices } = useBleDevicesScanning({
     bleTransportListen: TransportBLE.listen,
+    stopBleScanning,
   });
 
   const handleOnSelect = useCallback(
