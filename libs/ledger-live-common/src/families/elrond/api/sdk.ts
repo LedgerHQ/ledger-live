@@ -117,17 +117,6 @@ function getEGLDOperationType(
     : "IN";
 }
 
-function getTransferOperationValue(
-  transaction: ElrondApiTransaction,
-  address: string
-): BigNumber {
-  return isSender(transaction, address)
-    ? isSelfSend(transaction)
-      ? transaction.fee ?? new BigNumber(0) // Self-send, only fees are paid
-      : new BigNumber(transaction.value ?? 0).plus(transaction.fee ?? 0) // The sender pays the amount and the fees
-    : new BigNumber(transaction.value ?? 0); // The recipient gets the amount
-}
-
 function getESDTOperationValue(
   transaction: ElrondApiTransaction,
   tokenIdentifier?: string
@@ -157,22 +146,6 @@ function getESDTOperationValue(
     default:
       return new BigNumber(transaction.tokenValue ?? 0);
   }
-}
-
-function getStakingOperationValue(
-  transaction: ElrondApiTransaction,
-  address: string
-): { value: BigNumber; delegationAmount: BigNumber } {
-  const delegationAmount = getStakingAmount(transaction, address);
-  let value = new BigNumber(transaction.fee ?? 0);
-  if (transaction.mode == "claimRewards" && delegationAmount) {
-    value = value.plus(delegationAmount);
-  }
-
-  return {
-    value,
-    delegationAmount,
-  };
 }
 
 function getStakingAmount(
@@ -225,7 +198,7 @@ function getEGLDOperationValue(
     } else {
       return isSender(transaction, address)
         ? isSelfSend(transaction)
-          ? transaction.fee ?? new BigNumber(0) // Self-send, only fees are paid
+          ? new BigNumber(transaction.fee ?? 0) // Self-send, only fees are paid
           : new BigNumber(transaction.value ?? 0).plus(transaction.fee ?? 0) // The sender pays the amount and the fees
         : new BigNumber(transaction.value ?? 0); // The recipient gets the amount
     }
