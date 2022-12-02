@@ -1,5 +1,30 @@
 # @ledgerhq/live-common
 
+## 27.9.0-nightly.1
+
+### Patch Changes
+
+- [#1984](https://github.com/LedgerHQ/ledger-live/pull/1984) [`f1c15446da`](https://github.com/LedgerHQ/ledger-live/commit/f1c15446dabef05bb91dada8d8f53f9bc6474ba5) Thanks [@alexandremgo](https://github.com/alexandremgo)! - feat: resilient BLE scanning
+
+* [#1984](https://github.com/LedgerHQ/ledger-live/pull/1984) [`f1c15446da`](https://github.com/LedgerHQ/ledger-live/commit/f1c15446dabef05bb91dada8d8f53f9bc6474ba5) Thanks [@alexandremgo](https://github.com/alexandremgo)! - New HwTransportError for all the implementations of Transport
+
+* Updated dependencies [[`f1c15446da`](https://github.com/LedgerHQ/ledger-live/commit/f1c15446dabef05bb91dada8d8f53f9bc6474ba5)]:
+  - @ledgerhq/errors@6.12.2-nightly.0
+  - @ledgerhq/hw-transport@6.27.9-nightly.0
+  - @ledgerhq/devices@7.0.6-nightly.0
+  - @ledgerhq/hw-app-algorand@6.27.9-nightly.0
+  - @ledgerhq/hw-app-cosmos@6.27.9-nightly.0
+  - @ledgerhq/hw-app-eth@6.30.2-nightly.0
+  - @ledgerhq/hw-app-polkadot@6.27.9-nightly.0
+  - @ledgerhq/hw-app-solana@7.0.3-nightly.0
+  - @ledgerhq/hw-app-trx@6.27.9-nightly.0
+  - @ledgerhq/hw-transport-node-speculos@6.27.9-nightly.0
+  - @ledgerhq/hw-app-btc@9.1.0-nightly.1
+  - @ledgerhq/hw-app-str@6.27.9-nightly.0
+  - @ledgerhq/hw-app-tezos@6.27.9-nightly.0
+  - @ledgerhq/hw-app-xrp@6.27.9-nightly.0
+  - @ledgerhq/hw-transport-mocker@6.27.9-nightly.0
+
 ## 27.9.0-nightly.0
 
 ### Minor Changes

@@ -1,5 +1,22 @@
 # live-mobile
 
+## 3.12.0-nightly.6
+
+### Patch Changes
+
+- [#204](https://github.com/LedgerHQ/ledger-live/pull/204) [`41747ad079`](https://github.com/LedgerHQ/ledger-live/commit/41747ad0796201bacdfb6b95e4d4c43ebd9e4bd0) Thanks [@ggilchrist-ledger](https://github.com/ggilchrist-ledger)! - Bump Android target & compile SDK to API 32
+
+* [#1984](https://github.com/LedgerHQ/ledger-live/pull/1984) [`f1c15446da`](https://github.com/LedgerHQ/ledger-live/commit/f1c15446dabef05bb91dada8d8f53f9bc6474ba5) Thanks [@alexandremgo](https://github.com/alexandremgo)! - chore: BLE pairing flow as components
+
+* Updated dependencies [[`f1c15446da`](https://github.com/LedgerHQ/ledger-live/commit/f1c15446dabef05bb91dada8d8f53f9bc6474ba5), [`f1c15446da`](https://github.com/LedgerHQ/ledger-live/commit/f1c15446dabef05bb91dada8d8f53f9bc6474ba5)]:
+  - @ledgerhq/live-common@27.9.0-nightly.1
+  - @ledgerhq/errors@6.12.2-nightly.0
+  - @ledgerhq/hw-transport@6.27.9-nightly.0
+  - @ledgerhq/react-native-hw-transport-ble@6.27.11-nightly.1
+  - @ledgerhq/devices@7.0.6-nightly.0
+  - @ledgerhq/hw-transport-http@6.27.9-nightly.0
+  - @ledgerhq/react-native-hid@6.28.11-nightly.0
+
 ## 3.12.0-nightly.5
 
 ### Minor Changes
