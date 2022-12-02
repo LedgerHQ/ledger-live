@@ -2075,14 +2075,6 @@
           "dismiss": "Not now",
           "stake": "Stake with {{provider}}"
         },
-        "ethereum": {
-          "title": "Grow your ETH. Stake now.",
-          "description": "Stake your Ethereum with Lido and earn rewards daily. No lock-up period. No minimum deposit.",
-          "kiln": {
-            "title": "Don’t just HODL. Grow your ETH.",
-            "description": "Got more than 32 ETH? Earn passive rewards by securely staking your ETH with Kiln."
-          }
-        },
         "cosmos": {
           "title": "Grow your ATOM. Stake with Ledger validator.",
           "description": "Stake your ATOM with the trusted Ledger validator. Your coins stay yours, backed by Ledger’s uncompromising security."
@@ -3406,6 +3398,21 @@
           }
         }
       }
+    }
+  },
+  "ethereum": {
+    "stake": {
+      "title": "Earn Ethereum",
+      "lido": {
+        "tag": "No minimun",
+        "description": "Stake your Ethereum with Lido and earn rewards daily. No lock-up period. No minimum."
+      },
+      "kiln": {
+        "tag": "Requires 32 ETH",
+        "description": "Got more than 32 ETH? Earn rewards daily by securely staking your ETH with Kiln."
+      },
+      "providerTitle": "Earn with {{provider}}",
+      "providerLink": "Learn more about {{provider}}"
     }
   },
   "delegation": {
