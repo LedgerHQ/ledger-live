@@ -1,5 +1,17 @@
 # live-mobile
 
+## 3.12.0-nightly.7
+
+### Patch Changes
+
+- [#2041](https://github.com/LedgerHQ/ledger-live/pull/2041) [`9189737e0b`](https://github.com/LedgerHQ/ledger-live/commit/9189737e0b137a6455f0fcd8739bf14be8d0a924) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Fix blank screen when refused camera permissions on iOS scanning recipient for the send flow
+
+* [#2045](https://github.com/LedgerHQ/ledger-live/pull/2045) [`93e19275f3`](https://github.com/LedgerHQ/ledger-live/commit/93e19275f3336672579d2e3bab317489d47853c5) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Made the exported logs on LLM larger and configurable via ENV vars.
+
+* Updated dependencies [[`101e6851ae`](https://github.com/LedgerHQ/ledger-live/commit/101e6851ae76747431b122076dc1752c94ee40d3), [`93e19275f3`](https://github.com/LedgerHQ/ledger-live/commit/93e19275f3336672579d2e3bab317489d47853c5), [`ee507188f0`](https://github.com/LedgerHQ/ledger-live/commit/ee507188f097429237bef6df0f63b5f6426dd91a)]:
+  - @ledgerhq/react-native-hw-transport-ble@6.27.11-nightly.2
+  - @ledgerhq/live-common@27.9.0-nightly.2
+
 ## 3.12.0-nightly.6
 
 ### Patch Changes

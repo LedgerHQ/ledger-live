@@ -1,5 +1,11 @@
 # @ledgerhq/react-native-hw-transport-ble
 
+## 6.27.11-nightly.2
+
+### Patch Changes
+
+- [#2048](https://github.com/LedgerHQ/ledger-live/pull/2048) [`101e6851ae`](https://github.com/LedgerHQ/ledger-live/commit/101e6851ae76747431b122076dc1752c94ee40d3) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Undo the auto disconnect mechanism, due to regressions
+
 ## 6.27.11-nightly.1
 
 ### Patch Changes
