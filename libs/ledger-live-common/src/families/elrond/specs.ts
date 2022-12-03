@@ -347,7 +347,7 @@ const elrondSpec: AppSpec<Transaction> = {
       },
     },
     {
-      name: "withdraw 1 EGLD",
+      name: "withdraw all EGLD",
       maxRun: 1,
       deviceAction: acceptWithdrawTransaction,
       transaction: ({ account, bridge }) => {
@@ -367,15 +367,13 @@ const elrondSpec: AppSpec<Transaction> = {
           "no withdrawable stake for account"
         );
 
-        const amount = MIN_DELEGATION_AMOUNT;
-
         return {
           transaction: bridge.createTransaction(account),
           updates: [
             {
               recipient: UNCAPPED_PROVIDER,
               mode: "withdraw",
-              amount,
+              amount: new BigNumber(0),
             },
           ],
         };
