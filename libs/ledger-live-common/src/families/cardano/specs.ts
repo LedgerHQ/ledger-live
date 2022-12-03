@@ -20,6 +20,7 @@ const minSpendableRequiredForTokenTx = parseCurrencyUnit(
   currency.units[0],
   "3"
 );
+const minBalanceRequiredForDelegate = parseCurrencyUnit(currency.units[0], "1");
 
 const cardano: AppSpec<Transaction> = {
   name: "cardano",
@@ -161,6 +162,27 @@ const cardano: AppSpec<Transaction> = {
         botTest("subOperation have correct tx amount", () =>
           expect(subOperation?.value).toEqual(transaction.amount)
         );
+      },
+    },
+    {
+      name: "delegate to pool",
+      maxRun: 1,
+      transaction: ({ account, bridge, maxSpendable }) => {
+        invariant(
+          maxSpendable.gte(minBalanceRequiredForDelegate),
+          "balance is too low"
+        );
+        const transaction = bridge.createTransaction(account);
+        const updates = [
+          {
+            // This can be updated with ledger pool once they are up
+            poolId: "7df262feae9201d1b2e32d4c825ca91b29fbafb2b8e556f6efb7f549",
+          },
+        ];
+        return {
+          transaction,
+          updates,
+        };
       },
     },
   ],

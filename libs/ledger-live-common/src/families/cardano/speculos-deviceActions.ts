@@ -1,16 +1,17 @@
 import type { DeviceAction } from "../../bot/types";
 import type { Transaction } from "./types";
 import { deviceActionFlow, formatDeviceAmount } from "../../bot/specs";
+import { getAccountStakeCredential, getBipPathString } from "./logic";
 
 export const acceptTransaction: DeviceAction<Transaction, any> =
   deviceActionFlow({
     steps: [
       {
-        title: "Start new",
+        title: "New ordinary",
       },
       {
-        title: "ordinary transaction?",
-        button: "Rr",
+        title: "transaction?",
+        button: "LRlr",
       },
       {
         title: "Auxiliary data hash",
@@ -52,6 +53,29 @@ export const acceptTransaction: DeviceAction<Transaction, any> =
           formatDeviceAmount(account.currency, status.estimatedFees),
       },
       {
+        title: "Register",
+      },
+      {
+        title: "staking key",
+        button: "LRlr",
+      },
+      {
+        title: "Staking key",
+        button: "LRlr",
+        expectedValue: ({ account }) => {
+          const stakeCred = getAccountStakeCredential(
+            account.xpub as string,
+            account.index
+          );
+          const bipPath = getBipPathString({
+            account: stakeCred.path.account,
+            chain: stakeCred.path.chain,
+            index: stakeCred.path.index,
+          });
+          return `m/${bipPath}`;
+        },
+      },
+      {
         title: "Transaction TTL",
         button: "LRlr",
       },
@@ -59,11 +83,21 @@ export const acceptTransaction: DeviceAction<Transaction, any> =
         title: "...",
       },
       {
-        title: "Confirm",
+        title: "registration?",
+        button: "LRlr",
+      },
+      {
+        title: "Delegate stake to",
+        button: "LRlr",
+      },
+      {
+        title: "delegation?",
+        button: "LRlr",
       },
       {
         title: "transaction?",
-        button: "Rr",
+        button: "LRlr",
+        final: true,
       },
     ],
   });
