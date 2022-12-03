@@ -1,13 +1,11 @@
-// @flow
 import { Server } from "ws";
 import path from "path";
 import fs from "fs";
-import type { E2EBridgeMessage } from "./client";
 import { NavigatorName } from "../../src/const";
 
 let wss: Server;
 
-export function init(port?: number = 8099) {
+export function init(port = 8099) {
   wss = new Server({ port });
   log(`Start listening on localhost:${port}`);
 
@@ -23,17 +21,20 @@ export function close() {
 
 export async function loadConfig(
   fileName: string,
-  agreed?: true = true,
+  agreed: true = true,
 ): Promise<void> {
   if (agreed) {
     acceptTerms();
   }
 
-  const f = fs.readFileSync(path.resolve("e2e", "setups", `${fileName}.json`));
+  const f = fs.readFileSync(
+    path.resolve("e2e", "setups", `${fileName}.json`),
+    "utf8",
+  );
 
-  const { data } = JSON.parse(f);
+  const { data } = JSON.parse(f.toString());
 
-  postMessage({ type: "importSettngs", payload: data.settings });
+  postMessage({ type: "importSettings", payload: data.settings });
 
   navigate(NavigatorName.Base);
 
@@ -59,7 +60,7 @@ export function addDevices(
   deviceNames.forEach((name, i) => {
     postMessage({
       type: "add",
-      payload: { id: `mock_${i + 1}`, name },
+      payload: { id: `mock_${i + 1}`, name, serviceUUID: `uuid_${i + 1}` },
     });
   });
   return deviceNames;
@@ -95,7 +96,7 @@ function acceptTerms() {
   postMessage({ type: "acceptTerms", payload: null });
 }
 
-function postMessage(message: E2EBridgeMessage) {
+function postMessage(message: { type: string; payload: unknown }) {
   for (const ws of wss.clients.values()) {
     ws.send(JSON.stringify(message));
   }

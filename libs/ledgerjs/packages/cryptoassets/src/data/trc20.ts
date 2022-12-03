@@ -51,13 +51,6 @@ const tokens: TRC20Token[] = [
     6,
   ],
   [
-    "TBwoSTyywvLrgjSgaatxrBhxt3DGpVuENh",
-    "SEED",
-    "SEED",
-    "TBwoSTyywvLrgjSgaatxrBhxt3DGpVuENh",
-    6,
-  ],
-  [
     "TZJmk51TP3YEETw7phRP581A7H3VzLDFsa",
     "TEUR",
     "EUR AlteWay Token",

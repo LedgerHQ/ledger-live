@@ -6,7 +6,11 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { PostOnboardingActionId } from "@ledgerhq/types-live";
-import { completeCustomImageFlow } from "../../actions/settings";
+import {
+  completeCustomImageFlow,
+  setLastConnectedDevice,
+  setReadOnlyMode,
+} from "../../actions/settings";
 import { ScreenName } from "../../const";
 import CustomImageDeviceAction from "../../components/CustomImageDeviceAction";
 import TestImage from "../../components/CustomImage/TestImage";
@@ -17,6 +21,7 @@ import {
   StackNavigatorProps,
 } from "../../components/RootNavigator/types/helpers";
 import { CustomImageNavigatorParamList } from "../../components/RootNavigator/types/CustomImageNavigator";
+import { addKnownDevice } from "../../actions/ble";
 import { lastConnectedDeviceSelector } from "../../reducers/settings";
 
 const deviceModelIds = [DeviceModelId.nanoFTS];
@@ -62,6 +67,22 @@ const Step3Transfer = ({ route, navigation }: NavigationProps) => {
     [navigation, device],
   );
 
+  const handleDeviceSelected = useCallback(
+    (device: Device) => {
+      dispatch(setReadOnlyMode(false));
+      dispatch(
+        addKnownDevice({
+          ...device,
+          id: device.deviceId,
+          name: device.deviceName || "",
+        }),
+      );
+      dispatch(setLastConnectedDevice(device));
+      setDevice(device);
+    },
+    [dispatch],
+  );
+
   const completeAction = useCompleteActionCallback();
 
   const handleExit = useCallback(() => {
@@ -96,7 +117,7 @@ const Step3Transfer = ({ route, navigation }: NavigationProps) => {
         ) : (
           <Flex flex={1} alignSelf="stretch">
             <SelectDevice
-              onSelect={setDevice}
+              onSelect={handleDeviceSelected}
               deviceModelIds={deviceModelIds}
               autoSelectOnAdd
             />
