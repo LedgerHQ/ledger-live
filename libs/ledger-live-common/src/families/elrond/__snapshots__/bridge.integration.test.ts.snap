@@ -76,7 +76,7 @@ Array [
       "blockHeight": 5932298,
       "contract": undefined,
       "extra": Object {
-        "amount": undefined,
+        "amount": "0",
       },
       "fee": "50000000000000",
       "hasFailed": false,
@@ -100,7 +100,7 @@ Array [
       "blockHeight": 5932325,
       "contract": undefined,
       "extra": Object {
-        "amount": undefined,
+        "amount": "0",
       },
       "fee": "50000000000000",
       "hasFailed": false,
@@ -125,7 +125,7 @@ Array [
       "blockHeight": 5010572,
       "contract": undefined,
       "extra": Object {
-        "amount": undefined,
+        "amount": "0",
       },
       "fee": "50000000000000",
       "hasFailed": false,
@@ -150,7 +150,7 @@ Array [
       "blockHeight": 5010620,
       "contract": undefined,
       "extra": Object {
-        "amount": undefined,
+        "amount": "0",
       },
       "fee": "50000000000000",
       "hasFailed": false,
@@ -175,7 +175,7 @@ Array [
       "blockHeight": 5010539,
       "contract": undefined,
       "extra": Object {
-        "amount": undefined,
+        "amount": "0",
       },
       "fee": "56000000000000",
       "hasFailed": false,
@@ -199,7 +199,7 @@ Array [
       "blockHeight": 7620524,
       "contract": undefined,
       "extra": Object {
-        "amount": undefined,
+        "amount": "0",
       },
       "fee": "50000000000000",
       "hasFailed": false,
