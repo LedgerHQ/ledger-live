@@ -15,6 +15,7 @@ import {
   acceptEsdtTransferTransaction,
   acceptMoveBalanceTransaction,
   acceptUndelegateTransaction,
+  acceptWithdrawTransaction,
 } from "./speculos-deviceActions";
 import BigNumber from "bignumber.js";
 import { MIN_DELEGATION_AMOUNT } from "./constants";
@@ -146,6 +147,8 @@ function expectCorrectSpendableBalanceChange(
   let value = operation.value;
   if (operation.type === "DELEGATE") {
     value = value.plus(new BigNumber(operation.extra.amount));
+  } else if (operation.type === "WITHDRAW") {
+    value = value.minus(new BigNumber(operation.extra.amount));
   }
 
   botTest("EGLD spendable balance change is correct", () =>
@@ -324,12 +327,10 @@ const elrondSpec: AppSpec<Transaction> = {
         const delegations = (account as ElrondAccount)?.elrondResources
           ?.delegations;
         invariant(delegations?.length, "account doesn't have any delegations");
-        for (const delegation of delegations) {
-          invariant(
-            new BigNumber(delegation.userActiveStake).gt(0),
-            "no active stake for account"
-          );
-        }
+        invariant(
+          delegations.some((d) => new BigNumber(d.userActiveStake).gt(0)),
+          "no active stake for account"
+        );
 
         const amount = MIN_DELEGATION_AMOUNT;
 
@@ -349,6 +350,48 @@ const elrondSpec: AppSpec<Transaction> = {
         expectCorrectBalanceFeeChange(input);
       },
     },
+    {
+      name: "withdraw 1 EGLD",
+      maxRun: 1,
+      deviceAction: acceptWithdrawTransaction,
+      transaction: ({ account, bridge }) => {
+        const delegations = (account as ElrondAccount)?.elrondResources
+          ?.delegations;
+        invariant(delegations?.length, "account doesn't have any delegations");
+        invariant(
+          // among all delegations
+          delegations.some((d) =>
+            // among all undelegating amounts
+            d.userUndelegatedList?.some(
+              (u) =>
+                new BigNumber(u.amount).gt(0) && // the undelegation has a positive amount
+                new BigNumber(u.seconds).eq(0) // the undelegation period has ended
+            )
+          ),
+          "no withdrawable stake for account"
+        );
+
+        const amount = MIN_DELEGATION_AMOUNT;
+
+        return {
+          transaction: bridge.createTransaction(account),
+          updates: [
+            {
+              recipient: UNCAPPED_PROVIDER,
+              mode: "withdraw",
+              amount,
+            },
+          ],
+        };
+      },
+      test: (input) => {
+        expectCorrectSpendableBalanceChange(input);
+        expectCorrectBalanceFeeChange(input);
+      },
+    },
+    // TODO
+    // "reDelegateRewards"
+    // "claimRewards"
   ],
 };
 
