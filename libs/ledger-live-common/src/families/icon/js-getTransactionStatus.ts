@@ -56,6 +56,10 @@ const getTransactionStatus = async (
     } else if (!isValidAddress(t.recipient)) {
       errors.recipient = new InvalidAddress();
     }
+  } else if (t.mode === 'freeze' || t.mode === 'unfreeze' ) {
+    if (amount.lte(0) && !t.useAllAmount) {
+      errors.amount = new AmountRequired();
+    }
   }
 
   return Promise.resolve({

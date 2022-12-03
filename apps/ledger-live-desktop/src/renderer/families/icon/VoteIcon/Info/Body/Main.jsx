@@ -9,7 +9,7 @@ import Text from "~/renderer/components/Text";
 import votesImage from "~/renderer/images/votes.svg";
 import { useAccount } from "../shared";
 
-export default function VoteTronInfoModalBodyMain() {
+export default function VoteIconInfoModalBodyMain() {
   const accountContext = useAccount();
   const account = accountContext && accountContext.account;
 
@@ -31,7 +31,7 @@ export default function VoteTronInfoModalBodyMain() {
 
         <Box mb={4}>
           <Text ff="Inter|SemiBold" fontSize={4} textAlign="center">
-            <Trans i18nKey="tron.manage.vote.steps.vote.description" />
+            <Trans i18nKey="icon.manage.vote.steps.vote.description" />
           </Text>
         </Box>
       </Box>

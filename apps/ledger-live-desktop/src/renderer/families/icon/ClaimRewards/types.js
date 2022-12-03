@@ -2,19 +2,21 @@
 import type { TFunction } from "react-i18next";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import type { Step } from "~/renderer/components/Stepper";
+import type { BigNumber } from "bignumber.js";
 
-import type { Account, Operation } from "@ledgerhq/types-live";
+import type { Account, AccountLike, Operation } from "@ledgerhq/types-live";
 
-import type { Transaction, TransactionStatus } from "@ledgerhq/live-common/families/icon/types";
+import type { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
 
-export type StepId = "amount" | "connectDevice" | "confirmation";
+export type StepId = "rewards" | "connectDevice" | "confirmation";
 
 export type StepProps = {
   t: TFunction,
   transitionTo: string => void,
   device: ?Device,
-  account: ?Account,
+  account: ?AccountLike,
   parentAccount: ?Account,
+  reward: ?BigNumber,
   onRetry: void => void,
   onClose: () => void,
   openModal: (key: string, config?: any) => void,
@@ -23,11 +25,9 @@ export type StepProps = {
   signed: boolean,
   transaction: ?Transaction,
   status: TransactionStatus,
-  onChangeTransaction: Transaction => void,
   onTransactionError: Error => void,
   onOperationBroadcasted: Operation => void,
   setSigned: boolean => void,
-  bridgePending: boolean,
 };
 
 export type St = Step<StepId, StepProps>;

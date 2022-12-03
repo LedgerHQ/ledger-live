@@ -7,6 +7,8 @@ import MODAL_ICON_FREEZE from "../families/icon/Freeze";
 import MODAL_MANAGE_ICON from "../families/icon/ManageIcon";
 import MODAL_VOTE_ICON from "../families/icon/VoteIcon";
 import MODAL_VOTE_ICON_INFO from "../families/icon/VoteIcon/Info";
+import MODAL_ICON_UNFREEZE from "../families/icon/Unfreeze";
+import MODAL_ICON_CLAIM_REWARDS from "../families/icon/ClaimRewards";
 import MODAL_EXPORT_OPERATIONS from "./ExportOperations";
 import MODAL_CONFIRM from "./ConfirmModal";
 import MODAL_MANAGE_TRON from "./ManageTron";
@@ -188,6 +190,7 @@ const modals: { [_: string]: React$ComponentType<any> } = {
   MODAL_ICON_REWARDS_INFO,
   MODAL_ICON_FREEZE,
   MODAL_VOTE_ICON,
+  MODAL_ICON_UNFREEZE,
   MODAL_VOTE_ICON_INFO,
   MODAL_MANAGE_ICON,
   MODAL_FULL_NODE,

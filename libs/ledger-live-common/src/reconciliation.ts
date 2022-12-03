@@ -41,6 +41,7 @@ import {
   toSolanaResourcesRaw,
   toCeloResourcesRaw,
   toNearResourcesRaw,
+  toIconResourcesRaw
 } from "./account";
 import consoleWarnExpectToEqual from "./consoleWarnExpectToEqual";
 import { AlgorandAccount, AlgorandAccountRaw } from "./families/algorand/types";
@@ -504,7 +505,9 @@ export function patchAccount(
 
       if (
         iconUpdatedRaw.iconResources &&
-        areSameResources(iconAcc.iconResources, iconUpdatedRaw.iconResources)
+        !areSameResources(
+          toIconResourcesRaw(iconAcc.iconResources),
+          iconUpdatedRaw.iconResources)
       ) {
         (next as IconAccount).iconResources = fromIconResourcesRaw(
           iconUpdatedRaw.iconResources

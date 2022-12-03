@@ -1,6 +1,7 @@
 // @flow
 import invariant from "invariant";
 import React, { useCallback, useState, useRef, useEffect } from "react";
+import { reduce, mergeWith, add } from "lodash";
 import { useSelector } from "react-redux";
 import { Trans } from "react-i18next";
 import type { TFunction } from "react-i18next";
@@ -46,12 +47,14 @@ const AmountField = ({ t, account, onChangeVotes, status, bridgePending, votes }
   const locale = useSelector(localeSelector);
 
   const publicRepresentatives = useIconPublicRepresentatives(account.currency);
+
   const SR = useSortedSr(search, publicRepresentatives, votes);
 
   const votesAvailable = iconResources.votingPower.toNumber();
-  const votesUsed = votes.reduce((sum, v) =>  sum + Number(v.value), 0);
+  const totalVotes = iconResources.totalDelegated.toNumber() + votesAvailable;
+  const votesUsed = votes.reduce((sum, v) => sum + Number(v.value), 0);
   const votesSelected = votes.length;
-  const max = Math.max(0, votesAvailable - votesUsed);
+  const max = Math.max(0, totalVotes - votesUsed);
 
   const unit = getAccountUnit(account);
 
@@ -85,8 +88,8 @@ const AmountField = ({ t, account, onChangeVotes, status, bridgePending, votes }
 
   const onSearch = useCallback(evt => setSearch(evt.target.value), [setSearch]);
 
-  const notEnoughVotes = votesUsed > votesAvailable;
-  const maxAvailable = Math.max(0, votesAvailable - votesUsed);
+  const notEnoughVotes = votesUsed > totalVotes;
+  const maxAvailable = Math.max(0, totalVotes - votesUsed);
 
   /** auto focus first input on mount */
   useEffect(() => {
@@ -119,7 +122,7 @@ const AmountField = ({ t, account, onChangeVotes, status, bridgePending, votes }
               <b></b>
             </Trans>
           }
-          value={item && item.voteCount}
+          value={item && item.value}
           onUpdateVote={onUpdateVote}
           onExternalLink={onExternalLink}
           disabled={disabled}

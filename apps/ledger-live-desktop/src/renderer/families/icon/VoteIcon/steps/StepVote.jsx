@@ -20,12 +20,25 @@ export default function StepVote({
   t,
 }: StepProps) {
   invariant(account && transaction && transaction.votes, "account and transaction required");
+  const { iconResources } = account
   const bridge = getAccountBridge(account, parentAccount);
-
+  let validators = transaction.votes;
+  if (transaction.votes.length === 0) {
+    const mergedVotes = [...iconResources.votes, ...transaction.votes]
+    const aggregate = {};
+    mergedVotes.forEach((item) => {
+      if (aggregate[item.address]) {
+        aggregate[item.address].value = Number(aggregate[item.address].value) + Number(item.value);
+      } else {
+        aggregate[item.address] = item;
+      }
+    });
+    validators = Object.values(aggregate);
+  }
   const updateVote = useCallback(
     updater => {
       onUpdateTransaction(transaction =>
-        bridge.updateTransaction(transaction, { votes: updater(transaction.votes) }),
+        bridge.updateTransaction(transaction, { votes: updater(validators) }),
       );
     },
     [bridge, onUpdateTransaction],
@@ -36,7 +49,7 @@ export default function StepVote({
       <TrackPage category="Vote Flow" name="Step 1" />
       <VotesField
         account={account}
-        votes={transaction.votes}
+        votes={validators}
         bridgePending={bridgePending}
         onChangeVotes={updateVote}
         status={status}

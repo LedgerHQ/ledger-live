@@ -82,7 +82,6 @@ const Row = ({
         <Discreet>{amount}</Discreet>
       </Column>
       <Column>{percentTP}%</Column>
-      <Column>Sang Đẹp Chai</Column>
     </Wrapper>
   );
 };
