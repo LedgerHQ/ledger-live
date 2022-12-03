@@ -34,9 +34,6 @@ const Header = () => (
     <TableLine>
       <Trans i18nKey="icon.voting.percentageTP" />
     </TableLine>
-    <TableLine>
-      <Trans i18nKey="delegation.duration" />
-    </TableLine>
   </HeaderWrapper>
 );
 

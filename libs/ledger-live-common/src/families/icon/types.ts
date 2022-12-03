@@ -50,6 +50,8 @@ export type IconResources = {
   votes: Vote[];
   votingPower: string | BigNumber;
   totalDelegated: string | BigNumber;
+  unwithdrawnReward: string | BigNumber;
+  unstake: string | BigNumber;
 };
 
 /**
@@ -61,6 +63,8 @@ export type IconResourcesRaw = {
   votes: Vote[];
   votingPower: string | BigNumber;
   totalDelegated: string | BigNumber;
+  unwithdrawnReward: string | BigNumber;
+  unstake: string | BigNumber;
 };
 
 /**

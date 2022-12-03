@@ -4,6 +4,7 @@ import { compose } from "redux";
 import { connect, useDispatch } from "react-redux";
 import { Trans, withTranslation } from "react-i18next";
 import { createStructuredSelector } from "reselect";
+import { SyncSkipUnderPriority } from "@ledgerhq/live-common/bridge/react/index";
 import Track from "~/renderer/analytics/Track";
 
 import { UserRefusedOnDevice } from "@ledgerhq/errors";
@@ -23,7 +24,7 @@ import { getCurrentDevice } from "~/renderer/reducers/devices";
 import { closeModal, openModal } from "~/renderer/actions/modals";
 
 import Stepper from "~/renderer/components/Stepper";
-import StepAmount, { StepAmountFooter } from "./steps/StepAmount";
+import StepRewards, { StepRewardsFooter } from "./steps/StepRewards";
 import GenericStepConnectDevice from "~/renderer/modals/Send/steps/GenericStepConnectDevice";
 import StepConfirmation, { StepConfirmationFooter } from "./steps/StepConfirmation";
 import logger from "~/logger/logger";
@@ -53,21 +54,20 @@ type Props = OwnProps & StateProps;
 
 const steps: Array<St> = [
   {
-    id: "amount",
-    label: <Trans i18nKey="unfreeze.steps.amount.title" />,
-    component: StepAmount,
-    noScroll: true,
-    footer: StepAmountFooter,
+    id: "rewards",
+    label: <Trans i18nKey="icon.claimReward.steps.rewards.title" />,
+    component: StepRewards,
+    footer: StepRewardsFooter,
   },
   {
     id: "connectDevice",
-    label: <Trans i18nKey="unfreeze.steps.connectDevice.title" />,
+    label: <Trans i18nKey="icon.claimReward.steps.connectDevice.title" />,
     component: GenericStepConnectDevice,
-    onBack: ({ transitionTo }: StepProps) => transitionTo("amount"),
+    onBack: ({ transitionTo }: StepProps) => transitionTo("rewards"),
   },
   {
     id: "confirmation",
-    label: <Trans i18nKey="unfreeze.steps.confirmation.title" />,
+    label: <Trans i18nKey="icon.claimReward.steps.confirmation.title" />,
     component: StepConfirmation,
     footer: StepConfirmationFooter,
   },
@@ -97,15 +97,7 @@ const Body = ({
   const [signed, setSigned] = useState(false);
   const dispatch = useDispatch();
 
-  const {
-    transaction,
-    setTransaction,
-    account,
-    parentAccount,
-    status,
-    bridgeError,
-    bridgePending,
-  } = useBridgeTransaction(() => {
+  const { transaction, account, parentAccount, status, bridgeError } = useBridgeTransaction(() => {
     const { account, parentAccount } = params;
 
     const bridge = getAccountBridge(account, parentAccount);
@@ -113,7 +105,7 @@ const Body = ({
     const t = bridge.createTransaction(account);
 
     const transaction = bridge.updateTransaction(t, {
-      mode: "unfreeze",
+      mode: "claimReward",
     });
 
     return { account, parentAccount, transaction };
@@ -126,7 +118,7 @@ const Body = ({
   const handleStepChange = useCallback(e => onChangeStepId(e.id), [onChangeStepId]);
 
   const handleRetry = useCallback(() => {
-    onChangeStepId("amount");
+    onChangeStepId("rewards");
   }, [onChangeStepId]);
 
   const handleTransactionError = useCallback((error: Error) => {
@@ -153,7 +145,7 @@ const Body = ({
   const error = transactionError || bridgeError;
 
   const stepperProps = {
-    title: t("unfreeze.title"),
+    title: t("claimReward.title"),
     device,
     account,
     parentAccount,
@@ -173,16 +165,14 @@ const Body = ({
     optimisticOperation,
     openModal,
     setSigned,
-    onChangeTransaction: setTransaction,
     onOperationBroadcasted: handleOperationBroadcasted,
     onTransactionError: handleTransactionError,
-    t,
-    bridgePending,
   };
 
   return (
     <Stepper {...stepperProps}>
-      <Track onUnmount event="CloseModalFreeze" />
+      <SyncSkipUnderPriority priority={100} />
+      <Track onUnmount event="CloseModalUnFreeze" />
     </Stepper>
   );
 };

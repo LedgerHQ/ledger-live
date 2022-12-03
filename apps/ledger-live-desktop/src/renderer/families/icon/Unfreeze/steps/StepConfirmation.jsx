@@ -1,10 +1,13 @@
 // @flow
 
-import React from "react";
+import invariant from "invariant";
+import { useSelector } from "react-redux";
+import React, { useCallback } from "react";
 import { Trans } from "react-i18next";
 import styled, { withTheme } from "styled-components";
-
-import { SyncOneAccountOnMount } from "@ledgerhq/live-common/bridge/react/index";
+import { useVotingPowerLoading } from "@ledgerhq/live-common/families/icon/react";
+import { useTimer } from "@ledgerhq/live-common/hooks/useTimer";
+import { accountSelector } from "~/renderer/reducers/accounts";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import type { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import { multiline } from "~/renderer/styles/helpers";
@@ -14,6 +17,8 @@ import RetryButton from "~/renderer/components/RetryButton";
 import ErrorDisplay from "~/renderer/components/ErrorDisplay";
 import SuccessDisplay from "~/renderer/components/SuccessDisplay";
 import BroadcastErrorDisclaimer from "~/renderer/components/BroadcastErrorDisclaimer";
+import ToolTip from "~/renderer/components/Tooltip";
+import Text from "~/renderer/components/Text";
 
 import type { StepProps } from "../types";
 
@@ -26,32 +31,36 @@ const Container: ThemedComponent<{ shouldSpace?: boolean }> = styled(Box).attrs(
   min-height: 220px;
 `;
 
+const TooltipContent = () => (
+  <Box style={{ padding: 4 }}>
+    <Text style={{ marginBottom: 5 }}>
+      <Trans i18nKey="freeze.steps.confirmation.tooltip.title" />
+    </Text>
+    <Text>
+      <Trans i18nKey="freeze.steps.confirmation.tooltip.desc" />
+    </Text>
+  </Box>
+);
+
 function StepConfirmation({
   account,
   t,
-  transaction,
   optimisticOperation,
   error,
   theme,
   device,
   signed,
+  transaction,
 }: StepProps & { theme: * }) {
+
   if (optimisticOperation) {
+    const key = "textNRG";
     return (
       <Container>
-        <TrackPage category="Unfreeze Flow" name="Step Confirmed" />
-        <SyncOneAccountOnMount
-          reason="transaction-flow-confirmation"
-          priority={10}
-          accountId={optimisticOperation.accountId}
-        />
+        <TrackPage category="Freeze Flow" name="Step Confirmed" />
         <SuccessDisplay
-          title={<Trans i18nKey="unfreeze.steps.confirmation.success.title" />}
-          description={multiline(
-            t("unfreeze.steps.confirmation.success.text", {
-              resource: transaction && transaction.resource && transaction.resource.toLowerCase(),
-            }),
-          )}
+          title={<Trans i18nKey="icon.freeze.steps.confirmation.success.title" />}
+          description={multiline(t(`icon.freeze.steps.confirmation.success.${key}`))}
         />
       </Container>
     );
@@ -60,10 +69,10 @@ function StepConfirmation({
   if (error) {
     return (
       <Container shouldSpace={signed}>
-        <TrackPage category="Unfreeze Flow" name="Step Confirmation Error" />
+        <TrackPage category="Freeze Flow" name="Step Confirmation Error" />
         {signed ? (
           <BroadcastErrorDisclaimer
-            title={<Trans i18nKey="unfreeze.steps.confirmation.broadcastError" />}
+            title={<Trans i18nKey="icon.freeze.steps.confirmation.broadcastError" />}
           />
         ) : null}
         <ErrorDisplay error={error} withExportLogs />
@@ -75,18 +84,58 @@ function StepConfirmation({
 }
 
 export function StepConfirmationFooter({
-  account,
-  parentAccount,
+  t,
+  transitionTo,
+  account: initialAccount,
   onRetry,
   error,
+  openModal,
   onClose,
 }: StepProps) {
+  invariant(initialAccount, "icon account required");
+  const account = useSelector(s => accountSelector(s, { accountId: initialAccount.id }));
+  invariant(account, "icon account still exists");
+
+  const time = useTimer(20);
+  const isLoading = useVotingPowerLoading(account);
+
+  const openVote = useCallback(() => {
+    onClose();
+    if (account) {
+      const { iconResources } = account;
+      const { votes } = iconResources || {};
+
+      openModal(votes.length > 0 ? "MODAL_VOTE_ICON" : "MODAL_VOTE_ICON_INFO", {
+        account: account,
+      });
+    }
+  }, [account, onClose, openModal]);
+
   return error ? (
     <RetryButton ml={2} primary onClick={onRetry} />
   ) : (
-    <Button ml={2} event="Unfreeze Flow Step 3 View OpD Clicked" onClick={onClose} primary>
-      <Trans i18nKey="unfreeze.steps.confirmation.success.continue" />
-    </Button>
+    <Box horizontal alignItems="right">
+      <Button ml={2} event="Freeze Flow Step 3 View OpD Clicked" onClick={onClose} secondary>
+        <Trans i18nKey="icon.freeze.steps.confirmation.success.later" />
+      </Button>
+      {time > 0 && isLoading ? (
+        <ToolTip content={<TooltipContent />}>
+          <Button
+            ml={2}
+            isLoading={isLoading && time === 0}
+            disabled={isLoading}
+            primary
+            onClick={openVote}
+          >
+            <Trans i18nKey="icon.freeze.steps.confirmation.success.votePending" values={{ time }} />
+          </Button>
+        </ToolTip>
+      ) : (
+        <Button ml={2} primary onClick={openVote}>
+          <Trans i18nKey="icon.freeze.steps.confirmation.success.vote" />
+        </Button>
+      )}
+    </Box>
   );
 }
 

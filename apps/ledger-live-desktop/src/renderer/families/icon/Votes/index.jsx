@@ -47,6 +47,9 @@ const Wrapper = styled(Box).attrs(() => ({
   align-items: center;
 `;
 
+const getDecimalPart = (value: BigNumber, magnitude: number) =>
+  value.minus(value.modulo(10 ** magnitude));
+
 const Delegation = ({ account }: Props) => {
   const dispatch = useDispatch();
   const locale = useSelector(localeSelector);
@@ -68,7 +71,7 @@ const Delegation = ({ account }: Props) => {
   const { votes, votingPower, unwithdrawnReward } = iconResources;
 
   const discreet = useDiscreetMode();
-
+  const defaultUnit = getAccountUnit(account);
   const formattedUnwidthDrawnReward = formatCurrencyUnit(unit, BigNumber(unwithdrawnReward || 0), {
     disableRounding: true,
     alwaysShowSign: false,
@@ -78,8 +81,19 @@ const Delegation = ({ account }: Props) => {
   });
 
   const formattedVotes = formatVotes(votes, superRepresentatives);
+  const totalVotesUsed = votes?.reduce((sum, { value }) => sum + Number(value), 0);
+  const totalPower = BigNumber(votingPower).plus(totalVotesUsed);
 
-  const totalVotesUsed = votes?.reduce((sum, { value }) => sum + value, 0);
+  const totalDelegated = useMemo(
+    () =>
+      formatCurrencyUnit(defaultUnit, getDecimalPart(BigNumber(totalVotesUsed), defaultUnit.magnitude), {
+        disableRounding: true,
+        showAllDigits: false,
+        showCode: true,
+        locale,
+      }),
+    [totalVotesUsed, defaultUnit, locale],
+  );
 
   const onDelegate = useCallback(
     () =>
@@ -173,7 +187,7 @@ const Delegation = ({ account }: Props) => {
           </ToolTip>
         ) : null}
       </TableHeader>
-      {votingPower > 0 && formattedVotes.length > 0 ? (
+      {formattedVotes.length > 0 ? (
         <>
           <Header />
           {formattedVotes.map(({ validator, address, value, isSR }, index) => (
@@ -183,28 +197,23 @@ const Delegation = ({ account }: Props) => {
               address={address}
               amount={value}
               isSR={isSR}
-              // duration={
-              //   duration ? (
-              //     <Trans
-              //       i18nKey="delegation.durationDays"
-              //       count={duration}
-              //       values={{ count: duration }}
-              //     />
-              //   ) : (
-              //     <Trans i18nKey="delegation.durationJustStarted" />
-              //   )
-              // }
-              percentTP={String(Math.round(100 * Number((value * 1e2) / votingPower)) / 100)}
+              percentTP={String(Math.round(100 * Number((value * 1e2) / totalPower)) / 100)}
               currency={account.currency}
               explorerView={explorerView}
             />
           ))}
-          <Footer total={votingPower} used={totalVotesUsed} onClick={onDelegate} />
+          <Text px={4} py={3} ff="Inter|Bold" color="palette.text.shade100" fontSize={6}>
+            <Trans
+              i18nKey="icon.voting.voted"
+              values={{ amount: totalDelegated }}
+            />
+          </Text>
+          <Footer total={totalPower} used={totalVotesUsed} onClick={onDelegate} />
         </>
       ) : (
         <Wrapper horizontal>
           <Box style={{ maxWidth: "65%" }}>
-            <Text ff="Inter|Medium|SemiBold" color="palette.text.shade60" fontSize={4}>
+            <Text ff="Inter|Medium|SemiBold" color="palette.text.shade60" fontSize={5}>
               <Trans
                 i18nKey={
                   votingPower > 0

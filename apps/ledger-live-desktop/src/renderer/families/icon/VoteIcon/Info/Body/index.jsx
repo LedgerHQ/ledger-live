@@ -2,23 +2,23 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { ModalBody } from "~/renderer/components/Modal";
-import VoteTronInfoModalBodyMain from "./Main";
-import VoteTronInfoModalBodyFooter from "./Footer";
+import VoteIconInfoModalBodyMain from "./Main";
+import VoteIconInfoModalBodyFooter from "./Footer";
 
 type Props = {
   onClose: () => void,
 };
 
-export default function VoteTronInfoModalBody({ onClose }: Props) {
+export default function VoteIconInfoModalBody({ onClose }: Props) {
   const { t } = useTranslation();
 
   return (
     <ModalBody
-      title={t("tron.manage.vote.steps.vote.title")}
+      title={t("icon.manage.vote.steps.vote.title")}
       onClose={onClose}
       noScroll
-      render={() => <VoteTronInfoModalBodyMain />}
-      renderFooter={() => <VoteTronInfoModalBodyFooter />}
+      render={() => <VoteIconInfoModalBodyMain />}
+      renderFooter={() => <VoteIconInfoModalBodyFooter />}
     />
   );
 }

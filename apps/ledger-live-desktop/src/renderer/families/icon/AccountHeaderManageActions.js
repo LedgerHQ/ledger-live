@@ -55,7 +55,7 @@ const AccountHeaderManageActionsComponent = ({ account, parentAccount }: Props) 
   });
 
   const disabledLabel = earnRewardDisabled
-    ? `${t("tron.voting.warnEarnRewards", { amount: formattedMinAmount })}`
+    ? `${t("icon.voting.warnEarnRewards", { amount: formattedMinAmount })}`
     : undefined;
 
   return [

@@ -21,11 +21,16 @@ export const buildTransaction = async (
     case 'send':
       iconTxData = buildSendingTransaction(a, t, stepLimit);
       break;
+    case 'unfreeze':
     case 'freeze':
       iconTxData = buildStakingTransaction(a, t);
       break;
     case 'vote':
       iconTxData = buildVotingTransaction(a, t);
+      break;
+    case 'claimReward':
+      iconTxData = buildClaimIScoreTransaction(a, t);
+      break;
     default:
       break;
   }
@@ -80,13 +85,19 @@ const buildSendingTransaction = (
 const buildStakingTransaction = (
   a: IconAccount,
   t: Transaction) => {
-
+  const { iconResources } = a;
   const address = a.freshAddress;
+  let amount = t.amount;
+  if (t.mode == 'freeze') {
+    amount = t.amount.plus(iconResources.totalDelegated);
+  } else {
+    amount = BigNumber(iconResources.votingPower).minus(t.amount);
+  }
   const icxTransferData = new IconBuilder.CallTransactionBuilder()
     .method('setStake')
     .params({
       value: IconConverter.toHexNumber(
-        IconAmount.of(t.amount, IconAmount.Unit.ICX).toLoop()
+        IconAmount.of(amount, IconAmount.Unit.ICX).toLoop()
       )
     })
     .from(address)
@@ -117,6 +128,25 @@ const buildVotingTransaction = (
         };
       })
     })
+    .from(address)
+    .to(IISS_SCORE_ADDRESS)
+    .nid(IconConverter.toHexNumber(getNid(a.currency)))
+    .timestamp(IconConverter.toHexNumber(new Date().getTime() * 1000))
+    .stepLimit(IconConverter.toHexNumber(IconConverter.toBigNumber(70000000)))
+    .version(IconConverter.toHexNumber(IconConverter.toBigNumber(3)))
+    .build();
+
+  return icxTransferData;
+};
+
+const buildClaimIScoreTransaction = (
+  a: IconAccount,
+  t: Transaction) => {
+
+  const address = a.freshAddress;
+  const icxTransferData = new IconBuilder.CallTransactionBuilder()
+    .method('claimIScore')
+    .params({})
     .from(address)
     .to(IISS_SCORE_ADDRESS)
     .nid(IconConverter.toHexNumber(getNid(a.currency)))

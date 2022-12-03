@@ -2320,7 +2320,13 @@
     }
   },
   "icon": {
-    "freeze":{
+    "account": {
+      "availableBalance": "Available balance",
+      "votingPower": "Voting Power",
+      "voted": "Voted",
+      "unstake": "Unstake"
+    },
+    "freeze": {
       "steps": {
         "confirmation": {
           "success": {
@@ -2343,6 +2349,7 @@
         "voteExisting": "Manage votes"
       },
       "manageTP": "Manage assets",
+      "voted": "Total Voted: {{amount}}",
       "warnEarnRewards": "You need at least {{amount}} to start earning rewards",
       "claimRewards": "Claim rewards",
       "nextRewardsDate": "Rewards can be claimed {{date}}",
@@ -2370,11 +2377,59 @@
         }
       }
     },
+    "unfreeze": {
+      "title": "Unfreeze assets",
+      "steps": {
+        "amount": {
+          "title": "Unfreeze",
+          "info": "The amount of voted ICX cannot be un-staked.",
+          "totalStaked": "Total Staked: {{totalStaked}}",
+          "voted": "Voted: {{voted}}",
+          "amountToUnstake": "Amount to Unstake: {{amountAvailable}}"
+        },
+        "connectDevice": {
+          "title": "Device"
+        },
+        "confirmation": {
+          "title": "Confirmation",
+          "success": {
+            "title": "",
+            "text": "Your assets were unfrozen successfully. Your {{resource}} points will be decreased, and your votes will be cancelled.",
+            "continue": "Continue"
+          },
+          "broadcastError": "Your transaction may have failed. Please wait a moment then check the transaction history before trying again."
+        }
+      }
+    },
+    "claimReward": {
+      "title": "Claim rewards",
+      "steps": {
+        "rewards": {
+          "title": "Rewards",
+          "description": "Congratulations! You earned <1>{{amount}}</1> by voting for Public Representative.",
+          "info": "Rewards can be claimed once every 43,200 blocks"
+        },
+        "connectDevice": {
+          "title": "Device"
+        },
+        "confirmation": {
+          "title": "Confirmation",
+          "success": {
+            "title": "Rewards claimed",
+            "text": "Your rewards were added to your available balance.",
+            "cta": "View details",
+            "done": "Done"
+          },
+          "broadcastError": "Your transaction may have failed. Please wait a moment then check the transaction history before trying again."
+        }
+      }
+    },
     "manage": {
       "title": "Manage assets",
       "freeze": {
         "title": "Freeze",
-        "description": "Freeze ICX to earn ISCORE. You'll also be able to vote for Public representatives."
+        "description": "Freeze ICX to earn I_SCORE. You'll also be able to vote for Public representatives.",
+        "shouldUseVotingPowerFirst": "You should use voting power remain before stake more"
       },
       "unfreeze": {
         "title": "Unfreeze",

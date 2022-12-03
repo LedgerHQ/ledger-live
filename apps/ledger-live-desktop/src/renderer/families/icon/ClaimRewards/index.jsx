@@ -9,10 +9,10 @@ type State = {
 };
 
 const INITIAL_STATE = {
-  stepId: "amount",
+  stepId: "rewards",
 };
 
-class UnFreezeModal extends PureComponent<{ name: string }, State> {
+class ClaimRewardsModal extends PureComponent<{ name: string }, State> {
   state = INITIAL_STATE;
 
   handleReset = () => this.setState({ ...INITIAL_STATE });
@@ -21,7 +21,7 @@ class UnFreezeModal extends PureComponent<{ name: string }, State> {
 
   handleReset = () =>
     this.setState({
-      stepId: "amount",
+      stepId: "rewards",
     });
 
   handleStepChange = (stepId: StepId) => this.setState({ stepId });
@@ -30,7 +30,7 @@ class UnFreezeModal extends PureComponent<{ name: string }, State> {
     const { stepId } = this.state;
     const { name } = this.props;
 
-    const isModalLocked = ["connectDevice", "confirmation"].includes(stepId);
+    const isModalLocked = ["device", "confirmation"].includes(stepId);
 
     return (
       <Modal
@@ -39,6 +39,7 @@ class UnFreezeModal extends PureComponent<{ name: string }, State> {
         refocusWhenChange={stepId}
         onHide={this.handleReset}
         preventBackdropClick={isModalLocked}
+        modalFooterStyle={{ justifyContent: "flex-end" }}
         render={({ onClose, data }) => (
           <Body
             stepId={stepId}
@@ -53,4 +54,4 @@ class UnFreezeModal extends PureComponent<{ name: string }, State> {
   }
 }
 
-export default UnFreezeModal;
+export default ClaimRewardsModal;

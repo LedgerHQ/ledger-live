@@ -5,9 +5,9 @@ import { makeSync, makeScanAccounts, mergeOps } from "../../bridge/jsHelpers";
 import { getAccount, getOperations } from "./api";
 import BigNumber from "bignumber.js";
 import { getApiUrl } from "./logic";
-import { getDelegation } from "./api/sdk";
+import { getDelegation, getIScore, getStake } from "./api/sdk";
 import { IconResources } from "./types";
-let LALA = 1;
+
 
 const getAccountShape: GetAccountShape = async (info) => {
   const { address, initialAccount, currency, derivationMode } = info;
@@ -29,23 +29,27 @@ const getAccountShape: GetAccountShape = async (info) => {
     address,
     url
   );
-  LALA+=1
+
   // Merge new operations with the previously synced ones
   const newOperations = await getOperations(accountId, address, startAt, url);
   const operations = mergeOps(oldOperations, newOperations);
-  // const preps = await getPreps(currency);
   const delegationData = await getDelegation(address, currency);
+  const { unstake } = await getStake(address, currency);
+  const iscore = await getIScore(address, currency);
+
   const iconResources: IconResources = {
     nonce: 0,
     additionalBalance: new BigNumber(additionalBalance),
     votes: delegationData.delegations,
     totalDelegated: delegationData.totalDelegated,
-    votingPower: delegationData.votingPower.plus(LALA),
+    votingPower: delegationData.votingPower,
+    unstake,
+    unwithdrawnReward: iscore,
   };
 
   const shape = {
     id: accountId,
-    balance: new BigNumber(balance.plus(LALA)),
+    balance: new BigNumber(balance),
     operationsCount: operations.length,
     blockHeight,
     iconResources,

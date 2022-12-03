@@ -10,7 +10,7 @@ import {
   getLatestBlock,
 } from "./apiCalls";
 import { formatPRepData, getRpcUrl } from "../logic";
-import { GOVERNANCE_SCORE_ADDRESS, IISS_SCORE_ADDRESS } from "../constants";
+import { GOVERNANCE_SCORE_ADDRESS, IISS_SCORE_ADDRESS, I_SCORE_UNIT } from "../constants";
 const { HttpProvider } = IconService;
 const { IconBuilder, IconAmount } = IconService;
 const iconUnit = IconAmount.Unit.ICX.toString();
@@ -255,5 +255,33 @@ export const getIScore = async (address, currency) => {
     // TODO: handle show log
     console.log(error);
   }
-  return { ...res };
+  return new BigNumber(IconAmount.fromLoop(res?.estimatedICX || 0, iconUnit));
 };
+
+export const getStake = async (address, currency) => {
+  const rpcURL = getRpcUrl(currency);
+  const httpProvider = new HttpProvider(rpcURL);
+  const iconService = new IconService(httpProvider);
+  const prepTx: any = new IconBuilder.CallBuilder()
+    .to(IISS_SCORE_ADDRESS)
+    .method("getStake")
+    .params({ address })
+    .build();
+
+  let res;
+  let unstake = new BigNumber(0);
+  try {
+    res = await iconService.call(prepTx).execute();
+    if (res?.unstakes) {
+      const unstakes = res?.unstakes;
+      for (let item of unstakes) {
+        unstake.plus(BigNumber(IconAmount.fromLoop(item.unstake || 0, iconUnit)));
+      }
+    }
+  } catch (error) {
+    // TODO: handle show log
+    console.log(error);
+  }
+  return { ...res, unstake };
+};
+

@@ -128,7 +128,7 @@ const ManageModal = ({ name, account, parentAccount, ...rest }: Props) => {
 
   const { votingPower, votes } = iconResources || {};
 
-  const canFreeze = spendableBalance && spendableBalance.gte(MIN_TRANSACTION_AMOUNT);
+  const canFreeze = spendableBalance && spendableBalance.gte(MIN_TRANSACTION_AMOUNT) && votingPower == 0;
 
   const canUnfreeze = true
 
@@ -179,7 +179,7 @@ const ManageModal = ({ name, account, parentAccount, ...rest }: Props) => {
                 </ManageButton>
                 <ManageButton
                   disabled={!canUnfreeze}
-                  onClick={() => onSelectAction("MODAL_UNFREEZE", onClose)}
+                  onClick={() => onSelectAction("MODAL_ICON_UNFREEZE", onClose)}
                 >
                   <IconWrapper>
                     <Unfreeze size={16} />
@@ -189,7 +189,9 @@ const ManageModal = ({ name, account, parentAccount, ...rest }: Props) => {
                       <Trans i18nKey="icon.manage.unfreeze.title" />
                     </Title>
                     <Description>
-                      <Trans i18nKey="icon.manage.unfreeze.description" />
+                      {canVote
+                        ? <Trans i18nKey="icon.manage.unfreeze.description" />
+                        : <Trans i18nKey="icon.manage.unfreeze.shouldUseVotingPowerFirst" />}
                     </Description>
                   </InfoWrapper>
                   {!canUnfreeze && (
