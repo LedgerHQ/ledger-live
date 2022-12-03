@@ -64,10 +64,21 @@ function formatAccountSpecifics(account: ElrondAccount): string {
 }
 
 function formatOperationSpecifics(
-  _op: Operation,
-  _unit: Unit | null | undefined
+  op: Operation,
+  unit: Unit | null | undefined
 ): string {
-  return "";
+  const { amount } = op.extra;
+  return amount?.gt && amount.gt(0)
+    ? " amount: " +
+        `${
+          unit
+            ? formatCurrencyUnit(unit, new BigNumber(amount), {
+                showCode: true,
+                disableRounding: true,
+              }).padEnd(16)
+            : amount
+        }`
+    : "";
 }
 
 export default {
