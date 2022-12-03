@@ -3,7 +3,7 @@ import { useHistory } from "react-router-dom";
 import { Flex, Text, Icons, Link, ProviderIcon, Icon, Tag as TagCore } from "@ledgerhq/react-ui";
 import { useTranslation } from "react-i18next";
 import { openURL } from "~/renderer/linking";
-import type { ThemedComponent } from "~/renderer/styles/StyleProvider";
+import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import styled from "styled-components";
 import { track } from "~/renderer/analytics/segment";
 

@@ -25,7 +25,7 @@ export default class DelegationModal extends PureComponent<Props> {
             render={() => (
               <Flex justifyContent={"center"}>
                 <TrackPage category="ETH Stake Modal" name="Main Modal" />
-                <Body onClose={onClose} account={account} checkbox={checkbox} source={source}/>
+                <Body onClose={onClose} account={account} checkbox={checkbox} source={source} />
               </Flex>
             )}
           />
