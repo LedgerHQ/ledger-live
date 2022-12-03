@@ -1,8 +1,4 @@
-import type {
-  ElrondAccount,
-  ElrondResources,
-  Transaction,
-} from "../../families/elrond/types";
+import type { ElrondAccount, Transaction } from "../../families/elrond/types";
 import invariant from "invariant";
 import { getCryptoCurrencyById, parseCurrencyUnit } from "../../currencies";
 import { botTest, pickSiblings, genericTestDestination } from "../../bot/specs";
@@ -147,7 +143,7 @@ function expectCorrectSpendableBalanceChange(
   let value = operation.value;
   if (operation.type === "DELEGATE") {
     value = value.plus(new BigNumber(operation.extra.amount));
-  } else if (operation.type === "WITHDRAW") {
+  } else if (operation.type === "WITHDRAW_UNBONDED") {
     value = value.minus(new BigNumber(operation.extra.amount));
   }
 
