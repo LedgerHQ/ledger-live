@@ -717,7 +717,7 @@
       "title": "Please disable multisign to make Stellar transactions"
     },
     "StellarBurnAddressError": {
-      "title": "An error occured, please try again"
+      "title": "An error occurred, please try again"
     },
     "ImageLoadFromGalleryError": {
       "title": "Image loading from gallery failed",
