@@ -116,6 +116,9 @@ internal.onExit((code, signal, unexpected) => {
         },
       });
     });
+    if (process.env.CRASH_ON_INTERNAL_CRASH) {
+      process.exit(code || 1);
+    }
   }
 });
 
