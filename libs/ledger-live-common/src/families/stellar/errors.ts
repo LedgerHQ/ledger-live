@@ -32,3 +32,6 @@ export const StellarMuxedAccountNotExist = createCustomErrorClass(
 export const StellarSourceHasMultiSign = createCustomErrorClass(
   "StellarSourceHasMultiSign"
 );
+export const StellarBurnAddressError = createCustomErrorClass(
+  "StellarBurnAddressError"
+);

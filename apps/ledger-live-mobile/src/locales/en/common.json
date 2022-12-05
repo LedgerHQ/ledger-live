@@ -716,6 +716,9 @@
     "StellarSourceHasMultiSign": {
       "title": "Please disable multisign to make Stellar transactions"
     },
+    "StellarBurnAddressError": {
+      "title": "An error occured, please try again"
+    },
     "ImageLoadFromGalleryError": {
       "title": "Image loading from gallery failed",
       "description": "Please try again with another image"

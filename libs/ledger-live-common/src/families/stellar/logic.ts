@@ -25,6 +25,9 @@ import type {
   RawOperation,
 } from "./types";
 
+export const STELLAR_BURN_ADDRESS =
+  "GAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAWHF";
+
 const currency = getCryptoCurrencyById("stellar");
 
 const getMinimumBalance = (account: ServerApi.AccountRecord): BigNumber => {
