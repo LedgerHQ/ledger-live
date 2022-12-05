@@ -30,7 +30,7 @@ const Text: ThemedComponent<{}> = styled(TextBase).attrs(() => ({
 `;
 
 const TextWrappper = styled.div`
-  max-width: 11.875rem;
+  max-width: 28rem;
 `;
 
 const ButtonAddAccount = styled(Button).attrs(() => ({

@@ -24,6 +24,8 @@ import useSatStackStatus from "~/renderer/hooks/useSatStackStatus";
 import useEnv from "~/renderer/hooks/useEnv";
 import type { SatStackStatus } from "@ledgerhq/live-common/families/bitcoin/satstack";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
+import { NetworkDown } from "@ledgerhq/errors";
+import ErrorBanner from "~/renderer/components/ErrorBanner";
 
 const listSupportedTokens = () => listTokens().filter(t => isCurrencySupported(t.parentCurrency));
 
@@ -63,7 +65,13 @@ const StepChooseCurrency = ({ currency, setCurrency }: StepProps) => {
 
   return (
     <>
-      {currency ? <CurrencyDownStatusAlert currencies={[currency]} /> : null}
+      {!navigator.onLine ? (
+        <div>
+          <ErrorBanner error={new NetworkDown()} />
+        </div>
+      ) : currency ? (
+        <CurrencyDownStatusAlert currencies={[currency]} />
+      ) : null}
       {/* $FlowFixMe: onChange type is not good */}
       <SelectCurrency currencies={currencies} autoFocus onChange={setCurrency} value={currency} />
       <FullNodeStatus currency={currency} />
@@ -169,7 +177,7 @@ export const StepChooseCurrencyFooter = ({
       ) : (
         <Button
           primary
-          disabled={!currency || fullNodeNotReady}
+          disabled={!currency || fullNodeNotReady || !navigator.onLine}
           onClick={() => transitionTo("connectDevice")}
           data-test-id="modal-continue-button"
         >

@@ -1,4 +1,4 @@
-export const cropAspectRatio = {
-  width: 1080,
-  height: 1400,
+export const targetDimensions = {
+  width: 400,
+  height: 672,
 };

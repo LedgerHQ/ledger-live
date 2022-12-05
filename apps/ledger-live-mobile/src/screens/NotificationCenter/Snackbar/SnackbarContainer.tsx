@@ -36,30 +36,42 @@ export default function SnackbarContainer() {
     }),
     icon: "info",
   };
-  return hasCompletedOnboarding &&
-    toasts &&
-    toasts.length &&
+
+  const lastToastIsSuccess =
+    toasts && toasts[toasts.length - 1]?.type === "success";
+
+  return hasCompletedOnboarding && toasts?.length ? (
     toasts.length === 1 ? (
-    <FlatList
-      style={styles.root}
-      data={[toasts[0]]} // NB in case we change our minds about the max
-      keyExtractor={item => item.id}
-      renderItem={({ item }) => (
-        <Snackbar
-          toast={item}
-          onPress={navigate}
-          onClose={handleDismissToast}
-        />
-      )}
-    />
-  ) : toasts.length && toasts.length > 1 ? (
-    <View style={styles.root}>
-      <Snackbar
-        toast={groupedSnackbarsItems}
-        cta={t("notificationCenter.groupedToast.cta")}
-        onPress={navigate}
+      <FlatList
+        style={styles.root}
+        data={[toasts[0]]} // NB in case we change our minds about the max
+        keyExtractor={item => item.id}
+        renderItem={({ item }) => (
+          <Snackbar
+            toast={item}
+            onPress={navigate}
+            onClose={handleDismissToast}
+          />
+        )}
       />
-    </View>
+    ) : (
+      <View style={styles.root}>
+        <Snackbar
+          toast={
+            lastToastIsSuccess
+              ? toasts[toasts.length - 1]
+              : groupedSnackbarsItems
+          }
+          cta={
+            lastToastIsSuccess
+              ? undefined
+              : t("notificationCenter.groupedToast.cta")
+          }
+          onPress={navigate}
+          onClose={lastToastIsSuccess ? handleDismissToast : undefined}
+        />
+      </View>
+    )
   ) : null;
 }
 const styles = StyleSheet.create({

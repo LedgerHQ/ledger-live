@@ -3,6 +3,7 @@
 import React, { useCallback, useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import TrackPage from "~/renderer/analytics/TrackPage";
+import { getEnv } from "@ledgerhq/live-common/env";
 import { SettingsSectionBody as Body, SettingsSectionRow as Row } from "../../SettingsSection";
 import RowItem from "../../RowItem";
 import ReleaseNotesButton from "./ReleaseNotesButton";
@@ -21,7 +22,7 @@ const SectionHelp = () => {
   const dispatch = useDispatch();
   const { pushToast } = useToasts();
 
-  const version = process.env.PLAYWRIGHT_RUN ? "0.0.0" : __APP_VERSION__;
+  const version = getEnv("PLAYWRIGHT_RUN") ? "0.0.0" : __APP_VERSION__;
   const [clickCounter, setClickCounter] = useState(0);
   const onVersionClick = useCallback(() => {
     if (clickCounter < 10) {

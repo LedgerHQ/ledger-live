@@ -10,12 +10,16 @@ import { log } from "@ledgerhq/logs";
 import { OutputInfo } from "..";
 
 export class CoinSelect extends PickingStrategy {
-  // eslint-disable-next-line class-methods-use-this
   async selectUnspentUtxosToUse(
     xpub: Xpub,
     outputs: OutputInfo[],
     feePerByte: number
-  ) {
+  ): Promise<{
+    unspentUtxos: Output[];
+    totalValue: BigNumber;
+    fee: number;
+    needChangeoutput: boolean;
+  }> {
     // get the utxos to use as input
     // from all addresses of the account
     const addresses = await xpub.getXpubAddresses();

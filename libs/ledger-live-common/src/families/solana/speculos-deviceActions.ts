@@ -1,7 +1,6 @@
 import type { DeviceAction } from "../../bot/types";
 import type { Transaction } from "./types";
-import { formatCurrencyUnit } from "../../currencies";
-import { deviceActionFlow } from "../../bot/specs";
+import { deviceActionFlow, formatDeviceAmount } from "../../bot/specs";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import BigNumber from "bignumber.js";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
@@ -17,12 +16,11 @@ function ellipsis(str: string) {
   return `${str.slice(0, 7)}..${str.slice(-7)}`;
 }
 
-function formatAmount(currency: CryptoCurrency, amount: number) {
-  const unit = getMainCurrency(currency).units[0];
-  return formatCurrencyUnit(unit, new BigNumber(amount), {
-    disableRounding: true,
-    showCode: true,
-  }).replace(/\s/g, " ");
+function formatAmount(c: CryptoCurrency, amount: number) {
+  const currency = getMainCurrency(c);
+  return formatDeviceAmount(currency, new BigNumber(amount), {
+    postfixCode: true,
+  });
 }
 
 export const acceptTransferTransaction: DeviceAction<Transaction, any> =

@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Ledger Support
+    url: https://support.ledger.com/
+    about: "Github is used by developers. For questions, feature requests or Ledger Live issues, please prefer to go through our Customer Support. If you are a developer, feel free to contribute with Pull Requests."
+  - name: Ledger Bug Bounty
+    url: https://donjon.ledger.com/bounty/
+    about: Please report security vulnerabilities here.

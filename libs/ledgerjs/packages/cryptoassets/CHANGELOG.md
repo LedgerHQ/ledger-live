@@ -1,5 +1,105 @@
 # @ledgerhq/cryptoassets
 
+## 6.37.0
+
+### Minor Changes
+
+- [#1662](https://github.com/LedgerHQ/ledger-live/pull/1662) [`4ad6155953`](https://github.com/LedgerHQ/ledger-live/commit/4ad615595392f5ef806cbd21f0be1b30d3ae73c6) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Update Ethereum currency to london fork
+
+* [#1211](https://github.com/LedgerHQ/ledger-live/pull/1211) [`32c8df8f47`](https://github.com/LedgerHQ/ledger-live/commit/32c8df8f47644278ee44e9db623af864d57ad61c) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Add EIP712 CAL and CAL importer
+
+- [#1616](https://github.com/LedgerHQ/ledger-live/pull/1616) [`5b8315df30`](https://github.com/LedgerHQ/ledger-live/commit/5b8315df306d72e8b0191aa5136760142f9d3447) Thanks [@adrienlacombe-ledger](https://github.com/adrienlacombe-ledger)! - 20221019 CAL update
+
+* [#1800](https://github.com/LedgerHQ/ledger-live/pull/1800) [`bef0a76d27`](https://github.com/LedgerHQ/ledger-live/commit/bef0a76d276f6a8d322e890ceaedc266a710b06a) Thanks [@adrienlacombe-ledger](https://github.com/adrienlacombe-ledger)! - 20221114 CAL update
+
+- [#1650](https://github.com/LedgerHQ/ledger-live/pull/1650) [`ab40db1288`](https://github.com/LedgerHQ/ledger-live/commit/ab40db1288bf4a795819a8a636821dbccf33073a) Thanks [@adrienlacombe-ledger](https://github.com/adrienlacombe-ledger)! - 20221021 CAL update
+
+### Patch Changes
+
+- [#1141](https://github.com/LedgerHQ/ledger-live/pull/1141) [`24ea9cd15f`](https://github.com/LedgerHQ/ledger-live/commit/24ea9cd15f92d5a2c74c4b936bacb89d5d4d36fd) Thanks [@valpinkman](https://github.com/valpinkman)! - Collateral changes due to solving all LLM typescript/eslint issues/warnings.
+
+## 6.37.0-next.0
+
+### Minor Changes
+
+- [#1662](https://github.com/LedgerHQ/ledger-live/pull/1662) [`4ad6155953`](https://github.com/LedgerHQ/ledger-live/commit/4ad615595392f5ef806cbd21f0be1b30d3ae73c6) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Update Ethereum currency to london fork
+
+* [#1211](https://github.com/LedgerHQ/ledger-live/pull/1211) [`32c8df8f47`](https://github.com/LedgerHQ/ledger-live/commit/32c8df8f47644278ee44e9db623af864d57ad61c) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Add EIP712 CAL and CAL importer
+
+- [#1616](https://github.com/LedgerHQ/ledger-live/pull/1616) [`5b8315df30`](https://github.com/LedgerHQ/ledger-live/commit/5b8315df306d72e8b0191aa5136760142f9d3447) Thanks [@adrienlacombe-ledger](https://github.com/adrienlacombe-ledger)! - 20221019 CAL update
+
+* [#1800](https://github.com/LedgerHQ/ledger-live/pull/1800) [`bef0a76d27`](https://github.com/LedgerHQ/ledger-live/commit/bef0a76d276f6a8d322e890ceaedc266a710b06a) Thanks [@adrienlacombe-ledger](https://github.com/adrienlacombe-ledger)! - 20221114 CAL update
+
+- [#1650](https://github.com/LedgerHQ/ledger-live/pull/1650) [`ab40db1288`](https://github.com/LedgerHQ/ledger-live/commit/ab40db1288bf4a795819a8a636821dbccf33073a) Thanks [@adrienlacombe-ledger](https://github.com/adrienlacombe-ledger)! - 20221021 CAL update
+
+### Patch Changes
+
+- [#1141](https://github.com/LedgerHQ/ledger-live/pull/1141) [`24ea9cd15f`](https://github.com/LedgerHQ/ledger-live/commit/24ea9cd15f92d5a2c74c4b936bacb89d5d4d36fd) Thanks [@valpinkman](https://github.com/valpinkman)! - Collateral changes due to solving all LLM typescript/eslint issues/warnings.
+
+## 6.36.1
+
+### Patch Changes
+
+- [#1561](https://github.com/LedgerHQ/ledger-live/pull/1561) [`627f928b9d`](https://github.com/LedgerHQ/ledger-live/commit/627f928b9dc93f072f47b85d09e34c41b1948d0b) Thanks [@haammar-ledger](https://github.com/haammar-ledger)! - Disable countervalue for Cardano tokens unsupported in CoinGecko
+
+## 6.36.1-next.0
+
+### Patch Changes
+
+- [#1561](https://github.com/LedgerHQ/ledger-live/pull/1561) [`627f928b9d`](https://github.com/LedgerHQ/ledger-live/commit/627f928b9dc93f072f47b85d09e34c41b1948d0b) Thanks [@haammar-ledger](https://github.com/haammar-ledger)! - Disable countervalue for Cardano tokens unsupported in CoinGecko
+
+## 6.36.0
+
+### Minor Changes
+
+- [#1442](https://github.com/LedgerHQ/ledger-live/pull/1442) [`d3dc2c6877`](https://github.com/LedgerHQ/ledger-live/commit/d3dc2c6877fbdcaf68e442a781798d752fc5152d) Thanks [@sarneijim](https://github.com/sarneijim)! - Add bep20 exchange
+
+### Patch Changes
+
+- [#1419](https://github.com/LedgerHQ/ledger-live/pull/1419) [`2100b9fb81`](https://github.com/LedgerHQ/ledger-live/commit/2100b9fb81a4fd04f65b96561c0a7d618658843a) Thanks [@gre](https://github.com/gre)! - Introduce tests to ensure we define abandonseed values for coin we support
+
+## 6.36.0-next.0
+
+### Minor Changes
+
+- [#1442](https://github.com/LedgerHQ/ledger-live/pull/1442) [`d3dc2c6877`](https://github.com/LedgerHQ/ledger-live/commit/d3dc2c6877fbdcaf68e442a781798d752fc5152d) Thanks [@sarneijim](https://github.com/sarneijim)! - Add bep20 exchange
+
+### Patch Changes
+
+- [#1419](https://github.com/LedgerHQ/ledger-live/pull/1419) [`2100b9fb81`](https://github.com/LedgerHQ/ledger-live/commit/2100b9fb81a4fd04f65b96561c0a7d618658843a) Thanks [@gre](https://github.com/gre)! - Introduce tests to ensure we define abandonseed values for coin we support
+
+## 6.35.1
+
+### Patch Changes
+
+- [#1356](https://github.com/LedgerHQ/ledger-live/pull/1356) [`ecac411d7a`](https://github.com/LedgerHQ/ledger-live/commit/ecac411d7aad6f4003503ba6259d7c25017ca7aa) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Updated readme.md of packages
+
+## 6.35.1-next.0
+
+### Patch Changes
+
+- [#1356](https://github.com/LedgerHQ/ledger-live/pull/1356) [`ecac411d7a`](https://github.com/LedgerHQ/ledger-live/commit/ecac411d7aad6f4003503ba6259d7c25017ca7aa) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Updated readme.md of packages
+
+## 6.35.0
+
+### Minor Changes
+
+- [#1257](https://github.com/LedgerHQ/ledger-live/pull/1257) [`4f66046ef7`](https://github.com/LedgerHQ/ledger-live/commit/4f66046ef78ebcd14e6d63639f54834e90e6547a) Thanks [@adrienlacombe-ledger](https://github.com/adrienlacombe-ledger)! - 20220912 CAL update
+
+### Patch Changes
+
+- [#1304](https://github.com/LedgerHQ/ledger-live/pull/1304) [`df76dd28c1`](https://github.com/LedgerHQ/ledger-live/commit/df76dd28c15d0cd5b7b57ee3f78aa0bd4170a44a) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Fixing currency inferences in cryptoassets, and reorder currencies as a temporary fix for the ticker/managerAppName collisions' side effects
+
+## 6.35.0-next.0
+
+### Minor Changes
+
+- [#1257](https://github.com/LedgerHQ/ledger-live/pull/1257) [`4f66046ef7`](https://github.com/LedgerHQ/ledger-live/commit/4f66046ef78ebcd14e6d63639f54834e90e6547a) Thanks [@adrienlacombe-ledger](https://github.com/adrienlacombe-ledger)! - 20220912 CAL update
+
+### Patch Changes
+
+- [#1304](https://github.com/LedgerHQ/ledger-live/pull/1304) [`df76dd28c1`](https://github.com/LedgerHQ/ledger-live/commit/df76dd28c15d0cd5b7b57ee3f78aa0bd4170a44a) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Fixing currency inferences in cryptoassets, and reorder currencies as a temporary fix for the ticker/managerAppName collisions' side effects
+
 ## 6.34.0
 
 ### Minor Changes

@@ -5,7 +5,8 @@ import { getStackNavigatorConfig } from "../../navigation/navigatorConfig";
 import NftViewer from "../Nft/NftViewer";
 import NftImageViewer from "../Nft/NftImageViewer";
 import { ScreenName } from "../../const";
-import { CloseButton, BackButton } from "../../screens/OperationDetails";
+import { BackButton } from "../../screens/OperationDetails";
+import type { NftNavigatorParamList } from "./types/NftNavigator";
 
 const NftNavigator = () => {
   const { colors } = useTheme();
@@ -20,17 +21,17 @@ const NftNavigator = () => {
         name={ScreenName.NftViewer}
         component={NftViewer}
         options={({ navigation }) => ({
-          title: null,
-          headerRight: null,
-          headerLeft: () => <CloseButton navigation={navigation} />,
+          title: "",
+          headerRight: undefined,
+          headerLeft: () => <BackButton navigation={navigation} />,
         })}
       />
       <Stack.Screen
         name={ScreenName.NftImageViewer}
         component={NftImageViewer}
         options={({ navigation }) => ({
-          title: null,
-          headerRight: null,
+          title: "",
+          headerRight: undefined,
           headerLeft: () => <BackButton navigation={navigation} />,
           headerTransparent: true,
         })}
@@ -39,6 +40,6 @@ const NftNavigator = () => {
   );
 };
 
-const Stack = createStackNavigator();
+const Stack = createStackNavigator<NftNavigatorParamList>();
 
 export default NftNavigator;

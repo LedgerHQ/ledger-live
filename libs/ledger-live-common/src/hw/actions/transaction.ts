@@ -39,6 +39,7 @@ type TransactionResult =
   | {
       signedOperation: SignedOperation;
       device: Device;
+      swapId?: string;
     }
   | {
       transactionSignError: Error;

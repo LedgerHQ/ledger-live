@@ -115,9 +115,10 @@ export const experimentalFeatures: Feature[] = [
   {
     type: "toggle",
     name: "LEDGER_COUNTERVALUES_API",
-    title: "Experimental countervalues API",
-    description:
-      "This may cause the countervalues displayed for your accounts to become incorrect.",
+    title: <Trans i18nKey="settings.experimental.features.experimentalCountervalues.title" />,
+    description: (
+      <Trans i18nKey="settings.experimental.features.experimentalCountervalues.description" />
+    ),
     valueOn: "https://countervalues-experimental.live.ledger.com",
     valueOff: "https://countervalues.live.ledger.com",
   },
@@ -138,6 +139,24 @@ export const experimentalFeatures: Feature[] = [
     title: <Trans i18nKey="settings.experimental.features.forceProvider.title" />,
     description: <Trans i18nKey="settings.experimental.features.forceProvider.description" />,
     minValue: 1,
+  },
+  {
+    type: "toggle",
+    name: "EIP1559_MINIMUM_FEES_GATE",
+    title: <Trans i18nKey="settings.experimental.features.1559DeactivateGate.title" />,
+    description: <Trans i18nKey="settings.experimental.features.1559DeactivateGate.description" />,
+    valueOn: false,
+    valueOff: true,
+  },
+  {
+    type: "integer",
+    name: "EIP1559_PRIORITY_FEE_LOWER_GATE",
+    title: <Trans i18nKey="settings.experimental.features.1559CustomPriorityLowerGate.title" />,
+    description: (
+      <Trans i18nKey="settings.experimental.features.1559CustomPriorityLowerGate.description" />
+    ),
+    minValue: 0,
+    maxValue: 1,
   },
 ];
 

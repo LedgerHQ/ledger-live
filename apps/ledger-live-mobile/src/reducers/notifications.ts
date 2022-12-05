@@ -1,78 +1,71 @@
 import { handleActions } from "redux-actions";
-import type { State } from ".";
-import type { EventTrigger, DataOfUser } from "../logic/notifications";
+import type { Action, ReducerMap } from "redux-actions";
+import type { NotificationsState, State } from "./types";
+import type {
+  NotificationsPayload,
+  NotificationsSetCurrentRouteNamePayload,
+  NotificationsSetDataOfUserPayload,
+  NotificationsSetEventTriggeredPayload,
+  NotificationsSetModalLockedPayload,
+  NotificationsSetModalOpenPayload,
+  NotificationsSetModalTypePayload,
+} from "../actions/types";
+import { NotificationsActionTypes } from "../actions/types";
 
-export type NotificationsState = {
-  /** Boolean indicating whether the push notifications modal is opened or closed */
-  isPushNotificationsModalOpen: boolean;
-  /** Type of the push notifications modal to display (either the generic one or the market one) */
-  notificationsModalType: string;
-  /** The route name of the current screen displayed in the app, it is updated every time the displayed screen change */
-  currentRouteName?: string;
-  /** The event that triggered the oppening of the push notifications modal */
-  eventTriggered?: EventTrigger;
-  /** Data related to the user's app usage. We use this data to prompt the push notifications modal on certain conditions only */
-  dataOfUser?: DataOfUser;
-  /**
-   * Used to avoid having multiple different modals opened at the same time (for example the push notifications and the ratings ones)
-   * If true, it means another modal is already opened or being opened
-   */
-  isPushNotificationsModalLocked: boolean;
-};
-
-const initialState: NotificationsState = {
+export const INITIAL_STATE: NotificationsState = {
   isPushNotificationsModalOpen: false,
   isPushNotificationsModalLocked: false,
   notificationsModalType: "generic",
-  currentRouteName: null,
-  eventTriggered: null,
-  dataOfUser: null,
+  currentRouteName: undefined,
+  eventTriggered: undefined,
+  dataOfUser: undefined,
 };
 
-const handlers: any = {
-  NOTIFICATIONS_SET_MODAL_OPEN: (
-    state: NotificationsState,
-    { isPushNotificationsModalOpen }: { isPushNotificationsModalOpen: boolean },
-  ) => ({
+const handlers: ReducerMap<NotificationsState, NotificationsPayload> = {
+  [NotificationsActionTypes.NOTIFICATIONS_SET_MODAL_OPEN]: (state, action) => ({
     ...state,
-    isPushNotificationsModalOpen,
+    isPushNotificationsModalOpen: (
+      action as Action<NotificationsSetModalOpenPayload>
+    ).payload.isPushNotificationsModalOpen,
   }),
-  NOTIFICATIONS_SET_MODAL_LOCKED: (
-    state: NotificationsState,
-    {
-      isPushNotificationsModalLocked,
-    }: { isPushNotificationsModalLocked: boolean },
+  [NotificationsActionTypes.NOTIFICATIONS_SET_MODAL_LOCKED]: (
+    state,
+    action,
   ) => ({
     ...state,
-    isPushNotificationsModalLocked,
+    isPushNotificationsModalLocked: (
+      action as Action<NotificationsSetModalLockedPayload>
+    ).payload.isPushNotificationsModalLocked,
   }),
-  NOTIFICATIONS_SET_MODAL_TYPE: (
-    state: NotificationsState,
-    { notificationsModalType }: { notificationsModalType: string },
-  ) => ({
+  [NotificationsActionTypes.NOTIFICATIONS_SET_MODAL_TYPE]: (state, action) => ({
     ...state,
-    notificationsModalType,
+    notificationsModalType: (action as Action<NotificationsSetModalTypePayload>)
+      .payload.notificationsModalType,
   }),
-  NOTIFICATIONS_SET_CURRENT_ROUTE_NAME: (
-    state: NotificationsState,
-    { currentRouteName }: { currentRouteName?: string },
+  [NotificationsActionTypes.NOTIFICATIONS_SET_CURRENT_ROUTE_NAME]: (
+    state,
+    action,
   ) => ({
     ...state,
-    currentRouteName,
+    currentRouteName: (
+      action as Action<NotificationsSetCurrentRouteNamePayload>
+    ).payload.currentRouteName,
   }),
-  NOTIFICATIONS_SET_EVENT_TRIGGERED: (
-    state: NotificationsState,
-    { eventTriggered }: { eventTriggered?: EventTrigger },
+  [NotificationsActionTypes.NOTIFICATIONS_SET_EVENT_TRIGGERED]: (
+    state,
+    action,
   ) => ({
     ...state,
-    eventTriggered,
+    eventTriggered: (action as Action<NotificationsSetEventTriggeredPayload>)
+      .payload.eventTriggered,
   }),
-  NOTIFICATIONS_SET_DATA_OF_USER: (
-    state: NotificationsState,
-    { dataOfUser }: { dataOfUser?: DataOfUser },
+  [NotificationsActionTypes.NOTIFICATIONS_SET_DATA_OF_USER]: (
+    state,
+    action,
   ) => ({
     ...state,
-    dataOfUser,
+    dataOfUser: (action as Action<NotificationsSetDataOfUserPayload>).payload
+      .dataOfUser,
   }),
 };
 
@@ -95,4 +88,7 @@ export const notificationsEventTriggeredSelector = (s: State) =>
 export const notificationsDataOfUserSelector = (s: State) =>
   s.notifications.dataOfUser;
 
-export default handleActions(handlers, initialState);
+export default handleActions<NotificationsState, NotificationsPayload>(
+  handlers,
+  INITIAL_STATE,
+);

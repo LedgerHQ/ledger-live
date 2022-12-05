@@ -9,6 +9,7 @@ import {
   TransportStatusError,
   UserRefusedAllowManager,
   ManagerDeviceLockedError,
+  StatusCodes,
 } from "@ledgerhq/errors";
 import { cancelDeviceAction } from "../hw/deviceAccess";
 import { getEnv } from "../env";
@@ -32,7 +33,7 @@ export const createDeviceSocket = (
   }
 ): Observable<SocketEvent> =>
   new Observable((o) => {
-    let deviceError = null; // the socket was interrupted by device problem
+    let deviceError: Error | null = null; // the socket was interrupted by device problem
 
     let unsubscribed = false; // subscriber wants to stops everything
 
@@ -114,6 +115,13 @@ export const createDeviceSocket = (
 
             if (unsubscribed) return;
             const status = r.readUInt16BE(r.length - 2);
+
+            // Pushes an error on locked device. TransportStatusError will
+            // be remapped to a LockedDeviceError with a correct error message.
+            if (status === StatusCodes.LOCKED_DEVICE) {
+              o.error(new TransportStatusError(status));
+              return;
+            }
 
             // if allow manager was requested, we either throw if deny or emit accepted
             if (allowManagerAwaitingUser) {

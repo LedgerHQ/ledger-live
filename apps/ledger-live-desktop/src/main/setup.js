@@ -23,7 +23,11 @@ if (process.env.DEV_TOOLS || process.env.DEBUG_LOGS) {
 }
 
 if (process.env.DESKTOP_LOGS_FILE) {
-  enableFileLogger();
+  let possiblydir = process.env.DESKTOP_LOGS_FILE;
+  if (possiblydir === "true" || possiblydir === "1") {
+    possiblydir = null; // we will infer the base desktop app folder instead
+  }
+  enableFileLogger(possiblydir);
 }
 
 ipcMain.on("mainCrashTest", () => {

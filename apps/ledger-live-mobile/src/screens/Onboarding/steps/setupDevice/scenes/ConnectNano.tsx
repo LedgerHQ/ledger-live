@@ -1,9 +1,9 @@
 import React, { useCallback, useState } from "react";
 import { Flex } from "@ledgerhq/native-ui";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import connectManager from "@ledgerhq/live-common/hw/connectManager";
-import { createAction } from "@ledgerhq/live-common/hw/actions/manager";
+import { createAction, Result } from "@ledgerhq/live-common/hw/actions/manager";
 import DeviceActionModal from "../../../../../components/DeviceActionModal";
 import SelectDevice from "../../../../../components/SelectDevice";
 import { TrackScreen, updateIdentify } from "../../../../../analytics";
@@ -16,6 +16,7 @@ import {
   setReadOnlyMode,
 } from "../../../../../actions/settings";
 import { updateUser } from "../../../../../user";
+import { readOnlyModeEnabledSelector } from "../../../../../reducers/settings";
 
 const action = createAction(connectManager);
 
@@ -27,38 +28,46 @@ const ConnectNanoScene = ({
   deviceModelId: string;
 }) => {
   const dispatch = useDispatch();
+  const readOnlyMode = useSelector(readOnlyModeEnabledSelector);
   const [device, setDevice] = useState<Device | undefined>();
 
   const onSetDevice = useCallback(
-    async device => {
+    async (device: Device) => {
+      if (readOnlyMode) {
+        await updateUser();
+        await updateIdentify();
+      }
       dispatch(setLastConnectedDevice(device));
       setDevice(device);
       dispatch(setReadOnlyMode(false));
       dispatch(setHasOrderedNano(false));
     },
-    [dispatch],
+    [dispatch, readOnlyMode],
   );
 
   const directNext = useCallback(
     async device => {
-      await updateUser();
-      await updateIdentify();
+      if (readOnlyMode) {
+        await updateUser();
+        await updateIdentify();
+      }
       dispatch(setLastConnectedDevice(device));
       dispatch(setReadOnlyMode(false));
       dispatch(setHasOrderedNano(false));
       onNext();
     },
-    [dispatch, onNext],
+    [dispatch, onNext, readOnlyMode],
   );
 
   const onResult = useCallback(
-    (info: any) => {
+    (info: Result) => {
       /** if list apps succeed we update settings with state of apps installed */
       if (info) {
-        const hasAnyAppinstalled =
+        const hasAnyAppinstalled = !!(
           info.result &&
           info.result.installed &&
-          info.result.installed.length > 0;
+          info.result.installed.length > 0
+        );
 
         dispatch(installAppFirstTime(hasAnyAppinstalled));
         setDevice(undefined);
@@ -79,14 +88,13 @@ const ConnectNanoScene = ({
         <SelectDevice
           withArrows
           usbOnly={usbOnly}
-          deviceModelId={deviceModelId}
           onSelect={usbOnly ? onSetDevice : directNext}
           autoSelectOnAdd
           hideAnimation
         />
       </Flex>
       <DeviceActionModal
-        onClose={setDevice}
+        onClose={() => setDevice(undefined)}
         device={device}
         onResult={onResult}
         action={action}

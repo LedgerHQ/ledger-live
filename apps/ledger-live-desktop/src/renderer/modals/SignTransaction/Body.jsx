@@ -21,6 +21,7 @@ import StepConfirmation, { StepConfirmationFooter } from "./steps/StepConfirmati
 import type { St, StepId } from "./types";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import logger from "~/logger/logger";
+import Text from "~/renderer/components/Text";
 
 type Props = {|
   stepId: StepId,
@@ -52,6 +53,13 @@ function useSteps(canEditFees = false): St[] {
         component: StepSummary,
         footer: StepSummaryFooter,
         onBack: canEditFees ? ({ transitionTo }) => transitionTo("amount") : null,
+        backButtonComponent: canEditFees ? (
+          <Text ff="Inter|Bold" fontSize={4} color="palette.primary.main">
+            {t("common.adjustFees")}
+          </Text>
+        ) : (
+          undefined
+        ),
       },
       {
         id: "device",

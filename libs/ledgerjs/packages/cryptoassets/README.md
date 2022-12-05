@@ -1,4 +1,4 @@
-<img src="https://user-images.githubusercontent.com/211411/34776833-6f1ef4da-f618-11e7-8b13-f0697901d6a8.png" height="100" />
+<img src="https://user-images.githubusercontent.com/4631227/191834116-59cf590e-25cc-4956-ae5c-812ea464f324.png" height="100" />
 
 ## @ledgerhq/cryptoassets
 
@@ -19,6 +19,7 @@ There are two modes of usage of this library.
 
 #### Table of Contents
 
+*   [abandonSeedAddresses](#abandonseedaddresses)
 *   [getAbandonSeedAddress](#getabandonseedaddress)
     *   [Parameters](#parameters)
 *   [registerCryptoCurrency](#registercryptocurrency)
@@ -65,6 +66,15 @@ There are two modes of usage of this library.
 *   [findCompoundToken](#findcompoundtoken)
     *   [Parameters](#parameters-21)
 
+### abandonSeedAddresses
+
+these are either "dead"/"burn" addresses OR "abandon" seed addresses.
+These addresses are PUBLIC addresses
+We use them for tests and also for dry-run estimations
+DO NOT USE AS RECIPIENT OR SIGN TRANSACTIONS INTO THEM
+
+Type: Record<[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)>
+
 ### getAbandonSeedAddress
 
 Returns a valid address for a given currency.
@@ -84,6 +94,8 @@ Returns **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/G
 
 *   `id` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** 
 *   `currency` **CryptoCurrency** 
+
+Returns **void** 
 
 ### listCryptoCurrencies
 
@@ -131,6 +143,7 @@ Returns **(CryptoCurrency | null | [undefined](https://developer.mozilla.org/doc
 #### Parameters
 
 *   `keyword` **any** 
+*   `tests`   (optional, default `["keywords","name","id","ticker","manager"]`)
 
 Returns **(CryptoCurrency | null | [undefined](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/undefined))** 
 
@@ -255,9 +268,17 @@ Returns **(TokenCurrency | null | [undefined](https://developer.mozilla.org/docs
 
 ## Maintainance notes
 
-To regenerate data:
+Import crypto assets data guide:
+
+https://ledgerhq.atlassian.net/wiki/spaces/WALLETCO/pages/3256516784/How+to+import+crypto-assets+data+in+Ledger+Live
+
+Regenerate data:
 
     node script/crypto-assets-importer/index.js ~/dev/crypto-assets
     node script/crypto-assets-importer/tron/sync-trc10-tokens.js
 
 NB: currencies, trc20 and asa are currently manually maintained.
+
+Update test and snapshots in the monorepo:
+
+https://ledgerhq.atlassian.net/wiki/spaces/WALLETCO/pages/3740205141/CAL+updates

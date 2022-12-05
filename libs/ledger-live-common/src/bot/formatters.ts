@@ -74,8 +74,12 @@ export function formatReportForConsole<T extends Transaction>({
   operation,
   confirmedTime,
   finalAccount,
+  finalDestination,
+  finalDestinationOperation,
+  testDestinationDuration,
   testDuration,
   error,
+  errorTime,
 }: MutationReport<T>): string {
   let str = "";
   str += `necessary accounts resynced in ${formatTime(
@@ -167,15 +171,30 @@ export function formatReportForConsole<T extends Transaction>({
   }
 
   if (finalAccount) {
-    str += `✔️ ${formatAccount(finalAccount, "basic")}\n`;
+    str += `✔️ ${formatAccount(finalAccount, "basic")}`;
   }
 
   if (testDuration) {
-    str += `(final state reached in ${formatTime(testDuration)})\n`;
+    str += `(in ${formatTime(testDuration)})\n`;
+  }
+
+  if (finalDestination && finalDestinationOperation) {
+    str += `✔️ destination operation ${formatOperation(finalDestination)(
+      finalDestinationOperation
+    )}\n`;
+  }
+
+  if (testDestinationDuration) {
+    str += `(in ${formatTime(testDestinationDuration)})\n`;
   }
 
   if (error) {
     str += `⚠️ ${formatError(error, true)}\n`;
+    if (mutationTime && errorTime) {
+      str += `(totally spent ${formatTime(
+        errorTime - mutationTime
+      )} – ends at ${new Date().toISOString()})`;
+    }
   }
 
   return str;

@@ -1,17 +1,6 @@
 import type { DeviceAction } from "../../bot/types";
 import type { Transaction } from "./types";
-import { formatCurrencyUnit } from "../../currencies";
-import { deviceActionFlow } from "../../bot/specs";
-import type { Unit } from "@ledgerhq/types-cryptoassets";
-import BigNumber from "bignumber.js";
-
-function expectedValue(unit: Unit, value: BigNumber) {
-  return formatCurrencyUnit(unit, value, {
-    showCode: true,
-    disableRounding: true,
-    showAllDigits: true,
-  });
-}
+import { deviceActionFlow, formatDeviceAmount } from "../../bot/specs";
 
 export const acceptTransaction: DeviceAction<Transaction, any> =
   deviceActionFlow({
@@ -38,7 +27,7 @@ export const acceptTransaction: DeviceAction<Transaction, any> =
         button: "LRlr",
         ignoreAssertionFailure: true,
         expectedValue: ({ account, status }) =>
-          expectedValue(account.unit, status.amount),
+          formatDeviceAmount(account.currency, status.amount),
       },
       {
         title: "Asset fingerprint",
@@ -60,7 +49,7 @@ export const acceptTransaction: DeviceAction<Transaction, any> =
         button: "LRlr",
         ignoreAssertionFailure: true,
         expectedValue: ({ account, status }) =>
-          expectedValue(account.unit, status.estimatedFees),
+          formatDeviceAmount(account.currency, status.estimatedFees),
       },
       {
         title: "Transaction TTL",

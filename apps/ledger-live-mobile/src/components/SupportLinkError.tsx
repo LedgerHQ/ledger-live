@@ -3,18 +3,24 @@ import { Linking } from "react-native";
 import { Trans } from "react-i18next";
 import { urls } from "../config/urls";
 import ExternalLink from "./ExternalLink";
+import { LearnMoreLink } from "./Alert";
 
 type Props = {
   error: Error | null | undefined;
+  type?: "alert";
 };
 
-const SupportLinkError = ({ error }: Props) => {
-  const maybeLink = error ? urls.errors[error.name] : null;
+const SupportLinkError = ({ error, type }: Props) => {
+  const maybeLink = error
+    ? urls.errors[error.name as keyof typeof urls.errors]
+    : null;
   const onOpen = useCallback(() => {
     maybeLink && Linking.openURL(maybeLink);
   }, [maybeLink]);
   if (!maybeLink) return null;
-  return (
+  return type === "alert" ? (
+    <LearnMoreLink color="alert" onPress={onOpen} />
+  ) : (
     <ExternalLink
       onPress={onOpen}
       event="ErrorLearnMore"

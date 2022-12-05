@@ -1,13 +1,12 @@
 import type { DeviceAction } from "../../bot/types";
 import type { Transaction } from "./types";
 import { formatCurrencyUnit } from "../../currencies";
-import { deviceActionFlow } from "../../bot/specs";
+import { deviceActionFlow, formatDeviceAmount } from "../../bot/specs";
 
 const expectedAmount = ({ account, status, transaction }) => {
   if (transaction.assetCode && transaction.assetIssuer) {
-    const amount = formatCurrencyUnit(account.unit, status.amount, {
-      disableRounding: true,
-      useGrouping: false,
+    const amount = formatDeviceAmount(account.currency, status.amount, {
+      hideCode: true,
     });
 
     return `${amount} ${transaction.assetCode}@${truncateAddress(
@@ -17,12 +16,9 @@ const expectedAmount = ({ account, status, transaction }) => {
     )}`;
   }
 
-  return (
-    formatCurrencyUnit(account.unit, status.amount, {
-      disableRounding: true,
-      useGrouping: false,
-    }) + " XLM"
-  );
+  return formatDeviceAmount(account.currency, status.amount, {
+    postfixCode: true,
+  });
 };
 
 const truncateAddress = (stellarAddress: string, start = 6, end = 6) =>

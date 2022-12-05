@@ -1,19 +1,21 @@
 import { Image, NativeModules, Platform } from "react-native";
 import RNFetchBlob from "rn-fetch-blob";
-import * as ImagePicker from "expo-image-picker";
-import { ImageDimensions, ImageFileUri, ImageUrl } from "./types";
+import * as ImagePicker from "react-native-image-picker";
 import {
   ImageDownloadError,
   ImageLoadFromGalleryError,
   ImageMetadataLoadingError,
   ImageTooLargeError,
-} from "./errors";
+} from "@ledgerhq/live-common/customImage/errors";
+import { NFTMediaSize, NFTMetadata } from "@ledgerhq/types-live";
+import { ImageDimensions, ImageFileUri, ImageUrl } from "./types";
+import { getMetadataMediaTypes } from "../../logic/nft";
 
 /**
  * Call this to prompt the user to pick an image from its phone.
  *
- * @returns (a promise) null if the user cancelled, otherwise an containing
- * the chosen image file URI as well as the image dimensions
+ * @returns (a promise) null if the user cancelled, otherwise an object
+ * containing the chosen image file URI as well as the image dimensions
  */
 export async function importImageFromPhoneGallery(): Promise<ImageFileUri | null> {
   try {
@@ -26,11 +28,22 @@ export async function importImageFromPhoneGallery(): Promise<ImageFileUri | null
     const pickImagePromise =
       Platform.OS === "android"
         ? NativeModules.ImagePickerModule.pickImage()
-        : ImagePicker.launchImageLibraryAsync({
-            mediaTypes: ImagePicker.MediaTypeOptions.Images,
-            allowsEditing: false,
+        : ImagePicker.launchImageLibrary({
+            mediaType: "photo",
             quality: 1,
-            base64: false,
+            includeBase64: false,
+          }).then(res => {
+            if (res.errorCode)
+              throw new Error(
+                `ImagePicker.launchImageLibrary Error (error code: ${res.errorCode}): ${res.errorMessage}`,
+              );
+            const assets = res?.assets || [];
+            if (assets.length === 0 && !res.didCancel)
+              throw new Error("Assets length is 0");
+            return {
+              cancelled: res.didCancel,
+              uri: assets[0]?.uri,
+            };
           });
     const { uri, cancelled } = await pickImagePromise;
     if (cancelled) return null;
@@ -44,6 +57,20 @@ export async function importImageFromPhoneGallery(): Promise<ImageFileUri | null
     console.error(e);
     throw new ImageLoadFromGalleryError();
   }
+}
+
+export function extractImageUrlFromNftMetadata(
+  nftMetadata?: NFTMetadata,
+): string | null {
+  const nftMediaTypes = nftMetadata ? getMetadataMediaTypes(nftMetadata) : null;
+  const nftMediaSize = nftMediaTypes
+    ? (["big", "preview"] as NFTMediaSize[]).find(
+        size => nftMediaTypes[size] === "image",
+      )
+    : null;
+  const nftImageUri = nftMediaSize && nftMetadata?.medias?.[nftMediaSize]?.uri;
+
+  return nftImageUri || null;
 }
 
 type CancellablePromise<T> = {
@@ -156,5 +183,12 @@ export function fitImageContain(
   return {
     width: (imageWidth / imageHeight) * boxHeight,
     height: boxHeight,
+  };
+}
+
+export function scaleDimensions(dimensions: ImageDimensions, scale: number) {
+  return {
+    width: dimensions.width * scale,
+    height: dimensions.height * scale,
   };
 }

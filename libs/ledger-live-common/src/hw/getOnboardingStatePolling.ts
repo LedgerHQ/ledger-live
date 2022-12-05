@@ -7,7 +7,14 @@ import {
   Observable,
   TimeoutError,
 } from "rxjs";
-import { map, catchError, repeat, first, timeout } from "rxjs/operators";
+import {
+  map,
+  catchError,
+  first,
+  timeout,
+  repeatWhen,
+  delay,
+} from "rxjs/operators";
 import getVersion from "./getVersion";
 import { withDevice } from "./deviceAccess";
 import {
@@ -50,100 +57,84 @@ export const getOnboardingStatePolling = ({
   pollingPeriodMs,
   fetchingTimeoutMs = pollingPeriodMs,
 }: GetOnboardingStatePollingArgs): GetOnboardingStatePollingResult => {
-  let firstRun = true;
+  const getOnboardingStateOnce =
+    (): Observable<OnboardingStatePollingResult> => {
+      const firmwareInfoOrAllowedErrorObservable = withDevice(deviceId)((t) =>
+        from(getVersion(t))
+      ).pipe(
+        timeout(fetchingTimeoutMs), // Throws a TimeoutError
+        first(),
+        catchError((error: any) => {
+          if (isAllowedOnboardingStatePollingError(error)) {
+            // Pushes the error to the next step to be processed (no retry from the beginning)
+            return of(error);
+          }
 
-  const delayedOnceOnboardingStateObservable: Observable<OnboardingStatePollingResult> =
-    new Observable((subscriber) => {
-      const delayMs = firstRun ? 0 : pollingPeriodMs;
-      firstRun = false;
+          return throwError(error);
+        })
+      );
 
-      const getOnboardingStateOnce = () => {
-        const firmwareInfoOrAllowedErrorObservable = withDevice(deviceId)((t) =>
-          from(getVersion(t))
-        ).pipe(
-          timeout(fetchingTimeoutMs), // Throws a TimeoutError
-          first(),
-          catchError((error: any) => {
-            if (isAllowedOnboardingStatePollingError(error)) {
-              // Pushes the error to the next step to be processed (no retry from the beginning)
-              return of(error);
+      // If an error is catched previously, and this error is "allowed",
+      // the value from the observable is not a FirmwareInfo but an Error
+      const [firmwareInfoObservable, allowedErrorObservable] = partition(
+        firmwareInfoOrAllowedErrorObservable,
+        // TS cannot infer correctly the value given to RxJS partition
+        (value) => Boolean(value?.flags)
+      );
+
+      const onboardingStateFromFirmwareInfoObservable =
+        firmwareInfoObservable.pipe(
+          map((firmwareInfo: FirmwareInfo) => {
+            let onboardingState: OnboardingState | null = null;
+
+            try {
+              onboardingState = extractOnboardingState(firmwareInfo.flags);
+            } catch (error: any) {
+              if (error instanceof DeviceExtractOnboardingStateError) {
+                return {
+                  onboardingState: null,
+                  allowedError: error,
+                };
+              } else {
+                return {
+                  onboardingState: null,
+                  allowedError: new DeviceOnboardingStatePollingError(
+                    `SyncOnboarding: Unknown error while extracting the onboarding state ${
+                      error?.name ?? error
+                    } ${error?.message}`
+                  ),
+                };
+              }
             }
-
-            return throwError(error);
+            return { onboardingState, allowedError: null };
           })
         );
 
-        // If an error is catched previously, and this error is "allowed",
-        // the value from the observable is not a FirmwareInfo but an Error
-        const [firmwareInfoObservable, allowedErrorObservable] = partition(
-          firmwareInfoOrAllowedErrorObservable,
-          // TS cannot infer correctly the value given to RxJS partition
-          (value: any) => Boolean(value?.flags)
+      // Handles the case of an (allowed) Error value
+      const onboardingStateFromAllowedErrorObservable =
+        allowedErrorObservable.pipe(
+          map((allowedError: Error) => {
+            return {
+              onboardingState: null,
+              allowedError: allowedError,
+            };
+          })
         );
 
-        const onboardingStateFromFirmwareInfoObservable =
-          firmwareInfoObservable.pipe(
-            map((firmwareInfo: FirmwareInfo) => {
-              let onboardingState: OnboardingState | null = null;
+      return merge(
+        onboardingStateFromFirmwareInfoObservable,
+        onboardingStateFromAllowedErrorObservable
+      );
+    };
 
-              try {
-                onboardingState = extractOnboardingState(firmwareInfo.flags);
-              } catch (error: any) {
-                if (error instanceof DeviceExtractOnboardingStateError) {
-                  return {
-                    onboardingState: null,
-                    allowedError: error,
-                  };
-                } else {
-                  return {
-                    onboardingState: null,
-                    allowedError: new DeviceOnboardingStatePollingError(
-                      `SyncOnboarding: Unknown error while extracting the onboarding state ${
-                        error?.name ?? error
-                      } ${error?.message}`
-                    ),
-                  };
-                }
-              }
-              return { onboardingState, allowedError: null };
-            })
-          );
-
-        // Handles the case of an (allowed) Error value
-        const onboardingStateFromAllowedErrorObservable =
-          allowedErrorObservable.pipe(
-            map((allowedError: Error) => {
-              return {
-                onboardingState: null,
-                allowedError: allowedError,
-              };
-            })
-          );
-
-        return merge(
-          onboardingStateFromFirmwareInfoObservable,
-          onboardingStateFromAllowedErrorObservable
-        );
-      };
-
-      // Delays the fetch of the onboarding state
-      setTimeout(() => {
-        getOnboardingStateOnce().subscribe({
-          next: (value: OnboardingStatePollingResult) => {
-            subscriber.next(value);
-          },
-          error: (error: any) => {
-            subscriber.error(error);
-          },
-          complete: () => subscriber.complete(),
-        });
-      }, delayMs);
-    });
-
-  return delayedOnceOnboardingStateObservable.pipe(repeat());
+  return getOnboardingStateOnce().pipe(
+    repeatWhen((completed) => completed.pipe(delay(pollingPeriodMs)))
+  );
 };
 
-export const isAllowedOnboardingStatePollingError = (error: Error): boolean => {
+export const isAllowedOnboardingStatePollingError = (
+  error: unknown
+): boolean => {
   if (
     error &&
     // Timeout error is thrown by rxjs's timeout

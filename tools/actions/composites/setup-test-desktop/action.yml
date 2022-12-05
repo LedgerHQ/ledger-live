@@ -27,8 +27,4 @@ runs:
     - uses: ruby/setup-ruby@v1
       if: ${{ !inputs.skip_ruby }}
       with:
-        ruby-version: 2.7
-        bundler-cache: true
-    - name: Bump npm to latest
-      run: npm i -g npm@8.12.2
-      shell: bash
+        ruby-version: 3.1.2

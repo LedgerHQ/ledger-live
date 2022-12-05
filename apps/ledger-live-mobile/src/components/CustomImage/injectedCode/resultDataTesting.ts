@@ -1,7 +1,8 @@
 declare global {
   interface Window {
-    ReactNativeWebView: any;
-    /* eslint-disable-next-line no-unused-vars */
+    ReactNativeWebView: {
+      postMessage(message: string): void;
+    };
     reconstructImage: (width: number, height: number, hexData: string) => void;
   }
 }
@@ -23,12 +24,17 @@ function codeToInject() {
 
   "show source";
 
-  const postDataToWebView = (data: any) => {
+  const postDataToWebView = (data: unknown) => {
     window.ReactNativeWebView.postMessage(JSON.stringify(data));
   };
 
   const logError = (error: Error) => {
     postDataToWebView({ type: "ERROR", payload: error.toString() });
+  };
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const log = (...args: unknown[]) => {
+    postDataToWebView({ type: "LOG", payload: JSON.stringify(args) });
   };
 
   /**
@@ -47,17 +53,30 @@ function codeToInject() {
 
       const numLevelsOfGray = 16;
       const rgbStep = 255 / (numLevelsOfGray - 1);
-      hexData.split("").forEach(char => {
+
+      const pixels256 = Array.from(Array(height), () => Array(width));
+
+      hexData.split("").forEach((char, index) => {
+        /** running from top right to bottom left, column after column */
+        const y = index % height;
+        const x = width - 1 - (index - y) / height;
         const numericVal16 = Number.parseInt(char, 16);
         const numericVal256 = numericVal16 * rgbStep;
-        imageData.push(numericVal256); // R
-        imageData.push(numericVal256); // G
-        imageData.push(numericVal256); // B
-        imageData.push(255);
+        pixels256[y][x] = numericVal256;
       });
 
+      for (let y = 0; y < height; y++) {
+        for (let x = 0; x < width; x++) {
+          const val = pixels256[y][x];
+          imageData.push(val); // R
+          imageData.push(val); // G
+          imageData.push(val); // B
+          imageData.push(255);
+        }
+      }
+
       context.putImageData(
-        new ImageData(Uint8ClampedArray.from(imageData), width, height), // eslint-disable-line no-undef
+        new ImageData(Uint8ClampedArray.from(imageData), width, height),
         0,
         0,
       );

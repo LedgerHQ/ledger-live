@@ -11,7 +11,7 @@ import TrackScreen from "../../analytics/TrackScreen";
 type Props = {
   isOpened: boolean;
   onClose: () => void;
-  onPress: (..._: Array<any>) => any;
+  onPress: () => void;
 };
 
 function ConfirmationModal({ isOpened, onClose, onPress, ...rest }: Props) {
@@ -19,7 +19,6 @@ function ConfirmationModal({ isOpened, onClose, onPress, ...rest }: Props) {
   return (
     <BottomModal
       {...rest}
-      id="ConfirmationModal"
       isOpened={isOpened}
       onClose={onClose}
       style={styles.confirmationModal}

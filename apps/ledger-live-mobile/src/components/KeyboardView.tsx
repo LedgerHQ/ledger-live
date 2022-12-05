@@ -4,6 +4,7 @@ import {
   Platform,
   NativeModules,
   StatusBar,
+  KeyboardAvoidingViewProps,
 } from "react-native";
 import { HeaderHeightContext } from "@react-navigation/elements";
 import { HEIGHT as ExperimentalHeaderHeight } from "../screens/Settings/Experimental/ExperimentalHeader";
@@ -11,9 +12,9 @@ import { useExperimental } from "../experimental";
 
 const { DeviceInfo } = NativeModules;
 type Props = {
-  style?: any;
+  style?: KeyboardAvoidingViewProps["style"];
   children: React.ReactNode;
-  behavior?: string;
+  behavior?: KeyboardAvoidingViewProps["behavior"];
 };
 const KeyboardView = React.memo<Props>(
   ({
@@ -22,10 +23,10 @@ const KeyboardView = React.memo<Props>(
     },
     children,
     behavior,
-  }: any) => {
+  }: Props) => {
     const isExperimental = useExperimental();
     const headerHeight = React.useContext(HeaderHeightContext) || 0;
-    let behaviorParam;
+    let behaviorParam: KeyboardAvoidingViewProps["behavior"] | undefined;
     let keyboardVerticalOffset = isExperimental ? ExperimentalHeaderHeight : 0;
 
     if (Platform.OS === "ios") {
@@ -37,7 +38,7 @@ const KeyboardView = React.memo<Props>(
       <KeyboardAvoidingView
         style={style}
         keyboardVerticalOffset={
-          headerHeight + StatusBar.currentHeight + keyboardVerticalOffset
+          headerHeight + (StatusBar.currentHeight || 0) + keyboardVerticalOffset
         }
         behavior={behaviorParam}
         enabled

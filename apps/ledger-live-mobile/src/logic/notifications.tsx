@@ -1,13 +1,10 @@
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useMemo } from "react";
 import { Linking, Platform } from "react-native";
 import { useSelector, useDispatch } from "react-redux";
-import { useToasts } from "@ledgerhq/live-common/lib/notifications/ToastProvider";
-import { useNavigation } from "@react-navigation/native";
 import { add, isBefore, parseISO } from "date-fns";
-import type { Account } from "@ledgerhq/live-common/lib/types";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import messaging from "@react-native-firebase/messaging";
-import useFeature from "@ledgerhq/live-common/lib/featureFlags/useFeature";
+import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import { accountsSelector } from "../reducers/accounts";
 import {
   notificationsModalOpenSelector,
@@ -24,20 +21,21 @@ import {
   setNotificationsEventTriggered,
   setNotificationsDataOfUser,
 } from "../actions/notifications";
-import { notificationsSelector } from "../reducers/settings";
-import { ScreenName, NavigatorName } from "../const";
 import { setRatingsModalLocked } from "../actions/ratings";
 import { track } from "../analytics";
+import { notificationsSelector } from "../reducers/settings";
+import { setNotifications } from "../actions/settings";
 
 export type EventTrigger = {
+  timeout: NodeJS.Timeout;
   /** Name of the route that will trigger the push notification modal */
-  // camelcase perhps it should
-  // eslint-disable-next-line
+  // camelcase perhaps it should
+  // eslint-disable-next-line camelcase
   route_name: string;
   /** In milliseconds, delay before triggering the push notification modal */
   timer: number;
   /** Whether the push notification modal is triggered when entering or when leaving the screen */
-  type: "on_enter" | "on_leave";
+  type?: "on_enter" | "on_leave";
 };
 
 export type DataOfUser = {
@@ -56,29 +54,16 @@ export type DataOfUser = {
 const pushNotificationsDataOfUserAsyncStorageKey =
   "pushNotificationsDataOfUser";
 
-const getCurrentRouteName = (
-  state: NavigationState | Required<NavigationState["routes"][0]>["state"],
-): Routes | undefined => {
-  if (state.index === undefined || state.index < 0) {
-    return undefined;
-  }
-
-  const nestedState = state.routes[state.index].state;
-  if (nestedState !== undefined) {
-    return getCurrentRouteName(nestedState);
-  }
-  return state.routes[state.index].name;
-};
-
 async function getPushNotificationsDataOfUserFromStorage() {
   const dataOfUser = await AsyncStorage.getItem(
     pushNotificationsDataOfUserAsyncStorageKey,
   );
+  if (!dataOfUser) return null;
 
   return JSON.parse(dataOfUser);
 }
 
-async function setPushNotificationsDataOfUserInStorage(dataOfUser) {
+async function setPushNotificationsDataOfUserInStorage(dataOfUser: DataOfUser) {
   await AsyncStorage.setItem(
     pushNotificationsDataOfUserAsyncStorageKey,
     JSON.stringify(dataOfUser),
@@ -88,18 +73,13 @@ async function setPushNotificationsDataOfUserInStorage(dataOfUser) {
 const getIsNotifEnabled = async () => {
   const authStatus = await messaging().hasPermission();
 
-  return (
-    authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
-    authStatus === messaging.AuthorizationStatus.PROVISIONAL
-  );
+  return authStatus === messaging.AuthorizationStatus.AUTHORIZED;
 };
 
 const useNotifications = () => {
-  const pushNotificationsFeature = useFeature("pushNotifications");
-  const { pushToast } = useToasts();
-  const notificationsSettings = useSelector(notificationsSelector);
+  const pushNotificationsFeature = useFeature("brazePushNotifications");
+  const notifications = useSelector(notificationsSelector);
 
-  const [notificationsToken, setNotificationsToken] = useState();
   const isPushNotificationsModalOpen = useSelector(
     notificationsModalOpenSelector,
   );
@@ -118,7 +98,7 @@ const useNotifications = () => {
   const pushNotificationsDataOfUser = useSelector(
     notificationsDataOfUserSelector,
   );
-  const accounts: Account[] = useSelector(accountsSelector);
+  const accounts = useSelector(accountsSelector);
 
   const accountsWithAmountCount = useMemo(
     () => accounts.filter(account => account.balance?.gt(0)).length,
@@ -126,41 +106,8 @@ const useNotifications = () => {
   );
 
   const dispatch = useDispatch();
-  const navigation = useNavigation();
-
-  const listenForNotifications = useCallback(async () => {
-    if (!notificationsToken) {
-      const fcm = messaging();
-      const token = await fcm.getToken();
-      setNotificationsToken(token);
-      fcm.onMessage(async remoteMessage => {
-        if (remoteMessage && remoteMessage.notification) {
-          pushToast({
-            id: remoteMessage.messageId,
-            title: remoteMessage.notification.title,
-            text: remoteMessage.notification.body,
-            icon: "info",
-          });
-        }
-      });
-      // Needed to avoid a warning
-      // eslint-disable-next-line @typescript-eslint/no-empty-function
-      fcm.setBackgroundMessageHandler(async _ => {});
-    }
-  }, [notificationsToken, pushToast]);
-
-  const clearNotificationsListeners = useCallback(() => {
-    if (notificationsToken) {
-      messaging().deleteToken(notificationsToken);
-      setNotificationsToken(undefined);
-    }
-  }, [notificationsToken]);
 
   const handlePushNotificationsPermission = useCallback(async () => {
-    track("button_clicked", {
-      button: "Go to system settings",
-      screen: pushNotificationsOldRoute,
-    });
     if (Platform.OS === "android") {
       Linking.openSettings();
     } else {
@@ -169,11 +116,14 @@ const useNotifications = () => {
 
       if (permission === messaging.AuthorizationStatus.DENIED) {
         Linking.openSettings();
-      } else if (permission === messaging.AuthorizationStatus.NOT_DETERMINED) {
+      } else if (
+        permission === messaging.AuthorizationStatus.NOT_DETERMINED ||
+        permission === messaging.AuthorizationStatus.PROVISIONAL
+      ) {
         fcm.requestPermission();
       }
     }
-  }, [pushNotificationsOldRoute]);
+  }, []);
 
   const setPushNotificationsModalOpenCallback = useCallback(
     isModalOpen => {
@@ -183,14 +133,14 @@ const useNotifications = () => {
         dispatch(setRatingsModalLocked(false));
       } else if (!isPushNotificationsModalLocked) {
         getIsNotifEnabled().then(isNotifEnabled => {
-          if (!isNotifEnabled || !notificationsSettings.allowed) {
+          if (!isNotifEnabled) {
             dispatch(setNotificationsModalOpen(isModalOpen));
             dispatch(setRatingsModalLocked(true));
           }
         });
       }
     },
-    [dispatch, notificationsSettings.allowed, isPushNotificationsModalLocked],
+    [dispatch, isPushNotificationsModalLocked],
   );
 
   const areConditionsMet = useCallback(() => {
@@ -226,6 +176,7 @@ const useNotifications = () => {
     const minimumAppStartsNumber: number =
       pushNotificationsFeature?.params?.conditions?.minimum_app_starts_number;
     if (
+      pushNotificationsDataOfUser.numberOfAppStarts &&
       pushNotificationsDataOfUser.numberOfAppStarts < minimumAppStartsNumber
     ) {
       return false;
@@ -235,13 +186,15 @@ const useNotifications = () => {
     const minimumDurationSinceAppFirstStart: Duration =
       pushNotificationsFeature?.params?.conditions
         ?.minimum_duration_since_app_first_start;
-    const dateAllowedAfterAppFirstStart = add(
-      pushNotificationsDataOfUser?.appFirstStartDate,
-      minimumDurationSinceAppFirstStart,
-    );
     if (
-      pushNotificationsDataOfUser?.appFirstStartDate &&
-      isBefore(Date.now(), dateAllowedAfterAppFirstStart)
+      pushNotificationsDataOfUser.appFirstStartDate &&
+      isBefore(
+        Date.now(),
+        add(
+          pushNotificationsDataOfUser.appFirstStartDate,
+          minimumDurationSinceAppFirstStart,
+        ),
+      )
     ) {
       return false;
     }
@@ -266,14 +219,14 @@ const useNotifications = () => {
     [pushNotificationsOldRoute],
   );
 
-  const onRouteChange = useCallback(
-    newRoute => {
+  const onPushNotificationsRouteChange = useCallback(
+    (newRoute, isOtherModalOpened = false) => {
       if (pushNotificationsEventTriggered?.timeout) {
         clearTimeout(pushNotificationsEventTriggered?.timeout);
         dispatch(setRatingsModalLocked(false));
       }
 
-      if (isPushNotificationsModalLocked || !areConditionsMet()) return;
+      if (isOtherModalOpened || !areConditionsMet()) return false;
 
       for (const eventTrigger of pushNotificationsFeature?.params
         ?.trigger_events) {
@@ -288,9 +241,12 @@ const useNotifications = () => {
               timeout,
             }),
           );
+          dispatch(setNotificationsCurrentRouteName(newRoute));
+          return true;
         }
       }
       dispatch(setNotificationsCurrentRouteName(newRoute));
+      return false;
     },
     [
       areConditionsMet,
@@ -299,31 +255,27 @@ const useNotifications = () => {
       pushNotificationsFeature?.params?.trigger_events,
       isEventTriggered,
       setPushNotificationsModalOpenCallback,
-      isPushNotificationsModalLocked,
     ],
   );
 
   const updatePushNotificationsDataOfUserInStateAndStore = useCallback(
-    dataOfUserUpdated => {
+    (dataOfUserUpdated: DataOfUser) => {
       dispatch(setNotificationsDataOfUser(dataOfUserUpdated));
       setPushNotificationsDataOfUserInStorage(dataOfUserUpdated);
     },
     [dispatch],
   );
 
-  const initPushNotifications = useCallback(() => {
-    if (!pushNotificationsFeature?.enabled) return;
-
-    navigation.addListener("state", e => {
-      const navState = e?.data?.state;
-      if (navState && navState.routeNames) {
-        const currentRouteName = getCurrentRouteName(navState);
-        onRouteChange(currentRouteName);
-      }
-    });
-  }, [navigation, pushNotificationsFeature?.enabled, onRouteChange]);
-
   const initPushNotificationsData = useCallback(() => {
+    if (notifications && notifications.areNotificationsAllowed === undefined) {
+      dispatch(
+        setNotifications({
+          areNotificationsAllowed: true,
+          announcementsCategory: true,
+          recommendationsCategory: true,
+        }),
+      );
+    }
     getPushNotificationsDataOfUserFromStorage().then(dataOfUser => {
       updatePushNotificationsDataOfUserInStateAndStore({
         ...dataOfUser,
@@ -331,11 +283,11 @@ const useNotifications = () => {
         numberOfAppStarts: (dataOfUser?.numberOfAppStarts ?? 0) + 1,
       });
     });
-  }, []);
-
-  const cleanPushNotifications = useCallback(() => {
-    navigation.removeListener("state");
-  }, [navigation]);
+  }, [
+    dispatch,
+    notifications,
+    updatePushNotificationsDataOfUserInStateAndStore,
+  ]);
 
   const triggerMarketPushNotificationModal = useCallback(() => {
     if (
@@ -395,7 +347,7 @@ const useNotifications = () => {
     ]);
 
   const handleSetDateOfNextAllowedRequest = useCallback(
-    (delay, additionalParams) => {
+    (delay, additionalParams?: Partial<DataOfUser>) => {
       if (delay !== null && delay !== undefined) {
         const dateOfNextAllowedRequest: Date = add(Date.now(), delay);
         updatePushNotificationsDataOfUserInStateAndStore({
@@ -418,9 +370,7 @@ const useNotifications = () => {
       drawer: "Notif",
     });
     setPushNotificationsModalOpenCallback(false);
-    navigation.navigate(NavigatorName.Settings, {
-      screen: ScreenName.NotificationsSettings,
-    });
+    handlePushNotificationsPermission();
     if (
       pushNotificationsFeature?.params?.conditions
         ?.default_delay_between_two_prompts
@@ -432,11 +382,11 @@ const useNotifications = () => {
     }
   }, [
     pushNotificationsOldRoute,
-    handleSetDateOfNextAllowedRequest,
-    navigation,
+    setPushNotificationsModalOpenCallback,
+    handlePushNotificationsPermission,
     pushNotificationsFeature?.params?.conditions
       ?.default_delay_between_two_prompts,
-    setPushNotificationsModalOpenCallback,
+    handleSetDateOfNextAllowedRequest,
   ]);
 
   const modalDelayLater = useCallback(() => {
@@ -473,9 +423,8 @@ const useNotifications = () => {
   ]);
 
   return {
-    initPushNotifications,
     initPushNotificationsData,
-    cleanPushNotifications,
+    onPushNotificationsRouteChange,
     pushNotificationsOldRoute,
     pushNotificationsModalType,
     isPushNotificationsModalOpen,
@@ -483,8 +432,6 @@ const useNotifications = () => {
     handlePushNotificationsPermission,
     triggerMarketPushNotificationModal,
     triggerJustFinishedOnboardingNewDevicePushNotificationModal,
-    listenForNotifications,
-    clearNotificationsListeners,
     modalAllowNotifications,
     modalDelayLater,
   };

@@ -11,7 +11,7 @@ To be ready to be merged, we must comply with all theses checks:
 - [ ] reviewed by QA
 - [ ] hotix is reviewed by the Delivery Team
 
-### /!\ If this hotfix targets Ledger Live Desktop
+### :warning: If this hotfix targets Ledger Live Desktop
  
 - [ ] RELEASE_NOTES.md has been updated
 

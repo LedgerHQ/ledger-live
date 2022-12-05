@@ -53,6 +53,48 @@ const fundProviders: Record<
     ),
     curve: "secp256r1",
   },
+  youhodler: {
+    /**
+     * nameAndPubkey is the concatenation of:
+     * - an empty buffer of the size of the partner name
+     * - a buffer created from the partner name string in ascii encoding
+     * - a buffer created from the hexadecimal version of the partner public key
+     */
+    nameAndPubkey: Buffer.concat([
+      Buffer.from([9]),
+      Buffer.from("Youhodler", "ascii"),
+      Buffer.from(
+        "0471e9a38549562e7e49c2dc079f1350c75b42b5de23104572dbf0d7d2753d1581a246a8bd6e72257f450c023972ad2190c70b468e133648a47e87cce08d17047d",
+        "hex"
+      ),
+    ]),
+    signature: Buffer.from(
+      "304402207e18ad4540f47a86f7f4d40db3b9ca21a42026b37e404ef528a0e150ce88098e02206c05b27b66bef58e9a056152ef280077a8d7583260cb94c574a3074b2681ff6a",
+      "hex"
+    ),
+    curve: "secp256r1",
+  },
+  uquid: {
+    /**
+     * nameAndPubkey is the concatenation of:
+     * - an empty buffer of the size of the partner name
+     * - a buffer created from the partner name string in ascii encoding
+     * - a buffer created from the hexadecimal version of the partner public key
+     */
+    nameAndPubkey: Buffer.concat([
+      Buffer.from([5]),
+      Buffer.from("Uquid", "ascii"),
+      Buffer.from(
+        "02f96aa3d99d5ec6ce060808fd99c958c17f23e6cb9c1cf81d6419e11677410d04",
+        "hex"
+      ),
+    ]),
+    signature: Buffer.from(
+      "3045022100c24ad1df500551b901ebeaeb133cdfd23fcc498ca08637bc9793ecc6485aa79902207152856487f6ed74faabded16fcae07eaf47d84a155db8aaec3fd066e27cbf38",
+      "hex"
+    ),
+    curve: "secp256r1",
+  },
 };
 
 const getProvider = (

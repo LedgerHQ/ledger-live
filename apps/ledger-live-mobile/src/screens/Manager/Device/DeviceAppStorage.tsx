@@ -49,6 +49,8 @@ const DeviceAppStorage = ({
     [apps, appsSpaceBytes],
   );
 
+  const isDeviceFull = !freeSpaceBytes;
+
   return (
     /* Fixme: Storage info line might be too tight with some translation, consider putting it on multiple lines */
     <Box mx={6}>
@@ -106,32 +108,38 @@ const DeviceAppStorage = ({
             </Trans>
           </Text>
         </Flex>
+
         <Flex flexDirection={"row"} alignItems={"center"}>
           {shouldWarnMemory && (
             <Box mr={2}>
               <WarningMedium color={"palette.warning.c60"} size={14} />
             </Box>
           )}
-          <Text
-            variant={"small"}
-            fontWeight={"medium"}
-            color={"palette.neutral.c80"}
-          >
-            <ByteSize
-              value={freeSpaceBytes}
-              deviceModel={deviceModel}
-              firmwareVersion={deviceInfo.version}
-            />{" "}
-            <Trans i18nKey="manager.storage.storageAvailable" />
-          </Text>
+          {isDeviceFull ? (
+            <Text
+              variant={"small"}
+              fontWeight={"medium"}
+              color={"palette.warning.c60"}
+            >
+              <Trans i18nKey="manager.storage.noFreeSpace" />
+            </Text>
+          ) : (
+            <Text
+              variant={"small"}
+              fontWeight={"medium"}
+              color={"palette.neutral.c80"}
+            >
+              <ByteSize
+                value={freeSpaceBytes}
+                deviceModel={deviceModel}
+                firmwareVersion={deviceInfo.version}
+              />{" "}
+              <Trans i18nKey="manager.storage.storageAvailable" />
+            </Text>
+          )}
         </Flex>
       </Flex>
-      <StorageRepartition
-        activeOpacity={1}
-        bg="neutral.c40"
-        style={{ flex: 1 }}
-        event="ManagerAppDeviceGraphClick"
-      >
+      <StorageRepartition bg="neutral.c40" style={{ flex: 1 }}>
         {appSizes.map(({ ratio, color, name }, i) => (
           <Box
             key={`${i}${name}`}

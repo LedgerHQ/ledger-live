@@ -9,7 +9,7 @@ import Button from "~/renderer/components/Button";
 import Alert from "~/renderer/components/Alert";
 import Text from "~/renderer/components/Text";
 import { WaveContainer } from "~/renderer/components/Onboarding/Screens/Tutorial/shared";
-import { AnimatedWave } from "~/renderer/components/Onboarding/Screens/Tutorial/assets/AnimatedWave";
+import { AnimatedWave } from "~/renderer/components/AnimatedWave";
 // $FlowFixMe
 import { disconnect } from "./Provider";
 // $FlowFixMe

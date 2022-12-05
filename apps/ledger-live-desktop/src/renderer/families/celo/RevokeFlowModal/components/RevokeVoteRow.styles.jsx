@@ -1,7 +1,7 @@
 // @flow
 
 import styled from "styled-components";
-import ValidatorRow, { IconContainer } from "~/renderer/components/Delegation/ValidatorRow";
+import ValidatorRow from "~/renderer/components/Delegation/ValidatorRow";
 import Text from "~/renderer/components/Text";
 import Check from "~/renderer/icons/Check";
 import type { ThemedComponent } from "~/renderer/styles/StyleProvider";

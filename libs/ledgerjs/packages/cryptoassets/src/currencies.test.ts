@@ -19,6 +19,7 @@ import {
   findCryptoCurrencyByTicker,
   findCryptoCurrencyByKeyword,
   registerCryptoCurrency,
+  cryptocurrenciesById,
 } from "./currencies";
 
 test("can get currency by coin type", () => {
@@ -37,23 +38,68 @@ test("can get currency by coin type", () => {
   expect(() => getCryptoCurrencyById("_")).toThrow();
 });
 
-test("can find currency", () => {
+// Unique list in case of dup in the currency list
+const currencies = Array.from(new Set(Object.values(cryptocurrenciesById)));
+const duplicatedTickers: Set<string> = new Set();
+currencies.reduce((acc, curr) => {
+  if (acc.includes(curr.ticker)) {
+    duplicatedTickers.add(curr.ticker);
+  }
+  acc.push(curr.ticker);
+  return acc;
+}, [] as string[]);
+
+currencies.forEach((c) => {
+  test(`should find ${c.name} by id`, () => {
+    expect(findCryptoCurrencyById(c.id)).toEqual(c);
+  });
+
+  test(`should find ${c.name} by ticker`, () => {
+    try {
+      expect(findCryptoCurrencyByTicker(c.ticker)).toEqual(c);
+    } catch (e) {
+      // Should throw only if the ticker is not duplicated or if it's not a testnet (see conditions in `cryptocurrenciesByTicker`)
+      if (!duplicatedTickers.has(c.ticker) && !c.isTestnetFor) {
+        throw e;
+      }
+    }
+  });
+
+  test(`should find ${c.name} by scheme`, () => {
+    expect(findCryptoCurrencyByScheme(c.scheme)).toEqual(c);
+  });
+
+  c.keywords?.forEach((k) => {
+    test(`should find ${c.name} with keyword ${k}`, () => {
+      expect(findCryptoCurrencyByKeyword(k)).toEqual(c);
+    });
+  });
+});
+
+test("[LEGACY TEST] can find currency", () => {
   const bitcoinMatch = {
     id: "bitcoin",
     name: "Bitcoin",
   };
+  const ethereumMatch = {
+    id: "ethereum",
+    name: "Ethereum",
+  };
+
   expect(findCryptoCurrency((c) => c.name === "Bitcoin")).toMatchObject(
     bitcoinMatch
   );
   expect(findCryptoCurrencyById("bitcoin")).toMatchObject(bitcoinMatch);
   expect(findCryptoCurrencyByKeyword("btc")).toMatchObject(bitcoinMatch);
-  expect(findCryptoCurrencyByKeyword("btc")).toMatchObject(bitcoinMatch);
-  expect(findCryptoCurrencyByKeyword("btc")).toMatchObject(bitcoinMatch);
   expect(findCryptoCurrencyByTicker("BTC")).toMatchObject(bitcoinMatch);
   expect(findCryptoCurrencyByScheme("bitcoin")).toMatchObject(bitcoinMatch);
+
+  expect(findCryptoCurrencyById("ethereum")).toMatchObject(ethereumMatch);
+  expect(findCryptoCurrencyByKeyword("eth")).toMatchObject(ethereumMatch);
+  expect(findCryptoCurrencyByTicker("ETH")).toMatchObject(ethereumMatch);
+  expect(findCryptoCurrencyByScheme("ethereum")).toMatchObject(ethereumMatch);
+
   expect(findCryptoCurrencyById("_")).toBe(undefined);
-  expect(findCryptoCurrencyByKeyword("_")).toBe(undefined);
-  expect(findCryptoCurrencyByKeyword("_")).toBe(undefined);
   expect(findCryptoCurrencyByKeyword("_")).toBe(undefined);
   expect(findCryptoCurrencyByTicker("_")).toBe(undefined);
   expect(findCryptoCurrencyByScheme("_")).toBe(undefined);

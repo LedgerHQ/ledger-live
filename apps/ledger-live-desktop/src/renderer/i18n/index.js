@@ -12,7 +12,7 @@ import ko from "../../../static/i18n/ko/app.json";
 import nl from "../../../static/i18n/nl/app.json";
 import no from "../../../static/i18n/no/app.json";
 import pl from "../../../static/i18n/pl/app.json";
-import pt from "../../../static/i18n/pt/app.json";
+import pt from "../../../static/i18n/pt-BR/app.json";
 import ru from "../../../static/i18n/ru/app.json";
 import sr from "../../../static/i18n/sr/app.json";
 import sv from "../../../static/i18n/sv/app.json";

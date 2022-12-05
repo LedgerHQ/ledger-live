@@ -1,8 +1,6 @@
 // from https://github.com/LedgerHQ/xpub-scan/blob/master/src/actions/deriveAddresses.ts
 
 import * as bjs from "bitcoinjs-lib";
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
 import { toOutputScript } from "bitcoinjs-lib/src/address";
 import bs58check from "bs58check";
 import { DerivationModes } from "../types";
@@ -27,12 +25,10 @@ export function fallbackValidateAddress(address: string): boolean {
 }
 
 class Base implements ICrypto {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   network: any;
   protected static bip32Cache = {}; // xpub + account + index to publicKey
   public static addressCache = {}; // derivationMode + xpub + account + index to address
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   constructor({ network }: { network: any }) {
     this.network = network;
     this.network.dustThreshold = 3000;
@@ -181,22 +177,6 @@ class Base implements ICrypto {
     }
   }
 
-  // infer address type from its syntax
-  getDerivationMode(address: string): DerivationModes {
-    if (address.match("^(bc1|tb1).*")) {
-      return DerivationModes.NATIVE_SEGWIT;
-    }
-    if (address.match("^(3|2|M).*")) {
-      return DerivationModes.SEGWIT;
-    }
-    if (address.match("^(1|n|m|L).*")) {
-      return DerivationModes.LEGACY;
-    }
-    throw new Error(
-      "INVALID ADDRESS: ".concat(address).concat(" is not a valid address")
-    );
-  }
-
   toOutputScript(address: string): Buffer {
     return toOutputScript(address, this.network);
   }
@@ -211,8 +191,7 @@ class Base implements ICrypto {
     );
   }
 
-  // eslint-disable-next-line
-  isTaprootAddress(address: string): boolean {
+  isTaprootAddress(_address: string): boolean {
     return false;
   }
 }

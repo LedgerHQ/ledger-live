@@ -1,7 +1,6 @@
 import type { DeviceAction } from "../../bot/types";
 import type { PolkadotAccount, Transaction } from "./types";
-import { deviceActionFlow } from "../../bot/specs";
-import { formatCurrencyUnit } from "../../currencies";
+import { deviceActionFlow, formatDeviceAmount } from "../../bot/specs";
 
 export const acceptTransaction: DeviceAction<Transaction, any> =
   deviceActionFlow({
@@ -22,20 +21,10 @@ export const acceptTransaction: DeviceAction<Transaction, any> =
       {
         title: "Amount",
         button: "Rr",
-        expectedValue: ({ account, transaction }) => {
-          const formattedValue =
-            "DOT " +
-            formatCurrencyUnit(account.unit, transaction.amount, {
-              disableRounding: true,
-            });
-
-          if (!formattedValue.includes(".")) {
-            // if the value is pure integer, in the app it will automatically add an .0
-            return formattedValue + ".0";
-          }
-
-          return formattedValue;
-        },
+        expectedValue: ({ account, transaction }) =>
+          formatDeviceAmount(account.currency, transaction.amount, {
+            forceFloating: true,
+          }),
       },
       {
         title: "Chain",

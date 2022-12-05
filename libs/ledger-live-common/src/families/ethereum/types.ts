@@ -11,30 +11,30 @@ import type {
 } from "@ledgerhq/types-live";
 import type { MessageData } from "../../hw/signMessage/types";
 
-export type EthereumGasLimitRequest = {
-  from?: string;
-  to?: string;
-  value?: string;
-  data?: string;
-  gas?: string;
-  gasPrice?: string;
-  amplifier: string;
-};
 export type NetworkInfo = {
   family: "ethereum";
-  gasPrice: Range;
+  gasPrice?: Range;
+  nextBaseFeePerGas?: BigNumber;
+  maxPriorityFeePerGas?: Range;
 };
+
 export type NetworkInfoRaw = {
   family: "ethereum";
-  gasPrice: RangeRaw;
+  gasPrice?: RangeRaw;
+  nextBaseFeePerGas?: string;
+  maxPriorityFeePerGas?: RangeRaw;
 };
+
 export type { TransactionMode, ModeModule };
+
 export type Transaction = TransactionCommon & {
   family: "ethereum";
   mode: TransactionMode;
   nonce?: number;
   data?: Buffer;
-  gasPrice: BigNumber | null | undefined;
+  gasPrice?: BigNumber | null | undefined;
+  maxFeePerGas?: BigNumber | null | undefined;
+  maxPriorityFeePerGas?: BigNumber | null | undefined;
   userGasLimit: BigNumber | null | undefined;
   estimatedGasLimit: BigNumber | null | undefined;
   feeCustomUnit: Unit | null | undefined;
@@ -43,14 +43,17 @@ export type Transaction = TransactionCommon & {
   collection?: string;
   collectionName?: string;
   tokenIds?: string[];
-  quantities?: BigNumber[];
+  quantities?: Array<BigNumber | null>;
 };
+
 export type TransactionRaw = TransactionCommonRaw & {
   family: "ethereum";
   mode: TransactionMode;
   nonce?: number;
   data?: string;
-  gasPrice: string | null | undefined;
+  gasPrice?: string | null | undefined;
+  maxFeePerGas?: string | null | undefined;
+  maxPriorityFeePerGas?: string | null | undefined;
   userGasLimit: string | null | undefined;
   estimatedGasLimit: string | null | undefined;
   feeCustomUnit: Unit | null | undefined;
@@ -61,6 +64,7 @@ export type TransactionRaw = TransactionCommonRaw & {
   collectionName?: string;
   quantities?: string[];
 };
+
 export type TypedMessageData = Omit<MessageData, "message"> & {
   message: EIP712Message;
   hashes: {

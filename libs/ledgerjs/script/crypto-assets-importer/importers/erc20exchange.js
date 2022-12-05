@@ -6,11 +6,18 @@ const idFromFolderAndFile = (folder, id) =>
 
 module.exports = {
   paths: ["tokens/ethereum/erc20"],
-  output: "data/exchange/erc20.js",
-  outputTemplate: (data) =>
-    "module.exports = [" +
-    data.map((item) => JSON.stringify(item)).join(",\n\t") +
-    "];\n",
+  output: (toJSON) => `data/exchange/erc20.${toJSON ? "json" : "ts"}`,
+  outputTemplate: (data, toJSON) =>
+    toJSON
+      ? JSON.stringify(data)
+      : `export type ERC20Exchange = [string, string, string];
+
+const exchanges: ERC20Exchange[] = [
+  ${data.map((item) => JSON.stringify(item)).join(",\n\t")}
+];
+
+export default exchanges;
+`,
 
   loader: ({ signatureFolder, folder, id }) =>
     Promise.all([

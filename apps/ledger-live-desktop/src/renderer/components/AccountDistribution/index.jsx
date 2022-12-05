@@ -2,6 +2,7 @@
 import React, { useLayoutEffect, useRef, useState, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { BigNumber } from "bignumber.js";
+import { getEnv } from "@ledgerhq/live-common/env";
 import Text from "~/renderer/components/Text";
 import Card from "~/renderer/components/Box/Card";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
@@ -34,7 +35,7 @@ export default function AccountDistribution({ accounts }: Props) {
   );
 
   const cardRef = useRef(null);
-  const [isVisible, setVisible] = useState(!!process.env.PLAYWRIGHT_RUN || false);
+  const [isVisible, setVisible] = useState(getEnv("PLAYWRIGHT_RUN")); // default to false
 
   useLayoutEffect(() => {
     const scrollArea = document.getElementById("scroll-area");

@@ -29,6 +29,28 @@ const boolParser = (v: unknown): boolean | null | undefined => {
 const stringParser = (v: unknown): string | null | undefined =>
   typeof v === "string" ? v : undefined;
 
+type JSONValue =
+  | string
+  | number
+  | boolean
+  | null
+  | { [x: string]: JSONValue }
+  | Array<JSONValue>;
+
+const jsonParser = (v: unknown): JSONValue | undefined => {
+  try {
+    if (typeof v !== "string") throw new Error();
+    return JSON.parse(v);
+  } catch (e) {
+    return undefined;
+  }
+};
+
+const stringArrayParser = (v: any): string[] | null | undefined => {
+  const v_array = typeof v === "string" ? v.split(",") : null;
+  if (Array.isArray(v_array) && v_array.length > 0) return v_array;
+};
+
 const envDefinitions = {
   ANALYTICS_CONSOLE: {
     def: false,
@@ -171,9 +193,14 @@ const envDefinitions = {
     desc: "Ledger script runner API",
   },
   BOT_TIMEOUT_SCAN_ACCOUNTS: {
-    def: 30 * 60 * 1000,
+    def: 10 * 60 * 1000,
     parser: intParser,
     desc: "bot's default timeout for scanAccounts",
+  },
+  BOT_SPEC_DEFAULT_TIMEOUT: {
+    def: 30 * 60 * 1000,
+    parser: intParser,
+    desc: "define the default value of spec.skipMutationsTimeout (if not overriden by spec)",
   },
   CARDANO_API_ENDPOINT: {
     def: "https://cardano.coin.ledger.com/api",
@@ -260,6 +287,21 @@ const envDefinitions = {
     parser: boolParser,
     desc: "disable a problematic mechanism of our API",
   },
+  EIP1559_ENABLED_CURRENCIES: {
+    def: "ethereum,ethereum_goerli,polygon",
+    parser: stringArrayParser,
+    desc: "set the currency ids where EIP1559 is enabled",
+  },
+  EIP1559_MINIMUM_FEES_GATE: {
+    def: true,
+    parser: boolParser,
+    desc: "prevents the user from doing an EIP1559 transaction with fees too low",
+  },
+  EIP1559_PRIORITY_FEE_LOWER_GATE: {
+    def: 0.85,
+    parser: floatParser,
+    desc: "minimum priority fee percents allowed compared to network conditions allowed when EIP1559_MINIMUM_FEES_GATE is activated",
+  },
   ETHEREUM_GAS_LIMIT_AMPLIFIER: {
     def: 1.2,
     parser: floatParser,
@@ -274,11 +316,6 @@ const envDefinitions = {
     def: "",
     parser: stringParser,
     desc: "enable experimental support of currencies (comma separated)",
-  },
-  EXPERIMENTAL_EIP712: {
-    def: false,
-    parser: boolParser,
-    desc: "enable experimental support for EIP712",
   },
   EXPERIMENTAL_EXPLORERS: {
     def: false,
@@ -339,6 +376,16 @@ const envDefinitions = {
     def: "http://localhost:20000",
     parser: stringParser,
     desc: "Ledger satstack Bitcoin explorer API",
+  },
+  EXPORT_EXCLUDED_LOG_TYPES: {
+    def: "ble-frame",
+    parser: stringParser,
+    desc: "comma-separated list of excluded log types for exported logs",
+  },
+  EXPORT_MAX_LOGS: {
+    def: 5000,
+    parser: intParser,
+    desc: "maximum logs to keep for export",
   },
   DISABLE_APP_VERSION_REQUIREMENTS: {
     def: false,
@@ -500,7 +547,7 @@ const envDefinitions = {
     desc: "dev flag to skip onboarding flow",
   },
   SWAP_API_BASE: {
-    def: "https://swap.ledger.com/v3",
+    def: "https://swap.ledger.com/v4",
     parser: stringParser,
     desc: "Swap API base",
   },
@@ -530,7 +577,7 @@ const envDefinitions = {
     desc: "maximum limit to synchronize accounts concurrently to limit overload",
   },
   BOT_MAX_CONCURRENT: {
-    def: 5,
+    def: 10,
     parser: intParser,
     desc: "maximum limit to run bot spec in parallel",
   },
@@ -629,6 +676,11 @@ const envDefinitions = {
     parser: intParser,
     desc: "version used for the platform api",
   },
+  PLAYWRIGHT_RUN: {
+    def: false,
+    parser: boolParser,
+    desc: "true when launched for E2E testing",
+  },
   MARKET_API_URL: {
     def: "https://proxycg.api.live.ledger.com/api/v3",
     parser: stringParser,
@@ -638,6 +690,16 @@ const envDefinitions = {
     def: false,
     parser: boolParser,
     desc: "use the staging URL for the learn page",
+  },
+  DYNAMIC_CAL_BASE_URL: {
+    def: "https://cdn.live.ledger.com/cryptoassets",
+    parser: stringParser,
+    desc: "bucket S3 of the dynamic cryptoassets list",
+  },
+  FEATURE_FLAGS: {
+    def: "",
+    parser: jsonParser,
+    desc: "key value map for feature flags: {[key in FeatureId]?: Feature]}",
   },
 };
 

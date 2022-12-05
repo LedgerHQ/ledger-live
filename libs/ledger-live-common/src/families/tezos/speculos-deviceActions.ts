@@ -1,8 +1,7 @@
 // @flow
 import type { DeviceAction } from "../../bot/types";
 import type { Transaction } from "./types";
-import { formatCurrencyUnit } from "../../currencies";
-import { deviceActionFlow } from "../../bot/specs";
+import { deviceActionFlow, formatDeviceAmount } from "../../bot/specs";
 
 export const acceptTransaction: DeviceAction<Transaction, any> =
   deviceActionFlow({
@@ -38,24 +37,18 @@ export const acceptTransaction: DeviceAction<Transaction, any> =
       {
         title: "Amount",
         button: "Rr",
-        expectedValue: ({ account, transaction }) => {
-          const amount = transaction.amount;
-          return formatCurrencyUnit(account.unit, amount, {
-            disableRounding: true,
-            joinFragmentsSeparator: " ",
-          }).replace(/\s/g, " ");
-        },
+        expectedValue: ({ account, transaction }) =>
+          formatDeviceAmount(account.currency, transaction.amount, {
+            hideCode: true,
+          }),
       },
       {
         title: "Fee",
         button: "Rr",
-        expectedValue: ({ account, status }) => {
-          const amount = status.estimatedFees;
-          return formatCurrencyUnit(account.currency.units[0], amount, {
-            disableRounding: true,
-            joinFragmentsSeparator: " ",
-          }).replace(/\s/g, " ");
-        },
+        expectedValue: ({ account, status }) =>
+          formatDeviceAmount(account.currency, status.estimatedFees, {
+            hideCode: true,
+          }),
       },
       {
         title: "Source",

@@ -3,6 +3,7 @@ package com.ledger.live;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
+import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.view.View;
@@ -11,13 +12,12 @@ import android.view.WindowManager;
 import com.facebook.react.ReactActivity;
 import com.facebook.react.ReactActivityDelegate;
 import com.facebook.react.ReactRootView;
-import com.swmansion.gesturehandler.react.RNGestureHandlerEnabledRootView;
 
 import org.devio.rn.splashscreen.SplashScreen;
 
 import java.util.Locale;
 
-import expo.modules.ReactActivityDelegateWrapper;
+import com.facebook.react.modules.i18nmanager.I18nUtil;
 
 public class MainActivity extends ReactActivity {
 
@@ -30,6 +30,12 @@ public class MainActivity extends ReactActivity {
     @Override
     protected String getMainComponentName() {
         return "ledgerlivemobile";
+    }
+
+    @Override
+    public void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        setIntent(intent);
     }
 
     /**
@@ -68,7 +74,7 @@ public class MainActivity extends ReactActivity {
             }
         }
         super.onCreate(null);
-        /**
+        /*
          * Addresses an inconvenient side-effect of using `password-visible`, that
          * allowed styled texts to be pasted (receiver's address for instance) retaining
          * the styles of the source text.
@@ -101,6 +107,9 @@ public class MainActivity extends ReactActivity {
                 }
             });
         }
+
+        I18nUtil sharedI18nUtilInstance = I18nUtil.getInstance();
+        sharedI18nUtilInstance.allowRTL(getApplicationContext(), true);
 
     }
 

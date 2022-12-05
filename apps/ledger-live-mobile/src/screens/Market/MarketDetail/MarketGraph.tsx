@@ -8,9 +8,10 @@ import {
 } from "@ledgerhq/native-ui";
 import { rangeDataTable } from "@ledgerhq/live-common/market/utils/rangeDataTable";
 import { useTranslation } from "react-i18next";
+import { SingleCoinProviderData } from "@ledgerhq/live-common/market/MarketDataProvider";
 import Graph from "../../../components/Graph";
-// eslint-disable-next-line import/no-unresolved
 import getWindowDimensions from "../../../logic/getWindowDimensions";
+import { Item } from "../../../components/Graph/types";
 
 const { width } = getWindowDimensions();
 
@@ -22,12 +23,12 @@ function MarketGraph({
   refreshChart,
   chartData,
 }: {
-  setHoverItem: (_: any) => void;
-  chartRequestParams: any;
+  setHoverItem: (_: Item | null | undefined) => void;
+  chartRequestParams: SingleCoinProviderData["chartRequestParams"];
   loading?: boolean;
   loadingChart?: boolean;
-  refreshChart: (_: any) => void;
-  chartData: Record<string, number[]>;
+  refreshChart: (_: { range: string }) => void;
+  chartData: Record<string, [number, number][]>;
 }) {
   const { t } = useTranslation();
   const { colors } = useTheme();
@@ -45,7 +46,7 @@ function MarketGraph({
   const activeRangeIndex = ranges.findIndex(r => r.value === range);
   const data = useMemo(
     () =>
-      chartData?.[range]
+      range && chartData?.[range]
         ? chartData[range].map(d => ({
             date: new Date(d[0]),
             value: d[1] || 0,
@@ -70,10 +71,8 @@ function MarketGraph({
       <Flex height={120} alignItems="center" justifyContent="center">
         {data && data.length > 0 ? (
           <Transitions.Fade duration={400} status="entering">
-            {/** @ts-expect-error import js issue */}
             <Graph
               isInteractive
-              isLoading={loadingChart}
               height={100}
               width={width}
               color={colors.primary.c80}

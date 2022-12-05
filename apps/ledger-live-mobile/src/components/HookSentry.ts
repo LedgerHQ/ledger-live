@@ -2,6 +2,7 @@ import { PureComponent } from "react";
 import { connect } from "react-redux";
 import { createStructuredSelector } from "reselect";
 import { reportErrorsEnabledSelector } from "../reducers/settings";
+import { State } from "../reducers/types";
 
 let enabled = false;
 export const getEnabled = (): boolean => enabled;
@@ -26,10 +27,8 @@ class HookSentry extends PureComponent<{
   }
 }
 
-// eslint-disable-next-line @typescript-eslint/ban-types
-const m: React.ComponentType<{}> = connect(
-  createStructuredSelector({
+export default connect(
+  createStructuredSelector<State, { enabled: boolean }>({
     enabled: reportErrorsEnabledSelector,
   }),
 )(HookSentry);
-export default m;

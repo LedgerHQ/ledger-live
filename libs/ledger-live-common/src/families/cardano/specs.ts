@@ -1,7 +1,7 @@
 import expect from "expect";
 import type { AppSpec } from "../../bot/types";
 import type { CardanoAccount, CardanoResources, Transaction } from "./types";
-import { botTest, pickSiblings } from "../../bot/specs";
+import { botTest, genericTestDestination, pickSiblings } from "../../bot/specs";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import { DeviceModelId } from "@ledgerhq/devices";
 import BigNumber from "bignumber.js";
@@ -12,6 +12,7 @@ import { parseCurrencyUnit } from "../../currencies";
 import { SubAccount } from "@ledgerhq/types-live";
 import { acceptTransaction } from "./speculos-deviceActions";
 
+const maxAccounts = 5;
 const currency = getCryptoCurrencyById("cardano");
 const minBalanceRequired = parseCurrencyUnit(currency.units[0], "2.2");
 const minBalanceRequiredForMaxSend = parseCurrencyUnit(currency.units[0], "1");
@@ -27,15 +28,17 @@ const cardano: AppSpec<Transaction> = {
     model: DeviceModelId.nanoS,
     appName: "CardanoADA",
   },
+  minViableAmount: minBalanceRequired,
   genericDeviceAction: acceptTransaction,
-  testTimeout: 2 * 60 * 1000,
+  testTimeout: 5 * 60 * 1000,
   mutations: [
     {
+      testDestination: genericTestDestination,
       name: "move ~50%",
       maxRun: 1,
       transaction: ({ account, siblings, bridge, maxSpendable }) => {
         invariant(maxSpendable.gt(minBalanceRequired), "balance is too low");
-        const sibling = pickSiblings(siblings, 3);
+        const sibling = pickSiblings(siblings, maxAccounts);
         const recipient = sibling.freshAddress;
         const transaction = bridge.createTransaction(account);
 
@@ -72,12 +75,13 @@ const cardano: AppSpec<Transaction> = {
     {
       name: "send max",
       maxRun: 1,
+      testDestination: genericTestDestination,
       transaction: ({ account, siblings, bridge, maxSpendable }) => {
         invariant(
           maxSpendable.gt(minBalanceRequiredForMaxSend),
           "balance is too low"
         );
-        const sibling = pickSiblings(siblings, 3);
+        const sibling = pickSiblings(siblings, maxAccounts);
         const recipient = sibling.freshAddress;
         const transaction = bridge.createTransaction(account);
 
@@ -117,7 +121,7 @@ const cardano: AppSpec<Transaction> = {
           maxSpendable.gte(minSpendableRequiredForTokenTx),
           "balance is too low"
         );
-        const sibling = pickSiblings(siblings, 3);
+        const sibling = pickSiblings(siblings, maxAccounts);
         const recipient = sibling.freshAddress;
         const transaction = bridge.createTransaction(account);
 

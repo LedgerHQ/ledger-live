@@ -5,32 +5,15 @@ import { Text } from "@ledgerhq/native-ui";
 import SettingsRow from "../../../components/SettingsRow";
 import { ScreenName } from "../../../const";
 import { useLocale } from "../../../context/Locale";
+import { languages } from "../../../languages";
+import { StackNavigatorProps } from "../../../components/RootNavigator/types/helpers";
+import { SettingsNavigatorStackParamList } from "../../../components/RootNavigator/types/SettingsNavigator";
 
-export const languageLabels = {
-  de: "Deutsch",
-  el: "Ελληνικά",
-  en: "English",
-  es: "Español",
-  fi: "suomi",
-  fr: "Français",
-  hu: "magyar",
-  it: "italiano",
-  ja: "日本語",
-  ko: "한국어",
-  nl: "Nederlands",
-  no: "Norsk",
-  pl: "polski",
-  pt: "português",
-  ru: "Русский",
-  sr: "српски",
-  sv: "svenska",
-  tr: "Türkçe",
-  zh: "简体中文",
-};
+type Navigation = StackNavigatorProps<SettingsNavigatorStackParamList>;
 
 const LanguageSettingsRow = () => {
   const { locale } = useLocale();
-  const { navigate } = useNavigation();
+  const { navigate } = useNavigation<Navigation["navigation"]>();
   const onNavigate = useCallback(() => {
     navigate(ScreenName.OnboardingLanguage);
   }, [navigate]);
@@ -46,7 +29,7 @@ const LanguageSettingsRow = () => {
       onPress={onNavigate}
     >
       <Text variant={"body"} fontWeight={"medium"} color="primary.c80">
-        {languageLabels[locale] || locale}
+        {languages[locale] || locale}
       </Text>
     </SettingsRow>
   );

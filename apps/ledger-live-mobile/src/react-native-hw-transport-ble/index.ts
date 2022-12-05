@@ -3,12 +3,17 @@ import BleTransport from "@ledgerhq/react-native-hw-transport-ble";
 import makeMock from "./makeMock";
 import createAPDUMock from "../logic/createAPDUMock";
 
-const names = {};
+const names: { [key: string]: string } = {};
 const transport = Config.MOCK
   ? makeMock({
       // TODO E2E: This could be dynamically set in bridge/server.js
-      createTransportDeviceMock: (id, name) => {
+      createTransportDeviceMock: (
+        id: string,
+        name: string,
+        serviceUUID: string,
+      ) => {
         names[id] = name;
+        const serviceUUIDs = [serviceUUID];
         const apduMock = createAPDUMock({
           setDeviceName: name => {
             names[id] = name;
@@ -33,6 +38,7 @@ const transport = Config.MOCK
           id,
           name: names[id] || id,
           apduMock,
+          serviceUUIDs,
         };
       },
     })

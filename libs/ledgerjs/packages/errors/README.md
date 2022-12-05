@@ -1,4 +1,4 @@
-<img src="https://user-images.githubusercontent.com/211411/34776833-6f1ef4da-f618-11e7-8b13-f0697901d6a8.png" height="100" />
+<img src="https://user-images.githubusercontent.com/4631227/191834116-59cf590e-25cc-4956-ae5c-812ea464f324.png" height="100" />
 
 ## @ledgerhq/errors
 
@@ -10,12 +10,36 @@ Hodl all possible errors of Ledger (live, ledgerjs) so we can deal with them in 
 
 #### Table of Contents
 
-*   [TransportError](#transporterror)
+*   [HwTransportErrorType](#hwtransporterrortype)
+*   [HwTransportError](#hwtransporterror)
     *   [Parameters](#parameters)
-*   [TransportStatusError](#transportstatuserror)
+*   [TransportError](#transporterror)
     *   [Parameters](#parameters-1)
+*   [TransportStatusError](#transportstatuserror)
+    *   [Parameters](#parameters-2)
+
+### HwTransportErrorType
+
+Type of a Transport error used to represent all equivalent errors coming from all possible implementation of Transport
+
+### HwTransportError
+
+**Extends Error**
+
+Represents an error coming from any Transport implementation.
+
+Needed to map a specific implementation error into an error that
+can be managed by any code unaware of the specific Transport implementation
+that was used.
+
+#### Parameters
+
+*   `type` **[HwTransportErrorType](#hwtransporterrortype)** 
+*   `message` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** 
 
 ### TransportError
+
+**Extends Error**
 
 TransportError is used for any generic transport errors.
 e.g. Error thrown when data received by exchanges are incorrect or if exchanged failed to communicate with the device for various reason.
@@ -24,8 +48,6 @@ e.g. Error thrown when data received by exchanges are incorrect or if exchanged 
 
 *   `message` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** 
 *   `id` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** 
-
-Returns **void** 
 
 ### TransportStatusError
 

@@ -82,7 +82,7 @@ export default function unistallLanguage({
 
               subscriber.complete();
             }),
-            catchError((e: Error) => {
+            catchError((e: unknown) => {
               if (
                 e instanceof DeviceOnDashboardExpected ||
                 (e &&

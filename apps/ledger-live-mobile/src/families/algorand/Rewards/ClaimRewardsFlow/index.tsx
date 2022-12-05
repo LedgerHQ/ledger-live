@@ -16,6 +16,7 @@ import ClaimRewardsConnectDevice from "../../../../screens/ConnectDevice";
 import ClaimRewardsValidation from "./03-Validation";
 import ClaimRewardsValidationError from "./03-ValidationError";
 import ClaimRewardsValidationSuccess from "./03-ValidationSuccess";
+import type { AlgorandClaimRewardsFlowParamList } from "./type";
 
 function ClaimRewardsFlow() {
   const { t } = useTranslation();
@@ -85,7 +86,7 @@ function ClaimRewardsFlow() {
         }}
       />
       <Stack.Screen
-        name={ScreenName.AlgorandClaimRewardsValidation}
+        name={ScreenName.AlgorandClaimRewardsSummary}
         component={ClaimRewardsValidation}
         options={{
           headerTitle: () => (
@@ -97,8 +98,8 @@ function ClaimRewardsFlow() {
               })}
             />
           ),
-          headerLeft: null,
-          headerRight: null,
+          headerLeft: undefined,
+          headerRight: undefined,
           gestureEnabled: false,
         }}
       />
@@ -143,4 +144,4 @@ const options = {
   headerShown: false,
 };
 export { ClaimRewardsFlow as component, options };
-const Stack = createStackNavigator();
+const Stack = createStackNavigator<AlgorandClaimRewardsFlowParamList>();

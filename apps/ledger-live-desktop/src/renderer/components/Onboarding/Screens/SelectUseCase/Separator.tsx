@@ -15,11 +15,7 @@ const SeparatorLine = styled(Flex).attrs({
   flex: 1,
 })``;
 
-interface SeparatorProps {
-  label: string;
-}
-
-export function Separator({ label }: SeparatorProps) {
+export function Separator() {
   return (
     <SeparatorContainer>
       <SeparatorLine />

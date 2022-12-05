@@ -14,6 +14,7 @@ import {
 } from "@solana/web3.js";
 import { getEnv } from "../../../../env";
 import { Awaited } from "../../logic";
+import { NetworkDown } from "@ledgerhq/errors";
 
 export type Config = {
   readonly endpoint: string;
@@ -82,6 +83,11 @@ export type ChainAPI = Readonly<{
   config: Config;
 }>;
 
+// Naive mode, allow us to filter in sentry all this error comming from Sol RPC node
+const remapErrors = (e) => {
+  throw new NetworkDown(e?.message);
+};
+
 export function getChainAPI(
   config: Config,
   logger?: (url: string, options: any) => void
@@ -106,93 +112,113 @@ export function getChainAPI(
 
   return {
     getBalance: (address: string) =>
-      connection().getBalance(new PublicKey(address)),
+      connection().getBalance(new PublicKey(address)).catch(remapErrors),
 
     getLatestBlockhash: () =>
       connection()
         .getLatestBlockhash()
-        .then((r) => r.blockhash),
+        .then((r) => r.blockhash)
+        .catch(remapErrors),
 
     getFeeForMessage: (msg: Message) =>
       connection()
         .getFeeForMessage(msg)
-        .then((r) => r.value),
+        .then((r) => r.value)
+        .catch(remapErrors),
 
     getBalanceAndContext: (address: string) =>
-      connection().getBalanceAndContext(new PublicKey(address)),
+      connection()
+        .getBalanceAndContext(new PublicKey(address))
+        .catch(remapErrors),
 
     getParsedTokenAccountsByOwner: (address: string) =>
-      connection().getParsedTokenAccountsByOwner(new PublicKey(address), {
-        programId: TOKEN_PROGRAM_ID,
-      }),
+      connection()
+        .getParsedTokenAccountsByOwner(new PublicKey(address), {
+          programId: TOKEN_PROGRAM_ID,
+        })
+        .catch(remapErrors),
 
     getStakeAccountsByStakeAuth: (authAddr: string) =>
-      connection().getParsedProgramAccounts(StakeProgram.programId, {
-        filters: [
-          {
-            memcmp: {
-              offset: 12,
-              bytes: authAddr,
+      connection()
+        .getParsedProgramAccounts(StakeProgram.programId, {
+          filters: [
+            {
+              memcmp: {
+                offset: 12,
+                bytes: authAddr,
+              },
             },
-          },
-        ],
-      }),
+          ],
+        })
+        .catch(remapErrors),
 
     getStakeAccountsByWithdrawAuth: (authAddr: string) =>
-      connection().getParsedProgramAccounts(StakeProgram.programId, {
-        filters: [
-          {
-            memcmp: {
-              offset: 44,
-              bytes: authAddr,
+      connection()
+        .getParsedProgramAccounts(StakeProgram.programId, {
+          filters: [
+            {
+              memcmp: {
+                offset: 44,
+                bytes: authAddr,
+              },
             },
-          },
-        ],
-      }),
+          ],
+        })
+        .catch(remapErrors),
 
     getStakeActivation: (stakeAccAddr: string) =>
-      connection().getStakeActivation(new PublicKey(stakeAccAddr)),
+      connection()
+        .getStakeActivation(new PublicKey(stakeAccAddr))
+        .catch(remapErrors),
 
     getInflationReward: (addresses: string[]) =>
-      connection().getInflationReward(
-        addresses.map((addr) => new PublicKey(addr))
-      ),
+      connection()
+        .getInflationReward(addresses.map((addr) => new PublicKey(addr)))
+        .catch(remapErrors),
 
-    getVoteAccounts: () => connection().getVoteAccounts(),
+    getVoteAccounts: () => connection().getVoteAccounts().catch(remapErrors),
 
     getSignaturesForAddress: (
       address: string,
       opts?: SignaturesForAddressOptions
-    ) => connection().getSignaturesForAddress(new PublicKey(address), opts),
+    ) =>
+      connection()
+        .getSignaturesForAddress(new PublicKey(address), opts)
+        .catch(remapErrors),
 
     getParsedTransactions: (signatures: string[]) =>
-      connection().getParsedTransactions(signatures),
+      connection().getParsedTransactions(signatures).catch(remapErrors),
 
     getAccountInfo: (address: string) =>
       connection()
         .getParsedAccountInfo(new PublicKey(address))
-        .then((r) => r.value),
+        .then((r) => r.value)
+        .catch(remapErrors),
 
     sendRawTransaction: (buffer: Buffer) => {
       return sendAndConfirmRawTransaction(connection(), buffer, {
         commitment: "confirmed",
-      });
+      }).catch(remapErrors);
     },
 
     findAssocTokenAccAddress: (owner: string, mint: string) => {
       return getAssociatedTokenAddress(
         new PublicKey(mint),
         new PublicKey(owner)
-      ).then((r) => r.toBase58());
+      )
+        .then((r) => r.toBase58())
+        .catch(remapErrors);
     },
 
     getAssocTokenAccMinNativeBalance: () =>
-      getMinimumBalanceForRentExemptAccount(connection()),
+      getMinimumBalanceForRentExemptAccount(connection()).catch(remapErrors),
 
     getMinimumBalanceForRentExemption: (dataLength: number) =>
-      connection().getMinimumBalanceForRentExemption(dataLength),
+      connection()
+        .getMinimumBalanceForRentExemption(dataLength)
+        .catch(remapErrors),
 
-    getEpochInfo: () => connection().getEpochInfo(),
+    getEpochInfo: () => connection().getEpochInfo().catch(remapErrors),
 
     config,
   };

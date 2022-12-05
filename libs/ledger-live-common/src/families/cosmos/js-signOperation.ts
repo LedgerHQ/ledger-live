@@ -153,9 +153,12 @@ const signOperation = ({
           id: encodeOperationId(accountId, hash, type),
           hash,
           type,
-          value: transaction.useAllAmount
-            ? account.spendableBalance
-            : transaction.amount.plus(fee),
+          value:
+            type === "REWARD"
+              ? new BigNumber(0)
+              : transaction.useAllAmount
+              ? account.spendableBalance
+              : transaction.amount.plus(fee),
           fee,
           extra,
           blockHash: null,

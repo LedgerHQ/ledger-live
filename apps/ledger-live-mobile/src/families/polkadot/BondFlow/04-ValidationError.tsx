@@ -1,12 +1,13 @@
 import React, { useCallback } from "react";
-import { StyleSheet, Linking, SafeAreaView } from "react-native";
+import { StyleSheet, SafeAreaView } from "react-native";
 import { useTheme } from "@react-navigation/native";
+import { Transaction } from "@ledgerhq/live-common/generated/types";
+import { StackNavigationProp } from "@react-navigation/stack";
 import { TrackScreen } from "../../../analytics";
-import { urls } from "../../../config/urls";
 import ValidateError from "../../../components/ValidateError";
 
 type Props = {
-  navigation: any;
+  navigation: StackNavigationProp<Record<string, object | undefined>>;
   route: {
     params: RouteParams;
   };
@@ -14,17 +15,16 @@ type Props = {
 type RouteParams = {
   accountId: string;
   deviceId: string;
-  transaction: any;
+  transaction: Transaction;
   error: Error;
 };
 export default function ValidationError({ navigation, route }: Props) {
   const { colors } = useTheme();
   const onClose = useCallback(() => {
-    navigation.getParent().pop();
+    navigation
+      .getParent<StackNavigationProp<Record<string, object | undefined>>>()
+      .pop();
   }, [navigation]);
-  const contactUs = useCallback(() => {
-    Linking.openURL(urls.contact);
-  }, []);
   const retry = useCallback(() => {
     navigation.goBack();
   }, [navigation]);
@@ -42,7 +42,6 @@ export default function ValidationError({ navigation, route }: Props) {
         error={route.params.error}
         onRetry={retry}
         onClose={onClose}
-        onContactUs={contactUs}
       />
     </SafeAreaView>
   );

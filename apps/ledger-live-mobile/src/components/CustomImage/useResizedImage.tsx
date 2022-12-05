@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { manipulateAsync, SaveFormat } from "expo-image-manipulator";
+import { ImageResizeError } from "@ledgerhq/live-common/customImage/errors";
 import { ImageBase64Data, ImageDimensions, ImageFileUri } from "./types";
-import { ImageResizeError } from "./errors";
 
 export type ResizeResult = ImageBase64Data & ImageDimensions;
 
@@ -12,11 +12,10 @@ export type Params = Partial<ImageFileUri> & {
 };
 
 /**
- * Component to resize an image.
+ * Hook to resize an image.
  *
  * It:
  *  - takes as an input an image file URI & target dimensions as an input
- *  - renders nothing
  *  - outputs the resulting image as a base64 data URI.
  *
  * */

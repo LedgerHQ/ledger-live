@@ -3,6 +3,7 @@ import {
   deserializeError,
   createCustomErrorClass,
   addCustomErrorDeserializer,
+  LedgerErrorConstructor,
 } from "./helpers";
 
 export {
@@ -25,9 +26,10 @@ export const CantOpenDevice = createCustomErrorClass("CantOpenDevice");
 export const CashAddrNotSupported = createCustomErrorClass(
   "CashAddrNotSupported"
 );
-export const CurrencyNotSupported = createCustomErrorClass(
-  "CurrencyNotSupported"
-);
+export const CurrencyNotSupported = createCustomErrorClass<
+  { currencyName: string },
+  LedgerErrorConstructor<{ currencyName: string }>
+>("CurrencyNotSupported");
 export const DeviceAppVerifyNotSupported = createCustomErrorClass(
   "DeviceAppVerifyNotSupported"
 );
@@ -50,6 +52,7 @@ export const DeviceSocketFail = createCustomErrorClass("DeviceSocketFail");
 export const DeviceSocketNoBulkStatus = createCustomErrorClass(
   "DeviceSocketNoBulkStatus"
 );
+export const LockedDeviceError = createCustomErrorClass("LockedDeviceError");
 export const DisconnectedDevice = createCustomErrorClass("DisconnectedDevice");
 export const DisconnectedDeviceDuringOperation = createCustomErrorClass(
   "DisconnectedDeviceDuringOperation"
@@ -111,7 +114,6 @@ export const ManagerUninstallBTCDep = createCustomErrorClass(
   "ManagerUninstallBTCDep"
 );
 export const NetworkDown = createCustomErrorClass("NetworkDown");
-export const NetworkError = createCustomErrorClass("NetworkError");
 export const NoAddressesFound = createCustomErrorClass("NoAddressesFound");
 export const NotEnoughBalance = createCustomErrorClass("NotEnoughBalance");
 export const NotEnoughBalanceToDelegate = createCustomErrorClass(
@@ -133,6 +135,12 @@ export const NotSupportedLegacyAddress = createCustomErrorClass(
 export const GasLessThanEstimate = createCustomErrorClass(
   "GasLessThanEstimate"
 );
+export const PriorityFeeTooLow = createCustomErrorClass("PriorityFeeTooLow");
+export const PriorityFeeTooHigh = createCustomErrorClass("PriorityFeeTooHigh");
+export const PriorityFeeHigherThanMaxFee = createCustomErrorClass(
+  "PriorityFeeHigherThanMaxFee"
+);
+export const MaxFeeTooLow = createCustomErrorClass("MaxFeeTooLow");
 export const PasswordsDontMatchError =
   createCustomErrorClass("PasswordsDontMatch");
 export const PasswordIncorrectError =
@@ -210,6 +218,8 @@ export const CantScanQRCode = createCustomErrorClass("CantScanQRCode");
 export const FeeNotLoaded = createCustomErrorClass("FeeNotLoaded");
 export const FeeRequired = createCustomErrorClass("FeeRequired");
 export const FeeTooHigh = createCustomErrorClass("FeeTooHigh");
+export const DustLimit = createCustomErrorClass("DustLimit");
+export const PendingOperation = createCustomErrorClass("PendingOperation");
 export const SyncError = createCustomErrorClass("SyncError");
 export const PairingFailed = createCustomErrorClass("PairingFailed");
 export const GenuineCheckFailed = createCustomErrorClass("GenuineCheckFailed");
@@ -227,16 +237,50 @@ export const DBWrongPassword = createCustomErrorClass("DBWrongPassword");
 export const DBNotReset = createCustomErrorClass("DBNotReset");
 
 /**
+ * Type of a Transport error used to represent all equivalent errors coming from all possible implementation of Transport
+ */
+export enum HwTransportErrorType {
+  Unknown = 0,
+  BleLocationServicesDisabled = 1,
+  BleBluetoothUnauthorized = 2,
+  BleScanStartFailed = 3,
+}
+
+/**
+ * Represents an error coming from any Transport implementation.
+ *
+ * Needed to map a specific implementation error into an error that
+ * can be managed by any code unaware of the specific Transport implementation
+ * that was used.
+ */
+export class HwTransportError extends Error {
+  type: HwTransportErrorType;
+
+  constructor(type: HwTransportErrorType, message: string) {
+    super(message);
+    this.name = "HwTransportError";
+    this.type = type;
+
+    // Needed as long as we target < ES6
+    Object.setPrototypeOf(this, HwTransportError.prototype);
+  }
+}
+
+/**
  * TransportError is used for any generic transport errors.
  * e.g. Error thrown when data received by exchanges are incorrect or if exchanged failed to communicate with the device for various reason.
  */
-export function TransportError(message: string, id: string): void {
-  this.name = "TransportError";
-  this.message = message;
-  this.stack = new Error().stack;
-  this.id = id;
+export class TransportError extends Error {
+  id: string;
+  constructor(message: string, id: string) {
+    const name = "TransportError";
+    super(message || name);
+    this.name = name;
+    this.message = message;
+    this.stack = new Error().stack;
+    this.id = id;
+  }
 }
-TransportError.prototype = new Error();
 
 addCustomErrorDeserializer(
   "TransportError",
@@ -275,6 +319,9 @@ export const StatusCodes = {
   GP_AUTH_FAILED: 0x6300,
   LICENSING: 0x6f42,
   HALTED: 0x6faa,
+  LOCKED_DEVICE: 0x5515,
+  CUSTOM_IMAGE_EMPTY: 0x662e,
+  CUSTOM_IMAGE_BOOTLOADER: 0x662f,
 };
 
 export function getAltStatusMessage(code: number): string | undefined | null {
@@ -292,6 +339,8 @@ export function getAltStatusMessage(code: number): string | undefined | null {
       return "Invalid data received";
     case 0x6b00:
       return "Invalid parameter received";
+    case 0x5515:
+      return "Locked device";
   }
   if (0x6f00 <= code && code <= 0x6fff) {
     return "Internal error, please report";
@@ -303,13 +352,20 @@ export function getAltStatusMessage(code: number): string | undefined | null {
  * the error.statusCode is one of the `StatusCodes` exported by this library.
  */
 export function TransportStatusError(statusCode: number): void {
-  this.name = "TransportStatusError";
   const statusText =
     Object.keys(StatusCodes).find((k) => StatusCodes[k] === statusCode) ||
     "UNKNOWN_ERROR";
   const smsg = getAltStatusMessage(statusCode) || statusText;
   const statusCodeStr = statusCode.toString(16);
-  this.message = `Ledger device: ${smsg} (0x${statusCodeStr})`;
+  const message = `Ledger device: ${smsg} (0x${statusCodeStr})`;
+
+  // Maps to a LockedDeviceError
+  if (statusCode === StatusCodes.LOCKED_DEVICE) {
+    throw new LockedDeviceError(message);
+  }
+
+  this.name = "TransportStatusError";
+  this.message = message;
   this.stack = new Error().stack;
   this.statusCode = statusCode;
   this.statusText = statusText;

@@ -4,21 +4,21 @@ import { View, StyleSheet } from "react-native";
 import { DropdownMedium, DropupMedium } from "@ledgerhq/native-ui/assets/icons";
 import Button from "../../../components/wrappedUi/Button";
 
-type Props = {
+type Props<Item> = {
   children?: React.ReactNode;
-  uncollapsedItems: Array<any>;
-  collapsedItems: Array<any>;
-  renderItem: (item: any, index: number, isLast: boolean) => React.ReactNode;
+  uncollapsedItems: Array<Item>;
+  collapsedItems: Array<Item>;
+  renderItem: (item: Item, index: number, isLast: boolean) => React.ReactNode;
   renderShowMore: (collapsed: boolean) => React.ReactNode;
 };
 
-const CollapsibleList = ({
+const CollapsibleList = <Item,>({
   children,
   uncollapsedItems,
   collapsedItems,
   renderItem,
   renderShowMore,
-}: Props) => {
+}: Props<Item>) => {
   const [collapsed, setCollapsed] = useState(true);
 
   const toggleCollapsed = useCallback(() => {
@@ -52,7 +52,7 @@ const CollapsibleList = ({
                 Icon={collapsed ? DropdownMedium : DropupMedium}
                 iconPosition={"right"}
                 onPress={toggleCollapsed}
-                size={"small"}
+                size={"medium"}
                 mt={3}
               >
                 {renderShowMore(collapsed)}
@@ -61,9 +61,6 @@ const CollapsibleList = ({
           </>
         ) : null}
       </View>
-      {!!collapsed && collapsedItems.length ? (
-        <View style={[styles.showMoreIndicator, {}]} />
-      ) : null}
     </>
   );
 };
@@ -93,4 +90,4 @@ const styles = StyleSheet.create({
   buttonIcon: { paddingLeft: 6 },
 });
 
-export default React.memo<Props>(CollapsibleList);
+export default React.memo(CollapsibleList) as typeof CollapsibleList;

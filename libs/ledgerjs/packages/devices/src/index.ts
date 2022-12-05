@@ -87,9 +87,9 @@ const devices: { [key in DeviceModelId]: DeviceModel } = {
     productIdMM: 0x60,
     legacyUsbProductId: 0x0006,
     usbOnly: false,
-    memorySize: 2 * 1024 * 1024, // ← ↓ TODO Update with actual values
+    memorySize: 1536 * 1024,
     masks: [0x33200000],
-    getBlockSize: (_firwareVersion: string): number => 4 * 1024,
+    getBlockSize: (_firmwareVersion: string): number => 32,
     bluetoothSpec: [
       {
         serviceUuid: "13d63400-2c97-6004-0000-4c6564676572",

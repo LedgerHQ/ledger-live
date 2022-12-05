@@ -1,25 +1,25 @@
 import React, { memo, useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { NativeModules } from "react-native";
-import styled from "styled-components/native";
-import { Box, Flex, IconBox, Icons, Link, Text } from "@ledgerhq/native-ui";
+import styled, { useTheme } from "styled-components/native";
+import { Box, Flex, Icons, Link, Text } from "@ledgerhq/native-ui";
 import { CloseMedium } from "@ledgerhq/native-ui/assets/icons";
 import { BluetoothRequired } from "@ledgerhq/errors";
-import { IconOrElementType } from "@ledgerhq/native-ui/components/Icon/type";
+import { IconType } from "@ledgerhq/native-ui/components/Icon/type";
 import useExportLogs from "./useExportLogs";
 import TranslatedError from "./TranslatedError";
 import SupportLinkError from "./SupportLinkError";
+import { usePromptBluetoothCallback } from "../logic/usePromptBluetoothCallback";
 
 type Props = {
   error: Error;
   // sometimes we want to "hide" the technical error into a category
   // for instance, for Genuine check we want to express "Genuine check failed" because "<actual error>"
   // in such case, the outerError is GenuineCheckFailed and the actual error is still error
-  outerError?: Error;
+  outerError?: Error | null;
   withDescription?: boolean;
   withIcon?: boolean;
   hasExportLogButton?: boolean;
-  Icon?: IconOrElementType;
+  Icon?: IconType;
   iconColor?: string;
   children?: React.ReactNode;
 };
@@ -41,13 +41,14 @@ const GenericErrorView = ({
   Icon = CloseMedium,
   iconColor = "error.c100",
 }: Props) => {
+  const promptBluetooth = usePromptBluetoothCallback();
   useEffect(() => {
     if (error instanceof BluetoothRequired) {
-      NativeModules.BluetoothHelperModule.prompt().catch(() => {
+      promptBluetooth().catch(() => {
         /* ignore */
       });
     }
-  }, [error]);
+  }, [promptBluetooth, error]);
 
   const { t } = useTranslation();
 
@@ -56,18 +57,35 @@ const GenericErrorView = ({
   const titleError = outerError || error;
   const subtitleError = outerError ? error : null;
 
+  const { space } = useTheme();
+
   return (
     <Flex flexDirection={"column"} alignItems={"center"} alignSelf="stretch">
       {withIcon ? (
         <Box mb={7}>
-          <IconBox Icon={Icon} iconSize={24} boxSize={64} color={iconColor} />
+          <Flex
+            backgroundColor={iconColor}
+            height={space[10]}
+            width={space[10]}
+            borderRadius={999}
+            justifyContent="center"
+            alignItems="center"
+          >
+            <Icon size={24} color="neutral.c00" />
+          </Flex>
         </Box>
       ) : null}
-      <Text variant={"h2"} textAlign={"center"} numberOfLines={3} mb={3}>
+      <Text
+        variant={"h4"}
+        fontWeight="semiBold"
+        textAlign={"center"}
+        numberOfLines={3}
+        mb={6}
+      >
         <TranslatedError error={titleError} />
       </Text>
       {subtitleError ? (
-        <Text variant={"paragraph"} color="error.c80" numberOfLines={3} mb={3}>
+        <Text variant={"paragraph"} color="error.c80" numberOfLines={3} mb={6}>
           <TranslatedError error={subtitleError} />
         </Text>
       ) : null}

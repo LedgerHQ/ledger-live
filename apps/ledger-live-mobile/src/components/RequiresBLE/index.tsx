@@ -1,55 +1,31 @@
 // renders children if BLE is available
 // otherwise render an error
-import React, { Component } from "react";
-import { Observable } from "rxjs";
-import TransportBLE from "../../react-native-hw-transport-ble";
-// eslint-disable-next-line import/no-unresolved
-import RequiresLocationOnAndroid from "./RequiresLocationOnAndroid";
-import BluetoothDisabled from "./BluetoothDisabled";
+import React from "react";
+import { Platform } from "react-native";
+import AndroidRequiresBluetoothPermissions from "./AndroidRequiresBluetoothPermissions";
+import AndroidRequiresLocationPermissions from "./AndroidRequiresLocationPermissions";
+import RequiresBluetoothEnabled from "./RequiresBluetoothEnabled";
 
 type Props = {
-  children: any;
-};
-type State = {
-  type: any;
+  children: React.ReactNode;
 };
 
-class RequiresBLE extends Component<Props, State> {
-  state = {
-    type: "Unknown",
-  };
-  sub: any;
-
-  componentDidMount() {
-    this.sub = Observable.create(TransportBLE.observeState).subscribe({
-      next: ({ type }) =>
-        this.setState({
-          type,
-        }),
-    });
+const RequiresBLE: React.FC<Props> = ({
+  children,
+}: {
+  children?: React.ReactNode;
+}) => {
+  if (Platform.OS === "android") {
+    return (
+      <AndroidRequiresBluetoothPermissions>
+        <AndroidRequiresLocationPermissions>
+          <RequiresBluetoothEnabled>{children}</RequiresBluetoothEnabled>
+        </AndroidRequiresLocationPermissions>
+      </AndroidRequiresBluetoothPermissions>
+    );
   }
 
-  componentWillUnmount() {
-    this.sub.unsubscribe();
-  }
+  return <RequiresBluetoothEnabled>{children}</RequiresBluetoothEnabled>;
+};
 
-  render() {
-    const { children } = this.props;
-    const { type } = this.state;
-    if (type === "Unknown") return null; // suspense PLZ
-
-    if (type === "PoweredOn") {
-      return children;
-    }
-
-    return <BluetoothDisabled />;
-  }
-}
-
-export default function RequiresBLEWrapped({ children }: any) {
-  return (
-    <RequiresLocationOnAndroid>
-      <RequiresBLE>{children}</RequiresBLE>
-    </RequiresLocationOnAndroid>
-  );
-}
+export default RequiresBLE;

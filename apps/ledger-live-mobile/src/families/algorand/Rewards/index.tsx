@@ -8,17 +8,18 @@ import {
 } from "@ledgerhq/live-common/account/index";
 import { Box, Button, Flex, Text } from "@ledgerhq/native-ui";
 import { InfoMedium } from "@ledgerhq/native-ui/assets/icons";
-import { AlgorandAccount } from "@ledgerhq/live-common/lib/families/algorand/types";
+import { AlgorandAccount } from "@ledgerhq/live-common/families/algorand/types";
+import type { AccountLike } from "@ledgerhq/types-live";
 import AccountSectionLabel from "../../../components/AccountSectionLabel";
 import CurrencyUnitValue from "../../../components/CurrencyUnitValue";
 import CounterValue from "../../../components/CounterValue";
 import { ScreenName, NavigatorName } from "../../../const";
 
 type Props = {
-  account: AlgorandAccount;
+  account: AccountLike;
 };
 
-const RewardsSection = ({ account }: Props) => {
+const RewardsSection = ({ account }: { account: AlgorandAccount }) => {
   invariant(
     account && account.algorandResources,
     "algorand resources required",
@@ -47,13 +48,13 @@ const RewardsSection = ({ account }: Props) => {
   const rewardsDisabled = rewards.lte(0);
 
   return (
-    <Box p={6}>
+    <Box px={6}>
       <AccountSectionLabel
         name={t("algorand.claimRewards.title")}
-        icon={<InfoMedium size={20} color={"neutral.c100"} />}
+        Icon={InfoMedium}
         onPress={onRewardsInfoClick}
       />
-      <Flex flexDirection={"row"} alignItems={"center"} py={6} mb={6}>
+      <Flex flexDirection={"row"} alignItems={"center"} pt={6}>
         <Flex flexDirection={"column"} flex={1}>
           <Text fontWeight={"semiBold"} variant={"large"}>
             <CurrencyUnitValue unit={unit} value={rewards} />
@@ -71,11 +72,11 @@ const RewardsSection = ({ account }: Props) => {
 };
 
 const Rewards = ({ account }: Props) => {
-  const { algorandResources } = account;
+  const { algorandResources } = account as AlgorandAccount;
 
   if (!algorandResources) return null;
 
-  return <RewardsSection account={account} />;
+  return <RewardsSection account={account as AlgorandAccount} />;
 };
 
 export default Rewards;

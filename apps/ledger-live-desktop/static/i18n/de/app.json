@@ -85,6 +85,7 @@
     "lock" : "Sperren",
     "showMore" : "Mehr anzeigen",
     "back" : "Zurück",
+    "adjustFees" : "Gebühren anpassen",
     "reset" : "Zurücksetzen",
     "retry" : "Wiederholen",
     "range" : "Spanne",
@@ -123,12 +124,14 @@
     },
     "exchange" : "Umtauschen",
     "info" : "Informationen",
-    "connectDevice" : "Verbinden Sie Ihr Gerät"
+    "connectDevice" : "Verbinden Sie Ihr Gerät",
+    "add" : "Hinzufügen"
   },
   "devices" : {
     "nanoS" : "Nano S",
     "nanoSP" : "Nano S Plus",
     "nanoX" : "Nano X",
+    "nanoFTS" : "Nano FTS",
     "blue" : "Blau"
   },
   "operation" : {
@@ -177,6 +180,8 @@
   "time" : {
     "minute" : "Minute",
     "minute_plural" : "Minuten",
+    "minute_short" : "Min.",
+    "second_short" : "Sek.",
     "hour" : "Stunde",
     "hour_plural" : "Stunden",
     "range" : {
@@ -235,10 +240,26 @@
     },
     "form" : {
       "changeCTA" : "Änderung",
-      "ratesDrawer" : {
-        "title" : "Kurs",
-        "quote" : "Preis",
-        "receive" : "Empfangen"
+      "rates" : {
+        "title" : "Preise",
+        "registration" : "Anmeldung erforderlich ",
+        "noRegistration" : "Keine Anmeldung erforderlich",
+        "fixed" : "Festgelegt",
+        "float" : "Variabel",
+        "update" : "Kursaktualisierung in",
+        "loading" : "Lade Daten...",
+        "name" : {
+          "title" : "Anbieter",
+          "tooltip" : "Je nach Anbieter müssen Sie sich bei diesem anmelden, indem Sie ein Konto erstellen."
+        },
+        "rate" : {
+          "title" : "Wechselkurs",
+          "tooltip" : "Ein <0>variabler Zinssatz<0> schwankt je nach den Marktbedingungen, so dass Sie mehr oder weniger erhalten können, was Sie geschätzt haben. <br/><br/>Ein <0>fester Kurs<0> entspricht dem Betrag, der zu Beginn des Wechsels angezeigt wird."
+        },
+        "receive" : {
+          "title" : "Empfangen",
+          "tooltip" : "Der geschätzte Betrag, den Sie nach dem Austausch erhalten werden."
+        }
       },
       "details" : {
         "label" : {
@@ -411,7 +432,15 @@
           "approved" : "KYC genehmigt!",
           "closed" : "KYC abgelehnt"
         }
-      }
+      },
+      "filter" : {
+        "centralised" : "Zentralisiert",
+        "decentralised" : "Dezentralisiert",
+        "float" : "Variabler Wechselkurs",
+        "fixed" : "Fester Wechselkurs"
+      },
+      "noQuote" : "Kurs im nächsten Schritt verfügbar",
+      "noProviders" : "Keine Ergebnisse gefunden. Mit den aktuellen Einstellungen sind keine Angebote verfügbar."
     },
     "ip" : {
       "title" : "Willkommen bei Swap",
@@ -574,6 +603,12 @@
   "lottieDebugger" : {
     "buttonTitle" : "Testen"
   },
+  "storylyDebugger" : {
+    "buttonTitle" : "Testen"
+  },
+  "postOnboardingDebugger" : {
+    "buttonTitle" : "Testen"
+  },
   "fullNode" : {
     "status" : "Status",
     "connect" : "Verbinden",
@@ -729,7 +764,7 @@
     "settings" : {
       "title" : "Konto bearbeiten",
       "advancedLogs" : "Erweitert",
-      "advancedTips" : "Ihr xpub sind datenschutzsensible Daten. Verwenden Sie sie mit Vorsicht, insbesondere bei der Weitergabe an Dritte.",
+      "advancedTips" : "Das ist ein {{tag}} xpub. Wenn Sie es in eine Wallet eines Drittanbieters importieren, wählen Sie denselben Ableitungsmodus.",
       "accountName" : {
         "title" : "Kontoname",
         "desc" : "Beschreibung des Kontos"
@@ -760,7 +795,7 @@
       },
       "delegation" : {
         "title" : "Schon gewusst?",
-        "description" : "The Ledger validator stakes your {{asset}} at a commission of {{commission}}%.",
+        "description" : "Der Ledger-Validator erledigt das Staking Ihrer {{asset}} zu einer Provision in Höhe von {{commission}} %.",
         "cta" : "Mit Ledger staken"
       }
     }
@@ -1100,6 +1135,111 @@
     "desc" : "Diese Aktion blendet alle <1><0>{{tokenName}}</0></1> Konten aus, Sie können sie unter <3>Einstellungen</3> wieder einblenden",
     "hideCTA" : "Token ausblenden"
   },
+  "syncOnboarding" : {
+    "connection" : {
+      "searching" : {
+        "title" : "Verbinden Sie {{deviceModelName}} mit Ihrem Computer",
+        "connectionTrouble" : "Haben Sie Probleme, Ihr Gerät zu verbinden?"
+      },
+      "success" : {
+        "title" : "Verbunden mit {{ deviceName }}"
+      }
+    },
+    "manual" : {
+      "title" : "{{deviceName}} einrichten",
+      "pairedContent" : {
+        "title" : "{{deviceName}} ist verbunden",
+        "description" : "Fortfahren der Einrichtung auf {{deviceName}}",
+        "text" : "Dieser Bildschirm ändert sich dynamisch, um Ihnen während der Einrichtung Ihres {{deviceName}} relevante Informationen zur Verfügung zu stellen."
+      },
+      "pinContent" : {
+        "title" : "Legen Sie Ihre PIN fest",
+        "description" : "Ihre PIN kann 4 bis 8 Ziffern lang sein",
+        "text" : "Jeder mit Zugriff auf Ihren {{deviceName}} und Ihre PIN kann auch auf alle Ihre Kryptowährungs- und NFT-Werte zugreifen."
+      },
+      "recoveryContent" : {
+        "title" : "Wiederherstellungsphrase",
+        "content" : "Tippen Sie auf die Videos unten, um mehr über Ihre geheime Wiederherstellungsphrase zu erfahren"
+      },
+      "softwareCheckContent" : {
+        "title" : "Prüfung der Software",
+        "genuineCheck" : {
+          "active" : "{{deviceName}} wird überprüft",
+          "completed" : "{{deviceName}} ist ein Originalgerät"
+        },
+        "firmwareUpdate" : {
+          "inactive" : "Prüfung der Software",
+          "active" : "Auf Softwareupdates prüfen",
+          "updateAvailable" : "Software-Update verfügbar {{firmwareVersion}}",
+          "recommendation" : "Wir empfehlen, das Update jetzt herunterzuladen",
+          "downloadUpdate" : "Update herunterladen",
+          "skipUpdate" : "Vorerst überspringen",
+          "completed" : "Software ist auf dem neuesten Stand"
+        }
+      },
+      "installApplications" : {
+        "title" : "Wir empfehlen, eine Standardauswahl an Apps herunterzuladen. Sie können später mehr herunterladen",
+        "install" : "Installieren",
+        "skip" : "Das werde ich später machen",
+        "info" : "Apps auf {{deviceName}} werden zur Autorisierung von Transaktionen verwendet. Sie können sie jederzeit hinzufügen oder entfernen."
+      },
+      "genuineCheckModal" : {
+        "title" : "Echtheitsprüfung",
+        "paragraph1" : "Lassen Sie uns sicherstellen, dass Ihr {{deviceName}} echt ist und sicher verwendet werden kann",
+        "paragraph2" : "Wir führen eine Überprüfung durch, um sicherzustellen, dass Ihr Gerät nicht manipuliert wurde. Sie müssen dies auf Ihrem {{deviceName}} akzeptieren.",
+        "checkDeviceButton" : "Gerät überprüfen"
+      },
+      "genuineCheckCancelModal" : {
+        "title" : "Echtheitsprüfung",
+        "paragraph1" : "Die Echtheitsprüfung wurde abgebrochen",
+        "paragraph2" : "Diese Überprüfung ist unverzichtbar, um dafür zu sorgen, dass Ihr {{deviceName}} sicher verwendet werden kann.",
+        "checkDeviceButton" : "Überprüfung erneut durchführen",
+        "cancelButton" : "Vielleicht später"
+      },
+      "genuineCheckNotGenuineModal" : {
+        "title" : "Echtheitsprüfung",
+        "paragraph1" : "Ihr Gerät ist nicht echt",
+        "paragraph2" : "Echtheitsprüfung fehlgeschlagen",
+        "checkDeviceButton" : "Überprüfung erneut durchführen",
+        "cancelButton" : "Vielleicht später"
+      },
+      "genuineCheckAnimationModal" : {
+        "message" : "Manager aktivieren auf {{deviceName}}"
+      },
+      "helpDrawer" : {
+        "title" : "Benötigen Sie Hilfe mit Ihrem Einrichtungshandbuch?",
+        "description" : "Lorem Elsass ipsum aliquam bissame Oberschaeffolsheim geht's messti de Bischheim tellus blottkopf, dui sed libero. hopla libero, placerat leo eget Gal.",
+        "docButton" : "Zum FAQ gehen",
+        "supportButton" : "Sprechen Sie mit einem Menschen"
+      },
+      "troubleshootingDrawer" : {
+        "title" : "Fehlerbehebung bei der USB-Verbindung",
+        "description" : "Es scheint ein Problem beim Verbinden mit Ihrem Gerät zu geben. Keine Sorge, Sie können verschiedene Lösungen nacheinander ausprobieren, bis Ihr Gerät eine Verbindung herstellt!",
+        "fixButton" : "Reparieren",
+        "closeButton" : "Schließen"
+      },
+      "desyncOverlay" : {
+        "errorMessage" : "Offenbar wurde die Verbindung zu Ihrem {{deviceName}} getrennt. Wir versuchen die Verbindung wiederherzustellen."
+      },
+      "header" : {
+        "helpButton" : "Hilfe nötig?"
+      }
+    }
+  },
+  "postOnboarding" : {
+    "postOnboardingScreen" : {
+      "title" : "Gut gemacht.\nSie können loslegen.",
+      "description" : "Vielen Dank für das Einrichten Ihres {{deviceName}}!",
+      "paragraph" : "Wir haben zunächst einige Schritte für Sie vorbereitet. Wenn Sie Ledger Live auf eigene Faust erkunden möchten, zögern Sie nicht, diesen Schritt zu überspringen, Sie können jederzeit darauf zurückkommen.",
+      "bottomText" : "Genießen Sie Ihre Reise ins Web 3.0 sicher mit Ledger Live."
+    },
+    "postOnboardingContent" : {
+      "title" : "Gut gemacht.\nSie können loslegen.",
+      "description" : "Hier ist, was Sie als nächstes tun können:",
+      "skipLink" : "Weiter zur App",
+      "skipLinkInDrawer" : "Ich mache das später"
+    }
+  },
   "hideNftCollection" : {
     "title" : "NFT-Sammlung ausblenden",
     "desc" : "Diese Aktion wird alle NFTs aus der <1><0>{{collectionName}}</0></1> Sammlung ausblenden. Sie können sie erneut mit <3>Einstellungen</3> anzeigen",
@@ -1159,6 +1299,10 @@
     "blackfriday" : {
       "title" : "Black Friday ",
       "description" : "Freuen Sie sich über 40 % Rabatt auf Ledger Hardware-Wallets mit dem Promo-Code BLACKFRIDAY20"
+    },
+    "referralProgram" : {
+      "title" : "Empfehlen und 10$ verdienen",
+      "description" : "Wenn Sie erfolgreich einen Freund empfehlen, verdienen Sie beide Bitcoin im Wert von 10$."
     }
   },
   "signmessage" : {
@@ -1170,6 +1314,10 @@
       "sign" : {
         "title" : "Gerät"
       }
+    },
+    "eip712" : {
+      "showFullMessage" : "Vollständige Nachricht anzeigen",
+      "hideFullMessage" : "Vollständige Nachricht ausblenden"
     }
   },
   "walletconnect" : {
@@ -1565,7 +1713,10 @@
     "listApps" : "Prüfen von App-Abhängigkeiten",
     "listAppsDescription" : "Bitte warten Sie, während wir sicherstellen, dass Sie alle erforderlichen Apps haben",
     "swap" : {
-      "notice" : "Vor dem Senden der Fondsdetails müssen Sie diese auf Ihrem Gerät verifizieren. Die Adressen müssen Sie nicht verifizieren, da diese sicher ausgetauscht werden.",
+      "notice" : {
+        "default" : "Überprüfen Sie die Details des Tauschs auf Ihrem Gerät, bevor Sie sie senden. Die Adressen werden sicher ausgetauscht, sodass Sie diese nicht verifizieren müssen.",
+        "cic" : "Verifizieren Sie die Swap-Details auf Ihrem Gerät, bevor Sie diese senden. CIC muss möglicherweise eine zusätzliche Überprüfung für einige Transaktionen durchführen, was zu einer Verzögerung führen kann."
+      },
       "confirm" : "Swap-Transaktion bestätigen",
       "amountSent" : "Zu sendender Betrag",
       "amountReceived" : "Zu erhaltender Betrag",
@@ -1915,6 +2066,39 @@
         "tezos" : {
           "text" : "Der Betrag, der auf einem delegierten Konto eingeht, wird zum eingesetzten Gesamtbetrag addiert. Wählen Sie ein anderes Konto, wenn Sie dies vermeiden möchten."
         }
+      },
+      "staking" : {
+        "title" : "Verdiene {{currencyName}}",
+        "link" : "Weitere Informationen",
+        "notShow" : "Nicht erneut anzeigen",
+        "footer" : {
+          "dismiss" : "Nicht jetzt",
+          "stake" : "Staken mit {{provider}}"
+        },
+        "ethereum" : {
+          "title" : "Vermehren Sie Ihre ETH. Jetzt staken.",
+          "description" : "Staken Sie Ihr Ethereum mit Lido ein und verdienen Sie täglich Belohnungen. Keine Sperrfrist. Keine Mindesteinzahlung.",
+          "kiln" : {
+            "title" : "HODLen Sie nicht einfach. Vermehren Sie Ihre ETH.",
+            "description" : "Sie haben mehr als 32 ETH? Verdienen Sie passive Belohnungen, indem Sie Ihre ETH sicher mit Kiln staken."
+          }
+        },
+        "cosmos" : {
+          "title" : "Vermehren Sie Ihre ATOM. Staken mit Ledger Validator.",
+          "description" : "Staken Sie Ihre ATOM mit dem vertrauenswürdigen Ledger Validator. Ihre Coins gehören stets Ihnen, unterstützt durch die kompromisslose Sicherheit von Ledger."
+        },
+        "osmo" : {
+          "title" : "Vermehren Sie Ihre OSMO. Staken mit Ledger by Figment.",
+          "description" : "Staken Sie Ihre OSMO mit dem Ledger by Figment Validator. Er bietet die niedrigste Provisionsgebühr und eine Garantie gegen Slashing!"
+        },
+        "solana" : {
+          "title" : "Vermehren Sie Ihre SOL. Staken mit Ledger by Figment.",
+          "description" : "Staken Sie Ihre SOL mit dem Ledger by Figment Validator. Ihre Coins gehören stets Ihnen, unterstützt durch die kompromisslose Sicherheit von Ledger."
+        },
+        "celo" : {
+          "title" : "Vermehren Sie Ihre CELO. Staken mit Ledger by Figment.",
+          "description" : "Staken Sie Ihre CELO mit dem Ledger by Figment Validator. Garantiert vollständiger Schutz vor Slashing, unterstützt durch die kompromisslose Sicherheit von Ledger."
+        }
       }
     }
   },
@@ -1930,7 +2114,7 @@
       "amount" : {
         "title" : "Betrag",
         "banner" : "Maximaler Auszahlungsbetrag ist",
-        "fees" : "Gebühren",
+        "fees" : "Geschätzte max. Gebühr",
         "standard" : "Standart",
         "advanced" : "Advanced",
         "nftQuantity" : "Menge"
@@ -1950,11 +2134,17 @@
         "recipientAddress" : "Adresse des Empfängers",
         "amount" : "Betrag",
         "fees" : "Netzgebühren",
-        "useMax" : "Maximum senden",
+        "useMax" : "Max. verwenden",
+        "sendMax" : "Maximum senden",
         "rippleTag" : "Tag",
         "rippleTagPlaceholder" : "Optional",
+        "edit" : "Bearbeiten",
         "ethereumGasLimit" : "Gaslimit",
         "ethereumGasPrice" : "Gaspreis",
+        "ethereumMaxFee" : "Max. Gebühr ({{unitName}})",
+        "ethereumPriorityFee" : "Max. Prioritätsgebühr ({{unitName}})",
+        "nextBlock" : "Nächster Block: {{nextBaseFee}}",
+        "suggestedPriorityFee" : "Vorgeschlagen: {{lowPriorityFee}} - {{highPriorityFee}} {{unitName}}",
         "unitPerByte" : "{{unit}} pro Byte",
         "nft" : "NFT",
         "nftQuantity" : "Menge"
@@ -2002,6 +2192,29 @@
     },
     "switchButton" : "Zu {{language}} wechseln",
     "no" : "Lieber nicht"
+  },
+  "deviceLocalization" : {
+    "language" : "Sprache",
+    "deviceLanguage" : "Sprache",
+    "changeLanguage" : "Sprache wechseln",
+    "changeDeviceLanguage" : "Möchten Sie die Sprache Ihres Geräts ändern?",
+    "chooseLanguage" : "Wählen Sie eine Sprache für {{deviceName}} aus.",
+    "changeDeviceLanguagePrompt" : {
+      "title" : "{{language}} ist jetzt für {{deviceName}} verfügbar.",
+      "description" : "Möchten Sie die Sprache auf {{language}} umstellen?"
+    },
+    "firmwareUpdatePrompt" : {
+      "title" : "Ihr {{deviceName}} auf {{language}} einstellen?",
+      "description" : "{{language}} ist jetzt für {{deviceName}} verfügbar. Sie können die Sprache Ihres Geräts jetzt einstellen oder jederzeit über My Ledger ändern."
+    },
+    "allowLanguageInstallation" : "Sprachinstallation zulassen",
+    "languageInstalled" : "Sprache umgestellt auf {{language}}",
+    "installingLanguage" : "Sprache installieren",
+    "languages" : {
+      "english" : "Englisch",
+      "french" : "Französisch",
+      "spanish" : "Spanisch"
+    }
   },
   "distribution" : {
     "asset" : "Vermögenswert",
@@ -3335,6 +3548,7 @@
       "featureFlagsEdit" : "Bearbeiten",
       "featureFlagsRestore" : "Wiederherstellen",
       "featureFlagsOverride" : "Überschreiben",
+      "firebaseProject" : "Firebase-Projekt, auf das diese Entwicklung abzielt",
       "addLocalApp" : "Lokale App hinzufügen",
       "addLocalAppDesc" : "Durchsuchen Sie lokale Dateien und fügen Sie eine lokale App mit einem lokalen Manifest hinzu",
       "addLocalAppButton" : "Durchsuchen",
@@ -3405,6 +3619,10 @@
           "title" : "Erweiterte Kontosuche",
           "description" : "Suchen Sie nach Konten mit fehlerhaften Ableitungspfaden. Bitte senden Sie potenziell gefundene Vermögenswerte an ein reguläres Konto."
         },
+        "experimentalCountervalues" : {
+          "title" : "Experimentelle Gegenwerte API",
+          "description" : "Dies kann dazu führen, dass die für Ihre Konten angezeigten Gegenwerte nicht mehr stimmen."
+        },
         "experimentalExplorers" : {
           "title" : "Experimentelle Explorer-API",
           "description" : "Probieren Sie eine kommende Version von Ledgers Blockchain-Explorern aus. Das Ändern dieser Einstellung kann den Kontostand und die Synchronisation sowie die Sendefunktion beeinflussen.\n(<0></0>)"
@@ -3420,6 +3638,22 @@
         "testAnimations" : {
           "title" : "Lottie-Animationen testen",
           "description" : "Testen Sie alle Animationen, die in Ledger Live verwendet werden"
+        },
+        "testStories" : {
+          "title" : "Storyly-Storys testen",
+          "description" : "Testen Sie alle in Ledger Live verwendeten Storys"
+        },
+        "testPostonboarding" : {
+          "title" : "Post-Onboarding testen",
+          "description" : "Alle Post-Onboarding-Funktionen testen"
+        },
+        "1559DeactivateGate" : {
+          "title" : "Deaktivierung der Mindestprioritätsgebühren (gemäß EIP1559)",
+          "description" : "Dies ermöglicht die Übermittlung einer Transaktion, ohne dass eine Mindestprioritätsgebühr erhoben wird. Dies kann dazu führen, dass eine Transaktion für immer im Mempool stecken bleibt."
+        },
+        "1559CustomPriorityLowerGate" : {
+          "title" : "Benutzerdefinierte Grenze für Prioritätsgebühren",
+          "description" : "Passen Sie den Prozentsatz unserer voraussichtlichen Mindestprioritätsgebühr für eine erweiterte EIP1559-Transaktion an."
         }
       }
     },
@@ -3550,7 +3784,11 @@
       "ru" : "Russisch",
       "es" : "Spanisch",
       "zh" : "Chinesisch",
-      "de" : "Deutsch"
+      "de" : "Deutsch",
+      "tr" : "Türkisch",
+      "ja" : "Japanisch",
+      "ko" : "Koreanisch",
+      "pt" : "Portugiesisch"
     }
   },
   "theme" : {
@@ -4202,13 +4440,14 @@
       "4" : {
         "deviceSelection" : {
           "title" : "Was für ein Gerät haben Sie?",
-          "desc" : "Wenn Sie einen Nano S haben, können Sie versuchen, die Firmware Ihres Geräts zu reparieren. Für Nano X- und Blue-Benutzer wenden Sie sich bitte an den Ledger-Support"
+          "desc" : "Wenn Sie versuchen, einen Nano S anzuschließen, wählen Sie den Status aus, der auf Ihrem Nano angezeigt wird. Wenn Sie versuchen, einen Nano S Plus oder Nano X zu verbinden, <0>besuchen Sie das Hilfe-Center</0>"
         },
         "notFixed" : {
           "title" : " USB-Verbindungsproblem immer noch nicht behoben?",
           "desc" : "Wenn Sie alle möglichen Lösungen ausprobiert haben, wenden Sie sich bitte an den Ledger-Support. Ansonsten folgen Sie bitte den Anweisungen jeder Lösung, die Sie noch nicht ausprobiert haben.",
           "back" : "Zurück zum Portfolio",
-          "cta" : "Support kontaktieren"
+          "cta" : "Support kontaktieren",
+          "cta2" : "Zurückgehen"
         },
         "repair" : {
           "title" : "Reparieren Sie Ihren Nano S",
@@ -4337,6 +4576,9 @@
     "NoSuchAppOnProvider" : {
       "title" : "Die {{appName}} -App kann für Ihre spezifische Konfiguration nicht gefunden werden.",
       "description" : "Versuchen Sie, die App über My Ledger neu zu installieren."
+    },
+    "PendingOperation" : {
+      "description" : "Sie haben eingehende Transaktionen ausstehend. Bitte bedenken Sie, dass ausstehende Transaktionen rückgängig gemacht werden können."
     },
     "countervaluesUnavailable" : {
       "title" : "Wir können derzeit keinen Gegenwert für diesen Vermögenswert angeben"
@@ -4516,6 +4758,14 @@
       "title" : "Entschuldigung, die Verbindung konnte nicht zurückgesetzt werden",
       "description" : "Bitte versuchen Sie es erneut oder wenden Sie sich an den Ledger Kundenservice, falls das Problem weiterhin besteht."
     },
+    "LanguageInstallRefusedOnDevice" : {
+      "title" : "Sprachinstallation auf dem Gerät abgelehnt",
+      "description" : "Bitte versuchen Sie es erneut. Wenn das Problem weiterhin besteht, speichern Sie bitte Ihre Protokolle über die Schaltfläche unten und stellen Sie sie dem Ledger-Support zur Verfügung."
+    },
+    "LanguageNotFound" : {
+      "title" : "Die Sprache wurde nicht gefunden",
+      "description" : "Die Sprache, die Sie installieren möchten, wurde nicht gefunden. Bitte versuchen Sie, eine andere Sprache zu installieren."
+    },
     "LatestMCUInstalledError" : {
       "title" : "Entschuldigung, es gibt nichts zu aktualisieren",
       "description" : "Bitte kontaktieren Sie den Ledger-Support, wenn Sie Ihr Gerät nicht verwenden können."
@@ -4580,10 +4830,6 @@
     },
     "NetworkDown" : {
       "title" : "Entschuldigung, das Internet scheint ausgefallen zu sein",
-      "description" : "Bitte überprüfen Sie Ihre Internetverbindung."
-    },
-    "NetworkError" : {
-      "title" : "Während der Synchronisierung ist ein Fehler aufgetreten",
       "description" : "Bitte überprüfen Sie Ihre Internetverbindung."
     },
     "NoAddressesFound" : {
@@ -4733,7 +4979,7 @@
     },
     "EthAppNftNotSupported" : {
       "title" : "Vorgang auf diesem Gerät nicht verfügbar",
-      "description" : "Funktion zum Senden von NFTs ist nur für Nano X verfügbar. Bitte besuchen Sie unsere Kunden-Support-Plattform, um herauszufinden, wie man ein NFT mit einem Nano S sendet."
+      "description" : "Die Funktion zum Senden von NFTs ist nur für Nano X und Nano S+ verfügbar. Bitte besuchen Sie unsere Kunden-Support-Plattform, um herauszufinden, wie man ein NFT mit einem Nano S sendet."
     },
     "CantScanQRCode" : {
       "title" : "Dieser QR-Code konnte nicht gescannt werden: Auto-Verifizierung wird von dieser Adresse nicht unterstützt"
@@ -4746,6 +4992,18 @@
     },
     "GasLessThanEstimate" : {
       "title" : "Dies könnte zu niedrig sein. Bitte erhöhen"
+    },
+    "PriorityFeeTooLow" : {
+      "title" : "Die Prioritätsgebühr ist niedriger als der empfohlene Wert"
+    },
+    "PriorityFeeTooHigh" : {
+      "title" : "Die Prioritätsgebühr ist höher als nötig. Möglicherweise zahlen Sie zu viel"
+    },
+    "MaxFeeTooLow" : {
+      "title" : "Die maximale Gebühr ist niedriger als der empfohlene Wert"
+    },
+    "PriorityFeeHigherThanMaxFee" : {
+      "title" : "Die maximale Prioritätsgebühr kann nicht höher sein als die maximale Gebühr"
     },
     "UnknownMCU" : {
       "title" : "Unbekannte MCU-Version",
@@ -4881,6 +5139,9 @@
     "FeeTooHigh" : {
       "title" : "Die Netzwerkgebühren liegen über 10 % des Betrags"
     },
+    "DustLimit" : {
+      "title" : "Die Menge ist niedriger als das Staub (dust) -Limit"
+    },
     "SourceHasMultiSign" : {
       "title" : "Bitte deaktivieren Sie Multisign um {{currencyName}} zu senden"
     },
@@ -4991,6 +5252,58 @@
     },
     "StellarSourceHasMultiSign" : {
       "title" : "Bitte deaktivieren Sie Multisign, um Stellar-Transaktionen durchzuführen"
+    },
+    "HederaAddAccountError" : {
+      "title" : "Ihr Konto wurde nicht hinzugefügt. Bitte versuchen Sie es erneut."
+    },
+    "ImageIncorrectFileTypeError" : {
+      "title" : "Das Laden des Bildes aus einer Datei ist fehlgeschlagen.",
+      "description" : "Bitte versuchen Sie es erneut mit einem Bild."
+    },
+    "ImageLoadFromFileError" : {
+      "title" : "Das Laden des Bildes aus einer Datei ist fehlgeschlagen",
+      "description" : "Bitte versuchen Sie es noch einmal mit einem anderen Bild"
+    },
+    "ImageDownloadError" : {
+      "title" : "Bilddownload fehlgeschlagen",
+      "description" : "Bitte versuchen Sie es noch einmal mit einem anderen Bild"
+    },
+    "ImageMetadataLoadingError" : {
+      "title" : "Laden der Bild-Metadaten fehlgeschlagen",
+      "description" : "Bitte versuchen Sie es noch einmal mit einem anderen Bild"
+    },
+    "ImageTooLargeError" : {
+      "title" : "Das Bild ist zu groß",
+      "description" : "Bitte versuchen Sie es mit einem kleineren Bild"
+    },
+    "ImageCropError" : {
+      "title" : "Das Zuschneiden des Bildes ist fehlgeschlagen",
+      "description" : "Bitte versuchen Sie es noch einmal mit einem anderen Bild"
+    },
+    "ImageResizeError" : {
+      "title" : "Die Größenänderung des Bildes ist fehlgeschlagen",
+      "description" : "Bitte versuchen Sie es noch einmal mit einem anderen Bild"
+    },
+    "ImagePreviewError" : {
+      "title" : "Die Vorschau des Bildes ist fehlgeschlagen",
+      "description" : "Bitte versuchen Sie es noch einmal mit einem anderen Bild"
+    },
+    "ImageProcessingError" : {
+      "title" : "Die Verarbeitung des Bildes ist fehlgeschlagen",
+      "description" : "Bitte versuchen Sie es noch einmal mit einem anderen Bild"
+    },
+    "ImageCommitRefusedOnDevice" : {
+      "title" : "Bildübertragung auf Gerät verweigert",
+      "description" : "Sollte dieses Bild nicht passen, können Sie es mit einem anderen Bild erneut versuchen."
+    },
+    "ImageLoadRefusedOnDevice" : {
+      "title" : "Laden von Bildern auf Gerät verweigert",
+      "description" : "Sollte dieses Bild nicht passen, können Sie es mit einem anderen Bild erneut versuchen."
+    },
+    "LockedDeviceError" : {
+      "title" : "Ihr Gerät ist gesperrt",
+      "description" : "Entsperren Sie Ihr Gerät und versuchen Sie es erneut.",
+      "descriptionWithProductName" : "Entsperren Sie Ihr {{ productName }} und versuchen Sie es erneut."
     }
   },
   "cryptoOrg" : {
@@ -5021,5 +5334,42 @@
     "selectAccount" : {
       "title" : "Konto auswählen"
     }
+  },
+  "customImage" : {
+    "title" : "Benutzerdefiniertes Bild",
+    "steps" : {
+      "choose" : {
+        "stepLabel" : "Wählen Sie ein Bild aus",
+        "description" : "Wählen Sie ein Bild, das als (...) festgelegt werden soll",
+        "pickFromNftGallery" : "Aus meiner NFT-Galerie auswählen",
+        "upload" : "Von meinem Computer hochladen"
+      },
+      "adjust" : {
+        "stepLabel" : "Bild anpassen",
+        "rotate" : "Drehen"
+      },
+      "contrast" : {
+        "stepLabel" : "Kontrast auswählen"
+      },
+      "transfer" : {
+        "stepLabel" : "Übertragen",
+        "uploadAnotherImage" : "Ein weiteres Bild hochladen",
+        "allowPreview" : "Bildvorschau zulassen auf {{productName}}",
+        "loadingPicture" : "Bild wird geladen auf {{productName}}",
+        "pictureLoaded" : "Bild geladen",
+        "imageLoaded" : "Bild geladen auf {{productName}}",
+        "confirmPicture" : "Bestätigen auf {{productName}}",
+        "doThisLater" : "Vielleicht später",
+        "timeDisclaimer" : "Dies kann bis zu 30 Sekunden dauern"
+      }
+    },
+    "postOnboarding" : {
+      "title" : "Mein Gerät personalisieren",
+      "description" : "Durch Anpassen des Bildschirms",
+      "actionCompletedPopupLabel" : "Gerät personalisiert",
+      "actionCompletedHubTitle" : "Dieser Bildschirm sieht gut aus."
+    },
+    "customImageSet" : "Benutzerdefiniertes Bild-Set",
+    "finishCTA" : "Beenden"
   }
 }

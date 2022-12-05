@@ -10,6 +10,8 @@ import { getCurrentSolanaPreloadData } from "./js-preload-data";
 import { LEDGER_VALIDATOR_ADDRESS } from "./utils";
 import * as hooks from "./react";
 
+jest.setTimeout(2 * 60 * 1000);
+
 const localCache = {};
 const cache = makeBridgeCacheSystem({
   saveData(c, d) {

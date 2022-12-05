@@ -3,31 +3,46 @@ import React from "react";
 import { useTranslation } from "react-i18next";
 import { View, StyleSheet } from "react-native";
 import { useSelector } from "react-redux";
+import { Alert } from "@ledgerhq/native-ui";
+import {
+  getTagDerivationMode,
+  DerivationMode,
+} from "@ledgerhq/live-common/derivation";
+import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import {
+  getAccountCurrency,
+  isAccount,
+} from "@ledgerhq/live-common/account/index";
 import { accountScreenSelector } from "../../reducers/accounts";
 import LText from "../../components/LText";
 import NavigationScrollView from "../../components/NavigationScrollView";
 import { localeIds } from "../../languages";
 import { localeSelector } from "../../reducers/settings";
+import {
+  BaseComposite,
+  StackNavigatorProps,
+} from "../../components/RootNavigator/types/helpers";
+import { AccountSettingsNavigatorParamList } from "../../components/RootNavigator/types/AccountSettingsNavigator";
+import { ScreenName } from "../../const";
 
-type Props = {
-  navigation: any;
-  route: {
-    params: RouteParams;
-  };
-};
-type RouteParams = {
-  accountId: string;
-};
-export default function AdvancedLogs({ route }: Props) {
+type NavigationProps = BaseComposite<
+  StackNavigatorProps<
+    AccountSettingsNavigatorParamList,
+    ScreenName.AdvancedLogs
+  >
+>;
+
+export default function AdvancedLogs({ route }: NavigationProps) {
   const locale = useSelector(localeSelector);
   const { account } = useSelector(accountScreenSelector(route));
   const { t } = useTranslation();
   const usefulData = {
-    xpub: account?.xpub || undefined,
-    index: account?.index || undefined,
-    freshAddressPath: account?.freshAddressPath || undefined,
+    xpub: (isAccount(account) && account?.xpub) || undefined,
+    index: (isAccount(account) && account?.index) || undefined,
+    freshAddressPath:
+      (isAccount(account) && account?.freshAddressPath) || undefined,
     id: account?.id || undefined,
-    blockHeight: account?.blockHeight || undefined,
+    blockHeight: (isAccount(account) && account?.blockHeight) || undefined,
   };
   invariant(account?.type === "Account", "account must be a main account");
   const locales = [locale, ...localeIds];
@@ -38,10 +53,30 @@ export default function AdvancedLogs({ route }: Props) {
     hour: "2-digit",
     minute: "2-digit",
   });
+
+  const currency = getAccountCurrency(account) as CryptoCurrency;
+  const tag =
+    (account.derivationMode !== undefined &&
+      account.derivationMode !== null &&
+      getTagDerivationMode(
+        currency,
+        (account as { derivationMode: DerivationMode }).derivationMode,
+      )) ||
+    null;
+
   return (
     <NavigationScrollView>
       <View style={styles.body}>
-        <LText semiBold style={styles.sync}>
+        {tag && (
+          <Alert
+            type="info"
+            title={t("account.settings.advanced.warningDerivation", {
+              tag,
+            })}
+          />
+        )}
+
+        <LText semiBold style={styles.sync} mt="16px">
           {t("common.sync.ago", {
             time: readableDate,
           })}
@@ -53,6 +88,7 @@ export default function AdvancedLogs({ route }: Props) {
     </NavigationScrollView>
   );
 }
+
 const styles = StyleSheet.create({
   body: {
     flexDirection: "column",

@@ -9,7 +9,7 @@ import type {
   TransactionRes,
 } from "../../bot/types";
 import type { Transaction } from "./types";
-import { botTest, pickSiblings } from "../../bot/specs";
+import { botTest, genericTestDestination, pickSiblings } from "../../bot/specs";
 import { isAccountEmpty } from "../../account";
 import { acceptTransaction } from "./speculos-deviceActions";
 
@@ -45,10 +45,12 @@ const hedera: AppSpec<Transaction> = {
   transactionCheck: ({ maxSpendable }) => {
     invariant(maxSpendable.gt(0), "Balance is too low");
   },
+  allowEmptyAccounts: true,
   mutations: [
     {
       name: "Send ~50%",
       maxRun: 2,
+      testDestination: genericTestDestination,
       transaction: ({
         account,
         siblings,
@@ -85,6 +87,7 @@ const hedera: AppSpec<Transaction> = {
     {
       name: "Send max",
       maxRun: 2,
+      testDestination: genericTestDestination,
       transaction: ({
         account,
         siblings,
@@ -99,23 +102,6 @@ const hedera: AppSpec<Transaction> = {
           transaction,
           updates: [{ recipient }, { useAllAmount: true }],
         };
-      },
-      test: ({
-        accountBeforeTransaction,
-        account,
-        operation,
-        transaction,
-      }: TransactionTestInput<Transaction>): void => {
-        const accountBalanceAfterTx = account.balance.toNumber();
-
-        // NOTE: operation.fee is the ACTUAL (not estimated) fee cost of the transaction
-        const amount = accountBeforeTransaction.balance
-          .minus(transaction.amount.plus(operation.fee))
-          .toNumber();
-
-        botTest("account balance moved with operation", () =>
-          expect(accountBalanceAfterTx).toBe(amount)
-        );
       },
     },
     {

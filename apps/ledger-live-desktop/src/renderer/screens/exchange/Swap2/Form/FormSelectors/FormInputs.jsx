@@ -5,12 +5,15 @@ import Button from "~/renderer/components/Button";
 import ArrowsUpDown from "~/renderer/icons/ArrowsUpDown";
 import styled from "styled-components";
 import type { ThemedComponent } from "~/renderer/styles/StyleProvider";
+import { track } from "~/renderer/analytics/segment";
 import FromRow from "./FromRow";
 import ToRow from "./ToRow";
 import type {
   SwapSelectorStateType,
   SwapTransactionType,
-} from "@ledgerhq/live-common/exchange/swap/hooks/index";
+  SwapDataType,
+} from "@ledgerhq/live-common/exchange/swap/types";
+import { swapDefaultTrack } from "../../utils/index";
 
 type FormInputsProps = {
   fromAccount: $PropertyType<SwapSelectorStateType, "account">,
@@ -30,6 +33,7 @@ type FormInputsProps = {
   provider: ?string,
   loadingRates: boolean,
   isSendMaxLoading: boolean,
+  updateSelectedRate: $PropertyType<SwapDataType, "updateSelectedRate">,
 };
 
 const RoundButton = styled(Button)`
@@ -41,7 +45,7 @@ const RoundButton = styled(Button)`
 const Main: ThemedComponent<{}> = styled.section`
   display: flex;
   flex-direction: column;
-  row-gap: 50px;
+  row-gap: 12px;
   margin-bottom: 5px;
 `;
 
@@ -75,7 +79,17 @@ export default function FormInputs({
   provider,
   loadingRates,
   isSendMaxLoading,
+  updateSelectedRate,
 }: FormInputsProps) {
+  const reverseSwapAndTrack = () => {
+    track("button_clicked", {
+      button: "switch",
+      page: "Page Swap Form",
+      ...swapDefaultTrack,
+    });
+    reverseSwap();
+  };
+
   return (
     <Main>
       <Box>
@@ -89,10 +103,11 @@ export default function FormInputs({
           fromAmountError={fromAmountError}
           provider={provider}
           isSendMaxLoading={isSendMaxLoading}
+          updateSelectedRate={updateSelectedRate}
         />
       </Box>
       <Box horizontal justifyContent="center" alignContent="center">
-        <SwapButton disabled={!isSwapReversable} onClick={reverseSwap} />
+        <SwapButton disabled={!isSwapReversable} onClick={reverseSwapAndTrack} />
       </Box>
       <Box style={{ marginTop: "-23px" }}>
         <ToRow
@@ -104,6 +119,7 @@ export default function FormInputs({
           provider={provider}
           toAccount={toAccount}
           loadingRates={loadingRates}
+          updateSelectedRate={updateSelectedRate}
         />
       </Box>
     </Main>

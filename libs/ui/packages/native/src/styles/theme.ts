@@ -11,6 +11,7 @@ export const textVariants = [
   "h4",
   "h5",
   "large",
+  "largeLineHeight",
   "body",
   "bodyLineHeight",
   "paragraph",
@@ -44,6 +45,7 @@ export const fontSizes = [10, 11, 12, 13, 14, 16, 18, 24, 28, 32] as ThemeScale<
 ] = fontSizes;
 fontSizes.bodyLineHeight = fontSizes.body;
 fontSizes.paragraphLineHeight = fontSizes.paragraph;
+fontSizes.largeLineHeight = fontSizes.large;
 fontSizes.h4 = fontSizes.h2;
 fontSizes.h5 = fontSizes.h3;
 
@@ -51,7 +53,7 @@ export const radii = [0, 4, 8];
 export const zIndexes = [-1, 0, 1, 9, 10, 90, 100, 900, 1000];
 
 export type Theme = {
-  theme: string;
+  theme: "light" | "dark";
   sizes: {
     topBarHeight: number;
     sideBarWidth: number;

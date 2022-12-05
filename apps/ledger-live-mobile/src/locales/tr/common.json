@@ -3,6 +3,7 @@
     "cancel" : "İptal et",
     "apply" : "Uygula",
     "seeAll" : "Tümünü gör",
+    "seeAllWithNumber" : "Tümünü gör ({{number}})",
     "back" : "Geri",
     "delete" : "Sil",
     "paste" : "Yapıştır",
@@ -30,6 +31,7 @@
     "received" : "Alındı",
     "sent" : "Gönderildi",
     "or" : "VEYA",
+    "others" : "Diğerleri",
     "rename" : "Cihazın adını değiştir",
     "learnMore" : "Daha fazla bilgi",
     "checkItOut" : "Göz at",
@@ -83,7 +85,9 @@
     "moreInfo" : "Daha fazla bilgi",
     "buyEth" : "Ethereum Satın Al",
     "popular" : "popüler",
-    "comingSoon" : "Çok yakında"
+    "getSupport" : "Destek alın",
+    "comingSoon" : "Çok yakında",
+    "restart" : "Yeniden Başlat"
   },
   "errors" : {
     "countervaluesUnavailable" : {
@@ -147,6 +151,12 @@
           "nanoX" : "{{productName}} cihazınızın kilidinin açıldığından ve kablo ile bağlı olduğundan veya Bluetooth'un etkin olduğundan emin olun."
         }
       }
+    },
+    "CeloAllFundsWarning" : {
+      "title" : "Gelecekteki işlem ücretleri için yeterli bakiyenizin kaldığından emin olun"
+    },
+    "CeloMissingWithdrawalsError" : {
+      "title" : "Bir hata oluştu, çekilecek hiçbir fon getirilemedi"
     },
     "ClaimRewardsFeesWarning" : {
       "title" : "Ödül miktarı, ödülü almak için gereken tahmini ağ ücretlerinden daha az.",
@@ -276,7 +286,7 @@
     },
     "EthAppNftNotSupported" : {
       "title" : "Bu işlem bu cihaz için mevcut değil",
-      "description" : "NFT gönderme özelliği yalnızca Nano X için mevcuttur. Nano S ile nasıl NFT gönderileceğini öğrenmek için lütfen müşteri destek platformumuzu ziyaret edin."
+      "description" : "NFT Gönder özelliği yalnızca Nano X ve Nano S+ ile kullanılabilir. Nano S ile nasıl NFT gönderebileceğinizi öğrenmek için lütfen müşteri destek platformumuzu ziyaret edin."
     },
     "Touch ID Error" : {
       "title" : "Biyometrik kimlik doğrulaması başarısız oldu",
@@ -311,6 +321,14 @@
     "HardResetFail" : {
       "title" : "Üzgünüz, sıfırlanamadı",
       "description" : "Lütfen tekrar deneyin. Sorun devam ederse, lütfen aşağıdaki butonu kullanarak loglarınızı kaydedin ve Ledger Destek'e gönderin."
+    },
+    "ImageCommitRefusedOnDevice" : {
+      "title" : "Görüntü commit etme cihazda reddedildi (TODO: final wording)",
+      "description" : "Bu resim uygun olmadıysa başka bir resim seçerek tekrar deneyebilirsiniz."
+    },
+    "ImageLoadRefusedOnDevice" : {
+      "title" : "Görüntü yükleme cihazda reddedildi (TODO: final wording)",
+      "description" : "Bu resim uygun olmadıysa başka bir resim seçerek tekrar deneyebilirsiniz."
     },
     "InvalidAddress" : {
       "title" : "Bu geçerli bir {{currencyName}} adresi değil"
@@ -392,6 +410,9 @@
       "title" : "Üzgünüz, bu uygulama gerekli",
       "description" : "Bitcoin veya Ethereum uygulamasını en son kaldırın."
     },
+    "MaxFeeLow" : {
+      "title" : "Ücret üst limitiniz yetersiz. İşleminiz bir süreliğine beklemede kalabilir"
+    },
     "NetworkDown" : {
       "title" : "Üzgünüz, internet bağlantısı görünmüyor",
       "description" : "Lütfen internet bağlantınızı kontrol edin."
@@ -403,6 +424,10 @@
     "NotEnoughBalance" : {
       "title" : "Üzgünüz, fon miktarı yetersiz",
       "description" : "Hesabınızdaki fon miktarının yeterli olduğundan lütfen emin olun."
+    },
+    "NoSuchAppOnProvider" : {
+      "title" : "{{appName}} uygulaması, özel yapılandırmanız için bulunamadı.",
+      "description" : "Uygulamayı Yönetici sekmesinden yeniden yüklemeyi deneyin"
     },
     "NotEnoughGas" : {
       "title" : "Ağ ücreti için yetersiz ETH",
@@ -573,6 +598,9 @@
     "SourceHasMultiSign" : {
       "title" : "{{currencyName}} göndermek için lütfen çoklu imzayı devre dışı bırakın"
     },
+    "DustLimit" : {
+      "title" : "Miktar, dust sınırının altında"
+    },
     "StratisDown2021Warning" : {
       "description" : "Stratis blok zinciri evrimleşti ve artık düzgün çalışmayabilir. Orijinal Stratis blok zinciri desteği 16 Ekim 2021'e kadar sürdürülecektir."
     },
@@ -583,8 +611,8 @@
       "title" : "Tutar {{maxAmountFromFormatted}} değerinden az olmalıdır"
     },
     "SwapGenericAPIError" : {
-      "title" : "Kur zaman aşımına uğradı",
-      "description" : "Süre bitmeden önce takas işlemini onaylamalısınız. Kur, sabit bir süreliğine geçerli kalır."
+      "title" : "Bir hata oluştu",
+      "description" : "Takas işlemi gerçekleştirilemedi. Lütfen tekrar deneyin veya destek ekibiyle iletişime geçin."
     },
     "PolkadotElectionClosed" : {
       "title" : "Doğrulayıcı seçimleri kapatılmalı"
@@ -719,7 +747,30 @@
     "ImageProcessingError" : {
       "title" : "Görüntü işlenemedi",
       "description" : "Lütfen başka bir görüntüyle tekrar deneyin"
+    },
+    "HederaAddAccountError" : {
+      "title" : "Hesabınız eklenemedi. Lütfen tekrar deneyin."
+    },
+    "PriorityFeeTooLow" : {
+      "title" : "Öncelik ücreti, önerilen değerden düşük"
+    },
+    "PriorityFeeTooHigh" : {
+      "title" : "Öncelik ücreti, gereğinden yüksek. Fazla ödeme yapıyor olabilirsiniz"
+    },
+    "MaxFeeTooLow" : {
+      "title" : "Ücret üst limiti, önerilen değerden düşük"
+    },
+    "PriorityFeeHigherThanMaxFee" : {
+      "title" : "Öncelik ücreti üst limiti, ücret üst limitinden yüksek olamaz"
+    },
+    "LockedDeviceError" : {
+      "title" : "Cihazınız kilitlendi",
+      "description" : "Cihazınızın kilidini açın ve tekrar deneyin.",
+      "descriptionWithProductName" : "{{ productName }} cihazınızın kilidini açın ve tekrar deneyin."
     }
+  },
+  "crash" : {
+    "title" : "Bir hata oluştu"
   },
   "bluetooth" : {
     "required" : "Üzgünüz, Bluetooth devre dışı görünüyor",
@@ -734,13 +785,26 @@
     }
   },
   "location" : {
-    "required" : "Konum hizmetleri gerekli",
+    "titleServiceRequired" : "Location services required",
+    "titlePermissionRequired" : "Location permission required",
+    "titlePermissionRequiredPrecise" : "Precise location permission required",
+    "descriptionServiceRequired" : "Ledger Live requires location services to pair your device through Bluetooth.",
+    "descriptionPermissionRequired" : "Ledger Live requires the location permission to pair your device through Bluetooth.",
+    "descriptionPermissionRequiredPrecise" : "Ledger Live requires the precise location permission to pair your device through Bluetooth.",
     "open" : "Konum ayarlarını aç",
-    "disabled" : "Ledger Live, cihazınızı Bluetooth üzerinden eşleştirmek için konum hizmetleri gerektirir.",
     "noInfos" : "Ledger konum bilgilerinize erişmez."
   },
   "permissions" : {
-    "open" : "Uygulama izinlerini aç"
+    "open" : "Uygulama izinlerini aç",
+    "authorize" : "Authorize",
+    "bluetooth" : {
+      "modalTitle" : "Permission required to pair your Ledger over Bluetooth",
+      "modalDescriptionBase" : "To pair your Ledger over Bluetooth, you must authorize Ledger Live to scan for nearby devices.",
+      "modalDescriptionSettingsVariant" : "To pair your Ledger over Bluetooth, you must authorize Ledger Live to scan for nearby devices in your phone’s settings.",
+      "modalButtonLabelBase" : "Authorize",
+      "modalButtonLabelSettingsVariant" : "Go to settings",
+      "dontPair" : "Don't pair"
+    }
   },
   "fees" : {
     "speed" : {
@@ -763,6 +827,9 @@
     "failed" : {
       "biometrics" : {
         "title" : "{{biometricsType}} ile kilit açma başarısız",
+        "touchid" : "TouchID",
+        "faceid" : "FaceID",
+        "fingerprint" : "Parmak İzi",
         "description" : "Devam etmek için parolanızı girin",
         "authenticate" : "Lütfen Ledger Live uygulamasıyla kimlik doğrulaması yapın"
       },
@@ -791,7 +858,10 @@
     },
     "enableBiometrics" : {
       "title" : "{{biometricsType}}",
-      "desc" : "Kilidi {{biometricsType}} ile açın"
+      "desc" : "Kilidi {{biometricsType}} ile açın",
+      "touchid" : "TouchID",
+      "faceid" : "FaceID",
+      "fingerprint" : "Parmak İzi"
     }
   },
   "reset" : {
@@ -990,12 +1060,12 @@
   },
   "discover" : {
     "title" : "Keşfedin",
-    "desc" : "Ledger Live'daki Web 3.0 dünyasını keşfedin",
+    "desc" : "Web3 dünyasını güvenle keşfedin",
     "link" : "Daha fazla bilgi ver",
     "sections" : {
       "learn" : {
         "title" : "Öğrenin",
-        "desc" : "Kripto, NFT'ler, dijital güvenlik ve daha fazlası hakkında bilgi edinin"
+        "desc" : "Uzmanlardan kripto ve daha fazlası hakkında ücretsiz bilgiler öğrenin."
       },
       "ledgerApps" : {
         "title" : "Uygulamalar",
@@ -1003,15 +1073,34 @@
       },
       "earn" : {
         "title" : "Kazanın",
-        "desc" : "Pasif gelir elde edin ve kripto varlıklarınızı artırın"
+        "desc" : "Kriptolarınızı stake ederek ve borç vererek artırın."
       },
       "mint" : {
         "title" : "Mint'leyin",
-        "desc" : "[ L ] Market'teki özel iş birliklerini kullanarak NFT'ler mint'leyin"
+        "desc" : "[L] Market'teki özel kampanyalara katılarak NFT'ler mint'leyin."
+      },
+      "referralProgram" : {
+        "title" : "Arkadaşına Öner",
+        "desc" : "Arkadaşınız bir Ledger satın aldığında 10$ değerinde BTC kazanın. "
       }
     },
     "comingSoon" : "Çok yakında",
     "mostPopular" : "En popüler"
+  },
+  "installSetOfApps" : {
+    "landing" : {
+      "estimatedTime" : "{{ minutes }} dk.",
+      "title" : "{{ productName }}, güvenli blok zinciri işlemleri gerçekleştirmek için uygulamalar kullanmaktadır",
+      "subtitle" : "Varsayılan bir uygulama grubunu indirmenizi öneririz. Daha sonra diğer uygulamaları da indirebilirsiniz.",
+      "installCTA" : "Uygulamaları yükle",
+      "skipCTA" : "Daha sonra yapacağım"
+    },
+    "ongoing" : {
+      "loading" : "Yükleniyor...",
+      "resolving" : "Gereksinimler çözülüyor",
+      "progress" : "Uygulamalar yükleniyor %{{progress}}",
+      "disclaimer" : "{{ productName }} cihazındaki uygulamalar işlemleri onaylamak için kullanılır. İstediğiniz zaman bu uygulamaları ekleyebilir ve silebilirsiniz."
+    }
   },
   "onboarding" : {
     "stepWelcome" : {
@@ -1072,10 +1161,16 @@
     "stepLanguage" : {
       "title" : "Dilinizi seçin",
       "cta" : "Devam",
+      "changeDeviceLanguage" : "{{deviceName}} cihazınızı {{language}} dilinde de kullanabilirsiniz",
+      "changeDeviceLanguageDescription" : "Dili {{language}} yapmak ister misiniz?",
       "warning" : {
         "title" : "İngilizce olarak başlayın",
         "cta" : "Anladım!",
         "desc" : "Ledger kullanmaya başlamanızı kolaylaştırmak için ek diller sunuyoruz. Ledger deneyiminin geri kalanının an itibarıyla sadece İngilizce olarak mevcut olduğunu lütfen unutmayın."
+      },
+      "RestartModal" : {
+        "title" : "Yeniden başlatın",
+        "paragraph" : "Seçilen dil, uygulamanın yeniden başlatılmasını gerektiriyor. Devam etmek istediğinize emin misiniz?"
       }
     },
     "stepSelectDevice" : {
@@ -1083,6 +1178,7 @@
       "nanoS" : "Nano S",
       "nanoSP" : "Nano S Plus",
       "nanoX" : "Nano X",
+      "nanoFTS" : "Nano FTS",
       "blue" : "Blue",
       "chooseDevice" : "Cihazınızı seçin"
     },
@@ -1479,7 +1575,7 @@
       "cta" : "Taramaya hazırım.",
       "bullets" : {
         "0" : {
-          "label" : "Masaüstü uygulamasında <1>Ayarlar > Hesaplar > Hesap Dışa Aktarma</1> seçeneğini seçin."
+          "label" : "Masaüstü uygulamasında \n<1>Ayarlar > Hesaplar > Hesap Dışa Aktarma</1> seçeneğini seçin."
         },
         "1" : {
           "label" : "LiveQR kodunu telefonunuzla tarayın."
@@ -1603,28 +1699,155 @@
   "blePairingFlow" : {
     "scanning" : {
       "withProductName" : {
-        "title" : "Looking for your {{productName}}",
-        "description" : "Please make sure your {{productName}} is unlocked and Bluetooth is enabled"
+        "title" : "{{productName}} cihazınız aranıyor",
+        "description" : "Lütfen {{productName}} cihazınızın kilidinin açıldığından ve Bluetooth'un etkin olduğundan emin olun"
       },
       "withoutProductName" : {
-        "title" : "Looking for devices",
-        "description" : "Please make sure your device is switched on, unlocked, and bluetooth is enabled"
+        "title" : "Cihazlar aranıyor",
+        "description" : "Lütfen cihazınızın açık olduğundan, kilidinin açıldığından ve Bluetooth'un etkin olduğundan emin olun"
       },
-      "alreadyPaired" : "Already paired"
+      "alreadyPaired" : "Zaten eşleştirilmiş"
     },
     "pairing" : {
       "success" : {
-        "title" : "Paired with {{deviceName}}"
+        "title" : "{{deviceName}} ile eşleştirildi"
       },
       "loading" : {
-        "title" : "Pairing with {{deviceName}}",
-        "subtitle" : "Confirm the code on your {{productName}}"
+        "title" : "{{deviceName}} ile eşleştiriliyor",
+        "subtitle" : "{{productName}} cihazınızdaki kodu onaylayın"
       },
       "error" : {
-        "title" : "Pairing unsucessful",
-        "subtitle" : "Looks like something went wrong! Check that your bluetooth is on and your {{productName}} is nearby",
-        "retryCta" : "Try again"
+        "title" : "Eşleştirme başarısız",
+        "subtitle" : "Bir sorun oluştu!\nBluetooth'unuzun açık ve {{productName}} cihazınızın yakında olduğundan emin olun.",
+        "retryCta" : "Tekrar deneyin"
       }
+    }
+  },
+  "syncOnboarding" : {
+    "title" : "{{deviceName}} cihazını kurun",
+    "estimatedTimeFormat" : "{{estimatedTime}} dk.",
+    "deviceSelection" : {
+      "title" : "Elinizdeki cihaz hangisi?",
+      "subtitle" : "Ledger Live ile kurmak istediğiniz Ledger cüzdanını seçin",
+      "brand" : "Ledger",
+      "setupTime" : "{{time}} dk"
+    },
+    "scanning" : {
+      "title" : "{{productName}} cihazınız aranıyor",
+      "description" : "Lütfen {{productName}} cihazınızın kilidinin açıldığından ve Bluetooth'un etkin olduğundan emin olun"
+    },
+    "pairing" : {
+      "success" : {
+        "title" : "{{deviceName}} ile eşleştirildi"
+      },
+      "loading" : {
+        "title" : "{{deviceName}} ile eşleştiriliyor",
+        "subtitle" : "{{productName}} cihazınızdaki kodu onaylayın"
+      },
+      "error" : {
+        "title" : "Eşleştirme başarısız",
+        "subtitle" : "Bir sorun oluştu! Bluetooth'unuzun açık ve {{productName}} cihazınızın yakında olduğundan emin olun"
+      }
+    },
+    "languageSelect" : {
+      "title" : "Uygulama Dili"
+    },
+    "firmwareLanguageUpdateDrawer" : {
+      "title" : "{{productName}} cihazınızın dilini değiştirin",
+      "description" : "Ledger Live artık {{newLanguage}}. {{productName}} cihazınızı da {{newLanguage}} kullanmak ister misiniz?",
+      "updateCta" : "Dili değiştir",
+      "cancelCta" : "İptal et"
+    },
+    "desyncDrawer" : {
+      "title" : "{{productName}} cihazınıza bağlanamadık",
+      "description" : "Lütfen {{productName}} cihazınızın yakında olduğundan ve kilidinin açıldığından emin olun. Cep telefonunuzun Bluetooth bağlantısının açık olup olmadığını kontrol edin",
+      "retryCta" : "Tekrar deneyin",
+      "helpCta" : "Yardım alın"
+    },
+    "resyncOverlay" : {
+      "content" : "{{productName}} ile bağlantınız kesilmiş. Yeniden bağlanılıyor"
+    },
+    "helpDrawer" : {
+      "title" : "Kurulum kılavuzuyla ilgili yardıma mı ihtiyacınız var?",
+      "description" : "Lorem Elsass ipsum aliquam bissame Ober schae ffolsheim gehts messti de Bischheim tellus blottkopf, dui sed libero. hopla libero, placerat leo eget Gal",
+      "docCta" : "SSS sayfalarımızı görüntüleyin",
+      "supportCta" : "Bir temsilciyle görüş"
+    },
+    "pairingStep" : {
+      "title" : "{{productName}} eşleştirildi",
+      "description" : "{{productName}} cihazınızı kurmaya devam edin ve adım adım kılavuzu görmek için buraya tekrar bakın"
+    },
+    "pinStep" : {
+      "title" : "PIN Kodunuzu seçin",
+      "description" : "PIN Kodunuz {{productName}} cihazınıza istenmeyen kişilerin erişmesine engel olur. Bunu asla paylaşmayın",
+      "warning" : "PIN Kodunuzu bilen ve {{productName}} cihazınıza erişebilen herkes varlıklarınızı sonsuza dek çalabilir"
+    },
+    "seedStep" : {
+      "title" : "Kurtarma ifadenizi ayarlayın",
+      "description" : "Kurtarma ifadeniz, özel anahtarlarınızı yedekleyen 24 kelimeden oluşan gizli bir listedir. {{productName}} cihazınız benzersiz bir kurtarma ifadesi oluşturur. Ledger bunun bir kopyasını saklamaz"
+    },
+    "softwareChecksSteps" : {
+      "title" : "İşletim sistemi kontrolü",
+      "genuineCheckRequestDrawer" : {
+        "title" : "{{productName}} cihazınızın orijinal olduğundan emin olalım",
+        "checkCta" : "Orijinalliği kontrol et"
+      },
+      "allowManagerDrawer" : {
+        "wording" : "Ledger Live"
+      },
+      "genuineCheckCancelledDrawer" : {
+        "title" : "Orijinallik kontrolü Nano'nuzda iptal edildi",
+        "description" : "Bu kontrol, {{productName}} cihazınızın güvenli bir şekilde kullanılabileceğinden emin olmak için önemlidir",
+        "retryCta" : "Orijinallik kontrolünü tekrar çalıştırın",
+        "skipCta" : "Belki sonra"
+      },
+      "updateAvailableDrawer" : {
+        "title" : "Yeni yazılım bulundu",
+        "description" : "En yeni güvenlik özelliklerine erişmek için {{productName}} cihazınızı güncellemenizi önemle tavsiye ederiz",
+        "updateCta" : "Güncelle"
+      },
+      "genuineCheckStep" : {
+        "inactive" : {
+          "title" : "Orijinallik Kontrolü"
+        },
+        "active" : {
+          "title" : "{{productName}} kontrol ediliyor"
+        },
+        "completed" : {
+          "title" : "{{productName}} cihazınız orijinal"
+        },
+        "failed" : {
+          "title" : "Cihaz güvenliği kontrol edilmedi"
+        }
+      },
+      "firmwareUpdateStep" : {
+        "inactive" : {
+          "title" : "Yazılım kontrolü"
+        },
+        "active" : {
+          "title" : "Yazılım sürümü kontrol ediliyor"
+        },
+        "completed" : {
+          "updateAvailable" : {
+            "title" : "{{firmwareVersion}} yazılım sürümü mevcut"
+          },
+          "noUpdateAvailable" : {
+            "title" : "Yazılım sürümü güncel"
+          }
+        },
+        "failed" : {
+          "title" : "Yazılım güncellenemedi"
+        }
+      }
+    },
+    "appsStep" : {
+      "title" : "{{productName}} uygulamaları"
+    },
+    "readyStep" : {
+      "title" : "{{productName}} hazır"
+    },
+    "completion" : {
+      "title" : "Artık kontrol sizde"
     }
   },
   "tabs" : {
@@ -1670,7 +1893,10 @@
         "addAccounts" : "Varlık ekle",
         "title" : "Hemen başla",
         "description" : "Ortaklarımızdan kripto satın alabilir veya cüzdanınızı kurabilirsiniz"
-      }
+      },
+      "title" : "Başlangıç olarak en çok kullandığınız varlıkları cüzdanınıza ekleyin",
+      "subtitle" : "Ledger 6.000'den fazla coin ve token'ı destekler",
+      "addAccount" : "veya bir hesap ekleyin"
     },
     "noOpState" : {
       "title" : "Henüz işlem yok mu?",
@@ -1682,20 +1908,27 @@
     "topGainers" : {
       "title" : "Yükselenler (24SA)",
       "seeMarket" : "Tümünü gör"
+    },
+    "walletBalance" : "Cüzdan bakiyesi",
+    "seelAllAssets" : "Tüm Varlıkları Gör",
+    "marketPriceSection" : {
+      "title" : "{{currencyTicker}} piyasa fiyatı",
+      "currencyPrice" : "1 {{currencyTicker}} fiyatı",
+      "currencyPriceChange" : "Son 24 saatlik değişim"
     }
   },
   "addAccountsModal" : {
+    "title" : "Hesap ekle",
     "ctaAdd" : "Hesap ekle",
     "ctaImport" : "Masaüstü hesaplarını içe aktar",
-    "title" : "Kripto Ekle",
-    "description" : "Kriptoları doğrudan Ledger'ınızla eklemeyi seçebilir veya bunları Ledger Live Desktop'tan içe aktarabilirsiniz.",
+    "description" : "Doğrudan Ledger'ınız ile kripto eklemeyi ya da onları Ledger Live Desktop üzerinden içe aktarmayı seçebilirsiniz.",
     "add" : {
       "title" : "Ledger'ınızla ekleyin",
-      "description" : "Varlıkları Ledger'ınızla ekleyin veya içe aktarın"
+      "description" : "Ledger'ınız ile varlık yaratabilir ya da içe aktarabilirsiniz"
     },
     "import" : {
       "title" : "Masaüstünden içe aktarın",
-      "description" : "Varlıkları Ledger Live Desktop'tan içe aktarın"
+      "description" : "Ledger Live Desktop'tan varlık içe aktarın"
     }
   },
   "byteSize" : {
@@ -1907,7 +2140,8 @@
       "buttons" : {
         "receiveFunds" : "Al",
         "buyCrypto" : "Satın Al"
-      }
+      },
+      "addAccountCta" : "Hesap ekle"
     },
     "settings" : {
       "header" : "Hesap ayarları",
@@ -1945,6 +2179,7 @@
       },
       "advanced" : {
         "title" : "Kapsamlı loglar",
+        "warningDerivation" : "Bu bir {{tag}} xpub'ıdır. Bunu bir üçüncü taraf cüzdana aktarırken aynı türev modunu seçin.",
         "desc" : ""
       }
     },
@@ -2008,6 +2243,15 @@
         "subtitle" : "{{assetName}} satın almak veya teslim almak için bir cihaza ihtiyacınız olacak"
       }
     },
+    "modals" : {
+      "zeroBalanceDisabledAction" : {
+        "title" : "Henüz elinizde {{currencyTicker}} yok",
+        "start" : "Başlamak için {{currencyTicker}} Satın Alın veya başka bir yerden cüzdanınıza Alın.",
+        "description" : "Bu hesapla {{actionName}} işlemi yapmak için elinizde {{currencyTicker}} olmalı."
+      }
+    },
+    "earn" : "Kazanın",
+    "quickActions" : "Hızlı işlemler",
     "banner" : {
       "redelegation" : {
         "description" : "Haberiniz olsun! Ledger doğrulayıcısı, kullanmakta olduğunuz doğrulayıcıya kıyasla daha düşük bir komisyonla stake eder.",
@@ -2021,6 +2265,7 @@
   },
   "accounts" : {
     "title" : "Hesaplar",
+    "cryptoAccountsTitle" : "{{currencyTicker}} hesapları",
     "importNotification" : {
       "message" : "Hesaplarınız başarıyla içe aktarıldı!"
     },
@@ -2229,14 +2474,19 @@
         "title" : "Piyasa",
         "desc" : "Önemli piyasa değişikliklerinden haberdar olun"
       },
-      "announcement" : {
+      "announcements" : {
         "title" : "Duyurular",
         "desc" : "Önemli Ledger Live haberlerini alın"
+      },
+      "recommendations" : {
+        "title" : "Öneriler",
+        "desc" : "Kişiselleştirilmiş öneriler ve özel teklifler ile daha zengin bir deneyim yaşayın"
       },
       "price" : {
         "title" : "Fiyat Uyarıları",
         "desc" : "En çok tercih ettiğiniz coin'ler için fiyat uyarıları belirleyerek piyasa hareketlerini kaçırmayın"
-      }
+      },
+      "disclaimer" : "Ledger'da veri gizliliği her şeyden önce gelir. Toplanan veriler iş ortaklarımızla asla paylaşılmaz."
     },
     "help" : {
       "title" : "Yardım",
@@ -2253,6 +2503,10 @@
       "clearCacheButton" : "Temizle",
       "exportLogs" : "Logları kaydedin",
       "exportLogsDesc" : "Ledger Live loglarını kaydetmek sorun giderme amacıyla gerekli olabilir.",
+      "resetThirdPartyData" : "Üçüncü taraf verilerini sıfırla",
+      "resetThirdPartyDataDesc" : "Üçüncü taraf işlem sağlayıcısına erişmek için kullanılan tüm yerel üçüncü taraf verilerinizi silin.",
+      "resetThirdPartyDataModal" : "Yerel üçüncü taraf verilerinizi silin",
+      "resetThirdPartyDataModalDesc" : "Yerel üçüncü taraf verilerinizi silin. İş ortaklarımız tarafından sağlanan hizmetlere erişmek için KYC'nizi yeniden göndermeniz veya tekrar oturum açmanız gerekebilir.",
       "hardReset" : "Ledger Live'ı sıfırlayın",
       "hardResetDesc" : "Bunun varlıklarınız üzerinde bir etkisi yoktur. Hesap verileri, işlem geçmişleri ve ayarlar dahil olmak üzere Ledger Live'daki tüm verileri siler. Boş bir Ledger Live'da kripto varlıklarınızı yeniden yüklemek ve yönetmek için Ledger cihazınızı kullanın.",
       "repairDevice" : "Ledger cihazınızı onarın",
@@ -2261,7 +2515,46 @@
     "experimental" : {
       "title" : "Deneysel özellikler",
       "desc" : "Deneysel özelliklere bakıp ne düşündüğünüzü bize bildirin.",
-      "disclaimer" : "Bu Deneysel özellikleri, teknoloji tutkunu topluluğumuzun test edebilmesi için \"olduğu gibi\" sunuyoruz. Herhangi bir zamanda değişebilir, bozulabilir veya kaldırılabilirler. Bu özellikleri etkinleştirdiğinizde tüm riskin size ait olduğunu kabul etmiş olursunuz."
+      "disclaimer" : "Bu Deneysel özellikleri, teknoloji tutkunu topluluğumuzun test edebilmesi için \"olduğu gibi\" sunuyoruz. Herhangi bir zamanda değişebilir, bozulabilir veya kaldırılabilirler. Bu özellikleri etkinleştirdiğinizde tüm riskin size ait olduğunu kabul etmiş olursunuz.",
+      "experimentalFeatures" : {
+        "experimentalIntegrations" : {
+          "title" : "Deneysel entegrasyonlar",
+          "description" : "Mevcut deneysel kripto varlık entegrasyonlarını kullanın."
+        },
+        "developerMode" : {
+          "title" : "Geliştirici modu",
+          "description" : "Yönetici sayfasında geliştirici ve testnet uygulamalarını gösterir."
+        },
+        "managerProvider" : {
+          "title" : "Yönetici sağlayıcısı",
+          "description" : "Yönetici'de uygulama sağlayıcısını değiştirmek, Ledger cihazınıza uygulama yüklemeyi veya kaldırmayı imkansız hale getirebilir."
+        },
+        "experimentalExplorers" : {
+          "title" : "Deneysel Tarayıcılar API'ı",
+          "description" : "Ledger'ın blok zinciri tarayıcılarının gelecek bir sürümünü deneyin. Bu ayarın değiştirilmesi, hesap bakiyesi ve senkronizasyonun yanı sıra gönderme özelliğini de etkileyebilir."
+        },
+        "experimentalCountervalues" : {
+          "title" : "Deneysel karşı değerler API'ı",
+          "description" : "Bu, hesaplarınız için görüntülenen karşı değerlerin hatalı gözükmesine neden olabilir."
+        },
+        "experimentalSwap" : {
+          "title" : "Yeni TAKAS arayüzü",
+          "description" : "Yeni ve deneysel takas arayüzünü kullanın"
+        }
+      },
+      "developerFeatures" : {
+        "experimentalApps" : {
+          "title" : "Deneysel uygulamalara izin ver",
+          "description" : "Deneysel etiketli platform uygulamalarını görüntüleme ve açmaya izin verin."
+        },
+        "staggingUrl" : {
+          "title" : "Test ortamı URL'sini öğrenin",
+          "description" : "Öğrenin sayfası için test ortamı URL'sini kullanın."
+        },
+        "platformManifest" : {
+          "title" : "Platform Manifest Dosyasını Yükleyin"
+        }
+      }
     },
     "developer" : {
       "title" : "Geliştiriciler için",
@@ -2273,17 +2566,15 @@
     "debug" : {
       "featureFlagsTitle" : "Ledger Live'da kullanılan tanımlı özellik bayrakları",
       "featureFlagsDesc" : "Uygulama yeniden başlatılırsa geçersiz bırakılan değerler sıfırlanacaktır. Sadece geçerli JSON dizeleri kabul edilecektir.",
-      "featureFlagsOverride" : "Geçersiz bırak",
       "featureFlagsEdit" : "Düzenle",
       "featureFlagsRestore" : "Geri yükle",
-      "featureFlagsDisplayValue" : "Değeri göster",
-      "featureFlagsHideValue" : "Değeri gizle"
+      "firebaseProject" : "Firebase project targeted by this build:"
     }
   },
   "notifications" : {
     "prompt" : {
       "title" : "Bildirimleri aç",
-      "desc" : "Ledger Live, Ledger ürünleri ve güvenlik ile ilgili önemli gelişmeleri öğrenin. İstediğiniz zaman devre dışı bırakabilirsiniz.",
+      "desc" : "Ledger Live, Ledger ürünleri ve piyasalar hakkındaki son haberleri ve kişiye özel öneriler alın. Ayarları değiştirerek istediğiniz zaman abonelikten çıkabilirsiniz",
       "allow" : "Bildirimlere izin ver",
       "later" : "Belki sonra"
     }
@@ -2637,19 +2928,79 @@
         }
       }
     },
-    "swapv2" : {
+    "swap2" : {
       "form" : {
-        "summary" : {
-          "from" : "Gönderici",
-          "to" : "Alıcı",
-          "send" : "Gönder",
-          "payoutNetworkFees" : "Ödeme ücretleri",
-          "payoutNetworkFeesTooltip" : "Bu tutar cihazınızda gösterilmeyecektir",
-          "receive" : "Tutar",
-          "receiveFloat" : "Hizmet ücretleri hariç alınacak tutar",
-          "provider" : "Sağlayıcı",
-          "method" : "Kur",
-          "fees" : "Ücretler"
+        "ratesDrawer" : {
+          "title" : "Kur",
+          "quote" : "Teklif",
+          "receive" : "Al"
+        },
+        "placeholder" : "Seç",
+        "title" : "Takas edin",
+        "cta" : "Takas et",
+        "from" : "Gönderici",
+        "to" : "Alıcı",
+        "loading" : "Yükleniyor...",
+        "disclaimer" : {
+          "title" : "Hüküm ve Koşullar",
+          "desc" : "“Kabul Et” seçeneğine tıklayarak bu hizmetin tamamen ve sadece {{providerName}} Hüküm ve Koşullarına tabi olduğunu anlıyor ve kabul ediyorum.",
+          "tos" : "Hüküm ve Koşullar",
+          "accept" : "Kabul et"
+        },
+        "notAvailable" : {
+          "title" : "Bulunduğunuz yerde takas işlemleri henüz mevcut değil",
+          "content" : "Lütfen biraz daha sabredin; bu özelliği çok yakında başlatacağız"
+        },
+        "amount" : {
+          "useMax" : "Tümünü kullan"
+        },
+        "details" : {
+          "label" : {
+            "provider" : "Sağlayıcı",
+            "rate" : "Kur",
+            "fees" : "Ağ ücretleri",
+            "target" : "Hedef hesap"
+          },
+          "noAccount" : "{{name}} almak için bir hesap oluşturun",
+          "noAccountCTA" : "Hesap ekle"
+        },
+        "select" : {
+          "from" : {
+            "title" : "Gönderici"
+          },
+          "to" : {
+            "title" : "Alıcı"
+          }
+        },
+        "providers" : {
+          "kyc" : {
+            "title" : "KYC",
+            "required" : "KYC işlemini tamamlamalısınız",
+            "complete" : "KYC'yi tamamla",
+            "update" : "KYC'yi yenile",
+            "rejected" : "KYC reddedildi; doğrulamayı yeniden başlatın",
+            "rejectedContactProviderSupport" : "KYC reddedildi, lütfen {{providerName}} desteğiyle iletişime geçin",
+            "updateRequired" : "KYC'nizi tamamlayın veya güncelleyin",
+            "status" : {
+              "pending" : "KYC beklemede",
+              "approved" : "KYC onaylandı",
+              "closed" : "KYC reddedildi",
+              "upgradeRequired" : "KYC eksik"
+            }
+          },
+          "login" : {
+            "title" : "Oturum aç",
+            "required" : "Bu sağlayıcı ile giriş yapmanız gerekiyor",
+            "complete" : "Oturum aç"
+          },
+          "mfa" : {
+            "title" : "MFA",
+            "required" : "Bu sağlayıcı ile MFA kurmanız gerekiyor",
+            "complete" : "MFA kur"
+          },
+          "withdrawalsBlockedError" : {
+            "message" : "Çekim işleminiz {{providerName}} tarafından engellendi. \n\n Daha fazla bilgi almak için lütfen onların destek ekibiyle iletişime geçin."
+          }
         }
       }
     },
@@ -2845,6 +3196,12 @@
       }
     }
   },
+  "signMessage" : {
+    "eip712" : {
+      "showFullMessage" : "Tam mesajı göster",
+      "hideFullMessage" : "Tam mesajı gizle"
+    }
+  },
   "sync" : {
     "error" : "Senkronizasyon hatası",
     "loading" : "Senkronizasyon"
@@ -2906,9 +3263,14 @@
       "infoTotalDesc" : "İşlem miktarını ve seçilen ağın ücretlerini içerir",
       "gasLimit" : "Gas limiti",
       "gasPrice" : "Gas ücreti",
+      "maxFee" : "Ücret üst limiti",
+      "maxPriorityFee" : "Öncelik ücreti üst limiti",
+      "nextBlock" : "Sonraki blok: {{nextBaseFee}}",
+      "suggestedPriorityFee" : "Önerilen: {{lowPriorityFee}} - {{highPriorityFee}}",
       "maxFees" : "Maksimum ücret",
       "validateGasLimit" : "Gas limitini onayla",
       "fees" : "Ücretler",
+      "maxEstimatedFee" : "Maks. tahminî ücret",
       "validateFees" : "Ücretleri Onayla",
       "customizeFees" : "Ücretleri Özelleştir",
       "memo" : {
@@ -3072,6 +3434,7 @@
     }
   },
   "addAccounts" : {
+    "addNew" : "Yeni ekle",
     "supportLinks" : {
       "segwit_or_native_segwit" : "Segwit mi yoksa Native Segwit mi?"
     },
@@ -3104,7 +3467,6 @@
     "retry" : "Tekrar dene",
     "done" : "Tamam",
     "finalCta" : "Devam",
-    "finalCtaForSwap" : "Takas sayfasına dön",
     "synchronizing" : "Senkronize ediliyor",
     "synchronizingDesc" : "Hesaplarınız senkronize ediliyor. Bu biraz zaman alabilir...",
     "noAccountToCreate" : "<1><0>{{currencyName}}<></> hesabı oluşturulamadı. İşlemi yeniden başlatın ve hesaplarınızı senkronize edin.",
@@ -3156,7 +3518,7 @@
     }
   },
   "DeviceAction" : {
-    "stayInTheAppPlz" : "Ledger Live uygulamasında kalın ve Nano X'inizi yakınınızda tutun",
+    "stayInTheAppPlz" : "Ledger Live uygulamasında kalın ve Ledger'ınızı yakınınızda tutun.",
     "allowAppPermission" : "Cihazınızda {{wording}} uygulamasını açın",
     "allowAppPermissionSubtitleToken" : "ve {{token}} token'larınızı yönetin",
     "allowManagerPermission" : "Cihazınızda {{wording}} uygulamasına izin verin",
@@ -3170,6 +3532,10 @@
     "appNotInstalled" : "Lütfen {{appName}} uygulamasını yükleyin",
     "appNotInstalled_plural" : "Lütfen {{appName}} uygulamasını yükleyin",
     "useAnotherDevice" : "Başka bir cihaz kullanın",
+    "deviceNotOnboarded" : {
+      "title" : "Ledger'ınız henüz kullanılmaya hazır değil",
+      "description" : "İlk önce {{deviceName}} cihazının kurulumunu yapmanız gerekiyor. Cihaz kurulum sürecinde size yardımcı olacağız"
+    },
     "deviceInBootloader" : {
       "title" : "Cihaz Bootloader (önyükleyici) modunda.",
       "description" : "Güncellemek için \"Devam\" butonuna tıklayın."
@@ -3180,8 +3546,21 @@
     },
     "confirmSwap" : {
       "title" : "Takas işlemini cihazdan onaylayın",
-      "alert" : "Göndermeden önce cihazınızdaki takas bilgilerini doğrulayın. Adresler güvenli bir şekilde aktarılır, böylece onları doğrulamak zorunda kalmazsınız.",
-      "acceptTerms" : "Bu işlemi onaylayarak,\n<0><0>{{provider}}</0> Kullanım Koşullarını</0> kabul ediyorum."
+      "alert" : {
+        "default" : "Göndermeden önce cihazınızdaki takas bilgilerini doğrulayın. Adresler güvenli bir şekilde aktarılır, böylece onları doğrulamak zorunda kalmazsınız.",
+        "cic" : "Göndermeden önce cihazınızdaki Takas bilgilerini doğrulayın. Bazı işlemler için CIC tarafından ek doğrulama adımları gerekebilir ve bu biraz gecikmeye neden olabilir."
+      },
+      "acceptTerms" : "Bu işlemi onaylayarak,\n<0><0>{{provider}}</0> Kullanım Koşullarını</0> kabul ediyorum.",
+      "notice" : "Göndermeden önce cihazınızdaki takas bilgilerini doğrulayın. Adresler güvenli bir şekilde aktarılır, böylece onları doğrulamak zorunda kalmazsınız."
+    },
+    "swap2" : {
+      "notice" : "Göndermeden önce cihazınızdaki takas bilgilerini doğrulayın. Adresler güvenli bir şekilde aktarılır, böylece onları doğrulamak zorunda kalmazsınız.",
+      "amountSent" : "Gönderilecek tutar",
+      "amountReceived" : "Alınacak tutar",
+      "provider" : "Sağlayıcı",
+      "fees" : "Ağ Ücretleri",
+      "sourceAccount" : "Kaynak Hesap",
+      "targetAccount" : "Hedef Hesap"
     },
     "confirmSell" : {
       "title" : "Satış işleminizi cihazdan onaylayın",
@@ -3308,6 +3687,24 @@
   "manager" : {
     "tabTitle" : "My Ledger",
     "title" : "My Ledger",
+    "selectDevice" : {
+      "saved" : {
+        "title" : "Cihazlar",
+        "description" : "Kayıtlı Ledger'larınızı yönetin"
+      },
+      "addNewCTA" : "Yeni ekle",
+      "otgBanner" : "Elinizde bir Nano S veya Nano S Plus varsa cihazınızı USB kablosuyla bağlayın.",
+      "connectExistingLedger" : "Mevcut bir Ledger'ı bağlayın",
+      "connectExistingLedgerDescription" : "Kurulumu yapılmış bir Ledger'ınız zaten var mı? Bluetooth ile eşleştirin",
+      "setUpNewLedger" : "Yeni bir Ledger'ın kurulumunu yapın",
+      "setUpNewLedgerDescription" : "Yeni bir Ledger mı satın aldınız? Kurulumunu yapmak için buraya tıklayın",
+      "buyDeviceCTA" : "Yeni bir Ledger'a mı ihtiyacınız var? Satın al",
+      "item" : {
+        "usb" : "USB ile bağlandı",
+        "available" : "Mevcut. Bağlanmak için dokunun",
+        "unavailable" : "Bağlı değil"
+      }
+    },
     "connect" : "Cihazınızı seçin",
     "appsCatalog" : "Uygulama Kataloğu",
     "installedApps" : "Yüklenmiş uygulamalar",
@@ -3355,6 +3752,7 @@
       "appsInstalled" : "<0>{{number}}</0> uygulama",
       "appsInstalled_plural" : "<0>{{number}}</0> uygulama",
       "storageAvailable" : "kullanılabilir",
+      "noFreeSpace" : "Depolama alanı kalmadı",
       "appsToUpdate" : "<0>{{number}}</0> güncelleme",
       "appsToUpdate_plural" : "<0>{{number}}</0> güncelleme"
     },
@@ -3515,6 +3913,17 @@
       "pleaseConnectUsbDescription" : "Donanım yazılımı güncellemesini başlatmak için {{deviceName}} cihazınızı bir USB kablosuyla cep telefonunuza bağlayın."
     }
   },
+  "firmwareUpdateRequired" : {
+    "updateAvailableFromLLM" : {
+      "title" : "Donanım yazılımı güncellemesi gerekli",
+      "description" : "Bu eylemi gerçekleştirmeden önce {{ deviceName }} cihazınızın donanım yazılımını güncellemelisiniz.",
+      "cta" : "My Ledger'a Git"
+    },
+    "updateNotAvailableFromLLM" : {
+      "title" : "Donanım yazılımının bilgisayarınızda güncellenmesi gerekiyor",
+      "description" : "Ledger Live Desktop'ta {{ deviceName }} cihazını güncelleyin"
+    }
+  },
   "FirmwareUpdateReleaseNotes" : {
     "introTitle" : "{{deviceName}} cihazınızı {{version}} sürümüne güncelleyin",
     "recoveryPhraseBackupInstructions" : "Önlem olarak, 24 kelimelik kurtarma ifadenizi bir Kurtarma kağıdına yazdığınızdan ve ona kolayca ulaşabileceğinizden emin olun.",
@@ -3537,15 +3946,25 @@
       "ru" : "Rusça",
       "es" : "İspanyolca",
       "zh" : "Çince",
-      "de" : "Almanca"
+      "de" : "Almanca",
+      "tr" : "Türkçe",
+      "ja" : "Japonca",
+      "ko" : "Korece",
+      "pt" : "Portekizce"
     }
   },
   "deviceLocalization" : {
     "language" : "Dil",
     "deviceLanguage" : "Cihaz Dili",
+    "chooseLanguage" : "{{deviceName}} cihazınız için bir dil seçin.",
     "changeLanguage" : "Dili değiştir",
-    "allowLanguageInstallation" : "Dilin yüklenmesine izin verin",
-    "languageInstalled" : "Cihaz dili {{language}} oldu",
+    "yesChangeLanguage" : "Evet, dili değiştir",
+    "allowLanguageInstallation" : "{{deviceName}} cihazına dilin yüklenmesini onaylayın",
+    "languageInstalled" : "Dil {{language}} oldu",
+    "firmwareUpdatePrompt" : {
+      "title" : "{{deviceName}} cihazınızın dili {{language}} yapılsın mı?",
+      "description" : "{{deviceName}} cihazınızı artık {{language}} kullanabilirsiniz. Cihaz dilini şimdi ayarlayabilir ya da daha sonra My Ledger'dan istediğiniz zaman değiştirebilirsiniz."
+    },
     "installingLanguage" : "Dil yükleniyor",
     "languages" : {
       "english" : "İngilizce",
@@ -3659,7 +4078,276 @@
       "available" : {
         "title" : "CELO mevcut",
         "description" : "Bu tutar, kullanabileceğiniz fondur."
+      },
+      "lockedBalance" : {
+        "title" : "Kilitli bakiye",
+        "description" : "Ödül kazanmak için öncelikle varlıkların kilitlenmesi ve doğrulayıcı gruplarına oylanması gerekir."
+      },
+      "nonvotingLockedBalance" : {
+        "title" : "Oylamayan kilitli bakiye",
+        "description" : "Oylama için kullanılabilecek kilitli varlıkların bakiyesi."
+      },
+      "withdrawableBalance" : {
+        "title" : "Çekilebilir bakiye",
+        "description" : "Mevcut Bakiyenize çekebileceğiniz, kilidi açık Celo varlıkları."
       }
+    },
+    "delegation" : {
+      "validatorGroup" : "Doğrulayıcı Grubu",
+      "totalVotes" : "Toplam Oy",
+      "actions" : {
+        "activate" : "Etkinleştir",
+        "revoke" : "İptal et"
+      },
+      "delegationUnavailable" : {
+        "title" : "Yetersiz Kilitli Fon"
+      },
+      "manageMultipleVoteWarning" : "Bu oyu yönetmeden önce, aynı doğrulayıcı grubundaki diğer oyları Etkinleştirmeli ya da İptal Etmelisiniz."
+    },
+    "manage" : {
+      "title" : "Varlıkları yönet",
+      "titleWhenPendingRegistration" : "Hesap Kaydı Beklemede",
+      "lock" : {
+        "title" : "Kilitle",
+        "description" : "Ödül kazanmak için öncelikle belli bir miktarı kilitleyin. Ardından doğrulayıcılarınıza oy verin."
+      },
+      "unlock" : {
+        "title" : "Kilit açın",
+        "description" : "Kilitli bir tutarı yeniden kullanabilmek için öncelikle kilidini açmalısınız. 3 günlük kilit açma süresinin ardından çekebilirsiniz."
+      },
+      "withdraw" : {
+        "title" : "Çekim",
+        "description" : "Kilidi açılan varlıkları mevcut bakiyeye geri almak için manuel olarak çekim yapmanız gerekir."
+      },
+      "vote" : {
+        "title" : "Oylayın",
+        "description" : "Doğrulayıcı gruplarına oy verin. Ödül kazanmak için oylarınızı etkinleştirdiğinizden emin olun."
+      },
+      "activate" : {
+        "title" : "Oy etkinleştirin",
+        "description" : "Doğrulayıcı grubuna verdiğiniz oyu etkinleştirin"
+      },
+      "revoke" : {
+        "title" : "Oy iptal edin",
+        "description" : "Doğrulayıcı grubuna verdiğiniz oyu iptal edin"
+      }
+    },
+    "unlock" : {
+      "stepperHeader" : {
+        "title" : "Varlıkların kilidini açın",
+        "stepRange" : "Adım {{currentStep}} / {{totalSteps}}",
+        "selectDevice" : "Cihaz seçin",
+        "connectDevice" : "Cihazı bağlayın"
+      },
+      "flow" : {
+        "steps" : {
+          "amount" : {
+            "info" : "Kilidi açılan varlıklar, 3 günlük kilit açma süresinin ardından çekilebilir.",
+            "available" : "Mevcut",
+            "max" : "Maks."
+          },
+          "verification" : {
+            "success" : {
+              "title" : "Kilit açma işlemi başarıyla gönderildi",
+              "text" : "Kilidi açılan varlıklar 3 gün sonra çekilebilir."
+            }
+          }
+        }
+      }
+    },
+    "vote" : {
+      "iVote" : "Oy veriyorum",
+      "stepperHeader" : {
+        "title" : "Oylayın",
+        "stepRange" : "Adım {{currentStep}} / {{totalSteps}}",
+        "selectDevice" : "Cihaz seçin",
+        "connectDevice" : "Cihazı bağlayın"
+      },
+      "flow" : {
+        "steps" : {
+          "starter" : {
+            "description" : "CELO varlıklarınızın yetkisini bir doğrulayıcıya devrederek ödüller kazanabilirsiniz.",
+            "bullet" : {
+              "0" : "Yetki devrinde kullanılan varlıklar size ait olmaya devam eder.",
+              "1" : "Ledger cihazınızı kullanarak yetki devredin.",
+              "2" : "Varlıklar yetki iptalinden sonra mevcut olacak"
+            },
+            "warning" : {
+              "description" : "Doğrulayıcınızı dikkatle seçin: Doğrulayıcının yanlış kararlar vermesi halinde yetki devrinde kullandığınız varlıkların bir kısmını geri dönülemez bir şekilde kaybedebilirsiniz."
+            },
+            "cta" : "Devam"
+          },
+          "amount" : {
+            "available" : "Mevcut",
+            "max" : "Maks."
+          },
+          "verification" : {
+            "success" : {
+              "title" : "Başarıyla oy verdiniz",
+              "text" : "İşlem kısa süre içinde işlem geçmişinde görünecek."
+            }
+          }
+        }
+      }
+    },
+    "activate" : {
+      "iActivate" : "Oylarımı etkinleştiriyorum",
+      "stepperHeader" : {
+        "title" : "Oy etkinleştirin",
+        "stepRange" : "Adım {{currentStep}} / {{totalSteps}}",
+        "selectDevice" : "Cihaz seçin",
+        "connectDevice" : "Cihazı bağlayın"
+      },
+      "title" : "Oyları etkinleştirin",
+      "flow" : {
+        "steps" : {
+          "verification" : {
+            "success" : {
+              "title" : "Etkinleştirme başarılı",
+              "text" : "Oyunuz başarıyla etkinleştirildi."
+            }
+          }
+        }
+      }
+    },
+    "revoke" : {
+      "iRevoke" : "İptal ediyorum",
+      "stepperHeader" : {
+        "title" : "Oylayın",
+        "stepRange" : "Adım {{currentStep}} / {{totalSteps}}",
+        "selectDevice" : "Cihaz seçin",
+        "connectDevice" : "Cihazı bağlayın"
+      },
+      "flow" : {
+        "steps" : {
+          "validator" : {
+            "active" : "Aktif",
+            "pending" : "Beklemede"
+          },
+          "amount" : {
+            "available" : "Mevcut",
+            "max" : "Maks."
+          },
+          "verification" : {
+            "success" : {
+              "title" : "Oylarınızı başarıyla iptal ettiniz",
+              "text" : "İşlem kısa süre içinde işlem geçmişinde görünecek."
+            }
+          }
+        }
+      },
+      "vote" : {
+        "title" : "Oylayın",
+        "active" : "Aktif",
+        "pending" : "Beklemede",
+        "awaitingActivation" : "Etkinleştirme bekleniyor",
+        "info" : "Bu modda sadece iptal edebileceğiniz oylar gösterilir"
+      }
+    },
+    "register" : {
+      "stepperHeader" : {
+        "title" : "Hesap kaydet",
+        "continue" : "Devam",
+        "stepRange" : "Adım {{currentStep}} / {{totalSteps}}",
+        "selectDevice" : "Cihaz seçin",
+        "connectDevice" : "Cihazı bağlayın"
+      },
+      "flow" : {
+        "steps" : {
+          "started" : {
+            "description" : "Celo varlıklarınızın kilidini açmadan önce hesabınızı on-chain (zincir içi) olarak kaydetmeniz gerekir."
+          },
+          "verification" : {
+            "success" : {
+              "title" : "Hesap başarıyla kaydedildi.",
+              "text" : "İşlem kısa süre içinde işlem geçmişinde görünecek."
+            }
+          }
+        }
+      }
+    },
+    "lock" : {
+      "stepperHeader" : {
+        "title" : "Varlıkları kilitleyin",
+        "stepRange" : "Adım {{currentStep}} / {{totalSteps}}",
+        "selectDevice" : "Cihaz seçin",
+        "connectDevice" : "Cihazı bağlayın"
+      },
+      "flow" : {
+        "steps" : {
+          "amount" : {
+            "info" : "Kilitli varlıkların kilidini istediğiniz zaman açabilirsiniz ancak kilit açma işlemi 3 günde tamamlanır.",
+            "available" : "Mevcut",
+            "max" : "Maks."
+          },
+          "verification" : {
+            "success" : {
+              "title" : "Varlıkların kilidi başarıyla açıldı",
+              "text" : "İşleminiz ağ tarafından onaylandıktan sonra doğrulayıcılara oy verebileceksiniz."
+            }
+          }
+        }
+      }
+    },
+    "withdraw" : {
+      "iWithdraw" : "Çekilecek:",
+      "title" : "Varlık çekimi",
+      "steps" : {
+        "amount" : {
+          "title" : "Çekim"
+        },
+        "connectDevice" : {
+          "title" : "Cihaz"
+        },
+        "confirmation" : {
+          "title" : "Onaylayın",
+          "success" : {
+            "title" : "Çekim işlemi başarıyla gönderildi",
+            "text" : "Çekilen tutar mevcut bakiyenize aktarılacaktır.",
+            "cta" : "Ayrıntıları göster"
+          },
+          "broadcastError" : "İşleminiz başarısız olmuş olabilir. Lütfen biraz bekleyin ve tekrar denemeden önce işlem geçmişini kontrol edin."
+        }
+      },
+      "stepperHeader" : {
+        "title" : "Oyla",
+        "stepRange" : "Adım {{currentStep}} / {{totalSteps}}",
+        "selectDevice" : "Cihaz seçin",
+        "connectDevice" : "Cihazı bağlayın"
+      },
+      "flow" : {
+        "steps" : {
+          "amount" : {
+            "available" : "Mevcut",
+            "max" : "Maks.",
+            "waitingTitle" : "Tutar, çekim için hazır değil",
+            "waitingPeriod" : "Bu tutarı çekmek için {{date}} tarihine kadar beklemeniz gerekiyor."
+          },
+          "verification" : {
+            "success" : {
+              "title" : "Varlıklarınız başarıyla çekildi",
+              "text" : "Çekilen tutar mevcut bakiyenize aktarılacaktır."
+            }
+          }
+        }
+      }
+    },
+    "emptyState" : {
+      "description" : "Varlıklarınızın yetkisini devrederek CELO ödülleri kazanabilirsiniz.",
+      "info" : "Yetki Devri nasıl çalışır?",
+      "delegation" : "Ödüller kazanın"
+    },
+    "earnRewards" : {
+      "description" : "CELO varlıklarınızın yetkisini bir doğrulayıcıya devrederek ödüller kazanabilirsiniz.",
+      "bullet" : {
+        "0" : "Yetki devrinde kullanılan varlıklar size ait olmaya devam eder.",
+        "1" : "Ledger cihazınızı kullanarak yetki devredin.",
+        "2" : "Varlıklar yetki iptalinden sonra mevcut olacak"
+      }
+    },
+    "alerts" : {
+      "withdrawableAssets" : "Çekebileceğiniz bir miktar bakiyeniz var.",
+      "activatableVotes" : "Etkinleştirebileceğiniz oylar bulunuyor."
     }
   },
   "osmosis" : {
@@ -4694,7 +5382,11 @@
       "retrySearchParams" : "Lütfen aramayı farklı bir değişkenle yeniden deneyin.",
       "trackFavAssets" : "Favorilerinizi takip edin",
       "clickOnStarIcon" : "Bir varlığın yanındaki yıldız simgesine tıklamak onu otomatik bir şekilde favori varlıklarınız arasına ekler.",
-      "browseAssets" : "Varlıklara göz atın"
+      "browseAssets" : "Varlıklara göz atın",
+      "starred" : {
+        "title" : "İlgilendiğiniz varlıkları takip edin!",
+        "desc" : "Bir varlığın yanında bulunan \"Yıldız\" simgesine tıkladığınızda otomatik olarak favorileriniz arasına eklenir"
+      }
     }
   },
   "nft" : {
@@ -4703,7 +5395,8 @@
       "seeFewerNfts" : "Daha az NFT gör"
     },
     "gallery" : {
-      "allNft" : "Tüm NFT'ler"
+      "allNft" : "Tüm NFT'ler",
+      "addNew" : "Yeni ekle"
     },
     "viewer" : {
       "properties" : "Özellikler",
@@ -4720,7 +5413,13 @@
     "viewerModal" : {
       "viewOn" : "Burada görüntüle:",
       "viewInExplorer" : "Tarayıcıda görüntüle",
+      "hide" : "NFT koleksiyonunu gizleyin",
       "txDetails" : "İşlem bilgileri"
+    },
+    "modalDisabled" : {
+      "title" : "Gönderme işlevi devre dışı",
+      "body" : "Apple'ın App Store için gerçekleştirdiği son güncellemeler uyarınca, NFT gönderme işlevi geçici olarak devre dışı bırakıldı. Ledger Live Desktop sürümünü kullanarak NFT göndermeye devam edebilirsiniz.",
+      "contactSupport" : "Daha çok bilgi almak için lütfen destek makalemizi okuyun."
     }
   },
   "ApplicationVersion" : "v{{version}}",
@@ -4743,16 +5442,96 @@
       "messageIfVirtual" : "{{name}} adresiniz Ledger cihazınızda onaylanamıyor. Kullandığınız takdirde sorumluluk size aittir."
     }
   },
+  "asset" : {
+    "title" : "{{assetName}} varlığınız",
+    "accountsSection" : {
+      "title" : "{{currencyName}} hesaplarınız"
+    }
+  },
   "customImage" : {
+    "title" : "Kilit ekranı resmi",
+    "replace" : "Değiştir",
     "drawer" : {
       "title" : "Bir görüntü seçin",
       "options" : {
         "uploadFromPhone" : "Telefonumdan yükle"
       }
     },
-    "cropImage" : "Crop image",
-    "chooseConstrast" : "Choose contrast",
+    "cropImage" : "Görüntüyü kırp",
+    "chooseConstrast" : "Kontrastı seç",
     "uploadAnotherImage" : "Başka bir görsel yükleyin",
-    "selectContrast" : "Kontrastınızı seçin"
+    "rotateImage" : "Döndür",
+    "allowPreview" : "{{productName}} cihazında resim ön izlemesine izin ver",
+    "loadingPicture" : "{{productName}} cihazında resim yükleniyor",
+    "pictureLoaded" : "Resim yüklendi",
+    "timeDisclaimer" : "Bu, 30 saniyeye kadar sürebilir",
+    "imageLoaded" : "Görüntü {{productName}} cihazına yüklendi",
+    "confirmPicture" : "{{productName}} cihazında onaylayın",
+    "landingPage" : {
+      "title" : "Bir resim seçin.\nBir tarz oluşturun.\nLedger'ı özelleştirin.",
+      "subtitle" : "En sevdiğiniz NFT'nin bir resmini veya telefonunuzdaki bir resmi ayarlayın.",
+      "choosePicture" : "Bir resim seçin"
+    },
+    "customImage" : "Özel resim",
+    "doThisLater" : "Belki sonra",
+    "preview" : {
+      "title" : "Ön izleme",
+      "loading" : "Loading preview",
+      "setPicture" : "Özel resmi ayarla",
+      "editPicture" : "Resmi düzenle"
+    }
+  },
+  "postOnboarding" : {
+    "hub" : {
+      "title" : "Bravo.\nArtık tamamen hazırsınız.",
+      "allDoneTitle" : "İyi iş çıkardınız.\nHer şey tamam.",
+      "subtitle" : "Şimdi şunları yapabilirsiniz:",
+      "skip" : "Uygulamaya geç",
+      "goToWallet" : "Ledger Live cüzdanına git",
+      "done" : "Az önce geleceğinizi güvenceye almış oldunuz"
+    },
+    "walletCard" : {
+      "title" : "Başlarken",
+      "description" : "Ledger Live ile {{productName}} kurulumunu tamamlamak için buraya tıklayın"
+    },
+    "actions" : {
+      "customImage" : {
+        "title" : "Ledger cihazımı kişiselleştir",
+        "description" : "Görüntü ekleyerek",
+        "popupLabel" : "Cihaz kişiselleştirildi",
+        "hubTitleAfterAction" : "Ekran şık görünüyor"
+      }
+    }
+  },
+  "wallet" : {
+    "tabs" : {
+      "crypto" : "Kripto",
+      "nft" : "NFT'ler"
+    },
+    "nftGallery" : {
+      "empty" : {
+        "title" : "Gösterilecek NFT yok",
+        "subtitle" : "Başlangıç olarak ilk NFT'nizi alın.",
+        "receive" : "NFT al",
+        "supportLink" : "Diğer cüzdanlardaki NFT'ler nasıl alınır?"
+      },
+      "receiveModal" : {
+        "title" : "Bir NFT'yi kriptoları aldığınız gibi alırsınız",
+        "bullets" : {
+          "0" : "• NFT'nin kripto blok zincirini seçin.",
+          "1" : "• NFT'nin geleceği hesabı seçin"
+        },
+        "cta" : "Tamam, anladım",
+        "info" : "Daha fazla bilgi istiyorum"
+      },
+      "hideNftModal" : {
+        "title" : "NFT koleksiyonunu gizleyin",
+        "desc" : "Bu eylem {{collectionName}} koleksiyonundaki tüm NFT'leri gizleyecektir. Onları uygulama ayarlarından tekrar görünür yapabilirsiniz",
+        "cta" : "Bu NFT'yi gizle"
+      },
+      "media" : {
+        "tag" : "{{count}} NFT"
+      }
+    }
   }
 }

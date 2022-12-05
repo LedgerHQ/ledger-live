@@ -19,6 +19,7 @@ import MODAL_TECHNICAL_DATA from "./TechnicalData";
 import MODAL_SHARE_ANALYTICS from "./ShareAnalytics";
 import MODAL_SETTINGS_ACCOUNT from "./SettingsAccount";
 import MODAL_RELEASE_NOTES from "./ReleaseNotes";
+import MODAL_TROUBLESHOOT_NETWORK from "./TroubleshootNetwork";
 import MODAL_SYSTEM_LANGUAGE_AVAILABLE from "./SystemLanguageAvailable";
 // $FlowFixMe
 import MODAL_TERM_OF_USE_UPDATE from "./TermOfUseUpdate";
@@ -32,6 +33,7 @@ import MODAL_PLATFORM_EXCHANGE_COMPLETE from "./Platform/Exchange/CompleteExchan
 
 import MODAL_FULL_NODE from "./FullNode";
 import MODAL_LOTTIE_DEBUGGER from "./LottieDebugger";
+import MODAL_STORYLY_DEBUGGER from "./StorylyDebugger";
 import MODAL_RECOVERY_SEED_WARNING from "./RecoverySeedWarning";
 
 import MODAL_CLAIM_REWARDS from "./ClaimRewards";
@@ -117,6 +119,7 @@ const modals: { [_: string]: React$ComponentType<any> } = {
   MODAL_SHARE_ANALYTICS,
   MODAL_SETTINGS_ACCOUNT,
   MODAL_RELEASE_NOTES,
+  MODAL_TROUBLESHOOT_NETWORK,
   MODAL_SYSTEM_LANGUAGE_AVAILABLE,
   MODAL_TERM_OF_USE_UPDATE,
   MODAL_CLAIM_REWARDS,
@@ -165,6 +168,7 @@ const modals: { [_: string]: React$ComponentType<any> } = {
   MODAL_CELO_REVOKE,
   MODAL_FULL_NODE,
   MODAL_LOTTIE_DEBUGGER,
+  MODAL_STORYLY_DEBUGGER,
   MODAL_RECOVERY_SEED_WARNING,
   // Lending
   MODAL_LEND_MANAGE,

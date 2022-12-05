@@ -17,7 +17,11 @@ import {
 import ManagerAPI from "../api/Manager";
 import { getEnv } from "../env";
 import hwListApps from "../hw/listApps";
-import { polyfillApp, polyfillApplication } from "./polyfill";
+import {
+  calculateDependencies,
+  polyfillApp,
+  polyfillApplication,
+} from "./polyfill";
 import {
   reducer,
   isOutOfMemoryState,
@@ -56,6 +60,9 @@ export type StreamAppInstallEvent =
   | {
       type: "stream-install";
       progress: number;
+      itemProgress: number;
+      currentAppOp: AppOp;
+      installQueue: string[];
     };
 
 // global percentage
@@ -112,10 +119,20 @@ export const streamAppInstall = ({
           const exec = execWithTransport(transport);
           return concat(
             runAllWithProgress(state, exec).pipe(
-              map((progress) => ({
-                type: "stream-install",
-                progress,
-              }))
+              map(
+                ({
+                  globalProgress,
+                  itemProgress,
+                  installQueue,
+                  currentAppOp,
+                }) => ({
+                  type: "stream-install",
+                  progress: globalProgress,
+                  itemProgress,
+                  installQueue,
+                  currentAppOp,
+                })
+              )
             ),
             defer(onSuccessObs || (() => EMPTY))
           );
@@ -238,13 +255,18 @@ export const listApps = (
         sortedCryptoCurrencies,
       ] = await Promise.all([
         installedP,
-        ManagerAPI.listApps().then((apps) => apps.map(polyfillApplication)),
+        ManagerAPI.listApps().then((apps) =>
+          apps.map((app) => {
+            return polyfillApplication(app, provider);
+          })
+        ),
         applicationsByDeviceP,
         firmwareP,
         currenciesByMarketcap(
           listCryptoCurrencies(getEnv("MANAGER_DEV_MODE"), true)
         ),
       ]);
+      calculateDependencies();
 
       // unfortunately we sometimes (nano s 1.3.1) miss app.name (it's set as "" from list apps)
       // the fallback strategy is to look it up in applications list

@@ -3,10 +3,32 @@ import styled from "styled-components";
 import { Text, SearchInput, Flex, Grid, CryptoIcon } from "../../..";
 import * as cryptoIcons from "@ledgerhq/crypto-icons-ui/react";
 
+const description = `
+### A customizable crypto-icon component.
+
+### Props
+
+\`\`\`tsx
+type Props = {
+  name: string;
+  size?: number;
+  color?: string;
+  backgroundColor?: string; // overrides background color to ensure contrast with icon color
+  circleIcon?: boolean; // if icon is in a circle or not
+  tokenIcon?: string; // ref to the token icon to show as a sub icon
+  disabled?: boolean;
+  fallback?: JSX.Element; // fallback element if no icon found - defaults to an icon with first letter of icon name
+};
+\`\`\`
+`;
+
 type CryptoIconsProps = {
   name: keyof typeof cryptoIcons;
   size?: number;
   color?: string;
+  circleIcon?: boolean;
+  disabled?: boolean;
+  tokenIcon?: string;
 };
 
 const ScrollArea = styled(Grid)`
@@ -63,6 +85,28 @@ const Story = {
         },
       },
     },
+    circleIcon: {
+      type: "boolean",
+      description: "if icon is in a circle or not",
+      defaultValue: false,
+    },
+    disabled: {
+      type: "boolean",
+      description: "if icon is in a disabled or not",
+      defaultValue: false,
+    },
+    tokenIcon: {
+      type: "string",
+      description: "ref to the token icon to show as a sub icon",
+      defaultValue: "",
+    },
+  },
+  parameters: {
+    docs: {
+      description: {
+        component: description,
+      },
+    },
   },
 };
 export default Story;
@@ -72,6 +116,8 @@ const ListTemplate = (args: CryptoIconsProps) => {
   const [search, setSearch] = useState("");
   const s = search.toLowerCase();
   const regexp = new RegExp(s, "i");
+
+  const { tokenIcon, disabled, circleIcon, size } = args;
 
   return (
     <Container>
@@ -94,7 +140,15 @@ const ListTemplate = (args: CryptoIconsProps) => {
             return (
               <IconContainer active={!!active}>
                 <Flex flex={1} justifyContent="center" alignItems="center">
-                  <CryptoIcon key={name} name={name} size={args.size} color={color} />
+                  <CryptoIcon
+                    key={name}
+                    name={name}
+                    size={size}
+                    color={color}
+                    disabled={disabled}
+                    circleIcon={circleIcon}
+                    tokenIcon={tokenIcon}
+                  />
                 </Flex>
                 <Text variant="extraSmall">
                   {active ? (

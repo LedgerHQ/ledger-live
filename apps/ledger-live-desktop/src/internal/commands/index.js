@@ -4,15 +4,16 @@ import firmwarePrepare from "./firmwarePrepare";
 import firmwareMain from "./firmwareMain";
 import firmwareRepair from "./firmwareRepair";
 import flushDevice from "./flushDevice";
-import firmwareUpdating from "./firmwareUpdating";
+import waitForDeviceInfo from "./waitForDeviceInfo";
 import getLatestFirmwareForDevice from "./getLatestFirmwareForDevice";
 import getSatStackStatus from "./getSatStackStatus";
-import listenDevices from "./listenDevices";
+import listenToHidDevices from "./listenToHidDevices";
 import listApps from "./listApps";
 import signMessage from "./signMessage";
 import ping from "./ping";
 import connectApp from "./connectApp";
 import connectManager from "./connectManager";
+import networkTroubleshoot from "./networkTroubleshoot";
 import testApdu from "./testApdu";
 import testCrash from "./testCrash";
 import testInterval from "./testInterval";
@@ -24,7 +25,13 @@ import websocketBridge from "./websocketBridge";
 import checkSignatureAndPrepare from "./checkSignatureAndPrepare";
 import getTransactionId from "./getTransactionId";
 import scanDescriptors from "./scanDescriptors";
+import installLanguage from "./installLanguage";
 import getAppAndVersion from "./getAppAndVersion";
+import getDeviceInfo from "./getDeviceInfo";
+import ftsLoadImage from "./ftsLoadImage";
+import getOnboardingStatePolling from "./getOnboardingStatePolling";
+import getGenuineCheckFromDeviceId from "./getGenuineCheckFromDeviceId";
+import getLatestAvailableFirmwareFromDeviceId from "./getLatestAvailableFirmwareFromDeviceId";
 import { commands as bridgeProxyCommands } from "~/renderer/bridge/proxy-commands";
 
 export const commandsById = {
@@ -35,14 +42,15 @@ export const commandsById = {
   firmwareMain,
   firmwareRepair,
   flushDevice,
-  firmwareUpdating,
+  waitForDeviceInfo,
   getLatestFirmwareForDevice,
   getSatStackStatus,
-  listenDevices,
+  listenToHidDevices,
   connectApp,
   connectManager,
   listApps,
   ping,
+  networkTroubleshoot,
   testApdu,
   initSwap,
   startExchange,
@@ -53,8 +61,14 @@ export const commandsById = {
   testInterval,
   websocketBridge,
   scanDescriptors,
+  installLanguage,
   signMessage,
   getAppAndVersion,
+  getDeviceInfo,
+  ftsLoadImage,
+  getOnboardingStatePolling,
+  getGenuineCheckFromDeviceId,
+  getLatestAvailableFirmwareFromDeviceId,
 };
 
 export type Commands = typeof commandsById;
