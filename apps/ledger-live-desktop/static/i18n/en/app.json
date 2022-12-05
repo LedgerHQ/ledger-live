@@ -5284,7 +5284,7 @@
       "title": "Please disable multisign to make Stellar transactions"
     },
     "StellarBurnAddressError": {
-      "title": "An error occurred, please try again"
+      "title": "A problem occurred while trying to add a Stellar account"
     },
     "HederaAddAccountError": {
       "title": "Your account has not been added. Please try again."
