@@ -33,6 +33,8 @@ jobs:
         with:
           app_id: ${{ secrets.GH_BOT_APP_ID }}
           private_key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
+
+      # Labeller
       - uses: actions/labeler@v4
         with:
           repo-token: "${{ steps.generate-token.outputs.token }}"
@@ -63,10 +65,10 @@ jobs:
               console.error(error)
             }
 
-  desktop:
-    name: "Desktop Workflows"
+  desktop-builds:
+    name: "Desktop (builds)"
     needs: setup
-    if: ${{ contains(fromJSON(needs.setup.outputs.affected), "ledger-live-desktop") }}
+    if: ${{ contains(fromJSON(needs.setup.outputs.affected), 'ledger-live-desktop') }}
     runs-on: ubuntu-latest
     steps:
       - name: generate token
@@ -75,8 +77,6 @@ jobs:
         with:
           app_id: ${{ secrets.GH_BOT_APP_ID }}
           private_key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
-
-      # Builds
       - uses: actions/github-script@v6
         name: create desktop builds checks
         id: desktop-build-check
@@ -108,7 +108,7 @@ jobs:
             });
       - uses: actions/github-script@v6
         name: "Triggering desktop build failed"
-        if: steps.desktop-build.conclusion != 'success'
+        if: always() && steps.desktop-build.conclusion != 'success'
         with:
           github-token: ${{ steps.generate-token.outputs.token }}
           script: |
@@ -131,12 +131,23 @@ jobs:
               },
               actions: [{
                 label: "Rerun",
-                identifier: "rerun_desktop_build",
+                identifier: "rerun_desktop_builds",
                 description: "Retry to run the Desktop Build workflow"
               }]
             });
 
-      # Tests
+  desktop-tests:
+    name: "Desktop (tests)"
+    needs: setup
+    if: ${{ contains(fromJSON(needs.setup.outputs.affected), 'ledger-live-desktop') }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: generate token
+        id: generate-token
+        uses: tibdex/github-app-token@v1
+        with:
+          app_id: ${{ secrets.GH_BOT_APP_ID }}
+          private_key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
       - uses: actions/github-script@v6
         name: "Create Desktop tests checks"
         id: desktop-test-check
@@ -185,12 +196,153 @@ jobs:
               check_run_id: "${{ steps.desktop-test-check.outputs.result }}",
               conclusion: "failure",
               output: {
-                title: "Desktop Build Summary",
+                title: "Desktop Tests Summary",
                 summary: "Something went wrong when triggering Desktop Tests workflow"
               },
               actions: [{
                 label: "Rerun",
-                identifier: "rerun_desktop_build",
+                identifier: "rerun_desktop_tests",
                 description: "Retry to run the Desktop Tests workflow"
+              }]
+            });
+
+  # mobile-builds:
+  #   name: "Mobile (builds)"
+  #   needs: setup
+  #   if: ${{ contains(fromJSON(needs.setup.outputs.affected), 'live-mobile') }}
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: generate token
+  #       id: generate-token
+  #       uses: tibdex/github-app-token@v1
+  #       with:
+  #         app_id: ${{ secrets.GH_BOT_APP_ID }}
+  #         private_key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
+  #     - uses: actions/github-script@v6
+  #       name: create mobile builds checks
+  #       id: mobile-build-check
+  #       with:
+  #         github-token: ${{ steps.generate-token.outputs.token }}
+  #         script: |
+  #           const { data } = await github.rest.checks.create({
+  #             owner: context.repo.owner,
+  #             repo: context.repo.repo,
+  #             head_sha: "${{ github.event.pull_request.head.sha }}",
+  #             name: "[Mobile] Builds",
+  #             status: "queued"
+  #           });
+  #           return data.id
+  #     - uses: actions/github-script@v6
+  #       id: mobile-build
+  #       with:
+  #         script: |
+  #           await github.rest.actions.createWorkflowDispatch({
+  #             owner: context.repo.owner,
+  #             repo: context.repo.repo,
+  #             ref: "${{ github.event.pull_request.head.ref }}",
+  #             workflow_id: "build-mobile.yml",
+  #             inputs: {
+  #               ref: "${{ github.event.pull_request.head.ref }}",
+  #               sha: "${{ github.event.pull_request.head.sha }}",
+  #               check_run_id: "${{ steps.mobile-build-check.outputs.result }}"
+  #             }
+  #           });
+  #     - uses: actions/github-script@v6
+  #       name: "Triggering mobile build failed"
+  #       if: steps.mobile-build.conclusion != 'success'
+  #       with:
+  #         github-token: ${{ steps.generate-token.outputs.token }}
+  #         script: |
+  #           const previous = await github.rest.checks.get({
+  #             owner: context.repo.owner,
+  #             repo: context.repo.repo,
+  #             head_sha: "${{ github.event.pull_request.head.sha }}",
+  #             check_run_id: "${{ steps.mobile-build-check.outputs.result }}",
+  #           });
+  #           await github.rest.checks.update({
+  #             owner: context.repo.owner,
+  #             repo: context.repo.repo,
+  #             name: previous.data.name,
+  #             head_sha: "${{ github.event.pull_request.head.sha }}",
+  #             check_run_id: "${{ steps.mobile-build-check.outputs.result }}",
+  #             conclusion: "failure",
+  #             output: {
+  #               title: "Mobile Build Summary",
+  #               summary: "Something went wrong when triggering Mobile Build workflow"
+  #             },
+  #             actions: [{
+  #               label: "Rerun",
+  #               identifier: "rerun_mobile_build",
+  #               description: "Retry to run the Mobile Build workflow"
+  #             }]
+  #           });
+
+  mobile-tests:
+    name: "Mobile (tests)"
+    needs: setup
+    # if: ${{ contains(fromJSON(needs.setup.outputs.affected), 'live-mobile') }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: generate token
+        id: generate-token
+        uses: tibdex/github-app-token@v1
+        with:
+          app_id: ${{ secrets.GH_BOT_APP_ID }}
+          private_key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
+      - uses: actions/github-script@v6
+        name: "Create Mobile tests checks"
+        id: mobile-test-check
+        with:
+          github-token: ${{ steps.generate-token.outputs.token }}
+          script: |
+            const { data } = await github.rest.checks.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              head_sha: "${{ github.event.pull_request.head.sha }}",
+              name: "[Mobile] Tests",
+              status: "queued"
+            });
+            return data.id
+      - uses: actions/github-script@v6
+        name: trigger test workflow
+        id: mobile-test
+        with:
+          script: |
+            await github.rest.actions.createWorkflowDispatch({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              ref: "${{ github.event.pull_request.head.ref }}",
+              workflow_id: "test-mobile.yml",
+              inputs: {
+                ref: "${{ github.event.pull_request.head.ref }}",
+                sha: "${{ github.event.pull_request.head.sha }}",
+                check_run_id: "${{ steps.mobile-test-check.outputs.result }}"
+              }
+            });
+      - uses: actions/github-script@v6
+        name: "triggering mobile test failed"
+        if: steps.mobile-test.conclusion != 'success'
+        with:
+          script: |
+            const previous = await github.rest.checks.get({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              head_sha: "${{ github.event.pull_request.head.sha }}",
+              check_run_id: "${{ steps.mobile-test-check.outputs.result }}",
+            });
+            await github.rest.checks.update({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              name: previousW.data.name,
+              check_run_id: "${{ steps.mobile-test-check.outputs.result }}",
+              conclusion: "failure",
+              output: {
+                title: "Mobile Tests Summary",
+                summary: "Something went wrong when triggering Mobile Tests workflow"
+              },
+              actions: [{
+                label: "Rerun",
+                identifier: "rerun_mobile_tests",
+                description: "Retry to run the Mobile Tests workflow"
               }]
             });
