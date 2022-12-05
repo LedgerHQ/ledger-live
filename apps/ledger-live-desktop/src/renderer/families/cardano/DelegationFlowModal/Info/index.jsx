@@ -32,7 +32,7 @@ export default function CardanoEarnRewardsInfoModal({ name, account, parentAccou
   }, [parentAccount, account, dispatch, name]);
 
   const onLearnMore = useCallback(() => {
-    openURL(urls.cosmosStakingRewards);
+    openURL(urls.cardanoStakingRewards);
   }, []);
 
   return (

@@ -2247,6 +2247,8 @@
       "assetsAlreadyStaked": "Your assets are already staked",
       "addFundsToStake": "Add Funds to stake",
       "commission": "Commission",
+      "stakeKeyRegistrationDeposit": "Stake key registration deposit",
+      "delegatingTo": "Delegating to",
       "flow": {
         "title": "Delegate",
         "steps": {

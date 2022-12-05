@@ -1,5 +1,5 @@
 // @flow
-import React, { useState, useCallback, useMemo, useEffect } from "react";
+import React, { useState, useCallback, useMemo, useEffect, useRef } from "react";
 import type { TFunction } from "react-i18next";
 
 import { getAccountUnit } from "@ledgerhq/live-common/account/index";
@@ -15,10 +15,14 @@ import type { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import type { Account } from "@ledgerhq/types-live";
 import type { TransactionStatus } from "@ledgerhq/live-common/generated/types";
 import type { StakePool } from "@ledgerhq/live-common/families/cardano/api/api-types";
-import { fetchPoolList } from "@ledgerhq/live-common/families/cardano/api/getPools";
+import {
+  fetchPoolList,
+  fetchPoolDetails,
+} from "@ledgerhq/live-common/families/cardano/api/getPools";
 
 import ValidatorSearchInput from "~/renderer/components/Delegation/ValidatorSearchInput";
 import { LEDGER_POOL_ADDRESSES } from "@ledgerhq/live-common/families/cardano/utils";
+import async from "react-select/async";
 
 type Props = {
   t: TFunction,
@@ -38,39 +42,55 @@ const ValidatorField = ({
   selectedPoolId,
 }: Props) => {
   const [search, setSearch] = useState("");
-  const [pageNo, setPageNo] = useState(1);
   const [totalPools, setTotalPools] = useState(0);
   const [ledgerPools, setLedgerPools] = useState([]); // TODO: fetch ledger pools and set it here
   const unit = getAccountUnit(account);
+  const [validators, setValidators] = useState([]);
+  const [pageNo, setPageNo] = useState(1);
   const [showAll, setShowAll] = useState(
     LEDGER_POOL_ADDRESSES.length === 0 ||
       (LEDGER_POOL_ADDRESSES.length === 1 && delegation.poolId === LEDGER_POOL_ADDRESSES[0]),
   );
 
+  const fetchPoolsFromNextPage = async () => {
+    if (search === "" || validators.length === pageNo * 50) {
+      setPageNo(pageNo + 1);
+      await fetchPools();
+    }
+  };
+
   const poolIdsToFilterFromAllPools = [...LEDGER_POOL_ADDRESSES];
   if (delegation.poolId) {
     poolIdsToFilterFromAllPools.push(delegation.poolId);
   }
-  useEffect(() => {
-    fetchPoolList(account.currency, search, pageNo, 50).then(apiRes => {
-      setTotalPools(apiRes.count);
+
+  const fetchPools = async () => {
+    const apiRes = await fetchPoolList(account.currency, search, pageNo, 50);
+    setTotalPools(apiRes.count);
+    if (pageNo === 1) {
+      setValidators([...apiRes.pools.filter(p => !poolIdsToFilterFromAllPools.includes(p.poolId))]);
+    } else {
       setValidators([
         ...validators,
         ...apiRes.pools.filter(p => !poolIdsToFilterFromAllPools.includes(p.poolId)),
       ]);
-    });
-  }, [pageNo]); // eslint-disable-line react-hooks/exhaustive-deps
+    }
+  };
 
   useEffect(() => {
-    fetchPoolList(account.currency, search, pageNo, 50).then(apiRes => {
-      setTotalPools(apiRes.count);
-      setValidators([...apiRes.pools.filter(p => !poolIdsToFilterFromAllPools.includes(p.poolId))]);
-    });
+    setPageNo(1);
+    fetchPools();
   }, [search]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  const [validators, setValidators] = useState([]);
-
   const onSearch = useCallback(evt => setSearch(evt.target.value), [setSearch]);
+
+  useEffect(() => {
+    if (LEDGER_POOL_ADDRESSES.length) {
+      fetchPoolDetails(account.currency, LEDGER_POOL_ADDRESSES).then(apiRes => {
+        setLedgerPools(apiRes.pools);
+      });
+    }
+  }, [account]);
 
   const renderItem = (validator: StakePool, validatorIdx: number) => {
     return (
@@ -94,9 +114,8 @@ const ValidatorField = ({
             style={{ flex: showAll ? "1 0 256px" : "1 0 64px", marginBottom: 0, paddingLeft: 0 }}
             renderItem={renderItem}
             noResultPlaceholder={null}
-            setPageNo={setPageNo}
-            pageNo={pageNo}
-            totalPools={totalPools}
+            fetchPoolsFromNextPage={fetchPoolsFromNextPage}
+            search={search}
           />
         </Box>
         {LEDGER_POOL_ADDRESSES.length ? (

@@ -12,50 +12,23 @@ import {
 import TrackPage from "~/renderer/analytics/TrackPage";
 import Box from "~/renderer/components/Box";
 import Button from "~/renderer/components/Button";
-import CryptoCurrencyIcon from "~/renderer/components/CryptoCurrencyIcon";
 import Ellipsis from "~/renderer/components/Ellipsis";
 import FormattedVal from "~/renderer/components/FormattedVal";
 import Text from "~/renderer/components/Text";
-import TranslatedError from "~/renderer/components/TranslatedError";
-import IconExclamationCircle from "~/renderer/icons/ExclamationCircle";
-import IconQrCode from "~/renderer/icons/QrCode";
-import IconWallet from "~/renderer/icons/Wallet";
 import { rgba } from "~/renderer/styles/helpers";
 import CounterValue from "~/renderer/components/CounterValue";
-import Alert from "~/renderer/components/Alert";
-import NFTSummary from "~/renderer/screens/nft/Send/Summary";
 import type { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import type { StepProps } from "../types";
-import AccountTagDerivationMode from "~/renderer/components/AccountTagDerivationMode";
-import AccountFooter from "~/renderer/modals/Send/AccountFooter";
-import CosmosLedgerValidatorIcon from "../LedgerPoolIcon";
+import CardanoLedgerPoolIcon from "../LedgerPoolIcon";
 
 const FromToWrapper: ThemedComponent<{}> = styled.div``;
-const Circle: ThemedComponent<{}> = styled.div`
-  height: 32px;
-  width: 32px;
-  border-radius: 32px;
-  background-color: ${p => rgba(p.theme.colors.palette.primary.main, 0.1)};
-  color: ${p => p.theme.colors.palette.primary.main};
-  align-items: center;
-  display: flex;
-  justify-content: center;
-  margin-right: 12px;
-`;
-const VerticalSeparator: ThemedComponent<{}> = styled.div`
-  height: 18px;
-  background: ${p => p.theme.colors.palette.text.shade20};
-  width: 1px;
-  margin: 1px 0px 0px 15px;
-`;
+
 const Separator: ThemedComponent<{}> = styled.div`
   height: 1px;
   background: ${p => p.theme.colors.palette.text.shade20};
   width: 100%;
   margin: 15px 0;
 `;
-
-const WARN_FROM_UTXO_COUNT = 50;
 
 export default class StepSummary extends PureComponent<StepProps> {
   render() {
@@ -70,6 +43,8 @@ export default class StepSummary extends PureComponent<StepProps> {
     const unit = getAccountUnit(account);
 
     const showDeposit = !account.cardanoResources?.delegation?.status;
+    const stakeKeyDeposit = account.cardanoResources?.protocolParams.stakeKeyDeposit;
+
     return (
       <Box flow={4} mx={40}>
         <FromToWrapper>
@@ -77,12 +52,11 @@ export default class StepSummary extends PureComponent<StepProps> {
             <Box horizontal alignItems="center">
               <Box flex={1}>
                 <Text ff="Inter|Medium" color="palette.text.shade40" fontSize={4}>
-                  {/* <Trans i18nKey="send.steps.details.to" /> */}
-                  Delegating to
+                  <Trans i18nKey="cardano.delegation.delegatingTo" />
                 </Text>
                 <Ellipsis mt={2}>
                   <Box horizontal alignItems="center">
-                    <CosmosLedgerValidatorIcon validator={selectedPool} />
+                    <CardanoLedgerPoolIcon validator={selectedPool} />
                     <Text ff="Inter" color="palette.text.shade100" fontSize={4} ml={2}>
                       {`${selectedPool.name} [${selectedPool.ticker}]`}
                     </Text>
@@ -93,8 +67,7 @@ export default class StepSummary extends PureComponent<StepProps> {
           </Box>
           <Box horizontal justifyContent="space-between" mt={1}>
             <Text ff="Inter|Medium" color="palette.text.shade40" fontSize={4}>
-              {/* <Trans i18nKey="send.steps.details.fees" /> */}
-              Pool Cost
+              <Trans i18nKey="cardano.delegation.cost" />
             </Text>
             <Box>
               <FormattedVal
@@ -111,12 +84,10 @@ export default class StepSummary extends PureComponent<StepProps> {
           </Box>
           <Box horizontal justifyContent="space-between" mt={1}>
             <Text ff="Inter|Medium" color="palette.text.shade40" fontSize={4}>
-              {/* <Trans i18nKey="send.steps.details.fees" /> */}
-              Commission
+              <Trans i18nKey="cardano.delegation.commission" />
             </Text>
             <Box>
               <Text ff="Inter|Medium" color="palette.text.shade80" fontSize={4}>
-                {/* <Trans i18nKey="send.steps.details.fees" /> */}
                 {selectedPool.margin} %
               </Text>
             </Box>
@@ -125,8 +96,7 @@ export default class StepSummary extends PureComponent<StepProps> {
           {showDeposit ? (
             <Box horizontal justifyContent="space-between">
               <Text ff="Inter|Medium" color="palette.text.shade40" fontSize={4}>
-                {/* <Trans i18nKey="send.steps.details.fees" /> */}
-                Stake key registration deposit
+                <Trans i18nKey="cardano.delegation.stakeKeyRegistrationDeposit" />
               </Text>
               <Box>
                 <FormattedVal
@@ -134,7 +104,7 @@ export default class StepSummary extends PureComponent<StepProps> {
                   disableRounding
                   unit={feesUnit}
                   alwaysShowValue
-                  val={2000000}
+                  val={stakeKeyDeposit}
                   fontSize={4}
                   inline
                   showCode

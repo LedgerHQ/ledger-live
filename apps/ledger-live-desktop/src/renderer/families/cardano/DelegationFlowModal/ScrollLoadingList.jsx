@@ -21,9 +21,8 @@ type ScrollLoadingListProps = {
   scrollEndThreshold?: number,
   bufferSize?: number,
   style?: *,
-  pageNo: number,
-  setPageNo: (pageNo: number) => void,
-  totalPools: number,
+  fetchPoolsFromNextPage: () => Promise<void>,
+  search: string,
 };
 
 const ScrollLoadingList = ({
@@ -33,50 +32,38 @@ const ScrollLoadingList = ({
   scrollEndThreshold = 200,
   bufferSize = 20,
   style,
-  pageNo,
-  setPageNo,
-  totalPools,
+  fetchPoolsFromNextPage,
+  search,
 }: ScrollLoadingListProps) => {
   const scrollRef = useRef();
   const [scrollOffset, setScrollOffset] = useState(bufferSize);
 
-  /**
-   * We are reseting scroll after each change of data
-   * to the top position
-   */
   useEffect(() => {
     // $FlowFixMe
-    scrollRef.current.scrollTop = 0;
-    setScrollOffset(bufferSize);
+    if (search !== "") {
+      setScrollOffset(bufferSize);
+    } else {
+      setScrollOffset(data.length - 20);
+    }
   }, [data, scrollRef, bufferSize]);
 
-  const handleScroll = useCallback(() => {
+  const handleScroll = useCallback(async () => {
     const target = scrollRef && scrollRef.current;
     if (
-      // the offset was off when :
-      // - do a first search with few results and scroll on the bottom of it
-      // - then do one more search but with no result
-      // - and redo a research with a result, no items will be display in the scrollContainer
-      // we don't allow the value 0 to be able to set the offset to prevent this
       target &&
       // $FlowFixMe
       target.scrollTop + target.offsetHeight >= target.scrollHeight - scrollEndThreshold
     ) {
-      if (totalPools > data.length) {
-        console.log(pageNo, `POOL LIST API CALL`);
-        setPageNo(pageNo + 1);
-      }
+      fetchPoolsFromNextPage();
       setScrollOffset(Math.min(data.length, scrollOffset + bufferSize));
     }
   }, [
     setScrollOffset,
+    fetchPoolsFromNextPage,
     scrollOffset,
     data.length,
     bufferSize,
     scrollEndThreshold,
-    setPageNo,
-    pageNo,
-    totalPools,
   ]);
 
   return (
