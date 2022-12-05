@@ -66,7 +66,7 @@ jobs:
   desktop:
     name: "Desktop Workflows"
     needs: setup
-    # if: ${{ contains(fromJSON(needs.setup.outputs.affected), "ledger-live-desktop") }}
+    if: ${{ contains(fromJSON(needs.setup.outputs.affected), "ledger-live-desktop") }}
     runs-on: ubuntu-latest
     steps:
       - name: generate token
@@ -77,64 +77,64 @@ jobs:
           private_key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
 
       # Builds
-      # - uses: actions/github-script@v6
-      #   name: create desktop builds checks
-      #   id: desktop-build-check
-      #   with:
-      #     github-token: ${{ steps.generate-token.outputs.token }}
-      #     script: |
-      #       const { data } = await github.rest.checks.create({
-      #         owner: context.repo.owner,
-      #         repo: context.repo.repo,
-      #         head_sha: "${{ github.event.pull_request.head.sha }}",
-      #         name: "[Desktop] Builds",
-      #         status: "queued"
-      #       });
-      #       return data.id
-      # - uses: actions/github-script@v6
-      #   id: desktop-build
-      #   with:
-      #     script: |
-      #       await github.rest.actions.createWorkflowDispatch({
-      #         owner: context.repo.owner,
-      #         repo: context.repo.repo,
-      #         ref: "${{ github.event.pull_request.head.ref }}",
-      #         workflow_id: "build-desktop.yml",
-      #         inputs: {
-      #           ref: "${{ github.event.pull_request.head.ref }}",
-      #           sha: "${{ github.event.pull_request.head.sha }}",
-      #           check_run_id: "${{ steps.desktop-build-check.outputs.result }}"
-      #         }
-      #       });
-      # - uses: actions/github-script@v6
-      #   name: "Triggering desktop build failed"
-      #   if: steps.desktop-build.conclusion != 'success'
-      #   with:
-      #     github-token: ${{ steps.generate-token.outputs.token }}
-      #     script: |
-      #       const previous = await github.rest.checks.get({
-      #         owner: context.repo.owner,
-      #         repo: context.repo.repo,
-      #         head_sha: "${{ github.event.pull_request.head.sha }}",
-      #         check_run_id: "${{ steps.desktop-build-check.outputs.result }}",
-      #       });
-      #       await github.rest.checks.update({
-      #         owner: context.repo.owner,
-      #         repo: context.repo.repo,
-      #         name: previous.data.name,
-      #         head_sha: "${{ github.event.pull_request.head.sha }}",
-      #         check_run_id: "${{ steps.desktop-build-check.outputs.result }}",
-      #         conclusion: "failure",
-      #         output: {
-      #           title: "Desktop Build Summary",
-      #           summary: "Something went wrong when triggering Desktop Build workflow"
-      #         },
-      #         actions: [{
-      #           label: "Rerun",
-      #           identifier: "rerun_desktop_build",
-      #           description: "Retry to run the Desktop Build workflow"
-      #         }]
-      #       });
+      - uses: actions/github-script@v6
+        name: create desktop builds checks
+        id: desktop-build-check
+        with:
+          github-token: ${{ steps.generate-token.outputs.token }}
+          script: |
+            const { data } = await github.rest.checks.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              head_sha: "${{ github.event.pull_request.head.sha }}",
+              name: "[Desktop] Builds",
+              status: "queued"
+            });
+            return data.id
+      - uses: actions/github-script@v6
+        id: desktop-build
+        with:
+          script: |
+            await github.rest.actions.createWorkflowDispatch({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              ref: "${{ github.event.pull_request.head.ref }}",
+              workflow_id: "build-desktop.yml",
+              inputs: {
+                ref: "${{ github.event.pull_request.head.ref }}",
+                sha: "${{ github.event.pull_request.head.sha }}",
+                check_run_id: "${{ steps.desktop-build-check.outputs.result }}"
+              }
+            });
+      - uses: actions/github-script@v6
+        name: "Triggering desktop build failed"
+        if: steps.desktop-build.conclusion != 'success'
+        with:
+          github-token: ${{ steps.generate-token.outputs.token }}
+          script: |
+            const previous = await github.rest.checks.get({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              head_sha: "${{ github.event.pull_request.head.sha }}",
+              check_run_id: "${{ steps.desktop-build-check.outputs.result }}",
+            });
+            await github.rest.checks.update({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              name: previous.data.name,
+              head_sha: "${{ github.event.pull_request.head.sha }}",
+              check_run_id: "${{ steps.desktop-build-check.outputs.result }}",
+              conclusion: "failure",
+              output: {
+                title: "Desktop Build Summary",
+                summary: "Something went wrong when triggering Desktop Build workflow"
+              },
+              actions: [{
+                label: "Rerun",
+                identifier: "rerun_desktop_build",
+                description: "Retry to run the Desktop Build workflow"
+              }]
+            });
 
       # Tests
       - uses: actions/github-script@v6

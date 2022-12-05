@@ -282,7 +282,6 @@ jobs:
             apps/ledger-live-desktop/tests/artifacts/coverage
             apps/ledger-live-desktop/tests/artifacts/videos
             apps/ledger-live-desktop/tests/artifacts/logs
-
       # - uses: ./tools/actions/composites/test-desktop
       #   id: test-desktop
       #   with:
@@ -365,7 +364,6 @@ jobs:
             apps/ledger-live-desktop/tests/artifacts/coverage
             apps/ledger-live-desktop/tests/artifacts/videos
             apps/ledger-live-desktop/tests/artifacts/logs
-
       # - uses: ./tools/actions/composites/test-desktop
       #   id: test-desktop
       #   with:
