@@ -78,7 +78,7 @@ export const prepareTransaction: AccountBridge<Transaction>["prepareTransaction"
         // Those are the only elements from a transaction necessary to estimate the gas limit
         {
           from: account.freshAddress,
-          to: protoTransaction.to as string,
+          to: protoTransaction.to!.toString(),
           value: "0x" + (protoTransaction.value.toString(16) || "00"),
           data: protoTransaction.data
             ? `0x${protoTransaction.data.toString("hex")}`
