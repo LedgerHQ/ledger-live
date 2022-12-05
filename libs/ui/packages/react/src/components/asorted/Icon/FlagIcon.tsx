@@ -1,13 +1,12 @@
 import * as flags from "@ledgerhq/icons-ui/react/Flags/index";
 import React from "react";
+import styled from "styled-components";
+import FlexBox from "../../layout/Flex";
 
 export const sizes = {
   XXS: 16,
-  XS: 24,
   S: 32,
-  M: 40,
   L: 48,
-  XL: 56,
 };
 
 export type FlagsSizes = keyof typeof sizes;
@@ -27,12 +26,36 @@ export const iconNames = Array.from(
   }, new Set<string>()),
 );
 
+const FlagContainer = styled(FlexBox).attrs({
+  borderRadius: "50%",
+  position: "relative",
+})`
+  &:after {
+    content: "";
+    display: block;
+    box-shadow: inset 0 0 10px black;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border-radius: 100%;
+    opacity: 10%;
+    ${(p) => `box-shadow: inset 0px 0px 0px 1px ${p.theme.colors.neutral.c100};`}
+  }
+`;
+
 const FlagIcon = ({ name, size = "S" }: Props): JSX.Element | null => {
   const maybeIconName = `${name}`;
+
   if (maybeIconName in flags) {
     // @ts-expect-error FIXME I don't know how to make you happy ts
     const Component = flags[maybeIconName];
-    return <Component size={sizes[size]} />;
+    return (
+      <FlagContainer width={sizes[size]} height={sizes[size]} overflow={"hidden"}>
+        <Component size={sizes[size]} />
+      </FlagContainer>
+    );
   }
   return null;
 };
