@@ -129,7 +129,7 @@ const estimateMaxSpendable = async ({
     throw new InvalidAddress();
 
   const balances = await fetchBalances(address);
-  const balance = new BigNumber(balances.spendable_balance);
+  let balance = new BigNumber(balances.spendable_balance);
 
   if (balance.eq(0)) return balance;
 
@@ -142,8 +142,8 @@ const estimateMaxSpendable = async ({
 
   if (balance.lte(estimatedFees)) return new BigNumber(0);
 
-  balance.minus(estimatedFees);
-  if (amount) balance.minus(amount);
+  balance = balance.minus(estimatedFees);
+  if (amount) balance = balance.minus(amount);
 
   // log("debug", "[estimateMaxSpendable] finish fn");
 
