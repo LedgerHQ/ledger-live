@@ -26,7 +26,8 @@ function PortfolioHeader({ hidePortfolio }: { hidePortfolio: boolean }) {
 
   const onNotificationButtonPress = useCallback(() => {
     track("button_clicked", {
-      button: "Notification Center",
+      button: "notification bell",
+      screen: ScreenName.Portfolio,
     });
     navigation.navigate(NavigatorName.NotificationCenter, {
       screen: ScreenName.NotificationCenter,

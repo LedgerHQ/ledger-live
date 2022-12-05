@@ -134,6 +134,7 @@ const useDynamicContent = () => {
         campaign: string;
         screen: string;
         link: string;
+        contentcard?: string;
       },
     ) => {
       track(event, params);

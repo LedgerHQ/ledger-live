@@ -1,10 +1,11 @@
-import React, { useCallback, useEffect } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import {
   Animated,
   FlatList,
   Linking,
   TouchableHighlight,
   View,
+  RefreshControl,
 } from "react-native";
 
 import { CardC, Box, Flex, Text } from "@ledgerhq/native-ui";
@@ -46,10 +47,17 @@ export default function NotificationCenter() {
     trackContentCardEvent,
   } = useDynamicContent();
   const { fetchData, refreshDynamicContent } = useDynamicContentLogic();
+  const [isDynamicContentLoading, setIsDynamicContentLoading] = useState(false);
+
+  const refreshNotifications = useCallback(async () => {
+    setIsDynamicContentLoading(true);
+    refreshDynamicContent();
+    await fetchData();
+    setIsDynamicContentLoading(false);
+  }, [refreshDynamicContent, fetchData]);
 
   useEffect(() => {
-    refreshDynamicContent();
-    fetchData();
+    refreshNotifications();
     // Need to refresh just one time when coming in the Page
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -63,6 +71,7 @@ export default function NotificationCenter() {
         screen: item.location,
         link: item.link || "",
         campaign: item.id,
+        contentcard: item.title,
       });
 
       if (!item.link) return;
@@ -75,15 +84,30 @@ export default function NotificationCenter() {
   );
 
   const deleteNotification = useCallback(
-    (itemId: string) => {
-      logDismissCard(itemId);
+    (item: NotificationContentCard) => {
+      if (!item) return;
+
+      logDismissCard(item.id);
+
+      trackContentCardEvent("contentcard_dismissed", {
+        screen: item.location,
+        link: item.link || "",
+        campaign: item.id,
+        contentcard: item.title,
+      });
+
       dispatch(
         setDynamicContentNotificationCards(
-          orderedNotificationsCards.filter(n => n.id !== itemId),
+          orderedNotificationsCards.filter(n => n.id !== item.id),
         ),
       );
     },
-    [dispatch, logDismissCard, orderedNotificationsCards],
+    [
+      dispatch,
+      logDismissCard,
+      orderedNotificationsCards,
+      trackContentCardEvent,
+    ],
   );
 
   const onClickCard = useCallback(
@@ -112,7 +136,7 @@ export default function NotificationCenter() {
   const renderRightActions = (
     _progress: Animated.AnimatedInterpolation,
     dragX: Animated.AnimatedInterpolation,
-    itemId: string,
+    item: NotificationContentCard,
   ) => {
     const scale = dragX.interpolate({
       inputRange: [-80, 0],
@@ -121,7 +145,7 @@ export default function NotificationCenter() {
     });
     return (
       <RemoveContainer
-        onPress={() => deleteNotification(itemId)}
+        onPress={() => deleteNotification(item)}
         underlayColor={colors.primary.c20}
       >
         <AnimatedView style={{ transform: [{ scale }] }}>
@@ -139,7 +163,7 @@ export default function NotificationCenter() {
       <Swipeable
         key={item.id}
         renderRightActions={(_progress, dragX) =>
-          renderRightActions(_progress, dragX, item.id)
+          renderRightActions(_progress, dragX, item)
         }
         ref={ref => {
           if (ref && !rowRefs.get(item.id)) {
@@ -171,7 +195,16 @@ export default function NotificationCenter() {
   return (
     <>
       {orderedNotificationsCards.length > 0 ? (
-        <Container>
+        <Container
+          refreshControl={
+            <RefreshControl
+              refreshing={isDynamicContentLoading}
+              colors={[colors.primary.c80]}
+              tintColor={colors.primary.c80}
+              onRefresh={refreshNotifications}
+            />
+          }
+        >
           <FlatList<NotificationContentCard>
             data={orderedNotificationsCards}
             keyExtractor={(card: NotificationContentCard) => card.id}
