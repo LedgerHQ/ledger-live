@@ -1,4 +1,5 @@
 import { Account, Address, Operation } from "@ledgerhq/types-live";
+import { log } from "@ledgerhq/logs";
 import {
   getCryptoCurrencyById,
   parseCurrencyUnit,
@@ -39,6 +40,11 @@ export const processTxs = (
   const processedTxs: TransactionResponse[] = [];
   for (const txId in txsById) {
     const { Fee: feeTx, Send: sendTx } = txsById[txId];
+
+    if( !sendTx ) {
+      log("warn", `feeTx [${feeTx.hash}] found without a sendTx linked to it.`);
+      continue;
+    }
 
     if (feeTx) sendTx.fee = feeTx.amount;
 
