@@ -385,9 +385,6 @@ jobs:
     # if: ${{ always() && !cancelled() && needs.is-affected.outputs.is-desktop-affected == 'true' && github.event.pull_request != '' && !fromJSON(needs.pr-is-fork.outputs.pr-is-fork) }}
     if: always() && github.event_name == 'workflow_dispatch' && github.event.inputs.check_run_id != '' && github.event.inputs.sha != ''
     steps:
-      - name: echo
-        run: |
-          echo ${{ fromJSON(job) }}
       - uses: actions/checkout@v3
         with:
           ref: ${{ github.event.inputs.sha || github.event.inputs.ref || github.ref }}
