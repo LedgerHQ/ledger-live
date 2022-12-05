@@ -54,8 +54,8 @@ export const mapAsNotificationContentCard = (card: BrazeContentCard) =>
     title: card.extras.title,
     description: card.extras.description,
     location: LocationContentCard.NotificationCenter,
-    link: card.extras.link ?? "",
-    cta: card.extras.cta ?? "",
+    link: card.extras.link,
+    cta: card.extras.cta,
     createdAt: card.created,
     viewed: card.viewed,
   } as NotificationContentCard);
@@ -86,6 +86,14 @@ const useDynamicContent = () => {
         (ac: AssetContentCard) => !hiddenCards.includes(ac.id),
       ),
     [assetsCards, hiddenCards],
+  );
+  const orderedNotificationsCards = useMemo(
+    () =>
+      notificationCards.sort(
+        (notif: NotificationContentCard, nt: NotificationContentCard) =>
+          nt.createdAt - notif.createdAt,
+      ),
+    [notificationCards],
   );
   const isAWalletCardDisplayed = useMemo(
     () => walletCardsDisplayed.length >= 1,
@@ -146,6 +154,7 @@ const useDynamicContent = () => {
     dismissCard,
     trackContentCardEvent,
     notificationCards,
+    orderedNotificationsCards,
     refreshDynamicContent,
   };
 };

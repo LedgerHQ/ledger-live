@@ -14,7 +14,7 @@ export type CardProps = TouchableOpacityProps & {
   time?: string;
   title?: string;
   onClickCard?: () => void;
-  onPress?: () => void;
+  showLinkCta: boolean;
   viewed: boolean;
 };
 
@@ -43,7 +43,8 @@ const Timer = ({ time, viewed }: { time: string; viewed: boolean }) => (
 );
 
 const CardC = (props: CardProps): React.ReactElement => {
-  const { tag = "", time = "", title, description, cta, onPress, viewed, onClickCard } = props;
+  const { tag = "", time = "", title, description, cta, viewed, onClickCard, showLinkCta } = props;
+
   return (
     <Base onPress={onClickCard} activeOpacity={0.5}>
       <Flex width="100%" flexDirection="column">
@@ -62,19 +63,19 @@ const CardC = (props: CardProps): React.ReactElement => {
           color="neutral.c70"
           numberOfLines={3}
           mt={2}
-          mb={onPress ? 4 : 0}
+          mb={showLinkCta ? 4 : 0}
         >
           {description}
         </Text>
 
-        {onPress && (
+        {!!showLinkCta && (
           <Flex alignItems="flex-start">
             <Link
               type="main"
               size="medium"
               iconPosition="right"
               Icon={() => <ExternalLinkMedium color="neutral.c100" />}
-              onPress={onPress}
+              onPress={onClickCard}
               numberOfLines={1}
             >
               <StyledText
