@@ -207,6 +207,15 @@ export const SyncOnboarding = ({
     stopPolling,
   });
 
+  // Unmount cleanup to make sure the polling is stopped.
+  // The cleanup function triggered by the useEffect of useOnboardingStatePolling
+  // has been observed to be called after, and some apdu could still be exchanged with the device
+  useEffect(() => {
+    return () => {
+      setStopPolling(true);
+    };
+  }, []);
+
   const handleClose = useCallback(() => {
     goBackToPairingFlow();
   }, [goBackToPairingFlow]);
@@ -216,9 +225,9 @@ export const SyncOnboarding = ({
   }, []);
 
   const handleDesyncRetry = useCallback(() => {
+    // handleDesyncClose is then called
     setDesyncDrawerOpen(false);
-    goBackToPairingFlow();
-  }, [goBackToPairingFlow]);
+  }, []);
 
   const handleDesyncClose = useCallback(() => {
     setDesyncDrawerOpen(false);

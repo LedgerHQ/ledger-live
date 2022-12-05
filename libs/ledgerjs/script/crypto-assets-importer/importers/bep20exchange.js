@@ -6,14 +6,18 @@ const idFromFolderAndFile = (folder, id) =>
 
 module.exports = {
   paths: ["tokens/bsc/bep20"],
-  output: (toJSON) => `data/exchange/bep20.js${toJSON ? "on" : ""}`,
+  output: (toJSON) => `data/exchange/bep20.${toJSON ? "json" : "ts"}`,
   outputTemplate: (data, toJSON) =>
     toJSON
       ? JSON.stringify(data)
-      : "module.exports = [" +
-        data.map((item) => JSON.stringify(item)).join(",\n\t") +
-        "];\n",
+      : `export type BEP20Exchange = [string, string, string];
 
+const exchanges: BEP20Exchange[] = [
+  ${data.map((item) => JSON.stringify(item)).join(",\n\t")}
+];
+
+export default exchanges;
+`,
   loader: ({ signatureFolder, folder, id }) =>
     Promise.all([
       readFileJSON(path.join(signatureFolder, id, "exchange_signature.json")),

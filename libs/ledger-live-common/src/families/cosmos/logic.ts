@@ -15,7 +15,6 @@ import type {
   CosmosAccount,
 } from "./types";
 import type { Transaction } from "../../generated/types";
-import { calculateFees } from "./js-prepareTransaction";
 import type { Unit } from "@ledgerhq/types-cryptoassets";
 
 export const COSMOS_MAX_REDELEGATIONS = 7;
@@ -194,39 +193,6 @@ export function canRedelegate(
     !cosmosResources.redelegations.some(
       (rd) => rd.validatorDstAddress === delegation.validatorAddress
     )
-  );
-}
-
-export async function canClaimRewards(
-  account: CosmosAccount,
-  delegation: CosmosDelegation
-): Promise<boolean> {
-  const { cosmosResources } = account;
-  invariant(cosmosResources, "cosmosResources should exist");
-  const res = await calculateFees({
-    account,
-    transaction: {
-      family: "cosmos",
-      mode: "claimReward",
-      amount: new BigNumber(0),
-      fees: null,
-      gas: null,
-      recipient: "",
-      useAllAmount: false,
-      networkInfo: null,
-      memo: null,
-      sourceValidator: null,
-      validators: [
-        {
-          address: delegation.validatorAddress,
-          amount: new BigNumber(0),
-        },
-      ],
-    },
-  });
-  return (
-    res.estimatedFees.lt(account.spendableBalance) &&
-    res.estimatedFees.lt(delegation.pendingRewards)
   );
 }
 

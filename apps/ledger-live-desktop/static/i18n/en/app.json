@@ -1716,7 +1716,10 @@
     "listApps": "Checking App dependencies",
     "listAppsDescription": "Please wait while we make sure you have all the required apps",
     "swap": {
-      "notice": "Verify the Swap details on your device before sending it. The addresses are exchanged securely so you don’t have to verify them.",
+      "notice": {
+        "default": "Verify the Swap details on your device before sending it. The addresses are exchanged securely so you don’t have to verify them.",
+        "cic": "Verify the Swap details on your device before sending it. CIC may need to perform additional verification for some transactions, resulting in a delay."
+      },
       "confirm": "Confirm Swap transaction",
       "amountSent": "Amount to send",
       "amountReceived": "Amount to receive",
@@ -2134,7 +2137,8 @@
         "recipientAddress": "Recipient address",
         "amount": "Amount",
         "fees": "Network fees",
-        "useMax": "Send Max",
+        "useMax": "Use Max",
+        "sendMax": "Send Max",
         "rippleTag": "Tag",
         "rippleTagPlaceholder": "Optional",
         "edit": "Edit",
@@ -2182,6 +2186,9 @@
   "releaseNotes": {
     "title": "Release notes",
     "version": "Ledger Live {{versionNb}}"
+  },
+  "troubleshootNetwork": {
+    "title": "Troubleshoot networking"
   },
   "systemLanguageAvailable": {
     "title": "Change your app's language?",
@@ -2240,6 +2247,9 @@
     }
   },
   "tron": {
+    "receive": {
+      "newAddressTRC20": "You first need to send at least 0.1 TRX to this address to activate it."
+    },
     "voting": {
       "emptyState": {
         "description": "You can now earn rewards by freezing and voting.",
@@ -3697,6 +3707,7 @@
       "featureFlagsEdit": "Edit",
       "featureFlagsRestore": "Restore",
       "featureFlagsOverride": "Override",
+      "firebaseProject": "Firebase project targeted by this build:",
       "addLocalApp": "Add a local app",
       "addLocalAppDesc": "Browse local files and add a local app using a local manifest",
       "addLocalAppButton": "Browse",
@@ -3843,6 +3854,11 @@
       "title": "Save logs",
       "desc": "Saving Ledger Live logs may be needed for troubleshooting purposes.",
       "btn": "Save"
+    },
+    "troubleshootNetwork": {
+      "title": "Troubleshoot networking",
+      "desc": "Run a checklist to assess networking conditions for troubleshooting purposes.",
+      "btn": "Troubleshoot"
     },
     "accounts": {
       "hideEmptyTokens": {
@@ -4888,6 +4904,10 @@
       "title": "Sorry, it looks like your device disconnected",
       "description": "Please reconnect and try again."
     },
+    "EConnReset": {
+      "title": "The Ledger application store can't be reached",
+      "description": "Your internet connection may be down or using unusual configuration. Start by verifying if anything is blocking your connection (proxy or firewall). If the problem persists click below for solutions or reach out to our customer support."
+    },
     "EnpointConfig": {
       "title": "Invalid endpoint",
       "description": "Please provide a valid endpoint"
@@ -5242,7 +5262,7 @@
       "title": "Amount to freeze cannot be lower than 1"
     },
     "TronSendTrc20ToNewAccountForbidden": {
-      "title": "Sending TRC20 to a new account won't activate it",
+      "title": "You first need to send at least 0.1 TRX to this address to enable TRC20 token reception.",
       "description": "The recipient account must be activated prior to sending TRC20 to it. Send either TRX or TRC10 to an account to activate it."
     },
     "TronUnexpectedFees": {
@@ -5477,6 +5497,11 @@
     },
     "NearStakingThresholdNotMet": {
       "title": "Amount needs to be at least {{threshold}}"
+    },
+    "LockedDeviceError": {
+      "title": "Your device is locked",
+      "description": "Unlock your device and try again.",
+      "descriptionWithProductName": "Unlock your {{ productName }} and try again."
     }
   },
   "cryptoOrg": {

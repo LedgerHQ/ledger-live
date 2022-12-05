@@ -51,4 +51,5 @@ export type SettingsNavigatorStackParamList = {
   [ScreenName.PostOnboardingDebugScreen]: undefined;
   [ScreenName.DebugMultiAppInstall]: undefined;
   [ScreenName.DebugStoryly]: undefined;
+  [ScreenName.DebugFetchCustomImage]: undefined;
 };

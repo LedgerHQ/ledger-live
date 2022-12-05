@@ -32,7 +32,7 @@ def infer_android_version_code
       package_name: "com.ledger.live",
       track: track,
       json_key_data: ENV["ANDROID_SERVICE_KEY_CONTENT"]
-    )[0].to_i
+    ).map(&:to_i).max
   }.max + 1
 end
 
@@ -468,10 +468,10 @@ platform :android do
   # ============================= END PRIVATE =============================
   # ============================= LOCAL BUILD =============================
 
-  desc "build APK (local) (can be uploaded to Play Store)"
+  desc "build APK (local) (cannot be uploaded to Play Store)"
   lane :apk_local do
     build(
-      type: "Release",
+      type: "StagingRelease",
       apk: true,
       local: true
     )
@@ -480,10 +480,10 @@ platform :android do
   # =========================== END LOCAL BUILD ===========================
   # ============================== CI BUILD ===============================
 
-  desc "build APK (can be uploaded to Play Store)"
+  desc "build APK (cannot be uploaded to Play Store)"
   lane :apk do
     build(
-      type: "Release",
+      type: "StagingRelease",
       apk: true
     )
   end

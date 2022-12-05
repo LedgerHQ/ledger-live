@@ -109,6 +109,7 @@ import { setWallectConnectUri } from "./actions/walletconnect";
 import PostOnboardingProviderWrapped from "./logic/postOnboarding/PostOnboardingProviderWrapped";
 import { isAcceptedTerms } from "./logic/terms";
 import type { Writeable } from "./types/helpers";
+import HookDynamicContentCards from "./dynamicContent/useContentCards";
 
 const themes: {
   [key: string]: Theme;
@@ -445,6 +446,15 @@ const linkingOptions = {
               [ScreenName.DeveloperSettings]: "settings/developer",
             },
           },
+
+          [NavigatorName.CustomImage]: {
+            screens: {
+              /**
+               * ie: "ledgerlive://custom-image"
+               */
+              [ScreenName.CustomImageStep0Welcome]: "custom-image",
+            },
+          },
         },
       },
     },
@@ -676,6 +686,7 @@ export default class Root extends Component<{
                 <DelayedTrackingProvider />
                 <AnalyticsProvider store={store}>
                   <HookNotifications />
+                  <HookDynamicContentCards />
                   <WalletConnectProvider>
                     <RemoteLiveAppProvider
                       provider={provider}

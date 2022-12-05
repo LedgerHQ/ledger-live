@@ -73,7 +73,7 @@ export function Summary({
     navigation.navigate(ScreenName.SwapSelectProvider, {
       swap,
       provider,
-      selectedId: exchangeRate?.rateId,
+      selectedRate: exchangeRate,
     });
   }, [navigation, swap, provider, exchangeRate]);
 

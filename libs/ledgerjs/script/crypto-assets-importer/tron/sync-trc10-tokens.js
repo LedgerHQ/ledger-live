@@ -87,18 +87,30 @@ async function fetchTrc10Tokens() {
 
 const outputFolder = path.join(
   __dirname,
-  "../../../packages/cryptoassets/data"
+  "../../../packages/cryptoassets/src/data"
 );
 
 fetchTrc10Tokens().then((array) => {
   fs.writeFileSync(
-    path.join(outputFolder, "trc10.js"),
-    "module.exports = " +
-      "[\n" +
-      array.map((item) => JSON.stringify(item)).join(",\n") +
-      "\n]" +
-      ";",
+    path.join(outputFolder, "trc10.ts"),
+    `export type TRC10Token = [
+  number,
+  string,
+  string,
+  string,
+  number,
+  boolean,
+  string,
+  boolean?
+];
+
+const tokens: TRC10Token[] = [
+  ${array.map((item) => JSON.stringify(item)).join(",\n\t")}
+];
+
+export default tokens;
+`,
     "utf-8"
   );
-  console.log(`Wrote ${array.length} tokens in trc10.js`);
+  console.log(`Wrote ${array.length} tokens in trc10.ts`);
 });

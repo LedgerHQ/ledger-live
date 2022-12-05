@@ -19,7 +19,7 @@ export function SelectProvider({
     params: {
       provider,
       swap: { from, to, rates },
-      selectedId,
+      selectedRate,
     },
   },
 }: SelectProviderParamList) {
@@ -63,11 +63,11 @@ export function SelectProvider({
       <Flex>
         {rates.value.map(rate => {
           const ProviderIcon = providerIcons[rate.provider.toLowerCase()];
-          const isSelected = selectedId === rate.rateId;
+          const isSelected = selectedRate === rate;
 
           return (
             <TouchableOpacity
-              key={rate.rateId}
+              key={`${rate.provider}_${rate.tradeMethod}`}
               onPress={() => onSelect(rate)}
               disabled={isSelected}
             >

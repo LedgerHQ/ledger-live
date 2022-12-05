@@ -241,6 +241,7 @@ class AuthScreen extends PureComponent<Props, State> {
                   onFocus={this.onFocus}
                   onBlur={this.onBlur}
                   password={this.state.password}
+                  testID="password-text-input"
                 />
               </View>
 
