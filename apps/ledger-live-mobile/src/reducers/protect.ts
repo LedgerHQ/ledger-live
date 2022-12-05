@@ -13,7 +13,7 @@ import { ProtectStateNumberEnum } from "../components/ServicesWidget/types";
 export const INITIAL_STATE: ProtectState = {
   data: {
     services: {
-      protect: {
+      Protect: {
         available: true,
         active: false,
         paymentDue: false,

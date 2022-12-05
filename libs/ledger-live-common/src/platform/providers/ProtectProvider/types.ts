@@ -9,7 +9,7 @@ export enum ProtectStateNumberEnum {
 
 export type ProtectData = {
   services: {
-    protect: {
+    Protect: {
       available: boolean;
       active: boolean;
       payment_due: boolean;

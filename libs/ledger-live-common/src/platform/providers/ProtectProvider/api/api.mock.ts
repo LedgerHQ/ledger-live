@@ -5,7 +5,7 @@ import { ProtectData } from "../types";
 
 const serviceActiveMockData = {
   services: {
-    protect: {
+    Protect: {
       available: true,
       active: true,
       payment_due: false,

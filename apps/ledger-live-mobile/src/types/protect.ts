@@ -5,7 +5,7 @@
 
 export type RawProtectData = {
   services: {
-    protect: {
+    Protect: {
       available: boolean;
       active: boolean;
       payment_due: boolean;

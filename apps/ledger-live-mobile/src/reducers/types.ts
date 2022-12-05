@@ -235,7 +235,7 @@ export type SwapStateType = {
 
 export type ProtectData = {
   services: {
-    protect: {
+    Protect: {
       available: boolean;
       active: boolean;
       paymentDue: boolean;

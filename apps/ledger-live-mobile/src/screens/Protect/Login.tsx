@@ -6,7 +6,7 @@ import { useTheme } from "styled-components/native";
 import { useNavigation } from "@react-navigation/native";
 import { Box, Flex, Text } from "@ledgerhq/native-ui";
 import BaseInput from "@ledgerhq/native-ui/components/Form/Input/BaseInput";
-import { login as loginMock } from "@ledgerhq/live-common/platform/providers/ProtectProvider/api/api.mock";
+import { login } from "@ledgerhq/live-common/platform/providers/ProtectProvider/api/index";
 
 import TabBarSafeAreaView from "../../components/TabBar/TabBarSafeAreaView";
 import Button from "../../components/wrappedUi/Button";
@@ -65,7 +65,7 @@ function Login() {
 
       if (!valideEmail || !validePassword) return;
 
-      const res = await loginMock(email, password);
+      const res = await login(email, password);
       const data = formatData(res);
 
       dispatch(updateProtectData(data));

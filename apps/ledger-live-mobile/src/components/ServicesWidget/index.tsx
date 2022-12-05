@@ -1,6 +1,6 @@
 import { Flex, Text } from "@ledgerhq/native-ui";
 import { ProtectStateNumberEnum } from "@ledgerhq/live-common/platform/providers/ProtectProvider/types";
-import { refreshToken as refreshTokenMock } from "@ledgerhq/live-common/platform/providers/ProtectProvider/api/api.mock";
+import { refreshToken } from "@ledgerhq/live-common/platform/providers/ProtectProvider/api/index";
 import React, { memo, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
@@ -78,7 +78,7 @@ function ServicesWidget() {
     const refreshSession = async () => {
       if (!data.refreshToken) return;
 
-      const res = await refreshTokenMock(data.refreshToken);
+      const res = await refreshToken(data.refreshToken);
       const newData = formatData(res);
 
       dispatch(updateProtectData(newData));

@@ -1,7 +1,7 @@
 import network from "../../../../network";
 import { ProtectData } from "../types";
 
-const ACCOUNT_API_URL = "https://protect-account-simu-stg.aws.stg.ldg-tech.com";
+const ACCOUNT_API_URL = "https://stargate-portal-stg.api.aws.stg.ldg-tech.com";
 
 export async function login(
   email: string,
@@ -29,4 +29,12 @@ export async function refreshToken(refreshToken: string): Promise<ProtectData> {
   });
 
   return data as ProtectData;
+}
+
+export async function forgotPassword(email: string): Promise<any> {
+  return await network({
+    method: "POST",
+    url: `${ACCOUNT_API_URL}/account/reset-password`,
+    data: { email },
+  });
 }
