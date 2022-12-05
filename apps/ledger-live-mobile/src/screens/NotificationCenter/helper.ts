@@ -7,6 +7,7 @@ enum TypeOfTime {
   month = "month",
   year = "year",
 }
+
 function getTime(timestampNew: number): [number, TypeOfTime] {
   const today = new Date().getTime();
   const fixedTimeStamp = new Date(timestampNew * 1000).getTime();

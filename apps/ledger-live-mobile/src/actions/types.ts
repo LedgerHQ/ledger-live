@@ -276,6 +276,7 @@ export enum SettingsActionTypes {
   SET_NOTIFICATIONS = "SET_NOTIFICATIONS",
   RESET_SWAP_LOGIN_AND_KYC_DATA = "RESET_SWAP_LOGIN_AND_KYC_DATA",
   WALLET_TAB_NAVIGATOR_LAST_VISITED_TAB = "WALLET_TAB_NAVIGATOR_LAST_VISITED_TAB",
+  SET_STATUS_CENTER = "SET_STATUS_CENTER",
 }
 
 export type SettingsImportPayload = Partial<SettingsState>;
@@ -421,6 +422,11 @@ export type SettingsSetWalletTabNavigatorLastVisitedTabPayload = Pick<
   SettingsState,
   "walletTabNavigatorLastVisitedTab"
 >;
+
+export type SettingsSetStatusCenterPayload = Pick<
+  SettingsState,
+  "displayStatusCenter"
+>;
 export type SettingsDangerouslyOverrideStatePayload = State;
 export type SettingsPayload =
   | SettingsImportPayload
@@ -465,7 +471,8 @@ export type SettingsPayload =
   | SettingsSetSensitiveAnalyticsPayload
   | SettingsSetFirstConnectHasDeviceUpdatedPayload
   | SettingsSetNotificationsPayload
-  | SettingsDangerouslyOverrideStatePayload;
+  | SettingsDangerouslyOverrideStatePayload
+  | SettingsSetStatusCenterPayload;
 
 // === WALLET CONNECT ACTIONS ===
 

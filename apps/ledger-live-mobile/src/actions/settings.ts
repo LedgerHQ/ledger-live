@@ -63,6 +63,7 @@ import {
   SettingsActionTypes,
   SettingsSetWalletTabNavigatorLastVisitedTabPayload,
   SettingsSetDismissedDynamicCardsPayload,
+  SettingsSetStatusCenterPayload,
 } from "./types";
 import { WalletTabNavigatorStackParamList } from "../components/RootNavigator/types/WalletTabNavigator";
 
@@ -480,6 +481,14 @@ export const setWalletTabNavigatorLastVisitedTab = (
 ) =>
   setWalletTabNavigatorLastVisitedTabAction({
     walletTabNavigatorLastVisitedTab,
+  });
+
+const setStatusCenterAction = createAction<SettingsSetStatusCenterPayload>(
+  SettingsActionTypes.SET_STATUS_CENTER,
+);
+export const setStatusCenter = (displayStatusCenter: boolean) =>
+  setStatusCenterAction({
+    displayStatusCenter,
   });
 
 const dangerouslyOverrideStateAction =

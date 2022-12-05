@@ -63,6 +63,7 @@ import type {
   SettingsUpdateCurrencyPayload,
   SettingsSetSwapSelectableCurrenciesPayload,
   SettingsSetDismissedDynamicCardsPayload,
+  SettingsSetStatusCenterPayload,
 } from "../actions/types";
 import {
   SettingsActionTypes,
@@ -152,6 +153,7 @@ export const INITIAL_STATE: SettingsState = {
     recommendationsCategory: true,
   },
   walletTabNavigatorLastVisitedTab: ScreenName.Portfolio,
+  displayStatusCenter: false,
 };
 
 const pairHash = (from: { ticker: string }, to: { ticker: string }) =>
@@ -570,6 +572,12 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
       action as Action<SettingsSetWalletTabNavigatorLastVisitedTabPayload>
     ).payload.walletTabNavigatorLastVisitedTab,
   }),
+
+  [SettingsActionTypes.SET_STATUS_CENTER]: (state, action) => ({
+    ...state,
+    displayStatusCenter: (action as Action<SettingsSetStatusCenterPayload>)
+      .payload.displayStatusCenter,
+  }),
 };
 
 export default handleActions<SettingsState, SettingsPayload>(
@@ -771,3 +779,5 @@ export const notificationsSelector = (state: State) =>
   state.settings.notifications;
 export const walletTabNavigatorLastVisitedTabSelector = (state: State) =>
   state.settings.walletTabNavigatorLastVisitedTab;
+export const statusCenterSelector = (state: State) =>
+  state.settings.displayStatusCenter;

@@ -5290,7 +5290,12 @@
       }
     },
     "status": {
-      "title": "Status",
+      "title": "{{count}} issue need your attention",
+      "title_plural": "{{count}} issues need your attention",
+      "cta": {
+        "ok": "Got it",
+        "more": "Learn more"
+      },
       "ok": {
         "title": "Ledger Live is up and running",
         "desc": "<0>Having trouble? Go on our </0><1>help page</1>"
