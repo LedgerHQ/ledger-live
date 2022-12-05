@@ -9,7 +9,6 @@ import { FIGMENT_NEAR_VALIDATOR_ADDRESS } from "@ledgerhq/live-common/families/n
 
 import CounterValue from "../../../components/CounterValue";
 import ArrowRight from "../../../icons/ArrowRight";
-import LText from "../../../components/LText";
 import ValidatorImage from "../shared/ValidatorImage";
 
 type Props = {
@@ -54,9 +53,9 @@ export default function StakingRow({
         </Text>
 
         <View style={styles.row}>
-          <LText style={styles.seeMore} color="live">
+          <Text variant={"body"} color="live">
             {t("common.seeMore")}
-          </LText>
+          </Text>
           <ArrowRight color={colors.live} size={14} />
         </View>
       </View>
@@ -66,7 +65,7 @@ export default function StakingRow({
           {formattedAmount}
         </Text>
 
-        <LText color="grey">
+        <Text color="grey">
           <CounterValue
             currency={currency}
             showCode
@@ -74,7 +73,7 @@ export default function StakingRow({
             alwaysShowSign={false}
             withPlaceholder
           />
-        </LText>
+        </Text>
       </View>
     </TouchableOpacity>
   );
@@ -90,9 +89,6 @@ const styles = StyleSheet.create({
   row: {
     flexDirection: "row",
     alignItems: "center",
-  },
-  seeMore: {
-    fontSize: 14,
   },
   icon: {
     alignItems: "center",

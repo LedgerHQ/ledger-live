@@ -394,7 +394,7 @@ function SummaryWords({
     <>
       <Line>
         <Words>
-          <Trans i18nKey={"near.staking.iStake"} />
+          <Trans i18nKey="near.staking.iStake" />
         </Words>
         <Touchable onPress={onChangeAmount}>
           <Selectable name={formattedAmount} />

@@ -1,6 +1,6 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useState, useMemo } from "react";
 import { ScrollView, StyleSheet } from "react-native";
-import { useTranslation } from "react-i18next";
+import { useTranslation, TFunction } from "react-i18next";
 import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
 import { getAccountUnit } from "@ledgerhq/live-common/account/helpers";
 import { getCryptoCurrencyIcon } from "@ledgerhq/live-common/reactNative";
@@ -23,8 +23,8 @@ type InfoName =
 
 function AccountBalanceSummaryFooter({ account }: Props) {
   const { t } = useTranslation();
-  const [infoName, setInfoName] = useState<InfoName | typeof undefined>();
-  const info = useInfo();
+  const [infoName, setInfoName] = useState<InfoName>();
+  const info = useMemo(() => getInfo(t), [t]);
   const { spendableBalance, nearResources } = account;
   const {
     storageUsageBalance,
@@ -136,8 +136,7 @@ const styles = StyleSheet.create({
   },
 });
 
-function useInfo(): Record<InfoName, ModalInfo[]> {
-  const { t } = useTranslation();
+function getInfo(t: TFunction<"translation">): Record<InfoName, ModalInfo[]> {
   const currency = getCryptoCurrencyById("near");
   const NearIcon = getCryptoCurrencyIcon(currency);
   invariant(NearIcon, "Icon is expected");
