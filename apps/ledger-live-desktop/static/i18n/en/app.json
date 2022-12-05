@@ -2562,7 +2562,7 @@
   "cosmos": {
     "delegation": {
       "emptyState": {
-        "description": "You can earn ATOM rewards by delegating your assets.",
+        "description": "You can earn {{currencyTicker}} rewards by delegating your assets.",
         "info": "How Delegation works",
         "delegation": "Earn rewards"
       },
@@ -2587,11 +2587,11 @@
         "title": "Delegate",
         "steps": {
           "starter": {
-            "description": "You may earn rewards by delegating your ATOM assets to a validator.",
+            "description": "You may earn rewards by delegating your {{currencyTicker}} assets to a validator.",
             "bullet": [
               "You keep ownership of delegated assets",
               "Delegate using your Ledger device",
-              "Assets will be available 21 days after undelegation"
+              "Assets will be available {{numberOfDays}} days after undelegation"
             ],
             "warning": {
               "description": "Choose your validator wisely: Part of your delegated assets may be irrevocably lost if the validator does not behave appropriately."
@@ -2669,7 +2669,7 @@
             "currentDelegation": "Current delegation",
             "newDelegation": "New delegation",
             "chooseValidator": "Choose a validator",
-            "warning": "You will have to wait <0>21 days</0> to redelegate from the new validator, if you change your mind again",
+            "warning": "You will have to wait <0>{{numberOfDays}}</0> to redelegate from the new validator, if you change your mind again",
             "amountLabel": "Amount to redelegate"
           },
           "device": {
@@ -2696,7 +2696,7 @@
         "steps": {
           "amount": {
             "title": "Amount",
-            "subtitle": "The undelegation process takes <0>21 days</0> to finalize.",
+            "subtitle": "The undelegation process takes <0>{{numberOfDays}}</0> to finalize.",
             "warning": "Rewards will be immediately cashed in. The undelegated amount will be back in the available balance after the <0>21-day timelock</0>.",
             "fields": {
               "validator": "Validator",

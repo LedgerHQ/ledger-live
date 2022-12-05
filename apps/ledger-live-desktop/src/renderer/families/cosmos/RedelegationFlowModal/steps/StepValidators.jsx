@@ -197,7 +197,10 @@ export default function StepValidators({
       )}
 
       <Alert type="primary">
-        <Trans i18nKey="cosmos.redelegation.flow.steps.validators.warning">
+        <Trans
+          i18nKey="cosmos.redelegation.flow.steps.validators.warning"
+          values={{ numberOfDays: 21 }}
+        >
           <b></b>
         </Trans>
       </Alert>

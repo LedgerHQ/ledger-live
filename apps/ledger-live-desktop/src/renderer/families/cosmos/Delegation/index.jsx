@@ -194,7 +194,7 @@ const Delegation = ({ account }: Props) => {
               <Text ff="Inter|Medium|SemiBold" color="palette.text.shade60" fontSize={4}>
                 <Trans
                   i18nKey="cosmos.delegation.emptyState.description"
-                  values={{ name: account.currency.name }}
+                  values={{ name: account.currency.name, currencyTicker: account.currency.ticker }}
                 />
               </Text>
               <Box mt={2}>

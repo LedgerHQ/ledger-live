@@ -64,10 +64,7 @@ function CosmosFamilyValidatorRow({ validator, active, onClick, unit, currency }
               })}
             </Text>
             <Text fontSize={2} textAlign="right">
-              <Trans
-                color="palette.text.shade50"
-                i18nKey={`${currencyName}.delegation.totalStake`}
-              />
+              <Trans color="palette.text.shade50" i18nKey={`cosmos.delegation.totalStake`} />
             </Text>
           </Box>
           <Box ml={2} justifyContent="center" alignContent="center">
@@ -78,7 +75,7 @@ function CosmosFamilyValidatorRow({ validator, active, onClick, unit, currency }
       subtitle={
         <Box>
           <Text ff="Inter|Medium" fontSize={2} color="palette.text.shade50">
-            <Trans i18nKey={`${currencyName}.delegation.commission`} />{" "}
+            <Trans i18nKey={`cosmos.delegation.commission`} />{" "}
             {`${Math.round(validator.commission * 10000) / 100} %`}
           </Text>
         </Box>

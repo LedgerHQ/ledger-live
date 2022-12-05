@@ -70,7 +70,10 @@ export default function StepAmount({
       {error && <ErrorBanner error={error} />}
       <Box horizontal justifyContent="center" mb={2}>
         <Text ff="Inter|Medium" fontSize={4}>
-          <Trans i18nKey={`${currencyName}.undelegation.flow.steps.amount.subtitle`}>
+          <Trans
+            i18nKey={`${currencyName}.undelegation.flow.steps.amount.subtitle`}
+            values={{ numberOfDays: 21 }}
+          >
             <b></b>
           </Trans>
         </Text>
