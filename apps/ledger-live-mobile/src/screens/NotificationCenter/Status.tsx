@@ -77,7 +77,7 @@ export default function StatusCenter({ onClose, isOpened }: Props) {
           key={index}
           mb={3}
         >
-          {`\u2022 ${incidents[index].incident_updates}`}
+          {`\u2022 ${incidents[index].name}`}
         </Text>
       ))}
 
