@@ -35,6 +35,9 @@ export const defaultFeatures: DefaultFeatures = {
   currencyFlare: {
     enabled: false,
   },
+  currencyNear: {
+    enabled: false,
+  },
   currencyOsmosisMobile: {
     enabled: false,
   },
@@ -51,6 +54,9 @@ export const defaultFeatures: DefaultFeatures = {
     enabled: false,
   },
   currencyFlareMobile: {
+    enabled: false,
+  },
+  currencyNearMobile: {
     enabled: false,
   },
   deviceInitialApps: {
