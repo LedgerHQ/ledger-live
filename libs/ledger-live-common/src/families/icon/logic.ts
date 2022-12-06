@@ -11,6 +11,7 @@ import {
   ICON_RPC_ENDPOINT,
   ICON_TESTNET_API_ENDPOINT,
   ICON_TESTNET_RPC_ENDPOINT,
+  IISS_SCORE_ADDRESS,
   MAINNET_NID,
   PREP_TYPE,
 } from "./constants";
@@ -121,3 +122,6 @@ export function formatPRepData(pRep: PRep): PRep {
     p2pEndpoint: pRep.grade,
   };
 }
+
+export const defaultIISSContractAddress = (): string =>
+  IISS_SCORE_ADDRESS;

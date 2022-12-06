@@ -8,7 +8,7 @@ import { SyncSkipUnderPriority } from "@ledgerhq/live-common/bridge/react/index"
 import Track from "~/renderer/analytics/Track";
 
 import { UserRefusedOnDevice } from "@ledgerhq/errors";
-
+import { defaultIISSContractAddress } from "@ledgerhq/live-common/families/icon/logic";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 
@@ -106,6 +106,7 @@ const Body = ({
 
     const transaction = bridge.updateTransaction(t, {
       mode: "claimReward",
+      recipient: defaultIISSContractAddress()
     });
 
     return { account, parentAccount, transaction };

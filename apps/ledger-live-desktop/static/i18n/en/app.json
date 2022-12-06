@@ -2324,7 +2324,9 @@
       "availableBalance": "Available balance",
       "votingPower": "Voting Power",
       "voted": "Voted",
-      "unstake": "Unstake"
+      "unstake": "Unstake",
+      "votingPowerTooltip":"Using Voting power, it can be delegate to P-Rep candidate.",
+      "unstakeTooltip":"The unlock period may vary between 5 and 20 days"
     },
     "freeze": {
       "steps": {
@@ -2337,6 +2339,9 @@
             "vote": "Vote",
             "later": "Vote later"
           }
+        },
+        "amount": {
+          "info": "Function for staking requested amount of ICX. Once staking is requested, Voting power will generate in 1 to 1 ratio. Using Voting power, it can be delegate to P-Rep candidate."
         }
       }
     },
@@ -2368,7 +2373,7 @@
             "description": "Freeze ICX to earn rewards and still keep full security and control of your assets.",
             "bullet": {
               "delegate": "Delegated assets stay yours.",
-              "access": "You can unfreeze your assets after 11 days.",
+              "access": "The unlock period may vary between 5 and 20 days",
               "ledger": "Freeze and vote securely with your Ledger device."
             },
             "help": "How voting works",
@@ -2382,7 +2387,7 @@
       "steps": {
         "amount": {
           "title": "Unfreeze",
-          "info": "The amount of voted ICX cannot be un-staked.",
+          "info": "After you have completed the unstaking of your tokens, the unlock period may vary between 5 and 20 days. It depends on current Total Staked %: the more tokens are staked, the less you have to wait before the unlock. Current unlock period is 10 days approximately.",
           "totalStaked": "Total Staked: {{totalStaked}}",
           "voted": "Voted: {{voted}}",
           "amountToUnstake": "Amount to Unstake: {{amountAvailable}}"
@@ -2428,8 +2433,8 @@
       "title": "Manage assets",
       "freeze": {
         "title": "Freeze",
-        "description": "Freeze ICX to earn I_SCORE. You'll also be able to vote for Public representatives.",
-        "shouldUseVotingPowerFirst": "You should use voting power remain before stake more"
+        "description": "Freeze ICX to earn I_SCORE. 1000 I-Score can be exchange with 1 ICX. You'll also be able to vote for Public representatives.",
+        "shouldUseVotingPowerFirst": "You have to use voting power remain before stake more"
       },
       "unfreeze": {
         "title": "Unfreeze",
@@ -2447,14 +2452,14 @@
               "next": "Cast Votes"
             },
             "info": {
-              "message": "P-Rep or Candidates?",
+              "message": "P-Rep, Sub P-Reps?",
               "superRepresentative": {
                 "title": "Public representatives (P-Rep)",
-                "description": "Public representatives play a key role in governing the ICON community by ensuring basic functions, e.g. block generation and bookkeeping."
+                "description": "Public Representatives (P-Reps) are elected for the ICON Network by delegation of ICONists. Top ranked 22 main P-Reps will participate in block production, verification and making governance decisions."
               },
               "candidates": {
-                "title": "Candidates",
-                "description": "155 individuals elected through voting by the entire token holder community. Votes are updated once every 6 hours."
+                "title": "Sub P-Reps",
+                "description": "The other 78 P-Reps are considered as Sub P-Rep and only receive the representative reward. They also verify blocks."
               }
             }
           }

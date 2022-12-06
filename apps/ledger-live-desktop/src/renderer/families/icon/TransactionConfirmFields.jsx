@@ -37,14 +37,6 @@ const AddressText = styled(Text).attrs(() => ({
   max-width: 50%;
 `;
 
-const IconResourceField = ({ account, parentAccount, transaction, field }: FieldComponentProps) => {
-  invariant(field.type === "icon.resource", "IconResourceField invalid");
-  return (
-    <TransactionConfirmField label={field.label}>
-      <AddressText ff="Inter|SemiBold">{field.value}</AddressText>
-    </TransactionConfirmField>
-  );
-};
 
 const IconVotesField = ({ account, parentAccount, transaction, field }: FieldComponentProps) => {
   const mainAccount = getMainAccount(account, parentAccount);
@@ -95,7 +87,6 @@ const Title = ({ transaction }: { transaction: Transaction }) => {
 };
 
 const fieldComponents = {
-  "icon.resource": IconResourceField,
   "icon.votes": IconVotesField,
 };
 

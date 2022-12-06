@@ -7,7 +7,7 @@ import { createStructuredSelector } from "reselect";
 import Track from "~/renderer/analytics/Track";
 
 import { UserRefusedOnDevice } from "@ledgerhq/errors";
-
+import { defaultIISSContractAddress } from "@ledgerhq/live-common/families/icon/logic";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 
@@ -114,6 +114,7 @@ const Body = ({
 
     const transaction = bridge.updateTransaction(t, {
       mode: "freeze",
+      recipient: defaultIISSContractAddress()
     });
 
     return { account, parentAccount, transaction };

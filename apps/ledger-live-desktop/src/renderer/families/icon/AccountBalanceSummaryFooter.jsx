@@ -108,7 +108,7 @@ const AccountBalanceSummaryFooter = ({ account, countervalue }: Props) => {
         <AmountValue>{spendableBalance}</AmountValue>
       </BalanceDetail>
       <BalanceDetail>
-        <ToolTip content={<Trans i18nKey="account.frozenAssetsTooltip" />}>
+        <ToolTip content={<Trans i18nKey="icon.account.votingPowerTooltip" />}>
           <TitleWrapper>
             <Title>
               <Trans i18nKey="icon.account.votingPower" />
@@ -119,7 +119,7 @@ const AccountBalanceSummaryFooter = ({ account, countervalue }: Props) => {
         <AmountValue>{votingPowerAmount}</AmountValue>
       </BalanceDetail>
       <BalanceDetail>
-        <ToolTip content={<Trans i18nKey="account.bandwidthTooltip" />}>
+        <ToolTip content={<Trans i18nKey="account.delegatedTooltip" />}>
           <TitleWrapper>
             <Title>
               <Trans i18nKey="icon.account.voted" />
@@ -132,7 +132,7 @@ const AccountBalanceSummaryFooter = ({ account, countervalue }: Props) => {
         </AmountValue>
       </BalanceDetail>
       <BalanceDetail>
-        <ToolTip content={<Trans i18nKey="account.energyTooltip" />}>
+        <ToolTip content={<Trans i18nKey="icon.account.unstakeTooltip" />}>
           <TitleWrapper>
             <Title>
               <Trans i18nKey="icon.account.unstake" />

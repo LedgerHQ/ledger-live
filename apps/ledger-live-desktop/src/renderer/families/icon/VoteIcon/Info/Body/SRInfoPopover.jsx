@@ -23,21 +23,21 @@ export default function SRInfoPopover({ ...props }: *) {
           <Box vertical px={2}>
             <Box vertical alignItems="start" justifyContent="start" my={2}>
               <Text ff="Inter|SemiBold" fontSize={4} color="palette.primary.main">
-                <Trans i18nKey="tron.manage.vote.steps.vote.info.superRepresentative.title" />
+                <Trans i18nKey="icon.manage.vote.steps.vote.info.superRepresentative.title" />
               </Text>
 
               <Text fontSize={3} textAlign="left" color="palette.text.shade80">
-                <Trans i18nKey="tron.manage.vote.steps.vote.info.superRepresentative.description" />
+                <Trans i18nKey="icon.manage.vote.steps.vote.info.superRepresentative.description" />
               </Text>
             </Box>
 
             <Box vertical alignItems="start" justifyContent="start" my={2}>
               <Text ff="Inter|SemiBold" fontSize={4} color="palette.primary.main">
-                <Trans i18nKey="tron.manage.vote.steps.vote.info.candidates.title" />
+                <Trans i18nKey="icon.manage.vote.steps.vote.info.candidates.title" />
               </Text>
 
               <Text fontSize={3} textAlign="left" color="palette.text.shade80">
-                <Trans i18nKey="tron.manage.vote.steps.vote.info.candidates.description" />
+                <Trans i18nKey="icon.manage.vote.steps.vote.info.candidates.description" />
               </Text>
             </Box>
           </Box>
@@ -45,7 +45,7 @@ export default function SRInfoPopover({ ...props }: *) {
       >
         <Box horizontal alignItems="center" p={2} justifyContent="center">
           <Text ff="Inter|SemiBold" fontSize={3}>
-            <Trans i18nKey="tron.manage.vote.steps.vote.info.message" />
+            <Trans i18nKey="icon.manage.vote.steps.vote.info.message" />
           </Text>
 
           <Box ml={1}>
