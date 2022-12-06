@@ -1,5 +1,12 @@
 # ledger-live-desktop
 
+## 2.50.1-nightly.3
+
+### Patch Changes
+
+- Updated dependencies [[`32993aea9a`](https://github.com/LedgerHQ/ledger-live/commit/32993aea9af5dfb7f2519263e5f2a22a88320cdc)]:
+  - @ledgerhq/react-ui@0.10.2-nightly.0
+
 ## 2.50.1-nightly.2
 
 ### Patch Changes
