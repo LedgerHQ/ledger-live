@@ -1,7 +1,5 @@
 import "../../__tests__/test-helpers/setup";
-import { testBridge } from "../../__tests__/test-helpers/bridge";
 
-import { fromTransactionRaw } from "../elrond/transaction";
 import { BigNumber } from "bignumber.js";
 import {
   InvalidAddressBecauseDestinationIsAlsoSource,
@@ -9,7 +7,11 @@ import {
   InvalidAddress,
 } from "@ledgerhq/errors";
 import type { DatasetTest, CurrenciesData } from "@ledgerhq/types-live";
+
 import type { Transaction } from "./types";
+import { testBridge } from "../../__tests__/test-helpers/bridge";
+import { fromTransactionRaw } from "../elrond/transaction";
+
 const TEST_ADDRESS =
   "erd1vgfp3g7azqjx4wsmtt7067m0l62v3psmqzr24j6xvywj2tlz0gesvyzsq2";
 
@@ -95,6 +97,25 @@ const elrond: CurrenciesData<Transaction> = {
               amount: new NotEnoughBalance(),
             },
             warnings: {},
+          },
+        },
+        {
+          name: "Send max",
+          transaction: fromTransactionRaw({
+            family: "elrond",
+            recipient:
+              "erd1frj909pfums4m8aza596595l9pl56crwdj077vs2aqcw6ynl28wsfkw9rd",
+            useAllAmount: true,
+            amount: "0",
+            mode: "send",
+            fees: null,
+          }),
+          expectedStatus: (account, _, status) => {
+            return {
+              amount: account.balance.minus(status.estimatedFees),
+              warnings: {},
+              errors: {},
+            };
           },
         },
       ],
