@@ -10,7 +10,6 @@ import {
   CosmosAccount,
 } from "./types";
 import { mapDelegations, mapUnbondings, mapRedelegations } from "./logic";
-import { getCurrentOsmosisPreloadData } from "../osmosis/preloadedData";
 import type { Unit } from "@ledgerhq/types-cryptoassets";
 
 function formatOperationSpecifics(
@@ -33,21 +32,14 @@ function formatOperationSpecifics(
     .join("");
 }
 
-function getCurrentCosmosFamilyPreloadData(
-  currencyName: string
-): CosmosPreloadData {
-  if (currencyName === "osmosis") {
-    return getCurrentOsmosisPreloadData();
-  } else {
-    return getCurrentCosmosPreloadData();
-  }
+function getCurrentCosmosFamilyPreloadData(): CosmosPreloadData {
+  return getCurrentCosmosPreloadData();
 }
 
 export function formatAccountSpecifics(account: CosmosAccount): string {
   const { cosmosResources } = account;
   invariant(cosmosResources, "cosmos account expected");
-  const currencyName = account.currency.name.toLowerCase();
-  const { validators } = getCurrentCosmosFamilyPreloadData(currencyName);
+  const { validators } = getCurrentCosmosFamilyPreloadData();
 
   const unit = getAccountUnit(account);
   const formatConfig = {

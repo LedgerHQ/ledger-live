@@ -160,7 +160,7 @@ export type CosmosLikeTransaction = TransactionCommon & {
 };
 
 export type Transaction = CosmosLikeTransaction & {
-  family: "cosmos" | "osmosis";
+  family: "cosmos";
   networkInfo: NetworkInfo | null | undefined;
 };
 
@@ -176,7 +176,7 @@ export type CosmosLikeTransactionRaw = TransactionCommonRaw & {
 };
 
 export type TransactionRaw = CosmosLikeTransactionRaw & {
-  family: "cosmos" | "osmosis";
+  family: "cosmos";
   networkInfo: NetworkInfoRaw | null | undefined;
 };
 

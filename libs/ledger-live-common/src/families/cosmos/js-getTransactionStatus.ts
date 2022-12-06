@@ -29,7 +29,6 @@ import {
 } from "./logic";
 import invariant from "invariant";
 import { CosmosAPI, defaultCosmosAPI } from "./api/Cosmos";
-import { OsmosisAPI } from "../osmosis/api/sdk";
 
 export class CosmosTransactionStatusManager {
   protected _api: CosmosAPI = defaultCosmosAPI;
@@ -176,27 +175,12 @@ export class CosmosTransactionStatusManager {
 
     const estimatedFees = t.fees || new BigNumber(0);
 
-    if (this._api instanceof OsmosisAPI) {
-      if (!t.fees) {
-        errors.fees = new FeeNotLoaded();
-      }
-    } else {
-      if (!t.fees || !t.fees.gt(0)) {
-        errors.fees = new FeeNotLoaded();
-      }
+    if (!t.fees || !t.fees.gt(0)) {
+      errors.fees = new FeeNotLoaded();
     }
-    let amount;
-
-    // TODO, refactor this block. We should use cosmosResources for Osmosis
-    if (this._api instanceof OsmosisAPI) {
-      amount = t.useAllAmount
-        ? a.spendableBalance.minus(estimatedFees)
-        : new BigNumber(t.amount);
-    } else {
-      amount = t.useAllAmount
-        ? getMaxEstimatedBalance(a, estimatedFees)
-        : t.amount;
-    }
+    const amount = t.useAllAmount
+      ? getMaxEstimatedBalance(a, estimatedFees)
+      : t.amount;
     const totalSpent = amount.plus(estimatedFees);
 
     if (amount.eq(0)) {
@@ -250,15 +234,8 @@ export class CosmosTransactionStatusManager {
     }
 
     const estimatedFees = t.fees || new BigNumber(0);
-
-    if (this._api instanceof OsmosisAPI) {
-      if (!t.fees) {
-        errors.fees = new FeeNotLoaded();
-      }
-    } else {
-      if (!t.fees || !t.fees.gt(0)) {
-        errors.fees = new FeeNotLoaded();
-      }
+    if (!t.fees || !t.fees.gt(0)) {
+      errors.fees = new FeeNotLoaded();
     }
 
     amount = t.useAllAmount ? getMaxEstimatedBalance(a, estimatedFees) : amount;
