@@ -10,7 +10,9 @@ import { login } from "@ledgerhq/live-common/platform/providers/ProtectProvider/
 
 import TabBarSafeAreaView from "../../components/TabBar/TabBarSafeAreaView";
 import Button from "../../components/wrappedUi/Button";
-import { ScreenName } from "../../const/navigation";
+import { StackNavigatorNavigation } from "../../components/RootNavigator/types/helpers";
+import { ManagerNavigatorStackParamList } from "../../components/RootNavigator/types/ManagerNavigator";
+import { ScreenName } from "../../const";
 import { updateProtectData, updateProtectStatus } from "../../actions/protect";
 import { formatData, getProtectStatus } from "../../logic/protect";
 
@@ -24,7 +26,8 @@ function Login() {
   const [passwordError, setPasswordError] = useState<string | undefined>(
     undefined,
   );
-  const navigation = useNavigation();
+  const navigation =
+    useNavigation<StackNavigatorNavigation<ManagerNavigatorStackParamList>>();
 
   const validateEmail = useCallback(() => {
     if (!email) {
@@ -66,6 +69,9 @@ function Login() {
       if (!valideEmail || !validePassword) return;
 
       const res = await login(email, password);
+
+      if (!res) return;
+
       const data = formatData(res);
 
       dispatch(updateProtectData(data));

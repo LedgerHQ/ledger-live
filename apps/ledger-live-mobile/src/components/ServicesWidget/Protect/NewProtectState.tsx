@@ -5,6 +5,8 @@ import { Linking } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import Button from "../../Button";
 import { ScreenName } from "../../../const/navigation";
+import { StackNavigatorNavigation } from "../../RootNavigator/types/helpers";
+import { ManagerNavigatorStackParamList } from "../../RootNavigator/types/ManagerNavigator";
 
 const items = [
   {
@@ -27,7 +29,8 @@ const items = [
 
 function NewProtectState({ params }: { params: Record<string, string> }) {
   const { t } = useTranslation();
-  const navigation = useNavigation();
+  const navigation =
+    useNavigation<StackNavigatorNavigation<ManagerNavigatorStackParamList>>();
   const { learnMoreURI } = params || {};
 
   const onLearnMore = useCallback(() => {
@@ -62,7 +65,7 @@ const StateTag = () => {
 
   return (
     <Tag
-      color="hsla(40, 50%, 64%, 1)"
+      color="primary.c80"
       textColor="neutral.c00"
       ellipsizeMode="tail"
       size="medium"

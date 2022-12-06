@@ -16,11 +16,9 @@ function ActiveProtectState({ params }: { params: Record<string, string> }) {
   }, [viewDetailsURI]);
 
   return (
-    <>
-      <Button type="main" outline={false} onPress={onViewDetails} mt={8}>
-        {t(`servicesWidget.protect.status.active.actions.viewDetails`)}
-      </Button>
-    </>
+    <Button type="main" outline={false} onPress={onViewDetails} mt={8}>
+      {t(`servicesWidget.protect.status.active.actions.viewDetails`)}
+    </Button>
   );
 }
 

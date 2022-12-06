@@ -79,6 +79,9 @@ function ServicesWidget() {
       if (!data.refreshToken) return;
 
       const res = await refreshToken(data.refreshToken);
+
+      if (!res) return;
+
       const newData = formatData(res);
 
       dispatch(updateProtectData(newData));
@@ -94,7 +97,7 @@ function ServicesWidget() {
 
   return enabled && params?.managerStatesData ? (
     <>
-      <Text mt={12} variant="body" fontSize="20px">
+      <Text mt={12} fontWeight="semiBold" variant="h5">
         {t("servicesWidget.title")}
       </Text>
       <Text variant="paragraph" color="neutral.c80">
@@ -108,7 +111,7 @@ function ServicesWidget() {
             justifyContent="space-between"
             alignItems="center"
           >
-            <Text variant="body" fontSize="18px" mr={6}>
+            <Text variant="h5" mr={6}>
               {t("servicesWidget.protect.title")}
             </Text>
             {ProtectStateComponent && ProtectStateComponent.StatusTag ? (

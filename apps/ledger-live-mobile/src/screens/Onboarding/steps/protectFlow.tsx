@@ -58,7 +58,7 @@ function OnboardingStepProtectFlow() {
           <StepLottieAnimation
             stepId="pinCode"
             deviceModelId={deviceModelId}
-            theme={theme === "dark" ? "dark" : "light"}
+            theme={theme}
           />
         ),
         drawer: null,
@@ -69,7 +69,7 @@ function OnboardingStepProtectFlow() {
           <StepLottieAnimation
             stepId="pinCode"
             deviceModelId={deviceModelId}
-            theme={theme === "dark" ? "dark" : "light"}
+            theme={theme}
           />
         ),
         drawer: {

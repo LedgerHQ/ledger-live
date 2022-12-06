@@ -40,7 +40,7 @@ const StateTag = () => {
 
   return (
     <Tag
-      color="hsla(36, 94%, 56%, 1)"
+      color="warning.c50"
       textColor="neutral.c00"
       ellipsizeMode="tail"
       size="medium"

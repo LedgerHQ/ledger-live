@@ -1458,7 +1458,7 @@
         "tooltip": "Cannot see it on my Ledger",
         "title": "Why can I not see Restore with Protect on my Ledger?",
         "desc1": "The most probable option is that your device is not compatible with Protect. No worries, we are here to guide you on how to make it work.",
-        "desc2": "Please contact us through and chose \"My Ledger doesn't display Restore with Protect\", we got you covered.",
+        "desc2": "Please contact us through and choose \"My Ledger doesn't display Restore with Protect\", we got you covered.",
         "cta": "Go through manual steps",
         "supportLink": "Contact Ledger Support"
       }
