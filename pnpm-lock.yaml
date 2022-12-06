@@ -3122,7 +3122,7 @@ importers:
       bignumber.js: '*'
       flow-bin: ^0.145.0
       invariant: ^2.2.4
-      lodash: '4'
+      lodash: ^4.17.21
       prop-types: ^15.8.1
       qrcode: ^1.4.2
       re-resizable: '6'
@@ -24165,7 +24165,7 @@ packages:
       mkdirp: 0.5.6
       move-concurrently: 1.0.1
       p-map: 3.0.0
-      promise-inflight: 1.0.1
+      promise-inflight: 1.0.1_bluebird@3.7.2
       rimraf: 2.7.1
       ssri: 7.1.1
       unique-filename: 1.1.1
@@ -45638,6 +45638,7 @@ packages:
     peerDependenciesMeta:
       bluebird:
         optional: true
+    dev: true
 
   /promise-inflight/1.0.1_bluebird@3.7.2:
     resolution: {integrity: sha512-6zWPyEOFaQBJYcGMHBKTKJ3u6TBsnMFOIZSa6ce1e/ZrrsOlnHRHbabMjLiBYKp+n44X9eUI6VUPaukCXHuG4g==}
