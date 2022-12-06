@@ -130,7 +130,11 @@ export function WebView({ manifest, onClose, inputs = {}, config }: Props) {
       transportRef.current = {
         onMessage: undefined,
         send: message => {
-          targetRef.current?.contentWindow.postMessage(message);
+          const webview = targetRef.current;
+          if (webview) {
+            const origin = new URL(webview.src).origin;
+            webview.contentWindow.postMessage(message, origin);
+          }
         },
       };
       serverRef.current = new WalletAPIServer(transportRef.current);
