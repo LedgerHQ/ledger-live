@@ -3,7 +3,6 @@ import * as remote from "@electron/remote";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
-import styled from "styled-components";
 
 import { UserRefusedOnDevice } from "@ledgerhq/errors";
 import { Account, AccountLike, SignedOperation, Operation } from "@ledgerhq/types-live";
@@ -46,47 +45,15 @@ import TrackPage from "../../analytics/TrackPage";
 import useTheme from "../../hooks/useTheme";
 import { accountsSelector } from "../../reducers/accounts";
 import BigSpinner from "../BigSpinner";
-import Box from "../Box";
 import { setDrawer } from "~/renderer/drawers/Provider";
 import { OperationDetails } from "~/renderer/drawers/OperationDetails";
 import SelectAccountAndCurrencyDrawer from "~/renderer/drawers/DataSelector/SelectAccountAndCurrencyDrawer";
 import { track } from "~/renderer/analytics/segment";
 import TopBar from "./TopBar";
 import { TopBarConfig } from "./type";
+import { Container, Wrapper, CustomWebview, Loader } from "./styled";
 
 const tracking = trackingWrapper(track);
-
-const Container = styled.div`
-  display: flex;
-  flex-direction: column;
-  flex: 1;
-  height: 100%;
-`;
-
-// $FlowFixMe
-const CustomWebview = styled("webview")`
-  border: none;
-  width: 100%;
-  flex: 1;
-  transition: opacity 200ms ease-out;
-`;
-
-const Wrapper = styled(Box).attrs(() => ({
-  flex: 1,
-}))`
-  position: relative;
-`;
-
-const Loader = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-`;
 
 type WebPlatformPlayerConfig = {
   topBarConfig?: TopBarConfig;
