@@ -3,6 +3,7 @@ import StellarSdk, { ServerApi } from "stellar-sdk";
 import { findSubAccountById } from "../../account";
 import type { CacheRes } from "../../cache";
 import { makeLRUCache } from "../../cache";
+import { StellarBurnAddressError } from "./errors";
 import type {
   Account,
   Operation,
@@ -288,6 +289,9 @@ export const isAccountMultiSign = async (
  */
 export const isAddressValid = (address: string): boolean => {
   if (!address) return false;
+
+  // FIXME Workaround for burn address, see https://ledgerhq.atlassian.net/browse/LIVE-4014
+  if (address === STELLAR_BURN_ADDRESS) return false;
 
   try {
     return (
