@@ -23,6 +23,6 @@ export function fromIconResourcesRaw(r: IconResourcesRaw): IconResources {
     votingPower: new BigNumber(votingPower || 0),
     totalDelegated: new BigNumber(totalDelegated || 0),
     unwithdrawnReward: new BigNumber(unwithdrawnReward || 0),
-    unstake: new BigNumber(unwithdrawnReward || 0),
+    unstake: new BigNumber(unstake || 0),
   };
 }

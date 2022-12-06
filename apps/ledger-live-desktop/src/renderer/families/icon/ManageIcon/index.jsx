@@ -173,7 +173,9 @@ const ManageModal = ({ name, account, parentAccount, ...rest }: Props) => {
                       <Trans i18nKey="icon.manage.freeze.title" />
                     </Title>
                     <Description>
-                      <Trans i18nKey="icon.manage.freeze.description" />
+                      {!canVote
+                        ? <Trans i18nKey="icon.manage.freeze.description" />
+                        : <Trans i18nKey="icon.manage.freeze.shouldUseVotingPowerFirst" />}
                     </Description>
                   </InfoWrapper>
                 </ManageButton>
@@ -189,9 +191,7 @@ const ManageModal = ({ name, account, parentAccount, ...rest }: Props) => {
                       <Trans i18nKey="icon.manage.unfreeze.title" />
                     </Title>
                     <Description>
-                      {canVote
-                        ? <Trans i18nKey="icon.manage.unfreeze.description" />
-                        : <Trans i18nKey="icon.manage.unfreeze.shouldUseVotingPowerFirst" />}
+                      <Trans i18nKey="icon.manage.unfreeze.description" />
                     </Description>
                   </InfoWrapper>
                   {!canUnfreeze && (

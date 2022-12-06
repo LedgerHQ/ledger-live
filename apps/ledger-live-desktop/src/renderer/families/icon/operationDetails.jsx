@@ -21,11 +21,13 @@ import {
 } from "~/renderer/drawers/OperationDetails/styledComponents";
 import { Trans } from "react-i18next";
 import Box from "~/renderer/components/Box/Box";
+import {
+  formatVotes, useIconPublicRepresentatives,
+} from "@ledgerhq/live-common/families/icon/react";
 import Text from "~/renderer/components/Text";
 import FormattedVal from "~/renderer/components/FormattedVal";
 import CounterValue from "~/renderer/components/CounterValue";
 import { useDiscreetMode } from "~/renderer/components/Discreet";
-import { formatVotes, useIconPublicRepresentatives } from "~/../../../libs/ledger-live-common/lib/families/icon/react";
 
 const helpURL = "https://support.ledger.com/hc/en-us/articles/360013062139";
 
@@ -78,7 +80,7 @@ export const OperationDetailsVotes = ({
         {sp.length > 0 &&
           formattedVotes &&
           formattedVotes.length > 0 &&
-          formattedVotes.map(({ voteCount, address, validator }, i) => (
+          formattedVotes.map(({ value, address, validator }, i) => (
             <OpDetailsData key={address + i} justifyContent="flex-start">
               <OpDetailsVoteData>
                 <Box>
@@ -86,7 +88,7 @@ export const OperationDetailsVotes = ({
                     <Trans
                       i18nKey="operationDetails.extra.votesAddress"
                       values={{
-                        votes: !discreet ? voteCount : "***",
+                        votes: !discreet ? value : "***",
                         name: validator && validator.name,
                       }}
                     >
@@ -128,7 +130,7 @@ const OperationDetailsExtra = ({ extra, type, account }: OperationDetailsExtraPr
           <OpDetailsData>
             <Box>
               <FormattedVal
-                val={extra.frozenAmount}
+                val={extra?.frozenAmount}
                 unit={account.unit}
                 showCode
                 fontSize={4}
@@ -147,7 +149,7 @@ const OperationDetailsExtra = ({ extra, type, account }: OperationDetailsExtraPr
           <OpDetailsData>
             <Box>
               <FormattedVal
-                val={extra.unfreezeAmount}
+                val={extra?.unfreezeAmount}
                 unit={account.unit}
                 showCode
                 fontSize={4}
@@ -169,7 +171,7 @@ type Props = {
 };
 
 const FreezeAmountCell = ({ operation, currency, unit }: Props) => {
-  const amount = new BigNumber(operation.extra ? operation.extra.frozenAmount : 0);
+  const amount = new BigNumber(operation.extra ? operation.extra?.frozenAmount : 0);
 
   return (
     !amount.isZero() && (
@@ -185,7 +187,7 @@ const FreezeAmountCell = ({ operation, currency, unit }: Props) => {
         <CounterValue
           color="palette.text.shade60"
           fontSize={3}
-          date={operation.date}
+          date={operation?.date}
           currency={currency}
           value={amount}
         />
@@ -195,7 +197,7 @@ const FreezeAmountCell = ({ operation, currency, unit }: Props) => {
 };
 
 const UnfreezeAmountCell = ({ operation, currency, unit }: Props) => {
-  const amount = new BigNumber(operation.extra ? operation.extra.unfreezeAmount : 0);
+  const amount = new BigNumber(operation.extra ? operation.extra?.unfreezeAmount : 0);
 
   return (
     !amount.isZero() && (
@@ -211,7 +213,7 @@ const UnfreezeAmountCell = ({ operation, currency, unit }: Props) => {
         <CounterValue
           color="palette.text.shade60"
           fontSize={3}
-          date={operation.date}
+          date={operation?.date}
           currency={currency}
           value={amount}
         />
@@ -223,8 +225,8 @@ const UnfreezeAmountCell = ({ operation, currency, unit }: Props) => {
 const VoteAmountCell = ({ operation, currency, unit }: Props) => {
   const discreet = useDiscreetMode();
   const amount =
-    operation.extra && operation.extra.votes
-      ? operation.extra.votes.reduce((sum, { voteCount }) => sum + voteCount, 0)
+    operation.extra && operation.extra?.votes
+      ? operation.extra?.votes.reduce((sum, { voteCount }) => sum + voteCount, 0)
       : 0;
 
   return amount > 0 ? (

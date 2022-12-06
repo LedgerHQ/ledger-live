@@ -41,7 +41,7 @@ export default function StepAmount({
         t={t}
       />
       <Alert type="primary" my={4}>
-        <Trans i18nKey="freeze.steps.amount.info" />
+        <Trans i18nKey="icon.freeze.steps.amount.info" />
       </Alert>
     </Box>
   );

@@ -6,7 +6,7 @@ import styled from "styled-components";
 import { useSelector } from "react-redux";
 
 import { BigNumber } from "bignumber.js";
-
+import { defaultIISSContractAddress } from "@ledgerhq/live-common/families/icon/logic";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { getAccountUnit } from "@ledgerhq/live-common/account/index";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
@@ -108,6 +108,7 @@ const AmountField = ({
       onChangeTransaction(
         bridge.updateTransaction(transaction, {
           amount: getDecimalPart(value, defaultUnit.magnitude),
+          recipient: defaultIISSContractAddress()
         }),
       );
     },

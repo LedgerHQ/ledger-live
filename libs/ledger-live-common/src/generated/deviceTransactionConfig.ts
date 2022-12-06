@@ -50,12 +50,14 @@ import { ExtraDeviceTransactionField as ExtraDeviceTransactionField_stacks } fro
 import { ExtraDeviceTransactionField as ExtraDeviceTransactionField_stellar } from "../families/stellar/deviceTransactionConfig";
 import { ExtraDeviceTransactionField as ExtraDeviceTransactionField_tron } from "../families/tron/deviceTransactionConfig";
 import { ExtraDeviceTransactionField as ExtraDeviceTransactionField_polkadot } from "@ledgerhq/coin-polkadot/bridge/deviceTransactionConfig";
+import { ExtraDeviceTransactionField as ExtraDeviceTransactionField_icon } from "../families/icon/deviceTransactionConfig";
 
 export type ExtraDeviceTransactionField =
   | ExtraDeviceTransactionField_casper
   | ExtraDeviceTransactionField_cosmos
   | ExtraDeviceTransactionField_filecoin
   | ExtraDeviceTransactionField_stacks
+  | ExtraDeviceTransactionField_icon
   | ExtraDeviceTransactionField_stellar
   | ExtraDeviceTransactionField_tron
   | ExtraDeviceTransactionField_polkadot;

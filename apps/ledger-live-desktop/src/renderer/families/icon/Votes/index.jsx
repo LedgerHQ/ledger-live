@@ -165,7 +165,7 @@ const Delegation = ({ account }: Props) => {
               small
               onClick={() => {
                 dispatch(
-                  openModal("MODAL_CLAIM_REWARDS", {
+                  openModal("MODAL_ICON_CLAIM_REWARDS", {
                     account,
                     reward: unwithdrawnReward,
                   }),
