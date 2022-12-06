@@ -5290,11 +5290,14 @@
       }
     },
     "status": {
-      "title": "{{count}} issue need your attention",
-      "title_plural": "{{count}} issues need your attention",
+      "title": "Some issue might need your attention",
+      "title_plural": "Some issues might need your attention",
+      "desc": {
+        "0": "They’re being investigated and will be resolved shortly.",
+        "1": "If you’re affected by any of the issues, reach out to our <0>Customer Support</0>"
+      },
       "cta": {
-        "ok": "Got it",
-        "more": "Learn more"
+        "ok": "Got it"
       },
       "ok": {
         "title": "Ledger Live is up and running",

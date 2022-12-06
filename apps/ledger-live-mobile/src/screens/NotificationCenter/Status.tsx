@@ -1,10 +1,10 @@
 import React, { useCallback } from "react";
 import { Linking } from "react-native";
-import { useTranslation } from "react-i18next";
+import { Trans, useTranslation } from "react-i18next";
 import { useFilteredServiceStatus } from "@ledgerhq/live-common/notifications/ServiceStatusProvider/index";
 import { BottomDrawer, Button, Flex, Icons, Text } from "@ledgerhq/native-ui";
 
-import { useTheme } from "styled-components/native";
+import styled, { useTheme } from "styled-components/native";
 
 import { urls } from "../../config/urls";
 import { track, TrackScreen } from "../../analytics";
@@ -29,15 +29,6 @@ export default function StatusCenter({ onClose, isOpened }: Props) {
       drawer: DRAWER,
     });
     Linking.openURL(urls.supportPage);
-  }, []);
-
-  const openStatusLink = useCallback(() => {
-    track("url_clicked", {
-      name: "Status Center",
-      url: urls.ledgerStatus,
-      drawer: DRAWER,
-    });
-    Linking.openURL(urls.ledgerStatus);
   }, []);
 
   const onPressClose = useCallback(() => {
@@ -78,25 +69,52 @@ export default function StatusCenter({ onClose, isOpened }: Props) {
     >
       <TrackScreen category={DRAWER} type="drawer" refreshSource={false} />
 
-      <Text>{}</Text>
-      {new Array(2).fill(null).map((_e, index) => (
+      {new Array(incidents.length).fill(null).map((_e, index) => (
         <Text
           variant="body"
           fontWeight="medium"
-          color="neutral.c80"
+          color="neutral.c90"
           key={index}
+          mb={3}
         >
-          {t(`wallet.nftGallery.receiveModal.bullets.${index}`)}
+          {`\u2022 ${incidents[index].incident_updates}`}
         </Text>
       ))}
+
+      <Text
+        variant="body"
+        fontWeight="medium"
+        color="neutral.c70"
+        mt={6}
+        textAlign="center"
+      >
+        {t("notificationCenter.status.desc.0")}
+      </Text>
+
+      <Text
+        variant="body"
+        fontWeight="medium"
+        color="neutral.c70"
+        textAlign="center"
+        justifyContent="center"
+        mt={3}
+      >
+        <Trans i18nKey="notificationCenter.status.desc.1">
+          <Link onPress={openSupportLink} fontWeight="bold">
+            {""}
+          </Link>
+        </Trans>
+      </Text>
 
       <Button type="main" size="large" onPress={onPressOk} mt={8} mb={4}>
         {t("notificationCenter.status.cta.ok")}
       </Button>
-
-      <Button size="large" type="default" onPress={openStatusLink}>
-        {t("notificationCenter.status.cta.more")}
-      </Button>
     </BottomDrawer>
   );
 }
+
+const Link = styled(Text)`
+  color: ${p => p.theme.colors.neutral.c70};
+  text-decoration: underline;
+  text-decoration-color: ${p => p.theme.colors.neutral.c70};
+`;

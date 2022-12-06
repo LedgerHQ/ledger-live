@@ -45,7 +45,8 @@ export default function NotificationCenterNavigator() {
       button: "Notification Center Status",
     });
     dispatch(setStatusCenter(true));
-  }, [dispatch]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <Stack.Navigator screenOptions={stackNavConfig}>
@@ -56,7 +57,7 @@ export default function NotificationCenterNavigator() {
           title: t("notificationCenter.news.title"),
           headerRight: () => (
             <Flex flexDirection="row">
-              {incidents.length == 0 && (
+              {incidents.length === 0 && (
                 <TouchableOpacity
                   style={{ marginRight: 18 }}
                   onPress={openStatusCenter}
