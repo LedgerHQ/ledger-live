@@ -62,7 +62,7 @@ export default function NotificationCenterNavigator() {
                   style={{ marginRight: 18 }}
                   onPress={openStatusCenter}
                 >
-                  <Icons.StorageMedium size={20} />
+                  <Icons.FullnodeMedium size={20} />
                 </TouchableOpacity>
               )}
               <TouchableOpacity
