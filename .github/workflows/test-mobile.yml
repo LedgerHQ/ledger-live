@@ -199,8 +199,8 @@ jobs:
                   annotations: batchedAnnotations,
                   summary: `${status.summary}
 
-                ---
-                [⚙️ Summary](https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${{ github.run_id }})`
+            ---
+            [⚙️ Summary](https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${{ github.run_id }})`
                 },
                 ...(annotations.length === 0 ? extras : {}),
               });
