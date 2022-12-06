@@ -13,15 +13,8 @@ export const acceptTransaction: DeviceAction<Transaction, any> =
       {
         title: "Amount",
         button: "Rr",
-        expectedValue: ({ account, transaction }) => {
-          if (transaction.useAllAmount) {
-            return formatDeviceAmount(
-              account.currency,
-              account.spendableBalance
-            );
-          }
-
-          return formatDeviceAmount(account.currency, transaction.amount, {
+        expectedValue: ({ account, status }) => {
+          return formatDeviceAmount(account.currency, status.amount, {
             postfixCode: true,
           });
         },
