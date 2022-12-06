@@ -167,29 +167,36 @@ jobs:
               }))
             );
 
-            // while(annotations.length > 50) {}
-            const batchedAnnotations = annotations.splice(0, 50);
-            const previous = await github.rest.checks.update({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              head_sha: "${{ github.event.inputs.sha }}",
-              check_run_id: "${{ github.event.inputs.check_run_id }}",
-            });
-            await github.rest.checks.update({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              name: previous.data.name,
-              details_url: `https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${{ github.run_id }}`,
-              head_sha: "${{ github.event.inputs.sha }}",
-              check_run_id: "${{ github.event.inputs.check_run_id }}",
+            const split = Math.ceil(annotations.length / 50);
+            const extras = {
               conclusion: status.isFailed ? 'failure' : status.isCancelled ? 'cancelled' : 'success',
               completed_at: new Date().toISOString(),
-              output: {
-                title,
-                annotations: batchedAnnotations,
-                summary: `${status.summary}
+            };
 
-              ---
-              [⚙️ Summary](https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${{ github.run_id }})`
-              },
-            });
+            for (let i = 0; i < split; i++) {
+              const batchedAnnotations = annotations.splice(0, 50);
+              const previous = await github.rest.checks.update({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                head_sha: "${{ github.event.inputs.sha }}",
+                check_run_id: "${{ github.event.inputs.check_run_id }}",
+              });
+              await github.rest.checks.update({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                name: previous.data.name,
+                details_url: `https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${{ github.run_id }}`,
+                head_sha: "${{ github.event.inputs.sha }}",
+                check_run_id: "${{ github.event.inputs.check_run_id }}",
+                status: annotations.length === 0 ? "completed" : "in_progress",
+                output: {
+                  title,
+                  annotations: batchedAnnotations,
+                  summary: `${status.summary}
+
+                ---
+                [⚙️ Summary](https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${{ github.run_id }})`
+                },
+                ...(annotations.length === 0 ? extras : {}),
+              });
+            }
