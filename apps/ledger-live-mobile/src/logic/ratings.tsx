@@ -43,6 +43,8 @@ export type RatingsDataOfUser = {
   dateOfNextAllowedRequest?: Date;
   /** Whether or not the user clicked on the "Not now" cta from the Enjoy step of the ratings flow */
   alreadyClosedFromEnjoyStep?: boolean;
+  /** Whether or not the user clicked on the "Not now" cta from the Init step of the ratings flow */
+  alreadyClosedFromInitStep?: boolean;
   /** Whether or not the user already rated the app */
   alreadyRated?: boolean;
   /** If true, we will not prompt the rating flow again unless the user triggers it manually from the settings */
@@ -288,7 +290,7 @@ const useRatings = () => {
   );
 
   const handleEnjoyNotNow = useCallback(() => {
-    if (ratingsDataOfUser?.alreadyClosedFromEnjoyStep) {
+    if (ratingsDataOfUser?.alreadyClosedFromEnjoyStep || ratingsDataOfUser?.alreadyClosedFromInitStep) {
       updateRatingsDataOfUserInStateAndStore({
         ...ratingsDataOfUser,
         doNotAskAgain: true,
@@ -306,6 +308,27 @@ const useRatings = () => {
     handleRatingsSetDateOfNextAllowedRequest,
     ratingsDataOfUser,
     ratingsFeature?.params?.conditions?.satisfied_then_not_now_delay,
+    updateRatingsDataOfUserInStateAndStore,
+  ]);
+
+  const handleInitNotNow = useCallback(() => {
+    if (ratingsDataOfUser?.alreadyClosedFromEnjoyStep || ratingsDataOfUser?.alreadyClosedFromInitStep) {
+      updateRatingsDataOfUserInStateAndStore({
+        ...ratingsDataOfUser,
+        doNotAskAgain: true,
+      });
+    } else {
+      handleRatingsSetDateOfNextAllowedRequest(
+        ratingsFeature?.params?.conditions?.not_now_delay,
+        {
+          alreadyClosedFromInitStep: true,
+        },
+      );
+    }
+  }, [
+    handleRatingsSetDateOfNextAllowedRequest,
+    ratingsDataOfUser,
+    ratingsFeature?.params?.conditions?.not_now_delay,
     updateRatingsDataOfUserInStateAndStore,
   ]);
 
@@ -330,6 +353,7 @@ const useRatings = () => {
     handleSettingsRateApp,
     handleRatingsSetDateOfNextAllowedRequest,
     handleEnjoyNotNow,
+    handleInitNotNow,
     handleGoToStore,
     handleSatisfied,
     ratingsFeatureParams: ratingsFeature?.params,
