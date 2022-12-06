@@ -27,6 +27,13 @@ export const acceptTransaction: DeviceAction<Transaction, any> =
         title: "Amount",
         button: "Rr",
         expectedValue: ({ account, status, transaction }) => {
+          if (transaction.useAllAmount) {
+            return formatDeviceAmount(
+              account.currency,
+              account.spendableBalance
+            );
+          }
+
           const a = transaction.subAccountId
             ? subAccount(transaction.subAccountId, account)
             : null;
