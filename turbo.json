@@ -7,7 +7,7 @@
       "outputs": ["dist/**", "lib/**", "lib-es/**", "build/**"]
     },
     "lint": {
-      "outputs": [],
+      "outputs": ["lint.json"],
       "env": ["CI_OS"]
     },
     "lint:fix": {
