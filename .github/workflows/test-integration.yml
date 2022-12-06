@@ -50,7 +50,7 @@ jobs:
         run: |
           pnpm add -g node-gyp
       - name: Install dependencies
-        run: pnpm i --filter="!./apps/** --scope=@ledgerhq/live-common --include-dependencies --no-deps"
+        run: pnpm i --filter="live-common..." --filter="ledger-live"
       - name: Build
         run: pnpm build:llc
       - name: Test
