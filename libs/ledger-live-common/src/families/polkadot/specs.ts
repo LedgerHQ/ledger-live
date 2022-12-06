@@ -300,6 +300,7 @@ const polkadot: AppSpec<Transaction> = {
     },
   ],
 };
+
 export default {
   polkadot,
 };

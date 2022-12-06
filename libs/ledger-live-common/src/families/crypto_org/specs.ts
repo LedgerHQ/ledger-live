@@ -37,7 +37,7 @@ const sharedMutations = ({ maxAccount }) => [
 
       return {
         transaction: bridge.createTransaction(account),
-        updates: [{ recipient }, { useAllAmout: true }],
+        updates: [{ recipient }, { useAllAmount: true }],
       };
     },
   },
