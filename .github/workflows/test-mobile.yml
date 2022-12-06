@@ -93,6 +93,10 @@ jobs:
         run: pnpm lint --filter="live-mobile" --api="http://127.0.0.1:${{ steps.turborepo-cache-server.outputs.port }}" --token="yolo" --team="foo" -- --format="json" -o="lint.json"
       - name: Run code checkers
         run: pnpm typecheck --filter="live-mobile" --api="http://127.0.0.1:${{ steps.turborepo-cache-server.outputs.port }}" --token="yolo" --team="foo"
+      - name: ls and git
+        run: |
+          git status
+          ls ./apps/ledger-live-mobile
       - uses: actions/upload-artifact@v3
         name: "uploads LINTER results"
         with:
@@ -143,6 +147,7 @@ jobs:
         with:
           github-token: ${{ steps.generate-token.outputs.token }}
           script: |
+            const path = require("path");
             const lintResult = require("./lint.json");
             const status = ${{ steps.status.outputs.result }};
             const title = status.isFailed ? "🔴 Failed" : status.isCancelled ? "♾ Cancelled" : "💚 Success";
@@ -156,7 +161,7 @@ jobs:
             const withErrorOrWarning = lintResult.filter(r => r.errorCount > 0 || r.fatalErrorCount > 0 || r.warningCount > 0);
             let annotations = withErrorOrWarning.flatMap(({ filePath, messages }) =>
               messages.map((m) => ({
-                path: filePath,
+                path: path.relative(process.env.GITHUB_WORKSPACE, filePath),
                 start_line: m.line,
                 end_line: m.endLine,
                 start_column: m.column,
