@@ -109,6 +109,7 @@ function Login() {
             onBlur={validateEmail}
             placeholder={t("protect.login.email")}
             textContentType="emailAddress"
+            autoCapitalize="none"
           />
         </Box>
         <Box mt={8}>
@@ -119,6 +120,8 @@ function Login() {
             onBlur={validatePassword}
             placeholder={t("protect.login.password")}
             textContentType="password"
+            autoCapitalize="none"
+            secureTextEntry
           />
         </Box>
         <Button
