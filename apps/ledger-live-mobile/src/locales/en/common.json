@@ -5269,7 +5269,7 @@
     "news": {
       "title": "Notifications",
       "emptyState": {
-        "title": "It’s just peace and quiet for now 💤",
+        "title": "It’s just peace and quiet for now",
         "desc": "We’ll let you know if anything comes up."
       },
       "time": {

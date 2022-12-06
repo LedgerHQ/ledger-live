@@ -29,7 +29,7 @@ type AssetContentCard = ContentCard & {
 };
 
 type NotificationContentCard = ContentCard & {
-  cta: string;
+  cta?: string;
   createdAt: number;
   viewed: boolean;
 };
