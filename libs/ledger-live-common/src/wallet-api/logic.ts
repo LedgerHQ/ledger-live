@@ -3,6 +3,7 @@ import { Account, AccountLike, SignedOperation } from "@ledgerhq/types-live";
 import {
   accountToWalletAPIAccount,
   getWalletAPITransactionSignFlowInfos,
+  getAccountIdFromWalletAccountId,
 } from "./converters";
 import type { TrackingAPI } from "./tracking";
 import { AppManifest, TranslatableString, WalletAPITransaction } from "./types";
@@ -37,7 +38,7 @@ function getParentAccount(
 
 export function receiveOnAccountLogic(
   { manifest, accounts, tracking }: WalletAPIContext,
-  accountId: string,
+  walletAccountId: string,
   uiNavigation: (
     account: AccountLike,
     parentAccount: Account | undefined,
@@ -45,6 +46,12 @@ export function receiveOnAccountLogic(
   ) => Promise<string>
 ): Promise<string> {
   tracking.receiveRequested(manifest);
+
+  const accountId = getAccountIdFromWalletAccountId(walletAccountId);
+  if (!accountId) {
+    tracking.receiveFail(manifest);
+    return Promise.reject(new Error(`accountId ${walletAccountId} unknown`));
+  }
 
   const account = accounts.find((account) => account.id === accountId);
 
@@ -64,7 +71,7 @@ export function receiveOnAccountLogic(
 
 export function signTransactionLogic(
   { manifest, accounts, tracking }: WalletAPIContext,
-  accountId: string,
+  walletAccountId: string,
   transaction: WalletAPITransaction,
   uiNavigation: (
     account: AccountLike,
@@ -81,6 +88,12 @@ export function signTransactionLogic(
   if (!transaction) {
     tracking.signTransactionFail(manifest);
     return Promise.reject(new Error("Transaction required"));
+  }
+
+  const accountId = getAccountIdFromWalletAccountId(walletAccountId);
+  if (!accountId) {
+    tracking.signTransactionFail(manifest);
+    return Promise.reject(new Error(`accountId ${walletAccountId} unknown`));
   }
 
   const account = accounts.find((account) => account.id === accountId);
@@ -114,7 +127,7 @@ export function signTransactionLogic(
 
 export function broadcastTransactionLogic(
   { manifest, accounts, tracking }: WalletAPIContext,
-  accountId: string,
+  walletAccountId: string,
   signedOperation: SignedOperation,
   uiNavigation: (
     account: AccountLike,
@@ -125,6 +138,12 @@ export function broadcastTransactionLogic(
   if (!signedOperation) {
     tracking.broadcastFail(manifest);
     return Promise.reject(new Error("Transaction required"));
+  }
+
+  const accountId = getAccountIdFromWalletAccountId(walletAccountId);
+  if (!accountId) {
+    tracking.broadcastFail(manifest);
+    return Promise.reject(new Error(`accountId ${walletAccountId} unknown`));
   }
 
   const account = accounts.find((account) => account.id === accountId);
@@ -140,7 +159,7 @@ export function broadcastTransactionLogic(
 
 export function signMessageLogic(
   { manifest, accounts, tracking }: WalletAPIContext,
-  accountId: string,
+  walletAccountId: string,
   message: string,
   uiNavigation: (
     account: AccountLike,
@@ -148,6 +167,12 @@ export function signMessageLogic(
   ) => Promise<Buffer>
 ): Promise<Buffer> {
   tracking.signMessageRequested(manifest);
+
+  const accountId = getAccountIdFromWalletAccountId(walletAccountId);
+  if (!accountId) {
+    tracking.signMessageFail(manifest);
+    return Promise.reject(new Error(`accountId ${walletAccountId} unknown`));
+  }
 
   const account = accounts.find((account) => account.id === accountId);
   if (account === undefined) {
