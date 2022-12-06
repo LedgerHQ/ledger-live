@@ -1,12 +1,18 @@
 // @flow
 import { app, ipcMain } from "electron";
 import path from "path";
+import { v4 as uuidv4 } from "uuid";
 import { setEnvUnsafe, getAllEnvs } from "@ledgerhq/live-common/env";
 import { isRestartNeeded } from "~/helpers/env";
 import { setTags } from "~/sentry/main";
 import logger from "~/logger";
 import { getMainWindow } from "./window-lifecycle";
 import InternalProcess from "./InternalProcess";
+import {
+  transportCloseChannel,
+  transportExchangeChannel,
+  transportOpenChannel,
+} from "~/internal/transportHandler";
 
 // ~~~ Local state that main thread keep
 
@@ -196,4 +202,35 @@ ipcMain.on("hydrateCurrencyData", (event, { currencyId, serialized }) => {
   hydratedPerCurrency[currencyId] = serialized;
 
   internal.send({ type: "hydrateCurrencyData", serialized, currencyId });
+});
+
+const internalRequest = (channel, data) => {
+  return new Promise((resolve, reject) => {
+    const requestId = uuidv4();
+    const handler = message => {
+      if (message.type === channel && message.requestId === requestId) {
+        if (message.error) {
+          reject(message.error);
+        } else {
+          resolve(message.data);
+        }
+        internal.process.removeListener("message", handler);
+      }
+    };
+
+    internal.process.on("message", handler);
+    internal.send({ type: channel, data, requestId });
+  });
+};
+
+ipcMain.handle(transportOpenChannel, (event, data) => {
+  return internalRequest(transportOpenChannel, data);
+});
+
+ipcMain.handle(transportExchangeChannel, (event, data) => {
+  return internalRequest(transportExchangeChannel, data);
+});
+
+ipcMain.handle(transportCloseChannel, (event, data) => {
+  return internalRequest(transportCloseChannel, data);
 });
