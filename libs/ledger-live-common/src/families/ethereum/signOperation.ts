@@ -32,6 +32,7 @@ import {
   buildEthereumTx,
   EIP1559ShouldBeUsed,
 } from "./transaction";
+import { padHexString } from "./logic";
 
 export const signOperation = ({
   account,
@@ -99,7 +100,7 @@ export const signOperation = ({
 
                 const rawData = tx.raw();
                 rawData[6] = Buffer.from(
-                  common.chainIdBN().toString("hex"),
+                  padHexString(common.chainIdBN().toString("hex")),
                   "hex"
                 );
 
