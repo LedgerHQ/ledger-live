@@ -22,7 +22,9 @@ import {
   getMainAccount,
 } from "@ledgerhq/live-common/account/index";
 import { AppResult } from "@ledgerhq/live-common/hw/actions/app";
-import { BidirectionalEvent } from "@ledgerhq/live-common/hw/openTransportAsSubject";
+import openTransportAsSubject, {
+  BidirectionalEvent,
+} from "@ledgerhq/live-common/hw/openTransportAsSubject";
 import { MessageData } from "@ledgerhq/live-common/hw/signMessage/types";
 import { useToasts } from "@ledgerhq/live-common/notifications/ToastProvider/index";
 import { TypedMessageData } from "@ledgerhq/live-common/families/ethereum/types";
@@ -57,7 +59,6 @@ import { track } from "~/renderer/analytics/segment";
 import TopBar from "./TopBar";
 import { TopBarConfig } from "./type";
 import { Container, Wrapper, CustomWebview, Loader } from "./styled";
-import { command } from "~/renderer/commands";
 
 const tracking = trackingWrapper(track);
 
@@ -376,10 +377,9 @@ export function WebView({ manifest, onClose, inputs = {}, config }: Props) {
 
                 const { deviceId } = device;
 
-                // @ts-expect-error: command is using flow typings
-                transport.current = command("openTransportAsSubject")({
+                transport.current = openTransportAsSubject({
                   deviceId,
-                }) as Subject<BidirectionalEvent>;
+                });
 
                 // Clean the ref on completion
                 transport.current.subscribe({

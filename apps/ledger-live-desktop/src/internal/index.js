@@ -17,6 +17,14 @@ import {
   completeCommand,
 } from "./commandHandler";
 import sentry, { setTags } from "~/sentry/internal";
+import {
+  transportClose,
+  transportExchange,
+  transportOpen,
+  transportCloseChannel,
+  transportExchangeChannel,
+  transportOpenChannel,
+} from "~/internal/transportHandler";
 
 process.on("exit", () => {
   logger.debug("exiting process, unsubscribing all...");
@@ -56,6 +64,15 @@ if (INITIAL_SENTRY_TAGS) {
 
 process.on("message", m => {
   switch (m.type) {
+    case transportOpenChannel:
+      transportOpen(m);
+      break;
+    case transportExchangeChannel:
+      transportExchange(m);
+      break;
+    case transportCloseChannel:
+      transportClose(m);
+      break;
     case "command-next":
       // $FlowFixMe TODO
       writeToCommand(m.command, process.send.bind(process));
