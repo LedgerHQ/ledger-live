@@ -744,8 +744,7 @@ const getTransactionStatus = async (
     if (
       account.type === "TokenAccount" &&
       account.token.tokenType === "trc20" &&
-      energy.eq(0) &&
-      a.spendableBalance.lt(1000000)
+      energy.eq(0)
     ) {
       const contractUserEnergyConsumption =
         await getContractUserEnergyRatioConsumption(
