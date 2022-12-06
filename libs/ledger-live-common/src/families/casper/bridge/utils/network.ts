@@ -38,7 +38,7 @@ const live = async <T>(path: string) => {
     // We force data to this way as network func is not using the correct param type. Changing that func will generate errors in other implementations
     const opts: AxiosRequestConfig = {
       method: "GET",
-      url: `${url}&limit=100&page=${page}`,
+      url: `${url}?limit=100&page=${page}`,
     };
 
     const rawResponse = await network(opts);
@@ -181,7 +181,7 @@ export const fetchBlockHeight = async (): Promise<NNetworkStatusResponse> => {
 
 export const fetchTxs = async (addr: string): Promise<LTxnHistoryData[]> => {
   const response = await live<LTxnHistoryData>(
-    `/transfers?accountHash=${addr}`
+    `/accounts/${addr}/extended-deploys`
   );
   return response; // TODO Validate if the response fits this interface
 };
