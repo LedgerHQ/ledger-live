@@ -1,5 +1,5 @@
 import React from "react"
-import Svg, { Mask, Path, G } from "react-native-svg"
+import Svg, { Mask, Path, G, EMaskUnits } from "react-native-svg"
 
 type Props = {
     size?: number;
@@ -20,10 +20,7 @@ const FullNodeWarning = ({
   >
     <Mask
       id="a"
-      style={{
-        maskType: "alpha",
-      }}
-      maskUnits="userSpaceOnUse"
+      maskUnits={"userSpaceOnUse" as EMaskUnits.USER_SPACE_ON_USE}
       x={2}
       y={-2}
       width={size + 2}
@@ -33,7 +30,7 @@ const FullNodeWarning = ({
         fillRule="evenodd"
         clipRule="evenodd"
         d="M21.987-.7c-1.616-2.8-5.658-2.8-7.274 0L13.154 2H2v21h19v-9.525h1.897c3.233 0 5.254-3.5 3.637-6.3L21.987-.7ZM21 13.475V2h-7.846l-2.988 5.175c-1.617 2.8.404 6.3 3.637 6.3H21Z"
-        fill={color}
+        fill="#D9D9D9"
       />
     </Mask>
     <G mask="url(#a)">
