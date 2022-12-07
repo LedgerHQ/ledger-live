@@ -87,7 +87,7 @@ const elrondSpec: AppSpec<Transaction> = {
     {
       name: "send max",
       maxRun: 1,
-      transaction: ({ account, siblings, bridge, maxSpendable }) => {
+      transaction: ({ account, siblings, bridge }) => {
         invariant(account.spendableBalance.gt(0), "balance is 0");
         const sibling = pickSiblings(siblings, maxAccounts);
 
@@ -99,9 +99,6 @@ const elrondSpec: AppSpec<Transaction> = {
             },
             {
               useAllAmount: true,
-            },
-            {
-              amount: maxSpendable,
             },
           ],
         };

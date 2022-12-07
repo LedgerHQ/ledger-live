@@ -64,7 +64,7 @@ const evmBasicMutations = ({ maxAccount }) => [
     name: "send max",
     maxRun: 1,
     testDestination: genericTestDestination,
-    transaction: ({ account, siblings, bridge, maxSpendable }) => {
+    transaction: ({ account, siblings, bridge }) => {
       const sibling = pickSiblings(siblings, maxAccount);
       const recipient = sibling.freshAddress;
 
@@ -73,7 +73,6 @@ const evmBasicMutations = ({ maxAccount }) => [
         updates: [
           {
             recipient,
-            amount: maxSpendable,
           },
           {
             useAllAmount: true,
