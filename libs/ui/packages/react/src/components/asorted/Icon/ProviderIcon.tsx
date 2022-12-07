@@ -51,11 +51,14 @@ const ProviderIcon = ({ name, size = "S", boxed = false }: Props): JSX.Element |
       search: maybeIconName,
       object: providersBoxed,
     }) as React.ElementType;
-    return (
-      <FlexBox width={sizes[size]} height={sizes[size]} borderRadius={8} overflow={"hidden"}>
-        <BoxedComponent size={sizes[size]} />
-      </FlexBox>
-    );
+    if (BoxedComponent) {
+      return (
+        <FlexBox width={sizes[size]} height={sizes[size]} borderRadius={8} overflow={"hidden"}>
+          <BoxedComponent size={sizes[size]} />
+        </FlexBox>
+      );
+    }
+    return null;
   }
   const Component = getIconCaseInsensitive({
     search: maybeIconName,
