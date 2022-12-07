@@ -11,6 +11,7 @@ import {
 export const INITIAL_STATE: DynamicContentState = {
   assetsCards: [],
   walletCards: [],
+  discoverCards: [],
 };
 
 const handlers: ReducerMap<DynamicContentState, DynamicContentPayload> = {
@@ -36,6 +37,9 @@ const handlers: ReducerMap<DynamicContentState, DynamicContentPayload> = {
 export const assetsCardsSelector = (s: State) => s.dynamicContent.assetsCards;
 
 export const walletCardsSelector = (s: State) => s.dynamicContent.walletCards;
+
+export const discoverCardsSelector = (s: State) =>
+  s.dynamicContent.discoverCards;
 
 export default handleActions<DynamicContentState, DynamicContentPayload>(
   handlers,

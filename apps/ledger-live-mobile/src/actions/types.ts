@@ -168,6 +168,7 @@ export type NotificationsPayload =
 export enum DynamicContentActionTypes {
   DYNAMIC_CONTENT_SET_WALLET_CARDS = "DYNAMIC_CONTENT_SET_WALLET_CARDS",
   DYNAMIC_CONTENT_SET_ASSET_CARDS = "DYNAMIC_CONTENT_SET_ASSET_CARDS",
+  DYNAMIC_CONTENT_SET_DISCOVER_CARDS = "DYNAMIC_CONTENT_SET_DISCOVER_CARDS",
 }
 
 export type DynamicContentSetWalletCardsPayload = Pick<
@@ -180,9 +181,15 @@ export type DynamicContentSetAssetCardsPayload = Pick<
   "assetsCards"
 >;
 
+export type DynamicContentSetDiscoverCardsPayload = Pick<
+  DynamicContentState,
+  "discoverCards"
+>;
+
 export type DynamicContentPayload =
   | DynamicContentSetWalletCardsPayload
-  | DynamicContentSetAssetCardsPayload;
+  | DynamicContentSetAssetCardsPayload
+  | DynamicContentSetDiscoverCardsPayload;
 
 // === RATINGS ACTIONS ===
 

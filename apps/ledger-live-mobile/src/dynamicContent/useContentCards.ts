@@ -3,6 +3,7 @@ import { useCallback, useEffect } from "react";
 import { useDispatch } from "react-redux";
 import {
   setDynamicContentAssetsCards,
+  setDynamicContentDiscoverCards,
   setDynamicContentWalletCards,
 } from "../actions/dynamicContent";
 import { useBrazeContentCard } from "./brazeContentCard";
@@ -10,6 +11,7 @@ import {
   filterByPage,
   mapAsWalletContentCard,
   mapAsAssetContentCard,
+  mapAsDiscoverContentCard,
 } from "./dynamicContent";
 import { LocationContentCard } from "./types";
 
@@ -32,8 +34,14 @@ const HookDynamicContentCards = () => {
       LocationContentCard.Asset,
     ).map(card => mapAsAssetContentCard(card));
 
+    const discoverCards = filterByPage(
+      contentCards,
+      LocationContentCard.Discover,
+    ).map(card => mapAsDiscoverContentCard(card));
+
     dispatch(setDynamicContentWalletCards(walletCards));
     dispatch(setDynamicContentAssetsCards(assetCards));
+    dispatch(setDynamicContentDiscoverCards(discoverCards));
   }, [Braze, dispatch]);
 
   useEffect(() => {
