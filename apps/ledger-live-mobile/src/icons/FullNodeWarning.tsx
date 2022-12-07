@@ -1,23 +1,19 @@
-import React from "react"
-import Svg, { Mask, Path, G, EMaskUnits } from "react-native-svg"
+import React from "react";
+import Svg, { Mask, Path, G, EMaskUnits } from "react-native-svg";
 
 type Props = {
-    size?: number;
-    color?: string;
-    warningColor?: string;
-    backgroundColor?: string;
-  };
+  size?: number;
+  color?: string;
+  warningColor?: string;
+  backgroundColor?: string;
+};
 const FullNodeWarning = ({
-    size = 16,
-    color,
-    warningColor = "white",
-    backgroundColor,
-  }: Props) => (
-  <Svg
-    width={size}
-    height={size}
-    fill="none"
-  >
+  size = 16,
+  color,
+  warningColor = "white",
+  backgroundColor,
+}: Props) => (
+  <Svg width={size} height={size} fill="none">
     <Mask
       id="a"
       maskUnits={"userSpaceOnUse" as EMaskUnits.USER_SPACE_ON_USE}
@@ -55,6 +51,6 @@ const FullNodeWarning = ({
       strokeLinejoin="round"
     />
   </Svg>
-)
+);
 
 export default FullNodeWarning;
