@@ -7,6 +7,7 @@ import ble from "./ble";
 import ratings from "./ratings";
 import notifications from "./notifications";
 import swap from "./swap";
+import dynamicContent from "./dynamicContent";
 import walletconnect from "./walletconnect";
 import { State } from "./types";
 import { ActionsPayload, SettingsActionTypes } from "../actions/types";
@@ -19,6 +20,7 @@ const appReducer = combineReducers({
   appstate,
   ble,
   ratings,
+  dynamicContent,
   notifications,
   swap,
   walletconnect,

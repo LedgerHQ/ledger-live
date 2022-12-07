@@ -1,8 +1,8 @@
-import * as providers from "@ledgerhq/icons-ui/react/_ProvidersLogos/index";
-import * as favicons from "./providerFaviconsIndex";
+import * as providers from "@ledgerhq/icons-ui/react/Providers/index";
+import * as providersBoxed from "@ledgerhq/icons-ui/react/ProvidersBoxed/index";
 
 import React from "react";
-import styled from "styled-components";
+import FlexBox from "../../layout/Flex";
 
 export const sizes = {
   XXS: 16,
@@ -25,15 +25,12 @@ export const iconNames = Array.from(
   Object.keys(providers).reduce((set, rawKey) => {
     const key = rawKey
       .replace(/(.+)(Regular|Light|UltraLight|Thin|Medium)+$/g, "$1")
-      .replace(/(.+)(Ultra)+$/g, "$1");
+      .replace(/(.+)(Ultra)+$/g, "$1")
+      .replace(/^_/, "");
     if (!set.has(key)) set.add(key);
     return set;
   }, new Set<string>()),
 );
-
-const Favicon = styled.img`
-  border-radius: 8px;
-`;
 
 export type IconGetterProps = {
   search: string;
@@ -42,7 +39,7 @@ export type IconGetterProps = {
 
 const getIconCaseInsensitive = ({ search, object }: IconGetterProps) => {
   const asLower = search.toLowerCase();
-  const key = Object.keys(object).find((key) => key.toLowerCase() === asLower);
+  const key = Object.keys(object).find((key) => key.toLowerCase().replace(/^_/, "") === asLower);
   return key ? object[key] : null;
 };
 
@@ -50,13 +47,18 @@ const ProviderIcon = ({ name, size = "S", boxed = false }: Props): JSX.Element |
   const maybeIconName = `${name}`;
 
   if (boxed) {
-    return (
-      <Favicon
-        width={sizes[size]}
-        height={sizes[size]}
-        src={getIconCaseInsensitive({ search: maybeIconName, object: favicons }) as string}
-      />
-    );
+    const BoxedComponent = getIconCaseInsensitive({
+      search: maybeIconName,
+      object: providersBoxed,
+    }) as React.ElementType;
+    if (BoxedComponent) {
+      return (
+        <FlexBox width={sizes[size]} height={sizes[size]} borderRadius={8} overflow={"hidden"}>
+          <BoxedComponent size={sizes[size]} />
+        </FlexBox>
+      );
+    }
+    return null;
   }
   const Component = getIconCaseInsensitive({
     search: maybeIconName,

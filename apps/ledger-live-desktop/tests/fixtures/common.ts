@@ -68,6 +68,7 @@ const test = base.extend<TestFixtures>({
         CRASH_ON_INTERNAL_CRASH: true,
         LEDGER_MIN_HEIGHT: 768,
         FEATURE_FLAGS: JSON.stringify(featureFlags),
+        DESKTOP_LOGS_FILE: path.join(__dirname, "../artifacts/logs"),
       },
       env,
     );

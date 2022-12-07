@@ -140,7 +140,10 @@ const bitcoinLikeMutations = ({
       const sibling = pickSiblings(siblings, targetAccountSize);
       const recipient = recipientVariation(sibling.freshAddress);
       const amount = maxSpendable.div(1.9 + 0.2 * Math.random()).integerValue();
-      const transaction = bridge.createTransaction(account);
+      const transaction: Transaction = {
+        ...bridge.createTransaction(account),
+        feePerByte: new BigNumber(0.0001),
+      };
       const updates: Array<Partial<Transaction>> = [
         {
           recipient,
@@ -171,7 +174,10 @@ const bitcoinLikeMutations = ({
     transaction: ({ account, siblings, bridge, maxSpendable }) => {
       invariant(maxSpendable.gt(minimalAmount), "balance is too low");
       const sibling = pickSiblings(siblings, targetAccountSize);
-      const transaction = bridge.createTransaction(account);
+      const transaction: Transaction = {
+        ...bridge.createTransaction(account),
+        feePerByte: new BigNumber(0.0001),
+      };
       const updates = [
         {
           recipient: recipientVariation(sibling.freshAddress),
@@ -203,7 +209,10 @@ const bitcoinLikeMutations = ({
       const sibling = pickSiblings(siblings, targetAccountSize);
       const { bitcoinResources } = account as BitcoinAccount;
       invariant(bitcoinResources, "bitcoin resources");
-      const transaction = bridge.createTransaction(account);
+      const transaction: Transaction = {
+        ...bridge.createTransaction(account),
+        feePerByte: new BigNumber(0.0001),
+      };
       const utxo = sample(
         (bitcoinResources as BitcoinResources).utxos.filter(
           (u) => u.blockHeight
@@ -274,7 +283,10 @@ const bitcoinLikeMutations = ({
       invariant(maxSpendable.gt(minimalAmount), "balance is too low");
       const sibling = pickSiblings(siblings, targetAccountSize);
       const recipient = recipientVariation(sibling.freshAddress);
-      const transaction = bridge.createTransaction(account);
+      const transaction: Transaction = {
+        ...bridge.createTransaction(account),
+        feePerByte: new BigNumber(0),
+      };
       return {
         transaction,
         updates: [

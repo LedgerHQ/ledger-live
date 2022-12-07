@@ -74,11 +74,11 @@ function reactAdditionalTemplate({ template }, _, { imports, interfaces, compone
       ${imports}
       import Svg from "../StyledSvg"
   
-      type Props = { size?: number | string; };
+      type Props = { size?: number | string; width?: number | string; height?: number | string; };
   
       ${interfaces}
   
-      function ${componentName} ({ size = 16 }: Props): JSX.Element {
+      function ${componentName} ({ size, width, height }: Props): JSX.Element {
         return ${jsx};
       }
   
@@ -231,7 +231,7 @@ const folders = fs.readdirSync(additionalIconsDir);
 
 folders.forEach(folder => {
     // Create target folders
-    const folderName = `_${folder}`
+    const folderName = `${folder}`
     if (!fs.existsSync(`${reactDir}/${folderName}`)) {
         fs.mkdirSync(`${reactDir}/${folderName}`);
     }
@@ -256,8 +256,8 @@ folders.forEach(folder => {
                 expandProps: false,
                 componentName: name,
                 svgProps: {
-                  height: "{size}",
-                  width: "{size}",
+                  height: "{height || size}",
+                  width: "{width || size}",
                 },
                 svgoConfig: {
                   plugins: [{ removeXMLNS: true, removeViewBox: false }],

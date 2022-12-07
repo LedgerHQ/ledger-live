@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
-import { StyleSheet, View, Platform, NativeModules } from "react-native";
+import { StyleSheet, View, Platform } from "react-native";
 import Config from "react-native-config";
 import { useSelector, useDispatch } from "react-redux";
 import { Trans } from "react-i18next";
@@ -34,6 +34,7 @@ import Button from "../wrappedUi/Button";
 import PairLight from "../../screens/Onboarding/assets/nanoX/pairDevice/light.json";
 import PairDark from "../../screens/Onboarding/assets/nanoX/pairDevice/dark.json";
 import { DeviceLike } from "../../reducers/types";
+import { usePromptBluetoothCallback } from "../../logic/usePromptBluetoothCallback";
 
 type Props = {
   onBluetoothDeviceAction?: (_: Device) => void;
@@ -64,6 +65,7 @@ export default function SelectDevice({
   const knownDevices = useSelector(knownDevicesSelector);
   const dispatch = useDispatch();
   const route = useRoute();
+  const promptBluetooth = usePromptBluetoothCallback();
 
   const handleOnSelect = useCallback(
     deviceInfo => {
@@ -80,7 +82,7 @@ export default function SelectDevice({
         onSelect(deviceInfo);
         dispatch(setReadOnlyMode(false));
       } else {
-        NativeModules.BluetoothHelperModule.prompt()
+        promptBluetooth()
           .then(() => {
             track("Device selection", {
               modelId,
@@ -96,7 +98,7 @@ export default function SelectDevice({
           });
       }
     },
-    [dispatch, onSelect],
+    [dispatch, onSelect, promptBluetooth],
   );
 
   const [devices, setDevices] = useState<Device[]>([]);
@@ -106,7 +108,7 @@ export default function SelectDevice({
       button: "Pair with bluetooth",
       screen: route.name,
     });
-    NativeModules.BluetoothHelperModule.prompt()
+    promptBluetooth()
       .then(() =>
         navigation.navigate(ScreenName.PairDevices, {
           onDone: autoSelectOnAdd ? handleOnSelect : null,
@@ -116,7 +118,14 @@ export default function SelectDevice({
       .catch(() => {
         /* ignore */
       });
-  }, [autoSelectOnAdd, navigation, handleOnSelect, deviceModelIds, route.name]);
+  }, [
+    route.name,
+    promptBluetooth,
+    navigation,
+    autoSelectOnAdd,
+    handleOnSelect,
+    deviceModelIds,
+  ]);
 
   const renderItem = useCallback(
     (item: Device) => (

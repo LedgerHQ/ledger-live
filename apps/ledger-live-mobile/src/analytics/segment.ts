@@ -52,7 +52,7 @@ const { ANALYTICS_LOGS, ANALYTICS_TOKEN } = Config;
 
 export const updateSessionId = () => (sessionId = uuid());
 
-const extraProperties = (store: AppStore) => {
+const extraProperties = async (store: AppStore) => {
   const state: State = store.getState();
   const sensitiveAnalytics = sensitiveAnalyticsSelector(state);
   const systemLanguage = sensitiveAnalytics
@@ -77,12 +77,15 @@ const extraProperties = (store: AppStore) => {
     : {};
   const firstConnectionHasDevice = firstConnectionHasDeviceSelector(state);
   const notifications = notificationsSelector(state);
-  const notificationsAllowed = notifications.allowed;
+  const notificationsAllowed = notifications.areNotificationsAllowed;
   const notificationsBlacklisted = Object.entries(notifications)
-    .filter(([key, value]) => key !== "allowed" && value === false)
+    .filter(
+      ([key, value]) => key !== "areNotificationsAllowed" && value === false,
+    )
     .map(([key]) => key);
   const firstConnectHasDeviceUpdated =
     firstConnectHasDeviceUpdatedSelector(state);
+  const { user } = await getOrCreateUser();
 
   return {
     appVersion,
@@ -107,6 +110,7 @@ const extraProperties = (store: AppStore) => {
     ...deviceInfo,
     notificationsAllowed,
     notificationsBlacklisted,
+    userId: user?.id,
   };
 };
 
@@ -127,6 +131,7 @@ export const start = async (
   }
 
   console.log("START ANALYTICS", ANALYTICS_LOGS);
+  const userExtraProperties = await extraProperties(store);
   if (token) {
     segmentClient = createClient({
       writeKey: token,
@@ -137,11 +142,11 @@ export const start = async (
 
     if (created) {
       segmentClient.reset();
-      segmentClient.identify(user.id, extraProperties(store));
     }
+    segmentClient.identify(user.id, userExtraProperties);
   }
 
-  track("Start", extraProperties(store), true);
+  track("Start", userExtraProperties, true);
   return segmentClient;
 };
 export const updateIdentify = async () => {
@@ -154,11 +159,10 @@ export const updateIdentify = async () => {
     return;
   }
 
-  if (ANALYTICS_LOGS)
-    console.log("analytics:identify", extraProperties(storeInstance));
+  const userExtraProperties = await extraProperties(storeInstance);
+  if (ANALYTICS_LOGS) console.log("analytics:identify", userExtraProperties);
   if (!token) return;
-  const { user } = await getOrCreateUser();
-  segmentClient?.identify(user.id, extraProperties(storeInstance));
+  segmentClient?.identify(userExtraProperties.userId, userExtraProperties);
 };
 export const stop = () => {
   if (ANALYTICS_LOGS) console.log("analytics:stop");
@@ -168,7 +172,7 @@ export const trackSubject = new ReplaySubject<{
   event: string;
   properties?: Error | Record<string, unknown> | null;
 }>(10);
-export const track = (
+export const track = async (
   event: string,
   properties?: Error | Record<string, unknown> | null,
   mandatory?: boolean | null,
@@ -195,9 +199,10 @@ export const track = (
 
   const screen = currentRouteNameRef.current;
 
+  const userExtraProperties = await extraProperties(storeInstance as AppStore);
   const allProperties = {
     screen,
-    ...extraProperties(storeInstance as AppStore),
+    ...userExtraProperties,
     ...properties,
   };
   if (ANALYTICS_LOGS) console.log("analytics:track", event, allProperties);
@@ -250,7 +255,7 @@ export const useAnalytics = () => {
     page,
   };
 };
-export const screen = (
+export const screen = async (
   category?: string,
   name?: string | null,
   properties?: Record<string, unknown> | null | undefined,
@@ -278,9 +283,10 @@ export const screen = (
 
   const source = previousRouteNameRef.current;
 
+  const userExtraProperties = await extraProperties(storeInstance as AppStore);
   const allProperties = {
     source,
-    ...extraProperties(storeInstance as AppStore),
+    ...userExtraProperties,
     ...properties,
   };
   if (ANALYTICS_LOGS)

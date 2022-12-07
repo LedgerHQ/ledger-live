@@ -2,7 +2,6 @@
 
 import invariant from "invariant";
 import React, { useEffect, useRef, useCallback, useState } from "react";
-import { useHistory } from "react-router-dom";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { getMainAccount, getAccountName } from "@ledgerhq/live-common/account/index";
 import TrackPage from "~/renderer/analytics/TrackPage";
@@ -143,7 +142,6 @@ const StepReceiveFunds = (props: StepProps) => {
     eventType,
     currencyName,
   } = props;
-  const history = useHistory();
   const receiveStakingFlowConfig = useFeature("receiveStakingFlowConfigDesktop");
   const mainAccount = account ? getMainAccount(account, parentAccount) : null;
   invariant(account && mainAccount, "No account given");
@@ -212,16 +210,12 @@ const StepReceiveFunds = (props: StepProps) => {
       });
 
       transitionTo("stakingFlow");
-      history.push({
-        pathname: `/account/${account.id}`,
-      });
     } else {
       onClose();
     }
   }, [
     account,
     currencyName,
-    history,
     onClose,
     receiveStakingFlowConfig?.enabled,
     receiveStakingFlowConfig?.params,

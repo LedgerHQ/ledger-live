@@ -40,6 +40,7 @@ import {
   SettingsSetLanguagePayload,
   SettingsSetLastConnectedDevicePayload,
   SettingsSetLocalePayload,
+  SettingsSetCustomImageBackupPayload,
   SettingsSetMarketCounterCurrencyPayload,
   SettingsSetMarketFilterByStarredAccountsPayload,
   SettingsSetMarketRequestParamsPayload,
@@ -60,7 +61,10 @@ import {
   SettingsUnhideNftCollectionPayload,
   SettingsUpdateCurrencyPayload,
   SettingsActionTypes,
+  SettingsSetWalletTabNavigatorLastVisitedTabPayload,
+  SettingsSetDismissedDynamicCardsPayload,
 } from "./types";
+import { WalletTabNavigatorStackParamList } from "../components/RootNavigator/types/WalletTabNavigator";
 
 // FIXME: NEVER USED BY ANYONE, DROP ?
 const setExchangePairsAction = createAction<SettingsSetPairsPayload>(
@@ -176,6 +180,11 @@ export const updateCurrencySettings = (
     patch,
   });
 
+const completeCustomImageFlowAction = createAction(
+  SettingsActionTypes.SETTINGS_COMPLETE_CUSTOM_IMAGE_FLOW,
+);
+export const completeCustomImageFlow = () => completeCustomImageFlowAction();
+
 const completeOnboardingAction = createAction(
   SettingsActionTypes.SETTINGS_COMPLETE_ONBOARDING,
 );
@@ -252,6 +261,13 @@ const setCarouselVisibilityAction =
 export const setCarouselVisibility = (carouselVisibility: {
   [key: string]: boolean;
 }) => setCarouselVisibilityAction({ carouselVisibility });
+
+const setDismissedDynamicCardsAction =
+  createAction<SettingsSetDismissedDynamicCardsPayload>(
+    SettingsActionTypes.SETTINGS_SET_DISMISSED_DYNAMIC_CARDS,
+  );
+export const setDismissedDynamicCards = (dismissedDynamicCards: string[]) =>
+  setDismissedDynamicCardsAction({ dismissedDynamicCards });
 
 const setAvailableUpdateAction =
   createAction<SettingsSetAvailableUpdatePayload>(
@@ -374,6 +390,19 @@ export const setLastConnectedDevice = (lastConnectedDevice: Device) =>
     lastConnectedDevice,
   });
 
+const setCustomImageBackupAction =
+  createAction<SettingsSetCustomImageBackupPayload>(
+    SettingsActionTypes.SET_CUSTOM_IMAGE_BACKUP,
+  );
+export const setCustomImageBackup = ({
+  hash,
+  hex,
+}: SettingsSetCustomImageBackupPayload) =>
+  setCustomImageBackupAction({
+    hash,
+    hex,
+  });
+
 const setHasOrderedNanoAction = createAction<SettingsSetHasOrderedNanoPayload>(
   SettingsActionTypes.SET_HAS_ORDERED_NANO,
 );
@@ -440,6 +469,17 @@ export const setNotifications = (
 ) =>
   setNotificationsAction({
     notifications,
+  });
+
+const setWalletTabNavigatorLastVisitedTabAction =
+  createAction<SettingsSetWalletTabNavigatorLastVisitedTabPayload>(
+    SettingsActionTypes.WALLET_TAB_NAVIGATOR_LAST_VISITED_TAB,
+  );
+export const setWalletTabNavigatorLastVisitedTab = (
+  walletTabNavigatorLastVisitedTab: keyof WalletTabNavigatorStackParamList,
+) =>
+  setWalletTabNavigatorLastVisitedTabAction({
+    walletTabNavigatorLastVisitedTab,
   });
 
 const dangerouslyOverrideStateAction =

@@ -1,6 +1,6 @@
 {
   "name": "@actions/turborepo-gh-cache",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Uses Github actions cache API to cache turborepo outputs",
   "author": "Julien Elbaz <elbywan@hotmail.com>",
   "license": "MIT",

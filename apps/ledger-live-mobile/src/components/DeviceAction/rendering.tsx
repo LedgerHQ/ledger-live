@@ -2,23 +2,30 @@ import React, { useEffect, useState } from "react";
 import { Platform, ScrollView } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import styled from "styled-components/native";
-import { WrongDeviceForAccount } from "@ledgerhq/errors";
+import { LockedDeviceError, WrongDeviceForAccount } from "@ledgerhq/errors";
 import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { Transaction } from "@ledgerhq/live-common/generated/types";
 import { getDeviceModel } from "@ledgerhq/devices";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { AppRequest } from "@ledgerhq/live-common/hw/actions/app";
 import firmwareUpdateRepair from "@ledgerhq/live-common/hw/firmwareUpdate-repair";
-import { getProviderName } from "@ledgerhq/live-common/exchange/swap/utils/index";
+import {
+  getProviderName,
+  getNoticeType,
+} from "@ledgerhq/live-common/exchange/swap/utils/index";
 import {
   InfiniteLoader,
   Text,
   Flex,
   Tag,
   Icons,
-  Log,
   BoxedIcon,
+  Log,
 } from "@ledgerhq/native-ui";
+import {
+  LockAltMedium,
+  DownloadMedium,
+} from "@ledgerhq/native-ui/assets/icons";
 import BigNumber from "bignumber.js";
 import {
   ExchangeRate,
@@ -33,7 +40,6 @@ import {
 import { TFunction } from "react-i18next";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import type { DeviceModelInfo } from "@ledgerhq/types-live";
-import { DownloadMedium } from "@ledgerhq/native-ui/assets/icons";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { ParamListBase } from "@react-navigation/native";
@@ -105,24 +111,12 @@ const CenteredText = styled(Text).attrs({
   textAlign: "center",
 })``;
 
-const TitleContainer = styled(Flex).attrs({
-  py: 8,
-})``;
-
-const TitleText = ({
-  children,
-  disableUppercase,
-}: {
-  children: React.ReactNode;
-  disableUppercase?: boolean;
-}) => (
-  <TitleContainer>
-    <Log
-      extraTextProps={disableUppercase ? { textTransform: "none" } : undefined}
-    >
+export const TitleText = ({ children }: { children: React.ReactNode }) => (
+  <Flex>
+    <Text textAlign="center" variant="h4" fontWeight="semiBold">
       {children}
-    </Log>
-  </TitleContainer>
+    </Text>
+  </Flex>
 );
 
 const DescriptionText = styled(CenteredText).attrs({
@@ -239,7 +233,11 @@ export function renderVerifyAddress({
             onPress={onPress}
           />
         )}
-        {address && <TitleText disableUppercase>{address}</TitleText>}
+        {address && (
+          <Flex py={8}>
+            <Log extraTextProps={{ textTransform: "none" }}>{address}</Log>
+          </Flex>
+        )}
       </ActionContainer>
     </Wrapper>
   );
@@ -263,12 +261,16 @@ export function renderConfirmSwap({
   estimatedFees?: string | null;
 }) {
   const ProviderIcon = providerIcons[exchangeRate.provider.toLowerCase()];
-
+  const providerName = getProviderName(exchangeRate.provider);
+  const noticeType = getNoticeType(exchangeRate.provider);
+  const alertProperties = noticeType.learnMore
+    ? { learnMoreUrl: urls.swap.learnMore }
+    : {};
   return (
     <ScrollView>
       <Wrapper width="100%">
-        <Alert type="primary" learnMoreUrl={urls.swap.learnMore}>
-          {t("DeviceAction.confirmSwap.alert")}
+        <Alert type="primary" {...alertProperties}>
+          {t(`DeviceAction.confirmSwap.alert.${noticeType.message}`)}
         </Alert>
         <AnimationContainer
           marginTop="16px"
@@ -313,7 +315,7 @@ export function renderConfirmSwap({
                 <ProviderIcon size={14} />
               </Flex>
 
-              <Text>{getProviderName(exchangeRate.provider)}</Text>
+              <Text>{providerName}</Text>
             </Flex>
           </FieldItem>
 
@@ -535,6 +537,67 @@ export function renderInWrongAppForAccount({
   });
 }
 
+// Quick fix: the error LockedDeviceError should be catched
+// inside all the device actions and mapped to an event of type "lockedDevice".
+// With this fix, we can catch all the device action error that were not catched upstream.
+// If LockedDeviceError is thrown from outside a device action and renderError was not called
+// it is still handled by GenericErrorView.
+export function renderLockedDeviceError({
+  t,
+  onRetry,
+  device,
+}: RawProps & {
+  onRetry?: (() => void) | null;
+  device?: Device;
+}) {
+  const productName = device
+    ? getDeviceModel(device.modelId).productName
+    : null;
+
+  return (
+    <Wrapper>
+      <Flex flexDirection="column" alignItems="center" alignSelf="stretch">
+        <Flex mb={5}>
+          <BoxedIcon
+            size={64}
+            Icon={LockAltMedium}
+            iconSize={24}
+            iconColor="neutral.c100"
+          />
+        </Flex>
+
+        <Text
+          variant="h4"
+          fontWeight="semiBold"
+          textAlign="center"
+          numberOfLines={3}
+          mb={6}
+        >
+          {t("errors.LockedDeviceError.title")}
+        </Text>
+        <Text variant="paragraph" textAlign="center" numberOfLines={3} mb={6}>
+          {productName
+            ? t("errors.LockedDeviceError.descriptionWithProductName", {
+                productName,
+              })
+            : t("errors.LockedDeviceError.description")}
+        </Text>
+        {onRetry ? (
+          <ActionContainer marginBottom={0} marginTop={32}>
+            <StyledButton
+              event="DeviceActionErrorRetry"
+              type="main"
+              outline={false}
+              title={t("common.retry")}
+              onPress={onRetry}
+            />
+          </ActionContainer>
+        ) : null}
+      </Flex>
+    </Wrapper>
+  );
+}
+
 export function renderError({
   t,
   error,
@@ -543,6 +606,7 @@ export function renderError({
   navigation,
   Icon,
   iconColor,
+  device,
 }: RawProps & {
   navigation?: StackNavigationProp<ParamListBase>;
   error: Error;
@@ -550,6 +614,7 @@ export function renderError({
   managerAppName?: string;
   Icon?: React.ComponentProps<typeof GenericErrorView>["Icon"];
   iconColor?: string;
+  device?: Device;
 }) {
   const onPress = () => {
     if (managerAppName && navigation) {
@@ -564,6 +629,13 @@ export function renderError({
       onRetry();
     }
   };
+
+  // Redirects from renderError and not from DeviceActionDefaultRendering because renderError
+  // can be used directly by other component
+  if (error instanceof LockedDeviceError) {
+    return renderLockedDeviceError({ t, onRetry, device });
+  }
+
   return (
     <Wrapper>
       <GenericErrorView

@@ -61,6 +61,8 @@ const Result = ({
 const Root = ({ data, onClose }: Props) => {
   const { account, parentAccount, getCoinifyContext, onResult, onCancel } = data;
 
+  const { t } = useTranslation();
+
   const tokenCurrency = account && account.type === "TokenAccount" && account.token;
 
   // state
@@ -138,6 +140,7 @@ const Root = ({ data, onClose }: Props) => {
     return (
       <Box alignItems={"center"} justifyContent={"center"} p={20}>
         {renderError({
+          t,
           error,
         })}
       </Box>

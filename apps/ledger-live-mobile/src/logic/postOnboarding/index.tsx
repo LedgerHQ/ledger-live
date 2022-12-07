@@ -1,4 +1,4 @@
-import { DeviceModelId } from "@ledgerhq/devices/lib/index";
+import { DeviceModelId } from "@ledgerhq/devices";
 import {
   PostOnboardingAction,
   PostOnboardingActionId,

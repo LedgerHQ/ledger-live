@@ -13,6 +13,7 @@ import type { Transaction } from "./types";
 export type { AddressFormat };
 import { signP2SHTransaction } from "./signP2SHTransaction";
 import { signMessage } from "./signMessage";
+import { checkIsBtcLegacy, getAppAndVersion } from "./getAppAndVersion";
 
 /**
  * Bitcoin API.
@@ -65,7 +66,9 @@ export default class Btc {
    * @returns XPUB of the account
    */
   getWalletXpub(arg: { path: string; xpubVersion: number }): Promise<string> {
-    return this._impl.getWalletXpub(arg);
+    return this.changeImplIfNecessary().then((impl) => {
+      return impl.getWalletXpub(arg);
+    });
   }
 
   /**
@@ -114,7 +117,9 @@ export default class Btc {
     } else {
       options = opts || {};
     }
-    return this._impl.getWalletPublicKey(path, options);
+    return this.changeImplIfNecessary().then((impl) => {
+      return impl.getWalletPublicKey(path, options);
+    });
   }
 
   /**
@@ -179,7 +184,9 @@ export default class Btc {
         "@ledgerhq/hw-app-btc: createPaymentTransaction multi argument signature is deprecated. please switch to named parameters."
       );
     }
-    return this._impl.createPaymentTransaction(arg);
+    return this.changeImplIfNecessary().then((impl) => {
+      return impl.createPaymentTransaction(arg);
+    });
   }
 
   /**
@@ -259,5 +266,16 @@ export default class Btc {
       transaction,
       additionals
     );
+  }
+
+  async changeImplIfNecessary(): Promise<BtcOld | BtcNew> {
+    const appAndVersion = await getAppAndVersion(this._transport);
+    if (appAndVersion.name === "Exchange" && this._impl instanceof BtcNew) {
+      const isBtcLegacy = await checkIsBtcLegacy(this._transport);
+      if (isBtcLegacy) {
+        this._impl = new BtcOld(this._transport);
+      }
+    }
+    return this._impl;
   }
 }

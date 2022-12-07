@@ -14,16 +14,16 @@ const exec = async (opts: ftsLoadImageJobOpts) => {
 
   const hexImage = fs.readFileSync(fileInput, "utf-8");
 
-  await new Promise<void>((p) =>
+  await new Promise<void>((resolve) =>
       ftsLoadImage({ deviceId, hexImage }).subscribe(
         (x) => console.log(x),
         (e) => {
           console.error(e);
-          p();
+          resolve();
         },
         () => {
           console.log(`Image loaded.`);
-          p();
+          resolve();
         }
       )
     );
@@ -37,7 +37,7 @@ export default {
       name: "fileInput",
       alias: "i",
       type: String,
-      desc: "Text file containing the base64 data of the image to load on FTS",
+      desc: "Text file containing the hex data of the image to load on FTS",
     }
   ],
   job: (opts: ftsLoadImageJobOpts): any => from(exec(opts)),
