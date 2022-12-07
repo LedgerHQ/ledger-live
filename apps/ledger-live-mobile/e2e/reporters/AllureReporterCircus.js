@@ -1,12 +1,12 @@
 const Allure = require('allure-js-commons'); // version "1.3.2",
 const fs = require('fs');
 const stripAnsi = require('strip-ansi');
+const { device } = require('detox');
 
 class AllureReporterCircus {
 
-  constructor({ detox }) {
+  constructor() {
     this.allure = new Allure();
-    this.detox = detox;
   }
 
   run_describe_start(event) {
@@ -29,7 +29,7 @@ class AllureReporterCircus {
   async test_done(event) {
     if (event.test.errors.length > 0) {
       const { test } = event;
-      const screenshotPath = await this.detox.device.takeScreenshot(`${test.startedAt}-failed`);
+      const screenshotPath = await device.takeScreenshot(`${test.startedAt}-failed`);
       const buffer = fs.readFileSync(`${screenshotPath}`);
       this.allure.addAttachment('Screenshot test failue', Buffer.from(buffer, 'base64'), 'image/png');
 
