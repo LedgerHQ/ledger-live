@@ -1,5 +1,7 @@
 import blake from "blakejs";
 import base32Decode from "base32-decode";
+
+// @ts-ignore
 import BN from "bn.js";
 
 // @ts-ignore
