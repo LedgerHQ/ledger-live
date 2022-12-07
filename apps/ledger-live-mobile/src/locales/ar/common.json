@@ -518,7 +518,7 @@
       "title" : "مبلغ التجميد لا يمكن أن يكون أصغر من 1"
     },
     "TronSendTrc20ToNewAccountForbidden" : {
-      "title" : "إرسال TRC20 إلى الحساب الجديد لن يؤدي إلى تفعيله",
+      "title" : "تحتاج أولاً إلى إرسال على الأقل 0.1 TRX إلى هذا العنوان لتمكين تلقي رمز TRC20.",
       "description" : "لتفعيله، قم بإرسال إما TRX أو TRC10 إلى الحساب أولاً. ثم يمكن بعدها أن يتلقى TRC20."
     },
     "TronUnexpectedFees" : {
@@ -1717,8 +1717,14 @@
         "subtitle" : "قم بتأكيد الكود على {{productName}} خاصتك"
       },
       "error" : {
-        "title" : "الإقران لم ينجح",
-        "subtitle" : "يبدو أنه قد حدث خطأ ما!تأكد من تشغيل البلوتوث لديك وأن {{productName}} خاصتك قريبة.",
+        "generic" : {
+          "title" : "Pairing unsuccessful",
+          "subtitle" : "Looks like something went wrong!\nCheck that your Bluetooth is switched on and your {{productName}} is nearby."
+        },
+        "lockedDevice" : {
+          "title" : "Your device is locked",
+          "subtitle" : "Unlock your {{ productName }} and try again."
+        },
         "retryCta" : "أعد المحاولة"
       }
     }
@@ -1901,6 +1907,9 @@
     "noOpState" : {
       "title" : "لا توجد أي عمليات بعد؟",
       "desc" : "ببساطة قم بإرسال الأصول المشفرة إلى عنوان التلقي الخاص بك وانتظر حتى يقوم التطبيق بالمزامنة."
+    },
+    "carousel" : {
+      "title" : "من أجلك"
     },
     "recommended" : {
       "title" : "موصى به"
@@ -2350,8 +2359,8 @@
     "display" : {
       "title" : "عامة",
       "desc" : "تكوين إعدادات Ledger Live العامة.",
-      "carousel" : "رؤية كشريط دوّار",
-      "carouselDesc" : "تمكين الرؤية كشريط دوّار في المحفظة الاستثمارية",
+      "carousel" : "التوصيات",
+      "carouselDesc" : "سنعرض لك بطاقات تضم نصائح مخصصة وأحدث عروضنا من أجلك فقط.",
       "language" : "لغة العرض",
       "languageDesc" : "قم بتعيين اللغة المعروضة في Ledger Live.",
       "region" : "المنطقة",
@@ -2486,7 +2495,7 @@
         "title" : "تنبيهات الأسعار",
         "desc" : "قم بتعيين تنبيهات السعر لعملاتك المفضلة حتى لا تفوتك حركة السوق"
       },
-      "disclaimer" : "خصوصية البيانات أمر بالغ الأهمية في Ledger. البيانات التي تُجمع لا تُشارَك أبداً مع شركائنا."
+      "disclaimer" : "بياناتك وخصوصيتك مهمة بالنسبة لنا في Ledger. البيانات التي تُجمع لا تُشارَك أبداً مع شركائنا."
     },
     "help" : {
       "title" : "مساعدة",
@@ -4690,6 +4699,9 @@
         "title" : "المرشحون",
         "description" : "تم انتخاب 127 فردًا من خلال التصويت من قِبل مجتمع حاملي رموز التوكن بأكمله. يتم أخذ عينات من الأصوات كل 6 ساعات."
       }
+    },
+    "receive" : {
+      "newAddressTRC20" : "تحتاج أولاً إلى إرسال على الأقل 0.1 TRX إلى هذا العنوان لتنشيطه."
     }
   },
   "stellar" : {
@@ -5454,7 +5466,8 @@
     "drawer" : {
       "title" : "اختر صورة",
       "options" : {
-        "uploadFromPhone" : "قم بالتحميل من هاتفك"
+        "uploadFromPhone" : "Choose from my picture gallery",
+        "selectFromNFTGallery" : "Choose from NFT gallery"
       }
     },
     "cropImage" : "قُصّ الصورة",
@@ -5479,6 +5492,9 @@
       "loading" : "جاري تحميل المعاينة",
       "setPicture" : "تعيين صورة مخصصة",
       "editPicture" : "تعديل الصورة"
+    },
+    "nftGallery" : {
+      "title" : "رموزي غير القابلة للاستبدال"
     }
   },
   "postOnboarding" : {
