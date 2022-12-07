@@ -22,7 +22,7 @@
     "build:libs:force": "pnpm -r --filter=\"!./apps/**\" --filter=\"!ledger-live\" build",
     "build:actions": "pnpm turbo build --filter=@actions/* --no-deps",
     "build:cli": "pnpm turbo build --no-daemon --filter=live-cli",
-    "build:llc": "pnpm turbo build --no-daemon --filter=\"!./apps/**\" --scope=@ledgerhq/live-common --include-dependencies --no-deps",
+    "build:llc": "pnpm turbo build --no-daemon --filter=\"live-common\"",
     "build:lld": "pnpm turbo build --no-daemon --filter=ledger-live-desktop",
     "build:lld:deps": "pnpm turbo build --no-daemon --filter=\"ledger-live-desktop^...\"",
     "build:llm:android": "pnpm turbo android:apk:local --no-daemon --filter=live-mobile",
@@ -125,11 +125,5 @@
       "react-native-os@1.2.6": "patches/react-native-os@1.2.6.patch",
       "react-native-tcp@4.0.0": "patches/react-native-tcp@4.0.0.patch"
     }
-  },
-  "dependencies": {
-    "cross-env": "^7.0.3",
-    "node-gyp": "^9.3.0",
-    "tslib": "^2.4.1",
-    "typescript": "^4.9.3"
   }
 }
