@@ -375,14 +375,6 @@ export function SwapForm({
           undefined,
         );
         swapTransaction.setFromAccount(account);
-      } else {
-        swapTransaction.setToAccount(
-          swapTransaction.swap.to.currency,
-          account,
-          isTokenAccount(account)
-            ? getParentAccount(account, accounts)
-            : undefined,
-        );
       }
     }
 
