@@ -1,150 +1,123 @@
+import blake from "blakejs";
 import base32Decode from "base32-decode";
-import { blake2bInit, blake2bUpdate, blake2bFinal, Blake2bCTX } from "blakejs";
-import leb128 from "leb128";
-import { log } from "@ledgerhq/logs";
+import BN from "bn.js";
 
-type PrefixObjType = Readonly<{ f: "mainnet" } & { t: "testnet" }>;
-type PrefixType = keyof PrefixObjType;
+import leb from "leb128";
 
-type ProtocolsObjType = Readonly<
-  { "0": "ID" } & { "1": "SECP256K1" } & { "2": "Actor" } & {
-    "3": "BLS";
-  }
->;
-
-type ValidateAddressResult =
+export type ValidateAddressResult =
   | {
       isValid: true;
-      data: {
-        protocol: number;
-        address: Buffer;
-        network: PrefixType;
-      };
+      bytes: Buffer;
     }
   | {
       isValid: false;
     };
 
-// Constants
-const BASE_64_VARIANT_TYPE: Readonly<"RFC3548"> = "RFC3548";
-const SECP256K1_ACTOR_LEN = 20;
-const ID_MAX_LEN = 19;
-const BLS_MAX_LEN = 48;
-const validPrefixs: PrefixObjType = {
-  f: "mainnet",
-  t: "testnet",
-};
-const validProtocols: ProtocolsObjType = {
-  "0": "ID",
-  "1": "SECP256K1",
-  "2": "Actor",
-  "3": "BLS",
-};
-
-export const getAddressRaw = (address: string) => {
-  const result = validateAddress(address);
-
-  if (result.isValid) {
-    const {
-      data: { address, protocol },
-    } = result;
-
-    return Buffer.concat([
-      Buffer.from(`0${protocol.toString()}`, "hex"),
-      address,
-    ]);
-  }
-
-  throw new Error("The address is not valid");
+export const ProtocolIndicator = {
+  ID: 0,
+  SECP256K1: 1,
+  ACTOR: 2,
+  BLS: 3,
+  DELEGATED: 4,
 };
 
 export const validateAddress = (input: string): ValidateAddressResult => {
-  const [prefix, protocol] = input;
+  try {
+    const bytes = addressAsBytes(input);
+    return { isValid: true, bytes };
+  } catch (error) {
+    return { isValid: false };
+  }
+};
 
-  if (!validPrefixs[prefix]) return { isValid: false };
-  if (!validProtocols[protocol]) return { isValid: false };
+function getChecksum(payload: Buffer): Buffer {
+  const blakeCtx = blake.blake2bInit(4);
+  blake.blake2bUpdate(blakeCtx, payload);
+  return Buffer.from(blake.blake2bFinal(blakeCtx));
+}
 
-  let newCksum, rcvCksum, addr: Buffer, context: Blake2bCTX;
-  const protocolBuf = Buffer.from(`0${protocol.toString()}`, "hex");
-  const addrAndCksum = input.substr(2).toUpperCase();
+function addressAsBytes(address: string): Buffer {
+  let address_decoded, payload, checksum;
+  const protocolIndicator = address[1];
+  const protocolIndicatorByte = `0${protocolIndicator}`;
 
-  switch (protocol) {
-    case "0":
-      log(
-        "debug",
-        `String Address: ${input} --> Network:${prefix} - Protocol:${protocol} - PkHash:${addrAndCksum.toLowerCase()}`
-      );
+  switch (Number(protocolIndicator)) {
+    case ProtocolIndicator.ID:
+      if (address.length > 18) {
+        throw new Error("invalid payload length");
+      }
+      return Buffer.concat([
+        Buffer.from(protocolIndicatorByte, "hex"),
+        Buffer.from(leb.unsigned.encode(address.substr(2))),
+      ]);
+    case ProtocolIndicator.SECP256K1:
+      address_decoded = base32Decode(address.slice(2).toUpperCase(), "RFC4648");
 
-      if (addrAndCksum.length > ID_MAX_LEN) return { isValid: false };
+      payload = address_decoded.slice(0, -4);
+      checksum = Buffer.from(address_decoded.slice(-4));
 
-      addr = leb128.unsigned.encode(addrAndCksum);
+      if (payload.byteLength !== 20) {
+        throw new Error("invalid payload length");
+      }
       break;
+    case ProtocolIndicator.ACTOR:
+      address_decoded = base32Decode(address.slice(2).toUpperCase(), "RFC4648");
 
-    case "1":
-    case "2":
-    case "3":
-      [addr, rcvCksum] = splitAddFromCkSum(
-        toBuffer(base32Decode(addrAndCksum, BASE_64_VARIANT_TYPE))
-      );
+      payload = address_decoded.slice(0, -4);
+      checksum = Buffer.from(address_decoded.slice(-4));
 
-      if (
-        (protocol === "1" || protocol === "2") &&
-        addr.length > SECP256K1_ACTOR_LEN
-      )
-        return { isValid: false };
-
-      if (protocol === "3" && addr.length > BLS_MAX_LEN)
-        return { isValid: false };
-
-      context = blake2bInit(4);
-      blake2bUpdate(context, Buffer.concat([protocolBuf, addr]));
-      newCksum = Buffer.from(blake2bFinal(context));
-
-      log(
-        "debug",
-        `String Address: ${input} --> Network:${prefix} - Protocol:${protocol} - PkHash:${addr.toString(
-          "hex"
-        )} - CkSum: ${rcvCksum.toString("hex")}`
-      );
-
-      if (rcvCksum.toString("hex") !== newCksum.toString("hex"))
-        return { isValid: false };
+      if (payload.byteLength !== 20) {
+        throw new Error("invalid payload length");
+      }
       break;
+    case ProtocolIndicator.BLS:
+      address_decoded = base32Decode(address.slice(2).toUpperCase(), "RFC4648");
 
+      payload = address_decoded.slice(0, -4);
+      checksum = Buffer.from(address_decoded.slice(-4));
+
+      if (payload.byteLength !== 48) {
+        throw new Error("invalid payload length");
+      }
+      break;
+    case ProtocolIndicator.DELEGATED:
+      return delegatedAddressAsBytes(address);
     default:
-      return { isValid: false };
+      throw new Error("invalid protocol indicator");
   }
 
-  return {
-    isValid: true,
-    data: {
-      network: prefix as PrefixType,
-      protocol: parseInt(protocol),
-      address: addr,
-    },
-  };
-};
+  const bytes_address = Buffer.concat([
+    Buffer.from(protocolIndicatorByte, "hex"),
+    Buffer.from(payload),
+  ]);
 
-export const splitAddFromCkSum = (addAndCkSum: Buffer): [Buffer, Buffer] => {
-  const cksum = addAndCkSum.slice(-4);
-  const add = addAndCkSum.slice(0, addAndCkSum.byteLength - 4);
-  return [toBuffer(add), toBuffer(cksum)];
-};
-
-export const toArrayBuffer = (buf: Buffer): ArrayBuffer => {
-  const ab = new ArrayBuffer(buf.length);
-  const view = new Uint8Array(ab);
-  for (let i = 0; i < buf.length; ++i) {
-    view[i] = buf[i];
+  if (getChecksum(bytes_address).toString("hex") !== checksum.toString("hex")) {
+    throw new Error("invalid checksum");
   }
-  return ab;
-};
 
-export const toBuffer = (ab: ArrayBuffer): Buffer => {
-  const buf = Buffer.alloc(ab.byteLength);
-  const view = new Uint8Array(ab);
-  for (let i = 0; i < buf.length; ++i) {
-    buf[i] = view[i];
+  return bytes_address;
+}
+
+function delegatedAddressAsBytes(address: string): Buffer {
+  const protocolIndicator = address[1];
+
+  const namespaceRaw = address.slice(2, address.indexOf("f", 2));
+  const subAddressRaw = address.slice(address.indexOf("f", 2) + 1);
+  const address_decoded = base32Decode(subAddressRaw.toUpperCase(), "RFC4648");
+
+  const namespaceBuff = new BN(namespaceRaw, 10).toBuffer("be", 8);
+  const namespaceBytes = Buffer.from(leb.unsigned.encode(namespaceBuff));
+  const protocolBytes = Buffer.from(leb.unsigned.encode(protocolIndicator));
+  const bytes_address = Buffer.concat([
+    protocolBytes,
+    namespaceBytes,
+    Buffer.from(address_decoded.slice(0, -4)),
+  ]);
+  const checksum = Buffer.from(address_decoded.slice(-4));
+
+  if (getChecksum(bytes_address).toString("hex") !== checksum.toString("hex")) {
+    throw new Error("invalid checksum");
   }
-  return buf;
-};
+
+  return bytes_address;
+}
