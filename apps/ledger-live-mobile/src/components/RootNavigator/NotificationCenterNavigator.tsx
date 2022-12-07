@@ -3,27 +3,32 @@ import { TouchableOpacity } from "react-native";
 import { useTranslation } from "react-i18next";
 
 import { createStackNavigator } from "@react-navigation/stack";
-import { Icons } from "@ledgerhq/native-ui";
+import { Flex, Icons } from "@ledgerhq/native-ui";
 import { useTheme } from "styled-components/native";
 import { useNavigation } from "@react-navigation/native";
-import NotificationCenterStatus from "../../screens/NotificationCenter/Status";
+import { useFilteredServiceStatus } from "@ledgerhq/live-common/notifications/ServiceStatusProvider/index";
+
+import { useDispatch } from "react-redux";
 import NotificationCenter from "../../screens/NotificationCenter/Notifications";
 import { NavigatorName, ScreenName } from "../../const";
 import type { NotificationCenterNavigatorParamList } from "./types/NotificationCenterNavigator";
 import { getStackNavigatorConfig } from "../../navigation/navigatorConfig";
 import { track } from "../../analytics";
+import { setStatusCenter } from "../../actions/settings";
 
 const Stack = createStackNavigator<NotificationCenterNavigatorParamList>();
 
 export default function NotificationCenterNavigator() {
   const { t } = useTranslation();
   const navigation = useNavigation();
+  const dispatch = useDispatch();
   const { colors } = useTheme();
 
   const stackNavConfig = useMemo(
     () => getStackNavigatorConfig(colors),
     [colors],
   );
+  const { incidents } = useFilteredServiceStatus();
 
   const goToNotificationsSettings = useCallback(() => {
     track("button_clicked", {
@@ -35,6 +40,14 @@ export default function NotificationCenterNavigator() {
     });
   }, [navigation]);
 
+  const openStatusCenter = useCallback(() => {
+    track("button_clicked", {
+      button: "Notification Center Status",
+    });
+    dispatch(setStatusCenter(true));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   return (
     <Stack.Navigator screenOptions={stackNavConfig}>
       <Stack.Screen
@@ -43,20 +56,23 @@ export default function NotificationCenterNavigator() {
         options={{
           title: t("notificationCenter.news.title"),
           headerRight: () => (
-            <TouchableOpacity
-              style={{ marginRight: 24 }}
-              onPress={goToNotificationsSettings}
-            >
-              <Icons.SettingsMedium size={24} />
-            </TouchableOpacity>
+            <Flex flexDirection="row">
+              {incidents.length === 0 && (
+                <TouchableOpacity
+                  style={{ marginRight: 18 }}
+                  onPress={openStatusCenter}
+                >
+                  <Icons.FullnodeMedium size={20} />
+                </TouchableOpacity>
+              )}
+              <TouchableOpacity
+                style={{ marginRight: 18 }}
+                onPress={goToNotificationsSettings}
+              >
+                <Icons.SettingsMedium size={24} />
+              </TouchableOpacity>
+            </Flex>
           ),
-        }}
-      />
-      <Stack.Screen
-        name={ScreenName.NotificationCenterStatus}
-        component={NotificationCenterStatus}
-        options={{
-          title: t("notificationCenter.status.title"),
         }}
       />
     </Stack.Navigator>

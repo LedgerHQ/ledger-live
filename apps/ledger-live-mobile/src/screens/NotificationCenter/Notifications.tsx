@@ -12,7 +12,7 @@ import { CardC, Box, Flex, Text } from "@ledgerhq/native-ui";
 
 import styled, { useTheme } from "styled-components/native";
 import { useTranslation } from "react-i18next";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Swipeable } from "react-native-gesture-handler";
 import { TrashMedium } from "@ledgerhq/native-ui/assets/icons";
 
@@ -22,6 +22,9 @@ import { NotificationContentCard } from "../../dynamicContent/types";
 import { getTime } from "./helper";
 import { setDynamicContentNotificationCards } from "../../actions/dynamicContent";
 import { useDynamicContentLogic } from "../../dynamicContent/useDynamicContentLogic";
+import StatusCenter from "./Status";
+import { statusCenterSelector } from "../../reducers/settings";
+import { setStatusCenter } from "../../actions/settings";
 
 const Container = styled(SettingsNavigationScrollView)``;
 const AnimatedView = Animated.createAnimatedComponent(View);
@@ -48,6 +51,7 @@ export default function NotificationCenter() {
   } = useDynamicContent();
   const { fetchData, refreshDynamicContent } = useDynamicContentLogic();
   const [isDynamicContentLoading, setIsDynamicContentLoading] = useState(false);
+  const displayStatusCenter = useSelector(statusCenterSelector);
 
   const refreshNotifications = useCallback(async () => {
     setIsDynamicContentLoading(true);
@@ -129,6 +133,10 @@ export default function NotificationCenter() {
     },
     [dispatch, logImpressionCard, onPress, orderedNotificationsCards],
   );
+
+  const onCloseStatusCenter = useCallback(() => {
+    dispatch(setStatusCenter(false));
+  }, [dispatch]);
 
   // ---------------
 
@@ -215,7 +223,7 @@ export default function NotificationCenter() {
           />
         </Container>
       ) : (
-        <Flex alignItems="center" flex={1} px={3}>
+        <Flex alignItems="center" flex={1} px={6}>
           <Text
             variant="large"
             fontWeight="semiBold"
@@ -236,6 +244,10 @@ export default function NotificationCenter() {
           </Text>
         </Flex>
       )}
+      <StatusCenter
+        isOpened={displayStatusCenter}
+        onClose={onCloseStatusCenter}
+      />
     </>
   );
 }

@@ -212,6 +212,7 @@ export type SettingsState = {
   customImageBackup?: { hex: string; hash: string };
   notifications: NotificationsSettings;
   walletTabNavigatorLastVisitedTab: keyof WalletTabNavigatorStackParamList;
+  displayStatusCenter: boolean;
 };
 
 export type NotificationsSettings = {
