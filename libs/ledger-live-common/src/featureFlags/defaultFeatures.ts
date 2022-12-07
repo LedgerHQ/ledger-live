@@ -29,6 +29,9 @@ export const defaultFeatures: DefaultFeatures = {
   currencyCronos: {
     enabled: false,
   },
+  currencyNear: {
+    enabled: false,
+  },
   currencySongbird: {
     enabled: false,
   },
