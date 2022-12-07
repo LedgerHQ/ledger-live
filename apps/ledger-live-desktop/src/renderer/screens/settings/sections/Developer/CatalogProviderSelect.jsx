@@ -6,7 +6,6 @@ import { setCatalogProvider } from "~/renderer/actions/settings";
 import { catalogProviderSelector } from "~/renderer/reducers/settings";
 import Select from "~/renderer/components/Select";
 import Track from "~/renderer/analytics/Track";
-import { providers } from "@ledgerhq/live-common/platform/PlatformAppProvider/providers";
 
 const CatalogProviderSelect = () => {
   const dispatch = useDispatch();
@@ -19,8 +18,7 @@ const CatalogProviderSelect = () => {
     [dispatch],
   );
 
-  const currentProvider = providers.find(option => option.value === provider);
-
+//TODO : replace per URL
   return (
     <>
       <Track onUpdate event="CatalogProviderSelect" currentProvider={provider} />
@@ -29,8 +27,7 @@ const CatalogProviderSelect = () => {
         minWidth={260}
         isSearchable={false}
         onChange={handleChangeProvider}
-        value={currentProvider}
-        options={providers}
+        value={provider}
       />
     </>
   );
