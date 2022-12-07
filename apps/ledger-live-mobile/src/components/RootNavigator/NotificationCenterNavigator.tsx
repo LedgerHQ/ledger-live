@@ -63,7 +63,7 @@ export default function NotificationCenterNavigator() {
                   style={{ marginRight: 18 }}
                   onPress={openStatusCenter}
                 >
-                  <FullNodeWarning size={24} color={colors.neutral.c100} warningColor={colors.warning.c60} backgroundColor={colors.background.main} />
+                  <FullNodeWarning size={24} color={colors.neutral.c100} warningColor={colors.warning.c70} backgroundColor={colors.background.main} />
                 </TouchableOpacity>
               )}
               <TouchableOpacity
