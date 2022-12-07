@@ -908,11 +908,11 @@ export const cryptocurrenciesById: Record<string, CryptoCurrency> = {
     type: "CryptoCurrency",
     id: "elrond",
     coinType: 508,
-    name: "Elrond",
-    managerAppName: "Elrond",
+    name: "MultiversX",
+    managerAppName: "MultiversX",
     ticker: "EGLD",
     scheme: "elrond",
-    color: "#1b46c2",
+    color: "#23F7DD",
     family: "elrond",
     blockAvgTime: 6,
     deviceTicker: "EGLD",
@@ -3503,8 +3503,8 @@ export function listCryptoCurrencies(
       ? cryptocurrenciesArray
       : prodCryptoArray
     : withDevCrypto
-    ? cryptocurrenciesArrayWithoutTerminated
-    : prodCryptoArrayWithoutTerminated;
+      ? cryptocurrenciesArrayWithoutTerminated
+      : prodCryptoArrayWithoutTerminated;
 }
 
 /**
@@ -3593,7 +3593,7 @@ export const findCryptoCurrencyByManagerAppName = (
     findCryptoCurrency((c) =>
       Boolean(
         c.managerAppName &&
-          c.managerAppName.replace(/ /, "").toLowerCase() === search
+        c.managerAppName.replace(/ /, "").toLowerCase() === search
       )
     )
   );
