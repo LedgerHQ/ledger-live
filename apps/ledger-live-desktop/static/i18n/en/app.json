@@ -4883,6 +4883,10 @@
     "NotEnoughGas": {
       "title": "The parent account balance is insufficient for network fees"
     },
+    "OperatingSystemOutdated": {
+      "title": "Your Operating System version is outdated",
+      "description": "Please upgrade your operating system and retry. You can check the article below to understand why Ledger Live is not supported on your current operating system version."
+    },
     "PasswordsDontMatch": {
       "title": "The Passwords don't match",
       "description": "Please try again"
