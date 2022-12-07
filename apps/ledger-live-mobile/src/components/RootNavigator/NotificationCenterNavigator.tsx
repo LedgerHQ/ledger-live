@@ -15,6 +15,7 @@ import type { NotificationCenterNavigatorParamList } from "./types/NotificationC
 import { getStackNavigatorConfig } from "../../navigation/navigatorConfig";
 import { track } from "../../analytics";
 import { setStatusCenter } from "../../actions/settings";
+import FullNodeWarning from "../../icons/FullNodeWarning";
 
 const Stack = createStackNavigator<NotificationCenterNavigatorParamList>();
 
@@ -57,12 +58,12 @@ export default function NotificationCenterNavigator() {
           title: t("notificationCenter.news.title"),
           headerRight: () => (
             <Flex flexDirection="row">
-              {incidents.length > 0 && (
+              {incidents.length >= 0 && (
                 <TouchableOpacity
                   style={{ marginRight: 18 }}
                   onPress={openStatusCenter}
                 >
-                  <Icons.FullnodeMedium size={20} />
+                  <FullNodeWarning size={24} color={colors.neutral.c100} warningColor={colors.warning.c60} backgroundColor={colors.background.main} />
                 </TouchableOpacity>
               )}
               <TouchableOpacity
