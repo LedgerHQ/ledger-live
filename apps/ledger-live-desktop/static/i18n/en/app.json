@@ -3404,7 +3404,7 @@
     "stake": {
       "title": "Earn Ethereum",
       "lido": {
-        "tag": "No minimun",
+        "tag": "No minimum",
         "description": "Stake your Ethereum with Lido and earn rewards daily. No lock-up period. No minimum."
       },
       "kiln": {
