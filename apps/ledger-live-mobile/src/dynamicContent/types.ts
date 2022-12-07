@@ -1,6 +1,7 @@
 enum LocationContentCard {
   Wallet = "wallet",
   Asset = "asset",
+  Discover = "discover",
 }
 
 enum Background {
@@ -27,5 +28,12 @@ type AssetContentCard = ContentCard & {
   displayOnEveryAssets?: boolean;
 };
 
-export type { AssetContentCard, WalletContentCard, ContentCard };
+type DiscoverContentCard = ContentCard;
+
+export type {
+  ContentCard,
+  AssetContentCard,
+  WalletContentCard,
+  DiscoverContentCard,
+};
 export { LocationContentCard, Background };
