@@ -47,7 +47,7 @@ function PortfolioHeader({ hidePortfolio }: { hidePortfolio: boolean }) {
     navigation.navigate(NavigatorName.Settings);
   }, [navigation]);
 
-  const onCardButtonPress = useCallback(() => {
+  const onSideImageCarduttonPress = useCallback(() => {
     navigation.navigate(ScreenName.PlatformApp, {
       platform: "cl-card",
       name: "CL Card Powered by Ledger",
@@ -96,7 +96,7 @@ function PortfolioHeader({ hidePortfolio }: { hidePortfolio: boolean }) {
       <Flex flexDirection="row">
         <Flex mr={7}>
           <Touchable
-            onPress={onCardButtonPress}
+            onPress={onSideImageCarduttonPress}
             event="button_clicked"
             eventProperties={{
               button: "card",

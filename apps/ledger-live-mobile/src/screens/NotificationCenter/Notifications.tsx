@@ -8,7 +8,7 @@ import {
   RefreshControl,
 } from "react-native";
 
-import { CardC, Box, Flex, Text } from "@ledgerhq/native-ui";
+import { NotificationCard, Box, Flex, Text } from "@ledgerhq/native-ui";
 
 import styled, { useTheme } from "styled-components/native";
 import { useTranslation } from "react-i18next";
@@ -186,7 +186,7 @@ export default function NotificationCenter() {
         }}
       >
         <Box py={7} px={6} zIndex={4} bg="background.main">
-          <CardC
+          <NotificationCard
             onClickCard={() => onClickCard(item)}
             time={t(`notificationCenter.news.time.${time[1]}`, {
               count: time[0],

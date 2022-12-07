@@ -42,7 +42,7 @@ const Timer = ({ time, viewed }: { time: string; viewed: boolean }) => (
   </Flex>
 );
 
-const CardC = (props: CardProps): React.ReactElement => {
+const NotificationCard = (props: CardProps): React.ReactElement => {
   const { tag = "", time = "", title, description, cta, viewed, onClickCard, showLinkCta } = props;
 
   return (
@@ -100,4 +100,4 @@ const StyledText = styled(Text)`
   text-decoration-color: ${(p) => p.theme.colors.neutral.c100};
 `;
 
-export default CardC;
+export default NotificationCard;
