@@ -2184,6 +2184,9 @@
     "title" : "リリースノート",
     "version" : "Ledger Live{{versionNb}}"
   },
+  "troubleshootNetwork" : {
+    "title" : "Troubleshoot networking"
+  },
   "systemLanguageAvailable" : {
     "title" : "アプリの言語を変更しますか？",
     "description" : {
@@ -2241,6 +2244,9 @@
     }
   },
   "tron" : {
+    "receive" : {
+      "newAddressTRC20" : "有効化するには、こちらのアドレスに0.1 TRX以上を送る必要があります。"
+    },
     "voting" : {
       "emptyState" : {
         "description" : "資産を凍結し投票することで、報酬を得られるようになりました。",
@@ -3696,6 +3702,11 @@
       "desc" : "トラブルを解決するために、Ledger Liveログの保存が必要になる場合があります。",
       "btn" : "保存"
     },
+    "troubleshootNetwork" : {
+      "title" : "Troubleshoot networking",
+      "desc" : "Run a checklist to assess networking conditions for troubleshooting purposes.",
+      "btn" : "Troubleshoot"
+    },
     "accounts" : {
       "hideEmptyTokens" : {
         "title" : "未使用アカウントを非表示にする",
@@ -4734,6 +4745,10 @@
       "title" : "デバイスの接続が切断されているようです。",
       "description" : "デバイスを再接続して、もう一度お試しください。"
     },
+    "EConnReset" : {
+      "title" : "Ledgerアプリケーションストアに到達できません",
+      "description" : "インターネット接続がダウンしているか、異常が発生している可能性があります。接続をブロックしているもの（プロキシまたはファイアウォール）の確認から始めてください。問題が解決しない場合は、以下をクリックして解決策を確認するか、当社のカスタマーサポートにご連絡ください。"
+    },
     "EnpointConfig" : {
       "title" : "エンドポイントが無効です",
       "description" : "有効なエンドポイントを提供してください"
@@ -4845,6 +4860,10 @@
     },
     "NotEnoughGas" : {
       "title" : "親アカウントで、ネットワーク手数料用の残高が不足しています"
+    },
+    "OperatingSystemOutdated" : {
+      "title" : "Your Operating System version is outdated",
+      "description" : "Please upgrade your operating system and retry. You can check the article below to understand why Ledger Live is not supported on your current operating system version."
     },
     "PasswordsDontMatch" : {
       "title" : "パスワードが一致しません。",
@@ -5088,7 +5107,7 @@
       "title" : "凍結額を1未満にすることはできません。"
     },
     "TronSendTrc20ToNewAccountForbidden" : {
-      "title" : "TRC20を新しいアカウントに送付しても、アクティベートされません。",
+      "title" : "TRC20の受け取りを有効化するには、まず新しいアカウントに0.1 TRX以上を送る必要があります。",
       "description" : "受取アカウントは、TRC20を送信する前に有効化する必要があります。有効化するにはTRXまたはTRC10をアカウントに送付してください。"
     },
     "TronUnexpectedFees" : {
