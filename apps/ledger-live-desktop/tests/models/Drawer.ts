@@ -8,9 +8,9 @@ export class Drawer {
 
   constructor(page: Page) {
     this.page = page;
-    this.content = page.locator('data-test-id=drawer-content');
-    this.continueButton = page.locator('data-test-id=drawer-continue-button');
-    this.closeButton = page.locator('data-test-id=drawer-close-button');
+    this.content = page.locator("data-test-id=drawer-content");
+    this.continueButton = page.locator("data-test-id=drawer-continue-button");
+    this.closeButton = page.locator("data-test-id=drawer-close-button");
   }
 
   async continue() {
@@ -18,7 +18,8 @@ export class Drawer {
   }
 
   async waitForDrawerToDisappear() {
-    await this.continueButton.waitFor({state: "detached"});
+    await this.continueButton.waitFor({ state: "detached" });
+    await this.closeButton.waitFor({ state: "detached" });
   }
 
   async close() {

@@ -126,13 +126,18 @@ const MemoizedSelectAccountAndCurrencyDrawer = memo<SelectAccountAndCurrencyDraw
             color="palette.text.shade100"
             fontSize="24px"
             style={{ textTransform: "uppercase" }}
+            data-test-id="select-asset-drawer-title"
           >
             {t("drawers.selectCurrency.title")}
           </Text>
         </HeaderContainer>
         <SelectorContent>
           <SearchInputContainer>
-            <SearchInput value={searchValue} onChange={setSearchValue} />
+            <SearchInput
+              data-test-id="select-asset-drawer-search-input"
+              value={searchValue}
+              onChange={setSearchValue}
+            />
           </SearchInputContainer>
           <CurrencyList currencies={filteredCurrencies} onCurrencySelect={handleCurrencySelected} />
         </SelectorContent>
