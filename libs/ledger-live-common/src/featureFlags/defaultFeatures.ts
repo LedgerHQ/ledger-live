@@ -29,6 +29,9 @@ export const defaultFeatures: DefaultFeatures = {
   currencyCronos: {
     enabled: false,
   },
+  currencyNear: {
+    enabled: false,
+  },
   currencySongbird: {
     enabled: false,
   },
@@ -53,6 +56,7 @@ export const defaultFeatures: DefaultFeatures = {
   currencyFlareMobile: {
     enabled: false,
   },
+
   deviceInitialApps: {
     enabled: false,
     params: {
