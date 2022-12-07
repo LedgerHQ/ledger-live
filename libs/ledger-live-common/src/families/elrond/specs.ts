@@ -1,8 +1,4 @@
-import type {
-  ElrondAccount,
-  ElrondResources,
-  Transaction,
-} from "../../families/elrond/types";
+import type { ElrondAccount, Transaction } from "../../families/elrond/types";
 import invariant from "invariant";
 import { getCryptoCurrencyById, parseCurrencyUnit } from "../../currencies";
 import { botTest, pickSiblings, genericTestDestination } from "../../bot/specs";
@@ -15,6 +11,7 @@ import {
   acceptEsdtTransferTransaction,
   acceptMoveBalanceTransaction,
   acceptUndelegateTransaction,
+  acceptWithdrawTransaction,
 } from "./speculos-deviceActions";
 import BigNumber from "bignumber.js";
 import { MIN_DELEGATION_AMOUNT } from "./constants";
@@ -53,10 +50,14 @@ function expectCorrectEsdtBalanceChange(
     (ta) => ta.id === subAccountId
   );
 
-  if (tokenAccount && tokenAccountBefore) {
+  const subOperation = operation.subOperations?.find(
+    (sa) => sa.id === operation.id
+  );
+
+  if (tokenAccount && tokenAccountBefore && subOperation) {
     botTest("ESDT balance change is correct", () =>
       expect(tokenAccount.balance.toFixed()).toStrictEqual(
-        tokenAccountBefore.balance.minus(operation.value).toFixed()
+        tokenAccountBefore.balance.minus(subOperation.value).toFixed()
       )
     );
   }
@@ -115,11 +116,10 @@ function expectCorrectOptimisticOperation(
     botTest("optimistic operation matches recipients", () =>
       expect(operation.recipients).toStrictEqual(optimisticOperation.recipients)
     );
-    // FIXME operation is of the main account, need the token operation to compare to optimisticOperation
     if (!transaction.subAccountId) {
       botTest("optimistic operation matches value", () =>
         expect(operation.value.toFixed()).toStrictEqual(
-          optimisticOperation.value.plus(optimisticOperation.fee).toFixed()
+          optimisticOperation.value.toFixed()
         )
       );
     }
@@ -143,6 +143,8 @@ function expectCorrectSpendableBalanceChange(
   let value = operation.value;
   if (operation.type === "DELEGATE") {
     value = value.plus(new BigNumber(operation.extra.amount));
+  } else if (operation.type === "WITHDRAW_UNBONDED") {
+    value = value.minus(new BigNumber(operation.extra.amount));
   }
 
   botTest("EGLD spendable balance change is correct", () =>
@@ -318,22 +320,13 @@ const elrondSpec: AppSpec<Transaction> = {
       maxRun: 1,
       deviceAction: acceptUndelegateTransaction,
       transaction: ({ account, bridge }) => {
+        const delegations = (account as ElrondAccount)?.elrondResources
+          ?.delegations;
+        invariant(delegations?.length, "account doesn't have any delegations");
         invariant(
-          account.balance
-            .minus(account.spendableBalance)
-            .gt(MIN_DELEGATION_AMOUNT),
-          `account don't have any delegations`
+          delegations.some((d) => new BigNumber(d.userActiveStake).gt(0)),
+          "no active stake for account"
         );
-        const elrondAccount = account as ElrondAccount;
-        const elrondResources =
-          elrondAccount.elrondResources as ElrondResources;
-        const delegations = elrondResources.delegations;
-        for (const delegation of delegations) {
-          invariant(
-            new BigNumber(delegation.userActiveStake).gt(0),
-            "no active stake for account"
-          );
-        }
 
         const amount = MIN_DELEGATION_AMOUNT;
 
@@ -353,6 +346,46 @@ const elrondSpec: AppSpec<Transaction> = {
         expectCorrectBalanceFeeChange(input);
       },
     },
+    {
+      name: "withdraw all EGLD",
+      maxRun: 1,
+      deviceAction: acceptWithdrawTransaction,
+      transaction: ({ account, bridge }) => {
+        const delegations = (account as ElrondAccount)?.elrondResources
+          ?.delegations;
+        invariant(delegations?.length, "account doesn't have any delegations");
+        invariant(
+          // among all delegations
+          delegations.some((d) =>
+            // among all undelegating amounts
+            d.userUndelegatedList?.some(
+              (u) =>
+                new BigNumber(u.amount).gt(0) && // the undelegation has a positive amount
+                new BigNumber(u.seconds).eq(0) // the undelegation period has ended
+            )
+          ),
+          "no withdrawable stake for account"
+        );
+
+        return {
+          transaction: bridge.createTransaction(account),
+          updates: [
+            {
+              recipient: UNCAPPED_PROVIDER,
+              mode: "withdraw",
+              amount: new BigNumber(0),
+            },
+          ],
+        };
+      },
+      test: (input) => {
+        expectCorrectSpendableBalanceChange(input);
+        expectCorrectBalanceFeeChange(input);
+      },
+    },
+    // TODO
+    // "reDelegateRewards"
+    // "claimRewards"
   ],
 };
 

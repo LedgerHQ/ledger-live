@@ -5,16 +5,19 @@ import {
   ElrondDelegation,
   ElrondProvider,
   ElrondTransferOptions,
+  ElrondTransactionOperation,
   ESDTToken,
   Transaction,
 } from "../types";
 import type {
+  TokenAccount,
   Operation,
   OperationType,
   SignedOperation,
 } from "@ledgerhq/types-live";
 import { getAbandonSeedAddress } from "@ledgerhq/cryptoassets";
 import { getEnv } from "../../../env";
+import { inferSubOperations } from "../../../account";
 import { encodeOperationId } from "../../../operation";
 import {
   Address,
@@ -77,10 +80,18 @@ function isSender(transaction: ElrondApiTransaction, addr: string): boolean {
   return transaction.sender === addr;
 }
 
+function isSelfSend(transaction: ElrondApiTransaction): boolean {
+  return (
+    !!transaction.sender &&
+    !!transaction.receiver &&
+    transaction.sender === transaction.receiver
+  );
+}
+
 /**
  * Map transaction to an Operation Type
  */
-function getOperationType(
+function getEGLDOperationType(
   transaction: ElrondApiTransaction,
   addr: string
 ): OperationType {
@@ -99,77 +110,146 @@ function getOperationType(
         return "DELEGATE";
     }
   }
-  return isSender(transaction, addr) ? "OUT" : "IN";
+  return isSender(transaction, addr)
+    ? transaction.transfer === ElrondTransferOptions.esdt
+      ? "FEES"
+      : "OUT"
+    : "IN";
+}
+
+function getESDTOperationValue(
+  transaction: ElrondApiTransaction,
+  tokenIdentifier?: string
+): BigNumber {
+  const hasFailed =
+    !transaction.status ||
+    transaction.status === "fail" ||
+    transaction.status === "invalid";
+
+  if (!transaction.action || hasFailed) {
+    return new BigNumber(0);
+  }
+  let token1, token2;
+  switch (transaction.action.name) {
+    case "transfer":
+      return new BigNumber(
+        transaction.action.arguments.transfers[0].value ?? 0
+      );
+    case "swap":
+      token1 = transaction.action.arguments.transfers[0];
+      token2 = transaction.action.arguments.transfers[1];
+      if (token1.token === tokenIdentifier) {
+        return new BigNumber(token1.value);
+      } else {
+        return new BigNumber(token2.value);
+      }
+    default:
+      return new BigNumber(transaction.tokenValue ?? 0);
+  }
+}
+
+function getStakingAmount(
+  transaction: ElrondApiTransaction,
+  address: string
+): BigNumber {
+  const operation: ElrondTransactionOperation | undefined =
+    transaction.operations?.find(
+      ({ sender, receiver, action, type }) =>
+        action == "transfer" &&
+        type == "egld" &&
+        sender == transaction.receiver &&
+        (receiver == address || receiver == ELROND_STAKING_POOL)
+    );
+
+  if (!operation) {
+    return new BigNumber(0);
+  }
+
+  let dataDecoded;
+  switch (transaction.mode) {
+    case "send":
+      return new BigNumber(0);
+    case "delegate":
+      return new BigNumber(transaction.value ?? 0);
+    case "unDelegate":
+      dataDecoded = BinaryUtils.base64Decode(transaction.data ?? "");
+      return new BigNumber(`0x${dataDecoded.split("@")[1]}`);
+    case "reDelegateRewards":
+    case "claimRewards":
+    case "withdraw":
+    default:
+      return new BigNumber(operation.value);
+  }
 }
 
 /**
  * Map transaction to a correct Operation Value (affecting account balance)
  */
-function getOperationValue(
+function getEGLDOperationValue(
   transaction: ElrondApiTransaction,
-  addr: string,
-  tokenIdentifier?: string
+  address: string
 ): BigNumber {
-  if (transaction.transfer === ElrondTransferOptions.esdt) {
-    if (transaction.action) {
-      let token1, token2;
-      switch (transaction.action.name) {
-        case "transfer":
-          return new BigNumber(
-            transaction.action.arguments.transfers[0].value ?? 0
-          );
-        case "swap":
-          token1 = transaction.action.arguments.transfers[0];
-          token2 = transaction.action.arguments.transfers[1];
-          if (token1.token === tokenIdentifier) {
-            return new BigNumber(token1.value);
-          } else {
-            return new BigNumber(token2.value);
-          }
-        default:
-          return new BigNumber(transaction.tokenValue ?? 0);
-      }
+  if (transaction.mode === "send") {
+    if (transaction.transfer === ElrondTransferOptions.esdt) {
+      // Only fees paid in EGLD for token transactions
+      return isSender(transaction, address) && transaction.fee
+        ? new BigNumber(transaction.fee)
+        : new BigNumber(0);
+    } else {
+      return isSender(transaction, address)
+        ? isSelfSend(transaction)
+          ? new BigNumber(transaction.fee ?? 0) // Self-send, only fees are paid
+          : new BigNumber(transaction.value ?? 0).plus(transaction.fee ?? 0) // The sender pays the amount and the fees
+        : new BigNumber(transaction.value ?? 0); // The recipient gets the amount
     }
+  } else {
+    // Operation value for staking transactions are just the fees, plus possible rewards
+    // Other amounts are put in extra.delegationAmount
+    return new BigNumber(transaction.fee ?? 0);
   }
-
-  switch (transaction.mode) {
-    case "delegate":
-      return new BigNumber(transaction.fee ?? 0);
-  }
-
-  if (!isSender(transaction, addr)) {
-    return new BigNumber(transaction.value ?? 0);
-  }
-
-  return new BigNumber(transaction.value ?? 0).plus(transaction.fee ?? 0);
 }
 
 /**
  * Map the Elrond history transaction to a Ledger Live Operation
  */
-function transactionToOperation(
+function transactionToEGLDOperation(
   accountId: string,
   addr: string,
   transaction: ElrondApiTransaction,
-  tokenIdentifier?: string
+  subAccounts: TokenAccount[]
 ): Operation {
-  const type = getOperationType(transaction, addr);
+  const type = getEGLDOperationType(transaction, addr);
+  const fee = new BigNumber(transaction.fee ?? 0);
+  const hasFailed =
+    !transaction.status ||
+    transaction.status === "fail" ||
+    transaction.status === "invalid";
 
-  const delegationAmount = getDelegationOperationAmount(addr, transaction);
+  const delegationAmount = getStakingAmount(transaction, addr);
+
+  const value = hasFailed
+    ? isSender(transaction, addr)
+      ? fee
+      : new BigNumber(0)
+    : transaction.mode === "claimRewards"
+    ? delegationAmount.minus(fee)
+    : getEGLDOperationValue(transaction, addr);
+
+  const subOperations = subAccounts
+    ? inferSubOperations(transaction.txHash ?? "", subAccounts)
+    : undefined;
 
   return {
     id: encodeOperationId(accountId, transaction.txHash ?? "", type),
     accountId,
-    fee: new BigNumber(transaction.fee || 0),
-    value:
-      transaction.mode == "claimRewards" && delegationAmount
-        ? delegationAmount
-        : getOperationValue(transaction, addr, tokenIdentifier),
+    fee,
+    value,
     type,
     hash: transaction.txHash ?? "",
     blockHash: transaction.miniBlockHash,
     blockHeight: transaction.round,
     date: new Date(transaction.timestamp ? transaction.timestamp * 1000 : 0),
+    subOperations,
     extra: {
       amount: delegationAmount,
     },
@@ -184,68 +264,68 @@ function transactionToOperation(
     transactionSequenceNumber: isSender(transaction, addr)
       ? transaction.nonce
       : undefined,
-    hasFailed:
-      !transaction.status ||
-      transaction.status === "fail" ||
-      transaction.status === "invalid",
+    hasFailed,
     contract: new Address(transaction.receiver).isContractAddress()
       ? transaction.receiver
       : undefined,
   };
 }
 
-export const getDelegationOperationAmount = (
-  address: string,
-  transaction: ElrondApiTransaction
-): BigNumber | undefined => {
-  if (transaction.mode === "send") {
-    return undefined;
-  }
+const getESDTOperationType = (
+  transaction: ElrondApiTransaction,
+  address: string
+): OperationType => {
+  return isSender(transaction, address) ? "OUT" : "IN";
+};
 
-  const operations = transaction.operations;
-  let operation;
-  if (operations) {
-    operation = operations.find(
-      ({ sender, receiver, action, type }) =>
-        action == "transfer" &&
-        type == "egld" &&
-        sender == transaction.receiver &&
-        (receiver == address || receiver == ELROND_STAKING_POOL)
-    );
-  }
+const transactionToESDTOperation = (
+  tokenAccountId: string,
+  addr: string,
+  transaction: ElrondApiTransaction,
+  tokenIdentifier?: string
+): Operation => {
+  const type = getESDTOperationType(transaction, addr);
+  const value = getESDTOperationValue(transaction, tokenIdentifier);
+  const fee = new BigNumber(transaction.fee ?? 0);
+  const senders: string[] = transaction.sender ? [transaction.sender] : [];
+  const recipients: string[] = transaction.receiver
+    ? [transaction.receiver]
+    : [];
+  const hash = transaction.txHash ?? "";
+  const blockHeight = transaction.round;
+  const date = new Date(
+    transaction.timestamp ? transaction.timestamp * 1000 : 0
+  );
 
-  let dataDecoded;
-  switch (transaction.mode) {
-    case "delegate":
-      return new BigNumber(transaction.value ?? 0);
-
-    case "reDelegateRewards":
-      return operation ? new BigNumber(operation.value) : undefined;
-
-    case "claimRewards":
-      return operation ? new BigNumber(operation.value) : undefined;
-
-    case "withdraw":
-      return operation ? new BigNumber(operation.value) : undefined;
-
-    case "unDelegate":
-      dataDecoded = BinaryUtils.base64Decode(transaction.data ?? "");
-      return new BigNumber(`0x${dataDecoded.split("@")[1]}`);
-  }
+  return {
+    id: encodeOperationId(tokenAccountId, hash, type),
+    accountId: tokenAccountId,
+    hash,
+    date,
+    type,
+    value,
+    fee,
+    senders,
+    recipients,
+    blockHeight,
+    blockHash: transaction.miniBlockHash,
+    extra: {},
+  };
 };
 
 /**
  * Fetch operation list
  */
-export const getOperations = async (
+export const getEGLDOperations = async (
   accountId: string,
   addr: string,
-  startAt: number
+  startAt: number,
+  subAccounts: TokenAccount[]
 ): Promise<Operation[]> => {
   const rawTransactions = await api.getHistory(addr, startAt);
   if (!rawTransactions) return rawTransactions;
   return rawTransactions.map((transaction) =>
-    transactionToOperation(accountId, addr, transaction)
+    transactionToEGLDOperation(accountId, addr, transaction, subAccounts)
   );
 };
 
@@ -266,8 +346,8 @@ export const hasESDTTokens = async (address: string): Promise<boolean> => {
   return tokensCount > 0;
 };
 
-export const getAccountESDTOperations = async (
-  accountId: string,
+export const getESDTOperations = async (
+  tokenAccountId: string,
   address: string,
   tokenIdentifier: string,
   startAt: number
@@ -279,7 +359,12 @@ export const getAccountESDTOperations = async (
   );
 
   return accountESDTTransactions.map((transaction) =>
-    transactionToOperation(accountId, address, transaction, tokenIdentifier)
+    transactionToESDTOperation(
+      tokenAccountId,
+      address,
+      transaction,
+      tokenIdentifier
+    )
   );
 };
 

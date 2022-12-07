@@ -80,13 +80,10 @@ const buildOptimisticOperation = (
       account.subAccounts.find((ta) => ta.id === subAccountId)) ||
     null;
 
-  let value = transaction.useAllAmount
-    ? account.spendableBalance.minus(fees)
-    : transaction.amount;
-
-  if (tokenAccount) {
-    value = transaction.amount;
-  }
+  const value =
+    tokenAccount || transaction.mode !== "send"
+      ? fees
+      : transaction.amount.plus(transaction.fees || new BigNumber(0));
 
   const delegationAmount = getOptimisticOperationDelegationAmount(transaction);
 
@@ -114,12 +111,10 @@ const buildOptimisticOperation = (
   if (tokenAccount && subAccountId) {
     operation.subOperations = [
       {
-        id: `${subAccountId}--OUT`,
+        id: encodeOperationId(subAccountId, "", "OUT"),
         hash: "",
         type: "OUT",
-        value: transaction.useAllAmount
-          ? tokenAccount.balance
-          : transaction.amount,
+        value: transaction.amount,
         fee: new BigNumber(0),
         blockHash: null,
         blockHeight: null,

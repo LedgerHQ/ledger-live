@@ -14,7 +14,7 @@ const importers = [
   require("./importers/currenciesExchange"),
 ];
 
-const outputFolder = path.join(__dirname, "../../packages/cryptoassets");
+const outputFolder = path.join(__dirname, "../../packages/cryptoassets/src");
 const inputFolder = process.argv[2];
 if (!inputFolder) {
   console.error(
@@ -30,7 +30,7 @@ axios
     importers.forEach((imp) => {
       const outputJS = path.join(
         outputFolder,
-        imp.output ? imp.output(toJSON) : imp.path + toJSON ? ".json" : ".js"
+        imp.output ? imp.output(toJSON) : imp.path + toJSON ? ".json" : ".ts"
       );
       Promise.all(
         imp.paths.map((p) => {

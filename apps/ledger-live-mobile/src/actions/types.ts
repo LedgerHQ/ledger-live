@@ -24,6 +24,7 @@ import type {
   State,
   WalletConnectState,
   SwapStateType,
+  DynamicContentState,
 } from "../reducers/types";
 import type { Unpacked } from "../types/helpers";
 
@@ -162,6 +163,27 @@ export type NotificationsPayload =
   | NotificationsSetEventTriggeredPayload
   | NotificationsSetDataOfUserPayload;
 
+// === DYNAMIC CONTENT ACTIONS ===
+
+export enum DynamicContentActionTypes {
+  DYNAMIC_CONTENT_SET_WALLET_CARDS = "DYNAMIC_CONTENT_SET_WALLET_CARDS",
+  DYNAMIC_CONTENT_SET_ASSET_CARDS = "DYNAMIC_CONTENT_SET_ASSET_CARDS",
+}
+
+export type DynamicContentSetWalletCardsPayload = Pick<
+  DynamicContentState,
+  "walletCards"
+>;
+
+export type DynamicContentSetAssetCardsPayload = Pick<
+  DynamicContentState,
+  "assetsCards"
+>;
+
+export type DynamicContentPayload =
+  | DynamicContentSetWalletCardsPayload
+  | DynamicContentSetAssetCardsPayload;
+
 // === RATINGS ACTIONS ===
 
 export enum RatingsActionTypes {
@@ -225,6 +247,7 @@ export enum SettingsActionTypes {
   SETTINGS_SET_THEME = "SETTINGS_SET_THEME",
   SETTINGS_SET_OS_THEME = "SETTINGS_SET_OS_THEME",
   SETTINGS_SET_CAROUSEL_VISIBILITY = "SETTINGS_SET_CAROUSEL_VISIBILITY",
+  SETTINGS_SET_DISMISSED_DYNAMIC_CARDS = "SETTINGS_SET_DISMISSED_DYNAMIC_CARDS",
   SETTINGS_SET_DISCREET_MODE = "SETTINGS_SET_DISCREET_MODE",
   SETTINGS_SET_LANGUAGE = "SETTINGS_SET_LANGUAGE",
   SETTINGS_SET_LOCALE = "SETTINGS_SET_LOCALE",
@@ -315,6 +338,10 @@ export type SettingsSetOsThemePayload = Pick<SettingsState, "osTheme">;
 export type SettingsSetCarouselVisibilityPayload = Pick<
   SettingsState,
   "carouselVisibility"
+>;
+export type SettingsSetDismissedDynamicCardsPayload = Pick<
+  SettingsState,
+  "dismissedDynamicCards"
 >;
 export type SettingsSetDiscreetModePayload = Pick<
   SettingsState,

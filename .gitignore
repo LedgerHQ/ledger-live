@@ -1,6 +1,7 @@
 node_modules
 .turbo
 .vscode
+!.vscode/launch.json
 .pnpm-*
 /temp
 .idea

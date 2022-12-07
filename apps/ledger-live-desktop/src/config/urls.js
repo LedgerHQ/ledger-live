@@ -272,6 +272,10 @@ export const urls = {
     SyncError:
       "https://support.ledger.com/hc/en-us/articles/360012207759-Solve-a-synchronization-error?support=true",
     ServiceStatusWarning: "https://status.ledger.com",
+    EConnReset:
+      "https://support.ledger.com/hc/en-us/articles/6793501085981?support=true&utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=error_connect_manager",
+    TronSendTrc20ToNewAccountForbidden:
+      "https://support.ledger.com/hc/en-us/articles/6516823445533--Sending-TRC20-to-a-new-account-won-t-activate-it-message-in-Ledger-Live?support=true",
   },
   compound:
     "https://support.ledger.com/hc/en-us/articles/360017215099?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=compound",

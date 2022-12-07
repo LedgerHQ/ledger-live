@@ -154,6 +154,55 @@ export const acceptUndelegateTransaction: DeviceAction<Transaction, any> =
     ],
   });
 
+export const acceptWithdrawTransaction: DeviceAction<Transaction, any> =
+  deviceActionFlow({
+    steps: [
+      {
+        title: "Receiver",
+        button: "Rr",
+        expectedValue: ({ transaction }) => transaction.recipient,
+      },
+      {
+        title: "Amount",
+        button: "Rr",
+        expectedValue: ({ account }) =>
+          formatCurrencyUnit(account.unit, new BigNumber(0), {
+            showCode: true,
+            disableRounding: true,
+            joinFragmentsSeparator: " ",
+          }).replace(/\s+/g, " "),
+      },
+      {
+        title: "Fee",
+        button: "Rr",
+        expectedValue: ({ account, transaction }) =>
+          formatCurrencyUnit(
+            account.unit,
+            transaction.fees || new BigNumber(50000),
+            {
+              showCode: true,
+              disableRounding: true,
+              joinFragmentsSeparator: " ",
+            }
+          ).replace(/\s+/g, " "),
+      },
+      {
+        title: "Data",
+        button: "Rr",
+      },
+      {
+        title: "Sign",
+        button: "LRlr",
+        final: true,
+      },
+      {
+        title: "Network",
+        button: "Rr",
+        expectedValue: () => "Mainnet",
+      },
+    ],
+  });
+
 export const acceptEsdtTransferTransaction: DeviceAction<Transaction, any> =
   deviceActionFlow({
     steps: [
@@ -238,4 +287,5 @@ export default {
   acceptEsdtTransferTransaction,
   acceptDelegateTransaction,
   acceptUndelegateTransaction,
+  acceptWithdrawTransaction,
 };

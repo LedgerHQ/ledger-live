@@ -123,6 +123,7 @@ export type ElrondTransactionOperation = {
   type: string;
   sender: string;
   receiver: string;
+  value: string;
 };
 
 export type ElrondTransactionAction = {
