@@ -128,8 +128,4 @@ export class DiscoverPage {
 
     return result;
   }
-
-  delay(timeout: number) {
-    return new Promise(resolve => setTimeout(() => resolve("delay complete"), timeout));
-  }
 }
