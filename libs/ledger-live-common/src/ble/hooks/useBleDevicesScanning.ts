@@ -10,9 +10,11 @@ import type {
   DescriptorEventType,
 } from "@ledgerhq/hw-transport";
 import { DeviceId } from "@ledgerhq/types-live";
-import { TransportBleDevice, ScannedDevice, BleError } from "../types";
+import { HwTransportError, HwTransportErrorType } from "@ledgerhq/errors";
+import { log } from "@ledgerhq/logs";
+import { TransportBleDevice, ScannedDevice } from "../types";
 
-export type ScanningBleError = BleError | null;
+export type ScanningBleError = HwTransportError | null;
 
 export type UseBleDevicesScanningResult = {
   scannedDevices: ScannedDevice[];
@@ -21,7 +23,10 @@ export type UseBleDevicesScanningResult = {
 
 export type UseBleDevicesScanningDependencies = {
   bleTransportListen: (
-    observer: TransportObserver<DescriptorEvent<TransportBleDevice | null>>
+    observer: TransportObserver<
+      DescriptorEvent<TransportBleDevice | null>,
+      HwTransportError
+    >
   ) => TransportSubscription;
 };
 
@@ -29,15 +34,23 @@ export type UseBleDevicesScanningOptions = {
   stopBleScanning?: boolean;
   filterByDeviceModelIds?: DeviceModelId[];
   filterOutDevicesByDeviceIds?: DeviceId[];
+  restartScanningTimeoutMs?: number;
 };
 
 const DEFAULT_DEVICE_NAME = "Device";
+const DEFAULT_RESTART_SCANNING_TIMEOUT_MS = 4000;
 
 /**
  * Scans the BLE devices around the user
+ *
+ * Note: if a communication is started with a device, the scanning should be stopped
+ *
  * @param filterByDeviceModelIds An array of device model ids to filter on
  * @param filterOutDevicesByDeviceIds An array of device ids to filter out
  * @param stopBleScanning Flag to stop or continue the scanning
+ * @param restartScanningTimeoutMs When a restart is needed (on some specific errors, or for the first restart
+ * that makes the scanning more resilient to a previously paired device with which a communication was happening),
+ * time in ms after which the restart is actually happening
  * @returns An object containing:
  * - scannedDevices: list of ScannedDevice found by the scanning
  * - scanningBleError: if an error occurred, a BleError, otherwise null
@@ -47,16 +60,19 @@ export const useBleDevicesScanning = ({
   stopBleScanning,
   filterByDeviceModelIds,
   filterOutDevicesByDeviceIds,
+  restartScanningTimeoutMs = DEFAULT_RESTART_SCANNING_TIMEOUT_MS,
 }: UseBleDevicesScanningDependencies &
   UseBleDevicesScanningOptions): UseBleDevicesScanningResult => {
   const [scanningBleError, setScanningBleError] =
     useState<ScanningBleError>(null);
   const [scannedDevices, setScannedDevices] = useState<ScannedDevice[]>([]);
   // To check for duplicates. The ref will persist for the full lifetime of the component
-  // in which the hook is called.
-  // We could use the current value of scannedDevices inside setScannedDevices
-  // but the check would only be done at the end of the process when calling setScannedDevices.
+  // in which the hook is called, and does not re-trigger the hook when being updated.
   const scannedDevicesRef = useRef<ScannedDevice[]>([]);
+  // To stop, call the unsubscribe and cleaning function, and re-run the scanning
+  const [restartScanningNonce, setRestartScanningNonce] = useState<number>(0);
+  // To request a restart of the scanning
+  const [isRestartNeeded, setIsRestartNeeded] = useState<boolean>(true);
 
   useEffect(() => {
     if (stopBleScanning) {
@@ -135,11 +151,17 @@ export const useBleDevicesScanning = ({
             }
           }
         },
-        error: (error: BleError) => {
-          // TODO: we should be sure to have a BleError
-          if (error.errorCode) {
-            setScanningBleError(error);
+        error: (error: HwTransportError) => {
+          log("useBleDevicesScanning:error", `${error.type}: ${error.message}`);
+
+          if (
+            error instanceof HwTransportError &&
+            error.type === HwTransportErrorType.BleScanStartFailed
+          ) {
+            setIsRestartNeeded(true);
           }
+
+          setScanningBleError(error);
         },
       });
 
@@ -147,12 +169,27 @@ export const useBleDevicesScanning = ({
       sub.unsubscribe();
     };
   }, [
+    restartScanningNonce,
     bleTransportListen,
     stopBleScanning,
     filterByDeviceModelIds,
-    setScannedDevices,
     filterOutDevicesByDeviceIds,
   ]);
+
+  // Triggers after a defined time a restart of the scanning if needed
+  useEffect(() => {
+    let timer;
+    if (isRestartNeeded && !stopBleScanning) {
+      timer = setTimeout(() => {
+        setRestartScanningNonce((prev) => prev + 1);
+        setIsRestartNeeded(false);
+      }, restartScanningTimeoutMs);
+    }
+
+    return () => {
+      if (timer) clearTimeout(timer);
+    };
+  }, [isRestartNeeded, restartScanningTimeoutMs, stopBleScanning]);
 
   return {
     scannedDevices,

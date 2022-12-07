@@ -1,9 +1,10 @@
 import { BigNumber } from "bignumber.js";
 import type { CurrenciesData } from "@ledgerhq/types-live";
+import { DustLimit } from "@ledgerhq/errors";
+
 import type { BitcoinAccountRaw, NetworkInfoRaw, Transaction } from "../types";
 import { fromTransactionRaw } from "../transaction";
 import scanAccounts1 from "./bitcoin.scanAccounts.1";
-import { DustLimit } from "@ledgerhq/errors";
 
 const networkInfo: NetworkInfoRaw = {
   family: "bitcoin",
@@ -189,11 +190,60 @@ const dataset: CurrenciesData<Transaction> = {
             warnings: {},
           },
         },
+        {
+          name: "Send Max",
+          transaction: (t): Transaction => {
+            return {
+              ...t,
+              family: "bitcoin",
+              recipient: "BC1QQMXQDRKXGX6SWRVJL9L2E6SZVVKG45ALL5U4FL",
+              amount: new BigNumber(1),
+              useAllAmount: true,
+              feePerByte: new BigNumber(1),
+              networkInfo: {
+                family: "bitcoin",
+                feeItems: {
+                  items: [
+                    {
+                      key: "0",
+                      speed: "high",
+                      feePerByte: new BigNumber(3),
+                    },
+                    {
+                      key: "1",
+                      speed: "standard",
+                      feePerByte: new BigNumber(2),
+                    },
+                    {
+                      key: "2",
+                      speed: "low",
+                      feePerByte: new BigNumber(1),
+                    },
+                  ],
+                  defaultFeePerByte: new BigNumber(1),
+                },
+              },
+              rbf: false,
+              utxoStrategy: {
+                strategy: 0,
+                excludeUTXOs: [],
+              },
+            };
+          },
+          expectedStatus: (account, _, status) => {
+            return {
+              amount: account.spendableBalance.minus(status.estimatedFees),
+              errors: {},
+              warnings: {},
+            };
+          },
+        },
       ],
       raw: bitcoin1,
     },
     {
       raw: bitcoin2,
+      transactions: [],
     },
   ],
 };

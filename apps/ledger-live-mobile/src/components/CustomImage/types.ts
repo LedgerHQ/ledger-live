@@ -1,3 +1,5 @@
+import { useNftMetadata } from "@ledgerhq/live-common/nft/index";
+
 export type ImageDimensions = {
   /** pixel height of the image */
   height: number;
@@ -28,4 +30,11 @@ export type ImageUrl = {
    * e.g: "https://example.com/an_image.png"
    */
   imageUrl: string;
+};
+
+export type GalleryNFT = {
+  /**
+   * NFT parameters that can be used to get its metadata using useNftMetadata
+   */
+  nftMetadataParams: Parameters<typeof useNftMetadata>;
 };

@@ -77,6 +77,10 @@ They all are prefixed by **_ledgerlive://_**
         - *APP_ID* => the url param app id
         - *?params* => the url query params that will be transmitted to the app, you should refer to each apps documentation in order to use them.
 
+- **_custom-image_** 🠒 Custom lock screen flow
+
+  `ledgerlive://custom-image` will redirect to custom lock screen page
+
 **_Testing on android_** in order to test in debug your link run using [**_adb_**](https://developer.android.com/training/app-links/deep-linking#testing-filters)
 
 ```

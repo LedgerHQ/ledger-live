@@ -1,4 +1,5 @@
 import { Probot } from "probot";
+import { upToDate } from "./features/upToDate";
 import { commands, isValidBody, isValidBranchName, isValidUser } from "./tools";
 
 export default (app: Probot) => {
@@ -105,62 +106,6 @@ export default (app: Probot) => {
     });
   });
 
-  // Ensure that the PR is up-to-date
-  app.on(
-    ["pull_request.synchronize", "pull_request.ready_for_review"],
-    async (context) => {
-      const { payload, octokit } = context;
-      const { owner, repo } = context.repo();
-
-      let runId = null;
-
-      try {
-        const prBase = payload.pull_request.base;
-        const prHead = payload.pull_request.head;
-
-        const checkRun = await octokit.checks.create({
-          owner,
-          repo,
-          name: "PR is up-to-date",
-          head_sha: prHead.sha,
-          status: "in_progress",
-        });
-        runId = checkRun.data.id;
-
-        const comparison = await octokit.repos.compareCommitsWithBasehead({
-          owner,
-          repo,
-          basehead: `${prBase.ref}...${prHead.user}:${prHead.ref}`,
-          per_page: 1,
-        });
-
-        const isUpToDate = ["ahead", "identical"].includes(
-          comparison.data.status
-        );
-
-        await octokit.checks.update({
-          owner,
-          repo,
-          check_run_id: runId,
-          status: "completed",
-          conclusion: isUpToDate ? "success" : "failure",
-        });
-      } catch (error) {
-        console.error(error);
-        if (runId) {
-          await octokit.checks.update({
-            owner,
-            repo,
-            check_run_id: runId,
-            status: "completed",
-            conclusion: "failure",
-            output: {
-              title: "Error",
-              summary: (error as Error).message,
-            },
-          });
-        }
-      }
-    }
-  );
+  // Report if PRs are up to date
+  upToDate(app);
 };
