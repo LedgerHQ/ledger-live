@@ -124,12 +124,14 @@
     },
     "exchange" : "兑换",
     "info" : "信息",
-    "connectDevice" : "连接您的设备"
+    "connectDevice" : "连接您的设备",
+    "add" : "添加"
   },
   "devices" : {
     "nanoS" : "Nano S",
     "nanoSP" : "Nano S Plus",
     "nanoX" : "Nano X",
+    "nanoFTS" : "Nano FTS",
     "blue" : "Blue"
   },
   "operation" : {
@@ -178,6 +180,8 @@
   "time" : {
     "minute" : "分钟",
     "minute_plural" : "分钟",
+    "minute_short" : "分钟",
+    "second_short" : "秒",
     "hour" : "小时",
     "hour_plural" : "小时",
     "range" : {
@@ -599,6 +603,12 @@
   "lottieDebugger" : {
     "buttonTitle" : "测试"
   },
+  "storylyDebugger" : {
+    "buttonTitle" : "测试"
+  },
+  "postOnboardingDebugger" : {
+    "buttonTitle" : "测试"
+  },
   "fullNode" : {
     "status" : "状态",
     "connect" : "连接",
@@ -754,7 +764,7 @@
     "settings" : {
       "title" : "编辑账户",
       "advancedLogs" : "高级",
-      "advancedTips" : "这是一个 {{tag}} xpub。将其导入第三方钱包时，请选择相同的衍生模式。",
+      "advancedTips" : "这是一个 {{tag}} xpub 扩展公钥。将其导入第三方钱包时，请选择相同的衍生模式。",
       "accountName" : {
         "title" : "账户名",
         "desc" : "账户描述"
@@ -1125,6 +1135,111 @@
     "desc" : "此操作将隐藏全部 <1><0>{{tokenName}}</0></1> 账户，您可以使用 <3>设置</3> 再次显示这些账户。",
     "hideCTA" : "隐藏代币"
   },
+  "syncOnboarding" : {
+    "connection" : {
+      "searching" : {
+        "title" : "将 {{deviceModelName}} 连接到您的计算机",
+        "connectionTrouble" : "无法连接设备？"
+      },
+      "success" : {
+        "title" : "已连接到 {{ deviceName }}"
+      }
+    },
+    "manual" : {
+      "title" : "设置 {{deviceName}}",
+      "pairedContent" : {
+        "title" : "{{deviceName}} 已连接",
+        "description" : "在 {{deviceName}} 上继续设置",
+        "text" : "在您设置 {{deviceName}} 时，此屏幕将动态变化，向您提供相关信息"
+      },
+      "pinContent" : {
+        "title" : "设置您的识别码",
+        "description" : "您的识别码可以长 4 到 8 位",
+        "text" : "任何可获取您的 {{deviceName}} 和识别码的人都可以访问您的所有加密资产和 NFT 资产。"
+      },
+      "recoveryContent" : {
+        "title" : "恢复短语",
+        "content" : "点按下面的视频，详细了解您的秘密恢复短语"
+      },
+      "softwareCheckContent" : {
+        "title" : "软件检查",
+        "genuineCheck" : {
+          "active" : "正在检查 {{deviceName}}",
+          "completed" : "{{deviceName}} 是正品"
+        },
+        "firmwareUpdate" : {
+          "inactive" : "软件检查",
+          "active" : "检查软件更新",
+          "updateAvailable" : "有可用的软件更新 {{firmwareVersion}}",
+          "recommendation" : "我们建议立即下载更新",
+          "downloadUpdate" : "下载更新",
+          "skipUpdate" : "暂时跳过",
+          "completed" : "软件是最新的"
+        }
+      },
+      "installApplications" : {
+        "title" : "我们建议下载一组默认应用程序。以后可以下载更多",
+        "install" : "安装",
+        "skip" : "我以后再下载",
+        "info" : "{{deviceName}} 上的应用程序用于批准交易。您可以随时添加或删除它们。"
+      },
+      "genuineCheckModal" : {
+        "title" : "真伪检查",
+        "paragraph1" : "我们要确保 {{deviceName}} 为正品，可以安全使用",
+        "paragraph2" : "我们将进行检查，确保设备未被篡改。您需要在 {{deviceName}} 上接受此检查。",
+        "checkDeviceButton" : "检查设备"
+      },
+      "genuineCheckCancelModal" : {
+        "title" : "真伪检查",
+        "paragraph1" : "正品检查已取消",
+        "paragraph2" : "该检查对确保 {{deviceName}} 能够安全使用至关重要。",
+        "checkDeviceButton" : "再次运行检查",
+        "cancelButton" : "以后再说"
+      },
+      "genuineCheckNotGenuineModal" : {
+        "title" : "真伪检查",
+        "paragraph1" : "您的设备不是正品",
+        "paragraph2" : "真伪检查失败",
+        "checkDeviceButton" : "再次运行检查",
+        "cancelButton" : "以后再说"
+      },
+      "genuineCheckAnimationModal" : {
+        "message" : "在 {{deviceName}} 上允许使用管理器"
+      },
+      "helpDrawer" : {
+        "title" : "需要安装手册方面的一些帮助？",
+        "description" : "Lorem Elsass ipsum aliquam bissame Oberschaeffolsheim geht's messti de Bischheim tellus blottkopf, dui sed libero. hopla libero, placerat leo eget Gal.",
+        "docButton" : "转至常见问题解答",
+        "supportButton" : "人工服务"
+      },
+      "troubleshootingDrawer" : {
+        "title" : "USB 连接的故障排除",
+        "description" : "连接到您的设备似乎有问题。不要担心，您可以逐一尝试不同的解决方案，直到您的设备连接上为止！",
+        "fixButton" : "解决这个问题",
+        "closeButton" : "关闭"
+      },
+      "desyncOverlay" : {
+        "errorMessage" : "您的 {{deviceName}} 似乎已断开连接。我们正在尝试重新连接。"
+      },
+      "header" : {
+        "helpButton" : "需要帮助？"
+      }
+    }
+  },
+  "postOnboarding" : {
+    "postOnboardingScreen" : {
+      "title" : "不错。\n一切准备就绪。",
+      "description" : "您的 {{deviceName}} 设置完毕！",
+      "paragraph" : "我们为您准备了一些开始使用的步骤。如果您想自己探索 Ledger Live，请跳过此步骤，您可以随时返回。",
+      "bottomText" : "使用 Ledger Live 安全享受 Web3 之旅。"
+    },
+    "postOnboardingContent" : {
+      "title" : "不错。\n一切准备就绪。",
+      "description" : "以下是您接下来可以执行的操作：",
+      "skipLink" : "跳到应用程序",
+      "skipLinkInDrawer" : "我以后再下载"
+    }
+  },
   "hideNftCollection" : {
     "title" : "隐藏 NFT 藏品",
     "desc" : "此操作将隐藏 <1><0>{{collectionName}}</0></1> 中的全部藏品，您可以使用 <3>设置</3> 再次显示这些藏品。",
@@ -1199,6 +1314,10 @@
       "sign" : {
         "title" : "设备"
       }
+    },
+    "eip712" : {
+      "showFullMessage" : "显示完整消息",
+      "hideFullMessage" : "隐藏完整消息"
     }
   },
   "walletconnect" : {
@@ -1594,7 +1713,10 @@
     "listApps" : "正在检查应用程序依存关系",
     "listAppsDescription" : "请等待，正在确认您是否安装了所有必需的应用程序",
     "swap" : {
-      "notice" : "发送之前请在您的设备上验证互换详情。地址会被安全地交换因此您不必对其进行验证。",
+      "notice" : {
+        "default" : "发送之前请在您的设备上验证互换详情。地址会被安全地交换因此您不必对其进行验证。",
+        "cic" : "在发送之前，请先在您的设备上核实互换详情。CIC 可能需要对某些交易进行额外的验证，从而导致延迟。"
+      },
       "confirm" : "确认互换交易",
       "amountSent" : "发送数额",
       "amountReceived" : "待收数额",
@@ -1944,6 +2066,39 @@
         "tezos" : {
           "text" : "已委托账户收到的数额会被添加到总的质押数额中。若要避免此情况则请选择另一个账户。"
         }
+      },
+      "staking" : {
+        "title" : "赚取{{currencyName}}",
+        "link" : "了解更多",
+        "notShow" : "不要再显示",
+        "footer" : {
+          "dismiss" : "以后再说",
+          "stake" : "使用 {{provider}} 进行权益质押"
+        },
+        "ethereum" : {
+          "title" : "增长您的以太币。立即进行权益质押。",
+          "description" : "使用 Lido 权益质押您的以太币，每天赚取奖励。无锁定期。无最低存款限制。",
+          "kiln" : {
+            "title" : "请不要仅仅长期持有。增长您的以太币。",
+            "description" : "有超过 32 个以太币？不妨使用 Kiln 安全权益质押您的以太币来赚取被动奖励。"
+          }
+        },
+        "cosmos" : {
+          "title" : "增长您的 ATOM。使用 Ledger 验证器进行权益质押。",
+          "description" : "使用可信的 Ledger 验证器权益质押您的 ATOM。您的币仍归您所有，由 Ledger 提供妥善的安全防护。"
+        },
+        "osmo" : {
+          "title" : "增长您的 OSMO。使用 Ledger by Figment 进行权益质押。",
+          "description" : "使用 Ledger by Figment 验证器权益质押您的 OSMO。它收取的佣金最低，而且保证不削减。"
+        },
+        "solana" : {
+          "title" : "增长您的 SOL。使用 Ledger by Figment 进行权益质押。",
+          "description" : "使用 Ledger by Figment 验证器权益质押您的 SOL。您的币仍归您所有，由 Ledger 提供妥善的安全防护。"
+        },
+        "celo" : {
+          "title" : "增长您的 CELO。使用 Ledger by Figment 进行权益质押。",
+          "description" : "使用 Ledger by Figment 验证器权益质押您的 CELO。它保证全面防止削减，由 Ledger 提供妥善的安全防护。"
+        }
       }
     }
   },
@@ -1959,7 +2114,7 @@
       "amount" : {
         "title" : "数额",
         "banner" : "最大可支出数额为",
-        "fees" : "费用",
+        "fees" : "最高预估费用",
         "standard" : "标准",
         "advanced" : "高级",
         "nftQuantity" : "数量"
@@ -1979,11 +2134,17 @@
         "recipientAddress" : "接收方地址",
         "amount" : "数额",
         "fees" : "网络费用",
+        "useMax" : "使用最大值",
         "sendMax" : "发送最大值",
         "rippleTag" : "标签",
         "rippleTagPlaceholder" : "可选",
+        "edit" : "编辑",
         "ethereumGasLimit" : "Gas 限值",
         "ethereumGasPrice" : "Gas 价格",
+        "ethereumMaxFee" : "最高费用 ({{unitName}})",
+        "ethereumPriorityFee" : "最高优先费用 ({{unitName}})",
+        "nextBlock" : "下一个区块：{{nextBaseFee}}",
+        "suggestedPriorityFee" : "建议：{{lowPriorityFee}} - {{highPriorityFee}} {{unitName}}",
         "unitPerByte" : "{{unit}} 每字节",
         "nft" : "NFT",
         "nftQuantity" : "数量"
@@ -3387,6 +3548,7 @@
       "featureFlagsEdit" : "编辑",
       "featureFlagsRestore" : "重置",
       "featureFlagsOverride" : "覆盖",
+      "firebaseProject" : "此版本支持的 Firebase 项目：",
       "addLocalApp" : "添加一个本地应用程序",
       "addLocalAppDesc" : "浏览本地文件并使用本地清单添加本地应用程序",
       "addLocalAppButton" : "浏览",
@@ -3476,6 +3638,22 @@
         "testAnimations" : {
           "title" : "测试 Lottie 动画",
           "description" : "测试 Ledger Live 中使用的所有动画"
+        },
+        "testStories" : {
+          "title" : "测试 Storyly 文章",
+          "description" : "测试 Ledger Live 中使用的所有文章"
+        },
+        "testPostonboarding" : {
+          "title" : "测试新手引导后的功能",
+          "description" : "测试新手引导后的所有功能"
+        },
+        "1559DeactivateGate" : {
+          "title" : "停用 EIP1559 最低优先费用限额",
+          "description" : "这将允许发送交易时没有最低优先费用要求。这可能会导致交易永远停滞在内存池中。"
+        },
+        "1559CustomPriorityLowerGate" : {
+          "title" : "自定义优先费用限额",
+          "description" : "自定义高级 EIP1559 交易允许的预估最低优先费用百分比"
         }
       }
     },
@@ -4815,6 +4993,18 @@
     "GasLessThanEstimate" : {
       "title" : "这可能太低。请增加"
     },
+    "PriorityFeeTooLow" : {
+      "title" : "优先费用低于推荐值"
+    },
+    "PriorityFeeTooHigh" : {
+      "title" : "优先费用高于必要费用。您可能多付了费用"
+    },
+    "MaxFeeTooLow" : {
+      "title" : "最高费用低于推荐值"
+    },
+    "PriorityFeeHigherThanMaxFee" : {
+      "title" : "最高优先费用不能高于最高费用"
+    },
     "UnknownMCU" : {
       "title" : "未知 MCU 版本",
       "description" : "请联系 Ledger 客服"
@@ -4949,6 +5139,9 @@
     "FeeTooHigh" : {
       "title" : "网络费用超过数额的10%"
     },
+    "DustLimit" : {
+      "title" : "金额低于小额资产下限"
+    },
     "SourceHasMultiSign" : {
       "title" : "请禁用多重签名以发送 {{currencyName}}"
     },
@@ -5062,6 +5255,55 @@
     },
     "HederaAddAccountError" : {
       "title" : "您的账户尚未添加。请再次尝试。"
+    },
+    "ImageIncorrectFileTypeError" : {
+      "title" : "从文件加载图片失败。",
+      "description" : "请使用图片再试一次。"
+    },
+    "ImageLoadFromFileError" : {
+      "title" : "从文件加载图片失败",
+      "description" : "请使用另一张图片重试"
+    },
+    "ImageDownloadError" : {
+      "title" : "图片下载失败",
+      "description" : "请使用另一张图片重试"
+    },
+    "ImageMetadataLoadingError" : {
+      "title" : "图片元数据加载失败",
+      "description" : "请使用另一张图片重试"
+    },
+    "ImageTooLargeError" : {
+      "title" : "图片过大",
+      "description" : "请尝试使用较小的图片"
+    },
+    "ImageCropError" : {
+      "title" : "图片裁剪失败",
+      "description" : "请使用另一张图片重试"
+    },
+    "ImageResizeError" : {
+      "title" : "调整图片大小失败",
+      "description" : "请使用另一张图片重试"
+    },
+    "ImagePreviewError" : {
+      "title" : "图片预览失败",
+      "description" : "请使用另一张图片重试"
+    },
+    "ImageProcessingError" : {
+      "title" : "图片处理失败",
+      "description" : "请使用另一张图片重试"
+    },
+    "ImageCommitRefusedOnDevice" : {
+      "title" : "图像提交在设备上被拒绝",
+      "description" : "如果这张图片不合适，您可以使用另一张图片重试。"
+    },
+    "ImageLoadRefusedOnDevice" : {
+      "title" : "图像加载在设备上被拒绝",
+      "description" : "如果这张图片不合适，您可以使用另一张图片重试。"
+    },
+    "LockedDeviceError" : {
+      "title" : "您的设备已经锁定",
+      "description" : "解锁您的设备并重试。",
+      "descriptionWithProductName" : "解锁您的 {{ productName }} 并重试。"
     }
   },
   "cryptoOrg" : {
@@ -5092,5 +5334,42 @@
     "selectAccount" : {
       "title" : "选择账户"
     }
+  },
+  "customImage" : {
+    "title" : "自定义图片",
+    "steps" : {
+      "choose" : {
+        "stepLabel" : "选择一张图片",
+        "description" : "选择要设为 (...) 的图片",
+        "pickFromNftGallery" : "从我的 NFT 画廊中选择",
+        "upload" : "从我的计算机上传"
+      },
+      "adjust" : {
+        "stepLabel" : "调整图片",
+        "rotate" : "旋转"
+      },
+      "contrast" : {
+        "stepLabel" : "选择对比度"
+      },
+      "transfer" : {
+        "stepLabel" : "转移",
+        "uploadAnotherImage" : "上传另一张图片",
+        "allowPreview" : "允许在 {{productName}} 上预览图片",
+        "loadingPicture" : "正在 {{productName}} 上加载图片",
+        "pictureLoaded" : "图片已加载",
+        "imageLoaded" : "图片已加载到 {{productName}}",
+        "confirmPicture" : "在 {{productName}} 上确认",
+        "doThisLater" : "以后再说",
+        "timeDisclaimer" : "可能最多需要 30 秒"
+      }
+    },
+    "postOnboarding" : {
+      "title" : "个性化我的设备",
+      "description" : "通过自定义屏幕",
+      "actionCompletedPopupLabel" : "设备已个性化",
+      "actionCompletedHubTitle" : "那个屏幕看起来很简洁。"
+    },
+    "customImageSet" : "自定义图片集",
+    "finishCTA" : "完成"
   }
 }

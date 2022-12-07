@@ -18,6 +18,7 @@ import { Transaction } from "@ledgerhq/live-common/generated/types";
 import type { EventTrigger, DataOfUser } from "../logic/notifications";
 import type { RatingsHappyMoment, RatingsDataOfUser } from "../logic/ratings";
 import { WalletTabNavigatorStackParamList } from "../components/RootNavigator/types/WalletTabNavigator";
+import { WalletContentCard, AssetContentCard } from "../dynamicContent/types";
 
 // === ACCOUNT STATE ===
 
@@ -97,6 +98,15 @@ export type NotificationsState = {
   isPushNotificationsModalLocked: boolean;
 };
 
+// === DYNAMIC CONTENT STATE ===
+
+export type DynamicContentState = {
+  /** Dynamic content cards displayed in the Wallet Page */
+  walletCards: WalletContentCard[];
+  /** Dynamic content cards displayed in an Asset Page */
+  assetsCards: AssetContentCard[];
+};
+
 // === RATINGS STATE ===
 
 export type RatingsState = {
@@ -170,6 +180,7 @@ export type SettingsState = {
   theme: Theme;
   osTheme: string | null | undefined;
   carouselVisibility: number | Record<string, boolean>;
+  dismissedDynamicCards: string[];
   // number is the legacy type from LLM V2
   discreetMode: boolean;
   language: string;
@@ -227,6 +238,7 @@ export type State = {
   appstate: AppState;
   ble: BleState;
   ratings: RatingsState;
+  dynamicContent: DynamicContentState;
   notifications: NotificationsState;
   swap: SwapStateType;
   walletconnect: WalletConnectState;

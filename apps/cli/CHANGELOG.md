@@ -1,5 +1,39 @@
 # @ledgerhq/live-cli
 
+## 22.4.9
+
+### Patch Changes
+
+- [#1779](https://github.com/LedgerHQ/ledger-live/pull/1779) [`856f49374e`](https://github.com/LedgerHQ/ledger-live/commit/856f49374ec9b49f005676e270acdb81b78879c8) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Introduce new command for demoing the conditional image fetch
+
+- Updated dependencies [[`d10c727430`](https://github.com/LedgerHQ/ledger-live/commit/d10c727430ffece743bbb7e703aaff61f97dacc1), [`856f49374e`](https://github.com/LedgerHQ/ledger-live/commit/856f49374ec9b49f005676e270acdb81b78879c8), [`57b82ad735`](https://github.com/LedgerHQ/ledger-live/commit/57b82ad7350c6368b2d6a731d7b1c52b759516b0), [`77056e3692`](https://github.com/LedgerHQ/ledger-live/commit/77056e369256112188c183823a2c3fabfea2cba8), [`70f00ec916`](https://github.com/LedgerHQ/ledger-live/commit/70f00ec91629c917be13c6937e14ebc7201b231f), [`e43939cfd5`](https://github.com/LedgerHQ/ledger-live/commit/e43939cfd5e3df8888cfe1f0ba95140acd061eea), [`856f49374e`](https://github.com/LedgerHQ/ledger-live/commit/856f49374ec9b49f005676e270acdb81b78879c8), [`3119c17ec3`](https://github.com/LedgerHQ/ledger-live/commit/3119c17ec3966f7dc1780734c016878bab9db722), [`f22d46a006`](https://github.com/LedgerHQ/ledger-live/commit/f22d46a006adc630ccb087808c2290e3ef65cea3)]:
+  - @ledgerhq/live-common@27.8.0
+  - @ledgerhq/errors@6.12.1
+  - @ledgerhq/hw-transport@6.27.8
+  - @ledgerhq/hw-transport-http@6.27.8
+  - @ledgerhq/hw-transport-node-ble@6.27.8
+  - @ledgerhq/hw-transport-node-hid@6.27.8
+  - @ledgerhq/hw-transport-node-speculos@6.27.8
+  - @ledgerhq/hw-app-btc@9.0.1
+  - @ledgerhq/hw-transport-mocker@6.27.8
+
+## 22.4.9-next.0
+
+### Patch Changes
+
+- [#1779](https://github.com/LedgerHQ/ledger-live/pull/1779) [`856f49374e`](https://github.com/LedgerHQ/ledger-live/commit/856f49374ec9b49f005676e270acdb81b78879c8) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Introduce new command for demoing the conditional image fetch
+
+- Updated dependencies [[`d10c727430`](https://github.com/LedgerHQ/ledger-live/commit/d10c727430ffece743bbb7e703aaff61f97dacc1), [`856f49374e`](https://github.com/LedgerHQ/ledger-live/commit/856f49374ec9b49f005676e270acdb81b78879c8), [`57b82ad735`](https://github.com/LedgerHQ/ledger-live/commit/57b82ad7350c6368b2d6a731d7b1c52b759516b0), [`77056e3692`](https://github.com/LedgerHQ/ledger-live/commit/77056e369256112188c183823a2c3fabfea2cba8), [`70f00ec916`](https://github.com/LedgerHQ/ledger-live/commit/70f00ec91629c917be13c6937e14ebc7201b231f), [`e43939cfd5`](https://github.com/LedgerHQ/ledger-live/commit/e43939cfd5e3df8888cfe1f0ba95140acd061eea), [`856f49374e`](https://github.com/LedgerHQ/ledger-live/commit/856f49374ec9b49f005676e270acdb81b78879c8), [`3119c17ec3`](https://github.com/LedgerHQ/ledger-live/commit/3119c17ec3966f7dc1780734c016878bab9db722), [`f22d46a006`](https://github.com/LedgerHQ/ledger-live/commit/f22d46a006adc630ccb087808c2290e3ef65cea3)]:
+  - @ledgerhq/live-common@27.8.0-next.0
+  - @ledgerhq/errors@6.12.1-next.0
+  - @ledgerhq/hw-transport@6.27.8-next.0
+  - @ledgerhq/hw-transport-http@6.27.8-next.0
+  - @ledgerhq/hw-transport-node-ble@6.27.8-next.0
+  - @ledgerhq/hw-transport-node-hid@6.27.8-next.0
+  - @ledgerhq/hw-transport-node-speculos@6.27.8-next.0
+  - @ledgerhq/hw-app-btc@9.0.1-next.0
+  - @ledgerhq/hw-transport-mocker@6.27.8-next.0
+
 ## 22.4.8
 
 ### Patch Changes

@@ -124,12 +124,14 @@
     },
     "exchange" : "Negociar",
     "info" : "Informações",
-    "connectDevice" : "Conecte seu dispositivo"
+    "connectDevice" : "Conecte seu dispositivo",
+    "add" : "Adicionar"
   },
   "devices" : {
     "nanoS" : "Nano S",
     "nanoSP" : "Nano S Plus",
     "nanoX" : "Nano X",
+    "nanoFTS" : "Nano FTS",
     "blue" : "Blue"
   },
   "operation" : {
@@ -178,6 +180,8 @@
   "time" : {
     "minute" : "Minuto",
     "minute_plural" : "Minutos",
+    "minute_short" : "min",
+    "second_short" : "sec",
     "hour" : "Hora",
     "hour_plural" : "Horas",
     "range" : {
@@ -597,6 +601,12 @@
     }
   },
   "lottieDebugger" : {
+    "buttonTitle" : "Testar"
+  },
+  "storylyDebugger" : {
+    "buttonTitle" : "Testar"
+  },
+  "postOnboardingDebugger" : {
     "buttonTitle" : "Testar"
   },
   "fullNode" : {
@@ -1125,6 +1135,111 @@
     "desc" : "Esta ação ocultará todas as contas de <1><0>{{tokenName}}</0></1>, você pode exibi-las novamente usando as <3>Configurações</3>",
     "hideCTA" : "Ocultar Token"
   },
+  "syncOnboarding" : {
+    "connection" : {
+      "searching" : {
+        "title" : "Conecte a {{deviceModelName}} ao seu computador",
+        "connectionTrouble" : "Está tendo problemas para conectar seu dispositivo?"
+      },
+      "success" : {
+        "title" : "Conectado à {{ deviceName }}"
+      }
+    },
+    "manual" : {
+      "title" : "Configurar {{deviceName}}",
+      "pairedContent" : {
+        "title" : "{{deviceName}} está conectada",
+        "description" : "Continuar a configuração em {{deviceName}}",
+        "text" : "Esta tela mudará dinamicamente para fornecer a você informações relevantes enquanto você configura sua {{deviceName}}"
+      },
+      "pinContent" : {
+        "title" : "Definir seu PIN",
+        "description" : "Seu PIN pode conter de 4 a 8 dígitos",
+        "text" : "Qualquer pessoa com acesso à sua {{deviceName}} e ao seu PIN pode também acessar todos os seus criptoativos e NFTs."
+      },
+      "recoveryContent" : {
+        "title" : "Frase de recuperação",
+        "content" : "Toque nos vídeos abaixo para saber mais sobre a sua frase de recuperação secreta"
+      },
+      "softwareCheckContent" : {
+        "title" : "Verificação de software",
+        "genuineCheck" : {
+          "active" : "Verificando {{deviceName}}",
+          "completed" : "Sua {{deviceName}} é autêntica"
+        },
+        "firmwareUpdate" : {
+          "inactive" : "Verificação de software",
+          "active" : "Verificando atualizações de software",
+          "updateAvailable" : "Atualização {{firmwareVersion}} do software disponível",
+          "recommendation" : "Recomendamos que você baixe a atualização agora",
+          "downloadUpdate" : "Baixar Atualização",
+          "skipUpdate" : "Pular por enquanto",
+          "completed" : "O software está atualizado"
+        }
+      },
+      "installApplications" : {
+        "title" : "Recomendamos que você baixe um conjunto padrão de aplicativos. Você pode baixar outros mais tarde",
+        "install" : "Instalar",
+        "skip" : "Farei isso mais tarde",
+        "info" : "Aplicativos da {{deviceName}} são usados para aprovar transações. Você pode adicioná-los ou removê-los a qualquer momento."
+      },
+      "genuineCheckModal" : {
+        "title" : "Verificação de autenticidade",
+        "paragraph1" : "Vamos nos certificar de que sua {{deviceName}} é autêntica e segura para usar",
+        "paragraph2" : "Realizaremos uma verificação para garantir que o seu dispositivo não foi adulterado. Você precisará aceitar isso em sua {{deviceName}}.",
+        "checkDeviceButton" : "Verificar Dispositivo"
+      },
+      "genuineCheckCancelModal" : {
+        "title" : "Verificação de autenticidade",
+        "paragraph1" : "A verificação de autenticidade foi cancelada",
+        "paragraph2" : "Esta verificação é muito importante para garantir que sua {{deviceName}} é segura para usar.",
+        "checkDeviceButton" : "Fazer verificação novamente",
+        "cancelButton" : "Talvez mais tarde"
+      },
+      "genuineCheckNotGenuineModal" : {
+        "title" : "Verificação de autenticidade",
+        "paragraph1" : "Seu dispositivo não é autêntico",
+        "paragraph2" : "Falha na verificação de autenticidade",
+        "checkDeviceButton" : "Fazer verificação novamente",
+        "cancelButton" : "Talvez mais tarde"
+      },
+      "genuineCheckAnimationModal" : {
+        "message" : "Permitir Minha Ledger em {{deviceName}}"
+      },
+      "helpDrawer" : {
+        "title" : "Precisa de ajuda com o seu manual de configuração?",
+        "description" : "Lorem Elsass ipsum aliquam bissame Oberschaeffolsheim geht's messti de Bischheim tellus blottkopf, dui sed libero. hopla libero, placerat leo eget Gal.",
+        "docButton" : "Ir para Perguntas Frequentes",
+        "supportButton" : "Fale com um humano"
+      },
+      "troubleshootingDrawer" : {
+        "title" : "Solução de problemas de conexão USB",
+        "description" : "Parece haver um problema ao conectar seu dispositivo. Não se preocupe, você pode tentar diferentes soluções até que seu dispositivo se conecte!",
+        "fixButton" : "Resolver",
+        "closeButton" : "Fechar"
+      },
+      "desyncOverlay" : {
+        "errorMessage" : "Parece que a conexão com sua {{deviceName}} foi perdida. Estamos tentado reconectar."
+      },
+      "header" : {
+        "helpButton" : "Precisa de ajuda?"
+      }
+    }
+  },
+  "postOnboarding" : {
+    "postOnboardingScreen" : {
+      "title" : "Muito bom. Tudo pronto.",
+      "description" : "Parabéns por configurar sua {{deviceName}}!",
+      "paragraph" : "Preparamos alguns passos para você começar. Se você tiver vontade de explorar o Ledger Live por conta própria, não hesite em pular este passo, você pode sempre voltar a ele.",
+      "bottomText" : "Aproveite sua viagem pela Web3 seguramente com o Ledger Live."
+    },
+    "postOnboardingContent" : {
+      "title" : "Muito bom. Tudo pronto.",
+      "description" : "Aqui está o que você pode fazer a seguir:",
+      "skipLink" : "Pular para o aplicativo.",
+      "skipLinkInDrawer" : "Farei isso mais tarde."
+    }
+  },
   "hideNftCollection" : {
     "title" : "Ocultar coleção de NFT",
     "desc" : "Esta ação ocultará todos os NFTs da coleção <1><0>{{collectionName}}</0></1>. Você pode exibi-los novamente em <3>Configurações</3>",
@@ -1199,6 +1314,10 @@
       "sign" : {
         "title" : "Dispositivo"
       }
+    },
+    "eip712" : {
+      "showFullMessage" : "Mostrar mensagem completa",
+      "hideFullMessage" : "Esconder mensagem completa"
     }
   },
   "walletconnect" : {
@@ -1594,7 +1713,10 @@
     "listApps" : "Verificando dependências do aplicativo",
     "listAppsDescription" : "Aguarde enquanto verificamos se você tem todos os aplicativos necessários",
     "swap" : {
-      "notice" : "Verifique os detalhes da troca no seu dispositivo antes de enviá-la. Os endereços são comunicados com segurança para que você não precise verificá-los.",
+      "notice" : {
+        "default" : "Verifique os detalhes da troca no seu dispositivo antes de enviá-la. Os endereços são comunicados com segurança para que você não precise verificá-los.",
+        "cic" : "Verifique os detalhes da troca no seu dispositivo antes de enviá-la. O CIC pode precisar fazer verificações adicionais para algumas transações, resultando em demora."
+      },
       "confirm" : "Confirmar transação de troca",
       "amountSent" : "Quantia a enviar",
       "amountReceived" : "Quantia a receber",
@@ -1944,6 +2066,39 @@
         "tezos" : {
           "text" : "A quantia recebida em uma conta delegada será adicionada à quantia total em staking. Se quiser evitar isso, escolha outra conta."
         }
+      },
+      "staking" : {
+        "title" : "Ganhe {{currencyName}}",
+        "link" : "Saiba Mais",
+        "notShow" : "Não mostrar isto novamente",
+        "footer" : {
+          "dismiss" : "Agora não",
+          "stake" : "Aplicar com {{provider}}"
+        },
+        "ethereum" : {
+          "title" : "Aumente seus ETH. Faça staking agora.",
+          "description" : "Faça staking de Ethereum com Lido e ganhe recompensas diariamente. Sem período de bloqueio. Sem depósito mínimo.",
+          "kiln" : {
+            "title" : "Não se limite ao HODL. Aumente seus ETH.",
+            "description" : "Tem mais do que 32 ETH? Receba recompensas passivas fazendo staking seguro dos seus ETH com Kiln."
+          }
+        },
+        "cosmos" : {
+          "title" : "Aumente seus ATOM. Faça staking com o validador da Ledger.",
+          "description" : "Faça staking de ATOM com o validador confiável da Ledger. As suas moedas continuam sendo suas, suportadas pela segurança impenetrável da Ledger."
+        },
+        "osmo" : {
+          "title" : "Aumente seu OSMO. Faça staking com a Ledger by Figment.",
+          "description" : "Faça staking dos seus OSMO com o validador Ledger by Figment. Ela oferece a menor taxa de comissão e uma garantia contra cortes!"
+        },
+        "solana" : {
+          "title" : "Aumente seus SOL. Faça staking com a Ledger by Figment.",
+          "description" : "Faça staking dos seus SOL com o validador Ledger by Figment. As suas moedas continuam sendo suas, suportadas pela segurança impenetrável da Ledger."
+        },
+        "celo" : {
+          "title" : "Aumente seus CELO. Faça staking com a Ledger by Figment.",
+          "description" : "Faça staking dos seus CELO com o validador Ledger by Figment. Ele garante cobertura completa contra cortes, com proteção da pela segurança impenetrável da Ledger."
+        }
       }
     }
   },
@@ -1959,7 +2114,7 @@
       "amount" : {
         "title" : "Quantia",
         "banner" : "Quantia máxima a ser gasta é",
-        "fees" : "Taxas",
+        "fees" : "Taxa máxima estimada",
         "standard" : "Padrão",
         "advanced" : "Avançado",
         "nftQuantity" : "Quantidade"
@@ -1979,11 +2134,17 @@
         "recipientAddress" : "Endereço do destinatário",
         "amount" : "Quantia",
         "fees" : "Taxas de rede",
+        "useMax" : "Usar Máximo",
         "sendMax" : "Enviar Máximo",
         "rippleTag" : "Etiqueta",
         "rippleTagPlaceholder" : "Opcional",
+        "edit" : "Editar",
         "ethereumGasLimit" : "Limite de gas",
         "ethereumGasPrice" : "Preço do gás",
+        "ethereumMaxFee" : "Taxa máxima ({{unitName}})",
+        "ethereumPriorityFee" : "Taxa de Prioridade Máxima ({{unitName}})",
+        "nextBlock" : "Próximo bloco: {{nextBaseFee}}",
+        "suggestedPriorityFee" : "Sugerido {{lowPriorityFee}} - {{highPriorityFee}} {{unitName}}",
         "unitPerByte" : "{{unit}} por byte",
         "nft" : "NFT",
         "nftQuantity" : "Quantidade"
@@ -3387,6 +3548,7 @@
       "featureFlagsEdit" : "Editar",
       "featureFlagsRestore" : "Restaurar",
       "featureFlagsOverride" : "Sobrepor",
+      "firebaseProject" : "Firebase project targeted by this build:",
       "addLocalApp" : "Adicionar um aplicativo local",
       "addLocalAppDesc" : "Navegue por arquivos locais e adicione um aplicativo local usando um manifesto local",
       "addLocalAppButton" : "Navegar",
@@ -3476,6 +3638,22 @@
         "testAnimations" : {
           "title" : "Testar animações Lottie",
           "description" : "Testar todas as animações usadas no Ledger Live"
+        },
+        "testStories" : {
+          "title" : "Testar stories do Storyly",
+          "description" : "Testar todos os stories usadas no Ledger Live"
+        },
+        "testPostonboarding" : {
+          "title" : "Testar pós-introdução",
+          "description" : "Testar todos os recursos pós-introdução"
+        },
+        "1559DeactivateGate" : {
+          "title" : "Desativar portão da taxa de prioridade mínima EIP1559",
+          "description" : "Isso permitirá que a transação seja enviada sem que qualquer taxa de prioridade mínima seja esperada. Isso pode fazer com que uma transação fique presa na mempool para sempre."
+        },
+        "1559CustomPriorityLowerGate" : {
+          "title" : "Portão da taxa de prioridade personalizada",
+          "description" : "Personalize a porcentagem da nossa taxa de prioridade mínima estimada permitida para uma transação EIP1559 avançada"
         }
       }
     },
@@ -4815,6 +4993,18 @@
     "GasLessThanEstimate" : {
       "title" : "Isto pode ser baixo demais Por favor, aumente"
     },
+    "PriorityFeeTooLow" : {
+      "title" : "A taxa de prioridade é mais baixa do que a quantia recomendada"
+    },
+    "PriorityFeeTooHigh" : {
+      "title" : "A taxa de prioridade é mais alta do que o necessário. Você pode estar pagando mais que o necessário"
+    },
+    "MaxFeeTooLow" : {
+      "title" : "A taxa máxima é mais baixa do que o valor recomendado"
+    },
+    "PriorityFeeHigherThanMaxFee" : {
+      "title" : "A taxa de prioridade máxima não pode ser maior do que a taxa máxima"
+    },
     "UnknownMCU" : {
       "title" : "Versão de MCU desconhecida",
       "description" : "Entre em contato com o Suporte Ledger"
@@ -4949,6 +5139,9 @@
     "FeeTooHigh" : {
       "title" : "As taxas de rede estão acima de 10% da quantia"
     },
+    "DustLimit" : {
+      "title" : "Quantia menor do que o limite de pó"
+    },
     "SourceHasMultiSign" : {
       "title" : "Desative a assinatura múltipla para enviar {{currencyName}}"
     },
@@ -5062,6 +5255,55 @@
     },
     "HederaAddAccountError" : {
       "title" : "Sua conta não foi adicionada. Tente Novamente."
+    },
+    "ImageIncorrectFileTypeError" : {
+      "title" : "Falha no carregamento da imagem do arquivo.",
+      "description" : "Tente novamente com uma imagem."
+    },
+    "ImageLoadFromFileError" : {
+      "title" : "Falha no carregamento da imagem do arquivo",
+      "description" : "Tente novamente com outra imagem"
+    },
+    "ImageDownloadError" : {
+      "title" : "Falha m baixar a imagem",
+      "description" : "Tente novamente com outra imagem"
+    },
+    "ImageMetadataLoadingError" : {
+      "title" : "Falha no carregamento dos metadados da imagem",
+      "description" : "Tente novamente com outra imagem"
+    },
+    "ImageTooLargeError" : {
+      "title" : "Imagem muito grande",
+      "description" : "Tente com uma imagem menor"
+    },
+    "ImageCropError" : {
+      "title" : "Falha no corte da imagem",
+      "description" : "Tente novamente com outra imagem"
+    },
+    "ImageResizeError" : {
+      "title" : "Falha no redimensionamento da imagem",
+      "description" : "Tente novamente com outra imagem"
+    },
+    "ImagePreviewError" : {
+      "title" : "Falha na pré-visualização da imagem",
+      "description" : "Tente novamente com outra imagem"
+    },
+    "ImageProcessingError" : {
+      "title" : "Falha no processamento da imagem",
+      "description" : "Tente novamente com outra imagem"
+    },
+    "ImageCommitRefusedOnDevice" : {
+      "title" : "Commit de imagem recusado no dispositivo (TODO: final wording)",
+      "description" : "Se esta imagem não era a mais adequada, você pode tentar novamente com outra imagem."
+    },
+    "ImageLoadRefusedOnDevice" : {
+      "title" : "Carregamento de imagem recusada no dispositivo (TODO: final wording)",
+      "description" : "Se esta imagem não era a mais adequada, você pode tentar novamente com outra imagem."
+    },
+    "LockedDeviceError" : {
+      "title" : "Seu dispositivo está bloqueado",
+      "description" : "Desbloqueie seu dispositivo e tente novamente.",
+      "descriptionWithProductName" : "Desbloqueie sua {{ productName }} e tente novamente."
     }
   },
   "cryptoOrg" : {
@@ -5092,5 +5334,42 @@
     "selectAccount" : {
       "title" : "escolher conta"
     }
+  },
+  "customImage" : {
+    "title" : "Imagem personalizada",
+    "steps" : {
+      "choose" : {
+        "stepLabel" : "Escolha uma imagem",
+        "description" : "Escolha uma imagem para definir como (...)",
+        "pickFromNftGallery" : "Selecionar na minha galeria de NFTs",
+        "upload" : "Carregar do meu computador"
+      },
+      "adjust" : {
+        "stepLabel" : "Ajustar imagem",
+        "rotate" : "Girar"
+      },
+      "contrast" : {
+        "stepLabel" : "Escolher contraste"
+      },
+      "transfer" : {
+        "stepLabel" : "Transferência",
+        "uploadAnotherImage" : "Enviar outra imagem",
+        "allowPreview" : "Permitir a visualização da imagem em {{productName}}",
+        "loadingPicture" : "Carregando imagem em {{productName}}",
+        "pictureLoaded" : "Imagem carregada",
+        "imageLoaded" : "Imagem carregada em {{productName}}",
+        "confirmPicture" : "Confirme em {{productName}}",
+        "doThisLater" : "Talvez mais tarde",
+        "timeDisclaimer" : "Isso pode demorar até 30 segundos"
+      }
+    },
+    "postOnboarding" : {
+      "title" : "Personalizar meu dispositivo",
+      "description" : "Customizando a tela",
+      "actionCompletedPopupLabel" : "Dispositivo personalizado",
+      "actionCompletedHubTitle" : "Essa tela ficou demais."
+    },
+    "customImageSet" : "Imagem personalizada definida",
+    "finishCTA" : "Finalizar"
   }
 }

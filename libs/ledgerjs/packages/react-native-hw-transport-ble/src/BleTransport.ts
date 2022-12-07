@@ -9,14 +9,15 @@ import {
   BleManager,
   ConnectionPriority,
   BleErrorCode,
+  BleError,
 } from "react-native-ble-plx";
 import {
   getBluetoothServiceUuids,
   getInfosForServiceUuid,
 } from "@ledgerhq/devices";
 import type { DeviceModel } from "@ledgerhq/devices";
-import { sendAPDU } from "@ledgerhq/devices/lib/ble/sendAPDU";
-import { receiveAPDU } from "@ledgerhq/devices/lib/ble/receiveAPDU";
+import { sendAPDU } from "@ledgerhq/devices/ble/sendAPDU";
+import { receiveAPDU } from "@ledgerhq/devices/ble/receiveAPDU";
 import { log } from "@ledgerhq/logs";
 import { Observable, defer, merge, from, of, throwError } from "rxjs";
 import {
@@ -32,6 +33,8 @@ import {
   TransportError,
   DisconnectedDeviceDuringOperation,
   PairingFailed,
+  HwTransportError,
+  HwTransportErrorType,
 } from "@ledgerhq/errors";
 import type { Device, Characteristic } from "./types";
 import { monitorCharacteristic } from "./monitorCharacteristic";
@@ -339,11 +342,12 @@ export default class BluetoothTransport extends Transport {
    * Scan for bluetooth Ledger devices
    */
   static listen(
-    observer: TransportObserver<DescriptorEvent<Device>>
+    observer: TransportObserver<DescriptorEvent<Device>, HwTransportError>
   ): TransportSubscription {
     log("ble-verbose", "listen...");
+
     let unsubscribed;
-    // $FlowFixMe
+
     const stateSub = bleManager.onStateChange(async (state) => {
       if (state === "PoweredOn") {
         stateSub.remove();
@@ -362,7 +366,7 @@ export default class BluetoothTransport extends Transport {
           null,
           (bleError, device) => {
             if (bleError) {
-              observer.error(bleError);
+              observer.error(mapBleErrorToHwTransportError(bleError));
               unsubscribe();
               return;
             }
@@ -543,3 +547,26 @@ export default class BluetoothTransport extends Transport {
     }
   }
 }
+
+const bleErrorToHwTransportError = new Map([
+  [BleErrorCode.ScanStartFailed, HwTransportErrorType.BleScanStartFailed],
+  [
+    BleErrorCode.LocationServicesDisabled,
+    HwTransportErrorType.BleLocationServicesDisabled,
+  ],
+  [
+    BleErrorCode.BluetoothUnauthorized,
+    HwTransportErrorType.BleBluetoothUnauthorized,
+  ],
+]);
+
+const mapBleErrorToHwTransportError = (
+  bleError: BleError
+): HwTransportError => {
+  const message = `${bleError.message}. Origin: ${bleError.errorCode}`;
+
+  const inferedType = bleErrorToHwTransportError.get(bleError.errorCode);
+  const type = !inferedType ? HwTransportErrorType.Unknown : inferedType;
+
+  return new HwTransportError(type, message);
+};

@@ -70,7 +70,9 @@ device: transport specific device info
 
 ### Observer
 
-Type: Readonly<{next: function (event: Ev): any, error: function (e: any): any, complete: function (): any}>
+Observer generic type, following the Observer pattern
+
+Type: Readonly<{next: function (event: EventType): any, error: function (e: EventError): any, complete: function (): any}>
 
 ### Transport
 

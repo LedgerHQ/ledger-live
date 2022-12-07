@@ -2184,6 +2184,9 @@
     "title": "Release notes",
     "version": "Ledger Live {{versionNb}}"
   },
+  "troubleshootNetwork": {
+    "title": "Troubleshoot networking"
+  },
   "systemLanguageAvailable": {
     "title": "Change your app's language?",
     "description": {
@@ -2283,6 +2286,9 @@
     }
   },
   "tron": {
+    "receive": {
+      "newAddressTRC20": "You first need to send at least 0.1 TRX to this address to activate it."
+    },
     "voting": {
       "emptyState": {
         "description": "You can now earn rewards by freezing and voting.",
@@ -3750,6 +3756,11 @@
       "desc": "Saving Ledger Live logs may be needed for troubleshooting purposes.",
       "btn": "Save"
     },
+    "troubleshootNetwork": {
+      "title": "Troubleshoot networking",
+      "desc": "Run a checklist to assess networking conditions for troubleshooting purposes.",
+      "btn": "Troubleshoot"
+    },
     "accounts": {
       "hideEmptyTokens": {
         "title": "Hide empty token accounts",
@@ -4907,6 +4918,10 @@
     "NotEnoughGas": {
       "title": "The parent account balance is insufficient for network fees"
     },
+    "OperatingSystemOutdated": {
+      "title": "Your Operating System version is outdated",
+      "description": "Please upgrade your operating system and retry. You can check the article below to understand why Ledger Live is not supported on your current operating system version."
+    },
     "PasswordsDontMatch": {
       "title": "The Passwords don't match",
       "description": "Please try again"
@@ -5149,7 +5164,7 @@
       "title": "Amount to freeze cannot be lower than 1"
     },
     "TronSendTrc20ToNewAccountForbidden": {
-      "title": "Sending TRC20 to a new account won't activate it",
+      "title": "You first need to send at least 0.1 TRX to this address to enable TRC20 token reception.",
       "description": "The recipient account must be activated prior to sending TRC20 to it. Send either TRX or TRC10 to an account to activate it."
     },
     "TronUnexpectedFees": {

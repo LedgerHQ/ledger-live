@@ -113,7 +113,7 @@
 | lisk | LSK | NO | lisk |
 | æternity | AE | NO | aeternity |
 
-## Tokens (10677)
+## Tokens (10676)
 | parent currency | ticker | contract | name | status | ledger id |
 |--|--|--|--|--|--|
 | Algorand | ARCC | MESEJMPXKL7YUWEQGNRCKSLMQDKHOHWIZ3RBWP7BV4JDMUJXFUVQZWUBJM | Asia Reserve Currency Coin | countervalues disabled | algorand/asa/163650 |
@@ -990,7 +990,7 @@
 | Cardano | GMBL | 2b0a04a7b60132b1805b296c7fcb3b217ff14413991bf76f72663c3067696d62616c | gimbal | countervalues disabled | cardano/native/2b0a04a7b60132b1805b296c7fcb3b217ff14413991bf76f72663c3067696d62616c |
 | Cardano | purrADA | 97747aa3c33fdfe4b5faa7bb8b4534932c6d980cb13c14c5a547e7ca70757272414441 | purrADA | countervalues disabled | cardano/native/97747aa3c33fdfe4b5faa7bb8b4534932c6d980cb13c14c5a547e7ca70757272414441 |
 | Cardano | SPACE | d894897411707efa755a76deb66d26dfd50593f2e70863e1661e98a07370616365636f696e73 | spacecoins | countervalues disabled | cardano/native/d894897411707efa755a76deb66d26dfd50593f2e70863e1661e98a07370616365636f696e73 |
-| Cardano (Testnet) | tToken | 581684861359b6d4d00594073a9aa4223c6fc24d24da05e1b34fb865544553545f544f4b454e | TEST_TOKEN | countervalues disabled | cardano_testnet/native/581684861359b6d4d00594073a9aa4223c6fc24d24da05e1b34fb865544553545f544f4b454e |
+| Cardano (Testnet) | tToken | 47be64fcc8a7fe5321b976282ce4e43e4d29015f6613cfabcea28eab54657374 | TEST_TOKEN | countervalues disabled | cardano_testnet/native/47be64fcc8a7fe5321b976282ce4e43e4d29015f6613cfabcea28eab54657374 |
 | Elrond | MEX | erd1qqqqqqqqqqqqqqqpqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqzllls8a5w6u | MEX |  | elrond/esdt/4d45582d343535633537 |
 | Elrond | USDC | erd1qqqqqqqqqqqqqqqpqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqzllls8a5w6u | WrappedUSDC |  | elrond/esdt/555344432d633736663166 |
 | Elrond | RIDE | erd1qqqqqqqqqqqqqqqpqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqzllls8a5w6u | holoride |  | elrond/esdt/524944452d376431386539 |
@@ -9723,7 +9723,6 @@
 | Tron | SEED | TEUBykq4STvu27fsGEQGrPwpdaWuDgmkSL | SEED | delisted, countervalues disabled | tron/trc10/1001877 |
 | Tron | TRX | TFE3TW7P5Y1nWdMf2bMk14M8eS4kTjr8eH | SEED | delisted, countervalues disabled | tron/trc10/1001873 |
 | Tron | SEED | TGzz8gjYiYRqpfmDwnLxfgPuLVNmpCswVp | SEED | delisted, countervalues disabled | tron/trc10/1000001 |
-| Tron | SEED | TBwoSTyywvLrgjSgaatxrBhxt3DGpVuENh | SEED | countervalues disabled | tron/trc20/TBwoSTyywvLrgjSgaatxrBhxt3DGpVuENh |
 | Tron | SEGG | TJEDEi1hQTGVGzrqyvBssV46tbSv23cP2W | SEEDEGG | delisted, countervalues disabled | tron/trc10/1001284 |
 | Tron | SEED | TZ6dgQ8UU2Pw1RXKcduwCRi5otVQwG1XCQ | SEEDGerminator | delisted, countervalues disabled | tron/trc10/1001465 |
 | Tron | SEEDR | TDcF4aR8Jp1UvSvXti9gcmRvuE7pGe72r5 | SEEDR | delisted, countervalues disabled | tron/trc10/1001599 |

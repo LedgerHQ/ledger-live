@@ -30,7 +30,7 @@ const signOperation = ({
     Observable.create((o) => {
       async function main() {
         const { currency } = account;
-        const hwApp = new Btc(transport);
+        const hwApp = new Btc({ transport, currency: currency.id });
         const walletAccount = getWalletAccount(account);
 
         log("hw", `signTransaction ${currency.id} for account ${account.id}`);

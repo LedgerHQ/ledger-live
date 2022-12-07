@@ -10,7 +10,7 @@ export function Max({ swapTx }: { swapTx: SwapTransactionType }) {
     <Flex alignSelf="flex-end" flexDirection="row" alignItems="center">
       <Flex flexDirection="row" alignItems="center" paddingY={4}>
         <Text variant="small" paddingRight={2}>
-          {t("transfer.swap2.form.amount.sendMax")}
+          {t("transfer.swap2.form.amount.useMax")}
         </Text>
 
         <Switch
