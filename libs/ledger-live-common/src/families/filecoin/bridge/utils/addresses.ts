@@ -2,6 +2,7 @@ import blake from "blakejs";
 import base32Decode from "base32-decode";
 import BN from "bn.js";
 
+// @ts-ignore
 import leb from "leb128";
 
 export type ValidateAddressResult =
