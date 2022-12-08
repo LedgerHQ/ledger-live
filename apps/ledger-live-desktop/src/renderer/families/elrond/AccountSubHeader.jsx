@@ -72,8 +72,8 @@ const AccountSubHeader = () => {
       <AccountSubHeaderDrawer
         isOpen={isDrawerOpen}
         closeDrawer={closeDrawer}
-        team="Elrond"
-        family="Elrond"
+        team="MultiversX"
+        family="MultiversX"
       />
     </Card>
   );
