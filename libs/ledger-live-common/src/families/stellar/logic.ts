@@ -3,7 +3,6 @@ import StellarSdk, { ServerApi } from "stellar-sdk";
 import { findSubAccountById } from "../../account";
 import type { CacheRes } from "../../cache";
 import { makeLRUCache } from "../../cache";
-import { StellarBurnAddressError } from "./errors";
 import type {
   Account,
   Operation,
