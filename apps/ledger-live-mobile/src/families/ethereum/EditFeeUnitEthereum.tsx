@@ -80,7 +80,7 @@ export default function EditFeeUnitEthereum({
 
   return (
     <View>
-      <View style={[styles.sliderContainer, { backgroundColor: colors.card }]}>
+      <View style={[styles.sliderContainer]}>
         <View style={styles.feeHeader}>
           <LText style={styles.feeLabel} semiBold>
             {t(title)}
