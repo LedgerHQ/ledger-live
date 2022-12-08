@@ -5,7 +5,7 @@ import CardB from "../../../src/components/Cards/CardB";
 import CardD from "../../../src/components/Cards/CardD";
 import Flex from "../../../src/components/Layout/Flex";
 import { text, select, number } from "@storybook/addon-knobs";
-import { descriptionCardA, descriptionCardB } from "./descriptionsCards";
+import { descriptionCardA, descriptionCardB, descriptionCardD } from "./descriptionsCards";
 
 const CardAStory = () => {
   const variant = select("variant", ["purple", "red"], undefined);
@@ -131,7 +131,7 @@ storiesOf((story) =>
       docs: {
         title: "Card D",
         description: {
-          component: descriptionCardB,
+          component: descriptionCardD,
         },
       },
     }),

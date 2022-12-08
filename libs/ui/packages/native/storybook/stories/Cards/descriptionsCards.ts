@@ -94,3 +94,45 @@ const onPressDismiss = ()=> console.log("DISMISS")
 };
 \`\`\`
 `;
+
+export const descriptionCardD = `
+### A simple content card D.
+
+This simple card implementation component allows to display specific content for users
+
+## Usage
+
+
+### Import  
+\`\`\`ts
+
+import { CardD } from "@ledgerhq/native-ui"
+\`\`\`
+
+
+### Props 
+\`\`\`ts
+type CardProps = TouchableOpacityProps & {
+  tag?: string;
+  title?: string;
+  imageUrl?: string;
+  onClickCard?: () => void;
+};
+
+\`\`\`
+
+### Integration 
+
+\`\`\`ts
+
+const MyCard = (): JSX.Element => {
+  return (
+    <CardD
+      tag="Article" 
+      title="Learn how to stake?" 
+      imageUrl="https://www.cointribune.com/app/uploads/2020/12/LEDGER-Nano-X.jpg?nowebp" 
+    />
+  );
+};
+\`\`\`
+`;
