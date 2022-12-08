@@ -101,6 +101,13 @@ const hedera: AppSpec<Transaction> = {
           updates: [{ recipient }, { useAllAmount: true }],
         };
       },
+      test: ({ account, accountBeforeTransaction, operation }) => {
+        botTest("Account balance should have decreased", () => {
+          expect(account.balance.toNumber()).toBeLessThanOrEqual(
+            accountBeforeTransaction.balance.minus(operation.value).toNumber()
+          );
+        });
+      },
     },
     {
       name: "Memo",
@@ -130,6 +137,7 @@ const hedera: AppSpec<Transaction> = {
           expect(transaction.memo).toBe(memoTestMessage)
         );
       },
+      testDestination: genericTestDestination,
     },
   ],
 };
