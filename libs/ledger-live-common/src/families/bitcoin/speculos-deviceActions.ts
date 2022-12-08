@@ -10,8 +10,9 @@ export const acceptTransaction: DeviceAction<Transaction, any> =
         title: "Amount",
         button: "Rr",
         ignoreAssertionFailure: true,
-        expectedValue: ({ account, status }) =>
-          formatDeviceAmount(account.currency, status.amount),
+        expectedValue: ({ account, status }) => {
+          return formatDeviceAmount(account.currency, status.amount);
+        },
       },
       {
         title: "Fees",
