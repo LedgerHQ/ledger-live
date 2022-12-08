@@ -11,7 +11,7 @@ import { withDevice } from "../../hw/deviceAccess";
 /**
  * Serialize a Ledger Live transaction into an hex string
  */
-const getSerializedTransaction = async (
+export const getSerializedTransaction = async (
   account: Account,
   tx: EvmTransaction,
   signature?: Partial<ethers.Signature>
@@ -20,10 +20,8 @@ const getSerializedTransaction = async (
     account,
     tx
   );
-  const unsignedEthersTransaction = transactionToEthersTransaction(
-    unsignedTransaction,
-    account
-  );
+  const unsignedEthersTransaction =
+    transactionToEthersTransaction(unsignedTransaction);
 
   return ethers.utils.serializeTransaction(
     unsignedEthersTransaction,
