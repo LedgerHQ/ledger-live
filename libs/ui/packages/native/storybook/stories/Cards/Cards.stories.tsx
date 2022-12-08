@@ -5,7 +5,11 @@ import SideImageCard from "../../../src/components/Cards/SideImageCard";
 import NotificationCard from "../../../src/components/Cards/NotificationCard";
 import Flex from "../../../src/components/Layout/Flex";
 import { text, select, number, boolean } from "@storybook/addon-knobs";
-import { descriptionFullBackgroundCard, descriptionSideImageCard, descriptionNotificationCard } from "./descriptionsCards";
+import {
+  descriptionFullBackgroundCard,
+  descriptionSideImageCard,
+  descriptionNotificationCard,
+} from "./descriptionsCards";
 
 const FullBackgroundCardStory = () => {
   const variant = select("variant", ["purple", "red"], undefined);
