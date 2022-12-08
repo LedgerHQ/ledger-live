@@ -2,6 +2,7 @@ import { storiesOf } from "../storiesOf";
 import React from "react";
 import CardA from "../../../src/components/Cards/CardA";
 import CardB from "../../../src/components/Cards/CardB";
+import CardD from "../../../src/components/Cards/CardD";
 import Flex from "../../../src/components/Layout/Flex";
 import { text, select, number } from "@storybook/addon-knobs";
 import { descriptionCardA, descriptionCardB } from "./descriptionsCards";
@@ -77,6 +78,37 @@ const CardBStory = () => {
   );
 };
 
+const CardDStory = () => {
+  const tag = text("tag", "Promo");
+  const title = text(
+    "title",
+    "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam tellus risus, pretium a nulla sit amet, porta sollicitudin tortor.",
+  );
+
+  const imageUrl = select(
+    "url Image",
+    [
+      "https://s3-alpha-sig.figma.com/img/c612/0964/8542620853157378d404f6a35813545b?Expires=1671408000&Signature=TmzxWg0esXtZh5wr1vGqx9zTirE~TNxSli119uSj7PREAAYyj-B1LBMSwy33hORgayqNY4dCdSTCM7nYPRo0scgVJgXfUM1EawnSwOrQtvTO6Il~QGhhTmIAxtrcE2tWiSpwToQYZBpCk2hzIoB5GkLxMvrfDwzBHx8bR1UWeFskRu0QeMfbbww2~7tBL6w4de~D6PCd5zh9dEw-TL~vyhO43~KJMJBUVqk5zjbqI~SYkf-rXff-5T~59o3avSVapsWuleTem02XPShdvH8-FIS1BVQce-WIry59bdVy7WQpniLJYffeSpOqKXb5pQw6zRioJjBHBr-Cn~eftv4c7A__&Key-Pair-Id=APKAINTVSUGEWH5XD5UA",
+      "https://s3-alpha-sig.figma.com/img/0f07/c648/73ebeffc083aac935ae4fe33f6f8fd05?Expires=1671408000&Signature=Ctq2rZ5Bh2eDORA1Oz2c4WW94X-gn8tGBsRo2xP2TnRwPjJDTdK05F-nEfqtlelwI9KLLAV3LID3phu0k9tca1bUVreirf2tBrwZ4ZePtg5z3fHsGllelCsd9B2TQGioNpS~8Zskx4LUoP6SvRsLbIAuFnhfPQLTuM02sCjxfE5sLefDqTNF4L8hH0rFr46t--zibS~UAJCZAsP0i3FzIGgEroRrRdtCl7VvuL40oLT-wQhca-4K6-~VYk9vs07hfsNCeCivZQmeFX1ZhDFE0ADapBW8S~PKWc8KaKMoHBRE~CdZFt7y6m-Uc3lIB1xFWk-zto1SzVzfvHC~ucZyGw__&Key-Pair-Id=APKAINTVSUGEWH5XD5UA",
+      "https://s3-alpha-sig.figma.com/img/7c7b/64c2/62088b7b9e550eea12208a501fd9d57d?Expires=1671408000&Signature=KV8ZedhcFA1oh8gntmHo3j9gtsg1kgJcpbIWDutlJ3dyewDi2fCocWBzHZoMiFfeZSQyIcnRPYJI5hxtcVy-48naoBrmTyxw7QCokAK0LZ4-Ts3h8LAPRMFd4E4-6q3Gp9vDdkIoct89BeXBFPmuLAAZ5dfGOoKU~sKLbw1KZhDHlRqFBlzaKwkbEljHD5~DmLLAmprbkG~2u1kbEPH7X4Jd0yrH16-PEhF6zN7o2yESbtN~~uhq--kFtCBXZbv~67g0JZdzh6t7cO-vzH3qxCYYzE5NTPQTgZdlkmIvh9DFsdJjHcO5wlAMlvm0SijPIqYmbdLGGU6hGj-99KL-fw__&Key-Pair-Id=APKAINTVSUGEWH5XD5UA",
+    ],
+    "",
+  );
+
+  return (
+    <Flex
+      backgroundColor={"primary.c20"}
+      height={300}
+      width={400}
+      alignItems="center"
+      justifyContent={"center"}
+      p={"16px"}
+    >
+      <CardD tag={tag} title={title} imageUrl={imageUrl?.replace(/&amp;/g, "&")} />
+    </Flex>
+  );
+};
+
 storiesOf((story) =>
   story("Cards", module)
     .add("Card A", CardAStory, {
@@ -90,6 +122,14 @@ storiesOf((story) =>
     .add("Card B", CardBStory, {
       docs: {
         title: "Card B",
+        description: {
+          component: descriptionCardB,
+        },
+      },
+    })
+    .add("Card D", CardDStory, {
+      docs: {
+        title: "Card D",
         description: {
           component: descriptionCardB,
         },
