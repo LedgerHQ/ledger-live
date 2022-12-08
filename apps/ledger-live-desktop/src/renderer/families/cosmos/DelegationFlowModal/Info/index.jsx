@@ -39,11 +39,13 @@ export default function CosmosEarnRewardsInfoModal({ name, account, parentAccoun
     <EarnRewardsInfoModal
       name={name}
       onNext={onNext}
-      description={t("cosmos.delegation.flow.steps.starter.description")}
+      description={t("cosmos.delegation.flow.steps.starter.description", {
+        currencyTicker: account.currency.ticker,
+      })}
       bullets={[
         t("cosmos.delegation.flow.steps.starter.bullet.0"),
         t("cosmos.delegation.flow.steps.starter.bullet.1"),
-        t("cosmos.delegation.flow.steps.starter.bullet.2"),
+        t("cosmos.delegation.flow.steps.starter.bullet.2", { numberOfDays: 21 }),
       ]}
       additional={
         <WarnBox>{t("cosmos.delegation.flow.steps.starter.warning.description")}</WarnBox>
