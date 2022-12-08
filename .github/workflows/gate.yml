@@ -33,7 +33,6 @@ jobs:
         with:
           app_id: ${{ secrets.GH_BOT_APP_ID }}
           private_key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
-
       # Labeller
       - uses: actions/labeler@v4
         with:
@@ -64,6 +63,12 @@ jobs:
             } catch(error) {
               console.error(error)
             }
+      - uses: actions/github-script@v6
+        with:
+          script: |
+            const affected = ${{ steps.affected.outputs.affected }};
+            console.log(affected)
+            console.log(Array.isArray(affected));
 
   desktop-builds:
     name: "Desktop (builds)"
