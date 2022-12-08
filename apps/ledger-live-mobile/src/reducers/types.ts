@@ -18,7 +18,11 @@ import { Transaction } from "@ledgerhq/live-common/generated/types";
 import type { EventTrigger, DataOfUser } from "../logic/notifications";
 import type { RatingsHappyMoment, RatingsDataOfUser } from "../logic/ratings";
 import { WalletTabNavigatorStackParamList } from "../components/RootNavigator/types/WalletTabNavigator";
-import { WalletContentCard, AssetContentCard } from "../dynamicContent/types";
+import {
+  WalletContentCard,
+  AssetContentCard,
+  LearnContentCard,
+} from "../dynamicContent/types";
 import { ProtectStateNumberEnum } from "../components/ServicesWidget/types";
 
 // === ACCOUNT STATE ===
@@ -106,6 +110,8 @@ export type DynamicContentState = {
   walletCards: WalletContentCard[];
   /** Dynamic content cards displayed in an Asset Page */
   assetsCards: AssetContentCard[];
+  /** Dynamic content cards displayed in Learn Section */
+  learnCards: LearnContentCard[];
 };
 
 // === RATINGS STATE ===
