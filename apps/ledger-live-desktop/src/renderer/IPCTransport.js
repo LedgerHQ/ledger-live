@@ -1,28 +1,19 @@
+// @flow
+
 import { ipcRenderer } from "electron";
 import Transport from "@ledgerhq/hw-transport";
 import { log } from "@ledgerhq/logs";
-import type {
-  Observer,
-  DescriptorEvent,
-  Subscription,
-} from "@ledgerhq/hw-transport";
 
 export class IPCTransport extends Transport {
   static isSupported = (): Promise<boolean> => Promise.resolve(typeof ipcRenderer === "function");
   // this transport is not discoverable
   static list = (): any => Promise.resolve([]);
-  static listen = (observer: Observer<DescriptorEvent<unknown>>): Subscription => {
-    // function checkLoop() {
-
-    // }
-    // const interval = setInterval(checkLoop, 5000);
-
-    return ({
+  static listen = () => {
+    return {
       unsubscribe: () => {
-        // clearInterval(interval);
         // empty fn
       },
-    });
+    };
   };
 
   static async open(id: string): Promise<Transport> {
