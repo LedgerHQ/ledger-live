@@ -744,7 +744,7 @@ const getTransactionStatus = async (
     if (
       account.type === "TokenAccount" &&
       account.token.tokenType === "trc20" &&
-      energy.lt(29650) // temporary value corresponding to usdt trc20 energy
+      energy.eq(0)
     ) {
       const contractUserEnergyConsumption =
         await getContractUserEnergyRatioConsumption(
