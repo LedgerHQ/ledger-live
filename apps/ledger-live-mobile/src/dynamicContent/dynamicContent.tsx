@@ -5,12 +5,14 @@ import { useCallback, useMemo } from "react";
 import { useBrazeContentCard } from "./brazeContentCard";
 import {
   assetsCardsSelector,
+  learnCardsSelector,
   walletCardsSelector,
 } from "../reducers/dynamicContent";
 import { dismissedDynamicCardsSelector } from "../reducers/settings";
 import {
   AssetContentCard,
   Background,
+  LearnContentCard,
   LocationContentCard,
   WalletContentCard,
 } from "./types";
@@ -45,6 +47,16 @@ export const mapAsAssetContentCard = (card: BrazeContentCard) =>
     displayOnEveryAssets: Boolean(card.extras.displayOnEveryAssets) ?? false,
   } as AssetContentCard);
 
+export const mapAsLearnContentCard = (card: BrazeContentCard) =>
+  ({
+    id: card.id,
+    tag: card.extras.tag,
+    title: card.extras.title,
+    location: LocationContentCard.Learn,
+    image: card.extras.image,
+    link: card.extras.link,
+  } as LearnContentCard);
+
 const useDynamicContent = () => {
   const dispatch = useDispatch();
   const { logClickCard, logDismissCard, logImpressionCard } =
@@ -52,6 +64,7 @@ const useDynamicContent = () => {
 
   const assetsCards = useSelector(assetsCardsSelector);
   const walletCards = useSelector(walletCardsSelector);
+  const learnCards = useSelector(learnCardsSelector);
   const hiddenCards: string[] = useSelector(dismissedDynamicCardsSelector);
 
   const walletCardsDisplayed = useMemo(
@@ -68,6 +81,7 @@ const useDynamicContent = () => {
       ),
     [assetsCards, hiddenCards],
   );
+
   const isAWalletCardDisplayed = useMemo(
     () => walletCardsDisplayed.length >= 1,
     [walletCardsDisplayed],
@@ -119,6 +133,7 @@ const useDynamicContent = () => {
     walletCardsDisplayed,
     isAWalletCardDisplayed,
     assetsCards,
+    learnCards,
     getAssetCardByIdOrTicker,
     isAtLeastOneCardDisplayed,
     logClickCard,
