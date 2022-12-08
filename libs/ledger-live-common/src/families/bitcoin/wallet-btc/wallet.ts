@@ -15,6 +15,8 @@ import * as utils from "./utils";
 import cryptoFactory from "./crypto/factory";
 import BitcoinLikeExplorer from "./explorer";
 import { TX, Address } from "./storage/types";
+import { blockchainBaseURL } from "../../../api/Ledger";
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 
 class BitcoinLikeWallet {
   explorer!: IExplorer;
@@ -29,19 +31,21 @@ class BitcoinLikeWallet {
     return this.explorer || new BitcoinLikeExplorer({ explorerURI });
   }
 
-  async generateAccount(params: {
-    xpub: string;
-    path: string;
-    index: number;
-    currency: Currency;
-    network: "mainnet" | "testnet";
-    derivationMode: DerivationModes;
-    storage: "mock";
-    storageParams: any[];
-    explorerURI: string;
-  }): Promise<Account> {
+  async generateAccount(
+    params: {
+      xpub: string;
+      path: string;
+      index: number;
+      currency: Currency;
+      network: "mainnet" | "testnet";
+      derivationMode: DerivationModes;
+      storage: "mock";
+      storageParams: any[];
+    },
+    baseUrl: string
+  ): Promise<Account> {
     this.explorer = new BitcoinLikeExplorer({
-      explorerURI: params.explorerURI,
+      explorerURI: baseUrl,
     });
     const crypto = cryptoFactory(params.currency);
     const storage = this.accountStorages[params.storage](
@@ -329,14 +333,17 @@ class BitcoinLikeWallet {
   }
 
   instantiateXpubFromSerializedAccount(account: SerializedAccount): Xpub {
-    const crypto = cryptoFactory(account.params.currency);
+    const currencyId = account.params.currency;
+    const cryptoCurrency = getCryptoCurrencyById(currencyId);
+    const crypto = cryptoFactory(currencyId);
+    const baseUrl = blockchainBaseURL(cryptoCurrency);
     const storage = this.accountStorages[account.params.storage](
       ...account.params.storageParams
     );
 
     return new Xpub({
       storage,
-      explorer: this.getExplorer(account.params.explorerURI),
+      explorer: this.getExplorer(baseUrl),
       crypto,
       xpub: account.xpub.xpub,
       derivationMode: account.params.derivationMode,

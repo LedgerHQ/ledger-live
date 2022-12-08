@@ -9,7 +9,6 @@ export interface Account {
     currency: Currency;
     network: "mainnet" | "testnet";
     derivationMode: DerivationModes;
-    explorerURI: string;
     storage: "mock";
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     storageParams: any[];
@@ -25,7 +24,6 @@ export interface SerializedAccount {
     currency: Currency;
     network: "mainnet" | "testnet";
     derivationMode: DerivationModes;
-    explorerURI: string;
     storage: "mock";
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     storageParams: any[];

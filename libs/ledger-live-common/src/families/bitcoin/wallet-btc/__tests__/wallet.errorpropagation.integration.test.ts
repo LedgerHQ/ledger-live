@@ -20,17 +20,19 @@ describe("testing resilience of failures", () => {
     try {
       await expect(
         wallet
-          .generateAccount({
-            xpub: "xpub6CV2NfQJYxHn7MbSQjQip3JMjTZGUbeoKz5xqkBftSZZPc7ssVPdjKrgh6N8U1zoQDxtSo6jLarYAQahpd35SJoUKokfqf1DZgdJWZhSMqP",
-            path: "44'/0'",
-            index: 0,
-            currency: "bitcoin",
-            network: "mainnet",
-            derivationMode: DerivationModes.LEGACY,
-            explorerURI: `${explorerUrl}/v4/btc`,
-            storage: "mock",
-            storageParams: [],
-          })
+          .generateAccount(
+            {
+              xpub: "xpub6CV2NfQJYxHn7MbSQjQip3JMjTZGUbeoKz5xqkBftSZZPc7ssVPdjKrgh6N8U1zoQDxtSo6jLarYAQahpd35SJoUKokfqf1DZgdJWZhSMqP",
+              path: "44'/0'",
+              index: 0,
+              currency: "bitcoin",
+              network: "mainnet",
+              derivationMode: DerivationModes.LEGACY,
+              storage: "mock",
+              storageParams: [],
+            },
+            `${explorerUrl}/v4/btc`
+          )
           .then((a) => wallet.syncAccount(a))
       ).rejects.toEqual(new Error("FAILCRYPTO"));
     } finally {

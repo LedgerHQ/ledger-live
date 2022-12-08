@@ -75,17 +75,19 @@ describe("testing dogecoin transactions", () => {
       utxoPickingStrategy,
       sequence: 0,
     });
-    const account = await wallet.generateAccount({
-      xpub: xpub.xpub,
-      path: "44'/0'",
-      index: 0,
-      currency: "dogecoin",
-      network: "mainnet",
-      derivationMode: DerivationModes.LEGACY,
-      explorerURI: `${explorerUrl}/v4/doge`,
-      storage: "mock",
-      storageParams: [],
-    });
+    const account = await wallet.generateAccount(
+      {
+        xpub: xpub.xpub,
+        path: "44'/0'",
+        index: 0,
+        currency: "dogecoin",
+        network: "mainnet",
+        derivationMode: DerivationModes.LEGACY,
+        storage: "mock",
+        storageParams: [],
+      },
+      `${explorerUrl}/v4/doge`
+    );
     await wallet.signAccountTx({
       btc: new MockBtc(),
       fromAccount: account,

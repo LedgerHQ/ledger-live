@@ -132,22 +132,24 @@ const getAccountShape: GetAccountShape = async (info) => {
   const walletDerivationMode = toWalletDerivationMode(
     derivationMode as DerivationMode
   );
-  const baseURL = blockchainBaseURL(currency);
 
+  const baseURL = blockchainBaseURL(currency);
   span = startSpan("sync", "generateAccount");
   const walletAccount =
     (initialAccount as BitcoinAccount)?.bitcoinResources?.walletAccount ||
-    (await wallet.generateAccount({
-      xpub,
-      path: rootPath,
-      index,
-      currency: <Currency>currency.id,
-      network: walletNetwork,
-      derivationMode: walletDerivationMode,
-      storage: "mock",
-      storageParams: [],
-      explorerURI: baseURL,
-    }));
+    (await wallet.generateAccount(
+      {
+        xpub,
+        path: rootPath,
+        index,
+        currency: <Currency>currency.id,
+        network: walletNetwork,
+        derivationMode: walletDerivationMode,
+        storage: "mock",
+        storageParams: [],
+      },
+      baseURL
+    ));
   span.finish();
 
   const oldOperations = initialAccount?.operations || [];

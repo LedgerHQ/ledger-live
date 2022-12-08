@@ -12,17 +12,19 @@ describe("testing wallet", () => {
   const wallet = new BitcoinLikeWallet();
   let account: Account;
   it("should generate an account", async () => {
-    account = await wallet.generateAccount({
-      xpub: "xpub6CV2NfQJYxHn7MbSQjQip3JMjTZGUbeoKz5xqkBftSZZPc7ssVPdjKrgh6N8U1zoQDxtSo6jLarYAQahpd35SJoUKokfqf1DZgdJWZhSMqP",
-      path: "44'/0'",
-      index: 0,
-      currency: "bitcoin",
-      network: "mainnet",
-      derivationMode: DerivationModes.LEGACY,
-      explorerURI: `${explorerUrl}/v4/btc`,
-      storage: "mock",
-      storageParams: [],
-    });
+    account = await wallet.generateAccount(
+      {
+        xpub: "xpub6CV2NfQJYxHn7MbSQjQip3JMjTZGUbeoKz5xqkBftSZZPc7ssVPdjKrgh6N8U1zoQDxtSo6jLarYAQahpd35SJoUKokfqf1DZgdJWZhSMqP",
+        path: "44'/0'",
+        index: 0,
+        currency: "bitcoin",
+        network: "mainnet",
+        derivationMode: DerivationModes.LEGACY,
+        storage: "mock",
+        storageParams: [],
+      },
+      `${explorerUrl}/v4/btc`
+    );
 
     expect(account.xpub.xpub).toEqual(
       "xpub6CV2NfQJYxHn7MbSQjQip3JMjTZGUbeoKz5xqkBftSZZPc7ssVPdjKrgh6N8U1zoQDxtSo6jLarYAQahpd35SJoUKokfqf1DZgdJWZhSMqP"
