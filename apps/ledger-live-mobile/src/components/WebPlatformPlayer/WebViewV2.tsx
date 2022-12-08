@@ -141,16 +141,7 @@ export const WebView = ({ manifest, inputs }: Props) => {
       serverRef.current = new WalletAPIServer(transportRef.current);
       serverRef.current.setPermissions({
         currencyIds: manifest.currencies === "*" ? ["*"] : manifest.currencies,
-        methodIds: [
-          "account.request",
-          "account.list",
-          "account.receive",
-          "currency.list",
-          "message.sign",
-          "transaction.sign",
-          "transaction.signAndBroadcast",
-          "wallet.capabilities",
-        ],
+        methodIds: manifest.permissions as unknown as string[], // TODO use the new manifest type for v2 as we should avoid as typings
       });
       serverRef.current.setAccounts(walletAPIAccounts);
       serverRef.current.setCurrencies(walletAPICurrencies);
