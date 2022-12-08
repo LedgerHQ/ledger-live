@@ -11,6 +11,7 @@ import WarnBox from "~/renderer/components/WarnBox";
 import { urls } from "~/config/urls";
 import { openURL } from "~/renderer/linking";
 import LinkWithExternalIcon from "~/renderer/components/LinkWithExternalIcon";
+import Crypto from "@ledgerhq/live-common/families/cosmos/crypto/crypto";
 
 type Props = {
   name?: string,
@@ -34,7 +35,7 @@ export default function CosmosEarnRewardsInfoModal({ name, account, parentAccoun
   const onLearnMore = useCallback(() => {
     openURL(urls.cosmosStakingRewards);
   }, []);
-
+  const crypto = new Crypto(account.currency.id);
   return (
     <EarnRewardsInfoModal
       name={name}
@@ -45,7 +46,9 @@ export default function CosmosEarnRewardsInfoModal({ name, account, parentAccoun
       bullets={[
         t("cosmos.delegation.flow.steps.starter.bullet.0"),
         t("cosmos.delegation.flow.steps.starter.bullet.1"),
-        t("cosmos.delegation.flow.steps.starter.bullet.2", { numberOfDays: 21 }),
+        t("cosmos.delegation.flow.steps.starter.bullet.2", {
+          numberOfDays: crypto.unbonding_period,
+        }),
       ]}
       additional={
         <WarnBox>{t("cosmos.delegation.flow.steps.starter.warning.description")}</WarnBox>

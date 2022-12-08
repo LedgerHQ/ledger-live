@@ -14,6 +14,7 @@ import Text from "~/renderer/components/Text";
 import Alert from "~/renderer/components/Alert";
 import ErrorBanner from "~/renderer/components/ErrorBanner";
 import AccountFooter from "~/renderer/modals/Send/AccountFooter";
+import Crypto from "@ledgerhq/live-common/families/cosmos/crypto/crypto";
 
 export default function StepAmount({
   account,
@@ -63,7 +64,7 @@ export default function StepAmount({
   ]);
 
   const amount = useMemo(() => (validator ? validator.amount : BigNumber(0)), [validator]);
-
+  const crypto = new Crypto(account.currency.id);
   return (
     <Box flow={1}>
       <TrackPage category="Undelegation Flow" name="Step 1" />
@@ -72,7 +73,7 @@ export default function StepAmount({
         <Text ff="Inter|Medium" fontSize={4}>
           <Trans
             i18nKey={`${currencyName}.undelegation.flow.steps.amount.subtitle`}
-            values={{ numberOfDays: 21 }}
+            values={{ numberOfDays: crypto.unbonding_period }}
           >
             <b></b>
           </Trans>

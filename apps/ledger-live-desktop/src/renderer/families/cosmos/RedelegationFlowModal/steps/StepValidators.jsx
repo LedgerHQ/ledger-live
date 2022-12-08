@@ -27,6 +27,7 @@ import ChevronRight from "~/renderer/icons/ChevronRightSmall";
 import CosmosFamilyLedgerValidatorIcon from "~/renderer/families/cosmos/shared/components/CosmosFamilyLedgerValidatorIcon";
 import Text from "~/renderer/components/Text";
 import AccountFooter from "~/renderer/modals/Send/AccountFooter";
+import Crypto from "@ledgerhq/live-common/families/cosmos/crypto/crypto";
 
 const SelectButton = styled(Base)`
   border-radius: 4px;
@@ -148,7 +149,7 @@ export default function StepValidators({
   const open = useCallback(() => {
     transitionTo("destinationValidators");
   }, [transitionTo]);
-
+  const crypto = new Crypto(account.currency.id);
   return (
     <Container>
       <TrackPage category="Redelegation Flow" name="Step 1" />
@@ -199,7 +200,7 @@ export default function StepValidators({
       <Alert type="primary">
         <Trans
           i18nKey="cosmos.redelegation.flow.steps.validators.warning"
-          values={{ numberOfDays: 21 }}
+          values={{ numberOfDays: crypto.unbonding_period }}
         >
           <b></b>
         </Trans>

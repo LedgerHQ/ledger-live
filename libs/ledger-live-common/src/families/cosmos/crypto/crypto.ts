@@ -18,6 +18,7 @@ class Crypto {
   default_gas = 100000;
   min_gasprice = 0.0025;
   version = "v1beta1";
+  unbonding_period = 21;
   gas: {
     [Key in CosmosOperationMode]: number;
   } = {
@@ -36,9 +37,11 @@ class Crypto {
     this.currency = getCryptoCurrencyById(currencyId);
     this.currencyId = currencyId;
     if (currencyId === "cosmos") {
+      this.unbonding_period = 21;
       this.lcd = "https://cosmoshub4.coin.ledger.com";
       this.min_gasprice = 0.025;
     } else if (currencyId === "osmo") {
+      this.unbonding_period = 14;
       this.lcd = "https://osmosis.coin.ledger.com/node";
       this.gas = {
         send: 100000,
@@ -49,6 +52,7 @@ class Crypto {
         claimRewardCompound: 400000,
       };
     } else if (currencyId === "juno") {
+      this.unbonding_period = 28;
       this.lcd = "https://lcd-juno.itastakers.com";
     } else {
       throw new Error(`${currencyId} is not supported`);
