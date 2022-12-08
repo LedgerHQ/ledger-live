@@ -58,6 +58,7 @@ const SelectAccountDrawer = ({ currency, onAccountSelected }: SelectAccountDrawe
           color="palette.text.shade100"
           fontSize="24px"
           style={{ textTransform: "uppercase" }}
+          data-test-id="select-account-drawer-title"
         >
           {t("drawers.selectAccount.title")}
         </Text>

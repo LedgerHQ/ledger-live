@@ -518,7 +518,7 @@
       "title" : "Le montant à geler ne peut pas être inférieur à 1."
     },
     "TronSendTrc20ToNewAccountForbidden" : {
-      "title" : "Envoyer des TRC-20 sur le nouveau compte ne l’activera pas.",
+      "title" : "Vous devez d’abord envoyer un minimum de 0,1 TRX à cette adresse avant de recevoir des tokens TRC20.",
       "description" : "Pour l’activer, envoyez d’abord des TRX ou TRC-10 sur le compte. Il pourra ensuite recevoir des TRC-20."
     },
     "TronUnexpectedFees" : {
@@ -1902,6 +1902,9 @@
       "title" : "Pas encore d’opérations ?",
       "desc" : "Il vous suffit d’envoyer des crypto-actifs à votre adresse bénéficiaire et d’attendre que l’app se synchronise."
     },
+    "carousel" : {
+      "title" : "Pour vous"
+    },
     "recommended" : {
       "title" : "Recommandé"
     },
@@ -2350,8 +2353,8 @@
     "display" : {
       "title" : "Général",
       "desc" : "Configurez les paramètres de base de Ledger Live.",
-      "carousel" : "Visibilité du carrousel",
-      "carouselDesc" : "Affichez le carrousel sur le Portefeuille.",
+      "carousel" : "Recommandations",
+      "carouselDesc" : "Nous vous présenterons des cartes avec des conseils personnalisés et nos dernières offres exclusives.",
       "language" : "Langue d’affichage",
       "languageDesc" : "Choisissez la langue d’affichage de Ledger Live.",
       "region" : "Région",
@@ -3265,8 +3268,8 @@
       "gasPrice" : "Prix du gaz",
       "maxFee" : "Frais maximaux",
       "maxPriorityFee" : "Frais de priorité maximaux",
-      "nextBlock" : "Bloc suivant : {{nextBaseFee}}",
-      "suggestedPriorityFee" : "Suggérés : {{lowPriorityFee}} - {{highPriorityFee}}",
+      "nextBlock" : "Bloc suivant",
+      "suggested" : "Suggérés",
       "maxFees" : "Frais maximaux",
       "validateGasLimit" : "Valider la limite de gaz",
       "fees" : "Frais",
@@ -4690,6 +4693,9 @@
         "title" : "Candidats",
         "description" : "127 personnes élues par le vote de la communauté des détenteurs de tokens. Les votes sont mis à jour toutes les 6 heures."
       }
+    },
+    "receive" : {
+      "newAddressTRC20" : "Vous devez d’abord envoyer un minimum de 0,1 TRX à cette adresse pour l’activer."
     }
   },
   "stellar" : {
@@ -5454,7 +5460,8 @@
     "drawer" : {
       "title" : "Choisissez une image",
       "options" : {
-        "uploadFromPhone" : "Télécharger à partir de mon téléphone"
+        "uploadFromPhone" : "Choisir dans ma galerie d’images",
+        "selectFromNFTGallery" : "Choisir dans ma galerie de NFT"
       }
     },
     "cropImage" : "Recadrez l’image",
@@ -5479,6 +5486,9 @@
       "loading" : "Chargement de l’aperçu",
       "setPicture" : "Définir cette image",
       "editPicture" : "Modifier l’image"
+    },
+    "nftGallery" : {
+      "title" : "Mes NFT"
     }
   },
   "postOnboarding" : {

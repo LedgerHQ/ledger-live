@@ -2,4 +2,4 @@
 "ledger-live-desktop": patch
 ---
 
-Improve cic logo
+Add translation key

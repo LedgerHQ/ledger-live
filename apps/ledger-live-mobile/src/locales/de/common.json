@@ -518,7 +518,7 @@
       "title" : "Der zu sperrende Betrag kann nicht kleiner als 1 sein"
     },
     "TronSendTrc20ToNewAccountForbidden" : {
-      "title" : "Das Senden von TRC20 an das neue Konto wird es nicht aktivieren",
+      "title" : "Sie müssen zuerst mindestens 0,1 TRX an diese Adresse senden, um den Empfang von TRC20-Token zu aktivieren.",
       "description" : "Um es zu aktivieren, senden Sie zuerst entweder TRX oder TRC10 an das Konto. Dann kann es TRC20 empfangen."
     },
     "TronUnexpectedFees" : {
@@ -1902,6 +1902,9 @@
       "title" : "Noch keine Aktionen?",
       "desc" : "Senden Sie einfach Krypto-Vermögenswerte an Ihre Empfangsadresse und warten Sie auf die Synchronisierung mit der App."
     },
+    "carousel" : {
+      "title" : "Für Sie"
+    },
     "recommended" : {
       "title" : "Empfohlen"
     },
@@ -2350,8 +2353,8 @@
     "display" : {
       "title" : "Allgemeines",
       "desc" : "Konfigurieren Sie die allgemeinen Ledger-Live-Einstellungen.",
-      "carousel" : "Karussell-Sichtbarkeit",
-      "carouselDesc" : "Aktivieren Sie die Sichtbarkeit des Karussells auf Portfolio",
+      "carousel" : "Empfehlungen",
+      "carouselDesc" : "Wir zeigen Ihnen Karten mit personalisierten Tipps und unseren neuesten Angeboten nur für Sie.",
       "language" : "Sprache",
       "languageDesc" : "Stellen Sie die in Ledger Live angezeigte Sprache ein.",
       "region" : "Region",
@@ -2464,7 +2467,7 @@
       },
       "allowed" : {
         "title" : "Benachrichtigungen zulassen",
-        "desc" : "Erhalten Sie Benachrichtigungen über Ihre Krypto, Markttendenzen und mehr"
+        "desc" : "Erhalten Sie Benachrichtigungen über Ihre Krypto-Werte, Markttrends und mehr"
       },
       "transactions" : {
         "title" : "Transaktionen",
@@ -2486,7 +2489,7 @@
         "title" : "Preisalarme",
         "desc" : "Legen Sie Preisalarme für Ihre Lieblingscoins fest, damit Sie keine Marktbewegung verpassen"
       },
-      "disclaimer" : "Der Datenschutz hat bei Ledger oberste Priorität. Die gesammelten Daten werden niemals an unsere Partner weitergegeben"
+      "disclaimer" : "Ihre Daten und Ihr Datenschutz sind uns bei Ledger wichtig. Die gesammelten Daten werden niemals mit unseren Partnern geteilt"
     },
     "help" : {
       "title" : "Hilfe",
@@ -3265,8 +3268,8 @@
       "gasPrice" : "Gaspreis",
       "maxFee" : "Max. Gebühr",
       "maxPriorityFee" : "Maximale Prioritätsgebühr",
-      "nextBlock" : "Nächster Block: {{nextBaseFee}}",
-      "suggestedPriorityFee" : "Vorgeschlagen: {{lowPriorityFee}} - {{highPriorityFee}}",
+      "nextBlock" : "Nächster Block",
+      "suggested" : "Vorgeschlagen",
       "maxFees" : "Max. Gebühren",
       "validateGasLimit" : "Gas-Limit validieren",
       "fees" : "Gebühren",
@@ -4690,6 +4693,9 @@
         "title" : "Kandidaten",
         "description" : "127 Personen, die durch Abstimmung von der gesamten Token-Inhaber-Community gewählt werden. Die Abstimmungen werden alle 6 Stunden abgefragt."
       }
+    },
+    "receive" : {
+      "newAddressTRC20" : "Sie müssen zuerst mindestens 0,1 TRX an diese Adresse senden, um sie zu aktivieren."
     }
   },
   "stellar" : {
@@ -5454,7 +5460,8 @@
     "drawer" : {
       "title" : "Wählen Sie ein Bild aus",
       "options" : {
-        "uploadFromPhone" : "Von meinem Mobiltelefon hochladen"
+        "uploadFromPhone" : "Aus meiner Bildergalerie auswählen",
+        "selectFromNFTGallery" : "Aus meiner NFT-Galerie auswählen"
       }
     },
     "cropImage" : "Bild zuschneiden",
@@ -5479,6 +5486,9 @@
       "loading" : "Vorschau wird geladen",
       "setPicture" : "Benutzerdefiniertes Bild einstellen",
       "editPicture" : "Bild bearbeiten"
+    },
+    "nftGallery" : {
+      "title" : "Meine NFTs"
     }
   },
   "postOnboarding" : {

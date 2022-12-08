@@ -2,4 +2,4 @@
 "live-mobile": patch
 ---
 
-Fix for locked device error
+Add translation key
