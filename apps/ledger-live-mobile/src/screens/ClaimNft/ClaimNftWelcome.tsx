@@ -3,7 +3,16 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { Button, Flex, Icons, Text, Link } from "@ledgerhq/native-ui";
 import { useTranslation } from "react-i18next";
 import { useNavigation } from "@react-navigation/native";
+import { PostOnboardingActionId } from "@ledgerhq/types-live";
+import { useCompleteActionCallback } from "../../logic/postOnboarding/useCompleteAction";
+import { useNavigateToPostOnboardingHubCallback } from "../../logic/postOnboarding/useNavigateToPostOnboardingHubCallback";
 import { NavigatorName, ScreenName } from "../../const";
+import Animation from "../../components/Animation";
+import { Linking } from "react-native";
+
+const animation = {
+  infinityPass: require("../../animations/infinityPassCentered.json"),
+};
 
 const BulletItem = ({ textKey }: { textKey: string }) => {
   const { t } = useTranslation();
@@ -18,6 +27,8 @@ const BulletItem = ({ textKey }: { textKey: string }) => {
 const ClaimNftWelcome = () => {
   const { t } = useTranslation();
   const navigation = useNavigation();
+  const completePostOnboardingAction = useCompleteActionCallback();
+  const goBackToHub = useNavigateToPostOnboardingHubCallback();
 
   const handleGoToQrScan = useCallback(
     () =>
@@ -27,19 +38,20 @@ const ClaimNftWelcome = () => {
     [navigation],
   );
 
+  const handleSkipQrScan = useCallback(() => {
+    //goBackToHub();
+    Linking.openURL("ledgerlive://post-onboarding/nft-claimed?completed=true");
+    //completePostOnboardingAction(PostOnboardingActionId.claimNft);
+    //navigation.goBack();
+  }, []);
+
   return (
     <SafeAreaView style={{ flex: 1 }} edges={["bottom"]}>
       <Flex flex={1}>
-        <Flex
-          backgroundColor="neutral.c40"
-          alignItems="center"
-          justifyContent="center"
-          height={200}
-          width="100%"
-        >
-          <Text>illustration placeholder NFT</Text>
+        <Flex alignItems="center">
+          <Animation source={animation.infinityPass} />
         </Flex>
-        <Flex flex={1} px={7} justifyContent="space-evenly">
+        <Flex flex={1} px={6} justifyContent="space-evenly">
           <Text variant="h4" fontWeight="semiBold" mt={7} textAlign="center">
             {t("claimNft.welcomePage.title")}
           </Text>
@@ -55,7 +67,9 @@ const ClaimNftWelcome = () => {
             <Button mb={8} type="main" onPress={handleGoToQrScan}>
               {t("claimNft.welcomePage.claimButton")}
             </Button>
-            <Link>{t("claimNft.welcomePage.backButton")}</Link>
+            <Link onPress={handleSkipQrScan}>
+              {t("claimNft.welcomePage.backButton")}
+            </Link>
           </Flex>
         </Flex>
       </Flex>
