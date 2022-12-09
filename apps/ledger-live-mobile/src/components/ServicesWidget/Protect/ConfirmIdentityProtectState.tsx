@@ -11,11 +11,13 @@ function ConfirmIdentityProtectState({
 }) {
   const { t } = useTranslation();
 
-  const { addNowURI, viewDetailsURI } = params || {};
+  const { confirmNowURI, viewDetailsURI } = params || {};
 
-  const onAddNow = useCallback(() => {
-    Linking.canOpenURL(addNowURI).then(() => Linking.openURL(addNowURI));
-  }, [addNowURI]);
+  const onConfirmNow = useCallback(() => {
+    Linking.canOpenURL(confirmNowURI).then(() =>
+      Linking.openURL(confirmNowURI),
+    );
+  }, [confirmNowURI]);
 
   const onViewDetails = useCallback(() => {
     Linking.canOpenURL(viewDetailsURI).then(() =>
@@ -25,7 +27,7 @@ function ConfirmIdentityProtectState({
 
   return (
     <>
-      <Button type="main" outline={false} onPress={onAddNow} mt={8} mb={6}>
+      <Button type="main" outline={false} onPress={onConfirmNow} mt={8} mb={6}>
         {t(`servicesWidget.protect.status.confirmIdentity.actions.confirmNow`)}
       </Button>
       <Button type="default" outline={false} onPress={onViewDetails}>
