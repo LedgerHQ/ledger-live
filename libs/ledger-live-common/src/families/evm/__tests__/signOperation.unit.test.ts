@@ -2,9 +2,12 @@ import BigNumber from "bignumber.js";
 import { Account } from "@ledgerhq/types-live";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { findCryptoCurrencyById } from "@ledgerhq/cryptoassets";
+import signOperation, {
+  applyEIP155,
+  getSerializedTransaction,
+} from "../signOperation";
 import { Transaction as EvmTransaction } from "../types";
 import * as Device from "../../../hw/deviceAccess";
-import signOperation, { getSerializedTransaction } from "../signOperation";
 import { getEstimatedFees } from "../logic";
 import { makeAccount } from "../testUtils";
 import * as API from "../api/rpc.common";
@@ -148,6 +151,44 @@ describe("EVM Family", () => {
         expect(serializedTx).toBe(
           "0x02df01806464825208946775e49108cb77cda06fc3bef51bcd497602ad886480c0"
         );
+      });
+    });
+
+    describe("applyEIP155", () => {
+      const chainIds = [
+        1, //ethereum
+        5, // goerli
+        10, // optimism
+        14, // flare
+        19, // songbird
+        56, // bsc
+        137, // polygon
+        250, // fantom
+        1284, // moonbeam
+      ];
+      const possibleHexV = [
+        "00", // 0 - ethereum + testnets should always retrun 0/1 from hw-app-eth
+        "01", // 1
+        "1b", // 27 - type 0 transactions from other chains (when chain id > 109) shoud always return 27/28
+        "1c", // 28
+      ];
+
+      chainIds.forEach((chainId) => {
+        possibleHexV.forEach((v) => {
+          it(`should return an EIP155 compatible v for chain id ${chainId} with v = ${parseInt(
+            v,
+            16
+          )}`, () => {
+            const eip155Logic = chainId * 2 + 35;
+            expect(
+              [eip155Logic, eip155Logic + 1] // eip155 + parity
+            ).toContain(applyEIP155(v, chainId));
+          });
+        });
+
+        it("should return the value given by the nano as is if we can't figure out parity from it", () => {
+          expect(applyEIP155("1b39", chainId)).toBe(6969);
+        });
       });
     });
   });
