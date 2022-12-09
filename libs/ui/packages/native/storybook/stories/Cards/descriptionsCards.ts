@@ -106,7 +106,7 @@ This simple card implementation component allows to display specific content for
 ### Import  
 \`\`\`ts
 
-import { CardD } from "@ledgerhq/native-ui"
+import { InformativeCard } from "@ledgerhq/native-ui"
 \`\`\`
 
 
@@ -127,7 +127,7 @@ type CardProps = TouchableOpacityProps & {
 
 const MyCard = (): JSX.Element => {
   return (
-    <CardD
+    <InformativeCard
       tag="Article" 
       title="Learn how to stake?" 
       imageUrl="https://www.cointribune.com/app/uploads/2020/12/LEDGER-Nano-X.jpg?nowebp" 

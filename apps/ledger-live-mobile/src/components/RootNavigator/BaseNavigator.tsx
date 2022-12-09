@@ -71,7 +71,7 @@ import ScreenHeader from "../../screens/Exchange/ScreenHeader";
 import ExchangeStackNavigator from "./ExchangeStackNavigator";
 
 import PostBuyDeviceScreen from "../../screens/PostBuyDeviceScreen";
-import Learn from "../../screens/Learn";
+import Learn from "../../screens/Learn/learn";
 import { useNoNanoBuyNanoWallScreenOptions } from "../../context/NoNanoBuyNanoWall";
 import PostBuyDeviceSetupNanoWallScreen from "../../screens/PostBuyDeviceSetupNanoWallScreen";
 import MarketDetail from "../../screens/Market/MarketDetail";
@@ -195,12 +195,13 @@ export default function BaseNavigator() {
         <Stack.Screen
           name={ScreenName.Learn}
           component={Learn}
-          options={{
+          options={({ navigation }) => ({
             headerShown: true,
             animationEnabled: false,
-            headerTitle: "",
-            headerLeft: () => null,
-          }}
+            headerTitle: t("discover.sections.learn.title"),
+            headerLeft: () => <BackButton navigation={navigation} />,
+            headerRight: () => null,
+          })}
         />
       ) : null}
       <Stack.Screen
