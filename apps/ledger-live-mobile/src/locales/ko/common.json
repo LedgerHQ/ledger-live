@@ -532,7 +532,7 @@
       "description" : "트랜잭션은 30초 이내에 서명을 완료해야 합니다. 다시 시도해 주세요."
     },
     "TronNotEnoughEnergy" : {
-      "title" : "이 토큰 전송에 필요한 에너지가 부족합니다"
+      "title" : "에너지가 필요한 것보다 낮습니다. 수수료로 최대 20TRX를 지불할 수 있습니다."
     },
     "UpdateYourApp" : {
       "title" : "앱 업데이트 필요",
@@ -715,6 +715,9 @@
     },
     "StellarSourceHasMultiSign" : {
       "title" : "스텔라 트랜잭션을 수행하려면 다중서명을 비활성화하세요"
+    },
+    "StellarBurnAddressError" : {
+      "title" : "A problem occurred while trying to add a Stellar account"
     },
     "ImageLoadFromGalleryError" : {
       "title" : "갤러리 이미지 로딩 실패",
@@ -1717,8 +1720,14 @@
         "subtitle" : "{{productName}}에서 코드를 확인합니다"
       },
       "error" : {
-        "title" : "페어링 실패",
-        "subtitle" : "문제가 발생한 것 같습니다!\n블루투스가 켜져 있고 {{productName}} 장치가 근처에 있는지 확인하세요.",
+        "generic" : {
+          "title" : "페어링 실패",
+          "subtitle" : "문제가 발생한 것 같습니다!\n블루투스가 켜져 있고 {{productName}} 장치가 근처에 있는지 확인하세요."
+        },
+        "lockedDevice" : {
+          "title" : "장치가 잠금 상태입니다",
+          "subtitle" : "{{ productName }}의 잠금을 해제하고 다시 시도하세요."
+        },
         "retryCta" : "다시 시도하세요"
       }
     }
@@ -3268,8 +3277,8 @@
       "gasPrice" : "가스 가격(Gas price)",
       "maxFee" : "최대 비용",
       "maxPriorityFee" : "최대 우선 수수료",
-      "nextBlock" : "다음 블록",
-      "suggested" : "권장",
+      "nextBlock" : "Next block",
+      "suggested" : "Suggested",
       "maxFees" : "최대 수수료",
       "validateGasLimit" : "가스 제한 검증",
       "fees" : "수수료",
