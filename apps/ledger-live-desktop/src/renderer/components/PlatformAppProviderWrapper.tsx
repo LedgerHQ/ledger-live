@@ -1,7 +1,6 @@
 import React, { ReactNode } from "react";
 import {
   allowDebugAppsSelector,
-  catalogProviderSelector,
   allowExperimentalAppsSelector,
 } from "~/renderer/reducers/settings";
 import { useSelector } from "react-redux";
@@ -19,11 +18,9 @@ const AUTO_UPDATE_DEFAULT_DELAY = 1800 * 1000; // 1800 seconds
 export function PlatformAppProviderWrapper({ children }: PlatformAppProviderWrapperProps) {
   const allowDebugApps = useSelector(allowDebugAppsSelector);
   const allowExperimentalApps = useSelector(allowExperimentalAppsSelector);
-  const provider = useSelector(catalogProviderSelector);
 
   return (
     <RemoteLiveAppProvider
-      provider={provider}
       parameters={{
         version: getPlatformVersion(),
         platform: "desktop",
@@ -33,7 +30,7 @@ export function PlatformAppProviderWrapper({ children }: PlatformAppProviderWrap
       updateFrequency={AUTO_UPDATE_DEFAULT_DELAY}
     >
       <LocalLiveAppProvider>
-        <RampCatalogProvider provider={provider} updateFrequency={AUTO_UPDATE_DEFAULT_DELAY}>
+        <RampCatalogProvider updateFrequency={AUTO_UPDATE_DEFAULT_DELAY}>
           {children}
         </RampCatalogProvider>
       </LocalLiveAppProvider>

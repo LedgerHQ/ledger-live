@@ -11,6 +11,7 @@ import { LiveAppManifest, Loadable } from "../types";
 
 import api from "./api";
 import { FilterParams } from "../../filters";
+import { getEnv } from "../../../env";
 
 const initialState: Loadable<LiveAppRegistry> = {
   isLoading: false,
@@ -18,17 +19,23 @@ const initialState: Loadable<LiveAppRegistry> = {
   error: null,
 };
 
+const initialProvider = "production";
+
 const initialParams: FilterParams = {
   branches: ["stable", "soon"],
 };
 
 type LiveAppContextType = {
   state: Loadable<LiveAppRegistry>;
+  provider: string;
+  setProvider: React.Dispatch<React.SetStateAction<string>>;
   updateManifests: () => Promise<void>;
 };
 
 export const liveAppContext = createContext<LiveAppContextType>({
   state: initialState,
+  provider: initialProvider,
+  setProvider: () => {},
   updateManifests: () => Promise.resolve(),
 });
 
@@ -42,7 +49,6 @@ type FetchLiveAppCatalogPrams = Required<
 
 type LiveAppProviderProps = {
   children: React.ReactNode;
-  provider: string;
   parameters: FetchLiveAppCatalogPrams;
   updateFrequency: number;
 };
@@ -65,12 +71,16 @@ export function useRemoteLiveAppContext(): LiveAppContextType {
 
 export function RemoteLiveAppProvider({
   children,
-  provider,
   parameters,
   updateFrequency,
 }: LiveAppProviderProps): JSX.Element {
   const [state, setState] = useState<Loadable<LiveAppRegistry>>(initialState);
+  const [provider, setProvider] = useState<string>(initialProvider);
+
   const { allowExperimentalApps, allowDebugApps, ...params } = parameters;
+
+  const providerURL: string =
+    provider === "production" ? getEnv("PLATFORM_MANIFEST_API_URL") : provider;
 
   const updateManifests = useCallback(async () => {
     setState((currentState) => ({
@@ -84,7 +94,7 @@ export function RemoteLiveAppProvider({
     allowDebugApps && branches.push("debug");
 
     try {
-      const allManifests = await api.fetchLiveAppManifests(provider, {
+      const allManifests = await api.fetchLiveAppManifests(providerURL, {
         ...params,
         branches,
       });
@@ -107,11 +117,13 @@ export function RemoteLiveAppProvider({
         error,
       }));
     }
-  }, [allowDebugApps, allowExperimentalApps, provider]);
+  }, [allowDebugApps, allowExperimentalApps, providerURL]);
 
   const value: LiveAppContextType = useMemo(
     () => ({
       state,
+      provider,
+      setProvider,
       updateManifests,
     }),
     [state, updateManifests]

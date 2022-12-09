@@ -17,11 +17,9 @@ export default function PlatformAppProviderWrapper({
   const isExperimentalAppEnabled = useEnv<"PLATFORM_EXPERIMENTAL_APPS">(
     "PLATFORM_EXPERIMENTAL_APPS",
   ) as boolean;
-  const provider = __DEV__ ? "staging" : "production";
 
   return (
     <RemoteLiveAppProvider
-      provider={provider}
       updateFrequency={AUTO_UPDATE_DEFAULT_DELAY}
       parameters={{
         version: getPlatformVersion(),
@@ -31,10 +29,7 @@ export default function PlatformAppProviderWrapper({
       }}
     >
       <LocalLiveAppProvider>
-        <RampCatalogProvider
-          provider={provider}
-          updateFrequency={AUTO_UPDATE_DEFAULT_DELAY}
-        >
+        <RampCatalogProvider updateFrequency={AUTO_UPDATE_DEFAULT_DELAY}>
           {children}
         </RampCatalogProvider>
       </LocalLiveAppProvider>

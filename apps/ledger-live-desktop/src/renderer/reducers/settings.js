@@ -109,7 +109,6 @@ export type SettingsState = {
   allowDebugApps: boolean,
   allowExperimentalApps: boolean,
   enablePlatformDevTools: boolean,
-  catalogProvider: string,
   USBTroubleshootingIndex?: number,
   enableLearnPageStagingUrl?: boolean,
   swap: {
@@ -187,7 +186,6 @@ const INITIAL_STATE: SettingsState = {
   allowDebugApps: false,
   allowExperimentalApps: false,
   enablePlatformDevTools: false,
-  catalogProvider: "production",
   enableLearnPageStagingUrl: false,
   USBTroubleshootingIndex: undefined,
   swap: {
@@ -517,7 +515,6 @@ export const allowDebugAppsSelector = (state: State) => state.settings.allowDebu
 export const allowExperimentalAppsSelector = (state: State) => state.settings.allowExperimentalApps;
 export const enablePlatformDevToolsSelector = (state: State) =>
   state.settings.enablePlatformDevTools;
-export const catalogProviderSelector = (state: State) => state.settings.catalogProvider;
 
 export const enableLearnPageStagingUrlSelector = (state: State) =>
   state.settings.enableLearnPageStagingUrl;
