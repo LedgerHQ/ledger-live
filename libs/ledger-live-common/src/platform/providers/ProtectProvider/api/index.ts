@@ -31,7 +31,7 @@ export async function refreshToken(
       method: "POST",
       url: `${ACCOUNT_API_URL}/account/refresh-token`,
       data: {
-        refreshToken: refreshToken,
+        refresh_token: refreshToken,
       },
     });
 

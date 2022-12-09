@@ -1,11 +1,12 @@
 import { Flex, Text } from "@ledgerhq/native-ui";
 import { ProtectStateNumberEnum } from "@ledgerhq/live-common/platform/providers/ProtectProvider/types";
 import { refreshToken } from "@ledgerhq/live-common/platform/providers/ProtectProvider/api/index";
-import React, { memo, useEffect } from "react";
+import React, { memo, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 import Svg, { LinearGradient, Defs, Rect, Stop } from "react-native-svg";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { useNavigation } from "@react-navigation/native";
 import NewProtectState from "./Protect/NewProtectState";
 import ConfirmIdentityProtectState from "./Protect/ConfirmIdentityProtectState";
 import AddPaymentProtectState from "./Protect/AddPaymentProtectState";
@@ -17,6 +18,9 @@ import { protectSelector } from "../../reducers/protect";
 import { updateProtectData, updateProtectStatus } from "../../actions/protect";
 import { formatData, getProtectStatus } from "../../logic/protect";
 import { saveProtect } from "../../db";
+import { ScreenName } from "../../const";
+import { StackNavigatorNavigation } from "../RootNavigator/types/helpers";
+import { ManagerNavigatorStackParamList } from "../RootNavigator/types/ManagerNavigator";
 
 const SvgGradient = () => (
   <Svg width="100%" height="8px">
@@ -67,6 +71,10 @@ function ServicesWidget() {
   const servicesConfig: ServicesConfig | null = useFeature(
     "protectServicesMobile",
   );
+  const navigation =
+    useNavigation<StackNavigatorNavigation<ManagerNavigatorStackParamList>>();
+
+  const [wasPreviouslyRefreshed, setWasPreviouslyRefreshed] = useState(false);
 
   const { enabled, params } = servicesConfig || {};
 
@@ -76,20 +84,26 @@ function ServicesWidget() {
 
   useEffect(() => {
     const refreshSession = async () => {
-      if (!data.refreshToken) return;
+      if (wasPreviouslyRefreshed || !data.refreshToken) {
+        return;
+      }
 
       const res = await refreshToken(data.refreshToken);
 
-      if (!res) return;
+      if (!res) {
+        navigation.navigate(ScreenName.ProtectLogin);
+        return;
+      }
 
       const newData = formatData(res);
 
       dispatch(updateProtectData(newData));
       dispatch(updateProtectStatus(getProtectStatus(newData)));
+      setWasPreviouslyRefreshed(true);
     };
 
     refreshSession();
-  }, [data.refreshToken, dispatch]);
+  }, [data.refreshToken, dispatch, navigation, wasPreviouslyRefreshed]);
 
   useEffect(() => {
     saveProtect({ data, protectStatus });
