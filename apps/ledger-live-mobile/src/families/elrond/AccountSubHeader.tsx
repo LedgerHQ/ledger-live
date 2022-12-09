@@ -3,7 +3,7 @@ import React from "react";
 import AccountSubHeader from "../../components/AccountSubHeader";
 
 const ElrondAccountSubHeader = () => (
-  <AccountSubHeader family="Elrond" team="Elrond" />
+  <AccountSubHeader family="MultiversX" team="MultiversX" />
 );
 
 export default ElrondAccountSubHeader;
