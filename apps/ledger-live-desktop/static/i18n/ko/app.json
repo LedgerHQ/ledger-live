@@ -2143,8 +2143,8 @@
         "ethereumGasPrice" : "가스 가격(Gas price)",
         "ethereumMaxFee" : "최대 비용({{unitName}})",
         "ethereumPriorityFee" : "최대 우선 수수료({{unitName}})",
-        "nextBlock" : "다음 블록: {{nextBaseFee}}",
-        "suggestedPriorityFee" : "권장: {{lowPriorityFee}} - {{highPriorityFee}} {{unitName}}",
+        "nextBlock" : "Next block",
+        "suggested" : "Suggested",
         "unitPerByte" : "바이트당 {{unit}}",
         "nft" : "NFT",
         "nftQuantity" : "수량"
@@ -2183,6 +2183,9 @@
   "releaseNotes" : {
     "title" : "릴리즈 노트",
     "version" : "Ledger Live {{versionNb}}"
+  },
+  "troubleshootNetwork" : {
+    "title" : "네트워크 문제 해결"
   },
   "systemLanguageAvailable" : {
     "title" : "앱의 언어를 변경하시겠습니까?",
@@ -2241,6 +2244,9 @@
     }
   },
   "tron" : {
+    "receive" : {
+      "newAddressTRC20" : "활성화하려면 먼저 이 주소로 최소 0.1 TRX를 보내야 합니다."
+    },
     "voting" : {
       "emptyState" : {
         "description" : "이제 동결 및 투표를 통해 보상을 획득할 수 있습니다.",
@@ -3548,7 +3554,7 @@
       "featureFlagsEdit" : "편집",
       "featureFlagsRestore" : "복구",
       "featureFlagsOverride" : "재정의",
-      "firebaseProject" : "Firebase project targeted by this build:",
+      "firebaseProject" : "이 빌드에서 대상으로 하는 Firebase 프로젝트:",
       "addLocalApp" : "로컬 앱 추가",
       "addLocalAppDesc" : "로컬 매니페스트 기능으로 로컬 파일을 둘러보고 로컬 앱 추가하기",
       "addLocalAppButton" : "둘러보기",
@@ -3695,6 +3701,11 @@
       "title" : "로그 저장",
       "desc" : "문제 해결을 위해 Ledger Live 로그가 필요할 수 있습니다.",
       "btn" : "Ledger Nano S를"
+    },
+    "troubleshootNetwork" : {
+      "title" : "네트워크 문제 해결",
+      "desc" : "체크리스트를 실행하여 문제 해결을 위한 네트워크 상태를 평가하세요.",
+      "btn" : "문제 해결"
     },
     "accounts" : {
       "hideEmptyTokens" : {
@@ -4734,6 +4745,10 @@
       "title" : "죄송하지만 장치 연결이 해제된 것 같습니다",
       "description" : "다시 연결하여 재시도해주세요."
     },
+    "EConnReset" : {
+      "title" : "Ledger 애플리케이션 스토어에 연결할 수 없습니다.",
+      "description" : "인터넷 연결이 끊어졌거나 비정상적인 구성을 사용하고 있을 수 있습니다. 연결(프록시 또는 방화벽)을 차단하는 것이 있는지 확인하고 시작하세요. 문제가 지속되면 아래의 해결 방법을 클릭하거나 고객 지원팀에 문의해주세요."
+    },
     "EnpointConfig" : {
       "title" : "잘못된 엔드포인트",
       "description" : "유효한 엔드포인트를 입력하세요"
@@ -4845,6 +4860,10 @@
     },
     "NotEnoughGas" : {
       "title" : "상위 계정 잔액이 네트워크 수수료에 충분하지 않습니다"
+    },
+    "OperatingSystemOutdated" : {
+      "title" : "Your Operating System version is outdated",
+      "description" : "Please upgrade your operating system and retry. You can check the article below to understand why Ledger Live is not supported on your current operating system version."
     },
     "PasswordsDontMatch" : {
       "title" : "패스워드가 일치하지 않습니다",
@@ -5088,7 +5107,7 @@
       "title" : "동결 금액은 1보다 낮을 수 없습니다"
     },
     "TronSendTrc20ToNewAccountForbidden" : {
-      "title" : "새 계정에 TRC20을 보내도 계정이 활성화되지 않습니다",
+      "title" : "TRC20 토큰 수령을 활성화하려면 먼저 최소 0.1 TRX를 이 주소로 보내야 합니다.",
       "description" : "TRC20을 보내기 전에 수령인 계정이 활성화되어야 합니다. TRX 또는 TRC10을 계정에 보내 활성화하세요."
     },
     "TronUnexpectedFees" : {
@@ -5102,7 +5121,7 @@
       "description" : "30초 이내에 서명이 적용되어야 합니다. 다시 시도해 주세요."
     },
     "TronNotEnoughEnergy" : {
-      "title" : "이 토큰 전송에 필요한 에너지가 부족합니다"
+      "title" : "에너지가 필요한 것보다 낮습니다. 수수료로 최대 20TRX를 지불할 수 있습니다."
     },
     "PairingFailed" : {
       "title" : "페어링 실패",
@@ -5252,6 +5271,9 @@
     },
     "StellarSourceHasMultiSign" : {
       "title" : "스텔라 트랜잭션을 수행하려면 다중서명을 비활성화하세요"
+    },
+    "StellarBurnAddressError" : {
+      "title" : "A problem occurred while trying to add a Stellar account"
     },
     "HederaAddAccountError" : {
       "title" : "귀하의 계정이 추가되지 않았습니다. 다시 시도해 주세요."
