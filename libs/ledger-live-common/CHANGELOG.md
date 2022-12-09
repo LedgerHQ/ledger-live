@@ -1,5 +1,11 @@
 # @ledgerhq/live-common
 
+## 27.8.1
+
+### Patch Changes
+
+- [#2099](https://github.com/LedgerHQ/ledger-live/pull/2099) [`6a07e7bc3c`](https://github.com/LedgerHQ/ledger-live/commit/6a07e7bc3c47672e658218e06160fa121f0166ef) Thanks [@github-actions](https://github.com/apps/github-actions)! - Change tron trc20 fees limit when no energy
+
 ## 27.8.1-hotfix.0
 
 ### Patch Changes
