@@ -9,6 +9,10 @@ on:
         options:
           - LLD
           - LLM
+      tag:
+        description: "Tag"
+        required: true
+        type: string
 
 jobs:
   create-hotfix:
@@ -19,7 +23,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
         with:
-          ref: main
+          ref: ${{ inputs.tag }}
           token: ${{ secrets.GH_PAT }}
       - name: set git user
         run: |
