@@ -1,37 +1,36 @@
 # ledger-live-desktop
 
-## 2.50.1-nightly.3
+## 2.51.0
+
+### Minor Changes
+
+- [#1642](https://github.com/LedgerHQ/ledger-live/pull/1642) [`62f17e6c9b`](https://github.com/LedgerHQ/ledger-live/commit/62f17e6c9b7960783987441c1f213d9223eefd09) Thanks [@sarneijim](https://github.com/sarneijim)! - Add swap data track
+
+* [#1962](https://github.com/LedgerHQ/ledger-live/pull/1962) [`d96bcf101d`](https://github.com/LedgerHQ/ledger-live/commit/d96bcf101d5f023fd75e8ee6e0bcaebc83cad07d) Thanks [@henrily-ledger](https://github.com/henrily-ledger)! - Add more explicit error on tron trc20
 
 ### Patch Changes
 
-- Updated dependencies [[`32993aea9a`](https://github.com/LedgerHQ/ledger-live/commit/32993aea9af5dfb7f2519263e5f2a22a88320cdc)]:
-  - @ledgerhq/react-ui@0.10.2-nightly.0
+- [#1899](https://github.com/LedgerHQ/ledger-live/pull/1899) [`f29d3d9384`](https://github.com/LedgerHQ/ledger-live/commit/f29d3d9384f57c99c228749673d4f5d840b4bf06) Thanks [@LFBarreto](https://github.com/LFBarreto)! - LLD - Handle ECONNRESET error in manager
 
-## 2.50.1-nightly.2
+* [#1986](https://github.com/LedgerHQ/ledger-live/pull/1986) [`1ad947ba07`](https://github.com/LedgerHQ/ledger-live/commit/1ad947ba07c0c0d9f3469746a6a23ae50dd5a0f2) Thanks [@sarneijim](https://github.com/sarneijim)! - Remove redirection to account details from receive banner
 
-### Patch Changes
+- [#1956](https://github.com/LedgerHQ/ledger-live/pull/1956) [`7f95a94ef2`](https://github.com/LedgerHQ/ledger-live/commit/7f95a94ef265afa4b5c3df878ae20b7ae62f8185) Thanks [@sarneijim](https://github.com/sarneijim)! - Improve cic logo
 
-- Updated dependencies [[`93e19275f3`](https://github.com/LedgerHQ/ledger-live/commit/93e19275f3336672579d2e3bab317489d47853c5), [`ee507188f0`](https://github.com/LedgerHQ/ledger-live/commit/ee507188f097429237bef6df0f63b5f6426dd91a)]:
-  - @ledgerhq/live-common@27.9.0-nightly.2
+## 2.51.0-hotfix.0
 
-## 2.50.1-nightly.1
+### Minor Changes
 
-### Patch Changes
+- [#1642](https://github.com/LedgerHQ/ledger-live/pull/1642) [`62f17e6c9b`](https://github.com/LedgerHQ/ledger-live/commit/62f17e6c9b7960783987441c1f213d9223eefd09) Thanks [@sarneijim](https://github.com/sarneijim)! - Add swap data track
 
-- Updated dependencies [[`f1c15446da`](https://github.com/LedgerHQ/ledger-live/commit/f1c15446dabef05bb91dada8d8f53f9bc6474ba5), [`f1c15446da`](https://github.com/LedgerHQ/ledger-live/commit/f1c15446dabef05bb91dada8d8f53f9bc6474ba5)]:
-  - @ledgerhq/live-common@27.9.0-nightly.1
-  - @ledgerhq/errors@6.12.2-nightly.0
-  - @ledgerhq/hw-transport@6.27.9-nightly.0
-  - @ledgerhq/devices@7.0.6-nightly.0
-  - @ledgerhq/hw-transport-http@6.27.9-nightly.0
-  - @ledgerhq/hw-transport-node-hid-singleton@6.28.6-nightly.0
-
-## 2.50.1-nightly.0
+* [#1962](https://github.com/LedgerHQ/ledger-live/pull/1962) [`d96bcf101d`](https://github.com/LedgerHQ/ledger-live/commit/d96bcf101d5f023fd75e8ee6e0bcaebc83cad07d) Thanks [@henrily-ledger](https://github.com/henrily-ledger)! - Add more explicit error on tron trc20
 
 ### Patch Changes
 
-- Updated dependencies [[`ff5cb2cb11`](https://github.com/LedgerHQ/ledger-live/commit/ff5cb2cb11a2dcac0f2a65bf3ae4efac512cfe71), [`2aa8cc9c33`](https://github.com/LedgerHQ/ledger-live/commit/2aa8cc9c339ce8c9677b24e70218cc45847d799b)]:
-  - @ledgerhq/live-common@27.9.0-nightly.0
+- [#1899](https://github.com/LedgerHQ/ledger-live/pull/1899) [`f29d3d9384`](https://github.com/LedgerHQ/ledger-live/commit/f29d3d9384f57c99c228749673d4f5d840b4bf06) Thanks [@LFBarreto](https://github.com/LFBarreto)! - LLD - Handle ECONNRESET error in manager
+
+* [#1986](https://github.com/LedgerHQ/ledger-live/pull/1986) [`1ad947ba07`](https://github.com/LedgerHQ/ledger-live/commit/1ad947ba07c0c0d9f3469746a6a23ae50dd5a0f2) Thanks [@sarneijim](https://github.com/sarneijim)! - Remove redirection to account details from receive banner
+
+- [#1956](https://github.com/LedgerHQ/ledger-live/pull/1956) [`7f95a94ef2`](https://github.com/LedgerHQ/ledger-live/commit/7f95a94ef265afa4b5c3df878ae20b7ae62f8185) Thanks [@sarneijim](https://github.com/sarneijim)! - Improve cic logo
 
 ## 2.50.0
 

@@ -2143,8 +2143,8 @@
         "ethereumGasPrice" : "Gas 价格",
         "ethereumMaxFee" : "最高费用 ({{unitName}})",
         "ethereumPriorityFee" : "最高优先费用 ({{unitName}})",
-        "nextBlock" : "下一个区块：{{nextBaseFee}}",
-        "suggestedPriorityFee" : "建议：{{lowPriorityFee}} - {{highPriorityFee}} {{unitName}}",
+        "nextBlock" : "下一个区块",
+        "suggested" : "建议",
         "unitPerByte" : "{{unit}} 每字节",
         "nft" : "NFT",
         "nftQuantity" : "数量"
