@@ -79,5 +79,27 @@
     "native-modules-tools": "1.0.2",
     "pnpm-utils": "1.0.1"
   },
-  "changesets": []
+  "changesets": [
+    "bright-zebras-add",
+    "brown-pumpkins-crash",
+    "clever-eagles-sing",
+    "cuddly-lions-clap",
+    "cyan-otters-help",
+    "fifty-garlics-marry",
+    "gold-windows-complain",
+    "lazy-files-agree",
+    "mean-tigers-repeat",
+    "metal-guests-exercise",
+    "nine-donkeys-walk",
+    "olive-coins-camp",
+    "popular-eagles-camp",
+    "pretty-rivers-hear",
+    "pretty-terms-repair",
+    "selfish-beds-flash",
+    "thin-bees-camp",
+    "twenty-beers-refuse",
+    "twenty-cows-burn",
+    "weak-days-end",
+    "witty-fireants-hide"
+  ]
 }
