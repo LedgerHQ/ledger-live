@@ -64,11 +64,16 @@ jobs:
               console.error(error)
             }
       - uses: actions/github-script@v6
+        name: create output file ("affected.json")
         with:
           script: |
+            const fs = require("fs");
             const affected = ${{ steps.affected.outputs.affected }};
-            console.log(affected)
-            console.log(Array.isArray(affected));
+            fs.writeFileSync("affected.json", affected, "utf-8");
+      - uses: actions/upload-artifact@v3
+        with:
+          name: affected.json
+          path: affected.json
 
   desktop-builds:
     name: "Desktop (builds)"

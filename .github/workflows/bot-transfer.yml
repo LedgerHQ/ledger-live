@@ -80,7 +80,7 @@ jobs:
         timeout-minutes: 120
       - name: upload logs
         if: failure() || success()
-        uses: actions/upload-artifact@v1
+        uses: actions/upload-artifact@v3
         with:
           name: bot-transfer.txt
           path: bot-transfer.txt
