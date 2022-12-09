@@ -12,7 +12,5 @@
   "access": "public",
   "baseBranch": "develop",
   "updateInternalDependencies": "patch",
-  "ignore": [
-    "live-mobile"
-  ]
+  "ignore": []
 }
