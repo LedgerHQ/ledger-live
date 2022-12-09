@@ -1,5 +1,21 @@
 # ledger-live-desktop
 
+## 2.51.0-hotfix.0
+
+### Minor Changes
+
+- [#2091](https://github.com/LedgerHQ/ledger-live/pull/2091) [`909b9ed4ef`](https://github.com/LedgerHQ/ledger-live/commit/909b9ed4ef40e3cbff0c8d3cd71f84ab9a162164) Thanks [@hzheng-ledger](https://github.com/hzheng-ledger)! - Add swap data track
+
+* [#2091](https://github.com/LedgerHQ/ledger-live/pull/2091) [`909b9ed4ef`](https://github.com/LedgerHQ/ledger-live/commit/909b9ed4ef40e3cbff0c8d3cd71f84ab9a162164) Thanks [@hzheng-ledger](https://github.com/hzheng-ledger)! - Add more explicit error on tron trc20
+
+### Patch Changes
+
+- [#2091](https://github.com/LedgerHQ/ledger-live/pull/2091) [`909b9ed4ef`](https://github.com/LedgerHQ/ledger-live/commit/909b9ed4ef40e3cbff0c8d3cd71f84ab9a162164) Thanks [@hzheng-ledger](https://github.com/hzheng-ledger)! - LLD - Handle ECONNRESET error in manager
+
+* [#2091](https://github.com/LedgerHQ/ledger-live/pull/2091) [`909b9ed4ef`](https://github.com/LedgerHQ/ledger-live/commit/909b9ed4ef40e3cbff0c8d3cd71f84ab9a162164) Thanks [@hzheng-ledger](https://github.com/hzheng-ledger)! - Remove redirection to account details from receive banner
+
+- [#2091](https://github.com/LedgerHQ/ledger-live/pull/2091) [`909b9ed4ef`](https://github.com/LedgerHQ/ledger-live/commit/909b9ed4ef40e3cbff0c8d3cd71f84ab9a162164) Thanks [@hzheng-ledger](https://github.com/hzheng-ledger)! - Improve cic logo
+
 ## 2.50.0
 
 ### Minor Changes
