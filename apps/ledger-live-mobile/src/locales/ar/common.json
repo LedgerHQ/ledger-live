@@ -532,7 +532,7 @@
       "description" : "يجب توقيع المعاملات في غضون 30 ثانية. يرجى المحاولة مرة أخرى."
     },
     "TronNotEnoughEnergy" : {
-      "title" : "لا توجد طاقة كافية لإرسال رمز توكن هذا"
+      "title" : "الطاقة أقل من المطلوب. قد تدفع رسوم تصل إلى 20TRX."
     },
     "UpdateYourApp" : {
       "title" : "مطلوب تحديث للتطبيق",
@@ -715,6 +715,9 @@
     },
     "StellarSourceHasMultiSign" : {
       "title" : "يرجى تعطيل التوقيع المتعدد لإجراء معاملات Stellar"
+    },
+    "StellarBurnAddressError" : {
+      "title" : "A problem occurred while trying to add a Stellar account"
     },
     "ImageLoadFromGalleryError" : {
       "title" : "فشل تحميل الصورة من المعرض",
@@ -1717,8 +1720,14 @@
         "subtitle" : "قم بتأكيد الكود على {{productName}} خاصتك"
       },
       "error" : {
-        "title" : "الإقران لم ينجح",
-        "subtitle" : "يبدو أنه قد حدث خطأ ما!تأكد من تشغيل البلوتوث لديك وأن {{productName}} خاصتك قريبة.",
+        "generic" : {
+          "title" : "Pairing unsuccessful",
+          "subtitle" : "Looks like something went wrong!\nCheck that your Bluetooth is switched on and your {{productName}} is nearby."
+        },
+        "lockedDevice" : {
+          "title" : "Your device is locked",
+          "subtitle" : "Unlock your {{ productName }} and try again."
+        },
         "retryCta" : "أعد المحاولة"
       }
     }
@@ -3268,8 +3277,8 @@
       "gasPrice" : "سعر الغاز",
       "maxFee" : "الحد الأقصى للرسوم",
       "maxPriorityFee" : "الحد الأقصى لرسوم الأولوية",
-      "nextBlock" : "الكتلة التالية",
-      "suggested" : "المُقترح",
+      "nextBlock" : "Next block",
+      "suggested" : "مُقترح",
       "maxFees" : "الحد الأقصى للرسوم",
       "validateGasLimit" : "تأكيد حد الغاز",
       "fees" : "رسوم",
