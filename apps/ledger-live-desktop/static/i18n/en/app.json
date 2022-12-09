@@ -5136,7 +5136,7 @@
       "description": "Signature must be applied within 30 seconds. Please try again."
     },
     "TronNotEnoughEnergy": {
-      "title": "Energy is lower than necessary. You might pay up to 20TRX in fees."
+      "title": "Not enough Energy to send this token"
     },
     "PairingFailed": {
       "title": "Pairing unsuccessful",
