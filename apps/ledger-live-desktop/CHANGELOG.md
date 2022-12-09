@@ -1,37 +1,5 @@
 # ledger-live-desktop
 
-## 2.51.0
-
-### Minor Changes
-
-- [#1642](https://github.com/LedgerHQ/ledger-live/pull/1642) [`62f17e6c9b`](https://github.com/LedgerHQ/ledger-live/commit/62f17e6c9b7960783987441c1f213d9223eefd09) Thanks [@sarneijim](https://github.com/sarneijim)! - Add swap data track
-
-* [#1962](https://github.com/LedgerHQ/ledger-live/pull/1962) [`d96bcf101d`](https://github.com/LedgerHQ/ledger-live/commit/d96bcf101d5f023fd75e8ee6e0bcaebc83cad07d) Thanks [@henrily-ledger](https://github.com/henrily-ledger)! - Add more explicit error on tron trc20
-
-### Patch Changes
-
-- [#1899](https://github.com/LedgerHQ/ledger-live/pull/1899) [`f29d3d9384`](https://github.com/LedgerHQ/ledger-live/commit/f29d3d9384f57c99c228749673d4f5d840b4bf06) Thanks [@LFBarreto](https://github.com/LFBarreto)! - LLD - Handle ECONNRESET error in manager
-
-* [#1986](https://github.com/LedgerHQ/ledger-live/pull/1986) [`1ad947ba07`](https://github.com/LedgerHQ/ledger-live/commit/1ad947ba07c0c0d9f3469746a6a23ae50dd5a0f2) Thanks [@sarneijim](https://github.com/sarneijim)! - Remove redirection to account details from receive banner
-
-- [#1956](https://github.com/LedgerHQ/ledger-live/pull/1956) [`7f95a94ef2`](https://github.com/LedgerHQ/ledger-live/commit/7f95a94ef265afa4b5c3df878ae20b7ae62f8185) Thanks [@sarneijim](https://github.com/sarneijim)! - Improve cic logo
-
-## 2.51.0-hotfix.0
-
-### Minor Changes
-
-- [#1642](https://github.com/LedgerHQ/ledger-live/pull/1642) [`62f17e6c9b`](https://github.com/LedgerHQ/ledger-live/commit/62f17e6c9b7960783987441c1f213d9223eefd09) Thanks [@sarneijim](https://github.com/sarneijim)! - Add swap data track
-
-* [#1962](https://github.com/LedgerHQ/ledger-live/pull/1962) [`d96bcf101d`](https://github.com/LedgerHQ/ledger-live/commit/d96bcf101d5f023fd75e8ee6e0bcaebc83cad07d) Thanks [@henrily-ledger](https://github.com/henrily-ledger)! - Add more explicit error on tron trc20
-
-### Patch Changes
-
-- [#1899](https://github.com/LedgerHQ/ledger-live/pull/1899) [`f29d3d9384`](https://github.com/LedgerHQ/ledger-live/commit/f29d3d9384f57c99c228749673d4f5d840b4bf06) Thanks [@LFBarreto](https://github.com/LFBarreto)! - LLD - Handle ECONNRESET error in manager
-
-* [#1986](https://github.com/LedgerHQ/ledger-live/pull/1986) [`1ad947ba07`](https://github.com/LedgerHQ/ledger-live/commit/1ad947ba07c0c0d9f3469746a6a23ae50dd5a0f2) Thanks [@sarneijim](https://github.com/sarneijim)! - Remove redirection to account details from receive banner
-
-- [#1956](https://github.com/LedgerHQ/ledger-live/pull/1956) [`7f95a94ef2`](https://github.com/LedgerHQ/ledger-live/commit/7f95a94ef265afa4b5c3df878ae20b7ae62f8185) Thanks [@sarneijim](https://github.com/sarneijim)! - Improve cic logo
-
 ## 2.50.0
 
 ### Minor Changes
