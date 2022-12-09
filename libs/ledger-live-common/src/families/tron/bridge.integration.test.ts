@@ -95,7 +95,7 @@ const tron: CurrenciesData<Transaction> = {
           },
         },
         {
-          name: "useAllAmountSuccess",
+          name: "Send max",
           transaction: fromTransactionRaw({
             family: "tron",
             recipient: activatedAddress1,

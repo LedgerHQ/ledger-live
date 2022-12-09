@@ -28,6 +28,19 @@ const sharedMutations = ({ maxAccount }) => [
       };
     },
   },
+  {
+    name: "send max",
+    maxRun: 2,
+    transaction: ({ account, siblings, bridge }) => {
+      const sibling = pickSiblings(siblings, maxAccount);
+      const recipient = sibling.freshAddress;
+
+      return {
+        transaction: bridge.createTransaction(account),
+        updates: [{ recipient }, { useAllAmount: true }],
+      };
+    },
+  },
 ];
 
 const crypto_org_croeseid: AppSpec<Transaction> = {

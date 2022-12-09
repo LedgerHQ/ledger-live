@@ -716,6 +716,9 @@
     "StellarSourceHasMultiSign": {
       "title": "Please disable multisign to make Stellar transactions"
     },
+    "StellarBurnAddressError": {
+      "title": "A problem occurred while trying to add a Stellar account"
+    },
     "ImageLoadFromGalleryError": {
       "title": "Image loading from gallery failed",
       "description": "Please try again with another image"
@@ -1717,8 +1720,14 @@
         "subtitle": "Confirm the code on your {{productName}}"
       },
       "error": {
-        "title": "Pairing unsuccessful",
-        "subtitle": "Looks like something went wrong!\nCheck that your Bluetooth is switched on and your {{productName}} is nearby.",
+        "generic": {
+          "title": "Pairing unsuccessful",
+          "subtitle": "Looks like something went wrong!\nCheck that your Bluetooth is switched on and your {{productName}} is nearby."
+        },
+        "lockedDevice": {
+          "title": "Your device is locked",
+          "subtitle": "Unlock your {{ productName }} and try again."
+        },
         "retryCta": "Try again"
       }
     }
@@ -3268,8 +3277,8 @@
       "gasPrice": "Gas price",
       "maxFee": "Max fee",
       "maxPriorityFee": "Max priority fee",
-      "nextBlock": "Next block: {{nextBaseFee}}",
-      "suggestedPriorityFee": "Suggested: {{lowPriorityFee}} - {{highPriorityFee}}",
+      "nextBlock": "Next block",
+      "suggested": "Suggested",
       "maxFees": "Max fees",
       "validateGasLimit": "Validate gas limit",
       "fees": "Fees",
