@@ -716,6 +716,9 @@
     "StellarSourceHasMultiSign" : {
       "title" : "Désactivez le multisig pour envoyer des transactions Stellar"
     },
+    "StellarBurnAddressError" : {
+      "title" : "A problem occurred while trying to add a Stellar account"
+    },
     "ImageLoadFromGalleryError" : {
       "title" : "Échec du chargement de l’image depuis la galerie",
       "description" : "Veuillez réessayer avec une autre image."
@@ -1717,8 +1720,14 @@
         "subtitle" : "Confirmez le code sur votre {{productName}}."
       },
       "error" : {
-        "title" : "Échec du couplage",
-        "subtitle" : "Une erreur est survenue.\nVérifiez que le Bluetooth est activé et que votre {{productName}} est à proximité.",
+        "generic" : {
+          "title" : "Échec du couplage",
+          "subtitle" : "Une erreur est survenue.\nVérifiez que le Bluetooth est activé et que votre {{productName}} est à proximité."
+        },
+        "lockedDevice" : {
+          "title" : "Appareil verrouillé",
+          "subtitle" : "Déverrouillez votre {{ productName }} et réessayez."
+        },
         "retryCta" : "Réessayer"
       }
     }
@@ -3268,7 +3277,7 @@
       "gasPrice" : "Prix du gaz",
       "maxFee" : "Frais maximaux",
       "maxPriorityFee" : "Frais de priorité maximaux",
-      "nextBlock" : "Bloc suivant",
+      "nextBlock" : "Next block",
       "suggested" : "Suggérés",
       "maxFees" : "Frais maximaux",
       "validateGasLimit" : "Valider la limite de gaz",
