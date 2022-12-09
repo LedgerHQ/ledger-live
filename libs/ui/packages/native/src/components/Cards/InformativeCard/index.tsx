@@ -56,7 +56,7 @@ const CardContainer = (props: CardProps): React.ReactElement => {
   );
 };
 
-const CardD = (props: CardProps): React.ReactElement => {
+const InformativeCard = (props: CardProps): React.ReactElement => {
   return (
     <Base {...props} activeOpacity={0.5} onPress={props.onClickCard}>
       <CardContainer {...props} />
@@ -64,4 +64,4 @@ const CardD = (props: CardProps): React.ReactElement => {
   );
 };
 
-export default CardD;
+export default InformativeCard;
