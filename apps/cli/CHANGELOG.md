@@ -1,5 +1,12 @@
 # @ledgerhq/live-cli
 
+## 22.5.1-hotfix.0
+
+### Patch Changes
+
+- Updated dependencies [[`95e76761ec`](https://github.com/LedgerHQ/ledger-live/commit/95e76761ecea04363062c0ca37732bf42a9697eb)]:
+  - @ledgerhq/live-common@27.9.1-hotfix.0
+
 ## 22.5.0
 
 ### Minor Changes
