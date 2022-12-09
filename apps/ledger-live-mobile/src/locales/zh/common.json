@@ -716,6 +716,9 @@
     "StellarSourceHasMultiSign" : {
       "title" : "要进行 Stellar（恒星）交易，请禁用多重签名"
     },
+    "StellarBurnAddressError" : {
+      "title" : "A problem occurred while trying to add a Stellar account"
+    },
     "ImageLoadFromGalleryError" : {
       "title" : "从图库加载图片失败",
       "description" : "请使用另一张图片重试"
@@ -1717,8 +1720,14 @@
         "subtitle" : "在您的 {{productName}} 上确认代码"
       },
       "error" : {
-        "title" : "配对不成功",
-        "subtitle" : "似乎出了点问题！\n检查蓝牙是否已打开，以及 {{productName}} 是否在附近。",
+        "generic" : {
+          "title" : "配对不成功",
+          "subtitle" : "似乎出了点问题！\n检查蓝牙是否已打开，以及 {{productName}} 是否在附近。"
+        },
+        "lockedDevice" : {
+          "title" : "您的设备已经锁定",
+          "subtitle" : "解锁您的 {{ productName }} 并重试。"
+        },
         "retryCta" : "请重试"
       }
     }
@@ -3268,7 +3277,7 @@
       "gasPrice" : "Gas 价格",
       "maxFee" : "最高费用",
       "maxPriorityFee" : "最高优先费用",
-      "nextBlock" : "下一个区块",
+      "nextBlock" : "Next block",
       "suggested" : "建议",
       "maxFees" : "最大费用",
       "validateGasLimit" : "验证 gas 限值",
