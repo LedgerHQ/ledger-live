@@ -79,11 +79,5 @@
     "native-modules-tools": "1.0.2",
     "pnpm-utils": "1.0.1"
   },
-  "changesets": [
-    "ninety-eggs-look",
-    "pink-houses-do",
-    "shy-bats-end",
-    "slow-crabs-develop",
-    "spicy-jeans-study"
-  ]
+  "changesets": []
 }
