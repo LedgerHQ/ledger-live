@@ -1,11 +1,5 @@
 # @ledgerhq/live-common
 
-## 27.10.0
-
-### Minor Changes
-
-- [#2087](https://github.com/LedgerHQ/ledger-live/pull/2087) [`1910b239af`](https://github.com/LedgerHQ/ledger-live/commit/1910b239af7b1c3533721ddc5edea6c4297363a6) Thanks [@github-actions](https://github.com/apps/github-actions)! - Change tron trc20 fees limit when no energy
-
 ## 27.9.0
 
 ### Minor Changes
