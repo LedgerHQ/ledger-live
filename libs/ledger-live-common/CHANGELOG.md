@@ -1,5 +1,11 @@
 # @ledgerhq/live-common
 
+## 27.10.1-nightly.0
+
+### Patch Changes
+
+- [#2058](https://github.com/LedgerHQ/ledger-live/pull/2058) [`aee5dd361f`](https://github.com/LedgerHQ/ledger-live/commit/aee5dd361fae6aacb8b7320107417185c90f9b8b) Thanks [@haammar-ledger](https://github.com/haammar-ledger)! - Protection against syncing or adding the burn address for stellar
+
 ## 27.10.0
 
 ### Minor Changes

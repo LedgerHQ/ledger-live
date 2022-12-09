@@ -1,5 +1,16 @@
 # live-mobile
 
+## 3.12.2-nightly.0
+
+### Patch Changes
+
+- [#2058](https://github.com/LedgerHQ/ledger-live/pull/2058) [`aee5dd361f`](https://github.com/LedgerHQ/ledger-live/commit/aee5dd361fae6aacb8b7320107417185c90f9b8b) Thanks [@haammar-ledger](https://github.com/haammar-ledger)! - Add translation key
+
+* [#2019](https://github.com/LedgerHQ/ledger-live/pull/2019) [`08b0445a5f`](https://github.com/LedgerHQ/ledger-live/commit/08b0445a5f8431042ddffe9abf01e1319d677ad8) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Update Ethereum custom fees CSS for Ethereum
+
+* Updated dependencies [[`aee5dd361f`](https://github.com/LedgerHQ/ledger-live/commit/aee5dd361fae6aacb8b7320107417185c90f9b8b)]:
+  - @ledgerhq/live-common@27.10.1-nightly.0
+
 ## 3.12.1
 
 ### Patch Changes
