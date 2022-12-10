@@ -1,5 +1,21 @@
 # ledger-live-desktop
 
+## 2.51.0-nightly.0
+
+### Minor Changes
+
+- [#2093](https://github.com/LedgerHQ/ledger-live/pull/2093) [`0d8405b179`](https://github.com/LedgerHQ/ledger-live/commit/0d8405b17950125c3e3bba50086c28876e9a0c68) Thanks [@haammar-ledger](https://github.com/haammar-ledger)! - Add swap data track
+
+* [#2093](https://github.com/LedgerHQ/ledger-live/pull/2093) [`0d8405b179`](https://github.com/LedgerHQ/ledger-live/commit/0d8405b17950125c3e3bba50086c28876e9a0c68) Thanks [@haammar-ledger](https://github.com/haammar-ledger)! - Add more explicit error on tron trc20
+
+### Patch Changes
+
+- [#2093](https://github.com/LedgerHQ/ledger-live/pull/2093) [`0d8405b179`](https://github.com/LedgerHQ/ledger-live/commit/0d8405b17950125c3e3bba50086c28876e9a0c68) Thanks [@haammar-ledger](https://github.com/haammar-ledger)! - LLD - Handle ECONNRESET error in manager
+
+* [#2093](https://github.com/LedgerHQ/ledger-live/pull/2093) [`0d8405b179`](https://github.com/LedgerHQ/ledger-live/commit/0d8405b17950125c3e3bba50086c28876e9a0c68) Thanks [@haammar-ledger](https://github.com/haammar-ledger)! - Remove redirection to account details from receive banner
+
+- [#2093](https://github.com/LedgerHQ/ledger-live/pull/2093) [`0d8405b179`](https://github.com/LedgerHQ/ledger-live/commit/0d8405b17950125c3e3bba50086c28876e9a0c68) Thanks [@haammar-ledger](https://github.com/haammar-ledger)! - Improve cic logo
+
 ## 2.50.1
 
 ### Patch Changes
