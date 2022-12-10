@@ -1,17 +1,5 @@
 # @ledgerhq/live-common
 
-## 27.10.1-nightly.0
-
-### Patch Changes
-
-- [#2058](https://github.com/LedgerHQ/ledger-live/pull/2058) [`aee5dd361f`](https://github.com/LedgerHQ/ledger-live/commit/aee5dd361fae6aacb8b7320107417185c90f9b8b) Thanks [@haammar-ledger](https://github.com/haammar-ledger)! - Protection against syncing or adding the burn address for stellar
-
-## 27.10.0
-
-### Minor Changes
-
-- [#2087](https://github.com/LedgerHQ/ledger-live/pull/2087) [`1910b239af`](https://github.com/LedgerHQ/ledger-live/commit/1910b239af7b1c3533721ddc5edea6c4297363a6) Thanks [@github-actions](https://github.com/apps/github-actions)! - Change tron trc20 fees limit when no energy
-
 ## 27.9.0
 
 ### Minor Changes
@@ -57,6 +45,18 @@
   - @ledgerhq/cryptoassets@7.0.0-next.0
   - @ledgerhq/hw-app-btc@9.1.0-next.0
   - @ledgerhq/hw-app-eth@6.30.2-next.0
+
+## 27.8.1
+
+### Patch Changes
+
+- [#2099](https://github.com/LedgerHQ/ledger-live/pull/2099) [`6a07e7bc3c`](https://github.com/LedgerHQ/ledger-live/commit/6a07e7bc3c47672e658218e06160fa121f0166ef) Thanks [@github-actions](https://github.com/apps/github-actions)! - Change tron trc20 fees limit when no energy
+
+## 27.8.1-hotfix.0
+
+### Patch Changes
+
+- [#2099](https://github.com/LedgerHQ/ledger-live/pull/2099) [`6a07e7bc3c`](https://github.com/LedgerHQ/ledger-live/commit/6a07e7bc3c47672e658218e06160fa121f0166ef) Thanks [@github-actions](https://github.com/apps/github-actions)! - Change tron trc20 fees limit when no energy
 
 ## 27.8.0
 

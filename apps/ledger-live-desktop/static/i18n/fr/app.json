@@ -2184,6 +2184,9 @@
     "title" : "Notes de publication",
     "version" : "Ledger Live {{versionNb}}"
   },
+  "troubleshootNetwork" : {
+    "title" : "Résoudre les problèmes réseau"
+  },
   "systemLanguageAvailable" : {
     "title" : "Changer la langue de l’application ?",
     "description" : {
@@ -2241,6 +2244,9 @@
     }
   },
   "tron" : {
+    "receive" : {
+      "newAddressTRC20" : "Vous devez d’abord envoyer un minimum de 0,1 TRX à cette adresse pour l’activer."
+    },
     "voting" : {
       "emptyState" : {
         "description" : "Vous pouvez maintenant gagner des récompenses en votant et en gelant vos actifs.",
@@ -3582,7 +3588,7 @@
       "analyticsDesc" : "Autoriser les statistiques pour aider Ledger à améliorer l’expérience utilisateur. Ces statistiques comprennent les clics, les visites de pages, les redirections, les actions (envoyer, recevoir, verrouiller, etc.), les défilements en bas de page, les installations, désinstallations et mises à jour des applications, les versions des applications, le nombre de comptes, de crypto-actifs et d’opérations, la durée des sessions, le type d’appareil Ledger et de micrologiciel.",
       "reportErrors" : "Rapports de bugs",
       "reportErrorsDesc" : "Envoyer automatiquement des rapports pour aider Ledger à améliorer ses produits.",
-      "launchOnboarding" : "Configuration de votre appareil",
+      "launchOnboarding" : "Configurer votre appareil",
       "launchOnboardingDesc" : "Configurez un nouvel appareil ou restaurez un appareil existant. Vos comptes et paramètres sont conservés."
     },
     "help" : {
@@ -3695,6 +3701,11 @@
       "title" : "Enregistrer les logs",
       "desc" : "Sauvegarder les logs de Ledger Live peut être nécessaire à des fins de dépannage.",
       "btn" : "Sauvegarder"
+    },
+    "troubleshootNetwork" : {
+      "title" : "Résoudre les problèmes réseau",
+      "desc" : "Réalisez un contrôle pour évaluer l’état du réseau à des fins de diagnostic et dépannage.",
+      "btn" : "Lancer"
     },
     "accounts" : {
       "hideEmptyTokens" : {
@@ -4734,6 +4745,10 @@
       "title" : "Votre appareil semble avoir été déconnecté.",
       "description" : "Reconnectez votre appareil et réessayez."
     },
+    "EConnReset" : {
+      "title" : "Impossible d’accéder au Catalogue d’apps de Ledger",
+      "description" : "Votre connexion Internet a peut-être été interrompue ou utilise une configuration particulière. Commencez par vérifier si votre connexion n’utilise pas un système de blocage (proxy ou pare-feu). Si le problème persiste, cliquez ci-dessous pour obtenir des solutions ou contactez l’Assistance Ledger."
+    },
     "EnpointConfig" : {
       "title" : "Point de terminaison non valide",
       "description" : "Merci de fournir un point de terminaison valide."
@@ -5088,7 +5103,7 @@
       "title" : "Le montant à geler ne peut pas être inférieur à 1."
     },
     "TronSendTrc20ToNewAccountForbidden" : {
-      "title" : "Envoyer des TRC-20 sur un nouveau compte ne l’activera pas.",
+      "title" : "Vous devez d’abord envoyer un minimum de 0,1 TRX à cette adresse avant de recevoir des tokens TRC20.",
       "description" : "Le compte bénéficiaire doit être activé avant de commencer à envoyer des TRC-20 dessus. Pour l’activer, envoyez soit des TRX soit des TRC-10."
     },
     "TronUnexpectedFees" : {
@@ -5102,7 +5117,7 @@
       "description" : "Les transactions doivent être signées dans les 30 secondes. Veuillez réessayer."
     },
     "TronNotEnoughEnergy" : {
-      "title" : "Vous n’avez pas assez d’Énergie pour envoyer ce token."
+      "title" : "Énergie inférieure à la quantité requise. Vous pourriez payer des frais allant jusqu’à 20 TRX."
     },
     "PairingFailed" : {
       "title" : "Échec du couplage",

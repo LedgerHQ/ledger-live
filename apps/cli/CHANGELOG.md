@@ -1,19 +1,5 @@
 # @ledgerhq/live-cli
 
-## 22.5.2-nightly.0
-
-### Patch Changes
-
-- Updated dependencies [[`aee5dd361f`](https://github.com/LedgerHQ/ledger-live/commit/aee5dd361fae6aacb8b7320107417185c90f9b8b)]:
-  - @ledgerhq/live-common@27.10.1-nightly.0
-
-## 22.5.1
-
-### Patch Changes
-
-- Updated dependencies [[`1910b239af`](https://github.com/LedgerHQ/ledger-live/commit/1910b239af7b1c3533721ddc5edea6c4297363a6)]:
-  - @ledgerhq/live-common@27.10.0
-
 ## 22.5.0
 
 ### Minor Changes
@@ -39,6 +25,20 @@
   - @ledgerhq/cryptoassets@7.0.0-next.0
   - @ledgerhq/live-common@27.9.0-next.0
   - @ledgerhq/hw-app-btc@9.1.0-next.0
+
+## 22.4.10
+
+### Patch Changes
+
+- Updated dependencies [[`6a07e7bc3c`](https://github.com/LedgerHQ/ledger-live/commit/6a07e7bc3c47672e658218e06160fa121f0166ef)]:
+  - @ledgerhq/live-common@27.8.1
+
+## 22.4.10-hotfix.0
+
+### Patch Changes
+
+- Updated dependencies [[`6a07e7bc3c`](https://github.com/LedgerHQ/ledger-live/commit/6a07e7bc3c47672e658218e06160fa121f0166ef)]:
+  - @ledgerhq/live-common@27.8.1-hotfix.0
 
 ## 22.4.9
 
