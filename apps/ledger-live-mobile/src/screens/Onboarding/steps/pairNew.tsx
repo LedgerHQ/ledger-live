@@ -57,7 +57,7 @@ function OnboardingStepPairNew() {
     useNotifications();
   const { resetCurrentStep } = useNavigationInterceptor();
 
-  const { deviceModelId, showSeedWarning } = route.params;
+  const { deviceModelId, showSeedWarning, next } = route.params;
 
   const metadata: Array<Metadata> = useMemo(
     () => [
@@ -96,6 +96,13 @@ function OnboardingStepPairNew() {
   const startPostOnboarding = useStartPostOnboardingCallback();
 
   const onFinish = useCallback(() => {
+    if (next) {
+      // only used for protect for now
+      navigation.navigate(next as ScreenName.OnboardingProtectFlow, {
+        deviceModelId,
+      });
+      return;
+    }
     dispatch(completeOnboarding());
     resetCurrentStep();
 
@@ -128,6 +135,7 @@ function OnboardingStepPairNew() {
     startPostOnboarding,
     deviceModelId,
     triggerJustFinishedOnboardingNewDevicePushNotificationModal,
+    next,
   ]);
 
   const nextPage = useCallback(() => {
