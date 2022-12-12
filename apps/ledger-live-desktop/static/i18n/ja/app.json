@@ -2143,8 +2143,8 @@
         "ethereumGasPrice" : "ガス価格",
         "ethereumMaxFee" : "最大手数料 ({{unitName}})",
         "ethereumPriorityFee" : "最大優先手数料 ({{unitName}})",
-        "nextBlock" : "次のブロック",
-        "suggested" : "推奨",
+        "nextBlock" : "Next block",
+        "suggested" : "Suggested",
         "unitPerByte" : "1バイトあたり{{unit}}",
         "nft" : "NFT",
         "nftQuantity" : "数量"
@@ -4861,6 +4861,10 @@
     "NotEnoughGas" : {
       "title" : "親アカウントで、ネットワーク手数料用の残高が不足しています"
     },
+    "OperatingSystemOutdated" : {
+      "title" : "Your Operating System version is outdated",
+      "description" : "Please upgrade your operating system and retry. You can check the article below to understand why Ledger Live is not supported on your current operating system version."
+    },
     "PasswordsDontMatch" : {
       "title" : "パスワードが一致しません。",
       "description" : "もう一度お試しください。"
@@ -5267,6 +5271,9 @@
     },
     "StellarSourceHasMultiSign" : {
       "title" : "Stellarトランザクションを行うには、マルチシグを無効にしてください"
+    },
+    "StellarBurnAddressError" : {
+      "title" : "A problem occurred while trying to add a Stellar account"
     },
     "HederaAddAccountError" : {
       "title" : "アカウントが追加されていません。もう一度お試しください。"
