@@ -532,7 +532,7 @@
       "description" : "Es necesario firmar las transacciones en menos de 30 segundos. Inténtalo de nuevo."
     },
     "TronNotEnoughEnergy" : {
-      "title" : "No hay suficiente Energía para enviar este token"
+      "title" : "La energía es menor que la requerida. Es posible que pagues hasta 20 TRX en tarifas."
     },
     "UpdateYourApp" : {
       "title" : "Es necesario actualizar la aplicación",
@@ -716,6 +716,9 @@
     "StellarSourceHasMultiSign" : {
       "title" : "Desactiva la multifirma para realizar transacciones de Stellar."
     },
+    "StellarBurnAddressError" : {
+      "title" : "Se ha producido un problema al intentar agregar una cuenta de Stellar"
+    },
     "ImageLoadFromGalleryError" : {
       "title" : "Error al cargar la imagen de la galería",
       "description" : "Vuelve a intentarlo con otra imagen"
@@ -750,6 +753,30 @@
     },
     "HederaAddAccountError" : {
       "title" : "Tu cuenta no ha sido agregada. Inténtalo de nuevo."
+    },
+    "NearNewAccountWarning" : {
+      "title" : "La cuenta del destinatario todavía no está creada. El protocolo requiere una transferencia de {{formattedNewAccountStorageCost}} para crearla."
+    },
+    "NearNewNamedAccountError" : {
+      "title" : "La cuenta del destinatario todavía no está creada. Se debe crear en la billetera de NEAR."
+    },
+    "NearActivationFeeNotCovered" : {
+      "title" : "Esta cantidad no cubre el costo de almacenamiento de {{formattedNewAccountStorageCost}}."
+    },
+    "NearUseAllAmountStakeWarning" : {
+      "title" : "Asegúrate de que tienes un saldo restante suficiente para cubrir las tarifas de transacciones futuras"
+    },
+    "NearNotEnoughStaked" : {
+      "title" : "Saldo puesto en participación insuficiente"
+    },
+    "NearNotEnoughAvailable" : {
+      "title" : "Saldo disponible para retirar insuficiente"
+    },
+    "NearRecommendUnstake" : {
+      "title" : "Quita de participación y retira fondos antes de vaciar la cuenta."
+    },
+    "NearStakingThresholdNotMet" : {
+      "title" : "La cantidad debe ser de {{threshold}} como mínimo."
     },
     "PriorityFeeTooLow" : {
       "title" : "La tarifa de prioridad es inferior al valor recomendado."
@@ -1208,7 +1235,11 @@
         "subTitle" : "Restaura tu Frase de recuperación a un nuevo dispositivo",
         "desc" : "¡Utiliza una Frase de recuperación existente para restaurar tus claves privadas a un nuevo Nano!"
       },
-      "recovery" : "¿Ya tienes una Frase de recuperación?"
+      "recovery" : "¿Ya tienes una Frase de recuperación?",
+      "protect" : {
+        "label" : "Aproximadamente 60 min",
+        "subTitle" : "Restaurar con Protect"
+      }
     },
     "stepNewDevice" : {
       "0" : {
@@ -1429,6 +1460,31 @@
           "desc" : "Responde a 3 sencillas preguntas para evitar algunos errores comunes acerca de tu billetera de hardware.",
           "cta" : "Resuelve el cuestionario"
         }
+      }
+    },
+    "stepProtect" : {
+      "bullets" : {
+        "0" : {
+          "title" : "Examinar ",
+          "label" : "Aprende a interactuar con tu dispositivo mediante las instrucciones en pantalla."
+        },
+        "1" : {
+          "title" : "Selecciona “Restore” (Restaurar)",
+          "label" : "Presiona ambos botones simultáneamente para validar la selección."
+        },
+        "2" : {
+          "title" : "Selecciona el modo “Restore with Protect” (Restaurar con Protect).",
+          "label" : "Presiona ambos botones simultáneamente para validar la selección."
+        }
+      },
+      "nextStep" : "Continuar",
+      "extraInfo" : {
+        "tooltip" : "No veo esa opción en mi Ledger",
+        "title" : "¿Por qué no veo la opción “Restore with Protect” (Restaurar con Protect) en mi Ledger?",
+        "desc1" : "Lo más probable es que tu dispositivo no sea compatible con Protect. No te preocupes, con gusto te ayudaremos a resolverlo.",
+        "desc2" : "Ponte en contacto con nosotros y elige la opción \"En Mi Ledger no se muestra Restore with Protect\" para que podamos ayudarte.",
+        "cta" : "Seguir los pasos manuales",
+        "supportLink" : "Ponte en contacto con el Soporte de Ledger"
       }
     },
     "stepRecoveryPhrase" : {
@@ -1717,8 +1773,14 @@
         "subtitle" : "Confirma el código en tu {{productName}}"
       },
       "error" : {
-        "title" : "Emparejamiento fallido",
-        "subtitle" : "Parece que algo ha salido mal.\nComprueba que el Bluetooth esté activado y que tu {{productName}} esté cerca.",
+        "generic" : {
+          "title" : "Emparejamiento fallido",
+          "subtitle" : "Parece que algo ha salido mal.\nComprueba que el Bluetooth esté activado y que tu {{productName}} esté cerca."
+        },
+        "lockedDevice" : {
+          "title" : "Tu dispositivo está bloqueado",
+          "subtitle" : "Desbloquea tu {{ productName }} e inténtalo de nuevo."
+        },
         "retryCta" : "Inténtalo de nuevo"
       }
     }
@@ -2004,7 +2066,10 @@
       "UNLOCK" : "Desbloqueado",
       "REVOKE" : "Revocado",
       "REGISTER" : "Registrado",
-      "WITHDRAW" : "Retirado"
+      "WITHDRAW" : "Retirado",
+      "STAKE" : "En participación",
+      "UNSTAKE" : "Fuera de participación",
+      "WITHDRAW_UNSTAKED" : "Retirado"
     }
   },
   "operationDetails" : {
@@ -2065,7 +2130,8 @@
       "storageLimit" : "Límite de almacenamiento",
       "gasLimit" : "Límite de gas",
       "id" : "Id",
-      "autoClaimedRewards" : "Recompensas Autoreclamadas"
+      "autoClaimedRewards" : "Recompensas Autoreclamadas",
+      "stakedAmount" : "Cantidad en participación"
     },
     "multipleAddresses" : "¿Por qué hay múltiples direcciones?",
     "tokenName" : "Nombre del token",
@@ -3269,7 +3335,7 @@
       "maxFee" : "Tarifa máxima",
       "maxPriorityFee" : "Tarifa de prioridad máxima",
       "nextBlock" : "Siguiente bloque",
-      "suggested" : "Sugerencia",
+      "suggested" : "Sugerida",
       "maxFees" : "Tarifas máx",
       "validateGasLimit" : "Validar límite de gas",
       "fees" : "Tarifas",
@@ -5024,6 +5090,118 @@
       }
     }
   },
+  "near" : {
+    "info" : {
+      "available" : {
+        "title" : "NEAR disponible",
+        "description" : "Este importe está disponible."
+      },
+      "storageUsage" : {
+        "title" : "Saldo mínimo",
+        "description" : "Esta cantidad está reservada para almacenamiento y transacciones, y es el saldo mínimo que debe mantener tu cuenta para permanecer activa."
+      },
+      "staked" : {
+        "title" : "Saldo en participación",
+        "description" : "Esta cantidad está en participación con validadores."
+      },
+      "pending" : {
+        "title" : "Saldo pendiente",
+        "description" : "Esta cantidad se ha quitado de participación y está pendiente de disponibilidad."
+      },
+      "withdrawable" : {
+        "title" : "Saldo retirable",
+        "description" : "Esta cantidad se ha quitado de participación y se puede retirar."
+      },
+      "stakingUnavailable" : {
+        "title" : "Puesta en participación no disponible",
+        "description" : "No tienes en tu cuenta saldo suficiente para poner en participación, quitar de participación y retirar."
+      }
+    },
+    "unstaking" : {
+      "stepperHeader" : {
+        "amountSubTitle" : "Importe de la cancelación de la puesta en participación"
+      },
+      "flow" : {
+        "steps" : {
+          "verification" : {
+            "success" : {
+              "title" : "Has cancelado la puesta en participación de tus activos correctamente"
+            }
+          }
+        }
+      }
+    },
+    "withdrawing" : {
+      "stepperHeader" : {
+        "amountSubTitle" : "Importe a retirar"
+      },
+      "flow" : {
+        "steps" : {
+          "verification" : {
+            "success" : {
+              "title" : "Has retirado con éxito tus activos"
+            }
+          }
+        }
+      }
+    },
+    "staking" : {
+      "sectionLabel" : "Posiciones en participación",
+      "info" : "Cómo funciona la participación",
+      "add" : "Agregar",
+      "stakingEarn" : "Puedes conseguir recompensas en NEAR al poner tus activos en participación.",
+      "totalStake" : "Participación total",
+      "commission" : "Comisión",
+      "iStake" : "Pongo en participación",
+      "actions" : {
+        "unstake" : "Cancelar la puesta en participación",
+        "withdraw" : "Retirar"
+      },
+      "drawer" : {
+        "status" : "Estado",
+        "active" : "Activo",
+        "inactive" : "Inactivo",
+        "rewards" : "Recompensas",
+        "pending" : "Pendiente",
+        "available" : "Puede retirarse"
+      },
+      "stepperHeader" : {
+        "amountSubTitle" : "Importe a poner en participación",
+        "selectDevice" : "Seleccionar dispositivo",
+        "connectDevice" : "Conectar dispositivo",
+        "stepRange" : "Paso {{currentStep}} de {{totalSteps}}"
+      },
+      "flow" : {
+        "steps" : {
+          "starter" : {
+            "description" : "Pon en participación tus NEAR para recibir recompensas de forma segura, a la vez que mantienes el control de tus activos.",
+            "steps" : {
+              "0" : "Los activos puestos en participación siguen siendo tuyos.",
+              "1" : "Deberás esperar entre 52 y 65 horas para que el proceso de quitar de participación finalice.",
+              "2" : "Pon en participación de forma segura con tu dispositivo Ledger."
+            },
+            "warning" : {
+              "description" : "Elige tu validador con cuidado: Puedes perder definitivamente parte de tus activos puestos en participación si el validador no se comporta apropiadamente."
+            },
+            "cta" : "Continuar"
+          },
+          "amount" : {
+            "assetsRemaining" : "Activos restantes: <0>{{amount}}</0>",
+            "allAssetsUsed" : "Todos los activos utilizados",
+            "minAmount" : "Cantidad mínima: <0>{{min}}</0>",
+            "incorrectAmount" : "Cantidad máxima: <0>{{max}}</0>",
+            "cta" : "Continuar"
+          },
+          "verification" : {
+            "success" : {
+              "title" : "Has puesto en participación tus activos correctamente",
+              "text" : "El saldo de la cuenta se actualizará cuando la red confirme la transacción."
+            }
+          }
+        }
+      }
+    }
+  },
   "delegation" : {
     "overdelegated" : "Sobredelegado",
     "delegationSendWarnDesc" : "El importe a enviar se deducirá de tu cuenta delegada.",
@@ -5541,6 +5719,88 @@
       },
       "media" : {
         "tag" : "{{count}} NFTs"
+      }
+    }
+  },
+  "servicesWidget" : {
+    "title" : "Servicios",
+    "subTitle" : "Gestiona tus servicios de Ledger",
+    "protect" : {
+      "title" : "Protect",
+      "status" : {
+        "new" : {
+          "title" : "Nuevo",
+          "desc" : "Respalda tu Frase de recuperación",
+          "0" : {
+            "title" : "Millones de usuarios de Ledger confían en nosotros"
+          },
+          "1" : {
+            "title" : "Tu Frase de recuperación está vinculada a tu identidad de forma segura"
+          },
+          "2" : {
+            "title" : "Cifrado con tecnología de avanzada"
+          },
+          "3" : {
+            "title" : "Distribuido en 3 instalaciones descentralizadas, de manera de que nadie pueda robar tu Frase de recuperación"
+          },
+          "actions" : {
+            "learnMore" : "Más información",
+            "alreadySubscribed" : "¿Ya estás suscrito a Protect?"
+          }
+        },
+        "confirmIdentity" : {
+          "title" : "Acción necesaria",
+          "desc" : "Confirma tu identidad y completa todas las tareas para proteger tu Frase de recuperación.",
+          "actions" : {
+            "confirmNow" : "Confirmar ahora",
+            "viewDetails" : "Ver detalles"
+          }
+        },
+        "addPayment" : {
+          "title" : "Acción necesaria",
+          "desc" : "Agrega tu información de pagos y completa todas las tareas para proteger tu Frase de recuperación",
+          "actions" : {
+            "addNow" : "Agregar ahora",
+            "viewDetails" : "Ver detalles"
+          }
+        },
+        "paymentRejected" : {
+          "title" : "Pago rechazado",
+          "desc" : "Tu pago de $5 falló. Por favor, edita tu información de pagos.",
+          "actions" : {
+            "editNow" : "Editar ahora",
+            "viewDetails" : "Ver detalles"
+          }
+        },
+        "subscriptionCanceled" : {
+          "title" : "Suscripción cancelada",
+          "desc" : "Tu suscripción ha terminado, luego de 3 meses sin pagos.",
+          "actions" : {
+            "contactLedgerSupport" : "Ponte en contacto con el Soporte de Ledger",
+            "viewDetails" : "Ver detalles"
+          }
+        },
+        "active" : {
+          "title" : "Activo",
+          "desc" : "Tu Frase de recuperación está protegida",
+          "actions" : {
+            "viewDetails" : "Ver detalles"
+          }
+        }
+      }
+    }
+  },
+  "protect" : {
+    "login" : {
+      "title" : "Inicia sesión",
+      "desc" : "Inicia sesión con tu cuenta de Ledger para gestionar tu suscripción de Protect.",
+      "email" : "Correo electrónico",
+      "password" : "Contraseña",
+      "cta" : "Usuario",
+      "forgotPassword" : "¿Has olvidado tu contraseña?",
+      "errors" : {
+        "emptyEmail" : "El correo electrónico no puede estar en blanco",
+        "emptyPassword" : "La contraseña no puede estar en blanco"
       }
     }
   }
