@@ -532,7 +532,7 @@
       "description" : "Les transactions doivent être signées dans les 30 secondes. Veuillez réessayer."
     },
     "TronNotEnoughEnergy" : {
-      "title" : "Vous n’avez pas assez d’Énergie pour envoyer ce token."
+      "title" : "Énergie inférieure à la quantité requise. Vous pourriez payer des frais allant jusqu’à 20 TRX."
     },
     "UpdateYourApp" : {
       "title" : "Mise à jour de l’app nécessaire",
@@ -715,6 +715,9 @@
     },
     "StellarSourceHasMultiSign" : {
       "title" : "Désactivez le multisig pour envoyer des transactions Stellar"
+    },
+    "StellarBurnAddressError" : {
+      "title" : "Un problème est survenu lors de l’ajout du compte Stellar"
     },
     "ImageLoadFromGalleryError" : {
       "title" : "Échec du chargement de l’image depuis la galerie",
@@ -1208,7 +1211,11 @@
         "subTitle" : "Restaurer une phrase de récupération sur un nouvel appareil",
         "desc" : "Utilisez une phrase de récupération existante pour restaurer vos clés privées sur votre nouveau Nano."
       },
-      "recovery" : "Vous avez déjà une phrase de récupération ?"
+      "recovery" : "Vous avez déjà une phrase de récupération ?",
+      "protect" : {
+        "label" : "~60 min",
+        "subTitle" : "Restaurer avec Protect"
+      }
     },
     "stepNewDevice" : {
       "0" : {
@@ -1429,6 +1436,31 @@
           "desc" : "Répondez à 3 questions rapides pour mieux comprendre votre wallet physique.",
           "cta" : "Répondre aux questions"
         }
+      }
+    },
+    "stepProtect" : {
+      "bullets" : {
+        "0" : {
+          "title" : "Naviguez ",
+          "label" : "Apprenez à interagir avec votre appareil. Lisez les instructions à l’écran."
+        },
+        "1" : {
+          "title" : "Sélectionnez \"Restore\"",
+          "label" : "Appuyez simultanément sur les deux boutons pour valider."
+        },
+        "2" : {
+          "title" : "Sélectionnez \"Restore with Protect\"",
+          "label" : "Appuyez simultanément sur les deux boutons pour valider."
+        }
+      },
+      "nextStep" : "Continuer",
+      "extraInfo" : {
+        "tooltip" : "Je ne le vois pas sur mon Ledger",
+        "title" : "Pourquoi ne vois-je pas \"Restore with Protect\" sur mon Ledger ?",
+        "desc1" : "La raison la plus probable est que votre appareil n’est pas compatible avec Protect. Ne vous inquiétez pas, nous allons vous aider à résoudre ce problème.",
+        "desc2" : "Please contact us through and choose \"My Ledger doesn't display Restore with Protect\", we got you covered.",
+        "cta" : "Suivre les étapes",
+        "supportLink" : "Contacter l’Assistance Ledger"
       }
     },
     "stepRecoveryPhrase" : {
@@ -1717,8 +1749,14 @@
         "subtitle" : "Confirmez le code sur votre {{productName}}."
       },
       "error" : {
-        "title" : "Échec du couplage",
-        "subtitle" : "Une erreur est survenue.\nVérifiez que le Bluetooth est activé et que votre {{productName}} est à proximité.",
+        "generic" : {
+          "title" : "Échec du couplage",
+          "subtitle" : "Une erreur est survenue.\nVérifiez que le Bluetooth est activé et que votre {{productName}} est à proximité."
+        },
+        "lockedDevice" : {
+          "title" : "Appareil verrouillé",
+          "subtitle" : "Déverrouillez votre {{ productName }} et réessayez."
+        },
         "retryCta" : "Réessayer"
       }
     }
@@ -5541,6 +5579,88 @@
       },
       "media" : {
         "tag" : "{{count}} NFT"
+      }
+    }
+  },
+  "servicesWidget" : {
+    "title" : "Services",
+    "subTitle" : "Gérez vos services Ledger",
+    "protect" : {
+      "title" : "Protect",
+      "status" : {
+        "new" : {
+          "title" : "Nouveau",
+          "desc" : "Sauvegardez votre phrase de récupération",
+          "0" : {
+            "title" : "Des millions d’utilisateurs Ledger nous font confiance."
+          },
+          "1" : {
+            "title" : "Votre phrase de récupération est liée à votre identité en toute sécurité."
+          },
+          "2" : {
+            "title" : "Chiffrement de pointe."
+          },
+          "3" : {
+            "title" : "Votre phrase de récupération est divisée en 3 fragments séparés ultra-sécurisés."
+          },
+          "actions" : {
+            "learnMore" : "En savoir plus",
+            "alreadySubscribed" : "Vous utilisez déjà Protect ?"
+          }
+        },
+        "confirmIdentity" : {
+          "title" : "Action requise",
+          "desc" : "Confirmez votre identité et réalisez toutes les étapes pour protéger votre phrase de récupération.",
+          "actions" : {
+            "confirmNow" : "Confirmer maintenant",
+            "viewDetails" : "Voir les détails"
+          }
+        },
+        "addPayment" : {
+          "title" : "Action requise",
+          "desc" : "Ajoutez un mode de paiement et réalisez toutes les étapes pour protéger votre phrase de récupération.",
+          "actions" : {
+            "addNow" : "Ajouter",
+            "viewDetails" : "Voir les détails"
+          }
+        },
+        "paymentRejected" : {
+          "title" : "Paiement rejeté",
+          "desc" : "Votre paiement de 5 $ US a échoué. Veuillez modifier vos informations de paiement.",
+          "actions" : {
+            "editNow" : "Modifier",
+            "viewDetails" : "Voir les détails"
+          }
+        },
+        "subscriptionCanceled" : {
+          "title" : "Abonnement résilié",
+          "desc" : "Votre abonnement sera résilié après 3 mois impayés.",
+          "actions" : {
+            "contactLedgerSupport" : "Contacter l’Assistance Ledger",
+            "viewDetails" : "Voir les détails"
+          }
+        },
+        "active" : {
+          "title" : "Actif",
+          "desc" : "Votre phrase de récupération est protégée",
+          "actions" : {
+            "viewDetails" : "Voir les détails"
+          }
+        }
+      }
+    }
+  },
+  "protect" : {
+    "login" : {
+      "title" : "Connexion",
+      "desc" : "Log in with your Ledger account to manage your Protect subscription.",
+      "email" : "Email",
+      "password" : "Mot de passe",
+      "cta" : "Me connecter",
+      "forgotPassword" : "Forgot password?",
+      "errors" : {
+        "emptyEmail" : "Email cannot be empty",
+        "emptyPassword" : "Password cannot be empty"
       }
     }
   }
