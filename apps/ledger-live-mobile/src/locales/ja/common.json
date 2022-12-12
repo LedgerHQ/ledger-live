@@ -532,7 +532,7 @@
       "description" : "トランザクションは、30秒以内に署名する必要があります。もう一度お試しください。"
     },
     "TronNotEnoughEnergy" : {
-      "title" : "このトークンの送金に必要なエネルギーが不足しています。"
+      "title" : "エネルギーが必要額を満たしていません。手数料には最大20TRXが必要となります。"
     },
     "UpdateYourApp" : {
       "title" : "アプリのアップデートが必要です。",
@@ -716,6 +716,9 @@
     "StellarSourceHasMultiSign" : {
       "title" : "Stellarトランザクションを行うには、マルチシグを無効にしてください"
     },
+    "StellarBurnAddressError" : {
+      "title" : "A problem occurred while trying to add a Stellar account"
+    },
     "ImageLoadFromGalleryError" : {
       "title" : "ギャラリーからの画像の読み込みに失敗しました",
       "description" : "別の画像でもう一度お試しください"
@@ -750,6 +753,30 @@
     },
     "HederaAddAccountError" : {
       "title" : "アカウントが追加されていません。もう一度お試しください。"
+    },
+    "NearNewAccountWarning" : {
+      "title" : "受取人アカウントはまだ作成されていません。このプロトコルでは、作成するのに{{formattedNewAccountStorageCost}}の転送コストが必要です。"
+    },
+    "NearNewNamedAccountError" : {
+      "title" : "受取人アカウントはまだ作成されていません。NEARウォレットで作成する必要があります。"
+    },
+    "NearActivationFeeNotCovered" : {
+      "title" : "この量は、{{formattedNewAccountStorageCost}}の保管コストをカバーしていません。"
+    },
+    "NearUseAllAmountStakeWarning" : {
+      "title" : "今後のトランザクション手数料に十分な残高を、確保しておいてください。"
+    },
+    "NearNotEnoughStaked" : {
+      "title" : "ステーキング済み残高が不十分です"
+    },
+    "NearNotEnoughAvailable" : {
+      "title" : "引き出し可能残高が不十分です"
+    },
+    "NearRecommendUnstake" : {
+      "title" : "アカウントを空にする前に、資金のステーキングを解除して引き出してください"
+    },
+    "NearStakingThresholdNotMet" : {
+      "title" : "{{threshold}}以上の数量が必要です。"
     },
     "PriorityFeeTooLow" : {
       "title" : "優先手数料が推奨手数料より低額です"
@@ -1208,7 +1235,11 @@
         "subTitle" : "新しいデバイスでリカバリーフレーズを復元",
         "desc" : "既存のリカバリーフレーズを使って、新しいNanoに秘密鍵を復元できます。"
       },
-      "recovery" : "リカバリーフレーズをすでにお持ちですか？"
+      "recovery" : "リカバリーフレーズをすでにお持ちですか？",
+      "protect" : {
+        "label" : "～60分",
+        "subTitle" : "Protectで復元"
+      }
     },
     "stepNewDevice" : {
       "0" : {
@@ -1429,6 +1460,31 @@
           "desc" : "ハードウェアウォレットに関するよくある誤解を解消するため、3つの簡単な質問にお答えください。",
           "cta" : "クイズをはじめる"
         }
+      }
+    },
+    "stepProtect" : {
+      "bullets" : {
+        "0" : {
+          "title" : "画面をチェックする ",
+          "label" : "デバイスの画面に表示される手順に従って、操作方法を学びましょう。"
+        },
+        "1" : {
+          "title" : "「復元」を選択",
+          "label" : "両方のボタンを同時に押して、選択内容を確定します。"
+        },
+        "2" : {
+          "title" : "「Protectで復元」モードを選択",
+          "label" : "両方のボタンを同時に押して、選択内容を確定します。"
+        }
+      },
+      "nextStep" : "続行",
+      "extraInfo" : {
+        "tooltip" : "Ledgerで表示されない",
+        "title" : "Ledgerで「Protectで復元」が表示されないのはなぜですか？",
+        "desc1" : "最も可能性の高い理由は、お使いのデバイスがProtectと互換性がないことです。ご心配ありません。それをお使いいただけるように、ぜひサポートさせていただきます。",
+        "desc2" : "Please contact us through and choose \"My Ledger doesn't display Restore with Protect\", we got you covered.",
+        "cta" : "マニュアル手順を実行する",
+        "supportLink" : "Ledgerサポートへのお問い合わせ"
       }
     },
     "stepRecoveryPhrase" : {
@@ -1717,8 +1773,14 @@
         "subtitle" : "{{productName}}のコードを確認してください"
       },
       "error" : {
-        "title" : "ペアリング失敗",
-        "subtitle" : "何か問題が発生したようです。\nBluetoothがオンになっており、{{productName}}が近くにあることをご確認ください。",
+        "generic" : {
+          "title" : "ペアリング失敗",
+          "subtitle" : "何か問題が発生したようです。\nBluetoothがオンになっており、{{productName}}が近くにあることをご確認ください。"
+        },
+        "lockedDevice" : {
+          "title" : "デバイスがロックされています。",
+          "subtitle" : "{{ productName }}のロックを解除して、再度お試しください。"
+        },
         "retryCta" : "再試行"
       }
     }
@@ -2004,7 +2066,10 @@
       "UNLOCK" : "ロック解除されました",
       "REVOKE" : "取り消されました",
       "REGISTER" : "登録されました",
-      "WITHDRAW" : "引き出し済み"
+      "WITHDRAW" : "引き出し済み",
+      "STAKE" : "ステーキング済み",
+      "UNSTAKE" : "ステーキング解除済み",
+      "WITHDRAW_UNSTAKED" : "引き出し済み"
     }
   },
   "operationDetails" : {
@@ -2065,7 +2130,8 @@
       "storageLimit" : "ストレージ上限",
       "gasLimit" : "ガスリミット",
       "id" : "ID",
-      "autoClaimedRewards" : "自動獲得報酬"
+      "autoClaimedRewards" : "自動獲得報酬",
+      "stakedAmount" : "ステーキング済み量"
     },
     "multipleAddresses" : "なぜ複数のアドレスがあるのですか？",
     "tokenName" : "トークン名",
@@ -3268,8 +3334,8 @@
       "gasPrice" : "ガス価格",
       "maxFee" : "最大手数料",
       "maxPriorityFee" : "最大優先手数料",
-      "nextBlock" : "次のブロック",
-      "suggested" : "推奨",
+      "nextBlock" : "Next block",
+      "suggested" : "Suggested",
       "maxFees" : "最大手数料",
       "validateGasLimit" : "ガスリミットの検証",
       "fees" : "手数料",
@@ -5024,6 +5090,118 @@
       }
     }
   },
+  "near" : {
+    "info" : {
+      "available" : {
+        "title" : "利用可能なNEAR",
+        "description" : "これは利用可能額です。"
+      },
+      "storageUsage" : {
+        "title" : "最低残高",
+        "description" : "この量は保管とトランザクション用に確保されており、アカウントを有効にしておくために維持する必要がある最低残高です。"
+      },
+      "staked" : {
+        "title" : "ステーキング済み残高",
+        "description" : "この量は現在、バリデーターにステーキングされています。"
+      },
+      "pending" : {
+        "title" : "保留中残高",
+        "description" : "この量はステーキング解除されており、現在利用可能待ちです。"
+      },
+      "withdrawable" : {
+        "title" : "出金可能残高",
+        "description" : "この数量はステーキング解除されており、現在出金可能です。"
+      },
+      "stakingUnavailable" : {
+        "title" : "ステーキングは利用できません",
+        "description" : "アカウントに、ステーキング、ステーキング解除、および引き出しに十分な残高がありません。"
+      }
+    },
+    "unstaking" : {
+      "stepperHeader" : {
+        "amountSubTitle" : "ステーキングを解除する数量"
+      },
+      "flow" : {
+        "steps" : {
+          "verification" : {
+            "success" : {
+              "title" : "資産のステーキングを正常に解除しました"
+            }
+          }
+        }
+      }
+    },
+    "withdrawing" : {
+      "stepperHeader" : {
+        "amountSubTitle" : "引き出す数量"
+      },
+      "flow" : {
+        "steps" : {
+          "verification" : {
+            "success" : {
+              "title" : "資産の引き出しに成功しました"
+            }
+          }
+        }
+      }
+    },
+    "staking" : {
+      "sectionLabel" : "ステーキングポジション",
+      "info" : "ステーキングの仕組み",
+      "add" : "追加",
+      "stakingEarn" : "資産をステーキングして、NEARの報酬を獲得できます。",
+      "totalStake" : "合計ステーキング量",
+      "commission" : "コミッション",
+      "iStake" : "ステーキングします",
+      "actions" : {
+        "unstake" : "ステーキング解除",
+        "withdraw" : "引き出す"
+      },
+      "drawer" : {
+        "status" : "ステータス",
+        "active" : "アクティブ",
+        "inactive" : "停止中",
+        "rewards" : "報酬",
+        "pending" : "保留中",
+        "available" : "引き出し可能"
+      },
+      "stepperHeader" : {
+        "amountSubTitle" : "ステーキングする数量",
+        "selectDevice" : "デバイスを選択",
+        "connectDevice" : "デバイスを接続",
+        "stepRange" : "ステップ{{currentStep}}/{{totalSteps}}"
+      },
+      "flow" : {
+        "steps" : {
+          "starter" : {
+            "description" : "資産を管理しながら、NEARをステーキングして報酬を獲得しましょう。",
+            "steps" : {
+              "0" : "資産をステーキングしても、資産の所有者はお客様のままです。",
+              "1" : "ステーキング解除が完了するまで52〜65時間待つ必要があります。",
+              "2" : "Ledgerデバイスを使って安全にステーキングできます。"
+            },
+            "warning" : {
+              "description" : "バリデーターを賢く選択：バリデーターが適切に動作しない場合、ステーキングされた資産の一部が失われて、取り返せない可能性があります。"
+            },
+            "cta" : "続行"
+          },
+          "amount" : {
+            "assetsRemaining" : "残りの資産：<0>{{amount}}</0>",
+            "allAssetsUsed" : "全ての資産を使用中",
+            "minAmount" : "最低金額: <0>{{min}}</0>",
+            "incorrectAmount" : "最大金額: <0>{{max}}</0>",
+            "cta" : "続行"
+          },
+          "verification" : {
+            "success" : {
+              "title" : "資産が正常にステーキングされました",
+              "text" : "ネットワークによるトランザクションの承認後、アカウントの残高が更新されます。"
+            }
+          }
+        }
+      }
+    }
+  },
   "delegation" : {
     "overdelegated" : "デリゲート超過",
     "delegationSendWarnDesc" : "送付額は、デリゲートアカウントから差し引かれます。",
@@ -5541,6 +5719,88 @@
       },
       "media" : {
         "tag" : "{{count}}NFT"
+      }
+    }
+  },
+  "servicesWidget" : {
+    "title" : "サービス",
+    "subTitle" : "Ledgerサービスを管理",
+    "protect" : {
+      "title" : "Protect",
+      "status" : {
+        "new" : {
+          "title" : "新商品",
+          "desc" : "リカバリーフレーズをバックアップ",
+          "0" : {
+            "title" : "数百万人のLedgerユーザーが信頼"
+          },
+          "1" : {
+            "title" : "リカバリーフレーズは安全に個人とリンクされます"
+          },
+          "2" : {
+            "title" : "最先端の暗号化"
+          },
+          "3" : {
+            "title" : "3つの分散型のパーツに分けてシェアされ、リカバリーフレーズの盗難を防ぎます"
+          },
+          "actions" : {
+            "learnMore" : "詳細はこちら",
+            "alreadySubscribed" : "Protectを利用しますか？"
+          }
+        },
+        "confirmIdentity" : {
+          "title" : "Action required",
+          "desc" : "Confirm your identity and complete all tasks to protect your recovery phrase.",
+          "actions" : {
+            "confirmNow" : "Confirm now",
+            "viewDetails" : "View details"
+          }
+        },
+        "addPayment" : {
+          "title" : "Action required",
+          "desc" : "Add a payment details and complete all tasks to protect your recovery phrase.",
+          "actions" : {
+            "addNow" : "Add now",
+            "viewDetails" : "View details"
+          }
+        },
+        "paymentRejected" : {
+          "title" : "支払い方法却下",
+          "desc" : "$5の支払いが不成立となりました。お支払い方法の詳細を編集してください。",
+          "actions" : {
+            "editNow" : "今すぐ編集",
+            "viewDetails" : "詳細を表示"
+          }
+        },
+        "subscriptionCanceled" : {
+          "title" : "購読キャンセル済み",
+          "desc" : "3ヶ月の未払いにより購読がキャンセルされました。",
+          "actions" : {
+            "contactLedgerSupport" : "Ledgerサポートへのお問い合わせ",
+            "viewDetails" : "詳細を表示"
+          }
+        },
+        "active" : {
+          "title" : "アクティブ",
+          "desc" : "リカバリーフレーズは保護されています。",
+          "actions" : {
+            "viewDetails" : "詳細を表示"
+          }
+        }
+      }
+    }
+  },
+  "protect" : {
+    "login" : {
+      "title" : "Log In",
+      "desc" : "Log in with your Ledger account to manage your Protect subscription.",
+      "email" : "Email",
+      "password" : "Password",
+      "cta" : "Login",
+      "forgotPassword" : "Forgot password?",
+      "errors" : {
+        "emptyEmail" : "Email cannot be empty",
+        "emptyPassword" : "Password cannot be empty"
       }
     }
   }
