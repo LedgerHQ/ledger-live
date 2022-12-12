@@ -15,6 +15,7 @@ import { Trans } from "react-i18next";
 import { ListAppsResult } from "@ledgerhq/live-common/apps/types";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { AppType, SortOptions } from "@ledgerhq/live-common/apps/filtering";
+import useLatestFirmware from "@ledgerhq/live-common/hooks/useLatestFirmware";
 import { ManagerTab } from "../../const/manager";
 
 import AppFilter from "./AppsList/AppFilter";
@@ -40,7 +41,6 @@ import type {
 import { ManagerNavigatorStackParamList } from "../../components/RootNavigator/types/ManagerNavigator";
 import { ScreenName } from "../../const";
 import { lastSeenDeviceSelector } from "../../reducers/settings";
-import useLatestFirmware from "../../hooks/useLatestFirmware";
 
 type NavigationProps = BaseComposite<
   StackNavigatorProps<ManagerNavigatorStackParamList, ScreenName.ManagerMain>

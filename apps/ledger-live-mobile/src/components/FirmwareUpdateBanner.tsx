@@ -11,6 +11,7 @@ import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { FlexBoxProps } from "@ledgerhq/native-ui/components/Layout/Flex";
 import isFirmwareUpdateVersionSupported from "@ledgerhq/live-common/hw/isFirmwareUpdateVersionSupported";
+import useLatestFirmware from "@ledgerhq/live-common/hooks/useLatestFirmware";
 import { ScreenName, NavigatorName } from "../const";
 import {
   lastSeenDeviceSelector,
@@ -19,7 +20,6 @@ import {
 } from "../reducers/settings";
 import { hasConnectedDeviceSelector } from "../reducers/appstate";
 import Button from "./Button";
-import useLatestFirmware from "../hooks/useLatestFirmware";
 import QueuedDrawer from "./QueuedDrawer";
 
 const FirmwareUpdateBanner = ({
