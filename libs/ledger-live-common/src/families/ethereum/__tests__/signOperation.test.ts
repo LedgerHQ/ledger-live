@@ -11,7 +11,6 @@ import { ethereum1 } from "../datasets/ethereum1";
 import { signOperation } from "../signOperation";
 import { setEnv } from "../../../env";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import { BN } from "ethereumjs-util";
 
 const signTransaction = jest.fn(() => {
   return Promise.resolve({
@@ -54,17 +53,17 @@ describe("signOperation", () => {
         setEnv("EIP1559_ENABLED_CURRENCIES", type2CurrenciesIds.join(","));
       });
 
-      type2CurrenciesIds.map(getCryptoCurrencyById).forEach((currency) => {
-        beforeEach(() => {
-          signTransaction.mockImplementation(() => {
-            return Promise.resolve({
-              r: "006c000371dc04c5752287a9901b1fac4b069eb1410173db39c407ae725e4a6e",
-              s: "4f445c94cc869f01e194478a3b876052716ae7676247664acec371b6e6ad16e4",
-              v: "01",
-            });
+      beforeEach(() => {
+        signTransaction.mockImplementationOnce(() => {
+          return Promise.resolve({
+            r: "006c000371dc04c5752287a9901b1fac4b069eb1410173db39c407ae725e4a6e",
+            s: "4f445c94cc869f01e194478a3b876052716ae7676247664acec371b6e6ad16e4",
+            v: "01",
           });
         });
+      });
 
+      type2CurrenciesIds.map(getCryptoCurrencyById).forEach((currency) => {
         it(`Should use EIP155 for ${currency.id} transaction`, async () => {
           await signOperation({
             account: {
