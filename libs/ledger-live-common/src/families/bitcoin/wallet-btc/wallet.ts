@@ -42,10 +42,10 @@ class BitcoinLikeWallet {
       storage: "mock";
       storageParams: any[];
     },
-    baseUrl: string
+    explorerURI: string
   ): Promise<Account> {
     this.explorer = new BitcoinLikeExplorer({
-      explorerURI: baseUrl,
+      explorerURI: explorerURI,
     });
     const crypto = cryptoFactory(params.currency);
     const storage = this.accountStorages[params.storage](
@@ -336,14 +336,14 @@ class BitcoinLikeWallet {
     const currencyId = account.params.currency;
     const cryptoCurrency = getCryptoCurrencyById(currencyId);
     const crypto = cryptoFactory(currencyId);
-    const baseUrl = blockchainBaseURL(cryptoCurrency);
+    const explorerURI = blockchainBaseURL(cryptoCurrency);
     const storage = this.accountStorages[account.params.storage](
       ...account.params.storageParams
     );
 
     return new Xpub({
       storage,
-      explorer: this.getExplorer(baseUrl),
+      explorer: this.getExplorer(explorerURI),
       crypto,
       xpub: account.xpub.xpub,
       derivationMode: account.params.derivationMode,
