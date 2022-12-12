@@ -532,7 +532,7 @@
       "description" : "يجب توقيع المعاملات في غضون 30 ثانية. يرجى المحاولة مرة أخرى."
     },
     "TronNotEnoughEnergy" : {
-      "title" : "لا توجد طاقة كافية لإرسال رمز توكن هذا"
+      "title" : "الطاقة أقل من المطلوب. قد تدفع رسوم تصل إلى 20TRX."
     },
     "UpdateYourApp" : {
       "title" : "مطلوب تحديث للتطبيق",
@@ -716,6 +716,9 @@
     "StellarSourceHasMultiSign" : {
       "title" : "يرجى تعطيل التوقيع المتعدد لإجراء معاملات Stellar"
     },
+    "StellarBurnAddressError" : {
+      "title" : "A problem occurred while trying to add a Stellar account"
+    },
     "ImageLoadFromGalleryError" : {
       "title" : "فشل تحميل الصورة من المعرض",
       "description" : "يُرجى المحاولة مرة أخرى بصورة أخرى"
@@ -750,6 +753,30 @@
     },
     "HederaAddAccountError" : {
       "title" : "لم تتم إضافة حسابك. يرجى إعادة المحاولة."
+    },
+    "NearNewAccountWarning" : {
+      "title" : "حساب المُستلِم لم يتم إنشاؤه بعد. البروتوكول يتطلب تحويل {{formattedNewAccountStorageCost}} لإنشائه."
+    },
+    "NearNewNamedAccountError" : {
+      "title" : "حساب المُستلِم لم يتم إنشاؤه بعد. يجب أن يتم إنشاؤه في محفظة NEAR."
+    },
+    "NearActivationFeeNotCovered" : {
+      "title" : "هذا المبلغ لا يغطي تكلفة الحفظ {{formattedNewAccountStorageCost}}."
+    },
+    "NearUseAllAmountStakeWarning" : {
+      "title" : "تأكد أن لديك رصيد كافي متبقي لرسوم المعاملات المستقبلية"
+    },
+    "NearNotEnoughStaked" : {
+      "title" : "الرصيد المُكدَّس غير كافٍ"
+    },
+    "NearNotEnoughAvailable" : {
+      "title" : "الرصيد القابل للسحب غير كافٍ"
+    },
+    "NearRecommendUnstake" : {
+      "title" : "يُرجى إلغاء التكديس وسحب الأموال قبل تفريغ الحساب"
+    },
+    "NearStakingThresholdNotMet" : {
+      "title" : "يجب أن يكون المبلغ على الأقل {{threshold}}"
     },
     "PriorityFeeTooLow" : {
       "title" : "رسوم الأولوية أقل من القيمة الموصى بها"
@@ -1208,7 +1235,11 @@
         "subTitle" : "استعادة عبارة الاسترداد الخاصة بك على جهاز جديد",
         "desc" : "استخدم عبارة استرداد حالية لاستعادة مفاتيحك الخاصة على Nano جديدة!"
       },
-      "recovery" : "لديك عبارة استرداد بالفعل؟"
+      "recovery" : "لديك عبارة استرداد بالفعل؟",
+      "protect" : {
+        "label" : "~60 mins",
+        "subTitle" : "Restore with Protect"
+      }
     },
     "stepNewDevice" : {
       "0" : {
@@ -1429,6 +1460,31 @@
           "desc" : "أجب على 3 أسئلة بسيطة لتجنب المفاهيم الخاطئة الشائعة حول محفظة الأجهزة الخاصة بك.",
           "cta" : "لنأخذ اختبار قصير"
         }
+      }
+    },
+    "stepProtect" : {
+      "bullets" : {
+        "0" : {
+          "title" : "تصفح ",
+          "label" : "تعرف على كيفية التفاعل مع جهازك من خلال قراءة التعليمات التي تظهر على الشاشة."
+        },
+        "1" : {
+          "title" : "Select “Restore”",
+          "label" : "اضغط على كلا الزرين في وقت واحد لتأكيد الاختيار."
+        },
+        "2" : {
+          "title" : "Select “Restore with Protect” mode",
+          "label" : "اضغط على كلا الزرين في وقت واحد لتأكيد الاختيار."
+        }
+      },
+      "nextStep" : "متابعة",
+      "extraInfo" : {
+        "tooltip" : "Cannot see it on my Ledger",
+        "title" : "Why can I not see Restore with Protect on my Ledger?",
+        "desc1" : "The most probable option is that your device is not compatible with Protect. No worries, we are here to guide you on how to make it work.",
+        "desc2" : "Please contact us through and choose \"My Ledger doesn't display Restore with Protect\", we got you covered.",
+        "cta" : "Go through manual steps",
+        "supportLink" : "تواصل مع دعم Ledger"
       }
     },
     "stepRecoveryPhrase" : {
@@ -1717,8 +1773,14 @@
         "subtitle" : "قم بتأكيد الكود على {{productName}} خاصتك"
       },
       "error" : {
-        "title" : "الإقران لم ينجح",
-        "subtitle" : "يبدو أنه قد حدث خطأ ما!تأكد من تشغيل البلوتوث لديك وأن {{productName}} خاصتك قريبة.",
+        "generic" : {
+          "title" : "Pairing unsuccessful",
+          "subtitle" : "Looks like something went wrong!\nCheck that your Bluetooth is switched on and your {{productName}} is nearby."
+        },
+        "lockedDevice" : {
+          "title" : "Your device is locked",
+          "subtitle" : "Unlock your {{ productName }} and try again."
+        },
         "retryCta" : "أعد المحاولة"
       }
     }
@@ -2004,7 +2066,10 @@
       "UNLOCK" : "غير مُقفل",
       "REVOKE" : "مُبطل",
       "REGISTER" : "مُسجّل",
-      "WITHDRAW" : "مسحوب"
+      "WITHDRAW" : "مسحوب",
+      "STAKE" : "مُكدَّس",
+      "UNSTAKE" : "غير مُكدَّس",
+      "WITHDRAW_UNSTAKED" : "مسحوب"
     }
   },
   "operationDetails" : {
@@ -2065,7 +2130,8 @@
       "storageLimit" : "حدّ مساحة التخزين",
       "gasLimit" : "حد الغاز",
       "id" : "المُعرّف",
-      "autoClaimedRewards" : "المكافآت المطالب بها تلقائياً"
+      "autoClaimedRewards" : "المكافآت المطالب بها تلقائياً",
+      "stakedAmount" : "المبلغ المُكدَّس"
     },
     "multipleAddresses" : "لماذا عناوين متعددة؟",
     "tokenName" : "اسم رمز التوكن",
@@ -3268,8 +3334,8 @@
       "gasPrice" : "سعر الغاز",
       "maxFee" : "الحد الأقصى للرسوم",
       "maxPriorityFee" : "الحد الأقصى لرسوم الأولوية",
-      "nextBlock" : "الكتلة التالية",
-      "suggested" : "المُقترح",
+      "nextBlock" : "Next block",
+      "suggested" : "مُقترح",
       "maxFees" : "الحد الأقصى للرسوم",
       "validateGasLimit" : "تأكيد حد الغاز",
       "fees" : "رسوم",
@@ -5024,6 +5090,118 @@
       }
     }
   },
+  "near" : {
+    "info" : {
+      "available" : {
+        "title" : "NEAR متاحة",
+        "description" : "هذا المبلغ يمكن التخلص منه."
+      },
+      "storageUsage" : {
+        "title" : "الحد الأدنى للرصيد",
+        "description" : "هذا المبلغ محجوز للحفظ والمعاملات، وهو الحد الأدنى للرصيد الذي يجب أن يكون في حسابك لكي يظل نشطاً."
+      },
+      "staked" : {
+        "title" : "الرصيد المُكدَّس",
+        "description" : "هذا المبلع مُكدَّس حالياً مع مدققين."
+      },
+      "pending" : {
+        "title" : "الرصيد المُعلَّق",
+        "description" : "هذا المبلغ تمّ إلغاء تكديسه وحالياً بانتظار الإتاحة."
+      },
+      "withdrawable" : {
+        "title" : "الرصيد القابل للسحب",
+        "description" : "هذا المبلغ تم إلغاء تكديسه وحالياً قابل للسحب."
+      },
+      "stakingUnavailable" : {
+        "title" : "التكديس غير متاح",
+        "description" : "ليس هناك رصيد متاح كافٍ في حسابك للتكديس وإلغاء التكديس والسحب."
+      }
+    },
+    "unstaking" : {
+      "stepperHeader" : {
+        "amountSubTitle" : "المبلغ المطلوب إلغاء تكديسه"
+      },
+      "flow" : {
+        "steps" : {
+          "verification" : {
+            "success" : {
+              "title" : "لقد قمت بإلغاء تكديس أصولك بنجاح"
+            }
+          }
+        }
+      }
+    },
+    "withdrawing" : {
+      "stepperHeader" : {
+        "amountSubTitle" : "المبلغ المراد سحبه"
+      },
+      "flow" : {
+        "steps" : {
+          "verification" : {
+            "success" : {
+              "title" : "لقد قمت بسحب أصولك بنجاح"
+            }
+          }
+        }
+      }
+    },
+    "staking" : {
+      "sectionLabel" : "موضع (أو مواضع) التكديس",
+      "info" : "كيف يعمل التكديس",
+      "add" : "إضافة",
+      "stakingEarn" : "يمكنك كسب مكافآت NEAR عن طريق تكديس أصولك.",
+      "totalStake" : "إجمالي التكديس",
+      "commission" : "العمولة",
+      "iStake" : "أنا أقوم بتكديس",
+      "actions" : {
+        "unstake" : "إلغاء التكديس",
+        "withdraw" : "سحب"
+      },
+      "drawer" : {
+        "status" : "الحالة",
+        "active" : "نشِط",
+        "inactive" : "غير نشِط",
+        "rewards" : "المكافآت",
+        "pending" : "مُعلقّة",
+        "available" : "قابل للسحب"
+      },
+      "stepperHeader" : {
+        "amountSubTitle" : "المبلغ المطلوب تكديسه",
+        "selectDevice" : "اختر جهاز",
+        "connectDevice" : "توصيل الجهاز",
+        "stepRange" : "خطوة {{currentStep}} من {{totalSteps}}"
+      },
+      "flow" : {
+        "steps" : {
+          "starter" : {
+            "description" : "قم بتكديس NEAR خاصتك لكسب المكافآت بأمان، مع الاحتفاظ بالسيطرة على أصولك.",
+            "steps" : {
+              "0" : "الأصول المُكدَّسة تظل ملكك.",
+              "1" : "يجب عليك الانتظار من 52 إلى 65 ساعة حتى يكتمل إلغاء التكديس.",
+              "2" : "قم بالتكديس بشكل آمن مع جهازك Ledger."
+            },
+            "warning" : {
+              "description" : "اختر المدقق بحكمة: فقد يتم فقدان جزء من أصولك المُكدسة بشكل لا رجعة فيه إذا لم يتصرف المدقق بشكل لائق."
+            },
+            "cta" : "متابعة"
+          },
+          "amount" : {
+            "assetsRemaining" : "الأصول المتبقية : <0>{{amount}}</0>",
+            "allAssetsUsed" : "جميع الأصول مستخدمة",
+            "minAmount" : "الحد الأدنى للمبلغ : <0>{{min}}</0>",
+            "incorrectAmount" : "الحد الأقصى للمبلغ : <0>{{max}}</0>",
+            "cta" : "متابعة"
+          },
+          "verification" : {
+            "success" : {
+              "title" : "لقد قمت بتكديس أصولك بنجاح",
+              "text" : "سيتم تحديث رصيد حسابك بمجرد أن تؤكد الشبكة المعاملة."
+            }
+          }
+        }
+      }
+    }
+  },
   "delegation" : {
     "overdelegated" : "تفويض زائد عن الحد",
     "delegationSendWarnDesc" : "سيتم خصم المبلغ المراد إرساله من حسابك المفوض.",
@@ -5541,6 +5719,88 @@
       },
       "media" : {
         "tag" : "{{count}} رمز غير قابل للاستبدال"
+      }
+    }
+  },
+  "servicesWidget" : {
+    "title" : "الخدمات",
+    "subTitle" : "إدارة خدمات Ledger لديك",
+    "protect" : {
+      "title" : "Protect",
+      "status" : {
+        "new" : {
+          "title" : "جديد",
+          "desc" : "قم بعمل نسخة احتياطية من عبارة الاسترداد الخاصة بك",
+          "0" : {
+            "title" : "يثق بها الملايين من مستخدمي Ledger"
+          },
+          "1" : {
+            "title" : "يتم ربط عبارة الاسترداد خاصتك بهويتك بأمان"
+          },
+          "2" : {
+            "title" : "أحدث تقنيات التشفير"
+          },
+          "3" : {
+            "title" : "مجزأة إلى 3 قطع لامركزية بحيث لا يمكن أبداً سرقة عبارة الاسترداد الخاصة بك"
+          },
+          "actions" : {
+            "learnMore" : "تعرّف على المزيد",
+            "alreadySubscribed" : "مشترك بالفعل في Protect؟"
+          }
+        },
+        "confirmIdentity" : {
+          "title" : "Action required",
+          "desc" : "Confirm your identity and complete all tasks to protect your recovery phrase.",
+          "actions" : {
+            "confirmNow" : "Confirm now",
+            "viewDetails" : "View details"
+          }
+        },
+        "addPayment" : {
+          "title" : "Action required",
+          "desc" : "Add a payment details and complete all tasks to protect your recovery phrase.",
+          "actions" : {
+            "addNow" : "Add now",
+            "viewDetails" : "View details"
+          }
+        },
+        "paymentRejected" : {
+          "title" : "تم رفض عملية الدفع",
+          "desc" : "لم تنجح عمليتك لدفع 5$. برجاء تعديل تفاصيل الدفع الخاصة بك.",
+          "actions" : {
+            "editNow" : "تعديل الآن",
+            "viewDetails" : "رؤية التفاصيل"
+          }
+        },
+        "subscriptionCanceled" : {
+          "title" : "تم إلغاء الاشتراك",
+          "desc" : "اشتراكك انتهى بعد 3 أشهر من عدم الدفع.",
+          "actions" : {
+            "contactLedgerSupport" : "تواصل مع دعم Ledger",
+            "viewDetails" : "رؤية التفاصيل"
+          }
+        },
+        "active" : {
+          "title" : "نشِط",
+          "desc" : "عبارة الاسترداد الخاصة بك محمية",
+          "actions" : {
+            "viewDetails" : "رؤية التفاصيل"
+          }
+        }
+      }
+    }
+  },
+  "protect" : {
+    "login" : {
+      "title" : "Log In",
+      "desc" : "Log in with your Ledger account to manage your Protect subscription.",
+      "email" : "Email",
+      "password" : "Password",
+      "cta" : "Login",
+      "forgotPassword" : "Forgot password?",
+      "errors" : {
+        "emptyEmail" : "Email cannot be empty",
+        "emptyPassword" : "Password cannot be empty"
       }
     }
   }
