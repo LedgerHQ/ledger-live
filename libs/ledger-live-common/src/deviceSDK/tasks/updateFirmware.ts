@@ -8,6 +8,7 @@ import {
 import { log } from "@ledgerhq/logs";
 import type {
   DeviceId,
+  DeviceInfo,
   FirmwareInfo,
   FirmwareUpdateContext,
 } from "@ledgerhq/types-live";
@@ -29,11 +30,11 @@ import {
   retryOnErrorsCommandWrapper,
 } from "./core";
 import { TransportRef, withTransport } from "../transports/core";
+import { parseDeviceInfo } from "./getDeviceInfo";
 
 export type UpdateFirmwareTaskArgs = {
   deviceId: DeviceId;
   updateContext: FirmwareUpdateContext;
-  // TODO: check if we should receive this here or rather retrieve it from the api in the task
 };
 
 export type UpdateFirmwareTaskError =
@@ -46,7 +47,7 @@ export type UpdateFirmwareTaskEvent =
   | { type: "installingOsu"; progress: number }
   | { type: "flashingMcu"; progress: number }
   | { type: "flashingBootloader"; progress: number }
-  | { type: "firmwareUpdateCompleted" }
+  | { type: "firmwareUpdateCompleted"; updatedDeviceInfo: DeviceInfo }
   | { type: "installOsuDevicePermissionRequested" }
   | { type: "installOsuDevicePermissionGranted" }
   | { type: "installOsuDevicePermissionDenied" }
@@ -201,6 +202,7 @@ const flashMcuOrBootloader = (
       // that means that only the Secure Element firmware has been updated, the update is complete
       subscriber.next({
         type: "firmwareUpdateCompleted",
+        updatedDeviceInfo: parseDeviceInfo(firmwareInfo),
       });
       subscriber.complete();
       return;
@@ -265,6 +267,7 @@ const flashMcuOrBootloader = (
                     // if we're not in the bootloader anymore, it means that the update has been completed
                     return of<UpdateFirmwareTaskEvent>({
                       type: "firmwareUpdateCompleted",
+                      updatedDeviceInfo: parseDeviceInfo(firmwareInfo),
                     });
                   }
                 })
