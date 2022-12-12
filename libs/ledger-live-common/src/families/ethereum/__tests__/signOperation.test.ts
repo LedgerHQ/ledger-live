@@ -11,6 +11,7 @@ import { ethereum1 } from "../datasets/ethereum1";
 import { signOperation } from "../signOperation";
 import { setEnv } from "../../../env";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { BN } from "ethereumjs-util";
 
 const signTransaction = jest.fn(() => {
   return Promise.resolve({
@@ -43,13 +44,17 @@ const currencies = Object.values(cryptocurrenciesById).filter((currency) => {
 describe("signOperation", () => {
   describe("chainId encoding (EIP155)", () => {
     describe("Transaction type 2", () => {
-      const type2Currencies: CryptoCurrency[] = [
+      const type2CurrenciesIds: CryptoCurrency["id"][] = [
         "ethereum",
         "ethereum_goerli",
         "polygon",
-      ].map(getCryptoCurrencyById);
+      ];
 
-      type2Currencies.forEach((currency) => {
+      beforeAll(() => {
+        setEnv("EIP1559_ENABLED_CURRENCIES", type2CurrenciesIds.join(","));
+      });
+
+      type2CurrenciesIds.map(getCryptoCurrencyById).forEach((currency) => {
         beforeEach(() => {
           signTransaction.mockImplementation(() => {
             return Promise.resolve({
@@ -60,10 +65,7 @@ describe("signOperation", () => {
           });
         });
 
-        it(`Should use EIP155 for ${currency.id}`, async () => {
-          setEnv("EIP1559_ENABLED_CURRENCIES", "ethereum");
-          const currency = getCryptoCurrencyById("ethereum");
-
+        it(`Should use EIP155 for ${currency.id} transaction`, async () => {
           await signOperation({
             account: {
               ...dummyAccount,
@@ -94,11 +96,11 @@ describe("signOperation", () => {
     });
 
     describe("Transaction type 0", () => {
-      currencies.forEach((currency) => {
-        beforeAll(() => {
-          setEnv("EIP1559_ENABLED_CURRENCIES", "");
-        });
+      beforeAll(() => {
+        setEnv("EIP1559_ENABLED_CURRENCIES", "");
+      });
 
+      currencies.forEach((currency) => {
         beforeEach(() => {
           signTransaction.mockImplementationOnce(() => {
             return Promise.resolve({
