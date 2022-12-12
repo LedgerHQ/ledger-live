@@ -1,13 +1,17 @@
 import { storiesOf } from "../storiesOf";
 import React from "react";
-import CardA from "../../../src/components/Cards/CardA";
-import CardB from "../../../src/components/Cards/CardB";
-import CardC from "../../../src/components/Cards/CardC";
+import FullBackgroundCard from "../../../src/components/Cards/FullBackgroundCard";
+import SideImageCard from "../../../src/components/Cards/SideImageCard";
+import NotificationCard from "../../../src/components/Cards/NotificationCard";
 import Flex from "../../../src/components/Layout/Flex";
 import { text, select, number, boolean } from "@storybook/addon-knobs";
-import { descriptionCardA, descriptionCardB, descriptionCardC } from "./descriptionsCards";
+import {
+  descriptionFullBackgroundCard,
+  descriptionSideImageCard,
+  descriptionNotificationCard,
+} from "./descriptionsCards";
 
-const CardAStory = () => {
+const FullBackgroundCardStory = () => {
   const variant = select("variant", ["purple", "red"], undefined);
   const tag = text("tag", "Promo");
   const description = text(
@@ -27,7 +31,7 @@ const CardAStory = () => {
   return (
     <Flex width="500px" height="500px" bg="#fff" alignItems="center" justifyContent="center">
       <Flex width="320px">
-        <CardA
+        <FullBackgroundCard
           variant={variant}
           backgroundImage={backgroundImage?.replace(/&amp;/g, "&")}
           tag={tag}
@@ -38,7 +42,7 @@ const CardAStory = () => {
   );
 };
 
-const CardBStory = () => {
+const SideImageCardStory = () => {
   const width = number("Container Width", 350);
   const tag = text("tag", "Promo");
   const title = text(
@@ -66,7 +70,7 @@ const CardBStory = () => {
       justifyContent="center"
       p="16px"
     >
-      <CardB
+      <SideImageCard
         tag={tag}
         title={title}
         cta={cta}
@@ -78,7 +82,7 @@ const CardBStory = () => {
   );
 };
 
-const CardCStory = () => {
+const NotificationCardStory = () => {
   const tag = text("tag", "Promo");
   const viewed = boolean("Notif has been viewed?", false);
   const title = text("title", "Free shipping worldwide for 1 week only");
@@ -99,7 +103,7 @@ const CardCStory = () => {
       justifyContent="center"
       p="16px"
     >
-      <CardC
+      <NotificationCard
         tag={tag}
         description={description}
         cta={cta}
@@ -115,27 +119,27 @@ const CardCStory = () => {
 
 storiesOf((story) =>
   story("Cards", module)
-    .add("Card A", CardAStory, {
+    .add("Full Background Card", FullBackgroundCardStory, {
       docs: {
-        title: "Card A",
+        title: "Full Background Card",
         description: {
-          component: descriptionCardA,
+          component: descriptionFullBackgroundCard,
         },
       },
     })
-    .add("Card B", CardBStory, {
+    .add("Side Image Card", SideImageCardStory, {
       docs: {
-        title: "Card B",
+        title: "Side Image Card",
         description: {
-          component: descriptionCardB,
+          component: descriptionSideImageCard,
         },
       },
     })
-    .add("Card C", CardCStory, {
+    .add("Notification Card", NotificationCardStory, {
       docs: {
-        title: "Card C",
+        title: "Notification Card",
         description: {
-          component: descriptionCardC,
+          component: descriptionNotificationCard,
         },
       },
     }),

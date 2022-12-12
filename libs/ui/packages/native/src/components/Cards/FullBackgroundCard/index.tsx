@@ -19,7 +19,7 @@ type Props = {
   onDismiss?: () => void;
 };
 
-const CardA = ({
+const FullBackgroundCard = ({
   variant,
   backgroundImage,
   tag,
@@ -89,4 +89,4 @@ const CardA = ({
   );
 };
 
-export default CardA;
+export default FullBackgroundCard;
