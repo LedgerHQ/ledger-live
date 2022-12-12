@@ -532,7 +532,7 @@
       "description" : "İşlemlerin 30 saniye içinde imzalanması gerekir. Lütfen tekrar deneyin."
     },
     "TronNotEnoughEnergy" : {
-      "title" : "Bu token'ı göndermek için yeterli Enerji yok"
+      "title" : "Yeterince Enerji mevcut değil. Ağ ücreti 20TRX tutarına ulaşabilir."
     },
     "UpdateYourApp" : {
       "title" : "Uygulama güncellemesi gerekiyor",
@@ -716,6 +716,9 @@
     "StellarSourceHasMultiSign" : {
       "title" : "Stellar işlemleri yapmak için lütfen çoklu imzayı devre dışı bırakın"
     },
+    "StellarBurnAddressError" : {
+      "title" : "A problem occurred while trying to add a Stellar account"
+    },
     "ImageLoadFromGalleryError" : {
       "title" : "Galeriden görüntü yüklenemedi",
       "description" : "Lütfen başka bir görüntüyle tekrar deneyin"
@@ -750,6 +753,30 @@
     },
     "HederaAddAccountError" : {
       "title" : "Hesabınız eklenemedi. Lütfen tekrar deneyin."
+    },
+    "NearNewAccountWarning" : {
+      "title" : "Alıcı hesabı henüz oluşturulmadı. Bu protokol, alıcı hesabı oluşturmak için {{formattedNewAccountStorageCost}} tutarında bir aktarım yapılmasını gerektiriyor."
+    },
+    "NearNewNamedAccountError" : {
+      "title" : "Alıcı hesabı henüz oluşturulmadı. NEAR cüzdanında oluşturulması gerekiyor."
+    },
+    "NearActivationFeeNotCovered" : {
+      "title" : "Bu miktar, {{formattedNewAccountStorageCost}} depolama ücretini karşılamak için yeterli değil."
+    },
+    "NearUseAllAmountStakeWarning" : {
+      "title" : "Gelecekteki işlem ücretleri için yeterli bakiyenizin kaldığından emin olun"
+    },
+    "NearNotEnoughStaked" : {
+      "title" : "Stake bakiyesi yetersiz"
+    },
+    "NearNotEnoughAvailable" : {
+      "title" : "Çekilebilir bakiye yetersiz"
+    },
+    "NearRecommendUnstake" : {
+      "title" : "Lütfen hesabı boşaltmadan önce stake iptali yapın ve fonları çekin"
+    },
+    "NearStakingThresholdNotMet" : {
+      "title" : "Tutarın en az {{threshold}} olması gerekiyor"
     },
     "PriorityFeeTooLow" : {
       "title" : "Öncelik ücreti, önerilen değerden düşük"
@@ -1717,8 +1744,14 @@
         "subtitle" : "{{productName}} cihazınızdaki kodu onaylayın"
       },
       "error" : {
-        "title" : "Eşleştirme başarısız",
-        "subtitle" : "Bir sorun oluştu!\nBluetooth'unuzun açık ve {{productName}} cihazınızın yakında olduğundan emin olun.",
+        "generic" : {
+          "title" : "Eşleştirme başarısız",
+          "subtitle" : "Bir sorun oluştu!\nBluetooth'unuzun açık ve {{productName}} cihazınızın yakında olduğundan emin olun."
+        },
+        "lockedDevice" : {
+          "title" : "Cihazınız kilitlendi",
+          "subtitle" : "{{ productName }} cihazınızın kilidini açın ve tekrar deneyin."
+        },
         "retryCta" : "Tekrar deneyin"
       }
     }
@@ -2004,7 +2037,10 @@
       "UNLOCK" : "Kilidi Açık",
       "REVOKE" : "İptal Edilmiş",
       "REGISTER" : "Kaydedilmiş",
-      "WITHDRAW" : "Çekildi"
+      "WITHDRAW" : "Çekildi",
+      "STAKE" : "Stake edildi",
+      "UNSTAKE" : "Stake iptali",
+      "WITHDRAW_UNSTAKED" : "Çekildi"
     }
   },
   "operationDetails" : {
@@ -2065,7 +2101,8 @@
       "storageLimit" : "Depolama Limiti",
       "gasLimit" : "Gas limiti",
       "id" : "Kimlik (ID)",
-      "autoClaimedRewards" : "Otomatik Alınan Ödüller"
+      "autoClaimedRewards" : "Otomatik Alınan Ödüller",
+      "stakedAmount" : "Stake edilen miktar"
     },
     "multipleAddresses" : "Neden birden fazla adres var?",
     "tokenName" : "Token Adı",
@@ -3268,8 +3305,8 @@
       "gasPrice" : "Gas ücreti",
       "maxFee" : "Ücret üst limiti",
       "maxPriorityFee" : "Öncelik ücreti üst limiti",
-      "nextBlock" : "Sonraki blok",
-      "suggested" : "Önerilen",
+      "nextBlock" : "Next block",
+      "suggested" : "Suggested",
       "maxFees" : "Maksimum ücret",
       "validateGasLimit" : "Gas limitini onayla",
       "fees" : "Ücretler",
@@ -5021,6 +5058,118 @@
       "delegatedTo" : "yetkiyi devralan",
       "started" : {
         "description" : "ATOM varlıklarınızın yetkisini bir doğrulayıcıya devrederek ödüller kazanabilirsiniz."
+      }
+    }
+  },
+  "near" : {
+    "info" : {
+      "available" : {
+        "title" : "Kullanılabilir NEAR miktarı",
+        "description" : "Bu tutar, kullanabileceğiniz fondur."
+      },
+      "storageUsage" : {
+        "title" : "Minimum bakiye",
+        "description" : "Saklama ve işlemler için rezerv edilen miktar; hesabınızın aktif kalması için hesabınızda bulunması gereken minimum bakiye."
+      },
+      "staked" : {
+        "title" : "Stake bakiyesi",
+        "description" : "Doğrulayıcılarla stake edilmiş olan güncel miktar."
+      },
+      "pending" : {
+        "title" : "Bekleyen bakiye",
+        "description" : "Stake’i iptal edilmiş ve müsait olması beklenen güncel miktar."
+      },
+      "withdrawable" : {
+        "title" : "Çekilebilir bakiye",
+        "description" : "Stake’i iptal edilmiş ve çekilebilecek olan güncel miktar."
+      },
+      "stakingUnavailable" : {
+        "title" : "Stake yapılamıyor",
+        "description" : "Hesabınızın bakiyesi stake etmek, stake iptal etmek ve çekim yapmak için yeterli değil."
+      }
+    },
+    "unstaking" : {
+      "stepperHeader" : {
+        "amountSubTitle" : "Staking'i iptal edilecek miktar"
+      },
+      "flow" : {
+        "steps" : {
+          "verification" : {
+            "success" : {
+              "title" : "Varlıklarınızın staking'ini başarıyla iptal ettiniz"
+            }
+          }
+        }
+      }
+    },
+    "withdrawing" : {
+      "stepperHeader" : {
+        "amountSubTitle" : "Çekilecek tutar"
+      },
+      "flow" : {
+        "steps" : {
+          "verification" : {
+            "success" : {
+              "title" : "Varlıklarınızı başarıyla çektiniz"
+            }
+          }
+        }
+      }
+    },
+    "staking" : {
+      "sectionLabel" : "Staking Pozisyonları",
+      "info" : "Staking Nasıl Çalışır?",
+      "add" : "Ekle",
+      "stakingEarn" : "NEAR varlıklarınızı stake ederek NEAR ödülleri kazanabilirsiniz.",
+      "totalStake" : "Toplam Stake",
+      "commission" : "Komisyon",
+      "iStake" : "Stake et:",
+      "actions" : {
+        "unstake" : "Staking'i iptal et",
+        "withdraw" : "Çek"
+      },
+      "drawer" : {
+        "status" : "Durum",
+        "active" : "Aktif",
+        "inactive" : "Devre Dışı",
+        "rewards" : "Ödüller",
+        "pending" : "Beklemede",
+        "available" : "Çekilebilir bakiye"
+      },
+      "stepperHeader" : {
+        "amountSubTitle" : "Stake edilecek miktar",
+        "selectDevice" : "Cihaz seçin",
+        "connectDevice" : "Cihazı bağlayın",
+        "stepRange" : "Adım {{currentStep}} / {{totalSteps}}"
+      },
+      "flow" : {
+        "steps" : {
+          "starter" : {
+            "description" : "NEAR varlıklarınızı stake edin ve varlıklarınızın kontrolünü bırakmadan, güvenle ödüller kazanın.",
+            "steps" : {
+              "0" : "Stake ettiğiniz varlıklar sizin mülkiyetinizde kalmaya devam eder.",
+              "1" : "Stake iptali işleminin tamamlanması için 52 ila 65 saat beklemeniz gerekebilir.",
+              "2" : "Ledger cihazınızı kullanarak güvenle stake edin."
+            },
+            "warning" : {
+              "description" : "Doğrulayıcınızı dikkatli seçin! Doğrulayıcının yanlış kararlar vermesi hâlinde stake ettiğiniz varlıkların bir kısmını kalıcı olarak kaybedebilirsiniz."
+            },
+            "cta" : "Devam"
+          },
+          "amount" : {
+            "assetsRemaining" : "Kalan varlıklar: <0>{{amount}}</0>",
+            "allAssetsUsed" : "Tüm varlıklar kullanıldı",
+            "minAmount" : "Minimum tutar: <0>{{min}}</0>",
+            "incorrectAmount" : "Maksimum tutar: <0>{{max}}</0>",
+            "cta" : "Devam"
+          },
+          "verification" : {
+            "success" : {
+              "title" : "Varlıklarınızı başarıyla stake ettiniz",
+              "text" : "İşlem, ağ tarafından onaylanınca hesap bakiyeniz güncellenecek."
+            }
+          }
+        }
       }
     }
   },
