@@ -40,6 +40,15 @@ const WarningDisplay = styled(Box)`
   color: ${p => p.theme.colors.warning};
 `;
 
+const FeesValues = styled.span`
+  color: ${p => p.theme.colors.neutral.c90};
+`;
+
+const WhiteSpacedLabel = styled(Label)`
+  white-space: pre;
+  color: ${p => p.theme.colors.neutral.c60};
+`;
+
 type Props = {
   account: AccountLike;
   parentAccount: Account | undefined;
@@ -122,7 +131,10 @@ const FeesField = ({ account, parentAccount, transaction, status, updateTransact
           </WarningDisplay>
         ) : null}
       </ErrorContainer>
-      <Label>{t("send.steps.details.nextBlock", { nextBaseFee: nextBaseFeeValue })}</Label>
+      <WhiteSpacedLabel>
+        {`${t("send.steps.details.nextBlock")} : `}
+        <FeesValues>{nextBaseFeeValue}</FeesValues>
+      </WhiteSpacedLabel>
     </Box>
   );
 };
