@@ -532,7 +532,7 @@
       "description" : "必须在 30 秒内签署交易。请重试。"
     },
     "TronNotEnoughEnergy" : {
-      "title" : "没有足够能量发送该代币"
+      "title" : "能量低于必要值。您可能需要支付高达 20TRX 的费用。"
     },
     "UpdateYourApp" : {
       "title" : "需要更新应用程序",
@@ -715,6 +715,9 @@
     },
     "StellarSourceHasMultiSign" : {
       "title" : "要进行 Stellar（恒星）交易，请禁用多重签名"
+    },
+    "StellarBurnAddressError" : {
+      "title" : "A problem occurred while trying to add a Stellar account"
     },
     "ImageLoadFromGalleryError" : {
       "title" : "从图库加载图片失败",
@@ -1208,7 +1211,11 @@
         "subTitle" : "在新设备上还原您的恢复短语",
         "desc" : "在新的 Nano 设备上使用现有的恢复短语来还原您的私钥！"
       },
-      "recovery" : "已经有了恢复短语？"
+      "recovery" : "已经有了恢复短语？",
+      "protect" : {
+        "label" : "约 60 分钟",
+        "subTitle" : "使用 Protect 重置"
+      }
     },
     "stepNewDevice" : {
       "0" : {
@@ -1429,6 +1436,31 @@
           "desc" : "回答 3 个简单问题，消除您对硬币钱包的常见误解。",
           "cta" : "接受测验"
         }
+      }
+    },
+    "stepProtect" : {
+      "bullets" : {
+        "0" : {
+          "title" : "浏览 ",
+          "label" : "阅读屏幕上的说明，了解如何使用您的设备。"
+        },
+        "1" : {
+          "title" : "选择“Restore”（重置）",
+          "label" : "同时按下两个按钮以激活该选项。"
+        },
+        "2" : {
+          "title" : "选择“Restore with Protect”（使用 Protect 重置）模式",
+          "label" : "同时按下两个按钮以激活该选项。"
+        }
+      },
+      "nextStep" : "继续",
+      "extraInfo" : {
+        "tooltip" : "在我的 Ledger 上看不到它",
+        "title" : "为什么我在 Ledger 上看不到 Restore with Protect（使用 Protect 重置）？",
+        "desc1" : "最有可能的原因是您的设备与 Protect 不兼容。别担心，我们会指导您如何解决此问题。",
+        "desc2" : "Please contact us through and choose \"My Ledger doesn't display Restore with Protect\", we got you covered.",
+        "cta" : "完成手动步骤",
+        "supportLink" : "联系 Ledger 客服"
       }
     },
     "stepRecoveryPhrase" : {
@@ -1717,8 +1749,14 @@
         "subtitle" : "在您的 {{productName}} 上确认代码"
       },
       "error" : {
-        "title" : "配对不成功",
-        "subtitle" : "似乎出了点问题！\n检查蓝牙是否已打开，以及 {{productName}} 是否在附近。",
+        "generic" : {
+          "title" : "配对不成功",
+          "subtitle" : "似乎出了点问题！\n检查蓝牙是否已打开，以及 {{productName}} 是否在附近。"
+        },
+        "lockedDevice" : {
+          "title" : "您的设备已经锁定",
+          "subtitle" : "解锁您的 {{ productName }} 并重试。"
+        },
         "retryCta" : "请重试"
       }
     }
@@ -3268,7 +3306,7 @@
       "gasPrice" : "Gas 价格",
       "maxFee" : "最高费用",
       "maxPriorityFee" : "最高优先费用",
-      "nextBlock" : "下一个区块",
+      "nextBlock" : "Next block",
       "suggested" : "建议",
       "maxFees" : "最大费用",
       "validateGasLimit" : "验证 gas 限值",
@@ -5541,6 +5579,88 @@
       },
       "media" : {
         "tag" : "{{count}} 个 NFT"
+      }
+    }
+  },
+  "servicesWidget" : {
+    "title" : "服务",
+    "subTitle" : "管理您的 Ledger 服务",
+    "protect" : {
+      "title" : "保护",
+      "status" : {
+        "new" : {
+          "title" : "新",
+          "desc" : "备份您的恢复短语",
+          "0" : {
+            "title" : "受到数百万 Ledger 用户的信赖"
+          },
+          "1" : {
+            "title" : "您的恢复短语与您的身份安全关联"
+          },
+          "2" : {
+            "title" : "最先进的加密技术"
+          },
+          "3" : {
+            "title" : "分成 3 个去中心化的部分，因此您的恢复短语绝不会被窃取"
+          },
+          "actions" : {
+            "learnMore" : "了解更多",
+            "alreadySubscribed" : "已经订阅了\"Protect\"保护？"
+          }
+        },
+        "confirmIdentity" : {
+          "title" : "需要进行操作",
+          "desc" : "确认您的身份并完成所有任务以保护您的恢复短语。",
+          "actions" : {
+            "confirmNow" : "立即确认",
+            "viewDetails" : "查看详情"
+          }
+        },
+        "addPayment" : {
+          "title" : "需要进行操作",
+          "desc" : "添加付款详细信息并完成所有任务以保护您的恢复短语。",
+          "actions" : {
+            "addNow" : "立即添加",
+            "viewDetails" : "查看详情"
+          }
+        },
+        "paymentRejected" : {
+          "title" : "付款被拒绝",
+          "desc" : "您的 5 美元付款失败。请编辑您的付款详细信息。",
+          "actions" : {
+            "editNow" : "立刻编辑",
+            "viewDetails" : "查看详情"
+          }
+        },
+        "subscriptionCanceled" : {
+          "title" : "取消的订阅",
+          "desc" : "您的订阅在 3 个月未付款后终止。",
+          "actions" : {
+            "contactLedgerSupport" : "联系 Ledger 客服",
+            "viewDetails" : "查看详情"
+          }
+        },
+        "active" : {
+          "title" : "活跃",
+          "desc" : "您的助记词受到保护",
+          "actions" : {
+            "viewDetails" : "查看详情"
+          }
+        }
+      }
+    }
+  },
+  "protect" : {
+    "login" : {
+      "title" : "登录",
+      "desc" : "Log in with your Ledger account to manage your Protect subscription.",
+      "email" : "Email",
+      "password" : "密码",
+      "cta" : "登录",
+      "forgotPassword" : "Forgot password?",
+      "errors" : {
+        "emptyEmail" : "Email cannot be empty",
+        "emptyPassword" : "Password cannot be empty"
       }
     }
   }
