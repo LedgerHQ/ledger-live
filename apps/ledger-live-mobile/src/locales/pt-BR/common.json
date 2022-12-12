@@ -532,7 +532,7 @@
       "description" : "Transações devem ser assinadas em até 30 segundos. Tente Novamente."
     },
     "TronNotEnoughEnergy" : {
-      "title" : "Energia insuficiente para enviar este token"
+      "title" : "A Energia está abaixo do necessário. Você pode pagar até 20 TRX em taxas."
     },
     "UpdateYourApp" : {
       "title" : "Atualização de aplicativo necessária",
@@ -716,6 +716,9 @@
     "StellarSourceHasMultiSign" : {
       "title" : "Desabilite a multiassinatura para fazer transações Stellar"
     },
+    "StellarBurnAddressError" : {
+      "title" : "A problem occurred while trying to add a Stellar account"
+    },
     "ImageLoadFromGalleryError" : {
       "title" : "Falha no carregamento da imagem da galeria",
       "description" : "Tente novamente com outra imagem"
@@ -750,6 +753,30 @@
     },
     "HederaAddAccountError" : {
       "title" : "Sua conta não foi adicionada. Tente Novamente."
+    },
+    "NearNewAccountWarning" : {
+      "title" : "A conta receptora ainda não foi criada. O protocolo requer uma transferência de {{formattedNewAccountStorageCost}} para criá-la."
+    },
+    "NearNewNamedAccountError" : {
+      "title" : "A conta receptora ainda não foi criada. Ela precisa ser criada na carteira NEAR."
+    },
+    "NearActivationFeeNotCovered" : {
+      "title" : "Este valor não cobre o custo de armazenamento de {{formattedNewAccountStorageCost}} ."
+    },
+    "NearUseAllAmountStakeWarning" : {
+      "title" : "Certifique-se de ter saldo suficiente para futuras taxas de transação"
+    },
+    "NearNotEnoughStaked" : {
+      "title" : "Saldo aplicado insuficiente"
+    },
+    "NearNotEnoughAvailable" : {
+      "title" : "Saldo disponível para saque insuficiente"
+    },
+    "NearRecommendUnstake" : {
+      "title" : "Desaplique e saque os fundos antes de esvaziar sua conta"
+    },
+    "NearStakingThresholdNotMet" : {
+      "title" : "A quantia precisa ser de pelo menos {{threshold}}"
     },
     "PriorityFeeTooLow" : {
       "title" : "A taxa de prioridade é mais baixa do que a quantia recomendada"
@@ -1717,8 +1744,14 @@
         "subtitle" : "Confirme o código em sua {{productName}}"
       },
       "error" : {
-        "title" : "Emparelhamento sem sucesso",
-        "subtitle" : "Parece que algo deu errado!\nVerifique se seu Bluetooth está habilitado e se sua {{productName}} está próxima.",
+        "generic" : {
+          "title" : "Emparelhamento sem sucesso",
+          "subtitle" : "Parece que algo deu errado!\nVerifique se seu Bluetooth está habilitado e se sua {{productName}} está próxima."
+        },
+        "lockedDevice" : {
+          "title" : "Seu dispositivo está bloqueado",
+          "subtitle" : "Desbloqueie sua {{ productName }} e tente novamente."
+        },
         "retryCta" : "Tente novamente"
       }
     }
@@ -2004,7 +2037,10 @@
       "UNLOCK" : "Desbloqueado",
       "REVOKE" : "Revogado",
       "REGISTER" : "Registrado",
-      "WITHDRAW" : "Sacado"
+      "WITHDRAW" : "Sacado",
+      "STAKE" : "Aplicado",
+      "UNSTAKE" : "Desaplicado",
+      "WITHDRAW_UNSTAKED" : "Sacado"
     }
   },
   "operationDetails" : {
@@ -2065,7 +2101,8 @@
       "storageLimit" : "Limite de armazenamento",
       "gasLimit" : "Limite de gas",
       "id" : "Id",
-      "autoClaimedRewards" : "Recompensas automaticamente resgatadas"
+      "autoClaimedRewards" : "Recompensas automaticamente resgatadas",
+      "stakedAmount" : "Quantia aplicada"
     },
     "multipleAddresses" : "Por que endereços múltiplos?",
     "tokenName" : "Nome do token",
@@ -3268,8 +3305,8 @@
       "gasPrice" : "Preço do gás",
       "maxFee" : "Taxa máxima",
       "maxPriorityFee" : "Taxa de prioridade máxima",
-      "nextBlock" : "Próximo bloco",
-      "suggested" : "Sugerido",
+      "nextBlock" : "Next block",
+      "suggested" : "Suggested",
       "maxFees" : "Taxas Máximas",
       "validateGasLimit" : "Validar limite de gás",
       "fees" : "Taxas",
@@ -5021,6 +5058,118 @@
       "delegatedTo" : "delegado a",
       "started" : {
         "description" : "Você pode receber recompensas delegando seus ativos SOL a um validador."
+      }
+    }
+  },
+  "near" : {
+    "info" : {
+      "available" : {
+        "title" : "NEAR disponível",
+        "description" : "Esta quantia é descartável."
+      },
+      "storageUsage" : {
+        "title" : "Saldo mínimo",
+        "description" : "Esta quantia é reservada para armazenamento e transações, e é o saldo mínimo que sua conta deve manter para permanecer ativa."
+      },
+      "staked" : {
+        "title" : "Saldo aplicado",
+        "description" : "Esta quantia está atualmente aplicada com validadores."
+      },
+      "pending" : {
+        "title" : "Saldo pendente",
+        "description" : "Esta quantia foi desaplicada e está atualmente com disponibilidade pendente."
+      },
+      "withdrawable" : {
+        "title" : "Saldo disponível para saque",
+        "description" : "Esta quantia foi desaplicada e atualmente pode ser sacada."
+      },
+      "stakingUnavailable" : {
+        "title" : "Staking indisponível",
+        "description" : "Não há saldo disponível suficiente em sua conta para aplicar, desaplicar e sacar."
+      }
+    },
+    "unstaking" : {
+      "stepperHeader" : {
+        "amountSubTitle" : "Quantia a desaplicar"
+      },
+      "flow" : {
+        "steps" : {
+          "verification" : {
+            "success" : {
+              "title" : "Você desaplicou seus ativos com sucesso"
+            }
+          }
+        }
+      }
+    },
+    "withdrawing" : {
+      "stepperHeader" : {
+        "amountSubTitle" : "Quantia a sacar"
+      },
+      "flow" : {
+        "steps" : {
+          "verification" : {
+            "success" : {
+              "title" : "Você sacou seus ativos com sucesso."
+            }
+          }
+        }
+      }
+    },
+    "staking" : {
+      "sectionLabel" : "Posições de Staking",
+      "info" : "Como Staking Funciona",
+      "add" : "Adicionar",
+      "stakingEarn" : "Você pode ganhar recompensas em NEAR fazendo staking de seus ativos.",
+      "totalStake" : "Total Aplicado",
+      "commission" : "Comissão",
+      "iStake" : "Eu faço staking",
+      "actions" : {
+        "unstake" : "Desaplicar",
+        "withdraw" : "Sacar"
+      },
+      "drawer" : {
+        "status" : "Status",
+        "active" : "Ativo",
+        "inactive" : "Inativo",
+        "rewards" : "Recompensas",
+        "pending" : "Pendente",
+        "available" : "Disponíveis para saque"
+      },
+      "stepperHeader" : {
+        "amountSubTitle" : "Quantia a aplicar",
+        "selectDevice" : "Selecione o dispositivo",
+        "connectDevice" : "Conecte o dispositivo",
+        "stepRange" : "Etapa {{currentStep}} de {{totalSteps}}"
+      },
+      "flow" : {
+        "steps" : {
+          "starter" : {
+            "description" : "Faça staking de seu NEAR para ganhar recompensas com segurança, mantendo o controle de seus ativos.",
+            "steps" : {
+              "0" : "Os ativos em staking continuam sendo seus.",
+              "1" : "Você terá que esperar de 52 a 65 horas para que a interrupção do staking seja concluída.",
+              "2" : "Faça staking com segurança do seu dispositivo Ledger."
+            },
+            "warning" : {
+              "description" : "Escolha cuidadosamente o seu validador: parte de seus ativos aplicados pode ser irrevogavelmente perdida se o validador não se comportar adequadamente."
+            },
+            "cta" : "Continuar"
+          },
+          "amount" : {
+            "assetsRemaining" : "Ativos restantes: <0>{{amount}}</0>",
+            "allAssetsUsed" : "Todos os ativos usados",
+            "minAmount" : "Quantia mínima: <0>{{min}}</0>",
+            "incorrectAmount" : "Quantia máxima: <0>{{max}}</0>",
+            "cta" : "Continuar"
+          },
+          "verification" : {
+            "success" : {
+              "title" : "Você fez staking de seus ativos com sucesso",
+              "text" : "O saldo de sua conta será atualizado assim que a rede confirmar a transação."
+            }
+          }
+        }
       }
     }
   },
