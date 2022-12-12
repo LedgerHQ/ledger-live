@@ -532,7 +532,7 @@
       "description" : "トランザクションは、30秒以内に署名する必要があります。もう一度お試しください。"
     },
     "TronNotEnoughEnergy" : {
-      "title" : "このトークンの送金に必要なエネルギーが不足しています。"
+      "title" : "エネルギーが必要額を満たしていません。手数料には最大20TRXが必要となります。"
     },
     "UpdateYourApp" : {
       "title" : "アプリのアップデートが必要です。",
@@ -715,6 +715,9 @@
     },
     "StellarSourceHasMultiSign" : {
       "title" : "Stellarトランザクションを行うには、マルチシグを無効にしてください"
+    },
+    "StellarBurnAddressError" : {
+      "title" : "A problem occurred while trying to add a Stellar account"
     },
     "ImageLoadFromGalleryError" : {
       "title" : "ギャラリーからの画像の読み込みに失敗しました",
@@ -1208,7 +1211,11 @@
         "subTitle" : "新しいデバイスでリカバリーフレーズを復元",
         "desc" : "既存のリカバリーフレーズを使って、新しいNanoに秘密鍵を復元できます。"
       },
-      "recovery" : "リカバリーフレーズをすでにお持ちですか？"
+      "recovery" : "リカバリーフレーズをすでにお持ちですか？",
+      "protect" : {
+        "label" : "～60分",
+        "subTitle" : "Protectで復元"
+      }
     },
     "stepNewDevice" : {
       "0" : {
@@ -1429,6 +1436,31 @@
           "desc" : "ハードウェアウォレットに関するよくある誤解を解消するため、3つの簡単な質問にお答えください。",
           "cta" : "クイズをはじめる"
         }
+      }
+    },
+    "stepProtect" : {
+      "bullets" : {
+        "0" : {
+          "title" : "画面をチェックする ",
+          "label" : "デバイスの画面に表示される手順に従って、操作方法を学びましょう。"
+        },
+        "1" : {
+          "title" : "「復元」を選択",
+          "label" : "両方のボタンを同時に押して、選択内容を確定します。"
+        },
+        "2" : {
+          "title" : "「Protectで復元」モードを選択",
+          "label" : "両方のボタンを同時に押して、選択内容を確定します。"
+        }
+      },
+      "nextStep" : "続行",
+      "extraInfo" : {
+        "tooltip" : "Ledgerで表示されない",
+        "title" : "Ledgerで「Protectで復元」が表示されないのはなぜですか？",
+        "desc1" : "最も可能性の高い理由は、お使いのデバイスがProtectと互換性がないことです。ご心配ありません。それをお使いいただけるように、ぜひサポートさせていただきます。",
+        "desc2" : "Please contact us through and choose \"My Ledger doesn't display Restore with Protect\", we got you covered.",
+        "cta" : "マニュアル手順を実行する",
+        "supportLink" : "Ledgerサポートへのお問い合わせ"
       }
     },
     "stepRecoveryPhrase" : {
@@ -1717,8 +1749,14 @@
         "subtitle" : "{{productName}}のコードを確認してください"
       },
       "error" : {
-        "title" : "ペアリング失敗",
-        "subtitle" : "何か問題が発生したようです。\nBluetoothがオンになっており、{{productName}}が近くにあることをご確認ください。",
+        "generic" : {
+          "title" : "ペアリング失敗",
+          "subtitle" : "何か問題が発生したようです。\nBluetoothがオンになっており、{{productName}}が近くにあることをご確認ください。"
+        },
+        "lockedDevice" : {
+          "title" : "デバイスがロックされています。",
+          "subtitle" : "{{ productName }}のロックを解除して、再度お試しください。"
+        },
         "retryCta" : "再試行"
       }
     }
@@ -3268,8 +3306,8 @@
       "gasPrice" : "ガス価格",
       "maxFee" : "最大手数料",
       "maxPriorityFee" : "最大優先手数料",
-      "nextBlock" : "次のブロック",
-      "suggested" : "推奨",
+      "nextBlock" : "Next block",
+      "suggested" : "Suggested",
       "maxFees" : "最大手数料",
       "validateGasLimit" : "ガスリミットの検証",
       "fees" : "手数料",
@@ -5541,6 +5579,88 @@
       },
       "media" : {
         "tag" : "{{count}}NFT"
+      }
+    }
+  },
+  "servicesWidget" : {
+    "title" : "サービス",
+    "subTitle" : "Ledgerサービスを管理",
+    "protect" : {
+      "title" : "Protect",
+      "status" : {
+        "new" : {
+          "title" : "新商品",
+          "desc" : "リカバリーフレーズをバックアップ",
+          "0" : {
+            "title" : "数百万人のLedgerユーザーが信頼"
+          },
+          "1" : {
+            "title" : "リカバリーフレーズは安全に個人とリンクされます"
+          },
+          "2" : {
+            "title" : "最先端の暗号化"
+          },
+          "3" : {
+            "title" : "3つの分散型のパーツに分けてシェアされ、リカバリーフレーズの盗難を防ぎます"
+          },
+          "actions" : {
+            "learnMore" : "詳細はこちら",
+            "alreadySubscribed" : "Protectを利用しますか？"
+          }
+        },
+        "confirmIdentity" : {
+          "title" : "Action required",
+          "desc" : "Confirm your identity and complete all tasks to protect your recovery phrase.",
+          "actions" : {
+            "confirmNow" : "Confirm now",
+            "viewDetails" : "View details"
+          }
+        },
+        "addPayment" : {
+          "title" : "Action required",
+          "desc" : "Add a payment details and complete all tasks to protect your recovery phrase.",
+          "actions" : {
+            "addNow" : "Add now",
+            "viewDetails" : "View details"
+          }
+        },
+        "paymentRejected" : {
+          "title" : "支払い方法却下",
+          "desc" : "$5の支払いが不成立となりました。お支払い方法の詳細を編集してください。",
+          "actions" : {
+            "editNow" : "今すぐ編集",
+            "viewDetails" : "詳細を表示"
+          }
+        },
+        "subscriptionCanceled" : {
+          "title" : "購読キャンセル済み",
+          "desc" : "3ヶ月の未払いにより購読がキャンセルされました。",
+          "actions" : {
+            "contactLedgerSupport" : "Ledgerサポートへのお問い合わせ",
+            "viewDetails" : "詳細を表示"
+          }
+        },
+        "active" : {
+          "title" : "アクティブ",
+          "desc" : "リカバリーフレーズは保護されています。",
+          "actions" : {
+            "viewDetails" : "詳細を表示"
+          }
+        }
+      }
+    }
+  },
+  "protect" : {
+    "login" : {
+      "title" : "Log In",
+      "desc" : "Log in with your Ledger account to manage your Protect subscription.",
+      "email" : "Email",
+      "password" : "Password",
+      "cta" : "Login",
+      "forgotPassword" : "Forgot password?",
+      "errors" : {
+        "emptyEmail" : "Email cannot be empty",
+        "emptyPassword" : "Password cannot be empty"
       }
     }
   }
