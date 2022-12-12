@@ -216,6 +216,7 @@ const StepReceiveFunds = (props: StepProps) => {
           openModal("MODAL_ETH_STAKE", {
             account,
             checkbox: true,
+            singleProviderRedirectMode: false,
             source: "receive",
           }),
         );

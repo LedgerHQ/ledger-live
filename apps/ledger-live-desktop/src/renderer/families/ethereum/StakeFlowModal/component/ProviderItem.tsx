@@ -1,11 +1,8 @@
 import React, { useCallback } from "react";
-import { useHistory } from "react-router-dom";
 import { Flex, Text, Icons, Link, ProviderIcon, Icon, Tag as TagCore } from "@ledgerhq/react-ui";
 import { useTranslation } from "react-i18next";
-import { openURL } from "~/renderer/linking";
 import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import styled from "styled-components";
-import { track } from "~/renderer/analytics/segment";
 
 export const Tag: ThemedComponent = styled(TagCore)`
   padding: 0 5px;
@@ -15,48 +12,23 @@ export const Tag: ThemedComponent = styled(TagCore)`
   }
 `;
 
-const ProviderItem = ({ id, name, supportLink, onClose, account, source }: ItemProps) => {
+const ProviderItem = ({ id, name, provider, infoOnClick, stakeOnClick }: ItemProps) => {
   const { t } = useTranslation();
-  const history = useHistory();
-  const getTrackProperties = useCallback(() => {
-    return {
-      page: window.location.hash
-        .split("/")
-        .filter(e => e !== "#")
-        .join("/"),
-      modal: source,
-      flow: "stake",
-      value: supportLink,
-    };
-  }, [source, supportLink]);
 
-  const openLink = useCallback(() => {
-    track("button_clicked", {
-      button: `${name}`,
-      ...getTrackProperties(),
-    });
-    history.push({
-      pathname: `/platform/${id}`,
-      state: { accountId: account.id },
-    });
-    onClose();
-  }, [account.id, getTrackProperties, history, id, name, onClose]);
+  const stakeLink = useCallback(() => {
+    stakeOnClick(provider);
+  }, [provider, stakeOnClick]);
 
   const infoLink = useCallback(
     event => {
-      track("button_clicked", {
-        button: `learn_more_${id}`,
-        ...getTrackProperties(),
-        link: supportLink,
-      });
-      openURL(supportLink, "OpenURL", getTrackProperties());
+      infoOnClick(provider);
       event.stopPropagation();
     },
-    [getTrackProperties, id, supportLink],
+    [infoOnClick, provider],
   );
 
   return (
-    <Flex flow={1} onClick={openLink} style={{ cursor: "pointer" }} my={4}>
+    <Flex flow={1} onClick={stakeLink} style={{ cursor: "pointer" }} my={4}>
       <ProviderIcon name={name} size="S" boxed={true} />
       <Flex flexDirection={"column"} ml={5} flex={"auto"} alignItems="flex-start">
         <Flex alignItems="center" mb={1}>

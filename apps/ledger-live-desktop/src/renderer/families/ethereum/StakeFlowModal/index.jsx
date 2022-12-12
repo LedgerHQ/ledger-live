@@ -8,9 +8,21 @@ import TrackPage from "~/renderer/analytics/TrackPage";
 import { Flex } from "@ledgerhq/react-ui";
 import type { Account } from "@ledgerhq/types-live";
 
-type Props = { name: string, account: Account, checkbox?: boolean, source?: string };
+type Props = {
+  name: string,
+  account: Account,
+  checkbox?: boolean,
+  singleProviderRedirectMode?: boolean,
+  source?: string,
+};
 
-const DelegationModal = ({ name, account, checkbox, source }: Props) => {
+const DelegationModal = ({
+  name,
+  account,
+  checkbox,
+  singleProviderRedirectMode,
+  source,
+}: Props) => {
   return (
     <Modal
       name={name}
@@ -24,7 +36,13 @@ const DelegationModal = ({ name, account, checkbox, source }: Props) => {
           render={() => (
             <Flex justifyContent={"center"}>
               <TrackPage category="ETH Stake Modal" name="Main Modal" />
-              <Body onClose={onClose} account={account} checkbox={checkbox} source={source} />
+              <Body
+                onClose={onClose}
+                account={account}
+                checkbox={checkbox}
+                singleProviderRedirectMode={singleProviderRedirectMode}
+                source={source}
+              />
             </Flex>
           )}
         />
