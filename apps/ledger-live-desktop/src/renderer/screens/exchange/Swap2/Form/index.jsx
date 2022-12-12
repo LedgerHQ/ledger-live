@@ -127,6 +127,7 @@ const SwapForm = () => {
     providers: storedProviders,
     includeDEX: false,
   });
+  // console.log("SwapForm -> swapTransaction", swapTransaction);
 
   const exchangeRatesState = swapTransaction.swap?.rates;
   const swapKYC = useSelector(swapKYCSelector);
@@ -417,6 +418,7 @@ const SwapForm = () => {
 
   // We check if a decentralized swap is available to conditionnaly render an Alert below.
   // All Ethereum related currencies are considered available
+  // TODO delete this
   const decentralizedSwapAvailable = useMemo(() => {
     if (sourceAccount && targetAccount) {
       const sourceMainAccount = getMainAccount(sourceAccount, sourceParentAccount);

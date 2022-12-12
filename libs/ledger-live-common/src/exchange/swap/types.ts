@@ -56,6 +56,7 @@ export type ExchangeRate = {
   // There's a delta somewhere between from times rate and the api.
   rateId?: string;
   provider: string;
+  providerType: "CEX" | "DEX";
   tradeMethod: "fixed" | "float";
   error?: Error;
   providerURL?: string | null | undefined;
@@ -70,6 +71,7 @@ export type ExchangeRateRaw = {
   toAmount: string;
   rateId?: string;
   provider: string;
+  providerType: "CEX" | "DEX";
   tradeMethod: TradeMethod;
   error?: string;
   providerURL?: string | null | undefined;
