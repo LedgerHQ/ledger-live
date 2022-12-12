@@ -2143,7 +2143,7 @@
         "ethereumGasPrice" : "Gas 价格",
         "ethereumMaxFee" : "最高费用 ({{unitName}})",
         "ethereumPriorityFee" : "最高优先费用 ({{unitName}})",
-        "nextBlock" : "下一个区块",
+        "nextBlock" : "Next block",
         "suggested" : "建议",
         "unitPerByte" : "{{unit}} 每字节",
         "nft" : "NFT",
@@ -4861,6 +4861,10 @@
     "NotEnoughGas" : {
       "title" : "父账户余额不足以支付网络费用"
     },
+    "OperatingSystemOutdated" : {
+      "title" : "Your Operating System version is outdated",
+      "description" : "Please upgrade your operating system and retry. You can check the article below to understand why Ledger Live is not supported on your current operating system version."
+    },
     "PasswordsDontMatch" : {
       "title" : "密码不匹配",
       "description" : "请重试"
@@ -5267,6 +5271,9 @@
     },
     "StellarSourceHasMultiSign" : {
       "title" : "要进行 Stellar（恒星）交易，请禁用多重签名"
+    },
+    "StellarBurnAddressError" : {
+      "title" : "A problem occurred while trying to add a Stellar account"
     },
     "HederaAddAccountError" : {
       "title" : "您的账户尚未添加。请再次尝试。"
