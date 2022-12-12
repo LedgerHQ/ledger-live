@@ -23,6 +23,7 @@ import {
   AssetContentCard,
   NotificationContentCard,
 } from "../dynamicContent/types";
+import { ProtectStateNumberEnum } from "../components/ServicesWidget/types";
 
 // === ACCOUNT STATE ===
 
@@ -237,6 +238,30 @@ export type SwapStateType = {
   exchangeRateExpiration?: Date;
 };
 
+// === PROTECT STATE ===
+
+export type ProtectData = {
+  services: {
+    Protect: {
+      available: boolean;
+      active: boolean;
+      paymentDue: boolean;
+      subscribedAt: number;
+      lastPaymentDate: number;
+    };
+  };
+  accessToken: string;
+  expiresIn: number;
+  refreshExpiresIn: number;
+  refreshToken: string;
+  tokenType: string;
+};
+
+export type ProtectState = {
+  data: ProtectData;
+  protectStatus: ProtectStateNumberEnum;
+};
+
 // === ROOT STATE ===
 
 export type State = {
@@ -250,4 +275,5 @@ export type State = {
   swap: SwapStateType;
   walletconnect: WalletConnectState;
   postOnboarding: PostOnboardingState;
+  protect: ProtectState;
 };

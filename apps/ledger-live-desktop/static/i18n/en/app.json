@@ -2143,8 +2143,8 @@
         "ethereumGasPrice": "Gas price",
         "ethereumMaxFee": "Max Fee ({{unitName}})",
         "ethereumPriorityFee": "Max Priority Fee ({{unitName}})",
-        "nextBlock": "Next block: {{nextBaseFee}}",
-        "suggestedPriorityFee": "Suggested: {{lowPriorityFee}} - {{highPriorityFee}} {{unitName}}",
+        "nextBlock": "Next block",
+        "suggested": "Suggested",
         "unitPerByte": "{{unit}} per byte",
         "nft": "NFT",
         "nftQuantity": "Quantity"
@@ -5136,7 +5136,7 @@
       "description": "Signature must be applied within 30 seconds. Please try again."
     },
     "TronNotEnoughEnergy": {
-      "title": "Not enough Energy to send this token"
+      "title": "Energy is lower than necessary. You might pay up to 20TRX in fees."
     },
     "PairingFailed": {
       "title": "Pairing unsuccessful",
@@ -5286,6 +5286,9 @@
     },
     "StellarSourceHasMultiSign": {
       "title": "Please disable multisign to make Stellar transactions"
+    },
+    "StellarBurnAddressError": {
+      "title": "A problem occurred while trying to add a Stellar account"
     },
     "HederaAddAccountError": {
       "title": "Your account has not been added. Please try again."

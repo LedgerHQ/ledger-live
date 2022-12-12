@@ -39,6 +39,9 @@ import OnboardingRecoveryPhraseWarning from "../../screens/Onboarding/steps/setu
 import PostWelcomeSelection from "../../screens/Onboarding/steps/postWelcomeSelection";
 import GetDeviceScreen from "../../screens/GetDeviceScreen";
 import OnboardingStepDoYouHaveALedgerDevice from "../../screens/Onboarding/steps/doYouHaveALedger";
+
+import OnboardingProtectFlow from "../../screens/Onboarding/steps/protectFlow";
+
 import {
   OnboardingCarefulWarningParamList,
   OnboardingNavigatorParamList,
@@ -265,6 +268,11 @@ export default function OnboardingNavigator() {
       <Stack.Screen
         name={ScreenName.OnboardingPairNew}
         component={OnboardingPairNew}
+      />
+
+      <Stack.Screen
+        name={ScreenName.OnboardingProtectFlow}
+        component={OnboardingProtectFlow}
       />
 
       <Stack.Screen

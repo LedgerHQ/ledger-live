@@ -5,9 +5,15 @@ import { makeScanAccounts, makeSync, mergeOps } from "../../bridge/jsHelpers";
 import { fetchAccount, fetchOperations } from "./api";
 import { buildSubAccounts } from "./tokens";
 import { inferSubOperations } from "../../account";
+import { STELLAR_BURN_ADDRESS } from "./logic";
+import { StellarBurnAddressError } from "./errors";
 
 const getAccountShape: GetAccountShape = async (info, syncConfig) => {
   const { address, currency, initialAccount, derivationMode } = info;
+
+  // FIXME Workaround for burn address, see https://ledgerhq.atlassian.net/browse/LIVE-4014
+  if (address === STELLAR_BURN_ADDRESS) throw new StellarBurnAddressError();
+
   const accountId = encodeAccountId({
     type: "js",
     version: "2",
