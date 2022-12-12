@@ -4861,6 +4861,10 @@
     "NotEnoughGas" : {
       "title" : "Solde du compte parent insuffisant pour les frais de réseau"
     },
+    "OperatingSystemOutdated" : {
+      "title" : "Version de votre système d’exploitation obsolète",
+      "description" : "Veuillez mettre à jour votre système d’exploitation et essayez à nouveau. Pour comprendre pourquoi Ledger Live n’est pas pris en charge par la version actuelle de votre système d’exploitation, consultez l’article ci-dessous."
+    },
     "PasswordsDontMatch" : {
       "title" : "Mots de passe non identiques",
       "description" : "Veuillez réessayer."
@@ -5267,6 +5271,9 @@
     },
     "StellarSourceHasMultiSign" : {
       "title" : "Désactivez le multisig pour envoyer des transactions Stellar"
+    },
+    "StellarBurnAddressError" : {
+      "title" : "Un problème est survenu lors de l’ajout du compte Stellar"
     },
     "HederaAddAccountError" : {
       "title" : "Votre compte n’a pas été ajouté. Veuillez réessayer."
