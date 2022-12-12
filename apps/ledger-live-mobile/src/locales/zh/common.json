@@ -518,7 +518,7 @@
       "title" : "要冻结的数额不可小于 1"
     },
     "TronSendTrc20ToNewAccountForbidden" : {
-      "title" : "发送 TRC20 到新账户并不会将其激活",
+      "title" : "您首先需要向该地址发送至少 0.1 TRX 才能启用 TRC20 代币接收。",
       "description" : "若要将其激活，首先发送 TRX 或 TRC10 至该账户。随后它便能接收 TRC20 。"
     },
     "TronUnexpectedFees" : {
@@ -1902,6 +1902,9 @@
       "title" : "尚无操作？",
       "desc" : "只需将加密资产发送到您的接收地址并等待应用程序同步。"
     },
+    "carousel" : {
+      "title" : "为您而设"
+    },
     "recommended" : {
       "title" : "推荐"
     },
@@ -2350,8 +2353,8 @@
     "display" : {
       "title" : "一般条款",
       "desc" : "配置 Ledger Live 常规设置。",
-      "carousel" : "轮播可见性",
-      "carouselDesc" : "启用资产组合的轮播可见",
+      "carousel" : "推荐",
+      "carouselDesc" : "我们会向您显示一些卡片，其中有个性化提示以及您的专属最新优惠。",
       "language" : "显示语言",
       "languageDesc" : "设置 Ledger Live 显示的语言。",
       "region" : "地区",
@@ -2464,7 +2467,7 @@
       },
       "allowed" : {
         "title" : "允许通知",
-        "desc" : "接收关于加密货币、市场趋势等内容的通知"
+        "desc" : "接收关于加密资产、市场趋势等内容的通知"
       },
       "transactions" : {
         "title" : "交易",
@@ -2486,7 +2489,7 @@
         "title" : "价格提醒",
         "desc" : "为您收藏的币种设置价格提醒，以免错过市场波动"
       },
-      "disclaimer" : "数据隐私在 Ledger 至关重要。收集的数据决不会与我们的合作伙伴分享。"
+      "disclaimer" : "Ledger 非常重视您的数据和隐私。我们决不会与合作伙伴分享收集到的数据。"
     },
     "help" : {
       "title" : "帮助",
@@ -3265,8 +3268,8 @@
       "gasPrice" : "Gas 价格",
       "maxFee" : "最高费用",
       "maxPriorityFee" : "最高优先费用",
-      "nextBlock" : "下一个区块：{{nextBaseFee}}",
-      "suggestedPriorityFee" : "建议：{{lowPriorityFee}} - {{highPriorityFee}}",
+      "nextBlock" : "下一个区块",
+      "suggested" : "建议",
       "maxFees" : "最大费用",
       "validateGasLimit" : "验证 gas 限值",
       "fees" : "费用",
@@ -4690,6 +4693,9 @@
         "title" : "候选人",
         "description" : "由整个代币持有者社区推选出的 127 名个人。投票每 6 个小时抽样一次。"
       }
+    },
+    "receive" : {
+      "newAddressTRC20" : "您首先需要向该地址发送至少 0.1 TRX 才能将其激活。"
     }
   },
   "stellar" : {
@@ -5454,7 +5460,8 @@
     "drawer" : {
       "title" : "选择一张图片",
       "options" : {
-        "uploadFromPhone" : "从我的手机上传"
+        "uploadFromPhone" : "从我的图片库中选择",
+        "selectFromNFTGallery" : "从 NFT 库中选择"
       }
     },
     "cropImage" : "裁剪图片",
@@ -5479,6 +5486,9 @@
       "loading" : "正在加载预览",
       "setPicture" : "设置自定义图片",
       "editPicture" : "编辑图片"
+    },
+    "nftGallery" : {
+      "title" : "我的 NFT"
     }
   },
   "postOnboarding" : {

@@ -532,7 +532,7 @@
       "description": "Transactions must be signed within 30 seconds. Please try again."
     },
     "TronNotEnoughEnergy": {
-      "title": "Not enough Energy to send this token"
+      "title": "Energy is lower than necessary. You might pay up to 20TRX in fees."
     },
     "UpdateYourApp": {
       "title": "App update needed",
@@ -715,6 +715,9 @@
     },
     "StellarSourceHasMultiSign": {
       "title": "Please disable multisign to make Stellar transactions"
+    },
+    "StellarBurnAddressError": {
+      "title": "A problem occurred while trying to add a Stellar account"
     },
     "ImageLoadFromGalleryError": {
       "title": "Image loading from gallery failed",
@@ -3302,8 +3305,8 @@
       "gasPrice": "Gas price",
       "maxFee": "Max fee",
       "maxPriorityFee": "Max priority fee",
-      "nextBlock": "Next block: {{nextBaseFee}}",
-      "suggestedPriorityFee": "Suggested: {{lowPriorityFee}} - {{highPriorityFee}}",
+      "nextBlock": "Next block",
+      "suggested": "Suggested",
       "maxFees": "Max fees",
       "validateGasLimit": "Validate gas limit",
       "fees": "Fees",

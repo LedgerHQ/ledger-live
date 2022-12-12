@@ -1,3 +1,9 @@
+# 2.50.1
+
+### 🐛 Fixes
+
+- Sending USDT through Ledger Live would result in the **FAILED -OUT OF ENERGY>** error for some users. We've fixed the issue, and you'll now see a **warning message if your account doesn't have enough energy** to cover the transaction.
+
 # 2.50.0
 
 ### 🚀 Features
