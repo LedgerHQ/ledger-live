@@ -156,7 +156,6 @@ export function SwapForm({
     // we don't display it if user needs to login first
     if (
       currentBanner !== ActionRequired.Login &&
-      kycStatus &&
       shouldShowKYCBanner({ provider, kycStatus })
     ) {
       setCurrentBanner(ActionRequired.KYC);
