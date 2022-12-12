@@ -532,7 +532,7 @@
       "description" : "Es necesario firmar las transacciones en menos de 30 segundos. Inténtalo de nuevo."
     },
     "TronNotEnoughEnergy" : {
-      "title" : "No hay suficiente Energía para enviar este token"
+      "title" : "La energía es menor que la requerida. Es posible que pagues hasta 20 TRX en tarifas."
     },
     "UpdateYourApp" : {
       "title" : "Es necesario actualizar la aplicación",
@@ -715,6 +715,9 @@
     },
     "StellarSourceHasMultiSign" : {
       "title" : "Desactiva la multifirma para realizar transacciones de Stellar."
+    },
+    "StellarBurnAddressError" : {
+      "title" : "A problem occurred while trying to add a Stellar account"
     },
     "ImageLoadFromGalleryError" : {
       "title" : "Error al cargar la imagen de la galería",
@@ -1208,7 +1211,11 @@
         "subTitle" : "Restaura tu Frase de recuperación a un nuevo dispositivo",
         "desc" : "¡Utiliza una Frase de recuperación existente para restaurar tus claves privadas a un nuevo Nano!"
       },
-      "recovery" : "¿Ya tienes una Frase de recuperación?"
+      "recovery" : "¿Ya tienes una Frase de recuperación?",
+      "protect" : {
+        "label" : "Aproximadamente 60 min",
+        "subTitle" : "Restaurar con Protect"
+      }
     },
     "stepNewDevice" : {
       "0" : {
@@ -1429,6 +1436,31 @@
           "desc" : "Responde a 3 sencillas preguntas para evitar algunos errores comunes acerca de tu billetera de hardware.",
           "cta" : "Resuelve el cuestionario"
         }
+      }
+    },
+    "stepProtect" : {
+      "bullets" : {
+        "0" : {
+          "title" : "Examinar ",
+          "label" : "Aprende a interactuar con tu dispositivo mediante las instrucciones en pantalla."
+        },
+        "1" : {
+          "title" : "Selecciona “Restore” (Restaurar)",
+          "label" : "Presiona ambos botones simultáneamente para validar la selección."
+        },
+        "2" : {
+          "title" : "Selecciona el modo “Restore with Protect” (Restaurar con Protect).",
+          "label" : "Presiona ambos botones simultáneamente para validar la selección."
+        }
+      },
+      "nextStep" : "Continuar",
+      "extraInfo" : {
+        "tooltip" : "No veo esa opción en mi Ledger",
+        "title" : "¿Por qué no veo la opción “Restore with Protect” (Restaurar con Protect) en mi Ledger?",
+        "desc1" : "Lo más probable es que tu dispositivo no sea compatible con Protect. No te preocupes, con gusto te ayudaremos a resolverlo.",
+        "desc2" : "Please contact us through and choose \"My Ledger doesn't display Restore with Protect\", we got you covered.",
+        "cta" : "Seguir los pasos manuales",
+        "supportLink" : "Ponte en contacto con el Soporte de Ledger"
       }
     },
     "stepRecoveryPhrase" : {
@@ -1717,8 +1749,14 @@
         "subtitle" : "Confirma el código en tu {{productName}}"
       },
       "error" : {
-        "title" : "Emparejamiento fallido",
-        "subtitle" : "Parece que algo ha salido mal.\nComprueba que el Bluetooth esté activado y que tu {{productName}} esté cerca.",
+        "generic" : {
+          "title" : "Emparejamiento fallido",
+          "subtitle" : "Parece que algo ha salido mal.\nComprueba que el Bluetooth esté activado y que tu {{productName}} esté cerca."
+        },
+        "lockedDevice" : {
+          "title" : "Tu dispositivo está bloqueado",
+          "subtitle" : "Desbloquea tu {{ productName }} e inténtalo de nuevo."
+        },
         "retryCta" : "Inténtalo de nuevo"
       }
     }
@@ -3268,8 +3306,8 @@
       "gasPrice" : "Precio de gas",
       "maxFee" : "Tarifa máxima",
       "maxPriorityFee" : "Tarifa de prioridad máxima",
-      "nextBlock" : "Siguiente bloque",
-      "suggested" : "Sugerencia",
+      "nextBlock" : "Next block",
+      "suggested" : "Sugerida",
       "maxFees" : "Tarifas máx",
       "validateGasLimit" : "Validar límite de gas",
       "fees" : "Tarifas",
@@ -5541,6 +5579,88 @@
       },
       "media" : {
         "tag" : "{{count}} NFTs"
+      }
+    }
+  },
+  "servicesWidget" : {
+    "title" : "Servicios",
+    "subTitle" : "Gestiona tus servicios de Ledger",
+    "protect" : {
+      "title" : "Protect",
+      "status" : {
+        "new" : {
+          "title" : "Nuevo",
+          "desc" : "Respalda tu Frase de recuperación",
+          "0" : {
+            "title" : "Millones de usuarios de Ledger confían en nosotros"
+          },
+          "1" : {
+            "title" : "Tu Frase de recuperación está vinculada a tu identidad de forma segura"
+          },
+          "2" : {
+            "title" : "Cifrado con tecnología de avanzada"
+          },
+          "3" : {
+            "title" : "Distribuido en 3 instalaciones descentralizadas, de manera de que nadie pueda robar tu Frase de recuperación"
+          },
+          "actions" : {
+            "learnMore" : "Más información",
+            "alreadySubscribed" : "¿Ya estás suscrito a Protect?"
+          }
+        },
+        "confirmIdentity" : {
+          "title" : "Acción necesaria",
+          "desc" : "Confirma tu identidad y completa todas las tareas para proteger tu Frase de recuperación.",
+          "actions" : {
+            "confirmNow" : "Confirmar ahora",
+            "viewDetails" : "Ver detalles"
+          }
+        },
+        "addPayment" : {
+          "title" : "Acción necesaria",
+          "desc" : "Agrega tu información de pagos y completa todas las tareas para proteger tu Frase de recuperación",
+          "actions" : {
+            "addNow" : "Agregar ahora",
+            "viewDetails" : "Ver detalles"
+          }
+        },
+        "paymentRejected" : {
+          "title" : "Pago rechazado",
+          "desc" : "Tu pago de $5 falló. Por favor, edita tu información de pagos.",
+          "actions" : {
+            "editNow" : "Editar ahora",
+            "viewDetails" : "Ver detalles"
+          }
+        },
+        "subscriptionCanceled" : {
+          "title" : "Suscripción cancelada",
+          "desc" : "Tu suscripción ha terminado, luego de 3 meses sin pagos.",
+          "actions" : {
+            "contactLedgerSupport" : "Ponte en contacto con el Soporte de Ledger",
+            "viewDetails" : "Ver detalles"
+          }
+        },
+        "active" : {
+          "title" : "Activo",
+          "desc" : "Tu Frase de recuperación está protegida",
+          "actions" : {
+            "viewDetails" : "Ver detalles"
+          }
+        }
+      }
+    }
+  },
+  "protect" : {
+    "login" : {
+      "title" : "Inicia sesión",
+      "desc" : "Log in with your Ledger account to manage your Protect subscription.",
+      "email" : "Email",
+      "password" : "Contraseña",
+      "cta" : "Usuario",
+      "forgotPassword" : "Forgot password?",
+      "errors" : {
+        "emptyEmail" : "Email cannot be empty",
+        "emptyPassword" : "Password cannot be empty"
       }
     }
   }
