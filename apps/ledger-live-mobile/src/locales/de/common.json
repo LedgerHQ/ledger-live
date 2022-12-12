@@ -518,7 +518,7 @@
       "title" : "Der zu sperrende Betrag kann nicht kleiner als 1 sein"
     },
     "TronSendTrc20ToNewAccountForbidden" : {
-      "title" : "Das Senden von TRC20 an das neue Konto wird es nicht aktivieren",
+      "title" : "Sie müssen zuerst mindestens 0,1 TRX an diese Adresse senden, um den Empfang von TRC20-Token zu aktivieren.",
       "description" : "Um es zu aktivieren, senden Sie zuerst entweder TRX oder TRC10 an das Konto. Dann kann es TRC20 empfangen."
     },
     "TronUnexpectedFees" : {
@@ -750,6 +750,30 @@
     },
     "HederaAddAccountError" : {
       "title" : "Ihr Konto wurde nicht hinzugefügt. Bitte versuchen Sie es erneut."
+    },
+    "NearNewAccountWarning" : {
+      "title" : "Das Empfängerkonto wurde noch nicht erstellt. Das Protokoll erfordert einen Transfer von {{formattedNewAccountStorageCost}}, um es zu erstellen."
+    },
+    "NearNewNamedAccountError" : {
+      "title" : "Das Empfängerkonto wurde noch nicht erstellt. Es muss in der NEAR-Wallet erstellt werden."
+    },
+    "NearActivationFeeNotCovered" : {
+      "title" : "Dieser Betrag deckt nicht die Speicherkosten über {{formattedNewAccountStorageCost}} ab."
+    },
+    "NearUseAllAmountStakeWarning" : {
+      "title" : "Stellen Sie sicher, dass Sie genug Guthaben für zukünftige Transaktionsgebühren übrig haben"
+    },
+    "NearNotEnoughStaked" : {
+      "title" : "Unzureichendes Guthaben, welches gestaked wurde"
+    },
+    "NearNotEnoughAvailable" : {
+      "title" : "Unzureichendes abhebbares Guthaben"
+    },
+    "NearRecommendUnstake" : {
+      "title" : "Bitte heben Sie den Staking-Prozess auf und heben Sie Ihre Vermögenswerte ab, bevor Sie das Konto leeren"
+    },
+    "NearStakingThresholdNotMet" : {
+      "title" : "Der Betrag muss mindestens {{threshold}} betragen"
     },
     "PriorityFeeTooLow" : {
       "title" : "Die Prioritätsgebühr ist niedriger als der empfohlene Wert"
@@ -1717,8 +1741,14 @@
         "subtitle" : "Bestätigen Sie den Code auf Ihrer {{productName}}"
       },
       "error" : {
-        "title" : "Kopplung fehlgeschlagen",
-        "subtitle" : "Offenbar ist ein Problem aufgetreten!\nÜberprüfen Sie, ob Ihr Bluetooth aktiviert ist und sich Ihre {{productName}} in der Nähe befindet.",
+        "generic" : {
+          "title" : "Kopplung fehlgeschlagen",
+          "subtitle" : "Offenbar ist ein Problem aufgetreten!\nÜberprüfen Sie, ob Ihr Bluetooth aktiviert ist und sich Ihr {{productName}} in der Nähe befindet."
+        },
+        "lockedDevice" : {
+          "title" : "Ihr Gerät ist gesperrt",
+          "subtitle" : "Entsperren Sie Ihr {{ productName }} und versuchen Sie es erneut."
+        },
         "retryCta" : "Wiederholen"
       }
     }
@@ -1902,6 +1932,9 @@
       "title" : "Noch keine Aktionen?",
       "desc" : "Senden Sie einfach Krypto-Vermögenswerte an Ihre Empfangsadresse und warten Sie auf die Synchronisierung mit der App."
     },
+    "carousel" : {
+      "title" : "Für Sie"
+    },
     "recommended" : {
       "title" : "Empfohlen"
     },
@@ -2001,7 +2034,10 @@
       "UNLOCK" : "Entsperrt",
       "REVOKE" : "Widerrufen",
       "REGISTER" : "Registriert",
-      "WITHDRAW" : "Ausgezahlt"
+      "WITHDRAW" : "Ausgezahlt",
+      "STAKE" : "Gestaked",
+      "UNSTAKE" : "Nicht mehr gestaked",
+      "WITHDRAW_UNSTAKED" : "Ausgezahlt"
     }
   },
   "operationDetails" : {
@@ -2062,7 +2098,8 @@
       "storageLimit" : "Speicherlimit",
       "gasLimit" : "Gaslimit",
       "id" : "ID",
-      "autoClaimedRewards" : "Automatisch beanspruchte Prämien"
+      "autoClaimedRewards" : "Automatisch beanspruchte Prämien",
+      "stakedAmount" : "Betrag gestaked"
     },
     "multipleAddresses" : "Warum mehrere Adressen?",
     "tokenName" : "Token-Name",
@@ -2350,8 +2387,8 @@
     "display" : {
       "title" : "Allgemeines",
       "desc" : "Konfigurieren Sie die allgemeinen Ledger-Live-Einstellungen.",
-      "carousel" : "Karussell-Sichtbarkeit",
-      "carouselDesc" : "Aktivieren Sie die Sichtbarkeit des Karussells auf Portfolio",
+      "carousel" : "Empfehlungen",
+      "carouselDesc" : "Wir zeigen Ihnen Karten mit personalisierten Tipps und unseren neuesten Angeboten nur für Sie.",
       "language" : "Sprache",
       "languageDesc" : "Stellen Sie die in Ledger Live angezeigte Sprache ein.",
       "region" : "Region",
@@ -2464,7 +2501,7 @@
       },
       "allowed" : {
         "title" : "Benachrichtigungen zulassen",
-        "desc" : "Erhalten Sie Benachrichtigungen über Ihre Krypto, Markttendenzen und mehr"
+        "desc" : "Erhalten Sie Benachrichtigungen über Ihre Krypto-Werte, Markttrends und mehr"
       },
       "transactions" : {
         "title" : "Transaktionen",
@@ -2486,7 +2523,7 @@
         "title" : "Preisalarme",
         "desc" : "Legen Sie Preisalarme für Ihre Lieblingscoins fest, damit Sie keine Marktbewegung verpassen"
       },
-      "disclaimer" : "Der Datenschutz hat bei Ledger oberste Priorität. Die gesammelten Daten werden niemals an unsere Partner weitergegeben"
+      "disclaimer" : "Ihre Daten und Ihr Datenschutz sind uns bei Ledger wichtig. Die gesammelten Daten werden niemals mit unseren Partnern geteilt"
     },
     "help" : {
       "title" : "Hilfe",
@@ -4690,6 +4727,9 @@
         "title" : "Kandidaten",
         "description" : "127 Personen, die durch Abstimmung von der gesamten Token-Inhaber-Community gewählt werden. Die Abstimmungen werden alle 6 Stunden abgefragt."
       }
+    },
+    "receive" : {
+      "newAddressTRC20" : "Sie müssen zuerst mindestens 0,1 TRX an diese Adresse senden, um sie zu aktivieren."
     }
   },
   "stellar" : {
@@ -5015,6 +5055,118 @@
       "delegatedTo" : "delegiert an",
       "started" : {
         "description" : "Sie können Belohnungen verdienen, indem Sie Ihre SOL-Werte an einen Validator delegieren."
+      }
+    }
+  },
+  "near" : {
+    "info" : {
+      "available" : {
+        "title" : "NEAR verfügbar",
+        "description" : "Dieser Betrag ist verfügbar."
+      },
+      "storageUsage" : {
+        "title" : "Minimales Guthaben",
+        "description" : "Dieser Betrag ist für Speicherungen und Transaktionen reserviert und ist das Mindestguthaben, das auf Ihrem Konto verfügbar sein muss, um aktiv zu bleiben."
+      },
+      "staked" : {
+        "title" : "Kontostand gestaked",
+        "description" : "Dieser Betrag ist derzeit mit Validatoren gestaked."
+      },
+      "pending" : {
+        "title" : "Ausstehender Saldo",
+        "description" : "Dieser Betrag wird nicht mehr gestaked, steht aber derzeit noch nicht zur Verfügung."
+      },
+      "withdrawable" : {
+        "title" : "Auszahlbares Guthaben",
+        "description" : "Dieser Betrag wird nicht mehr gestaked und kann derzeit abgehoben werden."
+      },
+      "stakingUnavailable" : {
+        "title" : "Staking nicht verfügbar",
+        "description" : "Nicht genügend verfügbares Guthaben auf Ihrem Konto, um es zu staken, das Staking aufzuheben oder abzubuchen.."
+      }
+    },
+    "unstaking" : {
+      "stepperHeader" : {
+        "amountSubTitle" : "Aufzuhebender Staking-Betrag"
+      },
+      "flow" : {
+        "steps" : {
+          "verification" : {
+            "success" : {
+              "title" : "Sie haben erfolgreich das Staking Ihrer Vermögenswerte aufgehoben"
+            }
+          }
+        }
+      }
+    },
+    "withdrawing" : {
+      "stepperHeader" : {
+        "amountSubTitle" : "Abzuhebender Betrag"
+      },
+      "flow" : {
+        "steps" : {
+          "verification" : {
+            "success" : {
+              "title" : "Sie haben Ihre Vermögenswerte erfolgreich zurückgezogen."
+            }
+          }
+        }
+      }
+    },
+    "staking" : {
+      "sectionLabel" : "Position(en) gestaked",
+      "info" : "So funktioniert Staking",
+      "add" : "Hinzufügen",
+      "stakingEarn" : "Sie können NEAR-Belohnungen verdienen, indem Sie Ihre Vermögenswerte staken.",
+      "totalStake" : "Staking-Gesamtbetrag",
+      "commission" : "Provision",
+      "iStake" : "Ich stake",
+      "actions" : {
+        "unstake" : "Unstake",
+        "withdraw" : "Abheben"
+      },
+      "drawer" : {
+        "status" : "Status",
+        "active" : "Aktiv",
+        "inactive" : "Inaktiv",
+        "rewards" : "Prämien",
+        "pending" : "Ausstehend",
+        "available" : "Auszahlbar"
+      },
+      "stepperHeader" : {
+        "amountSubTitle" : "Staking-Betrag",
+        "selectDevice" : "Gerät wählen",
+        "connectDevice" : "Verbundenes Gerät",
+        "stepRange" : "Schritt {{currentStep}} von {{totalSteps}}"
+      },
+      "flow" : {
+        "steps" : {
+          "starter" : {
+            "description" : "Staken Sie Ihre NEAR, um sicher Belohnungen zu verdienen und behalten Sie die Kontrolle über Ihr Vermögen.",
+            "steps" : {
+              "0" : "Vermögenswerte die gestaked wurden, bleiben in Ihrem Besitz.",
+              "1" : "Sie müssen 52 — 65 Stunden warten, bis der Staking-Prozess aufgehoben wurde.",
+              "2" : "Staken Sie sicher mit Ihrem Ledger-Gerät."
+            },
+            "warning" : {
+              "description" : "Wählen Sie Ihren Validator mit Bedacht: Ein Teil Ihrer Vermögenswerte, die gestaked sind, kann unwiderruflich verloren gehen, wenn sich der Validator nicht angemessen verhält."
+            },
+            "cta" : "Weiter"
+          },
+          "amount" : {
+            "assetsRemaining" : "Verbleibende Vermögenswerte: <0>{{amount}}</0>",
+            "allAssetsUsed" : "Alle verwendeten Vermögenswerte",
+            "minAmount" : "Mindestbetrag: <0>{{min}}</0>",
+            "incorrectAmount" : "Maximaler Betrag: <0>{{max}}</0>",
+            "cta" : "Weiter"
+          },
+          "verification" : {
+            "success" : {
+              "title" : "Sie haben Ihre Vermögenswerte erfolgreich im Staking eingesetzt",
+              "text" : "Ihr Kontostand wird aktualisiert, sobald das Netzwerk die Transaktion bestätigt."
+            }
+          }
+        }
       }
     }
   },
@@ -5454,7 +5606,8 @@
     "drawer" : {
       "title" : "Wählen Sie ein Bild aus",
       "options" : {
-        "uploadFromPhone" : "Von meinem Mobiltelefon hochladen"
+        "uploadFromPhone" : "Aus meiner Bildergalerie auswählen",
+        "selectFromNFTGallery" : "Aus meiner NFT-Galerie auswählen"
       }
     },
     "cropImage" : "Bild zuschneiden",
@@ -5479,6 +5632,9 @@
       "loading" : "Vorschau wird geladen",
       "setPicture" : "Benutzerdefiniertes Bild einstellen",
       "editPicture" : "Bild bearbeiten"
+    },
+    "nftGallery" : {
+      "title" : "Meine NFTs"
     }
   },
   "postOnboarding" : {
