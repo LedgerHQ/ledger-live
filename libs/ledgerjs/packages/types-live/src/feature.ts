@@ -37,7 +37,8 @@ export type FeatureId =
   | "receiveStakingFlowConfigDesktop"
   | "ethStakingProviders"
   | "storyly"
-  | "firebaseEnvironmentReadOnly";
+  | "firebaseEnvironmentReadOnly"
+  | "protectServicesMobile";
 
 /**  We use objects instead of direct booleans for potential future improvements
 like feature versioning etc */

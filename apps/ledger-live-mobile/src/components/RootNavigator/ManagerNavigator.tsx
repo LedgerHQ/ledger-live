@@ -17,6 +17,7 @@ import styles from "../../navigation/styles";
 import TabIcon from "../TabIcon";
 import { useIsNavLocked } from "./CustomBlockRouterNavigator";
 import { ManagerNavigatorStackParamList } from "./types/ManagerNavigator";
+import ProtectLogin from "../../screens/Protect/Login";
 
 const BadgeContainer = styled(Flex).attrs({
   position: "absolute",
@@ -69,6 +70,11 @@ export default function ManagerNavigator() {
       <Stack.Screen
         name={ScreenName.ManagerMain}
         component={ManagerMain}
+        options={{ title: "" }}
+      />
+      <Stack.Screen
+        name={ScreenName.ProtectLogin}
+        component={ProtectLogin}
         options={{ title: "" }}
       />
     </Stack.Navigator>
