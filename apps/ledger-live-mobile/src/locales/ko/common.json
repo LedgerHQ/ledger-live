@@ -518,7 +518,7 @@
       "title" : "동결할 금액은 1보다 작을 수 없습니다"
     },
     "TronSendTrc20ToNewAccountForbidden" : {
-      "title" : "새 계정에 TRC20을 보내도 계정이 활성화되지 않습니다",
+      "title" : "TRC20 토큰 수령을 활성화하려면 먼저 최소 0.1 TRX를 이 주소로 보내야 합니다.",
       "description" : "계정을 활성화하려면, 우선 계정에 TRX 또는 TRC10을 보내세요. 그 다음에 TRC20을 받을 수 있습니다."
     },
     "TronUnexpectedFees" : {
@@ -750,6 +750,30 @@
     },
     "HederaAddAccountError" : {
       "title" : "귀하의 계정이 추가되지 않았습니다. 다시 시도해 주세요."
+    },
+    "NearNewAccountWarning" : {
+      "title" : "수령인 계정이 아직 생성되지 않았습니다. 프로토콜을 생성하려면 {{formattedNewAccountStorageCost}} 전송이 필요합니다."
+    },
+    "NearNewNamedAccountError" : {
+      "title" : "수령인 계정이 아직 생성되지 않았습니다. 니어 지갑에서 생성해야 합니다."
+    },
+    "NearActivationFeeNotCovered" : {
+      "title" : "이 금액은 {{formattedNewAccountStorageCost}} 스토리지 비용을 포함하지 않습니다."
+    },
+    "NearUseAllAmountStakeWarning" : {
+      "title" : "향후 트랜잭션 수수료 지불에 필요한 잔액을 충분히 남겨 두세요"
+    },
+    "NearNotEnoughStaked" : {
+      "title" : "스테이킹 잔액 부족"
+    },
+    "NearNotEnoughAvailable" : {
+      "title" : "출금 가능 잔액 부족"
+    },
+    "NearRecommendUnstake" : {
+      "title" : "계정을 비우기 전에 자금을 언스테이킹하고 출금하세요."
+    },
+    "NearStakingThresholdNotMet" : {
+      "title" : "금액은 {{threshold}} 이상이어야 합니다."
     },
     "PriorityFeeTooLow" : {
       "title" : "우선 수수료가 권장 값 보다 낮습니다."
@@ -1717,8 +1741,14 @@
         "subtitle" : "{{productName}}에서 코드를 확인합니다"
       },
       "error" : {
-        "title" : "페어링 실패",
-        "subtitle" : "문제가 발생한 것 같습니다!\n블루투스가 켜져 있고 {{productName}} 장치가 근처에 있는지 확인하세요.",
+        "generic" : {
+          "title" : "페어링 실패",
+          "subtitle" : "문제가 발생한 것 같습니다!\n블루투스가 켜져 있고 {{productName}} 장치가 근처에 있는지 확인하세요."
+        },
+        "lockedDevice" : {
+          "title" : "장치가 잠금 상태입니다",
+          "subtitle" : "{{ productName }}의 잠금을 해제하고 다시 시도하세요."
+        },
         "retryCta" : "다시 시도하세요"
       }
     }
@@ -1902,6 +1932,9 @@
       "title" : "아직 거래가 없나요?",
       "desc" : "수신 주소로 암호화 자산을 보내고 앱이 동기화를 마칠 때까지 기다리기만 하면 됩니다."
     },
+    "carousel" : {
+      "title" : "고객 맞춤 정보"
+    },
     "recommended" : {
       "title" : "제품 추천"
     },
@@ -2001,7 +2034,10 @@
       "UNLOCK" : "잠금 해제",
       "REVOKE" : "취소",
       "REGISTER" : "등록 완료",
-      "WITHDRAW" : "출금됨"
+      "WITHDRAW" : "출금됨",
+      "STAKE" : "스테이킹 완료",
+      "UNSTAKE" : "언스테이킹 완료",
+      "WITHDRAW_UNSTAKED" : "출금됨"
     }
   },
   "operationDetails" : {
@@ -2062,7 +2098,8 @@
       "storageLimit" : "저장공간 한계",
       "gasLimit" : "가스 한도",
       "id" : "Id",
-      "autoClaimedRewards" : "자동으로 청구된 보상"
+      "autoClaimedRewards" : "자동으로 청구된 보상",
+      "stakedAmount" : "스테이킹 금액"
     },
     "multipleAddresses" : "왜 주소가 여러 개인가요?",
     "tokenName" : "토큰명",
@@ -2350,8 +2387,8 @@
     "display" : {
       "title" : "일반",
       "desc" : "일반 Ledger Live 설정을 구성하세요.",
-      "carousel" : "슬라이드 활성화",
-      "carouselDesc" : "포트폴리오 화면에서 슬라이드 기능을 활성화합니다.",
+      "carousel" : "추천",
+      "carouselDesc" : "개인 맞춤 팁이 포함된 카드와 귀하만을 위한 최신 오퍼를 안내해드립니다.",
       "language" : "언어 표시하기",
       "languageDesc" : "Ledger Live에 표시되는 언어를 설정하세요.",
       "region" : "지역",
@@ -2486,7 +2523,7 @@
         "title" : "가격 알림",
         "desc" : "시장 흐름을 놓치지 않도록 선호하는 코인의 가격 알림을 설정해 보세요"
       },
-      "disclaimer" : "Ledger는 데이터 프라이버시를 무엇보다 중요하게 생각합니다. 수집된 데이터를 파트너와 공유하는 일은 절대 없습니다."
+      "disclaimer" : "Ledger는 귀하의 데이터 및 개인정보 보호를 중요하게 생각합니다. 수집된 데이터를 파트너와 공유하는 일은 절대 없습니다."
     },
     "help" : {
       "title" : "도움말",
@@ -2568,7 +2605,7 @@
       "featureFlagsDesc" : "앱을 다시 실행하면 재정의된 값이 다시 설정됩니다. 유효한 JSON 문자열만 허용됩니다.",
       "featureFlagsEdit" : "편집",
       "featureFlagsRestore" : "복구",
-      "firebaseProject" : "Firebase project targeted by this build:"
+      "firebaseProject" : "이 빌드에서 대상으로 하는 Firebase 프로젝트:"
     }
   },
   "notifications" : {
@@ -4690,6 +4727,9 @@
         "title" : "후보자",
         "description" : "전체 토큰 홀더 커뮤니티의 투표로 127명의 개인이 선출되었습니다. 6시간마다 투표의 표본 조사를 실시합니다."
       }
+    },
+    "receive" : {
+      "newAddressTRC20" : "활성화하려면 먼저 이 주소로 최소 0.1 TRX를 보내야 합니다."
     }
   },
   "stellar" : {
@@ -5015,6 +5055,118 @@
       "delegatedTo" : "다음에게 위임됨",
       "started" : {
         "description" : "SOL 암호화폐를 검증인에게 위임하여 보상을 받을 수 있습니다."
+      }
+    }
+  },
+  "near" : {
+    "info" : {
+      "available" : {
+        "title" : "니어 가용 금액",
+        "description" : "가처분 금액입니다."
+      },
+      "storageUsage" : {
+        "title" : "최소 잔액",
+        "description" : "이 금액은 저장 및 트랜잭션용으로 예약된 금액이며 계정이 활성 상태를 유지하기 위해 필요한 최소 잔액입니다."
+      },
+      "staked" : {
+        "title" : "스테이킹 잔액",
+        "description" : "이 금액은 현재 검증인에게 스테이킹되어 있습니다."
+      },
+      "pending" : {
+        "title" : "승인 대기 잔액",
+        "description" : "이 금액은 언스테이킹되어 현재 가용성 여부가 보류 상태입니다."
+      },
+      "withdrawable" : {
+        "title" : "출금 가능 잔액",
+        "description" : "이 금액은 언스테이킹되어 현재 출금이 가능합니다."
+      },
+      "stakingUnavailable" : {
+        "title" : "스테이킹 불가",
+        "description" : "계정에 스테이킹, 언스테이킹 및 인출에 필요한 가용 잔액이 충분하지 않습니다."
+      }
+    },
+    "unstaking" : {
+      "stepperHeader" : {
+        "amountSubTitle" : "언스테이킹할 금액"
+      },
+      "flow" : {
+        "steps" : {
+          "verification" : {
+            "success" : {
+              "title" : "자산을 성공적으로 언스테이킹했습니다."
+            }
+          }
+        }
+      }
+    },
+    "withdrawing" : {
+      "stepperHeader" : {
+        "amountSubTitle" : "출금 금액"
+      },
+      "flow" : {
+        "steps" : {
+          "verification" : {
+            "success" : {
+              "title" : "자산을 성공적으로 출금했습니다."
+            }
+          }
+        }
+      }
+    },
+    "staking" : {
+      "sectionLabel" : "스테이킹 포지션",
+      "info" : "스테이킹 작동 방식",
+      "add" : "추가",
+      "stakingEarn" : "자산을 스테이킹하여 니어 보상을 받을 수 있습니다.",
+      "totalStake" : "총 스테이킹",
+      "commission" : "커미션",
+      "iStake" : "스테이킹하기",
+      "actions" : {
+        "unstake" : "언스테이킹",
+        "withdraw" : "출금"
+      },
+      "drawer" : {
+        "status" : "상태",
+        "active" : "활성",
+        "inactive" : "비활성",
+        "rewards" : "보상",
+        "pending" : "대기 중",
+        "available" : "출금 가능"
+      },
+      "stepperHeader" : {
+        "amountSubTitle" : "스테이킹할 금액",
+        "selectDevice" : "장치 선택",
+        "connectDevice" : "장치 연결",
+        "stepRange" : "{{totalSteps}} 중 {{currentStep}} 단계"
+      },
+      "flow" : {
+        "steps" : {
+          "starter" : {
+            "description" : "니어를 스테이킹하여 안전하게 보상을 받으면서, 자산에 대한 통제 권한도 유지하세요.",
+            "steps" : {
+              "0" : "스테이킹된 자산은 귀하의 소유입니다.",
+              "1" : "언스테이킹이 완료되려면 52 - 65시간을 기다려야 합니다.",
+              "2" : "Ledger 장치로 안전하게 스테이킹하세요."
+            },
+            "warning" : {
+              "description" : "검증인을 현명하게 선택하세요. 검증인이 부적절하게 행동하는 경우 일부 스테이킹된 자산이 영구 손실될 수 있습니다."
+            },
+            "cta" : "계속"
+          },
+          "amount" : {
+            "assetsRemaining" : "나머지 자산: <0>{{amount}}</0>",
+            "allAssetsUsed" : "사용된 모든 자산",
+            "minAmount" : "최소 금액: <0>{{min}}</0>",
+            "incorrectAmount" : "최대 금액: <0>{{max}}</0>",
+            "cta" : "계속"
+          },
+          "verification" : {
+            "success" : {
+              "title" : "자산을 성공적으로 스테이킹했습니다.",
+              "text" : "네트워크가 트랜잭션을 검증 완료하면 계정 잔액이 업데이트됩니다."
+            }
+          }
+        }
       }
     }
   },
@@ -5454,7 +5606,8 @@
     "drawer" : {
       "title" : "이미지 선택",
       "options" : {
-        "uploadFromPhone" : "핸드폰에서 업로드"
+        "uploadFromPhone" : "내 사진 갤러리에서 선택",
+        "selectFromNFTGallery" : "NFT 갤러리에서 선택"
       }
     },
     "cropImage" : "이미지 자르기",
@@ -5475,10 +5628,13 @@
     "customImage" : "커스텀 사진",
     "doThisLater" : "다음에 결정하기",
     "preview" : {
-      "title" : "Preview",
-      "loading" : "Loading preview",
-      "setPicture" : "Set custom picture",
-      "editPicture" : "Edit picture"
+      "title" : "미리보기",
+      "loading" : "미리보기 로드 중",
+      "setPicture" : "커스텀 사진 설정",
+      "editPicture" : "사진 편집"
+    },
+    "nftGallery" : {
+      "title" : "내 NFT"
     }
   },
   "postOnboarding" : {
