@@ -1,6 +1,6 @@
 import network from "../../../../network";
 import { getEnv } from "../../../../env";
-import type { LiveAppManifest } from "../../types";
+import type { LiveAppManifest } from "../../../types";
 import mockData from "./mock.json";
 import { FilterParams } from "../../../filters";
 import qs from "qs";

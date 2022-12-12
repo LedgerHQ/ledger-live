@@ -7,7 +7,7 @@ import React, {
   useCallback,
 } from "react";
 import { LiveAppRegistry } from "./types";
-import { LiveAppManifest, Loadable } from "../types";
+import { LiveAppManifest, Loadable } from "../../types";
 
 import api from "./api";
 import { FilterParams } from "../../filters";
