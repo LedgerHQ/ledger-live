@@ -2143,8 +2143,8 @@
         "ethereumGasPrice" : "Gas ücreti",
         "ethereumMaxFee" : "Ücret Üst Limiti ({{unitName}})",
         "ethereumPriorityFee" : "Öncelik Ücreti Üst Limiti ({{unitName}})",
-        "nextBlock" : "Sonraki blok",
-        "suggested" : "Önerilen",
+        "nextBlock" : "Next block",
+        "suggested" : "Suggested",
         "unitPerByte" : "bayt başına {{unit}}",
         "nft" : "NFT",
         "nftQuantity" : "Miktar"
@@ -4861,6 +4861,10 @@
     "NotEnoughGas" : {
       "title" : "Ana hesaptaki bakiye ağ ücretlerini karşılamak için yetersiz"
     },
+    "OperatingSystemOutdated" : {
+      "title" : "Your Operating System version is outdated",
+      "description" : "Please upgrade your operating system and retry. You can check the article below to understand why Ledger Live is not supported on your current operating system version."
+    },
     "PasswordsDontMatch" : {
       "title" : "Parolalar eşleşmiyor",
       "description" : "Lütfen tekrar deneyin"
@@ -5267,6 +5271,9 @@
     },
     "StellarSourceHasMultiSign" : {
       "title" : "Stellar işlemleri yapmak için lütfen çoklu imzayı devre dışı bırakın"
+    },
+    "StellarBurnAddressError" : {
+      "title" : "A problem occurred while trying to add a Stellar account"
     },
     "HederaAddAccountError" : {
       "title" : "Hesabınız eklenemedi. Lütfen tekrar deneyin."
