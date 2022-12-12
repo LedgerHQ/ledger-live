@@ -1,11 +1,11 @@
 import { Observable, from } from "rxjs";
 import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";
-import getBatteryStatus, { BatteryStatusTypes } from "@ledgerhq/live-common/hw/getBatteryStatus";
-import { BatteryStatusFlags } from "@ledgerhq/types-devices";
-import { currencyOpt, deviceOpt, inferCurrency } from "../scan";
+import getBatteryStatus, {
+  BatteryStatusTypes,
+} from "@ledgerhq/live-common/hw/getBatteryStatus";
+import { currencyOpt, deviceOpt } from "../scan";
 export default {
-  description:
-    "Get the battery status of the current device",
+  description: "Get the battery status of the current device",
   args: [
     currencyOpt,
     deviceOpt,
@@ -20,6 +20,8 @@ export default {
       device: string;
       p2: string;
     }>
-  ): Observable<BatteryStatusFlags | number> =>
-    withDevice(arg.device || "")((t) => from(getBatteryStatus(t, parseInt(arg.p2 || "0") as BatteryStatusTypes)))
+  ): Observable<number[]> =>
+    withDevice(arg.device || "")((t) =>
+      from(getBatteryStatus(t, [parseInt(arg.p2 || "0") as BatteryStatusTypes]))
+    ),
 };
