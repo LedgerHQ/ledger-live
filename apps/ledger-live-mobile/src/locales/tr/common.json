@@ -532,7 +532,7 @@
       "description" : "İşlemlerin 30 saniye içinde imzalanması gerekir. Lütfen tekrar deneyin."
     },
     "TronNotEnoughEnergy" : {
-      "title" : "Bu token'ı göndermek için yeterli Enerji yok"
+      "title" : "Yeterince Enerji mevcut değil. Ağ ücreti 20TRX tutarına ulaşabilir."
     },
     "UpdateYourApp" : {
       "title" : "Uygulama güncellemesi gerekiyor",
@@ -715,6 +715,9 @@
     },
     "StellarSourceHasMultiSign" : {
       "title" : "Stellar işlemleri yapmak için lütfen çoklu imzayı devre dışı bırakın"
+    },
+    "StellarBurnAddressError" : {
+      "title" : "A problem occurred while trying to add a Stellar account"
     },
     "ImageLoadFromGalleryError" : {
       "title" : "Galeriden görüntü yüklenemedi",
@@ -1717,8 +1720,14 @@
         "subtitle" : "{{productName}} cihazınızdaki kodu onaylayın"
       },
       "error" : {
-        "title" : "Eşleştirme başarısız",
-        "subtitle" : "Bir sorun oluştu!\nBluetooth'unuzun açık ve {{productName}} cihazınızın yakında olduğundan emin olun.",
+        "generic" : {
+          "title" : "Eşleştirme başarısız",
+          "subtitle" : "Bir sorun oluştu!\nBluetooth'unuzun açık ve {{productName}} cihazınızın yakında olduğundan emin olun."
+        },
+        "lockedDevice" : {
+          "title" : "Cihazınız kilitlendi",
+          "subtitle" : "{{ productName }} cihazınızın kilidini açın ve tekrar deneyin."
+        },
         "retryCta" : "Tekrar deneyin"
       }
     }
@@ -3268,8 +3277,8 @@
       "gasPrice" : "Gas ücreti",
       "maxFee" : "Ücret üst limiti",
       "maxPriorityFee" : "Öncelik ücreti üst limiti",
-      "nextBlock" : "Sonraki blok",
-      "suggested" : "Önerilen",
+      "nextBlock" : "Next block",
+      "suggested" : "Suggested",
       "maxFees" : "Maksimum ücret",
       "validateGasLimit" : "Gas limitini onayla",
       "fees" : "Ücretler",
