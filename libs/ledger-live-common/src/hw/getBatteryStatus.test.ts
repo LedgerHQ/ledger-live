@@ -10,8 +10,8 @@ describe("getBatteryStatus", () => {
     );
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore next-line
-    const response = await getBatteryStatus(mockedTransport, p2);
-    expect(response).toBe(99);
+    const response = await getBatteryStatus(mockedTransport, [p2]);
+    expect(response).toEqual([99]);
   });
 
   test("battery percentage KO returns -1", async () => {
@@ -21,8 +21,8 @@ describe("getBatteryStatus", () => {
     );
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore next-line
-    const response = await getBatteryStatus(mockedTransport, p2);
-    expect(response).toBe(-1);
+    const response = await getBatteryStatus(mockedTransport, [p2]);
+    expect(response).toEqual([-1]);
   });
 
   test("battery voltage resolves", async () => {
@@ -32,8 +32,8 @@ describe("getBatteryStatus", () => {
     );
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore next-line
-    const response = await getBatteryStatus(mockedTransport, p2);
-    expect(response).toBe(4095);
+    const response = await getBatteryStatus(mockedTransport, [p2]);
+    expect(response).toEqual([4095]);
   });
 
   test("battery temperature with positive values", async () => {
@@ -43,8 +43,8 @@ describe("getBatteryStatus", () => {
     );
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore next-line
-    const response = await getBatteryStatus(mockedTransport, p2);
-    expect(response).toBe(16);
+    const response = await getBatteryStatus(mockedTransport, [p2]);
+    expect(response).toEqual([16]);
   });
 
   test("battery temperature with negative values", async () => {
@@ -54,8 +54,8 @@ describe("getBatteryStatus", () => {
     );
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore next-line
-    const response = await getBatteryStatus(mockedTransport, p2);
-    expect(response).toBe(-3);
+    const response = await getBatteryStatus(mockedTransport, [p2]);
+    expect(response).toEqual([-3]);
   });
 
   test("battery current with positive values", async () => {
@@ -65,8 +65,8 @@ describe("getBatteryStatus", () => {
     );
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore next-line
-    const response = await getBatteryStatus(mockedTransport, p2);
-    expect(response).toBe(16);
+    const response = await getBatteryStatus(mockedTransport, [p2]);
+    expect(response).toEqual([16]);
   });
 
   test("battery current with negative values", async () => {
@@ -76,77 +76,115 @@ describe("getBatteryStatus", () => {
     );
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore next-line
-    const response = await getBatteryStatus(mockedTransport, p2);
-    expect(response).toBe(-3);
-  });
-
-  test("battery flags if no parameter passed", async () => {
-    const mockedTransport = mockTransportGenerator(
-      Buffer.from("000000009000", "hex")
-    );
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore next-line
-    const response = await getBatteryStatus(mockedTransport);
-    expect(response).not.toBeNull();
+    const response = await getBatteryStatus(mockedTransport, [p2]);
+    expect(response).toEqual([-3]);
   });
 
   test("battery flags for USB charging", async () => {
     const mockedTransport = mockTransportGenerator(
       Buffer.from("0000000F9000", "hex")
     );
+
+    const p2 = BatteryStatusTypes.BATTERY_FLAGS;
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore next-line
-    const response = await getBatteryStatus(mockedTransport);
-    expect(response).toMatchObject({
-      charging: ChargingModes.USB,
-      issueCharging: false,
-      issueTemperature: false,
-      issueBattery: false,
-    });
+    const response = await getBatteryStatus(mockedTransport, [p2]);
+    expect(response).toEqual([
+      {
+        charging: ChargingModes.USB,
+        issueCharging: false,
+        issueTemperature: false,
+        issueBattery: false,
+      },
+    ]);
   });
 
   test("battery flags for not charging", async () => {
     const mockedTransport = mockTransportGenerator(
       Buffer.from("000000069000", "hex")
     );
+
+    const p2 = BatteryStatusTypes.BATTERY_FLAGS;
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore next-line
-    const response = await getBatteryStatus(mockedTransport);
-    expect(response).toMatchObject({
-      charging: ChargingModes.NONE,
-      issueCharging: false,
-      issueTemperature: false,
-      issueBattery: false,
-    });
+    const response = await getBatteryStatus(mockedTransport, [p2]);
+    expect(response).toEqual([
+      {
+        charging: ChargingModes.NONE,
+        issueCharging: false,
+        issueTemperature: false,
+        issueBattery: false,
+      },
+    ]);
   });
 
   test("battery flags for Qi charging without USB", async () => {
     const mockedTransport = mockTransportGenerator(
       Buffer.from("000000079000", "hex")
     );
+
+    const p2 = BatteryStatusTypes.BATTERY_FLAGS;
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore next-line
-    const response = await getBatteryStatus(mockedTransport);
-    expect(response).toMatchObject({
-      charging: ChargingModes.QI,
-      issueCharging: false,
-      issueTemperature: false,
-      issueBattery: false,
-    });
+    const response = await getBatteryStatus(mockedTransport, [p2]);
+    expect(response).toEqual([
+      {
+        charging: ChargingModes.QI,
+        issueCharging: false,
+        issueTemperature: false,
+        issueBattery: false,
+      },
+    ]);
   });
 
   test("battery flags for Qi charging with USB plugged in", async () => {
     const mockedTransport = mockTransportGenerator(
       Buffer.from("0000000F9000", "hex")
     );
+
+    const p2 = BatteryStatusTypes.BATTERY_FLAGS;
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore next-line
-    const response = await getBatteryStatus(mockedTransport);
-    expect(response).toMatchObject({
-      charging: ChargingModes.USB, // USB takes over
-      issueCharging: false,
-      issueTemperature: false,
-      issueBattery: false,
-    });
+    const response = await getBatteryStatus(mockedTransport, [p2]);
+    expect(response).toEqual([
+      {
+        charging: ChargingModes.USB, // USB takes over
+        issueCharging: false,
+        issueTemperature: false,
+        issueBattery: false,
+      },
+    ]);
+  });
+
+  test("multiple statuses: percentage + battery flags for Qi charging with USB plugged in", async () => {
+    let calls = 0;
+    const multipleStatusMockedTransport = {
+      send: () => {
+        if (calls === 0) {
+          calls++;
+          return Buffer.from("0000000F9000", "hex");
+        }
+
+        return Buffer.from("639000", "hex");
+      },
+    };
+
+    const percentage = BatteryStatusTypes.BATTERY_PERCENTAGE;
+    const flags = BatteryStatusTypes.BATTERY_FLAGS;
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore next-line
+    const response = await getBatteryStatus(multipleStatusMockedTransport, [
+      flags,
+      percentage,
+    ]);
+    expect(response).toEqual([
+      {
+        charging: ChargingModes.USB, // USB takes over
+        issueCharging: false,
+        issueTemperature: false,
+        issueBattery: false,
+      },
+      99,
+    ]);
   });
 });

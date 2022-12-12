@@ -3,7 +3,7 @@ import { TouchableOpacity } from "react-native";
 import styled, { useTheme } from "styled-components/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { useSelector } from "react-redux";
-import { Box, Icons, Flex } from "@ledgerhq/native-ui";
+import { Box, Icons, Flex, Button } from "@ledgerhq/native-ui";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { ScreenName } from "../../const";
 import {
@@ -16,6 +16,7 @@ import { getStackNavigatorConfig } from "../../navigation/navigatorConfig";
 import TabIcon from "../TabIcon";
 import { useIsNavLocked } from "./CustomBlockRouterNavigator";
 import { ManagerNavigatorStackParamList } from "./types/ManagerNavigator";
+import FirmwareUpdateScreen from "../../screens/FirmwareUpdate";
 
 const BadgeContainer = styled(Flex).attrs({
   position: "absolute",
@@ -52,6 +53,16 @@ export default function ManagerNavigator() {
         ...stackNavConfig,
       }}
     >
+      <Stack.Screen
+        name={ScreenName.FirmwareUpdate}
+        component={FirmwareUpdateScreen}
+        options={{
+          gestureEnabled: false,
+          headerTitle: () => null,
+          headerLeft: () => null,
+          headerRight: () => <Button Icon={Icons.CloseMedium} />,
+        }}
+      />
       <Stack.Screen
         name={ScreenName.Manager}
         component={Manager}

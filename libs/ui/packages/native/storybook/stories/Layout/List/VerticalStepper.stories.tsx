@@ -93,7 +93,7 @@ export const VerticalStepperStory = () => {
       <ScrollView>
         <Switch checked={animate} onChange={setAnimate} label={"Auto animate VerticalTimeline"} />
         <Divider />
-        <VerticalStepper steps={items} setActiveIndex={animate ? undefined : setActiveIndex} />
+        <VerticalStepper steps={items} onTapIndex={animate ? undefined : setActiveIndex} />
       </ScrollView>
     </Flex>
   );

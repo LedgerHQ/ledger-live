@@ -1,5 +1,5 @@
 import { DeviceId } from "@ledgerhq/types-live";
-import { Observable, of } from "rxjs";
+import { concat, Observable, of } from "rxjs";
 import { scan, switchMap } from "rxjs/operators";
 import {
   updateFirmwareTask,
@@ -45,7 +45,7 @@ export type UpdateFirmwareActionState = FullActionState<{
   // final step when the device has reconnected after the firwmare update has been completed
 
   progress: number;
-  error: { type: "UpdateFirmwareError"; message?: string };
+  error: { type: "UpdateFirmwareError"; name: string };
 }>;
 
 export const initialState: UpdateFirmwareActionState = {
@@ -62,8 +62,9 @@ export const initialState: UpdateFirmwareActionState = {
 export function updateFirmwareAction({
   deviceId,
 }: updateFirmwareActionArgs): Observable<UpdateFirmwareActionState> {
-  return getDeviceInfoTask({ deviceId })
-    .pipe(
+  return concat(
+    of(initialState),
+    getDeviceInfoTask({ deviceId }).pipe(
       switchMap((event) => {
         if (event.type !== "data") {
           return of(event);
@@ -80,9 +81,7 @@ export function updateFirmwareAction({
             updateContext: event.firmwareUpdateContext,
           });
         }
-      })
-    )
-    .pipe(
+      }),
       scan<
         | UpdateFirmwareTaskEvent
         | GetLatestFirmwareTaskErrorEvent
@@ -95,7 +94,7 @@ export function updateFirmwareAction({
               ...initialState,
               error: {
                 type: "UpdateFirmwareError",
-                error: event.error,
+                name: event.error,
               },
             };
           case "installingOsu":
@@ -121,5 +120,6 @@ export function updateFirmwareAction({
             };
         }
       }, initialState)
-    );
+    )
+  );
 }

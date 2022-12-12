@@ -37,8 +37,8 @@ export default function Features() {
         onPress={() => navigation.navigate(ScreenName.DebugFetchCustomImage)}
       />
       <SettingsRow
-        title="Firmware Update"
-        desc="Test the firmware update feature. USE AT YOUR OWN RISK!"
+        title="Firmware Update UI"
+        desc="Test the firmware update feature. UI-only"
         iconLeft={<Icons.NanoFirmwareUpdateMedium size={32} color="black" />}
         onPress={() => navigation.navigate(ScreenName.DebugFirmwareUpdate)}
       />
