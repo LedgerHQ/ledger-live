@@ -203,6 +203,7 @@ const Manager = ({ navigation, route }: NavigationProps) => {
         tab={tab}
         result={result}
         onLanguageChange={refreshDeviceInfo}
+        onBackFromUpdate={refreshDeviceInfo}
       />
       <GenericErrorBottomModal error={error} onClose={closeErrorModal} />
       <QuitManagerModal

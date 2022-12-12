@@ -65,6 +65,7 @@ type Props = {
   optimisticState: State;
   result: ListAppsResult;
   onLanguageChange: () => void;
+  onBackFromUpdate: () => void;
 };
 
 const AppsScreen = ({
@@ -84,6 +85,7 @@ const AppsScreen = ({
   optimisticState,
   result,
   onLanguageChange,
+  onBackFromUpdate,
 }: Props) => {
   const distribution = distribute(state);
 
@@ -275,6 +277,11 @@ const AppsScreen = ({
         data={items}
         ListHeaderComponent={
           <Flex mt={4}>
+            {showFwUpdateBanner && (
+              <Flex mb={5}>
+                <FirmwareUpdateBanner onBackFromUpdate={onBackFromUpdate} />
+              </Flex>
+            )}
             <DeviceCard
               distribution={distribution}
               state={state}
@@ -291,16 +298,12 @@ const AppsScreen = ({
             />
             <ProviderWarning />
             <Benchmarking state={state} />
-            {showFwUpdateBanner ? (
-              <FirmwareUpdateBanner />
-            ) : (
-              <AppUpdateAll
-                state={state}
-                appsToUpdate={update}
-                dispatch={dispatch}
-                isModalOpened={updateModalOpened}
-              />
-            )}
+            <AppUpdateAll
+              state={state}
+              appsToUpdate={update}
+              dispatch={dispatch}
+              isModalOpened={updateModalOpened}
+            />
             <Flex
               flexDirection="row"
               mt={8}
