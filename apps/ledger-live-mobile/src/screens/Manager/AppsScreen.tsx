@@ -274,6 +274,11 @@ const AppsScreen = ({
         data={items}
         ListHeaderComponent={
           <Flex mt={4}>
+            {showFwUpdateBanner && (
+              <Flex mb={5}>
+                <FirmwareUpdateBanner />
+              </Flex>
+            )}
             <DeviceCard
               distribution={distribution}
               state={state}
@@ -289,16 +294,12 @@ const AppsScreen = ({
               onLanguageChange={onLanguageChange}
             />
             <Benchmarking state={state} />
-            {showFwUpdateBanner ? (
-              <FirmwareUpdateBanner />
-            ) : (
-              <AppUpdateAll
-                state={state}
-                appsToUpdate={update}
-                dispatch={dispatch}
-                isModalOpened={updateModalOpened}
-              />
-            )}
+            <AppUpdateAll
+              state={state}
+              appsToUpdate={update}
+              dispatch={dispatch}
+              isModalOpened={updateModalOpened}
+            />
             <Flex
               flexDirection="row"
               mt={8}

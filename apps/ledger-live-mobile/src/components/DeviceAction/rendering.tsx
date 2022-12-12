@@ -42,7 +42,6 @@ import {
 import { TFunction } from "react-i18next";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import type { DeviceModelInfo } from "@ledgerhq/types-live";
-import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { ParamListBase } from "@react-navigation/native";
 import isFirmwareUpdateVersionSupported from "@ledgerhq/live-common/hw/isFirmwareUpdateVersionSupported";
@@ -693,15 +692,12 @@ export function RequiredFirmwareUpdate({
     lastSeenDeviceSelector,
   );
 
-  const usbFwUpdateFeatureFlag = useFeature("llmUsbFirmwareUpdate");
   const isUsbFwVersionUpdateSupported =
     lastSeenDevice &&
     isFirmwareUpdateVersionSupported(lastSeenDevice.deviceInfo, device.modelId);
 
   const usbFwUpdateActivated =
-    usbFwUpdateFeatureFlag?.enabled &&
-    Platform.OS === "android" &&
-    isUsbFwVersionUpdateSupported;
+    Platform.OS === "android" && isUsbFwVersionUpdateSupported;
 
   const deviceName = getDeviceModel(device.modelId).productName;
 

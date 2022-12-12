@@ -12,7 +12,7 @@ import type {
 } from "@ledgerhq/types-live";
 import Transport from "@ledgerhq/hw-transport";
 
-import { Observable, concat, of } from "rxjs";
+import { Observable, concat, of, EMPTY } from "rxjs";
 import { filter, map, switchMap } from "rxjs/operators";
 
 import { getVersion, GetVersionCmdArgs } from "../commands/getVersion";
@@ -75,44 +75,44 @@ function internalUpdateFirmwareTask({
   updateContext,
 }: UpdateFirmwareTaskArgs): Observable<UpdateFirmwareTaskEvent> {
   return new Observable((subscriber) => {
-    withTransport(deviceId)(({ transportRef }) =>
+    const sub = withTransport(deviceId)(({ transportRef }) =>
       concat(
         quitApp(transportRef.current).pipe(
           switchMap(() => waitForGetVersion(transportRef, {})),
           switchMap((value) => {
             const { firmwareInfo } = value;
 
-            // TODO: we're repeating the handling of the unresponsive event here... is there a way to make this better
-            // the problem that if we want to change multiple commands that may have unresponsive events
-            // and only continue with the next command if the event is not unresponsive we might have to handle multiple times
-            // the unresponsive event :/
-            return installOsuFirmware({
-              firmwareInfo,
-              updateContext,
-              transport: transportRef.current,
-            }).pipe(
-              map((e) => {
-                if (e.type === "unresponsive") {
-                  return {
-                    type: "error" as const,
-                    error: new LockedDeviceError(),
-                  };
-                }
+            return subscriber.closed
+              ? EMPTY
+              : installOsuFirmware({
+                  firmwareInfo,
+                  updateContext,
+                  transport: transportRef.current,
+                }).pipe(
+                  map((e) => {
+                    if (e.type === "unresponsive") {
+                      return {
+                        type: "error" as const,
+                        error: new LockedDeviceError(),
+                      };
+                    }
 
-                return e;
-              })
-            );
+                    return e;
+                  })
+                );
           })
         ),
         waitForGetVersion(transportRef, {}).pipe(
-          switchMap(({ firmwareInfo }) =>
-            flashMcuOrBootloader(
-              updateContext,
-              firmwareInfo,
-              transportRef,
-              deviceId
-            )
-          )
+          switchMap(({ firmwareInfo }) => {
+            return subscriber.closed
+              ? EMPTY
+              : flashMcuOrBootloader(
+                  updateContext,
+                  firmwareInfo,
+                  transportRef,
+                  deviceId
+                );
+          })
         )
       )
     ).subscribe({
@@ -147,6 +147,10 @@ function internalUpdateFirmwareTask({
         }
       },
     });
+
+    return {
+      unsubscribe: () => sub.unsubscribe(),
+    };
   });
 }
 
@@ -209,7 +213,7 @@ const flashMcuOrBootloader = (
     }
 
     ManagerAPI.retrieveMcuVersion(updateContext.final).then((mcuVersion) => {
-      if (mcuVersion) {
+      if (mcuVersion && !subscriber.closed) {
         const majMinRegexMatch = firmwareInfo.rawVersion.match(
           /([0-9]+.[0-9]+)(.[0-9]+)?(-(.*))?/
         );
