@@ -29,13 +29,14 @@ export const RETRY_ON_ERROR_DELAY_MS = 500;
  * @returns A wrapped task function
  */
 export function sharedLogicTaskWrapper<TaskArgsType, TaskEventsType>(
-  task: (args: TaskArgsType) => Observable<TaskEventsType | SharedTaskEvent>
+  task: (args: TaskArgsType) => Observable<TaskEventsType | SharedTaskEvent>,
+  defaultTimeoutOverride?: number
 ) {
   return (args: TaskArgsType): Observable<TaskEventsType | SharedTaskEvent> => {
     return new Observable((subscriber) => {
       return task(args)
         .pipe(
-          timeout(NO_RESPONSE_TIMEOUT_MS),
+          timeout(defaultTimeoutOverride ?? NO_RESPONSE_TIMEOUT_MS),
           retryWhen((attempts) =>
             attempts.pipe(
               // concatMap to sequentially handle errors

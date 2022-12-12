@@ -81,6 +81,7 @@ export function installFirmwareCommand(
         firmwareKey: firmware.firmware_key,
       },
     }),
+    unresponsiveExpectedDuringBulk: true,
   }).pipe(
     catchError(remapSocketFirmwareError),
     filter<SocketEvent, FilteredSocketEvent>((e): e is FilteredSocketEvent => {
