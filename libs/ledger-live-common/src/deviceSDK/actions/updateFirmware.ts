@@ -1,4 +1,4 @@
-import { DeviceId } from "@ledgerhq/types-live";
+import { DeviceId, DeviceInfo } from "@ledgerhq/types-live";
 import { concat, Observable, of } from "rxjs";
 import { scan, switchMap } from "rxjs/operators";
 import {
@@ -45,6 +45,7 @@ export type UpdateFirmwareActionState = FullActionState<{
   // final step when the device has reconnected after the firwmare update has been completed
 
   progress: number;
+  updatedDeviceInfo?: DeviceInfo;
   error: { type: "UpdateFirmwareError"; name: string };
 }>;
 
@@ -109,8 +110,13 @@ export function updateFirmwareAction({
           case "installOsuDevicePermissionRequested":
           case "installOsuDevicePermissionGranted":
           case "installOsuDevicePermissionDenied":
-          case "firmwareUpdateCompleted":
             return { ...currentState, step: event.type };
+          case "firmwareUpdateCompleted":
+            return {
+              ...currentState,
+              step: event.type,
+              updatedDeviceInfo: event.updatedDeviceInfo,
+            };
           default:
             return {
               ...currentState,
