@@ -1,6 +1,6 @@
 import { ListAppsResult } from "@ledgerhq/live-common/apps/types";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
-import { DeviceInfo } from "@ledgerhq/types-live";
+import { DeviceInfo, FirmwareUpdateContext } from "@ledgerhq/types-live";
 import { ScreenName } from "../../../const";
 import { ManagerTab } from "../../../const/manager";
 
@@ -24,5 +24,11 @@ export type ManagerNavigatorStackParamList = {
     appsToRestore?: string[];
     updateModalOpened?: boolean;
     tab: ManagerTab;
+  };
+  [ScreenName.FirmwareUpdate]: {
+    deviceInfo?: DeviceInfo | null;
+    firmwareUpdateContext?: FirmwareUpdateContext | null;
+    device?: Device | null;
+    onBackFromUpdate?: () => void;
   };
 };

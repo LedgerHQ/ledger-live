@@ -154,7 +154,7 @@ export const defaultFeatures: DefaultFeatures = {
   llmNewDeviceSelection: {
     enabled: false,
   },
-  llmUsbFirmwareUpdate: {
+  llmNewFirmwareUpdateUx: {
     enabled: false,
   },
   ptxSmartRouting: {
