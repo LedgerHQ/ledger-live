@@ -449,14 +449,22 @@ export function renderAllowLanguageInstallation({
   t,
   device,
   theme,
+  fullScreen = true,
 }: RawProps & {
   device: Device;
+  fullScreen?: boolean;
 }) {
   const deviceName = getDeviceModel(device.modelId).productName;
   const key = device.modelId === "stax" ? "allowManager" : "sign";
 
   return (
-    <Wrapper>
+    <Flex
+      flexDirection="column"
+      justifyContent="center"
+      alignItems="center"
+      alignSelf="stretch"
+      flex={fullScreen ? 1 : undefined}
+    >
       <TrackScreen category="Allow language installation on Stax" />
       <Text variant="h4" textAlign="center">
         {t("deviceLocalization.allowLanguageInstallation", { deviceName })}
@@ -464,7 +472,7 @@ export function renderAllowLanguageInstallation({
       <AnimationContainer>
         <Animation source={getDeviceAnimation({ device, key, theme })} />
       </AnimationContainer>
-    </Wrapper>
+    </Flex>
   );
 }
 

@@ -1,7 +1,10 @@
+import { log } from "@ledgerhq/logs";
 import staxLoadImage from "@ledgerhq/live-common/hw/staxLoadImage";
 import staxFetchImage from "@ledgerhq/live-common/hw/staxFetchImage";
+import installLanguage from "@ledgerhq/live-common/hw/installLanguage";
 import { createAction as createStaxLoadImageAction } from "@ledgerhq/live-common/hw/actions/staxLoadImage";
 import { createAction as createStaxFetchImageAction } from "@ledgerhq/live-common/hw/actions/staxFetchImage";
+import { createAction as createInstallLanguageAction } from "@ledgerhq/live-common/hw/actions/installLanguage";
 import { useUpdateFirmware } from "@ledgerhq/live-common/deviceSDK/hooks/useUpdateFirmware";
 import { Device, DeviceModelId } from "@ledgerhq/types-devices";
 import {
@@ -9,11 +12,12 @@ import {
   updateFirmwareActionArgs,
 } from "@ledgerhq/live-common/deviceSDK/actions/updateFirmware";
 import { Observable } from "rxjs";
-import { useEffect, useMemo, useState } from "react";
-import { log } from "@ledgerhq/logs";
+import { useCallback, useMemo, useEffect, useState } from "react";
+import { DeviceInfo, idsToLanguage, languageIds } from "@ledgerhq/types-live";
 
 export type FirmwareUpdateParams = {
   device: Device;
+  deviceInfo: DeviceInfo;
   updateFirmwareAction?: (
     args: updateFirmwareActionArgs,
   ) => Observable<UpdateFirmwareActionState>;
@@ -28,12 +32,14 @@ export type UpdateStep =
   | "appsRestore"
   | "completed";
 
+const installLanguageAction = createInstallLanguageAction(installLanguage);
 const staxLoadImageAction = createStaxLoadImageAction(staxLoadImage);
 const staxFetchImageAction = createStaxFetchImageAction(staxFetchImage);
 
 export const useUpdateFirmwareAndRestoreSettings = ({
   updateFirmwareAction,
   device,
+  deviceInfo,
 }: FirmwareUpdateParams) => {
   const [updateStep, setUpdateStep] = useState<UpdateStep>("start");
 
@@ -47,6 +53,15 @@ export const useUpdateFirmwareAndRestoreSettings = ({
     deviceId: device?.deviceId ?? "",
     updateFirmwareAction,
   });
+
+  const installLanguageRequest = useMemo(
+    () => ({ language: idsToLanguage[deviceInfo.languageId ?? 0] }),
+    [deviceInfo.languageId],
+  );
+  const installLanguageState = installLanguageAction.useHook(
+    updateStep === "languageRestore" ? device : null,
+    installLanguageRequest,
+  );
 
   const staxLoadImageRequest = useMemo(
     () => ({
@@ -62,67 +77,115 @@ export const useUpdateFirmwareAndRestoreSettings = ({
     staxLoadImageRequest,
   );
 
+  const proceedToFirmwareUpdate = useCallback(() => {
+    setUpdateStep("firmwareUpdate");
+  }, []);
+
+  const proceedToImageBackup = useCallback(() => {
+    if (device.modelId === DeviceModelId.stax) {
+      setUpdateStep("imageBackup");
+    } else {
+      proceedToFirmwareUpdate();
+    }
+  }, [device.modelId, proceedToFirmwareUpdate]);
+
+  const proceedToUpdateCompleted = useCallback(() => {
+    setUpdateStep("completed");
+  }, []);
+
+  const proceedToAppsRestore = useCallback(() => {
+    // TODO: if no apps to restore proceed to update completed
+    setUpdateStep("appsRestore");
+  }, []);
+
+  const proceedToImageRestore = useCallback(() => {
+    if (staxFetchImageState.hexImage) {
+      setUpdateStep("imageRestore");
+    } else {
+      proceedToAppsRestore();
+    }
+  }, [proceedToAppsRestore, staxFetchImageState.hexImage]);
+
+  const proceedToLanguageRestore = useCallback(() => {
+    if (
+      deviceInfo.languageId !== undefined &&
+      deviceInfo.languageId !== languageIds.english
+    ) {
+      setUpdateStep("languageRestore");
+    } else {
+      setUpdateStep("imageRestore");
+    }
+  }, [deviceInfo.languageId]);
+
   useEffect(() => {
     switch (updateStep) {
       case "start":
-        if (device.modelId === DeviceModelId.stax) {
-          setUpdateStep("imageBackup");
-        } else {
-          setUpdateStep("firmwareUpdate");
-        }
+        proceedToImageBackup();
         break;
       case "imageBackup":
-        // Only logging for now
-        if (staxLoadImageState.error) {
-          log(
-            "UpdateFirmwareAndRestoreSettings",
-            "Unable to fetch image",
-            staxFetchImageState.error,
-          );
-        }
-
         if (staxFetchImageState.imageFetched || staxFetchImageState.error) {
-          // TODO: check if we want to do something with error, maybe just log it
-          setUpdateStep("firmwareUpdate");
+          if (staxFetchImageState.error)
+            log(
+              "FirmwareUpdate",
+              "error while backing up stax image",
+              staxFetchImageState.error,
+            );
+          proceedToFirmwareUpdate();
         }
         break;
       case "firmwareUpdate":
         if (updateActionState.step === "preparingUpdate") {
           triggerUpdate();
         } else if (updateActionState.step === "firmwareUpdateCompleted") {
-          setUpdateStep("languageRestore");
+          proceedToLanguageRestore();
         }
         break;
       case "languageRestore":
-        // TODO: implement image restore
-        setUpdateStep("imageRestore");
+        if (
+          installLanguageState.languageInstalled ||
+          installLanguageState.error
+        ) {
+          if (installLanguageState.error)
+            log(
+              "FirmwareUpdate",
+              "error while restoring language",
+              installLanguageState.error,
+            );
+          proceedToImageRestore();
+        }
         break;
       case "imageRestore":
-        // Only logging for now
-        if (staxLoadImageState.error) {
-          log(
-            "UpdateFirmwareAndRestoreSettings",
-            "Unable to restore image",
-            staxLoadImageState.error,
-          );
-        }
-
         if (
           staxLoadImageState.imageLoaded ||
           staxLoadImageState.error ||
           !staxFetchImageState.hexImage
         ) {
-          setUpdateStep("appsRestore");
+          if (staxLoadImageState.error)
+            log(
+              "FirmwareUpdate",
+              "error while restoring stax image",
+              installLanguageState.error,
+            );
+          proceedToAppsRestore();
         }
         break;
       case "appsRestore":
-        setUpdateStep("completed");
+        proceedToUpdateCompleted();
         break;
       default:
         break;
     }
   }, [
     device.modelId,
+    deviceInfo.languageId,
+    installLanguageState.error,
+    installLanguageState.languageInstalled,
+    proceedToAppsRestore,
+    proceedToFirmwareUpdate,
+    proceedToImageBackup,
+    proceedToImageRestore,
+    proceedToLanguageRestore,
+    proceedToUpdateCompleted,
     staxFetchImageState.error,
     staxFetchImageState.imageFetched,
     staxFetchImageState.hexImage,
@@ -138,6 +201,7 @@ export const useUpdateFirmwareAndRestoreSettings = ({
     staxFetchImageState,
     updateActionState,
     staxLoadImageState,
+    installLanguageState,
     retryUpdate: triggerUpdate,
   };
 };
