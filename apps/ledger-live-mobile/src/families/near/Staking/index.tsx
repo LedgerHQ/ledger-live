@@ -23,6 +23,7 @@ import {
   canWithdraw,
   FIGMENT_NEAR_VALIDATOR_ADDRESS,
 } from "@ledgerhq/live-common/families/near/logic";
+import { Account } from "@ledgerhq/types-live";
 import AccountDelegationInfo from "../../../components/AccountDelegationInfo";
 import IlluRewards from "../../../icons/images/Rewards";
 import { urls } from "../../../config/urls";
@@ -41,7 +42,7 @@ import LabelRight from "./LabelRight";
 import ValidatorImage from "../shared/ValidatorImage";
 
 type Props = {
-  account: NearAccount;
+  account: Account;
 };
 
 type DelegationDrawerProps = React.ComponentProps<typeof DelegationDrawer>;
@@ -251,7 +252,8 @@ function StakingPositions({ account }: Props) {
     colors.alert,
   ]);
 
-  const stakingDisabled = stakingPositions.length <= 0 || !canStake(account);
+  const stakingDisabled =
+    stakingPositions.length <= 0 || !canStake(account as NearAccount);
 
   return (
     <View style={styles.root}>
@@ -309,7 +311,8 @@ function StakingPositions({ account }: Props) {
   );
 }
 
-export default function NearStakingPositions({ account }: Props) {
+export default function NearStakingPositions(props: Props) {
+  const { account } = props as { account: NearAccount };
   if (!account.nearResources) return null;
   return <StakingPositions account={account} />;
 }
