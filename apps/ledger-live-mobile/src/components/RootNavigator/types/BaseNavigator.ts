@@ -37,7 +37,6 @@ import type { PlatformExchangeNavigatorParamList } from "./PlatformExchangeNavig
 import type { ExchangeStackNavigatorParamList } from "./ExchangeStackNavigator";
 import type { ExchangeNavigatorParamList } from "./ExchangeNavigator";
 import type { ExchangeLiveAppNavigatorParamList } from "./ExchangeLiveAppNavigator";
-import type { FirmwareUpdateNavigatorParamList } from "./FirmwareUpdateNavigator";
 import type { RequestAccountNavigatorParamList } from "./RequestAccountNavigator";
 import type { AddAccountsNavigatorParamList } from "./AddAccountsNavigator";
 import type { ClaimRewardsNavigatorParamList } from "./ClaimRewardsNavigator";
@@ -240,7 +239,6 @@ export type BaseNavigatorStackParamList = {
     onError?: (_: Error) => void;
     error?: Error;
   };
-  [NavigatorName.FirmwareUpdate]: NavigatorScreenParams<FirmwareUpdateNavigatorParamList>;
   [NavigatorName.Exchange]:
     | NavigatorScreenParams<ExchangeLiveAppNavigatorParamList>
     | NavigatorScreenParams<ExchangeNavigatorParamList>
