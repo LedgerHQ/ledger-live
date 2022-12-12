@@ -518,7 +518,7 @@
       "title" : "Le montant à geler ne peut pas être inférieur à 1."
     },
     "TronSendTrc20ToNewAccountForbidden" : {
-      "title" : "Envoyer des TRC-20 sur le nouveau compte ne l’activera pas.",
+      "title" : "Vous devez d’abord envoyer un minimum de 0,1 TRX à cette adresse avant de recevoir des tokens TRC20.",
       "description" : "Pour l’activer, envoyez d’abord des TRX ou TRC-10 sur le compte. Il pourra ensuite recevoir des TRC-20."
     },
     "TronUnexpectedFees" : {
@@ -750,6 +750,30 @@
     },
     "HederaAddAccountError" : {
       "title" : "Votre compte n’a pas été ajouté. Veuillez réessayer."
+    },
+    "NearNewAccountWarning" : {
+      "title" : "Le compte du bénéficiaire n’a pas encore été créé. Pour le créer, le protocole nécessite un transfert de {{formattedNewAccountStorageCost}}."
+    },
+    "NearNewNamedAccountError" : {
+      "title" : "Le compte du bénéficiaire n’a pas encore été créé. Il doit être créé dans NEAR Wallet."
+    },
+    "NearActivationFeeNotCovered" : {
+      "title" : "Ce montant ne couvre pas le coût de stockage de {{formattedNewAccountStorageCost}}."
+    },
+    "NearUseAllAmountStakeWarning" : {
+      "title" : "Assurez-vous que votre solde disponible est suffisant pour couvrir vos futurs frais de transaction."
+    },
+    "NearNotEnoughStaked" : {
+      "title" : "Solde staké insuffisant"
+    },
+    "NearNotEnoughAvailable" : {
+      "title" : "Solde pouvant être retiré insuffisant"
+    },
+    "NearRecommendUnstake" : {
+      "title" : "Veuillez déstaker et retirer vos fonds avant de vider le compte."
+    },
+    "NearStakingThresholdNotMet" : {
+      "title" : "Le montant doit être d’au moins {{threshold}}"
     },
     "PriorityFeeTooLow" : {
       "title" : "Frais de priorité inférieurs au montant recommandé."
@@ -1717,8 +1741,14 @@
         "subtitle" : "Confirmez le code sur votre {{productName}}."
       },
       "error" : {
-        "title" : "Échec du couplage",
-        "subtitle" : "Une erreur est survenue.\nVérifiez que le Bluetooth est activé et que votre {{productName}} est à proximité.",
+        "generic" : {
+          "title" : "Échec du couplage",
+          "subtitle" : "Une erreur est survenue.\nVérifiez que le Bluetooth est activé et que votre {{productName}} est à proximité."
+        },
+        "lockedDevice" : {
+          "title" : "Appareil verrouillé",
+          "subtitle" : "Déverrouillez votre {{ productName }} et réessayez."
+        },
         "retryCta" : "Réessayer"
       }
     }
@@ -1902,6 +1932,9 @@
       "title" : "Pas encore d’opérations ?",
       "desc" : "Il vous suffit d’envoyer des crypto-actifs à votre adresse bénéficiaire et d’attendre que l’app se synchronise."
     },
+    "carousel" : {
+      "title" : "Pour vous"
+    },
     "recommended" : {
       "title" : "Recommandé"
     },
@@ -2001,7 +2034,10 @@
       "UNLOCK" : "Dégelé",
       "REVOKE" : "Révoqué",
       "REGISTER" : "Enregistré",
-      "WITHDRAW" : "Retiré"
+      "WITHDRAW" : "Retiré",
+      "STAKE" : "Staké",
+      "UNSTAKE" : "Déstaké",
+      "WITHDRAW_UNSTAKED" : "Retiré"
     }
   },
   "operationDetails" : {
@@ -2062,7 +2098,8 @@
       "storageLimit" : "Limite de stockage",
       "gasLimit" : "Limite de gaz",
       "id" : "Identifiant (ID)",
-      "autoClaimedRewards" : "Récompenses automatiques"
+      "autoClaimedRewards" : "Récompenses automatiques",
+      "stakedAmount" : "Montant en staking"
     },
     "multipleAddresses" : "Pourquoi plusieurs adresses ?",
     "tokenName" : "Nom du token",
@@ -2350,8 +2387,8 @@
     "display" : {
       "title" : "Général",
       "desc" : "Configurez les paramètres de base de Ledger Live.",
-      "carousel" : "Visibilité du carrousel",
-      "carouselDesc" : "Affichez le carrousel sur le Portefeuille.",
+      "carousel" : "Recommandations",
+      "carouselDesc" : "Nous vous présenterons des cartes avec des conseils personnalisés et nos dernières offres exclusives.",
       "language" : "Langue d’affichage",
       "languageDesc" : "Choisissez la langue d’affichage de Ledger Live.",
       "region" : "Région",
@@ -4690,6 +4727,9 @@
         "title" : "Candidats",
         "description" : "127 personnes élues par le vote de la communauté des détenteurs de tokens. Les votes sont mis à jour toutes les 6 heures."
       }
+    },
+    "receive" : {
+      "newAddressTRC20" : "Vous devez d’abord envoyer un minimum de 0,1 TRX à cette adresse pour l’activer."
     }
   },
   "stellar" : {
@@ -5015,6 +5055,118 @@
       "delegatedTo" : "délégué à",
       "started" : {
         "description" : "Vous pouvez gagner des récompenses en déléguant vos SOL à un validateur."
+      }
+    }
+  },
+  "near" : {
+    "info" : {
+      "available" : {
+        "title" : "NEAR disponibles",
+        "description" : "Ce montant est disponible."
+      },
+      "storageUsage" : {
+        "title" : "Solde minimum",
+        "description" : "Montant réservé pour le stockage et les transactions. Il constitue le solde minimum que votre compte doit contenir pour rester actif."
+      },
+      "staked" : {
+        "title" : "Solde de staking",
+        "description" : "Montant actuellement staké auprès de validateurs."
+      },
+      "pending" : {
+        "title" : "Solde en attente",
+        "description" : "Montant des actifs déstakés qui seront bientôt disponibles."
+      },
+      "withdrawable" : {
+        "title" : "Solde pouvant être retiré",
+        "description" : "Montant des actifs déstakés qui peuvent actuellement être retirés."
+      },
+      "stakingUnavailable" : {
+        "title" : "Staking non disponible",
+        "description" : "Votre compte ne dispose pas d’un solde suffisant d’actifs pouvant être mis en staking, déstakés ou retirés."
+      }
+    },
+    "unstaking" : {
+      "stepperHeader" : {
+        "amountSubTitle" : "Montant à déstaker"
+      },
+      "flow" : {
+        "steps" : {
+          "verification" : {
+            "success" : {
+              "title" : "Actifs bien déstakés"
+            }
+          }
+        }
+      }
+    },
+    "withdrawing" : {
+      "stepperHeader" : {
+        "amountSubTitle" : "Montant à retirer"
+      },
+      "flow" : {
+        "steps" : {
+          "verification" : {
+            "success" : {
+              "title" : "Retrait des actifs effectué"
+            }
+          }
+        }
+      }
+    },
+    "staking" : {
+      "sectionLabel" : "Position(s) de staking",
+      "info" : "Fonctionnement du staking",
+      "add" : "Ajouter",
+      "stakingEarn" : "Vous pouvez gagner des récompenses NEAR en stakant vos actifs.",
+      "totalStake" : "Stake total",
+      "commission" : "Commission",
+      "iStake" : "Je stake",
+      "actions" : {
+        "unstake" : "Déstaker",
+        "withdraw" : "Retirer"
+      },
+      "drawer" : {
+        "status" : "Statut",
+        "active" : "Actif",
+        "inactive" : "Inactif",
+        "rewards" : "Récompenses",
+        "pending" : "En attente",
+        "available" : "Disponible au retrait"
+      },
+      "stepperHeader" : {
+        "amountSubTitle" : "Montant à staker",
+        "selectDevice" : "Sélectionner votre appareil",
+        "connectDevice" : "Connecter votre appareil",
+        "stepRange" : "Étape {{currentStep}} sur {{totalSteps}}"
+      },
+      "flow" : {
+        "steps" : {
+          "starter" : {
+            "description" : "Stakez vos NEAR pour gagner des récompenses en toute sécurité et en gardant le contrôle de vos actifs.",
+            "steps" : {
+              "0" : "Vous conservez la propriété de vos actifs stakés.",
+              "1" : "Vous devrez attendre 52 à 65 heures pour que le déstaking soit finalisé.",
+              "2" : "Stakez en toute sécurité avec votre appareil Ledger."
+            },
+            "warning" : {
+              "description" : "Choisissez votre validateur avec soin : une partie de vos actifs stakés peut être perdue si le validateur ne respecte pas les règles."
+            },
+            "cta" : "Continuer"
+          },
+          "amount" : {
+            "assetsRemaining" : "Actifs restants : <0>{{amount}}</0>",
+            "allAssetsUsed" : "Tous les actifs sont utilisés.",
+            "minAmount" : "Montant minimal : <0>{{min}}</0>",
+            "incorrectAmount" : "Montant maximal : <0>{{max}}</0>",
+            "cta" : "Continuer"
+          },
+          "verification" : {
+            "success" : {
+              "title" : "Actifs bien stakés",
+              "text" : "Le solde de votre compte sera mis à jour une fois que le réseau aura confirmé la transaction."
+            }
+          }
+        }
       }
     }
   },
@@ -5454,7 +5606,8 @@
     "drawer" : {
       "title" : "Choisissez une image",
       "options" : {
-        "uploadFromPhone" : "Télécharger à partir de mon téléphone"
+        "uploadFromPhone" : "Choisir dans ma galerie d’images",
+        "selectFromNFTGallery" : "Choisir dans ma galerie de NFT"
       }
     },
     "cropImage" : "Recadrez l’image",
@@ -5479,6 +5632,9 @@
       "loading" : "Chargement de l’aperçu",
       "setPicture" : "Définir cette image",
       "editPicture" : "Modifier l’image"
+    },
+    "nftGallery" : {
+      "title" : "Mes NFT"
     }
   },
   "postOnboarding" : {
