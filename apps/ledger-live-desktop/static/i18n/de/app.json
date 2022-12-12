@@ -2144,7 +2144,7 @@
         "ethereumMaxFee" : "Max. Gebühr ({{unitName}})",
         "ethereumPriorityFee" : "Max. Prioritätsgebühr ({{unitName}})",
         "nextBlock" : "Nächster Block",
-        "suggested" : "Vorgeschlagen",
+        "suggested" : "Empfohlen",
         "unitPerByte" : "{{unit}} pro Byte",
         "nft" : "NFT",
         "nftQuantity" : "Menge"
@@ -4861,6 +4861,10 @@
     "NotEnoughGas" : {
       "title" : "Der übergeordnete Kontostand reicht für Netzwerkgebühren nicht aus"
     },
+    "OperatingSystemOutdated" : {
+      "title" : "Die Version Ihres Betriebssystems ist veraltet",
+      "description" : "Bitte aktualisieren Sie Ihr Betriebssystem und versuchen Sie es erneut. Sie können im folgenden Artikel nachlesen, warum Ledger Live auf der aktuellen Version Ihres Betriebssystems nicht unterstützt wird."
+    },
     "PasswordsDontMatch" : {
       "title" : "Die Passwörter stimmen nicht überein",
       "description" : "Bitte versuchen Sie es erneut"
@@ -5267,6 +5271,9 @@
     },
     "StellarSourceHasMultiSign" : {
       "title" : "Bitte deaktivieren Sie Multisign, um Stellar-Transaktionen durchzuführen"
+    },
+    "StellarBurnAddressError" : {
+      "title" : "Beim Versuch, ein Stellar-Konto hinzuzufügen, ist ein Problem aufgetreten"
     },
     "HederaAddAccountError" : {
       "title" : "Ihr Konto wurde nicht hinzugefügt. Bitte versuchen Sie es erneut."
