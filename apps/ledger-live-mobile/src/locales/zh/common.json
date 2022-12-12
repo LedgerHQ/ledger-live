@@ -532,7 +532,7 @@
       "description" : "必须在 30 秒内签署交易。请重试。"
     },
     "TronNotEnoughEnergy" : {
-      "title" : "没有足够能量发送该代币"
+      "title" : "能量低于必要值。您可能需要支付高达 20TRX 的费用。"
     },
     "UpdateYourApp" : {
       "title" : "需要更新应用程序",
@@ -716,6 +716,9 @@
     "StellarSourceHasMultiSign" : {
       "title" : "要进行 Stellar（恒星）交易，请禁用多重签名"
     },
+    "StellarBurnAddressError" : {
+      "title" : "尝试添加恒星账户时出现问题"
+    },
     "ImageLoadFromGalleryError" : {
       "title" : "从图库加载图片失败",
       "description" : "请使用另一张图片重试"
@@ -750,6 +753,30 @@
     },
     "HederaAddAccountError" : {
       "title" : "您的账户尚未添加。请再次尝试。"
+    },
+    "NearNewAccountWarning" : {
+      "title" : "尚未创建接收人账户。 该协议需要 {{formattedNewAccountStorageCost}} 转账才能创建账户。"
+    },
+    "NearNewNamedAccountError" : {
+      "title" : "尚未创建接收人账户。需要在 NEAR 钱包中创建账户。"
+    },
+    "NearActivationFeeNotCovered" : {
+      "title" : "此数额不包括 {{formattedNewAccountStorageCost}} 存储费用。"
+    },
+    "NearUseAllAmountStakeWarning" : {
+      "title" : "确保您留有足够的余额，以便缴纳未来的交易费"
+    },
+    "NearNotEnoughStaked" : {
+      "title" : "权益质押余额不足"
+    },
+    "NearNotEnoughAvailable" : {
+      "title" : "可提取余额不足"
+    },
+    "NearRecommendUnstake" : {
+      "title" : "清空账户前请解除权益质押并提取资金"
+    },
+    "NearStakingThresholdNotMet" : {
+      "title" : "数额必须至少为 {{threshold}}"
     },
     "PriorityFeeTooLow" : {
       "title" : "优先费用低于推荐值"
@@ -1208,7 +1235,11 @@
         "subTitle" : "在新设备上还原您的恢复短语",
         "desc" : "在新的 Nano 设备上使用现有的恢复短语来还原您的私钥！"
       },
-      "recovery" : "已经有了恢复短语？"
+      "recovery" : "已经有了恢复短语？",
+      "protect" : {
+        "label" : "约 60 分钟",
+        "subTitle" : "使用 Protect 重置"
+      }
     },
     "stepNewDevice" : {
       "0" : {
@@ -1429,6 +1460,31 @@
           "desc" : "回答 3 个简单问题，消除您对硬币钱包的常见误解。",
           "cta" : "接受测验"
         }
+      }
+    },
+    "stepProtect" : {
+      "bullets" : {
+        "0" : {
+          "title" : "浏览 ",
+          "label" : "阅读屏幕上的说明，了解如何使用您的设备。"
+        },
+        "1" : {
+          "title" : "选择“Restore”（重置）",
+          "label" : "同时按下两个按钮以激活该选项。"
+        },
+        "2" : {
+          "title" : "选择“Restore with Protect”（使用 Protect 重置）模式",
+          "label" : "同时按下两个按钮以激活该选项。"
+        }
+      },
+      "nextStep" : "继续",
+      "extraInfo" : {
+        "tooltip" : "在我的 Ledger 上看不到它",
+        "title" : "为什么我在 Ledger 上看不到 Restore with Protect（使用 Protect 重置）？",
+        "desc1" : "最有可能的原因是您的设备与 Protect 不兼容。别担心，我们会指导您如何解决此问题。",
+        "desc2" : "Please contact us through and choose \"My Ledger doesn't display Restore with Protect\", we got you covered.",
+        "cta" : "完成手动步骤",
+        "supportLink" : "联系 Ledger 客服"
       }
     },
     "stepRecoveryPhrase" : {
@@ -1717,8 +1773,14 @@
         "subtitle" : "在您的 {{productName}} 上确认代码"
       },
       "error" : {
-        "title" : "配对不成功",
-        "subtitle" : "似乎出了点问题！\n检查蓝牙是否已打开，以及 {{productName}} 是否在附近。",
+        "generic" : {
+          "title" : "配对不成功",
+          "subtitle" : "似乎出了点问题！\n检查蓝牙是否已打开，以及 {{productName}} 是否在附近。"
+        },
+        "lockedDevice" : {
+          "title" : "您的设备已经锁定",
+          "subtitle" : "解锁您的 {{ productName }} 并重试。"
+        },
         "retryCta" : "请重试"
       }
     }
@@ -2004,7 +2066,10 @@
       "UNLOCK" : "已解锁",
       "REVOKE" : "已撤销",
       "REGISTER" : "已注册",
-      "WITHDRAW" : "已提取"
+      "WITHDRAW" : "已提取",
+      "STAKE" : "已权益质押",
+      "UNSTAKE" : "已解除权益质押",
+      "WITHDRAW_UNSTAKED" : "已提取"
     }
   },
   "operationDetails" : {
@@ -2065,7 +2130,8 @@
       "storageLimit" : "存储空间限制",
       "gasLimit" : "矿工费限值",
       "id" : "Id",
-      "autoClaimedRewards" : "自动领取的奖励"
+      "autoClaimedRewards" : "自动领取的奖励",
+      "stakedAmount" : "权益质押数额"
     },
     "multipleAddresses" : "为什么有多个地址？",
     "tokenName" : "代币名称",
@@ -5024,6 +5090,118 @@
       }
     }
   },
+  "near" : {
+    "info" : {
+      "available" : {
+        "title" : "现已支持 NEAR",
+        "description" : "该数额可自由支配。"
+      },
+      "storageUsage" : {
+        "title" : "最低余额",
+        "description" : "此数额是可用于存储和交易的账户保留数额，也是您的账户保持活跃所必须保有的最低余额。"
+      },
+      "staked" : {
+        "title" : "已权益质押的余额",
+        "description" : "此数额目前由验证者权益质押。"
+      },
+      "pending" : {
+        "title" : "待使用余额",
+        "description" : "此数额已解除权益质押，目前等待使用。"
+      },
+      "withdrawable" : {
+        "title" : "可提取余额",
+        "description" : "此数额已解除权益质押，现已可以提取。"
+      },
+      "stakingUnavailable" : {
+        "title" : "权益质押不可用",
+        "description" : "您账户中的可用余额不足，无法权益质押、解除权益质押和提取。"
+      }
+    },
+    "unstaking" : {
+      "stepperHeader" : {
+        "amountSubTitle" : "要取消权益质押的数额"
+      },
+      "flow" : {
+        "steps" : {
+          "verification" : {
+            "success" : {
+              "title" : "您已成功取消权益质押资产"
+            }
+          }
+        }
+      }
+    },
+    "withdrawing" : {
+      "stepperHeader" : {
+        "amountSubTitle" : "要提取的金额"
+      },
+      "flow" : {
+        "steps" : {
+          "verification" : {
+            "success" : {
+              "title" : "您已成功提取资产"
+            }
+          }
+        }
+      }
+    },
+    "staking" : {
+      "sectionLabel" : "权益质押持仓",
+      "info" : "权益质押的运作方式",
+      "add" : "添加",
+      "stakingEarn" : "您可以通过权益质押您的资产来赚取 NEAR 奖励。",
+      "totalStake" : "质押总额",
+      "commission" : "佣金",
+      "iStake" : "我权益质押",
+      "actions" : {
+        "unstake" : "取消权益质押",
+        "withdraw" : "提取"
+      },
+      "drawer" : {
+        "status" : "状态",
+        "active" : "活跃",
+        "inactive" : "不活跃",
+        "rewards" : "奖励",
+        "pending" : "待处理",
+        "available" : "可提取"
+      },
+      "stepperHeader" : {
+        "amountSubTitle" : "要权益质押的数额",
+        "selectDevice" : "选择设备",
+        "connectDevice" : "连接设备",
+        "stepRange" : "步骤 {{currentStep}} 之 {{totalSteps}}"
+      },
+      "flow" : {
+        "steps" : {
+          "starter" : {
+            "description" : "通过权益质押 NEAR 安全赚取奖励，时刻掌控您的资产。",
+            "steps" : {
+              "0" : "权益质押的资产仍然属于您。",
+              "1" : "您需要等待 52 至 65 小时才能完成解除权益质押。",
+              "2" : "使用您的 Ledger 设备安全权益质押。"
+            },
+            "warning" : {
+              "description" : "明智地选择验证者：如果验证者的行为不当，您可能失去部分权益质押资产并且无法挽回。"
+            },
+            "cta" : "继续"
+          },
+          "amount" : {
+            "assetsRemaining" : "剩余资产：<0>{{amount}}</0>",
+            "allAssetsUsed" : "已使用所有资产",
+            "minAmount" : "最小数额：<0>{{min}}</0>",
+            "incorrectAmount" : "最大数额：<0>{{max}}</0>",
+            "cta" : "继续"
+          },
+          "verification" : {
+            "success" : {
+              "title" : "您已成功权益质押资产",
+              "text" : "交易一经网络确认，您的账户余额就会更新。"
+            }
+          }
+        }
+      }
+    }
+  },
   "delegation" : {
     "overdelegated" : "过度委托",
     "delegationSendWarnDesc" : "发送的数额会从您的委托账户中扣除。",
@@ -5541,6 +5719,88 @@
       },
       "media" : {
         "tag" : "{{count}} 个 NFT"
+      }
+    }
+  },
+  "servicesWidget" : {
+    "title" : "服务",
+    "subTitle" : "管理您的 Ledger 服务",
+    "protect" : {
+      "title" : "保护",
+      "status" : {
+        "new" : {
+          "title" : "新",
+          "desc" : "备份您的恢复短语",
+          "0" : {
+            "title" : "受到数百万 Ledger 用户的信赖"
+          },
+          "1" : {
+            "title" : "您的恢复短语与您的身份安全关联"
+          },
+          "2" : {
+            "title" : "最先进的加密技术"
+          },
+          "3" : {
+            "title" : "分成 3 个去中心化的部分，因此您的恢复短语绝不会被窃取"
+          },
+          "actions" : {
+            "learnMore" : "了解更多",
+            "alreadySubscribed" : "已经订阅了\"Protect\"保护？"
+          }
+        },
+        "confirmIdentity" : {
+          "title" : "需要进行操作",
+          "desc" : "确认您的身份并完成所有任务以保护您的恢复短语。",
+          "actions" : {
+            "confirmNow" : "立即确认",
+            "viewDetails" : "查看详情"
+          }
+        },
+        "addPayment" : {
+          "title" : "需要进行操作",
+          "desc" : "添加付款详细信息并完成所有任务以保护您的恢复短语。",
+          "actions" : {
+            "addNow" : "立即添加",
+            "viewDetails" : "查看详情"
+          }
+        },
+        "paymentRejected" : {
+          "title" : "付款被拒绝",
+          "desc" : "您的 5 美元付款失败。请编辑您的付款详细信息。",
+          "actions" : {
+            "editNow" : "立刻编辑",
+            "viewDetails" : "查看详情"
+          }
+        },
+        "subscriptionCanceled" : {
+          "title" : "取消的订阅",
+          "desc" : "您的订阅在 3 个月未付款后终止。",
+          "actions" : {
+            "contactLedgerSupport" : "联系 Ledger 客服",
+            "viewDetails" : "查看详情"
+          }
+        },
+        "active" : {
+          "title" : "活跃",
+          "desc" : "您的助记词受到保护",
+          "actions" : {
+            "viewDetails" : "查看详情"
+          }
+        }
+      }
+    }
+  },
+  "protect" : {
+    "login" : {
+      "title" : "登录",
+      "desc" : "Log in with your Ledger account to manage your Protect subscription.",
+      "email" : "Email",
+      "password" : "密码",
+      "cta" : "登录",
+      "forgotPassword" : "Forgot password?",
+      "errors" : {
+        "emptyEmail" : "Email cannot be empty",
+        "emptyPassword" : "Password cannot be empty"
       }
     }
   }
