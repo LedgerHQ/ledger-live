@@ -5,7 +5,6 @@ import { Trans } from "react-i18next";
 import { track } from "~/renderer/analytics/segment";
 import Box from "~/renderer/components/Box";
 import Text from "~/renderer/components/Text";
-import DecentralisedRate from "./DecentralisedRate";
 import CentralisedRate from "./CentralisedRate";
 import Countdown from "./Countdown";
 import EmptyState from "./EmptyState";
@@ -233,24 +232,6 @@ export default function ProviderRate({
             return null;
           }
         })}
-        {decentralizedSwapAvailable &&
-          DEX_PROVIDERS.map((rate, index) => {
-            const valid = filter.every(item => [FILTER.decentralised, FILTER.float].includes(item));
-            if (valid) {
-              return (
-                <DecentralisedRate
-                  filter={filter}
-                  key={rate.id}
-                  value={rate}
-                  selected={dexSelected && rate.id === dexSelected.id}
-                  onSelect={setDexRate}
-                  icon={rate.icon}
-                />
-              );
-            } else {
-              return null;
-            }
-          })}
       </Box>
       {emptyState && <EmptyState />}
     </Box>
