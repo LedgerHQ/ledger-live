@@ -14,7 +14,7 @@ export type Props = {
   progress?: number;
   nested?: boolean;
   isLastItem?: boolean;
-  setActiveIndex?: (_: number) => void;
+  onTapIndex?: (_: number) => void;
   index: number;
 };
 
@@ -30,7 +30,7 @@ export default function StepperItem({
   progress,
   nested,
   isLastItem,
-  setActiveIndex,
+  onTapIndex,
   index,
 }: Props) {
   /**
@@ -61,8 +61,8 @@ export default function StepperItem({
   );
 
   const handlePress = useCallback(() => {
-    setActiveIndex && setActiveIndex(index);
-  }, [setActiveIndex, index]);
+    onTapIndex && onTapIndex(index);
+  }, [onTapIndex, index]);
 
   return (
     <Pressable onPress={handlePress}>
