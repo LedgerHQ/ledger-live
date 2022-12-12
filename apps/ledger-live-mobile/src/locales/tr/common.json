@@ -532,7 +532,7 @@
       "description" : "İşlemlerin 30 saniye içinde imzalanması gerekir. Lütfen tekrar deneyin."
     },
     "TronNotEnoughEnergy" : {
-      "title" : "Bu token'ı göndermek için yeterli Enerji yok"
+      "title" : "Yeterince Enerji mevcut değil. Ağ ücreti 20TRX tutarına ulaşabilir."
     },
     "UpdateYourApp" : {
       "title" : "Uygulama güncellemesi gerekiyor",
@@ -716,6 +716,9 @@
     "StellarSourceHasMultiSign" : {
       "title" : "Stellar işlemleri yapmak için lütfen çoklu imzayı devre dışı bırakın"
     },
+    "StellarBurnAddressError" : {
+      "title" : "A problem occurred while trying to add a Stellar account"
+    },
     "ImageLoadFromGalleryError" : {
       "title" : "Galeriden görüntü yüklenemedi",
       "description" : "Lütfen başka bir görüntüyle tekrar deneyin"
@@ -750,6 +753,30 @@
     },
     "HederaAddAccountError" : {
       "title" : "Hesabınız eklenemedi. Lütfen tekrar deneyin."
+    },
+    "NearNewAccountWarning" : {
+      "title" : "Alıcı hesabı henüz oluşturulmadı. Bu protokol, alıcı hesabı oluşturmak için {{formattedNewAccountStorageCost}} tutarında bir aktarım yapılmasını gerektiriyor."
+    },
+    "NearNewNamedAccountError" : {
+      "title" : "Alıcı hesabı henüz oluşturulmadı. NEAR cüzdanında oluşturulması gerekiyor."
+    },
+    "NearActivationFeeNotCovered" : {
+      "title" : "Bu miktar, {{formattedNewAccountStorageCost}} depolama ücretini karşılamak için yeterli değil."
+    },
+    "NearUseAllAmountStakeWarning" : {
+      "title" : "Gelecekteki işlem ücretleri için yeterli bakiyenizin kaldığından emin olun"
+    },
+    "NearNotEnoughStaked" : {
+      "title" : "Stake bakiyesi yetersiz"
+    },
+    "NearNotEnoughAvailable" : {
+      "title" : "Çekilebilir bakiye yetersiz"
+    },
+    "NearRecommendUnstake" : {
+      "title" : "Lütfen hesabı boşaltmadan önce stake iptali yapın ve fonları çekin"
+    },
+    "NearStakingThresholdNotMet" : {
+      "title" : "Tutarın en az {{threshold}} olması gerekiyor"
     },
     "PriorityFeeTooLow" : {
       "title" : "Öncelik ücreti, önerilen değerden düşük"
@@ -1208,7 +1235,11 @@
         "subTitle" : "Kurtarma ifadenizi yeni bir cihazda geri yükleyin",
         "desc" : "Özel anahtarlarınızı yeni bir Nano üzerinde geri yüklemek için mevcut bir kurtarma ifadesini kullanın!"
       },
-      "recovery" : "Kurtarma ifadeniz var mı?"
+      "recovery" : "Kurtarma ifadeniz var mı?",
+      "protect" : {
+        "label" : "Yaklaşık 60 dk.",
+        "subTitle" : "Protect ile Geri Yükleyin"
+      }
     },
     "stepNewDevice" : {
       "0" : {
@@ -1429,6 +1460,31 @@
           "desc" : "Donanım cüzdanınızla ilgili yaygın yanılgılardan kaçınmak için 3 basit soruyu yanıtlayın.",
           "cta" : "Sınava hazırım"
         }
+      }
+    },
+    "stepProtect" : {
+      "bullets" : {
+        "0" : {
+          "title" : "Göz Atın ",
+          "label" : "Ekrandaki yönergeleri okuyarak cihazınızı nasıl kullanacağınızı öğrenin."
+        },
+        "1" : {
+          "title" : "“Restore” (Geri Yükle) seçimini yapın",
+          "label" : "Seçimi onaylamak için her iki tuşa da aynı anda basın."
+        },
+        "2" : {
+          "title" : "“Restore with Protect” (Protect ile Geri Yükleyin) modunu seçin",
+          "label" : "Seçimi onaylamak için her iki tuşa da aynı anda basın."
+        }
+      },
+      "nextStep" : "Devam",
+      "extraInfo" : {
+        "tooltip" : "Ledger'ımda göremiyorum",
+        "title" : "Ledger'ımda neden “Restore with Protect” seçeneğini göremiyorum?",
+        "desc1" : "Büyük ihtimalle cihazınız Protect hizmetiyle uyumlu değildir. Endişelenmeyin! Nasıl çalıştıracağınız konusunda sizi yönlendireceğiz.",
+        "desc2" : "Please contact us through and choose \"My Ledger doesn't display Restore with Protect\", we got you covered.",
+        "cta" : "Manuel adımları uygulayın",
+        "supportLink" : "Ledger Destek ile iletişime geçin"
       }
     },
     "stepRecoveryPhrase" : {
@@ -1717,8 +1773,14 @@
         "subtitle" : "{{productName}} cihazınızdaki kodu onaylayın"
       },
       "error" : {
-        "title" : "Eşleştirme başarısız",
-        "subtitle" : "Bir sorun oluştu!\nBluetooth'unuzun açık ve {{productName}} cihazınızın yakında olduğundan emin olun.",
+        "generic" : {
+          "title" : "Eşleştirme başarısız",
+          "subtitle" : "Bir sorun oluştu!\nBluetooth'unuzun açık ve {{productName}} cihazınızın yakında olduğundan emin olun."
+        },
+        "lockedDevice" : {
+          "title" : "Cihazınız kilitlendi",
+          "subtitle" : "{{ productName }} cihazınızın kilidini açın ve tekrar deneyin."
+        },
         "retryCta" : "Tekrar deneyin"
       }
     }
@@ -2004,7 +2066,10 @@
       "UNLOCK" : "Kilidi Açık",
       "REVOKE" : "İptal Edilmiş",
       "REGISTER" : "Kaydedilmiş",
-      "WITHDRAW" : "Çekildi"
+      "WITHDRAW" : "Çekildi",
+      "STAKE" : "Stake edildi",
+      "UNSTAKE" : "Stake iptali",
+      "WITHDRAW_UNSTAKED" : "Çekildi"
     }
   },
   "operationDetails" : {
@@ -2065,7 +2130,8 @@
       "storageLimit" : "Depolama Limiti",
       "gasLimit" : "Gas limiti",
       "id" : "Kimlik (ID)",
-      "autoClaimedRewards" : "Otomatik Alınan Ödüller"
+      "autoClaimedRewards" : "Otomatik Alınan Ödüller",
+      "stakedAmount" : "Stake edilen miktar"
     },
     "multipleAddresses" : "Neden birden fazla adres var?",
     "tokenName" : "Token Adı",
@@ -3268,8 +3334,8 @@
       "gasPrice" : "Gas ücreti",
       "maxFee" : "Ücret üst limiti",
       "maxPriorityFee" : "Öncelik ücreti üst limiti",
-      "nextBlock" : "Sonraki blok",
-      "suggested" : "Önerilen",
+      "nextBlock" : "Next block",
+      "suggested" : "Suggested",
       "maxFees" : "Maksimum ücret",
       "validateGasLimit" : "Gas limitini onayla",
       "fees" : "Ücretler",
@@ -5024,6 +5090,118 @@
       }
     }
   },
+  "near" : {
+    "info" : {
+      "available" : {
+        "title" : "Kullanılabilir NEAR miktarı",
+        "description" : "Bu tutar, kullanabileceğiniz fondur."
+      },
+      "storageUsage" : {
+        "title" : "Minimum bakiye",
+        "description" : "Saklama ve işlemler için rezerv edilen miktar; hesabınızın aktif kalması için hesabınızda bulunması gereken minimum bakiye."
+      },
+      "staked" : {
+        "title" : "Stake bakiyesi",
+        "description" : "Doğrulayıcılarla stake edilmiş olan güncel miktar."
+      },
+      "pending" : {
+        "title" : "Bekleyen bakiye",
+        "description" : "Stake’i iptal edilmiş ve müsait olması beklenen güncel miktar."
+      },
+      "withdrawable" : {
+        "title" : "Çekilebilir bakiye",
+        "description" : "Stake’i iptal edilmiş ve çekilebilecek olan güncel miktar."
+      },
+      "stakingUnavailable" : {
+        "title" : "Stake yapılamıyor",
+        "description" : "Hesabınızın bakiyesi stake etmek, stake iptal etmek ve çekim yapmak için yeterli değil."
+      }
+    },
+    "unstaking" : {
+      "stepperHeader" : {
+        "amountSubTitle" : "Staking'i iptal edilecek miktar"
+      },
+      "flow" : {
+        "steps" : {
+          "verification" : {
+            "success" : {
+              "title" : "Varlıklarınızın staking'ini başarıyla iptal ettiniz"
+            }
+          }
+        }
+      }
+    },
+    "withdrawing" : {
+      "stepperHeader" : {
+        "amountSubTitle" : "Çekilecek tutar"
+      },
+      "flow" : {
+        "steps" : {
+          "verification" : {
+            "success" : {
+              "title" : "Varlıklarınızı başarıyla çektiniz"
+            }
+          }
+        }
+      }
+    },
+    "staking" : {
+      "sectionLabel" : "Staking Pozisyonları",
+      "info" : "Staking Nasıl Çalışır?",
+      "add" : "Ekle",
+      "stakingEarn" : "NEAR varlıklarınızı stake ederek NEAR ödülleri kazanabilirsiniz.",
+      "totalStake" : "Toplam Stake",
+      "commission" : "Komisyon",
+      "iStake" : "Stake et:",
+      "actions" : {
+        "unstake" : "Staking'i iptal et",
+        "withdraw" : "Çek"
+      },
+      "drawer" : {
+        "status" : "Durum",
+        "active" : "Aktif",
+        "inactive" : "Devre Dışı",
+        "rewards" : "Ödüller",
+        "pending" : "Beklemede",
+        "available" : "Çekilebilir bakiye"
+      },
+      "stepperHeader" : {
+        "amountSubTitle" : "Stake edilecek miktar",
+        "selectDevice" : "Cihaz seçin",
+        "connectDevice" : "Cihazı bağlayın",
+        "stepRange" : "Adım {{currentStep}} / {{totalSteps}}"
+      },
+      "flow" : {
+        "steps" : {
+          "starter" : {
+            "description" : "NEAR varlıklarınızı stake edin ve varlıklarınızın kontrolünü bırakmadan, güvenle ödüller kazanın.",
+            "steps" : {
+              "0" : "Stake ettiğiniz varlıklar sizin mülkiyetinizde kalmaya devam eder.",
+              "1" : "Stake iptali işleminin tamamlanması için 52 ila 65 saat beklemeniz gerekebilir.",
+              "2" : "Ledger cihazınızı kullanarak güvenle stake edin."
+            },
+            "warning" : {
+              "description" : "Doğrulayıcınızı dikkatli seçin! Doğrulayıcının yanlış kararlar vermesi hâlinde stake ettiğiniz varlıkların bir kısmını kalıcı olarak kaybedebilirsiniz."
+            },
+            "cta" : "Devam"
+          },
+          "amount" : {
+            "assetsRemaining" : "Kalan varlıklar: <0>{{amount}}</0>",
+            "allAssetsUsed" : "Tüm varlıklar kullanıldı",
+            "minAmount" : "Minimum tutar: <0>{{min}}</0>",
+            "incorrectAmount" : "Maksimum tutar: <0>{{max}}</0>",
+            "cta" : "Devam"
+          },
+          "verification" : {
+            "success" : {
+              "title" : "Varlıklarınızı başarıyla stake ettiniz",
+              "text" : "İşlem, ağ tarafından onaylanınca hesap bakiyeniz güncellenecek."
+            }
+          }
+        }
+      }
+    }
+  },
   "delegation" : {
     "overdelegated" : "Yetki Devri Aşımı",
     "delegationSendWarnDesc" : "Gönderilecek tutar yetkisi devredilmiş hesabınızdan düşülecektir.",
@@ -5541,6 +5719,88 @@
       },
       "media" : {
         "tag" : "{{count}} NFT"
+      }
+    }
+  },
+  "servicesWidget" : {
+    "title" : "Hizmetler",
+    "subTitle" : "Ledger hizmetlerinizi yönetin",
+    "protect" : {
+      "title" : "Protect",
+      "status" : {
+        "new" : {
+          "title" : "Yeni",
+          "desc" : "Kurtarma ifadenizi yedekleyin",
+          "0" : {
+            "title" : "Milyonlarca Ledger kullanıcısı güveniyor"
+          },
+          "1" : {
+            "title" : "Kurtarma İfadeniz güvenli bir şekilde kimliğinizle eşleştirilir"
+          },
+          "2" : {
+            "title" : "En gelişmiş şifreleme teknolojisi"
+          },
+          "3" : {
+            "title" : "Merkeziyetsiz bir şekilde 3 farklı parçaya bölünen kurtarma ifadeniz asla çalınamaz"
+          },
+          "actions" : {
+            "learnMore" : "Daha fazla bilgi",
+            "alreadySubscribed" : "Protect'e zaten abone misiniz?"
+          }
+        },
+        "confirmIdentity" : {
+          "title" : "Eylem gerekiyor",
+          "desc" : "Kurtarma ifadenizi korumak için kimliğinizi doğrulayın ve tüm adımları tamamlayın.",
+          "actions" : {
+            "confirmNow" : "Hemen doğrula",
+            "viewDetails" : "Ayrıntıları göster"
+          }
+        },
+        "addPayment" : {
+          "title" : "Eylem gerekiyor",
+          "desc" : "Kurtarma ifadenizi korumak için ödeme bilgilerinizi ekleyin ve tüm adımları tamamlayın.",
+          "actions" : {
+            "addNow" : "Şimdi ekle",
+            "viewDetails" : "Ayrıntıları göster"
+          }
+        },
+        "paymentRejected" : {
+          "title" : "Ödeme reddedildi",
+          "desc" : "$5 ödeme işlemi başarısız oldu. Lütfen ödeme bilgilerinizi düzenleyin.",
+          "actions" : {
+            "editNow" : "Şimdi düzenle",
+            "viewDetails" : "Ayrıntıları göster"
+          }
+        },
+        "subscriptionCanceled" : {
+          "title" : "Abonelik iptal edildi",
+          "desc" : "3 ay boyunca ödeme yapılmaması nedeniyle aboneliğiniz sonlandırıldı.",
+          "actions" : {
+            "contactLedgerSupport" : "Ledger Destek",
+            "viewDetails" : "Ayrıntıları göster"
+          }
+        },
+        "active" : {
+          "title" : "Aktif",
+          "desc" : "Kurtarma ifadeniz koruma altında",
+          "actions" : {
+            "viewDetails" : "Ayrıntıları göster"
+          }
+        }
+      }
+    }
+  },
+  "protect" : {
+    "login" : {
+      "title" : "Oturum aç",
+      "desc" : "Log in with your Ledger account to manage your Protect subscription.",
+      "email" : "Email",
+      "password" : "Parola",
+      "cta" : "Oturum aç",
+      "forgotPassword" : "Forgot password?",
+      "errors" : {
+        "emptyEmail" : "Email cannot be empty",
+        "emptyPassword" : "Password cannot be empty"
       }
     }
   }
