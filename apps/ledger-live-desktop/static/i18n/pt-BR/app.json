@@ -2143,8 +2143,8 @@
         "ethereumGasPrice" : "Preço do gás",
         "ethereumMaxFee" : "Taxa máxima ({{unitName}})",
         "ethereumPriorityFee" : "Taxa de Prioridade Máxima ({{unitName}})",
-        "nextBlock" : "Próximo bloco",
-        "suggested" : "Sugerido",
+        "nextBlock" : "Next block",
+        "suggested" : "Suggested",
         "unitPerByte" : "{{unit}} por byte",
         "nft" : "NFT",
         "nftQuantity" : "Quantidade"
@@ -4861,6 +4861,10 @@
     "NotEnoughGas" : {
       "title" : "O saldo da conta principal é insuficiente para as taxas de rede"
     },
+    "OperatingSystemOutdated" : {
+      "title" : "Your Operating System version is outdated",
+      "description" : "Please upgrade your operating system and retry. You can check the article below to understand why Ledger Live is not supported on your current operating system version."
+    },
     "PasswordsDontMatch" : {
       "title" : "As senhas não correspondem",
       "description" : "Tente Novamente"
@@ -5267,6 +5271,9 @@
     },
     "StellarSourceHasMultiSign" : {
       "title" : "Desabilite a multiassinatura para fazer transações Stellar"
+    },
+    "StellarBurnAddressError" : {
+      "title" : "A problem occurred while trying to add a Stellar account"
     },
     "HederaAddAccountError" : {
       "title" : "Sua conta não foi adicionada. Tente Novamente."
