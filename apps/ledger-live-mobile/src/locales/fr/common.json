@@ -532,7 +532,7 @@
       "description" : "Les transactions doivent être signées dans les 30 secondes. Veuillez réessayer."
     },
     "TronNotEnoughEnergy" : {
-      "title" : "Vous n’avez pas assez d’Énergie pour envoyer ce token."
+      "title" : "Énergie inférieure à la quantité requise. Vous pourriez payer des frais allant jusqu’à 20 TRX."
     },
     "UpdateYourApp" : {
       "title" : "Mise à jour de l’app nécessaire",
@@ -715,6 +715,9 @@
     },
     "StellarSourceHasMultiSign" : {
       "title" : "Désactivez le multisig pour envoyer des transactions Stellar"
+    },
+    "StellarBurnAddressError" : {
+      "title" : "Un problème est survenu lors de l’ajout du compte Stellar"
     },
     "ImageLoadFromGalleryError" : {
       "title" : "Échec du chargement de l’image depuis la galerie",
@@ -1717,8 +1720,14 @@
         "subtitle" : "Confirmez le code sur votre {{productName}}."
       },
       "error" : {
-        "title" : "Échec du couplage",
-        "subtitle" : "Une erreur est survenue.\nVérifiez que le Bluetooth est activé et que votre {{productName}} est à proximité.",
+        "generic" : {
+          "title" : "Échec du couplage",
+          "subtitle" : "Une erreur est survenue.\nVérifiez que le Bluetooth est activé et que votre {{productName}} est à proximité."
+        },
+        "lockedDevice" : {
+          "title" : "Appareil verrouillé",
+          "subtitle" : "Déverrouillez votre {{ productName }} et réessayez."
+        },
         "retryCta" : "Réessayer"
       }
     }
