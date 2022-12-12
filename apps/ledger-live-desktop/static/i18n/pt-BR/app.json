@@ -169,7 +169,10 @@
       "WITHDRAW" : "Sacado",
       "REVOKE" : "Revogado",
       "ACTIVATE" : "Ativado",
-      "REGISTER" : "Registrado"
+      "REGISTER" : "Registrado",
+      "STAKE" : "Aplicado",
+      "UNSTAKE" : "Desaplicado",
+      "WITHDRAW_UNSTAKED" : "Sacado"
     }
   },
   "byteSize" : {
@@ -2143,8 +2146,8 @@
         "ethereumGasPrice" : "Preço do gás",
         "ethereumMaxFee" : "Taxa máxima ({{unitName}})",
         "ethereumPriorityFee" : "Taxa de Prioridade Máxima ({{unitName}})",
-        "nextBlock" : "Próximo bloco",
-        "suggested" : "Sugerido",
+        "nextBlock" : "Next block",
+        "suggested" : "Suggested",
         "unitPerByte" : "{{unit}} por byte",
         "nft" : "NFT",
         "nftQuantity" : "Quantidade"
@@ -3396,6 +3399,140 @@
       }
     }
   },
+  "near" : {
+    "account" : {
+      "stakedBalance" : "Saldo aplicado",
+      "stakedBalanceTooltip" : "Esta quantia está atualmente aplicada com validadores.",
+      "availableBalance" : "Saldo disponível para saque",
+      "availableBalanceTooltip" : "Esta quantia foi desaplicada e atualmente pode ser sacada.",
+      "pendingBalance" : "Saldo pendente",
+      "pendingBalanceTooltip" : "Esta quantia foi desaplicada e está atualmente com disponibilidade pendente.",
+      "storageUsageBalance" : "Saldo mínimo",
+      "storageUsageBalanceTooltip" : "Esta quantia é reservada para armazenamento e transações, e é o saldo mínimo que sua conta deve manter para permanecer ativa.",
+      "subHeader" : {
+        "cardTitle" : "Powered by Figment",
+        "moreInfo" : "Mais informações",
+        "drawerTitle" : "Powered by Figment",
+        "title" : "O token NEAR agora está disponível no Ledger Live",
+        "description" : "Agora você pode gerenciar e proteger seus tokens NEAR no Ledger Live.",
+        "description2" : "O token NEAR é nativo da NEAR Chain e é usado para tudo, desde transações, staking e vários recursos por vir.",
+        "website" : "Powered by Figment"
+      }
+    },
+    "operationDetails" : {
+      "extra" : {
+        "stakedAmount" : "Quantia aplicada"
+      }
+    },
+    "stake" : {
+      "emptyState" : {
+        "description" : "Você pode ganhar recompensas em NEAR fazendo staking de seus ativos.",
+        "info" : "Como Staking Funciona",
+        "earnRewards" : "Receber Recompensas"
+      },
+      "table" : {
+        "header" : "Posições de Staking",
+        "stake" : "Adicionar",
+        "staked" : "Aplicado",
+        "pending" : "Liberação Pendente",
+        "available" : "Disponíveis para saque"
+      },
+      "unstake" : "Desaplicar",
+      "withdraw" : "Sacar",
+      "activeTooltip" : "Quantias aplicadas geram recompensas",
+      "inactiveTooltip" : "Quantias desaplicadas não geram recompensas",
+      "commission" : "Comissão",
+      "totalStake" : "Total Aplicado",
+      "minSafeWarning" : "Fundos Insuficientes",
+      "flow" : {
+        "title" : "Aplicar",
+        "steps" : {
+          "starter" : {
+            "description" : "Você pode ganhar recompensas fazendo staking de seus ativos NEAR a um validador.",
+            "bullet" : ["Você mantém a propriedade dos ativos em staking.", "Faça staking usando seu dispositivo Ledger.", "Ativos estarão disponíveis de 52 a 65 horas após desaplicá-los"],
+            "warning" : {
+              "description" : "Escolha cuidadosamente o seu validador: parte de seus ativos aplicados pode ser irrevogavelmente perdida se o validador não se comportar adequadamente."
+            }
+          },
+          "amount" : {
+            "title" : "Quantia"
+          },
+          "validator" : {
+            "title" : "Validadores",
+            "ledgerByFigmentTC" : "Ledger por Figment T&Cs"
+          },
+          "connectDevice" : {
+            "title" : "Dispositivo"
+          },
+          "confirmation" : {
+            "title" : "Confirmação",
+            "success" : {
+              "title" : "Você fez staking de seus ativos com sucesso",
+              "text" : "O saldo da sua conta será atualizado quando a blockchain confirmar a transação.",
+              "cta" : "Ver detalhes"
+            },
+            "broadcastError" : "Sua transação pode ter falhado. Aguarde um momento e verifique seu histórico de transações antes de tentar novamente."
+          }
+        }
+      }
+    },
+    "unstake" : {
+      "disabledTooltip" : "Não há ativos aplicados o suficiente para desaplicar",
+      "flow" : {
+        "title" : "Desaplicar",
+        "steps" : {
+          "amount" : {
+            "title" : "Quantia",
+            "subtitle" : "O processo de desaplicação leva de <0>52 a 65 horas</0> para ser finalizado.",
+            "warning" : "Recompensas serão imediatamente depositadas. A quantidade não aplicada estará disponível para retirada após o horário <0>de 52 a 65 horas</0>.",
+            "fields" : {
+              "validator" : "Validador",
+              "amount" : "Quantia a desaplicar"
+            }
+          },
+          "connectDevice" : {
+            "title" : "Dispositivo"
+          },
+          "confirmation" : {
+            "title" : "Confirmação",
+            "success" : {
+              "title" : "Você desaplicar seus ativos com sucesso",
+              "description" : "<0>{{amount}}</0> não foram aplicados a partir de <0>{{validator}}</0>",
+              "cta" : "Ver detalhes"
+            },
+            "broadcastError" : "Sua transação pode ter falhado. Aguarde um momento e verifique seu histórico de transações antes de tentar novamente."
+          }
+        }
+      }
+    },
+    "withdraw" : {
+      "disabledTooltip" : "Não há ativos suficientes para sacar",
+      "flow" : {
+        "title" : "Sacar",
+        "steps" : {
+          "amount" : {
+            "title" : "Quantia",
+            "fields" : {
+              "validator" : "Validador",
+              "amount" : "Quantia a sacar"
+            }
+          },
+          "connectDevice" : {
+            "title" : "Dispositivo"
+          },
+          "confirmation" : {
+            "title" : "Confirmação",
+            "success" : {
+              "title" : "Você sacou seus ativos com sucesso.",
+              "description" : "<0>{{amount}}</0> foram sacados de <0>{{validator}}</0>",
+              "cta" : "Ver detalhes"
+            },
+            "broadcastError" : "Sua transação pode ter falhado. Aguarde um momento e verifique seu histórico de transações antes de tentar novamente."
+          }
+        }
+      }
+    }
+  },
   "delegation" : {
     "title" : "Receba Recompensas",
     "header" : "Delegação",
@@ -4512,6 +4649,9 @@
       "claimRewardCompound" : "validador que receberá as recompensas",
       "optIn" : "destinatário",
       "nominate" : "validador",
+      "stake" : "validador",
+      "unstake" : "validador",
+      "withdraw" : "validador",
       "erc721" : {
         "transfer" : "destinatário"
       },
@@ -4860,6 +5000,10 @@
     },
     "NotEnoughGas" : {
       "title" : "O saldo da conta principal é insuficiente para as taxas de rede"
+    },
+    "OperatingSystemOutdated" : {
+      "title" : "Your Operating System version is outdated",
+      "description" : "Please upgrade your operating system and retry. You can check the article below to understand why Ledger Live is not supported on your current operating system version."
     },
     "PasswordsDontMatch" : {
       "title" : "As senhas não correspondem",
@@ -5268,6 +5412,9 @@
     "StellarSourceHasMultiSign" : {
       "title" : "Desabilite a multiassinatura para fazer transações Stellar"
     },
+    "StellarBurnAddressError" : {
+      "title" : "A problem occurred while trying to add a Stellar account"
+    },
     "HederaAddAccountError" : {
       "title" : "Sua conta não foi adicionada. Tente Novamente."
     },
@@ -5314,6 +5461,30 @@
     "ImageLoadRefusedOnDevice" : {
       "title" : "Carregamento de imagem recusada no dispositivo (TODO: final wording)",
       "description" : "Se esta imagem não era a mais adequada, você pode tentar novamente com outra imagem."
+    },
+    "NearNewAccountWarning" : {
+      "title" : "A conta receptora ainda não foi criada. O protocolo requer uma transferência de {{formattedNewAccountStorageCost}} para criá-la."
+    },
+    "NearNewNamedAccountError" : {
+      "title" : "A conta receptora ainda não foi criada. Ela precisa ser criada na carteira NEAR."
+    },
+    "NearActivationFeeNotCovered" : {
+      "title" : "Este valor não cobre o custo de armazenamento de {{formattedNewAccountStorageCost}} ."
+    },
+    "NearUseAllAmountStakeWarning" : {
+      "title" : "Certifique-se de ter saldo suficiente para futuras taxas de transação"
+    },
+    "NearNotEnoughStaked" : {
+      "title" : "Saldo aplicado insuficiente"
+    },
+    "NearNotEnoughAvailable" : {
+      "title" : "Saldo disponível para saque insuficiente"
+    },
+    "NearRecommendUnstake" : {
+      "title" : "Desaplique e saque os fundos antes de esvaziar sua conta"
+    },
+    "NearStakingThresholdNotMet" : {
+      "title" : "A quantia precisa ser de pelo menos {{threshold}}"
     },
     "LockedDeviceError" : {
       "title" : "Seu dispositivo está bloqueado",
