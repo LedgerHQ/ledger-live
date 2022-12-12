@@ -532,7 +532,7 @@
       "description" : "트랜잭션은 30초 이내에 서명을 완료해야 합니다. 다시 시도해 주세요."
     },
     "TronNotEnoughEnergy" : {
-      "title" : "이 토큰 전송에 필요한 에너지가 부족합니다"
+      "title" : "에너지가 필요한 것보다 낮습니다. 수수료로 최대 20TRX를 지불할 수 있습니다."
     },
     "UpdateYourApp" : {
       "title" : "앱 업데이트 필요",
@@ -715,6 +715,9 @@
     },
     "StellarSourceHasMultiSign" : {
       "title" : "스텔라 트랜잭션을 수행하려면 다중서명을 비활성화하세요"
+    },
+    "StellarBurnAddressError" : {
+      "title" : "A problem occurred while trying to add a Stellar account"
     },
     "ImageLoadFromGalleryError" : {
       "title" : "갤러리 이미지 로딩 실패",
@@ -1208,7 +1211,11 @@
         "subTitle" : "새 장치에서 복구 문구를 복원하세요",
         "desc" : "기존 복구 문구를 사용하여 새 Nano에서 개인 키를 복구하세요!"
       },
-      "recovery" : "이미 복구 문구가 있나요?"
+      "recovery" : "이미 복구 문구가 있나요?",
+      "protect" : {
+        "label" : "~60 mins",
+        "subTitle" : "Restore with Protect"
+      }
     },
     "stepNewDevice" : {
       "0" : {
@@ -1429,6 +1436,31 @@
           "desc" : "3가지 간단한 질문에 답하며 사람들이 흔히 잘못 알고 있는 하드웨어 지갑 상식을 알아보세요.",
           "cta" : "퀴즈를 풀어보세요"
         }
+      }
+    },
+    "stepProtect" : {
+      "bullets" : {
+        "0" : {
+          "title" : "Browse ",
+          "label" : "Learn how to interact with your device by reading the on-screen instructions."
+        },
+        "1" : {
+          "title" : "Select “Restore”",
+          "label" : "Press both buttons simultaneously to validate the selection."
+        },
+        "2" : {
+          "title" : "Select “Restore with Protect” mode",
+          "label" : "Press both buttons simultaneously to validate the selection."
+        }
+      },
+      "nextStep" : "Continue",
+      "extraInfo" : {
+        "tooltip" : "Cannot see it on my Ledger",
+        "title" : "Why can I not see Restore with Protect on my Ledger?",
+        "desc1" : "The most probable option is that your device is not compatible with Protect. No worries, we are here to guide you on how to make it work.",
+        "desc2" : "Please contact us through and choose \"My Ledger doesn't display Restore with Protect\", we got you covered.",
+        "cta" : "Go through manual steps",
+        "supportLink" : "Contact Ledger Support"
       }
     },
     "stepRecoveryPhrase" : {
@@ -1717,8 +1749,14 @@
         "subtitle" : "{{productName}}에서 코드를 확인합니다"
       },
       "error" : {
-        "title" : "페어링 실패",
-        "subtitle" : "문제가 발생한 것 같습니다!\n블루투스가 켜져 있고 {{productName}} 장치가 근처에 있는지 확인하세요.",
+        "generic" : {
+          "title" : "페어링 실패",
+          "subtitle" : "문제가 발생한 것 같습니다!\n블루투스가 켜져 있고 {{productName}} 장치가 근처에 있는지 확인하세요."
+        },
+        "lockedDevice" : {
+          "title" : "장치가 잠금 상태입니다",
+          "subtitle" : "{{ productName }}의 잠금을 해제하고 다시 시도하세요."
+        },
         "retryCta" : "다시 시도하세요"
       }
     }
@@ -3268,8 +3306,8 @@
       "gasPrice" : "가스 가격(Gas price)",
       "maxFee" : "최대 비용",
       "maxPriorityFee" : "최대 우선 수수료",
-      "nextBlock" : "다음 블록",
-      "suggested" : "권장",
+      "nextBlock" : "Next block",
+      "suggested" : "Suggested",
       "maxFees" : "최대 수수료",
       "validateGasLimit" : "가스 제한 검증",
       "fees" : "수수료",
@@ -5541,6 +5579,88 @@
       },
       "media" : {
         "tag" : "{{count}}개의 NFT"
+      }
+    }
+  },
+  "servicesWidget" : {
+    "title" : "서비스",
+    "subTitle" : "Ledger 서비스 관리",
+    "protect" : {
+      "title" : "Protect",
+      "status" : {
+        "new" : {
+          "title" : "신규",
+          "desc" : "복구 문구 백업",
+          "0" : {
+            "title" : "수백만 명의 Ledger 사용자가 신뢰하는"
+          },
+          "1" : {
+            "title" : "귀하의 복구 문구는 귀하의 신원과 안전하게 연결됩니다"
+          },
+          "2" : {
+            "title" : "최첨단 암호화"
+          },
+          "3" : {
+            "title" : "3개의 탈중앙화된 부분으로 분할되어 복구 문구를 절대 도난당하지 않습니다"
+          },
+          "actions" : {
+            "learnMore" : "자세히 알아보기",
+            "alreadySubscribed" : "이미 Protect에 가입하셨나요?"
+          }
+        },
+        "confirmIdentity" : {
+          "title" : "Action required",
+          "desc" : "Confirm your identity and complete all tasks to protect your recovery phrase.",
+          "actions" : {
+            "confirmNow" : "Confirm now",
+            "viewDetails" : "View details"
+          }
+        },
+        "addPayment" : {
+          "title" : "Action required",
+          "desc" : "Add a payment details and complete all tasks to protect your recovery phrase.",
+          "actions" : {
+            "addNow" : "Add now",
+            "viewDetails" : "View details"
+          }
+        },
+        "paymentRejected" : {
+          "title" : "결제 거부됨",
+          "desc" : "$5 결제에 실패했습니다. 결제 세부정보를 수정해주세요.",
+          "actions" : {
+            "editNow" : "지금 수정",
+            "viewDetails" : "세부사항 보기"
+          }
+        },
+        "subscriptionCanceled" : {
+          "title" : "취소된 구독",
+          "desc" : "3개월 무료 평가판 이후 구독이 종료되었습니다.",
+          "actions" : {
+            "contactLedgerSupport" : "Ledger 지원 부서에 문의해주세요",
+            "viewDetails" : "세부사항 보기"
+          }
+        },
+        "active" : {
+          "title" : "활성",
+          "desc" : "귀하의 복구 문구가 보호됩니다",
+          "actions" : {
+            "viewDetails" : "세부사항 보기"
+          }
+        }
+      }
+    }
+  },
+  "protect" : {
+    "login" : {
+      "title" : "Log In",
+      "desc" : "Log in with your Ledger account to manage your Protect subscription.",
+      "email" : "Email",
+      "password" : "Password",
+      "cta" : "Login",
+      "forgotPassword" : "Forgot password?",
+      "errors" : {
+        "emptyEmail" : "Email cannot be empty",
+        "emptyPassword" : "Password cannot be empty"
       }
     }
   }
