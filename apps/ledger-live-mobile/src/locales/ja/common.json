@@ -532,7 +532,7 @@
       "description" : "トランザクションは、30秒以内に署名する必要があります。もう一度お試しください。"
     },
     "TronNotEnoughEnergy" : {
-      "title" : "このトークンの送金に必要なエネルギーが不足しています。"
+      "title" : "エネルギーが必要額を満たしていません。手数料には最大20TRXが必要となります。"
     },
     "UpdateYourApp" : {
       "title" : "アプリのアップデートが必要です。",
@@ -715,6 +715,9 @@
     },
     "StellarSourceHasMultiSign" : {
       "title" : "Stellarトランザクションを行うには、マルチシグを無効にしてください"
+    },
+    "StellarBurnAddressError" : {
+      "title" : "A problem occurred while trying to add a Stellar account"
     },
     "ImageLoadFromGalleryError" : {
       "title" : "ギャラリーからの画像の読み込みに失敗しました",
@@ -1717,8 +1720,14 @@
         "subtitle" : "{{productName}}のコードを確認してください"
       },
       "error" : {
-        "title" : "ペアリング失敗",
-        "subtitle" : "何か問題が発生したようです。\nBluetoothがオンになっており、{{productName}}が近くにあることをご確認ください。",
+        "generic" : {
+          "title" : "ペアリング失敗",
+          "subtitle" : "何か問題が発生したようです。\nBluetoothがオンになっており、{{productName}}が近くにあることをご確認ください。"
+        },
+        "lockedDevice" : {
+          "title" : "デバイスがロックされています。",
+          "subtitle" : "{{ productName }}のロックを解除して、再度お試しください。"
+        },
         "retryCta" : "再試行"
       }
     }
@@ -3268,8 +3277,8 @@
       "gasPrice" : "ガス価格",
       "maxFee" : "最大手数料",
       "maxPriorityFee" : "最大優先手数料",
-      "nextBlock" : "次のブロック",
-      "suggested" : "推奨",
+      "nextBlock" : "Next block",
+      "suggested" : "Suggested",
       "maxFees" : "最大手数料",
       "validateGasLimit" : "ガスリミットの検証",
       "fees" : "手数料",
