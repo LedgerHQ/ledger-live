@@ -207,6 +207,17 @@ export const urls = {
       "https://support.ledger.com/hc/en-us/articles/7572912170653?docs=true",
     howToSecure: "https://www.ledger.com/academy/how-to-secure-your-nfts",
   },
+  fwUpdateReleaseNotes: {
+    nanoS:
+      "https://support.ledger.com/hc/en-us/articles/360010446000-Ledger-Nano-S-firmware-release-notes?docs=true",
+    nanoSP:
+      "https://support.ledger.com/hc/en-us/articles/4494540771997-Ledger-Nano-S-Plus-Firmware-Release-Notes?docs=true",
+    nanoX:
+      "https://support.ledger.com/hc/en-us/articles/360014980580-Ledger-Nano-X-firmware-release-notes?docs=true",
+    stax: "https://support.ledger.com/hc/en-us/articles/9950654827293?docs=true",
+    blue:
+      "https://support.ledger.com/hc/en-us/articles/360014980580-Ledger-Nano-X-firmware-release-notes?docs=true",
+  },
   lnxFirmwareUpdate:
     "https://support.ledger.com/hc/en-us/articles/9305992683165?docs=true",
   recoverSources: {

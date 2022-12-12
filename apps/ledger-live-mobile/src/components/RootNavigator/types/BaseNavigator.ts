@@ -37,14 +37,12 @@ import type { PlatformExchangeNavigatorParamList } from "./PlatformExchangeNavig
 import type { ExchangeStackNavigatorParamList } from "./ExchangeStackNavigator";
 import type { ExchangeNavigatorParamList } from "./ExchangeNavigator";
 import type { ExchangeLiveAppNavigatorParamList } from "./ExchangeLiveAppNavigator";
-import type { FirmwareUpdateNavigatorParamList } from "./FirmwareUpdateNavigator";
 import type { RequestAccountNavigatorParamList } from "./RequestAccountNavigator";
 import type { AddAccountsNavigatorParamList } from "./AddAccountsNavigator";
 import type { ClaimRewardsNavigatorParamList } from "./ClaimRewardsNavigator";
 import type { UnfreezeNavigatorParamList } from "./UnfreezeNavigator";
 import type { FreezeNavigatorParamList } from "./FreezeNavigator";
 import type { BuyDeviceNavigatorParamList } from "./BuyDeviceNavigator";
-import type { MainNavigatorParamList } from "./MainNavigator";
 import type { WalletConnectNavigatorParamList } from "./WalletConnectNavigator";
 import type { WalletConnectLiveAppNavigatorParamList } from "./WalletConnectLiveAppNavigator";
 import type { PostOnboardingNavigatorParamList } from "./PostOnboardingNavigator";
@@ -96,11 +94,7 @@ export type PathToDeviceParam = PropertyPath;
 export type NavigationType = "navigate" | "replace" | "push";
 
 export type BaseNavigatorStackParamList = {
-  [NavigatorName.Main]:
-    | (NavigatorScreenParams<MainNavigatorParamList> & {
-        hideTabNavigation?: boolean;
-      })
-    | undefined;
+  [NavigatorName.Main]: undefined;
   [NavigatorName.BuyDevice]:
     | NavigatorScreenParams<BuyDeviceNavigatorParamList>
     | undefined;
@@ -240,7 +234,6 @@ export type BaseNavigatorStackParamList = {
     onError?: (_: Error) => void;
     error?: Error;
   };
-  [NavigatorName.FirmwareUpdate]: NavigatorScreenParams<FirmwareUpdateNavigatorParamList>;
   [NavigatorName.Exchange]:
     | NavigatorScreenParams<ExchangeLiveAppNavigatorParamList>
     | NavigatorScreenParams<ExchangeNavigatorParamList>
