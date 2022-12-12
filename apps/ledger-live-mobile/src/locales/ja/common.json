@@ -518,7 +518,7 @@
       "title" : "凍結額を1未満にすることはできません。"
     },
     "TronSendTrc20ToNewAccountForbidden" : {
-      "title" : "新しいアカウントにTRC20トークンを送金してもアクティブ化されません。",
+      "title" : "TRC20の受け取りを有効化するには、まず新しいアカウントに0.1 TRX以上を送る必要があります。",
       "description" : "有効化するには、TRXまたはTRC10トークンをアカウントに送金してください。その後、アカウントでTRC20トークンの受取が可能になります。"
     },
     "TronUnexpectedFees" : {
@@ -750,6 +750,30 @@
     },
     "HederaAddAccountError" : {
       "title" : "アカウントが追加されていません。もう一度お試しください。"
+    },
+    "NearNewAccountWarning" : {
+      "title" : "受取人アカウントはまだ作成されていません。このプロトコルでは、作成するのに{{formattedNewAccountStorageCost}}の転送コストが必要です。"
+    },
+    "NearNewNamedAccountError" : {
+      "title" : "受取人アカウントはまだ作成されていません。NEARウォレットで作成する必要があります。"
+    },
+    "NearActivationFeeNotCovered" : {
+      "title" : "この量は、{{formattedNewAccountStorageCost}}の保管コストをカバーしていません。"
+    },
+    "NearUseAllAmountStakeWarning" : {
+      "title" : "今後のトランザクション手数料に十分な残高を、確保しておいてください。"
+    },
+    "NearNotEnoughStaked" : {
+      "title" : "ステーキング済み残高が不十分です"
+    },
+    "NearNotEnoughAvailable" : {
+      "title" : "引き出し可能残高が不十分です"
+    },
+    "NearRecommendUnstake" : {
+      "title" : "アカウントを空にする前に、資金のステーキングを解除して引き出してください"
+    },
+    "NearStakingThresholdNotMet" : {
+      "title" : "{{threshold}}以上の数量が必要です。"
     },
     "PriorityFeeTooLow" : {
       "title" : "優先手数料が推奨手数料より低額です"
@@ -1717,8 +1741,14 @@
         "subtitle" : "{{productName}}のコードを確認してください"
       },
       "error" : {
-        "title" : "ペアリング失敗",
-        "subtitle" : "何か問題が発生したようです。\nBluetoothがオンになっており、{{productName}}が近くにあることをご確認ください。",
+        "generic" : {
+          "title" : "ペアリング失敗",
+          "subtitle" : "何か問題が発生したようです。\nBluetoothがオンになっており、{{productName}}が近くにあることをご確認ください。"
+        },
+        "lockedDevice" : {
+          "title" : "デバイスがロックされています。",
+          "subtitle" : "{{ productName }}のロックを解除して、再度お試しください。"
+        },
         "retryCta" : "再試行"
       }
     }
@@ -1902,6 +1932,9 @@
       "title" : "トランザクションがありません。",
       "desc" : "暗号資産を受取アドレスに送金して、アプリが同期するのを待ちましょう。"
     },
+    "carousel" : {
+      "title" : "お客様へ"
+    },
     "recommended" : {
       "title" : "おすすめ"
     },
@@ -2001,7 +2034,10 @@
       "UNLOCK" : "ロック解除されました",
       "REVOKE" : "取り消されました",
       "REGISTER" : "登録されました",
-      "WITHDRAW" : "引き出し済み"
+      "WITHDRAW" : "引き出し済み",
+      "STAKE" : "ステーキング済み",
+      "UNSTAKE" : "ステーキング解除済み",
+      "WITHDRAW_UNSTAKED" : "引き出し済み"
     }
   },
   "operationDetails" : {
@@ -2062,7 +2098,8 @@
       "storageLimit" : "ストレージ上限",
       "gasLimit" : "ガスリミット",
       "id" : "ID",
-      "autoClaimedRewards" : "自動獲得報酬"
+      "autoClaimedRewards" : "自動獲得報酬",
+      "stakedAmount" : "ステーキング済み量"
     },
     "multipleAddresses" : "なぜ複数のアドレスがあるのですか？",
     "tokenName" : "トークン名",
@@ -2350,8 +2387,8 @@
     "display" : {
       "title" : "一般",
       "desc" : "Ledger Liveの一般設定を変更します。",
-      "carousel" : "カルーセルの表示／非表示",
-      "carouselDesc" : "ポートフォリオ上でカルーセルの表示を有効化",
+      "carousel" : "おすすめ",
+      "carouselDesc" : "お客様用にパーソナライズされたヒントと最新のオファーが記載されたカードをお見せします。",
       "language" : "表示言語",
       "languageDesc" : "Ledger Liveの表示言語を設定。",
       "region" : "地域",
@@ -2464,7 +2501,7 @@
       },
       "allowed" : {
         "title" : "通知を許可",
-        "desc" : "暗号資産、マーケットの傾向に関する通知を受け取る"
+        "desc" : "暗号資産、市場動向などに関する通知を受け取る"
       },
       "transactions" : {
         "title" : "トランザクション",
@@ -2486,7 +2523,7 @@
         "title" : "価格アラート",
         "desc" : "お気に入りのコインの価格アラートを設定して、市場の動きを見逃さないようにしましょう"
       },
-      "disclaimer" : "Ledgerでは、データとプライバシーを最も重視しています。収集されたデータが当社パートナーと共有されることはありません。"
+      "disclaimer" : "お客様のデータとプライバシーは、Ledgerにとって重要です。収集されたデータが当社パートナーと共有されることはありません。"
     },
     "help" : {
       "title" : "ヘルプ",
@@ -4690,6 +4727,9 @@
         "title" : "候補者",
         "description" : "トークン所有者コミュニティ全体の投票によって123人が選出されました。投票は6時間ごとに集計されます。"
       }
+    },
+    "receive" : {
+      "newAddressTRC20" : "有効化するには、こちらのアドレスに0.1 TRX以上を送る必要があります。"
     }
   },
   "stellar" : {
@@ -5015,6 +5055,118 @@
       "delegatedTo" : "デリゲート先：",
       "started" : {
         "description" : "SOL資産をバリデーターにデリゲートすることで報酬を得ることができます。"
+      }
+    }
+  },
+  "near" : {
+    "info" : {
+      "available" : {
+        "title" : "利用可能なNEAR",
+        "description" : "これは利用可能額です。"
+      },
+      "storageUsage" : {
+        "title" : "最低残高",
+        "description" : "この量は保管とトランザクション用に確保されており、アカウントを有効にしておくために維持する必要がある最低残高です。"
+      },
+      "staked" : {
+        "title" : "ステーキング済み残高",
+        "description" : "この量は現在、バリデーターにステーキングされています。"
+      },
+      "pending" : {
+        "title" : "保留中残高",
+        "description" : "この量はステーキング解除されており、現在利用可能待ちです。"
+      },
+      "withdrawable" : {
+        "title" : "出金可能残高",
+        "description" : "この数量はステーキング解除されており、現在出金可能です。"
+      },
+      "stakingUnavailable" : {
+        "title" : "ステーキングは利用できません",
+        "description" : "アカウントに、ステーキング、ステーキング解除、および引き出しに十分な残高がありません。"
+      }
+    },
+    "unstaking" : {
+      "stepperHeader" : {
+        "amountSubTitle" : "ステーキングを解除する数量"
+      },
+      "flow" : {
+        "steps" : {
+          "verification" : {
+            "success" : {
+              "title" : "資産のステーキングを正常に解除しました"
+            }
+          }
+        }
+      }
+    },
+    "withdrawing" : {
+      "stepperHeader" : {
+        "amountSubTitle" : "引き出す数量"
+      },
+      "flow" : {
+        "steps" : {
+          "verification" : {
+            "success" : {
+              "title" : "資産の引き出しに成功しました"
+            }
+          }
+        }
+      }
+    },
+    "staking" : {
+      "sectionLabel" : "ステーキングポジション",
+      "info" : "ステーキングの仕組み",
+      "add" : "追加",
+      "stakingEarn" : "資産をステーキングして、NEARの報酬を獲得できます。",
+      "totalStake" : "合計ステーキング量",
+      "commission" : "コミッション",
+      "iStake" : "ステーキングします",
+      "actions" : {
+        "unstake" : "ステーキング解除",
+        "withdraw" : "引き出す"
+      },
+      "drawer" : {
+        "status" : "ステータス",
+        "active" : "アクティブ",
+        "inactive" : "停止中",
+        "rewards" : "報酬",
+        "pending" : "保留中",
+        "available" : "引き出し可能"
+      },
+      "stepperHeader" : {
+        "amountSubTitle" : "ステーキングする数量",
+        "selectDevice" : "デバイスを選択",
+        "connectDevice" : "デバイスを接続",
+        "stepRange" : "ステップ{{currentStep}}/{{totalSteps}}"
+      },
+      "flow" : {
+        "steps" : {
+          "starter" : {
+            "description" : "資産を管理しながら、NEARをステーキングして報酬を獲得しましょう。",
+            "steps" : {
+              "0" : "資産をステーキングしても、資産の所有者はお客様のままです。",
+              "1" : "ステーキング解除が完了するまで52〜65時間待つ必要があります。",
+              "2" : "Ledgerデバイスを使って安全にステーキングできます。"
+            },
+            "warning" : {
+              "description" : "バリデーターを賢く選択：バリデーターが適切に動作しない場合、ステーキングされた資産の一部が失われて、取り返せない可能性があります。"
+            },
+            "cta" : "続行"
+          },
+          "amount" : {
+            "assetsRemaining" : "残りの資産：<0>{{amount}}</0>",
+            "allAssetsUsed" : "全ての資産を使用中",
+            "minAmount" : "最低金額: <0>{{min}}</0>",
+            "incorrectAmount" : "最大金額: <0>{{max}}</0>",
+            "cta" : "続行"
+          },
+          "verification" : {
+            "success" : {
+              "title" : "資産が正常にステーキングされました",
+              "text" : "ネットワークによるトランザクションの承認後、アカウントの残高が更新されます。"
+            }
+          }
+        }
       }
     }
   },
@@ -5454,7 +5606,8 @@
     "drawer" : {
       "title" : "画像を選択してください",
       "options" : {
-        "uploadFromPhone" : "携帯電話からアップロードする"
+        "uploadFromPhone" : "画像ギャラリーから選択",
+        "selectFromNFTGallery" : "NFTギャラリーから選択"
       }
     },
     "cropImage" : "画像をトリミング",
@@ -5479,6 +5632,9 @@
       "loading" : "プレビューの読み込み中",
       "setPicture" : "カスタム画像を設定する",
       "editPicture" : "画像を編集"
+    },
+    "nftGallery" : {
+      "title" : "私のNFT"
     }
   },
   "postOnboarding" : {
