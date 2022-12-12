@@ -1,5 +1,5 @@
-export const descriptionCardA = `
-### A simple content card A.
+export const descriptionFullBackgroundCard = `
+### A simple content card with a full background.
 
 This simple card implementation component allows to display specific content for users
 
@@ -9,7 +9,7 @@ This simple card implementation component allows to display specific content for
 ### Import  
 \`\`\`ts
 
-import { CardA } from "@ledgerhq/native-ui"
+import { FullBackgroundCard } from "@ledgerhq/native-ui"
 \`\`\`
 
 
@@ -32,10 +32,9 @@ Use the tag <bold>YourText</bold> in description if you want to highlight some t
 
 \`\`\`ts
 
-const MyCardA = (): JSX.Element => {
-
+const MyCard = (): JSX.Element => {
   return (
-    <CardA
+    <FullBackgroundCard
       variant="purple"
       tag="Promo"
       description="Lorem <bold>ipsum</bold> dolor sit amet, consectetur adipiscing elit."
@@ -45,8 +44,8 @@ const MyCardA = (): JSX.Element => {
 \`\`\`
 `;
 
-export const descriptionCardB = `
-### A simple content card B.
+export const descriptionSideImageCard = `
+### A simple content card with a side image.
 
 This simple card implementation component allows to display specific content for users
 
@@ -56,7 +55,7 @@ This simple card implementation component allows to display specific content for
 ### Import  
 \`\`\`ts
 
-import { CardB } from "@ledgerhq/native-ui"
+import { SideImageCard } from "@ledgerhq/native-ui"
 \`\`\`
 
 
@@ -82,7 +81,7 @@ const MyCard = (): JSX.Element => {
 const onPress = ()=> console.log("PRESS")
 const onPressDismiss = ()=> console.log("DISMISS")
   return (
-    <CardB 
+    <SideImageCard 
       tag="Promo" 
       title="Announcement for promotion" 
       cta="Click"
@@ -95,8 +94,8 @@ const onPressDismiss = ()=> console.log("DISMISS")
 \`\`\`
 `;
 
-export const descriptionCardC = `
-### A simple content card C.
+export const descriptionNotificationCard = `
+### A simple content card for Notifications.
 
 This simple card implementation component allows to display specific content for users
 
@@ -106,7 +105,7 @@ This simple card implementation component allows to display specific content for
 ### Import  
 \`\`\`ts
 
-import { CardC } from "@ledgerhq/native-ui"
+import { NotificationCard } from "@ledgerhq/native-ui"
 \`\`\`
 
 
@@ -132,7 +131,7 @@ const MyCard = (): JSX.Element => {
 const onPress = ()=> console.log("PRESS")
 const onPressDismiss = ()=> console.log("DISMISS")
   return (
-    <CardC
+    <NotificationCard
       tag="Promo" 
       title="Announcement" 
       description="Announcement for promotion" 
