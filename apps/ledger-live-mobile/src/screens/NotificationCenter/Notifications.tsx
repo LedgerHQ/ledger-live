@@ -29,8 +29,7 @@ import getWindowDimensions from "../../logic/getWindowDimensions";
 
 const { height } = getWindowDimensions();
 
-const Container = styled(SettingsNavigationScrollView)`
-`;
+const Container = styled(SettingsNavigationScrollView)``;
 const AnimatedView = Animated.createAnimatedComponent(View);
 const RemoveContainer = styled(TouchableHighlight)`
   background-color: ${p => p.theme.colors.neutral.c30};
@@ -224,7 +223,12 @@ export default function NotificationCenter() {
             <Box height={1} width="100%" backgroundColor="neutral.c30" />
           )}
           ListEmptyComponent={
-            <Flex alignItems="center" justifyContent="center" height={height * 0.7} px={6}>
+            <Flex
+              alignItems="center"
+              justifyContent="center"
+              height={height * 0.7}
+              px={6}
+            >
               <Text
                 variant="large"
                 fontWeight="semiBold"

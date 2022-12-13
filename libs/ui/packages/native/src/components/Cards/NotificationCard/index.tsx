@@ -44,7 +44,17 @@ const Timer = ({ time, viewed }: { time: string; viewed: boolean }) => (
 );
 
 const NotificationCard = (props: CardProps): React.ReactElement => {
-  const { tag = "", time = "", title, description, cta, viewed, onClickCard, showLinkCta, link = "" } = props;
+  const {
+    tag = "",
+    time = "",
+    title,
+    description,
+    cta,
+    viewed,
+    onClickCard,
+    showLinkCta,
+    link = "",
+  } = props;
 
   const ctaIcon = useMemo(() => {
     const isDeepLink = link?.startsWith("ledgerlive:");
