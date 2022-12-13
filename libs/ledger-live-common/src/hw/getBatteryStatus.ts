@@ -24,13 +24,13 @@ enum FlagMasks {
 
 const getBatteryStatus = async (
   transport: Transport,
-  p1: BatteryStatusTypes = BatteryStatusTypes.BATTERY_FLAGS
+  p2: BatteryStatusTypes = BatteryStatusTypes.BATTERY_FLAGS
 ): Promise<BatteryStatusFlags | number> => {
-  const res = await transport.send(0xe0, 0x10, 0x00, p1);
+  const res = await transport.send(0xe0, 0x10, 0x00, p2);
   const status = res.readUInt16BE(res.length - 2);
 
   if (status === StatusCodes.OK) {
-    switch (p1) {
+    switch (p2) {
       case BatteryStatusTypes.BATTERY_PERCENTAGE: {
         // Nb values greater that 100 would mean a bad case
         // to be assessed if we want to break the flow.

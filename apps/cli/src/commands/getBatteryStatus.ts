@@ -1,6 +1,7 @@
-import { from } from "rxjs";
+import { Observable, from } from "rxjs";
 import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";
 import getBatteryStatus, { BatteryStatusTypes } from "@ledgerhq/live-common/hw/getBatteryStatus";
+import { BatteryStatusFlags } from "@ledgerhq/types-devices";
 import { currencyOpt, deviceOpt, inferCurrency } from "../scan";
 export default {
   description:
@@ -9,7 +10,7 @@ export default {
     currencyOpt,
     deviceOpt,
     {
-      name: "p1",
+      name: "p2",
       type: String,
       desc: "What type of request to run (00-04)",
     },
@@ -17,8 +18,8 @@ export default {
   job: (
     arg: Partial<{
       device: string;
-      p1: string;
+      p2: string;
     }>
-  ): any =>
-    withDevice(arg.device || "")((t) => from(getBatteryStatus(t, parseInt(arg.p1 || "0") as BatteryStatusTypes)))
+  ): Observable<BatteryStatusFlags | number> =>
+    withDevice(arg.device || "")((t) => from(getBatteryStatus(t, parseInt(arg.p2 || "0") as BatteryStatusTypes)))
 };
