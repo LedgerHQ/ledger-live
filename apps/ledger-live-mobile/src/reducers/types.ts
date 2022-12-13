@@ -2,6 +2,8 @@ import type {
   Account,
   DeviceInfo,
   DeviceModelInfo,
+  Feature,
+  FeatureId,
   PortfolioRange,
 } from "@ledgerhq/types-live";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
@@ -210,6 +212,7 @@ export type SettingsState = {
   };
   notifications: NotificationsSettings;
   walletTabNavigatorLastVisitedTab: keyof WalletTabNavigatorStackParamList;
+  overriddenFeatureFlags: { [key in FeatureId]?: Feature | undefined };
 };
 
 export type NotificationsSettings = {

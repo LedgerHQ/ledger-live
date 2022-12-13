@@ -5,7 +5,12 @@ import type {
   ImportAccountsReduceInput,
 } from "@ledgerhq/live-common/account/index";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
-import type { Account, DeviceModelInfo } from "@ledgerhq/types-live";
+import type {
+  Account,
+  DeviceModelInfo,
+  Feature,
+  FeatureId,
+} from "@ledgerhq/types-live";
 import type { Payload as PostOnboardingPayload } from "@ledgerhq/live-common/postOnboarding/reducer";
 import { Transaction } from "@ledgerhq/live-common/generated/types";
 import { ExchangeRate } from "@ledgerhq/live-common/exchange/swap/types";
@@ -271,6 +276,8 @@ export enum SettingsActionTypes {
   SET_NOTIFICATIONS = "SET_NOTIFICATIONS",
   RESET_SWAP_LOGIN_AND_KYC_DATA = "RESET_SWAP_LOGIN_AND_KYC_DATA",
   WALLET_TAB_NAVIGATOR_LAST_VISITED_TAB = "WALLET_TAB_NAVIGATOR_LAST_VISITED_TAB",
+  SET_OVERRIDDEN_FEATURE_FLAG = "SET_OVERRIDDEN_FEATURE_FLAG",
+  SET_OVERRIDDEN_FEATURE_FLAGS = "SET_OVERRIDDEN_FEATURE_FLAGS",
 }
 
 export type SettingsImportPayload = Partial<SettingsState>;
@@ -417,6 +424,14 @@ export type SettingsSetWalletTabNavigatorLastVisitedTabPayload = Pick<
   "walletTabNavigatorLastVisitedTab"
 >;
 export type SettingsDangerouslyOverrideStatePayload = State;
+export type SettingsSetOverriddenFeatureFlagPlayload = {
+  id: FeatureId;
+  value: Feature | undefined;
+};
+export type SettingsSetOverriddenFeatureFlagsPlayload = Pick<
+  SettingsState,
+  "overriddenFeatureFlags"
+>;
 export type SettingsPayload =
   | SettingsImportPayload
   | SettingsImportDesktopPayload
@@ -460,7 +475,9 @@ export type SettingsPayload =
   | SettingsSetSensitiveAnalyticsPayload
   | SettingsSetFirstConnectHasDeviceUpdatedPayload
   | SettingsSetNotificationsPayload
-  | SettingsDangerouslyOverrideStatePayload;
+  | SettingsDangerouslyOverrideStatePayload
+  | SettingsSetOverriddenFeatureFlagPlayload
+  | SettingsSetOverriddenFeatureFlagsPlayload;
 
 // === WALLET CONNECT ACTIONS ===
 

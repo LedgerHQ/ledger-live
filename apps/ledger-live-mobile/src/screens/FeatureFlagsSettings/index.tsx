@@ -127,7 +127,7 @@ export default function DebugFeatureFlags() {
                 <Icons.PlusMedium color="neutral.c70" />
               </InputRenderLeftContainer>
             )}
-            placeholder="Add missing flag (instructions above)"
+            placeholder="Add missing flag (instructions below)"
             onChange={handleAddHiddenFlag}
             autoCapitalize="none"
           />

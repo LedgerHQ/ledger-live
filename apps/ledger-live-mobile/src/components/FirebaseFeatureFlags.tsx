@@ -1,5 +1,5 @@
-import React, { PropsWithChildren, useCallback, useState } from "react";
-import { useSelector } from "react-redux";
+import React, { PropsWithChildren, useCallback } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import isEqual from "lodash/isEqual";
 import semver from "semver";
 import remoteConfig from "@react-native-firebase/remote-config";
@@ -12,7 +12,11 @@ import { FeatureId, Feature } from "@ledgerhq/types-live";
 import { getEnv } from "@ledgerhq/live-common/env";
 
 import { formatFeatureId } from "./FirebaseRemoteConfig";
-import { languageSelector } from "../reducers/settings";
+import {
+  languageSelector,
+  overriddenFeatureFlagsSelector,
+} from "../reducers/settings";
+import { setOverriddenFeatureFlag } from "../actions/settings";
 
 const checkFeatureFlagVersion = (feature: Feature | undefined) => {
   if (
@@ -102,7 +106,8 @@ export const getAllDivergedFlags = (
 };
 
 export const FirebaseFeatureFlagsProvider: React.FC<Props> = ({ children }) => {
-  const [localOverrides, setLocalOverrides] = useState({});
+  const localOverrides = useSelector(overriddenFeatureFlagsSelector);
+  const dispatch = useDispatch();
 
   const appLanguage = useSelector(languageSelector);
 
@@ -116,25 +121,16 @@ export const FirebaseFeatureFlagsProvider: React.FC<Props> = ({ children }) => {
       if (!isEqual(actualRemoteValue, value)) {
         const { overriddenByEnv: _, ...pureValue } = value;
         const overridenValue = { ...pureValue, overridesRemote: true };
-        setLocalOverrides(currentOverrides => ({
-          ...currentOverrides,
-          [key]: overridenValue,
-        }));
+        dispatch(setOverriddenFeatureFlag(key, overridenValue));
       } else {
-        setLocalOverrides(currentOverrides => ({
-          ...currentOverrides,
-          [key]: undefined,
-        }));
+        dispatch(setOverriddenFeatureFlag(key, undefined));
       }
     },
-    [appLanguage],
+    [appLanguage, dispatch],
   );
 
   const resetFeature = (key: FeatureId): void => {
-    setLocalOverrides(currentOverrides => ({
-      ...currentOverrides,
-      [key]: undefined,
-    }));
+    dispatch(setOverriddenFeatureFlag(key, undefined));
   };
 
   // Nb wrapped because the method is also called from outside.
