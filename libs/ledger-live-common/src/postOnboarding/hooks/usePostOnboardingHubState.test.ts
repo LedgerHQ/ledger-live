@@ -22,6 +22,7 @@ const mockedGetFeatureWithMockFeatureEnabled = (enabled) => ({
   },
   overrideFeature: () => {},
   resetFeature: () => {},
+  resetFeatures: () => {},
 });
 
 const mockedUsePostOnboardingContext = jest.mocked(usePostOnboardingContext);

@@ -16,7 +16,10 @@ import {
   languageSelector,
   overriddenFeatureFlagsSelector,
 } from "../reducers/settings";
-import { setOverriddenFeatureFlag } from "../actions/settings";
+import {
+  setOverriddenFeatureFlag,
+  setOverriddenFeatureFlags,
+} from "../actions/settings";
 
 const checkFeatureFlagVersion = (feature: Feature | undefined) => {
   if (
@@ -133,6 +136,10 @@ export const FirebaseFeatureFlagsProvider: React.FC<Props> = ({ children }) => {
     dispatch(setOverriddenFeatureFlag(key, undefined));
   };
 
+  const resetFeatures = (): void => {
+    dispatch(setOverriddenFeatureFlags({}));
+  };
+
   // Nb wrapped because the method is also called from outside.
   const wrappedGetFeature = useCallback(
     (key: FeatureId): Feature =>
@@ -145,6 +152,7 @@ export const FirebaseFeatureFlagsProvider: React.FC<Props> = ({ children }) => {
       getFeature={wrappedGetFeature}
       overrideFeature={overrideFeature}
       resetFeature={resetFeature}
+      resetFeatures={resetFeatures}
     >
       {children}
     </FeatureFlagsProvider>
