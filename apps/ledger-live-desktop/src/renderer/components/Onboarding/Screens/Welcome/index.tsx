@@ -6,6 +6,7 @@ import styled, { useTheme } from "styled-components";
 import { openURL } from "~/renderer/linking";
 import LangSwitcher from "~/renderer/components/Onboarding/LangSwitcher";
 import { urls } from "~/config/urls";
+import { acceptTerms } from "~/renderer/terms";
 import { Text, Button, Logos, Icons, InvertThemeV3, Flex } from "@ledgerhq/react-ui";
 
 import BuyNanoX from "./assets/buyNanoX.webm";
@@ -126,6 +127,11 @@ export function Welcome() {
     }, 1000);
   }, []);
 
+  const handleAcceptTermsAndGetStarted = useCallback(() => {
+    acceptTerms();
+    history.push("/onboarding/select-device");
+  }, [history]);
+
   useEffect(() => {
     return () => {
       if (timeout.current) clearTimeout(timeout.current);
@@ -155,7 +161,7 @@ export function Welcome() {
             iconPosition="right"
             Icon={Icons.ArrowRightMedium}
             variant="main"
-            onClick={() => history.push("/onboarding/select-device")}
+            onClick={handleAcceptTermsAndGetStarted}
             mb="24px"
           >
             {t("onboarding.screens.welcome.nextButton")}
