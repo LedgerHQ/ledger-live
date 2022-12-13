@@ -2,6 +2,7 @@
 export type FeatureId =
   | "learn"
   | "brazePushNotifications"
+  | "brazeLearn"
   | "llmNewDeviceSelection"
   | "llmUsbFirmwareUpdate"
   | "ratings"
