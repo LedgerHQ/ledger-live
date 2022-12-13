@@ -5,7 +5,7 @@ import { NFTStandard } from "./nft";
 /**
  *
  */
-export type OperationType =
+export type OperationType = 
   | "IN"
   | "OUT"
   | "NONE"

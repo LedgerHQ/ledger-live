@@ -17,5 +17,4 @@ export default {
   filecoin,
   near,
   polkadot,
-  zilliqa,
 };

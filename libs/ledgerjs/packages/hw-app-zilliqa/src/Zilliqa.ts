@@ -108,19 +108,22 @@ export default class Zilliqa {
     });
   }
 
-  async getPathParametersFromPath(path: string): Promise<{
+  async getPathParametersFromPath(
+    path: string
+  ): Promise<{
     account: number;
     change: number;
     index: number;
     fullProtocol: boolean;
   }> {
-    // Test with: pnpm build:cli getAddress --currency zilliqa --path "44'/313'/0'/1'/0'" --derivationMode "etcM"
+    // Test with: pnpm build:cli getAddress --currency zilliqa --path "44'/313'/0'/1'/0'" --derivationMode "zilliqaL"
     // pnpm build:cli signMessage --currency zilliqa --path "44'/313'/0'/1'/0'" --message "hello world"
     // Validating that initial part of the path is hardened and starts
     // with `44'/313'/n'`.
+    console.log("Accessing ", path);
     const pathParts = path.split("/");
     if (pathParts.length !== 5) {
-      throw Error("Only valid BIP44 paths are supported.");
+      throw Error("Only valid BIP44 paths are supported. Path: " + path);
     }
 
     const [purposeStr, coinStr, accountStr, changeStr, indexStr] = pathParts;
@@ -176,11 +179,17 @@ export default class Zilliqa {
       // By forcing the correct input, we ensure that wallets will be forward
       // comaptible.
       if (index !== HARDEN_CONSTANT) {
-        throw new Error("Path 'index' must be hardended and equal to zero");
+        throw new Error(
+          "Path 'index' must be hardended and equal to zero for versions below v 0.5. Path: " +
+            path
+        );
       }
 
       if (change !== HARDEN_CONSTANT) {
-        throw new Error("Path 'change' must be hardended and equal to zero");
+        throw new Error(
+          "Path 'change' must be hardended and equal to zero for versions below v 0.5. Path: " +
+            path
+        );
       }
     }
 
@@ -199,7 +208,9 @@ export default class Zilliqa {
    * @example
    * zilliqa.getAddress("44'/313'/0'/0/0", "zilliqa").then(o => o.address)
    */
-  async getAddress(path: string): Promise<{
+  async getAddress(
+    path: string
+  ): Promise<{
     publicKey: string;
     address: string;
   }> {
@@ -243,8 +254,12 @@ export default class Zilliqa {
     message: string
   ): Promise<{ signature: null | Buffer; returnCode: number }> {
     // Getting path parameters
-    const { account, change, index, fullProtocol } =
-      await this.getPathParametersFromPath(path);
+    const {
+      account,
+      change,
+      index,
+      fullProtocol,
+    } = await this.getPathParametersFromPath(path);
 
     // If we are using the full protocol, we add change and index
     // as well to the parameters. Note that this is unfortunately not backward compatible.
@@ -324,8 +339,12 @@ export default class Zilliqa {
     message: string
   ): Promise<{ signature: null | Buffer; returnCode: number }> {
     // Getting path parameters
-    const { account, change, index, fullProtocol } =
-      await this.getPathParametersFromPath(path);
+    const {
+      account,
+      change,
+      index,
+      fullProtocol,
+    } = await this.getPathParametersFromPath(path);
 
     const params = Buffer.alloc(fullProtocol ? 12 : 4);
     params.writeUInt32LE(account, 0);
