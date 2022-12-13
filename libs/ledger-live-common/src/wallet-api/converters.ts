@@ -1,4 +1,5 @@
 import { Account, AccountLike } from "@ledgerhq/types-live";
+import { v5 as uuidv5 } from "uuid";
 import byFamily from "../generated/platformAdapter";
 import type { Transaction } from "../generated/types";
 import { isTokenAccount, isSubAccount } from "../account";
@@ -10,17 +11,28 @@ import {
 } from "./types";
 import { Families } from "@ledgerhq/wallet-api-core";
 
+// The namespace is a randomly generated uuid v4 from https://www.uuidgenerator.net/
+const NAMESPACE = "c3c78073-6844-409e-9e75-171ab4c7f9a2";
+const uuidToAccountId = new Map<string, string>();
+
+export const getAccountIdFromWalletAccountId = (
+  walletAccountId: string
+): string | undefined => uuidToAccountId.get(walletAccountId);
+
 export function accountToWalletAPIAccount(
   account: AccountLike,
   parentAccount?: Account
 ): WalletAPIAccount {
+  const walletApiId = uuidv5(account.id, NAMESPACE);
+  uuidToAccountId.set(walletApiId, account.id);
+
   if (isSubAccount(account)) {
     if (!parentAccount) {
       throw new Error("No 'parentAccount' account provided for token account");
     }
 
     return {
-      id: account.id,
+      id: walletApiId,
       balance: account.balance,
       address: parentAccount.freshAddress,
       blockHeight: parentAccount.blockHeight,
@@ -40,7 +52,7 @@ export function accountToWalletAPIAccount(
   }
 
   return {
-    id: account.id,
+    id: walletApiId,
     name: account.name,
     address: account.freshAddress,
     currency: account.currency.id,
