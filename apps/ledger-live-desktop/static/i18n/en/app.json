@@ -3710,7 +3710,7 @@
       "experimentalApps": "Allow experimental apps",
       "experimentalAppsDesc": "Display and allow opening experimental tagged platform apps.",
       "catalogServer": "Set the catalog provider",
-      "catalogServerDesc": "Switch between multiple platform apps sources",
+      "catalogServerDesc": "Enter your custom catalog provider URL",
       "enablePlatformDevTools": "Enable platform dev tools",
       "enablePlatformDevToolsDesc": "Enable opening platform apps dev tools window",
       "featureFlagsTitle": "Defined feature flags used in Ledger Live",

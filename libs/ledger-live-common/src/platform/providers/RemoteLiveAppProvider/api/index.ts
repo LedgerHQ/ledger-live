@@ -19,15 +19,22 @@ const api = {
       }
       return mockData as LiveAppManifest[];
     }
-    const { data }: { data: LiveAppManifest[] } = await network({
-      method: "GET",
-      params,
-      paramsSerializer: (params) => {
-        return qs.stringify(params, { arrayFormat: "repeat" });
-      },
-      url,
-    });
-    return data;
+    try {
+      const { data }: { data: LiveAppManifest[] } = await network({
+        method: "GET",
+        params,
+        paramsSerializer: (params) => {
+          return qs.stringify(params, { arrayFormat: "repeat" });
+        },
+        url,
+      });
+
+      if (!Array.isArray(data)) throw new Error("Response is not an Array");
+      return data;
+    } catch (e) {
+      console.error(e);
+      return [];
+    }
   },
 };
 export default api;
