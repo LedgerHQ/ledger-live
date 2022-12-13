@@ -176,7 +176,7 @@ export function orchestrator(app: Probot) {
             owner,
             repo,
             workflow_id: fileName,
-            ref: payload.workflow_run.head_sha,
+            ref: payload.workflow_run.head_branch,
             inputs: workflow.getInputs(payload),
           });
         }
