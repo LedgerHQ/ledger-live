@@ -1,11 +1,10 @@
 // @flow
-import React, { useCallback, useState, useRef, useEffect } from "react";
+import React, { useCallback, useState, useRef, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Trans } from "react-i18next";
 import { track } from "~/renderer/analytics/segment";
 import Box from "~/renderer/components/Box";
 import Text from "~/renderer/components/Text";
-import DecentralisedRate from "./DecentralisedRate";
 import CentralisedRate from "./CentralisedRate";
 import Countdown from "./Countdown";
 import EmptyState from "./EmptyState";
@@ -20,7 +19,7 @@ import { swapDefaultTrack } from "../../utils/index";
 import styled from "styled-components";
 import Tooltip from "~/renderer/components/Tooltip";
 import IconInfoCircle from "~/renderer/icons/InfoCircle";
-import { DEX_PROVIDERS, FILTER } from "../utils";
+import { filterRates } from "./filterRates";
 
 type Props = {
   fromCurrency: $PropertyType<SwapSelectorStateType, "currency">,
@@ -57,88 +56,53 @@ export default function ProviderRate({
   updateSelection,
   refreshTime,
   countdown,
-  decentralizedSwapAvailable,
 }: Props) {
   const dispatch = useDispatch();
-  const [dexSelected, setDexSelected] = useState(null);
   const [filter, setFilter] = useState([]);
   const [defaultPartner, setDefaultPartner] = useState("");
-  const [emptyState, setEmptyState] = useState(false);
   const selectedRate = useSelector(rateSelector);
 
   const providerRef = useRef(null);
 
-  const setRate = useCallback(
+  const filteredRates = useMemo(() => {
+    return filterRates(rates, filter);
+  }, [rates, filter]);
+
+  const updateRate = useCallback(
     rate => {
+      const buttonName = rate.providerType === "CEX" ? "Partner Chosen" : "Partner Dex Chosen";
+      const value = rate ?? rate.provider;
       track("partner_clicked", {
-        button: "Partner Chosen",
+        button: buttonName,
         page: "Page Swap Form",
         ...swapDefaultTrack,
         swap_type: rate.tradeMethod,
-        value: rate,
+        value,
         defaultPartner,
       });
-      setDexSelected(null);
       updateSelection(rate);
       dispatch(updateRateAction(rate));
     },
     [defaultPartner, updateSelection, dispatch],
   );
 
-  const setDexRate = useCallback(
-    provider => {
-      track("partner_clicked", {
-        button: "Partner Dex Chosen",
+  const updateFilter = useCallback(
+    newFilter => {
+      track("button_clicked", {
+        button: "Filter selected",
         page: "Page Swap Form",
         ...swapDefaultTrack,
-        swap_type: "float",
-        value: provider,
-        defaultPartner,
+        value: newFilter,
       });
-      setDexSelected(provider);
-      updateSelection(provider);
-    },
-    [defaultPartner, updateSelection],
-  );
-
-  useEffect(() => {
-    track("button_clicked", {
-      button: "Filter selected",
-      page: "Page Swap Form",
-      ...swapDefaultTrack,
-      value: filter,
-    });
-    if (filter.includes(FILTER.decentralised)) {
-      setDexRate(DEX_PROVIDERS[0]);
-      setDefaultPartner(DEX_PROVIDERS[0].name);
-    } else {
-      let selectedRate;
-      if (filter.includes(FILTER.float)) {
-        selectedRate = rates.find(rate => rate.tradeMethod === FILTER.float);
-      } else if (filter.includes(FILTER.fixed)) {
-        selectedRate = rates.find(rate => rate.tradeMethod === FILTER.fixed);
-      } else {
-        selectedRate = rates && rates[0];
+      setFilter(newFilter);
+      const first = filterRates(rates, newFilter)[0];
+      if (first) {
+        updateRate(first);
+        setDefaultPartner(first.provider);
       }
-      setRate(selectedRate || {});
-      setDefaultPartner(selectedRate?.provider);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [filter]);
-
-  useEffect(() => {
-    const hasCentralise =
-      rates &&
-      rates.some(rate => {
-        return filter.every(item => [FILTER.centralised, rate.tradeMethod].includes(item));
-      });
-    const hasDecentralise =
-      decentralizedSwapAvailable &&
-      DEX_PROVIDERS.some((rate, index) => {
-        return filter.every(item => [FILTER.decentralised, FILTER.float].includes(item));
-      });
-    setEmptyState(!hasCentralise && !hasDecentralise);
-  }, [decentralizedSwapAvailable, filter, rates]);
+    },
+    [rates, updateRate],
+  );
 
   return (
     <Box height="100%" width="100%">
@@ -162,7 +126,7 @@ export default function ProviderRate({
           </Box>
         )}
       </Box>
-      <Filter onClick={type => setFilter(type)} />
+      <Filter onClick={updateFilter} />
       <TableHeader>
         <Box horizontal width="215px" alignItems="center" pr="38px">
           <Text alignItems="center" display="flex" mr={1}>
@@ -216,43 +180,18 @@ export default function ProviderRate({
         </Box>
       </TableHeader>
       <Box mt={3} ref={providerRef}>
-        {rates?.map((rate, index) => {
-          const valid = filter.every(item => [FILTER.centralised, rate.tradeMethod].includes(item));
-          if (valid) {
-            return (
-              <CentralisedRate
-                key={`${rate.provider}-${rate.tradeMethod}`}
-                value={rate}
-                selected={!dexSelected && rate === selectedRate}
-                onSelect={setRate}
-                fromCurrency={fromCurrency}
-                toCurrency={toCurrency}
-              />
-            );
-          } else {
-            return null;
-          }
-        })}
-        {decentralizedSwapAvailable &&
-          DEX_PROVIDERS.map((rate, index) => {
-            const valid = filter.every(item => [FILTER.decentralised, FILTER.float].includes(item));
-            if (valid) {
-              return (
-                <DecentralisedRate
-                  filter={filter}
-                  key={rate.id}
-                  value={rate}
-                  selected={dexSelected && rate.id === dexSelected.id}
-                  onSelect={setDexRate}
-                  icon={rate.icon}
-                />
-              );
-            } else {
-              return null;
-            }
-          })}
+        {filteredRates.map(rate => (
+          <CentralisedRate
+            key={`${rate.provider}-${rate.tradeMethod}`}
+            value={rate}
+            selected={rate === selectedRate}
+            onSelect={updateRate}
+            fromCurrency={fromCurrency}
+            toCurrency={toCurrency}
+          />
+        ))}
       </Box>
-      {emptyState && <EmptyState />}
+      {!filteredRates.length && <EmptyState />}
     </Box>
   );
 }
