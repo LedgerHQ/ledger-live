@@ -216,7 +216,6 @@ export default function NotificationCenter() {
           />
         }
       >
-        <Flex>
         <FlatList<NotificationContentCard>
           data={orderedNotificationsCards}
           keyExtractor={(card: NotificationContentCard) => card.id}
@@ -246,7 +245,6 @@ export default function NotificationCenter() {
             </Flex>
           }
         />
-        </Flex>
       </Container>
       <StatusCenter
         isOpened={displayStatusCenter}
