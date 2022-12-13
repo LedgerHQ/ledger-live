@@ -13,10 +13,6 @@ import {
   toCosmosResourcesRaw,
   fromCosmosResourcesRaw,
 } from "../families/cosmos/serialization";
-import {
-  toZilliqaResourcesRaw,
-  fromZilliqaResourcesRaw,
-} from "../families/zilliqa/serialization";
 
 import {
   toAlgorandResourcesRaw,
@@ -85,7 +81,6 @@ import type {
   TokenAccountRaw,
 } from "@ledgerhq/types-live";
 import { CosmosAccount, CosmosAccountRaw } from "../families/cosmos/types";
-import { ZilliqaAccount, ZilliqaAccountRaw } from "../families/zilliqa/types";
 
 import { BitcoinAccount, BitcoinAccountRaw } from "../families/bitcoin/types";
 import {
@@ -107,7 +102,6 @@ import { TezosAccount, TezosAccountRaw } from "../families/tezos/types";
 import { CeloAccount, CeloAccountRaw } from "../families/celo/types";
 
 export { toCosmosResourcesRaw, fromCosmosResourcesRaw };
-export { toZilliqaResourcesRaw, fromZilliqaResourcesRaw };
 export { toAlgorandResourcesRaw, fromAlgorandResourcesRaw };
 export { toBitcoinResourcesRaw, fromBitcoinResourcesRaw };
 export { toPolkadotResourcesRaw, fromPolkadotResourcesRaw };
@@ -814,15 +808,6 @@ export function fromAccountRaw(rawAccount: AccountRaw): Account {
         );
       break;
     }
-    case "zilliqa": {
-      const zilliqaResourcesRaw = (rawAccount as ZilliqaAccountRaw)
-        .zilliqaResources;
-      if (zilliqaResourcesRaw)
-        (res as ZilliqaAccount).zilliqaResources = fromZilliqaResourcesRaw(
-          zilliqaResourcesRaw
-        );
-      break;
-    }
     case "tezos": {
       const tezosResourcesRaw = (rawAccount as TezosAccountRaw).tezosResources;
       if (tezosResourcesRaw)
@@ -1006,15 +991,6 @@ export function toAccountRaw(account: Account): AccountRaw {
       if (cosmosAccount.cosmosResources) {
         (res as CosmosAccountRaw).cosmosResources = toCosmosResourcesRaw(
           cosmosAccount.cosmosResources
-        );
-      }
-      break;
-    }
-    case "zilliqa": {
-      const zilliqaAccount = account as ZilliqaAccount;
-      if (zilliqaAccount.zilliqaResources) {
-        (res as ZilliqaAccountRaw).zilliqaResources = toZilliqaResourcesRaw(
-          zilliqaAccount.zilliqaResources
         );
       }
       break;

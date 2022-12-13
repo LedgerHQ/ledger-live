@@ -97,6 +97,12 @@ const modes = Object.freeze({
     tag: "galleon",
     overridesDerivation: "44'/1729'/<account>'/0'/0'",
   },
+  zilliqaL: {
+    tag: "legacy",
+    startsAt: 1,
+    overridesDerivation: "44'/313'/<account>'/0'/0'",
+  },
+
   galleonL: {
     tag: "legacy",
     startsAt: 1,
@@ -199,6 +205,7 @@ const legacyDerivations: Record<CryptoCurrencyIds, DerivationMode[]> = {
   filecoin: ["gliflegacy", "glif"],
   cardano: ["cardano"],
   cardano_testnet: ["cardano"],
+  zilliqa: ["zilliqaL"],
 };
 
 const legacyDerivationsPerFamily: Record<string, DerivationMode[]> = {
@@ -361,8 +368,10 @@ const disableBIP44 = {
   hedera: true,
   cardano: true,
   cardano_testnet: true,
+  zilliqa: true,
 };
 const seedIdentifierPath = {
+  zilliqa: ({ purpose, coinType }) => `${purpose}'/${coinType}'/0'/0'/0'`,
   neo: ({ purpose, coinType }) => `${purpose}'/${coinType}'/0'/0/0`,
   filecoin: ({ purpose, coinType }) => `${purpose}'/${coinType}'/0'/0/0`,
   solana: ({ purpose, coinType }) => `${purpose}'/${coinType}'`,
@@ -479,7 +488,9 @@ export type WalletDerivationInput<R> = {
   currency: CryptoCurrency;
   derivationMode: DerivationMode;
   derivateAddress: (arg0: GetAddressOptions) => Observable<Result>;
-  stepAddress: (arg0: StepAddressInput) => Observable<{
+  stepAddress: (
+    arg0: StepAddressInput
+  ) => Observable<{
     result?: R;
     complete?: boolean;
   }>;
@@ -514,8 +525,9 @@ export function walletDerivation<R>({
     switchMap((parentDerivation) => {
       const seedIdentifier = parentDerivation.publicKey;
       const emptyCount = 0;
-      const mandatoryEmptyAccountSkip =
-        getMandatoryEmptyAccountSkip(derivationMode);
+      const mandatoryEmptyAccountSkip = getMandatoryEmptyAccountSkip(
+        derivationMode
+      );
       const derivationScheme = getDerivationScheme({
         derivationMode,
         currency,

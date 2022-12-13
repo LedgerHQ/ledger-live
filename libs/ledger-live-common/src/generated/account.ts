@@ -6,7 +6,6 @@ import elrond from "../families/elrond/account";
 import filecoin from "../families/filecoin/account";
 import osmosis from "../families/osmosis/account";
 import polkadot from "../families/polkadot/account";
-import zilliqa from "../families/zilliqa/account";
 
 export default {
   algorand,
@@ -17,5 +16,4 @@ export default {
   filecoin,
   osmosis,
   polkadot,
-  zilliqa,
 };
