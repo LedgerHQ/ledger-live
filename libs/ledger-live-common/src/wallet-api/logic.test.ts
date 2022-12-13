@@ -36,19 +36,28 @@ describe("receiveOnAccountLogic", () => {
     "12"
   );
   const uiNavigation = jest.fn();
+  const getAccountIdFromWalletAccountIdSpy = jest.spyOn(
+    converters,
+    "getAccountIdFromWalletAccountId"
+  );
 
   beforeEach(() => {
     mockWalletAPIReceiveRequested.mockClear();
     mockWalletAPIReceiveFail.mockClear();
     uiNavigation.mockClear();
+    getAccountIdFromWalletAccountIdSpy.mockClear();
   });
 
   describe("when nominal case", () => {
     // Given
     const accountId = "ethereumjs:2:ethereum:0x012:";
+    const walletAccountId = "806ea21d-f5f0-425a-add3-39d4b78209f1";
     const expectedResult = "Function called";
 
-    beforeEach(() => uiNavigation.mockResolvedValueOnce(expectedResult));
+    beforeEach(() => {
+      uiNavigation.mockResolvedValueOnce(expectedResult);
+      getAccountIdFromWalletAccountIdSpy.mockReturnValueOnce(accountId);
+    });
 
     it("calls uiNavigation callback with an accountAddress", async () => {
       // Given
@@ -63,7 +72,7 @@ describe("receiveOnAccountLogic", () => {
       // When
       const result = await receiveOnAccountLogic(
         context,
-        accountId,
+        walletAccountId,
         uiNavigation
       );
 
@@ -75,7 +84,7 @@ describe("receiveOnAccountLogic", () => {
 
     it("calls the tracking for success", async () => {
       // When
-      await receiveOnAccountLogic(context, accountId, uiNavigation);
+      await receiveOnAccountLogic(context, walletAccountId, uiNavigation);
 
       // Then
       expect(mockWalletAPIReceiveRequested).toBeCalledTimes(1);
@@ -85,13 +94,17 @@ describe("receiveOnAccountLogic", () => {
 
   describe("when account cannot be found", () => {
     // Given
-    const nonFoundAccountId = "ethereumjs:2:ethereum:0x010:";
+    const walletAccountId = "806ea21d-f5f0-425a-add3-39d4b78209f1";
+
+    beforeEach(() => {
+      getAccountIdFromWalletAccountIdSpy.mockReturnValueOnce(undefined);
+    });
 
     it("returns an error", async () => {
       // When
       await expect(async () => {
-        await receiveOnAccountLogic(context, nonFoundAccountId, uiNavigation);
-      }).rejects.toThrowError("Account required");
+        await receiveOnAccountLogic(context, walletAccountId, uiNavigation);
+      }).rejects.toThrowError(`accountId ${walletAccountId} unknown`);
 
       // Then
       expect(uiNavigation).toBeCalledTimes(0);
@@ -100,7 +113,7 @@ describe("receiveOnAccountLogic", () => {
     it("calls the tracking for error", async () => {
       // When
       await expect(async () => {
-        await receiveOnAccountLogic(context, nonFoundAccountId, uiNavigation);
+        await receiveOnAccountLogic(context, walletAccountId, uiNavigation);
       }).rejects.toThrow();
 
       // Then
@@ -122,15 +135,26 @@ describe("broadcastTransactionLogic", () => {
   );
   const uiNavigation = jest.fn();
 
+  const getAccountIdFromWalletAccountIdSpy = jest.spyOn(
+    converters,
+    "getAccountIdFromWalletAccountId"
+  );
+
   beforeEach(() => {
     mockWalletAPIBroadcastFail.mockClear();
     uiNavigation.mockClear();
+    getAccountIdFromWalletAccountIdSpy.mockClear();
   });
 
   describe("when nominal case", () => {
     // Given
     const accountId = "ethereumjs:2:ethereum:0x012:";
+    const walletAccountId = "806ea21d-f5f0-425a-add3-39d4b78209f1";
     const signedTransaction = createSignedOperation();
+
+    beforeEach(() => {
+      getAccountIdFromWalletAccountIdSpy.mockReturnValueOnce(accountId);
+    });
 
     it("calls uiNavigation callback with a signedOperation", async () => {
       // Given
@@ -144,7 +168,7 @@ describe("broadcastTransactionLogic", () => {
       // When
       const result = await broadcastTransactionLogic(
         context,
-        accountId,
+        walletAccountId,
         signedTransaction,
         uiNavigation
       );
@@ -159,7 +183,7 @@ describe("broadcastTransactionLogic", () => {
       // When
       await broadcastTransactionLogic(
         context,
-        accountId,
+        walletAccountId,
         signedTransaction,
         uiNavigation
       );
@@ -172,7 +196,12 @@ describe("broadcastTransactionLogic", () => {
   describe("when account cannot be found", () => {
     // Given
     const nonFoundAccountId = "ethereumjs:2:ethereum:0x010:";
+    const walletAccountId = "806ea21d-f5f0-425a-add3-39d4b78209f1";
     const signedTransaction = createSignedOperation();
+
+    beforeEach(() => {
+      getAccountIdFromWalletAccountIdSpy.mockReturnValueOnce(nonFoundAccountId);
+    });
 
     it("returns an error", async () => {
       // Given
@@ -187,7 +216,7 @@ describe("broadcastTransactionLogic", () => {
       await expect(async () => {
         await broadcastTransactionLogic(
           context,
-          nonFoundAccountId,
+          walletAccountId,
           signedTransaction,
           uiNavigation
         );
@@ -202,7 +231,7 @@ describe("broadcastTransactionLogic", () => {
       await expect(async () => {
         await broadcastTransactionLogic(
           context,
-          nonFoundAccountId,
+          walletAccountId,
           signedTransaction,
           uiNavigation
         );
@@ -228,10 +257,16 @@ describe("signMessageLogic", () => {
   );
   const uiNavigation = jest.fn();
 
+  const getAccountIdFromWalletAccountIdSpy = jest.spyOn(
+    converters,
+    "getAccountIdFromWalletAccountId"
+  );
+
   beforeEach(() => {
     mockWalletAPISignMessageRequested.mockClear();
     mockWalletAPISignMessageFail.mockClear();
     uiNavigation.mockClear();
+    getAccountIdFromWalletAccountIdSpy.mockClear();
   });
 
   describe("when nominal case", () => {
@@ -243,7 +278,12 @@ describe("signMessageLogic", () => {
       "prepareMessageToSign"
     );
 
-    beforeEach(() => spyPrepareMessageToSign.mockClear());
+    const walletAccountId = "806ea21d-f5f0-425a-add3-39d4b78209f1";
+
+    beforeEach(() => {
+      spyPrepareMessageToSign.mockClear();
+      getAccountIdFromWalletAccountIdSpy.mockReturnValueOnce(accountId);
+    });
 
     it("calls uiNavigation callback with a signedOperation", async () => {
       // Given
@@ -255,7 +295,7 @@ describe("signMessageLogic", () => {
       // When
       const result = await signMessageLogic(
         context,
-        accountId,
+        walletAccountId,
         messageToSign,
         uiNavigation
       );
@@ -281,12 +321,18 @@ describe("signMessageLogic", () => {
     const nonFoundAccountId = "ethereumjs:2:ethereum:0x010:";
     const messageToSign = "Message to sign";
 
+    const walletAccountId = "806ea21d-f5f0-425a-add3-39d4b78209f1";
+
+    beforeEach(() => {
+      getAccountIdFromWalletAccountIdSpy.mockReturnValueOnce(nonFoundAccountId);
+    });
+
     it("returns an error", async () => {
       // When
       await expect(async () => {
         await signMessageLogic(
           context,
-          nonFoundAccountId,
+          walletAccountId,
           messageToSign,
           uiNavigation
         );
@@ -301,7 +347,7 @@ describe("signMessageLogic", () => {
       await expect(async () => {
         await signMessageLogic(
           context,
-          nonFoundAccountId,
+          walletAccountId,
           messageToSign,
           uiNavigation
         );
@@ -322,12 +368,18 @@ describe("signMessageLogic", () => {
       ...context.accounts,
     ];
 
+    const walletAccountId = "806ea21d-f5f0-425a-add3-39d4b78209f1";
+
+    beforeEach(() => {
+      getAccountIdFromWalletAccountIdSpy.mockReturnValueOnce(tokenAccountId);
+    });
+
     it("returns an error", async () => {
       // When
       await expect(async () => {
         await signMessageLogic(
           context,
-          tokenAccountId,
+          walletAccountId,
           messageToSign,
           uiNavigation
         );
@@ -342,7 +394,7 @@ describe("signMessageLogic", () => {
       await expect(async () => {
         await signMessageLogic(
           context,
-          tokenAccountId,
+          walletAccountId,
           messageToSign,
           uiNavigation
         );
@@ -363,7 +415,12 @@ describe("signMessageLogic", () => {
       "prepareMessageToSign"
     );
 
-    beforeEach(() => spyPrepareMessageToSign.mockClear());
+    const walletAccountId = "806ea21d-f5f0-425a-add3-39d4b78209f1";
+
+    beforeEach(() => {
+      spyPrepareMessageToSign.mockClear();
+      getAccountIdFromWalletAccountIdSpy.mockReturnValueOnce(accountId);
+    });
 
     it("returns an error", async () => {
       // Given
@@ -373,7 +430,12 @@ describe("signMessageLogic", () => {
 
       // When
       await expect(async () => {
-        await signMessageLogic(context, accountId, messageToSign, uiNavigation);
+        await signMessageLogic(
+          context,
+          walletAccountId,
+          messageToSign,
+          uiNavigation
+        );
       }).rejects.toThrowError("Some error");
 
       // Then
@@ -388,7 +450,12 @@ describe("signMessageLogic", () => {
 
       // When
       await expect(async () => {
-        await signMessageLogic(context, accountId, messageToSign, uiNavigation);
+        await signMessageLogic(
+          context,
+          walletAccountId,
+          messageToSign,
+          uiNavigation
+        );
       }).rejects.toThrow();
 
       // Then
