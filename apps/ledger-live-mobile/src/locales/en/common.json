@@ -1211,7 +1211,11 @@
         "subTitle": "Restore your recovery phrase on a new device",
         "desc": "Use an existing recovery phrase to restore your private keys on a new Nano!"
       },
-      "recovery": "Already have a recovery phrase?"
+      "recovery": "Already have a recovery phrase?",
+      "protect": {
+        "label": "~60 mins",
+        "subTitle": "Restore with Protect"
+      }
     },
     "stepNewDevice": {
       "0": {
@@ -1432,6 +1436,31 @@
           "desc": "Answer 3 simple questions to avoid common misconceptions about your hardware wallet.",
           "cta": "Let’s take the quiz"
         }
+      }
+    },
+    "stepProtect": {
+      "bullets": {
+        "0": {
+          "title": "Browse ",
+          "label": "Learn how to interact with your device by reading the on-screen instructions."
+        },
+        "1": {
+          "title": "Select “Restore”",
+          "label": "Press both buttons simultaneously to validate the selection."
+        },
+        "2": {
+          "title": "Select “Restore with Protect” mode",
+          "label": "Press both buttons simultaneously to validate the selection."
+        }
+      },
+      "nextStep": "Continue",
+      "extraInfo": {
+        "tooltip": "Cannot see it on my Ledger",
+        "title": "Why can I not see Restore with Protect on my Ledger?",
+        "desc1": "The most probable option is that your device is not compatible with Protect. No worries, we are here to guide you on how to make it work.",
+        "desc2": "Please contact us through and choose \"My Ledger doesn't display Restore with Protect\", we got you covered.",
+        "cta": "Go through manual steps",
+        "supportLink": "Contact Ledger Support"
       }
     },
     "stepRecoveryPhrase": {
@@ -5556,6 +5585,88 @@
       },
       "media": {
         "tag": "{{count}} NFTs"
+      }
+    }
+  },
+  "servicesWidget": {
+    "title": "Services",
+    "subTitle": "Manage your Ledger services",
+    "protect": {
+      "title": "Protect",
+      "status": {
+        "new": {
+          "title": "New",
+          "desc": "Back up your recovery phrase",
+          "0": {
+            "title": "Trusted by millions of Ledger users"
+          },
+          "1": {
+            "title": "Your Recovery Phrase is safely linked to your identity"
+          },
+          "2": {
+            "title": "State of the art encryption"
+          },
+          "3": {
+            "title": "Sharded into 3 decentralized pieces, so your recovery phrase can never be stolen"
+          },
+          "actions": {
+            "learnMore": "Learn more",
+            "alreadySubscribed": "Already subscribed to Protect?"
+          }
+        },
+        "confirmIdentity": {
+          "title": "Action required",
+          "desc": "Confirm your identity and complete all tasks to protect your recovery phrase.",
+          "actions": {
+            "confirmNow": "Confirm now",
+            "viewDetails": "View details"
+          }
+        },
+        "addPayment": {
+          "title": "Action required",
+          "desc": "Add a payment details and complete all tasks to protect your recovery phrase.",
+          "actions": {
+            "addNow": "Add now",
+            "viewDetails": "View details"
+          }
+        },
+        "paymentRejected": {
+          "title": "Payment rejected",
+          "desc": "Your $5 payment was unsuccessful. Please edit your payment details.",
+          "actions": {
+            "editNow": "Edit now",
+            "viewDetails": "View details"
+          }
+        },
+        "subscriptionCanceled": {
+          "title": "Subscription canceled",
+          "desc": "Your subscription ended after 3 months of non payment.",
+          "actions": {
+            "contactLedgerSupport": "Contact Ledger Support",
+            "viewDetails": "View details"
+          }
+        },
+        "active": {
+          "title": "Active",
+          "desc": "Your recovery phrase is protected",
+          "actions": {
+            "viewDetails": "View details"
+          }
+        }
+      }
+    }
+  },
+  "protect": {
+    "login": {
+      "title": "Log In",
+      "desc": "Log in with your Ledger account to manage your Protect subscription.",
+      "email": "Email",
+      "password": "Password",
+      "cta": "Login",
+      "forgotPassword": "Forgot password?",
+      "errors": {
+        "emptyEmail": "Email cannot be empty",
+        "emptyPassword": "Password cannot be empty"
       }
     }
   }
