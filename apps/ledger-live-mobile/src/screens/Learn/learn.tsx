@@ -9,18 +9,23 @@ import { LearnContentCard } from "../../dynamicContent/types";
 const keyExtractor = (item: LearnContentCard) => item.id;
 
 function LearnSection() {
-  const { learnCards } = useDynamicContent();
+  const { learnCards, trackContentCardEvent } = useDynamicContent();
   const navigation = useNavigation();
 
   const renderItem = ({ item: card }: { item: LearnContentCard }) => {
     return (
       <Flex px="16px" py="12px">
         <InformativeCard
-          onClickCard={() =>
+          onClickCard={() => {
+            trackContentCardEvent("contentcard_clicked", {
+              screen: ScreenName.Learn,
+              campaign: card.id,
+              link: card.link,
+            });
             navigation.navigate(ScreenName.LearnWebView, {
               uri: card.link,
-            })
-          }
+            });
+          }}
           imageUrl={card.image}
           tag={card.tag}
           title={card.title}
