@@ -1,5 +1,11 @@
 # @ledgerhq/icons-ui
 
+## 0.3.3-next.0
+
+### Patch Changes
+
+- [#2062](https://github.com/LedgerHQ/ledger-live/pull/2062) [`32993aea9a`](https://github.com/LedgerHQ/ledger-live/commit/32993aea9af5dfb7f2519263e5f2a22a88320cdc) Thanks [@mlegall-ledger](https://github.com/mlegall-ledger)! - New flags icons. Added 2 new icons to Providers and Payments. Prevented crash when using ProviderIcon with incorrect string in boxed mode
+
 ## 0.3.2
 
 ### Patch Changes
