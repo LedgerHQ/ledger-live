@@ -129,7 +129,9 @@ export function orchestrator(app: Probot) {
         sha: payload.workflow_run.head_sha,
         checkName: matchedWorkflow.checkRunName,
         updateToPendingFields: {
+          details_url: `https://github.com/${owner}/${repo}/actions/runs/${payload.workflow_run.id}`,
           output: {
+            title: "⚙️",
             summary: "Work in progress 🧪",
           }, // TODO: add proper output
         },
@@ -232,6 +234,7 @@ export function orchestrator(app: Probot) {
         checkName: GATE_CHECK_RUN_NAME,
         updateToPendingFields: {
           output: {
+            title: "⚙️",
             summary: "Work in progress 🧪",
           }, // TODO: add proper output
         },
