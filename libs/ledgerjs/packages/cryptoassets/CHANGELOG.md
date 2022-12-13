@@ -1,5 +1,11 @@
 # @ledgerhq/cryptoassets
 
+## 7.1.0-next.0
+
+### Minor Changes
+
+- [#1805](https://github.com/LedgerHQ/ledger-live/pull/1805) [`d99aafd1d4`](https://github.com/LedgerHQ/ledger-live/commit/d99aafd1d48336f6b4da3c1d8e7c52dbc1676278) Thanks [@haammar-ledger](https://github.com/haammar-ledger)! - Explorer views and yoctoNEAR added to NEAR entry
+
 ## 7.0.0
 
 ### Major Changes
