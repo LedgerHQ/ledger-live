@@ -17,6 +17,7 @@ export type FeatureId =
   | "currencyCronos"
   | "currencySongbird"
   | "currencyFlare"
+  | "currencyNear"
   | "currencyFantomMobile"
   | "currencyMoonbeamMobile"
   | "currencyCronosMobile"
