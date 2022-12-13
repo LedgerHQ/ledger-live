@@ -6,6 +6,7 @@ import {
   OnNoRatesCallback,
   ActionRequired,
   ValidCheckQuoteErrorCodes,
+  ValidKYCStatus,
 } from "@ledgerhq/live-common/exchange/swap/types";
 import {
   usePollKYCStatus,
@@ -156,7 +157,7 @@ export function SwapForm({
     // we don't display it if user needs to login first
     if (
       currentBanner !== ActionRequired.Login &&
-      shouldShowKYCBanner({ provider, kycStatus as ValidKYCStatus | "rejected" })
+      shouldShowKYCBanner({ provider, kycStatus })
     ) {
       setCurrentBanner(ActionRequired.KYC);
     }
