@@ -25,8 +25,12 @@ import { useDynamicContentLogic } from "../../dynamicContent/useDynamicContentLo
 import StatusCenter from "./Status";
 import { statusCenterSelector } from "../../reducers/settings";
 import { setStatusCenter } from "../../actions/settings";
+import getWindowDimensions from "../../logic/getWindowDimensions";
 
-const Container = styled(SettingsNavigationScrollView)``;
+const { height } = getWindowDimensions();
+
+const Container = styled(SettingsNavigationScrollView)`
+`;
 const AnimatedView = Animated.createAnimatedComponent(View);
 const RemoveContainer = styled(TouchableHighlight)`
   background-color: ${p => p.theme.colors.neutral.c30};
@@ -202,48 +206,48 @@ export default function NotificationCenter() {
 
   return (
     <>
-      {orderedNotificationsCards.length > 0 ? (
-        <Container
-          refreshControl={
-            <RefreshControl
-              refreshing={isDynamicContentLoading}
-              colors={[colors.primary.c80]}
-              tintColor={colors.primary.c80}
-              onRefresh={refreshNotifications}
-            />
-          }
-        >
-          <FlatList<NotificationContentCard>
-            data={orderedNotificationsCards}
-            keyExtractor={(card: NotificationContentCard) => card.id}
-            renderItem={elem => ListItem(elem.item)}
-            ItemSeparatorComponent={() => (
-              <Box height={1} width="100%" backgroundColor="neutral.c30" />
-            )}
+      <Container
+        refreshControl={
+          <RefreshControl
+            refreshing={isDynamicContentLoading}
+            colors={[colors.primary.c80]}
+            tintColor={colors.primary.c80}
+            onRefresh={refreshNotifications}
           />
-        </Container>
-      ) : (
-        <Flex alignItems="center" flex={1} px={6}>
-          <Text
-            variant="large"
-            fontWeight="semiBold"
-            color="neutral.c100"
-            mb={3}
-            mt={14}
-            textAlign="center"
-          >
-            {t("notificationCenter.news.emptyState.title")} 💤
-          </Text>
-          <Text
-            variant="paragraph"
-            fontWeight="medium"
-            color="neutral.c70"
-            textAlign="center"
-          >
-            {t("notificationCenter.news.emptyState.desc")}
-          </Text>
+        }
+      >
+        <Flex>
+        <FlatList<NotificationContentCard>
+          data={orderedNotificationsCards}
+          keyExtractor={(card: NotificationContentCard) => card.id}
+          renderItem={elem => ListItem(elem.item)}
+          ItemSeparatorComponent={() => (
+            <Box height={1} width="100%" backgroundColor="neutral.c30" />
+          )}
+          ListEmptyComponent={
+            <Flex alignItems="center" justifyContent="center" height={height * 0.7} px={6}>
+              <Text
+                variant="large"
+                fontWeight="semiBold"
+                color="neutral.c100"
+                mb={3}
+                textAlign="center"
+              >
+                {t("notificationCenter.news.emptyState.title")} 💤
+              </Text>
+              <Text
+                variant="paragraph"
+                fontWeight="medium"
+                color="neutral.c70"
+                textAlign="center"
+              >
+                {t("notificationCenter.news.emptyState.desc")}
+              </Text>
+            </Flex>
+          }
+        />
         </Flex>
-      )}
+      </Container>
       <StatusCenter
         isOpened={displayStatusCenter}
         onClose={onCloseStatusCenter}

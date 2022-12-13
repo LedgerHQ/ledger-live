@@ -202,7 +202,7 @@ function NotificationsSettings() {
                   ? "neutral.c40"
                   : "neutral.c70"
               }
-              variant={"bodyLineHeight"}
+              variant={"small"}
               textAlign="center"
             >
               {t("settings.notifications.disclaimer")}
