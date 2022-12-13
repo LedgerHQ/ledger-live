@@ -233,3 +233,4 @@ export * from "./families/polkadot/errors";
 export * from "./families/stellar/errors";
 export * from "./families/solana/errors";
 export * from "./families/cardano/errors";
+export * from "./families/near/errors";

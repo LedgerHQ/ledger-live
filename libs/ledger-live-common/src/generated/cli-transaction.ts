@@ -8,6 +8,7 @@ import elrond from "../families/elrond/cli-transaction";
 import ethereum from "../families/ethereum/cli-transaction";
 import filecoin from "../families/filecoin/cli-transaction";
 import hedera from "../families/hedera/cli-transaction";
+import near from "../families/near/cli-transaction";
 import osmosis from "../families/osmosis/cli-transaction";
 import polkadot from "../families/polkadot/cli-transaction";
 import ripple from "../families/ripple/cli-transaction";
@@ -27,6 +28,7 @@ export default {
   ethereum,
   filecoin,
   hedera,
+  near,
   osmosis,
   polkadot,
   ripple,

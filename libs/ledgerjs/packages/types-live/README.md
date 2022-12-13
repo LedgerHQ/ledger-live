@@ -491,7 +491,7 @@ Type: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Globa
 
 Add others with union (e.g. "learn" | "market" | "foo")
 
-Type: (`"learn"` | `"brazePushNotifications"` | `"llmNewDeviceSelection"` | `"llmUsbFirmwareUpdate"` | `"ratings"` | `"counterValue"` | `"deviceLocalization"` | `"deviceInitialApps"` | `"buyDeviceFromLive"` | `"ptxSmartRouting"` | `"currencyOsmosis"` | `"currencyOsmosisMobile"` | `"currencyFantom"` | `"currencyMoonbeam"` | `"currencyCronos"` | `"currencySongbird"` | `"currencyFlare"` | `"currencyFantomMobile"` | `"currencyMoonbeamMobile"` | `"currencyCronosMobile"` | `"currencySongbirdMobile"` | `"currencyFlareMobile"` | `"ptxSmartRoutingMobile"` | `"mockFeature"` | `"syncOnboarding"` | `"walletConnectLiveApp"` | `"customImage"` | `"referralProgramDiscoverCard"` | `"referralProgramDesktopBanner"` | `"disableNftSend"` | `"disableNftLedgerMarket"` | `"disableNftRaribleOpensea"` | `"walletNftGallery"` | `"receiveStakingFlowConfigDesktop"` | `"ethStakingProviders"` | `"storyly"` | `"firebaseEnvironmentReadOnly"`)
+Type: (`"learn"` | `"brazePushNotifications"` | `"llmNewDeviceSelection"` | `"llmUsbFirmwareUpdate"` | `"ratings"` | `"counterValue"` | `"deviceLocalization"` | `"deviceInitialApps"` | `"buyDeviceFromLive"` | `"ptxSmartRouting"` | `"currencyOsmosis"` | `"currencyOsmosisMobile"` | `"currencyFantom"` | `"currencyMoonbeam"` | `"currencyCronos"` | `"currencySongbird"` | `"currencyFlare"` | `"currencyNear"` | `"currencyFantomMobile"` | `"currencyMoonbeamMobile"` | `"currencyCronosMobile"` | `"currencySongbirdMobile"` | `"currencyFlareMobile"` | `"ptxSmartRoutingMobile"` | `"mockFeature"` | `"syncOnboarding"` | `"walletConnectLiveApp"` | `"customImage"` | `"referralProgramDiscoverCard"` | `"referralProgramDesktopBanner"` | `"disableNftSend"` | `"disableNftLedgerMarket"` | `"disableNftRaribleOpensea"` | `"walletNftGallery"` | `"receiveStakingFlowConfigDesktop"` | `"ethStakingProviders"` | `"storyly"` | `"firebaseEnvironmentReadOnly"` | `"protectServicesMobile"`)
 
 ### Feature
 
@@ -935,7 +935,7 @@ Type: {ticker: [string](https://developer.mozilla.org/docs/Web/JavaScript/Refere
 
 ### OperationType
 
-Type: (`"IN"` | `"OUT"` | `"NONE"` | `"CREATE"` | `"REVEAL"` | `"DELEGATE"` | `"UNDELEGATE"` | `"REDELEGATE"` | `"REWARD"` | `"FEES"` | `"FREEZE"` | `"UNFREEZE"` | `"VOTE"` | `"REWARD_PAYOUT"` | `"BOND"` | `"UNBOND"` | `"WITHDRAW_UNBONDED"` | `"SET_CONTROLLER"` | `"SLASH"` | `"NOMINATE"` | `"CHILL"` | `"SUPPLY"` | `"REDEEM"` | `"APPROVE"` | `"OPT_IN"` | `"OPT_OUT"` | `"LOCK"` | `"UNLOCK"` | `"WITHDRAW"` | `"REVOKE"` | `"ACTIVATE"` | `"REGISTER"` | `"NFT_IN"` | `"NFT_OUT"`)
+Type: (`"IN"` | `"OUT"` | `"NONE"` | `"CREATE"` | `"REVEAL"` | `"DELEGATE"` | `"UNDELEGATE"` | `"REDELEGATE"` | `"REWARD"` | `"FEES"` | `"FREEZE"` | `"UNFREEZE"` | `"VOTE"` | `"REWARD_PAYOUT"` | `"BOND"` | `"UNBOND"` | `"WITHDRAW_UNBONDED"` | `"SET_CONTROLLER"` | `"SLASH"` | `"NOMINATE"` | `"CHILL"` | `"SUPPLY"` | `"REDEEM"` | `"APPROVE"` | `"OPT_IN"` | `"OPT_OUT"` | `"LOCK"` | `"UNLOCK"` | `"WITHDRAW"` | `"REVOKE"` | `"ACTIVATE"` | `"REGISTER"` | `"NFT_IN"` | `"NFT_OUT"` | `"STAKE"` | `"UNSTAKE"` | `"WITHDRAW_UNSTAKED"`)
 
 ### Operation
 

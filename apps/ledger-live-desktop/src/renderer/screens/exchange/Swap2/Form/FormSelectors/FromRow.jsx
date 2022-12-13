@@ -68,12 +68,6 @@ type Props = {
 /* @dev: Yeah, Im sorry if you read this, design asked us to
  override the input component when it is called from the swap form. */
 const InputSection = styled(Box)`
-  & div {
-    padding-right: 0;
-    > input {
-      padding-right: 15px;
-    }
-  }
   & ${ErrorContainer} {
     font-weight: 500;
     font-size: 11px;
@@ -81,6 +75,7 @@ const InputSection = styled(Box)`
     margin-left: calc(calc(100% + 30px) * -1);
     margin-top: 6px;
     align-self: flex-end;
+    margin-right: -15px;
   }
 `;
 

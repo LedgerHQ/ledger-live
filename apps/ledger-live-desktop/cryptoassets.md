@@ -28,6 +28,7 @@
 | Komodo | KMD | YES | komodo |
 | Litecoin | LTC | YES | litecoin |
 | Moonbeam | GLMR | YES | moonbeam |
+| NEAR | NEAR | YES | near |
 | Osmosis | OSMO | YES | osmo |
 | Peercoin | PPC | YES | peercoin |
 | PivX | PIVX | YES | pivx |
@@ -82,7 +83,6 @@
 | Monero | XMR | NO | monero |
 | Moonriver | MOVR | NO | moonriver |
 | Musicoin | MUSIC | NO | musicoin |
-| NEAR | NEAR | NO | near |
 | NEM | XEM | NO | nem |
 | NOS | NOS | NO | nos |
 | Nano | NANO | NO | nano |
