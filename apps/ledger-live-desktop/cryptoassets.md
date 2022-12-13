@@ -37,7 +37,6 @@
 | Qtum | QTUM | YES | qtum |
 | Solana | SOL | YES | solana |
 | Songbird | SGB | YES | songbird |
-| Stakenet | XSN | YES | stakenet |
 | Stellar | XLM | YES | stellar |
 | Tezos | XTZ | YES | tezos |
 | Tron | TRX | YES | tron |

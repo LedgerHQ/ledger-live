@@ -32,7 +32,6 @@ const abandonSeedAddresses: Record<string, string> = {
   pivx: "DDBxSas734KhMp1Btga3LdwWAc1igSER8o",
   polkadot: "111111111111111111111111111111111HC1",
   qtum: "QPvRe2C17qk24K6v5gTg7CPghZ8b4WMxZP",
-  stakenet: "XhPU3ZrghEh387nqgQ1Fi16JvtkSeYdP4g",
   stealthcoin: "SKsLkKVeMtPNZQuNfUNXi3Bk1TwP1QPqJG",
   stratis: "Sdo6x9k5AxWtfyJe5B9SZPteYTKgUoMMr1",
   vertcoin: "Vce16eJifb7HpuoTFEBJyKNLsBJPo7fM83",
