@@ -9,6 +9,7 @@ import notifications from "./notifications";
 import swap from "./swap";
 import dynamicContent from "./dynamicContent";
 import walletconnect from "./walletconnect";
+import protect from "./protect";
 import { State } from "./types";
 import { ActionsPayload, SettingsActionTypes } from "../actions/types";
 
@@ -25,6 +26,7 @@ const appReducer = combineReducers({
   swap,
   walletconnect,
   postOnboarding,
+  protect,
 });
 
 // TODO: EXPORT ALL POSSIBLE ACTION TYPES AND USE ACTION<TYPES>

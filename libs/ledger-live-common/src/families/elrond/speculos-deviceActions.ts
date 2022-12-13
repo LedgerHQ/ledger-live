@@ -13,10 +13,11 @@ export const acceptTransaction: DeviceAction<Transaction, any> =
       {
         title: "Amount",
         button: "Rr",
-        expectedValue: ({ account, transaction }) =>
-          formatDeviceAmount(account.currency, transaction.amount, {
+        expectedValue: ({ account, status }) => {
+          return formatDeviceAmount(account.currency, status.amount, {
             postfixCode: true,
-          }),
+          });
+        },
       },
       {
         title: "Fee",

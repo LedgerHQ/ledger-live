@@ -34,18 +34,8 @@ const StepReceiveStakingFlow = (props: StepProps) => {
     const manageList =
       familyManageActions && familyManageActions.length > 0 ? familyManageActions : [];
     const newAction = manageList && manageList.find(item => item.key === "Stake");
-
-    const provider = newAction?.provider?.liveAppId ? newAction?.provider?.liveAppId : "ledger";
-    const altTitle = t(`receive.steps.staking.${id}.${provider}.title`);
-    const newTitle =
-      altTitle === `receive.steps.staking.${id}.${provider}.title`
-        ? t(`receive.steps.staking.${id}.title`)
-        : altTitle;
-    const altDescription = t(`receive.steps.staking.${id}.${provider}.description`);
-    const newDescription =
-      altDescription === `receive.steps.staking.${id}.${provider}.description`
-        ? t(`receive.steps.staking.${id}.description`)
-        : altDescription;
+    const newTitle = t(`receive.steps.staking.${id}.title`);
+    const newDescription = t(`receive.steps.staking.${id}.description`);
     if (JSON.stringify(title) !== JSON.stringify(newTitle)) {
       setTitle(newTitle);
     }

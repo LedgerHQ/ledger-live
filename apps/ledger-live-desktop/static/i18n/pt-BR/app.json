@@ -2143,8 +2143,8 @@
         "ethereumGasPrice" : "Preço do gás",
         "ethereumMaxFee" : "Taxa máxima ({{unitName}})",
         "ethereumPriorityFee" : "Taxa de Prioridade Máxima ({{unitName}})",
-        "nextBlock" : "Próximo bloco: {{nextBaseFee}}",
-        "suggestedPriorityFee" : "Sugerido {{lowPriorityFee}} - {{highPriorityFee}} {{unitName}}",
+        "nextBlock" : "Próximo bloco",
+        "suggested" : "Sugerido",
         "unitPerByte" : "{{unit}} por byte",
         "nft" : "NFT",
         "nftQuantity" : "Quantidade"
@@ -2183,6 +2183,9 @@
   "releaseNotes" : {
     "title" : "Notas de versão",
     "version" : "Ledger Live {{versionNb}}"
+  },
+  "troubleshootNetwork" : {
+    "title" : "Solucionar problemas de rede"
   },
   "systemLanguageAvailable" : {
     "title" : "Alterar o idioma do seu aplicativo?",
@@ -2241,6 +2244,9 @@
     }
   },
   "tron" : {
+    "receive" : {
+      "newAddressTRC20" : "Primeiro, você precisa enviar pelo menos 0,1 TRX para este endereço para ativá-lo."
+    },
     "voting" : {
       "emptyState" : {
         "description" : "Agora você pode ganhar recompensas com congelamento e votação.",
@@ -3548,7 +3554,7 @@
       "featureFlagsEdit" : "Editar",
       "featureFlagsRestore" : "Restaurar",
       "featureFlagsOverride" : "Sobrepor",
-      "firebaseProject" : "Firebase project targeted by this build:",
+      "firebaseProject" : "Projeto Firebase mirado por esta versão:",
       "addLocalApp" : "Adicionar um aplicativo local",
       "addLocalAppDesc" : "Navegue por arquivos locais e adicione um aplicativo local usando um manifesto local",
       "addLocalAppButton" : "Navegar",
@@ -3695,6 +3701,11 @@
       "title" : "Salvar Registros",
       "desc" : "Pode ser necessário salvar os registros do Ledger Live para fins de solução de problemas.",
       "btn" : "Salvar"
+    },
+    "troubleshootNetwork" : {
+      "title" : "Solucionar problemas de rede",
+      "desc" : "Executar um checklist para determinar as condições da rede para solucionar problemas.",
+      "btn" : "Solucionar"
     },
     "accounts" : {
       "hideEmptyTokens" : {
@@ -4734,6 +4745,10 @@
       "title" : "Parece que seu dispositivo está desconectado",
       "description" : "Reconecte e tente novamente."
     },
+    "EConnReset" : {
+      "title" : "A loja de aplicativos da Ledger não pode ser acessada",
+      "description" : "Sua conexão com a internet pode ter caído ou estar usando uma configuração incomum. Comece verificando se alguma coisa está bloqueando sua conexão (proxy ou firewall). Se o problema persistir, clique abaixo para soluções ou contate nosso suporte ao cliente."
+    },
     "EnpointConfig" : {
       "title" : "Endpoint inválido",
       "description" : "Forneça um endpoint válido"
@@ -5088,7 +5103,7 @@
       "title" : "Quantia a ser congelada não pode ser menor que 1"
     },
     "TronSendTrc20ToNewAccountForbidden" : {
-      "title" : "Enviar TRC20 para uma nova conta não a ativará",
+      "title" : "Primeiro, você precisa enviar pelo menos 0,1 TRX para este endereço para habilitar o recebimento de tokens TRC20.",
       "description" : "A conta do destinatário deve ser ativada antes de enviar TRC20 a ela. Envie TRX ou TRC10 a uma conta para ativá-la."
     },
     "TronUnexpectedFees" : {
@@ -5102,7 +5117,7 @@
       "description" : "A assinatura deve ser aplicada dentro de 30 segundos. Tente Novamente."
     },
     "TronNotEnoughEnergy" : {
-      "title" : "Energia insuficiente para enviar este token"
+      "title" : "A Energia está abaixo do necessário. Você pode pagar até 20 TRX em taxas."
     },
     "PairingFailed" : {
       "title" : "Emparelhamento sem sucesso",

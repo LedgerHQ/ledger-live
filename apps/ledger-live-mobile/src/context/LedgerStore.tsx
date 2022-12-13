@@ -11,11 +11,13 @@ import {
   getSettings,
   getBle,
   getPostOnboardingState,
+  getProtect,
 } from "../db";
 import reducers from "../reducers";
 import { importSettings } from "../actions/settings";
 import { importStore as importAccounts } from "../actions/accounts";
 import { importBle } from "../actions/ble";
+import { updateProtectData, updateProtectStatus } from "../actions/protect";
 import {
   INITIAL_STATE as settingsState,
   supportedCountervalues,
@@ -28,6 +30,7 @@ import { INITIAL_STATE as swapState } from "../reducers/swap";
 import { INITIAL_STATE as ratingsState } from "../reducers/ratings";
 import { INITIAL_STATE as walletconnectState } from "../reducers/walletconnect";
 import { INITIAL_STATE as dynamicContentState } from "../reducers/dynamicContent";
+import { INITIAL_STATE as protectState } from "../reducers/protect";
 import type { State } from "../reducers/types";
 
 const INITIAL_STATE: State = {
@@ -41,6 +44,7 @@ const INITIAL_STATE: State = {
   walletconnect: walletconnectState,
   postOnboarding: postOnboardingState,
   dynamicContent: dynamicContentState,
+  protect: protectState,
 };
 
 export const store = createStore(
@@ -103,6 +107,12 @@ export default class LedgerStoreProvider extends Component<
       store.dispatch(
         importPostOnboardingState({ newState: postOnboardingState }),
       );
+    }
+
+    const protect = await getProtect();
+    if (protect) {
+      store.dispatch(updateProtectData(protect.data));
+      store.dispatch(updateProtectStatus(protect.protectStatus));
     }
 
     const initialCountervalues = await getCountervalues();

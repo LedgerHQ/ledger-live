@@ -1,5 +1,63 @@
 # @ledgerhq/live-common
 
+## 27.9.0
+
+### Minor Changes
+
+- [#1874](https://github.com/LedgerHQ/ledger-live/pull/1874) [`eef8038f61`](https://github.com/LedgerHQ/ledger-live/commit/eef8038f611820efffd3b4834e124be0c29acd39) Thanks [@henrily-ledger](https://github.com/henrily-ledger)! - Help to filter Solana network error
+
+* [#1918](https://github.com/LedgerHQ/ledger-live/pull/1918) [`a00544e8de`](https://github.com/LedgerHQ/ledger-live/commit/a00544e8de135285609e9aabc2d4ca354f8ebc2a) Thanks [@chabroA](https://github.com/chabroA)! - Add ERC-20 funding
+
+- [#1959](https://github.com/LedgerHQ/ledger-live/pull/1959) [`2aa8cc9c33`](https://github.com/LedgerHQ/ledger-live/commit/2aa8cc9c339ce8c9677b24e70218cc45847d799b) Thanks [@hzheng-ledger](https://github.com/hzheng-ledger)! - Change hw-app-btc to remove any dependency to the legacy Bitcoin Nano app API. Update hw-app-btc API (refer to hw-app-btc/src/Btc.ts for new method signature)
+
+### Patch Changes
+
+- [#1871](https://github.com/LedgerHQ/ledger-live/pull/1871) [`ff5cb2cb11`](https://github.com/LedgerHQ/ledger-live/commit/ff5cb2cb11a2dcac0f2a65bf3ae4efac512cfe71) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Allow runner errors to bubble up and not be silenced
+
+* [#1899](https://github.com/LedgerHQ/ledger-live/pull/1899) [`f29d3d9384`](https://github.com/LedgerHQ/ledger-live/commit/f29d3d9384f57c99c228749673d4f5d840b4bf06) Thanks [@LFBarreto](https://github.com/LFBarreto)! - LLC - Errors - add custom error
+
+- [`720dc1f58a`](https://github.com/LedgerHQ/ledger-live/commit/720dc1f58a6cea9c8a933139ff94a1d9f1b98129) Thanks [@Justkant](https://github.com/Justkant)! - Fix: improvement on BLE scanning and polling mechanism
+
+- Updated dependencies [[`9100363270`](https://github.com/LedgerHQ/ledger-live/commit/91003632704d11fc327517a582ac6d7009c05bd3), [`82676099c5`](https://github.com/LedgerHQ/ledger-live/commit/82676099c5d99bbe877b92281d29fde040a0285a), [`82676099c5`](https://github.com/LedgerHQ/ledger-live/commit/82676099c5d99bbe877b92281d29fde040a0285a), [`82676099c5`](https://github.com/LedgerHQ/ledger-live/commit/82676099c5d99bbe877b92281d29fde040a0285a), [`2aa8cc9c33`](https://github.com/LedgerHQ/ledger-live/commit/2aa8cc9c339ce8c9677b24e70218cc45847d799b)]:
+  - @ledgerhq/cryptoassets@7.0.0
+  - @ledgerhq/hw-app-btc@9.1.0
+  - @ledgerhq/hw-app-eth@6.30.2
+
+## 27.9.0-next.0
+
+### Minor Changes
+
+- [#1874](https://github.com/LedgerHQ/ledger-live/pull/1874) [`eef8038f61`](https://github.com/LedgerHQ/ledger-live/commit/eef8038f611820efffd3b4834e124be0c29acd39) Thanks [@henrily-ledger](https://github.com/henrily-ledger)! - Help to filter Solana network error
+
+* [#1918](https://github.com/LedgerHQ/ledger-live/pull/1918) [`a00544e8de`](https://github.com/LedgerHQ/ledger-live/commit/a00544e8de135285609e9aabc2d4ca354f8ebc2a) Thanks [@chabroA](https://github.com/chabroA)! - Add ERC-20 funding
+
+- [#1959](https://github.com/LedgerHQ/ledger-live/pull/1959) [`2aa8cc9c33`](https://github.com/LedgerHQ/ledger-live/commit/2aa8cc9c339ce8c9677b24e70218cc45847d799b) Thanks [@hzheng-ledger](https://github.com/hzheng-ledger)! - Change hw-app-btc to remove any dependency to the legacy Bitcoin Nano app API. Update hw-app-btc API (refer to hw-app-btc/src/Btc.ts for new method signature)
+
+### Patch Changes
+
+- [#1871](https://github.com/LedgerHQ/ledger-live/pull/1871) [`ff5cb2cb11`](https://github.com/LedgerHQ/ledger-live/commit/ff5cb2cb11a2dcac0f2a65bf3ae4efac512cfe71) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Allow runner errors to bubble up and not be silenced
+
+* [#1899](https://github.com/LedgerHQ/ledger-live/pull/1899) [`f29d3d9384`](https://github.com/LedgerHQ/ledger-live/commit/f29d3d9384f57c99c228749673d4f5d840b4bf06) Thanks [@LFBarreto](https://github.com/LFBarreto)! - LLC - Errors - add custom error
+
+- [`720dc1f58a`](https://github.com/LedgerHQ/ledger-live/commit/720dc1f58a6cea9c8a933139ff94a1d9f1b98129) Thanks [@Justkant](https://github.com/Justkant)! - Fix: improvement on BLE scanning and polling mechanism
+
+- Updated dependencies [[`9100363270`](https://github.com/LedgerHQ/ledger-live/commit/91003632704d11fc327517a582ac6d7009c05bd3), [`82676099c5`](https://github.com/LedgerHQ/ledger-live/commit/82676099c5d99bbe877b92281d29fde040a0285a), [`82676099c5`](https://github.com/LedgerHQ/ledger-live/commit/82676099c5d99bbe877b92281d29fde040a0285a), [`82676099c5`](https://github.com/LedgerHQ/ledger-live/commit/82676099c5d99bbe877b92281d29fde040a0285a), [`2aa8cc9c33`](https://github.com/LedgerHQ/ledger-live/commit/2aa8cc9c339ce8c9677b24e70218cc45847d799b)]:
+  - @ledgerhq/cryptoassets@7.0.0-next.0
+  - @ledgerhq/hw-app-btc@9.1.0-next.0
+  - @ledgerhq/hw-app-eth@6.30.2-next.0
+
+## 27.8.1
+
+### Patch Changes
+
+- [#2099](https://github.com/LedgerHQ/ledger-live/pull/2099) [`6a07e7bc3c`](https://github.com/LedgerHQ/ledger-live/commit/6a07e7bc3c47672e658218e06160fa121f0166ef) Thanks [@github-actions](https://github.com/apps/github-actions)! - Change tron trc20 fees limit when no energy
+
+## 27.8.1-hotfix.0
+
+### Patch Changes
+
+- [#2099](https://github.com/LedgerHQ/ledger-live/pull/2099) [`6a07e7bc3c`](https://github.com/LedgerHQ/ledger-live/commit/6a07e7bc3c47672e658218e06160fa121f0166ef) Thanks [@github-actions](https://github.com/apps/github-actions)! - Change tron trc20 fees limit when no energy
+
 ## 27.8.0
 
 ### Minor Changes

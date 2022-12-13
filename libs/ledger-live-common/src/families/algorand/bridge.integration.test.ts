@@ -9,8 +9,6 @@ import {
 import { AlgorandASANotOptInInRecipient } from "../../errors";
 import type { AlgorandTransaction } from "./types";
 import type { DatasetTest } from "@ledgerhq/types-live";
-// const notCreatedAlgorandAddress =
-//   "ZBILW5BPM7AQU54YQZICSGS4J7KJ2XV6OC3DFUQ7BB4DVLYKKUEVWDDBGM";
 
 const dataset: DatasetTest<AlgorandTransaction> = {
   implementations: ["js"],
@@ -210,6 +208,22 @@ const dataset: DatasetTest<AlgorandTransaction> = {
                   amount: new NotEnoughBalance(),
                 },
                 warnings: {},
+              },
+            },
+            {
+              name: "send max",
+              transaction: (t) => ({
+                ...t,
+                recipient:
+                  "MECOWMKPKH2NWVZTS5V5RQDGFFYBT25KNLOPHG2KUMMNKU6FOHGJT24WBI",
+                useAllAmount: true,
+              }),
+              expectedStatus: (account, _, status) => {
+                return {
+                  amount: account.spendableBalance.minus(status.estimatedFees),
+                  warnings: {},
+                  errors: {},
+                };
               },
             },
           ],

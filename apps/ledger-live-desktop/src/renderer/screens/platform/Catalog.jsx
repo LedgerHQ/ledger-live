@@ -109,7 +109,7 @@ const PlatformCatalog = () => {
     <>
       <TrackPage category="Platform" name="Catalog" />
       <Header>
-        <Title>{t("platform.catalog.title")}</Title>
+        <Title data-test-id="discover-title">{t("platform.catalog.title")}</Title>
       </Header>
       <CatalogBanner />
       <TwitterBanner />
