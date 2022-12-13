@@ -74,7 +74,6 @@ jobs:
         with:
           name: affected.json
           path: affected.json
-
   # desktop-builds:
   #   name: "Desktop (builds)"
   #   needs: setup
@@ -145,7 +144,6 @@ jobs:
   #               description: "Retry to run the Desktop Build workflow"
   #             }]
   #           });
-
   # desktop-tests:
   #   name: "Desktop (tests)"
   #   needs: setup
@@ -215,7 +213,6 @@ jobs:
   #               description: "Retry to run the Desktop Tests workflow"
   #             }]
   #           });
-
   # mobile-builds:
   #   name: "Mobile (builds)"
   #   needs: setup
@@ -286,73 +283,72 @@ jobs:
   #               description: "Retry to run the Mobile Build workflow"
   #             }]
   #           });
-
-  mobile-tests:
-    name: "Mobile (tests)"
-    needs: setup
-    # if: ${{ contains(fromJSON(needs.setup.outputs.affected), 'live-mobile') }}
-    runs-on: ubuntu-latest
-    steps:
-      - name: generate token
-        id: generate-token
-        uses: tibdex/github-app-token@v1
-        with:
-          app_id: ${{ secrets.GH_BOT_APP_ID }}
-          private_key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
-      - uses: actions/github-script@v6
-        name: "Create Mobile tests checks"
-        id: mobile-test-check
-        with:
-          github-token: ${{ steps.generate-token.outputs.token }}
-          script: |
-            const { data } = await github.rest.checks.create({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              head_sha: "${{ github.event.pull_request.head.sha }}",
-              name: "[Mobile] Tests",
-              status: "queued"
-            });
-            return data.id
-      - uses: actions/github-script@v6
-        name: trigger test workflow
-        id: mobile-test
-        with:
-          script: |
-            await github.rest.actions.createWorkflowDispatch({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              ref: "${{ github.event.pull_request.head.ref }}",
-              workflow_id: "test-mobile.yml",
-              inputs: {
-                ref: "${{ github.event.pull_request.head.ref }}",
-                sha: "${{ github.event.pull_request.head.sha }}",
-                check_run_id: "${{ steps.mobile-test-check.outputs.result }}"
-              }
-            });
-      - uses: actions/github-script@v6
-        name: "triggering mobile test failed"
-        if: steps.mobile-test.conclusion != 'success'
-        with:
-          script: |
-            const previous = await github.rest.checks.get({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              head_sha: "${{ github.event.pull_request.head.sha }}",
-              check_run_id: "${{ steps.mobile-test-check.outputs.result }}",
-            });
-            await github.rest.checks.update({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              name: previousW.data.name,
-              check_run_id: "${{ steps.mobile-test-check.outputs.result }}",
-              conclusion: "failure",
-              output: {
-                title: "Mobile Tests Summary",
-                summary: "Something went wrong when triggering Mobile Tests workflow"
-              },
-              actions: [{
-                label: "Rerun",
-                identifier: "rerun_mobile_tests",
-                description: "Retry to run the Mobile Tests workflow"
-              }]
-            });
+  # mobile-tests:
+  #   name: "Mobile (tests)"
+  #   needs: setup
+  #   # if: ${{ contains(fromJSON(needs.setup.outputs.affected), 'live-mobile') }}
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: generate token
+  #       id: generate-token
+  #       uses: tibdex/github-app-token@v1
+  #       with:
+  #         app_id: ${{ secrets.GH_BOT_APP_ID }}
+  #         private_key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
+  #     - uses: actions/github-script@v6
+  #       name: "Create Mobile tests checks"
+  #       id: mobile-test-check
+  #       with:
+  #         github-token: ${{ steps.generate-token.outputs.token }}
+  #         script: |
+  #           const { data } = await github.rest.checks.create({
+  #             owner: context.repo.owner,
+  #             repo: context.repo.repo,
+  #             head_sha: "${{ github.event.pull_request.head.sha }}",
+  #             name: "[Mobile] Tests",
+  #             status: "queued"
+  #           });
+  #           return data.id
+  #     - uses: actions/github-script@v6
+  #       name: trigger test workflow
+  #       id: mobile-test
+  #       with:
+  #         script: |
+  #           await github.rest.actions.createWorkflowDispatch({
+  #             owner: context.repo.owner,
+  #             repo: context.repo.repo,
+  #             ref: "${{ github.event.pull_request.head.ref }}",
+  #             workflow_id: "test-mobile.yml",
+  #             inputs: {
+  #               ref: "${{ github.event.pull_request.head.ref }}",
+  #               sha: "${{ github.event.pull_request.head.sha }}",
+  #               check_run_id: "${{ steps.mobile-test-check.outputs.result }}"
+  #             }
+  #           });
+  #     - uses: actions/github-script@v6
+  #       name: "triggering mobile test failed"
+  #       if: steps.mobile-test.conclusion != 'success'
+  #       with:
+  #         script: |
+  #           const previous = await github.rest.checks.get({
+  #             owner: context.repo.owner,
+  #             repo: context.repo.repo,
+  #             head_sha: "${{ github.event.pull_request.head.sha }}",
+  #             check_run_id: "${{ steps.mobile-test-check.outputs.result }}",
+  #           });
+  #           await github.rest.checks.update({
+  #             owner: context.repo.owner,
+  #             repo: context.repo.repo,
+  #             name: previousW.data.name,
+  #             check_run_id: "${{ steps.mobile-test-check.outputs.result }}",
+  #             conclusion: "failure",
+  #             output: {
+  #               title: "Mobile Tests Summary",
+  #               summary: "Something went wrong when triggering Mobile Tests workflow"
+  #             },
+  #             actions: [{
+  #               label: "Rerun",
+  #               identifier: "rerun_mobile_tests",
+  #               description: "Retry to run the Mobile Tests workflow"
+  #             }]
+  #           });
