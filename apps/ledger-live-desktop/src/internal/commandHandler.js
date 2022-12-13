@@ -17,18 +17,6 @@ function inferSentryTransaction(cmd, command) {
   });
 }
 
-export function writeToCommand(command: *, send: *) {
-  const { data, requestId } = command;
-  const subject = subscriptions[requestId];
-  subject.next(data);
-}
-
-export function completeCommand(command: *, send: *) {
-  const { requestId } = command;
-  const subject = subscriptions[requestId];
-  subject.complete();
-}
-
 export function executeCommand(command: *, send: *) {
   const { data, requestId, id } = command;
   const cmd = commandsById[id];
@@ -45,10 +33,8 @@ export function executeCommand(command: *, send: *) {
   const startTime = Date.now();
   logger.onCmd("cmd.START", id, 0, data);
   try {
-    subscriptions[requestId] = cmd(data); // Store the subject returned instead of the subscription
-    subscriptions[requestId].subscribe({
+    subscriptions[requestId] = cmd(data).subscribe({
       next: data => {
-        if (data?.type === "input-frame") return; // TODO Input can't be treated as output too
         logger.onCmd("cmd.NEXT", id, Date.now() - startTime, data);
         send({ type: "cmd.NEXT", requestId, data });
       },
