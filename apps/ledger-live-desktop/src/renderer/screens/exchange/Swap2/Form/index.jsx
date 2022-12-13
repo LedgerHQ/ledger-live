@@ -124,6 +124,7 @@ const SwapForm = () => {
     setIsSendMaxLoading,
     onNoRates: trackNoRates,
     ...locationState,
+    providers,
   });
 
   const exchangeRatesState = swapTransaction.swap?.rates;

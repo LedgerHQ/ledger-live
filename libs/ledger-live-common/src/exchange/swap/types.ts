@@ -137,12 +137,13 @@ export type CheckQuote = ({
   quoteId?: string;
   bearerToken: string;
 }) => Promise<CheckQuoteStatus>;
-export type AvailableProvider = AvailableProviderV2 | AvailableProviderV3;
+export type AvailableProvider = AvailableProviderV3;
 export type GetExchangeRates = (
   arg0: Exchange,
   arg1: Transaction,
   wyreUserId?: string,
-  currencyTo?: TokenCurrency | CryptoCurrency | undefined | null
+  currencyTo?: TokenCurrency | CryptoCurrency | undefined | null,
+  providers?: AvailableProviderV3[],
 ) => Promise<ExchangeRate[]>;
 export type GetProviders = () => Promise<AvailableProvider[]>;
 export type InitSwapResult = {
