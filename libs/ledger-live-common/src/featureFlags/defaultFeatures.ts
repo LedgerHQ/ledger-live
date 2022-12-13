@@ -7,6 +7,9 @@ export const defaultFeatures: DefaultFeatures = {
   brazePushNotifications: {
     enabled: false,
   },
+  brazeLearn: {
+    enabled: false,
+  },
   deviceLocalization: {
     enabled: false,
   },
