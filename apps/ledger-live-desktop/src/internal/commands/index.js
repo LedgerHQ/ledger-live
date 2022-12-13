@@ -32,7 +32,6 @@ import staxLoadImage from "./staxLoadImage";
 import getOnboardingStatePolling from "./getOnboardingStatePolling";
 import getGenuineCheckFromDeviceId from "./getGenuineCheckFromDeviceId";
 import getLatestAvailableFirmwareFromDeviceId from "./getLatestAvailableFirmwareFromDeviceId";
-import openTransportAsSubject from "./openTransportAsSubject";
 import { commands as bridgeProxyCommands } from "~/renderer/bridge/proxy-commands";
 
 export const commandsById = {
@@ -70,7 +69,6 @@ export const commandsById = {
   getOnboardingStatePolling,
   getGenuineCheckFromDeviceId,
   getLatestAvailableFirmwareFromDeviceId,
-  openTransportAsSubject,
 };
 
 export type Commands = typeof commandsById;
