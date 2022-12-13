@@ -1,5 +1,11 @@
 # @ledgerhq/native-ui
 
+## 0.14.0-nightly.0
+
+### Minor Changes
+
+- [#1802](https://github.com/LedgerHQ/ledger-live/pull/1802) [`b01f9f5c02`](https://github.com/LedgerHQ/ledger-live/commit/b01f9f5c02ef255738b557daba38c1d9f13ee8fe) Thanks [@LFBarreto](https://github.com/LFBarreto)! - NativeUI - add colo and text Color to tag component
+
 ## 0.13.0
 
 ### Minor Changes

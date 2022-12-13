@@ -1,5 +1,11 @@
 # @ledgerhq/types-live
 
+## 6.27.2-nightly.0
+
+### Patch Changes
+
+- [#1802](https://github.com/LedgerHQ/ledger-live/pull/1802) [`b01f9f5c02`](https://github.com/LedgerHQ/ledger-live/commit/b01f9f5c02ef255738b557daba38c1d9f13ee8fe) Thanks [@LFBarreto](https://github.com/LFBarreto)! - Add feature flag types for protect mobile
+
 ## 6.27.1
 
 ### Patch Changes
