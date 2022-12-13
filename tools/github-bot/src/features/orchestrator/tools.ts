@@ -60,13 +60,14 @@ export const createOrRerequestRunByName = async ({
 
   if (!checkRun) {
     // If not, create it.
-    await octokit.checks.create({
+    const { data } = await octokit.checks.create({
       owner,
       repo,
       name: checkName,
       head_sha: sha,
       status: "queued",
     });
+    checkRun = data;
   } else {
     // Else, retrigger the check run.
     await octokit.checks.rerequestRun({
@@ -76,7 +77,7 @@ export const createOrRerequestRunByName = async ({
     });
   }
 
-  if (checkRun && updateToPendingFields) {
+  if (updateToPendingFields) {
     await octokit.checks.update({
       owner,
       repo,

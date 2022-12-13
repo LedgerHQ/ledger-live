@@ -13,18 +13,42 @@ const WORKFLOWS = {
   "build-desktop.yml": {
     affected: ["ledger-live-desktop"],
     checkRunName: "[Desktop] Build the app",
+    getInputs: (payload: any) => {
+      return {
+        sha: payload.workflow_run.head_sha,
+        ref: payload.workflow_run.head_branch,
+      };
+    },
   },
   "test-desktop.yml": {
     affected: ["ledger-live-desktop"],
     checkRunName: "[Desktop] Run e2e and unit tests",
+    getInputs: (payload: any) => {
+      return {
+        sha: payload.workflow_run.head_sha,
+        ref: payload.workflow_run.head_branch,
+      };
+    },
   },
   "build-mobile.yml": {
     affected: ["live-mobile"],
     checkRunName: "[Mobile] Build the app",
+    getInputs: (payload: any) => {
+      return {
+        sha: payload.workflow_run.head_sha,
+        ref: payload.workflow_run.head_branch,
+      };
+    },
   },
   "test-mobile.yml": {
     affected: ["live-mobile"],
     checkRunName: "[Mobile] Run tests",
+    getInputs: (payload: any) => {
+      return {
+        sha: payload.workflow_run.head_sha,
+        ref: payload.workflow_run.head_branch,
+      };
+    },
   },
   "test.yml": {
     affected: [
@@ -68,6 +92,14 @@ const WORKFLOWS = {
       "@ledgerhq/ui-shared",
     ],
     checkRunName: "[Libraries] Run tests",
+    getInputs: (payload: any) => {
+      return {
+        sha: payload.workflow_run.head_sha,
+        ref: payload.workflow_run.head_branch,
+        since_branch:
+          payload.workflow_run.pull_requests[0]?.base.ref || "develop",
+      };
+    },
   },
 };
 
@@ -97,7 +129,11 @@ export function orchestrator(app: Probot) {
         sha: payload.workflow_run.head_sha,
         checkName: matchedWorkflow.checkRunName,
         updateToPendingFields: {
-          output: "Work in progress 🧪", // TODO: add proper output
+          details_url: `https://github.com/${owner}/${repo}/actions/runs/${payload.workflow_run.id}`,
+          output: {
+            title: "⚙️",
+            summary: "Work in progress 🧪",
+          }, // TODO: add proper output
         },
       });
     }
@@ -144,11 +180,8 @@ export function orchestrator(app: Probot) {
             owner,
             repo,
             workflow_id: fileName,
-            ref: payload.workflow_run.head_sha,
-            inputs: {
-              sha: payload.workflow_run.head_sha,
-              ref: payload.workflow_run.head_branch,
-            },
+            ref: payload.workflow_run.head_branch,
+            inputs: workflow.getInputs(payload),
           });
         }
       });
@@ -200,7 +233,10 @@ export function orchestrator(app: Probot) {
         sha: payload.check_run.head_sha,
         checkName: GATE_CHECK_RUN_NAME,
         updateToPendingFields: {
-          output: "Work in progress 🧪", // TODO: add proper output
+          output: {
+            title: "⚙️",
+            summary: "Work in progress 🧪",
+          }, // TODO: add proper output
         },
       });
     }
