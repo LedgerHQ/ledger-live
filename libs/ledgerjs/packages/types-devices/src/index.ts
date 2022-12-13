@@ -34,7 +34,7 @@ export interface DeviceModel {
 export enum ChargingModes {
   NONE = 0x00,
   USB = 0x01,
-  QI = 0x01,
+  QI = 0x02,
 }
 
 /**
