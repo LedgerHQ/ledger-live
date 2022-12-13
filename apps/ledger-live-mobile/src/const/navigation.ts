@@ -430,6 +430,7 @@ export enum ScreenName {
   NoDeviceWallScreen = "NoDeviceWallScreen",
   DiscoverScreen = "DiscoverScreen",
   Learn = "Learn",
+  LearnWebView = "LearnWebView",
   // cardano
   CardanoEditMemo = "CardanoEditMemo",
   // hedera
