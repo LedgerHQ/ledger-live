@@ -125,7 +125,7 @@ export function SwapForm({
   const swapKYC = useSelector(swapKYCSelector);
   const provider = exchangeRate?.provider;
   const providerKYC = provider ? swapKYC?.[provider] : undefined;
-  const kycStatus = providerKYC?.status;
+  const kycStatus = providerKYC?.status as ValidKYCStatus | "rejected";
 
   // On provider change, reset banner and flow
   useEffect(() => {
@@ -156,7 +156,7 @@ export function SwapForm({
     // we don't display it if user needs to login first
     if (
       currentBanner !== ActionRequired.Login &&
-      shouldShowKYCBanner({ provider, kycStatus })
+      shouldShowKYCBanner({ provider, kycStatus as ValidKYCStatus | "rejected" })
     ) {
       setCurrentBanner(ActionRequired.KYC);
     }
