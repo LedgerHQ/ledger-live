@@ -82,8 +82,8 @@ jobs:
   start-runner:
     name: Start self-hosted EC2 runner
     runs-on: [ledger-live, linux]
-    needs: [pr-is-fork]
-    if: ${{ !fromJSON(needs.pr-is-fork.outputs.pr-is-fork) }}
+    # needs: [pr-is-fork]
+    # if: ${{ !fromJSON(needs.pr-is-fork.outputs.pr-is-fork) }}
     outputs:
       label: ${{ steps.start-ec2-linux-runner.outputs.label }}
       ec2-instance-id: ${{ steps.start-ec2-linux-runner.outputs.ec2-instance-id }}
@@ -117,8 +117,9 @@ jobs:
 
   build-mobile-app-android:
     name: "Build Ledger Live Mobile (Android)"
-    if: ${{ !fromJSON(needs.pr-is-fork.outputs.pr-is-fork) }}
-    needs: [pr-is-fork, start-runner]
+    # if: ${{ !fromJSON(needs.pr-is-fork.outputs.pr-is-fork) }}
+    # needs: [pr-is-fork, start-runner]
+    needs: start-runner
     runs-on: ${{ needs.start-runner.outputs.label }}
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
@@ -270,8 +271,8 @@ jobs:
   build-mobile-app-ios:
     runs-on: macos-latest
     name: "Build Ledger Live Mobile (Mac OS X)"
-    needs: is-affected
-    if: ${{ needs.is-affected.outputs.is-mobile-affected == 'true' }}
+    # needs: is-affected
+    # if: ${{ needs.is-affected.outputs.is-mobile-affected == 'true' }}
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
     steps:

@@ -129,7 +129,9 @@ export function orchestrator(app: Probot) {
         sha: payload.workflow_run.head_sha,
         checkName: matchedWorkflow.checkRunName,
         updateToPendingFields: {
-          output: "Work in progress 🧪", // TODO: add proper output
+          output: {
+            summary: "Work in progress 🧪",
+          }, // TODO: add proper output
         },
       });
     }
@@ -229,7 +231,9 @@ export function orchestrator(app: Probot) {
         sha: payload.check_run.head_sha,
         checkName: GATE_CHECK_RUN_NAME,
         updateToPendingFields: {
-          output: "Work in progress 🧪", // TODO: add proper output
+          output: {
+            summary: "Work in progress 🧪",
+          }, // TODO: add proper output
         },
       });
     }
