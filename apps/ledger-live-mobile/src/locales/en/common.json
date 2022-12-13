@@ -323,11 +323,11 @@
       "description": "Please try again. If the problem persists, please save your logs using the button below and provide them to Ledger Support."
     },
     "ImageCommitRefusedOnDevice": {
-      "title": "Image commit refused on device (TODO: final wording)",
+      "title": "Lock screen cancelled on Ledger Stax",
       "description": "If this image wasn't the right fit, you can try again with another image."
     },
     "ImageLoadRefusedOnDevice": {
-      "title": "Image load refused on device (TODO: final wording)",
+      "title": "Lock screen cancelled on Ledger Stax",
       "description": "If this image wasn't the right fit, you can try again with another image."
     },
     "InvalidAddress": {
@@ -1119,7 +1119,7 @@
       "estimatedTime": "{{ minutes }} min",
       "title": "{{ productName }} uses apps to enable secure blockchain transactions",
       "subtitle": "We recommend downloading a default set of apps. You can download more later.",
-      "installCTA": "Intall apps",
+      "installCTA": "Install apps",
       "skipCTA": "I'll do this later"
     },
     "ongoing": {
@@ -1132,7 +1132,7 @@
   "onboarding": {
     "stepWelcome": {
       "title": "Welcome to Ledger",
-      "subtitle": "We make digital ownership secure and simple.",
+      "subtitle": "We make digital ownership secure and simple",
       "start": "Get started",
       "noDevice": "No device?",
       "buy": "Buy a {{fullDeviceName}}",
@@ -1148,8 +1148,8 @@
       "no": "Not yet"
     },
     "postWelcomeStep": {
-      "title": "It's your choice",
-      "subtitle_yes": "You can choose to set up your Ledger or take a look around the app first",
+      "title": "Let's get you started",
+      "subtitle_yes": "Set up your Ledger, or take a look around the app first.",
       "subtitle_no": "You can choose to take a look around the app first or buy a Nano X device",
       "noLedgerLink": "I don’t have a Ledger and I would like to buy one",
       "setupLedger": {
@@ -1754,14 +1754,14 @@
   },
   "blePairingFlow": {
     "scanning": {
+      "cantSeeDevice": "Can't see your {{productName}}?",
       "withProductName": {
-        "title": "Looking for your {{productName}}",
-        "description": "Please make sure your {{productName}} is unlocked and Bluetooth is enabled"
+        "title": "Looking for {{productName}}..."
       },
       "withoutProductName": {
-        "title": "Looking for devices",
-        "description": "Please make sure your device is switched on, unlocked, and bluetooth is enabled"
+        "title": "Looking for devices"
       },
+      "description": "Make sure your Ledger is unlocked and close to the mobile phone you want to pair with.",
       "alreadyPaired": "Already paired"
     },
     "pairing": {
@@ -1769,7 +1769,7 @@
         "title": "Paired with {{deviceName}}"
       },
       "loading": {
-        "title": "Pairing with {{deviceName}}",
+        "title": "Pairing with {{deviceName}}...",
         "subtitle": "Confirm the code on your {{productName}}"
       },
       "error": {
@@ -1789,8 +1789,7 @@
     "title": "Setup {{deviceName}}",
     "estimatedTimeFormat": "{{estimatedTime}} min",
     "deviceSelection": {
-      "title": "Which device do you own?",
-      "subtitle": "Choose which Ledger wallet you want to setup with Ledger Live",
+      "title": "Choose the Ledger you'd like to set up:",
       "brand": "Ledger",
       "setupTime": "{{time}} mins"
     },
@@ -1821,13 +1820,13 @@
       "cancelCta": "Cancel"
     },
     "desyncDrawer": {
-      "title": "We could not connect to your {{productName}}",
-      "description": "Please make sure your {{productName}} is nearby and unlocked. Check to see if Bluetooth is enabled on your mobile phone",
-      "retryCta": "Try again",
+      "title": "Couldn't connect to {{productName}}",
+      "description": "Make sure your mobile phone is close to your {{productName}} and try connecting again.",
+      "retryCta": "Try connecting again",
       "helpCta": "Get help"
     },
     "resyncOverlay": {
-      "content": "It looks like your connection to your {{productName}} was lost. Reconnecting"
+      "content": "Connection with {{productName}} lost. Trying to reconnect..."
     },
     "helpDrawer": {
       "title": "Need some help with your setup manual?",
@@ -1837,31 +1836,34 @@
     },
     "pairingStep": {
       "title": "{{productName}} is paired",
-      "description": "Continue setting up your {{productName}} and look back here for step by step assistance"
+      "description": "Continue setting up on {{productName}}. Look back here for step-by-step assistance."
     },
     "pinStep": {
-      "title": "Choose your PIN",
-      "description": "Your PIN prevents any unwanted access to your {{productName}}. Never share it",
-      "warning": "Anyone who knows your PIN and has access to your {{productName}} can steal your assets forever"
+      "title": "PIN",
+      "doneTitle": "PIN set",
+      "description": "Your PIN prevents unwanted access to your {{productName}}."
     },
     "seedStep": {
-      "title": "Set your recovery phrase",
+      "title": "Secret Recovery Phrase",
+      "doneTitle": "Secret Recovery Phrase confirmed",
       "description": "Your recovery phrase is a secret list of 24 words that backs up your private keys. Your {{productName}} generates a unique recovery phrase. Ledger does not keep a copy of it"
     },
     "softwareChecksSteps": {
-      "title": "Operating system check",
+      "title": "Hardware and Software checks",
+      "doneTitle": "{{productName}} is genuine and up to date",
       "genuineCheckRequestDrawer": {
-        "title": "Let's make sure your {{productName}} is genuine",
-        "checkCta": "Check genuineness"
+        "iconText": "Genuine Check",
+        "title": "This check assures that your Ledger Stax is an official Ledger.",
+        "checkCta": "Start Genuine Check"
       },
       "allowManagerDrawer": {
-        "wording": "Ledger Live"
+        "wording": "Genuine Check"
       },
       "genuineCheckCancelledDrawer": {
-        "title": "Authenticity check was cancelled on your Nano",
-        "description": "This check is important to make sure your {{productName}} is safe to use",
-        "retryCta": "Run genuine check again",
-        "skipCta": "Maybe later"
+        "title": "Genuine Check canceled",
+        "description": "This check is important to make sure your {{productName}} is an official Ledger.",
+        "retryCta": "Run Genuine Check again",
+        "skipCta": "I'll do it later"
       },
       "updateAvailableDrawer": {
         "title": "New software found",
@@ -1873,28 +1875,25 @@
           "title": "Authenticity check"
         },
         "active": {
-          "title": "Checking {{productName}}"
+          "title": "Genuine Check in progress..."
         },
         "completed": {
-          "title": "Your {{productName}} is authentic"
+          "title": "{{productName}} is genuine"
         },
         "failed": {
-          "title": "Device security not checked"
+          "title": "Genuine Check skipped"
         }
       },
       "firmwareUpdateStep": {
-        "inactive": {
-          "title": "Software check"
-        },
         "active": {
-          "title": "Checking software version"
+          "title": "Check for OS update"
         },
         "completed": {
           "updateAvailable": {
             "title": "Software version {{firmwareVersion}} available"
           },
           "noUpdateAvailable": {
-            "title": "Software version up-to-date"
+            "title": "{{productName}} is up to date"
           }
         },
         "failed": {
@@ -1903,10 +1902,11 @@
       }
     },
     "appsStep": {
-      "title": "{{productName}} applications"
+      "title": "Install blockchain apps"
     },
     "readyStep": {
-      "title": "{{productName}} is ready"
+      "title": "End of setup",
+      "doneTitle": "{{productName}} is ready"
     },
     "completion": {
       "title": "Now you are in control"
@@ -3588,7 +3588,7 @@
     "stayInTheAppPlz": "Stay in the Ledger Live app and keep your Ledger nearby.",
     "allowAppPermission": "Open the {{wording}} app on your device",
     "allowAppPermissionSubtitleToken": "to manage your {{token}} tokens",
-    "allowManagerPermission": "Allow {{wording}} on your device",
+    "allowManagerPermission": "Allow {{wording}} on your {{productName}}",
     "loading": "Loading...",
     "turnOnAndUnlockDevice": "Turn on and unlock your device",
     "connectAndUnlockDevice": "Connect and unlock your device",
@@ -3755,17 +3755,16 @@
     "tabTitle": "My Ledger",
     "title": "My Ledger",
     "selectDevice": {
-      "saved": {
-        "title": "Devices",
-        "description": "Manage your saved Ledgers"
-      },
+      "title": "Devices",
+      "addALedger": "Add a Ledger",
+      "addWithBluetooth": "Add with Bluetooth",
       "addNewCTA": "Add new",
-      "otgBanner": "If you own a Nano S or a Nano S Plus, connect your device with USB cable.",
+      "otgBanner": "To use Ledger Nano S or Ledger Nano S Plus, connect with the USB cable.",
       "connectExistingLedger": "Connect an existing Ledger",
-      "connectExistingLedgerDescription": "Already have a Ledger that is set up? Pair it with bluetooth",
+      "connectExistingLedgerDescription": "If your Ledger is already set up",
       "setUpNewLedger": "Set up a new Ledger",
-      "setUpNewLedgerDescription": "Bought a new Ledger? Click here to set it up",
-      "buyDeviceCTA": "Need a new Ledger? Buy one",
+      "setUpNewLedgerDescription": "If your Ledger is not set up yet",
+      "buyDeviceCTA": "<0>Need a new Ledger? </0><1>Buy now</1>",
       "item": {
         "usb": "Connected with USB",
         "available": "Available. Tap to connect",
@@ -5265,7 +5264,7 @@
   },
   "ValidateOnDevice": {
     "title": {
-      "send": "Please confirm the operation on your {{productName}} to send it",
+      "send": "Please confirm transaction on your {{productName}}",
       "freeze": "On your device, please confirm to finalize the operation",
       "unfreeze": "On your device, please confirm to finalize the operation",
       "claimReward": "On your device, please confirm to finalize the operation",
@@ -5274,7 +5273,7 @@
       "redelegate": "On your device, please confirm to finalize the operation",
       "undelegate": "On your device, please confirm to finalize the operation"
     },
-    "warning": "Always verify the address displayed your device exactly matches the one given to you by the {{recipientWording}}",
+    "warning": "Make sure the address displayed on your Ledger matches the {{recipientWording}}'s address",
     "recipientWording": {
       "send": "Always verify the address displayed your device exactly matches the one given to you by the recipient",
       "delegate": "Always verify that your device displays the address exactly as provided by the validator",
@@ -5642,33 +5641,33 @@
     "title": "Lock screen picture",
     "replace": "Replace",
     "drawer": {
-      "title": "Choose an image",
       "options": {
         "uploadFromPhone": "Choose from my picture gallery",
         "selectFromNFTGallery": "Choose from NFT gallery"
       }
     },
-    "cropImage": "Crop image",
+    "cropImage": "Crop picture",
     "chooseConstrast": "Choose contrast",
     "uploadAnotherImage": "Upload another image",
     "rotateImage": "Rotate",
-    "allowPreview": "Allow picture preview on {{productName}}",
-    "loadingPicture": "Loading picture on {{productName}}",
-    "pictureLoaded": "Picture loaded",
-    "timeDisclaimer": "This can take up to 30 seconds",
-    "imageLoaded": "Image loaded on {{productName}}",
+    "allowPreview": "Allow lock screen picture to load on your {{productName}}",
+    "loadingPicture": "Loading...",
+    "loadingPictureAlmostOver": "Voilà!",
+    "commitRequested": "Like what you see?\nKeep it!",
     "confirmPicture": "Confirm on {{productName}}",
     "landingPage": {
-      "title": "Choose a picture.\nCreate a vibe.\nMake your Ledger yours.",
-      "subtitle": "Set a picture of your favourite NFT or a picture from your phone.",
+      "title": "Choose any NFT, or photo.\nCustomize.\nMake your Ledger, yours.",
       "choosePicture": "Choose a picture"
     },
+    "confirmCrop": "Confirm crop",
+    "confirmContrast": "Confirm contrast",
+    "nftEntryPointButtonLabel": "Set as Ledger Stax lockscreen picture",
     "customImage": "Custom picture",
     "doThisLater": "Maybe later",
     "preview": {
       "title": "Preview",
       "loading": "Loading preview",
-      "setPicture": "Set custom picture",
+      "setPicture": "Set as lock screen",
       "editPicture": "Edit picture"
     },
     "nftGallery": {
@@ -5677,23 +5676,35 @@
   },
   "postOnboarding": {
     "hub": {
-      "title": "Nice one.\nYou're all set.",
-      "allDoneTitle": "Nice work.\nYou're up and running.",
-      "subtitle": "Here is what you can do next:",
-      "skip": "Skip to the app",
-      "goToWallet": "Go to Ledger Live wallet",
+      "title": "Next up, use your {{productName}} to...",
+      "allDoneTitle": "and that’s a wrap!",
+      "skip": "I’ll do this later",
       "done": "You've just secured your future"
     },
-    "walletCard": {
-      "title": "Getting started",
-      "description": "Click here to finish setting up your {{productName}} with Ledger Live"
+    "entryPointCard": {
+      "title": "What's next for your {{productName}}?",
+      "description": "Claim the Infinity NFT, customize its lock screen, or transfer your assets from other exchanges.",
+      "buttonLabel": "See what's next"
     },
     "actions": {
       "customImage": {
-        "title": "Personalize my Ledger device",
-        "description": "By adding an image",
-        "popupLabel": "Device personalized",
-        "hubTitleAfterAction": "That screen is looking neat"
+        "title": "Customize the lock screen",
+        "titleCompleted": "Lock screen customized",
+        "description": "Choose any NFT or picture to set as the lock screen of your Ledger Stax.",
+        "popupLabel": "Lockscreen set"
+      },
+      "claimNft": {
+        "title": "Claim the Infinity NFT",
+        "titleCompleted": "Infinity NFT claimed",
+        "description": "This NFT gets you access to [ Ledger ] Market, our NFT marketplace.",
+        "popupLabel": "NFT claimed",
+        "tagLabel": "Gift"
+      },
+      "assetsTransfer": {
+        "title": "Transfer your assets to Ledger",
+        "titleCompleted": "Assets transferred to Ledger",
+        "description": "Transfer from any other exchange or wallet.",
+        "popupLabel": "Assets transferred"
       }
     }
   },

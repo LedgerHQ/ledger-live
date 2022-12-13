@@ -52,6 +52,7 @@ import DebugStoryly from "../../screens/DebugStoryly";
 import { useNoNanoBuyNanoWallScreenOptions } from "../../context/NoNanoBuyNanoWall";
 import PostOnboardingDebugScreen from "../../screens/PostOnboarding/PostOnboardingDebugScreen";
 import { SettingsNavigatorStackParamList } from "./types/SettingsNavigator";
+import DebugCustomImageGraphics from "../../screens/DebugCustomImageGraphics";
 
 const Stack = createStackNavigator<SettingsNavigatorStackParamList>();
 
@@ -316,6 +317,13 @@ export default function SettingsNavigator() {
         component={DebugFetchCustomImage}
         options={{
           title: "Debug FetchCustomImage",
+        }}
+      />
+      <Stack.Screen
+        name={ScreenName.DebugCustomImageGraphics}
+        component={DebugCustomImageGraphics}
+        options={{
+          title: "Debug custom image graphics",
         }}
       />
       <Stack.Screen

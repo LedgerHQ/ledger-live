@@ -4,13 +4,13 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { useTheme } from "@react-navigation/native";
 import Config from "react-native-config";
 import { DeviceModelId } from "@ledgerhq/types-devices";
+import { Flex, Icons } from "@ledgerhq/native-ui";
 import Button from "../components/Button";
 import LText from "../components/LText";
 import Animation from "../components/Animation";
 import { getDeviceAnimation } from "../helpers/getDeviceAnimation";
 import BottomModal from "../components/BottomModal";
 import Touchable from "../components/Touchable";
-import Alert from "../components/Alert";
 import Check from "../icons/Check";
 import { lottieAnimations } from "./Onboarding/shared/infoPagesData";
 
@@ -23,7 +23,8 @@ const DebugLottie = () => {
       "quitApp",
       "allowManager",
       "openApp",
-      "validate",
+      "verify",
+      "sign",
     ],
     [],
   );
@@ -87,6 +88,7 @@ const DebugLottie = () => {
     return null; // Onboarding animations
   }, [key, keys, modelId, onBoardingKeys, wired]);
   const allKeys = [...keys, ...onBoardingKeys];
+  const keyIndex = allKeys.findIndex(k => k === key);
   return (
     <SafeAreaView
       style={[
@@ -96,11 +98,6 @@ const DebugLottie = () => {
         },
       ]}
     >
-      <Alert type="warning">
-        {
-          "This is a tool provided as-is for the team to validate lottie animations used in the app."
-        }
-      </Alert>
       <LText secondary semiBold style={styles.title}>
         {!key ? "Select Animation" : `Showing '${key}'`}
       </LText>
@@ -171,14 +168,31 @@ const DebugLottie = () => {
         disabled={modelId !== "nanoX" || !keys.includes(key)}
         onPress={() => setWired(wired => !wired)}
       />
-      <Button
-        containerStyle={{
-          marginTop: 8,
-        }}
-        type="primary"
-        title="Animation key"
-        onPress={() => setKeyModalVisible(true)}
-      />
+      <Flex mt={8} flexDirection="row">
+        <Button
+          disabled={keyIndex === 0}
+          onPress={() => {
+            setKey(allKeys[Math.max(keyIndex - 1, 0)]);
+          }}
+          type="primary"
+          Icon={Icons.ChevronLeftMedium}
+        />
+        <Flex mx={3} flex={1}>
+          <Button
+            type="primary"
+            title="Animation key"
+            onPress={() => setKeyModalVisible(true)}
+          />
+        </Flex>
+        <Button
+          disabled={keyIndex === allKeys.length - 1}
+          onPress={() => {
+            setKey(allKeys[Math.min(keyIndex + 1, allKeys.length - 1)]);
+          }}
+          type="primary"
+          Icon={Icons.ChevronRightMedium}
+        />
+      </Flex>
       <BottomModal
         isOpened={keyModalVisible}
         onClose={setKeyModalVisible as () => void}
