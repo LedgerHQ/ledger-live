@@ -50,6 +50,8 @@ import MODAL_COSMOS_CLAIM_REWARDS from "../families/cosmos/ClaimRewardsFlowModal
 import MODAL_COSMOS_REDELEGATE from "../families/cosmos/RedelegationFlowModal";
 import MODAL_COSMOS_UNDELEGATE from "../families/cosmos/UndelegationFlowModal";
 
+import MODAL_ETH_STAKE from "../families/ethereum/StakeFlowModal";
+
 import MODAL_ALGORAND_OPT_IN from "../families/algorand/OptInFlowModal";
 import MODAL_ALGORAND_CLAIM_REWARDS from "../families/algorand/Rewards/ClaimRewardsFlowModal";
 import MODAL_ALGORAND_EARN_REWARDS_INFO from "../families/algorand/Rewards/EarnRewardsInfoModal";
@@ -140,6 +142,7 @@ const modals: { [_: string]: React$ComponentType<any> } = {
   MODAL_COSMOS_CLAIM_REWARDS,
   MODAL_COSMOS_REDELEGATE,
   MODAL_COSMOS_UNDELEGATE,
+  MODAL_ETH_STAKE,
   MODAL_EXCHANGE_CRYPTO_DEVICE,
   MODAL_SELL_CRYPTO_DEVICE,
   MODAL_ALGORAND_OPT_IN,
